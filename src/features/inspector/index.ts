@@ -44,13 +44,18 @@
  */
 
 // Components
-export { InspectorContent, InspectorHeader, InspectorShell, type InspectorDisplayMode } from './components'
+export {
+  InspectorContent,
+  InspectorHeader,
+  InspectorShell,
+  type InspectorDisplayMode,
+} from './components';
 
 // Hooks
-export { INSPECTOR_SIZE, useInspectorKeyboard, useInspectorResize } from './hooks'
+export { INSPECTOR_SIZE, useInspectorKeyboard, useInspectorResize } from './hooks';
 
 // Store factories
-export { createExtendedInspectorStore, createInspectorStore } from './stores'
+export { createExtendedInspectorStore, createInspectorStore } from './stores';
 
 // Types
 export type {
@@ -63,4 +68,4 @@ export type {
   InspectorDisplayMode as InspectorDisplayModeStore,
   InspectorState,
   InspectorStore,
-} from './stores'
+} from './stores';

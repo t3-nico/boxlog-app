@@ -4,14 +4,19 @@
  */
 
 // 設定
-export { RECAPTCHA_CONFIG, isDevelopment, isRecaptchaV2Enabled, isRecaptchaV3Enabled } from './config'
+export {
+  RECAPTCHA_CONFIG,
+  isDevelopment,
+  isRecaptchaV2Enabled,
+  isRecaptchaV3Enabled,
+} from './config';
 
 // サーバーサイド検証
-export { isScoreAboveThreshold, verifyRecaptchaV2, verifyRecaptchaV3 } from './verify'
-export type { RecaptchaVerifyResponse } from './verify'
+export { isScoreAboveThreshold, verifyRecaptchaV2, verifyRecaptchaV3 } from './verify';
+export type { RecaptchaVerifyResponse } from './verify';
 
 // クライアントサイドフック
-export { useRecaptchaV2, useRecaptchaV3 } from './hooks'
+export { useRecaptchaV2, useRecaptchaV3 } from './hooks';
 
 // コンポーネント
-export { RecaptchaScript } from './RecaptchaScript'
+export { RecaptchaScript } from './RecaptchaScript';

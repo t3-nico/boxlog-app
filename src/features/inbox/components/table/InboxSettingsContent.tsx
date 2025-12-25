@@ -1,12 +1,16 @@
-'use client'
+'use client';
 
-import { MobileSettingsButtonGroup, MobileSettingsChip, MobileSettingsSection } from '@/components/common'
-import { Button } from '@/components/ui/button'
-import { Columns3, Group, Settings2, Table2 } from 'lucide-react'
-import { useInboxColumnStore } from '../../stores/useInboxColumnStore'
-import { useInboxGroupStore } from '../../stores/useInboxGroupStore'
-import { useInboxViewStore } from '../../stores/useInboxViewStore'
-import type { GroupByField } from '../../types/group'
+import {
+  MobileSettingsButtonGroup,
+  MobileSettingsChip,
+  MobileSettingsSection,
+} from '@/components/common';
+import { Button } from '@/components/ui/button';
+import { Columns3, Group, Settings2, Table2 } from 'lucide-react';
+import { useInboxColumnStore } from '../../stores/useInboxColumnStore';
+import { useInboxGroupStore } from '../../stores/useInboxGroupStore';
+import { useInboxViewStore } from '../../stores/useInboxViewStore';
+import type { GroupByField } from '../../types/group';
 
 /**
  * グループ化オプション
@@ -16,7 +20,7 @@ const GROUP_BY_OPTIONS: Array<{ value: GroupByField; label: string }> = [
   { value: 'status', label: 'ステータス' },
   { value: 'due_date', label: '期限' },
   { value: 'tags', label: 'タグ' },
-]
+];
 
 /**
  * Inbox設定コンテンツ
@@ -30,14 +34,14 @@ const GROUP_BY_OPTIONS: Array<{ value: GroupByField; label: string }> = [
  */
 export function InboxSettingsContent() {
   // 表示モード
-  const { displayMode, setDisplayMode } = useInboxViewStore()
+  const { displayMode, setDisplayMode } = useInboxViewStore();
 
   // グループ化
-  const { groupBy, setGroupBy } = useInboxGroupStore()
+  const { groupBy, setGroupBy } = useInboxGroupStore();
 
   // 列設定
-  const { columns, toggleColumnVisibility, resetColumns } = useInboxColumnStore()
-  const configurableColumns = columns.filter((col) => col.id !== 'selection')
+  const { columns, toggleColumnVisibility, resetColumns } = useInboxColumnStore();
+  const configurableColumns = columns.filter((col) => col.id !== 'selection');
 
   return (
     <div className="space-y-6">
@@ -92,5 +96,5 @@ export function InboxSettingsContent() {
         </div>
       </MobileSettingsSection>
     </div>
-  )
+  );
 }

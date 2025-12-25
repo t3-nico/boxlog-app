@@ -1,24 +1,24 @@
-'use client'
+'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import type { CalendarViewType } from '../../types/calendar.types'
+import type { CalendarViewType } from '../../types/calendar.types';
 
-export type LayoutMode = 'default' | 'compact' | 'fullscreen'
-export type SidebarWidth = 'full' | 'collapsed' | 'hidden'
-export type Breakpoint = 'mobile' | 'tablet' | 'desktop'
+export type LayoutMode = 'default' | 'compact' | 'fullscreen';
+export type SidebarWidth = 'full' | 'collapsed' | 'hidden';
+export type Breakpoint = 'mobile' | 'tablet' | 'desktop';
 
 interface CalendarLayoutState {
-  sidebarOpen: boolean
-  sidebarWidth: SidebarWidth
-  layoutMode: LayoutMode
-  currentBreakpoint: Breakpoint
-  showHeader: boolean
-  showSidebar: boolean
+  sidebarOpen: boolean;
+  sidebarWidth: SidebarWidth;
+  layoutMode: LayoutMode;
+  currentBreakpoint: Breakpoint;
+  showHeader: boolean;
+  showSidebar: boolean;
 
   // 追加: カレンダー状態
-  viewType: CalendarViewType
-  currentDate: Date
+  viewType: CalendarViewType;
+  currentDate: Date;
 }
 
 /**
@@ -26,17 +26,17 @@ interface CalendarLayoutState {
  * サイドバーの開閉、レスポンシブ対応、レイアウトモード管理、日付・ビューナビゲーション
  */
 export function useCalendarLayout(options?: {
-  sidebarDefaultOpen?: boolean
-  showHeaderDefault?: boolean
-  showSidebarDefault?: boolean
+  sidebarDefaultOpen?: boolean;
+  showHeaderDefault?: boolean;
+  showSidebarDefault?: boolean;
 
   // 追加: カレンダー設定
-  initialViewType?: CalendarViewType
-  initialDate?: Date
-  persistSidebarState?: boolean
-  sidebarStorageKey?: string
-  onViewChange?: ((viewType: CalendarViewType) => void) | undefined
-  onDateChange?: ((date: Date) => void) | undefined
+  initialViewType?: CalendarViewType;
+  initialDate?: Date;
+  persistSidebarState?: boolean;
+  sidebarStorageKey?: string;
+  onViewChange?: ((viewType: CalendarViewType) => void) | undefined;
+  onDateChange?: ((date: Date) => void) | undefined;
 }) {
   const {
     sidebarDefaultOpen = true,
@@ -50,20 +50,20 @@ export function useCalendarLayout(options?: {
     sidebarStorageKey = 'calendar-sidebar-collapsed',
     onViewChange,
     onDateChange,
-  } = options || {}
+  } = options || {};
 
   // レスポンシブ対応のブレークポイント判定
-  const [currentBreakpoint, setCurrentBreakpoint] = useState<Breakpoint>('desktop')
+  const [currentBreakpoint, setCurrentBreakpoint] = useState<Breakpoint>('desktop');
 
   // サイドバー状態の永続化対応
   const [state, setState] = useState<CalendarLayoutState>(() => {
     const sidebarOpen =
       persistSidebarState && typeof window !== 'undefined'
         ? (() => {
-            const stored = localStorage.getItem(sidebarStorageKey)
-            return stored ? JSON.parse(stored) : sidebarDefaultOpen
+            const stored = localStorage.getItem(sidebarStorageKey);
+            return stored ? JSON.parse(stored) : sidebarDefaultOpen;
           })()
-        : sidebarDefaultOpen
+        : sidebarDefaultOpen;
 
     return {
       sidebarOpen,
@@ -76,95 +76,98 @@ export function useCalendarLayout(options?: {
       // カレンダー状態
       viewType: initialViewType,
       currentDate: initialDate,
-    }
-  })
+    };
+  });
 
   // サイドバー状態の永続化
   useEffect(() => {
     if (persistSidebarState && typeof window !== 'undefined') {
-      localStorage.setItem(sidebarStorageKey, JSON.stringify(state.sidebarOpen))
+      localStorage.setItem(sidebarStorageKey, JSON.stringify(state.sidebarOpen));
     }
-  }, [state.sidebarOpen, persistSidebarState, sidebarStorageKey])
+  }, [state.sidebarOpen, persistSidebarState, sidebarStorageKey]);
 
   // ブレークポイント判定
   const checkBreakpoint = useCallback((): Breakpoint => {
-    if (typeof window === 'undefined') return 'desktop'
+    if (typeof window === 'undefined') return 'desktop';
 
-    const width = window.innerWidth
-    if (width < 768) return 'mobile'
-    if (width < 1024) return 'tablet'
-    return 'desktop'
-  }, [])
+    const width = window.innerWidth;
+    if (width < 768) return 'mobile';
+    if (width < 1024) return 'tablet';
+    return 'desktop';
+  }, []);
 
   // サイドバー幅の計算
-  const getSidebarWidth = useCallback((open: boolean, breakpoint: Breakpoint, showSidebar: boolean): SidebarWidth => {
-    if (!showSidebar) return 'hidden'
+  const getSidebarWidth = useCallback(
+    (open: boolean, breakpoint: Breakpoint, showSidebar: boolean): SidebarWidth => {
+      if (!showSidebar) return 'hidden';
 
-    switch (breakpoint) {
-      case 'mobile':
-        // モバイルでは常にドロワー形式（hidden扱い）
-        return 'hidden'
-      case 'tablet':
-        // タブレットでは折りたたみ表示
-        return open ? 'full' : 'collapsed'
-      case 'desktop':
-        // デスクトップでは通常表示
-        return open ? 'full' : 'collapsed'
-      default:
-        return 'full'
-    }
-  }, [])
+      switch (breakpoint) {
+        case 'mobile':
+          // モバイルでは常にドロワー形式（hidden扱い）
+          return 'hidden';
+        case 'tablet':
+          // タブレットでは折りたたみ表示
+          return open ? 'full' : 'collapsed';
+        case 'desktop':
+          // デスクトップでは通常表示
+          return open ? 'full' : 'collapsed';
+        default:
+          return 'full';
+      }
+    },
+    [],
+  );
 
   // ウィンドウリサイズ対応
   useEffect(() => {
     const handleResize = () => {
-      const breakpoint = checkBreakpoint()
-      const newSidebarWidth = getSidebarWidth(state.sidebarOpen, breakpoint, state.showSidebar)
+      const breakpoint = checkBreakpoint();
+      const newSidebarWidth = getSidebarWidth(state.sidebarOpen, breakpoint, state.showSidebar);
 
       setState((prev) => ({
         ...prev,
         currentBreakpoint: breakpoint,
         sidebarWidth: newSidebarWidth,
-      }))
+      }));
 
-      setCurrentBreakpoint(breakpoint)
-    }
+      setCurrentBreakpoint(breakpoint);
+    };
 
     // 初回実行
-    handleResize()
+    handleResize();
 
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [state.sidebarOpen, state.showSidebar, checkBreakpoint, getSidebarWidth])
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [state.sidebarOpen, state.showSidebar, checkBreakpoint, getSidebarWidth]);
 
   // サイドバー開閉
   const toggleSidebar = useCallback(() => {
     setState((prev) => {
-      const newOpen = !prev.sidebarOpen
-      const newSidebarWidth = getSidebarWidth(newOpen, prev.currentBreakpoint, prev.showSidebar)
+      const newOpen = !prev.sidebarOpen;
+      const newSidebarWidth = getSidebarWidth(newOpen, prev.currentBreakpoint, prev.showSidebar);
 
       return {
         ...prev,
         sidebarOpen: newOpen,
         sidebarWidth: newSidebarWidth,
-      }
-    })
-  }, [getSidebarWidth])
+      };
+    });
+  }, [getSidebarWidth]);
 
   const setSidebarOpen = useCallback(
     (open: boolean) => {
       setState((prev) => {
-        const newSidebarWidth = getSidebarWidth(open, prev.currentBreakpoint, prev.showSidebar)
+        const newSidebarWidth = getSidebarWidth(open, prev.currentBreakpoint, prev.showSidebar);
 
         return {
           ...prev,
           sidebarOpen: open,
           sidebarWidth: newSidebarWidth,
-        }
-      })
+        };
+      });
     },
-    [getSidebarWidth]
-  )
+    [getSidebarWidth],
+  );
 
   // レイアウトモード変更
   const setLayoutMode = useCallback(
@@ -174,56 +177,58 @@ export function useCalendarLayout(options?: {
         layoutMode: mode,
         showHeader: mode === 'fullscreen' ? false : showHeaderDefault,
         showSidebar: mode === 'fullscreen' ? false : showSidebarDefault,
-      }))
+      }));
     },
-    [showHeaderDefault, showSidebarDefault]
-  )
+    [showHeaderDefault, showSidebarDefault],
+  );
 
   // ヘッダー表示/非表示
   const setShowHeader = useCallback((show: boolean) => {
-    setState((prev) => ({ ...prev, showHeader: show }))
-  }, [])
+    setState((prev) => ({ ...prev, showHeader: show }));
+  }, []);
 
   // サイドバー表示/非表示
   const setShowSidebar = useCallback(
     (show: boolean) => {
       setState((prev) => {
-        const newSidebarWidth = show ? getSidebarWidth(prev.sidebarOpen, prev.currentBreakpoint, true) : 'hidden'
+        const newSidebarWidth = show
+          ? getSidebarWidth(prev.sidebarOpen, prev.currentBreakpoint, true)
+          : 'hidden';
 
         return {
           ...prev,
           showSidebar: show,
           sidebarWidth: newSidebarWidth,
-        }
-      })
+        };
+      });
     },
-    [getSidebarWidth]
-  )
+    [getSidebarWidth],
+  );
 
   // サイドバーの実際の幅（px）を取得
   const getSidebarWidthPx = useCallback((): number => {
     switch (state.sidebarWidth) {
       case 'full':
-        return 256
+        return 256;
       case 'collapsed':
-        return 64
+        return 64;
       case 'hidden':
-        return 0
+        return 0;
       default:
-        return 0
+        return 0;
     }
-  }, [state.sidebarWidth])
+  }, [state.sidebarWidth]);
 
   // カレンダー日付ナビゲーション
   const navigateToDate = useCallback(
     (date: Date) => {
-      console.log('📅 navigateToDate called:', date)
-      setState((prev) => ({ ...prev, currentDate: date }))
-      console.log('📅 calling onDateChange with:', date)
-      onDateChange?.(date)
+      console.log('📅 navigateToDate called:', date);
+      setState((prev) => ({ ...prev, currentDate: date }));
+      console.log('📅 calling onDateChange with:', date);
+      onDateChange?.(date);
     },
-    [onDateChange]
-  )
+    [onDateChange],
+  );
 
   const navigateRelative = useCallback(
     (direction: 'prev' | 'next' | 'today') => {
@@ -231,110 +236,110 @@ export function useCalendarLayout(options?: {
         direction,
         currentViewType: state.viewType,
         currentDate: state.currentDate,
-      })
-      let newDate: Date
+      });
+      let newDate: Date;
 
       if (direction === 'today') {
-        newDate = new Date()
+        newDate = new Date();
       } else {
-        const multiplier = direction === 'next' ? 1 : -1
+        const multiplier = direction === 'next' ? 1 : -1;
 
         switch (state.viewType) {
           case 'day':
-            newDate = new Date(state.currentDate)
-            newDate.setDate(state.currentDate.getDate() + 1 * multiplier)
-            break
+            newDate = new Date(state.currentDate);
+            newDate.setDate(state.currentDate.getDate() + 1 * multiplier);
+            break;
 
           case '3day':
-            newDate = new Date(state.currentDate)
-            newDate.setDate(state.currentDate.getDate() + 3 * multiplier)
-            break
+            newDate = new Date(state.currentDate);
+            newDate.setDate(state.currentDate.getDate() + 3 * multiplier);
+            break;
 
           case '5day':
-            newDate = new Date(state.currentDate)
-            newDate.setDate(state.currentDate.getDate() + 5 * multiplier)
-            break
+            newDate = new Date(state.currentDate);
+            newDate.setDate(state.currentDate.getDate() + 5 * multiplier);
+            break;
 
           case 'week':
-            newDate = new Date(state.currentDate)
-            newDate.setDate(state.currentDate.getDate() + 7 * multiplier)
-            break
+            newDate = new Date(state.currentDate);
+            newDate.setDate(state.currentDate.getDate() + 7 * multiplier);
+            break;
 
           default:
-            newDate = new Date(state.currentDate)
-            newDate.setDate(state.currentDate.getDate() + 7 * multiplier)
+            newDate = new Date(state.currentDate);
+            newDate.setDate(state.currentDate.getDate() + 7 * multiplier);
         }
       }
 
-      console.log('📅 navigateRelative computed newDate:', newDate)
-      navigateToDate(newDate)
+      console.log('📅 navigateRelative computed newDate:', newDate);
+      navigateToDate(newDate);
     },
-    [state.viewType, state.currentDate, navigateToDate]
-  )
+    [state.viewType, state.currentDate, navigateToDate],
+  );
 
   // ビュー変更
   const changeView = useCallback(
     (view: CalendarViewType) => {
-      setState((prev) => ({ ...prev, viewType: view }))
-      onViewChange?.(view)
+      setState((prev) => ({ ...prev, viewType: view }));
+      onViewChange?.(view);
     },
-    [onViewChange]
-  )
+    [onViewChange],
+  );
 
   // 日付範囲の計算
   const dateRange = useMemo(() => {
-    const start = new Date(state.currentDate)
-    const end = new Date(state.currentDate)
+    const start = new Date(state.currentDate);
+    const end = new Date(state.currentDate);
 
     switch (state.viewType) {
       case 'day':
-        break
+        break;
 
       case '3day': {
-        start.setDate(state.currentDate.getDate() - 1)
-        end.setDate(state.currentDate.getDate() + 1)
-        break
+        start.setDate(state.currentDate.getDate() - 1);
+        end.setDate(state.currentDate.getDate() + 1);
+        break;
       }
 
       case '5day': {
-        start.setDate(state.currentDate.getDate() - 2)
-        end.setDate(state.currentDate.getDate() + 2)
-        break
+        start.setDate(state.currentDate.getDate() - 2);
+        end.setDate(state.currentDate.getDate() + 2);
+        break;
       }
 
       case 'week': {
-        const dayOfWeek = state.currentDate.getDay()
-        const mondayOffset = dayOfWeek === 0 ? 6 : dayOfWeek - 1
-        start.setDate(state.currentDate.getDate() - mondayOffset)
-        end.setDate(start.getDate() + 6)
-        break
+        const dayOfWeek = state.currentDate.getDay();
+        const mondayOffset = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+        start.setDate(state.currentDate.getDate() - mondayOffset);
+        end.setDate(start.getDate() + 6);
+        break;
       }
 
       default: {
-        const dayOfWeek = state.currentDate.getDay()
-        const mondayOffset = dayOfWeek === 0 ? 6 : dayOfWeek - 1
-        start.setDate(state.currentDate.getDate() - mondayOffset)
-        end.setDate(start.getDate() + 6)
+        const dayOfWeek = state.currentDate.getDay();
+        const mondayOffset = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+        start.setDate(state.currentDate.getDate() - mondayOffset);
+        end.setDate(start.getDate() + 6);
       }
     }
 
-    return { start, end }
-  }, [state.currentDate, state.viewType])
+    return { start, end };
+  }, [state.currentDate, state.viewType]);
 
   // 今日判定
   const isToday = useMemo(() => {
-    const today = new Date()
-    return state.currentDate.toDateString() === today.toDateString()
-  }, [state.currentDate])
+    const today = new Date();
+    return state.currentDate.toDateString() === today.toDateString();
+  }, [state.currentDate]);
 
   // 日付範囲表示
   const formattedDateRange = useMemo(() => {
-    const { start, end } = dateRange
+    const { start, end } = dateRange;
     const options: Intl.DateTimeFormatOptions = {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
-    }
+    };
 
     if (state.viewType === 'day') {
       return state.currentDate.toLocaleDateString('ja-JP', {
@@ -342,18 +347,18 @@ export function useCalendarLayout(options?: {
         month: 'long',
         day: 'numeric',
         weekday: 'long',
-      })
+      });
     }
 
     if (start.getMonth() === end.getMonth()) {
-      return `${start.toLocaleDateString('ja-JP', options)} - ${end.getDate()}日`
+      return `${start.toLocaleDateString('ja-JP', options)} - ${end.getDate()}日`;
     } else {
-      return `${start.toLocaleDateString('ja-JP', options)} - ${end.toLocaleDateString('ja-JP', options)}`
+      return `${start.toLocaleDateString('ja-JP', options)} - ${end.toLocaleDateString('ja-JP', options)}`;
     }
-  }, [state.currentDate, state.viewType, dateRange])
+  }, [state.currentDate, state.viewType, dateRange]);
 
   // モバイル判定（ドロワー表示用）
-  const isMobile = currentBreakpoint === 'mobile'
+  const isMobile = currentBreakpoint === 'mobile';
 
   return {
     // レイアウト状態
@@ -391,5 +396,5 @@ export function useCalendarLayout(options?: {
     isFullscreen: state.layoutMode === 'fullscreen',
     isCompact: state.layoutMode === 'compact' || currentBreakpoint === 'tablet',
     shouldShowDrawer: isMobile && state.sidebarOpen,
-  }
+  };
 }

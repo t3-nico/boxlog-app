@@ -6,9 +6,9 @@
  */
 
 /** JSON互換の値を表す型 */
-type JsonValue = string | number | boolean | null | JsonObject | JsonArray
-type JsonObject = { [key: string]: JsonValue }
-type JsonArray = JsonValue[]
+type JsonValue = string | number | boolean | null | JsonObject | JsonArray;
+type JsonObject = { [key: string]: JsonValue };
+type JsonArray = JsonValue[];
 
 /**
  * 🛡️ 安全なJSON文字列化
@@ -17,8 +17,8 @@ type JsonArray = JsonValue[]
 export function safeJsonStringify(obj: JsonValue, space?: string | number): string {
   // 常に文字列を清浄化してからJSON化
   // （一部のJavaScriptエンジンやAPIエンドポイントは無効な文字を受け付けない）
-  const cleanedObj = sanitizeObject(obj)
-  return JSON.stringify(cleanedObj, null, space)
+  const cleanedObj = sanitizeObject(obj);
+  return JSON.stringify(cleanedObj, null, space);
 }
 
 /**
@@ -27,23 +27,23 @@ export function safeJsonStringify(obj: JsonValue, space?: string | number): stri
  */
 function sanitizeObject(obj: JsonValue): JsonValue {
   if (typeof obj === 'string') {
-    return sanitizeString(obj)
+    return sanitizeString(obj);
   }
 
   if (Array.isArray(obj)) {
-    return obj.map((item) => sanitizeObject(item))
+    return obj.map((item) => sanitizeObject(item));
   }
 
   if (obj !== null && typeof obj === 'object') {
-    const sanitized: JsonObject = {}
+    const sanitized: JsonObject = {};
     for (const [key, value] of Object.entries(obj)) {
-      const cleanKey = sanitizeString(key)
-      sanitized[cleanKey] = sanitizeObject(value)
+      const cleanKey = sanitizeString(key);
+      sanitized[cleanKey] = sanitizeObject(value);
     }
-    return sanitized
+    return sanitized;
   }
 
-  return obj
+  return obj;
 }
 
 /**
@@ -51,7 +51,7 @@ function sanitizeObject(obj: JsonValue): JsonValue {
  * 無効なUnicode文字を除去/置換
  */
 function sanitizeString(str: string): string {
-  if (typeof str !== 'string') return str
+  if (typeof str !== 'string') return str;
 
   // 高サロゲート文字（0xD800-0xDBFF）および低サロゲート文字（0xDC00-0xDFFF）の処理
   return (
@@ -64,79 +64,79 @@ function sanitizeString(str: string): string {
       .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F]/g, '')
       // 非文字コードポイントを除去
       .replace(/[\uFDD0-\uFDEF\uFFFE\uFFFF]/g, '�')
-  )
+  );
 }
 
 /**
  * 🔍 文字列に無効なUnicode文字が含まれているかチェック
  */
 export function hasInvalidUnicodeChars(str: string): boolean {
-  if (typeof str !== 'string') return false
+  if (typeof str !== 'string') return false;
 
   // 孤立したサロゲート文字をチェック
-  const isolatedHighSurrogate = /[\uD800-\uDBFF](?![\uDC00-\uDFFF])/
-  const isolatedLowSurrogate = /(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/
-  const controlChars = /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F]/
-  const nonCharacters = /[\uFDD0-\uFDEF\uFFFE\uFFFF]/
+  const isolatedHighSurrogate = /[\uD800-\uDBFF](?![\uDC00-\uDFFF])/;
+  const isolatedLowSurrogate = /(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/;
+  const controlChars = /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F]/;
+  const nonCharacters = /[\uFDD0-\uFDEF\uFFFE\uFFFF]/;
 
   return (
     isolatedHighSurrogate.test(str) ||
     isolatedLowSurrogate.test(str) ||
     controlChars.test(str) ||
     nonCharacters.test(str)
-  )
+  );
 }
 
 /**
  * 🧪 デバッグ用：問題のある文字の詳細を取得
  */
 export function analyzeInvalidChars(str: string): {
-  hasIssues: boolean
+  hasIssues: boolean;
   issues: Array<{
-    type: string
-    char: string
-    position: number
-    charCode: number
-  }>
+    type: string;
+    char: string;
+    position: number;
+    charCode: number;
+  }>;
 } {
   if (typeof str !== 'string') {
-    return { hasIssues: false, issues: [] }
+    return { hasIssues: false, issues: [] };
   }
 
   const issues: Array<{
-    type: string
-    char: string
-    position: number
-    charCode: number
-  }> = []
+    type: string;
+    char: string;
+    position: number;
+    charCode: number;
+  }> = [];
 
   for (let i = 0; i < str.length; i++) {
-    const char = str[i]
-    const charCode = str.charCodeAt(i)
+    const char = str[i];
+    const charCode = str.charCodeAt(i);
 
     // 高サロゲート文字
     if (charCode >= 0xd800 && charCode <= 0xdbff) {
-      const nextChar = str[i + 1]
+      const nextChar = str[i + 1];
       if (!nextChar || nextChar.charCodeAt(0) < 0xdc00 || nextChar.charCodeAt(0) > 0xdfff) {
         issues.push({
           type: 'isolated_high_surrogate',
           char: char!,
           position: i,
           charCode,
-        })
+        });
       }
     }
 
     // 低サロゲート文字
     if (charCode >= 0xdc00 && charCode <= 0xdfff) {
-      const prevChar = str[i - 1]
+      const prevChar = str[i - 1];
       if (!prevChar || prevChar.charCodeAt(0) < 0xd800 || prevChar.charCodeAt(0) > 0xdbff) {
         issues.push({
           type: 'isolated_low_surrogate',
           char: char!,
           position: i,
           charCode,
-        })
+        });
       }
     }
 
@@ -153,7 +153,7 @@ export function analyzeInvalidChars(str: string): {
         char: char === '\u0000' ? '\\0' : char!,
         position: i,
         charCode,
-      })
+      });
     }
 
     // 非文字コードポイント
@@ -163,12 +163,12 @@ export function analyzeInvalidChars(str: string): {
         char: char!,
         position: i,
         charCode,
-      })
+      });
     }
   }
 
   return {
     hasIssues: issues.length > 0,
     issues,
-  }
+  };
 }

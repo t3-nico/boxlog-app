@@ -1,4 +1,4 @@
-import { PasswordResetForm } from '@/features/auth'
+import { PasswordResetForm } from '@/features/auth';
 
 export default function PasswordResetPage() {
   return (
@@ -7,5 +7,5 @@ export default function PasswordResetPage() {
         <PasswordResetForm />
       </div>
     </div>
-  )
+  );
 }

@@ -2,22 +2,22 @@
  * プラン表示カードコンポーネント
  */
 
-'use client'
+'use client';
 
-import React, { memo, useCallback, useEffect, useMemo, useState } from 'react'
+import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { calendarColors } from '@/features/calendar/theme'
-import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
-import { getEffectiveStatus } from '@/features/plans/utils/status'
-import { CheckCircle2, Circle } from 'lucide-react'
-import { useTranslations } from 'next-intl'
+import { calendarColors } from '@/features/calendar/theme';
+import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
+import { getEffectiveStatus } from '@/features/plans/utils/status';
+import { CheckCircle2, Circle } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/utils';
 
-import { MIN_EVENT_HEIGHT, Z_INDEX } from '../../constants/grid.constants'
-import type { PlanCardProps } from '../../types/plan.types'
+import { MIN_EVENT_HEIGHT, Z_INDEX } from '../../constants/grid.constants';
+import type { PlanCardProps } from '../../types/plan.types';
 
-import { PlanCardContent } from './PlanCardContent'
+import { PlanCardContent } from './PlanCardContent';
 
 export const PlanCard = memo<PlanCardProps>(function PlanCard({
   plan,
@@ -34,15 +34,15 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
   style = {},
   previewTime = null,
 }) {
-  const t = useTranslations()
-  const { updatePlan } = usePlanMutations()
-  const [isHovered, setIsHovered] = useState(false)
-  const [isCheckboxHovered, setIsCheckboxHovered] = useState(false)
+  const t = useTranslations();
+  const { updatePlan } = usePlanMutations();
+  const [isHovered, setIsHovered] = useState(false);
+  const [isCheckboxHovered, setIsCheckboxHovered] = useState(false);
 
   // すべてのプランは時間指定プラン
 
   // カレンダーテーマのscheduledカラーを使用
-  const scheduledColors = calendarColors.event.scheduled
+  const scheduledColors = calendarColors.event.scheduled;
 
   // positionが未定義の場合のデフォルト値
   const safePosition = useMemo(
@@ -53,8 +53,8 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
         width: 100,
         height: MIN_EVENT_HEIGHT,
       },
-    [position]
-  )
+    [position],
+  );
 
   // 動的スタイルを計算
   const dynamicStyle: React.CSSProperties = {
@@ -66,25 +66,25 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
     zIndex: isHovered || isSelected || isDragging ? Z_INDEX.DRAGGING : Z_INDEX.EVENTS,
     cursor: isDragging ? 'grabbing' : 'pointer',
     ...style,
-  }
+  };
 
   // イベントハンドラー
   const handleClick = useCallback(
     (e: React.MouseEvent) => {
-      e.stopPropagation()
-      onClick?.(plan)
+      e.stopPropagation();
+      onClick?.(plan);
     },
-    [onClick, plan]
-  )
+    [onClick, plan],
+  );
 
   const handleContextMenu = useCallback(
     (e: React.MouseEvent) => {
-      e.preventDefault()
-      e.stopPropagation()
-      onContextMenu?.(plan, e)
+      e.preventDefault();
+      e.stopPropagation();
+      onContextMenu?.(plan, e);
     },
-    [onContextMenu, plan]
-  )
+    [onContextMenu, plan],
+  );
 
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
@@ -95,75 +95,75 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
           left: safePosition.left,
           width: safePosition.width,
           height: safePosition.height,
-        })
+        });
       }
     },
-    [onDragStart, plan, safePosition]
-  )
+    [onDragStart, plan, safePosition],
+  );
 
   const handleMouseUp = useCallback(() => {
     if (isDragging) {
-      onDragEnd?.(plan)
+      onDragEnd?.(plan);
     }
-  }, [isDragging, onDragEnd, plan])
+  }, [isDragging, onDragEnd, plan]);
 
   // ホバー状態制御
   const handleMouseEnter = useCallback(() => {
-    setIsHovered(true)
-  }, [])
+    setIsHovered(true);
+  }, []);
 
   const handleMouseLeave = useCallback(() => {
-    setIsHovered(false)
-  }, [])
+    setIsHovered(false);
+  }, []);
 
   // キーボードイベントハンドラー
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
       if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault()
+        e.preventDefault();
         // キーボードイベントの場合はplanオブジェクトを直接渡す
-        onClick?.(plan)
+        onClick?.(plan);
       }
     },
-    [onClick, plan]
-  )
+    [onClick, plan],
+  );
 
   // 下端リサイズハンドラー
   const handleBottomResizeMouseDown = useCallback(
     (e: React.MouseEvent) => {
-      e.stopPropagation()
-      e.preventDefault()
+      e.stopPropagation();
+      e.preventDefault();
       onResizeStart?.(plan, 'bottom', e, {
         top: safePosition.top,
         left: safePosition.left,
         width: safePosition.width,
         height: safePosition.height,
-      })
+      });
     },
-    [onResizeStart, plan, safePosition]
-  )
+    [onResizeStart, plan, safePosition],
+  );
 
   const handleResizeKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault()
+      e.preventDefault();
       // キーボードでのリサイズ操作の代替手段
     }
-  }, [])
+  }, []);
 
   // Escキーでドラッグをキャンセル
   useEffect(() => {
-    if (!isDragging) return
+    if (!isDragging) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         // ドラッグ状態をリセット（親コンポーネントに委ねる）
-        onDragEnd?.(plan)
+        onDragEnd?.(plan);
       }
-    }
+    };
 
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [isDragging, onDragEnd, plan])
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isDragging, onDragEnd, plan]);
 
   // 状態に応じたスタイルを決定
   // CSSクラスを組み立て（colors.tsのscheduledを参照）
@@ -181,13 +181,13 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
     isActive ? 'border-primary border-2' : 'border-transparent',
     // サイズ別スタイル（上下左右に8pxのpadding = p-2、フォントは統一）
     'p-2 text-sm',
-    className
-  )
+    className,
+  );
 
   // planがundefinedの場合は何も表示しない（全hooks実行後）
   if (!plan || !plan.id) {
-    console.error('PlanCard: plan is undefined or missing id', { plan, position })
-    return null
+    console.error('PlanCard: plan is undefined or missing id', { plan, position });
+    return null;
   }
 
   return (
@@ -211,37 +211,37 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
       <button
         type="button"
         onClick={(e) => {
-          e.stopPropagation()
-          const effectiveStatus = getEffectiveStatus(plan)
-          const newStatus = effectiveStatus === 'done' ? 'todo' : 'done'
+          e.stopPropagation();
+          const effectiveStatus = getEffectiveStatus(plan);
+          const newStatus = effectiveStatus === 'done' ? 'todo' : 'done';
           updatePlan.mutate({
             id: plan.id,
             data: { status: newStatus },
-          })
+          });
         }}
         onMouseEnter={() => setIsCheckboxHovered(true)}
         onMouseLeave={() => setIsCheckboxHovered(false)}
         className={cn(
           'absolute z-10 flex-shrink-0 rounded',
-          safePosition.height < 30 ? 'top-0.5 left-0.5' : 'top-2 left-2'
+          safePosition.height < 30 ? 'top-0.5 left-0.5' : 'top-2 left-2',
         )}
         aria-label={getEffectiveStatus(plan) === 'done' ? '未完了に戻す' : '完了にする'}
       >
         {(() => {
-          const status = getEffectiveStatus(plan)
-          const iconClass = safePosition.height < 30 ? 'h-3 w-3' : 'h-4 w-4'
+          const status = getEffectiveStatus(plan);
+          const iconClass = safePosition.height < 30 ? 'h-3 w-3' : 'h-4 w-4';
           if (status === 'done') {
-            return <CheckCircle2 className={cn('text-success', iconClass)} />
+            return <CheckCircle2 className={cn('text-success', iconClass)} />;
           }
           // ホバー時はチェックマークを表示（完了予告）
           if (isCheckboxHovered) {
-            return <CheckCircle2 className={cn('text-success', iconClass)} />
+            return <CheckCircle2 className={cn('text-success', iconClass)} />;
           }
           if (status === 'doing') {
-            return <Circle className={cn('text-primary', iconClass)} />
+            return <Circle className={cn('text-primary', iconClass)} />;
           }
           // todo
-          return <Circle className={cn('text-muted-foreground', iconClass)} />
+          return <Circle className={cn('text-muted-foreground', iconClass)} />;
         })()}
       </button>
 
@@ -272,5 +272,5 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
         title={t('calendar.event.adjustEndTime')}
       />
     </div>
-  )
-})
+  );
+});

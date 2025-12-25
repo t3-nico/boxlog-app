@@ -1,26 +1,26 @@
-import { create } from 'zustand'
-import { devtools } from 'zustand/middleware'
+import { create } from 'zustand';
+import { devtools } from 'zustand/middleware';
 
-import type { GroupByField } from '../types/group'
+import type { GroupByField } from '../types/group';
 
 /**
  * テーブルグループ化状態
  */
 interface TableGroupState {
   /** グループ化フィールド（nullの場合はグループ化なし） */
-  groupBy: GroupByField
+  groupBy: GroupByField;
   /** 折りたたまれたグループのSet */
-  collapsedGroups: Set<string>
+  collapsedGroups: Set<string>;
   /** グループ化フィールドを設定 */
-  setGroupBy: (field: GroupByField) => void
+  setGroupBy: (field: GroupByField) => void;
   /** グループの折りたたみ状態をトグル */
-  toggleGroupCollapse: (groupKey: string) => void
+  toggleGroupCollapse: (groupKey: string) => void;
   /** すべてのグループを展開 */
-  expandAll: () => void
+  expandAll: () => void;
   /** すべてのグループを折りたたむ */
-  collapseAll: (groupKeys: string[]) => void
+  collapseAll: (groupKeys: string[]) => void;
   /** リセット */
-  reset: () => void
+  reset: () => void;
 }
 
 /**
@@ -48,37 +48,37 @@ export const useTableGroupStore = create<TableGroupState>()(
       collapsedGroups: new Set(),
 
       setGroupBy: (field) => {
-        set({ groupBy: field, collapsedGroups: new Set() })
+        set({ groupBy: field, collapsedGroups: new Set() });
       },
 
       toggleGroupCollapse: (groupKey) => {
-        const { collapsedGroups } = get()
-        const newCollapsed = new Set(collapsedGroups)
+        const { collapsedGroups } = get();
+        const newCollapsed = new Set(collapsedGroups);
 
         if (newCollapsed.has(groupKey)) {
-          newCollapsed.delete(groupKey)
+          newCollapsed.delete(groupKey);
         } else {
-          newCollapsed.add(groupKey)
+          newCollapsed.add(groupKey);
         }
 
-        set({ collapsedGroups: newCollapsed })
+        set({ collapsedGroups: newCollapsed });
       },
 
       expandAll: () => {
-        set({ collapsedGroups: new Set() })
+        set({ collapsedGroups: new Set() });
       },
 
       collapseAll: (groupKeys) => {
-        set({ collapsedGroups: new Set(groupKeys) })
+        set({ collapsedGroups: new Set(groupKeys) });
       },
 
       reset: () => {
-        set({ groupBy: null, collapsedGroups: new Set() })
+        set({ groupBy: null, collapsedGroups: new Set() });
       },
     }),
-    { name: 'table-group-store' }
-  )
-)
+    { name: 'table-group-store' },
+  ),
+);
 
 // 後方互換性のためのエイリアス
-export const useInboxGroupStore = useTableGroupStore
+export const useInboxGroupStore = useTableGroupStore;

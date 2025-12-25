@@ -1,40 +1,46 @@
-'use client'
+'use client';
 
-import dynamic from 'next/dynamic'
-import { usePathname } from 'next/navigation'
-import { Suspense, useMemo } from 'react'
+import dynamic from 'next/dynamic';
+import { usePathname } from 'next/navigation';
+import { Suspense, useMemo } from 'react';
 
-import { useAuthStore } from '@/features/auth/stores/useAuthStore'
-import { CalendarSidebar } from '@/features/calendar/components/sidebar/CalendarSidebar'
-import { InboxSidebarWrapper } from '@/features/inbox/components/InboxSidebarWrapper'
-import { AppBar } from '@/features/navigation/components/appbar'
-import { AppSidebar } from '@/features/navigation/components/sidebar/app-sidebar'
-import { useSidebarStore } from '@/features/navigation/stores/useSidebarStore'
-import { SettingsSidebar } from '@/features/settings/components/sidebar'
-import { StatsSidebar } from '@/features/stats'
-import { TagsSidebarWrapper } from '@/features/tags/components/TagsSidebarWrapper'
+import { useAuthStore } from '@/features/auth/stores/useAuthStore';
+import { CalendarSidebar } from '@/features/calendar/components/sidebar/CalendarSidebar';
+import { InboxSidebarWrapper } from '@/features/inbox/components/InboxSidebarWrapper';
+import { AppBar } from '@/features/navigation/components/appbar';
+import { AppSidebar } from '@/features/navigation/components/sidebar/app-sidebar';
+import { useSidebarStore } from '@/features/navigation/stores/useSidebarStore';
+import { SettingsSidebar } from '@/features/settings/components/sidebar';
+import { StatsSidebar } from '@/features/stats';
+import { TagsSidebarWrapper } from '@/features/tags/components/TagsSidebarWrapper';
 
-import { MainContentWrapper } from './main-content-wrapper'
-import { StatusBar } from './status-bar'
+import { MainContentWrapper } from './main-content-wrapper';
+import { StatusBar } from './status-bar';
 
 // LCP改善: StatusBarアイテムを遅延ロード（APIコール・ストア参照を含むため初回レンダリングをブロックしない）
 const ScheduleStatusItem = dynamic(
-  () => import('./status-bar/items/ScheduleStatusItem').then((mod) => ({ default: mod.ScheduleStatusItem })),
-  { ssr: false }
-)
+  () =>
+    import('./status-bar/items/ScheduleStatusItem').then((mod) => ({
+      default: mod.ScheduleStatusItem,
+    })),
+  { ssr: false },
+);
 const ChronotypeStatusItem = dynamic(
-  () => import('./status-bar/items/ChronotypeStatusItem').then((mod) => ({ default: mod.ChronotypeStatusItem })),
-  { ssr: false }
-)
+  () =>
+    import('./status-bar/items/ChronotypeStatusItem').then((mod) => ({
+      default: mod.ChronotypeStatusItem,
+    })),
+  { ssr: false },
+);
 
 interface DesktopLayoutProps {
-  children: React.ReactNode
-  locale: 'ja' | 'en'
+  children: React.ReactNode;
+  locale: 'ja' | 'en';
 }
 
 // StatusBarアイテムのスケルトン（遅延ロード中の表示）
 function StatusBarItemSkeleton() {
-  return <div className="bg-surface-container h-3 w-20 animate-pulse rounded" />
+  return <div className="bg-surface-container h-3 w-20 animate-pulse rounded" />;
 }
 
 /**
@@ -47,38 +53,38 @@ function StatusBarItemSkeleton() {
  */
 export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
   // selector化: isOpenのみ監視（toggle変更時の再レンダリングを防止）
-  const isOpen = useSidebarStore((state) => state.isOpen)
-  const pathname = usePathname()
-  const user = useAuthStore((state) => state.user)
-  const isAuthenticated = !!user
+  const isOpen = useSidebarStore((state) => state.isOpen);
+  const pathname = usePathname();
+  const user = useAuthStore((state) => state.user);
+  const isAuthenticated = !!user;
 
   // パフォーマンス最適化: ページ判定をメモ化（pathnameとlocale変更時のみ再計算）
   const currentPage = useMemo(() => {
-    if (pathname?.startsWith(`/${locale}/calendar`)) return 'calendar'
-    if (pathname?.startsWith(`/${locale}/inbox`)) return 'inbox'
-    if (pathname?.startsWith(`/${locale}/tags`)) return 'tags'
-    if (pathname?.startsWith(`/${locale}/stats`)) return 'stats'
-    if (pathname?.startsWith(`/${locale}/settings`)) return 'settings'
-    return 'default'
-  }, [pathname, locale])
+    if (pathname?.startsWith(`/${locale}/calendar`)) return 'calendar';
+    if (pathname?.startsWith(`/${locale}/inbox`)) return 'inbox';
+    if (pathname?.startsWith(`/${locale}/tags`)) return 'tags';
+    if (pathname?.startsWith(`/${locale}/stats`)) return 'stats';
+    if (pathname?.startsWith(`/${locale}/settings`)) return 'settings';
+    return 'default';
+  }, [pathname, locale]);
 
   // サイドバーコンポーネントをメモ化（currentPage変更時のみ再計算）
   const SidebarComponent = useMemo(() => {
     switch (currentPage) {
       case 'calendar':
-        return CalendarSidebar
+        return CalendarSidebar;
       case 'inbox':
-        return InboxSidebarWrapper
+        return InboxSidebarWrapper;
       case 'tags':
-        return TagsSidebarWrapper
+        return TagsSidebarWrapper;
       case 'stats':
-        return StatsSidebar
+        return StatsSidebar;
       case 'settings':
-        return SettingsSidebar
+        return SettingsSidebar;
       default:
-        return AppSidebar
+        return AppSidebar;
     }
-  }, [currentPage])
+  }, [currentPage]);
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
@@ -125,5 +131,5 @@ export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
         </StatusBar>
       ) : null}
     </div>
-  )
+  );
 }

@@ -1,16 +1,16 @@
-'use client'
+'use client';
 
-import { Separator } from '@/components/ui/separator'
+import { Separator } from '@/components/ui/separator';
 
 interface MobileSettingsSectionProps {
   /** セクションアイコン */
-  icon: React.ReactNode
+  icon: React.ReactNode;
   /** セクションタイトル（文字列またはReactNode） */
-  title: React.ReactNode
+  title: React.ReactNode;
   /** セクションの内容 */
-  children: React.ReactNode
+  children: React.ReactNode;
   /** 区切り線を表示するか（デフォルト: true） */
-  showSeparator?: boolean
+  showSeparator?: boolean;
 }
 
 /**
@@ -25,7 +25,12 @@ interface MobileSettingsSectionProps {
  * </MobileSettingsSection>
  * ```
  */
-export function MobileSettingsSection({ icon, title, children, showSeparator = true }: MobileSettingsSectionProps) {
+export function MobileSettingsSection({
+  icon,
+  title,
+  children,
+  showSeparator = true,
+}: MobileSettingsSectionProps) {
   return (
     <>
       <section className="py-4">
@@ -37,5 +42,5 @@ export function MobileSettingsSection({ icon, title, children, showSeparator = t
       </section>
       {showSeparator && <Separator />}
     </>
-  )
+  );
 }

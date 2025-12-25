@@ -1,21 +1,21 @@
-'use client'
+'use client';
 
-import { CheckCircle2, Clock, TrendingDown, TrendingUp } from 'lucide-react'
+import { CheckCircle2, Clock, TrendingDown, TrendingUp } from 'lucide-react';
 
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
-import { api } from '@/lib/trpc'
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { api } from '@/lib/trpc';
 
 function formatHours(hours: number): string {
   if (hours < 1) {
-    return `${Math.round(hours * 60)}m`
+    return `${Math.round(hours * 60)}m`;
   }
-  return `${hours.toFixed(1)}h`
+  return `${hours.toFixed(1)}h`;
 }
 
 export function StatsSummary() {
-  const { data, isPending } = api.plans.getSummary.useQuery()
+  const { data, isPending } = api.plans.getSummary.useQuery();
 
   if (isPending) {
     return (
@@ -51,14 +51,14 @@ export function StatsSummary() {
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   if (!data) {
-    return null
+    return null;
   }
 
-  const isPositive = data.monthComparison >= 0
+  const isPositive = data.monthComparison >= 0;
 
   return (
     <div className="grid gap-4 md:grid-cols-3">
@@ -109,5 +109,5 @@ export function StatsSummary() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

@@ -11,7 +11,7 @@
  */
 
 // Components
-export { AIInspector, AIInspectorContent } from './components'
+export { AIInspector, AIInspectorContent } from './components';
 
 // Stores
-export { useAIInspectorStore } from './stores'
+export { useAIInspectorStore } from './stores';

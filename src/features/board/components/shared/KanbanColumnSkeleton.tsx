@@ -1,12 +1,12 @@
-import { Skeleton } from '@/components/ui/skeleton'
-import { KanbanCardSkeleton } from './KanbanCardSkeleton'
+import { Skeleton } from '@/components/ui/skeleton';
+import { KanbanCardSkeleton } from './KanbanCardSkeleton';
 
 interface KanbanColumnSkeletonProps {
   /**
    * 表示するスケルトンカードの数
    * @default 3
    */
-  cardCount?: number
+  cardCount?: number;
 }
 
 /**
@@ -45,5 +45,5 @@ export function KanbanColumnSkeleton({ cardCount = 3 }: KanbanColumnSkeletonProp
         ))}
       </div>
     </div>
-  )
+  );
 }

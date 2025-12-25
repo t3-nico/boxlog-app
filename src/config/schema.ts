@@ -8,7 +8,7 @@
  * - デフォルト値・必須項目定義
  */
 
-import { z } from 'zod'
+import { z } from 'zod';
 
 /**
  * 📊 データベース設定スキーマ
@@ -32,7 +32,7 @@ export const DatabaseConfigSchema = z.object({
   connectionTimeout: z.number().int().min(1000).default(30000),
   /** クエリタイムアウト（ミリ秒） */
   queryTimeout: z.number().int().min(1000).default(60000),
-})
+});
 
 /**
  * 🔐 認証設定スキーマ
@@ -52,7 +52,7 @@ export const AuthConfigSchema = z.object({
   maxLoginAttempts: z.number().int().min(3).max(20).default(5),
   /** アカウントロック期間（分） */
   lockoutDuration: z.number().int().min(5).max(1440).default(30),
-})
+});
 
 /**
  * 🎨 機能フラグ設定スキーマ
@@ -78,7 +78,7 @@ export const FeatureFlagsSchema = z.object({
   analytics: z.boolean().default(true),
   /** デバッグモード */
   debugMode: z.boolean().default(false),
-})
+});
 
 /**
  * 📧 メール設定スキーマ
@@ -100,7 +100,7 @@ export const EmailConfigSchema = z.object({
   fromName: z.string().default('BoxLog'),
   /** 1時間あたりの送信制限 */
   rateLimit: z.number().int().min(1).default(100),
-})
+});
 
 /**
  * 🔗 外部API設定スキーマ
@@ -122,7 +122,7 @@ export const ExternalApisSchema = z.object({
       projectId: z.string().optional(),
     })
     .optional(),
-})
+});
 
 /**
  * 🚀 サーバー設定スキーマ
@@ -150,7 +150,7 @@ export const ServerConfigSchema = z.object({
     httpOnly: z.boolean().default(true),
     secure: z.boolean().default(false),
   }),
-})
+});
 
 /**
  * 📊 ログ設定スキーマ
@@ -173,7 +173,7 @@ export const LoggingConfigSchema = z.object({
   json: z.boolean().default(false),
   /** タイムスタンプ */
   timestamp: z.boolean().default(true),
-})
+});
 
 /**
  * 🎯 メインアプリケーション設定スキーマ
@@ -193,7 +193,7 @@ export const AppConfigSchema = z.object({
   locale: z.string().default('ja-JP'),
   /** デバッグモード */
   debug: z.boolean().default(false),
-})
+});
 
 /**
  * 🔧 統合設定スキーマ
@@ -215,20 +215,20 @@ export const ConfigSchema = z.object({
   server: ServerConfigSchema,
   /** ログ設定 */
   logging: LoggingConfigSchema,
-})
+});
 
 /**
  * 📝 型定義エクスポート
  */
-export type DatabaseConfig = z.infer<typeof DatabaseConfigSchema>
-export type AuthConfig = z.infer<typeof AuthConfigSchema>
-export type FeatureFlags = z.infer<typeof FeatureFlagsSchema>
-export type EmailConfig = z.infer<typeof EmailConfigSchema>
-export type ExternalApisConfig = z.infer<typeof ExternalApisSchema>
-export type ServerConfig = z.infer<typeof ServerConfigSchema>
-export type LoggingConfig = z.infer<typeof LoggingConfigSchema>
-export type AppConfig = z.infer<typeof AppConfigSchema>
-export type Config = z.infer<typeof ConfigSchema>
+export type DatabaseConfig = z.infer<typeof DatabaseConfigSchema>;
+export type AuthConfig = z.infer<typeof AuthConfigSchema>;
+export type FeatureFlags = z.infer<typeof FeatureFlagsSchema>;
+export type EmailConfig = z.infer<typeof EmailConfigSchema>;
+export type ExternalApisConfig = z.infer<typeof ExternalApisSchema>;
+export type ServerConfig = z.infer<typeof ServerConfigSchema>;
+export type LoggingConfig = z.infer<typeof LoggingConfigSchema>;
+export type AppConfig = z.infer<typeof AppConfigSchema>;
+export type Config = z.infer<typeof ConfigSchema>;
 
 /**
  * 🎯 環境別デフォルト設定
@@ -312,24 +312,24 @@ export const DEFAULT_CONFIGS = {
       },
     },
   },
-} as const
+} as const;
 
 /**
  * 🔍 設定検証エラー情報
  */
 export interface ConfigValidationError {
-  path: string[]
-  message: string
-  code: string
-  input?: unknown
+  path: string[];
+  message: string;
+  code: string;
+  input?: unknown;
 }
 
 /**
  * ✅ 設定検証結果
  */
 export interface ConfigValidationResult {
-  success: boolean
-  data?: Config
-  errors: ConfigValidationError[]
-  warnings: string[]
+  success: boolean;
+  data?: Config;
+  errors: ConfigValidationError[];
+  warnings: string[];
 }

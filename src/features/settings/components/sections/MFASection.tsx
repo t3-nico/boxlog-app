@@ -1,11 +1,11 @@
-'use client'
+'use client';
 
-import { Button } from '@/components/ui/button'
-import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp'
-import { useTranslations } from 'next-intl'
+import { Button } from '@/components/ui/button';
+import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
+import { useTranslations } from 'next-intl';
 
-import { useMFA } from '../../hooks/useMFA'
-import { SettingsCard } from '../SettingsCard'
+import { useMFA } from '../../hooks/useMFA';
+import { SettingsCard } from '../SettingsCard';
 
 /**
  * MFA（二段階認証）セクション
@@ -13,7 +13,7 @@ import { SettingsCard } from '../SettingsCard'
  * TOTP認証の登録・管理UIを提供
  */
 export function MFASection() {
-  const t = useTranslations()
+  const t = useTranslations();
   const {
     hasMFA,
     showMFASetup,
@@ -28,15 +28,19 @@ export function MFASection() {
     verifyMFA,
     disableMFA,
     cancelSetup,
-  } = useMFA()
+  } = useMFA();
 
   return (
     <SettingsCard title={t('settings.account.twoFactor')} isSaving={isLoading}>
       <div className="space-y-4">
         {/* エラー・成功メッセージ */}
-        {error && <div className="bg-destructive/10 text-destructive rounded-lg p-3 text-sm">{error}</div>}
+        {error && (
+          <div className="bg-destructive/10 text-destructive rounded-lg p-3 text-sm">{error}</div>
+        )}
         {success && (
-          <div className="border-success/30 bg-success/5 text-success rounded-lg border p-3 text-sm">{success}</div>
+          <div className="border-success/30 bg-success/5 text-success rounded-lg border p-3 text-sm">
+            {success}
+          </div>
         )}
 
         {/* MFA未設定時の表示 */}
@@ -72,7 +76,8 @@ export function MFASection() {
                   <img src={qrCode} alt="QR Code" className="h-48 w-48" />
                 </div>
                 <p className="text-muted-foreground mt-2 text-xs">
-                  Google Authenticator、Microsoft Authenticator、Authyなどの認証アプリでスキャンしてください
+                  Google Authenticator、Microsoft
+                  Authenticator、Authyなどの認証アプリでスキャンしてください
                 </p>
               </div>
 
@@ -84,7 +89,9 @@ export function MFASection() {
               )}
 
               <div>
-                <p className="mb-2 text-sm font-medium">2. 認証アプリに表示された6桁のコードを入力</p>
+                <p className="mb-2 text-sm font-medium">
+                  2. 認証アプリに表示された6桁のコードを入力
+                </p>
                 <div className="flex items-center gap-4">
                   <InputOTP maxLength={6} value={verificationCode} onChange={setVerificationCode}>
                     <InputOTPGroup>
@@ -114,9 +121,13 @@ export function MFASection() {
             <div className="border-success/30 bg-success/5 rounded-lg border p-4">
               <div className="mb-2 flex items-center gap-2">
                 <div className="bg-success h-2 w-2 rounded-full"></div>
-                <span className="text-success text-sm font-medium">2段階認証が有効になっています</span>
+                <span className="text-success text-sm font-medium">
+                  2段階認証が有効になっています
+                </span>
               </div>
-              <p className="text-success/80 text-xs">ログイン時に認証アプリで生成されるコードが必要になります</p>
+              <p className="text-success/80 text-xs">
+                ログイン時に認証アプリで生成されるコードが必要になります
+              </p>
             </div>
 
             <div className="flex justify-end">
@@ -128,5 +139,5 @@ export function MFASection() {
         )}
       </div>
     </SettingsCard>
-  )
+  );
 }

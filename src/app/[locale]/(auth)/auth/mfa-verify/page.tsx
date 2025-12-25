@@ -1,125 +1,126 @@
-'use client'
+'use client';
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react';
 
-import Image from 'next/image'
-import { useParams, useRouter, useSearchParams } from 'next/navigation'
+import Image from 'next/image';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
-import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui/field'
-import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp'
-import { Spinner } from '@/components/ui/spinner'
-import { createClient } from '@/lib/supabase/client'
-import { useTranslations } from 'next-intl'
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui/field';
+import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
+import { Spinner } from '@/components/ui/spinner';
+import { createClient } from '@/lib/supabase/client';
+import { useTranslations } from 'next-intl';
 
 export default function MFAVerifyPage() {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const params = useParams()
-  const locale = (params?.locale as string) || 'ja'
-  const t = useTranslations()
-  const supabase = createClient()
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const params = useParams();
+  const locale = (params?.locale as string) || 'ja';
+  const t = useTranslations();
+  const supabase = createClient();
 
-  const [verificationCode, setVerificationCode] = useState('')
-  const [isVerifying, setIsVerifying] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [factorId, setFactorId] = useState<string | null>(null)
-  const [challengeId, setChallengeId] = useState<string | null>(null)
+  const [verificationCode, setVerificationCode] = useState('');
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [factorId, setFactorId] = useState<string | null>(null);
+  const [challengeId, setChallengeId] = useState<string | null>(null);
 
   useEffect(() => {
     // ログイン後にMFAチャレンジを発行
-    checkMFARequired()
+    checkMFARequired();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, []);
 
   const checkMFARequired = async () => {
     try {
-      console.log('MFA検証ページ: ファクターをチェック中...')
-      const { data: factors } = await supabase.auth.mfa.listFactors()
+      console.log('MFA検証ページ: ファクターをチェック中...');
+      const { data: factors } = await supabase.auth.mfa.listFactors();
 
       if (factors && factors.totp.length > 0) {
         // 最初の有効なTOTPファクターを使用
-        const verifiedFactor = factors.totp.find((f) => f.status === 'verified')
+        const verifiedFactor = factors.totp.find((f) => f.status === 'verified');
         if (verifiedFactor) {
-          console.log('検証済みファクター発見:', verifiedFactor.id)
-          setFactorId(verifiedFactor.id)
+          console.log('検証済みファクター発見:', verifiedFactor.id);
+          setFactorId(verifiedFactor.id);
 
           // MFAチャレンジを発行（公式ベストプラクティス）
           const { data: challengeData, error: challengeError } = await supabase.auth.mfa.challenge({
             factorId: verifiedFactor.id,
-          })
+          });
 
           if (challengeError) {
-            console.error('Challenge error:', challengeError)
-            setError('MFAチャレンジの作成に失敗しました')
-            return
+            console.error('Challenge error:', challengeError);
+            setError('MFAチャレンジの作成に失敗しました');
+            return;
           }
 
           if (challengeData) {
-            console.log('チャレンジ作成成功:', challengeData.id)
-            setChallengeId(challengeData.id)
+            console.log('チャレンジ作成成功:', challengeData.id);
+            setChallengeId(challengeData.id);
           }
         } else {
           // MFAが設定されていない場合はリダイレクト
-          console.log('検証済みファクターなし、カレンダーへリダイレクト')
-          router.push('/calendar')
+          console.log('検証済みファクターなし、カレンダーへリダイレクト');
+          router.push('/calendar');
         }
       } else {
         // MFAが設定されていない場合はリダイレクト
-        console.log('TOTPファクターなし、カレンダーへリダイレクト')
-        router.push('/calendar')
+        console.log('TOTPファクターなし、カレンダーへリダイレクト');
+        router.push('/calendar');
       }
     } catch (err) {
-      console.error('MFA check error:', err)
-      setError('MFA状態の確認に失敗しました')
+      console.error('MFA check error:', err);
+      setError('MFA状態の確認に失敗しました');
     }
-  }
+  };
 
   const handleVerify = async () => {
     if (!factorId || !challengeId || !verificationCode) {
-      setError('6桁のコードを入力してください')
-      return
+      setError('6桁のコードを入力してください');
+      return;
     }
 
     if (verificationCode.length !== 6) {
-      setError('コードは6桁である必要があります')
-      return
+      setError('コードは6桁である必要があります');
+      return;
     }
 
-    setIsVerifying(true)
-    setError(null)
+    setIsVerifying(true);
+    setError(null);
 
     try {
-      console.log('MFA検証開始:', { factorId, challengeId, codeLength: verificationCode.length })
+      console.log('MFA検証開始:', { factorId, challengeId, codeLength: verificationCode.length });
 
       // 公式ベストプラクティス: 保存済みのchallengeIdを使用
       const { data: verifyData, error: verifyError } = await supabase.auth.mfa.verify({
         factorId,
         challengeId,
         code: verificationCode,
-      })
+      });
 
       if (verifyError) {
-        console.error('Verify error:', verifyError)
-        throw new Error(verifyError.message)
+        console.error('Verify error:', verifyError);
+        throw new Error(verifyError.message);
       }
 
-      console.log('MFA検証成功:', verifyData)
+      console.log('MFA検証成功:', verifyData);
 
       // 検証成功、次のページへリダイレクト
-      const next = searchParams?.get('next') || `/${locale}/calendar`
-      router.refresh()
-      router.push(next)
+      const next = searchParams?.get('next') || `/${locale}/calendar`;
+      router.refresh();
+      router.push(next);
     } catch (err) {
-      console.error('Verification error:', err)
-      const errorMessage = err instanceof Error ? err.message : '無効なコードです。もう一度お試しください'
-      setError(errorMessage)
-      setVerificationCode('')
+      console.error('Verification error:', err);
+      const errorMessage =
+        err instanceof Error ? err.message : '無効なコードです。もう一度お試しください';
+      setError(errorMessage);
+      setVerificationCode('');
     } finally {
-      setIsVerifying(false)
+      setIsVerifying(false);
     }
-  }
+  };
 
   return (
     <div className="bg-surface-container flex min-h-svh flex-col items-center justify-center p-4 md:p-10">
@@ -147,7 +148,9 @@ export default function MFAVerifyPage() {
                       </svg>
                     </div>
                     <h1 className="text-2xl font-bold">{t('auth.mfaVerify.title')}</h1>
-                    <p className="text-muted-foreground text-balance">{t('auth.mfaVerify.description')}</p>
+                    <p className="text-muted-foreground text-balance">
+                      {t('auth.mfaVerify.description')}
+                    </p>
                   </div>
 
                   {error && (
@@ -157,7 +160,9 @@ export default function MFAVerifyPage() {
                   )}
 
                   <div className="flex flex-col items-center gap-3">
-                    <FieldLabel className="text-center">{t('auth.mfaVerify.verificationCode')}</FieldLabel>
+                    <FieldLabel className="text-center">
+                      {t('auth.mfaVerify.verificationCode')}
+                    </FieldLabel>
                     <InputOTP
                       maxLength={6}
                       value={verificationCode}
@@ -182,7 +187,9 @@ export default function MFAVerifyPage() {
                       className="w-full"
                     >
                       {isVerifying && <Spinner className="mr-2" />}
-                      {isVerifying ? t('auth.mfaVerify.verifying') : t('auth.mfaVerify.verifyButton')}
+                      {isVerifying
+                        ? t('auth.mfaVerify.verifying')
+                        : t('auth.mfaVerify.verifyButton')}
                     </Button>
                   </Field>
 
@@ -194,7 +201,10 @@ export default function MFAVerifyPage() {
                   </FieldDescription>
 
                   <FieldDescription className="text-center">
-                    <a href={`/${locale}/auth/login`} className="hover:text-primary hover:underline">
+                    <a
+                      href={`/${locale}/auth/login`}
+                      className="hover:text-primary hover:underline"
+                    >
                       {t('auth.mfaVerify.backToLogin')}
                     </a>
                   </FieldDescription>
@@ -211,12 +221,13 @@ export default function MFAVerifyPage() {
             </CardContent>
           </Card>
           <FieldDescription className="px-6 text-center">
-            {t('auth.mfaVerify.termsAndPrivacy')} <a href="#">{t('auth.mfaVerify.termsOfService')}</a>{' '}
-            {t('auth.mfaVerify.and')} <a href="#">{t('auth.mfaVerify.privacyPolicy')}</a>
+            {t('auth.mfaVerify.termsAndPrivacy')}{' '}
+            <a href="#">{t('auth.mfaVerify.termsOfService')}</a> {t('auth.mfaVerify.and')}{' '}
+            <a href="#">{t('auth.mfaVerify.privacyPolicy')}</a>
             {t('auth.mfaVerify.agree')}
           </FieldDescription>
         </div>
       </div>
     </div>
-  )
+  );
 }

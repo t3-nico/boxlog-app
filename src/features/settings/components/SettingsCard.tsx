@@ -1,20 +1,20 @@
-'use client'
+'use client';
 
-import React from 'react'
+import React from 'react';
 
-import { Loader2 } from 'lucide-react'
+import { Loader2 } from 'lucide-react';
 
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/utils';
 
 interface SettingsCardProps {
-  title?: React.ReactNode
-  children: React.ReactNode
-  className?: string
-  actions?: React.ReactNode
-  noPadding?: boolean
-  isSaving?: boolean
+  title?: React.ReactNode;
+  children: React.ReactNode;
+  className?: string;
+  actions?: React.ReactNode;
+  noPadding?: boolean;
+  isSaving?: boolean;
   /** 最後のセクションの場合はセパレーターを非表示 */
-  isLast?: boolean
+  isLast?: boolean;
 }
 
 /**
@@ -34,7 +34,12 @@ export const SettingsCard = ({
 }: SettingsCardProps) => {
   return (
     <section
-      className={cn('text-foreground', !isLast && 'border-border border-b pb-6', isSaving && 'opacity-70', className)}
+      className={cn(
+        'text-foreground',
+        !isLast && 'border-border border-b pb-6',
+        isSaving && 'opacity-70',
+        className,
+      )}
     >
       <div className={cn(noPadding ? '' : '')}>
         {(title || actions || isSaving) && (
@@ -54,5 +59,5 @@ export const SettingsCard = ({
         <div className="text-sm">{children}</div>
       </div>
     </section>
-  )
-}
+  );
+};

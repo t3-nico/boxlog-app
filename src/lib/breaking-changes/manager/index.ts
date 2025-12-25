@@ -9,7 +9,7 @@
  * @see ./helpers.ts - ヘルパー関数
  */
 
-export { BreakingChangeManager } from './core'
+export { BreakingChangeManager } from './core';
 
 // ユーティリティ関数のエクスポート
 export {
@@ -22,7 +22,7 @@ export {
   getGroupSpecificMitigation,
   identifyRisks,
   suggestRiskMitigation,
-} from './analysis'
+} from './analysis';
 
 export {
   calculateEndDate,
@@ -34,29 +34,31 @@ export {
   getGroupEmoji,
   getImpactEmoji,
   groupChangesByVersion,
-} from './helpers'
+} from './helpers';
 
-export { generateMarkdownDocument } from './markdown'
+export { generateMarkdownDocument } from './markdown';
 
-export { createMigrationPhases, createMigrationPlan } from './migration'
+export { createMigrationPhases, createMigrationPlan } from './migration';
 
 // グローバルインスタンスと便利関数
-import { BreakingChangeManager } from './core'
+import { BreakingChangeManager } from './core';
 
 /**
  * 🌍 グローバル管理インスタンス
  */
-export const breakingChangeManager = new BreakingChangeManager()
+export const breakingChangeManager = new BreakingChangeManager();
 
 /**
  * 🔧 便利関数
  */
-export const addBreakingChange = (change: Parameters<BreakingChangeManager['addBreakingChange']>[0]) =>
-  breakingChangeManager.addBreakingChange(change)
+export const addBreakingChange = (
+  change: Parameters<BreakingChangeManager['addBreakingChange']>[0],
+) => breakingChangeManager.addBreakingChange(change);
 
 export const findBreakingChanges = (query: Parameters<BreakingChangeManager['findChanges']>[0]) =>
-  breakingChangeManager.findChanges(query)
+  breakingChangeManager.findChanges(query);
 
-export const generateVersionSummary = (version: string) => breakingChangeManager.generateVersionSummary(version)
+export const generateVersionSummary = (version: string) =>
+  breakingChangeManager.generateVersionSummary(version);
 
-export default BreakingChangeManager
+export default BreakingChangeManager;

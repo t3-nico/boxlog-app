@@ -1,44 +1,51 @@
-'use client'
+'use client';
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react';
 
-import Image from 'next/image'
+import Image from 'next/image';
 
-import { Bell, Calendar, Download, Palette, Settings, Upload, User, X } from 'lucide-react'
+import { Bell, Calendar, Download, Palette, Settings, Upload, User, X } from 'lucide-react';
 
-import { cn } from '@/lib/utils'
-import { useTranslations } from 'next-intl'
+import { cn } from '@/lib/utils';
+import { useTranslations } from 'next-intl';
 
 export type DrawerMenuItem = {
-  id: string
-  label: string
-  icon: React.ReactNode
-  onClick?: () => void
-  badge?: number
-  disabled?: boolean
-  divider?: boolean
-}
+  id: string;
+  label: string;
+  icon: React.ReactNode;
+  onClick?: () => void;
+  badge?: number;
+  disabled?: boolean;
+  divider?: boolean;
+};
 
 interface MobileDrawerProps {
-  isOpen: boolean
-  onClose: () => void
-  title?: string
-  items?: DrawerMenuItem[]
+  isOpen: boolean;
+  onClose: () => void;
+  title?: string;
+  items?: DrawerMenuItem[];
   userInfo?: {
-    name: string
-    email?: string
-    avatar?: string
-  }
-  className?: string
+    name: string;
+    email?: string;
+    avatar?: string;
+  };
+  className?: string;
 }
 
 /**
  * モバイル用ドロワーメニュー
  * 左側からスライドインするサイドメニュー
  */
-export const MobileDrawer = ({ isOpen, onClose, title, items, userInfo, className }: MobileDrawerProps) => {
-  const t = useTranslations()
-  const drawerRef = useRef<HTMLDivElement>(null)
+export const MobileDrawer = ({
+  isOpen,
+  onClose,
+  title,
+  items,
+  userInfo,
+  className,
+}: MobileDrawerProps) => {
+  const t = useTranslations();
+  const drawerRef = useRef<HTMLDivElement>(null);
 
   const defaultMenuItems: DrawerMenuItem[] = [
     {
@@ -78,76 +85,80 @@ export const MobileDrawer = ({ isOpen, onClose, title, items, userInfo, classNam
       label: t('actions.create'),
       icon: <Upload className="h-5 w-5" />,
     },
-  ]
+  ];
 
-  const menuItems = items ?? defaultMenuItems
-  const menuTitle = title ?? t('navigation.settings')
+  const menuItems = items ?? defaultMenuItems;
+  const menuTitle = title ?? t('navigation.settings');
 
   // ESCキーでクローズ
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isOpen) {
-        onClose()
+        onClose();
       }
-    }
+    };
 
     if (isOpen) {
-      document.addEventListener('keydown', handleEscape)
+      document.addEventListener('keydown', handleEscape);
       // スクロールを防止
-      document.body.style.overflow = 'hidden'
+      document.body.style.overflow = 'hidden';
     }
 
     return () => {
-      document.removeEventListener('keydown', handleEscape)
-      document.body.style.overflow = 'unset'
-    }
-  }, [isOpen, onClose])
+      document.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen, onClose]);
 
   // フォーカストラップ
   useEffect(() => {
     if (isOpen && drawerRef.current) {
       const focusableElements = drawerRef.current.querySelectorAll(
-        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-      )
-      const firstElement = focusableElements[0] as HTMLElement
-      const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+      );
+      const firstElement = focusableElements[0] as HTMLElement;
+      const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
 
       const handleTabKey = (e: KeyboardEvent) => {
         if (e.key === 'Tab') {
           if (e.shiftKey) {
             if (document.activeElement === firstElement) {
-              lastElement?.focus()
-              e.preventDefault()
+              lastElement?.focus();
+              e.preventDefault();
             }
           } else {
             if (document.activeElement === lastElement) {
-              firstElement?.focus()
-              e.preventDefault()
+              firstElement?.focus();
+              e.preventDefault();
             }
           }
         }
-      }
+      };
 
-      document.addEventListener('keydown', handleTabKey)
-      firstElement?.focus()
+      document.addEventListener('keydown', handleTabKey);
+      firstElement?.focus();
 
-      return () => document.removeEventListener('keydown', handleTabKey)
+      return () => document.removeEventListener('keydown', handleTabKey);
     }
-    return undefined
-  }, [isOpen])
+    return undefined;
+  }, [isOpen]);
 
   const handleItemClick = (item: DrawerMenuItem) => {
-    if (item.disabled || item.divider) return
-    item.onClick?.()
-    onClose()
-  }
+    if (item.disabled || item.divider) return;
+    item.onClick?.();
+    onClose();
+  };
 
-  if (!isOpen) return null
+  if (!isOpen) return null;
 
   return (
     <>
       {/* オーバーレイ */}
-      <div className="bg-overlay fixed inset-0 z-50 transition-opacity" onClick={onClose} aria-hidden="true" />
+      <div
+        className="bg-overlay fixed inset-0 z-50 transition-opacity"
+        onClick={onClose}
+        aria-hidden="true"
+      />
 
       {/* ドロワー */}
       <div
@@ -157,7 +168,7 @@ export const MobileDrawer = ({ isOpen, onClose, title, items, userInfo, classNam
           'bg-background border-border z-50 border-r shadow-xl',
           'transform transition-transform duration-300 ease-out',
           isOpen ? 'translate-x-0' : '-translate-x-full',
-          className
+          className,
         )}
         role="dialog"
         aria-modal="true"
@@ -209,7 +220,7 @@ export const MobileDrawer = ({ isOpen, onClose, title, items, userInfo, classNam
           <div className="py-2">
             {menuItems.map((item) => {
               if (item.divider) {
-                return <div key={item.id} className="border-border my-2 border-t" />
+                return <div key={item.id} className="border-border my-2 border-t" />;
               }
 
               return (
@@ -221,7 +232,7 @@ export const MobileDrawer = ({ isOpen, onClose, title, items, userInfo, classNam
                   className={cn(
                     'flex w-full items-center gap-3 px-4 py-3 text-left',
                     'hover:bg-state-hover transition-colors',
-                    'disabled:cursor-not-allowed disabled:opacity-50'
+                    'disabled:cursor-not-allowed disabled:opacity-50',
                   )}
                 >
                   {/* アイコン */}
@@ -237,11 +248,11 @@ export const MobileDrawer = ({ isOpen, onClose, title, items, userInfo, classNam
                     </div>
                   ) : null}
                 </button>
-              )
+              );
             })}
           </div>
         </div>
       </div>
     </>
-  )
-}
+  );
+};

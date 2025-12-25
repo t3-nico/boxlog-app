@@ -1,6 +1,6 @@
-'use client'
+'use client';
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -8,28 +8,28 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { useEffect, useState } from 'react'
-import { useInboxViewStore } from '../../stores/useInboxViewStore'
-import type { InboxView } from '../../types/view'
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { useEffect, useState } from 'react';
+import { useInboxViewStore } from '../../stores/useInboxViewStore';
+import type { InboxView } from '../../types/view';
 
 interface ViewSettingsDialogProps {
   /** ダイアログの開閉状態 */
-  open: boolean
+  open: boolean;
   /** ダイアログを閉じる関数 */
-  onOpenChange: (open: boolean) => void
+  onOpenChange: (open: boolean) => void;
   /** 編集対象のビュー（新規作成時はundefined） */
-  view?: InboxView | undefined
+  view?: InboxView | undefined;
   /** 現在のフィルター・ソート・ページサイズ（新規作成時に使用） */
   currentState?:
     | {
-        filters: InboxView['filters']
-        sorting?: InboxView['sorting'] | undefined
-        pageSize?: number | undefined
+        filters: InboxView['filters'];
+        sorting?: InboxView['sorting'] | undefined;
+        pageSize?: number | undefined;
       }
-    | undefined
+    | undefined;
 }
 
 /**
@@ -48,21 +48,26 @@ interface ViewSettingsDialogProps {
  * />
  * ```
  */
-export function ViewSettingsDialog({ open, onOpenChange, view, currentState }: ViewSettingsDialogProps) {
-  const { createView, updateView } = useInboxViewStore()
-  const [name, setName] = useState(view?.name || '')
+export function ViewSettingsDialog({
+  open,
+  onOpenChange,
+  view,
+  currentState,
+}: ViewSettingsDialogProps) {
+  const { createView, updateView } = useInboxViewStore();
+  const [name, setName] = useState(view?.name || '');
 
   // viewが変更されたら名前をリセット
   useEffect(() => {
-    setName(view?.name || '')
-  }, [view])
+    setName(view?.name || '');
+  }, [view]);
 
   const handleSave = () => {
-    if (!name.trim()) return
+    if (!name.trim()) return;
 
     if (view) {
       // 既存ビューの編集
-      updateView(view.id, { name: name.trim() })
+      updateView(view.id, { name: name.trim() });
     } else {
       // 新規ビュー作成
       createView({
@@ -70,18 +75,18 @@ export function ViewSettingsDialog({ open, onOpenChange, view, currentState }: V
         filters: currentState?.filters || {},
         sorting: currentState?.sorting,
         isDefault: false,
-      })
+      });
     }
 
     // ダイアログを閉じる
-    onOpenChange(false)
-    setName('')
-  }
+    onOpenChange(false);
+    setName('');
+  };
 
   const handleCancel = () => {
-    onOpenChange(false)
-    setName('')
-  }
+    onOpenChange(false);
+    setName('');
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -105,8 +110,8 @@ export function ViewSettingsDialog({ open, onOpenChange, view, currentState }: V
               onChange={(e) => setName(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
-                  e.preventDefault()
-                  handleSave()
+                  e.preventDefault();
+                  handleSave();
                 }
               }}
             />
@@ -122,7 +127,8 @@ export function ViewSettingsDialog({ open, onOpenChange, view, currentState }: V
                 {currentState.filters.search && <li>検索: {currentState.filters.search}</li>}
                 {currentState.sorting && (
                   <li>
-                    ソート: {currentState.sorting.field} ({currentState.sorting.direction === 'asc' ? '昇順' : '降順'})
+                    ソート: {currentState.sorting.field} (
+                    {currentState.sorting.direction === 'asc' ? '昇順' : '降順'})
                   </li>
                 )}
                 {currentState.pageSize && <li>ページサイズ: {currentState.pageSize}件/ページ</li>}
@@ -141,5 +147,5 @@ export function ViewSettingsDialog({ open, onOpenChange, view, currentState }: V
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

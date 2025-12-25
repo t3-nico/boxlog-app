@@ -1,18 +1,23 @@
-'use client'
+'use client';
 
-import React, { useMemo } from 'react'
+import React, { useMemo } from 'react';
 
-import { getWeek } from 'date-fns'
+import { getWeek } from 'date-fns';
 
-import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
-import { cn } from '@/lib/utils'
+import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
+import { cn } from '@/lib/utils';
 
-import { CalendarViewAnimation } from '../../animations/ViewTransition'
-import { CalendarDateHeader, DateDisplay, OverdueSectionSingle, ScrollableCalendarLayout } from '../shared'
+import { CalendarViewAnimation } from '../../animations/ViewTransition';
+import {
+  CalendarDateHeader,
+  DateDisplay,
+  OverdueSectionSingle,
+  ScrollableCalendarLayout,
+} from '../shared';
 
-import { DayContent } from './components/DayContent'
-import type { DayViewProps } from './DayView.types'
-import { useDayView } from './hooks/useDayView'
+import { DayContent } from './components/DayContent';
+import type { DayViewProps } from './DayView.types';
+import { useDayView } from './hooks/useDayView';
 
 export const DayView = ({
   dateRange: _dateRange,
@@ -35,30 +40,30 @@ export const DayView = ({
   onNavigateNext: _onNavigateNext,
   onNavigateToday,
 }: DayViewProps) => {
-  const { timezone } = useCalendarSettingsStore()
+  const { timezone } = useCalendarSettingsStore();
 
   // 表示する日付
   const displayDates = useMemo(() => {
-    const date = new Date(currentDate)
-    date.setHours(0, 0, 0, 0)
-    return [date]
-  }, [currentDate])
+    const date = new Date(currentDate);
+    date.setHours(0, 0, 0, 0);
+    return [date];
+  }, [currentDate]);
 
   // 最初の日付を使用（Day表示なので1日のみ）
-  const date = displayDates[0]
+  const date = displayDates[0];
   if (!date) {
-    throw new Error('Display date is undefined')
+    throw new Error('Display date is undefined');
   }
 
   // ドラッグイベント用のハンドラー（プラン時間更新）
   const handleEventTimeUpdate = React.useCallback(
     async (eventId: string, updates: { startTime: Date; endTime: Date }) => {
       if (onUpdatePlan) {
-        await onUpdatePlan(eventId, updates)
+        await onUpdatePlan(eventId, updates);
       }
     },
-    [onUpdatePlan]
-  )
+    [onUpdatePlan],
+  );
 
   // DayView専用ロジック（CalendarControllerから渡されたプランデータを使用）
   const {
@@ -70,21 +75,21 @@ export const DayView = ({
     date,
     plans: plans || [],
     ...(onUpdatePlan && { onPlanUpdate: onUpdatePlan }),
-  })
+  });
 
   // 週番号を計算
   const weekNumber = useMemo(() => {
-    return getWeek(date, { weekStartsOn: 1 })
-  }, [date])
+    return getWeek(date, { weekStartsOn: 1 });
+  }, [date]);
 
   // 日付ヘッダーのクリックハンドラー（DayViewでは日付変更のみ）
   const handleDateHeaderClick = React.useCallback(
     (_clickedDate: Date) => {
       // DayViewで日付ヘッダーをクリックした場合、その日付に移動
-      onNavigateToday?.()
+      onNavigateToday?.();
     },
-    [onNavigateToday]
-  )
+    [onNavigateToday],
+  );
 
   const headerComponent = (
     <div className="bg-background flex h-8 items-center justify-center px-2">
@@ -100,7 +105,7 @@ export const DayView = ({
         onClick={handleDateHeaderClick}
       />
     </div>
-  )
+  );
 
   return (
     <CalendarViewAnimation viewType="day">
@@ -135,5 +140,5 @@ export const DayView = ({
         </ScrollableCalendarLayout>
       </div>
     </CalendarViewAnimation>
-  )
-}
+  );
+};

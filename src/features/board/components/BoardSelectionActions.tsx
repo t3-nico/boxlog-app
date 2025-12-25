@@ -1,31 +1,31 @@
-'use client'
+'use client';
 
-import { Archive, Calendar, MoreHorizontal, Tag, Trash2 } from 'lucide-react'
+import { Archive, Calendar, MoreHorizontal, Tag, Trash2 } from 'lucide-react';
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { HoverTooltip } from '@/components/ui/tooltip'
+} from '@/components/ui/dropdown-menu';
+import { HoverTooltip } from '@/components/ui/tooltip';
 
-import type { InboxItem } from '@/features/inbox/hooks/useInboxData'
-import { BoardActionMenuItems } from './BoardActionMenuItems'
+import type { InboxItem } from '@/features/inbox/hooks/useInboxData';
+import { BoardActionMenuItems } from './BoardActionMenuItems';
 
 interface BoardSelectionActionsProps {
-  selectedCount: number
-  selectedIds: string[]
-  items: InboxItem[]
-  onArchive: () => void
-  onDelete: () => void
-  onEdit?: (item: InboxItem) => void
-  onDuplicate?: (item: InboxItem) => void
-  onAddTags?: () => void
-  onChangeDueDate?: () => void
-  onClearSelection: () => void
+  selectedCount: number;
+  selectedIds: string[];
+  items: InboxItem[];
+  onArchive: () => void;
+  onDelete: () => void;
+  onEdit?: (item: InboxItem) => void;
+  onDuplicate?: (item: InboxItem) => void;
+  onAddTags?: () => void;
+  onChangeDueDate?: () => void;
+  onClearSelection: () => void;
 }
 
 /**
@@ -50,14 +50,14 @@ export function BoardSelectionActions({
   onChangeDueDate,
   onClearSelection,
 }: BoardSelectionActionsProps) {
-  const isSingleSelection = selectedCount === 1
-  const selectedItem = isSingleSelection ? items.find((item) => item.id === selectedIds[0]) : null
+  const isSingleSelection = selectedCount === 1;
+  const selectedItem = isSingleSelection ? items.find((item) => item.id === selectedIds[0]) : null;
 
   const handleSingleItemAction = (action: (_item: InboxItem) => void) => {
     if (selectedItem) {
-      action(selectedItem)
+      action(selectedItem);
     }
-  }
+  };
 
   return (
     <>
@@ -85,8 +85,8 @@ export function BoardSelectionActions({
           variant="ghost"
           size="icon"
           onClick={() => {
-            onArchive()
-            onClearSelection()
+            onArchive();
+            onClearSelection();
           }}
           aria-label="アーカイブ"
         >
@@ -100,8 +100,8 @@ export function BoardSelectionActions({
           variant="ghost"
           size="icon"
           onClick={() => {
-            onDelete()
-            onClearSelection()
+            onDelete();
+            onClearSelection();
           }}
           className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
           aria-label="削除"
@@ -128,12 +128,12 @@ export function BoardSelectionActions({
               onAddTags={onAddTags ? () => onAddTags() : undefined}
               onChangeDueDate={onChangeDueDate ? () => onChangeDueDate() : undefined}
               onArchive={() => {
-                onArchive()
-                onClearSelection()
+                onArchive();
+                onClearSelection();
               }}
               onDelete={() => {
-                onDelete()
-                onClearSelection()
+                onDelete();
+                onClearSelection();
               }}
               renderMenuItem={({ icon, label, onClick, variant }) => (
                 <DropdownMenuItem
@@ -154,5 +154,5 @@ export function BoardSelectionActions({
         </DropdownMenu>
       )}
     </>
-  )
+  );
 }

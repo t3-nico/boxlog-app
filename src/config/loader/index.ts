@@ -8,21 +8,21 @@
  * - 型安全性保証
  */
 
-import { Config, ConfigValidationResult } from '../schema'
-import { CONFIG_PATHS } from './constants'
-import { applyEnvironmentVariables } from './env-parser'
-import { deepMerge, getDefaultConfig, loadConfigFile } from './file-reader'
-import { validateConfig } from './validator'
+import { Config, ConfigValidationResult } from '../schema';
+import { CONFIG_PATHS } from './constants';
+import { applyEnvironmentVariables } from './env-parser';
+import { deepMerge, getDefaultConfig, loadConfigFile } from './file-reader';
+import { validateConfig } from './validator';
 
 /**
  * 🎯 設定ローダークラス
  */
 export class ConfigLoader {
-  private cachedConfig: Config | null = null
-  private environment: string
+  private cachedConfig: Config | null = null;
+  private environment: string;
 
   constructor(environment?: string) {
-    this.environment = environment || process.env.NODE_ENV || 'development'
+    this.environment = environment || process.env.NODE_ENV || 'development';
   }
 
   /**
@@ -31,14 +31,14 @@ export class ConfigLoader {
   async load(
     options: {
       /** キャッシュを使用 */
-      useCache?: boolean
+      useCache?: boolean;
       /** 環境変数を優先 */
-      preferEnvVars?: boolean
+      preferEnvVars?: boolean;
       /** 厳密モード */
-      strict?: boolean
-    } = {}
+      strict?: boolean;
+    } = {},
   ): Promise<ConfigValidationResult> {
-    const { useCache = true, preferEnvVars = true, strict = false } = options
+    const { useCache = true, preferEnvVars = true, strict = false } = options;
 
     try {
       // キャッシュチェック
@@ -48,39 +48,45 @@ export class ConfigLoader {
           data: this.cachedConfig,
           errors: [],
           warnings: [],
-        }
+        };
       }
 
       // 1. ベース設定の読み込み
-      const baseConfig = await loadConfigFile(CONFIG_PATHS.base)
+      const baseConfig = await loadConfigFile(CONFIG_PATHS.base);
 
       // 2. 環境別設定の読み込み
-      const envConfigPath = CONFIG_PATHS.environment[this.environment as keyof typeof CONFIG_PATHS.environment]
-      const envConfig = await loadConfigFile(envConfigPath)
+      const envConfigPath =
+        CONFIG_PATHS.environment[this.environment as keyof typeof CONFIG_PATHS.environment];
+      const envConfig = await loadConfigFile(envConfigPath);
 
       // 3. ローカル設定の読み込み
-      const localConfig = await loadConfigFile(CONFIG_PATHS.local)
+      const localConfig = await loadConfigFile(CONFIG_PATHS.local);
 
       // 4. デフォルト設定の取得
-      const defaultConfig = getDefaultConfig(this.environment)
+      const defaultConfig = getDefaultConfig(this.environment);
 
       // 5. 設定のマージ
-      let mergedConfig = deepMerge(defaultConfig, baseConfig || {}, envConfig || {}, localConfig || {})
+      let mergedConfig = deepMerge(
+        defaultConfig,
+        baseConfig || {},
+        envConfig || {},
+        localConfig || {},
+      );
 
       // 6. 環境変数の適用
       if (preferEnvVars) {
-        mergedConfig = applyEnvironmentVariables(mergedConfig)
+        mergedConfig = applyEnvironmentVariables(mergedConfig);
       }
 
       // 7. バリデーション
-      const validationResult = validateConfig(mergedConfig, strict, this.environment)
+      const validationResult = validateConfig(mergedConfig, strict, this.environment);
 
       // 8. キャッシュ更新
       if (validationResult.success && validationResult.data) {
-        this.cachedConfig = validationResult.data
+        this.cachedConfig = validationResult.data;
       }
 
-      return validationResult
+      return validationResult;
     } catch (error) {
       return {
         success: false,
@@ -92,7 +98,7 @@ export class ConfigLoader {
           },
         ],
         warnings: [],
-      }
+      };
     }
   }
 
@@ -100,36 +106,36 @@ export class ConfigLoader {
    * 🧹 キャッシュのクリア
    */
   clearCache(): void {
-    this.cachedConfig = null
+    this.cachedConfig = null;
   }
 
   /**
    * 📊 現在の設定取得
    */
   getCurrentConfig(): Config | null {
-    return this.cachedConfig
+    return this.cachedConfig;
   }
 
   /**
    * 🔄 設定の再読み込み
    */
   async reload(options?: Parameters<ConfigLoader['load']>[0]): Promise<ConfigValidationResult> {
-    this.clearCache()
-    return await this.load(options)
+    this.clearCache();
+    return await this.load(options);
   }
 }
 
 /**
  * 🌍 グローバルローダーインスタンス
  */
-export const globalConfigLoader = new ConfigLoader()
+export const globalConfigLoader = new ConfigLoader();
 
 /**
  * 🔧 便利な関数エクスポート
  */
-export const loadConfig = globalConfigLoader.load.bind(globalConfigLoader)
-export const reloadConfig = globalConfigLoader.reload.bind(globalConfigLoader)
-export const getCurrentConfig = globalConfigLoader.getCurrentConfig.bind(globalConfigLoader)
-export const clearConfigCache = globalConfigLoader.clearCache.bind(globalConfigLoader)
+export const loadConfig = globalConfigLoader.load.bind(globalConfigLoader);
+export const reloadConfig = globalConfigLoader.reload.bind(globalConfigLoader);
+export const getCurrentConfig = globalConfigLoader.getCurrentConfig.bind(globalConfigLoader);
+export const clearConfigCache = globalConfigLoader.clearCache.bind(globalConfigLoader);
 
-export default globalConfigLoader
+export default globalConfigLoader;

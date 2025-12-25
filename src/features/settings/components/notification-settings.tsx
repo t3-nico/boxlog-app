@@ -1,26 +1,26 @@
-'use client'
+'use client';
 
-import { useCallback } from 'react'
+import { useCallback } from 'react';
 
-import { Bell } from 'lucide-react'
+import { Bell } from 'lucide-react';
 
-import { Switch } from '@/components/ui/switch'
-import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
-import { useTranslations } from 'next-intl'
+import { Switch } from '@/components/ui/switch';
+import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings';
+import { useTranslations } from 'next-intl';
 
-import { SettingField } from './fields/SettingField'
-import { SettingsCard } from './SettingsCard'
+import { SettingField } from './fields/SettingField';
+import { SettingsCard } from './SettingsCard';
 
 interface NotificationAutoSaveSettings {
-  emailNotifications: boolean
-  pushNotifications: boolean
-  browserNotifications: boolean
-  weeklyDigest: boolean
-  systemNotifications: boolean
+  emailNotifications: boolean;
+  pushNotifications: boolean;
+  browserNotifications: boolean;
+  weeklyDigest: boolean;
+  systemNotifications: boolean;
 }
 
 export function NotificationSettings() {
-  const t = useTranslations()
+  const t = useTranslations();
 
   // 通知設定の自動保存
   const notifications = useAutoSaveSettings<NotificationAutoSaveSettings>({
@@ -33,48 +33,48 @@ export function NotificationSettings() {
     },
     onSave: async (values) => {
       // 通知設定API呼び出しシミュレーション
-      await new Promise((resolve) => setTimeout(resolve, 500))
-      console.log('Saving notification settings:', values)
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      console.log('Saving notification settings:', values);
     },
     successMessage: t('notifications.settings.saveSuccess'),
     debounceMs: 800,
-  })
+  });
 
   // Notification settings handlers
   const handleEmailNotificationsChange = useCallback(
     (checked: boolean) => {
-      notifications.updateValue('emailNotifications', checked)
+      notifications.updateValue('emailNotifications', checked);
     },
-    [notifications]
-  )
+    [notifications],
+  );
 
   const handlePushNotificationsChange = useCallback(
     (checked: boolean) => {
-      notifications.updateValue('pushNotifications', checked)
+      notifications.updateValue('pushNotifications', checked);
     },
-    [notifications]
-  )
+    [notifications],
+  );
 
   const handleBrowserNotificationsChange = useCallback(
     (checked: boolean) => {
-      notifications.updateValue('browserNotifications', checked)
+      notifications.updateValue('browserNotifications', checked);
     },
-    [notifications]
-  )
+    [notifications],
+  );
 
   const handleWeeklyDigestChange = useCallback(
     (checked: boolean) => {
-      notifications.updateValue('weeklyDigest', checked)
+      notifications.updateValue('weeklyDigest', checked);
     },
-    [notifications]
-  )
+    [notifications],
+  );
 
   const handleSystemNotificationsChange = useCallback(
     (checked: boolean) => {
-      notifications.updateValue('systemNotifications', checked)
+      notifications.updateValue('systemNotifications', checked);
     },
-    [notifications]
-  )
+    [notifications],
+  );
 
   return (
     <div className="space-y-6">
@@ -103,7 +103,10 @@ export function NotificationSettings() {
             label={t('notifications.settings.deliverySettings.push.label')}
             description={t('notifications.settings.deliverySettings.push.description')}
           >
-            <Switch checked={notifications.values.pushNotifications} onCheckedChange={handlePushNotificationsChange} />
+            <Switch
+              checked={notifications.values.pushNotifications}
+              onCheckedChange={handlePushNotificationsChange}
+            />
           </SettingField>
 
           <SettingField
@@ -119,13 +122,19 @@ export function NotificationSettings() {
       </SettingsCard>
 
       {/* コンテンツ通知 */}
-      <SettingsCard title={t('notifications.settings.contentSettings.title')} isSaving={notifications.isSaving}>
+      <SettingsCard
+        title={t('notifications.settings.contentSettings.title')}
+        isSaving={notifications.isSaving}
+      >
         <div className="space-y-4">
           <SettingField
             label={t('notifications.settings.contentSettings.weeklyDigest.label')}
             description={t('notifications.settings.contentSettings.weeklyDigest.description')}
           >
-            <Switch checked={notifications.values.weeklyDigest} onCheckedChange={handleWeeklyDigestChange} />
+            <Switch
+              checked={notifications.values.weeklyDigest}
+              onCheckedChange={handleWeeklyDigestChange}
+            />
           </SettingField>
 
           <SettingField
@@ -145,5 +154,5 @@ export function NotificationSettings() {
         <p className="text-muted-foreground text-sm">{t('notifications.settings.tip')}</p>
       </div>
     </div>
-  )
+  );
 }

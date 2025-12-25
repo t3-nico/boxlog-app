@@ -1,19 +1,19 @@
-'use client'
+'use client';
 
-import { useMemo } from 'react'
+import { useMemo } from 'react';
 
-import { differenceInMinutes, isSameDay, isToday, startOfDay } from 'date-fns'
+import { differenceInMinutes, isSameDay, isToday, startOfDay } from 'date-fns';
 
-import type { CalendarPlan } from '../types/calendar.types'
+import type { CalendarPlan } from '../types/calendar.types';
 
 /**
  * 未完了プラン情報
  */
 export interface OverduePlan {
   /** プランデータ */
-  plan: CalendarPlan
+  plan: CalendarPlan;
   /** 超過時間（分） */
-  overdueMinutes: number
+  overdueMinutes: number;
 }
 
 /**
@@ -33,32 +33,32 @@ export interface OverduePlan {
  */
 export function useOverduePlans(plans: CalendarPlan[], date: Date): OverduePlan[] {
   return useMemo(() => {
-    const now = new Date()
-    const targetDate = startOfDay(date)
-    const isTargetToday = isToday(date)
+    const now = new Date();
+    const targetDate = startOfDay(date);
+    const isTargetToday = isToday(date);
 
     return plans
       .filter((plan) => {
         // 完了済みは除外
-        if (plan.status === 'done') return false
+        if (plan.status === 'done') return false;
 
         // 終了日がないプランは除外
-        if (!plan.endDate) return false
+        if (!plan.endDate) return false;
 
         // 今日の場合: 終了予定時刻が現在時刻を過ぎているもの
         if (isTargetToday) {
-          return isSameDay(plan.endDate, targetDate) && plan.endDate < now
+          return isSameDay(plan.endDate, targetDate) && plan.endDate < now;
         }
 
         // 過去の日付の場合: その日が終了予定日だったもの
-        return isSameDay(plan.endDate, targetDate)
+        return isSameDay(plan.endDate, targetDate);
       })
       .map((plan) => ({
         plan,
         overdueMinutes: differenceInMinutes(now, plan.endDate!),
       }))
-      .sort((a, b) => b.overdueMinutes - a.overdueMinutes) // 超過時間が長い順
-  }, [plans, date])
+      .sort((a, b) => b.overdueMinutes - a.overdueMinutes); // 超過時間が長い順
+  }, [plans, date]);
 }
 
 /**
@@ -75,23 +75,23 @@ export function useOverduePlans(plans: CalendarPlan[], date: Date): OverduePlan[
  */
 export function useAllOverduePlans(plans: CalendarPlan[]): OverduePlan[] {
   return useMemo(() => {
-    const now = new Date()
+    const now = new Date();
 
     return plans
       .filter((plan) => {
         // 完了済みは除外
-        if (plan.status === 'done') return false
+        if (plan.status === 'done') return false;
 
         // 終了日がないプランは除外
-        if (!plan.endDate) return false
+        if (!plan.endDate) return false;
 
         // 終了予定時刻が現在時刻を過ぎているもの
-        return plan.endDate < now
+        return plan.endDate < now;
       })
       .map((plan) => ({
         plan,
         overdueMinutes: differenceInMinutes(now, plan.endDate!),
       }))
-      .sort((a, b) => b.overdueMinutes - a.overdueMinutes) // 超過時間が長い順
-  }, [plans])
+      .sort((a, b) => b.overdueMinutes - a.overdueMinutes); // 超過時間が長い順
+  }, [plans]);
 }

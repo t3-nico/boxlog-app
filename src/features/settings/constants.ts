@@ -8,19 +8,19 @@ import {
   Sliders,
   User,
   type LucideIcon,
-} from 'lucide-react'
+} from 'lucide-react';
 
-import type { SettingsCategory } from './types'
+import type { SettingsCategory } from './types';
 
 /**
  * 設定カテゴリのメタデータ
  * アイコンと翻訳キーを定義
  */
 export interface SettingsCategoryMeta {
-  id: SettingsCategory
-  icon: LucideIcon
-  labelKey: string
-  descKey: string
+  id: SettingsCategory;
+  icon: LucideIcon;
+  labelKey: string;
+  descKey: string;
 }
 
 /**
@@ -88,4 +88,4 @@ export const SETTINGS_CATEGORIES: readonly SettingsCategoryMeta[] = [
     labelKey: 'settings.dialog.categories.about',
     descKey: 'settings.dialog.categories.aboutDesc',
   },
-] as const
+] as const;

@@ -1,17 +1,17 @@
-'use client'
+'use client';
 
-import { useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation';
 
-import { ChevronLeft } from 'lucide-react'
+import { ChevronLeft } from 'lucide-react';
 
-import { PageHeader } from '@/components/common/PageHeader'
-import { Button } from '@/components/ui/button'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { useTranslations } from 'next-intl'
+import { PageHeader } from '@/components/common/PageHeader';
+import { Button } from '@/components/ui/button';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { useTranslations } from 'next-intl';
 
 interface SettingsPageWrapperProps {
-  title: string
-  children: React.ReactNode
+  title: string;
+  children: React.ReactNode;
 }
 
 /**
@@ -21,8 +21,8 @@ interface SettingsPageWrapperProps {
  * - スクロール可能なコンテンツ領域
  */
 export function SettingsPageWrapper({ title, children }: SettingsPageWrapperProps) {
-  const router = useRouter()
-  const t = useTranslations()
+  const router = useRouter();
+  const t = useTranslations();
 
   return (
     <div className="flex h-full flex-col">
@@ -50,5 +50,5 @@ export function SettingsPageWrapper({ title, children }: SettingsPageWrapperProp
         <div className="p-4 md:p-6">{children}</div>
       </ScrollArea>
     </div>
-  )
+  );
 }

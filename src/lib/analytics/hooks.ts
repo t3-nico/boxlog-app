@@ -5,23 +5,23 @@
  * コンポーネントでの使用を簡素化
  */
 
-'use client'
+'use client';
 
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef } from 'react';
 
-import type { AnalyticsEventName, EventProperties } from './events'
-import { ANALYTICS_EVENTS } from './events'
-import { trackEvent } from './tracker'
+import type { AnalyticsEventName, EventProperties } from './events';
+import { ANALYTICS_EVENTS } from './events';
+import { trackEvent } from './tracker';
 
 /**
  * 📊 基本的なアナリティクスフック
  */
 export function useAnalytics() {
   const track = useCallback((eventName: AnalyticsEventName, properties?: EventProperties) => {
-    trackEvent(eventName, properties)
-  }, [])
+    trackEvent(eventName, properties);
+  }, []);
 
-  return { track }
+  return { track };
 }
 
 /**
@@ -29,12 +29,12 @@ export function useAnalytics() {
  */
 export function usePageView(pageName?: string) {
   useEffect(() => {
-    const page = pageName || (typeof window !== 'undefined' ? window.location.pathname : '')
+    const page = pageName || (typeof window !== 'undefined' ? window.location.pathname : '');
     trackEvent(ANALYTICS_EVENTS.NAVIGATION.PAGE_VIEW, {
       page_url: typeof window !== 'undefined' ? window.location.href : '',
       page_name: page,
-    })
-  }, [pageName])
+    });
+  }, [pageName]);
 }
 
 /**
@@ -42,7 +42,7 @@ export function usePageView(pageName?: string) {
  */
 export function useClickTracking(
   eventName: AnalyticsEventName,
-  properties?: EventProperties
+  properties?: EventProperties,
 ): (event?: React.MouseEvent) => void {
   return useCallback(
     (event?: React.MouseEvent) => {
@@ -51,55 +51,58 @@ export function useClickTracking(
         interaction_type: 'click',
         element_type: event?.currentTarget.tagName.toLowerCase(),
         element_text: (event?.currentTarget as HTMLElement)?.textContent?.slice(0, 100),
-      }
-      trackEvent(eventName, clickProperties)
+      };
+      trackEvent(eventName, clickProperties);
     },
-    [eventName, properties]
-  )
+    [eventName, properties],
+  );
 }
 
 /**
  * ⏱️ 時間追跡フック
  */
 export function useTimeTracking(eventName: AnalyticsEventName, properties?: EventProperties) {
-  const startTimeRef = useRef<number | null>(null)
+  const startTimeRef = useRef<number | null>(null);
 
   const start = useCallback(() => {
-    startTimeRef.current = Date.now()
-  }, [])
+    startTimeRef.current = Date.now();
+  }, []);
 
   const end = useCallback(
     (additionalProperties?: EventProperties) => {
       if (startTimeRef.current) {
-        const duration = Date.now() - startTimeRef.current
+        const duration = Date.now() - startTimeRef.current;
         trackEvent(eventName, {
           ...properties,
           ...additionalProperties,
           duration_ms: duration,
-        })
-        startTimeRef.current = null
+        });
+        startTimeRef.current = null;
       }
     },
-    [eventName, properties]
-  )
+    [eventName, properties],
+  );
 
-  return { start, end }
+  return { start, end };
 }
 
 /**
  * 🔍 検索追跡フック
  */
 export function useSearchTracking() {
-  const trackSearch = useCallback((query: string, resultCount?: number, filters?: Record<string, unknown>) => {
-    trackEvent(ANALYTICS_EVENTS.FEATURE.SEARCH_PERFORM, {
-      search_query: query.slice(0, 100), // 最初の100文字のみ
-      result_count: resultCount,
-      has_filters: filters && Object.keys(filters).length > 0,
-      filter_count: filters ? Object.keys(filters).length : 0,
-    })
-  }, [])
+  const trackSearch = useCallback(
+    (query: string, resultCount?: number, filters?: Record<string, unknown>) => {
+      trackEvent(ANALYTICS_EVENTS.FEATURE.SEARCH_PERFORM, {
+        search_query: query.slice(0, 100), // 最初の100文字のみ
+        result_count: resultCount,
+        has_filters: filters && Object.keys(filters).length > 0,
+        filter_count: filters ? Object.keys(filters).length : 0,
+      });
+    },
+    [],
+  );
 
-  return { trackSearch }
+  return { trackSearch };
 }
 
 /**
@@ -107,8 +110,8 @@ export function useSearchTracking() {
  */
 export function useErrorTracking() {
   const trackError = useCallback((error: Error | string, context?: Record<string, unknown>) => {
-    const errorMessage = typeof error === 'string' ? error : error.message
-    const stackTrace = typeof error === 'object' ? error.stack : undefined
+    const errorMessage = typeof error === 'string' ? error : error.message;
+    const stackTrace = typeof error === 'object' ? error.stack : undefined;
 
     trackEvent(ANALYTICS_EVENTS.ERROR.CLIENT_ERROR, {
       error_message: errorMessage.slice(0, 200),
@@ -117,10 +120,10 @@ export function useErrorTracking() {
       user_action: context?.action,
       error_boundary: context?.errorBoundary,
       severity: context?.severity || 'medium',
-    })
-  }, [])
+    });
+  }, []);
 
-  return { trackError }
+  return { trackError };
 }
 
 /**
@@ -131,8 +134,8 @@ export function useFormTracking(formName: string) {
     trackEvent(ANALYTICS_EVENTS.ENGAGEMENT.INTERACTION_COUNT, {
       interaction_type: 'form_start',
       form_name: formName,
-    })
-  }, [formName])
+    });
+  }, [formName]);
 
   const trackFormSubmit = useCallback(
     (success: boolean, validationErrors?: string[]) => {
@@ -142,10 +145,10 @@ export function useFormTracking(formName: string) {
         success,
         validation_error_count: validationErrors?.length || 0,
         validation_errors: validationErrors?.slice(0, 5), // 最初の5個のエラーのみ
-      })
+      });
     },
-    [formName]
-  )
+    [formName],
+  );
 
   const trackFieldInteraction = useCallback(
     (fieldName: string, interactionType: 'focus' | 'blur' | 'change') => {
@@ -153,16 +156,16 @@ export function useFormTracking(formName: string) {
         interaction_type: `form_field_${interactionType}`,
         form_name: formName,
         field_name: fieldName,
-      })
+      });
     },
-    [formName]
-  )
+    [formName],
+  );
 
   return {
     trackFormStart,
     trackFormSubmit,
     trackFieldInteraction,
-  }
+  };
 }
 
 /**
@@ -171,35 +174,35 @@ export function useFormTracking(formName: string) {
 export function useFeatureTracking(featureName: string, category?: string) {
   const trackFeatureUse = useCallback(
     (action: string, properties?: EventProperties) => {
-      const featureEventName = `feature_${featureName.toLowerCase().replace(/\s+/g, '_')}_${action}`
+      const featureEventName = `feature_${featureName.toLowerCase().replace(/\s+/g, '_')}_${action}`;
 
       // 事前定義されたイベント名にフォールバックする仕組み
-      const allFeatureEvents = Object.values(ANALYTICS_EVENTS.FEATURE) as string[]
+      const allFeatureEvents = Object.values(ANALYTICS_EVENTS.FEATURE) as string[];
       const eventName = allFeatureEvents.includes(featureEventName)
         ? (featureEventName as AnalyticsEventName)
-        : ANALYTICS_EVENTS.FEATURE.DASHBOARD_WIDGET_INTERACT
+        : ANALYTICS_EVENTS.FEATURE.DASHBOARD_WIDGET_INTERACT;
 
       trackEvent(eventName, {
         feature_name: featureName,
         feature_category: category,
         action,
         ...properties,
-      })
+      });
     },
-    [featureName, category]
-  )
+    [featureName, category],
+  );
 
   const trackFeatureDiscovery = useCallback(() => {
     trackEvent(ANALYTICS_EVENTS.ENGAGEMENT.FEATURE_DISCOVERY, {
       feature_name: featureName,
       feature_category: category,
-    })
-  }, [featureName, category])
+    });
+  }, [featureName, category]);
 
   return {
     trackFeatureUse,
     trackFeatureDiscovery,
-  }
+  };
 }
 
 /**
@@ -219,67 +222,67 @@ export function useDeviceTracking() {
         language: navigator.language,
         languages: navigator.languages,
         user_agent: navigator.userAgent.slice(0, 200),
-      }
+      };
 
-      trackEvent(ANALYTICS_EVENTS.ENGAGEMENT.SESSION_START, deviceInfo)
+      trackEvent(ANALYTICS_EVENTS.ENGAGEMENT.SESSION_START, deviceInfo);
     }
-  }, [])
+  }, []);
 }
 
 /**
  * 🔄 セッション追跡フック
  */
 export function useSessionTracking() {
-  const sessionStartRef = useRef<number>(0)
-  const lastActivityRef = useRef<number>(0)
-  const pageViewCountRef = useRef<number>(0)
-  const interactionCountRef = useRef<number>(0)
+  const sessionStartRef = useRef<number>(0);
+  const lastActivityRef = useRef<number>(0);
+  const pageViewCountRef = useRef<number>(0);
+  const interactionCountRef = useRef<number>(0);
 
   // 初回マウント時にタイムスタンプを設定
   useEffect(() => {
     if (sessionStartRef.current === 0) {
-      const now = Date.now()
-      sessionStartRef.current = now
-      lastActivityRef.current = now
+      const now = Date.now();
+      sessionStartRef.current = now;
+      lastActivityRef.current = now;
     }
-  }, [])
+  }, []);
 
   // アクティビティ更新
   const updateActivity = useCallback(() => {
-    lastActivityRef.current = Date.now()
-    interactionCountRef.current += 1
-  }, [])
+    lastActivityRef.current = Date.now();
+    interactionCountRef.current += 1;
+  }, []);
 
   // ページビューカウント
   const incrementPageView = useCallback(() => {
-    pageViewCountRef.current += 1
-  }, [])
+    pageViewCountRef.current += 1;
+  }, []);
 
   // セッション終了時のトラッキング
   useEffect(() => {
     const handleBeforeUnload = () => {
-      const sessionDuration = Date.now() - sessionStartRef.current
-      const idleTime = Date.now() - lastActivityRef.current
+      const sessionDuration = Date.now() - sessionStartRef.current;
+      const idleTime = Date.now() - lastActivityRef.current;
 
       trackEvent(ANALYTICS_EVENTS.ENGAGEMENT.SESSION_END, {
         session_duration_ms: sessionDuration,
         idle_time_ms: idleTime,
         page_views: pageViewCountRef.current,
         interactions: interactionCountRef.current,
-      })
-    }
+      });
+    };
 
-    window.addEventListener('beforeunload', handleBeforeUnload)
+    window.addEventListener('beforeunload', handleBeforeUnload);
     return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload)
-      handleBeforeUnload()
-    }
-  }, [])
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      handleBeforeUnload();
+    };
+  }, []);
 
   return {
     updateActivity,
     incrementPageView,
-  }
+  };
 }
 
 /**
@@ -292,8 +295,8 @@ export function useABTestTracking(testName: string, variant: string) {
       test_name: testName,
       variant,
       experiment_group: `${testName}_${variant}`,
-    })
-  }, [testName, variant])
+    });
+  }, [testName, variant]);
 
   const trackConversion = useCallback(
     (conversionType: string, value?: number) => {
@@ -303,12 +306,12 @@ export function useABTestTracking(testName: string, variant: string) {
         variant,
         value_amount: value,
         experiment_group: `${testName}_${variant}`,
-      })
+      });
     },
-    [testName, variant]
-  )
+    [testName, variant],
+  );
 
-  return { trackConversion }
+  return { trackConversion };
 }
 
 /**
@@ -320,20 +323,23 @@ export function usePerformanceTracking() {
       metric_name: metricName,
       metric_value: value,
       metric_unit: unit,
-    })
-  }, [])
+    });
+  }, []);
 
-  const trackAPIPerformance = useCallback((endpoint: string, duration: number, statusCode?: number) => {
-    trackEvent(ANALYTICS_EVENTS.PERFORMANCE.API_RESPONSE_TIME, {
-      endpoint: endpoint.slice(0, 100),
-      metric_value: duration,
-      metric_unit: 'ms',
-      status_code: statusCode,
-    })
-  }, [])
+  const trackAPIPerformance = useCallback(
+    (endpoint: string, duration: number, statusCode?: number) => {
+      trackEvent(ANALYTICS_EVENTS.PERFORMANCE.API_RESPONSE_TIME, {
+        endpoint: endpoint.slice(0, 100),
+        metric_value: duration,
+        metric_unit: 'ms',
+        status_code: statusCode,
+      });
+    },
+    [],
+  );
 
   return {
     trackPerformance,
     trackAPIPerformance,
-  }
+  };
 }

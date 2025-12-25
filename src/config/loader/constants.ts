@@ -18,7 +18,7 @@ export const CONFIG_PATHS = {
   local: './config/local.json',
   /** 環境変数マッピング */
   envMapping: './config/env-mapping.json',
-} as const
+} as const;
 
 /**
  * 🌍 環境変数から設定マッピング
@@ -58,4 +58,4 @@ export const ENV_VAR_MAPPINGS = {
   'server.port': 'PORT',
   'server.host': 'HOST',
   'server.session.secret': 'SESSION_SECRET',
-} as const
+} as const;

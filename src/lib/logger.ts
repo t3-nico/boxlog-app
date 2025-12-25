@@ -3,32 +3,32 @@
  * 本番環境ではログを出力しない
  */
 
-const isDevelopment = process.env.NODE_ENV === 'development'
+const isDevelopment = process.env.NODE_ENV === 'development';
 
 export const logger = {
   log: (...args: unknown[]) => {
     if (isDevelopment) {
-      console.log(...args)
+      console.log(...args);
     }
   },
   error: (...args: unknown[]) => {
     if (isDevelopment) {
-      console.error(...args)
+      console.error(...args);
     }
   },
   warn: (...args: unknown[]) => {
     if (isDevelopment) {
-      console.warn(...args)
+      console.warn(...args);
     }
   },
   info: (...args: unknown[]) => {
     if (isDevelopment) {
-      console.info(...args)
+      console.info(...args);
     }
   },
   debug: (...args: unknown[]) => {
     if (isDevelopment) {
-      console.debug(...args)
+      console.debug(...args);
     }
   },
-} as const
+} as const;

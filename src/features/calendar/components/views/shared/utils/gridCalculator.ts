@@ -2,9 +2,9 @@
  * グリッド計算ユーティリティ
  */
 
-import { MS_PER_MINUTE } from '@/constants/time'
+import { MS_PER_MINUTE } from '@/constants/time';
 
-import { HOUR_HEIGHT } from '../constants/grid.constants'
+import { HOUR_HEIGHT } from '../constants/grid.constants';
 
 /**
  * 時刻をピクセル位置に変換
@@ -13,10 +13,10 @@ import { HOUR_HEIGHT } from '../constants/grid.constants'
  * @returns Y座標（px）
  */
 export function timeToPixels(time: Date, hourHeight: number = HOUR_HEIGHT): number {
-  const hours = time.getHours()
-  const minutes = time.getMinutes()
-  const totalMinutes = hours * 60 + minutes
-  return (totalMinutes * hourHeight) / 60
+  const hours = time.getHours();
+  const minutes = time.getMinutes();
+  const totalMinutes = hours * 60 + minutes;
+  return (totalMinutes * hourHeight) / 60;
 }
 
 /**
@@ -26,14 +26,18 @@ export function timeToPixels(time: Date, hourHeight: number = HOUR_HEIGHT): numb
  * @param hourHeight - 1時間の高さ（デフォルト: 60px）
  * @returns 時刻
  */
-export function pixelsToTime(pixels: number, baseDate: Date, hourHeight: number = HOUR_HEIGHT): Date {
-  const totalMinutes = (pixels * 60) / hourHeight
-  const hours = Math.floor(totalMinutes / 60)
-  const minutes = Math.floor(totalMinutes % 60)
+export function pixelsToTime(
+  pixels: number,
+  baseDate: Date,
+  hourHeight: number = HOUR_HEIGHT,
+): Date {
+  const totalMinutes = (pixels * 60) / hourHeight;
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = Math.floor(totalMinutes % 60);
 
-  const result = new Date(baseDate)
-  result.setHours(hours, minutes, 0, 0)
-  return result
+  const result = new Date(baseDate);
+  result.setHours(hours, minutes, 0, 0);
+  return result;
 }
 
 /**
@@ -42,11 +46,14 @@ export function pixelsToTime(pixels: number, baseDate: Date, hourHeight: number 
  * @param hourHeight - 1時間の高さ（デフォルト: 60px）
  * @returns {hour, minute}
  */
-export function pixelsToTimeValues(pixels: number, hourHeight: number = HOUR_HEIGHT): { hour: number; minute: number } {
-  const totalMinutes = (pixels * 60) / hourHeight
-  const hour = Math.floor(totalMinutes / 60)
-  const minute = Math.floor(totalMinutes % 60)
-  return { hour, minute }
+export function pixelsToTimeValues(
+  pixels: number,
+  hourHeight: number = HOUR_HEIGHT,
+): { hour: number; minute: number } {
+  const totalMinutes = (pixels * 60) / hourHeight;
+  const hour = Math.floor(totalMinutes / 60);
+  const minute = Math.floor(totalMinutes % 60);
+  return { hour, minute };
 }
 
 /**
@@ -63,14 +70,14 @@ export function getEventStyle(
   end: Date,
   column: number = 0,
   totalColumns: number = 1,
-  hourHeight: number = HOUR_HEIGHT
+  hourHeight: number = HOUR_HEIGHT,
 ): React.CSSProperties {
-  const top = timeToPixels(start, hourHeight)
-  const bottom = timeToPixels(end, hourHeight)
-  const height = Math.max(bottom - top, 20) // 最小高さ20px
+  const top = timeToPixels(start, hourHeight);
+  const bottom = timeToPixels(end, hourHeight);
+  const height = Math.max(bottom - top, 20); // 最小高さ20px
 
-  const width = 100 / totalColumns
-  const left = (100 / totalColumns) * column
+  const width = 100 / totalColumns;
+  const left = (100 / totalColumns) * column;
 
   return {
     position: 'absolute',
@@ -79,7 +86,7 @@ export function getEventStyle(
     left: `${left}%`,
     width: `${width}%`,
     zIndex: 10,
-  }
+  };
 }
 
 /**
@@ -92,9 +99,9 @@ export function getEventStyle(
 export function calculateGridHeight(
   startHour: number = 0,
   endHour: number = 24,
-  hourHeight: number = HOUR_HEIGHT
+  hourHeight: number = HOUR_HEIGHT,
 ): number {
-  return (endHour - startHour) * hourHeight
+  return (endHour - startHour) * hourHeight;
 }
 
 /**
@@ -105,8 +112,8 @@ export function calculateGridHeight(
  * @returns 範囲内ならtrue
  */
 export function isTimeInRange(time: Date, startHour: number, endHour: number): boolean {
-  const hour = time.getHours()
-  return hour >= startHour && hour < endHour
+  const hour = time.getHours();
+  return hour >= startHour && hour < endHour;
 }
 
 /**
@@ -115,27 +122,30 @@ export function isTimeInRange(time: Date, startHour: number, endHour: number): b
  * @param direction - 'up' | 'down' | 'nearest'
  * @returns 丸められた時刻
  */
-export function roundToQuarterHour(time: Date, direction: 'up' | 'down' | 'nearest' = 'nearest'): Date {
-  const result = new Date(time)
-  const minutes = result.getMinutes()
-  const quarterHour = 15
+export function roundToQuarterHour(
+  time: Date,
+  direction: 'up' | 'down' | 'nearest' = 'nearest',
+): Date {
+  const result = new Date(time);
+  const minutes = result.getMinutes();
+  const quarterHour = 15;
 
-  let roundedMinutes: number
+  let roundedMinutes: number;
   if (direction === 'up') {
-    roundedMinutes = Math.ceil(minutes / quarterHour) * quarterHour
+    roundedMinutes = Math.ceil(minutes / quarterHour) * quarterHour;
   } else if (direction === 'down') {
-    roundedMinutes = Math.floor(minutes / quarterHour) * quarterHour
+    roundedMinutes = Math.floor(minutes / quarterHour) * quarterHour;
   } else {
-    roundedMinutes = Math.round(minutes / quarterHour) * quarterHour
+    roundedMinutes = Math.round(minutes / quarterHour) * quarterHour;
   }
 
   if (roundedMinutes === 60) {
-    result.setHours(result.getHours() + 1, 0, 0, 0)
+    result.setHours(result.getHours() + 1, 0, 0, 0);
   } else {
-    result.setMinutes(roundedMinutes, 0, 0)
+    result.setMinutes(roundedMinutes, 0, 0);
   }
 
-  return result
+  return result;
 }
 
 /**
@@ -145,7 +155,7 @@ export function roundToQuarterHour(time: Date, direction: 'up' | 'down' | 'neare
  * @returns 継続時間（分）
  */
 export function getDurationInMinutes(start: Date, end: Date): number {
-  return Math.max(0, (end.getTime() - start.getTime()) / MS_PER_MINUTE)
+  return Math.max(0, (end.getTime() - start.getTime()) / MS_PER_MINUTE);
 }
 
 /**
@@ -158,9 +168,9 @@ export function getDurationInMinutes(start: Date, end: Date): number {
 export function calculateScrollPosition(
   targetHour: number,
   hourHeight: number = HOUR_HEIGHT,
-  containerHeight: number = 600
+  containerHeight: number = 600,
 ): number {
-  const targetPosition = targetHour * hourHeight
+  const targetPosition = targetHour * hourHeight;
   // 画面の中央に表示するように調整
-  return Math.max(0, targetPosition - containerHeight / 3)
+  return Math.max(0, targetPosition - containerHeight / 3);
 }

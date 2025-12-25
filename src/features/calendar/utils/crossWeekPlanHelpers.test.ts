@@ -1,8 +1,12 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vitest';
 
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
 
-import { detectFridayToMondayPlans, filterWeekendPlans, splitCrossWeekPlans } from './crossWeekPlanHelpers'
+import {
+  detectFridayToMondayPlans,
+  filterWeekendPlans,
+  splitCrossWeekPlans,
+} from './crossWeekPlanHelpers';
 
 describe('crossWeekPlanHelpers', () => {
   describe('splitCrossWeekPlans', () => {
@@ -24,15 +28,15 @@ describe('crossWeekPlanHelpers', () => {
           createdAt: new Date(),
           updatedAt: new Date(),
         },
-      ]
+      ];
 
-      const weekStart = new Date('2024-06-10')
-      const segments = splitCrossWeekPlans(plans, true, weekStart)
+      const weekStart = new Date('2024-06-10');
+      const segments = splitCrossWeekPlans(plans, true, weekStart);
 
-      expect(segments).toHaveLength(1)
-      expect(segments[0]!.segmentType).toBe('full')
-      expect(segments[0]!.isPartialSegment).toBe(false)
-    })
+      expect(segments).toHaveLength(1);
+      expect(segments[0]!.segmentType).toBe('full');
+      expect(segments[0]!.isPartialSegment).toBe(false);
+    });
 
     it('複数日プランを分割する', () => {
       const plans: CalendarPlan[] = [
@@ -52,15 +56,15 @@ describe('crossWeekPlanHelpers', () => {
           createdAt: new Date(),
           updatedAt: new Date(),
         },
-      ]
+      ];
 
-      const weekStart = new Date('2024-06-10')
-      const segments = splitCrossWeekPlans(plans, true, weekStart)
+      const weekStart = new Date('2024-06-10');
+      const segments = splitCrossWeekPlans(plans, true, weekStart);
 
-      expect(segments.length).toBeGreaterThan(1)
-      expect(segments[0]!.segmentType).toBe('start')
-      expect(segments[segments.length - 1]!.segmentType).toBe('end')
-    })
+      expect(segments.length).toBeGreaterThan(1);
+      expect(segments[0]!.segmentType).toBe('start');
+      expect(segments[segments.length - 1]!.segmentType).toBe('end');
+    });
 
     it('週末表示OFF時は土日をスキップする', () => {
       const plans: CalendarPlan[] = [
@@ -80,16 +84,16 @@ describe('crossWeekPlanHelpers', () => {
           createdAt: new Date(),
           updatedAt: new Date(),
         },
-      ]
+      ];
 
-      const weekStart = new Date('2024-06-10')
-      const segments = splitCrossWeekPlans(plans, false, weekStart) // showWeekends: false
+      const weekStart = new Date('2024-06-10');
+      const segments = splitCrossWeekPlans(plans, false, weekStart); // showWeekends: false
 
       // 土日がスキップされるため、金曜と月曜のみ
-      const segmentDays = segments.map((s) => s.segmentStart.getDay())
-      expect(segmentDays).not.toContain(0) // 日曜
-      expect(segmentDays).not.toContain(6) // 土曜
-    })
+      const segmentDays = segments.map((s) => s.segmentStart.getDay());
+      expect(segmentDays).not.toContain(0); // 日曜
+      expect(segmentDays).not.toContain(6); // 土曜
+    });
 
     it('startDate/endDateがnullの場合はフルプランとして扱う', () => {
       const plans: CalendarPlan[] = [
@@ -109,15 +113,15 @@ describe('crossWeekPlanHelpers', () => {
           createdAt: new Date(),
           updatedAt: new Date(),
         },
-      ]
+      ];
 
-      const weekStart = new Date('2024-06-10')
-      const segments = splitCrossWeekPlans(plans, true, weekStart)
+      const weekStart = new Date('2024-06-10');
+      const segments = splitCrossWeekPlans(plans, true, weekStart);
 
-      expect(segments).toHaveLength(1)
-      expect(segments[0]!.segmentType).toBe('full')
-    })
-  })
+      expect(segments).toHaveLength(1);
+      expect(segments[0]!.segmentType).toBe('full');
+    });
+  });
 
   describe('filterWeekendPlans', () => {
     it('週末（土日）のプランのみ返す', () => {
@@ -170,20 +174,20 @@ describe('crossWeekPlanHelpers', () => {
           createdAt: new Date(),
           updatedAt: new Date(),
         },
-      ]
+      ];
 
       const dateRange = {
         start: new Date('2024-06-10'),
         end: new Date('2024-06-17'),
-      }
+      };
 
-      const weekendPlans = filterWeekendPlans(plans, dateRange)
+      const weekendPlans = filterWeekendPlans(plans, dateRange);
 
       // 2024-06-15は土曜、2024-06-16は日曜
-      expect(weekendPlans.length).toBeGreaterThanOrEqual(1)
-      const weekendIds = weekendPlans.map((p) => p.id)
-      expect(weekendIds).toContain('plan-2')
-    })
+      expect(weekendPlans.length).toBeGreaterThanOrEqual(1);
+      const weekendIds = weekendPlans.map((p) => p.id);
+      expect(weekendIds).toContain('plan-2');
+    });
 
     it('startDateがnullの場合は除外する', () => {
       const plans: CalendarPlan[] = [
@@ -203,18 +207,18 @@ describe('crossWeekPlanHelpers', () => {
           createdAt: new Date(),
           updatedAt: new Date(),
         },
-      ]
+      ];
 
       const dateRange = {
         start: new Date('2024-06-10'),
         end: new Date('2024-06-16'),
-      }
+      };
 
-      const weekendPlans = filterWeekendPlans(plans, dateRange)
+      const weekendPlans = filterWeekendPlans(plans, dateRange);
 
-      expect(weekendPlans).toHaveLength(0)
-    })
-  })
+      expect(weekendPlans).toHaveLength(0);
+    });
+  });
 
   describe('detectFridayToMondayPlans', () => {
     it('金曜から月曜にまたがるプランを検出する', () => {
@@ -251,13 +255,13 @@ describe('crossWeekPlanHelpers', () => {
           createdAt: new Date(),
           updatedAt: new Date(),
         },
-      ]
+      ];
 
-      const fridayToMonday = detectFridayToMondayPlans(plans)
+      const fridayToMonday = detectFridayToMondayPlans(plans);
 
-      expect(fridayToMonday).toHaveLength(1)
-      expect(fridayToMonday[0]!.id).toBe('plan-1')
-    })
+      expect(fridayToMonday).toHaveLength(1);
+      expect(fridayToMonday[0]!.id).toBe('plan-1');
+    });
 
     it('startDate/endDateがnullの場合は除外する', () => {
       const plans: CalendarPlan[] = [
@@ -277,11 +281,11 @@ describe('crossWeekPlanHelpers', () => {
           createdAt: new Date(),
           updatedAt: new Date(),
         },
-      ]
+      ];
 
-      const fridayToMonday = detectFridayToMondayPlans(plans)
+      const fridayToMonday = detectFridayToMondayPlans(plans);
 
-      expect(fridayToMonday).toHaveLength(0)
-    })
-  })
-})
+      expect(fridayToMonday).toHaveLength(0);
+    });
+  });
+});

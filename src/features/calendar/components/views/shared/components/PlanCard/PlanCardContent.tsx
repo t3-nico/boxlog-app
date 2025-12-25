@@ -2,40 +2,40 @@
  * プランカードの中身（タイトル、時間等）のコンポーネント
  */
 
-'use client'
+'use client';
 
-import { Bell } from 'lucide-react'
-import { memo } from 'react'
+import { Bell } from 'lucide-react';
+import { memo } from 'react';
 
-import { RecurringIndicatorFromFlag } from '@/features/plans/components/shared/RecurringIndicator'
-import { useTranslations } from 'next-intl'
+import { RecurringIndicatorFromFlag } from '@/features/plans/components/shared/RecurringIndicator';
+import { useTranslations } from 'next-intl';
 
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
-import { formatTimeRange } from '../../utils/dateHelpers'
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
+import { formatTimeRange } from '../../utils/dateHelpers';
 
 interface PlanCardContentProps {
-  plan: CalendarPlan
-  isCompact?: boolean
-  showTime?: boolean
-  timeFormat?: '12h' | '24h'
-  previewTime?: { start: Date; end: Date } | null // ドラッグ中のプレビュー時間
-  hasCheckbox?: boolean // チェックボックスがある場合は左パディングを追加
+  plan: CalendarPlan;
+  isCompact?: boolean;
+  showTime?: boolean;
+  timeFormat?: '12h' | '24h';
+  previewTime?: { start: Date; end: Date } | null; // ドラッグ中のプレビュー時間
+  hasCheckbox?: boolean; // チェックボックスがある場合は左パディングを追加
 }
 
 // Helper function: Parse plan start date
 function parseplanStartDate(plan: CalendarPlan): Date | null {
   // CalendarPlanはstartDateを持つ
-  if (plan.startDate instanceof Date) return plan.startDate
-  if (plan.startDate) return new Date(plan.startDate)
-  return null
+  if (plan.startDate instanceof Date) return plan.startDate;
+  if (plan.startDate) return new Date(plan.startDate);
+  return null;
 }
 
 // Helper function: Parse plan end date
 function parseplanEndDate(plan: CalendarPlan): Date | null {
   // CalendarPlanはendDateを持つ
-  if (plan.endDate instanceof Date) return plan.endDate
-  if (plan.endDate) return new Date(plan.endDate)
-  return null
+  if (plan.endDate instanceof Date) return plan.endDate;
+  if (plan.endDate) return new Date(plan.endDate);
+  return null;
 }
 
 export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardContent({
@@ -46,11 +46,11 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
   previewTime = null,
   hasCheckbox = false,
 }) {
-  const t = useTranslations()
+  const t = useTranslations();
 
   // プランの開始・終了時刻をDateオブジェクトに変換
-  const planStart = parseplanStartDate(plan)
-  const planEnd = parseplanEndDate(plan)
+  const planStart = parseplanStartDate(plan);
+  const planEnd = parseplanEndDate(plan);
 
   // 継続時間を計算
 
@@ -58,22 +58,32 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
     // コンパクト表示：タイトル #番号
     return (
       <div className={`flex h-full items-center gap-1 ${hasCheckbox ? 'pl-4' : ''}`}>
-        <span className="text-foreground truncate text-sm leading-tight font-medium">{plan.title}</span>
+        <span className="text-foreground truncate text-sm leading-tight font-medium">
+          {plan.title}
+        </span>
         {plan.plan_number && (
-          <span className="flex-shrink-0 text-sm leading-tight opacity-75">#{plan.plan_number}</span>
+          <span className="flex-shrink-0 text-sm leading-tight opacity-75">
+            #{plan.plan_number}
+          </span>
         )}
       </div>
-    )
+    );
   }
 
   // 通常表示：タイトル #番号 + 時間 + アイコン + タグの順番（優先度順）
   return (
-    <div className={`relative flex h-full flex-col gap-0.5 overflow-hidden ${hasCheckbox ? 'pl-6' : ''}`}>
+    <div
+      className={`relative flex h-full flex-col gap-0.5 overflow-hidden ${hasCheckbox ? 'pl-6' : ''}`}
+    >
       {/* タイトル（最優先） */}
       <div className="flex flex-shrink-0 items-baseline gap-1 text-sm leading-tight font-medium">
-        <span className={`${isCompact ? 'line-clamp-1' : 'line-clamp-2'} text-foreground`}>{plan.title}</span>
+        <span className={`${isCompact ? 'line-clamp-1' : 'line-clamp-2'} text-foreground`}>
+          {plan.title}
+        </span>
         {plan.plan_number && (
-          <span className="flex-shrink-0 text-sm leading-tight opacity-75">#{plan.plan_number}</span>
+          <span className="flex-shrink-0 text-sm leading-tight opacity-75">
+            #{plan.plan_number}
+          </span>
         )}
       </div>
 
@@ -88,7 +98,11 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
                 : t('calendar.event.noTimeSet')}
           </span>
           {/* 繰り返しアイコン */}
-          <RecurringIndicatorFromFlag isRecurring={plan.isRecurring} size="xs" className="opacity-75" />
+          <RecurringIndicatorFromFlag
+            isRecurring={plan.isRecurring}
+            size="xs"
+            className="opacity-75"
+          />
           {/* 通知アイコン（reminder_minutesが設定されている場合） */}
           {plan.reminder_minutes != null && <Bell className="h-3 w-3 flex-shrink-0 opacity-75" />}
         </div>
@@ -101,11 +115,11 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
             .slice(0, 2)
             .map(
               (tag: {
-                id: string
-                name: string
-                color: string
-                icon?: string | undefined
-                parent_id?: string | undefined
+                id: string;
+                name: string;
+                color: string;
+                icon?: string | undefined;
+                parent_id?: string | undefined;
               }) => (
                 <span
                   key={tag.id}
@@ -125,13 +139,15 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
                   </span>
                   <span className="truncate">{tag.name}</span>
                 </span>
-              )
+              ),
             )}
           {plan.tags.length > 2 && (
-            <span className="inline-flex items-center px-1 text-xs opacity-75">+{plan.tags.length - 2}</span>
+            <span className="inline-flex items-center px-1 text-xs opacity-75">
+              +{plan.tags.length - 2}
+            </span>
           )}
         </div>
       ) : null}
     </div>
-  )
-})
+  );
+});

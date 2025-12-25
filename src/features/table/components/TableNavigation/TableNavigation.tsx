@@ -1,55 +1,61 @@
-'use client'
+'use client';
 
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react';
 
-import { ArrowUpDown, ListFilter, Search, Settings2, X } from 'lucide-react'
+import { ArrowUpDown, ListFilter, Search, Settings2, X } from 'lucide-react';
 
-import { MobileSettingsRadioGroup, MobileSettingsSection } from '@/components/common'
-import { Button } from '@/components/ui/button'
-import { Drawer, DrawerClose, DrawerContent, DrawerHeader, DrawerTitle } from '@/components/ui/drawer'
-import { Input } from '@/components/ui/input'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { HoverTooltip } from '@/components/ui/tooltip'
-import { MEDIA_QUERIES } from '@/config/ui/breakpoints'
-import { useMediaQuery } from '@/hooks/useMediaQuery'
-import { cn } from '@/lib/utils'
+import { MobileSettingsRadioGroup, MobileSettingsSection } from '@/components/common';
+import { Button } from '@/components/ui/button';
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+} from '@/components/ui/drawer';
+import { Input } from '@/components/ui/input';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { HoverTooltip } from '@/components/ui/tooltip';
+import { MEDIA_QUERIES } from '@/config/ui/breakpoints';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { cn } from '@/lib/utils';
 
 export interface TableNavigationConfig {
   /** 検索の現在値 */
-  search: string
+  search: string;
   /** 検索値の更新 */
-  onSearchChange: (value: string) => void
+  onSearchChange: (value: string) => void;
   /** ソートフィールド（null = ソートなし） */
-  sortField: string | null
+  sortField: string | null;
   /** ソート方向 */
-  sortDirection: 'asc' | 'desc' | null
+  sortDirection: 'asc' | 'desc' | null;
   /** ソート変更 */
-  onSortChange: (field: string, direction: 'asc' | 'desc') => void
+  onSortChange: (field: string, direction: 'asc' | 'desc') => void;
   /** ソートクリア */
-  onSortClear: () => void
+  onSortClear: () => void;
   /** ソートフィールドオプション */
-  sortFieldOptions: Array<{ value: string; label: string }>
+  sortFieldOptions: Array<{ value: string; label: string }>;
   /** フィルターシートの内容（カスタム） */
-  filterContent?: React.ReactNode
+  filterContent?: React.ReactNode;
   /** フィルター数（バッジ表示用） */
-  filterCount?: number
+  filterCount?: number;
   /** アクティブなフィルターがあるか */
-  hasActiveFilters?: boolean
+  hasActiveFilters?: boolean;
   /** フィルターリセットハンドラー */
-  onFilterReset?: () => void
+  onFilterReset?: () => void;
   /** 設定シートの内容（カスタム） */
-  settingsContent?: React.ReactNode
+  settingsContent?: React.ReactNode;
   /** 設定のリセットハンドラー */
-  onSettingsReset?: () => void
+  onSettingsReset?: () => void;
   /** アクティブな設定があるか */
-  hasActiveSettings?: boolean
+  hasActiveSettings?: boolean;
 }
 
 export interface TableNavigationProps {
   /** 設定 */
-  config: TableNavigationConfig
+  config: TableNavigationConfig;
   /** 追加のクラス名 */
-  className?: string
+  className?: string;
 }
 
 /**
@@ -58,7 +64,7 @@ export interface TableNavigationProps {
 const SORT_DIRECTION_OPTIONS: Array<{ value: 'asc' | 'desc'; label: string }> = [
   { value: 'asc', label: '昇順 (A → Z)' },
   { value: 'desc', label: '降順 (Z → A)' },
-]
+];
 
 /**
  * テーブル用Notion風ナビゲーション
@@ -68,62 +74,62 @@ const SORT_DIRECTION_OPTIONS: Array<{ value: 'asc' | 'desc'; label: string }> = 
  * - モバイル: Drawer (Vaul) で表示
  */
 export function TableNavigation({ config, className }: TableNavigationProps) {
-  const isMobile = useMediaQuery(MEDIA_QUERIES.mobile)
+  const isMobile = useMediaQuery(MEDIA_QUERIES.mobile);
 
-  const [showSearch, setShowSearch] = useState(false)
-  const [showFilter, setShowFilter] = useState(false)
-  const [showSort, setShowSort] = useState(false)
-  const [showSettings, setShowSettings] = useState(false)
+  const [showSearch, setShowSearch] = useState(false);
+  const [showFilter, setShowFilter] = useState(false);
+  const [showSort, setShowSort] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
 
   // 検索用ローカル状態
-  const [localSearch, setLocalSearch] = useState(config.search)
+  const [localSearch, setLocalSearch] = useState(config.search);
 
   // 検索確定
   const handleSearchSubmit = useCallback(
     (e: React.FormEvent) => {
-      e.preventDefault()
-      config.onSearchChange(localSearch)
-      setShowSearch(false)
+      e.preventDefault();
+      config.onSearchChange(localSearch);
+      setShowSearch(false);
     },
-    [config, localSearch]
-  )
+    [config, localSearch],
+  );
 
   const handleSearchClear = useCallback(() => {
-    setLocalSearch('')
-    config.onSearchChange('')
-  }, [config])
+    setLocalSearch('');
+    config.onSearchChange('');
+  }, [config]);
 
   // ソートフィールド変更
   const handleSortFieldChange = useCallback(
     (value: string) => {
       if (value === 'none') {
-        config.onSortClear()
+        config.onSortClear();
       } else {
-        config.onSortChange(value, config.sortDirection || 'asc')
+        config.onSortChange(value, config.sortDirection || 'asc');
       }
     },
-    [config]
-  )
+    [config],
+  );
 
   // ソート方向変更
   const handleSortDirectionChange = useCallback(
     (value: 'asc' | 'desc') => {
       if (config.sortField) {
-        config.onSortChange(config.sortField, value)
+        config.onSortChange(config.sortField, value);
       }
     },
-    [config]
-  )
+    [config],
+  );
 
   // ソートフィールドオプション（noneを追加）
   const allSortFieldOptions = useMemo(
     () => [{ value: 'none', label: 'なし' }, ...config.sortFieldOptions],
-    [config.sortFieldOptions]
-  )
+    [config.sortFieldOptions],
+  );
 
   // 共通のアイコンボタンスタイル
-  const iconButtonClass = 'text-muted-foreground hover:text-foreground relative size-8'
-  const activeClass = 'text-foreground bg-state-selected'
+  const iconButtonClass = 'text-muted-foreground hover:text-foreground relative size-8';
+  const activeClass = 'text-foreground bg-state-selected';
 
   // 検索コンテンツ（PC/モバイル共通）
   const searchContent = (
@@ -150,7 +156,12 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
         )}
       </div>
       <div className="flex gap-2">
-        <Button type="button" variant="outline" onClick={() => setShowSearch(false)} className="flex-1">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => setShowSearch(false)}
+          className="flex-1"
+        >
           キャンセル
         </Button>
         <Button type="submit" className="flex-1">
@@ -158,7 +169,7 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
         </Button>
       </div>
     </form>
-  )
+  );
 
   // ソートコンテンツ（PC/モバイル共通）
   const sortContent = (
@@ -183,7 +194,7 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
         </MobileSettingsSection>
       )}
     </div>
-  )
+  );
 
   // モバイル用レンダリング（Drawer）
   if (isMobile) {
@@ -196,8 +207,8 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
               variant="ghost"
               size="icon"
               onClick={() => {
-                setLocalSearch(config.search)
-                setShowSearch(true)
+                setLocalSearch(config.search);
+                setShowSearch(true);
               }}
               aria-label="検索"
               className={cn(iconButtonClass, config.search !== '' && activeClass)}
@@ -259,8 +270,8 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
         <Drawer
           open={showSearch}
           onOpenChange={(open) => {
-            if (open) setLocalSearch(config.search)
-            setShowSearch(open)
+            if (open) setLocalSearch(config.search);
+            setShowSearch(open);
           }}
         >
           <DrawerContent>
@@ -342,7 +353,7 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
           </DrawerContent>
         </Drawer>
       </>
-    )
+    );
   }
 
   // PC用レンダリング（Popover）
@@ -352,8 +363,8 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
       <Popover
         open={showSearch}
         onOpenChange={(open) => {
-          if (open) setLocalSearch(config.search)
-          setShowSearch(open)
+          if (open) setLocalSearch(config.search);
+          setShowSearch(open);
         }}
       >
         <HoverTooltip content="検索" side="top">
@@ -400,7 +411,12 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
             <div className="mb-3 flex items-center justify-between">
               <h3 className="text-sm font-medium">フィルター</h3>
               {config.hasActiveFilters && config.onFilterReset && (
-                <Button variant="ghost" size="sm" onClick={config.onFilterReset} className="h-auto p-0 text-xs">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={config.onFilterReset}
+                  className="h-auto p-0 text-xs"
+                >
                   リセット
                 </Button>
               )}
@@ -428,7 +444,12 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
           <div className="mb-3 flex items-center justify-between">
             <h3 className="text-sm font-medium">ソート</h3>
             {config.sortField && (
-              <Button variant="ghost" size="sm" onClick={config.onSortClear} className="h-auto p-0 text-xs">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={config.onSortClear}
+                className="h-auto p-0 text-xs"
+              >
                 リセット
               </Button>
             )}
@@ -456,7 +477,12 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
             <div className="mb-3 flex items-center justify-between">
               <h3 className="text-sm font-medium">設定</h3>
               {config.hasActiveSettings && config.onSettingsReset && (
-                <Button variant="ghost" size="sm" onClick={config.onSettingsReset} className="h-auto p-0 text-xs">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={config.onSettingsReset}
+                  className="h-auto p-0 text-xs"
+                >
                   リセット
                 </Button>
               )}
@@ -466,5 +492,5 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
         </Popover>
       )}
     </div>
-  )
+  );
 }

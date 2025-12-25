@@ -1,33 +1,33 @@
-'use client'
+'use client';
 
-import { createContext, ReactNode, useCallback, useContext, useState } from 'react'
+import { createContext, ReactNode, useCallback, useContext, useState } from 'react';
 
-import { NotificationModal } from '../components/NotificationModal'
+import { NotificationModal } from '../components/NotificationModal';
 
 interface NotificationModalContextType {
-  open: () => void
-  close: () => void
-  isOpen: boolean
-  notificationCount: number
-  setNotificationCount: (count: number) => void
+  open: () => void;
+  close: () => void;
+  isOpen: boolean;
+  notificationCount: number;
+  setNotificationCount: (count: number) => void;
 }
 
-const NotificationModalContext = createContext<NotificationModalContextType | null>(null)
+const NotificationModalContext = createContext<NotificationModalContextType | null>(null);
 
 export function useNotificationModal() {
-  const context = useContext(NotificationModalContext)
+  const context = useContext(NotificationModalContext);
   if (!context) {
-    throw new Error('useNotificationModal must be used within NotificationModalProvider')
+    throw new Error('useNotificationModal must be used within NotificationModalProvider');
   }
-  return context
+  return context;
 }
 
 export const NotificationModalProvider = ({ children }: { children: ReactNode }) => {
-  const [isOpen, setIsOpen] = useState(false)
-  const [notificationCount, setNotificationCount] = useState(0)
+  const [isOpen, setIsOpen] = useState(false);
+  const [notificationCount, setNotificationCount] = useState(0);
 
-  const open = useCallback(() => setIsOpen(true), [])
-  const close = useCallback(() => setIsOpen(false), [])
+  const open = useCallback(() => setIsOpen(true), []);
+  const close = useCallback(() => setIsOpen(false), []);
 
   const contextValue = {
     open,
@@ -35,12 +35,12 @@ export const NotificationModalProvider = ({ children }: { children: ReactNode })
     isOpen,
     notificationCount,
     setNotificationCount,
-  }
+  };
 
   return (
     <NotificationModalContext.Provider value={contextValue}>
       {children}
       <NotificationModal isOpen={isOpen} onClose={close} />
     </NotificationModalContext.Provider>
-  )
-}
+  );
+};

@@ -22,11 +22,11 @@ export {
   useAnimation,
   useAnimationPerformance,
   useViewTransition,
-} from './ViewTransition'
+} from './ViewTransition';
 
-export type { CalendarView, SlideDirection } from './types'
+export type { CalendarView, SlideDirection } from './types';
 
-export { AnimatedEventCard } from './AnimatedPlanCard'
+export { AnimatedEventCard } from './AnimatedPlanCard';
 export {
   // NOTE: tailwindAnimations はPlanAnimations.tsxで未定義のため除外
   AnimatedEventItem,
@@ -34,4 +34,4 @@ export {
   DeletingEvent,
   PulseEffect,
   eventAnimations,
-} from './PlanAnimations'
+} from './PlanAnimations';

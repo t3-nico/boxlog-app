@@ -1,15 +1,15 @@
-'use client'
+'use client';
 
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Label } from '@/components/ui/label'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { Separator } from '@/components/ui/separator'
-import type { PlanStatus } from '@/features/plans/types/plan'
-import { Filter } from 'lucide-react'
-import { type DueDateFilter, useInboxFilterStore } from '../../stores/useInboxFilterStore'
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Separator } from '@/components/ui/separator';
+import type { PlanStatus } from '@/features/plans/types/plan';
+import { Filter } from 'lucide-react';
+import { type DueDateFilter, useInboxFilterStore } from '../../stores/useInboxFilterStore';
 
 /**
  * ステータス選択肢
@@ -18,7 +18,7 @@ const STATUS_OPTIONS: Array<{ value: PlanStatus; label: string }> = [
   { value: 'todo', label: 'Todo' },
   { value: 'doing', label: 'Doing' },
   { value: 'done', label: 'Done' },
-]
+];
 
 /**
  * 期限フィルター選択肢
@@ -31,7 +31,7 @@ const DUE_DATE_OPTIONS: Array<{ value: DueDateFilter; label: string }> = [
   { value: 'next_week', label: '来週' },
   { value: 'overdue', label: '期限切れ' },
   { value: 'no_due_date', label: '期限なし' },
-]
+];
 
 /**
  * テーブルフィルターコンポーネント
@@ -50,22 +50,24 @@ const DUE_DATE_OPTIONS: Array<{ value: DueDateFilter; label: string }> = [
  * ```
  */
 export function TableFilters() {
-  const { status, dueDate, setStatus, setDueDate } = useInboxFilterStore()
+  const { status, dueDate, setStatus, setDueDate } = useInboxFilterStore();
 
   // フィルター数をカウント（期限は'all'以外の場合のみカウント）
-  const filterCount = status.length + (dueDate !== 'all' ? 1 : 0)
+  const filterCount = status.length + (dueDate !== 'all' ? 1 : 0);
 
   // ステータストグル
   const toggleStatus = (value: PlanStatus) => {
-    const newStatus = status.includes(value) ? status.filter((s) => s !== value) : [...status, value]
-    setStatus(newStatus as PlanStatus[])
-  }
+    const newStatus = status.includes(value)
+      ? status.filter((s) => s !== value)
+      : [...status, value];
+    setStatus(newStatus as PlanStatus[]);
+  };
 
   // クリア（期限とステータスのみ）
   const handleClear = () => {
-    setStatus([])
-    setDueDate('all')
-  }
+    setStatus([]);
+    setDueDate('all');
+  };
 
   return (
     <Popover>
@@ -86,7 +88,12 @@ export function TableFilters() {
           <div className="flex items-center justify-between">
             <h4 className="text-sm font-medium">フィルター</h4>
             {filterCount > 0 && (
-              <Button variant="ghost" size="sm" onClick={handleClear} className="h-auto p-0 text-xs">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleClear}
+                className="h-auto p-0 text-xs"
+              >
                 クリア
               </Button>
             )}
@@ -97,14 +104,20 @@ export function TableFilters() {
           {/* 期限フィルター */}
           <div className="space-y-2">
             <Label className="text-xs font-medium">期限</Label>
-            <RadioGroup value={dueDate} onValueChange={(value) => setDueDate(value as DueDateFilter)}>
+            <RadioGroup
+              value={dueDate}
+              onValueChange={(value) => setDueDate(value as DueDateFilter)}
+            >
               {DUE_DATE_OPTIONS.map((option) => (
                 <div
                   key={option.value}
                   className="hover:bg-state-hover flex items-center space-x-2 rounded-sm px-2 py-1.5"
                 >
                   <RadioGroupItem value={option.value} id={`due-date-${option.value}`} />
-                  <Label htmlFor={`due-date-${option.value}`} className="flex-1 cursor-pointer text-sm font-normal">
+                  <Label
+                    htmlFor={`due-date-${option.value}`}
+                    className="flex-1 cursor-pointer text-sm font-normal"
+                  >
                     {option.label}
                   </Label>
                 </div>
@@ -128,7 +141,10 @@ export function TableFilters() {
                     checked={status.includes(option.value)}
                     onCheckedChange={() => toggleStatus(option.value)}
                   />
-                  <Label htmlFor={`status-${option.value}`} className="flex-1 cursor-pointer text-sm font-normal">
+                  <Label
+                    htmlFor={`status-${option.value}`}
+                    className="flex-1 cursor-pointer text-sm font-normal"
+                  >
                     {option.label}
                   </Label>
                 </div>
@@ -138,5 +154,5 @@ export function TableFilters() {
         </div>
       </PopoverContent>
     </Popover>
-  )
+  );
 }

@@ -1,9 +1,9 @@
-'use client'
+'use client';
 
-import { useRouter } from 'next/navigation'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useRouter } from 'next/navigation';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { useDebounce } from '@/hooks/useDebounce'
+import { useDebounce } from '@/hooks/useDebounce';
 
 import {
   BarChart3,
@@ -19,7 +19,7 @@ import {
   Sun,
   Tag,
   Zap,
-} from 'lucide-react'
+} from 'lucide-react';
 
 import {
   Command,
@@ -29,46 +29,46 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
-} from '@/components/ui/command'
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
-import { useTheme } from '@/contexts/theme-context'
-import { usePlans } from '@/features/plans/hooks'
-import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
-import { useTagCreateModalStore } from '@/features/tags/stores/useTagCreateModalStore'
-import { useTagStore } from '@/features/tags/stores/useTagStore'
-import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
+} from '@/components/ui/command';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { useTheme } from '@/contexts/theme-context';
+import { usePlans } from '@/features/plans/hooks';
+import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
+import { useTagCreateModalStore } from '@/features/tags/stores/useTagCreateModalStore';
+import { useTagStore } from '@/features/tags/stores/useTagStore';
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 
-import type { PlanStatus, PlanWithTags } from '@/features/plans/types'
-import { useRecentPlans } from '../hooks/use-recent-plans'
-import { useSearchHistory } from '../hooks/use-search'
-import { registerDefaultCommands } from '../lib/command-registry'
-import { HighlightedText } from '../lib/highlight-text'
-import { getFilterHints, parseSearchQuery } from '../lib/query-parser'
-import { SearchEngine } from '../lib/search-engine'
-import type { SearchResult } from '../types'
+import type { PlanStatus, PlanWithTags } from '@/features/plans/types';
+import { useRecentPlans } from '../hooks/use-recent-plans';
+import { useSearchHistory } from '../hooks/use-search';
+import { registerDefaultCommands } from '../lib/command-registry';
+import { HighlightedText } from '../lib/highlight-text';
+import { getFilterHints, parseSearchQuery } from '../lib/query-parser';
+import { SearchEngine } from '../lib/search-engine';
+import type { SearchResult } from '../types';
 
 // Helper function to convert plan_tags to tags format
 type PlanFromAPI = {
-  id: string
-  user_id: string
-  title: string
-  description: string | null
-  status: PlanStatus
-  due_date: string | null
-  start_time: string | null
-  end_time: string | null
-  plan_number: string
-  recurrence_type: string | null
-  recurrence_end_date: string | null
-  recurrence_rule: string | null
-  reminder_minutes: number | null
-  created_at: string | null
-  updated_at: string | null
+  id: string;
+  user_id: string;
+  title: string;
+  description: string | null;
+  status: PlanStatus;
+  due_date: string | null;
+  start_time: string | null;
+  end_time: string | null;
+  plan_number: string;
+  recurrence_type: string | null;
+  recurrence_end_date: string | null;
+  recurrence_rule: string | null;
+  reminder_minutes: number | null;
+  created_at: string | null;
+  updated_at: string | null;
   plan_tags: Array<{
-    tag_id: string
-    tags: { id: string; name: string; color: string } | null
-  }>
-}
+    tag_id: string;
+    tags: { id: string; name: string; color: string } | null;
+  }>;
+};
 
 function convertPlanToSearchFormat(plans: PlanFromAPI[]): PlanWithTags[] {
   return plans.map((plan) => ({
@@ -91,12 +91,12 @@ function convertPlanToSearchFormat(plans: PlanFromAPI[]): PlanWithTags[] {
       plan.plan_tags
         ?.map((pt) => pt.tags)
         .filter((tag): tag is { id: string; name: string; color: string } => tag !== null) || [],
-  }))
+  }));
 }
 
 interface GlobalSearchModalProps {
-  isOpen: boolean
-  onClose: () => void
+  isOpen: boolean;
+  onClose: () => void;
 }
 
 // Category icon mapping
@@ -106,7 +106,7 @@ const categoryIcons: Record<string, React.ElementType> = {
   actions: Zap,
   plans: CheckSquare,
   tags: Tag,
-}
+};
 
 // Icon name to component mapping
 const iconNameMap: Record<string, React.ElementType> = {
@@ -119,38 +119,38 @@ const iconNameMap: Record<string, React.ElementType> = {
   moon: Moon,
   sun: Sun,
   'check-square': CheckSquare,
-}
+};
 
 export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
-  const router = useRouter()
-  const { history, addToHistory } = useSearchHistory()
-  const { recentPlans, addRecentPlan } = useRecentPlans()
-  const [query, setQuery] = useState('')
-  const [results, setResults] = useState<SearchResult[]>([])
+  const router = useRouter();
+  const { history, addToHistory } = useSearchHistory();
+  const { recentPlans, addRecentPlan } = useRecentPlans();
+  const [query, setQuery] = useState('');
+  const [results, setResults] = useState<SearchResult[]>([]);
 
   // Debounce search query (150ms delay for responsive feel)
-  const debouncedQuery = useDebounce(query, 150)
+  const debouncedQuery = useDebounce(query, 150);
 
   // Parse query for active filters
-  const parsedQuery = useMemo(() => parseSearchQuery(query), [query])
-  const filterHints = useMemo(() => getFilterHints(), [])
+  const parsedQuery = useMemo(() => parseSearchQuery(query), [query]);
+  const filterHints = useMemo(() => getFilterHints(), []);
 
   // Get data from stores - only fetch when modal is open to prevent 401 errors on unauthenticated pages
-  const { data: plans = [] } = usePlans(undefined, { enabled: isOpen })
-  const tags = useTagStore((state) => state.tags)
+  const { data: plans = [] } = usePlans(undefined, { enabled: isOpen });
+  const tags = useTagStore((state) => state.tags);
 
   // Get actions from stores
-  const openPlanInspector = usePlanInspectorStore((state) => state.openInspector)
-  const openTagCreateModal = useTagCreateModalStore((state) => state.openModal)
-  const { resolvedTheme, setTheme } = useTheme()
+  const openPlanInspector = usePlanInspectorStore((state) => state.openInspector);
+  const openTagCreateModal = useTagCreateModalStore((state) => state.openModal);
+  const { resolvedTheme, setTheme } = useTheme();
 
   const toggleTheme = useCallback(() => {
-    setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')
-  }, [resolvedTheme, setTheme])
+    setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');
+  }, [resolvedTheme, setTheme]);
 
   const navigateToSettings = useCallback(() => {
-    router.push('/settings')
-  }, [router])
+    router.push('/settings');
+  }, [router]);
 
   // Register default commands on mount
   useEffect(() => {
@@ -160,45 +160,45 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
       openTagCreateModal,
       navigateToSettings,
       toggleTheme,
-    })
-  }, [router, openPlanInspector, openTagCreateModal, navigateToSettings, toggleTheme])
+    });
+  }, [router, openPlanInspector, openTagCreateModal, navigateToSettings, toggleTheme]);
 
   // Perform search when debounced query changes
   useEffect(() => {
     const performSearch = async () => {
       // Convert plans from API format (plan_tags) to search format (tags)
-      const convertedPlans = convertPlanToSearchFormat(plans as unknown as PlanFromAPI[])
+      const convertedPlans = convertPlanToSearchFormat(plans as unknown as PlanFromAPI[]);
       const searchResults = await SearchEngine.search(
         { query: debouncedQuery, limit: 15 },
-        { plans: convertedPlans, tags }
-      )
-      setResults(searchResults)
-    }
+        { plans: convertedPlans, tags },
+      );
+      setResults(searchResults);
+    };
 
-    performSearch()
-  }, [debouncedQuery, plans, tags])
+    performSearch();
+  }, [debouncedQuery, plans, tags]);
 
   // Reset query when modal closes
   useEffect(() => {
     if (!isOpen) {
-      setQuery('')
+      setQuery('');
     }
-  }, [isOpen])
+  }, [isOpen]);
 
   // Group results by category/type
   const groupedResults = useMemo(() => {
-    const groups: Record<string, SearchResult[]> = {}
+    const groups: Record<string, SearchResult[]> = {};
 
     results.forEach((result) => {
-      const groupKey = result.category || result.type
+      const groupKey = result.category || result.type;
       if (!groups[groupKey]) {
-        groups[groupKey] = []
+        groups[groupKey] = [];
       }
-      groups[groupKey].push(result)
-    })
+      groups[groupKey].push(result);
+    });
 
-    return groups
-  }, [results])
+    return groups;
+  }, [results]);
 
   // Get group label
   const getGroupLabel = (key: string): string => {
@@ -211,68 +211,75 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
       command: 'コマンド',
       plan: 'プラン',
       tag: 'タグ',
-    }
-    return labels[key] || key
-  }
+    };
+    return labels[key] || key;
+  };
 
   // Get icon for result
   const getResultIcon = (result: SearchResult): React.ElementType => {
     // Check icon name mapping first
     if (result.icon) {
-      const iconFromName = iconNameMap[result.icon]
+      const iconFromName = iconNameMap[result.icon];
       if (iconFromName) {
-        return iconFromName
+        return iconFromName;
       }
     }
     // Check category icons
     if (result.category) {
-      const iconFromCategory = categoryIcons[result.category]
+      const iconFromCategory = categoryIcons[result.category];
       if (iconFromCategory) {
-        return iconFromCategory
+        return iconFromCategory;
       }
     }
     // Default icon
-    return CheckSquare
-  }
+    return CheckSquare;
+  };
 
   // Handle result selection
   const handleSelect = useCallback(
     async (result: SearchResult) => {
       if (query) {
-        addToHistory(query)
+        addToHistory(query);
       }
 
-      onClose()
+      onClose();
 
       // Execute action if available
       if (result.action) {
-        await result.action()
+        await result.action();
       } else {
         // Default navigation based on type
         if (result.type === 'plan') {
-          const planId = result.id.replace('plan:', '')
-          addRecentPlan(planId, result.title)
-          router.push(`/inbox?plan=${planId}`)
+          const planId = result.id.replace('plan:', '');
+          addRecentPlan(planId, result.title);
+          router.push(`/inbox?plan=${planId}`);
         } else if (result.type === 'tag') {
-          const tagNumber = (result.metadata as { tagNumber?: string })?.tagNumber
+          const tagNumber = (result.metadata as { tagNumber?: string })?.tagNumber;
           if (tagNumber) {
-            router.push(`/tags/${tagNumber}`)
+            router.push(`/tags/${tagNumber}`);
           }
         }
       }
     },
-    [query, addToHistory, addRecentPlan, router, onClose]
-  )
+    [query, addToHistory, addRecentPlan, router, onClose],
+  );
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="!w-[95vw] !max-w-[42rem] overflow-hidden !p-0 sm:!w-auto" showCloseButton={false}>
+      <DialogContent
+        className="!w-[95vw] !max-w-[42rem] overflow-hidden !p-0 sm:!w-auto"
+        showCloseButton={false}
+      >
         <VisuallyHidden>
           <DialogTitle>グローバル検索</DialogTitle>
         </VisuallyHidden>
         <Command className="[&_[cmdk-group-heading]]:text-muted-foreground !rounded-none [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group]]:px-2 [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-2">
           <div className="relative">
-            <CommandInput placeholder="検索... (コマンド、プラン、タグ)" value={query} onValueChange={setQuery} />
+            <CommandInput
+              placeholder="検索... (コマンド、プラン、タグ)"
+              value={query}
+              onValueChange={setQuery}
+            />
             {/* ESCバッジ（PCのみ表示） */}
             <div className="absolute top-1/2 right-3 hidden -translate-y-1/2 items-center gap-1 md:flex">
               <kbd className="bg-surface-container text-muted-foreground inline-flex h-6 items-center gap-1 rounded border px-2 font-mono text-xs font-medium opacity-100 select-none">
@@ -317,7 +324,9 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
                   >
                     <Filter className="h-4 w-4 shrink-0" />
                     <div className="flex min-w-0 flex-1 items-center gap-2">
-                      <code className="bg-surface-container rounded px-2 py-1 text-xs">{hint.syntax}</code>
+                      <code className="bg-surface-container rounded px-2 py-1 text-xs">
+                        {hint.syntax}
+                      </code>
                       <span className="text-muted-foreground text-xs">{hint.description}</span>
                     </div>
                   </CommandItem>
@@ -348,8 +357,8 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
                     <CommandItem
                       key={`recent-plan-${plan.id}`}
                       onSelect={() => {
-                        onClose()
-                        router.push(`/inbox?plan=${plan.id}`)
+                        onClose();
+                        router.push(`/inbox?plan=${plan.id}`);
                       }}
                     >
                       <CheckSquare className="mr-2 h-4 w-4" />
@@ -365,7 +374,7 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
             {Object.entries(groupedResults).map(([groupKey, groupResults]) => (
               <CommandGroup key={groupKey} heading={getGroupLabel(groupKey)}>
                 {groupResults.map((result) => {
-                  const ResultIcon = getResultIcon(result)
+                  const ResultIcon = getResultIcon(result);
 
                   return (
                     <CommandItem
@@ -399,7 +408,7 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
                         </div>
                       )}
                     </CommandItem>
-                  )
+                  );
                 })}
               </CommandGroup>
             ))}
@@ -407,5 +416,5 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
         </Command>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

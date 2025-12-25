@@ -1,9 +1,9 @@
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
 
-import { HOUR_HEIGHT } from '../../../constants/grid.constants'
-import { formatTimeRange } from '../../../utils/dateHelpers'
+import { HOUR_HEIGHT } from '../../../constants/grid.constants';
+import { formatTimeRange } from '../../../utils/dateHelpers';
 
-import type { DragDataRef } from '../types'
+import type { DragDataRef } from '../types';
 
 /**
  * プレビュー時間を計算する
@@ -18,31 +18,36 @@ export function calculatePreviewTime(
   targetDateIndex: number,
   date: Date,
   viewMode: string,
-  displayDates: Date[] | undefined
+  displayDates: Date[] | undefined,
 ): { previewStartTime: Date; previewEndTime: Date } {
-  const event = events.find((e) => e.id === draggedEventId)
-  let durationMs = 60 * 60 * 1000
+  const event = events.find((e) => e.id === draggedEventId);
+  let durationMs = 60 * 60 * 1000;
 
   if (event?.startDate && event?.endDate) {
-    durationMs = event.endDate.getTime() - event.startDate.getTime()
+    durationMs = event.endDate.getTime() - event.startDate.getTime();
   } else if (eventDuration) {
-    durationMs = (eventDuration / HOUR_HEIGHT) * 60 * 60 * 1000
+    durationMs = (eventDuration / HOUR_HEIGHT) * 60 * 60 * 1000;
   }
 
-  let targetDate = date
-  if (viewMode !== 'day' && displayDates && targetDateIndex in displayDates && displayDates[targetDateIndex]) {
-    targetDate = displayDates[targetDateIndex]
+  let targetDate = date;
+  if (
+    viewMode !== 'day' &&
+    displayDates &&
+    targetDateIndex in displayDates &&
+    displayDates[targetDateIndex]
+  ) {
+    targetDate = displayDates[targetDateIndex];
   }
 
   if (!targetDate || isNaN(targetDate.getTime())) {
-    targetDate = date
+    targetDate = date;
   }
 
-  const previewStartTime = new Date(targetDate)
-  previewStartTime.setHours(hour, minute, 0, 0)
-  const previewEndTime = new Date(previewStartTime.getTime() + durationMs)
+  const previewStartTime = new Date(targetDate);
+  previewStartTime.setHours(hour, minute, 0, 0);
+  const previewEndTime = new Date(previewStartTime.getTime() + durationMs);
 
-  return { previewStartTime, previewEndTime }
+  return { previewStartTime, previewEndTime };
 }
 
 /**
@@ -53,19 +58,19 @@ export function calculateTargetDate(
   date: Date,
   viewMode: string,
   displayDates: Date[] | undefined,
-  _dragDataRef: DragDataRef | null
+  _dragDataRef: DragDataRef | null,
 ): Date {
-  let targetDate = date
+  let targetDate = date;
 
   if (viewMode !== 'day' && displayDates && displayDates[targetDateIndex]) {
-    targetDate = displayDates[targetDateIndex]
+    targetDate = displayDates[targetDateIndex];
   }
 
   if (!targetDate || isNaN(targetDate.getTime())) {
-    targetDate = date
+    targetDate = date;
   }
 
-  return targetDate
+  return targetDate;
 }
 
 /**
@@ -77,24 +82,30 @@ export function calculateNewTime(
   date: Date,
   viewMode: string,
   displayDates: Date[] | undefined,
-  dragDataRef: DragDataRef | null
+  dragDataRef: DragDataRef | null,
 ): Date {
-  const hourDecimal = newTop / HOUR_HEIGHT
-  let hour = Math.floor(Math.max(0, Math.min(23, hourDecimal)))
-  let minute = Math.round(Math.max(0, ((hourDecimal - hour) * 60) / 15)) * 15
+  const hourDecimal = newTop / HOUR_HEIGHT;
+  let hour = Math.floor(Math.max(0, Math.min(23, hourDecimal)));
+  let minute = Math.round(Math.max(0, ((hourDecimal - hour) * 60) / 15)) * 15;
 
   // 60分になった場合は時間を繰り上げる
   if (minute >= 60) {
-    minute = 0
-    hour = Math.min(23, hour + 1)
+    minute = 0;
+    hour = Math.min(23, hour + 1);
   }
 
-  const targetDate = calculateTargetDate(targetDateIndex, date, viewMode, displayDates, dragDataRef)
+  const targetDate = calculateTargetDate(
+    targetDateIndex,
+    date,
+    viewMode,
+    displayDates,
+    dragDataRef,
+  );
 
-  const newStartTime = new Date(targetDate)
-  newStartTime.setHours(hour, minute, 0, 0)
+  const newStartTime = new Date(targetDate);
+  newStartTime.setHours(hour, minute, 0, 0);
 
-  return newStartTime
+  return newStartTime;
 }
 
 /**
@@ -103,29 +114,33 @@ export function calculateNewTime(
 export function calculateEventDuration(
   events: CalendarPlan[],
   eventId: string,
-  dragDataRef: DragDataRef | null
+  dragDataRef: DragDataRef | null,
 ): { event: CalendarPlan | undefined; durationMs: number } {
-  const event = events.find((e) => e.id === eventId)
-  let durationMs = 60 * 60 * 1000
+  const event = events.find((e) => e.id === eventId);
+  let durationMs = 60 * 60 * 1000;
 
   if (event?.startDate && event?.endDate) {
-    durationMs = event.endDate.getTime() - event.startDate.getTime()
+    durationMs = event.endDate.getTime() - event.startDate.getTime();
   } else if (dragDataRef?.eventDuration) {
-    durationMs = (dragDataRef.eventDuration / HOUR_HEIGHT) * 60 * 60 * 1000
+    durationMs = (dragDataRef.eventDuration / HOUR_HEIGHT) * 60 * 60 * 1000;
   }
 
-  return { event, durationMs }
+  return { event, durationMs };
 }
 
 /**
  * 時間表示を更新する
  */
-export function updateTimeDisplay(dragElement: HTMLElement | null, previewStartTime: Date, previewEndTime: Date): void {
-  if (!dragElement) return
+export function updateTimeDisplay(
+  dragElement: HTMLElement | null,
+  previewStartTime: Date,
+  previewEndTime: Date,
+): void {
+  if (!dragElement) return;
 
-  const timeElement = dragElement.querySelector('.event-time')
+  const timeElement = dragElement.querySelector('.event-time');
   if (timeElement) {
-    const formattedTimeRange = formatTimeRange(previewStartTime, previewEndTime, '24h')
-    timeElement.textContent = formattedTimeRange
+    const formattedTimeRange = formatTimeRange(previewStartTime, previewEndTime, '24h');
+    timeElement.textContent = formattedTimeRange;
   }
 }

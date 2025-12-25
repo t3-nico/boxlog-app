@@ -21,51 +21,58 @@
  * @see src/app/[locale]/(app)/layout.tsx - 使用箇所
  * @see https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns#moving-client-components-down-the-tree
  */
-'use client'
+'use client';
 
-import dynamic from 'next/dynamic'
-import { useState } from 'react'
+import dynamic from 'next/dynamic';
+import { useState } from 'react';
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { httpBatchLink, loggerLink } from '@trpc/client'
-import superjson from 'superjson'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { httpBatchLink, loggerLink } from '@trpc/client';
+import superjson from 'superjson';
 
 // React Query DevTools: 本番環境では完全に除外（バンドルサイズ削減）
 const ReactQueryDevtools =
   process.env.NODE_ENV === 'development'
-    ? dynamic(() => import('@tanstack/react-query-devtools').then((mod) => mod.ReactQueryDevtools), { ssr: false })
-    : () => null
+    ? dynamic(
+        () => import('@tanstack/react-query-devtools').then((mod) => mod.ReactQueryDevtools),
+        { ssr: false },
+      )
+    : () => null;
 
-import { RealtimeProvider } from '@/components/providers/RealtimeProvider'
-import { ThemeProvider } from '@/contexts/theme-context'
-import { AuthStoreInitializer } from '@/features/auth/stores/AuthStoreInitializer'
-import { api } from '@/lib/trpc'
+import { RealtimeProvider } from '@/components/providers/RealtimeProvider';
+import { ThemeProvider } from '@/contexts/theme-context';
+import { AuthStoreInitializer } from '@/features/auth/stores/AuthStoreInitializer';
+import { api } from '@/lib/trpc';
 
 // GlobalSearchProviderを遅延ロード（初回レンダリングをブロックしない）
-const GlobalSearchProvider = dynamic(() => import('@/features/search').then((mod) => mod.GlobalSearchProvider), {
-  ssr: false,
-})
+const GlobalSearchProvider = dynamic(
+  () => import('@/features/search').then((mod) => mod.GlobalSearchProvider),
+  {
+    ssr: false,
+  },
+);
 
 // ServiceWorkerProviderを遅延ロード（PWAオフライン対応）
 const ServiceWorkerProvider = dynamic(
-  () => import('@/components/providers/ServiceWorkerProvider').then((mod) => mod.ServiceWorkerProvider),
-  { ssr: false }
-)
+  () =>
+    import('@/components/providers/ServiceWorkerProvider').then((mod) => mod.ServiceWorkerProvider),
+  { ssr: false },
+);
 
 // GlobalTagCreateModalを遅延ロード
 const GlobalTagCreateModal = dynamic(
   () => import('@/features/tags/components').then((mod) => mod.GlobalTagCreateModal),
-  { ssr: false }
-)
+  { ssr: false },
+);
 
 function getBaseUrl() {
-  if (typeof window !== 'undefined') return '' // ブラウザではルート相対パス
-  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}` // SSR Vercel
-  return `http://localhost:${process.env.PORT ?? 3000}` // SSR 開発
+  if (typeof window !== 'undefined') return ''; // ブラウザではルート相対パス
+  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`; // SSR Vercel
+  return `http://localhost:${process.env.PORT ?? 3000}`; // SSR 開発
 }
 
 interface ProvidersProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 export function Providers({ children }: ProvidersProps) {
@@ -80,8 +87,8 @@ export function Providers({ children }: ProvidersProps) {
             refetchOnReconnect: 'always',
             retry: (failureCount, error) => {
               // エラーによってリトライ戦略を変更
-              if (error && 'status' in error && error.status === 404) return false
-              return failureCount < 3
+              if (error && 'status' in error && error.status === 404) return false;
+              return failureCount < 3;
             },
             retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
           },
@@ -89,33 +96,34 @@ export function Providers({ children }: ProvidersProps) {
             retry: 1,
           },
         },
-      })
-  )
+      }),
+  );
 
   const [trpcClient] = useState(() =>
     api.createClient({
       links: [
         loggerLink({
           enabled: (opts) =>
-            process.env.NODE_ENV === 'development' || (opts.direction === 'down' && opts.result instanceof Error),
+            process.env.NODE_ENV === 'development' ||
+            (opts.direction === 'down' && opts.result instanceof Error),
         }),
         httpBatchLink({
           url: `${getBaseUrl()}/api/trpc`,
           transformer: superjson,
           headers() {
-            const headers: Record<string, string> = {}
+            const headers: Record<string, string> = {};
             if (typeof window !== 'undefined') {
-              const token = localStorage.getItem('auth_token')
+              const token = localStorage.getItem('auth_token');
               if (token) {
-                headers.authorization = `Bearer ${token}`
+                headers.authorization = `Bearer ${token}`;
               }
             }
-            return headers
+            return headers;
           },
         }),
       ],
-    })
-  )
+    }),
+  );
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -137,5 +145,5 @@ export function Providers({ children }: ProvidersProps) {
         )}
       </api.Provider>
     </QueryClientProvider>
-  )
+  );
 }

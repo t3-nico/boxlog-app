@@ -1,22 +1,22 @@
-'use client'
+'use client';
 
-import { useCallback, useMemo } from 'react'
+import { useCallback, useMemo } from 'react';
 
-import { format, isToday, isTomorrow } from 'date-fns'
-import { ja } from 'date-fns/locale'
-import { Tag } from 'lucide-react'
+import { format, isToday, isTomorrow } from 'date-fns';
+import { ja } from 'date-fns/locale';
+import { Tag } from 'lucide-react';
 
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
-import { PlanTagSelectDialogEnhanced } from '@/features/plans/components/shared/PlanTagSelectDialogEnhanced'
-import { usePlanTags } from '@/features/plans/hooks/usePlanTags'
-import { useDateFormat } from '@/features/settings/hooks/useDateFormat'
-import { cn } from '@/lib/utils'
-import { useLocale } from 'next-intl'
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
+import { PlanTagSelectDialogEnhanced } from '@/features/plans/components/shared/PlanTagSelectDialogEnhanced';
+import { usePlanTags } from '@/features/plans/hooks/usePlanTags';
+import { useDateFormat } from '@/features/settings/hooks/useDateFormat';
+import { cn } from '@/lib/utils';
+import { useLocale } from 'next-intl';
 
 interface AgendaListItemProps {
-  plan: CalendarPlan
-  onClick?: ((plan: CalendarPlan) => void) | undefined
-  onContextMenu?: ((plan: CalendarPlan, mouseEvent: React.MouseEvent) => void) | undefined
+  plan: CalendarPlan;
+  onClick?: ((plan: CalendarPlan) => void) | undefined;
+  onContextMenu?: ((plan: CalendarPlan, mouseEvent: React.MouseEvent) => void) | undefined;
 }
 
 /**
@@ -25,74 +25,80 @@ interface AgendaListItemProps {
  * レイアウト: 日付 | 時間 | タイトル# | タグ
  */
 export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemProps) {
-  const locale = useLocale()
-  const dateLocale = locale === 'ja' ? ja : undefined
-  const { addPlanTag, removePlanTag } = usePlanTags()
-  const { formatTime: formatTimeWithSettings } = useDateFormat()
+  const locale = useLocale();
+  const dateLocale = locale === 'ja' ? ja : undefined;
+  const { addPlanTag, removePlanTag } = usePlanTags();
+  const { formatTime: formatTimeWithSettings } = useDateFormat();
 
   // プランの実際のIDを取得（繰り返しプランの場合はcalendarIdを使用）
-  const planId = plan.calendarId ?? plan.id
+  const planId = plan.calendarId ?? plan.id;
 
   // 選択中のタグID
   const selectedTagIds = useMemo(() => {
-    return plan.tags?.map((t) => t.id) ?? []
-  }, [plan.tags])
+    return plan.tags?.map((t) => t.id) ?? [];
+  }, [plan.tags]);
 
   const handleClick = () => {
-    onClick?.(plan)
-  }
+    onClick?.(plan);
+  };
 
   const handleContextMenu = (e: React.MouseEvent) => {
-    e.preventDefault()
-    onContextMenu?.(plan, e)
-  }
+    e.preventDefault();
+    onContextMenu?.(plan, e);
+  };
 
   // タグの変更ハンドラー
   const handleTagsChange = useCallback(
     async (newTagIds: string[]) => {
-      const currentTagIds = selectedTagIds
-      const addedTagIds = newTagIds.filter((id) => !currentTagIds.includes(id))
-      const removedTagIds = currentTagIds.filter((id) => !newTagIds.includes(id))
+      const currentTagIds = selectedTagIds;
+      const addedTagIds = newTagIds.filter((id) => !currentTagIds.includes(id));
+      const removedTagIds = currentTagIds.filter((id) => !newTagIds.includes(id));
 
       // 追加されたタグを処理
       for (const tagId of addedTagIds) {
-        await addPlanTag(planId, tagId)
+        await addPlanTag(planId, tagId);
       }
 
       // 削除されたタグを処理
       for (const tagId of removedTagIds) {
-        await removePlanTag(planId, tagId)
+        await removePlanTag(planId, tagId);
       }
     },
-    [planId, selectedTagIds, addPlanTag, removePlanTag]
-  )
+    [planId, selectedTagIds, addPlanTag, removePlanTag],
+  );
 
   // 日付のフォーマット
   const formatDate = (date: Date | null) => {
-    if (!date) return ''
+    if (!date) return '';
     if (isToday(date)) {
-      return locale === 'ja' ? '今日' : 'Today'
+      return locale === 'ja' ? '今日' : 'Today';
     }
     if (isTomorrow(date)) {
-      return locale === 'ja' ? '明日' : 'Tomorrow'
+      return locale === 'ja' ? '明日' : 'Tomorrow';
     }
-    return format(date, locale === 'ja' ? 'M/d' : 'M/d', dateLocale ? { locale: dateLocale } : undefined)
-  }
+    return format(
+      date,
+      locale === 'ja' ? 'M/d' : 'M/d',
+      dateLocale ? { locale: dateLocale } : undefined,
+    );
+  };
 
   // 時間のフォーマット
   const formatTime = (date: Date | null) => {
-    if (!date) return ''
-    return formatTimeWithSettings(date)
-  }
+    if (!date) return '';
+    return formatTimeWithSettings(date);
+  };
 
-  const dateLabel = formatDate(plan.startDate)
-  const startTime = formatTime(plan.startDate)
-  const endTime = formatTime(plan.endDate)
+  const dateLabel = formatDate(plan.startDate);
+  const startTime = formatTime(plan.startDate);
+  const endTime = formatTime(plan.endDate);
   const timeRange =
-    startTime && endTime ? `${startTime}-${endTime}` : startTime || (locale === 'ja' ? '終日' : 'All day')
+    startTime && endTime
+      ? `${startTime}-${endTime}`
+      : startTime || (locale === 'ja' ? '終日' : 'All day');
 
   // タグの表示
-  const displayTags = plan.tags?.slice(0, 3) ?? []
+  const displayTags = plan.tags?.slice(0, 3) ?? [];
 
   return (
     <button
@@ -104,7 +110,7 @@ export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemP
         'hover:bg-secondary focus-visible:bg-secondary',
         'focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset',
         'transition-colors duration-150',
-        'cursor-pointer text-left'
+        'cursor-pointer text-left',
       )}
       onClick={handleClick}
       onContextMenu={handleContextMenu}
@@ -115,7 +121,7 @@ export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemP
         <div
           className={cn(
             'shrink-0 text-sm font-medium md:w-12',
-            isToday(plan.startDate ?? new Date()) ? 'text-primary' : 'text-muted-foreground'
+            isToday(plan.startDate ?? new Date()) ? 'text-primary' : 'text-muted-foreground',
           )}
         >
           {dateLabel}
@@ -132,8 +138,12 @@ export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemP
       <div className="flex min-w-0 flex-1 items-center gap-2 md:gap-4">
         {/* タイトル + # */}
         <div className="flex min-w-0 flex-1 items-baseline gap-1 md:gap-1.5">
-          <span className="text-foreground truncate font-medium group-hover:underline md:max-w-48">{plan.title}</span>
-          {plan.plan_number && <span className="text-muted-foreground shrink-0 text-sm">#{plan.plan_number}</span>}
+          <span className="text-foreground truncate font-medium group-hover:underline md:max-w-48">
+            {plan.title}
+          </span>
+          {plan.plan_number && (
+            <span className="text-muted-foreground shrink-0 text-sm">#{plan.plan_number}</span>
+          )}
         </div>
 
         {/* タグ */}
@@ -167,10 +177,14 @@ export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemP
                 </span>
               )}
               {(plan.tags?.length ?? 0) > 3 && (
-                <span className="text-muted-foreground hidden text-xs md:inline">+{(plan.tags?.length ?? 0) - 3}</span>
+                <span className="text-muted-foreground hidden text-xs md:inline">
+                  +{(plan.tags?.length ?? 0) - 3}
+                </span>
               )}
               {(plan.tags?.length ?? 0) > 2 && (
-                <span className="text-muted-foreground text-xs md:hidden">+{(plan.tags?.length ?? 0) - 2}</span>
+                <span className="text-muted-foreground text-xs md:hidden">
+                  +{(plan.tags?.length ?? 0) - 2}
+                </span>
               )}
             </>
           ) : (
@@ -183,7 +197,9 @@ export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemP
               <div className="hover:bg-state-hover flex w-fit cursor-pointer items-center gap-1 rounded py-0.5 text-sm transition-colors">
                 <div className="text-muted-foreground flex items-center gap-1">
                   <Tag className="size-3" />
-                  <span className="hidden md:inline">{locale === 'ja' ? 'タグを追加' : 'Add tag'}</span>
+                  <span className="hidden md:inline">
+                    {locale === 'ja' ? 'タグを追加' : 'Add tag'}
+                  </span>
                 </div>
               </div>
             </PlanTagSelectDialogEnhanced>
@@ -191,5 +207,5 @@ export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemP
         </div>
       </div>
     </button>
-  )
+  );
 }

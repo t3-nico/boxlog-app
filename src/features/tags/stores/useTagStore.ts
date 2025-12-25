@@ -1,27 +1,27 @@
-import { create } from 'zustand'
-import { devtools, persist } from 'zustand/middleware'
+import { create } from 'zustand';
+import { devtools, persist } from 'zustand/middleware';
 
-import { CreateTagInput, Tag, UpdateTagInput } from '@/features/tags/types'
+import { CreateTagInput, Tag, UpdateTagInput } from '@/features/tags/types';
 
 interface TagStore {
-  tags: Tag[]
+  tags: Tag[];
 
   // Actions
-  addTag: (tag: CreateTagInput) => Promise<boolean>
-  updateTag: (id: string, updates: UpdateTagInput) => Promise<boolean>
-  deleteTag: (id: string) => Promise<boolean>
-  getTagById: (id: string) => Tag | undefined
-  getTagsByIds: (ids: string[]) => Tag[]
-  getAllTags: () => Tag[]
+  addTag: (tag: CreateTagInput) => Promise<boolean>;
+  updateTag: (id: string, updates: UpdateTagInput) => Promise<boolean>;
+  deleteTag: (id: string) => Promise<boolean>;
+  getTagById: (id: string) => Tag | undefined;
+  getTagsByIds: (ids: string[]) => Tag[];
+  getAllTags: () => Tag[];
 
   // Group helpers
-  getTagsByGroup: (groupId: string | null) => Tag[]
-  getActiveTags: () => Tag[]
+  getTagsByGroup: (groupId: string | null) => Tag[];
+  getActiveTags: () => Tag[];
 }
 
 const generateId = (): string => {
-  return Math.random().toString(36).substring(2) + Date.now().toString(36)
-}
+  return Math.random().toString(36).substring(2) + Date.now().toString(36);
+};
 
 // Comprehensive color palette for tags (50+ colors)
 export const tagColors = [
@@ -102,7 +102,7 @@ export const tagColors = [
   '#0c4a6e', // sky-800
   '#075985', // sky-700
   '#0369a1', // sky-600
-]
+];
 
 // Color categories for better organization
 export const colorCategories = {
@@ -112,10 +112,10 @@ export const colorCategories = {
   neutral: ['#374151', '#4b5563', '#6b7280', '#9ca3af', '#d1d5db', '#0f172a', '#1e293b', '#334155'],
   nature: ['#365314', '#4d7c0f', '#65a30d', '#84cc16', '#a3e635'],
   tech: ['#1f2937', '#111827', '#0c4a6e', '#075985', '#0369a1'],
-}
+};
 
 // フラット構造の初期タグデータ
-const initialTags: Tag[] = []
+const initialTags: Tag[] = [];
 
 export const useTagStore = create<TagStore>()(
   devtools(
@@ -125,7 +125,7 @@ export const useTagStore = create<TagStore>()(
 
         addTag: async (tagData) => {
           try {
-            const { tags } = get()
+            const { tags } = get();
 
             const newTag: Tag = {
               id: generateId(),
@@ -140,23 +140,23 @@ export const useTagStore = create<TagStore>()(
               sort_order: tags.length,
               created_at: new Date(),
               updated_at: new Date(),
-            }
+            };
 
-            set({ tags: [...tags, newTag] })
-            return true
+            set({ tags: [...tags, newTag] });
+            return true;
           } catch (error) {
-            console.error('Failed to add tag:', error)
-            return false
+            console.error('Failed to add tag:', error);
+            return false;
           }
         },
 
         updateTag: async (id, updates) => {
           try {
-            const { tags } = get()
-            const tagExists = tags.some((tag) => tag.id === id)
+            const { tags } = get();
+            const tagExists = tags.some((tag) => tag.id === id);
 
             if (!tagExists) {
-              throw new Error('Tag not found')
+              throw new Error('Tag not found');
             }
 
             set((state) => ({
@@ -172,70 +172,70 @@ export const useTagStore = create<TagStore>()(
                     ...(updates.group_id !== undefined && { group_id: updates.group_id }),
                     ...(updates.sort_order !== undefined && { sort_order: updates.sort_order }),
                     updated_at: new Date(),
-                  } as Tag
+                  } as Tag;
                 }
-                return tag
+                return tag;
               }),
-            }))
-            return true
+            }));
+            return true;
           } catch (error) {
-            console.error('Failed to update tag:', error)
-            return false
+            console.error('Failed to update tag:', error);
+            return false;
           }
         },
 
         deleteTag: async (id) => {
           try {
-            const { tags } = get()
-            const tagExists = tags.some((tag) => tag.id === id)
+            const { tags } = get();
+            const tagExists = tags.some((tag) => tag.id === id);
 
             if (!tagExists) {
-              throw new Error('Tag not found')
+              throw new Error('Tag not found');
             }
 
             set((state) => ({
               tags: state.tags.filter((tag) => tag.id !== id),
-            }))
-            return true
+            }));
+            return true;
           } catch (error) {
-            console.error('Failed to delete tag:', error)
-            return false
+            console.error('Failed to delete tag:', error);
+            return false;
           }
         },
 
         getTagById: (id) => {
-          const { tags } = get()
-          return tags.find((tag) => tag.id === id)
+          const { tags } = get();
+          return tags.find((tag) => tag.id === id);
         },
 
         getTagsByIds: (ids) => {
-          const { tags } = get()
-          return tags.filter((tag) => ids.includes(tag.id))
+          const { tags } = get();
+          return tags.filter((tag) => ids.includes(tag.id));
         },
 
         getAllTags: () => {
-          const { tags } = get()
-          return tags
+          const { tags } = get();
+          return tags;
         },
 
         // Group helpers
         getTagsByGroup: (groupId) => {
-          const { tags } = get()
-          return tags.filter((tag) => tag.group_id === groupId && tag.is_active)
+          const { tags } = get();
+          return tags.filter((tag) => tag.group_id === groupId && tag.is_active);
         },
 
         getActiveTags: () => {
-          const { tags } = get()
-          return tags.filter((tag) => tag.is_active)
+          const { tags } = get();
+          return tags.filter((tag) => tag.is_active);
         },
       }),
       {
         name: 'tag-storage',
         partialize: (state) => ({ tags: state.tags }),
-      }
+      },
     ),
     {
       name: 'tag-store',
-    }
-  )
-)
+    },
+  ),
+);

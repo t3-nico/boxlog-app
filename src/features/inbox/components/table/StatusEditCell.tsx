@@ -1,27 +1,27 @@
-'use client'
+'use client';
 
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { TableCell } from '@/components/ui/table'
-import { PlanStatusBadge } from '@/features/plans/components/display/PlanStatusBadge'
-import type { PlanStatus } from '@/features/plans/types/plan'
-import { cn } from '@/lib/utils'
-import { Check } from 'lucide-react'
-import { useState } from 'react'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { TableCell } from '@/components/ui/table';
+import { PlanStatusBadge } from '@/features/plans/components/display/PlanStatusBadge';
+import type { PlanStatus } from '@/features/plans/types/plan';
+import { cn } from '@/lib/utils';
+import { Check } from 'lucide-react';
+import { useState } from 'react';
 
 interface StatusEditCellProps {
   /** 現在のステータス */
-  status: PlanStatus
+  status: PlanStatus;
   /** 列幅 */
-  width?: number | undefined
+  width?: number | undefined;
   /** ステータス変更時のコールバック */
-  onStatusChange: (status: PlanStatus) => void
+  onStatusChange: (status: PlanStatus) => void;
 }
 
 const STATUS_OPTIONS: { value: PlanStatus; label: string }[] = [
   { value: 'todo', label: 'Todo' },
   { value: 'doing', label: 'Doing' },
   { value: 'done', label: 'Done' },
-]
+];
 
 /**
  * ステータス編集可能セル
@@ -41,14 +41,14 @@ const STATUS_OPTIONS: { value: PlanStatus; label: string }[] = [
  * ```
  */
 export function StatusEditCell({ status, width, onStatusChange }: StatusEditCellProps) {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
 
   const handleStatusSelect = (newStatus: PlanStatus) => {
-    onStatusChange(newStatus)
-    setOpen(false)
-  }
+    onStatusChange(newStatus);
+    setOpen(false);
+  };
 
-  const style = width ? { width: `${width}px` } : undefined
+  const style = width ? { width: `${width}px` } : undefined;
 
   return (
     <TableCell
@@ -71,7 +71,7 @@ export function StatusEditCell({ status, width, onStatusChange }: StatusEditCell
                 onClick={() => handleStatusSelect(option.value)}
                 className={cn(
                   'hover:bg-state-hover flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-sm transition-colors',
-                  status === option.value && 'bg-surface-container'
+                  status === option.value && 'bg-surface-container',
                 )}
               >
                 <div className="flex size-4 items-center justify-center">
@@ -84,5 +84,5 @@ export function StatusEditCell({ status, width, onStatusChange }: StatusEditCell
         </PopoverContent>
       </Popover>
     </TableCell>
-  )
+  );
 }

@@ -1,20 +1,20 @@
-import { create } from 'zustand'
-import { devtools } from 'zustand/middleware'
+import { create } from 'zustand';
+import { devtools } from 'zustand/middleware';
 
 /**
  * フォーカスストアの状態
  */
 export interface TableFocusState {
   /** 現在フォーカス中のアイテムID */
-  focusedId: string | null
+  focusedId: string | null;
   /** フォーカスをセット */
-  setFocusedId: (id: string | null) => void
+  setFocusedId: (id: string | null) => void;
   /** 次の行にフォーカス移動 */
-  focusNext: (ids: string[]) => void
+  focusNext: (ids: string[]) => void;
   /** 前の行にフォーカス移動 */
-  focusPrevious: (ids: string[]) => void
+  focusPrevious: (ids: string[]) => void;
   /** フォーカスをクリア */
-  clearFocus: () => void
+  clearFocus: () => void;
 }
 
 /**
@@ -22,7 +22,7 @@ export interface TableFocusState {
  */
 export interface CreateTableFocusStoreConfig {
   /** devtools 表示名 */
-  storeName?: string
+  storeName?: string;
 }
 
 /**
@@ -45,7 +45,7 @@ export interface CreateTableFocusStoreConfig {
  * ```
  */
 export function createTableFocusStore(config: CreateTableFocusStoreConfig = {}) {
-  const { storeName = 'table-focus-store' } = config
+  const { storeName = 'table-focus-store' } = config;
 
   return create<TableFocusState>()(
     devtools(
@@ -55,42 +55,42 @@ export function createTableFocusStore(config: CreateTableFocusStoreConfig = {}) 
         setFocusedId: (id) => set({ focusedId: id }),
 
         focusNext: (ids) => {
-          const { focusedId } = get()
-          if (ids.length === 0) return
+          const { focusedId } = get();
+          if (ids.length === 0) return;
 
           if (!focusedId) {
-            set({ focusedId: ids[0] ?? null })
-            return
+            set({ focusedId: ids[0] ?? null });
+            return;
           }
 
-          const currentIndex = ids.findIndex((id) => id === focusedId)
+          const currentIndex = ids.findIndex((id) => id === focusedId);
           if (currentIndex === -1 || currentIndex === ids.length - 1) {
-            return
+            return;
           }
 
-          set({ focusedId: ids[currentIndex + 1] ?? null })
+          set({ focusedId: ids[currentIndex + 1] ?? null });
         },
 
         focusPrevious: (ids) => {
-          const { focusedId } = get()
-          if (ids.length === 0) return
+          const { focusedId } = get();
+          if (ids.length === 0) return;
 
           if (!focusedId) {
-            set({ focusedId: ids[0] ?? null })
-            return
+            set({ focusedId: ids[0] ?? null });
+            return;
           }
 
-          const currentIndex = ids.findIndex((id) => id === focusedId)
+          const currentIndex = ids.findIndex((id) => id === focusedId);
           if (currentIndex === -1 || currentIndex === 0) {
-            return
+            return;
           }
 
-          set({ focusedId: ids[currentIndex - 1] ?? null })
+          set({ focusedId: ids[currentIndex - 1] ?? null });
         },
 
         clearFocus: () => set({ focusedId: null }),
       }),
-      { name: storeName }
-    )
-  )
+      { name: storeName },
+    ),
+  );
 }

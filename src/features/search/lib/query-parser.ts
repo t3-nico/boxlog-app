@@ -1,11 +1,11 @@
-import type { PlanStatus } from '@/features/plans/types'
+import type { PlanStatus } from '@/features/plans/types';
 
-import type { SearchFilters } from '../types'
+import type { SearchFilters } from '../types';
 
 export interface ParsedQuery {
-  text: string
-  filters: SearchFilters
-  hasFilters: boolean
+  text: string;
+  filters: SearchFilters;
+  hasFilters: boolean;
 }
 
 /**
@@ -18,7 +18,7 @@ const FILTER_PATTERNS = {
   tag: /#(\S+)/g,
   status: /status:(\w+)/gi,
   due: /due:(\w+)/gi,
-}
+};
 
 const STATUS_MAP: Record<string, PlanStatus> = {
   done: 'done',
@@ -29,7 +29,7 @@ const STATUS_MAP: Record<string, PlanStatus> = {
   in_progress: 'doing',
   inprogress: 'doing',
   doing: 'doing',
-}
+};
 
 const DUE_MAP: Record<string, SearchFilters['dueDate']> = {
   today: 'today',
@@ -39,63 +39,63 @@ const DUE_MAP: Record<string, SearchFilters['dueDate']> = {
   overdue: 'overdue',
   no_due: 'no_due_date',
   none: 'no_due_date',
-}
+};
 
 /**
  * 検索クエリを解析してテキストとフィルターを分離
  */
 export function parseSearchQuery(query: string): ParsedQuery {
-  let text = query
-  const filters: SearchFilters = {}
+  let text = query;
+  const filters: SearchFilters = {};
 
   // タグフィルター抽出
-  const tagMatches = query.matchAll(FILTER_PATTERNS.tag)
-  const tags: string[] = []
+  const tagMatches = query.matchAll(FILTER_PATTERNS.tag);
+  const tags: string[] = [];
   for (const match of tagMatches) {
     if (match[1]) {
-      tags.push(match[1])
+      tags.push(match[1]);
     }
-    text = text.replace(match[0], '')
+    text = text.replace(match[0], '');
   }
   if (tags.length > 0) {
-    filters.tags = tags
+    filters.tags = tags;
   }
 
   // ステータスフィルター抽出
-  const statusMatches = query.matchAll(FILTER_PATTERNS.status)
-  const statuses: PlanStatus[] = []
+  const statusMatches = query.matchAll(FILTER_PATTERNS.status);
+  const statuses: PlanStatus[] = [];
   for (const match of statusMatches) {
     if (match[1]) {
-      const statusKey = match[1].toLowerCase()
-      const mappedStatus = STATUS_MAP[statusKey]
+      const statusKey = match[1].toLowerCase();
+      const mappedStatus = STATUS_MAP[statusKey];
       if (mappedStatus) {
-        statuses.push(mappedStatus)
+        statuses.push(mappedStatus);
       }
     }
-    text = text.replace(match[0], '')
+    text = text.replace(match[0], '');
   }
   if (statuses.length > 0) {
-    filters.status = statuses
+    filters.status = statuses;
   }
 
   // 期限フィルター抽出
-  const dueMatches = query.matchAll(FILTER_PATTERNS.due)
+  const dueMatches = query.matchAll(FILTER_PATTERNS.due);
   for (const match of dueMatches) {
     if (match[1]) {
-      const dueKey = match[1].toLowerCase()
-      const mappedDue = DUE_MAP[dueKey]
+      const dueKey = match[1].toLowerCase();
+      const mappedDue = DUE_MAP[dueKey];
       if (mappedDue) {
-        filters.dueDate = mappedDue
+        filters.dueDate = mappedDue;
       }
     }
-    text = text.replace(match[0], '')
+    text = text.replace(match[0], '');
   }
 
   return {
     text: text.trim(),
     filters,
     hasFilters: Object.keys(filters).length > 0,
-  }
+  };
 }
 
 /**
@@ -109,5 +109,5 @@ export function getFilterHints(): Array<{ syntax: string; description: string }>
     { syntax: 'status:in_progress', description: '進行中を表示' },
     { syntax: 'due:today', description: '今日が期限' },
     { syntax: 'due:overdue', description: '期限超過' },
-  ]
+  ];
 }

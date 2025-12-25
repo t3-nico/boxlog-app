@@ -3,9 +3,9 @@
  * /api/trpc/* エンドポイントの処理
  */
 
-import { appRouter } from '@/server/api/root'
-import { createTRPCContext } from '@/server/api/trpc'
-import { createNextApiHandler } from '@trpc/server/adapters/next'
+import { appRouter } from '@/server/api/root';
+import { createTRPCContext } from '@/server/api/trpc';
+import { createNextApiHandler } from '@trpc/server/adapters/next';
 
 /**
  * tRPC APIハンドラー
@@ -23,27 +23,28 @@ export default createNextApiHandler({
       input: process.env.NODE_ENV === 'development' ? input : '[REDACTED]',
       userId: ctx?.userId,
       timestamp: new Date().toISOString(),
-    })
+    });
 
     // 本番環境では詳細なエラー情報を隠す
     if (process.env.NODE_ENV === 'production' && error.code === 'INTERNAL_SERVER_ERROR') {
-      error.message = 'サーバーエラーが発生しました'
+      error.message = 'サーバーエラーが発生しました';
     }
   },
   responseMeta: ({ ctx: _ctx, paths, type, errors: _errors }) => {
     // リクエストごとのメタデータ設定
-    const oneDay = 60 * 60 * 24
-    const isQuery = type === 'query'
-    const isPublic = paths && paths.every((path) => !path.includes('protected'))
+    const oneDay = 60 * 60 * 24;
+    const isQuery = type === 'query';
+    const isPublic = paths && paths.every((path) => !path.includes('protected'));
 
     return {
       headers: {
         // クエリの場合はキャッシュを有効化
-        'cache-control': isQuery && isPublic ? `s-maxage=1, stale-while-revalidate=${oneDay}` : 'no-cache',
+        'cache-control':
+          isQuery && isPublic ? `s-maxage=1, stale-while-revalidate=${oneDay}` : 'no-cache',
       },
-    }
+    };
   },
-})
+});
 
 /**
  * APIルートの設定
@@ -55,4 +56,4 @@ export const config = {
     },
     externalResolver: true,
   },
-}
+};

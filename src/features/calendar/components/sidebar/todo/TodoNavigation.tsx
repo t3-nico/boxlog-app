@@ -1,25 +1,25 @@
-'use client'
+'use client';
 
-import { ChevronDown } from 'lucide-react'
-import { useTranslations } from 'next-intl'
+import { ChevronDown } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+} from '@/components/ui/dropdown-menu';
 
-export type TodoFilter = 'all' | 'today' | 'overdue'
-export type TodoSort = 'due' | 'priority' | 'created'
+export type TodoFilter = 'all' | 'today' | 'overdue';
+export type TodoSort = 'due' | 'priority' | 'created';
 
 interface TodoNavigationProps {
-  filter: TodoFilter
-  onFilterChange: (filter: TodoFilter) => void
-  sort: TodoSort
-  onSortChange: (sort: TodoSort) => void
+  filter: TodoFilter;
+  onFilterChange: (filter: TodoFilter) => void;
+  sort: TodoSort;
+  onSortChange: (sort: TodoSort) => void;
 }
 
 /**
@@ -32,22 +32,27 @@ interface TodoNavigationProps {
  * **Note**: 優先度フィルターはDBスキーマにpriorityフィールドが
  * 追加された後に実装予定
  */
-export function TodoNavigation({ filter, onFilterChange, sort, onSortChange }: TodoNavigationProps) {
-  const t = useTranslations('calendar.todo.navigation')
+export function TodoNavigation({
+  filter,
+  onFilterChange,
+  sort,
+  onSortChange,
+}: TodoNavigationProps) {
+  const t = useTranslations('calendar.todo.navigation');
 
   // フィルターラベルのマッピング
   const filterLabels: Record<TodoFilter, string> = {
     all: t('all'),
     today: t('today'),
     overdue: t('overdue'),
-  }
+  };
 
   // ソートラベルのマッピング
   const sortLabels: Record<TodoSort, string> = {
     due: t('dueDate'),
     priority: t('priority'),
     created: t('created'),
-  }
+  };
 
   return (
     <div className="flex items-center gap-2">
@@ -60,7 +65,10 @@ export function TodoNavigation({ filter, onFilterChange, sort, onSortChange }: T
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start" className="w-32">
-          <DropdownMenuRadioGroup value={filter} onValueChange={(value) => onFilterChange(value as TodoFilter)}>
+          <DropdownMenuRadioGroup
+            value={filter}
+            onValueChange={(value) => onFilterChange(value as TodoFilter)}
+          >
             <DropdownMenuRadioItem value="all">{t('all')}</DropdownMenuRadioItem>
             <DropdownMenuRadioItem value="today">{t('today')}</DropdownMenuRadioItem>
             <DropdownMenuRadioItem value="overdue">{t('overdue')}</DropdownMenuRadioItem>
@@ -77,7 +85,10 @@ export function TodoNavigation({ filter, onFilterChange, sort, onSortChange }: T
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start" className="w-32">
-          <DropdownMenuRadioGroup value={sort} onValueChange={(value) => onSortChange(value as TodoSort)}>
+          <DropdownMenuRadioGroup
+            value={sort}
+            onValueChange={(value) => onSortChange(value as TodoSort)}
+          >
             <DropdownMenuRadioItem value="due">{t('dueDate')}</DropdownMenuRadioItem>
             <DropdownMenuRadioItem value="priority">{t('priority')}</DropdownMenuRadioItem>
             <DropdownMenuRadioItem value="created">{t('created')}</DropdownMenuRadioItem>
@@ -85,5 +96,5 @@ export function TodoNavigation({ filter, onFilterChange, sort, onSortChange }: T
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
-  )
+  );
 }

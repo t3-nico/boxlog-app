@@ -11,6 +11,10 @@ export {
   usePerformanceMonitor,
   usePerformanceStats,
   useRenderCount,
-} from './performance'
+} from './performance';
 
-export type { PerformanceMemory, PerformanceStatsResult, PerformanceWithMemory } from './performance'
+export type {
+  PerformanceMemory,
+  PerformanceStatsResult,
+  PerformanceWithMemory,
+} from './performance';

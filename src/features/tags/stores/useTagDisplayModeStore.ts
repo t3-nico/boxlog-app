@@ -1,13 +1,13 @@
-import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
-export type TagDisplayMode = 'flat' | 'grouped'
+export type TagDisplayMode = 'flat' | 'grouped';
 
 interface TagDisplayModeState {
   /** 表示モード: フラット or グループ別 */
-  displayMode: TagDisplayMode
+  displayMode: TagDisplayMode;
   /** 表示モードを設定 */
-  setDisplayMode: (mode: TagDisplayMode) => void
+  setDisplayMode: (mode: TagDisplayMode) => void;
 }
 
 /**
@@ -24,6 +24,6 @@ export const useTagDisplayModeStore = create<TagDisplayModeState>()(
     }),
     {
       name: 'tag-display-mode',
-    }
-  )
-)
+    },
+  ),
+);

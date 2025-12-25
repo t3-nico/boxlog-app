@@ -20,41 +20,41 @@
  * ```
  */
 
-import type { SupabaseClient } from '@supabase/supabase-js'
-import { initTRPC, type AnyRouter } from '@trpc/server'
-import superjson from 'superjson'
-import { expect, vi } from 'vitest'
+import type { SupabaseClient } from '@supabase/supabase-js';
+import { initTRPC, type AnyRouter } from '@trpc/server';
+import superjson from 'superjson';
+import { expect, vi } from 'vitest';
 
-import type { Database } from '@/lib/database.types'
-import type { Context } from '@/server/api/trpc'
+import type { Database } from '@/lib/database.types';
+import type { Context } from '@/server/api/trpc';
 
 /**
  * モックコンテキストのオプション
  */
 export interface MockContextOptions {
-  userId?: string
-  sessionId?: string
-  supabaseOverrides?: Partial<MockSupabaseClient>
+  userId?: string;
+  sessionId?: string;
+  supabaseOverrides?: Partial<MockSupabaseClient>;
 }
 
 /**
  * モックSupabaseクライアントの型
  */
 export interface MockSupabaseClient {
-  from: ReturnType<typeof vi.fn>
+  from: ReturnType<typeof vi.fn>;
   auth: {
-    getSession: ReturnType<typeof vi.fn>
-    getUser: ReturnType<typeof vi.fn>
-  }
-  rpc: ReturnType<typeof vi.fn>
+    getSession: ReturnType<typeof vi.fn>;
+    getUser: ReturnType<typeof vi.fn>;
+  };
+  rpc: ReturnType<typeof vi.fn>;
 }
 
 /**
  * Supabaseクエリビルダーのモック結果
  */
 export interface MockQueryResult<T> {
-  data: T | null
-  error: { message: string; code: string } | null
+  data: T | null;
+  error: { message: string; code: string } | null;
 }
 
 /**
@@ -76,7 +76,7 @@ export function createMockSupabase(overrides?: Partial<MockSupabaseClient>): Moc
     single: vi.fn().mockResolvedValue({ data: null, error: null }),
     maybeSingle: vi.fn().mockResolvedValue({ data: null, error: null }),
     then: vi.fn().mockImplementation((resolve) => resolve({ data: [], error: null })),
-  })
+  });
 
   return {
     from: mockFrom,
@@ -86,16 +86,16 @@ export function createMockSupabase(overrides?: Partial<MockSupabaseClient>): Moc
     },
     rpc: vi.fn().mockResolvedValue({ data: null, error: null }),
     ...overrides,
-  }
+  };
 }
 
 /**
  * モックコンテキストを作成
  */
 export function createMockContext(options: MockContextOptions = {}): Context {
-  const { userId, sessionId, supabaseOverrides } = options
+  const { userId, sessionId, supabaseOverrides } = options;
 
-  const mockSupabase = createMockSupabase(supabaseOverrides)
+  const mockSupabase = createMockSupabase(supabaseOverrides);
 
   return {
     req: {
@@ -110,7 +110,7 @@ export function createMockContext(options: MockContextOptions = {}): Context {
     userId,
     sessionId,
     supabase: mockSupabase as unknown as SupabaseClient<Database>,
-  }
+  };
 }
 
 /**
@@ -118,9 +118,9 @@ export function createMockContext(options: MockContextOptions = {}): Context {
  */
 export function createAuthenticatedContext(
   userId: string = 'test-user-id',
-  options: Omit<MockContextOptions, 'userId'> = {}
+  options: Omit<MockContextOptions, 'userId'> = {},
 ): Context {
-  return createMockContext({ ...options, userId })
+  return createMockContext({ ...options, userId });
 }
 
 /**
@@ -134,18 +134,22 @@ export function createTestCaller<TRouter extends AnyRouter>(router: TRouter, ctx
   // tRPCインスタンスを作成（テスト用）
   const t = initTRPC.context<Context>().create({
     transformer: superjson,
-  })
+  });
 
   // callerFactoryを作成
-  const createCaller = t.createCallerFactory(router)
+  const createCaller = t.createCallerFactory(router);
 
-  return createCaller(ctx)
+  return createCaller(ctx);
 }
 
 /**
  * Supabaseクエリの成功レスポンスをモック
  */
-export function mockSupabaseSuccess<T>(mockFrom: MockSupabaseClient['from'], tableName: string, data: T): void {
+export function mockSupabaseSuccess<T>(
+  mockFrom: MockSupabaseClient['from'],
+  tableName: string,
+  data: T,
+): void {
   mockFrom.mockImplementation((table: string) => {
     if (table === tableName) {
       return {
@@ -165,9 +169,9 @@ export function mockSupabaseSuccess<T>(mockFrom: MockSupabaseClient['from'], tab
         then: vi
           .fn()
           .mockImplementation((resolve: (value: unknown) => void) =>
-            resolve({ data: Array.isArray(data) ? data : [data], error: null })
+            resolve({ data: Array.isArray(data) ? data : [data], error: null }),
           ),
-      }
+      };
     }
     // デフォルトのモックQueryBuilder を返す
     return {
@@ -184,9 +188,13 @@ export function mockSupabaseSuccess<T>(mockFrom: MockSupabaseClient['from'], tab
       range: vi.fn().mockReturnThis(),
       single: vi.fn().mockResolvedValue({ data: null, error: null }),
       maybeSingle: vi.fn().mockResolvedValue({ data: null, error: null }),
-      then: vi.fn().mockImplementation((resolve: (value: unknown) => void) => resolve({ data: [], error: null })),
-    }
-  })
+      then: vi
+        .fn()
+        .mockImplementation((resolve: (value: unknown) => void) =>
+          resolve({ data: [], error: null }),
+        ),
+    };
+  });
 }
 
 /**
@@ -196,7 +204,7 @@ export function mockSupabaseError(
   mockFrom: MockSupabaseClient['from'],
   tableName: string,
   errorMessage: string,
-  errorCode: string = 'PGRST116'
+  errorCode: string = 'PGRST116',
 ): void {
   mockFrom.mockImplementation((table: string) => {
     if (table === tableName) {
@@ -212,14 +220,18 @@ export function mockSupabaseError(
         order: vi.fn().mockReturnThis(),
         limit: vi.fn().mockReturnThis(),
         range: vi.fn().mockReturnThis(),
-        single: vi.fn().mockResolvedValue({ data: null, error: { message: errorMessage, code: errorCode } }),
-        maybeSingle: vi.fn().mockResolvedValue({ data: null, error: { message: errorMessage, code: errorCode } }),
+        single: vi
+          .fn()
+          .mockResolvedValue({ data: null, error: { message: errorMessage, code: errorCode } }),
+        maybeSingle: vi
+          .fn()
+          .mockResolvedValue({ data: null, error: { message: errorMessage, code: errorCode } }),
         then: vi
           .fn()
           .mockImplementation((resolve: (value: unknown) => void) =>
-            resolve({ data: null, error: { message: errorMessage, code: errorCode } })
+            resolve({ data: null, error: { message: errorMessage, code: errorCode } }),
           ),
-      }
+      };
     }
     // デフォルトのモックQueryBuilder を返す
     return {
@@ -234,24 +246,28 @@ export function mockSupabaseError(
       order: vi.fn().mockReturnThis(),
       limit: vi.fn().mockReturnThis(),
       range: vi.fn().mockReturnThis(),
-      single: vi.fn().mockResolvedValue({ data: null, error: { message: errorMessage, code: errorCode } }),
-      maybeSingle: vi.fn().mockResolvedValue({ data: null, error: { message: errorMessage, code: errorCode } }),
+      single: vi
+        .fn()
+        .mockResolvedValue({ data: null, error: { message: errorMessage, code: errorCode } }),
+      maybeSingle: vi
+        .fn()
+        .mockResolvedValue({ data: null, error: { message: errorMessage, code: errorCode } }),
       then: vi
         .fn()
         .mockImplementation((resolve: (value: unknown) => void) =>
-          resolve({ data: null, error: { message: errorMessage, code: errorCode } })
+          resolve({ data: null, error: { message: errorMessage, code: errorCode } }),
         ),
-    }
-  })
+    };
+  });
 }
 
 /**
  * テスト用のプランデータを生成
  */
 export function createMockPlan(
-  overrides: Partial<Database['public']['Tables']['plans']['Row']> = {}
+  overrides: Partial<Database['public']['Tables']['plans']['Row']> = {},
 ): Database['public']['Tables']['plans']['Row'] {
-  const now = new Date().toISOString()
+  const now = new Date().toISOString();
   return {
     id: 'test-plan-id',
     user_id: 'test-user-id',
@@ -271,16 +287,16 @@ export function createMockPlan(
     created_at: now,
     updated_at: now,
     ...overrides,
-  }
+  };
 }
 
 /**
  * テスト用のタグデータを生成
  */
 export function createMockTag(
-  overrides: Partial<Database['public']['Tables']['tags']['Row']> = {}
+  overrides: Partial<Database['public']['Tables']['tags']['Row']> = {},
 ): Database['public']['Tables']['tags']['Row'] {
-  const now = new Date().toISOString()
+  const now = new Date().toISOString();
   return {
     id: 'test-tag-id',
     user_id: 'test-user-id',
@@ -294,13 +310,13 @@ export function createMockTag(
     created_at: now,
     updated_at: now,
     ...overrides,
-  }
+  };
 }
 
 /**
  * TRPCErrorをアサート
  */
 export function expectTRPCError(error: unknown, code: string): void {
-  expect(error).toBeDefined()
-  expect((error as { code?: string }).code).toBe(code)
+  expect(error).toBeDefined();
+  expect((error as { code?: string }).code).toBe(code);
 }

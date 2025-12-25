@@ -1,6 +1,6 @@
-import { cacheStrategies } from '@/lib/tanstack-query/cache-config'
-import { api } from '@/lib/trpc'
-import type { PlanFilters } from '../types/plan'
+import { cacheStrategies } from '@/lib/tanstack-query/cache-config';
+import { api } from '@/lib/trpc';
+import type { PlanFilters } from '../types/plan';
 
 /**
  * プラン一覧取得フック
@@ -21,8 +21,8 @@ export function usePlans(filters?: PlanFilters, options?: { enabled?: boolean })
     ...cacheStrategies.plans, // staleTime: 30秒, gcTime: 2分
     retry: 1,
     ...options,
-  })
+  });
 }
 
 // Backward compatibility
-export { usePlans as useplans }
+export { usePlans as useplans };

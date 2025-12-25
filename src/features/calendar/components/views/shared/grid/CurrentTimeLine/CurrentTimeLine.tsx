@@ -2,14 +2,14 @@
  * 現在時刻線コンポーネント - シンプル版
  */
 
-'use client'
+'use client';
 
-import { memo, useMemo } from 'react'
+import { memo, useMemo } from 'react';
 
-import { HOUR_HEIGHT, Z_INDEX } from '../../constants/grid.constants'
-import { useCurrentTime } from '../../hooks/useCurrentTime'
-import type { CurrentTimeLineProps } from '../../types/grid.types'
-import { timeToPixels } from '../../utils/gridCalculator'
+import { HOUR_HEIGHT, Z_INDEX } from '../../constants/grid.constants';
+import { useCurrentTime } from '../../hooks/useCurrentTime';
+import type { CurrentTimeLineProps } from '../../types/grid.types';
+import { timeToPixels } from '../../utils/gridCalculator';
 
 export const CurrentTimeLine = memo<CurrentTimeLineProps>(function CurrentTimeLine({
   hourHeight = HOUR_HEIGHT,
@@ -23,26 +23,26 @@ export const CurrentTimeLine = memo<CurrentTimeLineProps>(function CurrentTimeLi
   // viewModeはpropsとして受け取るが使用しない（将来の拡張用）
   viewMode: _viewMode = 'day',
 }) {
-  const currentTime = useCurrentTime({ updateInterval })
+  const currentTime = useCurrentTime({ updateInterval });
 
   // 現在時刻のY座標を計算
-  const topPosition = timeToPixels(currentTime, hourHeight)
+  const topPosition = timeToPixels(currentTime, hourHeight);
 
   // 今日が含まれているかチェック
   const hasToday = useMemo(() => {
     if (!displayDates || displayDates.length === 0) {
-      return true // displayDatesがない場合は今日とみなす
+      return true; // displayDatesがない場合は今日とみなす
     }
 
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
     return displayDates.some((date) => {
-      const d = new Date(date)
-      d.setHours(0, 0, 0, 0)
-      return d.getTime() === today.getTime()
-    })
-  }, [displayDates])
+      const d = new Date(date);
+      d.setHours(0, 0, 0, 0);
+      return d.getTime() === today.getTime();
+    });
+  }, [displayDates]);
 
   // 今日の列位置を計算（複数日表示の場合）
   const columnInfo = useMemo(() => {
@@ -52,18 +52,18 @@ export const CurrentTimeLine = memo<CurrentTimeLineProps>(function CurrentTimeLi
         left: timeColumnWidth,
         width: '100%',
         isToday: hasToday,
-      }
+      };
     }
 
     // 複数日表示の場合、今日の列を特定
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
     const todayIndex = displayDates.findIndex((date) => {
-      const d = new Date(date)
-      d.setHours(0, 0, 0, 0)
-      return d.getTime() === today.getTime()
-    })
+      const d = new Date(date);
+      d.setHours(0, 0, 0, 0);
+      return d.getTime() === today.getTime();
+    });
 
     if (todayIndex === -1) {
       // 今日が見つからない場合、showOnOtherDaysがtrueなら全幅で薄く表示
@@ -72,26 +72,26 @@ export const CurrentTimeLine = memo<CurrentTimeLineProps>(function CurrentTimeLi
           left: timeColumnWidth,
           width: containerWidth - timeColumnWidth,
           isToday: false,
-        }
+        };
       }
-      return null
+      return null;
     }
 
     // 今日の列の位置とサイズを計算
-    const availableWidth = containerWidth - timeColumnWidth
-    const columnWidth = availableWidth / displayDates.length
-    const left = timeColumnWidth + todayIndex * columnWidth
+    const availableWidth = containerWidth - timeColumnWidth;
+    const columnWidth = availableWidth / displayDates.length;
+    const left = timeColumnWidth + todayIndex * columnWidth;
 
     return {
       left,
       width: columnWidth,
       isToday: true,
-    }
-  }, [displayDates, timeColumnWidth, containerWidth, hasToday, showOnOtherDays])
+    };
+  }, [displayDates, timeColumnWidth, containerWidth, hasToday, showOnOtherDays]);
 
   // 表示しない場合
   if (!columnInfo) {
-    return null
+    return null;
   }
 
   return (
@@ -106,7 +106,9 @@ export const CurrentTimeLine = memo<CurrentTimeLineProps>(function CurrentTimeLi
       }}
     >
       {/* 時刻線 - 今日は濃く、他の日は薄く */}
-      <div className={`h-full w-full shadow-sm ${columnInfo.isToday ? 'bg-primary' : 'bg-primary/50'}`} />
+      <div
+        className={`h-full w-full shadow-sm ${columnInfo.isToday ? 'bg-primary' : 'bg-primary/50'}`}
+      />
 
       {/* ドット（今日の場合のみ） */}
       {showDot != null && columnInfo.isToday && (
@@ -121,20 +123,20 @@ export const CurrentTimeLine = memo<CurrentTimeLineProps>(function CurrentTimeLi
         />
       )}
     </div>
-  )
-})
+  );
+});
 
 /**
  * 列専用の現在時刻線（DayColumn内で使用）
  */
 export const CurrentTimeLineForColumn = memo<{
-  hourHeight?: number
-  showDot?: boolean
-  className?: string
+  hourHeight?: number;
+  showDot?: boolean;
+  className?: string;
   /** この列が今日かどうか */
-  isToday?: boolean
+  isToday?: boolean;
   /** 他の日でも薄く表示するか（デフォルト: true） */
-  showOnOtherDays?: boolean
+  showOnOtherDays?: boolean;
 }>(function CurrentTimeLineForColumn({
   hourHeight = HOUR_HEIGHT,
   showDot = false,
@@ -142,14 +144,14 @@ export const CurrentTimeLineForColumn = memo<{
   isToday = true,
   showOnOtherDays = true,
 }) {
-  const currentTime = useCurrentTime({ updateInterval: 60000 })
+  const currentTime = useCurrentTime({ updateInterval: 60000 });
 
   // 現在時刻のY座標を計算
-  const topPosition = timeToPixels(currentTime, hourHeight)
+  const topPosition = timeToPixels(currentTime, hourHeight);
 
   // 今日でない場合で、他の日に表示しない設定なら非表示
   if (!isToday && !showOnOtherDays) {
-    return null
+    return null;
   }
 
   return (
@@ -176,5 +178,5 @@ export const CurrentTimeLineForColumn = memo<{
       {/* 時刻線 - 今日は濃く、他の日は薄く */}
       <div className={`w-full shadow-sm ${isToday ? 'bg-primary h-0.5' : 'bg-primary/50 h-px'}`} />
     </div>
-  )
-})
+  );
+});

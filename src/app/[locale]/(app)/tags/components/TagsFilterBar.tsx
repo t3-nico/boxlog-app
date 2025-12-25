@@ -1,14 +1,19 @@
-'use client'
+'use client';
 
-import { ChevronDown, Filter, Plus } from 'lucide-react'
+import { ChevronDown, Filter, Plus } from 'lucide-react';
 
-import { Button } from '@/components/ui/button'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import type { useTranslations } from 'next-intl'
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import type { useTranslations } from 'next-intl';
 
 interface TagsFilterBarProps {
-  onCreateTag: () => void
-  t: ReturnType<typeof useTranslations>
+  onCreateTag: () => void;
+  t: ReturnType<typeof useTranslations>;
 }
 
 export function TagsFilterBar({ onCreateTag, t }: TagsFilterBarProps) {
@@ -38,5 +43,5 @@ export function TagsFilterBar({ onCreateTag, t }: TagsFilterBarProps) {
         </Button>
       </div>
     </div>
-  )
+  );
 }

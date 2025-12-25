@@ -1,6 +1,6 @@
-'use client'
+'use client';
 
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/utils';
 
 /**
  * CalendarSkeleton - カレンダー読み込み中のスケルトン画面
@@ -20,13 +20,19 @@ export const CalendarSkeleton = () => {
           {/* Left: Date navigation */}
           <div className="flex items-center gap-4">
             <div
-              className={cn('bg-surface-container h-9 w-9 animate-pulse rounded-md motion-reduce:animate-none')}
+              className={cn(
+                'bg-surface-container h-9 w-9 animate-pulse rounded-md motion-reduce:animate-none',
+              )}
             ></div>
             <div
-              className={cn('bg-surface-container h-7 w-40 animate-pulse rounded-md motion-reduce:animate-none')}
+              className={cn(
+                'bg-surface-container h-7 w-40 animate-pulse rounded-md motion-reduce:animate-none',
+              )}
             ></div>
             <div
-              className={cn('bg-surface-container h-9 w-9 animate-pulse rounded-md motion-reduce:animate-none')}
+              className={cn(
+                'bg-surface-container h-9 w-9 animate-pulse rounded-md motion-reduce:animate-none',
+              )}
             ></div>
           </div>
 
@@ -35,7 +41,9 @@ export const CalendarSkeleton = () => {
             {Array.from({ length: 6 }).map((_, i) => (
               <div
                 key={i}
-                className={cn('bg-surface-container h-9 w-16 animate-pulse rounded-md motion-reduce:animate-none')}
+                className={cn(
+                  'bg-surface-container h-9 w-16 animate-pulse rounded-md motion-reduce:animate-none',
+                )}
               ></div>
             ))}
           </div>
@@ -52,7 +60,9 @@ export const CalendarSkeleton = () => {
               {Array.from({ length: 7 }).map((_, i) => (
                 <div
                   key={i}
-                  className={cn('bg-surface-container h-10 animate-pulse rounded-md motion-reduce:animate-none')}
+                  className={cn(
+                    'bg-surface-container h-10 animate-pulse rounded-md motion-reduce:animate-none',
+                  )}
                 ></div>
               ))}
             </div>
@@ -65,7 +75,9 @@ export const CalendarSkeleton = () => {
               {Array.from({ length: 24 }).map((_, i) => (
                 <div
                   key={i}
-                  className={cn('bg-surface-container/50 h-12 animate-pulse rounded-sm motion-reduce:animate-none')}
+                  className={cn(
+                    'bg-surface-container/50 h-12 animate-pulse rounded-sm motion-reduce:animate-none',
+                  )}
                 ></div>
               ))}
             </div>
@@ -73,14 +85,17 @@ export const CalendarSkeleton = () => {
             {/* Calendar columns */}
             <div className="grid flex-1 grid-cols-7 gap-1">
               {Array.from({ length: 7 }).map((_, dayIndex) => (
-                <div key={dayIndex} className="border-border relative flex flex-col space-y-px border-l">
+                <div
+                  key={dayIndex}
+                  className="border-border relative flex flex-col space-y-px border-l"
+                >
                   {/* Time slots */}
                   {Array.from({ length: 24 }).map((_, timeIndex) => (
                     <div
                       key={timeIndex}
                       className={cn(
                         'border-border/50 h-12 border-b',
-                        timeIndex % 2 === 0 ? 'bg-background' : 'bg-surface-container/10'
+                        timeIndex % 2 === 0 ? 'bg-background' : 'bg-surface-container/10',
                       )}
                     ></div>
                   ))}
@@ -90,7 +105,7 @@ export const CalendarSkeleton = () => {
                     <div
                       style={{ top: '160px', height: '96px' }}
                       className={cn(
-                        'bg-primary/20 border-primary/30 absolute right-1 left-1 animate-pulse rounded-md border motion-reduce:animate-none'
+                        'bg-primary/20 border-primary/30 absolute right-1 left-1 animate-pulse rounded-md border motion-reduce:animate-none',
                       )}
                     ></div>
                   )}
@@ -98,7 +113,7 @@ export const CalendarSkeleton = () => {
                     <div
                       style={{ top: '320px', height: '64px' }}
                       className={cn(
-                        'bg-surface-container border-muted-foreground/20 absolute right-1 left-1 animate-pulse rounded-md border motion-reduce:animate-none'
+                        'bg-surface-container border-muted-foreground/20 absolute right-1 left-1 animate-pulse rounded-md border motion-reduce:animate-none',
                       )}
                     ></div>
                   )}
@@ -109,5 +124,5 @@ export const CalendarSkeleton = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};

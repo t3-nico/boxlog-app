@@ -3,19 +3,19 @@
  * 技術的な詳細を隠し、ユーザーにとって分かりやすく、行動指向のメッセージを提供
  */
 
-import { ERROR_CODES, ErrorCode, getErrorCategory, type SeverityLevel } from './categories'
+import { ERROR_CODES, ErrorCode, getErrorCategory, type SeverityLevel } from './categories';
 
 /**
  * ユーザー向けメッセージの構造
  */
 export interface UserMessage {
-  title: string // 短いタイトル（例：「認証エラー」）
-  description: string // 詳細説明（ユーザー理解用）
-  action?: string // 推奨アクション（例：「再度ログインしてください」）
-  severity: SeverityLevel // 重要度レベル
-  icon?: string // アイコン名（UI表示用）
-  autoRetry?: boolean // 自動リトライ可能か
-  supportContact?: boolean // サポート連絡が必要か
+  title: string; // 短いタイトル（例：「認証エラー」）
+  description: string; // 詳細説明（ユーザー理解用）
+  action?: string; // 推奨アクション（例：「再度ログインしてください」）
+  severity: SeverityLevel; // 重要度レベル
+  icon?: string; // アイコン名（UI表示用）
+  autoRetry?: boolean; // 自動リトライ可能か
+  supportContact?: boolean; // サポート連絡が必要か
 }
 
 /**
@@ -76,7 +76,7 @@ const AUTH_MESSAGES: Record<number, UserMessage> = {
     autoRetry: false,
     supportContact: false,
   },
-}
+};
 
 /**
  * バリデーションエラーメッセージ (2xxx)
@@ -136,7 +136,7 @@ const VALIDATION_MESSAGES: Record<number, UserMessage> = {
     autoRetry: false,
     supportContact: false,
   },
-}
+};
 
 /**
  * データベースエラーメッセージ (3xxx)
@@ -178,7 +178,7 @@ const DB_MESSAGES: Record<number, UserMessage> = {
     autoRetry: false,
     supportContact: false,
   },
-}
+};
 
 /**
  * ビジネスロジックエラーメッセージ (4xxx)
@@ -220,7 +220,7 @@ const BIZ_MESSAGES: Record<number, UserMessage> = {
     autoRetry: false,
     supportContact: false,
   },
-}
+};
 
 /**
  * 外部サービス連携エラーメッセージ (5xxx)
@@ -262,7 +262,7 @@ const EXTERNAL_MESSAGES: Record<number, UserMessage> = {
     autoRetry: true,
     supportContact: false,
   },
-}
+};
 
 /**
  * システム・インフラエラーメッセージ (6xxx)
@@ -304,7 +304,7 @@ const SYSTEM_MESSAGES: Record<number, UserMessage> = {
     autoRetry: false,
     supportContact: true,
   },
-}
+};
 
 /**
  * レート制限エラーメッセージ (7xxx)
@@ -337,7 +337,7 @@ const RATE_MESSAGES: Record<number, UserMessage> = {
     autoRetry: false,
     supportContact: false,
   },
-}
+};
 
 /**
  * 全メッセージの統合
@@ -350,16 +350,16 @@ const ALL_MESSAGES = {
   ...EXTERNAL_MESSAGES,
   ...SYSTEM_MESSAGES,
   ...RATE_MESSAGES,
-}
+};
 
 /**
  * エラーコードからユーザー向けメッセージを取得
  */
 export function getUserMessage(errorCode: ErrorCode): UserMessage {
-  const message = ALL_MESSAGES[errorCode]
+  const message = ALL_MESSAGES[errorCode];
   if (!message) {
     // フォールバック用の汎用メッセージ
-    const category = getErrorCategory(errorCode)
+    const category = getErrorCategory(errorCode);
     return {
       title: 'エラーが発生しました',
       description: `${category}関連のエラーが発生しました。`,
@@ -368,9 +368,9 @@ export function getUserMessage(errorCode: ErrorCode): UserMessage {
       icon: 'alert-circle',
       autoRetry: true,
       supportContact: true,
-    }
+    };
   }
-  return message
+  return message;
 }
 
 /**
@@ -394,7 +394,7 @@ export const SEVERITY_STYLES = {
     severity: 'critical',
     category: 'critical',
   },
-} as const
+} as const;
 
 /**
  * カテゴリ別のデフォルトアクション
@@ -407,4 +407,4 @@ export const CATEGORY_DEFAULT_ACTIONS = {
   EXTERNAL: 'しばらく待ってから再試行してください',
   SYSTEM: 'ページを再読み込みしてください',
   RATE: 'しばらく待ってから再試行してください',
-} as const
+} as const;

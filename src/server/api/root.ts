@@ -3,12 +3,12 @@
  * 全APIルーターの統合とエクスポート
  */
 
-import { authRouter } from './routers/auth'
-import { notificationsRouter } from './routers/notifications'
-import { plansRouter } from './routers/plans'
-import { profileRouter } from './routers/profile'
-import { userSettingsRouter } from './routers/userSettings'
-import { createTRPCRouter } from './trpc'
+import { authRouter } from './routers/auth';
+import { notificationsRouter } from './routers/notifications';
+import { plansRouter } from './routers/plans';
+import { profileRouter } from './routers/profile';
+import { userSettingsRouter } from './routers/userSettings';
+import { createTRPCRouter } from './trpc';
 
 /**
  * メインAPIルーター
@@ -19,10 +19,10 @@ export const appRouter = createTRPCRouter({
   plans: plansRouter,
   notifications: notificationsRouter,
   userSettings: userSettingsRouter,
-})
+});
 
 /**
  * AppRouter型のエクスポート
  * クライアント側で型推論に使用
  */
-export type AppRouter = typeof appRouter
+export type AppRouter = typeof appRouter;

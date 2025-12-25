@@ -1,12 +1,12 @@
-import { useEffect } from 'react'
+import { useEffect } from 'react';
 
-import type { CalendarViewType } from '../types/calendar.types'
+import type { CalendarViewType } from '../types/calendar.types';
 
 interface UseCalendarKeyboardProps {
-  viewType: CalendarViewType
-  onNavigate: (direction: 'prev' | 'next' | 'today') => void
-  onViewChange: (view: CalendarViewType) => void
-  onToggleWeekends: () => void
+  viewType: CalendarViewType;
+  onNavigate: (direction: 'prev' | 'next' | 'today') => void;
+  onViewChange: (view: CalendarViewType) => void;
+  onToggleWeekends: () => void;
 }
 
 /**
@@ -34,46 +34,46 @@ export const useCalendarKeyboard = ({
       if (e.metaKey || e.ctrlKey) {
         switch (e.key) {
           case 'ArrowLeft':
-            e.preventDefault()
-            onNavigate('prev')
-            break
+            e.preventDefault();
+            onNavigate('prev');
+            break;
           case 'ArrowRight':
-            e.preventDefault()
-            onNavigate('next')
-            break
+            e.preventDefault();
+            onNavigate('next');
+            break;
           case 't':
-            e.preventDefault()
-            onNavigate('today')
-            break
+            e.preventDefault();
+            onNavigate('today');
+            break;
           case '1':
-            e.preventDefault()
-            onViewChange('day')
-            break
+            e.preventDefault();
+            onViewChange('day');
+            break;
           case '3':
-            e.preventDefault()
-            onViewChange('3day')
-            break
+            e.preventDefault();
+            onViewChange('3day');
+            break;
           case '5':
-            e.preventDefault()
-            onViewChange('5day')
-            break
+            e.preventDefault();
+            onViewChange('5day');
+            break;
           case '7':
-            e.preventDefault()
-            onViewChange('week')
-            break
+            e.preventDefault();
+            onViewChange('week');
+            break;
           case 'a':
-            e.preventDefault()
-            onViewChange('agenda')
-            break
+            e.preventDefault();
+            onViewChange('agenda');
+            break;
           case 'w':
-            e.preventDefault()
-            onToggleWeekends()
-            break
+            e.preventDefault();
+            onToggleWeekends();
+            break;
         }
       }
-    }
+    };
 
-    window.addEventListener('keydown', handleKeyPress)
-    return () => window.removeEventListener('keydown', handleKeyPress)
-  }, [viewType, onNavigate, onViewChange, onToggleWeekends])
-}
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [viewType, onNavigate, onViewChange, onToggleWeekends]);
+};

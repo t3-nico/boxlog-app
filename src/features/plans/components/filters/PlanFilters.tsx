@@ -1,18 +1,24 @@
-'use client'
+'use client';
 
-import { Search, X } from 'lucide-react'
+import { Search, X } from 'lucide-react';
 
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import type { PlanStatus } from '../../types/plan'
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import type { PlanStatus } from '../../types/plan';
 
 interface planFiltersProps {
-  searchQuery?: string
-  status?: PlanStatus
-  onSearchChange?: (query: string) => void
-  onStatusChange?: (status: PlanStatus | undefined) => void
-  onClearFilters?: () => void
+  searchQuery?: string;
+  status?: PlanStatus;
+  onSearchChange?: (query: string) => void;
+  onStatusChange?: (status: PlanStatus | undefined) => void;
+  onClearFilters?: () => void;
 }
 
 export function PlanFilters({
@@ -22,7 +28,7 @@ export function PlanFilters({
   onStatusChange,
   onClearFilters,
 }: planFiltersProps) {
-  const hasActiveFilters = searchQuery || status
+  const hasActiveFilters = searchQuery || status;
 
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -62,5 +68,5 @@ export function PlanFilters({
         </Button>
       )}
     </div>
-  )
+  );
 }

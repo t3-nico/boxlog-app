@@ -2,20 +2,25 @@
  * 個別の時間ラベルコンポーネント
  */
 
-'use client'
+'use client';
 
-import { memo } from 'react'
+import { memo } from 'react';
 
 interface TimeLabelProps {
-  hour: number
-  label: string
-  position: number
-  hourHeight: number
-  isFirst: boolean
-  isLast: boolean
+  hour: number;
+  label: string;
+  position: number;
+  hourHeight: number;
+  isFirst: boolean;
+  isLast: boolean;
 }
 
-export const TimeLabel = memo<TimeLabelProps>(function TimeLabel({ hour, label, position, isFirst }) {
+export const TimeLabel = memo<TimeLabelProps>(function TimeLabel({
+  hour,
+  label,
+  position,
+  isFirst,
+}) {
   return (
     <div
       className="text-muted-foreground absolute w-full text-xs select-none"
@@ -32,5 +37,5 @@ export const TimeLabel = memo<TimeLabelProps>(function TimeLabel({ hour, label, 
       {/* 0時は表示しない（見た目がすっきりする） */}
       {!(hour === 0 && isFirst) && <span className="bg-background">{label}</span>}
     </div>
-  )
-})
+  );
+});

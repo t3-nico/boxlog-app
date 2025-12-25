@@ -41,15 +41,15 @@ export const zIndex = {
 
   /** ツールチップ（最前面に表示） */
   tooltip: 9999,
-} as const
+} as const;
 
-export type ZIndexKey = keyof typeof zIndex
-export type ZIndexValue = (typeof zIndex)[ZIndexKey]
+export type ZIndexKey = keyof typeof zIndex;
+export type ZIndexValue = (typeof zIndex)[ZIndexKey];
 
 /**
  * Tailwindクラス用のz-index値を取得
  * @example getZIndexClass('modal') // 'z-[200]'
  */
 export function getZIndexClass(key: ZIndexKey): string {
-  return `z-[${zIndex[key]}]`
+  return `z-[${zIndex[key]}]`;
 }

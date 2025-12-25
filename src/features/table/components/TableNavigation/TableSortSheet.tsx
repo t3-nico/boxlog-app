@@ -1,18 +1,18 @@
-'use client'
+'use client';
 
-import { MobileSettingsRadioGroup, MobileSettingsSection } from '@/components/common'
-import { Button } from '@/components/ui/button'
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
-import { ArrowUpDown } from 'lucide-react'
+import { MobileSettingsRadioGroup, MobileSettingsSection } from '@/components/common';
+import { Button } from '@/components/ui/button';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { ArrowUpDown } from 'lucide-react';
 
 interface TableSortSheetProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  sortField: string | null
-  sortDirection: 'asc' | 'desc' | null
-  onSortChange: (field: string, direction: 'asc' | 'desc') => void
-  onSortClear: () => void
-  fieldOptions: Array<{ value: string; label: string }>
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  sortField: string | null;
+  sortDirection: 'asc' | 'desc' | null;
+  onSortChange: (field: string, direction: 'asc' | 'desc') => void;
+  onSortClear: () => void;
+  fieldOptions: Array<{ value: string; label: string }>;
 }
 
 /**
@@ -21,7 +21,7 @@ interface TableSortSheetProps {
 const SORT_DIRECTION_OPTIONS: Array<{ value: 'asc' | 'desc'; label: string }> = [
   { value: 'asc', label: '昇順 (A → Z)' },
   { value: 'desc', label: '降順 (Z → A)' },
-]
+];
 
 /**
  * テーブル用ソートシート
@@ -38,21 +38,21 @@ export function TableSortSheet({
   fieldOptions,
 }: TableSortSheetProps) {
   // 'none'を追加したフィールドオプション
-  const allFieldOptions = [{ value: 'none', label: 'なし' }, ...fieldOptions]
+  const allFieldOptions = [{ value: 'none', label: 'なし' }, ...fieldOptions];
 
   const handleFieldChange = (value: string) => {
     if (value === 'none') {
-      onSortClear()
+      onSortClear();
     } else {
-      onSortChange(value, sortDirection || 'asc')
+      onSortChange(value, sortDirection || 'asc');
     }
-  }
+  };
 
   const handleDirectionChange = (value: 'asc' | 'desc') => {
     if (sortField) {
-      onSortChange(sortField, value)
+      onSortChange(sortField, value);
     }
-  }
+  };
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -91,5 +91,5 @@ export function TableSortSheet({
         </div>
       </SheetContent>
     </Sheet>
-  )
+  );
 }

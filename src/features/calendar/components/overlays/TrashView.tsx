@@ -2,14 +2,14 @@
  * ゴミ箱ビュー - 削除されたイベントの表示と復元
  */
 
-'use client'
+'use client';
 
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
 
 interface TrashViewProps {
-  events: CalendarPlan[]
-  onRestore?: (plan: CalendarPlan) => void
-  onPermanentDelete?: (eventId: string) => void
+  events: CalendarPlan[];
+  onRestore?: (plan: CalendarPlan) => void;
+  onPermanentDelete?: (eventId: string) => void;
 }
 
 export const TrashView = ({ events, onRestore, onPermanentDelete }: TrashViewProps) => {
@@ -22,7 +22,10 @@ export const TrashView = ({ events, onRestore, onPermanentDelete }: TrashViewPro
       ) : (
         <div className="space-y-2">
           {events.map((event) => (
-            <div key={event.id} className="bg-surface-container flex items-center justify-between rounded-lg p-3">
+            <div
+              key={event.id}
+              className="bg-surface-container flex items-center justify-between rounded-lg p-3"
+            >
               <div>
                 <div className="text-foreground font-medium">{event.title}</div>
                 <div className="text-muted-foreground text-sm">{event.description}</div>
@@ -49,5 +52,5 @@ export const TrashView = ({ events, onRestore, onPermanentDelete }: TrashViewPro
         </div>
       )}
     </div>
-  )
-}
+  );
+};

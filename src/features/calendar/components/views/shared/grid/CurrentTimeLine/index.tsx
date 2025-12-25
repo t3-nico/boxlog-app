@@ -1,1 +1,1 @@
-export { CurrentTimeLine, CurrentTimeLineForColumn } from './CurrentTimeLine'
+export { CurrentTimeLine, CurrentTimeLineForColumn } from './CurrentTimeLine';

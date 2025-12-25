@@ -2,7 +2,7 @@
  * Error Utilities - Public API
  */
 
-export { getApiErrorMessage, getErrorMessage, normalizeError } from './get-error-message'
+export { getApiErrorMessage, getErrorMessage, normalizeError } from './get-error-message';
 export {
   formatErrorResponse,
   hideInternalDetails,
@@ -12,4 +12,4 @@ export {
   sanitizeDatabaseError,
   sanitizeError,
   type SecureErrorResponse,
-} from './secure-error-handler'
+} from './secure-error-handler';

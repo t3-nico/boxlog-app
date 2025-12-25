@@ -1,13 +1,13 @@
-import { redirect } from 'next/navigation'
+import { redirect } from 'next/navigation';
 
-import type { Locale } from '@/lib/i18n'
+import type { Locale } from '@/lib/i18n';
 
 interface CalendarPageProps {
-  params: Promise<{ locale: Locale }>
+  params: Promise<{ locale: Locale }>;
 }
 
 export default async function CalendarPage({ params }: CalendarPageProps) {
-  const { locale } = await params
-  const [today] = new Date().toISOString().split('T') // YYYY-MM-DD
-  redirect(`/${locale}/calendar/day?date=${today}`)
+  const { locale } = await params;
+  const [today] = new Date().toISOString().split('T'); // YYYY-MM-DD
+  redirect(`/${locale}/calendar/day?date=${today}`);
 }

@@ -2,14 +2,14 @@
  * 日付ヘッダーコンポーネント
  */
 
-'use client'
+'use client';
 
-import { memo } from 'react'
+import { memo } from 'react';
 
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/utils';
 
-import type { DayDisplayProps } from '../types/view.types'
-import { formatDate } from '../utils/dateHelpers'
+import type { DayDisplayProps } from '../types/view.types';
+import { formatDate } from '../utils/dateHelpers';
 
 // ヘルパー関数: ヘッダークラスを生成
 const generateHeaderClasses = (
@@ -17,12 +17,17 @@ const generateHeaderClasses = (
   isSelected: boolean,
   isWeekend: boolean,
   onClick?: (date: Date) => void,
-  className?: string
+  className?: string,
 ): string => {
-  const baseClasses = 'flex items-center justify-center py-2 px-1 text-center transition-colors rounded-xl'
+  const baseClasses =
+    'flex items-center justify-center py-2 px-1 text-center transition-colors rounded-xl';
 
   const hoverClasses =
-    onClick && !isToday ? 'cursor-pointer hover:bg-state-hover' : onClick && isToday ? 'cursor-pointer' : ''
+    onClick && !isToday
+      ? 'cursor-pointer hover:bg-state-hover'
+      : onClick && isToday
+        ? 'cursor-pointer'
+        : '';
 
   const statusClasses = isToday
     ? 'bg-primary text-primary-foreground font-semibold'
@@ -30,18 +35,18 @@ const generateHeaderClasses = (
       ? 'bg-primary/10 text-primary'
       : isWeekend
         ? 'text-muted-foreground'
-        : 'text-foreground'
+        : 'text-foreground';
 
-  return [baseClasses, hoverClasses, statusClasses, className].filter(Boolean).join(' ')
-}
+  return [baseClasses, hoverClasses, statusClasses, className].filter(Boolean).join(' ');
+};
 
 // ヘルパー関数: テキストクラスを生成
 const getTextClasses = (isToday: boolean, isBase: boolean = false): string => {
   if (isToday) {
-    return isBase ? 'text-primary-foreground' : 'text-primary-foreground/75'
+    return isBase ? 'text-primary-foreground' : 'text-primary-foreground/75';
   }
-  return 'text-muted-foreground'
-}
+  return 'text-muted-foreground';
+};
 
 export const DayDisplay = memo<DayDisplayProps>(function DayDisplay({
   date,
@@ -53,17 +58,22 @@ export const DayDisplay = memo<DayDisplayProps>(function DayDisplay({
   className = '',
 }) {
   const handleClick = () => {
-    onClick?.(date)
-  }
+    onClick?.(date);
+  };
 
   // ヘッダーのスタイルクラス
-  const headerClasses = generateHeaderClasses(isToday, isSelected, isWeekend, onClick, className)
+  const headerClasses = generateHeaderClasses(isToday, isSelected, isWeekend, onClick, className);
 
   // 日付の表示形式
-  const dateDisplay = formatDate(date, format)
+  const dateDisplay = formatDate(date, format);
 
   return onClick ? (
-    <button className={headerClasses} onClick={handleClick} aria-label={`${dateDisplay}を選択`} type="button">
+    <button
+      className={headerClasses}
+      onClick={handleClick}
+      aria-label={`${dateDisplay}を選択`}
+      type="button"
+    >
       <div className="flex min-w-0 flex-col items-center">
         {/* 曜日 */}
         <div className={cn('text-xs', getTextClasses(isToday))}>
@@ -71,7 +81,9 @@ export const DayDisplay = memo<DayDisplayProps>(function DayDisplay({
         </div>
 
         {/* 日付 */}
-        <div className={cn('text-lg font-semibold', getTextClasses(isToday, true))}>{date.getDate()}</div>
+        <div className={cn('text-lg font-semibold', getTextClasses(isToday, true))}>
+          {date.getDate()}
+        </div>
 
         {/* 月（異なる月の場合のみ表示） */}
         {format === 'long' && (
@@ -90,7 +102,9 @@ export const DayDisplay = memo<DayDisplayProps>(function DayDisplay({
         </div>
 
         {/* 日付 */}
-        <div className={`text-lg font-semibold ${getTextClasses(isToday, true)}`}>{date.getDate()}</div>
+        <div className={`text-lg font-semibold ${getTextClasses(isToday, true)}`}>
+          {date.getDate()}
+        </div>
 
         {/* 月（異なる月の場合のみ表示） */}
         {format === 'long' && (
@@ -100,5 +114,5 @@ export const DayDisplay = memo<DayDisplayProps>(function DayDisplay({
         )}
       </div>
     </div>
-  )
-})
+  );
+});

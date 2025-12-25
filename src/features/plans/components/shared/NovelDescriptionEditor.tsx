@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import {
   EditorCommand,
@@ -9,15 +9,15 @@ import {
   type EditorInstance,
   EditorRoot,
   handleCommandNavigation,
-} from 'novel'
-import { useEffect, useMemo, useRef } from 'react'
-import { defaultExtensions } from './extensions'
-import { slashCommand, suggestionItems } from './slash-command'
+} from 'novel';
+import { useEffect, useMemo, useRef } from 'react';
+import { defaultExtensions } from './extensions';
+import { slashCommand, suggestionItems } from './slash-command';
 
 interface NovelDescriptionEditorProps {
-  content?: string
-  onChange: (content: string) => void
-  placeholder?: string
+  content?: string;
+  onChange: (content: string) => void;
+  placeholder?: string;
 }
 
 /**
@@ -33,10 +33,10 @@ export function NovelDescriptionEditor({
   onChange,
   placeholder = '説明を追加...',
 }: NovelDescriptionEditorProps) {
-  const editorRef = useRef<EditorInstance | null>(null)
-  const lastContentRef = useRef<string | undefined>(content)
+  const editorRef = useRef<EditorInstance | null>(null);
+  const lastContentRef = useRef<string | undefined>(content);
 
-  const extensions = useMemo(() => [...defaultExtensions, slashCommand], [])
+  const extensions = useMemo(() => [...defaultExtensions, slashCommand], []);
 
   const editorProps = useMemo(
     () => ({
@@ -48,20 +48,20 @@ export function NovelDescriptionEditor({
         'data-placeholder': placeholder,
       },
     }),
-    [placeholder]
-  )
+    [placeholder],
+  );
 
   // 外部から content が変更された場合にエディターを同期
   useEffect(() => {
     if (editorRef.current && content !== lastContentRef.current) {
       // エディターの現在のコンテンツと異なる場合のみ更新
-      const currentEditorContent = editorRef.current.getHTML()
+      const currentEditorContent = editorRef.current.getHTML();
       if (content !== currentEditorContent) {
-        editorRef.current.commands.setContent(content || '')
+        editorRef.current.commands.setContent(content || '');
       }
-      lastContentRef.current = content
+      lastContentRef.current = content;
     }
-  }, [content])
+  }, [content]);
 
   return (
     <EditorRoot>
@@ -71,21 +71,23 @@ export function NovelDescriptionEditor({
         extensions={extensions as any}
         editorProps={editorProps}
         onCreate={({ editor }: { editor: EditorInstance }) => {
-          editorRef.current = editor
+          editorRef.current = editor;
           // 初期コンテンツを設定
           if (content) {
-            editor.commands.setContent(content)
+            editor.commands.setContent(content);
           }
         }}
         onUpdate={({ editor }: { editor: EditorInstance }) => {
           // HTML形式で保存
-          const html = editor.getHTML()
-          onChange(html)
+          const html = editor.getHTML();
+          onChange(html);
         }}
         className="text-muted-foreground hover:bg-state-hover flex min-h-8 items-center rounded-md border-0 bg-transparent px-2 py-1 text-sm shadow-none transition-colors focus-visible:ring-0"
       >
         <EditorCommand className="novel-command-menu bg-popover border-border z-50 h-auto max-h-80 overflow-y-auto rounded-md border shadow-md transition-all">
-          <EditorCommandEmpty className="text-muted-foreground px-3 py-2 text-sm">No results</EditorCommandEmpty>
+          <EditorCommandEmpty className="text-muted-foreground px-3 py-2 text-sm">
+            No results
+          </EditorCommandEmpty>
           <EditorCommandList className="bg-popover p-1">
             {suggestionItems.map((item) => (
               <EditorCommandItem
@@ -106,5 +108,5 @@ export function NovelDescriptionEditor({
         </EditorCommand>
       </EditorContent>
     </EditorRoot>
-  )
+  );
 }

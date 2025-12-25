@@ -1,16 +1,16 @@
-'use client'
+'use client';
 
-import type { ReactNode } from 'react'
+import type { ReactNode } from 'react';
 
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/utils';
 
 interface SidebarHeadingProps {
   /** 見出しテキスト */
-  children: ReactNode
+  children: ReactNode;
   /** 右側に表示するアクション要素（ボタン等） */
-  action?: ReactNode
+  action?: ReactNode;
   /** 追加のクラス名 */
-  className?: string
+  className?: string;
 }
 
 /**
@@ -39,9 +39,14 @@ interface SidebarHeadingProps {
  */
 export function SidebarHeading({ children, action, className }: SidebarHeadingProps) {
   return (
-    <div className={cn('text-muted-foreground flex items-center justify-between py-2 pr-0.5 pl-2', className)}>
+    <div
+      className={cn(
+        'text-muted-foreground flex items-center justify-between py-2 pr-0.5 pl-2',
+        className,
+      )}
+    >
       <span className="text-xs font-semibold">{children}</span>
       {action}
     </div>
-  )
+  );
 }

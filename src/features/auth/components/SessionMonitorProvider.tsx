@@ -1,13 +1,13 @@
-'use client'
+'use client';
 
-import type { ReactNode } from 'react'
+import type { ReactNode } from 'react';
 
-import { useSessionMonitor } from '../hooks/useSessionMonitor'
+import { useSessionMonitor } from '../hooks/useSessionMonitor';
 
-import { SessionTimeoutDialog } from './SessionTimeoutDialog'
+import { SessionTimeoutDialog } from './SessionTimeoutDialog';
 
 interface SessionMonitorProviderProps {
-  children: ReactNode
+  children: ReactNode;
 }
 
 /**
@@ -25,7 +25,7 @@ interface SessionMonitorProviderProps {
  * ```
  */
 export function SessionMonitorProvider({ children }: SessionMonitorProviderProps) {
-  const { showTimeoutWarning, remainingTime, extendSession, logout } = useSessionMonitor()
+  const { showTimeoutWarning, remainingTime, extendSession, logout } = useSessionMonitor();
 
   return (
     <>
@@ -37,5 +37,5 @@ export function SessionMonitorProvider({ children }: SessionMonitorProviderProps
         onLogout={logout}
       />
     </>
-  )
+  );
 }

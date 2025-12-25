@@ -8,106 +8,106 @@ export type NotificationType =
   | 'event_deleted' // イベント削除
   | 'task_completed' // タスク完了
   | 'trash_warning' // ゴミ箱自動削除警告
-  | 'system' // システム通知
+  | 'system'; // システム通知
 
 // 優先度
-export type NotificationPriority = 'urgent' | 'high' | 'medium' | 'low'
+export type NotificationPriority = 'urgent' | 'high' | 'medium' | 'low';
 
 // アイコンタイプ
-export type NotificationIcon = 'bell' | 'calendar' | 'trash' | 'alert' | 'check' | 'info'
+export type NotificationIcon = 'bell' | 'calendar' | 'trash' | 'alert' | 'check' | 'info';
 
 // データベースエンティティ（Supabaseから取得する型）
 export interface NotificationEntity {
-  id: string
-  user_id: string
-  type: NotificationType
-  priority: NotificationPriority
-  title: string
-  message: string | null
-  related_event_id: string | null
-  related_tag_id: string | null
-  action_url: string | null
-  icon: NotificationIcon | null
-  data: Record<string, unknown>
-  is_read: boolean
-  read_at: string | null
-  expires_at: string | null
-  created_at: string
-  updated_at: string
+  id: string;
+  user_id: string;
+  type: NotificationType;
+  priority: NotificationPriority;
+  title: string;
+  message: string | null;
+  related_event_id: string | null;
+  related_tag_id: string | null;
+  action_url: string | null;
+  icon: NotificationIcon | null;
+  data: Record<string, unknown>;
+  is_read: boolean;
+  read_at: string | null;
+  expires_at: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
 // クライアント側の通知型
 export interface Notification {
-  id: string
-  type: NotificationType
-  priority: NotificationPriority
-  title: string
-  message?: string | undefined
-  relatedEventId?: string | undefined
-  relatedTagId?: string | undefined
-  actionUrl?: string | undefined
-  icon?: NotificationIcon | undefined
-  data?: Record<string, unknown> | undefined
-  isRead: boolean
-  readAt?: Date | undefined
-  expiresAt?: Date | undefined
-  createdAt: Date
-  updatedAt: Date
+  id: string;
+  type: NotificationType;
+  priority: NotificationPriority;
+  title: string;
+  message?: string | undefined;
+  relatedEventId?: string | undefined;
+  relatedTagId?: string | undefined;
+  actionUrl?: string | undefined;
+  icon?: NotificationIcon | undefined;
+  data?: Record<string, unknown> | undefined;
+  isRead: boolean;
+  readAt?: Date | undefined;
+  expiresAt?: Date | undefined;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 // 通知作成リクエスト
 export interface CreateNotificationRequest {
-  type: NotificationType
-  priority?: NotificationPriority | undefined
-  title: string
-  message?: string | undefined
-  relatedEventId?: string | undefined
-  relatedTagId?: string | undefined
-  actionUrl?: string | undefined
-  icon?: NotificationIcon | undefined
-  data?: Record<string, unknown> | undefined
-  expiresAt?: Date | undefined
+  type: NotificationType;
+  priority?: NotificationPriority | undefined;
+  title: string;
+  message?: string | undefined;
+  relatedEventId?: string | undefined;
+  relatedTagId?: string | undefined;
+  actionUrl?: string | undefined;
+  icon?: NotificationIcon | undefined;
+  data?: Record<string, unknown> | undefined;
+  expiresAt?: Date | undefined;
 }
 
 // 通知フィルター
 export interface NotificationFilters {
-  types?: NotificationType[] | undefined
-  priorities?: NotificationPriority[] | undefined
-  isRead?: boolean | undefined
-  startDate?: Date | undefined
-  endDate?: Date | undefined
+  types?: NotificationType[] | undefined;
+  priorities?: NotificationPriority[] | undefined;
+  isRead?: boolean | undefined;
+  startDate?: Date | undefined;
+  endDate?: Date | undefined;
 }
 
 // Zustand Store型
 export interface NotificationState {
-  notifications: Notification[]
-  unreadCount: number
-  loading: boolean
-  error: string | null
+  notifications: Notification[];
+  unreadCount: number;
+  loading: boolean;
+  error: string | null;
 }
 
 export interface NotificationActions {
   // データ取得
-  fetchNotifications: () => Promise<void>
-  fetchUnreadCount: () => Promise<void>
+  fetchNotifications: () => Promise<void>;
+  fetchUnreadCount: () => Promise<void>;
 
   // 既読管理
-  markAsRead: (notificationId: string) => Promise<void>
-  markAllAsRead: () => Promise<void>
+  markAsRead: (notificationId: string) => Promise<void>;
+  markAllAsRead: () => Promise<void>;
 
   // 削除
-  deleteNotification: (notificationId: string) => Promise<void>
-  deleteAllRead: () => Promise<void>
+  deleteNotification: (notificationId: string) => Promise<void>;
+  deleteAllRead: () => Promise<void>;
 
   // フィルタリング
-  getUnreadNotifications: () => Notification[]
-  getNotificationsByType: (type: NotificationType) => Notification[]
+  getUnreadNotifications: () => Notification[];
+  getNotificationsByType: (type: NotificationType) => Notification[];
 
   // エラー処理
-  clearError: () => void
+  clearError: () => void;
 }
 
-export type NotificationStore = NotificationState & NotificationActions
+export type NotificationStore = NotificationState & NotificationActions;
 
 // 優先度ごとの設定
 export const NOTIFICATION_PRIORITY_CONFIG = {
@@ -131,7 +131,7 @@ export const NOTIFICATION_PRIORITY_CONFIG = {
     textColor: 'text-muted-foreground',
     badgeColor: 'bg-surface-container-foreground',
   },
-} as const
+} as const;
 
 // 通知タイプごとのデフォルトアイコン
 export const NOTIFICATION_TYPE_ICONS: Record<NotificationType, NotificationIcon> = {
@@ -142,4 +142,4 @@ export const NOTIFICATION_TYPE_ICONS: Record<NotificationType, NotificationIcon>
   task_completed: 'check',
   trash_warning: 'alert',
   system: 'info',
-}
+};

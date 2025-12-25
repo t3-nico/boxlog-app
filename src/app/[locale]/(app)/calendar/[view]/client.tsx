@@ -1,17 +1,17 @@
-'use client'
+'use client';
 
-import { FeatureErrorBoundary } from '@/components/error-boundary'
-import { CalendarController } from '@/features/calendar/components/CalendarController'
-import type { CalendarViewType } from '@/features/calendar/types/calendar.types'
+import { FeatureErrorBoundary } from '@/components/error-boundary';
+import { CalendarController } from '@/features/calendar/components/CalendarController';
+import type { CalendarViewType } from '@/features/calendar/types/calendar.types';
 
 interface CalendarViewClientProps {
-  view: CalendarViewType
-  initialDate: Date | null
+  view: CalendarViewType;
+  initialDate: Date | null;
   translations: {
-    errorTitle: string
-    errorMessage: string
-    reloadButton: string
-  }
+    errorTitle: string;
+    errorMessage: string;
+    reloadButton: string;
+  };
 }
 
 export function CalendarViewClient({ view, initialDate, translations }: CalendarViewClientProps) {
@@ -24,7 +24,9 @@ export function CalendarViewClient({ view, initialDate, translations }: Calendar
             <div className="border-destructive bg-destructive/12 max-w-md rounded-xl border p-6">
               <div className="text-center">
                 <div className="mb-4 text-6xl">📅</div>
-                <h2 className="text-destructive mb-2 text-2xl font-bold tracking-tight">{translations.errorTitle}</h2>
+                <h2 className="text-destructive mb-2 text-2xl font-bold tracking-tight">
+                  {translations.errorTitle}
+                </h2>
                 <p className="text-foreground/80 mb-4 text-sm">{translations.errorMessage}</p>
                 <button
                   onClick={() => window.location.reload()}
@@ -40,5 +42,5 @@ export function CalendarViewClient({ view, initialDate, translations }: Calendar
         <CalendarController initialViewType={view} initialDate={initialDate} />
       </FeatureErrorBoundary>
     </div>
-  )
+  );
 }

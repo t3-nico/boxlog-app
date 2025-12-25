@@ -1,21 +1,21 @@
-'use client'
+'use client';
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react';
 
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
-import { useDateFormat } from '@/features/settings/hooks/useDateFormat'
-import { cn } from '@/lib/utils'
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
+import { useDateFormat } from '@/features/settings/hooks/useDateFormat';
+import { cn } from '@/lib/utils';
 
 interface AnimatedEventCardProps {
-  plan: CalendarPlan
-  style: React.CSSProperties
-  isSelected?: boolean
-  isNew?: boolean
-  isDeleting?: boolean
-  onClick?: () => void
-  onContextMenu?: (e: React.MouseEvent) => void
-  children?: React.ReactNode
-  className?: string
+  plan: CalendarPlan;
+  style: React.CSSProperties;
+  isSelected?: boolean;
+  isNew?: boolean;
+  isDeleting?: boolean;
+  onClick?: () => void;
+  onContextMenu?: (e: React.MouseEvent) => void;
+  children?: React.ReactNode;
+  className?: string;
 }
 
 export const AnimatedEventCard = ({
@@ -29,130 +29,139 @@ export const AnimatedEventCard = ({
   children,
   className,
 }: AnimatedEventCardProps) => {
-  const [isVisible, setIsVisible] = useState(!isNew)
-  const [isHovered, setIsHovered] = useState(false)
-  const cardRef = useRef<HTMLDivElement>(null)
-  const animationTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-  const { formatTime: formatTimeWithSettings } = useDateFormat()
+  const [isVisible, setIsVisible] = useState(!isNew);
+  const [isHovered, setIsHovered] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const animationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const { formatTime: formatTimeWithSettings } = useDateFormat();
 
   // 新規イベントのアニメーション
   useEffect(() => {
     if (isNew && !isVisible) {
       // 短い遅延後にフェードイン開始
       animationTimeoutRef.current = setTimeout(() => {
-        setIsVisible(true)
-      }, 10)
+        setIsVisible(true);
+      }, 10);
     }
 
     return () => {
       if (animationTimeoutRef.current) {
-        clearTimeout(animationTimeoutRef.current)
+        clearTimeout(animationTimeoutRef.current);
       }
-    }
-  }, [isNew, isVisible])
+    };
+  }, [isNew, isVisible]);
 
   // 削除アニメーション
   useEffect(() => {
     if (isDeleting) {
-      setIsVisible(false)
+      setIsVisible(false);
     }
-  }, [isDeleting])
+  }, [isDeleting]);
 
   // 選択時のアニメーション
   const getAnimationClasses = () => {
     const baseClasses = [
       'transition-all duration-200 ease-out motion-reduce:transition-none',
       'transform-gpu', // GPUアクセラレーション
-    ]
+    ];
 
     if (isNew) {
       baseClasses.push(
-        isVisible ? 'animate-in fade-in-0 zoom-in-95 duration-200 motion-reduce:animate-none' : 'opacity-0 scale-95'
-      )
+        isVisible
+          ? 'animate-in fade-in-0 zoom-in-95 duration-200 motion-reduce:animate-none'
+          : 'opacity-0 scale-95',
+      );
     }
 
     if (isDeleting) {
-      baseClasses.push('animate-out fade-out-0 zoom-out-95 duration-150 motion-reduce:animate-none')
+      baseClasses.push(
+        'animate-out fade-out-0 zoom-out-95 duration-150 motion-reduce:animate-none',
+      );
     }
 
     if (isSelected) {
-      baseClasses.push('shadow-lg shadow-primary/25', 'scale-105', 'ring-2 ring-primary/50', 'z-30')
+      baseClasses.push(
+        'shadow-lg shadow-primary/25',
+        'scale-105',
+        'ring-2 ring-primary/50',
+        'z-30',
+      );
     }
 
     if (isHovered && !isSelected) {
-      baseClasses.push('brightness-110', 'shadow-md', 'scale-[1.02]', 'z-25')
+      baseClasses.push('brightness-110', 'shadow-md', 'scale-[1.02]', 'z-25');
     }
 
-    return baseClasses.join(' ')
-  }
+    return baseClasses.join(' ');
+  };
 
   // イベントの色調整
   const getEventColor = () => {
-    if (!plan.color) return '#3b82f6'
+    if (!plan.color) return '#3b82f6';
 
     // ホバー時は明度を上げる
     if (isHovered && !isSelected) {
       // 色を10%明るくする
-      const { color } = plan
+      const { color } = plan;
       if (color.startsWith('#')) {
-        const r = parseInt(color.slice(1, 3), 16)
-        const g = parseInt(color.slice(3, 5), 16)
-        const b = parseInt(color.slice(5, 7), 16)
+        const r = parseInt(color.slice(1, 3), 16);
+        const g = parseInt(color.slice(3, 5), 16);
+        const b = parseInt(color.slice(5, 7), 16);
 
-        const brighten = (value: number) => Math.min(255, Math.round(value * 1.1))
+        const brighten = (value: number) => Math.min(255, Math.round(value * 1.1));
 
-        return `rgb(${brighten(r)}, ${brighten(g)}, ${brighten(b)})`
+        return `rgb(${brighten(r)}, ${brighten(g)}, ${brighten(b)})`;
       }
     }
 
-    return plan.color
-  }
+    return plan.color;
+  };
 
   // クリック処理（100ms以下の反応速度）
   const handleClick = (e: React.MouseEvent) => {
-    e.stopPropagation()
+    e.stopPropagation();
 
     // 即座にビジュアルフィードバック
     if (cardRef.current) {
-      cardRef.current.style.transform = 'scale(0.98)'
+      cardRef.current.style.transform = 'scale(0.98)';
       setTimeout(() => {
         if (cardRef.current) {
-          cardRef.current.style.transform = ''
+          cardRef.current.style.transform = '';
         }
-      }, 100)
+      }, 100);
     }
 
-    onClick?.()
-  }
+    onClick?.();
+  };
 
   // 右クリック処理
   const handleContextMenu = (e: React.MouseEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    onContextMenu?.(e)
-  }
+    e.preventDefault();
+    e.stopPropagation();
+    onContextMenu?.(e);
+  };
 
   // マウスイベント
   const handleMouseEnter = () => {
-    setIsHovered(true)
-  }
+    setIsHovered(true);
+  };
 
   const handleMouseLeave = () => {
-    setIsHovered(false)
-  }
+    setIsHovered(false);
+  };
 
   // キーボード操作
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault()
-      onClick?.()
+      e.preventDefault();
+      onClick?.();
     }
     if (e.key === 'Delete' || e.key === 'Backspace') {
-      e.preventDefault()
+      e.preventDefault();
       // 削除イベントを発火
-      console.log('キーボードで削除:', plan.id)
+      console.log('キーボードで削除:', plan.id);
     }
-  }
+  };
 
   return (
     <div
@@ -164,7 +173,7 @@ export const AnimatedEventCard = ({
         'focus:ring-primary/50 focus:ring-2 focus:outline-none',
         'will-change-transform', // パフォーマンス最適化
         getAnimationClasses(),
-        className
+        className,
       )}
       style={{
         ...style,
@@ -185,7 +194,9 @@ export const AnimatedEventCard = ({
           <div className="flex h-full flex-col">
             <div className="min-h-0 flex-1">
               {/* タイトル */}
-              <div className="mb-1 line-clamp-2 text-sm leading-tight font-medium">{plan.title}</div>
+              <div className="mb-1 line-clamp-2 text-sm leading-tight font-medium">
+                {plan.title}
+              </div>
 
               {/* 時間（高さが十分な場合のみ） */}
               {(style.height as number) > 40 && plan.startDate ? (
@@ -198,7 +209,9 @@ export const AnimatedEventCard = ({
 
             {/* 場所（高さが十分な場合のみ） */}
             {plan.location != null && (style.height as number) > 70 ? (
-              <div className="mt-1 line-clamp-1 text-xs leading-tight opacity-80">📍 {plan.location}</div>
+              <div className="mt-1 line-clamp-1 text-xs leading-tight opacity-80">
+                📍 {plan.location}
+              </div>
             ) : null}
           </div>
         </div>
@@ -214,8 +227,8 @@ export const AnimatedEventCard = ({
         <div className="pointer-events-none absolute inset-0 rounded-md bg-white/10" />
       ) : null}
     </div>
-  )
-}
+  );
+};
 
 // アニメーション用のCSS（globals.cssに追加推奨）
 export const eventAnimationStyles = `
@@ -267,4 +280,4 @@ export const eventAnimationStyles = `
       transform: scale(0.98);
     }
   }
-`
+`;

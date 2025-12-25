@@ -1,25 +1,25 @@
-'use client'
+'use client';
 
-import { useEffect } from 'react'
+import { useEffect } from 'react';
 
-import { useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation';
 
-import { useAuthStore } from '../stores/useAuthStore'
+import { useAuthStore } from '../stores/useAuthStore';
 
 interface ProtectedRouteProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const user = useAuthStore((state) => state.user)
-  const loading = useAuthStore((state) => state.loading)
-  const router = useRouter()
+  const user = useAuthStore((state) => state.user);
+  const loading = useAuthStore((state) => state.loading);
+  const router = useRouter();
 
   useEffect(() => {
     if (!loading && !user) {
-      router.push('/auth')
+      router.push('/auth');
     }
-  }, [user, loading, router])
+  }, [user, loading, router]);
 
   if (loading) {
     return (
@@ -29,12 +29,12 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
           <p className="text-muted-foreground mt-4">読み込み中...</p>
         </div>
       </div>
-    )
+    );
   }
 
   if (!user) {
-    return null
+    return null;
   }
 
-  return <>{children}</>
+  return <>{children}</>;
 }

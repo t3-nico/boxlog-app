@@ -1,8 +1,8 @@
-import { Slot } from '@radix-ui/react-slot'
-import { cva, type VariantProps } from 'class-variance-authority'
-import * as React from 'react'
+import { Slot } from '@radix-ui/react-slot';
+import { cva, type VariantProps } from 'class-variance-authority';
+import * as React from 'react';
 
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/utils';
 
 /**
  * バッジバリアント定義
@@ -25,15 +25,19 @@ const badgeVariants = cva(
     variants: {
       variant: {
         // 強調 - 主要なラベル
-        primary: 'border-transparent bg-primary text-primary-foreground [a&]:hover:bg-primary-hover',
+        primary:
+          'border-transparent bg-primary text-primary-foreground [a&]:hover:bg-primary-hover',
         // 控えめ - カウント表示など
-        secondary: 'border-transparent bg-secondary text-secondary-foreground [a&]:hover:bg-state-hover',
+        secondary:
+          'border-transparent bg-secondary text-secondary-foreground [a&]:hover:bg-state-hover',
         // 軽量 - ボーダー付き
         outline: 'border-border bg-background text-foreground [a&]:hover:bg-state-hover',
         // 成功 - 完了、プラス
-        success: 'border-transparent bg-success/10 text-success dark:bg-success/20 dark:text-success',
+        success:
+          'border-transparent bg-success/10 text-success dark:bg-success/20 dark:text-success',
         // 警告 - 注意
-        warning: 'border-transparent bg-warning/10 text-warning dark:bg-warning/20 dark:text-warning',
+        warning:
+          'border-transparent bg-warning/10 text-warning dark:bg-warning/20 dark:text-warning',
         // 情報 - ニュートラル
         info: 'border-transparent bg-info/10 text-info dark:bg-info/20 dark:text-info',
         // エラー - マイナス、削除
@@ -44,8 +48,8 @@ const badgeVariants = cva(
     defaultVariants: {
       variant: 'primary',
     },
-  }
-)
+  },
+);
 
 function Badge({
   className,
@@ -53,9 +57,11 @@ function Badge({
   asChild = false,
   ...props
 }: React.ComponentProps<'span'> & VariantProps<typeof badgeVariants> & { asChild?: boolean }) {
-  const Comp = asChild ? Slot : 'span'
+  const Comp = asChild ? Slot : 'span';
 
-  return <Comp data-slot="badge" className={cn(badgeVariants({ variant }), className)} {...props} />
+  return (
+    <Comp data-slot="badge" className={cn(badgeVariants({ variant }), className)} {...props} />
+  );
 }
 
-export { Badge, badgeVariants }
+export { Badge, badgeVariants };

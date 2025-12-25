@@ -1,29 +1,29 @@
-'use client'
+'use client';
 
-import type { LucideIcon } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react';
 
-import { Button } from '@/components/ui/button'
-import { HoverTooltip } from '@/components/ui/tooltip'
-import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button';
+import { HoverTooltip } from '@/components/ui/tooltip';
+import { cn } from '@/lib/utils';
 
 export interface IconNavigationItem {
   /** アイコン */
-  icon: LucideIcon
+  icon: LucideIcon;
   /** ツールチップに表示するラベル */
-  label: string
+  label: string;
   /** クリック時のコールバック */
-  onClick: () => void
+  onClick: () => void;
   /** アクティブ状態かどうか */
-  isActive?: boolean
+  isActive?: boolean;
   /** バッジ表示（フィルター数など） */
-  badge?: number
+  badge?: number;
 }
 
 export interface IconNavigationProps {
   /** ナビゲーションアイテム */
-  items: IconNavigationItem[]
+  items: IconNavigationItem[];
   /** 追加のクラス名 */
-  className?: string
+  className?: string;
 }
 
 /**
@@ -55,7 +55,7 @@ export function IconNavigation({ items, className }: IconNavigationProps) {
   return (
     <div className={cn('flex items-center gap-1', className)}>
       {items.map((item) => {
-        const Icon = item.icon
+        const Icon = item.icon;
         return (
           <HoverTooltip key={item.label} content={item.label} side="top">
             <Button
@@ -65,7 +65,7 @@ export function IconNavigation({ items, className }: IconNavigationProps) {
               aria-label={item.label}
               className={cn(
                 'text-muted-foreground hover:text-foreground relative size-8',
-                item.isActive && 'text-foreground bg-state-selected'
+                item.isActive && 'text-foreground bg-state-selected',
               )}
             >
               <Icon className="size-5" />
@@ -76,8 +76,8 @@ export function IconNavigation({ items, className }: IconNavigationProps) {
               )}
             </Button>
           </HoverTooltip>
-        )
+        );
       })}
     </div>
-  )
+  );
 }

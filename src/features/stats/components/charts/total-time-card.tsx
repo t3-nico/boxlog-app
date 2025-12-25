@@ -1,23 +1,23 @@
-'use client'
+'use client';
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
-import { api } from '@/lib/trpc'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { api } from '@/lib/trpc';
 
 function formatHours(hours: number): string {
   if (hours < 1) {
-    return `${Math.round(hours * 60)}分`
+    return `${Math.round(hours * 60)}分`;
   }
-  const h = Math.floor(hours)
-  const m = Math.round((hours - h) * 60)
+  const h = Math.floor(hours);
+  const m = Math.round((hours - h) * 60);
   if (m === 0) {
-    return `${h}時間`
+    return `${h}時間`;
   }
-  return `${h}時間${m}分`
+  return `${h}時間${m}分`;
 }
 
 export function TotalTimeCard() {
-  const { data, isPending } = api.plans.getTotalTime.useQuery()
+  const { data, isPending } = api.plans.getTotalTime.useQuery();
 
   if (isPending) {
     return (
@@ -30,7 +30,7 @@ export function TotalTimeCard() {
           <Skeleton className="h-16 w-full" />
         </CardContent>
       </Card>
-    )
+    );
   }
 
   if (!data) {
@@ -41,10 +41,12 @@ export function TotalTimeCard() {
           <CardDescription>すべての予定の時間</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="text-muted-foreground flex h-16 items-center justify-center">データがありません</div>
+          <div className="text-muted-foreground flex h-16 items-center justify-center">
+            データがありません
+          </div>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   return (
@@ -96,5 +98,5 @@ export function TotalTimeCard() {
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

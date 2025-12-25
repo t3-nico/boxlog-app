@@ -42,10 +42,10 @@
  * @see https://supabase.com/docs/guides/auth/server-side/nextjs
  */
 
-import { createServerClient } from '@supabase/ssr'
-import { type NextRequest, NextResponse } from 'next/server'
+import { createServerClient } from '@supabase/ssr';
+import { type NextRequest, NextResponse } from 'next/server';
 
-import type { Database } from '@/lib/database.types'
+import type { Database } from '@/lib/database.types';
 
 /**
  * Middlewareでセッションを更新（トークンリフレッシュ）
@@ -63,7 +63,7 @@ export async function updateSession(request: NextRequest) {
   // レスポンスオブジェクトを作成（後でCookieを書き込む）
   let response = NextResponse.next({
     request,
-  })
+  });
 
   // Supabaseクライアントを作成
   const supabase = createServerClient<Database>(
@@ -72,34 +72,34 @@ export async function updateSession(request: NextRequest) {
     {
       cookies: {
         getAll() {
-          return request.cookies.getAll()
+          return request.cookies.getAll();
         },
         setAll(cookiesToSet) {
           // リクエストにCookieを設定（後続の処理で使用）
           cookiesToSet.forEach(({ name, value }) => {
-            request.cookies.set(name, value)
-          })
+            request.cookies.set(name, value);
+          });
 
           // レスポンスを再作成してCookieを含める
           response = NextResponse.next({
             request,
-          })
+          });
 
           // レスポンスにCookieを設定（ブラウザに送信）
           cookiesToSet.forEach(({ name, value, options }) => {
-            response.cookies.set(name, value, options)
-          })
+            response.cookies.set(name, value, options);
+          });
         },
       },
-    }
-  )
+    },
+  );
 
   // ⚠️ 重要: getUser() を呼び出すことで、期限切れトークンが自動リフレッシュされる
   // この呼び出しにより、上記の setAll() が実行され、新しいトークンがCookieに保存される
   // パフォーマンス最適化: ユーザー情報も返すことで、呼び出し元での重複取得を防止
   const {
     data: { user },
-  } = await supabase.auth.getUser()
+  } = await supabase.auth.getUser();
 
-  return { response, supabase, user }
+  return { response, supabase, user };
 }

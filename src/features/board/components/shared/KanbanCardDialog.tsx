@@ -1,7 +1,7 @@
-'use client'
+'use client';
 
-import { MiniCalendar } from '@/components/common/MiniCalendar'
-import { Button } from '@/components/ui/button'
+import { MiniCalendar } from '@/components/common/MiniCalendar';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -9,38 +9,51 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Textarea } from '@/components/ui/textarea'
-import { cn } from '@/lib/utils'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { Calendar } from 'lucide-react'
-import { useForm, type Control, type FieldValues } from 'react-hook-form'
-import { z } from 'zod'
-import { kanbanCardSchema, type KanbanCard } from '../../types'
+} from '@/components/ui/dialog';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { cn } from '@/lib/utils';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Calendar } from 'lucide-react';
+import { useForm, type Control, type FieldValues } from 'react-hook-form';
+import { z } from 'zod';
+import { kanbanCardSchema, type KanbanCard } from '../../types';
 
 // Zodスキーマからid, createdAt, updatedAtを除外した型を作成
 const kanbanCardInputSchema = kanbanCardSchema.omit({
   id: true,
   createdAt: true,
   updatedAt: true,
-})
+});
 
-type KanbanCardFormData = z.infer<typeof kanbanCardInputSchema>
+type KanbanCardFormData = z.infer<typeof kanbanCardInputSchema>;
 
 // react-hook-form の Control 型互換性のためのヘルパー型
 // FormField は Control<FieldValues> を期待するが、useForm は具体的な型を返すため
-type FormControl = Control<FieldValues>
+type FormControl = Control<FieldValues>;
 
 interface KanbanCardDialogProps {
-  card?: KanbanCard
-  isOpen: boolean
-  onClose: () => void
-  onSave: (card: KanbanCardFormData) => void
-  defaultStatus?: KanbanCard['status']
+  card?: KanbanCard;
+  isOpen: boolean;
+  onClose: () => void;
+  onSave: (card: KanbanCardFormData) => void;
+  defaultStatus?: KanbanCard['status'];
 }
 
 /**
@@ -58,7 +71,13 @@ interface KanbanCardDialogProps {
  * />
  * ```
  */
-export function KanbanCardDialog({ card, isOpen, onClose, onSave, defaultStatus = 'todo' }: KanbanCardDialogProps) {
+export function KanbanCardDialog({
+  card,
+  isOpen,
+  onClose,
+  onSave,
+  defaultStatus = 'todo',
+}: KanbanCardDialogProps) {
   const form = useForm<KanbanCardFormData>({
     resolver: zodResolver(kanbanCardInputSchema),
     defaultValues: card
@@ -79,18 +98,18 @@ export function KanbanCardDialog({ card, isOpen, onClose, onSave, defaultStatus 
           assignee: '',
           tags: [],
         },
-  })
+  });
 
   const handleSubmit = (data: KanbanCardFormData) => {
-    onSave(data)
-    form.reset()
-    onClose()
-  }
+    onSave(data);
+    form.reset();
+    onClose();
+  };
 
   const handleClose = () => {
-    form.reset()
-    onClose()
-  }
+    form.reset();
+    onClose();
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
@@ -210,7 +229,10 @@ export function KanbanCardDialog({ card, isOpen, onClose, onSave, defaultStatus 
                         <FormControl>
                           <Button
                             variant="outline"
-                            className={cn('w-full pl-3 text-left font-normal', !field.value && 'text-muted-foreground')}
+                            className={cn(
+                              'w-full pl-3 text-left font-normal',
+                              !field.value && 'text-muted-foreground',
+                            )}
                           >
                             {field.value ? (
                               new Date(field.value).toLocaleDateString('ja-JP')
@@ -244,5 +266,5 @@ export function KanbanCardDialog({ card, isOpen, onClose, onSave, defaultStatus 
         </Form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

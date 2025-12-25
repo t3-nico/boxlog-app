@@ -8,7 +8,7 @@
 /**
  * 🎯 ログレベル定義
  */
-export type LogLevel = 'error' | 'warn' | 'info' | 'debug'
+export type LogLevel = 'error' | 'warn' | 'info' | 'debug';
 
 /**
  * 📊 ログレベル優先度
@@ -18,114 +18,114 @@ export const LOG_LEVELS: Record<LogLevel, number> = {
   warn: 1,
   info: 2,
   debug: 3,
-} as const
+} as const;
 
 /**
  * 📋 基本ログエントリ
  */
 export interface LogEntry {
   /** タイムスタンプ */
-  timestamp: string
+  timestamp: string;
   /** ログレベル */
-  level: LogLevel
+  level: LogLevel;
   /** メッセージ */
-  message: string
+  message: string;
   /** アプリケーションバージョン */
-  version?: string | undefined
+  version?: string | undefined;
   /** 実行環境 */
-  environment?: string | undefined
+  environment?: string | undefined;
   /** コンポーネント名 */
-  component?: string | undefined
+  component?: string | undefined;
   /** リクエストID */
-  requestId?: string | undefined
+  requestId?: string | undefined;
   /** ユーザーID */
-  userId?: string | undefined
+  userId?: string | undefined;
   /** セッションID */
-  sessionId?: string | undefined
+  sessionId?: string | undefined;
   /** 追加メタデータ */
-  meta?: Record<string, unknown>
+  meta?: Record<string, unknown>;
 }
 
 /**
  * 🚨 エラーログエントリ
  */
 export interface ErrorLogEntry extends LogEntry {
-  level: 'error'
+  level: 'error';
   /** エラーオブジェクト */
   error?:
     | {
-        name: string
-        message: string
-        stack?: string | undefined
-        code?: string | number | undefined
+        name: string;
+        message: string;
+        stack?: string | undefined;
+        code?: string | number | undefined;
       }
-    | undefined
+    | undefined;
   /** エラーコンテキスト */
   context?: {
-    action?: string
-    resource?: string
-    parameters?: Record<string, unknown>
-  }
+    action?: string;
+    resource?: string;
+    parameters?: Record<string, unknown>;
+  };
 }
 
 /**
  * ⚡ パフォーマンスログエントリ
  */
 export interface PerformanceLogEntry extends LogEntry {
-  level: 'info' | 'debug'
+  level: 'info' | 'debug';
   /** パフォーマンスメトリクス */
   performance: {
     /** 実行時間（ミリ秒） */
-    duration: number
+    duration: number;
     /** メモリ使用量（バイト） */
-    memory?: number
+    memory?: number;
     /** CPUタイム（ミリ秒） */
-    cpu?: number
+    cpu?: number;
     /** データベースクエリ時間 */
-    dbTime?: number
+    dbTime?: number;
     /** 外部API呼び出し時間 */
-    apiTime?: number
-  }
+    apiTime?: number;
+  };
 }
 
 /**
  * 🔐 セキュリティログエントリ
  */
 export interface SecurityLogEntry extends LogEntry {
-  level: 'warn' | 'error'
+  level: 'warn' | 'error';
   /** セキュリティイベント */
   security: {
     /** イベントタイプ */
-    eventType: 'login_attempt' | 'unauthorized_access' | 'suspicious_activity' | 'data_breach'
+    eventType: 'login_attempt' | 'unauthorized_access' | 'suspicious_activity' | 'data_breach';
     /** IPアドレス */
-    ipAddress?: string
+    ipAddress?: string;
     /** ユーザーエージェント */
-    userAgent?: string
+    userAgent?: string;
     /** 脅威レベル */
-    threatLevel?: 'low' | 'medium' | 'high' | 'critical'
+    threatLevel?: 'low' | 'medium' | 'high' | 'critical';
     /** 関連リソース */
-    resource?: string
-  }
+    resource?: string;
+  };
 }
 
 /**
  * 📊 ビジネスログエントリ
  */
 export interface BusinessLogEntry extends LogEntry {
-  level: 'info'
+  level: 'info';
   /** ビジネスイベント */
   business: {
     /** イベントタイプ */
-    eventType: 'user_action' | 'transaction' | 'conversion' | 'milestone'
+    eventType: 'user_action' | 'transaction' | 'conversion' | 'milestone';
     /** ビジネス値 */
-    value?: number
+    value?: number;
     /** 通貨 */
-    currency?: string
+    currency?: string;
     /** カテゴリ */
-    category?: string
+    category?: string;
     /** タグ */
-    tags?: string[]
-  }
+    tags?: string[];
+  };
 }
 
 /**
@@ -133,67 +133,67 @@ export interface BusinessLogEntry extends LogEntry {
  */
 export interface LoggerConfig {
   /** 最小ログレベル */
-  level: LogLevel
+  level: LogLevel;
   /** コンソール出力 */
   console: {
-    enabled: boolean
+    enabled: boolean;
     /** カラー出力 */
-    colors: boolean
+    colors: boolean;
     /** フォーマット形式 */
-    format: 'json' | 'pretty' | 'simple'
-  }
+    format: 'json' | 'pretty' | 'simple';
+  };
   /** ファイル出力 */
   file: {
-    enabled: boolean
+    enabled: boolean;
     /** ファイルパス */
-    path: string
+    path: string;
     /** ローテーション設定 */
     rotation: {
       /** 最大ファイルサイズ */
-      maxSize: string
+      maxSize: string;
       /** 最大ファイル数 */
-      maxFiles: number
+      maxFiles: number;
       /** 日別ローテーション */
-      datePattern?: string
-    }
-  }
+      datePattern?: string;
+    };
+  };
   /** 外部サービス出力 */
   external: {
-    enabled: boolean
+    enabled: boolean;
     /** サービス設定 */
     services: {
       vercel?: {
-        enabled: boolean
-      }
+        enabled: boolean;
+      };
       supabase?: {
-        enabled: boolean
-        table?: string
-      }
+        enabled: boolean;
+        table?: string;
+      };
       webhook?: {
-        enabled: boolean
-        url?: string
-        headers?: Record<string, string>
-      }
-    }
-  }
+        enabled: boolean;
+        url?: string;
+        headers?: Record<string, string>;
+      };
+    };
+  };
   /** メタデータ設定 */
   metadata: {
     /** 自動追加するフィールド */
-    includeVersion: boolean
-    includeEnvironment: boolean
-    includeHostname: boolean
-    includeProcessId: boolean
-    includeMemory: boolean
-  }
+    includeVersion: boolean;
+    includeEnvironment: boolean;
+    includeHostname: boolean;
+    includeProcessId: boolean;
+    includeMemory: boolean;
+  };
   /** フィルタリング設定 */
   filtering: {
     /** 機密情報のマスキング */
-    sensitiveKeys: string[]
+    sensitiveKeys: string[];
     /** 除外するコンポーネント */
-    excludeComponents: string[]
+    excludeComponents: string[];
     /** サンプリングレート */
-    samplingRate: number
-  }
+    samplingRate: number;
+  };
 }
 
 /**
@@ -201,13 +201,13 @@ export interface LoggerConfig {
  */
 export interface LogOutput {
   /** 出力名 */
-  name: string
+  name: string;
   /** ログエントリの出力 */
-  write(entry: LogEntry): Promise<void> | void
+  write(entry: LogEntry): Promise<void> | void;
   /** クローズ処理 */
-  close?(): Promise<void> | void
+  close?(): Promise<void> | void;
   /** フラッシュ処理 */
-  flush?(): Promise<void> | void
+  flush?(): Promise<void> | void;
 }
 
 /**
@@ -215,15 +215,15 @@ export interface LogOutput {
  */
 export interface LogContext {
   /** リクエストID */
-  requestId?: string | undefined
+  requestId?: string | undefined;
   /** ユーザーID */
-  userId?: string | undefined
+  userId?: string | undefined;
   /** セッションID */
-  sessionId?: string | undefined
+  sessionId?: string | undefined;
   /** コンポーネント名 */
-  component?: string | undefined
+  component?: string | undefined;
   /** 追加コンテキスト */
-  [key: string]: unknown
+  [key: string]: unknown;
 }
 
 /**
@@ -231,62 +231,62 @@ export interface LogContext {
  */
 export interface LogStats {
   /** 総ログ数 */
-  totalLogs: number
+  totalLogs: number;
   /** レベル別統計 */
-  byLevel: Record<LogLevel, number>
+  byLevel: Record<LogLevel, number>;
   /** 時間帯別統計 */
-  byHour: Record<string, number>
+  byHour: Record<string, number>;
   /** コンポーネント別統計 */
-  byComponent: Record<string, number>
+  byComponent: Record<string, number>;
   /** エラー統計 */
   errors: {
-    total: number
-    byType: Record<string, number>
-    recent: ErrorLogEntry[]
-  }
+    total: number;
+    byType: Record<string, number>;
+    recent: ErrorLogEntry[];
+  };
   /** パフォーマンス統計 */
   performance: {
-    averageDuration: number
-    slowestOperations: PerformanceLogEntry[]
+    averageDuration: number;
+    slowestOperations: PerformanceLogEntry[];
     memoryUsage: {
-      average: number
-      peak: number
-    }
-  }
+      average: number;
+      peak: number;
+    };
+  };
 }
 
 /**
  * 🎨 ログフォーマッター関数型
  */
-export type LogFormatter = (entry: LogEntry) => string
+export type LogFormatter = (entry: LogEntry) => string;
 
 /**
  * 🔍 ログフィルター関数型
  */
-export type LogFilter = (entry: LogEntry) => boolean
+export type LogFilter = (entry: LogEntry) => boolean;
 
 /**
  * 📋 ログクエリ条件
  */
 export interface LogQuery {
   /** 開始日時 */
-  startTime?: Date
+  startTime?: Date;
   /** 終了日時 */
-  endTime?: Date
+  endTime?: Date;
   /** ログレベル */
-  levels?: LogLevel[]
+  levels?: LogLevel[];
   /** コンポーネント */
-  components?: string[]
+  components?: string[];
   /** ユーザーID */
-  userIds?: string[]
+  userIds?: string[];
   /** メッセージ検索 */
-  messageSearch?: string
+  messageSearch?: string;
   /** メタデータ条件 */
-  metaFilters?: Record<string, unknown>
+  metaFilters?: Record<string, unknown>;
   /** 制限数 */
-  limit?: number
+  limit?: number;
   /** オフセット */
-  offset?: number
+  offset?: number;
   /** ソート順 */
-  sortOrder?: 'asc' | 'desc'
+  sortOrder?: 'asc' | 'desc';
 }

@@ -1,18 +1,18 @@
-'use client'
+'use client';
 
-import { useCallback, useEffect, useState } from 'react'
-import { createPortal } from 'react-dom'
+import { useCallback, useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 
-import { Button } from '@/components/ui/button'
-import { useTagUsage } from '@/features/tags/hooks'
-import type { Tag } from '@/features/tags/types'
-import { Archive } from 'lucide-react'
-import { useTranslations } from 'next-intl'
+import { Button } from '@/components/ui/button';
+import { useTagUsage } from '@/features/tags/hooks';
+import type { Tag } from '@/features/tags/types';
+import { Archive } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface TagArchiveDialogProps {
-  tag: Tag | null
-  onClose: () => void
-  onConfirm: () => Promise<void>
+  tag: Tag | null;
+  onClose: () => void;
+  onConfirm: () => Promise<void>;
 }
 
 /**
@@ -27,51 +27,51 @@ interface TagArchiveDialogProps {
  * - セマンティックカラー: warning系トークン使用
  */
 export function TagArchiveDialog({ tag, onClose, onConfirm }: TagArchiveDialogProps) {
-  const t = useTranslations()
-  const [isArchiving, setIsArchiving] = useState(false)
-  const [mounted, setMounted] = useState(false)
+  const t = useTranslations();
+  const [isArchiving, setIsArchiving] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   // TanStack Queryでタグ使用状況を取得
-  const { data: usage, isPending } = useTagUsage(tag?.id)
+  const { data: usage, isPending } = useTagUsage(tag?.id);
 
   // クライアントサイドでのみマウント
   useEffect(() => {
-    setMounted(true)
-  }, [])
+    setMounted(true);
+  }, []);
 
   const handleConfirm = useCallback(async () => {
-    setIsArchiving(true)
+    setIsArchiving(true);
     try {
-      await onConfirm()
+      await onConfirm();
     } finally {
-      setIsArchiving(false)
+      setIsArchiving(false);
     }
-  }, [onConfirm])
+  }, [onConfirm]);
 
   const handleBackdropClick = useCallback(
     (e: React.MouseEvent) => {
       if (e.target === e.currentTarget && !isArchiving) {
-        onClose()
+        onClose();
       }
     },
-    [isArchiving, onClose]
-  )
+    [isArchiving, onClose],
+  );
 
   // ESCキーでダイアログを閉じる
   useEffect(() => {
-    if (!tag) return
+    if (!tag) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && !isArchiving) {
-        onClose()
+        onClose();
       }
-    }
+    };
 
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [tag, isArchiving, onClose])
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [tag, isArchiving, onClose]);
 
-  if (!mounted || !tag) return null
+  if (!mounted || !tag) return null;
 
   const dialog = (
     <div
@@ -116,13 +116,16 @@ export function TagArchiveDialog({ tag, onClose, onConfirm }: TagArchiveDialogPr
               <p className="mb-2 text-sm font-medium">{t('tag.archive.currentUsage')}</p>
               <ul className="text-muted-foreground space-y-1 text-sm">
                 <li>
-                  • {t('tag.delete.plans')}: {t('tag.delete.itemsCount', { count: usage.planCount })}
+                  • {t('tag.delete.plans')}:{' '}
+                  {t('tag.delete.itemsCount', { count: usage.planCount })}
                 </li>
                 <li>
-                  • {t('tag.delete.events')}: {t('tag.delete.itemsCount', { count: usage.eventCount })}
+                  • {t('tag.delete.events')}:{' '}
+                  {t('tag.delete.itemsCount', { count: usage.eventCount })}
                 </li>
                 <li>
-                  • {t('tag.delete.tasks')}: {t('tag.delete.itemsCount', { count: usage.taskCount })}
+                  • {t('tag.delete.tasks')}:{' '}
+                  {t('tag.delete.itemsCount', { count: usage.taskCount })}
                 </li>
               </ul>
               <p className="text-muted-foreground mt-2 text-sm font-medium">
@@ -145,7 +148,12 @@ export function TagArchiveDialog({ tag, onClose, onConfirm }: TagArchiveDialogPr
 
         {/* Footer */}
         <div className="mt-6 flex justify-end gap-2">
-          <Button variant="outline" onClick={onClose} disabled={isArchiving} className="hover:bg-state-hover">
+          <Button
+            variant="outline"
+            onClick={onClose}
+            disabled={isArchiving}
+            className="hover:bg-state-hover"
+          >
             {t('tag.actions.cancel')}
           </Button>
           <Button
@@ -158,7 +166,7 @@ export function TagArchiveDialog({ tag, onClose, onConfirm }: TagArchiveDialogPr
         </div>
       </div>
     </div>
-  )
+  );
 
-  return createPortal(dialog, document.body)
+  return createPortal(dialog, document.body);
 }

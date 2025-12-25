@@ -6,9 +6,9 @@
  */
 
 // Core exports
-export * from './detector'
-export * from './manager'
-export * from './types'
+export * from './detector';
+export * from './manager';
+export * from './types';
 
 // Type exports for convenience
 export type {
@@ -19,7 +19,7 @@ export type {
   ChangeImpactAnalysis,
   ImpactLevel,
   MigrationPlan,
-} from './types'
+} from './types';
 
 // Detector exports
 export {
@@ -27,7 +27,7 @@ export {
   breakingChangeDetector,
   detectBreakingChanges,
   filterHighConfidenceChanges,
-} from './detector'
+} from './detector';
 
 // Manager exports
 export {
@@ -37,17 +37,17 @@ export {
   createMigrationPlan,
   findBreakingChanges,
   generateVersionSummary,
-} from './manager'
+} from './manager';
 
 // Convenience re-export
-import { breakingChangeDetector, detectBreakingChanges } from './detector'
+import { breakingChangeDetector, detectBreakingChanges } from './detector';
 import {
   addBreakingChange,
   breakingChangeManager,
   createMigrationPlan,
   findBreakingChanges,
   generateVersionSummary,
-} from './manager'
+} from './manager';
 
 const breakingChanges = {
   detector: breakingChangeDetector,
@@ -57,6 +57,6 @@ const breakingChanges = {
   findBreakingChanges,
   generateVersionSummary,
   createMigrationPlan,
-}
+};
 
-export default breakingChanges
+export default breakingChanges;

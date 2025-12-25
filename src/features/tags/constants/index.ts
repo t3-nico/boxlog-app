@@ -7,7 +7,7 @@
  * ```
  */
 
-export { DEFAULT_TAG_COLOR, TAG_COLOR_PALETTE, TAG_PRESET_COLORS } from './colors'
+export { DEFAULT_TAG_COLOR, TAG_COLOR_PALETTE, TAG_PRESET_COLORS } from './colors';
 
-export { tagIconCategories, tagIconMapping } from './icons'
-export type { TagIconName } from './icons'
+export { tagIconCategories, tagIconMapping } from './icons';
+export type { TagIconName } from './icons';

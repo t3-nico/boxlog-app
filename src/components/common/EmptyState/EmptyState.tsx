@@ -1,27 +1,27 @@
-'use client'
+'use client';
 
-import type { LucideIcon } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react';
 
-import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 export interface EmptyStateProps {
   /** タイトル */
-  title: string
+  title: string;
   /** 説明文 */
-  description?: string | undefined
+  description?: string | undefined;
   /** アイコン（Lucideアイコンコンポーネント） */
-  icon?: LucideIcon | undefined
+  icon?: LucideIcon | undefined;
   /** アクションボタンのラベル */
-  actionLabel?: string | undefined
+  actionLabel?: string | undefined;
   /** アクションボタンのコールバック */
-  onAction?: (() => void) | undefined
+  onAction?: (() => void) | undefined;
   /** カスタムアクション（Buttonなど） */
-  actions?: React.ReactNode | undefined
+  actions?: React.ReactNode | undefined;
   /** ヒントテキスト */
-  hint?: string | undefined
+  hint?: string | undefined;
   /** 追加のクラス名 */
-  className?: string | undefined
+  className?: string | undefined;
 }
 
 /**
@@ -71,7 +71,12 @@ export function EmptyState({
   className,
 }: EmptyStateProps) {
   return (
-    <div className={cn('flex h-full flex-col items-center justify-center px-4 py-8 text-center md:p-8', className)}>
+    <div
+      className={cn(
+        'flex h-full flex-col items-center justify-center px-4 py-8 text-center md:p-8',
+        className,
+      )}
+    >
       {/* アイコン */}
       {Icon && <Icon className="text-muted-foreground size-12" />}
 
@@ -79,7 +84,9 @@ export function EmptyState({
       <h3 className="text-foreground mt-6 text-lg font-semibold">{title}</h3>
 
       {/* 説明 */}
-      {description && <p className="text-muted-foreground mt-2 mb-6 text-sm md:max-w-md">{description}</p>}
+      {description && (
+        <p className="text-muted-foreground mt-2 mb-6 text-sm md:max-w-md">{description}</p>
+      )}
 
       {/* アクションボタン */}
       {actionLabel && onAction && <Button onClick={onAction}>{actionLabel}</Button>}
@@ -90,5 +97,5 @@ export function EmptyState({
       {/* ヒント */}
       {hint && <p className="text-muted-foreground mt-8 max-w-xs text-xs md:max-w-sm">{hint}</p>}
     </div>
-  )
+  );
 }

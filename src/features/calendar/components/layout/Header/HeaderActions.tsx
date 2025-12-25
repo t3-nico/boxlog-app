@@ -1,17 +1,17 @@
-'use client'
+'use client';
 
-import { Download, MoreHorizontal, Settings, Upload } from 'lucide-react'
+import { Download, MoreHorizontal, Settings, Upload } from 'lucide-react';
 
-import { cn } from '@/lib/utils'
-import { useTranslations } from 'next-intl'
+import { cn } from '@/lib/utils';
+import { useTranslations } from 'next-intl';
 
 interface HeaderActionsProps {
-  onSettings?: (() => void) | undefined
-  onExport?: (() => void) | undefined
-  onImport?: (() => void) | undefined
-  onMore?: (() => void) | undefined
-  className?: string | undefined
-  compact?: boolean | undefined
+  onSettings?: (() => void) | undefined;
+  onExport?: (() => void) | undefined;
+  onImport?: (() => void) | undefined;
+  onMore?: (() => void) | undefined;
+  className?: string | undefined;
+  compact?: boolean | undefined;
 }
 
 /**
@@ -26,14 +26,14 @@ export const HeaderActions = ({
   className,
   compact = false,
 }: HeaderActionsProps) => {
-  const t = useTranslations()
+  const t = useTranslations();
   const buttonClass = cn(
     'rounded-md p-2 transition-colors',
     'hover:bg-state-hover text-muted-foreground',
-    compact ? 'p-2' : 'p-2'
-  )
+    compact ? 'p-2' : 'p-2',
+  );
 
-  const iconSize = compact ? 'size-5' : 'size-6'
+  const iconSize = compact ? 'size-5' : 'size-6';
 
   return (
     <div className={cn('flex items-center gap-1', className)}>
@@ -89,5 +89,5 @@ export const HeaderActions = ({
         </button>
       ) : null}
     </div>
-  )
-}
+  );
+};

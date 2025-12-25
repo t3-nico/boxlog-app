@@ -1,20 +1,20 @@
-'use client'
+'use client';
 
-import type { ReactNode } from 'react'
+import type { ReactNode } from 'react';
 
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/utils';
 
-import { SidebarHeader } from './SidebarHeader'
+import { SidebarHeader } from './SidebarHeader';
 
 interface SidebarShellProps {
   /** ページタイトル */
-  title: string
+  title: string;
   /** Sidebarのコンテンツ */
-  children: ReactNode
+  children: ReactNode;
   /** 追加のクラス名 */
-  className?: string
+  className?: string;
   /** ヘッダーを非表示にする（タブレイアウトで独自ヘッダーを使う場合） */
-  hideHeader?: boolean
+  hideHeader?: boolean;
 }
 
 /**
@@ -37,11 +37,18 @@ interface SidebarShellProps {
  * </SidebarShell>
  * ```
  */
-export function SidebarShell({ title, children, className, hideHeader = false }: SidebarShellProps) {
+export function SidebarShell({
+  title,
+  children,
+  className,
+  hideHeader = false,
+}: SidebarShellProps) {
   return (
-    <aside className={cn('bg-surface-container text-foreground flex h-full w-full flex-col', className)}>
+    <aside
+      className={cn('bg-surface-container text-foreground flex h-full w-full flex-col', className)}
+    >
       {!hideHeader && <SidebarHeader title={title} />}
       {children}
     </aside>
-  )
+  );
 }

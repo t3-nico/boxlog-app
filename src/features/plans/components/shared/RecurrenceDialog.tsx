@@ -1,27 +1,33 @@
-'use client'
+'use client';
 
-import * as Portal from '@radix-ui/react-portal'
-import { format } from 'date-fns'
-import { useEffect, useRef, useState } from 'react'
+import * as Portal from '@radix-ui/react-portal';
+import { format } from 'date-fns';
+import { useEffect, useRef, useState } from 'react';
 
-import { MiniCalendar } from '@/components/common/MiniCalendar'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { useDateFormat } from '@/features/settings/hooks/useDateFormat'
+import { MiniCalendar } from '@/components/common/MiniCalendar';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { useDateFormat } from '@/features/settings/hooks/useDateFormat';
 
-import type { RecurrenceConfig } from '../../types/plan'
-import { configToRRule, ruleToConfig } from '../../utils/rrule'
+import type { RecurrenceConfig } from '../../types/plan';
+import { configToRRule, ruleToConfig } from '../../utils/rrule';
 
 interface RecurrenceDialogProps {
-  value: string | null // RRULE文字列
-  onChange: (rrule: string | null) => void
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  triggerRef?: React.RefObject<HTMLElement | null>
-  placement?: 'bottom' | 'right' | 'left' // ポップアップの表示位置
+  value: string | null; // RRULE文字列
+  onChange: (rrule: string | null) => void;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  triggerRef?: React.RefObject<HTMLElement | null>;
+  placement?: 'bottom' | 'right' | 'left'; // ポップアップの表示位置
 }
 
 /**
@@ -46,104 +52,106 @@ export function RecurrenceDialog({
   triggerRef,
   placement = 'bottom',
 }: RecurrenceDialogProps) {
-  const dialogRef = useRef<HTMLDivElement>(null)
-  const [showCalendar, setShowCalendar] = useState(false)
-  const [position, setPosition] = useState({ top: 0, left: 0 })
-  const { formatDate: formatDateWithSettings } = useDateFormat()
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const [showCalendar, setShowCalendar] = useState(false);
+  const [position, setPosition] = useState({ top: 0, left: 0 });
+  const { formatDate: formatDateWithSettings } = useDateFormat();
 
   const [config, setConfig] = useState<RecurrenceConfig>(() => {
     if (value) {
       try {
-        return ruleToConfig(value)
+        return ruleToConfig(value);
       } catch {
         // パースエラー時はデフォルト値
-        const oneMonthLater = new Date()
-        oneMonthLater.setMonth(oneMonthLater.getMonth() + 1)
+        const oneMonthLater = new Date();
+        oneMonthLater.setMonth(oneMonthLater.getMonth() + 1);
         return {
           frequency: 'daily',
           interval: 1,
           endType: 'never',
           endDate: format(oneMonthLater, 'yyyy-MM-dd'),
-        }
+        };
       }
     }
     // デフォルトで1ヶ月後を設定
-    const oneMonthLater = new Date()
-    oneMonthLater.setMonth(oneMonthLater.getMonth() + 1)
+    const oneMonthLater = new Date();
+    oneMonthLater.setMonth(oneMonthLater.getMonth() + 1);
     return {
       frequency: 'daily',
       interval: 1,
       endType: 'never',
       endDate: format(oneMonthLater, 'yyyy-MM-dd'),
-    }
-  })
+    };
+  });
 
   // 位置を動的に計算（useEffect内でref参照）
   useEffect(() => {
-    if (!open || !triggerRef?.current) return
+    if (!open || !triggerRef?.current) return;
 
-    const rect = triggerRef.current.getBoundingClientRect()
-    const dialogWidth = 400 // w-[25rem]
+    const rect = triggerRef.current.getBoundingClientRect();
+    const dialogWidth = 400; // w-[25rem]
 
     if (placement === 'right') {
       setPosition({
         top: rect.top + window.scrollY,
         left: rect.right + window.scrollX + 4,
-      })
+      });
     } else if (placement === 'left') {
       setPosition({
         top: rect.top + window.scrollY,
         left: rect.left + window.scrollX - dialogWidth - 4,
-      })
+      });
     } else {
       setPosition({
         top: rect.bottom + window.scrollY + 4,
         left: rect.left + window.scrollX,
-      })
+      });
     }
-  }, [open, triggerRef, placement])
+  }, [open, triggerRef, placement]);
 
   // 外側クリックで閉じる
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as Node
-      const clickedTrigger = triggerRef?.current && triggerRef.current.contains(target)
-      const clickedDialog = dialogRef.current && dialogRef.current.contains(target)
+      const target = event.target as Node;
+      const clickedTrigger = triggerRef?.current && triggerRef.current.contains(target);
+      const clickedDialog = dialogRef.current && dialogRef.current.contains(target);
 
       // Portal要素（Selectのドロップダウン、Calendarなど）をクリックした場合は閉じない
       const isPortalElement =
         (target as Element).closest('[role="listbox"]') || // Select dropdown
         (target as Element).closest('[role="dialog"]') || // Dialog
-        (target as Element).closest('.react-datepicker') // Calendar (if any)
+        (target as Element).closest('.react-datepicker'); // Calendar (if any)
 
       if (!clickedTrigger && !clickedDialog && !isPortalElement) {
-        onOpenChange(false)
+        onOpenChange(false);
       }
-    }
+    };
 
     if (open) {
-      document.addEventListener('mousedown', handleClickOutside)
+      document.addEventListener('mousedown', handleClickOutside);
       return () => {
-        document.removeEventListener('mousedown', handleClickOutside)
-      }
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
     }
-    return undefined
-  }, [open, onOpenChange, triggerRef])
+    return undefined;
+  }, [open, onOpenChange, triggerRef]);
 
   const handleSave = () => {
-    const rrule = configToRRule(config)
-    onChange(rrule)
-    onOpenChange(false)
-  }
+    const rrule = configToRRule(config);
+    onChange(rrule);
+    onOpenChange(false);
+  };
 
   // 曜日トグル
   const toggleWeekday = (index: number) => {
-    const current = config.byWeekday || []
-    const updated = current.includes(index) ? current.filter((d) => d !== index) : [...current, index].sort()
-    setConfig({ ...config, byWeekday: updated })
-  }
+    const current = config.byWeekday || [];
+    const updated = current.includes(index)
+      ? current.filter((d) => d !== index)
+      : [...current, index].sort();
+    setConfig({ ...config, byWeekday: updated });
+  };
 
-  if (!open) return null
+  if (!open) return null;
 
   return (
     <Portal.Root>
@@ -210,7 +218,7 @@ export function RecurrenceDialog({
               <div className="flex gap-2">
                 {['月', '火', '水', '木', '金', '土', '日'].map((day, index) => {
                   // 月=1, 火=2, ..., 日=0 に変換
-                  const weekdayIndex = index === 6 ? 0 : index + 1
+                  const weekdayIndex = index === 6 ? 0 : index + 1;
                   return (
                     <Button
                       key={index}
@@ -222,7 +230,7 @@ export function RecurrenceDialog({
                     >
                       {day}
                     </Button>
-                  )
+                  );
                 })}
               </div>
             </div>
@@ -239,21 +247,21 @@ export function RecurrenceDialog({
                 }
                 onValueChange={(value) => {
                   if (value.startsWith('setpos-')) {
-                    const [, setPos, weekday] = value.split('-')
+                    const [, setPos, weekday] = value.split('-');
                     setConfig({
                       ...config,
                       byMonthDay: undefined,
                       bySetPos: Number(setPos!),
                       byWeekday: [Number(weekday!)],
-                    })
+                    });
                   } else {
-                    const monthDay = Number(value.split('-')[1]!)
+                    const monthDay = Number(value.split('-')[1]!);
                     setConfig({
                       ...config,
                       byMonthDay: monthDay,
                       bySetPos: undefined,
                       byWeekday: undefined,
-                    })
+                    });
                   }
                 }}
               >
@@ -264,19 +272,23 @@ export function RecurrenceDialog({
                   <SelectContent className="z-[250]">
                     {(() => {
                       // 現在の日付から候補を生成
-                      const today = new Date()
-                      const day = today.getDate()
-                      const weekday = today.getDay()
-                      const weekdayNames = ['日', '月', '火', '水', '木', '金', '土']
-                      const weekdayName = weekdayNames[weekday]
+                      const today = new Date();
+                      const day = today.getDate();
+                      const weekday = today.getDay();
+                      const weekdayNames = ['日', '月', '火', '水', '木', '金', '土'];
+                      const weekdayName = weekdayNames[weekday];
 
                       // その日が第何週か計算
-                      const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1)
-                      const weekOfMonth = Math.ceil((day + firstDayOfMonth.getDay()) / 7)
+                      const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+                      const weekOfMonth = Math.ceil((day + firstDayOfMonth.getDay()) / 7);
 
                       // 最終週かどうか判定
-                      const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate()
-                      const isLastWeek = day + 7 > lastDayOfMonth
+                      const lastDayOfMonth = new Date(
+                        today.getFullYear(),
+                        today.getMonth() + 1,
+                        0,
+                      ).getDate();
+                      const isLastWeek = day + 7 > lastDayOfMonth;
 
                       const options = [
                         // 選択肢1: 毎月 X 日
@@ -284,22 +296,25 @@ export function RecurrenceDialog({
                           毎月 {day} 日
                         </SelectItem>,
                         // 選択肢2: 毎月 第 N X曜日
-                        <SelectItem key={`setpos-${weekOfMonth}-${weekday}`} value={`setpos-${weekOfMonth}-${weekday}`}>
+                        <SelectItem
+                          key={`setpos-${weekOfMonth}-${weekday}`}
+                          value={`setpos-${weekOfMonth}-${weekday}`}
+                        >
                           毎月 第{weekOfMonth}
                           {weekdayName}曜日
                         </SelectItem>,
-                      ]
+                      ];
 
                       // 最終週の場合は「最終X曜日」も追加
                       if (isLastWeek) {
                         options.push(
                           <SelectItem key={`setpos--1-${weekday}`} value={`setpos--1-${weekday}`}>
                             毎月 最終{weekdayName}曜日
-                          </SelectItem>
-                        )
+                          </SelectItem>,
+                        );
                       }
 
-                      return options
+                      return options;
                     })()}
                   </SelectContent>
                 </Portal.Root>
@@ -312,13 +327,18 @@ export function RecurrenceDialog({
             <Label className="text-foreground text-sm font-medium">期間</Label>
             <RadioGroup
               value={config.endType}
-              onValueChange={(value) => setConfig({ ...config, endType: value as 'never' | 'until' | 'count' })}
+              onValueChange={(value) =>
+                setConfig({ ...config, endType: value as 'never' | 'until' | 'count' })
+              }
               className="space-y-2"
             >
               {/* 1. 終了日未定 */}
               <div className="flex items-center gap-2">
                 <RadioGroupItem value="never" id="end-never" />
-                <Label htmlFor="end-never" className="text-foreground cursor-pointer text-sm font-normal">
+                <Label
+                  htmlFor="end-never"
+                  className="text-foreground cursor-pointer text-sm font-normal"
+                >
                   終了日未定
                 </Label>
               </div>
@@ -329,16 +349,16 @@ export function RecurrenceDialog({
                   value="until"
                   id="end-until"
                   onClick={() => {
-                    setConfig({ ...config, endType: 'until' })
-                    setShowCalendar(true)
+                    setConfig({ ...config, endType: 'until' });
+                    setShowCalendar(true);
                   }}
                 />
                 <Label
                   htmlFor="end-until"
                   className="text-foreground cursor-pointer text-sm font-normal"
                   onClick={() => {
-                    setConfig({ ...config, endType: 'until' })
-                    setShowCalendar(true)
+                    setConfig({ ...config, endType: 'until' });
+                    setShowCalendar(true);
                   }}
                 >
                   終了日：
@@ -355,8 +375,8 @@ export function RecurrenceDialog({
                     selectedDate={config.endDate ? new Date(config.endDate) : undefined}
                     onDateSelect={(date) => {
                       if (date) {
-                        setConfig({ ...config, endDate: format(date, 'yyyy-MM-dd') })
-                        setShowCalendar(false)
+                        setConfig({ ...config, endDate: format(date, 'yyyy-MM-dd') });
+                        setShowCalendar(false);
                       }
                     }}
                     className="rounded-md border"
@@ -374,7 +394,9 @@ export function RecurrenceDialog({
                   min="1"
                   max="50"
                   value={config.count || 4}
-                  onChange={(e) => setConfig({ ...config, count: Number(e.target.value) || 4, endType: 'count' })}
+                  onChange={(e) =>
+                    setConfig({ ...config, count: Number(e.target.value) || 4, endType: 'count' })
+                  }
                   disabled={config.endType !== 'count'}
                   className="w-20"
                 />
@@ -395,5 +417,5 @@ export function RecurrenceDialog({
         </div>
       </div>
     </Portal.Root>
-  )
+  );
 }

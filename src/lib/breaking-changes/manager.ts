@@ -15,8 +15,8 @@ export {
   createMigrationPlan,
   findBreakingChanges,
   generateVersionSummary,
-} from './manager/index'
+} from './manager/index';
 
-import { BreakingChangeManager } from './manager/index'
+import { BreakingChangeManager } from './manager/index';
 
-export default BreakingChangeManager
+export default BreakingChangeManager;

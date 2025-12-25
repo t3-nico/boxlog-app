@@ -16,7 +16,7 @@ import {
   type FeatureValue,
   type ScreenName,
   type ScreenValue,
-} from '@/constants/naming'
+} from '@/constants/naming';
 
 // ==============================================
 // 🎯 分析イベント生成関数
@@ -25,7 +25,10 @@ import {
 /**
  * ページビューイベント生成
  */
-export function createPageViewEvent(screen: ScreenName, properties?: Record<string, unknown>): AnalyticsEvent {
+export function createPageViewEvent(
+  screen: ScreenName,
+  properties?: Record<string, unknown>,
+): AnalyticsEvent {
   return {
     name: ANALYTICS_EVENTS.page_view(screen),
     screen: SCREENS[screen],
@@ -34,7 +37,7 @@ export function createPageViewEvent(screen: ScreenName, properties?: Record<stri
       screen_name: SCREENS[screen],
       ...properties,
     },
-  }
+  };
 }
 
 /**
@@ -43,9 +46,9 @@ export function createPageViewEvent(screen: ScreenName, properties?: Record<stri
 export function createActionEvent(
   feature: FeatureName,
   screen?: ScreenName,
-  properties?: Record<string, unknown>
+  properties?: Record<string, unknown>,
 ): AnalyticsEvent {
-  const screenValue = screen ? SCREENS[screen] : undefined
+  const screenValue = screen ? SCREENS[screen] : undefined;
   return {
     name: ANALYTICS_EVENTS.action(feature),
     feature: FEATURES[feature],
@@ -56,7 +59,7 @@ export function createActionEvent(
       ...(screenValue && { screen_name: screenValue }),
       ...properties,
     },
-  }
+  };
 }
 
 /**
@@ -66,9 +69,9 @@ export function createEngagementEvent(
   type: string,
   details: string,
   screen?: ScreenName,
-  properties?: Record<string, unknown>
+  properties?: Record<string, unknown>,
 ): AnalyticsEvent {
-  const screenValue = screen ? SCREENS[screen] : undefined
+  const screenValue = screen ? SCREENS[screen] : undefined;
   return {
     name: ANALYTICS_EVENTS.engagement(type, details),
     ...(screenValue && { screen: screenValue }),
@@ -79,7 +82,7 @@ export function createEngagementEvent(
       ...(screenValue && { screen_name: screenValue }),
       ...properties,
     },
-  }
+  };
 }
 
 /**
@@ -89,9 +92,9 @@ export function createErrorEvent(
   errorType: string,
   context: string,
   screen?: ScreenName,
-  properties?: Record<string, unknown>
+  properties?: Record<string, unknown>,
 ): AnalyticsEvent {
-  const screenValue = screen ? SCREENS[screen] : undefined
+  const screenValue = screen ? SCREENS[screen] : undefined;
   return {
     name: ANALYTICS_EVENTS.error(errorType, context),
     ...(screenValue && { screen: screenValue }),
@@ -102,7 +105,7 @@ export function createErrorEvent(
       ...(screenValue && { screen_name: screenValue }),
       ...properties,
     },
-  }
+  };
 }
 
 /**
@@ -113,9 +116,9 @@ export function createPerformanceEvent(
   component: string,
   value: number,
   screen?: ScreenName,
-  properties?: Record<string, unknown>
+  properties?: Record<string, unknown>,
 ): AnalyticsEvent {
-  const screenValue = screen ? SCREENS[screen] : undefined
+  const screenValue = screen ? SCREENS[screen] : undefined;
   return {
     name: ANALYTICS_EVENTS.performance(metric, component),
     ...(screenValue && { screen: screenValue }),
@@ -127,7 +130,7 @@ export function createPerformanceEvent(
       ...(screenValue && { screen_name: screenValue }),
       ...properties,
     },
-  }
+  };
 }
 
 // ==============================================
@@ -139,7 +142,7 @@ export function createPerformanceEvent(
  */
 export function navigateToScreen(screen: ScreenName): string {
   // 設定画面はダイアログ形式のため、ダッシュボードを返す
-  const settingsRouteStub = () => '/'
+  const settingsRouteStub = () => '/';
 
   // ルートマッピング
   const routeMap: Partial<Record<ScreenName, () => string>> = {
@@ -188,10 +191,10 @@ export function navigateToScreen(screen: ScreenName): string {
     HELP_CHAT_HISTORY: settingsRouteStub,
     ERROR: () => '/', // エラーはerror.tsxで処理、URLルートは不要
     TEST_SENTRY: ROUTES.testSentry,
-  }
+  };
 
-  const routeFunction = routeMap[screen]
-  return routeFunction ? routeFunction() : '/'
+  const routeFunction = routeMap[screen];
+  return routeFunction ? routeFunction() : '/';
 }
 
 /**
@@ -200,11 +203,11 @@ export function navigateToScreen(screen: ScreenName): string {
 export function getParameterizedRoute(screen: ScreenName, parameter: string): string {
   switch (screen) {
     case 'CALENDAR_VIEW':
-      return ROUTES.calendarView(parameter)
+      return ROUTES.calendarView(parameter);
     case 'STATS_DETAIL':
-      return ROUTES.statsDetail(parameter)
+      return ROUTES.statsDetail(parameter);
     default:
-      return navigateToScreen(screen)
+      return navigateToScreen(screen);
   }
 }
 
@@ -216,24 +219,28 @@ export function getParameterizedRoute(screen: ScreenName, parameter: string): st
  * ページレベルCSSクラス生成
  */
 export function getPageClassName(screen: ScreenName): string {
-  return CSS_CLASSES.page(screen)
+  return CSS_CLASSES.page(screen);
 }
 
 /**
  * コンポーネントレベルCSSクラス生成
  */
-export function getComponentClassName(componentName: string, element?: string, modifier?: string): string {
-  let className = CSS_CLASSES.component(componentName)
+export function getComponentClassName(
+  componentName: string,
+  element?: string,
+  modifier?: string,
+): string {
+  let className = CSS_CLASSES.component(componentName);
 
   if (element) {
-    className = CSS_CLASSES.element(className, element)
+    className = CSS_CLASSES.element(className, element);
   }
 
   if (modifier) {
-    className = CSS_CLASSES.modifier(className, modifier)
+    className = CSS_CLASSES.modifier(className, modifier);
   }
 
-  return className
+  return className;
 }
 
 // ==============================================
@@ -244,28 +251,28 @@ export function getComponentClassName(componentName: string, element?: string, m
  * 画面名の妥当性チェック
  */
 export function isValidScreen(screen: string): screen is ScreenName {
-  return screen in SCREENS
+  return screen in SCREENS;
 }
 
 /**
  * 機能名の妥当性チェック
  */
 export function isValidFeature(feature: string): feature is FeatureName {
-  return feature in FEATURES
+  return feature in FEATURES;
 }
 
 /**
  * 画面値の妥当性チェック
  */
 export function isValidScreenValue(value: string): value is ScreenValue {
-  return Object.values(SCREENS).includes(value as ScreenValue)
+  return Object.values(SCREENS).includes(value as ScreenValue);
 }
 
 /**
  * 機能値の妥当性チェック
  */
 export function isValidFeatureValue(value: string): value is FeatureValue {
-  return Object.values(FEATURES).includes(value as FeatureValue)
+  return Object.values(FEATURES).includes(value as FeatureValue);
 }
 
 // ==============================================
@@ -276,28 +283,28 @@ export function isValidFeatureValue(value: string): value is FeatureValue {
  * 画面名から画面値への変換
  */
 export function getScreenValue(screen: ScreenName): ScreenValue {
-  return SCREENS[screen]
+  return SCREENS[screen];
 }
 
 /**
  * 機能名から機能値への変換
  */
 export function getFeatureValue(feature: FeatureName): FeatureValue {
-  return FEATURES[feature]
+  return FEATURES[feature];
 }
 
 /**
  * 画面値から画面名への変換
  */
 export function getScreenName(value: ScreenValue): ScreenName | undefined {
-  return (Object.keys(SCREENS) as ScreenName[]).find((key) => SCREENS[key] === value)
+  return (Object.keys(SCREENS) as ScreenName[]).find((key) => SCREENS[key] === value);
 }
 
 /**
  * 機能値から機能名への変換
  */
 export function getFeatureName(value: FeatureValue): FeatureName | undefined {
-  return (Object.keys(FEATURES) as FeatureName[]).find((key) => FEATURES[key] === value)
+  return (Object.keys(FEATURES) as FeatureName[]).find((key) => FEATURES[key] === value);
 }
 
 /**
@@ -305,9 +312,9 @@ export function getFeatureName(value: FeatureValue): FeatureName | undefined {
  */
 export function safeGetScreenName(value: string): ScreenName | undefined {
   if (isValidScreenValue(value)) {
-    return getScreenName(value)
+    return getScreenName(value);
   }
-  return undefined
+  return undefined;
 }
 
 /**
@@ -315,9 +322,9 @@ export function safeGetScreenName(value: string): ScreenName | undefined {
  */
 export function safeGetFeatureName(value: string): FeatureName | undefined {
   if (isValidFeatureValue(value)) {
-    return getFeatureName(value)
+    return getFeatureName(value);
   }
-  return undefined
+  return undefined;
 }
 
 // ==============================================
@@ -331,7 +338,7 @@ export function getAllScreens(): { name: ScreenName; value: ScreenValue }[] {
   return (Object.keys(SCREENS) as ScreenName[]).map((name) => ({
     name,
     value: SCREENS[name],
-  }))
+  }));
 }
 
 /**
@@ -341,48 +348,48 @@ export function getAllFeatures(): { name: FeatureName; value: FeatureValue }[] {
   return (Object.keys(FEATURES) as FeatureName[]).map((name) => ({
     name,
     value: FEATURES[name],
-  }))
+  }));
 }
 
 /**
  * 命名辞書の一貫性チェック
  */
 export function validateNamingConsistency(): {
-  isValid: boolean
-  errors: string[]
+  isValid: boolean;
+  errors: string[];
 } {
-  const errors: string[] = []
+  const errors: string[] = [];
 
   // 重複チェック
-  const screenValues = Object.values(SCREENS)
-  const uniqueScreenValues = new Set(screenValues)
+  const screenValues = Object.values(SCREENS);
+  const uniqueScreenValues = new Set(screenValues);
   if (screenValues.length !== uniqueScreenValues.size) {
-    errors.push('重複した画面値が存在します')
+    errors.push('重複した画面値が存在します');
   }
 
-  const featureValues = Object.values(FEATURES)
-  const uniqueFeatureValues = new Set(featureValues)
+  const featureValues = Object.values(FEATURES);
+  const uniqueFeatureValues = new Set(featureValues);
   if (featureValues.length !== uniqueFeatureValues.size) {
-    errors.push('重複した機能値が存在します')
+    errors.push('重複した機能値が存在します');
   }
 
   // 命名規則チェック
   screenValues.forEach((value) => {
     if (!/^[a-z0-9_]+$/.test(value)) {
-      errors.push(`画面値 "${value}" が命名規則に違反しています`)
+      errors.push(`画面値 "${value}" が命名規則に違反しています`);
     }
-  })
+  });
 
   featureValues.forEach((value) => {
     if (!/^[a-z0-9_]+$/.test(value)) {
-      errors.push(`機能値 "${value}" が命名規則に違反しています`)
+      errors.push(`機能値 "${value}" が命名規則に違反しています`);
     }
-  })
+  });
 
   return {
     isValid: errors.length === 0,
     errors,
-  }
+  };
 }
 
 const namingUtils = {
@@ -406,6 +413,6 @@ const namingUtils = {
   getAllScreens,
   getAllFeatures,
   validateNamingConsistency,
-}
+};
 
-export default namingUtils
+export default namingUtils;

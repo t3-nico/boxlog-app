@@ -1,8 +1,8 @@
-import { useCallback } from 'react'
+import { useCallback } from 'react';
 
-import { getTranslation } from './get-translation'
-import { CALENDAR_TOAST_KEYS } from './translation-keys'
-import { useCalendarToast } from './use-calendar-toast'
+import { getTranslation } from './get-translation';
+import { CALENDAR_TOAST_KEYS } from './translation-keys';
+import { useCalendarToast } from './use-calendar-toast';
 
 // ネットワークエラーの種類
 export type NetworkErrorType =
@@ -13,14 +13,14 @@ export type NetworkErrorType =
   | 'unauthorized'
   | 'forbidden'
   | 'conflict'
-  | 'unknown'
+  | 'unknown';
 
 // ネットワークエラー情報
 export interface NetworkErrorInfo {
-  type: NetworkErrorType
-  code?: string | number | undefined
-  message?: string | undefined
-  statusCode?: number | undefined
+  type: NetworkErrorType;
+  code?: string | number | undefined;
+  message?: string | undefined;
+  statusCode?: number | undefined;
 }
 
 // HTTPステータスコードマッピング
@@ -33,53 +33,60 @@ const STATUS_CODE_MAPPING: Record<number, { type: NetworkErrorType; message: str
   502: { type: 'server_error', message: getTranslation(CALENDAR_TOAST_KEYS.ERROR_SERVER_ERROR) },
   503: { type: 'server_error', message: getTranslation(CALENDAR_TOAST_KEYS.ERROR_SERVER_ERROR) },
   504: { type: 'server_error', message: getTranslation(CALENDAR_TOAST_KEYS.ERROR_SERVER_ERROR) },
-}
+};
 
 // ヘルパー関数: オフライン状態チェック
 const checkOfflineStatus = (): NetworkErrorInfo | null => {
   if (!navigator.onLine) {
-    return { type: 'offline', message: getTranslation(CALENDAR_TOAST_KEYS.ERROR_OFFLINE) }
+    return { type: 'offline', message: getTranslation(CALENDAR_TOAST_KEYS.ERROR_OFFLINE) };
   }
-  return null
-}
+  return null;
+};
 
 // ヘルパー関数: タイムアウトエラーチェック
-const checkTimeoutError = (error: Error & { code?: string; message?: string }): NetworkErrorInfo | null => {
+const checkTimeoutError = (
+  error: Error & { code?: string; message?: string },
+): NetworkErrorInfo | null => {
   if (error.code === 'TIMEOUT' || error.message?.includes('timeout')) {
-    return { type: 'timeout', message: getTranslation(CALENDAR_TOAST_KEYS.ERROR_TIMEOUT) }
+    return { type: 'timeout', message: getTranslation(CALENDAR_TOAST_KEYS.ERROR_TIMEOUT) };
   }
-  return null
-}
+  return null;
+};
 
 // ヘルパー関数: HTTPステータスコード処理
 const handleStatusCode = (status: number, errorMessage?: string): NetworkErrorInfo => {
-  const statusMapping = STATUS_CODE_MAPPING[status]
+  const statusMapping = STATUS_CODE_MAPPING[status];
   if (statusMapping) {
-    return { type: statusMapping.type, statusCode: status, message: statusMapping.message }
+    return { type: statusMapping.type, statusCode: status, message: statusMapping.message };
   }
   return {
     type: 'unknown',
     statusCode: status,
     message: errorMessage || getTranslation(CALENDAR_TOAST_KEYS.ERROR_UNEXPECTED),
-  }
-}
+  };
+};
 
 // エラー分類関数（複雑度削減版）
 export const classifyNetworkError = (
-  error: Error & { code?: string; response?: { status: number }; statusCode?: number; message?: string }
+  error: Error & {
+    code?: string;
+    response?: { status: number };
+    statusCode?: number;
+    message?: string;
+  },
 ): NetworkErrorInfo => {
   // オフライン状態のチェック
-  const offlineResult = checkOfflineStatus()
-  if (offlineResult) return offlineResult
+  const offlineResult = checkOfflineStatus();
+  if (offlineResult) return offlineResult;
 
   // タイムアウトエラーチェック
-  const timeoutResult = checkTimeoutError(error)
-  if (timeoutResult) return timeoutResult
+  const timeoutResult = checkTimeoutError(error);
+  if (timeoutResult) return timeoutResult;
 
   // HTTPステータスコードによる分類
-  const status = error.response?.status || error.statusCode
+  const status = error.response?.status || error.statusCode;
   if (status) {
-    return handleStatusCode(status, error.message)
+    return handleStatusCode(status, error.message);
   }
 
   // その他のエラー
@@ -87,26 +94,26 @@ export const classifyNetworkError = (
     type: 'unknown',
     message: error.message || getTranslation(CALENDAR_TOAST_KEYS.ERROR_UNEXPECTED),
     code: error.code ?? undefined,
-  }
-}
+  };
+};
 
 // ネットワークエラーハンドリング用のカスタムフック
 export const useNetworkErrorHandler = () => {
-  const toast = useCalendarToast()
+  const toast = useCalendarToast();
 
   const handleNetworkError = useCallback(
     (
       error: Error & { code?: string; response?: { status: number }; statusCode?: number },
-      retryFn?: () => void | Promise<void>
+      retryFn?: () => void | Promise<void>,
     ) => {
-      const errorInfo = classifyNetworkError(error)
+      const errorInfo = classifyNetworkError(error);
 
       switch (errorInfo.type) {
         case 'offline':
           return toast.warning(getTranslation(CALENDAR_TOAST_KEYS.TOAST_OFFLINE), {
             description: getTranslation(CALENDAR_TOAST_KEYS.TOAST_OFFLINE_DESC),
             duration: 5000,
-          })
+          });
 
         case 'timeout':
           return toast.error(getTranslation(CALENDAR_TOAST_KEYS.TOAST_TIMEOUT_TITLE), {
@@ -116,11 +123,11 @@ export const useNetworkErrorHandler = () => {
               action: {
                 label: '再試行',
                 onClick: () => {
-                  void retryFn()
+                  void retryFn();
                 },
               },
             }),
-          })
+          });
 
         case 'unauthorized':
           return toast.error(getTranslation(CALENDAR_TOAST_KEYS.TOAST_AUTH_ERROR_TITLE), {
@@ -129,16 +136,16 @@ export const useNetworkErrorHandler = () => {
             action: {
               label: 'ログイン',
               onClick: () => {
-                window.location.href = '/login'
+                window.location.href = '/login';
               },
             },
-          })
+          });
 
         case 'forbidden':
           return toast.error(getTranslation(CALENDAR_TOAST_KEYS.TOAST_ACCESS_DENIED_TITLE), {
             description: getTranslation(CALENDAR_TOAST_KEYS.TOAST_ACCESS_DENIED_DESC),
             duration: 8000,
-          })
+          });
 
         case 'not_found':
           return toast.warning(getTranslation(CALENDAR_TOAST_KEYS.TOAST_NOT_FOUND_TITLE), {
@@ -148,11 +155,11 @@ export const useNetworkErrorHandler = () => {
               action: {
                 label: '再試行',
                 onClick: () => {
-                  void retryFn()
+                  void retryFn();
                 },
               },
             }),
-          })
+          });
 
         case 'conflict':
           return toast.warning(getTranslation(CALENDAR_TOAST_KEYS.TOAST_CONFLICT_TITLE), {
@@ -162,11 +169,11 @@ export const useNetworkErrorHandler = () => {
               action: {
                 label: '再試行',
                 onClick: () => {
-                  void retryFn()
+                  void retryFn();
                 },
               },
             }),
-          })
+          });
 
         case 'server_error':
           return toast.error(getTranslation(CALENDAR_TOAST_KEYS.TOAST_SERVER_ERROR_TITLE), {
@@ -176,29 +183,30 @@ export const useNetworkErrorHandler = () => {
               action: {
                 label: '再試行',
                 onClick: () => {
-                  void retryFn()
+                  void retryFn();
                 },
               },
             }),
-          })
+          });
 
         default:
           return toast.error(getTranslation(CALENDAR_TOAST_KEYS.TOAST_UNKNOWN_ERROR_TITLE), {
-            description: errorInfo.message || getTranslation(CALENDAR_TOAST_KEYS.TOAST_UNKNOWN_ERROR_DESC),
+            description:
+              errorInfo.message || getTranslation(CALENDAR_TOAST_KEYS.TOAST_UNKNOWN_ERROR_DESC),
             duration: 6000,
             ...(retryFn && {
               action: {
                 label: '再試行',
                 onClick: () => {
-                  void retryFn()
+                  void retryFn();
                 },
               },
             }),
-          })
+          });
       }
     },
-    [toast]
-  )
+    [toast],
+  );
 
   const handlePermissionError = useCallback(
     (action: string) => {
@@ -208,29 +216,29 @@ export const useNetworkErrorHandler = () => {
         action: {
           label: '設定を開く',
           onClick: () => {
-            window.location.href = '/settings/permissions'
+            window.location.href = '/settings/permissions';
           },
         },
-      })
+      });
     },
-    [toast]
-  )
+    [toast],
+  );
 
   const handleValidationError = useCallback(
     (errors: string[] | string) => {
-      const errorList = Array.isArray(errors) ? errors : [errors]
+      const errorList = Array.isArray(errors) ? errors : [errors];
       return toast.error(getTranslation(CALENDAR_TOAST_KEYS.TOAST_VALIDATION_ERROR_TITLE), {
         description: errorList.join(', '),
         duration: 6000,
-      })
+      });
     },
-    [toast]
-  )
+    [toast],
+  );
 
   return {
     handleError: handleNetworkError,
     handlePermissionError,
     handleValidationError,
     classifyError: classifyNetworkError,
-  }
-}
+  };
+};

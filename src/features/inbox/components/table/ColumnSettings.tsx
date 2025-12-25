@@ -1,12 +1,12 @@
-'use client'
+'use client';
 
-import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Label } from '@/components/ui/label'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { Separator } from '@/components/ui/separator'
-import { Settings2 } from 'lucide-react'
-import { useInboxColumnStore } from '../../stores/useInboxColumnStore'
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Separator } from '@/components/ui/separator';
+import { Settings2 } from 'lucide-react';
+import { useInboxColumnStore } from '../../stores/useInboxColumnStore';
 
 /**
  * 列設定コンポーネント
@@ -22,10 +22,10 @@ import { useInboxColumnStore } from '../../stores/useInboxColumnStore'
  * ```
  */
 export function ColumnSettings() {
-  const { columns, toggleColumnVisibility, resetColumns } = useInboxColumnStore()
+  const { columns, toggleColumnVisibility, resetColumns } = useInboxColumnStore();
 
   // 表示/非表示を切り替え可能な列のみ
-  const configurableColumns = columns.filter((col) => col.id !== 'selection')
+  const configurableColumns = columns.filter((col) => col.id !== 'selection');
 
   return (
     <Popover>
@@ -50,13 +50,19 @@ export function ColumnSettings() {
           {/* 列の表示/非表示切り替え */}
           <div className="space-y-1">
             {configurableColumns.map((column) => (
-              <div key={column.id} className="hover:bg-state-hover flex items-center space-x-2 rounded-sm px-2 py-1.5">
+              <div
+                key={column.id}
+                className="hover:bg-state-hover flex items-center space-x-2 rounded-sm px-2 py-1.5"
+              >
                 <Checkbox
                   id={`column-${column.id}`}
                   checked={column.visible}
                   onCheckedChange={() => toggleColumnVisibility(column.id)}
                 />
-                <Label htmlFor={`column-${column.id}`} className="flex-1 cursor-pointer text-sm font-normal">
+                <Label
+                  htmlFor={`column-${column.id}`}
+                  className="flex-1 cursor-pointer text-sm font-normal"
+                >
                   {column.label}
                 </Label>
               </div>
@@ -65,5 +71,5 @@ export function ColumnSettings() {
         </div>
       </PopoverContent>
     </Popover>
-  )
+  );
 }

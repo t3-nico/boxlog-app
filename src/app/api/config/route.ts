@@ -7,62 +7,62 @@
  * - 環境情報取得
  */
 
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server';
 
-import { loadConfig } from '@/config/loader'
+import { loadConfig } from '@/config/loader';
 
 /**
  * Configuration structure type
  */
 interface ConfigStructure {
-  app?: Record<string, unknown>
-  database?: { password?: string; host?: string; name?: string }
-  auth?: { jwtSecret?: string }
-  features?: Record<string, boolean>
-  email?: { password?: string; host?: string; from?: string }
+  app?: Record<string, unknown>;
+  database?: { password?: string; host?: string; name?: string };
+  auth?: { jwtSecret?: string };
+  features?: Record<string, boolean>;
+  email?: { password?: string; host?: string; from?: string };
   apis?: {
-    openai?: { apiKey?: string }
-    vercel?: { token?: string }
-  }
-  server?: { session?: { secret?: string } }
-  logging?: Record<string, unknown>
+    openai?: { apiKey?: string };
+    vercel?: { token?: string };
+  };
+  server?: { session?: { secret?: string } };
+  logging?: Record<string, unknown>;
 }
 
 /**
  * 🔧 Configuration Info レスポンス型定義
  */
 interface ConfigInfoResponse {
-  environment: string
-  timestamp: string
+  environment: string;
+  timestamp: string;
   validation: {
-    success: boolean
-    errors: number
-    warnings: number
-  }
+    success: boolean;
+    errors: number;
+    warnings: number;
+  };
   sections: {
     [key: string]: {
-      loaded: boolean
-      keys: number
-      hasSecrets?: boolean
-    }
-  }
+      loaded: boolean;
+      keys: number;
+      hasSecrets?: boolean;
+    };
+  };
   features: {
-    enabled: string[]
-    disabled: string[]
-  }
+    enabled: string[];
+    disabled: string[];
+  };
   health: {
-    database: 'configured' | 'missing' | 'invalid'
-    auth: 'configured' | 'missing' | 'invalid'
-    email: 'configured' | 'missing' | 'invalid'
-    apis: 'configured' | 'missing' | 'partial'
-  }
+    database: 'configured' | 'missing' | 'invalid';
+    auth: 'configured' | 'missing' | 'invalid';
+    email: 'configured' | 'missing' | 'invalid';
+    apis: 'configured' | 'missing' | 'partial';
+  };
 }
 
 /**
  * 📊 セクション情報の構築
  */
 function buildSectionInfo(
-  config: ConfigStructure
+  config: ConfigStructure,
 ): Record<string, { loaded: boolean; keys: number; hasSecrets?: boolean }> {
   return {
     app: {
@@ -102,64 +102,64 @@ function buildSectionInfo(
       loaded: !!config.logging,
       keys: config.logging ? Object.keys(config.logging).length : 0,
     },
-  }
+  };
 }
 
 /**
  * 🚀 機能フラグ情報の構築
  */
 function buildFeatureFlags(config: ConfigStructure): { enabled: string[]; disabled: string[] } {
-  const features: { enabled: string[]; disabled: string[] } = { enabled: [], disabled: [] }
+  const features: { enabled: string[]; disabled: string[] } = { enabled: [], disabled: [] };
 
   if (config.features) {
     Object.entries(config.features).forEach(([key, value]) => {
       if (value === true) {
-        features.enabled.push(key)
+        features.enabled.push(key);
       } else {
-        features.disabled.push(key)
+        features.disabled.push(key);
       }
-    })
+    });
   }
 
-  return features
+  return features;
 }
 
 /**
  * 🏥 API健康チェック情報の構築
  */
 function buildApiHealthStatus(config: ConfigStructure): 'configured' | 'missing' | 'partial' {
-  let configuredCount = 0
-  let totalCount = 0
+  let configuredCount = 0;
+  let totalCount = 0;
 
   if (config.apis?.openai) {
-    totalCount++
-    if (config.apis.openai.apiKey) configuredCount++
+    totalCount++;
+    if (config.apis.openai.apiKey) configuredCount++;
   }
   if (config.apis?.vercel) {
-    totalCount++
-    if (config.apis.vercel.token) configuredCount++
+    totalCount++;
+    if (config.apis.vercel.token) configuredCount++;
   }
 
-  if (totalCount === 0) return 'missing'
-  if (configuredCount === totalCount) return 'configured'
-  return 'partial'
+  if (totalCount === 0) return 'missing';
+  if (configuredCount === totalCount) return 'configured';
+  return 'partial';
 }
 
 /**
  * 🏥 ヘルスチェック情報の構築
  */
 function buildHealthInfo(config: ConfigStructure): {
-  database: 'configured' | 'missing' | 'invalid'
-  auth: 'configured' | 'missing' | 'invalid'
-  email: 'configured' | 'missing' | 'invalid'
-  apis: 'configured' | 'missing' | 'partial'
+  database: 'configured' | 'missing' | 'invalid';
+  auth: 'configured' | 'missing' | 'invalid';
+  email: 'configured' | 'missing' | 'invalid';
+  apis: 'configured' | 'missing' | 'partial';
 } {
   return {
     database: config.database?.host && config.database?.name ? 'configured' : 'missing',
     auth: config.auth?.jwtSecret ? 'configured' : 'missing',
     email: config.email?.host && config.email?.from ? 'configured' : 'missing',
     apis: buildApiHealthStatus(config),
-  }
+  };
 }
 
 /**
@@ -172,9 +172,9 @@ export async function GET(_request: NextRequest): Promise<NextResponse> {
       useCache: false,
       preferEnvVars: true,
       strict: false,
-    })
+    });
 
-    const environment = process.env.NODE_ENV || 'development'
+    const environment = process.env.NODE_ENV || 'development';
 
     const response: ConfigInfoResponse = {
       environment,
@@ -195,15 +195,15 @@ export async function GET(_request: NextRequest): Promise<NextResponse> {
         email: 'missing',
         apis: 'missing',
       },
-    }
+    };
 
     // 設定が成功した場合の詳細情報
     if (configResult.success && configResult.data) {
-      const config = configResult.data as ConfigStructure
+      const config = configResult.data as ConfigStructure;
 
-      response.sections = buildSectionInfo(config)
-      response.features = buildFeatureFlags(config)
-      response.health = buildHealthInfo(config)
+      response.sections = buildSectionInfo(config);
+      response.features = buildFeatureFlags(config);
+      response.health = buildHealthInfo(config);
     }
 
     // 開発環境でのみ、検証エラー詳細を含める
@@ -214,21 +214,21 @@ export async function GET(_request: NextRequest): Promise<NextResponse> {
           errors: configResult.errors,
           warnings: configResult.warnings,
         },
-        { status: 200 }
-      )
+        { status: 200 },
+      );
     }
 
-    return NextResponse.json(response, { status: 200 })
+    return NextResponse.json(response, { status: 200 });
   } catch (error) {
-    console.error('Configuration API error:', error)
+    console.error('Configuration API error:', error);
     return NextResponse.json(
       {
         error: 'CONFIG_API_ERROR',
         message: 'Failed to retrieve configuration information',
         timestamp: new Date().toISOString(),
       },
-      { status: 500 }
-    )
+      { status: 500 },
+    );
   }
 }
 
@@ -237,12 +237,12 @@ export async function GET(_request: NextRequest): Promise<NextResponse> {
  */
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
-    const body = await request.json().catch(() => ({}))
-    const { strict = false, clearCache = false } = body
+    const body = await request.json().catch(() => ({}));
+    const { strict = false, clearCache = false } = body;
 
     if (clearCache) {
-      const { clearConfigCache } = await import('@/config/loader')
-      clearConfigCache()
+      const { clearConfigCache } = await import('@/config/loader');
+      clearConfigCache();
     }
 
     // 設定の再検証
@@ -250,7 +250,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       useCache: false,
       preferEnvVars: true,
       strict,
-    })
+    });
 
     const validationResponse = {
       success: configResult.success,
@@ -261,7 +261,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         errors: configResult.errors.length,
         warnings: configResult.warnings?.length || 0,
       },
-    }
+    };
 
     // 開発環境またはエラーがある場合は詳細を返す
     if (process.env.NODE_ENV === 'development' || !configResult.success) {
@@ -271,20 +271,20 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           errors: configResult.errors,
           warnings: configResult.warnings,
         },
-        { status: configResult.success ? 200 : 400 }
-      )
+        { status: configResult.success ? 200 : 400 },
+      );
     }
 
-    return NextResponse.json(validationResponse, { status: 200 })
+    return NextResponse.json(validationResponse, { status: 200 });
   } catch (error) {
-    console.error('Configuration validation API error:', error)
+    console.error('Configuration validation API error:', error);
     return NextResponse.json(
       {
         error: 'CONFIG_VALIDATION_ERROR',
         message: 'Configuration validation failed',
         timestamp: new Date().toISOString(),
       },
-      { status: 500 }
-    )
+      { status: 500 },
+    );
   }
 }

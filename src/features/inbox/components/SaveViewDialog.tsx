@@ -1,8 +1,8 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
+import { useState } from 'react';
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -10,21 +10,21 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 type SaveViewDialogProps = {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  onSave: (name: string) => void
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onSave: (name: string) => void;
   currentFilters: {
-    status?: string[]
-    priority?: string[]
-    tags?: string[]
-    search?: string
-  }
-}
+    status?: string[];
+    priority?: string[];
+    tags?: string[];
+    search?: string;
+  };
+};
 
 /**
  * View保存ダイアログ
@@ -41,36 +41,41 @@ type SaveViewDialogProps = {
  * />
  * ```
  */
-export function SaveViewDialog({ open, onOpenChange, onSave, currentFilters }: SaveViewDialogProps) {
-  const [name, setName] = useState('')
+export function SaveViewDialog({
+  open,
+  onOpenChange,
+  onSave,
+  currentFilters,
+}: SaveViewDialogProps) {
+  const [name, setName] = useState('');
 
   const handleSave = () => {
-    if (!name.trim()) return
+    if (!name.trim()) return;
 
-    onSave(name.trim())
-    setName('')
-    onOpenChange(false)
-  }
+    onSave(name.trim());
+    setName('');
+    onOpenChange(false);
+  };
 
   // フィルターのプレビュー文字列を生成
   const getFilterPreview = () => {
-    const parts: string[] = []
+    const parts: string[] = [];
 
     if (currentFilters.status && currentFilters.status.length > 0) {
-      parts.push(`ステータス: ${currentFilters.status.join(', ')}`)
+      parts.push(`ステータス: ${currentFilters.status.join(', ')}`);
     }
     if (currentFilters.priority && currentFilters.priority.length > 0) {
-      parts.push(`優先度: ${currentFilters.priority.join(', ')}`)
+      parts.push(`優先度: ${currentFilters.priority.join(', ')}`);
     }
     if (currentFilters.tags && currentFilters.tags.length > 0) {
-      parts.push(`タグ: ${currentFilters.tags.join(', ')}`)
+      parts.push(`タグ: ${currentFilters.tags.join(', ')}`);
     }
     if (currentFilters.search) {
-      parts.push(`検索: "${currentFilters.search}"`)
+      parts.push(`検索: "${currentFilters.search}"`);
     }
 
-    return parts.length > 0 ? parts.join(' | ') : 'フィルターなし'
-  }
+    return parts.length > 0 ? parts.join(' | ') : 'フィルターなし';
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -91,7 +96,7 @@ export function SaveViewDialog({ open, onOpenChange, onSave, currentFilters }: S
               onChange={(e) => setName(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
-                  handleSave()
+                  handleSave();
                 }
               }}
             />
@@ -116,5 +121,5 @@ export function SaveViewDialog({ open, onOpenChange, onSave, currentFilters }: S
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

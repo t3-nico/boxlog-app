@@ -17,9 +17,9 @@
  * </StatusBar>
  * ```
  */
-export { StatusBar } from './StatusBar'
-export { StatusBarItem } from './StatusBarItem'
+export { StatusBar } from './StatusBar';
+export { StatusBarItem } from './StatusBarItem';
 
 // アイテムコンポーネント
-export { ChronotypeStatusItem } from './items/ChronotypeStatusItem'
-export { ScheduleStatusItem } from './items/ScheduleStatusItem'
+export { ChronotypeStatusItem } from './items/ChronotypeStatusItem';
+export { ScheduleStatusItem } from './items/ScheduleStatusItem';

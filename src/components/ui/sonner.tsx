@@ -1,11 +1,11 @@
-'use client'
+'use client';
 
-import { MEDIA_QUERIES } from '@/config/ui/breakpoints'
-import { useMediaQuery } from '@/hooks/useMediaQuery'
-import { useTheme } from 'next-themes'
-import { Toaster as Sonner } from 'sonner'
+import { MEDIA_QUERIES } from '@/config/ui/breakpoints';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { useTheme } from 'next-themes';
+import { Toaster as Sonner } from 'sonner';
 
-type ToasterProps = React.ComponentProps<typeof Sonner>
+type ToasterProps = React.ComponentProps<typeof Sonner>;
 
 /**
  * Toast通知コンポーネント（shadcn/ui公式準拠）
@@ -31,9 +31,9 @@ type ToasterProps = React.ComponentProps<typeof Sonner>
  * ```
  */
 const Toaster = ({ ...props }: ToasterProps) => {
-  const { theme = 'system' } = useTheme()
-  const validTheme = theme === 'light' || theme === 'dark' || theme === 'system' ? theme : 'system'
-  const isMobile = useMediaQuery(MEDIA_QUERIES.mobile)
+  const { theme = 'system' } = useTheme();
+  const validTheme = theme === 'light' || theme === 'dark' || theme === 'system' ? theme : 'system';
+  const isMobile = useMediaQuery(MEDIA_QUERIES.mobile);
 
   return (
     <Sonner
@@ -57,7 +57,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
       }}
       {...props}
     />
-  )
-}
+  );
+};
 
-export { Toaster }
+export { Toaster };

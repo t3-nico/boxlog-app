@@ -1,19 +1,19 @@
-'use client'
+'use client';
 
-import { FileSearch, Filter, Inbox, Plus } from 'lucide-react'
+import { FileSearch, Filter, Inbox, Plus } from 'lucide-react';
 
-import { EmptyState } from '@/components/common'
-import { Button } from '@/components/ui/button'
-import { TableCell, TableRow } from '@/components/ui/table'
-import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
+import { EmptyState } from '@/components/common';
+import { Button } from '@/components/ui/button';
+import { TableCell, TableRow } from '@/components/ui/table';
+import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
 
-import { useInboxFilterStore } from '../../stores/useInboxFilterStore'
+import { useInboxFilterStore } from '../../stores/useInboxFilterStore';
 
 interface InboxTableEmptyStateProps {
   /** 列数（colSpan用） */
-  columnCount: number
+  columnCount: number;
   /** 全アイテム数（フィルター前） */
-  totalItems: number
+  totalItems: number;
 }
 
 /**
@@ -29,20 +29,23 @@ interface InboxTableEmptyStateProps {
  * <InboxTableEmptyState columnCount={5} totalItems={0} />
  * ```
  */
-export function InboxTableEmptyState({ columnCount, totalItems: _totalItems }: InboxTableEmptyStateProps) {
-  const { search, status, reset } = useInboxFilterStore()
-  const { openInspector } = usePlanInspectorStore()
+export function InboxTableEmptyState({
+  columnCount,
+  totalItems: _totalItems,
+}: InboxTableEmptyStateProps) {
+  const { search, status, reset } = useInboxFilterStore();
+  const { openInspector } = usePlanInspectorStore();
 
   // フィルター適用中かどうか
-  const isFiltered = search !== '' || status.length > 0
+  const isFiltered = search !== '' || status.length > 0;
 
   // 検索中かどうか
-  const isSearching = search !== ''
+  const isSearching = search !== '';
 
   // 新規作成ハンドラー
   const handleCreate = () => {
-    openInspector('new')
-  }
+    openInspector('new');
+  };
 
   // 状態に応じた表示内容
   const getEmptyStateContent = () => {
@@ -57,7 +60,7 @@ export function InboxTableEmptyState({ columnCount, totalItems: _totalItems }: I
             検索をクリア
           </Button>
         ),
-      }
+      };
     }
 
     if (isFiltered) {
@@ -71,7 +74,7 @@ export function InboxTableEmptyState({ columnCount, totalItems: _totalItems }: I
             フィルターをクリア
           </Button>
         ),
-      }
+      };
     }
 
     return {
@@ -84,10 +87,10 @@ export function InboxTableEmptyState({ columnCount, totalItems: _totalItems }: I
           新規作成
         </Button>
       ),
-    }
-  }
+    };
+  };
 
-  const { icon, title, description, action } = getEmptyStateContent()
+  const { icon, title, description, action } = getEmptyStateContent();
 
   return (
     <TableRow>
@@ -95,5 +98,5 @@ export function InboxTableEmptyState({ columnCount, totalItems: _totalItems }: I
         <EmptyState icon={icon} title={title} description={description} actions={action} />
       </TableCell>
     </TableRow>
-  )
+  );
 }

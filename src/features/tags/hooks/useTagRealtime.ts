@@ -31,22 +31,22 @@
  * ```
  */
 
-'use client'
+'use client';
 
-import { useQueryClient } from '@tanstack/react-query'
+import { useQueryClient } from '@tanstack/react-query';
 
-import { useRealtimeSubscription } from '@/lib/supabase/realtime/useRealtimeSubscription'
+import { useRealtimeSubscription } from '@/lib/supabase/realtime/useRealtimeSubscription';
 
-import { tagKeys } from './use-tags'
+import { tagKeys } from './use-tags';
 
 interface UseTagRealtimeOptions {
   /** 購読を有効化するか（デフォルト: true） */
-  enabled?: boolean
+  enabled?: boolean;
 }
 
 export function useTagRealtime(userId: string | undefined, options: UseTagRealtimeOptions = {}) {
-  const { enabled = true } = options
-  const queryClient = useQueryClient()
+  const { enabled = true } = options;
+  const queryClient = useQueryClient();
 
   useRealtimeSubscription<{ id: string }>({
     channelName: `tag-changes-${userId}`,
@@ -55,22 +55,22 @@ export function useTagRealtime(userId: string | undefined, options: UseTagRealti
     ...(userId && { filter: `user_id=eq.${userId}` }),
     ...(enabled !== undefined && { enabled }),
     onEvent: (payload) => {
-      const newRecord = payload.new as { id: string } | undefined
-      const oldRecord = payload.old as { id: string } | undefined
+      const newRecord = payload.new as { id: string } | undefined;
+      const oldRecord = payload.old as { id: string } | undefined;
 
       // TanStack Queryキャッシュを無効化 → 自動で再フェッチ
       // tagKeys.all を無効化することで、全てのタグ関連クエリを再フェッチ
-      queryClient.invalidateQueries({ queryKey: tagKeys.all })
+      queryClient.invalidateQueries({ queryKey: tagKeys.all });
 
       // 個別タグのキャッシュも無効化
       if (newRecord?.id) {
-        queryClient.invalidateQueries({ queryKey: tagKeys.detail(newRecord.id) })
+        queryClient.invalidateQueries({ queryKey: tagKeys.detail(newRecord.id) });
       } else if (oldRecord?.id) {
-        queryClient.invalidateQueries({ queryKey: tagKeys.detail(oldRecord.id) })
+        queryClient.invalidateQueries({ queryKey: tagKeys.detail(oldRecord.id) });
       }
     },
     onError: (error) => {
-      console.error('[Tag Realtime] Subscription error:', error)
+      console.error('[Tag Realtime] Subscription error:', error);
     },
-  })
+  });
 }

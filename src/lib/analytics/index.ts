@@ -5,7 +5,7 @@
  */
 
 // Core exports
-export { ANALYTICS_EVENTS, EVENT_CATEGORIES } from './events'
+export { ANALYTICS_EVENTS, EVENT_CATEGORIES } from './events';
 export type {
   AnalyticsEventName,
   BaseEventProperties,
@@ -17,9 +17,9 @@ export type {
   NavigationEventProperties,
   PerformanceEventProperties,
   UserEventProperties,
-} from './events'
+} from './events';
 
-export { getAllEventNames, getEventCategory, getEventStats, validateEventName } from './events'
+export { getAllEventNames, getEventCategory, getEventStats, validateEventName } from './events';
 
 // Tracker exports
 export {
@@ -30,8 +30,8 @@ export {
   setUserId,
   trackEvent,
   updateConfig,
-} from './tracker'
-export type { AnalyticsProvider } from './tracker'
+} from './tracker';
+export type { AnalyticsProvider } from './tracker';
 
 // Hooks exports
 export {
@@ -47,11 +47,11 @@ export {
   useSearchTracking,
   useSessionTracking,
   useTimeTracking,
-} from './hooks'
+} from './hooks';
 
 // Re-export for convenience
-import { ANALYTICS_EVENTS } from './events'
-import { flushEvents, setUserConsent, setUserId, trackEvent, updateConfig } from './tracker'
+import { ANALYTICS_EVENTS } from './events';
+import { flushEvents, setUserConsent, setUserId, trackEvent, updateConfig } from './tracker';
 
 const analytics = {
   events: ANALYTICS_EVENTS,
@@ -60,5 +60,5 @@ const analytics = {
   setUserId,
   updateConfig,
   flush: flushEvents,
-}
-export default analytics
+};
+export default analytics;

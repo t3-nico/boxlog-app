@@ -1,26 +1,26 @@
-'use client'
+'use client';
 
-import { useDroppable } from '@dnd-kit/core'
-import { Tags } from 'lucide-react'
-import { useTranslations } from 'next-intl'
+import { useDroppable } from '@dnd-kit/core';
+import { Tags } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface AllTagsDropZoneProps {
-  isActive: boolean
-  activeTagsCount: number
-  onClick: () => void
+  isActive: boolean;
+  activeTagsCount: number;
+  onClick: () => void;
 }
 
 /**
  * すべてのタグへのドロップゾーン（アーカイブから復元用）
  */
 export function AllTagsDropZone({ isActive, activeTagsCount, onClick }: AllTagsDropZoneProps) {
-  const t = useTranslations()
+  const t = useTranslations();
   const { setNodeRef, isOver } = useDroppable({
     id: 'drop-all-tags',
     data: {
       type: 'restore',
     },
-  })
+  });
 
   return (
     <div
@@ -30,8 +30,8 @@ export function AllTagsDropZone({ isActive, activeTagsCount, onClick }: AllTagsD
       onClick={onClick}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault()
-          onClick()
+          e.preventDefault();
+          onClick();
         }
       }}
       className={`hover:bg-state-hover flex w-full cursor-pointer items-center rounded-md px-2 py-2 text-sm transition-colors ${
@@ -45,8 +45,10 @@ export function AllTagsDropZone({ isActive, activeTagsCount, onClick }: AllTagsD
           </div>
           <span>{t('tags.sidebar.allTags')}</span>
         </div>
-        <span className="text-muted-foreground w-4 text-right text-xs tabular-nums">{activeTagsCount}</span>
+        <span className="text-muted-foreground w-4 text-right text-xs tabular-nums">
+          {activeTagsCount}
+        </span>
       </div>
     </div>
-  )
+  );
 }

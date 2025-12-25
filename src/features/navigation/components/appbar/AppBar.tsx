@@ -1,20 +1,20 @@
-'use client'
+'use client';
 
-import { BarChart3, Box, Calendar, Inbox, PanelLeftClose, PanelLeftOpen, Tag } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { BarChart3, Box, Calendar, Inbox, PanelLeftClose, PanelLeftOpen, Tag } from 'lucide-react';
+import { useMemo, useState } from 'react';
 
-import { Button } from '@/components/ui/button'
-import { HoverTooltip } from '@/components/ui/tooltip'
-import { useTheme } from '@/contexts/theme-context'
-import { useAuthStore } from '@/features/auth/stores/useAuthStore'
-import { useSidebarStore } from '@/features/navigation/stores/useSidebarStore'
-import { useGlobalSearch } from '@/features/search'
-import { useLocale, useTranslations } from 'next-intl'
+import { Button } from '@/components/ui/button';
+import { HoverTooltip } from '@/components/ui/tooltip';
+import { useTheme } from '@/contexts/theme-context';
+import { useAuthStore } from '@/features/auth/stores/useAuthStore';
+import { useSidebarStore } from '@/features/navigation/stores/useSidebarStore';
+import { useGlobalSearch } from '@/features/search';
+import { useLocale, useTranslations } from 'next-intl';
 
-import { Account } from './Account'
-import { Actions } from './Actions'
-import { Navigation } from './Navigation'
-import type { AppBarNavItem } from './types'
+import { Account } from './Account';
+import { Actions } from './Actions';
+import { Navigation } from './Navigation';
+import type { AppBarNavItem } from './types';
 
 /**
  * コンパクトAppBar（56px幅）
@@ -35,22 +35,22 @@ import type { AppBarNavItem } from './types'
  * ```
  */
 export function AppBar() {
-  const user = useAuthStore((state) => state.user)
-  const { open: openGlobalSearch } = useGlobalSearch()
-  const { resolvedTheme, setTheme } = useTheme()
+  const user = useAuthStore((state) => state.user);
+  const { open: openGlobalSearch } = useGlobalSearch();
+  const { resolvedTheme, setTheme } = useTheme();
   // selector化: 必要な値だけ監視（他の状態変更時の再レンダリングを防止）
-  const isOpen = useSidebarStore((state) => state.isOpen)
-  const toggle = useSidebarStore((state) => state.toggle)
-  const [isAppBarHovered, setIsAppBarHovered] = useState(false)
+  const isOpen = useSidebarStore((state) => state.isOpen);
+  const toggle = useSidebarStore((state) => state.toggle);
+  const [isAppBarHovered, setIsAppBarHovered] = useState(false);
 
-  const t = useTranslations()
-  const locale = useLocale() as 'ja' | 'en'
+  const t = useTranslations();
+  const locale = useLocale() as 'ja' | 'en';
 
   const userData = {
     name: user?.user_metadata?.username || user?.email?.split('@')[0] || 'ユーザー',
     email: user?.email || '',
     avatar: user?.user_metadata?.avatar_url || null,
-  }
+  };
 
   // ナビゲーションアイテム
   const navItems: AppBarNavItem[] = useMemo(
@@ -80,8 +80,8 @@ export function AppBar() {
         url: `/${locale}/tags`,
       },
     ],
-    [t, locale]
-  )
+    [t, locale],
+  );
 
   return (
     <aside
@@ -94,7 +94,10 @@ export function AppBar() {
     >
       {/* Logo / Sidebar Toggle - 48px (8px padding + 32px button + 8px padding) */}
       <div className="flex items-center justify-center py-2" onClick={(e) => e.stopPropagation()}>
-        <HoverTooltip content={isOpen ? t('sidebar.closeSidebar') : t('sidebar.openSidebar')} side="right">
+        <HoverTooltip
+          content={isOpen ? t('sidebar.closeSidebar') : t('sidebar.openSidebar')}
+          side="right"
+        >
           <Button
             onClick={toggle}
             size="icon"
@@ -120,8 +123,13 @@ export function AppBar() {
       {/* スペーサー: Actions/Accountを下に配置 */}
       <div className="flex-1" />
 
-      <Actions onSearch={openGlobalSearch} onToggleTheme={setTheme} resolvedTheme={resolvedTheme} t={t} />
+      <Actions
+        onSearch={openGlobalSearch}
+        onToggleTheme={setTheme}
+        resolvedTheme={resolvedTheme}
+        t={t}
+      />
       <Account userData={userData} locale={locale} />
     </aside>
-  )
+  );
 }

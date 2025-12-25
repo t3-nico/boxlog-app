@@ -2,18 +2,18 @@
  * 時間列コンポーネント（左側の時間表示）
  */
 
-'use client'
+'use client';
 
-import { memo } from 'react'
+import { memo } from 'react';
 
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/utils';
 
-import { TIME_COLUMN_WIDTH } from '../../constants/grid.constants'
-import { useTimeGrid } from '../../hooks/useTimeGrid'
+import { TIME_COLUMN_WIDTH } from '../../constants/grid.constants';
+import { useTimeGrid } from '../../hooks/useTimeGrid';
 
-import type { TimeColumnProps } from '../../types/grid.types'
+import type { TimeColumnProps } from '../../types/grid.types';
 
-import { TimeLabel } from './TimeLabel'
+import { TimeLabel } from './TimeLabel';
 
 export const TimeColumn = memo<TimeColumnProps>(function TimeColumn({
   startHour = 0,
@@ -27,7 +27,7 @@ export const TimeColumn = memo<TimeColumnProps>(function TimeColumn({
     endHour,
     hourHeight,
     format,
-  })
+  });
 
   return (
     <div
@@ -49,5 +49,5 @@ export const TimeColumn = memo<TimeColumnProps>(function TimeColumn({
         />
       ))}
     </div>
-  )
-})
+  );
+});

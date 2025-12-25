@@ -59,7 +59,7 @@ import {
   // Personal & Life
   User as UserIcon,
   Video as VideoCameraIcon,
-} from 'lucide-react'
+} from 'lucide-react';
 
 export const tagIconMapping = {
   // Work & Business
@@ -130,9 +130,9 @@ export const tagIconMapping = {
   ExclamationTriangleIcon,
   InformationCircleIcon,
   CheckCircleIcon,
-}
+};
 
-export type TagIconName = keyof typeof tagIconMapping
+export type TagIconName = keyof typeof tagIconMapping;
 
 export const tagIconCategories = {
   'Work & Business': [
@@ -152,8 +152,22 @@ export const tagIconCategories = {
     'CircleStackIcon',
     'RocketLaunchIcon',
   ],
-  'Design & Creative': ['PaintBrushIcon', 'SwatchIcon', 'CubeIcon', 'PhotoIcon', 'VideoCameraIcon', 'MusicalNoteIcon'],
-  'Personal & Life': ['UserIcon', 'HeartIcon', 'HomeIcon', 'ShoppingCartIcon', 'GiftIcon', 'CalendarIcon'],
+  'Design & Creative': [
+    'PaintBrushIcon',
+    'SwatchIcon',
+    'CubeIcon',
+    'PhotoIcon',
+    'VideoCameraIcon',
+    'MusicalNoteIcon',
+  ],
+  'Personal & Life': [
+    'UserIcon',
+    'HeartIcon',
+    'HomeIcon',
+    'ShoppingCartIcon',
+    'GiftIcon',
+    'CalendarIcon',
+  ],
   'Learning & Knowledge': [
     'BookOpenIcon',
     'AcademicCapIcon',
@@ -165,5 +179,12 @@ export const tagIconCategories = {
   'Health & Fitness': ['BoltIcon', 'SparklesIcon', 'BeakerIcon', 'FireIcon', 'SunIcon', 'MoonIcon'],
   Communication: ['ChatBubbleLeftIcon', 'EnvelopeIcon', 'PhoneIcon', 'MegaphoneIcon'],
   'Navigation & Movement': ['ForwardIcon', 'ArrowRightIcon', 'MapPinIcon', 'GlobeEuropeAfricaIcon'],
-  General: ['TagIcon', 'StarIcon', 'FlagIcon', 'ExclamationTriangleIcon', 'InformationCircleIcon', 'CheckCircleIcon'],
-} as const
+  General: [
+    'TagIcon',
+    'StarIcon',
+    'FlagIcon',
+    'ExclamationTriangleIcon',
+    'InformationCircleIcon',
+    'CheckCircleIcon',
+  ],
+} as const;

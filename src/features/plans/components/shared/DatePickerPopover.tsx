@@ -1,13 +1,13 @@
-'use client'
+'use client';
 
-import { MiniCalendar } from '@/components/common/MiniCalendar'
-import { useDateFormat } from '@/features/settings/hooks/useDateFormat'
+import { MiniCalendar } from '@/components/common/MiniCalendar';
+import { useDateFormat } from '@/features/settings/hooks/useDateFormat';
 
 interface DatePickerPopoverProps {
-  selectedDate: Date | undefined
-  onDateChange: (date: Date | undefined) => void
-  placeholder?: string
-  className?: string
+  selectedDate: Date | undefined;
+  onDateChange: (date: Date | undefined) => void;
+  placeholder?: string;
+  className?: string;
 }
 
 /**
@@ -18,8 +18,12 @@ interface DatePickerPopoverProps {
  * - 日付選択後に自動的に閉じる
  * - 月/年のドロップダウン選択対応
  */
-export function DatePickerPopover({ selectedDate, onDateChange, placeholder = '日付を選択' }: DatePickerPopoverProps) {
-  const { formatDate } = useDateFormat()
+export function DatePickerPopover({
+  selectedDate,
+  onDateChange,
+  placeholder = '日付を選択',
+}: DatePickerPopoverProps) {
+  const { formatDate } = useDateFormat();
 
   return (
     <MiniCalendar
@@ -37,5 +41,5 @@ export function DatePickerPopover({ selectedDate, onDateChange, placeholder = '�
       onDateSelect={onDateChange}
       popoverAlign="start"
     />
-  )
+  );
 }

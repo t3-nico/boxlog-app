@@ -1,21 +1,21 @@
-'use client'
+'use client';
 
-import { MiniCalendar } from '@/components/common/MiniCalendar'
-import { Button } from '@/components/ui/button'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { TableCell } from '@/components/ui/table'
-import { formatDistanceToNow } from 'date-fns'
-import { ja } from 'date-fns/locale'
-import { X } from 'lucide-react'
-import { useState } from 'react'
+import { MiniCalendar } from '@/components/common/MiniCalendar';
+import { Button } from '@/components/ui/button';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { TableCell } from '@/components/ui/table';
+import { formatDistanceToNow } from 'date-fns';
+import { ja } from 'date-fns/locale';
+import { X } from 'lucide-react';
+import { useState } from 'react';
 
 interface DueDateEditCellProps {
   /** 現在の期限日 */
-  dueDate?: string | null
+  dueDate?: string | null;
   /** 列幅 */
-  width?: number
+  width?: number;
   /** 期限日変更時のコールバック */
-  onDueDateChange: (date: string | null) => void
+  onDueDateChange: (date: string | null) => void;
 }
 
 /**
@@ -36,22 +36,22 @@ interface DueDateEditCellProps {
  * ```
  */
 export function DueDateEditCell({ dueDate, width, onDueDateChange }: DueDateEditCellProps) {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
 
   const handleDateSelect = (date: Date | undefined) => {
     if (date) {
-      onDueDateChange(date.toISOString())
-      setOpen(false)
+      onDueDateChange(date.toISOString());
+      setOpen(false);
     }
-  }
+  };
 
   const handleClear = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    onDueDateChange(null)
-    setOpen(false)
-  }
+    e.stopPropagation();
+    onDueDateChange(null);
+    setOpen(false);
+  };
 
-  const style = width ? { width: `${width}px` } : undefined
+  const style = width ? { width: `${width}px` } : undefined;
 
   return (
     <TableCell
@@ -82,10 +82,13 @@ export function DueDateEditCell({ dueDate, width, onDueDateChange }: DueDateEdit
                 </Button>
               )}
             </div>
-            <MiniCalendar selectedDate={dueDate ? new Date(dueDate) : undefined} onDateSelect={handleDateSelect} />
+            <MiniCalendar
+              selectedDate={dueDate ? new Date(dueDate) : undefined}
+              onDateSelect={handleDateSelect}
+            />
           </div>
         </PopoverContent>
       </Popover>
     </TableCell>
-  )
+  );
 }

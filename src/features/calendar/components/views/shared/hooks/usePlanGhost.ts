@@ -1,7 +1,7 @@
-import type { CSSProperties } from 'react'
-import { useMemo } from 'react'
+import type { CSSProperties } from 'react';
+import { useMemo } from 'react';
 
-import type { DragState } from './useDragAndDrop'
+import type { DragState } from './useDragAndDrop';
 
 /**
  * Googleカレンダー風ゴースト表示のためのスタイル計算フック
@@ -12,10 +12,14 @@ import type { DragState } from './useDragAndDrop'
  * @param dragState ドラッグ状態
  * @returns ゴースト表示を考慮した調整済みスタイル
  */
-export function useEventGhost(originalStyle: CSSProperties, eventId: string, dragState: DragState): CSSProperties {
+export function useEventGhost(
+  originalStyle: CSSProperties,
+  eventId: string,
+  dragState: DragState,
+): CSSProperties {
   return useMemo((): CSSProperties => {
-    const isDragging = dragState.draggedEventId === eventId && dragState.isDragging
-    const isResizingThis = dragState.isResizing && dragState.draggedEventId === eventId
+    const isDragging = dragState.draggedEventId === eventId && dragState.isDragging;
+    const isResizingThis = dragState.isResizing && dragState.draggedEventId === eventId;
 
     // ドラッグ・リサイズ中の表示制御（Googleカレンダー風ゴースト）
     if (isDragging) {
@@ -24,19 +28,19 @@ export function useEventGhost(originalStyle: CSSProperties, eventId: string, dra
         ...originalStyle, // 元の位置を完全保持
         opacity: 0.3, // ゴースト表示
         pointerEvents: 'none',
-      }
+      };
     } else if (isResizingThis && dragState.snappedPosition?.height) {
       // リサイズ中：サイズをリアルタイム調整
       return {
         ...originalStyle,
         height: `${dragState.snappedPosition.height}px`,
         zIndex: 1000,
-      }
+      };
     }
 
     // 通常時：元のスタイルをそのまま使用
-    return originalStyle
-  }, [originalStyle, eventId, dragState])
+    return originalStyle;
+  }, [originalStyle, eventId, dragState]);
 }
 
 /**
@@ -47,12 +51,21 @@ export function useEventGhost(originalStyle: CSSProperties, eventId: string, dra
  * @param dragState ドラッグ状態
  * @returns プレビュー時間（リサイズ中のみ）
  */
-export function useEventPreviewTime(eventId: string, dragState: DragState): { start: Date; end: Date } | null {
+export function useEventPreviewTime(
+  eventId: string,
+  dragState: DragState,
+): { start: Date; end: Date } | null {
   return useMemo(() => {
-    const isDragging = dragState.draggedEventId === eventId && dragState.isDragging
-    const isResizingThis = dragState.isResizing && dragState.draggedEventId === eventId
+    const isDragging = dragState.draggedEventId === eventId && dragState.isDragging;
+    const isResizingThis = dragState.isResizing && dragState.draggedEventId === eventId;
 
     // リサイズ中かつドラッグ中でない場合のみプレビュー時間を表示
-    return isResizingThis && !isDragging ? dragState.previewTime : null
-  }, [eventId, dragState.draggedEventId, dragState.isDragging, dragState.isResizing, dragState.previewTime])
+    return isResizingThis && !isDragging ? dragState.previewTime : null;
+  }, [
+    eventId,
+    dragState.draggedEventId,
+    dragState.isDragging,
+    dragState.isResizing,
+    dragState.previewTime,
+  ]);
 }

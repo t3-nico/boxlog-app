@@ -1,33 +1,33 @@
-'use client'
+'use client';
 
-import type { PlanStatus } from '@/features/plans/types/plan'
-import { ChevronDown, Plus } from 'lucide-react'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import type { PlanStatus } from '@/features/plans/types/plan';
+import { ChevronDown, Plus } from 'lucide-react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { Button } from '@/components/ui/button'
-import { MEDIA_QUERIES } from '@/config/ui/breakpoints'
-import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
-import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
-import { TableNavigation, TablePagination, type TableNavigationConfig } from '@/features/table'
-import { useMediaQuery } from '@/hooks/useMediaQuery'
-import { useTranslations } from 'next-intl'
-import type { InboxItem } from '../hooks/useInboxData'
-import { useInboxData } from '../hooks/useInboxData'
-import { useInboxFilterStore } from '../stores/useInboxFilterStore'
-import { useInboxGroupStore } from '../stores/useInboxGroupStore'
-import { useInboxPaginationStore } from '../stores/useInboxPaginationStore'
-import { useInboxSelectionStore } from '../stores/useInboxSelectionStore'
-import { useInboxSortStore } from '../stores/useInboxSortStore'
-import { useInboxViewStore } from '../stores/useInboxViewStore'
-import { DisplayModeSwitcher } from './DisplayModeSwitcher'
-import { BulkDatePickerDialog } from './table/BulkDatePickerDialog'
-import { BulkTagSelectDialog } from './table/BulkTagSelectDialog'
-import { InboxFilterContent } from './table/InboxFilterContent'
-import { InboxSelectionActions } from './table/InboxSelectionActions'
-import { InboxSelectionBar } from './table/InboxSelectionBar'
-import { InboxSettingsContent } from './table/InboxSettingsContent'
-import { InboxTableContent } from './table/InboxTableContent'
-import { type InboxTableRowCreateHandle } from './table/InboxTableRowCreate'
+import { Button } from '@/components/ui/button';
+import { MEDIA_QUERIES } from '@/config/ui/breakpoints';
+import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
+import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
+import { TableNavigation, TablePagination, type TableNavigationConfig } from '@/features/table';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { useTranslations } from 'next-intl';
+import type { InboxItem } from '../hooks/useInboxData';
+import { useInboxData } from '../hooks/useInboxData';
+import { useInboxFilterStore } from '../stores/useInboxFilterStore';
+import { useInboxGroupStore } from '../stores/useInboxGroupStore';
+import { useInboxPaginationStore } from '../stores/useInboxPaginationStore';
+import { useInboxSelectionStore } from '../stores/useInboxSelectionStore';
+import { useInboxSortStore } from '../stores/useInboxSortStore';
+import { useInboxViewStore } from '../stores/useInboxViewStore';
+import { DisplayModeSwitcher } from './DisplayModeSwitcher';
+import { BulkDatePickerDialog } from './table/BulkDatePickerDialog';
+import { BulkTagSelectDialog } from './table/BulkTagSelectDialog';
+import { InboxFilterContent } from './table/InboxFilterContent';
+import { InboxSelectionActions } from './table/InboxSelectionActions';
+import { InboxSelectionBar } from './table/InboxSelectionBar';
+import { InboxSettingsContent } from './table/InboxSettingsContent';
+import { InboxTableContent } from './table/InboxTableContent';
+import { type InboxTableRowCreateHandle } from './table/InboxTableRowCreate';
 
 /**
  * Inbox Table View コンポーネント
@@ -48,48 +48,48 @@ import { type InboxTableRowCreateHandle } from './table/InboxTableRowCreate'
  * ```
  */
 export function InboxTableView() {
-  const t = useTranslations()
-  const { bulkUpdatePlan, bulkDeletePlan, createPlan } = usePlanMutations()
+  const t = useTranslations();
+  const { bulkUpdatePlan, bulkDeletePlan, createPlan } = usePlanMutations();
 
   // フィルター関連：必要な値のみselectorで取得
-  const filterStatus = useInboxFilterStore((state) => state.status)
-  const filterSearch = useInboxFilterStore((state) => state.search)
-  const filterTags = useInboxFilterStore((state) => state.tags)
-  const filterDueDate = useInboxFilterStore((state) => state.dueDate)
-  const setStatus = useInboxFilterStore((state) => state.setStatus)
-  const setSearch = useInboxFilterStore((state) => state.setSearch)
+  const filterStatus = useInboxFilterStore((state) => state.status);
+  const filterSearch = useInboxFilterStore((state) => state.search);
+  const filterTags = useInboxFilterStore((state) => state.tags);
+  const filterDueDate = useInboxFilterStore((state) => state.dueDate);
+  const setStatus = useInboxFilterStore((state) => state.setStatus);
+  const setSearch = useInboxFilterStore((state) => state.setSearch);
 
   // ソート関連
-  const setSort = useInboxSortStore((state) => state.setSort)
+  const setSort = useInboxSortStore((state) => state.setSort);
 
   // ページネーション関連
-  const currentPage = useInboxPaginationStore((state) => state.currentPage)
-  const pageSize = useInboxPaginationStore((state) => state.pageSize)
-  const setCurrentPage = useInboxPaginationStore((state) => state.setCurrentPage)
-  const setPageSize = useInboxPaginationStore((state) => state.setPageSize)
+  const currentPage = useInboxPaginationStore((state) => state.currentPage);
+  const pageSize = useInboxPaginationStore((state) => state.pageSize);
+  const setCurrentPage = useInboxPaginationStore((state) => state.setCurrentPage);
+  const setPageSize = useInboxPaginationStore((state) => state.setPageSize);
 
   // 選択関連
-  const selectedIds = useInboxSelectionStore((state) => state.selectedIds)
-  const clearSelection = useInboxSelectionStore((state) => state.clearSelection)
+  const selectedIds = useInboxSelectionStore((state) => state.selectedIds);
+  const clearSelection = useInboxSelectionStore((state) => state.clearSelection);
 
   // ビュー関連
-  const getActiveView = useInboxViewStore((state) => state.getActiveView)
+  const getActiveView = useInboxViewStore((state) => state.getActiveView);
 
   // グループ化関連（ページネーション表示判定用）
-  const groupBy = useInboxGroupStore((state) => state.groupBy)
+  const groupBy = useInboxGroupStore((state) => state.groupBy);
 
   // モバイル判定
-  const isMobile = useMediaQuery(MEDIA_QUERIES.mobile)
+  const isMobile = useMediaQuery(MEDIA_QUERIES.mobile);
 
   // モバイル用「もっと見る」の表示件数（初期50件、クリックで50件追加）
-  const MOBILE_INITIAL_LIMIT = 50
-  const MOBILE_LOAD_MORE_COUNT = 50
-  const [mobileDisplayLimit, setMobileDisplayLimit] = useState(MOBILE_INITIAL_LIMIT)
+  const MOBILE_INITIAL_LIMIT = 50;
+  const MOBILE_LOAD_MORE_COUNT = 50;
+  const [mobileDisplayLimit, setMobileDisplayLimit] = useState(MOBILE_INITIAL_LIMIT);
 
   // 期限一括変更ダイアログの状態
-  const [showDateDialog, setShowDateDialog] = useState(false)
+  const [showDateDialog, setShowDateDialog] = useState(false);
   // タグ一括追加ダイアログの状態
-  const [showTagDialog, setShowTagDialog] = useState(false)
+  const [showTagDialog, setShowTagDialog] = useState(false);
 
   // データ取得
   const { items, isPending, error } = useInboxData({
@@ -97,52 +97,52 @@ export function InboxTableView() {
     search: filterSearch,
     tags: filterTags,
     dueDate: filterDueDate,
-  })
+  });
 
   // 新規作成行のref
-  const createRowRef = useRef<InboxTableRowCreateHandle>(null)
+  const createRowRef = useRef<InboxTableRowCreateHandle>(null);
 
   // 選択数
-  const selectedCount = selectedIds.size
+  const selectedCount = selectedIds.size;
 
   // アクションハンドラー: アーカイブ（status を 'done' に変更）
   const handleArchive = async () => {
-    const ids = Array.from(selectedIds)
-    if (ids.length === 0) return
+    const ids = Array.from(selectedIds);
+    if (ids.length === 0) return;
 
     try {
       await bulkUpdatePlan.mutateAsync({
         ids,
         data: { status: 'done' },
-      })
-      clearSelection()
+      });
+      clearSelection();
     } catch (error) {
-      console.error('Archive error:', error)
+      console.error('Archive error:', error);
     }
-  }
+  };
 
   // アクションハンドラー: 削除（確認ダイアログ付き）
   const handleDelete = async () => {
-    const ids = Array.from(selectedIds)
-    if (ids.length === 0) return
+    const ids = Array.from(selectedIds);
+    if (ids.length === 0) return;
 
     // 確認ダイアログ
     if (!window.confirm(t('common.inbox.deleteConfirm', { count: ids.length }))) {
-      return
+      return;
     }
 
     try {
-      await bulkDeletePlan.mutateAsync({ ids })
-      clearSelection()
+      await bulkDeletePlan.mutateAsync({ ids });
+      clearSelection();
     } catch (error) {
-      console.error('Delete error:', error)
+      console.error('Delete error:', error);
     }
-  }
+  };
 
   // アクションハンドラー: 編集（Inspectorを開く）
   const handleEdit = (item: InboxItem) => {
-    usePlanInspectorStore.getState().openInspector(item.id)
-  }
+    usePlanInspectorStore.getState().openInspector(item.id);
+  };
 
   // アクションハンドラー: 複製
   const handleDuplicate = async (item: InboxItem) => {
@@ -152,33 +152,33 @@ export function InboxTableView() {
         status: item.status,
         description: item.description || undefined,
         due_date: item.due_date || undefined,
-      })
+      });
     } catch (error) {
-      console.error('Duplicate error:', error)
+      console.error('Duplicate error:', error);
     }
-  }
+  };
 
   // アクションハンドラー: タグ一括追加（ダイアログを開く）
   const handleAddTags = () => {
-    setShowTagDialog(true)
-  }
+    setShowTagDialog(true);
+  };
 
   // アクションハンドラー: 期限一括変更（ダイアログを開く）
   const handleChangeDueDate = () => {
-    setShowDateDialog(true)
-  }
+    setShowDateDialog(true);
+  };
 
   // アクティブなビューを取得
-  const activeView = getActiveView()
+  const activeView = getActiveView();
 
   // ソート状態取得
-  const sortField = useInboxSortStore((state) => state.sortField)
-  const sortDirection = useInboxSortStore((state) => state.sortDirection)
-  const clearSort = useInboxSortStore((state) => state.clearSort)
+  const sortField = useInboxSortStore((state) => state.sortField);
+  const sortDirection = useInboxSortStore((state) => state.sortDirection);
+  const clearSort = useInboxSortStore((state) => state.clearSort);
 
   // フィルターリセット
-  const resetFilters = useInboxFilterStore((state) => state.reset)
-  const setGroupBy = useInboxGroupStore((state) => state.setGroupBy)
+  const resetFilters = useInboxFilterStore((state) => state.reset);
+  const setGroupBy = useInboxGroupStore((state) => state.setGroupBy);
 
   // ソートフィールドオプション
   const sortFieldOptions = useMemo(
@@ -188,11 +188,11 @@ export function InboxTableView() {
       { value: 'updated_at', label: '更新日' },
       { value: 'status', label: 'ステータス' },
     ],
-    []
-  )
+    [],
+  );
 
   // フィルター数をカウント
-  const filterCount = filterStatus.length + (filterDueDate !== 'all' ? 1 : 0)
+  const filterCount = filterStatus.length + (filterDueDate !== 'all' ? 1 : 0);
 
   // TableNavigation設定
   const navigationConfig: TableNavigationConfig = useMemo(
@@ -211,7 +211,7 @@ export function InboxTableView() {
       settingsContent: <InboxSettingsContent />,
       hasActiveSettings: groupBy !== null,
       onSettingsReset: () => {
-        setGroupBy(null)
+        setGroupBy(null);
       },
     }),
     [
@@ -226,37 +226,37 @@ export function InboxTableView() {
       resetFilters,
       groupBy,
       setGroupBy,
-    ]
-  )
+    ],
+  );
 
   // アクティブビュー変更時にフィルター・ソート・ページサイズを適用
   useEffect(() => {
-    if (!activeView) return
+    if (!activeView) return;
 
     // フィルター適用
     if (activeView.filters.status) {
-      setStatus(activeView.filters.status as PlanStatus[])
+      setStatus(activeView.filters.status as PlanStatus[]);
     }
     if (activeView.filters.search) {
-      setSearch(activeView.filters.search)
+      setSearch(activeView.filters.search);
     }
 
     // ソート適用
     if (activeView.sorting) {
-      setSort(activeView.sorting.field, activeView.sorting.direction)
+      setSort(activeView.sorting.field, activeView.sorting.direction);
     }
 
     // ページサイズ適用
     if (activeView.pageSize) {
-      setPageSize(activeView.pageSize)
+      setPageSize(activeView.pageSize);
     }
-  }, [activeView, setStatus, setSearch, setSort, setPageSize])
+  }, [activeView, setStatus, setSearch, setSort, setPageSize]);
 
   // フィルター変更時にページ1に戻る＆モバイル表示件数リセット
   useEffect(() => {
-    setCurrentPage(1)
-    setMobileDisplayLimit(MOBILE_INITIAL_LIMIT)
-  }, [filterStatus, filterSearch, setCurrentPage])
+    setCurrentPage(1);
+    setMobileDisplayLimit(MOBILE_INITIAL_LIMIT);
+  }, [filterStatus, filterSearch, setCurrentPage]);
 
   // エラー表示
   if (error) {
@@ -267,7 +267,7 @@ export function InboxTableView() {
           <p className="mt-1 text-sm">{error.message}</p>
         </div>
       </div>
-    )
+    );
   }
 
   // ローディング表示
@@ -279,7 +279,7 @@ export function InboxTableView() {
           <p className="text-muted-foreground text-sm">読み込み中...</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -316,10 +316,17 @@ export function InboxTableView() {
           <TableNavigation config={navigationConfig} />
 
           {/* 作成ボタン: 固定位置（モバイル: アイコンのみ、PC: テキスト付き） */}
-          <Button onClick={() => createRowRef.current?.startCreate()} size="icon" className="shrink-0 md:hidden">
+          <Button
+            onClick={() => createRowRef.current?.startCreate()}
+            size="icon"
+            className="shrink-0 md:hidden"
+          >
             <Plus className="size-4" />
           </Button>
-          <Button onClick={() => createRowRef.current?.startCreate()} className="hidden shrink-0 md:inline-flex">
+          <Button
+            onClick={() => createRowRef.current?.startCreate()}
+            className="hidden shrink-0 md:inline-flex"
+          >
             <Plus className="size-4" />
             {t('common.inbox.createNew')}
           </Button>
@@ -331,7 +338,7 @@ export function InboxTableView() {
         className="flex flex-1 flex-col overflow-hidden px-4"
         onClick={(e) => {
           if (e.target === e.currentTarget) {
-            useInboxSelectionStore.getState().clearSelection()
+            useInboxSelectionStore.getState().clearSelection();
           }
         }}
       >
@@ -355,7 +362,9 @@ export function InboxTableView() {
                   className="gap-2"
                 >
                   <ChevronDown className="size-4" />
-                  {t('table.loadMore', { count: Math.min(MOBILE_LOAD_MORE_COUNT, items.length - mobileDisplayLimit) })}
+                  {t('table.loadMore', {
+                    count: Math.min(MOBILE_LOAD_MORE_COUNT, items.length - mobileDisplayLimit),
+                  })}
                 </Button>
               </div>
             )}
@@ -379,8 +388,8 @@ export function InboxTableView() {
         onOpenChange={setShowDateDialog}
         selectedIds={Array.from(selectedIds)}
         onSuccess={() => {
-          clearSelection()
-          setShowDateDialog(false)
+          clearSelection();
+          setShowDateDialog(false);
         }}
       />
 
@@ -390,10 +399,10 @@ export function InboxTableView() {
         onOpenChange={setShowTagDialog}
         selectedPlanIds={Array.from(selectedIds)}
         onSuccess={() => {
-          clearSelection()
-          setShowTagDialog(false)
+          clearSelection();
+          setShowTagDialog(false);
         }}
       />
     </div>
-  )
+  );
 }

@@ -1,40 +1,44 @@
-import type { Metadata } from 'next'
-import { NextIntlClientProvider } from 'next-intl'
-import { getMessages, getTranslations } from 'next-intl/server'
-import Script from 'next/script'
+import type { Metadata } from 'next';
+import { NextIntlClientProvider } from 'next-intl';
+import { getMessages, getTranslations } from 'next-intl/server';
+import Script from 'next/script';
 
-import { CookieConsentBanner } from '@/components/common'
-import type { Locale } from '@/i18n/routing'
-import { routing } from '@/i18n/routing'
+import { CookieConsentBanner } from '@/components/common';
+import type { Locale } from '@/i18n/routing';
+import { routing } from '@/i18n/routing';
 
 interface LocaleLayoutProps {
-  children: React.ReactNode
-  params: Promise<{ locale: string }>
+  children: React.ReactNode;
+  params: Promise<{ locale: string }>;
 }
 
 // RTL言語判定
 function getDirection(locale: string): 'ltr' | 'rtl' {
-  const rtlLocales = ['ar', 'he', 'fa', 'ur']
-  return rtlLocales.includes(locale) ? 'rtl' : 'ltr'
+  const rtlLocales = ['ar', 'he', 'fa', 'ur'];
+  return rtlLocales.includes(locale) ? 'rtl' : 'ltr';
 }
 
 // 型ガード: 有効なロケールかチェック
 function isValidLocale(locale: string): locale is Locale {
-  return routing.locales.includes(locale as Locale)
+  return routing.locales.includes(locale as Locale);
 }
 
 // 動的メタデータ生成
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
-  const { locale } = await params
-  const validLocale = isValidLocale(locale) ? locale : routing.defaultLocale
-  const t = await getTranslations({ locale: validLocale, namespace: 'app' })
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const validLocale = isValidLocale(locale) ? locale : routing.defaultLocale;
+  const t = await getTranslations({ locale: validLocale, namespace: 'app' });
 
   // 代替言語URLの生成
-  const alternateLanguages: Record<string, string> = {}
+  const alternateLanguages: Record<string, string> = {};
   routing.locales.forEach((lang) => {
-    const url = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/${lang}`
-    alternateLanguages[lang as keyof typeof alternateLanguages] = url
-  })
+    const url = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/${lang}`;
+    alternateLanguages[lang as keyof typeof alternateLanguages] = url;
+  });
 
   return {
     title: {
@@ -98,12 +102,12 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     other: {
       'google-site-verification': process.env.GOOGLE_SITE_VERIFICATION || '',
     },
-  }
+  };
 }
 
 // JSON-LD構造化データ（SEO改善）
 function generateJsonLd(locale: string, appName: string, appDescription: string) {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
 
   return {
     '@context': 'https://schema.org',
@@ -129,29 +133,29 @@ function generateJsonLd(locale: string, appName: string, appDescription: string)
       '@type': 'Organization',
       name: 'BoxLog',
     },
-  }
+  };
 }
 
 // 静的生成用の言語パラメータ
 export async function generateStaticParams() {
   return routing.locales.map((locale) => ({
     locale,
-  }))
+  }));
 }
 
 // 言語特化レイアウト（HTMLタグなし - ルートレイアウトで定義済み）
 export default async function LocaleLayout({ children, params }: LocaleLayoutProps) {
-  const { locale } = await params
+  const { locale } = await params;
   // 不正な言語の場合、デフォルト言語にフォールバック
-  const validLocale = isValidLocale(locale) ? locale : routing.defaultLocale
-  const direction = getDirection(validLocale)
+  const validLocale = isValidLocale(locale) ? locale : routing.defaultLocale;
+  const direction = getDirection(validLocale);
 
   // next-intl: メッセージを取得
-  const messages = await getMessages()
-  const t = await getTranslations({ locale: validLocale, namespace: 'app' })
+  const messages = await getMessages();
+  const t = await getTranslations({ locale: validLocale, namespace: 'app' });
 
   // JSON-LD構造化データ
-  const jsonLd = generateJsonLd(validLocale, t('name'), t('description'))
+  const jsonLd = generateJsonLd(validLocale, t('name'), t('description'));
 
   return (
     <NextIntlClientProvider messages={messages}>
@@ -167,5 +171,5 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
         <CookieConsentBanner />
       </div>
     </NextIntlClientProvider>
-  )
+  );
 }

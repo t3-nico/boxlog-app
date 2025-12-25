@@ -1,38 +1,38 @@
-import { useMemo } from 'react'
+import { useMemo } from 'react';
 
-import { isSameDay, isValid } from 'date-fns'
+import { isSameDay, isValid } from 'date-fns';
 
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
 
-import { HOUR_HEIGHT } from '../constants/grid.constants'
+import { HOUR_HEIGHT } from '../constants/grid.constants';
 
-import { usePlanLayoutCalculator, type PlanLayout } from './usePlanLayoutCalculator'
+import { usePlanLayoutCalculator, type PlanLayout } from './usePlanLayoutCalculator';
 
-const PLAN_PADDING = 2 // プラン間のパディング
-const MIN_PLAN_HEIGHT = 20 // 最小プラン高さ
+const PLAN_PADDING = 2; // プラン間のパディング
+const MIN_PLAN_HEIGHT = 20; // 最小プラン高さ
 
 interface UseViewPlansOptions {
-  date: Date
-  plans: CalendarPlan[]
+  date: Date;
+  plans: CalendarPlan[];
 }
 
 export interface PlanPosition {
-  plan: CalendarPlan
-  top: number
-  height: number
-  left: number
-  width: number
-  zIndex: number
-  column: number
-  totalColumns: number
-  opacity?: number
+  plan: CalendarPlan;
+  top: number;
+  height: number;
+  left: number;
+  width: number;
+  zIndex: number;
+  column: number;
+  totalColumns: number;
+  opacity?: number;
 }
 
 interface UseViewPlansReturn {
-  dayPlans: CalendarPlan[]
-  planPositions: PlanPosition[]
-  maxConcurrentPlans: number
-  skippedPlansCount: number
+  dayPlans: CalendarPlan[];
+  planPositions: PlanPosition[];
+  maxConcurrentPlans: number;
+  skippedPlansCount: number;
 }
 
 /**
@@ -43,17 +43,17 @@ export function useViewPlans({ date, plans = [] }: UseViewPlansOptions): UseView
   // 指定日のプランのみフィルター
   const dayPlans = useMemo(() => {
     if (!plans || !Array.isArray(plans)) {
-      return []
+      return [];
     }
     return plans.filter((plan) => {
       if (!plan.startDate || !isValid(new Date(plan.startDate))) {
-        return false
+        return false;
       }
 
-      const planDate = new Date(plan.startDate)
-      return isSameDay(planDate, date)
-    })
-  }, [date, plans])
+      const planDate = new Date(plan.startDate);
+      return isSameDay(planDate, date);
+    });
+  }, [date, plans]);
 
   // CalendarPlanをusePlanLayoutCalculatorで期待される形式に変換
   const convertedPlans = useMemo(() => {
@@ -61,25 +61,25 @@ export function useViewPlans({ date, plans = [] }: UseViewPlansOptions): UseView
       ...plan,
       start: plan.startDate!,
       end: plan.endDate || new Date(new Date(plan.startDate!).getTime() + 60 * 60 * 1000),
-    }))
-  }, [dayPlans])
+    }));
+  }, [dayPlans]);
 
   // 新しいレイアウト計算システムを使用
-  const planLayouts = usePlanLayoutCalculator(convertedPlans, { notifyConflicts: true })
+  const planLayouts = usePlanLayoutCalculator(convertedPlans, { notifyConflicts: true });
 
   // レイアウト情報をPlanPositionに変換
   const planPositions = useMemo((): PlanPosition[] => {
     return planLayouts.map((layout: PlanLayout, index: number) => {
-      const startDate = new Date(layout.plan.start)
-      const endDate = new Date(layout.plan.end)
+      const startDate = new Date(layout.plan.start);
+      const endDate = new Date(layout.plan.end);
 
-      const startHour = startDate.getHours() + startDate.getMinutes() / 60
-      const endHour = endDate.getHours() + endDate.getMinutes() / 60
-      const duration = Math.max(endHour - startHour, 0.25) // 最小15分
+      const startHour = startDate.getHours() + startDate.getMinutes() / 60;
+      const endHour = endDate.getHours() + endDate.getMinutes() / 60;
+      const duration = Math.max(endHour - startHour, 0.25); // 最小15分
 
       // 位置計算
-      const top = startHour * HOUR_HEIGHT
-      const height = Math.max(duration * HOUR_HEIGHT - PLAN_PADDING, MIN_PLAN_HEIGHT)
+      const top = startHour * HOUR_HEIGHT;
+      const height = Math.max(duration * HOUR_HEIGHT - PLAN_PADDING, MIN_PLAN_HEIGHT);
 
       return {
         plan: layout.plan as CalendarPlan,
@@ -91,18 +91,18 @@ export function useViewPlans({ date, plans = [] }: UseViewPlansOptions): UseView
         column: layout.column,
         totalColumns: layout.totalColumns,
         opacity: layout.totalColumns > 1 ? 0.95 : 1.0,
-      }
-    })
-  }, [planLayouts])
+      };
+    });
+  }, [planLayouts]);
 
   const maxConcurrentPlans = useMemo(() => {
-    return Math.max(1, ...planLayouts.map((layout: PlanLayout) => layout.totalColumns))
-  }, [planLayouts])
+    return Math.max(1, ...planLayouts.map((layout: PlanLayout) => layout.totalColumns));
+  }, [planLayouts]);
 
   return {
     dayPlans,
     planPositions,
     maxConcurrentPlans,
     skippedPlansCount: 0, // 新しいシステムではスキップしない
-  }
+  };
 }

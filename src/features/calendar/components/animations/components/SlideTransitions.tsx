@@ -1,13 +1,18 @@
-'use client'
+'use client';
 
-import { useRef } from 'react'
+import { useRef } from 'react';
 
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/utils';
 
-import type { AdvancedSlideTransitionProps, FadeTransitionProps, SlideDirection, SlideTransitionProps } from '../types'
-import { ANIMATION_CONFIG, GPU_OPTIMIZED_STYLES } from '../types'
+import type {
+  AdvancedSlideTransitionProps,
+  FadeTransitionProps,
+  SlideDirection,
+  SlideTransitionProps,
+} from '../types';
+import { ANIMATION_CONFIG, GPU_OPTIMIZED_STYLES } from '../types';
 
 // 高度なスライド遷移コンポーネント
 export function AdvancedSlideTransition({
@@ -17,12 +22,12 @@ export function AdvancedSlideTransition({
   duration = ANIMATION_CONFIG.slideTransition.duration,
   onComplete,
 }: AdvancedSlideTransitionProps) {
-  const prefersReducedMotion = useReducedMotion()
-  const containerRef = useRef<HTMLDivElement>(null)
+  const prefersReducedMotion = useReducedMotion();
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // スライド方向の設定
   const getSlideVariants = (dir: SlideDirection) => {
-    const distance = 100 // %単位
+    const distance = 100; // %単位
 
     const variants = {
       left: {
@@ -45,17 +50,21 @@ export function AdvancedSlideTransition({
         animate: { y: 0, opacity: 1 },
         exit: { y: `${distance}%`, opacity: 0.8 },
       },
-    }
+    };
 
-    return dir in variants ? variants[dir as keyof typeof variants] : variants.left
-  }
+    return dir in variants ? variants[dir as keyof typeof variants] : variants.left;
+  };
 
   const animationConfig = prefersReducedMotion
     ? ANIMATION_CONFIG.reduced
-    : { ...ANIMATION_CONFIG.slideTransition, duration }
+    : { ...ANIMATION_CONFIG.slideTransition, duration };
 
   return (
-    <motion.div ref={containerRef} className={cn('relative overflow-hidden', className)} style={GPU_OPTIMIZED_STYLES}>
+    <motion.div
+      ref={containerRef}
+      className={cn('relative overflow-hidden', className)}
+      style={GPU_OPTIMIZED_STYLES}
+    >
       <AnimatePresence mode="wait" {...(onComplete && { onExitComplete: onComplete })}>
         <motion.div
           key={direction}
@@ -70,11 +79,16 @@ export function AdvancedSlideTransition({
         </motion.div>
       </AnimatePresence>
     </motion.div>
-  )
+  );
 }
 
 // フェードイン/アウトアニメーション
-export function FadeTransition({ show, children, duration = 200, className = '' }: FadeTransitionProps) {
+export function FadeTransition({
+  show,
+  children,
+  duration = 200,
+  className = '',
+}: FadeTransitionProps) {
   return (
     <div
       className={`transition-opacity duration-${duration} ${
@@ -83,7 +97,7 @@ export function FadeTransition({ show, children, duration = 200, className = '' 
     >
       {children}
     </div>
-  )
+  );
 }
 
 // スライドアニメーション
@@ -95,21 +109,21 @@ export function SlideTransition({
   className = '',
 }: SlideTransitionProps) {
   const getTransform = () => {
-    if (show) return 'translate-0'
+    if (show) return 'translate-0';
 
     switch (direction) {
       case 'up':
-        return 'translate-y-2'
+        return 'translate-y-2';
       case 'down':
-        return '-translate-y-2'
+        return '-translate-y-2';
       case 'left':
-        return 'translate-x-2'
+        return 'translate-x-2';
       case 'right':
-        return '-translate-x-2'
+        return '-translate-x-2';
       default:
-        return 'translate-y-2'
+        return 'translate-y-2';
     }
-  }
+  };
 
   return (
     <div
@@ -119,5 +133,5 @@ export function SlideTransition({
     >
       {children}
     </div>
-  )
+  );
 }

@@ -1,44 +1,44 @@
-import { create } from 'zustand'
-import { devtools, persist } from 'zustand/middleware'
+import { create } from 'zustand';
+import { devtools, persist } from 'zustand/middleware';
 
 interface NavigationState {
   // AppBar State (L1 - always visible)
-  isAppBarOpen: boolean
-  setAppBarOpen: (open: boolean) => void
-  toggleAppBar: () => void
+  isAppBarOpen: boolean;
+  setAppBarOpen: (open: boolean) => void;
+  toggleAppBar: () => void;
 
   // Sidebar State (L2 - collapsible & resizable)
-  isSidebarOpen: boolean
-  setSidebarOpen: (open: boolean) => void
-  toggleSidebar: () => void
+  isSidebarOpen: boolean;
+  setSidebarOpen: (open: boolean) => void;
+  toggleSidebar: () => void;
 
   // Sidebar Resize Settings
-  sidebarWidth: number
-  sidebarMinWidth: number
-  sidebarMaxWidth: number
-  sidebarDefaultWidth: number
-  setSidebarWidth: (width: number) => void
-  setSidebarWidthConstrained: (width: number) => void
+  sidebarWidth: number;
+  sidebarMinWidth: number;
+  sidebarMaxWidth: number;
+  sidebarDefaultWidth: number;
+  setSidebarWidth: (width: number) => void;
+  setSidebarWidthConstrained: (width: number) => void;
 
   // Secondary Navigation (L2) State - deprecated
-  isSecondaryNavCollapsed: boolean
-  setSecondaryNavCollapsed: (collapsed: boolean) => void
-  toggleSecondaryNav: () => void
+  isSecondaryNavCollapsed: boolean;
+  setSecondaryNavCollapsed: (collapsed: boolean) => void;
+  toggleSecondaryNav: () => void;
 
   // Column Widths (Legacy - AppBar用)
-  primaryNavWidth: number
-  secondaryNavWidth: number
+  primaryNavWidth: number;
+  secondaryNavWidth: number;
 
   // Resizable AppBar Settings (Legacy)
-  minWidth: number
-  maxWidth: number
-  defaultWidth: number
+  minWidth: number;
+  maxWidth: number;
+  defaultWidth: number;
 
-  setPrimaryNavWidth: (width: number) => void
-  setSecondaryNavWidth: (width: number) => void
+  setPrimaryNavWidth: (width: number) => void;
+  setSecondaryNavWidth: (width: number) => void;
 
   // AppBar resize methods (Legacy)
-  setPrimaryNavWidthConstrained: (width: number) => void
+  setPrimaryNavWidthConstrained: (width: number) => void;
 }
 
 export const useNavigationStore = create<NavigationState>()(
@@ -62,15 +62,16 @@ export const useNavigationStore = create<NavigationState>()(
         sidebarDefaultWidth: 240,
         setSidebarWidth: (width) => set({ sidebarWidth: width }),
         setSidebarWidthConstrained: (width) => {
-          const { sidebarMinWidth, sidebarMaxWidth } = get()
-          const constrainedWidth = Math.max(sidebarMinWidth, Math.min(sidebarMaxWidth, width))
-          set({ sidebarWidth: constrainedWidth })
+          const { sidebarMinWidth, sidebarMaxWidth } = get();
+          const constrainedWidth = Math.max(sidebarMinWidth, Math.min(sidebarMaxWidth, width));
+          set({ sidebarWidth: constrainedWidth });
         },
 
         // Secondary Navigation State - deprecated
         isSecondaryNavCollapsed: false,
         setSecondaryNavCollapsed: (collapsed) => set({ isSecondaryNavCollapsed: collapsed }),
-        toggleSecondaryNav: () => set((state) => ({ isSecondaryNavCollapsed: !state.isSecondaryNavCollapsed })),
+        toggleSecondaryNav: () =>
+          set((state) => ({ isSecondaryNavCollapsed: !state.isSecondaryNavCollapsed })),
 
         // Column Widths (Legacy)
         primaryNavWidth: 280, // デフォルト幅
@@ -86,9 +87,9 @@ export const useNavigationStore = create<NavigationState>()(
 
         // AppBar resize with constraints (Legacy)
         setPrimaryNavWidthConstrained: (width) => {
-          const { minWidth, maxWidth } = get()
-          const constrainedWidth = Math.max(minWidth, Math.min(maxWidth, width))
-          set({ primaryNavWidth: constrainedWidth })
+          const { minWidth, maxWidth } = get();
+          const constrainedWidth = Math.max(minWidth, Math.min(maxWidth, width));
+          set({ primaryNavWidth: constrainedWidth });
         },
       }),
       {
@@ -101,10 +102,10 @@ export const useNavigationStore = create<NavigationState>()(
           primaryNavWidth: state.primaryNavWidth,
           secondaryNavWidth: state.secondaryNavWidth,
         }),
-      }
+      },
     ),
     {
       name: 'navigation-store',
-    }
-  )
-)
+    },
+  ),
+);

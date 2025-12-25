@@ -1,2 +1,2 @@
 // 親ディレクトリと同じローディングUIを使用
-export { default } from '../../loading'
+export { default } from '../../loading';

@@ -1,11 +1,11 @@
-'use client'
+'use client';
 
-import type React from 'react'
+import type React from 'react';
 
-import { usePathname } from 'next/navigation'
+import { usePathname } from 'next/navigation';
 
 export const AuthLayout = ({ children }: { children: React.ReactNode }) => {
-  const pathname = usePathname()
+  const pathname = usePathname();
 
   // ログインとサインアップページは shadcn/ui の2カラムレイアウトを使用するため、ラップしない
   if (
@@ -14,7 +14,7 @@ export const AuthLayout = ({ children }: { children: React.ReactNode }) => {
     pathname?.includes('/auth/password') ||
     pathname?.includes('/auth/mfa-verify')
   ) {
-    return <>{children}</>
+    return <>{children}</>;
   }
 
   return (
@@ -23,5 +23,5 @@ export const AuthLayout = ({ children }: { children: React.ReactNode }) => {
         {children}
       </div>
     </main>
-  )
-}
+  );
+};

@@ -1,9 +1,9 @@
-'use client'
+'use client';
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react';
 
-import { Button } from '@/components/ui/button'
-import { ColorPalettePicker } from '@/components/ui/color-palette-picker'
+import { Button } from '@/components/ui/button';
+import { ColorPalettePicker } from '@/components/ui/color-palette-picker';
 import {
   Dialog,
   DialogContent,
@@ -11,62 +11,62 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import type { CreateTagGroupInput } from '@/features/tags/types'
-import { useTranslations } from 'next-intl'
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import type { CreateTagGroupInput } from '@/features/tags/types';
+import { useTranslations } from 'next-intl';
 
 interface TagGroupCreateModalProps {
-  isOpen: boolean
-  onClose: () => void
-  onSave: (data: CreateTagGroupInput) => Promise<void>
+  isOpen: boolean;
+  onClose: () => void;
+  onSave: (data: CreateTagGroupInput) => Promise<void>;
 }
 
 export const TagGroupCreateModal = ({ isOpen, onClose, onSave }: TagGroupCreateModalProps) => {
-  const t = useTranslations()
-  const [name, setName] = useState('')
-  const [color, setColor] = useState('#3B82F6')
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState('')
+  const t = useTranslations();
+  const [name, setName] = useState('');
+  const [color, setColor] = useState('#3B82F6');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
   // モーダルが開いたらリセット
   useEffect(() => {
     if (isOpen) {
-      setName('')
-      setColor('#3B82F6')
-      setError('')
+      setName('');
+      setColor('#3B82F6');
+      setError('');
     }
-  }, [isOpen])
+  }, [isOpen]);
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
-      e.preventDefault()
-      setError('')
+      e.preventDefault();
+      setError('');
 
       if (!name.trim()) {
-        setError(t('tag.toast.groupNameRequired'))
-        return
+        setError(t('tag.toast.groupNameRequired'));
+        return;
       }
 
-      setIsLoading(true)
+      setIsLoading(true);
       try {
         await onSave({
           name: name.trim(),
           slug: '', // 空文字列（将来的に削除予定）
           description: null,
           color: color || null,
-        })
-        onClose()
+        });
+        onClose();
       } catch (err) {
-        console.error('Tag group creation failed:', err)
-        setError(t('tag.toast.groupCreateFailed'))
+        console.error('Tag group creation failed:', err);
+        setError(t('tag.toast.groupCreateFailed'));
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
     },
-    [name, color, onSave, onClose, t]
-  )
+    [name, color, onSave, onClose, t],
+  );
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -111,5 +111,5 @@ export const TagGroupCreateModal = ({ isOpen, onClose, onSave }: TagGroupCreateM
         </form>
       </DialogContent>
     </Dialog>
-  )
-}
+  );
+};

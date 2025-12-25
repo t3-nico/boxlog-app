@@ -1,15 +1,15 @@
-import type { PlanStatus } from '@/features/plans/types/plan'
-import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import type { PlanStatus } from '@/features/plans/types/plan';
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 interface BoardStatusFilterState {
-  visibleStatuses: Set<PlanStatus>
-  toggleStatus: (status: PlanStatus) => void
-  isStatusVisible: (status: PlanStatus) => boolean
-  resetFilters: () => void
+  visibleStatuses: Set<PlanStatus>;
+  toggleStatus: (status: PlanStatus) => void;
+  isStatusVisible: (status: PlanStatus) => boolean;
+  resetFilters: () => void;
 }
 
-const defaultStatuses: PlanStatus[] = ['todo', 'doing', 'done']
+const defaultStatuses: PlanStatus[] = ['todo', 'doing', 'done'];
 
 /**
  * Boardのステータスフィルター管理用Store
@@ -23,22 +23,22 @@ export const useBoardStatusFilterStore = create<BoardStatusFilterState>()(
 
       toggleStatus: (status) => {
         set((state) => {
-          const newVisibleStatuses = new Set(state.visibleStatuses)
+          const newVisibleStatuses = new Set(state.visibleStatuses);
           if (newVisibleStatuses.has(status)) {
-            newVisibleStatuses.delete(status)
+            newVisibleStatuses.delete(status);
           } else {
-            newVisibleStatuses.add(status)
+            newVisibleStatuses.add(status);
           }
-          return { visibleStatuses: newVisibleStatuses }
-        })
+          return { visibleStatuses: newVisibleStatuses };
+        });
       },
 
       isStatusVisible: (status) => {
-        return get().visibleStatuses.has(status)
+        return get().visibleStatuses.has(status);
       },
 
       resetFilters: () => {
-        set({ visibleStatuses: new Set(defaultStatuses) })
+        set({ visibleStatuses: new Set(defaultStatuses) });
       },
     }),
     {
@@ -47,12 +47,12 @@ export const useBoardStatusFilterStore = create<BoardStatusFilterState>()(
         visibleStatuses: Array.from(state.visibleStatuses),
       }),
       merge: (persistedState, currentState) => {
-        const persisted = persistedState as { visibleStatuses?: PlanStatus[] }
+        const persisted = persistedState as { visibleStatuses?: PlanStatus[] };
         return {
           ...currentState,
           visibleStatuses: new Set(persisted.visibleStatuses || defaultStatuses),
-        }
+        };
       },
-    }
-  )
-)
+    },
+  ),
+);

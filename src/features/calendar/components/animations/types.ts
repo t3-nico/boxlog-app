@@ -1,10 +1,18 @@
-import { ReactNode } from 'react'
+import { ReactNode } from 'react';
 
 // ビュータイプの定義
-export type CalendarView = 'day' | 'split-day' | '3day' | '5day' | 'week' | 'week-no-weekend' | 'schedule' | 'agenda'
+export type CalendarView =
+  | 'day'
+  | 'split-day'
+  | '3day'
+  | '5day'
+  | 'week'
+  | 'week-no-weekend'
+  | 'schedule'
+  | 'agenda';
 
 // 方向の定義
-export type SlideDirection = 'left' | 'right' | 'up' | 'down'
+export type SlideDirection = 'left' | 'right' | 'up' | 'down';
 
 // GPU加速用のスタイル定数
 export const GPU_OPTIMIZED_STYLES = {
@@ -12,7 +20,7 @@ export const GPU_OPTIMIZED_STYLES = {
   backfaceVisibility: 'hidden' as const,
   perspective: 1000,
   transformStyle: 'preserve-3d' as const,
-}
+};
 
 // アニメーション設定
 export const ANIMATION_CONFIG = {
@@ -40,142 +48,158 @@ export const ANIMATION_CONFIG = {
     duration: 0.1,
     ease: 'linear' as const,
   },
-} as const
+} as const;
 
 // Props型定義
 export interface AdvancedViewTransitionProps {
-  currentView: CalendarView
-  children: ReactNode
-  className?: string
-  onTransitionComplete?: () => void
+  currentView: CalendarView;
+  children: ReactNode;
+  className?: string;
+  onTransitionComplete?: () => void;
 }
 
 export interface AdvancedSlideTransitionProps {
-  direction: SlideDirection
-  children: ReactNode
-  className?: string
-  duration?: number
-  onComplete?: () => void
+  direction: SlideDirection;
+  children: ReactNode;
+  className?: string;
+  duration?: number;
+  onComplete?: () => void;
 }
 
 export interface EventCollapseProps {
-  isExpanded: boolean
-  children: ReactNode
-  maxHeight?: number
-  className?: string
+  isExpanded: boolean;
+  children: ReactNode;
+  maxHeight?: number;
+  className?: string;
 }
 
 export interface ViewTransitionProps {
-  children: ReactNode
-  viewType: string
-  className?: string
+  children: ReactNode;
+  viewType: string;
+  className?: string;
 }
 
 export interface TaskDragAnimationProps {
-  isDragging: boolean
-  children: ReactNode
+  isDragging: boolean;
+  children: ReactNode;
 }
 
 export interface HoverEffectProps {
-  children: ReactNode
-  isHovered: boolean
-  disabled?: boolean
+  children: ReactNode;
+  isHovered: boolean;
+  disabled?: boolean;
 }
 
 export interface FadeTransitionProps {
-  show: boolean
-  children: ReactNode
-  duration?: number
-  className?: string
+  show: boolean;
+  children: ReactNode;
+  duration?: number;
+  className?: string;
 }
 
 export interface SlideTransitionProps {
-  show: boolean
-  direction?: 'up' | 'down' | 'left' | 'right'
-  children: ReactNode
-  duration?: number
-  className?: string
+  show: boolean;
+  direction?: 'up' | 'down' | 'left' | 'right';
+  children: ReactNode;
+  duration?: number;
+  className?: string;
 }
 
 export interface TaskCreateAnimationProps {
-  children: ReactNode
-  isNew?: boolean
+  children: ReactNode;
+  isNew?: boolean;
 }
 
 export interface CalendarViewAnimationProps {
-  children: ReactNode
-  viewType: 'day' | 'split-day' | '3day' | '5day' | 'week' | 'week-no-weekend' | 'schedule' | 'agenda'
-  previousViewType?: 'day' | 'split-day' | '3day' | '5day' | 'week' | 'week-no-weekend' | 'schedule' | 'agenda'
+  children: ReactNode;
+  viewType:
+    | 'day'
+    | 'split-day'
+    | '3day'
+    | '5day'
+    | 'week'
+    | 'week-no-weekend'
+    | 'schedule'
+    | 'agenda';
+  previousViewType?:
+    | 'day'
+    | 'split-day'
+    | '3day'
+    | '5day'
+    | 'week'
+    | 'week-no-weekend'
+    | 'schedule'
+    | 'agenda';
 }
 
 export interface SkeletonAnimationProps {
-  show: boolean
-  count?: number
-  height?: string
-  className?: string
+  show: boolean;
+  count?: number;
+  height?: string;
+  className?: string;
 }
 
 export interface TaskHoverTooltipProps {
-  show: boolean
-  children: ReactNode
-  position?: { x: number; y: number }
+  show: boolean;
+  children: ReactNode;
+  position?: { x: number; y: number };
 }
 
 export interface AnimationWrapperProps {
-  children: ReactNode
-  disabled?: boolean
-  className?: string
+  children: ReactNode;
+  disabled?: boolean;
+  className?: string;
 }
 
 export interface AnimationContextType {
-  enabled: boolean
-  reducedMotion: boolean
-  duration: 'fast' | 'normal' | 'slow'
+  enabled: boolean;
+  reducedMotion: boolean;
+  duration: 'fast' | 'normal' | 'slow';
 }
 
 export interface AnimationProviderProps {
-  children: ReactNode
-  config?: Partial<AnimationContextType>
+  children: ReactNode;
+  config?: Partial<AnimationContextType>;
 }
 
 export interface StaggeredAnimationProps {
-  children: React.ReactNode[]
-  staggerDelay?: number
-  className?: string
+  children: React.ReactNode[];
+  staggerDelay?: number;
+  className?: string;
 }
 
 export interface SpringAnimationProps {
-  children: React.ReactNode
-  isActive: boolean
+  children: React.ReactNode;
+  isActive: boolean;
   springConfig?: {
-    stiffness: number
-    damping: number
-    mass: number
-  }
-  className?: string
+    stiffness: number;
+    damping: number;
+    mass: number;
+  };
+  className?: string;
 }
 
 export interface ParallaxProps {
-  children: React.ReactNode
-  offset: number
-  className?: string
+  children: React.ReactNode;
+  offset: number;
+  className?: string;
 }
 
 export interface PerformanceIndicatorProps {
-  isLoading: boolean
-  progress?: number
-  className?: string
+  isLoading: boolean;
+  progress?: number;
+  className?: string;
 }
 
 export interface TouchAnimationProps {
-  children: React.ReactNode
-  onTap?: () => void
-  className?: string
+  children: React.ReactNode;
+  onTap?: () => void;
+  className?: string;
 }
 
 export interface OptimizedListAnimationProps {
-  children: React.ReactNode[]
-  itemHeight: number
-  visibleItems: number
-  className?: string
+  children: React.ReactNode[];
+  itemHeight: number;
+  visibleItems: number;
+  className?: string;
 }

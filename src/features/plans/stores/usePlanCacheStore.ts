@@ -1,4 +1,4 @@
-import { create } from 'zustand'
+import { create } from 'zustand';
 
 /**
  * plan キャッシュストア
@@ -12,26 +12,26 @@ import { create } from 'zustand'
  */
 
 interface planCache {
-  recurrence_type?: 'none' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'weekdays' | null
-  recurrence_rule?: string | null
+  recurrence_type?: 'none' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'weekdays' | null;
+  recurrence_rule?: string | null;
 }
 
 interface planCacheState {
   // プランID → キャッシュデータのマップ
-  cache: Record<string, planCache>
+  cache: Record<string, planCache>;
 
   // キャッシュ更新
-  updateCache: (planId: string, data: planCache) => void
+  updateCache: (planId: string, data: planCache) => void;
 
   // キャッシュ取得
-  getCache: (planId: string) => planCache | undefined
+  getCache: (planId: string) => planCache | undefined;
 
   // キャッシュクリア
-  clearCache: (planId: string) => void
+  clearCache: (planId: string) => void;
 
   // mutation実行中フラグ（Realtime二重更新防止用）
-  isMutating: boolean
-  setIsMutating: (value: boolean) => void
+  isMutating: boolean;
+  setIsMutating: (value: boolean) => void;
 }
 
 export const usePlanCacheStore = create<planCacheState>((set, get) => ({
@@ -53,13 +53,13 @@ export const usePlanCacheStore = create<planCacheState>((set, get) => ({
 
   clearCache: (planId) =>
     set((state) => {
-      const newCache = { ...state.cache }
-      delete newCache[planId]
-      return { cache: newCache }
+      const newCache = { ...state.cache };
+      delete newCache[planId];
+      return { cache: newCache };
     }),
 
   setIsMutating: (value) => set({ isMutating: value }),
-}))
+}));
 
 // Backward compatibility
-export { usePlanCacheStore as useplanCacheStore }
+export { usePlanCacheStore as useplanCacheStore };

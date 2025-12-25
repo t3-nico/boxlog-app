@@ -1,18 +1,18 @@
-export type ChronotypeType = 'lion' | 'bear' | 'wolf' | 'dolphin' | 'custom'
+export type ChronotypeType = 'lion' | 'bear' | 'wolf' | 'dolphin' | 'custom';
 
 export interface ChronotypeProfile {
-  type: ChronotypeType
-  name: string
-  description: string
-  productivityZones: ProductivityZone[]
+  type: ChronotypeType;
+  name: string;
+  description: string;
+  productivityZones: ProductivityZone[];
 }
 
 export interface ProductivityZone {
-  startHour: number // 0-23
-  endHour: number // 0-23
-  level: 'peak' | 'good' | 'moderate' | 'low' | 'sleep'
-  label: string
-  color: string // Tailwind color class or hex
+  startHour: number; // 0-23
+  endHour: number; // 0-23
+  level: 'peak' | 'good' | 'moderate' | 'low' | 'sleep';
+  label: string;
+  color: string; // Tailwind color class or hex
 }
 
 // プリセットのクロノタイプ定義
@@ -84,7 +84,7 @@ export const CHRONOTYPE_PRESETS: Record<ChronotypeType, ChronotypeProfile> = {
     description: '自分だけのリズムを設定できます',
     productivityZones: [],
   },
-}
+};
 
 // 色のマッピング (より鮮明で目立つ色に変更)
 export const PRODUCTIVITY_COLORS = {
@@ -98,36 +98,39 @@ export const PRODUCTIVITY_COLORS = {
   'bg-gray-300': { bg: 'rgb(209 213 219)', border: 'rgb(107 114 128)' }, // 睡眠試行 - グレー
   'bg-gray-400': { bg: 'rgb(156 163 175)', border: 'rgb(75 85 99)' }, // 睡眠推奨 - 濃いグレー
   'bg-indigo-500': { bg: 'rgb(99 102 241)', border: 'rgb(67 56 202)' }, // Sleep - インディゴ
-}
+};
 
 // ヘルパー関数
-export function getProductivityZoneForHour(profile: ChronotypeProfile, hour: number): ProductivityZone | null {
+export function getProductivityZoneForHour(
+  profile: ChronotypeProfile,
+  hour: number,
+): ProductivityZone | null {
   return (
     profile.productivityZones.find((zone) => {
       if (zone.startHour <= zone.endHour) {
         // 同日内の時間帯 (e.g. 9-17)
-        return hour >= zone.startHour && hour < zone.endHour
+        return hour >= zone.startHour && hour < zone.endHour;
       } else {
         // 日跨ぎの時間帯 (e.g. 22-5)
-        return hour >= zone.startHour || hour < zone.endHour
+        return hour >= zone.startHour || hour < zone.endHour;
       }
     }) || null
-  )
+  );
 }
 
 export function getProductivityLevelColor(level: ProductivityZone['level']): string {
   switch (level) {
     case 'peak':
-      return 'bg-green-500'
+      return 'bg-green-500';
     case 'good':
-      return 'bg-green-300'
+      return 'bg-green-300';
     case 'moderate':
-      return 'bg-blue-200'
+      return 'bg-blue-200';
     case 'low':
-      return 'bg-gray-200'
+      return 'bg-gray-200';
     case 'sleep':
-      return 'bg-indigo-500'
+      return 'bg-indigo-500';
     default:
-      return 'bg-gray-200'
+      return 'bg-gray-200';
   }
 }

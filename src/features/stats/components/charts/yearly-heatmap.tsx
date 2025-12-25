@@ -1,43 +1,43 @@
-'use client'
+'use client';
 
-import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { useState } from 'react'
-import CalendarHeatmap from 'react-calendar-heatmap'
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useState } from 'react';
+import CalendarHeatmap from 'react-calendar-heatmap';
 
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
-import { api } from '@/lib/trpc'
-import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { api } from '@/lib/trpc';
+import { cn } from '@/lib/utils';
 
-import 'react-calendar-heatmap/dist/styles.css'
+import 'react-calendar-heatmap/dist/styles.css';
 
 type HeatmapValue = {
-  date: string
-  hours: number
-}
+  date: string;
+  hours: number;
+};
 
 function formatHours(hours: number): string {
   if (hours < 1) {
-    return `${Math.round(hours * 60)}m`
+    return `${Math.round(hours * 60)}m`;
   }
-  return `${hours.toFixed(1)}h`
+  return `${hours.toFixed(1)}h`;
 }
 
 export function YearlyHeatmap() {
-  const currentYear = new Date().getFullYear()
-  const [year, setYear] = useState(currentYear)
+  const currentYear = new Date().getFullYear();
+  const [year, setYear] = useState(currentYear);
 
-  const { data, isPending } = api.plans.getDailyHours.useQuery({ year })
+  const { data, isPending } = api.plans.getDailyHours.useQuery({ year });
 
-  const startDate = new Date(year, 0, 1)
-  const endDate = new Date(year, 11, 31)
+  const startDate = new Date(year, 0, 1);
+  const endDate = new Date(year, 11, 31);
 
   // データをHeatmap用に変換
-  const values: HeatmapValue[] = data ?? []
+  const values: HeatmapValue[] = data ?? [];
 
   // 合計時間を計算
-  const totalHours = values.reduce((sum, v) => sum + v.hours, 0)
+  const totalHours = values.reduce((sum, v) => sum + v.hours, 0);
 
   if (isPending) {
     return (
@@ -50,7 +50,7 @@ export function YearlyHeatmap() {
           <Skeleton className="h-32 w-full" />
         </CardContent>
       </Card>
-    )
+    );
   }
 
   return (
@@ -93,19 +93,19 @@ export function YearlyHeatmap() {
               endDate={endDate}
               values={values}
               classForValue={(value) => {
-                const v = value as HeatmapValue | undefined
+                const v = value as HeatmapValue | undefined;
                 if (!v || !v.hours || v.hours === 0) {
-                  return 'color-empty'
+                  return 'color-empty';
                 }
-                if (v.hours < 1) return 'color-scale-1'
-                if (v.hours < 3) return 'color-scale-2'
-                if (v.hours < 5) return 'color-scale-3'
-                return 'color-scale-4'
+                if (v.hours < 1) return 'color-scale-1';
+                if (v.hours < 3) return 'color-scale-2';
+                if (v.hours < 5) return 'color-scale-3';
+                return 'color-scale-4';
               }}
               titleForValue={(value) => {
-                const v = value as HeatmapValue | undefined
-                if (!v || !v.date) return ''
-                return `${v.date}: ${formatHours(v.hours || 0)}`
+                const v = value as HeatmapValue | undefined;
+                if (!v || !v.date) return '';
+                return `${v.date}: ${formatHours(v.hours || 0)}`;
               }}
               showWeekdayLabels
               gutterSize={2}
@@ -155,5 +155,5 @@ export function YearlyHeatmap() {
         }
       `}</style>
     </Card>
-  )
+  );
 }

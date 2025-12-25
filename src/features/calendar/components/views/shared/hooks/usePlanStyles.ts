@@ -1,7 +1,7 @@
-import type { CSSProperties } from 'react'
-import { useMemo } from 'react'
+import type { CSSProperties } from 'react';
+import { useMemo } from 'react';
 
-import type { PlanPosition } from './useViewPlans'
+import type { PlanPosition } from './useViewPlans';
 
 /**
  * プラン位置情報からCSSスタイルを計算するフック
@@ -12,13 +12,19 @@ import type { PlanPosition } from './useViewPlans'
  */
 export function usePlanStyles(planPositions: PlanPosition[]): Record<string, CSSProperties> {
   return useMemo((): Record<string, CSSProperties> => {
-    const styles: Record<string, CSSProperties> = {}
+    const styles: Record<string, CSSProperties> = {};
 
     planPositions.forEach(({ plan, top, height, left, width, zIndex, opacity }) => {
       // planがundefinedの場合はスキップ
       if (!plan || !plan.id) {
-        console.warn('usePlanStyles: Invalid plan position detected', { plan, top, height, left, width })
-        return
+        console.warn('usePlanStyles: Invalid plan position detected', {
+          plan,
+          top,
+          height,
+          left,
+          width,
+        });
+        return;
       }
 
       styles[plan.id] = {
@@ -29,9 +35,9 @@ export function usePlanStyles(planPositions: PlanPosition[]): Record<string, CSS
         width: `${width}%`,
         zIndex,
         opacity: opacity || 1.0,
-      }
-    })
+      };
+    });
 
-    return styles
-  }, [planPositions])
+    return styles;
+  }, [planPositions]);
 }

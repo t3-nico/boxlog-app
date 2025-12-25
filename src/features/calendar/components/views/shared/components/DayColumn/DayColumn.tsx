@@ -2,17 +2,17 @@
  * 1日分の列コンポーネント（再利用可能）
  */
 
-'use client'
+'use client';
 
-import React, { memo, useMemo } from 'react'
+import React, { memo, useMemo } from 'react';
 
-import { GRID_BACKGROUND, HOUR_HEIGHT } from '../../constants/grid.constants'
-import { usePlanPosition } from '../../hooks/usePlanPosition'
-import type { DayColumnProps } from '../../types/view.types'
-import { isWeekend } from '../../utils/dateHelpers'
-import { filterEventsByDate, sortTimedEvents } from '../../utils/planPositioning'
-import { EmptyState } from '../EmptyState'
-import { PlanCard } from '../PlanCard/PlanCard'
+import { GRID_BACKGROUND, HOUR_HEIGHT } from '../../constants/grid.constants';
+import { usePlanPosition } from '../../hooks/usePlanPosition';
+import type { DayColumnProps } from '../../types/view.types';
+import { isWeekend } from '../../utils/dateHelpers';
+import { filterEventsByDate, sortTimedEvents } from '../../utils/planPositioning';
+import { EmptyState } from '../EmptyState';
+import { PlanCard } from '../PlanCard/PlanCard';
 
 export const DayColumn = memo<DayColumnProps>(function DayColumn({
   date,
@@ -26,7 +26,7 @@ export const DayColumn = memo<DayColumnProps>(function DayColumn({
   className = '',
 }) {
   // 今日・週末の判定（propsで上書き可能）
-  const isWeekendActual = isWeekendProp ?? isWeekend(date)
+  const isWeekendActual = isWeekendProp ?? isWeekend(date);
 
   // この日のイベントをフィルタリング
   const dayEvents = useMemo(() => {
@@ -35,28 +35,28 @@ export const DayColumn = memo<DayColumnProps>(function DayColumn({
       ...event,
       start: event.startDate || new Date(),
       end: event.endDate || new Date(),
-    }))
-    const filtered = filterEventsByDate(timedEvents, date)
-    return sortTimedEvents(filtered)
-  }, [events, date])
+    }));
+    const filtered = filterEventsByDate(timedEvents, date);
+    return sortTimedEvents(filtered);
+  }, [events, date]);
 
   // プランの位置を計算
-  const eventPositions = usePlanPosition(dayEvents, { hourHeight })
+  const eventPositions = usePlanPosition(dayEvents, { hourHeight });
 
   // 時間クリックハンドラー
   const handleTimeClick = (e: React.MouseEvent) => {
-    if (!onTimeClick) return
+    if (!onTimeClick) return;
 
-    const rect = e.currentTarget.getBoundingClientRect()
-    const y = e.clientY - rect.top
+    const rect = e.currentTarget.getBoundingClientRect();
+    const y = e.clientY - rect.top;
 
     // 時間を計算（15分単位で丸める）
-    const totalMinutes = (y * 60) / hourHeight
-    const hour = Math.floor(totalMinutes / 60)
-    const minute = Math.floor((totalMinutes % 60) / 15) * 15
+    const totalMinutes = (y * 60) / hourHeight;
+    const hour = Math.floor(totalMinutes / 60);
+    const minute = Math.floor((totalMinutes % 60) / 15) * 15;
 
-    onTimeClick(date, hour, minute)
-  }
+    onTimeClick(date, hour, minute);
+  };
 
   // カラムのスタイル
   const columnClasses = [
@@ -67,7 +67,7 @@ export const DayColumn = memo<DayColumnProps>(function DayColumn({
     className,
   ]
     .filter(Boolean)
-    .join(' ')
+    .join(' ');
 
   return (
     <div className={columnClasses}>
@@ -79,8 +79,8 @@ export const DayColumn = memo<DayColumnProps>(function DayColumn({
         onClick={handleTimeClick}
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault()
-            handleTimeClick(e as unknown as React.MouseEvent<Element, MouseEvent>)
+            e.preventDefault();
+            handleTimeClick(e as unknown as React.MouseEvent<Element, MouseEvent>);
           }
         }}
         style={{
@@ -92,7 +92,7 @@ export const DayColumn = memo<DayColumnProps>(function DayColumn({
 
         {/* イベント */}
         {dayEvents.map((event) => {
-          const position = eventPositions.get(event.id)
+          const position = eventPositions.get(event.id);
           // positionが見つからない場合は、デフォルト位置を使用してレンダリング
 
           return (
@@ -103,7 +103,7 @@ export const DayColumn = memo<DayColumnProps>(function DayColumn({
               onClick={onEventClick}
               onContextMenu={onEventContextMenu}
             />
-          )
+          );
         })}
 
         {/* 空状態（イベントがない場合） */}
@@ -119,5 +119,5 @@ export const DayColumn = memo<DayColumnProps>(function DayColumn({
         )}
       </div>
     </div>
-  )
-})
+  );
+});

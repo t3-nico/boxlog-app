@@ -1,10 +1,10 @@
-'use client'
+'use client';
 
-import { InspectorShell, type InspectorDisplayMode } from '@/features/inspector'
+import { InspectorShell, type InspectorDisplayMode } from '@/features/inspector';
 
-import { useAIInspectorStore } from '../stores'
+import { useAIInspectorStore } from '../stores';
 
-import { AIInspectorContent } from './AIInspectorContent'
+import { AIInspectorContent } from './AIInspectorContent';
 
 /**
  * AI Inspector（全ページ共通）
@@ -13,9 +13,9 @@ import { AIInspectorContent } from './AIInspectorContent'
  * PlanInspectorやTagInspectorと同様のパターンで実装
  */
 export function AIInspector() {
-  const isOpen = useAIInspectorStore((state) => state.isOpen)
-  const displayMode = useAIInspectorStore((state) => state.displayMode) as InspectorDisplayMode
-  const closeInspector = useAIInspectorStore((state) => state.closeInspector)
+  const isOpen = useAIInspectorStore((state) => state.isOpen);
+  const displayMode = useAIInspectorStore((state) => state.displayMode) as InspectorDisplayMode;
+  const closeInspector = useAIInspectorStore((state) => state.closeInspector);
 
   return (
     <InspectorShell
@@ -28,5 +28,5 @@ export function AIInspector() {
     >
       <AIInspectorContent />
     </InspectorShell>
-  )
+  );
 }

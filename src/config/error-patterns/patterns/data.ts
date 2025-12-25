@@ -2,9 +2,9 @@
  * 3000番台: データ・データベース系エラーパターン
  */
 
-import { ERROR_CODES } from '@/constants/errorCodes'
+import { ERROR_CODES } from '@/constants/errorCodes';
 
-import type { ErrorMessagePattern } from '../types'
+import type { ErrorMessagePattern } from '../types';
 
 export const DATA_ERROR_PATTERNS: Record<number, ErrorMessagePattern> = {
   [ERROR_CODES.DATA_NOT_FOUND]: {
@@ -12,7 +12,11 @@ export const DATA_ERROR_PATTERNS: Record<number, ErrorMessagePattern> = {
     userFriendly: '探している情報が見つかりません',
     short: 'データなし',
     description: '要求された情報が削除されているか、アクセス権限がない可能性があります。',
-    recommendedActions: ['ホーム画面から改めて探す', 'ページを更新してみる', '削除されている可能性を確認'],
+    recommendedActions: [
+      'ホーム画面から改めて探す',
+      'ページを更新してみる',
+      '削除されている可能性を確認',
+    ],
     autoRecoverable: false,
     urgency: 'info',
     emoji: '🔍',
@@ -38,9 +42,13 @@ export const DATA_ERROR_PATTERNS: Record<number, ErrorMessagePattern> = {
     userFriendly: '入力された情報の形式が正しくありません',
     short: '入力形式エラー',
     description: '入力規則に合わない情報が含まれています。',
-    recommendedActions: ['入力形式の例を参考に修正', '必須項目の入力漏れを確認', '文字数や形式の制限を確認'],
+    recommendedActions: [
+      '入力形式の例を参考に修正',
+      '必須項目の入力漏れを確認',
+      '文字数や形式の制限を確認',
+    ],
     autoRecoverable: false,
     urgency: 'error',
     emoji: '⚠️',
   },
-}
+};

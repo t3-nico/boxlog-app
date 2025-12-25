@@ -1,10 +1,14 @@
-'use client'
+'use client';
 
-import { MobileSettingsChip, MobileSettingsRadioGroup, MobileSettingsSection } from '@/components/common'
-import { Label } from '@/components/ui/label'
-import type { PlanStatus } from '@/features/plans/types/plan'
-import { Calendar, CheckCircle2 } from 'lucide-react'
-import { type DueDateFilter, useInboxFilterStore } from '../../stores/useInboxFilterStore'
+import {
+  MobileSettingsChip,
+  MobileSettingsRadioGroup,
+  MobileSettingsSection,
+} from '@/components/common';
+import { Label } from '@/components/ui/label';
+import type { PlanStatus } from '@/features/plans/types/plan';
+import { Calendar, CheckCircle2 } from 'lucide-react';
+import { type DueDateFilter, useInboxFilterStore } from '../../stores/useInboxFilterStore';
 
 /**
  * ステータス選択肢
@@ -13,7 +17,7 @@ const STATUS_OPTIONS: Array<{ value: PlanStatus; label: string }> = [
   { value: 'todo', label: 'Todo' },
   { value: 'doing', label: 'Doing' },
   { value: 'done', label: 'Done' },
-]
+];
 
 /**
  * 期限フィルター選択肢
@@ -26,7 +30,7 @@ const DUE_DATE_OPTIONS: Array<{ value: DueDateFilter; label: string }> = [
   { value: 'next_week', label: '来週' },
   { value: 'overdue', label: '期限切れ' },
   { value: 'no_due_date', label: '期限なし' },
-]
+];
 
 /**
  * Inboxフィルターコンテンツ
@@ -36,13 +40,15 @@ const DUE_DATE_OPTIONS: Array<{ value: DueDateFilter; label: string }> = [
  * - ステータスフィルター
  */
 export function InboxFilterContent() {
-  const { status, dueDate, setStatus, setDueDate } = useInboxFilterStore()
+  const { status, dueDate, setStatus, setDueDate } = useInboxFilterStore();
 
   // ステータストグル
   const toggleStatus = (value: PlanStatus) => {
-    const newStatus = status.includes(value) ? status.filter((s) => s !== value) : [...status, value]
-    setStatus(newStatus as PlanStatus[])
-  }
+    const newStatus = status.includes(value)
+      ? status.filter((s) => s !== value)
+      : [...status, value];
+    setStatus(newStatus as PlanStatus[]);
+  };
 
   return (
     <>
@@ -72,5 +78,5 @@ export function InboxFilterContent() {
         </div>
       </MobileSettingsSection>
     </>
-  )
+  );
 }

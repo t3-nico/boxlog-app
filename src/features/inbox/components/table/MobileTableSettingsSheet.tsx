@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import {
   MobileSettingsButtonGroup,
@@ -6,17 +6,17 @@ import {
   MobileSettingsRadioGroup,
   MobileSettingsSection,
   MobileSettingsSheet,
-} from '@/components/common'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Label } from '@/components/ui/label'
-import type { PlanStatus } from '@/features/plans/types/plan'
-import { Columns3, Filter, Group, Settings2, Table2 } from 'lucide-react'
-import { useInboxColumnStore } from '../../stores/useInboxColumnStore'
-import { type DueDateFilter, useInboxFilterStore } from '../../stores/useInboxFilterStore'
-import { useInboxGroupStore } from '../../stores/useInboxGroupStore'
-import { useInboxViewStore } from '../../stores/useInboxViewStore'
-import type { GroupByField } from '../../types/group'
+} from '@/components/common';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import type { PlanStatus } from '@/features/plans/types/plan';
+import { Columns3, Filter, Group, Settings2, Table2 } from 'lucide-react';
+import { useInboxColumnStore } from '../../stores/useInboxColumnStore';
+import { type DueDateFilter, useInboxFilterStore } from '../../stores/useInboxFilterStore';
+import { useInboxGroupStore } from '../../stores/useInboxGroupStore';
+import { useInboxViewStore } from '../../stores/useInboxViewStore';
+import type { GroupByField } from '../../types/group';
 
 /**
  * ステータス選択肢
@@ -25,7 +25,7 @@ const STATUS_OPTIONS: Array<{ value: PlanStatus; label: string }> = [
   { value: 'todo', label: 'Todo' },
   { value: 'doing', label: 'Doing' },
   { value: 'done', label: 'Done' },
-]
+];
 
 /**
  * 期限フィルター選択肢
@@ -38,7 +38,7 @@ const DUE_DATE_OPTIONS: Array<{ value: DueDateFilter; label: string }> = [
   { value: 'next_week', label: '来週' },
   { value: 'overdue', label: '期限切れ' },
   { value: 'no_due_date', label: '期限なし' },
-]
+];
 
 /**
  * グループ化オプション
@@ -48,13 +48,13 @@ const GROUP_BY_OPTIONS: Array<{ value: GroupByField; label: string }> = [
   { value: 'status', label: 'ステータス' },
   { value: 'due_date', label: '期限' },
   { value: 'tags', label: 'タグ' },
-]
+];
 
 interface MobileTableSettingsSheetProps {
   /** 外部から制御する場合のopen状態 */
-  open?: boolean
+  open?: boolean;
   /** 外部から制御する場合のonOpenChange */
-  onOpenChange?: (open: boolean) => void
+  onOpenChange?: (open: boolean) => void;
 }
 
 /**
@@ -77,39 +77,41 @@ interface MobileTableSettingsSheetProps {
  */
 export function MobileTableSettingsSheet({ open, onOpenChange }: MobileTableSettingsSheetProps) {
   // 表示モード
-  const { displayMode, setDisplayMode } = useInboxViewStore()
+  const { displayMode, setDisplayMode } = useInboxViewStore();
 
   // グループ化
-  const { groupBy, setGroupBy } = useInboxGroupStore()
+  const { groupBy, setGroupBy } = useInboxGroupStore();
 
   // フィルター
-  const { status, dueDate, setStatus, setDueDate, reset: resetFilters } = useInboxFilterStore()
+  const { status, dueDate, setStatus, setDueDate, reset: resetFilters } = useInboxFilterStore();
 
   // 列設定
-  const { columns, toggleColumnVisibility, resetColumns } = useInboxColumnStore()
-  const configurableColumns = columns.filter((col) => col.id !== 'selection')
+  const { columns, toggleColumnVisibility, resetColumns } = useInboxColumnStore();
+  const configurableColumns = columns.filter((col) => col.id !== 'selection');
 
   // フィルター数をカウント
-  const filterCount = status.length + (dueDate !== 'all' ? 1 : 0)
+  const filterCount = status.length + (dueDate !== 'all' ? 1 : 0);
 
   // ステータストグル
   const toggleStatus = (value: PlanStatus) => {
-    const newStatus = status.includes(value) ? status.filter((s) => s !== value) : [...status, value]
-    setStatus(newStatus as PlanStatus[])
-  }
+    const newStatus = status.includes(value)
+      ? status.filter((s) => s !== value)
+      : [...status, value];
+    setStatus(newStatus as PlanStatus[]);
+  };
 
   // 全てリセット
   const handleResetAll = () => {
-    resetFilters()
-    setGroupBy(null)
-    resetColumns()
-  }
+    resetFilters();
+    setGroupBy(null);
+    resetColumns();
+  };
 
   // アクティブな設定があるかどうか
-  const hasActiveSettings = filterCount > 0 || groupBy !== null
+  const hasActiveSettings = filterCount > 0 || groupBy !== null;
 
   // 外部制御かどうか（openとonOpenChangeの両方が必要）
-  const isControlled = open !== undefined && onOpenChange !== undefined
+  const isControlled = open !== undefined && onOpenChange !== undefined;
 
   // 外部制御時のprops
   const controlledProps = isControlled
@@ -118,7 +120,7 @@ export function MobileTableSettingsSheet({ open, onOpenChange }: MobileTableSett
         onOpenChange,
         hideTrigger: true as const,
       }
-    : {}
+    : {};
 
   return (
     <MobileSettingsSheet
@@ -169,8 +171,8 @@ export function MobileTableSettingsSheet({ open, onOpenChange }: MobileTableSett
                 variant="ghost"
                 size="sm"
                 onClick={() => {
-                  setStatus([])
-                  setDueDate('all')
+                  setStatus([]);
+                  setDueDate('all');
                 }}
                 className="ml-auto h-auto p-0 text-xs"
               >
@@ -234,5 +236,5 @@ export function MobileTableSettingsSheet({ open, onOpenChange }: MobileTableSett
         </div>
       </MobileSettingsSection>
     </MobileSettingsSheet>
-  )
+  );
 }

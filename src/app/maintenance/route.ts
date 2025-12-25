@@ -9,7 +9,7 @@
  * CSP違反を防止する
  */
 
-import { NextResponse } from 'next/server'
+import { NextResponse } from 'next/server';
 
 export async function GET() {
   const html = `<!DOCTYPE html>
@@ -177,7 +177,7 @@ export async function GET() {
     </div>
   </div>
 </body>
-</html>`
+</html>`;
 
   return new NextResponse(html, {
     status: 200,
@@ -185,5 +185,5 @@ export async function GET() {
       'Content-Type': 'text/html; charset=utf-8',
       'Cache-Control': 'no-store, must-revalidate',
     },
-  })
+  });
 }

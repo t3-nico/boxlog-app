@@ -1,27 +1,33 @@
-'use client'
+'use client';
 
-import { useCallback } from 'react'
+import { useCallback } from 'react';
 
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Switch } from '@/components/ui/switch'
-import { useTheme } from '@/contexts/theme-context'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
+import { useTheme } from '@/contexts/theme-context';
 
-import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
-import { useTranslations } from 'next-intl'
+import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings';
+import { useTranslations } from 'next-intl';
 
-import { SettingField } from './fields/SettingField'
-import { SettingsCard } from './SettingsCard'
+import { SettingField } from './fields/SettingField';
+import { SettingsCard } from './SettingsCard';
 
 interface PreferencesSettingsData {
-  animations: boolean
-  sounds: boolean
-  autoBackup: boolean
-  developerMode: boolean
+  animations: boolean;
+  sounds: boolean;
+  autoBackup: boolean;
+  developerMode: boolean;
 }
 
 export function PreferencesSettings() {
-  const t = useTranslations()
-  const { theme, setTheme } = useTheme()
+  const t = useTranslations();
+  const { theme, setTheme } = useTheme();
 
   // 設定の自動保存（テーマ以外）
   const preferences = useAutoSaveSettings<PreferencesSettingsData>({
@@ -33,47 +39,47 @@ export function PreferencesSettings() {
     },
     onSave: async (_values) => {
       // 環境設定API呼び出しシミュレーション
-      await new Promise((resolve) => setTimeout(resolve, 600))
+      await new Promise((resolve) => setTimeout(resolve, 600));
     },
     successMessage: t('settings.preferences.settingsSaved'),
     debounceMs: 1000,
-  })
+  });
 
   // Handler functions
   const handleThemeChange = useCallback(
     (value: string) => {
-      setTheme(value as 'system' | 'light' | 'dark')
+      setTheme(value as 'system' | 'light' | 'dark');
     },
-    [setTheme]
-  )
+    [setTheme],
+  );
 
   const handleAnimationsChange = useCallback(
     (checked: boolean) => {
-      preferences.updateValue('animations', checked)
+      preferences.updateValue('animations', checked);
     },
-    [preferences]
-  )
+    [preferences],
+  );
 
   const handleSoundsChange = useCallback(
     (checked: boolean) => {
-      preferences.updateValue('sounds', checked)
+      preferences.updateValue('sounds', checked);
     },
-    [preferences]
-  )
+    [preferences],
+  );
 
   const handleAutoBackupChange = useCallback(
     (checked: boolean) => {
-      preferences.updateValue('autoBackup', checked)
+      preferences.updateValue('autoBackup', checked);
     },
-    [preferences]
-  )
+    [preferences],
+  );
 
   const handleDeveloperModeChange = useCallback(
     (checked: boolean) => {
-      preferences.updateValue('developerMode', checked)
+      preferences.updateValue('developerMode', checked);
     },
-    [preferences]
-  )
+    [preferences],
+  );
 
   return (
     <div className="space-y-6">
@@ -96,10 +102,16 @@ export function PreferencesSettings() {
       </SettingsCard>
 
       {/* ユーザーエクスペリエンス */}
-      <SettingsCard title={t('settings.preferences.userExperience')} isSaving={preferences.isSaving}>
+      <SettingsCard
+        title={t('settings.preferences.userExperience')}
+        isSaving={preferences.isSaving}
+      >
         <div className="space-y-4">
           <SettingField label={t('settings.preferences.animations')}>
-            <Switch checked={preferences.values.animations} onCheckedChange={handleAnimationsChange} />
+            <Switch
+              checked={preferences.values.animations}
+              onCheckedChange={handleAnimationsChange}
+            />
           </SettingField>
 
           <SettingField label={t('settings.preferences.soundEffects')}>
@@ -112,14 +124,20 @@ export function PreferencesSettings() {
       <SettingsCard title={t('settings.preferences.dataPrivacy')} isSaving={preferences.isSaving}>
         <div className="space-y-4">
           <SettingField label={t('settings.preferences.autoBackup')}>
-            <Switch checked={preferences.values.autoBackup} onCheckedChange={handleAutoBackupChange} />
+            <Switch
+              checked={preferences.values.autoBackup}
+              onCheckedChange={handleAutoBackupChange}
+            />
           </SettingField>
 
           <SettingField label={t('settings.preferences.developerMode')}>
-            <Switch checked={preferences.values.developerMode} onCheckedChange={handleDeveloperModeChange} />
+            <Switch
+              checked={preferences.values.developerMode}
+              onCheckedChange={handleDeveloperModeChange}
+            />
           </SettingField>
         </div>
       </SettingsCard>
     </div>
-  )
+  );
 }

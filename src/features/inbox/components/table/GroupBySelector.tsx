@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -6,23 +6,23 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Check, Group, X } from 'lucide-react'
-import { useInboxGroupStore } from '../../stores/useInboxGroupStore'
-import type { GroupByField } from '../../types/group'
+} from '@/components/ui/dropdown-menu';
+import { Check, Group, X } from 'lucide-react';
+import { useInboxGroupStore } from '../../stores/useInboxGroupStore';
+import type { GroupByField } from '../../types/group';
 
 /**
  * グループ化フィールドの設定
  */
 const GROUP_BY_OPTIONS: Array<{
-  value: GroupByField
-  label: string
+  value: GroupByField;
+  label: string;
 }> = [
   { value: null, label: 'なし' },
   { value: 'status', label: 'ステータス' },
   { value: 'due_date', label: '期限' },
   { value: 'tags', label: 'タグ' },
-]
+];
 
 /**
  * Group By セレクター
@@ -38,9 +38,9 @@ const GROUP_BY_OPTIONS: Array<{
  * ```
  */
 export function GroupBySelector() {
-  const { groupBy, setGroupBy } = useInboxGroupStore()
+  const { groupBy, setGroupBy } = useInboxGroupStore();
 
-  const activeOption = GROUP_BY_OPTIONS.find((opt) => opt.value === groupBy)
+  const activeOption = GROUP_BY_OPTIONS.find((opt) => opt.value === groupBy);
 
   return (
     <DropdownMenu>
@@ -52,8 +52,8 @@ export function GroupBySelector() {
             <X
               className="size-3"
               onClick={(e) => {
-                e.stopPropagation()
-                setGroupBy(null)
+                e.stopPropagation();
+                setGroupBy(null);
               }}
             />
           )}
@@ -75,5 +75,5 @@ export function GroupBySelector() {
         ))}
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }

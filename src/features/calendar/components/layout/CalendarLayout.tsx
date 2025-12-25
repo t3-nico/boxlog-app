@@ -1,44 +1,44 @@
-'use client'
+'use client';
 
-import { memo, useCallback } from 'react'
+import { memo, useCallback } from 'react';
 
-import { MEDIA_QUERIES } from '@/config/ui/breakpoints'
-import { MobileMenuButton } from '@/features/navigation/components/mobile/MobileMenuButton'
-import { useMediaQuery } from '@/hooks/useMediaQuery'
-import { cn } from '@/lib/utils'
+import { MEDIA_QUERIES } from '@/config/ui/breakpoints';
+import { MobileMenuButton } from '@/features/navigation/components/mobile/MobileMenuButton';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { cn } from '@/lib/utils';
 
-import { useSwipeGesture } from '../../hooks/useSwipeGesture'
-import type { CalendarViewType } from '../../types/calendar.types'
+import { useSwipeGesture } from '../../hooks/useSwipeGesture';
+import type { CalendarViewType } from '../../types/calendar.types';
 
-import { CalendarHeader } from './Header'
+import { CalendarHeader } from './Header';
 
 export interface CalendarLayoutProps {
-  children: React.ReactNode
-  className?: string | undefined
+  children: React.ReactNode;
+  className?: string | undefined;
 
   // Header props
-  viewType: CalendarViewType
-  currentDate: Date
-  onNavigate: (direction: 'prev' | 'next' | 'today') => void
-  onViewChange: (view: CalendarViewType) => void
+  viewType: CalendarViewType;
+  currentDate: Date;
+  onNavigate: (direction: 'prev' | 'next' | 'today') => void;
+  onViewChange: (view: CalendarViewType) => void;
 
   // Header actions
-  onSettings?: (() => void) | undefined
-  onExport?: (() => void) | undefined
-  onImport?: (() => void) | undefined
-  showHeaderActions?: boolean | undefined
+  onSettings?: (() => void) | undefined;
+  onExport?: (() => void) | undefined;
+  onImport?: (() => void) | undefined;
+  showHeaderActions?: boolean | undefined;
 
   // Date selection for mini calendar
-  selectedDate?: Date | undefined
-  onDateSelect?: ((date: Date) => void) | undefined
+  selectedDate?: Date | undefined;
+  onDateSelect?: ((date: Date) => void) | undefined;
 
   // Display range for mini calendar highlight
   displayRange?:
     | {
-        start: Date
-        end: Date
+        start: Date;
+        end: Date;
       }
-    | undefined
+    | undefined;
 }
 
 /**
@@ -66,22 +66,22 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
     displayRange,
   }) => {
     // タッチデバイスでのみスワイプを有効化
-    const isTouchDevice = useMediaQuery(MEDIA_QUERIES.touch)
+    const isTouchDevice = useMediaQuery(MEDIA_QUERIES.touch);
 
     // スワイプで前後の期間に移動
     const handleSwipeLeft = useCallback(() => {
-      onNavigate('next')
-    }, [onNavigate])
+      onNavigate('next');
+    }, [onNavigate]);
 
     const handleSwipeRight = useCallback(() => {
-      onNavigate('prev')
-    }, [onNavigate])
+      onNavigate('prev');
+    }, [onNavigate]);
 
     const { handlers, ref } = useSwipeGesture(handleSwipeLeft, handleSwipeRight, {
       threshold: 50,
       touchOnly: true,
       disabled: !isTouchDevice,
-    })
+    });
 
     return (
       <div className={cn('calendar-layout bg-background flex h-full flex-col', className)}>
@@ -112,8 +112,8 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
           <div className="flex min-h-0 flex-1 flex-col overflow-hidden">{children}</div>
         </main>
       </div>
-    )
-  }
-)
+    );
+  },
+);
 
-CalendarLayout.displayName = 'CalendarLayout'
+CalendarLayout.displayName = 'CalendarLayout';

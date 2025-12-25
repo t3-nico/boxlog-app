@@ -1,36 +1,46 @@
-'use client'
+'use client';
 
-import { Bell, CheckCheck, Loader2, Settings, Trash2 } from 'lucide-react'
-import { useRouter } from 'next/navigation'
-import { useCallback, useMemo, useState } from 'react'
+import { Bell, CheckCheck, Loader2, Settings, Trash2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useCallback, useMemo, useState } from 'react';
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { HoverTooltip } from '@/components/ui/tooltip'
-import type { NotificationType } from '@/schemas/notifications'
-import { useLocale, useTranslations } from 'next-intl'
+} from '@/components/ui/dropdown-menu';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { HoverTooltip } from '@/components/ui/tooltip';
+import type { NotificationType } from '@/schemas/notifications';
+import { useLocale, useTranslations } from 'next-intl';
 
-import { useNotificationMutations, useNotificationsList, useUnreadCount } from '../hooks/useNotificationsData'
-import { groupNotificationsByDate } from '../utils/notification-helpers'
-import { NotificationItem } from './NotificationItem'
+import {
+  useNotificationMutations,
+  useNotificationsList,
+  useUnreadCount,
+} from '../hooks/useNotificationsData';
+import { groupNotificationsByDate } from '../utils/notification-helpers';
+import { NotificationItem } from './NotificationItem';
 
 // 型定義
 interface NotificationData {
-  id: string
-  type: NotificationType
-  title: string
-  message: string | null
-  is_read: boolean
-  created_at: string
-  action_url?: string | null
+  id: string;
+  type: NotificationType;
+  title: string;
+  message: string | null;
+  is_read: boolean;
+  created_at: string;
+  action_url?: string | null;
 }
 
 // フィルターの選択肢
@@ -42,10 +52,10 @@ const TYPE_FILTER_OPTIONS: Array<{ value: NotificationType | 'all'; labelKey: st
   { value: 'plan_completed', labelKey: 'notification.types.plan_completed' },
   { value: 'trash_warning', labelKey: 'notification.types.trash_warning' },
   { value: 'system', labelKey: 'notification.types.system' },
-]
+];
 
 interface NotificationDropdownProps {
-  className?: string
+  className?: string;
 }
 
 /**
@@ -57,101 +67,104 @@ interface NotificationDropdownProps {
  * - 日付グループ化、タイプフィルター、一括操作
  */
 export function NotificationDropdown({ className: _className }: NotificationDropdownProps) {
-  const router = useRouter()
-  const locale = useLocale()
-  const t = useTranslations()
+  const router = useRouter();
+  const locale = useLocale();
+  const t = useTranslations();
 
   // タイプフィルター
-  const [typeFilter, setTypeFilter] = useState<NotificationType | 'all'>('all')
-  const [isOpen, setIsOpen] = useState(false)
+  const [typeFilter, setTypeFilter] = useState<NotificationType | 'all'>('all');
+  const [isOpen, setIsOpen] = useState(false);
 
   // データ取得
-  const { data: unreadCount = 0 } = useUnreadCount()
-  const { data: allNotifications = [], isLoading: isLoadingAll } = useNotificationsList()
+  const { data: unreadCount = 0 } = useUnreadCount();
+  const { data: allNotifications = [], isLoading: isLoadingAll } = useNotificationsList();
   const { data: unreadNotifications = [], isLoading: isLoadingUnread } = useNotificationsList({
     is_read: false,
-  })
+  });
 
-  const { markAsRead, markAllAsRead, deleteNotification, deleteAllRead } = useNotificationMutations()
+  const { markAsRead, markAllAsRead, deleteNotification, deleteAllRead } =
+    useNotificationMutations();
 
   // フィルター適用
   const filteredAllNotifications = useMemo(() => {
-    if (typeFilter === 'all') return allNotifications as NotificationData[]
-    return (allNotifications as NotificationData[]).filter((n) => n.type === typeFilter)
-  }, [allNotifications, typeFilter])
+    if (typeFilter === 'all') return allNotifications as NotificationData[];
+    return (allNotifications as NotificationData[]).filter((n) => n.type === typeFilter);
+  }, [allNotifications, typeFilter]);
 
   const filteredUnreadNotifications = useMemo(() => {
-    if (typeFilter === 'all') return unreadNotifications as NotificationData[]
-    return (unreadNotifications as NotificationData[]).filter((n) => n.type === typeFilter)
-  }, [unreadNotifications, typeFilter])
+    if (typeFilter === 'all') return unreadNotifications as NotificationData[];
+    return (unreadNotifications as NotificationData[]).filter((n) => n.type === typeFilter);
+  }, [unreadNotifications, typeFilter]);
 
   // 日付グループ化
   const groupedAllNotifications = useMemo(
     () => groupNotificationsByDate(filteredAllNotifications, t),
-    [filteredAllNotifications, t]
-  )
+    [filteredAllNotifications, t],
+  );
 
   const groupedUnreadNotifications = useMemo(
     () => groupNotificationsByDate(filteredUnreadNotifications, t),
-    [filteredUnreadNotifications, t]
-  )
+    [filteredUnreadNotifications, t],
+  );
 
   const handleMarkAsRead = useCallback(
     (id: string) => {
-      markAsRead.mutate({ id })
+      markAsRead.mutate({ id });
     },
-    [markAsRead]
-  )
+    [markAsRead],
+  );
 
   const handleMarkAllAsRead = useCallback(() => {
-    markAllAsRead.mutate()
-  }, [markAllAsRead])
+    markAllAsRead.mutate();
+  }, [markAllAsRead]);
 
   const handleDelete = useCallback(
     (id: string) => {
-      deleteNotification.mutate({ id })
+      deleteNotification.mutate({ id });
     },
-    [deleteNotification]
-  )
+    [deleteNotification],
+  );
 
   const handleDeleteAllRead = useCallback(() => {
     if (window.confirm(t('notification.confirm.deleteAllRead'))) {
-      deleteAllRead.mutate()
+      deleteAllRead.mutate();
     }
-  }, [deleteAllRead, t])
+  }, [deleteAllRead, t]);
 
   const handleNavigate = useCallback(
     (url: string) => {
-      setIsOpen(false)
-      router.push(url)
+      setIsOpen(false);
+      router.push(url);
     },
-    [router]
-  )
+    [router],
+  );
 
   const handleOpenSettings = useCallback(() => {
-    setIsOpen(false)
-    router.push(`/${locale}/settings/notifications`)
-  }, [locale, router])
+    setIsOpen(false);
+    router.push(`/${locale}/settings/notifications`);
+  }, [locale, router]);
 
   // 通知リストのレンダリング
   const renderNotificationList = (
     groups: ReturnType<typeof groupNotificationsByDate<NotificationData>>,
     isLoading: boolean,
     emptyMessageKey: string,
-    showDeleteAll: boolean
+    showDeleteAll: boolean,
   ) => {
     if (isLoading) {
       return (
         <div className="flex items-center justify-center py-8">
           <Loader2 className="h-6 w-6 animate-spin" />
         </div>
-      )
+      );
     }
 
-    const totalCount = groups.reduce((acc, g) => acc + g.notifications.length, 0)
+    const totalCount = groups.reduce((acc, g) => acc + g.notifications.length, 0);
 
     if (totalCount === 0) {
-      return <div className="text-muted-foreground py-8 text-center text-sm">{t(emptyMessageKey)}</div>
+      return (
+        <div className="text-muted-foreground py-8 text-center text-sm">{t(emptyMessageKey)}</div>
+      );
     }
 
     return (
@@ -193,7 +206,9 @@ export function NotificationDropdown({ className: _className }: NotificationDrop
           {groups.map((group) => (
             <div key={group.key}>
               {/* グループヘッダー */}
-              <h3 className="text-muted-foreground mb-1.5 px-1 text-xs font-medium">{group.label}</h3>
+              <h3 className="text-muted-foreground mb-1.5 px-1 text-xs font-medium">
+                {group.label}
+              </h3>
               {/* 通知アイテム */}
               <div className="space-y-1">
                 {group.notifications.map((notification) => (
@@ -218,8 +233,8 @@ export function NotificationDropdown({ className: _className }: NotificationDrop
           ))}
         </div>
       </>
-    )
-  }
+    );
+  };
 
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
@@ -248,7 +263,9 @@ export function NotificationDropdown({ className: _className }: NotificationDrop
           <div className="flex items-center gap-2">
             <span className="text-sm font-semibold">{t('notification.title')}</span>
             {unreadCount > 0 && (
-              <span className="bg-primary text-primary-foreground rounded-full px-2 py-0.5 text-xs">{unreadCount}</span>
+              <span className="bg-primary text-primary-foreground rounded-full px-2 py-0.5 text-xs">
+                {unreadCount}
+              </span>
             )}
           </div>
           <HoverTooltip content={t('notification.settings')} side="top">
@@ -285,7 +302,10 @@ export function NotificationDropdown({ className: _className }: NotificationDrop
               </TabsList>
 
               {/* タイプフィルター */}
-              <Select value={typeFilter} onValueChange={(value) => setTypeFilter(value as NotificationType | 'all')}>
+              <Select
+                value={typeFilter}
+                onValueChange={(value) => setTypeFilter(value as NotificationType | 'all')}
+              >
                 <SelectTrigger size="sm" className="h-8 w-28 text-xs">
                   <SelectValue />
                 </SelectTrigger>
@@ -301,16 +321,26 @@ export function NotificationDropdown({ className: _className }: NotificationDrop
 
             {/* すべてタブ */}
             <TabsContent value="all" className="mt-0">
-              {renderNotificationList(groupedAllNotifications, isLoadingAll, 'notification.empty.all', true)}
+              {renderNotificationList(
+                groupedAllNotifications,
+                isLoadingAll,
+                'notification.empty.all',
+                true,
+              )}
             </TabsContent>
 
             {/* 未読タブ */}
             <TabsContent value="unread" className="mt-0">
-              {renderNotificationList(groupedUnreadNotifications, isLoadingUnread, 'notification.empty.unread', false)}
+              {renderNotificationList(
+                groupedUnreadNotifications,
+                isLoadingUnread,
+                'notification.empty.unread',
+                false,
+              )}
             </TabsContent>
           </Tabs>
         </div>
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }

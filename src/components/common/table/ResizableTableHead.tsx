@@ -1,30 +1,30 @@
-'use client'
+'use client';
 
-import { TableHead } from '@/components/ui/table'
-import { ArrowDown, ArrowUp, ArrowUpDown, type LucideIcon } from 'lucide-react'
-import { useState } from 'react'
+import { TableHead } from '@/components/ui/table';
+import { ArrowDown, ArrowUp, ArrowUpDown, type LucideIcon } from 'lucide-react';
+import { useState } from 'react';
 
 interface ResizableTableHeadProps {
   /** 現在の列幅 */
-  width: number
+  width: number;
   /** リサイズ可能かどうか */
-  resizable?: boolean
+  resizable?: boolean;
   /** 表示ラベル */
-  children: React.ReactNode
+  children: React.ReactNode;
   /** カスタムクラス名 */
-  className?: string
+  className?: string;
   /** ソート可能かどうか */
-  sortable?: boolean
+  sortable?: boolean;
   /** 現在このフィールドでソート中かどうか */
-  isSorting?: boolean
+  isSorting?: boolean;
   /** ソート方向（'asc' | 'desc'） */
-  sortDirection?: 'asc' | 'desc'
+  sortDirection?: 'asc' | 'desc';
   /** ソートクリック時のコールバック */
-  onSort?: () => void
+  onSort?: () => void;
   /** リサイズ時のコールバック */
-  onResize?: (newWidth: number) => void
+  onResize?: (newWidth: number) => void;
   /** 列アイコン */
-  icon?: LucideIcon
+  icon?: LucideIcon;
 }
 
 /**
@@ -47,41 +47,46 @@ export function ResizableTableHead({
   onResize,
   icon: ColumnIcon,
 }: ResizableTableHeadProps) {
-  const [isResizing, setIsResizing] = useState(false)
+  const [isResizing, setIsResizing] = useState(false);
 
   // ソートアイコン
-  const Icon = isSorting ? (sortDirection === 'asc' ? ArrowUp : ArrowDown) : ArrowUpDown
+  const Icon = isSorting ? (sortDirection === 'asc' ? ArrowUp : ArrowDown) : ArrowUpDown;
 
   // リサイズ開始
   const handleMouseDown = (e: React.MouseEvent) => {
-    if (!resizable || !onResize) return
+    if (!resizable || !onResize) return;
 
-    e.preventDefault()
-    setIsResizing(true)
+    e.preventDefault();
+    setIsResizing(true);
 
-    const startX = e.clientX
-    const startWidth = width
+    const startX = e.clientX;
+    const startWidth = width;
 
     const handleMouseMove = (moveEvent: MouseEvent) => {
-      const diff = moveEvent.clientX - startX
-      const newWidth = Math.max(50, startWidth + diff)
-      onResize(newWidth)
-    }
+      const diff = moveEvent.clientX - startX;
+      const newWidth = Math.max(50, startWidth + diff);
+      onResize(newWidth);
+    };
 
     const handleMouseUp = () => {
-      setIsResizing(false)
-      document.removeEventListener('mousemove', handleMouseMove)
-      document.removeEventListener('mouseup', handleMouseUp)
-    }
+      setIsResizing(false);
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
 
-    document.addEventListener('mousemove', handleMouseMove)
-    document.addEventListener('mouseup', handleMouseUp)
-  }
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+  };
 
   return (
     <TableHead
       className={className}
-      style={{ width: `${width}px`, minWidth: `${width}px`, position: 'relative', maxWidth: `${width}px` }}
+      style={{
+        width: `${width}px`,
+        minWidth: `${width}px`,
+        position: 'relative',
+        maxWidth: `${width}px`,
+      }}
     >
       <div className="flex items-center gap-1">
         {sortable && onSort ? (
@@ -92,7 +97,9 @@ export function ResizableTableHead({
           >
             {ColumnIcon && <ColumnIcon className="text-muted-foreground size-4 shrink-0" />}
             <span className="truncate">{children}</span>
-            <Icon className={`size-4 shrink-0 ${isSorting ? 'text-foreground' : 'text-muted-foreground'}`} />
+            <Icon
+              className={`size-4 shrink-0 ${isSorting ? 'text-foreground' : 'text-muted-foreground'}`}
+            />
           </button>
         ) : (
           <div className="flex min-w-0 items-center gap-1">
@@ -113,5 +120,5 @@ export function ResizableTableHead({
         />
       )}
     </TableHead>
-  )
+  );
 }

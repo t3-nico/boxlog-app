@@ -24,26 +24,26 @@
  * ```
  */
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { type FileError, type FileRejection, useDropzone } from 'react-dropzone'
+import { type FileError, type FileRejection, useDropzone } from 'react-dropzone';
 
-import { createClient } from '@/lib/supabase/client'
+import { createClient } from '@/lib/supabase/client';
 
 /**
  * プレビュー付きファイル
  */
 interface FileWithPreview extends File {
-  preview: string | undefined
-  errors: readonly FileError[]
+  preview: string | undefined;
+  errors: readonly FileError[];
 }
 
 /**
  * アップロードエラー
  */
 interface UploadError {
-  name: string
-  message: string
+  name: string;
+  message: string;
 }
 
 /**
@@ -51,29 +51,29 @@ interface UploadError {
  */
 interface UseSupabaseUploadOptions {
   /** バケット名 */
-  bucketName: string
+  bucketName: string;
   /** アップロード先パス（フォルダ） */
-  path?: string
+  path?: string;
   /** 許可するMIMEタイプ（例: ['image/*', 'application/pdf']） */
-  allowedMimeTypes?: string[]
+  allowedMimeTypes?: string[];
   /** 最大ファイルサイズ（バイト） */
-  maxFileSize?: number
+  maxFileSize?: number;
   /** 最大ファイル数 */
-  maxFiles?: number
+  maxFiles?: number;
   /** キャッシュ制御（秒） */
-  cacheControl?: number
+  cacheControl?: number;
   /** 上書きを許可 */
-  upsert?: boolean
+  upsert?: boolean;
   /** アップロード成功時のコールバック */
-  onUploadSuccess?: (files: Array<{ name: string; url: string }>) => void
+  onUploadSuccess?: (files: Array<{ name: string; url: string }>) => void;
   /** アップロードエラー時のコールバック */
-  onUploadError?: (error: UploadError) => void
+  onUploadError?: (error: UploadError) => void;
 }
 
 /**
  * useSupabaseUpload 戻り値
  */
-type UseSupabaseUploadReturn = ReturnType<typeof useSupabaseUpload>
+type UseSupabaseUploadReturn = ReturnType<typeof useSupabaseUpload>;
 
 /**
  * Supabase Storage ファイルアップロードフック
@@ -89,19 +89,19 @@ function useSupabaseUpload(options: UseSupabaseUploadOptions) {
     upsert = false,
     onUploadSuccess,
     onUploadError,
-  } = options
+  } = options;
 
   // 状態管理
-  const [files, setFiles] = useState<FileWithPreview[]>([])
-  const [loading, setLoading] = useState(false)
-  const [errors, setErrors] = useState<UploadError[]>([])
-  const [successes, setSuccesses] = useState<string[]>([])
-  const inputRef = useRef<HTMLInputElement>(null)
+  const [files, setFiles] = useState<FileWithPreview[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<UploadError[]>([]);
+  const [successes, setSuccesses] = useState<string[]>([]);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   // 成功判定
   const isSuccess = useMemo(() => {
-    return files.length > 0 && files.every((file) => successes.includes(file.name))
-  }, [files, successes])
+    return files.length > 0 && files.every((file) => successes.includes(file.name));
+  }, [files, successes]);
 
   // ファイルドロップ時のハンドラ
   const onDrop = useCallback((acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
@@ -110,23 +110,25 @@ function useSupabaseUpload(options: UseSupabaseUploadOptions) {
       Object.assign(file, {
         preview: file.type.startsWith('image/') ? URL.createObjectURL(file) : undefined,
         errors: [] as readonly FileError[],
-      })
-    )
+      }),
+    );
 
     // 拒否されたファイルをエラー付きで追加
     const rejectedFilesWithErrors: FileWithPreview[] = rejectedFiles.map((rejection) =>
       Object.assign(rejection.file, {
-        preview: rejection.file.type.startsWith('image/') ? URL.createObjectURL(rejection.file) : undefined,
+        preview: rejection.file.type.startsWith('image/')
+          ? URL.createObjectURL(rejection.file)
+          : undefined,
         errors: rejection.errors,
-      })
-    )
+      }),
+    );
 
-    setFiles((prev) => [...prev, ...filesWithPreview, ...rejectedFilesWithErrors])
+    setFiles((prev) => [...prev, ...filesWithPreview, ...rejectedFilesWithErrors]);
 
     // エラーと成功をリセット
-    setErrors([])
-    setSuccesses([])
-  }, [])
+    setErrors([]);
+    setSuccesses([]);
+  }, []);
 
   // dropzone 設定
   const dropzoneOptions = useMemo(() => {
@@ -135,88 +137,90 @@ function useSupabaseUpload(options: UseSupabaseUploadOptions) {
       maxSize: maxFileSize,
       maxFiles,
       multiple: maxFiles > 1,
-    }
+    };
 
     // acceptが必要な場合のみ追加
     if (allowedMimeTypes.length > 0) {
       return {
         ...baseOptions,
         accept: parseAcceptTypes(allowedMimeTypes),
-      }
+      };
     }
 
-    return baseOptions
-  }, [onDrop, maxFileSize, maxFiles, allowedMimeTypes])
+    return baseOptions;
+  }, [onDrop, maxFileSize, maxFiles, allowedMimeTypes]);
 
-  const dropzone = useDropzone(dropzoneOptions)
+  const dropzone = useDropzone(dropzoneOptions);
 
   // アップロード処理
   const onUpload = useCallback(async () => {
     // バリデーションエラーがあるファイルを除外
-    const validFiles = files.filter((file) => file.errors.length === 0)
+    const validFiles = files.filter((file) => file.errors.length === 0);
 
     if (validFiles.length === 0) {
-      return
+      return;
     }
 
-    setLoading(true)
-    setErrors([])
+    setLoading(true);
+    setErrors([]);
 
-    const supabase = createClient()
-    const uploadResults: Array<{ name: string; url: string }> = []
-    const uploadErrors: UploadError[] = []
+    const supabase = createClient();
+    const uploadResults: Array<{ name: string; url: string }> = [];
+    const uploadErrors: UploadError[] = [];
 
     // 並列アップロード
     await Promise.all(
       validFiles.map(async (file) => {
         // すでにアップロード済みの場合はスキップ
         if (successes.includes(file.name)) {
-          return
+          return;
         }
 
-        const filePath = path ? `${path}/${file.name}` : file.name
+        const filePath = path ? `${path}/${file.name}` : file.name;
 
-        const { error: uploadError } = await supabase.storage.from(bucketName).upload(filePath, file, {
-          cacheControl: cacheControl.toString(),
-          upsert,
-        })
+        const { error: uploadError } = await supabase.storage
+          .from(bucketName)
+          .upload(filePath, file, {
+            cacheControl: cacheControl.toString(),
+            upsert,
+          });
 
         if (uploadError) {
           uploadErrors.push({
             name: file.name,
             message: uploadError.message,
-          })
-          onUploadError?.({ name: file.name, message: uploadError.message })
+          });
+          onUploadError?.({ name: file.name, message: uploadError.message });
         } else {
           // 公開URLを取得
           const {
             data: { publicUrl },
-          } = supabase.storage.from(bucketName).getPublicUrl(filePath)
+          } = supabase.storage.from(bucketName).getPublicUrl(filePath);
 
-          uploadResults.push({ name: file.name, url: publicUrl })
-          setSuccesses((prev) => [...prev, file.name])
+          uploadResults.push({ name: file.name, url: publicUrl });
+          setSuccesses((prev) => [...prev, file.name]);
         }
-      })
-    )
+      }),
+    );
 
-    setErrors(uploadErrors)
-    setLoading(false)
+    setErrors(uploadErrors);
+    setLoading(false);
 
     if (uploadResults.length > 0) {
-      onUploadSuccess?.(uploadResults)
+      onUploadSuccess?.(uploadResults);
     }
-  }, [files, successes, bucketName, path, cacheControl, upsert, onUploadSuccess, onUploadError])
+  }, [files, successes, bucketName, path, cacheControl, upsert, onUploadSuccess, onUploadError]);
 
   // プレビューURLのクリーンアップ
   useEffect(() => {
     return () => {
       files.forEach((file) => {
         if (file.preview) {
-          URL.revokeObjectURL(file.preview)
+          URL.revokeObjectURL(file.preview);
         }
-      })
-    }
-  }, [files])
+      });
+    };
+  }, [files]);
 
   return {
     // ファイル状態
@@ -239,19 +243,19 @@ function useSupabaseUpload(options: UseSupabaseUploadOptions) {
     // dropzone props
     ...dropzone,
     inputRef,
-  }
+  };
 }
 
 /**
  * MIMEタイプ配列をreact-dropzoneのacceptフォーマットに変換
  */
 function parseAcceptTypes(mimeTypes: string[]): Record<string, string[]> {
-  const accept: Record<string, string[]> = {}
+  const accept: Record<string, string[]> = {};
 
   mimeTypes.forEach((type) => {
     // ワイルドカード対応（例: image/*）
     if (type.endsWith('/*')) {
-      const category = type.replace('/*', '')
+      const category = type.replace('/*', '');
       // 一般的な拡張子をマッピング
       const extensionMap: Record<string, string[]> = {
         image: ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg'],
@@ -259,16 +263,16 @@ function parseAcceptTypes(mimeTypes: string[]): Record<string, string[]> {
         audio: ['.mp3', '.wav', '.ogg', '.m4a'],
         text: ['.txt', '.csv', '.json', '.xml'],
         application: ['.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx', '.zip'],
-      }
-      accept[type] = extensionMap[category] || []
+      };
+      accept[type] = extensionMap[category] || [];
     } else {
       // 具体的なMIMEタイプ
-      accept[type] = []
+      accept[type] = [];
     }
-  })
+  });
 
-  return accept
+  return accept;
 }
 
-export { useSupabaseUpload }
-export type { FileWithPreview, UploadError, UseSupabaseUploadOptions, UseSupabaseUploadReturn }
+export { useSupabaseUpload };
+export type { FileWithPreview, UploadError, UseSupabaseUploadOptions, UseSupabaseUploadReturn };

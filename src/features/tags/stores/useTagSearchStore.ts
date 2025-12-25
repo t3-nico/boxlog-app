@@ -1,12 +1,12 @@
-import { create } from 'zustand'
+import { create } from 'zustand';
 
 interface TagSearchState {
   /** 検索クエリ */
-  searchQuery: string
+  searchQuery: string;
   /** 検索クエリを設定 */
-  setSearchQuery: (query: string) => void
+  setSearchQuery: (query: string) => void;
   /** 検索クエリをクリア */
-  clearSearch: () => void
+  clearSearch: () => void;
 }
 
 /**
@@ -16,4 +16,4 @@ export const useTagSearchStore = create<TagSearchState>((set) => ({
   searchQuery: '',
   setSearchQuery: (query) => set({ searchQuery: query }),
   clearSearch: () => set({ searchQuery: '' }),
-}))
+}));

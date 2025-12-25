@@ -2,11 +2,11 @@
 // Data implementation tracked in Issue #83
 
 export interface Country {
-  code: string
-  name: string
-  flag: string
-  regions: string[]
-  flagUrl: string
+  code: string;
+  name: string;
+  flag: string;
+  regions: string[];
+  flagUrl: string;
 }
 
 // Temporary mock data
@@ -19,7 +19,13 @@ export function getCountries(): Country[] {
       regions: ['California', 'New York', 'Texas'],
       flagUrl: '/flags/us.png',
     },
-    { code: 'JP', name: 'Japan', flag: '🇯🇵', regions: ['Tokyo', 'Osaka', 'Kyoto'], flagUrl: '/flags/jp.png' },
+    {
+      code: 'JP',
+      name: 'Japan',
+      flag: '🇯🇵',
+      regions: ['Tokyo', 'Osaka', 'Kyoto'],
+      flagUrl: '/flags/jp.png',
+    },
     {
       code: 'GB',
       name: 'United Kingdom',
@@ -27,8 +33,20 @@ export function getCountries(): Country[] {
       regions: ['England', 'Scotland', 'Wales'],
       flagUrl: '/flags/gb.png',
     },
-    { code: 'DE', name: 'Germany', flag: '🇩🇪', regions: ['Bavaria', 'Berlin', 'Hamburg'], flagUrl: '/flags/de.png' },
-    { code: 'FR', name: 'France', flag: '🇫🇷', regions: ['Paris', 'Lyon', 'Marseille'], flagUrl: '/flags/fr.png' },
+    {
+      code: 'DE',
+      name: 'Germany',
+      flag: '🇩🇪',
+      regions: ['Bavaria', 'Berlin', 'Hamburg'],
+      flagUrl: '/flags/de.png',
+    },
+    {
+      code: 'FR',
+      name: 'France',
+      flag: '🇫🇷',
+      regions: ['Paris', 'Lyon', 'Marseille'],
+      flagUrl: '/flags/fr.png',
+    },
     {
       code: 'CA',
       name: 'Canada',
@@ -43,26 +61,26 @@ export function getCountries(): Country[] {
       regions: ['New South Wales', 'Victoria', 'Queensland'],
       flagUrl: '/flags/au.png',
     },
-  ]
+  ];
 }
 
 // Add other data functions as needed
 export function getEvents() {
-  return []
+  return [];
 }
 
 export function getReviews() {
-  return []
+  return [];
 }
 
 export function getEvent(_id: string) {
-  return null
+  return null;
 }
 
 export function getReview(_id: string) {
-  return null
+  return null;
 }
 
 export function getEventReviews(_id: string) {
-  return []
+  return [];
 }

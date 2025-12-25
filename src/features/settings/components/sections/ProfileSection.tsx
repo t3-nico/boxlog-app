@@ -1,23 +1,23 @@
-'use client'
+'use client';
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react';
 
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'next-intl';
 
-import { AvatarDropzone } from '@/components/ui/avatar-dropzone'
-import { Input } from '@/components/ui/input'
-import { useAuthStore } from '@/features/auth/stores/useAuthStore'
-import { createClient } from '@/lib/supabase/client'
-import { deleteAvatar, uploadAvatar } from '@/lib/supabase/storage'
+import { AvatarDropzone } from '@/components/ui/avatar-dropzone';
+import { Input } from '@/components/ui/input';
+import { useAuthStore } from '@/features/auth/stores/useAuthStore';
+import { createClient } from '@/lib/supabase/client';
+import { deleteAvatar, uploadAvatar } from '@/lib/supabase/storage';
 
-import { useAutoSaveSettings } from '../../hooks/useAutoSaveSettings'
-import { SettingField } from '../fields/SettingField'
-import { SettingsCard } from '../SettingsCard'
+import { useAutoSaveSettings } from '../../hooks/useAutoSaveSettings';
+import { SettingField } from '../fields/SettingField';
+import { SettingsCard } from '../SettingsCard';
 
 interface ProfileSettings {
-  username: string
-  email: string
-  uploadedAvatar: string | null
+  username: string;
+  email: string;
+  uploadedAvatar: string | null;
 }
 
 /**
@@ -26,12 +26,12 @@ interface ProfileSettings {
  * アバター画像とユーザー名の編集
  */
 export function ProfileSection() {
-  const user = useAuthStore((state) => state.user)
-  const t = useTranslations()
-  const supabase = createClient()
+  const user = useAuthStore((state) => state.user);
+  const t = useTranslations();
+  const supabase = createClient();
 
-  const [uploadedAvatar, setUploadedAvatar] = useState<string | null>(null)
-  const [isUploading, setIsUploading] = useState(false)
+  const [uploadedAvatar, setUploadedAvatar] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   const profile = useAutoSaveSettings<ProfileSettings>({
     initialValues: {
@@ -41,7 +41,7 @@ export function ProfileSection() {
     },
     onSave: async (values) => {
       if (!user?.id) {
-        throw new Error(t('errors.auth.userIdNotFound'))
+        throw new Error(t('errors.auth.userIdNotFound'));
       }
 
       const { error: profileError } = await supabase
@@ -51,10 +51,10 @@ export function ProfileSection() {
           avatar_url: values.uploadedAvatar,
           updated_at: new Date().toISOString(),
         })
-        .eq('id', user.id)
+        .eq('id', user.id);
 
       if (profileError) {
-        throw new Error(`${t('errors.auth.profileUpdateFailed')}: ${profileError.message}`)
+        throw new Error(`${t('errors.auth.profileUpdateFailed')}: ${profileError.message}`);
       }
 
       const { error: authError } = await supabase.auth.updateUser({
@@ -62,15 +62,15 @@ export function ProfileSection() {
           username: values.username,
           avatar_url: values.uploadedAvatar,
         },
-      })
+      });
 
       if (authError) {
-        console.error('Auth metadata update error:', authError)
+        console.error('Auth metadata update error:', authError);
       }
     },
     successMessage: t('settings.account.profileUpdated'),
     debounceMs: 1000,
-  })
+  });
 
   // ユーザー情報を初期値として設定
   useEffect(() => {
@@ -79,53 +79,53 @@ export function ProfileSection() {
         username: user.user_metadata?.username || user.email?.split('@')[0] || '',
         email: user.email || '',
         uploadedAvatar: user.user_metadata?.avatar_url || null,
-      })
-      setUploadedAvatar(user.user_metadata?.avatar_url || null)
+      });
+      setUploadedAvatar(user.user_metadata?.avatar_url || null);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user?.id, user?.email])
+  }, [user?.id, user?.email]);
 
   const handleAvatarUpload = useCallback(
     async (file: File) => {
-      if (!user?.id) return
+      if (!user?.id) return;
 
-      setIsUploading(true)
+      setIsUploading(true);
       try {
-        const publicUrl = await uploadAvatar(file, user.id)
-        setUploadedAvatar(publicUrl)
-        profile.updateValue('uploadedAvatar', publicUrl)
+        const publicUrl = await uploadAvatar(file, user.id);
+        setUploadedAvatar(publicUrl);
+        profile.updateValue('uploadedAvatar', publicUrl);
       } catch (error) {
-        console.error('Avatar upload error:', error)
-        throw error // AvatarDropzone側でエラー表示
+        console.error('Avatar upload error:', error);
+        throw error; // AvatarDropzone側でエラー表示
       } finally {
-        setIsUploading(false)
+        setIsUploading(false);
       }
     },
-    [profile, user?.id]
-  )
+    [profile, user?.id],
+  );
 
   const handleAvatarRemove = useCallback(async () => {
-    if (!user?.id) return
+    if (!user?.id) return;
 
-    setIsUploading(true)
+    setIsUploading(true);
     try {
-      await deleteAvatar(user.id)
-      setUploadedAvatar(null)
-      profile.updateValue('uploadedAvatar', null)
+      await deleteAvatar(user.id);
+      setUploadedAvatar(null);
+      profile.updateValue('uploadedAvatar', null);
     } catch (error) {
-      console.error('Avatar delete error:', error)
-      throw error // AvatarDropzone側でエラー表示
+      console.error('Avatar delete error:', error);
+      throw error; // AvatarDropzone側でエラー表示
     } finally {
-      setIsUploading(false)
+      setIsUploading(false);
     }
-  }, [profile, user?.id])
+  }, [profile, user?.id]);
 
   const handleUsernameChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      profile.updateValue('username', e.target.value)
+      profile.updateValue('username', e.target.value);
     },
-    [profile]
-  )
+    [profile],
+  );
 
   return (
     <SettingsCard title={t('settings.account.profile')} isSaving={profile.isSaving}>
@@ -142,9 +142,14 @@ export function ProfileSection() {
         </SettingField>
 
         <SettingField label="ユーザー名" description="アプリ内で表示される名前です" required>
-          <Input value={profile.values.username} onChange={handleUsernameChange} placeholder="username" required />
+          <Input
+            value={profile.values.username}
+            onChange={handleUsernameChange}
+            placeholder="username"
+            required
+          />
         </SettingField>
       </div>
     </SettingsCard>
-  )
+  );
 }

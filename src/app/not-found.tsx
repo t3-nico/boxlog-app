@@ -8,14 +8,14 @@
  * 注意: このページはProvidersの外で動作するため、
  * i18n、Theme、その他のコンテキストは利用不可。
  */
-'use client'
+'use client';
 
-import { Button } from '@/components/ui/button'
-import Image from 'next/image'
-import { useRouter } from 'next/navigation'
+import { Button } from '@/components/ui/button';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 export default function RootNotFound() {
-  const router = useRouter()
+  const router = useRouter();
 
   return (
     <div className="mx-auto flex min-h-dvh flex-col items-center justify-center gap-8 p-8 md:gap-12 md:p-16">
@@ -44,5 +44,5 @@ export default function RootNotFound() {
         </div>
       </div>
     </div>
-  )
+  );
 }

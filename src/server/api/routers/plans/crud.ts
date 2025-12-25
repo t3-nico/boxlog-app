@@ -8,12 +8,18 @@
  * ルーターの責務は入力バリデーションとエラーハンドリングのみです。
  */
 
-import { TRPCError } from '@trpc/server'
-import { z } from 'zod'
+import { TRPCError } from '@trpc/server';
+import { z } from 'zod';
 
-import { createPlanSchema, getPlanByIdSchema, planFilterSchema, planIdSchema, updatePlanSchema } from '@/schemas/plans'
-import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc'
-import { createPlanService, PlanServiceError } from '@/server/services/plans'
+import {
+  createPlanSchema,
+  getPlanByIdSchema,
+  planFilterSchema,
+  planIdSchema,
+  updatePlanSchema,
+} from '@/schemas/plans';
+import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc';
+import { createPlanService, PlanServiceError } from '@/server/services/plans';
 
 /**
  * サービスエラーをTRPCエラーに変換
@@ -27,18 +33,18 @@ function handleServiceError(error: unknown): never {
       UPDATE_FAILED: 'INTERNAL_SERVER_ERROR',
       DELETE_FAILED: 'INTERNAL_SERVER_ERROR',
       TAG_FILTER_FAILED: 'INTERNAL_SERVER_ERROR',
-    }
+    };
 
     throw new TRPCError({
       code: codeMap[error.code] ?? 'INTERNAL_SERVER_ERROR',
       message: error.message,
-    })
+    });
   }
 
   throw new TRPCError({
     code: 'INTERNAL_SERVER_ERROR',
     message: error instanceof Error ? error.message : 'Unknown error',
-  })
+  });
 }
 
 export const plansCrudRouter = createTRPCRouter({
@@ -46,16 +52,16 @@ export const plansCrudRouter = createTRPCRouter({
    * プラン一覧取得
    */
   list: protectedProcedure.input(planFilterSchema.optional()).query(async ({ ctx, input }) => {
-    const { supabase, userId } = ctx
-    const service = createPlanService(supabase)
+    const { supabase, userId } = ctx;
+    const service = createPlanService(supabase);
 
     try {
       return await service.list({
         userId,
         ...input,
-      })
+      });
     } catch (error) {
-      handleServiceError(error)
+      handleServiceError(error);
     }
   }),
 
@@ -63,19 +69,19 @@ export const plansCrudRouter = createTRPCRouter({
    * プランをIDで取得
    */
   getById: protectedProcedure.input(getPlanByIdSchema).query(async ({ ctx, input }) => {
-    const { supabase, userId } = ctx
-    const service = createPlanService(supabase)
+    const { supabase, userId } = ctx;
+    const service = createPlanService(supabase);
 
     try {
       const options: Parameters<typeof service.getById>[0] = {
         userId,
         planId: input.id,
-      }
-      if (input.include?.tags !== undefined) options.includeTags = input.include.tags
+      };
+      if (input.include?.tags !== undefined) options.includeTags = input.include.tags;
 
-      return await service.getById(options)
+      return await service.getById(options);
     } catch (error) {
-      handleServiceError(error)
+      handleServiceError(error);
     }
   }),
 
@@ -83,16 +89,16 @@ export const plansCrudRouter = createTRPCRouter({
    * プラン作成
    */
   create: protectedProcedure.input(createPlanSchema).mutation(async ({ ctx, input }) => {
-    const { supabase, userId } = ctx
-    const service = createPlanService(supabase)
+    const { supabase, userId } = ctx;
+    const service = createPlanService(supabase);
 
     try {
       return await service.create({
         userId,
         input,
-      })
+      });
     } catch (error) {
-      handleServiceError(error)
+      handleServiceError(error);
     }
   }),
 
@@ -102,17 +108,17 @@ export const plansCrudRouter = createTRPCRouter({
   update: protectedProcedure
     .input(z.object({ id: z.string().uuid(), data: updatePlanSchema }))
     .mutation(async ({ ctx, input }) => {
-      const { supabase, userId } = ctx
-      const service = createPlanService(supabase)
+      const { supabase, userId } = ctx;
+      const service = createPlanService(supabase);
 
       try {
         return await service.update({
           userId,
           planId: input.id,
           input: input.data,
-        })
+        });
       } catch (error) {
-        handleServiceError(error)
+        handleServiceError(error);
       }
     }),
 
@@ -120,16 +126,16 @@ export const plansCrudRouter = createTRPCRouter({
    * プラン削除
    */
   delete: protectedProcedure.input(planIdSchema).mutation(async ({ ctx, input }) => {
-    const { supabase, userId } = ctx
-    const service = createPlanService(supabase)
+    const { supabase, userId } = ctx;
+    const service = createPlanService(supabase);
 
     try {
       return await service.delete({
         userId,
         planId: input.id,
-      })
+      });
     } catch (error) {
-      handleServiceError(error)
+      handleServiceError(error);
     }
   }),
-})
+});

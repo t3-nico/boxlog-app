@@ -1,15 +1,17 @@
-import { format } from 'date-fns'
-import { ja } from 'date-fns/locale'
+import { format } from 'date-fns';
+import { ja } from 'date-fns/locale';
 
-import { getTranslation } from './get-translation'
-import { CALENDAR_TOAST_KEYS } from './translation-keys'
-import type { ToastTemplates } from './types'
+import { getTranslation } from './get-translation';
+import { CALENDAR_TOAST_KEYS } from './translation-keys';
+import type { ToastTemplates } from './types';
 
 export const toastTemplates: ToastTemplates = {
   created: {
     title: getTranslation(CALENDAR_TOAST_KEYS.EVENT_CREATED),
     description: (opts) =>
-      opts.event ? `「${opts.event.title}」${format(opts.event.displayStartDate, 'M月d日 HH:mm', { locale: ja })}` : '',
+      opts.event
+        ? `「${opts.event.title}」${format(opts.event.displayStartDate, 'M月d日 HH:mm', { locale: ja })}`
+        : '',
     type: 'success',
     duration: 3000,
   },
@@ -31,8 +33,8 @@ export const toastTemplates: ToastTemplates = {
   moved: {
     title: getTranslation(CALENDAR_TOAST_KEYS.EVENT_MOVED),
     description: (opts) => {
-      if (!opts.event || !opts.toDate) return ''
-      return `「${opts.event.title}」${getTranslation(CALENDAR_TOAST_KEYS.EVENT_MOVED_TO)}${format(opts.toDate, 'M月d日', { locale: ja })}${getTranslation(CALENDAR_TOAST_KEYS.EVENT_MOVED_TO_SUFFIX)}`
+      if (!opts.event || !opts.toDate) return '';
+      return `「${opts.event.title}」${getTranslation(CALENDAR_TOAST_KEYS.EVENT_MOVED_TO)}${format(opts.toDate, 'M月d日', { locale: ja })}${getTranslation(CALENDAR_TOAST_KEYS.EVENT_MOVED_TO_SUFFIX)}`;
     },
     type: 'success',
     duration: 3000,
@@ -47,7 +49,8 @@ export const toastTemplates: ToastTemplates = {
 
   'bulk-deleted': {
     title: getTranslation(CALENDAR_TOAST_KEYS.EVENT_BULK_DELETED),
-    description: (opts) => `${opts.count || 0}${getTranslation(CALENDAR_TOAST_KEYS.EVENT_BULK_DELETED_DESC)}`,
+    description: (opts) =>
+      `${opts.count || 0}${getTranslation(CALENDAR_TOAST_KEYS.EVENT_BULK_DELETED_DESC)}`,
     type: 'success',
     duration: 10000, // アンドゥ可能なら長め
   },
@@ -69,7 +72,7 @@ export const toastTemplates: ToastTemplates = {
     type: 'error',
     duration: 5000,
   },
-}
+};
 
 // アイコンマッピング（オプション）
 export const actionIcons = {
@@ -82,4 +85,4 @@ export const actionIcons = {
   'sync-started': 'RefreshCw',
   'sync-completed': 'Check',
   'sync-failed': 'AlertCircle',
-} as const
+} as const;

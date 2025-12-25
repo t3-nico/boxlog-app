@@ -1,10 +1,10 @@
-'use client'
+'use client';
 
-import { Skeleton } from '@/components/ui/skeleton'
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface LoadingStateProps {
-  count?: number
-  type?: 'card' | 'list' | 'form'
+  count?: number;
+  type?: 'card' | 'list' | 'form';
 }
 
 function CardSkeleton() {
@@ -23,7 +23,7 @@ function CardSkeleton() {
       </div>
       <Skeleton className="h-4 w-full" />
     </div>
-  )
+  );
 }
 
 function ListItemSkeleton() {
@@ -38,7 +38,7 @@ function ListItemSkeleton() {
         <Skeleton className="h-5 w-16" />
       </div>
     </div>
-  )
+  );
 }
 
 function FormSkeleton() {
@@ -61,7 +61,7 @@ function FormSkeleton() {
         <Skeleton className="h-10 w-20" />
       </div>
     </div>
-  )
+  );
 }
 
 export function LoadingState({ count = 3, type = 'card' }: LoadingStateProps) {
@@ -69,10 +69,10 @@ export function LoadingState({ count = 3, type = 'card' }: LoadingStateProps) {
     card: CardSkeleton,
     list: ListItemSkeleton,
     form: FormSkeleton,
-  }[type]
+  }[type];
 
   if (type === 'form') {
-    return <FormSkeleton />
+    return <FormSkeleton />;
   }
 
   return (
@@ -81,5 +81,5 @@ export function LoadingState({ count = 3, type = 'card' }: LoadingStateProps) {
         <SkeletonComponent key={i} />
       ))}
     </div>
-  )
+  );
 }

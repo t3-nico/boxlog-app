@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react';
 
 /**
  * 遅延ローディング表示フック
@@ -23,24 +23,24 @@ import { useEffect, useState } from 'react'
  * @returns 表示すべきかどうか
  */
 export function useDelayedLoading(isLoading: boolean, delay = 300): boolean {
-  const [showLoading, setShowLoading] = useState(false)
+  const [showLoading, setShowLoading] = useState(false);
 
   useEffect(() => {
     if (isLoading) {
       // 遅延後にローディング表示を開始
       const timer = setTimeout(() => {
-        setShowLoading(true)
-      }, delay)
+        setShowLoading(true);
+      }, delay);
 
-      return () => clearTimeout(timer)
+      return () => clearTimeout(timer);
     }
 
     // ローディング終了時は即座に非表示
-    setShowLoading(false)
-    return undefined
-  }, [isLoading, delay])
+    setShowLoading(false);
+    return undefined;
+  }, [isLoading, delay]);
 
-  return showLoading
+  return showLoading;
 }
 
 /**
@@ -64,38 +64,38 @@ export function useDelayedLoading(isLoading: boolean, delay = 300): boolean {
  */
 export function useDelayedLoadingWithMinDuration(
   isLoading: boolean,
-  options: { delay?: number; minDuration?: number } = {}
+  options: { delay?: number; minDuration?: number } = {},
 ): boolean {
-  const { delay = 300, minDuration = 500 } = options
-  const [showLoading, setShowLoading] = useState(false)
-  const [startTime, setStartTime] = useState<number | null>(null)
+  const { delay = 300, minDuration = 500 } = options;
+  const [showLoading, setShowLoading] = useState(false);
+  const [startTime, setStartTime] = useState<number | null>(null);
 
   useEffect(() => {
     if (isLoading) {
       const timer = setTimeout(() => {
-        setShowLoading(true)
-        setStartTime(Date.now())
-      }, delay)
+        setShowLoading(true);
+        setStartTime(Date.now());
+      }, delay);
 
-      return () => clearTimeout(timer)
+      return () => clearTimeout(timer);
     }
 
     // ローディング終了時、最小表示時間を確保
     if (startTime !== null) {
-      const elapsed = Date.now() - startTime
-      const remaining = Math.max(0, minDuration - elapsed)
+      const elapsed = Date.now() - startTime;
+      const remaining = Math.max(0, minDuration - elapsed);
 
       const timer = setTimeout(() => {
-        setShowLoading(false)
-        setStartTime(null)
-      }, remaining)
+        setShowLoading(false);
+        setStartTime(null);
+      }, remaining);
 
-      return () => clearTimeout(timer)
+      return () => clearTimeout(timer);
     }
 
-    setShowLoading(false)
-    return undefined
-  }, [isLoading, delay, minDuration, startTime])
+    setShowLoading(false);
+    return undefined;
+  }, [isLoading, delay, minDuration, startTime]);
 
-  return showLoading
+  return showLoading;
 }

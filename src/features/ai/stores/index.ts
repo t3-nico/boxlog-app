@@ -1,1 +1,1 @@
-export { useAIInspectorStore } from './useAIInspectorStore'
+export { useAIInspectorStore } from './useAIInspectorStore';

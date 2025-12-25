@@ -1,41 +1,41 @@
-'use client'
+'use client';
 
-import { useCallback, useState } from 'react'
+import { useCallback, useState } from 'react';
 
-import { TAG_NAME_MAX_LENGTH } from '@/features/tags/constants/colors'
-import { Plus, X } from 'lucide-react'
-import { useTranslations } from 'next-intl'
+import { TAG_NAME_MAX_LENGTH } from '@/features/tags/constants/colors';
+import { Plus, X } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { cn } from '@/lib/utils';
 
 // Tag interface
 interface Tag {
-  id: string
-  name: string
-  color: string
+  id: string;
+  name: string;
+  color: string;
 }
 
 interface QuickTagCreateModalProps {
-  isOpen: boolean
-  onClose: () => void
-  onCreateTag: (tag: Omit<Tag, 'id'>) => void
+  isOpen: boolean;
+  onClose: () => void;
+  onCreateTag: (tag: Omit<Tag, 'id'>) => void;
 }
 
 export const QuickTagCreateModal = ({ isOpen, onClose, onCreateTag }: QuickTagCreateModalProps) => {
-  const [tagName, setTagName] = useState('')
-  const [selectedColor, setSelectedColor] = useState('#3b82f6')
-  const t = useTranslations()
+  const [tagName, setTagName] = useState('');
+  const [selectedColor, setSelectedColor] = useState('#3b82f6');
+  const t = useTranslations();
 
   // jsx-no-bind optimization: Event handlers
   const handleTagNameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setTagName(e.target.value)
-  }, [])
+    setTagName(e.target.value);
+  }, []);
 
   const createColorHandler = useCallback((color: string) => {
-    return () => setSelectedColor(color)
-  }, [])
+    return () => setSelectedColor(color);
+  }, []);
 
   const presetColors = [
     '#ef4444', // red
@@ -46,47 +46,47 @@ export const QuickTagCreateModal = ({ isOpen, onClose, onCreateTag }: QuickTagCr
     '#ec4899', // pink
     '#6b7280', // gray
     '#f97316', // orange
-  ]
+  ];
 
   const handleCreateTag = useCallback(() => {
     if (tagName.trim()) {
       onCreateTag({
         name: tagName.trim(),
         color: selectedColor,
-      })
-      setTagName('')
-      setSelectedColor('#3b82f6')
-      onClose()
+      });
+      setTagName('');
+      setSelectedColor('#3b82f6');
+      onClose();
     }
-  }, [tagName, selectedColor, onCreateTag, onClose])
+  }, [tagName, selectedColor, onCreateTag, onClose]);
 
   const handleClose = useCallback(() => {
-    setTagName('')
-    setSelectedColor('#3b82f6')
-    onClose()
-  }, [onClose])
+    setTagName('');
+    setSelectedColor('#3b82f6');
+    onClose();
+  }, [onClose]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === 'Enter') {
-        handleCreateTag()
+        handleCreateTag();
       } else if (e.key === 'Escape') {
-        handleClose()
+        handleClose();
       }
     },
-    [handleCreateTag, handleClose]
-  )
+    [handleCreateTag, handleClose],
+  );
 
   const handleOverlayKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
       if (e.key === 'Escape') {
-        handleClose()
+        handleClose();
       }
     },
-    [handleClose]
-  )
+    [handleClose],
+  );
 
-  if (!isOpen) return null
+  if (!isOpen) return null;
 
   return (
     <>
@@ -113,7 +113,10 @@ export const QuickTagCreateModal = ({ isOpen, onClose, onCreateTag }: QuickTagCr
         {/* Content */}
         <div className="space-y-4 p-4">
           <div>
-            <label htmlFor="tag-name-input" className="text-muted-foreground mb-2 block text-sm font-medium">
+            <label
+              htmlFor="tag-name-input"
+              className="text-muted-foreground mb-2 block text-sm font-medium"
+            >
               {t('tags.form.tagName')}
             </label>
             <Input
@@ -128,10 +131,17 @@ export const QuickTagCreateModal = ({ isOpen, onClose, onCreateTag }: QuickTagCr
           </div>
 
           <div>
-            <div className="text-muted-foreground mb-2 block text-sm font-medium" id="color-selection-label">
+            <div
+              className="text-muted-foreground mb-2 block text-sm font-medium"
+              id="color-selection-label"
+            >
               {t('tags.form.color')}
             </div>
-            <div className="flex flex-wrap gap-2" role="group" aria-labelledby="color-selection-label">
+            <div
+              className="flex flex-wrap gap-2"
+              role="group"
+              aria-labelledby="color-selection-label"
+            >
               {presetColors.map((color) => (
                 <Button
                   key={color}
@@ -140,7 +150,7 @@ export const QuickTagCreateModal = ({ isOpen, onClose, onCreateTag }: QuickTagCr
                   onClick={createColorHandler(color)}
                   className={cn(
                     'h-10 w-10 rounded-lg p-0 transition-all hover:scale-105 hover:bg-transparent',
-                    selectedColor === color && 'ring-primary ring-2 ring-offset-2'
+                    selectedColor === color && 'ring-primary ring-2 ring-offset-2',
                   )}
                   style={{ backgroundColor: color }}
                   title={color}
@@ -151,10 +161,14 @@ export const QuickTagCreateModal = ({ isOpen, onClose, onCreateTag }: QuickTagCr
 
           {/* Preview */}
           <div className="bg-surface-container rounded-lg p-3">
-            <div className="text-muted-foreground mb-2 text-xs font-medium">{t('tags.form.preview')}:</div>
+            <div className="text-muted-foreground mb-2 text-xs font-medium">
+              {t('tags.form.preview')}:
+            </div>
             <div className="flex items-center gap-2">
               <div className="h-3 w-3 rounded-full" style={{ backgroundColor: selectedColor }} />
-              <span className="text-foreground text-sm">{tagName || t('tags.form.tagNamePlaceholder')}</span>
+              <span className="text-foreground text-sm">
+                {tagName || t('tags.form.tagNamePlaceholder')}
+              </span>
             </div>
           </div>
         </div>
@@ -171,5 +185,5 @@ export const QuickTagCreateModal = ({ isOpen, onClose, onCreateTag }: QuickTagCr
         </div>
       </div>
     </>
-  )
-}
+  );
+};

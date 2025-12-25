@@ -1,6 +1,13 @@
-'use client'
+'use client';
 
-import { DangerZoneSection, EmailSection, LogoutSection, MFASection, PasswordSection, ProfileSection } from './sections'
+import {
+  DangerZoneSection,
+  EmailSection,
+  LogoutSection,
+  MFASection,
+  PasswordSection,
+  ProfileSection,
+} from './sections';
 
 /**
  * アカウント設定コンポーネント
@@ -23,5 +30,5 @@ export function AccountSettings() {
       <LogoutSection />
       <DangerZoneSection />
     </div>
-  )
+  );
 }

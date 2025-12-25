@@ -1,9 +1,9 @@
-'use client'
+'use client';
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react';
 
-import { timeToMinutes } from '@/features/calendar/lib/time-grid-helpers'
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
+import { timeToMinutes } from '@/features/calendar/lib/time-grid-helpers';
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
 
 // アニメーション設定
 export const eventAnimations = {
@@ -43,19 +43,19 @@ export const eventAnimations = {
     zIndex: 50,
     transition: { duration: 0.1, ease: 'easeOut' },
   },
-}
+};
 
 // アニメーション付きイベントコンポーネント
 interface AnimatedEventItemProps {
-  plan: CalendarPlan
-  children: React.ReactNode
-  isSelected?: boolean
-  isHovered?: boolean
-  isDragging?: boolean
-  isCreating?: boolean
-  onAnimationComplete?: () => void
-  className?: string
-  style?: React.CSSProperties
+  plan: CalendarPlan;
+  children: React.ReactNode;
+  isSelected?: boolean;
+  isHovered?: boolean;
+  isDragging?: boolean;
+  isCreating?: boolean;
+  onAnimationComplete?: () => void;
+  className?: string;
+  style?: React.CSSProperties;
 }
 
 export const AnimatedEventItem = ({
@@ -68,16 +68,16 @@ export const AnimatedEventItem = ({
   className,
   style,
 }: AnimatedEventItemProps) => {
-  const [isVisible, setIsVisible] = useState(!isCreating)
+  const [isVisible, setIsVisible] = useState(!isCreating);
 
   useEffect(() => {
     if (isCreating) {
       // 作成アニメーション開始
-      const timer = setTimeout(() => setIsVisible(true), 10)
-      return () => clearTimeout(timer)
+      const timer = setTimeout(() => setIsVisible(true), 10);
+      return () => clearTimeout(timer);
     }
-    return undefined
-  }, [isCreating])
+    return undefined;
+  }, [isCreating]);
 
   return (
     <div>
@@ -91,20 +91,20 @@ export const AnimatedEventItem = ({
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
 // 作成中のイベントプレビュー
 interface CreatingEventPreviewProps {
-  date: Date
-  startTime: string
-  endTime: string
-  title?: string
-  color?: string
-  onConfirm?: (title: string) => void
-  onCancel?: () => void
-  dayWidth: number
-  className?: string
+  date: Date;
+  startTime: string;
+  endTime: string;
+  title?: string;
+  color?: string;
+  onConfirm?: (title: string) => void;
+  onCancel?: () => void;
+  dayWidth: number;
+  className?: string;
 }
 
 export const CreatingEventPreview = ({
@@ -117,42 +117,42 @@ export const CreatingEventPreview = ({
   dayWidth,
   className,
 }: CreatingEventPreviewProps) => {
-  const [eventTitle, setEventTitle] = useState(title)
-  const [isEditing, setIsEditing] = useState(false)
-  const inputRef = useRef<HTMLInputElement>(null)
+  const [eventTitle, setEventTitle] = useState(title);
+  const [isEditing, setIsEditing] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   // 位置とサイズの計算
-  const startMinutes = timeToMinutes(startTime)
-  const endMinutes = timeToMinutes(endTime)
-  const top = startMinutes * (72 / 60) // HOUR_HEIGHT / 60
-  const height = Math.max((endMinutes - startMinutes) * (72 / 60), 20)
+  const startMinutes = timeToMinutes(startTime);
+  const endMinutes = timeToMinutes(endTime);
+  const top = startMinutes * (72 / 60); // HOUR_HEIGHT / 60
+  const height = Math.max((endMinutes - startMinutes) * (72 / 60), 20);
 
   useEffect(() => {
     if (isEditing && inputRef.current) {
-      inputRef.current.focus()
-      inputRef.current.select()
+      inputRef.current.focus();
+      inputRef.current.select();
     }
-  }, [isEditing])
+  }, [isEditing]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
-      handleConfirm()
+      handleConfirm();
     } else if (e.key === 'Escape') {
-      handleCancel()
+      handleCancel();
     }
-  }
+  };
 
   const handleConfirm = () => {
-    onConfirm?.(eventTitle.trim() || title)
-  }
+    onConfirm?.(eventTitle.trim() || title);
+  };
 
   const handleCancel = () => {
-    onCancel?.()
-  }
+    onCancel?.();
+  };
 
   const handleTitleClick = () => {
-    setIsEditing(true)
-  }
+    setIsEditing(true);
+  };
 
   return (
     <div
@@ -215,14 +215,14 @@ export const CreatingEventPreview = ({
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
 // 削除アニメーション用のコンポーネント
 interface DeletingEventProps {
-  plan: CalendarPlan
-  onAnimationComplete: () => void
-  children: React.ReactNode
+  plan: CalendarPlan;
+  onAnimationComplete: () => void;
+  children: React.ReactNode;
 }
 
 export const DeletingEvent = ({ plan, onAnimationComplete, children }: DeletingEventProps) => {
@@ -234,16 +234,16 @@ export const DeletingEvent = ({ plan, onAnimationComplete, children }: DeletingE
     >
       {children}
     </div>
-  )
-}
+  );
+};
 
 // パルス効果（ホバー時の視覚フィードバック）
 interface PulseEffectProps {
-  isActive: boolean
-  children: React.ReactNode
-  intensity?: 'low' | 'medium' | 'high'
+  isActive: boolean;
+  children: React.ReactNode;
+  intensity?: 'low' | 'medium' | 'high';
 }
 
 export const PulseEffect = ({ isActive, children }: PulseEffectProps) => {
-  return <div className={isActive ? 'animate-pulse' : ''}>{children}</div>
-}
+  return <div className={isActive ? 'animate-pulse' : ''}>{children}</div>;
+};

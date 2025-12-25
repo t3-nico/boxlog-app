@@ -3,40 +3,42 @@
  * 各機能を分離したフックを組み合わせて提供
  */
 
-'use client'
+'use client';
 
-import { useCallback } from 'react'
+import { useCallback } from 'react';
 
-import { useDragInteraction, type DragResult } from './useDragInteraction'
-import { useKeyboardShortcuts } from './useKeyboardShortcuts'
-import { useEventCreation, type CreatingEvent } from './usePlanCreation'
-import { useEventSelection } from './usePlanSelection'
+import { useDragInteraction, type DragResult } from './useDragInteraction';
+import { useKeyboardShortcuts } from './useKeyboardShortcuts';
+import { useEventCreation, type CreatingEvent } from './usePlanCreation';
+import { useEventSelection } from './usePlanSelection';
 
 export interface UseInteractionManagerRefactoredOptions {
-  onEscape?: () => void
-  onConfirmCreate?: (event: CreatingEvent) => void
-  onSelectionChange?: (eventId: string | null) => void
+  onEscape?: () => void;
+  onConfirmCreate?: (event: CreatingEvent) => void;
+  onSelectionChange?: (eventId: string | null) => void;
 }
 
-export function useInteractionManagerRefactored(options: UseInteractionManagerRefactoredOptions = {}) {
-  const { onEscape, onConfirmCreate, onSelectionChange } = options
+export function useInteractionManagerRefactored(
+  options: UseInteractionManagerRefactoredOptions = {},
+) {
+  const { onEscape, onConfirmCreate, onSelectionChange } = options;
 
   // 各機能のフックを初期化
   const eventSelection = useEventSelection({
     ...(onSelectionChange && { onSelectionChange }),
-  })
+  });
   const dragInteraction = useDragInteraction({
     onDragComplete: handleDragComplete,
-  })
+  });
   const eventCreation = useEventCreation({
     ...(onConfirmCreate && { onConfirmCreate }),
     defaultDurationMinutes: 30,
-  })
+  });
 
   // ドラッグ完了時の処理
   function handleDragComplete(result: DragResult) {
     if (result.isValid) {
-      eventCreation.actions.startCreating(result.date, result.startTime, result.endTime)
+      eventCreation.actions.startCreating(result.date, result.startTime, result.endTime);
     }
   }
 
@@ -44,13 +46,13 @@ export function useInteractionManagerRefactored(options: UseInteractionManagerRe
   const keyboardActions = {
     onEscape: useCallback(() => {
       if (dragInteraction.state.isDragging) {
-        dragInteraction.actions.cancelDrag()
+        dragInteraction.actions.cancelDrag();
       } else if (eventCreation.state.isCreating) {
-        eventCreation.actions.cancelCreating()
+        eventCreation.actions.cancelCreating();
       } else if (eventSelection.state.selectedEventId) {
-        eventSelection.actions.selectEvent(null)
+        eventSelection.actions.selectEvent(null);
       }
-      onEscape?.()
+      onEscape?.();
     }, [
       dragInteraction.state.isDragging,
       eventCreation.state.isCreating,
@@ -63,20 +65,20 @@ export function useInteractionManagerRefactored(options: UseInteractionManagerRe
 
     onEnter: useCallback(() => {
       if (eventCreation.state.isCreating && eventCreation.state.creatingEvent) {
-        eventCreation.actions.confirmCreate()
+        eventCreation.actions.confirmCreate();
       }
     }, [eventCreation.state, eventCreation.actions]),
-  }
+  };
 
   useKeyboardShortcuts({
     isActive: true,
     actions: keyboardActions,
-  })
+  });
 
   // タイムスロットホバー機能（シンプル化）
   const setHoveredTimeSlot = useCallback((_date: Date | null, _time: string | null) => {
     // 実装は必要に応じて追加
-  }, [])
+  }, []);
 
   // 統合された状態とアクション
   return {
@@ -117,10 +119,10 @@ export function useInteractionManagerRefactored(options: UseInteractionManagerRe
 
       // 全体リセット
       resetState: useCallback(() => {
-        eventSelection.actions.clearSelection()
-        dragInteraction.actions.cancelDrag()
-        eventCreation.actions.cancelCreating()
+        eventSelection.actions.clearSelection();
+        dragInteraction.actions.cancelDrag();
+        eventCreation.actions.cancelCreating();
       }, [eventSelection.actions, dragInteraction.actions, eventCreation.actions]),
     },
-  }
+  };
 }

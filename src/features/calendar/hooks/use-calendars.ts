@@ -1,8 +1,8 @@
-import { useState } from 'react'
+import { useState } from 'react';
 
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query';
 
-import { getCacheStrategy } from '@/lib/tanstack-query/cache-config'
+import { getCacheStrategy } from '@/lib/tanstack-query/cache-config';
 import type {
   Calendar,
   CalendarShare,
@@ -10,7 +10,7 @@ import type {
   CalendarViewState,
   CreateCalendarInput,
   UpdateCalendarInput,
-} from '../types/calendar.types'
+} from '../types/calendar.types';
 
 // クエリキー
 export const calendarKeys = {
@@ -23,7 +23,7 @@ export const calendarKeys = {
   share: (calendarId: string) => [...calendarKeys.shares(), calendarId] as const,
   viewStates: () => [...calendarKeys.all, 'view-state'] as const,
   viewState: (userId: string) => [...calendarKeys.viewStates(), userId] as const,
-}
+};
 
 // ========================================
 // Calendar Management Hooks (localStorage-based)
@@ -35,7 +35,7 @@ export function useCalendars(userId: string) {
     queryKey: calendarKeys.list(userId),
     queryFn: () => Promise.resolve<Calendar[]>([]), // Temporary stub
     enabled: !!userId,
-  })
+  });
 }
 
 export function useCalendar(calendarId: string) {
@@ -43,32 +43,37 @@ export function useCalendar(calendarId: string) {
     queryKey: calendarKeys.detail(calendarId),
     queryFn: () => Promise.resolve<Calendar | null>(null), // Temporary stub
     enabled: !!calendarId,
-  })
+  });
 }
 
 export function useCreateCalendar(_userId: string) {
   return useMutation({
     mutationFn: (_input: CreateCalendarInput) => Promise.resolve({} as Calendar), // Temporary stub
-  })
+  });
 }
 
 export function useUpdateCalendar() {
   return useMutation({
-    mutationFn: ({ calendarId: _calendarId, input: _input }: { calendarId: string; input: UpdateCalendarInput }) =>
-      Promise.resolve({} as Calendar), // Temporary stub
-  })
+    mutationFn: ({
+      calendarId: _calendarId,
+      input: _input,
+    }: {
+      calendarId: string;
+      input: UpdateCalendarInput;
+    }) => Promise.resolve({} as Calendar), // Temporary stub
+  });
 }
 
 export function useDeleteCalendar() {
   return useMutation({
     mutationFn: (_calendarId: string) => Promise.resolve(), // Temporary stub
-  })
+  });
 }
 
 export function useSetDefaultCalendar() {
   return useMutation({
     mutationFn: (_calendarId: string) => Promise.resolve(), // Temporary stub
-  })
+  });
 }
 
 // ========================================
@@ -80,13 +85,13 @@ export function useCalendarShares(calendarId: string) {
     queryKey: calendarKeys.share(calendarId),
     queryFn: () => Promise.resolve<CalendarShare[]>([]), // Temporary stub
     enabled: !!calendarId,
-  })
+  });
 }
 
 export function useShareCalendar() {
   return useMutation({
     mutationFn: (_input: CalendarShareInput) => Promise.resolve({} as CalendarShare), // Temporary stub
-  })
+  });
 }
 
 export function useUpdateCalendarShare() {
@@ -95,16 +100,16 @@ export function useUpdateCalendarShare() {
       shareId: _shareId,
       permission: _permission,
     }: {
-      shareId: string
-      permission: 'view' | 'edit' | 'admin'
+      shareId: string;
+      permission: 'view' | 'edit' | 'admin';
     }) => Promise.resolve({} as CalendarShare), // Temporary stub
-  })
+  });
 }
 
 export function useRevokeCalendarShare() {
   return useMutation({
     mutationFn: (_shareId: string) => Promise.resolve(), // Temporary stub
-  })
+  });
 }
 
 export function useCreatePublicShareLink() {
@@ -114,11 +119,11 @@ export function useCreatePublicShareLink() {
       permission: _permission,
       expiresInDays: _expiresInDays,
     }: {
-      calendarId: string
-      permission: 'view' | 'edit'
-      expiresInDays?: number
+      calendarId: string;
+      permission: 'view' | 'edit';
+      expiresInDays?: number;
     }) => Promise.resolve(''), // Temporary stub
-  })
+  });
 }
 
 // ========================================
@@ -131,13 +136,13 @@ export function useCalendarViewState(userId: string) {
     queryFn: () => Promise.resolve<CalendarViewState | null>(null), // Temporary stub
     enabled: !!userId,
     ...getCacheStrategy('calendarViewState'),
-  })
+  });
 }
 
 export function useUpdateViewState(_userId: string) {
   return useMutation({
     mutationFn: (_updates: Partial<CalendarViewState>) => Promise.resolve({} as CalendarViewState), // Temporary stub
-  })
+  });
 }
 
 // ========================================
@@ -145,24 +150,24 @@ export function useUpdateViewState(_userId: string) {
 // ========================================
 
 export function useCalendarManagement(userId: string) {
-  const { data: calendars, isLoading: calendarsLoading } = useCalendars(userId)
-  const { data: viewState, isLoading: viewStateLoading } = useCalendarViewState(userId)
+  const { data: calendars, isLoading: calendarsLoading } = useCalendars(userId);
+  const { data: viewState, isLoading: viewStateLoading } = useCalendarViewState(userId);
 
-  const createCalendar = useCreateCalendar(userId)
-  const updateCalendar = useUpdateCalendar()
-  const deleteCalendar = useDeleteCalendar()
-  const setDefaultCalendar = useSetDefaultCalendar()
-  const updateViewState = useUpdateViewState(userId)
+  const createCalendar = useCreateCalendar(userId);
+  const updateCalendar = useUpdateCalendar();
+  const deleteCalendar = useDeleteCalendar();
+  const setDefaultCalendar = useSetDefaultCalendar();
+  const updateViewState = useUpdateViewState(userId);
 
   // デフォルトカレンダーを取得
-  const defaultCalendar = calendars?.find((cal) => cal.isDefault)
+  const defaultCalendar = calendars?.find((cal) => cal.isDefault);
 
   // 表示可能なカレンダーを取得
-  const visibleCalendars = calendars?.filter((cal) => cal.isVisible) || []
+  const visibleCalendars = calendars?.filter((cal) => cal.isVisible) || [];
 
   // 選択されたカレンダー（ビュー状態から）
-  const selectedCalendarIds = viewState?.selectedCalendars || []
-  const selectedCalendars = calendars?.filter((cal) => selectedCalendarIds.includes(cal.id)) || []
+  const selectedCalendarIds = viewState?.selectedCalendars || [];
+  const selectedCalendars = calendars?.filter((cal) => selectedCalendarIds.includes(cal.id)) || [];
 
   return {
     // Data
@@ -186,7 +191,7 @@ export function useCalendarManagement(userId: string) {
     isCreating: createCalendar.isPending,
     isUpdating: updateCalendar.isPending,
     isDeleting: deleteCalendar.isPending,
-  }
+  };
 }
 
 // ========================================
@@ -194,25 +199,25 @@ export function useCalendarManagement(userId: string) {
 // ========================================
 
 export function useCalendarSelection(initialCalendarIds: string[] = []) {
-  const [selectedCalendarIds, setSelectedCalendarIds] = useState<string[]>(initialCalendarIds)
+  const [selectedCalendarIds, setSelectedCalendarIds] = useState<string[]>(initialCalendarIds);
 
   const toggleCalendar = (calendarId: string) => {
     setSelectedCalendarIds((prev) =>
-      prev.includes(calendarId) ? prev.filter((id) => id !== calendarId) : [...prev, calendarId]
-    )
-  }
+      prev.includes(calendarId) ? prev.filter((id) => id !== calendarId) : [...prev, calendarId],
+    );
+  };
 
   const selectAll = (calendarIds: string[]) => {
-    setSelectedCalendarIds(calendarIds)
-  }
+    setSelectedCalendarIds(calendarIds);
+  };
 
   const deselectAll = () => {
-    setSelectedCalendarIds([])
-  }
+    setSelectedCalendarIds([]);
+  };
 
   const isSelected = (calendarId: string) => {
-    return selectedCalendarIds.includes(calendarId)
-  }
+    return selectedCalendarIds.includes(calendarId);
+  };
 
   return {
     selectedCalendarIds,
@@ -221,7 +226,7 @@ export function useCalendarSelection(initialCalendarIds: string[] = []) {
     deselectAll,
     isSelected,
     setSelectedCalendarIds,
-  }
+  };
 }
 
 export function useCalendarColors() {
@@ -236,21 +241,21 @@ export function useCalendarColors() {
     '#84cc16', // lime-500
     '#f97316', // orange-500
     '#6366f1', // indigo-500
-  ]
+  ];
 
-  const [customColors, setCustomColors] = useState<string[]>([])
+  const [customColors, setCustomColors] = useState<string[]>([]);
 
   const addCustomColor = (color: string) => {
     if (!customColors.includes(color)) {
-      setCustomColors((prev) => [...prev, color])
+      setCustomColors((prev) => [...prev, color]);
     }
-  }
+  };
 
   const removeCustomColor = (color: string) => {
-    setCustomColors((prev) => prev.filter((c) => c !== color))
-  }
+    setCustomColors((prev) => prev.filter((c) => c !== color));
+  };
 
-  const allColors = [...defaultColors, ...customColors]
+  const allColors = [...defaultColors, ...customColors];
 
   return {
     defaultColors,
@@ -258,5 +263,5 @@ export function useCalendarColors() {
     allColors,
     addCustomColor,
     removeCustomColor,
-  }
+  };
 }

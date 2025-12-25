@@ -1,22 +1,27 @@
-'use client'
+'use client';
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react';
 
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/utils';
 
 import type {
   AnimationWrapperProps,
   OptimizedListAnimationProps,
   PerformanceIndicatorProps,
   SkeletonAnimationProps,
-} from '../types'
-import { GPU_OPTIMIZED_STYLES } from '../types'
+} from '../types';
+import { GPU_OPTIMIZED_STYLES } from '../types';
 
 // 読み込み時のスケルトンアニメーション
-export function SkeletonAnimation({ show, count = 3, height = 'h-8', className = '' }: SkeletonAnimationProps) {
-  if (!show) return null
+export function SkeletonAnimation({
+  show,
+  count = 3,
+  height = 'h-8',
+  className = '',
+}: SkeletonAnimationProps) {
+  if (!show) return null;
 
   return (
     <div className={`space-y-2 ${className}`}>
@@ -30,17 +35,29 @@ export function SkeletonAnimation({ show, count = 3, height = 'h-8', className =
         />
       ))}
     </div>
-  )
+  );
 }
 
 // パフォーマンス最適化：アニメーションの有効/無効を制御
-export function AnimationWrapper({ children, disabled = false, className = '' }: AnimationWrapperProps) {
-  return <div className={`${disabled ? '' : 'transition-all duration-150'} ${className}`}>{children}</div>
+export function AnimationWrapper({
+  children,
+  disabled = false,
+  className = '',
+}: AnimationWrapperProps) {
+  return (
+    <div className={`${disabled ? '' : 'transition-all duration-150'} ${className}`}>
+      {children}
+    </div>
+  );
 }
 
 // 高性能インジケーター（ローディング、プログレス等）
-export function PerformanceIndicator({ isLoading, progress = 0, className }: PerformanceIndicatorProps) {
-  const prefersReducedMotion = useReducedMotion()
+export function PerformanceIndicator({
+  isLoading,
+  progress = 0,
+  className,
+}: PerformanceIndicatorProps) {
+  const prefersReducedMotion = useReducedMotion();
 
   return (
     <AnimatePresence>
@@ -79,39 +96,50 @@ export function PerformanceIndicator({ isLoading, progress = 0, className }: Per
         </motion.div>
       )}
     </AnimatePresence>
-  )
+  );
 }
 
 // パフォーマンス最適化されたリストアニメーション
-export function OptimizedListAnimation({ children, itemHeight, visibleItems, className }: OptimizedListAnimationProps) {
-  const prefersReducedMotion = useReducedMotion()
-  const [scrollY, setScrollY] = useState(0)
-  const containerRef = useRef<HTMLDivElement>(null)
+export function OptimizedListAnimation({
+  children,
+  itemHeight,
+  visibleItems,
+  className,
+}: OptimizedListAnimationProps) {
+  const prefersReducedMotion = useReducedMotion();
+  const [scrollY, setScrollY] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const container = containerRef.current
-    if (!container) return
+    const container = containerRef.current;
+    if (!container) return;
 
     const handleScroll = () => {
-      setScrollY(container.scrollTop)
-    }
+      setScrollY(container.scrollTop);
+    };
 
-    container.addEventListener('scroll', handleScroll, { passive: true })
-    return () => container.removeEventListener('scroll', handleScroll)
-  }, [])
+    container.addEventListener('scroll', handleScroll, { passive: true });
+    return () => container.removeEventListener('scroll', handleScroll);
+  }, []);
 
-  const startIndex = Math.floor(scrollY / itemHeight)
-  const endIndex = Math.min(startIndex + visibleItems + 1, children.length)
-  const visibleChildren = children.slice(startIndex, endIndex)
+  const startIndex = Math.floor(scrollY / itemHeight);
+  const endIndex = Math.min(startIndex + visibleItems + 1, children.length);
+  const visibleChildren = children.slice(startIndex, endIndex);
 
   return (
-    <div ref={containerRef} className={cn('overflow-auto', className)} style={{ height: visibleItems * itemHeight }}>
+    <div
+      ref={containerRef}
+      className={cn('overflow-auto', className)}
+      style={{ height: visibleItems * itemHeight }}
+    >
       <div style={{ height: children.length * itemHeight, position: 'relative' }}>
         <AnimatePresence mode="popLayout">
           {visibleChildren.map((child, index) => (
             <motion.div
               key={`list-item-${startIndex + index}-${Date.now()}`}
-              {...(prefersReducedMotion ? {} : { initial: { opacity: 0, y: 20 }, exit: { opacity: 0, y: -20 } })}
+              {...(prefersReducedMotion
+                ? {}
+                : { initial: { opacity: 0, y: 20 }, exit: { opacity: 0, y: -20 } })}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: prefersReducedMotion ? 0 : 0.2 }}
               style={{
@@ -128,5 +156,5 @@ export function OptimizedListAnimation({ children, itemHeight, visibleItems, cla
         </AnimatePresence>
       </div>
     </div>
-  )
+  );
 }

@@ -58,48 +58,48 @@ export const AUTH_CONFIG = {
     REQUIRE_NUMBER: 'auth.passwordValidation.requireNumber',
     REQUIRE_SPECIAL_CHAR: 'auth.passwordValidation.requireSpecialChar',
   },
-} as const
+} as const;
 
 // パスワード強度チェック関数（翻訳キーを返す）
 // Client Component側で t() を使って翻訳すること
 export function validatePassword(password: string): { isValid: boolean; errorKeys: string[] } {
-  const errorKeys: string[] = []
+  const errorKeys: string[] = [];
 
   if (password.length < AUTH_CONFIG.PASSWORD.MIN_LENGTH) {
-    errorKeys.push(AUTH_CONFIG.PASSWORD_VALIDATION_KEYS.MIN_LENGTH)
+    errorKeys.push(AUTH_CONFIG.PASSWORD_VALIDATION_KEYS.MIN_LENGTH);
   }
 
   if (AUTH_CONFIG.PASSWORD.REQUIRE_UPPERCASE && !/[A-Z]/.test(password)) {
-    errorKeys.push(AUTH_CONFIG.PASSWORD_VALIDATION_KEYS.REQUIRE_UPPERCASE)
+    errorKeys.push(AUTH_CONFIG.PASSWORD_VALIDATION_KEYS.REQUIRE_UPPERCASE);
   }
 
   if (AUTH_CONFIG.PASSWORD.REQUIRE_LOWERCASE && !/[a-z]/.test(password)) {
-    errorKeys.push(AUTH_CONFIG.PASSWORD_VALIDATION_KEYS.REQUIRE_LOWERCASE)
+    errorKeys.push(AUTH_CONFIG.PASSWORD_VALIDATION_KEYS.REQUIRE_LOWERCASE);
   }
 
   if (AUTH_CONFIG.PASSWORD.REQUIRE_NUMBERS && !/\d/.test(password)) {
-    errorKeys.push(AUTH_CONFIG.PASSWORD_VALIDATION_KEYS.REQUIRE_NUMBER)
+    errorKeys.push(AUTH_CONFIG.PASSWORD_VALIDATION_KEYS.REQUIRE_NUMBER);
   }
 
   if (AUTH_CONFIG.PASSWORD.REQUIRE_SPECIAL_CHARS && !/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
-    errorKeys.push(AUTH_CONFIG.PASSWORD_VALIDATION_KEYS.REQUIRE_SPECIAL_CHAR)
+    errorKeys.push(AUTH_CONFIG.PASSWORD_VALIDATION_KEYS.REQUIRE_SPECIAL_CHAR);
   }
 
   return {
     isValid: errorKeys.length === 0,
     errorKeys,
-  }
+  };
 }
 
 // メールアドレス検証関数
 export function validateEmail(email: string): boolean {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  return emailRegex.test(email)
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
 }
 
 // セッション有効期限チェック関数
 export function isSessionExpiringSoon(expiresAt: number): boolean {
-  const now = Math.floor(Date.now() / 1000)
-  const timeUntilExpiry = expiresAt - now
-  return timeUntilExpiry <= AUTH_CONFIG.SESSION.REFRESH_THRESHOLD
+  const now = Math.floor(Date.now() / 1000);
+  const timeUntilExpiry = expiresAt - now;
+  return timeUntilExpiry <= AUTH_CONFIG.SESSION.REFRESH_THRESHOLD;
 }

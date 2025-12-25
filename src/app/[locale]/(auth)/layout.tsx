@@ -15,12 +15,12 @@
  *
  * @see src/components/providers/PublicProviders.tsx - 軽量Providers定義
  */
-'use client'
+'use client';
 
-import { PublicProviders } from '@/components/providers/PublicProviders'
-import { Toaster } from '@/components/ui/sonner'
-import { AuthLayout } from '@/features/auth'
-import { RecaptchaScript } from '@/lib/recaptcha'
+import { PublicProviders } from '@/components/providers/PublicProviders';
+import { Toaster } from '@/components/ui/sonner';
+import { AuthLayout } from '@/features/auth';
+import { RecaptchaScript } from '@/lib/recaptcha';
 
 const AuthRootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -29,7 +29,7 @@ const AuthRootLayout = ({ children }: { children: React.ReactNode }) => {
       <AuthLayout>{children}</AuthLayout>
       <Toaster />
     </PublicProviders>
-  )
-}
+  );
+};
 
-export default AuthRootLayout
+export default AuthRootLayout;

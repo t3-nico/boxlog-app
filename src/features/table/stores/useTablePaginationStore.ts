@@ -1,15 +1,15 @@
-import { create } from 'zustand'
-import { devtools } from 'zustand/middleware'
+import { create } from 'zustand';
+import { devtools } from 'zustand/middleware';
 
 /**
  * テーブルページネーション状態
  */
 interface TablePaginationState {
-  currentPage: number
-  pageSize: number
-  setCurrentPage: (page: number) => void
-  setPageSize: (size: number) => void
-  reset: () => void
+  currentPage: number;
+  pageSize: number;
+  setCurrentPage: (page: number) => void;
+  setPageSize: (size: number) => void;
+  reset: () => void;
 }
 
 /**
@@ -40,9 +40,9 @@ export const useTablePaginationStore = create<TablePaginationState>()(
       setPageSize: (size) => set({ pageSize: size, currentPage: 1 }),
       reset: () => set({ currentPage: 1, pageSize: 25 }),
     }),
-    { name: 'table-pagination-store' }
-  )
-)
+    { name: 'table-pagination-store' },
+  ),
+);
 
 // 後方互換性のためのエイリアス
-export const useInboxPaginationStore = useTablePaginationStore
+export const useInboxPaginationStore = useTablePaginationStore;

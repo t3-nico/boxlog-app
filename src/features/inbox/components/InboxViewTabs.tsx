@@ -1,23 +1,23 @@
-'use client'
+'use client';
 
-import { Columns3, MoreHorizontal, Pencil, Table2, Trash2 } from 'lucide-react'
-import { useTranslations } from 'next-intl'
-import { useParams, useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { Columns3, MoreHorizontal, Pencil, Table2, Trash2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { useParams, useRouter } from 'next/navigation';
+import { useState } from 'react';
 
-import { AlertDialogConfirm } from '@/components/ui/alert-dialog-confirm'
-import { Button } from '@/components/ui/button'
+import { AlertDialogConfirm } from '@/components/ui/alert-dialog-confirm';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+} from '@/components/ui/dropdown-menu';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-import { useInboxViewStore } from '../stores/useInboxViewStore'
-import type { DisplayMode, InboxView } from '../types/view'
+import { useInboxViewStore } from '../stores/useInboxViewStore';
+import type { DisplayMode, InboxView } from '../types/view';
 
 /**
  * Inbox View Tabs Component
@@ -30,51 +30,52 @@ import type { DisplayMode, InboxView } from '../types/view'
  * ```
  */
 export function InboxViewTabs() {
-  const t = useTranslations()
-  const router = useRouter()
-  const params = useParams()
-  const locale = params?.locale as string
+  const t = useTranslations();
+  const router = useRouter();
+  const params = useParams();
+  const locale = params?.locale as string;
 
-  const { views, activeViewId, setActiveView, deleteView, displayMode, setDisplayMode } = useInboxViewStore()
-  const [editingView, setEditingView] = useState<InboxView | null>(null)
-  const [deleteConfirmView, setDeleteConfirmView] = useState<InboxView | null>(null)
+  const { views, activeViewId, setActiveView, deleteView, displayMode, setDisplayMode } =
+    useInboxViewStore();
+  const [editingView, setEditingView] = useState<InboxView | null>(null);
+  const [deleteConfirmView, setDeleteConfirmView] = useState<InboxView | null>(null);
 
   const handleViewChange = (viewId: string) => {
-    const view = views.find((v) => v.id === viewId)
-    if (!view) return
+    const view = views.find((v) => v.id === viewId);
+    if (!view) return;
 
-    setActiveView(viewId)
-    router.push(`/${locale}/inbox?view=${viewId}`)
-  }
+    setActiveView(viewId);
+    router.push(`/${locale}/inbox?view=${viewId}`);
+  };
 
   const handleOpenDeleteDialog = (viewId: string) => {
-    const view = views.find((v) => v.id === viewId)
+    const view = views.find((v) => v.id === viewId);
     if (view) {
-      setDeleteConfirmView(view)
+      setDeleteConfirmView(view);
     }
-  }
+  };
 
   const handleDeleteConfirm = () => {
     if (deleteConfirmView) {
-      deleteView(deleteConfirmView.id)
-      setDeleteConfirmView(null)
+      deleteView(deleteConfirmView.id);
+      setDeleteConfirmView(null);
     }
-  }
+  };
 
   const getDisplayModeIcon = (mode: DisplayMode) => {
     switch (mode) {
       case 'board':
-        return <Columns3 className="h-4 w-4" />
+        return <Columns3 className="h-4 w-4" />;
       case 'table':
-        return <Table2 className="h-4 w-4" />
+        return <Table2 className="h-4 w-4" />;
       default:
-        return null
+        return null;
     }
-  }
+  };
 
   const handleDisplayModeToggle = () => {
-    setDisplayMode(displayMode === 'board' ? 'table' : 'board')
-  }
+    setDisplayMode(displayMode === 'board' ? 'table' : 'board');
+  };
 
   return (
     <>
@@ -152,5 +153,5 @@ export function InboxViewTabs() {
         variant="destructive"
       />
     </>
-  )
+  );
 }

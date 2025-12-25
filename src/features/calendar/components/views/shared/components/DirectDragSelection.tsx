@@ -1,26 +1,26 @@
-'use client'
+'use client';
 
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-import { getEventColor } from '@/features/calendar/theme'
-import { calendarStyles } from '@/features/calendar/theme/styles'
-import { cn } from '@/lib/utils'
+import { getEventColor } from '@/features/calendar/theme';
+import { calendarStyles } from '@/features/calendar/theme/styles';
+import { cn } from '@/lib/utils';
 
-import { HOUR_HEIGHT } from '../constants/grid.constants'
+import { HOUR_HEIGHT } from '../constants/grid.constants';
 
 interface DirectDragSelectionProps {
-  weekDates: Date[] // 週の全日付配列
-  className?: string
+  weekDates: Date[]; // 週の全日付配列
+  className?: string;
   onTimeRangeSelect?: (selection: {
-    date: Date
-    startHour: number
-    startMinute: number
-    endHour: number
-    endMinute: number
-  }) => void
-  onSingleClick?: (date: Date, timeString: string) => void
-  children?: React.ReactNode
-  disabled?: boolean
+    date: Date;
+    startHour: number;
+    startMinute: number;
+    endHour: number;
+    endMinute: number;
+  }) => void;
+  onSingleClick?: (date: Date, timeString: string) => void;
+  children?: React.ReactNode;
+  disabled?: boolean;
 }
 
 /**
@@ -35,46 +35,46 @@ export const DirectDragSelection = ({
   children,
   disabled = false,
 }: DirectDragSelectionProps) => {
-  const [isSelecting, setIsSelecting] = useState(false)
+  const [isSelecting, setIsSelecting] = useState(false);
   const [selection, setSelection] = useState<{
-    date: Date
-    startHour: number
-    startMinute: number
-    endHour: number
-    endMinute: number
-  } | null>(null)
+    date: Date;
+    startHour: number;
+    startMinute: number;
+    endHour: number;
+    endMinute: number;
+  } | null>(null);
   const [selectionStart, setSelectionStart] = useState<{
-    date: Date
-    hour: number
-    minute: number
-    x: number
-    y: number
-  } | null>(null)
-  const isDragging = useRef(false)
-  const isTouchDevice = useRef(false)
-  const containerRef = useRef<HTMLDivElement>(null)
+    date: Date;
+    hour: number;
+    minute: number;
+    x: number;
+    y: number;
+  } | null>(null);
+  const isDragging = useRef(false);
+  const isTouchDevice = useRef(false);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // マウス座標から日付と時刻を計算
   const calculateDateTimeFromMouse = useCallback(
     (clientX: number, clientY: number) => {
-      if (!containerRef.current) return null
+      if (!containerRef.current) return null;
 
-      const container = containerRef.current
-      const rect = container.getBoundingClientRect()
+      const container = containerRef.current;
+      const rect = container.getBoundingClientRect();
 
       // X座標から日付インデックスを計算
-      const relativeX = clientX - rect.left
-      const columnWidth = rect.width / weekDates.length
-      const dateIndex = Math.floor(relativeX / columnWidth)
-      const targetDate = weekDates[dateIndex] ?? weekDates[0]
-      if (!targetDate) return null
+      const relativeX = clientX - rect.left;
+      const columnWidth = rect.width / weekDates.length;
+      const dateIndex = Math.floor(relativeX / columnWidth);
+      const targetDate = weekDates[dateIndex] ?? weekDates[0];
+      if (!targetDate) return null;
 
       // Y座標から時刻を計算
-      const relativeY = clientY - rect.top + container.scrollTop
-      const hourDecimal = relativeY / HOUR_HEIGHT
-      const hour = Math.floor(Math.max(0, Math.min(23, hourDecimal)))
-      const minuteDecimal = (hourDecimal - hour) * 60
-      const minute = Math.round(minuteDecimal / 15) * 15 // 15分単位
+      const relativeY = clientY - rect.top + container.scrollTop;
+      const hourDecimal = relativeY / HOUR_HEIGHT;
+      const hour = Math.floor(Math.max(0, Math.min(23, hourDecimal)));
+      const minuteDecimal = (hourDecimal - hour) * 60;
+      const minute = Math.round(minuteDecimal / 15) * 15; // 15分単位
 
       console.log('🎯 DirectDragSelection座標計算:', {
         clientX,
@@ -87,101 +87,101 @@ export const DirectDragSelection = ({
         hour,
         minute,
         weekDatesLength: weekDates.length,
-      })
+      });
 
-      return { date: targetDate, hour, minute }
+      return { date: targetDate, hour, minute };
     },
-    [weekDates]
-  )
+    [weekDates],
+  );
 
   // 共通のドラッグ開始処理
   const startDragSelection = useCallback(
     (clientX: number, clientY: number) => {
-      if (disabled) return
+      if (disabled) return;
 
-      const result = calculateDateTimeFromMouse(clientX, clientY)
-      if (!result) return
+      const result = calculateDateTimeFromMouse(clientX, clientY);
+      if (!result) return;
 
-      setIsSelecting(true)
+      setIsSelecting(true);
       setSelectionStart({
         date: result.date,
         hour: result.hour,
         minute: result.minute,
         x: clientX,
         y: clientY,
-      })
-      isDragging.current = false
+      });
+      isDragging.current = false;
     },
-    [disabled, calculateDateTimeFromMouse]
-  )
+    [disabled, calculateDateTimeFromMouse],
+  );
 
   // マウスダウン
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
-      if (disabled) return
-      isTouchDevice.current = false
-      startDragSelection(e.clientX, e.clientY)
-      e.preventDefault()
+      if (disabled) return;
+      isTouchDevice.current = false;
+      startDragSelection(e.clientX, e.clientY);
+      e.preventDefault();
     },
-    [disabled, startDragSelection]
-  )
+    [disabled, startDragSelection],
+  );
 
   // タッチ開始
   const handleTouchStart = useCallback(
     (e: React.TouchEvent) => {
-      if (disabled) return
-      if (e.touches.length !== 1) return
+      if (disabled) return;
+      if (e.touches.length !== 1) return;
 
-      isTouchDevice.current = true
-      const touch = e.touches[0]
-      if (!touch) return
+      isTouchDevice.current = true;
+      const touch = e.touches[0];
+      if (!touch) return;
 
-      startDragSelection(touch.clientX, touch.clientY)
+      startDragSelection(touch.clientX, touch.clientY);
       // タッチイベントではpreventDefaultしない（スクロールとの競合を避ける）
     },
-    [disabled, startDragSelection]
-  )
+    [disabled, startDragSelection],
+  );
 
   // グローバルマウス/タッチ移動と終了の処理
   useEffect(() => {
-    if (!isSelecting || !selectionStart) return
+    if (!isSelecting || !selectionStart) return;
 
     // 共通の移動処理
     const handleMove = (clientX: number, clientY: number) => {
-      if (!selectionStart) return
+      if (!selectionStart) return;
 
       // ドラッグ判定
-      const deltaX = Math.abs(clientX - selectionStart.x)
-      const deltaY = Math.abs(clientY - selectionStart.y)
+      const deltaX = Math.abs(clientX - selectionStart.x);
+      const deltaY = Math.abs(clientY - selectionStart.y);
       if (deltaX > 5 || deltaY > 10) {
-        isDragging.current = true
+        isDragging.current = true;
       }
 
-      const result = calculateDateTimeFromMouse(clientX, clientY)
-      if (!result || !result.date) return
+      const result = calculateDateTimeFromMouse(clientX, clientY);
+      if (!result || !result.date) return;
 
       // 同じ日付内でのみドラッグを許可
       if (result.date.getTime() !== selectionStart.date.getTime()) {
-        return
+        return;
       }
 
-      let startHour = selectionStart.hour
-      let startMinute = selectionStart.minute
-      let endHour = result.hour
-      let endMinute = result.minute
+      let startHour = selectionStart.hour;
+      let startMinute = selectionStart.minute;
+      let endHour = result.hour;
+      let endMinute = result.minute;
 
       // 上向きドラッグの場合は開始・終了を入れ替え
       if (endHour < startHour || (endHour === startHour && endMinute < startMinute)) {
-        ;[startHour, endHour] = [endHour, startHour]
-        ;[startMinute, endMinute] = [endMinute, startMinute]
+        [startHour, endHour] = [endHour, startHour];
+        [startMinute, endMinute] = [endMinute, startMinute];
       }
 
       // 最低15分の選択を保証
       if (endHour === startHour && endMinute <= startMinute) {
-        endMinute = startMinute + 15
+        endMinute = startMinute + 15;
         if (endMinute >= 60) {
-          endHour += 1
-          endMinute = 0
+          endHour += 1;
+          endMinute = 0;
         }
       }
 
@@ -191,80 +191,88 @@ export const DirectDragSelection = ({
         startMinute: Math.max(0, startMinute),
         endHour: Math.min(23, endHour),
         endMinute: Math.min(59, endMinute),
-      })
-    }
+      });
+    };
 
     const handleGlobalMouseMove = (e: MouseEvent) => {
-      handleMove(e.clientX, e.clientY)
-    }
+      handleMove(e.clientX, e.clientY);
+    };
 
     const handleGlobalTouchMove = (e: TouchEvent) => {
-      if (e.touches.length !== 1) return
-      const touch = e.touches[0]
-      if (!touch) return
-      handleMove(touch.clientX, touch.clientY)
+      if (e.touches.length !== 1) return;
+      const touch = e.touches[0];
+      if (!touch) return;
+      handleMove(touch.clientX, touch.clientY);
       // ドラッグ中はスクロールを防止
       if (isDragging.current) {
-        e.preventDefault()
+        e.preventDefault();
       }
-    }
+    };
 
     // 共通の終了処理
     const handleEnd = () => {
       if (disabled) {
-        clearSelectionState()
-        return
+        clearSelectionState();
+        return;
       }
 
       if (selection && isDragging.current && onTimeRangeSelect) {
-        onTimeRangeSelect(selection)
+        onTimeRangeSelect(selection);
       } else if (!isDragging.current && onSingleClick && selectionStart) {
-        const timeString = `${String(selectionStart.hour).padStart(2, '0')}:${String(selectionStart.minute).padStart(2, '0')}`
-        onSingleClick(selectionStart.date, timeString)
+        const timeString = `${String(selectionStart.hour).padStart(2, '0')}:${String(selectionStart.minute).padStart(2, '0')}`;
+        onSingleClick(selectionStart.date, timeString);
       }
 
-      clearSelectionState()
-    }
+      clearSelectionState();
+    };
 
     const handleGlobalMouseUp = () => {
-      handleEnd()
-    }
+      handleEnd();
+    };
 
     const handleGlobalTouchEnd = () => {
-      handleEnd()
-    }
+      handleEnd();
+    };
 
     const clearSelectionState = () => {
-      setIsSelecting(false)
-      setSelection(null)
-      setSelectionStart(null)
-      isDragging.current = false
-    }
+      setIsSelecting(false);
+      setSelection(null);
+      setSelectionStart(null);
+      isDragging.current = false;
+    };
 
     // マウスイベント
-    document.addEventListener('mousemove', handleGlobalMouseMove)
-    document.addEventListener('mouseup', handleGlobalMouseUp)
+    document.addEventListener('mousemove', handleGlobalMouseMove);
+    document.addEventListener('mouseup', handleGlobalMouseUp);
     // タッチイベント
-    document.addEventListener('touchmove', handleGlobalTouchMove, { passive: false })
-    document.addEventListener('touchend', handleGlobalTouchEnd)
-    document.addEventListener('touchcancel', handleGlobalTouchEnd)
+    document.addEventListener('touchmove', handleGlobalTouchMove, { passive: false });
+    document.addEventListener('touchend', handleGlobalTouchEnd);
+    document.addEventListener('touchcancel', handleGlobalTouchEnd);
 
     return () => {
-      document.removeEventListener('mousemove', handleGlobalMouseMove)
-      document.removeEventListener('mouseup', handleGlobalMouseUp)
-      document.removeEventListener('touchmove', handleGlobalTouchMove)
-      document.removeEventListener('touchend', handleGlobalTouchEnd)
-      document.removeEventListener('touchcancel', handleGlobalTouchEnd)
-    }
-  }, [isSelecting, selectionStart, selection, onTimeRangeSelect, onSingleClick, calculateDateTimeFromMouse, disabled])
+      document.removeEventListener('mousemove', handleGlobalMouseMove);
+      document.removeEventListener('mouseup', handleGlobalMouseUp);
+      document.removeEventListener('touchmove', handleGlobalTouchMove);
+      document.removeEventListener('touchend', handleGlobalTouchEnd);
+      document.removeEventListener('touchcancel', handleGlobalTouchEnd);
+    };
+  }, [
+    isSelecting,
+    selectionStart,
+    selection,
+    onTimeRangeSelect,
+    onSingleClick,
+    calculateDateTimeFromMouse,
+    disabled,
+  ]);
 
   // 選択範囲のスタイルを計算
   const selectionStyle: React.CSSProperties | null = selection
     ? (() => {
-        const startMinutes = selection.startHour * 60 + selection.startMinute
-        const endMinutes = selection.endHour * 60 + selection.endMinute
-        const top = startMinutes * (HOUR_HEIGHT / 60)
-        const height = (endMinutes - startMinutes) * (HOUR_HEIGHT / 60)
+        const startMinutes = selection.startHour * 60 + selection.startMinute;
+        const endMinutes = selection.endHour * 60 + selection.endMinute;
+        const top = startMinutes * (HOUR_HEIGHT / 60);
+        const height = (endMinutes - startMinutes) * (HOUR_HEIGHT / 60);
 
         return {
           position: 'absolute',
@@ -274,15 +282,15 @@ export const DirectDragSelection = ({
           height: `${height}px`,
           pointerEvents: 'none',
           zIndex: 1000,
-        }
+        };
       })()
-    : null
+    : null;
 
   const selectionClassName = cn(
     getEventColor('scheduled', 'background'),
     calendarStyles.event.borderRadius,
-    'border-2 border-primary opacity-50'
-  )
+    'border-2 border-primary opacity-50',
+  );
 
   return (
     <div
@@ -294,16 +302,16 @@ export const DirectDragSelection = ({
       onTouchStart={handleTouchStart}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault()
+          e.preventDefault();
           // キーボードからの操作用のダミーイベントを作成
-          const rect = containerRef.current?.getBoundingClientRect()
+          const rect = containerRef.current?.getBoundingClientRect();
           if (rect) {
             const mockEvent = {
               clientX: rect.left + rect.width / 2,
               clientY: rect.top + rect.height / 2,
               preventDefault: () => {},
-            } as React.MouseEvent
-            handleMouseDown(mockEvent)
+            } as React.MouseEvent;
+            handleMouseDown(mockEvent);
           }
         }
       }}
@@ -314,5 +322,5 @@ export const DirectDragSelection = ({
       {/* 選択範囲の表示 */}
       {selectionStyle != null && <div style={selectionStyle} className={selectionClassName} />}
     </div>
-  )
-}
+  );
+};

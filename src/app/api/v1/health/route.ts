@@ -5,23 +5,23 @@
  * /api/v1/health または API-Version: 1.0 header で呼び出し
  */
 
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server';
 
 /**
  * 🌍 API Health Check レスポンス型定義
  */
 interface HealthCheckResponse {
-  status: 'ok' | 'error'
-  version: string
-  timestamp: string
-  uptime: number
-  environment: string
+  status: 'ok' | 'error';
+  version: string;
+  timestamp: string;
+  uptime: number;
+  environment: string;
   features: {
-    versioning: boolean
-    rateLimit: boolean
-    cors: boolean
-    metrics: boolean
-  }
+    versioning: boolean;
+    rateLimit: boolean;
+    cors: boolean;
+    metrics: boolean;
+  };
 }
 
 /**
@@ -41,9 +41,9 @@ export async function GET(_request: NextRequest): Promise<NextResponse> {
         cors: true,
         metrics: true,
       },
-    }
+    };
 
-    return NextResponse.json(healthResponse, { status: 200 })
+    return NextResponse.json(healthResponse, { status: 200 });
   } catch (error) {
     return NextResponse.json(
       {
@@ -52,7 +52,7 @@ export async function GET(_request: NextRequest): Promise<NextResponse> {
         error: error instanceof Error ? error.message : 'Unknown error',
         timestamp: new Date().toISOString(),
       },
-      { status: 500 }
-    )
+      { status: 500 },
+    );
   }
 }

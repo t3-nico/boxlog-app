@@ -1,13 +1,13 @@
-'use client'
+'use client';
 
-import { useDroppable } from '@dnd-kit/core'
-import { useSortable } from '@dnd-kit/sortable'
-import { CSS } from '@dnd-kit/utilities'
-import { Edit, Folder, MoreHorizontal, Palette, Trash2 } from 'lucide-react'
-import { useCallback } from 'react'
+import { useDroppable } from '@dnd-kit/core';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { Edit, Folder, MoreHorizontal, Palette, Trash2 } from 'lucide-react';
+import { useCallback } from 'react';
 
-import { Button } from '@/components/ui/button'
-import { ColorPalettePicker } from '@/components/ui/color-palette-picker'
+import { Button } from '@/components/ui/button';
+import { ColorPalettePicker } from '@/components/ui/color-palette-picker';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,29 +17,29 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Input } from '@/components/ui/input'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { DEFAULT_GROUP_COLOR } from '@/config/ui/colors'
-import { GroupNameWithTooltip } from '@/features/tags/components/GroupNameWithTooltip'
-import type { TagGroup } from '@/features/tags/types'
-import { useTranslations } from 'next-intl'
+} from '@/components/ui/dropdown-menu';
+import { Input } from '@/components/ui/input';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { DEFAULT_GROUP_COLOR } from '@/config/ui/colors';
+import { GroupNameWithTooltip } from '@/features/tags/components/GroupNameWithTooltip';
+import type { TagGroup } from '@/features/tags/types';
+import { useTranslations } from 'next-intl';
 
 interface GroupItemProps {
-  group: TagGroup
-  isActive: boolean
-  tagCount: number
-  onGroupClick: (groupNumber: number) => void
-  onStartEdit: (group: TagGroup) => void
-  onCancelEdit: () => void
-  onSaveEdit: (group: TagGroup) => Promise<void>
-  onUpdateColor: (groupId: string, color: string) => Promise<void>
-  onDelete: (group: TagGroup) => void
-  isEditing: boolean
-  editingName: string
-  setEditingName: (name: string) => void
+  group: TagGroup;
+  isActive: boolean;
+  tagCount: number;
+  onGroupClick: (groupNumber: number) => void;
+  onStartEdit: (group: TagGroup) => void;
+  onCancelEdit: () => void;
+  onSaveEdit: (group: TagGroup) => Promise<void>;
+  onUpdateColor: (groupId: string, color: string) => Promise<void>;
+  onDelete: (group: TagGroup) => void;
+  isEditing: boolean;
+  editingName: string;
+  setEditingName: (name: string) => void;
   /** ドラッグ並び替えを有効にするか（manual sort時のみtrue） */
-  isDraggable?: boolean
+  isDraggable?: boolean;
 }
 
 /**
@@ -60,7 +60,7 @@ export function SortableGroupItem({
   setEditingName,
   isDraggable = false,
 }: GroupItemProps) {
-  const t = useTranslations()
+  const t = useTranslations();
 
   // ソート用（ドラッグ並び替え）
   const {
@@ -73,7 +73,7 @@ export function SortableGroupItem({
   } = useSortable({
     id: group.id,
     disabled: !isDraggable,
-  })
+  });
 
   // ドロップゾーンとして設定（タグをグループにドロップ）
   const { setNodeRef: setDroppableNodeRef, isOver } = useDroppable({
@@ -82,34 +82,34 @@ export function SortableGroupItem({
       type: 'group',
       groupId: group.id,
     },
-  })
+  });
 
   // 両方のrefを結合
   const setNodeRef = (node: HTMLDivElement | null) => {
-    setSortableNodeRef(node)
-    setDroppableNodeRef(node)
-  }
+    setSortableNodeRef(node);
+    setDroppableNodeRef(node);
+  };
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.5 : 1,
-  }
+  };
 
   const handleSave = useCallback(() => {
-    onSaveEdit(group)
-  }, [group, onSaveEdit])
+    onSaveEdit(group);
+  }, [group, onSaveEdit]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
       if (e.key === 'Enter') {
-        handleSave()
+        handleSave();
       } else if (e.key === 'Escape') {
-        onCancelEdit()
+        onCancelEdit();
       }
     },
-    [handleSave, onCancelEdit]
-  )
+    [handleSave, onCancelEdit],
+  );
 
   return (
     <div
@@ -118,8 +118,8 @@ export function SortableGroupItem({
       onClick={() => onGroupClick(group.group_number)}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault()
-          onGroupClick(group.group_number)
+          e.preventDefault();
+          onGroupClick(group.group_number);
         }
       }}
       className={`group hover:bg-state-hover flex w-full cursor-pointer items-center rounded-md px-2 py-2 text-sm transition-colors ${
@@ -138,12 +138,15 @@ export function SortableGroupItem({
                 variant="ghost"
                 size="icon-sm"
                 onClick={(e) => {
-                  e.stopPropagation()
+                  e.stopPropagation();
                 }}
                 className="shrink-0"
                 aria-label={t('tags.sidebar.changeColorAria', { name: group.name })}
               >
-                <Folder className="h-4 w-4 shrink-0" style={{ color: group.color || DEFAULT_GROUP_COLOR }} />
+                <Folder
+                  className="h-4 w-4 shrink-0"
+                  style={{ color: group.color || DEFAULT_GROUP_COLOR }}
+                />
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-3" align="start">
@@ -169,8 +172,8 @@ export function SortableGroupItem({
             <GroupNameWithTooltip
               name={group.name}
               onDoubleClick={(e) => {
-                e.stopPropagation()
-                onStartEdit(group)
+                e.stopPropagation();
+                onStartEdit(group);
               }}
             />
           )}
@@ -186,7 +189,7 @@ export function SortableGroupItem({
                 size="icon-sm"
                 className="h-10 w-10 shrink-0 opacity-100 sm:h-7 sm:w-7 sm:opacity-0 sm:group-hover:opacity-100"
                 onClick={(e) => {
-                  e.stopPropagation()
+                  e.stopPropagation();
                 }}
               >
                 <MoreHorizontal className="h-4 w-4" />
@@ -195,8 +198,8 @@ export function SortableGroupItem({
             <DropdownMenuContent align="end">
               <DropdownMenuItem
                 onClick={(e) => {
-                  e.stopPropagation()
-                  onStartEdit(group)
+                  e.stopPropagation();
+                  onStartEdit(group);
                 }}
               >
                 <Edit className="mr-2 h-4 w-4" />
@@ -217,8 +220,8 @@ export function SortableGroupItem({
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={(e) => {
-                  e.stopPropagation()
-                  onDelete(group)
+                  e.stopPropagation();
+                  onDelete(group);
                 }}
                 className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
               >
@@ -228,9 +231,11 @@ export function SortableGroupItem({
             </DropdownMenuContent>
           </DropdownMenu>
 
-          <span className="text-muted-foreground w-4 text-right text-xs tabular-nums">{tagCount}</span>
+          <span className="text-muted-foreground w-4 text-right text-xs tabular-nums">
+            {tagCount}
+          </span>
         </div>
       </div>
     </div>
-  )
+  );
 }

@@ -1,27 +1,31 @@
-'use client'
+'use client';
 
-import { useDroppable } from '@dnd-kit/core'
-import { FolderX } from 'lucide-react'
-import { useTranslations } from 'next-intl'
+import { useDroppable } from '@dnd-kit/core';
+import { FolderX } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface UncategorizedDropZoneProps {
-  isActive: boolean
-  uncategorizedTagsCount: number
-  onClick: () => void
+  isActive: boolean;
+  uncategorizedTagsCount: number;
+  onClick: () => void;
 }
 
 /**
  * 未分類へのドロップゾーン
  */
-export function UncategorizedDropZone({ isActive, uncategorizedTagsCount, onClick }: UncategorizedDropZoneProps) {
-  const t = useTranslations()
+export function UncategorizedDropZone({
+  isActive,
+  uncategorizedTagsCount,
+  onClick,
+}: UncategorizedDropZoneProps) {
+  const t = useTranslations();
   const { setNodeRef, isOver } = useDroppable({
     id: 'drop-uncategorized',
     data: {
       type: 'group',
       groupId: null,
     },
-  })
+  });
 
   return (
     <div
@@ -31,8 +35,8 @@ export function UncategorizedDropZone({ isActive, uncategorizedTagsCount, onClic
       onClick={onClick}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault()
-          onClick()
+          e.preventDefault();
+          onClick();
         }
       }}
       className={`hover:bg-state-hover flex w-full cursor-pointer items-center rounded-md px-2 py-2 text-sm transition-colors ${
@@ -46,8 +50,10 @@ export function UncategorizedDropZone({ isActive, uncategorizedTagsCount, onClic
           </div>
           <span>{t('tags.sidebar.uncategorized')}</span>
         </div>
-        <span className="text-muted-foreground w-4 text-right text-xs tabular-nums">{uncategorizedTagsCount}</span>
+        <span className="text-muted-foreground w-4 text-right text-xs tabular-nums">
+          {uncategorizedTagsCount}
+        </span>
       </div>
     </div>
-  )
+  );
 }

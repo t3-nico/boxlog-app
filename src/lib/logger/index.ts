@@ -6,78 +6,85 @@
  */
 
 // Core exports
-export * from './formatters'
-export { createLogger, getDefaultConfig, Logger } from './logger'
-export * from './outputs'
-export * from './types'
+export * from './formatters';
+export { createLogger, getDefaultConfig, Logger } from './logger';
+export * from './outputs';
+export * from './types';
 
 // Convenience imports
-import { createLogger, getDefaultConfig } from './logger'
+import { createLogger, getDefaultConfig } from './logger';
 
 /**
  * 🌍 グローバルロガーインスタンス
  */
-export const logger = createLogger(getDefaultConfig())
+export const logger = createLogger(getDefaultConfig());
 
 /**
  * 🎯 便利な関数エクスポート（グローバルロガー使用）
  */
-export const log = (level: 'error' | 'warn' | 'info' | 'debug', message: string, meta?: Record<string, unknown>) =>
-  logger.log(level, message, meta)
+export const log = (
+  level: 'error' | 'warn' | 'info' | 'debug',
+  message: string,
+  meta?: Record<string, unknown>,
+) => logger.log(level, message, meta);
 
-export const error = (message: string, error?: Error | unknown, context?: Record<string, unknown>) =>
-  logger.error(message, error, context)
+export const error = (
+  message: string,
+  error?: Error | unknown,
+  context?: Record<string, unknown>,
+) => logger.error(message, error, context);
 
-export const warn = (message: string, meta?: Record<string, unknown>) => logger.warn(message, meta)
+export const warn = (message: string, meta?: Record<string, unknown>) => logger.warn(message, meta);
 
-export const info = (message: string, meta?: Record<string, unknown>) => logger.info(message, meta)
+export const info = (message: string, meta?: Record<string, unknown>) => logger.info(message, meta);
 
-export const debug = (message: string, meta?: Record<string, unknown>) => logger.debug(message, meta)
+export const debug = (message: string, meta?: Record<string, unknown>) =>
+  logger.debug(message, meta);
 
 export const performance = (
   message: string,
   performance: { duration: number; memory?: number; cpu?: number },
-  meta?: Record<string, unknown>
-) => logger.performance(message, performance, meta)
+  meta?: Record<string, unknown>,
+) => logger.performance(message, performance, meta);
 
 export const security = (
   message: string,
   security: {
-    eventType: 'login_attempt' | 'unauthorized_access' | 'suspicious_activity' | 'data_breach'
-    ipAddress?: string
-    userAgent?: string
-    threatLevel?: 'low' | 'medium' | 'high' | 'critical'
-    resource?: string
+    eventType: 'login_attempt' | 'unauthorized_access' | 'suspicious_activity' | 'data_breach';
+    ipAddress?: string;
+    userAgent?: string;
+    threatLevel?: 'low' | 'medium' | 'high' | 'critical';
+    resource?: string;
   },
-  meta?: Record<string, unknown>
-) => logger.security(message, security, meta)
+  meta?: Record<string, unknown>,
+) => logger.security(message, security, meta);
 
 export const business = (
   message: string,
   business: {
-    eventType: 'user_action' | 'transaction' | 'conversion' | 'milestone'
-    value?: number
-    currency?: string
-    category?: string
-    tags?: string[]
+    eventType: 'user_action' | 'transaction' | 'conversion' | 'milestone';
+    value?: number;
+    currency?: string;
+    category?: string;
+    tags?: string[];
   },
-  meta?: Record<string, unknown>
-) => logger.business(message, business, meta)
+  meta?: Record<string, unknown>,
+) => logger.business(message, business, meta);
 
-export const timer = (label: string) => logger.timer(label)
+export const timer = (label: string) => logger.timer(label);
 
-export const setContext = (context: Record<string, unknown>) => logger.setContext(context)
-export const clearContext = () => logger.clearContext()
-export const getStats = () => logger.getStats()
-export const resetStats = () => logger.resetStats()
-export const flush = () => logger.flush()
+export const setContext = (context: Record<string, unknown>) => logger.setContext(context);
+export const clearContext = () => logger.clearContext();
+export const getStats = () => logger.getStats();
+export const resetStats = () => logger.resetStats();
+export const flush = () => logger.flush();
 
 /**
  * 🔧 環境設定ヘルパー
  */
 export function configureLogger(environment?: string): void {
-  const config = getDefaultConfig(environment)
-  logger.updateConfig(config)
+  const config = getDefaultConfig(environment);
+  logger.updateConfig(config);
 }
 
 /**
@@ -86,28 +93,28 @@ export function configureLogger(environment?: string): void {
 export function withRequestContext<T extends (...args: unknown[]) => unknown>(
   fn: T,
   context: {
-    requestId?: string
-    userId?: string
-    method?: string
-    url?: string
-  }
+    requestId?: string;
+    userId?: string;
+    method?: string;
+    url?: string;
+  },
 ): T {
   return ((...args: Parameters<T>) => {
-    const originalContext = logger.getContext()
+    const originalContext = logger.getContext();
 
     logger.setContext({
       ...originalContext,
       requestId: context.requestId,
       userId: context.userId,
       component: `${context.method} ${context.url}`,
-    })
+    });
 
     try {
-      return fn(...args)
+      return fn(...args);
     } finally {
-      logger.setContext(originalContext)
+      logger.setContext(originalContext);
     }
-  }) as T
+  }) as T;
 }
 
 /**
@@ -118,7 +125,7 @@ export function logErrorBoundary(error: Error, errorInfo: { componentStack: stri
     component: 'ErrorBoundary',
     componentStack: errorInfo.componentStack,
     errorBoundary: true,
-  })
+  });
 }
 
 /**
@@ -129,9 +136,9 @@ export function logApiRequest(
   url: string,
   statusCode: number,
   duration: number,
-  userId?: string
+  userId?: string,
 ): void {
-  const level = statusCode >= 500 ? 'error' : statusCode >= 400 ? 'warn' : 'info'
+  const level = statusCode >= 500 ? 'error' : statusCode >= 400 ? 'warn' : 'info';
 
   logger.log(level, `${method} ${url} - ${statusCode}`, {
     component: 'api',
@@ -142,19 +149,24 @@ export function logApiRequest(
     performance: {
       duration,
     },
-  })
+  });
 }
 
 /**
  * 🎯 Database Query Logger Helper
  */
-export function logDatabaseQuery(query: string, duration: number, rowCount?: number, error?: Error): void {
+export function logDatabaseQuery(
+  query: string,
+  duration: number,
+  rowCount?: number,
+  error?: Error,
+): void {
   if (error) {
     logger.error('Database query failed', error, {
       component: 'database',
       query: query.substring(0, 200), // 最初の200文字のみ
       performance: { duration },
-    })
+    });
   } else {
     logger.performance(
       'Database query executed',
@@ -165,8 +177,8 @@ export function logDatabaseQuery(query: string, duration: number, rowCount?: num
         component: 'database',
         query: query.substring(0, 100),
         rowCount,
-      }
-    )
+      },
+    );
   }
 }
 
@@ -179,7 +191,7 @@ export function logExternalApi(
   method: string,
   statusCode: number,
   duration: number,
-  error?: Error
+  error?: Error,
 ): void {
   if (error) {
     logger.error(`External API ${service} failed`, error, {
@@ -189,7 +201,7 @@ export function logExternalApi(
       method,
       statusCode,
       performance: { duration },
-    })
+    });
   } else {
     logger.info(`External API ${service} called`, {
       component: 'external-api',
@@ -198,14 +210,18 @@ export function logExternalApi(
       method,
       statusCode,
       performance: { duration },
-    })
+    });
   }
 }
 
 /**
  * 🎯 User Action Logger Helper
  */
-export function logUserAction(action: string, userId: string, details?: Record<string, unknown>): void {
+export function logUserAction(
+  action: string,
+  userId: string,
+  details?: Record<string, unknown>,
+): void {
   logger.business(
     `User action: ${action}`,
     {
@@ -217,8 +233,8 @@ export function logUserAction(action: string, userId: string, details?: Record<s
       userId,
       component: 'user-action',
       ...details,
-    }
-  )
+    },
+  );
 }
 
 /**
@@ -231,33 +247,33 @@ export function createLoggerMiddleware(component: string) {
         requestId,
         userId,
         component: `${component}:${method}:${url}`,
-      })
+      });
 
       logger.info(`Request started: ${method} ${url}`, {
         method,
         url,
         userId,
-      })
+      });
     },
 
     onResponse: (statusCode: number, duration: number) => {
       logger.info(`Request completed: ${statusCode}`, {
         statusCode,
         performance: { duration },
-      })
+      });
 
-      logger.clearContext()
+      logger.clearContext();
     },
 
     onError: (error: Error, statusCode: number) => {
       logger.error(`Request failed: ${statusCode}`, error, {
         statusCode,
         component: 'middleware',
-      })
+      });
 
-      logger.clearContext()
+      logger.clearContext();
     },
-  }
+  };
 }
 
 /**
@@ -287,6 +303,6 @@ const loggerSystem = {
   logExternalApi,
   logUserAction,
   createLoggerMiddleware,
-}
+};
 
-export default loggerSystem
+export default loggerSystem;

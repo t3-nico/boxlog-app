@@ -4,7 +4,7 @@
  * プラン操作のサービス層エクスポート
  */
 
-export { PlanService, PlanServiceError, createPlanService } from './plan-service'
+export { PlanService, PlanServiceError, createPlanService } from './plan-service';
 export type {
   CreatePlanOptions,
   DeletePlanOptions,
@@ -15,4 +15,4 @@ export type {
   ServiceResponse,
   ServiceSupabaseClient,
   UpdatePlanOptions,
-} from './types'
+} from './types';

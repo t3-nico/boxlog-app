@@ -1,23 +1,23 @@
 // Main Calendar Controller Component
-export { CalendarController } from './CalendarController'
+export { CalendarController } from './CalendarController';
 
 // Schedule Card
-export { CurrentScheduleCard } from './current-schedule-card'
+export { CurrentScheduleCard } from './current-schedule-card';
 
 // Layout Components
-export * from './layout'
+export * from './layout';
 
 // Calendar-Specific Components
-export * from './calendar-specific'
+export * from './calendar-specific';
 
 // Animation Components
-export * from './animations'
+export * from './animations';
 
 // Overlay Components
-export * from './overlays'
+export * from './overlays';
 
 // Common Components
-export * from './common'
+export * from './common';
 
 // Views
-export * from './views'
+export * from './views';

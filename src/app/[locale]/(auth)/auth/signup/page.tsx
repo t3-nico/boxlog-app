@@ -1,4 +1,4 @@
-import { SignupForm } from '@/features/auth'
+import { SignupForm } from '@/features/auth';
 
 export default function SignupPage() {
   return (
@@ -7,5 +7,5 @@ export default function SignupPage() {
         <SignupForm />
       </div>
     </div>
-  )
+  );
 }

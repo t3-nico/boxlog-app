@@ -2,18 +2,26 @@
  * Markdownドキュメント生成
  */
 
-import type { BreakingChange, BreakingChangeSummary, ImpactLevel } from '../types'
+import type { BreakingChange, BreakingChangeSummary, ImpactLevel } from '../types';
 
-import { getChangeEmoji, getGroupDisplayName, getGroupEmoji, getImpactEmoji, groupChangesByVersion } from './helpers'
+import {
+  getChangeEmoji,
+  getGroupDisplayName,
+  getGroupEmoji,
+  getImpactEmoji,
+  groupChangesByVersion,
+} from './helpers';
 
 /**
  * 📄 Markdownドキュメント生成
  */
 export function generateMarkdownDocument(
   changes: BreakingChange[],
-  generateVersionSummary: (version: string) => BreakingChangeSummary
+  generateVersionSummary: (version: string) => BreakingChangeSummary,
 ): string {
-  const sortedChanges = changes.sort((a, b) => new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime())
+  const sortedChanges = changes.sort(
+    (a, b) => new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime(),
+  );
 
   let markdown = `# 🚨 BoxLog Breaking Changes
 
@@ -32,72 +40,72 @@ export function generateMarkdownDocument(
 
 ---
 
-`
+`;
 
   // バージョンごとにグループ化
-  const versionGroups = groupChangesByVersion(sortedChanges)
+  const versionGroups = groupChangesByVersion(sortedChanges);
 
   Object.entries(versionGroups).forEach(([version, versionChanges]) => {
-    const summary = generateVersionSummary(version)
+    const summary = generateVersionSummary(version);
 
-    markdown += `## ${version} (${versionChanges[0]!.releaseDate})\n\n`
+    markdown += `## ${version} (${versionChanges[0]!.releaseDate})\n\n`;
 
     if (versionChanges.length > 1) {
-      markdown += `### 📊 概要\n\n`
-      markdown += `- **変更総数**: ${summary.totalChanges}\n`
-      markdown += `- **必須マイグレーション**: ${summary.requiredMigrations}件\n`
-      markdown += `- **推定作業時間**: ${Math.round(summary.totalMigrationTime / 60)}時間\n`
-      markdown += `- **影響度別**: `
+      markdown += `### 📊 概要\n\n`;
+      markdown += `- **変更総数**: ${summary.totalChanges}\n`;
+      markdown += `- **必須マイグレーション**: ${summary.requiredMigrations}件\n`;
+      markdown += `- **推定作業時間**: ${Math.round(summary.totalMigrationTime / 60)}時間\n`;
+      markdown += `- **影響度別**: `;
 
       Object.entries(summary.byImpact)
         .filter(([, count]) => count > 0)
         .forEach(([level, count]) => {
-          const emoji = getImpactEmoji(level as ImpactLevel)
-          markdown += `${emoji}${level}:${count} `
-        })
+          const emoji = getImpactEmoji(level as ImpactLevel);
+          markdown += `${emoji}${level}:${count} `;
+        });
 
-      markdown += `\n\n`
+      markdown += `\n\n`;
     }
 
     versionChanges.forEach((change) => {
-      markdown += `### ${getChangeEmoji(change.type)} ${change.title}\n\n`
-      markdown += `**変更内容:**\n${change.description}\n\n`
+      markdown += `### ${getChangeEmoji(change.type)} ${change.title}\n\n`;
+      markdown += `**変更内容:**\n${change.description}\n\n`;
 
       // 影響範囲
-      markdown += `**影響範囲:**\n`
+      markdown += `**影響範囲:**\n`;
       change.affectedGroups.forEach((group) => {
-        const emoji = getGroupEmoji(group)
-        markdown += `- ${emoji} **${getGroupDisplayName(group)}**: 影響あり\n`
-      })
-      markdown += `\n`
+        const emoji = getGroupEmoji(group);
+        markdown += `- ${emoji} **${getGroupDisplayName(group)}**: 影響あり\n`;
+      });
+      markdown += `\n`;
 
       // マイグレーション
       if (change.migration.steps.length > 0) {
-        markdown += `**マイグレーション:**\n`
+        markdown += `**マイグレーション:**\n`;
         if (change.migration.automationScript) {
-          markdown += `\`\`\`bash\n# 自動マイグレーション\n${change.migration.automationScript}\n\`\`\`\n\n`
+          markdown += `\`\`\`bash\n# 自動マイグレーション\n${change.migration.automationScript}\n\`\`\`\n\n`;
         } else {
-          markdown += `\`\`\`bash\n`
+          markdown += `\`\`\`bash\n`;
           change.migration.steps.forEach((step, index) => {
-            markdown += `# ${index + 1}. ${step.title}\n`
+            markdown += `# ${index + 1}. ${step.title}\n`;
             if (step.command) {
-              markdown += `${step.command}\n`
+              markdown += `${step.command}\n`;
             }
-          })
-          markdown += `\`\`\`\n\n`
+          });
+          markdown += `\`\`\`\n\n`;
         }
       }
 
-      markdown += `**理由:** ${change.reason}\n\n`
+      markdown += `**理由:** ${change.reason}\n\n`;
 
       // 回避方法
       if (change.workaround) {
-        markdown += `**回避方法:** ${change.workaround.description}\n\n`
+        markdown += `**回避方法:** ${change.workaround.description}\n\n`;
       }
 
-      markdown += `---\n\n`
-    })
-  })
+      markdown += `---\n\n`;
+    });
+  });
 
   // フッター情報
   markdown += `
@@ -109,7 +117,7 @@ export function generateMarkdownDocument(
 
 **📝 最終更新**: ${new Date().toISOString().split('T')[0]}
 **📋 記録担当**: Claude Code Development Team
-`
+`;
 
-  return markdown
+  return markdown;
 }

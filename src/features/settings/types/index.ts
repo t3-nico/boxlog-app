@@ -1,8 +1,8 @@
 // Settings-related types
 
-import type { LucideIcon } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react';
 
-import type { TranslatedString } from '@/lib/i18n'
+import type { TranslatedString } from '@/lib/i18n';
 
 // ========================================
 // Settings Dialog Types
@@ -24,7 +24,7 @@ export type SettingsCategory =
   | 'data-controls' // エクスポート、連携
   | 'account' // プロフィール、セキュリティ
   | 'subscription' // プラン、課金
-  | 'about' // 法的情報、バージョン
+  | 'about'; // 法的情報、バージョン
 
 /**
  * 設定セクションの識別子（スクロールターゲット用）
@@ -32,16 +32,16 @@ export type SettingsCategory =
 export type SettingsSectionId =
   | 'calendar' // カレンダー設定
   | 'chronotype' // クロノタイプ設定
-  | 'tags' // タグ設定
+  | 'tags'; // タグ設定
 
 /**
  * 設定メニュー項目
  */
 export interface SettingsMenuItem {
-  id: SettingsCategory
-  icon: LucideIcon
-  label: TranslatedString
-  description?: TranslatedString
+  id: SettingsCategory;
+  icon: LucideIcon;
+  label: TranslatedString;
+  description?: TranslatedString;
 }
 
 // ========================================
@@ -49,42 +49,42 @@ export interface SettingsMenuItem {
 // ========================================
 
 export interface CalendarSettingsData {
-  timezone: string
-  weekStartDay: number
-  timeFormat: '12h' | '24h'
-  defaultView: 'month' | 'week' | 'day'
-  showWeekends: boolean
-  showAllDayEvents: boolean
+  timezone: string;
+  weekStartDay: number;
+  timeFormat: '12h' | '24h';
+  defaultView: 'month' | 'week' | 'day';
+  showWeekends: boolean;
+  showAllDayEvents: boolean;
 }
 
 export interface NotificationSettingsData {
-  emailNotifications: boolean
-  pushNotifications: boolean
-  reminderMinutes: number[]
-  weeklyDigest: boolean
+  emailNotifications: boolean;
+  pushNotifications: boolean;
+  reminderMinutes: number[];
+  weeklyDigest: boolean;
 }
 
 export interface PreferencesSettingsData {
-  theme: 'light' | 'dark' | 'system'
-  language: string
-  chronotype: 'morning' | 'evening' | 'intermediate'
-  dateFormat: string
+  theme: 'light' | 'dark' | 'system';
+  language: string;
+  chronotype: 'morning' | 'evening' | 'intermediate';
+  dateFormat: string;
 }
 
 export interface IntegrationSettingsData {
-  googleCalendar: boolean
-  outlook: boolean
-  slack: boolean
-  zapier: boolean
+  googleCalendar: boolean;
+  outlook: boolean;
+  slack: boolean;
+  zapier: boolean;
 }
 
 /**
  * @deprecated Use SettingsMenuItem instead
  */
 export interface SettingsSection {
-  id: string
-  title: string
-  description?: string
-  icon?: string
-  href: string
+  id: string;
+  title: string;
+  description?: string;
+  icon?: string;
+  href: string;
 }

@@ -1,17 +1,17 @@
-import { Badge } from '@/components/ui/badge'
-import { TableCell, TableRow } from '@/components/ui/table'
-import { ChevronDown, ChevronRight } from 'lucide-react'
-import { useInboxGroupStore } from '../../stores/useInboxGroupStore'
+import { Badge } from '@/components/ui/badge';
+import { TableCell, TableRow } from '@/components/ui/table';
+import { ChevronDown, ChevronRight } from 'lucide-react';
+import { useInboxGroupStore } from '../../stores/useInboxGroupStore';
 
 interface GroupHeaderProps {
   /** グループキー */
-  groupKey: string
+  groupKey: string;
   /** グループラベル */
-  groupLabel: string
+  groupLabel: string;
   /** グループ内のアイテム数 */
-  count: number
+  count: number;
   /** 列数（colSpan用） */
-  columnCount: number
+  columnCount: number;
 }
 
 /**
@@ -32,8 +32,8 @@ interface GroupHeaderProps {
  * ```
  */
 export function GroupHeader({ groupKey, groupLabel, count, columnCount }: GroupHeaderProps) {
-  const { collapsedGroups, toggleGroupCollapse } = useInboxGroupStore()
-  const isCollapsed = collapsedGroups.has(groupKey)
+  const { collapsedGroups, toggleGroupCollapse } = useInboxGroupStore();
+  const isCollapsed = collapsedGroups.has(groupKey);
 
   return (
     <TableRow
@@ -50,5 +50,5 @@ export function GroupHeader({ groupKey, groupLabel, count, columnCount }: GroupH
         </div>
       </TableCell>
     </TableRow>
-  )
+  );
 }

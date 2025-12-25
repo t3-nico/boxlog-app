@@ -2,12 +2,12 @@
  * データフェッチ用自動リトライフック
  */
 
-'use client'
+'use client';
 
-import { ERROR_CODES, getErrorCategory } from '@/constants/errorCodes'
+import { ERROR_CODES, getErrorCategory } from '@/constants/errorCodes';
 
-import { RetryConfig } from './types'
-import { useAutoRetry } from './useAutoRetry'
+import { RetryConfig } from './types';
+import { useAutoRetry } from './useAutoRetry';
 
 /**
  * データフェッチ専用リトライフック
@@ -28,10 +28,10 @@ export function useDataFetchRetry<T>(fetchFunction: () => Promise<T>, config: Re
     shouldRetry:
       config.shouldRetry ||
       ((_error: Error, retryCount: number) => {
-        const category = getErrorCategory(ERROR_CODES.DATA_NOT_FOUND)
-        return ['data', 'api', 'system'].includes(category) && retryCount < 2
+        const category = getErrorCategory(ERROR_CODES.DATA_NOT_FOUND);
+        return ['data', 'api', 'system'].includes(category) && retryCount < 2;
       }),
-  }
+  };
 
-  return useAutoRetry(fetchFunction, dataConfig)
+  return useAutoRetry(fetchFunction, dataConfig);
 }

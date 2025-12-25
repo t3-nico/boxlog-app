@@ -1,13 +1,13 @@
-'use client'
+'use client';
 
-import { Bot, Send } from 'lucide-react'
-import { memo, useCallback, useState } from 'react'
+import { Bot, Send } from 'lucide-react';
+import { memo, useCallback, useState } from 'react';
 
-import { Button } from '@/components/ui/button'
-import { Textarea } from '@/components/ui/textarea'
-import { InspectorHeader } from '@/features/inspector'
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { InspectorHeader } from '@/features/inspector';
 
-import { useAIInspectorStore } from '../stores'
+import { useAIInspectorStore } from '../stores';
 
 /**
  * AIInspector コンテンツ
@@ -17,38 +17,42 @@ import { useAIInspectorStore } from '../stores'
  * - 入力フォーム
  */
 export const AIInspectorContent = memo(function AIInspectorContent() {
-  const closeInspector = useAIInspectorStore((state) => state.closeInspector)
-  const displayMode = useAIInspectorStore((state) => state.displayMode)
-  const context = useAIInspectorStore((state) => state.context)
+  const closeInspector = useAIInspectorStore((state) => state.closeInspector);
+  const displayMode = useAIInspectorStore((state) => state.displayMode);
+  const context = useAIInspectorStore((state) => state.context);
 
-  const [input, setInput] = useState('')
+  const [input, setInput] = useState('');
 
   const handleSubmit = useCallback(
     (e: React.FormEvent) => {
-      e.preventDefault()
-      if (!input.trim()) return
+      e.preventDefault();
+      if (!input.trim()) return;
 
       // TODO: AI SDKを使用してメッセージを送信
-      console.log('Sending message:', input)
-      setInput('')
+      console.log('Sending message:', input);
+      setInput('');
     },
-    [input]
-  )
+    [input],
+  );
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
       if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault()
-        handleSubmit(e)
+        e.preventDefault();
+        handleSubmit(e);
       }
     },
-    [handleSubmit]
-  )
+    [handleSubmit],
+  );
 
   return (
     <div className="flex h-full flex-col">
       {/* ヘッダー */}
-      <InspectorHeader onClose={closeInspector} displayMode={displayMode} closeLabel="AIチャットを閉じる" />
+      <InspectorHeader
+        onClose={closeInspector}
+        displayMode={displayMode}
+        closeLabel="AIチャットを閉じる"
+      />
 
       {/* メッセージエリア */}
       <div className="flex-1 overflow-y-auto p-4">
@@ -73,7 +77,13 @@ export const AIInspectorContent = memo(function AIInspectorContent() {
           {/* サンプルプロンプト */}
           <div className="mt-4 flex flex-wrap justify-center gap-2">
             {['今日の予定は？', 'タグを整理したい', '統計を教えて'].map((prompt) => (
-              <Button key={prompt} variant="outline" size="sm" className="text-xs" onClick={() => setInput(prompt)}>
+              <Button
+                key={prompt}
+                variant="outline"
+                size="sm"
+                className="text-xs"
+                onClick={() => setInput(prompt)}
+              >
                 {prompt}
               </Button>
             ))}
@@ -96,8 +106,10 @@ export const AIInspectorContent = memo(function AIInspectorContent() {
             <Send className="h-4 w-4" />
           </Button>
         </form>
-        <p className="text-muted-foreground mt-2 text-center text-xs">設定でAPIキーを登録すると利用できます</p>
+        <p className="text-muted-foreground mt-2 text-center text-xs">
+          設定でAPIキーを登録すると利用できます
+        </p>
       </div>
     </div>
-  )
-})
+  );
+});

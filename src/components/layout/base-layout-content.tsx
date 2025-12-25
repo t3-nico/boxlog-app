@@ -1,30 +1,33 @@
-'use client'
+'use client';
 
-import { CookieConsentBanner } from '@/components/common/cookie-consent-banner'
-import { Button } from '@/components/ui/button'
-import { MEDIA_QUERIES } from '@/config/ui/breakpoints'
-import { useAuthStore } from '@/features/auth/stores/useAuthStore'
-import { CalendarNavigationProvider } from '@/features/calendar/contexts/CalendarNavigationContext'
-import { useCalendarProviderProps } from '@/features/calendar/hooks/useCalendarProviderProps'
+import { CookieConsentBanner } from '@/components/common/cookie-consent-banner';
+import { Button } from '@/components/ui/button';
+import { MEDIA_QUERIES } from '@/config/ui/breakpoints';
+import { useAuthStore } from '@/features/auth/stores/useAuthStore';
+import { CalendarNavigationProvider } from '@/features/calendar/contexts/CalendarNavigationContext';
+import { useCalendarProviderProps } from '@/features/calendar/hooks/useCalendarProviderProps';
 import {
   CreateActionSheet,
   useCreateActionSheet,
   type CreateActionType,
-} from '@/features/navigation/components/mobile/CreateActionSheet'
-import { MobileBottomNavigation } from '@/features/navigation/components/mobile/MobileBottomNavigation'
-import { useNotificationRealtime } from '@/features/notifications/hooks/useNotificationRealtime'
-import { TagsNavigationProvider, type TagsFilter } from '@/features/tags/contexts/TagsNavigationContext'
-import { TagsPageProvider } from '@/features/tags/contexts/TagsPageContext'
-import { useMediaQuery } from '@/hooks/useMediaQuery'
-import { Plus } from 'lucide-react'
-import { useTranslations } from 'next-intl'
-import { usePathname, useSearchParams } from 'next/navigation'
-import React, { useCallback, useMemo } from 'react'
-import { DesktopLayout } from './desktop-layout'
-import { MobileLayout } from './mobile-layout'
+} from '@/features/navigation/components/mobile/CreateActionSheet';
+import { MobileBottomNavigation } from '@/features/navigation/components/mobile/MobileBottomNavigation';
+import { useNotificationRealtime } from '@/features/notifications/hooks/useNotificationRealtime';
+import {
+  TagsNavigationProvider,
+  type TagsFilter,
+} from '@/features/tags/contexts/TagsNavigationContext';
+import { TagsPageProvider } from '@/features/tags/contexts/TagsPageContext';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { Plus } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { usePathname, useSearchParams } from 'next/navigation';
+import React, { useCallback, useMemo } from 'react';
+import { DesktopLayout } from './desktop-layout';
+import { MobileLayout } from './mobile-layout';
 
 interface BaseLayoutContentProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 /**
@@ -39,58 +42,61 @@ interface BaseLayoutContentProps {
  * Client Componentとして分離
  */
 export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
-  const pathname = usePathname() || '/'
-  const t = useTranslations()
-  const isMobile = useMediaQuery(MEDIA_QUERIES.mobile)
-  const searchParams = useSearchParams()
-  const user = useAuthStore((state) => state.user)
+  const pathname = usePathname() || '/';
+  const t = useTranslations();
+  const isMobile = useMediaQuery(MEDIA_QUERIES.mobile);
+  const searchParams = useSearchParams();
+  const user = useAuthStore((state) => state.user);
 
   // メモ化: localeをパスから抽出
   const localeFromPath = useMemo(() => {
-    return (pathname.split('/')[1] || 'ja') as 'ja' | 'en'
-  }, [pathname])
+    return (pathname.split('/')[1] || 'ja') as 'ja' | 'en';
+  }, [pathname]);
 
   // メモ化: カレンダープロバイダーのprops
-  const { calendarProviderProps } = useCalendarProviderProps(pathname, searchParams || new URLSearchParams())
+  const { calendarProviderProps } = useCalendarProviderProps(
+    pathname,
+    searchParams || new URLSearchParams(),
+  );
 
   // メモ化: タグページかどうかを判定
   const isTagsPage = useMemo(() => {
-    return pathname?.startsWith(`/${localeFromPath}/tags`) ?? false
-  }, [pathname, localeFromPath])
+    return pathname?.startsWith(`/${localeFromPath}/tags`) ?? false;
+  }, [pathname, localeFromPath]);
 
   // メモ化: タグページの初期フィルターをURLから解析
   const initialTagsFilter = useMemo((): TagsFilter => {
-    if (!isTagsPage) return 'all'
-    const tagsPath = pathname?.replace(`/${localeFromPath}/tags`, '') || ''
-    if (tagsPath === '/uncategorized') return 'uncategorized'
-    if (tagsPath === '/archive') return 'archive'
+    if (!isTagsPage) return 'all';
+    const tagsPath = pathname?.replace(`/${localeFromPath}/tags`, '') || '';
+    if (tagsPath === '/uncategorized') return 'uncategorized';
+    if (tagsPath === '/archive') return 'archive';
     // /tags/g-{number} → group-{number}
-    const groupMatch = tagsPath.match(/^\/g-(\d+)$/)
-    if (groupMatch?.[1]) return `group-${parseInt(groupMatch[1], 10)}`
-    return 'all'
-  }, [isTagsPage, pathname, localeFromPath])
+    const groupMatch = tagsPath.match(/^\/g-(\d+)$/);
+    if (groupMatch?.[1]) return `group-${parseInt(groupMatch[1], 10)}`;
+    return 'all';
+  }, [isTagsPage, pathname, localeFromPath]);
 
   // Realtime通知購読（Toast表示）
-  useNotificationRealtime(user?.id, true)
+  useNotificationRealtime(user?.id, true);
 
   // CreateActionSheet状態管理
-  const createActionSheet = useCreateActionSheet()
+  const createActionSheet = useCreateActionSheet();
 
   // FABからのアクション選択ハンドラー
   const handleCreateAction = useCallback((type: CreateActionType) => {
     // TODO: 各アクションの実装
     switch (type) {
       case 'plan':
-        console.log('Create new plan')
-        break
+        console.log('Create new plan');
+        break;
       case 'record':
-        console.log('Create new record')
-        break
+        console.log('Create new record');
+        break;
       case 'template':
-        console.log('Add from template')
-        break
+        console.log('Add from template');
+        break;
     }
-  }, [])
+  }, []);
 
   // メモ化: コンテンツ部分（children, isMobile, localeに依存）
   const content = useMemo(
@@ -143,8 +149,8 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
         {isMobile ? <MobileBottomNavigation /> : null}
       </div>
     ),
-    [children, isMobile, localeFromPath, t, createActionSheet, handleCreateAction]
-  )
+    [children, isMobile, localeFromPath, t, createActionSheet, handleCreateAction],
+  );
 
   // カレンダーページの場合はCalendarNavigationProviderでラップ
   if (calendarProviderProps) {
@@ -155,7 +161,7 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
       >
         {content}
       </CalendarNavigationProvider>
-    )
+    );
   }
 
   // タグページの場合はTagsNavigationProvider + TagsPageProviderでラップ
@@ -164,8 +170,8 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
       <TagsNavigationProvider initialFilter={initialTagsFilter}>
         <TagsPageProvider>{content}</TagsPageProvider>
       </TagsNavigationProvider>
-    )
+    );
   }
 
-  return content
+  return content;
 }

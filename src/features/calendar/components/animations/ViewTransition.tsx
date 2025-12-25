@@ -1,10 +1,10 @@
-'use client'
+'use client';
 
 // Types
-export type { CalendarView, SlideDirection } from './types'
+export type { CalendarView, SlideDirection } from './types';
 
 // Context
-export { useAnimation } from './context'
+export { useAnimation } from './context';
 
 // Components
 export {
@@ -28,7 +28,7 @@ export {
   TaskHoverTooltip,
   TouchAnimation,
   ViewTransition,
-} from './components'
+} from './components';
 
 // Hooks
-export { useAnimationPerformance, useViewTransition } from './hooks'
+export { useAnimationPerformance, useViewTransition } from './hooks';

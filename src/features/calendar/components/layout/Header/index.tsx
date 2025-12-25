@@ -1,39 +1,39 @@
-'use client'
+'use client';
 
-import { Search } from 'lucide-react'
+import { Search } from 'lucide-react';
 
-import { Button } from '@/components/ui/button'
-import { useGlobalSearch } from '@/features/search/hooks/use-global-search'
+import { Button } from '@/components/ui/button';
+import { useGlobalSearch } from '@/features/search/hooks/use-global-search';
 
-import type { CalendarViewType } from '../../../types/calendar.types'
+import type { CalendarViewType } from '../../../types/calendar.types';
 
-import { DateNavigator } from './DateNavigator'
-import { DateRangeDisplay } from './DateRangeDisplay'
-import { HeaderActions } from './HeaderActions'
-import { ViewSwitcher } from './ViewSwitcher'
+import { DateNavigator } from './DateNavigator';
+import { DateRangeDisplay } from './DateRangeDisplay';
+import { HeaderActions } from './HeaderActions';
+import { ViewSwitcher } from './ViewSwitcher';
 
 interface CalendarHeaderProps {
-  viewType: CalendarViewType
-  currentDate: Date
-  onNavigate: (direction: 'prev' | 'next' | 'today') => void
-  onViewChange: (view: CalendarViewType) => void
+  viewType: CalendarViewType;
+  currentDate: Date;
+  onNavigate: (direction: 'prev' | 'next' | 'today') => void;
+  onViewChange: (view: CalendarViewType) => void;
   // オプションのアクション
-  onSettings?: (() => void) | undefined
-  onExport?: (() => void) | undefined
-  onImport?: (() => void) | undefined
-  showActions?: boolean | undefined
+  onSettings?: (() => void) | undefined;
+  onExport?: (() => void) | undefined;
+  onImport?: (() => void) | undefined;
+  showActions?: boolean | undefined;
   // 左側のカスタムコンテンツ（モバイルメニューボタンなど）
-  leftSlot?: React.ReactNode | undefined
+  leftSlot?: React.ReactNode | undefined;
   // 日付選択機能
-  onDateSelect?: ((date: Date) => void) | undefined
-  showMiniCalendar?: boolean | undefined
+  onDateSelect?: ((date: Date) => void) | undefined;
+  showMiniCalendar?: boolean | undefined;
   // 現在表示している期間（MiniCalendarでのハイライト用）
   displayRange?:
     | {
-        start: Date
-        end: Date
+        start: Date;
+        end: Date;
       }
-    | undefined
+    | undefined;
 }
 
 const viewOptions = [
@@ -42,7 +42,7 @@ const viewOptions = [
   { value: '5day' as CalendarViewType, label: '5 Days', shortcut: '5' },
   { value: 'week' as CalendarViewType, label: 'Week', shortcut: 'W' },
   { value: 'agenda' as CalendarViewType, label: 'Agenda', shortcut: 'A' },
-]
+];
 
 /**
  * カレンダーヘッダー（ナビゲーション部分）
@@ -76,7 +76,7 @@ export const CalendarHeader = ({
   showMiniCalendar = false,
   displayRange,
 }: CalendarHeaderProps) => {
-  const { open: openSearch } = useGlobalSearch()
+  const { open: openSearch } = useGlobalSearch();
 
   return (
     <header className="bg-background relative h-12 px-4 py-2">
@@ -140,9 +140,11 @@ export const CalendarHeader = ({
           <DateNavigator onNavigate={onNavigate} arrowSize="md" />
 
           {/* アクションボタン */}
-          {showActions != null && <HeaderActions onSettings={onSettings} onExport={onExport} onImport={onImport} />}
+          {showActions != null && (
+            <HeaderActions onSettings={onSettings} onExport={onExport} onImport={onImport} />
+          )}
         </div>
       </div>
     </header>
-  )
-}
+  );
+};

@@ -1,16 +1,16 @@
-import type { StateCreator } from 'zustand'
-import { create } from 'zustand'
-import { devtools, persist } from 'zustand/middleware'
+import type { StateCreator } from 'zustand';
+import { create } from 'zustand';
+import { devtools, persist } from 'zustand/middleware';
 
 /**
  * ページネーションストアの状態
  */
 export interface TablePaginationState {
-  currentPage: number
-  pageSize: number
-  setCurrentPage: (page: number) => void
-  setPageSize: (size: number) => void
-  reset: () => void
+  currentPage: number;
+  pageSize: number;
+  setCurrentPage: (page: number) => void;
+  setPageSize: (size: number) => void;
+  reset: () => void;
 }
 
 /**
@@ -18,11 +18,11 @@ export interface TablePaginationState {
  */
 export interface CreateTablePaginationStoreConfig {
   /** デフォルトページサイズ（デフォルト: 25） */
-  defaultPageSize?: number
+  defaultPageSize?: number;
   /** localStorage 永続化キー（nullの場合は永続化しない） */
-  persistKey?: string
+  persistKey?: string;
   /** devtools 表示名 */
-  storeName?: string
+  storeName?: string;
 }
 
 /**
@@ -42,7 +42,11 @@ export interface CreateTablePaginationStoreConfig {
  * ```
  */
 export function createTablePaginationStore(config: CreateTablePaginationStoreConfig = {}) {
-  const { defaultPageSize = 25, persistKey, storeName = persistKey ?? 'table-pagination-store' } = config
+  const {
+    defaultPageSize = 25,
+    persistKey,
+    storeName = persistKey ?? 'table-pagination-store',
+  } = config;
 
   const storeCreator: StateCreator<TablePaginationState> = (set) => ({
     currentPage: 1,
@@ -51,11 +55,13 @@ export function createTablePaginationStore(config: CreateTablePaginationStoreCon
     setCurrentPage: (page: number) => set({ currentPage: page }),
     setPageSize: (size: number) => set({ pageSize: size, currentPage: 1 }),
     reset: () => set({ currentPage: 1, pageSize: defaultPageSize }),
-  })
+  });
 
   if (persistKey) {
-    return create<TablePaginationState>()(devtools(persist(storeCreator, { name: persistKey }), { name: storeName }))
+    return create<TablePaginationState>()(
+      devtools(persist(storeCreator, { name: persistKey }), { name: storeName }),
+    );
   }
 
-  return create<TablePaginationState>()(devtools(storeCreator, { name: storeName }))
+  return create<TablePaginationState>()(devtools(storeCreator, { name: storeName }));
 }

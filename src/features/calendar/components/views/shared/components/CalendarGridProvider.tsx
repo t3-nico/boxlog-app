@@ -2,52 +2,55 @@
  * カレンダーグリッドのCSS変数を管理するプロバイダー
  */
 
-'use client'
+'use client';
 
-import React, { useEffect } from 'react'
+import React, { useEffect } from 'react';
 
-import { useResponsiveHourHeight } from '../hooks/useResponsiveHourHeight'
+import { useResponsiveHourHeight } from '../hooks/useResponsiveHourHeight';
 
 interface CalendarGridProviderProps {
-  children: React.ReactNode
+  children: React.ReactNode;
   hourHeightConfig?: {
-    mobile?: number
-    tablet?: number
-    desktop?: number
-  }
+    mobile?: number;
+    tablet?: number;
+    desktop?: number;
+  };
 }
 
-export const CalendarGridProvider = ({ children, hourHeightConfig = {} }: CalendarGridProviderProps) => {
-  const hourHeight = useResponsiveHourHeight(hourHeightConfig)
+export const CalendarGridProvider = ({
+  children,
+  hourHeightConfig = {},
+}: CalendarGridProviderProps) => {
+  const hourHeight = useResponsiveHourHeight(hourHeightConfig);
 
   useEffect(() => {
     // CSS変数をルート要素に設定
-    const root = document.documentElement
+    const root = document.documentElement;
 
-    root.style.setProperty('--calendar-hour-height', `${hourHeight}px`)
-    root.style.setProperty('--calendar-half-hour-height', `${hourHeight / 2}px`)
-    root.style.setProperty('--calendar-quarter-hour-height', `${hourHeight / 4}px`)
-    root.style.setProperty('--calendar-minute-height', `${hourHeight / 60}px`)
-    root.style.setProperty('--calendar-grid-height', `${hourHeight * 24}px`)
+    root.style.setProperty('--calendar-hour-height', `${hourHeight}px`);
+    root.style.setProperty('--calendar-half-hour-height', `${hourHeight / 2}px`);
+    root.style.setProperty('--calendar-quarter-hour-height', `${hourHeight / 4}px`);
+    root.style.setProperty('--calendar-minute-height', `${hourHeight / 60}px`);
+    root.style.setProperty('--calendar-grid-height', `${hourHeight * 24}px`);
 
     return () => {
       // クリーンアップ
-      root.style.removeProperty('--calendar-hour-height')
-      root.style.removeProperty('--calendar-half-hour-height')
-      root.style.removeProperty('--calendar-quarter-hour-height')
-      root.style.removeProperty('--calendar-minute-height')
-      root.style.removeProperty('--calendar-grid-height')
-    }
-  }, [hourHeight])
+      root.style.removeProperty('--calendar-hour-height');
+      root.style.removeProperty('--calendar-half-hour-height');
+      root.style.removeProperty('--calendar-quarter-hour-height');
+      root.style.removeProperty('--calendar-minute-height');
+      root.style.removeProperty('--calendar-grid-height');
+    };
+  }, [hourHeight]);
 
-  return <>{children}</>
-}
+  return <>{children}</>;
+};
 
 /**
  * CSS変数を使用するためのユーティリティフック
  */
 export function useCalendarGridVars() {
-  const hourHeight = useResponsiveHourHeight()
+  const hourHeight = useResponsiveHourHeight();
 
   return {
     hourHeight,
@@ -63,5 +66,5 @@ export function useCalendarGridVars() {
       minuteHeight: 'var(--calendar-minute-height, 1.2px)',
       gridHeight: 'var(--calendar-grid-height, 1728px)',
     },
-  }
+  };
 }

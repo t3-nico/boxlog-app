@@ -1,7 +1,7 @@
-import { format } from 'date-fns'
-import { formatInTimeZone as formatInTZ, fromZonedTime, toZonedTime } from 'date-fns-tz'
+import { format } from 'date-fns';
+import { formatInTimeZone as formatInTZ, fromZonedTime, toZonedTime } from 'date-fns-tz';
 
-import type { DateFormatType } from '../stores/useCalendarSettingsStore'
+import type { DateFormatType } from '../stores/useCalendarSettingsStore';
 
 // タイムゾーンリストの取得
 export function getTimeZones() {
@@ -22,51 +22,55 @@ export function getTimeZones() {
     { value: 'Asia/Tokyo', label: '東京 (GMT+9)', offset: 9 },
     { value: 'Australia/Sydney', label: 'シドニー (GMT+10)', offset: 10 },
     { value: 'Pacific/Auckland', label: 'オークランド (GMT+12)', offset: 12 },
-  ]
+  ];
 
-  return timezones.sort((a, b) => a.offset - b.offset)
+  return timezones.sort((a, b) => a.offset - b.offset);
 }
 
 // 時間表示のフォーマット（タイムゾーン対応）
-export function formatTimeWithSettings(date: Date, timeFormat: '12h' | '24h', timezone?: string): string {
-  const formatString = timeFormat === '24h' ? 'HH:mm' : 'h:mm a'
+export function formatTimeWithSettings(
+  date: Date,
+  timeFormat: '12h' | '24h',
+  timezone?: string,
+): string {
+  const formatString = timeFormat === '24h' ? 'HH:mm' : 'h:mm a';
 
   // タイムゾーンが指定されている場合は、そのタイムゾーンで表示
   if (timezone) {
-    return formatInTZ(date, timezone, formatString)
+    return formatInTZ(date, timezone, formatString);
   }
 
   // タイムゾーンが指定されていない場合は、ローカルタイムゾーンで表示
-  return format(date, formatString)
+  return format(date, formatString);
 }
 
 // 時間のみのフォーマット（時間軸用）
 export function formatHour(hour: number, timeFormat: '12h' | '24h'): string {
   if (timeFormat === '24h') {
-    return `${hour}:00`
+    return `${hour}:00`;
   }
 
-  if (hour === 0) return '12:00 AM'
-  if (hour === 12) return '12:00 PM'
-  if (hour < 12) return `${hour}:00 AM`
-  return `${hour - 12}:00 PM`
+  if (hour === 0) return '12:00 AM';
+  if (hour === 12) return '12:00 PM';
+  if (hour < 12) return `${hour}:00 AM`;
+  return `${hour - 12}:00 PM`;
 }
 
 // 現在時刻をタイムゾーンでフォーマット
 export function formatInTimeZone(date: Date, timezone: string, formatString: string): string {
-  return formatInTZ(date, timezone, formatString)
+  return formatInTZ(date, timezone, formatString);
 }
 
 // UTC時刻を指定タイムゾーンの時刻に変換
 export function convertToTimezone(utcDate: Date, timezone: string): Date {
-  return toZonedTime(utcDate, timezone)
+  return toZonedTime(utcDate, timezone);
 }
 
 // 指定タイムゾーンの時刻をUTCに変換
 export function convertFromTimezone(zonedDate: Date, timezone: string): Date {
   // zonedDateは「そのタイムゾーンでの時刻」として解釈されるべきDateオブジェクト
   // 例: 2025-11-20 16:00 (JST) → 2025-11-20 07:00 (UTC)
-  return fromZonedTime(zonedDate, timezone)
+  return fromZonedTime(zonedDate, timezone);
 }
 
 /**
@@ -75,11 +79,15 @@ export function convertFromTimezone(zonedDate: Date, timezone: string): Date {
  * @param dateFormat - 日付フォーマット設定
  * @param timezone - オプションのタイムゾーン
  */
-export function formatDateWithSettings(date: Date, dateFormat: DateFormatType, timezone?: string): string {
+export function formatDateWithSettings(
+  date: Date,
+  dateFormat: DateFormatType,
+  timezone?: string,
+): string {
   if (timezone) {
-    return formatInTZ(date, timezone, dateFormat)
+    return formatInTZ(date, timezone, dateFormat);
   }
-  return format(date, dateFormat)
+  return format(date, dateFormat);
 }
 
 /**
@@ -93,15 +101,15 @@ export function formatDateTimeWithSettings(
   date: Date,
   dateFormat: DateFormatType,
   timeFormat: '12h' | '24h',
-  timezone?: string
+  timezone?: string,
 ): string {
-  const timeFormatString = timeFormat === '24h' ? 'HH:mm' : 'h:mm a'
-  const fullFormat = `${dateFormat} ${timeFormatString}`
+  const timeFormatString = timeFormat === '24h' ? 'HH:mm' : 'h:mm a';
+  const fullFormat = `${dateFormat} ${timeFormatString}`;
 
   if (timezone) {
-    return formatInTZ(date, timezone, fullFormat)
+    return formatInTZ(date, timezone, fullFormat);
   }
-  return format(date, fullFormat)
+  return format(date, fullFormat);
 }
 
 // タイムゾーンの略称を取得
@@ -117,11 +125,11 @@ export function getTimezoneAbbreviation(timezone: string): string {
     'Europe/Paris': 'CET',
     'Australia/Sydney': 'AEDT',
     'Pacific/Auckland': 'NZDT',
-  }
+  };
 
   // マッピングにある場合はそれを返す
   if (abbreviations[timezone]) {
-    return abbreviations[timezone]
+    return abbreviations[timezone];
   }
 
   // マッピングにない場合は、Intl.DateTimeFormatを使って略称を取得
@@ -129,11 +137,11 @@ export function getTimezoneAbbreviation(timezone: string): string {
     const formatter = new Intl.DateTimeFormat('en-US', {
       timeZone: timezone,
       timeZoneName: 'short',
-    })
-    const parts = formatter.formatToParts(new Date())
-    const timeZonePart = parts.find((part) => part.type === 'timeZoneName')
-    return timeZonePart?.value || 'UTC'
+    });
+    const parts = formatter.formatToParts(new Date());
+    const timeZonePart = parts.find((part) => part.type === 'timeZoneName');
+    return timeZonePart?.value || 'UTC';
   } catch {
-    return 'UTC'
+    return 'UTC';
   }
 }

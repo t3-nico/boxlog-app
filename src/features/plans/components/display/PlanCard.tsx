@@ -1,48 +1,48 @@
-'use client'
+'use client';
 
-import { Calendar, MoreVertical } from 'lucide-react'
+import { Calendar, MoreVertical } from 'lucide-react';
 
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { parseDateString } from '@/features/calendar/utils/dateUtils'
-import type { Plan } from '../../types/plan'
-import { PlanStatusBadge } from './PlanStatusBadge'
+} from '@/components/ui/dropdown-menu';
+import { parseDateString } from '@/features/calendar/utils/dateUtils';
+import type { Plan } from '../../types/plan';
+import { PlanStatusBadge } from './PlanStatusBadge';
 
 // tRPC返却値の型（plan_tags を含む）
 type PlanWithplanTags = Plan & {
   plan_tags?: Array<{
-    tag_id: string
-    tags: { id: string; name: string; color: string; description?: string }
-  }>
-}
+    tag_id: string;
+    tags: { id: string; name: string; color: string; description?: string };
+  }>;
+};
 
 interface PlanCardProps {
-  plan: PlanWithplanTags
-  onEdit?: (plan: PlanWithplanTags) => void
-  onDelete?: (plan: PlanWithplanTags) => void
-  onClick?: (plan: PlanWithplanTags) => void
-  tags?: Array<{ id: string; name: string; color: string }>
+  plan: PlanWithplanTags;
+  onEdit?: (plan: PlanWithplanTags) => void;
+  onDelete?: (plan: PlanWithplanTags) => void;
+  onClick?: (plan: PlanWithplanTags) => void;
+  tags?: Array<{ id: string; name: string; color: string }>;
 }
 
 export function PlanCard({ plan, onEdit, onDelete, onClick, tags = [] }: PlanCardProps) {
   const handleCardClick = () => {
     if (onClick) {
-      onClick(plan)
+      onClick(plan);
     }
-  }
+  };
 
   const handleMenuAction = (action: () => void) => (e: Event) => {
-    e.preventDefault()
-    e.stopPropagation()
-    action()
-  }
+    e.preventDefault();
+    e.stopPropagation();
+    action();
+  };
 
   return (
     <Card
@@ -67,7 +67,11 @@ export function PlanCard({ plan, onEdit, onDelete, onClick, tags = [] }: PlanCar
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              {onEdit && <DropdownMenuItem onSelect={handleMenuAction(() => onEdit(plan))}>編集</DropdownMenuItem>}
+              {onEdit && (
+                <DropdownMenuItem onSelect={handleMenuAction(() => onEdit(plan))}>
+                  編集
+                </DropdownMenuItem>
+              )}
               {onDelete && (
                 <>
                   <DropdownMenuSeparator />
@@ -118,11 +122,13 @@ export function PlanCard({ plan, onEdit, onDelete, onClick, tags = [] }: PlanCar
         )}
 
         {/* 説明（省略形） */}
-        {plan.description && <p className="text-muted-foreground line-clamp-2 text-sm">{plan.description}</p>}
+        {plan.description && (
+          <p className="text-muted-foreground line-clamp-2 text-sm">{plan.description}</p>
+        )}
       </CardContent>
     </Card>
-  )
+  );
 }
 
 // Backward compatibility
-export { PlanCard as planCard }
+export { PlanCard as planCard };

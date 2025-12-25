@@ -1,7 +1,7 @@
-import type { ReactNode } from 'react'
+import type { ReactNode } from 'react';
 
 interface TagsLayoutProps {
-  children: ReactNode
+  children: ReactNode;
 }
 
 /**
@@ -11,5 +11,5 @@ interface TagsLayoutProps {
  * モバイルメニューはTagsPageHeaderで提供
  */
 export default function TagsLayout({ children }: TagsLayoutProps) {
-  return <>{children}</>
+  return <>{children}</>;
 }

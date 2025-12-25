@@ -1,24 +1,24 @@
-'use client'
+'use client';
 
-import type React from 'react'
+import type React from 'react';
 
-import Link from 'next/link'
+import Link from 'next/link';
 
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/utils';
 
 export interface AuthPageLayoutProps {
   /** ロゴコンポーネント */
-  logo: React.ReactNode
+  logo: React.ReactNode;
   /** 右側背景のグラデーションクラス名 */
-  backgroundGradient?: string
+  backgroundGradient?: string;
   /** 右側に表示する絵文字 */
-  emoji?: string
+  emoji?: string;
   /** 右側に表示するタイトル */
-  title?: string
+  title?: string;
   /** 右側に表示する説明文 */
-  description?: string
+  description?: string;
   /** フォームコンポーネント */
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 /**
@@ -67,13 +67,19 @@ export function AuthPageLayout({
         <div className={cn('absolute inset-0', backgroundGradient)}>
           <div className="flex h-full items-center justify-center p-8">
             <div className="space-y-4 text-center">
-              {emoji != null && <div className="text-muted-foreground/60 text-6xl font-bold">{emoji}</div>}
-              {title != null && <h2 className="text-muted-foreground text-3xl font-bold">{title}</h2>}
-              {description != null && <p className="text-muted-foreground/80 max-w-md text-lg">{description}</p>}
+              {emoji != null && (
+                <div className="text-muted-foreground/60 text-6xl font-bold">{emoji}</div>
+              )}
+              {title != null && (
+                <h2 className="text-muted-foreground text-3xl font-bold">{title}</h2>
+              )}
+              {description != null && (
+                <p className="text-muted-foreground/80 max-w-md text-lg">{description}</p>
+              )}
             </div>
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }

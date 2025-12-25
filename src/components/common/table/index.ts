@@ -5,6 +5,6 @@ export {
   type GroupedData,
   type PaginationState,
   type SortState,
-} from './DataTable'
-export { ResizableTableHead } from './ResizableTableHead'
-export { TablePagination } from './TablePagination'
+} from './DataTable';
+export { ResizableTableHead } from './ResizableTableHead';
+export { TablePagination } from './TablePagination';

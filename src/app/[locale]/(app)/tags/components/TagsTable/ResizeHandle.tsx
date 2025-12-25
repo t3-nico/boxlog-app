@@ -1,43 +1,43 @@
-'use client'
+'use client';
 
-import type React from 'react'
-import { useCallback, useRef, useState } from 'react'
+import type React from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 interface ResizeHandleProps {
-  columnId: string
-  currentWidth: number
-  onResize: (columnId: string, newWidth: number) => void
+  columnId: string;
+  currentWidth: number;
+  onResize: (columnId: string, newWidth: number) => void;
 }
 
 export function ResizeHandle({ columnId, currentWidth, onResize }: ResizeHandleProps) {
-  const [isResizing, setIsResizing] = useState(false)
-  const startXRef = useRef<number>(0)
-  const startWidthRef = useRef<number>(0)
+  const [isResizing, setIsResizing] = useState(false);
+  const startXRef = useRef<number>(0);
+  const startWidthRef = useRef<number>(0);
 
   const onMouseDown = useCallback(
     (e: React.MouseEvent) => {
-      e.preventDefault()
-      e.stopPropagation()
-      setIsResizing(true)
-      startXRef.current = e.clientX
-      startWidthRef.current = currentWidth
+      e.preventDefault();
+      e.stopPropagation();
+      setIsResizing(true);
+      startXRef.current = e.clientX;
+      startWidthRef.current = currentWidth;
 
       const onMouseMove = (moveEvent: MouseEvent) => {
-        const delta = moveEvent.clientX - startXRef.current
-        onResize(columnId, Math.max(50, startWidthRef.current + delta))
-      }
+        const delta = moveEvent.clientX - startXRef.current;
+        onResize(columnId, Math.max(50, startWidthRef.current + delta));
+      };
 
       const onMouseUp = () => {
-        setIsResizing(false)
-        document.removeEventListener('mousemove', onMouseMove)
-        document.removeEventListener('mouseup', onMouseUp)
-      }
+        setIsResizing(false);
+        document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('mouseup', onMouseUp);
+      };
 
-      document.addEventListener('mousemove', onMouseMove)
-      document.addEventListener('mouseup', onMouseUp)
+      document.addEventListener('mousemove', onMouseMove);
+      document.addEventListener('mouseup', onMouseUp);
     },
-    [columnId, currentWidth, onResize]
-  )
+    [columnId, currentWidth, onResize],
+  );
 
   return (
     <div
@@ -47,5 +47,5 @@ export function ResizeHandle({ columnId, currentWidth, onResize }: ResizeHandleP
       onMouseDown={onMouseDown}
       style={{ userSelect: 'none' }}
     />
-  )
+  );
 }

@@ -1,8 +1,8 @@
-'use client'
+'use client';
 
-import { useCallback, useState } from 'react'
+import { useCallback, useState } from 'react';
 
-import { Check, Edit2, Plus, Trash2, X } from 'lucide-react'
+import { Check, Edit2, Plus, Trash2, X } from 'lucide-react';
 
 import {
   AlertDialog,
@@ -13,28 +13,37 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { cn } from '@/lib/utils'
+} from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { cn } from '@/lib/utils';
 
 // Tag interface
 interface Tag {
-  id: string
-  name: string
-  color: string
-  parentId?: string | null
-  isExpanded?: boolean
+  id: string;
+  name: string;
+  color: string;
+  parentId?: string | null;
+  isExpanded?: boolean;
 }
 
 interface TagManagementModalProps {
-  isOpen: boolean
-  onClose: () => void
-  tags: Tag[]
-  onCreateTag: (tag: { name: string; color: string; parentId?: string | null }) => void
-  onUpdateTag: (id: string, updates: { name?: string; color?: string; parentId?: string | null }) => void
-  onDeleteTag: (id: string) => void
+  isOpen: boolean;
+  onClose: () => void;
+  tags: Tag[];
+  onCreateTag: (tag: { name: string; color: string; parentId?: string | null }) => void;
+  onUpdateTag: (
+    id: string,
+    updates: { name?: string; color?: string; parentId?: string | null },
+  ) => void;
+  onDeleteTag: (id: string) => void;
 }
 
 export const TagManagementModal = ({
@@ -45,14 +54,14 @@ export const TagManagementModal = ({
   onUpdateTag,
   onDeleteTag,
 }: TagManagementModalProps) => {
-  const [newTagName, setNewTagName] = useState('')
-  const [newTagColor, setNewTagColor] = useState('#3b82f6')
-  const [newTagParentId, setNewTagParentId] = useState<string | null>(null)
-  const [editingTag, setEditingTag] = useState<string | null>(null)
-  const [editName, setEditName] = useState('')
-  const [editColor, setEditColor] = useState('')
-  const [editParentId, setEditParentId] = useState<string | null>(null)
-  const [deletingTag, setDeletingTag] = useState<Tag | null>(null)
+  const [newTagName, setNewTagName] = useState('');
+  const [newTagColor, setNewTagColor] = useState('#3b82f6');
+  const [newTagParentId, setNewTagParentId] = useState<string | null>(null);
+  const [editingTag, setEditingTag] = useState<string | null>(null);
+  const [editName, setEditName] = useState('');
+  const [editColor, setEditColor] = useState('');
+  const [editParentId, setEditParentId] = useState<string | null>(null);
+  const [deletingTag, setDeletingTag] = useState<Tag | null>(null);
 
   const presetColors = [
     '#ef4444', // red
@@ -63,7 +72,7 @@ export const TagManagementModal = ({
     '#ec4899', // pink
     '#6b7280', // gray
     '#f97316', // orange
-  ]
+  ];
 
   const handleCreateTag = useCallback(() => {
     if (newTagName.trim() && !tags.some((t) => t.name === newTagName.trim())) {
@@ -71,19 +80,19 @@ export const TagManagementModal = ({
         name: newTagName.trim(),
         color: newTagColor,
         parentId: newTagParentId,
-      })
-      setNewTagName('')
-      setNewTagColor('#3b82f6')
-      setNewTagParentId(null)
+      });
+      setNewTagName('');
+      setNewTagColor('#3b82f6');
+      setNewTagParentId(null);
     }
-  }, [newTagName, newTagColor, newTagParentId, tags, onCreateTag])
+  }, [newTagName, newTagColor, newTagParentId, tags, onCreateTag]);
 
   const handleEditTag = useCallback((tag: Tag) => {
-    setEditingTag(tag.id)
-    setEditName(tag.name)
-    setEditColor(tag.color)
-    setEditParentId(tag.parentId || null)
-  }, [])
+    setEditingTag(tag.id);
+    setEditName(tag.name);
+    setEditColor(tag.color);
+    setEditParentId(tag.parentId || null);
+  }, []);
 
   const handleSaveEdit = useCallback(() => {
     if (editingTag && editName.trim()) {
@@ -91,130 +100,130 @@ export const TagManagementModal = ({
         name: editName.trim(),
         color: editColor,
         parentId: editParentId,
-      })
-      setEditingTag(null)
-      setEditName('')
-      setEditColor('')
-      setEditParentId(null)
+      });
+      setEditingTag(null);
+      setEditName('');
+      setEditColor('');
+      setEditParentId(null);
     }
-  }, [editingTag, editName, editColor, editParentId, onUpdateTag])
+  }, [editingTag, editName, editColor, editParentId, onUpdateTag]);
 
   const handleCancelEdit = useCallback(() => {
-    setEditingTag(null)
-    setEditName('')
-    setEditColor('')
-    setEditParentId(null)
-  }, [])
+    setEditingTag(null);
+    setEditName('');
+    setEditColor('');
+    setEditParentId(null);
+  }, []);
 
   // useCallback handlers for jsx-no-bind optimization
   const handleNewTagNameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setNewTagName(e.target.value)
-  }, [])
+    setNewTagName(e.target.value);
+  }, []);
 
   const handleNewTagNameKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === 'Enter') {
-        handleCreateTag()
+        handleCreateTag();
       }
     },
-    [handleCreateTag]
-  )
+    [handleCreateTag],
+  );
 
   const handleNewTagParentChange = useCallback((value: string) => {
-    setNewTagParentId(value || null)
-  }, [])
+    setNewTagParentId(value || null);
+  }, []);
 
   const handleEditNameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setEditName(e.target.value)
-  }, [])
+    setEditName(e.target.value);
+  }, []);
 
   const handleEditNameKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === 'Enter') {
-        handleSaveEdit()
+        handleSaveEdit();
       } else if (e.key === 'Escape') {
-        handleCancelEdit()
+        handleCancelEdit();
       }
     },
-    [handleSaveEdit, handleCancelEdit]
-  )
+    [handleSaveEdit, handleCancelEdit],
+  );
 
   const handleEditParentChange = useCallback((value: string) => {
-    setEditParentId(value || null)
-  }, [])
+    setEditParentId(value || null);
+  }, []);
 
   const handleOverlayKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
       if (e.key === 'Escape') {
-        onClose()
+        onClose();
       }
     },
-    [onClose]
-  )
+    [onClose],
+  );
 
   const handleNewTagColorSelect = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
-    const color = event.currentTarget.dataset.color
+    const color = event.currentTarget.dataset.color;
     if (color) {
-      setNewTagColor(color)
+      setNewTagColor(color);
     }
-  }, [])
+  }, []);
 
   const handleEditColorSelect = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
-    const color = event.currentTarget.dataset.color
+    const color = event.currentTarget.dataset.color;
     if (color) {
-      setEditColor(color)
+      setEditColor(color);
     }
-  }, [])
+  }, []);
 
   const handleEditClick = useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
-      const tagId = event.currentTarget.dataset.tagId
-      const tag = tags.find((t) => t.id === tagId)
+      const tagId = event.currentTarget.dataset.tagId;
+      const tag = tags.find((t) => t.id === tagId);
       if (tag) {
-        handleEditTag(tag)
+        handleEditTag(tag);
       }
     },
-    [tags, handleEditTag]
-  )
+    [tags, handleEditTag],
+  );
 
   const handleDeleteClick = useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
-      const tagId = event.currentTarget.dataset.tagId
-      const tag = tags.find((t) => t.id === tagId)
+      const tagId = event.currentTarget.dataset.tagId;
+      const tag = tags.find((t) => t.id === tagId);
       if (tag) {
-        setDeletingTag(tag)
+        setDeletingTag(tag);
       }
     },
-    [tags]
-  )
+    [tags],
+  );
 
   const handleConfirmDelete = useCallback(() => {
     if (deletingTag) {
-      onDeleteTag(deletingTag.id)
-      setDeletingTag(null)
+      onDeleteTag(deletingTag.id);
+      setDeletingTag(null);
     }
-  }, [deletingTag, onDeleteTag])
+  }, [deletingTag, onDeleteTag]);
 
   // 親タグとして選択可能なタグを取得（循環参照を防ぐ）
   const getAvailableParentTags = (excludeId?: string) => {
-    if (!excludeId) return tags
+    if (!excludeId) return tags;
 
     // 自分自身と自分の子孫は親として選択できない
-    const descendants = new Set<string>()
+    const descendants = new Set<string>();
     const findDescendants = (parentId: string) => {
       tags.forEach((tag) => {
         if (tag.parentId === parentId) {
-          descendants.add(tag.id)
-          findDescendants(tag.id)
+          descendants.add(tag.id);
+          findDescendants(tag.id);
         }
-      })
-    }
-    findDescendants(excludeId)
+      });
+    };
+    findDescendants(excludeId);
 
-    return tags.filter((tag) => tag.id !== excludeId && !descendants.has(tag.id))
-  }
+    return tags.filter((tag) => tag.id !== excludeId && !descendants.has(tag.id));
+  };
 
-  if (!isOpen) return null
+  if (!isOpen) return null;
 
   return (
     <>
@@ -245,7 +254,10 @@ export const TagManagementModal = ({
 
             <div className="space-y-3">
               <div>
-                <label htmlFor="new-tag-name" className="text-muted-foreground mb-1 block text-xs font-medium">
+                <label
+                  htmlFor="new-tag-name"
+                  className="text-muted-foreground mb-1 block text-xs font-medium"
+                >
                   Name
                 </label>
                 <Input
@@ -259,7 +271,10 @@ export const TagManagementModal = ({
               </div>
 
               <div>
-                <label htmlFor="new-tag-parent" className="text-muted-foreground mb-1 block text-xs font-medium">
+                <label
+                  htmlFor="new-tag-parent"
+                  className="text-muted-foreground mb-1 block text-xs font-medium"
+                >
                   Parent Tag (Optional)
                 </label>
                 <Select value={newTagParentId || ''} onValueChange={handleNewTagParentChange}>
@@ -278,10 +293,17 @@ export const TagManagementModal = ({
               </div>
 
               <div>
-                <div className="text-muted-foreground mb-2 block text-xs font-medium" id="new-tag-color-label">
+                <div
+                  className="text-muted-foreground mb-2 block text-xs font-medium"
+                  id="new-tag-color-label"
+                >
                   Color
                 </div>
-                <div className="flex flex-wrap gap-2" role="group" aria-labelledby="new-tag-color-label">
+                <div
+                  className="flex flex-wrap gap-2"
+                  role="group"
+                  aria-labelledby="new-tag-color-label"
+                >
                   {presetColors.map((color) => (
                     <Button
                       type="button"
@@ -291,7 +313,7 @@ export const TagManagementModal = ({
                       data-color={color}
                       className={cn(
                         'h-8 w-8 rounded-lg p-0 transition-all hover:scale-110 hover:bg-transparent',
-                        newTagColor === color && 'ring-2 ring-gray-400 ring-offset-2'
+                        newTagColor === color && 'ring-2 ring-gray-400 ring-offset-2',
                       )}
                       style={{ backgroundColor: color }}
                       title={color}
@@ -300,7 +322,12 @@ export const TagManagementModal = ({
                 </div>
               </div>
 
-              <Button type="button" onClick={handleCreateTag} disabled={!newTagName.trim()} className="w-full">
+              <Button
+                type="button"
+                onClick={handleCreateTag}
+                disabled={!newTagName.trim()}
+                className="w-full"
+              >
                 <Plus className="h-4 w-4" />
                 Create Tag
               </Button>
@@ -309,7 +336,9 @@ export const TagManagementModal = ({
 
           {/* Existing Tags */}
           <div className="p-4">
-            <h3 className="text-foreground mb-3 text-sm font-medium">Existing Tags ({tags.length})</h3>
+            <h3 className="text-foreground mb-3 text-sm font-medium">
+              Existing Tags ({tags.length})
+            </h3>
 
             {tags.length === 0 ? (
               <div className="text-muted-foreground py-8 text-center">
@@ -358,7 +387,7 @@ export const TagManagementModal = ({
                                 data-color={color}
                                 className={cn(
                                   'h-6 w-6 rounded p-0 transition-all hover:bg-transparent',
-                                  editColor === color && 'ring-2 ring-blue-500'
+                                  editColor === color && 'ring-2 ring-blue-500',
                                 )}
                                 style={{ backgroundColor: color }}
                               />
@@ -389,7 +418,10 @@ export const TagManagementModal = ({
                     ) : (
                       <>
                         {/* Display Mode */}
-                        <div className="h-4 w-4 flex-shrink-0 rounded-full" style={{ backgroundColor: tag.color }} />
+                        <div
+                          className="h-4 w-4 flex-shrink-0 rounded-full"
+                          style={{ backgroundColor: tag.color }}
+                        />
                         <div className="flex-1">
                           <span className="text-foreground text-sm">{tag.name}</span>
                           {tag.parentId != null && (
@@ -451,12 +483,15 @@ export const TagManagementModal = ({
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleConfirmDelete} className="bg-destructive text-destructive-foreground">
+            <AlertDialogAction
+              onClick={handleConfirmDelete}
+              className="bg-destructive text-destructive-foreground"
+            >
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
     </>
-  )
-}
+  );
+};

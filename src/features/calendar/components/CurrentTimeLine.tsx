@@ -2,10 +2,10 @@
  * 現在時刻線コンポーネント
  */
 
-'use client'
+'use client';
 
-import { cn } from '@/lib/utils'
-import { useEffect, useMemo, useState } from 'react'
+import { cn } from '@/lib/utils';
+import { useEffect, useMemo, useState } from 'react';
 
 const currentTimeLineStyles = {
   container: 'absolute z-30 pointer-events-none w-full',
@@ -15,14 +15,14 @@ const currentTimeLineStyles = {
   line: 'absolute h-[2px] bg-primary shadow-sm',
   // 他の日用（薄い表示）
   lineFaded: 'absolute h-[1px] bg-primary/50',
-} as const
+} as const;
 
 interface CurrentTimeLineProps {
-  hourHeight: number
-  displayDates: Date[]
-  timeColumnWidth?: number
+  hourHeight: number;
+  displayDates: Date[];
+  timeColumnWidth?: number;
   /** 他の日にも薄い線を表示するか（デフォルト: true） */
-  showOnOtherDays?: boolean
+  showOnOtherDays?: boolean;
 }
 
 export const CurrentTimeLine = ({
@@ -31,36 +31,36 @@ export const CurrentTimeLine = ({
   timeColumnWidth = 0,
   showOnOtherDays = true,
 }: CurrentTimeLineProps) => {
-  const [currentTime, setCurrentTime] = useState(new Date())
+  const [currentTime, setCurrentTime] = useState(new Date());
 
   // 現在時刻を1分ごとに更新
   useEffect(() => {
-    const updateTime = () => setCurrentTime(new Date())
-    updateTime() // 初回実行
+    const updateTime = () => setCurrentTime(new Date());
+    updateTime(); // 初回実行
 
-    const interval = setInterval(updateTime, 60000) // 1分ごと
-    return () => clearInterval(interval)
-  }, [])
+    const interval = setInterval(updateTime, 60000); // 1分ごと
+    return () => clearInterval(interval);
+  }, []);
 
   // 今日のインデックスを取得
   const todayIndex = useMemo(() => {
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
     return displayDates.findIndex((date) => {
-      const d = new Date(date)
-      d.setHours(0, 0, 0, 0)
-      return d.getTime() === today.getTime()
-    })
-  }, [displayDates])
+      const d = new Date(date);
+      d.setHours(0, 0, 0, 0);
+      return d.getTime() === today.getTime();
+    });
+  }, [displayDates]);
 
   // 現在時刻のY座標を計算
   const topPosition = useMemo(() => {
-    const hours = currentTime.getHours()
-    const minutes = currentTime.getMinutes()
-    const totalMinutes = hours * 60 + minutes
-    return (totalMinutes / 60) * hourHeight
-  }, [currentTime, hourHeight])
+    const hours = currentTime.getHours();
+    const minutes = currentTime.getMinutes();
+    const totalMinutes = hours * 60 + minutes;
+    return (totalMinutes / 60) * hourHeight;
+  }, [currentTime, hourHeight]);
 
   // 時刻文字列を生成
   const timeString = useMemo(() => {
@@ -68,18 +68,18 @@ export const CurrentTimeLine = ({
       hour: '2-digit',
       minute: '2-digit',
       hour12: false,
-    })
-  }, [currentTime])
+    });
+  }, [currentTime]);
 
   // 今日が含まれている場合のメインライン
-  const hasToday = todayIndex !== -1
+  const hasToday = todayIndex !== -1;
 
   // 他の日に線を表示するか（今日がない場合または showOnOtherDays が true の場合）
-  const showFadedLine = showOnOtherDays && displayDates.length > 0
+  const showFadedLine = showOnOtherDays && displayDates.length > 0;
 
   // 何も表示しない場合
   if (!hasToday && !showFadedLine) {
-    return null
+    return null;
   }
 
   return (
@@ -129,18 +129,18 @@ export const CurrentTimeLine = ({
         />
       )}
     </div>
-  )
-}
+  );
+};
 
 /**
  * 列ごとの現在時刻線（複数日表示で各列に個別表示する場合に使用）
  */
 interface CurrentTimeLineForColumnProps {
-  hourHeight: number
+  hourHeight: number;
   /** この列の日付 */
-  date: Date
+  date: Date;
   /** 他の日でも薄く表示するか */
-  showOnOtherDays?: boolean
+  showOnOtherDays?: boolean;
 }
 
 export const CurrentTimeLineForColumn = ({
@@ -148,37 +148,37 @@ export const CurrentTimeLineForColumn = ({
   date,
   showOnOtherDays = true,
 }: CurrentTimeLineForColumnProps) => {
-  const [currentTime, setCurrentTime] = useState(new Date())
+  const [currentTime, setCurrentTime] = useState(new Date());
 
   // 現在時刻を1分ごとに更新
   useEffect(() => {
-    const updateTime = () => setCurrentTime(new Date())
-    updateTime() // 初回実行
+    const updateTime = () => setCurrentTime(new Date());
+    updateTime(); // 初回実行
 
-    const interval = setInterval(updateTime, 60000) // 1分ごと
-    return () => clearInterval(interval)
-  }, [])
+    const interval = setInterval(updateTime, 60000); // 1分ごと
+    return () => clearInterval(interval);
+  }, []);
 
   // 今日かどうかをチェック
   const isToday = useMemo(() => {
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
-    const d = new Date(date)
-    d.setHours(0, 0, 0, 0)
-    return d.getTime() === today.getTime()
-  }, [date])
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const d = new Date(date);
+    d.setHours(0, 0, 0, 0);
+    return d.getTime() === today.getTime();
+  }, [date]);
 
   // 現在時刻のY座標を計算
   const topPosition = useMemo(() => {
-    const hours = currentTime.getHours()
-    const minutes = currentTime.getMinutes()
-    const totalMinutes = hours * 60 + minutes
-    return (totalMinutes / 60) * hourHeight
-  }, [currentTime, hourHeight])
+    const hours = currentTime.getHours();
+    const minutes = currentTime.getMinutes();
+    const totalMinutes = hours * 60 + minutes;
+    return (totalMinutes / 60) * hourHeight;
+  }, [currentTime, hourHeight]);
 
   // 今日でない場合で、他の日に表示しない設定なら非表示
   if (!isToday && !showOnOtherDays) {
-    return null
+    return null;
   }
 
   return (
@@ -207,5 +207,5 @@ export const CurrentTimeLineForColumn = ({
       {/* 他の日の場合：薄い線のみ */}
       {!isToday && showOnOtherDays && <div className="bg-primary/50 h-px w-full" />}
     </div>
-  )
-}
+  );
+};

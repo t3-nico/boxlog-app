@@ -4,12 +4,12 @@
  * 一貫した見た目とアクセシビリティ機能を提供
  */
 
-import React, { useCallback } from 'react'
+import React, { useCallback } from 'react';
 
-import { cva } from 'class-variance-authority'
+import { cva } from 'class-variance-authority';
 
-import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 const dangerButtonVariants = cva(
   'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*="size-"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-destructive focus-visible:ring-destructive/20 focus-visible:ring-[3px] bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive-hover',
@@ -23,13 +23,13 @@ const dangerButtonVariants = cva(
     defaultVariants: {
       intent: 'delete',
     },
-  }
-)
+  },
+);
 
 interface DangerButtonProps extends React.ComponentProps<typeof Button> {
-  children: React.ReactNode
-  loading?: boolean
-  confirmText?: string
+  children: React.ReactNode;
+  loading?: boolean;
+  confirmText?: string;
 }
 
 export const DangerButton = ({
@@ -43,12 +43,12 @@ export const DangerButton = ({
   const handleClick = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {
       if (confirmText && !window.confirm(confirmText)) {
-        return
+        return;
       }
-      onClick?.(e)
+      onClick?.(e);
     },
-    [confirmText, onClick]
-  )
+    [confirmText, onClick],
+  );
 
   return (
     <Button
@@ -67,7 +67,7 @@ export const DangerButton = ({
         children
       )}
     </Button>
-  )
-}
+  );
+};
 
-DangerButton.displayName = 'DangerButton'
+DangerButton.displayName = 'DangerButton';

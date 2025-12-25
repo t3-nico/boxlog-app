@@ -1,9 +1,9 @@
-import { redirect } from 'next/navigation'
+import { redirect } from 'next/navigation';
 
 interface InboxPageProps {
   params: Promise<{
-    locale: string
-  }>
+    locale: string;
+  }>;
 }
 
 /**
@@ -12,6 +12,6 @@ interface InboxPageProps {
  * /inbox へのアクセスは /inbox/all へリダイレクト
  */
 export default async function InboxPage({ params }: InboxPageProps) {
-  const { locale } = await params
-  redirect(`/${locale}/inbox/all`)
+  const { locale } = await params;
+  redirect(`/${locale}/inbox/all`);
 }

@@ -25,47 +25,51 @@
  * ```
  */
 
-'use client'
+'use client';
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react';
 
-import { createClient } from '@/lib/supabase/client'
+import { createClient } from '@/lib/supabase/client';
 
-import type { RealtimeChannelManager, RealtimeSubscriptionConfig } from './types'
-import { RealtimeSubscriptionError } from './types'
+import type { RealtimeChannelManager, RealtimeSubscriptionConfig } from './types';
+import { RealtimeSubscriptionError } from './types';
 
-export function useRealtimeSubscription<T extends Record<string, unknown> = Record<string, unknown>>(
-  config: RealtimeSubscriptionConfig<T>
-) {
-  const channelRef = useRef<RealtimeChannelManager | null>(null)
-  const configRef = useRef(config)
-  const [channelManager, setChannelManager] = useState<RealtimeChannelManager | null>(null)
+export function useRealtimeSubscription<
+  T extends Record<string, unknown> = Record<string, unknown>,
+>(config: RealtimeSubscriptionConfig<T>) {
+  const channelRef = useRef<RealtimeChannelManager | null>(null);
+  const configRef = useRef(config);
+  const [channelManager, setChannelManager] = useState<RealtimeChannelManager | null>(null);
 
   // 最新のconfigを保持（クロージャ問題を回避）
   // 依存配列は空にして、常に最新のconfigを参照
-  configRef.current = config
+  configRef.current = config;
 
   useEffect(() => {
-    const { channelName, enabled = true } = configRef.current
+    const { channelName, enabled = true } = configRef.current;
 
     // enabled=false の場合は購読をスキップ
     if (!enabled) {
-      console.debug(`[Realtime] Subscription disabled: ${channelName}`)
-      return
+      console.debug(`[Realtime] Subscription disabled: ${channelName}`);
+      return;
     }
 
-    const supabase = createClient()
-    const { table, event, filter, schema = 'public', onEvent, onError } = configRef.current
+    const supabase = createClient();
+    const { table, event, filter, schema = 'public', onEvent, onError } = configRef.current;
 
     try {
       // チャンネル作成
-      const channel = supabase.channel(channelName)
+      const channel = supabase.channel(channelName);
 
       // Postgres変更イベントを購読
       // Supabase Realtime型定義の制約を回避するため、anyを使用
       const typedChannel = channel as {
-        on: (event: string, config: Record<string, unknown>, callback: (payload: unknown) => void) => typeof channel
-      }
+        on: (
+          event: string,
+          config: Record<string, unknown>,
+          callback: (payload: unknown) => void,
+        ) => typeof channel;
+      };
 
       typedChannel.on(
         'postgres_changes',
@@ -77,70 +81,73 @@ export function useRealtimeSubscription<T extends Record<string, unknown> = Reco
         },
         (payload: unknown) => {
           try {
-            onEvent(payload as never)
+            onEvent(payload as never);
           } catch (error) {
             const subscriptionError = new RealtimeSubscriptionError(
               `Error in onEvent callback for channel "${channelName}"`,
               channelName,
-              error
-            )
+              error,
+            );
             if (onError) {
-              onError(subscriptionError)
+              onError(subscriptionError);
             } else {
-              console.error(subscriptionError)
+              console.error(subscriptionError);
             }
           }
-        }
-      )
+        },
+      );
 
       // 購読開始
       channel.subscribe((status) => {
         if (status === 'SUBSCRIBED') {
-          console.debug(`[Realtime] Subscribed to channel: ${channelName}`)
+          console.debug(`[Realtime] Subscribed to channel: ${channelName}`);
         } else if (status === 'CHANNEL_ERROR') {
-          const error = new RealtimeSubscriptionError(`Failed to subscribe to channel: ${channelName}`, channelName)
+          const error = new RealtimeSubscriptionError(
+            `Failed to subscribe to channel: ${channelName}`,
+            channelName,
+          );
           if (onError) {
-            onError(error)
+            onError(error);
           } else {
-            console.error(error)
+            console.error(error);
           }
         }
-      })
+      });
 
       // チャンネル管理情報を保存
       const manager: RealtimeChannelManager = {
         channel,
         status: 'subscribing',
         unsubscribe: async () => {
-          await supabase.removeChannel(channel)
+          await supabase.removeChannel(channel);
         },
-      }
-      channelRef.current = manager
-      setChannelManager(manager)
+      };
+      channelRef.current = manager;
+      setChannelManager(manager);
     } catch (error) {
       const subscriptionError = new RealtimeSubscriptionError(
         `Failed to create channel: ${channelName}`,
         channelName,
-        error
-      )
+        error,
+      );
       if (onError) {
-        onError(subscriptionError)
+        onError(subscriptionError);
       } else {
-        console.error(subscriptionError)
+        console.error(subscriptionError);
       }
     }
 
     // クリーンアップ: コンポーネントアンマウント時に購読解除
     return () => {
       if (channelRef.current) {
-        const { channel } = channelRef.current
-        supabase.removeChannel(channel)
-        console.debug(`[Realtime] Unsubscribed from channel: ${channelName}`)
-        channelRef.current = null
-        setChannelManager(null)
+        const { channel } = channelRef.current;
+        supabase.removeChannel(channel);
+        console.debug(`[Realtime] Unsubscribed from channel: ${channelName}`);
+        channelRef.current = null;
+        setChannelManager(null);
       }
-    }
-  }, []) // 空配列: マウント時に1回だけ実行
+    };
+  }, []); // 空配列: マウント時に1回だけ実行
 
-  return channelManager
+  return channelManager;
 }

@@ -1,7 +1,7 @@
-import { useCallback } from 'react'
+import { useCallback } from 'react';
 
-import { useCurrentPeriod, useDateUtilities, useEventsByDate } from '../../shared'
-import type { UseFiveDayViewOptions, UseFiveDayViewReturn } from '../FiveDayView.types'
+import { useCurrentPeriod, useDateUtilities, useEventsByDate } from '../../shared';
+import type { UseFiveDayViewOptions, UseFiveDayViewReturn } from '../FiveDayView.types';
 
 /**
  * FiveDayView専用のロジックを管理するフック
@@ -21,28 +21,28 @@ export function useFiveDayView({
     referenceDate: centerDate,
     viewType: 'fiveday',
     showWeekends,
-  })
+  });
 
   // Phase 3統合フック: 現在期間判定とtodayIndex計算、相対インデックス計算
   const { isCurrentPeriod: isCurrentDay, todayIndex } = useCurrentPeriod({
     dates: fiveDayDates,
     periodType: 'fiveday',
-  })
+  });
 
   // 中央の日付のインデックス（常に2）
-  const centerIndex = 2
+  const centerIndex = 2;
 
   // Phase 3統合フック: イベント日付グループ化
   const { eventsByDate } = useEventsByDate({
     dates: fiveDayDates,
     events,
     sortType: 'standard',
-  })
+  });
 
   // スクロール処理はScrollableCalendarLayoutに委譲
   const scrollToNow = useCallback(() => {
     // ScrollableCalendarLayoutが処理するため、ここでは何もしない
-  }, [])
+  }, []);
 
   return {
     fiveDayDates,
@@ -51,5 +51,5 @@ export function useFiveDayView({
     todayIndex,
     isCurrentDay,
     scrollToNow,
-  }
+  };
 }

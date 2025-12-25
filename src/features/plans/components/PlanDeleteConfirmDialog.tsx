@@ -1,11 +1,11 @@
-'use client'
+'use client';
 
-import { Button } from '@/components/ui/button'
-import { AlertTriangle } from 'lucide-react'
-import { useTranslations } from 'next-intl'
-import { useCallback, useEffect, useState } from 'react'
-import { createPortal } from 'react-dom'
-import { useDeleteConfirmStore } from '../stores/useDeleteConfirmStore'
+import { Button } from '@/components/ui/button';
+import { AlertTriangle } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { useCallback, useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { useDeleteConfirmStore } from '../stores/useDeleteConfirmStore';
 
 /**
  * プラン削除確認ダイアログ
@@ -20,59 +20,59 @@ import { useDeleteConfirmStore } from '../stores/useDeleteConfirmStore'
  * - セマンティックカラー: destructive系トークン使用
  */
 export function PlanDeleteConfirmDialog() {
-  const t = useTranslations()
-  const [isDeleting, setIsDeleting] = useState(false)
-  const [mounted, setMounted] = useState(false)
+  const t = useTranslations();
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
-  const isOpen = useDeleteConfirmStore((state) => state.isOpen)
-  const planTitle = useDeleteConfirmStore((state) => state.planTitle)
-  const onConfirm = useDeleteConfirmStore((state) => state.onConfirm)
-  const closeDialog = useDeleteConfirmStore((state) => state.closeDialog)
+  const isOpen = useDeleteConfirmStore((state) => state.isOpen);
+  const planTitle = useDeleteConfirmStore((state) => state.planTitle);
+  const onConfirm = useDeleteConfirmStore((state) => state.onConfirm);
+  const closeDialog = useDeleteConfirmStore((state) => state.closeDialog);
 
   // クライアントサイドでのみマウント
   useEffect(() => {
-    setMounted(true)
-  }, [])
+    setMounted(true);
+  }, []);
 
   // ESCキーでダイアログを閉じる
   useEffect(() => {
-    if (!isOpen) return
+    if (!isOpen) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && !isDeleting) {
-        closeDialog()
+        closeDialog();
       }
-    }
+    };
 
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [isOpen, isDeleting, closeDialog])
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, isDeleting, closeDialog]);
 
   const handleConfirm = useCallback(async () => {
-    if (!onConfirm) return
-    setIsDeleting(true)
+    if (!onConfirm) return;
+    setIsDeleting(true);
     try {
-      await onConfirm()
+      await onConfirm();
     } finally {
-      setIsDeleting(false)
-      closeDialog()
+      setIsDeleting(false);
+      closeDialog();
     }
-  }, [onConfirm, closeDialog])
+  }, [onConfirm, closeDialog]);
 
   const handleBackdropClick = useCallback(
     (e: React.MouseEvent) => {
       if (e.target === e.currentTarget && !isDeleting) {
-        closeDialog()
+        closeDialog();
       }
     },
-    [isDeleting, closeDialog]
-  )
+    [isDeleting, closeDialog],
+  );
 
-  if (!mounted || !isOpen) return null
+  if (!mounted || !isOpen) return null;
 
   const title = planTitle
     ? t('common.plan.delete.confirmTitleWithName', { name: planTitle })
-    : t('common.plan.delete.confirmTitle')
+    : t('common.plan.delete.confirmTitle');
 
   const dialog = (
     <div
@@ -107,7 +107,12 @@ export function PlanDeleteConfirmDialog() {
 
         {/* Footer: gap-2, justify-end */}
         <div className="flex justify-end gap-2">
-          <Button variant="outline" onClick={closeDialog} disabled={isDeleting} className="hover:bg-state-hover">
+          <Button
+            variant="outline"
+            onClick={closeDialog}
+            disabled={isDeleting}
+            className="hover:bg-state-hover"
+          >
             {t('actions.cancel')}
           </Button>
           <Button
@@ -121,7 +126,7 @@ export function PlanDeleteConfirmDialog() {
         </div>
       </div>
     </div>
-  )
+  );
 
-  return createPortal(dialog, document.body)
+  return createPortal(dialog, document.body);
 }

@@ -1,9 +1,14 @@
-'use client'
+'use client';
 
-import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts'
+import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts';
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from '@/components/ui/chart';
 
 const chartData = [
   { date: '2024-10-14', completed: 12, pending: 5 },
@@ -13,7 +18,7 @@ const chartData = [
   { date: '2024-10-18', completed: 22, pending: 7 },
   { date: '2024-10-19', completed: 20, pending: 5 },
   { date: '2024-10-20', completed: 25, pending: 3 },
-]
+];
 
 // 意味ベース → セマンティックカラー使用
 const chartConfig = {
@@ -25,7 +30,7 @@ const chartConfig = {
     label: '未完了',
     color: 'var(--color-chart-warning)',
   },
-} satisfies ChartConfig
+} satisfies ChartConfig;
 
 export function AreaChartInteractive() {
   return (
@@ -51,11 +56,11 @@ export function AreaChartInteractive() {
               axisLine={false}
               tickMargin={8}
               tickFormatter={(value) => {
-                const date = new Date(value)
+                const date = new Date(value);
                 return date.toLocaleDateString('ja-JP', {
                   month: 'short',
                   day: 'numeric',
-                })
+                });
               }}
             />
             <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="dot" />} />
@@ -79,5 +84,5 @@ export function AreaChartInteractive() {
         </ChartContainer>
       </CardContent>
     </Card>
-  )
+  );
 }

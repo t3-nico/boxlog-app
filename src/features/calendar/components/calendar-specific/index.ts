@@ -3,4 +3,4 @@
  */
 
 // Layout calculations
-export * from './layout'
+export * from './layout';

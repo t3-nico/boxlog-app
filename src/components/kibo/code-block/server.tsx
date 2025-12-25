@@ -1,4 +1,4 @@
-import type { HTMLAttributes } from 'react'
+import type { HTMLAttributes } from 'react';
 
 import {
   transformerNotationDiff,
@@ -6,17 +6,17 @@ import {
   transformerNotationFocus,
   transformerNotationHighlight,
   transformerNotationWordHighlight,
-} from '@shikijs/transformers'
-import { type BundledLanguage, type CodeOptionsMultipleThemes, codeToHtml } from 'shiki'
+} from '@shikijs/transformers';
+import { type BundledLanguage, type CodeOptionsMultipleThemes, codeToHtml } from 'shiki';
 
-import { sanitizeCodeBlock } from '@/lib/security/sanitize'
+import { sanitizeCodeBlock } from '@/lib/security/sanitize';
 
 export type CodeBlockContentProps = HTMLAttributes<HTMLDivElement> & {
-  themes?: CodeOptionsMultipleThemes['themes']
-  language?: BundledLanguage
-  children: string
-  syntaxHighlighting?: boolean
-}
+  themes?: CodeOptionsMultipleThemes['themes'];
+  language?: BundledLanguage;
+  children: string;
+  syntaxHighlighting?: boolean;
+};
 
 export const CodeBlockContent = async ({
   children,
@@ -50,7 +50,7 @@ export const CodeBlockContent = async ({
           }),
         ],
       })
-    : children
+    : children;
 
   return (
     <div
@@ -58,5 +58,5 @@ export const CodeBlockContent = async ({
       dangerouslySetInnerHTML={{ __html: sanitizeCodeBlock(html) }}
       {...props}
     />
-  )
-}
+  );
+};

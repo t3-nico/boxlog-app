@@ -7,4 +7,4 @@
  * @see ./quality-metrics/utils.ts - ユーティリティ
  */
 
-export * from './quality-metrics/index'
+export * from './quality-metrics/index';

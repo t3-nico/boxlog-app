@@ -1,7 +1,7 @@
-import type { MetadataRoute } from 'next'
+import type { MetadataRoute } from 'next';
 
 // サポートする言語
-const locales = ['ja', 'en'] as const
+const locales = ['ja', 'en'] as const;
 
 /**
  * 動的Sitemap生成（多言語対応）
@@ -10,14 +10,14 @@ const locales = ['ja', 'en'] as const
  * @see https://nextjs.org/docs/app/api-reference/file-conventions/metadata/sitemap
  */
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://boxlog.app'
-  const now = new Date()
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://boxlog.app';
+  const now = new Date();
 
   // 多言語URLを生成するヘルパー関数
   const createLocalizedUrls = (
     path: string,
     changeFrequency: 'always' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'never',
-    priority: number
+    priority: number,
   ): MetadataRoute.Sitemap => {
     return locales.map((locale) => ({
       url: `${baseUrl}/${locale}${path}`,
@@ -27,8 +27,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
       alternates: {
         languages: Object.fromEntries(locales.map((l) => [l, `${baseUrl}/${l}${path}`])),
       },
-    }))
-  }
+    }));
+  };
 
   // 静的ページ（多言語対応）
   const staticPages: MetadataRoute.Sitemap = [
@@ -36,7 +36,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...createLocalizedUrls('', 'daily', 1.0),
     // 認証ページ
     ...createLocalizedUrls('/auth', 'monthly', 0.5),
-  ]
+  ];
 
   // メインアプリケーションページ（認証後・多言語対応）
   const appPages: MetadataRoute.Sitemap = [
@@ -45,7 +45,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...createLocalizedUrls('/tags', 'daily', 0.8),
     ...createLocalizedUrls('/stats', 'weekly', 0.7),
     ...createLocalizedUrls('/trash', 'weekly', 0.5),
-  ]
+  ];
 
   // 設定サブページ（多言語対応）
   const settingsPaths = [
@@ -59,10 +59,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     'integration',
     'data-export',
     'plan-billing',
-  ]
+  ];
   const settingsPages: MetadataRoute.Sitemap = settingsPaths.flatMap((path) =>
-    createLocalizedUrls(`/settings/${path}`, 'monthly', 0.5)
-  )
+    createLocalizedUrls(`/settings/${path}`, 'monthly', 0.5),
+  );
 
   // Stats サブページ（多言語対応）
   const statsPaths = [
@@ -79,10 +79,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     'reflect/week',
     'reflect/month',
     'reflect/all',
-  ]
+  ];
   const statsPages: MetadataRoute.Sitemap = statsPaths.flatMap((path) =>
-    createLocalizedUrls(`/stats/${path}`, 'weekly', 0.6)
-  )
+    createLocalizedUrls(`/stats/${path}`, 'weekly', 0.6),
+  );
 
   // APIドキュメント（言語非依存）
   const apiPages: MetadataRoute.Sitemap = [
@@ -92,7 +92,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'monthly',
       priority: 0.3,
     },
-  ]
+  ];
 
-  return [...staticPages, ...appPages, ...settingsPages, ...statsPages, ...apiPages]
+  return [...staticPages, ...appPages, ...settingsPages, ...statsPages, ...apiPages];
 }

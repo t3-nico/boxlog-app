@@ -1,2 +1,2 @@
-export { AIInspector } from './AIInspector'
-export { AIInspectorContent } from './AIInspectorContent'
+export { AIInspector } from './AIInspector';
+export { AIInspectorContent } from './AIInspectorContent';

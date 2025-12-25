@@ -1,21 +1,21 @@
-'use client'
+'use client';
 
-import { AlertCircle } from 'lucide-react'
-import { useTranslations } from 'next-intl'
+import { AlertCircle } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
-import { cn } from '@/lib/utils'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
+import { cn } from '@/lib/utils';
 
-import type { OverduePlan } from '../../../../hooks/useOverduePlans'
+import type { OverduePlan } from '../../../../hooks/useOverduePlans';
 
 interface OverdueBadgeProps {
   /** 未完了プラン配列 */
-  overduePlans: OverduePlan[]
+  overduePlans: OverduePlan[];
   /** 追加のクラス名 */
-  className?: string
+  className?: string;
   /** 追加のスタイル */
-  style?: React.CSSProperties
+  style?: React.CSSProperties;
 }
 
 /**
@@ -25,14 +25,14 @@ interface OverdueBadgeProps {
  */
 function formatOverdueTime(minutes: number): string {
   if (minutes < 60) {
-    return `${minutes}m`
+    return `${minutes}m`;
   }
-  const hours = Math.floor(minutes / 60)
-  const mins = minutes % 60
+  const hours = Math.floor(minutes / 60);
+  const mins = minutes % 60;
   if (mins === 0) {
-    return `${hours}h`
+    return `${hours}h`;
   }
-  return `${hours}h ${mins}m`
+  return `${hours}h ${mins}m`;
 }
 
 /**
@@ -44,17 +44,17 @@ function formatOverdueTime(minutes: number): string {
  * 各プランをクリックするとInspectorを開く。
  */
 export function OverdueBadge({ overduePlans, className, style }: OverdueBadgeProps) {
-  const t = useTranslations('calendar.overdue')
-  const openInspector = usePlanInspectorStore((state) => state.openInspector)
+  const t = useTranslations('calendar.overdue');
+  const openInspector = usePlanInspectorStore((state) => state.openInspector);
 
   // 未完了プランがない場合は非表示
   if (overduePlans.length === 0) {
-    return null
+    return null;
   }
 
   const handlePlanClick = (planId: string) => {
-    openInspector(planId)
-  }
+    openInspector(planId);
+  };
 
   return (
     <Popover>
@@ -65,7 +65,7 @@ export function OverdueBadge({ overduePlans, className, style }: OverdueBadgePro
             'text-destructive',
             'flex items-center justify-center gap-1 text-xs font-medium md:gap-1.5',
             'transition-colors focus:outline-none',
-            className
+            className,
           )}
           style={style}
         >
@@ -73,7 +73,12 @@ export function OverdueBadge({ overduePlans, className, style }: OverdueBadgePro
           <span className="truncate">{t('badge', { count: overduePlans.length })}</span>
         </button>
       </PopoverTrigger>
-      <PopoverContent className="w-72 p-0" align="start" sideOffset={4} onOpenAutoFocus={(e) => e.preventDefault()}>
+      <PopoverContent
+        className="w-72 p-0"
+        align="start"
+        sideOffset={4}
+        onOpenAutoFocus={(e) => e.preventDefault()}
+      >
         <div className="border-border border-b px-3 py-2">
           <h4 className="text-sm font-semibold">{t('popoverTitle')}</h4>
         </div>
@@ -86,7 +91,7 @@ export function OverdueBadge({ overduePlans, className, style }: OverdueBadgePro
               className={cn(
                 'hover:bg-state-hover w-full px-3 py-2 text-left transition-colors',
                 'border-border border-b last:border-b-0',
-                'focus:bg-state-focus focus:outline-none'
+                'focus:bg-state-focus focus:outline-none',
               )}
             >
               <div className="flex items-start justify-between gap-2">
@@ -107,5 +112,5 @@ export function OverdueBadge({ overduePlans, className, style }: OverdueBadgePro
         </div>
       </PopoverContent>
     </Popover>
-  )
+  );
 }

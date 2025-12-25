@@ -1,12 +1,12 @@
-import type { CalendarViewType } from '../types/calendar.types'
+import type { CalendarViewType } from '../types/calendar.types';
 
 /**
  * 有効なビュータイプかどうかを判定
  */
 export function isValidViewType(view: string): view is CalendarViewType {
-  const validTypes: CalendarViewType[] = ['day', '3day', '5day', 'week', 'agenda']
+  const validTypes: CalendarViewType[] = ['day', '3day', '5day', 'week', 'agenda'];
 
-  return validTypes.includes(view as CalendarViewType)
+  return validTypes.includes(view as CalendarViewType);
 }
 
 /**
@@ -19,38 +19,40 @@ export function getViewDisplayName(viewType: CalendarViewType): string {
     '5day': '5 Days',
     week: 'Week',
     agenda: 'Agenda',
-  }
+  };
 
-  return Object.prototype.hasOwnProperty.call(displayNames, viewType) ? displayNames[viewType] : viewType
+  return Object.prototype.hasOwnProperty.call(displayNames, viewType)
+    ? displayNames[viewType]
+    : viewType;
 }
 
 /**
  * デフォルトのビュータイプを取得
  */
 export function getDefaultViewType(): CalendarViewType {
-  return 'day'
+  return 'day';
 }
 
 /**
  * 次のビュータイプを取得
  */
 export function getNextViewType(currentView: CalendarViewType): CalendarViewType {
-  const viewOrder: CalendarViewType[] = ['day', '3day', '5day', 'week', 'agenda']
+  const viewOrder: CalendarViewType[] = ['day', '3day', '5day', 'week', 'agenda'];
 
-  const currentIndex = viewOrder.indexOf(currentView)
-  const nextIndex = (currentIndex + 1) % viewOrder.length
+  const currentIndex = viewOrder.indexOf(currentView);
+  const nextIndex = (currentIndex + 1) % viewOrder.length;
 
-  return viewOrder[nextIndex]!
+  return viewOrder[nextIndex]!;
 }
 
 /**
  * 前のビュータイプを取得
  */
 export function getPrevViewType(currentView: CalendarViewType): CalendarViewType {
-  const viewOrder: CalendarViewType[] = ['day', '3day', '5day', 'week']
+  const viewOrder: CalendarViewType[] = ['day', '3day', '5day', 'week'];
 
-  const currentIndex = viewOrder.indexOf(currentView)
-  const prevIndex = currentIndex === 0 ? viewOrder.length - 1 : currentIndex - 1
+  const currentIndex = viewOrder.indexOf(currentView);
+  const prevIndex = currentIndex === 0 ? viewOrder.length - 1 : currentIndex - 1;
 
-  return viewOrder[prevIndex]!
+  return viewOrder[prevIndex]!;
 }

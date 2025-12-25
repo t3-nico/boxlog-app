@@ -1,40 +1,40 @@
-'use client'
+'use client';
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
-import { useDateFormat } from '@/features/settings/hooks/useDateFormat'
-import { cn } from '@/lib/utils'
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
+import { useDateFormat } from '@/features/settings/hooks/useDateFormat';
+import { cn } from '@/lib/utils';
 
 interface VirtualCalendarGridProps {
-  dates: Date[]
-  plans: CalendarPlan[]
-  hourHeight?: number | undefined
-  startHour?: number | undefined
-  endHour?: number | undefined
-  overscan?: number | undefined // レンダリングバッファ（時間単位）
-  onPlanClick?: ((plan: CalendarPlan) => void) | undefined
-  onCreatePlan?: ((date: Date, time: string) => void) | undefined
-  className?: string | undefined
+  dates: Date[];
+  plans: CalendarPlan[];
+  hourHeight?: number | undefined;
+  startHour?: number | undefined;
+  endHour?: number | undefined;
+  overscan?: number | undefined; // レンダリングバッファ（時間単位）
+  onPlanClick?: ((plan: CalendarPlan) => void) | undefined;
+  onCreatePlan?: ((date: Date, time: string) => void) | undefined;
+  className?: string | undefined;
 }
 
 interface VirtualizedItem {
-  index: number
-  hour: number
-  top: number
-  height: number
-  isVisible: boolean
+  index: number;
+  hour: number;
+  top: number;
+  height: number;
+  isVisible: boolean;
 }
 
 interface ViewportInfo {
-  scrollTop: number
-  visibleStart: number
-  visibleEnd: number
-  containerHeight: number
+  scrollTop: number;
+  visibleStart: number;
+  visibleEnd: number;
+  containerHeight: number;
 }
 
-const HOUR_HEIGHT = 60 // デフォルトの1時間の高さ
-const BUFFER_SIZE = 2 // 前後2時間分のバッファ
+const HOUR_HEIGHT = 60; // デフォルトの1時間の高さ
+const BUFFER_SIZE = 2; // 前後2時間分のバッファ
 
 export const VirtualCalendarGrid = ({
   dates,
@@ -47,22 +47,23 @@ export const VirtualCalendarGrid = ({
   onCreatePlan,
   className,
 }: VirtualCalendarGridProps) => {
-  const containerRef = useRef<HTMLDivElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null);
   const [viewport, setViewport] = useState<ViewportInfo>({
     scrollTop: 0,
     visibleStart: startHour,
     visibleEnd: startHour + 8, // 初期表示は8時間分
     containerHeight: 480,
-  })
+  });
 
   // 仮想化されたアイテムの計算
   const virtualItems = useMemo(() => {
-    const items: VirtualizedItem[] = []
+    const items: VirtualizedItem[] = [];
 
     for (let hour = startHour; hour < endHour; hour++) {
-      const index = hour - startHour
-      const top = index * hourHeight
-      const isVisible = hour >= viewport.visibleStart - overscan && hour <= viewport.visibleEnd + overscan
+      const index = hour - startHour;
+      const top = index * hourHeight;
+      const isVisible =
+        hour >= viewport.visibleStart - overscan && hour <= viewport.visibleEnd + overscan;
 
       items.push({
         index,
@@ -70,40 +71,40 @@ export const VirtualCalendarGrid = ({
         top,
         height: hourHeight,
         isVisible,
-      })
+      });
     }
 
-    return items
-  }, [startHour, endHour, hourHeight, viewport.visibleStart, viewport.visibleEnd, overscan])
+    return items;
+  }, [startHour, endHour, hourHeight, viewport.visibleStart, viewport.visibleEnd, overscan]);
 
   // 表示するプランのフィルタリングと最適化
   const visiblePlans = useMemo(() => {
-    if (!plans.length) return []
+    if (!plans.length) return [];
 
-    const visibleStartHour = Math.max(0, viewport.visibleStart - overscan)
-    const visibleEndHour = Math.min(24, viewport.visibleEnd + overscan)
+    const visibleStartHour = Math.max(0, viewport.visibleStart - overscan);
+    const visibleEndHour = Math.min(24, viewport.visibleEnd + overscan);
 
     return plans.filter((plan) => {
-      if (!plan.startDate) return false
+      if (!plan.startDate) return false;
 
-      const planHour = plan.startDate.getHours()
-      const planEndHour = plan.endDate ? plan.endDate.getHours() : planHour + 1
+      const planHour = plan.startDate.getHours();
+      const planEndHour = plan.endDate ? plan.endDate.getHours() : planHour + 1;
 
       // プランが表示範囲と重複するかチェック
-      return planHour < visibleEndHour && planEndHour > visibleStartHour
-    })
-  }, [plans, viewport.visibleStart, viewport.visibleEnd, overscan])
+      return planHour < visibleEndHour && planEndHour > visibleStartHour;
+    });
+  }, [plans, viewport.visibleStart, viewport.visibleEnd, overscan]);
 
   // スクロールハンドラー（パフォーマンス最適化）
   const handleScroll = useCallback(
     (e: React.UIEvent<HTMLDivElement>) => {
-      const target = e.currentTarget
-      const { scrollTop } = target
-      const containerHeight = target.clientHeight
+      const target = e.currentTarget;
+      const { scrollTop } = target;
+      const containerHeight = target.clientHeight;
 
       // 新しい表示範囲を計算
-      const visibleStart = Math.floor(scrollTop / hourHeight) + startHour
-      const visibleEnd = Math.ceil((scrollTop + containerHeight) / hourHeight) + startHour
+      const visibleStart = Math.floor(scrollTop / hourHeight) + startHour;
+      const visibleEnd = Math.ceil((scrollTop + containerHeight) / hourHeight) + startHour;
 
       setViewport((prev) => {
         // 変化がない場合は更新しない
@@ -113,7 +114,7 @@ export const VirtualCalendarGrid = ({
           prev.visibleEnd === visibleEnd &&
           prev.containerHeight === containerHeight
         ) {
-          return prev
+          return prev;
         }
 
         return {
@@ -121,44 +122,44 @@ export const VirtualCalendarGrid = ({
           visibleStart,
           visibleEnd,
           containerHeight,
-        }
-      })
+        };
+      });
     },
-    [hourHeight, startHour]
-  )
+    [hourHeight, startHour],
+  );
 
   // Intersection Observer state
-  const [observer, setObserver] = useState<IntersectionObserver | null>(null)
+  const [observer, setObserver] = useState<IntersectionObserver | null>(null);
 
   // Intersection Observer for further optimization
   useEffect(() => {
-    if (!containerRef.current) return undefined
+    if (!containerRef.current) return undefined;
 
     const newObserver = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          const element = entry.target as HTMLElement
+          const element = entry.target as HTMLElement;
           if (entry.isIntersecting) {
-            element.style.visibility = 'visible'
+            element.style.visibility = 'visible';
           } else {
-            element.style.visibility = 'hidden'
+            element.style.visibility = 'hidden';
           }
-        })
+        });
       },
       {
         root: containerRef.current,
         rootMargin: `${overscan * hourHeight}px`,
         threshold: 0,
-      }
-    )
+      },
+    );
 
-    setObserver(newObserver)
+    setObserver(newObserver);
 
     return () => {
-      newObserver.disconnect()
-      setObserver(null)
-    }
-  }, [overscan, hourHeight])
+      newObserver.disconnect();
+      setObserver(null);
+    };
+  }, [overscan, hourHeight]);
 
   // レンダリング最適化のための時間スロット生成
   const renderTimeSlots = useCallback(() => {
@@ -172,19 +173,19 @@ export const VirtualCalendarGrid = ({
           height={item.height}
           dates={dates}
           plans={visiblePlans.filter((plan) => {
-            if (!plan.startDate) return false
-            const planHour = plan.startDate.getHours()
-            return planHour === item.hour
+            if (!plan.startDate) return false;
+            const planHour = plan.startDate.getHours();
+            return planHour === item.hour;
           })}
           onPlanClick={onPlanClick}
           onCreatePlan={onCreatePlan}
           observer={observer}
         />
-      ))
-  }, [virtualItems, dates, visiblePlans, onPlanClick, onCreatePlan, observer])
+      ));
+  }, [virtualItems, dates, visiblePlans, onPlanClick, onCreatePlan, observer]);
 
   // 全体の高さ計算
-  const totalHeight = (endHour - startHour) * hourHeight
+  const totalHeight = (endHour - startHour) * hourHeight;
 
   return (
     <div
@@ -223,19 +224,19 @@ export const VirtualCalendarGrid = ({
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
 // 仮想化された時間スロットコンポーネント
 interface VirtualTimeSlotProps {
-  hour: number
-  top: number
-  height: number
-  dates: Date[]
-  plans: CalendarPlan[]
-  onPlanClick?: ((plan: CalendarPlan) => void) | undefined
-  onCreatePlan?: ((date: Date, time: string) => void) | undefined
-  observer?: IntersectionObserver | null | undefined
+  hour: number;
+  top: number;
+  height: number;
+  dates: Date[];
+  plans: CalendarPlan[];
+  onPlanClick?: ((plan: CalendarPlan) => void) | undefined;
+  onCreatePlan?: ((date: Date, time: string) => void) | undefined;
+  observer?: IntersectionObserver | null | undefined;
 }
 
 const VirtualTimeSlot = React.memo(function VirtualTimeSlot({
@@ -248,19 +249,19 @@ const VirtualTimeSlot = React.memo(function VirtualTimeSlot({
   onCreatePlan,
   observer,
 }: VirtualTimeSlotProps) {
-  const slotRef = useRef<HTMLDivElement>(null)
+  const slotRef = useRef<HTMLDivElement>(null);
 
   // Intersection Observer の設定
   useEffect(() => {
-    const element = slotRef.current
+    const element = slotRef.current;
     if (element && observer) {
-      observer.observe(element)
-      return () => observer.unobserve(element)
+      observer.observe(element);
+      return () => observer.unobserve(element);
     }
-    return undefined
-  }, [observer])
+    return undefined;
+  }, [observer]);
 
-  const timeString = `${String(hour).padStart(2, '0')}:00`
+  const timeString = `${String(hour).padStart(2, '0')}:00`;
 
   return (
     <div
@@ -274,7 +275,9 @@ const VirtualTimeSlot = React.memo(function VirtualTimeSlot({
       data-hour={hour}
     >
       {/* 時間ラベル */}
-      <div className="text-muted-foreground absolute top-0 left-0 -mt-2 w-16 text-xs">{timeString}</div>
+      <div className="text-muted-foreground absolute top-0 left-0 -mt-2 w-16 text-xs">
+        {timeString}
+      </div>
 
       {/* 各日付の列 */}
       <div className="ml-16 flex h-full">
@@ -290,16 +293,16 @@ const VirtualTimeSlot = React.memo(function VirtualTimeSlot({
         ))}
       </div>
     </div>
-  )
-})
+  );
+});
 
 // 仮想化された日付列コンポーネント
 interface VirtualDayColumnProps {
-  date: Date
-  hour: number
-  plans: CalendarPlan[]
-  onPlanClick?: ((plan: CalendarPlan) => void) | undefined
-  onCreatePlan?: ((date: Date, time: string) => void) | undefined
+  date: Date;
+  hour: number;
+  plans: CalendarPlan[];
+  onPlanClick?: ((plan: CalendarPlan) => void) | undefined;
+  onCreatePlan?: ((date: Date, time: string) => void) | undefined;
 }
 
 const VirtualDayColumn = React.memo(function VirtualDayColumn({
@@ -310,9 +313,9 @@ const VirtualDayColumn = React.memo(function VirtualDayColumn({
   onCreatePlan,
 }: VirtualDayColumnProps) {
   const handleClick = useCallback(() => {
-    const timeString = `${String(hour).padStart(2, '0')}:00`
-    onCreatePlan?.(date, timeString)
-  }, [date, hour, onCreatePlan])
+    const timeString = `${String(hour).padStart(2, '0')}:00`;
+    onCreatePlan?.(date, timeString);
+  }, [date, hour, onCreatePlan]);
 
   return (
     <div
@@ -323,8 +326,8 @@ const VirtualDayColumn = React.memo(function VirtualDayColumn({
       onClick={handleClick}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault()
-          handleClick()
+          e.preventDefault();
+          handleClick();
         }
       }}
       style={{
@@ -336,30 +339,33 @@ const VirtualDayColumn = React.memo(function VirtualDayColumn({
         <VirtualPlanCard key={plan.id} plan={plan} onClick={() => onPlanClick?.(plan)} />
       ))}
     </div>
-  )
-})
+  );
+});
 
 // 仮想化されたプランカード
 interface VirtualPlanCardProps {
-  plan: CalendarPlan
-  onClick: () => void
+  plan: CalendarPlan;
+  onClick: () => void;
 }
 
-const VirtualPlanCard = React.memo(function VirtualPlanCard({ plan, onClick }: VirtualPlanCardProps) {
-  const { formatTime: formatTimeWithSettings } = useDateFormat()
+const VirtualPlanCard = React.memo(function VirtualPlanCard({
+  plan,
+  onClick,
+}: VirtualPlanCardProps) {
+  const { formatTime: formatTimeWithSettings } = useDateFormat();
   const { style, heightInPixels } = useMemo(() => {
     if (!plan.startDate || !plan.endDate) {
-      return { style: {}, heightInPixels: 0 }
+      return { style: {}, heightInPixels: 0 };
     }
 
-    const startHour = plan.startDate.getHours()
-    const startMinutes = plan.startDate.getMinutes()
-    const endHour = plan.endDate.getHours()
-    const endMinutes = plan.endDate.getMinutes()
+    const startHour = plan.startDate.getHours();
+    const startMinutes = plan.startDate.getMinutes();
+    const endHour = plan.endDate.getHours();
+    const endMinutes = plan.endDate.getMinutes();
 
-    const top = (startMinutes / 60) * HOUR_HEIGHT
-    const duration = endHour - startHour + (endMinutes - startMinutes) / 60
-    const height = duration * HOUR_HEIGHT
+    const top = (startMinutes / 60) * HOUR_HEIGHT;
+    const duration = endHour - startHour + (endMinutes - startMinutes) / 60;
+    const height = duration * HOUR_HEIGHT;
 
     return {
       style: {
@@ -372,8 +378,8 @@ const VirtualPlanCard = React.memo(function VirtualPlanCard({ plan, onClick }: V
         zIndex: 10,
       },
       heightInPixels: height,
-    }
-  }, [plan])
+    };
+  }, [plan]);
 
   return (
     <div
@@ -385,8 +391,8 @@ const VirtualPlanCard = React.memo(function VirtualPlanCard({ plan, onClick }: V
       onClick={onClick}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault()
-          onClick()
+          e.preventDefault();
+          onClick();
         }
       }}
     >
@@ -395,16 +401,16 @@ const VirtualPlanCard = React.memo(function VirtualPlanCard({ plan, onClick }: V
         <div className="opacity-90">{formatTimeWithSettings(plan.startDate)}</div>
       ) : null}
     </div>
-  )
-})
+  );
+});
 
 // ユーティリティ関数
 function format(date: Date, formatStr: string): string {
   if (formatStr === 'yyyy-MM-dd') {
-    return date.toISOString().split('T')[0]!
+    return date.toISOString().split('T')[0]!;
   }
   if (formatStr === 'MMM d') {
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   }
-  return date.toISOString()
+  return date.toISOString();
 }

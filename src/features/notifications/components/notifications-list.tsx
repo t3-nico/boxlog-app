@@ -1,20 +1,20 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
+import { useState } from 'react';
 
-import { BellRing } from 'lucide-react'
+import { BellRing } from 'lucide-react';
 
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'next-intl';
 
-import { useNotificationTypeLabel } from '../utils/notification-helpers'
+import { useNotificationTypeLabel } from '../utils/notification-helpers';
 
 interface SystemNotification {
-  id: number
-  title: string
-  content: string
-  date: string
-  isRead: boolean
-  type: 'system' | 'feature' | 'important'
+  id: number;
+  title: string;
+  content: string;
+  date: string;
+  isRead: boolean;
+  type: 'system' | 'feature' | 'important';
 }
 
 const getDefaultNotifications = (t: (key: string) => string): SystemNotification[] => [
@@ -42,36 +42,38 @@ const getDefaultNotifications = (t: (key: string) => string): SystemNotification
     isRead: true,
     type: 'important',
   },
-]
+];
 
 interface NotificationsListProps {
-  notifications?: SystemNotification[]
+  notifications?: SystemNotification[];
 }
 
 export function NotificationsList({ notifications }: NotificationsListProps) {
-  const t = useTranslations()
-  const getTypeLabel = useNotificationTypeLabel()
-  const defaultNotifications = getDefaultNotifications(t)
-  const [notificationList, setNotificationList] = useState(notifications || defaultNotifications)
+  const t = useTranslations();
+  const getTypeLabel = useNotificationTypeLabel();
+  const defaultNotifications = getDefaultNotifications(t);
+  const [notificationList, setNotificationList] = useState(notifications || defaultNotifications);
 
   const markAsRead = (id: number) => {
     setNotificationList((prev) =>
-      prev.map((notification) => (notification.id === id ? { ...notification, isRead: true } : notification))
-    )
-  }
+      prev.map((notification) =>
+        notification.id === id ? { ...notification, isRead: true } : notification,
+      ),
+    );
+  };
 
   const getTypeColor = (type: string) => {
     switch (type) {
       case 'system':
-        return 'text-primary bg-primary/10'
+        return 'text-primary bg-primary/10';
       case 'feature':
-        return 'text-success bg-success/10'
+        return 'text-success bg-success/10';
       case 'important':
-        return 'text-destructive bg-destructive/10'
+        return 'text-destructive bg-destructive/10';
       default:
-        return 'text-muted-foreground bg-muted'
+        return 'text-muted-foreground bg-muted';
     }
-  }
+  };
 
   return (
     <div className="space-y-6">
@@ -96,7 +98,7 @@ export function NotificationsList({ notifications }: NotificationsListProps) {
                 <div className="mb-2 flex items-center gap-3">
                   <span
                     className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ${getTypeColor(
-                      notification.type
+                      notification.type,
                     )}`}
                   >
                     {getTypeLabel(notification.type)}
@@ -128,10 +130,14 @@ export function NotificationsList({ notifications }: NotificationsListProps) {
       {notificationList.length === 0 && (
         <div className="py-12 text-center">
           <BellRing className="text-muted-foreground mx-auto h-12 w-12" />
-          <h3 className="text-foreground mt-2 text-sm font-medium">{t('notification.list.empty.title')}</h3>
-          <p className="text-muted-foreground mt-2 text-sm">{t('notification.list.empty.description')}</p>
+          <h3 className="text-foreground mt-2 text-sm font-medium">
+            {t('notification.list.empty.title')}
+          </h3>
+          <p className="text-muted-foreground mt-2 text-sm">
+            {t('notification.list.empty.description')}
+          </p>
         </div>
       )}
     </div>
-  )
+  );
 }

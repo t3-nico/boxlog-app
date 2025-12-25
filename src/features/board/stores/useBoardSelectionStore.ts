@@ -1,18 +1,18 @@
-import { create } from 'zustand'
-import { devtools } from 'zustand/middleware'
+import { create } from 'zustand';
+import { devtools } from 'zustand/middleware';
 
 /**
  * Board一括選択状態
  */
 interface BoardSelectionState {
-  selectedIds: Set<string>
-  toggleSelection: (id: string) => void
-  toggleAll: (ids: string[]) => void
-  setSelectedIds: (ids: string[]) => void
-  clearSelection: () => void
-  isSelected: (id: string) => boolean
-  getSelectedCount: () => number
-  getSelectedIds: () => Set<string>
+  selectedIds: Set<string>;
+  toggleSelection: (id: string) => void;
+  toggleAll: (ids: string[]) => void;
+  setSelectedIds: (ids: string[]) => void;
+  clearSelection: () => void;
+  isSelected: (id: string) => boolean;
+  getSelectedCount: () => number;
+  getSelectedIds: () => Set<string>;
 }
 
 /**
@@ -41,26 +41,26 @@ export const useBoardSelectionStore = create<BoardSelectionState>()(
       selectedIds: new Set(),
 
       toggleSelection: (id) => {
-        const { selectedIds } = get()
-        const newSet = new Set(selectedIds)
+        const { selectedIds } = get();
+        const newSet = new Set(selectedIds);
 
         if (newSet.has(id)) {
-          newSet.delete(id)
+          newSet.delete(id);
         } else {
-          newSet.add(id)
+          newSet.add(id);
         }
 
-        set({ selectedIds: newSet })
+        set({ selectedIds: newSet });
       },
 
       toggleAll: (ids) => {
-        const { selectedIds } = get()
-        const allSelected = ids.every((id) => selectedIds.has(id))
+        const { selectedIds } = get();
+        const allSelected = ids.every((id) => selectedIds.has(id));
 
         if (allSelected) {
-          set({ selectedIds: new Set() })
+          set({ selectedIds: new Set() });
         } else {
-          set({ selectedIds: new Set(ids) })
+          set({ selectedIds: new Set(ids) });
         }
       },
 
@@ -74,6 +74,6 @@ export const useBoardSelectionStore = create<BoardSelectionState>()(
 
       getSelectedIds: () => get().selectedIds,
     }),
-    { name: 'board-selection-store' }
-  )
-)
+    { name: 'board-selection-store' },
+  ),
+);

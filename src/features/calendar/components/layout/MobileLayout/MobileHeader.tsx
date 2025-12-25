@@ -1,28 +1,28 @@
-'use client'
+'use client';
 
-import { useCallback, useState } from 'react'
+import { useCallback, useState } from 'react';
 
-import { format, getWeek } from 'date-fns'
-import { ja } from 'date-fns/locale'
-import { ChevronLeft, ChevronRight, Menu } from 'lucide-react'
+import { format, getWeek } from 'date-fns';
+import { ja } from 'date-fns/locale';
+import { ChevronLeft, ChevronRight, Menu } from 'lucide-react';
 
-import { cn } from '@/lib/utils'
-import { useTranslations } from 'next-intl'
+import { cn } from '@/lib/utils';
+import { useTranslations } from 'next-intl';
 
-import type { CalendarViewType } from '../../../types/calendar.types'
+import type { CalendarViewType } from '../../../types/calendar.types';
 
-export type MobileNavigationDirection = 'prev' | 'next' | 'today'
+export type MobileNavigationDirection = 'prev' | 'next' | 'today';
 
 interface MobileHeaderProps {
-  viewType: CalendarViewType
-  currentDate: Date
-  onNavigate: (direction: MobileNavigationDirection) => void
-  onMenuToggle?: () => void
-  onViewChange?: (view: CalendarViewType) => void
-  title?: string
-  showBackButton?: boolean
-  onBack?: () => void
-  className?: string
+  viewType: CalendarViewType;
+  currentDate: Date;
+  onNavigate: (direction: MobileNavigationDirection) => void;
+  onMenuToggle?: () => void;
+  onViewChange?: (view: CalendarViewType) => void;
+  title?: string;
+  showBackButton?: boolean;
+  onBack?: () => void;
+  className?: string;
 }
 
 /**
@@ -40,9 +40,9 @@ export const MobileHeader = ({
   onBack,
   className,
 }: MobileHeaderProps) => {
-  const t = useTranslations()
-  const [isViewMenuOpen, setIsViewMenuOpen] = useState(false)
-  const weekNumber = getWeek(currentDate, { weekStartsOn: 1 })
+  const t = useTranslations();
+  const [isViewMenuOpen, setIsViewMenuOpen] = useState(false);
+  const weekNumber = getWeek(currentDate, { weekStartsOn: 1 });
 
   const viewLabels: Record<CalendarViewType, string> = {
     day: t('calendar.mobile.header.viewLabels.day'),
@@ -50,53 +50,53 @@ export const MobileHeader = ({
     '5day': t('calendar.mobile.header.viewLabels.5day'),
     week: t('calendar.mobile.header.viewLabels.week'),
     agenda: t('calendar.mobile.header.viewLabels.agenda'),
-  }
+  };
 
   // jsx-no-bind optimization: Navigation handlers
   const handleViewMenuOpen = useCallback(() => {
-    setIsViewMenuOpen(true)
-  }, [])
+    setIsViewMenuOpen(true);
+  }, []);
 
   const handleNavigatePrev = useCallback(() => {
-    onNavigate('prev')
-  }, [onNavigate])
+    onNavigate('prev');
+  }, [onNavigate]);
 
   const handleNavigateNext = useCallback(() => {
-    onNavigate('next')
-  }, [onNavigate])
+    onNavigate('next');
+  }, [onNavigate]);
 
   const handleViewMenuClose = useCallback(() => {
-    setIsViewMenuOpen(false)
-  }, [])
+    setIsViewMenuOpen(false);
+  }, []);
 
   const handleViewMenuKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Escape') {
-      setIsViewMenuOpen(false)
+      setIsViewMenuOpen(false);
     }
-  }, [])
+  }, []);
 
   // jsx-no-bind optimization: View change handler creator
   const createViewChangeHandler = useCallback(
     (value: CalendarViewType) => {
       return () => {
-        onViewChange?.(value)
-        setIsViewMenuOpen(false)
-      }
+        onViewChange?.(value);
+        setIsViewMenuOpen(false);
+      };
     },
-    [onViewChange]
-  )
+    [onViewChange],
+  );
 
   // 日付の表示形式をモバイル用に短縮
   const getDateDisplay = () => {
     switch (viewType) {
       case 'day':
-        return format(currentDate, 'M/d (E)', { locale: ja })
+        return format(currentDate, 'M/d (E)', { locale: ja });
       case 'week':
-        return `${format(currentDate, 'M月')} W${weekNumber}`
+        return `${format(currentDate, 'M月')} W${weekNumber}`;
       default:
-        return format(currentDate, 'M/d (E)', { locale: ja })
+        return format(currentDate, 'M/d (E)', { locale: ja });
     }
-  }
+  };
 
   return (
     <header
@@ -104,7 +104,7 @@ export const MobileHeader = ({
         'bg-background relative h-14',
         'flex items-center justify-between px-4',
         'sticky top-0 z-40',
-        className
+        className,
       )}
     >
       {/* 左側: メニューボタンまたは戻るボタン */}
@@ -194,7 +194,7 @@ export const MobileHeader = ({
                   onClick={createViewChangeHandler(value as CalendarViewType)}
                   className={cn(
                     'hover:bg-state-hover w-full px-4 py-3 text-left text-sm transition-colors',
-                    viewType === value && 'bg-state-selected text-foreground font-medium'
+                    viewType === value && 'bg-state-selected text-foreground font-medium',
                   )}
                 >
                   {label}
@@ -206,5 +206,5 @@ export const MobileHeader = ({
         </>
       ) : null}
     </header>
-  )
-}
+  );
+};

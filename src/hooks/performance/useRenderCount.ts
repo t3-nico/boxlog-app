@@ -2,7 +2,7 @@
  * レンダリング回数追跡フック
  */
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react';
 
 /**
  * コンポーネントのレンダリング回数を追跡
@@ -12,14 +12,14 @@ import { useEffect, useRef } from 'react'
  * @returns 現在のレンダリング回数
  */
 export function useRenderCount(componentName: string, enabled = false) {
-  const renderCount = useRef(0)
-  renderCount.current++
+  const renderCount = useRef(0);
+  renderCount.current++;
 
   useEffect(() => {
     if (enabled) {
-      console.debug(`${componentName} rendered ${renderCount.current} times`)
+      console.debug(`${componentName} rendered ${renderCount.current} times`);
     }
-  })
+  });
 
-  return renderCount.current
+  return renderCount.current;
 }

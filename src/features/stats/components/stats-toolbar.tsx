@@ -1,18 +1,31 @@
-'use client'
+'use client';
 
-import { format, isSameDay } from 'date-fns'
-import { ja } from 'date-fns/locale'
-import { Calendar, ChevronLeft, ChevronRight, Download, GitCompareArrows, RotateCcw } from 'lucide-react'
-import { usePathname } from 'next/navigation'
+import { format, isSameDay } from 'date-fns';
+import { ja } from 'date-fns/locale';
+import {
+  Calendar,
+  ChevronLeft,
+  ChevronRight,
+  Download,
+  GitCompareArrows,
+  RotateCcw,
+} from 'lucide-react';
+import { usePathname } from 'next/navigation';
 
-import { Button } from '@/components/ui/button'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Separator } from '@/components/ui/separator'
-import { HoverTooltip } from '@/components/ui/tooltip'
-import type { ComparePeriod, PeriodType } from '@/features/stats/stores'
-import { useStatsPeriodStore } from '@/features/stats/stores'
-import { cn } from '@/lib/utils'
-import { useTranslations } from 'next-intl'
+import { Button } from '@/components/ui/button';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Separator } from '@/components/ui/separator';
+import { HoverTooltip } from '@/components/ui/tooltip';
+import type { ComparePeriod, PeriodType } from '@/features/stats/stores';
+import { useStatsPeriodStore } from '@/features/stats/stores';
+import { cn } from '@/lib/utils';
+import { useTranslations } from 'next-intl';
 
 /**
  * 統計ページ用ツールバー
@@ -26,10 +39,10 @@ import { useTranslations } from 'next-intl'
  * - 8pxグリッドシステム準拠
  */
 export function StatsToolbar() {
-  const pathname = usePathname()
-  const localeFromPath = (pathname?.split('/')[1] || 'ja') as 'ja' | 'en'
-  const t = useTranslations()
-  const dateLocale = localeFromPath === 'ja' ? ja : undefined
+  const pathname = usePathname();
+  const localeFromPath = (pathname?.split('/')[1] || 'ja') as 'ja' | 'en';
+  const t = useTranslations();
+  const dateLocale = localeFromPath === 'ja' ? ja : undefined;
 
   const {
     periodType,
@@ -43,16 +56,16 @@ export function StatsToolbar() {
     goToCurrent,
     setCompareEnabled,
     setComparePeriod,
-  } = useStatsPeriodStore()
+  } = useStatsPeriodStore();
 
   // 日付範囲のフォーマット
   const formatDateRange = () => {
-    const formatOptions = dateLocale ? { locale: dateLocale } : {}
+    const formatOptions = dateLocale ? { locale: dateLocale } : {};
     if (isSameDay(startDate, endDate)) {
-      return format(startDate, 'M/d (E)', formatOptions)
+      return format(startDate, 'M/d (E)', formatOptions);
     }
-    return `${format(startDate, 'M/d', formatOptions)} - ${format(endDate, 'M/d', formatOptions)}`
-  }
+    return `${format(startDate, 'M/d', formatOptions)} - ${format(endDate, 'M/d', formatOptions)}`;
+  };
 
   // 期間タイプの選択肢
   const periodOptions: { value: PeriodType; label: string }[] = [
@@ -60,14 +73,14 @@ export function StatsToolbar() {
     { value: 'week', label: t('stats.toolbar.thisWeek') },
     { value: 'month', label: t('stats.toolbar.thisMonth') },
     { value: 'year', label: t('stats.toolbar.thisYear') },
-  ]
+  ];
 
   // 比較期間の選択肢
   const compareOptions: { value: ComparePeriod; label: string }[] = [
     { value: 'none', label: t('stats.toolbar.noCompare') },
     { value: 'previous', label: t('stats.toolbar.previousPeriod') },
     { value: 'lastYear', label: t('stats.toolbar.lastYear') },
-  ]
+  ];
 
   return (
     <div className="flex h-full items-center gap-2">
@@ -131,7 +144,10 @@ export function StatsToolbar() {
 
       {/* 比較期間選択（比較有効時のみ表示） */}
       {compareEnabled && (
-        <Select value={comparePeriod} onValueChange={(value) => setComparePeriod(value as ComparePeriod)}>
+        <Select
+          value={comparePeriod}
+          onValueChange={(value) => setComparePeriod(value as ComparePeriod)}
+        >
           <SelectTrigger className="h-8 w-28">
             <SelectValue />
           </SelectTrigger>
@@ -156,5 +172,5 @@ export function StatsToolbar() {
         </Button>
       </HoverTooltip>
     </div>
-  )
+  );
 }

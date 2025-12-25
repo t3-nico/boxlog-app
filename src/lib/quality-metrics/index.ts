@@ -17,10 +17,10 @@ export type {
   Recommendation,
   TechnicalDebtDetail,
   TypeScriptError,
-} from './types'
+} from './types';
 
 // コレクター
-export { QualityMetricsCollector } from './collector'
+export { QualityMetricsCollector } from './collector';
 
 // ユーティリティ
-export { calculateQualityScore, getQualityGrade } from './utils'
+export { calculateQualityScore, getQualityGrade } from './utils';

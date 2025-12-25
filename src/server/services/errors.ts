@@ -4,7 +4,7 @@
  * すべてのサービスエラーをTRPCエラーに変換するための統一ヘルパー
  */
 
-import { TRPCError } from '@trpc/server'
+import { TRPCError } from '@trpc/server';
 
 /**
  * サービスエラーの基底クラス
@@ -15,10 +15,10 @@ import { TRPCError } from '@trpc/server'
 export class ServiceError extends Error {
   constructor(
     public readonly code: string,
-    message: string
+    message: string,
   ) {
-    super(message)
-    this.name = 'ServiceError'
+    super(message);
+    this.name = 'ServiceError';
   }
 }
 
@@ -45,7 +45,7 @@ const ERROR_CODE_MAP: Record<
   TAG_FILTER_FAILED: 'INTERNAL_SERVER_ERROR',
   NOTIFICATION_SEND_FAILED: 'INTERNAL_SERVER_ERROR',
   PROFILE_UPDATE_FAILED: 'INTERNAL_SERVER_ERROR',
-}
+};
 
 /**
  * サービスエラーをTRPCエラーに変換
@@ -65,18 +65,18 @@ const ERROR_CODE_MAP: Record<
 export function handleServiceError(error: unknown): never {
   // ServiceError（またはその派生クラス）の場合
   if (error instanceof ServiceError) {
-    const trpcCode = ERROR_CODE_MAP[error.code] ?? 'INTERNAL_SERVER_ERROR'
+    const trpcCode = ERROR_CODE_MAP[error.code] ?? 'INTERNAL_SERVER_ERROR';
 
     throw new TRPCError({
       code: trpcCode,
       message: error.message,
       cause: error,
-    })
+    });
   }
 
   // TRPCError の場合はそのまま再スロー
   if (error instanceof TRPCError) {
-    throw error
+    throw error;
   }
 
   // その他のエラー
@@ -84,7 +84,7 @@ export function handleServiceError(error: unknown): never {
     code: 'INTERNAL_SERVER_ERROR',
     message: error instanceof Error ? error.message : 'Unknown error occurred',
     cause: error,
-  })
+  });
 }
 
 /**
@@ -95,7 +95,7 @@ export function handleServiceError(error: unknown): never {
  */
 export function registerErrorCode(
   code: string,
-  trpcCode: 'INTERNAL_SERVER_ERROR' | 'NOT_FOUND' | 'BAD_REQUEST' | 'FORBIDDEN' | 'UNAUTHORIZED'
+  trpcCode: 'INTERNAL_SERVER_ERROR' | 'NOT_FOUND' | 'BAD_REQUEST' | 'FORBIDDEN' | 'UNAUTHORIZED',
 ): void {
-  ERROR_CODE_MAP[code] = trpcCode
+  ERROR_CODE_MAP[code] = trpcCode;
 }

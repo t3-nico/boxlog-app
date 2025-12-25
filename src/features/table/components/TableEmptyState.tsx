@@ -1,25 +1,25 @@
-'use client'
+'use client';
 
-import type { LucideIcon } from 'lucide-react'
-import { Inbox } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react';
+import { Inbox } from 'lucide-react';
 
-import { EmptyState } from '@/components/common'
-import { Button } from '@/components/ui/button'
-import { TableCell, TableRow } from '@/components/ui/table'
+import { EmptyState } from '@/components/common';
+import { Button } from '@/components/ui/button';
+import { TableCell, TableRow } from '@/components/ui/table';
 
 export interface TableEmptyStateProps {
   /** 列数（colspan） */
-  columnCount: number
+  columnCount: number;
   /** メッセージ */
-  message?: string
+  message?: string;
   /** サブメッセージ */
-  subMessage?: string
+  subMessage?: string;
   /** フィルター適用中か */
-  isFiltered?: boolean
+  isFiltered?: boolean;
   /** フィルターリセットコールバック */
-  onResetFilter?: () => void
+  onResetFilter?: () => void;
   /** カスタムアイコン */
-  icon?: LucideIcon
+  icon?: LucideIcon;
 }
 
 /**
@@ -60,5 +60,5 @@ export function TableEmptyState({
         />
       </TableCell>
     </TableRow>
-  )
+  );
 }

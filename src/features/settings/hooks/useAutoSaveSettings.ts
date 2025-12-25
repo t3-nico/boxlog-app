@@ -1,39 +1,42 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { toast } from 'sonner'
+import { toast } from 'sonner';
 
-import { getErrorMessage } from '@/lib/errors'
+import { getErrorMessage } from '@/lib/errors';
 
 interface UseAutoSaveSettingsOptions<T> {
-  initialValues: T
-  onSave: (values: T) => Promise<void>
-  debounceMs?: number
-  successMessage?: string
-  errorMessage?: string
+  initialValues: T;
+  onSave: (values: T) => Promise<void>;
+  debounceMs?: number;
+  successMessage?: string;
+  errorMessage?: string;
 }
 
 // シンプルなdebounce実装
-function debounce<T extends (...args: never[]) => unknown>(func: T, wait: number): T & { cancel: () => void } {
-  let timeoutId: NodeJS.Timeout | null = null
+function debounce<T extends (...args: never[]) => unknown>(
+  func: T,
+  wait: number,
+): T & { cancel: () => void } {
+  let timeoutId: NodeJS.Timeout | null = null;
 
   const debounced = ((...args: Parameters<T>) => {
     if (timeoutId) {
-      clearTimeout(timeoutId)
+      clearTimeout(timeoutId);
     }
 
     timeoutId = setTimeout(() => {
-      func(...args)
-    }, wait)
-  }) as T & { cancel: () => void }
+      func(...args);
+    }, wait);
+  }) as T & { cancel: () => void };
 
   debounced.cancel = () => {
     if (timeoutId) {
-      clearTimeout(timeoutId)
-      timeoutId = null
+      clearTimeout(timeoutId);
+      timeoutId = null;
     }
-  }
+  };
 
-  return debounced
+  return debounced;
 }
 
 export function useAutoSaveSettings<T>({
@@ -45,63 +48,63 @@ export function useAutoSaveSettings<T>({
   successMessage = '設定を保存しました',
   errorMessage = '保存に失敗しました',
 }: UseAutoSaveSettingsOptions<T>) {
-  const [values, setValues] = useState<T>(initialValues)
-  const [isSaving, setIsSaving] = useState(false)
-  const lastSavedValues = useRef<T>(initialValues)
+  const [values, setValues] = useState<T>(initialValues);
+  const [isSaving, setIsSaving] = useState(false);
+  const lastSavedValues = useRef<T>(initialValues);
 
   // デバウンスされた保存関数
   const debouncedSave = useRef(
     debounce(async (newValues: T) => {
       // 変更がない場合は保存しない
       if (JSON.stringify(newValues) === JSON.stringify(lastSavedValues.current)) {
-        return
+        return;
       }
 
-      setIsSaving(true)
+      setIsSaving(true);
 
       try {
-        await onSave(newValues)
-        lastSavedValues.current = newValues
+        await onSave(newValues);
+        lastSavedValues.current = newValues;
 
         // 成功トースト
-        toast.success(successMessage)
+        toast.success(successMessage);
       } catch (error) {
-        console.error('Failed to save settings:', error)
+        console.error('Failed to save settings:', error);
 
         // エラートースト
         toast.error(errorMessage, {
           description: getErrorMessage(error),
-        })
+        });
       } finally {
-        setIsSaving(false)
+        setIsSaving(false);
       }
-    }, debounceMs)
-  ).current
+    }, debounceMs),
+  ).current;
 
   // 値が変更されたら自動保存
   useEffect(() => {
-    debouncedSave(values)
-  }, [values, debouncedSave])
+    debouncedSave(values);
+  }, [values, debouncedSave]);
 
   // クリーンアップ
   useEffect(() => {
     return () => {
-      debouncedSave.cancel()
-    }
-  }, [debouncedSave])
+      debouncedSave.cancel();
+    };
+  }, [debouncedSave]);
 
   const updateValue = useCallback(<K extends keyof T>(key: K, value: T[K]) => {
-    setValues((prev) => ({ ...prev, [key]: value }))
-  }, [])
+    setValues((prev) => ({ ...prev, [key]: value }));
+  }, []);
 
   const updateValues = useCallback((updates: Partial<T>) => {
-    setValues((prev) => ({ ...prev, ...updates }))
-  }, [])
+    setValues((prev) => ({ ...prev, ...updates }));
+  }, []);
 
   return {
     values,
     updateValue,
     updateValues,
     isSaving,
-  }
+  };
 }

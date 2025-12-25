@@ -1,15 +1,19 @@
-'use client'
+'use client';
 
-import { MobileSettingsRadioGroup, MobileSettingsSection } from '@/components/common'
-import { Button } from '@/components/ui/button'
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
-import { ArrowUpDown } from 'lucide-react'
+import { MobileSettingsRadioGroup, MobileSettingsSection } from '@/components/common';
+import { Button } from '@/components/ui/button';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { ArrowUpDown } from 'lucide-react';
 
-import { useInboxSortStore, type SortDirection, type SortField } from '../../stores/useInboxSortStore'
+import {
+  useInboxSortStore,
+  type SortDirection,
+  type SortField,
+} from '../../stores/useInboxSortStore';
 
 interface MobileSortSheetProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
 /**
@@ -22,7 +26,7 @@ const SORT_FIELD_OPTIONS: Array<{ value: SortField | 'none'; label: string }> = 
   { value: 'created_at', label: '作成日' },
   { value: 'updated_at', label: '更新日' },
   { value: 'status', label: 'ステータス' },
-]
+];
 
 /**
  * ソート順選択肢
@@ -30,7 +34,7 @@ const SORT_FIELD_OPTIONS: Array<{ value: SortField | 'none'; label: string }> = 
 const SORT_DIRECTION_OPTIONS: Array<{ value: SortDirection; label: string }> = [
   { value: 'asc', label: '昇順 (A → Z)' },
   { value: 'desc', label: '降順 (Z → A)' },
-]
+];
 
 /**
  * モバイル用ソートシート
@@ -38,25 +42,25 @@ const SORT_DIRECTION_OPTIONS: Array<{ value: SortDirection; label: string }> = [
  * Notion風のアイコンナビゲーションから開くソート専用シート
  */
 export function MobileSortSheet({ open, onOpenChange }: MobileSortSheetProps) {
-  const { sortField, sortDirection, setSort, clearSort } = useInboxSortStore()
+  const { sortField, sortDirection, setSort, clearSort } = useInboxSortStore();
 
   const handleFieldChange = (value: SortField | 'none') => {
     if (value === 'none') {
-      clearSort()
+      clearSort();
     } else {
-      setSort(value, sortDirection || 'asc')
+      setSort(value, sortDirection || 'asc');
     }
-  }
+  };
 
   const handleDirectionChange = (value: SortDirection) => {
     if (sortField) {
-      setSort(sortField, value)
+      setSort(sortField, value);
     }
-  }
+  };
 
   const handleReset = () => {
-    clearSort()
-  }
+    clearSort();
+  };
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -95,5 +99,5 @@ export function MobileSortSheet({ open, onOpenChange }: MobileSortSheetProps) {
         </div>
       </SheetContent>
     </Sheet>
-  )
+  );
 }

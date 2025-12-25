@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 /**
  * カレンダー用EmptyStateコンポーネント
@@ -6,13 +6,13 @@
  * @deprecated 共通コンポーネント `@/components/common/EmptyState` を使用してください
  */
 
-import { memo } from 'react'
+import { memo } from 'react';
 
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'next-intl';
 
-import { EmptyState as BaseEmptyState } from '@/components/common'
+import { EmptyState as BaseEmptyState } from '@/components/common';
 
-import type { EmptyStateProps } from '../../types/view.types'
+import type { EmptyStateProps } from '../../types/view.types';
 
 /**
  * カレンダービュー用EmptyState
@@ -27,18 +27,19 @@ export const EmptyState = memo<EmptyStateProps>(function EmptyState({
   hint,
   className = '',
 }) {
-  const t = useTranslations()
+  const t = useTranslations();
 
   // デフォルト値を翻訳から取得
-  const displayTitle = title ?? t('calendar.emptyState.defaultTitle')
-  const displayDescription = description ?? t('calendar.emptyState.defaultDescription')
+  const displayTitle = title ?? t('calendar.emptyState.defaultTitle');
+  const displayDescription = description ?? t('calendar.emptyState.defaultDescription');
 
   // アイコンがコンポーネント型かどうかを判定
   const isIconComponent =
-    typeof icon === 'function' || (typeof icon === 'object' && icon !== null && '$$typeof' in icon && 'render' in icon)
+    typeof icon === 'function' ||
+    (typeof icon === 'object' && icon !== null && '$$typeof' in icon && 'render' in icon);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const IconComponent = isIconComponent ? (icon as any) : undefined
+  const IconComponent = isIconComponent ? (icon as any) : undefined;
 
   return (
     <BaseEmptyState
@@ -49,5 +50,5 @@ export const EmptyState = memo<EmptyStateProps>(function EmptyState({
       hint={hint ?? undefined}
       className={className}
     />
-  )
-})
+  );
+});

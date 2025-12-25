@@ -1,59 +1,59 @@
-import { create } from 'zustand'
-import { devtools, persist } from 'zustand/middleware'
+import { create } from 'zustand';
+import { devtools, persist } from 'zustand/middleware';
 
-import type { ChronotypeType, ProductivityZone } from '@/features/settings/types/chronotype'
+import type { ChronotypeType, ProductivityZone } from '@/features/settings/types/chronotype';
 
-import { listenToTimezoneChange } from '../utils/timezone'
+import { listenToTimezoneChange } from '../utils/timezone';
 
-export type CalendarViewType = 'day' | '3day' | '5day' | 'week'
+export type CalendarViewType = 'day' | '3day' | '5day' | 'week';
 
 // 日付フォーマット型
-export type DateFormatType = 'yyyy/MM/dd' | 'MM/dd/yyyy' | 'dd/MM/yyyy' | 'yyyy-MM-dd'
+export type DateFormatType = 'yyyy/MM/dd' | 'MM/dd/yyyy' | 'dd/MM/yyyy' | 'yyyy-MM-dd';
 
 interface CalendarSettings {
   // タイムゾーン設定
-  timezone: string // 例: 'Asia/Tokyo', 'America/New_York'
-  showUTCOffset: boolean // UTC表示のON/OFF
+  timezone: string; // 例: 'Asia/Tokyo', 'America/New_York'
+  showUTCOffset: boolean; // UTC表示のON/OFF
 
   // 時間表示形式
-  timeFormat: '24h' | '12h'
+  timeFormat: '24h' | '12h';
 
   // 日付表示形式
-  dateFormat: DateFormatType // yyyy/MM/dd（日本）, MM/dd/yyyy（米国）, dd/MM/yyyy（欧州）, yyyy-MM-dd（ISO）
+  dateFormat: DateFormatType; // yyyy/MM/dd（日本）, MM/dd/yyyy（米国）, dd/MM/yyyy（欧州）, yyyy-MM-dd（ISO）
 
   // デフォルトビュー設定
-  defaultView: CalendarViewType // 起動時のデフォルトビュー
+  defaultView: CalendarViewType; // 起動時のデフォルトビュー
 
   // その他の設定
-  weekStartsOn: 0 | 1 | 6 // 日曜、月曜、土曜
-  defaultDuration: number // デフォルトのタスク時間（分）
-  snapInterval: 5 | 10 | 15 | 30 // ドラッグ&ドロップのスナップ間隔（分）
+  weekStartsOn: 0 | 1 | 6; // 日曜、月曜、土曜
+  defaultDuration: number; // デフォルトのタスク時間（分）
+  snapInterval: 5 | 10 | 15 | 30; // ドラッグ&ドロップのスナップ間隔（分）
   businessHours: {
-    start: number // 営業開始時間（0-23）
-    end: number // 営業終了時間（0-23）
-  }
+    start: number; // 営業開始時間（0-23）
+    end: number; // 営業終了時間（0-23）
+  };
 
   // 表示設定
-  showWeekNumbers: boolean
-  showDeclinedEvents: boolean
-  showWeekends: boolean
+  showWeekNumbers: boolean;
+  showDeclinedEvents: boolean;
+  showWeekends: boolean;
 
   // クロノタイプ設定
   chronotype: {
-    enabled: boolean
-    type: ChronotypeType
-    customZones?: ProductivityZone[]
-    displayMode: 'border' | 'background' | 'both'
-    opacity: number // 0-100
-  }
+    enabled: boolean;
+    type: ChronotypeType;
+    customZones?: ProductivityZone[];
+    displayMode: 'border' | 'background' | 'both';
+    opacity: number; // 0-100
+  };
 
   // Plan/Record表示設定
-  planRecordMode: 'plan' | 'record' | 'both'
+  planRecordMode: 'plan' | 'record' | 'both';
 }
 
 interface CalendarSettingsStore extends CalendarSettings {
-  updateSettings: (settings: Partial<CalendarSettings>) => void
-  resetSettings: () => void
+  updateSettings: (settings: Partial<CalendarSettings>) => void;
+  resetSettings: () => void;
 }
 
 const defaultSettings: CalendarSettings = {
@@ -79,7 +79,7 @@ const defaultSettings: CalendarSettings = {
     opacity: 90,
   },
   planRecordMode: 'both',
-}
+};
 
 export const useCalendarSettingsStore = create<CalendarSettingsStore>()(
   devtools(
@@ -88,12 +88,12 @@ export const useCalendarSettingsStore = create<CalendarSettingsStore>()(
         // タイムゾーン変更リスナーをセットアップ
         if (typeof window !== 'undefined') {
           listenToTimezoneChange((newTimezone) => {
-            const currentState = get()
+            const currentState = get();
             if (currentState.timezone !== newTimezone) {
-              console.log('📅 Preferencesからのタイムゾーン変更を検出:', newTimezone)
-              set({ ...currentState, timezone: newTimezone })
+              console.log('📅 Preferencesからのタイムゾーン変更を検出:', newTimezone);
+              set({ ...currentState, timezone: newTimezone });
             }
-          })
+          });
 
           // クリーンアップ関数は保存されない（Zustandの制約）
           // 必要に応じて手動でクリーンアップ
@@ -109,14 +109,14 @@ export const useCalendarSettingsStore = create<CalendarSettingsStore>()(
             })),
 
           resetSettings: () => set(defaultSettings),
-        }
+        };
       },
       {
         name: 'calendar-settings',
-      }
+      },
     ),
     {
       name: 'calendar-settings-store',
-    }
-  )
-)
+    },
+  ),
+);

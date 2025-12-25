@@ -1,15 +1,15 @@
-'use client'
+'use client';
 
-import type React from 'react'
-import { useCallback } from 'react'
+import type React from 'react';
+import { useCallback } from 'react';
 
-import { MS_PER_MINUTE } from '@/constants/time'
-import useCalendarToast from '@/features/calendar/lib/toast'
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
-import { logger } from '@/lib/logger'
-import { useTranslations } from 'next-intl'
+import { MS_PER_MINUTE } from '@/constants/time';
+import useCalendarToast from '@/features/calendar/lib/toast';
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
+import { logger } from '@/lib/logger';
+import { useTranslations } from 'next-intl';
 
-import type { DragDataRef, DragState } from './types'
+import type { DragDataRef, DragState } from './types';
 import {
   calculateColumnWidth,
   calculateEventDuration,
@@ -17,19 +17,19 @@ import {
   calculateSnappedPosition,
   updateDragElementPosition,
   updateTimeDisplay,
-} from './utils'
+} from './utils';
 
 interface UseDragHandlerProps {
-  events: CalendarPlan[]
-  date: Date
-  displayDates: Date[] | undefined
-  viewMode: string
+  events: CalendarPlan[];
+  date: Date;
+  displayDates: Date[] | undefined;
+  viewMode: string;
   eventUpdateHandler:
     | ((eventId: string, updates: { startTime: Date; endTime: Date }) => Promise<void> | void)
-    | undefined
-  eventClickHandler: ((plan: CalendarPlan) => void) | undefined
-  dragDataRef: React.MutableRefObject<DragDataRef | null>
-  setDragState: React.Dispatch<React.SetStateAction<DragState>>
+    | undefined;
+  eventClickHandler: ((plan: CalendarPlan) => void) | undefined;
+  dragDataRef: React.MutableRefObject<DragDataRef | null>;
+  setDragState: React.Dispatch<React.SetStateAction<DragState>>;
 }
 
 export function useDragHandler({
@@ -42,8 +42,8 @@ export function useDragHandler({
   dragDataRef,
   setDragState,
 }: UseDragHandlerProps) {
-  const t = useTranslations()
-  const calendarToast = useCalendarToast()
+  const t = useTranslations();
+  const calendarToast = useCalendarToast();
 
   // ドラッグ開始
   const handleMouseDown = useCallback(
@@ -51,25 +51,25 @@ export function useDragHandler({
       eventId: string,
       e: React.MouseEvent,
       originalPosition: { top: number; left: number; width: number; height: number },
-      dateIndex: number = 0
+      dateIndex: number = 0,
     ) => {
-      if (e.button !== 0) return
+      if (e.button !== 0) return;
 
-      e.preventDefault()
-      e.stopPropagation()
+      e.preventDefault();
+      e.stopPropagation();
 
-      const startPosition = { x: e.clientX, y: e.clientY }
+      const startPosition = { x: e.clientX, y: e.clientY };
       // 外側のポジショニング用divを優先して取得
       // DayView: data-event-wrapper / data-event-block
       // WeekView/ThreeDayView/FiveDayView: data-plan-block
       const originalElement =
         ((e.target as HTMLElement).closest('[data-event-wrapper="true"]') as HTMLElement) ||
         ((e.target as HTMLElement).closest('[data-plan-block="true"]') as HTMLElement) ||
-        ((e.target as HTMLElement).closest('[data-event-block="true"]') as HTMLElement)
-      const columnWidth = calculateColumnWidth(originalElement, viewMode, displayDates)
+        ((e.target as HTMLElement).closest('[data-event-block="true"]') as HTMLElement);
+      const columnWidth = calculateColumnWidth(originalElement, viewMode, displayDates);
 
       // mousedown時点での元要素の位置を保存（ゴースト位置計算用）
-      const originalElementRect = originalElement?.getBoundingClientRect() ?? null
+      const originalElementRect = originalElement?.getBoundingClientRect() ?? null;
 
       // 注意: ゴースト要素（dragElement）は5px移動後に作成する
       // mousedown時点では作成しない（クリックと区別するため）
@@ -87,7 +87,7 @@ export function useDragHandler({
         dragElement: null, // 5px移動後に作成
         initialRect: null, // 5px移動後に設定
         originalElementRect, // mousedown時点の位置
-      }
+      };
 
       setDragState({
         isPending: true, // まず準備状態に入る（5px移動後にisDraggingになる）
@@ -108,16 +108,22 @@ export function useDragHandler({
         originalDateIndex: dateIndex,
         targetDateIndex: dateIndex,
         ghostElement: null,
-      })
+      });
     },
-    [viewMode, displayDates, dragDataRef, setDragState]
-  )
+    [viewMode, displayDates, dragDataRef, setDragState],
+  );
 
   // ドラッグ処理
   const handleDragging = useCallback(
-    (constrainedX: number, constrainedY: number, deltaX: number, deltaY: number, targetDateIndex: number) => {
-      const dragData = dragDataRef.current
-      if (!dragData) return
+    (
+      constrainedX: number,
+      constrainedY: number,
+      deltaX: number,
+      deltaY: number,
+      targetDateIndex: number,
+    ) => {
+      const dragData = dragDataRef.current;
+      if (!dragData) return;
 
       const { snappedTop, snappedLeft, hour, minute } = calculateSnappedPosition(
         dragData.originalTop,
@@ -125,12 +131,17 @@ export function useDragHandler({
         deltaY,
         targetDateIndex,
         viewMode,
-        displayDates
-      )
+        displayDates,
+      );
 
       // originalElementRect（mousedown時点の位置）を基準に計算
       // initialRectは5px移動後に取得されるため、deltaX/deltaYとずれる
-      updateDragElementPosition(dragData.dragElement || null, dragData.originalElementRect || null, deltaX, deltaY)
+      updateDragElementPosition(
+        dragData.dragElement || null,
+        dragData.originalElementRect || null,
+        deltaX,
+        deltaY,
+      );
 
       const { previewStartTime, previewEndTime } = calculatePreviewTime(
         events,
@@ -142,10 +153,10 @@ export function useDragHandler({
         targetDateIndex,
         date,
         viewMode,
-        displayDates
-      )
+        displayDates,
+      );
 
-      updateTimeDisplay(dragData.dragElement || null, previewStartTime, previewEndTime)
+      updateTimeDisplay(dragData.dragElement || null, previewStartTime, previewEndTime);
 
       setDragState((prev) => ({
         ...prev,
@@ -156,47 +167,47 @@ export function useDragHandler({
         },
         previewTime: { start: previewStartTime, end: previewEndTime },
         targetDateIndex,
-      }))
+      }));
     },
-    [events, date, viewMode, displayDates, dragDataRef, setDragState]
-  )
+    [events, date, viewMode, displayDates, dragDataRef, setDragState],
+  );
 
   // プランドロップのヘルパー
   const handleEventDrop = useCallback(
     (eventId: string, newStartTime: Date) => {
       if (eventUpdateHandler) {
-        const { durationMs } = calculateEventDuration(events, eventId, dragDataRef.current)
-        const newEndTime = new Date(newStartTime.getTime() + durationMs)
-        eventUpdateHandler(eventId, { startTime: newStartTime, endTime: newEndTime })
+        const { durationMs } = calculateEventDuration(events, eventId, dragDataRef.current);
+        const newEndTime = new Date(newStartTime.getTime() + durationMs);
+        eventUpdateHandler(eventId, { startTime: newStartTime, endTime: newEndTime });
       }
     },
-    [eventUpdateHandler, events, dragDataRef]
-  )
+    [eventUpdateHandler, events, dragDataRef],
+  );
 
   // クリック処理
   const handleEventClick = useCallback(() => {
     if (!dragDataRef.current || dragDataRef.current.hasMoved || !eventClickHandler) {
-      return false
+      return false;
     }
 
-    const eventToClick = events.find((e) => e.id === dragDataRef.current!.eventId)
+    const eventToClick = events.find((e) => e.id === dragDataRef.current!.eventId);
     if (eventToClick) {
-      eventClickHandler(eventToClick)
-      return true
+      eventClickHandler(eventToClick);
+      return true;
     }
-    return false
-  }, [events, eventClickHandler, dragDataRef])
+    return false;
+  }, [events, eventClickHandler, dragDataRef]);
 
   // Toast通知を処理する
   const handleEventUpdateToast = useCallback(
     async (promise: Promise<void>, plan: CalendarPlan, newStartTime: Date, durationMs: number) => {
-      if (!plan) return
+      if (!plan) return;
 
-      const previousStartTime = plan.startDate || date
-      const timeChanged = Math.abs(newStartTime.getTime() - previousStartTime.getTime()) > 1000
+      const previousStartTime = plan.startDate || date;
+      const timeChanged = Math.abs(newStartTime.getTime() - previousStartTime.getTime()) > 1000;
 
       if (!timeChanged) {
-        return
+        return;
       }
 
       const eventData: CalendarPlan = {
@@ -224,7 +235,7 @@ export function useDragHandler({
         allDay: plan.allDay,
         priority: plan.priority,
         calendarId: plan.calendarId,
-      }
+      };
 
       if (promise && typeof promise.then === 'function') {
         promise
@@ -232,63 +243,67 @@ export function useDragHandler({
             calendarToast.eventMoved(eventData, newStartTime, {
               undoAction: async () => {
                 try {
-                  const originalEndTime = new Date(previousStartTime.getTime() + durationMs)
+                  const originalEndTime = new Date(previousStartTime.getTime() + durationMs);
                   await eventUpdateHandler!(dragDataRef.current!.eventId, {
                     startTime: previousStartTime,
                     endTime: originalEndTime,
-                  })
-                  calendarToast.success(t('calendar.event.undoMove'))
+                  });
+                  calendarToast.success(t('calendar.event.undoMove'));
                 } catch {
-                  calendarToast.error(t('calendar.event.undoFailed'))
+                  calendarToast.error(t('calendar.event.undoFailed'));
                 }
               },
-            })
+            });
           })
           .catch((error: unknown) => {
-            logger.error('Failed to update event time:', error)
-            calendarToast.error(t('calendar.event.moveFailed'))
-          })
+            logger.error('Failed to update event time:', error);
+            calendarToast.error(t('calendar.event.moveFailed'));
+          });
       } else {
-        calendarToast.eventMoved(eventData, newStartTime)
+        calendarToast.eventMoved(eventData, newStartTime);
       }
     },
-    [date, calendarToast, eventUpdateHandler, dragDataRef, t]
-  )
+    [date, calendarToast, eventUpdateHandler, dragDataRef, t],
+  );
 
   // プラン更新処理を実行する
   const executeEventUpdate = useCallback(
     async (newStartTime: Date) => {
       if (!eventUpdateHandler || !dragDataRef.current?.eventId || !dragDataRef.current?.hasMoved) {
-        return
+        return;
       }
 
-      const { event, durationMs } = calculateEventDuration(events, dragDataRef.current.eventId, dragDataRef.current)
+      const { event, durationMs } = calculateEventDuration(
+        events,
+        dragDataRef.current.eventId,
+        dragDataRef.current,
+      );
 
       if (!event) {
-        logger.warn('Plan not found for update')
-        return
+        logger.warn('Plan not found for update');
+        return;
       }
 
-      const newEndTime = new Date(newStartTime.getTime() + durationMs)
+      const newEndTime = new Date(newStartTime.getTime() + durationMs);
 
       if (newEndTime <= newStartTime) {
-        newEndTime.setTime(newStartTime.getTime() + 60 * 60 * 1000)
+        newEndTime.setTime(newStartTime.getTime() + 60 * 60 * 1000);
       }
 
       try {
         const result = eventUpdateHandler(dragDataRef.current.eventId, {
           startTime: newStartTime,
           endTime: newEndTime,
-        })
+        });
 
-        await handleEventUpdateToast(Promise.resolve(result), event, newStartTime, durationMs)
+        await handleEventUpdateToast(Promise.resolve(result), event, newStartTime, durationMs);
       } catch (error) {
-        logger.error('Failed to update event time:', error)
-        calendarToast.error(t('calendar.event.moveFailed'))
+        logger.error('Failed to update event time:', error);
+        calendarToast.error(t('calendar.event.moveFailed'));
       }
     },
-    [eventUpdateHandler, events, dragDataRef, handleEventUpdateToast, calendarToast, t]
-  )
+    [eventUpdateHandler, events, dragDataRef, handleEventUpdateToast, calendarToast, t],
+  );
 
   return {
     handleMouseDown,
@@ -296,5 +311,5 @@ export function useDragHandler({
     handleEventDrop,
     handleEventClick,
     executeEventUpdate,
-  }
+  };
 }

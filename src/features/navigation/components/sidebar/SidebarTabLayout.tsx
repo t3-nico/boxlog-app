@@ -1,9 +1,9 @@
-'use client'
+'use client';
 
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-import type { SidebarTabLayoutProps } from './types'
+import type { SidebarTabLayoutProps } from './types';
 
 /**
  * Sidebarタブレイアウトコンポーネント
@@ -35,7 +35,7 @@ import type { SidebarTabLayoutProps } from './types'
  * ```
  */
 export function SidebarTabLayout({ tabs, defaultTab }: SidebarTabLayoutProps) {
-  const initialTab = defaultTab || tabs[0]?.value || ''
+  const initialTab = defaultTab || tabs[0]?.value || '';
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <Tabs defaultValue={initialTab} className="flex flex-1 flex-col overflow-hidden">
@@ -47,7 +47,7 @@ export function SidebarTabLayout({ tabs, defaultTab }: SidebarTabLayoutProps) {
           }}
         >
           {tabs.map((tab) => {
-            const Icon = tab.icon
+            const Icon = tab.icon;
             return (
               <TabsTrigger
                 key={tab.value}
@@ -57,13 +57,17 @@ export function SidebarTabLayout({ tabs, defaultTab }: SidebarTabLayoutProps) {
                 {Icon && <Icon className="size-4" />}
                 {tab.label}
               </TabsTrigger>
-            )
+            );
           })}
         </TabsList>
 
         {/* TabsContent - スクロール可能・幅可変 */}
         {tabs.map((tab) => (
-          <TabsContent key={tab.value} value={tab.value} className="mt-0 min-h-0 min-w-0 flex-1 overflow-hidden">
+          <TabsContent
+            key={tab.value}
+            value={tab.value}
+            className="mt-0 min-h-0 min-w-0 flex-1 overflow-hidden"
+          >
             <ScrollArea className="h-full w-full">
               <div className="flex min-w-0 flex-col">{tab.content}</div>
             </ScrollArea>
@@ -71,5 +75,5 @@ export function SidebarTabLayout({ tabs, defaultTab }: SidebarTabLayoutProps) {
         ))}
       </Tabs>
     </div>
-  )
+  );
 }

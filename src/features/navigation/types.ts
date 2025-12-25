@@ -1,31 +1,31 @@
 /**
- * ÊÓ²ü·çó¶Kn‹š©
+ * ï¿½Ó²ï¿½ï¿½ï¿½ï¿½Knï¿½ï¿½ï¿½
  */
 export interface NavigationState {
-  /** Sidebarn‹‰¶K */
-  isSidebarOpen: boolean
-  /** Sidebarn‹‰’ŠÿH‹ */
-  toggleSidebar: () => void
-  /** Sidebar’‹O */
-  openSidebar: () => void
-  /** Sidebar’‰X‹ */
-  closeSidebar: () => void
+  /** Sidebarnï¿½ï¿½ï¿½K */
+  isSidebarOpen: boolean;
+  /** Sidebarnï¿½ï¿½ï¿½ï¿½ï¿½Hï¿½ */
+  toggleSidebar: () => void;
+  /** Sidebarï¿½ï¿½O */
+  openSidebar: () => void;
+  /** Sidebarï¿½ï¿½Xï¿½ */
+  closeSidebar: () => void;
 }
 
 /**
- * ÊÓ²ü·çóîn‹š©
+ * ï¿½Ó²ï¿½ï¿½ï¿½ï¿½ï¿½nï¿½ï¿½ï¿½
  */
 export interface NavigationItem {
-  /** îID */
-  id: string
-  /** h:éÙë */
-  label: string
-  /** êó¯HURL */
-  href: string
-  /** ¢¤³ólucide-react³óÝüÍóÈ	 */
-  icon?: React.ComponentType<{ className?: string }>
-  /** ÐÃ¸h:p$	 */
-  badge?: number
-  /** ¢¯Æ£Ö¶Kn$š¢p */
-  isActive?: (pathname: string) => boolean
+  /** ï¿½ID */
+  id: string;
+  /** h:ï¿½ï¿½ï¿½ */
+  label: string;
+  /** ï¿½ï¿½HURL */
+  href: string;
+  /** ï¿½ï¿½ï¿½ï¿½lucide-reactï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½	 */
+  icon?: React.ComponentType<{ className?: string }>;
+  /** ï¿½Ã¸h:p$	 */
+  badge?: number;
+  /** ï¿½ï¿½Æ£Ö¶Kn$ï¿½ï¿½p */
+  isActive?: (pathname: string) => boolean;
 }

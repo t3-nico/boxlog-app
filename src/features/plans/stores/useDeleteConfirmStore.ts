@@ -1,14 +1,14 @@
-'use client'
+'use client';
 
-import { create } from 'zustand'
+import { create } from 'zustand';
 
 interface DeleteConfirmState {
-  isOpen: boolean
-  planId: string | null
-  planTitle: string | null
-  onConfirm: (() => Promise<void>) | null
-  openDialog: (planId: string, planTitle: string | null, onConfirm: () => Promise<void>) => void
-  closeDialog: () => void
+  isOpen: boolean;
+  planId: string | null;
+  planTitle: string | null;
+  onConfirm: (() => Promise<void>) | null;
+  openDialog: (planId: string, planTitle: string | null, onConfirm: () => Promise<void>) => void;
+  closeDialog: () => void;
 }
 
 /**
@@ -37,4 +37,4 @@ export const useDeleteConfirmStore = create<DeleteConfirmState>((set) => ({
       planTitle: null,
       onConfirm: null,
     }),
-}))
+}));

@@ -11,7 +11,7 @@
 /**
  * 対応言語
  */
-export type Locale = 'en' | 'ja'
+export type Locale = 'en' | 'ja';
 
 // ============================================
 // ブランド型（翻訳済み文字列）
@@ -34,8 +34,8 @@ export type Locale = 'en' | 'ja'
  * ```
  */
 export type TranslatedString = string & {
-  readonly __brand: 'TranslatedString'
-}
+  readonly __brand: 'TranslatedString';
+};
 
 /**
  * 生の文字列を TranslatedString として型アサーションする（内部使用のみ）
@@ -46,7 +46,7 @@ export type TranslatedString = string & {
  * @internal
  */
 export function markAsTranslated(str: string): TranslatedString {
-  return str as TranslatedString
+  return str as TranslatedString;
 }
 
 /**
@@ -55,14 +55,17 @@ export function markAsTranslated(str: string): TranslatedString {
  * 外部APIやログ出力など、TranslatedString型を受け付けない場面で使用します。
  */
 export function unwrapTranslated(str: TranslatedString): string {
-  return str
+  return str;
 }
 
 /**
  * 複数のTranslatedStringを結合
  */
-export function joinTranslated(strings: TranslatedString[], separator: string = ''): TranslatedString {
-  return markAsTranslated(strings.map(unwrapTranslated).join(separator))
+export function joinTranslated(
+  strings: TranslatedString[],
+  separator: string = '',
+): TranslatedString {
+  return markAsTranslated(strings.map(unwrapTranslated).join(separator));
 }
 
 /**
@@ -71,5 +74,5 @@ export function joinTranslated(strings: TranslatedString[], separator: string = 
  * 実行時には常にtrueを返しますが、TypeScriptの型推論に使用します。
  */
 export function isTranslated(_str: string): _str is TranslatedString {
-  return true
+  return true;
 }

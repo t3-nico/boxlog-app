@@ -10,4 +10,4 @@ export {
   type InspectorDisplayMode,
   type InspectorState,
   type InspectorStore,
-} from './createInspectorStore'
+} from './createInspectorStore';

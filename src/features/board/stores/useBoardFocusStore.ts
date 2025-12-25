@@ -1,16 +1,16 @@
-import { create } from 'zustand'
-import { devtools } from 'zustand/middleware'
+import { create } from 'zustand';
+import { devtools } from 'zustand/middleware';
 
 /**
  * Boardフォーカス状態
  */
 interface BoardFocusState {
   /** 現在フォーカス中のカードID */
-  focusedId: string | null
+  focusedId: string | null;
   /** フォーカスをセット */
-  setFocusedId: (id: string | null) => void
+  setFocusedId: (id: string | null) => void;
   /** フォーカスをクリア */
-  clearFocus: () => void
+  clearFocus: () => void;
 }
 
 /**
@@ -36,6 +36,6 @@ export const useBoardFocusStore = create<BoardFocusState>()(
 
       clearFocus: () => set({ focusedId: null }),
     }),
-    { name: 'board-focus-store' }
-  )
-)
+    { name: 'board-focus-store' },
+  ),
+);

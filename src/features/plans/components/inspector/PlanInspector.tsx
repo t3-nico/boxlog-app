@@ -1,18 +1,23 @@
-'use client'
+'use client';
 
-import { Copy, ExternalLink, Link, Trash2 } from 'lucide-react'
-import { useCallback } from 'react'
+import { Copy, ExternalLink, Link, Trash2 } from 'lucide-react';
+import { useCallback } from 'react';
 
-import { DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu'
-import { InspectorContent, InspectorShell, useInspectorKeyboard, type InspectorDisplayMode } from '@/features/inspector'
+import { DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
+import {
+  InspectorContent,
+  InspectorShell,
+  useInspectorKeyboard,
+  type InspectorDisplayMode,
+} from '@/features/inspector';
 
-import { usePlan } from '../../hooks/usePlan'
-import { useDeleteConfirmStore } from '../../stores/useDeleteConfirmStore'
-import { usePlanInspectorStore } from '../../stores/usePlanInspectorStore'
-import type { Plan } from '../../types/plan'
+import { usePlan } from '../../hooks/usePlan';
+import { useDeleteConfirmStore } from '../../stores/useDeleteConfirmStore';
+import { usePlanInspectorStore } from '../../stores/usePlanInspectorStore';
+import type { Plan } from '../../types/plan';
 
-import { useInspectorAutoSave, useInspectorNavigation } from './hooks'
-import { PlanInspectorContent } from './PlanInspectorContent'
+import { useInspectorAutoSave, useInspectorNavigation } from './hooks';
+import { PlanInspectorContent } from './PlanInspectorContent';
 
 /**
  * Plan Inspector（全ページ共通）
@@ -21,20 +26,20 @@ import { PlanInspectorContent } from './PlanInspectorContent'
  * displayModeに応じてSheet（サイドパネル）またはDialog（ポップアップ）で表示
  */
 export function PlanInspector() {
-  const isOpen = usePlanInspectorStore((state) => state.isOpen)
-  const planId = usePlanInspectorStore((state) => state.planId)
-  const displayMode = usePlanInspectorStore((state) => state.displayMode) as InspectorDisplayMode
-  const closeInspector = usePlanInspectorStore((state) => state.closeInspector)
+  const isOpen = usePlanInspectorStore((state) => state.isOpen);
+  const planId = usePlanInspectorStore((state) => state.planId);
+  const displayMode = usePlanInspectorStore((state) => state.displayMode) as InspectorDisplayMode;
+  const closeInspector = usePlanInspectorStore((state) => state.closeInspector);
 
-  const { data: planData, isLoading } = usePlan(planId!, { includeTags: true, enabled: !!planId })
-  const plan = (planData ?? null) as unknown as Plan | null
+  const { data: planData, isLoading } = usePlan(planId!, { includeTags: true, enabled: !!planId });
+  const plan = (planData ?? null) as unknown as Plan | null;
 
   // ナビゲーション
-  const { hasPrevious, hasNext, goToPrevious, goToNext } = useInspectorNavigation(planId)
+  const { hasPrevious, hasNext, goToPrevious, goToNext } = useInspectorNavigation(planId);
 
   // 削除
-  const openDeleteDialog = useDeleteConfirmStore((state) => state.openDialog)
-  const { deletePlan } = useInspectorAutoSave({ planId, plan })
+  const openDeleteDialog = useDeleteConfirmStore((state) => state.openDialog);
+  const { deletePlan } = useInspectorAutoSave({ planId, plan });
 
   // キーボードショートカット
   useInspectorKeyboard({
@@ -44,27 +49,27 @@ export function PlanInspector() {
     onClose: closeInspector,
     onPrevious: goToPrevious,
     onNext: goToNext,
-  })
+  });
 
   // モバイル用メニューアクション
   const handleCopyLink = useCallback(() => {
     if (planId) {
-      const url = `${window.location.origin}/plans/${planId}`
-      navigator.clipboard.writeText(url)
+      const url = `${window.location.origin}/plans/${planId}`;
+      navigator.clipboard.writeText(url);
     }
-  }, [planId])
+  }, [planId]);
 
   const handleOpenInNewTab = useCallback(() => {
-    if (planId) window.open(`/plans/${planId}`, '_blank')
-  }, [planId])
+    if (planId) window.open(`/plans/${planId}`, '_blank');
+  }, [planId]);
 
   const handleDelete = useCallback(() => {
-    if (!planId) return
+    if (!planId) return;
     openDeleteDialog(planId, plan?.title ?? null, async () => {
-      await deletePlan.mutateAsync({ id: planId })
-      closeInspector()
-    })
-  }, [planId, plan?.title, openDeleteDialog, deletePlan, closeInspector])
+      await deletePlan.mutateAsync({ id: planId });
+      closeInspector();
+    });
+  }, [planId, plan?.title, openDeleteDialog, deletePlan, closeInspector]);
 
   // モバイル用メニューコンテンツ（簡略版）
   const mobileMenuContent = (
@@ -79,7 +84,7 @@ export function PlanInspector() {
       </DropdownMenuItem>
       <DropdownMenuItem
         onClick={() => {
-          if (planId) navigator.clipboard.writeText(planId)
+          if (planId) navigator.clipboard.writeText(planId);
         }}
       >
         <Copy className="size-4" />
@@ -91,7 +96,7 @@ export function PlanInspector() {
         削除
       </DropdownMenuItem>
     </>
-  )
+  );
 
   return (
     <InspectorShell
@@ -103,9 +108,13 @@ export function PlanInspector() {
       modal={false}
       mobileMenuContent={mobileMenuContent}
     >
-      <InspectorContent isLoading={isLoading} hasData={!!plan} emptyMessage="プランが見つかりません">
+      <InspectorContent
+        isLoading={isLoading}
+        hasData={!!plan}
+        emptyMessage="プランが見つかりません"
+      >
         <PlanInspectorContent />
       </InspectorContent>
     </InspectorShell>
-  )
+  );
 }

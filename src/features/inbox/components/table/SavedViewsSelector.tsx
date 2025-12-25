@@ -1,6 +1,6 @@
-'use client'
+'use client';
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,21 +8,21 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Input } from '@/components/ui/input'
-import { Check, ChevronDown, Layers, Pencil, Plus, Trash2, X } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
-import { useInboxViewStore } from '../../stores/useInboxViewStore'
-import type { InboxView } from '../../types/view'
-import { ViewSettingsDialog } from './ViewSettingsDialog'
+} from '@/components/ui/dropdown-menu';
+import { Input } from '@/components/ui/input';
+import { Check, ChevronDown, Layers, Pencil, Plus, Trash2, X } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { useInboxViewStore } from '../../stores/useInboxViewStore';
+import type { InboxView } from '../../types/view';
+import { ViewSettingsDialog } from './ViewSettingsDialog';
 
 interface SavedViewsSelectorProps {
   /** 新規ビュー作成時の初期状態 */
   currentState?: {
-    filters: InboxView['filters']
-    sorting?: InboxView['sorting']
-    pageSize?: number
-  }
+    filters: InboxView['filters'];
+    sorting?: InboxView['sorting'];
+    pageSize?: number;
+  };
 }
 
 /**
@@ -39,25 +39,26 @@ interface SavedViewsSelectorProps {
  * ```
  */
 export function SavedViewsSelector({ currentState }: SavedViewsSelectorProps) {
-  const { views, activeViewId, setActiveView, deleteView, createView, updateView } = useInboxViewStore()
-  const [dialogOpen, setDialogOpen] = useState(false)
-  const [editingViewId, setEditingViewId] = useState<string | null>(null)
-  const [editingName, setEditingName] = useState('')
-  const inputRef = useRef<HTMLInputElement>(null)
+  const { views, activeViewId, setActiveView, deleteView, createView, updateView } =
+    useInboxViewStore();
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [editingViewId, setEditingViewId] = useState<string | null>(null);
+  const [editingName, setEditingName] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  const activeView = views.find((view) => view.id === activeViewId)
+  const activeView = views.find((view) => view.id === activeViewId);
 
   // デフォルトビューとカスタムビューに分離
-  const defaultViews = views.filter((view) => view.id.startsWith('default-'))
-  const customViews = views.filter((view) => !view.id.startsWith('default-'))
+  const defaultViews = views.filter((view) => view.id.startsWith('default-'));
+  const customViews = views.filter((view) => !view.id.startsWith('default-'));
 
   // 入力欄がマウントされたら自動フォーカス
   useEffect(() => {
     if (editingViewId && inputRef.current) {
-      inputRef.current.focus()
-      inputRef.current.select()
+      inputRef.current.focus();
+      inputRef.current.select();
     }
-  }, [editingViewId])
+  }, [editingViewId]);
 
   // Notionスタイル：クリックで即座にビューを作成してタイトル入力状態にする
   const handleCreateView = () => {
@@ -65,48 +66,48 @@ export function SavedViewsSelector({ currentState }: SavedViewsSelectorProps) {
       name: '無題のビュー',
       filters: currentState?.filters || {},
       sorting: currentState?.sorting,
-    })
-    setEditingViewId(newView.id)
-    setEditingName(newView.name)
-  }
+    });
+    setEditingViewId(newView.id);
+    setEditingName(newView.name);
+  };
 
   // インライン編集開始
   const handleStartEdit = (view: InboxView, e: React.MouseEvent) => {
-    e.stopPropagation()
-    setEditingViewId(view.id)
-    setEditingName(view.name)
-  }
+    e.stopPropagation();
+    setEditingViewId(view.id);
+    setEditingName(view.name);
+  };
 
   // インライン編集確定
   const handleSaveEdit = (viewId: string) => {
     if (editingName.trim()) {
-      updateView(viewId, { name: editingName.trim() })
+      updateView(viewId, { name: editingName.trim() });
     } else {
       // タイトルが空の場合は削除
-      deleteView(viewId)
+      deleteView(viewId);
     }
-    setEditingViewId(null)
-    setEditingName('')
-  }
+    setEditingViewId(null);
+    setEditingName('');
+  };
 
   // インライン編集キャンセル
   const handleCancelEdit = (viewId: string) => {
-    const view = views.find((v) => v.id === viewId)
+    const view = views.find((v) => v.id === viewId);
     // 新規作成直後でタイトルが未入力の場合は削除
     if (view?.name === '無題のビュー' && !editingName.trim()) {
-      deleteView(viewId)
+      deleteView(viewId);
     }
-    setEditingViewId(null)
-    setEditingName('')
-  }
+    setEditingViewId(null);
+    setEditingName('');
+  };
 
   // ビューを削除
   const handleDeleteView = (viewId: string, e: React.MouseEvent) => {
-    e.stopPropagation()
+    e.stopPropagation();
     if (confirm('このビューを削除してもよろしいですか？')) {
-      deleteView(viewId)
+      deleteView(viewId);
     }
-  }
+  };
 
   return (
     <>
@@ -144,13 +145,13 @@ export function SavedViewsSelector({ currentState }: SavedViewsSelectorProps) {
                   key={view.id}
                   onClick={() => {
                     if (editingViewId !== view.id) {
-                      setActiveView(view.id)
+                      setActiveView(view.id);
                     }
                   }}
                   className="flex items-center justify-between gap-2"
                   onSelect={(e) => {
                     if (editingViewId === view.id) {
-                      e.preventDefault()
+                      e.preventDefault();
                     }
                   }}
                 >
@@ -161,9 +162,9 @@ export function SavedViewsSelector({ currentState }: SavedViewsSelectorProps) {
                       onChange={(e) => setEditingName(e.target.value)}
                       onKeyDown={(e) => {
                         if (e.key === 'Enter') {
-                          handleSaveEdit(view.id)
+                          handleSaveEdit(view.id);
                         } else if (e.key === 'Escape') {
-                          handleCancelEdit(view.id)
+                          handleCancelEdit(view.id);
                         }
                       }}
                       onBlur={() => handleSaveEdit(view.id)}
@@ -174,14 +175,16 @@ export function SavedViewsSelector({ currentState }: SavedViewsSelectorProps) {
                     <span className="flex-1 truncate">{view.name}</span>
                   )}
                   <div className="flex items-center gap-1">
-                    {activeViewId === view.id && editingViewId !== view.id && <Check className="size-4 shrink-0" />}
+                    {activeViewId === view.id && editingViewId !== view.id && (
+                      <Check className="size-4 shrink-0" />
+                    )}
                     {editingViewId === view.id ? (
                       <Button
                         variant="ghost"
                         size="icon-sm"
                         onClick={(e) => {
-                          e.stopPropagation()
-                          handleCancelEdit(view.id)
+                          e.stopPropagation();
+                          handleCancelEdit(view.id);
                         }}
                         className="size-6 shrink-0"
                       >
@@ -223,7 +226,12 @@ export function SavedViewsSelector({ currentState }: SavedViewsSelectorProps) {
       </DropdownMenu>
 
       {/* ビュー作成・編集ダイアログ */}
-      <ViewSettingsDialog open={dialogOpen} onOpenChange={setDialogOpen} view={undefined} currentState={currentState} />
+      <ViewSettingsDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        view={undefined}
+        currentState={currentState}
+      />
     </>
-  )
+  );
 }

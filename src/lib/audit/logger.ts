@@ -72,34 +72,34 @@ export enum AuditSeverity {
  * 監査ログエントリ
  */
 export interface AuditLogEntry {
-  id?: string | undefined
-  timestamp: string
-  eventType: AuditEventType
-  severity: AuditSeverity
-  userId?: string | undefined
-  sessionId?: string | undefined
-  ipAddress?: string | undefined
-  userAgent?: string | undefined
-  resource?: string | undefined
-  action?: string | undefined
-  metadata?: Record<string, unknown> | undefined
-  success: boolean
-  errorMessage?: string | undefined
+  id?: string | undefined;
+  timestamp: string;
+  eventType: AuditEventType;
+  severity: AuditSeverity;
+  userId?: string | undefined;
+  sessionId?: string | undefined;
+  ipAddress?: string | undefined;
+  userAgent?: string | undefined;
+  resource?: string | undefined;
+  action?: string | undefined;
+  metadata?: Record<string, unknown> | undefined;
+  success: boolean;
+  errorMessage?: string | undefined;
 }
 
 /**
  * 監査ログオプション
  */
 export interface AuditLogOptions {
-  userId?: string | undefined
-  sessionId?: string | undefined
-  ipAddress?: string | undefined
-  userAgent?: string | undefined
-  resource?: string | undefined
-  action?: string | undefined
-  metadata?: Record<string, unknown> | undefined
-  success?: boolean | undefined
-  errorMessage?: string | undefined
+  userId?: string | undefined;
+  sessionId?: string | undefined;
+  ipAddress?: string | undefined;
+  userAgent?: string | undefined;
+  resource?: string | undefined;
+  action?: string | undefined;
+  metadata?: Record<string, unknown> | undefined;
+  success?: boolean | undefined;
+  errorMessage?: string | undefined;
 }
 
 /**
@@ -132,7 +132,7 @@ export interface AuditLogOptions {
 export async function logAuditEvent(
   eventType: AuditEventType,
   severity: AuditSeverity,
-  options: AuditLogOptions = {}
+  options: AuditLogOptions = {},
 ): Promise<void> {
   const entry: AuditLogEntry = {
     timestamp: new Date().toISOString(),
@@ -147,25 +147,25 @@ export async function logAuditEvent(
     metadata: options.metadata,
     success: options.success ?? true,
     errorMessage: options.errorMessage,
-  }
+  };
 
   // 開発環境: コンソールログ
   if (process.env.NODE_ENV === 'development') {
-    const level = getSeverityLevel(severity)
+    const level = getSeverityLevel(severity);
     console[level]('[AUDIT]', {
       type: eventType,
       ...entry,
-    })
+    });
   }
 
   // 本番環境: Supabase + Sentry
   if (process.env.NODE_ENV === 'production') {
     // Supabase audit_logsテーブルに保存
-    await saveToDatabase(entry)
+    await saveToDatabase(entry);
 
     // 重大なイベントはSentryにも送信
     if (severity === AuditSeverity.CRITICAL || severity === AuditSeverity.ERROR) {
-      await sendToSentry(entry)
+      await sendToSentry(entry);
     }
   }
 }
@@ -176,13 +176,13 @@ export async function logAuditEvent(
 function getSeverityLevel(severity: AuditSeverity): 'log' | 'warn' | 'error' | 'error' {
   switch (severity) {
     case AuditSeverity.INFO:
-      return 'log'
+      return 'log';
     case AuditSeverity.WARNING:
-      return 'warn'
+      return 'warn';
     case AuditSeverity.ERROR:
-      return 'error'
+      return 'error';
     case AuditSeverity.CRITICAL:
-      return 'error'
+      return 'error';
   }
 }
 
@@ -211,10 +211,10 @@ async function saveToDatabase(entry: AuditLogEntry): Promise<void> {
     // })
 
     // 一時的なフォールバック: ファイルログ
-    console.info('[AUDIT:DB]', entry)
+    console.info('[AUDIT:DB]', entry);
   } catch (error) {
     // ログ保存失敗時もアプリケーションは継続
-    console.error('[AUDIT:DB:ERROR]', error)
+    console.error('[AUDIT:DB:ERROR]', error);
   }
 }
 
@@ -237,22 +237,26 @@ async function sendToSentry(entry: AuditLogEntry): Promise<void> {
     // })
 
     // 一時的なフォールバック: コンソールログ
-    console.error('[AUDIT:SENTRY]', entry)
+    console.error('[AUDIT:SENTRY]', entry);
   } catch (error) {
-    console.error('[AUDIT:SENTRY:ERROR]', error)
+    console.error('[AUDIT:SENTRY:ERROR]', error);
   }
 }
 
 /**
  * ユーティリティ関数: ログイン成功ログ
  */
-export async function logLoginSuccess(userId: string, ipAddress?: string, userAgent?: string): Promise<void> {
+export async function logLoginSuccess(
+  userId: string,
+  ipAddress?: string,
+  userAgent?: string,
+): Promise<void> {
   await logAuditEvent(AuditEventType.LOGIN_SUCCESS, AuditSeverity.INFO, {
     userId,
     ipAddress,
     userAgent,
     success: true,
-  })
+  });
 }
 
 /**
@@ -262,7 +266,7 @@ export async function logLoginFailure(
   email: string,
   reason: string,
   ipAddress?: string,
-  userAgent?: string
+  userAgent?: string,
 ): Promise<void> {
   await logAuditEvent(AuditEventType.LOGIN_FAILURE, AuditSeverity.WARNING, {
     metadata: { email },
@@ -270,7 +274,7 @@ export async function logLoginFailure(
     userAgent,
     success: false,
     errorMessage: reason,
-  })
+  });
 }
 
 /**
@@ -280,7 +284,7 @@ export async function logUnauthorizedAccess(
   resource: string,
   userId?: string,
   ipAddress?: string,
-  userAgent?: string
+  userAgent?: string,
 ): Promise<void> {
   await logAuditEvent(AuditEventType.UNAUTHORIZED_ACCESS_ATTEMPT, AuditSeverity.CRITICAL, {
     userId,
@@ -289,20 +293,24 @@ export async function logUnauthorizedAccess(
     userAgent,
     success: false,
     errorMessage: 'Unauthorized access attempt',
-  })
+  });
 }
 
 /**
  * ユーティリティ関数: レート制限超過ログ
  */
-export async function logRateLimitExceeded(endpoint: string, identifier: string, ipAddress?: string): Promise<void> {
+export async function logRateLimitExceeded(
+  endpoint: string,
+  identifier: string,
+  ipAddress?: string,
+): Promise<void> {
   await logAuditEvent(AuditEventType.RATE_LIMIT_EXCEEDED, AuditSeverity.WARNING, {
     resource: endpoint,
     metadata: { identifier },
     ipAddress,
     success: false,
     errorMessage: 'Rate limit exceeded',
-  })
+  });
 }
 
 /**
@@ -312,7 +320,7 @@ export async function logSensitiveDataAccess(
   userId: string,
   resource: string,
   action: string,
-  ipAddress?: string
+  ipAddress?: string,
 ): Promise<void> {
   await logAuditEvent(AuditEventType.SENSITIVE_DATA_ACCESS, AuditSeverity.INFO, {
     userId,
@@ -320,7 +328,7 @@ export async function logSensitiveDataAccess(
     action,
     ipAddress,
     success: true,
-  })
+  });
 }
 
 /**

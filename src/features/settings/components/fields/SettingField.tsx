@@ -1,15 +1,15 @@
-'use client'
+'use client';
 
-import React from 'react'
+import React from 'react';
 
-import { Field, FieldDescription, FieldLabel } from '@/components/ui/field'
+import { Field, FieldDescription, FieldLabel } from '@/components/ui/field';
 
 interface SettingFieldProps {
-  label: string
-  description?: string
-  children?: React.ReactNode
-  required?: boolean
-  orientation?: 'vertical' | 'horizontal' | 'responsive'
+  label: string;
+  description?: string;
+  children?: React.ReactNode;
+  required?: boolean;
+  orientation?: 'vertical' | 'horizontal' | 'responsive';
 }
 
 /**
@@ -32,5 +32,5 @@ export const SettingField = ({
       {description && <FieldDescription>{description}</FieldDescription>}
       {children && children}
     </Field>
-  )
-}
+  );
+};

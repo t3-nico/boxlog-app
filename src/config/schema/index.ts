@@ -2,7 +2,7 @@
  * 設定スキーマ - Zodバリデーション
  */
 
-import { z } from 'zod'
+import { z } from 'zod';
 
 /**
  * 📋 アプリ設定スキーマ
@@ -12,7 +12,7 @@ const AppConfigSchema = z.object({
   environment: z.enum(['development', 'production', 'test']).default('development'),
   debug: z.boolean().default(false),
   version: z.string().default('1.0.0'),
-})
+});
 
 /**
  * 📋 データベース設定スキーマ
@@ -21,7 +21,7 @@ const DatabaseConfigSchema = z.object({
   url: z.string().optional(),
   ssl: z.boolean().default(true),
   maxConnections: z.number().default(10),
-})
+});
 
 /**
  * 📋 機能フラグスキーマ
@@ -30,7 +30,7 @@ const FeaturesConfigSchema = z.object({
   debugMode: z.boolean().default(false),
   experimentalFeatures: z.boolean().default(false),
   analytics: z.boolean().default(true),
-})
+});
 
 /**
  * 📋 ロギング設定スキーマ
@@ -39,7 +39,7 @@ const LoggingConfigSchema = z.object({
   level: z.enum(['debug', 'info', 'warn', 'error']).default('info'),
   console: z.boolean().default(true),
   file: z.boolean().default(false),
-})
+});
 
 /**
  * 📋 サーバー設定スキーマ
@@ -53,7 +53,7 @@ const ServerConfigSchema = z.object({
       maxAge: z.number().default(86400000), // 24時間
     })
     .optional(),
-})
+});
 
 /**
  * 📋 統合設定スキーマ
@@ -64,26 +64,26 @@ export const ConfigSchema = z.object({
   features: FeaturesConfigSchema,
   logging: LoggingConfigSchema,
   server: ServerConfigSchema,
-})
+});
 
 /**
  * 📋 設定型定義
  */
-export type Config = z.infer<typeof ConfigSchema>
-export type AppConfig = z.infer<typeof AppConfigSchema>
-export type DatabaseConfig = z.infer<typeof DatabaseConfigSchema>
-export type FeaturesConfig = z.infer<typeof FeaturesConfigSchema>
-export type LoggingConfig = z.infer<typeof LoggingConfigSchema>
-export type ServerConfig = z.infer<typeof ServerConfigSchema>
+export type Config = z.infer<typeof ConfigSchema>;
+export type AppConfig = z.infer<typeof AppConfigSchema>;
+export type DatabaseConfig = z.infer<typeof DatabaseConfigSchema>;
+export type FeaturesConfig = z.infer<typeof FeaturesConfigSchema>;
+export type LoggingConfig = z.infer<typeof LoggingConfigSchema>;
+export type ServerConfig = z.infer<typeof ServerConfigSchema>;
 
 /**
  * 📋 設定バリデーションエラー型
  */
 export interface ConfigValidationError {
-  path: string[]
-  message: string
-  code: string
-  input?: unknown
+  path: string[];
+  message: string;
+  code: string;
+  input?: unknown;
 }
 
 /**
@@ -91,17 +91,17 @@ export interface ConfigValidationError {
  */
 export type ConfigValidationResult =
   | {
-      success: true
-      data: Config
-      errors: ConfigValidationError[]
-      warnings: string[]
+      success: true;
+      data: Config;
+      errors: ConfigValidationError[];
+      warnings: string[];
     }
   | {
-      success: false
-      errors: ConfigValidationError[]
-      warnings: string[]
-      data?: never
-    }
+      success: false;
+      errors: ConfigValidationError[];
+      warnings: string[];
+      data?: never;
+    };
 
 /**
  * 📋 デフォルト設定
@@ -197,4 +197,4 @@ export const DEFAULT_CONFIGS = {
       },
     },
   },
-} as const
+} as const;

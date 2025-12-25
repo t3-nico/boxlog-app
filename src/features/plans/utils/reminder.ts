@@ -14,23 +14,23 @@
  * reminderTypeToMinutes('') // => null
  */
 export function reminderTypeToMinutes(reminderType: string): number | null | undefined {
-  if (!reminderType || reminderType === 'none') return null
+  if (!reminderType || reminderType === 'none') return null;
 
   switch (reminderType) {
     case '開始時刻':
-      return 0
+      return 0;
     case '10分前':
-      return 10
+      return 10;
     case '30分前':
-      return 30
+      return 30;
     case '1時間前':
-      return 60
+      return 60;
     case '1日前':
-      return 1440 // 24 * 60
+      return 1440; // 24 * 60
     case '1週間前':
-      return 10080 // 7 * 24 * 60
+      return 10080; // 7 * 24 * 60
     default:
-      return null
+      return null;
   }
 }
 
@@ -46,22 +46,22 @@ export function reminderTypeToMinutes(reminderType: string): number | null | und
  * minutesToReminderType(null) // => ''
  */
 export function minutesToReminderType(minutes: number | null | undefined): string {
-  if (minutes === null || minutes === undefined) return ''
+  if (minutes === null || minutes === undefined) return '';
 
   switch (minutes) {
     case 0:
-      return '開始時刻'
+      return '開始時刻';
     case 10:
-      return '10分前'
+      return '10分前';
     case 30:
-      return '30分前'
+      return '30分前';
     case 60:
-      return '1時間前'
+      return '1時間前';
     case 1440:
-      return '1日前'
+      return '1日前';
     case 10080:
-      return '1週間前'
+      return '1週間前';
     default:
-      return ''
+      return '';
   }
 }

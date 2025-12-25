@@ -1,15 +1,15 @@
-'use client'
+'use client';
 
-import { TableCell } from '@/components/ui/table'
-import { useDateFormat } from '@/features/settings/hooks/useDateFormat'
+import { TableCell } from '@/components/ui/table';
+import { useDateFormat } from '@/features/settings/hooks/useDateFormat';
 
 interface DurationRangeCellProps {
   /** 開始時刻（ISO 8601） */
-  startTime?: string | null
+  startTime?: string | null;
   /** 終了時刻（ISO 8601） */
-  endTime?: string | null
+  endTime?: string | null;
   /** 列幅 */
-  width?: number
+  width?: number;
 }
 
 /**
@@ -31,34 +31,34 @@ interface DurationRangeCellProps {
  * ```
  */
 export function DurationRangeCell({ startTime, endTime, width }: DurationRangeCellProps) {
-  const { formatTime: formatTimeWithSettings } = useDateFormat()
+  const { formatTime: formatTimeWithSettings } = useDateFormat();
 
   const formatTimeValue = (dateTimeStr: string | null | undefined) => {
-    if (!dateTimeStr) return null
+    if (!dateTimeStr) return null;
     try {
-      return formatTimeWithSettings(new Date(dateTimeStr))
+      return formatTimeWithSettings(new Date(dateTimeStr));
     } catch {
-      return null
+      return null;
     }
-  }
+  };
 
-  const startFormatted = formatTimeValue(startTime)
-  const endFormatted = formatTimeValue(endTime)
+  const startFormatted = formatTimeValue(startTime);
+  const endFormatted = formatTimeValue(endTime);
 
-  let displayText = '-'
+  let displayText = '-';
   if (startFormatted && endFormatted) {
-    displayText = `${startFormatted} - ${endFormatted}`
+    displayText = `${startFormatted} - ${endFormatted}`;
   } else if (startFormatted) {
-    displayText = `${startFormatted} -`
+    displayText = `${startFormatted} -`;
   } else if (endFormatted) {
-    displayText = `- ${endFormatted}`
+    displayText = `- ${endFormatted}`;
   }
 
-  const style = width ? { width: `${width}px`, minWidth: `${width}px` } : undefined
+  const style = width ? { width: `${width}px`, minWidth: `${width}px` } : undefined;
 
   return (
     <TableCell className="text-muted-foreground text-sm" style={style}>
       <div className="truncate">{displayText}</div>
     </TableCell>
-  )
+  );
 }

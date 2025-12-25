@@ -11,8 +11,8 @@
  * ```
  */
 
-import { cacheStrategies } from '@/lib/tanstack-query/cache-config'
-import { api } from '@/lib/trpc'
+import { cacheStrategies } from '@/lib/tanstack-query/cache-config';
+import { api } from '@/lib/trpc';
 
 /**
  * 通知一覧取得
@@ -25,7 +25,7 @@ export function useNotificationsList(params?: { is_read?: boolean; limit?: numbe
   return api.notifications.list.useQuery(params, {
     ...cacheStrategies.notifications,
     retry: 1,
-  })
+  });
 }
 
 /**
@@ -39,7 +39,7 @@ export function useUnreadCount() {
     ...cacheStrategies.notifications,
     retry: 1,
     refetchInterval: 60 * 1000, // 1分ごとに自動更新
-  })
+  });
 }
 
 /**
@@ -54,8 +54,8 @@ export function useNotification(id: string) {
       ...cacheStrategies.notifications,
       retry: 1,
       enabled: !!id,
-    }
-  )
+    },
+  );
 }
 
 /**
@@ -64,36 +64,36 @@ export function useNotification(id: string) {
  * @returns mutation関数群
  */
 export function useNotificationMutations() {
-  const utils = api.useUtils()
+  const utils = api.useUtils();
 
   /**
    * キャッシュ無効化（通知関連の全クエリ）
    */
   const invalidateNotifications = () => {
-    void utils.notifications.list.invalidate()
-    void utils.notifications.unreadCount.invalidate()
-  }
+    void utils.notifications.list.invalidate();
+    void utils.notifications.unreadCount.invalidate();
+  };
 
   const markAsRead = api.notifications.markAsRead.useMutation({
     onSuccess: invalidateNotifications,
-  })
+  });
 
   const markAllAsRead = api.notifications.markAllAsRead.useMutation({
     onSuccess: invalidateNotifications,
-  })
+  });
 
   const deleteNotification = api.notifications.delete.useMutation({
     onSuccess: invalidateNotifications,
-  })
+  });
 
   const deleteAllRead = api.notifications.deleteAllRead.useMutation({
     onSuccess: invalidateNotifications,
-  })
+  });
 
   return {
     markAsRead,
     markAllAsRead,
     deleteNotification,
     deleteAllRead,
-  }
+  };
 }

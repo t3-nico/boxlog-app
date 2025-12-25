@@ -1,27 +1,33 @@
-'use client'
+'use client';
 
-import { Input } from '@/components/ui/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Switch } from '@/components/ui/switch'
-import { SettingField, SettingsCard, SettingsLayout } from '@/features/settings/components'
-import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
-import { useTranslations } from 'next-intl'
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
+import { SettingField, SettingsCard, SettingsLayout } from '@/features/settings/components';
+import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings';
+import { useTranslations } from 'next-intl';
 
 interface ProfileSettings {
-  displayName: string
-  email: string
-  timezone: string
-  language: string
+  displayName: string;
+  email: string;
+  timezone: string;
+  language: string;
 }
 
 interface PrivacySettings {
-  publicProfile: boolean
-  showEmail: boolean
-  allowNotifications: boolean
+  publicProfile: boolean;
+  showEmail: boolean;
+  allowNotifications: boolean;
 }
 
 export function AccountSettingsAutoSave() {
-  const t = useTranslations()
+  const t = useTranslations();
   // プロフィール設定（自動保存）
   const profile = useAutoSaveSettings<ProfileSettings>({
     initialValues: {
@@ -32,17 +38,17 @@ export function AccountSettingsAutoSave() {
     },
     onSave: async (values) => {
       // 実際のAPIコール（例）
-      await new Promise((resolve) => setTimeout(resolve, 1000)) // シミュレート
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // シミュレート
 
       // await fetch('/api/settings/profile', {
       //   method: 'POST',
       //   headers: { 'Content-Type': 'application/json' },
       //   body: JSON.stringify(values)
       // })
-      console.log('Saving profile:', values)
+      console.log('Saving profile:', values);
     },
     successMessage: t('settings.account.profileUpdated'),
-  })
+  });
 
   // プライバシー設定（自動保存）
   const privacy = useAutoSaveSettings<PrivacySettings>({
@@ -53,17 +59,17 @@ export function AccountSettingsAutoSave() {
     },
     onSave: async (values) => {
       // 実際のAPIコール（例）
-      await new Promise((resolve) => setTimeout(resolve, 800)) // シミュレート
+      await new Promise((resolve) => setTimeout(resolve, 800)); // シミュレート
 
       // await fetch('/api/settings/privacy', {
       //   method: 'POST',
       //   headers: { 'Content-Type': 'application/json' },
       //   body: JSON.stringify(values)
       // })
-      console.log('Saving privacy:', values)
+      console.log('Saving privacy:', values);
     },
     successMessage: t('settings.account.privacyUpdated'),
-  })
+  });
 
   return (
     <SettingsLayout title={t('settings.account.title')}>
@@ -89,7 +95,10 @@ export function AccountSettingsAutoSave() {
             </SettingField>
 
             <SettingField label={t('settings.calendar.timezone')}>
-              <Select value={profile.values.timezone} onValueChange={(value) => profile.updateValue('timezone', value)}>
+              <Select
+                value={profile.values.timezone}
+                onValueChange={(value) => profile.updateValue('timezone', value)}
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -102,7 +111,10 @@ export function AccountSettingsAutoSave() {
             </SettingField>
 
             <SettingField label={t('settings.preferences.language')}>
-              <Select value={profile.values.language} onValueChange={(value) => profile.updateValue('language', value)}>
+              <Select
+                value={profile.values.language}
+                onValueChange={(value) => profile.updateValue('language', value)}
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -156,5 +168,5 @@ export function AccountSettingsAutoSave() {
         </SettingsCard>
       </div>
     </SettingsLayout>
-  )
+  );
 }

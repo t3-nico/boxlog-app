@@ -18,9 +18,9 @@ export {
   useAutoRetry,
   useDataFetchRetry,
   useUserActionRetry,
-} from './retry'
+} from './retry';
 
-export type { ErrorWithStatus, RetryConfig, RetryState } from './retry'
+export type { ErrorWithStatus, RetryConfig, RetryState } from './retry';
 
 // デフォルトエクスポートも維持
-export { useAutoRetry as default } from './retry'
+export { useAutoRetry as default } from './retry';

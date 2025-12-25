@@ -16,7 +16,7 @@ export const EVENT_CATEGORIES = {
   ERROR: 'error',
   ENGAGEMENT: 'engagement',
   BUSINESS: 'business',
-} as const
+} as const;
 
 /**
  * 📋 統一イベント名定義
@@ -196,120 +196,120 @@ export const ANALYTICS_EVENTS = {
     SURVEY_COMPLETE: 'business_survey_complete',
     NPS_SCORE: 'business_nps_score',
   },
-} as const
+} as const;
 
 /**
  * 🏷️ イベントプロパティの型定義
  */
 export interface BaseEventProperties {
   /** ユーザーID（匿名化済み） */
-  user_id?: string | undefined
+  user_id?: string | undefined;
   /** セッションID */
-  session_id?: string | undefined
+  session_id?: string | undefined;
   /** ページURL */
-  page_url?: string | undefined
+  page_url?: string | undefined;
   /** リファラー */
-  referrer?: string | undefined
+  referrer?: string | undefined;
   /** デバイスタイプ */
-  device_type?: 'desktop' | 'tablet' | 'mobile' | undefined
+  device_type?: 'desktop' | 'tablet' | 'mobile' | undefined;
   /** ブラウザ */
-  browser?: string | undefined
+  browser?: string | undefined;
   /** OS */
-  operating_system?: string | undefined
+  operating_system?: string | undefined;
   /** 画面解像度 */
-  screen_resolution?: string | undefined
+  screen_resolution?: string | undefined;
   /** タイムゾーン */
-  timezone?: string | undefined
+  timezone?: string | undefined;
   /** 言語設定 */
-  language?: string | undefined
+  language?: string | undefined;
   /** アプリバージョン */
-  app_version?: string | undefined
+  app_version?: string | undefined;
   /** 環境 */
-  environment?: 'development' | 'staging' | 'production' | undefined
+  environment?: 'development' | 'staging' | 'production' | undefined;
   /** 実験グループ */
-  experiment_group?: string | undefined
+  experiment_group?: string | undefined;
   /** カスタムプロパティ */
-  [key: string]: unknown
+  [key: string]: unknown;
 }
 
 /**
  * 🎯 具体的なイベントプロパティ型
  */
 export interface UserEventProperties extends BaseEventProperties {
-  method?: 'email' | 'google' | 'github' | 'apple'
-  is_new_user?: boolean
-  signup_source?: string
-  onboarding_step?: number
-  settings_category?: string
-  theme?: 'light' | 'dark' | 'system'
-  language_from?: string
-  language_to?: string
+  method?: 'email' | 'google' | 'github' | 'apple';
+  is_new_user?: boolean;
+  signup_source?: string;
+  onboarding_step?: number;
+  settings_category?: string;
+  theme?: 'light' | 'dark' | 'system';
+  language_from?: string;
+  language_to?: string;
 }
 
 export interface FeatureEventProperties extends BaseEventProperties {
-  feature_name: string
-  feature_category?: string
-  interaction_type?: 'click' | 'hover' | 'drag' | 'keyboard'
-  duration_ms?: number
-  success?: boolean
-  error_code?: string
-  result_count?: number
-  filter_type?: string
-  export_format?: 'json' | 'csv' | 'pdf'
-  ai_model?: string
-  suggestion_count?: number
+  feature_name: string;
+  feature_category?: string;
+  interaction_type?: 'click' | 'hover' | 'drag' | 'keyboard';
+  duration_ms?: number;
+  success?: boolean;
+  error_code?: string;
+  result_count?: number;
+  filter_type?: string;
+  export_format?: 'json' | 'csv' | 'pdf';
+  ai_model?: string;
+  suggestion_count?: number;
 }
 
 export interface NavigationEventProperties extends BaseEventProperties {
-  from_page?: string
-  to_page?: string
-  navigation_method?: 'click' | 'keyboard' | 'gesture'
-  section_name?: string
-  link_url?: string
-  is_external?: boolean
+  from_page?: string;
+  to_page?: string;
+  navigation_method?: 'click' | 'keyboard' | 'gesture';
+  section_name?: string;
+  link_url?: string;
+  is_external?: boolean;
 }
 
 export interface PerformanceEventProperties extends BaseEventProperties {
-  metric_name: string
-  metric_value: number
-  metric_unit?: 'ms' | 'bytes' | 'percent'
-  endpoint?: string
-  status_code?: number
-  connection_type?: string
+  metric_name: string;
+  metric_value: number;
+  metric_unit?: 'ms' | 'bytes' | 'percent';
+  endpoint?: string;
+  status_code?: number;
+  connection_type?: string;
 }
 
 export interface ErrorEventProperties extends BaseEventProperties {
-  error_type: string
-  error_message?: string
-  error_code?: string
-  stack_trace?: string
-  component_name?: string
-  user_action?: string
-  recovery_action?: string
-  severity?: 'low' | 'medium' | 'high' | 'critical'
+  error_type: string;
+  error_message?: string;
+  error_code?: string;
+  stack_trace?: string;
+  component_name?: string;
+  user_action?: string;
+  recovery_action?: string;
+  severity?: 'low' | 'medium' | 'high' | 'critical';
 }
 
 export interface EngagementEventProperties extends BaseEventProperties {
-  session_duration_ms?: number
-  page_views?: number
-  scroll_percentage?: number
-  interactions?: number
-  feature_name?: string
-  help_category?: string
-  shortcut_key?: string
+  session_duration_ms?: number;
+  page_views?: number;
+  scroll_percentage?: number;
+  interactions?: number;
+  feature_name?: string;
+  help_category?: string;
+  shortcut_key?: string;
 }
 
 export interface BusinessEventProperties extends BaseEventProperties {
-  conversion_type?: string
-  goal_name?: string
-  value_amount?: number
-  value_currency?: string
-  feature_name?: string
-  milestone_type?: string
-  risk_score?: number
-  contact_method?: 'chat' | 'email' | 'phone'
-  feedback_type?: 'bug' | 'feature' | 'improvement'
-  rating?: number
+  conversion_type?: string;
+  goal_name?: string;
+  value_amount?: number;
+  value_currency?: string;
+  feature_name?: string;
+  milestone_type?: string;
+  risk_score?: number;
+  contact_method?: 'chat' | 'email' | 'phone';
+  feedback_type?: 'bug' | 'feature' | 'improvement';
+  rating?: number;
 }
 
 /**
@@ -322,7 +322,7 @@ export type EventProperties =
   | PerformanceEventProperties
   | ErrorEventProperties
   | EngagementEventProperties
-  | BusinessEventProperties
+  | BusinessEventProperties;
 
 /**
  * 🔧 イベント名の型安全性確保
@@ -334,20 +334,20 @@ export type AnalyticsEventName =
   | (typeof ANALYTICS_EVENTS.PERFORMANCE)[keyof typeof ANALYTICS_EVENTS.PERFORMANCE]
   | (typeof ANALYTICS_EVENTS.ERROR)[keyof typeof ANALYTICS_EVENTS.ERROR]
   | (typeof ANALYTICS_EVENTS.ENGAGEMENT)[keyof typeof ANALYTICS_EVENTS.ENGAGEMENT]
-  | (typeof ANALYTICS_EVENTS.BUSINESS)[keyof typeof ANALYTICS_EVENTS.BUSINESS]
+  | (typeof ANALYTICS_EVENTS.BUSINESS)[keyof typeof ANALYTICS_EVENTS.BUSINESS];
 
 /**
  * 🎯 イベント名からカテゴリを取得
  */
 export function getEventCategory(eventName: AnalyticsEventName): string {
-  if (eventName.startsWith('user_')) return EVENT_CATEGORIES.USER
-  if (eventName.startsWith('feature_')) return EVENT_CATEGORIES.FEATURE
-  if (eventName.startsWith('navigation_')) return EVENT_CATEGORIES.NAVIGATION
-  if (eventName.startsWith('performance_')) return EVENT_CATEGORIES.PERFORMANCE
-  if (eventName.startsWith('error_')) return EVENT_CATEGORIES.ERROR
-  if (eventName.startsWith('engagement_')) return EVENT_CATEGORIES.ENGAGEMENT
-  if (eventName.startsWith('business_')) return EVENT_CATEGORIES.BUSINESS
-  return 'unknown'
+  if (eventName.startsWith('user_')) return EVENT_CATEGORIES.USER;
+  if (eventName.startsWith('feature_')) return EVENT_CATEGORIES.FEATURE;
+  if (eventName.startsWith('navigation_')) return EVENT_CATEGORIES.NAVIGATION;
+  if (eventName.startsWith('performance_')) return EVENT_CATEGORIES.PERFORMANCE;
+  if (eventName.startsWith('error_')) return EVENT_CATEGORIES.ERROR;
+  if (eventName.startsWith('engagement_')) return EVENT_CATEGORIES.ENGAGEMENT;
+  if (eventName.startsWith('business_')) return EVENT_CATEGORIES.BUSINESS;
+  return 'unknown';
 }
 
 /**
@@ -362,8 +362,8 @@ export function validateEventName(eventName: string): eventName is AnalyticsEven
     ...Object.values(ANALYTICS_EVENTS.ERROR),
     ...Object.values(ANALYTICS_EVENTS.ENGAGEMENT),
     ...Object.values(ANALYTICS_EVENTS.BUSINESS),
-  ]
-  return allEvents.includes(eventName as AnalyticsEventName)
+  ];
+  return allEvents.includes(eventName as AnalyticsEventName);
 }
 
 /**
@@ -378,7 +378,7 @@ export function getAllEventNames(): AnalyticsEventName[] {
     ...Object.values(ANALYTICS_EVENTS.ERROR),
     ...Object.values(ANALYTICS_EVENTS.ENGAGEMENT),
     ...Object.values(ANALYTICS_EVENTS.BUSINESS),
-  ] as AnalyticsEventName[]
+  ] as AnalyticsEventName[];
 }
 
 /**
@@ -396,8 +396,8 @@ export function getEventStats() {
       engagement: Object.keys(ANALYTICS_EVENTS.ENGAGEMENT).length,
       business: Object.keys(ANALYTICS_EVENTS.BUSINESS).length,
     },
-  }
+  };
 }
 
 // デフォルトエクスポート（後方互換性のため）
-export default ANALYTICS_EVENTS
+export default ANALYTICS_EVENTS;

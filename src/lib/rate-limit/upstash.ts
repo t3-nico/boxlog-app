@@ -8,30 +8,30 @@
  * @see Issue #487 - OWASP準拠のセキュリティ強化 Phase 3
  */
 
-import { Ratelimit } from '@upstash/ratelimit'
-import { Redis } from '@upstash/redis'
+import { Ratelimit } from '@upstash/ratelimit';
+import { Redis } from '@upstash/redis';
 
 /**
  * 環境変数チェック
  */
-const UPSTASH_REDIS_REST_URL = process.env.UPSTASH_REDIS_REST_URL
-const UPSTASH_REDIS_REST_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN
+const UPSTASH_REDIS_REST_URL = process.env.UPSTASH_REDIS_REST_URL;
+const UPSTASH_REDIS_REST_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
 
 /**
  * Upstash Redis有効化フラグ
  */
-export const isUpstashEnabled = Boolean(UPSTASH_REDIS_REST_URL && UPSTASH_REDIS_REST_TOKEN)
+export const isUpstashEnabled = Boolean(UPSTASH_REDIS_REST_URL && UPSTASH_REDIS_REST_TOKEN);
 
 /**
  * Redis接続（環境変数が設定されている場合のみ）
  */
-let redis: Redis | null = null
+let redis: Redis | null = null;
 
 if (isUpstashEnabled) {
   redis = new Redis({
     url: UPSTASH_REDIS_REST_URL!,
     token: UPSTASH_REDIS_REST_TOKEN!,
-  })
+  });
 }
 
 /**
@@ -46,7 +46,7 @@ export const apiRateLimit =
         analytics: true,
         prefix: 'ratelimit:api',
       })
-    : null
+    : null;
 
 /**
  * ログイン用レート制限（より厳格）
@@ -60,7 +60,7 @@ export const loginRateLimit =
         analytics: true,
         prefix: 'ratelimit:login',
       })
-    : null
+    : null;
 
 /**
  * パスワードリセット用レート制限
@@ -74,7 +74,7 @@ export const passwordResetRateLimit =
         analytics: true,
         prefix: 'ratelimit:password-reset',
       })
-    : null
+    : null;
 
 /**
  * 汎用レート制限ミドルウェア
@@ -104,34 +104,34 @@ export const passwordResetRateLimit =
  */
 export async function withUpstashRateLimit(
   request: Request,
-  rateLimit: Ratelimit | null
+  rateLimit: Ratelimit | null,
 ): Promise<{
-  success: boolean
-  limit: number
-  remaining: number
-  reset: number
-  pending: Promise<unknown>
+  success: boolean;
+  limit: number;
+  remaining: number;
+  reset: number;
+  pending: Promise<unknown>;
 } | null> {
   if (!rateLimit) {
     // Upstash未設定の場合はスキップ（インメモリ実装にフォールバック）
-    return null
+    return null;
   }
 
   // クライアント識別子取得
-  const identifier = getClientIdentifier(request)
+  const identifier = getClientIdentifier(request);
 
   try {
     // レート制限チェック
-    const { success, limit, remaining, reset, pending } = await rateLimit.limit(identifier)
-    return { success, limit, remaining, reset, pending }
+    const { success, limit, remaining, reset, pending } = await rateLimit.limit(identifier);
+    return { success, limit, remaining, reset, pending };
   } catch (error) {
     // Redis接続エラー等の場合はログを出力し、レート制限をスキップ（可用性優先）
     console.error('[RateLimit] Upstash rate limit check failed:', {
       identifier,
       error: error instanceof Error ? error.message : String(error),
-    })
+    });
     // エラー時はnullを返してインメモリ実装にフォールバック
-    return null
+    return null;
   }
 }
 
@@ -146,10 +146,10 @@ function getClientIdentifier(request: Request): string {
   // if (userId) return `user:${userId}`
 
   // IPアドレスをフォールバック
-  const forwardedFor = request.headers.get('x-forwarded-for')
-  const ip = forwardedFor?.split(',')[0]?.trim() || 'unknown'
+  const forwardedFor = request.headers.get('x-forwarded-for');
+  const ip = forwardedFor?.split(',')[0]?.trim() || 'unknown';
 
-  return `ip:${ip}`
+  return `ip:${ip}`;
 }
 
 /**
@@ -197,7 +197,7 @@ export const RATE_LIMIT_ALGORITHMS = {
   slidingWindow: 'Sliding Window（推奨）',
   fixedWindow: 'Fixed Window',
   tokenBucket: 'Token Bucket',
-} as const
+} as const;
 
 /**
  * レート制限プリセット
@@ -239,7 +239,7 @@ export const RATE_LIMIT_PRESETS = {
     window: '1 h',
     description: '10リクエスト/時間',
   },
-} as const
+} as const;
 
 /**
  * コスト見積もり
@@ -262,7 +262,7 @@ export const UPSTASH_COST_ESTIMATE = {
   pricePerHundredThousand: 0.2,
   estimatedMonthlyRequests: 3_000_000,
   estimatedMonthlyCost: 6,
-} as const
+} as const;
 
 /**
  * パフォーマンス
@@ -276,4 +276,4 @@ export const UPSTASH_PERFORMANCE = {
   latency: '<10ms',
   availability: '99.99%',
   scaling: 'automatic',
-} as const
+} as const;

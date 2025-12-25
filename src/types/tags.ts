@@ -11,4 +11,4 @@
  * import type { Tag } from '@/features/tags/types'
  */
 
-export * from '@/features/tags/types'
+export * from '@/features/tags/types';

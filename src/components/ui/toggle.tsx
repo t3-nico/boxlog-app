@@ -1,10 +1,10 @@
-'use client'
+'use client';
 
-import * as TogglePrimitive from '@radix-ui/react-toggle'
-import { cva, type VariantProps } from 'class-variance-authority'
-import * as React from 'react'
+import * as TogglePrimitive from '@radix-ui/react-toggle';
+import { cva, type VariantProps } from 'class-variance-authority';
+import * as React from 'react';
 
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/utils';
 
 /**
  * トグルバリアント定義
@@ -39,7 +39,8 @@ const toggleVariants = cva(
     variants: {
       variant: {
         ghost: 'bg-transparent',
-        outline: 'border border-border bg-background text-foreground shadow-xs hover:bg-state-hover',
+        outline:
+          'border border-border bg-background text-foreground shadow-xs hover:bg-state-hover',
       },
       size: {
         // sm: 24px高さ - ボタンと統一
@@ -54,8 +55,8 @@ const toggleVariants = cva(
       variant: 'ghost',
       size: 'default',
     },
-  }
-)
+  },
+);
 
 function Toggle({
   className,
@@ -64,8 +65,12 @@ function Toggle({
   ...props
 }: React.ComponentProps<typeof TogglePrimitive.Root> & VariantProps<typeof toggleVariants>) {
   return (
-    <TogglePrimitive.Root data-slot="toggle" className={cn(toggleVariants({ variant, size, className }))} {...props} />
-  )
+    <TogglePrimitive.Root
+      data-slot="toggle"
+      className={cn(toggleVariants({ variant, size, className }))}
+      {...props}
+    />
+  );
 }
 
-export { Toggle, toggleVariants }
+export { Toggle, toggleVariants };

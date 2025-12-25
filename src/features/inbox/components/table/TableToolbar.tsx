@@ -1,11 +1,11 @@
-'use client'
+'use client';
 
-import { Button } from '@/components/ui/button'
-import { X } from 'lucide-react'
-import { useInboxFilterStore } from '../../stores/useInboxFilterStore'
-import { ColumnSettings } from './ColumnSettings'
-import { TableFilters } from './TableFilters'
-import { TagFilterButton } from './TagFilterButton'
+import { Button } from '@/components/ui/button';
+import { X } from 'lucide-react';
+import { useInboxFilterStore } from '../../stores/useInboxFilterStore';
+import { ColumnSettings } from './ColumnSettings';
+import { TableFilters } from './TableFilters';
+import { TagFilterButton } from './TagFilterButton';
 
 /**
  * Tableビュー用ツールバー
@@ -19,9 +19,9 @@ import { TagFilterButton } from './TagFilterButton'
  * 作成ボタンは親コンポーネント（InboxTableView）で管理
  */
 export function TableToolbar() {
-  const { search, status, tags, dueDate, reset } = useInboxFilterStore()
+  const { search, status, tags, dueDate, reset } = useInboxFilterStore();
 
-  const isFiltered = search !== '' || status.length > 0 || tags.length > 0 || dueDate !== 'all'
+  const isFiltered = search !== '' || status.length > 0 || tags.length > 0 || dueDate !== 'all';
 
   return (
     <div className="flex shrink-0 items-center gap-2">
@@ -42,5 +42,5 @@ export function TableToolbar() {
       {/* 列設定 */}
       <ColumnSettings />
     </div>
-  )
+  );
 }

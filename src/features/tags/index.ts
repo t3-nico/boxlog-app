@@ -46,9 +46,9 @@ export {
   // Main
   TagsSidebar,
   TagsSidebarWrapper,
-} from './components'
+} from './components';
 
-export type { TagGroupsSectionRef } from './components'
+export type { TagGroupsSectionRef } from './components';
 
 // Hooks
 export {
@@ -92,18 +92,24 @@ export {
   useUpdateTag,
   useUpdateTagColor,
   useUpdateTagGroup,
-} from './hooks'
+} from './hooks';
 
 // Stores
-export { colorCategories, tagColors, useTagStore } from './stores'
+export { colorCategories, tagColors, useTagStore } from './stores';
 
 // Constants
-export { DEFAULT_TAG_COLOR, TAG_COLOR_PALETTE, TAG_PRESET_COLORS, tagIconCategories, tagIconMapping } from './constants'
+export {
+  DEFAULT_TAG_COLOR,
+  TAG_COLOR_PALETTE,
+  TAG_PRESET_COLORS,
+  tagIconCategories,
+  tagIconMapping,
+} from './constants';
 
-export type { TagIconName } from './constants'
+export type { TagIconName } from './constants';
 
 // Context
-export { TagsPageProvider, useTagsPageContext } from './contexts/TagsPageContext'
+export { TagsPageProvider, useTagsPageContext } from './contexts/TagsPageContext';
 
 // Types
 export type {
@@ -119,4 +125,4 @@ export type {
   TagUsageStats,
   TagWithChildren,
   UpdateTagInput,
-} from './types'
+} from './types';

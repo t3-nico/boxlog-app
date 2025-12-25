@@ -1,32 +1,32 @@
-import { create } from 'zustand'
+import { create } from 'zustand';
 
-import type { InspectorDisplayMode } from '@/features/inspector'
+import type { InspectorDisplayMode } from '@/features/inspector';
 
 interface AIInspectorState {
   /** Inspectorが開いているか */
-  isOpen: boolean
+  isOpen: boolean;
   /** 表示モード */
-  displayMode: InspectorDisplayMode
+  displayMode: InspectorDisplayMode;
   /** コンテキスト情報（現在のページやアイテム） */
   context: {
-    pageType?: 'inbox' | 'calendar' | 'tags' | 'stats' | 'settings'
-    itemId?: string
-    itemType?: 'plan' | 'tag'
-  } | null
+    pageType?: 'inbox' | 'calendar' | 'tags' | 'stats' | 'settings';
+    itemId?: string;
+    itemType?: 'plan' | 'tag';
+  } | null;
 }
 
 interface AIInspectorActions {
   /** Inspectorを開く */
-  openInspector: (context?: AIInspectorState['context']) => void
+  openInspector: (context?: AIInspectorState['context']) => void;
   /** Inspectorを閉じる */
-  closeInspector: () => void
+  closeInspector: () => void;
   /** 表示モードを切り替える */
-  toggleDisplayMode: () => void
+  toggleDisplayMode: () => void;
   /** コンテキストを更新 */
-  setContext: (context: AIInspectorState['context']) => void
+  setContext: (context: AIInspectorState['context']) => void;
 }
 
-type AIInspectorStore = AIInspectorState & AIInspectorActions
+type AIInspectorStore = AIInspectorState & AIInspectorActions;
 
 /**
  * AIInspector Store
@@ -60,4 +60,4 @@ export const useAIInspectorStore = create<AIInspectorStore>((set) => ({
     set({
       context,
     }),
-}))
+}));

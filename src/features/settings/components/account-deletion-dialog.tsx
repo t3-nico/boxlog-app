@@ -1,7 +1,7 @@
-'use client'
+'use client';
 
-import { AlertTriangle } from 'lucide-react'
-import { useState } from 'react'
+import { AlertTriangle } from 'lucide-react';
+import { useState } from 'react';
 
 import {
   AlertDialog,
@@ -12,11 +12,11 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { useTranslations } from 'next-intl'
-import { toast } from 'sonner'
+} from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { useTranslations } from 'next-intl';
+import { toast } from 'sonner';
 
 /**
  * 🗑️ Account Deletion Dialog Component
@@ -29,29 +29,29 @@ import { toast } from 'sonner'
  * @see Issue #548 - データ削除リクエスト機能（忘れられる権利）
  */
 export function AccountDeletionDialog() {
-  const t = useTranslations()
-  const [isOpen, setIsOpen] = useState(false)
-  const [password, setPassword] = useState('')
-  const [confirmText, setConfirmText] = useState('')
-  const [isDeleting, setIsDeleting] = useState(false)
+  const t = useTranslations();
+  const [isOpen, setIsOpen] = useState(false);
+  const [password, setPassword] = useState('');
+  const [confirmText, setConfirmText] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleDelete = async () => {
     if (confirmText !== 'DELETE') {
-      toast.error(t('settings.account.deletion.confirmTextError'))
-      return
+      toast.error(t('settings.account.deletion.confirmTextError'));
+      return;
     }
 
     if (!password) {
-      toast.error(t('settings.account.deletion.passwordRequired'))
-      return
+      toast.error(t('settings.account.deletion.passwordRequired'));
+      return;
     }
 
-    setIsDeleting(true)
+    setIsDeleting(true);
 
     try {
       console.info('Account deletion initiated', {
         component: 'account-deletion-dialog',
-      })
+      });
 
       const response = await fetch('/api/user/delete-account', {
         method: 'POST',
@@ -62,41 +62,41 @@ export function AccountDeletionDialog() {
           password,
           confirmText,
         }),
-      })
+      });
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (!response.ok) {
         if (data.error === 'INVALID_PASSWORD') {
-          toast.error(t('settings.account.deletion.invalidPassword'))
+          toast.error(t('settings.account.deletion.invalidPassword'));
         } else {
-          toast.error(data.message || t('settings.account.deletion.error'))
+          toast.error(data.message || t('settings.account.deletion.error'));
         }
-        return
+        return;
       }
 
       console.info('Account deletion scheduled', {
         component: 'account-deletion-dialog',
         scheduledDate: data.scheduledDeletionDate,
-      })
+      });
 
-      toast.success(t('settings.account.deletion.success'))
-      setIsOpen(false)
+      toast.success(t('settings.account.deletion.success'));
+      setIsOpen(false);
 
       // 5秒後にログアウトページへリダイレクト
       setTimeout(() => {
-        window.location.href = '/auth/signout'
-      }, 5000)
+        window.location.href = '/auth/signout';
+      }, 5000);
     } catch (error) {
       console.error('Account deletion failed', error as Error, {
         component: 'account-deletion-dialog',
-      })
+      });
 
-      toast.error(t('settings.account.deletion.error'))
+      toast.error(t('settings.account.deletion.error'));
     } finally {
-      setIsDeleting(false)
+      setIsDeleting(false);
     }
-  }
+  };
 
   return (
     <>
@@ -105,7 +105,9 @@ export function AccountDeletionDialog() {
           <div className="flex-1 space-y-2">
             <div className="flex items-center gap-2">
               <div className="bg-destructive h-2 w-2 animate-pulse rounded-full"></div>
-              <div className="text-destructive font-medium">{t('settings.account.deletion.title')}</div>
+              <div className="text-destructive font-medium">
+                {t('settings.account.deletion.title')}
+              </div>
             </div>
             <p className="text-destructive text-sm leading-relaxed">
               ⚠️ <strong>{t('settings.account.deletion.warningTitle')}</strong>
@@ -125,7 +127,9 @@ export function AccountDeletionDialog() {
             className="ml-4"
             disabled={isDeleting}
           >
-            {isDeleting ? t('settings.account.deletion.deleting') : `🗑️ ${t('settings.account.deletion.buttonText')}`}
+            {isDeleting
+              ? t('settings.account.deletion.deleting')
+              : `🗑️ ${t('settings.account.deletion.buttonText')}`}
           </Button>
         </div>
       </div>
@@ -171,25 +175,31 @@ export function AccountDeletionDialog() {
                   placeholder="DELETE"
                   disabled={isDeleting}
                 />
-                <p className="text-muted-foreground text-xs">{t('settings.account.deletion.confirmTextHint')}</p>
+                <p className="text-muted-foreground text-xs">
+                  {t('settings.account.deletion.confirmTextHint')}
+                </p>
               </div>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeleting}>{t('settings.account.deletion.cancel')}</AlertDialogCancel>
+            <AlertDialogCancel disabled={isDeleting}>
+              {t('settings.account.deletion.cancel')}
+            </AlertDialogCancel>
             <AlertDialogAction
               onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                e.preventDefault()
-                handleDelete()
+                e.preventDefault();
+                handleDelete();
               }}
               disabled={isDeleting || !password || confirmText !== 'DELETE'}
               className="bg-destructive text-destructive-foreground hover:bg-destructive-hover"
             >
-              {isDeleting ? t('settings.account.deletion.deleting') : t('settings.account.deletion.confirm')}
+              {isDeleting
+                ? t('settings.account.deletion.deleting')
+                : t('settings.account.deletion.confirm')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
     </>
-  )
+  );
 }

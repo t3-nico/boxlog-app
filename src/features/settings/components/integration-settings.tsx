@@ -1,31 +1,40 @@
-'use client'
+'use client';
 
-import { memo, useCallback, useState } from 'react'
+import { memo, useCallback, useState } from 'react';
 
-import { Bot, Calendar, CheckCircle2, ExternalLink, Eye, EyeOff, MessageSquare, Unplug } from 'lucide-react'
+import {
+  Bot,
+  Calendar,
+  CheckCircle2,
+  ExternalLink,
+  Eye,
+  EyeOff,
+  MessageSquare,
+  Unplug,
+} from 'lucide-react';
 
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Switch } from '@/components/ui/switch'
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Switch } from '@/components/ui/switch';
 
-import { SettingField } from './fields/SettingField'
-import { SettingsCard } from './SettingsCard'
+import { SettingField } from './fields/SettingField';
+import { SettingsCard } from './SettingsCard';
 
 interface Integration {
-  id: string
-  name: string
-  description: string
-  icon: React.ReactNode
-  connected: boolean
-  status?: 'active' | 'inactive' | 'error'
+  id: string;
+  name: string;
+  description: string;
+  icon: React.ReactNode;
+  connected: boolean;
+  status?: 'active' | 'inactive' | 'error';
 }
 
 interface AIProvider {
-  id: string
-  name: string
-  description: string
-  keyPrefix: string
+  id: string;
+  name: string;
+  description: string;
+  keyPrefix: string;
 }
 
 const AI_PROVIDERS: AIProvider[] = [
@@ -41,31 +50,31 @@ const AI_PROVIDERS: AIProvider[] = [
     description: 'OpenAI社のGPTモデルを使用します',
     keyPrefix: 'sk-',
   },
-]
+];
 
 export const IntegrationSettings = memo(function IntegrationSettings() {
   // AI API Keys state
   const [aiKeys, setAiKeys] = useState<Record<string, string>>({
     anthropic: '',
     openai: '',
-  })
+  });
   const [showKeys, setShowKeys] = useState<Record<string, boolean>>({
     anthropic: false,
     openai: false,
-  })
+  });
 
   const handleAiKeyChange = useCallback((providerId: string, value: string) => {
-    setAiKeys((prev) => ({ ...prev, [providerId]: value }))
-  }, [])
+    setAiKeys((prev) => ({ ...prev, [providerId]: value }));
+  }, []);
 
   const toggleKeyVisibility = useCallback((providerId: string) => {
-    setShowKeys((prev) => ({ ...prev, [providerId]: !prev[providerId] }))
-  }, [])
+    setShowKeys((prev) => ({ ...prev, [providerId]: !prev[providerId] }));
+  }, []);
 
   const handleSaveApiKey = useCallback((providerId: string) => {
     // TODO: 実際の保存処理を実装（暗号化してlocalStorageまたはサーバーに保存）
-    console.log(`Saving API key for ${providerId}`)
-  }, [])
+    console.log(`Saving API key for ${providerId}`);
+  }, []);
 
   const [integrations, setIntegrations] = useState<Integration[]>([
     {
@@ -82,31 +91,33 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
       icon: <MessageSquare className="text-primary h-5 w-5" />,
       connected: false,
     },
-  ])
+  ]);
 
-  const [syncEnabled, setSyncEnabled] = useState(true)
+  const [syncEnabled, setSyncEnabled] = useState(true);
 
   const handleConnect = useCallback((integrationId: string) => {
     setIntegrations((prev) =>
-      prev.map((int) => (int.id === integrationId ? { ...int, connected: true, status: 'active' as const } : int))
-    )
-  }, [])
+      prev.map((int) =>
+        int.id === integrationId ? { ...int, connected: true, status: 'active' as const } : int,
+      ),
+    );
+  }, []);
 
   const handleDisconnect = useCallback((integrationId: string) => {
     setIntegrations((prev) =>
       prev.map((int) => {
         if (int.id === integrationId) {
-          const { status: _, ...rest } = int
-          return { ...rest, connected: false }
+          const { status: _, ...rest } = int;
+          return { ...rest, connected: false };
         }
-        return int
-      })
-    )
-  }, [])
+        return int;
+      }),
+    );
+  }, []);
 
   const handleSyncChange = useCallback((checked: boolean) => {
-    setSyncEnabled(checked)
-  }, [])
+    setSyncEnabled(checked);
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -147,7 +158,11 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
                         className="absolute top-1/2 right-1 h-7 w-7 -translate-y-1/2 p-0"
                         onClick={() => toggleKeyVisibility(provider.id)}
                       >
-                        {showKeys[provider.id] ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        {showKeys[provider.id] ? (
+                          <EyeOff className="h-4 w-4" />
+                        ) : (
+                          <Eye className="h-4 w-4" />
+                        )}
                       </Button>
                     </div>
                     <Button
@@ -170,7 +185,10 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
       <SettingsCard title="連携サービス">
         <div className="space-y-4">
           {integrations.map((integration) => (
-            <div key={integration.id} className="border-border flex items-center justify-between rounded-xl border p-4">
+            <div
+              key={integration.id}
+              className="border-border flex items-center justify-between rounded-xl border p-4"
+            >
               <div className="flex items-center gap-4">
                 <div className="bg-surface-container flex h-10 w-10 items-center justify-center rounded-xl">
                   {integration.icon}
@@ -209,7 +227,10 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
       {/* 同期設定 */}
       <SettingsCard title="同期設定">
         <div className="space-y-4">
-          <SettingField label="自動同期を有効にする" description="連携サービスのデータを自動的に同期します">
+          <SettingField
+            label="自動同期を有効にする"
+            description="連携サービスのデータを自動的に同期します"
+          >
             <Switch checked={syncEnabled} onCheckedChange={handleSyncChange} />
           </SettingField>
 
@@ -227,7 +248,9 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
       <SettingsCard title="API連携">
         <div className="space-y-4">
           <div className="bg-surface-container rounded-xl p-4">
-            <p className="text-muted-foreground text-sm">APIキーの発行やWebhookの設定は開発者ポータルから行えます。</p>
+            <p className="text-muted-foreground text-sm">
+              APIキーの発行やWebhookの設定は開発者ポータルから行えます。
+            </p>
           </div>
           <Button variant="outline" disabled>
             <ExternalLink className="mr-2 h-4 w-4" />
@@ -236,5 +259,5 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
         </div>
       </SettingsCard>
     </div>
-  )
-})
+  );
+});

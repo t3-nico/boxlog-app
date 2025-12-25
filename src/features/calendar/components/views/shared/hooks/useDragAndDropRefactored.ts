@@ -3,24 +3,27 @@
  * 複雑度を大幅に削減し、責任を分離
  */
 
-'use client'
+'use client';
 
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef } from 'react';
 
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
 
-import { useDragCalculations } from './drag-operations/useDragCalculations'
-import { useDragElement } from './drag-operations/useDragElement'
-import { useDragState } from './drag-operations/useDragState'
-import { useEventUpdate } from './drag-operations/usePlanUpdate'
+import { useDragCalculations } from './drag-operations/useDragCalculations';
+import { useDragElement } from './drag-operations/useDragElement';
+import { useDragState } from './drag-operations/useDragState';
+import { useEventUpdate } from './drag-operations/usePlanUpdate';
 
 interface UseDragAndDropRefactoredProps {
-  onEventUpdate?: (eventId: string, updates: { startTime: Date; endTime: Date }) => Promise<void> | void
-  onEventClick?: (plan: CalendarPlan) => void
-  date: Date
-  events: CalendarPlan[]
-  displayDates?: Date[]
-  viewMode?: 'day' | '3day' | '5day' | 'week' | 'agenda'
+  onEventUpdate?: (
+    eventId: string,
+    updates: { startTime: Date; endTime: Date },
+  ) => Promise<void> | void;
+  onEventClick?: (plan: CalendarPlan) => void;
+  date: Date;
+  events: CalendarPlan[];
+  displayDates?: Date[];
+  viewMode?: 'day' | '3day' | '5day' | 'week' | 'agenda';
 }
 
 export function useDragAndDropRefactored({
@@ -32,15 +35,27 @@ export function useDragAndDropRefactored({
   viewMode = 'day',
 }: UseDragAndDropRefactoredProps) {
   // 分離されたフックを使用
-  const { dragState, updateDragState, resetDragState, startDrag, startResize, completeDragOperation } = useDragState()
+  const {
+    dragState,
+    updateDragState,
+    resetDragState,
+    startDrag,
+    startResize,
+    completeDragOperation,
+  } = useDragState();
 
   const { executeEventUpdate, executeEventResize } = useEventUpdate({
     onEventUpdate: onEventUpdate ?? undefined,
     events,
     date,
-  })
+  });
 
-  const { createDragElement, updateDragElementPosition, updateDragElementTime, cleanupDragElements } = useDragElement()
+  const {
+    createDragElement,
+    updateDragElementPosition,
+    updateDragElementTime,
+    cleanupDragElements,
+  } = useDragElement();
 
   const {
     calculateNewTime,
@@ -49,21 +64,21 @@ export function useDragAndDropRefactored({
     calculateTargetDate,
     calculateDragMovement,
     calculateResizeMovement,
-  } = useDragCalculations()
+  } = useDragCalculations();
 
   // ドラッグデータの参照
   const dragDataRef = useRef<{
-    eventId: string
-    startX: number
-    startY: number
-    originalTop: number
-    eventDuration: number
-    hasMoved: boolean
-    originalElement: HTMLElement | null
-    originalDateIndex: number
-    columnWidth: number
-    initialRect?: DOMRect | undefined
-  } | null>(null)
+    eventId: string;
+    startX: number;
+    startY: number;
+    originalTop: number;
+    eventDuration: number;
+    hasMoved: boolean;
+    originalElement: HTMLElement | null;
+    originalDateIndex: number;
+    columnWidth: number;
+    initialRect?: DOMRect | undefined;
+  } | null>(null);
 
   // マウスダウン処理
   const handleMouseDown = useCallback(
@@ -71,34 +86,36 @@ export function useDragAndDropRefactored({
       eventId: string,
       e: React.MouseEvent,
       originalPosition: { top: number; left: number; width: number; height: number },
-      dateIndex = 0
+      dateIndex = 0,
     ) => {
-      if (e.button !== 0) return // 左クリック以外は無視
+      if (e.button !== 0) return; // 左クリック以外は無視
 
-      e.preventDefault()
-      e.stopPropagation()
+      e.preventDefault();
+      e.stopPropagation();
 
-      const startPosition = { x: e.clientX, y: e.clientY }
-      const originalElement = (e.target as HTMLElement).closest('[data-event-block="true"]') as HTMLElement
+      const startPosition = { x: e.clientX, y: e.clientY };
+      const originalElement = (e.target as HTMLElement).closest(
+        '[data-event-block="true"]',
+      ) as HTMLElement;
 
       // カラム幅を計算
-      let columnWidth = 0
+      let columnWidth = 0;
       if (viewMode !== 'day' && displayDates) {
-        const gridContainer = originalElement?.closest('.flex') as HTMLElement
+        const gridContainer = originalElement?.closest('.flex') as HTMLElement;
         if (gridContainer?.offsetWidth > 0) {
-          columnWidth = gridContainer.offsetWidth / displayDates.length
+          columnWidth = gridContainer.offsetWidth / displayDates.length;
         } else {
-          columnWidth = (window.innerWidth / displayDates.length) * 0.75
+          columnWidth = (window.innerWidth / displayDates.length) * 0.75;
         }
       }
 
       // ドラッグ要素作成
-      let dragElement: HTMLElement | null = null
-      let initialRect: DOMRect | undefined = undefined
+      let dragElement: HTMLElement | null = null;
+      let initialRect: DOMRect | undefined = undefined;
       if (originalElement) {
-        const result = createDragElement(originalElement)
-        dragElement = result.dragElement
-        initialRect = result.initialRect
+        const result = createDragElement(originalElement);
+        dragElement = result.dragElement;
+        initialRect = result.initialRect;
       }
 
       // ドラッグデータ設定
@@ -113,27 +130,27 @@ export function useDragAndDropRefactored({
         originalDateIndex: dateIndex,
         columnWidth,
         initialRect: initialRect ?? undefined,
-      }
+      };
 
-      startDrag(eventId, startPosition, originalPosition, dateIndex)
-      updateDragState({ dragElement })
+      startDrag(eventId, startPosition, originalPosition, dateIndex);
+      updateDragState({ dragElement });
     },
-    [createDragElement, viewMode, displayDates, startDrag, updateDragState]
-  )
+    [createDragElement, viewMode, displayDates, startDrag, updateDragState],
+  );
 
   // マウス移動処理
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {
-      if ((!dragState.isDragging && !dragState.isResizing) || !dragDataRef.current) return
+      if ((!dragState.isDragging && !dragState.isResizing) || !dragDataRef.current) return;
 
-      const dragData = dragDataRef.current
-      const { constrainedX, constrainedY } = getConstrainedPosition(e.clientX, e.clientY)
-      const deltaX = constrainedX - dragData.startX
-      const deltaY = constrainedY - dragData.startY
+      const dragData = dragDataRef.current;
+      const { constrainedX, constrainedY } = getConstrainedPosition(e.clientX, e.clientY);
+      const deltaX = constrainedX - dragData.startX;
+      const deltaY = constrainedY - dragData.startY;
 
       // 移動閾値チェック
       if (Math.abs(deltaY) > 5 || Math.abs(deltaX) > 5) {
-        dragData.hasMoved = true
+        dragData.hasMoved = true;
       }
 
       const targetDateIndex = calculateTargetDateIndex(
@@ -143,31 +160,31 @@ export function useDragAndDropRefactored({
         dragData.columnWidth,
         displayDates || [],
         dragData.originalElement ?? undefined,
-        viewMode
-      )
+        viewMode,
+      );
 
       if (dragState.isResizing) {
         // リサイズ処理
         const { finalHeight, originalTop } = calculateResizeMovement(
           dragData.originalTop,
           dragData.eventDuration,
-          deltaY
-        )
+          deltaY,
+        );
 
-        const event = events.find((e) => e.id === dragData.eventId)
-        let previewTime = null
+        const event = events.find((e) => e.id === dragData.eventId);
+        let previewTime = null;
 
         if (event?.startDate) {
-          const newDurationMs = (finalHeight / 60) * 60 * 60 * 1000 // HOUR_HEIGHT = 60
-          const previewEndTime = new Date(event.startDate.getTime() + newDurationMs)
-          previewTime = { start: event.startDate, end: previewEndTime }
+          const newDurationMs = (finalHeight / 60) * 60 * 60 * 1000; // HOUR_HEIGHT = 60
+          const previewEndTime = new Date(event.startDate.getTime() + newDurationMs);
+          previewTime = { start: event.startDate, end: previewEndTime };
         }
 
         updateDragState({
           currentPosition: { x: constrainedX, y: constrainedY },
           snappedPosition: { top: originalTop, height: finalHeight },
           previewTime,
-        })
+        });
       } else if (dragState.isDragging) {
         // ドラッグ処理
         const { snappedTop, snappedLeft, hour, minute } = calculateDragMovement(
@@ -175,38 +192,38 @@ export function useDragAndDropRefactored({
           deltaY,
           targetDateIndex,
           displayDates,
-          viewMode
-        )
+          viewMode,
+        );
 
         // ドラッグ要素の位置更新
         if (dragData.initialRect) {
-          const newLeft = dragData.initialRect.left + deltaX
-          const newTop = dragData.initialRect.top + deltaY
-          updateDragElementPosition(newLeft, newTop)
+          const newLeft = dragData.initialRect.left + deltaX;
+          const newTop = dragData.initialRect.top + deltaY;
+          updateDragElementPosition(newLeft, newTop);
         }
 
         // プレビュー時間計算
-        const targetDate = calculateTargetDate(targetDateIndex, date, displayDates, viewMode)
-        const event = events.find((e) => e.id === dragData.eventId)
+        const targetDate = calculateTargetDate(targetDateIndex, date, displayDates, viewMode);
+        const event = events.find((e) => e.id === dragData.eventId);
 
-        let durationMs = 60 * 60 * 1000
+        let durationMs = 60 * 60 * 1000;
         if (event?.startDate && event?.endDate) {
-          durationMs = event.endDate.getTime() - event.startDate.getTime()
+          durationMs = event.endDate.getTime() - event.startDate.getTime();
         }
 
-        const previewStartTime = new Date(targetDate)
-        previewStartTime.setHours(hour, minute, 0, 0)
-        const previewEndTime = new Date(previewStartTime.getTime() + durationMs)
+        const previewStartTime = new Date(targetDate);
+        previewStartTime.setHours(hour, minute, 0, 0);
+        const previewEndTime = new Date(previewStartTime.getTime() + durationMs);
 
         // ドラッグ要素の時間表示更新
-        updateDragElementTime(previewStartTime, previewEndTime)
+        updateDragElementTime(previewStartTime, previewEndTime);
 
         updateDragState({
           currentPosition: { x: constrainedX, y: constrainedY },
           snappedPosition: { top: snappedTop, left: snappedLeft ?? undefined },
           previewTime: { start: previewStartTime, end: previewEndTime },
           targetDateIndex,
-        })
+        });
       }
     },
     [
@@ -223,20 +240,20 @@ export function useDragAndDropRefactored({
       displayDates,
       viewMode,
       date,
-    ]
-  )
+    ],
+  );
 
   // マウスアップ処理
   const handleMouseUp = useCallback(async () => {
-    cleanupDragElements()
+    cleanupDragElements();
 
     // クリック処理
     if (!dragDataRef.current?.hasMoved && onEventClick && dragDataRef.current?.eventId) {
-      const eventToClick = events.find((e) => e.id === dragDataRef.current!.eventId)
+      const eventToClick = events.find((e) => e.id === dragDataRef.current!.eventId);
       if (eventToClick) {
-        resetDragState()
-        onEventClick(eventToClick)
-        return
+        resetDragState();
+        onEventClick(eventToClick);
+        return;
       }
     }
 
@@ -246,8 +263,8 @@ export function useDragAndDropRefactored({
       !dragState.currentPosition ||
       !dragState.dragStartPosition
     ) {
-      resetDragState()
-      return
+      resetDragState();
+      return;
     }
 
     if (dragState.isResizing) {
@@ -256,28 +273,28 @@ export function useDragAndDropRefactored({
         await executeEventResize(
           dragDataRef.current.eventId,
           dragState.snappedPosition.height,
-          dragDataRef.current.hasMoved
-        )
+          dragDataRef.current.hasMoved,
+        );
       }
     } else if (dragState.isDragging) {
       // ドラッグ処理
-      const deltaY = dragState.currentPosition.y - dragState.dragStartPosition.y
-      const newTop = dragDataRef.current.originalTop + deltaY
-      const targetDateIndex = dragState.targetDateIndex ?? dragDataRef.current.originalDateIndex
-      const targetDate = calculateTargetDate(targetDateIndex, date, displayDates, viewMode)
-      const newStartTime = calculateNewTime(newTop, targetDate)
+      const deltaY = dragState.currentPosition.y - dragState.dragStartPosition.y;
+      const newTop = dragDataRef.current.originalTop + deltaY;
+      const targetDateIndex = dragState.targetDateIndex ?? dragDataRef.current.originalDateIndex;
+      const targetDate = calculateTargetDate(targetDateIndex, date, displayDates, viewMode);
+      const newStartTime = calculateNewTime(newTop, targetDate);
 
       await executeEventUpdate(
         dragDataRef.current.eventId,
         newStartTime,
         dragDataRef.current.eventDuration,
-        dragDataRef.current.hasMoved
-      )
+        dragDataRef.current.hasMoved,
+      );
     }
 
-    const actuallyMoved = dragDataRef.current?.hasMoved || false
-    completeDragOperation(actuallyMoved)
-    dragDataRef.current = null
+    const actuallyMoved = dragDataRef.current?.hasMoved || false;
+    completeDragOperation(actuallyMoved);
+    dragDataRef.current = null;
   }, [
     cleanupDragElements,
     dragState,
@@ -292,7 +309,7 @@ export function useDragAndDropRefactored({
     date,
     displayDates,
     viewMode,
-  ])
+  ]);
 
   // リサイズ開始処理
   const handleResizeStart = useCallback(
@@ -300,11 +317,11 @@ export function useDragAndDropRefactored({
       eventId: string,
       _direction: 'top' | 'bottom',
       e: React.MouseEvent,
-      originalPosition: { top: number; left: number; width: number; height: number }
+      originalPosition: { top: number; left: number; width: number; height: number },
     ) => {
-      if (e.button !== 0) return
+      if (e.button !== 0) return;
 
-      const startPosition = { x: e.clientX, y: e.clientY }
+      const startPosition = { x: e.clientX, y: e.clientY };
 
       dragDataRef.current = {
         eventId,
@@ -316,44 +333,44 @@ export function useDragAndDropRefactored({
         originalElement: null,
         originalDateIndex: 0,
         columnWidth: 0,
-      }
+      };
 
-      startResize(eventId, startPosition, originalPosition)
+      startResize(eventId, startPosition, originalPosition);
     },
-    [startResize]
-  )
+    [startResize],
+  );
 
   // イベントドロップヘルパー
   const handleEventDrop = useCallback(
     (eventId: string, newStartTime: Date) => {
       if (onEventUpdate) {
-        const event = events.find((e) => e.id === eventId)
-        let durationMs = 60 * 60 * 1000
+        const event = events.find((e) => e.id === eventId);
+        let durationMs = 60 * 60 * 1000;
 
         if (event?.startDate && event?.endDate) {
-          durationMs = event.endDate.getTime() - event.startDate.getTime()
+          durationMs = event.endDate.getTime() - event.startDate.getTime();
         }
 
-        const newEndTime = new Date(newStartTime.getTime() + durationMs)
-        onEventUpdate(eventId, { startTime: newStartTime, endTime: newEndTime })
+        const newEndTime = new Date(newStartTime.getTime() + durationMs);
+        onEventUpdate(eventId, { startTime: newStartTime, endTime: newEndTime });
       }
     },
-    [onEventUpdate, events]
-  )
+    [onEventUpdate, events],
+  );
 
   // グローバルマウスイベント設定
   useEffect(() => {
     if (dragState.isDragging || dragState.isResizing) {
-      document.addEventListener('mousemove', handleMouseMove, { passive: false })
-      document.addEventListener('mouseup', handleMouseUp)
+      document.addEventListener('mousemove', handleMouseMove, { passive: false });
+      document.addEventListener('mouseup', handleMouseUp);
 
       return () => {
-        document.removeEventListener('mousemove', handleMouseMove)
-        document.removeEventListener('mouseup', handleMouseUp)
-      }
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+      };
     }
-    return undefined
-  }, [dragState.isDragging, dragState.isResizing, handleMouseMove, handleMouseUp])
+    return undefined;
+  }, [dragState.isDragging, dragState.isResizing, handleMouseMove, handleMouseUp]);
 
   return {
     dragState,
@@ -364,5 +381,5 @@ export function useDragAndDropRefactored({
       handleEventDrop,
       handleResizeStart,
     },
-  }
+  };
 }

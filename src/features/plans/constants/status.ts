@@ -1,4 +1,4 @@
-import type { PlanStatus } from '../types/plan'
+import type { PlanStatus } from '../types/plan';
 
 /**
  * プランステータス定数
@@ -7,7 +7,7 @@ export const PLAN_STATUSES = {
   TODO: 'todo',
   DOING: 'doing',
   DONE: 'done',
-} as const
+} as const;
 
 /**
  * ステータス表示名マップ
@@ -16,7 +16,7 @@ export const PLAN_STATUS_LABELS: Record<PlanStatus, string> = {
   todo: 'Todo',
   doing: 'Doing',
   done: 'Done',
-}
+};
 
 /**
  * ステータス色マップ（Tailwind classes）
@@ -24,12 +24,12 @@ export const PLAN_STATUS_LABELS: Record<PlanStatus, string> = {
 export const PLAN_STATUS_COLORS: Record<
   PlanStatus,
   {
-    bg: string
-    text: string
-    border: string
-    darkBg: string
-    darkText: string
-    darkBorder: string
+    bg: string;
+    text: string;
+    border: string;
+    darkBg: string;
+    darkText: string;
+    darkBorder: string;
   }
 > = {
   todo: {
@@ -56,4 +56,4 @@ export const PLAN_STATUS_COLORS: Record<
     darkText: 'dark:text-green-300',
     darkBorder: 'dark:border-green-800',
   },
-}
+};

@@ -1,8 +1,8 @@
-'use client'
+'use client';
 
-import { Archive, Folder, FolderX, Merge, MoreHorizontal, RotateCcw, Trash2 } from 'lucide-react'
+import { Archive, Folder, FolderX, Merge, MoreHorizontal, RotateCcw, Trash2 } from 'lucide-react';
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,28 +11,28 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { HoverTooltip } from '@/components/ui/tooltip'
-import { DEFAULT_GROUP_COLOR } from '@/config/ui/colors'
-import type { Tag, TagGroup } from '@/features/tags/types'
+} from '@/components/ui/dropdown-menu';
+import { HoverTooltip } from '@/components/ui/tooltip';
+import { DEFAULT_GROUP_COLOR } from '@/config/ui/colors';
+import type { Tag, TagGroup } from '@/features/tags/types';
 
-import { TagActionMenuItems } from './TagActionMenuItems'
+import { TagActionMenuItems } from './TagActionMenuItems';
 
 interface TagSelectionActionsProps {
-  selectedTagIds: string[]
-  tags: Tag[]
-  groups: TagGroup[]
-  onMoveToGroup: (tag: Tag, groupId: string | null) => void
-  onArchive?: (tagIds: string[]) => Promise<void>
+  selectedTagIds: string[];
+  tags: Tag[];
+  groups: TagGroup[];
+  onMoveToGroup: (tag: Tag, groupId: string | null) => void;
+  onArchive?: (tagIds: string[]) => Promise<void>;
   /** 復元（アーカイブモード用） */
-  onRestore?: (tagIds: string[]) => Promise<void>
-  onDelete: () => void
+  onRestore?: (tagIds: string[]) => Promise<void>;
+  onDelete: () => void;
   /** 単一タグマージ（1つ選択時のみ有効） */
-  onSingleMerge?: (tag: Tag) => void
-  onEdit?: (tag: Tag) => void
-  onView?: (tag: Tag) => void
-  onClearSelection: () => void
-  t: (key: string) => string
+  onSingleMerge?: (tag: Tag) => void;
+  onEdit?: (tag: Tag) => void;
+  onView?: (tag: Tag) => void;
+  onClearSelection: () => void;
+  t: (key: string) => string;
 }
 
 /**
@@ -58,9 +58,9 @@ export function TagSelectionActions({
   onClearSelection,
   t,
 }: TagSelectionActionsProps) {
-  const hasGroups = groups.length > 0
-  const isSingleSelection = selectedTagIds.length === 1
-  const selectedTag = isSingleSelection ? tags.find((t) => t.id === selectedTagIds[0]) : null
+  const hasGroups = groups.length > 0;
+  const isSingleSelection = selectedTagIds.length === 1;
+  const selectedTag = isSingleSelection ? tags.find((t) => t.id === selectedTagIds[0]) : null;
 
   return (
     <>
@@ -78,9 +78,9 @@ export function TagSelectionActions({
             <DropdownMenuItem
               onClick={() => {
                 selectedTagIds.forEach((tagId) => {
-                  const tag = tags.find((t) => t.id === tagId)
-                  if (tag) onMoveToGroup(tag, null)
-                })
+                  const tag = tags.find((t) => t.id === tagId);
+                  if (tag) onMoveToGroup(tag, null);
+                });
               }}
             >
               <FolderX className="text-muted-foreground mr-2 h-4 w-4" />
@@ -91,12 +91,15 @@ export function TagSelectionActions({
                 key={group.id}
                 onClick={() => {
                   selectedTagIds.forEach((tagId) => {
-                    const tag = tags.find((t) => t.id === tagId)
-                    if (tag) onMoveToGroup(tag, group.id)
-                  })
+                    const tag = tags.find((t) => t.id === tagId);
+                    if (tag) onMoveToGroup(tag, group.id);
+                  });
                 }}
               >
-                <Folder className="mr-2 h-4 w-4" style={{ color: group.color || DEFAULT_GROUP_COLOR }} />
+                <Folder
+                  className="mr-2 h-4 w-4"
+                  style={{ color: group.color || DEFAULT_GROUP_COLOR }}
+                />
                 {group.name}
               </DropdownMenuItem>
             ))}
@@ -111,8 +114,8 @@ export function TagSelectionActions({
             variant="ghost"
             size="icon"
             onClick={async () => {
-              await onRestore(selectedTagIds)
-              onClearSelection()
+              await onRestore(selectedTagIds);
+              onClearSelection();
             }}
             aria-label={t('tag.archive.restore')}
           >
@@ -128,8 +131,8 @@ export function TagSelectionActions({
             variant="ghost"
             size="icon"
             onClick={async () => {
-              await onArchive(selectedTagIds)
-              onClearSelection()
+              await onArchive(selectedTagIds);
+              onClearSelection();
             }}
             aria-label={t('tag.page.archive')}
           >
@@ -182,17 +185,17 @@ export function TagSelectionActions({
               {...(onView && { onView })}
               {...(onEdit && { onEdit })}
               onMoveToGroup={(tag, groupId) => {
-                onMoveToGroup(tag, groupId)
+                onMoveToGroup(tag, groupId);
               }}
               {...(onArchive && {
                 onArchive: async (tag) => {
-                  await onArchive([tag.id])
-                  onClearSelection()
+                  await onArchive([tag.id]);
+                  onClearSelection();
                 },
               })}
               onDelete={() => {
-                onDelete()
-                onClearSelection()
+                onDelete();
+                onClearSelection();
               }}
               t={t}
               renderMenuItem={({ icon, label, onClick, variant }) => (
@@ -229,5 +232,5 @@ export function TagSelectionActions({
         </DropdownMenu>
       )}
     </>
-  )
+  );
 }

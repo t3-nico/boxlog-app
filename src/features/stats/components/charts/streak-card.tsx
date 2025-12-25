@@ -1,13 +1,13 @@
-'use client'
+'use client';
 
-import { Flame, Trophy } from 'lucide-react'
+import { Flame, Trophy } from 'lucide-react';
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
-import { api } from '@/lib/trpc'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { api } from '@/lib/trpc';
 
 export function StreakCard() {
-  const { data, isPending } = api.plans.getStreak.useQuery()
+  const { data, isPending } = api.plans.getStreak.useQuery();
 
   if (isPending) {
     return (
@@ -20,11 +20,11 @@ export function StreakCard() {
           <Skeleton className="h-16 w-full" />
         </CardContent>
       </Card>
-    )
+    );
   }
 
   if (!data) {
-    return null
+    return null;
   }
 
   return (
@@ -82,5 +82,5 @@ export function StreakCard() {
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

@@ -1,17 +1,17 @@
-import { useMemo } from 'react'
+import { useMemo } from 'react';
 
-import { useEventPositioning, type EventPositionInfo } from '../../shared/hooks/usePlanPositioning'
-import type { CalendarPlan, EventPosition } from '../../shared/types/plan.types'
+import { useEventPositioning, type EventPositionInfo } from '../../shared/hooks/usePlanPositioning';
+import type { CalendarPlan, EventPosition } from '../../shared/types/plan.types';
 
 interface UseDayEventLayoutOptions {
-  date: Date
-  events: CalendarPlan[]
+  date: Date;
+  events: CalendarPlan[];
 }
 
 interface UseDayEventLayoutReturn {
-  eventPositions: EventPosition[]
-  dayEvents: CalendarPlan[]
-  maxConcurrentEvents: number
+  eventPositions: EventPosition[];
+  dayEvents: CalendarPlan[];
+  maxConcurrentEvents: number;
 }
 
 /**
@@ -31,7 +31,7 @@ export function useDayEventLayout({
     date,
     events,
     viewType: 'day',
-  })
+  });
 
   // DayView固有のEventPosition形式に変換
   const eventPositions = useMemo(() => {
@@ -45,12 +45,12 @@ export function useDayEventLayout({
       column: info.column,
       totalColumns: info.totalColumns,
       opacity: info.opacity,
-    })) as EventPosition[]
-  }, [positionsInfo])
+    })) as EventPosition[];
+  }, [positionsInfo]);
 
   return {
     eventPositions,
     dayEvents: dayEvents as CalendarPlan[],
     maxConcurrentEvents,
-  }
+  };
 }

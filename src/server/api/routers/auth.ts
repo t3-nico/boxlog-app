@@ -3,8 +3,8 @@
  * @description reCAPTCHA検証、IPレート制限などの認証補助機能
  */
 
-import { TRPCError } from '@trpc/server'
-import { z } from 'zod'
+import { TRPCError } from '@trpc/server';
+import { z } from 'zod';
 
 import {
   type AuthAuditEventType,
@@ -12,11 +12,11 @@ import {
   getRecentLogins,
   parseUserAgent,
   recordAuthAuditLog,
-} from '@/features/auth/lib/audit-log'
-import { checkIpRateLimit } from '@/features/auth/lib/ip-rate-limit'
-import { RECAPTCHA_CONFIG, verifyRecaptchaV3 } from '@/lib/recaptcha'
+} from '@/features/auth/lib/audit-log';
+import { checkIpRateLimit } from '@/features/auth/lib/ip-rate-limit';
+import { RECAPTCHA_CONFIG, verifyRecaptchaV3 } from '@/lib/recaptcha';
 
-import { createTRPCRouter, protectedProcedure, publicProcedure } from '../trpc'
+import { createTRPCRouter, protectedProcedure, publicProcedure } from '../trpc';
 
 /**
  * reCAPTCHA検証の入力スキーマ
@@ -24,14 +24,14 @@ import { createTRPCRouter, protectedProcedure, publicProcedure } from '../trpc'
 const verifyRecaptchaInput = z.object({
   token: z.string().min(1, 'validation.recaptcha.required'),
   action: z.enum(['login', 'signup', 'password_reset']),
-})
+});
 
 /**
  * IPレート制限チェックの入力スキーマ
  */
 const checkIpRateLimitInput = z.object({
   // クライアントからは送信しない（サーバー側でIPを取得）
-})
+});
 
 /**
  * 認証ルーター
@@ -42,48 +42,48 @@ export const authRouter = createTRPCRouter({
    * @description ログイン/サインアップ前にボット判定を行う
    */
   verifyRecaptcha: publicProcedure.input(verifyRecaptchaInput).mutation(async ({ input }) => {
-    const { token, action } = input
+    const { token, action } = input;
 
     // reCAPTCHA が設定されていない場合はスキップ（開発環境用）
     if (!RECAPTCHA_CONFIG.SECRET_KEY_V3) {
-      console.warn('[Auth] reCAPTCHA v3 not configured, skipping verification')
+      console.warn('[Auth] reCAPTCHA v3 not configured, skipping verification');
       return {
         success: true,
         score: 1.0,
         isBot: false,
-      }
+      };
     }
 
     try {
-      const result = await verifyRecaptchaV3(token, action)
+      const result = await verifyRecaptchaV3(token, action);
 
       if (!result.success) {
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: 'reCAPTCHA検証に失敗しました',
-        })
+        });
       }
 
       // スコアのしきい値判定
-      const score = result.score ?? 0
-      const threshold = RECAPTCHA_CONFIG.SCORE_THRESHOLD.MODERATE // 0.5
+      const score = result.score ?? 0;
+      const threshold = RECAPTCHA_CONFIG.SCORE_THRESHOLD.MODERATE; // 0.5
 
       return {
         success: true,
         score,
         isBot: score < threshold,
-      }
+      };
     } catch (error) {
       // TRPCErrorはそのまま再スロー
       if (error instanceof TRPCError) {
-        throw error
+        throw error;
       }
 
-      console.error('[Auth] reCAPTCHA verification error:', error)
+      console.error('[Auth] reCAPTCHA verification error:', error);
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
         message: 'reCAPTCHA検証中にエラーが発生しました',
-      })
+      });
     }
   }),
 
@@ -93,36 +93,36 @@ export const authRouter = createTRPCRouter({
    */
   checkIpRateLimit: publicProcedure.input(checkIpRateLimitInput).query(async ({ ctx }) => {
     // クライアントIPを取得
-    const forwarded = ctx.req?.headers?.['x-forwarded-for']
-    const remoteAddress = ctx.req?.socket?.remoteAddress
-    const firstForwarded = typeof forwarded === 'string' ? forwarded.split(',')[0] : undefined
-    const ipAddress = firstForwarded?.trim() ?? remoteAddress ?? null
+    const forwarded = ctx.req?.headers?.['x-forwarded-for'];
+    const remoteAddress = ctx.req?.socket?.remoteAddress;
+    const firstForwarded = typeof forwarded === 'string' ? forwarded.split(',')[0] : undefined;
+    const ipAddress = firstForwarded?.trim() ?? remoteAddress ?? null;
 
     if (!ipAddress) {
       return {
         isBlocked: false,
         remainingMinutes: 0,
         failedAttempts: 0,
-      }
+      };
     }
 
     try {
-      const status = await checkIpRateLimit(ctx.supabase, ipAddress)
+      const status = await checkIpRateLimit(ctx.supabase, ipAddress);
 
       return {
         isBlocked: status.isBlocked,
         remainingMinutes: status.remainingMinutes,
         failedAttempts: status.failedAttempts,
         ipAddress, // デバッグ用（本番では削除可）
-      }
+      };
     } catch (error) {
-      console.error('[Auth] IP rate limit check error:', error)
+      console.error('[Auth] IP rate limit check error:', error);
       // エラー時はブロックしない（可用性優先）
       return {
         isBlocked: false,
         remainingMinutes: 0,
         failedAttempts: 0,
-      }
+      };
     }
   }),
 
@@ -135,17 +135,17 @@ export const authRouter = createTRPCRouter({
       z.object({
         email: z.string().email(),
         isSuccessful: z.boolean(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
-      const { email, isSuccessful } = input
+      const { email, isSuccessful } = input;
 
       // クライアントIPを取得
-      const forwarded = ctx.req?.headers?.['x-forwarded-for']
-      const remoteAddress = ctx.req?.socket?.remoteAddress
-      const firstForwarded = typeof forwarded === 'string' ? forwarded.split(',')[0] : undefined
-      const ipAddress = firstForwarded?.trim() ?? remoteAddress ?? null
-      const userAgent = ctx.req?.headers?.['user-agent'] ?? null
+      const forwarded = ctx.req?.headers?.['x-forwarded-for'];
+      const remoteAddress = ctx.req?.socket?.remoteAddress;
+      const firstForwarded = typeof forwarded === 'string' ? forwarded.split(',')[0] : undefined;
+      const ipAddress = firstForwarded?.trim() ?? remoteAddress ?? null;
+      const userAgent = ctx.req?.headers?.['user-agent'] ?? null;
 
       try {
         const { error } = await ctx.supabase.from('login_attempts').insert({
@@ -154,16 +154,16 @@ export const authRouter = createTRPCRouter({
           is_successful: isSuccessful,
           ip_address: ipAddress || null,
           user_agent: userAgent,
-        })
+        });
 
         if (error) {
-          console.error('[Auth] Failed to record login attempt:', error)
+          console.error('[Auth] Failed to record login attempt:', error);
         }
 
-        return { success: !error }
+        return { success: !error };
       } catch (error) {
-        console.error('[Auth] Exception recording login attempt:', error)
-        return { success: false }
+        console.error('[Auth] Exception recording login attempt:', error);
+        return { success: false };
       }
     }),
 
@@ -184,21 +184,21 @@ export const authRouter = createTRPCRouter({
           'account_recovery',
         ]),
         metadata: z.record(z.unknown()).optional(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
-      const { eventType, metadata } = input
-      const userId = ctx.userId
+      const { eventType, metadata } = input;
+      const userId = ctx.userId;
 
       // クライアントIPとUser-Agentを取得
-      const forwarded = ctx.req?.headers?.['x-forwarded-for']
-      const remoteAddress = ctx.req?.socket?.remoteAddress
-      const firstForwarded = typeof forwarded === 'string' ? forwarded.split(',')[0] : undefined
-      const ipAddress = firstForwarded?.trim() ?? remoteAddress ?? null
-      const userAgent = ctx.req?.headers?.['user-agent'] ?? null
+      const forwarded = ctx.req?.headers?.['x-forwarded-for'];
+      const remoteAddress = ctx.req?.socket?.remoteAddress;
+      const firstForwarded = typeof forwarded === 'string' ? forwarded.split(',')[0] : undefined;
+      const ipAddress = firstForwarded?.trim() ?? remoteAddress ?? null;
+      const userAgent = ctx.req?.headers?.['user-agent'] ?? null;
 
       // User-Agentを解析
-      const { device, browser } = parseUserAgent(userAgent)
+      const { device, browser } = parseUserAgent(userAgent);
 
       const result = await recordAuthAuditLog(ctx.supabase, {
         userId,
@@ -210,9 +210,9 @@ export const authRouter = createTRPCRouter({
           device,
           browser,
         },
-      })
+      });
 
-      return result
+      return result;
     }),
 
   /**
@@ -223,20 +223,20 @@ export const authRouter = createTRPCRouter({
     .input(
       z.object({
         limit: z.number().min(1).max(50).default(10),
-      })
+      }),
     )
     .query(async ({ ctx, input }) => {
-      const userId = ctx.userId
-      const result = await getRecentLogins(ctx.supabase, userId, input.limit)
+      const userId = ctx.userId;
+      const result = await getRecentLogins(ctx.supabase, userId, input.limit);
 
       if (result.error) {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: result.error,
-        })
+        });
       }
 
-      return result.logins
+      return result.logins;
     }),
 
   /**
@@ -256,42 +256,42 @@ export const authRouter = createTRPCRouter({
               'password_changed',
               'session_extended',
               'account_recovery',
-            ])
+            ]),
           )
           .optional(),
         startDate: z.string().datetime().optional(),
         endDate: z.string().datetime().optional(),
         limit: z.number().min(1).max(100).default(50),
-      })
+      }),
     )
     .query(async ({ ctx, input }) => {
-      const userId = ctx.userId
+      const userId = ctx.userId;
       const options: {
-        eventTypes?: AuthAuditEventType[]
-        startDate?: Date
-        endDate?: Date
-        limit?: number
-      } = { limit: input.limit }
+        eventTypes?: AuthAuditEventType[];
+        startDate?: Date;
+        endDate?: Date;
+        limit?: number;
+      } = { limit: input.limit };
 
       if (input.eventTypes) {
-        options.eventTypes = input.eventTypes as AuthAuditEventType[]
+        options.eventTypes = input.eventTypes as AuthAuditEventType[];
       }
       if (input.startDate) {
-        options.startDate = new Date(input.startDate)
+        options.startDate = new Date(input.startDate);
       }
       if (input.endDate) {
-        options.endDate = new Date(input.endDate)
+        options.endDate = new Date(input.endDate);
       }
 
-      const result = await getAuditLogs(ctx.supabase, userId, options)
+      const result = await getAuditLogs(ctx.supabase, userId, options);
 
       if (result.error) {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: result.error,
-        })
+        });
       }
 
-      return result.logs
+      return result.logs;
     }),
-})
+});

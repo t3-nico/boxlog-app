@@ -7,12 +7,16 @@ import {
   closestCenter,
   useSensor,
   useSensors,
-} from '@dnd-kit/core'
-import { arrayMove, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable'
-import { useEffect, useRef, useState } from 'react'
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { useEffect, useRef, useState } from 'react';
 
-import type { TagGroup } from '@/features/tags/types'
-import { useReorderTagGroups } from './use-tag-groups'
+import type { TagGroup } from '@/features/tags/types';
+import { useReorderTagGroups } from './use-tag-groups';
 
 /**
  * タググループのドラッグアンドドロップ用フック（シンプル版）
@@ -20,12 +24,12 @@ import { useReorderTagGroups } from './use-tag-groups'
  * 無限ループを避けるため、groupsの同期は最小限に抑える
  */
 export function useTagGroupsDnd(groups: TagGroup[]) {
-  const [activeGroup, setActiveGroup] = useState<TagGroup | null>(null)
-  const [localGroups, setLocalGroups] = useState<TagGroup[]>(groups)
-  const reorderMutation = useReorderTagGroups()
+  const [activeGroup, setActiveGroup] = useState<TagGroup | null>(null);
+  const [localGroups, setLocalGroups] = useState<TagGroup[]>(groups);
+  const reorderMutation = useReorderTagGroups();
 
   // 前回のグループIDを文字列化して保持
-  const prevGroupIdsRef = useRef<string>(groups.map((g) => g.id).join(','))
+  const prevGroupIdsRef = useRef<string>(groups.map((g) => g.id).join(','));
 
   // センサー設定
   const sensors = useSensors(
@@ -37,62 +41,62 @@ export function useTagGroupsDnd(groups: TagGroup[]) {
     }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    })
-  )
+    }),
+  );
 
   // グループIDが変わった時のみlocalGroupsを更新（useEffect内でref操作）
-  const currentGroupIds = groups.map((g) => g.id).join(',')
+  const currentGroupIds = groups.map((g) => g.id).join(',');
   useEffect(() => {
     if (currentGroupIds !== prevGroupIdsRef.current && !activeGroup) {
-      prevGroupIdsRef.current = currentGroupIds
+      prevGroupIdsRef.current = currentGroupIds;
 
-      setLocalGroups(groups)
+      setLocalGroups(groups);
     }
-  }, [currentGroupIds, groups, activeGroup])
+  }, [currentGroupIds, groups, activeGroup]);
 
   const handleDragStart = (event: DragStartEvent) => {
-    const { active } = event
-    const group = localGroups.find((g) => g.id === active.id)
+    const { active } = event;
+    const group = localGroups.find((g) => g.id === active.id);
     if (group) {
-      setActiveGroup(group)
+      setActiveGroup(group);
     }
-  }
+  };
 
   const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event
+    const { active, over } = event;
 
     if (!over || active.id === over.id) {
-      setActiveGroup(null)
-      return
+      setActiveGroup(null);
+      return;
     }
 
-    const oldIndex = localGroups.findIndex((g) => g.id === active.id)
-    const newIndex = localGroups.findIndex((g) => g.id === over.id)
+    const oldIndex = localGroups.findIndex((g) => g.id === active.id);
+    const newIndex = localGroups.findIndex((g) => g.id === over.id);
 
     if (oldIndex === -1 || newIndex === -1) {
-      setActiveGroup(null)
-      return
+      setActiveGroup(null);
+      return;
     }
 
     // 楽観的更新
-    const reordered = arrayMove(localGroups, oldIndex, newIndex)
-    setLocalGroups(reordered)
+    const reordered = arrayMove(localGroups, oldIndex, newIndex);
+    setLocalGroups(reordered);
 
     // APIに反映
-    const groupIds = reordered.map((g) => g.id)
+    const groupIds = reordered.map((g) => g.id);
     reorderMutation.mutate(groupIds, {
       onError: () => {
         // エラー時はロールバック
-        setLocalGroups(groups)
+        setLocalGroups(groups);
       },
-    })
+    });
 
-    setActiveGroup(null)
-  }
+    setActiveGroup(null);
+  };
 
   const handleDragCancel = () => {
-    setActiveGroup(null)
-  }
+    setActiveGroup(null);
+  };
 
   return {
     sensors,
@@ -112,5 +116,5 @@ export function useTagGroupsDnd(groups: TagGroup[]) {
       items: localGroups.map((g) => g.id),
       strategy: verticalListSortingStrategy,
     },
-  }
+  };
 }

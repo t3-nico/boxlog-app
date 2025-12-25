@@ -2,9 +2,9 @@
  * マイグレーション計画
  */
 
-import type { AffectedGroup, BreakingChange, MigrationPlan } from '../types'
+import type { AffectedGroup, BreakingChange, MigrationPlan } from '../types';
 
-import { calculateEndDate, generatePlanId, getDefaultStartDate } from './helpers'
+import { calculateEndDate, generatePlanId, getDefaultStartDate } from './helpers';
 
 /**
  * 📋 マイグレーションフェーズ作成
@@ -18,7 +18,7 @@ export function createMigrationPhases(changes: BreakingChange[]) {
     startDate: getDefaultStartDate(),
     endDate: calculateEndDate([change]),
     successCriteria: [`${change.title}のマイグレーション完了`],
-  }))
+  }));
 }
 
 /**
@@ -28,27 +28,28 @@ export function createMigrationPlan(
   changes: BreakingChange[],
   version: string,
   options: {
-    targetGroups?: AffectedGroup[]
+    targetGroups?: AffectedGroup[];
     timeConstraints?: {
-      startDate?: string
-      endDate?: string
-    }
-  } = {}
+      startDate?: string;
+      endDate?: string;
+    };
+  } = {},
 ): MigrationPlan {
   const relevantChanges = changes.filter(
     (change) =>
       change.version === version &&
-      (!options.targetGroups || change.affectedGroups.some((group) => options.targetGroups!.includes(group)))
-  )
+      (!options.targetGroups ||
+        change.affectedGroups.some((group) => options.targetGroups!.includes(group))),
+  );
 
-  const planId = generatePlanId(version)
+  const planId = generatePlanId(version);
 
   const checklist = relevantChanges.flatMap((change) =>
     change.migration.steps.map((step) => ({
       item: `${change.title}: ${step.title}`,
       completed: false,
-    }))
-  )
+    })),
+  );
 
   return {
     id: planId,
@@ -62,5 +63,5 @@ export function createMigrationPlan(
     status: 'planned',
     progress: 0,
     checklist,
-  }
+  };
 }

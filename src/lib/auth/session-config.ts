@@ -56,7 +56,7 @@ export const SESSION_CONFIG = {
     logout: true, // ログアウト時
     privilegeEscalation: true, // 権限昇格時
   },
-} as const
+} as const;
 
 /**
  * Cookie設定
@@ -81,7 +81,7 @@ export const COOKIE_CONFIG = {
     sameSite: 'lax' as const, // CSRF対策
     path: '/',
   },
-} as const
+} as const;
 
 /**
  * セッションセキュリティ設定
@@ -115,7 +115,7 @@ export const SESSION_SECURITY = {
    * タイムアウト後のリダイレクト
    */
   timeoutRedirect: '/auth/login?reason=timeout',
-} as const
+} as const;
 
 /**
  * セッションストレージ設定
@@ -143,23 +143,23 @@ export const SESSION_STORAGE = {
     trackUserAgent: true,
     trackDeviceId: true,
   },
-} as const
+} as const;
 
 /**
  * 型定義
  */
 export interface SessionData {
-  userId: string
-  email: string
-  createdAt: number // Unix timestamp
-  lastActivity: number // Unix timestamp
-  expiresAt: number // Unix timestamp
-  isRememberMe: boolean
+  userId: string;
+  email: string;
+  createdAt: number; // Unix timestamp
+  lastActivity: number; // Unix timestamp
+  expiresAt: number; // Unix timestamp
+  isRememberMe: boolean;
   metadata?: {
-    ipAddress?: string
-    userAgent?: string
-    deviceId?: string
-  }
+    ipAddress?: string;
+    userAgent?: string;
+    deviceId?: string;
+  };
 }
 
 /**
@@ -178,21 +178,21 @@ export enum SessionStatus {
  * セッション検証結果
  */
 export interface SessionValidation {
-  isValid: boolean
-  status: SessionStatus
-  remainingTime?: number // 秒
-  needsRefresh: boolean
-  message?: string
+  isValid: boolean;
+  status: SessionStatus;
+  remainingTime?: number; // 秒
+  needsRefresh: boolean;
+  message?: string;
 }
 
 /**
  * ヘルパー関数: セッションの有効性チェック
  */
 export function validateSession(session: SessionData): SessionValidation {
-  const now = Date.now()
-  const createdAt = session.createdAt
-  const lastActivity = session.lastActivity
-  const expiresAt = session.expiresAt
+  const now = Date.now();
+  const createdAt = session.createdAt;
+  const lastActivity = session.lastActivity;
+  const expiresAt = session.expiresAt;
 
   // セッション期限切れ
   if (now > expiresAt) {
@@ -201,58 +201,58 @@ export function validateSession(session: SessionData): SessionValidation {
       status: SessionStatus.EXPIRED,
       needsRefresh: false,
       message: 'Session expired',
-    }
+    };
   }
 
   // アイドルタイムアウト
-  const idleTime = (now - lastActivity) / 1000
+  const idleTime = (now - lastActivity) / 1000;
   if (idleTime > SESSION_CONFIG.idleTimeout) {
     return {
       isValid: false,
       status: SessionStatus.IDLE_TIMEOUT,
       needsRefresh: false,
       message: 'Session idle timeout',
-    }
+    };
   }
 
   // 絶対タイムアウト
-  const absoluteTime = (now - createdAt) / 1000
+  const absoluteTime = (now - createdAt) / 1000;
   if (absoluteTime > SESSION_CONFIG.absoluteTimeout) {
     return {
       isValid: false,
       status: SessionStatus.ABSOLUTE_TIMEOUT,
       needsRefresh: false,
       message: 'Session absolute timeout',
-    }
+    };
   }
 
   // セッション更新が必要かチェック
-  const timeSinceRefresh = (now - lastActivity) / 1000
-  const needsRefresh = timeSinceRefresh > SESSION_CONFIG.refreshInterval
+  const timeSinceRefresh = (now - lastActivity) / 1000;
+  const needsRefresh = timeSinceRefresh > SESSION_CONFIG.refreshInterval;
 
   const remainingTime = Math.min(
     expiresAt - now,
     SESSION_CONFIG.idleTimeout - idleTime,
-    SESSION_CONFIG.absoluteTimeout - absoluteTime
-  )
+    SESSION_CONFIG.absoluteTimeout - absoluteTime,
+  );
 
   return {
     isValid: true,
     status: SessionStatus.ACTIVE,
     remainingTime: Math.floor(remainingTime),
     needsRefresh,
-  }
+  };
 }
 
 /**
  * ヘルパー関数: セッションタイムアウト警告が必要かチェック
  */
 export function shouldShowTimeoutWarning(session: SessionData): boolean {
-  const validation = validateSession(session)
+  const validation = validateSession(session);
 
   if (!validation.isValid || !validation.remainingTime) {
-    return false
+    return false;
   }
 
-  return validation.remainingTime <= SESSION_SECURITY.timeoutWarning
+  return validation.remainingTime <= SESSION_SECURITY.timeoutWarning;
 }

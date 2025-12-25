@@ -1,5 +1,5 @@
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
-import { create } from 'zustand'
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
+import { create } from 'zustand';
 
 /**
  * カレンダーのドラッグ状態を管理するストア
@@ -11,32 +11,32 @@ import { create } from 'zustand'
 
 export interface CalendarDragState {
   /** ドラッグ中のプランID */
-  draggedPlanId: string | null
+  draggedPlanId: string | null;
   /** ドラッグ中のプランデータ（表示用） */
-  draggedPlan: CalendarPlan | null
+  draggedPlan: CalendarPlan | null;
   /** 元の日付インデックス */
-  originalDateIndex: number
+  originalDateIndex: number;
   /** 現在のターゲット日付インデックス */
-  targetDateIndex: number
+  targetDateIndex: number;
   /** ドラッグ中かどうか */
-  isDragging: boolean
+  isDragging: boolean;
   /** プレビュー時間 */
-  previewTime: { start: Date; end: Date } | null
+  previewTime: { start: Date; end: Date } | null;
   /** スナップされた位置（top, height） */
-  snappedPosition: { top: number; height?: number } | null
+  snappedPosition: { top: number; height?: number } | null;
 }
 
 interface CalendarDragActions {
   /** ドラッグ開始 */
-  startDrag: (planId: string, plan: CalendarPlan, dateIndex: number) => void
+  startDrag: (planId: string, plan: CalendarPlan, dateIndex: number) => void;
   /** ドラッグ中の状態更新 */
-  updateDrag: (updates: Partial<Omit<CalendarDragState, 'draggedPlanId' | 'draggedPlan'>>) => void
+  updateDrag: (updates: Partial<Omit<CalendarDragState, 'draggedPlanId' | 'draggedPlan'>>) => void;
   /** ドラッグ終了 */
-  endDrag: () => void
+  endDrag: () => void;
   /** ターゲット日付インデックスを更新 */
-  setTargetDateIndex: (index: number) => void
+  setTargetDateIndex: (index: number) => void;
   /** プレビュー時間を更新 */
-  setPreviewTime: (time: { start: Date; end: Date } | null) => void
+  setPreviewTime: (time: { start: Date; end: Date } | null) => void;
 }
 
 const initialState: CalendarDragState = {
@@ -47,7 +47,7 @@ const initialState: CalendarDragState = {
   isDragging: false,
   previewTime: null,
   snappedPosition: null,
-}
+};
 
 export const useCalendarDragStore = create<CalendarDragState & CalendarDragActions>((set) => ({
   ...initialState,
@@ -82,4 +82,4 @@ export const useCalendarDragStore = create<CalendarDragState & CalendarDragActio
       ...state,
       previewTime: time,
     })),
-}))
+}));

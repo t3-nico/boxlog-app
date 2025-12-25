@@ -1,41 +1,41 @@
-'use client'
+'use client';
 
-import { Folder, MoreHorizontal, Palette, Plus, Trash2 } from 'lucide-react'
-import { useTranslations } from 'next-intl'
-import { usePathname, useRouter } from 'next/navigation'
-import { forwardRef, useCallback, useImperativeHandle, useState } from 'react'
+import { Folder, MoreHorizontal, Palette, Plus, Trash2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { usePathname, useRouter } from 'next/navigation';
+import { forwardRef, useCallback, useImperativeHandle, useState } from 'react';
 
-import { Button } from '@/components/ui/button'
-import { ColorPalettePicker } from '@/components/ui/color-palette-picker'
+import { Button } from '@/components/ui/button';
+import { ColorPalettePicker } from '@/components/ui/color-palette-picker';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Input } from '@/components/ui/input'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { DEFAULT_GROUP_COLOR } from '@/config/ui/colors'
-import { TagGroupDeleteDialog } from '@/features/tags/components/tag-group-delete-dialog'
+} from '@/components/ui/dropdown-menu';
+import { Input } from '@/components/ui/input';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { DEFAULT_GROUP_COLOR } from '@/config/ui/colors';
+import { TagGroupDeleteDialog } from '@/features/tags/components/tag-group-delete-dialog';
 import {
   useCreateTagGroup,
   useDeleteTagGroup,
   useTagGroups,
   useUpdateTagGroup,
-} from '@/features/tags/hooks/use-tag-groups'
-import { useTags } from '@/features/tags/hooks/use-tags'
-import type { TagGroup } from '@/features/tags/types'
-import { toast } from 'sonner'
+} from '@/features/tags/hooks/use-tag-groups';
+import { useTags } from '@/features/tags/hooks/use-tags';
+import type { TagGroup } from '@/features/tags/types';
+import { toast } from 'sonner';
 
 interface TagGroupsSectionProps {
-  onSelectGroup?: (groupId: string | null) => void
-  selectedGroupId?: string | null
-  onClose?: () => void
+  onSelectGroup?: (groupId: string | null) => void;
+  selectedGroupId?: string | null;
+  onClose?: () => void;
 }
 
 export interface TagGroupsSectionRef {
-  startCreating: () => void
+  startCreating: () => void;
 }
 
 /**
@@ -45,46 +45,46 @@ export interface TagGroupsSectionRef {
  */
 export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSectionProps>(
   ({ onSelectGroup: _onSelectGroup, selectedGroupId, onClose }, ref) => {
-    const t = useTranslations()
-    const { data: groups = [] as TagGroup[], isPending } = useTagGroups()
-    const { data: allTags = [] } = useTags(true) // タグ数カウント用
-    const createGroupMutation = useCreateTagGroup()
-    const updateGroupMutation = useUpdateTagGroup()
-    const deleteGroupMutation = useDeleteTagGroup()
-    const router = useRouter()
-    const pathname = usePathname()
+    const t = useTranslations();
+    const { data: groups = [] as TagGroup[], isPending } = useTagGroups();
+    const { data: allTags = [] } = useTags(true); // タグ数カウント用
+    const createGroupMutation = useCreateTagGroup();
+    const updateGroupMutation = useUpdateTagGroup();
+    const deleteGroupMutation = useDeleteTagGroup();
+    const router = useRouter();
+    const pathname = usePathname();
 
-    const [deletingGroup, setDeletingGroup] = useState<TagGroup | null>(null)
-    const [editingGroupId, setEditingGroupId] = useState<string | null>(null)
-    const [editingGroupName, setEditingGroupName] = useState('')
-    const [isCreating, setIsCreating] = useState(false)
-    const [newGroupName, setNewGroupName] = useState('')
-    const [newGroupColor, setNewGroupColor] = useState(DEFAULT_GROUP_COLOR)
+    const [deletingGroup, setDeletingGroup] = useState<TagGroup | null>(null);
+    const [editingGroupId, setEditingGroupId] = useState<string | null>(null);
+    const [editingGroupName, setEditingGroupName] = useState('');
+    const [isCreating, setIsCreating] = useState(false);
+    const [newGroupName, setNewGroupName] = useState('');
+    const [newGroupColor, setNewGroupColor] = useState(DEFAULT_GROUP_COLOR);
 
     // インライン作成を開始
     const handleStartCreating = useCallback(() => {
-      setIsCreating(true)
-      setNewGroupName('')
-      setNewGroupColor(DEFAULT_GROUP_COLOR)
-    }, [])
+      setIsCreating(true);
+      setNewGroupName('');
+      setNewGroupColor(DEFAULT_GROUP_COLOR);
+    }, []);
 
     // 外部から呼び出せるように公開
     useImperativeHandle(ref, () => ({
       startCreating: handleStartCreating,
-    }))
+    }));
 
     // インライン作成をキャンセル
     const handleCancelCreating = useCallback(() => {
-      setIsCreating(false)
-      setNewGroupName('')
-      setNewGroupColor(DEFAULT_GROUP_COLOR)
-    }, [])
+      setIsCreating(false);
+      setNewGroupName('');
+      setNewGroupColor(DEFAULT_GROUP_COLOR);
+    }, []);
 
     // インライン作成を保存
     const handleSaveNewGroup = useCallback(async () => {
       if (!newGroupName.trim()) {
-        toast.error(t('tag.toast.groupNameRequired'))
-        return
+        toast.error(t('tag.toast.groupNameRequired'));
+        return;
       }
 
       try {
@@ -94,46 +94,46 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
           .toLowerCase()
           .replace(/\s+/g, '-')
           .replace(/[^\w\-]+/g, '')
-          .replace(/\-\-+/g, '-')
+          .replace(/\-\-+/g, '-');
 
         const result = await createGroupMutation.mutateAsync({
           name: newGroupName.trim(),
           slug: slug || `group-${Date.now()}`, // 空の場合はタイムスタンプを使用
           description: null,
           color: newGroupColor || null,
-        })
-        toast.success(t('tag.toast.groupCreated', { name: newGroupName }))
-        setIsCreating(false)
-        setNewGroupName('')
-        setNewGroupColor(DEFAULT_GROUP_COLOR)
+        });
+        toast.success(t('tag.toast.groupCreated', { name: newGroupName }));
+        setIsCreating(false);
+        setNewGroupName('');
+        setNewGroupColor(DEFAULT_GROUP_COLOR);
 
         // 作成したグループのページに遷移
-        const locale = pathname?.split('/')[1] || 'ja'
-        router.push(`/${locale}/tags/g-${result.group_number}`)
+        const locale = pathname?.split('/')[1] || 'ja';
+        router.push(`/${locale}/tags/g-${result.group_number}`);
       } catch (error) {
-        console.error('Failed to create tag group:', error)
-        toast.error(t('tag.toast.groupCreateFailed'))
+        console.error('Failed to create tag group:', error);
+        toast.error(t('tag.toast.groupCreateFailed'));
       }
-    }, [newGroupName, newGroupColor, createGroupMutation, router, pathname, t])
+    }, [newGroupName, newGroupColor, createGroupMutation, router, pathname, t]);
 
     // インライン編集を開始
     const handleStartEditing = useCallback((group: TagGroup) => {
-      setEditingGroupId(group.id)
-      setEditingGroupName(group.name)
-    }, [])
+      setEditingGroupId(group.id);
+      setEditingGroupName(group.name);
+    }, []);
 
     // インライン編集をキャンセル
     const handleCancelEditing = useCallback(() => {
-      setEditingGroupId(null)
-      setEditingGroupName('')
-    }, [])
+      setEditingGroupId(null);
+      setEditingGroupName('');
+    }, []);
 
     // インライン編集を保存
     const handleSaveEditing = useCallback(
       async (group: TagGroup) => {
         if (!editingGroupName.trim()) {
-          toast.error(t('tag.toast.groupNameRequired'))
-          return
+          toast.error(t('tag.toast.groupNameRequired'));
+          return;
         }
 
         try {
@@ -144,46 +144,46 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
               description: group.description,
               color: group.color,
             },
-          })
-          toast.success(t('tag.toast.groupNameChanged', { name: editingGroupName }))
-          setEditingGroupId(null)
-          setEditingGroupName('')
+          });
+          toast.success(t('tag.toast.groupNameChanged', { name: editingGroupName }));
+          setEditingGroupId(null);
+          setEditingGroupName('');
         } catch (error) {
-          console.error('Failed to update tag group:', error)
-          toast.error(t('tag.toast.groupNameChangeFailed'))
+          console.error('Failed to update tag group:', error);
+          toast.error(t('tag.toast.groupNameChangeFailed'));
         }
       },
-      [editingGroupName, updateGroupMutation, t]
-    )
+      [editingGroupName, updateGroupMutation, t],
+    );
 
     // グループ削除
     const handleDeleteGroup = useCallback(async () => {
-      if (!deletingGroup) return
+      if (!deletingGroup) return;
 
       try {
-        await deleteGroupMutation.mutateAsync(deletingGroup.id)
-        toast.success(t('tag.toast.groupDeleted', { name: deletingGroup.name }))
-        setDeletingGroup(null)
+        await deleteGroupMutation.mutateAsync(deletingGroup.id);
+        toast.success(t('tag.toast.groupDeleted', { name: deletingGroup.name }));
+        setDeletingGroup(null);
       } catch (error) {
-        console.error('Failed to delete tag group:', error)
-        toast.error(t('tag.toast.groupDeleteFailed'))
+        console.error('Failed to delete tag group:', error);
+        toast.error(t('tag.toast.groupDeleteFailed'));
       }
-    }, [deletingGroup, deleteGroupMutation, t])
+    }, [deletingGroup, deleteGroupMutation, t]);
 
     // グループごとのタグ数をカウント
     const getGroupTagCount = useCallback(
       (groupId: string) => {
-        return allTags.filter((tag) => tag.group_id === groupId && tag.is_active).length
+        return allTags.filter((tag) => tag.group_id === groupId && tag.is_active).length;
       },
-      [allTags]
-    )
+      [allTags],
+    );
 
     if (isPending) {
       return (
         <div className="flex items-center justify-center p-8">
           <div className="border-primary h-8 w-8 animate-spin rounded-full border-b-2"></div>
         </div>
-      )
+      );
     }
 
     return (
@@ -223,12 +223,12 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
                     : 'hover:bg-state-hover cursor-pointer'
                 }`}
                 onClick={(e) => {
-                  e.preventDefault()
-                  e.stopPropagation()
-                  const locale = pathname?.split('/')[1] || 'ja'
-                  const targetUrl = `/${locale}/tags/g-${group.group_number}`
-                  router.push(targetUrl)
-                  onClose?.()
+                  e.preventDefault();
+                  e.stopPropagation();
+                  const locale = pathname?.split('/')[1] || 'ja';
+                  const targetUrl = `/${locale}/tags/g-${group.group_number}`;
+                  router.push(targetUrl);
+                  onClose?.();
                 }}
               >
                 <div className="flex items-center gap-3">
@@ -240,7 +240,7 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
                         variant="ghost"
                         size="icon-sm"
                         onClick={(e) => {
-                          e.stopPropagation()
+                          e.stopPropagation();
                         }}
                         className="shrink-0"
                         aria-label={`${group.name}のカラーを変更`}
@@ -264,9 +264,9 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
                                 description: group.description,
                                 color,
                               },
-                            })
+                            });
                           } catch (error) {
-                            console.error('Failed to update group color:', error)
+                            console.error('Failed to update group color:', error);
                           }
                         }}
                       />
@@ -276,16 +276,18 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
                   {/* グループ情報 */}
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <span className="text-muted-foreground font-mono text-xs">g-{group.group_number}</span>
+                      <span className="text-muted-foreground font-mono text-xs">
+                        g-{group.group_number}
+                      </span>
                       {editingGroupId === group.id ? (
                         <Input
                           value={editingGroupName}
                           onChange={(e) => setEditingGroupName(e.target.value)}
                           onKeyDown={(e) => {
                             if (e.key === 'Enter') {
-                              handleSaveEditing(group)
+                              handleSaveEditing(group);
                             } else if (e.key === 'Escape') {
-                              handleCancelEditing()
+                              handleCancelEditing();
                             }
                           }}
                           onBlur={() => handleSaveEditing(group)}
@@ -297,15 +299,17 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
                         <h4
                           className="cursor-text font-medium"
                           onDoubleClick={(e) => {
-                            e.stopPropagation()
-                            handleStartEditing(group)
+                            e.stopPropagation();
+                            handleStartEditing(group);
                           }}
                         >
                           {group.name}
                         </h4>
                       )}
                     </div>
-                    {group.description && <p className="text-muted-foreground text-sm">{group.description}</p>}
+                    {group.description && (
+                      <p className="text-muted-foreground text-sm">{group.description}</p>
+                    )}
                   </div>
 
                   {/* タグ数表示は一旦削除 */}
@@ -321,8 +325,8 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem
                       onClick={(e) => {
-                        e.stopPropagation()
-                        handleStartEditing(group)
+                        e.stopPropagation();
+                        handleStartEditing(group);
                       }}
                     >
                       <Palette className="mr-2 h-4 w-4" />
@@ -331,19 +335,19 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
                       onClick={async () => {
-                        const tagCount = getGroupTagCount(group.id)
+                        const tagCount = getGroupTagCount(group.id);
                         // タグ数が0件の場合は即削除
                         if (tagCount === 0) {
                           try {
-                            await deleteGroupMutation.mutateAsync(group.id)
-                            toast.success(t('tag.toast.groupDeleted', { name: group.name }))
+                            await deleteGroupMutation.mutateAsync(group.id);
+                            toast.success(t('tag.toast.groupDeleted', { name: group.name }));
                           } catch (error) {
-                            console.error('Failed to delete tag group:', error)
-                            toast.error(t('tag.toast.groupDeleteFailed'))
+                            console.error('Failed to delete tag group:', error);
+                            toast.error(t('tag.toast.groupDeleteFailed'));
                           }
                         } else {
                           // タグが1件以上の場合は確認ダイアログを表示
-                          setDeletingGroup(group)
+                          setDeletingGroup(group);
                         }
                       }}
                       className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
@@ -369,11 +373,18 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
                       className="shrink-0"
                       aria-label={t('tag.sidebar.changeColor')}
                     >
-                      <Folder className="h-5 w-5" style={{ color: newGroupColor }} fill={newGroupColor} />
+                      <Folder
+                        className="h-5 w-5"
+                        style={{ color: newGroupColor }}
+                        fill={newGroupColor}
+                      />
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-3" align="start">
-                    <ColorPalettePicker selectedColor={newGroupColor} onColorSelect={setNewGroupColor} />
+                    <ColorPalettePicker
+                      selectedColor={newGroupColor}
+                      onColorSelect={setNewGroupColor}
+                    />
                   </PopoverContent>
                 </Popover>
 
@@ -383,9 +394,9 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
                   onChange={(e) => setNewGroupName(e.target.value)}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
-                      handleSaveNewGroup()
+                      handleSaveNewGroup();
                     } else if (e.key === 'Escape') {
-                      handleCancelCreating()
+                      handleCancelCreating();
                     }
                   }}
                   placeholder={t('tag.sidebar.groupNamePlaceholder')}
@@ -405,8 +416,8 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
           onConfirm={handleDeleteGroup}
         />
       </div>
-    )
-  }
-)
+    );
+  },
+);
 
-TagGroupsSection.displayName = 'TagGroupsSection'
+TagGroupsSection.displayName = 'TagGroupsSection';

@@ -10,7 +10,7 @@ export const REMINDER_MINUTES = {
   HOUR_1: 60,
   DAY_1: 1440, // 60 * 24
   WEEK_1: 10080, // 60 * 24 * 7
-} as const
+} as const;
 
 /** リマインダー翻訳キー */
 export const REMINDER_TRANSLATION_KEYS = {
@@ -20,7 +20,7 @@ export const REMINDER_TRANSLATION_KEYS = {
   [REMINDER_MINUTES.HOUR_1]: 'reminder.hour1',
   [REMINDER_MINUTES.DAY_1]: 'reminder.day1',
   [REMINDER_MINUTES.WEEK_1]: 'reminder.week1',
-} as const
+} as const;
 
 /** リマインダーオプション（UIで使用） */
 export const REMINDER_OPTIONS = [
@@ -30,12 +30,15 @@ export const REMINDER_OPTIONS = [
   { value: REMINDER_MINUTES.HOUR_1, key: 'reminder.hour1' },
   { value: REMINDER_MINUTES.DAY_1, key: 'reminder.day1' },
   { value: REMINDER_MINUTES.WEEK_1, key: 'reminder.week1' },
-] as const
+] as const;
 
 /**
  * 分数から翻訳キーを取得
  */
 export function getReminderTranslationKey(minutes: number | null | undefined): string {
-  if (minutes === null || minutes === undefined) return ''
-  return REMINDER_TRANSLATION_KEYS[minutes as keyof typeof REMINDER_TRANSLATION_KEYS] ?? 'reminder.custom'
+  if (minutes === null || minutes === undefined) return '';
+  return (
+    REMINDER_TRANSLATION_KEYS[minutes as keyof typeof REMINDER_TRANSLATION_KEYS] ??
+    'reminder.custom'
+  );
 }

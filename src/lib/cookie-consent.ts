@@ -7,16 +7,16 @@
  * - 必須Cookieは常に有効（無効化不可）
  */
 
-export type CookieCategory = 'necessary' | 'analytics' | 'marketing'
+export type CookieCategory = 'necessary' | 'analytics' | 'marketing';
 
 export interface CookieConsent {
-  necessary: boolean // 常にtrue（無効化不可）
-  analytics: boolean
-  marketing: boolean
-  timestamp: number // 同意取得日時（UNIX timestamp）
+  necessary: boolean; // 常にtrue（無効化不可）
+  analytics: boolean;
+  marketing: boolean;
+  timestamp: number; // 同意取得日時（UNIX timestamp）
 }
 
-const STORAGE_KEY = 'boxlog_cookie_consent'
+const STORAGE_KEY = 'boxlog_cookie_consent';
 
 /**
  * Cookie同意状態を取得
@@ -25,35 +25,37 @@ const STORAGE_KEY = 'boxlog_cookie_consent'
  */
 export const getCookieConsent = (): CookieConsent | null => {
   if (typeof window === 'undefined') {
-    return null // SSR対応
+    return null; // SSR対応
   }
 
   try {
-    const stored = localStorage.getItem(STORAGE_KEY)
+    const stored = localStorage.getItem(STORAGE_KEY);
     if (!stored) {
-      return null
+      return null;
     }
 
-    const consent = JSON.parse(stored) as CookieConsent
+    const consent = JSON.parse(stored) as CookieConsent;
 
     // 必須Cookieは常に有効
-    consent.necessary = true
+    consent.necessary = true;
 
-    return consent
+    return consent;
   } catch (error) {
-    console.error('Failed to parse cookie consent:', error)
-    return null
+    console.error('Failed to parse cookie consent:', error);
+    return null;
   }
-}
+};
 
 /**
  * Cookie同意状態を保存
  *
  * @param consent Cookie同意状態
  */
-export const setCookieConsent = (consent: Partial<Omit<CookieConsent, 'necessary' | 'timestamp'>>): void => {
+export const setCookieConsent = (
+  consent: Partial<Omit<CookieConsent, 'necessary' | 'timestamp'>>,
+): void => {
   if (typeof window === 'undefined') {
-    return // SSR対応
+    return; // SSR対応
   }
 
   try {
@@ -62,16 +64,16 @@ export const setCookieConsent = (consent: Partial<Omit<CookieConsent, 'necessary
       analytics: consent.analytics ?? false,
       marketing: consent.marketing ?? false,
       timestamp: Date.now(),
-    }
+    };
 
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(newConsent))
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(newConsent));
 
     // カスタムイベント発火（他のコンポーネントで同意状態変更を検知可能）
-    window.dispatchEvent(new CustomEvent('cookieConsentChanged', { detail: newConsent }))
+    window.dispatchEvent(new CustomEvent('cookieConsentChanged', { detail: newConsent }));
   } catch (error) {
-    console.error('Failed to save cookie consent:', error)
+    console.error('Failed to save cookie consent:', error);
   }
-}
+};
 
 /**
  * すべてのCookieを受け入れる
@@ -80,8 +82,8 @@ export const acceptAllCookies = (): void => {
   setCookieConsent({
     analytics: true,
     marketing: true,
-  })
-}
+  });
+};
 
 /**
  * 必須Cookieのみ受け入れる（分析・マーケティングは拒否）
@@ -90,24 +92,24 @@ export const acceptNecessaryOnly = (): void => {
   setCookieConsent({
     analytics: false,
     marketing: false,
-  })
-}
+  });
+};
 
 /**
  * Cookie同意状態をリセット（同意バナー再表示用）
  */
 export const resetCookieConsent = (): void => {
   if (typeof window === 'undefined') {
-    return
+    return;
   }
 
   try {
-    localStorage.removeItem(STORAGE_KEY)
-    window.dispatchEvent(new CustomEvent('cookieConsentChanged', { detail: null }))
+    localStorage.removeItem(STORAGE_KEY);
+    window.dispatchEvent(new CustomEvent('cookieConsentChanged', { detail: null }));
   } catch (error) {
-    console.error('Failed to reset cookie consent:', error)
+    console.error('Failed to reset cookie consent:', error);
   }
-}
+};
 
 /**
  * 特定カテゴリのCookieが有効か確認
@@ -116,29 +118,29 @@ export const resetCookieConsent = (): void => {
  * @returns 有効な場合true
  */
 export const isCookieCategoryEnabled = (category: CookieCategory): boolean => {
-  const consent = getCookieConsent()
+  const consent = getCookieConsent();
 
   if (!consent) {
     // 同意未取得の場合、必須Cookieのみ有効
-    return category === 'necessary'
+    return category === 'necessary';
   }
 
-  return consent[category] ?? false
-}
+  return consent[category] ?? false;
+};
 
 /**
  * 分析Cookieが有効か確認（Vercel Analytics, Sentry用）
  */
 export const isAnalyticsEnabled = (): boolean => {
-  return isCookieCategoryEnabled('analytics')
-}
+  return isCookieCategoryEnabled('analytics');
+};
 
 /**
  * マーケティングCookieが有効か確認（将来の広告統合用）
  */
 export const isMarketingEnabled = (): boolean => {
-  return isCookieCategoryEnabled('marketing')
-}
+  return isCookieCategoryEnabled('marketing');
+};
 
 /**
  * Cookie同意が必要か確認（バナー表示判定用）
@@ -146,8 +148,8 @@ export const isMarketingEnabled = (): boolean => {
  * @returns 同意未取得の場合true
  */
 export const needsCookieConsent = (): boolean => {
-  return getCookieConsent() === null
-}
+  return getCookieConsent() === null;
+};
 
 /**
  * Cookie同意状態変更イベントをリッスン
@@ -155,18 +157,20 @@ export const needsCookieConsent = (): boolean => {
  * @param callback 同意状態変更時のコールバック
  * @returns クリーンアップ関数
  */
-export const onCookieConsentChange = (callback: (consent: CookieConsent | null) => void): (() => void) => {
+export const onCookieConsentChange = (
+  callback: (consent: CookieConsent | null) => void,
+): (() => void) => {
   if (typeof window === 'undefined') {
-    return () => {} // SSR対応
+    return () => {}; // SSR対応
   }
 
   const handler = (event: CustomEvent<CookieConsent | null>) => {
-    callback(event.detail)
-  }
+    callback(event.detail);
+  };
 
-  window.addEventListener('cookieConsentChanged', handler as EventListener)
+  window.addEventListener('cookieConsentChanged', handler as EventListener);
 
   return () => {
-    window.removeEventListener('cookieConsentChanged', handler as EventListener)
-  }
-}
+    window.removeEventListener('cookieConsentChanged', handler as EventListener);
+  };
+};

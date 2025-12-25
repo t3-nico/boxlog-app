@@ -1,11 +1,11 @@
-'use client'
+'use client';
 
-import { Hash, Loader2, Search, X } from 'lucide-react'
-import { useTranslations } from 'next-intl'
-import { useEffect, useMemo, useState } from 'react'
+import { Hash, Loader2, Search, X } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { useEffect, useMemo, useState } from 'react';
 
-import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Dialog,
   DialogContent,
@@ -13,21 +13,21 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
-import { useTags } from '@/features/tags/hooks/use-tags'
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
+import { useTags } from '@/features/tags/hooks/use-tags';
 
 interface BulkTagSelectDialogProps {
   /** ダイアログの開閉状態 */
-  open: boolean
+  open: boolean;
   /** 開閉状態を変更するコールバック */
-  onOpenChange: (open: boolean) => void
+  onOpenChange: (open: boolean) => void;
   /** 選択されたプランIDの配列 */
-  selectedPlanIds: string[]
+  selectedPlanIds: string[];
   /** 成功時のコールバック */
-  onSuccess?: () => void
+  onSuccess?: () => void;
 }
 
 /**
@@ -47,63 +47,70 @@ interface BulkTagSelectDialogProps {
  * />
  * ```
  */
-export function BulkTagSelectDialog({ open, onOpenChange, selectedPlanIds, onSuccess }: BulkTagSelectDialogProps) {
-  const t = useTranslations()
-  const [searchQuery, setSearchQuery] = useState('')
-  const [selectedTagIds, setSelectedTagIds] = useState<string[]>([])
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const { bulkAddTags } = usePlanMutations()
-  const { data: tagsData } = useTags(true)
+export function BulkTagSelectDialog({
+  open,
+  onOpenChange,
+  selectedPlanIds,
+  onSuccess,
+}: BulkTagSelectDialogProps) {
+  const t = useTranslations();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { bulkAddTags } = usePlanMutations();
+  const { data: tagsData } = useTags(true);
 
   // フラット構造のタグデータからアクティブなタグのみを抽出
   const activeTags = useMemo(() => {
-    if (!tagsData) return []
-    return tagsData.filter((tag) => tag.is_active)
-  }, [tagsData])
+    if (!tagsData) return [];
+    return tagsData.filter((tag) => tag.is_active);
+  }, [tagsData]);
 
   // 検索フィルタリング
   const filteredTags = useMemo(() => {
-    if (!searchQuery) return activeTags
-    return activeTags.filter((tag) => tag.name.toLowerCase().includes(searchQuery.toLowerCase()))
-  }, [activeTags, searchQuery])
+    if (!searchQuery) return activeTags;
+    return activeTags.filter((tag) => tag.name.toLowerCase().includes(searchQuery.toLowerCase()));
+  }, [activeTags, searchQuery]);
 
   // タグの選択/解除
   const handleToggleTag = (tagId: string) => {
-    setSelectedTagIds((prev) => (prev.includes(tagId) ? prev.filter((id) => id !== tagId) : [...prev, tagId]))
-  }
+    setSelectedTagIds((prev) =>
+      prev.includes(tagId) ? prev.filter((id) => id !== tagId) : [...prev, tagId],
+    );
+  };
 
   // 送信ハンドラー
   const handleSubmit = async () => {
-    if (selectedTagIds.length === 0) return
+    if (selectedTagIds.length === 0) return;
 
-    setIsSubmitting(true)
+    setIsSubmitting(true);
     try {
       await bulkAddTags.mutateAsync({
         planIds: selectedPlanIds,
         tagIds: selectedTagIds,
-      })
-      onSuccess?.()
+      });
+      onSuccess?.();
     } catch (error) {
-      console.error('Bulk tag add error:', error)
+      console.error('Bulk tag add error:', error);
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   // ダイアログを閉じる際にリセット
   const handleClose = () => {
-    setSearchQuery('')
-    setSelectedTagIds([])
-    onOpenChange(false)
-  }
+    setSearchQuery('');
+    setSelectedTagIds([]);
+    onOpenChange(false);
+  };
 
   // ダイアログが閉じた時にリセット
   useEffect(() => {
     if (!open) {
-      setSearchQuery('')
-      setSelectedTagIds([])
+      setSearchQuery('');
+      setSelectedTagIds([]);
     }
-  }, [open])
+  }, [open]);
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
@@ -132,8 +139,8 @@ export function BulkTagSelectDialog({ open, onOpenChange, selectedPlanIds, onSuc
             <div className="bg-surface-container rounded-md p-3">
               <div className="flex flex-wrap gap-2">
                 {selectedTagIds.map((tagId) => {
-                  const tag = activeTags.find((t) => t.id === tagId)
-                  if (!tag) return null
+                  const tag = activeTags.find((t) => t.id === tagId);
+                  if (!tag) return null;
                   return (
                     <div
                       key={tagId}
@@ -149,7 +156,7 @@ export function BulkTagSelectDialog({ open, onOpenChange, selectedPlanIds, onSuc
                         <X className="h-3 w-3" />
                       </button>
                     </div>
-                  )
+                  );
                 })}
               </div>
             </div>
@@ -164,21 +171,26 @@ export function BulkTagSelectDialog({ open, onOpenChange, selectedPlanIds, onSuc
             ) : (
               <div className="space-y-1 pr-4">
                 {filteredTags.map((tag) => {
-                  const isSelected = selectedTagIds.includes(tag.id)
+                  const isSelected = selectedTagIds.includes(tag.id);
                   return (
                     <button
                       key={tag.id}
                       type="button"
                       onClick={() => handleToggleTag(tag.id)}
                       className={`flex w-full items-center gap-3 rounded-md px-3 py-2 text-left text-sm transition-colors ${
-                        isSelected ? 'bg-primary/10 text-foreground' : 'hover:bg-state-hover text-muted-foreground'
+                        isSelected
+                          ? 'bg-primary/10 text-foreground'
+                          : 'hover:bg-state-hover text-muted-foreground'
                       }`}
                     >
                       <Checkbox checked={isSelected} className="pointer-events-none" />
-                      <Hash className="h-4 w-4 shrink-0" style={{ color: tag.color || '#3B82F6' }} />
+                      <Hash
+                        className="h-4 w-4 shrink-0"
+                        style={{ color: tag.color || '#3B82F6' }}
+                      />
                       <span className="flex-1 truncate">{tag.name}</span>
                     </button>
-                  )
+                  );
                 })}
               </div>
             )}
@@ -186,7 +198,12 @@ export function BulkTagSelectDialog({ open, onOpenChange, selectedPlanIds, onSuc
         </div>
 
         <DialogFooter className="flex flex-col gap-2 sm:flex-row">
-          <Button variant="outline" onClick={handleClose} disabled={isSubmitting} className="w-full sm:w-auto">
+          <Button
+            variant="outline"
+            onClick={handleClose}
+            disabled={isSubmitting}
+            className="w-full sm:w-auto"
+          >
             {t('common.inbox.cancel')}
           </Button>
           <Button
@@ -206,5 +223,5 @@ export function BulkTagSelectDialog({ open, onOpenChange, selectedPlanIds, onSuc
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

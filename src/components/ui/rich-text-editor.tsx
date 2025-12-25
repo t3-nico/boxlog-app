@@ -1,21 +1,21 @@
-'use client'
+'use client';
 
-import { useCallback } from 'react'
+import { useCallback } from 'react';
 
-import Placeholder from '@tiptap/extension-placeholder'
-import { EditorContent, useEditor } from '@tiptap/react'
-import StarterKit from '@tiptap/starter-kit'
-import { Bold, Heading1, Heading2, Heading3, Italic, List, ListOrdered, Quote } from 'lucide-react'
+import Placeholder from '@tiptap/extension-placeholder';
+import { EditorContent, useEditor } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import { Bold, Heading1, Heading2, Heading3, Italic, List, ListOrdered, Quote } from 'lucide-react';
 
-import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 interface RichTextEditorProps {
-  content: string
-  onChange: (content: string) => void
-  placeholder?: string
-  className?: string
-  minimal?: boolean
+  content: string;
+  onChange: (content: string) => void;
+  placeholder?: string;
+  className?: string;
+  minimal?: boolean;
 }
 
 export const RichTextEditor = ({
@@ -47,7 +47,7 @@ export const RichTextEditor = ({
     content,
     immediatelyRender: false,
     onUpdate: ({ editor }) => {
-      onChange(editor.getHTML())
+      onChange(editor.getHTML());
     },
     editorProps: {
       attributes: {
@@ -63,53 +63,53 @@ export const RichTextEditor = ({
           '[&_li]:mb-1',
           '[&_strong]:font-bold',
           '[&_em]:italic',
-          '[&_blockquote]:border-l-4 [&_blockquote]:border-border [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:mb-2'
+          '[&_blockquote]:border-l-4 [&_blockquote]:border-border [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:mb-2',
         ),
       },
     },
-  })
+  });
 
   const toggleBold = useCallback(() => {
     if (editor) {
-      editor.chain().focus().toggleBold().run()
+      editor.chain().focus().toggleBold().run();
     }
-  }, [editor])
+  }, [editor]);
 
   const toggleItalic = useCallback(() => {
     if (editor) {
-      editor.chain().focus().toggleItalic().run()
+      editor.chain().focus().toggleItalic().run();
     }
-  }, [editor])
+  }, [editor]);
 
   const toggleBulletList = useCallback(() => {
     if (editor) {
-      editor.chain().focus().toggleBulletList().run()
+      editor.chain().focus().toggleBulletList().run();
     }
-  }, [editor])
+  }, [editor]);
 
   const toggleOrderedList = useCallback(() => {
     if (editor) {
-      editor.chain().focus().toggleOrderedList().run()
+      editor.chain().focus().toggleOrderedList().run();
     }
-  }, [editor])
+  }, [editor]);
 
   const toggleBlockquote = useCallback(() => {
     if (editor) {
-      editor.chain().focus().toggleBlockquote().run()
+      editor.chain().focus().toggleBlockquote().run();
     }
-  }, [editor])
+  }, [editor]);
 
   const toggleHeading = useCallback(
     (level: 1 | 2 | 3) => {
       if (editor) {
-        editor.chain().focus().toggleHeading({ level }).run()
+        editor.chain().focus().toggleHeading({ level }).run();
       }
     },
-    [editor]
-  )
+    [editor],
+  );
 
   if (!editor) {
-    return null
+    return null;
   }
 
   return (
@@ -122,7 +122,10 @@ export const RichTextEditor = ({
             variant="ghost"
             size="sm"
             onClick={() => toggleHeading(1)}
-            className={cn('h-8 w-8 p-0', editor.isActive('heading', { level: 1 }) && 'bg-surface-container')}
+            className={cn(
+              'h-8 w-8 p-0',
+              editor.isActive('heading', { level: 1 }) && 'bg-surface-container',
+            )}
           >
             <Heading1 className="h-4 w-4" />
           </Button>
@@ -131,7 +134,10 @@ export const RichTextEditor = ({
             variant="ghost"
             size="sm"
             onClick={() => toggleHeading(2)}
-            className={cn('h-8 w-8 p-0', editor.isActive('heading', { level: 2 }) && 'bg-surface-container')}
+            className={cn(
+              'h-8 w-8 p-0',
+              editor.isActive('heading', { level: 2 }) && 'bg-surface-container',
+            )}
           >
             <Heading2 className="h-4 w-4" />
           </Button>
@@ -140,7 +146,10 @@ export const RichTextEditor = ({
             variant="ghost"
             size="sm"
             onClick={() => toggleHeading(3)}
-            className={cn('h-8 w-8 p-0', editor.isActive('heading', { level: 3 }) && 'bg-surface-container')}
+            className={cn(
+              'h-8 w-8 p-0',
+              editor.isActive('heading', { level: 3 }) && 'bg-surface-container',
+            )}
           >
             <Heading3 className="h-4 w-4" />
           </Button>
@@ -208,5 +217,5 @@ export const RichTextEditor = ({
       )}
       <EditorContent editor={editor} className="max-h-[25rem] min-h-20 resize-y overflow-auto" />
     </div>
-  )
-}
+  );
+};

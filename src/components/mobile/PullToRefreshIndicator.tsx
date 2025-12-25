@@ -1,19 +1,19 @@
-'use client'
+'use client';
 
-import { cn } from '@/lib/utils'
-import { Loader2 } from 'lucide-react'
+import { cn } from '@/lib/utils';
+import { Loader2 } from 'lucide-react';
 
 interface PullToRefreshIndicatorProps {
   /** 引っ張り距離（px） */
-  pullDistance: number
+  pullDistance: number;
   /** しきい値（px） */
-  threshold?: number
+  threshold?: number;
   /** リフレッシュ中かどうか */
-  isRefreshing: boolean
+  isRefreshing: boolean;
   /** 進捗（0〜1） */
-  progress: number
+  progress: number;
   /** しきい値を超えたかどうか */
-  isOverThreshold: boolean
+  isOverThreshold: boolean;
 }
 
 /**
@@ -31,7 +31,7 @@ export function PullToRefreshIndicator({
   progress,
   isOverThreshold,
 }: PullToRefreshIndicatorProps) {
-  if (pullDistance === 0 && !isRefreshing) return null
+  if (pullDistance === 0 && !isRefreshing) return null;
 
   return (
     <div
@@ -45,7 +45,7 @@ export function PullToRefreshIndicator({
         className={cn(
           'bg-surface-bright flex items-center justify-center rounded-full shadow-md',
           'border-border border',
-          isOverThreshold || isRefreshing ? 'text-primary' : 'text-muted-foreground'
+          isOverThreshold || isRefreshing ? 'text-primary' : 'text-muted-foreground',
         )}
         style={{
           width: 40,
@@ -79,5 +79,5 @@ export function PullToRefreshIndicator({
         )}
       </div>
     </div>
-  )
+  );
 }

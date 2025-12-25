@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 /**
  * カレンダービュー用スケルトンローダー
@@ -37,5 +37,5 @@ export function CalendarViewSkeleton() {
         </div>
       </div>
     </div>
-  )
+  );
 }

@@ -1,17 +1,17 @@
-'use client'
+'use client';
 
-import { Checkbox } from '@/components/ui/checkbox'
-import { TableHead } from '@/components/ui/table'
+import { Checkbox } from '@/components/ui/checkbox';
+import { TableHead } from '@/components/ui/table';
 
 export interface SelectionHeaderProps {
   /** 全選択状態 */
-  allSelected: boolean
+  allSelected: boolean;
   /** 一部選択状態 */
-  someSelected: boolean
+  someSelected: boolean;
   /** 全選択/解除コールバック */
-  onToggleAll: () => void
+  onToggleAll: () => void;
   /** 幅（デフォルト: 50） */
-  width?: number
+  width?: number;
 }
 
 /**
@@ -26,21 +26,29 @@ export interface SelectionHeaderProps {
  * />
  * ```
  */
-export function SelectionHeader({ allSelected, someSelected, onToggleAll, width = 50 }: SelectionHeaderProps) {
+export function SelectionHeader({
+  allSelected,
+  someSelected,
+  onToggleAll,
+  width = 50,
+}: SelectionHeaderProps) {
   return (
     <TableHead style={{ width: `${width}px`, minWidth: `${width}px` }}>
-      <Checkbox checked={allSelected ? true : someSelected ? 'indeterminate' : false} onCheckedChange={onToggleAll} />
+      <Checkbox
+        checked={allSelected ? true : someSelected ? 'indeterminate' : false}
+        onCheckedChange={onToggleAll}
+      />
     </TableHead>
-  )
+  );
 }
 
 export interface SelectionCellProps {
   /** 選択状態 */
-  selected: boolean
+  selected: boolean;
   /** 選択トグルコールバック */
-  onToggle: () => void
+  onToggle: () => void;
   /** 無効化 */
-  disabled?: boolean
+  disabled?: boolean;
 }
 
 /**
@@ -56,6 +64,11 @@ export interface SelectionCellProps {
  */
 export function SelectionCell({ selected, onToggle, disabled = false }: SelectionCellProps) {
   return (
-    <Checkbox checked={selected} onCheckedChange={onToggle} disabled={disabled} onClick={(e) => e.stopPropagation()} />
-  )
+    <Checkbox
+      checked={selected}
+      onCheckedChange={onToggle}
+      disabled={disabled}
+      onClick={(e) => e.stopPropagation()}
+    />
+  );
 }

@@ -1,14 +1,14 @@
-'use client'
+'use client';
 
-import { Bell } from 'lucide-react'
+import { Bell } from 'lucide-react';
 
-import { calendarColors } from '@/features/calendar/theme'
-import { RecurringIndicatorFromFlag } from '@/features/plans/components/shared/RecurringIndicator'
-import { useDateFormat } from '@/features/settings/hooks/useDateFormat'
-import { cn } from '@/lib/utils'
-import { useLocale } from 'next-intl'
+import { calendarColors } from '@/features/calendar/theme';
+import { RecurringIndicatorFromFlag } from '@/features/plans/components/shared/RecurringIndicator';
+import { useDateFormat } from '@/features/settings/hooks/useDateFormat';
+import { cn } from '@/lib/utils';
+import { useLocale } from 'next-intl';
 
-import type { AgendaItemProps } from '../AgendaView.types'
+import type { AgendaItemProps } from '../AgendaView.types';
 
 /**
  * AgendaItem - アジェンダビュー内の個別プラン表示
@@ -19,31 +19,31 @@ import type { AgendaItemProps } from '../AgendaView.types'
  * - タイトル、タグ、アイコン表示
  */
 export function AgendaItem({ plan, onClick, onContextMenu }: AgendaItemProps) {
-  const locale = useLocale()
-  const scheduledColors = calendarColors.event.scheduled
-  const { formatTime: formatTimeWithSettings } = useDateFormat()
+  const locale = useLocale();
+  const scheduledColors = calendarColors.event.scheduled;
+  const { formatTime: formatTimeWithSettings } = useDateFormat();
 
   const handleClick = () => {
-    onClick?.(plan)
-  }
+    onClick?.(plan);
+  };
 
   const handleContextMenu = (e: React.MouseEvent) => {
-    e.preventDefault()
-    onContextMenu?.(plan, e)
-  }
+    e.preventDefault();
+    onContextMenu?.(plan, e);
+  };
 
   // 時間のフォーマット
   const formatTime = (date: Date | null) => {
-    if (!date) return ''
-    return formatTimeWithSettings(date)
-  }
+    if (!date) return '';
+    return formatTimeWithSettings(date);
+  };
 
-  const startTime = formatTime(plan.startDate)
-  const endTime = formatTime(plan.endDate)
-  const hasTime = startTime && endTime
+  const startTime = formatTime(plan.startDate);
+  const endTime = formatTime(plan.endDate);
+  const hasTime = startTime && endTime;
 
   // タグの表示（最大2つ）
-  const displayTags = plan.tags?.slice(0, 2) ?? []
+  const displayTags = plan.tags?.slice(0, 2) ?? [];
 
   return (
     <button
@@ -53,7 +53,7 @@ export function AgendaItem({ plan, onClick, onContextMenu }: AgendaItemProps) {
         'hover:bg-state-hover focus-visible:bg-state-active/50',
         'focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:outline-none',
         'transition-colors duration-150',
-        'cursor-pointer text-left'
+        'cursor-pointer text-left',
       )}
       onClick={handleClick}
       onContextMenu={handleContextMenu}
@@ -81,7 +81,9 @@ export function AgendaItem({ plan, onClick, onContextMenu }: AgendaItemProps) {
         {/* タイトル + プラン番号（PlanCardContentと統一） */}
         <div className="flex items-baseline gap-1">
           <span className="text-foreground truncate font-medium">{plan.title}</span>
-          {plan.plan_number && <span className="text-muted-foreground flex-shrink-0 text-sm">#{plan.plan_number}</span>}
+          {plan.plan_number && (
+            <span className="text-muted-foreground flex-shrink-0 text-sm">#{plan.plan_number}</span>
+          )}
         </div>
 
         {/* アイコン表示（繰り返し・通知） */}
@@ -124,7 +126,9 @@ export function AgendaItem({ plan, onClick, onContextMenu }: AgendaItemProps) {
         )}
 
         {/* 説明（存在する場合） */}
-        {plan.description && <p className="text-muted-foreground mt-1 line-clamp-2 text-sm">{plan.description}</p>}
+        {plan.description && (
+          <p className="text-muted-foreground mt-1 line-clamp-2 text-sm">{plan.description}</p>
+        )}
       </div>
 
       {/* 所要時間 */}
@@ -136,5 +140,5 @@ export function AgendaItem({ plan, onClick, onContextMenu }: AgendaItemProps) {
         </div>
       )}
     </button>
-  )
+  );
 }

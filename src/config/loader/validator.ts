@@ -2,9 +2,9 @@
  * 設定ローダー - バリデーター
  */
 
-import { ZodError } from 'zod'
+import { ZodError } from 'zod';
 
-import { ConfigSchema, ConfigValidationError, ConfigValidationResult } from '../schema'
+import { ConfigSchema, ConfigValidationError, ConfigValidationResult } from '../schema';
 
 /**
  * ✅ 設定の検証
@@ -12,17 +12,17 @@ import { ConfigSchema, ConfigValidationError, ConfigValidationResult } from '../
 export function validateConfig(
   config: Record<string, unknown>,
   strict: boolean,
-  environment: string
+  environment: string,
 ): ConfigValidationResult {
   try {
-    const validatedConfig = ConfigSchema.parse(config)
+    const validatedConfig = ConfigSchema.parse(config);
 
     return {
       success: true,
       data: validatedConfig,
       errors: [],
       warnings: generateWarnings(config, strict, environment),
-    }
+    };
   } catch (error) {
     if (error instanceof ZodError) {
       const errors: ConfigValidationError[] = error.issues.map((err) => ({
@@ -30,13 +30,13 @@ export function validateConfig(
         message: err.message,
         code: err.code,
         input: 'input' in err ? err.input : undefined,
-      }))
+      }));
 
       return {
         success: false,
         errors,
         warnings: [],
-      }
+      };
     }
 
     return {
@@ -49,7 +49,7 @@ export function validateConfig(
         },
       ],
       warnings: [],
-    }
+    };
   }
 }
 
@@ -58,39 +58,46 @@ export function validateConfig(
  */
 // 型安全なプロパティアクセスヘルパー
 function getNestedProperty(obj: unknown, ...keys: string[]): unknown {
-  let current: unknown = obj
+  let current: unknown = obj;
   for (const key of keys) {
     if (current && typeof current === 'object' && key in current) {
-      current = (current as Record<string, unknown>)[key]
+      current = (current as Record<string, unknown>)[key];
     } else {
-      return undefined
+      return undefined;
     }
   }
-  return current
+  return current;
 }
 
-export function generateWarnings(config: Record<string, unknown>, _strict: boolean, environment: string): string[] {
-  const warnings: string[] = []
+export function generateWarnings(
+  config: Record<string, unknown>,
+  _strict: boolean,
+  environment: string,
+): string[] {
+  const warnings: string[] = [];
 
   // 本番環境でのデバッグモード警告
   if (environment === 'production' && getNestedProperty(config, 'app', 'debug') === true) {
-    warnings.push('Debug mode is enabled in production environment')
+    warnings.push('Debug mode is enabled in production environment');
   }
 
   // SSL無効化警告
   if (environment !== 'development' && getNestedProperty(config, 'database', 'ssl') === false) {
-    warnings.push('Database SSL is disabled in non-development environment')
+    warnings.push('Database SSL is disabled in non-development environment');
   }
 
   // 機能フラグ警告
   if (getNestedProperty(config, 'features', 'debugMode') === true && environment === 'production') {
-    warnings.push('Debug mode feature flag is enabled in production')
+    warnings.push('Debug mode feature flag is enabled in production');
   }
 
   // セッションセキュリティ警告
-  if (getNestedProperty(config, 'server', 'session', 'secure') === false && environment === 'production') {
-    warnings.push('Session secure flag is disabled in production')
+  if (
+    getNestedProperty(config, 'server', 'session', 'secure') === false &&
+    environment === 'production'
+  ) {
+    warnings.push('Session secure flag is disabled in production');
   }
 
-  return warnings
+  return warnings;
 }

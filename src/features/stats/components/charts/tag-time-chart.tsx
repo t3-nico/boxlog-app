@@ -1,34 +1,39 @@
-'use client'
+'use client';
 
-import { Bar, BarChart, XAxis, YAxis } from 'recharts'
+import { Bar, BarChart, XAxis, YAxis } from 'recharts';
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
-import { Skeleton } from '@/components/ui/skeleton'
-import { api } from '@/lib/trpc'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from '@/components/ui/chart';
+import { Skeleton } from '@/components/ui/skeleton';
+import { api } from '@/lib/trpc';
 
 type TagTimeData = {
-  tagId: string
-  name: string
-  color: string
-  hours: number
-}
+  tagId: string;
+  name: string;
+  color: string;
+  hours: number;
+};
 
 type ChartDataItem = {
-  name: string
-  hours: number
-  fill: string
-}
+  name: string;
+  hours: number;
+  fill: string;
+};
 
 function formatHours(hours: number): string {
   if (hours < 1) {
-    return `${Math.round(hours * 60)}m`
+    return `${Math.round(hours * 60)}m`;
   }
-  return `${hours.toFixed(1)}h`
+  return `${hours.toFixed(1)}h`;
 }
 
 export function TagTimeChart() {
-  const { data, isPending } = api.plans.getTimeByTag.useQuery()
+  const { data, isPending } = api.plans.getTimeByTag.useQuery();
 
   if (isPending) {
     return (
@@ -41,7 +46,7 @@ export function TagTimeChart() {
           <Skeleton className="h-64 w-full" />
         </CardContent>
       </Card>
-    )
+    );
   }
 
   if (!data || data.length === 0) {
@@ -52,10 +57,12 @@ export function TagTimeChart() {
           <CardDescription>タグごとの作業時間</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="text-muted-foreground flex h-32 items-center justify-center">データがありません</div>
+          <div className="text-muted-foreground flex h-32 items-center justify-center">
+            データがありません
+          </div>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   // 上位10件に絞る
@@ -63,19 +70,19 @@ export function TagTimeChart() {
     name: item.name,
     hours: item.hours,
     fill: item.color,
-  }))
+  }));
 
   // 合計時間
-  const totalHours = data.reduce((sum: number, item: TagTimeData) => sum + item.hours, 0)
+  const totalHours = data.reduce((sum: number, item: TagTimeData) => sum + item.hours, 0);
 
   // ChartConfigを動的に生成
   const chartConfig = chartData.reduce((config: ChartConfig, item: ChartDataItem) => {
     config[item.name] = {
       label: item.name,
       color: item.fill,
-    }
-    return config
-  }, {} as ChartConfig)
+    };
+    return config;
+  }, {} as ChartConfig);
 
   return (
     <Card className="bg-background">
@@ -87,7 +94,12 @@ export function TagTimeChart() {
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
-          <BarChart accessibilityLayer data={chartData} layout="vertical" margin={{ left: 0, right: 16 }}>
+          <BarChart
+            accessibilityLayer
+            data={chartData}
+            layout="vertical"
+            margin={{ left: 0, right: 16 }}
+          >
             <YAxis
               dataKey="name"
               type="category"
@@ -100,12 +112,14 @@ export function TagTimeChart() {
             <XAxis dataKey="hours" type="number" hide />
             <ChartTooltip
               cursor={false}
-              content={<ChartTooltipContent formatter={(value) => formatHours(Number(value))} hideLabel />}
+              content={
+                <ChartTooltipContent formatter={(value) => formatHours(Number(value))} hideLabel />
+              }
             />
             <Bar dataKey="hours" radius={5} />
           </BarChart>
         </ChartContainer>
       </CardContent>
     </Card>
-  )
+  );
 }

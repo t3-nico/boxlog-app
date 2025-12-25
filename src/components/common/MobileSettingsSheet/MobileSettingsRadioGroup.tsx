@@ -1,22 +1,22 @@
-'use client'
+'use client';
 
-import { Label } from '@/components/ui/label'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 interface MobileSettingsRadioOption<T> {
-  value: T
-  label: string
+  value: T;
+  label: string;
 }
 
 interface MobileSettingsRadioGroupProps<T extends string> {
   /** 選択肢 */
-  options: MobileSettingsRadioOption<T>[]
+  options: MobileSettingsRadioOption<T>[];
   /** 現在の値 */
-  value: T
+  value: T;
   /** 値変更時のコールバック */
-  onValueChange: (value: T) => void
+  onValueChange: (value: T) => void;
   /** IDプレフィックス */
-  idPrefix: string
+  idPrefix: string;
 }
 
 /**
@@ -56,11 +56,15 @@ export function MobileSettingsRadioGroup<T extends string>({
                 : 'border-border hover:bg-state-hover'
             }`}
           >
-            <RadioGroupItem value={option.value} id={`${idPrefix}-${option.value}`} className="sr-only" />
+            <RadioGroupItem
+              value={option.value}
+              id={`${idPrefix}-${option.value}`}
+              className="sr-only"
+            />
             {option.label}
           </Label>
         ))}
       </div>
     </RadioGroup>
-  )
+  );
 }

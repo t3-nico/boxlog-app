@@ -24,8 +24,8 @@
  * ```
  */
 export type TranslatedString = string & {
-  readonly __brand: 'TranslatedString'
-}
+  readonly __brand: 'TranslatedString';
+};
 
 /**
  * 生の文字列を TranslatedString として型アサーションする（内部使用のみ）
@@ -36,7 +36,7 @@ export type TranslatedString = string & {
  * @internal
  */
 export function markAsTranslated(str: string): TranslatedString {
-  return str as TranslatedString
+  return str as TranslatedString;
 }
 
 /**
@@ -45,14 +45,17 @@ export function markAsTranslated(str: string): TranslatedString {
  * 外部APIやログ出力など、TranslatedString型を受け付けない場面で使用します。
  */
 export function unwrapTranslated(str: TranslatedString): string {
-  return str
+  return str;
 }
 
 /**
  * 複数のTranslatedStringを結合
  */
-export function joinTranslated(strings: TranslatedString[], separator: string = ''): TranslatedString {
-  return markAsTranslated(strings.map(unwrapTranslated).join(separator))
+export function joinTranslated(
+  strings: TranslatedString[],
+  separator: string = '',
+): TranslatedString {
+  return markAsTranslated(strings.map(unwrapTranslated).join(separator));
 }
 
 /**
@@ -63,5 +66,5 @@ export function joinTranslated(strings: TranslatedString[], separator: string = 
 export function isTranslated(_str: string): _str is TranslatedString {
   // ブランド型は実行時には存在しないため、常にtrueを返す
   // この関数は型推論のためにのみ使用される
-  return true
+  return true;
 }

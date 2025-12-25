@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import {
   Building,
@@ -13,11 +13,11 @@ import {
   Shield,
   Sparkles,
   UserCircle,
-} from 'lucide-react'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+} from 'lucide-react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -29,18 +29,18 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { useTranslations } from 'next-intl'
+} from '@/components/ui/dropdown-menu';
+import { useTranslations } from 'next-intl';
 
-import { useUserAuth } from './hooks/useUserAuth'
+import { useUserAuth } from './hooks/useUserAuth';
 
 interface AccountProps {
   userData: {
-    name: string
-    email: string
-    avatar: string | null
-  }
-  locale: 'ja' | 'en'
+    name: string;
+    email: string;
+    avatar: string | null;
+  };
+  locale: 'ja' | 'en';
 }
 
 /**
@@ -49,16 +49,19 @@ interface AccountProps {
  * ユーザーアバターとドロップダウンメニュー（アカウント設定、ヘルプ、ログアウト）を表示
  */
 export function Account({ userData, locale }: AccountProps) {
-  const t = useTranslations()
-  const router = useRouter()
-  const { handleLogout, isLoggingOut } = useUserAuth()
+  const t = useTranslations();
+  const router = useRouter();
+  const { handleLogout, isLoggingOut } = useUserAuth();
 
   const navigateToSettings = (category: string) => {
-    router.push(`/${locale}/settings/${category}`)
-  }
+    router.push(`/${locale}/settings/${category}`);
+  };
 
   return (
-    <div className="flex flex-col items-center justify-center px-2 py-2" onClick={(e) => e.stopPropagation()}>
+    <div
+      className="flex flex-col items-center justify-center px-2 py-2"
+      onClick={(e) => e.stopPropagation()}
+    >
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button
@@ -68,16 +71,25 @@ export function Account({ userData, locale }: AccountProps) {
           >
             <Avatar className="h-10 w-10 rounded-xl sm:h-8 sm:w-8">
               {userData.avatar ? <AvatarImage src={userData.avatar} alt={userData.name} /> : null}
-              <AvatarFallback className="rounded-xl">{userData.name.charAt(0).toUpperCase()}</AvatarFallback>
+              <AvatarFallback className="rounded-xl">
+                {userData.name.charAt(0).toUpperCase()}
+              </AvatarFallback>
             </Avatar>
           </button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="border-input min-w-56 rounded-xl" side="right" align="start" sideOffset={8}>
+        <DropdownMenuContent
+          className="border-input min-w-56 rounded-xl"
+          side="right"
+          align="start"
+          sideOffset={8}
+        >
           <DropdownMenuLabel className="p-0 font-normal">
             <div className="flex items-center gap-2 px-2 py-2 text-left text-sm">
               <Avatar className="h-6 w-6 rounded-xl">
                 {userData.avatar ? <AvatarImage src={userData.avatar} alt={userData.name} /> : null}
-                <AvatarFallback className="rounded-xl text-xs">{userData.name.charAt(0).toUpperCase()}</AvatarFallback>
+                <AvatarFallback className="rounded-xl text-xs">
+                  {userData.name.charAt(0).toUpperCase()}
+                </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{userData.name}</span>
@@ -118,7 +130,11 @@ export function Account({ userData, locale }: AccountProps) {
               </DropdownMenuSubTrigger>
               <DropdownMenuSubContent className="border-input">
                 <DropdownMenuItem asChild>
-                  <Link href="https://github.com/t3-nico/boxlog-app/releases" target="_blank" rel="noopener noreferrer">
+                  <Link
+                    href="https://github.com/t3-nico/boxlog-app/releases"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     <Megaphone />
                     <span className="flex-1">{t('navUser.helpSubmenu.releaseNotes')}</span>
                     <ExternalLink className="text-muted-foreground size-3" />
@@ -140,14 +156,22 @@ export function Account({ userData, locale }: AccountProps) {
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href={`/${locale}/legal/tokushoho`} target="_blank" rel="noopener noreferrer">
+                  <Link
+                    href={`/${locale}/legal/tokushoho`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     <Building />
                     <span className="flex-1">{t('navUser.helpSubmenu.tokushoho')}</span>
                     <ExternalLink className="text-muted-foreground size-3" />
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href={`/${locale}/legal/security`} target="_blank" rel="noopener noreferrer">
+                  <Link
+                    href={`/${locale}/legal/security`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     <Shield />
                     <span className="flex-1">{t('navUser.helpSubmenu.security')}</span>
                     <ExternalLink className="text-muted-foreground size-3" />
@@ -175,5 +199,5 @@ export function Account({ userData, locale }: AccountProps) {
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
-  )
+  );
 }

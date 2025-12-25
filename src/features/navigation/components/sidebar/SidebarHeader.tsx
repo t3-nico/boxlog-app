@@ -1,15 +1,15 @@
-'use client'
+'use client';
 
-import { PanelLeftClose } from 'lucide-react'
+import { PanelLeftClose } from 'lucide-react';
 
-import { Button } from '@/components/ui/button'
-import { useSidebarStore } from '@/features/navigation/stores/useSidebarStore'
-import { cn } from '@/lib/utils'
-import { useTranslations } from 'next-intl'
+import { Button } from '@/components/ui/button';
+import { useSidebarStore } from '@/features/navigation/stores/useSidebarStore';
+import { cn } from '@/lib/utils';
+import { useTranslations } from 'next-intl';
 
 interface SidebarHeaderProps {
-  title?: string
-  className?: string
+  title?: string;
+  className?: string;
 }
 
 /**
@@ -27,8 +27,8 @@ interface SidebarHeaderProps {
  * - 8pxグリッドシステム準拠
  */
 export function SidebarHeader({ title, className }: SidebarHeaderProps) {
-  const toggle = useSidebarStore((state) => state.toggle)
-  const t = useTranslations()
+  const toggle = useSidebarStore((state) => state.toggle);
+  const t = useTranslations();
 
   return (
     <div className={cn('bg-surface-container flex h-12 items-center px-4 py-2', className)}>
@@ -48,5 +48,5 @@ export function SidebarHeader({ title, className }: SidebarHeaderProps) {
         <PanelLeftClose className="size-4" />
       </Button>
     </div>
-  )
+  );
 }

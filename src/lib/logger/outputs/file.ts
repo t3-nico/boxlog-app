@@ -2,34 +2,34 @@
  * 📁 ファイル出力
  */
 
-import fs from 'fs'
-import path from 'path'
+import fs from 'fs';
+import path from 'path';
 
-import { getFormatter } from '../formatters'
-import type { LogEntry, LogOutput } from '../types'
+import { getFormatter } from '../formatters';
+import type { LogEntry, LogOutput } from '../types';
 
 /**
  * 📁 ファイル出力
  */
 export class FileOutput implements LogOutput {
-  name = 'file'
-  protected formatter
-  protected filePath: string
-  private writeStream?: fs.WriteStream
-  private buffer: string[] = []
-  private bufferTimeout?: NodeJS.Timeout | undefined
+  name = 'file';
+  protected formatter;
+  protected filePath: string;
+  private writeStream?: fs.WriteStream;
+  private buffer: string[] = [];
+  private bufferTimeout?: NodeJS.Timeout | undefined;
 
   constructor(
     filePath: string,
     format: 'json' | 'structured' | 'csv' = 'json',
     private options: {
-      bufferSize?: number
-      bufferTimeout?: number
-      createDirectory?: boolean
-    } = {}
+      bufferSize?: number;
+      bufferTimeout?: number;
+      createDirectory?: boolean;
+    } = {},
   ) {
-    this.formatter = getFormatter(format)
-    this.filePath = path.resolve(filePath)
+    this.formatter = getFormatter(format);
+    this.filePath = path.resolve(filePath);
 
     // デフォルトオプション
     this.options = {
@@ -37,37 +37,37 @@ export class FileOutput implements LogOutput {
       bufferTimeout: 5000,
       createDirectory: true,
       ...options,
-    }
+    };
 
-    this.init()
+    this.init();
   }
 
   protected async init(): Promise<void> {
     try {
       // セキュリティ: ログディレクトリ内のみ許可
-      const allowedBasePath = path.resolve(process.cwd(), 'logs')
-      const resolvedPath = path.resolve(this.filePath)
+      const allowedBasePath = path.resolve(process.cwd(), 'logs');
+      const resolvedPath = path.resolve(this.filePath);
 
       if (!resolvedPath.startsWith(allowedBasePath)) {
-        throw new Error(`Log file path outside allowed directory: ${this.filePath}`)
+        throw new Error(`Log file path outside allowed directory: ${this.filePath}`);
       }
 
       // ディレクトリ作成
       if (this.options.createDirectory) {
-        const dir = path.dirname(resolvedPath)
-        this.createDirectoryIfNotExists(dir)
+        const dir = path.dirname(resolvedPath);
+        this.createDirectoryIfNotExists(dir);
       }
 
       // 書き込みストリーム作成
-      this.createWriteStream(resolvedPath)
+      this.createWriteStream(resolvedPath);
 
       if (this.writeStream) {
         this.writeStream.on('error', (error) => {
-          console.error('FileOutput error:', error)
-        })
+          console.error('FileOutput error:', error);
+        });
       }
     } catch (error) {
-      console.error('FileOutput initialization error:', error)
+      console.error('FileOutput initialization error:', error);
     }
   }
 
@@ -76,7 +76,7 @@ export class FileOutput implements LogOutput {
    */
   private createDirectoryIfNotExists(dir: string): void {
     if (!this.directoryExists(dir)) {
-      this.performDirectoryCreation(dir)
+      this.performDirectoryCreation(dir);
     }
   }
 
@@ -85,9 +85,9 @@ export class FileOutput implements LogOutput {
    */
   private directoryExists(dir: string): boolean {
     try {
-      return this.performDirectoryCheck(dir)
+      return this.performDirectoryCheck(dir);
     } catch {
-      return false
+      return false;
     }
   }
 
@@ -95,7 +95,7 @@ export class FileOutput implements LogOutput {
    * 🔐 セキュア 書き込みストリーム作成
    */
   private createWriteStream(resolvedPath: string): void {
-    this.writeStream = this.performStreamCreation(resolvedPath)
+    this.writeStream = this.performStreamCreation(resolvedPath);
   }
 
   /**
@@ -103,7 +103,7 @@ export class FileOutput implements LogOutput {
    */
   private performDirectoryCreation(validatedDir: string): void {
     // Note: This is a legitimate file system operation on validated log paths
-    fs.mkdirSync(validatedDir, { recursive: true })
+    fs.mkdirSync(validatedDir, { recursive: true });
   }
 
   /**
@@ -111,7 +111,7 @@ export class FileOutput implements LogOutput {
    */
   private performDirectoryCheck(validatedDir: string): boolean {
     // Note: This is a legitimate file system operation on validated log paths
-    return fs.existsSync(validatedDir)
+    return fs.existsSync(validatedDir);
   }
 
   /**
@@ -119,49 +119,49 @@ export class FileOutput implements LogOutput {
    */
   private performStreamCreation(validatedPath: string): fs.WriteStream {
     // Note: This is a legitimate file system operation on validated log paths
-    return fs.createWriteStream(validatedPath, { flags: 'a' })
+    return fs.createWriteStream(validatedPath, { flags: 'a' });
   }
 
   write(entry: LogEntry): void {
-    const formatted = this.formatter(entry)
-    this.buffer.push(formatted)
+    const formatted = this.formatter(entry);
+    this.buffer.push(formatted);
 
     // バッファサイズチェック
     if (this.buffer.length >= (this.options.bufferSize || 100)) {
-      this.flush()
+      this.flush();
     } else {
       // タイムアウト設定
       if (!this.bufferTimeout) {
         this.bufferTimeout = setTimeout(() => {
-          this.flush()
-        }, this.options.bufferTimeout || 5000)
+          this.flush();
+        }, this.options.bufferTimeout || 5000);
       }
     }
   }
 
   flush(): void {
     if (this.buffer.length === 0 || !this.writeStream) {
-      return
+      return;
     }
 
-    const data = this.buffer.join('\n') + '\n'
-    this.writeStream.write(data)
+    const data = this.buffer.join('\n') + '\n';
+    this.writeStream.write(data);
 
-    this.buffer = []
+    this.buffer = [];
 
     if (this.bufferTimeout !== undefined) {
-      clearTimeout(this.bufferTimeout)
-      this.bufferTimeout = undefined
+      clearTimeout(this.bufferTimeout);
+      this.bufferTimeout = undefined;
     }
   }
 
   async close(): Promise<void> {
-    this.flush()
+    this.flush();
 
     if (this.writeStream) {
       return new Promise((resolve) => {
-        this.writeStream!.end(resolve)
-      })
+        this.writeStream!.end(resolve);
+      });
     }
   }
 }
@@ -170,76 +170,76 @@ export class FileOutput implements LogOutput {
  * 🔄 ローテーションファイル出力
  */
 export class RotatingFileOutput extends FileOutput {
-  name = 'rotating-file'
-  private maxSize: number
-  private maxFiles: number
-  private currentSize = 0
+  name = 'rotating-file';
+  private maxSize: number;
+  private maxFiles: number;
+  private currentSize = 0;
 
   constructor(
     filePath: string,
     format: 'json' | 'structured' | 'csv' = 'json',
     rotationOptions: {
-      maxSize: string // '10MB', '100KB'
-      maxFiles: number
-      datePattern?: string // 'YYYY-MM-DD'
+      maxSize: string; // '10MB', '100KB'
+      maxFiles: number;
+      datePattern?: string; // 'YYYY-MM-DD'
     },
     options?: {
-      bufferSize?: number
-      bufferTimeout?: number
-      createDirectory?: boolean
-    }
+      bufferSize?: number;
+      bufferTimeout?: number;
+      createDirectory?: boolean;
+    },
   ) {
-    super(filePath, format, options)
+    super(filePath, format, options);
 
-    this.maxSize = this.parseSize(rotationOptions.maxSize)
-    this.maxFiles = rotationOptions.maxFiles
+    this.maxSize = this.parseSize(rotationOptions.maxSize);
+    this.maxFiles = rotationOptions.maxFiles;
 
     // 現在のファイルサイズを取得
-    this.currentSize = this.getFileSize(this.filePath)
+    this.currentSize = this.getFileSize(this.filePath);
   }
 
   write(entry: LogEntry): void {
-    const formatted = this.formatter(entry)
+    const formatted = this.formatter(entry);
 
     // ローテーションチェック
     if (this.currentSize + formatted.length > this.maxSize) {
-      this.rotate()
+      this.rotate();
     }
 
-    super.write(entry)
-    this.currentSize += formatted.length + 1 // +1 for newline
+    super.write(entry);
+    this.currentSize += formatted.length + 1; // +1 for newline
   }
 
   private rotate(): void {
     if (!this.fileExists(this.filePath)) {
-      return
+      return;
     }
 
     try {
       // 古いファイルをシフト
       for (let i = this.maxFiles - 1; i > 0; i--) {
-        const oldPath = `${this.filePath}.${i}`
-        const newPath = `${this.filePath}.${i + 1}`
+        const oldPath = `${this.filePath}.${i}`;
+        const newPath = `${this.filePath}.${i + 1}`;
 
         if (this.fileExists(oldPath)) {
           if (i === this.maxFiles - 1) {
             // 最古のファイルを削除
-            this.deleteFile(oldPath)
+            this.deleteFile(oldPath);
           } else {
-            this.renameFile(oldPath, newPath)
+            this.renameFile(oldPath, newPath);
           }
         }
       }
 
       // 現在のファイルを .1 に移動
-      this.renameFile(this.filePath, `${this.filePath}.1`)
+      this.renameFile(this.filePath, `${this.filePath}.1`);
 
       // 新しいストリーム作成
-      this.close()
-      this.init()
-      this.currentSize = 0
+      this.close();
+      this.init();
+      this.currentSize = 0;
     } catch (error) {
-      console.error('Log rotation error:', error)
+      console.error('Log rotation error:', error);
     }
   }
 
@@ -249,11 +249,11 @@ export class RotatingFileOutput extends FileOutput {
   private getFileSize(filePath: string): number {
     try {
       if (this.fileExists(filePath)) {
-        return this.performStatOperation(filePath)
+        return this.performStatOperation(filePath);
       }
-      return 0
+      return 0;
     } catch {
-      return 0
+      return 0;
     }
   }
 
@@ -262,9 +262,9 @@ export class RotatingFileOutput extends FileOutput {
    */
   private fileExists(filePath: string): boolean {
     try {
-      return this.performExistsCheck(filePath)
+      return this.performExistsCheck(filePath);
     } catch {
-      return false
+      return false;
     }
   }
 
@@ -272,14 +272,14 @@ export class RotatingFileOutput extends FileOutput {
    * 🔐 セキュア ファイル削除
    */
   private deleteFile(filePath: string): void {
-    this.performFileDelete(filePath)
+    this.performFileDelete(filePath);
   }
 
   /**
    * 🔐 セキュア ファイル名変更
    */
   private renameFile(oldPath: string, newPath: string): void {
-    this.performFileRename(oldPath, newPath)
+    this.performFileRename(oldPath, newPath);
   }
 
   /**
@@ -287,7 +287,7 @@ export class RotatingFileOutput extends FileOutput {
    */
   private performStatOperation(validatedPath: string): number {
     // Note: This is a legitimate file system operation on validated log paths
-    return fs.statSync(validatedPath).size
+    return fs.statSync(validatedPath).size;
   }
 
   /**
@@ -295,7 +295,7 @@ export class RotatingFileOutput extends FileOutput {
    */
   private performExistsCheck(validatedPath: string): boolean {
     // Note: This is a legitimate file system operation on validated log paths
-    return fs.existsSync(validatedPath)
+    return fs.existsSync(validatedPath);
   }
 
   /**
@@ -303,7 +303,7 @@ export class RotatingFileOutput extends FileOutput {
    */
   private performFileDelete(validatedPath: string): void {
     // Note: This is a legitimate file system operation on validated log paths
-    fs.unlinkSync(validatedPath)
+    fs.unlinkSync(validatedPath);
   }
 
   /**
@@ -311,7 +311,7 @@ export class RotatingFileOutput extends FileOutput {
    */
   private performFileRename(validatedOldPath: string, validatedNewPath: string): void {
     // Note: This is a legitimate file system operation on validated log paths
-    fs.renameSync(validatedOldPath, validatedNewPath)
+    fs.renameSync(validatedOldPath, validatedNewPath);
   }
 
   private parseSize(sizeStr: string): number {
@@ -320,17 +320,17 @@ export class RotatingFileOutput extends FileOutput {
       KB: 1024,
       MB: 1024 * 1024,
       GB: 1024 * 1024 * 1024,
-    }
+    };
 
     // Fixed: Use RegExp constructor with escaped pattern for security
-    const pattern = '^(\\d+(?:\\.\\d+)?)\\s*([KMGT]?B)$'
-    const regex = new RegExp(pattern, 'i')
-    const match = sizeStr.match(regex)
+    const pattern = '^(\\d+(?:\\.\\d+)?)\\s*([KMGT]?B)$';
+    const regex = new RegExp(pattern, 'i');
+    const match = sizeStr.match(regex);
     if (!match) {
-      throw new Error(`Invalid size format: ${sizeStr}`)
+      throw new Error(`Invalid size format: ${sizeStr}`);
     }
 
-    const [, size, unit] = match
-    return parseFloat(size!) * (units[unit!.toUpperCase()] || 1)
+    const [, size, unit] = match;
+    return parseFloat(size!) * (units[unit!.toUpperCase()] || 1);
   }
 }

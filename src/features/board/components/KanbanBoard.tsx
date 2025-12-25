@@ -1,7 +1,7 @@
-'use client'
+'use client';
 
-import type { InboxItem } from '@/features/inbox/hooks/useInboxData'
-import { PlanKanbanBoard } from './PlanKanbanBoard'
+import type { InboxItem } from '@/features/inbox/hooks/useInboxData';
+import { PlanKanbanBoard } from './PlanKanbanBoard';
 
 /**
  * Kanbanボードコンポーネント（メイン）
@@ -14,5 +14,5 @@ import { PlanKanbanBoard } from './PlanKanbanBoard'
  * ```
  */
 export function KanbanBoard({ items }: { items: InboxItem[] }) {
-  return <PlanKanbanBoard items={items} />
+  return <PlanKanbanBoard items={items} />;
 }
