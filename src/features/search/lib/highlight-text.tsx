@@ -1,7 +1,5 @@
 import { Fragment } from 'react';
 
-import type { FuseMatch } from './search-engine';
-
 /**
  * 検索語句をハイライトするためのユーティリティ
  */
@@ -30,24 +28,6 @@ export function findMatches(text: string, query: string): HighlightMatch[] {
   }
 
   return matches;
-}
-
-/**
- * Fuse.jsのマッチ情報をHighlightMatch形式に変換
- */
-export function convertFuseMatches(
-  fuseMatches: FuseMatch[] | undefined,
-  key: string,
-): HighlightMatch[] {
-  if (!fuseMatches) return [];
-
-  const keyMatch = fuseMatches.find((m) => m.key === key);
-  if (!keyMatch) return [];
-
-  return keyMatch.indices.map(([start, end]) => ({
-    start,
-    end: end + 1, // Fuse.js indices are inclusive, we need exclusive end
-  }));
 }
 
 /**
@@ -82,8 +62,6 @@ function mergeMatches(matches: HighlightMatch[]): HighlightMatch[] {
 interface HighlightedTextProps {
   text: string;
   query: string;
-  fuseMatches?: FuseMatch[];
-  fuseKey?: string;
   className?: string;
   highlightClassName?: string;
 }
@@ -92,15 +70,11 @@ interface HighlightedTextProps {
  * 検索語句をハイライトしたReact要素を返す
  *
  * @param text - 表示するテキスト
- * @param query - 検索クエリ（Fuse.jsマッチがない場合のフォールバック用）
- * @param fuseMatches - Fuse.jsのマッチ情報（あれば優先使用）
- * @param fuseKey - Fuse.jsマッチのキー（title, description等）
+ * @param query - 検索クエリ
  */
 export function HighlightedText({
   text,
   query,
-  fuseMatches,
-  fuseKey,
   className,
   highlightClassName = 'bg-primary/20 text-foreground rounded-sm',
 }: HighlightedTextProps) {
@@ -108,16 +82,11 @@ export function HighlightedText({
     return <span className={className}>{text}</span>;
   }
 
-  // Get matches - prefer Fuse.js matches if available
-  let matches: HighlightMatch[];
-
-  if (fuseMatches && fuseKey) {
-    matches = convertFuseMatches(fuseMatches, fuseKey);
-  } else if (query.trim()) {
-    matches = findMatches(text, query);
-  } else {
+  if (!query.trim()) {
     return <span className={className}>{text}</span>;
   }
+
+  const matches = findMatches(text, query);
 
   if (matches.length === 0) {
     return <span className={className}>{text}</span>;

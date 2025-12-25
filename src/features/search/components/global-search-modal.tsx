@@ -3,8 +3,6 @@
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { useDebounce } from '@/hooks/useDebounce';
-
 import {
   BarChart3,
   Calendar,
@@ -38,14 +36,12 @@ import { useTagCreateModalStore } from '@/features/tags/stores/useTagCreateModal
 import { useTagStore } from '@/features/tags/stores/useTagStore';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 
-import type { PlanStatus, PlanWithTags } from '@/features/plans/types';
+import type { PlanStatus } from '@/features/plans/types';
 import { useRecentPlans } from '../hooks/use-recent-plans';
 import { useSearchHistory } from '../hooks/use-search';
-import { registerDefaultCommands } from '../lib/command-registry';
+import { commandRegistry, registerDefaultCommands } from '../lib/command-registry';
 import { HighlightedText } from '../lib/highlight-text';
 import { getFilterHints, parseSearchQuery } from '../lib/query-parser';
-import { SearchEngine } from '../lib/search-engine';
-import type { SearchResult } from '../types';
 
 // Helper function to convert plan_tags to tags format
 type PlanFromAPI = {
@@ -69,30 +65,6 @@ type PlanFromAPI = {
     tags: { id: string; name: string; color: string } | null;
   }>;
 };
-
-function convertPlanToSearchFormat(plans: PlanFromAPI[]): PlanWithTags[] {
-  return plans.map((plan) => ({
-    id: plan.id,
-    user_id: plan.user_id,
-    title: plan.title,
-    description: plan.description,
-    status: plan.status,
-    due_date: plan.due_date,
-    start_time: plan.start_time,
-    end_time: plan.end_time,
-    plan_number: plan.plan_number,
-    recurrence_type: plan.recurrence_type as PlanWithTags['recurrence_type'],
-    recurrence_end_date: plan.recurrence_end_date,
-    recurrence_rule: plan.recurrence_rule,
-    reminder_minutes: plan.reminder_minutes,
-    created_at: plan.created_at,
-    updated_at: plan.updated_at,
-    tags:
-      plan.plan_tags
-        ?.map((pt) => pt.tags)
-        .filter((tag): tag is { id: string; name: string; color: string } => tag !== null) || [],
-  }));
-}
 
 interface GlobalSearchModalProps {
   isOpen: boolean;
@@ -126,10 +98,6 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
   const { history, addToHistory } = useSearchHistory();
   const { recentPlans, addRecentPlan } = useRecentPlans();
   const [query, setQuery] = useState('');
-  const [results, setResults] = useState<SearchResult[]>([]);
-
-  // Debounce search query (150ms delay for responsive feel)
-  const debouncedQuery = useDebounce(query, 150);
 
   // Parse query for active filters
   const parsedQuery = useMemo(() => parseSearchQuery(query), [query]);
@@ -163,21 +131,6 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
     });
   }, [router, openPlanInspector, openTagCreateModal, navigateToSettings, toggleTheme]);
 
-  // Perform search when debounced query changes
-  useEffect(() => {
-    const performSearch = async () => {
-      // Convert plans from API format (plan_tags) to search format (tags)
-      const convertedPlans = convertPlanToSearchFormat(plans as unknown as PlanFromAPI[]);
-      const searchResults = await SearchEngine.search(
-        { query: debouncedQuery, limit: 15 },
-        { plans: convertedPlans, tags },
-      );
-      setResults(searchResults);
-    };
-
-    performSearch();
-  }, [debouncedQuery, plans, tags]);
-
   // Reset query when modal closes
   useEffect(() => {
     if (!isOpen) {
@@ -185,20 +138,90 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
     }
   }, [isOpen]);
 
-  // Group results by category/type
-  const groupedResults = useMemo(() => {
-    const groups: Record<string, SearchResult[]> = {};
+  // Get commands from registry
+  const commands = useMemo(() => {
+    return commandRegistry.getAvailable();
+  }, []);
 
-    results.forEach((result) => {
-      const groupKey = result.category || result.type;
-      if (!groups[groupKey]) {
-        groups[groupKey] = [];
+  // Group commands by category
+  const commandsByCategory = useMemo(() => {
+    const groups: Record<string, typeof commands> = {};
+    commands.forEach((command) => {
+      const category = command.category;
+      if (!groups[category]) {
+        groups[category] = [];
       }
-      groups[groupKey].push(result);
+      groups[category]!.push(command);
     });
-
     return groups;
-  }, [results]);
+  }, [commands]);
+
+  // Convert and filter plans
+  const filteredPlans = useMemo(() => {
+    const converted = (plans as unknown as PlanFromAPI[]).map((plan) => ({
+      id: plan.id,
+      title: plan.title,
+      description: plan.description,
+      status: plan.status,
+      due_date: plan.due_date,
+      plan_number: plan.plan_number,
+      tags:
+        plan.plan_tags
+          ?.map((pt) => pt.tags)
+          .filter((tag): tag is { id: string; name: string; color: string } => tag !== null) || [],
+    }));
+
+    // Apply custom filters from parsed query
+    let filtered = converted;
+
+    if (parsedQuery.filters.status && parsedQuery.filters.status.length > 0) {
+      filtered = filtered.filter((plan) => parsedQuery.filters.status!.includes(plan.status));
+    }
+
+    if (parsedQuery.filters.tags && parsedQuery.filters.tags.length > 0) {
+      filtered = filtered.filter((plan) =>
+        parsedQuery.filters.tags!.some((filterTag) =>
+          plan.tags?.some((planTag) =>
+            planTag.name.toLowerCase().includes(filterTag.toLowerCase()),
+          ),
+        ),
+      );
+    }
+
+    if (parsedQuery.filters.dueDate) {
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      const weekEnd = new Date(today);
+      weekEnd.setDate(weekEnd.getDate() + 7);
+
+      filtered = filtered.filter((plan) => {
+        if (!plan.due_date) {
+          return parsedQuery.filters.dueDate === 'no_due_date';
+        }
+
+        const dueDate = new Date(plan.due_date);
+
+        switch (parsedQuery.filters.dueDate) {
+          case 'today':
+            return dueDate >= today && dueDate < tomorrow;
+          case 'tomorrow':
+            return dueDate >= tomorrow && dueDate < new Date(tomorrow.getTime() + 86400000);
+          case 'this_week':
+            return dueDate >= today && dueDate < weekEnd;
+          case 'overdue':
+            return dueDate < today && plan.status !== 'done';
+          case 'no_due_date':
+            return false;
+          default:
+            return true;
+        }
+      });
+    }
+
+    return filtered;
+  }, [plans, parsedQuery.filters]);
 
   // Get group label
   const getGroupLabel = (key: string): string => {
@@ -206,62 +229,49 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
       navigation: 'ナビゲーション',
       create: '作成',
       actions: 'アクション',
-      plans: 'プラン',
-      tags: 'タグ',
-      command: 'コマンド',
-      plan: 'プラン',
-      tag: 'タグ',
     };
     return labels[key] || key;
   };
 
-  // Get icon for result
-  const getResultIcon = (result: SearchResult): React.ElementType => {
-    // Check icon name mapping first
-    if (result.icon) {
-      const iconFromName = iconNameMap[result.icon];
-      if (iconFromName) {
-        return iconFromName;
-      }
-    }
-    // Check category icons
-    if (result.category) {
-      const iconFromCategory = categoryIcons[result.category];
-      if (iconFromCategory) {
-        return iconFromCategory;
-      }
-    }
-    // Default icon
-    return CheckSquare;
-  };
-
-  // Handle result selection
-  const handleSelect = useCallback(
-    async (result: SearchResult) => {
+  // Handle command selection
+  const handleCommandSelect = useCallback(
+    async (commandId: string) => {
       if (query) {
         addToHistory(query);
       }
-
       onClose();
 
-      // Execute action if available
-      if (result.action) {
-        await result.action();
-      } else {
-        // Default navigation based on type
-        if (result.type === 'plan') {
-          const planId = result.id.replace('plan:', '');
-          addRecentPlan(planId, result.title);
-          router.push(`/inbox?plan=${planId}`);
-        } else if (result.type === 'tag') {
-          const tagNumber = (result.metadata as { tagNumber?: string })?.tagNumber;
-          if (tagNumber) {
-            router.push(`/tags/${tagNumber}`);
-          }
-        }
+      const command = commandRegistry.get(commandId);
+      if (command?.action) {
+        await command.action();
       }
     },
+    [query, addToHistory, onClose],
+  );
+
+  // Handle plan selection
+  const handlePlanSelect = useCallback(
+    (planId: string, title: string) => {
+      if (query) {
+        addToHistory(query);
+      }
+      addRecentPlan(planId, title);
+      onClose();
+      router.push(`/inbox?plan=${planId}`);
+    },
     [query, addToHistory, addRecentPlan, router, onClose],
+  );
+
+  // Handle tag selection
+  const handleTagSelect = useCallback(
+    (tagNumber: number) => {
+      if (query) {
+        addToHistory(query);
+      }
+      onClose();
+      router.push(`/tags/${tagNumber}`);
+    },
+    [query, addToHistory, router, onClose],
   );
 
   return (
@@ -356,10 +366,7 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
                   {recentPlans.map((plan) => (
                     <CommandItem
                       key={`recent-plan-${plan.id}`}
-                      onSelect={() => {
-                        onClose();
-                        router.push(`/inbox?plan=${plan.id}`);
-                      }}
+                      onSelect={() => handlePlanSelect(plan.id, plan.title)}
                     >
                       <CheckSquare className="mr-2 h-4 w-4" />
                       {plan.title}
@@ -370,34 +377,35 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
               </>
             )}
 
-            {/* Grouped Results */}
-            {Object.entries(groupedResults).map(([groupKey, groupResults]) => (
-              <CommandGroup key={groupKey} heading={getGroupLabel(groupKey)}>
-                {groupResults.map((result) => {
-                  const ResultIcon = getResultIcon(result);
+            {/* Commands by Category */}
+            {Object.entries(commandsByCategory).map(([category, categoryCommands]) => (
+              <CommandGroup key={category} heading={getGroupLabel(category)}>
+                {categoryCommands.map((command) => {
+                  const IconComponent = command.icon
+                    ? iconNameMap[command.icon] || categoryIcons[category] || Zap
+                    : categoryIcons[category] || Zap;
 
                   return (
                     <CommandItem
-                      key={result.id}
-                      value={result.title}
-                      onSelect={() => handleSelect(result)}
+                      key={command.id}
+                      value={`${command.title} ${command.description || ''} ${command.keywords?.join(' ') || ''}`}
+                      onSelect={() => handleCommandSelect(command.id)}
                       className="flex items-center gap-2"
                     >
-                      <ResultIcon className="h-4 w-4 shrink-0" />
+                      <IconComponent className="h-4 w-4 shrink-0" />
                       <div className="flex min-w-0 flex-1 flex-col">
                         <span className="truncate">
-                          <HighlightedText text={result.title} query={query} />
+                          <HighlightedText text={command.title} query={parsedQuery.text} />
                         </span>
-                        {result.description && (
+                        {command.description && (
                           <span className="text-muted-foreground truncate text-xs">
-                            <HighlightedText text={result.description} query={query} />
+                            <HighlightedText text={command.description} query={parsedQuery.text} />
                           </span>
                         )}
                       </div>
-                      {/* ショートカット表示（PCのみ） */}
-                      {result.shortcut && result.shortcut.length > 0 && (
+                      {command.shortcut && command.shortcut.length > 0 && (
                         <div className="hidden shrink-0 items-center gap-1 md:flex">
-                          {result.shortcut.map((key, index) => (
+                          {command.shortcut.map((key, index) => (
                             <kbd
                               key={index}
                               className="bg-surface-container text-muted-foreground inline-flex h-6 min-w-6 items-center justify-center rounded border px-2 font-mono text-xs font-medium"
@@ -412,6 +420,58 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
                 })}
               </CommandGroup>
             ))}
+
+            {/* Plans */}
+            {filteredPlans.length > 0 && (
+              <CommandGroup heading="プラン">
+                {filteredPlans.slice(0, 10).map((plan) => (
+                  <CommandItem
+                    key={`plan-${plan.id}`}
+                    value={`${plan.title} ${plan.description || ''} ${plan.tags.map((t) => t.name).join(' ')}`}
+                    onSelect={() => handlePlanSelect(plan.id, plan.title)}
+                    className="flex items-center gap-2"
+                  >
+                    <CheckSquare className="h-4 w-4 shrink-0" />
+                    <div className="flex min-w-0 flex-1 flex-col">
+                      <span className="truncate">
+                        <HighlightedText text={plan.title} query={parsedQuery.text} />
+                      </span>
+                      {plan.description && (
+                        <span className="text-muted-foreground truncate text-xs">
+                          <HighlightedText text={plan.description} query={parsedQuery.text} />
+                        </span>
+                      )}
+                    </div>
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            )}
+
+            {/* Tags */}
+            {tags.length > 0 && (
+              <CommandGroup heading="タグ">
+                {tags.slice(0, 10).map((tag) => (
+                  <CommandItem
+                    key={`tag-${tag.id}`}
+                    value={`${tag.name} ${tag.description || ''}`}
+                    onSelect={() => handleTagSelect(tag.tag_number)}
+                    className="flex items-center gap-2"
+                  >
+                    <Tag className="h-4 w-4 shrink-0" />
+                    <div className="flex min-w-0 flex-1 flex-col">
+                      <span className="truncate">
+                        <HighlightedText text={tag.name} query={parsedQuery.text} />
+                      </span>
+                      {tag.description && (
+                        <span className="text-muted-foreground truncate text-xs">
+                          <HighlightedText text={tag.description} query={parsedQuery.text} />
+                        </span>
+                      )}
+                    </div>
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            )}
           </CommandList>
         </Command>
       </DialogContent>

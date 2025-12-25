@@ -59,15 +59,6 @@ export interface SearchContext {
 export interface SearchPreferences {
   defaultTypes?: SearchResultType[];
   resultsPerPage?: number;
-  fuzzyMatchThreshold?: number;
-}
-
-// Fuzzy search configuration
-export interface FuzzySearchConfig {
-  threshold?: number;
-  includeScore?: boolean;
-  keys?: string[];
-  maxPatternLength?: number;
 }
 
 // Search providers interface
