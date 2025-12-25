@@ -13,6 +13,9 @@ function renderWithProviders(ui: React.ReactElement) {
 const mockPush = vi.fn();
 const mockSignIn = vi.fn();
 
+// MFAモックの状態を管理（テストごとに変更可能）
+const mockMfaGetAAL = vi.fn();
+
 vi.mock('next/navigation', () => ({
   useParams: () => ({ locale: 'ja' }),
   useRouter: () => ({
@@ -33,7 +36,7 @@ vi.mock('@/lib/supabase/client', () => ({
   createClient: () => ({
     auth: {
       mfa: {
-        getAuthenticatorAssuranceLevel: vi.fn().mockResolvedValue({ data: null }),
+        getAuthenticatorAssuranceLevel: mockMfaGetAAL,
       },
     },
   }),
@@ -42,6 +45,8 @@ vi.mock('@/lib/supabase/client', () => ({
 describe('LoginForm', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // デフォルトのMFAモック（MFA不要）
+    mockMfaGetAAL.mockResolvedValue({ data: null, error: null });
   });
 
   describe('レンダリング', () => {
@@ -185,17 +190,10 @@ describe('LoginForm', () => {
       });
 
       // MFAが必要な状態をモック
-      vi.mocked(vi.fn()).mockImplementation(() => ({
-        createClient: () => ({
-          auth: {
-            mfa: {
-              getAuthenticatorAssuranceLevel: vi.fn().mockResolvedValue({
-                data: { currentLevel: 'aal1', nextLevel: 'aal2' },
-              }),
-            },
-          },
-        }),
-      }));
+      mockMfaGetAAL.mockResolvedValue({
+        data: { currentLevel: 'aal1', nextLevel: 'aal2' },
+        error: null,
+      });
 
       renderWithProviders(<LoginForm />);
 
@@ -203,31 +201,25 @@ describe('LoginForm', () => {
       await user.type(screen.getByLabelText('auth.loginForm.password'), 'password123');
       await user.click(screen.getByRole('button', { name: 'auth.loginForm.loginButton' }));
 
-      // MFAモックが正しく設定されていれば遷移が確認できる
       await waitFor(() => {
-        expect(mockSignIn).toHaveBeenCalled();
+        expect(mockPush).toHaveBeenCalledWith('/ja/auth/mfa-verify');
       });
     });
   });
 
   describe('エラーハンドリング', () => {
-    it('MFAチェック失敗時も正常に遷移する', async () => {
+    it('MFAチェック失敗時はMFA検証ページへ遷移する', async () => {
       const user = userEvent.setup();
       mockSignIn.mockResolvedValue({
         data: { user: { id: '123' }, session: {} },
         error: null,
       });
 
-      // Supabaseクライアントが例外を投げる
-      vi.mock('@/lib/supabase/client', () => ({
-        createClient: () => ({
-          auth: {
-            mfa: {
-              getAuthenticatorAssuranceLevel: vi.fn().mockRejectedValue(new Error('MFA Error')),
-            },
-          },
-        }),
-      }));
+      // MFAチェックがエラーを返す（セキュリティ上、MFA検証ページへ誘導）
+      mockMfaGetAAL.mockResolvedValue({
+        data: null,
+        error: { message: 'MFA check failed' },
+      });
 
       renderWithProviders(<LoginForm />);
 
@@ -235,9 +227,31 @@ describe('LoginForm', () => {
       await user.type(screen.getByLabelText('auth.loginForm.password'), 'password123');
       await user.click(screen.getByRole('button', { name: 'auth.loginForm.loginButton' }));
 
-      // エラーがあってもカレンダーへ遷移する（グレースフルデグラデーション）
+      // MFAエラー時はセキュリティのためMFA検証ページへ
       await waitFor(() => {
-        expect(mockPush).toHaveBeenCalled();
+        expect(mockPush).toHaveBeenCalledWith('/ja/auth/mfa-verify');
+      });
+    });
+
+    it('MFAチェックで例外が発生してもエラー表示される', async () => {
+      const user = userEvent.setup();
+      mockSignIn.mockResolvedValue({
+        data: { user: { id: '123' }, session: {} },
+        error: null,
+      });
+
+      // MFAチェックが例外を投げる
+      mockMfaGetAAL.mockRejectedValue(new Error('MFA Error'));
+
+      renderWithProviders(<LoginForm />);
+
+      await user.type(screen.getByLabelText('auth.loginForm.email'), 'test@example.com');
+      await user.type(screen.getByLabelText('auth.loginForm.password'), 'password123');
+      await user.click(screen.getByRole('button', { name: 'auth.loginForm.loginButton' }));
+
+      // 例外時はエラーメッセージが表示される
+      await waitFor(() => {
+        expect(screen.getByRole('alert')).toBeInTheDocument();
       });
     });
   });
