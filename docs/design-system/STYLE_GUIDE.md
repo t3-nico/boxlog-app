@@ -2,6 +2,9 @@
 
 BoxLog App のスタイリングルール統一リファレンスです。
 
+> **GAFA-First原則**: UI/UXで迷ったら文脈に合うGoogle製品を開いて観察する。
+> 詳細は [`/CLAUDE.md`](../../CLAUDE.md) の「意思決定の優先順位（GAFA-First原則）」を参照。
+
 ## 📐 8pxグリッドシステム（必須遵守）
 
 すべてのスペーシング・サイズ・余白は **8の倍数** を使用します。
@@ -10,22 +13,22 @@ BoxLog App のスタイリングルール統一リファレンスです。
 
 ```typescript
 // Tailwind クラス → ピクセル値
-gap - 1 // 4px   - 最小
-gap - 2 // 8px   - 標準: 小要素間
-gap - 3 // 12px  - 非推奨（8の倍数でない）
-gap - 4 // 16px  - 標準: 中要素間
-gap - 6 // 24px  - 標準: 大要素間
-gap - 8 // 32px  - セクション間
+gap - 1; // 4px   - 最小
+gap - 2; // 8px   - 標準: 小要素間
+gap - 3; // 12px  - 非推奨（8の倍数でない）
+gap - 4; // 16px  - 標準: 中要素間
+gap - 6; // 24px  - 標準: 大要素間
+gap - 8; // 32px  - セクション間
 
-p - 2 // 8px   - 小パディング
-p - 4 // 16px  - 標準パディング
-p - 6 // 24px  - 大パディング
-p - 8 // 32px  - セクションパディング
+p - 2; // 8px   - 小パディング
+p - 4; // 16px  - 標準パディング
+p - 6; // 24px  - 大パディング
+p - 8; // 32px  - セクションパディング
 
-m - 2 // 8px   - 小マージン
-m - 4 // 16px  - 標準マージン
-m - 6 // 24px  - 大マージン
-m - 8 // 32px  - セクションマージン
+m - 2; // 8px   - 小マージン
+m - 4; // 16px  - 標準マージン
+m - 6; // 24px  - 大マージン
+m - 8; // 32px  - セクションマージン
 ```
 
 ### 角丸（Border Radius）
@@ -46,15 +49,15 @@ m - 8 // 32px  - セクションマージン
 
 ```typescript
 // ボタン高さ
-h - 8 // 32px  - sm
-h - 10 // 40px  - md（標準）
-h - 12 // 48px  - lg
+h - 8; // 32px  - sm
+h - 10; // 40px  - md（標準）
+h - 12; // 48px  - lg
 
 // アイコンサイズ
-size - 4 // 16px - 小
-size - 5 // 20px - 中（非推奨：8の倍数でない）
-size - 6 // 24px - 大（標準）
-size - 8 // 32px - 特大
+size - 4; // 16px - 小
+size - 5; // 20px - 中（非推奨：8の倍数でない）
+size - 6; // 24px - 大（標準）
+size - 8; // 32px - 特大
 ```
 
 ### ❌ 禁止事項
@@ -103,16 +106,17 @@ Material Design 3のState Layer方式を採用。背景色を変えるのでは�
 
 #### ステートレイヤートークン（foregroundベース）
 
-| 状態         | Tailwindクラス      | 値  | 用途                 |
-| ------------ | ------------------- | --- | -------------------- |
-| **Hover**    | `bg-state-hover`    | 10% | マウスオーバー       |
-| **Focus**    | `bg-state-focus`    | 12% | キーボードフォーカス |
-| **Pressed**  | `bg-state-pressed`  | 12% | クリック/タップ中    |
-| **Selected** | `bg-state-selected` | 12% | 選択状態             |
+| 状態         | Tailwindクラス      | 値  | 用途                  |
+| ------------ | ------------------- | --- | --------------------- |
+| **Hover**    | `bg-state-hover`    | 10% | マウスオーバー        |
+| **Focus**    | `bg-state-focus`    | 12% | キーボードフォーカス  |
+| **Pressed**  | `bg-state-pressed`  | 12% | クリック/タップ中     |
+| **Selected** | `bg-state-selected` | 12% | 選択状態              |
 | **Active**   | `bg-state-active`   | -   | 現在のページ/ナビ項目 |
-| **Dragged**  | `bg-state-dragged`  | 16% | ドラッグ中           |
+| **Dragged**  | `bg-state-dragged`  | 16% | ドラッグ中            |
 
 **Active vs Selected の使い分け**:
+
 - `bg-state-active`: 現在のページやナビゲーション項目（持続的）
 - `bg-state-selected`: ユーザーが選択した項目（一時的）
 
@@ -136,10 +140,12 @@ Material Design 3のState Layer方式を採用。背景色を変えるのでは�
 
 ```tsx
 // ✅ 使用例: Board の「新規追加」ボタン
-className = 'text-primary hover:bg-primary-state-hover'
+className = 'text-primary hover:bg-primary-state-hover';
 
 // ✅ 使用例: Primary強調のリストアイテム
-isActive ? 'bg-primary-state-selected text-primary' : 'text-muted-foreground hover:bg-primary-state-hover'
+isActive
+  ? 'bg-primary-state-selected text-primary'
+  : 'text-muted-foreground hover:bg-primary-state-hover';
 ```
 
 #### Containerトークン（M3準拠 - 装飾的背景用）
@@ -193,14 +199,14 @@ className = 'bg-primary/12'
 
 ```tsx
 // ✅ 推奨（セマンティックトークン使用）
-className = 'bg-primary text-primary-foreground hover:bg-primary-hover'
-className = 'bg-destructive text-white hover:bg-destructive-hover'
-className = 'bg-warning text-warning-foreground hover:bg-warning-hover'
-className = 'bg-success text-success-foreground hover:bg-success-hover'
+className = 'bg-primary text-primary-foreground hover:bg-primary-hover';
+className = 'bg-destructive text-white hover:bg-destructive-hover';
+className = 'bg-warning text-warning-foreground hover:bg-warning-hover';
+className = 'bg-success text-success-foreground hover:bg-success-hover';
 
 // ❌ 禁止（ハードコード値）
-className = 'bg-primary hover:bg-primary/90'
-className = 'bg-primary hover:bg-primary/80'
+className = 'bg-primary hover:bg-primary/90';
+className = 'bg-primary hover:bg-primary/80';
 ```
 
 #### パターン2: Ghost/Outline/リスト項目
@@ -209,10 +215,10 @@ className = 'bg-primary hover:bg-primary/80'
 
 ```tsx
 // ✅ 推奨
-className = 'hover:bg-state-hover focus-visible:bg-state-selected active:bg-state-selected'
+className = 'hover:bg-state-hover focus-visible:bg-state-selected active:bg-state-selected';
 
 // テキスト色も変える場合
-className = 'text-muted-foreground hover:text-foreground hover:bg-state-hover'
+className = 'text-muted-foreground hover:text-foreground hover:bg-state-hover';
 ```
 
 #### パターン3: テーブル行/リスト
@@ -221,7 +227,7 @@ muted-foregroundでオーバーレイ
 
 ```tsx
 // ✅ 推奨
-className = 'hover:bg-state-hover transition-colors'
+className = 'hover:bg-state-hover transition-colors';
 ```
 
 #### パターン4: リンク
@@ -230,8 +236,8 @@ underline追加またはテキスト色変化
 
 ```tsx
 // ✅ 推奨
-className = 'text-primary hover:underline'
-className = 'text-muted-foreground hover:text-foreground transition-colors'
+className = 'text-primary hover:underline';
+className = 'text-muted-foreground hover:text-foreground transition-colors';
 ```
 
 #### パターン5: 選択状態（Selected）
@@ -240,14 +246,14 @@ foreground色で12%オーバーレイ（ChatGPT/Claude方式 - ニュートラ�
 
 ```tsx
 // ✅ 推奨（統一ルール）
-className = 'data-[state=selected]:bg-state-selected'
-className = 'aria-selected:bg-state-selected'
+className = 'data-[state=selected]:bg-state-selected';
+className = 'aria-selected:bg-state-selected';
 
 // hover + selected の組み合わせ
-className = 'hover:bg-state-hover data-[state=selected]:bg-state-selected'
+className = 'hover:bg-state-hover data-[state=selected]:bg-state-selected';
 
 // サイドバー・リストアイテムの選択
-isActive ? 'bg-state-selected text-foreground' : 'text-muted-foreground hover:bg-state-hover'
+isActive ? 'bg-state-selected text-foreground' : 'text-muted-foreground hover:bg-state-hover';
 ```
 
 **注意**: primary色は選択状態に使用しない（ホバーと選択の両方がforegroundベースで統一）
@@ -258,10 +264,10 @@ isActive ? 'bg-state-selected text-foreground' : 'text-muted-foreground hover:bg
 
 ```tsx
 // ✅ 推奨（ボタン等）
-className = 'disabled:pointer-events-none disabled:opacity-[0.38]'
+className = 'disabled:pointer-events-none disabled:opacity-[0.38]';
 
 // 背景も薄くする場合
-className = 'disabled:opacity-[0.38] disabled:bg-foreground/12'
+className = 'disabled:opacity-[0.38] disabled:bg-foreground/12';
 ```
 
 #### パターン7: アクティブ状態（Activated）
@@ -270,8 +276,8 @@ className = 'disabled:opacity-[0.38] disabled:bg-foreground/12'
 
 ```tsx
 // ✅ 推奨
-className = 'data-[state=open]:ring-2 data-[state=open]:ring-primary'
-className = 'data-[state=active]:bg-primary/12'
+className = 'data-[state=open]:ring-2 data-[state=open]:ring-primary';
+className = 'data-[state=active]:bg-primary/12';
 ```
 
 ### Transition設定
@@ -288,23 +294,23 @@ className = 'data-[state=active]:bg-primary/12'
 
 ```tsx
 // ❌ Hardcodedカラー
-className = 'bg-green-600 hover:bg-green-700'
-className = 'text-red-500 hover:text-red-400'
+className = 'bg-green-600 hover:bg-green-700';
+className = 'text-red-500 hover:text-red-400';
 
 // ❌ accent トークンをホバー状態に使用（M3違反）
-className = 'hover:bg-accent' // → hover:bg-state-hover
-className = 'hover:bg-accent/50' // → hover:bg-state-hover
-className = 'hover:bg-accent hover:text-accent-foreground' // → hover:bg-state-hover（テキスト変更なし）
+className = 'hover:bg-accent'; // → hover:bg-state-hover
+className = 'hover:bg-accent/50'; // → hover:bg-state-hover
+className = 'hover:bg-accent hover:text-accent-foreground'; // → hover:bg-state-hover（テキスト変更なし）
 
 // ❌ ホバー時のテキスト色変更（State Layerはオーバーレイのみ）
-className = 'hover:text-accent-foreground' // 削除
-className = 'dark:hover:text-accent-foreground' // 削除
+className = 'hover:text-accent-foreground'; // 削除
+className = 'dark:hover:text-accent-foreground'; // 削除
 
 // ❌ バラバラなOpacity値
-className = 'hover:bg-primary/90' // 別の場所で /80 を使っている
+className = 'hover:bg-primary/90'; // 別の場所で /80 を使っている
 
 // ❌ brightness調整（古い方式）
-className = 'hover:brightness-75'
+className = 'hover:brightness-75';
 ```
 
 ### shadcn/ui コンポーネント修正ルール
@@ -480,19 +486,19 @@ text-4xl  // 36px  - 非推奨（8の倍数でない）
 ### フォントウェイト
 
 ```typescript
-font - normal // 400 - 本文
-font - medium // 500 - 強調
-font - semibold // 600 - 見出し
-font - bold // 700 - 特別な強調
+font - normal; // 400 - 本文
+font - medium; // 500 - 強調
+font - semibold; // 600 - 見出し
+font - bold; // 700 - 特別な強調
 ```
 
 ### 行間
 
 ```typescript
-leading - tight // 1.25 - タイトル
-leading - snug // 1.375
-leading - normal // 1.5 - 本文（標準）
-leading - relaxed // 1.625 - 読みやすい本文
+leading - tight; // 1.25 - タイトル
+leading - snug; // 1.375
+leading - normal; // 1.5 - 本文（標準）
+leading - relaxed; // 1.625 - 読みやすい本文
 ```
 
 ---
@@ -516,18 +522,18 @@ xl: 1280px  // ≈ M3 Large
 
 ```typescript
 // src/config/ui/breakpoints.ts
-import { BREAKPOINT_VALUES, MEDIA_QUERIES, TOUCH_TARGET } from '@/config/ui/breakpoints'
+import { BREAKPOINT_VALUES, MEDIA_QUERIES, TOUCH_TARGET } from '@/config/ui/breakpoints';
 
 // ブレークポイント値（ピクセル）
-BREAKPOINT_VALUES.sm // 640
-BREAKPOINT_VALUES.md // 768
-BREAKPOINT_VALUES.lg // 1024
+BREAKPOINT_VALUES.sm; // 640
+BREAKPOINT_VALUES.md; // 768
+BREAKPOINT_VALUES.lg; // 1024
 
 // useMediaQuery用クエリ
-MEDIA_QUERIES.mobile // '(max-width: 639px)'
-MEDIA_QUERIES.tablet // '(min-width: 640px) and (max-width: 1023px)'
-MEDIA_QUERIES.desktop // '(min-width: 1024px)'
-MEDIA_QUERIES.touch // '(hover: none) and (pointer: coarse)'
+MEDIA_QUERIES.mobile; // '(max-width: 639px)'
+MEDIA_QUERIES.tablet; // '(min-width: 640px) and (max-width: 1023px)'
+MEDIA_QUERIES.desktop; // '(min-width: 1024px)'
+MEDIA_QUERIES.touch; // '(hover: none) and (pointer: coarse)'
 ```
 
 ### モバイルファースト設計
@@ -545,14 +551,14 @@ MEDIA_QUERIES.touch // '(hover: none) and (pointer: coarse)'
 ### useMediaQueryの使用
 
 ```tsx
-import { useMediaQuery } from '@/hooks/useMediaQuery'
-import { MEDIA_QUERIES } from '@/config/ui/breakpoints'
+import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { MEDIA_QUERIES } from '@/config/ui/breakpoints';
 
 function MyComponent() {
-  const isMobile = useMediaQuery(MEDIA_QUERIES.mobile)
-  const isTouch = useMediaQuery(MEDIA_QUERIES.touch)
+  const isMobile = useMediaQuery(MEDIA_QUERIES.mobile);
+  const isTouch = useMediaQuery(MEDIA_QUERIES.touch);
 
-  return isMobile ? <MobileView /> : <DesktopView />
+  return isMobile ? <MobileView /> : <DesktopView />;
 }
 ```
 
@@ -562,10 +568,10 @@ Material Design 3では、タッチ可能な要素は最小**48dp（48px）**を
 
 ```typescript
 // src/config/ui/breakpoints.ts
-TOUCH_TARGET.minimum // 44px（WCAG 2.5.5最小）
-TOUCH_TARGET.standard // 48px（M3推奨）
-TOUCH_TARGET.large // 56px（FAB等）
-TOUCH_TARGET.spacing // 8px（要素間マージン）
+TOUCH_TARGET.minimum; // 44px（WCAG 2.5.5最小）
+TOUCH_TARGET.standard; // 48px（M3推奨）
+TOUCH_TARGET.large; // 56px（FAB等）
+TOUCH_TARGET.spacing; // 8px（要素間マージン）
 ```
 
 #### サイズ早見表
@@ -743,14 +749,14 @@ import { AlertTriangle, Info } from 'lucide-react'
 使用状況、説明、詳細情報などに使用。
 
 ```tsx
-import { InfoBox } from '@/components/common'
-;<InfoBox>
+import { InfoBox } from '@/components/common';
+<InfoBox>
   <p className="mb-2 text-sm font-medium">使用状況:</p>
   <ul className="text-muted-foreground space-y-1 text-sm">
     <li>• Plans: 10件</li>
     <li>• Events: 5件</li>
   </ul>
-</InfoBox>
+</InfoBox>;
 ```
 
 ### AlertDialog パターン
@@ -797,12 +803,12 @@ UIコンポーネントの重なり順序を統一管理。値が大きいほど
 
 ```typescript
 // src/config/ui/z-index.ts
-import { zIndex, getZIndexClass } from '@/config/ui/z-index'
+import { zIndex, getZIndexClass } from '@/config/ui/z-index';
 
 // 使用例
-zIndex.modal // 200
-zIndex.sheet // 150
-getZIndexClass('confirmDialog') // 'z-[250]'
+zIndex.modal; // 200
+zIndex.sheet; // 150
+getZIndexClass('confirmDialog'); // 'z-[250]'
 ```
 
 ### 対応コンポーネント
@@ -841,7 +847,7 @@ getZIndexClass('confirmDialog') // 'z-[250]'
 
 ```tsx
 // ✅ カスタムダイアログでの使用
-import { zIndex } from '@/config/ui/z-index'
+import { zIndex } from '@/config/ui/z-index';
 
 const dialog = (
   <div
@@ -851,7 +857,7 @@ const dialog = (
   >
     {/* ... */}
   </div>
-)
+);
 ```
 
 ---
