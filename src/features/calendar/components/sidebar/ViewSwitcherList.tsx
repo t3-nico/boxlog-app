@@ -42,7 +42,8 @@ export function ViewSwitcherList() {
   const navigation = useCalendarNavigation();
   const t = useTranslations();
   const closeSidebar = useSidebarStore((state) => state.close);
-  const currentView = navigation?.viewType ?? 'day';
+  // デフォルトは'week'（CalendarNavigationContextのinitialViewと一致させる）
+  const currentView = navigation?.viewType ?? 'week';
 
   // ショートカットキー機能
   useEffect(() => {
@@ -99,8 +100,8 @@ export function ViewSwitcherList() {
             className={cn(
               'flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition-colors',
               isActive
-                ? 'bg-primary/10 text-primary font-medium'
-                : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+                ? 'bg-primary-state-selected text-primary font-medium'
+                : 'text-muted-foreground hover:bg-state-hover hover:text-foreground',
             )}
           >
             <div className="flex items-center gap-2">

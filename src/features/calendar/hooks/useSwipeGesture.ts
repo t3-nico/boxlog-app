@@ -2,15 +2,11 @@
 
 import { useCallback, useEffect, useRef } from 'react';
 
-import { MEDIA_QUERIES } from '@/config/ui/breakpoints';
-
 export interface SwipeGestureOptions {
   /** スワイプと判定する最小距離（px）。未指定時は画面幅の12%を使用 */
   threshold?: number;
   /** 垂直移動に対する水平移動の最小比率 */
   directionRatio?: number;
-  /** タッチデバイスのみで有効にするか */
-  touchOnly?: boolean;
   /** スワイプ中のプレビュー表示を有効にするか */
   enablePreview?: boolean;
   /** 無効化 */
@@ -62,12 +58,7 @@ export function useSwipeGesture(
 ): SwipeGestureResult {
   // 閾値未指定時は画面幅ベースの相対値を使用
   const defaultThreshold = typeof window !== 'undefined' ? getResponsiveThreshold() : 50;
-  const {
-    threshold = defaultThreshold,
-    directionRatio = 1.5,
-    touchOnly = true,
-    disabled = false,
-  } = options;
+  const { threshold = defaultThreshold, directionRatio = 1.5, disabled = false } = options;
 
   const ref = useRef<HTMLElement | null>(null);
   const touchStartX = useRef<number>(0);
@@ -77,18 +68,9 @@ export function useSwipeGesture(
   const swipeDirection = useRef<'left' | 'right' | null>(null);
   const swipeDistance = useRef<number>(0);
 
-  // タッチデバイスかどうかを確認
-  const isTouchDevice = useRef<boolean>(false);
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      isTouchDevice.current = window.matchMedia(MEDIA_QUERIES.touch).matches;
-    }
-  }, []);
-
   const handleTouchStart = useCallback(
     (e: React.TouchEvent | TouchEvent) => {
       if (disabled) return;
-      if (touchOnly && !isTouchDevice.current) return;
 
       const touch = 'touches' in e ? e.touches[0] : null;
       if (!touch) return;
@@ -100,7 +82,7 @@ export function useSwipeGesture(
       swipeDirection.current = null;
       swipeDistance.current = 0;
     },
-    [disabled, touchOnly],
+    [disabled],
   );
 
   const handleTouchMove = useCallback(

@@ -2,9 +2,7 @@
 
 import { memo, useCallback } from 'react';
 
-import { MEDIA_QUERIES } from '@/config/ui/breakpoints';
 import { MobileMenuButton } from '@/features/navigation/components/mobile/MobileMenuButton';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { cn } from '@/lib/utils';
 
 import { useSwipeGesture } from '../../hooks/useSwipeGesture';
@@ -65,9 +63,6 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
     onDateSelect,
     displayRange,
   }) => {
-    // タッチデバイスでのみスワイプを有効化
-    const isTouchDevice = useMediaQuery(MEDIA_QUERIES.touch);
-
     // スワイプで前後の期間に移動
     const handleSwipeLeft = useCallback(() => {
       onNavigate('next');
@@ -77,11 +72,8 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
       onNavigate('prev');
     }, [onNavigate]);
 
-    const { handlers, ref } = useSwipeGesture(handleSwipeLeft, handleSwipeRight, {
-      // threshold未指定で画面幅ベースの相対値を使用
-      touchOnly: true,
-      disabled: !isTouchDevice,
-    });
+    // タッチイベントのみで動作（タッチイベントが発生 = タッチデバイス）
+    const { handlers, ref } = useSwipeGesture(handleSwipeLeft, handleSwipeRight);
 
     return (
       <div className={cn('calendar-layout bg-background flex h-full flex-col', className)}>
