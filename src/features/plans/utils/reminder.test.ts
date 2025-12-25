@@ -131,7 +131,8 @@ describe('reminder', () => {
 
   describe('リマインダー通知時刻の計算', () => {
     it('開始時刻と同時に通知', () => {
-      const eventStart = new Date('2025-01-15T10:00:00');
+      // UTC形式で指定してタイムゾーンの影響を排除
+      const eventStart = new Date('2025-01-15T10:00:00Z');
       const minutes = reminderTypeToMinutes('開始時刻')!;
 
       const notifyAt = new Date(eventStart.getTime() - minutes * 60 * 1000);
@@ -139,7 +140,7 @@ describe('reminder', () => {
     });
 
     it('10分前に通知', () => {
-      const eventStart = new Date('2025-01-15T10:00:00');
+      const eventStart = new Date('2025-01-15T10:00:00Z');
       const minutes = reminderTypeToMinutes('10分前')!;
 
       const notifyAt = new Date(eventStart.getTime() - minutes * 60 * 1000);
@@ -147,7 +148,7 @@ describe('reminder', () => {
     });
 
     it('1時間前に通知', () => {
-      const eventStart = new Date('2025-01-15T10:00:00');
+      const eventStart = new Date('2025-01-15T10:00:00Z');
       const minutes = reminderTypeToMinutes('1時間前')!;
 
       const notifyAt = new Date(eventStart.getTime() - minutes * 60 * 1000);
@@ -155,7 +156,7 @@ describe('reminder', () => {
     });
 
     it('1日前に通知', () => {
-      const eventStart = new Date('2025-01-15T10:00:00');
+      const eventStart = new Date('2025-01-15T10:00:00Z');
       const minutes = reminderTypeToMinutes('1日前')!;
 
       const notifyAt = new Date(eventStart.getTime() - minutes * 60 * 1000);
