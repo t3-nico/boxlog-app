@@ -182,10 +182,10 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
     isSelected && 'ring-primary ring-2 ring-offset-1',
     // Inspectorで開いているプランのハイライト
     isActive && 'ring-primary ring-2',
-    // モバイル: Googleカレンダー風（左ボーダー、小さいパディング、角丸小）
+    // モバイル: Googleカレンダー風（左ボーダー、チェックボックス+タイトル横並び、上寄せ）
     // デスクトップ: 通常のカード表示
     isMobile
-      ? 'border-l-2 border-l-primary rounded-r-sm pl-1 pr-0.5 py-px text-xs'
+      ? 'border-l-2 border-l-primary rounded-r-sm pl-1 pr-1 pt-0.5 text-xs flex items-start gap-1'
       : 'rounded-md border border-transparent p-2 text-sm',
     className,
   );
@@ -213,52 +213,56 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
       aria-label={`plan: ${plan.title}`}
       aria-pressed={isSelected}
     >
-      {/* チェックボックス（デスクトップのみ表示、モバイルはスペース節約のため非表示） */}
-      {!isMobile && (
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            const effectiveStatus = getEffectiveStatus(plan);
-            const newStatus = effectiveStatus === 'done' ? 'todo' : 'done';
-            updatePlan.mutate({
-              id: plan.id,
-              data: { status: newStatus },
-            });
-          }}
-          onMouseEnter={() => setIsCheckboxHovered(true)}
-          onMouseLeave={() => setIsCheckboxHovered(false)}
-          className={cn(
-            'absolute z-10 flex-shrink-0 rounded',
-            safePosition.height < 30 ? 'top-0.5 left-0.5' : 'top-2 left-2',
-          )}
-          aria-label={getEffectiveStatus(plan) === 'done' ? '未完了に戻す' : '完了にする'}
-        >
-          {(() => {
-            const status = getEffectiveStatus(plan);
-            const iconClass = safePosition.height < 30 ? 'h-3 w-3' : 'h-4 w-4';
-            if (status === 'done') {
-              return <CheckCircle2 className={cn('text-success', iconClass)} />;
-            }
-            // ホバー時はチェックマークを表示（完了予告）
-            if (isCheckboxHovered) {
-              return <CheckCircle2 className={cn('text-success', iconClass)} />;
-            }
-            if (status === 'doing') {
-              return <Circle className={cn('text-primary', iconClass)} />;
-            }
-            // todo
-            return <Circle className={cn('text-muted-foreground', iconClass)} />;
-          })()}
-        </button>
-      )}
+      {/* チェックボックス（モバイル: 44x44pxタッチターゲット、Apple HIG準拠） */}
+      <button
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation();
+          const effectiveStatus = getEffectiveStatus(plan);
+          const newStatus = effectiveStatus === 'done' ? 'todo' : 'done';
+          updatePlan.mutate({
+            id: plan.id,
+            data: { status: newStatus },
+          });
+        }}
+        onMouseEnter={() => setIsCheckboxHovered(true)}
+        onMouseLeave={() => setIsCheckboxHovered(false)}
+        className={cn(
+          'z-10 flex-shrink-0 rounded',
+          // モバイル: インライン配置、デスクトップ: 絶対配置
+          isMobile ? 'relative' : 'absolute flex items-center justify-center',
+          !isMobile && (safePosition.height < 30 ? 'top-0.5 left-0.5' : 'top-2 left-2'),
+        )}
+        aria-label={getEffectiveStatus(plan) === 'done' ? '未完了に戻す' : '完了にする'}
+      >
+        {(() => {
+          const status = getEffectiveStatus(plan);
+          const iconClass = isMobile
+            ? 'h-3.5 w-3.5'
+            : safePosition.height < 30
+              ? 'h-3 w-3'
+              : 'h-4 w-4';
+          if (status === 'done') {
+            return <CheckCircle2 className={cn('text-success', iconClass)} />;
+          }
+          // ホバー時はチェックマークを表示（完了予告）
+          if (isCheckboxHovered) {
+            return <CheckCircle2 className={cn('text-success', iconClass)} />;
+          }
+          if (status === 'doing') {
+            return <Circle className={cn('text-primary', iconClass)} />;
+          }
+          // todo
+          return <Circle className={cn('text-muted-foreground', iconClass)} />;
+        })()}
+      </button>
 
       <PlanCardContent
         plan={plan}
         isCompact={safePosition.height < 40}
         showTime={safePosition.height >= 30}
         previewTime={previewTime}
-        hasCheckbox={!isMobile}
+        hasCheckbox={!isMobile} // デスクトップのみ左パディング必要
         isMobile={isMobile}
       />
 

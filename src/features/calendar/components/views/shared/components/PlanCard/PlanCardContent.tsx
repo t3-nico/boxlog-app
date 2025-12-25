@@ -55,10 +55,10 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
   const planEnd = parseplanEndDate(plan);
 
   // モバイル表示: Googleカレンダー風のシンプルな表示
-  // タイトルのみ、1行で省略表示
+  // チェックボックスの横にタイトルを1行で省略表示
   if (isMobile) {
     return (
-      <span className="text-foreground block truncate text-xs leading-normal font-medium">
+      <span className="text-foreground min-w-0 flex-1 truncate text-xs leading-tight font-medium">
         {plan.title || t('calendar.event.noTitle')}
       </span>
     );
