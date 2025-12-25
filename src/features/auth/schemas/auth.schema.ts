@@ -1,21 +1,27 @@
-import { z } from 'zod'
+import { z } from 'zod';
 
 /**
  * ログインフォームのスキーマ
  */
 export const loginSchema = z.object({
-  email: z.string().min(1, 'メールアドレスを入力してください').email('有効なメールアドレスを入力してください'),
+  email: z
+    .string()
+    .min(1, 'メールアドレスを入力してください')
+    .email('有効なメールアドレスを入力してください'),
   password: z.string().min(1, 'パスワードを入力してください'),
-})
+});
 
-export type LoginFormData = z.infer<typeof loginSchema>
+export type LoginFormData = z.infer<typeof loginSchema>;
 
 /**
  * サインアップフォームのスキーマ
  */
 export const signupSchema = z
   .object({
-    email: z.string().min(1, 'メールアドレスを入力してください').email('有効なメールアドレスを入力してください'),
+    email: z
+      .string()
+      .min(1, 'メールアドレスを入力してください')
+      .email('有効なメールアドレスを入力してください'),
     password: z
       .string()
       .min(8, 'パスワードは8文字以上で入力してください')
@@ -28,6 +34,6 @@ export const signupSchema = z
   .refine((data) => data.password === data.confirmPassword, {
     message: 'パスワードが一致しません',
     path: ['confirmPassword'],
-  })
+  });
 
-export type SignupFormData = z.infer<typeof signupSchema>
+export type SignupFormData = z.infer<typeof signupSchema>;

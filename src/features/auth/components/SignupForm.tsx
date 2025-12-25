@@ -1,26 +1,32 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
+import { useState } from 'react';
 
-import { zodResolver } from '@hookform/resolvers/zod'
-import { Check, Eye, EyeOff, X } from 'lucide-react'
-import { useTranslations } from 'next-intl'
-import NextImage from 'next/image'
-import Link from 'next/link'
-import { useParams, useRouter } from 'next/navigation'
-import { Controller, useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Check, Eye, EyeOff, X } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import NextImage from 'next/image';
+import Link from 'next/link';
+import { useParams, useRouter } from 'next/navigation';
+import { Controller, useForm } from 'react-hook-form';
 
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Field, FieldDescription, FieldGroup, FieldLabel, FieldSeparator } from '@/components/ui/field'
-import { Input } from '@/components/ui/input'
-import { Spinner } from '@/components/ui/spinner'
-import { HoverTooltip } from '@/components/ui/tooltip'
-import { useAuthStore } from '@/features/auth/stores/useAuthStore'
-import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
+import {
+  Field,
+  FieldDescription,
+  FieldGroup,
+  FieldLabel,
+  FieldSeparator,
+} from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
+import { Spinner } from '@/components/ui/spinner';
+import { HoverTooltip } from '@/components/ui/tooltip';
+import { useAuthStore } from '@/features/auth/stores/useAuthStore';
+import { cn } from '@/lib/utils';
 
-import { signupSchema, type SignupFormData } from '../schemas/auth.schema'
+import { signupSchema, type SignupFormData } from '../schemas/auth.schema';
 
 /**
  * 漏洩パスワードチェック（オプショナル）
@@ -29,11 +35,11 @@ import { signupSchema, type SignupFormData } from '../schemas/auth.schema'
 async function safeCheckPasswordPwned(password: string): Promise<boolean> {
   try {
     // 動的インポートでエラーハンドリングを強化
-    const { checkPasswordPwned } = await import('@/lib/auth/pwned-password')
-    return await checkPasswordPwned(password)
+    const { checkPasswordPwned } = await import('@/lib/auth/pwned-password');
+    return await checkPasswordPwned(password);
   } catch (err) {
-    console.warn('[SignupForm] Pwned password check failed, skipping:', err)
-    return false
+    console.warn('[SignupForm] Pwned password check failed, skipping:', err);
+    return false;
   }
 }
 
@@ -46,17 +52,17 @@ async function safeCheckPasswordPwned(password: string): Promise<boolean> {
  * 3. クライアントサイドバリデーション: パスワード長・一致確認
  */
 export function SignupForm({ className, ...props }: React.ComponentProps<'div'>) {
-  const params = useParams()
-  const router = useRouter()
-  const locale = (params?.locale as string) || 'ja'
-  const t = useTranslations()
-  const signUp = useAuthStore((state) => state.signUp)
+  const params = useParams();
+  const router = useRouter();
+  const locale = (params?.locale as string) || 'ja';
+  const t = useTranslations();
+  const signUp = useAuthStore((state) => state.signUp);
 
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const [serverError, setServerError] = useState<string | null>(null)
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [serverError, setServerError] = useState<string | null>(null);
 
-  const minPasswordLength = 8
+  const minPasswordLength = 8;
 
   const {
     register,
@@ -73,35 +79,35 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
       agreedToTerms: false as unknown as true, // 初期値はfalse、バリデーションでtrueを要求
     },
     mode: 'onChange', // リアルタイムバリデーション
-  })
+  });
 
-  const password = watch('password')
-  const confirmPassword = watch('confirmPassword')
+  const password = watch('password');
+  const confirmPassword = watch('confirmPassword');
 
-  const isPasswordValid = password.length >= minPasswordLength
-  const isPasswordMatching = confirmPassword.length > 0 && password === confirmPassword
+  const isPasswordValid = password.length >= minPasswordLength;
+  const isPasswordMatching = confirmPassword.length > 0 && password === confirmPassword;
 
   const onSubmit = async (data: SignupFormData) => {
-    setServerError(null)
+    setServerError(null);
 
     // 漏洩パスワードチェック（オプショナル - Have I Been Pwned API）
-    const isPwned = await safeCheckPasswordPwned(data.password)
+    const isPwned = await safeCheckPasswordPwned(data.password);
     if (isPwned) {
-      setServerError(t('auth.errors.pwnedPassword'))
-      return
+      setServerError(t('auth.errors.pwnedPassword'));
+      return;
     }
 
     try {
-      const { error } = await signUp(data.email, data.password)
+      const { error } = await signUp(data.email, data.password);
       if (error) {
-        setServerError(error.message)
+        setServerError(error.message);
       } else {
-        router.push(`/${locale}/calendar`)
+        router.push(`/${locale}/calendar`);
       }
     } catch {
-      setServerError('An unexpected error occurred')
+      setServerError('An unexpected error occurred');
     }
-  }
+  };
 
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
@@ -111,7 +117,9 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
             <FieldGroup>
               <div className="flex flex-col items-center gap-2 text-center">
                 <h1 className="text-2xl font-bold">{t('auth.signupForm.createAccount')}</h1>
-                <p className="text-muted-foreground text-sm text-balance">{t('auth.signupForm.enterEmail')}</p>
+                <p className="text-muted-foreground text-sm text-balance">
+                  {t('auth.signupForm.enterEmail')}
+                </p>
               </div>
 
               {serverError && (
@@ -157,7 +165,11 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                         {...register('password')}
                       />
                       <HoverTooltip
-                        content={showPassword ? t('auth.signupForm.hidePassword') : t('auth.signupForm.showPassword')}
+                        content={
+                          showPassword
+                            ? t('auth.signupForm.hidePassword')
+                            : t('auth.signupForm.showPassword')
+                        }
                         side="top"
                       >
                         <Button
@@ -168,10 +180,16 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                           onClick={() => setShowPassword(!showPassword)}
                           disabled={isSubmitting}
                           aria-label={
-                            showPassword ? t('auth.signupForm.hidePassword') : t('auth.signupForm.showPassword')
+                            showPassword
+                              ? t('auth.signupForm.hidePassword')
+                              : t('auth.signupForm.showPassword')
                           }
                         >
-                          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          {showPassword ? (
+                            <EyeOff className="h-4 w-4" />
+                          ) : (
+                            <Eye className="h-4 w-4" />
+                          )}
                         </Button>
                       </HoverTooltip>
                     </div>
@@ -182,7 +200,9 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                     )}
                   </Field>
                   <Field>
-                    <FieldLabel htmlFor="confirm-password">{t('auth.signupForm.confirmPassword')}</FieldLabel>
+                    <FieldLabel htmlFor="confirm-password">
+                      {t('auth.signupForm.confirmPassword')}
+                    </FieldLabel>
                     <div className="relative">
                       <Input
                         id="confirm-password"
@@ -195,7 +215,9 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                       />
                       <HoverTooltip
                         content={
-                          showConfirmPassword ? t('auth.signupForm.hidePassword') : t('auth.signupForm.showPassword')
+                          showConfirmPassword
+                            ? t('auth.signupForm.hidePassword')
+                            : t('auth.signupForm.showPassword')
                         }
                         side="top"
                       >
@@ -207,10 +229,16 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                           onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                           disabled={isSubmitting}
                           aria-label={
-                            showConfirmPassword ? t('auth.signupForm.hidePassword') : t('auth.signupForm.showPassword')
+                            showConfirmPassword
+                              ? t('auth.signupForm.hidePassword')
+                              : t('auth.signupForm.showPassword')
                           }
                         >
-                          {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          {showConfirmPassword ? (
+                            <EyeOff className="h-4 w-4" />
+                          ) : (
+                            <Eye className="h-4 w-4" />
+                          )}
                         </Button>
                       </HoverTooltip>
                     </div>
@@ -231,7 +259,9 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                       ) : (
                         <X className="text-muted-foreground h-4 w-4" />
                       )}
-                      <span className={cn(isPasswordValid ? 'text-success' : 'text-muted-foreground')}>
+                      <span
+                        className={cn(isPasswordValid ? 'text-success' : 'text-muted-foreground')}
+                      >
                         {password.length} / {minPasswordLength}
                         {t('auth.passwordStrength.minCharacters')}
                       </span>
@@ -244,7 +274,11 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                       ) : (
                         <X className="text-muted-foreground h-4 w-4" />
                       )}
-                      <span className={cn(isPasswordMatching ? 'text-success' : 'text-muted-foreground')}>
+                      <span
+                        className={cn(
+                          isPasswordMatching ? 'text-success' : 'text-muted-foreground',
+                        )}
+                      >
                         {isPasswordMatching
                           ? t('auth.signupForm.passwordMatch')
                           : t('auth.signupForm.passwordMismatch')}
@@ -274,11 +308,19 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                   />
                   <label htmlFor="agree-terms" className="text-sm leading-relaxed">
                     {t('auth.signupForm.byContinuing')}{' '}
-                    <Link href="/legal/terms" target="_blank" className="text-primary hover:underline">
+                    <Link
+                      href="/legal/terms"
+                      target="_blank"
+                      className="text-primary hover:underline"
+                    >
                       {t('auth.signupForm.termsOfService')}
                     </Link>{' '}
                     {t('auth.signupForm.and')}{' '}
-                    <Link href="/legal/privacy" target="_blank" className="text-primary hover:underline">
+                    <Link
+                      href="/legal/privacy"
+                      target="_blank"
+                      className="text-primary hover:underline"
+                    >
                       {t('auth.signupForm.privacyPolicy')}
                     </Link>
                     に同意します。
@@ -351,5 +393,5 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
