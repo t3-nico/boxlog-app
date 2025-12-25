@@ -42,7 +42,8 @@ export function ViewSwitcherList() {
   const navigation = useCalendarNavigation();
   const t = useTranslations();
   const closeSidebar = useSidebarStore((state) => state.close);
-  const currentView = navigation?.viewType ?? 'day';
+  // デフォルトは'week'（CalendarNavigationContextのinitialViewと一致させる）
+  const currentView = navigation?.viewType ?? 'week';
 
   // ショートカットキー機能
   useEffect(() => {
@@ -98,9 +99,8 @@ export function ViewSwitcherList() {
             onClick={() => handleSelect(option.value)}
             className={cn(
               'flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition-colors',
-              isActive
-                ? 'bg-primary/10 text-primary font-medium'
-                : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+              'text-muted-foreground hover:bg-state-hover hover:text-foreground',
+              isActive && 'text-foreground font-medium',
             )}
           >
             <div className="flex items-center gap-2">
@@ -108,7 +108,7 @@ export function ViewSwitcherList() {
               <span>{t(option.labelKey)}</span>
             </div>
             <div className="flex items-center gap-2">
-              {isActive && <Check className="size-4" />}
+              {isActive && <Check className="text-primary size-4" />}
               <span className="bg-surface-container text-muted-foreground rounded px-1.5 py-0.5 font-mono text-xs">
                 {option.shortcut}
               </span>

@@ -3,7 +3,14 @@
 import React, { useCallback, useState } from 'react';
 
 import type { DragEndEvent, DragMoveEvent, DragStartEvent, Over } from '@dnd-kit/core';
-import { DndContext, DragOverlay, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import {
+  DndContext,
+  DragOverlay,
+  PointerSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
 import { fromZonedTime } from 'date-fns-tz';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
@@ -51,11 +58,19 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
   const { data: plans } = useplans();
   const activeplan = plans?.find((t) => t.id === activeId);
 
-  // ドラッグセンサー設定（ポインターでドラッグ）
+  // ドラッグセンサー設定
   const sensors = useSensors(
+    // マウス操作: 8px移動でドラッグ開始（誤操作防止）
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 8, // 8px移動したらドラッグ開始
+        distance: 8,
+      },
+    }),
+    // タッチ操作: 250msロングプレスでドラッグ開始（スクロールとの区別）
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 250,
+        tolerance: 5,
       },
     }),
   );

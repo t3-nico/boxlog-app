@@ -1,8 +1,14 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { X } from 'lucide-react';
+
+import {
+  BottomSheet,
+  BottomSheetContent,
+  BottomSheetHeader,
+  BottomSheetTitle,
+} from '@/components/ui/bottom-sheet';
+import { Button } from '@/components/ui/button';
 
 interface TableSettingsSheetProps {
   open: boolean;
@@ -15,7 +21,7 @@ interface TableSettingsSheetProps {
 /**
  * テーブル用設定シート
  *
- * モバイル・PC共通で使用可能なボトムシート形式の設定UI
+ * Apple HIG準拠のボトムシート形式の設定UI
  * コンテンツは外部から渡される（柔軟性のため）
  */
 export function TableSettingsSheet({
@@ -26,29 +32,27 @@ export function TableSettingsSheet({
   onReset,
 }: TableSettingsSheetProps) {
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="bottom" className="rounded-t-2xl">
-        <SheetHeader className="flex flex-row items-center justify-between pb-4">
-          <SheetTitle>設定</SheetTitle>
-          <div className="flex items-center gap-2">
-            {hasActiveSettings && onReset && (
-              <Button variant="ghost" size="sm" onClick={onReset} className="h-auto p-0 text-xs">
-                リセット
-              </Button>
-            )}
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => onOpenChange(false)}
-              className="size-8"
-            >
-              <X className="size-4" />
+    <BottomSheet open={open} onOpenChange={onOpenChange} title="設定">
+      <BottomSheetHeader>
+        <BottomSheetTitle>設定</BottomSheetTitle>
+        <div className="flex items-center gap-2">
+          {hasActiveSettings && onReset && (
+            <Button variant="ghost" size="sm" onClick={onReset} className="h-auto p-0 text-xs">
+              リセット
             </Button>
-          </div>
-        </SheetHeader>
+          )}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => onOpenChange(false)}
+            className="size-8"
+          >
+            <X className="size-4" />
+          </Button>
+        </div>
+      </BottomSheetHeader>
 
-        <div className="max-h-[60vh] overflow-y-auto pb-8">{children}</div>
-      </SheetContent>
-    </Sheet>
+      <BottomSheetContent>{children}</BottomSheetContent>
+    </BottomSheet>
   );
 }

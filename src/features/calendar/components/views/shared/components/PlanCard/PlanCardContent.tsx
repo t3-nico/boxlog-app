@@ -20,6 +20,7 @@ interface PlanCardContentProps {
   timeFormat?: '12h' | '24h';
   previewTime?: { start: Date; end: Date } | null; // ドラッグ中のプレビュー時間
   hasCheckbox?: boolean; // チェックボックスがある場合は左パディングを追加
+  isMobile?: boolean; // モバイル表示（Googleカレンダー風シンプル表示）
 }
 
 // Helper function: Parse plan start date
@@ -45,6 +46,7 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
   timeFormat = '24h',
   previewTime = null,
   hasCheckbox = false,
+  isMobile = false,
 }) {
   const t = useTranslations();
 
@@ -52,7 +54,15 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
   const planStart = parseplanStartDate(plan);
   const planEnd = parseplanEndDate(plan);
 
-  // 継続時間を計算
+  // モバイル表示: Googleカレンダー風のシンプルな表示
+  // チェックボックスの横にタイトルを1行で省略表示
+  if (isMobile) {
+    return (
+      <span className="text-foreground min-w-0 flex-1 truncate text-xs leading-tight font-medium">
+        {plan.title || t('calendar.event.noTitle')}
+      </span>
+    );
+  }
 
   if (isCompact) {
     // コンパクト表示：タイトル #番号

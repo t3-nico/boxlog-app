@@ -12,6 +12,8 @@ import { getEffectiveStatus } from '@/features/plans/utils/status';
 import { CheckCircle2, Circle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
+import { MEDIA_QUERIES } from '@/config/ui/breakpoints';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { cn } from '@/lib/utils';
 
 import { MIN_EVENT_HEIGHT, Z_INDEX } from '../../constants/grid.constants';
@@ -38,6 +40,7 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
   const { updatePlan } = usePlanMutations();
   const [isHovered, setIsHovered] = useState(false);
   const [isCheckboxHovered, setIsCheckboxHovered] = useState(false);
+  const isMobile = useMediaQuery(MEDIA_QUERIES.mobile);
 
   // すべてのプランは時間指定プラン
 
@@ -169,7 +172,7 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
   // CSSクラスを組み立て（colors.tsのscheduledを参照）
   const planCardClasses = cn(
     // 基本スタイル
-    'overflow-hidden rounded-md shadow-sm border',
+    'overflow-hidden shadow-sm',
     'focus:outline-none focus:ring-2 focus:ring-offset-1',
     // colors.tsのscheduledカラーを参照（ドラッグ中はactive）
     isDragging ? scheduledColors.active : scheduledColors.background,
@@ -177,10 +180,13 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
     // 状態別スタイル
     isDragging ? 'cursor-grabbing' : 'cursor-pointer',
     isSelected && 'ring-primary ring-2 ring-offset-1',
-    // Inspectorで開いているプランのハイライト（Board/Inboxと同様にborder-primary）
-    isActive ? 'border-primary border-2' : 'border-transparent',
-    // サイズ別スタイル（上下左右に8pxのpadding = p-2、フォントは統一）
-    'p-2 text-sm',
+    // Inspectorで開いているプランのハイライト
+    isActive && 'ring-primary ring-2',
+    // モバイル: Googleカレンダー風（左ボーダー、チェックボックス+タイトル横並び、上寄せ）
+    // デスクトップ: 通常のカード表示
+    isMobile
+      ? 'border-l-2 border-l-primary rounded-r-sm pl-1 pr-1 pt-0.5 text-xs flex items-start gap-1'
+      : 'rounded-md border border-transparent p-2 text-sm',
     className,
   );
 
@@ -207,7 +213,7 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
       aria-label={`plan: ${plan.title}`}
       aria-pressed={isSelected}
     >
-      {/* チェックボックス（常に表示、サイズは高さに応じて調整） */}
+      {/* チェックボックス（モバイル: 44x44pxタッチターゲット、Apple HIG準拠） */}
       <button
         type="button"
         onClick={(e) => {
@@ -222,14 +228,20 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
         onMouseEnter={() => setIsCheckboxHovered(true)}
         onMouseLeave={() => setIsCheckboxHovered(false)}
         className={cn(
-          'absolute z-10 flex-shrink-0 rounded',
-          safePosition.height < 30 ? 'top-0.5 left-0.5' : 'top-2 left-2',
+          'z-10 flex-shrink-0 rounded',
+          // モバイル: インライン配置、デスクトップ: 絶対配置
+          isMobile ? 'relative' : 'absolute flex items-center justify-center',
+          !isMobile && (safePosition.height < 30 ? 'top-0.5 left-0.5' : 'top-2 left-2'),
         )}
         aria-label={getEffectiveStatus(plan) === 'done' ? '未完了に戻す' : '完了にする'}
       >
         {(() => {
           const status = getEffectiveStatus(plan);
-          const iconClass = safePosition.height < 30 ? 'h-3 w-3' : 'h-4 w-4';
+          const iconClass = isMobile
+            ? 'h-3.5 w-3.5'
+            : safePosition.height < 30
+              ? 'h-3 w-3'
+              : 'h-4 w-4';
           if (status === 'done') {
             return <CheckCircle2 className={cn('text-success', iconClass)} />;
           }
@@ -250,7 +262,8 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
         isCompact={safePosition.height < 40}
         showTime={safePosition.height >= 30}
         previewTime={previewTime}
-        hasCheckbox={true}
+        hasCheckbox={!isMobile} // デスクトップのみ左パディング必要
+        isMobile={isMobile}
       />
 
       {/* 下端リサイズハンドル */}

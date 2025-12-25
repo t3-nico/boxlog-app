@@ -4,9 +4,14 @@ import { useState } from 'react';
 
 import { X } from 'lucide-react';
 
+import {
+  BottomSheet,
+  BottomSheetContent,
+  BottomSheetHeader,
+  BottomSheetTitle,
+} from '@/components/ui/bottom-sheet';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 
 import { useInboxFilterStore } from '../../stores/useInboxFilterStore';
 
@@ -18,7 +23,7 @@ interface MobileSearchSheetProps {
 /**
  * モバイル用検索シート
  *
- * Notion風のアイコンナビゲーションから開く検索専用シート
+ * Apple HIG準拠のボトムシート形式の検索UI
  */
 export function MobileSearchSheet({ open, onOpenChange }: MobileSearchSheetProps) {
   const { search, setSearch } = useInboxFilterStore();
@@ -43,12 +48,12 @@ export function MobileSearchSheet({ open, onOpenChange }: MobileSearchSheetProps
   };
 
   return (
-    <Sheet open={open} onOpenChange={handleOpenChange}>
-      <SheetContent side="bottom" className="rounded-t-2xl">
-        <SheetHeader className="pb-4">
-          <SheetTitle>検索</SheetTitle>
-        </SheetHeader>
+    <BottomSheet open={open} onOpenChange={handleOpenChange} title="検索">
+      <BottomSheetHeader>
+        <BottomSheetTitle>検索</BottomSheetTitle>
+      </BottomSheetHeader>
 
+      <BottomSheetContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="relative">
             <Input
@@ -86,7 +91,7 @@ export function MobileSearchSheet({ open, onOpenChange }: MobileSearchSheetProps
             </Button>
           </div>
         </form>
-      </SheetContent>
-    </Sheet>
+      </BottomSheetContent>
+    </BottomSheet>
   );
 }

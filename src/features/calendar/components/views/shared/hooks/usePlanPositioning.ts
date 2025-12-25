@@ -60,7 +60,7 @@ export function useEventPositioning({
   }, [filteredEvents]);
 
   // 新しいレイアウト計算システムを使用
-  const eventLayouts = usePlanLayoutCalculator(convertedEvents, { notifyConflicts: true });
+  const eventLayouts = usePlanLayoutCalculator(convertedEvents, { notifyConflicts: false });
 
   // レイアウト情報をEventPositionInfoに変換
   const eventPositions = useMemo(() => {

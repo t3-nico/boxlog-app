@@ -62,7 +62,7 @@ function DrawerContent({
           className="hidden h-12 w-full shrink-0 items-center justify-center group-data-[vaul-drawer-direction=bottom]/drawer-content:flex"
           aria-hidden="true"
         >
-          <div className="bg-muted h-1.5 w-12 rounded-full" />
+          <div className="bg-border h-1.5 w-12 rounded-full" />
         </div>
         {children}
       </DrawerPrimitive.Content>
