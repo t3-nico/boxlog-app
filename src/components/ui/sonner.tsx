@@ -38,7 +38,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
   return (
     <Sonner
       theme={validTheme}
-      position={isMobile ? 'top-center' : 'bottom-right'}
+      position={isMobile ? 'bottom-center' : 'bottom-right'}
       richColors
       expand
       duration={6000}
