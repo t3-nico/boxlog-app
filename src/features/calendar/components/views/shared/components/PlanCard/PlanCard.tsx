@@ -12,6 +12,8 @@ import { getEffectiveStatus } from '@/features/plans/utils/status';
 import { CheckCircle2, Circle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
+import { MEDIA_QUERIES } from '@/config/ui/breakpoints';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { cn } from '@/lib/utils';
 
 import { MIN_EVENT_HEIGHT, Z_INDEX } from '../../constants/grid.constants';
@@ -38,6 +40,7 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
   const { updatePlan } = usePlanMutations();
   const [isHovered, setIsHovered] = useState(false);
   const [isCheckboxHovered, setIsCheckboxHovered] = useState(false);
+  const isMobile = useMediaQuery(MEDIA_QUERIES.mobile);
 
   // すべてのプランは時間指定プラン
 
@@ -179,8 +182,8 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
     isSelected && 'ring-primary ring-2 ring-offset-1',
     // Inspectorで開いているプランのハイライト（Board/Inboxと同様にborder-primary）
     isActive ? 'border-primary border-2' : 'border-transparent',
-    // サイズ別スタイル（上下左右に8pxのpadding = p-2、フォントは統一）
-    'p-2 text-sm',
+    // サイズ別スタイル（モバイル: 小さいパディング、デスクトップ: 通常パディング）
+    isMobile ? 'px-1.5 py-0.5 text-xs' : 'p-2 text-sm',
     className,
   );
 
@@ -207,50 +210,53 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
       aria-label={`plan: ${plan.title}`}
       aria-pressed={isSelected}
     >
-      {/* チェックボックス（常に表示、サイズは高さに応じて調整） */}
-      <button
-        type="button"
-        onClick={(e) => {
-          e.stopPropagation();
-          const effectiveStatus = getEffectiveStatus(plan);
-          const newStatus = effectiveStatus === 'done' ? 'todo' : 'done';
-          updatePlan.mutate({
-            id: plan.id,
-            data: { status: newStatus },
-          });
-        }}
-        onMouseEnter={() => setIsCheckboxHovered(true)}
-        onMouseLeave={() => setIsCheckboxHovered(false)}
-        className={cn(
-          'absolute z-10 flex-shrink-0 rounded',
-          safePosition.height < 30 ? 'top-0.5 left-0.5' : 'top-2 left-2',
-        )}
-        aria-label={getEffectiveStatus(plan) === 'done' ? '未完了に戻す' : '完了にする'}
-      >
-        {(() => {
-          const status = getEffectiveStatus(plan);
-          const iconClass = safePosition.height < 30 ? 'h-3 w-3' : 'h-4 w-4';
-          if (status === 'done') {
-            return <CheckCircle2 className={cn('text-success', iconClass)} />;
-          }
-          // ホバー時はチェックマークを表示（完了予告）
-          if (isCheckboxHovered) {
-            return <CheckCircle2 className={cn('text-success', iconClass)} />;
-          }
-          if (status === 'doing') {
-            return <Circle className={cn('text-primary', iconClass)} />;
-          }
-          // todo
-          return <Circle className={cn('text-muted-foreground', iconClass)} />;
-        })()}
-      </button>
+      {/* チェックボックス（デスクトップのみ表示、モバイルはスペース節約のため非表示） */}
+      {!isMobile && (
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            const effectiveStatus = getEffectiveStatus(plan);
+            const newStatus = effectiveStatus === 'done' ? 'todo' : 'done';
+            updatePlan.mutate({
+              id: plan.id,
+              data: { status: newStatus },
+            });
+          }}
+          onMouseEnter={() => setIsCheckboxHovered(true)}
+          onMouseLeave={() => setIsCheckboxHovered(false)}
+          className={cn(
+            'absolute z-10 flex-shrink-0 rounded',
+            safePosition.height < 30 ? 'top-0.5 left-0.5' : 'top-2 left-2',
+          )}
+          aria-label={getEffectiveStatus(plan) === 'done' ? '未完了に戻す' : '完了にする'}
+        >
+          {(() => {
+            const status = getEffectiveStatus(plan);
+            const iconClass = safePosition.height < 30 ? 'h-3 w-3' : 'h-4 w-4';
+            if (status === 'done') {
+              return <CheckCircle2 className={cn('text-success', iconClass)} />;
+            }
+            // ホバー時はチェックマークを表示（完了予告）
+            if (isCheckboxHovered) {
+              return <CheckCircle2 className={cn('text-success', iconClass)} />;
+            }
+            if (status === 'doing') {
+              return <Circle className={cn('text-primary', iconClass)} />;
+            }
+            // todo
+            return <Circle className={cn('text-muted-foreground', iconClass)} />;
+          })()}
+        </button>
+      )}
 
       <PlanCardContent
         plan={plan}
         isCompact={safePosition.height < 40}
         showTime={safePosition.height >= 30}
         previewTime={previewTime}
-        hasCheckbox={true}
+        hasCheckbox={!isMobile}
+        isMobile={isMobile}
       />
 
       {/* 下端リサイズハンドル */}
