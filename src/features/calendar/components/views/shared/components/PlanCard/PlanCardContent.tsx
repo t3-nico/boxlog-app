@@ -55,14 +55,12 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
   const planEnd = parseplanEndDate(plan);
 
   // モバイル表示: Googleカレンダー風のシンプルな表示
-  // タイトルのみを表示し、スペースを最大限活用
+  // タイトルのみ、1行で省略表示
   if (isMobile) {
     return (
-      <div className="flex h-full items-center overflow-hidden">
-        <span className="text-foreground line-clamp-2 text-xs leading-tight font-medium">
-          {plan.title || t('calendar.event.noTitle')}
-        </span>
-      </div>
+      <span className="text-foreground block truncate text-xs leading-normal font-medium">
+        {plan.title || t('calendar.event.noTitle')}
+      </span>
     );
   }
 
