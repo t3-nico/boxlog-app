@@ -1,26 +1,32 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
+import { useState } from 'react';
 
-import { zodResolver } from '@hookform/resolvers/zod'
-import { Eye, EyeOff } from 'lucide-react'
-import { useTranslations } from 'next-intl'
-import Image from 'next/image'
-import Link from 'next/link'
-import { useParams, useRouter } from 'next/navigation'
-import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Eye, EyeOff } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useParams, useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
 
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
-import { Field, FieldDescription, FieldGroup, FieldLabel, FieldSeparator } from '@/components/ui/field'
-import { Input } from '@/components/ui/input'
-import { Spinner } from '@/components/ui/spinner'
-import { HoverTooltip } from '@/components/ui/tooltip'
-import { useAuthStore } from '@/features/auth/stores/useAuthStore'
-import { createClient } from '@/lib/supabase/client'
-import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import {
+  Field,
+  FieldDescription,
+  FieldGroup,
+  FieldLabel,
+  FieldSeparator,
+} from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
+import { Spinner } from '@/components/ui/spinner';
+import { HoverTooltip } from '@/components/ui/tooltip';
+import { useAuthStore } from '@/features/auth/stores/useAuthStore';
+import { createClient } from '@/lib/supabase/client';
+import { cn } from '@/lib/utils';
 
-import { loginSchema, type LoginFormData } from '../schemas/auth.schema'
+import { loginSchema, type LoginFormData } from '../schemas/auth.schema';
 
 /**
  * LoginForm - 堅牢なログインフォームコンポーネント
@@ -31,14 +37,14 @@ import { loginSchema, type LoginFormData } from '../schemas/auth.schema'
  * 3. オプショナル強化: ロックアウト・reCAPTCHA等は追加機能として後から有効化可能
  */
 export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) {
-  const params = useParams()
-  const router = useRouter()
-  const locale = (params?.locale as string) || 'ja'
-  const t = useTranslations()
-  const signIn = useAuthStore((state) => state.signIn)
+  const params = useParams();
+  const router = useRouter();
+  const locale = (params?.locale as string) || 'ja';
+  const t = useTranslations();
+  const signIn = useAuthStore((state) => state.signIn);
 
-  const [showPassword, setShowPassword] = useState(false)
-  const [serverError, setServerError] = useState<string | null>(null)
+  const [showPassword, setShowPassword] = useState(false);
+  const [serverError, setServerError] = useState<string | null>(null);
 
   const {
     register,
@@ -50,46 +56,50 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
       email: '',
       password: '',
     },
-  })
+  });
 
   const onSubmit = async (data: LoginFormData) => {
-    setServerError(null)
+    setServerError(null);
 
     try {
       // ステップ1: ログイン試行（最小依存で実行）
-      const { error: signInError, data: signInData } = await signIn(data.email, data.password)
+      const { error: signInError, data: signInData } = await signIn(data.email, data.password);
 
       if (signInError) {
         // ログイン失敗時のエラー表示
-        setServerError(signInError.message)
+        setServerError(signInError.message);
       } else if (signInData) {
         // ログイン成功
 
         // MFAチェック（セキュリティ上必須 - エラー時もMFA画面へ誘導）
-        const supabase = createClient()
-        await new Promise((resolve) => setTimeout(resolve, 100))
-        const { data: aalData, error: mfaError } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel()
+        const supabase = createClient();
+        await new Promise((resolve) => setTimeout(resolve, 100));
+        const { data: aalData, error: mfaError } =
+          await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
 
         // MFAが必要な場合、またはMFAチェックに失敗した場合
         // → MFA検証画面へ（エラー時にバイパスさせない）
         if (mfaError) {
-          console.warn('[LoginForm] MFA check failed, redirecting to MFA verify for safety:', mfaError)
-          router.push(`/${locale}/auth/mfa-verify`)
-          return
+          console.warn(
+            '[LoginForm] MFA check failed, redirecting to MFA verify for safety:',
+            mfaError,
+          );
+          router.push(`/${locale}/auth/mfa-verify`);
+          return;
         }
 
         if (aalData?.currentLevel === 'aal1' && aalData?.nextLevel === 'aal2') {
-          router.push(`/${locale}/auth/mfa-verify`)
-          return
+          router.push(`/${locale}/auth/mfa-verify`);
+          return;
         }
 
-        router.push(`/${locale}/calendar`)
+        router.push(`/${locale}/calendar`);
       }
     } catch (err) {
-      console.error('[LoginForm] Unexpected error:', err)
-      setServerError(t('auth.errors.unexpectedError') || 'An unexpected error occurred')
+      console.error('[LoginForm] Unexpected error:', err);
+      setServerError(t('auth.errors.unexpectedError') || 'An unexpected error occurred');
     }
-  }
+  };
 
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
@@ -99,7 +109,9 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
             <FieldGroup>
               <div className="flex flex-col items-center gap-2 text-center">
                 <h1 className="text-2xl font-bold">{t('auth.loginForm.welcomeBack')}</h1>
-                <p className="text-muted-foreground text-balance">{t('auth.loginForm.loginToAccount')}</p>
+                <p className="text-muted-foreground text-balance">
+                  {t('auth.loginForm.loginToAccount')}
+                </p>
               </div>
 
               {serverError && (
@@ -131,7 +143,10 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
               <Field>
                 <div className="flex items-center">
                   <FieldLabel htmlFor="password">{t('auth.loginForm.password')}</FieldLabel>
-                  <Link href="/auth/password" className="ml-auto text-sm underline-offset-2 hover:underline">
+                  <Link
+                    href="/auth/password"
+                    className="ml-auto text-sm underline-offset-2 hover:underline"
+                  >
                     {t('auth.loginForm.forgotPassword')}
                   </Link>
                 </div>
@@ -146,7 +161,11 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
                     {...register('password')}
                   />
                   <HoverTooltip
-                    content={showPassword ? t('auth.loginForm.hidePassword') : t('auth.loginForm.showPassword')}
+                    content={
+                      showPassword
+                        ? t('auth.loginForm.hidePassword')
+                        : t('auth.loginForm.showPassword')
+                    }
                     side="top"
                   >
                     <Button
@@ -156,7 +175,11 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
                       className="absolute top-0 right-0 h-full px-3"
                       onClick={() => setShowPassword(!showPassword)}
                       disabled={isSubmitting}
-                      aria-label={showPassword ? t('auth.loginForm.hidePassword') : t('auth.loginForm.showPassword')}
+                      aria-label={
+                        showPassword
+                          ? t('auth.loginForm.hidePassword')
+                          : t('auth.loginForm.showPassword')
+                      }
                     >
                       {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </Button>
@@ -211,7 +234,8 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
               </Field>
 
               <FieldDescription className="text-center">
-                {t('auth.loginForm.noAccount')} <Link href="/auth/signup">{t('auth.loginForm.signUp')}</Link>
+                {t('auth.loginForm.noAccount')}{' '}
+                <Link href="/auth/signup">{t('auth.loginForm.signUp')}</Link>
               </FieldDescription>
             </FieldGroup>
           </form>
@@ -230,5 +254,5 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
         {t('auth.loginForm.and')} <a href="#">{t('auth.loginForm.privacyPolicy')}</a>.
       </FieldDescription>
     </div>
-  )
+  );
 }
