@@ -88,12 +88,14 @@ src/components/
 
 ## 🎯 コンポーネント選択優先度（絶対遵守）
 
+> **GAFA-First原則に基づく**: 詳細は [`/CLAUDE.md`](../../CLAUDE.md) の「意思決定の優先順位」を参照
+
 **新規UIコンポーネント作成時は、必ずこの順序で検討：**
 
 ```
-1️⃣ shadcn/ui を確認
+1️⃣ shadcn/ui を確認（Radix UI = 元Metaエンジニア製）
    ↓ なければ
-2️⃣ HeadlessUI を確認
+2️⃣ HeadlessUI を確認（Tailwind Labs製）
    ↓ どちらもなければ
 3️⃣ kiboUI（プロジェクト独自）を確認
    ↓ どれもなければ

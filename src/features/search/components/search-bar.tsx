@@ -19,7 +19,6 @@ import { useTagStore } from '@/features/tags/stores/useTagStore';
 import { cn } from '@/lib/utils';
 
 import { useSearchHistory } from '../hooks/use-search';
-import { FuzzySearch } from '../lib/search-engine';
 import type { SearchResultType } from '../types';
 
 // Helper function to get tags from plan_tags
@@ -62,43 +61,29 @@ export function SearchBar({
   const { data: plans = [] } = usePlans();
   const tags = useTagStore((state) => state.tags);
 
-  // Convert plans to searchable format
+  // Convert plans to displayable format
   const searchablePlans = useMemo(() => {
+    if (!types.includes('plan')) return [];
     return (plans as unknown as PlanFromAPI[]).map((plan) => {
       const planTags = getTagsFromPlan(plan);
       return {
-        ...plan,
+        id: plan.id,
         title: plan.title,
         description: plan.description || '',
-        keywords: planTags.map((t) => t.name),
         tags: planTags,
       };
     });
-  }, [plans]);
+  }, [plans, types]);
 
-  // Filter data by types and query
-  const filteredPlans =
-    types.includes('plan') && query
-      ? FuzzySearch.search(searchablePlans, query, 5)
-      : types.includes('plan')
-        ? searchablePlans.slice(0, 5)
-        : [];
-
-  const filteredTags =
-    types.includes('tag') && query
-      ? FuzzySearch.search(
-          tags.map((tag) => ({
-            ...tag,
-            title: tag.name,
-            description: tag.description || '',
-            keywords: [tag.name, tag.description].filter(Boolean) as string[],
-          })),
-          query,
-          5,
-        )
-      : types.includes('tag')
-        ? tags.slice(0, 5)
-        : [];
+  // Convert tags to displayable format
+  const searchableTags = useMemo(() => {
+    if (!types.includes('tag')) return [];
+    return tags.map((tag) => ({
+      id: tag.id,
+      name: tag.name,
+      description: tag.description || '',
+    }));
+  }, [tags, types]);
 
   // Handle selection
   const handleSelect = useCallback(
@@ -135,16 +120,12 @@ export function SearchBar({
             <CommandEmpty>結果が見つかりませんでした</CommandEmpty>
 
             {/* Plans */}
-            {filteredPlans.length > 0 && (
+            {searchablePlans.length > 0 && (
               <CommandGroup heading="プラン">
-                {filteredPlans.map((plan) => (
+                {searchablePlans.slice(0, 10).map((plan) => (
                   <CommandItem
                     key={plan.id}
-                    value={plan.title}
-                    keywords={[
-                      plan.description || '',
-                      ...plan.tags.map((t: { name: string }) => t.name),
-                    ]}
+                    value={`${plan.title} ${plan.description} ${plan.tags.map((t) => t.name).join(' ')}`}
                     onSelect={() => handleSelect(plan.id, 'plan')}
                   >
                     <CheckSquare className="mr-2 h-4 w-4" />
@@ -160,13 +141,12 @@ export function SearchBar({
             )}
 
             {/* Tags */}
-            {filteredTags.length > 0 && (
+            {searchableTags.length > 0 && (
               <CommandGroup heading="タグ">
-                {filteredTags.map((tag) => (
+                {searchableTags.slice(0, 10).map((tag) => (
                   <CommandItem
                     key={tag.id}
-                    value={tag.name}
-                    keywords={[tag.description || '']}
+                    value={`${tag.name} ${tag.description}`}
                     onSelect={() => handleSelect(tag.id, 'tag')}
                   >
                     <Tag className="mr-2 h-4 w-4" />

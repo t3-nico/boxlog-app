@@ -1,9 +1,7 @@
 'use client';
 
-import { CookieConsentBanner } from '@/components/common/cookie-consent-banner';
 import { Button } from '@/components/ui/button';
 import { MEDIA_QUERIES } from '@/config/ui/breakpoints';
-import { useAuthStore } from '@/features/auth/stores/useAuthStore';
 import { CalendarNavigationProvider } from '@/features/calendar/contexts/CalendarNavigationContext';
 import { useCalendarProviderProps } from '@/features/calendar/hooks/useCalendarProviderProps';
 import {
@@ -12,7 +10,6 @@ import {
   type CreateActionType,
 } from '@/features/navigation/components/mobile/CreateActionSheet';
 import { MobileBottomNavigation } from '@/features/navigation/components/mobile/MobileBottomNavigation';
-import { useNotificationRealtime } from '@/features/notifications/hooks/useNotificationRealtime';
 import {
   TagsNavigationProvider,
   type TagsFilter,
@@ -46,7 +43,6 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
   const t = useTranslations();
   const isMobile = useMediaQuery(MEDIA_QUERIES.mobile);
   const searchParams = useSearchParams();
-  const user = useAuthStore((state) => state.user);
 
   // メモ化: localeをパスから抽出
   const localeFromPath = useMemo(() => {
@@ -76,8 +72,7 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
     return 'all';
   }, [isTagsPage, pathname, localeFromPath]);
 
-  // Realtime通知購読（Toast表示）
-  useNotificationRealtime(user?.id, true);
+  // 注: Realtime通知購読はRealtimeProviderで一元管理
 
   // CreateActionSheet状態管理
   const createActionSheet = useCreateActionSheet();
@@ -117,8 +112,7 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
           <DesktopLayout locale={localeFromPath}>{children}</DesktopLayout>
         )}
 
-        {/* Cookie Consent Banner */}
-        <CookieConsentBanner />
+        {/* 注: CookieConsentBannerはsrc/app/[locale]/layout.tsxで一元管理 */}
 
         {/* Mobile FAB - BottomNavigationの上に配置（iOS Safe Area対応） */}
         {isMobile ? (

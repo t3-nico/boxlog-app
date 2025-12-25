@@ -1,8 +1,8 @@
 import { useCallback, useRef, useState } from 'react';
 
 import { toast } from 'sonner';
-import { useDebouncedCallback } from 'use-debounce';
 
+import { useDebouncedCallback } from '@/hooks/useDebounce';
 import { getErrorMessage } from '@/lib/errors';
 
 interface UseAutoSaveSettingsOptions<T> {
@@ -26,7 +26,7 @@ export function useAutoSaveSettings<T>({
   const [isSaving, setIsSaving] = useState(false);
   const lastSavedValues = useRef<T>(initialValues);
 
-  // デバウンスされた保存関数（use-debounceライブラリ使用）
+  // デバウンスされた保存関数
   const debouncedSave = useDebouncedCallback(async (newValues: T) => {
     // 変更がない場合は保存しない
     if (JSON.stringify(newValues) === JSON.stringify(lastSavedValues.current)) {
