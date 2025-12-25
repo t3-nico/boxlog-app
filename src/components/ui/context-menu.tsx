@@ -199,7 +199,10 @@ function ContextMenuShortcut({ className, ...props }: React.ComponentProps<'span
   return (
     <span
       data-slot="context-menu-shortcut"
-      className={cn('text-muted-foreground ml-auto text-xs tracking-widest', className)}
+      className={cn(
+        'text-muted-foreground ml-auto hidden text-xs tracking-widest md:inline',
+        className,
+      )}
       {...props}
     />
   );

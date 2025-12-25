@@ -1,9 +1,14 @@
 'use client';
 
 import * as React from 'react';
+import { useState } from 'react';
 
-import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
+import { Drawer, DrawerContent, DrawerTitle } from '@/components/ui/drawer';
 import { cn } from '@/lib/utils';
+
+// Apple HIG準拠のスナップポイント: medium(50%) → large(97% - セーフエリア考慮)
+// 必要な場合にのみ使用（Inspectorなど大きなコンテンツ用）
+export const BOTTOM_SHEET_SNAP_POINTS = [0.5, 0.97] as const;
 
 interface BottomSheetProps {
   /** シートが開いているか */
@@ -14,34 +19,82 @@ interface BottomSheetProps {
   children: React.ReactNode;
   /** アクセシビリティ用タイトル（sr-only） */
   title: string;
+  /** スナップポイント（デフォルト: [0.5, 0.97]） */
+  snapPoints?: readonly number[];
+  /** 初期スナップポイントのインデックス（デフォルト: 0） */
+  defaultSnapIndex?: number;
+  /** ヘッダーコンテンツ */
+  header?: React.ReactNode;
   /** コンテンツのclassName */
   className?: string;
 }
 
 /**
- * シンプルなボトムシート
+ * Apple HIG準拠のボトムシート
  *
- * コンテンツに合わせた高さで下から表示
- * 検索、ソート、設定などの小さいUIに使用
+ * - 複数のスナップポイント対応（デフォルト: 50%, 97%）
+ * - 上スワイプで全画面表示
+ * - 全画面時は角丸が消える
  *
  * @example
  * ```tsx
- * <BottomSheet open={open} onOpenChange={setOpen} title="検索">
+ * <BottomSheet open={open} onOpenChange={setOpen} title="設定">
  *   <BottomSheetHeader>
- *     <BottomSheetTitle>検索</BottomSheetTitle>
+ *     <h2>設定</h2>
  *   </BottomSheetHeader>
- *   <BottomSheetContent>...</BottomSheetContent>
+ *   <div>コンテンツ</div>
  * </BottomSheet>
  * ```
  */
-export function BottomSheet({ open, onOpenChange, children, title, className }: BottomSheetProps) {
+export function BottomSheet({
+  open,
+  onOpenChange,
+  children,
+  title,
+  snapPoints,
+  defaultSnapIndex = 0,
+  header,
+  className,
+}: BottomSheetProps) {
+  const [snap, setSnap] = useState<number | string | null>(
+    snapPoints ? (snapPoints[defaultSnapIndex] ?? 0.5) : null,
+  );
+  const isFullScreen = snapPoints && snap === snapPoints[snapPoints.length - 1];
+
+  // snapPointsが指定されていない場合はシンプルなDrawer
+  const drawerProps = snapPoints
+    ? {
+        snapPoints: snapPoints as unknown as (number | string)[],
+        activeSnapPoint: snap,
+        setActiveSnapPoint: setSnap,
+        fadeFromIndex: snapPoints.length - 1,
+      }
+    : {};
+
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="bottom" className={cn('rounded-t-2xl', className)}>
-        <SheetTitle className="sr-only">{title}</SheetTitle>
+    <Drawer open={open} onOpenChange={onOpenChange} {...drawerProps}>
+      <DrawerContent
+        className={cn('bg-popover flex flex-col gap-0 overflow-hidden p-0', className)}
+        style={{
+          // 全画面時は角丸をなくす
+          borderTopLeftRadius: isFullScreen ? 0 : undefined,
+          borderTopRightRadius: isFullScreen ? 0 : undefined,
+        }}
+      >
+        <DrawerTitle className="sr-only">{title}</DrawerTitle>
+
+        {/* ドラッグハンドル */}
+        <div className="flex h-10 shrink-0 items-center justify-center pt-2" aria-hidden="true">
+          <div className="bg-border h-1.5 w-12 rounded-full" />
+        </div>
+
+        {/* ヘッダー（オプション） */}
+        {header}
+
+        {/* コンテンツ */}
         {children}
-      </SheetContent>
-    </Sheet>
+      </DrawerContent>
+    </Drawer>
   );
 }
 
@@ -80,7 +133,10 @@ interface BottomSheetContentProps {
 
 /**
  * BottomSheet用コンテンツ
+ * 高さは親のスナップポイントに固定され、中身がスクロール
  */
 export function BottomSheetContent({ children, className }: BottomSheetContentProps) {
-  return <div className={cn('max-h-[60vh] overflow-y-auto pb-8', className)}>{children}</div>;
+  return (
+    <div className={cn('min-h-0 flex-1 overflow-y-auto px-4 pb-8', className)}>{children}</div>
+  );
 }
