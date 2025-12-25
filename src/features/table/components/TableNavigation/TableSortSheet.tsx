@@ -1,9 +1,15 @@
 'use client';
 
-import { MobileSettingsRadioGroup, MobileSettingsSection } from '@/components/common';
-import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { ArrowUpDown } from 'lucide-react';
+
+import { MobileSettingsRadioGroup, MobileSettingsSection } from '@/components/common';
+import {
+  BottomSheet,
+  BottomSheetContent,
+  BottomSheetHeader,
+  BottomSheetTitle,
+} from '@/components/ui/bottom-sheet';
+import { Button } from '@/components/ui/button';
 
 interface TableSortSheetProps {
   open: boolean;
@@ -26,7 +32,7 @@ const SORT_DIRECTION_OPTIONS: Array<{ value: 'asc' | 'desc'; label: string }> = 
 /**
  * テーブル用ソートシート
  *
- * モバイル・PC共通で使用可能なボトムシート形式のソートUI
+ * Apple HIG準拠のボトムシート形式のソートUI
  */
 export function TableSortSheet({
   open,
@@ -55,18 +61,18 @@ export function TableSortSheet({
   };
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="bottom" className="rounded-t-2xl">
-        <SheetHeader className="flex flex-row items-center justify-between pb-4">
-          <SheetTitle>ソート</SheetTitle>
-          {sortField && (
-            <Button variant="ghost" size="sm" onClick={onSortClear} className="h-auto p-0 text-xs">
-              リセット
-            </Button>
-          )}
-        </SheetHeader>
+    <BottomSheet open={open} onOpenChange={onOpenChange} title="ソート">
+      <BottomSheetHeader>
+        <BottomSheetTitle>ソート</BottomSheetTitle>
+        {sortField && (
+          <Button variant="ghost" size="sm" onClick={onSortClear} className="h-auto p-0 text-xs">
+            リセット
+          </Button>
+        )}
+      </BottomSheetHeader>
 
-        <div className="space-y-6 pb-4">
+      <BottomSheetContent>
+        <div className="space-y-6">
           {/* ソートフィールド */}
           <MobileSettingsSection icon={<ArrowUpDown />} title="並び替えの基準">
             <MobileSettingsRadioGroup
@@ -89,7 +95,7 @@ export function TableSortSheet({
             </MobileSettingsSection>
           )}
         </div>
-      </SheetContent>
-    </Sheet>
+      </BottomSheetContent>
+    </BottomSheet>
   );
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { CalendarSidebar } from '@/features/calendar/components/sidebar/CalendarSidebar';
@@ -33,6 +34,22 @@ export function MobileLayout({ children, locale }: MobileLayoutProps) {
   // selector化: 必要な値だけ監視（他の状態変更時の再レンダリングを防止）
   const isOpen = useSidebarStore((state) => state.isOpen);
   const toggle = useSidebarStore((state) => state.toggle);
+  const close = useSidebarStore((state) => state.close);
+
+  // モバイルでの初期表示時にサイドバーを閉じる
+  // デスクトップとストアを共有しているため、初期状態がtrueになる問題を解決
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  useEffect(() => {
+    if (!isInitialized) {
+      close();
+      setIsInitialized(true);
+    }
+  }, [close, isInitialized]);
+
+  // 初期化前は常にfalse、初期化後はストアの値を使用
+  const sheetOpen = isInitialized ? isOpen : false;
+
   const pathname = usePathname();
 
   // ページごとにSidebarを切り替え
@@ -53,7 +70,7 @@ export function MobileLayout({ children, locale }: MobileLayoutProps) {
   return (
     <>
       {/* モバイル: Sheet（左オーバーレイ）でSidebarを表示 */}
-      <Sheet open={isOpen} onOpenChange={toggle}>
+      <Sheet open={sheetOpen} onOpenChange={toggle}>
         <SheetContent
           side="left"
           className="p-0"

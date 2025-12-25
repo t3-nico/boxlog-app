@@ -8,6 +8,7 @@ import { format } from 'date-fns';
 import { getEventColor } from '@/features/calendar/theme';
 import { calendarStyles } from '@/features/calendar/theme/styles';
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
+import { useHapticFeedback } from '@/hooks/useHapticFeedback';
 import { cn } from '@/lib/utils';
 
 import { HOUR_HEIGHT } from '../constants/grid.constants';
@@ -49,6 +50,10 @@ export const CalendarDragSelection = ({
 }: CalendarDragSelectionProps) => {
   // 設定からデフォルト時間を取得
   const defaultDuration = useCalendarSettingsStore((state) => state.defaultDuration);
+  // ハプティックフィードバック
+  const { tap } = useHapticFeedback();
+  // 前回の選択時間（15分境界を越えたときのバイブレーション用）
+  const lastSelectionRef = useRef<{ startMinutes: number; endMinutes: number } | null>(null);
   // ドラッグ選択の状態
   const [isSelecting, setIsSelecting] = useState(false);
   const [selection, setSelection] = useState<TimeRange | null>(null);
@@ -63,9 +68,11 @@ export const CalendarDragSelection = ({
   // 長押し検出用（モバイル標準: 300ms）
   const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const touchStartPos = useRef<{ x: number; y: number } | null>(null);
+  const touchStartTime = useRef<number | null>(null); // シングルタップ検出用
   const [isLongPressActive, setIsLongPressActive] = useState(false);
   const LONG_PRESS_DURATION = 300; // Google/Apple標準: 300-500ms
   const LONG_PRESS_MOVE_THRESHOLD = 10; // 長押し中の許容移動距離（px）
+  const SINGLE_TAP_MAX_DURATION = 200; // シングルタップの最大時間（ms）
 
   // ドロップ可能エリアとして設定
   // ドロップ先データ: { date: Date, time: string }
@@ -84,6 +91,7 @@ export const CalendarDragSelection = ({
       longPressTimer.current = null;
     }
     touchStartPos.current = null;
+    touchStartTime.current = null;
     setIsLongPressActive(false);
   }, []);
 
@@ -94,6 +102,7 @@ export const CalendarDragSelection = ({
     setSelectionStart(null);
     setShowSelectionPreview(false);
     isDragging.current = false;
+    lastSelectionRef.current = null;
     clearLongPressTimer();
   }, [clearLongPressTimer]);
 
@@ -216,8 +225,9 @@ export const CalendarDragSelection = ({
 
       if (eventBlock) return;
 
-      // タッチ開始位置を記録
+      // タッチ開始位置・時刻を記録
       touchStartPos.current = { x: touch.clientX, y: touch.clientY };
+      touchStartTime.current = Date.now();
 
       const rect = e.currentTarget.getBoundingClientRect();
       const y = touch.clientY - rect.top;
@@ -238,13 +248,11 @@ export const CalendarDragSelection = ({
         setIsSelecting(true);
         isDragging.current = false;
 
-        // ハプティックフィードバック（対応デバイスのみ）
-        if (navigator.vibrate) {
-          navigator.vibrate(10);
-        }
+        // ハプティックフィードバック（長押し開始）
+        tap();
       }, LONG_PRESS_DURATION);
     },
-    [pixelsToTime, disabled, clearLongPressTimer],
+    [pixelsToTime, disabled, clearLongPressTimer, tap],
   );
 
   // マウスムーブ時にドロップ時刻を更新（ドラッグ中でない場合も）
@@ -328,6 +336,17 @@ export const CalendarDragSelection = ({
         endHour: Math.min(23, endHour),
         endMinute: Math.min(59, endMinute),
       };
+
+      // 15分境界を越えたらハプティックフィードバック
+      const newStartMinutes = newSelection.startHour * 60 + newSelection.startMinute;
+      const newEndMinutes = newSelection.endHour * 60 + newSelection.endMinute;
+      if (lastSelectionRef.current) {
+        const { startMinutes: prevStart, endMinutes: prevEnd } = lastSelectionRef.current;
+        if (newStartMinutes !== prevStart || newEndMinutes !== prevEnd) {
+          tap();
+        }
+      }
+      lastSelectionRef.current = { startMinutes: newStartMinutes, endMinutes: newEndMinutes };
 
       setSelection(newSelection);
     };
@@ -431,12 +450,65 @@ export const CalendarDragSelection = ({
         endMinute: Math.min(59, endMinute),
       };
 
+      // 15分境界を越えたらハプティックフィードバック（モバイル）
+      const newStartMinutes = newSelection.startHour * 60 + newSelection.startMinute;
+      const newEndMinutes = newSelection.endHour * 60 + newSelection.endMinute;
+      if (lastSelectionRef.current) {
+        const { startMinutes: prevStart, endMinutes: prevEnd } = lastSelectionRef.current;
+        if (newStartMinutes !== prevStart || newEndMinutes !== prevEnd) {
+          tap();
+        }
+      }
+      lastSelectionRef.current = { startMinutes: newStartMinutes, endMinutes: newEndMinutes };
+
       setSelection(newSelection);
     };
 
     // タッチ終了（モバイル用）
-    const handleGlobalTouchEnd = () => {
-      // 長押し完了前に離した場合は何もしない
+    const handleGlobalTouchEnd = (e: TouchEvent) => {
+      const handler = onDoubleClick || onTimeRangeSelect;
+
+      // シングルタップ検出：長押し完了前 + 短時間 + 小移動
+      if (!isLongPressActive && touchStartPos.current && touchStartTime.current) {
+        const touchDuration = Date.now() - touchStartTime.current;
+        const touch = e.changedTouches[0];
+
+        if (touch && touchDuration <= SINGLE_TAP_MAX_DURATION) {
+          const deltaX = Math.abs(touch.clientX - touchStartPos.current.x);
+          const deltaY = Math.abs(touch.clientY - touchStartPos.current.y);
+
+          // 移動距離が閾値以内ならシングルタップとして処理
+          if (deltaX <= LONG_PRESS_MOVE_THRESHOLD && deltaY <= LONG_PRESS_MOVE_THRESHOLD) {
+            if (handler && containerRef.current) {
+              const rect = containerRef.current.getBoundingClientRect();
+              const y = touch.clientY - rect.top;
+              const tapTime = pixelsToTime(y);
+
+              const startTotalMinutes = tapTime.hour * 60 + tapTime.minute;
+              const endTotalMinutes = Math.min(startTotalMinutes + defaultDuration, 24 * 60 - 1);
+              const endHour = Math.floor(endTotalMinutes / 60);
+              const endMinute = endTotalMinutes % 60;
+
+              const dateTimeSelection: DateTimeSelection = {
+                date,
+                startHour: tapTime.hour,
+                startMinute: tapTime.minute,
+                endHour,
+                endMinute,
+              };
+
+              // ハプティックフィードバック
+              tap();
+              handler(dateTimeSelection);
+            }
+          }
+        }
+
+        clearLongPressTimer();
+        return;
+      }
+
+      // 長押し完了前に離した場合（シングルタップ条件を満たさない）
       if (!isLongPressActive) {
         clearLongPressTimer();
         return;
@@ -448,7 +520,6 @@ export const CalendarDragSelection = ({
       }
 
       if (selection && selectionStart) {
-        const handler = onDoubleClick || onTimeRangeSelect;
         if (isDragging.current && onTimeRangeSelect) {
           // ドラッグした場合：選択範囲でプラン作成
           const dateTimeSelection: DateTimeSelection = {
@@ -460,8 +531,7 @@ export const CalendarDragSelection = ({
           };
           onTimeRangeSelect(dateTimeSelection);
         } else if (handler) {
-          // 長押し後にドラッグせず離した場合：シングルタップとしてイベント作成
-          // （モバイルではダブルタップの代わりにこの操作でイベント作成）
+          // 長押し後にドラッグせず離した場合
           const startTotalMinutes = selection.startHour * 60 + selection.startMinute;
           const endTotalMinutes = Math.min(startTotalMinutes + defaultDuration, 24 * 60 - 1);
           const endHour = Math.floor(endTotalMinutes / 60);
@@ -508,6 +578,7 @@ export const CalendarDragSelection = ({
     clearLongPressTimer,
     clearSelectionState,
     defaultDuration,
+    tap,
   ]);
 
   // モーダルキャンセル時のカスタムイベントリスナー

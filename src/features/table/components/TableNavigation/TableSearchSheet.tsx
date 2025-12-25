@@ -4,9 +4,14 @@ import { useState } from 'react';
 
 import { X } from 'lucide-react';
 
+import {
+  BottomSheet,
+  BottomSheetContent,
+  BottomSheetHeader,
+  BottomSheetTitle,
+} from '@/components/ui/bottom-sheet';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 
 interface TableSearchSheetProps {
   open: boolean;
@@ -18,7 +23,7 @@ interface TableSearchSheetProps {
 /**
  * テーブル用検索シート
  *
- * モバイル・PC共通で使用可能なボトムシート形式の検索UI
+ * Apple HIG準拠のボトムシート形式の検索UI
  */
 export function TableSearchSheet({ open, onOpenChange, value, onChange }: TableSearchSheetProps) {
   const [localSearch, setLocalSearch] = useState(value);
@@ -42,12 +47,12 @@ export function TableSearchSheet({ open, onOpenChange, value, onChange }: TableS
   };
 
   return (
-    <Sheet open={open} onOpenChange={handleOpenChange}>
-      <SheetContent side="bottom" className="rounded-t-2xl">
-        <SheetHeader className="pb-4">
-          <SheetTitle>検索</SheetTitle>
-        </SheetHeader>
+    <BottomSheet open={open} onOpenChange={handleOpenChange} title="検索">
+      <BottomSheetHeader>
+        <BottomSheetTitle>検索</BottomSheetTitle>
+      </BottomSheetHeader>
 
+      <BottomSheetContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="relative">
             <Input
@@ -85,7 +90,7 @@ export function TableSearchSheet({ open, onOpenChange, value, onChange }: TableS
             </Button>
           </div>
         </form>
-      </SheetContent>
-    </Sheet>
+      </BottomSheetContent>
+    </BottomSheet>
   );
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import { MoreHorizontal } from 'lucide-react';
-import type { ReactNode } from 'react';
+import { type ReactNode, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
@@ -16,6 +16,10 @@ import { zIndex } from '@/config/ui/z-index';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 
 import { INSPECTOR_SIZE, useInspectorResize } from '../hooks';
+
+// モバイルDrawerのスナップポイント
+// Apple HIG準拠: medium(50%) → large(97% - セーフエリア考慮)
+const SNAP_POINTS = [0.5, 0.97] as const;
 
 /**
  * Inspector表示モード
@@ -80,15 +84,32 @@ export function InspectorShell({
     enabled: displayMode === 'sheet' && resizable && !isMobile,
   });
 
+  // モバイルDrawerのスナップポイント状態
+  const [snap, setSnap] = useState<number | string | null>(SNAP_POINTS[0]);
+  const isFullScreen = snap === SNAP_POINTS[1];
+
   if (!isOpen) return null;
 
   // モバイル: 下からのDrawer（ボトムシート）
+  // 上にスワイプで全画面表示
   if (isMobile) {
     return (
-      <Drawer open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <Drawer
+        open={isOpen}
+        onOpenChange={(open) => !open && onClose()}
+        snapPoints={SNAP_POINTS as unknown as (number | string)[]}
+        activeSnapPoint={snap}
+        setActiveSnapPoint={setSnap}
+        fadeFromIndex={1}
+      >
         <DrawerContent
-          className="bg-popover flex max-h-[85vh] flex-col gap-0 overflow-hidden p-0 [&>div:first-child]:hidden"
-          style={{ zIndex: zIndex.modal }}
+          className="bg-popover flex flex-col gap-0 overflow-hidden p-0 [&>div:first-child]:hidden"
+          style={{
+            zIndex: zIndex.modal,
+            // 全画面時は角丸をなくす
+            borderTopLeftRadius: isFullScreen ? 0 : undefined,
+            borderTopRightRadius: isFullScreen ? 0 : undefined,
+          }}
         >
           <DrawerTitle className="sr-only">{title}</DrawerTitle>
 
@@ -98,7 +119,7 @@ export function InspectorShell({
             <div className="w-10" />
 
             {/* 中央: ドラッグハンドル */}
-            <div className="bg-muted h-1.5 w-12 rounded-full" />
+            <div className="bg-border h-1.5 w-12 rounded-full" />
 
             {/* 右側: メニュー */}
             <div className="flex w-10 justify-end">
