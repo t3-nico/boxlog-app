@@ -42,7 +42,7 @@ export const BREAKPOINT_VALUES = {
   xl: 1280,
   /** 大型ディスプレイ */
   '2xl': 1536,
-} as const
+} as const;
 
 /**
  * useMediaQuery用のクエリ文字列
@@ -72,7 +72,7 @@ export const MEDIA_QUERIES = {
   prefersDark: '(prefers-color-scheme: dark)',
   /** モーション軽減判定 */
   prefersReducedMotion: '(prefers-reduced-motion: reduce)',
-} as const
+} as const;
 
 /**
  * タッチターゲットサイズ（ピクセル）
@@ -99,7 +99,7 @@ export const TOUCH_TARGET = {
   large: 56,
   /** タッチ要素間の最小マージン */
   spacing: 8,
-} as const
+} as const;
 
 /**
  * Tailwindクラス用のタッチターゲットサイズ
@@ -118,12 +118,12 @@ export const TOUCH_TARGET_CLASS = {
   standard: 'h-12 min-w-12',
   /** 大型サイズ: h-14 w-14 (56px) */
   large: 'h-14 min-w-14',
-} as const
+} as const;
 
 /**
  * デバイスタイプ判定用のヘルパー型
  */
-export type DeviceType = 'mobile' | 'tablet' | 'desktop'
+export type DeviceType = 'mobile' | 'tablet' | 'desktop';
 
 /**
  * ブレークポイントに基づくデバイスタイプを取得
@@ -132,7 +132,7 @@ export type DeviceType = 'mobile' | 'tablet' | 'desktop'
  * @returns デバイスタイプ
  */
 export function getDeviceType(width: number): DeviceType {
-  if (width < BREAKPOINT_VALUES.sm) return 'mobile'
-  if (width < BREAKPOINT_VALUES.lg) return 'tablet'
-  return 'desktop'
+  if (width < BREAKPOINT_VALUES.sm) return 'mobile';
+  if (width < BREAKPOINT_VALUES.lg) return 'tablet';
+  return 'desktop';
 }

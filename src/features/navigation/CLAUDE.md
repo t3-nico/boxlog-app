@@ -74,8 +74,8 @@ BoxLogは3カラムレイアウトを採用：
 
 ```tsx
 // lg breakpoint (1024px) で切り替え
-lg: block // デスクトップ: AppBar表示
-lg: hidden // モバイル: MobileBottomNavigation表示
+lg: block; // デスクトップ: AppBar表示
+lg: hidden; // モバイル: MobileBottomNavigation表示
 ```
 
 ## 🚨 必須ルール
@@ -85,9 +85,9 @@ lg: hidden // モバイル: MobileBottomNavigation表示
 **`useNavigationStore`を使用**:
 
 ```tsx
-import { useNavigationStore } from '@/features/navigation/stores/useNavigationStore'
+import { useNavigationStore } from '@/features/navigation/stores/useNavigationStore';
 
-const { isSidebarOpen, toggleSidebar } = useNavigationStore()
+const { isSidebarOpen, toggleSidebar } = useNavigationStore();
 ```
 
 ### 2. スタイリング
@@ -106,12 +106,12 @@ const { isSidebarOpen, toggleSidebar } = useNavigationStore()
 
 ```tsx
 // ✅ 正しい
-import { AppBar } from '@/features/navigation/components/appbar'
-import { Sidebar } from '@/features/navigation/components/sidebar'
-import { useNavigationStore } from '@/features/navigation/stores/useNavigationStore'
+import { AppBar } from '@/features/navigation/components/appbar';
+import { Sidebar } from '@/features/navigation/components/sidebar';
+import { useNavigationStore } from '@/features/navigation/stores/useNavigationStore';
 
 // ❌ 禁止（旧パス）
-import { AppBar } from '@/components/layout/appbar'
+import { AppBar } from '@/components/layout/appbar';
 ```
 
 ## 📖 使用例
@@ -119,20 +119,20 @@ import { AppBar } from '@/components/layout/appbar'
 ### Sidebar切り替え
 
 ```tsx
-import { useNavigationStore } from '@/features/navigation/stores/useNavigationStore'
+import { useNavigationStore } from '@/features/navigation/stores/useNavigationStore';
 
 export const SidebarToggle = () => {
-  const { toggleSidebar } = useNavigationStore()
+  const { toggleSidebar } = useNavigationStore();
 
-  return <button onClick={toggleSidebar}>Toggle Sidebar</button>
-}
+  return <button onClick={toggleSidebar}>Toggle Sidebar</button>;
+};
 ```
 
 ### カスタムSidebarの実装
 
 ```tsx
 // src/features/calendar/components/CalendarSidebar.tsx
-import { SidebarHeader, SidebarSection } from '@/features/navigation/components/sidebar/components'
+import { SidebarHeader, SidebarSection } from '@/features/navigation/components/sidebar/components';
 
 export const CalendarSidebar = () => {
   return (
@@ -140,13 +140,13 @@ export const CalendarSidebar = () => {
       <SidebarHeader title="カレンダー" />
       <SidebarSection>{/* カスタムコンテンツ */}</SidebarSection>
     </>
-  )
-}
+  );
+};
 
 // layout.tsx で使用
-;<Sidebar>
+<Sidebar>
   <CalendarSidebar />
-</Sidebar>
+</Sidebar>;
 ```
 
 ## 🔗 関連ドキュメント
@@ -163,8 +163,8 @@ Inspector機能は`@/features/inspector`に配置されており、このモジ�
 
 ```tsx
 // ✅ 正しい
-import { useInspectorStore } from '@/features/inspector/stores/useInspectorStore'
-import { InspectorToggle } from '@/features/inspector/components/inspector-toggle'
+import { useInspectorStore } from '@/features/inspector/stores/useInspectorStore';
+import { InspectorToggle } from '@/features/inspector/components/inspector-toggle';
 ```
 
 ### ページタイトルは共通コンポーネント
@@ -173,7 +173,7 @@ import { InspectorToggle } from '@/features/inspector/components/inspector-toggl
 
 ```tsx
 // ✅ 正しい
-import { PageTitle } from '@/components/common/page-title'
+import { PageTitle } from '@/components/common/page-title';
 ```
 
 ### 共有ナビゲーションコンポーネント
@@ -186,7 +186,7 @@ import {
   SidebarItem,
   SidebarLabel,
   SidebarSection,
-} from '@/features/navigation/components/sidebar/shared'
+} from '@/features/navigation/components/sidebar/shared';
 ```
 
 ---

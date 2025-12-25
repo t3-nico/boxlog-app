@@ -103,11 +103,11 @@ src/features/tasks/components/TaskCard.test.tsx
 
 ```tsx
 // ✅ エイリアス使用（@/）
-import { colors } from '@/config/theme'
-import { useTaskStore } from '@/features/tasks/stores'
+import { colors } from '@/config/theme';
+import { useTaskStore } from '@/features/tasks/stores';
 
 // ❌ 相対パス多用は避ける
-import { colors } from '../../../../config/theme'
+import { colors } from '../../../../config/theme';
 ```
 
 ### スタイリング

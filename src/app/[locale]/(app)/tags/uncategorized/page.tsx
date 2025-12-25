@@ -1,11 +1,11 @@
-import { UncategorizedPageClient } from './uncategorized-page-client'
+import { UncategorizedPageClient } from './uncategorized-page-client';
 
 interface UncategorizedPageProps {
-  params: {
-    locale: string
-  }
+  params: Promise<{
+    locale: string;
+  }>;
 }
 
-export default function UncategorizedPage({ params: _params }: UncategorizedPageProps) {
-  return <UncategorizedPageClient />
+export default async function UncategorizedPage({ params: _params }: UncategorizedPageProps) {
+  return <UncategorizedPageClient />;
 }

@@ -1,8 +1,8 @@
 // Main Calendar Entry Point
-export { CalendarController } from './components/CalendarController'
+export { CalendarController } from './components/CalendarController';
 
 // Calendar Components
-export * from './components'
+export * from './components';
 
 // Calendar Types (only export types not already exported from components)
 export type {
@@ -28,18 +28,18 @@ export type {
   UpdatePlanInput,
   UpdateTicketInput,
   ViewSelectorProps,
-} from './types/calendar.types'
+} from './types/calendar.types';
 
 // Calendar Constants
 export {
   BUSINESS_HOURS as CALENDAR_BUSINESS_HOURS,
   MINUTE_HEIGHT as CALENDAR_MINUTE_HEIGHT,
   HOUR_HEIGHT,
-} from './constants/calendar-constants'
+} from './constants/calendar-constants';
 
 // Calendar Hooks
-export * from './hooks'
+export * from './hooks';
 
 // Calendar Utils/Lib (excluding conflicting exports)
-export { isValidViewType } from './lib/calendar-helpers'
-export { calculateViewDateRange, getNextPeriod, getPreviousPeriod } from './lib/view-helpers'
+export { isValidViewType } from './lib/calendar-helpers';
+export { calculateViewDateRange, getNextPeriod, getPreviousPeriod } from './lib/view-helpers';

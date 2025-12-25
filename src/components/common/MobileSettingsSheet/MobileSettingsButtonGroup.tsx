@@ -1,23 +1,23 @@
-'use client'
+'use client';
 
-import { Button } from '@/components/ui/button'
-import { Check } from 'lucide-react'
+import { Button } from '@/components/ui/button';
+import { Check } from 'lucide-react';
 
 interface MobileSettingsOption<T> {
-  value: T
-  label: string
-  icon?: React.ReactNode
+  value: T;
+  label: string;
+  icon?: React.ReactNode;
 }
 
 interface MobileSettingsButtonGroupProps<T> {
   /** 選択肢 */
-  options: MobileSettingsOption<T>[]
+  options: MobileSettingsOption<T>[];
   /** 現在の値 */
-  value: T
+  value: T;
   /** 値変更時のコールバック */
-  onValueChange: (value: T) => void
+  onValueChange: (value: T) => void;
   /** ボタンを横に広げるか */
-  fullWidth?: boolean
+  fullWidth?: boolean;
 }
 
 /**
@@ -60,5 +60,5 @@ export function MobileSettingsButtonGroup<T extends string | null>({
         </Button>
       ))}
     </div>
-  )
+  );
 }

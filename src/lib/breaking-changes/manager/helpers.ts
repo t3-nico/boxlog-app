@@ -2,14 +2,14 @@
  * 表示ヘルパー関数
  */
 
-import type { AffectedGroup, BreakingChange, ImpactLevel } from '../types'
+import type { AffectedGroup, BreakingChange, ImpactLevel } from '../types';
 
 /**
  * 🎨 影響度の絵文字取得
  */
 export function getImpactEmoji(impact: ImpactLevel): string {
-  const emojis = { low: '🟢', medium: '🟡', high: '🟠', critical: '🔴' }
-  return emojis[impact]
+  const emojis = { low: '🟢', medium: '🟡', high: '🟠', critical: '🔴' };
+  return emojis[impact];
 }
 
 /**
@@ -25,8 +25,8 @@ export function getChangeEmoji(type: string): string {
     auth_change: '🔐',
     behavior_change: '🔄',
     removal: '🗑️',
-  }
-  return emojis[type as keyof typeof emojis] || '🔧'
+  };
+  return emojis[type as keyof typeof emojis] || '🔧';
 }
 
 /**
@@ -40,8 +40,8 @@ export function getGroupEmoji(group: AffectedGroup): string {
     devops: '🚀',
     administrators: '👮',
     external_systems: '🌐',
-  }
-  return emojis[group] || '👤'
+  };
+  return emojis[group] || '👤';
 }
 
 /**
@@ -55,41 +55,41 @@ export function getGroupDisplayName(group: AffectedGroup): string {
     devops: 'DevOps・運用担当',
     administrators: 'システム管理者',
     external_systems: '外部システム連携',
-  }
-  return names[group] || group
+  };
+  return names[group] || group;
 }
 
 /**
  * 📅 デフォルト開始日取得
  */
 export function getDefaultStartDate(): string {
-  return new Date().toISOString().split('T')[0]!
+  return new Date().toISOString().split('T')[0]!;
 }
 
 /**
  * 📅 終了日計算
  */
 export function calculateEndDate(changes: BreakingChange[]): string {
-  const totalTime = changes.reduce((sum, change) => sum + (change.migration.estimatedTime || 0), 0)
-  const days = Math.ceil(totalTime / (8 * 60)) // 8時間/日として計算
-  const endDate = new Date()
-  endDate.setDate(endDate.getDate() + days)
-  return endDate.toISOString().split('T')[0]!
+  const totalTime = changes.reduce((sum, change) => sum + (change.migration.estimatedTime || 0), 0);
+  const days = Math.ceil(totalTime / (8 * 60)); // 8時間/日として計算
+  const endDate = new Date();
+  endDate.setDate(endDate.getDate() + days);
+  return endDate.toISOString().split('T')[0]!;
 }
 
 /**
  * 🆔 変更IDの生成
  */
 export function generateChangeId(version: string, title: string): string {
-  const sanitized = title.toLowerCase().replace(/[^a-z0-9]/g, '-')
-  return `${version}-${sanitized}`.substring(0, 50)
+  const sanitized = title.toLowerCase().replace(/[^a-z0-9]/g, '-');
+  return `${version}-${sanitized}`.substring(0, 50);
 }
 
 /**
  * 🆔 プランIDの生成
  */
 export function generatePlanId(version: string): string {
-  return `migration-plan-${version}-${Date.now()}`
+  return `migration-plan-${version}-${Date.now()}`;
 }
 
 /**
@@ -99,11 +99,11 @@ export function groupChangesByVersion(changes: BreakingChange[]): Record<string,
   return changes.reduce(
     (groups, change) => {
       if (!groups[change.version]) {
-        groups[change.version] = []
+        groups[change.version] = [];
       }
-      groups[change.version]!.push(change)
-      return groups
+      groups[change.version]!.push(change);
+      return groups;
     },
-    {} as Record<string, BreakingChange[]>
-  )
+    {} as Record<string, BreakingChange[]>,
+  );
 }

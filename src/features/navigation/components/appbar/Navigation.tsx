@@ -1,11 +1,11 @@
-'use client'
+'use client';
 
-import { usePathname } from 'next/navigation'
-import { Item } from './Item'
-import type { AppBarNavItem } from './types'
+import { usePathname } from 'next/navigation';
+import { Item } from './Item';
+import type { AppBarNavItem } from './types';
 
 interface NavigationProps {
-  navItems: AppBarNavItem[]
+  navItems: AppBarNavItem[];
 }
 
 /**
@@ -14,10 +14,13 @@ interface NavigationProps {
  * ビュー切り替えナビゲーション（Calendar/Board/Table/Stats）を表示
  */
 export function Navigation({ navItems }: NavigationProps) {
-  const pathname = usePathname()
+  const pathname = usePathname();
 
   return (
-    <nav className="flex flex-col items-center gap-1 px-2 pt-2" onClick={(e) => e.stopPropagation()}>
+    <nav
+      className="flex flex-col items-center gap-1 px-2 pt-2"
+      onClick={(e) => e.stopPropagation()}
+    >
       {navItems.map((item) => (
         <Item
           key={item.id}
@@ -28,5 +31,5 @@ export function Navigation({ navItems }: NavigationProps) {
         />
       ))}
     </nav>
-  )
+  );
 }

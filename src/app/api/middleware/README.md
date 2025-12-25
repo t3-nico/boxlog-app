@@ -26,66 +26,66 @@ import type {
   ApiContext, // リクエストコンテキスト
   ApiHandler, // ハンドラー関数型
   MiddlewareConfig, // ミドルウェア設定
-} from './middleware/types'
+} from './middleware/types';
 ```
 
 ### error-handler.ts（エラーハンドリング）
 
 ```typescript
-import { withErrorHandling } from './middleware/error-handler'
+import { withErrorHandling } from './middleware/error-handler';
 
 const handler = withErrorHandling(
   async (req, context) => {
     // エラーは自動的にキャッチ・正規化されます
-    return { data: 'success' }
+    return { data: 'success' };
   },
   {
     enableErrorReporting: true, // Sentryレポート有効化
     enableMetrics: true, // メトリクス収集
     requestTimeout: 30000, // 30秒タイムアウト
-  }
-)
+  },
+);
 ```
 
 ### auth.ts（認証）
 
 ```typescript
-import { withAuth } from './middleware/auth'
+import { withAuth } from './middleware/auth';
 
 const protectedHandler = withAuth(async (req, context) => {
   // context.userId が自動的に設定されます
-  return { userId: context.userId }
-})
+  return { userId: context.userId };
+});
 ```
 
 ### rate-limit.ts（レート制限）
 
 ```typescript
-import { withRateLimit } from './middleware/rate-limit'
+import { withRateLimit } from './middleware/rate-limit';
 
 const limitedHandler = withRateLimit(
   async (req, context) => {
-    return { data: 'limited' }
+    return { data: 'limited' };
   },
   {
     rateLimit: {
       windowMs: 60000, // 1分間
       maxRequests: 100, // 最大100リクエスト
     },
-  }
-)
+  },
+);
 ```
 
 ### cors.ts（CORS・タイムアウト）
 
 ```typescript
-import { setCorsHeaders, createTimeoutPromise } from './middleware/cors'
+import { setCorsHeaders, createTimeoutPromise } from './middleware/cors';
 
 // CORS設定
-const response = setCorsHeaders(req, ['https://example.com'])
+const response = setCorsHeaders(req, ['https://example.com']);
 
 // タイムアウト
-const timeoutPromise = createTimeoutPromise(5000) // 5秒
+const timeoutPromise = createTimeoutPromise(5000); // 5秒
 ```
 
 ### utils.ts（ユーティリティ）
@@ -100,7 +100,7 @@ import {
   logRequest,
   recordMetrics,
   getClientId,
-} from './middleware/utils'
+} from './middleware/utils';
 ```
 
 ## 📖 使用例
@@ -108,47 +108,47 @@ import {
 ### 基本的なAPI（エラーハンドリングのみ）
 
 ```typescript
-import { withErrorHandling } from '@/app/api/middleware'
+import { withErrorHandling } from '@/app/api/middleware';
 
 export const GET = withErrorHandling(async (req, context) => {
   return {
     message: 'Hello World',
     requestId: context.requestId,
-  }
-})
+  };
+});
 ```
 
 ### 認証が必要なAPI
 
 ```typescript
-import { withAuth } from '@/app/api/middleware'
+import { withAuth } from '@/app/api/middleware';
 
 export const POST = withAuth(
   async (req, context) => {
     // Bearerトークンが検証済み
-    const userId = context.userId
+    const userId = context.userId;
 
-    const body = await req.json()
+    const body = await req.json();
     // ... 処理
 
-    return { success: true, userId }
+    return { success: true, userId };
   },
   {
     enableErrorReporting: true,
     enableMetrics: true,
-  }
-)
+  },
+);
 ```
 
 ### レート制限付きAPI
 
 ```typescript
-import { withRateLimit } from '@/app/api/middleware'
+import { withRateLimit } from '@/app/api/middleware';
 
 export const GET = withRateLimit(
   async (req, context) => {
     // 1分間に100リクエストまで
-    return { data: 'rate-limited-data' }
+    return { data: 'rate-limited-data' };
   },
   {
     rateLimit: {
@@ -156,44 +156,44 @@ export const GET = withRateLimit(
       maxRequests: 100,
     },
     enableMetrics: true,
-  }
-)
+  },
+);
 ```
 
 ### 複合的なミドルウェア
 
 ```typescript
-import { withAuth, withRateLimit } from '@/app/api/middleware'
+import { withAuth, withRateLimit } from '@/app/api/middleware';
 
 // 認証 + レート制限
 const handler = withAuth(
   async (req, context) => {
-    return { userId: context.userId, data: 'protected' }
+    return { userId: context.userId, data: 'protected' };
   },
   {
     enableErrorReporting: true,
-  }
-)
+  },
+);
 
 export const POST = withRateLimit(handler, {
   rateLimit: { windowMs: 60000, maxRequests: 10 },
-})
+});
 ```
 
 ### CORS設定付きAPI
 
 ```typescript
-import { withErrorHandling } from '@/app/api/middleware'
+import { withErrorHandling } from '@/app/api/middleware';
 
 export const GET = withErrorHandling(
   async (req, context) => {
-    return { data: 'public' }
+    return { data: 'public' };
   },
   {
     enableCors: true,
     corsOrigins: ['https://example.com', 'https://app.example.com'],
-  }
-)
+  },
+);
 ```
 
 ## 🔄 レスポンス形式

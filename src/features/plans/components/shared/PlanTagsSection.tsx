@@ -1,21 +1,21 @@
-'use client'
+'use client';
 
-import { Badge } from '@/components/ui/badge'
-import { HoverTooltip } from '@/components/ui/tooltip'
-import { useTags } from '@/features/tags/hooks/use-tags'
-import { Plus, Tag, X } from 'lucide-react'
+import { Badge } from '@/components/ui/badge';
+import { HoverTooltip } from '@/components/ui/tooltip';
+import { useTags } from '@/features/tags/hooks/use-tags';
+import { Plus, Tag, X } from 'lucide-react';
 
-import { PlanTagSelectDialogEnhanced } from './PlanTagSelectDialogEnhanced'
+import { PlanTagSelectDialogEnhanced } from './PlanTagSelectDialogEnhanced';
 
 interface PlanTagsSectionProps {
-  selectedTagIds: string[]
-  onTagsChange: (tagIds: string[]) => void
-  onRemoveTag?: (tagId: string) => void
-  showBorderTop?: boolean
-  popoverAlign?: 'start' | 'center' | 'end'
-  popoverSide?: 'top' | 'right' | 'bottom' | 'left'
-  popoverAlignOffset?: number
-  popoverSideOffset?: number
+  selectedTagIds: string[];
+  onTagsChange: (tagIds: string[]) => void;
+  onRemoveTag?: (tagId: string) => void;
+  showBorderTop?: boolean;
+  popoverAlign?: 'start' | 'center' | 'end';
+  popoverSide?: 'top' | 'right' | 'bottom' | 'left';
+  popoverAlignOffset?: number;
+  popoverSideOffset?: number;
 }
 
 export function PlanTagsSection({
@@ -29,12 +29,14 @@ export function PlanTagsSection({
   popoverSideOffset,
 }: PlanTagsSectionProps) {
   // データベースからタグを取得
-  const { data: allTags = [] } = useTags(true)
+  const { data: allTags = [] } = useTags(true);
 
-  const selectedTags = allTags.filter((tag) => selectedTagIds.includes(tag.id))
+  const selectedTags = allTags.filter((tag) => selectedTagIds.includes(tag.id));
 
   return (
-    <div className={`flex min-h-10 items-start gap-2 px-4 py-2 ${showBorderTop ? 'border-border/50 border-t' : ''}`}>
+    <div
+      className={`flex min-h-10 items-start gap-2 px-4 py-2 ${showBorderTop ? 'border-border/50 border-t' : ''}`}
+    >
       <Tag className="text-muted-foreground mt-2 size-4 flex-shrink-0" />
       <div className="flex min-h-8 flex-1 items-center">
         <div className="flex max-h-[5.25rem] flex-wrap items-center gap-1.5 overflow-y-auto">
@@ -56,8 +58,8 @@ export function PlanTagsSection({
                   <button
                     type="button"
                     onClick={(e) => {
-                      e.stopPropagation()
-                      onRemoveTag(tag.id)
+                      e.stopPropagation();
+                      onRemoveTag(tag.id);
                     }}
                     className="hover:bg-state-hover absolute top-1/2 right-1 -translate-y-1/2 rounded-sm opacity-70 transition-opacity hover:opacity-100"
                   >
@@ -65,13 +67,18 @@ export function PlanTagsSection({
                   </button>
                 )}
               </Badge>
-            )
+            );
 
             return (
-              <HoverTooltip key={tag.id} content={tag.description} side="top" disabled={!tag.description}>
+              <HoverTooltip
+                key={tag.id}
+                content={tag.description}
+                side="top"
+                disabled={!tag.description}
+              >
                 {badgeContent}
               </HoverTooltip>
-            )
+            );
           })}
 
           {/* タグ選択ダイアログ */}
@@ -102,5 +109,5 @@ export function PlanTagsSection({
         </div>
       </div>
     </div>
-  )
+  );
 }

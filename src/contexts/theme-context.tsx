@@ -1,45 +1,51 @@
-'use client'
+'use client';
 
-import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from 'react'
+import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from 'react';
 
-import { CACHE_5_MINUTES } from '@/constants/time'
-import { api } from '@/lib/trpc'
+import { CACHE_5_MINUTES } from '@/constants/time';
+import { api } from '@/lib/trpc';
 
-type Theme = 'light' | 'dark' | 'system'
-type ColorScheme = 'blue' | 'green' | 'purple' | 'orange' | 'red'
+type Theme = 'light' | 'dark' | 'system';
+type ColorScheme = 'blue' | 'green' | 'purple' | 'orange' | 'red';
 
 interface ThemeContextType {
-  theme: Theme
-  colorScheme: ColorScheme
-  setTheme: (theme: Theme) => void
-  setColorScheme: (colorScheme: ColorScheme) => void
-  resolvedTheme: 'light' | 'dark'
-  isPending: boolean
+  theme: Theme;
+  colorScheme: ColorScheme;
+  setTheme: (theme: Theme) => void;
+  setColorScheme: (colorScheme: ColorScheme) => void;
+  resolvedTheme: 'light' | 'dark';
+  isPending: boolean;
 }
 
-const ThemeContext = createContext<ThemeContextType | null>(null)
+const ThemeContext = createContext<ThemeContextType | null>(null);
 
 export function useTheme() {
-  const context = useContext(ThemeContext)
+  const context = useContext(ThemeContext);
   if (!context) {
-    throw new Error('useTheme must be used within a ThemeProvider')
+    throw new Error('useTheme must be used within a ThemeProvider');
   }
-  return context
+  return context;
 }
 
 interface ThemeProviderProps {
-  children: ReactNode
+  children: ReactNode;
 }
 
 // カラースキーム適用（コンポーネント外に定義して参照安定性を確保）
 function applyColorScheme(scheme: ColorScheme, _currentTheme: 'light' | 'dark') {
-  const root = window.document.documentElement
+  const root = window.document.documentElement;
 
   // Remove existing color scheme classes
-  root.classList.remove('scheme-blue', 'scheme-green', 'scheme-purple', 'scheme-orange', 'scheme-red')
+  root.classList.remove(
+    'scheme-blue',
+    'scheme-green',
+    'scheme-purple',
+    'scheme-orange',
+    'scheme-red',
+  );
 
   // Add new color scheme class
-  root.classList.add(`scheme-${scheme}`)
+  root.classList.add(`scheme-${scheme}`);
 
   // NOTE: CSS変数の上書きを無効化
   // modern-minimalテーマのOKLCH値を使用するため、
@@ -48,121 +54,121 @@ function applyColorScheme(scheme: ColorScheme, _currentTheme: 'light' | 'dark') 
 
 // localStorageから安全に値を取得（SSR対応・フォールバック用）
 const getStoredTheme = (): Theme => {
-  if (typeof window === 'undefined') return 'system'
-  return (localStorage.getItem('theme') as Theme) || 'system'
-}
+  if (typeof window === 'undefined') return 'system';
+  return (localStorage.getItem('theme') as Theme) || 'system';
+};
 
 const getStoredColorScheme = (): ColorScheme => {
-  if (typeof window === 'undefined') return 'blue'
-  return (localStorage.getItem('colorScheme') as ColorScheme) || 'blue'
-}
+  if (typeof window === 'undefined') return 'blue';
+  return (localStorage.getItem('colorScheme') as ColorScheme) || 'blue';
+};
 
 export const ThemeProvider = ({ children }: ThemeProviderProps) => {
   // 初期値はlocalStorageから（SSR対応・DB取得前のフォールバック）
-  const [theme, setThemeState] = useState<Theme>(getStoredTheme)
-  const [colorScheme, setColorSchemeState] = useState<ColorScheme>(getStoredColorScheme)
-  const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('light')
+  const [theme, setThemeState] = useState<Theme>(getStoredTheme);
+  const [colorScheme, setColorSchemeState] = useState<ColorScheme>(getStoredColorScheme);
+  const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('light');
 
-  const utils = api.useUtils()
+  const utils = api.useUtils();
 
   // DBから設定を取得
   const { data: dbSettings, isPending } = api.userSettings.get.useQuery(undefined, {
     staleTime: CACHE_5_MINUTES,
     refetchOnWindowFocus: false,
     retry: false, // 認証エラー時はリトライしない
-  })
+  });
 
   // DB更新用mutation
   const updateMutation = api.userSettings.update.useMutation({
     onSuccess: () => {
-      utils.userSettings.get.invalidate()
+      utils.userSettings.get.invalidate();
     },
-  })
+  });
 
   // DBから取得した設定を反映
   useEffect(() => {
     if (dbSettings && !isPending) {
       if (dbSettings.theme) {
-        setThemeState(dbSettings.theme)
+        setThemeState(dbSettings.theme);
       }
       if (dbSettings.colorScheme) {
-        setColorSchemeState(dbSettings.colorScheme)
+        setColorSchemeState(dbSettings.colorScheme);
       }
     }
-  }, [dbSettings, isPending])
+  }, [dbSettings, isPending]);
 
   // テーマ設定（DB保存 + ローカル状態更新）
   const setTheme = useCallback(
     (newTheme: Theme) => {
-      setThemeState(newTheme)
+      setThemeState(newTheme);
       // localStorageにも保存（フォールバック用）
       if (typeof window !== 'undefined') {
-        localStorage.setItem('theme', newTheme)
+        localStorage.setItem('theme', newTheme);
       }
       // DBに保存（認証済みの場合）
-      updateMutation.mutate({ theme: newTheme })
+      updateMutation.mutate({ theme: newTheme });
     },
-    [updateMutation]
-  )
+    [updateMutation],
+  );
 
   // カラースキーム設定（DB保存 + ローカル状態更新）
   const setColorScheme = useCallback(
     (newColorScheme: ColorScheme) => {
-      setColorSchemeState(newColorScheme)
+      setColorSchemeState(newColorScheme);
       // localStorageにも保存（フォールバック用）
       if (typeof window !== 'undefined') {
-        localStorage.setItem('colorScheme', newColorScheme)
+        localStorage.setItem('colorScheme', newColorScheme);
       }
       // DBに保存（認証済みの場合）
-      updateMutation.mutate({ colorScheme: newColorScheme })
+      updateMutation.mutate({ colorScheme: newColorScheme });
     },
-    [updateMutation]
-  )
+    [updateMutation],
+  );
 
   // Handle theme changes
   useEffect(() => {
-    const root = window.document.documentElement
+    const root = window.document.documentElement;
 
     // Remove existing theme classes
-    root.classList.remove('light', 'dark')
+    root.classList.remove('light', 'dark');
 
     // Determine resolved theme
-    let newResolvedTheme: 'light' | 'dark' = 'light'
+    let newResolvedTheme: 'light' | 'dark' = 'light';
 
     if (theme === 'system') {
-      const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-      newResolvedTheme = systemPrefersDark ? 'dark' : 'light'
+      const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      newResolvedTheme = systemPrefersDark ? 'dark' : 'light';
     } else {
-      newResolvedTheme = theme
+      newResolvedTheme = theme;
     }
 
     // Apply theme
-    root.classList.add(newResolvedTheme)
+    root.classList.add(newResolvedTheme);
 
-    setResolvedTheme(newResolvedTheme)
+    setResolvedTheme(newResolvedTheme);
 
     // Apply color scheme CSS variables
-    applyColorScheme(colorScheme, newResolvedTheme)
-  }, [theme, colorScheme])
+    applyColorScheme(colorScheme, newResolvedTheme);
+  }, [theme, colorScheme]);
 
   // Listen for system theme changes
   useEffect(() => {
-    if (theme !== 'system') return
+    if (theme !== 'system') return;
 
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
     const handleChange = () => {
-      const newResolvedTheme = mediaQuery.matches ? 'dark' : 'light'
+      const newResolvedTheme = mediaQuery.matches ? 'dark' : 'light';
 
-      setResolvedTheme(newResolvedTheme)
-      document.documentElement.classList.remove('light', 'dark')
-      document.documentElement.classList.add(newResolvedTheme)
-      applyColorScheme(colorScheme, newResolvedTheme)
-    }
+      setResolvedTheme(newResolvedTheme);
+      document.documentElement.classList.remove('light', 'dark');
+      document.documentElement.classList.add(newResolvedTheme);
+      applyColorScheme(colorScheme, newResolvedTheme);
+    };
 
-    mediaQuery.addEventListener('change', handleChange)
-    return () => mediaQuery.removeEventListener('change', handleChange)
-  }, [theme, colorScheme])
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, [theme, colorScheme]);
 
   return (
     <ThemeContext.Provider
@@ -177,5 +183,5 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
     >
       {children}
     </ThemeContext.Provider>
-  )
-}
+  );
+};

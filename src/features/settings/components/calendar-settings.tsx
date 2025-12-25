@@ -1,27 +1,33 @@
-'use client'
+'use client';
 
-import { useCallback } from 'react'
+import { useCallback } from 'react';
 
-import { Button } from '@/components/ui/button'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Switch } from '@/components/ui/switch'
+import { Button } from '@/components/ui/button';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
 
-import { useUserSettings } from '@/features/settings/hooks/useUserSettings'
-import type { DateFormatType } from '@/features/settings/stores/useCalendarSettingsStore'
-import { formatHour } from '@/features/settings/utils/timezone-utils'
-import { useTranslations } from 'next-intl'
+import { useUserSettings } from '@/features/settings/hooks/useUserSettings';
+import type { DateFormatType } from '@/features/settings/stores/useCalendarSettingsStore';
+import { formatHour } from '@/features/settings/utils/timezone-utils';
+import { useTranslations } from 'next-intl';
 
-import { SettingField } from './fields/SettingField'
-import { SettingsCard } from './SettingsCard'
+import { SettingField } from './fields/SettingField';
+import { SettingsCard } from './SettingsCard';
 
 export function CalendarSettings() {
-  const { settings, saveSettings, isSaving, isPending } = useUserSettings()
-  const t = useTranslations()
+  const { settings, saveSettings, isSaving, isPending } = useUserSettings();
+  const t = useTranslations();
 
   // jsx-no-bind optimization: Reset settings handler
   const handleResetSettings = useCallback(() => {
     if (confirm('カレンダー設定をすべてデフォルトに戻しますか？')) {
-      settings.resetSettings()
+      settings.resetSettings();
       saveSettings({
         timezone: 'Asia/Tokyo',
         timeFormat: '24h',
@@ -32,73 +38,73 @@ export function CalendarSettings() {
         defaultDuration: 60,
         snapInterval: 15,
         businessHours: { start: 9, end: 18 },
-      })
+      });
     }
-  }, [settings, saveSettings])
+  }, [settings, saveSettings]);
 
   // Handler functions
   const handleTimezoneChange = useCallback(
     (value: string) => {
-      saveSettings({ timezone: value })
+      saveSettings({ timezone: value });
     },
-    [saveSettings]
-  )
+    [saveSettings],
+  );
 
   const handleTimeFormatChange = useCallback(
     (value: string) => {
-      saveSettings({ timeFormat: value as '12h' | '24h' })
+      saveSettings({ timeFormat: value as '12h' | '24h' });
     },
-    [saveSettings]
-  )
+    [saveSettings],
+  );
 
   const handleDateFormatChange = useCallback(
     (value: string) => {
-      saveSettings({ dateFormat: value as DateFormatType })
+      saveSettings({ dateFormat: value as DateFormatType });
     },
-    [saveSettings]
-  )
+    [saveSettings],
+  );
 
   const handleWeekStartsOnChange = useCallback(
     (value: string) => {
-      saveSettings({ weekStartsOn: Number(value) as 0 | 1 | 6 })
+      saveSettings({ weekStartsOn: Number(value) as 0 | 1 | 6 });
     },
-    [saveSettings]
-  )
+    [saveSettings],
+  );
 
   const handleShowWeekNumbersChange = useCallback(
     (checked: boolean) => {
-      saveSettings({ showWeekNumbers: checked })
+      saveSettings({ showWeekNumbers: checked });
     },
-    [saveSettings]
-  )
+    [saveSettings],
+  );
 
   const handleShowDeclinedEventsChange = useCallback(
     (checked: boolean) => {
-      saveSettings({ showDeclinedEvents: checked })
+      saveSettings({ showDeclinedEvents: checked });
     },
-    [saveSettings]
-  )
+    [saveSettings],
+  );
 
   const handleDefaultDurationChange = useCallback(
     (value: string) => {
-      saveSettings({ defaultDuration: Number(value) })
+      saveSettings({ defaultDuration: Number(value) });
     },
-    [saveSettings]
-  )
+    [saveSettings],
+  );
 
   const handleSnapIntervalChange = useCallback(
     (value: string) => {
-      saveSettings({ snapInterval: Number(value) as 5 | 10 | 15 | 30 })
+      saveSettings({ snapInterval: Number(value) as 5 | 10 | 15 | 30 });
     },
-    [saveSettings]
-  )
+    [saveSettings],
+  );
 
   const handleDefaultViewChange = useCallback(
     (value: string) => {
-      saveSettings({ defaultView: value as 'day' | '3day' | '5day' | 'week' })
+      saveSettings({ defaultView: value as 'day' | '3day' | '5day' | 'week' });
     },
-    [saveSettings]
-  )
+    [saveSettings],
+  );
 
   const handleBusinessHoursStartChange = useCallback(
     (value: string) => {
@@ -107,10 +113,10 @@ export function CalendarSettings() {
           ...settings.businessHours,
           start: Number(value),
         },
-      })
+      });
     },
-    [saveSettings, settings.businessHours]
-  )
+    [saveSettings, settings.businessHours],
+  );
 
   const handleBusinessHoursEndChange = useCallback(
     (value: string) => {
@@ -119,13 +125,13 @@ export function CalendarSettings() {
           ...settings.businessHours,
           end: Number(value),
         },
-      })
+      });
     },
-    [saveSettings, settings.businessHours]
-  )
+    [saveSettings, settings.businessHours],
+  );
 
   if (isPending) {
-    return <div className="animate-pulse space-y-6">Loading...</div>
+    return <div className="animate-pulse space-y-6">Loading...</div>;
   }
 
   return (
@@ -211,11 +217,17 @@ export function CalendarSettings() {
           </SettingField>
 
           <SettingField label={t('settings.calendar.showWeekNumbers')}>
-            <Switch checked={settings.showWeekNumbers} onCheckedChange={handleShowWeekNumbersChange} />
+            <Switch
+              checked={settings.showWeekNumbers}
+              onCheckedChange={handleShowWeekNumbersChange}
+            />
           </SettingField>
 
           <SettingField label={t('settings.calendar.showDeclinedEvents')}>
-            <Switch checked={settings.showDeclinedEvents} onCheckedChange={handleShowDeclinedEventsChange} />
+            <Switch
+              checked={settings.showDeclinedEvents}
+              onCheckedChange={handleShowDeclinedEventsChange}
+            />
           </SettingField>
         </div>
       </SettingsCard>
@@ -224,7 +236,10 @@ export function CalendarSettings() {
       <SettingsCard title={t('settings.calendar.defaultTaskSettings')} isSaving={isSaving}>
         <div className="space-y-4">
           <SettingField label={t('settings.calendar.defaultDuration')}>
-            <Select value={String(settings.defaultDuration)} onValueChange={handleDefaultDurationChange}>
+            <Select
+              value={String(settings.defaultDuration)}
+              onValueChange={handleDefaultDurationChange}
+            >
               <SelectTrigger>
                 <SelectValue placeholder={t('settings.calendar.selectDuration')} />
               </SelectTrigger>
@@ -258,7 +273,10 @@ export function CalendarSettings() {
       <SettingsCard title={t('settings.calendar.businessHours')} isSaving={isSaving}>
         <div className="space-y-4">
           <SettingField label={t('settings.calendar.businessHoursStart')}>
-            <Select value={String(settings.businessHours.start)} onValueChange={handleBusinessHoursStartChange}>
+            <Select
+              value={String(settings.businessHours.start)}
+              onValueChange={handleBusinessHoursStartChange}
+            >
               <SelectTrigger>
                 <SelectValue placeholder={t('settings.calendar.selectStartTime')} />
               </SelectTrigger>
@@ -273,7 +291,10 @@ export function CalendarSettings() {
           </SettingField>
 
           <SettingField label={t('settings.calendar.businessHoursEnd')}>
-            <Select value={String(settings.businessHours.end)} onValueChange={handleBusinessHoursEndChange}>
+            <Select
+              value={String(settings.businessHours.end)}
+              onValueChange={handleBusinessHoursEndChange}
+            >
               <SelectTrigger>
                 <SelectValue placeholder={t('settings.calendar.selectEndTime')} />
               </SelectTrigger>
@@ -289,7 +310,9 @@ export function CalendarSettings() {
 
           {/* 営業時間プレビュー */}
           <div className="bg-surface-container rounded-lg p-4">
-            <p className="text-muted-foreground mb-2 text-sm">{t('settings.calendar.businessHoursPreview')}</p>
+            <p className="text-muted-foreground mb-2 text-sm">
+              {t('settings.calendar.businessHoursPreview')}
+            </p>
             <p className="font-medium">
               {formatHour(settings.businessHours.start, settings.timeFormat)} -{' '}
               {formatHour(settings.businessHours.end, settings.timeFormat)}
@@ -305,5 +328,5 @@ export function CalendarSettings() {
         </Button>
       </SettingsCard>
     </div>
-  )
+  );
 }

@@ -1,25 +1,30 @@
-'use client'
+'use client';
 
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect } from 'react';
 
-import { Check, ChevronDown } from 'lucide-react'
+import { Check, ChevronDown } from 'lucide-react';
 
-import { buttonVariants } from '@/components/ui/button'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { cn } from '@/lib/utils'
+import { buttonVariants } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { cn } from '@/lib/utils';
 
 export type ViewOption = {
-  value: string
-  label: string
-  icon?: React.ReactNode
-  shortcut?: string
-}
+  value: string;
+  label: string;
+  icon?: React.ReactNode;
+  shortcut?: string;
+};
 
 interface ViewSwitcherProps {
-  options: ViewOption[]
-  currentView: string
-  onChange: (view: string) => void
-  className?: string
+  options: ViewOption[];
+  currentView: string;
+  onChange: (view: string) => void;
+  className?: string;
 }
 
 /**
@@ -30,50 +35,52 @@ interface ViewSwitcherProps {
  * - ボタン: 32px（size: 'sm'、8pxグリッド準拠）
  */
 export const ViewSwitcher = ({ options, currentView, onChange, className }: ViewSwitcherProps) => {
-  const currentOption = options.find((opt) => opt.value === currentView)
+  const currentOption = options.find((opt) => opt.value === currentView);
 
   const handleSelect = useCallback(
     (value: string) => {
-      onChange(value)
+      onChange(value);
     },
-    [onChange]
-  )
+    [onChange],
+  );
 
   // ショートカットキー機能
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       // Ctrl、Alt、Metaキーが押されている場合は無視
       if (event.ctrlKey || event.altKey || event.metaKey) {
-        return
+        return;
       }
 
       // 入力フィールドにフォーカスがある場合は無視
-      const { activeElement } = document
+      const { activeElement } = document;
       if (
         activeElement &&
         (activeElement.tagName === 'INPUT' ||
           activeElement.tagName === 'TEXTAREA' ||
           activeElement.getAttribute('contenteditable') === 'true')
       ) {
-        return
+        return;
       }
 
-      const key = event.key.toUpperCase()
-      const option = options.find((opt) => opt.shortcut?.toUpperCase() === key)
+      const key = event.key.toUpperCase();
+      const option = options.find((opt) => opt.shortcut?.toUpperCase() === key);
 
       if (option && option.value !== currentView) {
-        event.preventDefault()
-        onChange(option.value)
+        event.preventDefault();
+        onChange(option.value);
       }
-    }
+    };
 
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [options, currentView, onChange])
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [options, currentView, onChange]);
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className={cn(buttonVariants({ variant: 'outline' }), 'justify-start gap-0', className)}>
+      <DropdownMenuTrigger
+        className={cn(buttonVariants({ variant: 'outline' }), 'justify-start gap-0', className)}
+      >
         {currentOption?.icon}
         <span>{currentOption?.label || 'Day'}</span>
         <ChevronDown className="ml-2 h-4 w-4" />
@@ -102,5 +109,5 @@ export const ViewSwitcher = ({ options, currentView, onChange, className }: View
         ))}
       </DropdownMenuContent>
     </DropdownMenu>
-  )
-}
+  );
+};

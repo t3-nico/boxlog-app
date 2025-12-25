@@ -1,20 +1,20 @@
-'use client'
+'use client';
 
-import * as Portal from '@radix-ui/react-portal'
-import { Check } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import * as Portal from '@radix-ui/react-portal';
+import { Check } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 
-import { RecurrenceDialog } from './RecurrenceDialog'
+import { RecurrenceDialog } from './RecurrenceDialog';
 
 interface RecurrencePopoverProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  onRepeatTypeChange: (type: string) => void
-  triggerRef: React.RefObject<HTMLElement | null>
-  recurrenceRule: string | null // RRULE文字列
-  onRecurrenceRuleChange: (rrule: string | null) => void
-  placement?: 'bottom' | 'right' | 'left' // ポップアップの表示位置
-  currentValue?: string // 現在の表示値（'毎日', '毎週' など）
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onRepeatTypeChange: (type: string) => void;
+  triggerRef: React.RefObject<HTMLElement | null>;
+  recurrenceRule: string | null; // RRULE文字列
+  onRecurrenceRuleChange: (rrule: string | null) => void;
+  placement?: 'bottom' | 'right' | 'left'; // ポップアップの表示位置
+  currentValue?: string; // 現在の表示値（'毎日', '毎週' など）
 }
 
 export function RecurrencePopover({
@@ -27,66 +27,68 @@ export function RecurrencePopover({
   placement = 'bottom',
   currentValue = '',
 }: RecurrencePopoverProps) {
-  const popoverRef = useRef<HTMLDivElement>(null)
-  const [showCustomDialog, setShowCustomDialog] = useState(false)
-  const [position, setPosition] = useState({ top: 0, left: 0 })
+  const popoverRef = useRef<HTMLDivElement>(null);
+  const [showCustomDialog, setShowCustomDialog] = useState(false);
+  const [position, setPosition] = useState({ top: 0, left: 0 });
 
   // 位置を動的に計算（useEffect内でref参照）
   useEffect(() => {
-    if (!open) return
+    if (!open) return;
 
     // 少し遅延させてrefが確実にセットされるのを待つ
     const timer = setTimeout(() => {
-      if (!triggerRef?.current) return
+      if (!triggerRef?.current) return;
 
-      const rect = triggerRef.current.getBoundingClientRect()
-      const popoverWidth = 192 // w-48 = 12rem = 192px
+      const rect = triggerRef.current.getBoundingClientRect();
+      const popoverWidth = 192; // w-48 = 12rem = 192px
 
       if (placement === 'right') {
         setPosition({
           top: rect.top,
           left: rect.right + 4,
-        })
+        });
       } else if (placement === 'left') {
         setPosition({
           top: rect.top,
           left: rect.left - popoverWidth - 4,
-        })
+        });
       } else {
         setPosition({
           top: rect.bottom + 4,
           left: rect.left,
-        })
+        });
       }
-    }, 0)
+    }, 0);
 
-    return () => clearTimeout(timer)
-  }, [open, triggerRef, placement])
+    return () => clearTimeout(timer);
+  }, [open, triggerRef, placement]);
 
   // 外側クリックで閉じる（カスタムダイアログが開いている時は除外）
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       // カスタムダイアログが開いている場合は何もしない
-      if (showCustomDialog) return
+      if (showCustomDialog) return;
 
-      const clickedTrigger = triggerRef?.current && triggerRef.current.contains(event.target as Node)
-      const clickedPopover = popoverRef.current && popoverRef.current.contains(event.target as Node)
+      const clickedTrigger =
+        triggerRef?.current && triggerRef.current.contains(event.target as Node);
+      const clickedPopover =
+        popoverRef.current && popoverRef.current.contains(event.target as Node);
 
       if (!clickedTrigger && !clickedPopover) {
-        onOpenChange(false)
+        onOpenChange(false);
       }
-    }
+    };
 
     if (open) {
-      document.addEventListener('mousedown', handleClickOutside)
+      document.addEventListener('mousedown', handleClickOutside);
       return () => {
-        document.removeEventListener('mousedown', handleClickOutside)
-      }
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
     }
-    return undefined
-  }, [open, onOpenChange, triggerRef, showCustomDialog])
+    return undefined;
+  }, [open, onOpenChange, triggerRef, showCustomDialog]);
 
-  if (!open) return null
+  if (!open) return null;
 
   return (
     <>
@@ -104,8 +106,8 @@ export function RecurrencePopover({
               <button
                 className="hover:bg-state-hover flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-left text-sm"
                 onClick={() => {
-                  onRepeatTypeChange('')
-                  onOpenChange(false)
+                  onRepeatTypeChange('');
+                  onOpenChange(false);
                 }}
                 type="button"
               >
@@ -116,8 +118,8 @@ export function RecurrencePopover({
               <button
                 className="hover:bg-state-hover flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-left text-sm"
                 onClick={() => {
-                  onRepeatTypeChange('毎日')
-                  onOpenChange(false)
+                  onRepeatTypeChange('毎日');
+                  onOpenChange(false);
                 }}
                 type="button"
               >
@@ -127,8 +129,8 @@ export function RecurrencePopover({
               <button
                 className="hover:bg-state-hover flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-left text-sm"
                 onClick={() => {
-                  onRepeatTypeChange('毎週')
-                  onOpenChange(false)
+                  onRepeatTypeChange('毎週');
+                  onOpenChange(false);
                 }}
                 type="button"
               >
@@ -138,8 +140,8 @@ export function RecurrencePopover({
               <button
                 className="hover:bg-state-hover flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-left text-sm"
                 onClick={() => {
-                  onRepeatTypeChange('毎月')
-                  onOpenChange(false)
+                  onRepeatTypeChange('毎月');
+                  onOpenChange(false);
                 }}
                 type="button"
               >
@@ -149,8 +151,8 @@ export function RecurrencePopover({
               <button
                 className="hover:bg-state-hover flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-left text-sm"
                 onClick={() => {
-                  onRepeatTypeChange('毎年')
-                  onOpenChange(false)
+                  onRepeatTypeChange('毎年');
+                  onOpenChange(false);
                 }}
                 type="button"
               >
@@ -160,8 +162,8 @@ export function RecurrencePopover({
               <button
                 className="hover:bg-state-hover flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-left text-sm"
                 onClick={() => {
-                  onRepeatTypeChange('平日')
-                  onOpenChange(false)
+                  onRepeatTypeChange('平日');
+                  onOpenChange(false);
                 }}
                 type="button"
               >
@@ -172,7 +174,7 @@ export function RecurrencePopover({
               <button
                 className="hover:bg-state-hover flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-left text-sm"
                 onClick={() => {
-                  setShowCustomDialog(true)
+                  setShowCustomDialog(true);
                 }}
                 type="button"
               >
@@ -187,10 +189,10 @@ export function RecurrencePopover({
       <RecurrenceDialog
         open={showCustomDialog}
         onOpenChange={(open) => {
-          setShowCustomDialog(open)
+          setShowCustomDialog(open);
           // ダイアログが閉じたときは RecurrencePopover も閉じる
           if (!open) {
-            onOpenChange(false)
+            onOpenChange(false);
           }
         }}
         value={recurrenceRule}
@@ -199,5 +201,5 @@ export function RecurrencePopover({
         onChange={onRecurrenceRuleChange}
       />
     </>
-  )
+  );
 }

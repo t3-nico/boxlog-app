@@ -5,10 +5,10 @@
  */
 
 // 共通エラーハンドリング
-export { ServiceError, handleServiceError, registerErrorCode } from './errors'
+export { ServiceError, handleServiceError, registerErrorCode } from './errors';
 
 // Plans Service
-export { PlanService, PlanServiceError, createPlanService } from './plans'
+export { PlanService, PlanServiceError, createPlanService } from './plans';
 export type {
   CreatePlanOptions,
   DeletePlanOptions,
@@ -17,10 +17,14 @@ export type {
   PlanRow,
   PlanWithTags,
   UpdatePlanOptions,
-} from './plans'
+} from './plans';
 
 // Notifications Service
-export { NotificationService, NotificationServiceError, createNotificationService } from './notifications'
+export {
+  NotificationService,
+  NotificationServiceError,
+  createNotificationService,
+} from './notifications';
 export type {
   CreateNotificationOptions,
   DeleteNotificationsOptions,
@@ -28,4 +32,4 @@ export type {
   MarkAllAsReadOptions,
   NotificationRow,
   UpdateNotificationOptions,
-} from './notifications'
+} from './notifications';

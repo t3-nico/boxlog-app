@@ -1,7 +1,7 @@
-'use client'
+'use client';
 
-import * as Portal from '@radix-ui/react-portal'
-import { format } from 'date-fns'
+import * as Portal from '@radix-ui/react-portal';
+import { format } from 'date-fns';
 import {
   Bell,
   CheckIcon,
@@ -19,102 +19,106 @@ import {
   Save,
   SquareMousePointer,
   Trash2,
-} from 'lucide-react'
-import { useTranslations } from 'next-intl'
-import { useCallback, useEffect, useRef, useState } from 'react'
+} from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { parseDateString, parseDatetimeString } from '@/features/calendar/utils/dateUtils'
-import { InspectorHeader, type InspectorDisplayMode } from '@/features/inspector'
+import { DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { parseDateString, parseDatetimeString } from '@/features/calendar/utils/dateUtils';
+import { InspectorHeader, type InspectorDisplayMode } from '@/features/inspector';
 
-import { usePlan } from '../../hooks/usePlan'
-import { usePlanTags } from '../../hooks/usePlanTags'
-import { useDeleteConfirmStore } from '../../stores/useDeleteConfirmStore'
-import { usePlanCacheStore } from '../../stores/usePlanCacheStore'
-import { usePlanInspectorStore } from '../../stores/usePlanInspectorStore'
-import type { Plan } from '../../types/plan'
-import { NovelDescriptionEditor } from '../shared/NovelDescriptionEditor'
-import { PlanScheduleSection } from '../shared/PlanScheduleSection'
-import { PlanTagsSection } from '../shared/PlanTagsSection'
-import { ReminderSelect } from '../shared/ReminderSelect'
+import { usePlan } from '../../hooks/usePlan';
+import { usePlanTags } from '../../hooks/usePlanTags';
+import { useDeleteConfirmStore } from '../../stores/useDeleteConfirmStore';
+import { usePlanCacheStore } from '../../stores/usePlanCacheStore';
+import { usePlanInspectorStore } from '../../stores/usePlanInspectorStore';
+import type { Plan } from '../../types/plan';
+import { NovelDescriptionEditor } from '../shared/NovelDescriptionEditor';
+import { PlanScheduleSection } from '../shared/PlanScheduleSection';
+import { PlanTagsSection } from '../shared/PlanTagsSection';
+import { ReminderSelect } from '../shared/ReminderSelect';
 
-import { ActivityTab } from './components'
-import { useInspectorAutoSave, useInspectorNavigation } from './hooks'
+import { ActivityTab } from './components';
+import { useInspectorAutoSave, useInspectorNavigation } from './hooks';
 
 /**
  * Plan Inspectorのコンテンツ部分
  * InspectorShellの中で使用される
  */
 export function PlanInspectorContent() {
-  const t = useTranslations()
-  const planId = usePlanInspectorStore((state) => state.planId)
-  const initialData = usePlanInspectorStore((state) => state.initialData)
-  const closeInspector = usePlanInspectorStore((state) => state.closeInspector)
-  const displayMode = usePlanInspectorStore((state) => state.displayMode) as InspectorDisplayMode
-  const setDisplayMode = usePlanInspectorStore((state) => state.setDisplayMode)
+  const t = useTranslations();
+  const planId = usePlanInspectorStore((state) => state.planId);
+  const initialData = usePlanInspectorStore((state) => state.initialData);
+  const closeInspector = usePlanInspectorStore((state) => state.closeInspector);
+  const displayMode = usePlanInspectorStore((state) => state.displayMode) as InspectorDisplayMode;
+  const setDisplayMode = usePlanInspectorStore((state) => state.setDisplayMode);
 
   // 削除確認ダイアログ（ストア経由で制御）
-  const openDeleteDialog = useDeleteConfirmStore((state) => state.openDialog)
+  const openDeleteDialog = useDeleteConfirmStore((state) => state.openDialog);
 
-  const { data: planData } = usePlan(planId!, { includeTags: true, enabled: !!planId })
-  const plan = (planData ?? null) as unknown as Plan | null
+  const { data: planData } = usePlan(planId!, { includeTags: true, enabled: !!planId });
+  const plan = (planData ?? null) as unknown as Plan | null;
 
   // Custom hooks
-  const { hasPrevious, hasNext, goToPrevious, goToNext } = useInspectorNavigation(planId)
-  const { autoSave, updatePlan, deletePlan } = useInspectorAutoSave({ planId, plan })
+  const { hasPrevious, hasNext, goToPrevious, goToNext } = useInspectorNavigation(planId);
+  const { autoSave, updatePlan, deletePlan } = useInspectorAutoSave({ planId, plan });
 
   // Activity state
-  const [activityOrder, setActivityOrder] = useState<'asc' | 'desc'>('desc')
-  const [isHoveringSort, setIsHoveringSort] = useState(false)
-  const sortButtonRef = useRef<HTMLSpanElement>(null)
-  const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 })
+  const [activityOrder, setActivityOrder] = useState<'asc' | 'desc'>('desc');
+  const [isHoveringSort, setIsHoveringSort] = useState(false);
+  const sortButtonRef = useRef<HTMLSpanElement>(null);
+  const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
 
   // Tags state
-  const [selectedTagIds, setSelectedTagIds] = useState<string[]>([])
-  const { addPlanTag, removePlanTag } = usePlanTags()
+  const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
+  const { addPlanTag, removePlanTag } = usePlanTags();
 
   // UI state
-  const titleRef = useRef<HTMLSpanElement>(null)
-  const descriptionRef = useRef<HTMLTextAreaElement>(null)
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>()
-  const [startTime, setStartTime] = useState('')
-  const [endTime, setEndTime] = useState('')
-  const [reminderType, setReminderType] = useState<string>('')
+  const titleRef = useRef<HTMLSpanElement>(null);
+  const descriptionRef = useRef<HTMLTextAreaElement>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>();
+  const [startTime, setStartTime] = useState('');
+  const [endTime, setEndTime] = useState('');
+  const [reminderType, setReminderType] = useState<string>('');
 
-  const getCache = usePlanCacheStore((state) => state.getCache)
+  const getCache = usePlanCacheStore((state) => state.getCache);
 
   // Sync tags from plan data
   useEffect(() => {
     if (planData && 'tags' in planData) {
-      const tagIds = (planData.tags as Array<{ id: string }>).map((tag) => tag.id)
-      setSelectedTagIds(tagIds)
+      const tagIds = (planData.tags as Array<{ id: string }>).map((tag) => tag.id);
+      setSelectedTagIds(tagIds);
     } else {
-      setSelectedTagIds([])
+      setSelectedTagIds([]);
     }
-  }, [planData])
+  }, [planData]);
 
   // Initialize state from plan data
   useEffect(() => {
     if (plan && 'id' in plan) {
-      setSelectedDate(plan.due_date ? parseDateString(plan.due_date) : undefined)
+      setSelectedDate(plan.due_date ? parseDateString(plan.due_date) : undefined);
 
       if (plan.start_time) {
-        const date = parseDatetimeString(plan.start_time)
-        setStartTime(`${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`)
+        const date = parseDatetimeString(plan.start_time);
+        setStartTime(
+          `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`,
+        );
       } else {
-        setStartTime('')
+        setStartTime('');
       }
 
       if (plan.end_time) {
-        const date = parseDatetimeString(plan.end_time)
-        setEndTime(`${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`)
+        const date = parseDatetimeString(plan.end_time);
+        setEndTime(
+          `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`,
+        );
       } else {
-        setEndTime('')
+        setEndTime('');
       }
 
       if ('reminder_minutes' in plan && plan.reminder_minutes !== null) {
-        const minutes = plan.reminder_minutes
+        const minutes = plan.reminder_minutes;
         const reminderMap: Record<number, string> = {
           0: '開始時刻',
           10: '10分前',
@@ -122,196 +126,196 @@ export function PlanInspectorContent() {
           60: '1時間前',
           1440: '1日前',
           10080: '1週間前',
-        }
-        setReminderType(reminderMap[minutes] || 'カスタム')
+        };
+        setReminderType(reminderMap[minutes] || 'カスタム');
       } else {
-        setReminderType('')
+        setReminderType('');
       }
     } else if (!plan && initialData) {
       if (initialData.start_time) {
-        const startDate = new Date(initialData.start_time)
-        setSelectedDate(startDate)
+        const startDate = new Date(initialData.start_time);
+        setSelectedDate(startDate);
         setStartTime(
-          `${startDate.getHours().toString().padStart(2, '0')}:${startDate.getMinutes().toString().padStart(2, '0')}`
-        )
+          `${startDate.getHours().toString().padStart(2, '0')}:${startDate.getMinutes().toString().padStart(2, '0')}`,
+        );
       }
       if (initialData.end_time) {
-        const endDate = new Date(initialData.end_time)
+        const endDate = new Date(initialData.end_time);
         setEndTime(
-          `${endDate.getHours().toString().padStart(2, '0')}:${endDate.getMinutes().toString().padStart(2, '0')}`
-        )
+          `${endDate.getHours().toString().padStart(2, '0')}:${endDate.getMinutes().toString().padStart(2, '0')}`,
+        );
       }
     } else if (!plan && !initialData) {
-      setSelectedDate(undefined)
-      setStartTime('')
-      setEndTime('')
-      setReminderType('')
+      setSelectedDate(undefined);
+      setStartTime('');
+      setEndTime('');
+      setReminderType('');
     }
-  }, [plan, initialData])
+  }, [plan, initialData]);
 
   // Focus title on open
   useEffect(() => {
     if (titleRef.current) {
       const timer = setTimeout(() => {
-        titleRef.current?.focus()
-        const range = document.createRange()
-        const selection = window.getSelection()
+        titleRef.current?.focus();
+        const range = document.createRange();
+        const selection = window.getSelection();
         if (selection && titleRef.current) {
-          range.selectNodeContents(titleRef.current)
-          selection.removeAllRanges()
-          selection.addRange(range)
+          range.selectNodeContents(titleRef.current);
+          selection.removeAllRanges();
+          selection.addRange(range);
         }
-      }, 100)
-      return () => clearTimeout(timer)
+      }, 100);
+      return () => clearTimeout(timer);
     }
-    return undefined
-  }, [planId])
+    return undefined;
+  }, [planId]);
 
   // Adjust description height
   useEffect(() => {
     if (descriptionRef.current && plan) {
-      const textarea = descriptionRef.current
-      textarea.style.height = 'auto'
-      const newHeight = Math.min(textarea.scrollHeight, 96)
-      textarea.style.height = `${newHeight}px`
+      const textarea = descriptionRef.current;
+      textarea.style.height = 'auto';
+      const newHeight = Math.min(textarea.scrollHeight, 96);
+      textarea.style.height = `${newHeight}px`;
     }
-  }, [plan])
+  }, [plan]);
 
   // Handlers
   // selectedTagIds を ref で保持して最新値を参照可能にする
-  const selectedTagIdsRef = useRef<string[]>(selectedTagIds)
+  const selectedTagIdsRef = useRef<string[]>(selectedTagIds);
   useEffect(() => {
-    selectedTagIdsRef.current = selectedTagIds
-  }, [selectedTagIds])
+    selectedTagIdsRef.current = selectedTagIds;
+  }, [selectedTagIds]);
 
   const handleTagsChange = useCallback(
     async (newTagIds: string[]) => {
-      if (!planId) return
+      if (!planId) return;
 
       // ref から最新の値を取得
-      const oldTagIds = selectedTagIdsRef.current
-      const added = newTagIds.filter((id) => !oldTagIds.includes(id))
-      const removed = oldTagIds.filter((id) => !newTagIds.includes(id))
+      const oldTagIds = selectedTagIdsRef.current;
+      const added = newTagIds.filter((id) => !oldTagIds.includes(id));
+      const removed = oldTagIds.filter((id) => !newTagIds.includes(id));
 
       // 変更がなければスキップ
-      if (added.length === 0 && removed.length === 0) return
+      if (added.length === 0 && removed.length === 0) return;
 
       // 楽観的更新
-      setSelectedTagIds(newTagIds)
-      selectedTagIdsRef.current = newTagIds
+      setSelectedTagIds(newTagIds);
+      selectedTagIdsRef.current = newTagIds;
 
       try {
         // 追加されたタグを処理
         for (const tagId of added) {
-          await addPlanTag(planId, tagId)
+          await addPlanTag(planId, tagId);
         }
         // 削除されたタグを処理
         for (const tagId of removed) {
-          await removePlanTag(planId, tagId)
+          await removePlanTag(planId, tagId);
         }
       } catch (error) {
-        console.error('Failed to update tags:', error)
+        console.error('Failed to update tags:', error);
         // エラー時はロールバック
-        setSelectedTagIds(oldTagIds)
-        selectedTagIdsRef.current = oldTagIds
+        setSelectedTagIds(oldTagIds);
+        selectedTagIdsRef.current = oldTagIds;
       }
     },
-    [planId, addPlanTag, removePlanTag]
-  )
+    [planId, addPlanTag, removePlanTag],
+  );
 
   const handleRemoveTag = useCallback(
     async (tagId: string) => {
-      if (!planId) return
+      if (!planId) return;
 
       // ref から最新の値を取得
-      const oldTagIds = selectedTagIdsRef.current
-      const newTagIds = oldTagIds.filter((id) => id !== tagId)
+      const oldTagIds = selectedTagIdsRef.current;
+      const newTagIds = oldTagIds.filter((id) => id !== tagId);
 
       // 楽観的更新
-      setSelectedTagIds(newTagIds)
-      selectedTagIdsRef.current = newTagIds
+      setSelectedTagIds(newTagIds);
+      selectedTagIdsRef.current = newTagIds;
 
       try {
-        await removePlanTag(planId, tagId)
+        await removePlanTag(planId, tagId);
       } catch (error) {
-        console.error('Failed to remove tag:', error)
+        console.error('Failed to remove tag:', error);
         // エラー時はロールバック
-        setSelectedTagIds(oldTagIds)
-        selectedTagIdsRef.current = oldTagIds
+        setSelectedTagIds(oldTagIds);
+        selectedTagIdsRef.current = oldTagIds;
       }
     },
-    [planId, removePlanTag]
-  )
+    [planId, removePlanTag],
+  );
 
   const handleDelete = useCallback(() => {
-    if (!planId) return
+    if (!planId) return;
     openDeleteDialog(planId, plan?.title ?? null, async () => {
-      await deletePlan.mutateAsync({ id: planId })
-      closeInspector()
-    })
-  }, [planId, plan?.title, openDeleteDialog, deletePlan, closeInspector])
+      await deletePlan.mutateAsync({ id: planId });
+      closeInspector();
+    });
+  }, [planId, plan?.title, openDeleteDialog, deletePlan, closeInspector]);
 
   const handleDateChange = useCallback(
     (date: Date | undefined) => {
-      setSelectedDate(date)
-      autoSave('due_date', date ? format(date, 'yyyy-MM-dd') : undefined)
+      setSelectedDate(date);
+      autoSave('due_date', date ? format(date, 'yyyy-MM-dd') : undefined);
     },
-    [autoSave]
-  )
+    [autoSave],
+  );
 
   const handleStartTimeChange = useCallback(
     (time: string) => {
-      setStartTime(time)
+      setStartTime(time);
       if (time && selectedDate) {
-        const [hours, minutes] = time.split(':').map(Number)
-        const dateTime = new Date(selectedDate)
-        dateTime.setHours(hours ?? 0, minutes ?? 0, 0, 0)
-        autoSave('start_time', dateTime.toISOString())
+        const [hours, minutes] = time.split(':').map(Number);
+        const dateTime = new Date(selectedDate);
+        dateTime.setHours(hours ?? 0, minutes ?? 0, 0, 0);
+        autoSave('start_time', dateTime.toISOString());
       } else {
-        autoSave('start_time', undefined)
+        autoSave('start_time', undefined);
       }
     },
-    [selectedDate, autoSave]
-  )
+    [selectedDate, autoSave],
+  );
 
   const handleEndTimeChange = useCallback(
     (time: string) => {
-      setEndTime(time)
+      setEndTime(time);
       if (time && selectedDate) {
-        const [hours, minutes] = time.split(':').map(Number)
-        const dateTime = new Date(selectedDate)
-        dateTime.setHours(hours ?? 0, minutes ?? 0, 0, 0)
-        autoSave('end_time', dateTime.toISOString())
+        const [hours, minutes] = time.split(':').map(Number);
+        const dateTime = new Date(selectedDate);
+        dateTime.setHours(hours ?? 0, minutes ?? 0, 0, 0);
+        autoSave('end_time', dateTime.toISOString());
       } else {
-        autoSave('end_time', undefined)
+        autoSave('end_time', undefined);
       }
     },
-    [selectedDate, autoSave]
-  )
+    [selectedDate, autoSave],
+  );
 
   // Plan固有のメニューアクション
   const handleCopyId = useCallback(() => {
-    if (planId) navigator.clipboard.writeText(planId)
-  }, [planId])
+    if (planId) navigator.clipboard.writeText(planId);
+  }, [planId]);
 
   const handleOpenInNewTab = useCallback(() => {
-    if (planId) window.open(`/plans/${planId}`, '_blank')
-  }, [planId])
+    if (planId) window.open(`/plans/${planId}`, '_blank');
+  }, [planId]);
 
   const handleDuplicate = useCallback(() => {
-    console.log('Duplicate plan:', plan)
-  }, [plan])
+    console.log('Duplicate plan:', plan);
+  }, [plan]);
 
   const handleCopyLink = useCallback(() => {
     if (planId) {
-      const url = `${window.location.origin}/plans/${planId}`
-      navigator.clipboard.writeText(url)
+      const url = `${window.location.origin}/plans/${planId}`;
+      navigator.clipboard.writeText(url);
     }
-  }, [planId])
+  }, [planId]);
 
   const handleSaveAsTemplate = useCallback(() => {
-    console.log('Save as template:', plan)
-  }, [plan])
+    console.log('Save as template:', plan);
+  }, [plan]);
 
   // Plan固有のメニュー内容
   const menuContent = (
@@ -367,10 +371,10 @@ export function PlanInspectorContent() {
         削除
       </DropdownMenuItem>
     </>
-  )
+  );
 
   // ローディング・空状態はInspectorContentで処理されるので、ここでは通常コンテンツのみ
-  if (!plan) return null
+  if (!plan) return null;
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
@@ -409,25 +413,25 @@ export function PlanInspectorContent() {
                 role="button"
                 tabIndex={0}
                 onClick={(e) => {
-                  e.stopPropagation()
-                  setActivityOrder(activityOrder === 'desc' ? 'asc' : 'desc')
+                  e.stopPropagation();
+                  setActivityOrder(activityOrder === 'desc' ? 'asc' : 'desc');
                 }}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault()
-                    e.stopPropagation()
-                    setActivityOrder(activityOrder === 'desc' ? 'asc' : 'desc')
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setActivityOrder(activityOrder === 'desc' ? 'asc' : 'desc');
                   }
                 }}
                 onMouseEnter={() => {
                   if (sortButtonRef.current) {
-                    const rect = sortButtonRef.current.getBoundingClientRect()
+                    const rect = sortButtonRef.current.getBoundingClientRect();
                     setTooltipPosition({
                       top: rect.top - 8,
                       left: rect.left + rect.width / 2,
-                    })
+                    });
                   }
-                  setIsHoveringSort(true)
+                  setIsHoveringSort(true);
                 }}
                 onMouseLeave={() => setIsHoveringSort(false)}
                 className="hover:bg-state-hover cursor-pointer rounded p-0.5 transition-colors"
@@ -477,7 +481,9 @@ export function PlanInspectorContent() {
               >
                 {plan.title}
               </span>
-              {plan.plan_number && <span className="text-muted-foreground ml-2 text-sm">#{plan.plan_number}</span>}
+              {plan.plan_number && (
+                <span className="text-muted-foreground ml-2 text-sm">#{plan.plan_number}</span>
+              )}
             </div>
           </div>
 
@@ -490,33 +496,40 @@ export function PlanInspectorContent() {
             onStartTimeChange={handleStartTimeChange}
             onEndTimeChange={handleEndTimeChange}
             recurrenceRule={(() => {
-              if (!planId) return null
-              const cache = getCache(planId)
-              return cache?.recurrence_rule !== undefined ? cache.recurrence_rule : (plan?.recurrence_rule ?? null)
+              if (!planId) return null;
+              const cache = getCache(planId);
+              return cache?.recurrence_rule !== undefined
+                ? cache.recurrence_rule
+                : (plan?.recurrence_rule ?? null);
             })()}
             recurrenceType={(() => {
-              if (!planId) return null
-              const cache = getCache(planId)
-              return cache?.recurrence_type !== undefined ? cache.recurrence_type : (plan?.recurrence_type ?? null)
+              if (!planId) return null;
+              const cache = getCache(planId);
+              return cache?.recurrence_type !== undefined
+                ? cache.recurrence_type
+                : (plan?.recurrence_type ?? null);
             })()}
             onRepeatTypeChange={(type) => {
-              if (!planId) return
-              const typeMap: Record<string, 'none' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'weekdays'> = {
+              if (!planId) return;
+              const typeMap: Record<
+                string,
+                'none' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'weekdays'
+              > = {
                 '': 'none',
                 毎日: 'daily',
                 毎週: 'weekly',
                 毎月: 'monthly',
                 毎年: 'yearly',
                 平日: 'weekdays',
-              }
+              };
               updatePlan.mutate({
                 id: planId,
                 data: { recurrence_type: typeMap[type] || 'none', recurrence_rule: null },
-              })
+              });
             }}
             onRecurrenceRuleChange={(rrule) => {
-              if (!planId) return
-              updatePlan.mutate({ id: planId, data: { recurrence_rule: rrule } })
+              if (!planId) return;
+              updatePlan.mutate({ id: planId, data: { recurrence_rule: rrule } });
             }}
             showBorderTop={true}
           />
@@ -552,8 +565,8 @@ export function PlanInspectorContent() {
               <ReminderSelect
                 value={reminderType}
                 onChange={(type) => {
-                  if (!planId) return
-                  setReminderType(type)
+                  if (!planId) return;
+                  setReminderType(type);
                   const reminderMap: Record<string, number | null> = {
                     '': null,
                     開始時刻: 0,
@@ -562,8 +575,11 @@ export function PlanInspectorContent() {
                     '1時間前': 60,
                     '1日前': 1440,
                     '1週間前': 10080,
-                  }
-                  updatePlan.mutate({ id: planId, data: { reminder_minutes: reminderMap[type] ?? null } })
+                  };
+                  updatePlan.mutate({
+                    id: planId,
+                    data: { reminder_minutes: reminderMap[type] ?? null },
+                  });
                 }}
                 variant="inspector"
               />
@@ -580,5 +596,5 @@ export function PlanInspectorContent() {
         </TabsContent>
       </Tabs>
     </div>
-  )
+  );
 }

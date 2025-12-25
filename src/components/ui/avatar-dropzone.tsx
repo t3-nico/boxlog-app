@@ -17,35 +17,35 @@
  * ```
  */
 
-'use client'
+'use client';
 
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react';
 
-import { Camera, Loader2, Trash2, Upload, User } from 'lucide-react'
-import { useTranslations } from 'next-intl'
-import Image from 'next/image'
-import { type FileRejection, useDropzone } from 'react-dropzone'
+import { Camera, Loader2, Trash2, Upload, User } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import Image from 'next/image';
+import { type FileRejection, useDropzone } from 'react-dropzone';
 
-import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 interface AvatarDropzoneProps {
   /** 現在のアバターURL */
-  currentAvatarUrl?: string | null
+  currentAvatarUrl?: string | null;
   /** アップロード時のコールバック */
-  onUpload: (file: File) => Promise<void>
+  onUpload: (file: File) => Promise<void>;
   /** 削除時のコールバック */
-  onRemove?: () => Promise<void>
+  onRemove?: () => Promise<void>;
   /** アップロード中フラグ */
-  isUploading?: boolean
+  isUploading?: boolean;
   /** 最大ファイルサイズ（バイト） */
-  maxFileSize?: number
+  maxFileSize?: number;
   /** サイズ（px） */
-  size?: number
+  size?: number;
   /** 無効化 */
-  disabled?: boolean
+  disabled?: boolean;
   /** クラス名 */
-  className?: string
+  className?: string;
 }
 
 /**
@@ -61,39 +61,39 @@ function AvatarDropzone({
   disabled = false,
   className,
 }: AvatarDropzoneProps) {
-  const t = useTranslations('avatarDropzone')
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
-  const [error, setError] = useState<string | null>(null)
+  const t = useTranslations('avatarDropzone');
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   // 表示するアバターURL（プレビュー優先）
-  const displayUrl = previewUrl || currentAvatarUrl
+  const displayUrl = previewUrl || currentAvatarUrl;
 
   // ファイルドロップ時のハンドラ
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
-      const file = acceptedFiles[0]
-      if (!file) return
+      const file = acceptedFiles[0];
+      if (!file) return;
 
-      setError(null)
+      setError(null);
 
       // プレビュー表示
-      const preview = URL.createObjectURL(file)
-      setPreviewUrl(preview)
+      const preview = URL.createObjectURL(file);
+      setPreviewUrl(preview);
 
       try {
-        await onUpload(file)
+        await onUpload(file);
       } catch (err) {
         // エラー時はプレビューをクリア
-        setPreviewUrl(null)
-        setError(err instanceof Error ? err.message : t('uploadFailed'))
+        setPreviewUrl(null);
+        setError(err instanceof Error ? err.message : t('uploadFailed'));
       } finally {
         // プレビューURLをクリーンアップ
-        URL.revokeObjectURL(preview)
-        setPreviewUrl(null)
+        URL.revokeObjectURL(preview);
+        setPreviewUrl(null);
       }
     },
-    [onUpload, t]
-  )
+    [onUpload, t],
+  );
 
   // Dropzone設定
   const dropzoneOptions = useMemo(
@@ -107,39 +107,39 @@ function AvatarDropzone({
       multiple: false,
       disabled: disabled || isUploading,
       onDropRejected: (rejections: FileRejection[]) => {
-        const rejection = rejections[0]
+        const rejection = rejections[0];
         if (rejection?.errors[0]?.code === 'file-too-large') {
-          setError(t('fileTooLarge', { maxSize: formatBytes(maxFileSize) }))
+          setError(t('fileTooLarge', { maxSize: formatBytes(maxFileSize) }));
         } else if (rejection?.errors[0]?.code === 'file-invalid-type') {
-          setError(t('invalidFileType'))
+          setError(t('invalidFileType'));
         } else {
-          setError(t('uploadFailed'))
+          setError(t('uploadFailed'));
         }
       },
     }),
-    [onDrop, maxFileSize, disabled, isUploading, t]
-  )
+    [onDrop, maxFileSize, disabled, isUploading, t],
+  );
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone(dropzoneOptions)
+  const { getRootProps, getInputProps, isDragActive } = useDropzone(dropzoneOptions);
 
   // 削除ハンドラ
   const handleRemove = useCallback(
     async (e: React.MouseEvent) => {
-      e.stopPropagation()
-      if (!onRemove) return
+      e.stopPropagation();
+      if (!onRemove) return;
 
-      const confirmed = window.confirm(t('deleteConfirm'))
-      if (!confirmed) return
+      const confirmed = window.confirm(t('deleteConfirm'));
+      if (!confirmed) return;
 
-      setError(null)
+      setError(null);
       try {
-        await onRemove()
+        await onRemove();
       } catch (err) {
-        setError(err instanceof Error ? err.message : t('deleteFailed'))
+        setError(err instanceof Error ? err.message : t('deleteFailed'));
       }
     },
-    [onRemove, t]
-  )
+    [onRemove, t],
+  );
 
   return (
     <div className={cn('flex flex-col items-center gap-3', className)}>
@@ -150,7 +150,7 @@ function AvatarDropzone({
             'group relative cursor-pointer rounded-full transition-all duration-200',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
             isDragActive && 'ring-2 ring-primary ring-offset-2',
-            (disabled || isUploading) && 'cursor-not-allowed opacity-50'
+            (disabled || isUploading) && 'cursor-not-allowed opacity-50',
           ),
           style: { width: size, height: size },
         })}
@@ -182,7 +182,7 @@ function AvatarDropzone({
               'border-2 border-dashed transition-colors',
               isDragActive
                 ? 'border-primary bg-primary/10'
-                : 'border-border bg-muted hover:border-primary/50 hover:bg-muted/80'
+                : 'border-border bg-muted hover:border-primary/50 hover:bg-muted/80',
             )}
           >
             {isDragActive ? (
@@ -208,8 +208,8 @@ function AvatarDropzone({
           variant="outline"
           disabled={disabled || isUploading}
           onClick={() => {
-            const input = document.querySelector<HTMLInputElement>('input[type="file"]')
-            input?.click()
+            const input = document.querySelector<HTMLInputElement>('input[type="file"]');
+            input?.click();
           }}
         >
           {isUploading ? (
@@ -240,24 +240,26 @@ function AvatarDropzone({
       </div>
 
       {/* ファイル制限の説明 */}
-      <p className="text-muted-foreground text-xs">{t('fileRequirements', { maxSize: formatBytes(maxFileSize) })}</p>
+      <p className="text-muted-foreground text-xs">
+        {t('fileRequirements', { maxSize: formatBytes(maxFileSize) })}
+      </p>
 
       {/* エラー表示 */}
       {error && <p className="text-destructive text-xs">{error}</p>}
     </div>
-  )
+  );
 }
 
 /**
  * バイト数をフォーマット
  */
 function formatBytes(bytes: number): string {
-  if (bytes === 0) return '0 bytes'
-  const k = 1000
-  const sizes = ['bytes', 'KB', 'MB', 'GB']
-  const i = Math.floor(Math.log(bytes) / Math.log(k))
-  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(0))} ${sizes[i]}`
+  if (bytes === 0) return '0 bytes';
+  const k = 1000;
+  const sizes = ['bytes', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(0))} ${sizes[i]}`;
 }
 
-export { AvatarDropzone }
-export type { AvatarDropzoneProps }
+export { AvatarDropzone };
+export type { AvatarDropzoneProps };

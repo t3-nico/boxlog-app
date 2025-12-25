@@ -2,80 +2,80 @@
  * キーボードショートカット機能を管理するフック
  */
 
-'use client'
+'use client';
 
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect } from 'react';
 
 export interface KeyboardShortcutActions {
-  onEscape?: () => void
-  onEnter?: () => void
-  onSpace?: () => void
-  onDelete?: () => void
-  onArrowUp?: () => void
-  onArrowDown?: () => void
-  onArrowLeft?: () => void
-  onArrowRight?: () => void
+  onEscape?: () => void;
+  onEnter?: () => void;
+  onSpace?: () => void;
+  onDelete?: () => void;
+  onArrowUp?: () => void;
+  onArrowDown?: () => void;
+  onArrowLeft?: () => void;
+  onArrowRight?: () => void;
 }
 
 export interface UseKeyboardShortcutsOptions {
-  isActive?: boolean
-  actions: KeyboardShortcutActions
+  isActive?: boolean;
+  actions: KeyboardShortcutActions;
 }
 
 export function useKeyboardShortcuts(options: UseKeyboardShortcutsOptions) {
-  const { isActive = true, actions } = options
+  const { isActive = true, actions } = options;
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
-      if (!isActive) return
+      if (!isActive) return;
 
       // デフォルト動作を防ぐキー
-      const preventDefaultKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space']
+      const preventDefaultKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space'];
       if (preventDefaultKeys.includes(e.key)) {
-        e.preventDefault()
+        e.preventDefault();
       }
 
       switch (e.key) {
         case 'Escape':
-          actions.onEscape?.()
-          break
+          actions.onEscape?.();
+          break;
         case 'Enter':
-          actions.onEnter?.()
-          break
+          actions.onEnter?.();
+          break;
         case ' ':
         case 'Space':
-          actions.onSpace?.()
-          break
+          actions.onSpace?.();
+          break;
         case 'Delete':
         case 'Backspace':
-          actions.onDelete?.()
-          break
+          actions.onDelete?.();
+          break;
         case 'ArrowUp':
-          actions.onArrowUp?.()
-          break
+          actions.onArrowUp?.();
+          break;
         case 'ArrowDown':
-          actions.onArrowDown?.()
-          break
+          actions.onArrowDown?.();
+          break;
         case 'ArrowLeft':
-          actions.onArrowLeft?.()
-          break
+          actions.onArrowLeft?.();
+          break;
         case 'ArrowRight':
-          actions.onArrowRight?.()
-          break
+          actions.onArrowRight?.();
+          break;
       }
     },
-    [isActive, actions]
-  )
+    [isActive, actions],
+  );
 
   useEffect(() => {
-    if (!isActive) return
+    if (!isActive) return;
 
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [isActive, handleKeyDown])
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isActive, handleKeyDown]);
 
   return {
     // 現在アクティブかどうかの状態を返す
     isActive,
-  }
+  };
 }

@@ -1,16 +1,16 @@
-'use client'
+'use client';
 
 import {
   MobileSettingsButtonGroup,
   MobileSettingsChip,
   MobileSettingsSection,
   MobileSettingsSheet,
-} from '@/components/common'
-import type { PlanStatus } from '@/features/plans/types/plan'
-import { ArrowDownAZ, ArrowUpAZ, Filter, Layers } from 'lucide-react'
-import { useTranslations } from 'next-intl'
-import { useBoardStatusFilterStore } from '../stores/useBoardStatusFilterStore'
-import { useKanbanStore } from '../stores/useKanbanStore'
+} from '@/components/common';
+import type { PlanStatus } from '@/features/plans/types/plan';
+import { ArrowDownAZ, ArrowUpAZ, Filter, Layers } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { useBoardStatusFilterStore } from '../stores/useBoardStatusFilterStore';
+import { useKanbanStore } from '../stores/useKanbanStore';
 
 /**
  * ステータス選択肢
@@ -19,7 +19,7 @@ const STATUS_OPTIONS: Array<{ value: PlanStatus; label: string }> = [
   { value: 'todo', label: 'Todo' },
   { value: 'doing', label: 'Doing' },
   { value: 'done', label: 'Done' },
-]
+];
 
 /**
  * 優先度フィルター選択肢
@@ -29,7 +29,7 @@ const PRIORITY_OPTIONS = [
   { value: 'low', label: '低' },
   { value: 'medium', label: '中' },
   { value: 'high', label: '高' },
-] as const
+] as const;
 
 /**
  * ソート選択肢
@@ -43,7 +43,7 @@ const SORT_OPTIONS = [
   { value: 'priority-asc', label: '優先度（低い順）' },
   { value: 'title-asc', label: 'タイトル（A→Z）' },
   { value: 'title-desc', label: 'タイトル（Z→A）' },
-] as const
+] as const;
 
 /**
  * モバイル用ボード設定シート
@@ -59,27 +59,31 @@ const SORT_OPTIONS = [
  * ```
  */
 export function MobileBoardSettingsSheet() {
-  const t = useTranslations()
+  const t = useTranslations();
 
   // カラム表示設定
-  const { visibleStatuses, toggleStatus, resetFilters: resetStatusFilters } = useBoardStatusFilterStore()
+  const {
+    visibleStatuses,
+    toggleStatus,
+    resetFilters: resetStatusFilters,
+  } = useBoardStatusFilterStore();
 
   // フィルター・ソート
-  const { filter, setFilter, clearFilter, sort, setSort } = useKanbanStore()
+  const { filter, setFilter, clearFilter, sort, setSort } = useKanbanStore();
 
   // アクティブな設定があるかどうか
   const hasActiveSettings =
     visibleStatuses.size < 3 || // 一部カラムが非表示
     Object.keys(filter).length > 0 || // フィルターがある
     sort.key !== 'createdAt' ||
-    sort.order !== 'desc' // デフォルトソートと異なる
+    sort.order !== 'desc'; // デフォルトソートと異なる
 
   // 全てリセット
   const handleResetAll = () => {
-    resetStatusFilters()
-    clearFilter()
-    setSort({ key: 'createdAt', order: 'desc' })
-  }
+    resetStatusFilters();
+    clearFilter();
+    setSort({ key: 'createdAt', order: 'desc' });
+  };
 
   return (
     <MobileSettingsSheet
@@ -111,7 +115,9 @@ export function MobileBoardSettingsSheet() {
             label: opt.label,
           }))}
           value={filter.priority ?? null}
-          onValueChange={(value) => setFilter({ priority: value as 'low' | 'medium' | 'high' | undefined })}
+          onValueChange={(value) =>
+            setFilter({ priority: value as 'low' | 'medium' | 'high' | undefined })
+          }
         />
       </MobileSettingsSection>
 
@@ -123,8 +129,8 @@ export function MobileBoardSettingsSheet() {
       >
         <div className="flex flex-wrap gap-2">
           {SORT_OPTIONS.map((option) => {
-            const [key, order] = option.value.split('-') as [typeof sort.key, typeof sort.order]
-            const isActive = sort.key === key && sort.order === order
+            const [key, order] = option.value.split('-') as [typeof sort.key, typeof sort.order];
+            const isActive = sort.key === key && sort.order === order;
             return (
               <MobileSettingsChip
                 key={option.value}
@@ -133,10 +139,10 @@ export function MobileBoardSettingsSheet() {
                 checked={isActive}
                 onCheckedChange={() => setSort({ key, order })}
               />
-            )
+            );
           })}
         </div>
       </MobileSettingsSection>
     </MobileSettingsSheet>
-  )
+  );
 }

@@ -1,6 +1,6 @@
-'use client'
+'use client';
 
-import { useCallback, useState } from 'react'
+import { useCallback, useState } from 'react';
 
 import {
   ChevronDown as ChevronDownIcon,
@@ -12,35 +12,35 @@ import {
   Plus as PlusIcon,
   Tag as TagIcon,
   Trash2 as TrashIcon,
-} from 'lucide-react'
+} from 'lucide-react';
 
-import { Button } from '@/components/ui/button'
-import { DEFAULT_TAG_COLOR } from '@/config/ui/colors'
-import { useTagStore } from '@/features/tags/stores/useTagStore'
-import { Tag } from '@/features/tags/types'
-import { useActiveState } from '@/hooks/useActiveState'
-import { tagIconMapping, TagIconName } from '../constants/icons'
+import { Button } from '@/components/ui/button';
+import { DEFAULT_TAG_COLOR } from '@/config/ui/colors';
+import { useTagStore } from '@/features/tags/stores/useTagStore';
+import { Tag } from '@/features/tags/types';
+import { useActiveState } from '@/hooks/useActiveState';
+import { tagIconMapping, TagIconName } from '../constants/icons';
 
-import { TagDeleteDialog } from './TagDeleteDialog'
-import { TagEditDialog } from './tag-edit-dialog'
+import { TagDeleteDialog } from './TagDeleteDialog';
+import { TagEditDialog } from './tag-edit-dialog';
 
 interface TagsListProps {
-  collapsed?: boolean
-  onSelectTag?: (tagId: string) => void
-  selectedTagIds?: string[]
+  collapsed?: boolean;
+  onSelectTag?: (tagId: string) => void;
+  selectedTagIds?: string[];
 }
 
 interface TagItemProps {
-  tag: Tag
-  level: number
-  isExpanded: boolean
-  isSelected: boolean
-  isCollapsed: boolean
-  hasChildren: boolean
-  onToggleExpanded: (tagId: string) => void
-  onSelectTag: (tagId: string) => void
-  onEditTag: (tag: Tag) => void
-  onDeleteTag: (tag: Tag) => void
+  tag: Tag;
+  level: number;
+  isExpanded: boolean;
+  isSelected: boolean;
+  isCollapsed: boolean;
+  hasChildren: boolean;
+  onToggleExpanded: (tagId: string) => void;
+  onSelectTag: (tagId: string) => void;
+  onEditTag: (tag: Tag) => void;
+  onDeleteTag: (tag: Tag) => void;
 }
 
 const TagItem = ({
@@ -55,76 +55,76 @@ const TagItem = ({
   onEditTag,
   onDeleteTag,
 }: TagItemProps) => {
-  const [showMenu, setShowMenu] = useState(false)
-  const [isHovered, setIsHovered] = useState(false)
-  const { isTagActive } = useActiveState()
+  const [showMenu, setShowMenu] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const { isTagActive } = useActiveState();
 
-  const isActive = isTagActive(tag.id)
-  const paddingLeft = level === 0 ? 8 : level * 16 + 16 // 階層インデント調整（トップレベルにも8px追加）
+  const isActive = isTagActive(tag.id);
+  const paddingLeft = level === 0 ? 8 : level * 16 + 16; // 階層インデント調整（トップレベルにも8px追加）
 
   const handleToggleExpanded = useCallback(
     (e: React.MouseEvent) => {
-      e.preventDefault()
-      e.stopPropagation()
+      e.preventDefault();
+      e.stopPropagation();
       if (hasChildren) {
-        onToggleExpanded(tag.id)
+        onToggleExpanded(tag.id);
       }
     },
-    [hasChildren, onToggleExpanded, tag.id]
-  )
+    [hasChildren, onToggleExpanded, tag.id],
+  );
 
   const handleSelectTag = useCallback(() => {
-    onSelectTag(tag.id)
-    setShowMenu(false)
-  }, [onSelectTag, tag.id])
+    onSelectTag(tag.id);
+    setShowMenu(false);
+  }, [onSelectTag, tag.id]);
 
   // jsx-no-bind optimization handlers
-  const handleMouseEnter = useCallback(() => setIsHovered(true), [])
-  const handleMouseLeave = useCallback(() => setIsHovered(false), [])
+  const handleMouseEnter = useCallback(() => setIsHovered(true), []);
+  const handleMouseLeave = useCallback(() => setIsHovered(false), []);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
       if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault()
-        handleSelectTag()
+        e.preventDefault();
+        handleSelectTag();
       }
     },
-    [handleSelectTag]
-  )
+    [handleSelectTag],
+  );
 
   const handleContextMenu = useCallback(
     (e: React.MouseEvent) => {
-      e.preventDefault()
-      setShowMenu(!showMenu)
+      e.preventDefault();
+      setShowMenu(!showMenu);
     },
-    [showMenu]
-  )
+    [showMenu],
+  );
 
   const handleMenuButtonClick = useCallback(
     (e: React.MouseEvent) => {
-      e.stopPropagation()
-      setShowMenu(!showMenu)
+      e.stopPropagation();
+      setShowMenu(!showMenu);
     },
-    [showMenu]
-  )
+    [showMenu],
+  );
 
   const handleEditTag = useCallback(
     (e: React.MouseEvent) => {
-      e.stopPropagation()
-      onEditTag(tag)
-      setShowMenu(false)
+      e.stopPropagation();
+      onEditTag(tag);
+      setShowMenu(false);
     },
-    [onEditTag, tag]
-  )
+    [onEditTag, tag],
+  );
 
   const handleDeleteTag = useCallback(
     (e: React.MouseEvent) => {
-      e.stopPropagation()
-      onDeleteTag(tag)
-      setShowMenu(false)
+      e.stopPropagation();
+      onDeleteTag(tag);
+      setShowMenu(false);
     },
-    [onDeleteTag, tag]
-  )
+    [onDeleteTag, tag],
+  );
 
   return (
     <div className="space-y-2">
@@ -170,7 +170,7 @@ const TagItem = ({
                 : FolderIcon
               : tag.icon && tagIconMapping[tag.icon as TagIconName]
                 ? tagIconMapping[tag.icon as TagIconName]
-                : TagIcon
+                : TagIcon;
             return (
               <div
                 className="relative"
@@ -186,7 +186,7 @@ const TagItem = ({
                   }
                 />
               </div>
-            )
+            );
           })()}
 
           {/* タグ名 */}
@@ -196,7 +196,9 @@ const TagItem = ({
                 {tag.name}
               </span>
               {/* アクティブドット */}
-              {isActive ? <div className="bg-primary h-2 w-2 animate-pulse rounded-full"></div> : null}
+              {isActive ? (
+                <div className="bg-primary h-2 w-2 animate-pulse rounded-full"></div>
+              ) : null}
             </div>
           )}
         </div>
@@ -244,19 +246,25 @@ const TagItem = ({
 
       {/* 子タグは親コンポーネントで管理 */}
     </div>
-  )
-}
+  );
+};
 
-export const TagsList = ({ collapsed = false, onSelectTag = () => {}, selectedTagIds = [] }: TagsListProps) => {
-  const [isExpanded, setIsExpanded] = useState(false)
+export const TagsList = ({
+  collapsed = false,
+  onSelectTag = () => {},
+  selectedTagIds = [],
+}: TagsListProps) => {
+  const [isExpanded, setIsExpanded] = useState(false);
 
   // Zustandストアからデータを取得
-  const tags = useTagStore((state) => state.tags)
+  const tags = useTagStore((state) => state.tags);
   // State management tracked in Issue #89
-  const [_expandedTags, setExpandedTags] = useState<string[]>([])
+  const [_expandedTags, setExpandedTags] = useState<string[]>([]);
   const toggleTagExpansion = useCallback((tagId: string) => {
-    setExpandedTags((prev) => (prev.includes(tagId) ? prev.filter((id) => id !== tagId) : [...prev, tagId]))
-  }, [])
+    setExpandedTags((prev) =>
+      prev.includes(tagId) ? prev.filter((id) => id !== tagId) : [...prev, tagId],
+    );
+  }, []);
 
   // 表示するタグリストを計算（フラット構造）
   const displayTags = useCallback(() => {
@@ -265,72 +273,72 @@ export const TagsList = ({ collapsed = false, onSelectTag = () => {}, selectedTa
       level: 0,
       hasChildren: false,
       isExpanded: false,
-    }))
-  }, [tags])
+    }));
+  }, [tags]);
 
   const handleToggleExpanded = useCallback(
     (tagId: string) => {
-      toggleTagExpansion(tagId)
+      toggleTagExpansion(tagId);
     },
-    [toggleTagExpansion]
-  )
+    [toggleTagExpansion],
+  );
 
-  const [editingTag, setEditingTag] = useState<Tag | null>(null)
-  const [deletingTag, setDeletingTag] = useState<Tag | null>(null)
-  const updateTag = useTagStore((state) => state.updateTag)
-  const deleteTag = useTagStore((state) => state.deleteTag)
+  const [editingTag, setEditingTag] = useState<Tag | null>(null);
+  const [deletingTag, setDeletingTag] = useState<Tag | null>(null);
+  const updateTag = useTagStore((state) => state.updateTag);
+  const deleteTag = useTagStore((state) => state.deleteTag);
 
   const handleEditTag = useCallback((tag: Tag) => {
-    setEditingTag(tag)
-  }, [])
+    setEditingTag(tag);
+  }, []);
 
   const handleDeleteTag = useCallback((tag: Tag) => {
-    setDeletingTag(tag)
-  }, [])
+    setDeletingTag(tag);
+  }, []);
 
   const handleConfirmDelete = useCallback(async () => {
-    if (!deletingTag) return
-    deleteTag(deletingTag.id)
-    setDeletingTag(null)
-  }, [deletingTag, deleteTag])
+    if (!deletingTag) return;
+    deleteTag(deletingTag.id);
+    setDeletingTag(null);
+  }, [deletingTag, deleteTag]);
 
   const handleCloseDeleteDialog = useCallback(() => {
-    setDeletingTag(null)
-  }, [])
+    setDeletingTag(null);
+  }, []);
 
   const handleSaveTag = useCallback(
     (updatedTag: Partial<Tag>) => {
-      if (!editingTag) return
+      if (!editingTag) return;
 
       updateTag(editingTag.id, {
         name: updatedTag.name,
         color: updatedTag.color,
         icon: updatedTag.icon,
-      })
-      setEditingTag(null)
+      });
+      setEditingTag(null);
     },
-    [editingTag, updateTag]
-  )
+    [editingTag, updateTag],
+  );
 
   // jsx-no-bind optimization handlers
   const handleToggleExpansion = useCallback(() => {
-    setIsExpanded(!isExpanded)
-  }, [isExpanded])
+    setIsExpanded(!isExpanded);
+  }, [isExpanded]);
 
   const handleCreateNewTag = useCallback(() => {
     // タグ作成処理は親コンポーネントで実装
-  }, [])
+  }, []);
 
   const handleCreateNewTagCollapsed = useCallback(() => {
     // タグ作成処理は親コンポーネントで実装
-  }, [])
+  }, []);
 
   const handleCloseEditDialog = useCallback(() => {
-    setEditingTag(null)
-  }, [])
+    setEditingTag(null);
+  }, []);
 
   if (collapsed) {
-    return null
+    return null;
   }
 
   return (
@@ -409,10 +417,19 @@ export const TagsList = ({ collapsed = false, onSelectTag = () => {}, selectedTa
       )}
 
       {/* タグ編集ダイアログ */}
-      <TagEditDialog tag={editingTag} open={!!editingTag} onClose={handleCloseEditDialog} onSave={handleSaveTag} />
+      <TagEditDialog
+        tag={editingTag}
+        open={!!editingTag}
+        onClose={handleCloseEditDialog}
+        onSave={handleSaveTag}
+      />
 
       {/* タグ削除ダイアログ（使用状況チェック付き） */}
-      <TagDeleteDialog tag={deletingTag} onClose={handleCloseDeleteDialog} onConfirm={handleConfirmDelete} />
+      <TagDeleteDialog
+        tag={deletingTag}
+        onClose={handleCloseDeleteDialog}
+        onConfirm={handleConfirmDelete}
+      />
     </div>
-  )
-}
+  );
+};

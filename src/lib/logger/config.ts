@@ -4,7 +4,7 @@
  * 環境別デフォルト設定・設定ユーティリティ
  */
 
-import type { LoggerConfig } from './types'
+import type { LoggerConfig } from './types';
 
 /**
  * 基本設定
@@ -40,7 +40,7 @@ export const DEFAULT_CONFIG: LoggerConfig = {
     excludeComponents: [],
     samplingRate: 1.0,
   },
-}
+};
 
 /**
  * 開発環境設定
@@ -57,7 +57,7 @@ export const DEVELOPMENT_CONFIG: LoggerConfig = {
     ...DEFAULT_CONFIG.metadata,
     includeMemory: true,
   },
-}
+};
 
 /**
  * 本番環境設定
@@ -83,7 +83,7 @@ export const PRODUCTION_CONFIG: LoggerConfig = {
     includeHostname: true,
     includeProcessId: true,
   },
-}
+};
 
 /**
  * ステージング環境設定
@@ -103,20 +103,22 @@ export const STAGING_CONFIG: LoggerConfig = {
     ...DEFAULT_CONFIG.metadata,
     includeHostname: true,
   },
-}
+};
 
 /**
  * 環境別デフォルト設定を取得
  */
-export function getDefaultConfig(environment: string = process.env.NODE_ENV || 'development'): LoggerConfig {
+export function getDefaultConfig(
+  environment: string = process.env.NODE_ENV || 'development',
+): LoggerConfig {
   switch (environment) {
     case 'development':
-      return DEVELOPMENT_CONFIG
+      return DEVELOPMENT_CONFIG;
     case 'production':
-      return PRODUCTION_CONFIG
+      return PRODUCTION_CONFIG;
     case 'staging':
-      return STAGING_CONFIG
+      return STAGING_CONFIG;
     default:
-      return DEFAULT_CONFIG
+      return DEFAULT_CONFIG;
   }
 }

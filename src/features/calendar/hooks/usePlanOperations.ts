@@ -1,32 +1,32 @@
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect } from 'react';
 
-import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
-import { logger } from '@/lib/logger'
-import type { CalendarPlan } from '../types/calendar.types'
+import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
+import { logger } from '@/lib/logger';
+import type { CalendarPlan } from '../types/calendar.types';
 
 /**
  * プラン操作（CRUD）を提供するフック
  * プランの削除、復元、更新、自動クリーンアップを管理
  */
 export const usePlanOperations = () => {
-  const { updatePlan, deletePlan } = usePlanMutations()
+  const { updatePlan, deletePlan } = usePlanMutations();
 
   // プラン削除ハンドラー
   const handlePlanDelete = useCallback(
     async (planId: string) => {
       try {
-        deletePlan.mutate({ id: planId })
+        deletePlan.mutate({ id: planId });
       } catch (error) {
-        logger.error('プラン削除に失敗:', error)
+        logger.error('プラン削除に失敗:', error);
       }
     },
-    [deletePlan]
-  )
+    [deletePlan],
+  );
 
   // プラン復元ハンドラー
   const handlePlanRestore = useCallback(async (_plan: CalendarPlan) => {
     // noop - planにはソフトデリート機能がないため、復元は未実装
-  }, [])
+  }, []);
 
   // プラン更新ハンドラー（ドラッグ&ドロップ用）
   const handleUpdatePlan = useCallback(
@@ -34,7 +34,7 @@ export const usePlanOperations = () => {
       try {
         // ドラッグ&ドロップからの呼び出し（planId + updates形式）
         if (typeof planIdOrPlan === 'string' && updates) {
-          const planId = planIdOrPlan
+          const planId = planIdOrPlan;
 
           updatePlan.mutate({
             id: planId,
@@ -42,23 +42,23 @@ export const usePlanOperations = () => {
               start_time: updates.startTime.toISOString(),
               end_time: updates.endTime.toISOString(),
             },
-          })
+          });
         }
         // CalendarPlanオブジェクト形式
         else if (typeof planIdOrPlan === 'object') {
-          const updatedPlan = planIdOrPlan
+          const updatedPlan = planIdOrPlan;
 
           // startDateがnullの場合は早期リターン
           if (!updatedPlan.startDate) {
-            logger.error('❌ startDateがnullのため更新できません:', updatedPlan.id)
-            return
+            logger.error('❌ startDateがnullのため更新できません:', updatedPlan.id);
+            return;
           }
 
           logger.log('🔧 プラン更新 (CalendarPlan形式):', {
             planId: updatedPlan.id,
             newStartDate: updatedPlan.startDate.toISOString(),
             newEndDate: updatedPlan.endDate?.toISOString(),
-          })
+          });
 
           updatePlan.mutate({
             id: updatedPlan.id,
@@ -66,23 +66,23 @@ export const usePlanOperations = () => {
               start_time: updatedPlan.startDate.toISOString(),
               end_time: updatedPlan.endDate?.toISOString(),
             },
-          })
+          });
         }
       } catch (error) {
-        logger.error('プラン更新に失敗:', error)
+        logger.error('プラン更新に失敗:', error);
       }
     },
-    [updatePlan]
-  )
+    [updatePlan],
+  );
 
   // 30日経過したプランを自動削除
   useEffect(() => {
     // noop - Plans統合後に実装予定
-  }, [])
+  }, []);
 
   return {
     handlePlanDelete,
     handlePlanRestore,
     handleUpdatePlan,
-  }
-}
+  };
+};

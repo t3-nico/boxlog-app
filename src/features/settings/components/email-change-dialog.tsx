@@ -1,10 +1,10 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
+import { useState } from 'react';
 
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'next-intl';
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -12,41 +12,41 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { createClient } from '@/lib/supabase/client'
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { createClient } from '@/lib/supabase/client';
 
 interface EmailChangeDialogProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  currentEmail: string
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  currentEmail: string;
 }
 
 export function EmailChangeDialog({ open, onOpenChange, currentEmail }: EmailChangeDialogProps) {
-  const t = useTranslations()
-  const [newEmail, setNewEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
+  const t = useTranslations();
+  const [newEmail, setNewEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
 
-  const supabase = createClient()
+  const supabase = createClient();
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError(null)
-    setIsLoading(true)
+    e.preventDefault();
+    setError(null);
+    setIsLoading(true);
 
     try {
       // 1. パスワード確認（現在のメールアドレスで再認証）
       const { error: signInError } = await supabase.auth.signInWithPassword({
         email: currentEmail,
         password,
-      })
+      });
 
       if (signInError) {
-        throw new Error(t('errors.auth.wrongPassword'))
+        throw new Error(t('errors.auth.wrongPassword'));
       }
 
       // 2. メールアドレス更新（確認メール送信）
@@ -54,29 +54,29 @@ export function EmailChangeDialog({ open, onOpenChange, currentEmail }: EmailCha
         { email: newEmail },
         {
           emailRedirectTo: `${window.location.origin}/auth/callback`,
-        }
-      )
+        },
+      );
 
       if (updateError) {
-        throw new Error(`${t('errors.auth.emailUpdateFailed')}: ${updateError.message}`)
+        throw new Error(`${t('errors.auth.emailUpdateFailed')}: ${updateError.message}`);
       }
 
       // 成功
-      setSuccess(true)
+      setSuccess(true);
     } catch (err) {
-      setError(err instanceof Error ? err.message : t('errors.generic'))
+      setError(err instanceof Error ? err.message : t('errors.generic'));
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleClose = () => {
-    setNewEmail('')
-    setPassword('')
-    setError(null)
-    setSuccess(false)
-    onOpenChange(false)
-  }
+    setNewEmail('');
+    setPassword('');
+    setError(null);
+    setSuccess(false);
+    onOpenChange(false);
+  };
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
@@ -84,7 +84,9 @@ export function EmailChangeDialog({ open, onOpenChange, currentEmail }: EmailCha
         <DialogHeader>
           <DialogTitle>メールアドレスを変更</DialogTitle>
           <DialogDescription>
-            {success ? '確認メールを送信しました' : '新しいメールアドレスとパスワードを入力してください'}
+            {success
+              ? '確認メールを送信しました'
+              : '新しいメールアドレスとパスワードを入力してください'}
           </DialogDescription>
         </DialogHeader>
 
@@ -104,7 +106,13 @@ export function EmailChangeDialog({ open, onOpenChange, currentEmail }: EmailCha
             <div className="space-y-4 py-4">
               <div className="space-y-2">
                 <Label htmlFor="current-email">現在のメールアドレス</Label>
-                <Input id="current-email" type="email" value={currentEmail} disabled className="bg-surface-container" />
+                <Input
+                  id="current-email"
+                  type="email"
+                  value={currentEmail}
+                  disabled
+                  className="bg-surface-container"
+                />
               </div>
 
               <div className="space-y-2">
@@ -136,7 +144,11 @@ export function EmailChangeDialog({ open, onOpenChange, currentEmail }: EmailCha
                 />
               </div>
 
-              {error && <div className="bg-destructive/12 text-destructive rounded-md p-3 text-sm">{error}</div>}
+              {error && (
+                <div className="bg-destructive/12 text-destructive rounded-md p-3 text-sm">
+                  {error}
+                </div>
+              )}
             </div>
 
             <DialogFooter>
@@ -157,5 +169,5 @@ export function EmailChangeDialog({ open, onOpenChange, currentEmail }: EmailCha
         )}
       </DialogContent>
     </Dialog>
-  )
+  );
 }

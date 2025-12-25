@@ -1,28 +1,28 @@
-'use client'
+'use client';
 
-import { useCallback } from 'react'
+import { useCallback } from 'react';
 
-import { Calendar, Plus, Settings, User } from 'lucide-react'
+import { Calendar, Plus, Settings, User } from 'lucide-react';
 
-import { cn } from '@/lib/utils'
-import { useTranslations } from 'next-intl'
+import { cn } from '@/lib/utils';
+import { useTranslations } from 'next-intl';
 
 export type MobileNavItem = {
-  id: string
-  label: string
-  icon: React.ReactNode
-  badge?: number
-  onClick?: () => void
-  disabled?: boolean
-}
+  id: string;
+  label: string;
+  icon: React.ReactNode;
+  badge?: number;
+  onClick?: () => void;
+  disabled?: boolean;
+};
 
 interface MobileNavigationProps {
-  items?: MobileNavItem[]
-  activeItem?: string
-  onItemClick?: (itemId: string) => void
-  showAddButton?: boolean
-  onAddClick?: () => void
-  className?: string
+  items?: MobileNavItem[];
+  activeItem?: string;
+  onItemClick?: (itemId: string) => void;
+  showAddButton?: boolean;
+  onAddClick?: () => void;
+  className?: string;
 }
 
 /**
@@ -37,7 +37,7 @@ export const MobileNavigation = ({
   onAddClick,
   className,
 }: MobileNavigationProps) => {
-  const t = useTranslations()
+  const t = useTranslations();
 
   const defaultItems: MobileNavItem[] = [
     {
@@ -55,26 +55,26 @@ export const MobileNavigation = ({
       label: t('calendar.mobile.navigation.settings'),
       icon: <Settings className="h-5 w-5" />,
     },
-  ]
+  ];
 
-  const navItems = items ?? defaultItems
+  const navItems = items ?? defaultItems;
 
   const handleItemClick = useCallback(
     (item: MobileNavItem) => {
-      if (item.disabled) return
-      item.onClick?.()
-      onItemClick?.(item.id)
+      if (item.disabled) return;
+      item.onClick?.();
+      onItemClick?.(item.id);
     },
-    [onItemClick]
-  )
+    [onItemClick],
+  );
 
   // Dynamic click handler
   const createItemClickHandler = useCallback(
     (item: MobileNavItem) => {
-      return () => handleItemClick(item)
+      return () => handleItemClick(item);
     },
-    [handleItemClick]
-  )
+    [handleItemClick],
+  );
 
   return (
     <nav
@@ -82,7 +82,7 @@ export const MobileNavigation = ({
         'fixed right-0 bottom-0 left-0 z-50',
         'bg-background/95 border-border border-t backdrop-blur-sm',
         'safe-area-inset-bottom', // iOS SafeArea対応
-        className
+        className,
       )}
     >
       <div className="pb-safe relative flex items-center justify-around px-2 py-2">
@@ -97,7 +97,9 @@ export const MobileNavigation = ({
               'h-12 min-w-16 rounded-xl px-2 py-1',
               'transition-colors duration-200',
               'disabled:cursor-not-allowed disabled:opacity-50',
-              activeItem === item.id ? 'text-primary bg-primary/10' : 'text-muted-foreground hover:bg-state-hover'
+              activeItem === item.id
+                ? 'text-primary bg-primary/10'
+                : 'text-muted-foreground hover:bg-state-hover',
             )}
           >
             {/* アイコン */}
@@ -132,7 +134,7 @@ export const MobileNavigation = ({
               'rounded-full shadow-lg hover:shadow-xl',
               'flex items-center justify-center',
               'transition-all duration-200 hover:scale-105',
-              'border-background border-4'
+              'border-background border-4',
             )}
             aria-label={t('calendar.mobile.navigation.createEvent')}
           >
@@ -141,5 +143,5 @@ export const MobileNavigation = ({
         )}
       </div>
     </nav>
-  )
-}
+  );
+};

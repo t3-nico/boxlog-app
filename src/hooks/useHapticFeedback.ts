@@ -1,7 +1,7 @@
-'use client'
+'use client';
 
-import { useCallback, useMemo } from 'react'
-import { useReducedMotion } from './useReducedMotion'
+import { useCallback, useMemo } from 'react';
+import { useReducedMotion } from './useReducedMotion';
 
 /**
  * Haptic Feedback（触覚フィードバック）フック
@@ -20,17 +20,17 @@ import { useReducedMotion } from './useReducedMotion'
  * ```
  */
 export function useHapticFeedback() {
-  const prefersReducedMotion = useReducedMotion()
+  const prefersReducedMotion = useReducedMotion();
 
   /**
    * Vibration APIが利用可能かチェック
    * prefers-reduced-motionの場合は無効化
    */
   const isSupported = useMemo(() => {
-    if (typeof window === 'undefined') return false
-    if (prefersReducedMotion) return false
-    return 'vibrate' in navigator
-  }, [prefersReducedMotion])
+    if (typeof window === 'undefined') return false;
+    if (prefersReducedMotion) return false;
+    return 'vibrate' in navigator;
+  }, [prefersReducedMotion]);
 
   /**
    * 軽いタップフィードバック（ボタンクリック等）
@@ -38,9 +38,9 @@ export function useHapticFeedback() {
    */
   const tap = useCallback(() => {
     if (isSupported) {
-      navigator.vibrate(10)
+      navigator.vibrate(10);
     }
-  }, [isSupported])
+  }, [isSupported]);
 
   /**
    * 成功フィードバック（完了、保存成功等）
@@ -48,9 +48,9 @@ export function useHapticFeedback() {
    */
   const success = useCallback(() => {
     if (isSupported) {
-      navigator.vibrate([50, 30, 50])
+      navigator.vibrate([50, 30, 50]);
     }
-  }, [isSupported])
+  }, [isSupported]);
 
   /**
    * エラー/警告フィードバック（バリデーションエラー等）
@@ -58,9 +58,9 @@ export function useHapticFeedback() {
    */
   const error = useCallback(() => {
     if (isSupported) {
-      navigator.vibrate([100, 50, 100])
+      navigator.vibrate([100, 50, 100]);
     }
-  }, [isSupported])
+  }, [isSupported]);
 
   /**
    * 選択変更フィードバック（トグル、スイッチ等）
@@ -68,9 +68,9 @@ export function useHapticFeedback() {
    */
   const selection = useCallback(() => {
     if (isSupported) {
-      navigator.vibrate(15)
+      navigator.vibrate(15);
     }
-  }, [isSupported])
+  }, [isSupported]);
 
   /**
    * 重いインパクトフィードバック（ドラッグ&ドロップ完了等）
@@ -78,9 +78,9 @@ export function useHapticFeedback() {
    */
   const impact = useCallback(() => {
     if (isSupported) {
-      navigator.vibrate(30)
+      navigator.vibrate(30);
     }
-  }, [isSupported])
+  }, [isSupported]);
 
   return {
     isSupported,
@@ -89,5 +89,5 @@ export function useHapticFeedback() {
     error,
     selection,
     impact,
-  }
+  };
 }

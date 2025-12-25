@@ -1,18 +1,18 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
+import { useState } from 'react';
 
-import { X } from 'lucide-react'
+import { X } from 'lucide-react';
 
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 
-import { useInboxFilterStore } from '../../stores/useInboxFilterStore'
+import { useInboxFilterStore } from '../../stores/useInboxFilterStore';
 
 interface MobileSearchSheetProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
 /**
@@ -21,26 +21,26 @@ interface MobileSearchSheetProps {
  * Notion風のアイコンナビゲーションから開く検索専用シート
  */
 export function MobileSearchSheet({ open, onOpenChange }: MobileSearchSheetProps) {
-  const { search, setSearch } = useInboxFilterStore()
-  const [localSearch, setLocalSearch] = useState(search)
+  const { search, setSearch } = useInboxFilterStore();
+  const [localSearch, setLocalSearch] = useState(search);
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    setSearch(localSearch)
-    onOpenChange(false)
-  }
+    e.preventDefault();
+    setSearch(localSearch);
+    onOpenChange(false);
+  };
 
   const handleClear = () => {
-    setLocalSearch('')
-    setSearch('')
-  }
+    setLocalSearch('');
+    setSearch('');
+  };
 
   const handleOpenChange = (newOpen: boolean) => {
     if (newOpen) {
-      setLocalSearch(search)
+      setLocalSearch(search);
     }
-    onOpenChange(newOpen)
-  }
+    onOpenChange(newOpen);
+  };
 
   return (
     <Sheet open={open} onOpenChange={handleOpenChange}>
@@ -73,7 +73,12 @@ export function MobileSearchSheet({ open, onOpenChange }: MobileSearchSheetProps
           </div>
 
           <div className="flex gap-2">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="flex-1">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+              className="flex-1"
+            >
               キャンセル
             </Button>
             <Button type="submit" className="flex-1">
@@ -83,5 +88,5 @@ export function MobileSearchSheet({ open, onOpenChange }: MobileSearchSheetProps
         </form>
       </SheetContent>
     </Sheet>
-  )
+  );
 }

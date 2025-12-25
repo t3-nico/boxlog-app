@@ -2,9 +2,9 @@
  * 2000番台: API・ネットワーク系エラーパターン
  */
 
-import { ERROR_CODES } from '@/constants/errorCodes'
+import { ERROR_CODES } from '@/constants/errorCodes';
 
-import type { ErrorMessagePattern } from '../types'
+import type { ErrorMessagePattern } from '../types';
 
 export const API_ERROR_PATTERNS: Record<number, ErrorMessagePattern> = {
   [ERROR_CODES.API_RATE_LIMIT]: {
@@ -42,7 +42,11 @@ export const API_ERROR_PATTERNS: Record<number, ErrorMessagePattern> = {
     userFriendly: 'サーバーで問題が発生しています',
     short: 'サーバーエラー',
     description: 'システム側で一時的な問題が発生しています。',
-    recommendedActions: ['少し時間をおいて再試行', '問題が続く場合はサポートに連絡', '重要なデータは別途保存しておく'],
+    recommendedActions: [
+      '少し時間をおいて再試行',
+      '問題が続く場合はサポートに連絡',
+      '重要なデータは別途保存しておく',
+    ],
     autoRecoverable: true,
     urgency: 'error',
     emoji: '🔧',
@@ -53,9 +57,13 @@ export const API_ERROR_PATTERNS: Record<number, ErrorMessagePattern> = {
     userFriendly: '応答に時間がかかりすぎています',
     short: '接続タイムアウト',
     description: 'ネットワークの状況や処理の重さにより、応答が遅くなっています。',
-    recommendedActions: ['インターネット接続を確認', '「再試行」ボタンをクリック', '時間をおいて再度お試しください'],
+    recommendedActions: [
+      'インターネット接続を確認',
+      '「再試行」ボタンをクリック',
+      '時間をおいて再度お試しください',
+    ],
     autoRecoverable: true,
     urgency: 'warning',
     emoji: '⏱️',
   },
-}
+};

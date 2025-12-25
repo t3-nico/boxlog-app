@@ -2,9 +2,9 @@
  * 7000番台: 外部サービス連携系エラーパターン
  */
 
-import { ERROR_CODES } from '@/constants/errorCodes'
+import { ERROR_CODES } from '@/constants/errorCodes';
 
-import type { ErrorMessagePattern } from '../types'
+import type { ErrorMessagePattern } from '../types';
 
 export const EXTERNAL_ERROR_PATTERNS: Record<number, ErrorMessagePattern> = {
   [ERROR_CODES.EXTERNAL_API_CONNECTION]: {
@@ -12,7 +12,11 @@ export const EXTERNAL_ERROR_PATTERNS: Record<number, ErrorMessagePattern> = {
     userFriendly: '外部サービスとの接続で問題が発生しました',
     short: '外部サービスエラー',
     description: '連携している外部サービスで一時的な問題が発生しています。',
-    recommendedActions: ['時間をおいて再試行', '外部サービスの状況を確認', '別の方法での作業を検討'],
+    recommendedActions: [
+      '時間をおいて再試行',
+      '外部サービスの状況を確認',
+      '別の方法での作業を検討',
+    ],
     autoRecoverable: true,
     urgency: 'warning',
     emoji: '🔗',
@@ -32,4 +36,4 @@ export const EXTERNAL_ERROR_PATTERNS: Record<number, ErrorMessagePattern> = {
     urgency: 'info',
     emoji: '🔧',
   },
-}
+};

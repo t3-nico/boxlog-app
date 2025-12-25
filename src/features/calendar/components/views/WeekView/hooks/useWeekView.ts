@@ -1,7 +1,7 @@
-import { useCallback } from 'react'
+import { useCallback } from 'react';
 
-import { useCurrentPeriod, useDateUtilities, useEventsByDate } from '../../shared'
-import type { UseWeekViewOptions, UseWeekViewReturn } from '../WeekView.types'
+import { useCurrentPeriod, useDateUtilities, useEventsByDate } from '../../shared';
+import type { UseWeekViewOptions, UseWeekViewReturn } from '../WeekView.types';
 
 /**
  * WeekView専用のロジックを管理するフック
@@ -22,26 +22,26 @@ export function useWeekView({
     referenceDate: startDate,
     viewType: 'week',
     weekStartsOn,
-  })
+  });
 
   // Phase 3統合フック: 現在期間判定とtodayIndex計算
   const { isCurrentPeriod: isCurrentWeek, todayIndex } = useCurrentPeriod({
     dates: weekDates,
     periodType: 'week',
     weekStartsOn,
-  })
+  });
 
   // Phase 3統合フック: イベント日付グループ化（80-90行が1行に！）
   const { eventsByDate } = useEventsByDate({
     dates: weekDates,
     events,
     sortType: 'standard',
-  })
+  });
 
   // スクロール処理はScrollableCalendarLayoutに委譲
   const scrollToNow = useCallback(() => {
     // ScrollableCalendarLayoutが処理するため、ここでは何もしない
-  }, [])
+  }, []);
 
   return {
     weekDates,
@@ -49,5 +49,5 @@ export function useWeekView({
     todayIndex,
     scrollToNow,
     isCurrentWeek,
-  }
+  };
 }

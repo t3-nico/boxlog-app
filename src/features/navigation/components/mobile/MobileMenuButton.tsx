@@ -1,10 +1,10 @@
-'use client'
+'use client';
 
-import { Menu } from 'lucide-react'
+import { Menu } from 'lucide-react';
 
-import { Button } from '@/components/ui/button'
-import { useSidebarStore } from '@/features/navigation/stores/useSidebarStore'
-import { useTranslations } from 'next-intl'
+import { Button } from '@/components/ui/button';
+import { useSidebarStore } from '@/features/navigation/stores/useSidebarStore';
+import { useTranslations } from 'next-intl';
 
 /**
  * モバイル用ハンバーガーメニューボタン
@@ -21,12 +21,18 @@ import { useTranslations } from 'next-intl'
  * ```
  */
 export function MobileMenuButton({ className }: { className?: string }) {
-  const toggle = useSidebarStore((state) => state.toggle)
-  const t = useTranslations()
+  const toggle = useSidebarStore((state) => state.toggle);
+  const t = useTranslations();
 
   return (
-    <Button variant="ghost" size="icon" onClick={toggle} aria-label={t('aria.openMenu')} className={className}>
+    <Button
+      variant="ghost"
+      size="icon"
+      onClick={toggle}
+      aria-label={t('aria.openMenu')}
+      className={className}
+    >
       <Menu className="size-6" />
     </Button>
-  )
+  );
 }

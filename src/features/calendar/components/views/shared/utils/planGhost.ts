@@ -1,6 +1,6 @@
-import type { CSSProperties } from 'react'
+import type { CSSProperties } from 'react';
 
-import type { DragState } from '../hooks/useDragAndDrop'
+import type { DragState } from '../hooks/useDragAndDrop';
 
 /**
  * ドラッグ中プランのゴースト表示用スタイル計算
@@ -18,14 +18,15 @@ import type { DragState } from '../hooks/useDragAndDrop'
 export function calculatePlanGhostStyle(
   originalStyle: CSSProperties,
   eventId: string,
-  dragState: DragState
+  dragState: DragState,
 ): CSSProperties {
   // isDragging または isPending（5px移動後の遷移中）でもゴースト表示を適用
   const isDragging =
-    dragState.draggedEventId === eventId && (dragState.isDragging || (dragState.isPending && dragState.snappedPosition))
-  const isResizing = dragState.isResizing && dragState.draggedEventId === eventId
+    dragState.draggedEventId === eventId &&
+    (dragState.isDragging || (dragState.isPending && dragState.snappedPosition));
+  const isResizing = dragState.isResizing && dragState.draggedEventId === eventId;
 
-  let adjustedStyle = { ...originalStyle }
+  let adjustedStyle = { ...originalStyle };
 
   if (isDragging) {
     // ドラッグ中：元の位置に薄いゴーストを表示（位置は変更しない）
@@ -34,22 +35,22 @@ export function calculatePlanGhostStyle(
       ...adjustedStyle,
       opacity: 0.3, // 薄く表示
       zIndex: 1, // 低いz-indexで背面に
-    }
+    };
   } else if (isResizing && dragState.snappedPosition?.height) {
     // リサイズ中：サイズをリアルタイム調整
     adjustedStyle = {
       ...adjustedStyle,
       height: `${dragState.snappedPosition.height}px`,
       zIndex: 1000,
-    }
+    };
   }
 
-  return adjustedStyle
+  return adjustedStyle;
 }
 
 // 後方互換性のためのエイリアス
 /** @deprecated Use calculatePlanGhostStyle instead */
-export const calculateEventGhostStyle = calculatePlanGhostStyle
+export const calculateEventGhostStyle = calculatePlanGhostStyle;
 
 /**
  * ドラッグ/リサイズ中のプレビュー時間計算
@@ -66,10 +67,13 @@ export const calculateEventGhostStyle = calculatePlanGhostStyle
  * @param dragState ドラッグ状態
  * @returns プレビュー時間（リサイズ中のみ）
  */
-export function calculatePreviewTime(eventId: string, dragState: DragState): { start: Date; end: Date } | null {
-  const isResizing = dragState.isResizing && dragState.draggedEventId === eventId
+export function calculatePreviewTime(
+  eventId: string,
+  dragState: DragState,
+): { start: Date; end: Date } | null {
+  const isResizing = dragState.isResizing && dragState.draggedEventId === eventId;
 
   // リサイズ中のみプレビュー時間を返す
   // ドラッグ中はゴーストに元の時間を表示するためnullを返す
-  return isResizing ? dragState.previewTime : null
+  return isResizing ? dragState.previewTime : null;
 }

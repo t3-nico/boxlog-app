@@ -3,15 +3,15 @@
  * 国際化対応のフォント管理
  */
 
-import type { Locale } from '@/lib/i18n'
+import type { Locale } from '@/lib/i18n';
 
-type FontType = 'sans' | 'mono'
+type FontType = 'sans' | 'mono';
 
 interface FontConfig {
-  fontFamilies: Record<Locale, Record<FontType, string[]>>
-  weights: Record<Locale, Record<FontType, number[]>>
-  preloadUrls: Record<Locale, string[]>
-  prefetchUrls: Record<Locale, string[]>
+  fontFamilies: Record<Locale, Record<FontType, string[]>>;
+  weights: Record<Locale, Record<FontType, number[]>>;
+  preloadUrls: Record<Locale, string[]>;
+  prefetchUrls: Record<Locale, string[]>;
 }
 
 const DEFAULT_FONTS: FontConfig = {
@@ -43,20 +43,20 @@ const DEFAULT_FONTS: FontConfig = {
     ja: [],
     en: [],
   },
-}
+};
 
 class FontSystem {
-  private config: FontConfig
+  private config: FontConfig;
 
   constructor(config: FontConfig = DEFAULT_FONTS) {
-    this.config = config
+    this.config = config;
   }
 
   /**
    * 指定ロケールのフォントファミリーを取得
    */
   getFontFamily(locale: Locale, type: FontType = 'sans'): string[] {
-    return this.config.fontFamilies[locale]?.[type] || this.config.fontFamilies.en[type]
+    return this.config.fontFamilies[locale]?.[type] || this.config.fontFamilies.en[type];
   }
 
   /**
@@ -65,19 +65,19 @@ class FontSystem {
   getFontFamilyString(locale: Locale, type: FontType = 'sans'): string {
     return this.getFontFamily(locale, type)
       .map((font) => (font.includes(' ') ? `"${font}"` : font))
-      .join(', ')
+      .join(', ');
   }
 
   /**
    * 推奨ウェイトを取得
    */
   getRecommendedWeight(locale: Locale): { normal: number; medium: number; bold: number } {
-    const weights = this.config.weights[locale]?.sans || [400, 500, 700]
+    const weights = this.config.weights[locale]?.sans || [400, 500, 700];
     return {
       normal: weights[0] || 400,
       medium: weights[1] || 500,
       bold: weights[2] || 700,
-    }
+    };
   }
 
   /**
@@ -85,21 +85,21 @@ class FontSystem {
    */
   async selectOptimalFont(locale: Locale): Promise<string[]> {
     // 実際のフォント検出ロジックはここに実装
-    return this.getFontFamily(locale, 'sans')
+    return this.getFontFamily(locale, 'sans');
   }
 
   /**
    * CSS変数を生成
    */
   generateFontCSSVariables(locale: Locale): Record<string, string> {
-    const weights = this.getRecommendedWeight(locale)
+    const weights = this.getRecommendedWeight(locale);
     return {
       '--font-sans': this.getFontFamilyString(locale, 'sans'),
       '--font-mono': this.getFontFamilyString(locale, 'mono'),
       '--font-weight-normal': String(weights.normal),
       '--font-weight-medium': String(weights.medium),
       '--font-weight-bold': String(weights.bold),
-    }
+    };
   }
 
   /**
@@ -109,41 +109,41 @@ class FontSystem {
     return {
       sans: locale === 'ja' ? 'font-noto-sans-jp' : 'font-inter',
       mono: 'font-jetbrains-mono',
-    }
+    };
   }
 
   /**
    * プリロードURLを取得
    */
   getFontPreloadUrls(locale: Locale): string[] {
-    return this.config.preloadUrls[locale] || []
+    return this.config.preloadUrls[locale] || [];
   }
 
   /**
    * プリフェッチURLを取得
    */
   getFontPrefetchUrls(locale: Locale): string[] {
-    return this.config.prefetchUrls[locale] || []
+    return this.config.prefetchUrls[locale] || [];
   }
 
   /**
    * ロケールフォントを適用
    */
   applyLocaleFont(style: string, locale: Locale, type: FontType = 'sans'): string {
-    return `${style}; font-family: ${this.getFontFamilyString(locale, type)}`
+    return `${style}; font-family: ${this.getFontFamilyString(locale, type)}`;
   }
 
   /**
    * 完全なフォント設定を取得
    */
   getFullFontConfig(locale: Locale): {
-    fontFamilies: Record<FontType, string[]>
-    weights: Record<FontType, number[]>
+    fontFamilies: Record<FontType, string[]>;
+    weights: Record<FontType, number[]>;
   } {
     return {
       fontFamilies: this.config.fontFamilies[locale] || this.config.fontFamilies.en,
       weights: this.config.weights[locale] || this.config.weights.en,
-    }
+    };
   }
 
   /**
@@ -155,9 +155,9 @@ class FontSystem {
       fontFamilies: this.getFontFamily(locale),
       weights: this.getRecommendedWeight(locale),
       cssVariables: this.generateFontCSSVariables(locale),
-    })
+    });
   }
 }
 
-export const fontSystem = new FontSystem()
-export type { FontConfig, FontType }
+export const fontSystem = new FontSystem();
+export type { FontConfig, FontType };

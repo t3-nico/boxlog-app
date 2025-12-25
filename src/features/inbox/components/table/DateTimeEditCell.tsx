@@ -1,15 +1,15 @@
-import { TableCell } from '@/components/ui/table'
-import { format } from 'date-fns'
-import { ja } from 'date-fns/locale'
-import { Calendar } from 'lucide-react'
+import { TableCell } from '@/components/ui/table';
+import { format } from 'date-fns';
+import { ja } from 'date-fns/locale';
+import { Calendar } from 'lucide-react';
 
 interface DateTimeEditCellProps {
   /** 日時（ISO 8601形式） */
-  dateTime: string | null | undefined
+  dateTime: string | null | undefined;
   /** 列幅 */
-  width?: number
+  width?: number;
   /** 日時変更ハンドラー */
-  onDateTimeChange?: (dateTime: string | null) => void
+  onDateTimeChange?: (dateTime: string | null) => void;
 }
 
 /**
@@ -28,14 +28,24 @@ interface DateTimeEditCellProps {
  * />
  * ```
  */
-export function DateTimeEditCell({ dateTime, width, onDateTimeChange: _onDateTimeChange }: DateTimeEditCellProps) {
-  const style = width ? { width: `${width}px` } : undefined
+export function DateTimeEditCell({
+  dateTime,
+  width,
+  onDateTimeChange: _onDateTimeChange,
+}: DateTimeEditCellProps) {
+  const style = width ? { width: `${width}px` } : undefined;
 
   // 日時フォーマット（時刻があれば HH:mm も表示、なければ日付のみ）
-  const formattedDateTime = dateTime ? format(new Date(dateTime), 'yyyy/MM/dd HH:mm', { locale: ja }) : null
+  const formattedDateTime = dateTime
+    ? format(new Date(dateTime), 'yyyy/MM/dd HH:mm', { locale: ja })
+    : null;
 
   return (
-    <TableCell onClick={(e) => e.stopPropagation()} className="text-muted-foreground text-sm" style={style}>
+    <TableCell
+      onClick={(e) => e.stopPropagation()}
+      className="text-muted-foreground text-sm"
+      style={style}
+    >
       {formattedDateTime ? (
         <div className="flex items-center gap-1">
           <Calendar className="size-3 shrink-0" />
@@ -45,5 +55,5 @@ export function DateTimeEditCell({ dateTime, width, onDateTimeChange: _onDateTim
         <span className="text-muted-foreground/50">-</span>
       )}
     </TableCell>
-  )
+  );
 }

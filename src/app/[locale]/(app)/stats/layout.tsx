@@ -1,13 +1,13 @@
-'use client'
+'use client';
 
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'next-intl';
 
-import { PageHeader } from '@/components/common/PageHeader'
-import { MobileStatsSettingsSheet } from '@/features/stats/components/MobileStatsSettingsSheet'
-import { StatsToolbar } from '@/features/stats/components/stats-toolbar'
+import { PageHeader } from '@/components/common/PageHeader';
+import { MobileStatsSettingsSheet } from '@/features/stats/components/MobileStatsSettingsSheet';
+import { StatsToolbar } from '@/features/stats/components/stats-toolbar';
 
 interface StatsLayoutProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 /**
@@ -21,7 +21,7 @@ interface StatsLayoutProps {
  * サイドバーナビゲーションは上位レイアウト（DesktopLayout/MobileLayout）で管理
  */
 export default function StatsLayout({ children }: StatsLayoutProps) {
-  const t = useTranslations()
+  const t = useTranslations();
 
   return (
     <div className="flex h-full flex-col">
@@ -45,5 +45,5 @@ export default function StatsLayout({ children }: StatsLayoutProps) {
       {/* メインコンテンツ */}
       <div className="flex-1 overflow-y-auto px-4">{children}</div>
     </div>
-  )
+  );
 }

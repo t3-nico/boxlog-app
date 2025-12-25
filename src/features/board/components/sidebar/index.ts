@@ -1,1 +1,1 @@
-export { BoardSidebarSections } from './BoardSidebarSections'
+export { BoardSidebarSections } from './BoardSidebarSections';

@@ -1,23 +1,29 @@
-'use client'
+'use client';
 
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Tag } from '@/features/tags/types'
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Tag } from '@/features/tags/types';
 
 interface TagBadgeProps {
-  tag: Tag
-  size?: 'sm' | 'md' | 'lg'
-  showIcon?: boolean
-  onClick?: () => void
-  onRemove?: () => void
+  tag: Tag;
+  size?: 'sm' | 'md' | 'lg';
+  showIcon?: boolean;
+  onClick?: () => void;
+  onRemove?: () => void;
 }
 
-export const TagBadge = ({ tag, size = 'sm', showIcon = true, onClick, onRemove }: TagBadgeProps) => {
+export const TagBadge = ({
+  tag,
+  size = 'sm',
+  showIcon = true,
+  onClick,
+  onRemove,
+}: TagBadgeProps) => {
   const sizeClasses = {
     sm: 'text-xs px-2 py-1',
     md: 'text-sm px-3 py-2',
     lg: 'text-base px-4 py-2',
-  }
+  };
 
   return (
     <Badge
@@ -37,8 +43,8 @@ export const TagBadge = ({ tag, size = 'sm', showIcon = true, onClick, onRemove 
           variant="ghost"
           size="icon-sm"
           onClick={(e) => {
-            e.stopPropagation()
-            onRemove()
+            e.stopPropagation();
+            onRemove();
           }}
           className="hover:bg-destructive/10 dark:hover:bg-destructive/20 hover:text-destructive ml-1 h-4 w-4 text-xs"
         >
@@ -46,5 +52,5 @@ export const TagBadge = ({ tag, size = 'sm', showIcon = true, onClick, onRemove 
         </Button>
       )}
     </Badge>
-  )
-}
+  );
+};

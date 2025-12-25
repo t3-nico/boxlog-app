@@ -9,12 +9,12 @@
  * - GET /api/test/sentry?type=performance
  */
 
-import * as Sentry from '@sentry/nextjs'
-import { NextRequest, NextResponse } from 'next/server'
+import * as Sentry from '@sentry/nextjs';
+import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
-  const searchParams = request.nextUrl.searchParams
-  const type = searchParams.get('type')
+  const searchParams = request.nextUrl.searchParams;
+  const type = searchParams.get('type');
 
   try {
     switch (type) {
@@ -30,17 +30,17 @@ export async function GET(request: NextRequest) {
             timestamp: new Date().toISOString(),
             userAgent: request.headers.get('user-agent'),
           },
-        })
+        });
         return NextResponse.json({
           success: true,
           sent: 'message',
           message: 'Test message sent to Sentry',
-        })
+        });
 
       case 'error':
         // エラー送信テスト
         try {
-          throw new Error('Test error from BoxLog API')
+          throw new Error('Test error from BoxLog API');
         } catch (error) {
           Sentry.captureException(error, {
             tags: {
@@ -52,12 +52,12 @@ export async function GET(request: NextRequest) {
               timestamp: new Date().toISOString(),
               url: request.url,
             },
-          })
+          });
           return NextResponse.json({
             success: true,
             sent: 'error',
             message: 'Test error sent to Sentry',
-          })
+          });
         }
 
       case 'performance':
@@ -73,18 +73,18 @@ export async function GET(request: NextRequest) {
           },
           async () => {
             // 模擬処理（1秒待機）
-            await new Promise((resolve) => setTimeout(resolve, 1000))
+            await new Promise((resolve) => setTimeout(resolve, 1000));
 
-            Sentry.setMeasurement('test_duration', 1000, 'millisecond')
+            Sentry.setMeasurement('test_duration', 1000, 'millisecond');
 
             return NextResponse.json({
               success: true,
               sent: 'performance',
               message: 'Test performance transaction sent to Sentry',
               duration: '1000ms',
-            })
-          }
-        )
+            });
+          },
+        );
 
       case 'breadcrumb':
         // パンくずリストテスト
@@ -96,15 +96,15 @@ export async function GET(request: NextRequest) {
             timestamp: new Date().toISOString(),
             action: 'breadcrumb-test',
           },
-        })
+        });
 
-        Sentry.captureMessage('Breadcrumb test completed', 'info')
+        Sentry.captureMessage('Breadcrumb test completed', 'info');
 
         return NextResponse.json({
           success: true,
           sent: 'breadcrumb',
           message: 'Breadcrumb added and message sent to Sentry',
-        })
+        });
 
       default:
         // 使用方法の表示
@@ -118,7 +118,7 @@ export async function GET(request: NextRequest) {
             '/api/test/sentry?type=breadcrumb',
           ],
           note: 'Check Sentry dashboard at https://sentry.io after 5 minutes',
-        })
+        });
     }
   } catch (error) {
     // 予期しないエラーもSentryに送信
@@ -128,14 +128,14 @@ export async function GET(request: NextRequest) {
         endpoint: 'test-sentry',
         errorType: 'unexpected',
       },
-    })
+    });
 
     return NextResponse.json(
       {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
-    )
+      { status: 500 },
+    );
   }
 }

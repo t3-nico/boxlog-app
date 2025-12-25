@@ -1,14 +1,14 @@
-'use client'
+'use client';
 
-import { usePathname } from 'next/navigation'
-import { useMemo } from 'react'
+import { usePathname } from 'next/navigation';
+import { useMemo } from 'react';
 
-import { useAuthStore } from '@/features/auth/stores/useAuthStore'
-import { useTranslations } from 'next-intl'
+import { useAuthStore } from '@/features/auth/stores/useAuthStore';
+import { useTranslations } from 'next-intl';
 
-import { NavSecondary } from './nav-secondary'
-import { NavUser } from './nav-user'
-import { SidebarHeader } from './SidebarHeader'
+import { NavSecondary } from './nav-secondary';
+import { NavUser } from './nav-user';
+import { SidebarHeader } from './SidebarHeader';
 
 /**
  * アプリケーション共通Sidebar
@@ -23,43 +23,43 @@ import { SidebarHeader } from './SidebarHeader'
  * - セマンティックトークン使用
  */
 export function AppSidebar() {
-  const user = useAuthStore((state) => state.user)
-  const pathname = usePathname()
-  const t = useTranslations()
+  const user = useAuthStore((state) => state.user);
+  const pathname = usePathname();
+  const t = useTranslations();
 
   // 現在のページに応じたタイトルを取得
   const pageTitle = useMemo(() => {
-    if (!pathname) return ''
+    if (!pathname) return '';
 
-    const pathSegments = pathname.split('/')
-    const page = pathSegments[2] // /[locale]/[page]
+    const pathSegments = pathname.split('/');
+    const page = pathSegments[2]; // /[locale]/[page]
 
     switch (page) {
       case 'calendar':
-        return t('sidebar.navigation.calendar')
+        return t('sidebar.navigation.calendar');
       case 'inbox':
-        return t('sidebar.navigation.inbox')
+        return t('sidebar.navigation.inbox');
       case 'stats':
-        return t('sidebar.navigation.stats')
+        return t('sidebar.navigation.stats');
       case 'tags':
-        return t('sidebar.navigation.tags')
+        return t('sidebar.navigation.tags');
       default:
-        return ''
+        return '';
     }
-  }, [pathname, t])
+  }, [pathname, t]);
 
   const data = useMemo(
     () => ({
       navSecondary: [],
     }),
-    []
-  )
+    [],
+  );
 
   const userData = {
     name: user?.user_metadata?.username || user?.email?.split('@')[0] || 'ユーザー',
     email: user?.email || '',
     avatar: user?.user_metadata?.avatar_url || null,
-  }
+  };
 
   return (
     <aside className="bg-surface-container text-foreground flex h-full w-full flex-col">
@@ -76,5 +76,5 @@ export function AppSidebar() {
         <NavSecondary items={data.navSecondary} className="mt-auto py-2" />
       </div>
     </aside>
-  )
+  );
 }

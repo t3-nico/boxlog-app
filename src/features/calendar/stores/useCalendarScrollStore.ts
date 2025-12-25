@@ -1,7 +1,7 @@
-import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
-import type { CalendarViewType } from '@/features/settings/stores/useCalendarSettingsStore'
+import type { CalendarViewType } from '@/features/settings/stores/useCalendarSettingsStore';
 
 /**
  * カレンダーのスクロール位置を管理するストア
@@ -11,31 +11,31 @@ import type { CalendarViewType } from '@/features/settings/stores/useCalendarSet
  */
 
 interface ScrollPositions {
-  day: number
-  '3day': number
-  '5day': number
-  week: number
+  day: number;
+  '3day': number;
+  '5day': number;
+  week: number;
 }
 
 interface CalendarScrollState {
   /** ビューごとのスクロール位置（px） */
-  scrollPositions: ScrollPositions
+  scrollPositions: ScrollPositions;
   /** 最後に使用したビュー */
-  lastActiveView: CalendarViewType
+  lastActiveView: CalendarViewType;
 }
 
 interface CalendarScrollActions {
   /** スクロール位置を更新 */
-  setScrollPosition: (view: CalendarViewType, position: number) => void
+  setScrollPosition: (view: CalendarViewType, position: number) => void;
   /** 特定ビューのスクロール位置を取得 */
-  getScrollPosition: (view: CalendarViewType) => number
+  getScrollPosition: (view: CalendarViewType) => number;
   /** 最後のアクティブビューを更新 */
-  setLastActiveView: (view: CalendarViewType) => void
+  setLastActiveView: (view: CalendarViewType) => void;
   /** スクロール位置をリセット */
-  resetScrollPositions: () => void
+  resetScrollPositions: () => void;
 }
 
-const DEFAULT_SCROLL_POSITION = 0
+const DEFAULT_SCROLL_POSITION = 0;
 
 const initialState: CalendarScrollState = {
   scrollPositions: {
@@ -45,7 +45,7 @@ const initialState: CalendarScrollState = {
     week: DEFAULT_SCROLL_POSITION,
   },
   lastActiveView: 'week',
-}
+};
 
 export const useCalendarScrollStore = create<CalendarScrollState & CalendarScrollActions>()(
   persist(
@@ -61,8 +61,8 @@ export const useCalendarScrollStore = create<CalendarScrollState & CalendarScrol
         })),
 
       getScrollPosition: (view) => {
-        const state = get()
-        return state.scrollPositions[view] ?? DEFAULT_SCROLL_POSITION
+        const state = get();
+        return state.scrollPositions[view] ?? DEFAULT_SCROLL_POSITION;
       },
 
       setLastActiveView: (view) => set({ lastActiveView: view }),
@@ -71,6 +71,6 @@ export const useCalendarScrollStore = create<CalendarScrollState & CalendarScrol
     }),
     {
       name: 'calendar-scroll-positions',
-    }
-  )
-)
+    },
+  ),
+);

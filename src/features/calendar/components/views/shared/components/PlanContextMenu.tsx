@@ -1,24 +1,24 @@
-'use client'
+'use client';
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react';
 
-import { Calendar, Copy, Edit2, ExternalLink, Link, Tag, Trash2 } from 'lucide-react'
+import { Calendar, Copy, Edit2, ExternalLink, Link, Tag, Trash2 } from 'lucide-react';
 
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
-import { cn } from '@/lib/utils'
-import { useTranslations } from 'next-intl'
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
+import { cn } from '@/lib/utils';
+import { useTranslations } from 'next-intl';
 
 interface PlanContextMenuProps {
-  plan: CalendarPlan
-  position: { x: number; y: number }
-  onClose: () => void
-  onEdit?: (plan: CalendarPlan) => void
-  onDelete?: (plan: CalendarPlan) => void
-  onDuplicate?: (plan: CalendarPlan) => void
-  onOpen?: (plan: CalendarPlan) => void
-  onCopyLink?: (plan: CalendarPlan) => void
-  onAddTag?: (plan: CalendarPlan) => void
-  onMoveToDate?: (plan: CalendarPlan) => void
+  plan: CalendarPlan;
+  position: { x: number; y: number };
+  onClose: () => void;
+  onEdit?: (plan: CalendarPlan) => void;
+  onDelete?: (plan: CalendarPlan) => void;
+  onDuplicate?: (plan: CalendarPlan) => void;
+  onOpen?: (plan: CalendarPlan) => void;
+  onCopyLink?: (plan: CalendarPlan) => void;
+  onAddTag?: (plan: CalendarPlan) => void;
+  onMoveToDate?: (plan: CalendarPlan) => void;
 }
 
 export const EventContextMenu = ({
@@ -33,62 +33,62 @@ export const EventContextMenu = ({
   onAddTag,
   onMoveToDate,
 }: PlanContextMenuProps) => {
-  const t = useTranslations()
-  const menuRef = useRef<HTMLDivElement>(null)
-  const [adjustedPosition, setAdjustedPosition] = useState(position)
+  const t = useTranslations();
+  const menuRef = useRef<HTMLDivElement>(null);
+  const [adjustedPosition, setAdjustedPosition] = useState(position);
 
   // 画面外に出ないよう位置調整
   useEffect(() => {
     if (menuRef.current) {
-      const menu = menuRef.current
-      const rect = menu.getBoundingClientRect()
-      const viewportWidth = window.innerWidth
-      const viewportHeight = window.innerHeight
+      const menu = menuRef.current;
+      const rect = menu.getBoundingClientRect();
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
 
-      let { x } = position
-      let { y } = position
+      let { x } = position;
+      let { y } = position;
 
       // 右端を超える場合は左に表示
       if (x + rect.width > viewportWidth - 10) {
-        x = Math.max(10, viewportWidth - rect.width - 10)
+        x = Math.max(10, viewportWidth - rect.width - 10);
       }
 
       // 下端を超える場合は上に表示
       if (y + rect.height > viewportHeight - 10) {
-        y = Math.max(10, viewportHeight - rect.height - 10)
+        y = Math.max(10, viewportHeight - rect.height - 10);
       }
 
-      setAdjustedPosition({ x, y })
+      setAdjustedPosition({ x, y });
     }
-  }, [position])
+  }, [position]);
 
   // 外部クリック時にメニューを閉じる
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        onClose()
+        onClose();
       }
-    }
+    };
 
     const handleEscapeKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        onClose()
+        onClose();
       }
-    }
+    };
 
-    document.addEventListener('mousedown', handleClickOutside)
-    document.addEventListener('keydown', handleEscapeKey)
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleEscapeKey);
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-      document.removeEventListener('keydown', handleEscapeKey)
-    }
-  }, [onClose])
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleEscapeKey);
+    };
+  }, [onClose]);
 
   const handleAction = (action: () => void) => {
-    action()
-    onClose()
-  }
+    action();
+    onClose();
+  };
 
   const menuItems = [
     {
@@ -134,7 +134,7 @@ export const EventContextMenu = ({
       available: !!onDelete,
       dangerous: true,
     },
-  ].filter((item) => item.available)
+  ].filter((item) => item.available);
 
   return (
     <div
@@ -148,7 +148,7 @@ export const EventContextMenu = ({
       {/* メニューアイテム */}
       <div className="space-y-1">
         {menuItems.map((item, _index) => {
-          const IconComponent = item.icon
+          const IconComponent = item.icon;
 
           return (
             <button
@@ -159,15 +159,15 @@ export const EventContextMenu = ({
                 'flex w-full items-center gap-3 rounded-sm px-3 py-2 text-left transition-colors',
                 item.dangerous
                   ? 'text-destructive hover:bg-destructive/10 dark:hover:bg-destructive/20'
-                  : 'text-foreground hover:bg-state-hover'
+                  : 'text-foreground hover:bg-state-hover',
               )}
             >
               <IconComponent className="h-4 w-4 flex-shrink-0" />
               <span>{item.label}</span>
             </button>
-          )
+          );
         })}
       </div>
     </div>
-  )
-}
+  );
+};

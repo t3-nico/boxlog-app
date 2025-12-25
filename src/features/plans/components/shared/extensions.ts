@@ -1,4 +1,4 @@
-import { cx } from 'class-variance-authority'
+import { cx } from 'class-variance-authority';
 import {
   HorizontalRule,
   Placeholder,
@@ -8,56 +8,56 @@ import {
   TiptapImage,
   TiptapLink,
   UpdatedImage,
-} from 'novel'
+} from 'novel';
 
 const placeholder = Placeholder.configure({
   placeholder: ({ node, editor }) => {
     // 見出しの場合
     if (node.type.name === 'heading') {
-      return `Heading ${node.attrs.level}`
+      return `Heading ${node.attrs.level}`;
     }
 
     // エディター全体が空（最初の段落のみ）の場合
-    const isEditorEmpty = editor.state.doc.textContent.length === 0
+    const isEditorEmpty = editor.state.doc.textContent.length === 0;
     if (isEditorEmpty) {
-      return '説明を追加...'
+      return '説明を追加...';
     }
 
     // それ以外の空の行
-    return "'/' でコマンドを表示"
+    return "'/' でコマンドを表示";
   },
   emptyEditorClass: 'is-editor-empty',
   showOnlyWhenEditable: true,
   showOnlyCurrent: true,
   includeChildren: true,
-})
+});
 
 const tiptapLink = TiptapLink.configure({
   HTMLAttributes: {
     class: cx(
-      'text-muted-foreground underline underline-offset-[3px] hover:text-primary transition-colors cursor-pointer'
+      'text-muted-foreground underline underline-offset-[3px] hover:text-primary transition-colors cursor-pointer',
     ),
   },
-})
+});
 
 const taskList = TaskList.configure({
   HTMLAttributes: {
     class: cx('not-prose pl-2'),
   },
-})
+});
 
 const taskItem = TaskItem.configure({
   HTMLAttributes: {
     class: cx('flex items-start my-4'),
   },
   nested: true,
-})
+});
 
 const horizontalRule = HorizontalRule.configure({
   HTMLAttributes: {
     class: cx('mt-4 mb-6 border-t border-muted-foreground'),
   },
-})
+});
 
 const starterKit = StarterKit.configure({
   bulletList: {
@@ -82,7 +82,9 @@ const starterKit = StarterKit.configure({
   },
   codeBlock: {
     HTMLAttributes: {
-      class: cx('rounded-md bg-surface-container text-muted-foreground border p-5 font-mono font-medium'),
+      class: cx(
+        'rounded-md bg-surface-container text-muted-foreground border p-5 font-mono font-medium',
+      ),
     },
   },
   code: {
@@ -97,7 +99,7 @@ const starterKit = StarterKit.configure({
     width: 4,
   },
   gapcursor: false,
-})
+});
 
 export const defaultExtensions = [
   starterKit,
@@ -108,4 +110,4 @@ export const defaultExtensions = [
   taskList,
   taskItem,
   horizontalRule,
-]
+];

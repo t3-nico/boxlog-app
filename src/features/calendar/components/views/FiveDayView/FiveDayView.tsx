@@ -1,21 +1,27 @@
-'use client'
+'use client';
 
-import { useMemo } from 'react'
+import { useMemo } from 'react';
 
-import { format, getWeek, isToday } from 'date-fns'
+import { format, getWeek, isToday } from 'date-fns';
 
-import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
-import { cn } from '@/lib/utils'
+import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
+import { cn } from '@/lib/utils';
 
-import { CalendarViewAnimation } from '../../animations/ViewTransition'
-import { CalendarDateHeader, DateDisplay, OverdueSection, ScrollableCalendarLayout, usePlanStyles } from '../shared'
-import { useResponsiveHourHeight } from '../shared/hooks/useResponsiveHourHeight'
+import { CalendarViewAnimation } from '../../animations/ViewTransition';
+import {
+  CalendarDateHeader,
+  DateDisplay,
+  OverdueSection,
+  ScrollableCalendarLayout,
+  usePlanStyles,
+} from '../shared';
+import { useResponsiveHourHeight } from '../shared/hooks/useResponsiveHourHeight';
 
-import type { PlanPosition } from '../shared/hooks/useViewPlans'
+import type { PlanPosition } from '../shared/hooks/useViewPlans';
 
-import { FiveDayContent } from './components'
-import type { FiveDayViewProps } from './FiveDayView.types'
-import { useFiveDayView } from './hooks/useFiveDayView'
+import { FiveDayContent } from './components';
+import type { FiveDayViewProps } from './FiveDayView.types';
+import { useFiveDayView } from './hooks/useFiveDayView';
 
 /**
  * FiveDayView - 5-day view component
@@ -42,61 +48,61 @@ export const FiveDayView = ({
   onNavigateNext: _onNavigateNext,
   onNavigateToday: _onNavigateToday,
 }: FiveDayViewProps) => {
-  const timezone = useCalendarSettingsStore((state) => state.timezone)
+  const timezone = useCalendarSettingsStore((state) => state.timezone);
 
   // レスポンシブな時間高さ
   const HOUR_HEIGHT = useResponsiveHourHeight({
     mobile: 48,
     tablet: 60,
     desktop: 72,
-  })
+  });
 
   // FiveDayViewではcurrentDateを中心とした5日間を表示
   const displayCenterDate = useMemo(() => {
-    const date = new Date(currentDate)
-    date.setHours(0, 0, 0, 0)
-    return date
-  }, [currentDate])
+    const date = new Date(currentDate);
+    date.setHours(0, 0, 0, 0);
+    return date;
+  }, [currentDate]);
 
   // FiveDayView specific logic
   const { fiveDayDates, isCurrentDay } = useFiveDayView({
     centerDate: displayCenterDate,
     events: plans,
     showWeekends,
-  })
+  });
 
   // 統一された日付配列を使用（週末表示設定も考慮済み）
   const displayDates = useMemo(() => {
-    return fiveDayDates
-  }, [fiveDayDates])
+    return fiveDayDates;
+  }, [fiveDayDates]);
 
   // プラン位置計算（統一された日付配列ベース）
   const planPositions = useMemo(() => {
-    const positions: PlanPosition[] = []
+    const positions: PlanPosition[] = [];
 
     // displayDates（統一フィルタリング済み）を基準にプランを配置
     displayDates.forEach((displayDate) => {
-      const dateKey = format(displayDate, 'yyyy-MM-dd')
+      const dateKey = format(displayDate, 'yyyy-MM-dd');
 
       // 元のplans配列から直接フィルタリング（週末設定に依存しない）
       const dayPlans = plans.filter((plan) => {
-        const planDate = plan.startDate || new Date()
-        return format(planDate, 'yyyy-MM-dd') === dateKey
-      })
+        const planDate = plan.startDate || new Date();
+        return format(planDate, 'yyyy-MM-dd') === dateKey;
+      });
 
       dayPlans.forEach((plan) => {
-        const startDate = plan.startDate || new Date()
-        const startHour = startDate.getHours()
-        const startMinute = startDate.getMinutes()
-        const top = (startHour + startMinute / 60) * HOUR_HEIGHT
+        const startDate = plan.startDate || new Date();
+        const startHour = startDate.getHours();
+        const startMinute = startDate.getMinutes();
+        const top = (startHour + startMinute / 60) * HOUR_HEIGHT;
 
         // 高さ計算
-        let height = HOUR_HEIGHT // デフォルト1時間
+        let height = HOUR_HEIGHT; // デフォルト1時間
         if (plan.endDate) {
-          const endHour = plan.endDate.getHours()
-          const endMinute = plan.endDate.getMinutes()
-          const duration = endHour + endMinute / 60 - (startHour + startMinute / 60)
-          height = Math.max(20, duration * HOUR_HEIGHT) // 最小20px
+          const endHour = plan.endDate.getHours();
+          const endMinute = plan.endDate.getMinutes();
+          const duration = endHour + endMinute / 60 - (startHour + startMinute / 60);
+          height = Math.max(20, duration * HOUR_HEIGHT); // 最小20px
         }
 
         positions.push({
@@ -109,20 +115,20 @@ export const FiveDayView = ({
           column: 0, // 単独カラム
           totalColumns: 1, // 単独カラム
           opacity: 1.0,
-        })
-      })
-    })
+        });
+      });
+    });
 
-    return positions
-  }, [plans, displayDates, HOUR_HEIGHT])
+    return positions;
+  }, [plans, displayDates, HOUR_HEIGHT]);
 
   // 共通フック使用してスタイル計算
-  const planStyles = usePlanStyles(planPositions)
+  const planStyles = usePlanStyles(planPositions);
 
   // 週番号を計算（中央の日付から）
   const weekNumber = useMemo(() => {
-    return getWeek(displayCenterDate, { weekStartsOn: 1 })
-  }, [displayCenterDate])
+    return getWeek(displayCenterDate, { weekStartsOn: 1 });
+  }, [displayCenterDate]);
 
   // TimeGrid が空き時間クリック処理を担当するため、この関数は不要
 
@@ -147,7 +153,7 @@ export const FiveDayView = ({
         </div>
       ))}
     </div>
-  )
+  );
 
   return (
     <CalendarViewAnimation viewType="5day">
@@ -169,17 +175,20 @@ export const FiveDayView = ({
         >
           {/* 5日分のグリッド */}
           {displayDates.map((date, dayIndex) => {
-            const dateKey = format(date, 'yyyy-MM-dd')
+            const dateKey = format(date, 'yyyy-MM-dd');
             // 統一フィルタリング済みの日付に対応するプランを取得
             const dayPlans = plans.filter((plan) => {
-              const planDate = plan.startDate || new Date()
-              return format(planDate, 'yyyy-MM-dd') === dateKey
-            })
+              const planDate = plan.startDate || new Date();
+              return format(planDate, 'yyyy-MM-dd') === dateKey;
+            });
 
             return (
               <div
                 key={date.toISOString()}
-                className={cn('relative flex-1', dayIndex < displayDates.length - 1 ? 'border-border border-r' : '')}
+                className={cn(
+                  'relative flex-1',
+                  dayIndex < displayDates.length - 1 ? 'border-border border-r' : '',
+                )}
                 style={{ width: `${100 / displayDates.length}%` }}
               >
                 <FiveDayContent
@@ -192,9 +201,9 @@ export const FiveDayView = ({
                   onPlanUpdate={
                     onUpdatePlan
                       ? (planId, updates) => {
-                          const plan = plans.find((p) => p.id === planId)
+                          const plan = plans.find((p) => p.id === planId);
                           if (plan) {
-                            onUpdatePlan({ ...plan, ...updates })
+                            onUpdatePlan({ ...plan, ...updates });
                           }
                         }
                       : undefined
@@ -206,10 +215,10 @@ export const FiveDayView = ({
                   displayDates={displayDates}
                 />
               </div>
-            )
+            );
           })}
         </ScrollableCalendarLayout>
       </div>
     </CalendarViewAnimation>
-  )
-}
+  );
+};

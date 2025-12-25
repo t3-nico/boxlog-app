@@ -1,20 +1,20 @@
-'use client'
+'use client';
 
-import { useCallback, useEffect, useState } from 'react'
-import { createPortal } from 'react-dom'
+import { useCallback, useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import type { TagGroup } from '@/features/tags/types'
-import { AlertTriangle } from 'lucide-react'
-import { useTranslations } from 'next-intl'
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import type { TagGroup } from '@/features/tags/types';
+import { AlertTriangle } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface TagGroupDeleteDialogProps {
-  group: TagGroup | null
-  tagCount?: number
-  onClose: () => void
-  onConfirm: () => Promise<void>
+  group: TagGroup | null;
+  tagCount?: number;
+  onClose: () => void;
+  onConfirm: () => Promise<void>;
 }
 
 /**
@@ -28,62 +28,67 @@ interface TagGroupDeleteDialogProps {
  * - Surface: bg-surface（カード、ダイアログ用）
  * - セマンティックカラー: destructive系トークン使用
  */
-export function TagGroupDeleteDialog({ group, tagCount = 0, onClose, onConfirm }: TagGroupDeleteDialogProps) {
-  const t = useTranslations()
-  const [confirmText, setConfirmText] = useState('')
-  const [isDeleting, setIsDeleting] = useState(false)
-  const [mounted, setMounted] = useState(false)
+export function TagGroupDeleteDialog({
+  group,
+  tagCount = 0,
+  onClose,
+  onConfirm,
+}: TagGroupDeleteDialogProps) {
+  const t = useTranslations();
+  const [confirmText, setConfirmText] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   // クライアントサイドでのみマウント
   useEffect(() => {
-    setMounted(true)
-  }, [])
+    setMounted(true);
+  }, []);
 
   // グループが変更されたら確認テキストをリセット
   useEffect(() => {
     if (!group) {
-      setConfirmText('')
+      setConfirmText('');
     }
-  }, [group])
+  }, [group]);
 
   const handleConfirm = useCallback(async () => {
-    setIsDeleting(true)
+    setIsDeleting(true);
     try {
-      await onConfirm()
+      await onConfirm();
     } finally {
-      setIsDeleting(false)
+      setIsDeleting(false);
     }
-  }, [onConfirm])
+  }, [onConfirm]);
 
   const handleBackdropClick = useCallback(
     (e: React.MouseEvent) => {
       if (e.target === e.currentTarget && !isDeleting) {
-        setConfirmText('')
-        onClose()
+        setConfirmText('');
+        onClose();
       }
     },
-    [isDeleting, onClose]
-  )
+    [isDeleting, onClose],
+  );
 
   // ESCキーでダイアログを閉じる
   useEffect(() => {
-    if (!group) return
+    if (!group) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && !isDeleting) {
-        setConfirmText('')
-        onClose()
+        setConfirmText('');
+        onClose();
       }
-    }
+    };
 
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [group, isDeleting, onClose])
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [group, isDeleting, onClose]);
 
-  if (!mounted || !group) return null
+  if (!mounted || !group) return null;
 
-  const requiresConfirmation = tagCount > 10
-  const canDelete = !requiresConfirmation || confirmText === group.name
+  const requiresConfirmation = tagCount > 10;
+  const canDelete = !requiresConfirmation || confirmText === group.name;
 
   const dialog = (
     <div
@@ -121,7 +126,9 @@ export function TagGroupDeleteDialog({ group, tagCount = 0, onClose, onConfirm }
           {/* タグ数表示 */}
           <div className="bg-surface-container rounded-xl p-4">
             <p className="mb-2 text-sm font-medium">{t('tag.groupDelete.tagsInGroup')}:</p>
-            <p className="text-muted-foreground text-sm">{t('tag.groupDelete.tagCount', { count: tagCount })}</p>
+            <p className="text-muted-foreground text-sm">
+              {t('tag.groupDelete.tagCount', { count: tagCount })}
+            </p>
           </div>
 
           {/* 削除後の処理 */}
@@ -156,8 +163,8 @@ export function TagGroupDeleteDialog({ group, tagCount = 0, onClose, onConfirm }
           <Button
             variant="outline"
             onClick={() => {
-              setConfirmText('')
-              onClose()
+              setConfirmText('');
+              onClose();
             }}
             disabled={isDeleting}
             className="hover:bg-state-hover"
@@ -175,7 +182,7 @@ export function TagGroupDeleteDialog({ group, tagCount = 0, onClose, onConfirm }
         </div>
       </div>
     </div>
-  )
+  );
 
-  return createPortal(dialog, document.body)
+  return createPortal(dialog, document.body);
 }

@@ -137,13 +137,13 @@ src/features/calendar/components/
 
 ```typescript
 // メインコンポーネント
-export { CalendarView } from './CalendarView'
+export { CalendarView } from './CalendarView';
 
 // ビューコンポーネント
-export * from './views'
+export * from './views';
 
 // 共通コンポーネント
-export * from './common'
+export * from './common';
 ```
 
 ### コンポーネント間の依存関係

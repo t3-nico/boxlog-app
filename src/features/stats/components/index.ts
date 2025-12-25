@@ -1,3 +1,3 @@
-export { StatsSidebar, StatsSidebarSections } from './sidebar'
-export { Stat } from './stat'
-export { StatsToolbar } from './stats-toolbar'
+export { StatsSidebar, StatsSidebarSections } from './sidebar';
+export { Stat } from './stat';
+export { StatsToolbar } from './stats-toolbar';

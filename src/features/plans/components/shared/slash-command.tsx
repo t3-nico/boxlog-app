@@ -1,5 +1,15 @@
-import { CheckSquare, Code, Heading1, Heading2, Heading3, List, ListOrdered, Text, TextQuote } from 'lucide-react'
-import { Command, createSuggestionItems, renderItems } from 'novel'
+import {
+  CheckSquare,
+  Code,
+  Heading1,
+  Heading2,
+  Heading3,
+  List,
+  ListOrdered,
+  Text,
+  TextQuote,
+} from 'lucide-react';
+import { Command, createSuggestionItems, renderItems } from 'novel';
 
 export const suggestionItems = createSuggestionItems([
   {
@@ -8,7 +18,7 @@ export const suggestionItems = createSuggestionItems([
     searchTerms: ['p', 'paragraph'],
     icon: <Text size={18} />,
     command: ({ editor, range }) => {
-      editor.chain().focus().deleteRange(range).toggleNode('paragraph', 'paragraph').run()
+      editor.chain().focus().deleteRange(range).toggleNode('paragraph', 'paragraph').run();
     },
   },
   {
@@ -17,7 +27,7 @@ export const suggestionItems = createSuggestionItems([
     searchTerms: ['todo', 'task', 'list', 'check', 'checkbox'],
     icon: <CheckSquare size={18} />,
     command: ({ editor, range }) => {
-      editor.chain().focus().deleteRange(range).toggleTaskList().run()
+      editor.chain().focus().deleteRange(range).toggleTaskList().run();
     },
   },
   {
@@ -26,7 +36,7 @@ export const suggestionItems = createSuggestionItems([
     searchTerms: ['title', 'big', 'large'],
     icon: <Heading1 size={18} />,
     command: ({ editor, range }) => {
-      editor.chain().focus().deleteRange(range).setNode('heading', { level: 1 }).run()
+      editor.chain().focus().deleteRange(range).setNode('heading', { level: 1 }).run();
     },
   },
   {
@@ -35,7 +45,7 @@ export const suggestionItems = createSuggestionItems([
     searchTerms: ['subtitle', 'medium'],
     icon: <Heading2 size={18} />,
     command: ({ editor, range }) => {
-      editor.chain().focus().deleteRange(range).setNode('heading', { level: 2 }).run()
+      editor.chain().focus().deleteRange(range).setNode('heading', { level: 2 }).run();
     },
   },
   {
@@ -44,7 +54,7 @@ export const suggestionItems = createSuggestionItems([
     searchTerms: ['subtitle', 'small'],
     icon: <Heading3 size={18} />,
     command: ({ editor, range }) => {
-      editor.chain().focus().deleteRange(range).setNode('heading', { level: 3 }).run()
+      editor.chain().focus().deleteRange(range).setNode('heading', { level: 3 }).run();
     },
   },
   {
@@ -53,7 +63,7 @@ export const suggestionItems = createSuggestionItems([
     searchTerms: ['unordered', 'point'],
     icon: <List size={18} />,
     command: ({ editor, range }) => {
-      editor.chain().focus().deleteRange(range).toggleBulletList().run()
+      editor.chain().focus().deleteRange(range).toggleBulletList().run();
     },
   },
   {
@@ -62,7 +72,7 @@ export const suggestionItems = createSuggestionItems([
     searchTerms: ['ordered'],
     icon: <ListOrdered size={18} />,
     command: ({ editor, range }) => {
-      editor.chain().focus().deleteRange(range).toggleOrderedList().run()
+      editor.chain().focus().deleteRange(range).toggleOrderedList().run();
     },
   },
   {
@@ -71,20 +81,27 @@ export const suggestionItems = createSuggestionItems([
     searchTerms: ['blockquote'],
     icon: <TextQuote size={18} />,
     command: ({ editor, range }) =>
-      editor.chain().focus().deleteRange(range).toggleNode('paragraph', 'paragraph').toggleBlockquote().run(),
+      editor
+        .chain()
+        .focus()
+        .deleteRange(range)
+        .toggleNode('paragraph', 'paragraph')
+        .toggleBlockquote()
+        .run(),
   },
   {
     title: 'Code',
     description: 'Capture a code snippet.',
     searchTerms: ['codeblock'],
     icon: <Code size={18} />,
-    command: ({ editor, range }) => editor.chain().focus().deleteRange(range).toggleCodeBlock().run(),
+    command: ({ editor, range }) =>
+      editor.chain().focus().deleteRange(range).toggleCodeBlock().run(),
   },
-])
+]);
 
 export const slashCommand = Command.configure({
   suggestion: {
     items: () => suggestionItems,
     render: renderItems,
   },
-})
+});

@@ -1,4 +1,4 @@
-import type { Plan, PlanStatus } from '../types/plan'
+import type { Plan, PlanStatus } from '../types/plan';
 
 /**
  * getEffectiveStatusに必要な最小プロパティ
@@ -6,9 +6,9 @@ import type { Plan, PlanStatus } from '../types/plan'
  * DBには旧ステータス値が残っている可能性があるため、stringも許容
  */
 type StatusInput = {
-  status: PlanStatus | string
-  start_time?: string | null | undefined
-}
+  status: PlanStatus | string;
+  start_time?: string | null | undefined;
+};
 
 /**
  * 旧ステータス値を新ステータス値にマッピング
@@ -17,22 +17,22 @@ type StatusInput = {
 function normalizeStatus(status: string): PlanStatus {
   // 新ステータス値はそのまま
   if (status === 'todo' || status === 'doing' || status === 'done') {
-    return status
+    return status;
   }
 
   // 旧ステータス値のマッピング
   switch (status) {
     case 'backlog':
     case 'ready':
-      return 'todo'
+      return 'todo';
     case 'active':
     case 'wait':
-      return 'doing'
+      return 'doing';
     case 'cancel':
-      return 'done' // cancelはdoneとして扱う
+      return 'done'; // cancelはdoneとして扱う
     default:
       // 未知のステータスはtodoとして扱う
-      return 'todo'
+      return 'todo';
   }
 }
 
@@ -48,20 +48,20 @@ function normalizeStatus(status: string): PlanStatus {
  */
 export function getEffectiveStatus(plan: StatusInput): PlanStatus {
   // まずステータスを正規化
-  const normalizedStatus = normalizeStatus(plan.status)
+  const normalizedStatus = normalizeStatus(plan.status);
 
   // 明示的にdoneならdone
   if (normalizedStatus === 'done') {
-    return 'done'
+    return 'done';
   }
 
   // カレンダー配置あり（start_time がある）→ doing
   if (plan.start_time) {
-    return 'doing'
+    return 'doing';
   }
 
   // それ以外 → 正規化されたステータス（todoまたはdoing）
-  return normalizedStatus
+  return normalizedStatus;
 }
 
 /**
@@ -73,7 +73,7 @@ export function getEffectiveStatus(plan: StatusInput): PlanStatus {
  * @returns Todoに戻せる場合 true
  */
 export function canRevertToTodo(plan: Plan): boolean {
-  return !plan.start_time
+  return !plan.start_time;
 }
 
 /**
@@ -87,12 +87,12 @@ export function canRevertToTodo(plan: Plan): boolean {
 export function isOverdue(plan: Plan): boolean {
   // 実効ステータスで判定（旧ステータス値も考慮）
   if (getEffectiveStatus(plan) === 'done') {
-    return false
+    return false;
   }
 
   if (!plan.end_time) {
-    return false
+    return false;
   }
 
-  return new Date(plan.end_time) < new Date()
+  return new Date(plan.end_time) < new Date();
 }

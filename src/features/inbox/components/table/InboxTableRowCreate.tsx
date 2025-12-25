@@ -1,19 +1,19 @@
-'use client'
+'use client';
 
-import { Input } from '@/components/ui/input'
-import { TableCell, TableRow } from '@/components/ui/table'
-import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
-import { cn } from '@/lib/utils'
-import { Plus } from 'lucide-react'
-import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
-import { useInboxColumnStore } from '../../stores/useInboxColumnStore'
+import { Input } from '@/components/ui/input';
+import { TableCell, TableRow } from '@/components/ui/table';
+import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
+import { cn } from '@/lib/utils';
+import { Plus } from 'lucide-react';
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import { useInboxColumnStore } from '../../stores/useInboxColumnStore';
 
 /**
  * InboxTableRowCreate コンポーネントの外部から呼び出せるメソッド
  */
 export interface InboxTableRowCreateHandle {
   /** 新規作成モードを開始 */
-  startCreate: () => void
+  startCreate: () => void;
 }
 
 /**
@@ -33,53 +33,53 @@ export interface InboxTableRowCreateHandle {
  * ```
  */
 export const InboxTableRowCreate = forwardRef<InboxTableRowCreateHandle>((_props, ref) => {
-  const { getVisibleColumns } = useInboxColumnStore()
-  const { createPlan, deletePlan } = usePlanMutations()
-  const [isCreating, setIsCreating] = useState(false)
-  const [title, setTitle] = useState('')
-  const [tempplanId, setTempplanId] = useState<string | null>(null)
-  const inputRef = useRef<HTMLInputElement>(null)
-  const visibleColumns = getVisibleColumns()
+  const { getVisibleColumns } = useInboxColumnStore();
+  const { createPlan, deletePlan } = usePlanMutations();
+  const [isCreating, setIsCreating] = useState(false);
+  const [title, setTitle] = useState('');
+  const [tempplanId, setTempplanId] = useState<string | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const visibleColumns = getVisibleColumns();
 
   // 作成モードになったら自動フォーカス
   useEffect(() => {
     if (isCreating && inputRef.current) {
-      inputRef.current.focus()
+      inputRef.current.focus();
     }
-  }, [isCreating])
+  }, [isCreating]);
 
   // 外部から呼び出し可能なメソッドを公開
   useImperativeHandle(ref, () => ({
     startCreate: handleStartCreate,
-  }))
+  }));
 
   // Notionスタイル：クリックで即座にプランを作成してタイトル入力状態にする
   const handleStartCreate = async () => {
-    if (isCreating) return
+    if (isCreating) return;
 
-    setIsCreating(true)
+    setIsCreating(true);
     try {
       // 空のプランを作成（楽観的更新）
       const newplan = await createPlan.mutateAsync({
         title: '無題のプラン',
         status: 'todo',
-      })
+      });
 
       if (newplan?.id) {
-        setTempplanId(newplan.id)
-        setTitle('')
+        setTempplanId(newplan.id);
+        setTitle('');
       }
     } catch (error) {
-      console.error('Failed to create plan:', error)
-      setIsCreating(false)
+      console.error('Failed to create plan:', error);
+      setIsCreating(false);
     }
-  }
+  };
 
   // タイトル確定
   const handleSaveTitle = async () => {
     if (!tempplanId) {
-      setIsCreating(false)
-      return
+      setIsCreating(false);
+      return;
     }
 
     try {
@@ -88,39 +88,39 @@ export const InboxTableRowCreate = forwardRef<InboxTableRowCreateHandle>((_props
         await createPlan.mutateAsync({
           title: title.trim(),
           status: 'todo',
-        })
+        });
       } else {
         // タイトルが空の場合は削除
-        await deletePlan.mutateAsync({ id: tempplanId })
+        await deletePlan.mutateAsync({ id: tempplanId });
       }
     } catch (error) {
-      console.error('Failed to save title:', error)
+      console.error('Failed to save title:', error);
     } finally {
-      setIsCreating(false)
-      setTitle('')
-      setTempplanId(null)
+      setIsCreating(false);
+      setTitle('');
+      setTempplanId(null);
     }
-  }
+  };
 
   // キャンセル
   const handleCancel = async () => {
     if (tempplanId) {
       try {
-        await deletePlan.mutateAsync({ id: tempplanId })
+        await deletePlan.mutateAsync({ id: tempplanId });
       } catch (error) {
-        console.error('Failed to delete temp plan:', error)
+        console.error('Failed to delete temp plan:', error);
       }
     }
-    setIsCreating(false)
-    setTitle('')
-    setTempplanId(null)
-  }
+    setIsCreating(false);
+    setTitle('');
+    setTempplanId(null);
+  };
 
   return (
     <TableRow
       className={cn(
         'hover:bg-state-hover cursor-pointer border-none transition-colors',
-        isCreating && 'bg-surface-container'
+        isCreating && 'bg-surface-container',
       )}
       onClick={handleStartCreate}
     >
@@ -132,9 +132,9 @@ export const InboxTableRowCreate = forwardRef<InboxTableRowCreateHandle>((_props
             onChange={(e) => setTitle(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
-                handleSaveTitle()
+                handleSaveTitle();
               } else if (e.key === 'Escape') {
-                handleCancel()
+                handleCancel();
               }
             }}
             onBlur={handleSaveTitle}
@@ -150,7 +150,7 @@ export const InboxTableRowCreate = forwardRef<InboxTableRowCreateHandle>((_props
         )}
       </TableCell>
     </TableRow>
-  )
-})
+  );
+});
 
-InboxTableRowCreate.displayName = 'InboxTableRowCreate'
+InboxTableRowCreate.displayName = 'InboxTableRowCreate';

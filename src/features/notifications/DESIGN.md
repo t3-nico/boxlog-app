@@ -160,106 +160,106 @@ export type NotificationType =
   | 'event_deleted'
   | 'task_completed'
   | 'trash_warning'
-  | 'system'
+  | 'system';
 
 // 優先度
-export type NotificationPriority = 'urgent' | 'high' | 'medium' | 'low'
+export type NotificationPriority = 'urgent' | 'high' | 'medium' | 'low';
 
 // アイコンタイプ
-export type NotificationIcon = 'bell' | 'calendar' | 'trash' | 'alert' | 'check' | 'info'
+export type NotificationIcon = 'bell' | 'calendar' | 'trash' | 'alert' | 'check' | 'info';
 
 // データベースエンティティ（Supabaseから取得する型）
 export interface NotificationEntity {
-  id: string
-  user_id: string
-  type: NotificationType
-  priority: NotificationPriority
-  title: string
-  message: string | null
-  related_event_id: string | null
-  related_tag_id: string | null
-  action_url: string | null
-  icon: NotificationIcon | null
-  data: Record<string, unknown>
-  is_read: boolean
-  read_at: string | null
-  expires_at: string | null
-  created_at: string
-  updated_at: string
+  id: string;
+  user_id: string;
+  type: NotificationType;
+  priority: NotificationPriority;
+  title: string;
+  message: string | null;
+  related_event_id: string | null;
+  related_tag_id: string | null;
+  action_url: string | null;
+  icon: NotificationIcon | null;
+  data: Record<string, unknown>;
+  is_read: boolean;
+  read_at: string | null;
+  expires_at: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
 // クライアント側の通知型
 export interface Notification {
-  id: string
-  type: NotificationType
-  priority: NotificationPriority
-  title: string
-  message?: string
-  relatedEventId?: string
-  relatedTagId?: string
-  actionUrl?: string
-  icon?: NotificationIcon
-  data?: Record<string, unknown>
-  isRead: boolean
-  readAt?: Date
-  expiresAt?: Date
-  createdAt: Date
-  updatedAt: Date
+  id: string;
+  type: NotificationType;
+  priority: NotificationPriority;
+  title: string;
+  message?: string;
+  relatedEventId?: string;
+  relatedTagId?: string;
+  actionUrl?: string;
+  icon?: NotificationIcon;
+  data?: Record<string, unknown>;
+  isRead: boolean;
+  readAt?: Date;
+  expiresAt?: Date;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 // 通知作成リクエスト
 export interface CreateNotificationRequest {
-  type: NotificationType
-  priority?: NotificationPriority
-  title: string
-  message?: string
-  relatedEventId?: string
-  relatedTagId?: string
-  actionUrl?: string
-  icon?: NotificationIcon
-  data?: Record<string, unknown>
-  expiresAt?: Date
+  type: NotificationType;
+  priority?: NotificationPriority;
+  title: string;
+  message?: string;
+  relatedEventId?: string;
+  relatedTagId?: string;
+  actionUrl?: string;
+  icon?: NotificationIcon;
+  data?: Record<string, unknown>;
+  expiresAt?: Date;
 }
 
 // 通知フィルター
 export interface NotificationFilters {
-  types?: NotificationType[]
-  priorities?: NotificationPriority[]
-  isRead?: boolean
-  startDate?: Date
-  endDate?: Date
+  types?: NotificationType[];
+  priorities?: NotificationPriority[];
+  isRead?: boolean;
+  startDate?: Date;
+  endDate?: Date;
 }
 
 // Zustand Store型
 export interface NotificationState {
-  notifications: Notification[]
-  unreadCount: number
-  loading: boolean
-  error: string | null
+  notifications: Notification[];
+  unreadCount: number;
+  loading: boolean;
+  error: string | null;
 }
 
 export interface NotificationActions {
   // データ取得
-  fetchNotifications: () => Promise<void>
-  fetchUnreadCount: () => Promise<void>
+  fetchNotifications: () => Promise<void>;
+  fetchUnreadCount: () => Promise<void>;
 
   // 既読管理
-  markAsRead: (notificationId: string) => Promise<void>
-  markAllAsRead: () => Promise<void>
+  markAsRead: (notificationId: string) => Promise<void>;
+  markAllAsRead: () => Promise<void>;
 
   // 削除
-  deleteNotification: (notificationId: string) => Promise<void>
-  deleteAllRead: () => Promise<void>
+  deleteNotification: (notificationId: string) => Promise<void>;
+  deleteAllRead: () => Promise<void>;
 
   // フィルタリング
-  getUnreadNotifications: () => Notification[]
-  getNotificationsByType: (type: NotificationType) => Notification[]
+  getUnreadNotifications: () => Notification[];
+  getNotificationsByType: (type: NotificationType) => Notification[];
 
   // エラー処理
-  clearError: () => void
+  clearError: () => void;
 }
 
-export type NotificationStore = NotificationState & NotificationActions
+export type NotificationStore = NotificationState & NotificationActions;
 ```
 
 ## 🏗️ アーキテクチャ
@@ -339,12 +339,12 @@ src/features/notifications/
 
 ```typescript
 // Supabase Edge Function: check-reminders (1分ごと実行)
-const now = new Date()
+const now = new Date();
 const upcomingEvents = await supabase
   .from('events')
   .select('*')
   .gte('planned_start', now.toISOString())
-  .lte('planned_start', addMinutes(now, 60).toISOString())
+  .lte('planned_start', addMinutes(now, 60).toISOString());
 
 for (const event of upcomingEvents) {
   for (const reminder of event.reminders || []) {
@@ -357,10 +357,10 @@ for (const event of upcomingEvents) {
         relatedEventId: event.id,
         actionUrl: `/calendar?date=${format(event.planned_start, 'yyyy-MM-dd')}`,
         icon: 'bell',
-      })
+      });
 
       // リマインダーをトリガー済みにマーク
-      await markReminderTriggered(event.id, reminder.id)
+      await markReminderTriggered(event.id, reminder.id);
     }
   }
 }
@@ -372,7 +372,7 @@ for (const event of upcomingEvents) {
 // src/features/events/hooks/useCreateEvent.ts
 export const useCreateEvent = () => {
   const createEvent = async (eventData: CreateEventRequest) => {
-    const event = await supabase.from('events').insert(eventData)
+    const event = await supabase.from('events').insert(eventData);
 
     // 通知を生成
     await createNotification({
@@ -383,25 +383,25 @@ export const useCreateEvent = () => {
       relatedEventId: event.id,
       actionUrl: `/calendar?date=${format(eventData.startDate, 'yyyy-MM-dd')}`,
       icon: 'calendar',
-    })
+    });
 
-    return event
-  }
+    return event;
+  };
 
-  return { createEvent }
-}
+  return { createEvent };
+};
 ```
 
 ### 3. ゴミ箱警告（Cron Job）
 
 ```typescript
 // Supabase Edge Function: check-trash (1日1回実行)
-const threeDaysFromNow = addDays(new Date(), 3)
+const threeDaysFromNow = addDays(new Date(), 3);
 const trashedEvents = await supabase
   .from('events')
   .select('*')
   .eq('is_deleted', true)
-  .eq('deleted_at', format(threeDaysFromNow, 'yyyy-MM-dd'))
+  .eq('deleted_at', format(threeDaysFromNow, 'yyyy-MM-dd'));
 
 for (const event of trashedEvents) {
   await createNotification({
@@ -412,7 +412,7 @@ for (const event of trashedEvents) {
     relatedEventId: event.id,
     actionUrl: '/settings?tab=trash',
     icon: 'trash',
-  })
+  });
 }
 ```
 

@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/utils';
 
 /**
  * Skeletonアニメーションタイプ
@@ -8,14 +8,14 @@ import { cn } from '@/lib/utils'
  * @see https://uxdesign.cc/what-you-should-know-about-skeleton-screens-a820c45a571a
  * shimmerはpulseより最大40%速く感じられる（UX研究結果）
  */
-type SkeletonAnimation = 'pulse' | 'shimmer'
+type SkeletonAnimation = 'pulse' | 'shimmer';
 
 interface SkeletonProps extends React.ComponentProps<'div'> {
   /**
    * アニメーションタイプ
    * @default 'pulse'
    */
-  animation?: SkeletonAnimation
+  animation?: SkeletonAnimation;
 }
 
 function Skeleton({ className, animation = 'pulse', ...props }: SkeletonProps) {
@@ -27,12 +27,12 @@ function Skeleton({ className, animation = 'pulse', ...props }: SkeletonProps) {
         animation === 'shimmer'
           ? 'animate-shimmer motion-reduce:bg-surface-container motion-reduce:animate-none'
           : 'bg-surface-container animate-pulse motion-reduce:animate-none',
-        className
+        className,
       )}
       {...props}
     />
-  )
+  );
 }
 
-export { Skeleton }
-export type { SkeletonAnimation, SkeletonProps }
+export { Skeleton };
+export type { SkeletonAnimation, SkeletonProps };

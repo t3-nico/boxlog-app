@@ -1,19 +1,19 @@
-'use client'
+'use client';
 
-import { useMemo } from 'react'
+import { useMemo } from 'react';
 
-import { Button } from '@/components/ui/button'
-import { KanbanBoard } from '@/features/board'
-import { useBoardStatusFilterStore } from '@/features/board/stores/useBoardStatusFilterStore'
-import type { PlanStatus } from '@/features/plans/types/plan'
-import { TableNavigation, type TableNavigationConfig } from '@/features/table'
-import { Plus } from 'lucide-react'
+import { Button } from '@/components/ui/button';
+import { KanbanBoard } from '@/features/board';
+import { useBoardStatusFilterStore } from '@/features/board/stores/useBoardStatusFilterStore';
+import type { PlanStatus } from '@/features/plans/types/plan';
+import { TableNavigation, type TableNavigationConfig } from '@/features/table';
+import { Plus } from 'lucide-react';
 
-import { useInboxData } from '../hooks/useInboxData'
-import { useInboxFilterStore } from '../stores/useInboxFilterStore'
-import { DisplayModeSwitcher } from './DisplayModeSwitcher'
-import { InboxBoardFilterContent } from './board/InboxBoardFilterContent'
-import { InboxBoardSettingsContent } from './board/InboxBoardSettingsContent'
+import { useInboxData } from '../hooks/useInboxData';
+import { useInboxFilterStore } from '../stores/useInboxFilterStore';
+import { DisplayModeSwitcher } from './DisplayModeSwitcher';
+import { InboxBoardFilterContent } from './board/InboxBoardFilterContent';
+import { InboxBoardSettingsContent } from './board/InboxBoardSettingsContent';
 
 /**
  * Inbox Board View コンポーネント
@@ -28,19 +28,19 @@ import { InboxBoardSettingsContent } from './board/InboxBoardSettingsContent'
  * ```
  */
 export function InboxBoardView() {
-  const filters = useInboxFilterStore()
-  const { reset: resetFilters } = useInboxFilterStore()
-  const { resetFilters: resetStatusFilters } = useBoardStatusFilterStore()
+  const filters = useInboxFilterStore();
+  const { reset: resetFilters } = useInboxFilterStore();
+  const { resetFilters: resetStatusFilters } = useBoardStatusFilterStore();
 
   const { items, isPending, error } = useInboxData({
     status: filters.status[0] as PlanStatus | undefined,
     search: filters.search,
     tags: filters.tags,
     dueDate: filters.dueDate,
-  })
+  });
 
   // フィルター数をカウント
-  const filterCount = filters.tags.length + (filters.dueDate !== 'all' ? 1 : 0)
+  const filterCount = filters.tags.length + (filters.dueDate !== 'all' ? 1 : 0);
 
   // TableNavigation設定（Boardはソート機能なし）
   const navigationConfig: TableNavigationConfig = useMemo(
@@ -60,8 +60,8 @@ export function InboxBoardView() {
       hasActiveSettings: false,
       onSettingsReset: resetStatusFilters,
     }),
-    [filters.search, filters.setSearch, filterCount, resetFilters, resetStatusFilters]
-  )
+    [filters.search, filters.setSearch, filterCount, resetFilters, resetStatusFilters],
+  );
 
   // エラー表示
   if (error) {
@@ -72,7 +72,7 @@ export function InboxBoardView() {
           <p className="mt-1 text-sm">{error.message}</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -112,5 +112,5 @@ export function InboxBoardView() {
         )}
       </div>
     </div>
-  )
+  );
 }

@@ -1,4 +1,4 @@
 /**
  * DayView固有のコンポーネント
  */
-export { DayDateHeader } from './DayDateHeader'
+export { DayDateHeader } from './DayDateHeader';

@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import {
   ContextMenu,
@@ -6,23 +6,23 @@ import {
   ContextMenuItem,
   ContextMenuSeparator,
   ContextMenuTrigger,
-} from '@/components/ui/context-menu'
-import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
-import { cn } from '@/lib/utils'
-import type { ReactNode } from 'react'
-import { useEffect, useRef } from 'react'
-import type { InboxItem } from '../../hooks/useInboxData'
-import { useInboxFocusStore } from '../../stores/useInboxFocusStore'
-import { useInboxSelectionStore } from '../../stores/useInboxSelectionStore'
-import { InboxActionMenuItems } from './InboxActionMenuItems'
+} from '@/components/ui/context-menu';
+import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
+import { cn } from '@/lib/utils';
+import type { ReactNode } from 'react';
+import { useEffect, useRef } from 'react';
+import type { InboxItem } from '../../hooks/useInboxData';
+import { useInboxFocusStore } from '../../stores/useInboxFocusStore';
+import { useInboxSelectionStore } from '../../stores/useInboxSelectionStore';
+import { InboxActionMenuItems } from './InboxActionMenuItems';
 
 interface InboxRowWrapperProps {
   /** 表示するInboxアイテム */
-  item: InboxItem
+  item: InboxItem;
   /** 子要素（TableRow） */
-  children: ReactNode
+  children: ReactNode;
   /** 選択されているか */
-  isSelected: boolean
+  isSelected: boolean;
 }
 
 /**
@@ -34,46 +34,50 @@ interface InboxRowWrapperProps {
  * - フォーカス管理
  */
 export function InboxRowWrapper({ item, children, isSelected }: InboxRowWrapperProps) {
-  const { openInspector, planId: inspectorPlanId, isOpen: isInspectorOpen } = usePlanInspectorStore()
-  const { setSelectedIds } = useInboxSelectionStore()
-  const { focusedId, setFocusedId } = useInboxFocusStore()
+  const {
+    openInspector,
+    planId: inspectorPlanId,
+    isOpen: isInspectorOpen,
+  } = usePlanInspectorStore();
+  const { setSelectedIds } = useInboxSelectionStore();
+  const { focusedId, setFocusedId } = useInboxFocusStore();
 
-  const wrapperRef = useRef<HTMLDivElement>(null)
-  const isFocused = focusedId === item.id
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const isFocused = focusedId === item.id;
   // Inspectorで開いているアイテムかどうか
-  const isInspectorActive = isInspectorOpen && inspectorPlanId === item.id
+  const isInspectorActive = isInspectorOpen && inspectorPlanId === item.id;
 
   // フォーカスされた行をスクロールして表示
   useEffect(() => {
     if (isFocused && wrapperRef.current) {
-      wrapperRef.current.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
+      wrapperRef.current.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
     }
-  }, [isFocused])
+  }, [isFocused]);
 
   // コンテキストメニューアクション
   const handleEdit = () => {
-    openInspector(item.id)
-  }
+    openInspector(item.id);
+  };
 
   const handleDuplicate = () => {
-    console.log('Duplicate:', item.id)
-  }
+    console.log('Duplicate:', item.id);
+  };
 
   const handleAddTags = () => {
-    console.log('Add tags:', item.id)
-  }
+    console.log('Add tags:', item.id);
+  };
 
   const handleChangeDueDate = () => {
-    console.log('Change due date:', item.id)
-  }
+    console.log('Change due date:', item.id);
+  };
 
   const handleArchive = () => {
-    console.log('Archive:', item.id)
-  }
+    console.log('Archive:', item.id);
+  };
 
   const handleDelete = () => {
-    console.log('Delete:', item.id)
-  }
+    console.log('Delete:', item.id);
+  };
 
   return (
     <ContextMenu modal={false}>
@@ -84,16 +88,16 @@ export function InboxRowWrapper({ item, children, isSelected }: InboxRowWrapperP
             'hover:bg-state-hover cursor-pointer transition-colors',
             isSelected && 'bg-primary-state-selected hover:bg-state-dragged',
             !isSelected && isInspectorActive && 'bg-state-hover',
-            isFocused && 'ring-primary ring-2 ring-inset'
+            isFocused && 'ring-primary ring-2 ring-inset',
           )}
           onClick={() => {
-            openInspector(item.id)
-            setFocusedId(item.id)
+            openInspector(item.id);
+            setFocusedId(item.id);
           }}
           onContextMenu={() => {
             // 右クリックされた行を選択
             if (!isSelected) {
-              setSelectedIds([item.id])
+              setSelectedIds([item.id]);
             }
           }}
         >
@@ -110,7 +114,10 @@ export function InboxRowWrapper({ item, children, isSelected }: InboxRowWrapperP
           onArchive={handleArchive}
           onDelete={handleDelete}
           renderMenuItem={({ icon, label, onClick, variant }) => (
-            <ContextMenuItem onClick={onClick} className={variant === 'destructive' ? 'text-destructive' : ''}>
+            <ContextMenuItem
+              onClick={onClick}
+              className={variant === 'destructive' ? 'text-destructive' : ''}
+            >
               {icon}
               {label}
             </ContextMenuItem>
@@ -119,5 +126,5 @@ export function InboxRowWrapper({ item, children, isSelected }: InboxRowWrapperP
         />
       </ContextMenuContent>
     </ContextMenu>
-  )
+  );
 }

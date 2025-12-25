@@ -12,10 +12,15 @@ export {
   handleReactError,
   isSentryInitialized,
   reportToSentry,
-} from './integration'
+} from './integration';
 
 // パフォーマンス監視
-export { initPerformanceMonitoring, instrumentApiCalls, measureCoreWebVitals, measurePageLoad } from './performance'
+export {
+  initPerformanceMonitoring,
+  instrumentApiCalls,
+  measureCoreWebVitals,
+  measurePageLoad,
+} from './performance';
 
 // パフォーマンストレースヘルパー
-export { traceApiCall, traceDbQuery, traceServerComponent, withTrace } from './trace'
+export { traceApiCall, traceDbQuery, traceServerComponent, withTrace } from './trace';

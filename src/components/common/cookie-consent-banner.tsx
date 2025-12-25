@@ -1,11 +1,11 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
+import { useState } from 'react';
 
-import { Button } from '@/components/ui/button'
-import { acceptAllCookies, acceptNecessaryOnly, needsCookieConsent } from '@/lib/cookie-consent'
-import { useLocale, useTranslations } from 'next-intl'
-import Link from 'next/link'
+import { Button } from '@/components/ui/button';
+import { acceptAllCookies, acceptNecessaryOnly, needsCookieConsent } from '@/lib/cookie-consent';
+import { useLocale, useTranslations } from 'next-intl';
+import Link from 'next/link';
 
 /**
  * Cookie同意バナー
@@ -29,29 +29,29 @@ import Link from 'next/link'
  */
 // SSR対応の遅延初期化
 const getInitialShowBanner = (): boolean => {
-  if (typeof window === 'undefined') return false
-  return needsCookieConsent()
-}
+  if (typeof window === 'undefined') return false;
+  return needsCookieConsent();
+};
 
 export function CookieConsentBanner() {
-  const t = useTranslations()
-  const locale = useLocale()
+  const t = useTranslations();
+  const locale = useLocale();
   // 遅延初期化でクッキー同意状態を確認
-  const [showBanner, setShowBanner] = useState(getInitialShowBanner)
+  const [showBanner, setShowBanner] = useState(getInitialShowBanner);
 
   const handleAcceptAll = () => {
-    acceptAllCookies()
-    setShowBanner(false)
-  }
+    acceptAllCookies();
+    setShowBanner(false);
+  };
 
   const handleAcceptNecessaryOnly = () => {
-    acceptNecessaryOnly()
-    setShowBanner(false)
-  }
+    acceptNecessaryOnly();
+    setShowBanner(false);
+  };
 
   // SSR時、または同意済みの場合は何も表示しない
   if (!showBanner) {
-    return null
+    return null;
   }
 
   return (
@@ -70,7 +70,10 @@ export function CookieConsentBanner() {
             </h2>
             <p id="cookie-consent-description" className="text-muted-foreground text-sm">
               {t('legal.cookies.banner.description')}{' '}
-              <Link href={`/${locale}/legal/cookies`} className="text-primary hover:text-primary/80 underline">
+              <Link
+                href={`/${locale}/legal/cookies`}
+                className="text-primary hover:text-primary/80 underline"
+              >
                 {t('legal.cookies.banner.learnMore')}
               </Link>
             </p>
@@ -81,7 +84,11 @@ export function CookieConsentBanner() {
             <Button onClick={handleAcceptAll} className="w-full sm:w-auto">
               {t('legal.cookies.banner.acceptAll')}
             </Button>
-            <Button onClick={handleAcceptNecessaryOnly} variant="outline" className="w-full sm:w-auto">
+            <Button
+              onClick={handleAcceptNecessaryOnly}
+              variant="outline"
+              className="w-full sm:w-auto"
+            >
               {t('legal.cookies.banner.rejectAll')}
             </Button>
             <Button asChild variant="ghost" className="w-full sm:w-auto">
@@ -91,5 +98,5 @@ export function CookieConsentBanner() {
         </div>
       </div>
     </div>
-  )
+  );
 }

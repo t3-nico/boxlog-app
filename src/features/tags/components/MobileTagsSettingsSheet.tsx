@@ -1,34 +1,34 @@
-'use client'
+'use client';
 
 import {
   MobileSettingsButtonGroup,
   MobileSettingsChip,
   MobileSettingsSection,
   MobileSettingsSheet,
-} from '@/components/common'
-import { Input } from '@/components/ui/input'
-import type { TagColumnId } from '@/features/tags/stores/useTagColumnStore'
-import { useTagDisplayModeStore } from '@/features/tags/stores/useTagDisplayModeStore'
-import { FolderTree, List, Search, Settings2, X } from 'lucide-react'
-import { useRef } from 'react'
+} from '@/components/common';
+import { Input } from '@/components/ui/input';
+import type { TagColumnId } from '@/features/tags/stores/useTagColumnStore';
+import { useTagDisplayModeStore } from '@/features/tags/stores/useTagDisplayModeStore';
+import { FolderTree, List, Search, Settings2, X } from 'lucide-react';
+import { useRef } from 'react';
 
 interface ColumnSetting {
-  id: TagColumnId
-  label: string
+  id: TagColumnId;
+  label: string;
 }
 
 interface VisibleColumn {
-  id: string
-  width: number
+  id: string;
+  width: number;
 }
 
 interface MobileTagsSettingsSheetProps {
-  columnSettings: ColumnSetting[]
-  visibleColumns: VisibleColumn[]
-  onColumnVisibilityChange: (columnId: TagColumnId, visible: boolean) => void
-  searchQuery: string
-  onSearchChange: (query: string) => void
-  t: (key: string) => string
+  columnSettings: ColumnSetting[];
+  visibleColumns: VisibleColumn[];
+  onColumnVisibilityChange: (columnId: TagColumnId, visible: boolean) => void;
+  searchQuery: string;
+  onSearchChange: (query: string) => void;
+  t: (key: string) => string;
 }
 
 /**
@@ -59,13 +59,13 @@ export function MobileTagsSettingsSheet({
   onSearchChange,
   t,
 }: MobileTagsSettingsSheetProps) {
-  const inputRef = useRef<HTMLInputElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null);
 
   // 表示モード
-  const { displayMode, setDisplayMode } = useTagDisplayModeStore()
+  const { displayMode, setDisplayMode } = useTagDisplayModeStore();
 
   // アクティブな設定があるかどうか
-  const hasActiveSettings = searchQuery.length > 0
+  const hasActiveSettings = searchQuery.length > 0;
 
   return (
     <MobileSettingsSheet title={t('tags.page.settings')} hasActiveSettings={hasActiveSettings}>
@@ -106,10 +106,14 @@ export function MobileTagsSettingsSheet({
       </MobileSettingsSection>
 
       {/* 列設定 */}
-      <MobileSettingsSection icon={<Settings2 />} title={t('tags.page.columnSettings')} showSeparator={false}>
+      <MobileSettingsSection
+        icon={<Settings2 />}
+        title={t('tags.page.columnSettings')}
+        showSeparator={false}
+      >
         <div className="flex flex-wrap gap-2">
           {columnSettings.map((col) => {
-            const isVisible = visibleColumns.some((c) => c.id === col.id)
+            const isVisible = visibleColumns.some((c) => c.id === col.id);
             return (
               <MobileSettingsChip
                 key={col.id}
@@ -118,10 +122,10 @@ export function MobileTagsSettingsSheet({
                 checked={isVisible}
                 onCheckedChange={(checked) => onColumnVisibilityChange(col.id, checked)}
               />
-            )
+            );
           })}
         </div>
       </MobileSettingsSection>
     </MobileSettingsSheet>
-  )
+  );
 }

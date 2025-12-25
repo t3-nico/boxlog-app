@@ -1,16 +1,16 @@
-'use client'
+'use client';
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react';
 
-import type { Session, User } from '@supabase/supabase-js'
+import type { Session, User } from '@supabase/supabase-js';
 
-import { createClient } from '@/lib/supabase/client'
+import { createClient } from '@/lib/supabase/client';
 
 interface AuthState {
-  user: User | null
-  session: Session | null
-  loading: boolean
-  error: string | null
+  user: User | null;
+  session: Session | null;
+  loading: boolean;
+  error: string | null;
 }
 
 /**
@@ -39,9 +39,9 @@ export function useAuth() {
     session: null,
     loading: true,
     error: null,
-  })
+  });
 
-  const supabase = createClient()
+  const supabase = createClient();
 
   useEffect(() => {
     // 初期セッション取得
@@ -51,8 +51,8 @@ export function useAuth() {
         session: session,
         loading: false,
         error: null,
-      })
-    })
+      });
+    });
 
     // 認証状態の変更を監視
     const {
@@ -63,11 +63,11 @@ export function useAuth() {
         session: session,
         loading: false,
         error: null,
-      })
-    })
+      });
+    });
 
-    return () => subscription.unsubscribe()
-  }, [supabase.auth])
+    return () => subscription.unsubscribe();
+  }, [supabase.auth]);
 
   const signUp = async (email: string, password: string, metadata?: Record<string, unknown>) => {
     const result = await supabase.auth.signUp({
@@ -77,27 +77,27 @@ export function useAuth() {
         ...(metadata !== undefined && { data: metadata }),
         emailRedirectTo: `${window.location.origin}/auth/callback`,
       },
-    })
+    });
 
     if (result.error) {
-      setAuthState((prev) => ({ ...prev, error: result.error?.message ?? null }))
+      setAuthState((prev) => ({ ...prev, error: result.error?.message ?? null }));
     }
 
-    return result
-  }
+    return result;
+  };
 
   const signIn = async (email: string, password: string) => {
     const result = await supabase.auth.signInWithPassword({
       email,
       password,
-    })
+    });
 
     if (result.error) {
-      setAuthState((prev) => ({ ...prev, error: result.error?.message ?? null }))
+      setAuthState((prev) => ({ ...prev, error: result.error?.message ?? null }));
     }
 
-    return result
-  }
+    return result;
+  };
 
   const signInWithOAuth = async (provider: 'google' | 'apple') => {
     const result = await supabase.auth.signInWithOAuth({
@@ -105,52 +105,52 @@ export function useAuth() {
       options: {
         redirectTo: `${window.location.origin}/auth/callback`,
       },
-    })
+    });
 
     if (result.error) {
-      setAuthState((prev) => ({ ...prev, error: result.error?.message ?? null }))
+      setAuthState((prev) => ({ ...prev, error: result.error?.message ?? null }));
     }
 
-    return result
-  }
+    return result;
+  };
 
   const signOut = async () => {
-    const result = await supabase.auth.signOut()
+    const result = await supabase.auth.signOut();
 
     if (result.error) {
-      setAuthState((prev) => ({ ...prev, error: result.error?.message ?? null }))
+      setAuthState((prev) => ({ ...prev, error: result.error?.message ?? null }));
     }
 
-    return result
-  }
+    return result;
+  };
 
   const resetPassword = async (email: string) => {
     const result = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/auth/reset-password`,
-    })
+    });
 
     if (result.error) {
-      setAuthState((prev) => ({ ...prev, error: result.error?.message ?? null }))
+      setAuthState((prev) => ({ ...prev, error: result.error?.message ?? null }));
     }
 
-    return result
-  }
+    return result;
+  };
 
   const updatePassword = async (password: string) => {
     const result = await supabase.auth.updateUser({
       password,
-    })
+    });
 
     if (result.error) {
-      setAuthState((prev) => ({ ...prev, error: result.error?.message ?? null }))
+      setAuthState((prev) => ({ ...prev, error: result.error?.message ?? null }));
     }
 
-    return result
-  }
+    return result;
+  };
 
   const clearError = () => {
-    setAuthState((prev) => ({ ...prev, error: null }))
-  }
+    setAuthState((prev) => ({ ...prev, error: null }));
+  };
 
   return {
     user: authState.user,
@@ -164,5 +164,5 @@ export function useAuth() {
     resetPassword,
     updatePassword,
     clearError,
-  }
+  };
 }

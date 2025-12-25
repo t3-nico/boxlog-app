@@ -2,10 +2,10 @@
  * 開発環境専用パフォーマンスモニターフック
  */
 
-import { useMemoryMonitor } from './useMemoryMonitor'
-import { usePerformanceMonitor } from './usePerformanceMonitor'
-import { usePerformanceStats } from './usePerformanceStats'
-import { useRenderCount } from './useRenderCount'
+import { useMemoryMonitor } from './useMemoryMonitor';
+import { usePerformanceMonitor } from './usePerformanceMonitor';
+import { usePerformanceStats } from './usePerformanceStats';
+import { useRenderCount } from './useRenderCount';
 
 /**
  * 開発環境でのみ動作するパフォーマンス計測ラッパー
@@ -22,11 +22,11 @@ import { useRenderCount } from './useRenderCount'
  * }
  */
 export function useDevelopmentPerformanceMonitor(componentName: string) {
-  const isDevelopment = process.env.NODE_ENV === 'development'
+  const isDevelopment = process.env.NODE_ENV === 'development';
 
-  usePerformanceMonitor(componentName, isDevelopment)
-  useRenderCount(componentName, isDevelopment)
-  useMemoryMonitor(componentName, isDevelopment)
+  usePerformanceMonitor(componentName, isDevelopment);
+  useRenderCount(componentName, isDevelopment);
+  useMemoryMonitor(componentName, isDevelopment);
 
-  return usePerformanceStats(componentName, isDevelopment)
+  return usePerformanceStats(componentName, isDevelopment);
 }

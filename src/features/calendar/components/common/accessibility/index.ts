@@ -1,10 +1,14 @@
 // アクセシビリティコンポーネント
-export { AccessibilitySettings } from './AccessibilitySettings'
-export { AccessibleCalendarGrid } from './AccessibleCalendarGrid'
+export { AccessibilitySettings } from './AccessibilitySettings';
+export { AccessibleCalendarGrid } from './AccessibleCalendarGrid';
 
 // アクセシビリティフック
-export { AccessibilityLiveRegion, useAccessibilityKeyboard } from '../../../hooks/useAccessibilityKeyboard'
+export {
+  AccessibilityLiveRegion,
+  useAccessibilityKeyboard,
+} from '../../../hooks/useAccessibilityKeyboard';
 
-export { useHighContrast } from '../../../hooks/useHighContrast'
+export { useHighContrast } from '../../../hooks/useHighContrast';
 
-export { FocusTrap, useFocusTrap } from '../../../hooks/useFocusTrap'
+// useFocusTrap は Radix UI Dialog に置き換えられました
+// 新しいダイアログには @radix-ui/react-dialog を使用してください

@@ -3,19 +3,24 @@
  * 様々なサイズ・用途に対応したローディング表示
  */
 
-'use client'
+'use client';
 
-import React, { useCallback } from 'react'
+import React, { useCallback } from 'react';
 
-import { Loader2, RefreshCw } from 'lucide-react'
+import { Loader2, RefreshCw } from 'lucide-react';
 
-import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
-import { useTranslations } from 'next-intl'
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { useTranslations } from 'next-intl';
 
-import { Skeleton, type SkeletonAnimation } from '@/components/ui/skeleton'
+import { Skeleton, type SkeletonAnimation } from '@/components/ui/skeleton';
 
-import { LoadingButtonProps, LoadingCardProps, LoadingOverlayProps, LoadingSpinnerProps } from './types'
+import {
+  LoadingButtonProps,
+  LoadingCardProps,
+  LoadingOverlayProps,
+  LoadingSpinnerProps,
+} from './types';
 
 // === スピナーコンポーネント ===
 
@@ -29,20 +34,22 @@ export const LoadingSpinner = ({
     md: 'h-6 w-6',
     lg: 'h-8 w-8',
     xl: 'h-12 w-12',
-  }
+  };
 
   return (
     <Loader2
       className={cn(
-        'animate-spin text-neutral-600 motion-reduce:animate-none dark:text-neutral-400',
-        Object.prototype.hasOwnProperty.call(sizeClasses, size) ? sizeClasses[size as keyof typeof sizeClasses] : '',
-        className
+        'text-muted-foreground animate-spin motion-reduce:animate-none',
+        Object.prototype.hasOwnProperty.call(sizeClasses, size)
+          ? sizeClasses[size as keyof typeof sizeClasses]
+          : '',
+        className,
       )}
       aria-label={ariaLabel}
       role="status"
     />
-  )
-}
+  );
+};
 
 // === リフレッシュスピナー ===
 
@@ -56,20 +63,22 @@ export const RefreshSpinner = ({
     md: 'h-6 w-6',
     lg: 'h-8 w-8',
     xl: 'h-12 w-12',
-  }
+  };
 
   return (
     <RefreshCw
       className={cn(
-        'animate-spin text-blue-600 motion-reduce:animate-none dark:text-blue-400',
-        Object.prototype.hasOwnProperty.call(sizeClasses, size) ? sizeClasses[size as keyof typeof sizeClasses] : '',
-        className
+        'text-primary animate-spin motion-reduce:animate-none',
+        Object.prototype.hasOwnProperty.call(sizeClasses, size)
+          ? sizeClasses[size as keyof typeof sizeClasses]
+          : '',
+        className,
       )}
       aria-label={ariaLabel}
       role="status"
     />
-  )
-}
+  );
+};
 
 // === ローディングオーバーレイ ===
 
@@ -80,46 +89,48 @@ export const LoadingOverlay = ({
   className = '',
   spinnerSize = 'md',
 }: LoadingOverlayProps) => {
-  const t = useTranslations()
-  const displayMessage = message ?? t('error.loading.default')
+  const t = useTranslations();
+  const displayMessage = message ?? t('error.loading.default');
 
   return (
     <div className={cn('relative', className)}>
       {children}
       {isLoading === true && (
-        <div className="absolute inset-0 z-50 flex items-center justify-center bg-neutral-100/80 backdrop-blur-sm dark:bg-neutral-900/80">
+        <div className="bg-background/80 absolute inset-0 z-50 flex items-center justify-center backdrop-blur-sm">
           <div className="flex flex-col items-center gap-2">
             <LoadingSpinner size={spinnerSize} />
             {displayMessage ? (
-              <p className="text-sm font-medium text-neutral-800 dark:text-neutral-200">{displayMessage}</p>
+              <p className="text-foreground text-sm font-medium">{displayMessage}</p>
             ) : null}
           </div>
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
 // === ローディングカード ===
 
 export const LoadingCard = ({ title, message, className = '' }: LoadingCardProps) => {
-  const t = useTranslations()
-  const displayTitle = title ?? t('error.loading.title')
-  const displayMessage = message ?? t('error.loading.loadingData')
+  const t = useTranslations();
+  const displayTitle = title ?? t('error.loading.title');
+  const displayMessage = message ?? t('error.loading.loadingData');
 
   return (
     <div
       className={cn(
-        'flex flex-col items-center justify-center rounded-md bg-white p-8 shadow-sm dark:bg-neutral-800',
-        className
+        'bg-card flex flex-col items-center justify-center rounded-md p-8 shadow-sm',
+        className,
       )}
     >
       <LoadingSpinner size="lg" className="mb-4" />
-      <h3 className="mb-2 text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">{displayTitle}</h3>
-      <p className="max-w-sm text-center text-neutral-800 dark:text-neutral-200">{displayMessage}</p>
+      <h3 className="text-card-foreground mb-2 text-3xl font-bold tracking-tight">
+        {displayTitle}
+      </h3>
+      <p className="text-muted-foreground max-w-sm text-center">{displayMessage}</p>
     </div>
-  )
-}
+  );
+};
 
 // === ローディングボタン ===
 
@@ -133,7 +144,8 @@ export const LoadingButton = ({
   variant = 'primary',
 }: LoadingButtonProps) => {
   // variantのマッピング（LoadingButtonPropsのvariantをui/Buttonのvariantに変換）
-  const buttonVariant = variant === 'primary' ? 'primary' : variant === 'outline' ? 'outline' : 'ghost'
+  const buttonVariant =
+    variant === 'primary' ? 'primary' : variant === 'outline' ? 'outline' : 'ghost';
 
   return (
     <Button
@@ -148,22 +160,26 @@ export const LoadingButton = ({
     >
       {children}
     </Button>
-  )
-}
+  );
+};
 
 // === スケルトンコンポーネント ===
 // Skeleton は ui/skeleton.tsx から re-export
-export { Skeleton, type SkeletonAnimation } from '@/components/ui/skeleton'
+export { Skeleton, type SkeletonAnimation } from '@/components/ui/skeleton';
 
 // === スケルトンテキスト ===
 
 export interface SkeletonTextProps {
-  lines?: number
-  className?: string
-  animation?: SkeletonAnimation
+  lines?: number;
+  className?: string;
+  animation?: SkeletonAnimation;
 }
 
-export const SkeletonText = ({ lines = 3, className = '', animation = 'pulse' }: SkeletonTextProps) => {
+export const SkeletonText = ({
+  lines = 3,
+  className = '',
+  animation = 'pulse',
+}: SkeletonTextProps) => {
   return (
     <div className={cn('flex flex-col gap-2', className)}>
       {Array.from({ length: lines }, (_, i) => (
@@ -172,21 +188,21 @@ export const SkeletonText = ({ lines = 3, className = '', animation = 'pulse' }:
           animation={animation}
           className={cn(
             'h-4',
-            i === lines - 1 ? 'w-3/4' : 'w-full' // 最後の行は少し短く
+            i === lines - 1 ? 'w-3/4' : 'w-full', // 最後の行は少し短く
           )}
         />
       ))}
     </div>
-  )
-}
+  );
+};
 
 // === スケルトンカード ===
 
 export interface SkeletonCardProps {
-  showAvatar?: boolean
-  showImage?: boolean
-  className?: string
-  animation?: SkeletonAnimation
+  showAvatar?: boolean;
+  showImage?: boolean;
+  className?: string;
+  animation?: SkeletonAnimation;
 }
 
 export const SkeletonCard = ({
@@ -196,11 +212,13 @@ export const SkeletonCard = ({
   animation = 'pulse',
 }: SkeletonCardProps) => {
   return (
-    <div className={cn('rounded-md bg-white p-4 shadow-sm dark:bg-neutral-800', className)}>
+    <div className={cn('bg-card rounded-md p-4 shadow-sm', className)}>
       {showImage ? <Skeleton animation={animation} className="mb-4 h-40 w-full" /> : null}
 
       <div className="flex items-start gap-2">
-        {showAvatar ? <Skeleton animation={animation} className="h-10 w-10 flex-shrink-0 rounded-full" /> : null}
+        {showAvatar ? (
+          <Skeleton animation={animation} className="h-10 w-10 flex-shrink-0 rounded-full" />
+        ) : null}
 
         <div className="flex flex-1 flex-col gap-2">
           <Skeleton animation={animation} className="h-4 w-3/4" />
@@ -213,20 +231,20 @@ export const SkeletonCard = ({
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
 // === データローディング状態 ===
 
 export interface DataLoadingProps {
-  isLoading: boolean
-  isError: boolean
-  isEmpty: boolean
-  children: React.ReactNode
-  loadingComponent?: React.ReactNode
-  errorComponent?: React.ReactNode
-  emptyComponent?: React.ReactNode
-  className?: string
+  isLoading: boolean;
+  isError: boolean;
+  isEmpty: boolean;
+  children: React.ReactNode;
+  loadingComponent?: React.ReactNode;
+  errorComponent?: React.ReactNode;
+  emptyComponent?: React.ReactNode;
+  className?: string;
 }
 
 export const DataLoading = ({
@@ -239,16 +257,16 @@ export const DataLoading = ({
   emptyComponent,
   className = '',
 }: DataLoadingProps) => {
-  const t = useTranslations()
+  const t = useTranslations();
   const handleReload = useCallback(() => {
-    window.location.reload()
-  }, [])
+    window.location.reload();
+  }, []);
   if (isLoading) {
     return (
       <div className={cn('flex items-center justify-center p-8', className)}>
         {loadingComponent || <LoadingSpinner size="lg" />}
       </div>
-    )
+    );
   }
 
   if (isError) {
@@ -256,37 +274,37 @@ export const DataLoading = ({
       <div className={cn('flex items-center justify-center p-8', className)}>
         {errorComponent || (
           <div className="text-center">
-            <p className="mb-2 text-red-600 dark:text-red-400">{t('error.loading.loadFailed')}</p>
+            <p className="text-destructive mb-2">{t('error.loading.loadFailed')}</p>
             <Button type="button" variant="text" onClick={handleReload}>
               {t('error.loading.retry')}
             </Button>
           </div>
         )}
       </div>
-    )
+    );
   }
 
   if (isEmpty) {
     return (
       <div className={cn('flex items-center justify-center p-8', className)}>
-        {emptyComponent || <p className="text-neutral-600 dark:text-neutral-400">{t('error.loading.noData')}</p>}
+        {emptyComponent || <p className="text-muted-foreground">{t('error.loading.noData')}</p>}
       </div>
-    )
+    );
   }
 
-  return <>{children}</>
-}
+  return <>{children}</>;
+};
 
 // === プリセットローディング状態 ===
 
 // ページローディング
 function PageLoading() {
-  const t = useTranslations()
+  const t = useTranslations();
   return (
     <div className="flex min-h-screen items-center justify-center">
       <LoadingCard title={t('error.loading.loadingPage')} message={t('error.loading.pleaseWait')} />
     </div>
-  )
+  );
 }
 
 // テーブルローディング
@@ -302,7 +320,7 @@ function TableLoading({ rows = 5 }: { rows?: number }) {
         </div>
       ))}
     </div>
-  )
+  );
 }
 
 // リストローディング
@@ -313,7 +331,7 @@ function ListLoading({ items = 3 }: { items?: number }) {
         <SkeletonCard key={i} showAvatar />
       ))}
     </div>
-  )
+  );
 }
 
 // フォームローディング
@@ -334,7 +352,7 @@ function FormLoading() {
       </div>
       <Skeleton className="h-10 w-24" />
     </div>
-  )
+  );
 }
 
 export const PresetLoadings = {
@@ -342,7 +360,7 @@ export const PresetLoadings = {
   Table: TableLoading,
   List: ListLoading,
   Form: FormLoading,
-}
+};
 
 export const LoadingStates = {
   Spinner: LoadingSpinner,
@@ -354,4 +372,4 @@ export const LoadingStates = {
   SkeletonCard,
   DataLoading,
   PresetLoadings,
-}
+};

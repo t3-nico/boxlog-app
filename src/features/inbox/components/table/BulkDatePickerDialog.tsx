@@ -1,7 +1,7 @@
-'use client'
+'use client';
 
-import { MiniCalendar } from '@/components/common/MiniCalendar'
-import { Button } from '@/components/ui/button'
+import { MiniCalendar } from '@/components/common/MiniCalendar';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -9,24 +9,24 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
-import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
-import { format } from 'date-fns'
-import { ja } from 'date-fns/locale'
-import { Calendar as CalendarIcon, Loader2, X } from 'lucide-react'
-import { useTranslations } from 'next-intl'
-import { useState } from 'react'
-import { toast } from 'sonner'
+} from '@/components/ui/dialog';
+import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
+import { format } from 'date-fns';
+import { ja } from 'date-fns/locale';
+import { Calendar as CalendarIcon, Loader2, X } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { useState } from 'react';
+import { toast } from 'sonner';
 
 interface BulkDatePickerDialogProps {
   /** ダイアログの開閉状態 */
-  open: boolean
+  open: boolean;
   /** 開閉状態を変更するコールバック */
-  onOpenChange: (open: boolean) => void
+  onOpenChange: (open: boolean) => void;
   /** 選択されたプランIDの配列 */
-  selectedIds: string[]
+  selectedIds: string[];
   /** 成功時のコールバック */
-  onSuccess?: () => void
+  onSuccess?: () => void;
 }
 
 /**
@@ -47,64 +47,69 @@ interface BulkDatePickerDialogProps {
  * />
  * ```
  */
-export function BulkDatePickerDialog({ open, onOpenChange, selectedIds, onSuccess }: BulkDatePickerDialogProps) {
-  const t = useTranslations()
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const { bulkUpdatePlan } = usePlanMutations()
+export function BulkDatePickerDialog({
+  open,
+  onOpenChange,
+  selectedIds,
+  onSuccess,
+}: BulkDatePickerDialogProps) {
+  const t = useTranslations();
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { bulkUpdatePlan } = usePlanMutations();
 
   // 送信ハンドラー（期限設定）
   const handleSubmit = async () => {
     if (!selectedDate) {
-      toast.error(t('common.inbox.selectDate'))
-      return
+      toast.error(t('common.inbox.selectDate'));
+      return;
     }
 
-    setIsSubmitting(true)
+    setIsSubmitting(true);
     try {
       await bulkUpdatePlan.mutateAsync({
         ids: selectedIds,
         data: {
           due_date: selectedDate.toISOString(),
         },
-      })
+      });
 
-      toast.success(t('common.inbox.dueDateSetCount', { count: selectedIds.length }))
-      onSuccess?.()
+      toast.success(t('common.inbox.dueDateSetCount', { count: selectedIds.length }));
+      onSuccess?.();
     } catch (error) {
-      toast.error(t('common.inbox.dueDateSetFailed'))
-      console.error('Bulk date update error:', error)
+      toast.error(t('common.inbox.dueDateSetFailed'));
+      console.error('Bulk date update error:', error);
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   // 期限クリアハンドラー
   const handleClear = async () => {
-    setIsSubmitting(true)
+    setIsSubmitting(true);
     try {
       await bulkUpdatePlan.mutateAsync({
         ids: selectedIds,
         data: {
           due_date: undefined, // nullではなくundefinedを使用
         },
-      })
+      });
 
-      toast.success(t('common.inbox.dueDateClearedCount', { count: selectedIds.length }))
-      onSuccess?.()
+      toast.success(t('common.inbox.dueDateClearedCount', { count: selectedIds.length }));
+      onSuccess?.();
     } catch (error) {
-      toast.error(t('common.inbox.dueDateClearFailed'))
-      console.error('Bulk date clear error:', error)
+      toast.error(t('common.inbox.dueDateClearFailed'));
+      console.error('Bulk date clear error:', error);
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   // ダイアログを閉じる際にリセット
   const handleClose = () => {
-    setSelectedDate(undefined)
-    onOpenChange(false)
-  }
+    setSelectedDate(undefined);
+    onOpenChange(false);
+  };
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
@@ -123,9 +128,16 @@ export function BulkDatePickerDialog({ open, onOpenChange, selectedIds, onSucces
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <CalendarIcon className="text-muted-foreground size-4" />
-                  <span className="font-medium">{format(selectedDate, 'yyyy年MM月dd日 (E)', { locale: ja })}</span>
+                  <span className="font-medium">
+                    {format(selectedDate, 'yyyy年MM月dd日 (E)', { locale: ja })}
+                  </span>
                 </div>
-                <Button variant="ghost" size="sm" onClick={() => setSelectedDate(undefined)} className="size-8 p-0">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setSelectedDate(undefined)}
+                  className="size-8 p-0"
+                >
                   <X className="size-4" />
                 </Button>
               </div>
@@ -134,17 +146,30 @@ export function BulkDatePickerDialog({ open, onOpenChange, selectedIds, onSucces
 
           {/* カレンダー */}
           <div className="flex justify-center">
-            <MiniCalendar selectedDate={selectedDate} onDateSelect={setSelectedDate} className="rounded-md border" />
+            <MiniCalendar
+              selectedDate={selectedDate}
+              onDateSelect={setSelectedDate}
+              className="rounded-md border"
+            />
           </div>
 
           {/* 説明テキスト */}
           <div className="text-muted-foreground text-sm">
-            {selectedDate ? <p>{t('common.inbox.dateSelected')}</p> : <p>{t('common.inbox.selectDateHint')}</p>}
+            {selectedDate ? (
+              <p>{t('common.inbox.dateSelected')}</p>
+            ) : (
+              <p>{t('common.inbox.selectDateHint')}</p>
+            )}
           </div>
         </div>
 
         <DialogFooter className="flex flex-col gap-2 sm:flex-row">
-          <Button variant="outline" onClick={handleClose} disabled={isSubmitting} className="w-full sm:w-auto">
+          <Button
+            variant="outline"
+            onClick={handleClose}
+            disabled={isSubmitting}
+            className="w-full sm:w-auto"
+          >
             {t('common.inbox.cancel')}
           </Button>
           <Button
@@ -185,5 +210,5 @@ export function BulkDatePickerDialog({ open, onOpenChange, selectedIds, onSucces
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

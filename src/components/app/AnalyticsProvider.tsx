@@ -5,65 +5,65 @@
  * ユーザー同意管理、設定、セッション追跡
  */
 
-'use client'
+'use client';
 
-import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from 'react'
+import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
 
-import type { AnalyticsProvider } from '@/lib/analytics'
-import { analytics, setUserConsent, setUserId, updateConfig } from '@/lib/analytics'
+import type { AnalyticsProvider } from '@/lib/analytics';
+import { analytics, setUserConsent, setUserId, updateConfig } from '@/lib/analytics';
 
 // SSR対応: localStorageから同意状態を取得
 const getStoredConsent = (requireConsent: boolean, initialConsent: boolean): boolean => {
-  if (typeof window === 'undefined' || !requireConsent) return initialConsent
-  const savedConsent = localStorage.getItem('boxlog_analytics_consent')
+  if (typeof window === 'undefined' || !requireConsent) return initialConsent;
+  const savedConsent = localStorage.getItem('boxlog_analytics_consent');
   if (savedConsent !== null) {
-    return savedConsent === 'true'
+    return savedConsent === 'true';
   }
-  return initialConsent
-}
+  return initialConsent;
+};
 
 /**
  * 🎯 Analytics Context の型定義
  */
 interface AnalyticsContextValue {
   /** ユーザー同意状態 */
-  hasUserConsent: boolean
+  hasUserConsent: boolean;
   /** 同意状態を更新 */
-  setConsent: (consent: boolean) => void
+  setConsent: (consent: boolean) => void;
   /** ユーザーID設定 */
-  setUser: (userId?: string) => void
+  setUser: (userId?: string) => void;
   /** プロバイダー設定 */
-  enabledProviders: AnalyticsProvider[]
+  enabledProviders: AnalyticsProvider[];
   /** デバッグモード */
-  debugMode: boolean
+  debugMode: boolean;
   /** アナリティクス準備状態 */
-  isReady: boolean
+  isReady: boolean;
 }
 
 /**
  * 📊 Analytics Context
  */
-const AnalyticsContext = createContext<AnalyticsContextValue | undefined>(undefined)
+const AnalyticsContext = createContext<AnalyticsContextValue | undefined>(undefined);
 
 /**
  * ⚙️ Analytics Provider Props
  */
 interface AnalyticsProviderProps {
-  children: ReactNode
+  children: ReactNode;
   /** 有効なアナリティクスプロバイダー */
-  enabledProviders?: AnalyticsProvider[]
+  enabledProviders?: AnalyticsProvider[];
   /** デバッグモードを有効にする */
-  debug?: boolean
+  debug?: boolean;
   /** 開発環境での追跡を無効にする */
-  disableInDevelopment?: boolean
+  disableInDevelopment?: boolean;
   /** 自動的にユーザー同意を要求する */
-  requireConsent?: boolean
+  requireConsent?: boolean;
   /** 初期同意状態 */
-  initialConsent?: boolean
+  initialConsent?: boolean;
   /** ユーザーID */
-  userId?: string
+  userId?: string;
   /** カスタムエンドポイント */
-  customEndpoint?: string
+  customEndpoint?: string;
 }
 
 /**
@@ -80,29 +80,31 @@ export function AnalyticsProvider({
   customEndpoint,
 }: AnalyticsProviderProps) {
   // 遅延初期化でlocalStorageから同意状態を復元
-  const [hasUserConsent, setHasUserConsent] = useState(() => getStoredConsent(requireConsent, initialConsent))
-  const [isReady, setIsReady] = useState(false)
-  const initializedRef = useRef(false)
+  const [hasUserConsent, setHasUserConsent] = useState(() =>
+    getStoredConsent(requireConsent, initialConsent),
+  );
+  const [isReady, setIsReady] = useState(false);
+  const initializedRef = useRef(false);
 
   /**
    * 🔐 同意状態の更新
    */
   const setConsent = (consent: boolean) => {
-    setHasUserConsent(consent)
-    setUserConsent(consent)
+    setHasUserConsent(consent);
+    setUserConsent(consent);
 
     // ローカルストレージに保存
     if (typeof window !== 'undefined') {
-      localStorage.setItem('boxlog_analytics_consent', consent.toString())
+      localStorage.setItem('boxlog_analytics_consent', consent.toString());
     }
-  }
+  };
 
   /**
    * 👤 ユーザーID設定
    */
   const setUser = (newUserId?: string) => {
-    setUserId(newUserId)
-  }
+    setUserId(newUserId);
+  };
 
   /**
    * 🚀 初期化処理
@@ -110,8 +112,8 @@ export function AnalyticsProvider({
   useEffect(() => {
     // 初回のみ同意状態をアナリティクスに反映
     if (!initializedRef.current) {
-      initializedRef.current = true
-      setUserConsent(hasUserConsent)
+      initializedRef.current = true;
+      setUserConsent(hasUserConsent);
     }
 
     // アナリティクス設定を更新
@@ -121,15 +123,23 @@ export function AnalyticsProvider({
       disableInDevelopment,
       requireConsent,
       ...(customEndpoint !== undefined && { customEndpoint }),
-    })
+    });
 
     // 初期ユーザーID設定
     if (userId) {
-      setUserId(userId)
+      setUserId(userId);
     }
 
-    setIsReady(true)
-  }, [enabledProviders, debug, disableInDevelopment, requireConsent, userId, customEndpoint, hasUserConsent])
+    setIsReady(true);
+  }, [
+    enabledProviders,
+    debug,
+    disableInDevelopment,
+    requireConsent,
+    userId,
+    customEndpoint,
+    hasUserConsent,
+  ]);
 
   /**
    * 🎯 Context値
@@ -141,20 +151,20 @@ export function AnalyticsProvider({
     enabledProviders,
     debugMode: debug,
     isReady,
-  }
+  };
 
-  return <AnalyticsContext.Provider value={contextValue}>{children}</AnalyticsContext.Provider>
+  return <AnalyticsContext.Provider value={contextValue}>{children}</AnalyticsContext.Provider>;
 }
 
 /**
  * 🪝 Analytics Context Hook
  */
 export function useAnalyticsContext() {
-  const context = useContext(AnalyticsContext)
+  const context = useContext(AnalyticsContext);
   if (context === undefined) {
-    throw new Error('useAnalyticsContext must be used within an AnalyticsProvider')
+    throw new Error('useAnalyticsContext must be used within an AnalyticsProvider');
   }
-  return context
+  return context;
 }
 
 /**
@@ -162,25 +172,25 @@ export function useAnalyticsContext() {
  */
 interface CookieConsentProps {
   /** カスタムメッセージ */
-  message?: string
+  message?: string;
   /** 同意ボタンテキスト */
-  acceptText?: string
+  acceptText?: string;
   /** 拒否ボタンテキスト */
-  declineText?: string
+  declineText?: string;
   /** プライバシーポリシーURL */
-  privacyPolicyUrl?: string
+  privacyPolicyUrl?: string;
   /** バナー位置 */
-  position?: 'top' | 'bottom'
+  position?: 'top' | 'bottom';
   /** カスタムスタイル */
-  className?: string
+  className?: string;
 }
 
 // SSR対応: バナー表示状態の初期化
 const getInitialShowBanner = (): boolean => {
-  if (typeof window === 'undefined') return false
-  const savedConsent = localStorage.getItem('boxlog_analytics_consent')
-  return savedConsent === null
-}
+  if (typeof window === 'undefined') return false;
+  const savedConsent = localStorage.getItem('boxlog_analytics_consent');
+  return savedConsent === null;
+};
 
 export function CookieConsentBanner({
   message = 'このサイトでは、サービス向上のためにクッキーを使用しています。',
@@ -190,25 +200,25 @@ export function CookieConsentBanner({
   position = 'bottom',
   className = '',
 }: CookieConsentProps) {
-  const { hasUserConsent, setConsent } = useAnalyticsContext()
+  const { hasUserConsent, setConsent } = useAnalyticsContext();
   // 遅延初期化でバナー表示状態を決定
-  const [showBanner, setShowBanner] = useState(getInitialShowBanner)
+  const [showBanner, setShowBanner] = useState(getInitialShowBanner);
 
   const handleAccept = () => {
-    setConsent(true)
-    setShowBanner(false)
-  }
+    setConsent(true);
+    setShowBanner(false);
+  };
 
   const handleDecline = () => {
-    setConsent(false)
-    setShowBanner(false)
-  }
+    setConsent(false);
+    setShowBanner(false);
+  };
 
   if (!showBanner || hasUserConsent !== false) {
-    return null
+    return null;
   }
 
-  const positionClasses = position === 'top' ? 'top-0' : 'bottom-0'
+  const positionClasses = position === 'top' ? 'top-0' : 'bottom-0';
 
   return (
     <div
@@ -244,22 +254,24 @@ export function CookieConsentBanner({
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 /**
  * 🎯 Analytics Debug Panel Component
  */
 export function AnalyticsDebugPanel() {
-  const { debugMode, enabledProviders, hasUserConsent, isReady } = useAnalyticsContext()
+  const { debugMode, enabledProviders, hasUserConsent, isReady } = useAnalyticsContext();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- デバッグ用の汎用プロパティ
-  const [events, setEvents] = useState<Array<{ name: string; timestamp: number; properties: any }>>([])
+  const [events, setEvents] = useState<Array<{ name: string; timestamp: number; properties: any }>>(
+    [],
+  );
 
   useEffect(() => {
-    if (!debugMode) return
+    if (!debugMode) return;
 
     // イベント追跡のフック（デバッグ用）
-    const originalTrack = analytics.track
+    const originalTrack = analytics.track;
     analytics.track = function (eventName, properties) {
       setEvents((prev) => [
         ...prev.slice(-49), // 最新50件を保持
@@ -268,46 +280,52 @@ export function AnalyticsDebugPanel() {
           timestamp: Date.now(),
           properties,
         },
-      ])
-      return originalTrack.call(this, eventName, properties)
-    }
+      ]);
+      return originalTrack.call(this, eventName, properties);
+    };
 
     return () => {
-      analytics.track = originalTrack
-    }
-  }, [debugMode])
+      analytics.track = originalTrack;
+    };
+  }, [debugMode]);
 
-  if (!debugMode) return null
+  if (!debugMode) return null;
 
   return (
     <div className="bg-overlay-heavy fixed right-4 bottom-4 z-50 max-h-96 w-96 overflow-y-auto rounded-xl p-4 text-xs text-white">
       <div className="mb-2">
         <h3 className="text-sm font-bold">📊 Analytics Debug</h3>
-        <div className="text-xs text-gray-300">
-          <span className={`mr-2 ${isReady ? 'text-green-400' : 'text-red-400'}`}>{isReady ? '✅' : '❌'} Ready</span>
-          <span className={`mr-2 ${hasUserConsent ? 'text-green-400' : 'text-red-400'}`}>
+        <div className="text-muted-foreground text-xs">
+          <span className={`mr-2 ${isReady ? 'text-success' : 'text-destructive'}`}>
+            {isReady ? '✅' : '❌'} Ready
+          </span>
+          <span className={`mr-2 ${hasUserConsent ? 'text-success' : 'text-destructive'}`}>
             {hasUserConsent ? '✅' : '❌'} Consent
           </span>
-          <span className="text-blue-400">Providers: {enabledProviders.join(', ')}</span>
+          <span className="text-primary">Providers: {enabledProviders.join(', ')}</span>
         </div>
       </div>
 
       <div className="max-h-64 overflow-y-auto">
         <h4 className="mb-1 font-semibold">Recent Events:</h4>
         {events.length === 0 ? (
-          <p className="text-gray-400">No events tracked yet</p>
+          <p className="text-muted-foreground">No events tracked yet</p>
         ) : (
           events.slice(-10).map((event, index) => (
             <div key={index} className="border-border mb-1 border-b pb-1">
-              <div className="font-mono text-yellow-400">{event.name}</div>
-              <div className="text-xs text-gray-400">{new Date(event.timestamp).toLocaleTimeString()}</div>
+              <div className="text-warning font-mono">{event.name}</div>
+              <div className="text-muted-foreground text-xs">
+                {new Date(event.timestamp).toLocaleTimeString()}
+              </div>
               {Object.keys(event.properties).length > 0 && (
-                <div className="truncate text-xs text-gray-300">{JSON.stringify(event.properties, null, 0)}</div>
+                <div className="text-muted-foreground truncate text-xs">
+                  {JSON.stringify(event.properties, null, 0)}
+                </div>
               )}
             </div>
           ))
         )}
       </div>
     </div>
-  )
+  );
 }

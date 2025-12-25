@@ -1,22 +1,22 @@
-'use client'
+'use client';
 
-import { memo, useCallback, useState } from 'react'
+import { memo, useCallback, useState } from 'react';
 
-import { Check, CreditCard, Crown, Receipt, Sparkles, Zap } from 'lucide-react'
+import { Check, CreditCard, Crown, Receipt, Sparkles, Zap } from 'lucide-react';
 
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
-import { SettingsCard } from './SettingsCard'
+import { SettingsCard } from './SettingsCard';
 
 interface Plan {
-  id: string
-  name: string
-  price: number
-  period: 'month' | 'year'
-  features: string[]
-  recommended?: boolean
+  id: string;
+  name: string;
+  price: number;
+  period: 'month' | 'year';
+  features: string[];
+  recommended?: boolean;
 }
 
 const PLANS: Plan[] = [
@@ -42,19 +42,19 @@ const PLANS: Plan[] = [
     period: 'month',
     features: ['Proの全機能', 'チーム共有', '管理者ダッシュボード', 'SSO対応', '専用サポート'],
   },
-]
+];
 
 export const PlanBillingSettings = memo(function PlanBillingSettings() {
-  const [currentPlan] = useState('free')
-  const [billingPeriod, setBillingPeriod] = useState<'month' | 'year'>('month')
+  const [currentPlan] = useState('free');
+  const [billingPeriod, setBillingPeriod] = useState<'month' | 'year'>('month');
 
   const handleUpgrade = useCallback((planId: string) => {
-    console.log('Upgrade to:', planId)
-  }, [])
+    console.log('Upgrade to:', planId);
+  }, []);
 
   const handlePeriodChange = useCallback((period: 'month' | 'year') => {
-    setBillingPeriod(period)
-  }, [])
+    setBillingPeriod(period);
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -87,7 +87,10 @@ export const PlanBillingSettings = memo(function PlanBillingSettings() {
             >
               月払い
             </Button>
-            <Button variant={billingPeriod === 'year' ? 'primary' : 'ghost'} onClick={() => handlePeriodChange('year')}>
+            <Button
+              variant={billingPeriod === 'year' ? 'primary' : 'ghost'}
+              onClick={() => handlePeriodChange('year')}
+            >
               年払い
               <Badge variant="secondary" className="ml-2">
                 20% OFF
@@ -103,7 +106,7 @@ export const PlanBillingSettings = memo(function PlanBillingSettings() {
               className={cn(
                 'border-border relative rounded-xl border p-4',
                 plan.recommended && 'border-primary ring-primary/20 ring-2',
-                currentPlan === plan.id && 'bg-surface-container'
+                currentPlan === plan.id && 'bg-surface-container',
               )}
             >
               {plan.recommended && (
@@ -115,7 +118,7 @@ export const PlanBillingSettings = memo(function PlanBillingSettings() {
 
               <div className="mb-4">
                 <div className="flex items-center gap-2">
-                  {plan.id === 'team' && <Crown className="h-4 w-4 text-amber-500" />}
+                  {plan.id === 'team' && <Crown className="text-primary h-4 w-4" />}
                   <h4 className="font-semibold">{plan.name}</h4>
                 </div>
                 <div className="mt-2">
@@ -137,7 +140,9 @@ export const PlanBillingSettings = memo(function PlanBillingSettings() {
 
               <Button
                 className="w-full"
-                variant={currentPlan === plan.id ? 'outline' : plan.recommended ? 'primary' : 'outline'}
+                variant={
+                  currentPlan === plan.id ? 'outline' : plan.recommended ? 'primary' : 'outline'
+                }
                 disabled={currentPlan === plan.id}
                 onClick={() => handleUpgrade(plan.id)}
               >
@@ -178,5 +183,5 @@ export const PlanBillingSettings = memo(function PlanBillingSettings() {
         </div>
       </SettingsCard>
     </div>
-  )
-})
+  );
+});

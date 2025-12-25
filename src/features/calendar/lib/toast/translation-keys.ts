@@ -70,6 +70,6 @@ export const CALENDAR_TOAST_KEYS = {
   ERROR_OFFLINE: 'calendar.errors.offline',
   ERROR_TIMEOUT: 'calendar.errors.timeout',
   ERROR_UNEXPECTED: 'calendar.errors.unexpected',
-} as const
+} as const;
 
-export type CalendarToastKey = (typeof CALENDAR_TOAST_KEYS)[keyof typeof CALENDAR_TOAST_KEYS]
+export type CalendarToastKey = (typeof CALENDAR_TOAST_KEYS)[keyof typeof CALENDAR_TOAST_KEYS];

@@ -1,10 +1,10 @@
-'use client'
+'use client';
 
-import { Columns3, Table2 } from 'lucide-react'
+import { Columns3, Table2 } from 'lucide-react';
 
-import { PillSwitcher } from '@/components/ui/pill-switcher'
+import { PillSwitcher } from '@/components/ui/pill-switcher';
 
-import { useInboxViewStore } from '../stores/useInboxViewStore'
+import { useInboxViewStore } from '../stores/useInboxViewStore';
 
 /**
  * Display Mode Switcher
@@ -12,7 +12,7 @@ import { useInboxViewStore } from '../stores/useInboxViewStore'
  * Board/Tableビューを切り替えるトグルボタン
  */
 export function DisplayModeSwitcher() {
-  const { displayMode, setDisplayMode } = useInboxViewStore()
+  const { displayMode, setDisplayMode } = useInboxViewStore();
 
   return (
     <PillSwitcher
@@ -23,5 +23,5 @@ export function DisplayModeSwitcher() {
       value={displayMode}
       onValueChange={setDisplayMode}
     />
-  )
+  );
 }

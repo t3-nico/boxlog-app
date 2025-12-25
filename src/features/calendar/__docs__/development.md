@@ -87,25 +87,25 @@ NewView.displayName = 'NewView'
 
 ```typescript
 // interactions/NewInteraction.tsx
-'use client'
+'use client';
 
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect } from 'react';
 
 export function useNewInteraction() {
   const handleInteraction = useCallback(() => {
     // インタラクション処理
-  }, [])
+  }, []);
 
   useEffect(() => {
     // イベントリスナーの設定
     return () => {
       // クリーンアップ
-    }
-  }, [])
+    };
+  }, []);
 
   return {
     handleInteraction,
-  }
+  };
 }
 ```
 
@@ -178,24 +178,29 @@ MEMORY_MONITOR=true npm run dev
 const handleKeyDown = useCallback((event: KeyboardEvent) => {
   switch (event.key) {
     case 'ArrowLeft':
-      navigateLeft()
-      break
+      navigateLeft();
+      break;
     case 'ArrowRight':
-      navigateRight()
-      break
+      navigateRight();
+      break;
     case 'Enter':
     case ' ':
-      selectItem()
-      break
+      selectItem();
+      break;
   }
-}, [])
+}, []);
 ```
 
 2. **ARIA属性の設定**
 
 ```jsx
 <div role="grid" aria-label="カレンダー" aria-rowcount={rowCount} aria-colcount={colCount}>
-  <div role="gridcell" aria-selected={isSelected} aria-label={ariaLabel} tabIndex={isSelected ? 0 : -1}>
+  <div
+    role="gridcell"
+    aria-selected={isSelected}
+    aria-label={ariaLabel}
+    tabIndex={isSelected ? 0 : -1}
+  >
     {content}
   </div>
 </div>
@@ -204,15 +209,20 @@ const handleKeyDown = useCallback((event: KeyboardEvent) => {
 3. **フォーカス管理**
 
 ```typescript
-import { useFocusTrap } from '../hooks/useFocusTrap'
+// Radix UI Dialogを使用（フォーカストラップ内蔵）
+import * as Dialog from '@radix-ui/react-dialog'
 
 const Component = () => {
-  const trapRef = useFocusTrap<HTMLDivElement>()
-
   return (
-    <div ref={trapRef}>
-      {/* フォーカストラップされたコンテンツ */}
-    </div>
+    <Dialog.Root>
+      <Dialog.Trigger>開く</Dialog.Trigger>
+      <Dialog.Portal>
+        <Dialog.Overlay className="fixed inset-0 bg-overlay" />
+        <Dialog.Content>
+          {/* フォーカストラップされたコンテンツ */}
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
   )
 }
 ```
@@ -272,28 +282,28 @@ if (process.env.NODE_ENV === 'development') {
     currentView,
     selectedEvents,
     performanceMetrics,
-  }
+  };
 }
 ```
 
 2. **ログ出力**
 
 ```typescript
-import { debugLog } from '../utils/debug'
+import { debugLog } from '../utils/debug';
 
 // 開発環境でのみ出力
-debugLog('calendar', 'View changed to:', newView)
+debugLog('calendar', 'View changed to:', newView);
 ```
 
 3. **パフォーマンス監視**
 
 ```typescript
-import { PerformanceMonitor } from '../utils/performance/PerformanceMonitor'
+import { PerformanceMonitor } from '../utils/performance/PerformanceMonitor';
 
-const monitor = new PerformanceMonitor('CalendarView')
-monitor.start()
+const monitor = new PerformanceMonitor('CalendarView');
+monitor.start();
 // 処理実行
-monitor.end()
+monitor.end();
 ```
 
 ## 📦 依存関係管理
@@ -343,7 +353,7 @@ const config = {
     debug: false,
     performanceMonitoring: false,
   },
-}
+};
 ```
 
 ## 📝 コミット

@@ -1,10 +1,10 @@
-'use client'
+'use client';
 
-import type { HoverEffectProps } from '../types'
+import type { HoverEffectProps } from '../types';
 
 // スムーズなホバーエフェクト
 export function HoverEffect({ children, isHovered, disabled = false }: HoverEffectProps) {
-  if (disabled) return <>{children}</>
+  if (disabled) return <>{children}</>;
 
   return (
     <div
@@ -14,5 +14,5 @@ export function HoverEffect({ children, isHovered, disabled = false }: HoverEffe
     >
       {children}
     </div>
-  )
+  );
 }

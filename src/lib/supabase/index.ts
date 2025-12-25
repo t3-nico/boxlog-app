@@ -11,15 +11,15 @@
  */
 
 // クライアント作成関数（Browser Client のみ）
-export { createClient as createBrowserClient, type SupabaseClient } from './client'
+export { createClient as createBrowserClient, type SupabaseClient } from './client';
 
 // Middleware用（App Routerのみ）
 // NOTE: middleware.ts も直接インポートすることを推奨
-export { updateSession } from './middleware'
+export { updateSession } from './middleware';
 
 // Client Components用フック
 // 注: useTasks は削除済み（src/features/plans/hooks/useplans.ts を使用）
-export { useAuth, useProfile } from './hooks'
+export { useAuth, useProfile } from './hooks';
 
 // Storage アップロードフック
 export {
@@ -28,10 +28,10 @@ export {
   type UploadError,
   type UseSupabaseUploadOptions,
   type UseSupabaseUploadReturn,
-} from './hooks/useSupabaseUpload'
+} from './hooks/useSupabaseUpload';
 
 // ユーティリティ
-export * from './utils'
+export * from './utils';
 
 // 型定義
-export type { Database, Json } from '@/lib/database.types'
+export type { Database, Json } from '@/lib/database.types';

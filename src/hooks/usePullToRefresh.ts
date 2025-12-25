@@ -1,32 +1,32 @@
-'use client'
+'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { useHapticFeedback } from './useHapticFeedback'
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useHapticFeedback } from './useHapticFeedback';
 
 interface UsePullToRefreshOptions {
   /** リフレッシュ時のコールバック */
-  onRefresh: () => Promise<void>
+  onRefresh: () => Promise<void>;
   /** リフレッシュをトリガーする距離（px） */
-  threshold?: number
+  threshold?: number;
   /** 最大引っ張り距離（px） */
-  maxPullDistance?: number
+  maxPullDistance?: number;
   /** 無効化フラグ */
-  disabled?: boolean
+  disabled?: boolean;
 }
 
 interface UsePullToRefreshReturn {
   /** スクロールコンテナに設定するref */
-  containerRef: React.RefObject<HTMLDivElement | null>
+  containerRef: React.RefObject<HTMLDivElement | null>;
   /** 現在の引っ張り距離（0〜maxPullDistance） */
-  pullDistance: number
+  pullDistance: number;
   /** リフレッシュ中かどうか */
-  isRefreshing: boolean
+  isRefreshing: boolean;
   /** 引っ張り中かどうか */
-  isPulling: boolean
+  isPulling: boolean;
   /** しきい値を超えたかどうか */
-  isOverThreshold: boolean
+  isOverThreshold: boolean;
   /** 進捗（0〜1） */
-  progress: number
+  progress: number;
 }
 
 /**
@@ -59,118 +59,118 @@ export function usePullToRefresh({
   maxPullDistance = 120,
   disabled = false,
 }: UsePullToRefreshOptions): UsePullToRefreshReturn {
-  const containerRef = useRef<HTMLDivElement | null>(null)
-  const [pullDistance, setPullDistance] = useState(0)
-  const [isRefreshing, setIsRefreshing] = useState(false)
-  const [isPulling, setIsPulling] = useState(false)
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const [pullDistance, setPullDistance] = useState(0);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isPulling, setIsPulling] = useState(false);
 
-  const startYRef = useRef(0)
-  const currentYRef = useRef(0)
-  const isAtTopRef = useRef(false)
-  const hasTriggeredHapticRef = useRef(false)
+  const startYRef = useRef(0);
+  const currentYRef = useRef(0);
+  const isAtTopRef = useRef(false);
+  const hasTriggeredHapticRef = useRef(false);
 
-  const { tap, success } = useHapticFeedback()
+  const { tap, success } = useHapticFeedback();
 
-  const isOverThreshold = pullDistance >= threshold
-  const progress = Math.min(pullDistance / threshold, 1)
+  const isOverThreshold = pullDistance >= threshold;
+  const progress = Math.min(pullDistance / threshold, 1);
 
   // タッチ開始
   const handleTouchStart = useCallback(
     (e: TouchEvent) => {
-      if (disabled || isRefreshing) return
+      if (disabled || isRefreshing) return;
 
-      const container = containerRef.current
-      if (!container) return
+      const container = containerRef.current;
+      if (!container) return;
 
       // スクロール位置が最上部かどうかチェック
-      isAtTopRef.current = container.scrollTop <= 0
-      if (!isAtTopRef.current) return
+      isAtTopRef.current = container.scrollTop <= 0;
+      if (!isAtTopRef.current) return;
 
-      startYRef.current = e.touches[0]!.clientY
-      currentYRef.current = startYRef.current
-      hasTriggeredHapticRef.current = false
+      startYRef.current = e.touches[0]!.clientY;
+      currentYRef.current = startYRef.current;
+      hasTriggeredHapticRef.current = false;
     },
-    [disabled, isRefreshing]
-  )
+    [disabled, isRefreshing],
+  );
 
   // タッチ移動
   const handleTouchMove = useCallback(
     (e: TouchEvent) => {
-      if (disabled || isRefreshing || !isAtTopRef.current) return
+      if (disabled || isRefreshing || !isAtTopRef.current) return;
 
-      const container = containerRef.current
-      if (!container) return
+      const container = containerRef.current;
+      if (!container) return;
 
       // スクロール中に最上部からずれた場合はリセット
       if (container.scrollTop > 0) {
-        isAtTopRef.current = false
-        setPullDistance(0)
-        setIsPulling(false)
-        return
+        isAtTopRef.current = false;
+        setPullDistance(0);
+        setIsPulling(false);
+        return;
       }
 
-      currentYRef.current = e.touches[0]!.clientY
-      const distance = currentYRef.current - startYRef.current
+      currentYRef.current = e.touches[0]!.clientY;
+      const distance = currentYRef.current - startYRef.current;
 
       // 下方向へのスワイプのみ処理
       if (distance > 0) {
         // ラバーバンド効果（距離に応じて抵抗を増やす）
-        const rubberBandDistance = Math.min(distance * 0.5, maxPullDistance)
-        setPullDistance(rubberBandDistance)
-        setIsPulling(true)
+        const rubberBandDistance = Math.min(distance * 0.5, maxPullDistance);
+        setPullDistance(rubberBandDistance);
+        setIsPulling(true);
 
         // しきい値到達時にHaptic Feedback（1回のみ）
         if (rubberBandDistance >= threshold && !hasTriggeredHapticRef.current) {
-          tap()
-          hasTriggeredHapticRef.current = true
+          tap();
+          hasTriggeredHapticRef.current = true;
         }
 
         // ネイティブスクロールを防止
-        e.preventDefault()
+        e.preventDefault();
       }
     },
-    [disabled, isRefreshing, maxPullDistance, threshold, tap]
-  )
+    [disabled, isRefreshing, maxPullDistance, threshold, tap],
+  );
 
   // タッチ終了
   const handleTouchEnd = useCallback(async () => {
-    if (disabled || isRefreshing || !isPulling) return
+    if (disabled || isRefreshing || !isPulling) return;
 
-    setIsPulling(false)
+    setIsPulling(false);
 
     if (isOverThreshold) {
       // リフレッシュ実行
-      setIsRefreshing(true)
-      success() // リフレッシュ開始時のHaptic Feedback
+      setIsRefreshing(true);
+      success(); // リフレッシュ開始時のHaptic Feedback
 
       try {
-        await onRefresh()
+        await onRefresh();
       } finally {
-        setIsRefreshing(false)
-        setPullDistance(0)
+        setIsRefreshing(false);
+        setPullDistance(0);
       }
     } else {
       // しきい値未満の場合はリセット
-      setPullDistance(0)
+      setPullDistance(0);
     }
-  }, [disabled, isRefreshing, isPulling, isOverThreshold, onRefresh, success])
+  }, [disabled, isRefreshing, isPulling, isOverThreshold, onRefresh, success]);
 
   // イベントリスナーの登録
   useEffect(() => {
-    const container = containerRef.current
-    if (!container || disabled) return
+    const container = containerRef.current;
+    if (!container || disabled) return;
 
     // passive: false でpreventDefaultを有効化
-    container.addEventListener('touchstart', handleTouchStart, { passive: true })
-    container.addEventListener('touchmove', handleTouchMove, { passive: false })
-    container.addEventListener('touchend', handleTouchEnd, { passive: true })
+    container.addEventListener('touchstart', handleTouchStart, { passive: true });
+    container.addEventListener('touchmove', handleTouchMove, { passive: false });
+    container.addEventListener('touchend', handleTouchEnd, { passive: true });
 
     return () => {
-      container.removeEventListener('touchstart', handleTouchStart)
-      container.removeEventListener('touchmove', handleTouchMove)
-      container.removeEventListener('touchend', handleTouchEnd)
-    }
-  }, [handleTouchStart, handleTouchMove, handleTouchEnd, disabled])
+      container.removeEventListener('touchstart', handleTouchStart);
+      container.removeEventListener('touchmove', handleTouchMove);
+      container.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [handleTouchStart, handleTouchMove, handleTouchEnd, disabled]);
 
   return {
     containerRef,
@@ -179,5 +179,5 @@ export function usePullToRefresh({
     isPulling,
     isOverThreshold,
     progress,
-  }
+  };
 }

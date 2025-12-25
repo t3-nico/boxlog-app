@@ -1,4 +1,4 @@
-import { createTableSelectionStore } from '@/features/table'
+import { createTableSelectionStore } from '@/features/table';
 
 /**
  * タグ一括選択ストア
@@ -11,4 +11,4 @@ import { createTableSelectionStore } from '@/features/table'
  */
 export const useTagSelectionStore = createTableSelectionStore({
   storeName: 'tag-selection-store',
-})
+});

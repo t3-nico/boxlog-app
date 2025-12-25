@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import {
   DndContext,
@@ -11,54 +11,54 @@ import {
   useSensors,
   type DragEndEvent,
   type DragStartEvent,
-} from '@dnd-kit/core'
-import { sortableKeyboardCoordinates } from '@dnd-kit/sortable'
-import { useTranslations } from 'next-intl'
-import { createContext, useCallback, useContext, useState, type ReactNode } from 'react'
-import { toast } from 'sonner'
+} from '@dnd-kit/core';
+import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
+import { useTranslations } from 'next-intl';
+import { createContext, useCallback, useContext, useState, type ReactNode } from 'react';
+import { toast } from 'sonner';
 
-import { DEFAULT_TAG_COLOR } from '@/config/ui/colors'
-import { useTagGroups } from '@/features/tags/hooks/use-tag-groups'
-import { useUpdateTag } from '@/features/tags/hooks/use-tags'
-import type { Tag } from '@/features/tags/types'
+import { DEFAULT_TAG_COLOR } from '@/config/ui/colors';
+import { useTagGroups } from '@/features/tags/hooks/use-tag-groups';
+import { useUpdateTag } from '@/features/tags/hooks/use-tags';
+import type { Tag } from '@/features/tags/types';
 
 interface TagsPageContextValue {
-  tags: Tag[]
-  setTags: (tags: Tag[]) => void
-  isLoading: boolean
-  setIsLoading: (loading: boolean) => void
-  isCreatingGroup: boolean
-  setIsCreatingGroup: (creating: boolean) => void
-  isCreatingTag: boolean
-  setIsCreatingTag: (creating: boolean) => void
+  tags: Tag[];
+  setTags: (tags: Tag[]) => void;
+  isLoading: boolean;
+  setIsLoading: (loading: boolean) => void;
+  isCreatingGroup: boolean;
+  setIsCreatingGroup: (creating: boolean) => void;
+  isCreatingTag: boolean;
+  setIsCreatingTag: (creating: boolean) => void;
   // ドラッグ中のタグ
-  draggingTag: Tag | null
+  draggingTag: Tag | null;
 }
 
-const TagsPageContext = createContext<TagsPageContextValue | null>(null)
+const TagsPageContext = createContext<TagsPageContextValue | null>(null);
 
 export function useTagsPageContext() {
-  const context = useContext(TagsPageContext)
+  const context = useContext(TagsPageContext);
   if (!context) {
-    throw new Error('useTagsPageContext must be used within TagsPageProvider')
+    throw new Error('useTagsPageContext must be used within TagsPageProvider');
   }
-  return context
+  return context;
 }
 
 interface TagsPageProviderProps {
-  children: ReactNode
+  children: ReactNode;
 }
 
 export function TagsPageProvider({ children }: TagsPageProviderProps) {
-  const t = useTranslations()
-  const [tags, setTags] = useState<Tag[]>([])
-  const [isLoading, setIsLoading] = useState(false)
-  const [isCreatingGroup, setIsCreatingGroup] = useState(false)
-  const [isCreatingTag, setIsCreatingTag] = useState(false)
-  const [draggingTag, setDraggingTag] = useState<Tag | null>(null)
+  const t = useTranslations();
+  const [tags, setTags] = useState<Tag[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isCreatingGroup, setIsCreatingGroup] = useState(false);
+  const [isCreatingTag, setIsCreatingTag] = useState(false);
+  const [draggingTag, setDraggingTag] = useState<Tag | null>(null);
 
-  const { data: groups = [] } = useTagGroups()
-  const updateTagMutation = useUpdateTag()
+  const { data: groups = [] } = useTagGroups();
+  const updateTagMutation = useUpdateTag();
 
   // センサー設定（タグのドラッグ用）
   const sensors = useSensors(
@@ -70,126 +70,126 @@ export function TagsPageProvider({ children }: TagsPageProviderProps) {
     }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    })
-  )
+    }),
+  );
 
   // ドラッグ開始
   const handleDragStart = useCallback(
     (event: DragStartEvent) => {
-      const { active } = event
+      const { active } = event;
 
       // タグのドラッグ
       if (active.data.current?.type === 'tag') {
-        const tag = tags.find((t) => t.id === active.id)
+        const tag = tags.find((t) => t.id === active.id);
         if (tag) {
-          setDraggingTag(tag)
+          setDraggingTag(tag);
         }
       }
     },
-    [tags]
-  )
+    [tags],
+  );
 
   // ドラッグ終了
   const handleDragEnd = useCallback(
     async (event: DragEndEvent) => {
-      const { active, over } = event
+      const { active, over } = event;
 
       // タグのドラッグ終了
       if (draggingTag) {
-        setDraggingTag(null)
+        setDraggingTag(null);
 
-        if (!over) return
+        if (!over) return;
 
         // タグをアーカイブにドロップ
         if (over.data.current?.type === 'archive') {
-          const tagId = active.id as string
-          const tag = tags.find((t) => t.id === tagId)
+          const tagId = active.id as string;
+          const tag = tags.find((t) => t.id === tagId);
 
           if (tag && tag.is_active) {
             // 楽観的更新: リストから即座に削除
-            const previousTags = [...tags]
-            setTags(tags.filter((t) => t.id !== tagId))
+            const previousTags = [...tags];
+            setTags(tags.filter((t) => t.id !== tagId));
 
             try {
               await updateTagMutation.mutateAsync({
                 id: tagId,
                 data: { is_active: false },
-              })
-              toast.success(t('tag.page.tagArchived', { name: tag.name }))
+              });
+              toast.success(t('tag.page.tagArchived', { name: tag.name }));
             } catch (error) {
               // エラー時: ロールバック
-              console.error('Failed to archive tag:', error)
-              setTags(previousTags)
-              toast.error(t('tag.page.tagArchiveFailed'))
+              console.error('Failed to archive tag:', error);
+              setTags(previousTags);
+              toast.error(t('tag.page.tagArchiveFailed'));
             }
           }
-          return
+          return;
         }
 
         // タグを「すべてのタグ」にドロップ（アーカイブから復元）
         if (over.data.current?.type === 'restore') {
-          const tagId = active.id as string
-          const tag = tags.find((t) => t.id === tagId)
+          const tagId = active.id as string;
+          const tag = tags.find((t) => t.id === tagId);
 
           if (tag && !tag.is_active) {
             // 楽観的更新: is_activeをtrueに変更
-            const previousTags = [...tags]
-            setTags(tags.map((t) => (t.id === tagId ? { ...t, is_active: true } : t)))
+            const previousTags = [...tags];
+            setTags(tags.map((t) => (t.id === tagId ? { ...t, is_active: true } : t)));
 
             try {
               await updateTagMutation.mutateAsync({
                 id: tagId,
                 data: { is_active: true },
-              })
-              toast.success(t('tag.archive.restoreSuccess', { name: tag.name }))
+              });
+              toast.success(t('tag.archive.restoreSuccess', { name: tag.name }));
             } catch (error) {
               // エラー時: ロールバック
-              console.error('Failed to restore tag:', error)
-              setTags(previousTags)
-              toast.error(t('tag.archive.restoreFailed'))
+              console.error('Failed to restore tag:', error);
+              setTags(previousTags);
+              toast.error(t('tag.archive.restoreFailed'));
             }
           }
-          return
+          return;
         }
 
         // タグをグループにドロップ
         if (over.data.current?.type === 'group') {
-          const tagId = active.id as string
+          const tagId = active.id as string;
           // over.id が 'drop-xxx' 形式の場合は groupId を取得、そうでなければ null
-          const groupId = over.data.current.groupId as string | null
-          const tag = tags.find((t) => t.id === tagId)
+          const groupId = over.data.current.groupId as string | null;
+          const tag = tags.find((t) => t.id === tagId);
 
           if (tag && tag.group_id !== groupId) {
             // 楽観的更新: グループを即座に変更
-            const previousTags = [...tags]
-            setTags(tags.map((t) => (t.id === tagId ? { ...t, group_id: groupId } : t)))
+            const previousTags = [...tags];
+            setTags(tags.map((t) => (t.id === tagId ? { ...t, group_id: groupId } : t)));
 
-            const targetGroup = groupId ? groups.find((g) => g.id === groupId) : null
-            const groupName = targetGroup?.name ?? t('tag.sidebar.uncategorized')
+            const targetGroup = groupId ? groups.find((g) => g.id === groupId) : null;
+            const groupName = targetGroup?.name ?? t('tag.sidebar.uncategorized');
 
             try {
               await updateTagMutation.mutateAsync({
                 id: tagId,
                 data: { group_id: groupId },
-              })
-              toast.success(t('tag.page.tagMoved', { name: tag.name, group: groupName }))
+              });
+              toast.success(t('tag.page.tagMoved', { name: tag.name, group: groupName }));
             } catch (error) {
               // エラー時: ロールバック
-              console.error('Failed to move tag:', error)
-              setTags(previousTags)
-              toast.error(t('tag.page.tagMoveFailed'))
+              console.error('Failed to move tag:', error);
+              setTags(previousTags);
+              toast.error(t('tag.page.tagMoveFailed'));
             }
           }
         }
       }
     },
-    [draggingTag, tags, groups, updateTagMutation, t]
-  )
+    [draggingTag, tags, groups, updateTagMutation, t],
+  );
 
   // ドラッグキャンセル
   const handleDragCancel = useCallback(() => {
-    setDraggingTag(null)
-  }, [])
+    setDraggingTag(null);
+  }, []);
 
   return (
     <TagsPageContext.Provider
@@ -226,5 +226,5 @@ export function TagsPageProvider({ children }: TagsPageProviderProps) {
         </DragOverlay>
       </DndContext>
     </TagsPageContext.Provider>
-  )
+  );
 }

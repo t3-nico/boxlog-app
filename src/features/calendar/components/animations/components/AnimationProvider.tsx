@@ -1,7 +1,7 @@
-'use client'
+'use client';
 
-import { AnimationContext } from '../context'
-import type { AnimationContextType, AnimationProviderProps } from '../types'
+import { AnimationContext } from '../context';
+import type { AnimationContextType, AnimationProviderProps } from '../types';
 
 export function AnimationProvider({ children, config = {} }: AnimationProviderProps) {
   const defaultConfig: AnimationContextType = {
@@ -9,7 +9,7 @@ export function AnimationProvider({ children, config = {} }: AnimationProviderPr
     reducedMotion: false,
     duration: 'normal',
     ...config,
-  }
+  };
 
-  return <AnimationContext.Provider value={defaultConfig}>{children}</AnimationContext.Provider>
+  return <AnimationContext.Provider value={defaultConfig}>{children}</AnimationContext.Provider>;
 }

@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 /**
  * Global Error Handler - Sentry統合
@@ -10,13 +10,13 @@
  * so we use hardcoded English strings.
  */
 
-import { useEffect } from 'react'
+import { useEffect } from 'react';
 
-import * as Sentry from '@sentry/nextjs'
+import * as Sentry from '@sentry/nextjs';
 
 interface GlobalErrorProps {
-  error: Error & { digest?: string }
-  reset: () => void
+  error: Error & { digest?: string };
+  reset: () => void;
 }
 
 // Static text for global error page (outside i18n context)
@@ -28,7 +28,7 @@ const ERROR_TEXT = {
   retry: 'Try again',
   goHome: 'Go to Home',
   sentryReport: 'This error has been automatically reported.',
-}
+};
 
 export default function GlobalError({ error, reset }: GlobalErrorProps) {
   useEffect(() => {
@@ -51,8 +51,8 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
           errorBoundary: 'GlobalError',
         },
       },
-    })
-  }, [error])
+    });
+  }, [error]);
 
   return (
     <html lang="en">
@@ -79,7 +79,9 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
                 </summary>
                 <div className="bg-surface-container mt-3 rounded p-3">
                   <p className="mb-2 text-xs font-semibold">{error.name}</p>
-                  <pre className="text-muted-foreground max-h-40 overflow-auto text-xs">{error.message}</pre>
+                  <pre className="text-muted-foreground max-h-40 overflow-auto text-xs">
+                    {error.message}
+                  </pre>
                 </div>
               </details>
             )}
@@ -100,10 +102,12 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
               </button>
             </div>
 
-            <p className="text-muted-foreground mt-6 text-center text-xs">{ERROR_TEXT.sentryReport}</p>
+            <p className="text-muted-foreground mt-6 text-center text-xs">
+              {ERROR_TEXT.sentryReport}
+            </p>
           </div>
         </div>
       </body>
     </html>
-  )
+  );
 }

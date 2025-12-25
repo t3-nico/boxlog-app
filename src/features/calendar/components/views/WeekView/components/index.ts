@@ -1,2 +1,2 @@
-export { WeekContent } from './WeekContent'
-export { WeekGrid } from './WeekGrid'
+export { WeekContent } from './WeekContent';
+export { WeekGrid } from './WeekGrid';

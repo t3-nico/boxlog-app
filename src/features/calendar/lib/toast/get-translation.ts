@@ -7,13 +7,13 @@
 
 // 翻訳辞書の型
 interface Dictionary {
-  [key: string]: string | Dictionary
+  [key: string]: string | Dictionary;
 }
 
 // 翻訳キーから値を取得するヘルパー
 export function getTranslation(key: string, locale: 'ja' | 'en' = 'ja'): string {
   // キーのパスを分割（例: "calendar.event.moved" → ["calendar", "event", "moved"]）
-  const keys = key.split('.')
+  const keys = key.split('.');
 
   // ここでは日本語のみ対応（将来的にはlocaleに応じて切り替え可能）
   // 実際の辞書データは require/import で読み込む代わりに、
@@ -130,7 +130,8 @@ export function getTranslation(key: string, locale: 'ja' | 'en' = 'ja'): string 
           conflictTitle: 'Data Updated',
           conflictDesc: 'Another user has modified the data. Please check the latest data',
           serverErrorTitle: 'Server Error',
-          serverErrorDesc: 'A problem has occurred on the server. Please wait a moment and try again',
+          serverErrorDesc:
+            'A problem has occurred on the server. Please wait a moment and try again',
           unknownErrorTitle: 'An Error Occurred',
           unknownErrorDesc: 'An unexpected error occurred',
           permissionErrorTitle: 'Permission Denied',
@@ -163,23 +164,23 @@ export function getTranslation(key: string, locale: 'ja' | 'en' = 'ja'): string 
         },
       },
     },
-  }
+  };
 
   // キーパスに従って値を取得
-  let result: string | Dictionary | undefined = translations[locale]
+  let result: string | Dictionary | undefined = translations[locale];
   for (const k of keys) {
     if (result && typeof result === 'object' && k in result) {
-      result = result[k]
+      result = result[k];
     } else {
       // キーが見つからない場合はキー自体を返す
-      return key
+      return key;
     }
   }
 
   // undefined チェックを追加
   if (result === undefined) {
-    return key
+    return key;
   }
 
-  return typeof result === 'string' ? result : key
+  return typeof result === 'string' ? result : key;
 }

@@ -1,10 +1,10 @@
-'use client'
+'use client';
 
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { PlanTagSelectDialogEnhanced } from '@/features/plans/components/shared/PlanTagSelectDialogEnhanced'
-import { Tag } from 'lucide-react'
-import { useInboxFilterStore } from '../../stores/useInboxFilterStore'
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { PlanTagSelectDialogEnhanced } from '@/features/plans/components/shared/PlanTagSelectDialogEnhanced';
+import { Tag } from 'lucide-react';
+import { useInboxFilterStore } from '../../stores/useInboxFilterStore';
 
 /**
  * タグフィルターボタン（Table専用）
@@ -19,9 +19,9 @@ import { useInboxFilterStore } from '../../stores/useInboxFilterStore'
  * ```
  */
 export function TagFilterButton() {
-  const { tags, setTags } = useInboxFilterStore()
+  const { tags, setTags } = useInboxFilterStore();
 
-  const tagFilterCount = tags.length
+  const tagFilterCount = tags.length;
 
   return (
     <PlanTagSelectDialogEnhanced
@@ -41,5 +41,5 @@ export function TagFilterButton() {
         )}
       </Button>
     </PlanTagSelectDialogEnhanced>
-  )
+  );
 }

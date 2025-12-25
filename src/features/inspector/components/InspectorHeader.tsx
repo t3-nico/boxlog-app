@@ -1,38 +1,42 @@
-'use client'
+'use client';
 
-import { ChevronDown, ChevronUp, MoreHorizontal, PanelRightClose, X } from 'lucide-react'
-import type { ReactNode } from 'react'
+import { ChevronDown, ChevronUp, MoreHorizontal, PanelRightClose, X } from 'lucide-react';
+import type { ReactNode } from 'react';
 
-import { Button } from '@/components/ui/button'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { HoverTooltip } from '@/components/ui/tooltip'
-import { useMediaQuery } from '@/hooks/useMediaQuery'
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { HoverTooltip } from '@/components/ui/tooltip';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 
-import type { InspectorDisplayMode } from './InspectorShell'
+import type { InspectorDisplayMode } from './InspectorShell';
 
 interface InspectorHeaderProps {
   /** 前のアイテムが存在するか */
-  hasPrevious?: boolean
+  hasPrevious?: boolean;
   /** 次のアイテムが存在するか */
-  hasNext?: boolean
+  hasNext?: boolean;
   /** 閉じるボタンのコールバック */
-  onClose: () => void
+  onClose: () => void;
   /** 前へボタンのコールバック */
-  onPrevious?: () => void
+  onPrevious?: () => void;
   /** 次へボタンのコールバック */
-  onNext?: () => void
+  onNext?: () => void;
   /** ドロップダウンメニューの内容 */
-  menuContent?: ReactNode
+  menuContent?: ReactNode;
   /** 閉じるボタンのツールチップ */
-  closeLabel?: string
+  closeLabel?: string;
   /** 前へボタンのツールチップ */
-  previousLabel?: string
+  previousLabel?: string;
   /** 次へボタンのツールチップ */
-  nextLabel?: string
+  nextLabel?: string;
   /** 表示モード（アイコン切り替え用） */
-  displayMode?: InspectorDisplayMode
+  displayMode?: InspectorDisplayMode;
   /** ヘッダー右側の追加コンテンツ（メニューの左側に表示） */
-  rightContent?: ReactNode
+  rightContent?: ReactNode;
 }
 
 /**
@@ -72,12 +76,12 @@ export function InspectorHeader({
   displayMode = 'sheet',
   rightContent,
 }: InspectorHeaderProps) {
-  const isMobile = useMediaQuery('(max-width: 767px)')
-  const showNavigation = onPrevious && onNext
+  const isMobile = useMediaQuery('(max-width: 767px)');
+  const showNavigation = onPrevious && onNext;
 
   // モバイル: InspectorShell側でドラッグハンドル+メニューを表示するため非表示
   if (isMobile) {
-    return null
+    return null;
   }
 
   // PC: フルヘッダー
@@ -86,8 +90,18 @@ export function InspectorHeader({
       <div className="flex items-center gap-1">
         {/* 閉じるボタン */}
         <HoverTooltip content={closeLabel} side="bottom">
-          <Button variant="ghost" size="icon" className="size-8" onClick={onClose} aria-label={closeLabel}>
-            {displayMode === 'popover' ? <X className="size-5" /> : <PanelRightClose className="size-5" />}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="size-8"
+            onClick={onClose}
+            aria-label={closeLabel}
+          >
+            {displayMode === 'popover' ? (
+              <X className="size-5" />
+            ) : (
+              <PanelRightClose className="size-5" />
+            )}
           </Button>
         </HoverTooltip>
 
@@ -129,7 +143,12 @@ export function InspectorHeader({
         {menuContent && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="size-8 focus-visible:ring-0" aria-label="オプション">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="size-8 focus-visible:ring-0"
+                aria-label="オプション"
+              >
                 <MoreHorizontal className="size-5" />
               </Button>
             </DropdownMenuTrigger>
@@ -140,5 +159,5 @@ export function InspectorHeader({
         )}
       </div>
     </div>
-  )
+  );
 }

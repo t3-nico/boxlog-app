@@ -1,20 +1,20 @@
-'use client'
+'use client';
 
-import { useCallback, useEffect, useState } from 'react'
-import { createPortal } from 'react-dom'
+import { useCallback, useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 
-import { Button } from '@/components/ui/button'
-import { DEFAULT_TAG_COLOR } from '@/config/ui/colors'
-import { useMergeTag, useTags } from '@/features/tags/hooks/use-tags'
-import type { Tag } from '@/features/tags/types'
-import { cn } from '@/lib/utils'
-import { AlertCircle, Check, ChevronDown, GitMerge } from 'lucide-react'
-import { useTranslations } from 'next-intl'
-import { toast } from 'sonner'
+import { Button } from '@/components/ui/button';
+import { DEFAULT_TAG_COLOR } from '@/config/ui/colors';
+import { useMergeTag, useTags } from '@/features/tags/hooks/use-tags';
+import type { Tag } from '@/features/tags/types';
+import { cn } from '@/lib/utils';
+import { AlertCircle, Check, ChevronDown, GitMerge } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { toast } from 'sonner';
 
 interface TagMergeDialogProps {
-  tag: Tag | null
-  onClose: (targetTagId?: string) => void
+  tag: Tag | null;
+  onClose: (targetTagId?: string) => void;
 }
 
 /**
@@ -24,50 +24,50 @@ interface TagMergeDialogProps {
  * TagDeleteDialogと同じ構造
  */
 export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
-  const t = useTranslations()
-  const [targetTagId, setTargetTagId] = useState<string>('')
-  const [isMerging, setIsMerging] = useState(false)
-  const [mounted, setMounted] = useState(false)
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const t = useTranslations();
+  const [targetTagId, setTargetTagId] = useState<string>('');
+  const [isMerging, setIsMerging] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const { data: tags = [] } = useTags()
-  const mergeTagMutation = useMergeTag()
+  const { data: tags = [] } = useTags();
+  const mergeTagMutation = useMergeTag();
 
   // クライアントサイドでのみマウント
   useEffect(() => {
-    setMounted(true)
-  }, [])
+    setMounted(true);
+  }, []);
 
   // タグが変更されたらリセット
   useEffect(() => {
     if (!tag) {
-      setTargetTagId('')
-      setIsDropdownOpen(false)
-      setError(null)
+      setTargetTagId('');
+      setIsDropdownOpen(false);
+      setError(null);
     }
-  }, [tag])
+  }, [tag]);
 
   // ソースタグを除外（フラット構造なので自分自身のみ除外）
   const availableTags = tags.filter((t) => {
-    if (!tag) return false
+    if (!tag) return false;
     // 自分自身は除外
-    if (t.id === tag.id) return false
+    if (t.id === tag.id) return false;
     // アクティブなタグのみ
-    if (!t.is_active) return false
-    return true
-  })
+    if (!t.is_active) return false;
+    return true;
+  });
 
   const handleMerge = useCallback(async () => {
     // エラーをクリア
-    setError(null)
+    setError(null);
 
     if (!tag || !targetTagId) {
-      setError(t('tags.merge.noTargetSelected'))
-      return
+      setError(t('tags.merge.noTargetSelected'));
+      return;
     }
 
-    setIsMerging(true)
+    setIsMerging(true);
     try {
       // 常にプラン紐付けを移行し、統合元タグを削除
       const result = await mergeTagMutation.mutateAsync({
@@ -75,46 +75,46 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
         targetTagId,
         mergeAssociations: true,
         deleteSource: true,
-      })
+      });
 
-      toast.success(t('tags.merge.success', { count: result.merged_associations || 0 }))
+      toast.success(t('tags.merge.success', { count: result.merged_associations || 0 }));
       // 統合先タグIDを渡して閉じる（インスペクターで統合先を開くため）
-      onClose(targetTagId)
+      onClose(targetTagId);
     } catch (err) {
-      console.error('Merge failed:', err)
-      setError(t('tags.merge.failed'))
+      console.error('Merge failed:', err);
+      setError(t('tags.merge.failed'));
     } finally {
-      setIsMerging(false)
+      setIsMerging(false);
     }
-  }, [tag, targetTagId, mergeTagMutation, onClose, t])
+  }, [tag, targetTagId, mergeTagMutation, onClose, t]);
 
   const handleBackdropMouseDown = useCallback(
     (e: React.MouseEvent) => {
       if (e.target === e.currentTarget && !isMerging) {
-        onClose()
+        onClose();
       }
     },
-    [isMerging, onClose]
-  )
+    [isMerging, onClose],
+  );
 
   // ESCキーでダイアログを閉じる
   useEffect(() => {
-    if (!tag) return
+    if (!tag) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && !isMerging) {
-        onClose()
+        onClose();
       }
-    }
+    };
 
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [tag, isMerging, onClose])
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [tag, isMerging, onClose]);
 
-  if (!mounted || !tag) return null
+  if (!mounted || !tag) return null;
 
   // 選択中のタグを取得
-  const selectedTag = availableTags.find((t) => t.id === targetTagId)
+  const selectedTag = availableTags.find((t) => t.id === targetTagId);
 
   const dialog = (
     <div
@@ -138,7 +138,9 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
             <h2 id="tag-merge-dialog-title" className="text-lg leading-tight font-semibold">
               {t('tags.merge.title')}
             </h2>
-            <p className="text-muted-foreground mt-1 text-sm">{t('tags.merge.description', { source: tag.name })}</p>
+            <p className="text-muted-foreground mt-1 text-sm">
+              {t('tags.merge.description', { source: tag.name })}
+            </p>
           </div>
         </div>
 
@@ -155,18 +157,21 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
               variant="outline"
               onMouseDown={(e) => e.stopPropagation()}
               onClick={(e) => {
-                e.stopPropagation()
-                e.preventDefault()
-                setIsDropdownOpen((prev) => !prev)
+                e.stopPropagation();
+                e.preventDefault();
+                setIsDropdownOpen((prev) => !prev);
               }}
               className={cn(
                 'bg-secondary text-secondary-foreground hover:bg-state-hover justify-between gap-2',
-                isDropdownOpen && 'ring-ring/50 border-ring ring-2'
+                isDropdownOpen && 'ring-ring/50 border-ring ring-2',
               )}
             >
               {selectedTag ? (
                 <div className="flex max-w-48 items-center gap-1">
-                  <span className="shrink-0" style={{ color: selectedTag.color || DEFAULT_TAG_COLOR }}>
+                  <span
+                    className="shrink-0"
+                    style={{ color: selectedTag.color || DEFAULT_TAG_COLOR }}
+                  >
                     #
                   </span>
                   <span className="truncate">{selectedTag.name}</span>
@@ -181,7 +186,9 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
             {isDropdownOpen && (
               <div className="bg-popover border-border absolute top-full left-0 z-[260] mt-1 max-h-60 max-w-72 min-w-48 overflow-y-auto rounded-md border p-1 shadow-lg">
                 {availableTags.length === 0 ? (
-                  <p className="text-muted-foreground p-3 text-center text-sm">{t('tags.search.noTags')}</p>
+                  <p className="text-muted-foreground p-3 text-center text-sm">
+                    {t('tags.search.noTags')}
+                  </p>
                 ) : (
                   availableTags.map((tagItem) => (
                     <Button
@@ -189,19 +196,21 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
                       type="button"
                       variant="ghost"
                       onClick={(e) => {
-                        e.stopPropagation()
-                        setTargetTagId(tagItem.id)
-                        setIsDropdownOpen(false)
-                        setError(null)
+                        e.stopPropagation();
+                        setTargetTagId(tagItem.id);
+                        setIsDropdownOpen(false);
+                        setError(null);
                       }}
                       className={cn(
                         'flex w-full cursor-default justify-start gap-2',
-                        targetTagId === tagItem.id && 'bg-state-selected'
+                        targetTagId === tagItem.id && 'bg-state-selected',
                       )}
                     >
                       <span style={{ color: tagItem.color || DEFAULT_TAG_COLOR }}>#</span>
                       <span className="flex-1 truncate">{tagItem.name}</span>
-                      {targetTagId === tagItem.id && <Check className="text-primary size-4 shrink-0" />}
+                      {targetTagId === tagItem.id && (
+                        <Check className="text-primary size-4 shrink-0" />
+                      )}
                     </Button>
                   ))
                 )}
@@ -232,9 +241,9 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
           <Button
             type="button"
             onClick={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-              handleMerge()
+              e.preventDefault();
+              e.stopPropagation();
+              handleMerge();
             }}
             disabled={isMerging}
           >
@@ -243,7 +252,7 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
         </div>
       </div>
     </div>
-  )
+  );
 
-  return createPortal(dialog, document.body)
+  return createPortal(dialog, document.body);
 }

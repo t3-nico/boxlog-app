@@ -1,23 +1,23 @@
-'use client'
+'use client';
 
-import { Badge } from '@/components/ui/badge'
-import { TableCell } from '@/components/ui/table'
-import { PlanTagSelectDialogEnhanced } from '@/features/plans/components/shared/PlanTagSelectDialogEnhanced'
-import { useEffect, useRef, useState } from 'react'
+import { Badge } from '@/components/ui/badge';
+import { TableCell } from '@/components/ui/table';
+import { PlanTagSelectDialogEnhanced } from '@/features/plans/components/shared/PlanTagSelectDialogEnhanced';
+import { useEffect, useRef, useState } from 'react';
 
 interface Tag {
-  id: string
-  name: string
-  color?: string | undefined
+  id: string;
+  name: string;
+  color?: string | undefined;
 }
 
 interface TagsCellProps {
   /** 現在のタグ */
-  tags?: Tag[] | undefined
+  tags?: Tag[] | undefined;
   /** 列幅 */
-  width?: number | undefined
+  width?: number | undefined;
   /** タグ変更時のコールバック */
-  onTagsChange: (tagIds: string[]) => void
+  onTagsChange: (tagIds: string[]) => void;
 }
 
 /**
@@ -37,43 +37,45 @@ interface TagsCellProps {
  * ```
  */
 export function TagsCell({ tags = [], width, onTagsChange }: TagsCellProps) {
-  const [visibleCount, setVisibleCount] = useState(2)
-  const containerRef = useRef<HTMLDivElement>(null)
+  const [visibleCount, setVisibleCount] = useState(2);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  const selectedTagIds = tags.map((tag) => tag.id)
+  const selectedTagIds = tags.map((tag) => tag.id);
 
   // 列幅に応じて表示可能なタグ数を計算
   useEffect(() => {
-    if (!width || tags.length === 0) return
+    if (!width || tags.length === 0) return;
 
     // 列幅から余白を引いた利用可能幅（パディング16px * 2）
-    const availableWidth = width - 32
+    const availableWidth = width - 32;
 
     // タグ1つあたりの平均幅を推定（文字数 * 7px + パディング20px + gap 4px）
-    const estimateTagWidth = (tagName: string) => tagName.length * 7 + 24
+    const estimateTagWidth = (tagName: string) => tagName.length * 7 + 24;
 
     // "+N" バッジの幅（約30px）
-    const moreTagWidth = 30
+    const moreTagWidth = 30;
 
-    let currentWidth = 0
-    let count = 0
+    let currentWidth = 0;
+    let count = 0;
 
     for (let i = 0; i < tags.length; i++) {
-      const tagWidth = estimateTagWidth(tags[i]!.name)
-      const needsMoreTag = i < tags.length - 1
+      const tagWidth = estimateTagWidth(tags[i]!.name);
+      const needsMoreTag = i < tags.length - 1;
 
       if (currentWidth + tagWidth + (needsMoreTag ? moreTagWidth : 0) <= availableWidth) {
-        currentWidth += tagWidth + 4 // gap
-        count++
+        currentWidth += tagWidth + 4; // gap
+        count++;
       } else {
-        break
+        break;
       }
     }
 
-    setVisibleCount(Math.max(1, count))
-  }, [width, tags])
+    setVisibleCount(Math.max(1, count));
+  }, [width, tags]);
 
-  const style = width ? { width: `${width}px`, minWidth: `${width}px`, maxWidth: `${width}px` } : undefined
+  const style = width
+    ? { width: `${width}px`, minWidth: `${width}px`, maxWidth: `${width}px` }
+    : undefined;
 
   return (
     <TableCell
@@ -111,5 +113,5 @@ export function TagsCell({ tags = [], width, onTagsChange }: TagsCellProps) {
         </div>
       </PlanTagSelectDialogEnhanced>
     </TableCell>
-  )
+  );
 }

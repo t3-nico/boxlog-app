@@ -1,15 +1,19 @@
-'use client'
+'use client';
 
-import { TagsList } from '@/features/tags/components/tags-list'
+import { TagsList } from '@/features/tags/components/tags-list';
 
 interface StatsSidebarSectionsProps {
-  collapsed: boolean
+  collapsed: boolean;
   // タグフィルター関連
-  onSelectTag: (tagId: string) => void
-  selectedTagIds: string[]
+  onSelectTag: (tagId: string) => void;
+  selectedTagIds: string[];
 }
 
-export const StatsSidebarSections = ({ collapsed, onSelectTag, selectedTagIds }: StatsSidebarSectionsProps) => {
+export const StatsSidebarSections = ({
+  collapsed,
+  onSelectTag,
+  selectedTagIds,
+}: StatsSidebarSectionsProps) => {
   return (
     <>
       {/* 期間設定（将来拡張予定） */}
@@ -27,5 +31,5 @@ export const StatsSidebarSections = ({ collapsed, onSelectTag, selectedTagIds }:
         <TagsList collapsed={collapsed} onSelectTag={onSelectTag} selectedTagIds={selectedTagIds} />
       </div>
     </>
-  )
-}
+  );
+};

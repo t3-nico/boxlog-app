@@ -1,6 +1,6 @@
-import { useMemo } from 'react'
+import { useMemo } from 'react';
 
-import { isToday as dateFnsIsToday } from 'date-fns'
+import { isToday as dateFnsIsToday } from 'date-fns';
 
 /**
  * 指定された日付が今日かどうかを判定するフック
@@ -10,5 +10,5 @@ import { isToday as dateFnsIsToday } from 'date-fns'
  * @returns 今日の場合true、それ以外はfalse
  */
 export function useIsToday(date: Date): boolean {
-  return useMemo(() => dateFnsIsToday(date), [date])
+  return useMemo(() => dateFnsIsToday(date), [date]);
 }

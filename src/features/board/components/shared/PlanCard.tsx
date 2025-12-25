@@ -1,40 +1,40 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
+import { useState } from 'react';
 
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuSeparator,
   ContextMenuTrigger,
-} from '@/components/ui/context-menu'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { parseDateString, parseDatetimeString } from '@/features/calendar/utils/dateUtils'
-import type { InboxItem } from '@/features/inbox/hooks/useInboxData'
-import { DateTimePopoverContent } from '@/features/plans/components/shared/DateTimePopoverContent'
-import { PlanTagSelectDialogEnhanced } from '@/features/plans/components/shared/PlanTagSelectDialogEnhanced'
-import { RecurringIndicator } from '@/features/plans/components/shared/RecurringIndicator'
-import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
-import { useplanTags } from '@/features/plans/hooks/usePlanTags'
-import { useplanCacheStore } from '@/features/plans/stores/usePlanCacheStore'
-import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
-import { toLocalISOString } from '@/features/plans/utils/datetime'
-import { minutesToReminderType, reminderTypeToMinutes } from '@/features/plans/utils/reminder'
-import { getEffectiveStatus } from '@/features/plans/utils/status'
-import { useDateFormat } from '@/features/settings/hooks/useDateFormat'
-import { cn } from '@/lib/utils'
-import { useDraggable } from '@dnd-kit/core'
-import { format } from 'date-fns'
-import { Bell, Calendar as CalendarIcon, CheckCircle2, Circle, Plus, Tag } from 'lucide-react'
+} from '@/components/ui/context-menu';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { parseDateString, parseDatetimeString } from '@/features/calendar/utils/dateUtils';
+import type { InboxItem } from '@/features/inbox/hooks/useInboxData';
+import { DateTimePopoverContent } from '@/features/plans/components/shared/DateTimePopoverContent';
+import { PlanTagSelectDialogEnhanced } from '@/features/plans/components/shared/PlanTagSelectDialogEnhanced';
+import { RecurringIndicator } from '@/features/plans/components/shared/RecurringIndicator';
+import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
+import { useplanTags } from '@/features/plans/hooks/usePlanTags';
+import { useplanCacheStore } from '@/features/plans/stores/usePlanCacheStore';
+import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
+import { toLocalISOString } from '@/features/plans/utils/datetime';
+import { minutesToReminderType, reminderTypeToMinutes } from '@/features/plans/utils/reminder';
+import { getEffectiveStatus } from '@/features/plans/utils/status';
+import { useDateFormat } from '@/features/settings/hooks/useDateFormat';
+import { cn } from '@/lib/utils';
+import { useDraggable } from '@dnd-kit/core';
+import { format } from 'date-fns';
+import { Bell, Calendar as CalendarIcon, CheckCircle2, Circle, Plus, Tag } from 'lucide-react';
 
-import { useBoardFocusStore } from '../../stores/useBoardFocusStore'
-import { BoardActionMenuItems } from '../BoardActionMenuItems'
+import { useBoardFocusStore } from '../../stores/useBoardFocusStore';
+import { BoardActionMenuItems } from '../BoardActionMenuItems';
 
 interface PlanCardProps {
-  item: InboxItem
+  item: InboxItem;
 }
 
 /**
@@ -51,41 +51,46 @@ interface PlanCardProps {
  * - InboxCardList（Calendar Sidebar）
  */
 export function PlanCard({ item }: PlanCardProps) {
-  const { openInspector, planId } = usePlanInspectorStore()
-  const { focusedId, setFocusedId } = useBoardFocusStore()
-  const { addplanTag, removeplanTag } = useplanTags()
-  const { updatePlan } = usePlanMutations()
-  const { getCache } = useplanCacheStore()
-  const { formatDate: formatDateWithSettings, formatTime: formatTimeWithSettings } = useDateFormat()
-  const isActive = planId === item.id
-  const isFocused = focusedId === item.id
+  const { openInspector, planId } = usePlanInspectorStore();
+  const { focusedId, setFocusedId } = useBoardFocusStore();
+  const { addplanTag, removeplanTag } = useplanTags();
+  const { updatePlan } = usePlanMutations();
+  const { getCache } = useplanCacheStore();
+  const { formatDate: formatDateWithSettings, formatTime: formatTimeWithSettings } =
+    useDateFormat();
+  const isActive = planId === item.id;
+  const isFocused = focusedId === item.id;
 
   // ドラッグ可能にする
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: item.id,
-  })
+  });
 
   // ドラッグ時のスタイル
   const style = transform
     ? {
         transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
       }
-    : undefined
+    : undefined;
 
   // 日時編集用の状態
-  const [dateTimeOpen, setDateTimeOpen] = useState(false)
+  const [dateTimeOpen, setDateTimeOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(
-    item.due_date ? parseDateString(item.due_date) : undefined
-  )
+    item.due_date ? parseDateString(item.due_date) : undefined,
+  );
   const [startTime, setStartTime] = useState(
-    item.start_time ? format(parseDatetimeString(item.start_time), 'HH:mm') : ''
-  )
-  const [endTime, setEndTime] = useState(item.end_time ? format(parseDatetimeString(item.end_time), 'HH:mm') : '')
+    item.start_time ? format(parseDatetimeString(item.start_time), 'HH:mm') : '',
+  );
+  const [endTime, setEndTime] = useState(
+    item.end_time ? format(parseDatetimeString(item.end_time), 'HH:mm') : '',
+  );
   // 通知設定: UI文字列形式（'', '開始時刻', '10分前', ...）
-  const [reminderType, setReminderType] = useState<string>(minutesToReminderType(item.reminder_minutes))
+  const [reminderType, setReminderType] = useState<string>(
+    minutesToReminderType(item.reminder_minutes),
+  );
 
   // 繰り返し設定（Zustandキャッシュから取得、なければitemから）
-  const cache = getCache(item.id)
+  const cache = getCache(item.id);
   const recurrenceType =
     cache?.recurrence_type !== undefined
       ? cache.recurrence_type === 'none' || !cache.recurrence_type
@@ -93,25 +98,26 @@ export function PlanCard({ item }: PlanCardProps) {
         : cache.recurrence_type
       : item.recurrence_type === 'none' || !item.recurrence_type
         ? 'none'
-        : item.recurrence_type
-  const recurrenceRule = cache?.recurrence_rule !== undefined ? cache.recurrence_rule : (item.recurrence_rule ?? null)
+        : item.recurrence_type;
+  const recurrenceRule =
+    cache?.recurrence_rule !== undefined ? cache.recurrence_rule : (item.recurrence_rule ?? null);
 
   // タグ変更ハンドラー
   const handleTagsChange = async (tagIds: string[]) => {
-    const currentTagIds = item.tags?.map((tag) => tag.id) ?? []
-    const addedTagIds = tagIds.filter((id) => !currentTagIds.includes(id))
-    const removedTagIds = currentTagIds.filter((id) => !tagIds.includes(id))
+    const currentTagIds = item.tags?.map((tag) => tag.id) ?? [];
+    const addedTagIds = tagIds.filter((id) => !currentTagIds.includes(id));
+    const removedTagIds = currentTagIds.filter((id) => !tagIds.includes(id));
 
     // タグを追加
     for (const tagId of addedTagIds) {
-      await addplanTag(item.id, tagId)
+      await addplanTag(item.id, tagId);
     }
 
     // タグを削除
     for (const tagId of removedTagIds) {
-      await removeplanTag(item.id, tagId)
+      await removeplanTag(item.id, tagId);
     }
-  }
+  };
 
   // 日時データ変更ハンドラー
   const handleDateTimeChange = () => {
@@ -120,12 +126,17 @@ export function PlanCard({ item }: PlanCardProps) {
       data: {
         due_date: selectedDate ? format(selectedDate, 'yyyy-MM-dd') : undefined,
         start_time:
-          selectedDate && startTime ? toLocalISOString(format(selectedDate, 'yyyy-MM-dd'), startTime) : undefined,
-        end_time: selectedDate && endTime ? toLocalISOString(format(selectedDate, 'yyyy-MM-dd'), endTime) : undefined,
+          selectedDate && startTime
+            ? toLocalISOString(format(selectedDate, 'yyyy-MM-dd'), startTime)
+            : undefined,
+        end_time:
+          selectedDate && endTime
+            ? toLocalISOString(format(selectedDate, 'yyyy-MM-dd'), endTime)
+            : undefined,
         reminder_minutes: reminderTypeToMinutes(reminderType),
       },
-    })
-  }
+    });
+  };
 
   // 日時クリアハンドラー
   const handleDateTimeClear = () => {
@@ -139,25 +150,25 @@ export function PlanCard({ item }: PlanCardProps) {
         recurrence_type: 'none',
         recurrence_rule: null,
       },
-    })
-    setSelectedDate(undefined)
-    setStartTime('')
-    setEndTime('')
-    setReminderType('')
-    setDateTimeOpen(false)
-  }
+    });
+    setSelectedDate(undefined);
+    setStartTime('');
+    setEndTime('');
+    setReminderType('');
+    setDateTimeOpen(false);
+  };
 
   // 表示用の日時フォーマット
   const getDisplayContent = () => {
-    if (!item.due_date && !item.start_time && !item.end_time) return null
+    if (!item.due_date && !item.start_time && !item.end_time) return null;
 
-    const dateStr = item.due_date ? formatDateWithSettings(parseDateString(item.due_date)) : ''
-    let timeStr = ''
+    const dateStr = item.due_date ? formatDateWithSettings(parseDateString(item.due_date)) : '';
+    let timeStr = '';
 
     if (item.start_time && item.end_time) {
-      timeStr = ` ${formatTimeWithSettings(parseDatetimeString(item.start_time))} → ${formatTimeWithSettings(parseDatetimeString(item.end_time))}`
+      timeStr = ` ${formatTimeWithSettings(parseDatetimeString(item.start_time))} → ${formatTimeWithSettings(parseDatetimeString(item.end_time))}`;
     } else if (item.start_time) {
-      timeStr = ` ${formatTimeWithSettings(parseDatetimeString(item.start_time))}`
+      timeStr = ` ${formatTimeWithSettings(parseDatetimeString(item.start_time))}`;
     }
 
     return (
@@ -165,39 +176,39 @@ export function PlanCard({ item }: PlanCardProps) {
         {dateStr}
         {timeStr}
       </span>
-    )
-  }
+    );
+  };
 
   const handleClick = () => {
     if (item.type === 'plan') {
-      openInspector(item.id)
+      openInspector(item.id);
     }
-  }
+  };
 
   // コンテキストメニューアクション
   const handleEdit = (item: InboxItem) => {
-    openInspector(item.id)
-  }
+    openInspector(item.id);
+  };
 
   const handleDuplicate = (item: InboxItem) => {
-    console.log('Duplicate:', item.id)
-  }
+    console.log('Duplicate:', item.id);
+  };
 
   const handleAddTags = (item: InboxItem) => {
-    console.log('Add tags:', item.id)
-  }
+    console.log('Add tags:', item.id);
+  };
 
   const handleChangeDueDate = (item: InboxItem) => {
-    console.log('Change due date:', item.id)
-  }
+    console.log('Change due date:', item.id);
+  };
 
   const handleArchive = (item: InboxItem) => {
-    console.log('Archive:', item.id)
-  }
+    console.log('Archive:', item.id);
+  };
 
   const handleDelete = (item: InboxItem) => {
-    console.log('Delete:', item.id)
-  }
+    console.log('Delete:', item.id);
+  };
 
   return (
     <>
@@ -206,10 +217,10 @@ export function PlanCard({ item }: PlanCardProps) {
         onOpenChange={(open) => {
           if (open) {
             // メニューを開いたときにフォーカスを設定
-            setFocusedId(item.id)
+            setFocusedId(item.id);
           } else {
             // メニューを閉じたときにフォーカスをクリア
-            setFocusedId(null)
+            setFocusedId(null);
           }
         }}
       >
@@ -224,7 +235,7 @@ export function PlanCard({ item }: PlanCardProps) {
               'bg-secondary text-secondary-foreground hover:bg-state-hover border-border group flex cursor-pointer flex-col gap-2 rounded-xl border p-3 shadow-sm transition-colors',
               isActive && 'border-primary',
               isFocused && 'bg-primary-state-selected hover:bg-state-dragged',
-              isDragging && 'opacity-50'
+              isDragging && 'opacity-50',
             )}
           >
             {/* 1. タイトル + チェックボックス */}
@@ -233,33 +244,35 @@ export function PlanCard({ item }: PlanCardProps) {
               <button
                 type="button"
                 onClick={(e) => {
-                  e.stopPropagation()
-                  const effectiveStatus = getEffectiveStatus(item)
-                  const newStatus = effectiveStatus === 'done' ? 'todo' : 'done'
+                  e.stopPropagation();
+                  const effectiveStatus = getEffectiveStatus(item);
+                  const newStatus = effectiveStatus === 'done' ? 'todo' : 'done';
                   updatePlan.mutate({
                     id: item.id,
                     data: { status: newStatus },
-                  })
+                  });
                 }}
                 className="flex-shrink-0 transition-colors hover:opacity-80"
                 aria-label={getEffectiveStatus(item) === 'done' ? '未完了に戻す' : '完了にする'}
               >
                 {(() => {
-                  const status = getEffectiveStatus(item)
+                  const status = getEffectiveStatus(item);
                   if (status === 'done') {
-                    return <CheckCircle2 className="text-success h-4 w-4" />
+                    return <CheckCircle2 className="text-success h-4 w-4" />;
                   }
                   if (status === 'doing') {
-                    return <Circle className="text-primary h-4 w-4" />
+                    return <Circle className="text-primary h-4 w-4" />;
                   }
                   // todo
-                  return <Circle className="text-muted-foreground h-4 w-4" />
+                  return <Circle className="text-muted-foreground h-4 w-4" />;
                 })()}
               </button>
               <h3 className="text-foreground min-w-0 text-base leading-tight font-semibold hover:underline">
                 {item.title}
               </h3>
-              {item.plan_number && <span className="text-muted-foreground shrink-0 text-sm">#{item.plan_number}</span>}
+              {item.plan_number && (
+                <span className="text-muted-foreground shrink-0 text-sm">#{item.plan_number}</span>
+              )}
             </div>
 
             {/* 2. 日付・時間 */}
@@ -269,7 +282,7 @@ export function PlanCard({ item }: PlanCardProps) {
                   className="text-foreground hover:bg-primary/8 group/date flex w-fit cursor-pointer items-center gap-2 rounded py-0.5 text-sm transition-colors"
                   onClick={(e) => {
                     // カードクリックイベントの伝播を防止
-                    e.stopPropagation()
+                    e.stopPropagation();
                   }}
                 >
                   {getDisplayContent() || (
@@ -321,43 +334,46 @@ export function PlanCard({ item }: PlanCardProps) {
                 align="start"
                 onClick={(e) => {
                   // Popover内のクリックイベントがカードに伝播しないようにする
-                  e.stopPropagation()
+                  e.stopPropagation();
                 }}
               >
                 <DateTimePopoverContent
                   selectedDate={selectedDate}
                   onDateSelect={(date) => {
-                    setSelectedDate(date)
-                    handleDateTimeChange()
+                    setSelectedDate(date);
+                    handleDateTimeChange();
                   }}
                   startTime={startTime}
                   onStartTimeChange={(time) => {
-                    setStartTime(time)
-                    handleDateTimeChange()
+                    setStartTime(time);
+                    handleDateTimeChange();
                   }}
                   endTime={endTime}
                   onEndTimeChange={(time) => {
-                    setEndTime(time)
-                    handleDateTimeChange()
+                    setEndTime(time);
+                    handleDateTimeChange();
                   }}
                   reminderType={reminderType}
                   onReminderChange={(value) => {
-                    setReminderType(value)
-                    handleDateTimeChange()
+                    setReminderType(value);
+                    handleDateTimeChange();
                   }}
                   recurrenceRule={recurrenceRule}
                   recurrenceType={recurrenceType}
                   onRepeatTypeChange={(type) => {
                     // 型マッピング
-                    const typeMap: Record<string, 'none' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'weekdays'> = {
+                    const typeMap: Record<
+                      string,
+                      'none' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'weekdays'
+                    > = {
                       '': 'none',
                       毎日: 'daily',
                       毎週: 'weekly',
                       毎月: 'monthly',
                       毎年: 'yearly',
                       平日: 'weekdays',
-                    }
-                    const recurrenceType = typeMap[type] || 'none'
+                    };
+                    const recurrenceType = typeMap[type] || 'none';
 
                     // optimistic updateがキャッシュを即座に更新
                     updatePlan.mutate({
@@ -366,7 +382,7 @@ export function PlanCard({ item }: PlanCardProps) {
                         recurrence_type: recurrenceType,
                         recurrence_rule: null,
                       },
-                    })
+                    });
                   }}
                   onRecurrenceRuleChange={(rrule) => {
                     // optimistic updateがキャッシュを即座に更新
@@ -375,7 +391,7 @@ export function PlanCard({ item }: PlanCardProps) {
                       data: {
                         recurrence_rule: rrule,
                       },
-                    })
+                    });
                   }}
                 />
 
@@ -403,7 +419,7 @@ export function PlanCard({ item }: PlanCardProps) {
                   className="group/tags flex flex-wrap gap-1"
                   onClick={(e) => {
                     // カードクリックイベントの伝播を防止
-                    e.stopPropagation()
+                    e.stopPropagation();
                   }}
                 >
                   {item.tags.slice(0, 4).map((tag) => (
@@ -419,7 +435,10 @@ export function PlanCard({ item }: PlanCardProps) {
                           : undefined
                       }
                     >
-                      <span className="font-medium" style={tag.color ? { color: tag.color } : undefined}>
+                      <span
+                        className="font-medium"
+                        style={tag.color ? { color: tag.color } : undefined}
+                      >
                         #
                       </span>
                       {tag.name}
@@ -445,7 +464,7 @@ export function PlanCard({ item }: PlanCardProps) {
                   className="hover:bg-primary/8 group/tags flex w-fit cursor-pointer flex-wrap gap-1 rounded py-0.5 transition-colors"
                   onClick={(e) => {
                     // カードクリックイベントの伝播を防止
-                    e.stopPropagation()
+                    e.stopPropagation();
                   }}
                 >
                   <div className="text-muted-foreground flex items-center gap-1 text-sm">
@@ -467,7 +486,10 @@ export function PlanCard({ item }: PlanCardProps) {
             onArchive={handleArchive}
             onDelete={handleDelete}
             renderMenuItem={({ icon, label, onClick, variant }) => (
-              <ContextMenuItem onClick={onClick} className={variant === 'destructive' ? 'text-destructive' : ''}>
+              <ContextMenuItem
+                onClick={onClick}
+                className={variant === 'destructive' ? 'text-destructive' : ''}
+              >
                 {icon}
                 {label}
               </ContextMenuItem>
@@ -477,5 +499,5 @@ export function PlanCard({ item }: PlanCardProps) {
         </ContextMenuContent>
       </ContextMenu>
     </>
-  )
+  );
 }

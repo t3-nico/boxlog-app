@@ -1,21 +1,21 @@
-'use client'
+'use client';
 
-import type { ReactNode } from 'react'
+import type { ReactNode } from 'react';
 
-import { ChevronRight } from 'lucide-react'
+import { ChevronRight } from 'lucide-react';
 
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
-import { cn } from '@/lib/utils'
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { cn } from '@/lib/utils';
 
 interface SidebarSectionProps {
   /** セクションタイトル */
-  title: string
+  title: string;
   /** セクションの子要素 */
-  children: ReactNode
+  children: ReactNode;
   /** デフォルトで開いた状態にするか */
-  defaultOpen?: boolean
+  defaultOpen?: boolean;
   /** 追加のクラス名（コンテンツ部分） */
-  className?: string
+  className?: string;
 }
 
 /**
@@ -40,7 +40,12 @@ interface SidebarSectionProps {
  * </SidebarSection>
  * ```
  */
-export function SidebarSection({ title, children, defaultOpen = false, className }: SidebarSectionProps) {
+export function SidebarSection({
+  title,
+  children,
+  defaultOpen = false,
+  className,
+}: SidebarSectionProps) {
   return (
     <Collapsible defaultOpen={defaultOpen} className="min-w-0 overflow-hidden">
       <CollapsibleTrigger className="text-muted-foreground hover:bg-state-hover flex h-8 w-full items-center justify-between rounded px-2 text-left text-xs font-semibold transition-colors">
@@ -51,5 +56,5 @@ export function SidebarSection({ title, children, defaultOpen = false, className
         <div className={cn('min-w-0 overflow-hidden', className)}>{children}</div>
       </CollapsibleContent>
     </Collapsible>
-  )
+  );
 }

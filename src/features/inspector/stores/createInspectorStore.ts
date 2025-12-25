@@ -1,23 +1,23 @@
-import { create, type StateCreator } from 'zustand'
-import { devtools, persist, type PersistOptions } from 'zustand/middleware'
+import { create, type StateCreator } from 'zustand';
+import { devtools, persist, type PersistOptions } from 'zustand/middleware';
 
 /**
  * Inspector表示モード
  * - sheet: サイドパネル（右側に固定表示）
  * - popover: ポップアップ（クリック位置に表示）
  */
-export type InspectorDisplayMode = 'sheet' | 'popover'
+export type InspectorDisplayMode = 'sheet' | 'popover';
 
 /**
  * Inspector Store 基本状態
  */
 export interface InspectorState<TId extends string = string> {
   /** Inspector が開いているか */
-  isOpen: boolean
+  isOpen: boolean;
   /** 対象エンティティのID（null = 新規作成モード） */
-  entityId: TId | null
+  entityId: TId | null;
   /** 表示モード（sheet: サイドパネル, popover: ポップアップ） */
-  displayMode: InspectorDisplayMode
+  displayMode: InspectorDisplayMode;
 }
 
 /**
@@ -25,26 +25,27 @@ export interface InspectorState<TId extends string = string> {
  */
 export interface InspectorActions<TId extends string = string> {
   /** Inspector を開く */
-  openInspector: (entityId: TId | null) => void
+  openInspector: (entityId: TId | null) => void;
   /** Inspector を閉じる */
-  closeInspector: () => void
+  closeInspector: () => void;
   /** 表示モードを変更する */
-  setDisplayMode: (mode: InspectorDisplayMode) => void
+  setDisplayMode: (mode: InspectorDisplayMode) => void;
 }
 
 /**
  * Inspector Store 基本型
  */
-export type InspectorStore<TId extends string = string> = InspectorState<TId> & InspectorActions<TId>
+export type InspectorStore<TId extends string = string> = InspectorState<TId> &
+  InspectorActions<TId>;
 
 /**
  * createInspectorStore の設定
  */
 export interface CreateInspectorStoreConfig {
   /** devtools 用のストア名 */
-  storeName?: string
+  storeName?: string;
   /** persist 用のストレージキー（指定するとdisplayModeが永続化される） */
-  persistKey?: string
+  persistKey?: string;
 }
 
 /**
@@ -67,8 +68,10 @@ export interface CreateInspectorStoreConfig {
  * setDisplayMode('popover')
  * ```
  */
-export function createInspectorStore<TId extends string = string>(config: CreateInspectorStoreConfig = {}) {
-  const { storeName = 'inspector-store', persistKey } = config
+export function createInspectorStore<TId extends string = string>(
+  config: CreateInspectorStoreConfig = {},
+) {
+  const { storeName = 'inspector-store', persistKey } = config;
 
   const createState: StateCreator<InspectorStore<TId>, [], []> = (set) => ({
     isOpen: false,
@@ -80,19 +83,24 @@ export function createInspectorStore<TId extends string = string>(config: Create
     closeInspector: () => set({ isOpen: false, entityId: null }),
 
     setDisplayMode: (mode) => set({ displayMode: mode }),
-  })
+  });
 
   // persistKeyが指定されている場合は永続化する
   if (persistKey) {
-    const persistOptions: PersistOptions<InspectorStore<TId>, Pick<InspectorStore<TId>, 'displayMode'>> = {
+    const persistOptions: PersistOptions<
+      InspectorStore<TId>,
+      Pick<InspectorStore<TId>, 'displayMode'>
+    > = {
       name: persistKey,
       partialize: (state) => ({ displayMode: state.displayMode }),
-    }
+    };
 
-    return create<InspectorStore<TId>>()(devtools(persist(createState, persistOptions), { name: storeName }))
+    return create<InspectorStore<TId>>()(
+      devtools(persist(createState, persistOptions), { name: storeName }),
+    );
   }
 
-  return create<InspectorStore<TId>>()(devtools(createState, { name: storeName }))
+  return create<InspectorStore<TId>>()(devtools(createState, { name: storeName }));
 }
 
 /**
@@ -101,7 +109,7 @@ export function createInspectorStore<TId extends string = string>(config: Create
 export interface ExtendedInspectorState<TId extends string = string, TInitialData = unknown>
   extends InspectorState<TId> {
   /** 新規作成時の初期データ */
-  initialData?: TInitialData | undefined
+  initialData?: TInitialData | undefined;
 }
 
 /**
@@ -109,30 +117,29 @@ export interface ExtendedInspectorState<TId extends string = string, TInitialDat
  */
 export interface ExtendedInspectorActions<TId extends string = string, TInitialData = unknown> {
   /** Inspector を開く（オプションで初期データ指定） */
-  openInspector: (entityId: TId | null, options?: { initialData?: TInitialData }) => void
+  openInspector: (entityId: TId | null, options?: { initialData?: TInitialData }) => void;
   /** Inspector を閉じる */
-  closeInspector: () => void
+  closeInspector: () => void;
   /** 表示モードを変更する */
-  setDisplayMode: (mode: InspectorDisplayMode) => void
+  setDisplayMode: (mode: InspectorDisplayMode) => void;
 }
 
 /**
  * 拡張 Inspector Store 型
  */
-export type ExtendedInspectorStore<TId extends string = string, TInitialData = unknown> = ExtendedInspectorState<
-  TId,
-  TInitialData
-> &
-  ExtendedInspectorActions<TId, TInitialData>
+export type ExtendedInspectorStore<
+  TId extends string = string,
+  TInitialData = unknown,
+> = ExtendedInspectorState<TId, TInitialData> & ExtendedInspectorActions<TId, TInitialData>;
 
 /**
  * createExtendedInspectorStore の設定
  */
 export interface CreateExtendedInspectorStoreConfig {
   /** devtools 用のストア名 */
-  storeName?: string
+  storeName?: string;
   /** persist 用のストレージキー（指定するとdisplayModeが永続化される） */
-  persistKey?: string
+  persistKey?: string;
 }
 
 /**
@@ -158,9 +165,9 @@ export interface CreateExtendedInspectorStoreConfig {
  * ```
  */
 export function createExtendedInspectorStore<TId extends string = string, TInitialData = unknown>(
-  config: CreateExtendedInspectorStoreConfig = {}
+  config: CreateExtendedInspectorStoreConfig = {},
 ) {
-  const { storeName = 'extended-inspector-store', persistKey } = config
+  const { storeName = 'extended-inspector-store', persistKey } = config;
 
   const createState: StateCreator<ExtendedInspectorStore<TId, TInitialData>, [], []> = (set) => ({
     isOpen: false,
@@ -173,7 +180,7 @@ export function createExtendedInspectorStore<TId extends string = string, TIniti
         isOpen: true,
         entityId,
         initialData: entityId === null ? options?.initialData : undefined,
-      })
+      });
     },
 
     closeInspector: () => {
@@ -181,11 +188,11 @@ export function createExtendedInspectorStore<TId extends string = string, TIniti
         isOpen: false,
         entityId: null,
         initialData: undefined,
-      })
+      });
     },
 
     setDisplayMode: (mode) => set({ displayMode: mode }),
-  })
+  });
 
   // persistKeyが指定されている場合は永続化する
   if (persistKey) {
@@ -195,12 +202,14 @@ export function createExtendedInspectorStore<TId extends string = string, TIniti
     > = {
       name: persistKey,
       partialize: (state) => ({ displayMode: state.displayMode }),
-    }
+    };
 
     return create<ExtendedInspectorStore<TId, TInitialData>>()(
-      devtools(persist(createState, persistOptions), { name: storeName })
-    )
+      devtools(persist(createState, persistOptions), { name: storeName }),
+    );
   }
 
-  return create<ExtendedInspectorStore<TId, TInitialData>>()(devtools(createState, { name: storeName }))
+  return create<ExtendedInspectorStore<TId, TInitialData>>()(
+    devtools(createState, { name: storeName }),
+  );
 }

@@ -2,12 +2,12 @@
  * API エラーハンドリングミドルウェア
  */
 
-import { AppError, createAppError, ERROR_CODES, type ErrorCode } from '@/config/error-patterns'
-import { globalErrorHandler } from '@/lib/error-handler'
-import { reportToSentry } from '@/lib/sentry'
-import { NextRequest, NextResponse } from 'next/server'
-import { createTimeoutPromise, setCorsHeaders } from './cors'
-import type { ApiContext, ApiHandler, ApiResponse, MiddlewareConfig } from './types'
+import { AppError, createAppError, ERROR_CODES, type ErrorCode } from '@/config/error-patterns';
+import { globalErrorHandler } from '@/lib/error-handler';
+import { reportToSentry } from '@/lib/sentry';
+import { NextRequest, NextResponse } from 'next/server';
+import { createTimeoutPromise, setCorsHeaders } from './cors';
+import type { ApiContext, ApiHandler, ApiResponse, MiddlewareConfig } from './types';
 import {
   createJsonResponse,
   extractSessionId,
@@ -16,45 +16,52 @@ import {
   getHttpStatusCode,
   logRequest,
   recordMetrics,
-} from './utils'
+} from './utils';
 
 /**
  * API エラーハンドリングミドルウェア
  */
-export function withErrorHandling<T = unknown>(handler: ApiHandler<T>, config: MiddlewareConfig = {}) {
+export function withErrorHandling<T = unknown>(
+  handler: ApiHandler<T>,
+  config: MiddlewareConfig = {},
+) {
   return async (req: NextRequest): Promise<NextResponse> => {
-    const startTime = Date.now()
-    const requestId = generateRequestId()
+    const startTime = Date.now();
+    const requestId = generateRequestId();
 
     // コンテキスト作成
-    const userId = extractUserId(req)
-    const sessionId = extractSessionId(req)
+    const userId = extractUserId(req);
+    const sessionId = extractSessionId(req);
     const context: ApiContext = {
       request: req,
       requestId,
       startTime,
       ...(userId !== undefined && { userId }),
       ...(sessionId !== undefined && { sessionId }),
-    }
+    };
 
     // CORS設定
-    const response = config.enableCors ? setCorsHeaders(req, config.corsOrigins) : undefined
+    const response = config.enableCors ? setCorsHeaders(req, config.corsOrigins) : undefined;
 
     try {
       // リクエストログ
       if (config.enableRequestLogging) {
-        logRequest(req, context)
+        logRequest(req, context);
       }
 
       // タイムアウト設定
-      const timeoutPromise = config.requestTimeout ? createTimeoutPromise(config.requestTimeout) : null
+      const timeoutPromise = config.requestTimeout
+        ? createTimeoutPromise(config.requestTimeout)
+        : null;
 
       // ハンドラー実行
-      const handlerPromise = handler(req, context)
-      const result = timeoutPromise ? await Promise.race([handlerPromise, timeoutPromise]) : await handlerPromise
+      const handlerPromise = handler(req, context);
+      const result = timeoutPromise
+        ? await Promise.race([handlerPromise, timeoutPromise])
+        : await handlerPromise;
 
       // 成功レスポンス
-      const executionTime = Date.now() - startTime
+      const executionTime = Date.now() - startTime;
       const apiResponse: ApiResponse<T> = {
         success: true,
         data: result,
@@ -63,18 +70,18 @@ export function withErrorHandling<T = unknown>(handler: ApiHandler<T>, config: M
           timestamp: new Date().toISOString(),
           executionTime,
         },
-      }
+      };
 
       // メトリクス収集
       if (config.enableMetrics) {
-        recordMetrics(req, context, true, executionTime)
+        recordMetrics(req, context, true, executionTime);
       }
 
-      return createJsonResponse(apiResponse, 200, response)
+      return createJsonResponse(apiResponse, 200, response);
     } catch (error) {
-      return await handleApiError(error, req, context, config, response)
+      return await handleApiError(error, req, context, config, response);
     }
-  }
+  };
 }
 
 /**
@@ -85,12 +92,12 @@ async function handleApiError(
   req: NextRequest,
   context: ApiContext,
   config: MiddlewareConfig,
-  baseResponse?: NextResponse
+  baseResponse?: NextResponse,
 ): Promise<NextResponse> {
-  const executionTime = Date.now() - context.startTime
+  const executionTime = Date.now() - context.startTime;
 
   // エラーを AppError に正規化
-  const appError = normalizeApiError(error, context)
+  const appError = normalizeApiError(error, context);
 
   // エラー処理
   await globalErrorHandler.handleError(appError, undefined, {
@@ -102,20 +109,20 @@ async function handleApiError(
       headers: Object.fromEntries(req.headers.entries()),
       executionTime,
     },
-  })
+  });
 
   // Sentry レポート
   if (config.enableErrorReporting) {
-    reportToSentry(appError)
+    reportToSentry(appError);
   }
 
   // メトリクス収集
   if (config.enableMetrics) {
-    recordMetrics(req, context, false, executionTime, appError.code)
+    recordMetrics(req, context, false, executionTime, appError.code);
   }
 
   // エラーレスポンス
-  const statusCode = getHttpStatusCode(appError.code)
+  const statusCode = getHttpStatusCode(appError.code);
   const apiResponse: ApiResponse = {
     success: false,
     error: {
@@ -131,9 +138,9 @@ async function handleApiError(
       timestamp: new Date().toISOString(),
       executionTime,
     },
-  }
+  };
 
-  return createJsonResponse(apiResponse, statusCode, baseResponse)
+  return createJsonResponse(apiResponse, statusCode, baseResponse);
 }
 
 /**
@@ -141,25 +148,25 @@ async function handleApiError(
  */
 function normalizeApiError(error: unknown, context: ApiContext): AppError {
   if (error instanceof AppError) {
-    return error
+    return error;
   }
 
   if (error instanceof Error) {
     // 一般的なエラーパターンから ErrorCode を推定
-    let errorCode: ErrorCode = ERROR_CODES.INTERNAL_SERVER_ERROR
+    let errorCode: ErrorCode = ERROR_CODES.INTERNAL_SERVER_ERROR;
 
     if (error.message.includes('timeout')) {
-      errorCode = ERROR_CODES.API_TIMEOUT
+      errorCode = ERROR_CODES.API_TIMEOUT;
     } else if (error.message.includes('validation')) {
-      errorCode = ERROR_CODES.INVALID_FORMAT
+      errorCode = ERROR_CODES.INVALID_FORMAT;
     } else if (error.message.includes('unauthorized') || error.message.includes('auth')) {
-      errorCode = ERROR_CODES.INVALID_TOKEN
+      errorCode = ERROR_CODES.INVALID_TOKEN;
     } else if (error.message.includes('forbidden')) {
-      errorCode = ERROR_CODES.NO_PERMISSION
+      errorCode = ERROR_CODES.NO_PERMISSION;
     } else if (error.message.includes('not found')) {
-      errorCode = ERROR_CODES.NOT_FOUND
+      errorCode = ERROR_CODES.NOT_FOUND;
     } else if (error.message.includes('rate limit')) {
-      errorCode = ERROR_CODES.RATE_LIMIT_EXCEEDED
+      errorCode = ERROR_CODES.RATE_LIMIT_EXCEEDED;
     }
 
     return createAppError(
@@ -175,8 +182,8 @@ function normalizeApiError(error: unknown, context: ApiContext): AppError {
           method: context.request.method,
         },
       },
-      error.message
-    )
+      error.message,
+    );
   }
 
   // 不明なエラー
@@ -184,5 +191,5 @@ function normalizeApiError(error: unknown, context: ApiContext): AppError {
     source: 'api',
     requestId: context.requestId,
     context: { originalError: String(error) },
-  })
+  });
 }

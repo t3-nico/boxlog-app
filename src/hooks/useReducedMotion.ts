@@ -1,6 +1,6 @@
-'use client'
+'use client';
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react';
 
 /**
  * prefers-reduced-motion メディアクエリを監視するフック
@@ -22,28 +22,28 @@ import { useEffect, useState } from 'react'
  * ```
  */
 export function useReducedMotion(): boolean {
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
   useEffect(() => {
     // SSRセーフ: windowが存在しない場合は早期リターン
-    if (typeof window === 'undefined') return
+    if (typeof window === 'undefined') return;
 
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
 
     // 初期値を設定
-    setPrefersReducedMotion(mediaQuery.matches)
+    setPrefersReducedMotion(mediaQuery.matches);
 
     // 変更を監視
     const handleChange = (event: MediaQueryListEvent) => {
-      setPrefersReducedMotion(event.matches)
-    }
+      setPrefersReducedMotion(event.matches);
+    };
 
-    mediaQuery.addEventListener('change', handleChange)
+    mediaQuery.addEventListener('change', handleChange);
 
     return () => {
-      mediaQuery.removeEventListener('change', handleChange)
-    }
-  }, [])
+      mediaQuery.removeEventListener('change', handleChange);
+    };
+  }, []);
 
-  return prefersReducedMotion
+  return prefersReducedMotion;
 }

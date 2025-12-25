@@ -1,2 +1,2 @@
-export { TagGroupMenuItems } from './TagGroupDropdown'
-export { TagInspector } from './TagInspector'
+export { TagGroupMenuItems } from './TagGroupDropdown';
+export { TagInspector } from './TagInspector';

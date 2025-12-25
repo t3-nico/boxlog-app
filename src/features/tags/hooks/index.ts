@@ -20,7 +20,7 @@ export {
   useTags,
   useUpdateTag,
   useUpdateTagColor,
-} from './use-tags'
+} from './use-tags';
 
 // Tag Groups
 export {
@@ -31,10 +31,10 @@ export {
   useTagGroup,
   useTagGroups,
   useUpdateTagGroup,
-} from './use-tag-groups'
+} from './use-tag-groups';
 
 // Tag Group DnD
-export { useTagGroupsDnd } from './use-tag-groups-dnd'
+export { useTagGroupsDnd } from './use-tag-groups-dnd';
 
 // Item Tags (Plan, Task etc.)
 export {
@@ -46,16 +46,22 @@ export {
   useItemTagsByItem,
   useItemTagsOptimisticUpdate,
   useItemsByTags,
-} from './use-item-tags'
+} from './use-item-tags';
 
 // Tag Operations
-export { useTagOperations } from './use-tag-operations'
+export { useTagOperations } from './use-tag-operations';
 
 // Tag Stats
-export { tagStatsKeys, useSidebarTags, useTagExpandedState, useTagStats, useTagUsageCounts } from './use-tag-stats'
+export {
+  tagStatsKeys,
+  useSidebarTags,
+  useTagExpandedState,
+  useTagStats,
+  useTagUsageCounts,
+} from './use-tag-stats';
 
 // Realtime
-export { useTagRealtime } from './useTagRealtime'
+export { useTagRealtime } from './useTagRealtime';
 
 // Table Columns
-export { getTagColumnSettings, useTagTableColumns } from './useTagTableColumns'
+export { getTagColumnSettings, useTagTableColumns } from './useTagTableColumns';

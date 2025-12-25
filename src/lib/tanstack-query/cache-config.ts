@@ -17,7 +17,7 @@
 export const realtimeCache = {
   staleTime: 30 * 1000, // 30秒（Realtime購読で更新されるため長めでOK）
   gcTime: 2 * 60 * 1000, // 2分
-}
+};
 
 /**
  * 通常のデータ（標準）
@@ -27,7 +27,7 @@ export const realtimeCache = {
 export const standardCache = {
   staleTime: 5 * 60 * 1000, // 5分
   gcTime: 10 * 60 * 1000, // 10分
-}
+};
 
 /**
  * めったに変更されないデータ
@@ -37,7 +37,7 @@ export const standardCache = {
 export const staticCache = {
   staleTime: 60 * 60 * 1000, // 1時間
   gcTime: 2 * 60 * 60 * 1000, // 2時間
-}
+};
 
 /**
  * 短期キャッシュ（1分）
@@ -47,7 +47,7 @@ export const staticCache = {
 export const shortTermCache = {
   staleTime: 60 * 1000, // 1分
   gcTime: 5 * 60 * 1000, // 5分
-}
+};
 
 /**
  * 機能別のキャッシュ戦略マトリクス
@@ -68,11 +68,11 @@ export const cacheStrategies = {
   sessions: realtimeCache, // セッションもリアルタイム性が重要
   notifications: shortTermCache, // 通知はリアルタイム性が重要だが、短期キャッシュで十分
   profile: staticCache, // プロフィールはめったに変更されない
-} as const
+} as const;
 
 /**
  * キャッシュ戦略の選択ヘルパー
  */
 export function getCacheStrategy(feature: keyof typeof cacheStrategies) {
-  return cacheStrategies[feature]
+  return cacheStrategies[feature];
 }

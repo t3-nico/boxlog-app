@@ -1,18 +1,18 @@
-'use client'
+'use client';
 
-import type { LucideIcon } from 'lucide-react'
-import { AlertTriangle } from 'lucide-react'
-import type { ReactNode } from 'react'
+import type { LucideIcon } from 'lucide-react';
+import { AlertTriangle } from 'lucide-react';
+import type { ReactNode } from 'react';
 
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/utils';
 
 interface WarningBoxProps {
   /** 表示するメッセージ */
-  children: ReactNode
+  children: ReactNode;
   /** アイコン（デフォルト: AlertTriangle） */
-  icon?: LucideIcon
+  icon?: LucideIcon;
   /** 追加のクラス名 */
-  className?: string
+  className?: string;
 }
 
 /**
@@ -32,20 +32,20 @@ export function WarningBox({ children, icon: Icon = AlertTriangle, className }: 
     <div
       className={cn(
         'border-destructive/20 bg-destructive/10 text-destructive flex items-center gap-2 rounded-xl border p-3',
-        className
+        className,
       )}
     >
       <Icon className="h-4 w-4 shrink-0" />
       <p className="text-sm font-medium">{children}</p>
     </div>
-  )
+  );
 }
 
 interface InfoBoxProps {
   /** 表示するコンテンツ */
-  children: ReactNode
+  children: ReactNode;
   /** 追加のクラス名 */
-  className?: string
+  className?: string;
 }
 
 /**
@@ -63,5 +63,5 @@ interface InfoBoxProps {
  * ```
  */
 export function InfoBox({ children, className }: InfoBoxProps) {
-  return <div className={cn('bg-surface-container rounded-xl p-4', className)}>{children}</div>
+  return <div className={cn('bg-surface-container rounded-xl p-4', className)}>{children}</div>;
 }

@@ -1,18 +1,18 @@
-'use client'
+'use client';
 
-import { Button } from '@/components/ui/button'
-import { HoverTooltip } from '@/components/ui/tooltip'
-import { NotificationDropdown } from '@/features/notifications'
-import { PlanCreateTrigger } from '@/features/plans/components/shared/PlanCreateTrigger'
-import { Moon, Plus, Search, Sun } from 'lucide-react'
-import { useCallback } from 'react'
-import { Item } from './Item'
+import { Button } from '@/components/ui/button';
+import { HoverTooltip } from '@/components/ui/tooltip';
+import { NotificationDropdown } from '@/features/notifications';
+import { PlanCreateTrigger } from '@/features/plans/components/shared/PlanCreateTrigger';
+import { Moon, Plus, Search, Sun } from 'lucide-react';
+import { useCallback } from 'react';
+import { Item } from './Item';
 
 interface ActionsProps {
-  onSearch: () => void
-  onToggleTheme: (theme: 'light' | 'dark') => void
-  resolvedTheme: 'light' | 'dark' | undefined
-  t: (key: string) => string
+  onSearch: () => void;
+  onToggleTheme: (theme: 'light' | 'dark') => void;
+  resolvedTheme: 'light' | 'dark' | undefined;
+  t: (key: string) => string;
 }
 
 /**
@@ -25,19 +25,19 @@ export function Actions({ onSearch, onToggleTheme, resolvedTheme, t }: ActionsPr
   // useCallbackでイベントハンドラを定義（jsx-no-bind対策）
   const handleSearchClick = useCallback(
     (e: React.MouseEvent) => {
-      e.preventDefault()
-      onSearch()
+      e.preventDefault();
+      onSearch();
     },
-    [onSearch]
-  )
+    [onSearch],
+  );
 
   const handleThemeClick = useCallback(
     (e: React.MouseEvent) => {
-      e.preventDefault()
-      onToggleTheme(resolvedTheme === 'light' ? 'dark' : 'light')
+      e.preventDefault();
+      onToggleTheme(resolvedTheme === 'light' ? 'dark' : 'light');
     },
-    [onToggleTheme, resolvedTheme]
-  )
+    [onToggleTheme, resolvedTheme],
+  );
 
   return (
     <div className="flex flex-col items-center gap-1 px-2" onClick={(e) => e.stopPropagation()}>
@@ -57,7 +57,13 @@ export function Actions({ onSearch, onToggleTheme, resolvedTheme, t }: ActionsPr
           <NotificationDropdown />
         </div>
       </HoverTooltip>
-      <Item icon={Search} label={t('actions.search')} url="#" isActive={false} onClick={handleSearchClick} />
+      <Item
+        icon={Search}
+        label={t('actions.search')}
+        url="#"
+        isActive={false}
+        onClick={handleSearchClick}
+      />
       <Item
         icon={resolvedTheme === 'light' ? Moon : Sun}
         label={t('sidebar.theme')}
@@ -66,5 +72,5 @@ export function Actions({ onSearch, onToggleTheme, resolvedTheme, t }: ActionsPr
         onClick={handleThemeClick}
       />
     </div>
-  )
+  );
 }

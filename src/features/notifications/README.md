@@ -88,7 +88,7 @@ const {
   removeNotification, // 通知削除
   clearAllNotifications, // 全通知クリア
   markAsRead, // 既読マーク
-} = useNotifications()
+} = useNotifications();
 ```
 
 ### useNotificationModal
@@ -101,7 +101,7 @@ const {
   notification, // 表示中の通知
   showModal, // モーダル表示
   hideModal, // モーダル非表示
-} = useNotificationModal()
+} = useNotificationModal();
 ```
 
 ## 通知ヘルパー
@@ -119,14 +119,14 @@ const {
 
 ```typescript
 // 使用例
-import { createNotification, getNotificationIcon } from '../utils/notification-helpers'
+import { createNotification, getNotificationIcon } from '../utils/notification-helpers';
 
 const notification = createNotification({
   type: 'success',
   title: '保存完了',
   message: 'データが正常に保存されました',
   duration: 3000,
-})
+});
 ```
 
 ## スタイリング
@@ -134,21 +134,21 @@ const notification = createNotification({
 全コンポーネントは`/src/config/theme`の統一トークンを使用：
 
 ```tsx
-import { background, text, border, semantic } from '@/config/theme'
+import { background, text, border, semantic } from '@/config/theme';
 
 // 通知タイプ別スタイリング
 const getNotificationStyles = (type: NotificationType) => {
   switch (type) {
     case 'success':
-      return cn(background.success, text.successForeground, border.success)
+      return cn(background.success, text.successForeground, border.success);
     case 'error':
-      return cn(background.destructive, text.destructiveForeground, border.destructive)
+      return cn(background.destructive, text.destructiveForeground, border.destructive);
     case 'warning':
-      return cn(background.warning, text.warningForeground, border.warning)
+      return cn(background.warning, text.warningForeground, border.warning);
     default:
-      return cn(background.surface, text.primary, border.subtle)
+      return cn(background.surface, text.primary, border.subtle);
   }
-}
+};
 ```
 
 ## 今後の改善予定

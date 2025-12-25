@@ -1,6 +1,6 @@
-import { createNavigation } from 'next-intl/navigation'
+import { createNavigation } from 'next-intl/navigation';
 
-import { routing } from './routing'
+import { routing } from './routing';
 
 /**
  * next-intlのナビゲーションユーティリティ
@@ -20,4 +20,4 @@ import { routing } from './routing'
  * // usePathname: /ja/about → /about（言語プレフィックスなし）
  * ```
  */
-export const { Link, redirect, usePathname, useRouter, getPathname } = createNavigation(routing)
+export const { Link, redirect, usePathname, useRouter, getPathname } = createNavigation(routing);

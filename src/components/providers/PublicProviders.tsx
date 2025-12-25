@@ -11,14 +11,14 @@
  * @see /CLAUDE.md - プロバイダー階層の詳細
  */
 
-'use client'
+'use client';
 
-import { PublicThemeProvider } from '@/contexts/public-theme-context'
+import { PublicThemeProvider } from '@/contexts/public-theme-context';
 
 interface PublicProvidersProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 export function PublicProviders({ children }: PublicProvidersProps) {
-  return <PublicThemeProvider>{children}</PublicThemeProvider>
+  return <PublicThemeProvider>{children}</PublicThemeProvider>;
 }

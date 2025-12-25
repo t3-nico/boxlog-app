@@ -1,25 +1,31 @@
-'use client'
+'use client';
 
-import { Button } from '@/components/ui/button'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react'
-import { useTranslations } from 'next-intl'
+import { Button } from '@/components/ui/button';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface TablePaginationProps {
   /** 総件数 */
-  totalItems: number
+  totalItems: number;
   /** 現在のページ（1始まり） */
-  currentPage: number
+  currentPage: number;
   /** 1ページあたりの表示件数 */
-  pageSize: number
+  pageSize: number;
   /** ページ変更時のコールバック */
-  onPageChange: (page: number) => void
+  onPageChange: (page: number) => void;
   /** 表示件数変更時のコールバック */
-  onPageSizeChange: (size: number) => void
+  onPageSizeChange: (size: number) => void;
   /** 表示件数の選択肢 */
-  pageSizeOptions?: number[]
+  pageSizeOptions?: number[];
   /** 最初/最後へのジャンプボタンを表示するか */
-  showFirstLastButtons?: boolean
+  showFirstLastButtons?: boolean;
 }
 
 /**
@@ -40,25 +46,25 @@ export function TablePagination({
   pageSizeOptions = [10, 25, 50, 100],
   showFirstLastButtons = true,
 }: TablePaginationProps) {
-  const t = useTranslations()
+  const t = useTranslations();
 
   // 総ページ数
-  const totalPages = Math.ceil(totalItems / pageSize) || 1
+  const totalPages = Math.ceil(totalItems / pageSize) || 1;
 
   // 現在のページの範囲
-  const startItem = totalItems === 0 ? 0 : (currentPage - 1) * pageSize + 1
-  const endItem = Math.min(currentPage * pageSize, totalItems)
+  const startItem = totalItems === 0 ? 0 : (currentPage - 1) * pageSize + 1;
+  const endItem = Math.min(currentPage * pageSize, totalItems);
 
   // ページ移動ハンドラー
-  const goToFirstPage = () => onPageChange(1)
-  const goToPreviousPage = () => onPageChange(Math.max(1, currentPage - 1))
-  const goToNextPage = () => onPageChange(Math.min(totalPages, currentPage + 1))
-  const goToLastPage = () => onPageChange(totalPages)
+  const goToFirstPage = () => onPageChange(1);
+  const goToPreviousPage = () => onPageChange(Math.max(1, currentPage - 1));
+  const goToNextPage = () => onPageChange(Math.min(totalPages, currentPage + 1));
+  const goToLastPage = () => onPageChange(totalPages);
 
   // ページサイズ変更ハンドラー
   const handlePageSizeChange = (value: string) => {
-    onPageSizeChange(Number(value))
-  }
+    onPageSizeChange(Number(value));
+  };
 
   return (
     <div className="flex items-center justify-between px-4 py-4">
@@ -137,5 +143,5 @@ export function TablePagination({
         )}
       </div>
     </div>
-  )
+  );
 }

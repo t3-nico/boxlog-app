@@ -2,11 +2,11 @@
  * 自動リトライフック（技術知識不要の高度なエラー復旧）
  */
 
-'use client'
+'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { DEFAULT_RETRY_CONFIG, RetryConfig, RetryState } from './types'
+import { DEFAULT_RETRY_CONFIG, RetryConfig, RetryState } from './types';
 
 /**
  * 汎用自動リトライフック
@@ -20,7 +20,7 @@ import { DEFAULT_RETRY_CONFIG, RetryConfig, RetryState } from './types'
  * )
  */
 export function useAutoRetry<T>(asyncFunction: () => Promise<T>, config: RetryConfig = {}) {
-  const finalConfig = useMemo(() => ({ ...DEFAULT_RETRY_CONFIG, ...config }), [config])
+  const finalConfig = useMemo(() => ({ ...DEFAULT_RETRY_CONFIG, ...config }), [config]);
 
   const [state, setState] = useState<RetryState>({
     isLoading: false,
@@ -28,30 +28,30 @@ export function useAutoRetry<T>(asyncFunction: () => Promise<T>, config: RetryCo
     retryCount: 0,
     lastRetryTime: 0,
     isRetrying: false,
-  })
+  });
 
-  const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined)
-  const abortControllerRef = useRef<AbortController | undefined>(undefined)
+  const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
+  const abortControllerRef = useRef<AbortController | undefined>(undefined);
 
   const calculateDelay = useCallback(
     (retryCount: number): number => {
-      const delay = finalConfig.initialDelay * Math.pow(finalConfig.backoffFactor, retryCount)
-      return Math.min(delay, finalConfig.maxDelay)
+      const delay = finalConfig.initialDelay * Math.pow(finalConfig.backoffFactor, retryCount);
+      return Math.min(delay, finalConfig.maxDelay);
     },
-    [finalConfig.initialDelay, finalConfig.backoffFactor, finalConfig.maxDelay]
-  )
+    [finalConfig.initialDelay, finalConfig.backoffFactor, finalConfig.maxDelay],
+  );
 
   const executeWithRetry = useCallback(async (): Promise<T> => {
     setState((prev) => ({
       ...prev,
       isLoading: true,
       error: null,
-    }))
+    }));
 
-    abortControllerRef.current = new AbortController()
+    abortControllerRef.current = new AbortController();
 
-    let currentRetryCount = 0
-    let lastError: Error
+    let currentRetryCount = 0;
+    let lastError: Error;
 
     while (currentRetryCount <= finalConfig.maxRetries) {
       try {
@@ -59,45 +59,45 @@ export function useAutoRetry<T>(asyncFunction: () => Promise<T>, config: RetryCo
           ...prev,
           retryCount: currentRetryCount,
           isRetrying: currentRetryCount > 0,
-        }))
+        }));
 
-        const result = await asyncFunction()
+        const result = await asyncFunction();
 
         setState((prev) => ({
           ...prev,
           isLoading: false,
           error: null,
           isRetrying: false,
-        }))
+        }));
 
-        return result
+        return result;
       } catch (error) {
-        lastError = error instanceof Error ? error : new Error(String(error))
+        lastError = error instanceof Error ? error : new Error(String(error));
 
         setState((prev) => ({
           ...prev,
           error: lastError,
           lastRetryTime: Date.now(),
-        }))
+        }));
 
         if (!finalConfig.shouldRetry(lastError, currentRetryCount)) {
-          break
+          break;
         }
 
         if (currentRetryCount < finalConfig.maxRetries) {
-          const delay = calculateDelay(currentRetryCount)
+          const delay = calculateDelay(currentRetryCount);
 
-          finalConfig.onRetry(lastError, currentRetryCount)
+          finalConfig.onRetry(lastError, currentRetryCount);
 
           await new Promise<void>((resolve) => {
             timeoutRef.current = setTimeout(() => {
-              resolve()
-            }, delay)
-          })
+              resolve();
+            }, delay);
+          });
 
-          currentRetryCount++
+          currentRetryCount++;
         } else {
-          break
+          break;
         }
       }
     }
@@ -106,41 +106,41 @@ export function useAutoRetry<T>(asyncFunction: () => Promise<T>, config: RetryCo
       ...prev,
       isLoading: false,
       isRetrying: false,
-    }))
+    }));
 
-    finalConfig.onFinalFailure(lastError!, currentRetryCount)
-    throw lastError!
-  }, [asyncFunction, finalConfig, calculateDelay])
+    finalConfig.onFinalFailure(lastError!, currentRetryCount);
+    throw lastError!;
+  }, [asyncFunction, finalConfig, calculateDelay]);
 
   const manualRetry = useCallback(() => {
     setState((prev) => ({
       ...prev,
       retryCount: 0,
-    }))
-    return executeWithRetry()
-  }, [executeWithRetry])
+    }));
+    return executeWithRetry();
+  }, [executeWithRetry]);
 
   const cancel = useCallback(() => {
     if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current)
+      clearTimeout(timeoutRef.current);
     }
 
     if (abortControllerRef.current) {
-      abortControllerRef.current.abort()
+      abortControllerRef.current.abort();
     }
 
     setState((prev) => ({
       ...prev,
       isLoading: false,
       isRetrying: false,
-    }))
-  }, [])
+    }));
+  }, []);
 
   useEffect(() => {
     return () => {
-      cancel()
-    }
-  }, [cancel])
+      cancel();
+    };
+  }, [cancel]);
 
   return {
     ...state,
@@ -150,5 +150,5 @@ export function useAutoRetry<T>(asyncFunction: () => Promise<T>, config: RetryCo
     canRetry: state.retryCount < finalConfig.maxRetries,
     nextRetryDelay: calculateDelay(state.retryCount),
     progress: state.retryCount / finalConfig.maxRetries,
-  }
+  };
 }

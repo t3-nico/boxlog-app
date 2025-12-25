@@ -4,7 +4,7 @@
  * @see https://tanstack.com/query/latest/docs/framework/react/guides/optimistic-updates
  */
 
-import { QueryClient } from '@tanstack/react-query'
+import { QueryClient } from '@tanstack/react-query';
 
 /**
  * 楽観的更新ヘルパー（汎用版）
@@ -21,7 +21,7 @@ import { QueryClient } from '@tanstack/react-query'
  */
 export function createOptimisticUpdateHelper<TData extends unknown[], TItem extends { id: string }>(
   queryClient: QueryClient,
-  queryKey: unknown[]
+  queryKey: unknown[],
 ) {
   return {
     /**
@@ -29,9 +29,9 @@ export function createOptimisticUpdateHelper<TData extends unknown[], TItem exte
      */
     add: (newItem: TItem) => {
       queryClient.setQueryData<TData>(queryKey, (oldData) => {
-        if (!oldData) return [newItem] as TData
-        return [...oldData, newItem] as TData
-      })
+        if (!oldData) return [newItem] as TData;
+        return [...oldData, newItem] as TData;
+      });
     },
 
     /**
@@ -39,13 +39,13 @@ export function createOptimisticUpdateHelper<TData extends unknown[], TItem exte
      */
     update: (id: string, updates: Partial<TItem>) => {
       queryClient.setQueryData<TData>(queryKey, (oldData) => {
-        if (!oldData) return oldData
-        if (!Array.isArray(oldData)) return oldData
+        if (!oldData) return oldData;
+        if (!Array.isArray(oldData)) return oldData;
         return oldData.map((item) => {
-          const typedItem = item as TItem & { id: string }
-          return typedItem.id === id ? ({ ...typedItem, ...updates } as TItem) : item
-        }) as TData
-      })
+          const typedItem = item as TItem & { id: string };
+          return typedItem.id === id ? ({ ...typedItem, ...updates } as TItem) : item;
+        }) as TData;
+      });
     },
 
     /**
@@ -53,26 +53,26 @@ export function createOptimisticUpdateHelper<TData extends unknown[], TItem exte
      */
     remove: (id: string) => {
       queryClient.setQueryData<TData>(queryKey, (oldData) => {
-        if (!oldData) return oldData
-        if (!Array.isArray(oldData)) return oldData
-        return oldData.filter((item) => (item as TItem & { id: string }).id !== id) as TData
-      })
+        if (!oldData) return oldData;
+        if (!Array.isArray(oldData)) return oldData;
+        return oldData.filter((item) => (item as TItem & { id: string }).id !== id) as TData;
+      });
     },
 
     /**
      * 全てのアイテムを入れ替え
      */
     replace: (newData: TData) => {
-      queryClient.setQueryData<TData>(queryKey, newData)
+      queryClient.setQueryData<TData>(queryKey, newData);
     },
 
     /**
      * キャッシュを無効化
      */
     invalidate: () => {
-      queryClient.invalidateQueries({ queryKey })
+      queryClient.invalidateQueries({ queryKey });
     },
-  }
+  };
 }
 
 /**
@@ -95,37 +95,37 @@ export function createOptimisticUpdateHelper<TData extends unknown[], TItem exte
 export function createMutationWithOptimisticUpdate<TVariables, TContext = unknown>(
   queryClient: QueryClient,
   config: {
-    queryKey: unknown[]
-    onMutate: (variables: TVariables) => Promise<TContext>
-    onError?: (error: unknown, variables: TVariables, context: TContext | undefined) => void
-    onSettled?: () => void
-  }
+    queryKey: unknown[];
+    onMutate: (variables: TVariables) => Promise<TContext>;
+    onError?: (error: unknown, variables: TVariables, context: TContext | undefined) => void;
+    onSettled?: () => void;
+  },
 ) {
   return {
     onMutate: async (variables: TVariables) => {
       // 進行中のクエリをキャンセル
-      await queryClient.cancelQueries({ queryKey: config.queryKey })
+      await queryClient.cancelQueries({ queryKey: config.queryKey });
 
       // カスタムの onMutate を実行
-      return config.onMutate(variables)
+      return config.onMutate(variables);
     },
 
     onError: (error: unknown, variables: TVariables, context: TContext | undefined) => {
       // エラー時: カスタムエラーハンドリング
       if (config.onError) {
-        config.onError(error, variables, context)
+        config.onError(error, variables, context);
       }
     },
 
     onSettled: () => {
       // 成功・失敗にかかわらず、データを再取得
-      queryClient.invalidateQueries({ queryKey: config.queryKey })
+      queryClient.invalidateQueries({ queryKey: config.queryKey });
 
       if (config.onSettled) {
-        config.onSettled()
+        config.onSettled();
       }
     },
-  }
+  };
 }
 
 /**
@@ -150,7 +150,7 @@ export function createRollbackContext<TData>(queryClient: QueryClient, queryKey:
     snapshot: () => {
       return {
         previousData: queryClient.getQueryData<TData>(queryKey),
-      }
+      };
     },
 
     /**
@@ -158,8 +158,8 @@ export function createRollbackContext<TData>(queryClient: QueryClient, queryKey:
      */
     restore: (context: { previousData: TData | undefined } | undefined) => {
       if (context?.previousData !== undefined) {
-        queryClient.setQueryData<TData>(queryKey, context.previousData)
+        queryClient.setQueryData<TData>(queryKey, context.previousData);
       }
     },
-  }
+  };
 }

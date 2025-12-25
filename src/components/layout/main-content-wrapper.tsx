@@ -1,9 +1,9 @@
-'use client'
+'use client';
 
-import React from 'react'
+import React from 'react';
 
 interface MainContentWrapperProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 /**
@@ -23,5 +23,5 @@ export function MainContentWrapper({ children }: MainContentWrapperProps) {
         {children}
       </main>
     </div>
-  )
+  );
 }

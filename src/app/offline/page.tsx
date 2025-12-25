@@ -1,6 +1,6 @@
-'use client'
+'use client';
 
-import { WifiOff } from 'lucide-react'
+import { WifiOff } from 'lucide-react';
 
 /**
  * オフラインフォールバックページ
@@ -27,5 +27,5 @@ export default function OfflinePage() {
         </button>
       </div>
     </div>
-  )
+  );
 }

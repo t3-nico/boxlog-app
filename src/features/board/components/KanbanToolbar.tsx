@@ -1,6 +1,6 @@
-'use client'
+'use client';
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui/button';
 import {
   Select,
   SelectContent,
@@ -9,10 +9,10 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Plus, X } from 'lucide-react'
-import { useTranslations } from 'next-intl'
-import { useKanbanStore } from '../stores/useKanbanStore'
+} from '@/components/ui/select';
+import { Plus, X } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { useKanbanStore } from '../stores/useKanbanStore';
 
 /**
  * Kanbanボード用ツールバー
@@ -20,10 +20,10 @@ import { useKanbanStore } from '../stores/useKanbanStore'
  * 検索、フィルター、ソート機能を提供
  */
 export function KanbanToolbar() {
-  const { filter, setFilter, clearFilter, sort, setSort } = useKanbanStore()
-  const t = useTranslations()
+  const { filter, setFilter, clearFilter, sort, setSort } = useKanbanStore();
+  const t = useTranslations();
 
-  const isFiltered = Object.keys(filter).length > 0
+  const isFiltered = Object.keys(filter).length > 0;
 
   return (
     <div className="flex w-full items-center justify-between gap-4">
@@ -32,7 +32,9 @@ export function KanbanToolbar() {
         <Select
           value={filter.priority ?? 'all'}
           onValueChange={(value) =>
-            setFilter({ priority: value === 'all' ? undefined : (value as 'low' | 'medium' | 'high') })
+            setFilter({
+              priority: value === 'all' ? undefined : (value as 'low' | 'medium' | 'high'),
+            })
           }
         >
           <SelectTrigger className="h-10 w-28 sm:h-8 sm:w-32">
@@ -53,8 +55,8 @@ export function KanbanToolbar() {
         <Select
           value={`${sort.key}-${sort.order}`}
           onValueChange={(value) => {
-            const [key, order] = value.split('-') as [typeof sort.key, typeof sort.order]
-            setSort({ key, order })
+            const [key, order] = value.split('-') as [typeof sort.key, typeof sort.order];
+            setSort({ key, order });
           }}
         >
           <SelectTrigger className="h-10 w-32 sm:h-8 sm:w-36">
@@ -92,5 +94,5 @@ export function KanbanToolbar() {
         </Button>
       </div>
     </div>
-  )
+  );
 }

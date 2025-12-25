@@ -1,9 +1,9 @@
-'use client'
+'use client';
 
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/utils';
 
-import { DateDisplay } from './DateDisplay'
-import type { DateDisplayRowProps } from './DateDisplay.types'
+import { DateDisplay } from './DateDisplay';
+import type { DateDisplayRowProps } from './DateDisplay.types';
 
 export const DateDisplayRow = ({
   dates,
@@ -25,7 +25,7 @@ export const DateDisplayRow = ({
           className={cn(
             'flex-1',
             // 最後の日付以外は右ボーダーを表示
-            index < dates.length - 1 && 'border-border border-r'
+            index < dates.length - 1 && 'border-border border-r',
           )}
           isSelected={selectedDate ? date.toDateString() === selectedDate.toDateString() : false}
           showDayName={showDayNames}
@@ -37,5 +37,5 @@ export const DateDisplayRow = ({
         />
       ))}
     </div>
-  )
-}
+  );
+};

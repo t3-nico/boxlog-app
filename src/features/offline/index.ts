@@ -1,11 +1,11 @@
 // Offline Feature Exports
 
 // Components
-export { ConflictResolutionModal } from './components'
-export type { ConflictContext } from './components'
+export { ConflictResolutionModal } from './components';
+export type { ConflictContext } from './components';
 
 // Services
-export { OfflineManager, offlineManager } from './services/offline-manager'
+export { OfflineManager, offlineManager } from './services/offline-manager';
 
 // Types
 export type {
@@ -17,4 +17,4 @@ export type {
   SyncCompletedEvent,
   SyncFailedEvent,
   SyncResult,
-} from './types'
+} from './types';

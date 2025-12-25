@@ -1,23 +1,23 @@
-'use client'
+'use client';
 
-import { Suspense } from 'react'
+import { Suspense } from 'react';
 
-import { InboxBoardView } from '@/features/inbox/components/InboxBoardView'
-import { InboxTableView } from '@/features/inbox/components/InboxTableView'
-import { useInboxViewStore } from '@/features/inbox/stores/useInboxViewStore'
+import { InboxBoardView } from '@/features/inbox/components/InboxBoardView';
+import { InboxTableView } from '@/features/inbox/components/InboxTableView';
+import { useInboxViewStore } from '@/features/inbox/stores/useInboxViewStore';
 
 /**
  * Inboxコンテンツ（すべてのPlan）
  */
 function InboxContent() {
-  const displayMode = useInboxViewStore((state) => state.displayMode)
+  const displayMode = useInboxViewStore((state) => state.displayMode);
 
   // 表示形式に応じて表示を切り替え
   if (displayMode === 'table') {
-    return <InboxTableView />
+    return <InboxTableView />;
   }
 
-  return <InboxBoardView />
+  return <InboxBoardView />;
 }
 
 /**
@@ -39,5 +39,5 @@ export default function InboxAllPage() {
         <InboxContent />
       </Suspense>
     </div>
-  )
+  );
 }

@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import {
   Building,
@@ -14,12 +14,12 @@ import {
   Shield,
   Sparkles,
   UserCircle,
-} from 'lucide-react'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+} from 'lucide-react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,44 +31,44 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { createClient } from '@/lib/supabase/client'
-import { useLocale, useTranslations } from 'next-intl'
-import { toast } from 'sonner'
+} from '@/components/ui/dropdown-menu';
+import { createClient } from '@/lib/supabase/client';
+import { useLocale, useTranslations } from 'next-intl';
+import { toast } from 'sonner';
 
 export function NavUser({
   user,
 }: {
   user: {
-    name: string
-    email: string
-    avatar?: string | null
-  }
+    name: string;
+    email: string;
+    avatar?: string | null;
+  };
 }) {
-  const router = useRouter()
-  const [isLoggingOut, setIsLoggingOut] = useState(false)
-  const t = useTranslations()
-  const locale = useLocale()
+  const router = useRouter();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const t = useTranslations();
+  const locale = useLocale();
 
   const handleLogout = async () => {
-    setIsLoggingOut(true)
+    setIsLoggingOut(true);
     try {
-      const supabase = createClient()
-      await supabase.auth.signOut()
-      toast.success(t('navUser.logoutSuccess'))
-      router.push('/auth/login')
-      router.refresh()
+      const supabase = createClient();
+      await supabase.auth.signOut();
+      toast.success(t('navUser.logoutSuccess'));
+      router.push('/auth/login');
+      router.refresh();
     } catch (error) {
-      console.error('Logout error:', error)
-      toast.error(t('navUser.logoutFailed'))
+      console.error('Logout error:', error);
+      toast.error(t('navUser.logoutFailed'));
     } finally {
-      setIsLoggingOut(false)
+      setIsLoggingOut(false);
     }
-  }
+  };
 
   const navigateToSettings = (category: string) => {
-    router.push(`/${locale}/settings/${category}`)
-  }
+    router.push(`/${locale}/settings/${category}`);
+  };
 
   return (
     <DropdownMenu>
@@ -79,7 +79,9 @@ export function NavUser({
         >
           <Avatar className="h-6 w-6 rounded-xl">
             {user.avatar ? <AvatarImage src={user.avatar} alt={user.name} /> : null}
-            <AvatarFallback className="rounded-xl">{user.name.charAt(0).toUpperCase()}</AvatarFallback>
+            <AvatarFallback className="rounded-xl">
+              {user.name.charAt(0).toUpperCase()}
+            </AvatarFallback>
           </Avatar>
           <span className="max-w-20 truncate font-medium">{user.name}</span>
           <ChevronDown className="text-muted-foreground size-4 shrink-0" />
@@ -95,7 +97,9 @@ export function NavUser({
           <div className="flex items-center gap-2 px-2 py-2 text-left text-sm">
             <Avatar className="h-6 w-6 rounded-xl">
               {user.avatar ? <AvatarImage src={user.avatar} alt={user.name} /> : null}
-              <AvatarFallback className="rounded-xl">{user.name.charAt(0).toUpperCase()}</AvatarFallback>
+              <AvatarFallback className="rounded-xl">
+                {user.name.charAt(0).toUpperCase()}
+              </AvatarFallback>
             </Avatar>
             <div className="grid flex-1 text-left text-sm leading-tight">
               <span className="truncate font-medium">{user.name}</span>
@@ -136,7 +140,11 @@ export function NavUser({
             </DropdownMenuSubTrigger>
             <DropdownMenuSubContent className="border-input">
               <DropdownMenuItem asChild>
-                <Link href="https://github.com/t3-nico/boxlog-app/releases" target="_blank" rel="noopener noreferrer">
+                <Link
+                  href="https://github.com/t3-nico/boxlog-app/releases"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   <Megaphone />
                   {t('navUser.helpSubmenu.releaseNotes')}
                 </Link>
@@ -190,5 +198,5 @@ export function NavUser({
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }

@@ -2,13 +2,13 @@
 // カレンダー専用のアニメーション定義（Tailwindクラスベース）
 
 export interface CalendarAnimations {
-  pulse: string
-  slideIn: string
-  fadeIn: string
-  ghostAppear: string
-  placeholderPulse: string
-  dragScale: string
-  dropZone: string
+  pulse: string;
+  slideIn: string;
+  fadeIn: string;
+  ghostAppear: string;
+  placeholderPulse: string;
+  dragScale: string;
+  dropZone: string;
 }
 
 // カレンダー専用アニメーション（Tailwind標準クラス使用）
@@ -33,4 +33,4 @@ export const calendarAnimations: CalendarAnimations = {
 
   // ドロップゾーンのハイライト
   dropZone: 'ring-2 ring-blue-400 ring-opacity-50 transition-all duration-150',
-} as const
+} as const;

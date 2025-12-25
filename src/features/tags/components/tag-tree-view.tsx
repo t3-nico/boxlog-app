@@ -1,6 +1,6 @@
-'use client'
+'use client';
 
-import { useCallback, useState } from 'react'
+import { useCallback, useState } from 'react';
 
 import {
   MoreHorizontal as EllipsisHorizontalIcon,
@@ -8,84 +8,84 @@ import {
   Plus as PlusIcon,
   Tag as TagIcon,
   Trash2 as TrashIcon,
-} from 'lucide-react'
+} from 'lucide-react';
 
-import { Button } from '@/components/ui/button'
-import type { Tag } from '@/features/tags/types'
-import { useTranslations } from 'next-intl'
+import { Button } from '@/components/ui/button';
+import type { Tag } from '@/features/tags/types';
+import { useTranslations } from 'next-intl';
 
 interface TagTreeViewProps {
-  tags: Tag[]
-  onCreateTag: () => void
-  onEditTag: (tag: Tag) => void
-  onDeleteTag: (tag: Tag) => void
-  onRenameTag: (tag: Tag, newName: string) => void
-  isLoading?: boolean
+  tags: Tag[];
+  onCreateTag: () => void;
+  onEditTag: (tag: Tag) => void;
+  onDeleteTag: (tag: Tag) => void;
+  onRenameTag: (tag: Tag, newName: string) => void;
+  isLoading?: boolean;
 }
 
 interface TagTreeNodeProps {
-  tag: Tag
-  onEditTag: (tag: Tag) => void
-  onDeleteTag: (tag: Tag) => void
-  onRenameTag: (tag: Tag, newName: string) => void
+  tag: Tag;
+  onEditTag: (tag: Tag) => void;
+  onDeleteTag: (tag: Tag) => void;
+  onRenameTag: (tag: Tag, newName: string) => void;
 }
 
 const TagTreeNode = ({ tag, onEditTag, onDeleteTag, onRenameTag }: TagTreeNodeProps) => {
-  const t = useTranslations()
-  const [showMenu, setShowMenu] = useState(false)
-  const [isEditing, setIsEditing] = useState(false)
-  const [editName, setEditName] = useState(tag.name)
+  const t = useTranslations();
+  const [showMenu, setShowMenu] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editName, setEditName] = useState(tag.name);
 
   const handleStartEdit = useCallback(() => {
-    setIsEditing(true)
-    setEditName(tag.name)
-    setShowMenu(false)
-  }, [tag.name])
+    setIsEditing(true);
+    setEditName(tag.name);
+    setShowMenu(false);
+  }, [tag.name]);
 
   const handleSaveEdit = useCallback(() => {
     if (editName.trim() && editName !== tag.name) {
-      onRenameTag(tag, editName.trim())
+      onRenameTag(tag, editName.trim());
     }
-    setIsEditing(false)
-  }, [editName, tag, onRenameTag])
+    setIsEditing(false);
+  }, [editName, tag, onRenameTag]);
 
   const handleCancelEdit = useCallback(() => {
-    setIsEditing(false)
-    setEditName(tag.name)
-  }, [tag.name])
+    setIsEditing(false);
+    setEditName(tag.name);
+  }, [tag.name]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
       if (e.key === 'Enter') {
-        handleSaveEdit()
+        handleSaveEdit();
       } else if (e.key === 'Escape') {
-        handleCancelEdit()
+        handleCancelEdit();
       }
     },
-    [handleSaveEdit, handleCancelEdit]
-  )
+    [handleSaveEdit, handleCancelEdit],
+  );
 
   // jsx-no-bind optimization: Edit name change handler
   const handleEditNameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setEditName(e.target.value)
-  }, [])
+    setEditName(e.target.value);
+  }, []);
 
   // jsx-no-bind optimization: Toggle menu handler
   const handleToggleMenu = useCallback(() => {
-    setShowMenu(!showMenu)
-  }, [showMenu])
+    setShowMenu(!showMenu);
+  }, [showMenu]);
 
   // jsx-no-bind optimization: Edit tag handler
   const handleEditTag = useCallback(() => {
-    onEditTag(tag)
-    setShowMenu(false)
-  }, [onEditTag, tag])
+    onEditTag(tag);
+    setShowMenu(false);
+  }, [onEditTag, tag]);
 
   // jsx-no-bind optimization: Delete tag handler
   const handleDeleteTag = useCallback(() => {
-    onDeleteTag(tag)
-    setShowMenu(false)
-  }, [onDeleteTag, tag])
+    onDeleteTag(tag);
+    setShowMenu(false);
+  }, [onDeleteTag, tag]);
 
   return (
     <div className="relative">
@@ -169,8 +169,8 @@ const TagTreeNode = ({ tag, onEditTag, onDeleteTag, onRenameTag }: TagTreeNodePr
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
 export const TagTreeView = ({
   tags,
@@ -180,19 +180,19 @@ export const TagTreeView = ({
   onRenameTag,
   isLoading = false,
 }: TagTreeViewProps) => {
-  const t = useTranslations()
+  const t = useTranslations();
 
   // jsx-no-bind optimization: Create tag handler
   const handleCreateTag = useCallback(() => {
-    onCreateTag()
-  }, [onCreateTag])
+    onCreateTag();
+  }, [onCreateTag]);
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-8">
         <div className="border-primary h-8 w-8 animate-spin rounded-full border-b-2"></div>
       </div>
-    )
+    );
   }
 
   if (!tags || tags.length === 0) {
@@ -205,7 +205,7 @@ export const TagTreeView = ({
           {t('tag.actions.createFirst')}
         </Button>
       </div>
-    )
+    );
   }
 
   return (
@@ -234,5 +234,5 @@ export const TagTreeView = ({
         ))}
       </div>
     </div>
-  )
-}
+  );
+};

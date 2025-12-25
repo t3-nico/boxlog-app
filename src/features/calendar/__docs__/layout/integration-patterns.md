@@ -160,16 +160,16 @@ module.exports = {
 // Calendar Stores の統合パターン
 interface CalendarStoreSlice {
   // State
-  state: CalendarState
+  state: CalendarState;
 
   // Actions
-  actions: CalendarActions
+  actions: CalendarActions;
 
   // Selectors (computed values)
-  selectors: CalendarSelectors
+  selectors: CalendarSelectors;
 
   // Middleware hooks
-  middleware: CalendarMiddleware
+  middleware: CalendarMiddleware;
 }
 
 // Store composition
@@ -186,30 +186,30 @@ const useCalendarStore = create<CalendarStoreSlice>()(
           // Actions with Immer
           addEvent: (event) =>
             set((state) => {
-              state.events.push(event)
+              state.events.push(event);
             }),
 
           // Computed selectors
           getEventsForDate: (date) => {
-            return get().events.filter((event) => isSameDay(event.startDate, date))
+            return get().events.filter((event) => isSameDay(event.startDate, date));
           },
 
           // Middleware
           onEventChange: (callback) => {
-            return get().subscribe((state) => state.events, callback, { equalityFn: shallow })
+            return get().subscribe((state) => state.events, callback, { equalityFn: shallow });
           },
-        }))
+        })),
       ),
       {
         name: 'calendar-store',
         partialize: (state) => ({
           settings: state.settings,
         }), // 設定のみ永続化
-      }
+      },
     ),
-    { name: 'calendar' }
-  )
-)
+    { name: 'calendar' },
+  ),
+);
 ```
 
 ### React Query統合 (API状態管理)
@@ -224,36 +224,36 @@ const useEvents = (dateRange: DateRange) => {
     refetchOnWindowFocus: false,
     onSuccess: (data) => {
       // Zustand storeに同期
-      useEventStore.getState().setEvents(data)
+      useEventStore.getState().setEvents(data);
     },
-  })
-}
+  });
+};
 
 // Mutation with optimistic updates
 const useCreateEvent = () => {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: createEvent,
     onMutate: async (newEvent) => {
       // 楽観的更新
-      await queryClient.cancelQueries(['events'])
+      await queryClient.cancelQueries(['events']);
 
-      const previousEvents = queryClient.getQueryData(['events'])
-      queryClient.setQueryData(['events'], (old) => [...old, newEvent])
+      const previousEvents = queryClient.getQueryData(['events']);
+      queryClient.setQueryData(['events'], (old) => [...old, newEvent]);
 
-      return { previousEvents }
+      return { previousEvents };
     },
     onError: (err, newEvent, context) => {
       // エラー時はロールバック
-      queryClient.setQueryData(['events'], context.previousEvents)
+      queryClient.setQueryData(['events'], context.previousEvents);
     },
     onSettled: () => {
       // 成功・失敗問わず再取得
-      queryClient.invalidateQueries(['events'])
+      queryClient.invalidateQueries(['events']);
     },
-  })
-}
+  });
+};
 ```
 
 ### Store間通信パターン
@@ -261,7 +261,7 @@ const useCreateEvent = () => {
 ```typescript
 // Store間の依存関係管理
 interface StoreSubscription {
-  subscribe: (selector: StateSelector, callback: StateCallback) => Unsubscribe
+  subscribe: (selector: StateSelector, callback: StateCallback) => Unsubscribe;
 }
 
 // EventStore → TaskStore 連携例
@@ -270,30 +270,32 @@ const setupStoreIntegration = () => {
   useEventStore.subscribe(
     (state) => state.events,
     (events) => {
-      const taskStore = useTaskStore.getState()
+      const taskStore = useTaskStore.getState();
 
       // イベントに関連するタスクを更新
-      const relatedTasks = taskStore.tasks.filter((task) => events.some((event) => task.eventId === event.id))
+      const relatedTasks = taskStore.tasks.filter((task) =>
+        events.some((event) => task.eventId === event.id),
+      );
 
       relatedTasks.forEach((task) => {
         taskStore.updateTaskFromEvent(
           task.id,
-          events.find((e) => e.id === task.eventId)
-        )
-      })
-    }
-  )
+          events.find((e) => e.id === task.eventId),
+        );
+      });
+    },
+  );
 
   // SettingsStore → 全Store 設定変更の波及
   useCalendarSettingsStore.subscribe(
     (state) => state.timezone,
     (newTimezone) => {
       // 全イベントのタイムゾーン変換
-      useEventStore.getState().convertTimezone(newTimezone)
-      useTaskStore.getState().convertTimezone(newTimezone)
-    }
-  )
-}
+      useEventStore.getState().convertTimezone(newTimezone);
+      useTaskStore.getState().convertTimezone(newTimezone);
+    },
+  );
+};
 ```
 
 ---
@@ -305,7 +307,7 @@ const setupStoreIntegration = () => {
 ```typescript
 // Google Calendar 統合サービス
 class GoogleCalendarIntegration {
-  private gapi: GoogleAPI
+  private gapi: GoogleAPI;
 
   async syncEvents(dateRange: DateRange): Promise<Event[]> {
     try {
@@ -315,12 +317,12 @@ class GoogleCalendarIntegration {
         timeMax: dateRange.end.toISOString(),
         singleEvents: true,
         orderBy: 'startTime',
-      })
+      });
 
       // Google Events → Internal Event format
-      return response.result.items.map(this.transformGoogleEvent)
+      return response.result.items.map(this.transformGoogleEvent);
     } catch (error) {
-      throw new CalendarIntegrationError('Google Calendar sync failed', error)
+      throw new CalendarIntegrationError('Google Calendar sync failed', error);
     }
   }
 
@@ -335,46 +337,46 @@ class GoogleCalendarIntegration {
       isAllDay: !gEvent.start.dateTime,
       source: 'google',
       externalId: gEvent.id,
-    }
+    };
   }
 
   async createEvent(event: Event): Promise<Event> {
-    const gEvent = this.transformToGoogleEvent(event)
+    const gEvent = this.transformToGoogleEvent(event);
 
     const response = await this.gapi.client.calendar.events.insert({
       calendarId: 'primary',
       resource: gEvent,
-    })
+    });
 
-    return this.transformGoogleEvent(response.result)
+    return this.transformGoogleEvent(response.result);
   }
 }
 
 // 使用例
 const useGoogleCalendarSync = () => {
-  const [isConnected, setIsConnected] = useState(false)
-  const [lastSync, setLastSync] = useState<Date | null>(null)
+  const [isConnected, setIsConnected] = useState(false);
+  const [lastSync, setLastSync] = useState<Date | null>(null);
 
-  const integration = useMemo(() => new GoogleCalendarIntegration(), [])
+  const integration = useMemo(() => new GoogleCalendarIntegration(), []);
 
   const syncWithGoogle = useCallback(async () => {
-    if (!isConnected) return
+    if (!isConnected) return;
 
     try {
-      const dateRange = getMonthRange(new Date())
-      const googleEvents = await integration.syncEvents(dateRange)
+      const dateRange = getMonthRange(new Date());
+      const googleEvents = await integration.syncEvents(dateRange);
 
       // ローカルストアに統合
-      useEventStore.getState().mergeExternalEvents(googleEvents)
-      setLastSync(new Date())
+      useEventStore.getState().mergeExternalEvents(googleEvents);
+      setLastSync(new Date());
     } catch (error) {
-      console.error('Google Calendar sync failed:', error)
+      console.error('Google Calendar sync failed:', error);
       // エラー通知
     }
-  }, [isConnected, integration])
+  }, [isConnected, integration]);
 
-  return { isConnected, lastSync, syncWithGoogle }
-}
+  return { isConnected, lastSync, syncWithGoogle };
+};
 ```
 
 ### Outlook Calendar API
@@ -382,19 +384,19 @@ const useGoogleCalendarSync = () => {
 ```typescript
 // Microsoft Graph API統合
 class OutlookCalendarIntegration {
-  private msalInstance: PublicClientApplication
+  private msalInstance: PublicClientApplication;
 
   async authenticate(): Promise<AuthenticationResult> {
     const request = {
       scopes: ['https://graph.microsoft.com/calendars.read'],
       account: this.msalInstance.getAllAccounts()[0],
-    }
+    };
 
-    return await this.msalInstance.acquireTokenSilent(request)
+    return await this.msalInstance.acquireTokenSilent(request);
   }
 
   async fetchEvents(dateRange: DateRange): Promise<Event[]> {
-    const token = await this.authenticate()
+    const token = await this.authenticate();
 
     const response = await fetch(`https://graph.microsoft.com/v1.0/me/events`, {
       headers: {
@@ -405,10 +407,10 @@ class OutlookCalendarIntegration {
         startDateTime: dateRange.start.toISOString(),
         endDateTime: dateRange.end.toISOString(),
       },
-    })
+    });
 
-    const data = await response.json()
-    return data.value.map(this.transformOutlookEvent)
+    const data = await response.json();
+    return data.value.map(this.transformOutlookEvent);
   }
 }
 ```
@@ -418,18 +420,18 @@ class OutlookCalendarIntegration {
 ```typescript
 // CalDAV protocol support
 class CalDAVIntegration {
-  private caldavClient: DAVClient
+  private caldavClient: DAVClient;
 
   constructor(serverUrl: string, credentials: CalDAVCredentials) {
     this.caldavClient = new DAVClient({
       serverUrl,
       credentials,
       defaultAccountType: 'caldav',
-    })
+    });
   }
 
   async syncCalendars(): Promise<Calendar[]> {
-    const calendars = await this.caldavClient.fetchCalendars()
+    const calendars = await this.caldavClient.fetchCalendars();
 
     return calendars.map((cal) => ({
       id: cal.url,
@@ -437,7 +439,7 @@ class CalDAVIntegration {
       color: cal.color,
       source: 'caldav',
       url: cal.url,
-    }))
+    }));
   }
 
   async fetchEvents(calendarUrl: string, dateRange: DateRange): Promise<Event[]> {
@@ -447,9 +449,9 @@ class CalDAVIntegration {
         start: dateRange.start,
         end: dateRange.end,
       },
-    })
+    });
 
-    return calendarObjects.map(this.parseICalEvent)
+    return calendarObjects.map(this.parseICalEvent);
   }
 }
 ```
@@ -508,8 +510,8 @@ const NativeCalendarView = () => {
 ```typescript
 // Service Worker でのオフライン対応
 // sw.js
-const CALENDAR_CACHE = 'calendar-v1'
-const CALENDAR_URLS = ['/api/events', '/api/tasks', '/calendar']
+const CALENDAR_CACHE = 'calendar-v1';
+const CALENDAR_URLS = ['/api/events', '/api/tasks', '/calendar'];
 
 self.addEventListener('fetch', (event) => {
   if (CALENDAR_URLS.some((url) => event.request.url.includes(url))) {
@@ -520,27 +522,27 @@ self.addEventListener('fetch', (event) => {
             // キャッシュから返す
             fetch(event.request)
               .then((fetchResponse) => {
-                cache.put(event.request, fetchResponse.clone())
+                cache.put(event.request, fetchResponse.clone());
               })
-              .catch(() => {}) // ネットワークエラーは無視
+              .catch(() => {}); // ネットワークエラーは無視
 
-            return response
+            return response;
           }
 
           // ネットワークから取得してキャッシュ
           return fetch(event.request).then((fetchResponse) => {
-            cache.put(event.request, fetchResponse.clone())
-            return fetchResponse
-          })
-        })
-      })
-    )
+            cache.put(event.request, fetchResponse.clone());
+            return fetchResponse;
+          });
+        });
+      }),
+    );
   }
-})
+});
 
 // Push通知
 self.addEventListener('push', (event) => {
-  const data = event.data.json()
+  const data = event.data.json();
 
   if (data.type === 'calendar_reminder') {
     event.waitUntil(
@@ -553,10 +555,10 @@ self.addEventListener('push', (event) => {
           { action: 'snooze', title: '5分後に再通知' },
         ],
         data: data.eventId,
-      })
-    )
+      }),
+    );
   }
-})
+});
 ```
 
 ---
@@ -636,25 +638,25 @@ describe('Calendar Integration', () => {
 // E2E テストシナリオ
 test.describe('Calendar E2E Flow', () => {
   test('カレンダー全体のワークフロー', async ({ page }) => {
-    await page.goto('/calendar')
+    await page.goto('/calendar');
 
     // 週表示に切り替え
-    await page.click('[data-testid="view-selector-week"]')
-    await expect(page.locator('.week-view')).toBeVisible()
+    await page.click('[data-testid="view-selector-week"]');
+    await expect(page.locator('.week-view')).toBeVisible();
 
     // イベント作成
-    await page.click('[data-testid="time-slot-09-00"]')
-    await page.fill('[data-testid="event-title"]', 'Meeting')
-    await page.click('[data-testid="save-event"]')
+    await page.click('[data-testid="time-slot-09-00"]');
+    await page.fill('[data-testid="event-title"]', 'Meeting');
+    await page.click('[data-testid="save-event"]');
 
     // 作成されたイベントが表示されることを確認
-    await expect(page.locator('[data-testid="event-Meeting"]')).toBeVisible()
+    await expect(page.locator('[data-testid="event-Meeting"]')).toBeVisible();
 
     // 日表示に切り替えてもイベントが見えることを確認
-    await page.click('[data-testid="view-selector-day"]')
-    await expect(page.locator('[data-testid="event-Meeting"]')).toBeVisible()
-  })
-})
+    await page.click('[data-testid="view-selector-day"]');
+    await expect(page.locator('[data-testid="event-Meeting"]')).toBeVisible();
+  });
+});
 ```
 
 ---
@@ -741,7 +743,7 @@ CMD ["nginx", "-g", "daemon off;"]
 ```typescript
 // Calendar パフォーマンス監視
 const useCalendarPerformance = () => {
-  const [metrics, setMetrics] = useState<PerformanceMetrics>({})
+  const [metrics, setMetrics] = useState<PerformanceMetrics>({});
 
   // レンダリングパフォーマンス
   useEffect(() => {
@@ -751,19 +753,19 @@ const useCalendarPerformance = () => {
           setMetrics((prev) => ({
             ...prev,
             [entry.name]: entry.duration,
-          }))
+          }));
         }
       }
-    })
+    });
 
-    observer.observe({ entryTypes: ['measure'] })
-    return () => observer.disconnect()
-  }, [])
+    observer.observe({ entryTypes: ['measure'] });
+    return () => observer.disconnect();
+  }, []);
 
   // メモリ使用量監視
   const trackMemoryUsage = useCallback(() => {
     if ('memory' in performance) {
-      const memInfo = (performance as any).memory
+      const memInfo = (performance as any).memory;
       setMetrics((prev) => ({
         ...prev,
         memory: {
@@ -771,12 +773,12 @@ const useCalendarPerformance = () => {
           total: memInfo.totalJSHeapSize,
           limit: memInfo.jsHeapSizeLimit,
         },
-      }))
+      }));
     }
-  }, [])
+  }, []);
 
-  return { metrics, trackMemoryUsage }
-}
+  return { metrics, trackMemoryUsage };
+};
 
 // Analytics Events
 const useCalendarAnalytics = () => {
@@ -785,11 +787,11 @@ const useCalendarAnalytics = () => {
     gtag('event', eventName, {
       event_category: 'calendar',
       ...properties,
-    })
+    });
 
     // カスタム分析
-    analytics.track(`calendar_${eventName}`, properties)
-  }, [])
+    analytics.track(`calendar_${eventName}`, properties);
+  }, []);
 
   const trackViewChange = useCallback(
     (fromView: string, toView: string) => {
@@ -797,10 +799,10 @@ const useCalendarAnalytics = () => {
         from_view: fromView,
         to_view: toView,
         timestamp: new Date().toISOString(),
-      })
+      });
     },
-    [trackEvent]
-  )
+    [trackEvent],
+  );
 
   const trackEventCreation = useCallback(
     (event: CalendarEvent) => {
@@ -809,13 +811,13 @@ const useCalendarAnalytics = () => {
         has_location: Boolean(event.location),
         duration_minutes: event.duration,
         is_all_day: event.isAllDay,
-      })
+      });
     },
-    [trackEvent]
-  )
+    [trackEvent],
+  );
 
-  return { trackViewChange, trackEventCreation }
-}
+  return { trackViewChange, trackEventCreation };
+};
 ```
 
 ### Error Tracking
@@ -922,24 +924,27 @@ class CalendarIntegrationError extends Error {
   constructor(
     message: string,
     public provider: string,
-    public originalError?: Error
+    public originalError?: Error,
   ) {
-    super(message)
-    this.name = 'CalendarIntegrationError'
+    super(message);
+    this.name = 'CalendarIntegrationError';
   }
 }
 
 const handleAPIError = (error: Error, provider: string) => {
   if (error instanceof CalendarIntegrationError) {
     // すでにラップされたエラー
-    throw error
+    throw error;
   }
 
   // プロバイダー固有のエラー変換
-  const message = provider === 'google' ? 'Google Calendarとの同期に失敗しました' : 'カレンダー同期に失敗しました'
+  const message =
+    provider === 'google'
+      ? 'Google Calendarとの同期に失敗しました'
+      : 'カレンダー同期に失敗しました';
 
-  throw new CalendarIntegrationError(message, provider, error)
-}
+  throw new CalendarIntegrationError(message, provider, error);
+};
 ```
 
 ### 3. 型安全性
@@ -947,28 +952,28 @@ const handleAPIError = (error: Error, provider: string) => {
 ```typescript
 // ✅ Good: 厳密な型定義と変換
 interface ExternalEvent {
-  readonly source: 'google' | 'outlook' | 'caldav'
-  readonly externalId: string
-  readonly rawData: unknown
+  readonly source: 'google' | 'outlook' | 'caldav';
+  readonly externalId: string;
+  readonly rawData: unknown;
 }
 
 interface InternalEvent extends Event {
-  readonly id: string
-  readonly createdAt: Date
-  readonly updatedAt: Date
+  readonly id: string;
+  readonly createdAt: Date;
+  readonly updatedAt: Date;
 }
 
 const transformExternalEvent = (external: ExternalEvent): InternalEvent => {
   // 型安全な変換ロジック
   switch (external.source) {
     case 'google':
-      return transformGoogleEvent(external.rawData as GoogleEvent)
+      return transformGoogleEvent(external.rawData as GoogleEvent);
     case 'outlook':
-      return transformOutlookEvent(external.rawData as OutlookEvent)
+      return transformOutlookEvent(external.rawData as OutlookEvent);
     default:
-      throw new Error(`Unsupported source: ${external.source}`)
+      throw new Error(`Unsupported source: ${external.source}`);
   }
-}
+};
 ```
 
 ---

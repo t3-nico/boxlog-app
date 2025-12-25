@@ -40,27 +40,27 @@ src/hooks/
 
 ```tsx
 // ✅ 正しい命名（use始まり）
-useTaskFilter
-useAuth
-useLocalStorage
+useTaskFilter;
+useAuth;
+useLocalStorage;
 
 // ❌ 間違った命名
-taskFilter // useなし
-TaskFilter // 大文字始まり
+taskFilter; // useなし
+TaskFilter; // 大文字始まり
 ```
 
 ### ファイル配置（コロケーション原則）
 
 ```tsx
 // ❌ 避ける：安易な共通化
-src / hooks / useTaskFilter.ts // 1機能でしか使わない
+src / hooks / useTaskFilter.ts; // 1機能でしか使わない
 
 // ✅ 推奨：機能専用フック
-src / features / tasks / hooks / useTaskFilter.ts
+src / features / tasks / hooks / useTaskFilter.ts;
 
 // ✅ 許可：複数機能で使用（3箇所以上）
-src / hooks / useDebounce.ts
-src / hooks / useMediaQuery.ts
+src / hooks / useDebounce.ts;
+src / hooks / useMediaQuery.ts;
 ```
 
 **判断基準**: 3箇所以上で使われたらsrc/hooks/へ移動を検討
@@ -73,41 +73,41 @@ src / hooks / useMediaQuery.ts
 
 ```tsx
 // hooks/useToggle.ts
-import { useState, useCallback } from 'react'
+import { useState, useCallback } from 'react';
 
 export const useToggle = (initialValue = false) => {
-  const [value, setValue] = useState(initialValue)
+  const [value, setValue] = useState(initialValue);
 
   const toggle = useCallback(() => {
-    setValue((prev) => !prev)
-  }, [])
+    setValue((prev) => !prev);
+  }, []);
 
-  const setTrue = useCallback(() => setValue(true), [])
-  const setFalse = useCallback(() => setValue(false), [])
+  const setTrue = useCallback(() => setValue(true), []);
+  const setFalse = useCallback(() => setValue(false), []);
 
-  return { value, toggle, setTrue, setFalse }
-}
+  return { value, toggle, setTrue, setFalse };
+};
 ```
 
 ### 2. 副作用管理フック
 
 ```tsx
 // hooks/useDebounce.ts
-import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react';
 
 export const useDebounce = <T,>(value: T, delay: number): T => {
-  const [debouncedValue, setDebouncedValue] = useState<T>(value)
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
 
   useEffect(() => {
     const handler = setTimeout(() => {
-      setDebouncedValue(value)
-    }, delay)
+      setDebouncedValue(value);
+    }, delay);
 
-    return () => clearTimeout(handler)
-  }, [value, delay])
+    return () => clearTimeout(handler);
+  }, [value, delay]);
 
-  return debouncedValue
-}
+  return debouncedValue;
+};
 ```
 
 ### 3. 遅延ローディングフック
@@ -115,32 +115,32 @@ export const useDebounce = <T,>(value: T, delay: number): T => {
 ```tsx
 // hooks/useDelayedLoading.ts
 // 300ms以下の短時間ローディングをスキップし、チラつきを防止
-import { useDelayedLoading } from '@/hooks/useDelayedLoading'
+import { useDelayedLoading } from '@/hooks/useDelayedLoading';
 
-const { data, isPending } = api.plans.list.useQuery()
-const showLoading = useDelayedLoading(isPending) // 300ms以下はスキップ
+const { data, isPending } = api.plans.list.useQuery();
+const showLoading = useDelayedLoading(isPending); // 300ms以下はスキップ
 
-if (showLoading) return <Skeleton animation="shimmer" />
-return <Content data={data} />
+if (showLoading) return <Skeleton animation="shimmer" />;
+return <Content data={data} />;
 
 // 最小表示時間付きバージョン
 const showLoading = useDelayedLoadingWithMinDuration(isPending, {
   delay: 300, // 表示開始までの遅延
   minDuration: 500, // 一度表示したら最低500ms維持
-})
+});
 ```
 
 ### 4. オンライン状態検出フック
 
 ```tsx
 // hooks/useIsOnline.ts
-import { useIsOnline } from '@/hooks/useIsOnline'
+import { useIsOnline } from '@/hooks/useIsOnline';
 
-const isOnline = useIsOnline()
+const isOnline = useIsOnline();
 
 // ローディング中にオフラインになった場合
 if (!isOnline && isLoading) {
-  return <OfflineLoadingFallback />
+  return <OfflineLoadingFallback />;
 }
 ```
 
@@ -148,27 +148,27 @@ if (!isOnline && isLoading) {
 
 ```tsx
 // hooks/useLoadingTimeout.ts
-import { useLoadingTimeout, useLoadingState } from '@/hooks/useLoadingTimeout'
+import { useLoadingTimeout, useLoadingState } from '@/hooks/useLoadingTimeout';
 
 // シンプル版: タイムアウト検出のみ
-const hasTimedOut = useLoadingTimeout(isLoading, 10000) // 10秒
+const hasTimedOut = useLoadingTimeout(isLoading, 10000); // 10秒
 
 if (hasTimedOut) {
-  return <TimeoutFallback onRetry={refetch} />
+  return <TimeoutFallback onRetry={refetch} />;
 }
 
 // 詳細版: 警告状態も検出
 const loadingState = useLoadingState(isLoading, {
   timeout: 10000, // 10秒でタイムアウト
   warningThreshold: 5000, // 5秒で警告表示
-})
+});
 
 if (loadingState.hasTimedOut) {
-  return <TimeoutError />
+  return <TimeoutError />;
 }
 
 if (loadingState.isWarning) {
-  return <Skeleton message="読み込みに時間がかかっています..." />
+  return <Skeleton message="読み込みに時間がかかっています..." />;
 }
 ```
 
@@ -176,84 +176,88 @@ if (loadingState.isWarning) {
 
 ```tsx
 // hooks/useFetch.ts
-import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react';
 
 interface UseFetchResult<T> {
-  data: T | null
-  loading: boolean
-  error: Error | null
+  data: T | null;
+  loading: boolean;
+  error: Error | null;
 }
 
 export const useFetch = <T,>(url: string): UseFetchResult<T> => {
-  const [data, setData] = useState<T | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<Error | null>(null)
+  const [data, setData] = useState<T | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setLoading(true)
-        const response = await fetch(url)
+        setLoading(true);
+        const response = await fetch(url);
         if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
-        const json = await response.json()
-        setData(json)
+        const json = await response.json();
+        setData(json);
       } catch (err) {
-        setError(err instanceof Error ? err : new Error('Unknown error'))
+        setError(err instanceof Error ? err : new Error('Unknown error'));
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchData()
-  }, [url])
+    fetchData();
+  }, [url]);
 
-  return { data, loading, error }
-}
+  return { data, loading, error };
+};
 ```
 
 ### 7. フォーム管理フック
 
 ```tsx
 // hooks/useForm.ts
-import { useState, ChangeEvent, FormEvent } from 'react'
+import { useState, ChangeEvent, FormEvent } from 'react';
 
 interface UseFormOptions<T> {
-  initialValues: T
-  onSubmit: (values: T) => void | Promise<void>
-  validate?: (values: T) => Partial<Record<keyof T, string>>
+  initialValues: T;
+  onSubmit: (values: T) => void | Promise<void>;
+  validate?: (values: T) => Partial<Record<keyof T, string>>;
 }
 
-export const useForm = <T extends Record<string, any>>({ initialValues, onSubmit, validate }: UseFormOptions<T>) => {
-  const [values, setValues] = useState<T>(initialValues)
-  const [errors, setErrors] = useState<Partial<Record<keyof T, string>>>({})
-  const [isSubmitting, setIsSubmitting] = useState(false)
+export const useForm = <T extends Record<string, any>>({
+  initialValues,
+  onSubmit,
+  validate,
+}: UseFormOptions<T>) => {
+  const [values, setValues] = useState<T>(initialValues);
+  const [errors, setErrors] = useState<Partial<Record<keyof T, string>>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setValues((prev) => ({ ...prev, [name]: value }))
-  }
+    const { name, value } = e.target;
+    setValues((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (validate) {
-      const validationErrors = validate(values)
-      setErrors(validationErrors)
-      if (Object.keys(validationErrors).length > 0) return
+      const validationErrors = validate(values);
+      setErrors(validationErrors);
+      if (Object.keys(validationErrors).length > 0) return;
     }
 
-    setIsSubmitting(true)
+    setIsSubmitting(true);
     try {
-      await onSubmit(values)
+      await onSubmit(values);
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
-  return { values, errors, isSubmitting, handleChange, handleSubmit }
-}
+  return { values, errors, isSubmitting, handleChange, handleSubmit };
+};
 ```
 
 ---
@@ -264,47 +268,47 @@ export const useForm = <T extends Record<string, any>>({ initialValues, onSubmit
 
 ```tsx
 // hooks/useDisclosure.ts
-import { useState, useCallback } from 'react'
+import { useState, useCallback } from 'react';
 
 export const useDisclosure = (initialOpen = false) => {
-  const [isOpen, setIsOpen] = useState(initialOpen)
+  const [isOpen, setIsOpen] = useState(initialOpen);
 
-  const open = useCallback(() => setIsOpen(true), [])
-  const close = useCallback(() => setIsOpen(false), [])
-  const toggle = useCallback(() => setIsOpen((prev) => !prev), [])
+  const open = useCallback(() => setIsOpen(true), []);
+  const close = useCallback(() => setIsOpen(false), []);
+  const toggle = useCallback(() => setIsOpen((prev) => !prev), []);
 
-  return { isOpen, open, close, toggle }
-}
+  return { isOpen, open, close, toggle };
+};
 
 // 使用例
 const Modal = () => {
-  const { isOpen, open, close } = useDisclosure()
+  const { isOpen, open, close } = useDisclosure();
 
   return (
     <>
       <button onClick={open}>開く</button>
       {isOpen && <dialog onClose={close}>...</dialog>}
     </>
-  )
-}
+  );
+};
 ```
 
 ### Custom Context Hook
 
 ```tsx
 // hooks/useTheme.ts
-import { useContext } from 'react'
-import { ThemeContext } from '@/contexts/ThemeContext'
+import { useContext } from 'react';
+import { ThemeContext } from '@/contexts/ThemeContext';
 
 export const useTheme = () => {
-  const context = useContext(ThemeContext)
+  const context = useContext(ThemeContext);
 
   if (!context) {
-    throw new Error('useTheme must be used within ThemeProvider')
+    throw new Error('useTheme must be used within ThemeProvider');
   }
 
-  return context
-}
+  return context;
+};
 ```
 
 ---
@@ -315,36 +319,36 @@ export const useTheme = () => {
 
 ```tsx
 // hooks/useToggle.test.ts
-import { describe, it, expect } from 'vitest'
-import { renderHook, act } from '@testing-library/react'
-import { useToggle } from './useToggle'
+import { describe, it, expect } from 'vitest';
+import { renderHook, act } from '@testing-library/react';
+import { useToggle } from './useToggle';
 
 describe('useToggle', () => {
   it('should initialize with false', () => {
-    const { result } = renderHook(() => useToggle())
-    expect(result.current.value).toBe(false)
-  })
+    const { result } = renderHook(() => useToggle());
+    expect(result.current.value).toBe(false);
+  });
 
   it('should toggle value', () => {
-    const { result } = renderHook(() => useToggle())
+    const { result } = renderHook(() => useToggle());
 
     act(() => {
-      result.current.toggle()
-    })
+      result.current.toggle();
+    });
 
-    expect(result.current.value).toBe(true)
-  })
+    expect(result.current.value).toBe(true);
+  });
 
   it('should set true', () => {
-    const { result } = renderHook(() => useToggle(false))
+    const { result } = renderHook(() => useToggle(false));
 
     act(() => {
-      result.current.setTrue()
-    })
+      result.current.setTrue();
+    });
 
-    expect(result.current.value).toBe(true)
-  })
-})
+    expect(result.current.value).toBe(true);
+  });
+});
 ```
 
 ---
@@ -356,44 +360,44 @@ describe('useToggle', () => {
 ```tsx
 // ✅ 推奨：必要な依存のみ
 useEffect(() => {
-  fetchData(userId)
-}, [userId])
+  fetchData(userId);
+}, [userId]);
 
 // ❌ 避ける：不要な依存
 useEffect(() => {
-  fetchData(userId)
-}, [userId, fetchData]) // fetchDataは不要
+  fetchData(userId);
+}, [userId, fetchData]); // fetchDataは不要
 ```
 
 ### 2. メモ化の活用
 
 ```tsx
-import { useMemo, useCallback } from 'react'
+import { useMemo, useCallback } from 'react';
 
 export const useExpensiveCalculation = (data: number[]) => {
   const result = useMemo(() => {
-    return data.reduce((sum, n) => sum + n, 0)
-  }, [data])
+    return data.reduce((sum, n) => sum + n, 0);
+  }, [data]);
 
   const calculate = useCallback(() => {
-    return result * 2
-  }, [result])
+    return result * 2;
+  }, [result]);
 
-  return { result, calculate }
-}
+  return { result, calculate };
+};
 ```
 
 ### 3. クリーンアップ関数
 
 ```tsx
 useEffect(() => {
-  const subscription = eventEmitter.subscribe(handleEvent)
+  const subscription = eventEmitter.subscribe(handleEvent);
 
   // クリーンアップ
   return () => {
-    subscription.unsubscribe()
-  }
-}, [])
+    subscription.unsubscribe();
+  };
+}, []);
 ```
 
 ---

@@ -1,28 +1,28 @@
-'use client'
+'use client';
 
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo } from 'react';
 
-import { ChevronRight, CircleDashed } from 'lucide-react'
-import { useTranslations } from 'next-intl'
+import { ChevronRight, CircleDashed } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/utils';
 
-import { type ItemType, useCalendarFilterStore } from '../../stores/useCalendarFilterStore'
+import { type ItemType, useCalendarFilterStore } from '../../stores/useCalendarFilterStore';
 
-import { SidebarSection } from '@/features/navigation/components/sidebar/SidebarSection'
-import { useTagGroups } from '@/features/tags/hooks/use-tag-groups'
-import { useTags } from '@/features/tags/hooks/use-tags'
+import { SidebarSection } from '@/features/navigation/components/sidebar/SidebarSection';
+import { useTagGroups } from '@/features/tags/hooks/use-tag-groups';
+import { useTags } from '@/features/tags/hooks/use-tags';
 
-import { Checkbox } from '@/components/ui/checkbox'
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
-import { Skeleton } from '@/components/ui/skeleton'
-import { HoverTooltip } from '@/components/ui/tooltip'
-import { api } from '@/lib/trpc'
+import { Checkbox } from '@/components/ui/checkbox';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Skeleton } from '@/components/ui/skeleton';
+import { HoverTooltip } from '@/components/ui/tooltip';
+import { api } from '@/lib/trpc';
 
 /** Planのデフォルト色 */
-const PLAN_COLOR = '#3b82f6' // blue-500
+const PLAN_COLOR = '#3b82f6'; // blue-500
 /** Recordのデフォルト色 */
-const RECORD_COLOR = '#10b981' // emerald-500
+const RECORD_COLOR = '#10b981'; // emerald-500
 
 /**
  * カレンダーフィルターリスト
@@ -32,11 +32,11 @@ const RECORD_COLOR = '#10b981' // emerald-500
  * - タグ: グループ別に階層表示
  */
 export function CalendarFilterList() {
-  const t = useTranslations()
-  const { data: tags, isLoading: tagsLoading } = useTags()
-  const { data: groups, isLoading: groupsLoading } = useTagGroups()
-  const { data: tagStats } = api.plans.getTagStats.useQuery()
-  const tagPlanCounts = tagStats?.counts ?? {}
+  const t = useTranslations();
+  const { data: tags, isLoading: tagsLoading } = useTags();
+  const { data: groups, isLoading: groupsLoading } = useTagGroups();
+  const { data: tagStats } = api.plans.getTagStats.useQuery();
+  const tagPlanCounts = tagStats?.counts ?? {};
 
   const {
     visibleTypes,
@@ -48,30 +48,30 @@ export function CalendarFilterList() {
     toggleGroupTags,
     getGroupVisibility,
     initializeWithTags,
-  } = useCalendarFilterStore()
+  } = useCalendarFilterStore();
 
   // タグ一覧取得後に初期化
   useEffect(() => {
     if (tags && tags.length > 0) {
-      initializeWithTags(tags.map((tag) => tag.id))
+      initializeWithTags(tags.map((tag) => tag.id));
     }
-  }, [tags, initializeWithTags])
+  }, [tags, initializeWithTags]);
 
   // タグをグループ別に整理
   const groupedTags = useMemo(() => {
-    if (!tags) return { grouped: [], ungrouped: [] }
+    if (!tags) return { grouped: [], ungrouped: [] };
 
     const grouped = (groups || []).map((group) => ({
       group,
       tags: tags.filter((tag) => tag.group_id === group.id),
-    }))
+    }));
 
-    const ungrouped = tags.filter((tag) => !tag.group_id)
+    const ungrouped = tags.filter((tag) => !tag.group_id);
 
-    return { grouped, ungrouped }
-  }, [tags, groups])
+    return { grouped, ungrouped };
+  }, [tags, groups]);
 
-  const isLoading = tagsLoading || groupsLoading
+  const isLoading = tagsLoading || groupsLoading;
 
   return (
     <div className="min-w-0 space-y-2 overflow-hidden p-2">
@@ -118,7 +118,7 @@ export function CalendarFilterList() {
                     groupVisibility={getGroupVisibility(groupTags.map((t) => t.id))}
                     tagPlanCounts={tagPlanCounts}
                   />
-                )
+                ),
             )}
 
             {/* グループなしタグ */}
@@ -143,23 +143,25 @@ export function CalendarFilterList() {
             />
           </>
         ) : (
-          <div className="text-muted-foreground px-2 py-2 text-xs">{t('calendar.filter.noTags')}</div>
+          <div className="text-muted-foreground px-2 py-2 text-xs">
+            {t('calendar.filter.noTags')}
+          </div>
         )}
       </SidebarSection>
     </div>
-  )
+  );
 }
 
 /** タググループセクション */
 interface TagGroupSectionProps {
-  groupName: string
-  groupColor?: string | undefined
-  tags: Array<{ id: string; name: string; color: string; description?: string | null }>
-  visibleTagIds: Set<string>
-  onToggleTag: (tagId: string) => void
-  onToggleGroup: () => void
-  groupVisibility: 'all' | 'none' | 'some'
-  tagPlanCounts: Record<string, number>
+  groupName: string;
+  groupColor?: string | undefined;
+  tags: Array<{ id: string; name: string; color: string; description?: string | null }>;
+  visibleTagIds: Set<string>;
+  onToggleTag: (tagId: string) => void;
+  onToggleGroup: () => void;
+  groupVisibility: 'all' | 'none' | 'some';
+  tagPlanCounts: Record<string, number>;
 }
 
 function TagGroupSection({
@@ -177,7 +179,7 @@ function TagGroupSection({
         borderColor: groupColor,
         backgroundColor: groupVisibility === 'all' ? groupColor : 'transparent',
       } as React.CSSProperties)
-    : undefined
+    : undefined;
 
   return (
     <Collapsible defaultOpen className="min-w-0">
@@ -211,22 +213,22 @@ function TagGroupSection({
         </div>
       </CollapsibleContent>
     </Collapsible>
-  )
+  );
 }
 
 interface FilterItemProps {
-  label: string
+  label: string;
   /** タグの説明（ツールチップで表示） */
-  description?: string | null | undefined
+  description?: string | null | undefined;
   /** チェックボックスの色（hex値） */
-  checkboxColor?: string | undefined
-  icon?: React.ReactNode
-  checked: boolean
-  onCheckedChange: () => void
-  disabled?: boolean
-  disabledReason?: string
+  checkboxColor?: string | undefined;
+  icon?: React.ReactNode;
+  checked: boolean;
+  onCheckedChange: () => void;
+  disabled?: boolean;
+  disabledReason?: string;
   /** 右端に表示するカウント数 */
-  count?: number | undefined
+  count?: number | undefined;
 }
 
 function FilterItem({
@@ -246,7 +248,7 @@ function FilterItem({
         borderColor: checkboxColor,
         backgroundColor: checked ? checkboxColor : 'transparent',
       } as React.CSSProperties)
-    : undefined
+    : undefined;
 
   // 親幅 w-60 (240px) - padding 16px = 224px
   // チェックボックス 16px + gap 8px + 数字用 24px + gap 8px = 56px
@@ -255,7 +257,7 @@ function FilterItem({
     <label
       className={cn(
         'hover:bg-state-hover flex w-full cursor-pointer items-center gap-2 rounded px-2 py-1 text-sm',
-        disabled && 'cursor-not-allowed opacity-50'
+        disabled && 'cursor-not-allowed opacity-50',
       )}
       title={disabled ? disabledReason : undefined}
     >
@@ -269,15 +271,17 @@ function FilterItem({
       {icon && <span className="text-muted-foreground shrink-0">{icon}</span>}
       <span className="max-w-[140px] truncate">{label}</span>
       {count !== undefined && (
-        <span className="text-muted-foreground ml-auto w-4 shrink-0 text-right text-xs tabular-nums">{count}</span>
+        <span className="text-muted-foreground ml-auto w-4 shrink-0 text-right text-xs tabular-nums">
+          {count}
+        </span>
       )}
     </label>
-  )
+  );
 
   // 説明がある場合はツールチップで表示
   return (
     <HoverTooltip content={description} side="right" disabled={!description}>
       {content}
     </HoverTooltip>
-  )
+  );
 }

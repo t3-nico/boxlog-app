@@ -1,45 +1,51 @@
-'use client'
+'use client';
 
-import { MiniCalendar } from '@/components/common/MiniCalendar'
-import { Button } from '@/components/ui/button'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { TableCell } from '@/components/ui/table'
-import { RecurringIndicator } from '@/features/plans/components/shared/RecurringIndicator'
-import { ReminderSelect } from '@/features/plans/components/shared/ReminderSelect'
-import { useDateFormat } from '@/features/settings/hooks/useDateFormat'
-import { format } from 'date-fns'
-import { ArrowRight, Bell, Calendar as CalendarIcon, Clock, Repeat, Trash2 } from 'lucide-react'
-import { useState } from 'react'
+import { MiniCalendar } from '@/components/common/MiniCalendar';
+import { Button } from '@/components/ui/button';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { TableCell } from '@/components/ui/table';
+import { RecurringIndicator } from '@/features/plans/components/shared/RecurringIndicator';
+import { ReminderSelect } from '@/features/plans/components/shared/ReminderSelect';
+import { useDateFormat } from '@/features/settings/hooks/useDateFormat';
+import { format } from 'date-fns';
+import { ArrowRight, Bell, Calendar as CalendarIcon, Clock, Repeat, Trash2 } from 'lucide-react';
+import { useState } from 'react';
 
 interface DateTimeData {
   /** 日付（YYYY-MM-DD） */
-  date: string | null
+  date: string | null;
   /** 開始時刻（HH:mm） */
-  startTime: string | null
+  startTime: string | null;
   /** 終了時刻（HH:mm） */
-  endTime: string | null
+  endTime: string | null;
   /** 通知設定 */
-  reminder: ReminderConfig | null
+  reminder: ReminderConfig | null;
   /** 繰り返し設定 */
-  recurrence: RecurrenceType | null
+  recurrence: RecurrenceType | null;
 }
 
 interface ReminderConfig {
-  type: '5min' | '15min' | '30min' | '1hour' | '1day' | 'custom'
-  customMinutes?: number
-  enabled: boolean
+  type: '5min' | '15min' | '30min' | '1hour' | '1day' | 'custom';
+  customMinutes?: number;
+  enabled: boolean;
 }
 
-type RecurrenceType = 'none' | 'daily' | 'weekly' | 'monthly'
+type RecurrenceType = 'none' | 'daily' | 'weekly' | 'monthly';
 
 interface DateTimeUnifiedCellProps {
   /** 日付時刻データ */
-  data: DateTimeData
+  data: DateTimeData;
   /** 列幅 */
-  width?: number
+  width?: number;
   /** 変更ハンドラー */
-  onChange?: (data: DateTimeData) => void
+  onChange?: (data: DateTimeData) => void;
 }
 
 /**
@@ -65,27 +71,29 @@ interface DateTimeUnifiedCellProps {
  * ```
  */
 export function DateTimeUnifiedCell({ data, width, onChange }: DateTimeUnifiedCellProps) {
-  const { formatDate } = useDateFormat()
-  const [open, setOpen] = useState(false)
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(data.date ? new Date(data.date) : undefined)
-  const [startTime, setStartTime] = useState(data.startTime || '')
-  const [endTime, setEndTime] = useState(data.endTime || '')
+  const { formatDate } = useDateFormat();
+  const [open, setOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(
+    data.date ? new Date(data.date) : undefined,
+  );
+  const [startTime, setStartTime] = useState(data.startTime || '');
+  const [endTime, setEndTime] = useState(data.endTime || '');
   // 通知設定: UI文字列形式（'', '開始時刻', '10分前', ...）
-  const [reminderType, setReminderType] = useState<string>('')
-  const [recurrence, setRecurrence] = useState<RecurrenceType>(data.recurrence || 'none')
+  const [reminderType, setReminderType] = useState<string>('');
+  const [recurrence, setRecurrence] = useState<RecurrenceType>(data.recurrence || 'none');
 
   // 表示コンテンツを生成
   const getDisplayContent = () => {
-    if (!data.date) return <span>-</span>
+    if (!data.date) return <span>-</span>;
 
-    const dateStr = formatDate(new Date(data.date))
-    const hasReminder = data.reminder?.enabled
+    const dateStr = formatDate(new Date(data.date));
+    const hasReminder = data.reminder?.enabled;
 
-    let timeStr = ''
+    let timeStr = '';
     if (data.startTime && data.endTime) {
-      timeStr = ` ${data.startTime} → ${data.endTime}`
+      timeStr = ` ${data.startTime} → ${data.endTime}`;
     } else if (data.startTime) {
-      timeStr = ` ${data.startTime}`
+      timeStr = ` ${data.startTime}`;
     }
 
     return (
@@ -97,8 +105,8 @@ export function DateTimeUnifiedCell({ data, width, onChange }: DateTimeUnifiedCe
         {hasReminder && <Bell className="size-3.5" />}
         <RecurringIndicator recurrenceType={data.recurrence} size="sm" />
       </span>
-    )
-  }
+    );
+  };
 
   // 値が変更されたら即座に反映
   const handleChange = () => {
@@ -114,9 +122,9 @@ export function DateTimeUnifiedCell({ data, width, onChange }: DateTimeUnifiedCe
             }
           : null,
       recurrence,
-    }
-    onChange?.(newData)
-  }
+    };
+    onChange?.(newData);
+  };
 
   // クリアハンドラー
   const handleClear = () => {
@@ -126,20 +134,26 @@ export function DateTimeUnifiedCell({ data, width, onChange }: DateTimeUnifiedCe
       endTime: null,
       reminder: null,
       recurrence: null,
-    }
-    onChange?.(clearedData)
-    setSelectedDate(undefined)
-    setStartTime('')
-    setEndTime('')
-    setReminderType('none')
-    setRecurrence('none')
-    setOpen(false)
-  }
+    };
+    onChange?.(clearedData);
+    setSelectedDate(undefined);
+    setStartTime('');
+    setEndTime('');
+    setReminderType('none');
+    setRecurrence('none');
+    setOpen(false);
+  };
 
-  const style = width ? { width: `${width}px`, minWidth: `${width}px`, maxWidth: `${width}px` } : undefined
+  const style = width
+    ? { width: `${width}px`, minWidth: `${width}px`, maxWidth: `${width}px` }
+    : undefined;
 
   return (
-    <TableCell onClick={(e) => e.stopPropagation()} className="text-muted-foreground text-sm" style={style}>
+    <TableCell
+      onClick={(e) => e.stopPropagation()}
+      className="text-muted-foreground text-sm"
+      style={style}
+    >
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <div className="hover:bg-state-hover cursor-pointer rounded px-2 py-1 transition-colors">
@@ -157,8 +171,8 @@ export function DateTimeUnifiedCell({ data, width, onChange }: DateTimeUnifiedCe
               <MiniCalendar
                 selectedDate={selectedDate}
                 onDateSelect={(date) => {
-                  setSelectedDate(date)
-                  handleChange()
+                  setSelectedDate(date);
+                  handleChange();
                 }}
                 className="w-fit border-none bg-transparent p-0"
               />
@@ -177,8 +191,8 @@ export function DateTimeUnifiedCell({ data, width, onChange }: DateTimeUnifiedCe
                     type="time"
                     value={startTime}
                     onChange={(e) => {
-                      setStartTime(e.target.value)
-                      handleChange()
+                      setStartTime(e.target.value);
+                      handleChange();
                     }}
                     className="border-input flex h-9 w-20 gap-0 rounded-md border bg-transparent px-2 py-1 text-sm [&::-webkit-datetime-edit-fields-wrapper]:!gap-0 [&::-webkit-datetime-edit-hour-field]:!mr-0 [&::-webkit-datetime-edit-minute-field]:!ml-0"
                   />
@@ -190,8 +204,8 @@ export function DateTimeUnifiedCell({ data, width, onChange }: DateTimeUnifiedCe
                     type="time"
                     value={endTime}
                     onChange={(e) => {
-                      setEndTime(e.target.value)
-                      handleChange()
+                      setEndTime(e.target.value);
+                      handleChange();
                     }}
                     className="border-input flex h-9 w-20 gap-0 rounded-md border bg-transparent px-2 py-1 text-sm [&::-webkit-datetime-edit-fields-wrapper]:!gap-0 [&::-webkit-datetime-edit-hour-field]:!mr-0 [&::-webkit-datetime-edit-minute-field]:!ml-0"
                   />
@@ -208,8 +222,8 @@ export function DateTimeUnifiedCell({ data, width, onChange }: DateTimeUnifiedCe
               <ReminderSelect
                 value={reminderType}
                 onChange={(value: string) => {
-                  setReminderType(value)
-                  handleChange()
+                  setReminderType(value);
+                  handleChange();
                 }}
                 variant="button"
               />
@@ -224,8 +238,8 @@ export function DateTimeUnifiedCell({ data, width, onChange }: DateTimeUnifiedCe
               <Select
                 value={recurrence}
                 onValueChange={(value) => {
-                  setRecurrence(value as RecurrenceType)
-                  handleChange()
+                  setRecurrence(value as RecurrenceType);
+                  handleChange();
                 }}
               >
                 <SelectTrigger>
@@ -251,5 +265,5 @@ export function DateTimeUnifiedCell({ data, width, onChange }: DateTimeUnifiedCe
         </PopoverContent>
       </Popover>
     </TableCell>
-  )
+  );
 }

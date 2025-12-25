@@ -1,8 +1,8 @@
-import { render, screen } from '@testing-library/react'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
-import * as useInboxDataModule from '../hooks/useInboxData'
-import * as useInboxFilterStoreModule from '../stores/useInboxFilterStore'
-import { InboxBoardView } from './InboxBoardView'
+import { render, screen } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import * as useInboxDataModule from '../hooks/useInboxData';
+import * as useInboxFilterStoreModule from '../stores/useInboxFilterStore';
+import { InboxBoardView } from './InboxBoardView';
 
 // KanbanBoardとTableNavigationのモック
 vi.mock('@/features/board', () => ({
@@ -12,7 +12,7 @@ vi.mock('@/features/board', () => ({
     isStatusVisible: () => true,
     resetFilters: vi.fn(),
   }),
-}))
+}));
 
 vi.mock('@/features/board/stores/useBoardStatusFilterStore', () => ({
   useBoardStatusFilterStore: () => ({
@@ -20,15 +20,17 @@ vi.mock('@/features/board/stores/useBoardStatusFilterStore', () => ({
     isStatusVisible: () => true,
     resetFilters: vi.fn(),
   }),
-}))
+}));
 
 vi.mock('@/features/table', () => ({
   TableNavigation: () => <div data-testid="table-navigation">Table Navigation</div>,
-}))
+}));
 
 vi.mock('./board/InboxBoardSettingsContent', () => ({
-  InboxBoardSettingsContent: () => <div data-testid="inbox-board-settings-content">Settings Content</div>,
-}))
+  InboxBoardSettingsContent: () => (
+    <div data-testid="inbox-board-settings-content">Settings Content</div>
+  ),
+}));
 
 describe('InboxBoardView', () => {
   const mockFilters = {
@@ -45,36 +47,36 @@ describe('InboxBoardView', () => {
     setAssignee: vi.fn(),
     setDueDate: vi.fn(),
     reset: vi.fn(),
-  }
+  };
 
   beforeEach(() => {
-    vi.clearAllMocks()
+    vi.clearAllMocks();
 
     // デフォルトのモック
-    vi.spyOn(useInboxFilterStoreModule, 'useInboxFilterStore').mockReturnValue(mockFilters)
+    vi.spyOn(useInboxFilterStoreModule, 'useInboxFilterStore').mockReturnValue(mockFilters);
     vi.spyOn(useInboxDataModule, 'useInboxData').mockReturnValue({
       items: [],
       plans: [],
       isPending: false,
       error: null,
-    })
-  })
+    });
+  });
 
   describe('基本レンダリング', () => {
     it('正常時にKanbanBoardとTableNavigationが表示される', () => {
-      render(<InboxBoardView />)
+      render(<InboxBoardView />);
 
-      expect(screen.getByTestId('table-navigation')).toBeInTheDocument()
-      expect(screen.getByTestId('kanban-board')).toBeInTheDocument()
-    })
+      expect(screen.getByTestId('table-navigation')).toBeInTheDocument();
+      expect(screen.getByTestId('kanban-board')).toBeInTheDocument();
+    });
 
     it('role="tabpanel"とid="inbox-view-panel"が設定される', () => {
-      render(<InboxBoardView />)
+      render(<InboxBoardView />);
 
-      const panel = screen.getByRole('tabpanel')
-      expect(panel).toHaveAttribute('id', 'inbox-view-panel')
-    })
-  })
+      const panel = screen.getByRole('tabpanel');
+      expect(panel).toHaveAttribute('id', 'inbox-view-panel');
+    });
+  });
 
   describe('ローディング状態', () => {
     it('ローディング中はスピナーが表示される', () => {
@@ -83,18 +85,18 @@ describe('InboxBoardView', () => {
         plans: [],
         isPending: true,
         error: null,
-      })
+      });
 
-      render(<InboxBoardView />)
+      render(<InboxBoardView />);
 
-      expect(screen.getByText('読み込み中...')).toBeInTheDocument()
-      expect(screen.queryByTestId('kanban-board')).not.toBeInTheDocument()
-    })
-  })
+      expect(screen.getByText('読み込み中...')).toBeInTheDocument();
+      expect(screen.queryByTestId('kanban-board')).not.toBeInTheDocument();
+    });
+  });
 
   describe('エラー状態', () => {
     it('エラー時はエラーメッセージが表示される', () => {
-      const errorMessage = 'データ取得に失敗しました'
+      const errorMessage = 'データ取得に失敗しました';
       // TRPCClientErrorBaseをモック（unknown経由でキャスト）
       const mockError = {
         message: errorMessage,
@@ -113,30 +115,30 @@ describe('InboxBoardView', () => {
           httpStatus: 500,
         },
         name: 'TRPCClientError',
-      }
+      };
       vi.spyOn(useInboxDataModule, 'useInboxData').mockReturnValue({
         items: [],
         plans: [],
         isPending: false,
         error: mockError as unknown as ReturnType<typeof useInboxDataModule.useInboxData>['error'],
-      })
+      });
 
-      render(<InboxBoardView />)
+      render(<InboxBoardView />);
 
-      expect(screen.getByText('エラーが発生しました')).toBeInTheDocument()
-      expect(screen.getByText(errorMessage)).toBeInTheDocument()
-      expect(screen.queryByTestId('kanban-board')).not.toBeInTheDocument()
-    })
-  })
+      expect(screen.getByText('エラーが発生しました')).toBeInTheDocument();
+      expect(screen.getByText(errorMessage)).toBeInTheDocument();
+      expect(screen.queryByTestId('kanban-board')).not.toBeInTheDocument();
+    });
+  });
 
   describe('フィルタ連携', () => {
     it('useInboxFilterStoreからフィルタを取得する', () => {
-      const spy = vi.spyOn(useInboxFilterStoreModule, 'useInboxFilterStore')
+      const spy = vi.spyOn(useInboxFilterStoreModule, 'useInboxFilterStore');
 
-      render(<InboxBoardView />)
+      render(<InboxBoardView />);
 
-      expect(spy).toHaveBeenCalled()
-    })
+      expect(spy).toHaveBeenCalled();
+    });
 
     it('フィルタをuseInboxDataに渡す', () => {
       const filters = {
@@ -146,32 +148,32 @@ describe('InboxBoardView', () => {
         search: 'test query',
         tags: ['tag1'],
         dueDate: 'today' as const,
-      }
-      vi.spyOn(useInboxFilterStoreModule, 'useInboxFilterStore').mockReturnValue(filters)
+      };
+      vi.spyOn(useInboxFilterStoreModule, 'useInboxFilterStore').mockReturnValue(filters);
 
-      const dataSpy = vi.spyOn(useInboxDataModule, 'useInboxData')
+      const dataSpy = vi.spyOn(useInboxDataModule, 'useInboxData');
 
-      render(<InboxBoardView />)
+      render(<InboxBoardView />);
 
       expect(dataSpy).toHaveBeenCalledWith({
         status: 'open',
         search: 'test query',
         tags: ['tag1'],
         dueDate: 'today',
-      })
-    })
+      });
+    });
 
     it('フィルタが空の場合はundefinedで渡す', () => {
-      const dataSpy = vi.spyOn(useInboxDataModule, 'useInboxData')
+      const dataSpy = vi.spyOn(useInboxDataModule, 'useInboxData');
 
-      render(<InboxBoardView />)
+      render(<InboxBoardView />);
 
       expect(dataSpy).toHaveBeenCalledWith({
         status: undefined,
         search: '',
         tags: [],
         dueDate: 'all',
-      })
-    })
-  })
-})
+      });
+    });
+  });
+});

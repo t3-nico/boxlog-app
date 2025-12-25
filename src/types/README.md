@@ -33,20 +33,20 @@ Feature-specific types should be colocated with their features.
 
 ```typescript
 // Core types
-import type { Task, TaskStatus, Profile } from '@/types'
+import type { Task, TaskStatus, Profile } from '@/types';
 
 // API types (exported from index.ts)
-import type { ApiResponse, ApiError, PaginationParams } from '@/types'
+import type { ApiResponse, ApiError, PaginationParams } from '@/types';
 
 // Feature types (colocated)
-import type { Tag } from '@/features/tags/types'
-import type { ChronotypeProfile } from '@/features/settings/types/chronotype'
+import type { Tag } from '@/features/tags/types';
+import type { ChronotypeProfile } from '@/features/settings/types/chronotype';
 
 // DB types
-import type { Database } from '@/lib/database.types'
+import type { Database } from '@/lib/database.types';
 
 // i18n types
-import type { Locale, TranslatedString } from '@/lib/i18n'
+import type { Locale, TranslatedString } from '@/lib/i18n';
 ```
 
 ## Design Principles
@@ -80,11 +80,11 @@ Import directly from the source:
 
 ```typescript
 // Good - direct import
-import type { Tag } from '@/features/tags/types'
-import type { Database } from '@/lib/database.types'
+import type { Tag } from '@/features/tags/types';
+import type { Database } from '@/lib/database.types';
 
 // Bad - unnecessary indirection
-import type { Tag } from '@/types/tags' // Don't do this
+import type { Tag } from '@/types/tags'; // Don't do this
 ```
 
 ## Key Types
@@ -93,37 +93,37 @@ import type { Tag } from '@/types/tags' // Don't do this
 
 ```typescript
 export interface Task {
-  id: string
-  title: string
-  description?: string
-  status: TaskStatus
-  priority: TaskPriority
-  planned_start: string
-  planned_duration: number
-  tags?: string[]
-  created_at: string
-  updated_at: string
-  user_id: string
+  id: string;
+  title: string;
+  description?: string;
+  status: TaskStatus;
+  priority: TaskPriority;
+  planned_start: string;
+  planned_duration: number;
+  tags?: string[];
+  created_at: string;
+  updated_at: string;
+  user_id: string;
 }
 
-export type TaskStatus = 'backlog' | 'scheduled' | 'in_progress' | 'completed' | 'stopped'
-export type TaskPriority = 'low' | 'medium' | 'high' | 'urgent'
+export type TaskStatus = 'backlog' | 'scheduled' | 'in_progress' | 'completed' | 'stopped';
+export type TaskPriority = 'low' | 'medium' | 'high' | 'urgent';
 ```
 
 ### API Response (api.ts)
 
 ```typescript
 export interface ApiResponse<T = unknown> {
-  data?: T
-  error?: ApiError
-  success: boolean
+  data?: T;
+  error?: ApiError;
+  success: boolean;
 }
 
 export interface ApiError {
-  message: string
-  code?: string
-  status?: number
-  details?: unknown
+  message: string;
+  code?: string;
+  status?: number;
+  details?: unknown;
 }
 ```
 
@@ -136,19 +136,19 @@ Follow TypeScript official recommendations:
 ```typescript
 // Interface for objects (extensible)
 export interface Task {
-  id: string
-  title: string
+  id: string;
+  title: string;
 }
 
 // Type for unions
-export type TaskStatus = 'backlog' | 'scheduled' | 'completed'
+export type TaskStatus = 'backlog' | 'scheduled' | 'completed';
 ```
 
 ### Utility Types
 
 ```typescript
-export type TaskInsert = Omit<Task, 'id' | 'created_at' | 'updated_at'>
-export type TaskUpdate = Partial<Omit<Task, 'id' | 'user_id' | 'created_at'>>
+export type TaskInsert = Omit<Task, 'id' | 'created_at' | 'updated_at'>;
+export type TaskUpdate = Partial<Omit<Task, 'id' | 'user_id' | 'created_at'>>;
 ```
 
 ### No `any` Type
@@ -156,14 +156,14 @@ export type TaskUpdate = Partial<Omit<Task, 'id' | 'user_id' | 'created_at'>>
 ```typescript
 // Good
 export interface ApiError {
-  message: string
-  details?: unknown
+  message: string;
+  details?: unknown;
 }
 
 // Bad - any is forbidden
 export interface ApiError {
-  message: string
-  details?: any // NG
+  message: string;
+  details?: any; // NG
 }
 ```
 

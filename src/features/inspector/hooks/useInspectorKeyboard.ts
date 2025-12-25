@@ -1,18 +1,18 @@
-import { useEffect } from 'react'
+import { useEffect } from 'react';
 
 interface UseInspectorKeyboardOptions {
   /** Inspectorが開いているか */
-  isOpen: boolean
+  isOpen: boolean;
   /** 前のアイテムが存在するか */
-  hasPrevious?: boolean
+  hasPrevious?: boolean;
   /** 次のアイテムが存在するか */
-  hasNext?: boolean
+  hasNext?: boolean;
   /** 閉じるハンドラー */
-  onClose: () => void
+  onClose: () => void;
   /** 前へ移動ハンドラー */
-  onPrevious?: () => void
+  onPrevious?: () => void;
   /** 次へ移動ハンドラー */
-  onNext?: () => void
+  onNext?: () => void;
 }
 
 /**
@@ -45,41 +45,41 @@ export function useInspectorKeyboard({
   onNext,
 }: UseInspectorKeyboardOptions): void {
   useEffect(() => {
-    if (!isOpen) return
+    if (!isOpen) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
       // 入力中は無視
-      const target = e.target as HTMLElement
+      const target = e.target as HTMLElement;
       if (target.isContentEditable || target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
         // Escapeのみ入力中でも有効
         if (e.key === 'Escape') {
-          onClose()
+          onClose();
         }
-        return
+        return;
       }
 
       switch (e.key) {
         case 'Escape':
-          onClose()
-          break
+          onClose();
+          break;
         case 'ArrowUp':
         case 'k':
           if (hasPrevious && onPrevious) {
-            e.preventDefault()
-            onPrevious()
+            e.preventDefault();
+            onPrevious();
           }
-          break
+          break;
         case 'ArrowDown':
         case 'j':
           if (hasNext && onNext) {
-            e.preventDefault()
-            onNext()
+            e.preventDefault();
+            onNext();
           }
-          break
+          break;
       }
-    }
+    };
 
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [isOpen, hasPrevious, hasNext, onClose, onPrevious, onNext])
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, hasPrevious, hasNext, onClose, onPrevious, onNext]);
 }

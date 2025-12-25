@@ -1,6 +1,6 @@
-import { MS_PER_DAY, MS_PER_HOUR, MS_PER_MINUTE } from '@/constants/time'
+import { MS_PER_DAY, MS_PER_HOUR, MS_PER_MINUTE } from '@/constants/time';
 
-import type { PlanStatus } from '../types/plan'
+import type { PlanStatus } from '../types/plan';
 
 /**
  * プラン番号のフォーマット
@@ -8,11 +8,11 @@ import type { PlanStatus } from '../types/plan'
  */
 export function formatplanNumber(planNumber: string): string {
   // TKT-20241030-001 → #TKT-001
-  const parts = planNumber.split('-')
+  const parts = planNumber.split('-');
   if (parts.length === 3) {
-    return `#${parts[0]}-${parts[2]}`
+    return `#${parts[0]}-${parts[2]}`;
   }
-  return `#${planNumber}`
+  return `#${planNumber}`;
 }
 
 /**
@@ -23,24 +23,24 @@ export function formatplanStatus(status: PlanStatus): string {
     todo: 'Todo',
     doing: 'Doing',
     done: 'Done',
-  }
-  return statusMap[status]
+  };
+  return statusMap[status];
 }
 
 /**
  * 日付のフォーマット（YYYY-MM-DD → YYYY年MM月DD日）
  */
 export function formatplanDate(dateString: string | null | undefined): string {
-  if (!dateString) return '-'
+  if (!dateString) return '-';
 
   try {
-    const date = new Date(dateString)
-    const year = date.getFullYear()
-    const month = date.getMonth() + 1
-    const day = date.getDate()
-    return `${year}年${month}月${day}日`
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    return `${year}年${month}月${day}日`;
   } catch {
-    return dateString
+    return dateString;
   }
 }
 
@@ -48,18 +48,18 @@ export function formatplanDate(dateString: string | null | undefined): string {
  * 日時のフォーマット（ISO 8601 → YYYY/MM/DD HH:mm）
  */
 export function formatplanDateTime(dateTimeString: string | null | undefined): string {
-  if (!dateTimeString) return '-'
+  if (!dateTimeString) return '-';
 
   try {
-    const date = new Date(dateTimeString)
-    const year = date.getFullYear()
-    const month = String(date.getMonth() + 1).padStart(2, '0')
-    const day = String(date.getDate()).padStart(2, '0')
-    const hours = String(date.getHours()).padStart(2, '0')
-    const minutes = String(date.getMinutes()).padStart(2, '0')
-    return `${year}/${month}/${day} ${hours}:${minutes}`
+    const date = new Date(dateTimeString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${year}/${month}/${day} ${hours}:${minutes}`;
   } catch {
-    return dateTimeString
+    return dateTimeString;
   }
 }
 
@@ -68,23 +68,23 @@ export function formatplanDateTime(dateTimeString: string | null | undefined): s
  * @example "2分前", "3時間前", "2日前"
  */
 export function formatRelativeTime(dateString: string | null | undefined): string {
-  if (!dateString) return '-'
+  if (!dateString) return '-';
 
   try {
-    const date = new Date(dateString)
-    const now = new Date()
-    const diffMs = now.getTime() - date.getTime()
-    const diffMinutes = Math.floor(diffMs / MS_PER_MINUTE)
-    const diffHours = Math.floor(diffMs / MS_PER_HOUR)
-    const diffDays = Math.floor(diffMs / MS_PER_DAY)
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMinutes = Math.floor(diffMs / MS_PER_MINUTE);
+    const diffHours = Math.floor(diffMs / MS_PER_HOUR);
+    const diffDays = Math.floor(diffMs / MS_PER_DAY);
 
-    if (diffMinutes < 1) return 'たった今'
-    if (diffMinutes < 60) return `${diffMinutes}分前`
-    if (diffHours < 24) return `${diffHours}時間前`
-    if (diffDays < 30) return `${diffDays}日前`
+    if (diffMinutes < 1) return 'たった今';
+    if (diffMinutes < 60) return `${diffMinutes}分前`;
+    if (diffHours < 24) return `${diffHours}時間前`;
+    if (diffDays < 30) return `${diffDays}日前`;
 
-    return formatplanDate(dateString)
+    return formatplanDate(dateString);
   } catch {
-    return dateString
+    return dateString;
   }
 }

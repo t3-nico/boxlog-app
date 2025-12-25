@@ -9,7 +9,7 @@
  * 表示形式（BoardビューまたはTableビュー）
  * Viewとは独立して、ユーザーがヘッダーで切り替え可能
  */
-export type DisplayMode = 'board' | 'table'
+export type DisplayMode = 'board' | 'table';
 
 /**
  * Inbox View Configuration
@@ -34,66 +34,66 @@ export type DisplayMode = 'board' | 'table'
  */
 export type InboxView = {
   /** View ID (UUID) */
-  id: string
+  id: string;
 
   /** View名（ユーザーが設定） */
-  name: string
+  name: string;
 
   /** フィルター設定 */
   filters: {
     /** ステータスフィルター */
-    status?: string[] | undefined
+    status?: string[] | undefined;
     /** 優先度フィルター */
-    priority?: string[] | undefined
+    priority?: string[] | undefined;
     /** タグフィルター */
-    tags?: string[] | undefined
+    tags?: string[] | undefined;
     /** 検索キーワード */
-    search?: string | undefined
+    search?: string | undefined;
     /** アーカイブ済みかどうか */
-    archived?: boolean | undefined
-  }
+    archived?: boolean | undefined;
+  };
 
   /** ソート設定（将来拡張用） */
   sorting?:
     | {
-        field: string
-        direction: 'asc' | 'desc'
+        field: string;
+        direction: 'asc' | 'desc';
       }
-    | undefined
+    | undefined;
 
   /** Table view専用: 列設定 */
   columns?:
     | Array<{
-        id: string
-        visible: boolean
-        width: number
+        id: string;
+        visible: boolean;
+        width: number;
       }>
-    | undefined
+    | undefined;
 
   /** Table view専用: ページサイズ */
-  pageSize?: number | undefined
+  pageSize?: number | undefined;
 
   /** デフォルトViewかどうか */
-  isDefault?: boolean | undefined
+  isDefault?: boolean | undefined;
 
   /** 作成日時 */
-  createdAt: Date
+  createdAt: Date;
 
   /** 更新日時 */
-  updatedAt: Date
-}
+  updatedAt: Date;
+};
 
 /**
  * View作成用の入力データ
  */
 export type CreateInboxViewInput = {
-  name: string
-  filters?: InboxView['filters'] | undefined
-  sorting?: InboxView['sorting'] | undefined
-  isDefault?: boolean | undefined
-}
+  name: string;
+  filters?: InboxView['filters'] | undefined;
+  sorting?: InboxView['sorting'] | undefined;
+  isDefault?: boolean | undefined;
+};
 
 /**
  * View更新用の入力データ
  */
-export type UpdateInboxViewInput = Partial<Omit<InboxView, 'id' | 'createdAt' | 'updatedAt'>>
+export type UpdateInboxViewInput = Partial<Omit<InboxView, 'id' | 'createdAt' | 'updatedAt'>>;

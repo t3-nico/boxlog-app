@@ -3,7 +3,7 @@ export {
   calculateTargetDateIndex,
   getConstrainedPosition,
   snapToQuarterHour,
-} from './position'
+} from './position';
 
 export {
   calculateEventDuration,
@@ -11,6 +11,11 @@ export {
   calculatePreviewTime,
   calculateTargetDate,
   updateTimeDisplay,
-} from './time'
+} from './time';
 
-export { calculateColumnWidth, cleanupDragElements, createDragElement, updateDragElementPosition } from './dragElement'
+export {
+  calculateColumnWidth,
+  cleanupDragElements,
+  createDragElement,
+  updateDragElementPosition,
+} from './dragElement';

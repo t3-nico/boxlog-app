@@ -1,9 +1,9 @@
-'use client'
+'use client';
 
-import * as ProgressPrimitive from '@radix-ui/react-progress'
-import * as React from 'react'
+import * as ProgressPrimitive from '@radix-ui/react-progress';
+import * as React from 'react';
 
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/utils';
 
 interface ProgressProps extends React.ComponentProps<typeof ProgressPrimitive.Root> {
   /**
@@ -11,7 +11,7 @@ interface ProgressProps extends React.ComponentProps<typeof ProgressPrimitive.Ro
    * 進捗が不明な場合に使用（ファイルアップロード開始時など）
    * @default false
    */
-  indeterminate?: boolean
+  indeterminate?: boolean;
 }
 
 /**
@@ -46,13 +46,13 @@ function Progress({ className, value, indeterminate = false, ...props }: Progres
           'bg-primary h-full flex-1',
           indeterminate
             ? 'animate-indeterminate w-1/4 motion-reduce:w-full motion-reduce:animate-none'
-            : 'w-full transition-all'
+            : 'w-full transition-all',
         )}
         style={indeterminate ? undefined : { transform: `translateX(-${100 - (value || 0)}%)` }}
       />
     </ProgressPrimitive.Root>
-  )
+  );
 }
 
-export { Progress }
-export type { ProgressProps }
+export { Progress };
+export type { ProgressProps };

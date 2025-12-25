@@ -1,37 +1,37 @@
-'use client'
+'use client';
 
-import { addDays, format, isToday, subDays } from 'date-fns'
-import { ja } from 'date-fns/locale'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { useLocale, useTranslations } from 'next-intl'
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { addDays, format, isToday, subDays } from 'date-fns';
+import { ja } from 'date-fns/locale';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useLocale, useTranslations } from 'next-intl';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { Button } from '@/components/ui/button'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { cn } from '@/lib/utils';
 
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
 
 // コンパクト版の定数（カレンダーDayViewに近い設定）
-const COMPACT_HOUR_HEIGHT = 64 // 1時間あたりの高さ
-const COMPACT_TIME_COLUMN_WIDTH = 40 // 時間ラベル列の幅
-const COMPACT_MIN_EVENT_HEIGHT = 20
+const COMPACT_HOUR_HEIGHT = 64; // 1時間あたりの高さ
+const COMPACT_TIME_COLUMN_WIDTH = 40; // 時間ラベル列の幅
+const COMPACT_MIN_EVENT_HEIGHT = 20;
 
 interface CompactDayViewProps {
   /** 表示する日付 */
-  date: Date
+  date: Date;
   /** 日付変更ハンドラー */
-  onDateChange: (date: Date) => void
+  onDateChange: (date: Date) => void;
   /** プラン一覧 */
-  plans?: CalendarPlan[]
+  plans?: CalendarPlan[];
   /** プランクリック時 */
-  onPlanClick?: (plan: CalendarPlan) => void
+  onPlanClick?: (plan: CalendarPlan) => void;
   /** 空き時間クリック時 */
-  onEmptyClick?: (date: Date, time: string) => void
+  onEmptyClick?: (date: Date, time: string) => void;
   /** ドロップ受付時 */
-  onDrop?: (planId: string, date: Date, time: string) => void
+  onDrop?: (planId: string, date: Date, time: string) => void;
   /** 追加のクラス名 */
-  className?: string
+  className?: string;
 }
 
 /**
@@ -53,135 +53,137 @@ export const CompactDayView = memo(function CompactDayView({
   onDrop,
   className,
 }: CompactDayViewProps) {
-  const t = useTranslations()
-  const locale = useLocale()
-  const scrollRef = useRef<HTMLDivElement>(null)
-  const [currentTime, setCurrentTime] = useState(new Date())
-  const [isDragOver, setIsDragOver] = useState(false)
-  const [dragOverHour, setDragOverHour] = useState<number | null>(null)
-  const [draggingPlanId, setDraggingPlanId] = useState<string | null>(null)
+  const t = useTranslations();
+  const locale = useLocale();
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [currentTime, setCurrentTime] = useState(new Date());
+  const [isDragOver, setIsDragOver] = useState(false);
+  const [dragOverHour, setDragOverHour] = useState<number | null>(null);
+  const [draggingPlanId, setDraggingPlanId] = useState<string | null>(null);
 
-  const isTodayDate = useMemo(() => isToday(date), [date])
+  const isTodayDate = useMemo(() => isToday(date), [date]);
 
   // 現在時刻の位置（px）
   const currentTimePosition = useMemo(() => {
-    const hours = currentTime.getHours()
-    const minutes = currentTime.getMinutes()
-    return (hours + minutes / 60) * COMPACT_HOUR_HEIGHT
-  }, [currentTime])
+    const hours = currentTime.getHours();
+    const minutes = currentTime.getMinutes();
+    return (hours + minutes / 60) * COMPACT_HOUR_HEIGHT;
+  }, [currentTime]);
 
   // 1分ごとに現在時刻を更新
   useEffect(() => {
-    if (!isTodayDate) return
+    if (!isTodayDate) return;
 
-    const updateTime = () => setCurrentTime(new Date())
-    updateTime()
+    const updateTime = () => setCurrentTime(new Date());
+    updateTime();
 
-    const timer = setInterval(updateTime, 60000)
-    return () => clearInterval(timer)
-  }, [isTodayDate])
+    const timer = setInterval(updateTime, 60000);
+    return () => clearInterval(timer);
+  }, [isTodayDate]);
 
   // 初期スクロール位置（8時付近）
   useEffect(() => {
     if (scrollRef.current) {
-      const scrollTop = Math.max(0, (8 - 1) * COMPACT_HOUR_HEIGHT)
-      scrollRef.current.scrollTo({ top: scrollTop, behavior: 'smooth' })
+      const scrollTop = Math.max(0, (8 - 1) * COMPACT_HOUR_HEIGHT);
+      scrollRef.current.scrollTo({ top: scrollTop, behavior: 'smooth' });
     }
-  }, [date])
+  }, [date]);
 
   // ナビゲーション
   const handlePrev = useCallback(() => {
-    onDateChange(subDays(date, 1))
-  }, [date, onDateChange])
+    onDateChange(subDays(date, 1));
+  }, [date, onDateChange]);
 
   const handleNext = useCallback(() => {
-    onDateChange(addDays(date, 1))
-  }, [date, onDateChange])
+    onDateChange(addDays(date, 1));
+  }, [date, onDateChange]);
 
   const handleToday = useCallback(() => {
-    onDateChange(new Date())
-  }, [onDateChange])
+    onDateChange(new Date());
+  }, [onDateChange]);
 
   // 時間グリッドクリック
   const handleTimeClick = useCallback(
     (hour: number) => {
-      const timeString = `${String(hour).padStart(2, '0')}:00`
-      onEmptyClick?.(date, timeString)
+      const timeString = `${String(hour).padStart(2, '0')}:00`;
+      onEmptyClick?.(date, timeString);
     },
-    [date, onEmptyClick]
-  )
+    [date, onEmptyClick],
+  );
 
   // ドラッグ＆ドロップ
   const handleDragOver = useCallback((e: React.DragEvent, hour: number) => {
-    e.preventDefault()
-    e.dataTransfer.dropEffect = 'move'
-    setIsDragOver(true)
-    setDragOverHour(hour)
-  }, [])
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    setIsDragOver(true);
+    setDragOverHour(hour);
+  }, []);
 
   const handleDragLeave = useCallback(() => {
-    setIsDragOver(false)
-    setDragOverHour(null)
-  }, [])
+    setIsDragOver(false);
+    setDragOverHour(null);
+  }, []);
 
   // プランのドラッグ開始
   const handlePlanDragStart = useCallback((e: React.DragEvent, planId: string) => {
-    e.dataTransfer.setData('text/plain', planId)
-    e.dataTransfer.effectAllowed = 'move'
-    setDraggingPlanId(planId)
-  }, [])
+    e.dataTransfer.setData('text/plain', planId);
+    e.dataTransfer.effectAllowed = 'move';
+    setDraggingPlanId(planId);
+  }, []);
 
   // プランのドラッグ終了
   const handlePlanDragEnd = useCallback(() => {
-    setDraggingPlanId(null)
-  }, [])
+    setDraggingPlanId(null);
+  }, []);
 
   const handleDropOnHour = useCallback(
     (e: React.DragEvent, hour: number) => {
-      e.preventDefault()
-      setIsDragOver(false)
-      setDragOverHour(null)
+      e.preventDefault();
+      setIsDragOver(false);
+      setDragOverHour(null);
 
-      const planId = e.dataTransfer.getData('text/plain')
+      const planId = e.dataTransfer.getData('text/plain');
       if (planId && onDrop) {
-        const timeString = `${String(hour).padStart(2, '0')}:00`
-        onDrop(planId, date, timeString)
+        const timeString = `${String(hour).padStart(2, '0')}:00`;
+        onDrop(planId, date, timeString);
       }
     },
-    [date, onDrop]
-  )
+    [date, onDrop],
+  );
 
   // 時間ラベル生成
   const timeLabels = useMemo(() => {
     return Array.from({ length: 24 }, (_, i) => ({
       hour: i,
       label: `${String(i).padStart(2, '0')}:00`,
-    }))
-  }, [])
+    }));
+  }, []);
 
   // この日のプランをフィルタリング＆位置計算
   const dayPlans = useMemo(() => {
-    const dateStr = format(date, 'yyyy-MM-dd')
+    const dateStr = format(date, 'yyyy-MM-dd');
     return plans
       .filter((plan) => {
-        if (!plan.startDate) return false
-        const planDateStr = format(new Date(plan.startDate), 'yyyy-MM-dd')
-        return planDateStr === dateStr
+        if (!plan.startDate) return false;
+        const planDateStr = format(new Date(plan.startDate), 'yyyy-MM-dd');
+        return planDateStr === dateStr;
       })
       .map((plan) => {
-        const start = new Date(plan.startDate!)
-        const end = plan.endDate ? new Date(plan.endDate) : new Date(start.getTime() + 60 * 60 * 1000)
-        const startHour = start.getHours() + start.getMinutes() / 60
-        const endHour = end.getHours() + end.getMinutes() / 60
-        const duration = Math.max(endHour - startHour, 0.5)
+        const start = new Date(plan.startDate!);
+        const end = plan.endDate
+          ? new Date(plan.endDate)
+          : new Date(start.getTime() + 60 * 60 * 1000);
+        const startHour = start.getHours() + start.getMinutes() / 60;
+        const endHour = end.getHours() + end.getMinutes() / 60;
+        const duration = Math.max(endHour - startHour, 0.5);
 
         return {
           plan,
           top: startHour * COMPACT_HOUR_HEIGHT,
           height: Math.max(duration * COMPACT_HOUR_HEIGHT, COMPACT_MIN_EVENT_HEIGHT),
-        }
-      })
-  }, [plans, date])
+        };
+      });
+  }, [plans, date]);
 
   return (
     <div className={cn('flex h-full flex-col', className)}>
@@ -189,7 +191,9 @@ export const CompactDayView = memo(function CompactDayView({
       <div className="flex shrink-0 items-center justify-between py-2 pr-1 pl-2">
         <div className="flex items-center gap-1 text-sm font-medium">
           <span>{format(date, 'M月d日', locale === 'ja' ? { locale: ja } : {})}</span>
-          <span className="text-muted-foreground">({format(date, 'E', locale === 'ja' ? { locale: ja } : {})})</span>
+          <span className="text-muted-foreground">
+            ({format(date, 'E', locale === 'ja' ? { locale: ja } : {})})
+          </span>
         </div>
 
         <div className="flex items-center gap-1">
@@ -256,7 +260,7 @@ export const CompactDayView = memo(function CompactDayView({
                   key={hour}
                   className={cn(
                     'border-border border-b transition-colors',
-                    isDragOver && dragOverHour === hour && 'bg-primary/10'
+                    isDragOver && dragOverHour === hour && 'bg-primary/10',
                   )}
                   style={{ height: COMPACT_HOUR_HEIGHT }}
                   onClick={() => handleTimeClick(hour)}
@@ -266,7 +270,7 @@ export const CompactDayView = memo(function CompactDayView({
                   tabIndex={0}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
-                      handleTimeClick(hour)
+                      handleTimeClick(hour);
                     }
                   }}
                 />
@@ -298,13 +302,13 @@ export const CompactDayView = memo(function CompactDayView({
                     'bg-primary/20 hover:bg-primary/30 border-primary/50 border-l-2 transition-colors',
                     'focus:ring-ring focus:ring-1 focus:outline-none',
                     onDrop && 'cursor-grab active:cursor-grabbing',
-                    draggingPlanId === plan.id && 'opacity-50'
+                    draggingPlanId === plan.id && 'opacity-50',
                   )}
                   style={{ top, height, minHeight: COMPACT_MIN_EVENT_HEIGHT }}
                   onClick={() => onPlanClick?.(plan)}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
-                      onPlanClick?.(plan)
+                      onPlanClick?.(plan);
                     }
                   }}
                   role="button"
@@ -318,5 +322,5 @@ export const CompactDayView = memo(function CompactDayView({
         </div>
       </ScrollArea>
     </div>
-  )
-})
+  );
+});

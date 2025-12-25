@@ -1,29 +1,33 @@
-import { Button } from '@/components/ui/button'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { cn } from '@/lib/utils'
-import { useDroppable } from '@dnd-kit/core'
-import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
-import { Plus } from 'lucide-react'
-import type { KanbanCard as KanbanCardType, KanbanColumnColor, KanbanColumn as KanbanColumnType } from '../../types'
-import { KanbanCard } from './KanbanCard'
+import { Button } from '@/components/ui/button';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { cn } from '@/lib/utils';
+import { useDroppable } from '@dnd-kit/core';
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { Plus } from 'lucide-react';
+import type {
+  KanbanCard as KanbanCardType,
+  KanbanColumnColor,
+  KanbanColumn as KanbanColumnType,
+} from '../../types';
+import { KanbanCard } from './KanbanCard';
 
-// ClickUp風カラー定義
+// ClickUp風カラー定義（セマンティックトークン使用）
 const columnColorClasses: Record<KanbanColumnColor, string> = {
-  blue: 'bg-blue-50/50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800',
-  purple: 'bg-purple-50/50 dark:bg-purple-950/20 border-purple-200 dark:border-purple-800',
-  pink: 'bg-pink-50/50 dark:bg-pink-950/20 border-pink-200 dark:border-pink-800',
-  green: 'bg-green-50/50 dark:bg-green-950/20 border-green-200 dark:border-green-800',
-  yellow: 'bg-yellow-50/50 dark:bg-yellow-950/20 border-yellow-200 dark:border-yellow-800',
-  orange: 'bg-orange-50/50 dark:bg-orange-950/20 border-orange-200 dark:border-orange-800',
-  red: 'bg-red-50/50 dark:bg-red-950/20 border-red-200 dark:border-red-800',
+  blue: 'bg-muted border-border',
+  purple: 'bg-muted border-border',
+  pink: 'bg-muted border-border',
+  green: 'bg-success/10 border-success/20',
+  yellow: 'bg-warning/10 border-warning/20',
+  orange: 'bg-warning/10 border-warning/20',
+  red: 'bg-destructive/10 border-destructive/20',
   gray: 'bg-surface-container border-border',
-}
+};
 
 interface KanbanColumnProps {
-  column: KanbanColumnType
-  onAddCard?: (columnId: string) => void
-  onEditCard?: (card: KanbanCardType) => void
-  onDeleteCard?: (cardId: string) => void
+  column: KanbanColumnType;
+  onAddCard?: (columnId: string) => void;
+  onEditCard?: (card: KanbanCardType) => void;
+  onDeleteCard?: (cardId: string) => void;
 }
 
 /**
@@ -38,16 +42,16 @@ export function KanbanColumn({ column, onAddCard, onEditCard, onDeleteCard }: Ka
       columnId: column.id,
       status: column.status,
     },
-  })
+  });
 
-  const cardIds = column.cards.map((card) => card.id)
+  const cardIds = column.cards.map((card) => card.id);
 
   // WIP制限チェック
-  const isOverWipLimit = column.wipLimit !== undefined && column.cards.length >= column.wipLimit
-  const wipWarning = column.wipLimit !== undefined && column.cards.length === column.wipLimit - 1
+  const isOverWipLimit = column.wipLimit !== undefined && column.cards.length >= column.wipLimit;
+  const wipWarning = column.wipLimit !== undefined && column.cards.length === column.wipLimit - 1;
 
   // カラム背景色（デフォルトはgray）
-  const colorClass = columnColorClasses[column.color || 'gray']
+  const colorClass = columnColorClasses[column.color || 'gray'];
 
   return (
     <div
@@ -56,7 +60,7 @@ export function KanbanColumn({ column, onAddCard, onEditCard, onDeleteCard }: Ka
         'flex w-72 shrink-0 flex-col gap-3 rounded-xl border p-3 transition-colors sm:w-80',
         colorClass,
         isOver && 'bg-state-selected ring-primary ring-2',
-        isOverWipLimit && 'ring-destructive ring-2' // WIP制限超過時
+        isOverWipLimit && 'ring-destructive ring-2', // WIP制限超過時
       )}
     >
       {/* カラムヘッダー */}
@@ -72,7 +76,7 @@ export function KanbanColumn({ column, onAddCard, onEditCard, onDeleteCard }: Ka
               'flex size-5 items-center justify-center rounded-full text-xs font-medium',
               isOverWipLimit && 'bg-destructive text-destructive-foreground',
               wipWarning && 'bg-warning text-warning-foreground',
-              !isOverWipLimit && !wipWarning && 'bg-surface-container text-muted-foreground'
+              !isOverWipLimit && !wipWarning && 'bg-surface-container text-muted-foreground',
             )}
           >
             {column.cards.length}
@@ -126,5 +130,5 @@ export function KanbanColumn({ column, onAddCard, onEditCard, onDeleteCard }: Ka
         <span className="text-xs">カードを追加</span>
       </Button>
     </div>
-  )
+  );
 }

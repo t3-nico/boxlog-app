@@ -1,9 +1,9 @@
-'use client'
+'use client';
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react';
 
-import { Button } from '@/components/ui/button'
-import { ColorPalettePicker } from '@/components/ui/color-palette-picker'
+import { Button } from '@/components/ui/button';
+import { ColorPalettePicker } from '@/components/ui/color-palette-picker';
 import {
   Dialog,
   DialogContent,
@@ -11,87 +11,93 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Textarea } from '@/components/ui/textarea'
-import { TAG_DESCRIPTION_MAX_LENGTH, TAG_NAME_MAX_LENGTH } from '@/features/tags/constants/colors'
-import { useTagGroups } from '@/features/tags/hooks/use-tag-groups'
-import type { Tag, TagGroup, UpdateTagInput } from '@/features/tags/types'
-import { useTranslations } from 'next-intl'
-import { toast } from 'sonner'
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { TAG_DESCRIPTION_MAX_LENGTH, TAG_NAME_MAX_LENGTH } from '@/features/tags/constants/colors';
+import { useTagGroups } from '@/features/tags/hooks/use-tag-groups';
+import type { Tag, TagGroup, UpdateTagInput } from '@/features/tags/types';
+import { useTranslations } from 'next-intl';
+import { toast } from 'sonner';
 
 interface TagEditModalProps {
-  isOpen: boolean
-  onClose: () => void
-  onSave: (data: UpdateTagInput) => Promise<void>
-  tag: Tag | null
+  isOpen: boolean;
+  onClose: () => void;
+  onSave: (data: UpdateTagInput) => Promise<void>;
+  tag: Tag | null;
 }
 
 export const TagEditModal = ({ isOpen, onClose, onSave, tag }: TagEditModalProps) => {
-  const t = useTranslations()
-  const [name, setName] = useState('')
-  const [color, setColor] = useState('#3B82F6')
-  const [description, setDescription] = useState('')
-  const [groupId, setGroupId] = useState<string>('')
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState('')
+  const t = useTranslations();
+  const [name, setName] = useState('');
+  const [color, setColor] = useState('#3B82F6');
+  const [description, setDescription] = useState('');
+  const [groupId, setGroupId] = useState<string>('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
   // タググループ取得
-  const { data: groups = [] as TagGroup[] } = useTagGroups()
+  const { data: groups = [] as TagGroup[] } = useTagGroups();
 
   useEffect(() => {
     if (isOpen && tag) {
-      setName(tag.name)
-      setColor(tag.color || '#3B82F6')
-      setDescription(tag.description || '')
-      setGroupId(tag.group_id || '__none__')
-      setError('')
+      setName(tag.name);
+      setColor(tag.color || '#3B82F6');
+      setDescription(tag.description || '');
+      setGroupId(tag.group_id || '__none__');
+      setError('');
     }
-  }, [isOpen, tag])
+  }, [isOpen, tag]);
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
-      e.preventDefault()
-      setError('')
+      e.preventDefault();
+      setError('');
 
       if (!name.trim()) {
-        setError(t('tag.validation.nameEmpty'))
-        return
+        setError(t('tag.validation.nameEmpty'));
+        return;
       }
 
-      setIsLoading(true)
+      setIsLoading(true);
       try {
         await onSave({
           name: name.trim(),
           color,
           description: description.trim() || undefined,
           group_id: groupId && groupId !== '__none__' ? groupId : null,
-        })
-        onClose()
+        });
+        onClose();
       } catch (err) {
-        console.error('Tag update failed:', err)
+        console.error('Tag update failed:', err);
         // エラーメッセージから重複エラーを検出
-        const errorMessage = err instanceof Error ? err.message : String(err)
+        const errorMessage = err instanceof Error ? err.message : String(err);
         if (
           errorMessage.includes('duplicate') ||
           errorMessage.includes('unique') ||
           errorMessage.includes('重複') ||
           errorMessage.includes('既に存在')
         ) {
-          setError(t('tag.form.duplicateName'))
+          setError(t('tag.form.duplicateName'));
         } else {
-          setError(t('tag.errors.updateFailed'))
+          setError(t('tag.errors.updateFailed'));
         }
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
     },
-    [name, color, description, groupId, onSave, onClose, t]
-  )
+    [name, color, description, groupId, onSave, onClose, t],
+  );
 
-  if (!tag) return null
+  if (!tag) return null;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -148,9 +154,11 @@ export const TagEditModal = ({ isOpen, onClose, onSave, tag }: TagEditModalProps
                 value={description}
                 onChange={(e) => {
                   if (e.target.value.length <= TAG_DESCRIPTION_MAX_LENGTH) {
-                    setDescription(e.target.value)
+                    setDescription(e.target.value);
                   } else {
-                    toast.info(`説明は${TAG_DESCRIPTION_MAX_LENGTH}文字までです`, { id: 'description-limit' })
+                    toast.info(`説明は${TAG_DESCRIPTION_MAX_LENGTH}文字までです`, {
+                      id: 'description-limit',
+                    });
                   }
                 }}
                 placeholder={t('tag.form.descriptionPlaceholder')}
@@ -173,5 +181,5 @@ export const TagEditModal = ({ isOpen, onClose, onSave, tag }: TagEditModalProps
         </form>
       </DialogContent>
     </Dialog>
-  )
-}
+  );
+};

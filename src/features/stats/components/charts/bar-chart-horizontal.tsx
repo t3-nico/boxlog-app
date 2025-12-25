@@ -1,9 +1,14 @@
-'use client'
+'use client';
 
-import { Bar, BarChart, XAxis, YAxis } from 'recharts'
+import { Bar, BarChart, XAxis, YAxis } from 'recharts';
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from '@/components/ui/chart';
 
 const chartData = [
   { time: '00-06', tasks: 2 },
@@ -13,7 +18,7 @@ const chartData = [
   { time: '15-18', tasks: 18 },
   { time: '18-21', tasks: 10 },
   { time: '21-24', tasks: 5 },
-]
+];
 
 // 単一系列 → セマンティック primary を使用
 const chartConfig = {
@@ -21,7 +26,7 @@ const chartConfig = {
     label: 'タスク数',
     color: 'var(--color-chart-primary)',
   },
-} satisfies ChartConfig
+} satisfies ChartConfig;
 
 export function BarChartHorizontal() {
   return (
@@ -55,5 +60,5 @@ export function BarChartHorizontal() {
         </ChartContainer>
       </CardContent>
     </Card>
-  )
+  );
 }

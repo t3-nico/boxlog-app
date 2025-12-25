@@ -1,13 +1,13 @@
-'use client'
+'use client';
 
-import { Flame, Trophy } from 'lucide-react'
+import { Flame, Trophy } from 'lucide-react';
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
-import { api } from '@/lib/trpc'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { api } from '@/lib/trpc';
 
 export function StreakCard() {
-  const { data, isPending } = api.plans.getStreak.useQuery()
+  const { data, isPending } = api.plans.getStreak.useQuery();
 
   if (isPending) {
     return (
@@ -20,18 +20,18 @@ export function StreakCard() {
           <Skeleton className="h-16 w-full" />
         </CardContent>
       </Card>
-    )
+    );
   }
 
   if (!data) {
-    return null
+    return null;
   }
 
   return (
     <Card className="bg-background">
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center gap-2 text-base">
-          <Flame className="size-5 text-orange-500" />
+          <Flame className="text-warning size-5" />
           連続日数
         </CardTitle>
         <CardDescription>継続は力なり</CardDescription>
@@ -49,7 +49,7 @@ export function StreakCard() {
 
           {/* 最長記録 */}
           <div className="flex items-center gap-2 text-center">
-            <Trophy className="size-4 text-yellow-500" />
+            <Trophy className="text-warning size-4" />
             <div>
               <div className="text-lg font-semibold">{data.longestStreak}</div>
               <div className="text-muted-foreground text-xs">最長記録</div>
@@ -69,8 +69,8 @@ export function StreakCard() {
         {/* 今日のステータス */}
         <div className="mt-4 flex items-center justify-center gap-2 text-sm">
           {data.hasActivityToday ? (
-            <span className="flex items-center gap-1 text-green-600">
-              <span className="size-2 rounded-full bg-green-500" />
+            <span className="text-success flex items-center gap-1">
+              <span className="bg-success size-2 rounded-full" />
               今日も達成済み
             </span>
           ) : (
@@ -82,5 +82,5 @@ export function StreakCard() {
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

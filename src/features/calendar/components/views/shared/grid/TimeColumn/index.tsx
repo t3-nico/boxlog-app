@@ -1,2 +1,2 @@
-export { TimeColumn } from './TimeColumn'
-export { TimeLabel } from './TimeLabel'
+export { TimeColumn } from './TimeColumn';
+export { TimeLabel } from './TimeLabel';

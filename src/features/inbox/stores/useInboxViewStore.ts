@@ -1,45 +1,50 @@
-import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
-import type { CreateInboxViewInput, DisplayMode, InboxView, UpdateInboxViewInput } from '../types/view'
+import type {
+  CreateInboxViewInput,
+  DisplayMode,
+  InboxView,
+  UpdateInboxViewInput,
+} from '../types/view';
 
 /**
  * Inbox View Store State
  */
 type InboxViewState = {
   /** 保存されているView一覧 */
-  views: InboxView[]
+  views: InboxView[];
 
   /** 現在アクティブなView ID */
-  activeViewId: string | null
+  activeViewId: string | null;
 
   /** 現在の表示形式（Board/Table） */
-  displayMode: DisplayMode
+  displayMode: DisplayMode;
 
   /** View作成 */
-  createView: (input: CreateInboxViewInput) => InboxView
+  createView: (input: CreateInboxViewInput) => InboxView;
 
   /** View更新 */
-  updateView: (id: string, input: UpdateInboxViewInput) => void
+  updateView: (id: string, input: UpdateInboxViewInput) => void;
 
   /** View削除 */
-  deleteView: (id: string) => void
+  deleteView: (id: string) => void;
 
   /** アクティブなViewを設定 */
-  setActiveView: (id: string) => void
+  setActiveView: (id: string) => void;
 
   /** 表示形式を設定 */
-  setDisplayMode: (mode: DisplayMode) => void
+  setDisplayMode: (mode: DisplayMode) => void;
 
   /** View IDから取得 */
-  getViewById: (id: string) => InboxView | undefined
+  getViewById: (id: string) => InboxView | undefined;
 
   /** アクティブなViewを取得 */
-  getActiveView: () => InboxView | undefined
+  getActiveView: () => InboxView | undefined;
 
   /** デフォルトViewを設定 */
-  setDefaultView: (id: string) => void
-}
+  setDefaultView: (id: string) => void;
+};
 
 /**
  * デフォルトView（初期データ）
@@ -73,7 +78,7 @@ const DEFAULT_VIEWS: InboxView[] = [
     createdAt: new Date(),
     updatedAt: new Date(),
   },
-]
+];
 
 /**
  * Inbox View Store
@@ -113,13 +118,13 @@ export const useInboxViewStore = create<InboxViewState>()(
           isDefault: input.isDefault || false,
           createdAt: new Date(),
           updatedAt: new Date(),
-        }
+        };
 
         set((state) => ({
           views: [...state.views, newView],
-        }))
+        }));
 
-        return newView
+        return newView;
       },
 
       updateView: (id, input) => {
@@ -131,46 +136,46 @@ export const useInboxViewStore = create<InboxViewState>()(
                   ...input,
                   updatedAt: new Date(),
                 }
-              : view
+              : view,
           ),
-        }))
+        }));
       },
 
       deleteView: (id) => {
-        const { views, activeViewId } = get()
+        const { views, activeViewId } = get();
 
         // デフォルトViewは削除不可
-        const viewToDelete = views.find((v) => v.id === id)
+        const viewToDelete = views.find((v) => v.id === id);
         if (viewToDelete?.id.startsWith('default-')) {
-          console.warn('Cannot delete default view')
-          return
+          console.warn('Cannot delete default view');
+          return;
         }
 
         // アクティブなViewを削除する場合は、デフォルトViewに切り替え
         if (activeViewId === id) {
-          set({ activeViewId: 'default-all' })
+          set({ activeViewId: 'default-all' });
         }
 
         set((state) => ({
           views: state.views.filter((view) => view.id !== id),
-        }))
+        }));
       },
 
       setActiveView: (id) => {
-        set({ activeViewId: id })
+        set({ activeViewId: id });
       },
 
       setDisplayMode: (mode) => {
-        set({ displayMode: mode })
+        set({ displayMode: mode });
       },
 
       getViewById: (id) => {
-        return get().views.find((view) => view.id === id)
+        return get().views.find((view) => view.id === id);
       },
 
       getActiveView: () => {
-        const { views, activeViewId } = get()
-        return views.find((view) => view.id === activeViewId)
+        const { views, activeViewId } = get();
+        return views.find((view) => view.id === activeViewId);
       },
 
       setDefaultView: (id) => {
@@ -179,11 +184,11 @@ export const useInboxViewStore = create<InboxViewState>()(
             ...view,
             isDefault: view.id === id,
           })),
-        }))
+        }));
       },
     }),
     {
       name: 'inbox-view-storage-v3',
-    }
-  )
-)
+    },
+  ),
+);

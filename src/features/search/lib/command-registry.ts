@@ -1,31 +1,31 @@
-import type { Command } from '../types'
+import type { Command } from '../types';
 
 class CommandRegistry {
-  private commands = new Map<string, Command>()
-  private categories = new Set<string>()
+  private commands = new Map<string, Command>();
+  private categories = new Set<string>();
 
   /**
    * Register a new command
    */
   register(command: Command): void {
-    this.commands.set(command.id, command)
-    this.categories.add(command.category)
+    this.commands.set(command.id, command);
+    this.categories.add(command.category);
   }
 
   /**
    * Register multiple commands
    */
   registerMany(commands: Command[]): void {
-    commands.forEach((command) => this.register(command))
+    commands.forEach((command) => this.register(command));
   }
 
   /**
    * Unregister a command
    */
   unregister(commandId: string): void {
-    const command = this.commands.get(commandId)
+    const command = this.commands.get(commandId);
     if (command) {
-      this.commands.delete(commandId)
+      this.commands.delete(commandId);
     }
   }
 
@@ -33,20 +33,20 @@ class CommandRegistry {
    * Get a command by ID
    */
   get(commandId: string): Command | undefined {
-    return this.commands.get(commandId)
+    return this.commands.get(commandId);
   }
 
   /**
    * Get all commands, optionally filtered by category
    */
   getAll(categoryFilter?: string[]): Command[] {
-    const allCommands = Array.from(this.commands.values())
+    const allCommands = Array.from(this.commands.values());
 
     if (categoryFilter && categoryFilter.length > 0) {
-      return allCommands.filter((command) => categoryFilter.includes(command.category))
+      return allCommands.filter((command) => categoryFilter.includes(command.category));
     }
 
-    return allCommands
+    return allCommands;
   }
 
   /**
@@ -54,13 +54,13 @@ class CommandRegistry {
    */
   getAvailable(categoryFilter?: string[]): Command[] {
     return this.getAll(categoryFilter).filter((command) => {
-      if (!command.condition) return true
+      if (!command.condition) return true;
       try {
-        return command.condition()
+        return command.condition();
       } catch {
-        return false
+        return false;
       }
-    })
+    });
   }
 
   /**
@@ -68,69 +68,71 @@ class CommandRegistry {
    */
   search(query: string, categoryFilter?: string[]): Command[] {
     if (!query.trim()) {
-      return this.getAvailable(categoryFilter)
+      return this.getAvailable(categoryFilter);
     }
 
-    const searchTerm = query.toLowerCase()
-    const commands = this.getAvailable(categoryFilter)
+    const searchTerm = query.toLowerCase();
+    const commands = this.getAvailable(categoryFilter);
 
     return commands
       .filter((command) => {
         // Search in title
-        if (command.title.toLowerCase().includes(searchTerm)) return true
+        if (command.title.toLowerCase().includes(searchTerm)) return true;
 
         // Search in description
-        if (command.description?.toLowerCase().includes(searchTerm)) return true
+        if (command.description?.toLowerCase().includes(searchTerm)) return true;
 
         // Search in keywords
-        if (command.keywords?.some((keyword) => keyword.toLowerCase().includes(searchTerm))) return true
+        if (command.keywords?.some((keyword) => keyword.toLowerCase().includes(searchTerm)))
+          return true;
 
-        return false
+        return false;
       })
       .sort((a, b) => {
         // Prioritize exact title matches
-        const aExactTitle = a.title.toLowerCase().startsWith(searchTerm)
-        const bExactTitle = b.title.toLowerCase().startsWith(searchTerm)
+        const aExactTitle = a.title.toLowerCase().startsWith(searchTerm);
+        const bExactTitle = b.title.toLowerCase().startsWith(searchTerm);
 
-        if (aExactTitle && !bExactTitle) return -1
-        if (!aExactTitle && bExactTitle) return 1
+        if (aExactTitle && !bExactTitle) return -1;
+        if (!aExactTitle && bExactTitle) return 1;
 
         // Fallback to alphabetical
-        return a.title.localeCompare(b.title)
-      })
+        return a.title.localeCompare(b.title);
+      });
   }
 
   /**
    * Get all available categories
    */
   getCategories(): string[] {
-    return Array.from(this.categories)
+    return Array.from(this.categories);
   }
 
   /**
    * Clear all commands (useful for testing)
    */
   clear(): void {
-    this.commands.clear()
-    this.categories.clear()
+    this.commands.clear();
+    this.categories.clear();
   }
 }
 
 // Export singleton instance
-export const commandRegistry = new CommandRegistry()
+export const commandRegistry = new CommandRegistry();
 
 // Command actions interface
 interface CommandActions {
-  router: { push: (path: string) => void }
-  openPlanInspector: (planId: string | null) => void
-  openTagCreateModal: () => void
-  navigateToSettings: () => void
-  toggleTheme: () => void
+  router: { push: (path: string) => void };
+  openPlanInspector: (planId: string | null) => void;
+  openTagCreateModal: () => void;
+  navigateToSettings: () => void;
+  toggleTheme: () => void;
 }
 
 // Default commands that are always available
 export const registerDefaultCommands = (actions: CommandActions) => {
-  const { router, openPlanInspector, openTagCreateModal, navigateToSettings, toggleTheme } = actions
+  const { router, openPlanInspector, openTagCreateModal, navigateToSettings, toggleTheme } =
+    actions;
 
   const defaultCommands: Command[] = [
     // Navigation commands
@@ -217,7 +219,7 @@ export const registerDefaultCommands = (actions: CommandActions) => {
       keywords: ['theme', 'dark', 'light', 'テーマ', 'ダーク', 'ライト'],
       action: () => toggleTheme(),
     },
-  ]
+  ];
 
-  commandRegistry.registerMany(defaultCommands)
-}
+  commandRegistry.registerMany(defaultCommands);
+};

@@ -124,42 +124,42 @@ CalendarLayout (最上位)
 
 ```typescript
 interface CalendarLayoutProps {
-  children: React.ReactNode
-  className?: string
+  children: React.ReactNode;
+  className?: string;
 
   // Header props
-  viewType: CalendarViewType
-  currentDate: Date
-  onNavigate: (direction: 'prev' | 'next' | 'today') => void
-  onViewChange: (view: CalendarViewType) => void
+  viewType: CalendarViewType;
+  currentDate: Date;
+  onNavigate: (direction: 'prev' | 'next' | 'today') => void;
+  onViewChange: (view: CalendarViewType) => void;
 
   // Header actions
-  onSettings?: () => void
-  onExport?: () => void
-  onImport?: () => void
-  showHeaderActions?: boolean
+  onSettings?: () => void;
+  onExport?: () => void;
+  onImport?: () => void;
+  showHeaderActions?: boolean;
 
   // Sidebar props
-  showSidebar?: boolean
-  sidebarCollapsed?: boolean
-  onSidebarCollapsedChange?: (collapsed: boolean) => void
+  showSidebar?: boolean;
+  sidebarCollapsed?: boolean;
+  onSidebarCollapsedChange?: (collapsed: boolean) => void;
 
   // Calendar integration
-  selectedDate?: Date
-  onDateSelect?: (date: Date) => void
-  calendars?: Calendar[]
-  tags?: TagItem[]
+  selectedDate?: Date;
+  onDateSelect?: (date: Date) => void;
+  calendars?: Calendar[];
+  tags?: TagItem[];
 
   // Event handlers
-  onCreateEvent?: () => void
-  onCreateTask?: () => void
-  onCreateLog?: () => void
+  onCreateEvent?: () => void;
+  onCreateTask?: () => void;
+  onCreateLog?: () => void;
 
   // Display options
-  showMiniCalendar?: boolean
-  showCalendarList?: boolean
-  showTagFilter?: boolean
-  showQuickActions?: boolean
+  showMiniCalendar?: boolean;
+  showCalendarList?: boolean;
+  showTagFilter?: boolean;
+  showQuickActions?: boolean;
 }
 ```
 
@@ -198,15 +198,15 @@ interface CalendarLayoutProps {
 
 ```typescript
 interface CalendarHeaderProps {
-  viewType: CalendarViewType
-  currentDate: Date
-  onNavigate: (direction: 'prev' | 'next' | 'today') => void
-  onViewChange: (view: CalendarViewType) => void
-  leftSlot?: React.ReactNode // モバイルメニューボタン用
-  showActions?: boolean
-  onSettings?: () => void
-  onExport?: () => void
-  onImport?: () => void
+  viewType: CalendarViewType;
+  currentDate: Date;
+  onNavigate: (direction: 'prev' | 'next' | 'today') => void;
+  onViewChange: (view: CalendarViewType) => void;
+  leftSlot?: React.ReactNode; // モバイルメニューボタン用
+  showActions?: boolean;
+  onSettings?: () => void;
+  onExport?: () => void;
+  onImport?: () => void;
 }
 ```
 
@@ -347,15 +347,16 @@ interface CalendarHeaderProps {
 #### 1. レイアウトシステムの導入
 
 ```tsx
-import { CalendarLayout } from '@/features/calendar/components/layout'
-import { useCalendarLayout } from '@/features/calendar/hooks/ui'
+import { CalendarLayout } from '@/features/calendar/components/layout';
+import { useCalendarLayout } from '@/features/calendar/hooks/ui';
 
 export function MyCalendarPage() {
-  const { viewType, currentDate, navigateRelative, changeView, sidebarOpen, toggleSidebar } = useCalendarLayout({
-    initialViewType: 'week',
-    initialDate: new Date(),
-    persistSidebarState: true,
-  })
+  const { viewType, currentDate, navigateRelative, changeView, sidebarOpen, toggleSidebar } =
+    useCalendarLayout({
+      initialViewType: 'week',
+      initialDate: new Date(),
+      persistSidebarState: true,
+    });
 
   return (
     <CalendarLayout
@@ -370,7 +371,7 @@ export function MyCalendarPage() {
       {/* ビュー固有のコンテンツ */}
       <YourCalendarView />
     </CalendarLayout>
-  )
+  );
 }
 ```
 
@@ -381,15 +382,15 @@ export function MyCalendarPage() {
   // ... 基本Props
   onCreateEvent={() => {
     // イベント作成ロジック
-    openEventModal()
+    openEventModal();
   }}
   onCreateTask={() => {
     // タスク作成ロジック
-    openTaskModal()
+    openTaskModal();
   }}
   onDateSelect={(date) => {
     // 日付選択時のロジック
-    navigateToDate(date)
+    navigateToDate(date);
   }}
 />
 ```
@@ -436,7 +437,7 @@ export function CustomSidebarSection({ isExpanded, onToggle }) {
 
       {isExpanded && <div className="p-4">{/* カスタムコンテンツ */}</div>}
     </div>
-  )
+  );
 }
 ```
 
@@ -444,11 +445,13 @@ export function CustomSidebarSection({ isExpanded, onToggle }) {
 
 ```tsx
 // Sidebar.tsxに追加
-import { CustomSidebarSection } from './CustomSidebarSection'
+import { CustomSidebarSection } from './CustomSidebarSection';
 
 // Sidebarコンポーネント内
 {
-  showCustomSection && <CustomSidebarSection isExpanded={isExpanded('custom-section')} onToggle={toggleSection} />
+  showCustomSection && (
+    <CustomSidebarSection isExpanded={isExpanded('custom-section')} onToggle={toggleSection} />
+  );
 }
 ```
 
@@ -459,7 +462,7 @@ import { CustomSidebarSection } from './CustomSidebarSection'
 ```tsx
 // MyCustomView.tsx
 export function MyCustomView({ dateRange, events, onEventClick }) {
-  return <div className="custom-view">{/* ビューのコンテンツ */}</div>
+  return <div className="custom-view">{/* ビューのコンテンツ */}</div>;
 }
 ```
 
@@ -476,10 +479,10 @@ export function MyCustomView({ dateRange, events, onEventClick }) {
 ```tsx
 // カスタムフック
 export function useEnhancedCalendarLayout(options) {
-  const baseHook = useCalendarLayout(options)
+  const baseHook = useCalendarLayout(options);
 
   // 追加機能
-  const [customState, setCustomState] = useState()
+  const [customState, setCustomState] = useState();
 
   return {
     ...baseHook,
@@ -489,7 +492,7 @@ export function useEnhancedCalendarLayout(options) {
     customAction: () => {
       // カスタムロジック
     },
-  }
+  };
 }
 ```
 
@@ -505,7 +508,7 @@ export function useEnhancedCalendarLayout(options) {
 // コンポーネントのメモ化
 export const CalendarHeader = memo(({ viewType, currentDate, onNavigate }) => {
   // レンダリング最適化
-})
+});
 
 // 値のメモ化
 const memoizedProps = useMemo(
@@ -514,22 +517,22 @@ const memoizedProps = useMemo(
     currentDate,
     events: filteredEvents,
   }),
-  [viewType, currentDate, filteredEvents]
-)
+  [viewType, currentDate, filteredEvents],
+);
 ```
 
 #### 2. 仮想化の実装
 
 ```tsx
 // 大量データの仮想化
-import { FixedSizeList as List } from 'react-window'
+import { FixedSizeList as List } from 'react-window';
 
 export function VirtualizedEventList({ events }) {
   return (
     <List height={400} itemCount={events.length} itemSize={60}>
       {EventItem}
     </List>
-  )
+  );
 }
 ```
 
@@ -537,7 +540,7 @@ export function VirtualizedEventList({ events }) {
 
 ```tsx
 // 動的インポート
-const HeavyComponent = lazy(() => import('./HeavyComponent'))
+const HeavyComponent = lazy(() => import('./HeavyComponent'));
 
 // 条件付き読み込み
 {
@@ -545,7 +548,7 @@ const HeavyComponent = lazy(() => import('./HeavyComponent'))
     <Suspense fallback={<Loading />}>
       <HeavyComponent />
     </Suspense>
-  )
+  );
 }
 ```
 
@@ -564,24 +567,24 @@ useEffect(() => {
     if (e.metaKey || e.ctrlKey) {
       switch (e.key) {
         case 'ArrowLeft':
-          e.preventDefault()
-          navigateRelative('prev')
-          break
+          e.preventDefault();
+          navigateRelative('prev');
+          break;
         case 'ArrowRight':
-          e.preventDefault()
-          navigateRelative('next')
-          break
+          e.preventDefault();
+          navigateRelative('next');
+          break;
         case 't':
-          e.preventDefault()
-          navigateRelative('today')
-          break
+          e.preventDefault();
+          navigateRelative('today');
+          break;
       }
     }
-  }
+  };
 
-  window.addEventListener('keydown', handleKeyPress)
-  return () => window.removeEventListener('keydown', handleKeyPress)
-}, [navigateRelative])
+  window.addEventListener('keydown', handleKeyPress);
+  return () => window.removeEventListener('keydown', handleKeyPress);
+}, [navigateRelative]);
 ```
 
 #### 2. ARIA属性の適切な使用
@@ -636,7 +639,7 @@ useEffect(() => {
 const layoutState = useCalendarLayout({
   persistSidebarState: true, // ← これが重要
   sidebarStorageKey: 'my-app-sidebar', // カスタムキー
-})
+});
 ```
 
 #### 3. モバイルでサイドバーが動作しない
@@ -664,13 +667,13 @@ const layoutState = useCalendarLayout({
 // 1. イベントハンドラーのメモ化
 const handleViewChange = useCallback(
   (view) => {
-    changeView(view)
+    changeView(view);
   },
-  [changeView]
-)
+  [changeView],
+);
 
 // 2. 不要な再レンダリングの防止
-const MemoizedComponent = memo(Component)
+const MemoizedComponent = memo(Component);
 
 // 3. 仮想化の使用（大量データの場合）
 ```
@@ -683,10 +686,10 @@ const MemoizedComponent = memo(Component)
 
 ```tsx
 // 型定義のインポート
-import type { CalendarViewType, CalendarLayoutProps } from '@/features/calendar/types'
+import type { CalendarViewType, CalendarLayoutProps } from '@/features/calendar/types';
 
 // 適切な型注釈
-const viewType: CalendarViewType = 'week'
+const viewType: CalendarViewType = 'week';
 ```
 
 ---
@@ -713,7 +716,7 @@ const viewType: CalendarViewType = 'week'
      mobile: 48, // モバイル: 48px
      tablet: 60, // タブレット: 60px
      desktop: 72, // デスクトップ: 72px
-   })
+   });
    ```
 
 4. **2WeekViewの画面幅対応**
@@ -725,17 +728,17 @@ const viewType: CalendarViewType = 'week'
 
 ```typescript
 interface ScrollableCalendarLayoutProps {
-  children: React.ReactNode
-  header?: React.ReactNode // 統合ヘッダー
-  timezone?: string
-  scrollToHour?: number
-  showTimeColumn?: boolean
-  showCurrentTime?: boolean
-  showTimezone?: boolean // UTC表示制御
-  timeColumnWidth?: number
-  onTimeClick?: (hour: number, minute: number) => void
-  displayDates?: Date[]
-  viewMode?: 'day' | '3day' | 'week' | '2week'
+  children: React.ReactNode;
+  header?: React.ReactNode; // 統合ヘッダー
+  timezone?: string;
+  scrollToHour?: number;
+  showTimeColumn?: boolean;
+  showCurrentTime?: boolean;
+  showTimezone?: boolean; // UTC表示制御
+  timeColumnWidth?: number;
+  onTimeClick?: (hour: number, minute: number) => void;
+  displayDates?: Date[];
+  viewMode?: 'day' | '3day' | 'week' | '2week';
 }
 ```
 

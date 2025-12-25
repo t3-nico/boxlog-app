@@ -1,14 +1,25 @@
-'use client'
+'use client';
 
-import { MobileSettingsButtonGroup, MobileSettingsSection, MobileSettingsSheet } from '@/components/common'
-import { Button } from '@/components/ui/button'
-import type { ComparePeriod, PeriodType } from '@/features/stats/stores'
-import { useStatsPeriodStore } from '@/features/stats/stores'
-import { format, isSameDay } from 'date-fns'
-import { ja } from 'date-fns/locale'
-import { Calendar, ChevronLeft, ChevronRight, Download, GitCompareArrows, RotateCcw } from 'lucide-react'
-import { useTranslations } from 'next-intl'
-import { usePathname } from 'next/navigation'
+import {
+  MobileSettingsButtonGroup,
+  MobileSettingsSection,
+  MobileSettingsSheet,
+} from '@/components/common';
+import { Button } from '@/components/ui/button';
+import type { ComparePeriod, PeriodType } from '@/features/stats/stores';
+import { useStatsPeriodStore } from '@/features/stats/stores';
+import { format, isSameDay } from 'date-fns';
+import { ja } from 'date-fns/locale';
+import {
+  Calendar,
+  ChevronLeft,
+  ChevronRight,
+  Download,
+  GitCompareArrows,
+  RotateCcw,
+} from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { usePathname } from 'next/navigation';
 
 /**
  * モバイル用統計設定シート
@@ -25,10 +36,10 @@ import { usePathname } from 'next/navigation'
  * ```
  */
 export function MobileStatsSettingsSheet() {
-  const pathname = usePathname()
-  const localeFromPath = (pathname?.split('/')[1] || 'ja') as 'ja' | 'en'
-  const t = useTranslations()
-  const dateLocale = localeFromPath === 'ja' ? ja : undefined
+  const pathname = usePathname();
+  const localeFromPath = (pathname?.split('/')[1] || 'ja') as 'ja' | 'en';
+  const t = useTranslations();
+  const dateLocale = localeFromPath === 'ja' ? ja : undefined;
 
   const {
     periodType,
@@ -42,16 +53,16 @@ export function MobileStatsSettingsSheet() {
     goToCurrent,
     setCompareEnabled,
     setComparePeriod,
-  } = useStatsPeriodStore()
+  } = useStatsPeriodStore();
 
   // 日付範囲のフォーマット
   const formatDateRange = () => {
-    const formatOptions = dateLocale ? { locale: dateLocale } : {}
+    const formatOptions = dateLocale ? { locale: dateLocale } : {};
     if (isSameDay(startDate, endDate)) {
-      return format(startDate, 'M/d (E)', formatOptions)
+      return format(startDate, 'M/d (E)', formatOptions);
     }
-    return `${format(startDate, 'M/d', formatOptions)} - ${format(endDate, 'M/d', formatOptions)}`
-  }
+    return `${format(startDate, 'M/d', formatOptions)} - ${format(endDate, 'M/d', formatOptions)}`;
+  };
 
   // 期間タイプの選択肢
   const periodOptions: { value: PeriodType; label: string }[] = [
@@ -59,16 +70,16 @@ export function MobileStatsSettingsSheet() {
     { value: 'week', label: t('stats.toolbar.thisWeek') },
     { value: 'month', label: t('stats.toolbar.thisMonth') },
     { value: 'year', label: t('stats.toolbar.thisYear') },
-  ]
+  ];
 
   // 比較期間の選択肢
   const compareOptions: { value: ComparePeriod; label: string }[] = [
     { value: 'previous', label: t('stats.toolbar.previousPeriod') },
     { value: 'lastYear', label: t('stats.toolbar.lastYear') },
-  ]
+  ];
 
   // アクティブな設定があるかどうか（比較が有効な場合）
-  const hasActiveSettings = compareEnabled
+  const hasActiveSettings = compareEnabled;
 
   return (
     <MobileSettingsSheet title={t('stats.toolbar.settings')} hasActiveSettings={hasActiveSettings}>
@@ -91,7 +102,11 @@ export function MobileStatsSettingsSheet() {
 
       {/* 期間タイプ */}
       <MobileSettingsSection icon={<Calendar />} title={t('stats.toolbar.periodType')}>
-        <MobileSettingsButtonGroup options={periodOptions} value={periodType} onValueChange={setPeriodType} />
+        <MobileSettingsButtonGroup
+          options={periodOptions}
+          value={periodType}
+          onValueChange={setPeriodType}
+        />
       </MobileSettingsSection>
 
       {/* 比較設定 */}
@@ -118,12 +133,16 @@ export function MobileStatsSettingsSheet() {
       </MobileSettingsSection>
 
       {/* エクスポート */}
-      <MobileSettingsSection icon={<Download />} title={t('stats.toolbar.export')} showSeparator={false}>
+      <MobileSettingsSection
+        icon={<Download />}
+        title={t('stats.toolbar.export')}
+        showSeparator={false}
+      >
         <Button variant="outline" className="w-full gap-2">
           <Download className="size-4" />
           {t('stats.toolbar.exportData')}
         </Button>
       </MobileSettingsSection>
     </MobileSettingsSheet>
-  )
+  );
 }

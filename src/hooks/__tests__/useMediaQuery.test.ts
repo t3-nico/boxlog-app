@@ -1,6 +1,6 @@
-import { renderHook } from '@testing-library/react'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { useMediaQuery } from '../useMediaQuery'
+import { renderHook } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { useMediaQuery } from '../useMediaQuery';
 
 describe('useMediaQuery', () => {
   beforeEach(() => {
@@ -17,13 +17,13 @@ describe('useMediaQuery', () => {
         removeEventListener: vi.fn(),
         dispatchEvent: vi.fn(),
       })),
-    })
-  })
+    });
+  });
 
   it('should initialize with false for non-matching query', () => {
-    const { result } = renderHook(() => useMediaQuery('(min-width: 768px)'))
-    expect(result.current).toBe(false)
-  })
+    const { result } = renderHook(() => useMediaQuery('(min-width: 768px)'));
+    expect(result.current).toBe(false);
+  });
 
   it('should return true for matching query', () => {
     Object.defineProperty(window, 'matchMedia', {
@@ -38,23 +38,23 @@ describe('useMediaQuery', () => {
         removeEventListener: vi.fn(),
         dispatchEvent: vi.fn(),
       })),
-    })
+    });
 
-    const { result } = renderHook(() => useMediaQuery('(min-width: 768px)'))
-    expect(result.current).toBe(true)
-  })
+    const { result } = renderHook(() => useMediaQuery('(min-width: 768px)'));
+    expect(result.current).toBe(true);
+  });
 
   // SSRテストはhappy-dom環境では実行できないためスキップ
   it.skip('should handle SSR environment', () => {
     // windowをundefinedにシミュレート
-    const originalWindow = global.window
+    const originalWindow = global.window;
     // @ts-expect-error - テスト用にwindowをundefinedに
-    delete global.window
+    delete global.window;
 
-    const { result } = renderHook(() => useMediaQuery('(min-width: 768px)'))
-    expect(result.current).toBe(false)
+    const { result } = renderHook(() => useMediaQuery('(min-width: 768px)'));
+    expect(result.current).toBe(false);
 
     // 元に戻す
-    global.window = originalWindow
-  })
-})
+    global.window = originalWindow;
+  });
+});

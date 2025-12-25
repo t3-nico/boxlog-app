@@ -35,19 +35,19 @@ features/tasks/
 ```tsx
 // features/tasks/types.ts
 export interface Task {
-  id: string
-  title: string
-  description: string
-  status: 'todo' | 'in-progress' | 'done'
-  priority: 'low' | 'medium' | 'high'
-  createdAt: Date
-  updatedAt: Date
+  id: string;
+  title: string;
+  description: string;
+  status: 'todo' | 'in-progress' | 'done';
+  priority: 'low' | 'medium' | 'high';
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface TaskFilters {
-  status?: Task['status']
-  priority?: Task['priority']
-  searchQuery?: string
+  status?: Task['status'];
+  priority?: Task['priority'];
+  searchQuery?: string;
 }
 ```
 
@@ -55,17 +55,17 @@ export interface TaskFilters {
 
 ```tsx
 // features/tasks/stores/useTaskStore.ts
-import { create } from 'zustand'
-import { Task } from '../types'
+import { create } from 'zustand';
+import { Task } from '../types';
 
 interface TaskStore {
-  tasks: Task[]
-  filters: TaskFilters
-  fetchTasks: () => Promise<void>
-  addTask: (task: Omit<Task, 'id'>) => Promise<void>
-  updateTask: (id: string, updates: Partial<Task>) => Promise<void>
-  deleteTask: (id: string) => Promise<void>
-  setFilters: (filters: TaskFilters) => void
+  tasks: Task[];
+  filters: TaskFilters;
+  fetchTasks: () => Promise<void>;
+  addTask: (task: Omit<Task, 'id'>) => Promise<void>;
+  updateTask: (id: string, updates: Partial<Task>) => Promise<void>;
+  deleteTask: (id: string) => Promise<void>;
+  setFilters: (filters: TaskFilters) => void;
 }
 
 export const useTaskStore = create<TaskStore>((set, get) => ({
@@ -75,42 +75,42 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     // 実装
   },
   // ...
-}))
+}));
 ```
 
 ### Step 3: カスタムフック
 
 ```tsx
 // features/tasks/hooks/useTaskFilter.ts
-import { useMemo } from 'react'
-import { useTaskStore } from '../stores/useTaskStore'
+import { useMemo } from 'react';
+import { useTaskStore } from '../stores/useTaskStore';
 
 export const useTaskFilter = () => {
-  const { tasks, filters } = useTaskStore()
+  const { tasks, filters } = useTaskStore();
 
   const filteredTasks = useMemo(() => {
     return tasks.filter((task) => {
-      if (filters.status && task.status !== filters.status) return false
-      if (filters.priority && task.priority !== filters.priority) return false
-      if (filters.searchQuery && !task.title.includes(filters.searchQuery)) return false
-      return true
-    })
-  }, [tasks, filters])
+      if (filters.status && task.status !== filters.status) return false;
+      if (filters.priority && task.priority !== filters.priority) return false;
+      if (filters.searchQuery && !task.title.includes(filters.searchQuery)) return false;
+      return true;
+    });
+  }, [tasks, filters]);
 
-  return { filteredTasks }
-}
+  return { filteredTasks };
+};
 ```
 
 ### Step 4: UIコンポーネント
 
 ```tsx
 // features/tasks/components/TaskList.tsx
-import { useTaskFilter } from '../hooks/useTaskFilter'
-import { TaskCard } from './TaskCard'
+import { useTaskFilter } from '../hooks/useTaskFilter';
+import { TaskCard } from './TaskCard';
 
 // ✅ 推奨：関数宣言 + globals.cssのセマンティックトークン
 export function TaskList() {
-  const { filteredTasks } = useTaskFilter()
+  const { filteredTasks } = useTaskFilter();
 
   return (
     <div className="bg-background p-6">
@@ -118,7 +118,7 @@ export function TaskList() {
         <TaskCard key={task.id} task={task} />
       ))}
     </div>
-  )
+  );
 }
 ```
 
@@ -126,10 +126,10 @@ export function TaskList() {
 
 ```tsx
 // features/tasks/index.ts
-export { TaskList, TaskCard } from './components'
-export { useTaskStore } from './stores/useTaskStore'
-export { useTaskFilter } from './hooks/useTaskFilter'
-export type { Task, TaskFilters } from './types'
+export { TaskList, TaskCard } from './components';
+export { useTaskStore } from './stores/useTaskStore';
+export { useTaskFilter } from './hooks/useTaskFilter';
+export type { Task, TaskFilters } from './types';
 ```
 
 ---
@@ -140,37 +140,37 @@ export type { Task, TaskFilters } from './types'
 
 ```tsx
 // ✅ Zodスキーマ使用
-import { z } from 'zod'
+import { z } from 'zod';
 
 const taskSchema = z.object({
   title: z.string().min(1).max(100),
   status: z.enum(['todo', 'in_progress', 'done']),
-})
+});
 
 const createTask = async (taskData: Omit<Task, 'id'>) => {
   // バリデーション
-  const result = taskSchema.safeParse(taskData)
+  const result = taskSchema.safeParse(taskData);
   if (!result.success) {
-    throw new Error(result.error.message)
+    throw new Error(result.error.message);
   }
 
   // タスク作成
-  await api.createTask(result.data)
-}
+  await api.createTask(result.data);
+};
 ```
 
 ### 2. エラーハンドリング
 
 ```tsx
-import { AppError, ERROR_CODES } from '@/lib/errors'
+import { AppError, ERROR_CODES } from '@/lib/errors';
 
 try {
-  await createTask(taskData)
+  await createTask(taskData);
 } catch (error) {
   throw new AppError('タスク作成に失敗しました', ERROR_CODES.DATA_VALIDATION_ERROR, {
     context: { taskData },
     originalError: error,
-  })
+  });
 }
 ```
 
@@ -198,10 +198,10 @@ import { typography } from '@/config/ui/theme'
 
 ```tsx
 // features/tasks/components/TaskList.test.tsx
-import { describe, it, expect, beforeEach } from 'vitest'
-import { render, screen } from '@testing-library/react'
-import { TaskList } from './TaskList'
-import { useTaskStore } from '../stores/useTaskStore'
+import { describe, it, expect, beforeEach } from 'vitest';
+import { render, screen } from '@testing-library/react';
+import { TaskList } from './TaskList';
+import { useTaskStore } from '../stores/useTaskStore';
 
 describe('TaskList', () => {
   beforeEach(() => {
@@ -210,31 +210,31 @@ describe('TaskList', () => {
         { id: '1', title: 'Task 1', status: 'todo' },
         { id: '2', title: 'Task 2', status: 'done' },
       ],
-    })
-  })
+    });
+  });
 
   it('should render all tasks', () => {
-    render(<TaskList />)
-    expect(screen.getByText('Task 1')).toBeInTheDocument()
-    expect(screen.getByText('Task 2')).toBeInTheDocument()
-  })
-})
+    render(<TaskList />);
+    expect(screen.getByText('Task 1')).toBeInTheDocument();
+    expect(screen.getByText('Task 2')).toBeInTheDocument();
+  });
+});
 ```
 
 ### ストアテスト
 
 ```tsx
 // features/tasks/stores/useTaskStore.test.ts
-import { describe, it, expect } from 'vitest'
-import { useTaskStore } from './useTaskStore'
+import { describe, it, expect } from 'vitest';
+import { useTaskStore } from './useTaskStore';
 
 describe('useTaskStore', () => {
   it('should add task', () => {
-    const { addTask, tasks } = useTaskStore.getState()
-    addTask({ title: 'New Task', status: 'todo' })
-    expect(tasks).toHaveLength(1)
-  })
-})
+    const { addTask, tasks } = useTaskStore.getState();
+    addTask({ title: 'New Task', status: 'todo' });
+    expect(tasks).toHaveLength(1);
+  });
+});
 ```
 
 ---
@@ -245,19 +245,19 @@ describe('useTaskStore', () => {
 
 ```tsx
 // ✅ 許可：共通モジュール
-import { colors } from '@/config/theme'
-import { useAuth } from '@/features/auth/hooks/useAuth'
+import { colors } from '@/config/theme';
+import { useAuth } from '@/features/auth/hooks/useAuth';
 
 // ✅ 許可：上位の共通処理
-import { api } from '@/lib/api'
-import { z } from 'zod'
+import { api } from '@/lib/api';
+import { z } from 'zod';
 ```
 
 ### 禁止される依存
 
 ```tsx
 // ❌ 禁止：他の機能モジュールへの直接依存
-import { SomeComponent } from '@/features/other-feature/components'
+import { SomeComponent } from '@/features/other-feature/components';
 ```
 
 ---

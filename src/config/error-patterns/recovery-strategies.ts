@@ -3,51 +3,51 @@
  * エラーカテゴリ別の自動リトライ・復旧ロジックを提供
  */
 
-import { ErrorCategory, ErrorCode, getErrorCategory } from './categories'
+import { ErrorCategory, ErrorCode, getErrorCategory } from './categories';
 
 /**
  * リトライ戦略の設定
  */
 export interface RetryStrategy {
-  enabled: boolean // リトライを有効にするか
-  maxAttempts: number // 最大試行回数
-  baseDelay: number // 基本待機時間（ミリ秒）
-  maxDelay: number // 最大待機時間（ミリ秒）
-  backoffMultiplier: number // 指数バックオフの乗数
-  jitter: boolean // ジッタ（ランダム要素）を追加するか
-  retryCondition?: (error: Error) => boolean // リトライ条件
+  enabled: boolean; // リトライを有効にするか
+  maxAttempts: number; // 最大試行回数
+  baseDelay: number; // 基本待機時間（ミリ秒）
+  maxDelay: number; // 最大待機時間（ミリ秒）
+  backoffMultiplier: number; // 指数バックオフの乗数
+  jitter: boolean; // ジッタ（ランダム要素）を追加するか
+  retryCondition?: (error: Error) => boolean; // リトライ条件
 }
 
 /**
  * サーキットブレーカーの設定
  */
 export interface CircuitBreakerConfig {
-  enabled: boolean // サーキットブレーカーを有効にするか
-  failureThreshold: number // 失敗閾値（この回数失敗でOPEN）
-  recoveryTimeout: number // 復旧タイムアウト（ミリ秒）
-  successThreshold: number // 成功閾値（この回数成功でCLOSED）
-  monitoringPeriod: number // 監視期間（ミリ秒）
+  enabled: boolean; // サーキットブレーカーを有効にするか
+  failureThreshold: number; // 失敗閾値（この回数失敗でOPEN）
+  recoveryTimeout: number; // 復旧タイムアウト（ミリ秒）
+  successThreshold: number; // 成功閾値（この回数成功でCLOSED）
+  monitoringPeriod: number; // 監視期間（ミリ秒）
 }
 
 /**
  * フォールバック戦略
  */
 export interface FallbackStrategy {
-  enabled: boolean // フォールバックを有効にするか
-  handler: () => Promise<unknown> // フォールバック処理関数
-  timeout?: number // フォールバックのタイムアウト
+  enabled: boolean; // フォールバックを有効にするか
+  handler: () => Promise<unknown>; // フォールバック処理関数
+  timeout?: number; // フォールバックのタイムアウト
 }
 
 /**
  * 復旧戦略の完全な設定
  */
 export interface RecoveryStrategy {
-  retry: RetryStrategy
-  circuitBreaker: CircuitBreakerConfig
-  fallback?: FallbackStrategy
-  autoRecovery: boolean // 自動復旧を試行するか
-  userNotification: boolean // ユーザーに通知するか
-  logLevel: 'debug' | 'info' | 'warn' | 'error' // ログレベル
+  retry: RetryStrategy;
+  circuitBreaker: CircuitBreakerConfig;
+  fallback?: FallbackStrategy;
+  autoRecovery: boolean; // 自動復旧を試行するか
+  userNotification: boolean; // ユーザーに通知するか
+  logLevel: 'debug' | 'info' | 'warn' | 'error'; // ログレベル
 }
 
 /**
@@ -72,7 +72,7 @@ const AUTH_RECOVERY_STRATEGY: RecoveryStrategy = {
   autoRecovery: false, // 手動対応が必要
   userNotification: true, // ユーザーに明確に通知
   logLevel: 'warn',
-}
+};
 
 /**
  * バリデーションエラー用復旧戦略
@@ -96,7 +96,7 @@ const VALIDATION_RECOVERY_STRATEGY: RecoveryStrategy = {
   autoRecovery: false, // ユーザー入力修正が必要
   userNotification: true, // 入力エラーを明確に通知
   logLevel: 'info',
-}
+};
 
 /**
  * データベースエラー用復旧戦略
@@ -112,8 +112,10 @@ const DB_RECOVERY_STRATEGY: RecoveryStrategy = {
     retryCondition: (error) => {
       // 接続エラーやタイムアウトのみリトライ
       return (
-        error.message.includes('connection') || error.message.includes('timeout') || error.message.includes('deadlock')
-      )
+        error.message.includes('connection') ||
+        error.message.includes('timeout') ||
+        error.message.includes('deadlock')
+      );
     },
   },
   circuitBreaker: {
@@ -126,7 +128,7 @@ const DB_RECOVERY_STRATEGY: RecoveryStrategy = {
   autoRecovery: true, // 自動復旧を試行
   userNotification: true, // 問題を透明性を持って通知
   logLevel: 'error',
-}
+};
 
 /**
  * ビジネスロジックエラー用復旧戦略
@@ -150,7 +152,7 @@ const BIZ_RECOVERY_STRATEGY: RecoveryStrategy = {
   autoRecovery: false, // ユーザー操作が必要
   userNotification: true, // ビジネスルール説明を通知
   logLevel: 'info',
-}
+};
 
 /**
  * 外部サービスエラー用復旧戦略
@@ -169,7 +171,7 @@ const EXTERNAL_RECOVERY_STRATEGY: RecoveryStrategy = {
         !error.message.includes('authentication') &&
         !error.message.includes('authorization') &&
         !error.message.includes('forbidden')
-      )
+      );
     },
   },
   circuitBreaker: {
@@ -183,14 +185,14 @@ const EXTERNAL_RECOVERY_STRATEGY: RecoveryStrategy = {
     enabled: true,
     handler: async () => {
       // キャッシュされたデータや代替サービスを使用
-      return null
+      return null;
     },
     timeout: 5000,
   },
   autoRecovery: true, // フォールバック含む自動復旧
   userNotification: true, // 外部サービス問題を通知
   logLevel: 'warn',
-}
+};
 
 /**
  * システムエラー用復旧戦略
@@ -209,7 +211,7 @@ const SYSTEM_RECOVERY_STRATEGY: RecoveryStrategy = {
         error.message.includes('temporary') ||
         error.message.includes('unavailable') ||
         error.message.includes('timeout')
-      )
+      );
     },
   },
   circuitBreaker: {
@@ -222,7 +224,7 @@ const SYSTEM_RECOVERY_STRATEGY: RecoveryStrategy = {
   autoRecovery: true, // 自動復旧を試行
   userNotification: true, // システム問題を通知
   logLevel: 'error',
-}
+};
 
 /**
  * レート制限エラー用復旧戦略
@@ -247,7 +249,7 @@ const RATE_RECOVERY_STRATEGY: RecoveryStrategy = {
   autoRecovery: true, // 自動的に待機してリトライ
   userNotification: false, // ユーザーには透明に処理
   logLevel: 'debug',
-}
+};
 
 /**
  * カテゴリ別復旧戦略マップ
@@ -260,14 +262,14 @@ export const RECOVERY_STRATEGIES: Record<ErrorCategory, RecoveryStrategy> = {
   EXTERNAL: EXTERNAL_RECOVERY_STRATEGY,
   SYSTEM: SYSTEM_RECOVERY_STRATEGY,
   RATE: RATE_RECOVERY_STRATEGY,
-}
+};
 
 /**
  * エラーコードから復旧戦略を取得
  */
 export function getRecoveryStrategy(errorCode: ErrorCode): RecoveryStrategy {
-  const category = getErrorCategory(errorCode)
-  return RECOVERY_STRATEGIES[category]
+  const category = getErrorCategory(errorCode);
+  return RECOVERY_STRATEGIES[category];
 }
 
 /**
@@ -278,19 +280,19 @@ export function calculateDelay(
   baseDelay: number,
   maxDelay: number,
   backoffMultiplier: number,
-  jitter: boolean = false
+  jitter: boolean = false,
 ): number {
-  let delay = baseDelay * Math.pow(backoffMultiplier, attempt - 1)
-  delay = Math.min(delay, maxDelay)
+  let delay = baseDelay * Math.pow(backoffMultiplier, attempt - 1);
+  delay = Math.min(delay, maxDelay);
 
   if (jitter) {
     // ±25%のランダム要素を追加
-    const jitterFactor = 0.25
-    const randomFactor = 1 + (Math.random() - 0.5) * 2 * jitterFactor
-    delay *= randomFactor
+    const jitterFactor = 0.25;
+    const randomFactor = 1 + (Math.random() - 0.5) * 2 * jitterFactor;
+    delay *= randomFactor;
   }
 
-  return Math.floor(delay)
+  return Math.floor(delay);
 }
 
 /**
@@ -299,24 +301,24 @@ export function calculateDelay(
 export async function executeWithRetry<T>(
   operation: () => Promise<T>,
   strategy: RetryStrategy,
-  errorCode?: ErrorCode
+  errorCode?: ErrorCode,
 ): Promise<T> {
-  let lastError: Error
+  let lastError: Error;
 
   for (let attempt = 1; attempt <= strategy.maxAttempts; attempt++) {
     try {
-      return await operation()
+      return await operation();
     } catch (error) {
-      lastError = error as Error
+      lastError = error as Error;
 
       // 最後の試行の場合はエラーを投げる
       if (attempt === strategy.maxAttempts) {
-        throw lastError
+        throw lastError;
       }
 
       // リトライ条件をチェック
       if (strategy.retryCondition && !strategy.retryCondition(lastError)) {
-        throw lastError
+        throw lastError;
       }
 
       // 待機時間を計算
@@ -325,95 +327,97 @@ export async function executeWithRetry<T>(
         strategy.baseDelay,
         strategy.maxDelay,
         strategy.backoffMultiplier,
-        strategy.jitter
-      )
+        strategy.jitter,
+      );
 
       // ログ出力
-      console.log(`Retry attempt ${attempt}/${strategy.maxAttempts} for error code ${errorCode}, waiting ${delay}ms`)
+      console.log(
+        `Retry attempt ${attempt}/${strategy.maxAttempts} for error code ${errorCode}, waiting ${delay}ms`,
+      );
 
       // 待機
-      await new Promise((resolve) => setTimeout(resolve, delay))
+      await new Promise((resolve) => setTimeout(resolve, delay));
     }
   }
 
-  throw lastError!
+  throw lastError!;
 }
 
 /**
  * サーキットブレーカーの状態
  */
-export type CircuitBreakerState = 'CLOSED' | 'OPEN' | 'HALF_OPEN'
+export type CircuitBreakerState = 'CLOSED' | 'OPEN' | 'HALF_OPEN';
 
 /**
  * サーキットブレーカーのメトリクス
  */
 export interface CircuitBreakerMetrics {
-  state: CircuitBreakerState
-  failureCount: number
-  successCount: number
-  lastFailureTime: number
-  nextAttemptTime: number
+  state: CircuitBreakerState;
+  failureCount: number;
+  successCount: number;
+  lastFailureTime: number;
+  nextAttemptTime: number;
 }
 
 /**
  * サーキットブレーカー実装
  */
 export class CircuitBreaker {
-  private state: CircuitBreakerState = 'CLOSED'
-  private failureCount = 0
-  private successCount = 0
-  private lastFailureTime = 0
-  private nextAttemptTime = 0
+  private state: CircuitBreakerState = 'CLOSED';
+  private failureCount = 0;
+  private successCount = 0;
+  private lastFailureTime = 0;
+  private nextAttemptTime = 0;
 
   constructor(private config: CircuitBreakerConfig) {}
 
   async execute<T>(operation: () => Promise<T>): Promise<T> {
     if (!this.config.enabled) {
-      return await operation()
+      return await operation();
     }
 
     if (this.state === 'OPEN') {
       if (Date.now() < this.nextAttemptTime) {
-        throw new Error('Circuit breaker is OPEN')
+        throw new Error('Circuit breaker is OPEN');
       }
-      this.state = 'HALF_OPEN'
-      this.successCount = 0
+      this.state = 'HALF_OPEN';
+      this.successCount = 0;
     }
 
     try {
-      const result = await operation()
-      this.onSuccess()
-      return result
+      const result = await operation();
+      this.onSuccess();
+      return result;
     } catch (error) {
-      this.onFailure()
-      throw error
+      this.onFailure();
+      throw error;
     }
   }
 
   private onSuccess(): void {
-    this.failureCount = 0
+    this.failureCount = 0;
 
     if (this.state === 'HALF_OPEN') {
-      this.successCount++
+      this.successCount++;
       if (this.successCount >= this.config.successThreshold) {
-        this.state = 'CLOSED'
-        this.successCount = 0
+        this.state = 'CLOSED';
+        this.successCount = 0;
       }
     }
   }
 
   private onFailure(): void {
-    this.failureCount++
-    this.lastFailureTime = Date.now()
+    this.failureCount++;
+    this.lastFailureTime = Date.now();
 
     if (this.failureCount >= this.config.failureThreshold) {
-      this.state = 'OPEN'
-      this.nextAttemptTime = Date.now() + this.config.recoveryTimeout
+      this.state = 'OPEN';
+      this.nextAttemptTime = Date.now() + this.config.recoveryTimeout;
     }
   }
 
   getState(): CircuitBreakerState {
-    return this.state
+    return this.state;
   }
 
   getMetrics(): CircuitBreakerMetrics {
@@ -423,30 +427,35 @@ export class CircuitBreaker {
       successCount: this.successCount,
       lastFailureTime: this.lastFailureTime,
       nextAttemptTime: this.nextAttemptTime,
-    }
+    };
   }
 }
 
 /**
  * フォールバック実行関数
  */
-export async function executeWithFallback<T>(primary: () => Promise<T>, fallback: FallbackStrategy): Promise<T> {
+export async function executeWithFallback<T>(
+  primary: () => Promise<T>,
+  fallback: FallbackStrategy,
+): Promise<T> {
   if (!fallback.enabled) {
-    return await primary()
+    return await primary();
   }
 
   try {
-    return await primary()
+    return await primary();
   } catch (error) {
-    console.log('Primary operation failed, executing fallback')
+    console.log('Primary operation failed, executing fallback');
 
     if (fallback.timeout) {
       return (await Promise.race([
         fallback.handler(),
-        new Promise<never>((_, reject) => setTimeout(() => reject(new Error('Fallback timeout')), fallback.timeout)),
-      ])) as T
+        new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error('Fallback timeout')), fallback.timeout),
+        ),
+      ])) as T;
     }
 
-    return (await fallback.handler()) as T
+    return (await fallback.handler()) as T;
   }
 }

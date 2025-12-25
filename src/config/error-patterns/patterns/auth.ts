@@ -2,9 +2,9 @@
  * 1000番台: 認証・セキュリティ系エラーパターン
  */
 
-import { ERROR_CODES } from '@/constants/errorCodes'
+import { ERROR_CODES } from '@/constants/errorCodes';
 
-import type { ErrorMessagePattern } from '../types'
+import type { ErrorMessagePattern } from '../types';
 
 export const AUTH_ERROR_PATTERNS: Record<number, ErrorMessagePattern> = {
   [ERROR_CODES.AUTH_INVALID_TOKEN]: {
@@ -60,7 +60,11 @@ export const AUTH_ERROR_PATTERNS: Record<number, ErrorMessagePattern> = {
     userFriendly: '操作時間が長すぎたため、セッションが切れました',
     short: 'セッションタイムアウト',
     description: 'セキュリティのため、長時間操作がないとセッションが自動終了します。',
-    recommendedActions: ['「続行」ボタンをクリック', '再度ログイン', '今後は定期的に画面を操作してください'],
+    recommendedActions: [
+      '「続行」ボタンをクリック',
+      '再度ログイン',
+      '今後は定期的に画面を操作してください',
+    ],
     autoRecoverable: true,
     urgency: 'warning',
     emoji: '⏳',
@@ -81,4 +85,4 @@ export const AUTH_ERROR_PATTERNS: Record<number, ErrorMessagePattern> = {
     emoji: '❌',
     faqIds: ['auth-004'],
   },
-}
+};

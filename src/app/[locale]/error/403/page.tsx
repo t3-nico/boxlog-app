@@ -1,13 +1,13 @@
-'use client'
+'use client';
 
-import { Button } from '@/components/ui/button'
-import { useTranslations } from 'next-intl'
-import Image from 'next/image'
-import { useRouter } from 'next/navigation'
+import { Button } from '@/components/ui/button';
+import { useTranslations } from 'next-intl';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 export default function ForbiddenPage() {
-  const router = useRouter()
-  const t = useTranslations()
+  const router = useRouter();
+  const t = useTranslations();
 
   return (
     <div className="mx-auto flex min-h-dvh flex-col items-center justify-center gap-8 p-8 md:gap-12 md:p-16">
@@ -36,5 +36,5 @@ export default function ForbiddenPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

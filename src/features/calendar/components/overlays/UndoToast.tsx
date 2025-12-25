@@ -1,135 +1,138 @@
-'use client'
+'use client';
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react';
 
-import { RotateCcw, Undo2, X } from 'lucide-react'
+import { RotateCcw, Undo2, X } from 'lucide-react';
 
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
-import { cn } from '@/lib/utils'
-import { useTranslations } from 'next-intl'
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
+import { cn } from '@/lib/utils';
+import { useTranslations } from 'next-intl';
 
 interface UndoAction {
-  id: string
-  type: 'create' | 'delete' | 'edit' | 'move'
-  description: string
+  id: string;
+  type: 'create' | 'delete' | 'edit' | 'move';
+  description: string;
   data:
     | CalendarPlan
     | {
-        eventId: string
-        oldPosition?: { startTime: Date; endTime: Date }
-        newPosition?: { startTime: Date; endTime: Date }
-      }
-  timestamp: number
+        eventId: string;
+        oldPosition?: { startTime: Date; endTime: Date };
+        newPosition?: { startTime: Date; endTime: Date };
+      };
+  timestamp: number;
 }
 
 interface UndoToastProps {
-  action: UndoAction | null
-  onUndo: (action: UndoAction) => void
-  onDismiss: () => void
-  autoHideDelay?: number
+  action: UndoAction | null;
+  onUndo: (action: UndoAction) => void;
+  onDismiss: () => void;
+  autoHideDelay?: number;
 }
 
 export const UndoToast = ({ action, onUndo, onDismiss, autoHideDelay = 5000 }: UndoToastProps) => {
-  const t = useTranslations()
-  const [isVisible, setIsVisible] = useState(false)
-  const [progress, setProgress] = useState(100)
+  const t = useTranslations();
+  const [isVisible, setIsVisible] = useState(false);
+  const [progress, setProgress] = useState(100);
 
   const handleUndo = useCallback(() => {
     if (action) {
-      onUndo(action)
-      setIsVisible(false)
+      onUndo(action);
+      setIsVisible(false);
     }
-  }, [action, onUndo])
+  }, [action, onUndo]);
 
   const handleDismiss = useCallback(() => {
-    setIsVisible(false)
+    setIsVisible(false);
     setTimeout(() => {
-      onDismiss()
-    }, 200) // アニメーション完了を待つ
-  }, [onDismiss])
+      onDismiss();
+    }, 200); // アニメーション完了を待つ
+  }, [onDismiss]);
 
   useEffect(() => {
     if (action) {
-      setIsVisible(true)
+      setIsVisible(true);
 
-      setProgress(100)
+      setProgress(100);
 
       // プログレスバーのアニメーション
-      const startTime = Date.now()
+      const startTime = Date.now();
       const updateProgress = () => {
-        const elapsed = Date.now() - startTime
-        const remaining = Math.max(0, autoHideDelay - elapsed)
-        const newProgress = (remaining / autoHideDelay) * 100
+        const elapsed = Date.now() - startTime;
+        const remaining = Math.max(0, autoHideDelay - elapsed);
+        const newProgress = (remaining / autoHideDelay) * 100;
 
-        setProgress(newProgress)
+        setProgress(newProgress);
 
         if (remaining > 0) {
-          requestAnimationFrame(updateProgress)
+          requestAnimationFrame(updateProgress);
         } else {
-          handleDismiss()
+          handleDismiss();
         }
-      }
+      };
 
-      requestAnimationFrame(updateProgress)
+      requestAnimationFrame(updateProgress);
     } else {
-      setIsVisible(false)
+      setIsVisible(false);
     }
-  }, [action, autoHideDelay, handleDismiss])
+  }, [action, autoHideDelay, handleDismiss]);
 
   // キーボードショートカット
   useEffect(() => {
-    if (!action) return
+    if (!action) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'z' && (e.ctrlKey || e.metaKey) && !e.shiftKey) {
-        e.preventDefault()
-        handleUndo()
+        e.preventDefault();
+        handleUndo();
       }
       if (e.key === 'Escape') {
-        e.preventDefault()
-        handleDismiss()
+        e.preventDefault();
+        handleDismiss();
       }
-    }
+    };
 
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [action, handleUndo, handleDismiss])
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [action, handleUndo, handleDismiss]);
 
-  if (!action) return null
+  if (!action) return null;
 
   return (
     <div
       className={cn(
         'fixed bottom-4 left-1/2 z-50 -translate-x-1/2 transform',
         'transition-all duration-200 ease-out',
-        isVisible ? 'translate-y-0 scale-100 opacity-100' : 'translate-y-2 scale-95 opacity-0'
+        isVisible ? 'translate-y-0 scale-100 opacity-100' : 'translate-y-2 scale-95 opacity-0',
       )}
     >
       <div className="border-border bg-popover text-popover-foreground min-w-80 overflow-hidden rounded-lg border shadow-2xl">
         {/* プログレスバー */}
-        <div className="bg-primary h-1 transition-all duration-100 ease-linear" style={{ width: `${progress}%` }} />
+        <div
+          className="bg-primary h-1 transition-all duration-100 ease-linear"
+          style={{ width: `${progress}%` }}
+        />
 
         <div className="flex items-center gap-3 p-4">
           {/* アイコン */}
           <div className="flex-shrink-0">
             {action.type === 'create' && (
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-green-500/20">
-                <span className="text-sm text-green-400">+</span>
+              <div className="bg-success/20 flex h-8 w-8 items-center justify-center rounded-full">
+                <span className="text-success text-sm">+</span>
               </div>
             )}
             {action.type === 'delete' && (
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-red-500/20">
-                <X className="h-4 w-4 text-red-400" />
+              <div className="bg-destructive/20 flex h-8 w-8 items-center justify-center rounded-full">
+                <X className="text-destructive h-4 w-4" />
               </div>
             )}
             {action.type === 'edit' && (
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500/20">
-                <span className="text-sm text-blue-400">✏️</span>
+              <div className="bg-primary/20 flex h-8 w-8 items-center justify-center rounded-full">
+                <span className="text-primary text-sm">✏️</span>
               </div>
             )}
             {action.type === 'move' && (
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-purple-500/20">
-                <RotateCcw className="h-4 w-4 text-purple-400" />
+              <div className="bg-accent flex h-8 w-8 items-center justify-center rounded-full">
+                <RotateCcw className="text-accent-foreground h-4 w-4" />
               </div>
             )}
           </div>
@@ -137,7 +140,9 @@ export const UndoToast = ({ action, onUndo, onDismiss, autoHideDelay = 5000 }: U
           {/* メッセージ */}
           <div className="min-w-0 flex-1">
             <p className="text-foreground text-sm font-medium">{action.description}</p>
-            <p className="text-muted-foreground mt-1 text-xs">{t('calendar.undoToast.undoShortcut')}</p>
+            <p className="text-muted-foreground mt-1 text-xs">
+              {t('calendar.undoToast.undoShortcut')}
+            </p>
           </div>
 
           {/* アクション */}
@@ -149,7 +154,7 @@ export const UndoToast = ({ action, onUndo, onDismiss, autoHideDelay = 5000 }: U
                 'inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium',
                 'bg-primary text-primary-foreground rounded-md',
                 'hover:bg-primary-hover focus:ring-primary/50 focus:ring-2 focus:outline-none',
-                'transition-colors duration-150'
+                'transition-colors duration-150',
               )}
             >
               <Undo2 className="h-3 w-3" />
@@ -162,7 +167,7 @@ export const UndoToast = ({ action, onUndo, onDismiss, autoHideDelay = 5000 }: U
               className={cn(
                 'text-muted-foreground hover:text-foreground rounded-md p-2',
                 'hover:bg-state-hover focus:ring-ring focus:ring-2 focus:outline-none',
-                'transition-colors duration-150'
+                'transition-colors duration-150',
               )}
             >
               <X className="h-4 w-4" />
@@ -171,40 +176,40 @@ export const UndoToast = ({ action, onUndo, onDismiss, autoHideDelay = 5000 }: U
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
 // Undoアクション管理用のhook
 export function useUndoManager() {
-  const [undoStack, setUndoStack] = useState<UndoAction[]>([])
-  const [currentAction, setCurrentAction] = useState<UndoAction | null>(null)
+  const [undoStack, setUndoStack] = useState<UndoAction[]>([]);
+  const [currentAction, setCurrentAction] = useState<UndoAction | null>(null);
 
   const addAction = useCallback((action: Omit<UndoAction, 'id' | 'timestamp'>) => {
     const newAction: UndoAction = {
       ...action,
       id: `undo_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       timestamp: Date.now(),
-    }
+    };
 
     setUndoStack((prev) => {
       // 最大10個のアクションを保持
-      const newStack = [newAction, ...prev].slice(0, 10)
-      return newStack
-    })
+      const newStack = [newAction, ...prev].slice(0, 10);
+      return newStack;
+    });
 
-    setCurrentAction(newAction)
-  }, [])
+    setCurrentAction(newAction);
+  }, []);
 
   const performUndo = useCallback((action: UndoAction) => {
-    setCurrentAction(null)
-    return action
-  }, [])
+    setCurrentAction(null);
+    return action;
+  }, []);
 
   const dismissCurrent = useCallback(() => {
-    setCurrentAction(null)
-  }, [])
+    setCurrentAction(null);
+  }, []);
 
-  const canUndo = undoStack.length > 0
+  const canUndo = undoStack.length > 0;
 
   return {
     currentAction,
@@ -213,7 +218,7 @@ export function useUndoManager() {
     performUndo,
     dismissCurrent,
     undoStack,
-  }
+  };
 }
 
 // 具体的なアクション生成ヘルパー
@@ -232,16 +237,19 @@ export const createUndoActions = {
 
   eventMoved: (
     plan: CalendarPlan,
-    _oldData: { startDate: Date; endDate?: Date }
+    _oldData: { startDate: Date; endDate?: Date },
   ): Omit<UndoAction, 'id' | 'timestamp'> => ({
     type: 'move',
     description: `Moved "${plan.title}"`,
     data: plan,
   }),
 
-  eventEdited: (plan: CalendarPlan, _oldData: Partial<CalendarPlan>): Omit<UndoAction, 'id' | 'timestamp'> => ({
+  eventEdited: (
+    plan: CalendarPlan,
+    _oldData: Partial<CalendarPlan>,
+  ): Omit<UndoAction, 'id' | 'timestamp'> => ({
     type: 'edit',
     description: `Edited "${plan.title}"`,
     data: plan,
   }),
-}
+};

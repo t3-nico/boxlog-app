@@ -1,25 +1,25 @@
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { cn } from '@/lib/utils'
-import { useSortable } from '@dnd-kit/sortable'
-import { CSS } from '@dnd-kit/utilities'
-import { AlertCircle, MoreHorizontal } from 'lucide-react'
-import { useTranslations } from 'next-intl'
-import type { KanbanCard as KanbanCardType } from '../../types'
+} from '@/components/ui/dropdown-menu';
+import { cn } from '@/lib/utils';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { AlertCircle, MoreHorizontal } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import type { KanbanCard as KanbanCardType } from '../../types';
 
 interface KanbanCardProps {
-  card: KanbanCardType
-  columnId: string
-  index: number
-  onEdit?: ((card: KanbanCardType) => void) | undefined
-  onDelete?: ((cardId: string) => void) | undefined
-  isDragging?: boolean | undefined
+  card: KanbanCardType;
+  columnId: string;
+  index: number;
+  onEdit?: ((card: KanbanCardType) => void) | undefined;
+  onDelete?: ((cardId: string) => void) | undefined;
+  isDragging?: boolean | undefined;
 }
 
 /**
@@ -31,8 +31,15 @@ interface KanbanCardProps {
  * 3. Tags（カラー付き）
  * 4. 優先順位
  */
-export function KanbanCard({ card, columnId, index, onEdit, onDelete, isDragging = false }: KanbanCardProps) {
-  const t = useTranslations()
+export function KanbanCard({
+  card,
+  columnId,
+  index,
+  onEdit,
+  onDelete,
+  isDragging = false,
+}: KanbanCardProps) {
+  const t = useTranslations();
   const {
     attributes,
     listeners,
@@ -47,55 +54,55 @@ export function KanbanCard({ card, columnId, index, onEdit, onDelete, isDragging
       columnId,
       index,
     },
-  })
+  });
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-  }
+  };
 
   // 優先度ラベル
   const priorityLabel: Record<'low' | 'medium' | 'high', string> = {
     low: '低',
     medium: '中',
     high: '高',
-  }
+  };
 
   // 優先度の色（M3準拠セマンティックトークン）
   const priorityColor: Record<'low' | 'medium' | 'high', string> = {
     low: 'bg-primary-container text-primary border-primary',
     medium: 'bg-warning/10 text-warning-foreground border-warning',
     high: 'bg-destructive/10 text-destructive border-destructive',
-  }
+  };
 
   // 時間フォーマット関数
   const formatDateTime = () => {
-    if (!card.dueDate && !card.startTime && !card.endTime) return null
+    if (!card.dueDate && !card.startTime && !card.endTime) return null;
 
-    const parts: string[] = []
+    const parts: string[] = [];
 
     // 日付
     if (card.dueDate) {
-      const date = new Date(card.dueDate)
-      parts.push(date.toLocaleDateString('ja-JP', { month: 'short', day: 'numeric' }))
+      const date = new Date(card.dueDate);
+      parts.push(date.toLocaleDateString('ja-JP', { month: 'short', day: 'numeric' }));
     }
 
     // 時間範囲
     if (card.startTime && card.endTime) {
-      const start = new Date(card.startTime)
-      const end = new Date(card.endTime)
+      const start = new Date(card.startTime);
+      const end = new Date(card.endTime);
       parts.push(
-        `${start.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })}-${end.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })}`
-      )
+        `${start.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })}-${end.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })}`,
+      );
     } else if (card.startTime) {
-      const start = new Date(card.startTime)
-      parts.push(start.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' }))
+      const start = new Date(card.startTime);
+      parts.push(start.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' }));
     }
 
-    return parts.join(' ')
-  }
+    return parts.join(' ');
+  };
 
-  const timeDisplay = formatDateTime()
+  const timeDisplay = formatDateTime();
 
   return (
     <div
@@ -106,7 +113,7 @@ export function KanbanCard({ card, columnId, index, onEdit, onDelete, isDragging
         'border-border cursor-pointer border',
         (isDragging || isSortableDragging) && 'opacity-50 shadow-lg',
         card.isBlocked && 'border-l-destructive border-l-4',
-        'touch-none'
+        'touch-none',
       )}
       {...attributes}
       {...listeners}
@@ -116,7 +123,9 @@ export function KanbanCard({ card, columnId, index, onEdit, onDelete, isDragging
         <div className="bg-destructive/10 flex items-center gap-1.5 rounded px-2 py-1">
           <AlertCircle className="text-destructive size-3" />
           <span className="text-destructive text-xs font-medium">ブロック中</span>
-          {card.blockedReason && <span className="text-muted-foreground text-xs">: {card.blockedReason}</span>}
+          {card.blockedReason && (
+            <span className="text-muted-foreground text-xs">: {card.blockedReason}</span>
+          )}
         </div>
       )}
 
@@ -137,7 +146,10 @@ export function KanbanCard({ card, columnId, index, onEdit, onDelete, isDragging
             <DropdownMenuItem onClick={() => onEdit?.(card)}>編集</DropdownMenuItem>
             <DropdownMenuItem>複製</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={() => onDelete?.(card.id)}>
+            <DropdownMenuItem
+              className="text-destructive focus:text-destructive"
+              onClick={() => onDelete?.(card.id)}
+            >
               削除
             </DropdownMenuItem>
           </DropdownMenuContent>
@@ -148,7 +160,9 @@ export function KanbanCard({ card, columnId, index, onEdit, onDelete, isDragging
       <div className="pr-6">
         <h3 className="text-foreground flex items-baseline gap-2 text-sm leading-tight font-medium">
           <span>{card.title}</span>
-          {card.planNumber && <span className="text-muted-foreground shrink-0 text-xs">#{card.planNumber}</span>}
+          {card.planNumber && (
+            <span className="text-muted-foreground shrink-0 text-xs">#{card.planNumber}</span>
+          )}
         </h3>
       </div>
 
@@ -195,12 +209,12 @@ export function KanbanCard({ card, columnId, index, onEdit, onDelete, isDragging
         <span
           className={cn(
             'inline-flex items-center rounded border px-2 py-0.5 text-xs font-medium',
-            priorityColor[card.priority]
+            priorityColor[card.priority],
           )}
         >
           優先度: {priorityLabel[card.priority]}
         </span>
       </div>
     </div>
-  )
+  );
 }

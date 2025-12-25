@@ -1,23 +1,27 @@
-import { Bell, X } from 'lucide-react'
+import { Bell, X } from 'lucide-react';
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui/button';
 
 interface NotificationItem {
-  id: string
-  eventId: string
-  title: string
-  message: string
-  timestamp: Date
+  id: string;
+  eventId: string;
+  title: string;
+  message: string;
+  timestamp: Date;
 }
 
 interface NotificationDisplayProps {
-  notifications: NotificationItem[]
-  onDismiss: (id: string) => void
-  onClearAll: () => void
+  notifications: NotificationItem[];
+  onDismiss: (id: string) => void;
+  onClearAll: () => void;
 }
 
-export function NotificationDisplay({ notifications, onDismiss, onClearAll }: NotificationDisplayProps) {
-  if (notifications.length === 0) return null
+export function NotificationDisplay({
+  notifications,
+  onDismiss,
+  onClearAll,
+}: NotificationDisplayProps) {
+  if (notifications.length === 0) return null;
 
   return (
     <div className="fixed top-4 right-4 z-50 max-w-sm space-y-2">
@@ -44,7 +48,9 @@ export function NotificationDisplay({ notifications, onDismiss, onClearAll }: No
             <div className="min-w-0 flex-1">
               <h4 className="truncate text-sm font-medium">{notification.title}</h4>
               <p className="text-muted-foreground mt-1 text-xs">{notification.message}</p>
-              <p className="text-muted-foreground mt-2 text-xs">{notification.timestamp.toLocaleTimeString()}</p>
+              <p className="text-muted-foreground mt-2 text-xs">
+                {notification.timestamp.toLocaleTimeString()}
+              </p>
             </div>
             <Button
               variant="ghost"
@@ -58,5 +64,5 @@ export function NotificationDisplay({ notifications, onDismiss, onClearAll }: No
         </div>
       ))}
     </div>
-  )
+  );
 }

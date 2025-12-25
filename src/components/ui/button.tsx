@@ -1,9 +1,9 @@
-import { Slot } from '@radix-ui/react-slot'
-import { cva, type VariantProps } from 'class-variance-authority'
-import { Loader2 } from 'lucide-react'
-import * as React from 'react'
+import { Slot } from '@radix-ui/react-slot';
+import { cva, type VariantProps } from 'class-variance-authority';
+import { Loader2 } from 'lucide-react';
+import * as React from 'react';
 
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/utils';
 
 /**
  * ボタンバリアント定義
@@ -61,7 +61,8 @@ const buttonVariants = cva(
     variants: {
       variant: {
         // 主要CTA - 最も強調されるボタン
-        primary: 'bg-primary text-primary-foreground shadow-sm hover:bg-primary-hover active:bg-primary-hover',
+        primary:
+          'bg-primary text-primary-foreground shadow-sm hover:bg-primary-hover active:bg-primary-hover',
         // 副次アクション - ボーダー付きの控えめなボタン
         outline: [
           'border border-border bg-surface-container text-foreground shadow-sm',
@@ -119,16 +120,18 @@ const buttonVariants = cva(
       variant: 'primary',
       size: 'default',
     },
-  }
-)
+  },
+);
 
-export interface ButtonProps extends React.ComponentProps<'button'>, VariantProps<typeof buttonVariants> {
+export interface ButtonProps
+  extends React.ComponentProps<'button'>,
+    VariantProps<typeof buttonVariants> {
   /** 子要素にスタイルを委譲する（Linkなどで使用） */
-  asChild?: boolean
+  asChild?: boolean;
   /** ローディング状態 */
-  isLoading?: boolean
+  isLoading?: boolean;
   /** ローディング中に表示するテキスト（省略時は children を表示） */
-  loadingText?: string
+  loadingText?: string;
 }
 
 /**
@@ -175,18 +178,18 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       disabled,
       ...props
     },
-    ref
+    ref,
   ) => {
-    const Comp = asChild ? Slot : 'button'
+    const Comp = asChild ? Slot : 'button';
 
     // aria-disabled または isLoading 時はクリックを無効化
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
       if (props['aria-disabled'] || isLoading) {
-        e.preventDefault()
-        return
+        e.preventDefault();
+        return;
       }
-      onClick?.(e)
-    }
+      onClick?.(e);
+    };
 
     // ローディング中のコンテンツ
     const content = isLoading ? (
@@ -196,7 +199,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       </>
     ) : (
       children
-    )
+    );
 
     return (
       <Comp
@@ -210,9 +213,9 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       >
         {content}
       </Comp>
-    )
-  }
-)
-Button.displayName = 'Button'
+    );
+  },
+);
+Button.displayName = 'Button';
 
-export { Button, buttonVariants }
+export { Button, buttonVariants };

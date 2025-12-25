@@ -1,46 +1,49 @@
-'use client'
+'use client';
 
-import { useCallback, useMemo, useRef } from 'react'
+import { useCallback, useMemo, useRef } from 'react';
 
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
-import { cn } from '@/lib/utils'
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
+import { cn } from '@/lib/utils';
 
-import { AccessibilityLiveRegion, useAccessibilityKeyboard } from '../../../hooks/useAccessibilityKeyboard'
+import {
+  AccessibilityLiveRegion,
+  useAccessibilityKeyboard,
+} from '../../../hooks/useAccessibilityKeyboard';
 
 interface AccessibleCalendarGridProps {
-  dates: Date[]
-  events: CalendarPlan[]
-  currentDate: Date
-  selectedDate?: Date
-  selectedTime?: string
-  selectedEventId?: string | null
-  onCreatePlan: (date: Date, time: string) => void
-  onEditPlan: (eventId: string) => void
-  onDeletePlan: (eventId: string) => void
-  onSelectPlan: (eventId: string) => void
-  onNavigateDate: (date: Date) => void
-  onNavigateTime: (time: string) => void
-  onEscapeAction: () => void
-  hourHeight?: number
-  startHour?: number
-  endHour?: number
-  className?: string
+  dates: Date[];
+  events: CalendarPlan[];
+  currentDate: Date;
+  selectedDate?: Date;
+  selectedTime?: string;
+  selectedEventId?: string | null;
+  onCreatePlan: (date: Date, time: string) => void;
+  onEditPlan: (eventId: string) => void;
+  onDeletePlan: (eventId: string) => void;
+  onSelectPlan: (eventId: string) => void;
+  onNavigateDate: (date: Date) => void;
+  onNavigateTime: (time: string) => void;
+  onEscapeAction: () => void;
+  hourHeight?: number;
+  startHour?: number;
+  endHour?: number;
+  className?: string;
 }
 
 // 時間スロットの生成（15分刻み）
 const generateTimeSlots = (startHour: number, endHour: number) => {
-  const slots = []
+  const slots = [];
   for (let hour = startHour; hour < endHour; hour++) {
     for (let minute = 0; minute < 60; minute += 15) {
       slots.push({
         hour,
         minute,
         time: `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`,
-      })
+      });
     }
   }
-  return slots
-}
+  return slots;
+};
 
 export const AccessibleCalendarGrid = ({
   dates,
@@ -58,13 +61,11 @@ export const AccessibleCalendarGrid = ({
   endHour = 24,
   className,
 }: AccessibleCalendarGridProps) => {
-  const gridRef = useRef<HTMLDivElement>(null)
+  const gridRef = useRef<HTMLDivElement>(null);
 
   // アクセシビリティキーボード操作
-  const { navigationState, announcements, focusCalendar, getDetailedStatus } = useAccessibilityKeyboard(
-    events,
-    currentDate,
-    {
+  const { navigationState, announcements, focusCalendar, getDetailedStatus } =
+    useAccessibilityKeyboard(events, currentDate, {
       onCreatePlan,
       onEditPlan,
       onDeletePlan,
@@ -72,11 +73,10 @@ export const AccessibleCalendarGrid = ({
       onNavigateDate,
       onNavigateTime,
       onEscapeAction,
-    }
-  )
+    });
 
   // 時間スロットの生成
-  const timeSlots = useMemo(() => generateTimeSlots(startHour, endHour), [startHour, endHour])
+  const timeSlots = useMemo(() => generateTimeSlots(startHour, endHour), [startHour, endHour]);
 
   // 日付のフォーマット
   const formatDateForAria = useCallback((date: Date) => {
@@ -85,25 +85,25 @@ export const AccessibleCalendarGrid = ({
       month: 'long',
       day: 'numeric',
       weekday: 'long',
-    })
-  }, [])
+    });
+  }, []);
 
   // 時間のフォーマット
   const formatTimeForAria = useCallback((time: string) => {
-    const [hour, minute] = time.split(':')
-    return `${parseInt(hour!)}時${parseInt(minute!)}分`
-  }, [])
+    const [hour, minute] = time.split(':');
+    return `${parseInt(hour!)}時${parseInt(minute!)}分`;
+  }, []);
 
   // イベントの詳細説明
   const getEventDescription = useCallback((plan: CalendarPlan) => {
     const startTime = plan.startDate?.toLocaleTimeString('ja-JP', {
       hour: '2-digit',
       minute: '2-digit',
-    })
+    });
     const endTime = plan.endDate?.toLocaleTimeString('ja-JP', {
       hour: '2-digit',
       minute: '2-digit',
-    })
+    });
 
     return [
       plan.title,
@@ -113,8 +113,8 @@ export const AccessibleCalendarGrid = ({
       plan.tags?.length ? `タグ: ${plan.tags.join(', ')}` : '',
     ]
       .filter(Boolean)
-      .join('。')
-  }, [])
+      .join('。');
+  }, []);
 
   // グリッドセルのARIA属性
   const getCellAriaProps = useCallback(
@@ -124,26 +124,27 @@ export const AccessibleCalendarGrid = ({
           event.startDate &&
           event.startDate.toDateString() === date.toDateString() &&
           event.startDate.getHours() === parseInt(time.split(':')[0]!) &&
-          event.startDate.getMinutes() === parseInt(time.split(':')[1]!)
-      )
+          event.startDate.getMinutes() === parseInt(time.split(':')[1]!),
+      );
 
       const isSelected =
-        navigationState.selectedDate.toDateString() === date.toDateString() && navigationState.selectedTime === time
+        navigationState.selectedDate.toDateString() === date.toDateString() &&
+        navigationState.selectedTime === time;
 
-      const cellDate = formatDateForAria(date)
-      const cellTime = formatTimeForAria(time)
+      const cellDate = formatDateForAria(date);
+      const cellTime = formatTimeForAria(time);
 
-      let ariaLabel = `${cellDate} ${cellTime}`
+      let ariaLabel = `${cellDate} ${cellTime}`;
 
       if (cellEvents.length > 0) {
-        const eventTitles = cellEvents.map((e) => e.title).join(', ')
-        ariaLabel += `。イベント: ${eventTitles}`
+        const eventTitles = cellEvents.map((e) => e.title).join(', ');
+        ariaLabel += `。イベント: ${eventTitles}`;
       } else {
-        ariaLabel += '。空き時間'
+        ariaLabel += '。空き時間';
       }
 
       if (isSelected) {
-        ariaLabel += '。選択中'
+        ariaLabel += '。選択中';
       }
 
       return {
@@ -153,16 +154,16 @@ export const AccessibleCalendarGrid = ({
         'aria-colindex': colIndex,
         role: 'gridcell',
         tabIndex: isSelected ? 0 : -1,
-      }
+      };
     },
-    [events, navigationState, formatDateForAria, formatTimeForAria]
-  )
+    [events, navigationState, formatDateForAria, formatTimeForAria],
+  );
 
   // イベントのARIA属性
   const getEventAriaProps = useCallback(
     (plan: CalendarPlan) => {
-      const isSelected = navigationState.selectedPlanId === plan.id
-      const description = getEventDescription(plan)
+      const isSelected = navigationState.selectedPlanId === plan.id;
+      const description = getEventDescription(plan);
 
       return {
         'aria-label': description,
@@ -170,10 +171,10 @@ export const AccessibleCalendarGrid = ({
         role: 'button',
         tabIndex: isSelected ? 0 : -1,
         'aria-describedby': `event-details-${plan.id}`,
-      }
+      };
     },
-    [navigationState.selectedPlanId, getEventDescription]
-  )
+    [navigationState.selectedPlanId, getEventDescription],
+  );
 
   return (
     <div className={cn('relative', className)}>
@@ -201,7 +202,11 @@ export const AccessibleCalendarGrid = ({
         {/* ヘッダー行（日付） */}
         <div role="row" aria-rowindex={1} className="flex border-b">
           {/* 時間列のヘッダー */}
-          <div role="columnheader" aria-colindex={1} className="bg-surface-container w-16 p-2 text-sm font-medium">
+          <div
+            role="columnheader"
+            aria-colindex={1}
+            className="bg-surface-container w-16 p-2 text-sm font-medium"
+          >
             <span className="sr-only">時間</span>
           </div>
 
@@ -213,7 +218,7 @@ export const AccessibleCalendarGrid = ({
               aria-colindex={dateIndex + 2}
               className={cn(
                 'bg-surface-container flex-1 p-2 text-center text-sm font-medium',
-                date.toDateString() === new Date().toDateString() && 'bg-primary/12'
+                date.toDateString() === new Date().toDateString() && 'bg-primary/12',
               )}
             >
               <div aria-label={formatDateForAria(date)}>
@@ -223,7 +228,7 @@ export const AccessibleCalendarGrid = ({
                 <div
                   className={cn(
                     'text-lg',
-                    date.toDateString() === new Date().toDateString() && 'text-primary font-bold'
+                    date.toDateString() === new Date().toDateString() && 'text-primary font-bold',
                   )}
                 >
                   {date.getDate()}
@@ -258,8 +263,8 @@ export const AccessibleCalendarGrid = ({
                   event.startDate &&
                   event.startDate.toDateString() === date.toDateString() &&
                   event.startDate.getHours() === slot.hour &&
-                  event.startDate.getMinutes() === slot.minute
-              )
+                  event.startDate.getMinutes() === slot.minute,
+              );
 
               return (
                 <button
@@ -271,11 +276,11 @@ export const AccessibleCalendarGrid = ({
                     'hover:bg-state-hover focus:bg-primary/12 focus:outline-none',
                     navigationState.selectedDate.toDateString() === date.toDateString() &&
                       navigationState.selectedTime === slot.time &&
-                      'bg-primary/12 ring-primary ring-2 ring-inset'
+                      'bg-primary/12 ring-primary ring-2 ring-inset',
                   )}
                   onClick={() => {
-                    onNavigateDate(date)
-                    onNavigateTime(slot.time)
+                    onNavigateDate(date);
+                    onNavigateTime(slot.time);
                   }}
                 >
                   {/* イベント表示 */}
@@ -287,20 +292,23 @@ export const AccessibleCalendarGrid = ({
                       className={cn(
                         'absolute inset-x-1 cursor-pointer rounded p-1 text-xs',
                         'focus:ring-2 focus:ring-white focus:ring-offset-1 focus:outline-none',
-                        navigationState.selectedPlanId === event.id && 'ring-2 ring-white ring-offset-1'
+                        navigationState.selectedPlanId === event.id &&
+                          'ring-2 ring-white ring-offset-1',
                       )}
                       style={{
                         backgroundColor: event.color || '#3b82f6',
                         color: 'white',
-                        top: event.startDate ? `${(event.startDate.getMinutes() / 60) * 100}%` : '0%',
+                        top: event.startDate
+                          ? `${(event.startDate.getMinutes() / 60) * 100}%`
+                          : '0%',
                         height:
                           event.endDate && event.startDate
                             ? `${((event.endDate.getTime() - event.startDate.getTime()) / (60 * 60 * 1000)) * 100}%`
                             : '100%',
                       }}
                       onClick={(e) => {
-                        e.stopPropagation()
-                        onSelectPlan(event.id)
+                        e.stopPropagation();
+                        onSelectPlan(event.id);
                       }}
                     >
                       <div className="truncate font-medium">{event.title}</div>
@@ -317,7 +325,7 @@ export const AccessibleCalendarGrid = ({
                     <span className="sr-only">空き時間。Enterキーで新しいイベントを作成</span>
                   )}
                 </button>
-              )
+              );
             })}
           </div>
         ))}
@@ -352,10 +360,12 @@ export const AccessibleCalendarGrid = ({
         <h3>この週のイベント一覧</h3>
         {dates.map((date) => {
           const dayEvents = events
-            .filter((event) => event.startDate && event.startDate.toDateString() === date.toDateString())
-            .sort((a, b) => a.startDate!.getTime() - b.startDate!.getTime())
+            .filter(
+              (event) => event.startDate && event.startDate.toDateString() === date.toDateString(),
+            )
+            .sort((a, b) => a.startDate!.getTime() - b.startDate!.getTime());
 
-          if (dayEvents.length === 0) return null
+          if (dayEvents.length === 0) return null;
 
           return (
             <div key={date.toISOString()}>
@@ -371,9 +381,9 @@ export const AccessibleCalendarGrid = ({
                 ))}
               </ul>
             </div>
-          )
+          );
         })}
       </div>
     </div>
-  )
-}
+  );
+};

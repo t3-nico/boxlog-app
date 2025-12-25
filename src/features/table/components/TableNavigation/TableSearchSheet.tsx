@@ -1,18 +1,18 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
+import { useState } from 'react';
 
-import { X } from 'lucide-react'
+import { X } from 'lucide-react';
 
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 
 interface TableSearchSheetProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  value: string
-  onChange: (value: string) => void
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  value: string;
+  onChange: (value: string) => void;
 }
 
 /**
@@ -21,25 +21,25 @@ interface TableSearchSheetProps {
  * モバイル・PC共通で使用可能なボトムシート形式の検索UI
  */
 export function TableSearchSheet({ open, onOpenChange, value, onChange }: TableSearchSheetProps) {
-  const [localSearch, setLocalSearch] = useState(value)
+  const [localSearch, setLocalSearch] = useState(value);
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    onChange(localSearch)
-    onOpenChange(false)
-  }
+    e.preventDefault();
+    onChange(localSearch);
+    onOpenChange(false);
+  };
 
   const handleClear = () => {
-    setLocalSearch('')
-    onChange('')
-  }
+    setLocalSearch('');
+    onChange('');
+  };
 
   const handleOpenChange = (newOpen: boolean) => {
     if (newOpen) {
-      setLocalSearch(value)
+      setLocalSearch(value);
     }
-    onOpenChange(newOpen)
-  }
+    onOpenChange(newOpen);
+  };
 
   return (
     <Sheet open={open} onOpenChange={handleOpenChange}>
@@ -72,7 +72,12 @@ export function TableSearchSheet({ open, onOpenChange, value, onChange }: TableS
           </div>
 
           <div className="flex gap-2">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="flex-1">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+              className="flex-1"
+            >
               キャンセル
             </Button>
             <Button type="submit" className="flex-1">
@@ -82,5 +87,5 @@ export function TableSearchSheet({ open, onOpenChange, value, onChange }: TableS
         </form>
       </SheetContent>
     </Sheet>
-  )
+  );
 }

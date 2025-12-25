@@ -1,10 +1,10 @@
-'use client'
+'use client';
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react';
 
-import { RefreshCw } from 'lucide-react'
+import { RefreshCw } from 'lucide-react';
 
-import { useServiceWorker } from '@/hooks/useServiceWorker'
+import { useServiceWorker } from '@/hooks/useServiceWorker';
 
 /**
  * Service Worker プロバイダー
@@ -12,15 +12,15 @@ import { useServiceWorker } from '@/hooks/useServiceWorker'
  * Service Workerの登録と更新通知UIを提供
  */
 export function ServiceWorkerProvider({ children }: { children: React.ReactNode }) {
-  const { updateAvailable, applyUpdate } = useServiceWorker()
-  const [showUpdateBanner, setShowUpdateBanner] = useState(false)
+  const { updateAvailable, applyUpdate } = useServiceWorker();
+  const [showUpdateBanner, setShowUpdateBanner] = useState(false);
 
   // 更新が利用可能になったらバナーを表示
   useEffect(() => {
     if (updateAvailable) {
-      setShowUpdateBanner(true)
+      setShowUpdateBanner(true);
     }
-  }, [updateAvailable])
+  }, [updateAvailable]);
 
   return (
     <>
@@ -55,5 +55,5 @@ export function ServiceWorkerProvider({ children }: { children: React.ReactNode 
         </div>
       )}
     </>
-  )
+  );
 }

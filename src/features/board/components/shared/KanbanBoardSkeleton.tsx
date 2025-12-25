@@ -1,17 +1,17 @@
-import { Skeleton } from '@/components/ui/skeleton'
-import { KanbanColumnSkeleton } from './KanbanColumnSkeleton'
+import { Skeleton } from '@/components/ui/skeleton';
+import { KanbanColumnSkeleton } from './KanbanColumnSkeleton';
 
 interface KanbanBoardSkeletonProps {
   /**
    * 表示するカラムの数
    * @default 3
    */
-  columnCount?: number
+  columnCount?: number;
   /**
    * 各カラムに表示するカードの数
    * @default 3
    */
-  cardsPerColumn?: number
+  cardsPerColumn?: number;
 }
 
 /**
@@ -28,7 +28,10 @@ interface KanbanBoardSkeletonProps {
  * )}
  * ```
  */
-export function KanbanBoardSkeleton({ columnCount = 3, cardsPerColumn = 3 }: KanbanBoardSkeletonProps) {
+export function KanbanBoardSkeleton({
+  columnCount = 3,
+  cardsPerColumn = 3,
+}: KanbanBoardSkeletonProps) {
   return (
     <div className="flex h-full flex-col">
       {/* ボードヘッダー */}
@@ -48,5 +51,5 @@ export function KanbanBoardSkeleton({ columnCount = 3, cardsPerColumn = 3 }: Kan
         ))}
       </div>
     </div>
-  )
+  );
 }

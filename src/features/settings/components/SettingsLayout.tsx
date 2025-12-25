@@ -1,13 +1,13 @@
-'use client'
+'use client';
 
-import React from 'react'
+import React from 'react';
 
-import { ScrollArea } from '@/components/ui/scroll-area'
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface SettingsLayoutProps {
-  children: React.ReactNode
-  title: string
-  actions?: React.ReactNode
+  children: React.ReactNode;
+  title: string;
+  actions?: React.ReactNode;
 }
 
 export const SettingsLayout = ({ children, title, actions }: SettingsLayoutProps) => {
@@ -26,5 +26,5 @@ export const SettingsLayout = ({ children, title, actions }: SettingsLayoutProps
         <div className="w-full px-4 pb-8">{children}</div>
       </ScrollArea>
     </div>
-  )
-}
+  );
+};

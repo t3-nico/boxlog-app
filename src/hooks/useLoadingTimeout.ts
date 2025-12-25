@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react';
 
 /**
  * ローディングタイムアウトを検出するhook
@@ -25,24 +25,24 @@ import { useEffect, useState } from 'react'
  * @returns タイムアウトしたかどうか
  */
 export function useLoadingTimeout(isLoading: boolean, timeout = 10000): boolean {
-  const [hasTimedOut, setHasTimedOut] = useState(false)
+  const [hasTimedOut, setHasTimedOut] = useState(false);
 
   useEffect(() => {
     if (!isLoading) {
       // ローディング終了時はタイムアウト状態をリセット
-      setHasTimedOut(false)
-      return
+      setHasTimedOut(false);
+      return;
     }
 
     // タイムアウトタイマーを設定
     const timer = setTimeout(() => {
-      setHasTimedOut(true)
-    }, timeout)
+      setHasTimedOut(true);
+    }, timeout);
 
-    return () => clearTimeout(timer)
-  }, [isLoading, timeout])
+    return () => clearTimeout(timer);
+  }, [isLoading, timeout]);
 
-  return hasTimedOut
+  return hasTimedOut;
 }
 
 /**
@@ -69,63 +69,66 @@ export function useLoadingTimeout(isLoading: boolean, timeout = 10000): boolean 
  */
 export interface LoadingStateOptions {
   /** タイムアウト時間（ミリ秒） */
-  timeout?: number
+  timeout?: number;
   /** 警告表示までの時間（ミリ秒） */
-  warningThreshold?: number
+  warningThreshold?: number;
 }
 
 export interface LoadingStateResult {
   /** タイムアウトしたか */
-  hasTimedOut: boolean
+  hasTimedOut: boolean;
   /** 警告状態か（warningThreshold超過） */
-  isWarning: boolean
+  isWarning: boolean;
   /** 経過時間（ミリ秒） */
-  elapsedTime: number
+  elapsedTime: number;
 }
 
-export function useLoadingState(isLoading: boolean, options: LoadingStateOptions = {}): LoadingStateResult {
-  const { timeout = 10000, warningThreshold = 5000 } = options
+export function useLoadingState(
+  isLoading: boolean,
+  options: LoadingStateOptions = {},
+): LoadingStateResult {
+  const { timeout = 10000, warningThreshold = 5000 } = options;
 
   const [state, setState] = useState<LoadingStateResult>({
     hasTimedOut: false,
     isWarning: false,
     elapsedTime: 0,
-  })
+  });
 
   useEffect(() => {
     if (!isLoading) {
-      setState({ hasTimedOut: false, isWarning: false, elapsedTime: 0 })
-      return
+      setState({ hasTimedOut: false, isWarning: false, elapsedTime: 0 });
+      return;
     }
 
-    const startTime = Date.now()
+    const startTime = Date.now();
 
     // 経過時間の更新（1秒ごと）
     const intervalId = setInterval(() => {
-      const elapsed = Date.now() - startTime
+      const elapsed = Date.now() - startTime;
       setState({
         hasTimedOut: elapsed >= timeout,
         isWarning: elapsed >= warningThreshold && elapsed < timeout,
         elapsedTime: elapsed,
-      })
-    }, 1000)
+      });
+    }, 1000);
 
     // 警告タイマー
     const warningTimer = setTimeout(() => {
-      setState((prev) => ({ ...prev, isWarning: true }))
-    }, warningThreshold)
+      setState((prev) => ({ ...prev, isWarning: true }));
+    }, warningThreshold);
 
     // タイムアウトタイマー
     const timeoutTimer = setTimeout(() => {
-      setState((prev) => ({ ...prev, hasTimedOut: true, isWarning: false }))
-    }, timeout)
+      setState((prev) => ({ ...prev, hasTimedOut: true, isWarning: false }));
+    }, timeout);
 
     return () => {
-      clearInterval(intervalId)
-      clearTimeout(warningTimer)
-      clearTimeout(timeoutTimer)
-    }
-  }, [isLoading, timeout, warningThreshold])
+      clearInterval(intervalId);
+      clearTimeout(warningTimer);
+      clearTimeout(timeoutTimer);
+    };
+  }, [isLoading, timeout, warningThreshold]);
 
-  return state
+  return state;
 }

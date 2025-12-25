@@ -1,39 +1,39 @@
-'use client'
+'use client';
 
-import { Archive, Eye, Folder, FolderX, GitMerge, Pencil, Trash2 } from 'lucide-react'
+import { Archive, Eye, Folder, FolderX, GitMerge, Pencil, Trash2 } from 'lucide-react';
 
-import { DEFAULT_GROUP_COLOR } from '@/config/ui/colors'
-import type { Tag, TagGroup } from '@/features/tags/types'
+import { DEFAULT_GROUP_COLOR } from '@/config/ui/colors';
+import type { Tag, TagGroup } from '@/features/tags/types';
 
 interface TagActionMenuItemsProps {
-  tag: Tag
-  groups: TagGroup[]
-  onView?: (tag: Tag) => void
-  onEdit?: (tag: Tag) => void
-  onMoveToGroup: (tag: Tag, groupId: string | null) => void
-  onMerge?: (tag: Tag) => void
-  onArchive?: (tag: Tag) => void
-  onDelete: (tag: Tag) => void
-  t: (key: string) => string
+  tag: Tag;
+  groups: TagGroup[];
+  onView?: (tag: Tag) => void;
+  onEdit?: (tag: Tag) => void;
+  onMoveToGroup: (tag: Tag, groupId: string | null) => void;
+  onMerge?: (tag: Tag) => void;
+  onArchive?: (tag: Tag) => void;
+  onDelete: (tag: Tag) => void;
+  t: (key: string) => string;
   /** メニュー項目をレンダリングするための関数 */
   renderMenuItem: (props: {
-    key?: string
-    icon: React.ReactNode
-    label: string
-    onClick: () => void
-    variant?: 'default' | 'destructive'
-    disabled?: boolean
-  }) => React.ReactNode
+    key?: string;
+    icon: React.ReactNode;
+    label: string;
+    onClick: () => void;
+    variant?: 'default' | 'destructive';
+    disabled?: boolean;
+  }) => React.ReactNode;
   /** サブメニューをレンダリングするための関数 */
   renderSubMenu?: (props: {
-    trigger: { icon: React.ReactNode; label: string }
+    trigger: { icon: React.ReactNode; label: string };
     items: Array<{
-      key: string
-      icon?: React.ReactNode
-      label: string
-      onClick: () => void
-    }>
-  }) => React.ReactNode
+      key: string;
+      icon?: React.ReactNode;
+      label: string;
+      onClick: () => void;
+    }>;
+  }) => React.ReactNode;
 }
 
 /**
@@ -55,7 +55,7 @@ export function TagActionMenuItems({
   renderMenuItem,
   renderSubMenu,
 }: TagActionMenuItemsProps) {
-  const menuItems = []
+  const menuItems = [];
 
   // 表示
   if (onView) {
@@ -65,8 +65,8 @@ export function TagActionMenuItems({
         icon: <Eye className="mr-2 h-4 w-4" />,
         label: t('common.view'),
         onClick: () => onView(tag),
-      })
-    )
+      }),
+    );
   }
 
   // 編集
@@ -77,8 +77,8 @@ export function TagActionMenuItems({
         icon: <Pencil className="mr-2 h-4 w-4" />,
         label: t('tag.page.edit'),
         onClick: () => onEdit(tag),
-      })
-    )
+      }),
+    );
   }
 
   // グループに移動
@@ -98,13 +98,18 @@ export function TagActionMenuItems({
           },
           ...groups.map((group) => ({
             key: group.id,
-            icon: <Folder className="mr-2 h-4 w-4" style={{ color: group.color || DEFAULT_GROUP_COLOR }} />,
+            icon: (
+              <Folder
+                className="mr-2 h-4 w-4"
+                style={{ color: group.color || DEFAULT_GROUP_COLOR }}
+              />
+            ),
             label: group.name,
             onClick: () => onMoveToGroup(tag, group.id),
           })),
         ],
-      })
-    )
+      }),
+    );
   }
 
   // マージ
@@ -115,8 +120,8 @@ export function TagActionMenuItems({
         icon: <GitMerge className="mr-2 h-4 w-4" />,
         label: t('tags.merge.title'),
         onClick: () => onMerge(tag),
-      })
-    )
+      }),
+    );
   }
 
   // アーカイブ
@@ -127,8 +132,8 @@ export function TagActionMenuItems({
         icon: <Archive className="mr-2 h-4 w-4" />,
         label: t('tag.page.archive'),
         onClick: () => onArchive(tag),
-      })
-    )
+      }),
+    );
   }
 
   // 完全削除
@@ -139,8 +144,8 @@ export function TagActionMenuItems({
       label: t('tag.page.permanentDelete'),
       onClick: () => onDelete(tag),
       variant: 'destructive',
-    })
-  )
+    }),
+  );
 
-  return <>{menuItems}</>
+  return <>{menuItems}</>;
 }

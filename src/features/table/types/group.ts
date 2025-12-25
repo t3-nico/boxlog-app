@@ -9,17 +9,17 @@
  *
  * テーブルをグループ分けできるフィールド
  */
-export type GroupByField = 'status' | 'priority' | 'due_date' | 'tags' | null
+export type GroupByField = 'status' | 'priority' | 'due_date' | 'tags' | null;
 
 /**
  * グループ化設定
  */
 export type GroupConfig = {
   /** グループ化フィールド（nullの場合はグループ化なし） */
-  field: GroupByField
+  field: GroupByField;
   /** グループの折りたたみ状態（グループID → 折りたたみ状態） */
-  collapsedGroups: Set<string>
-}
+  collapsedGroups: Set<string>;
+};
 
 /**
  * グループ化されたデータ
@@ -36,11 +36,11 @@ export type GroupConfig = {
  */
 export type GroupedData<T> = {
   /** グループのキー（一意な識別子） */
-  groupKey: string
+  groupKey: string;
   /** グループの表示ラベル */
-  groupLabel: string
+  groupLabel: string;
   /** グループ内のアイテム */
-  items: T[]
+  items: T[];
   /** アイテム数 */
-  count: number
-}
+  count: number;
+};

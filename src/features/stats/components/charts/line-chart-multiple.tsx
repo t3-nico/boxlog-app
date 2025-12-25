@@ -1,9 +1,14 @@
-'use client'
+'use client';
 
-import { CartesianGrid, Line, LineChart, XAxis } from 'recharts'
+import { CartesianGrid, Line, LineChart, XAxis } from 'recharts';
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from '@/components/ui/chart';
 
 const chartData = [
   { month: '5月', completed: 186, created: 200 },
@@ -12,7 +17,7 @@ const chartData = [
   { month: '8月', completed: 273, created: 280 },
   { month: '9月', completed: 209, created: 230 },
   { month: '10月', completed: 245, created: 260 },
-]
+];
 
 // 比較 → 比較用カラー chart-1, chart-2 を使用
 const chartConfig = {
@@ -24,7 +29,7 @@ const chartConfig = {
     label: '作成タスク',
     color: 'var(--chart-2)',
   },
-} satisfies ChartConfig
+} satisfies ChartConfig;
 
 export function LineChartMultiple() {
   return (
@@ -44,13 +49,31 @@ export function LineChartMultiple() {
             }}
           >
             <CartesianGrid vertical={false} />
-            <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => value} />
+            <XAxis
+              dataKey="month"
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+              tickFormatter={(value) => value}
+            />
             <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
-            <Line dataKey="completed" type="monotone" stroke="var(--color-completed)" strokeWidth={2} dot={false} />
-            <Line dataKey="created" type="monotone" stroke="var(--color-created)" strokeWidth={2} dot={false} />
+            <Line
+              dataKey="completed"
+              type="monotone"
+              stroke="var(--color-completed)"
+              strokeWidth={2}
+              dot={false}
+            />
+            <Line
+              dataKey="created"
+              type="monotone"
+              stroke="var(--color-created)"
+              strokeWidth={2}
+              dot={false}
+            />
           </LineChart>
         </ChartContainer>
       </CardContent>
     </Card>
-  )
+  );
 }

@@ -1,39 +1,39 @@
-'use client'
+'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { ConflictResolutionModal } from '@/features/offline/components'
-import { offlineManager } from '@/features/offline/services/offline-manager'
-import type { ConflictResolution, OfflineAction } from '@/features/offline/types'
+import { ConflictResolutionModal } from '@/features/offline/components';
+import { offlineManager } from '@/features/offline/services/offline-manager';
+import type { ConflictResolution, OfflineAction } from '@/features/offline/types';
 
 interface ToastOptions {
-  title: string
-  description?: string
-  variant?: string
+  title: string;
+  description?: string;
+  variant?: string;
 }
 
 const toast = (options: ToastOptions) => {
-  console.log('Toast:', options.title, options.description)
-}
+  console.log('Toast:', options.title, options.description);
+};
 
 export interface OfflineSyncState {
-  isOnline: boolean
-  isInitialized: boolean
-  pendingActions: OfflineAction[]
-  conflictingActions: OfflineAction[]
-  syncInProgress: boolean
-  lastSyncTime: Date | null
-  queueSize: number
+  isOnline: boolean;
+  isInitialized: boolean;
+  pendingActions: OfflineAction[];
+  conflictingActions: OfflineAction[];
+  syncInProgress: boolean;
+  lastSyncTime: Date | null;
+  queueSize: number;
 }
 
 export interface ConflictContext {
-  actionId: string
-  entity: string
-  localData: unknown
-  serverData: unknown
-  localTimestamp: Date
-  serverTimestamp: Date
-  conflicts: unknown[]
+  actionId: string;
+  entity: string;
+  localData: unknown;
+  serverData: unknown;
+  localTimestamp: Date;
+  serverTimestamp: Date;
+  conflicts: unknown[];
 }
 
 export function useOfflineSync() {
@@ -45,18 +45,18 @@ export function useOfflineSync() {
     syncInProgress: false,
     lastSyncTime: null,
     queueSize: 0,
-  })
+  });
 
-  const [currentConflict, setCurrentConflict] = useState<ConflictContext | null>(null)
-  const [isConflictModalOpen, setIsConflictModalOpen] = useState(false)
-  const updateTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const [currentConflict, setCurrentConflict] = useState<ConflictContext | null>(null);
+  const [isConflictModalOpen, setIsConflictModalOpen] = useState(false);
+  const updateTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // 状態の更新
   const updateState = useCallback(async () => {
     try {
-      const pendingActions = await offlineManager.getPendingActions()
-      const conflictingActions = await offlineManager.getConflictingActions()
-      const managerStatus = offlineManager.getStatus()
+      const pendingActions = await offlineManager.getPendingActions();
+      const conflictingActions = await offlineManager.getConflictingActions();
+      const managerStatus = offlineManager.getStatus();
 
       setState((prev) => ({
         ...prev,
@@ -66,64 +66,64 @@ export function useOfflineSync() {
         isInitialized: managerStatus.isInitialized,
         syncInProgress: managerStatus.syncInProgress,
         queueSize: managerStatus.queueSize,
-      }))
+      }));
     } catch (error) {
-      console.error('Failed to update sync state:', error)
+      console.error('Failed to update sync state:', error);
     }
-  }, [])
+  }, []);
 
   // デバウンス付きの状態更新
   const debouncedUpdateState = useCallback(() => {
     if (updateTimeoutRef.current) {
-      clearTimeout(updateTimeoutRef.current)
+      clearTimeout(updateTimeoutRef.current);
     }
-    updateTimeoutRef.current = setTimeout(updateState, 100)
-  }, [updateState])
+    updateTimeoutRef.current = setTimeout(updateState, 100);
+  }, [updateState]);
 
   // イベントリスナーの設定
   useEffect(() => {
     const handleInitialized = () => {
-      setState((prev) => ({ ...prev, isInitialized: true }))
-      updateState()
-    }
+      setState((prev) => ({ ...prev, isInitialized: true }));
+      updateState();
+    };
 
     const handleOnline = () => {
-      setState((prev) => ({ ...prev, isOnline: true }))
+      setState((prev) => ({ ...prev, isOnline: true }));
       toast({
         title: 'オンラインに復帰しました',
         description: '同期を開始しています...',
         variant: 'default',
-      })
-      debouncedUpdateState()
-    }
+      });
+      debouncedUpdateState();
+    };
 
     const handleOffline = () => {
-      setState((prev) => ({ ...prev, isOnline: false }))
+      setState((prev) => ({ ...prev, isOnline: false }));
       toast({
         title: 'オフラインモードで動作中',
         description: '変更はローカルに保存され、オンライン復帰時に同期されます',
         variant: 'default',
-      })
-    }
+      });
+    };
 
     const handleSyncStarted = () => {
-      setState((prev) => ({ ...prev, syncInProgress: true }))
-      debouncedUpdateState()
-    }
+      setState((prev) => ({ ...prev, syncInProgress: true }));
+      debouncedUpdateState();
+    };
 
     const handleSyncCompleted = (data: { processed: number; conflicts: number }) => {
       setState((prev) => ({
         ...prev,
         syncInProgress: false,
         lastSyncTime: new Date(),
-      }))
+      }));
 
       if (data.processed > 0) {
         toast({
           title: '同期が完了しました',
           description: `${data.processed}件の変更が同期されました`,
           variant: 'default',
-        })
+        });
       }
 
       if (data.conflicts > 0) {
@@ -131,32 +131,34 @@ export function useOfflineSync() {
           title: '競合が発生しました',
           description: `${data.conflicts}件の競合を解決してください`,
           variant: 'destructive',
-        })
+        });
       }
 
-      debouncedUpdateState()
-    }
+      debouncedUpdateState();
+    };
 
     const handleSyncError = (error: Error) => {
-      setState((prev) => ({ ...prev, syncInProgress: false }))
+      setState((prev) => ({ ...prev, syncInProgress: false }));
       toast({
         title: '同期に失敗しました',
         description: error instanceof Error ? error.message : '不明なエラーが発生しました',
         variant: 'destructive',
-      })
-      debouncedUpdateState()
-    }
+      });
+      debouncedUpdateState();
+    };
 
     const handleActionRecorded = () => {
-      debouncedUpdateState()
-    }
+      debouncedUpdateState();
+    };
 
     const handleConflictDetected = (conflictData: {
-      action: OfflineAction
-      conflicts: unknown[]
-      conflictId: string
+      action: OfflineAction;
+      conflicts: unknown[];
+      conflictId: string;
     }) => {
-      const firstConflict = conflictData.conflicts[0] as { serverData?: unknown; serverTimestamp?: Date } | undefined
+      const firstConflict = conflictData.conflicts[0] as
+        | { serverData?: unknown; serverTimestamp?: Date }
+        | undefined;
       setCurrentConflict({
         actionId: conflictData.action.id,
         entity: conflictData.action.entity,
@@ -165,154 +167,162 @@ export function useOfflineSync() {
         localTimestamp: conflictData.action.timestamp,
         serverTimestamp: new Date(firstConflict?.serverTimestamp ?? Date.now()),
         conflicts: conflictData.conflicts,
-      })
-      setIsConflictModalOpen(true)
-      debouncedUpdateState()
-    }
+      });
+      setIsConflictModalOpen(true);
+      debouncedUpdateState();
+    };
 
     const handleConflictResolved = () => {
-      setCurrentConflict(null)
-      setIsConflictModalOpen(false)
+      setCurrentConflict(null);
+      setIsConflictModalOpen(false);
       toast({
         title: '競合が解決されました',
         description: 'データが正常に同期されました',
         variant: 'default',
-      })
-      debouncedUpdateState()
-    }
+      });
+      debouncedUpdateState();
+    };
 
     const handleSyncFailed = (data: { action: OfflineAction; error: Error }) => {
       toast({
         title: '同期に失敗しました',
         description: `${data.action.entity}の${data.action.type}が失敗しました: ${data.error.message}`,
         variant: 'destructive',
-      })
-      debouncedUpdateState()
-    }
+      });
+      debouncedUpdateState();
+    };
 
     // イベントリスナーの登録
-    offlineManager.on('initialized', handleInitialized)
-    offlineManager.on('online', handleOnline)
-    offlineManager.on('offline', handleOffline)
-    offlineManager.on('syncStarted', handleSyncStarted)
-    offlineManager.on('syncCompleted', handleSyncCompleted)
-    offlineManager.on('syncError', handleSyncError)
-    offlineManager.on('actionRecorded', handleActionRecorded)
-    offlineManager.on('conflictDetected', handleConflictDetected)
-    offlineManager.on('conflictResolved', handleConflictResolved)
-    offlineManager.on('syncFailed', handleSyncFailed)
+    offlineManager.on('initialized', handleInitialized);
+    offlineManager.on('online', handleOnline);
+    offlineManager.on('offline', handleOffline);
+    offlineManager.on('syncStarted', handleSyncStarted);
+    offlineManager.on('syncCompleted', handleSyncCompleted);
+    offlineManager.on('syncError', handleSyncError);
+    offlineManager.on('actionRecorded', handleActionRecorded);
+    offlineManager.on('conflictDetected', handleConflictDetected);
+    offlineManager.on('conflictResolved', handleConflictResolved);
+    offlineManager.on('syncFailed', handleSyncFailed);
 
     // 初期状態の取得
-    updateState()
+    updateState();
 
     return () => {
       // イベントリスナーのクリーンアップ
-      offlineManager.off('initialized', handleInitialized)
-      offlineManager.off('online', handleOnline)
-      offlineManager.off('offline', handleOffline)
-      offlineManager.off('syncStarted', handleSyncStarted)
-      offlineManager.off('syncCompleted', handleSyncCompleted)
-      offlineManager.off('syncError', handleSyncError)
-      offlineManager.off('actionRecorded', handleActionRecorded)
-      offlineManager.off('conflictDetected', handleConflictDetected)
-      offlineManager.off('conflictResolved', handleConflictResolved)
-      offlineManager.off('syncFailed', handleSyncFailed)
+      offlineManager.off('initialized', handleInitialized);
+      offlineManager.off('online', handleOnline);
+      offlineManager.off('offline', handleOffline);
+      offlineManager.off('syncStarted', handleSyncStarted);
+      offlineManager.off('syncCompleted', handleSyncCompleted);
+      offlineManager.off('syncError', handleSyncError);
+      offlineManager.off('actionRecorded', handleActionRecorded);
+      offlineManager.off('conflictDetected', handleConflictDetected);
+      offlineManager.off('conflictResolved', handleConflictResolved);
+      offlineManager.off('syncFailed', handleSyncFailed);
 
       if (updateTimeoutRef.current) {
-        clearTimeout(updateTimeoutRef.current)
+        clearTimeout(updateTimeoutRef.current);
       }
-    }
-  }, [debouncedUpdateState, updateState])
+    };
+  }, [debouncedUpdateState, updateState]);
 
   // アクションの記録
   const recordAction = useCallback(
-    async (type: 'create' | 'update' | 'delete', entity: 'plans' | 'tags' | 'tag_groups', data: unknown) => {
+    async (
+      type: 'create' | 'update' | 'delete',
+      entity: 'plans' | 'tags' | 'tag_groups',
+      data: unknown,
+    ) => {
       try {
-        const actionId = await offlineManager.recordAction({ type, entity, data })
-        debouncedUpdateState()
-        return actionId
+        const actionId = await offlineManager.recordAction({ type, entity, data });
+        debouncedUpdateState();
+        return actionId;
       } catch (error) {
-        console.error('Failed to record action:', error)
+        console.error('Failed to record action:', error);
         toast({
           title: 'アクションの記録に失敗しました',
           description: error instanceof Error ? error.message : '不明なエラーが発生しました',
           variant: 'destructive',
-        })
-        throw error
+        });
+        throw error;
       }
     },
-    [debouncedUpdateState]
-  )
+    [debouncedUpdateState],
+  );
 
   // 手動同期の実行
   const retrySync = useCallback(async () => {
     try {
-      await offlineManager.processPendingActions()
+      await offlineManager.processPendingActions();
     } catch (error) {
-      console.error('Manual sync failed:', error)
+      console.error('Manual sync failed:', error);
       toast({
         title: '同期に失敗しました',
         description: error instanceof Error ? error.message : '不明なエラーが発生しました',
         variant: 'destructive',
-      })
+      });
     }
-  }, [])
+  }, []);
 
   // 完了したアクションのクリア
   const clearCompleted = useCallback(async () => {
     try {
-      await offlineManager.clearCompletedActions()
-      debouncedUpdateState()
+      await offlineManager.clearCompletedActions();
+      debouncedUpdateState();
       toast({
         title: '履歴をクリアしました',
         description: '完了した同期アクションの履歴が削除されました',
         variant: 'default',
-      })
+      });
     } catch (error) {
-      console.error('Failed to clear completed actions:', error)
+      console.error('Failed to clear completed actions:', error);
       toast({
         title: '履歴のクリアに失敗しました',
         description: error instanceof Error ? error.message : '不明なエラーが発生しました',
         variant: 'destructive',
-      })
+      });
     }
-  }, [debouncedUpdateState])
+  }, [debouncedUpdateState]);
 
   // 競合解決
   const resolveConflict = useCallback(
     async (resolution: ConflictResolution) => {
-      if (!currentConflict) return
+      if (!currentConflict) return;
 
       try {
         // 競合IDを取得するためのロジック（実際の実装では適切な方法で取得）
-        const conflictId = `conflict_${currentConflict.actionId}`
-        await offlineManager.resolveConflict(conflictId, resolution)
+        const conflictId = `conflict_${currentConflict.actionId}`;
+        await offlineManager.resolveConflict(conflictId, resolution);
       } catch (error) {
-        console.error('Failed to resolve conflict:', error)
+        console.error('Failed to resolve conflict:', error);
         toast({
           title: '競合の解決に失敗しました',
           description: error instanceof Error ? error.message : '不明なエラーが発生しました',
           variant: 'destructive',
-        })
+        });
       }
     },
-    [currentConflict]
-  )
+    [currentConflict],
+  );
 
   // 楽観的更新のヘルパー
   const optimisticUpdate = useCallback(
-    async <T,>(optimisticData: T, actualUpdate: () => Promise<T>, rollback: (data: T) => void): Promise<T> => {
+    async <T,>(
+      optimisticData: T,
+      actualUpdate: () => Promise<T>,
+      rollback: (data: T) => void,
+    ): Promise<T> => {
       try {
-        const result = await actualUpdate()
-        return result
+        const result = await actualUpdate();
+        return result;
       } catch (error) {
         // エラーが発生した場合はロールバック
-        rollback(optimisticData)
-        throw error
+        rollback(optimisticData);
+        throw error;
       }
     },
-    []
-  )
+    [],
+  );
 
   return {
     // 状態
@@ -333,98 +343,98 @@ export function useOfflineSync() {
         conflict={currentConflict}
         onResolve={resolveConflict}
         onCancel={() => {
-          setIsConflictModalOpen(false)
-          setCurrentConflict(null)
+          setIsConflictModalOpen(false);
+          setCurrentConflict(null);
         }}
       />
     ) : null,
-  }
+  };
 }
 
 // 特定のエンティティのオフライン操作用カスタムフック
 export function useOfflineEntity<T extends Record<string, unknown>>(
   entity: 'plans' | 'tags' | 'tag_groups',
-  initialData: T[] = []
+  initialData: T[] = [],
 ) {
-  const [data, setData] = useState<T[]>(initialData)
-  const { recordAction, optimisticUpdate } = useOfflineSync()
+  const [data, setData] = useState<T[]>(initialData);
+  const { recordAction, optimisticUpdate } = useOfflineSync();
 
   const create = useCallback(
     async (item: Omit<T, 'id'>) => {
-      const tempId = `temp_${Date.now()}`
-      const optimisticItem = { ...item, id: tempId } as unknown as T
+      const tempId = `temp_${Date.now()}`;
+      const optimisticItem = { ...item, id: tempId } as unknown as T;
 
       return await optimisticUpdate(
         optimisticItem,
         async () => {
           // 楽観的更新
-          setData((prev) => [...prev, optimisticItem])
+          setData((prev) => [...prev, optimisticItem]);
 
           // オフラインアクションを記録
-          await recordAction('create', entity, optimisticItem)
+          await recordAction('create', entity, optimisticItem);
 
-          return optimisticItem
+          return optimisticItem;
         },
         (item) => {
           // ロールバック
-          setData((prev) => prev.filter((i) => i.id !== item.id))
-        }
-      )
+          setData((prev) => prev.filter((i) => i.id !== item.id));
+        },
+      );
     },
-    [recordAction, optimisticUpdate, entity]
-  )
+    [recordAction, optimisticUpdate, entity],
+  );
 
   const update = useCallback(
     async (id: string, updates: Partial<T>) => {
-      const originalItem = data.find((item) => item.id === id)
-      if (!originalItem) throw new Error('Item not found')
+      const originalItem = data.find((item) => item.id === id);
+      if (!originalItem) throw new Error('Item not found');
 
-      const updatedItem = { ...originalItem, ...updates }
+      const updatedItem = { ...originalItem, ...updates };
 
       return await optimisticUpdate(
         updatedItem,
         async () => {
           // 楽観的更新
-          setData((prev) => prev.map((item) => (item.id === id ? updatedItem : item)))
+          setData((prev) => prev.map((item) => (item.id === id ? updatedItem : item)));
 
           // オフラインアクションを記録
-          await recordAction('update', entity, updatedItem)
+          await recordAction('update', entity, updatedItem);
 
-          return updatedItem
+          return updatedItem;
         },
         (_item) => {
           // ロールバック
-          setData((prev) => prev.map((i) => (i.id === id ? originalItem : i)))
-        }
-      )
+          setData((prev) => prev.map((i) => (i.id === id ? originalItem : i)));
+        },
+      );
     },
-    [data, recordAction, optimisticUpdate, entity]
-  )
+    [data, recordAction, optimisticUpdate, entity],
+  );
 
   const remove = useCallback(
     async (id: string) => {
-      const originalItem = data.find((item) => item.id === id)
-      if (!originalItem) throw new Error('Item not found')
+      const originalItem = data.find((item) => item.id === id);
+      if (!originalItem) throw new Error('Item not found');
 
       return await optimisticUpdate(
         originalItem,
         async () => {
           // 楽観的更新
-          setData((prev) => prev.filter((item) => item.id !== id))
+          setData((prev) => prev.filter((item) => item.id !== id));
 
           // オフラインアクションを記録
-          await recordAction('delete', entity, { id })
+          await recordAction('delete', entity, { id });
 
-          return originalItem
+          return originalItem;
         },
         (item) => {
           // ロールバック
-          setData((prev) => [...prev, item])
-        }
-      )
+          setData((prev) => [...prev, item]);
+        },
+      );
     },
-    [data, recordAction, optimisticUpdate, entity]
-  )
+    [data, recordAction, optimisticUpdate, entity],
+  );
 
   return {
     data,
@@ -432,5 +442,5 @@ export function useOfflineEntity<T extends Record<string, unknown>>(
     create,
     update,
     remove,
-  }
+  };
 }

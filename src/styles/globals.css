@@ -1413,6 +1413,26 @@ button,
   *::-webkit-scrollbar {
     display: none;
   }
+
+  /* .scrollbar-thin クラスも非表示（より高い詳細度で上書き） */
+  .scrollbar-thin {
+    -ms-overflow-style: none !important;
+    scrollbar-width: none !important;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  /* カレンダー用スクロールバーも非表示 */
+  .calendar-scrollbar {
+    -ms-overflow-style: none !important;
+    scrollbar-width: none !important;
+  }
+
+  .calendar-scrollbar::-webkit-scrollbar {
+    display: none !important;
+  }
 }
 
 /* 画像のドラッグ防止（モバイル操作時の誤操作防止） */

@@ -8,25 +8,25 @@
  * 注意: このページはProvidersの外で動作するため、
  * i18n、Theme、その他のコンテキストは利用不可。
  */
-'use client'
+'use client';
 
-import { Button } from '@/components/ui/button'
-import Image from 'next/image'
-import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
+import { Button } from '@/components/ui/button';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 interface ErrorProps {
-  error: Error & { digest?: string }
-  reset: () => void
+  error: Error & { digest?: string };
+  reset: () => void;
 }
 
 export default function RootError({ error, reset }: ErrorProps) {
-  const router = useRouter()
+  const router = useRouter();
 
   useEffect(() => {
     // エラーをログに記録（Sentryなど）
-    console.error('Application error:', error)
-  }, [error])
+    console.error('Application error:', error);
+  }, [error]);
 
   return (
     <div className="mx-auto flex min-h-dvh flex-col items-center justify-center gap-8 p-8 md:gap-12 md:p-16">
@@ -50,11 +50,15 @@ export default function RootError({ error, reset }: ErrorProps) {
           <Button className="cursor-pointer" onClick={() => reset()}>
             Try Again
           </Button>
-          <Button variant="outline" className="flex cursor-pointer items-center gap-1" onClick={() => router.push('/')}>
+          <Button
+            variant="outline"
+            className="flex cursor-pointer items-center gap-1"
+            onClick={() => router.push('/')}
+          >
             Go Home
           </Button>
         </div>
       </div>
     </div>
-  )
+  );
 }

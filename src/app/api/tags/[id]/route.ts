@@ -3,11 +3,11 @@
  * @description 特定タグのGET/PATCH/DELETE操作
  */
 
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server';
 
-import { createClient } from '@/lib/supabase/server'
-import { handleSupabaseError } from '@/lib/supabase/utils'
-import type { UpdateTagInput } from '@/types/tags'
+import { createClient } from '@/lib/supabase/server';
+import { handleSupabaseError } from '@/lib/supabase/utils';
+import type { UpdateTagInput } from '@/types/tags';
 
 /**
  * 個別タグ取得 (GET)
@@ -15,27 +15,32 @@ import type { UpdateTagInput } from '@/types/tags'
  */
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const supabase = await createClient()
-    const { id } = await params
-    const { searchParams } = new URL(request.url)
-    const includeUsage = searchParams.get('usage') === 'true'
+    const supabase = await createClient();
+    const { id } = await params;
+    const { searchParams } = new URL(request.url);
+    const includeUsage = searchParams.get('usage') === 'true';
 
     // 認証チェック
     const {
       data: { user },
       error: authError,
-    } = await supabase.auth.getUser()
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json({ error: 'tags.errors.unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: 'tags.errors.unauthorized' }, { status: 401 });
     }
 
-    const { data, error } = await supabase.from('tags').select('*').eq('id', id).eq('user_id', user.id).single()
+    const { data, error } = await supabase
+      .from('tags')
+      .select('*')
+      .eq('id', id)
+      .eq('user_id', user.id)
+      .single();
 
     if (error) {
       if (error.code === 'PGRST116') {
-        return NextResponse.json({ error: 'tags.errors.tagNotFound' }, { status: 404 })
+        return NextResponse.json({ error: 'tags.errors.tagNotFound' }, { status: 404 });
       }
-      return NextResponse.json({ error: handleSupabaseError(error) }, { status: 500 })
+      return NextResponse.json({ error: handleSupabaseError(error) }, { status: 500 });
     }
 
     // 使用状況を取得
@@ -45,32 +50,32 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         eventCount: 0,
         taskCount: 0,
         totalCount: 0,
-      }
+      };
 
       // plan_tagsテーブルが存在する場合
       try {
         const { count: planCount } = await supabase
           .from('plan_tags')
           .select('*', { count: 'exact', head: true })
-          .eq('tag_id', id)
+          .eq('tag_id', id);
 
-        usage.planCount = planCount || 0
+        usage.planCount = planCount || 0;
       } catch {
         // テーブルが存在しない場合は0のまま
       }
 
       // 合計カウント（現在はplan_tagsのみ）
-      usage.totalCount = usage.planCount
+      usage.totalCount = usage.planCount;
 
-      return NextResponse.json({ data, usage })
+      return NextResponse.json({ data, usage });
     }
 
-    return NextResponse.json({ data })
+    return NextResponse.json({ data });
   } catch (error) {
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Internal server error' },
-      { status: 500 }
-    )
+      { status: 500 },
+    );
   }
 }
 
@@ -80,19 +85,19 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
  */
 export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const supabase = await createClient()
-    const { id } = await params
+    const supabase = await createClient();
+    const { id } = await params;
 
     // 認証チェック
     const {
       data: { user },
       error: authError,
-    } = await supabase.auth.getUser()
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json({ error: 'tags.errors.unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: 'tags.errors.unauthorized' }, { status: 401 });
     }
 
-    const body: UpdateTagInput = await request.json()
+    const body: UpdateTagInput = await request.json();
 
     // 所有権チェック
     const { data: existingTag, error: checkError } = await supabase
@@ -100,55 +105,60 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
       .select('*')
       .eq('id', id)
       .eq('user_id', user.id)
-      .single()
+      .single();
 
     if (checkError || !existingTag) {
-      return NextResponse.json({ error: 'tags.errors.tagNotFound' }, { status: 404 })
+      return NextResponse.json({ error: 'tags.errors.tagNotFound' }, { status: 404 });
     }
 
     // 更新データ構築
     const updateData: Record<string, unknown> = {
       updated_at: new Date().toISOString(),
-    }
+    };
 
     if (body.name !== undefined) {
       if (body.name.trim().length === 0) {
-        return NextResponse.json({ error: 'tags.validation.nameEmpty' }, { status: 400 })
+        return NextResponse.json({ error: 'tags.validation.nameEmpty' }, { status: 400 });
       }
       if (body.name.trim().length > 50) {
-        return NextResponse.json({ error: 'tags.validation.nameMaxLength' }, { status: 400 })
+        return NextResponse.json({ error: 'tags.validation.nameMaxLength' }, { status: 400 });
       }
-      updateData.name = body.name.trim()
+      updateData.name = body.name.trim();
     }
 
     if (body.color !== undefined) {
-      updateData.color = body.color
+      updateData.color = body.color;
     }
 
     if (body.description !== undefined) {
-      updateData.description = body.description?.trim() || null
+      updateData.description = body.description?.trim() || null;
     }
 
     if (body.is_active !== undefined) {
-      updateData.is_active = body.is_active
+      updateData.is_active = body.is_active;
     }
 
     if (body.group_id !== undefined) {
-      updateData.group_id = body.group_id
+      updateData.group_id = body.group_id;
     }
 
-    const { data, error } = await supabase.from('tags').update(updateData).eq('id', id).select().single()
+    const { data, error } = await supabase
+      .from('tags')
+      .update(updateData)
+      .eq('id', id)
+      .select()
+      .single();
 
     if (error) {
-      return NextResponse.json({ error: handleSupabaseError(error) }, { status: 500 })
+      return NextResponse.json({ error: handleSupabaseError(error) }, { status: 500 });
     }
 
-    return NextResponse.json({ data })
+    return NextResponse.json({ data });
   } catch (error) {
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Internal server error' },
-      { status: 500 }
-    )
+      { status: 500 },
+    );
   }
 }
 
@@ -156,18 +166,21 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
  * タグ削除 (DELETE)
  * @description 特定のタグを削除
  */
-export async function DELETE(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
   try {
-    const supabase = await createClient()
-    const { id } = await params
+    const supabase = await createClient();
+    const { id } = await params;
 
     // 認証チェック
     const {
       data: { user },
       error: authError,
-    } = await supabase.auth.getUser()
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json({ error: 'tags.errors.unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: 'tags.errors.unauthorized' }, { status: 401 });
     }
 
     // 所有権チェック
@@ -176,24 +189,24 @@ export async function DELETE(_request: NextRequest, { params }: { params: Promis
       .select('*')
       .eq('id', id)
       .eq('user_id', user.id)
-      .single()
+      .single();
 
     if (checkError || !existingTag) {
-      return NextResponse.json({ error: 'tags.errors.tagNotFound' }, { status: 404 })
+      return NextResponse.json({ error: 'tags.errors.tagNotFound' }, { status: 404 });
     }
 
     // 削除実行（CASCADE設定により子タグも削除される）
-    const { error } = await supabase.from('tags').delete().eq('id', id)
+    const { error } = await supabase.from('tags').delete().eq('id', id);
 
     if (error) {
-      return NextResponse.json({ error: handleSupabaseError(error) }, { status: 500 })
+      return NextResponse.json({ error: handleSupabaseError(error) }, { status: 500 });
     }
 
-    return NextResponse.json({ success: true })
+    return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Internal server error' },
-      { status: 500 }
-    )
+      { status: 500 },
+    );
   }
 }

@@ -38,11 +38,11 @@
 ```typescript
 // メインストア群
 interface CalendarStores {
-  eventStore: EventStore // イベントデータ管理
-  taskStore: TaskStore // タスクデータ管理
-  recordsStore: RecordsStore // 実績記録管理
-  calendarSettingsStore: CalendarSettingsStore // 設定管理
-  calendarLayoutStore: CalendarLayoutStore // レイアウト状態
+  eventStore: EventStore; // イベントデータ管理
+  taskStore: TaskStore; // タスクデータ管理
+  recordsStore: RecordsStore; // 実績記録管理
+  calendarSettingsStore: CalendarSettingsStore; // 設定管理
+  calendarLayoutStore: CalendarLayoutStore; // レイアウト状態
 }
 ```
 
@@ -51,20 +51,20 @@ interface CalendarStores {
 ```typescript
 interface EventStore {
   // State
-  events: Event[]
-  loading: boolean
-  error: string | null
+  events: Event[];
+  loading: boolean;
+  error: string | null;
 
   // Actions
-  fetchEvents: () => Promise<void>
-  createEvent: (data: CreateEventRequest) => Promise<Event>
-  updateEvent: (data: UpdateEventRequest) => Promise<Event>
-  deleteEvent: (id: string) => Promise<void>
-  getEventsByDateRange: (start: Date, end: Date) => Event[]
+  fetchEvents: () => Promise<void>;
+  createEvent: (data: CreateEventRequest) => Promise<Event>;
+  updateEvent: (data: UpdateEventRequest) => Promise<Event>;
+  deleteEvent: (id: string) => Promise<void>;
+  getEventsByDateRange: (start: Date, end: Date) => Event[];
 
   // Selectors
-  getEventsForDate: (date: Date) => Event[]
-  getUpcomingEvents: (limit?: number) => Event[]
+  getEventsForDate: (date: Date) => Event[];
+  getUpcomingEvents: (limit?: number) => Event[];
 }
 ```
 
@@ -73,16 +73,16 @@ interface EventStore {
 ```typescript
 interface TaskStore {
   // State
-  tasks: Task[]
-  loading: boolean
-  error: string | null
+  tasks: Task[];
+  loading: boolean;
+  error: string | null;
 
   // Actions
-  createTask: (data: CreateTaskInput) => Task
-  updateTask: (id: string, data: Partial<Task>) => void
-  deleteTask: (id: string) => void
-  updateTaskStatus: (id: string, status: TaskStatus) => void
-  getTasksForDateRange: (start: Date, end: Date) => Task[]
+  createTask: (data: CreateTaskInput) => Task;
+  updateTask: (id: string, data: Partial<Task>) => void;
+  deleteTask: (id: string) => void;
+  updateTaskStatus: (id: string, status: TaskStatus) => void;
+  getTasksForDateRange: (start: Date, end: Date) => Task[];
 }
 ```
 
@@ -91,15 +91,15 @@ interface TaskStore {
 ```typescript
 interface CalendarSettingsStore {
   // State
-  timezone: string
-  planRecordMode: 'plan' | 'record' | 'both'
-  weekStartsOn: 0 | 1
-  defaultView: CalendarViewType
-  timeFormat: '12h' | '24h'
+  timezone: string;
+  planRecordMode: 'plan' | 'record' | 'both';
+  weekStartsOn: 0 | 1;
+  defaultView: CalendarViewType;
+  timeFormat: '12h' | '24h';
 
   // Actions
-  updateSettings: (settings: Partial<CalendarSettings>) => void
-  resetSettings: () => void
+  updateSettings: (settings: Partial<CalendarSettings>) => void;
+  resetSettings: () => void;
 }
 ```
 
@@ -138,23 +138,23 @@ UI Update
 // CalendarController → Views
 interface ViewProps {
   // Data Props (computed from stores)
-  dateRange: ViewDateRange // 計算された日付範囲
-  tasks: Task[] // フィルタリング済みタスク
-  events: CalendarEvent[] // 変換済みイベント
-  currentDate: Date // 現在の表示日付
+  dateRange: ViewDateRange; // 計算された日付範囲
+  tasks: Task[]; // フィルタリング済みタスク
+  events: CalendarEvent[]; // 変換済みイベント
+  currentDate: Date; // 現在の表示日付
 
   // Event Handlers (bound to controller)
-  onEventClick: (event: CalendarEvent) => void
-  onCreateEvent: (date: Date, time?: string) => void
-  onUpdateEvent: (event: CalendarEvent) => void
-  onDeleteEvent: (eventId: string) => void
-  onEmptyClick: (date: Date, time: string) => void
+  onEventClick: (event: CalendarEvent) => void;
+  onCreateEvent: (date: Date, time?: string) => void;
+  onUpdateEvent: (event: CalendarEvent) => void;
+  onDeleteEvent: (eventId: string) => void;
+  onEmptyClick: (date: Date, time: string) => void;
 
   // Navigation Handlers
-  onViewChange: (viewType: CalendarViewType) => void
-  onNavigatePrev: () => void
-  onNavigateNext: () => void
-  onNavigateToday: () => void
+  onViewChange: (viewType: CalendarViewType) => void;
+  onNavigatePrev: () => void;
+  onNavigateNext: () => void;
+  onNavigateToday: () => void;
 }
 ```
 
@@ -172,13 +172,15 @@ const transformedEvents = useMemo(() => {
     duration: calculateDuration(event.startDate, event.endDate),
     isMultiDay: isMultiDayEvent(event.startDate, event.endDate),
     type: 'event' as const,
-  }))
-}, [events, timezone])
+  }));
+}, [events, timezone]);
 
 // 日付範囲フィルタリング
 const filteredEvents = useMemo(() => {
-  return transformedEvents.filter((event) => isEventInDateRange(event, viewDateRange.start, viewDateRange.end))
-}, [transformedEvents, viewDateRange])
+  return transformedEvents.filter((event) =>
+    isEventInDateRange(event, viewDateRange.start, viewDateRange.end),
+  );
+}, [transformedEvents, viewDateRange]);
 ```
 
 ---
@@ -220,18 +222,18 @@ export function useCalendarLayout({
   onViewChange,
   onDateChange,
 }: UseCalendarLayoutOptions) {
-  const [viewType, setViewType] = useState(initialViewType)
-  const [currentDate, setCurrentDate] = useState(initialDate)
-  const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [viewType, setViewType] = useState(initialViewType);
+  const [currentDate, setCurrentDate] = useState(initialDate);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   // ビュー変更
   const changeView = useCallback(
     (newView: CalendarViewType) => {
-      setViewType(newView)
-      onViewChange?.(newView)
+      setViewType(newView);
+      onViewChange?.(newView);
     },
-    [onViewChange]
-  )
+    [onViewChange],
+  );
 
   // 日付ナビゲーション
   const navigateRelative = useCallback(
@@ -241,13 +243,13 @@ export function useCalendarLayout({
           ? new Date()
           : direction === 'prev'
             ? getPreviousPeriod(currentDate, viewType)
-            : getNextPeriod(currentDate, viewType)
+            : getNextPeriod(currentDate, viewType);
 
-      setCurrentDate(newDate)
-      onDateChange?.(newDate)
+      setCurrentDate(newDate);
+      onDateChange?.(newDate);
     },
-    [currentDate, viewType, onDateChange]
-  )
+    [currentDate, viewType, onDateChange],
+  );
 
   return {
     viewType,
@@ -256,7 +258,7 @@ export function useCalendarLayout({
     changeView,
     navigateRelative,
     toggleSidebar: () => setSidebarOpen(!sidebarOpen),
-  }
+  };
 }
 ```
 
@@ -264,47 +266,47 @@ export function useCalendarLayout({
 
 ```typescript
 export function useDayView({ date, events, onEventUpdate }: UseDayViewOptions): UseDayViewReturn {
-  const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   // 表示日付の正規化
   const displayDate = useMemo(() => {
-    const normalized = new Date(date)
-    normalized.setHours(0, 0, 0, 0)
-    return normalized
-  }, [date])
+    const normalized = new Date(date);
+    normalized.setHours(0, 0, 0, 0);
+    return normalized;
+  }, [date]);
 
   // その日のイベントをフィルタリング・ソート
   const dayEvents = useMemo(() => {
     return events
       .filter((event) => {
-        if (!event.startDate) return false
-        return isSameDay(event.startDate, displayDate)
+        if (!event.startDate) return false;
+        return isSameDay(event.startDate, displayDate);
       })
       .sort((a, b) => {
         // 終日イベントを最初に
-        const aIsAllDay = isAllDayEvent(a)
-        const bIsAllDay = isAllDayEvent(b)
+        const aIsAllDay = isAllDayEvent(a);
+        const bIsAllDay = isAllDayEvent(b);
 
-        if (aIsAllDay && !bIsAllDay) return -1
-        if (!aIsAllDay && bIsAllDay) return 1
+        if (aIsAllDay && !bIsAllDay) return -1;
+        if (!aIsAllDay && bIsAllDay) return 1;
 
         // 時刻順
-        const aTime = a.startDate?.getTime() || 0
-        const bTime = b.startDate?.getTime() || 0
-        return aTime - bTime
-      })
-  }, [events, displayDate])
+        const aTime = a.startDate?.getTime() || 0;
+        const bTime = b.startDate?.getTime() || 0;
+        return aTime - bTime;
+      });
+  }, [events, displayDate]);
 
   // イベントスタイル計算
   const eventStyles = useMemo(() => {
-    const styles: Record<string, CSSProperties> = {}
+    const styles: Record<string, CSSProperties> = {};
 
     // 重複するイベントの列配置を計算
-    const eventColumns = calculateEventColumns(dayEvents)
+    const eventColumns = calculateEventColumns(dayEvents);
 
     dayEvents.forEach((event, index) => {
-      const position = calculateEventPosition(event)
-      const columnInfo = eventColumns[index]
+      const position = calculateEventPosition(event);
+      const columnInfo = eventColumns[index];
 
       styles[event.id] = {
         position: 'absolute',
@@ -313,36 +315,36 @@ export function useDayView({ date, events, onEventUpdate }: UseDayViewOptions): 
         left: `${(columnInfo.column / columnInfo.totalColumns) * 100}%`,
         width: `${(1 / columnInfo.totalColumns) * 95}%`, // 5% margin
         zIndex: 20 + columnInfo.column,
-      }
-    })
+      };
+    });
 
-    return styles
-  }, [dayEvents])
+    return styles;
+  }, [dayEvents]);
 
   // 今日判定
-  const isToday = useMemo(() => isSameDay(displayDate, new Date()), [displayDate])
+  const isToday = useMemo(() => isSameDay(displayDate, new Date()), [displayDate]);
 
   // 現在時刻へスクロール
   const scrollToNow = useCallback(() => {
-    if (!scrollContainerRef.current || !isToday) return
+    if (!scrollContainerRef.current || !isToday) return;
 
-    const now = new Date()
-    const currentHour = now.getHours()
-    const currentMinutes = now.getMinutes()
-    const scrollTop = (currentHour + currentMinutes / 60 - 2) * 72 // 72px per hour
+    const now = new Date();
+    const currentHour = now.getHours();
+    const currentMinutes = now.getMinutes();
+    const scrollTop = (currentHour + currentMinutes / 60 - 2) * 72; // 72px per hour
 
     scrollContainerRef.current.scrollTo({
       top: Math.max(0, scrollTop),
       behavior: 'smooth',
-    })
-  }, [isToday])
+    });
+  }, [isToday]);
 
   // 時間スロット生成
   const timeSlots = useMemo(() => {
     return Array.from({ length: 24 * 4 }, (_, index) => {
-      const totalMinutes = index * 15
-      const hour = Math.floor(totalMinutes / 60)
-      const minute = totalMinutes % 60
+      const totalMinutes = index * 15;
+      const hour = Math.floor(totalMinutes / 60);
+      const minute = totalMinutes % 60;
 
       return {
         time: `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`,
@@ -352,9 +354,9 @@ export function useDayView({ date, events, onEventUpdate }: UseDayViewOptions): 
         isHour: minute === 0,
         isHalfHour: minute === 30,
         isQuarterHour: minute === 15 || minute === 45,
-      }
-    })
-  }, [])
+      };
+    });
+  }, []);
 
   return {
     dayEvents,
@@ -362,7 +364,7 @@ export function useDayView({ date, events, onEventUpdate }: UseDayViewOptions): 
     scrollToNow,
     isToday,
     timeSlots,
-  }
+  };
 }
 ```
 
@@ -395,19 +397,19 @@ export function useDayView({ date, events, onEventUpdate }: UseDayViewOptions): 
 ```typescript
 // 1. DOM Event - 空きスロットクリック
 const handleEmptySlotClick = (e: MouseEvent, date: Date) => {
-  const timeString = calculateTimeFromClick(e)
-  onEmptyClick?.(date, timeString) // 2. Component Event Handler
-}
+  const timeString = calculateTimeFromClick(e);
+  onEmptyClick?.(date, timeString); // 2. Component Event Handler
+};
 
 // 3. View-Specific Logic (DayView)
 const handleEmptyClick = useCallback(
   (date: Date, time: string) => {
     // ビュー固有の前処理
-    const defaultEndTime = addMinutes(time, 60)
-    onEmptyClick?.(date, time)
+    const defaultEndTime = addMinutes(time, 60);
+    onEmptyClick?.(date, time);
   },
-  [onEmptyClick]
-)
+  [onEmptyClick],
+);
 
 // 4. CalendarController Unified Handler
 const handleEmptyClick = useCallback(
@@ -416,27 +418,27 @@ const handleEmptyClick = useCallback(
     openEventPopup({
       dueDate: date,
       status: 'Todo',
-    })
+    });
 
     // デフォルト値設定
-    setEventDefaultDate(date)
-    setEventDefaultTime(time)
+    setEventDefaultDate(date);
+    setEventDefaultTime(time);
   },
-  [openEventPopup]
-)
+  [openEventPopup],
+);
 
 // 5. Store Action (AddPopup内で実行)
 const handleEventSave = async (eventData: CreateEventRequest) => {
-  await eventStore.createEvent(eventData) // 6. API call
-}
+  await eventStore.createEvent(eventData); // 6. API call
+};
 
 // 7. State Update (eventStore内)
 const createEvent = async (data: CreateEventRequest) => {
   set((state) => ({
     events: [...state.events, newEvent], // 8. UI Re-render
     loading: false,
-  }))
-}
+  }));
+};
 ```
 
 ### エラーハンドリングフロー
@@ -445,22 +447,22 @@ const createEvent = async (data: CreateEventRequest) => {
 // エラー境界での処理
 const handleEventAction = async (action: () => Promise<void>) => {
   try {
-    setLoading(true)
-    await action()
-    setError(null)
+    setLoading(true);
+    await action();
+    setError(null);
   } catch (error) {
-    console.error('Event action failed:', error)
-    setError(error.message)
+    console.error('Event action failed:', error);
+    setError(error.message);
 
     // ユーザーへの通知
     showNotification({
       type: 'error',
       message: '操作に失敗しました。もう一度お試しください。',
-    })
+    });
   } finally {
-    setLoading(false)
+    setLoading(false);
   }
-}
+};
 ```
 
 ---
@@ -473,26 +475,26 @@ const handleEventAction = async (action: () => Promise<void>) => {
 // EventStore でのリアルタイム更新
 useEffect(() => {
   // WebSocket接続 (将来実装)
-  const ws = new WebSocket('/api/calendar/events/stream')
+  const ws = new WebSocket('/api/calendar/events/stream');
 
   ws.onmessage = (event) => {
-    const { type, data } = JSON.parse(event.data)
+    const { type, data } = JSON.parse(event.data);
 
     switch (type) {
       case 'event_created':
-        addEvent(data)
-        break
+        addEvent(data);
+        break;
       case 'event_updated':
-        updateEvent(data.id, data)
-        break
+        updateEvent(data.id, data);
+        break;
       case 'event_deleted':
-        removeEvent(data.id)
-        break
+        removeEvent(data.id);
+        break;
     }
-  }
+  };
 
-  return () => ws.close()
-}, [])
+  return () => ws.close();
+}, []);
 ```
 
 ### オフライン対応
@@ -502,26 +504,26 @@ useEffect(() => {
 const syncManager = {
   // 未同期アクションをキューに保存
   queueAction: (action: SyncAction) => {
-    const queue = JSON.parse(localStorage.getItem('syncQueue') || '[]')
-    queue.push(action)
-    localStorage.setItem('syncQueue', JSON.stringify(queue))
+    const queue = JSON.parse(localStorage.getItem('syncQueue') || '[]');
+    queue.push(action);
+    localStorage.setItem('syncQueue', JSON.stringify(queue));
   },
 
   // オンライン復帰時に同期
   syncPendingActions: async () => {
-    const queue = JSON.parse(localStorage.getItem('syncQueue') || '[]')
+    const queue = JSON.parse(localStorage.getItem('syncQueue') || '[]');
 
     for (const action of queue) {
       try {
-        await executeAction(action)
+        await executeAction(action);
       } catch (error) {
-        console.error('Sync failed for action:', action, error)
+        console.error('Sync failed for action:', action, error);
       }
     }
 
-    localStorage.removeItem('syncQueue')
+    localStorage.removeItem('syncQueue');
   },
-}
+};
 ```
 
 ---
@@ -567,23 +569,23 @@ const SomeComponent = () => {
 
 ```typescript
 interface CalendarThemeContext {
-  colors: CalendarColorScheme
-  spacing: CalendarSpacing
-  typography: CalendarTypography
+  colors: CalendarColorScheme;
+  spacing: CalendarSpacing;
+  typography: CalendarTypography;
 
-  updateTheme: (theme: Partial<CalendarTheme>) => void
+  updateTheme: (theme: Partial<CalendarTheme>) => void;
 }
 
 // カスタマイズ可能なテーマシステム
 const useCalendarTheme = () => {
-  const [theme, setTheme] = useState(defaultCalendarTheme)
+  const [theme, setTheme] = useState(defaultCalendarTheme);
 
   const updateTheme = useCallback((updates: Partial<CalendarTheme>) => {
-    setTheme((current) => ({ ...current, ...updates }))
-  }, [])
+    setTheme((current) => ({ ...current, ...updates }));
+  }, []);
 
-  return { ...theme, updateTheme }
-}
+  return { ...theme, updateTheme };
+};
 ```
 
 ---
@@ -667,15 +669,15 @@ const useCalendarDebug = () => {
       renderCount: useRef(0),
       lastRenderTime: performance.now(),
     },
-  }
+  };
 
   useEffect(() => {
-    debugInfo.performance.renderCount.current++
-    console.log('Calendar Debug:', debugInfo)
-  })
+    debugInfo.performance.renderCount.current++;
+    console.log('Calendar Debug:', debugInfo);
+  });
 
-  return debugInfo
-}
+  return debugInfo;
+};
 ```
 
 ### エラー追跡
@@ -691,14 +693,14 @@ const useErrorReporting = () => {
       timestamp: new Date().toISOString(),
       userAgent: navigator.userAgent,
       url: window.location.href,
-    }
+    };
 
     // エラー追跡サービスに送信
-    sendErrorReport(errorReport)
-  }, [])
+    sendErrorReport(errorReport);
+  }, []);
 
-  return { reportError }
-}
+  return { reportError };
+};
 ```
 
 ---
@@ -712,14 +714,14 @@ const useErrorReporting = () => {
 const updateEvent = (eventId: string, updates: Partial<Event>) => {
   set((state) => ({
     events: state.events.map((event) => (event.id === eventId ? { ...event, ...updates } : event)),
-  }))
-}
+  }));
+};
 
 // ❌ Bad: 直接変更
 const updateEventBad = (eventId: string, updates: Partial<Event>) => {
-  const event = state.events.find((e) => e.id === eventId)
-  Object.assign(event, updates) // Mutation!
-}
+  const event = state.events.find((e) => e.id === eventId);
+  Object.assign(event, updates); // Mutation!
+};
 ```
 
 ### 2. Effect Dependencies
@@ -727,13 +729,13 @@ const updateEventBad = (eventId: string, updates: Partial<Event>) => {
 ```typescript
 // ✅ Good: 適切な依存配列
 useEffect(() => {
-  fetchEvents(dateRange.start, dateRange.end)
-}, [dateRange.start, dateRange.end, fetchEvents])
+  fetchEvents(dateRange.start, dateRange.end);
+}, [dateRange.start, dateRange.end, fetchEvents]);
 
 // ❌ Bad: 不完全な依存配列
 useEffect(() => {
-  fetchEvents(dateRange.start, dateRange.end)
-}, []) // Missing dependencies
+  fetchEvents(dateRange.start, dateRange.end);
+}, []); // Missing dependencies
 ```
 
 ### 3. Error Boundaries

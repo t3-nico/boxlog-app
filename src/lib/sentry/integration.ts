@@ -6,9 +6,9 @@
  * このファイルはヘルパー関数のみを提供します。
  */
 
-import * as Sentry from '@sentry/nextjs'
+import * as Sentry from '@sentry/nextjs';
 
-import { AppError, type ErrorCategory, type SeverityLevel } from '@/config/error-patterns'
+import { AppError, type ErrorCategory, type SeverityLevel } from '@/config/error-patterns';
 
 /**
  * カテゴリ別Sentryタグ設定
@@ -56,7 +56,7 @@ const CATEGORY_TAGS: Record<ErrorCategory, Record<string, string>> = {
     team: 'backend',
     alerting: 'daily',
   },
-}
+};
 
 /**
  * 重要度をSentryのレベルにマッピング
@@ -64,15 +64,15 @@ const CATEGORY_TAGS: Record<ErrorCategory, Record<string, string>> = {
 function mapSeverityToSentryLevel(severity: SeverityLevel): Sentry.SeverityLevel {
   switch (severity) {
     case 'critical':
-      return 'fatal'
+      return 'fatal';
     case 'high':
-      return 'error'
+      return 'error';
     case 'medium':
-      return 'warning'
+      return 'warning';
     case 'low':
-      return 'info'
+      return 'info';
     default:
-      return 'error'
+      return 'error';
   }
 }
 
@@ -80,7 +80,7 @@ function mapSeverityToSentryLevel(severity: SeverityLevel): Sentry.SeverityLevel
  * エラーのフィンガープリントを生成
  */
 function generateFingerprint(error: AppError): string[] {
-  return ['boxlog-app', error.category, error.code.toString()]
+  return ['boxlog-app', error.category, error.code.toString()];
 }
 
 /**
@@ -101,23 +101,23 @@ function generateFingerprint(error: AppError): string[] {
  */
 export function reportToSentry(
   error: AppError,
-  userContext?: { userId?: string; ip?: string; userAgent?: string }
+  userContext?: { userId?: string; ip?: string; userAgent?: string },
 ): void {
   Sentry.withScope((scope) => {
     // エラーコード・カテゴリ・重要度をタグ付け
-    scope.setTag('errorCode', error.code)
-    scope.setTag('errorCategory', error.category)
-    scope.setTag('severity', error.severity)
+    scope.setTag('errorCode', error.code);
+    scope.setTag('errorCategory', error.category);
+    scope.setTag('severity', error.severity);
 
     // カテゴリ別タグを追加
-    const categoryTags = CATEGORY_TAGS[error.category]
+    const categoryTags = CATEGORY_TAGS[error.category];
     Object.entries(categoryTags).forEach(([key, value]) => {
-      scope.setTag(key, value)
-    })
+      scope.setTag(key, value);
+    });
 
     // フィンガープリントとレベル設定
-    scope.setFingerprint(generateFingerprint(error))
-    scope.setLevel(mapSeverityToSentryLevel(error.severity))
+    scope.setFingerprint(generateFingerprint(error));
+    scope.setLevel(mapSeverityToSentryLevel(error.severity));
 
     // エラーパターン情報をコンテキストに追加
     scope.setContext('errorPattern', {
@@ -125,11 +125,11 @@ export function reportToSentry(
       category: error.category,
       severity: error.severity,
       userMessage: error.userMessage,
-    })
+    });
 
     // メタデータがあればコンテキストに追加
     if (error.metadata) {
-      scope.setContext('errorMetadata', error.metadata)
+      scope.setContext('errorMetadata', error.metadata);
     }
 
     // ユーザーコンテキストを設定
@@ -137,11 +137,11 @@ export function reportToSentry(
       scope.setUser({
         id: userContext.userId,
         ...(userContext.ip && { ip_address: userContext.ip }),
-      })
+      });
     }
 
-    Sentry.captureException(error)
-  })
+    Sentry.captureException(error);
+  });
 }
 
 /**
@@ -153,14 +153,14 @@ export class SentryErrorHandler {
    */
   static handleError(error: Error | AppError, context?: Record<string, unknown>): void {
     if (error instanceof AppError) {
-      reportToSentry(error)
+      reportToSentry(error);
     } else {
       // 通常のErrorをAppErrorに変換してレポート
       const appError = new AppError(error.message, 'SYSTEM_ERROR_500', {
         originalError: error,
         ...context,
-      })
-      reportToSentry(appError)
+      });
+      reportToSentry(appError);
     }
   }
 
@@ -168,19 +168,19 @@ export class SentryErrorHandler {
    * 操作コンテキストを設定
    */
   static setOperationContext(context: Record<string, unknown>): void {
-    Sentry.setContext('operation', context)
+    Sentry.setContext('operation', context);
   }
 
   /**
    * パンくずリストを追加
    */
   static addBreadcrumb(breadcrumb: {
-    message: string
-    category?: string
-    level?: Sentry.SeverityLevel
-    data?: Record<string, unknown>
+    message: string;
+    category?: string;
+    level?: Sentry.SeverityLevel;
+    data?: Record<string, unknown>;
   }): void {
-    Sentry.addBreadcrumb(breadcrumb)
+    Sentry.addBreadcrumb(breadcrumb);
   }
 }
 
@@ -196,8 +196,11 @@ export class SentryErrorHandler {
  * }
  * ```
  */
-export function handleReactError(error: Error, errorInfo?: { componentStack?: string | null }): void {
-  SentryErrorHandler.handleError(error, { errorInfo, type: 'react' })
+export function handleReactError(
+  error: Error,
+  errorInfo?: { componentStack?: string | null },
+): void {
+  SentryErrorHandler.handleError(error, { errorInfo, type: 'react' });
 }
 
 /**
@@ -217,12 +220,12 @@ export function handleReactError(error: Error, errorInfo?: { componentStack?: st
  * ```
  */
 export function handleApiError(error: Error, context?: Record<string, unknown>): void {
-  SentryErrorHandler.handleError(error, { ...context, type: 'api' })
+  SentryErrorHandler.handleError(error, { ...context, type: 'api' });
 }
 
 /**
  * Sentryの初期化状態を確認
  */
 export function isSentryInitialized(): boolean {
-  return !!Sentry.getClient()
+  return !!Sentry.getClient();
 }

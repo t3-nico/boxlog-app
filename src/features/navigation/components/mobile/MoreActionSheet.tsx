@@ -1,19 +1,25 @@
-'use client'
+'use client';
 
-import { useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation';
 
-import { BarChart3, Bell, Bot, Search } from 'lucide-react'
+import { BarChart3, Bell, Bot, Search } from 'lucide-react';
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from '@/components/ui/drawer'
-import { useAIInspectorStore } from '@/features/ai'
-import { useAuthStore } from '@/features/auth/stores/useAuthStore'
-import { useTranslations } from 'next-intl'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerTitle,
+} from '@/components/ui/drawer';
+import { useAIInspectorStore } from '@/features/ai';
+import { useAuthStore } from '@/features/auth/stores/useAuthStore';
+import { useTranslations } from 'next-intl';
 
 interface MoreActionSheetProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  locale: 'ja' | 'en'
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  locale: 'ja' | 'en';
 }
 
 /**
@@ -25,21 +31,21 @@ interface MoreActionSheetProps {
  * - ログアウトは設定内で管理
  */
 export function MoreActionSheet({ open, onOpenChange, locale }: MoreActionSheetProps) {
-  const router = useRouter()
-  const t = useTranslations()
-  const user = useAuthStore((state) => state.user)
-  const openAIInspector = useAIInspectorStore((state) => state.openInspector)
+  const router = useRouter();
+  const t = useTranslations();
+  const user = useAuthStore((state) => state.user);
+  const openAIInspector = useAIInspectorStore((state) => state.openInspector);
 
   const userData = {
     name: user?.user_metadata?.username || user?.email?.split('@')[0] || 'User',
     email: user?.email || '',
     avatar: user?.user_metadata?.avatar_url || null,
-  }
+  };
 
   const handleNavigation = (href: string) => {
-    onOpenChange(false)
-    router.push(href)
-  }
+    onOpenChange(false);
+    router.push(href);
+  };
 
   const menuItems = [
     {
@@ -65,11 +71,11 @@ export function MoreActionSheet({ open, onOpenChange, locale }: MoreActionSheetP
       label: t('aria.openAIAssistant'),
       icon: Bot,
       onClick: () => {
-        onOpenChange(false)
-        openAIInspector()
+        onOpenChange(false);
+        openAIInspector();
       },
     },
-  ]
+  ];
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
@@ -87,7 +93,9 @@ export function MoreActionSheet({ open, onOpenChange, locale }: MoreActionSheetP
         >
           <Avatar className="size-12">
             {userData.avatar ? <AvatarImage src={userData.avatar} alt={userData.name} /> : null}
-            <AvatarFallback className="text-lg">{userData.name.charAt(0).toUpperCase()}</AvatarFallback>
+            <AvatarFallback className="text-lg">
+              {userData.name.charAt(0).toUpperCase()}
+            </AvatarFallback>
           </Avatar>
           <div className="min-w-0 flex-1">
             <p className="text-foreground truncate text-base font-medium">{userData.name}</p>
@@ -101,7 +109,7 @@ export function MoreActionSheet({ open, onOpenChange, locale }: MoreActionSheetP
         {/* Navigation Items */}
         <div className="py-2">
           {menuItems.map((item) => {
-            const Icon = item.icon
+            const Icon = item.icon;
 
             return (
               <button
@@ -113,10 +121,10 @@ export function MoreActionSheet({ open, onOpenChange, locale }: MoreActionSheetP
                 <Icon className="text-foreground size-5" />
                 <span className="text-foreground flex-1">{item.label}</span>
               </button>
-            )
+            );
           })}
         </div>
       </DrawerContent>
     </Drawer>
-  )
+  );
 }

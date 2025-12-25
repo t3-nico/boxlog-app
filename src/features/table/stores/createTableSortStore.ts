@@ -1,35 +1,35 @@
-import { create } from 'zustand'
-import { devtools, persist } from 'zustand/middleware'
+import { create } from 'zustand';
+import { devtools, persist } from 'zustand/middleware';
 
 /**
  * ソート方向
  */
-export type SortDirection = 'asc' | 'desc'
+export type SortDirection = 'asc' | 'desc';
 
 /**
  * ソート方向（null許容版）
  */
-export type SortDirectionNullable = SortDirection | null
+export type SortDirectionNullable = SortDirection | null;
 
 /**
  * ソートストアの状態
  */
 export interface TableSortState<TSortField extends string> {
-  sortField: TSortField
-  sortDirection: SortDirection
-  setSortField: (field: TSortField) => void
-  setSort: (field: TSortField, direction: SortDirection) => void
+  sortField: TSortField;
+  sortDirection: SortDirection;
+  setSortField: (field: TSortField) => void;
+  setSort: (field: TSortField, direction: SortDirection) => void;
 }
 
 /**
  * ソートストアの状態（null許容版）
  */
 export interface TableSortStateNullable<TSortField extends string> {
-  sortField: TSortField | null
-  sortDirection: SortDirectionNullable
-  setSortField: (field: TSortField) => void
-  setSort: (field: TSortField, direction: SortDirection) => void
-  clearSort: () => void
+  sortField: TSortField | null;
+  sortDirection: SortDirectionNullable;
+  setSortField: (field: TSortField) => void;
+  setSort: (field: TSortField, direction: SortDirection) => void;
+  clearSort: () => void;
 }
 
 /**
@@ -37,15 +37,15 @@ export interface TableSortStateNullable<TSortField extends string> {
  */
 export interface CreateTableSortStoreConfig<TSortField extends string> {
   /** デフォルトソートフィールド */
-  defaultSortField: TSortField
+  defaultSortField: TSortField;
   /** デフォルトソート方向 */
-  defaultSortDirection: SortDirection
+  defaultSortDirection: SortDirection;
   /** localStorage 永続化キー（nullの場合は永続化しない） */
-  persistKey?: string
+  persistKey?: string;
   /** devtools 表示名 */
-  storeName?: string
+  storeName?: string;
   /** ソート解除を許可するか（デフォルト: false） */
-  allowClearSort?: boolean
+  allowClearSort?: boolean;
 }
 
 /**
@@ -68,49 +68,56 @@ export interface CreateTableSortStoreConfig<TSortField extends string> {
  * })
  * ```
  */
-export function createTableSortStore<TSortField extends string>(config: CreateTableSortStoreConfig<TSortField>) {
+export function createTableSortStore<TSortField extends string>(
+  config: CreateTableSortStoreConfig<TSortField>,
+) {
   const {
     defaultSortField,
     defaultSortDirection,
     persistKey,
     storeName = persistKey ?? 'table-sort-store',
     allowClearSort = false,
-  } = config
+  } = config;
 
-  type StoreState = TableSortState<TSortField>
+  type StoreState = TableSortState<TSortField>;
 
-  const storeCreator = (set: (partial: Partial<StoreState>) => void, get: () => StoreState): StoreState => ({
+  const storeCreator = (
+    set: (partial: Partial<StoreState>) => void,
+    get: () => StoreState,
+  ): StoreState => ({
     sortField: defaultSortField,
     sortDirection: defaultSortDirection,
 
     setSortField: (field: TSortField) => {
-      const { sortField, sortDirection } = get()
+      const { sortField, sortDirection } = get();
 
       if (sortField === field) {
         if (allowClearSort) {
           // asc → desc → asc（解除はUI層で実装）
           set({
             sortDirection: sortDirection === 'asc' ? 'desc' : 'asc',
-          })
+          });
         } else {
           // asc ↔ desc
           set({
             sortDirection: sortDirection === 'asc' ? 'desc' : 'asc',
-          })
+          });
         }
       } else {
-        set({ sortField: field, sortDirection: 'asc' })
+        set({ sortField: field, sortDirection: 'asc' });
       }
     },
 
     setSort: (field: TSortField, direction: SortDirection) => {
-      set({ sortField: field, sortDirection: direction })
+      set({ sortField: field, sortDirection: direction });
     },
-  })
+  });
 
   if (persistKey) {
-    return create<StoreState>()(devtools(persist(storeCreator, { name: persistKey }), { name: storeName }))
+    return create<StoreState>()(
+      devtools(persist(storeCreator, { name: persistKey }), { name: storeName }),
+    );
   }
 
-  return create<StoreState>()(devtools(storeCreator, { name: storeName }))
+  return create<StoreState>()(devtools(storeCreator, { name: storeName }));
 }

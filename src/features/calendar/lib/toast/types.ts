@@ -1,6 +1,6 @@
-import type { ExternalToast } from 'sonner'
+import type { ExternalToast } from 'sonner';
 
-import type { CalendarPlan } from '@/features/calendar/types'
+import type { CalendarPlan } from '@/features/calendar/types';
 
 // Calendar操作の種類
 export type CalendarAction =
@@ -12,44 +12,44 @@ export type CalendarAction =
   | 'bulk-deleted'
   | 'sync-started'
   | 'sync-completed'
-  | 'sync-failed'
+  | 'sync-failed';
 
 // Calendar Toast用の拡張型
 export interface CalendarToastOptions {
-  event?: CalendarPlan
-  events?: CalendarPlan[]
-  count?: number
-  undoAction?: (() => void | Promise<void>) | undefined
-  viewAction?: (() => void) | undefined
-  retryAction?: (() => void | Promise<void>) | undefined
-  fromDate?: Date
-  toDate?: Date
-  description?: string
-  duration?: number
+  event?: CalendarPlan;
+  events?: CalendarPlan[];
+  count?: number;
+  undoAction?: (() => void | Promise<void>) | undefined;
+  viewAction?: (() => void) | undefined;
+  retryAction?: (() => void | Promise<void>) | undefined;
+  fromDate?: Date;
+  toDate?: Date;
+  description?: string;
+  duration?: number;
 }
 
 // メッセージテンプレート型
 export interface ToastTemplate {
-  title: string
-  description?: (options: CalendarToastOptions) => string
-  type: 'success' | 'error' | 'warning' | 'info' | 'loading'
-  duration?: number
+  title: string;
+  description?: (options: CalendarToastOptions) => string;
+  type: 'success' | 'error' | 'warning' | 'info' | 'loading';
+  duration?: number;
 }
 
-export type ToastTemplates = Record<CalendarAction, ToastTemplate>
+export type ToastTemplates = Record<CalendarAction, ToastTemplate>;
 
 // CalendarToastOptionsをsonnerのExternalToastに変換するヘルパー関数
 export function toExternalToast(options?: CalendarToastOptions): ExternalToast | undefined {
-  if (!options) return undefined
+  if (!options) return undefined;
 
-  const externalToast: ExternalToast = {}
+  const externalToast: ExternalToast = {};
 
   // descriptionとdurationを直接マッピング
   if (options.description) {
-    externalToast.description = options.description
+    externalToast.description = options.description;
   }
   if (options.duration !== undefined) {
-    externalToast.duration = options.duration
+    externalToast.duration = options.duration;
   }
 
   // actionボタンの処理（優先順位: undo > view > retry）
@@ -57,24 +57,24 @@ export function toExternalToast(options?: CalendarToastOptions): ExternalToast |
     externalToast.action = {
       label: '元に戻す',
       onClick: () => {
-        void options.undoAction?.()
+        void options.undoAction?.();
       },
-    }
+    };
   } else if (options.viewAction) {
     externalToast.action = {
       label: '表示',
       onClick: () => {
-        options.viewAction?.()
+        options.viewAction?.();
       },
-    }
+    };
   } else if (options.retryAction) {
     externalToast.action = {
       label: '再試行',
       onClick: () => {
-        void options.retryAction?.()
+        void options.retryAction?.();
       },
-    }
+    };
   }
 
-  return externalToast
+  return externalToast;
 }

@@ -1,8 +1,8 @@
-'use client'
+'use client';
 
-import { AccountSettings } from '@/features/settings/components/account-settings'
-import { SettingsPageWrapper } from '@/features/settings/components/page/SettingsPageWrapper'
-import { useTranslations } from 'next-intl'
+import { AccountSettings } from '@/features/settings/components/account-settings';
+import { SettingsPageWrapper } from '@/features/settings/components/page/SettingsPageWrapper';
+import { useTranslations } from 'next-intl';
 
 /**
  * アカウント設定ページ
@@ -10,11 +10,11 @@ import { useTranslations } from 'next-intl'
  * プロフィール、セキュリティ
  */
 export default function AccountSettingsPage() {
-  const t = useTranslations()
+  const t = useTranslations();
 
   return (
     <SettingsPageWrapper title={t('settings.dialog.categories.account')}>
       <AccountSettings />
     </SettingsPageWrapper>
-  )
+  );
 }

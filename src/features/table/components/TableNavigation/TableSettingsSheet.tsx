@@ -1,15 +1,15 @@
-'use client'
+'use client';
 
-import { Button } from '@/components/ui/button'
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
-import { X } from 'lucide-react'
+import { Button } from '@/components/ui/button';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { X } from 'lucide-react';
 
 interface TableSettingsSheetProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  children: React.ReactNode
-  hasActiveSettings?: boolean
-  onReset?: () => void
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  children: React.ReactNode;
+  hasActiveSettings?: boolean;
+  onReset?: () => void;
 }
 
 /**
@@ -36,7 +36,12 @@ export function TableSettingsSheet({
                 リセット
               </Button>
             )}
-            <Button variant="ghost" size="icon" onClick={() => onOpenChange(false)} className="size-8">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => onOpenChange(false)}
+              className="size-8"
+            >
               <X className="size-4" />
             </Button>
           </div>
@@ -45,5 +50,5 @@ export function TableSettingsSheet({
         <div className="max-h-[60vh] overflow-y-auto pb-8">{children}</div>
       </SheetContent>
     </Sheet>
-  )
+  );
 }

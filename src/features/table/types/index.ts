@@ -1,8 +1,8 @@
 // Column types
-export type { ColumnConfig, ColumnId } from './column'
+export type { ColumnConfig, ColumnId } from './column';
 
 // Group types
-export type { GroupByField, GroupConfig, GroupedData } from './group'
+export type { GroupByField, GroupConfig, GroupedData } from './group';
 
 // Sort types
-export type { SortDirection, SortField } from './sort'
+export type { SortDirection, SortField } from './sort';

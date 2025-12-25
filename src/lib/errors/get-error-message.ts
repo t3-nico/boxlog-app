@@ -13,15 +13,20 @@
  */
 export function getErrorMessage(error: unknown, fallback = 'Unknown error'): string {
   if (error instanceof Error) {
-    return error.message
+    return error.message;
   }
   if (typeof error === 'string') {
-    return error
+    return error;
   }
-  if (error && typeof error === 'object' && 'message' in error && typeof error.message === 'string') {
-    return error.message
+  if (
+    error &&
+    typeof error === 'object' &&
+    'message' in error &&
+    typeof error.message === 'string'
+  ) {
+    return error.message;
   }
-  return fallback
+  return fallback;
 }
 
 /**
@@ -31,9 +36,9 @@ export function getErrorMessage(error: unknown, fallback = 'Unknown error'): str
  */
 export function normalizeError(error: unknown): Error {
   if (error instanceof Error) {
-    return error
+    return error;
   }
-  return new Error(getErrorMessage(error))
+  return new Error(getErrorMessage(error));
 }
 
 /**
@@ -44,8 +49,8 @@ export function normalizeError(error: unknown): Error {
 export function getApiErrorMessage(error: unknown, fallback = 'Internal server error'): string {
   // 開発環境では詳細を返す
   if (process.env.NODE_ENV === 'development') {
-    return getErrorMessage(error, fallback)
+    return getErrorMessage(error, fallback);
   }
   // 本番環境では汎用メッセージ
-  return fallback
+  return fallback;
 }

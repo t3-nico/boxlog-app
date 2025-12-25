@@ -1,1 +1,5 @@
-export { IconNavigation, type IconNavigationItem, type IconNavigationProps } from './IconNavigation'
+export {
+  IconNavigation,
+  type IconNavigationItem,
+  type IconNavigationProps,
+} from './IconNavigation';

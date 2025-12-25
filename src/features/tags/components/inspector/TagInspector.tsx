@@ -1,27 +1,31 @@
-'use client'
+'use client';
 
-import { Button } from '@/components/ui/button'
-import { ColorPalettePicker } from '@/components/ui/color-palette-picker'
+import { Button } from '@/components/ui/button';
+import { ColorPalettePicker } from '@/components/ui/color-palette-picker';
 import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
-} from '@/components/ui/dropdown-menu'
-import { DEFAULT_TAG_COLOR } from '@/config/ui/colors'
+} from '@/components/ui/dropdown-menu';
+import { DEFAULT_TAG_COLOR } from '@/config/ui/colors';
 import {
   InspectorContent,
   InspectorHeader,
   InspectorShell,
   useInspectorKeyboard,
   type InspectorDisplayMode,
-} from '@/features/inspector'
-import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
-import { usePlans } from '@/features/plans/hooks/usePlans'
-import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
-import { getEffectiveStatus } from '@/features/plans/utils/status'
-import { DEFAULT_GROUP_COLOR, TAG_DESCRIPTION_MAX_LENGTH, TAG_NAME_MAX_LENGTH } from '@/features/tags/constants/colors'
+} from '@/features/inspector';
+import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
+import { usePlans } from '@/features/plans/hooks/usePlans';
+import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
+import { getEffectiveStatus } from '@/features/plans/utils/status';
+import {
+  DEFAULT_GROUP_COLOR,
+  TAG_DESCRIPTION_MAX_LENGTH,
+  TAG_NAME_MAX_LENGTH,
+} from '@/features/tags/constants/colors';
 import {
   Archive,
   CheckCircle2,
@@ -36,17 +40,17 @@ import {
   PanelRight,
   SquareMousePointer,
   Trash2,
-} from 'lucide-react'
-import { usePathname, useRouter } from 'next/navigation'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { toast } from 'sonner'
-import { useTagGroups } from '../../hooks/use-tag-groups'
-import { useDeleteTag, useTags, useUpdateTag, useUpdateTagColor } from '../../hooks/use-tags'
-import { useTagInspectorStore } from '../../stores/useTagInspectorStore'
-import { TagArchiveDialog } from '../TagArchiveDialog'
-import { TagDeleteDialog } from '../TagDeleteDialog'
-import { TagMergeDialog } from '../TagMergeDialog'
-import { TagGroupMenuItems } from './TagGroupDropdown'
+} from 'lucide-react';
+import { usePathname, useRouter } from 'next/navigation';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { toast } from 'sonner';
+import { useTagGroups } from '../../hooks/use-tag-groups';
+import { useDeleteTag, useTags, useUpdateTag, useUpdateTagColor } from '../../hooks/use-tags';
+import { useTagInspectorStore } from '../../stores/useTagInspectorStore';
+import { TagArchiveDialog } from '../TagArchiveDialog';
+import { TagDeleteDialog } from '../TagDeleteDialog';
+import { TagMergeDialog } from '../TagMergeDialog';
+import { TagGroupMenuItems } from './TagGroupDropdown';
 
 /**
  * Tag Inspector（タグ詳細Sheet）
@@ -64,88 +68,91 @@ export function TagInspector() {
     closeInspector: closeInspectorStore,
     openInspector,
     setDisplayMode,
-  } = useTagInspectorStore()
-  const { openInspector: openPlanInspector } = usePlanInspectorStore()
-  const { updatePlan } = usePlanMutations()
-  const router = useRouter()
-  const pathname = usePathname()
+  } = useTagInspectorStore();
+  const { openInspector: openPlanInspector } = usePlanInspectorStore();
+  const { updatePlan } = usePlanMutations();
+  const router = useRouter();
+  const pathname = usePathname();
 
   // Inspectorを閉じる時にURLも更新
   const closeInspector = useCallback(() => {
-    closeInspectorStore()
+    closeInspectorStore();
     // /tags/t-123 形式の場合、/tags に戻す
     if (pathname?.match(/\/tags\/t-\d+$/)) {
-      const locale = pathname.split('/')[1]
-      router.push(`/${locale}/tags`)
+      const locale = pathname.split('/')[1];
+      router.push(`/${locale}/tags`);
     }
-  }, [closeInspectorStore, pathname, router])
+  }, [closeInspectorStore, pathname, router]);
 
   // タグデータ取得
-  const { data: tags = [], isPending } = useTags()
-  const { data: groups = [] } = useTagGroups()
+  const { data: tags = [], isPending } = useTags();
+  const { data: groups = [] } = useTagGroups();
 
   // 現在のタグを取得
   const tag = useMemo(() => {
-    if (!tagId) return null
-    return tags.find((t) => t.id === tagId) ?? null
-  }, [tags, tagId])
+    if (!tagId) return null;
+    return tags.find((t) => t.id === tagId) ?? null;
+  }, [tags, tagId]);
 
   // アクティブなタグリスト（ナビゲーション用）
   const activeTags = useMemo(() => {
-    return tags.filter((t) => t.is_active)
-  }, [tags])
+    return tags.filter((t) => t.is_active);
+  }, [tags]);
 
   // 現在のタグのインデックス
   const currentIndex = useMemo(() => {
-    return activeTags.findIndex((t) => t.id === tagId)
-  }, [activeTags, tagId])
+    return activeTags.findIndex((t) => t.id === tagId);
+  }, [activeTags, tagId]);
 
-  const hasPrevious = currentIndex > 0
-  const hasNext = currentIndex >= 0 && currentIndex < activeTags.length - 1
+  const hasPrevious = currentIndex > 0;
+  const hasNext = currentIndex >= 0 && currentIndex < activeTags.length - 1;
 
   // タグに紐づくプランを取得
-  const { data: plans = [], isLoading: isLoadingPlans } = usePlans(tag?.id ? { tagId: tag.id } : {}, {
-    enabled: !!tag?.id,
-  })
+  const { data: plans = [], isLoading: isLoadingPlans } = usePlans(
+    tag?.id ? { tagId: tag.id } : {},
+    {
+      enabled: !!tag?.id,
+    },
+  );
 
   // 所属グループ
   const tagGroup = useMemo(() => {
-    if (!tag?.group_id) return null
-    return groups.find((g) => g.id === tag.group_id) || null
-  }, [groups, tag])
+    if (!tag?.group_id) return null;
+    return groups.find((g) => g.id === tag.group_id) || null;
+  }, [groups, tag]);
 
   // Mutations
-  const updateTagMutation = useUpdateTag()
-  const deleteTagMutation = useDeleteTag()
-  const updateColorMutation = useUpdateTagColor()
+  const updateTagMutation = useUpdateTag();
+  const deleteTagMutation = useDeleteTag();
+  const updateColorMutation = useUpdateTagColor();
 
   // ローカル状態
-  const [showColorPicker, setShowColorPicker] = useState(false)
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
-  const [showArchiveDialog, setShowArchiveDialog] = useState(false)
-  const [showMergeDialog, setShowMergeDialog] = useState(false)
+  const [showColorPicker, setShowColorPicker] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showArchiveDialog, setShowArchiveDialog] = useState(false);
+  const [showMergeDialog, setShowMergeDialog] = useState(false);
 
   // Title欄のref
-  const titleRef = useRef<HTMLSpanElement>(null)
-  const descriptionRef = useRef<HTMLSpanElement>(null)
+  const titleRef = useRef<HTMLSpanElement>(null);
+  const descriptionRef = useRef<HTMLSpanElement>(null);
 
   // デバウンスタイマー
-  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null)
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // ナビゲーション
   const goToPrevious = useCallback(() => {
     if (hasPrevious) {
-      const prevTag = activeTags[currentIndex - 1]
-      if (prevTag) openInspector(prevTag.id)
+      const prevTag = activeTags[currentIndex - 1];
+      if (prevTag) openInspector(prevTag.id);
     }
-  }, [hasPrevious, activeTags, currentIndex, openInspector])
+  }, [hasPrevious, activeTags, currentIndex, openInspector]);
 
   const goToNext = useCallback(() => {
     if (hasNext) {
-      const nextTag = activeTags[currentIndex + 1]
-      if (nextTag) openInspector(nextTag.id)
+      const nextTag = activeTags[currentIndex + 1];
+      if (nextTag) openInspector(nextTag.id);
     }
-  }, [hasNext, activeTags, currentIndex, openInspector])
+  }, [hasNext, activeTags, currentIndex, openInspector]);
 
   // キーボードショートカット
   useInspectorKeyboard({
@@ -155,20 +162,20 @@ export function TagInspector() {
     onClose: closeInspector,
     onPrevious: goToPrevious,
     onNext: goToNext,
-  })
+  });
 
   // 自動保存関数（デバウンス処理付き）
   const autoSave = useCallback(
     (field: 'name' | 'description', value: string) => {
-      if (!tagId || !tag) return
+      if (!tagId || !tag) return;
 
       // 値が変更されていない場合はスキップ
-      const currentValue = tag[field]
-      if (currentValue === value) return
+      const currentValue = tag[field];
+      if (currentValue === value) return;
 
       // 既存のタイマーをクリア
       if (debounceTimerRef.current) {
-        clearTimeout(debounceTimerRef.current)
+        clearTimeout(debounceTimerRef.current);
       }
 
       // 新しいタイマーを設定（500ms後に保存）
@@ -176,58 +183,58 @@ export function TagInspector() {
         updateTagMutation.mutate({
           id: tagId,
           data: { [field]: value },
-        })
-      }, 500)
+        });
+      }, 500);
     },
-    [tagId, tag, updateTagMutation]
-  )
+    [tagId, tag, updateTagMutation],
+  );
 
   // カラー変更
   const handleColorChange = useCallback(
     (color: string) => {
-      if (!tagId) return
-      updateColorMutation.mutate({ id: tagId, color })
-      setShowColorPicker(false)
+      if (!tagId) return;
+      updateColorMutation.mutate({ id: tagId, color });
+      setShowColorPicker(false);
     },
-    [tagId, updateColorMutation]
-  )
+    [tagId, updateColorMutation],
+  );
 
   // 削除ハンドラー
   const handleDelete = useCallback(() => {
-    setShowDeleteDialog(true)
-  }, [])
+    setShowDeleteDialog(true);
+  }, []);
 
   // アーカイブハンドラー
   const handleArchive = useCallback(() => {
-    setShowArchiveDialog(true)
-  }, [])
+    setShowArchiveDialog(true);
+  }, []);
 
   // マージハンドラー
   const handleMerge = useCallback(() => {
-    setShowMergeDialog(true)
-  }, [])
+    setShowMergeDialog(true);
+  }, []);
 
   // グループ変更ハンドラー
   const handleChangeGroup = useCallback(
     (groupId: string | null) => {
-      if (!tagId || !tag) return
-      if (tag.group_id === groupId) return
+      if (!tagId || !tag) return;
+      if (tag.group_id === groupId) return;
       updateTagMutation.mutate({
         id: tagId,
         data: { group_id: groupId },
-      })
+      });
     },
-    [tagId, tag, updateTagMutation]
-  )
+    [tagId, tag, updateTagMutation],
+  );
 
   // クリーンアップ
   useEffect(() => {
     return () => {
       if (debounceTimerRef.current) {
-        clearTimeout(debounceTimerRef.current)
+        clearTimeout(debounceTimerRef.current);
       }
-    }
-  }, [])
+    };
+  }, []);
 
   // Tag固有のメニュー内容
   const menuContent = (
@@ -242,7 +249,11 @@ export function TagInspector() {
           グループを変更
         </DropdownMenuSubTrigger>
         <DropdownMenuSubContent className="w-48">
-          <TagGroupMenuItems groups={groups} currentGroupId={tagGroup?.id ?? null} onSelect={handleChangeGroup} />
+          <TagGroupMenuItems
+            groups={groups}
+            currentGroupId={tagGroup?.id ?? null}
+            onSelect={handleChangeGroup}
+          />
         </DropdownMenuSubContent>
       </DropdownMenuSub>
       <DropdownMenuItem onClick={handleMerge}>
@@ -285,7 +296,7 @@ export function TagInspector() {
         削除
       </DropdownMenuItem>
     </>
-  )
+  );
 
   return (
     <>
@@ -293,8 +304,8 @@ export function TagInspector() {
         isOpen={isOpen}
         onClose={() => {
           // ダイアログが開いている時はSheetを閉じない
-          if (showDeleteDialog || showArchiveDialog || showMergeDialog) return
-          closeInspector()
+          if (showDeleteDialog || showArchiveDialog || showMergeDialog) return;
+          closeInspector();
         }}
         displayMode={displayMode as InspectorDisplayMode}
         title={tag?.name || 'タグの詳細'}
@@ -345,19 +356,19 @@ export function TagInspector() {
                     contentEditable
                     suppressContentEditableWarning
                     onInput={(e) => {
-                      const text = e.currentTarget.textContent || ''
+                      const text = e.currentTarget.textContent || '';
                       if (text.length > TAG_NAME_MAX_LENGTH) {
-                        e.currentTarget.textContent = text.slice(0, TAG_NAME_MAX_LENGTH)
+                        e.currentTarget.textContent = text.slice(0, TAG_NAME_MAX_LENGTH);
                         // カーソルを末尾に移動
-                        const range = document.createRange()
-                        const selection = window.getSelection()
-                        range.selectNodeContents(e.currentTarget)
-                        range.collapse(false)
-                        selection?.removeAllRanges()
-                        selection?.addRange(range)
+                        const range = document.createRange();
+                        const selection = window.getSelection();
+                        range.selectNodeContents(e.currentTarget);
+                        range.collapse(false);
+                        selection?.removeAllRanges();
+                        selection?.addRange(range);
                         toast.info(`タグ名は${TAG_NAME_MAX_LENGTH}文字までです`, {
                           id: 'name-limit',
-                        })
+                        });
                       }
                     }}
                     onBlur={(e) => autoSave('name', e.currentTarget.textContent || '')}
@@ -403,20 +414,20 @@ export function TagInspector() {
                     contentEditable
                     suppressContentEditableWarning
                     onInput={(e) => {
-                      const text = e.currentTarget.textContent || ''
+                      const text = e.currentTarget.textContent || '';
                       if (text.length > TAG_DESCRIPTION_MAX_LENGTH) {
-                        e.currentTarget.textContent = text.slice(0, TAG_DESCRIPTION_MAX_LENGTH)
+                        e.currentTarget.textContent = text.slice(0, TAG_DESCRIPTION_MAX_LENGTH);
                         // カーソルを末尾に移動
-                        const range = document.createRange()
-                        const selection = window.getSelection()
-                        range.selectNodeContents(e.currentTarget)
-                        range.collapse(false)
-                        selection?.removeAllRanges()
-                        selection?.addRange(range)
+                        const range = document.createRange();
+                        const selection = window.getSelection();
+                        range.selectNodeContents(e.currentTarget);
+                        range.collapse(false);
+                        selection?.removeAllRanges();
+                        selection?.addRange(range);
                         // 制限通知
                         toast.info(`説明は${TAG_DESCRIPTION_MAX_LENGTH}文字までです`, {
                           id: 'description-limit',
-                        })
+                        });
                       }
                     }}
                     onBlur={(e) => autoSave('description', e.currentTarget.textContent || '')}
@@ -445,58 +456,60 @@ export function TagInspector() {
                 ) : (
                   <div>
                     {plans.slice(0, 20).map((plan) => {
-                      const effectiveStatus = getEffectiveStatus(plan)
+                      const effectiveStatus = getEffectiveStatus(plan);
                       // 日付・時間のフォーマット
                       const getFormattedDateTime = () => {
-                        const parts: string[] = []
+                        const parts: string[] = [];
 
                         // 日付のフォーマット（due_date: YYYY-MM-DD形式）
                         if (plan.due_date) {
-                          const dateStr = String(plan.due_date).split('T')[0]
+                          const dateStr = String(plan.due_date).split('T')[0];
                           if (dateStr) {
-                            const dateParts = dateStr.split('-')
-                            const yearStr = dateParts[0]
-                            const monthStr = dateParts[1]
-                            const dayStr = dateParts[2]
+                            const dateParts = dateStr.split('-');
+                            const yearStr = dateParts[0];
+                            const monthStr = dateParts[1];
+                            const dayStr = dateParts[2];
                             if (yearStr && monthStr && dayStr) {
-                              const year = parseInt(yearStr, 10)
-                              const month = parseInt(monthStr, 10)
-                              const day = parseInt(dayStr, 10)
+                              const year = parseInt(yearStr, 10);
+                              const month = parseInt(monthStr, 10);
+                              const day = parseInt(dayStr, 10);
                               if (!isNaN(year) && !isNaN(month) && !isNaN(day)) {
-                                parts.push(`${year}/${month}/${day}`)
+                                parts.push(`${year}/${month}/${day}`);
                               }
                             }
                           }
                         }
 
                         // 時間（start_time, end_time: ISO 8601形式 例: 2025-12-16T14:30:00+09:00）
-                        const getTimeStr = (isoString: string | null | undefined): string | null => {
-                          if (!isoString) return null
+                        const getTimeStr = (
+                          isoString: string | null | undefined,
+                        ): string | null => {
+                          if (!isoString) return null;
                           try {
-                            const date = new Date(isoString)
-                            if (isNaN(date.getTime())) return null
-                            const hours = date.getHours().toString().padStart(2, '0')
-                            const minutes = date.getMinutes().toString().padStart(2, '0')
-                            return `${hours}:${minutes}`
+                            const date = new Date(isoString);
+                            if (isNaN(date.getTime())) return null;
+                            const hours = date.getHours().toString().padStart(2, '0');
+                            const minutes = date.getMinutes().toString().padStart(2, '0');
+                            return `${hours}:${minutes}`;
                           } catch {
-                            return null
+                            return null;
                           }
-                        }
+                        };
 
-                        const startTimeStr = getTimeStr(plan.start_time)
-                        const endTimeStr = getTimeStr(plan.end_time)
+                        const startTimeStr = getTimeStr(plan.start_time);
+                        const endTimeStr = getTimeStr(plan.end_time);
 
                         if (startTimeStr && endTimeStr) {
-                          parts.push(`${startTimeStr}-${endTimeStr}`)
+                          parts.push(`${startTimeStr}-${endTimeStr}`);
                         } else if (startTimeStr) {
-                          parts.push(startTimeStr)
+                          parts.push(startTimeStr);
                         } else if (endTimeStr) {
-                          parts.push(`-${endTimeStr}`)
+                          parts.push(`-${endTimeStr}`);
                         }
 
-                        return parts.length > 0 ? parts.join(' ') : null
-                      }
-                      const dateTime = getFormattedDateTime()
+                        return parts.length > 0 ? parts.join(' ') : null;
+                      };
+                      const dateTime = getFormattedDateTime();
 
                       return (
                         <div
@@ -506,12 +519,12 @@ export function TagInspector() {
                           <button
                             type="button"
                             onClick={(e) => {
-                              e.stopPropagation()
-                              const newStatus = effectiveStatus === 'done' ? 'todo' : 'done'
+                              e.stopPropagation();
+                              const newStatus = effectiveStatus === 'done' ? 'todo' : 'done';
                               updatePlan.mutate({
                                 id: plan.id,
                                 data: { status: newStatus },
-                              })
+                              });
                             }}
                             className="hover:bg-state-hover shrink-0 rounded p-0.5 transition-colors"
                             aria-label={effectiveStatus === 'done' ? '未完了に戻す' : '完了にする'}
@@ -531,12 +544,18 @@ export function TagInspector() {
                           >
                             {plan.title}
                           </button>
-                          {dateTime && <span className="text-muted-foreground shrink-0 text-xs">{dateTime}</span>}
+                          {dateTime && (
+                            <span className="text-muted-foreground shrink-0 text-xs">
+                              {dateTime}
+                            </span>
+                          )}
                         </div>
-                      )
+                      );
                     })}
                     {plans.length > 20 && (
-                      <p className="text-muted-foreground py-2 text-center text-xs">他 {plans.length - 20} 件</p>
+                      <p className="text-muted-foreground py-2 text-center text-xs">
+                        他 {plans.length - 20} 件
+                      </p>
                     )}
                   </div>
                 )}
@@ -562,10 +581,10 @@ export function TagInspector() {
         tag={showDeleteDialog ? tag : null}
         onClose={() => setShowDeleteDialog(false)}
         onConfirm={async () => {
-          if (!tagId) return
-          await deleteTagMutation.mutateAsync(tagId)
-          setShowDeleteDialog(false)
-          closeInspector()
+          if (!tagId) return;
+          await deleteTagMutation.mutateAsync(tagId);
+          setShowDeleteDialog(false);
+          closeInspector();
         }}
       />
 
@@ -574,13 +593,13 @@ export function TagInspector() {
         tag={showArchiveDialog ? tag : null}
         onClose={() => setShowArchiveDialog(false)}
         onConfirm={async () => {
-          if (!tagId) return
+          if (!tagId) return;
           await updateTagMutation.mutateAsync({
             id: tagId,
             data: { is_active: false },
-          })
-          setShowArchiveDialog(false)
-          closeInspector()
+          });
+          setShowArchiveDialog(false);
+          closeInspector();
         }}
       />
 
@@ -588,16 +607,16 @@ export function TagInspector() {
       <TagMergeDialog
         tag={showMergeDialog ? tag : null}
         onClose={(mergedTargetTagId) => {
-          setShowMergeDialog(false)
+          setShowMergeDialog(false);
           if (mergedTargetTagId) {
             // 統合成功: 統合先タグのインスペクターを開く
-            openInspector(mergedTargetTagId)
+            openInspector(mergedTargetTagId);
           } else {
             // キャンセル: インスペクターを閉じる
-            closeInspector()
+            closeInspector();
           }
         }}
       />
     </>
-  )
+  );
 }

@@ -377,17 +377,17 @@ components/
 
 ```typescript
 interface ScrollableCalendarLayoutProps {
-  children: React.ReactNode
-  header?: React.ReactNode // 統合ヘッダー
-  timezone?: string
-  scrollToHour?: number // 初期スクロール位置
-  showTimeColumn?: boolean // 時間軸表示制御
-  showCurrentTime?: boolean // 現在時刻線表示制御
-  showTimezone?: boolean // UTC表示制御
-  timeColumnWidth?: number // 時間軸幅 (default: 64px)
-  onTimeClick?: (hour: number, minute: number) => void
-  displayDates?: Date[] // 表示対象日付
-  viewMode?: 'day' | '3day' | 'week' | '2week'
+  children: React.ReactNode;
+  header?: React.ReactNode; // 統合ヘッダー
+  timezone?: string;
+  scrollToHour?: number; // 初期スクロール位置
+  showTimeColumn?: boolean; // 時間軸表示制御
+  showCurrentTime?: boolean; // 現在時刻線表示制御
+  showTimezone?: boolean; // UTC表示制御
+  timeColumnWidth?: number; // 時間軸幅 (default: 64px)
+  onTimeClick?: (hour: number, minute: number) => void;
+  displayDates?: Date[]; // 表示対象日付
+  viewMode?: 'day' | '3day' | 'week' | '2week';
 }
 ```
 
@@ -418,26 +418,26 @@ ScrollableCalendarLayout
 
 ```typescript
 export function useResponsiveHourHeight(config: Partial<ResponsiveHourHeightConfig> = {}): number {
-  const finalConfig = { ...DEFAULT_CONFIG, ...config }
-  const [hourHeight, setHourHeight] = useState<number>(HOUR_HEIGHT)
+  const finalConfig = { ...DEFAULT_CONFIG, ...config };
+  const [hourHeight, setHourHeight] = useState<number>(HOUR_HEIGHT);
 
   useEffect(() => {
     const updateHourHeight = () => {
-      const width = window.innerWidth
+      const width = window.innerWidth;
       if (width < 768) {
-        setHourHeight(finalConfig.mobile)
+        setHourHeight(finalConfig.mobile);
       } else if (width < 1024) {
-        setHourHeight(finalConfig.tablet)
+        setHourHeight(finalConfig.tablet);
       } else {
-        setHourHeight(finalConfig.desktop)
+        setHourHeight(finalConfig.desktop);
       }
-    }
-    updateHourHeight()
-    window.addEventListener('resize', updateHourHeight)
-    return () => window.removeEventListener('resize', updateHourHeight)
-  }, [finalConfig.mobile, finalConfig.tablet, finalConfig.desktop])
+    };
+    updateHourHeight();
+    window.addEventListener('resize', updateHourHeight);
+    return () => window.removeEventListener('resize', updateHourHeight);
+  }, [finalConfig.mobile, finalConfig.tablet, finalConfig.desktop]);
 
-  return hourHeight
+  return hourHeight;
 }
 ```
 
@@ -554,7 +554,13 @@ export function useResponsiveHourHeight(config: Partial<ResponsiveHourHeightConf
     {/* 時間軸列 - スクロールと同期 */}
     {showTimeColumn && (
       <div className="bg-muted/5 sticky left-0 z-10 shrink-0" style={{ width: timeColumnWidth }}>
-        <TimeColumn startHour={0} endHour={24} hourHeight={HOUR_HEIGHT} format="24h" className="h-full" />
+        <TimeColumn
+          startHour={0}
+          endHour={24}
+          hourHeight={HOUR_HEIGHT}
+          format="24h"
+          className="h-full"
+        />
       </div>
     )}
 
@@ -721,42 +727,42 @@ export function useResponsiveHourHeight(config: Partial<ResponsiveHourHeightConf
 
 ```typescript
 const todayColumnPosition = useMemo(() => {
-  if (!displayDates || displayDates.length === 0) return null
+  if (!displayDates || displayDates.length === 0) return null;
 
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
   const todayIndex = displayDates.findIndex((date) => {
-    if (!date) return false
-    const d = new Date(date)
-    d.setHours(0, 0, 0, 0)
-    return d.getTime() === today.getTime()
-  })
+    if (!date) return false;
+    const d = new Date(date);
+    d.setHours(0, 0, 0, 0);
+    return d.getTime() === today.getTime();
+  });
 
-  if (todayIndex === -1) return null
+  if (todayIndex === -1) return null;
 
   // 単一日表示の場合
   if (displayDates.length === 1) {
-    return { left: 0, width: '100%' }
+    return { left: 0, width: '100%' };
   }
 
   // 複数日表示の場合、列の幅と位置を計算
-  const columnWidth = 100 / displayDates.length
-  const leftPosition = todayIndex * columnWidth
+  const columnWidth = 100 / displayDates.length;
+  const leftPosition = todayIndex * columnWidth;
 
   return {
     left: `${leftPosition}%`,
     width: `${columnWidth}%`,
-  }
-}, [displayDates])
+  };
+}, [displayDates]);
 ```
 
 **表示制御:**
 
 ```typescript
 const shouldShowCurrentTimeLine = useMemo(() => {
-  return showCurrentTime && todayColumnPosition !== null
-}, [showCurrentTime, todayColumnPosition])
+  return showCurrentTime && todayColumnPosition !== null;
+}, [showCurrentTime, todayColumnPosition]);
 ```
 
 #### 4. 視覚デザインの改善
@@ -781,28 +787,28 @@ const shouldShowCurrentTimeLine = useMemo(() => {
 **1分ごとの自動更新:**
 
 ```typescript
-const [currentTime, setCurrentTime] = useState(new Date())
+const [currentTime, setCurrentTime] = useState(new Date());
 
 useEffect(() => {
-  if (!shouldShowCurrentTimeLine) return
+  if (!shouldShowCurrentTimeLine) return;
 
-  const updateCurrentTime = () => setCurrentTime(new Date())
-  updateCurrentTime()
+  const updateCurrentTime = () => setCurrentTime(new Date());
+  updateCurrentTime();
 
-  const timer = setInterval(updateCurrentTime, 60000)
-  return () => clearInterval(timer)
-}, [shouldShowCurrentTimeLine])
+  const timer = setInterval(updateCurrentTime, 60000);
+  return () => clearInterval(timer);
+}, [shouldShowCurrentTimeLine]);
 ```
 
 **位置計算:**
 
 ```typescript
 const currentTimePosition = useMemo(() => {
-  const hours = currentTime.getHours()
-  const minutes = currentTime.getMinutes()
-  const totalHours = hours + minutes / 60
-  return totalHours * HOUR_HEIGHT
-}, [currentTime, HOUR_HEIGHT])
+  const hours = currentTime.getHours();
+  const minutes = currentTime.getMinutes();
+  const totalHours = hours + minutes / 60;
+  return totalHours * HOUR_HEIGHT;
+}, [currentTime, HOUR_HEIGHT]);
 ```
 
 ### 📊 各ビューでの動作

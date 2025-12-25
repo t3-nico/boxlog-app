@@ -1,42 +1,46 @@
-'use client'
+'use client';
 
-import { MoreHorizontal } from 'lucide-react'
-import type { ReactNode } from 'react'
+import { MoreHorizontal } from 'lucide-react';
+import type { ReactNode } from 'react';
 
-import { Button } from '@/components/ui/button'
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
-import { Drawer, DrawerContent, DrawerTitle } from '@/components/ui/drawer'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet'
-import { zIndex } from '@/config/ui/z-index'
-import { useMediaQuery } from '@/hooks/useMediaQuery'
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { Drawer, DrawerContent, DrawerTitle } from '@/components/ui/drawer';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
+import { zIndex } from '@/config/ui/z-index';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 
-import { INSPECTOR_SIZE, useInspectorResize } from '../hooks'
+import { INSPECTOR_SIZE, useInspectorResize } from '../hooks';
 
 /**
  * Inspector表示モード
  */
-export type InspectorDisplayMode = 'sheet' | 'popover'
+export type InspectorDisplayMode = 'sheet' | 'popover';
 
 interface InspectorShellProps {
   /** Inspectorが開いているか */
-  isOpen: boolean
+  isOpen: boolean;
   /** 閉じるハンドラー */
-  onClose: () => void
+  onClose: () => void;
   /** 表示モード */
-  displayMode: InspectorDisplayMode
+  displayMode: InspectorDisplayMode;
   /** アクセシビリティ用タイトル（sr-only） */
-  title: string
+  title: string;
   /** コンテンツ */
-  children: ReactNode
+  children: ReactNode;
   /** リサイズを有効にするか（Sheetモードのみ、デフォルト: true） */
-  resizable?: boolean
+  resizable?: boolean;
   /** 初期幅 */
-  initialWidth?: number
+  initialWidth?: number;
   /** モーダルモード（デフォルト: false） */
-  modal?: boolean
+  modal?: boolean;
   /** モバイル用メニューコンテンツ（ドラッグハンドル行に表示） */
-  mobileMenuContent?: ReactNode
+  mobileMenuContent?: ReactNode;
 }
 
 /**
@@ -70,13 +74,13 @@ export function InspectorShell({
   modal = false,
   mobileMenuContent,
 }: InspectorShellProps) {
-  const isMobile = useMediaQuery('(max-width: 767px)')
+  const isMobile = useMediaQuery('(max-width: 767px)');
   const { inspectorWidth, isResizing, handleMouseDown } = useInspectorResize({
     initialWidth,
     enabled: displayMode === 'sheet' && resizable && !isMobile,
-  })
+  });
 
-  if (!isOpen) return null
+  if (!isOpen) return null;
 
   // モバイル: 下からのDrawer（ボトムシート）
   if (isMobile) {
@@ -121,7 +125,7 @@ export function InspectorShell({
           {children}
         </DrawerContent>
       </Drawer>
-    )
+    );
   }
 
   // PC: Sheet mode
@@ -155,7 +159,7 @@ export function InspectorShell({
           {children}
         </SheetContent>
       </Sheet>
-    )
+    );
   }
 
   // PC: Dialog/Popover mode
@@ -170,5 +174,5 @@ export function InspectorShell({
         {children}
       </DialogContent>
     </Dialog>
-  )
+  );
 }

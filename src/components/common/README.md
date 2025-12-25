@@ -52,10 +52,10 @@ src/components/common/
 ### エラーバウンダリー
 
 ```tsx
-import { GlobalErrorBoundary } from '@/components/common'
-;<GlobalErrorBoundary maxRetries={3}>
+import { GlobalErrorBoundary } from '@/components/common';
+<GlobalErrorBoundary maxRetries={3}>
   <YourApp />
-</GlobalErrorBoundary>
+</GlobalErrorBoundary>;
 ```
 
 ### ローディング
@@ -73,10 +73,10 @@ import { LoadingSpinner, LoadingOverlay } from '@/components/common'
 ### Providers
 
 ```tsx
-import { Providers } from '@/components/common'
-;<Providers>
+import { Providers } from '@/components/common';
+<Providers>
   <App />
-</Providers>
+</Providers>;
 ```
 
 ## 🔧 開発ガイドライン

@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 /**
  * Web Vitals レポーター
@@ -13,8 +13,8 @@
  * - https://web.dev/articles/vitals
  */
 
-import * as Sentry from '@sentry/nextjs'
-import { useReportWebVitals } from 'next/web-vitals'
+import * as Sentry from '@sentry/nextjs';
+import { useReportWebVitals } from 'next/web-vitals';
 
 /**
  * Google 2025公式閾値
@@ -26,14 +26,14 @@ const THRESHOLDS = {
   INP: { good: 200, poor: 500 },
   TTFB: { good: 800, poor: 1800 },
   FID: { good: 100, poor: 300 }, // 廃止済みだが後方互換のため残す
-} as const
+} as const;
 
-type MetricName = keyof typeof THRESHOLDS
+type MetricName = keyof typeof THRESHOLDS;
 
 export function WebVitalsReporter() {
   useReportWebVitals((metric) => {
-    const metricName = metric.name as MetricName
-    const threshold = THRESHOLDS[metricName]
+    const metricName = metric.name as MetricName;
+    const threshold = THRESHOLDS[metricName];
 
     // Sentry v8: startSpanを使用
     Sentry.startSpan(
@@ -50,33 +50,40 @@ export function WebVitalsReporter() {
       },
       () => {
         // メトリクス値を記録
-        Sentry.setMeasurement(metric.name, metric.value, metric.name === 'CLS' ? '' : 'millisecond')
+        Sentry.setMeasurement(
+          metric.name,
+          metric.value,
+          metric.name === 'CLS' ? '' : 'millisecond',
+        );
 
         // 閾値チェック
         if (threshold) {
-          const isPoor = metric.value > threshold.poor
-          const needsImprovement = metric.value > threshold.good && metric.value <= threshold.poor
+          const isPoor = metric.value > threshold.poor;
+          const needsImprovement = metric.value > threshold.good && metric.value <= threshold.poor;
 
           if (isPoor) {
             // Poorレベル: 警告送信
-            Sentry.captureMessage(`Poor ${metric.name}: ${metric.value}${metric.name === 'CLS' ? '' : 'ms'}`, {
-              level: 'warning',
-              tags: {
-                metric_name: metric.name,
-                metric_value: metric.value,
-                threshold_good: threshold.good,
-                threshold_poor: threshold.poor,
-              },
-              extra: {
-                metric: {
-                  name: metric.name,
-                  value: metric.value,
-                  rating: metric.rating,
-                  id: metric.id,
-                  navigationType: metric.navigationType,
+            Sentry.captureMessage(
+              `Poor ${metric.name}: ${metric.value}${metric.name === 'CLS' ? '' : 'ms'}`,
+              {
+                level: 'warning',
+                tags: {
+                  metric_name: metric.name,
+                  metric_value: metric.value,
+                  threshold_good: threshold.good,
+                  threshold_poor: threshold.poor,
+                },
+                extra: {
+                  metric: {
+                    name: metric.name,
+                    value: metric.value,
+                    rating: metric.rating,
+                    id: metric.id,
+                    navigationType: metric.navigationType,
+                  },
                 },
               },
-            })
+            );
           } else if (needsImprovement) {
             // Needs Improvement: パンくずリストに記録
             Sentry.addBreadcrumb({
@@ -89,7 +96,7 @@ export function WebVitalsReporter() {
                 threshold_good: threshold.good,
                 threshold_poor: threshold.poor,
               },
-            })
+            });
           }
         }
 
@@ -104,11 +111,11 @@ export function WebVitalsReporter() {
             id: metric.id,
             navigationType: metric.navigationType,
           },
-        })
-      }
-    )
-  })
+        });
+      },
+    );
+  });
 
   // このコンポーネントはUIをレンダリングしない
-  return null
+  return null;
 }

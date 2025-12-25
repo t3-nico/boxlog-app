@@ -1,43 +1,66 @@
-'use client'
+'use client';
 
-import type React from 'react'
-import { useCallback, useRef, useState } from 'react'
+import type React from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 interface ResizeHandleProps {
-  columnId: string
-  currentWidth: number
-  onResize: (columnId: string, newWidth: number) => void
+  columnId: string;
+  currentWidth: number;
+  onResize: (columnId: string, newWidth: number) => void;
 }
 
 export function ResizeHandle({ columnId, currentWidth, onResize }: ResizeHandleProps) {
-  const [isResizing, setIsResizing] = useState(false)
-  const startXRef = useRef<number>(0)
-  const startWidthRef = useRef<number>(0)
+  const [isResizing, setIsResizing] = useState(false);
+  const startXRef = useRef<number>(0);
+  const startWidthRef = useRef<number>(0);
+
+  // リスナー参照を保持してクリーンアップを保証
+  const handlersRef = useRef<{
+    onMouseMove: ((e: MouseEvent) => void) | null;
+    onMouseUp: (() => void) | null;
+  }>({ onMouseMove: null, onMouseUp: null });
 
   const onMouseDown = useCallback(
     (e: React.MouseEvent) => {
-      e.preventDefault()
-      e.stopPropagation()
-      setIsResizing(true)
-      startXRef.current = e.clientX
-      startWidthRef.current = currentWidth
+      e.preventDefault();
+      e.stopPropagation();
+      setIsResizing(true);
+      startXRef.current = e.clientX;
+      startWidthRef.current = currentWidth;
 
       const onMouseMove = (moveEvent: MouseEvent) => {
-        const delta = moveEvent.clientX - startXRef.current
-        onResize(columnId, Math.max(50, startWidthRef.current + delta))
-      }
+        const delta = moveEvent.clientX - startXRef.current;
+        onResize(columnId, Math.max(50, startWidthRef.current + delta));
+      };
 
       const onMouseUp = () => {
-        setIsResizing(false)
-        document.removeEventListener('mousemove', onMouseMove)
-        document.removeEventListener('mouseup', onMouseUp)
-      }
+        setIsResizing(false);
+        document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('mouseup', onMouseUp);
+        handlersRef.current = { onMouseMove: null, onMouseUp: null };
+      };
 
-      document.addEventListener('mousemove', onMouseMove)
-      document.addEventListener('mouseup', onMouseUp)
+      // 参照を保存
+      handlersRef.current = { onMouseMove, onMouseUp };
+
+      document.addEventListener('mousemove', onMouseMove);
+      document.addEventListener('mouseup', onMouseUp);
     },
-    [columnId, currentWidth, onResize]
-  )
+    [columnId, currentWidth, onResize],
+  );
+
+  // アンマウント時のクリーンアップを保証
+  useEffect(() => {
+    return () => {
+      const { onMouseMove, onMouseUp } = handlersRef.current;
+      if (onMouseMove) {
+        document.removeEventListener('mousemove', onMouseMove);
+      }
+      if (onMouseUp) {
+        document.removeEventListener('mouseup', onMouseUp);
+      }
+    };
+  }, []);
 
   return (
     <div
@@ -47,5 +70,5 @@ export function ResizeHandle({ columnId, currentWidth, onResize }: ResizeHandleP
       onMouseDown={onMouseDown}
       style={{ userSelect: 'none' }}
     />
-  )
+  );
 }

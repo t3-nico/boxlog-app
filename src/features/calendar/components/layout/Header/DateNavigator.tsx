@@ -1,29 +1,29 @@
-'use client'
+'use client';
 
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
-import { buttonVariants } from '@/components/ui/button'
-import { HoverTooltip } from '@/components/ui/tooltip'
-import { cn } from '@/lib/utils'
-import { useTranslations } from 'next-intl'
+import { buttonVariants } from '@/components/ui/button';
+import { HoverTooltip } from '@/components/ui/tooltip';
+import { cn } from '@/lib/utils';
+import { useTranslations } from 'next-intl';
 
-export type NavigationDirection = 'prev' | 'next' | 'today'
+export type NavigationDirection = 'prev' | 'next' | 'today';
 
 interface DateNavigatorProps {
-  onNavigate: (direction: NavigationDirection) => void
-  todayLabel?: string | undefined
-  showTodayButton?: boolean | undefined
-  showArrows?: boolean | undefined
-  className?: string | undefined
-  buttonClassName?: string | undefined
-  arrowSize?: 'sm' | 'md' | 'lg' | undefined
+  onNavigate: (direction: NavigationDirection) => void;
+  todayLabel?: string | undefined;
+  showTodayButton?: boolean | undefined;
+  showArrows?: boolean | undefined;
+  className?: string | undefined;
+  buttonClassName?: string | undefined;
+  arrowSize?: 'sm' | 'md' | 'lg' | undefined;
 }
 
 const arrowSizes = {
   sm: 'size-4',
   md: 'size-4',
   lg: 'size-5',
-}
+};
 
 /**
  * 日付ナビゲーション
@@ -42,7 +42,7 @@ export const DateNavigator = ({
   buttonClassName,
   arrowSize = 'md',
 }: DateNavigatorProps) => {
-  const t = useTranslations()
+  const t = useTranslations();
 
   return (
     <div className={cn('flex items-center gap-2', className)}>
@@ -69,7 +69,7 @@ export const DateNavigator = ({
               className={cn(
                 'flex size-8 items-center justify-center rounded-full transition-colors',
                 'hover:bg-state-hover',
-                'text-muted-foreground'
+                'text-muted-foreground',
               )}
               aria-label={t('calendar.navigation.previous')}
             >
@@ -83,7 +83,7 @@ export const DateNavigator = ({
               className={cn(
                 'flex size-8 items-center justify-center rounded-full transition-colors',
                 'hover:bg-state-hover',
-                'text-muted-foreground'
+                'text-muted-foreground',
               )}
               aria-label={t('calendar.navigation.next')}
             >
@@ -93,8 +93,8 @@ export const DateNavigator = ({
         </div>
       ) : null}
     </div>
-  )
-}
+  );
+};
 
 /**
  * コンパクトな日付ナビゲーション（矢印のみ）
@@ -112,5 +112,5 @@ export const CompactDateNavigator = ({
       className={className}
       arrowSize={arrowSize}
     />
-  )
-}
+  );
+};

@@ -1,7 +1,7 @@
-import '@testing-library/jest-dom'
-import { cleanup } from '@testing-library/react'
-import type { ReactNode } from 'react'
-import { afterEach, vi } from 'vitest'
+import '@testing-library/jest-dom';
+import { cleanup } from '@testing-library/react';
+import type { ReactNode } from 'react';
+import { afterEach, vi } from 'vitest';
 
 // next-intl のモック
 vi.mock('next-intl', () => ({
@@ -17,19 +17,19 @@ vi.mock('next-intl', () => ({
   }),
   // テストでNextIntlClientProviderを直接使うファイル用
   NextIntlClientProvider: ({ children }: { children: ReactNode }) => children,
-}))
+}));
 
 // テスト後のクリーンアップ
 afterEach(() => {
-  cleanup()
-})
+  cleanup();
+});
 
 // グローバルモック設定
 global.ResizeObserver = class ResizeObserver {
   observe() {}
   unobserve() {}
   disconnect() {}
-}
+};
 
 // matchMedia のモック
 Object.defineProperty(window, 'matchMedia', {
@@ -44,18 +44,18 @@ Object.defineProperty(window, 'matchMedia', {
     removeEventListener: () => {},
     dispatchEvent: () => {},
   }),
-})
+});
 
 // IntersectionObserver のモック
 global.IntersectionObserver = class IntersectionObserver {
-  readonly root: Element | null = null
-  readonly rootMargin: string = ''
-  readonly thresholds: ReadonlyArray<number> = []
+  readonly root: Element | null = null;
+  readonly rootMargin: string = '';
+  readonly thresholds: ReadonlyArray<number> = [];
   constructor(_callback: IntersectionObserverCallback, _options?: IntersectionObserverInit) {}
   observe() {}
   unobserve() {}
   disconnect() {}
   takeRecords(): IntersectionObserverEntry[] {
-    return []
+    return [];
   }
-}
+};

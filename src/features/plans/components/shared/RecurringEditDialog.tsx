@@ -1,10 +1,10 @@
-'use client'
+'use client';
 
-import { useCallback, useState } from 'react'
+import { useCallback, useState } from 'react';
 
-import { Calendar, CalendarDays, Repeat } from 'lucide-react'
+import { Calendar, CalendarDays, Repeat } from 'lucide-react';
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -12,21 +12,21 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
-import { Label } from '@/components/ui/label'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { useLocale } from 'next-intl'
+} from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { useLocale } from 'next-intl';
 
-export type RecurringEditScope = 'this' | 'thisAndFuture' | 'all'
+export type RecurringEditScope = 'this' | 'thisAndFuture' | 'all';
 
 export interface RecurringEditDialogProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  onConfirm: (scope: RecurringEditScope) => void
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onConfirm: (scope: RecurringEditScope) => void;
   /** 編集か削除か */
-  mode: 'edit' | 'delete'
+  mode: 'edit' | 'delete';
   /** プランタイトル（表示用） */
-  planTitle?: string | undefined
+  planTitle?: string | undefined;
 }
 
 /**
@@ -37,20 +37,26 @@ export interface RecurringEditDialogProps {
  * - このイベント以降すべて
  * - すべてのイベント
  */
-export function RecurringEditDialog({ open, onOpenChange, onConfirm, mode, planTitle }: RecurringEditDialogProps) {
-  const locale = useLocale()
-  const [scope, setScope] = useState<RecurringEditScope>('this')
+export function RecurringEditDialog({
+  open,
+  onOpenChange,
+  onConfirm,
+  mode,
+  planTitle,
+}: RecurringEditDialogProps) {
+  const locale = useLocale();
+  const [scope, setScope] = useState<RecurringEditScope>('this');
 
   const handleConfirm = useCallback(() => {
-    onConfirm(scope)
-    onOpenChange(false)
-  }, [onConfirm, onOpenChange, scope])
+    onConfirm(scope);
+    onOpenChange(false);
+  }, [onConfirm, onOpenChange, scope]);
 
   const handleCancel = useCallback(() => {
-    onOpenChange(false)
-  }, [onOpenChange])
+    onOpenChange(false);
+  }, [onOpenChange]);
 
-  const isEdit = mode === 'edit'
+  const isEdit = mode === 'edit';
 
   const title = isEdit
     ? locale === 'ja'
@@ -58,7 +64,7 @@ export function RecurringEditDialog({ open, onOpenChange, onConfirm, mode, planT
       : 'Edit recurring event'
     : locale === 'ja'
       ? '繰り返しイベントを削除'
-      : 'Delete recurring event'
+      : 'Delete recurring event';
 
   const description = planTitle
     ? locale === 'ja'
@@ -66,7 +72,7 @@ export function RecurringEditDialog({ open, onOpenChange, onConfirm, mode, planT
       : `Which events do you want to ${isEdit ? 'edit' : 'delete'}?`
     : locale === 'ja'
       ? `どの範囲で${isEdit ? '編集' : '削除'}しますか？`
-      : `Which events do you want to ${isEdit ? 'edit' : 'delete'}?`
+      : `Which events do you want to ${isEdit ? 'edit' : 'delete'}?`;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -93,7 +99,9 @@ export function RecurringEditDialog({ open, onOpenChange, onConfirm, mode, planT
                 {locale === 'ja' ? 'このイベントのみ' : 'This event only'}
               </div>
               <span className="text-muted-foreground text-sm">
-                {locale === 'ja' ? 'この日のイベントのみ変更されます' : 'Only this occurrence will be changed'}
+                {locale === 'ja'
+                  ? 'この日のイベントのみ変更されます'
+                  : 'Only this occurrence will be changed'}
               </span>
             </Label>
           </div>
@@ -123,7 +131,9 @@ export function RecurringEditDialog({ open, onOpenChange, onConfirm, mode, planT
                 {locale === 'ja' ? 'すべてのイベント' : 'All events'}
               </div>
               <span className="text-muted-foreground text-sm">
-                {locale === 'ja' ? 'すべての繰り返しイベントが変更されます' : 'All occurrences will be changed'}
+                {locale === 'ja'
+                  ? 'すべての繰り返しイベントが変更されます'
+                  : 'All occurrences will be changed'}
               </span>
             </Label>
           </div>
@@ -139,5 +149,5 @@ export function RecurringEditDialog({ open, onOpenChange, onConfirm, mode, planT
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

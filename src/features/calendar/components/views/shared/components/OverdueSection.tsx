@@ -1,24 +1,24 @@
-'use client'
+'use client';
 
-import { isToday } from 'date-fns'
+import { isToday } from 'date-fns';
 
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/utils';
 
-import { useAllOverduePlans } from '../../../../hooks/useOverduePlans'
-import type { CalendarPlan } from '../../../../types/calendar.types'
+import { useAllOverduePlans } from '../../../../hooks/useOverduePlans';
+import type { CalendarPlan } from '../../../../types/calendar.types';
 
-import { OverdueBadge } from './OverdueBadge'
-import { TimezoneOffset } from './TimezoneOffset'
+import { OverdueBadge } from './OverdueBadge';
+import { TimezoneOffset } from './TimezoneOffset';
 
 interface OverdueSectionProps {
   /** 表示する日付配列 */
-  dates: Date[]
+  dates: Date[];
   /** 全プラン配列 */
-  plans: CalendarPlan[]
+  plans: CalendarPlan[];
   /** タイムゾーン（左端に表示） */
-  timezone?: string
+  timezone?: string;
   /** 追加のクラス名 */
-  className?: string
+  className?: string;
 }
 
 /**
@@ -30,14 +30,14 @@ interface OverdueSectionProps {
  * バッジは今日の列にのみ表示され、全ての期限切れ未完了プランの件数を表示。
  */
 export function OverdueSection({ dates, plans, timezone, className }: OverdueSectionProps) {
-  const overduePlans = useAllOverduePlans(plans)
+  const overduePlans = useAllOverduePlans(plans);
 
   return (
     <div
       className={cn(
         'bg-background border-border flex h-6 items-center border-b',
         'px-1 md:px-4', // モバイルではパディングを小さく
-        className
+        className,
       )}
     >
       {/* タイムゾーン表示（左端） - モバイルでは非表示 */}
@@ -48,14 +48,14 @@ export function OverdueSection({ dates, plans, timezone, className }: OverdueSec
       {/* 各日付のエリア（今日の列のみバッジ表示） */}
       <div className="flex flex-1">
         {dates.map((date, index) => {
-          const isCurrentDay = isToday(date)
-          const hasOverdue = isCurrentDay && overduePlans.length > 0
+          const isCurrentDay = isToday(date);
+          const hasOverdue = isCurrentDay && overduePlans.length > 0;
           return (
             <div
               key={date.toISOString()}
               className={cn(
                 'flex flex-1 items-center justify-center py-0.5',
-                index < dates.length - 1 && 'border-border border-r'
+                index < dates.length - 1 && 'border-border border-r',
               )}
               style={{ width: `${100 / dates.length}%` }}
             >
@@ -64,27 +64,27 @@ export function OverdueSection({ dates, plans, timezone, className }: OverdueSec
                   overduePlans={overduePlans}
                   className={cn(
                     'bg-destructive/10 hover:bg-destructive/15 h-full rounded-md',
-                    'w-full px-0.5 md:w-[calc(100%-8px)] md:px-1'
+                    'w-full px-0.5 md:w-[calc(100%-8px)] md:px-1',
                   )}
                 />
               ) : null}
             </div>
-          )
+          );
         })}
       </div>
     </div>
-  )
+  );
 }
 
 interface OverdueSectionSingleProps {
   /** 表示する日付 */
-  date: Date
+  date: Date;
   /** 全プラン配列 */
-  plans: CalendarPlan[]
+  plans: CalendarPlan[];
   /** タイムゾーン（左端に表示） */
-  timezone?: string
+  timezone?: string;
   /** 追加のクラス名 */
-  className?: string
+  className?: string;
 }
 
 /**
@@ -94,22 +94,29 @@ interface OverdueSectionSingleProps {
  * DayViewなど、単一日付のビューで使用。
  * 今日を表示している場合のみバッジを表示。
  */
-export function OverdueSectionSingle({ date, plans, timezone, className }: OverdueSectionSingleProps) {
-  const overduePlans = useAllOverduePlans(plans)
-  const isTodayView = isToday(date)
-  const hasOverdue = isTodayView && overduePlans.length > 0
+export function OverdueSectionSingle({
+  date,
+  plans,
+  timezone,
+  className,
+}: OverdueSectionSingleProps) {
+  const overduePlans = useAllOverduePlans(plans);
+  const isTodayView = isToday(date);
+  const hasOverdue = isTodayView && overduePlans.length > 0;
 
   return (
     <div
       className={cn(
         'bg-background border-border flex h-6 items-center border-b',
         'px-2 md:px-4', // モバイルではパディングを小さく
-        className
+        className,
       )}
     >
       {/* タイムゾーン表示（左端） - モバイルでは小さく */}
       <div className="border-border flex w-8 flex-shrink-0 items-center border-r md:w-12">
-        {timezone ? <TimezoneOffset timezone={timezone} className="text-[10px] md:text-xs" /> : null}
+        {timezone ? (
+          <TimezoneOffset timezone={timezone} className="text-[10px] md:text-xs" />
+        ) : null}
       </div>
 
       {/* バッジエリア（今日の場合のみ表示） */}
@@ -119,11 +126,11 @@ export function OverdueSectionSingle({ date, plans, timezone, className }: Overd
             overduePlans={overduePlans}
             className={cn(
               'bg-destructive/10 hover:bg-destructive/15 h-full rounded-md',
-              'w-full md:w-[calc(100%-8px)]'
+              'w-full md:w-[calc(100%-8px)]',
             )}
           />
         ) : null}
       </div>
     </div>
-  )
+  );
 }

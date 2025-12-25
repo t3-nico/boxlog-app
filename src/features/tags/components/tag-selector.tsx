@@ -1,31 +1,31 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
+import { useState } from 'react';
 
-import { ChevronDown as ChevronDownIcon, Plus } from 'lucide-react'
+import { ChevronDown as ChevronDownIcon, Plus } from 'lucide-react';
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Input } from '@/components/ui/input'
-import { useCreateTag, useTags } from '@/features/tags/hooks/use-tags'
-import type { Tag } from '@/features/tags/types'
-import { useTranslations } from 'next-intl'
+} from '@/components/ui/dropdown-menu';
+import { Input } from '@/components/ui/input';
+import { useCreateTag, useTags } from '@/features/tags/hooks/use-tags';
+import type { Tag } from '@/features/tags/types';
+import { useTranslations } from 'next-intl';
 
-import { QuickTagCreateModal } from './quick-tag-create-modal'
-import { TagBadge } from './tag-badge'
+import { QuickTagCreateModal } from './quick-tag-create-modal';
+import { TagBadge } from './tag-badge';
 
 interface TagSelectorProps {
-  selectedTagIds: string[]
-  onTagsChange: (tagIds: string[]) => void
-  maxTags?: number
-  placeholder?: string
-  enableCreate?: boolean
+  selectedTagIds: string[];
+  onTagsChange: (tagIds: string[]) => void;
+  maxTags?: number;
+  placeholder?: string;
+  enableCreate?: boolean;
 }
 
 export const TagSelector = ({
@@ -35,32 +35,32 @@ export const TagSelector = ({
   placeholder,
   enableCreate = true,
 }: TagSelectorProps) => {
-  const t = useTranslations()
-  const effectivePlaceholder = placeholder ?? t('tag.selector.placeholder')
-  const [searchQuery, setSearchQuery] = useState('')
-  const [showCreateModal, setShowCreateModal] = useState(false)
-  const createTagMutation = useCreateTag()
+  const t = useTranslations();
+  const effectivePlaceholder = placeholder ?? t('tag.selector.placeholder');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const createTagMutation = useCreateTag();
 
   // データベースからタグを取得
-  const { data: allTags = [] } = useTags(true)
+  const { data: allTags = [] } = useTags(true);
   // アクティブなタグのみを使用（アーカイブ済みタグを除外）
-  const activeTags = allTags.filter((tag) => tag.is_active)
-  const selectedTags = activeTags.filter((tag) => selectedTagIds.includes(tag.id))
-  const availableTags = activeTags.filter((tag) => !selectedTagIds.includes(tag.id))
+  const activeTags = allTags.filter((tag) => tag.is_active);
+  const selectedTags = activeTags.filter((tag) => selectedTagIds.includes(tag.id));
+  const availableTags = activeTags.filter((tag) => !selectedTagIds.includes(tag.id));
 
   const filteredTags = searchQuery
     ? availableTags.filter((tag) => tag.name.toLowerCase().includes(searchQuery.toLowerCase()))
-    : availableTags
+    : availableTags;
 
   const handleTagAdd = (tag: Tag) => {
-    if (maxTags && selectedTagIds.length >= maxTags) return
-    onTagsChange([...selectedTagIds, tag.id])
-    setSearchQuery('')
-  }
+    if (maxTags && selectedTagIds.length >= maxTags) return;
+    onTagsChange([...selectedTagIds, tag.id]);
+    setSearchQuery('');
+  };
 
   const handleTagRemove = (tagId: string) => {
-    onTagsChange(selectedTagIds.filter((id) => id !== tagId))
-  }
+    onTagsChange(selectedTagIds.filter((id) => id !== tagId));
+  };
 
   const handleCreateTag = async (newTag: { name: string; color: string }) => {
     try {
@@ -68,18 +68,18 @@ export const TagSelector = ({
         name: newTag.name,
         color: newTag.color,
         description: undefined,
-      })
+      });
 
       // 作成されたタグを自動的に選択
       if (createdTag && createdTag.id) {
-        onTagsChange([...selectedTagIds, createdTag.id])
+        onTagsChange([...selectedTagIds, createdTag.id]);
       }
 
-      setShowCreateModal(false)
+      setShowCreateModal(false);
     } catch (error) {
-      console.error('Failed to create tag:', error)
+      console.error('Failed to create tag:', error);
     }
-  }
+  };
 
   return (
     <>
@@ -128,7 +128,9 @@ export const TagSelector = ({
                   >
                     <TagBadge tag={tag} showIcon={true} />
                     {tag.description != null && (
-                      <span className="text-muted-foreground truncate text-xs">{tag.description}</span>
+                      <span className="text-muted-foreground truncate text-xs">
+                        {tag.description}
+                      </span>
                     )}
                   </DropdownMenuItem>
                 ))
@@ -164,5 +166,5 @@ export const TagSelector = ({
         onCreateTag={handleCreateTag}
       />
     </>
-  )
-}
+  );
+};

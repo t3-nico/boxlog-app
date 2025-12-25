@@ -1,20 +1,20 @@
-'use client'
+'use client';
 
-import { useCallback, useEffect, useState } from 'react'
-import { createPortal } from 'react-dom'
+import { useCallback, useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { useTagUsage } from '@/features/tags/hooks'
-import type { Tag } from '@/features/tags/types'
-import { AlertTriangle } from 'lucide-react'
-import { useTranslations } from 'next-intl'
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { useTagUsage } from '@/features/tags/hooks';
+import type { Tag } from '@/features/tags/types';
+import { AlertTriangle } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface TagDeleteDialogProps {
-  tag: Tag | null
-  onClose: () => void
-  onConfirm: () => Promise<void>
+  tag: Tag | null;
+  onClose: () => void;
+  onConfirm: () => Promise<void>;
 }
 
 /**
@@ -29,64 +29,64 @@ interface TagDeleteDialogProps {
  * - セマンティックカラー: destructive系トークン使用
  */
 export function TagDeleteDialog({ tag, onClose, onConfirm }: TagDeleteDialogProps) {
-  const t = useTranslations()
-  const [confirmText, setConfirmText] = useState('')
-  const [isDeleting, setIsDeleting] = useState(false)
-  const [mounted, setMounted] = useState(false)
+  const t = useTranslations();
+  const [confirmText, setConfirmText] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   // TanStack Queryでタグ使用状況を取得
-  const { data: usage, isPending } = useTagUsage(tag?.id)
+  const { data: usage, isPending } = useTagUsage(tag?.id);
 
   // クライアントサイドでのみマウント
   useEffect(() => {
-    setMounted(true)
-  }, [])
+    setMounted(true);
+  }, []);
 
   // タグが変更されたら確認テキストをリセット
   useEffect(() => {
     if (!tag) {
-      setConfirmText('')
+      setConfirmText('');
     }
-  }, [tag])
+  }, [tag]);
 
   const handleConfirm = useCallback(async () => {
-    setIsDeleting(true)
+    setIsDeleting(true);
     try {
-      await onConfirm()
+      await onConfirm();
     } finally {
-      setIsDeleting(false)
+      setIsDeleting(false);
     }
-  }, [onConfirm])
+  }, [onConfirm]);
 
   const handleBackdropClick = useCallback(
     (e: React.MouseEvent) => {
       if (e.target === e.currentTarget && !isDeleting) {
-        setConfirmText('')
-        onClose()
+        setConfirmText('');
+        onClose();
       }
     },
-    [isDeleting, onClose]
-  )
+    [isDeleting, onClose],
+  );
 
   // ESCキーでダイアログを閉じる
   useEffect(() => {
-    if (!tag) return
+    if (!tag) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && !isDeleting) {
-        setConfirmText('')
-        onClose()
+        setConfirmText('');
+        onClose();
       }
-    }
+    };
 
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [tag, isDeleting, onClose])
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [tag, isDeleting, onClose]);
 
-  if (!mounted || !tag) return null
+  if (!mounted || !tag) return null;
 
-  const requiresConfirmation = (usage?.totalCount || 0) > 50
-  const canDelete = !requiresConfirmation || confirmText === tag.name
+  const requiresConfirmation = (usage?.totalCount || 0) > 50;
+  const canDelete = !requiresConfirmation || confirmText === tag.name;
 
   const dialog = (
     <div
@@ -131,13 +131,16 @@ export function TagDeleteDialog({ tag, onClose, onConfirm }: TagDeleteDialogProp
               <p className="mb-2 text-sm font-medium">{t('tag.delete.affectedItems')}:</p>
               <ul className="text-muted-foreground space-y-1 text-sm">
                 <li>
-                  • {t('tag.delete.plans')}: {t('tag.delete.itemsCount', { count: usage.planCount })}
+                  • {t('tag.delete.plans')}:{' '}
+                  {t('tag.delete.itemsCount', { count: usage.planCount })}
                 </li>
                 <li>
-                  • {t('tag.delete.events')}: {t('tag.delete.itemsCount', { count: usage.eventCount })}
+                  • {t('tag.delete.events')}:{' '}
+                  {t('tag.delete.itemsCount', { count: usage.eventCount })}
                 </li>
                 <li>
-                  • {t('tag.delete.tasks')}: {t('tag.delete.itemsCount', { count: usage.taskCount })}
+                  • {t('tag.delete.tasks')}:{' '}
+                  {t('tag.delete.itemsCount', { count: usage.taskCount })}
                 </li>
               </ul>
               <p className="text-muted-foreground mt-2 text-sm font-medium">
@@ -178,8 +181,8 @@ export function TagDeleteDialog({ tag, onClose, onConfirm }: TagDeleteDialogProp
           <Button
             variant="outline"
             onClick={() => {
-              setConfirmText('')
-              onClose()
+              setConfirmText('');
+              onClose();
             }}
             disabled={isDeleting}
             className="hover:bg-state-hover"
@@ -197,7 +200,7 @@ export function TagDeleteDialog({ tag, onClose, onConfirm }: TagDeleteDialogProp
         </div>
       </div>
     </div>
-  )
+  );
 
-  return createPortal(dialog, document.body)
+  return createPortal(dialog, document.body);
 }

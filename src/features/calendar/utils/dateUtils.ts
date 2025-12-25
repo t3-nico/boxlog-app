@@ -24,17 +24,17 @@
  * ```
  */
 export function parseDateString(dateString: string): Date {
-  const match = dateString.match(/^(\d{4})-(\d{2})-(\d{2})$/)
+  const match = dateString.match(/^(\d{4})-(\d{2})-(\d{2})$/);
   if (!match) {
-    throw new Error(`Invalid date format: ${dateString}. Expected YYYY-MM-DD.`)
+    throw new Error(`Invalid date format: ${dateString}. Expected YYYY-MM-DD.`);
   }
 
-  const [, yearStr, monthStr, dayStr] = match
-  const year = parseInt(yearStr!, 10)
-  const month = parseInt(monthStr!, 10) - 1 // 0始まり
-  const day = parseInt(dayStr!, 10)
+  const [, yearStr, monthStr, dayStr] = match;
+  const year = parseInt(yearStr!, 10);
+  const month = parseInt(monthStr!, 10) - 1; // 0始まり
+  const day = parseInt(dayStr!, 10);
 
-  return new Date(year, month, day)
+  return new Date(year, month, day);
 }
 
 /**
@@ -49,7 +49,7 @@ export function parseDateString(dateString: string): Date {
  * ```
  */
 export function formatDateString(dateString: string): string {
-  return dateString.replace(/^(\d{4})-(\d{2})-(\d{2})$/, '$1/$2/$3')
+  return dateString.replace(/^(\d{4})-(\d{2})-(\d{2})$/, '$1/$2/$3');
 }
 
 /**
@@ -72,37 +72,39 @@ export function formatDateString(dateString: string): string {
  */
 export function parseDatetimeString(datetimeString: string, _targetTimezone?: string): Date {
   // タイムゾーン付きの形式（YYYY-MM-DDTHH:mm:ss±HH:MM または YYYY-MM-DDTHH:mm:ss.sss±HH:MM）
-  if (datetimeString.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,3})?([+-]\d{2}:\d{2}|Z)$/)) {
-    const date = new Date(datetimeString)
+  if (
+    datetimeString.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,3})?([+-]\d{2}:\d{2}|Z)$/)
+  ) {
+    const date = new Date(datetimeString);
     if (isNaN(date.getTime())) {
-      throw new Error(`Invalid datetime: ${datetimeString}`)
+      throw new Error(`Invalid datetime: ${datetimeString}`);
     }
 
     // targetTimezoneが指定されている場合、そのタイムゾーンでの表示時刻を返す
     // ただし、Dateオブジェクトは内部的にはUTCタイムスタンプを保持するため、
     // ここでは変換せず、表示時にタイムゾーンを考慮する
     // （注: date-fns-tzを使う場合は後で実装）
-    return date
+    return date;
   }
 
   // タイムゾーンなしの形式（YYYY-MM-DDTHH:mm:ss）
-  const match = datetimeString.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})$/)
+  const match = datetimeString.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})$/);
   if (!match) {
     throw new Error(
-      `Invalid datetime format: ${datetimeString}. Expected YYYY-MM-DDTHH:mm:ss or ISO 8601 with timezone.`
-    )
+      `Invalid datetime format: ${datetimeString}. Expected YYYY-MM-DDTHH:mm:ss or ISO 8601 with timezone.`,
+    );
   }
 
-  const [, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr] = match
-  const year = parseInt(yearStr!, 10)
-  const month = parseInt(monthStr!, 10) - 1 // 0始まり
-  const day = parseInt(dayStr!, 10)
-  const hour = parseInt(hourStr!, 10)
-  const minute = parseInt(minuteStr!, 10)
-  const second = parseInt(secondStr!, 10)
+  const [, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr] = match;
+  const year = parseInt(yearStr!, 10);
+  const month = parseInt(monthStr!, 10) - 1; // 0始まり
+  const day = parseInt(dayStr!, 10);
+  const hour = parseInt(hourStr!, 10);
+  const minute = parseInt(minuteStr!, 10);
+  const second = parseInt(secondStr!, 10);
 
   // targetTimezoneが指定されている場合は、そのタイムゾーンの時刻として解釈
   // ただし、現在の実装ではローカルタイムゾーンとして解釈
   // （注: date-fns-tzを使う完全な実装は後で追加）
-  return new Date(year, month, day, hour, minute, second)
+  return new Date(year, month, day, hour, minute, second);
 }

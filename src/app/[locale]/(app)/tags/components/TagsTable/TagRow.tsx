@@ -1,9 +1,9 @@
-'use client'
+'use client';
 
-import { Folder, Hash } from 'lucide-react'
+import { Folder, Hash } from 'lucide-react';
 
-import { Checkbox } from '@/components/ui/checkbox'
-import { ColorPalettePicker } from '@/components/ui/color-palette-picker'
+import { Checkbox } from '@/components/ui/checkbox';
+import { ColorPalettePicker } from '@/components/ui/color-palette-picker';
 import {
   ContextMenu,
   ContextMenuContent,
@@ -12,49 +12,49 @@ import {
   ContextMenuSubContent,
   ContextMenuSubTrigger,
   ContextMenuTrigger,
-} from '@/components/ui/context-menu'
-import { Input } from '@/components/ui/input'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { TableCell, TableRow } from '@/components/ui/table'
-import { DEFAULT_GROUP_COLOR, DEFAULT_TAG_COLOR } from '@/config/ui/colors'
-import { TagActionMenuItems } from '@/features/tags/components/TagActionMenuItems'
-import type { Tag, TagGroup } from '@/features/tags/types'
-import type { useTranslations } from 'next-intl'
+} from '@/components/ui/context-menu';
+import { Input } from '@/components/ui/input';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { TableCell, TableRow } from '@/components/ui/table';
+import { DEFAULT_GROUP_COLOR, DEFAULT_TAG_COLOR } from '@/config/ui/colors';
+import { TagActionMenuItems } from '@/features/tags/components/TagActionMenuItems';
+import type { Tag, TagGroup } from '@/features/tags/types';
+import type { useTranslations } from 'next-intl';
 
 interface ColumnWidths {
-  select: number
-  id: number
-  color: number
-  name: number
-  description: number
-  group: number
-  created_at: number
-  actions: number
+  select: number;
+  id: number;
+  color: number;
+  name: number;
+  description: number;
+  group: number;
+  created_at: number;
+  actions: number;
 }
 
 interface TagRowProps {
-  tag: Tag
-  groups: TagGroup[]
-  tags: Tag[]
-  columnWidths: ColumnWidths
-  isSelected: boolean
-  isEditing: boolean
-  editingField: 'name' | 'description' | null
-  editValue: string
-  planCount: number
-  onSelect: (tagId: string) => void
-  onContextSelect: (tagId: string) => void
-  onColorChange: (tagId: string, color: string) => void
-  onEditStart: (tag: Tag) => void
-  onEditChange: (value: string) => void
-  onEditSave: (tagId: string) => void
-  onEditCancel: () => void
-  onView: (tag: Tag) => void
-  onMoveToGroup: (tag: Tag, groupId: string | null) => void
-  onArchive: (tag: Tag) => void
-  onDelete: (tag: Tag) => void
-  formatDate: (date: Date | string) => string
-  t: ReturnType<typeof useTranslations>
+  tag: Tag;
+  groups: TagGroup[];
+  tags: Tag[];
+  columnWidths: ColumnWidths;
+  isSelected: boolean;
+  isEditing: boolean;
+  editingField: 'name' | 'description' | null;
+  editValue: string;
+  planCount: number;
+  onSelect: (tagId: string) => void;
+  onContextSelect: (tagId: string) => void;
+  onColorChange: (tagId: string, color: string) => void;
+  onEditStart: (tag: Tag) => void;
+  onEditChange: (value: string) => void;
+  onEditSave: (tagId: string) => void;
+  onEditCancel: () => void;
+  onView: (tag: Tag) => void;
+  onMoveToGroup: (tag: Tag, groupId: string | null) => void;
+  onArchive: (tag: Tag) => void;
+  onDelete: (tag: Tag) => void;
+  formatDate: (date: Date | string) => string;
+  t: ReturnType<typeof useTranslations>;
 }
 
 export function TagRow({
@@ -81,7 +81,7 @@ export function TagRow({
   formatDate,
   t,
 }: TagRowProps) {
-  const group = tag.group_id ? groups.find((g) => g.id === tag.group_id) : null
+  const group = tag.group_id ? groups.find((g) => g.id === tag.group_id) : null;
 
   return (
     <ContextMenu modal={false}>
@@ -90,21 +90,30 @@ export function TagRow({
           className="group"
           onContextMenu={() => {
             if (!isSelected) {
-              onContextSelect(tag.id)
+              onContextSelect(tag.id);
             }
           }}
         >
-          <TableCell style={{ width: `${columnWidths.select}px` }} onClick={(e) => e.stopPropagation()}>
+          <TableCell
+            style={{ width: `${columnWidths.select}px` }}
+            onClick={(e) => e.stopPropagation()}
+          >
             <Checkbox
               checked={isSelected}
               onCheckedChange={() => onSelect(tag.id)}
               aria-label={t('tag.page.selectTag', { name: tag.name })}
             />
           </TableCell>
-          <TableCell className="text-muted-foreground font-mono text-sm" style={{ width: `${columnWidths.id}px` }}>
+          <TableCell
+            className="text-muted-foreground font-mono text-sm"
+            style={{ width: `${columnWidths.id}px` }}
+          >
             t-{tag.tag_number}
           </TableCell>
-          <TableCell className="font-medium" style={{ width: `${columnWidths.color + columnWidths.name}px` }}>
+          <TableCell
+            className="font-medium"
+            style={{ width: `${columnWidths.color + columnWidths.name}px` }}
+          >
             <div className="flex items-center gap-2">
               <Popover>
                 <PopoverTrigger asChild>
@@ -134,22 +143,28 @@ export function TagRow({
                   onBlur={() => onEditSave(tag.id)}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
-                      onEditSave(tag.id)
+                      onEditSave(tag.id);
                     } else if (e.key === 'Escape') {
-                      onEditCancel()
+                      onEditCancel();
                     }
                   }}
                   autoFocus
                   className="h-7 px-2"
                 />
               ) : (
-                <span className="min-w-0 flex-1 cursor-pointer truncate hover:underline" onClick={() => onView(tag)}>
+                <span
+                  className="min-w-0 flex-1 cursor-pointer truncate hover:underline"
+                  onClick={() => onView(tag)}
+                >
                   {tag.name}
                 </span>
               )}
             </div>
           </TableCell>
-          <TableCell className="text-muted-foreground" style={{ width: `${columnWidths.description}px` }}>
+          <TableCell
+            className="text-muted-foreground"
+            style={{ width: `${columnWidths.description}px` }}
+          >
             <span className="truncate">
               {tag.description || (
                 <span className="opacity-100 transition-opacity sm:opacity-0 sm:group-hover:opacity-100">
@@ -161,7 +176,10 @@ export function TagRow({
           <TableCell style={{ width: `${columnWidths.group}px` }}>
             {group ? (
               <div className="flex items-center gap-1">
-                <Folder className="h-4 w-4 shrink-0" style={{ color: group.color || DEFAULT_GROUP_COLOR }} />
+                <Folder
+                  className="h-4 w-4 shrink-0"
+                  style={{ color: group.color || DEFAULT_GROUP_COLOR }}
+                />
                 <span className="text-sm">{group.name}</span>
               </div>
             ) : (
@@ -170,7 +188,10 @@ export function TagRow({
               </span>
             )}
           </TableCell>
-          <TableCell className="text-muted-foreground text-xs" style={{ width: `${columnWidths.created_at}px` }}>
+          <TableCell
+            className="text-muted-foreground text-xs"
+            style={{ width: `${columnWidths.created_at}px` }}
+          >
             {formatDate(tag.created_at)}
           </TableCell>
         </TableRow>
@@ -217,5 +238,5 @@ export function TagRow({
         />
       </ContextMenuContent>
     </ContextMenu>
-  )
+  );
 }

@@ -17,22 +17,22 @@
  * ユーザープロフィール
  */
 export interface Profile {
-  id: string
-  email?: string
-  name?: string
-  avatar_url?: string
-  created_at?: string
-  updated_at?: string
+  id: string;
+  email?: string;
+  name?: string;
+  avatar_url?: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 /**
  * ユーザー設定値
  */
 export interface UserValues {
-  id: string
-  user_id: string
-  key: string
-  value: string
+  id: string;
+  user_id: string;
+  key: string;
+  value: string;
 }
 
 // ============================================
@@ -42,14 +42,14 @@ export interface UserValues {
 /**
  * プロフィール更新入力
  */
-export type ProfileUpdate = Partial<Omit<Profile, 'id' | 'created_at'>>
+export type ProfileUpdate = Partial<Omit<Profile, 'id' | 'created_at'>>;
 
 // ============================================
 // 3. 他モジュールからの再エクスポート
 // ============================================
 
 // 共通型
-export * from './chronotype'
-export * from './common'
-export * from './tags'
-export * from './trash'
+export * from './chronotype';
+export * from './common';
+export * from './tags';
+export * from './trash';

@@ -1,34 +1,34 @@
-'use client'
+'use client';
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react';
 
 interface HighContrastColors {
-  background: string
-  foreground: string
-  primary: string
-  secondary: string
-  accent: string
-  border: string
-  focus: string
-  selected: string
-  disabled: string
-  error: string
-  warning: string
-  success: string
+  background: string;
+  foreground: string;
+  primary: string;
+  secondary: string;
+  accent: string;
+  border: string;
+  focus: string;
+  selected: string;
+  disabled: string;
+  error: string;
+  warning: string;
+  success: string;
 }
 
 interface ContrastTheme {
-  name: string
-  colors: HighContrastColors
-  wcagAAA: boolean
+  name: string;
+  colors: HighContrastColors;
+  wcagAAA: boolean;
 }
 
-import { getTranslation } from '@/features/calendar/lib/toast/get-translation'
+import { getTranslation } from '@/features/calendar/lib/toast/get-translation';
 
 // 翻訳キーを追加
 const CALENDAR_ACCESSIBILITY_KEYS = {
   STANDARD_CONTRAST: 'calendar.accessibility.standardContrast',
-} as const
+} as const;
 
 // WCAG AAA準拠のハイコントラストカラーテーマ
 const HIGH_CONTRAST_THEMES: Record<string, ContrastTheme> = {
@@ -122,58 +122,58 @@ const HIGH_CONTRAST_THEMES: Record<string, ContrastTheme> = {
       success: '#006600',
     },
   },
-}
+};
 
 // OSの設定からハイコントラストモードを検出
 function detectSystemHighContrast(): boolean {
-  if (typeof window === 'undefined') return false
+  if (typeof window === 'undefined') return false;
 
   return (
     window.matchMedia('(prefers-contrast: high)').matches ||
     window.matchMedia('(-ms-high-contrast: active)').matches ||
     window.matchMedia('(-ms-high-contrast: black-on-white)').matches ||
     window.matchMedia('(-ms-high-contrast: white-on-black)').matches
-  )
+  );
 }
 
 // 色のコントラスト比を計算（WCAG準拠）
 function calculateContrastRatio(color1: string, color2: string): number {
   const getLuminance = (color: string): number => {
-    const rgb = color.startsWith('#') ? parseInt(color.slice(1), 16) : 0
+    const rgb = color.startsWith('#') ? parseInt(color.slice(1), 16) : 0;
 
-    const r = (rgb >> 16) & 255
-    const g = (rgb >> 8) & 255
-    const b = rgb & 255
+    const r = (rgb >> 16) & 255;
+    const g = (rgb >> 8) & 255;
+    const b = rgb & 255;
 
     const [rs = 0, gs = 0, bs = 0] = [r, g, b].map((c) => {
-      c = c / 255
-      return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4)
-    })
+      c = c / 255;
+      return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+    });
 
-    return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs
-  }
+    return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
+  };
 
-  const lum1 = getLuminance(color1)
-  const lum2 = getLuminance(color2)
-  const lighter = Math.max(lum1, lum2)
-  const darker = Math.min(lum1, lum2)
+  const lum1 = getLuminance(color1);
+  const lum2 = getLuminance(color2);
+  const lighter = Math.max(lum1, lum2);
+  const darker = Math.min(lum1, lum2);
 
-  return (lighter + 0.05) / (darker + 0.05)
+  return (lighter + 0.05) / (darker + 0.05);
 }
 
 // ハイコントラストスタイルを削除
 function removeHighContrastStyles(): void {
-  document.documentElement.removeAttribute('data-high-contrast')
-  const defaultTheme = HIGH_CONTRAST_THEMES.default
+  document.documentElement.removeAttribute('data-high-contrast');
+  const defaultTheme = HIGH_CONTRAST_THEMES.default;
   if (defaultTheme) {
     Object.keys(defaultTheme.colors).forEach((key) => {
-      document.documentElement.style.removeProperty(`--contrast-${key}`)
-    })
+      document.documentElement.style.removeProperty(`--contrast-${key}`);
+    });
   }
 
-  const existingStyle = document.getElementById('high-contrast-styles')
+  const existingStyle = document.getElementById('high-contrast-styles');
   if (existingStyle) {
-    existingStyle.remove()
+    existingStyle.remove();
   }
 }
 
@@ -196,12 +196,12 @@ function generateBaseStyles(isDark: boolean): string {
     [data-high-contrast] .contrast-border {
       border-color: ${isDark ? '#ffffff' : '#000000'} !important;
     }
-  `
+  `;
 }
 
 // フォーカススタイルを生成
 function generateFocusStyles(isDark: boolean): string {
-  const focusColor = isDark ? '#ffffff' : '#000000'
+  const focusColor = isDark ? '#ffffff' : '#000000';
   return `
     [data-high-contrast] .contrast-focus {
       outline-color: ${focusColor} !important;
@@ -212,14 +212,14 @@ function generateFocusStyles(isDark: boolean): string {
       outline: 3px solid ${focusColor} !important;
       outline-offset: 2px !important;
     }
-  `
+  `;
 }
 
 // インタラクティブ要素スタイルを生成
 function generateInteractiveStyles(isDark: boolean): string {
-  const primary = isDark ? '#ffffff' : '#000000'
-  const secondary = isDark ? '#000000' : '#ffffff'
-  const hover = isDark ? '#333333' : '#cccccc'
+  const primary = isDark ? '#ffffff' : '#000000';
+  const secondary = isDark ? '#000000' : '#ffffff';
+  const hover = isDark ? '#333333' : '#cccccc';
 
   return `
     [data-high-contrast] button,
@@ -246,7 +246,7 @@ function generateInteractiveStyles(isDark: boolean): string {
       background-color: ${secondary} !important;
       color: ${primary} !important;
     }
-  `
+  `;
 }
 
 // 選択状態スタイルを生成
@@ -273,67 +273,68 @@ function generateSelectionStyles(isDark: boolean): string {
       background-color: ${isDark ? '#333333' : '#cccccc'} !important;
       border: 2px solid ${isDark ? '#ffffff' : '#000000'} !important;
     }
-  `
+  `;
 }
 
 // ハイコントラストテーマを適用
 function applyHighContrastTheme(themeName: string): void {
-  document.documentElement.setAttribute('data-high-contrast', themeName)
+  document.documentElement.setAttribute('data-high-contrast', themeName);
 
-  const isDark = themeName === 'dark' || themeName === 'blackOnWhite' || themeName === 'yellowOnBlack'
+  const isDark =
+    themeName === 'dark' || themeName === 'blackOnWhite' || themeName === 'yellowOnBlack';
 
   const styleContent = [
     generateBaseStyles(isDark),
     generateFocusStyles(isDark),
     generateInteractiveStyles(isDark),
     generateSelectionStyles(isDark),
-  ].join('')
+  ].join('');
 
-  const existingStyle = document.getElementById('high-contrast-styles')
+  const existingStyle = document.getElementById('high-contrast-styles');
   if (existingStyle) {
-    existingStyle.remove()
+    existingStyle.remove();
   }
 
-  const style = document.createElement('style')
-  style.id = 'high-contrast-styles'
-  style.textContent = styleContent
-  document.head.appendChild(style)
+  const style = document.createElement('style');
+  style.id = 'high-contrast-styles';
+  style.textContent = styleContent;
+  document.head.appendChild(style);
 }
 
 // localStorageから安全に設定を取得
 const getStoredHighContrast = (): boolean => {
-  if (typeof window === 'undefined') return false
-  return localStorage.getItem('accessibility-high-contrast') === 'true'
-}
+  if (typeof window === 'undefined') return false;
+  return localStorage.getItem('accessibility-high-contrast') === 'true';
+};
 
 const getStoredContrastTheme = (): string => {
-  if (typeof window === 'undefined') return 'default'
-  const savedTheme = localStorage.getItem('accessibility-contrast-theme')
-  return savedTheme && HIGH_CONTRAST_THEMES[savedTheme] ? savedTheme : 'default'
-}
+  if (typeof window === 'undefined') return 'default';
+  const savedTheme = localStorage.getItem('accessibility-contrast-theme');
+  return savedTheme && HIGH_CONTRAST_THEMES[savedTheme] ? savedTheme : 'default';
+};
 
 export function useHighContrast() {
   // 遅延初期化でlocalStorageから読み込み
-  const [isHighContrastEnabled, setIsHighContrastEnabled] = useState(getStoredHighContrast)
-  const [currentTheme, setCurrentTheme] = useState<string>(getStoredContrastTheme)
-  const [isSystemHighContrast, setIsSystemHighContrast] = useState(false)
+  const [isHighContrastEnabled, setIsHighContrastEnabled] = useState(getStoredHighContrast);
+  const [currentTheme, setCurrentTheme] = useState<string>(getStoredContrastTheme);
+  const [isSystemHighContrast, setIsSystemHighContrast] = useState(false);
 
   // システムのハイコントラスト設定を監視
   useEffect(() => {
     const updateSystemHighContrast = () => {
-      const systemHighContrast = detectSystemHighContrast()
+      const systemHighContrast = detectSystemHighContrast();
 
-      setIsSystemHighContrast(systemHighContrast)
+      setIsSystemHighContrast(systemHighContrast);
 
       // システムでハイコントラストが有効な場合、自動的に適用
       if (systemHighContrast && !isHighContrastEnabled) {
-        setIsHighContrastEnabled(true)
+        setIsHighContrastEnabled(true);
 
-        setCurrentTheme('blackOnWhite')
+        setCurrentTheme('blackOnWhite');
       }
-    }
+    };
 
-    updateSystemHighContrast()
+    updateSystemHighContrast();
 
     // メディアクエリの変更を監視
     const mediaQueries = [
@@ -341,91 +342,91 @@ export function useHighContrast() {
       window.matchMedia('(-ms-high-contrast: active)'),
       window.matchMedia('(-ms-high-contrast: black-on-white)'),
       window.matchMedia('(-ms-high-contrast: white-on-black)'),
-    ]
+    ];
 
     mediaQueries.forEach((mq) => {
-      mq.addEventListener('change', updateSystemHighContrast)
-    })
+      mq.addEventListener('change', updateSystemHighContrast);
+    });
 
     return () => {
       mediaQueries.forEach((mq) => {
-        mq.removeEventListener('change', updateSystemHighContrast)
-      })
-    }
-  }, [isHighContrastEnabled])
+        mq.removeEventListener('change', updateSystemHighContrast);
+      });
+    };
+  }, [isHighContrastEnabled]);
 
   // ローカルストレージからの設定復元は遅延初期化で行うため、useEffectは不要
 
   // テーマの適用
   useEffect(() => {
-    const theme = HIGH_CONTRAST_THEMES[currentTheme]
+    const theme = HIGH_CONTRAST_THEMES[currentTheme];
     if (!theme || !isHighContrastEnabled) {
-      removeHighContrastStyles()
-      return
+      removeHighContrastStyles();
+      return;
     }
 
-    applyHighContrastTheme(currentTheme)
-  }, [isHighContrastEnabled, currentTheme])
+    applyHighContrastTheme(currentTheme);
+  }, [isHighContrastEnabled, currentTheme]);
 
   // ハイコントラストモードの切り替え
   const toggleHighContrast = useCallback(
     (enabled?: boolean) => {
-      const newEnabled = enabled !== undefined ? enabled : !isHighContrastEnabled
-      setIsHighContrastEnabled(newEnabled)
-      localStorage.setItem('accessibility-high-contrast', newEnabled.toString())
+      const newEnabled = enabled !== undefined ? enabled : !isHighContrastEnabled;
+      setIsHighContrastEnabled(newEnabled);
+      localStorage.setItem('accessibility-high-contrast', newEnabled.toString());
 
       // システムからの自動適用でない場合は、適切なテーマを選択
       if (newEnabled && currentTheme === 'default') {
-        setCurrentTheme('blackOnWhite')
+        setCurrentTheme('blackOnWhite');
       }
     },
-    [isHighContrastEnabled, currentTheme]
-  )
+    [isHighContrastEnabled, currentTheme],
+  );
 
   // テーマの変更
   const changeTheme = useCallback(
     (themeName: string) => {
       if (HIGH_CONTRAST_THEMES[themeName]) {
-        setCurrentTheme(themeName)
-        localStorage.setItem('accessibility-contrast-theme', themeName)
+        setCurrentTheme(themeName);
+        localStorage.setItem('accessibility-contrast-theme', themeName);
 
         // テーマ変更時にハイコントラストモードも有効化
         if (!isHighContrastEnabled) {
-          setIsHighContrastEnabled(true)
-          localStorage.setItem('accessibility-high-contrast', 'true')
+          setIsHighContrastEnabled(true);
+          localStorage.setItem('accessibility-high-contrast', 'true');
         }
       }
     },
-    [isHighContrastEnabled]
-  )
+    [isHighContrastEnabled],
+  );
 
   // 現在のテーマの情報を取得
   const getCurrentTheme = useCallback(() => {
-    return HIGH_CONTRAST_THEMES[currentTheme]
-  }, [currentTheme])
+    return HIGH_CONTRAST_THEMES[currentTheme];
+  }, [currentTheme]);
 
   // 利用可能なテーマリストを取得
   const getAvailableThemes = useCallback(() => {
     return Object.entries(HIGH_CONTRAST_THEMES).map(([key, theme]) => ({
       key,
       ...theme,
-    }))
-  }, [])
+    }));
+  }, []);
 
   // 特定の色の組み合わせのコントラスト比を確認
   const checkContrast = useCallback((foreground: string, background: string) => {
-    const ratio = calculateContrastRatio(foreground, background)
+    const ratio = calculateContrastRatio(foreground, background);
     return {
       ratio,
       wcagAA: ratio >= 4.5,
       wcagAAA: ratio >= 7.0,
-    }
-  }, [])
+    };
+  }, []);
 
   // 現在のテーマのコントラスト比を検証
   const validateCurrentTheme = useCallback(() => {
-    const theme = getCurrentTheme() ?? HIGH_CONTRAST_THEMES.default
-    if (!theme) return { compliant: false, results: {} }
+    const theme = getCurrentTheme() ?? HIGH_CONTRAST_THEMES.default;
+    if (!theme) return { compliant: false, results: {} };
 
     const results = {
       background_foreground: checkContrast(theme.colors.foreground, theme.colors.background),
@@ -434,30 +435,30 @@ export function useHighContrast() {
       error_background: checkContrast(theme.colors.error, theme.colors.background),
       warning_background: checkContrast(theme.colors.warning, theme.colors.background),
       success_background: checkContrast(theme.colors.success, theme.colors.background),
-    }
+    };
 
-    const allAAA = Object.values(results).every((result) => result.wcagAAA)
-    const allAA = Object.values(results).every((result) => result.wcagAA)
+    const allAAA = Object.values(results).every((result) => result.wcagAAA);
+    const allAA = Object.values(results).every((result) => result.wcagAA);
 
     return {
       results,
       wcagAAA: allAAA,
       wcagAA: allAA,
-    }
-  }, [getCurrentTheme, checkContrast])
+    };
+  }, [getCurrentTheme, checkContrast]);
 
   // CSS変数を取得するヘルパー
   const getContrastVariable = useCallback((name: keyof HighContrastColors) => {
-    return `var(--contrast-${name})`
-  }, [])
+    return `var(--contrast-${name})`;
+  }, []);
 
   // ハイコントラスト用のクラス名を生成
   const getContrastClassName = useCallback(
     (baseClass: string, contrastClass: string) => {
-      return isHighContrastEnabled ? `${baseClass} ${contrastClass}` : baseClass
+      return isHighContrastEnabled ? `${baseClass} ${contrastClass}` : baseClass;
     },
-    [isHighContrastEnabled]
-  )
+    [isHighContrastEnabled],
+  );
 
   return {
     isHighContrastEnabled,
@@ -475,5 +476,5 @@ export function useHighContrast() {
     // 便利なプロパティ
     colors: (getCurrentTheme() || HIGH_CONTRAST_THEMES.default!).colors,
     isWcagAAA: (getCurrentTheme() || HIGH_CONTRAST_THEMES.default!).wcagAAA,
-  }
+  };
 }

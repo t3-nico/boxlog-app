@@ -1,12 +1,12 @@
-'use client'
+'use client';
 
-import React from 'react'
+import React from 'react';
 
-import { format } from 'date-fns'
-import { ja } from 'date-fns/locale'
-import { AlertTriangle, Calendar } from 'lucide-react'
+import { format } from 'date-fns';
+import { ja } from 'date-fns/locale';
+import { AlertTriangle, Calendar } from 'lucide-react';
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -14,18 +14,18 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
-import { cn } from '@/lib/utils'
-import { useTranslations } from 'next-intl'
+} from '@/components/ui/dialog';
+import { cn } from '@/lib/utils';
+import { useTranslations } from 'next-intl';
 
 interface WeekendDropConfirmDialogProps {
-  isOpen: boolean
-  eventTitle: string
-  originalDate: Date
-  suggestedDate: Date
-  onConfirm: () => void
-  onCancel: () => void
-  onClose: () => void
+  isOpen: boolean;
+  eventTitle: string;
+  originalDate: Date;
+  suggestedDate: Date;
+  onConfirm: () => void;
+  onCancel: () => void;
+  onClose: () => void;
 }
 
 /**
@@ -41,7 +41,7 @@ export const WeekendDropConfirmDialog = ({
   onCancel,
   onClose,
 }: WeekendDropConfirmDialogProps) => {
-  const t = useTranslations()
+  const t = useTranslations();
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -51,13 +51,15 @@ export const WeekendDropConfirmDialog = ({
             <div
               className={cn(
                 'flex h-10 w-10 items-center justify-center rounded-full',
-                'bg-orange-100 dark:bg-orange-900/20'
+                'bg-warning/10',
               )}
             >
-              <AlertTriangle className="h-5 w-5 text-orange-600 dark:text-orange-400" />
+              <AlertTriangle className="text-warning h-5 w-5" />
             </div>
             <div>
-              <DialogTitle className="text-left">{t('calendar.weekendDropDialog.title')}</DialogTitle>
+              <DialogTitle className="text-left">
+                {t('calendar.weekendDropDialog.title')}
+              </DialogTitle>
               <DialogDescription className="mt-1 text-left">
                 {t('calendar.weekendDropDialog.description')}
               </DialogDescription>
@@ -74,11 +76,15 @@ export const WeekendDropConfirmDialog = ({
                 <h3 className={cn('text-foreground font-medium')}>{eventTitle}</h3>
                 <div className="mt-2 space-y-1">
                   <p className={cn('text-muted-foreground text-sm')}>
-                    <span className="font-medium">{t('calendar.weekendDropDialog.sourceLabel')}</span>{' '}
+                    <span className="font-medium">
+                      {t('calendar.weekendDropDialog.sourceLabel')}
+                    </span>{' '}
                     {format(originalDate, 'M月d日(E) HH:mm', { locale: ja })}
                   </p>
                   <p className={cn('text-muted-foreground text-sm')}>
-                    <span className="font-medium">{t('calendar.weekendDropDialog.targetLabel')}</span>{' '}
+                    <span className="font-medium">
+                      {t('calendar.weekendDropDialog.targetLabel')}
+                    </span>{' '}
                     {format(suggestedDate, 'M月d日(E) HH:mm', { locale: ja })}
                   </p>
                 </div>
@@ -99,63 +105,67 @@ export const WeekendDropConfirmDialog = ({
           </Button>
           <Button
             onClick={onConfirm}
-            className={cn('flex-1 sm:flex-none', 'bg-primary hover:bg-primary-hover', 'text-primary-foreground')}
+            className={cn(
+              'flex-1 sm:flex-none',
+              'bg-primary hover:bg-primary-hover',
+              'text-primary-foreground',
+            )}
           >
             {t('calendar.weekendDropDialog.confirmButton')}
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
-}
+  );
+};
 
 /**
  * 週末ドロップ確認ダイアログの管理フック
  */
 export function useWeekendDropConfirm() {
-  const [isOpen, setIsOpen] = React.useState(false)
+  const [isOpen, setIsOpen] = React.useState(false);
   const [dialogData, setDialogData] = React.useState<{
-    eventTitle: string
-    originalDate: Date
-    suggestedDate: Date
-    onConfirm: () => void
-    onCancel: () => void
-  } | null>(null)
+    eventTitle: string;
+    originalDate: Date;
+    suggestedDate: Date;
+    onConfirm: () => void;
+    onCancel: () => void;
+  } | null>(null);
 
   const showDialog = React.useCallback(
     (data: {
-      eventTitle: string
-      originalDate: Date
-      suggestedDate: Date
-      onConfirm: () => void
-      onCancel?: () => void
+      eventTitle: string;
+      originalDate: Date;
+      suggestedDate: Date;
+      onConfirm: () => void;
+      onCancel?: () => void;
     }) => {
       setDialogData({
         ...data,
         onCancel: data.onCancel || (() => setIsOpen(false)),
-      })
-      setIsOpen(true)
+      });
+      setIsOpen(true);
     },
-    []
-  )
+    [],
+  );
 
   const closeDialog = React.useCallback(() => {
-    setIsOpen(false)
-    setTimeout(() => setDialogData(null), 150) // アニメーション完了を待つ
-  }, [])
+    setIsOpen(false);
+    setTimeout(() => setDialogData(null), 150); // アニメーション完了を待つ
+  }, []);
 
   const handleConfirm = React.useCallback(() => {
-    dialogData?.onConfirm()
-    closeDialog()
-  }, [dialogData, closeDialog])
+    dialogData?.onConfirm();
+    closeDialog();
+  }, [dialogData, closeDialog]);
 
   const handleCancel = React.useCallback(() => {
-    dialogData?.onCancel()
-    closeDialog()
-  }, [dialogData, closeDialog])
+    dialogData?.onCancel();
+    closeDialog();
+  }, [dialogData, closeDialog]);
 
   const DialogComponent = React.useCallback(() => {
-    if (!dialogData) return null
+    if (!dialogData) return null;
 
     return (
       <WeekendDropConfirmDialog
@@ -167,11 +177,11 @@ export function useWeekendDropConfirm() {
         onCancel={handleCancel}
         onClose={closeDialog}
       />
-    )
-  }, [isOpen, dialogData, handleConfirm, handleCancel, closeDialog])
+    );
+  }, [isOpen, dialogData, handleConfirm, handleCancel, closeDialog]);
 
   return {
     showDialog,
     DialogComponent,
-  }
+  };
 }

@@ -1,23 +1,23 @@
-'use client'
+'use client';
 
-import { cn } from '@/lib/utils'
-import { useCallback } from 'react'
+import { cn } from '@/lib/utils';
+import { useCallback } from 'react';
 
 interface StatusBarItemProps {
   /** 表示するアイコン（lucide-react等） */
-  icon?: React.ReactNode
+  icon?: React.ReactNode;
   /** 表示するテキスト */
-  label: string
+  label: string;
   /** クリック時のコールバック */
-  onClick?: () => void
+  onClick?: () => void;
   /** ツールチップテキスト */
-  tooltip?: string
+  tooltip?: string;
   /** 追加のクラス名 */
-  className?: string
+  className?: string;
   /** 無効状態 */
-  disabled?: boolean
+  disabled?: boolean;
   /** 強制的にクリック可能なスタイルを適用（Popoverのトリガーなど外部でクリックを処理する場合） */
-  forceClickable?: boolean
+  forceClickable?: boolean;
 }
 
 /**
@@ -49,21 +49,21 @@ export function StatusBarItem({
 }: StatusBarItemProps) {
   const handleClick = useCallback(() => {
     if (!disabled && onClick) {
-      onClick()
+      onClick();
     }
-  }, [disabled, onClick])
+  }, [disabled, onClick]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
       if ((e.key === 'Enter' || e.key === ' ') && !disabled && onClick) {
-        e.preventDefault()
-        onClick()
+        e.preventDefault();
+        onClick();
       }
     },
-    [disabled, onClick]
-  )
+    [disabled, onClick],
+  );
 
-  const isClickable = (!!onClick || forceClickable) && !disabled
+  const isClickable = (!!onClick || forceClickable) && !disabled;
 
   return (
     <div
@@ -93,11 +93,11 @@ export function StatusBarItem({
         ],
         // 無効状態
         disabled && 'cursor-not-allowed opacity-50',
-        className
+        className,
       )}
     >
       {icon}
       <span className="truncate">{label}</span>
     </div>
-  )
+  );
 }

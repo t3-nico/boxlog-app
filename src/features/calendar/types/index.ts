@@ -9,7 +9,7 @@ export type {
   CalendarViewType,
   ViewDateRange,
   ViewSelectorProps,
-} from './calendar.types'
+} from './calendar.types';
 
 // その他の型定義があれば追加
-export * from './calendar.types'
+export * from './calendar.types';

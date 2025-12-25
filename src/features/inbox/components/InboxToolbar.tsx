@@ -1,8 +1,8 @@
-'use client'
+'use client';
 
-import { KanbanToolbar } from '@/features/board/components/KanbanToolbar'
+import { KanbanToolbar } from '@/features/board/components/KanbanToolbar';
 
-import { useInboxViewStore } from '../stores/useInboxViewStore'
+import { useInboxViewStore } from '../stores/useInboxViewStore';
 
 /**
  * Inboxツールバー
@@ -18,11 +18,11 @@ import { useInboxViewStore } from '../stores/useInboxViewStore'
  * - 8pxグリッドシステム準拠
  */
 export function InboxToolbar() {
-  const { displayMode } = useInboxViewStore()
+  const { displayMode } = useInboxViewStore();
 
   // Tableモードの場合はツールバーを表示しない
   if (displayMode === 'table') {
-    return null
+    return null;
   }
 
   return (
@@ -31,5 +31,5 @@ export function InboxToolbar() {
         <KanbanToolbar />
       </div>
     </div>
-  )
+  );
 }

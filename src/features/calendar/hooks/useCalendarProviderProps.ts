@@ -1,15 +1,15 @@
-import { useMemo } from 'react'
+import { useMemo } from 'react';
 
-import type { CalendarViewType } from '../types/calendar.types'
+import type { CalendarViewType } from '../types/calendar.types';
 
 interface CalendarProviderProps {
-  initialDate: Date
-  initialView: CalendarViewType
+  initialDate: Date;
+  initialView: CalendarViewType;
 }
 
 interface UseCalendarProviderPropsReturn {
-  isCalendarPage: boolean
-  calendarProviderProps: CalendarProviderProps | null
+  isCalendarPage: boolean;
+  calendarProviderProps: CalendarProviderProps | null;
 }
 
 /**
@@ -25,27 +25,27 @@ interface UseCalendarProviderPropsReturn {
  */
 export function useCalendarProviderProps(
   pathname: string,
-  searchParams: URLSearchParams
+  searchParams: URLSearchParams,
 ): UseCalendarProviderPropsReturn {
   // searchParamsからdate値を取得（useMemoの依存配列用）
-  const dateParam = searchParams.get('date')
+  const dateParam = searchParams.get('date');
 
   return useMemo(() => {
     // ロケールプレフィックス対応: /ja/calendar, /en/calendar 等
-    const isCalendarPage = pathname.includes('/calendar')
+    const isCalendarPage = pathname.includes('/calendar');
 
     if (!isCalendarPage) {
-      return { isCalendarPage, calendarProviderProps: null }
+      return { isCalendarPage, calendarProviderProps: null };
     }
 
-    const pathSegments = pathname.split('/')
-    const view = pathSegments[pathSegments.length - 1] as CalendarViewType
+    const pathSegments = pathname.split('/');
+    const view = pathSegments[pathSegments.length - 1] as CalendarViewType;
 
-    let initialDate: Date | undefined
+    let initialDate: Date | undefined;
     if (dateParam) {
-      const parsedDate = new Date(dateParam)
+      const parsedDate = new Date(dateParam);
       if (!isNaN(parsedDate.getTime())) {
-        initialDate = parsedDate
+        initialDate = parsedDate;
       }
     }
 
@@ -55,6 +55,6 @@ export function useCalendarProviderProps(
         initialDate: initialDate || new Date(),
         initialView: view || ('week' as CalendarViewType),
       },
-    }
-  }, [pathname, dateParam])
+    };
+  }, [pathname, dateParam]);
 }

@@ -1,21 +1,21 @@
-'use client'
+'use client';
 
-import * as React from 'react'
+import * as React from 'react';
 
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { cn } from '@/lib/utils'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { cn } from '@/lib/utils';
 
 export interface PillSwitcherOption<T extends string = string> {
-  value: T
-  label: string
-  icon?: React.ReactNode
+  value: T;
+  label: string;
+  icon?: React.ReactNode;
 }
 
 interface PillSwitcherProps<T extends string = string> {
-  options: PillSwitcherOption<T>[]
-  value: T
-  onValueChange: (value: T) => void
-  className?: string
+  options: PillSwitcherOption<T>[];
+  value: T;
+  onValueChange: (value: T) => void;
+  className?: string;
 }
 
 /**
@@ -54,7 +54,7 @@ export function PillSwitcher<T extends string = string>({
               'h-6 rounded-md px-3 text-xs font-medium transition-all',
               'text-muted-foreground',
               'data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm',
-              option.icon && 'gap-1.5'
+              option.icon && 'gap-1.5',
             )}
           >
             {option.icon}
@@ -63,5 +63,5 @@ export function PillSwitcher<T extends string = string>({
         ))}
       </TabsList>
     </Tabs>
-  )
+  );
 }

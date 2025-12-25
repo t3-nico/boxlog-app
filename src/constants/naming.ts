@@ -74,7 +74,7 @@ export const SCREENS = {
   // === エラー・システム系 ===
   ERROR: 'error',
   TEST_SENTRY: 'test_sentry',
-} as const
+} as const;
 
 // ==============================================
 // 🎯 機能・アクション識別子
@@ -130,7 +130,7 @@ export const FEATURES = {
   ERROR_OCCURRED: 'error_occurred',
   DEBUG_ACTION: 'debug_action',
   PERFORMANCE_MEASURE: 'performance_measure',
-} as const
+} as const;
 
 // ==============================================
 // 📊 分析イベント名規則
@@ -155,7 +155,7 @@ export const ANALYTICS_EVENTS = {
 
   // === パフォーマンス ===
   performance: (metric: string, component: string) => `performance_${metric}_${component}`,
-} as const
+} as const;
 
 // ==============================================
 // 🗂️ ファイル命名規則
@@ -167,7 +167,8 @@ export const ANALYTICS_EVENTS = {
  */
 export const FILE_NAMING = {
   // === ページコンポーネント ===
-  page: (screen: keyof typeof SCREENS) => `${screen.charAt(0).toUpperCase()}${screen.slice(1).replace(/_/g, '')}Page`,
+  page: (screen: keyof typeof SCREENS) =>
+    `${screen.charAt(0).toUpperCase()}${screen.slice(1).replace(/_/g, '')}Page`,
 
   // === 通常コンポーネント ===
   component: (name: string) => `${name.charAt(0).toUpperCase()}${name.slice(1).replace(/_/g, '')}`,
@@ -181,7 +182,7 @@ export const FILE_NAMING = {
   // === テストファイル ===
   test: (name: string) => `${name}.test.tsx`,
   spec: (name: string) => `${name}.spec.ts`,
-} as const
+} as const;
 
 // ==============================================
 // 🛣️ URL パス生成
@@ -235,7 +236,7 @@ export const ROUTES = {
   // === システムルート ===
   maintenance: () => '/maintenance',
   testSentry: () => '/test-sentry',
-} as const
+} as const;
 
 // ==============================================
 // 🎨 CSS クラス命名規則
@@ -257,7 +258,7 @@ export const CSS_CLASSES = {
 
   // === モディファイアレベル ===
   modifier: (base: string, modifier: string) => `${base}--${modifier.replace(/_/g, '-')}`,
-} as const
+} as const;
 
 // ==============================================
 // 🏷️ 型定義エクスポート
@@ -266,27 +267,27 @@ export const CSS_CLASSES = {
 /**
  * 型安全性のための型定義
  */
-export type ScreenName = keyof typeof SCREENS
-export type FeatureName = keyof typeof FEATURES
-export type ScreenValue = (typeof SCREENS)[ScreenName]
-export type FeatureValue = (typeof FEATURES)[FeatureName]
+export type ScreenName = keyof typeof SCREENS;
+export type FeatureName = keyof typeof FEATURES;
+export type ScreenValue = (typeof SCREENS)[ScreenName];
+export type FeatureValue = (typeof FEATURES)[FeatureName];
 
 /**
  * 分析イベント型
  */
 export interface AnalyticsEvent {
-  name: string
-  screen?: ScreenValue
-  feature?: FeatureValue
-  properties?: Record<string, unknown>
-  timestamp?: number
+  name: string;
+  screen?: ScreenValue;
+  feature?: FeatureValue;
+  properties?: Record<string, unknown>;
+  timestamp?: number;
 }
 
 /**
  * ルーティング型
  */
-export type RouteFunction = () => string
-export type ParameterizedRouteFunction<T = string> = (param: T) => string
+export type RouteFunction = () => string;
+export type ParameterizedRouteFunction<T = string> = (param: T) => string;
 
 const naming = {
   SCREENS,
@@ -295,5 +296,5 @@ const naming = {
   FILE_NAMING,
   ROUTES,
   CSS_CLASSES,
-}
-export default naming
+};
+export default naming;

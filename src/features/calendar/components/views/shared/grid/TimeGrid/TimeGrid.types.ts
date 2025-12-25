@@ -3,8 +3,8 @@
  */
 
 export interface TimeGridClickEvent {
-  hour: number
-  minute: number
-  pixelY: number
-  date?: Date
+  hour: number;
+  minute: number;
+  pixelY: number;
+  date?: Date;
 }

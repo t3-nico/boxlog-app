@@ -1,27 +1,27 @@
-'use client'
+'use client';
 
-import React, { useCallback, useEffect } from 'react'
+import React, { useCallback, useEffect } from 'react';
 
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/utils';
 
-import { HOUR_HEIGHT } from '../../constants/grid.constants'
-import { useDragAndDrop } from '../../hooks/useDragAndDrop'
-import type { CalendarPlan } from '../../types/plan.types'
-import { CalendarDragSelection } from '../CalendarDragSelection'
-import { PlanCard } from '../PlanCard'
+import { HOUR_HEIGHT } from '../../constants/grid.constants';
+import { useDragAndDrop } from '../../hooks/useDragAndDrop';
+import type { CalendarPlan } from '../../types/plan.types';
+import { CalendarDragSelection } from '../CalendarDragSelection';
+import { PlanCard } from '../PlanCard';
 
 export interface PlanGridProps {
-  date: Date
-  plans: CalendarPlan[]
-  planStyles: Record<string, React.CSSProperties>
-  onPlanClick?: (plan: CalendarPlan) => void
-  onPlanContextMenu?: (plan: CalendarPlan, e: React.MouseEvent) => void
-  onEmptyClick?: (date: Date, time: string) => void
-  onPlanUpdate?: (plan: CalendarPlan) => void
-  onTimeRangeSelect?: (start: Date, end: Date) => void
-  className?: string
-  showTimeGrid?: boolean
-  showCurrentTime?: boolean
+  date: Date;
+  plans: CalendarPlan[];
+  planStyles: Record<string, React.CSSProperties>;
+  onPlanClick?: (plan: CalendarPlan) => void;
+  onPlanContextMenu?: (plan: CalendarPlan, e: React.MouseEvent) => void;
+  onEmptyClick?: (date: Date, time: string) => void;
+  onPlanUpdate?: (plan: CalendarPlan) => void;
+  onTimeRangeSelect?: (start: Date, end: Date) => void;
+  className?: string;
+  showTimeGrid?: boolean;
+  showCurrentTime?: boolean;
 }
 
 /**
@@ -43,66 +43,71 @@ export const PlanGrid = ({
   const { dragState, handlers } = useDragAndDrop({
     onPlanUpdate: onPlanUpdate
       ? async (planId: string, updates: { startTime: Date; endTime: Date }) => {
-          const plan = plans.find((p) => p.id === planId)
+          const plan = plans.find((p) => p.id === planId);
           if (plan) {
             await onPlanUpdate({
               ...plan,
               startDate: updates.startTime,
               endDate: updates.endTime,
-            })
+            });
           }
         }
       : undefined,
     date,
     events: plans,
-  })
+  });
 
   // グローバルマウスイベント処理
   useEffect(() => {
     if (dragState.isDragging || dragState.isResizing) {
-      document.addEventListener('mousemove', handlers.handleMouseMove)
-      document.addEventListener('mouseup', handlers.handleMouseUp)
+      document.addEventListener('mousemove', handlers.handleMouseMove);
+      document.addEventListener('mouseup', handlers.handleMouseUp);
 
       // カーソル制御
       if (dragState.isResizing) {
-        document.body.style.cursor = 'ns-resize'
-        document.body.style.userSelect = 'none'
+        document.body.style.cursor = 'ns-resize';
+        document.body.style.userSelect = 'none';
       } else if (dragState.isDragging) {
-        document.body.style.cursor = 'grabbing'
-        document.body.style.userSelect = 'none'
+        document.body.style.cursor = 'grabbing';
+        document.body.style.userSelect = 'none';
       }
 
       return () => {
-        document.removeEventListener('mousemove', handlers.handleMouseMove)
-        document.removeEventListener('mouseup', handlers.handleMouseUp)
-        document.body.style.cursor = ''
-        document.body.style.userSelect = ''
-      }
+        document.removeEventListener('mousemove', handlers.handleMouseMove);
+        document.removeEventListener('mouseup', handlers.handleMouseUp);
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
+      };
     }
-    return undefined
-  }, [dragState.isDragging, dragState.isResizing, handlers.handleMouseMove, handlers.handleMouseUp])
+    return undefined;
+  }, [
+    dragState.isDragging,
+    dragState.isResizing,
+    handlers.handleMouseMove,
+    handlers.handleMouseUp,
+  ]);
 
   // プランクリックハンドラー
   const handlePlanClick = useCallback(
     (plan: CalendarPlan) => {
       if (dragState.isDragging || dragState.isResizing || dragState.recentlyDragged) {
-        return
+        return;
       }
-      onPlanClick?.(plan)
+      onPlanClick?.(plan);
     },
-    [onPlanClick, dragState]
-  )
+    [onPlanClick, dragState],
+  );
 
   // プラン右クリックハンドラー
   const handlePlanContextMenu = useCallback(
     (plan: CalendarPlan, mouseEvent: React.MouseEvent) => {
       if (dragState.isDragging || dragState.isResizing || dragState.recentlyDragged) {
-        return
+        return;
       }
-      onPlanContextMenu?.(plan, mouseEvent)
+      onPlanContextMenu?.(plan, mouseEvent);
     },
-    [onPlanContextMenu, dragState]
-  )
+    [onPlanContextMenu, dragState],
+  );
 
   // 時間グリッドの生成
   const timeGrid = showTimeGrid
@@ -113,7 +118,7 @@ export const PlanGrid = ({
           style={{ height: HOUR_HEIGHT }}
         />
       ))
-    : null
+    : null;
 
   return (
     <div className={cn('bg-background relative flex-1 overflow-hidden', className)}>
@@ -124,11 +129,11 @@ export const PlanGrid = ({
         onTimeRangeSelect={
           onTimeRangeSelect
             ? (selection) => {
-                const startDate = new Date(selection.date)
-                startDate.setHours(selection.startHour, selection.startMinute, 0, 0)
-                const endDate = new Date(selection.date)
-                endDate.setHours(selection.endHour, selection.endMinute, 0, 0)
-                onTimeRangeSelect(startDate, endDate)
+                const startDate = new Date(selection.date);
+                startDate.setHours(selection.startHour, selection.startMinute, 0, 0);
+                const endDate = new Date(selection.date);
+                endDate.setHours(selection.endHour, selection.endMinute, 0, 0);
+                onTimeRangeSelect(startDate, endDate);
               }
             : undefined
         }
@@ -143,27 +148,35 @@ export const PlanGrid = ({
       </CalendarDragSelection>
 
       {/* プラン表示レイヤー - CalendarDragSelectionより上にz-indexを設定 */}
-      <div className="pointer-events-none absolute inset-0 z-20" style={{ height: 24 * HOUR_HEIGHT }}>
+      <div
+        className="pointer-events-none absolute inset-0 z-20"
+        style={{ height: 24 * HOUR_HEIGHT }}
+      >
         {plans.map((plan) => {
-          const style = planStyles[plan.id]
-          if (!style) return null
+          const style = planStyles[plan.id];
+          if (!style) return null;
 
-          const isDragging = dragState.draggedEventId === plan.id && dragState.isDragging
-          const isResizing = dragState.isResizing && dragState.draggedEventId === plan.id
+          const isDragging = dragState.draggedEventId === plan.id && dragState.isDragging;
+          const isResizing = dragState.isResizing && dragState.draggedEventId === plan.id;
 
           // ドラッグ・リサイズ中の位置調整
-          const adjustedStyle = { ...style }
+          const adjustedStyle = { ...style };
           if (dragState.snappedPosition && (isDragging || isResizing)) {
             if (isDragging) {
-              adjustedStyle.top = `${dragState.snappedPosition.top}px`
+              adjustedStyle.top = `${dragState.snappedPosition.top}px`;
             } else if (isResizing && dragState.snappedPosition.height) {
-              adjustedStyle.height = `${dragState.snappedPosition.height}px`
+              adjustedStyle.height = `${dragState.snappedPosition.height}px`;
             }
-            adjustedStyle.zIndex = 1000
+            adjustedStyle.zIndex = 1000;
           }
 
           return (
-            <div key={plan.id} style={adjustedStyle} className="pointer-events-none absolute" data-plan-block="true">
+            <div
+              key={plan.id}
+              style={adjustedStyle}
+              className="pointer-events-none absolute"
+              data-plan-block="true"
+            >
               <div
                 className="focus:ring-ring pointer-events-auto absolute inset-0 rounded focus:ring-2 focus:ring-offset-1 focus:outline-none"
                 role="button"
@@ -177,12 +190,12 @@ export const PlanGrid = ({
                       left: 0,
                       width: 100,
                       height: parseFloat(style.height?.toString() || '20'),
-                    })
+                    });
                   }
                 }}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault()
+                    e.preventDefault();
                     // キーボードでドラッグ操作を開始する代替手段
                   }
                 }}
@@ -196,8 +209,14 @@ export const PlanGrid = ({
                     height: parseFloat(adjustedStyle.height?.toString() || '20'),
                   }}
                   onClick={() => handlePlanClick(plan)}
-                  onContextMenu={(plt: CalendarPlan, e: React.MouseEvent) => handlePlanContextMenu(plt, e)}
-                  onResizeStart={(plt: CalendarPlan, direction: 'top' | 'bottom', e: React.MouseEvent) =>
+                  onContextMenu={(plt: CalendarPlan, e: React.MouseEvent) =>
+                    handlePlanContextMenu(plt, e)
+                  }
+                  onResizeStart={(
+                    plt: CalendarPlan,
+                    direction: 'top' | 'bottom',
+                    e: React.MouseEvent,
+                  ) =>
                     handlers.handleResizeStart(plt.id, direction, e, {
                       top: parseFloat(style.top?.toString() || '0'),
                       left: 0,
@@ -208,15 +227,19 @@ export const PlanGrid = ({
                   isDragging={isDragging}
                   isResizing={isResizing}
                   previewTime={isDragging || isResizing ? dragState.previewTime : null}
-                  className={cn('h-full w-full', isDragging && 'cursor-grabbing', !isDragging && 'cursor-grab')}
+                  className={cn(
+                    'h-full w-full',
+                    isDragging && 'cursor-grabbing',
+                    !isDragging && 'cursor-grab',
+                  )}
                 />
               </div>
             </div>
-          )
+          );
         })}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default PlanGrid
+export default PlanGrid;

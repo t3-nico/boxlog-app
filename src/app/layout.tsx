@@ -15,16 +15,16 @@
  * @see src/app/[locale]/(auth)/layout.tsx - 認証ページ用Providers
  * @see src/app/[locale]/legal/layout.tsx - 法的文書用Providers
  */
-import '@/styles/globals.css'
+import '@/styles/globals.css';
 
-import { Analytics } from '@vercel/analytics/react'
-import { SpeedInsights } from '@vercel/speed-insights/next'
-import type { Metadata, Viewport } from 'next'
-import { Inter, Noto_Sans_JP } from 'next/font/google'
-import { Suspense } from 'react'
+import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/next';
+import type { Metadata, Viewport } from 'next';
+import { Inter, Noto_Sans_JP } from 'next/font/google';
+import { Suspense } from 'react';
 
-import { WebVitalsReporter } from '@/components/WebVitalsReporter'
-import { cn } from '@/lib/utils'
+import { WebVitalsReporter } from '@/components/WebVitalsReporter';
+import { cn } from '@/lib/utils';
 
 // next/font による最適化されたフォント読み込み（Variable Font: optical size軸有効）
 // preload: true でLCP改善（デフォルトでtrueだが明示的に指定）
@@ -35,7 +35,7 @@ const inter = Inter({
   axes: ['opsz'],
   preload: true,
   fallback: ['system-ui', 'sans-serif'],
-})
+});
 
 // 日本語フォント（GAFA方針準拠: Google = Noto Sans JP）
 const notoSansJP = Noto_Sans_JP({
@@ -45,7 +45,7 @@ const notoSansJP = Noto_Sans_JP({
   variable: '--font-noto-jp',
   preload: true,
   fallback: ['Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'sans-serif'],
-})
+});
 
 /**
  * Viewport設定（モバイルUX最適化）
@@ -66,7 +66,7 @@ export const viewport: Viewport = {
     { media: '(prefers-color-scheme: light)', color: '#ffffff' },
     { media: '(prefers-color-scheme: dark)', color: '#1a1a1a' },
   ],
-}
+};
 
 /**
  * メタデータ設定（PWA・SEO最適化）
@@ -102,18 +102,22 @@ export const metadata: Metadata = {
     // iOS用アイコン（Safari Home Screen対応）
     apple: [{ url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }],
   },
-}
+};
 
 interface RootLayoutProps {
-  children: React.ReactNode
-  params: Promise<{ locale?: string }>
+  children: React.ReactNode;
+  params: Promise<{ locale?: string }>;
 }
 
 const RootLayout = async ({ children, params }: RootLayoutProps) => {
-  const resolvedParams = await params
-  const locale = resolvedParams?.locale || 'en'
+  const resolvedParams = await params;
+  const locale = resolvedParams?.locale || 'en';
   return (
-    <html lang={locale} suppressHydrationWarning className={`${inter.variable} ${notoSansJP.variable}`}>
+    <html
+      lang={locale}
+      suppressHydrationWarning
+      className={`${inter.variable} ${notoSansJP.variable}`}
+    >
       <body className={cn('bg-background')} suppressHydrationWarning>
         <Suspense fallback={null}>
           {children}
@@ -123,7 +127,7 @@ const RootLayout = async ({ children, params }: RootLayoutProps) => {
         </Suspense>
       </body>
     </html>
-  )
-}
+  );
+};
 
-export default RootLayout
+export default RootLayout;

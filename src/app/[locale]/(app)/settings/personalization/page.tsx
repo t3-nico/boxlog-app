@@ -1,9 +1,9 @@
-'use client'
+'use client';
 
-import { ChronotypeSettings } from '@/features/settings/components/chronotype-settings'
-import { SettingsPageWrapper } from '@/features/settings/components/page/SettingsPageWrapper'
-import { TagsSettings } from '@/features/settings/components/tags-settings'
-import { useTranslations } from 'next-intl'
+import { ChronotypeSettings } from '@/features/settings/components/chronotype-settings';
+import { SettingsPageWrapper } from '@/features/settings/components/page/SettingsPageWrapper';
+import { TagsSettings } from '@/features/settings/components/tags-settings';
+import { useTranslations } from 'next-intl';
 
 /**
  * パーソナライズ設定ページ
@@ -11,7 +11,7 @@ import { useTranslations } from 'next-intl'
  * クロノタイプ、タグ設定
  */
 export default function PersonalizationSettingsPage() {
-  const t = useTranslations()
+  const t = useTranslations();
 
   return (
     <SettingsPageWrapper title={t('settings.dialog.categories.personalization')}>
@@ -20,5 +20,5 @@ export default function PersonalizationSettingsPage() {
         <TagsSettings />
       </div>
     </SettingsPageWrapper>
-  )
+  );
 }

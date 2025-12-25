@@ -5,44 +5,44 @@
 
 export interface CalendarStyles {
   event: {
-    borderRadius: string
-    padding: string
+    borderRadius: string;
+    padding: string;
     fontSize: {
-      title: string
-      time: string
-      duration: string
-    }
-    minHeight: string
+      title: string;
+      time: string;
+      duration: string;
+    };
+    minHeight: string;
     shadow: {
-      default: string
-      hover: string
-      dragging: string
-    }
-  }
+      default: string;
+      hover: string;
+      dragging: string;
+    };
+  };
 
   grid: {
-    hourHeight: string // 1時間の高さ（Tailwindクラス）
-    columnMinWidth: string // 列の最小幅
-    gap: string // グリッドの間隔
-  }
+    hourHeight: string; // 1時間の高さ（Tailwindクラス）
+    columnMinWidth: string; // 列の最小幅
+    gap: string; // グリッドの間隔
+  };
 
   transitions: {
-    default: string
-    drag: string
-    resize: string
-  }
+    default: string;
+    drag: string;
+    resize: string;
+  };
 
   print: {
-    hiddenClasses: string[]
-    colorClasses: string[]
-    layoutClasses: string[]
-  }
+    hiddenClasses: string[];
+    colorClasses: string[];
+    layoutClasses: string[];
+  };
 
   layout: {
-    scrollbar: string
-    touchOptimized: string
-    performance: string
-  }
+    scrollbar: string;
+    touchOptimized: string;
+    performance: string;
+  };
 }
 
 // カレンダー専用スタイル（既存テーマシステム準拠）
@@ -123,7 +123,7 @@ export const calendarStyles: CalendarStyles = {
       'print:page-break-inside-avoid',
     ],
   },
-} as const
+} as const;
 
 // カスタムCSS変数とキーフレームアニメーション（globals.cssに追加する場合）
 export const calendarCustomCSS = `
@@ -180,4 +180,4 @@ export const calendarCustomCSS = `
     display: none !important;
   }
 }
-`
+`;

@@ -22,25 +22,25 @@ export const RECAPTCHA_CONFIG = {
   // 検証エンドポイント
   VERIFY_URL_V3: 'https://www.google.com/recaptcha/api/siteverify',
   VERIFY_URL_V2: 'https://www.google.com/recaptcha/api/siteverify',
-} as const
+} as const;
 
 /**
  * reCAPTCHA v3が有効か確認
  */
 export function isRecaptchaV3Enabled(): boolean {
-  return Boolean(RECAPTCHA_CONFIG.SITE_KEY_V3 && RECAPTCHA_CONFIG.SECRET_KEY_V3)
+  return Boolean(RECAPTCHA_CONFIG.SITE_KEY_V3 && RECAPTCHA_CONFIG.SECRET_KEY_V3);
 }
 
 /**
  * reCAPTCHA v2が有効か確認
  */
 export function isRecaptchaV2Enabled(): boolean {
-  return Boolean(RECAPTCHA_CONFIG.SITE_KEY_V2 && RECAPTCHA_CONFIG.SECRET_KEY_V2)
+  return Boolean(RECAPTCHA_CONFIG.SITE_KEY_V2 && RECAPTCHA_CONFIG.SECRET_KEY_V2);
 }
 
 /**
  * 開発環境かどうか
  */
 export function isDevelopment(): boolean {
-  return process.env.NODE_ENV === 'development'
+  return process.env.NODE_ENV === 'development';
 }

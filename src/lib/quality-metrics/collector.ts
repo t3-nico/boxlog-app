@@ -2,9 +2,9 @@
  * 品質メトリクスコレクター
  */
 
-import { execSync } from 'child_process'
-import fs from 'fs'
-import path from 'path'
+import { execSync } from 'child_process';
+import fs from 'fs';
+import path from 'path';
 
 import type {
   BundleBreakdown,
@@ -13,15 +13,15 @@ import type {
   Recommendation,
   TechnicalDebtDetail,
   TypeScriptError,
-} from './types'
+} from './types';
 
 export class QualityMetricsCollector {
-  private metrics: QualityMetrics
-  private rootPath: string
+  private metrics: QualityMetrics;
+  private rootPath: string;
 
   constructor(rootPath: string = process.cwd()) {
-    this.rootPath = rootPath
-    this.metrics = this.initializeMetrics()
+    this.rootPath = rootPath;
+    this.metrics = this.initializeMetrics();
   }
 
   /**
@@ -59,28 +59,28 @@ export class QualityMetricsCollector {
         errorRate: 0,
       },
       recommendations: [],
-    }
+    };
   }
 
   /**
    * すべてのメトリクスを収集
    */
   async collectAll(): Promise<QualityMetrics> {
-    console.log('📊 品質メトリクス収集開始...')
+    console.log('📊 品質メトリクス収集開始...');
 
     try {
-      await this.analyzeESLint()
-      await this.analyzeTypeScript()
-      await this.analyzeTestCoverage()
-      await this.analyzeBundleSize()
-      await this.analyzeTechnicalDebt()
-      await this.generateRecommendations()
+      await this.analyzeESLint();
+      await this.analyzeTypeScript();
+      await this.analyzeTestCoverage();
+      await this.analyzeBundleSize();
+      await this.analyzeTechnicalDebt();
+      await this.generateRecommendations();
 
-      console.log('✅ メトリクス収集完了')
-      return this.metrics
+      console.log('✅ メトリクス収集完了');
+      return this.metrics;
     } catch (error) {
-      console.error('❌ メトリクス収集エラー:', error)
-      throw error
+      console.error('❌ メトリクス収集エラー:', error);
+      throw error;
     }
   }
 
@@ -89,31 +89,31 @@ export class QualityMetricsCollector {
    */
   private async analyzeESLint(): Promise<void> {
     try {
-      console.log('🔍 ESLint分析中...')
+      console.log('🔍 ESLint分析中...');
       const result = execSync('npx eslint . --format json', {
         encoding: 'utf8',
         stdio: ['pipe', 'pipe', 'ignore'],
         cwd: this.rootPath,
-      })
+      });
 
-      const data: ESLintResult[] = JSON.parse(result)
-      let totalErrors = 0
-      let totalWarnings = 0
+      const data: ESLintResult[] = JSON.parse(result);
+      let totalErrors = 0;
+      let totalWarnings = 0;
 
       data.forEach((file) => {
-        totalErrors += file.errorCount
-        totalWarnings += file.warningCount
-      })
+        totalErrors += file.errorCount;
+        totalWarnings += file.warningCount;
+      });
 
       this.metrics.codeQuality.eslint = {
         errors: totalErrors,
         warnings: totalWarnings,
         details: data.filter((f) => f.errorCount > 0 || f.warningCount > 0),
-      }
+      };
 
-      console.log(`  ESLint: ${totalErrors}エラー, ${totalWarnings}警告`)
+      console.log(`  ESLint: ${totalErrors}エラー, ${totalWarnings}警告`);
     } catch (error) {
-      console.error('ESLint分析エラー:', error)
+      console.error('ESLint分析エラー:', error);
     }
   }
 
@@ -122,29 +122,29 @@ export class QualityMetricsCollector {
    */
   private async analyzeTypeScript(): Promise<void> {
     try {
-      console.log('🔍 TypeScript分析中...')
+      console.log('🔍 TypeScript分析中...');
       const result = execSync('npx tsc --noEmit --pretty false 2>&1', {
         encoding: 'utf8',
         stdio: ['pipe', 'pipe', 'pipe'],
         cwd: this.rootPath,
-      })
+      });
 
-      const errors = this.parseTypeScriptErrors(result)
+      const errors = this.parseTypeScriptErrors(result);
       this.metrics.codeQuality.typescript = {
         errors: errors.length,
         details: errors,
-      }
+      };
 
-      console.log(`  TypeScript: ${errors.length}エラー`)
+      console.log(`  TypeScript: ${errors.length}エラー`);
     } catch (error: unknown) {
-      const err = error as { stdout?: Buffer; message?: string }
-      const output = err.stdout?.toString() || err.message || ''
-      const errors = this.parseTypeScriptErrors(output)
+      const err = error as { stdout?: Buffer; message?: string };
+      const output = err.stdout?.toString() || err.message || '';
+      const errors = this.parseTypeScriptErrors(output);
       this.metrics.codeQuality.typescript = {
         errors: errors.length,
         details: errors,
-      }
-      console.log(`  TypeScript: ${errors.length}エラー`)
+      };
+      console.log(`  TypeScript: ${errors.length}エラー`);
     }
   }
 
@@ -153,26 +153,26 @@ export class QualityMetricsCollector {
    */
   private async analyzeTestCoverage(): Promise<void> {
     try {
-      console.log('🔍 テストカバレッジ分析中...')
+      console.log('🔍 テストカバレッジ分析中...');
 
       execSync('npm run test:coverage', {
         stdio: 'ignore',
         cwd: this.rootPath,
-      })
+      });
 
-      const coveragePath = path.resolve(this.rootPath, 'coverage/coverage-summary.json')
+      const coveragePath = path.resolve(this.rootPath, 'coverage/coverage-summary.json');
       if (fs.existsSync(coveragePath)) {
-        const coverage = JSON.parse(fs.readFileSync(coveragePath, 'utf8'))
+        const coverage = JSON.parse(fs.readFileSync(coveragePath, 'utf8'));
         this.metrics.testing.coverage = {
           lines: coverage.total.lines.pct || 0,
           branches: coverage.total.branches.pct || 0,
           functions: coverage.total.functions.pct || 0,
           statements: coverage.total.statements.pct || 0,
-        }
-        console.log(`  カバレッジ: ${coverage.total.lines.pct}%`)
+        };
+        console.log(`  カバレッジ: ${coverage.total.lines.pct}%`);
       }
     } catch (error) {
-      console.error('カバレッジ分析エラー:', error)
+      console.error('カバレッジ分析エラー:', error);
     }
   }
 
@@ -181,23 +181,23 @@ export class QualityMetricsCollector {
    */
   private async analyzeBundleSize(): Promise<void> {
     try {
-      console.log('🔍 バンドルサイズ分析中...')
+      console.log('🔍 バンドルサイズ分析中...');
 
-      const buildStart = Date.now()
+      const buildStart = Date.now();
       execSync('npm run build', {
         stdio: 'ignore',
         cwd: this.rootPath,
-      })
-      this.metrics.performance.buildTime = Date.now() - buildStart
+      });
+      this.metrics.performance.buildTime = Date.now() - buildStart;
 
-      const staticPath = path.resolve(this.rootPath, '.next/static')
+      const staticPath = path.resolve(this.rootPath, '.next/static');
       if (fs.existsSync(staticPath)) {
-        const bundleInfo = this.analyzeBundleFiles(staticPath)
-        this.metrics.performance.bundleSize = bundleInfo
-        console.log(`  バンドルサイズ: ${(bundleInfo.total / 1024 / 1024).toFixed(2)}MB`)
+        const bundleInfo = this.analyzeBundleFiles(staticPath);
+        this.metrics.performance.bundleSize = bundleInfo;
+        console.log(`  バンドルサイズ: ${(bundleInfo.total / 1024 / 1024).toFixed(2)}MB`);
       }
     } catch (error) {
-      console.error('バンドルサイズ分析エラー:', error)
+      console.error('バンドルサイズ分析エラー:', error);
     }
   }
 
@@ -206,18 +206,18 @@ export class QualityMetricsCollector {
    */
   private async analyzeTechnicalDebt(): Promise<void> {
     try {
-      console.log('🔍 技術的負債分析中...')
+      console.log('🔍 技術的負債分析中...');
 
-      const details: TechnicalDebtDetail[] = []
+      const details: TechnicalDebtDetail[] = [];
 
       const todoResult = execSync('grep -rn "TODO\\|FIXME" src/ || true', {
         encoding: 'utf8',
         cwd: this.rootPath,
-      })
+      });
 
-      const todoLines = todoResult.split('\n').filter(Boolean)
+      const todoLines = todoResult.split('\n').filter(Boolean);
       todoLines.forEach((line) => {
-        const match = line.match(/^([^:]+):(\d+):(.*)$/)
+        const match = line.match(/^([^:]+):(\d+):(.*)$/);
         if (match) {
           details.push({
             type: line.includes('FIXME') ? 'fixme' : 'todo',
@@ -225,9 +225,9 @@ export class QualityMetricsCollector {
             line: parseInt(match[2]!),
             message: match[3]!.trim(),
             severity: line.includes('FIXME') ? 'high' : 'medium',
-          })
+          });
         }
-      })
+      });
 
       this.metrics.technicalDebt = {
         todoCount: todoLines.length,
@@ -235,11 +235,11 @@ export class QualityMetricsCollector {
         complexityScore: 0,
         duplicateCode: 0,
         details,
-      }
+      };
 
-      console.log(`  TODO/FIXME: ${todoLines.length}個`)
+      console.log(`  TODO/FIXME: ${todoLines.length}個`);
     } catch (error) {
-      console.error('技術的負債分析エラー:', error)
+      console.error('技術的負債分析エラー:', error);
     }
   }
 
@@ -247,7 +247,7 @@ export class QualityMetricsCollector {
    * 改善提案生成
    */
   private async generateRecommendations(): Promise<void> {
-    const recommendations: Recommendation[] = []
+    const recommendations: Recommendation[] = [];
 
     if (this.metrics.codeQuality.eslint.errors > 0) {
       recommendations.push({
@@ -257,7 +257,7 @@ export class QualityMetricsCollector {
         action: 'npm run lint:fix を実行してエラーを修正してください',
         effort: 'medium',
         impact: 'high',
-      })
+      });
     }
 
     if (this.metrics.codeQuality.typescript.errors > 0) {
@@ -268,7 +268,7 @@ export class QualityMetricsCollector {
         action: '型定義を修正してください',
         effort: 'high',
         impact: 'high',
-      })
+      });
     }
 
     if (this.metrics.testing.coverage.lines < 80) {
@@ -279,7 +279,7 @@ export class QualityMetricsCollector {
         action: 'テストケースを追加してください',
         effort: 'medium',
         impact: 'medium',
-      })
+      });
     }
 
     if (this.metrics.performance.bundleSize.total > 5 * 1024 * 1024) {
@@ -290,7 +290,7 @@ export class QualityMetricsCollector {
         action: 'コード分割や遅延読み込みを検討してください',
         effort: 'high',
         impact: 'high',
-      })
+      });
     }
 
     if (this.metrics.technicalDebt.todoCount > 20) {
@@ -301,21 +301,21 @@ export class QualityMetricsCollector {
         action: 'GitHub Issueに移行してタスク管理を改善してください',
         effort: 'low',
         impact: 'low',
-      })
+      });
     }
 
-    this.metrics.recommendations = recommendations
+    this.metrics.recommendations = recommendations;
   }
 
   /**
    * TypeScriptエラーのパース
    */
   private parseTypeScriptErrors(output: string): TypeScriptError[] {
-    const errors: TypeScriptError[] = []
-    const lines = output.split('\n')
+    const errors: TypeScriptError[] = [];
+    const lines = output.split('\n');
 
     lines.forEach((line) => {
-      const match = line.match(/^(.+)\((\d+),(\d+)\): error TS(\d+): (.+)$/)
+      const match = line.match(/^(.+)\((\d+),(\d+)\): error TS(\d+): (.+)$/);
       if (match) {
         errors.push({
           file: match[1]!,
@@ -323,62 +323,66 @@ export class QualityMetricsCollector {
           column: parseInt(match[3]!),
           code: parseInt(match[4]!),
           message: match[5]!,
-        })
+        });
       }
-    })
+    });
 
-    return errors
+    return errors;
   }
 
   /**
    * バンドルファイル分析
    */
-  private analyzeBundleFiles(staticPath: string): { main: number; total: number; breakdown: BundleBreakdown[] } {
-    const breakdown: BundleBreakdown[] = []
-    let total = 0
-    let main = 0
+  private analyzeBundleFiles(staticPath: string): {
+    main: number;
+    total: number;
+    breakdown: BundleBreakdown[];
+  } {
+    const breakdown: BundleBreakdown[] = [];
+    let total = 0;
+    let main = 0;
 
     const walkDir = (dir: string) => {
-      const files = fs.readdirSync(dir)
+      const files = fs.readdirSync(dir);
       files.forEach((file) => {
-        const filePath = path.resolve(dir, file)
-        const stat = fs.statSync(filePath)
+        const filePath = path.resolve(dir, file);
+        const stat = fs.statSync(filePath);
 
         if (stat.isDirectory()) {
-          walkDir(filePath)
+          walkDir(filePath);
         } else if (file.endsWith('.js') || file.endsWith('.css')) {
-          const size = stat.size
-          total += size
+          const size = stat.size;
+          total += size;
 
           if (file.includes('main') || file.includes('index')) {
-            main += size
+            main += size;
           }
 
           breakdown.push({
             name: file,
             size,
             gzipSize: size * 0.3,
-          })
+          });
         }
-      })
-    }
+      });
+    };
 
     try {
-      walkDir(staticPath)
+      walkDir(staticPath);
     } catch (error) {
-      console.error('バンドルファイル分析エラー:', error)
+      console.error('バンドルファイル分析エラー:', error);
     }
 
-    return { main, total, breakdown }
+    return { main, total, breakdown };
   }
 
   /**
    * 週番号取得
    */
   private getWeekNumber(): number {
-    const now = new Date()
-    const start = new Date(now.getFullYear(), 0, 1)
-    const diff = now.getTime() - start.getTime()
-    return Math.ceil(diff / (7 * 24 * 60 * 60 * 1000))
+    const now = new Date();
+    const start = new Date(now.getFullYear(), 0, 1);
+    const diff = now.getTime() - start.getTime();
+    return Math.ceil(diff / (7 * 24 * 60 * 60 * 1000));
   }
 }

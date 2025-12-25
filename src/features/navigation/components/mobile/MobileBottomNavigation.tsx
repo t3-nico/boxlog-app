@@ -1,16 +1,16 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
+import { useState } from 'react';
 
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
-import { BarChart3, Calendar, Inbox, MoreHorizontal, Tag } from 'lucide-react'
+import { BarChart3, Calendar, Inbox, MoreHorizontal, Tag } from 'lucide-react';
 
-import { cn } from '@/lib/utils'
-import { useLocale, useTranslations } from 'next-intl'
+import { cn } from '@/lib/utils';
+import { useLocale, useTranslations } from 'next-intl';
 
-import { MoreActionSheet } from './MoreActionSheet'
+import { MoreActionSheet } from './MoreActionSheet';
 
 /**
  * モバイル用ボトムナビゲーション
@@ -30,10 +30,10 @@ import { MoreActionSheet } from './MoreActionSheet'
  * - セマンティックトークン使用
  */
 export function MobileBottomNavigation() {
-  const pathname = usePathname()
-  const [isMoreOpen, setIsMoreOpen] = useState(false)
-  const t = useTranslations()
-  const locale = useLocale() as 'ja' | 'en'
+  const pathname = usePathname();
+  const [isMoreOpen, setIsMoreOpen] = useState(false);
+  const t = useTranslations();
+  const locale = useLocale() as 'ja' | 'en';
 
   // ナビゲーション項目
   const navItems = [
@@ -65,7 +65,7 @@ export function MobileBottomNavigation() {
       icon: BarChart3,
       isActive: pathname?.includes('/stats') ?? false,
     },
-  ]
+  ];
 
   return (
     <>
@@ -76,14 +76,14 @@ export function MobileBottomNavigation() {
           'h-16',
           'bg-surface-dim border-border border-t',
           // iOS Safe Area対応（ホームインジケーター領域を確保）
-          'pb-safe'
+          'pb-safe',
         )}
         role="navigation"
         aria-label="Mobile navigation"
       >
         {/* Navigation Items */}
         {navItems.map((item) => {
-          const Icon = item.icon
+          const Icon = item.icon;
 
           return (
             <Link
@@ -96,23 +96,26 @@ export function MobileBottomNavigation() {
               <div
                 className={cn(
                   'flex items-center justify-center rounded-full px-3 py-1 transition-colors',
-                  item.isActive && 'bg-primary-container'
+                  item.isActive && 'bg-primary-container',
                 )}
               >
                 <Icon
-                  className={cn('size-6 transition-colors', item.isActive ? 'text-primary' : 'text-muted-foreground')}
+                  className={cn(
+                    'size-6 transition-colors',
+                    item.isActive ? 'text-primary' : 'text-muted-foreground',
+                  )}
                 />
               </div>
               <span
                 className={cn(
                   'text-xs leading-tight transition-colors',
-                  item.isActive ? 'text-primary font-semibold' : 'text-muted-foreground'
+                  item.isActive ? 'text-primary font-semibold' : 'text-muted-foreground',
                 )}
               >
                 {item.label}
               </span>
             </Link>
-          )
+          );
         })}
 
         {/* More Button */}
@@ -126,12 +129,14 @@ export function MobileBottomNavigation() {
           <div className="flex items-center justify-center rounded-full px-3 py-1">
             <MoreHorizontal className="text-muted-foreground size-6" />
           </div>
-          <span className="text-muted-foreground text-xs leading-tight">{t('navigation.more.label')}</span>
+          <span className="text-muted-foreground text-xs leading-tight">
+            {t('navigation.more.label')}
+          </span>
         </button>
       </nav>
 
       {/* More Action Sheet */}
       <MoreActionSheet open={isMoreOpen} onOpenChange={setIsMoreOpen} locale={locale} />
     </>
-  )
+  );
 }

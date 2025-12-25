@@ -1,6 +1,6 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vitest';
 
-import type { CalendarPlan as Plan } from '@/features/calendar/types/calendar.types'
+import type { CalendarPlan as Plan } from '@/features/calendar/types/calendar.types';
 
 import {
   eventToTimedEvent,
@@ -8,7 +8,7 @@ import {
   safeEventToTimedEvent,
   safeEventsToTimedEvents,
   timedEventToEventUpdate,
-} from './planDataAdapter'
+} from './planDataAdapter';
 
 describe('planDataAdapter', () => {
   describe('eventToTimedEvent', () => {
@@ -29,18 +29,18 @@ describe('planDataAdapter', () => {
         userId: 'user-1',
         createdAt: new Date(),
         updatedAt: new Date(),
-      }
+      };
 
-      const result = eventToTimedEvent(event)
+      const result = eventToTimedEvent(event);
 
-      expect(result.id).toBe('plan-1')
-      expect(result.title).toBe('ミーティング')
-      expect(result.description).toBe('週次ミーティング')
-      expect(result.color).toBe('#3b82f6')
-      expect(result.start).toEqual(event.startDate)
-      expect(result.end).toEqual(event.endDate)
-      expect(result.isReadOnly).toBe(false)
-    })
+      expect(result.id).toBe('plan-1');
+      expect(result.title).toBe('ミーティング');
+      expect(result.description).toBe('週次ミーティング');
+      expect(result.color).toBe('#3b82f6');
+      expect(result.start).toEqual(event.startDate);
+      expect(result.end).toEqual(event.endDate);
+      expect(result.isReadOnly).toBe(false);
+    });
 
     it('完了済みプランは読み取り専用になる', () => {
       const event: Plan = {
@@ -58,12 +58,12 @@ describe('planDataAdapter', () => {
         userId: 'user-1',
         createdAt: new Date(),
         updatedAt: new Date(),
-      }
+      };
 
-      const result = eventToTimedEvent(event)
+      const result = eventToTimedEvent(event);
 
-      expect(result.isReadOnly).toBe(true)
-    })
+      expect(result.isReadOnly).toBe(true);
+    });
 
     it('作業中（doing）のプランは読み取り専用ではない', () => {
       const event: Plan = {
@@ -81,12 +81,12 @@ describe('planDataAdapter', () => {
         userId: 'user-1',
         createdAt: new Date(),
         updatedAt: new Date(),
-      }
+      };
 
-      const result = eventToTimedEvent(event)
+      const result = eventToTimedEvent(event);
 
-      expect(result.isReadOnly).toBe(false)
-    })
+      expect(result.isReadOnly).toBe(false);
+    });
 
     it('startDateがnullの場合は現在日時を使用する', () => {
       const event: Plan = {
@@ -104,14 +104,14 @@ describe('planDataAdapter', () => {
         userId: 'user-1',
         createdAt: new Date(),
         updatedAt: new Date(),
-      }
+      };
 
-      const result = eventToTimedEvent(event)
+      const result = eventToTimedEvent(event);
 
-      expect(result.start).toBeInstanceOf(Date)
-      expect(result.end).toBeInstanceOf(Date)
-    })
-  })
+      expect(result.start).toBeInstanceOf(Date);
+      expect(result.end).toBeInstanceOf(Date);
+    });
+  });
 
   describe('eventsToTimedEvents', () => {
     it('複数のイベントを変換する', () => {
@@ -148,20 +148,20 @@ describe('planDataAdapter', () => {
           createdAt: new Date(),
           updatedAt: new Date(),
         },
-      ]
+      ];
 
-      const result = eventsToTimedEvents(events)
+      const result = eventsToTimedEvents(events);
 
-      expect(result).toHaveLength(2)
-      expect(result[0]!.id).toBe('plan-1')
-      expect(result[1]!.id).toBe('plan-2')
-    })
+      expect(result).toHaveLength(2);
+      expect(result[0]!.id).toBe('plan-1');
+      expect(result[1]!.id).toBe('plan-2');
+    });
 
     it.skip('削除済みイベントは除外される（廃止予定の機能）', () => {
       // Note: isDeletedフィルタリングは現在の実装にはありません
       // 削除済みプランはデータベースクエリレベルでフィルタリングされます
-    })
-  })
+    });
+  });
 
   describe('timedEventToEventUpdate', () => {
     it('TimedEvent形式をEventUpdate形式に変換する', () => {
@@ -173,18 +173,20 @@ describe('planDataAdapter', () => {
         start: new Date('2024-06-15T10:00:00'),
         end: new Date('2024-06-15T11:00:00'),
         isReadOnly: false,
-      }
+      };
 
-      const result = timedEventToEventUpdate(timedEvent as unknown as Parameters<typeof timedEventToEventUpdate>[0])
+      const result = timedEventToEventUpdate(
+        timedEvent as unknown as Parameters<typeof timedEventToEventUpdate>[0],
+      );
 
-      expect(result.id).toBe('plan-1')
-      expect(result.title).toBe('ミーティング')
-      expect(result.description).toBe('週次ミーティング')
-      expect(result.color).toBe('#3b82f6')
-      expect(result.startDate).toEqual(timedEvent.start)
-      expect(result.endDate).toEqual(timedEvent.end)
-    })
-  })
+      expect(result.id).toBe('plan-1');
+      expect(result.title).toBe('ミーティング');
+      expect(result.description).toBe('週次ミーティング');
+      expect(result.color).toBe('#3b82f6');
+      expect(result.startDate).toEqual(timedEvent.start);
+      expect(result.endDate).toEqual(timedEvent.end);
+    });
+  });
 
   describe('safeEventToTimedEvent', () => {
     it('有効なイベントを変換する', () => {
@@ -195,83 +197,83 @@ describe('planDataAdapter', () => {
         color: '#3b82f6',
         startDate: new Date('2024-06-15T10:00:00'),
         endDate: new Date('2024-06-15T11:00:00'),
-      }
+      };
 
-      const result = safeEventToTimedEvent(event)
+      const result = safeEventToTimedEvent(event);
 
-      expect(result).not.toBeNull()
-      expect(result?.id).toBe('plan-1')
-      expect(result?.title).toBe('ミーティング')
-    })
+      expect(result).not.toBeNull();
+      expect(result?.id).toBe('plan-1');
+      expect(result?.title).toBe('ミーティング');
+    });
 
     it('idがない場合はnullを返す', () => {
       const event: Partial<Plan> = {
         title: 'ミーティング',
-      }
+      };
 
-      const result = safeEventToTimedEvent(event)
+      const result = safeEventToTimedEvent(event);
 
-      expect(result).toBeNull()
-    })
+      expect(result).toBeNull();
+    });
 
     it('titleがない場合はnullを返す', () => {
       const event: Partial<Plan> = {
         id: 'plan-1',
-      }
+      };
 
-      const result = safeEventToTimedEvent(event)
+      const result = safeEventToTimedEvent(event);
 
-      expect(result).toBeNull()
-    })
+      expect(result).toBeNull();
+    });
 
     it('descriptionがない場合は空文字をデフォルト値にする', () => {
       const event: Partial<Plan> = {
         id: 'plan-1',
         title: 'ミーティング',
-      }
+      };
 
-      const result = safeEventToTimedEvent(event)
+      const result = safeEventToTimedEvent(event);
 
-      expect(result?.description).toBe('')
-    })
+      expect(result?.description).toBe('');
+    });
 
     it('colorがない場合は青色をデフォルト値にする', () => {
       const event: Partial<Plan> = {
         id: 'plan-1',
         title: 'ミーティング',
-      }
+      };
 
-      const result = safeEventToTimedEvent(event)
+      const result = safeEventToTimedEvent(event);
 
-      expect(result?.color).toBe('#3b82f6')
-    })
+      expect(result?.color).toBe('#3b82f6');
+    });
 
     it('startDateがない場合は現在時刻を使用する', () => {
       const event: Partial<Plan> = {
         id: 'plan-1',
         title: 'ミーティング',
-      }
+      };
 
-      const result = safeEventToTimedEvent(event)
+      const result = safeEventToTimedEvent(event);
 
-      expect(result?.start).toBeInstanceOf(Date)
-    })
+      expect(result?.start).toBeInstanceOf(Date);
+    });
 
     it('endDateがない場合は開始時刻+1時間を使用する', () => {
       const event: Partial<Plan> = {
         id: 'plan-1',
         title: 'ミーティング',
-      }
+      };
 
-      const result = safeEventToTimedEvent(event)
+      const result = safeEventToTimedEvent(event);
 
-      expect(result?.end).toBeInstanceOf(Date)
+      expect(result?.end).toBeInstanceOf(Date);
       if (result) {
-        const diff = result.end.getTime() - result.start.getTime()
-        expect(diff).toBe(60 * 60 * 1000) // 1時間
+        const diff = result.end.getTime() - result.start.getTime();
+        expect(diff).toBe(60 * 60 * 1000); // 1時間
       }
-    })
-  })
+    });
+  });
 
   describe('safeEventsToTimedEvents', () => {
     it('有効なイベントのみ変換する', () => {
@@ -280,30 +282,30 @@ describe('planDataAdapter', () => {
         { id: 'plan-2' }, // titleなし
         { title: 'ミーティング3' }, // idなし
         { id: 'plan-4', title: 'ミーティング4' },
-      ]
+      ];
 
-      const result = safeEventsToTimedEvents(events)
+      const result = safeEventsToTimedEvents(events);
 
-      expect(result).toHaveLength(2)
-      expect(result[0]!.id).toBe('plan-1')
-      expect(result[1]!.id).toBe('plan-4')
-    })
+      expect(result).toHaveLength(2);
+      expect(result[0]!.id).toBe('plan-1');
+      expect(result[1]!.id).toBe('plan-4');
+    });
 
     it('空配列の場合は空配列を返す', () => {
-      const result = safeEventsToTimedEvents([])
+      const result = safeEventsToTimedEvents([]);
 
-      expect(result).toEqual([])
-    })
+      expect(result).toEqual([]);
+    });
 
     it('すべて無効なイベントの場合は空配列を返す', () => {
       const events: Partial<Plan>[] = [
         { id: 'plan-1' }, // titleなし
         { title: 'ミーティング' }, // idなし
-      ]
+      ];
 
-      const result = safeEventsToTimedEvents(events)
+      const result = safeEventsToTimedEvents(events);
 
-      expect(result).toEqual([])
-    })
-  })
-})
+      expect(result).toEqual([]);
+    });
+  });
+});

@@ -1,31 +1,31 @@
-'use client'
+'use client';
 
-import { Archive, Calendar, Copy, Pencil, Tag, Trash2 } from 'lucide-react'
+import { Archive, Calendar, Copy, Pencil, Tag, Trash2 } from 'lucide-react';
 
-import { ActionMenuItems, type ActionGroup } from '@/components/common/ActionMenuItems'
+import { ActionMenuItems, type ActionGroup } from '@/components/common/ActionMenuItems';
 
-import type { InboxItem } from '@/features/inbox/hooks/useInboxData'
+import type { InboxItem } from '@/features/inbox/hooks/useInboxData';
 
 interface BoardActionMenuItemsProps {
-  item: InboxItem
+  item: InboxItem;
   /** メニュー項目をレンダリングするための関数 */
   renderMenuItem: (props: {
-    key?: string | undefined
-    icon: React.ReactNode
-    label: string
-    onClick: () => void
-    variant?: 'default' | 'destructive' | undefined
-    disabled?: boolean | undefined
-  }) => React.ReactNode
+    key?: string | undefined;
+    icon: React.ReactNode;
+    label: string;
+    onClick: () => void;
+    variant?: 'default' | 'destructive' | undefined;
+    disabled?: boolean | undefined;
+  }) => React.ReactNode;
   /** セパレーターをレンダリングするための関数 */
-  renderSeparator?: (() => React.ReactNode) | undefined
+  renderSeparator?: (() => React.ReactNode) | undefined;
   /** アクションハンドラー */
-  onEdit?: ((item: InboxItem) => void) | undefined
-  onDuplicate?: ((item: InboxItem) => void) | undefined
-  onAddTags?: ((item: InboxItem) => void) | undefined
-  onChangeDueDate?: ((item: InboxItem) => void) | undefined
-  onArchive?: ((item: InboxItem) => void) | undefined
-  onDelete: (item: InboxItem) => void
+  onEdit?: ((item: InboxItem) => void) | undefined;
+  onDuplicate?: ((item: InboxItem) => void) | undefined;
+  onAddTags?: ((item: InboxItem) => void) | undefined;
+  onChangeDueDate?: ((item: InboxItem) => void) | undefined;
+  onArchive?: ((item: InboxItem) => void) | undefined;
+  onDelete: (item: InboxItem) => void;
 }
 
 /**
@@ -45,17 +45,17 @@ export function BoardActionMenuItems({
   onArchive,
   onDelete,
 }: BoardActionMenuItemsProps) {
-  const groups: ActionGroup<InboxItem>[] = []
+  const groups: ActionGroup<InboxItem>[] = [];
 
   // 編集・複製・タグ・期限グループ
-  const editActions = []
+  const editActions = [];
   if (onEdit) {
     editActions.push({
       key: 'edit',
       icon: <Pencil className="mr-2 size-4" />,
       label: '編集',
       onClick: onEdit,
-    })
+    });
   }
   if (onDuplicate) {
     editActions.push({
@@ -63,7 +63,7 @@ export function BoardActionMenuItems({
       icon: <Copy className="mr-2 size-4" />,
       label: '複製',
       onClick: onDuplicate,
-    })
+    });
   }
   if (onAddTags) {
     editActions.push({
@@ -71,7 +71,7 @@ export function BoardActionMenuItems({
       icon: <Tag className="mr-2 size-4" />,
       label: 'タグを追加',
       onClick: onAddTags,
-    })
+    });
   }
   if (onChangeDueDate) {
     editActions.push({
@@ -79,25 +79,25 @@ export function BoardActionMenuItems({
       icon: <Calendar className="mr-2 size-4" />,
       label: '期限を設定',
       onClick: onChangeDueDate,
-    })
+    });
   }
 
   if (editActions.length > 0) {
     groups.push({
       key: 'edit',
       actions: editActions,
-    })
+    });
   }
 
   // アーカイブ・削除グループ
-  const dangerActions = []
+  const dangerActions = [];
   if (onArchive) {
     dangerActions.push({
       key: 'archive',
       icon: <Archive className="mr-2 size-4" />,
       label: 'アーカイブ',
       onClick: onArchive,
-    })
+    });
   }
   dangerActions.push({
     key: 'delete',
@@ -105,14 +105,19 @@ export function BoardActionMenuItems({
     label: '削除',
     onClick: onDelete,
     variant: 'destructive' as const,
-  })
+  });
 
   groups.push({
     key: 'danger',
     actions: dangerActions,
-  })
+  });
 
   return (
-    <ActionMenuItems item={item} groups={groups} renderMenuItem={renderMenuItem} renderSeparator={renderSeparator} />
-  )
+    <ActionMenuItems
+      item={item}
+      groups={groups}
+      renderMenuItem={renderMenuItem}
+      renderSeparator={renderSeparator}
+    />
+  );
 }

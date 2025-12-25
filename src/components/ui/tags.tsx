@@ -1,71 +1,78 @@
-'use client'
+'use client';
 
-import * as React from 'react'
+import * as React from 'react';
 
-import { Check, ChevronDown, Plus, Tag, X } from 'lucide-react'
+import { Check, ChevronDown, Plus, Tag, X } from 'lucide-react';
 
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
-import { cn } from '@/lib/utils'
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command';
+import { cn } from '@/lib/utils';
 
 export interface TagOption {
-  id: string
-  name: string
-  color?: string
-  count?: number
+  id: string;
+  name: string;
+  color?: string;
+  count?: number;
 }
 
 interface TagsContextType {
-  value: string[]
-  onValueChange: (value: string[]) => void
-  options: TagOption[]
-  open: boolean
-  setOpen: (open: boolean) => void
-  onCreateTag?: (tagName: string) => void
-  searchValue: string
-  setSearchValue: (value: string) => void
+  value: string[];
+  onValueChange: (value: string[]) => void;
+  options: TagOption[];
+  open: boolean;
+  setOpen: (open: boolean) => void;
+  onCreateTag?: (tagName: string) => void;
+  searchValue: string;
+  setSearchValue: (value: string) => void;
 }
 
-const TagsContext = React.createContext<TagsContextType | undefined>(undefined)
+const TagsContext = React.createContext<TagsContextType | undefined>(undefined);
 
 function useTagsContext() {
-  const context = React.useContext(TagsContext)
+  const context = React.useContext(TagsContext);
   if (!context) {
-    throw new Error('Tags components must be used within Tags provider')
+    throw new Error('Tags components must be used within Tags provider');
   }
-  return context
+  return context;
 }
 
 interface TagsProps {
-  value?: string[]
-  onValueChange?: (value: string[]) => void
-  options: TagOption[]
-  children: React.ReactNode
-  onCreateTag?: (tagName: string) => void
+  value?: string[];
+  onValueChange?: (value: string[]) => void;
+  options: TagOption[];
+  children: React.ReactNode;
+  onCreateTag?: (tagName: string) => void;
 }
 
 export const Tags = ({ value = [], onValueChange, options, children, onCreateTag }: TagsProps) => {
-  const [open, setOpen] = React.useState(false)
-  const [searchValue, setSearchValue] = React.useState('')
-  const containerRef = React.useRef<HTMLDivElement>(null)
+  const [open, setOpen] = React.useState(false);
+  const [searchValue, setSearchValue] = React.useState('');
+  const containerRef = React.useRef<HTMLDivElement>(null);
 
   // Close when clicking outside
   React.useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-        setOpen(false)
+        setOpen(false);
       }
     }
 
     if (open) {
-      document.addEventListener('mousedown', handleClickOutside)
+      document.addEventListener('mousedown', handleClickOutside);
       return () => {
-        document.removeEventListener('mousedown', handleClickOutside)
-      }
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
     }
-    return undefined
-  }, [open])
+    return undefined;
+  }, [open]);
 
   const contextValue: TagsContextType = {
     value,
@@ -76,7 +83,7 @@ export const Tags = ({ value = [], onValueChange, options, children, onCreateTag
     ...(onCreateTag !== undefined && { onCreateTag }),
     searchValue,
     setSearchValue,
-  }
+  };
 
   return (
     <TagsContext.Provider value={contextValue}>
@@ -84,17 +91,17 @@ export const Tags = ({ value = [], onValueChange, options, children, onCreateTag
         {children}
       </div>
     </TagsContext.Provider>
-  )
-}
+  );
+};
 
 interface TagsTriggerProps {
-  className?: string
-  placeholder?: string
+  className?: string;
+  placeholder?: string;
 }
 
 export const TagsTrigger = ({ className, placeholder = 'Select tags...' }: TagsTriggerProps) => {
-  const { value, options, open, setOpen } = useTagsContext()
-  const selectedOptions = options.filter((option) => value.includes(option.id))
+  const { value, options, open, setOpen } = useTagsContext();
+  const selectedOptions = options.filter((option) => value.includes(option.id));
 
   return (
     <Button
@@ -128,23 +135,23 @@ export const TagsTrigger = ({ className, placeholder = 'Select tags...' }: TagsT
       </div>
       <ChevronDown className="mt-1 ml-2 h-4 w-4 shrink-0 opacity-50" />
     </Button>
-  )
-}
+  );
+};
 
 interface TagsValueProps {
-  className?: string
+  className?: string;
 }
 
 export const TagsValue = ({ className }: TagsValueProps) => {
-  const { value, onValueChange, options } = useTagsContext()
-  const selectedOptions = options.filter((option) => value.includes(option.id))
+  const { value, onValueChange, options } = useTagsContext();
+  const selectedOptions = options.filter((option) => value.includes(option.id));
 
   const handleRemove = (optionId: string) => {
-    const newValue = value.filter((id) => id !== optionId)
-    onValueChange(newValue)
-  }
+    const newValue = value.filter((id) => id !== optionId);
+    onValueChange(newValue);
+  };
 
-  if (selectedOptions.length === 0) return null
+  if (selectedOptions.length === 0) return null;
 
   return (
     <div className={cn('mb-2 flex flex-wrap gap-2', className)}>
@@ -164,8 +171,8 @@ export const TagsValue = ({ className }: TagsValueProps) => {
             size="sm"
             className="ml-1 h-4 w-4 p-0 hover:bg-transparent"
             onClick={(e) => {
-              e.stopPropagation()
-              handleRemove(option.id)
+              e.stopPropagation();
+              handleRemove(option.id);
             }}
           >
             <X className="h-3 w-3" />
@@ -173,46 +180,50 @@ export const TagsValue = ({ className }: TagsValueProps) => {
         </Badge>
       ))}
     </div>
-  )
-}
+  );
+};
 
 interface TagsContentProps {
-  children: React.ReactNode
-  className?: string
+  children: React.ReactNode;
+  className?: string;
 }
 
 export const TagsContent = ({ children, className }: TagsContentProps) => {
-  const { open, setOpen: _setOpen } = useTagsContext()
+  const { open, setOpen: _setOpen } = useTagsContext();
 
-  if (!open) return null
+  if (!open) return null;
 
   return (
     <div
       className={cn(
         'bg-popover text-popover-foreground border-border absolute top-full left-0 z-50 mt-1 max-h-60 min-w-48 overflow-hidden rounded-md border shadow-md',
-        className
+        className,
       )}
     >
       <Command>{children}</Command>
     </div>
-  )
-}
+  );
+};
 
 interface TagsInputProps {
-  placeholder?: string
+  placeholder?: string;
 }
 
 export const TagsInput = ({ placeholder = 'Search tags...' }: TagsInputProps) => {
-  const { searchValue, setSearchValue } = useTagsContext()
+  const { searchValue, setSearchValue } = useTagsContext();
 
-  return <CommandInput placeholder={placeholder} value={searchValue} onValueChange={setSearchValue} />
-}
+  return (
+    <CommandInput placeholder={placeholder} value={searchValue} onValueChange={setSearchValue} />
+  );
+};
 
 export const TagsList = ({ children }: { children: React.ReactNode }) => {
-  const { onCreateTag, searchValue, setSearchValue, options } = useTagsContext()
+  const { onCreateTag, searchValue, setSearchValue, options } = useTagsContext();
 
   // Check if searchValue doesn't match any existing tag
-  const hasExactMatch = options.some((option) => option.name.toLowerCase() === searchValue.toLowerCase())
+  const hasExactMatch = options.some(
+    (option) => option.name.toLowerCase() === searchValue.toLowerCase(),
+  );
 
   return (
     <CommandList>
@@ -221,8 +232,8 @@ export const TagsList = ({ children }: { children: React.ReactNode }) => {
         <CommandGroup>
           <CommandItem
             onSelect={() => {
-              onCreateTag(searchValue.trim())
-              setSearchValue('')
+              onCreateTag(searchValue.trim());
+              setSearchValue('');
             }}
           >
             <div className="flex items-center gap-2">
@@ -233,35 +244,37 @@ export const TagsList = ({ children }: { children: React.ReactNode }) => {
         </CommandGroup>
       ) : null}
     </CommandList>
-  )
-}
+  );
+};
 
 export const TagsEmpty = ({ children }: { children: React.ReactNode }) => {
-  return <CommandEmpty>{children}</CommandEmpty>
-}
+  return <CommandEmpty>{children}</CommandEmpty>;
+};
 
 interface TagsGroupProps {
-  children: React.ReactNode
-  heading?: string
+  children: React.ReactNode;
+  heading?: string;
 }
 
 export const TagsGroup = ({ children, heading }: TagsGroupProps) => {
-  return <CommandGroup heading={heading}>{children}</CommandGroup>
-}
+  return <CommandGroup heading={heading}>{children}</CommandGroup>;
+};
 
 interface TagsItemProps {
-  value: string
-  children: React.ReactNode
+  value: string;
+  children: React.ReactNode;
 }
 
 export const TagsItem = ({ value, children }: TagsItemProps) => {
-  const { value: selectedValues, onValueChange, setOpen: _setOpen } = useTagsContext()
-  const isSelected = selectedValues.includes(value)
+  const { value: selectedValues, onValueChange, setOpen: _setOpen } = useTagsContext();
+  const isSelected = selectedValues.includes(value);
 
   const handleSelect = () => {
-    const newValue = isSelected ? selectedValues.filter((id) => id !== value) : [...selectedValues, value]
-    onValueChange(newValue)
-  }
+    const newValue = isSelected
+      ? selectedValues.filter((id) => id !== value)
+      : [...selectedValues, value];
+    onValueChange(newValue);
+  };
 
   return (
     <CommandItem onSelect={handleSelect}>
@@ -270,20 +283,27 @@ export const TagsItem = ({ value, children }: TagsItemProps) => {
         <Check className={cn('ml-auto h-4 w-4', isSelected ? 'opacity-100' : 'opacity-0')} />
       </div>
     </CommandItem>
-  )
-}
+  );
+};
 
 // Convenience component that combines all the pieces
 interface SimpleTagsProps {
-  value?: string[]
-  onValueChange?: (value: string[]) => void
-  options: TagOption[]
-  placeholder?: string
-  className?: string
-  onCreateTag?: (tagName: string) => void
+  value?: string[];
+  onValueChange?: (value: string[]) => void;
+  options: TagOption[];
+  placeholder?: string;
+  className?: string;
+  onCreateTag?: (tagName: string) => void;
 }
 
-export const SimpleTags = ({ value, onValueChange, options, placeholder, className, onCreateTag }: SimpleTagsProps) => {
+export const SimpleTags = ({
+  value,
+  onValueChange,
+  options,
+  placeholder,
+  className,
+  onCreateTag,
+}: SimpleTagsProps) => {
   return (
     <Tags
       {...(value !== undefined && { value })}
@@ -301,7 +321,10 @@ export const SimpleTags = ({ value, onValueChange, options, placeholder, classNa
               {options.map((option) => (
                 <TagsItem key={option.id} value={option.id}>
                   {option.color ? (
-                    <div className="h-3 w-3 rounded-full" style={{ backgroundColor: option.color }} />
+                    <div
+                      className="h-3 w-3 rounded-full"
+                      style={{ backgroundColor: option.color }}
+                    />
                   ) : null}
                   <span>{option.name}</span>
                   {/* count表示は一旦削除 */}
@@ -312,5 +335,5 @@ export const SimpleTags = ({ value, onValueChange, options, placeholder, classNa
         </TagsContent>
       </div>
     </Tags>
-  )
-}
+  );
+};

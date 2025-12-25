@@ -1,8 +1,8 @@
-'use client'
+'use client';
 
-import { MobileSettingsRadioGroup, MobileSettingsSection } from '@/components/common'
-import { Calendar } from 'lucide-react'
-import { type DueDateFilter, useInboxFilterStore } from '../../stores/useInboxFilterStore'
+import { MobileSettingsRadioGroup, MobileSettingsSection } from '@/components/common';
+import { Calendar } from 'lucide-react';
+import { type DueDateFilter, useInboxFilterStore } from '../../stores/useInboxFilterStore';
 
 /**
  * 期限フィルター選択肢
@@ -15,7 +15,7 @@ const DUE_DATE_OPTIONS: Array<{ value: DueDateFilter; label: string }> = [
   { value: 'next_week', label: '来週' },
   { value: 'overdue', label: '期限切れ' },
   { value: 'no_due_date', label: '期限なし' },
-]
+];
 
 /**
  * Inbox Board用フィルターコンテンツ
@@ -25,7 +25,7 @@ const DUE_DATE_OPTIONS: Array<{ value: DueDateFilter; label: string }> = [
  * ※ステータスはカンバンのカラムで表現されるためフィルター不要
  */
 export function InboxBoardFilterContent() {
-  const { dueDate, setDueDate } = useInboxFilterStore()
+  const { dueDate, setDueDate } = useInboxFilterStore();
 
   return (
     <MobileSettingsSection icon={<Calendar />} title="期限" showSeparator={false}>
@@ -36,5 +36,5 @@ export function InboxBoardFilterContent() {
         idPrefix="board-filter-due-date"
       />
     </MobileSettingsSection>
-  )
+  );
 }

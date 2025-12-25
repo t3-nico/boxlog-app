@@ -1,33 +1,34 @@
-'use client'
+'use client';
 
-import { useEffect } from 'react'
+import { useEffect } from 'react';
 
-import { useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation';
 
-import { useAuthStore } from '../stores/useAuthStore'
+import { useAuthStore } from '../stores/useAuthStore';
 
 interface AuthGuardProps {
-  children: React.ReactNode
-  fallback?: React.ReactNode
+  children: React.ReactNode;
+  fallback?: React.ReactNode;
 }
 
 export const AuthGuard = ({ children, fallback }: AuthGuardProps) => {
-  const user = useAuthStore((state) => state.user)
-  const loading = useAuthStore((state) => state.loading)
-  const router = useRouter()
+  const user = useAuthStore((state) => state.user);
+  const loading = useAuthStore((state) => state.loading);
+  const router = useRouter();
 
   // 開発時の認証スキップ
-  const skipAuthInDev = process.env.NODE_ENV === 'development' && process.env.SKIP_AUTH_IN_DEV === 'true'
+  const skipAuthInDev =
+    process.env.NODE_ENV === 'development' && process.env.SKIP_AUTH_IN_DEV === 'true';
 
   useEffect(() => {
     if (!skipAuthInDev && !loading && !user) {
-      router.push('/auth/login')
+      router.push('/auth/login');
     }
-  }, [user, loading, router, skipAuthInDev])
+  }, [user, loading, router, skipAuthInDev]);
 
   // 開発時の認証スキップが有効な場合はすぐにchildren を表示
   if (skipAuthInDev) {
-    return <>{children}</>
+    return <>{children}</>;
   }
 
   // ローディング中
@@ -39,7 +40,7 @@ export const AuthGuard = ({ children, fallback }: AuthGuardProps) => {
           <p className="text-muted-foreground mt-4 text-sm">Checking authentication status...</p>
         </div>
       </div>
-    )
+    );
   }
 
   // 未認証の場合
@@ -53,9 +54,9 @@ export const AuthGuard = ({ children, fallback }: AuthGuardProps) => {
           </div>
         </div>
       )
-    )
+    );
   }
 
   // 認証済みの場合
-  return <>{children}</>
-}
+  return <>{children}</>;
+};

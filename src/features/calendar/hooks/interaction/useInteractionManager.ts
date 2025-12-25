@@ -2,38 +2,38 @@
  * カレンダーのインタラクション状態管理フック
  */
 
-'use client'
+'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 // インタラクション状態の管理
 export interface InteractionState {
   // クリック・選択状態
-  selectedEventId: string | null
-  isCreating: boolean
+  selectedEventId: string | null;
+  isCreating: boolean;
 
   // ドラッグ状態
-  isDragging: boolean
-  dragStartTime: string | null
-  dragEndTime: string | null
-  dragDate: Date | null
+  isDragging: boolean;
+  dragStartTime: string | null;
+  dragEndTime: string | null;
+  dragDate: Date | null;
 
   // ホバー状態
-  hoveredEventId: string | null
-  hoveredTimeSlot: { date: Date; time: string } | null
+  hoveredEventId: string | null;
+  hoveredTimeSlot: { date: Date; time: string } | null;
 
   // 作成中のイベント
   creatingEvent: {
-    date: Date
-    startTime: string
-    endTime: string
-    isVisible: boolean
-  } | null
+    date: Date;
+    startTime: string;
+    endTime: string;
+    isVisible: boolean;
+  } | null;
 }
 
 export interface UseInteractionManagerOptions {
-  onEscape?: () => void
-  onConfirmCreate?: (event: InteractionState['creatingEvent']) => void
+  onEscape?: () => void;
+  onConfirmCreate?: (event: InteractionState['creatingEvent']) => void;
 }
 
 // デフォルト状態
@@ -47,29 +47,29 @@ const defaultState: InteractionState = {
   hoveredEventId: null,
   hoveredTimeSlot: null,
   creatingEvent: null,
-}
+};
 
 export function useInteractionManager(options: UseInteractionManagerOptions = {}) {
-  const { onEscape, onConfirmCreate } = options
-  const [state, setState] = useState<InteractionState>(defaultState)
-  const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined)
+  const { onEscape, onConfirmCreate } = options;
+  const [state, setState] = useState<InteractionState>(defaultState);
+  const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
   // イベント選択
   const selectEvent = useCallback((eventId: string | null) => {
-    setState((prev) => ({ ...prev, selectedEventId: eventId }))
-  }, [])
+    setState((prev) => ({ ...prev, selectedEventId: eventId }));
+  }, []);
 
   // ホバー操作
   const setHoveredEvent = useCallback((eventId: string | null) => {
-    setState((prev) => ({ ...prev, hoveredEventId: eventId }))
-  }, [])
+    setState((prev) => ({ ...prev, hoveredEventId: eventId }));
+  }, []);
 
   const setHoveredTimeSlot = useCallback((date: Date | null, time: string | null) => {
     setState((prev) => ({
       ...prev,
       hoveredTimeSlot: date && time ? { date, time } : null,
-    }))
-  }, [])
+    }));
+  }, []);
 
   // ドラッグ操作
   const startDrag = useCallback((date: Date, time: string) => {
@@ -80,42 +80,48 @@ export function useInteractionManager(options: UseInteractionManagerOptions = {}
       dragStartTime: time,
       dragEndTime: time,
       isCreating: false,
-    }))
-  }, [])
+    }));
+  }, []);
 
   const updateDrag = useCallback((date: Date, time: string) => {
     setState((prev) => {
-      if (!prev.isDragging || !prev.dragDate) return prev
+      if (!prev.isDragging || !prev.dragDate) return prev;
 
       // 同じ日付の場合のみドラッグを継続
       if (date.toDateString() === prev.dragDate.toDateString()) {
         return {
           ...prev,
           dragEndTime: time,
-        }
+        };
       }
-      return prev
-    })
-  }, [])
+      return prev;
+    });
+  }, []);
 
   const endDrag = useCallback(() => {
     setState((prev) => {
       if (!prev.isDragging || !prev.dragDate || !prev.dragStartTime || !prev.dragEndTime) {
-        return { ...prev, isDragging: false, dragStartTime: null, dragEndTime: null, dragDate: null }
+        return {
+          ...prev,
+          isDragging: false,
+          dragStartTime: null,
+          dragEndTime: null,
+          dragDate: null,
+        };
       }
 
       // 開始時刻と終了時刻を正規化
-      const startTime = prev.dragStartTime
-      const endTime = prev.dragEndTime
+      const startTime = prev.dragStartTime;
+      const endTime = prev.dragEndTime;
 
-      const startMinutes = timeToMinutes(startTime)
-      const endMinutes = timeToMinutes(endTime)
+      const startMinutes = timeToMinutes(startTime);
+      const endMinutes = timeToMinutes(endTime);
 
       // 時間範囲が有効な場合のみイベント作成状態に移行
       if (Math.abs(endMinutes - startMinutes) >= 15) {
         // 最小15分
-        const finalStartTime = startMinutes <= endMinutes ? startTime : endTime
-        const finalEndTime = startMinutes <= endMinutes ? endTime : startTime
+        const finalStartTime = startMinutes <= endMinutes ? startTime : endTime;
+        const finalEndTime = startMinutes <= endMinutes ? endTime : startTime;
 
         return {
           ...prev,
@@ -130,7 +136,7 @@ export function useInteractionManager(options: UseInteractionManagerOptions = {}
             endTime: finalEndTime,
             isVisible: true,
           },
-        }
+        };
       }
 
       return {
@@ -139,9 +145,9 @@ export function useInteractionManager(options: UseInteractionManagerOptions = {}
         dragStartTime: null,
         dragEndTime: null,
         dragDate: null,
-      }
-    })
-  }, [])
+      };
+    });
+  }, []);
 
   const cancelDrag = useCallback(() => {
     setState((prev) => ({
@@ -150,12 +156,12 @@ export function useInteractionManager(options: UseInteractionManagerOptions = {}
       dragStartTime: null,
       dragEndTime: null,
       dragDate: null,
-    }))
-  }, [])
+    }));
+  }, []);
 
   // イベント作成
   const startCreating = useCallback((date: Date, startTime: string, endTime?: string) => {
-    const finalEndTime = endTime || addMinutesToTime(startTime, 30) // デフォルト30分
+    const finalEndTime = endTime || addMinutesToTime(startTime, 30); // デフォルト30分
 
     setState((prev) => ({
       ...prev,
@@ -166,29 +172,29 @@ export function useInteractionManager(options: UseInteractionManagerOptions = {}
         endTime: finalEndTime,
         isVisible: true,
       },
-    }))
-  }, [])
+    }));
+  }, []);
 
   const finishCreating = useCallback(() => {
     setState((prev) => ({
       ...prev,
       isCreating: false,
       creatingEvent: null,
-    }))
-  }, [])
+    }));
+  }, []);
 
   const cancelCreating = useCallback(() => {
     setState((prev) => ({
       ...prev,
       isCreating: false,
       creatingEvent: null,
-    }))
-  }, [])
+    }));
+  }, []);
 
   // 状態リセット
   const resetState = useCallback(() => {
-    setState(defaultState)
-  }, [])
+    setState(defaultState);
+  }, []);
 
   // キーボードイベント処理
   useEffect(() => {
@@ -196,35 +202,35 @@ export function useInteractionManager(options: UseInteractionManagerOptions = {}
       switch (e.key) {
         case 'Escape':
           if (state.isDragging) {
-            cancelDrag()
+            cancelDrag();
           } else if (state.isCreating) {
-            cancelCreating()
+            cancelCreating();
           } else if (state.selectedEventId) {
-            selectEvent(null)
+            selectEvent(null);
           }
-          onEscape?.()
-          break
+          onEscape?.();
+          break;
         case 'Enter':
           if (state.isCreating && state.creatingEvent) {
-            onConfirmCreate?.(state.creatingEvent)
+            onConfirmCreate?.(state.creatingEvent);
           }
-          break
+          break;
       }
-    }
+    };
 
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [state, cancelDrag, cancelCreating, selectEvent, onEscape, onConfirmCreate])
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [state, cancelDrag, cancelCreating, selectEvent, onEscape, onConfirmCreate]);
 
   // クリーンアップ
   useEffect(() => {
-    const currentTimeout = timeoutRef.current
+    const currentTimeout = timeoutRef.current;
     return () => {
       if (currentTimeout) {
-        clearTimeout(currentTimeout)
+        clearTimeout(currentTimeout);
       }
-    }
-  }, [])
+    };
+  }, []);
 
   return {
     state,
@@ -241,18 +247,18 @@ export function useInteractionManager(options: UseInteractionManagerOptions = {}
       cancelCreating,
       resetState,
     },
-  }
+  };
 }
 
 // ユーティリティ関数
 function timeToMinutes(timeString: string): number {
-  const [hours = 0, minutes = 0] = timeString.split(':').map(Number)
-  return hours * 60 + minutes
+  const [hours = 0, minutes = 0] = timeString.split(':').map(Number);
+  return hours * 60 + minutes;
 }
 
 function addMinutesToTime(timeString: string, minutesToAdd: number): string {
-  const totalMinutes = timeToMinutes(timeString) + minutesToAdd
-  const hours = Math.floor(totalMinutes / 60) % 24
-  const minutes = totalMinutes % 60
-  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`
+  const totalMinutes = timeToMinutes(timeString) + minutesToAdd;
+  const hours = Math.floor(totalMinutes / 60) % 24;
+  const minutes = totalMinutes % 60;
+  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
 }

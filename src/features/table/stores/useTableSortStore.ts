@@ -1,17 +1,17 @@
-import { create } from 'zustand'
-import { devtools } from 'zustand/middleware'
+import { create } from 'zustand';
+import { devtools } from 'zustand/middleware';
 
-import type { SortDirection, SortField } from '../types/sort'
+import type { SortDirection, SortField } from '../types/sort';
 
 /**
  * テーブルソート状態
  */
 interface TableSortState {
-  sortField: SortField | null
-  sortDirection: SortDirection
-  setSortField: (field: SortField) => void
-  setSort: (field: string, direction: 'asc' | 'desc') => void
-  clearSort: () => void
+  sortField: SortField | null;
+  sortDirection: SortDirection;
+  setSortField: (field: SortField) => void;
+  setSort: (field: string, direction: 'asc' | 'desc') => void;
+  clearSort: () => void;
 }
 
 /**
@@ -35,32 +35,33 @@ export const useTableSortStore = create<TableSortState>()(
       sortDirection: null,
 
       setSortField: (field) => {
-        const { sortField, sortDirection } = get()
+        const { sortField, sortDirection } = get();
 
         if (sortField === field) {
           // 同じフィールド: asc → desc → null
           set({
-            sortDirection: sortDirection === 'asc' ? 'desc' : sortDirection === 'desc' ? null : 'asc',
+            sortDirection:
+              sortDirection === 'asc' ? 'desc' : sortDirection === 'desc' ? null : 'asc',
             sortField: sortDirection === 'desc' ? null : field,
-          })
+          });
         } else {
           // 別フィールド: asc から開始
-          set({ sortField: field, sortDirection: 'asc' })
+          set({ sortField: field, sortDirection: 'asc' });
         }
       },
 
       setSort: (field, direction) => {
-        set({ sortField: field as SortField, sortDirection: direction })
+        set({ sortField: field as SortField, sortDirection: direction });
       },
 
       clearSort: () => set({ sortField: null, sortDirection: null }),
     }),
-    { name: 'table-sort-store' }
-  )
-)
+    { name: 'table-sort-store' },
+  ),
+);
 
 // 後方互換性のためのエイリアス
-export const useInboxSortStore = useTableSortStore
+export const useInboxSortStore = useTableSortStore;
 
 // 型の再エクスポート
-export type { SortDirection, SortField }
+export type { SortDirection, SortField };

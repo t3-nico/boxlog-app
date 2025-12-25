@@ -17,7 +17,7 @@
  * ```
  */
 
-import * as Sentry from '@sentry/nextjs'
+import * as Sentry from '@sentry/nextjs';
 
 /**
  * パフォーマンストレース設定
@@ -26,23 +26,23 @@ interface TraceOptions {
   /**
    * トランザクション名（例: 'task-creation', 'data-fetch'）
    */
-  name: string
+  name: string;
 
   /**
    * 操作タイプ（例: 'db.query', 'http.client', 'function'）
    * @default 'function'
    */
-  op?: string
+  op?: string;
 
   /**
    * 追加タグ（分類用）
    */
-  tags?: Record<string, string>
+  tags?: Record<string, string>;
 
   /**
    * 追加データ（デバッグ用）
    */
-  data?: Record<string, unknown>
+  data?: Record<string, unknown>;
 }
 
 /**
@@ -50,9 +50,9 @@ interface TraceOptions {
  */
 interface TraceResult<T> {
   /** 関数の実行結果 */
-  result: T
+  result: T;
   /** 実行時間（ミリ秒） */
-  duration: number
+  duration: number;
 }
 
 /**
@@ -71,8 +71,8 @@ interface TraceResult<T> {
 export async function withTrace<T>(
   name: string,
   fn: () => Promise<T>,
-  options?: Omit<TraceOptions, 'name'>
-): Promise<TraceResult<T>>
+  options?: Omit<TraceOptions, 'name'>,
+): Promise<TraceResult<T>>;
 
 /**
  * 同期関数のパフォーマンス計測
@@ -84,7 +84,11 @@ export async function withTrace<T>(
  * })
  * ```
  */
-export function withTrace<T>(name: string, fn: () => T, options?: Omit<TraceOptions, 'name'>): TraceResult<T>
+export function withTrace<T>(
+  name: string,
+  fn: () => T,
+  options?: Omit<TraceOptions, 'name'>,
+): TraceResult<T>;
 
 /**
  * 関数実装（オーバーロード統合）
@@ -92,9 +96,9 @@ export function withTrace<T>(name: string, fn: () => T, options?: Omit<TraceOpti
 export function withTrace<T>(
   name: string,
   fn: () => T | Promise<T>,
-  options?: Omit<TraceOptions, 'name'>
+  options?: Omit<TraceOptions, 'name'>,
 ): TraceResult<T> | Promise<TraceResult<T>> {
-  const startTime = performance.now()
+  const startTime = performance.now();
 
   return Sentry.startSpan(
     {
@@ -111,24 +115,24 @@ export function withTrace<T>(
     },
     () => {
       // 関数実行
-      const resultOrPromise = fn()
+      const resultOrPromise = fn();
 
       // 非同期の場合
       if (resultOrPromise instanceof Promise) {
         return resultOrPromise
           .then((result) => {
-            const duration = performance.now() - startTime
+            const duration = performance.now() - startTime;
 
             // パフォーマンスメトリクスを記録
-            Sentry.setMeasurement(`${name}_duration`, duration, 'millisecond')
+            Sentry.setMeasurement(`${name}_duration`, duration, 'millisecond');
 
-            return { result, duration }
+            return { result, duration };
           })
           .catch((error) => {
-            const duration = performance.now() - startTime
+            const duration = performance.now() - startTime;
 
             // エラー時もメトリクスを記録
-            Sentry.setMeasurement(`${name}_duration`, duration, 'millisecond')
+            Sentry.setMeasurement(`${name}_duration`, duration, 'millisecond');
             Sentry.captureException(error, {
               tags: {
                 trace_name: name,
@@ -141,19 +145,19 @@ export function withTrace<T>(
                 operation: options?.op || 'function',
                 data: options?.data,
               },
-            })
+            });
 
-            throw error
-          })
+            throw error;
+          });
       }
 
       // 同期の場合
-      const duration = performance.now() - startTime
-      Sentry.setMeasurement(`${name}_duration`, duration, 'millisecond')
+      const duration = performance.now() - startTime;
+      Sentry.setMeasurement(`${name}_duration`, duration, 'millisecond');
 
-      return { result: resultOrPromise, duration }
-    }
-  )
+      return { result: resultOrPromise, duration };
+    },
+  );
 }
 
 /**
@@ -170,9 +174,9 @@ export async function traceApiCall<T>(endpoint: string, fn: () => Promise<T>): P
   const { result } = await withTrace(endpoint, fn, {
     op: 'http.client',
     tags: { endpoint },
-  })
+  });
 
-  return result
+  return result;
 }
 
 /**
@@ -189,9 +193,9 @@ export async function traceDbQuery<T>(queryName: string, fn: () => Promise<T>): 
   const { result } = await withTrace(queryName, fn, {
     op: 'db.query',
     tags: { query: queryName },
-  })
+  });
 
-  return result
+  return result;
 }
 
 /**
@@ -208,11 +212,14 @@ export async function traceDbQuery<T>(queryName: string, fn: () => Promise<T>): 
  * }
  * ```
  */
-export async function traceServerComponent<T>(componentName: string, fn: () => Promise<T>): Promise<T> {
+export async function traceServerComponent<T>(
+  componentName: string,
+  fn: () => Promise<T>,
+): Promise<T> {
   const { result } = await withTrace(`RSC: ${componentName}`, fn, {
     op: 'server-component',
     tags: { component: componentName },
-  })
+  });
 
-  return result
+  return result;
 }

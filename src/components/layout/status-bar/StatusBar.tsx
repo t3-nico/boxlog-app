@@ -1,15 +1,15 @@
-'use client'
+'use client';
 
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/utils';
 
 interface StatusBarProps {
-  children: React.ReactNode
-  className?: string
+  children: React.ReactNode;
+  className?: string;
 }
 
 interface StatusBarSectionProps {
-  children: React.ReactNode
-  className?: string
+  children: React.ReactNode;
+  className?: string;
 }
 
 /**
@@ -44,36 +44,36 @@ export function StatusBar({ children, className }: StatusBarProps) {
         'px-4',
         // テキストスタイル（12px）
         'text-xs',
-        className
+        className,
       )}
     >
       {children}
     </div>
-  )
+  );
 }
 
 /**
  * ステータスバー左側セクション
  */
 function StatusBarLeft({ children, className }: StatusBarSectionProps) {
-  return <div className={cn('flex items-center gap-3', className)}>{children}</div>
+  return <div className={cn('flex items-center gap-3', className)}>{children}</div>;
 }
 
 /**
  * ステータスバー右側セクション
  */
 function StatusBarRight({ children, className }: StatusBarSectionProps) {
-  return <div className={cn('flex items-center gap-3', className)}>{children}</div>
+  return <div className={cn('flex items-center gap-3', className)}>{children}</div>;
 }
 
 /**
  * ステータスバーセパレーター（区切り線）
  */
 function StatusBarSeparator({ className }: { className?: string }) {
-  return <div className={cn('bg-border h-3 w-px', className)} aria-hidden="true" />
+  return <div className={cn('bg-border h-3 w-px', className)} aria-hidden="true" />;
 }
 
 // Compound Components パターン
-StatusBar.Left = StatusBarLeft
-StatusBar.Right = StatusBarRight
-StatusBar.Separator = StatusBarSeparator
+StatusBar.Left = StatusBarLeft;
+StatusBar.Right = StatusBarRight;
+StatusBar.Separator = StatusBarSeparator;

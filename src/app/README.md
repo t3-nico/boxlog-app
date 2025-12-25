@@ -90,7 +90,7 @@ src/app/
 export const metadata: Metadata = {
   title: 'BoxLog',
   description: '...',
-}
+};
 ```
 
 ## 🚨 重要な注意事項

@@ -123,9 +123,9 @@ npx shadcn-ui@latest add dialog
 **例**:
 
 ```tsx
-import { Button } from '@/components/ui/button'
-import { Dialog } from '@/components/ui/dialog'
-;<Button variant="primary">クリック</Button>
+import { Button } from '@/components/ui/button';
+import { Dialog } from '@/components/ui/dialog';
+<Button variant="primary">クリック</Button>;
 ```
 
 ### 2. 🥈 HeadlessUI（アクセシビリティ重視）
@@ -248,22 +248,26 @@ AI・高度なUIコンポーネント。
 ```tsx
 // ✅ 推奨：関数宣言 + 名前付きエクスポート
 interface TaskCardProps {
-  title: string
-  status: 'todo' | 'in-progress' | 'done'
-  onStatusChange: (status: string) => void
+  title: string;
+  status: 'todo' | 'in-progress' | 'done';
+  onStatusChange: (status: string) => void;
 }
 
 export function TaskCard({ title, status, onStatusChange }: TaskCardProps) {
   return (
     <div className="bg-card text-card-foreground border-border rounded-xl p-4">
       <h3 className="text-lg font-semibold">{title}</h3>
-      <select value={status} onChange={(e) => onStatusChange(e.target.value)} className="border-input rounded-md">
+      <select
+        value={status}
+        onChange={(e) => onStatusChange(e.target.value)}
+        className="border-input rounded-md"
+      >
         <option value="todo">未着手</option>
         <option value="in-progress">進行中</option>
         <option value="done">完了</option>
       </select>
     </div>
-  )
+  );
 }
 ```
 
@@ -272,16 +276,16 @@ export function TaskCard({ title, status, onStatusChange }: TaskCardProps) {
 ```tsx
 // ✅ 明確な型定義
 interface ButtonProps {
-  variant: 'primary' | 'secondary' | 'danger'
-  size: 'sm' | 'md' | 'lg'
-  disabled?: boolean
-  onClick: () => void
-  children: React.ReactNode
+  variant: 'primary' | 'secondary' | 'danger';
+  size: 'sm' | 'md' | 'lg';
+  disabled?: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
 }
 
 // ❌ any型禁止
 interface BadButtonProps {
-  props: any // 禁止
+  props: any; // 禁止
 }
 ```
 
@@ -297,13 +301,13 @@ export function TaskList({ tasks, onTaskClick }: TaskListProps) {
         <TaskCard key={task.id} {...task} onClick={onTaskClick} />
       ))}
     </div>
-  )
+  );
 }
 
 // TaskListContainer.tsx（Container - features/内）
 export function TaskListContainer() {
-  const { tasks, updateTask } = useTaskStore()
-  return <TaskList tasks={tasks} onTaskClick={updateTask} />
+  const { tasks, updateTask } = useTaskStore();
+  return <TaskList tasks={tasks} onTaskClick={updateTask} />;
 }
 ```
 
@@ -326,16 +330,16 @@ export function TaskListContainer() {
 {
   /* デスクトップ：フル機能 */
 }
-;<div className="hidden lg:block">
+<div className="hidden lg:block">
   <FullFeatureComponent />
-</div>
+</div>;
 
 {
   /* モバイル：簡易版 */
 }
-;<div className="block lg:hidden">
+<div className="block lg:hidden">
   <SimplifiedComponent />
-</div>
+</div>;
 ```
 
 ---
@@ -353,24 +357,24 @@ components/
 ### テスト例
 
 ```tsx
-import { describe, it, expect, vi } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
-import { TaskCard } from './TaskCard'
+import { describe, it, expect, vi } from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { TaskCard } from './TaskCard';
 
 describe('TaskCard', () => {
   it('should render title correctly', () => {
-    render(<TaskCard title="Test Task" status="todo" onStatusChange={vi.fn()} />)
-    expect(screen.getByText('Test Task')).toBeInTheDocument()
-  })
+    render(<TaskCard title="Test Task" status="todo" onStatusChange={vi.fn()} />);
+    expect(screen.getByText('Test Task')).toBeInTheDocument();
+  });
 
   it('should call onStatusChange when status changes', () => {
-    const onStatusChange = vi.fn()
-    render(<TaskCard title="Test" status="todo" onStatusChange={onStatusChange} />)
+    const onStatusChange = vi.fn();
+    render(<TaskCard title="Test" status="todo" onStatusChange={onStatusChange} />);
 
-    fireEvent.change(screen.getByRole('combobox'), { target: { value: 'done' } })
-    expect(onStatusChange).toHaveBeenCalledWith('done')
-  })
-})
+    fireEvent.change(screen.getByRole('combobox'), { target: { value: 'done' } });
+    expect(onStatusChange).toHaveBeenCalledWith('done');
+  });
+});
 ```
 
 ---

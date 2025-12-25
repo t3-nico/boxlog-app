@@ -1,2 +1,2 @@
 // Typography components
-export { Heading, Subheading } from './heading'
+export { Heading, Subheading } from './heading';

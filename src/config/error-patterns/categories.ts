@@ -11,9 +11,9 @@ export const ERROR_CATEGORIES = {
   EXTERNAL: 'EXTERNAL',
   SYSTEM: 'SYSTEM',
   RATE: 'RATE',
-} as const
+} as const;
 
-export type ErrorCategory = (typeof ERROR_CATEGORIES)[keyof typeof ERROR_CATEGORIES]
+export type ErrorCategory = (typeof ERROR_CATEGORIES)[keyof typeof ERROR_CATEGORIES];
 
 /**
  * エラーコード体系（カテゴリ別範囲）
@@ -26,7 +26,7 @@ export const ERROR_CODE_RANGES = {
   EXTERNAL: { start: 5000, end: 5999 },
   SYSTEM: { start: 6000, end: 6999 },
   RATE: { start: 7000, end: 7999 },
-} as const
+} as const;
 
 /**
  * 認証・認可エラー (1xxx)
@@ -42,7 +42,7 @@ export const AUTH_ERROR_CODES = {
   ACCOUNT_SUSPENDED: 1008,
   INVALID_API_KEY: 1009,
   INSUFFICIENT_SCOPE: 1010,
-} as const
+} as const;
 
 /**
  * バリデーションエラー (2xxx)
@@ -60,7 +60,7 @@ export const VALIDATION_ERROR_CODES = {
   INVALID_FILE_TYPE: 2010,
   DUPLICATE_VALUE: 2011,
   INVALID_ENUM: 2012,
-} as const
+} as const;
 
 /**
  * データベースエラー (3xxx)
@@ -76,7 +76,7 @@ export const DB_ERROR_CODES = {
   DEADLOCK: 3008,
   CONNECTION_POOL_EXHAUSTED: 3009,
   MIGRATION_FAILED: 3010,
-} as const
+} as const;
 
 /**
  * ビジネスロジックエラー (4xxx)
@@ -92,7 +92,7 @@ export const BIZ_ERROR_CODES = {
   DEPENDENCY_NOT_MET: 4008,
   RESOURCE_CONFLICT: 4009,
   OPERATION_NOT_ALLOWED: 4010,
-} as const
+} as const;
 
 /**
  * 外部サービス連携エラー (5xxx)
@@ -108,7 +108,7 @@ export const EXTERNAL_ERROR_CODES = {
   SMS_SEND_FAILED: 5008,
   FILE_UPLOAD_FAILED: 5009,
   THIRD_PARTY_ERROR: 5010,
-} as const
+} as const;
 
 /**
  * システム・インフラエラー (6xxx)
@@ -124,7 +124,7 @@ export const SYSTEM_ERROR_CODES = {
   HEALTH_CHECK_FAILED: 6008,
   RESOURCE_EXHAUSTED: 6009,
   UNEXPECTED_ERROR: 6010,
-} as const
+} as const;
 
 /**
  * レート制限エラー (7xxx)
@@ -140,7 +140,7 @@ export const RATE_ERROR_CODES = {
   IP_RATE_LIMITED: 7008,
   USER_RATE_LIMITED: 7009,
   API_RATE_LIMITED: 7010,
-} as const
+} as const;
 
 /**
  * 全エラーコードの統合
@@ -153,23 +153,23 @@ export const ERROR_CODES = {
   ...EXTERNAL_ERROR_CODES,
   ...SYSTEM_ERROR_CODES,
   ...RATE_ERROR_CODES,
-} as const
+} as const;
 
-export type ErrorCode = (typeof ERROR_CODES)[keyof typeof ERROR_CODES]
+export type ErrorCode = (typeof ERROR_CODES)[keyof typeof ERROR_CODES];
 
 /**
  * エラーコードからカテゴリを判定する関数
  */
 export function getErrorCategory(errorCode: number): ErrorCategory {
-  if (errorCode >= 1000 && errorCode <= 1999) return ERROR_CATEGORIES.AUTH
-  if (errorCode >= 2000 && errorCode <= 2999) return ERROR_CATEGORIES.VALIDATION
-  if (errorCode >= 3000 && errorCode <= 3999) return ERROR_CATEGORIES.DB
-  if (errorCode >= 4000 && errorCode <= 4999) return ERROR_CATEGORIES.BIZ
-  if (errorCode >= 5000 && errorCode <= 5999) return ERROR_CATEGORIES.EXTERNAL
-  if (errorCode >= 6000 && errorCode <= 6999) return ERROR_CATEGORIES.SYSTEM
-  if (errorCode >= 7000 && errorCode <= 7999) return ERROR_CATEGORIES.RATE
+  if (errorCode >= 1000 && errorCode <= 1999) return ERROR_CATEGORIES.AUTH;
+  if (errorCode >= 2000 && errorCode <= 2999) return ERROR_CATEGORIES.VALIDATION;
+  if (errorCode >= 3000 && errorCode <= 3999) return ERROR_CATEGORIES.DB;
+  if (errorCode >= 4000 && errorCode <= 4999) return ERROR_CATEGORIES.BIZ;
+  if (errorCode >= 5000 && errorCode <= 5999) return ERROR_CATEGORIES.EXTERNAL;
+  if (errorCode >= 6000 && errorCode <= 6999) return ERROR_CATEGORIES.SYSTEM;
+  if (errorCode >= 7000 && errorCode <= 7999) return ERROR_CATEGORIES.RATE;
 
-  throw new Error(`Invalid error code: ${errorCode}`)
+  throw new Error(`Invalid error code: ${errorCode}`);
 }
 
 /**
@@ -183,9 +183,9 @@ export const CATEGORY_SEVERITY = {
   [ERROR_CATEGORIES.EXTERNAL]: 'medium',
   [ERROR_CATEGORIES.SYSTEM]: 'critical',
   [ERROR_CATEGORIES.RATE]: 'low',
-} as const
+} as const;
 
-export type SeverityLevel = 'low' | 'medium' | 'high' | 'critical'
+export type SeverityLevel = 'low' | 'medium' | 'high' | 'critical';
 
 /**
  * カテゴリ別のリトライ可能性
@@ -198,4 +198,4 @@ export const CATEGORY_RETRYABLE = {
   [ERROR_CATEGORIES.EXTERNAL]: true,
   [ERROR_CATEGORIES.SYSTEM]: true,
   [ERROR_CATEGORIES.RATE]: true,
-} as const
+} as const;

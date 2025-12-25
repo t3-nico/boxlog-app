@@ -1,16 +1,21 @@
-'use client'
+'use client';
 
-import React, { useCallback } from 'react'
+import React, { useCallback } from 'react';
 
-import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
-import { cn } from '@/lib/utils'
+import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
+import { cn } from '@/lib/utils';
 
-import { CalendarDragSelection, EventBlock, calculateEventGhostStyle, calculatePreviewTime } from '../../shared'
-import { HOUR_HEIGHT } from '../../shared/constants/grid.constants'
-import { useGlobalDragCursor } from '../../shared/hooks/useGlobalDragCursor'
-import type { CalendarPlan } from '../../shared/types/base.types'
-import type { DayContentProps } from '../DayView.types'
-import { useDragAndDrop } from '../hooks/useDragAndDrop'
+import {
+  CalendarDragSelection,
+  EventBlock,
+  calculateEventGhostStyle,
+  calculatePreviewTime,
+} from '../../shared';
+import { HOUR_HEIGHT } from '../../shared/constants/grid.constants';
+import { useGlobalDragCursor } from '../../shared/hooks/useGlobalDragCursor';
+import type { CalendarPlan } from '../../shared/types/base.types';
+import type { DayContentProps } from '../DayView.types';
+import { useDragAndDrop } from '../hooks/useDragAndDrop';
 
 export const DayContent = ({
   date,
@@ -24,22 +29,22 @@ export const DayContent = ({
   className,
 }: DayContentProps) => {
   // Inspectorで開いているプランのIDを取得
-  const inspectorPlanId = usePlanInspectorStore((state) => state.planId)
-  const isInspectorOpen = usePlanInspectorStore((state) => state.isOpen)
+  const inspectorPlanId = usePlanInspectorStore((state) => state.planId);
+  const isInspectorOpen = usePlanInspectorStore((state) => state.isOpen);
 
   // ドラッグ&ドロップ機能用にonEventUpdateを変換
   const handleEventUpdate = useCallback(
     async (eventId: string, updates: { startTime: Date; endTime: Date }) => {
-      if (!onEventUpdate) return
+      if (!onEventUpdate) return;
 
       // handleUpdatePlan形式で呼び出し
       await onEventUpdate(eventId, {
         startTime: updates.startTime,
         endTime: updates.endTime,
-      })
+      });
     },
-    [onEventUpdate]
-  )
+    [onEventUpdate],
+  );
 
   // ドラッグ&ドロップ機能
   const { dragState, handlers } = useDragAndDrop({
@@ -48,22 +53,22 @@ export const DayContent = ({
     date,
     events: events ?? [],
     disabledPlanId,
-  })
+  });
 
   // グローバルドラッグカーソー管理（共通化）
-  useGlobalDragCursor(dragState, handlers)
+  useGlobalDragCursor(dragState, handlers);
 
   // プラン右クリックハンドラー
   const handlePlanContextMenu = useCallback(
     (plan: CalendarPlan, mouseEvent: React.MouseEvent) => {
       // ドラッグ操作中またはリサイズ操作中は右クリックを無視
       if (dragState.isDragging || dragState.isResizing) {
-        return
+        return;
       }
-      onPlanContextMenu?.(plan, mouseEvent)
+      onPlanContextMenu?.(plan, mouseEvent);
     },
-    [onPlanContextMenu, dragState.isDragging, dragState.isResizing]
-  )
+    [onPlanContextMenu, dragState.isDragging, dragState.isResizing],
+  );
 
   // 時間グリッドの生成（1時間単位、23時は下線なし）
   const timeGrid = Array.from({ length: 24 }, (_, hour) => (
@@ -72,10 +77,13 @@ export const DayContent = ({
       className={`relative ${hour < 23 ? 'border-border border-b' : ''}`}
       style={{ height: HOUR_HEIGHT }}
     />
-  ))
+  ));
 
   return (
-    <div className={cn('bg-background relative flex-1 overflow-hidden', className)} data-calendar-grid>
+    <div
+      className={cn('bg-background relative flex-1 overflow-hidden', className)}
+      data-calendar-grid
+    >
       {/* CalendarDragSelectionを使用（ドラッグ操作のみでプラン作成） */}
       <CalendarDragSelection
         date={date}
@@ -90,20 +98,23 @@ export const DayContent = ({
       </CalendarDragSelection>
 
       {/* イベント表示エリア - CalendarDragSelectionより上にz-indexを設定 */}
-      <div className="pointer-events-none absolute inset-0 z-20" style={{ height: 24 * HOUR_HEIGHT }}>
+      <div
+        className="pointer-events-none absolute inset-0 z-20"
+        style={{ height: 24 * HOUR_HEIGHT }}
+      >
         {events &&
           Array.isArray(events) &&
           events.map((event) => {
-            const style = eventStyles?.[event.id]
-            if (!style) return null
+            const style = eventStyles?.[event.id];
+            if (!style) return null;
 
-            const isDragging = dragState.draggedEventId === event.id && dragState.isDragging
-            const isResizingThis = dragState.isResizing && dragState.draggedEventId === event.id
-            const currentTop = parseFloat(style.top?.toString() || '0')
-            const currentHeight = parseFloat(style.height?.toString() || '20')
+            const isDragging = dragState.draggedEventId === event.id && dragState.isDragging;
+            const isResizingThis = dragState.isResizing && dragState.draggedEventId === event.id;
+            const currentTop = parseFloat(style.top?.toString() || '0');
+            const currentHeight = parseFloat(style.height?.toString() || '20');
 
             // ゴースト表示スタイル（共通化）
-            const adjustedStyle = calculateEventGhostStyle(style, event.id, dragState)
+            const adjustedStyle = calculateEventGhostStyle(style, event.id, dragState);
 
             return (
               <div
@@ -127,12 +138,12 @@ export const DayContent = ({
                         left: 0,
                         width: 100,
                         height: currentHeight,
-                      })
+                      });
                     }
                   }}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault()
+                      e.preventDefault();
                       // キーボードでドラッグ操作を開始する代替手段
                       // ここでは単純にフォーカスを維持
                     }
@@ -150,12 +161,14 @@ export const DayContent = ({
                           : currentHeight,
                     }}
                     // クリックは useDragAndDrop で処理されるため削除
-                    onContextMenu={(event: CalendarPlan, e: React.MouseEvent) => handlePlanContextMenu(event, e)}
+                    onContextMenu={(event: CalendarPlan, e: React.MouseEvent) =>
+                      handlePlanContextMenu(event, e)
+                    }
                     onResizeStart={(
                       event: CalendarPlan,
                       direction: 'top' | 'bottom',
                       e: React.MouseEvent,
-                      _position: { top: number; left: number; width: number; height: number }
+                      _position: { top: number; left: number; width: number; height: number },
                     ) =>
                       handlers.handleResizeStart(event.id, direction, e, {
                         top: currentTop,
@@ -172,9 +185,9 @@ export const DayContent = ({
                   />
                 </div>
               </div>
-            )
+            );
           })}
       </div>
     </div>
-  )
-}
+  );
+};

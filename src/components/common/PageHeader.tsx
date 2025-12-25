@@ -1,31 +1,31 @@
-'use client'
+'use client';
 
-import type { ReactNode } from 'react'
+import type { ReactNode } from 'react';
 
-import { Bot } from 'lucide-react'
+import { Bot } from 'lucide-react';
 
-import { Button } from '@/components/ui/button'
-import { HoverTooltip } from '@/components/ui/tooltip'
-import { useAIInspectorStore } from '@/features/ai'
-import { MobileMenuButton } from '@/features/navigation/components/mobile/MobileMenuButton'
-import { cn } from '@/lib/utils'
-import { useTranslations } from 'next-intl'
+import { Button } from '@/components/ui/button';
+import { HoverTooltip } from '@/components/ui/tooltip';
+import { useAIInspectorStore } from '@/features/ai';
+import { MobileMenuButton } from '@/features/navigation/components/mobile/MobileMenuButton';
+import { cn } from '@/lib/utils';
+import { useTranslations } from 'next-intl';
 
 interface PageHeaderProps {
   /** ページタイトル */
-  title: string
+  title: string;
   /** タイトル横のカウント表示 */
-  count?: number
+  count?: number;
   /** タイトル横のサブタイトル */
-  subtitle?: string
+  subtitle?: string;
   /** 右側に表示するアクション（ボタン等） */
-  actions?: ReactNode
+  actions?: ReactNode;
   /** タイトル右側に表示するカスタムコンテンツ */
-  children?: ReactNode
+  children?: ReactNode;
   /** モバイルメニューボタンを表示するか（デフォルト: true） */
-  showMobileMenu?: boolean
+  showMobileMenu?: boolean;
   /** 追加のクラス名 */
-  className?: string
+  className?: string;
 }
 
 /**
@@ -58,8 +58,8 @@ export function PageHeader({
   showMobileMenu = true,
   className,
 }: PageHeaderProps) {
-  const openAIInspector = useAIInspectorStore((state) => state.openInspector)
-  const t = useTranslations()
+  const openAIInspector = useAIInspectorStore((state) => state.openInspector);
+  const t = useTranslations();
 
   return (
     <div className={cn('bg-background flex h-12 shrink-0 items-center px-4 py-2', className)}>
@@ -89,5 +89,5 @@ export function PageHeader({
         </Button>
       </HoverTooltip>
     </div>
-  )
+  );
 }

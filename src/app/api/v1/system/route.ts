@@ -5,72 +5,71 @@
  * /api/v1/system で呼び出し
  */
 
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server';
 
-import { getApiStats, processApiRequest } from '@/lib/api/middleware'
-import type { ApiRequest } from '@/lib/api/versioning'
-import { API_VERSIONS } from '@/lib/api/versioning'
+import { getApiStats } from '@/lib/api/middleware';
+import { API_VERSIONS } from '@/lib/api/versioning';
 
 /**
  * 💻 System Information レスポンス型定義
  */
 interface SystemInfoResponse {
   api: {
-    currentVersion: string
-    supportedVersions: string[]
-    deprecatedVersions: string[]
-    requestedVersion: string
-    versionSource: 'url' | 'header' | 'default'
-  }
+    currentVersion: string;
+    supportedVersions: string[];
+    deprecatedVersions: string[];
+    requestedVersion: string;
+    versionSource: 'url' | 'header' | 'default';
+  };
   system: {
-    nodeVersion: string
-    environment: string
-    timestamp: string
-    timezone: string
-    uptime: number
-    memoryUsage: NodeJS.MemoryUsage
-  }
+    nodeVersion: string;
+    environment: string;
+    timestamp: string;
+    timezone: string;
+    uptime: number;
+    memoryUsage: NodeJS.MemoryUsage;
+  };
   middleware: {
-    versioning: boolean
-    rateLimit: boolean
-    cors: boolean
-    logging: boolean
-    metrics: boolean
-  }
+    versioning: boolean;
+    rateLimit: boolean;
+    cors: boolean;
+    logging: boolean;
+    metrics: boolean;
+  };
   statistics: {
-    totalRequests: number
+    totalRequests: number;
     endpoints: Array<{
-      path: string
-      requestCount: number
-      errorCount: number
-      averageResponseTime: number
-      lastRequest: string
-    }>
-  }
+      path: string;
+      requestCount: number;
+      errorCount: number;
+      averageResponseTime: number;
+      lastRequest: string;
+    }>;
+  };
 }
 
 /**
  * 📊 GET /api/v1/system - System Information API
  */
-export async function GET(_request: NextRequest, apiRequest?: ApiRequest): Promise<NextResponse> {
+export async function GET(_request: NextRequest): Promise<NextResponse> {
   try {
     // API統計情報の取得
-    const apiStats = getApiStats()
+    const apiStats = getApiStats();
     const statisticsData = Array.from(apiStats.entries()).map(([path, stats]) => ({
       path,
       requestCount: stats.requestCount,
       errorCount: stats.errorCount,
       averageResponseTime: stats.averageResponseTime,
       lastRequest: stats.lastRequest,
-    }))
+    }));
 
     const systemInfo: SystemInfoResponse = {
       api: {
         currentVersion: API_VERSIONS.CURRENT,
         supportedVersions: [...API_VERSIONS.SUPPORTED],
         deprecatedVersions: [...API_VERSIONS.DEPRECATED],
-        requestedVersion: apiRequest?.requestedVersion || API_VERSIONS.CURRENT,
-        versionSource: apiRequest?.versionSource || 'default',
+        requestedVersion: API_VERSIONS.CURRENT,
+        versionSource: 'url',
       },
       system: {
         nodeVersion: process.version,
@@ -91,26 +90,18 @@ export async function GET(_request: NextRequest, apiRequest?: ApiRequest): Promi
         totalRequests: statisticsData.reduce((total, endpoint) => total + endpoint.requestCount, 0),
         endpoints: statisticsData,
       },
-    }
+    };
 
-    return NextResponse.json(systemInfo, { status: 200 })
+    return NextResponse.json(systemInfo, { status: 200 });
   } catch (error) {
-    console.error('System info API error:', error)
+    console.error('System info API error:', error);
     return NextResponse.json(
       {
         error: 'SYSTEM_INFO_ERROR',
         message: 'Failed to retrieve system information',
         timestamp: new Date().toISOString(),
       },
-      { status: 500 }
-    )
+      { status: 500 },
+    );
   }
 }
-
-/**
- * 🔧 API Middleware Integration
- */
-const handler = (request: NextRequest, apiRequest?: ApiRequest) => GET(request, apiRequest)
-
-// Export wrapped handlers
-export const wrappedGET = (request: NextRequest) => processApiRequest(request, handler)

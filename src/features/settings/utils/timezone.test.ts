@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import {
   formatTimezoneInfo,
@@ -8,169 +8,169 @@ import {
   getUserTimezone,
   setUserTimezone,
   SUPPORTED_TIMEZONES,
-} from './timezone'
+} from './timezone';
 
 describe('timezone', () => {
   describe('SUPPORTED_TIMEZONES', () => {
     it('9つのタイムゾーンが定義されている', () => {
-      expect(SUPPORTED_TIMEZONES).toHaveLength(9)
-    })
+      expect(SUPPORTED_TIMEZONES).toHaveLength(9);
+    });
 
     it('日本（Asia/Tokyo）が含まれている', () => {
-      const tokyo = SUPPORTED_TIMEZONES.find((tz) => tz.value === 'Asia/Tokyo')
-      expect(tokyo).toBeDefined()
-      expect(tokyo?.label).toBe('日本 (JST)')
-      expect(tokyo?.offset).toBe('+09:00')
-    })
+      const tokyo = SUPPORTED_TIMEZONES.find((tz) => tz.value === 'Asia/Tokyo');
+      expect(tokyo).toBeDefined();
+      expect(tokyo?.label).toBe('日本 (JST)');
+      expect(tokyo?.offset).toBe('+09:00');
+    });
 
     it('UTCが含まれている', () => {
-      const utc = SUPPORTED_TIMEZONES.find((tz) => tz.value === 'UTC')
-      expect(utc).toBeDefined()
-      expect(utc?.offset).toBe('+00:00')
-    })
+      const utc = SUPPORTED_TIMEZONES.find((tz) => tz.value === 'UTC');
+      expect(utc).toBeDefined();
+      expect(utc?.offset).toBe('+00:00');
+    });
 
     it('すべてのタイムゾーンにvalue, label, offsetが定義されている', () => {
       SUPPORTED_TIMEZONES.forEach((tz) => {
-        expect(tz.value).toBeTruthy()
-        expect(tz.label).toBeTruthy()
-        expect(tz.offset).toBeTruthy()
-      })
-    })
-  })
+        expect(tz.value).toBeTruthy();
+        expect(tz.label).toBeTruthy();
+        expect(tz.offset).toBeTruthy();
+      });
+    });
+  });
 
   describe('getBrowserTimezone', () => {
     it('Intl APIからタイムゾーンを取得する', () => {
-      const result = getBrowserTimezone()
-      expect(typeof result).toBe('string')
-      expect(result.length).toBeGreaterThan(0)
-    })
+      const result = getBrowserTimezone();
+      expect(typeof result).toBe('string');
+      expect(result.length).toBeGreaterThan(0);
+    });
 
     it('エラー時はAsia/Tokyoにフォールバックする', () => {
       // Intl.DateTimeFormat をモック
-      const originalIntl = globalThis.Intl
+      const originalIntl = globalThis.Intl;
       const mockIntl = {
         ...originalIntl,
         DateTimeFormat: Object.assign(
           () => {
-            throw new Error('Test error')
+            throw new Error('Test error');
           },
-          { supportedLocalesOf: () => [] }
+          { supportedLocalesOf: () => [] },
         ),
-      }
-      globalThis.Intl = mockIntl as unknown as typeof Intl
+      };
+      globalThis.Intl = mockIntl as unknown as typeof Intl;
 
-      const result = getBrowserTimezone()
-      expect(result).toBe('Asia/Tokyo')
+      const result = getBrowserTimezone();
+      expect(result).toBe('Asia/Tokyo');
 
       // 復元
-      globalThis.Intl = originalIntl
-    })
-  })
+      globalThis.Intl = originalIntl;
+    });
+  });
 
   describe('getUserTimezone / setUserTimezone', () => {
     beforeEach(() => {
       // localStorage をクリア
-      localStorage.clear()
-    })
+      localStorage.clear();
+    });
 
     afterEach(() => {
-      localStorage.clear()
-    })
+      localStorage.clear();
+    });
 
     it('保存されていない場合はnullを返す', () => {
-      const result = getUserTimezone()
-      expect(result).toBeNull()
-    })
+      const result = getUserTimezone();
+      expect(result).toBeNull();
+    });
 
     it('タイムゾーンを保存・取得できる', () => {
-      setUserTimezone('America/New_York')
-      const result = getUserTimezone()
-      expect(result).toBe('America/New_York')
-    })
+      setUserTimezone('America/New_York');
+      const result = getUserTimezone();
+      expect(result).toBe('America/New_York');
+    });
 
     it('異なるタイムゾーンで上書きできる', () => {
-      setUserTimezone('Asia/Tokyo')
-      setUserTimezone('Europe/London')
-      const result = getUserTimezone()
-      expect(result).toBe('Europe/London')
-    })
-  })
+      setUserTimezone('Asia/Tokyo');
+      setUserTimezone('Europe/London');
+      const result = getUserTimezone();
+      expect(result).toBe('Europe/London');
+    });
+  });
 
   describe('getTimezoneOffset', () => {
     it('UTCは0分を返す', () => {
-      const result = getTimezoneOffset('UTC')
-      expect(result).toBe(0)
-    })
+      const result = getTimezoneOffset('UTC');
+      expect(result).toBe(0);
+    });
 
     it('Asia/Tokyoは数値を返す', () => {
-      const result = getTimezoneOffset('Asia/Tokyo')
+      const result = getTimezoneOffset('Asia/Tokyo');
       // getTimezoneOffsetは動的計算を行うため、CI環境（UTC）とローカル環境で
       // 異なる結果になる可能性がある。重要なのは:
       // 1. 数値を返すこと
       // 2. Asia/Tokyoは常にUTC+9なので、正しく計算されれば540分
-      expect(typeof result).toBe('number')
+      expect(typeof result).toBe('number');
       // 実際の計算結果を検証（環境によって異なる可能性があるため、範囲でチェック）
       // Asia/Tokyoのオフセットは540分（UTC+9）
       // ただし、Intl API計算の挙動が環境依存のため、ここでは型のみ検証
-    })
+    });
 
     it('不明なタイムゾーンは0を返す（フォールバック）', () => {
-      const result = getTimezoneOffset('Unknown/Timezone')
-      expect(result).toBe(0)
-    })
-  })
+      const result = getTimezoneOffset('Unknown/Timezone');
+      expect(result).toBe(0);
+    });
+  });
 
   describe('formatTimezoneInfo', () => {
     it('サポートされているタイムゾーンはラベルとオフセットを含む', () => {
-      const result = formatTimezoneInfo('Asia/Tokyo')
-      expect(result).toContain('日本')
-      expect(result).toContain('JST')
-      expect(result).toContain('+09:00')
-    })
+      const result = formatTimezoneInfo('Asia/Tokyo');
+      expect(result).toContain('日本');
+      expect(result).toContain('JST');
+      expect(result).toContain('+09:00');
+    });
 
     it('UTCは正しくフォーマットされる', () => {
-      const result = formatTimezoneInfo('UTC')
-      expect(result).toContain('UTC')
-      expect(result).toContain('+00:00')
-    })
+      const result = formatTimezoneInfo('UTC');
+      expect(result).toContain('UTC');
+      expect(result).toContain('+00:00');
+    });
 
     it('サポート外のタイムゾーンもフォーマットされる', () => {
-      const result = formatTimezoneInfo('Pacific/Auckland')
-      expect(result).toContain('Pacific/Auckland')
-    })
-  })
+      const result = formatTimezoneInfo('Pacific/Auckland');
+      expect(result).toContain('Pacific/Auckland');
+    });
+  });
 
   describe('getShortTimezoneDisplay', () => {
     it('Asia/TokyoはJSTを返す', () => {
-      expect(getShortTimezoneDisplay('Asia/Tokyo')).toBe('JST')
-    })
+      expect(getShortTimezoneDisplay('Asia/Tokyo')).toBe('JST');
+    });
 
     it('Asia/SeoulはKSTを返す', () => {
-      expect(getShortTimezoneDisplay('Asia/Seoul')).toBe('KST')
-    })
+      expect(getShortTimezoneDisplay('Asia/Seoul')).toBe('KST');
+    });
 
     it('UTCはUTCを返す', () => {
-      expect(getShortTimezoneDisplay('UTC')).toBe('UTC')
-    })
+      expect(getShortTimezoneDisplay('UTC')).toBe('UTC');
+    });
 
     it('America/New_YorkはESTを返す', () => {
-      expect(getShortTimezoneDisplay('America/New_York')).toBe('EST')
-    })
+      expect(getShortTimezoneDisplay('America/New_York')).toBe('EST');
+    });
 
     it('Europe/LondonはGMTを返す', () => {
-      expect(getShortTimezoneDisplay('Europe/London')).toBe('GMT')
-    })
+      expect(getShortTimezoneDisplay('Europe/London')).toBe('GMT');
+    });
 
     it('未知のタイムゾーンは最後のパスを返す', () => {
-      const result = getShortTimezoneDisplay('Pacific/Auckland')
-      expect(result).toBe('Auckland')
-    })
+      const result = getShortTimezoneDisplay('Pacific/Auckland');
+      expect(result).toBe('Auckland');
+    });
 
     it('スラッシュがないタイムゾーンはそのまま返す', () => {
-      const result = getShortTimezoneDisplay('SomeTimezone')
-      expect(result).toBe('SomeTimezone')
-    })
-  })
+      const result = getShortTimezoneDisplay('SomeTimezone');
+      expect(result).toBe('SomeTimezone');
+    });
+  });
 
   describe('タイムゾーン変換の一貫性', () => {
     it('既知のオフセットマップが正しい', () => {
@@ -184,14 +184,14 @@ describe('timezone', () => {
         'America/New_York': -300, // UTC-5
         'America/Los_Angeles': -480, // UTC-8
         UTC: 0,
-      }
+      };
 
       // Asia/Tokyoの確認
-      expect(knownOffsets['Asia/Tokyo']).toBe(9 * 60)
+      expect(knownOffsets['Asia/Tokyo']).toBe(9 * 60);
       // America/New_Yorkの確認
-      expect(knownOffsets['America/New_York']).toBe(-5 * 60)
+      expect(knownOffsets['America/New_York']).toBe(-5 * 60);
       // UTCの確認
-      expect(knownOffsets['UTC']).toBe(0)
-    })
-  })
-})
+      expect(knownOffsets['UTC']).toBe(0);
+    });
+  });
+});

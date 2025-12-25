@@ -2,9 +2,9 @@
  * 4000番台: UI・フロントエンド系エラーパターン
  */
 
-import { ERROR_CODES } from '@/constants/errorCodes'
+import { ERROR_CODES } from '@/constants/errorCodes';
 
-import type { ErrorMessagePattern } from '../types'
+import type { ErrorMessagePattern } from '../types';
 
 export const UI_ERROR_PATTERNS: Record<number, ErrorMessagePattern> = {
   [ERROR_CODES.UI_COMPONENT_ERROR]: {
@@ -12,7 +12,11 @@ export const UI_ERROR_PATTERNS: Record<number, ErrorMessagePattern> = {
     userFriendly: '画面の表示に問題が発生しました',
     short: '画面表示エラー',
     description: '画面の一部が正しく表示されていない可能性があります。',
-    recommendedActions: ['ページを再読み込み', 'ブラウザのキャッシュをクリア', '他のブラウザで試してみる'],
+    recommendedActions: [
+      'ページを再読み込み',
+      'ブラウザのキャッシュをクリア',
+      '他のブラウザで試してみる',
+    ],
     autoRecoverable: true,
     urgency: 'warning',
     emoji: '🖥️',
@@ -28,4 +32,4 @@ export const UI_ERROR_PATTERNS: Record<number, ErrorMessagePattern> = {
     urgency: 'warning',
     emoji: '🎨',
   },
-}
+};

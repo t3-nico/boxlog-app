@@ -12,13 +12,13 @@
  *
  * @see src/components/providers.tsx - フルProviders定義
  */
-import { BaseLayout } from '@/components/layout/base-layout'
-import { Providers } from '@/components/providers'
-import { Toaster } from '@/components/ui/sonner'
-import { AIInspector } from '@/features/ai'
-import { SessionMonitorProvider } from '@/features/auth/components/SessionMonitorProvider'
-import { PlanDeleteConfirmDialog, PlanInspector } from '@/features/plans/components'
-import { TagInspector } from '@/features/tags/components/inspector'
+import { BaseLayout } from '@/components/layout/base-layout';
+import { Providers } from '@/components/providers';
+import { Toaster } from '@/components/ui/sonner';
+import { AIInspector } from '@/features/ai';
+import { SessionMonitorProvider } from '@/features/auth/components/SessionMonitorProvider';
+import { PlanDeleteConfirmDialog, PlanInspector } from '@/features/plans/components';
+import { TagInspector } from '@/features/tags/components/inspector';
 
 const AppLayout = async ({ children }: { children: React.ReactNode }) => {
   return (
@@ -34,7 +34,7 @@ const AppLayout = async ({ children }: { children: React.ReactNode }) => {
         </BaseLayout>
       </SessionMonitorProvider>
     </Providers>
-  )
-}
+  );
+};
 
-export default AppLayout
+export default AppLayout;

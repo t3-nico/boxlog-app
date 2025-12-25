@@ -1,19 +1,19 @@
-'use client'
+'use client';
 
-import { useCallback, useMemo } from 'react'
+import { useCallback, useMemo } from 'react';
 
-import { ExternalLink, Star } from 'lucide-react'
+import { ExternalLink, Star } from 'lucide-react';
 
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/utils';
 
-import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
-import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
-import { useTranslations } from 'next-intl'
+import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings';
+import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
+import { useTranslations } from 'next-intl';
 
-import { SettingsCard } from './SettingsCard'
+import { SettingsCard } from './SettingsCard';
 
-import type { ChronotypeType, ProductivityZone } from '@/features/settings/types/chronotype'
-import { CHRONOTYPE_PRESETS } from '@/features/settings/types/chronotype'
+import type { ChronotypeType, ProductivityZone } from '@/features/settings/types/chronotype';
+import { CHRONOTYPE_PRESETS } from '@/features/settings/types/chronotype';
 
 // クロノタイプごとの絵文字アイコン
 const CHRONOTYPE_EMOJI: Record<Exclude<ChronotypeType, 'custom'>, string> = {
@@ -21,7 +21,7 @@ const CHRONOTYPE_EMOJI: Record<Exclude<ChronotypeType, 'custom'>, string> = {
   bear: '🐻',
   wolf: '🐺',
   dolphin: '🐬',
-}
+};
 
 // クロノタイプごとの日本語ラベル
 const CHRONOTYPE_LABEL: Record<Exclude<ChronotypeType, 'custom'>, string> = {
@@ -29,16 +29,16 @@ const CHRONOTYPE_LABEL: Record<Exclude<ChronotypeType, 'custom'>, string> = {
   bear: '標準型',
   wolf: '夜型',
   dolphin: '不規則型',
-}
+};
 
 // 生産性レベルの色
 const LEVEL_COLORS: Record<ProductivityZone['level'], string> = {
-  peak: 'bg-green-500',
-  good: 'bg-green-300',
-  moderate: 'bg-blue-200',
-  low: 'bg-gray-300',
-  sleep: 'bg-indigo-400',
-}
+  peak: 'bg-success',
+  good: 'bg-success/60',
+  moderate: 'bg-primary/40',
+  low: 'bg-muted',
+  sleep: 'bg-accent',
+};
 
 // 生産性レベルの日本語ラベル
 const LEVEL_LABELS: Record<ProductivityZone['level'], string> = {
@@ -47,15 +47,15 @@ const LEVEL_LABELS: Record<ProductivityZone['level'], string> = {
   moderate: '通常',
   low: '低調',
   sleep: '睡眠',
-}
+};
 
 interface ChronotypeAutoSaveSettings {
   chronotype: {
-    enabled: boolean
-    type: ChronotypeType
-    displayMode: 'border' | 'background' | 'both'
-    opacity: number
-  }
+    enabled: boolean;
+    type: ChronotypeType;
+    displayMode: 'border' | 'background' | 'both';
+    opacity: number;
+  };
 }
 
 /**
@@ -64,27 +64,27 @@ interface ChronotypeAutoSaveSettings {
 function TimelineBar({ zones }: { zones: ProductivityZone[] }) {
   // 0-24時間を表すバーを生成
   const segments = useMemo(() => {
-    const result: Array<{ hour: number; level: ProductivityZone['level']; label: string }> = []
+    const result: Array<{ hour: number; level: ProductivityZone['level']; label: string }> = [];
 
     for (let hour = 0; hour < 24; hour++) {
       const zone = zones.find((z) => {
         if (z.startHour <= z.endHour) {
-          return hour >= z.startHour && hour < z.endHour
+          return hour >= z.startHour && hour < z.endHour;
         } else {
           // 日跨ぎの時間帯
-          return hour >= z.startHour || hour < z.endHour
+          return hour >= z.startHour || hour < z.endHour;
         }
-      })
+      });
 
       result.push({
         hour,
         level: zone?.level || 'moderate',
         label: zone?.label || '',
-      })
+      });
     }
 
-    return result
-  }, [zones])
+    return result;
+  }, [zones]);
 
   return (
     <div className="space-y-2">
@@ -118,29 +118,29 @@ function TimelineBar({ zones }: { zones: ProductivityZone[] }) {
         ))}
       </div>
     </div>
-  )
+  );
 }
 
 /**
  * ピーク時間の取得
  */
 function getPeakHours(zones: ProductivityZone[]): string {
-  const peakZone = zones.find((z) => z.level === 'peak')
-  if (!peakZone) return '-'
+  const peakZone = zones.find((z) => z.level === 'peak');
+  if (!peakZone) return '-';
 
-  const formatHour = (hour: number) => `${hour}:00`
-  return `${formatHour(peakZone.startHour)} - ${formatHour(peakZone.endHour)}`
+  const formatHour = (hour: number) => `${hour}:00`;
+  return `${formatHour(peakZone.startHour)} - ${formatHour(peakZone.endHour)}`;
 }
 
 /**
  * クロノタイプ設定コンポーネント
  */
 export function ChronotypeSettings() {
-  const settings = useCalendarSettingsStore()
-  const t = useTranslations()
+  const settings = useCalendarSettingsStore();
+  const t = useTranslations();
 
   // 選択可能なタイプ（customは除外）
-  const selectableTypes: Exclude<ChronotypeType, 'custom'>[] = ['bear', 'lion', 'wolf', 'dolphin']
+  const selectableTypes: Exclude<ChronotypeType, 'custom'>[] = ['bear', 'lion', 'wolf', 'dolphin'];
 
   // 自動保存システム
   const autoSave = useAutoSaveSettings<ChronotypeAutoSaveSettings>({
@@ -153,12 +153,12 @@ export function ChronotypeSettings() {
       },
     },
     onSave: async (values) => {
-      await new Promise((resolve) => setTimeout(resolve, 500))
-      settings.updateSettings({ chronotype: values.chronotype })
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      settings.updateSettings({ chronotype: values.chronotype });
     },
     successMessage: t('settings.chronotype.settingsSaved'),
     debounceMs: 800,
-  })
+  });
 
   // タイプ選択ハンドラー
   const handleTypeSelect = useCallback(
@@ -166,14 +166,14 @@ export function ChronotypeSettings() {
       autoSave.updateValue('chronotype', {
         ...autoSave.values.chronotype,
         type,
-      })
+      });
     },
-    [autoSave]
-  )
+    [autoSave],
+  );
 
   // 現在選択中のタイプ
-  const selectedType = autoSave.values.chronotype.type
-  const selectedProfile = selectedType !== 'custom' ? CHRONOTYPE_PRESETS[selectedType] : null
+  const selectedType = autoSave.values.chronotype.type;
+  const selectedProfile = selectedType !== 'custom' ? CHRONOTYPE_PRESETS[selectedType] : null;
 
   return (
     <div className="space-y-6">
@@ -197,7 +197,7 @@ export function ChronotypeSettings() {
           {/* タイプ選択ボタン */}
           <div className="grid grid-cols-2 gap-2">
             {selectableTypes.map((type) => {
-              const isSelected = selectedType === type
+              const isSelected = selectedType === type;
               return (
                 <button
                   key={type}
@@ -207,7 +207,7 @@ export function ChronotypeSettings() {
                     'flex items-center gap-2 rounded-lg border p-3 text-left transition-colors outline-none',
                     isSelected
                       ? 'border-foreground bg-secondary text-secondary-foreground'
-                      : 'border-border hover:bg-secondary'
+                      : 'border-border hover:bg-secondary',
                   )}
                 >
                   <span className="text-xl">{CHRONOTYPE_EMOJI[type]}</span>
@@ -217,7 +217,7 @@ export function ChronotypeSettings() {
                   </div>
                   {isSelected && <div className="text-foreground ml-auto">✓</div>}
                 </button>
-              )
+              );
             })}
           </div>
         </div>
@@ -229,10 +229,13 @@ export function ChronotypeSettings() {
           <div className="space-y-4">
             {/* タイプ名と説明 */}
             <div className="flex items-start gap-3">
-              <span className="text-3xl">{CHRONOTYPE_EMOJI[selectedType as Exclude<ChronotypeType, 'custom'>]}</span>
+              <span className="text-3xl">
+                {CHRONOTYPE_EMOJI[selectedType as Exclude<ChronotypeType, 'custom'>]}
+              </span>
               <div>
                 <h4 className="font-medium">
-                  {selectedProfile.name} - {CHRONOTYPE_LABEL[selectedType as Exclude<ChronotypeType, 'custom'>]}
+                  {selectedProfile.name} -{' '}
+                  {CHRONOTYPE_LABEL[selectedType as Exclude<ChronotypeType, 'custom'>]}
                 </h4>
                 <p className="text-muted-foreground mt-1 text-sm">{selectedProfile.description}</p>
               </div>
@@ -245,8 +248,8 @@ export function ChronotypeSettings() {
             </div>
 
             {/* ピーク時間のハイライト */}
-            <div className="flex items-center gap-2 rounded-lg bg-green-500/12 p-3">
-              <Star className="h-4 w-4 text-green-600" />
+            <div className="bg-success/12 flex items-center gap-2 rounded-lg p-3">
+              <Star className="text-success h-4 w-4" />
               <div>
                 <span className="text-sm font-medium">{t('settings.chronotype.peakTime')}</span>
                 <span className="text-muted-foreground ml-2 text-sm">
@@ -258,5 +261,5 @@ export function ChronotypeSettings() {
         </SettingsCard>
       )}
     </div>
-  )
+  );
 }

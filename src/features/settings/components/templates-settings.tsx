@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 export function TemplatesSettings() {
   return (
@@ -11,5 +11,5 @@ export function TemplatesSettings() {
         <p className="text-muted-foreground text-sm">現在、この機能は開発中です</p>
       </div>
     </div>
-  )
+  );
 }

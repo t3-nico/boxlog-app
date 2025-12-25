@@ -1,21 +1,34 @@
-'use client'
+'use client';
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react';
 
-import { Box, Building, ChevronRight, Cookie, ExternalLink, FileText, Info, Shield } from 'lucide-react'
-import Link from 'next/link'
+import {
+  Box,
+  Building,
+  ChevronRight,
+  Cookie,
+  ExternalLink,
+  FileText,
+  Info,
+  Shield,
+} from 'lucide-react';
+import Link from 'next/link';
 
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Switch } from '@/components/ui/switch'
-import { getCookieConsent, setCookieConsent as saveCookieConsent, type CookieConsent } from '@/lib/cookie-consent'
-import { useLocale, useTranslations } from 'next-intl'
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
+import {
+  getCookieConsent,
+  setCookieConsent as saveCookieConsent,
+  type CookieConsent,
+} from '@/lib/cookie-consent';
+import { useLocale, useTranslations } from 'next-intl';
 
-import { SettingField } from './fields/SettingField'
-import { SettingsCard } from './SettingsCard'
+import { SettingField } from './fields/SettingField';
+import { SettingsCard } from './SettingsCard';
 
 // アプリバージョン（package.jsonから取得する場合は環境変数経由で）
-const APP_VERSION = '0.4.0'
+const APP_VERSION = '0.4.0';
 
 /**
  * About & Legal設定ページコンポーネント
@@ -26,59 +39,70 @@ const APP_VERSION = '0.4.0'
  * - 法的文書リンク集
  */
 export function AboutLegalSettings() {
-  const t = useTranslations()
-  const locale = useLocale()
-  const [cookieConsent, setCookieConsent] = useState<CookieConsent | null>(null)
-  const [isClient, setIsClient] = useState(false)
+  const t = useTranslations();
+  const locale = useLocale();
+  const [cookieConsent, setCookieConsent] = useState<CookieConsent | null>(null);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    setIsClient(true)
+    setIsClient(true);
 
-    setCookieConsent(getCookieConsent())
+    setCookieConsent(getCookieConsent());
 
     const handleCookieConsentChange = (event: CustomEvent<CookieConsent | null>) => {
-      setCookieConsent(event.detail)
-    }
+      setCookieConsent(event.detail);
+    };
 
-    window.addEventListener('cookieConsentChanged', handleCookieConsentChange as EventListener)
+    window.addEventListener('cookieConsentChanged', handleCookieConsentChange as EventListener);
 
     return () => {
-      window.removeEventListener('cookieConsentChanged', handleCookieConsentChange as EventListener)
-    }
-  }, [])
+      window.removeEventListener(
+        'cookieConsentChanged',
+        handleCookieConsentChange as EventListener,
+      );
+    };
+  }, []);
 
   const handleAnalyticsChange = useCallback(
     (checked: boolean) => {
       saveCookieConsent({
         analytics: checked,
         marketing: cookieConsent?.marketing ?? false,
-      })
+      });
     },
-    [cookieConsent?.marketing]
-  )
+    [cookieConsent?.marketing],
+  );
 
   const handleMarketingChange = useCallback(
     (checked: boolean) => {
       saveCookieConsent({
         analytics: cookieConsent?.analytics ?? false,
         marketing: checked,
-      })
+      });
     },
-    [cookieConsent?.analytics]
-  )
+    [cookieConsent?.analytics],
+  );
 
   if (!isClient) {
-    return null
+    return null;
   }
 
   const legalLinks = [
     { href: `/${locale}/legal/privacy`, label: t('settings.legal.links.privacy'), icon: Shield },
     { href: `/${locale}/legal/terms`, label: t('settings.legal.links.terms'), icon: FileText },
-    { href: `/${locale}/legal/tokushoho`, label: t('settings.legal.links.tokushoho'), icon: Building },
+    {
+      href: `/${locale}/legal/tokushoho`,
+      label: t('settings.legal.links.tokushoho'),
+      icon: Building,
+    },
     { href: `/${locale}/legal/security`, label: t('settings.legal.links.security'), icon: Shield },
     { href: `/${locale}/legal/cookies`, label: t('settings.legal.links.cookies'), icon: Cookie },
-    { href: `/${locale}/legal/oss-credits`, label: t('settings.legal.links.ossCredits'), icon: Box },
-  ]
+    {
+      href: `/${locale}/legal/oss-credits`,
+      label: t('settings.legal.links.ossCredits'),
+      icon: Box,
+    },
+  ];
 
   return (
     <div className="space-y-6">
@@ -141,7 +165,9 @@ export function AboutLegalSettings() {
           {cookieConsent?.timestamp && (
             <p className="text-muted-foreground text-xs">
               {t('settings.legal.cookies.lastUpdated')}:{' '}
-              {new Date(cookieConsent.timestamp).toLocaleString(locale === 'ja' ? 'ja-JP' : 'en-US')}
+              {new Date(cookieConsent.timestamp).toLocaleString(
+                locale === 'ja' ? 'ja-JP' : 'en-US',
+              )}
             </p>
           )}
         </div>
@@ -151,7 +177,7 @@ export function AboutLegalSettings() {
       <SettingsCard title={t('settings.legal.links.title')}>
         <div className="divide-border -mx-4 -mb-4 divide-y">
           {legalLinks.map((link) => {
-            const Icon = link.icon
+            const Icon = link.icon;
             return (
               <Link
                 key={link.href}
@@ -164,7 +190,7 @@ export function AboutLegalSettings() {
                 </div>
                 <ChevronRight className="text-muted-foreground h-4 w-4" />
               </Link>
-            )
+            );
           })}
         </div>
       </SettingsCard>
@@ -173,7 +199,11 @@ export function AboutLegalSettings() {
       <SettingsCard title="フィードバック">
         <div className="flex gap-3">
           <Button variant="outline" asChild>
-            <Link href="https://github.com/t3-nico/boxlog-app/issues" target="_blank" rel="noopener noreferrer">
+            <Link
+              href="https://github.com/t3-nico/boxlog-app/issues"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <ExternalLink className="mr-2 h-4 w-4" />
               バグを報告
             </Link>
@@ -184,5 +214,5 @@ export function AboutLegalSettings() {
         </div>
       </SettingsCard>
     </div>
-  )
+  );
 }

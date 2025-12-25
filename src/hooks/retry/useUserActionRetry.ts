@@ -2,10 +2,10 @@
  * ユーザーアクション用自動リトライフック（控えめなリトライ）
  */
 
-'use client'
+'use client';
 
-import { RetryConfig } from './types'
-import { useAutoRetry } from './useAutoRetry'
+import { RetryConfig } from './types';
+import { useAutoRetry } from './useAutoRetry';
 
 /**
  * ユーザーアクション専用リトライフック
@@ -26,10 +26,10 @@ export function useUserActionRetry<T>(actionFunction: () => Promise<T>, config: 
     shouldRetry:
       config.shouldRetry ||
       ((error: Error) => {
-        const errorMessage = error.message.toLowerCase()
-        return errorMessage.includes('network') || errorMessage.includes('timeout')
+        const errorMessage = error.message.toLowerCase();
+        return errorMessage.includes('network') || errorMessage.includes('timeout');
       }),
-  }
+  };
 
-  return useAutoRetry(actionFunction, actionConfig)
+  return useAutoRetry(actionFunction, actionConfig);
 }

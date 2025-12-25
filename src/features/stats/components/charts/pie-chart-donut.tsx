@@ -1,16 +1,21 @@
-'use client'
+'use client';
 
-import { Pie, PieChart } from 'recharts'
+import { Pie, PieChart } from 'recharts';
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from '@/components/ui/chart';
 
 const chartData = [
   { category: '仕事', tasks: 45, fill: 'var(--color-work)' },
   { category: '学習', tasks: 30, fill: 'var(--color-study)' },
   { category: 'プライベート', tasks: 25, fill: 'var(--color-personal)' },
   { category: 'その他', tasks: 15, fill: 'var(--color-other)' },
-]
+];
 
 // カテゴリ分け（意味なし）→ 比較用カラー chart-1〜5 を使用
 const chartConfig = {
@@ -33,7 +38,7 @@ const chartConfig = {
     label: 'その他',
     color: 'var(--chart-4)',
   },
-} satisfies ChartConfig
+} satisfies ChartConfig;
 
 export function PieChartDonut() {
   return (
@@ -46,7 +51,13 @@ export function PieChartDonut() {
         <ChartContainer config={chartConfig} className="mx-auto aspect-square max-h-64">
           <PieChart>
             <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-            <Pie data={chartData} dataKey="tasks" nameKey="category" innerRadius={60} strokeWidth={5}>
+            <Pie
+              data={chartData}
+              dataKey="tasks"
+              nameKey="category"
+              innerRadius={60}
+              strokeWidth={5}
+            >
               {/* <Label
                 content={({ viewBox }) => {
                   if (viewBox && "cx" in viewBox && "cy" in viewBox) {
@@ -68,5 +79,5 @@ export function PieChartDonut() {
         </ChartContainer>
       </CardContent>
     </Card>
-  )
+  );
 }

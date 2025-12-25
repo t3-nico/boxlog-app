@@ -2,49 +2,49 @@
  * API エラーハンドリング統合システム
  * tRPC・Zod・エラーパターン辞書の統合エラー処理
  */
-import { type AppError } from '@/config/error-patterns'
-import { trackError } from '@/lib/analytics/vercel-analytics'
-import { TRPCError } from '@trpc/server'
-import { z } from 'zod'
-import { safeJsonStringify } from './json-utils'
+import { type AppError } from '@/config/error-patterns';
+import { trackError } from '@/lib/analytics/vercel-analytics';
+import { TRPCError } from '@trpc/server';
+import { z } from 'zod';
+import { safeJsonStringify } from './json-utils';
 /**
  * APIエラーレスポンス型
  */
 export interface APIErrorResponse {
-  success: false
+  success: false;
   error: {
-    code: string
-    message: string
-    details?: unknown
-    path?: string[]
-    userMessage?: string
-    timestamp: string
-    requestId?: string
-  }
+    code: string;
+    message: string;
+    details?: unknown;
+    path?: string[];
+    userMessage?: string;
+    timestamp: string;
+    requestId?: string;
+  };
 }
 /**
  * API成功レスポンス型
  */
 export interface APISuccessResponse<T = unknown> {
-  success: true
-  data: T
-  timestamp: string
-  requestId?: string
+  success: true;
+  data: T;
+  timestamp: string;
+  requestId?: string;
 }
 /**
  * 統一レスポンス型
  */
-export type APIResponse<T = unknown> = APISuccessResponse<T> | APIErrorResponse
+export type APIResponse<T = unknown> = APISuccessResponse<T> | APIErrorResponse;
 /**
  * Zodバリデーションエラーの日本語化
  */
 export function translateZodError(error: z.ZodError): {
-  message: string
+  message: string;
   details: Array<{
-    field: string
-    message: string
-    code: string
-  }>
+    field: string;
+    message: string;
+    code: string;
+  }>;
 } {
   const fieldErrorMap: Record<string, string> = {
     // 共通フィールド
@@ -68,7 +68,7 @@ export function translateZodError(error: z.ZodError): {
     query: '検索キーワード',
     sortBy: 'ソート項目',
     sortOrder: 'ソート順序',
-  }
+  };
   // Zod 4のissue codeに対応したエラーメッセージマップ
   const errorTypeMap: Record<string, string> = {
     invalid_type: 'の形式が正しくありません',
@@ -82,74 +82,75 @@ export function translateZodError(error: z.ZodError): {
     invalid_element: 'の要素が不正です',
     not_multiple_of: 'は指定された倍数ではありません',
     custom: '', // カスタムメッセージをそのまま使用
-  }
+  };
   const details = error.issues.map((err) => {
-    const fieldPath = err.path.join('.')
-    const fieldName = fieldErrorMap[fieldPath] || fieldPath
-    let message = err.message
+    const fieldPath = err.path.join('.');
+    const fieldName = fieldErrorMap[fieldPath] || fieldPath;
+    let message = err.message;
     // Zodのデフォルトメッセージを日本語化
     if (err.code !== 'custom') {
-      const baseMessage = errorTypeMap[err.code] || 'に問題があります'
+      const baseMessage = errorTypeMap[err.code] || 'に問題があります';
       switch (err.code) {
         case 'too_small': {
-          const minValue = 'minimum' in err ? err.minimum : undefined
+          const minValue = 'minimum' in err ? err.minimum : undefined;
           if (minValue !== undefined) {
-            message = `${fieldName}は${minValue}以上で入力してください`
+            message = `${fieldName}は${minValue}以上で入力してください`;
           } else {
-            message = `${fieldName}${baseMessage}`
+            message = `${fieldName}${baseMessage}`;
           }
-          break
+          break;
         }
         case 'too_big': {
-          const maxValue = 'maximum' in err ? err.maximum : undefined
+          const maxValue = 'maximum' in err ? err.maximum : undefined;
           if (maxValue !== undefined) {
-            message = `${fieldName}は${maxValue}以下で入力してください`
+            message = `${fieldName}は${maxValue}以下で入力してください`;
           } else {
-            message = `${fieldName}${baseMessage}`
+            message = `${fieldName}${baseMessage}`;
           }
-          break
+          break;
         }
         case 'invalid_type':
           if ('expected' in err) {
             if (err.expected === 'string') {
-              message = `${fieldName}は文字列で入力してください`
+              message = `${fieldName}は文字列で入力してください`;
             } else if (err.expected === 'number') {
-              message = `${fieldName}は数値で入力してください`
+              message = `${fieldName}は数値で入力してください`;
             } else if (err.expected === 'boolean') {
-              message = `${fieldName}はtrue/falseで指定してください`
+              message = `${fieldName}はtrue/falseで指定してください`;
             } else if (err.expected === 'date') {
-              message = `${fieldName}は有効な日付を入力してください`
+              message = `${fieldName}は有効な日付を入力してください`;
             } else {
-              message = `${fieldName}${baseMessage}`
+              message = `${fieldName}${baseMessage}`;
             }
           } else {
-            message = `${fieldName}${baseMessage}`
+            message = `${fieldName}${baseMessage}`;
           }
-          break
+          break;
         default:
-          message = `${fieldName}${baseMessage}`
+          message = `${fieldName}${baseMessage}`;
       }
     }
     return {
       field: fieldPath,
       message,
       code: err.code,
-    }
-  })
-  const primaryError = details[0]!
-  const summary = details.length === 1 ? primaryError.message : `入力内容に${details.length}件の問題があります`
+    };
+  });
+  const primaryError = details[0]!;
+  const summary =
+    details.length === 1 ? primaryError.message : `入力内容に${details.length}件の問題があります`;
   return {
     message: summary,
     details,
-  }
+  };
 }
 /**
  * tRPCエラーの日本語化とユーザーフレンドリー化
  */
 export function translateTRPCError(error: TRPCError): {
-  userMessage: string
-  technicalMessage: string
-  code: string
+  userMessage: string;
+  technicalMessage: string;
+  code: string;
 } {
   const codeMessageMap: Record<string, string> = {
     BAD_REQUEST: '入力内容に問題があります',
@@ -165,23 +166,23 @@ export function translateTRPCError(error: TRPCError): {
     TOO_MANY_REQUESTS: 'リクエストが多すぎます。しばらく時間をおいて再試行してください',
     CLIENT_CLOSED_REQUEST: 'リクエストがキャンセルされました',
     INTERNAL_SERVER_ERROR: 'サーバーエラーが発生しました',
-  }
-  const userMessage = codeMessageMap[error.code] || 'エラーが発生しました'
+  };
+  const userMessage = codeMessageMap[error.code] || 'エラーが発生しました';
   // Zodバリデーションエラーが含まれている場合の特別処理
   if (error.cause && typeof error.cause === 'object' && 'issues' in error.cause) {
-    const zodError = error.cause as z.ZodError
-    const translated = translateZodError(zodError)
+    const zodError = error.cause as z.ZodError;
+    const translated = translateZodError(zodError);
     return {
       userMessage: translated.message,
       technicalMessage: error.message,
       code: error.code,
-    }
+    };
   }
   return {
     userMessage,
     technicalMessage: error.message,
     code: error.code,
-  }
+  };
 }
 /**
  * 統一エラーハンドラー
@@ -193,23 +194,23 @@ export class APIErrorHandler {
   static handleError(
     error: unknown,
     context?: {
-      operation?: string
-      userId?: string
-      requestId?: string
-    }
+      operation?: string;
+      userId?: string;
+      requestId?: string;
+    },
   ): APIErrorResponse {
-    const timestamp = new Date().toISOString()
-    const requestId = context?.requestId || crypto.randomUUID()
+    const timestamp = new Date().toISOString();
+    const requestId = context?.requestId || crypto.randomUUID();
     // TRPCエラーの処理
     if (error instanceof TRPCError) {
-      const translated = translateTRPCError(error)
+      const translated = translateTRPCError(error);
       // Analytics追跡
       trackError({
         errorCode: this.mapTRPCCodeToNumber(error.code),
         errorCategory: 'API',
         severity: this.mapTRPCCodeToSeverity(error.code),
         wasRecovered: false,
-      })
+      });
       return {
         success: false,
         error: {
@@ -219,17 +220,17 @@ export class APIErrorHandler {
           timestamp,
           requestId,
         },
-      }
+      };
     }
     // Zodバリデーションエラーの処理
     if (error instanceof z.ZodError) {
-      const translated = translateZodError(error)
+      const translated = translateZodError(error);
       trackError({
         errorCode: 400,
         errorCategory: 'Validation',
         severity: 'medium',
         wasRecovered: false,
-      })
+      });
       return {
         success: false,
         error: {
@@ -240,17 +241,17 @@ export class APIErrorHandler {
           timestamp,
           requestId,
         },
-      }
+      };
     }
     // AppErrorの処理
     if (error && typeof error === 'object' && 'code' in error && 'message' in error) {
-      const appError = error as AppError
+      const appError = error as AppError;
       trackError({
         errorCode: 500,
         errorCategory: 'Application',
         severity: 'high',
         wasRecovered: false,
-      })
+      });
       return {
         success: false,
         error: {
@@ -261,16 +262,16 @@ export class APIErrorHandler {
           timestamp,
           requestId,
         },
-      }
+      };
     }
     // 一般的なエラーの処理
-    const errorMessage = error instanceof Error ? error.message : String(error)
+    const errorMessage = error instanceof Error ? error.message : String(error);
     trackError({
       errorCode: 500,
       errorCategory: 'Unknown',
       severity: 'high',
       wasRecovered: false,
-    })
+    });
     return {
       success: false,
       error: {
@@ -280,7 +281,7 @@ export class APIErrorHandler {
         timestamp,
         requestId,
       },
-    }
+    };
   }
   /**
    * 成功レスポンスを生成
@@ -291,7 +292,7 @@ export class APIErrorHandler {
       data,
       timestamp: new Date().toISOString(),
       requestId: requestId || crypto.randomUUID(),
-    }
+    };
   }
   /**
    * tRPCエラーコードを数値にマッピング
@@ -311,8 +312,8 @@ export class APIErrorHandler {
       TOO_MANY_REQUESTS: 429,
       CLIENT_CLOSED_REQUEST: 499,
       INTERNAL_SERVER_ERROR: 500,
-    }
-    return mapping[code] || 500
+    };
+    return mapping[code] || 500;
   }
   /**
    * tRPCエラーコードを重要度にマッピング
@@ -321,14 +322,14 @@ export class APIErrorHandler {
     switch (code) {
       case 'BAD_REQUEST':
       case 'UNPROCESSABLE_CONTENT':
-        return 'medium'
+        return 'medium';
       case 'UNAUTHORIZED':
       case 'FORBIDDEN':
-        return 'high'
+        return 'high';
       case 'INTERNAL_SERVER_ERROR':
-        return 'critical'
+        return 'critical';
       default:
-        return 'medium'
+        return 'medium';
     }
   }
 }
@@ -337,7 +338,7 @@ export class APIErrorHandler {
  */
 export function useErrorHandler() {
   const handleError = (error: unknown, context?: { operation?: string }) => {
-    const errorResponse = APIErrorHandler.handleError(error, context)
+    const errorResponse = APIErrorHandler.handleError(error, context);
     // エラーログの出力（安全なJSON処理）
     console.error(
       'API Error:',
@@ -346,24 +347,24 @@ export function useErrorHandler() {
           ...errorResponse.error,
           ...(context ? { context } : {}),
         } as Parameters<typeof safeJsonStringify>[0],
-        2
-      )
-    )
-    return errorResponse
-  }
+        2,
+      ),
+    );
+    return errorResponse;
+  };
   const handleZodError = (error: z.ZodError) => {
-    const translated = translateZodError(error)
-    console.warn('Validation Error:', translated)
-    return translated
-  }
+    const translated = translateZodError(error);
+    console.warn('Validation Error:', translated);
+    return translated;
+  };
   const handleTRPCError = (error: TRPCError) => {
-    const translated = translateTRPCError(error)
-    console.error('tRPC Error:', translated)
-    return translated
-  }
+    const translated = translateTRPCError(error);
+    console.error('tRPC Error:', translated);
+    return translated;
+  };
   return {
     handleError,
     handleZodError,
     handleTRPCError,
-  }
+  };
 }

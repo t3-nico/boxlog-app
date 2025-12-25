@@ -21,6 +21,6 @@ export {
   createRotatingFileOutput,
   createSupabaseOutput,
   createWebhookOutput,
-} from './outputs/index'
+} from './outputs/index';
 
-export { default } from './outputs/index'
+export { default } from './outputs/index';

@@ -1,12 +1,12 @@
-import { createTableSortStore, type SortDirection } from '@/features/table'
+import { createTableSortStore, type SortDirection } from '@/features/table';
 
 /**
  * タグソート対象フィールド
  */
-export type TagSortField = 'tag_number' | 'name' | 'group' | 'created_at' | 'last_used'
+export type TagSortField = 'tag_number' | 'name' | 'group' | 'created_at' | 'last_used';
 
 // Re-export SortDirection for backward compatibility
-export type { SortDirection }
+export type { SortDirection };
 
 /**
  * タグソートストア
@@ -21,4 +21,4 @@ export const useTagSortStore = createTableSortStore<TagSortField>({
   persistKey: 'tag-sort-store-v1',
   storeName: 'tag-sort-store',
   allowClearSort: false,
-})
+});

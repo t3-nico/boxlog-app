@@ -1,1 +1,1 @@
-export { DnDProvider } from './DnDProvider'
+export { DnDProvider } from './DnDProvider';

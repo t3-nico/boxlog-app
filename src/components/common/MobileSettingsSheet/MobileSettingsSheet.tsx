@@ -1,29 +1,36 @@
-'use client'
+'use client';
 
-import { Button } from '@/components/ui/button'
-import { Drawer, DrawerClose, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from '@/components/ui/drawer'
-import { SlidersHorizontal, X } from 'lucide-react'
-import { useState } from 'react'
+import { Button } from '@/components/ui/button';
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from '@/components/ui/drawer';
+import { SlidersHorizontal, X } from 'lucide-react';
+import { useState } from 'react';
 
 interface MobileSettingsSheetProps {
   /** シートのタイトル */
-  title: string
+  title: string;
   /** アクティブな設定があるかどうか（ドットインジケーター表示） */
-  hasActiveSettings?: boolean
+  hasActiveSettings?: boolean;
   /** シートの内容 */
-  children: React.ReactNode
+  children: React.ReactNode;
   /** リセットボタンのラベル（表示する場合） */
-  resetLabel?: string
+  resetLabel?: string;
   /** リセット時のコールバック */
-  onReset?: () => void
+  onReset?: () => void;
   /** トリガーボタンのカスタムアイコン */
-  triggerIcon?: React.ReactNode
+  triggerIcon?: React.ReactNode;
   /** 外部から制御する場合のopen状態 */
-  open?: boolean
+  open?: boolean;
   /** 外部から制御する場合のonOpenChange */
-  onOpenChange?: (open: boolean) => void
+  onOpenChange?: (open: boolean) => void;
   /** トリガーボタンを非表示にする（外部制御時） */
-  hideTrigger?: boolean
+  hideTrigger?: boolean;
 }
 
 /**
@@ -57,12 +64,12 @@ export function MobileSettingsSheet({
   onOpenChange: controlledOnOpenChange,
   hideTrigger = false,
 }: MobileSettingsSheetProps) {
-  const [internalOpen, setInternalOpen] = useState(false)
+  const [internalOpen, setInternalOpen] = useState(false);
 
   // 外部制御モードかどうか
-  const isControlled = controlledOpen !== undefined
-  const open = isControlled ? controlledOpen : internalOpen
-  const setOpen = isControlled ? controlledOnOpenChange! : setInternalOpen
+  const isControlled = controlledOpen !== undefined;
+  const open = isControlled ? controlledOpen : internalOpen;
+  const setOpen = isControlled ? controlledOnOpenChange! : setInternalOpen;
 
   return (
     <Drawer open={open} onOpenChange={setOpen}>
@@ -70,7 +77,9 @@ export function MobileSettingsSheet({
         <DrawerTrigger asChild>
           <Button variant="ghost" size="icon-sm" className="relative shrink-0">
             {triggerIcon ?? <SlidersHorizontal className="size-4" />}
-            {hasActiveSettings && <span className="bg-primary absolute -top-0.5 -right-0.5 size-2 rounded-full" />}
+            {hasActiveSettings && (
+              <span className="bg-primary absolute -top-0.5 -right-0.5 size-2 rounded-full" />
+            )}
           </Button>
         </DrawerTrigger>
       )}
@@ -94,5 +103,5 @@ export function MobileSettingsSheet({
         <div className="max-h-[60vh] overflow-y-auto px-4 pb-8">{children}</div>
       </DrawerContent>
     </Drawer>
-  )
+  );
 }

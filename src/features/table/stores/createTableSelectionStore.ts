@@ -1,18 +1,18 @@
-import { create } from 'zustand'
-import { devtools } from 'zustand/middleware'
+import { create } from 'zustand';
+import { devtools } from 'zustand/middleware';
 
 /**
  * 選択ストアの状態
  */
 export interface TableSelectionState {
-  selectedIds: Set<string>
-  toggleSelection: (id: string) => void
-  toggleAll: (ids: string[]) => void
-  setSelectedIds: (ids: string[]) => void
-  clearSelection: () => void
-  isSelected: (id: string) => boolean
-  getSelectedCount: () => number
-  getSelectedIds: () => Set<string>
+  selectedIds: Set<string>;
+  toggleSelection: (id: string) => void;
+  toggleAll: (ids: string[]) => void;
+  setSelectedIds: (ids: string[]) => void;
+  clearSelection: () => void;
+  isSelected: (id: string) => boolean;
+  getSelectedCount: () => number;
+  getSelectedIds: () => Set<string>;
 }
 
 /**
@@ -20,7 +20,7 @@ export interface TableSelectionState {
  */
 export interface CreateTableSelectionStoreConfig {
   /** devtools 表示名 */
-  storeName?: string
+  storeName?: string;
 }
 
 /**
@@ -38,7 +38,7 @@ export interface CreateTableSelectionStoreConfig {
  * ```
  */
 export function createTableSelectionStore(config: CreateTableSelectionStoreConfig = {}) {
-  const { storeName = 'table-selection-store' } = config
+  const { storeName = 'table-selection-store' } = config;
 
   return create<TableSelectionState>()(
     devtools(
@@ -46,26 +46,26 @@ export function createTableSelectionStore(config: CreateTableSelectionStoreConfi
         selectedIds: new Set(),
 
         toggleSelection: (id) => {
-          const { selectedIds } = get()
-          const newSet = new Set(selectedIds)
+          const { selectedIds } = get();
+          const newSet = new Set(selectedIds);
 
           if (newSet.has(id)) {
-            newSet.delete(id)
+            newSet.delete(id);
           } else {
-            newSet.add(id)
+            newSet.add(id);
           }
 
-          set({ selectedIds: newSet })
+          set({ selectedIds: newSet });
         },
 
         toggleAll: (ids) => {
-          const { selectedIds } = get()
-          const allSelected = ids.every((id) => selectedIds.has(id))
+          const { selectedIds } = get();
+          const allSelected = ids.every((id) => selectedIds.has(id));
 
           if (allSelected) {
-            set({ selectedIds: new Set() })
+            set({ selectedIds: new Set() });
           } else {
-            set({ selectedIds: new Set(ids) })
+            set({ selectedIds: new Set(ids) });
           }
         },
 
@@ -79,7 +79,7 @@ export function createTableSelectionStore(config: CreateTableSelectionStoreConfi
 
         getSelectedIds: () => get().selectedIds,
       }),
-      { name: storeName }
-    )
-  )
+      { name: storeName },
+    ),
+  );
 }

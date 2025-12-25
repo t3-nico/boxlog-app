@@ -1,15 +1,24 @@
-'use client'
+'use client';
 
-import { useEffect } from 'react'
+import { useEffect } from 'react';
 
-import { motion, useMotionValue, useReducedMotion, useSpring } from 'framer-motion'
+import { motion, useMotionValue, useReducedMotion, useSpring } from 'framer-motion';
 
-import type { ParallaxProps, SpringAnimationProps, StaggeredAnimationProps, TouchAnimationProps } from '../types'
-import { GPU_OPTIMIZED_STYLES } from '../types'
+import type {
+  ParallaxProps,
+  SpringAnimationProps,
+  StaggeredAnimationProps,
+  TouchAnimationProps,
+} from '../types';
+import { GPU_OPTIMIZED_STYLES } from '../types';
 
 // ステガード（段階的）アニメーション
-export function StaggeredAnimation({ children, staggerDelay = 0.05, className }: StaggeredAnimationProps) {
-  const prefersReducedMotion = useReducedMotion()
+export function StaggeredAnimation({
+  children,
+  staggerDelay = 0.05,
+  className,
+}: StaggeredAnimationProps) {
+  const prefersReducedMotion = useReducedMotion();
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -20,7 +29,7 @@ export function StaggeredAnimation({ children, staggerDelay = 0.05, className }:
         delayChildren: 0.1,
       },
     },
-  }
+  };
 
   const itemVariants = {
     hidden: { y: 20, opacity: 0 },
@@ -32,7 +41,7 @@ export function StaggeredAnimation({ children, staggerDelay = 0.05, className }:
         ease: 'easeOut' as const,
       },
     },
-  }
+  };
 
   return (
     <motion.div
@@ -48,7 +57,7 @@ export function StaggeredAnimation({ children, staggerDelay = 0.05, className }:
         </motion.div>
       ))}
     </motion.div>
-  )
+  );
 }
 
 // スプリングアニメーション（高性能な物理ベースアニメーション）
@@ -58,12 +67,12 @@ export function SpringAnimation({
   springConfig = { stiffness: 300, damping: 30, mass: 1 },
   className,
 }: SpringAnimationProps) {
-  const scaleValue = useMotionValue(1)
-  const springScale = useSpring(scaleValue, springConfig)
+  const scaleValue = useMotionValue(1);
+  const springScale = useSpring(scaleValue, springConfig);
 
   useEffect(() => {
-    scaleValue.set(isActive ? 1.05 : 1)
-  }, [isActive, scaleValue])
+    scaleValue.set(isActive ? 1.05 : 1);
+  }, [isActive, scaleValue]);
 
   return (
     <motion.div
@@ -75,30 +84,30 @@ export function SpringAnimation({
     >
       {children}
     </motion.div>
-  )
+  );
 }
 
 // パララックス効果
 export function Parallax({ children, offset, className }: ParallaxProps) {
-  const prefersReducedMotion = useReducedMotion()
-  const y = useMotionValue(0)
-  const springY = useSpring(y, { stiffness: 400, damping: 90 })
+  const prefersReducedMotion = useReducedMotion();
+  const y = useMotionValue(0);
+  const springY = useSpring(y, { stiffness: 400, damping: 90 });
 
   useEffect(() => {
     if (!prefersReducedMotion) {
       const handleScroll = () => {
-        const scrolled = window.scrollY
-        y.set(scrolled * offset)
-      }
+        const scrolled = window.scrollY;
+        y.set(scrolled * offset);
+      };
 
-      window.addEventListener('scroll', handleScroll, { passive: true })
-      return () => window.removeEventListener('scroll', handleScroll)
+      window.addEventListener('scroll', handleScroll, { passive: true });
+      return () => window.removeEventListener('scroll', handleScroll);
     }
-    return undefined
-  }, [offset, y, prefersReducedMotion])
+    return undefined;
+  }, [offset, y, prefersReducedMotion]);
 
   if (prefersReducedMotion) {
-    return <div className={className}>{children}</div>
+    return <div className={className}>{children}</div>;
   }
 
   return (
@@ -111,12 +120,12 @@ export function Parallax({ children, offset, className }: ParallaxProps) {
     >
       {children}
     </motion.div>
-  )
+  );
 }
 
 // モバイル対応のタッチアニメーション
 export function TouchAnimation({ children, onTap, className }: TouchAnimationProps) {
-  const prefersReducedMotion = useReducedMotion()
+  const prefersReducedMotion = useReducedMotion();
 
   return (
     <motion.div
@@ -128,5 +137,5 @@ export function TouchAnimation({ children, onTap, className }: TouchAnimationPro
     >
       {children}
     </motion.div>
-  )
+  );
 }

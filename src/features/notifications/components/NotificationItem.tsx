@@ -1,24 +1,24 @@
-'use client'
+'use client';
 
-import { Button } from '@/components/ui/button'
-import type { NotificationType } from '@/schemas/notifications'
-import { formatDistanceToNow } from 'date-fns'
-import { enUS, ja } from 'date-fns/locale'
-import { AlertTriangle, Bell, CheckCircle, Edit, Info, PlusCircle, Trash2 } from 'lucide-react'
+import { Button } from '@/components/ui/button';
+import type { NotificationType } from '@/schemas/notifications';
+import { formatDistanceToNow } from 'date-fns';
+import { enUS, ja } from 'date-fns/locale';
+import { AlertTriangle, Bell, CheckCircle, Edit, Info, PlusCircle, Trash2 } from 'lucide-react';
 
 interface NotificationItemProps {
-  id: string
-  type: NotificationType
-  title: string
-  message: string | null
-  isRead: boolean
-  createdAt: string
-  actionUrl?: string | null | undefined
-  locale: 'ja' | 'en'
-  onMarkAsRead: (id: string) => void
-  onDelete: (id: string) => void
-  onNavigate?: (url: string) => void
-  isDeleting?: boolean
+  id: string;
+  type: NotificationType;
+  title: string;
+  message: string | null;
+  isRead: boolean;
+  createdAt: string;
+  actionUrl?: string | null | undefined;
+  locale: 'ja' | 'en';
+  onMarkAsRead: (id: string) => void;
+  onDelete: (id: string) => void;
+  onNavigate?: (url: string) => void;
+  isDeleting?: boolean;
 }
 
 const typeIcons: Record<NotificationType, React.ReactNode> = {
@@ -29,7 +29,7 @@ const typeIcons: Record<NotificationType, React.ReactNode> = {
   plan_completed: <CheckCircle className="h-4 w-4" />,
   trash_warning: <AlertTriangle className="h-4 w-4" />,
   system: <Info className="h-4 w-4" />,
-}
+};
 
 const typeColors: Record<NotificationType, string> = {
   reminder: 'text-primary',
@@ -39,7 +39,7 @@ const typeColors: Record<NotificationType, string> = {
   plan_completed: 'text-success',
   trash_warning: 'text-warning',
   system: 'text-muted-foreground',
-}
+};
 
 export function NotificationItem({
   id,
@@ -55,31 +55,31 @@ export function NotificationItem({
   onNavigate,
   isDeleting,
 }: NotificationItemProps) {
-  const dateLocale = locale === 'ja' ? ja : enUS
+  const dateLocale = locale === 'ja' ? ja : enUS;
 
   const formatTime = (timestamp: string) => {
     try {
-      return formatDistanceToNow(new Date(timestamp), { addSuffix: true, locale: dateLocale })
+      return formatDistanceToNow(new Date(timestamp), { addSuffix: true, locale: dateLocale });
     } catch {
-      return timestamp
+      return timestamp;
     }
-  }
+  };
 
   const handleClick = () => {
     if (!isRead) {
-      onMarkAsRead(id)
+      onMarkAsRead(id);
     }
     if (actionUrl && onNavigate) {
-      onNavigate(actionUrl)
+      onNavigate(actionUrl);
     }
-  }
+  };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault()
-      handleClick()
+      e.preventDefault();
+      handleClick();
     }
-  }
+  };
 
   return (
     <div
@@ -99,9 +99,13 @@ export function NotificationItem({
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
             <h4 className="truncate text-sm font-medium">{title}</h4>
-            {!isRead && <span className="bg-primary h-1.5 w-1.5 shrink-0 rounded-full" aria-label="未読" />}
+            {!isRead && (
+              <span className="bg-primary h-1.5 w-1.5 shrink-0 rounded-full" aria-label="未読" />
+            )}
           </div>
-          {message && <p className="text-muted-foreground mt-0.5 line-clamp-1 text-xs">{message}</p>}
+          {message && (
+            <p className="text-muted-foreground mt-0.5 line-clamp-1 text-xs">{message}</p>
+          )}
           <span className="text-muted-foreground mt-1 block text-xs">{formatTime(createdAt)}</span>
         </div>
 
@@ -111,8 +115,8 @@ export function NotificationItem({
           size="sm"
           className="h-7 w-7 shrink-0 p-0"
           onClick={(e) => {
-            e.stopPropagation()
-            onDelete(id)
+            e.stopPropagation();
+            onDelete(id);
           }}
           disabled={isDeleting}
         >
@@ -120,5 +124,5 @@ export function NotificationItem({
         </Button>
       </div>
     </div>
-  )
+  );
 }

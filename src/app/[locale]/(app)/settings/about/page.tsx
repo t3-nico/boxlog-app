@@ -1,8 +1,8 @@
-'use client'
+'use client';
 
-import { AboutLegalSettings } from '@/features/settings/components/about-legal-settings'
-import { SettingsPageWrapper } from '@/features/settings/components/page/SettingsPageWrapper'
-import { useTranslations } from 'next-intl'
+import { AboutLegalSettings } from '@/features/settings/components/about-legal-settings';
+import { SettingsPageWrapper } from '@/features/settings/components/page/SettingsPageWrapper';
+import { useTranslations } from 'next-intl';
 
 /**
  * About設定ページ
@@ -10,11 +10,11 @@ import { useTranslations } from 'next-intl'
  * 法的情報、バージョン情報
  */
 export default function AboutSettingsPage() {
-  const t = useTranslations()
+  const t = useTranslations();
 
   return (
     <SettingsPageWrapper title={t('settings.dialog.categories.about')}>
       <AboutLegalSettings />
     </SettingsPageWrapper>
-  )
+  );
 }

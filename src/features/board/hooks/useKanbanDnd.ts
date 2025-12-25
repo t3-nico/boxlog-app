@@ -6,10 +6,10 @@ import {
   TouchSensor,
   useSensor,
   useSensors,
-} from '@dnd-kit/core'
-import { useState } from 'react'
-import { useKanbanStore } from '../stores/useKanbanStore'
-import type { DragEvent, KanbanCard } from '../types'
+} from '@dnd-kit/core';
+import { useState } from 'react';
+import { useKanbanStore } from '../stores/useKanbanStore';
+import type { DragEvent, KanbanCard } from '../types';
 
 /**
  * Kanbanボード用のドラッグ&ドロップフック
@@ -29,8 +29,8 @@ import type { DragEvent, KanbanCard } from '../types'
  * ```
  */
 export function useKanbanDnd() {
-  const moveCard = useKanbanStore((state) => state.moveCard)
-  const [activeCard, setActiveCard] = useState<KanbanCard | null>(null)
+  const moveCard = useKanbanStore((state) => state.moveCard);
+  const [activeCard, setActiveCard] = useState<KanbanCard | null>(null);
 
   // センサー設定：マウス、タッチ、キーボード操作に対応
   const sensors = useSensors(
@@ -48,37 +48,37 @@ export function useKanbanDnd() {
       },
     }),
     // キーボード操作
-    useSensor(KeyboardSensor)
-  )
+    useSensor(KeyboardSensor),
+  );
 
   /**
    * ドラッグ開始時：ドラッグ中のカードを保存
    */
   const handleDragStart = (event: DragStartEvent) => {
-    const { active } = event
-    const card = active.data.current?.card as KanbanCard | undefined
+    const { active } = event;
+    const card = active.data.current?.card as KanbanCard | undefined;
 
     if (card) {
-      setActiveCard(card)
+      setActiveCard(card);
     }
-  }
+  };
 
   /**
    * ドラッグ終了時：カードを移動
    */
   const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event
+    const { active, over } = event;
 
     // ドロップ先がない場合は何もしない
     if (!over) {
-      setActiveCard(null)
-      return
+      setActiveCard(null);
+      return;
     }
 
     // 同じ位置にドロップした場合は何もしない
     if (active.id === over.id) {
-      setActiveCard(null)
-      return
+      setActiveCard(null);
+      return;
     }
 
     // DragEvent構築
@@ -88,19 +88,19 @@ export function useKanbanDnd() {
       targetColumnId: over.data.current?.columnId as string,
       sourceIndex: active.data.current?.index as number,
       targetIndex: over.data.current?.index as number,
-    }
+    };
 
     // カード移動
-    moveCard(dragEvent)
-    setActiveCard(null)
-  }
+    moveCard(dragEvent);
+    setActiveCard(null);
+  };
 
   /**
    * ドラッグキャンセル時
    */
   const handleDragCancel = () => {
-    setActiveCard(null)
-  }
+    setActiveCard(null);
+  };
 
   return {
     sensors,
@@ -108,5 +108,5 @@ export function useKanbanDnd() {
     handleDragEnd,
     handleDragCancel,
     activeCard,
-  }
+  };
 }

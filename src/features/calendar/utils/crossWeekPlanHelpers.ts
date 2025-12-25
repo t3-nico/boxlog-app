@@ -1,15 +1,24 @@
-import { addDays, endOfDay, format, isSameDay, isSaturday, isSunday, isWithinInterval, startOfDay } from 'date-fns'
+import {
+  addDays,
+  endOfDay,
+  format,
+  isSameDay,
+  isSaturday,
+  isSunday,
+  isWithinInterval,
+  startOfDay,
+} from 'date-fns';
 
-import { MS_PER_DAY, MS_PER_MINUTE } from '@/constants/time'
-import { CalendarPlan } from '@/features/calendar/types/calendar.types'
+import { MS_PER_DAY, MS_PER_MINUTE } from '@/constants/time';
+import { CalendarPlan } from '@/features/calendar/types/calendar.types';
 
 export interface PlanSegment extends CalendarPlan {
-  originalPlan: CalendarPlan
-  segmentStart: Date
-  segmentEnd: Date
-  isPartialSegment: boolean
-  segmentType: 'start' | 'middle' | 'end' | 'full'
-  originalDuration: number
+  originalPlan: CalendarPlan;
+  segmentStart: Date;
+  segmentEnd: Date;
+  isPartialSegment: boolean;
+  segmentType: 'start' | 'middle' | 'end' | 'full';
+  originalDuration: number;
 }
 
 /**
@@ -19,8 +28,12 @@ export interface PlanSegment extends CalendarPlan {
  * @param weekStart 週の開始日
  * @returns 分割されたプランセグメント
  */
-export function splitCrossWeekPlans(plans: CalendarPlan[], showWeekends: boolean, weekStart: Date): PlanSegment[] {
-  const segments: PlanSegment[] = []
+export function splitCrossWeekPlans(
+  plans: CalendarPlan[],
+  showWeekends: boolean,
+  weekStart: Date,
+): PlanSegment[] {
+  const segments: PlanSegment[] = [];
 
   plans.forEach((plan) => {
     if (!plan.startDate || !plan.endDate) {
@@ -33,12 +46,12 @@ export function splitCrossWeekPlans(plans: CalendarPlan[], showWeekends: boolean
         isPartialSegment: false,
         segmentType: 'full',
         originalDuration: plan.duration || 60,
-      })
-      return
+      });
+      return;
     }
 
-    const planStart = startOfDay(plan.startDate)
-    const planEnd = endOfDay(plan.endDate)
+    const planStart = startOfDay(plan.startDate);
+    const planEnd = endOfDay(plan.endDate);
 
     // 単日プランの場合
     if (isSameDay(planStart, planEnd)) {
@@ -50,62 +63,73 @@ export function splitCrossWeekPlans(plans: CalendarPlan[], showWeekends: boolean
         isPartialSegment: false,
         segmentType: 'full',
         originalDuration: plan.duration || 60,
-      })
-      return
+      });
+      return;
     }
 
     // 複数日プランを分割
-    const planSegments = createPlanSegments(plan, showWeekends, weekStart)
-    segments.push(...planSegments)
-  })
+    const planSegments = createPlanSegments(plan, showWeekends, weekStart);
+    segments.push(...planSegments);
+  });
 
-  return segments
+  return segments;
 }
 
 /**
  * 複数日プランを日毎のセグメントに分割
  */
-function createPlanSegments(plan: CalendarPlan, showWeekends: boolean, _weekStart: Date): PlanSegment[] {
-  const segments: PlanSegment[] = []
+function createPlanSegments(
+  plan: CalendarPlan,
+  showWeekends: boolean,
+  _weekStart: Date,
+): PlanSegment[] {
+  const segments: PlanSegment[] = [];
 
-  if (!plan.startDate || !plan.endDate) return segments
+  if (!plan.startDate || !plan.endDate) return segments;
 
-  let currentDate = startOfDay(plan.startDate)
-  const endDate = startOfDay(plan.endDate)
-  const originalDuration = plan.duration || 60
+  let currentDate = startOfDay(plan.startDate);
+  const endDate = startOfDay(plan.endDate);
+  const originalDuration = plan.duration || 60;
 
-  let segmentIndex = 0
-  const totalDays = Math.ceil((endDate.getTime() - currentDate.getTime()) / MS_PER_DAY) + 1
+  let segmentIndex = 0;
+  const totalDays = Math.ceil((endDate.getTime() - currentDate.getTime()) / MS_PER_DAY) + 1;
 
   while (currentDate <= endDate) {
     // 週末表示がOFFの場合、土日をスキップ
     if (!showWeekends && (isSaturday(currentDate) || isSunday(currentDate))) {
-      currentDate = addDays(currentDate, 1)
-      continue
+      currentDate = addDays(currentDate, 1);
+      continue;
     }
 
-    const isFirstSegment = segmentIndex === 0
-    const isLastSegment = isSameDay(currentDate, endDate)
+    const isFirstSegment = segmentIndex === 0;
+    const isLastSegment = isSameDay(currentDate, endDate);
 
     // セグメントの開始・終了時刻を計算
     const segmentStart = isFirstSegment
       ? plan.startDate
-      : new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 0, 0, 0)
+      : new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 0, 0, 0);
 
     const segmentEnd = isLastSegment
       ? plan.endDate
-      : new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 23, 59, 59)
+      : new Date(
+          currentDate.getFullYear(),
+          currentDate.getMonth(),
+          currentDate.getDate(),
+          23,
+          59,
+          59,
+        );
 
     // セグメントタイプを決定
-    let segmentType: 'start' | 'middle' | 'end' | 'full'
+    let segmentType: 'start' | 'middle' | 'end' | 'full';
     if (totalDays === 1) {
-      segmentType = 'full'
+      segmentType = 'full';
     } else if (isFirstSegment) {
-      segmentType = 'start'
+      segmentType = 'start';
     } else if (isLastSegment) {
-      segmentType = 'end'
+      segmentType = 'end';
     } else {
-      segmentType = 'middle'
+      segmentType = 'middle';
     }
 
     // セグメントを作成
@@ -124,13 +148,13 @@ function createPlanSegments(plan: CalendarPlan, showWeekends: boolean, _weekStar
       title: segmentType === 'full' ? plan.title : `${plan.title} ${getSegmentLabel(segmentType)}`,
       // 分割されたセグメントの継続時間を計算
       duration: Math.ceil((segmentEnd.getTime() - segmentStart.getTime()) / MS_PER_MINUTE),
-    })
+    });
 
-    currentDate = addDays(currentDate, 1)
-    segmentIndex++
+    currentDate = addDays(currentDate, 1);
+    segmentIndex++;
   }
 
-  return segments
+  return segments;
 }
 
 /**
@@ -139,29 +163,32 @@ function createPlanSegments(plan: CalendarPlan, showWeekends: boolean, _weekStar
 function getSegmentLabel(segmentType: 'start' | 'middle' | 'end' | 'full'): string {
   switch (segmentType) {
     case 'start':
-      return '(開始)'
+      return '(開始)';
     case 'middle':
-      return '(継続)'
+      return '(継続)';
     case 'end':
-      return '(終了)'
+      return '(終了)';
     case 'full':
     default:
-      return ''
+      return '';
   }
 }
 
 /**
  * 週末に含まれるプランをフィルタリング
  */
-export function filterWeekendPlans(plans: CalendarPlan[], dateRange: { start: Date; end: Date }): CalendarPlan[] {
+export function filterWeekendPlans(
+  plans: CalendarPlan[],
+  dateRange: { start: Date; end: Date },
+): CalendarPlan[] {
   return plans.filter((plan) => {
-    if (!plan.startDate) return false
+    if (!plan.startDate) return false;
 
-    const planDate = plan.startDate
-    const isWeekend = isSaturday(planDate) || isSunday(planDate)
+    const planDate = plan.startDate;
+    const isWeekend = isSaturday(planDate) || isSunday(planDate);
 
-    return isWeekend && isWithinInterval(planDate, dateRange)
-  })
+    return isWeekend && isWithinInterval(planDate, dateRange);
+  });
 }
 
 /**
@@ -169,11 +196,11 @@ export function filterWeekendPlans(plans: CalendarPlan[], dateRange: { start: Da
  */
 export function detectFridayToMondayPlans(plans: CalendarPlan[]): CalendarPlan[] {
   return plans.filter((plan) => {
-    if (!plan.startDate || !plan.endDate) return false
+    if (!plan.startDate || !plan.endDate) return false;
 
-    const startDay = plan.startDate.getDay() // 0=Sunday, 5=Friday
-    const endDay = plan.endDate.getDay() // 1=Monday
+    const startDay = plan.startDate.getDay(); // 0=Sunday, 5=Friday
+    const endDay = plan.endDate.getDay(); // 1=Monday
 
-    return startDay === 5 && endDay === 1 // Friday to Monday
-  })
+    return startDay === 5 && endDay === 1; // Friday to Monday
+  });
 }

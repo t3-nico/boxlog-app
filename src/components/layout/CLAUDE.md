@@ -71,7 +71,7 @@ export function BaseLayout({ children }: BaseLayoutProps) {
     <Providers>
       <BaseLayoutContent>{children}</BaseLayoutContent>
     </Providers>
-  )
+  );
 }
 ```
 
@@ -89,14 +89,18 @@ export function BaseLayout({ children }: BaseLayoutProps) {
 
 ```tsx
 export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
-  const isMobile = useMediaQuery('(max-width: 768px)')
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
   const content = (
     <div className="flex h-screen flex-col">
       <a href="#main-content">スキップリンク</a>
 
       <div className="bg-secondary flex flex-1 overflow-hidden">
-        {isMobile ? <MobileLayout>{children}</MobileLayout> : <DesktopLayout locale={locale}>{children}</DesktopLayout>}
+        {isMobile ? (
+          <MobileLayout>{children}</MobileLayout>
+        ) : (
+          <DesktopLayout locale={locale}>{children}</DesktopLayout>
+        )}
       </div>
 
       <FloatingActionButton locale={locale} />
@@ -104,14 +108,14 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
       <CookieConsentBanner />
       {isMobile && <MobileBottomNavigation />}
     </div>
-  )
+  );
 
   // カレンダーページの場合はProviderでラップ
   return calendarProviderProps ? (
     <CalendarNavigationProvider {...calendarProviderProps}>{content}</CalendarNavigationProvider>
   ) : (
     content
-  )
+  );
 }
 ```
 
@@ -134,7 +138,7 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
 
 ```tsx
 export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
-  const { isOpen } = useSidebarStore()
+  const { isOpen } = useSidebarStore();
 
   return (
     <ResizablePanelGroup direction="horizontal">
@@ -152,7 +156,7 @@ export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
         </div>
       </ResizablePanel>
     </ResizablePanelGroup>
-  )
+  );
 }
 ```
 
@@ -168,7 +172,7 @@ export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
 
 ```tsx
 export function MobileLayout({ children }: MobileLayoutProps) {
-  const { isOpen, toggle } = useSidebarStore()
+  const { isOpen, toggle } = useSidebarStore();
 
   return (
     <>
@@ -183,7 +187,7 @@ export function MobileLayout({ children }: MobileLayoutProps) {
         <MainContentWrapper>{children}</MainContentWrapper>
       </div>
     </>
-  )
+  );
 }
 ```
 
@@ -206,7 +210,7 @@ export function MainContentWrapper({ children }: MainContentWrapperProps) {
       </main>
       <Inspector />
     </div>
-  )
+  );
 }
 ```
 
@@ -227,12 +231,12 @@ Floating Action Button（FAB）、新規イベント作成を開始。
 
 ```tsx
 export function FloatingActionButton({ locale }: FloatingActionButtonProps) {
-  const { t } = useI18n(locale)
-  const { openCreateInspector } = useCreateEventInspector()
+  const { t } = useI18n(locale);
+  const { openCreateInspector } = useCreateEventInspector();
 
   const handleCreateEventClick = useCallback(() => {
-    openCreateInspector({ context: { source: 'fab' } })
-  }, [openCreateInspector])
+    openCreateInspector({ context: { source: 'fab' } });
+  }, [openCreateInspector]);
 
   return (
     <Button
@@ -243,7 +247,7 @@ export function FloatingActionButton({ locale }: FloatingActionButtonProps) {
     >
       <Plus className="h-6 w-6 md:h-7 md:w-7" />
     </Button>
-  )
+  );
 }
 ```
 
@@ -292,7 +296,7 @@ xl: 1280px  // デスクトップ（大）
 **デバイス判定**:
 
 ```tsx
-const isMobile = useMediaQuery('(max-width: 768px)') // md未満
+const isMobile = useMediaQuery('(max-width: 768px)'); // md未満
 ```
 
 ## 🚨 重要な設計原則
@@ -323,16 +327,16 @@ layouts/
 ```tsx
 // ✅ 正しい：レイアウト構造のみ
 export function DesktopLayout({ children }) {
-  return <ResizablePanelGroup>...</ResizablePanelGroup>
+  return <ResizablePanelGroup>...</ResizablePanelGroup>;
 }
 
 // ❌ 誤り：ビジネスロジック + レイアウト
 export function DesktopLayout({ children }) {
-  const { tasks, fetchTasks } = useTaskStore()
+  const { tasks, fetchTasks } = useTaskStore();
   useEffect(() => {
-    fetchTasks()
-  }, [])
-  return <ResizablePanelGroup>...</ResizablePanelGroup>
+    fetchTasks();
+  }, []);
+  return <ResizablePanelGroup>...</ResizablePanelGroup>;
 }
 ```
 
@@ -348,15 +352,15 @@ export function BaseLayout({ children }) {
     <Providers>
       <BaseLayoutContent>{children}</BaseLayoutContent>
     </Providers>
-  )
+  );
 }
 
 // ✅ 正しい：Client Component
 // base-layout-content.tsx
-;('use client')
+('use client');
 export function BaseLayoutContent({ children }) {
-  const isMobile = useMediaQuery('(max-width: 768px)')
-  return <div>{isMobile ? <MobileLayout /> : <DesktopLayout />}</div>
+  const isMobile = useMediaQuery('(max-width: 768px)');
+  return <div>{isMobile ? <MobileLayout /> : <DesktopLayout />}</div>;
 }
 ```
 

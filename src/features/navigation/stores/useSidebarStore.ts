@@ -1,17 +1,17 @@
-import { create } from 'zustand'
-import { devtools, persist } from 'zustand/middleware'
+import { create } from 'zustand';
+import { devtools, persist } from 'zustand/middleware';
 
-import { createSelectors } from '@/lib/zustand/createSelectors'
+import { createSelectors } from '@/lib/zustand/createSelectors';
 
 interface SidebarState {
   /** Sidebarの開閉状態 */
-  isOpen: boolean
+  isOpen: boolean;
   /** Sidebarを開く */
-  open: () => void
+  open: () => void;
   /** Sidebarを閉じる */
-  close: () => void
+  close: () => void;
   /** Sidebarの開閉をトグル */
-  toggle: () => void
+  toggle: () => void;
 }
 
 /**
@@ -41,13 +41,13 @@ const useSidebarStoreBase = create<SidebarState>()(
       }),
       {
         name: 'sidebar-storage', // localStorage key
-      }
+      },
     ),
     {
       name: 'sidebar-store',
-    }
-  )
-)
+    },
+  ),
+);
 
 // Auto-generated selectors でパフォーマンス最適化
-export const useSidebarStore = createSelectors(useSidebarStoreBase)
+export const useSidebarStore = createSelectors(useSidebarStoreBase);

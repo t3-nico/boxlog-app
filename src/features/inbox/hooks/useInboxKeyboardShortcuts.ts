@@ -1,15 +1,15 @@
-import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
-import { useEffect, useRef } from 'react'
-import { useInboxFocusStore } from '../stores/useInboxFocusStore'
-import { useInboxSelectionStore } from '../stores/useInboxSelectionStore'
+import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
+import { useEffect, useRef } from 'react';
+import { useInboxFocusStore } from '../stores/useInboxFocusStore';
+import { useInboxSelectionStore } from '../stores/useInboxSelectionStore';
 
 interface UseInboxKeyboardShortcutsOptions {
   /** 表示中のアイテムIDリスト */
-  itemIds: string[]
+  itemIds: string[];
   /** 検索フィールドのref */
-  searchInputRef?: React.RefObject<HTMLInputElement | null>
+  searchInputRef?: React.RefObject<HTMLInputElement | null>;
   /** ショートカットを有効にするか */
-  enabled?: boolean
+  enabled?: boolean;
 }
 
 /**
@@ -40,77 +40,78 @@ export function useInboxKeyboardShortcuts({
   searchInputRef,
   enabled = true,
 }: UseInboxKeyboardShortcutsOptions) {
-  const { focusedId, focusNext, focusPrevious, clearFocus } = useInboxFocusStore()
-  const { toggleSelection } = useInboxSelectionStore()
-  const { openInspector, closeInspector, isOpen } = usePlanInspectorStore()
+  const { focusedId, focusNext, focusPrevious, clearFocus } = useInboxFocusStore();
+  const { toggleSelection } = useInboxSelectionStore();
+  const { openInspector, closeInspector, isOpen } = usePlanInspectorStore();
 
   // イベントハンドラが常に最新の値を参照できるようにrefで保持
-  const itemIdsRef = useRef(itemIds)
+  const itemIdsRef = useRef(itemIds);
   useEffect(() => {
-    itemIdsRef.current = itemIds
-  }, [itemIds])
+    itemIdsRef.current = itemIds;
+  }, [itemIds]);
 
   useEffect(() => {
-    if (!enabled) return
+    if (!enabled) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
       // 入力フィールドにフォーカスがある場合は / 以外のショートカットを無効化
-      const target = e.target as HTMLElement
-      const isInputFocused = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable
+      const target = e.target as HTMLElement;
+      const isInputFocused =
+        target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable;
 
       // / キーで検索フィールドにフォーカス
       if (e.key === '/' && !isInputFocused) {
-        e.preventDefault()
-        searchInputRef?.current?.focus()
-        return
+        e.preventDefault();
+        searchInputRef?.current?.focus();
+        return;
       }
 
       // Escape キーでInspectorを閉じる、またはフォーカスをクリア
       if (e.key === 'Escape') {
         if (isOpen) {
-          closeInspector()
+          closeInspector();
         } else {
-          clearFocus()
+          clearFocus();
         }
-        return
+        return;
       }
 
       // 入力フィールドにフォーカスがある場合は以降のショートカットを無効化
-      if (isInputFocused) return
+      if (isInputFocused) return;
 
       // j キーで次の行にフォーカス
       if (e.key === 'j') {
-        e.preventDefault()
-        focusNext(itemIdsRef.current)
-        return
+        e.preventDefault();
+        focusNext(itemIdsRef.current);
+        return;
       }
 
       // k キーで前の行にフォーカス
       if (e.key === 'k') {
-        e.preventDefault()
-        focusPrevious(itemIdsRef.current)
-        return
+        e.preventDefault();
+        focusPrevious(itemIdsRef.current);
+        return;
       }
 
       // x キーでチェックボックストグル
       if (e.key === 'x' && focusedId) {
-        e.preventDefault()
-        toggleSelection(focusedId)
-        return
+        e.preventDefault();
+        toggleSelection(focusedId);
+        return;
       }
 
       // Enter キーでInspectorを開く
       if (e.key === 'Enter' && focusedId) {
-        e.preventDefault()
-        openInspector(focusedId)
-        return
+        e.preventDefault();
+        openInspector(focusedId);
+        return;
       }
-    }
+    };
 
-    document.addEventListener('keydown', handleKeyDown)
+    document.addEventListener('keydown', handleKeyDown);
     return () => {
-      document.removeEventListener('keydown', handleKeyDown)
-    }
+      document.removeEventListener('keydown', handleKeyDown);
+    };
   }, [
     enabled,
     focusedId,
@@ -122,5 +123,5 @@ export function useInboxKeyboardShortcuts({
     isOpen,
     clearFocus,
     searchInputRef,
-  ])
+  ]);
 }

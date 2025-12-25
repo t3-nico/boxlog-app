@@ -12,11 +12,11 @@
  * @see ./factories.ts - ファクトリー関数
  */
 
-export { ConsoleOutput } from './console'
-export { FileOutput, RotatingFileOutput } from './file'
-export { MultiOutput } from './multi'
-export { SupabaseOutput } from './supabase'
-export { WebhookOutput } from './webhook'
+export { ConsoleOutput } from './console';
+export { FileOutput, RotatingFileOutput } from './file';
+export { MultiOutput } from './multi';
+export { SupabaseOutput } from './supabase';
+export { WebhookOutput } from './webhook';
 
 export {
   createConsoleOutput,
@@ -24,21 +24,21 @@ export {
   createRotatingFileOutput,
   createSupabaseOutput,
   createWebhookOutput,
-} from './factories'
+} from './factories';
 
 // デフォルトエクスポート
-import { ConsoleOutput } from './console'
+import { ConsoleOutput } from './console';
 import {
   createConsoleOutput,
   createFileOutput,
   createRotatingFileOutput,
   createSupabaseOutput,
   createWebhookOutput,
-} from './factories'
-import { FileOutput, RotatingFileOutput } from './file'
-import { MultiOutput } from './multi'
-import { SupabaseOutput } from './supabase'
-import { WebhookOutput } from './webhook'
+} from './factories';
+import { FileOutput, RotatingFileOutput } from './file';
+import { MultiOutput } from './multi';
+import { SupabaseOutput } from './supabase';
+import { WebhookOutput } from './webhook';
 
 const loggerOutputs = {
   ConsoleOutput,
@@ -52,6 +52,6 @@ const loggerOutputs = {
   createRotatingFileOutput,
   createWebhookOutput,
   createSupabaseOutput,
-}
+};
 
-export default loggerOutputs
+export default loggerOutputs;

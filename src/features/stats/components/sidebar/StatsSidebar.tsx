@@ -1,18 +1,18 @@
-'use client'
+'use client';
 
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
-import { BarChart3 } from 'lucide-react'
+import { BarChart3 } from 'lucide-react';
 
-import { SidebarShell } from '@/features/navigation/components/sidebar/SidebarShell'
-import { cn } from '@/lib/utils'
-import { useTranslations } from 'next-intl'
+import { SidebarShell } from '@/features/navigation/components/sidebar/SidebarShell';
+import { cn } from '@/lib/utils';
+import { useTranslations } from 'next-intl';
 
 interface NavItem {
-  href: string
-  label: string
-  icon: React.ReactNode
+  href: string;
+  label: string;
+  icon: React.ReactNode;
 }
 
 /**
@@ -22,16 +22,16 @@ interface NavItem {
  * 将来的に機能が増えたらセクション分けを検討
  */
 export function StatsSidebar() {
-  const pathname = usePathname()
-  const localeFromPath = (pathname?.split('/')[1] || 'ja') as 'ja' | 'en'
-  const t = useTranslations()
+  const pathname = usePathname();
+  const localeFromPath = (pathname?.split('/')[1] || 'ja') as 'ja' | 'en';
+  const t = useTranslations();
 
-  const baseUrl = `/${localeFromPath}/stats`
+  const baseUrl = `/${localeFromPath}/stats`;
 
   // 現在のパスがアクティブかどうかを判定
   const isActive = (href: string) => {
-    return pathname === href || pathname === baseUrl
-  }
+    return pathname === href || pathname === baseUrl;
+  };
 
   // ナビゲーションアイテム（フラットリスト）
   const navItems: NavItem[] = [
@@ -40,7 +40,7 @@ export function StatsSidebar() {
       label: t('stats.sidebar.overview'),
       icon: <BarChart3 className="size-4" />,
     },
-  ]
+  ];
 
   return (
     <SidebarShell title={t('sidebar.navigation.stats')}>
@@ -56,7 +56,7 @@ export function StatsSidebar() {
                   'flex items-center gap-2 rounded-md px-3 py-2 text-sm transition-colors',
                   isActive(item.href)
                     ? 'bg-state-selected text-foreground'
-                    : 'text-muted-foreground hover:bg-state-hover'
+                    : 'text-muted-foreground hover:bg-state-hover',
                 )}
               >
                 {item.icon}
@@ -67,5 +67,5 @@ export function StatsSidebar() {
         </ul>
       </nav>
     </SidebarShell>
-  )
+  );
 }

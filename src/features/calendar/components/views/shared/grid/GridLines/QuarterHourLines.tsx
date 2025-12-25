@@ -2,17 +2,17 @@
  * 15分ごとの薄い点線コンポーネント
  */
 
-'use client'
+'use client';
 
-import { memo } from 'react'
+import { memo } from 'react';
 
-import { useTimeGrid } from '../../hooks/useTimeGrid'
+import { useTimeGrid } from '../../hooks/useTimeGrid';
 
 interface QuarterHourLinesProps {
-  startHour?: number
-  endHour?: number
-  hourHeight?: number
-  className?: string
+  startHour?: number;
+  endHour?: number;
+  hourHeight?: number;
+  className?: string;
 }
 
 export const QuarterHourLines = memo<QuarterHourLinesProps>(function QuarterHourLines({
@@ -21,7 +21,7 @@ export const QuarterHourLines = memo<QuarterHourLinesProps>(function QuarterHour
   hourHeight = 72,
   className = '',
 }) {
-  const { hours } = useTimeGrid({ startHour, endHour, hourHeight })
+  const { hours } = useTimeGrid({ startHour, endHour, hourHeight });
 
   return (
     <div className={`pointer-events-none absolute inset-0 ${className}`}>
@@ -46,5 +46,5 @@ export const QuarterHourLines = memo<QuarterHourLinesProps>(function QuarterHour
         ])
         .flat()}
     </div>
-  )
-})
+  );
+});

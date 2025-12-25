@@ -4,20 +4,20 @@
  */
 
 // @see Issue #389 - web-vitals v4 uses onINP instead of onFID
-import { onCLS, onFCP, onINP, onLCP, onTTFB } from 'web-vitals'
+import { onCLS, onFCP, onINP, onLCP, onTTFB } from 'web-vitals';
 
-import { trackPerformance } from './vercel-analytics'
+import { trackPerformance } from './vercel-analytics';
 
 /**
  * Core Web Vitals 測定結果
  */
 export interface WebVitalsMetric {
-  name: 'CLS' | 'FID' | 'FCP' | 'LCP' | 'TTFB'
-  value: number
-  rating: 'good' | 'needs-improvement' | 'poor'
-  delta: number
-  id: string
-  timestamp: number
+  name: 'CLS' | 'FID' | 'FCP' | 'LCP' | 'TTFB';
+  value: number;
+  rating: 'good' | 'needs-improvement' | 'poor';
+  delta: number;
+  id: string;
+  timestamp: number;
 }
 
 /**
@@ -49,17 +49,17 @@ export const PERFORMANCE_THRESHOLDS = {
     good: 800, // 800ms以下
     poor: 1800, // 1.8秒以上
   },
-} as const
+} as const;
 
 /**
  * パフォーマンス設定
  */
 export interface SpeedInsightsConfig {
-  enabled: boolean
-  sampleRate: number
-  reportThreshold: 'good' | 'needs-improvement' | 'poor'
-  autoReport: boolean
-  debug: boolean
+  enabled: boolean;
+  sampleRate: number;
+  reportThreshold: 'good' | 'needs-improvement' | 'poor';
+  autoReport: boolean;
+  debug: boolean;
 }
 
 /**
@@ -71,18 +71,18 @@ const DEFAULT_SPEED_CONFIG: SpeedInsightsConfig = {
   reportThreshold: 'needs-improvement', // 改善が必要以上のみレポート
   autoReport: true,
   debug: process.env.NODE_ENV === 'development',
-}
+};
 
 /**
  * Speed Insights管理クラス
  */
 export class SpeedInsightsManager {
-  private config: SpeedInsightsConfig
-  private metrics: Map<string, WebVitalsMetric> = new Map()
-  private isInitialized = false
+  private config: SpeedInsightsConfig;
+  private metrics: Map<string, WebVitalsMetric> = new Map();
+  private isInitialized = false;
 
   constructor(config: Partial<SpeedInsightsConfig> = {}) {
-    this.config = { ...DEFAULT_SPEED_CONFIG, ...config }
+    this.config = { ...DEFAULT_SPEED_CONFIG, ...config };
   }
 
   /**
@@ -90,29 +90,29 @@ export class SpeedInsightsManager {
    */
   initialize(): void {
     if (this.isInitialized || typeof window === 'undefined') {
-      return
+      return;
     }
 
     if (!this.config.enabled) {
       if (this.config.debug) {
-        console.log('⚡ Speed Insights disabled')
+        console.log('⚡ Speed Insights disabled');
       }
-      return
+      return;
     }
 
     // サンプリング
     if (Math.random() > this.config.sampleRate) {
       if (this.config.debug) {
-        console.log('⚡ Speed Insights: User not in sample')
+        console.log('⚡ Speed Insights: User not in sample');
       }
-      return
+      return;
     }
 
-    this.startMeasuring()
-    this.isInitialized = true
+    this.startMeasuring();
+    this.isInitialized = true;
 
     if (this.config.debug) {
-      console.log('⚡ Speed Insights initialized', this.config)
+      console.log('⚡ Speed Insights initialized', this.config);
     }
   }
 
@@ -129,8 +129,8 @@ export class SpeedInsightsManager {
         delta: metric.delta,
         id: metric.id,
         timestamp: Date.now(),
-      })
-    })
+      });
+    });
 
     // Interaction to Next Paint (replaced FID in web-vitals v4)
     onINP((metric: { value: number; delta: number; id: string }) => {
@@ -141,8 +141,8 @@ export class SpeedInsightsManager {
         delta: metric.delta,
         id: metric.id,
         timestamp: Date.now(),
-      })
-    })
+      });
+    });
 
     // Cumulative Layout Shift
     onCLS((metric: { value: number; delta: number; id: string }) => {
@@ -153,8 +153,8 @@ export class SpeedInsightsManager {
         delta: metric.delta,
         id: metric.id,
         timestamp: Date.now(),
-      })
-    })
+      });
+    });
 
     // First Contentful Paint
     onFCP((metric: { value: number; delta: number; id: string }) => {
@@ -165,8 +165,8 @@ export class SpeedInsightsManager {
         delta: metric.delta,
         id: metric.id,
         timestamp: Date.now(),
-      })
-    })
+      });
+    });
 
     // Time to First Byte
     onTTFB((metric: { value: number; delta: number; id: string }) => {
@@ -177,27 +177,27 @@ export class SpeedInsightsManager {
         delta: metric.delta,
         id: metric.id,
         timestamp: Date.now(),
-      })
-    })
+      });
+    });
   }
 
   /**
    * メトリクスを記録
    */
   private recordMetric(metric: WebVitalsMetric): void {
-    this.metrics.set(metric.name, metric)
+    this.metrics.set(metric.name, metric);
 
     if (this.config.debug) {
       console.log(`⚡ ${metric.name}:`, {
         value: metric.value,
         rating: metric.rating,
         threshold: PERFORMANCE_THRESHOLDS[metric.name],
-      })
+      });
     }
 
     // 自動レポート
     if (this.config.autoReport && this.shouldReport(metric)) {
-      this.reportMetric(metric)
+      this.reportMetric(metric);
     }
   }
 
@@ -207,13 +207,13 @@ export class SpeedInsightsManager {
   private shouldReport(metric: WebVitalsMetric): boolean {
     switch (this.config.reportThreshold) {
       case 'good':
-        return true // 全てレポート
+        return true; // 全てレポート
       case 'needs-improvement':
-        return metric.rating !== 'good' // 良好でないもののみ
+        return metric.rating !== 'good'; // 良好でないもののみ
       case 'poor':
-        return metric.rating === 'poor' // 悪いもののみ
+        return metric.rating === 'poor'; // 悪いもののみ
       default:
-        return false
+        return false;
     }
   }
 
@@ -225,7 +225,7 @@ export class SpeedInsightsManager {
       name: `web_vitals_${metric.name.toLowerCase()}`,
       value: metric.value,
       threshold: this.getThreshold(metric.name, 'good'),
-    })
+    });
 
     // カスタムイベントとしても送信
     // @see Issue #389 - trackEvent関数の実装後に有効化
@@ -250,180 +250,187 @@ export class SpeedInsightsManager {
    */
   private getRating(
     metricName: keyof typeof PERFORMANCE_THRESHOLDS,
-    value: number
+    value: number,
   ): 'good' | 'needs-improvement' | 'poor' {
-    const thresholds = PERFORMANCE_THRESHOLDS[metricName]
+    const thresholds = PERFORMANCE_THRESHOLDS[metricName];
 
     if (value <= thresholds.good) {
-      return 'good'
+      return 'good';
     } else if (value <= thresholds.poor) {
-      return 'needs-improvement'
+      return 'needs-improvement';
     } else {
-      return 'poor'
+      return 'poor';
     }
   }
 
   /**
    * 閾値を取得
    */
-  private getThreshold(metricName: keyof typeof PERFORMANCE_THRESHOLDS, rating: 'good' | 'poor'): number {
-    return PERFORMANCE_THRESHOLDS[metricName][rating]
+  private getThreshold(
+    metricName: keyof typeof PERFORMANCE_THRESHOLDS,
+    rating: 'good' | 'poor',
+  ): number {
+    return PERFORMANCE_THRESHOLDS[metricName][rating];
   }
 
   /**
    * 現在のメトリクスを取得
    */
   getMetrics(): WebVitalsMetric[] {
-    return Array.from(this.metrics.values())
+    return Array.from(this.metrics.values());
   }
 
   /**
    * パフォーマンスサマリーを取得
    */
   getPerformanceSummary(): {
-    overall: 'good' | 'needs-improvement' | 'poor'
-    metrics: WebVitalsMetric[]
-    recommendations: string[]
+    overall: 'good' | 'needs-improvement' | 'poor';
+    metrics: WebVitalsMetric[];
+    recommendations: string[];
   } {
-    const metrics = this.getMetrics()
+    const metrics = this.getMetrics();
 
     if (metrics.length === 0) {
       return {
         overall: 'good',
         metrics: [],
         recommendations: ['まだ測定データがありません'],
-      }
+      };
     }
 
     // 全体評価を計算
-    const poorCount = metrics.filter((m) => m.rating === 'poor').length
-    const needsImprovementCount = metrics.filter((m) => m.rating === 'needs-improvement').length
+    const poorCount = metrics.filter((m) => m.rating === 'poor').length;
+    const needsImprovementCount = metrics.filter((m) => m.rating === 'needs-improvement').length;
 
-    let overall: 'good' | 'needs-improvement' | 'poor'
+    let overall: 'good' | 'needs-improvement' | 'poor';
     if (poorCount > 0) {
-      overall = 'poor'
+      overall = 'poor';
     } else if (needsImprovementCount > 0) {
-      overall = 'needs-improvement'
+      overall = 'needs-improvement';
     } else {
-      overall = 'good'
+      overall = 'good';
     }
 
     // 推奨事項を生成
-    const recommendations = this.generateRecommendations(metrics)
+    const recommendations = this.generateRecommendations(metrics);
 
     return {
       overall,
       metrics,
       recommendations,
-    }
+    };
   }
 
   /**
    * 推奨事項を生成
    */
   private generateRecommendations(metrics: WebVitalsMetric[]): string[] {
-    const recommendations: string[] = []
+    const recommendations: string[] = [];
 
     metrics.forEach((metric) => {
       if (metric.rating === 'poor' || metric.rating === 'needs-improvement') {
         switch (metric.name) {
           case 'LCP':
-            recommendations.push('画像を最適化し、重要なリソースをプリロードしてください')
-            break
+            recommendations.push('画像を最適化し、重要なリソースをプリロードしてください');
+            break;
           case 'FID':
-            recommendations.push('JavaScriptの実行時間を短縮し、長いタスクを分割してください')
-            break
+            recommendations.push('JavaScriptの実行時間を短縮し、長いタスクを分割してください');
+            break;
           case 'CLS':
-            recommendations.push('画像やフォントのサイズを事前に指定してレイアウトシフトを防いでください')
-            break
+            recommendations.push(
+              '画像やフォントのサイズを事前に指定してレイアウトシフトを防いでください',
+            );
+            break;
           case 'FCP':
-            recommendations.push('重要なCSS/JSを最適化し、レンダリングブロッキングを削減してください')
-            break
+            recommendations.push(
+              '重要なCSS/JSを最適化し、レンダリングブロッキングを削減してください',
+            );
+            break;
           case 'TTFB':
-            recommendations.push('サーバー応答時間を改善し、CDNの利用を検討してください')
-            break
+            recommendations.push('サーバー応答時間を改善し、CDNの利用を検討してください');
+            break;
         }
       }
-    })
+    });
 
-    return recommendations.length > 0 ? recommendations : ['パフォーマンスは良好です']
+    return recommendations.length > 0 ? recommendations : ['パフォーマンスは良好です'];
   }
 
   /**
    * 設定を更新
    */
   updateConfig(newConfig: Partial<SpeedInsightsConfig>): void {
-    this.config = { ...this.config, ...newConfig }
+    this.config = { ...this.config, ...newConfig };
   }
 
   /**
    * メトリクスをリセット
    */
   resetMetrics(): void {
-    this.metrics.clear()
+    this.metrics.clear();
   }
 }
 
 /**
  * グローバルSpeed Insightsインスタンス
  */
-export const speedInsights = new SpeedInsightsManager()
+export const speedInsights = new SpeedInsightsManager();
 
 /**
  * Speed Insights初期化
  */
 export function initializeSpeedInsights(config?: Partial<SpeedInsightsConfig>): void {
   if (config) {
-    speedInsights.updateConfig(config)
+    speedInsights.updateConfig(config);
   }
-  speedInsights.initialize()
+  speedInsights.initialize();
 }
 
 /**
  * 手動でのパフォーマンス測定
  */
 export function measureCustomPerformance(name: string, startTime: number): void {
-  const duration = performance.now() - startTime
+  const duration = performance.now() - startTime;
 
   trackPerformance({
     name: `custom_${name}`,
     value: duration,
     threshold: 1000, // 1秒をデフォルト閾値とする
-  })
+  });
 }
 
 /**
  * ページ読み込み時間を測定
  */
 export function measurePageLoad(): void {
-  if (typeof window === 'undefined') return
+  if (typeof window === 'undefined') return;
 
   window.addEventListener('load', () => {
-    const perfData = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming
+    const perfData = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
 
     if (perfData) {
-      const pageLoadTime = perfData.loadEventEnd - perfData.startTime
+      const pageLoadTime = perfData.loadEventEnd - perfData.startTime;
 
       trackPerformance({
         name: 'page_load_time',
         value: pageLoadTime,
         threshold: 3000, // 3秒
-      })
+      });
     }
-  })
+  });
 }
 
 /**
  * API応答時間を測定
  */
 export function measureApiResponse(_url: string, startTime: number): void {
-  const duration = performance.now() - startTime
+  const duration = performance.now() - startTime;
 
   trackPerformance({
     name: 'api_response_time',
     value: duration,
     threshold: 2000, // 2秒
-  })
+  });
 }
 
 /**
@@ -436,30 +443,30 @@ export function usePerformanceMonitoring() {
       measureEnd: () => {},
       getMetrics: () => [],
       getSummary: () => ({ overall: 'good' as const, metrics: [], recommendations: [] }),
-    }
+    };
   }
 
   return {
     measureStartTime: () => performance.now(),
 
     measureEnd: (name: string, startTime: number) => {
-      measureCustomPerformance(name, startTime)
+      measureCustomPerformance(name, startTime);
     },
 
     getMetrics: () => speedInsights.getMetrics(),
 
     getSummary: () => speedInsights.getPerformanceSummary(),
-  }
+  };
 }
 
 /**
  * パフォーマンス監視の自動セットアップ
  */
 export function setupPerformanceMonitoring(): void {
-  if (typeof window === 'undefined') return
+  if (typeof window === 'undefined') return;
 
   // ページ読み込み測定
-  measurePageLoad()
+  measurePageLoad();
 
   // ブラウザサポートチェック
   if ('PerformanceObserver' in window) {
@@ -473,33 +480,33 @@ export function setupPerformanceMonitoring(): void {
               name: 'long_task',
               value: entry.duration,
               threshold: 50,
-            })
+            });
           }
-        })
-      })
-      observer.observe({ entryTypes: ['longtask'] })
+        });
+      });
+      observer.observe({ entryTypes: ['longtask'] });
     } catch (error) {
-      console.warn('Long task monitoring not supported:', error)
+      console.warn('Long task monitoring not supported:', error);
     }
 
     // Resource timing の監視
     try {
       const resourceObserver = new PerformanceObserver((list) => {
         list.getEntries().forEach((entry) => {
-          const resource = entry as PerformanceResourceTiming
+          const resource = entry as PerformanceResourceTiming;
           if (resource.duration > 1000) {
             // 1秒以上のリソース読み込みを記録
             trackPerformance({
               name: 'slow_resource',
               value: resource.duration,
               threshold: 1000,
-            })
+            });
           }
-        })
-      })
-      resourceObserver.observe({ entryTypes: ['resource'] })
+        });
+      });
+      resourceObserver.observe({ entryTypes: ['resource'] });
     } catch (error) {
-      console.warn('Resource timing monitoring not supported:', error)
+      console.warn('Resource timing monitoring not supported:', error);
     }
   }
 }

@@ -1,1 +1,5 @@
-export { TableNavigation, type TableNavigationConfig, type TableNavigationProps } from './TableNavigation'
+export {
+  TableNavigation,
+  type TableNavigationConfig,
+  type TableNavigationProps,
+} from './TableNavigation';

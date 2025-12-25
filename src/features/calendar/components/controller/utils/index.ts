@@ -1,1 +1,1 @@
-export { initializePreload, preloadCalendarViews } from './preload'
+export { initializePreload, preloadCalendarViews } from './preload';

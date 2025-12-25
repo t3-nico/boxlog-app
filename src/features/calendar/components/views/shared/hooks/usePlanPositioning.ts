@@ -1,33 +1,33 @@
-'use client'
+'use client';
 
-import { useMemo } from 'react'
+import { useMemo } from 'react';
 
-import { isSameDay, isValid } from 'date-fns'
+import { isSameDay, isValid } from 'date-fns';
 
-import { HOUR_HEIGHT } from '../constants/grid.constants'
-import type { CalendarPlan, TimedPlan } from '../types/plan.types'
+import { HOUR_HEIGHT } from '../constants/grid.constants';
+import type { CalendarPlan, TimedPlan } from '../types/plan.types';
 
-import { usePlanLayoutCalculator, type PlanLayout } from './usePlanLayoutCalculator'
+import { usePlanLayoutCalculator, type PlanLayout } from './usePlanLayoutCalculator';
 
-const EVENT_PADDING = 2 // イベント間のパディング
-const MIN_EVENT_HEIGHT = 20 // 最小イベント高さ
+const EVENT_PADDING = 2; // イベント間のパディング
+const MIN_EVENT_HEIGHT = 20; // 最小イベント高さ
 
 export interface EventPositionInfo {
-  event: TimedPlan
-  top: number // px
-  height: number // px
-  left: number // %
-  width: number // %
-  zIndex: number
-  column: number
-  totalColumns: number
-  opacity?: number
+  event: TimedPlan;
+  top: number; // px
+  height: number; // px
+  left: number; // %
+  width: number; // %
+  zIndex: number;
+  column: number;
+  totalColumns: number;
+  opacity?: number;
 }
 
 interface UseEventPositioningOptions {
-  date: Date
-  events: CalendarPlan[] // CalendarPlan型（startDate/endDateを持つ）
-  viewType?: 'day' | 'week'
+  date: Date;
+  events: CalendarPlan[]; // CalendarPlan型（startDate/endDateを持つ）
+  viewType?: 'day' | 'week';
 }
 
 /**
@@ -42,13 +42,13 @@ export function useEventPositioning({
   const filteredEvents = useMemo(() => {
     return events.filter((event) => {
       if (!event.startDate || !isValid(new Date(event.startDate))) {
-        return false
+        return false;
       }
 
-      const eventDate = new Date(event.startDate)
-      return isSameDay(eventDate, date)
-    })
-  }, [date, events])
+      const eventDate = new Date(event.startDate);
+      return isSameDay(eventDate, date);
+    });
+  }, [date, events]);
 
   // CalendarPlanをuseEventLayoutCalculatorで期待される形式に変換
   const convertedEvents = useMemo(() => {
@@ -56,25 +56,25 @@ export function useEventPositioning({
       ...event,
       start: event.startDate!,
       end: event.endDate || new Date(new Date(event.startDate!).getTime() + 60 * 60 * 1000),
-    }))
-  }, [filteredEvents])
+    }));
+  }, [filteredEvents]);
 
   // 新しいレイアウト計算システムを使用
-  const eventLayouts = usePlanLayoutCalculator(convertedEvents, { notifyConflicts: true })
+  const eventLayouts = usePlanLayoutCalculator(convertedEvents, { notifyConflicts: true });
 
   // レイアウト情報をEventPositionInfoに変換
   const eventPositions = useMemo(() => {
     return eventLayouts.map((layout: PlanLayout, index: number) => {
-      const startDate = new Date(layout.plan.start)
-      const endDate = new Date(layout.plan.end)
+      const startDate = new Date(layout.plan.start);
+      const endDate = new Date(layout.plan.end);
 
-      const startHour = startDate.getHours() + startDate.getMinutes() / 60
-      const endHour = endDate.getHours() + endDate.getMinutes() / 60
-      const duration = Math.max(endHour - startHour, 0.25) // 最小15分
+      const startHour = startDate.getHours() + startDate.getMinutes() / 60;
+      const endHour = endDate.getHours() + endDate.getMinutes() / 60;
+      const duration = Math.max(endHour - startHour, 0.25); // 最小15分
 
       // 位置計算
-      const top = startHour * HOUR_HEIGHT
-      const height = Math.max(duration * HOUR_HEIGHT - EVENT_PADDING, MIN_EVENT_HEIGHT)
+      const top = startHour * HOUR_HEIGHT;
+      const height = Math.max(duration * HOUR_HEIGHT - EVENT_PADDING, MIN_EVENT_HEIGHT);
 
       return {
         event: layout.plan,
@@ -86,17 +86,17 @@ export function useEventPositioning({
         column: layout.column,
         totalColumns: layout.totalColumns,
         opacity: layout.totalColumns > 1 ? 0.95 : 1.0,
-      }
-    })
-  }, [eventLayouts])
+      };
+    });
+  }, [eventLayouts]);
 
   const maxConcurrentEvents = useMemo(() => {
-    return Math.max(1, ...eventLayouts.map((layout: PlanLayout) => layout.totalColumns))
-  }, [eventLayouts])
+    return Math.max(1, ...eventLayouts.map((layout: PlanLayout) => layout.totalColumns));
+  }, [eventLayouts]);
 
   return {
     events: filteredEvents,
     eventPositions,
     maxConcurrentEvents,
-  }
+  };
 }

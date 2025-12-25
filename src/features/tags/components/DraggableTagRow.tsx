@@ -1,15 +1,15 @@
-'use client'
+'use client';
 
-import { useDraggable } from '@dnd-kit/core'
-import { forwardRef, useCallback, type ReactNode } from 'react'
+import { useDraggable } from '@dnd-kit/core';
+import { forwardRef, useCallback, type ReactNode } from 'react';
 
-import { TableRow } from '@/components/ui/table'
+import { TableRow } from '@/components/ui/table';
 
 interface DraggableTagRowProps {
-  id: string
-  children: ReactNode
-  className?: string
-  onContextMenu?: () => void
+  id: string;
+  children: ReactNode;
+  className?: string;
+  onContextMenu?: () => void;
 }
 
 /**
@@ -24,20 +24,20 @@ export const DraggableTagRow = forwardRef<HTMLTableRowElement, DraggableTagRowPr
       data: {
         type: 'tag',
       },
-    })
+    });
 
     // Merge refs
     const mergeRefs = useCallback(
       (node: HTMLTableRowElement | null) => {
-        setNodeRef(node)
+        setNodeRef(node);
         if (typeof forwardedRef === 'function') {
-          forwardedRef(node)
+          forwardedRef(node);
         } else if (forwardedRef) {
-          forwardedRef.current = node
+          forwardedRef.current = node;
         }
       },
-      [forwardedRef, setNodeRef]
-    )
+      [forwardedRef, setNodeRef],
+    );
 
     return (
       <TableRow
@@ -52,8 +52,8 @@ export const DraggableTagRow = forwardRef<HTMLTableRowElement, DraggableTagRowPr
       >
         {children}
       </TableRow>
-    )
-  }
-)
+    );
+  },
+);
 
-DraggableTagRow.displayName = 'DraggableTagRow'
+DraggableTagRow.displayName = 'DraggableTagRow';

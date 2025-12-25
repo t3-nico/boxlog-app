@@ -53,10 +53,10 @@
  *   トークンリフレッシュは Middleware で行います
  */
 
-import { createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers'
+import { createServerClient } from '@supabase/ssr';
+import { cookies } from 'next/headers';
 
-import type { Database } from '@/lib/database.types'
+import type { Database } from '@/lib/database.types';
 
 /**
  * Server用Supabaseクライアント作成
@@ -66,7 +66,7 @@ import type { Database } from '@/lib/database.types'
  * @returns Supabase Server Client
  */
 export async function createClient() {
-  const cookieStore = await cookies()
+  const cookieStore = await cookies();
 
   return createServerClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -74,24 +74,24 @@ export async function createClient() {
     {
       cookies: {
         getAll() {
-          return cookieStore.getAll()
+          return cookieStore.getAll();
         },
         setAll(cookiesToSet) {
           try {
             cookiesToSet.forEach(({ name, value, options }) => {
-              cookieStore.set(name, value, options)
-            })
+              cookieStore.set(name, value, options);
+            });
           } catch {
             // Server Component内で呼ばれた場合、setは失敗する可能性がある
             // これは正常な動作で、Middlewareでトークンリフレッシュが行われる
           }
         },
       },
-    }
-  )
+    },
+  );
 }
 
 /**
  * 型定義
  */
-export type SupabaseClient = ReturnType<typeof createClient>
+export type SupabaseClient = ReturnType<typeof createClient>;

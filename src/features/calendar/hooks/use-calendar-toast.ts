@@ -1,29 +1,29 @@
-'use client'
+'use client';
 
-import { format } from 'date-fns'
-import { ja } from 'date-fns/locale'
-import { toast } from 'sonner'
+import { format } from 'date-fns';
+import { ja } from 'date-fns/locale';
+import { toast } from 'sonner';
 
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'next-intl';
 
-import type { CalendarPlan } from '../types/calendar.types'
+import type { CalendarPlan } from '../types/calendar.types';
 
 export function useCalendarToast() {
-  const t = useTranslations()
+  const t = useTranslations();
 
   const eventCreated = (plan: CalendarPlan) => {
     toast.success(t('calendar.toast.created'), {
       description: `${format(plan.displayStartDate, 'MM/dd HH:mm', { locale: ja })} ${plan.title}`,
       duration: 3000,
-    })
-  }
+    });
+  };
 
   const eventUpdated = (plan: CalendarPlan) => {
     toast.success(t('calendar.toast.updated'), {
       description: plan.title,
       duration: 2000,
-    })
-  }
+    });
+  };
 
   const eventDeleted = (title: string, onUndo?: () => void) => {
     toast.info(t('calendar.toast.deleted'), {
@@ -35,19 +35,19 @@ export function useCalendarToast() {
             onClick: onUndo,
           }
         : undefined,
-    })
-  }
+    });
+  };
 
   const eventConflict = () => {
     toast.warning(t('calendar.toast.conflict'), {
       description: t('calendar.toast.conflictDescription'),
       duration: 4000,
-    })
-  }
+    });
+  };
 
   const eventSaving = () => {
-    return toast.loading(t('calendar.toast.saving'))
-  }
+    return toast.loading(t('calendar.toast.saving'));
+  };
 
   const eventMoved = (plan: CalendarPlan) => {
     toast.success(t('calendar.toast.moved'), {
@@ -55,82 +55,87 @@ export function useCalendarToast() {
         date: format(plan.displayStartDate, 'MM/dd HH:mm', { locale: ja }),
       }),
       duration: 2000,
-    })
-  }
+    });
+  };
 
   const eventResized = (plan: CalendarPlan) => {
-    const durationHours = Math.floor(plan.duration / 60)
-    const durationMinutes = plan.duration % 60
+    const durationHours = Math.floor(plan.duration / 60);
+    const durationMinutes = plan.duration % 60;
 
-    let durationText: string
+    let durationText: string;
     if (durationHours > 0 && durationMinutes > 0) {
       durationText = t('calendar.toast.durationHoursMinutes', {
         hours: durationHours,
         minutes: durationMinutes,
-      })
+      });
     } else if (durationHours > 0) {
-      durationText = t('calendar.toast.durationHours', { hours: durationHours })
+      durationText = t('calendar.toast.durationHours', { hours: durationHours });
     } else {
-      durationText = t('calendar.toast.durationMinutes', { minutes: durationMinutes })
+      durationText = t('calendar.toast.durationMinutes', { minutes: durationMinutes });
     }
 
     toast.success(t('calendar.toast.resized'), {
       description: t('calendar.toast.resizedTo', { duration: durationText }),
       duration: 2000,
-    })
-  }
+    });
+  };
 
   const eventDuplicated = (count: number) => {
     toast.success(t('calendar.toast.duplicated', { count }), {
       duration: 2000,
-    })
-  }
+    });
+  };
 
   const eventError = (message?: string) => {
     toast.error(t('calendar.toast.error'), {
       description: message || t('calendar.toast.errorDescription'),
       duration: 5000,
-    })
-  }
+    });
+  };
 
   const eventSyncSuccess = () => {
     toast.success(t('calendar.toast.syncSuccess'), {
       duration: 2000,
-    })
-  }
+    });
+  };
 
   const eventSyncError = () => {
     toast.error(t('calendar.toast.syncError'), {
       description: t('calendar.toast.syncErrorDescription'),
       duration: 4000,
-    })
-  }
+    });
+  };
 
   const batchOperation = (operation: string, count: number) => {
     toast.success(t('calendar.toast.batchComplete', { operation }), {
       description: t('calendar.toast.batchDescription', { count }),
       duration: 3000,
-    })
-  }
+    });
+  };
 
   const recurringEventUpdated = (affectsAll: boolean) => {
-    const message = affectsAll ? t('calendar.toast.recurringAll') : t('calendar.toast.recurringSingle')
+    const message = affectsAll
+      ? t('calendar.toast.recurringAll')
+      : t('calendar.toast.recurringSingle');
     toast.success(message, {
       duration: 3000,
-    })
-  }
+    });
+  };
 
   const reminderSet = (plan: CalendarPlan, minutes: number) => {
     const reminderText =
       minutes >= 60
         ? t('calendar.toast.hoursBefore', { hours: Math.floor(minutes / 60) })
-        : t('calendar.toast.minutesBefore', { minutes })
+        : t('calendar.toast.minutesBefore', { minutes });
 
     toast.success(t('calendar.toast.reminderSet'), {
-      description: t('calendar.toast.reminderDescription', { title: plan.title, time: reminderText }),
+      description: t('calendar.toast.reminderDescription', {
+        title: plan.title,
+        time: reminderText,
+      }),
       duration: 2000,
-    })
-  }
+    });
+  };
 
   return {
     eventCreated,
@@ -147,5 +152,5 @@ export function useCalendarToast() {
     batchOperation,
     recurringEventUpdated,
     reminderSet,
-  }
+  };
 }

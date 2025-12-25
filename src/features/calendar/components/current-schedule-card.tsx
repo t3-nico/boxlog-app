@@ -1,72 +1,72 @@
-'use client'
+'use client';
 
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react';
 
-import { useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation';
 
-import { ArrowRight, Calendar } from 'lucide-react'
+import { ArrowRight, Calendar } from 'lucide-react';
 
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
-import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
+import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
 import {
   CHRONOTYPE_PRESETS,
   getProductivityZoneForHour,
   PRODUCTIVITY_COLORS,
-} from '@/features/settings/types/chronotype'
+} from '@/features/settings/types/chronotype';
 
 interface CurrentScheduleCardProps {
-  collapsed?: boolean
+  collapsed?: boolean;
 }
 
 export const CurrentScheduleCard = ({ collapsed = false }: CurrentScheduleCardProps) => {
-  const [currentTime, setCurrentTime] = useState(new Date())
-  const [currentEvent, setCurrentEvent] = useState<CalendarPlan | null>(null)
-  const router = useRouter()
+  const [currentTime, setCurrentTime] = useState(new Date());
+  const [currentEvent, setCurrentEvent] = useState<CalendarPlan | null>(null);
+  const router = useRouter();
 
   // ストアから実際のイベントデータを取得
-  const chronotype = useCalendarSettingsStore((state) => state.chronotype)
+  const chronotype = useCalendarSettingsStore((state) => state.chronotype);
 
   // jsx-no-bind optimization: No event click handler
   const handleNoEventClick = useCallback(() => {
-    const today = new Date()
-    const dateParam = today.toISOString().split('T')[0]
-    router.push(`/calendar/day?date=${dateParam}`)
-  }, [router])
+    const today = new Date();
+    const dateParam = today.toISOString().split('T')[0];
+    router.push(`/calendar/day?date=${dateParam}`);
+  }, [router]);
 
   // jsx-no-bind optimization: No event keyboard handler
   const handleNoEventKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
       if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault()
-        handleNoEventClick()
+        e.preventDefault();
+        handleNoEventClick();
       }
     },
-    [handleNoEventClick]
-  )
+    [handleNoEventClick],
+  );
 
   // jsx-no-bind optimization: Calendar navigation click handler
   const handleClick = useCallback(() => {
-    const today = new Date()
-    const dateParam = today.toISOString().split('T')[0] // YYYY-MM-DD形式
-    router.push(`/calendar/day?date=${dateParam}`)
-  }, [router])
+    const today = new Date();
+    const dateParam = today.toISOString().split('T')[0]; // YYYY-MM-DD形式
+    router.push(`/calendar/day?date=${dateParam}`);
+  }, [router]);
 
   // jsx-no-bind optimization: Calendar navigation keyboard handler
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
       if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault()
-        handleClick()
+        e.preventDefault();
+        handleClick();
       }
     },
-    [handleClick]
-  )
+    [handleClick],
+  );
 
   // 今日のイベントを独立してフェッチ
-  const [todayEvents, _setTodayEvents] = useState<CalendarPlan[]>([])
+  const [todayEvents, _setTodayEvents] = useState<CalendarPlan[]>([]);
 
   useEffect(() => {
-    console.log('🔍 [DISABLED] Would fetch today events - disabled for debugging')
+    console.log('🔍 [DISABLED] Would fetch today events - disabled for debugging');
 
     // const fetchTodayEvents = async () => {
     //   try {
@@ -125,66 +125,66 @@ export const CurrentScheduleCard = ({ collapsed = false }: CurrentScheduleCardPr
     // }
 
     // fetchTodayEvents()
-  }, [])
+  }, []);
 
   // リアルタイム時間更新
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentTime(new Date())
-    }, 1000)
+      setCurrentTime(new Date());
+    }, 1000);
 
-    return () => clearInterval(timer)
-  }, [])
+    return () => clearInterval(timer);
+  }, []);
 
   // クロノタイプ設定に完全対応した色変更
   const getChronotypeColor = () => {
     if (!chronotype || !chronotype.enabled) {
-      return 'rgb(59 130 246)' // デフォルト青 (blue-500)
+      return 'rgb(59 130 246)'; // デフォルト青 (blue-500)
     }
 
     if (chronotype.type === 'custom') {
-      return 'rgb(59 130 246)' // カスタムの場合はデフォルト
+      return 'rgb(59 130 246)'; // カスタムの場合はデフォルト
     }
 
     try {
-      const profile = CHRONOTYPE_PRESETS[chronotype.type]
-      const currentHour = currentTime.getHours()
-      const zone = getProductivityZoneForHour(profile, currentHour)
+      const profile = CHRONOTYPE_PRESETS[chronotype.type];
+      const currentHour = currentTime.getHours();
+      const zone = getProductivityZoneForHour(profile, currentHour);
 
       if (!zone || !PRODUCTIVITY_COLORS[zone.color as keyof typeof PRODUCTIVITY_COLORS]) {
-        return 'rgb(59 130 246)' // フォールバック
+        return 'rgb(59 130 246)'; // フォールバック
       }
 
-      const colors = PRODUCTIVITY_COLORS[zone.color as keyof typeof PRODUCTIVITY_COLORS]
-      return colors.border
+      const colors = PRODUCTIVITY_COLORS[zone.color as keyof typeof PRODUCTIVITY_COLORS];
+      return colors.border;
     } catch (error) {
-      console.error('Chronotype color calculation error:', error)
-      return 'rgb(59 130 246)' // エラー時のフォールバック
+      console.error('Chronotype color calculation error:', error);
+      return 'rgb(59 130 246)'; // エラー時のフォールバック
     }
-  }
+  };
 
   // 現在進行中のイベントを取得
   useEffect(() => {
-    const now = new Date()
+    const now = new Date();
 
     console.log('🔍 CurrentScheduleCard debug:', {
       todayEventsCount: todayEvents.length,
       currentTime: now.toISOString(),
-    })
+    });
 
     if (todayEvents.length === 0) {
-      setCurrentEvent(null)
-      return
+      setCurrentEvent(null);
+      return;
     }
 
     // 現在時刻にアクティブなイベントを検索
     const activeEvent = todayEvents.find((event) => {
-      if (!event.startDate || !event.endDate) return false
+      if (!event.startDate || !event.endDate) return false;
 
-      const startTime = new Date(event.startDate)
-      const endTime = new Date(event.endDate)
+      const startTime = new Date(event.startDate);
+      const endTime = new Date(event.endDate);
 
-      const isActive = now >= startTime && now <= endTime
+      const isActive = now >= startTime && now <= endTime;
 
       console.log('🕐 Checking event:', {
         title: event.title,
@@ -192,15 +192,15 @@ export const CurrentScheduleCard = ({ collapsed = false }: CurrentScheduleCardPr
         endTime: endTime.toISOString(),
         currentTime: now.toISOString(),
         isActive,
-      })
+      });
 
-      return isActive
-    })
+      return isActive;
+    });
 
-    console.log('🎯 Final active event:', activeEvent?.title || 'None')
+    console.log('🎯 Final active event:', activeEvent?.title || 'None');
 
-    setCurrentEvent(activeEvent || null)
-  }, [currentTime, todayEvents])
+    setCurrentEvent(activeEvent || null);
+  }, [currentTime, todayEvents]);
 
   // 時間をフォーマット
   const formatTime = (date: Date): string => {
@@ -208,12 +208,12 @@ export const CurrentScheduleCard = ({ collapsed = false }: CurrentScheduleCardPr
       hour: '2-digit',
       minute: '2-digit',
       hour12: false,
-    })
-  }
+    });
+  };
 
   if (collapsed) {
     // 閉じている時はアイコンのみ表示
-    const borderColor = getChronotypeColor()
+    const borderColor = getChronotypeColor();
     return currentEvent ? (
       <div className="mb-4 flex justify-center">
         <div
@@ -225,7 +225,7 @@ export const CurrentScheduleCard = ({ collapsed = false }: CurrentScheduleCardPr
           <Calendar className="text-primary h-4 w-4" />
         </div>
       </div>
-    ) : null
+    ) : null;
   }
 
   if (!currentEvent) {
@@ -243,10 +243,10 @@ export const CurrentScheduleCard = ({ collapsed = false }: CurrentScheduleCardPr
           <span className="text-xs">No current events</span>
         </div>
       </div>
-    )
+    );
   }
 
-  const borderColor = getChronotypeColor()
+  const borderColor = getChronotypeColor();
 
   return (
     <div
@@ -266,7 +266,9 @@ export const CurrentScheduleCard = ({ collapsed = false }: CurrentScheduleCardPr
           Live
         </div>
         <div className="text-muted-foreground flex items-center text-sm font-semibold tabular-nums">
-          <span>{currentEvent.startDate ? formatTime(new Date(currentEvent.startDate)) : null}</span>
+          <span>
+            {currentEvent.startDate ? formatTime(new Date(currentEvent.startDate)) : null}
+          </span>
           <ArrowRight className="text-muted-foreground mx-1 h-4 w-4" />
           <span>{currentEvent.endDate ? formatTime(new Date(currentEvent.endDate)) : null}</span>
         </div>
@@ -274,5 +276,5 @@ export const CurrentScheduleCard = ({ collapsed = false }: CurrentScheduleCardPr
 
       <h3 className="text-foreground text-sm leading-tight font-semibold">{currentEvent.title}</h3>
     </div>
-  )
-}
+  );
+};

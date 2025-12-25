@@ -1,46 +1,55 @@
-'use client'
+'use client';
 
-import dynamic from 'next/dynamic'
-import { useCallback, useEffect, useState } from 'react'
+import dynamic from 'next/dynamic';
+import { useCallback, useEffect, useState } from 'react';
 
-import { Plus, Search } from 'lucide-react'
+import { Plus, Search } from 'lucide-react';
 
-import { ErrorBoundary } from '@/components/error-boundary'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { useTagOperations } from '@/features/tags/hooks/use-tag-operations'
-import { useTags } from '@/features/tags/hooks/use-tags'
-import { useTranslations } from 'next-intl'
+import { ErrorBoundary } from '@/components/error-boundary';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { useTagOperations } from '@/features/tags/hooks/use-tag-operations';
+import { useTags } from '@/features/tags/hooks/use-tags';
+import { useTranslations } from 'next-intl';
 
-import { SettingsCard } from './SettingsCard'
+import { SettingsCard } from './SettingsCard';
 
 const TagCreateModal = dynamic(
-  () => import('@/features/tags/components/tag-create-modal').then((mod) => ({ default: mod.TagCreateModal })),
-  { ssr: false }
-)
+  () =>
+    import('@/features/tags/components/tag-create-modal').then((mod) => ({
+      default: mod.TagCreateModal,
+    })),
+  { ssr: false },
+);
 
 const TagEditModal = dynamic(
-  () => import('@/features/tags/components/tag-edit-modal').then((mod) => ({ default: mod.TagEditModal })),
-  { ssr: false }
-)
+  () =>
+    import('@/features/tags/components/tag-edit-modal').then((mod) => ({
+      default: mod.TagEditModal,
+    })),
+  { ssr: false },
+);
 
 const TagTreeView = dynamic(
-  () => import('@/features/tags/components/tag-tree-view').then((mod) => ({ default: mod.TagTreeView })),
-  { ssr: false }
-)
+  () =>
+    import('@/features/tags/components/tag-tree-view').then((mod) => ({
+      default: mod.TagTreeView,
+    })),
+  { ssr: false },
+);
 
 export function TagsSettings() {
-  const t = useTranslations()
-  const [isMounted, setIsMounted] = useState(false)
-  const [searchQuery, setSearchQuery] = useState('')
+  const t = useTranslations();
+  const [isMounted, setIsMounted] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   // クライアントサイドでのみレンダリング
   useEffect(() => {
-    setIsMounted(true)
-  }, [])
+    setIsMounted(true);
+  }, []);
 
   // データ取得
-  const { data: tags = [], isPending, error } = useTags(true)
+  const { data: tags = [], isPending, error } = useTags(true);
 
   // タグ操作
   const {
@@ -54,29 +63,31 @@ export function TagsSettings() {
     handleDeleteTag,
     handleRenameTag,
     handleCloseModals,
-  } = useTagOperations(tags)
+  } = useTagOperations(tags);
 
   // フィルタリング
   const filteredTags = tags.filter((tag) => {
     if (searchQuery) {
-      const query = searchQuery.toLowerCase()
-      return tag.name.toLowerCase().includes(query) || tag.description?.toLowerCase().includes(query)
+      const query = searchQuery.toLowerCase();
+      return (
+        tag.name.toLowerCase().includes(query) || tag.description?.toLowerCase().includes(query)
+      );
     }
-    return true
-  })
+    return true;
+  });
 
   // ハンドラー
   const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value)
-  }, [])
+    setSearchQuery(e.target.value);
+  }, []);
 
   const handleCreateClick = useCallback(() => {
-    handleCreateTag()
-  }, [handleCreateTag])
+    handleCreateTag();
+  }, [handleCreateTag]);
 
   // SSR時は何も表示しない（Hydrationエラー回避）
   if (!isMounted) {
-    return null
+    return null;
   }
 
   // エラー状態
@@ -85,14 +96,16 @@ export function TagsSettings() {
       <div className="space-y-6">
         <SettingsCard title={t('settings.dialog.categories.tags') || 'タグ'}>
           <div className="border-destructive bg-destructive/12 rounded-lg border p-4">
-            <p className="text-destructive text-sm">エラー: {error instanceof Error ? error.message : String(error)}</p>
+            <p className="text-destructive text-sm">
+              エラー: {error instanceof Error ? error.message : String(error)}
+            </p>
             <Button variant="destructive" onClick={() => window.location.reload()} className="mt-4">
               再読み込み
             </Button>
           </div>
         </SettingsCard>
       </div>
-    )
+    );
   }
 
   return (
@@ -163,11 +176,20 @@ export function TagsSettings() {
         {/* モーダル */}
         {isMounted && (
           <>
-            <TagCreateModal isOpen={showCreateModal} onClose={handleCloseModals} onSave={handleSaveNewTag} />
-            <TagEditModal isOpen={showEditModal} tag={selectedTag} onClose={handleCloseModals} onSave={handleSaveTag} />
+            <TagCreateModal
+              isOpen={showCreateModal}
+              onClose={handleCloseModals}
+              onSave={handleSaveNewTag}
+            />
+            <TagEditModal
+              isOpen={showEditModal}
+              tag={selectedTag}
+              onClose={handleCloseModals}
+              onSave={handleSaveTag}
+            />
           </>
         )}
       </div>
     </ErrorBoundary>
-  )
+  );
 }

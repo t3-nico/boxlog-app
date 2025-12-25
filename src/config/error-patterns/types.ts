@@ -5,7 +5,7 @@
  * このファイルではエラーメッセージ定義用の型を提供。
  */
 
-import type { ErrorLevel } from '@/constants/errorCodes'
+import type { ErrorLevel } from '@/constants/errorCodes';
 
 /**
  * エラーメッセージパターン
@@ -13,21 +13,21 @@ import type { ErrorLevel } from '@/constants/errorCodes'
  */
 export interface ErrorMessagePattern {
   /** 技術者向けメッセージ */
-  technical: string
+  technical: string;
   /** ユーザーフレンドリーメッセージ */
-  userFriendly: string
+  userFriendly: string;
   /** 短縮メッセージ（トースト等用） */
-  short: string
+  short: string;
   /** 詳細説明（必要に応じて） */
-  description: string
+  description: string;
   /** 推奨アクション */
-  recommendedActions: string[]
+  recommendedActions: string[];
   /** 自動復旧可能か */
-  autoRecoverable: boolean
+  autoRecoverable: boolean;
   /** 緊急度レベル */
-  urgency: ErrorLevel
+  urgency: ErrorLevel;
   /** 絵文字アイコン */
-  emoji: string
+  emoji: string;
   /** 関連するFAQ ID（将来の拡張用） */
-  faqIds?: string[]
+  faqIds?: string[];
 }

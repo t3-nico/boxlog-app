@@ -48,7 +48,7 @@ export const AUTH_ERRORS = {
   NO_PERMISSION: 1003,
   /** スコープ不足 */
   INSUFFICIENT_SCOPE: 1011,
-} as const
+} as const;
 
 // ==============================================
 // 2000番台: API・ネットワーク系エラー
@@ -80,7 +80,7 @@ export const API_ERRORS = {
   RATE_LIMIT_EXCEEDED: 2001,
   /** 無効なフォーマット（API_INVALID_PARAMのエイリアス） */
   INVALID_FORMAT: 2002,
-} as const
+} as const;
 
 // ==============================================
 // 3000番台: データ・データベース系エラー
@@ -110,7 +110,7 @@ export const DATA_ERRORS = {
   // Aliases for middleware compatibility
   /** データが見つからない（DATA_NOT_FOUNDのエイリアス） */
   NOT_FOUND: 3001,
-} as const
+} as const;
 
 // ==============================================
 // 4000番台: UI・フロントエンド系エラー
@@ -136,7 +136,7 @@ export const UI_ERRORS = {
   UI_BROWSER_COMPAT_ERROR: 4009,
   /** アクセシビリティエラー */
   UI_ACCESSIBILITY_ERROR: 4010,
-} as const
+} as const;
 
 // ==============================================
 // 5000番台: システム・インフラ系エラー
@@ -172,7 +172,7 @@ export const SYSTEM_ERRORS = {
   INTERNAL_SERVER_ERROR: 5011,
   /** 予期しないエラー（SYSTEM_UNEXPECTED_ERRORのエイリアス） */
   UNEXPECTED_ERROR: 5012,
-} as const
+} as const;
 
 // ==============================================
 // 6000番台: ビジネスロジック系エラー
@@ -198,7 +198,7 @@ export const BUSINESS_ERRORS = {
   BUSINESS_CONCURRENCY_ERROR: 6009,
   /** リソース制限エラー */
   BUSINESS_RESOURCE_LIMIT: 6010,
-} as const
+} as const;
 
 // ==============================================
 // 7000番台: 外部サービス連携系エラー
@@ -222,7 +222,7 @@ export const EXTERNAL_ERRORS = {
   EXTERNAL_STORAGE_ERROR: 7008,
   /** 決済サービスエラー */
   EXTERNAL_PAYMENT_ERROR: 7009,
-} as const
+} as const;
 
 // ==============================================
 // 全エラーコードの統合
@@ -235,7 +235,7 @@ export const ERROR_CODES = {
   ...SYSTEM_ERRORS,
   ...BUSINESS_ERRORS,
   ...EXTERNAL_ERRORS,
-} as const
+} as const;
 
 // ==============================================
 // エラーカテゴリマッピング
@@ -248,7 +248,7 @@ export const ERROR_CATEGORIES = {
   system: SYSTEM_ERRORS,
   business: BUSINESS_ERRORS,
   external: EXTERNAL_ERRORS,
-} as const
+} as const;
 
 // ==============================================
 // エラー情報辞書
@@ -283,21 +283,21 @@ export const ERROR_INFO = {
     recoverable: true,
   },
   // 必要に応じて他のエラーコードの情報も追加
-} as const
+} as const;
 
 // ==============================================
 // TypeScript型定義
 // ==============================================
-export type ErrorCode = (typeof ERROR_CODES)[keyof typeof ERROR_CODES]
-export type ErrorCategory = keyof typeof ERROR_CATEGORIES
-export type ErrorLevel = 'info' | 'warning' | 'error' | 'critical'
+export type ErrorCode = (typeof ERROR_CODES)[keyof typeof ERROR_CODES];
+export type ErrorCategory = keyof typeof ERROR_CATEGORIES;
+export type ErrorLevel = 'info' | 'warning' | 'error' | 'critical';
 
 export interface ErrorInfo {
-  message: string
-  level: ErrorLevel
-  category: ErrorCategory
-  action: string
-  recoverable: boolean
+  message: string;
+  level: ErrorLevel;
+  category: ErrorCategory;
+  action: string;
+  recoverable: boolean;
 }
 
 // ==============================================
@@ -308,40 +308,40 @@ export interface ErrorInfo {
  * エラーコードからカテゴリを取得
  */
 export function getErrorCategory(code: ErrorCode): ErrorCategory {
-  if (code >= 1000 && code < 2000) return 'auth'
-  if (code >= 2000 && code < 3000) return 'api'
-  if (code >= 3000 && code < 4000) return 'data'
-  if (code >= 4000 && code < 5000) return 'ui'
-  if (code >= 5000 && code < 6000) return 'system'
-  if (code >= 6000 && code < 7000) return 'business'
-  if (code >= 7000 && code < 8000) return 'external'
-  return 'system' // デフォルト
+  if (code >= 1000 && code < 2000) return 'auth';
+  if (code >= 2000 && code < 3000) return 'api';
+  if (code >= 3000 && code < 4000) return 'data';
+  if (code >= 4000 && code < 5000) return 'ui';
+  if (code >= 5000 && code < 6000) return 'system';
+  if (code >= 6000 && code < 7000) return 'business';
+  if (code >= 7000 && code < 8000) return 'external';
+  return 'system'; // デフォルト
 }
 
 /**
  * エラーコードから重要度を判定
  */
 export function getErrorSeverity(code: ErrorCode): ErrorLevel {
-  const category = getErrorCategory(code)
+  const category = getErrorCategory(code);
 
   // カテゴリ別のデフォルト重要度
   switch (category) {
     case 'auth':
-      return 'error'
+      return 'error';
     case 'system':
-      return 'critical'
+      return 'critical';
     case 'data':
-      return 'error'
+      return 'error';
     case 'api':
-      return 'warning'
+      return 'warning';
     case 'ui':
-      return 'warning'
+      return 'warning';
     case 'business':
-      return 'error'
+      return 'error';
     case 'external':
-      return 'warning'
+      return 'warning';
     default:
-      return 'error'
+      return 'error';
   }
 }
 
@@ -349,6 +349,6 @@ export function getErrorSeverity(code: ErrorCode): ErrorLevel {
  * エラーコード名を取得（デバッグ用）
  */
 export function getErrorCodeName(code: ErrorCode): string {
-  const entry = Object.entries(ERROR_CODES).find(([, value]) => value === code)
-  return entry ? entry[0] : `UNKNOWN_ERROR_${code}`
+  const entry = Object.entries(ERROR_CODES).find(([, value]) => value === code);
+  return entry ? entry[0] : `UNKNOWN_ERROR_${code}`;
 }

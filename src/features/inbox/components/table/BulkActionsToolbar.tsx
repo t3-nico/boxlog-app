@@ -1,6 +1,6 @@
-'use client'
+'use client';
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui/button';
 import {
   Select,
   SelectContent,
@@ -9,15 +9,15 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
-import type { PlanStatus } from '@/features/plans/types/plan'
-import { Archive, Calendar, Trash2, X } from 'lucide-react'
-import { useTranslations } from 'next-intl'
-import { useState } from 'react'
-import { toast } from 'sonner'
-import { useInboxSelectionStore } from '../../stores/useInboxSelectionStore'
-import { BulkDatePickerDialog } from './BulkDatePickerDialog'
+} from '@/components/ui/select';
+import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
+import type { PlanStatus } from '@/features/plans/types/plan';
+import { Archive, Calendar, Trash2, X } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { useState } from 'react';
+import { toast } from 'sonner';
+import { useInboxSelectionStore } from '../../stores/useInboxSelectionStore';
+import { BulkDatePickerDialog } from './BulkDatePickerDialog';
 
 /**
  * 一括操作ツールバーコンポーネント
@@ -36,92 +36,94 @@ import { BulkDatePickerDialog } from './BulkDatePickerDialog'
  * ```
  */
 export function BulkActionsToolbar() {
-  const t = useTranslations()
-  const { getSelectedCount, getSelectedIds, clearSelection } = useInboxSelectionStore()
-  const { bulkUpdatePlan, bulkDeletePlan } = usePlanMutations()
-  const selectedCount = getSelectedCount()
-  const [showDateDialog, setShowDateDialog] = useState(false)
-  const [isProcessing, setIsProcessing] = useState(false)
+  const t = useTranslations();
+  const { getSelectedCount, getSelectedIds, clearSelection } = useInboxSelectionStore();
+  const { bulkUpdatePlan, bulkDeletePlan } = usePlanMutations();
+  const selectedCount = getSelectedCount();
+  const [showDateDialog, setShowDateDialog] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   // 選択がない場合は非表示
   if (selectedCount === 0) {
-    return null
+    return null;
   }
 
   // ステータス変更ハンドラー
   const handleStatusChange = async (status: PlanStatus) => {
-    setIsProcessing(true)
+    setIsProcessing(true);
     try {
-      const selectedIds = Array.from(getSelectedIds())
+      const selectedIds = Array.from(getSelectedIds());
       await bulkUpdatePlan.mutateAsync({
         ids: selectedIds,
         data: { status },
-      })
+      });
 
-      toast.success(t('common.inbox.statusChangedCount', { count: selectedIds.length }))
-      clearSelection()
+      toast.success(t('common.inbox.statusChangedCount', { count: selectedIds.length }));
+      clearSelection();
     } catch (error) {
-      toast.error(t('common.inbox.statusChangeFailed'))
-      console.error('Bulk status change error:', error)
+      toast.error(t('common.inbox.statusChangeFailed'));
+      console.error('Bulk status change error:', error);
     } finally {
-      setIsProcessing(false)
+      setIsProcessing(false);
     }
-  }
+  };
 
   // 期限設定ダイアログを開く
   const handleOpenDateDialog = () => {
-    setShowDateDialog(true)
-  }
+    setShowDateDialog(true);
+  };
 
   // アーカイブハンドラー
   const handleArchive = async () => {
-    setIsProcessing(true)
+    setIsProcessing(true);
     try {
-      const selectedIds = Array.from(getSelectedIds())
+      const selectedIds = Array.from(getSelectedIds());
       await bulkUpdatePlan.mutateAsync({
         ids: selectedIds,
         data: { status: 'done' }, // アーカイブ = 完了ステータスに変更
-      })
+      });
 
-      toast.success(t('common.inbox.archivedCount', { count: selectedIds.length }))
-      clearSelection()
+      toast.success(t('common.inbox.archivedCount', { count: selectedIds.length }));
+      clearSelection();
     } catch (error) {
-      toast.error(t('common.inbox.archiveFailed'))
-      console.error('Bulk archive error:', error)
+      toast.error(t('common.inbox.archiveFailed'));
+      console.error('Bulk archive error:', error);
     } finally {
-      setIsProcessing(false)
+      setIsProcessing(false);
     }
-  }
+  };
 
   // 削除ハンドラー
   const handleDelete = async () => {
     // 確認ダイアログ
     if (!window.confirm(t('common.inbox.deleteConfirm', { count: selectedCount }))) {
-      return
+      return;
     }
 
-    setIsProcessing(true)
+    setIsProcessing(true);
     try {
-      const selectedIds = Array.from(getSelectedIds())
+      const selectedIds = Array.from(getSelectedIds());
       await bulkDeletePlan.mutateAsync({
         ids: selectedIds,
-      })
+      });
 
-      toast.success(t('common.inbox.deletedCount', { count: selectedIds.length }))
-      clearSelection()
+      toast.success(t('common.inbox.deletedCount', { count: selectedIds.length }));
+      clearSelection();
     } catch (error) {
-      toast.error(t('common.inbox.deleteFailed'))
-      console.error('Bulk delete error:', error)
+      toast.error(t('common.inbox.deleteFailed'));
+      console.error('Bulk delete error:', error);
     } finally {
-      setIsProcessing(false)
+      setIsProcessing(false);
     }
-  }
+  };
 
   return (
     <div className="bg-surface-container border-border flex items-center justify-between border-b px-4 py-3">
       {/* 左側: 選択数表示 */}
       <div className="flex items-center gap-2">
-        <span className="text-sm font-medium">{t('common.inbox.selected', { count: selectedCount })}</span>
+        <span className="text-sm font-medium">
+          {t('common.inbox.selected', { count: selectedCount })}
+        </span>
         <Button variant="ghost" onClick={clearSelection}>
           <X className="size-4" />
           {t('common.inbox.clear')}
@@ -131,7 +133,10 @@ export function BulkActionsToolbar() {
       {/* 右側: 一括操作ボタン */}
       <div className="flex items-center gap-2">
         {/* ステータス変更 */}
-        <Select onValueChange={(value) => handleStatusChange(value as PlanStatus)} disabled={isProcessing}>
+        <Select
+          onValueChange={(value) => handleStatusChange(value as PlanStatus)}
+          disabled={isProcessing}
+        >
           <SelectTrigger className="h-8 w-36">
             <SelectValue placeholder={t('common.inbox.changeStatus')} />
           </SelectTrigger>
@@ -173,10 +178,10 @@ export function BulkActionsToolbar() {
         onOpenChange={setShowDateDialog}
         selectedIds={Array.from(getSelectedIds())}
         onSuccess={() => {
-          clearSelection()
-          setShowDateDialog(false)
+          clearSelection();
+          setShowDateDialog(false);
         }}
       />
     </div>
-  )
+  );
 }

@@ -1,13 +1,13 @@
-'use client'
+'use client';
 
-import type { ReactNode } from 'react'
+import type { ReactNode } from 'react';
 
-import { SelectionBar } from '@/components/common/SelectionBar'
+import { SelectionBar } from '@/components/common/SelectionBar';
 
 interface InboxSelectionBarProps {
-  selectedCount: number
-  onClearSelection: () => void
-  actions: ReactNode
+  selectedCount: number;
+  onClearSelection: () => void;
+  actions: ReactNode;
 }
 
 /**
@@ -15,6 +15,16 @@ interface InboxSelectionBarProps {
  *
  * @deprecated 共通SelectionBarを直接使用することを推奨
  */
-export function InboxSelectionBar({ selectedCount, onClearSelection, actions }: InboxSelectionBarProps) {
-  return <SelectionBar selectedCount={selectedCount} onClearSelection={onClearSelection} actions={actions} />
+export function InboxSelectionBar({
+  selectedCount,
+  onClearSelection,
+  actions,
+}: InboxSelectionBarProps) {
+  return (
+    <SelectionBar
+      selectedCount={selectedCount}
+      onClearSelection={onClearSelection}
+      actions={actions}
+    />
+  );
 }

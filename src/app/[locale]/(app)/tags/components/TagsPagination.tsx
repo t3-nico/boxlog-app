@@ -1,21 +1,27 @@
-'use client'
+'use client';
 
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
-import { Button } from '@/components/ui/button'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import type { useTranslations } from 'next-intl'
+import { Button } from '@/components/ui/button';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import type { useTranslations } from 'next-intl';
 
 interface TagsPaginationProps {
-  currentPage: number
-  pageSize: number
-  totalItems: number
-  totalPages: number
-  startIndex: number
-  endIndex: number
-  onPageChange: (page: number) => void
-  onPageSizeChange: (size: number) => void
-  t: ReturnType<typeof useTranslations>
+  currentPage: number;
+  pageSize: number;
+  totalItems: number;
+  totalPages: number;
+  startIndex: number;
+  endIndex: number;
+  onPageChange: (page: number) => void;
+  onPageSizeChange: (size: number) => void;
+  t: ReturnType<typeof useTranslations>;
 }
 
 export function TagsPagination({
@@ -35,7 +41,10 @@ export function TagsPagination({
         {/* 左側: 表示件数選択 */}
         <div className="flex items-center gap-2">
           <span className="text-muted-foreground text-sm">{t('tag.page.rowsPerPage')}</span>
-          <Select value={String(pageSize)} onValueChange={(value) => onPageSizeChange(Number(value))}>
+          <Select
+            value={String(pageSize)}
+            onValueChange={(value) => onPageSizeChange(Number(value))}
+          >
             <SelectTrigger className="h-8 w-16">
               <SelectValue />
             </SelectTrigger>
@@ -83,5 +92,5 @@ export function TagsPagination({
         </div>
       </div>
     </div>
-  )
+  );
 }

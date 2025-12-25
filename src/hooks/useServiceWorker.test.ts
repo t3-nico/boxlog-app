@@ -1,26 +1,26 @@
-import { act, renderHook, waitFor } from '@testing-library/react'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { act, renderHook, waitFor } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { useServiceWorker } from './useServiceWorker'
+import { useServiceWorker } from './useServiceWorker';
 
 describe('useServiceWorker', () => {
   let mockRegistration: {
-    installing: ServiceWorker | null
-    waiting: ServiceWorker | null
-    active: ServiceWorker | null
-    scope: string
-    updateViaCache: ServiceWorkerUpdateViaCache
-    addEventListener: ReturnType<typeof vi.fn>
-    update: ReturnType<typeof vi.fn>
-  }
-  let mockServiceWorker: Partial<ServiceWorker>
+    installing: ServiceWorker | null;
+    waiting: ServiceWorker | null;
+    active: ServiceWorker | null;
+    scope: string;
+    updateViaCache: ServiceWorkerUpdateViaCache;
+    addEventListener: ReturnType<typeof vi.fn>;
+    update: ReturnType<typeof vi.fn>;
+  };
+  let mockServiceWorker: Partial<ServiceWorker>;
 
   beforeEach(() => {
     mockServiceWorker = {
       postMessage: vi.fn(),
       state: 'activated',
       addEventListener: vi.fn(),
-    }
+    };
 
     mockRegistration = {
       installing: null,
@@ -30,7 +30,7 @@ describe('useServiceWorker', () => {
       updateViaCache: 'none',
       addEventListener: vi.fn(),
       update: vi.fn().mockResolvedValue(undefined),
-    }
+    };
 
     // Service Worker APIのモック
     const mockNavigator = {
@@ -41,113 +41,117 @@ describe('useServiceWorker', () => {
         addEventListener: vi.fn(),
         removeEventListener: vi.fn(),
       },
-    }
+    };
 
-    vi.stubGlobal('navigator', mockNavigator)
+    vi.stubGlobal('navigator', mockNavigator);
     vi.stubGlobal('caches', {
       keys: vi.fn().mockResolvedValue([]),
       delete: vi.fn().mockResolvedValue(true),
-    })
+    });
 
     // document.readyState のモック
     Object.defineProperty(document, 'readyState', {
       value: 'complete',
       writable: true,
-    })
-  })
+    });
+  });
 
   afterEach(() => {
-    vi.unstubAllGlobals()
-    vi.clearAllMocks()
-  })
+    vi.unstubAllGlobals();
+    vi.clearAllMocks();
+  });
 
   describe('初期状態', () => {
     it('Service Worker がサポートされている場合、isSupported が true', async () => {
-      const { result } = renderHook(() => useServiceWorker())
+      const { result } = renderHook(() => useServiceWorker());
 
       await waitFor(() => {
-        expect(result.current.isSupported).toBe(true)
-      })
-    })
+        expect(result.current.isSupported).toBe(true);
+      });
+    });
 
     it('登録成功後、isRegistered が true', async () => {
-      const { result } = renderHook(() => useServiceWorker())
+      const { result } = renderHook(() => useServiceWorker());
 
       await waitFor(() => {
-        expect(result.current.isRegistered).toBe(true)
-      })
-    })
-  })
+        expect(result.current.isRegistered).toBe(true);
+      });
+    });
+  });
 
   describe('Service Worker 登録', () => {
     it('sw.js を登録する', async () => {
-      renderHook(() => useServiceWorker())
+      renderHook(() => useServiceWorker());
 
       await waitFor(() => {
         expect(navigator.serviceWorker.register).toHaveBeenCalledWith('/sw.js', {
           scope: '/',
-        })
-      })
-    })
+        });
+      });
+    });
 
     it('登録エラー時、error が設定される', async () => {
-      const error = new Error('Registration failed')
-      vi.mocked(navigator.serviceWorker.register).mockRejectedValue(error)
+      const error = new Error('Registration failed');
+      vi.mocked(navigator.serviceWorker.register).mockRejectedValue(error);
 
-      const { result } = renderHook(() => useServiceWorker())
+      const { result } = renderHook(() => useServiceWorker());
 
       await waitFor(() => {
-        expect(result.current.error).toEqual(error)
-        expect(result.current.isRegistered).toBe(false)
-      })
-    })
-  })
+        expect(result.current.error).toEqual(error);
+        expect(result.current.isRegistered).toBe(false);
+      });
+    });
+  });
 
   describe('更新機能', () => {
     it('updateAvailable が true の時、applyUpdate が利用可能', async () => {
-      mockRegistration.waiting = mockServiceWorker as ServiceWorker
+      mockRegistration.waiting = mockServiceWorker as ServiceWorker;
 
-      const { result } = renderHook(() => useServiceWorker())
+      const { result } = renderHook(() => useServiceWorker());
 
       await waitFor(() => {
-        expect(result.current.isRegistered).toBe(true)
-      })
+        expect(result.current.isRegistered).toBe(true);
+      });
 
       // 手動で updateAvailable を設定するのは難しいので、
       // applyUpdate が関数として存在することを確認
-      expect(typeof result.current.applyUpdate).toBe('function')
-    })
-  })
+      expect(typeof result.current.applyUpdate).toBe('function');
+    });
+  });
 
   describe('キャッシュクリア', () => {
     it('clearCache が boxlog- プレフィックスのキャッシュを削除', async () => {
-      vi.mocked(window.caches.keys).mockResolvedValue(['boxlog-v1', 'boxlog-static-v1', 'other-cache'])
+      vi.mocked(window.caches.keys).mockResolvedValue([
+        'boxlog-v1',
+        'boxlog-static-v1',
+        'other-cache',
+      ]);
 
-      const { result } = renderHook(() => useServiceWorker())
+      const { result } = renderHook(() => useServiceWorker());
 
       await waitFor(() => {
-        expect(result.current.isRegistered).toBe(true)
-      })
+        expect(result.current.isRegistered).toBe(true);
+      });
 
       await act(async () => {
-        await result.current.clearCache()
-      })
+        await result.current.clearCache();
+      });
 
-      expect(window.caches.delete).toHaveBeenCalledWith('boxlog-v1')
-      expect(window.caches.delete).toHaveBeenCalledWith('boxlog-static-v1')
-      expect(window.caches.delete).not.toHaveBeenCalledWith('other-cache')
-    })
-  })
+      expect(window.caches.delete).toHaveBeenCalledWith('boxlog-v1');
+      expect(window.caches.delete).toHaveBeenCalledWith('boxlog-static-v1');
+      expect(window.caches.delete).not.toHaveBeenCalledWith('other-cache');
+    });
+  });
 
   describe('非対応環境', () => {
     it('Service Worker 非対応ブラウザでは isSupported が false', () => {
       // navigator.serviceWorker を undefined にする
-      vi.stubGlobal('navigator', {})
+      vi.stubGlobal('navigator', {});
 
-      const { result } = renderHook(() => useServiceWorker())
+      const { result } = renderHook(() => useServiceWorker());
 
-      expect(result.current.isSupported).toBe(false)
-      expect(result.current.isRegistered).toBe(false)
-    })
-  })
-})
+      expect(result.current.isSupported).toBe(false);
+      expect(result.current.isRegistered).toBe(false);
+    });
+  });
+});

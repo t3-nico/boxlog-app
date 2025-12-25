@@ -5,32 +5,32 @@
 export interface CalendarColors {
   event: {
     // ステータス別
-    scheduled: ColorSet
-    backlog: ColorSet
-    waiting: ColorSet
-    blocked: ColorSet
-    completed: ColorSet
-    cancelled: ColorSet
+    scheduled: ColorSet;
+    backlog: ColorSet;
+    waiting: ColorSet;
+    blocked: ColorSet;
+    completed: ColorSet;
+    cancelled: ColorSet;
 
     // タイプ別（将来拡張用）
-    task: ColorSet
-    log: ColorSet
-  }
+    task: ColorSet;
+    log: ColorSet;
+  };
 
   // UI状態
   states: {
-    ghost: ColorSet // ゴースト表示
-    selected: ColorSet // 選択時
-    displayPeriod: ColorSet // 表示期間
-    conflict: ColorSet // 衝突時
-  }
+    ghost: ColorSet; // ゴースト表示
+    selected: ColorSet; // 選択時
+    displayPeriod: ColorSet; // 表示期間
+    conflict: ColorSet; // 衝突時
+  };
 }
 
 interface ColorSet {
-  background: string
-  text: string
-  hover?: string
-  active?: string
+  background: string;
+  text: string;
+  hover?: string;
+  active?: string;
 }
 
 // カレンダー専用カラー（既存テーマシステム準拠）
@@ -121,4 +121,4 @@ export const calendarColors: CalendarColors = {
       text: 'text-red-600 dark:text-red-400',
     },
   },
-} as const
+} as const;

@@ -1,28 +1,28 @@
-import { create } from 'zustand'
-import { devtools, persist } from 'zustand/middleware'
+import { create } from 'zustand';
+import { devtools, persist } from 'zustand/middleware';
 
 /**
  * 汎用列設定
  */
 export interface ColumnConfig<TColumnId extends string> {
-  id: TColumnId
-  label: string
-  visible: boolean
-  width: number
-  resizable: boolean
+  id: TColumnId;
+  label: string;
+  visible: boolean;
+  width: number;
+  resizable: boolean;
 }
 
 /**
  * 列設定ストアの状態
  */
 export interface TableColumnState<TColumnId extends string> {
-  columns: ColumnConfig<TColumnId>[]
-  setColumnWidth: (id: TColumnId, width: number) => void
-  toggleColumnVisibility: (id: TColumnId) => void
-  setColumnVisibility: (id: TColumnId, visible: boolean) => void
-  resetColumns: () => void
-  getVisibleColumns: () => ColumnConfig<TColumnId>[]
-  getColumnWidth: (id: TColumnId) => number
+  columns: ColumnConfig<TColumnId>[];
+  setColumnWidth: (id: TColumnId, width: number) => void;
+  toggleColumnVisibility: (id: TColumnId) => void;
+  setColumnVisibility: (id: TColumnId, visible: boolean) => void;
+  resetColumns: () => void;
+  getVisibleColumns: () => ColumnConfig<TColumnId>[];
+  getColumnWidth: (id: TColumnId) => number;
 }
 
 /**
@@ -30,15 +30,15 @@ export interface TableColumnState<TColumnId extends string> {
  */
 export interface CreateTableColumnStoreConfig<TColumnId extends string> {
   /** デフォルト列設定 */
-  defaultColumns: ColumnConfig<TColumnId>[]
+  defaultColumns: ColumnConfig<TColumnId>[];
   /** localStorage 永続化キー */
-  persistKey: string
+  persistKey: string;
   /** devtools 表示名 */
-  storeName?: string
+  storeName?: string;
   /** 常に表示する列（非表示にできない） */
-  alwaysVisibleColumns?: TColumnId[]
+  alwaysVisibleColumns?: TColumnId[];
   /** 最小列幅（デフォルト: 50） */
-  minWidth?: number
+  minWidth?: number;
 }
 
 /**
@@ -67,8 +67,16 @@ export interface CreateTableColumnStoreConfig<TColumnId extends string> {
  * })
  * ```
  */
-export function createTableColumnStore<TColumnId extends string>(config: CreateTableColumnStoreConfig<TColumnId>) {
-  const { defaultColumns, persistKey, storeName = persistKey, alwaysVisibleColumns = [], minWidth = 50 } = config
+export function createTableColumnStore<TColumnId extends string>(
+  config: CreateTableColumnStoreConfig<TColumnId>,
+) {
+  const {
+    defaultColumns,
+    persistKey,
+    storeName = persistKey,
+    alwaysVisibleColumns = [],
+    minWidth = 50,
+  } = config;
 
   return create<TableColumnState<TColumnId>>()(
     devtools(
@@ -77,26 +85,30 @@ export function createTableColumnStore<TColumnId extends string>(config: CreateT
           columns: defaultColumns,
 
           setColumnWidth: (id, width) => {
-            const newWidth = Math.max(minWidth, width)
+            const newWidth = Math.max(minWidth, width);
             set({
-              columns: get().columns.map((col) => (col.id === id ? { ...col, width: newWidth } : col)),
-            })
+              columns: get().columns.map((col) =>
+                col.id === id ? { ...col, width: newWidth } : col,
+              ),
+            });
           },
 
           toggleColumnVisibility: (id) => {
             // 常に表示する列は切り替え不可
-            if (alwaysVisibleColumns.includes(id)) return
+            if (alwaysVisibleColumns.includes(id)) return;
             set({
-              columns: get().columns.map((col) => (col.id === id ? { ...col, visible: !col.visible } : col)),
-            })
+              columns: get().columns.map((col) =>
+                col.id === id ? { ...col, visible: !col.visible } : col,
+              ),
+            });
           },
 
           setColumnVisibility: (id, visible) => {
             // 常に表示する列は切り替え不可
-            if (alwaysVisibleColumns.includes(id)) return
+            if (alwaysVisibleColumns.includes(id)) return;
             set({
               columns: get().columns.map((col) => (col.id === id ? { ...col, visible } : col)),
-            })
+            });
           },
 
           resetColumns: () => set({ columns: defaultColumns }),
@@ -104,13 +116,13 @@ export function createTableColumnStore<TColumnId extends string>(config: CreateT
           getVisibleColumns: () => get().columns.filter((col) => col.visible),
 
           getColumnWidth: (id) => {
-            const col = get().columns.find((c) => c.id === id)
-            return col?.width ?? 100
+            const col = get().columns.find((c) => c.id === id);
+            return col?.width ?? 100;
           },
         }),
-        { name: persistKey }
+        { name: persistKey },
       ),
-      { name: storeName }
-    )
-  )
+      { name: storeName },
+    ),
+  );
 }

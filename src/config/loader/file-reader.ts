@@ -2,11 +2,11 @@
  * 設定ローダー - ファイル読み込み
  */
 
-import fs from 'fs'
-import path from 'path'
+import fs from 'fs';
+import path from 'path';
 
-import { DEFAULT_CONFIGS } from '../schema'
-import { CONFIG_PATHS } from './constants'
+import { DEFAULT_CONFIGS } from '../schema';
+import { CONFIG_PATHS } from './constants';
 
 /**
  * 📁 設定ファイルの読み込み
@@ -15,29 +15,29 @@ export async function loadConfigFile(filePath: string): Promise<Record<string, u
   try {
     // セキュリティ: 設定ディレクトリ内のファイルのみ許可
     if (!isValidConfigPath(filePath)) {
-      console.warn(`Config file path outside allowed directory: ${filePath}`)
-      return null
+      console.warn(`Config file path outside allowed directory: ${filePath}`);
+      return null;
     }
 
-    const allowedBasePath = path.resolve(process.cwd(), 'config')
-    const resolvedPath = path.resolve(filePath)
+    const allowedBasePath = path.resolve(process.cwd(), 'config');
+    const resolvedPath = path.resolve(filePath);
 
     if (!resolvedPath.startsWith(allowedBasePath)) {
-      console.warn(`Config file path outside allowed directory: ${filePath}`)
-      return null
+      console.warn(`Config file path outside allowed directory: ${filePath}`);
+      return null;
     }
 
     if (!fileExists(resolvedPath)) {
-      return null
+      return null;
     }
 
-    const fileContent = readFileContent(resolvedPath)
-    const config = JSON.parse(fileContent) as Record<string, unknown>
+    const fileContent = readFileContent(resolvedPath);
+    const config = JSON.parse(fileContent) as Record<string, unknown>;
 
-    return config
+    return config;
   } catch (error) {
-    console.warn(`Failed to load config file ${filePath}:`, error)
-    return null
+    console.warn(`Failed to load config file ${filePath}:`, error);
+    return null;
   }
 }
 
@@ -45,8 +45,12 @@ export async function loadConfigFile(filePath: string): Promise<Record<string, u
  * 🔐 セキュア ファイルパス検証
  */
 export function isValidConfigPath(filePath: string): boolean {
-  const validPaths: string[] = [CONFIG_PATHS.base, CONFIG_PATHS.local, ...Object.values(CONFIG_PATHS.environment)]
-  return validPaths.includes(filePath)
+  const validPaths: string[] = [
+    CONFIG_PATHS.base,
+    CONFIG_PATHS.local,
+    ...Object.values(CONFIG_PATHS.environment),
+  ];
+  return validPaths.includes(filePath);
 }
 
 /**
@@ -55,9 +59,9 @@ export function isValidConfigPath(filePath: string): boolean {
 function fileExists(resolvedPath: string): boolean {
   try {
     // Security: This method should only be called with validated paths
-    return performFileSystemCheck(resolvedPath)
+    return performFileSystemCheck(resolvedPath);
   } catch {
-    return false
+    return false;
   }
 }
 
@@ -66,7 +70,7 @@ function fileExists(resolvedPath: string): boolean {
  */
 function readFileContent(resolvedPath: string): string {
   // Security: This method should only be called with validated paths
-  return performFileSystemRead(resolvedPath)
+  return performFileSystemRead(resolvedPath);
 }
 
 /**
@@ -74,7 +78,7 @@ function readFileContent(resolvedPath: string): string {
  */
 function performFileSystemCheck(validatedPath: string): boolean {
   // Note: This is a legitimate file system operation on validated config paths
-  return fs.existsSync(validatedPath)
+  return fs.existsSync(validatedPath);
 }
 
 /**
@@ -82,17 +86,17 @@ function performFileSystemCheck(validatedPath: string): boolean {
  */
 function performFileSystemRead(validatedPath: string): string {
   // Note: This is a legitimate file system operation on validated config paths
-  return fs.readFileSync(validatedPath, 'utf8')
+  return fs.readFileSync(validatedPath, 'utf8');
 }
 
 /**
  * 🔄 深いマージ
  */
 export function deepMerge(...sources: Record<string, unknown>[]): Record<string, unknown> {
-  const result: Record<string, unknown> = {}
+  const result: Record<string, unknown> = {};
 
   for (const source of sources) {
-    if (!source) continue
+    if (!source) continue;
 
     for (const key in source) {
       if (Object.prototype.hasOwnProperty.call(source, key)) {
@@ -103,22 +107,26 @@ export function deepMerge(...sources: Record<string, unknown>[]): Record<string,
           !Array.isArray(result[key]) &&
           !Array.isArray(source[key])
         ) {
-          result[key] = deepMerge(result[key] as Record<string, unknown>, source[key] as Record<string, unknown>)
+          result[key] = deepMerge(
+            result[key] as Record<string, unknown>,
+            source[key] as Record<string, unknown>,
+          );
         } else {
-          result[key] = source[key]
+          result[key] = source[key];
         }
       }
     }
   }
 
-  return result
+  return result;
 }
 
 /**
  * 🌍 デフォルト設定の取得
  */
 export function getDefaultConfig(environment: string): Record<string, unknown> {
-  const envDefaults = DEFAULT_CONFIGS[environment as keyof typeof DEFAULT_CONFIGS] || DEFAULT_CONFIGS.development
+  const envDefaults =
+    DEFAULT_CONFIGS[environment as keyof typeof DEFAULT_CONFIGS] || DEFAULT_CONFIGS.development;
 
   return {
     app: { ...envDefaults.app, environment },
@@ -126,5 +134,5 @@ export function getDefaultConfig(environment: string): Record<string, unknown> {
     features: envDefaults.features,
     logging: envDefaults.logging,
     server: envDefaults.server,
-  }
+  };
 }

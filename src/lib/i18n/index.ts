@@ -1,4 +1,4 @@
 /**
  * i18nモジュールのエントリポイント
  */
-export * from './types'
+export * from './types';

@@ -1,12 +1,12 @@
-'use client'
+'use client';
 
-import { Input } from '@/components/ui/input'
-import { cn } from '@/lib/utils'
-import { forwardRef } from 'react'
+import { Input } from '@/components/ui/input';
+import { cn } from '@/lib/utils';
+import { forwardRef } from 'react';
 
 interface PlanTitleInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
-  className?: string
-  size?: 'sm' | 'default' | 'lg'
+  className?: string;
+  size?: 'sm' | 'default' | 'lg';
 }
 
 export const PlanTitleInput = forwardRef<HTMLInputElement, PlanTitleInputProps>(
@@ -18,11 +18,11 @@ export const PlanTitleInput = forwardRef<HTMLInputElement, PlanTitleInputProps>(
         size={size}
         className={cn(
           'bg-popover focus-visible:ring-ring/50 border-0 px-0 text-2xl font-bold shadow-none focus-visible:ring-2',
-          className
+          className,
         )}
       />
-    )
-  }
-)
+    );
+  },
+);
 
-PlanTitleInput.displayName = 'PlanTitleInput'
+PlanTitleInput.displayName = 'PlanTitleInput';

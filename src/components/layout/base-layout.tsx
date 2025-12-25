@@ -1,9 +1,9 @@
-import React from 'react'
+import React from 'react';
 
-import { BaseLayoutContent } from './base-layout-content'
+import { BaseLayoutContent } from './base-layout-content';
 
 interface BaseLayoutProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 /**
@@ -18,5 +18,5 @@ interface BaseLayoutProps {
  * @see https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns#moving-client-components-down-the-tree
  */
 export function BaseLayout({ children }: BaseLayoutProps) {
-  return <BaseLayoutContent>{children}</BaseLayoutContent>
+  return <BaseLayoutContent>{children}</BaseLayoutContent>;
 }

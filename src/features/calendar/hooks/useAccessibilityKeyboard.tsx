@@ -1,47 +1,56 @@
-'use client'
+'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react';
 
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
-import { markAsTranslated } from '@/lib/i18n'
-import { useTranslations } from 'next-intl'
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
+import { markAsTranslated } from '@/lib/i18n';
+import { useTranslations } from 'next-intl';
 
-import { handleActionKeys, handleArrowKeys, handleNavigationKeys, handlePlanDetailKeys } from './keyboardHandlers'
+import {
+  handleActionKeys,
+  handleArrowKeys,
+  handleNavigationKeys,
+  handlePlanDetailKeys,
+} from './keyboardHandlers';
 
 export interface NavigationState {
-  selectedDate: Date
-  selectedTime: string
-  selectedPlanId: string | null
-  focusedElement: string | null
-  isInPlanCreationMode: boolean
-  isInPlanEditMode: boolean
+  selectedDate: Date;
+  selectedTime: string;
+  selectedPlanId: string | null;
+  focusedElement: string | null;
+  isInPlanCreationMode: boolean;
+  isInPlanEditMode: boolean;
 }
 
 interface KeyboardCallbacks {
-  onCreatePlan: (date: Date, time: string) => void
-  onEditPlan: (planId: string) => void
-  onDeletePlan: (planId: string) => void
-  onSelectPlan: (planId: string) => void
-  onNavigateDate: (date: Date) => void
-  onNavigateTime: (time: string) => void
-  onEscapeAction: () => void
+  onCreatePlan: (date: Date, time: string) => void;
+  onEditPlan: (planId: string) => void;
+  onDeletePlan: (planId: string) => void;
+  onSelectPlan: (planId: string) => void;
+  onNavigateDate: (date: Date) => void;
+  onNavigateTime: (time: string) => void;
+  onEscapeAction: () => void;
 }
 
 interface AccessibilityAnnouncement {
-  message: string
-  priority: 'polite' | 'assertive'
-  timestamp: number
+  message: string;
+  priority: 'polite' | 'assertive';
+  timestamp: number;
 }
 
 // 時間スロットの定義（15分刻み）
 const TIME_SLOTS = Array.from({ length: 96 }, (_, i) => {
-  const hours = Math.floor(i / 4)
-  const minutes = (i % 4) * 15
-  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`
-})
+  const hours = Math.floor(i / 4);
+  const minutes = (i % 4) * 15;
+  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+});
 
-export function useAccessibilityKeyboard(plans: CalendarPlan[], currentDate: Date, callbacks: KeyboardCallbacks) {
-  const t = useTranslations()
+export function useAccessibilityKeyboard(
+  plans: CalendarPlan[],
+  currentDate: Date,
+  callbacks: KeyboardCallbacks,
+) {
+  const t = useTranslations();
   const [navigationState, setNavigationState] = useState<NavigationState>({
     selectedDate: new Date(currentDate),
     selectedTime: '09:00',
@@ -49,10 +58,10 @@ export function useAccessibilityKeyboard(plans: CalendarPlan[], currentDate: Dat
     focusedElement: null,
     isInPlanCreationMode: false,
     isInPlanEditMode: false,
-  })
+  });
 
-  const [announcements, setAnnouncements] = useState<AccessibilityAnnouncement[]>([])
-  const announcementTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const [announcements, setAnnouncements] = useState<AccessibilityAnnouncement[]>([]);
+  const announcementTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   /**
    * スクリーンリーダー用のアナウンス
@@ -62,19 +71,19 @@ export function useAccessibilityKeyboard(plans: CalendarPlan[], currentDate: Dat
       message,
       priority,
       timestamp: Date.now(),
-    }
+    };
 
-    setAnnouncements((prev) => [...prev.slice(-9), announcement]) // 最新10件のみ保持
+    setAnnouncements((prev) => [...prev.slice(-9), announcement]); // 最新10件のみ保持
 
     // 自動クリーンアップ
     if (announcementTimeoutRef.current) {
-      clearTimeout(announcementTimeoutRef.current)
+      clearTimeout(announcementTimeoutRef.current);
     }
 
     announcementTimeoutRef.current = setTimeout(() => {
-      setAnnouncements((prev) => prev.filter((a) => a.timestamp !== announcement.timestamp))
-    }, 5000)
-  }, [])
+      setAnnouncements((prev) => prev.filter((a) => a.timestamp !== announcement.timestamp));
+    }, 5000);
+  }, []);
 
   /**
    * 日付の移動
@@ -82,27 +91,27 @@ export function useAccessibilityKeyboard(plans: CalendarPlan[], currentDate: Dat
   const navigateDate = useCallback(
     (direction: 'next' | 'previous', unit: 'day' | 'week') => {
       setNavigationState((prev) => {
-        const newDate = new Date(prev.selectedDate)
-        const multiplier = direction === 'next' ? 1 : -1
-        const amount = unit === 'day' ? 1 : 7
+        const newDate = new Date(prev.selectedDate);
+        const multiplier = direction === 'next' ? 1 : -1;
+        const amount = unit === 'day' ? 1 : 7;
 
-        newDate.setDate(newDate.getDate() + amount * multiplier)
+        newDate.setDate(newDate.getDate() + amount * multiplier);
 
         const dateString = newDate.toLocaleDateString('ja-JP', {
           year: 'numeric',
           month: 'long',
           day: 'numeric',
           weekday: 'long',
-        })
+        });
 
-        announce(`${dateString}に移動しました`)
-        callbacks.onNavigateDate(newDate)
+        announce(`${dateString}に移動しました`);
+        callbacks.onNavigateDate(newDate);
 
-        return { ...prev, selectedDate: newDate }
-      })
+        return { ...prev, selectedDate: newDate };
+      });
     },
-    [announce, callbacks]
-  )
+    [announce, callbacks],
+  );
 
   /**
    * 時間の移動
@@ -110,19 +119,21 @@ export function useAccessibilityKeyboard(plans: CalendarPlan[], currentDate: Dat
   const navigateTime = useCallback(
     (direction: 'next' | 'previous') => {
       setNavigationState((prev) => {
-        const currentIndex = TIME_SLOTS.indexOf(prev.selectedTime)
+        const currentIndex = TIME_SLOTS.indexOf(prev.selectedTime);
         const newIndex =
-          direction === 'next' ? Math.min(currentIndex + 1, TIME_SLOTS.length - 1) : Math.max(currentIndex - 1, 0)
+          direction === 'next'
+            ? Math.min(currentIndex + 1, TIME_SLOTS.length - 1)
+            : Math.max(currentIndex - 1, 0);
 
-        const newTime = TIME_SLOTS[newIndex]!
-        announce(`${newTime}に移動しました`)
-        callbacks.onNavigateTime(newTime)
+        const newTime = TIME_SLOTS[newIndex]!;
+        announce(`${newTime}に移動しました`);
+        callbacks.onNavigateTime(newTime);
 
-        return { ...prev, selectedTime: newTime }
-      })
+        return { ...prev, selectedTime: newTime };
+      });
     },
-    [announce, callbacks]
-  )
+    [announce, callbacks],
+  );
 
   /**
    * プラン間の移動
@@ -131,90 +142,94 @@ export function useAccessibilityKeyboard(plans: CalendarPlan[], currentDate: Dat
     (direction: 'next' | 'previous') => {
       const currentDatePlans = plans
         .filter(
-          (plan) => plan.startDate && plan.startDate.toDateString() === navigationState.selectedDate.toDateString()
+          (plan) =>
+            plan.startDate &&
+            plan.startDate.toDateString() === navigationState.selectedDate.toDateString(),
         )
-        .sort((a, b) => a.startDate!.getTime() - b.startDate!.getTime())
+        .sort((a, b) => a.startDate!.getTime() - b.startDate!.getTime());
 
       if (currentDatePlans.length === 0) {
-        announce(t('calendar.plan.noPlansOnThisDay'))
-        return
+        announce(t('calendar.plan.noPlansOnThisDay'));
+        return;
       }
 
       setNavigationState((prev) => {
-        const currentIndex = prev.selectedPlanId ? currentDatePlans.findIndex((p) => p.id === prev.selectedPlanId) : -1
+        const currentIndex = prev.selectedPlanId
+          ? currentDatePlans.findIndex((p) => p.id === prev.selectedPlanId)
+          : -1;
 
-        let newIndex: number
+        let newIndex: number;
         if (direction === 'next') {
-          newIndex = currentIndex < currentDatePlans.length - 1 ? currentIndex + 1 : 0
+          newIndex = currentIndex < currentDatePlans.length - 1 ? currentIndex + 1 : 0;
         } else {
-          newIndex = currentIndex > 0 ? currentIndex - 1 : currentDatePlans.length - 1
+          newIndex = currentIndex > 0 ? currentIndex - 1 : currentDatePlans.length - 1;
         }
 
-        const newPlan = currentDatePlans[newIndex]
-        if (!newPlan) return prev
+        const newPlan = currentDatePlans[newIndex];
+        if (!newPlan) return prev;
 
         const timeString = newPlan.startDate?.toLocaleTimeString('ja-JP', {
           hour: '2-digit',
           minute: '2-digit',
-        })
+        });
 
-        announce(`${timeString} ${newPlan.title}`)
-        callbacks.onSelectPlan(newPlan.id)
+        announce(`${timeString} ${newPlan.title}`);
+        callbacks.onSelectPlan(newPlan.id);
 
-        return { ...prev, selectedPlanId: newPlan.id }
-      })
+        return { ...prev, selectedPlanId: newPlan.id };
+      });
     },
-    [plans, navigationState.selectedDate, announce, callbacks, t]
-  )
+    [plans, navigationState.selectedDate, announce, callbacks, t],
+  );
 
   /**
    * プラン作成
    */
   const createPlan = useCallback(() => {
     setNavigationState((prev) => {
-      announce(`${prev.selectedTime}に新しいプランを作成します`)
-      callbacks.onCreatePlan(prev.selectedDate, prev.selectedTime)
+      announce(`${prev.selectedTime}に新しいプランを作成します`);
+      callbacks.onCreatePlan(prev.selectedDate, prev.selectedTime);
 
-      return { ...prev, isInPlanCreationMode: true }
-    })
-  }, [announce, callbacks])
+      return { ...prev, isInPlanCreationMode: true };
+    });
+  }, [announce, callbacks]);
 
   /**
    * プラン編集
    */
   const editCurrentPlan = useCallback(() => {
     if (navigationState.selectedPlanId) {
-      const plan = plans.find((p) => p.id === navigationState.selectedPlanId)
+      const plan = plans.find((p) => p.id === navigationState.selectedPlanId);
       if (plan) {
-        announce(`${plan.title}を編集します`)
-        callbacks.onEditPlan(navigationState.selectedPlanId)
+        announce(`${plan.title}を編集します`);
+        callbacks.onEditPlan(navigationState.selectedPlanId);
 
-        setNavigationState((prev) => ({ ...prev, isInPlanEditMode: true }))
+        setNavigationState((prev) => ({ ...prev, isInPlanEditMode: true }));
       }
     } else {
-      announce(t('calendar.plan.selectPlanToEdit'))
+      announce(t('calendar.plan.selectPlanToEdit'));
     }
-  }, [navigationState.selectedPlanId, plans, announce, callbacks, t])
+  }, [navigationState.selectedPlanId, plans, announce, callbacks, t]);
 
   /**
    * プラン削除
    */
   const deleteCurrentPlan = useCallback(() => {
     if (navigationState.selectedPlanId) {
-      const plan = plans.find((p) => p.id === navigationState.selectedPlanId)
+      const plan = plans.find((p) => p.id === navigationState.selectedPlanId);
       if (plan) {
-        announce(`${plan.title}を削除します`)
-        callbacks.onDeletePlan(navigationState.selectedPlanId)
+        announce(`${plan.title}を削除します`);
+        callbacks.onDeletePlan(navigationState.selectedPlanId);
 
         setNavigationState((prev) => ({
           ...prev,
           selectedPlanId: null,
-        }))
+        }));
       }
     } else {
-      announce(t('calendar.plan.selectPlanToDelete'))
+      announce(t('calendar.plan.selectPlanToDelete'));
     }
-  }, [navigationState.selectedPlanId, plans, announce, callbacks, t])
+  }, [navigationState.selectedPlanId, plans, announce, callbacks, t]);
 
   /**
    * エスケープアクション
@@ -222,20 +237,20 @@ export function useAccessibilityKeyboard(plans: CalendarPlan[], currentDate: Dat
   const handleEscape = useCallback(() => {
     setNavigationState((prev) => {
       if (prev.isInPlanCreationMode || prev.isInPlanEditMode) {
-        announce(t('calendar.actions.undone'))
-        callbacks.onEscapeAction()
+        announce(t('calendar.actions.undone'));
+        callbacks.onEscapeAction();
         return {
           ...prev,
           isInPlanCreationMode: false,
           isInPlanEditMode: false,
-        }
+        };
       } else if (prev.selectedPlanId) {
-        announce(t('calendar.plan.deselected'))
-        return { ...prev, selectedPlanId: null }
+        announce(t('calendar.plan.deselected'));
+        return { ...prev, selectedPlanId: null };
       }
-      return prev
-    })
-  }, [announce, callbacks, t])
+      return prev;
+    });
+  }, [announce, callbacks, t]);
 
   /**
    * ヘルプメッセージの表示
@@ -250,10 +265,10 @@ export function useAccessibilityKeyboard(plans: CalendarPlan[], currentDate: Dat
       'F1: このヘルプを表示',
       'Home/End: 時間の最初・最後に移動',
       'PageUp/PageDown: 週単位で移動',
-    ].join('。')
+    ].join('。');
 
-    announce(helpMessage, 'assertive')
-  }, [announce])
+    announce(helpMessage, 'assertive');
+  }, [announce]);
 
   /**
    * キーボードイベントハンドラー
@@ -261,14 +276,18 @@ export function useAccessibilityKeyboard(plans: CalendarPlan[], currentDate: Dat
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
       // モーダルやフォームが開いている場合は処理しない
-      if (navigationState.isInPlanCreationMode || navigationState.isInPlanEditMode || event.target !== document.body) {
-        return
+      if (
+        navigationState.isInPlanCreationMode ||
+        navigationState.isInPlanEditMode ||
+        event.target !== document.body
+      ) {
+        return;
       }
 
-      const { ctrlKey, altKey } = event
+      const { ctrlKey, altKey } = event;
 
       // 修飾キーの組み合わせチェック
-      if (ctrlKey || altKey) return
+      if (ctrlKey || altKey) return;
 
       // キーボードハンドラーを分割して呼び出し
       const handlerProps = {
@@ -285,21 +304,21 @@ export function useAccessibilityKeyboard(plans: CalendarPlan[], currentDate: Dat
         setNavigationState,
         announce,
         events: plans as Array<{
-          id: string
-          title: string
-          startDate?: Date | null
-          endDate?: Date | null
-          description?: string
+          id: string;
+          title: string;
+          startDate?: Date | null;
+          endDate?: Date | null;
+          description?: string;
         }>,
         TIME_SLOTS,
         noDescriptionText: markAsTranslated(t('calendar.plan.noDescription')),
-      }
+      };
 
       // ヘルパー関数を直接呼び出し
-      handleArrowKeys(handlerProps)
-      handleActionKeys(handlerProps)
-      handleNavigationKeys(handlerProps)
-      handlePlanDetailKeys(handlerProps)
+      handleArrowKeys(handlerProps);
+      handleActionKeys(handlerProps);
+      handleNavigationKeys(handlerProps);
+      handlePlanDetailKeys(handlerProps);
     },
     [
       navigationState,
@@ -314,49 +333,49 @@ export function useAccessibilityKeyboard(plans: CalendarPlan[], currentDate: Dat
       plans,
       announce,
       t,
-    ]
-  )
+    ],
+  );
 
   /**
    * キーボードイベントの登録
    */
   useEffect(() => {
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [handleKeyDown])
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [handleKeyDown]);
 
   /**
    * フォーカス管理
    */
   const focusCalendar = useCallback(() => {
-    const calendarElement = document.querySelector('[role="grid"]') as HTMLElement
+    const calendarElement = document.querySelector('[role="grid"]') as HTMLElement;
     if (calendarElement) {
-      calendarElement.focus()
-      announce('カレンダーにフォーカスしました。F1キーでヘルプを表示できます')
+      calendarElement.focus();
+      announce('カレンダーにフォーカスしました。F1キーでヘルプを表示できます');
     }
-  }, [announce])
+  }, [announce]);
 
   /**
    * 現在の状態の詳細説明
    */
   const getDetailedStatus = useCallback(() => {
-    const { selectedDate, selectedTime, selectedPlanId } = navigationState
+    const { selectedDate, selectedTime, selectedPlanId } = navigationState;
     const dateString = selectedDate.toLocaleDateString('ja-JP', {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
       weekday: 'long',
-    })
+    });
 
     if (selectedPlanId) {
-      const plan = plans.find((p) => p.id === selectedPlanId)
+      const plan = plans.find((p) => p.id === selectedPlanId);
       if (plan) {
-        return `${dateString}、${plan.title}が選択されています`
+        return `${dateString}、${plan.title}が選択されています`;
       }
     }
 
-    return `${dateString}、${selectedTime}が選択されています`
-  }, [navigationState, plans])
+    return `${dateString}、${selectedTime}が選択されています`;
+  }, [navigationState, plans]);
 
   return {
     navigationState,
@@ -366,47 +385,51 @@ export function useAccessibilityKeyboard(plans: CalendarPlan[], currentDate: Dat
 
     // 手動ナビゲーション用
     navigateToDate: (date: Date) => {
-      setNavigationState((prev) => ({ ...prev, selectedDate: date }))
+      setNavigationState((prev) => ({ ...prev, selectedDate: date }));
       const dateString = date.toLocaleDateString('ja-JP', {
         year: 'numeric',
         month: 'long',
         day: 'numeric',
         weekday: 'long',
-      })
-      announce(`${dateString}に移動しました`)
+      });
+      announce(`${dateString}に移動しました`);
     },
 
     navigateToTime: (time: string) => {
-      setNavigationState((prev) => ({ ...prev, selectedTime: time }))
-      announce(`${time}に移動しました`)
+      setNavigationState((prev) => ({ ...prev, selectedTime: time }));
+      announce(`${time}に移動しました`);
     },
 
     selectPlan: (planId: string | null) => {
-      setNavigationState((prev) => ({ ...prev, selectedPlanId: planId }))
+      setNavigationState((prev) => ({ ...prev, selectedPlanId: planId }));
       if (planId) {
-        const plan = plans.find((p) => p.id === planId)
+        const plan = plans.find((p) => p.id === planId);
         if (plan) {
-          announce(`${plan.title}を選択しました`)
+          announce(`${plan.title}を選択しました`);
         }
       }
     },
 
     // モード制御
     setPlanCreationMode: (isActive: boolean) => {
-      setNavigationState((prev) => ({ ...prev, isInPlanCreationMode: isActive }))
+      setNavigationState((prev) => ({ ...prev, isInPlanCreationMode: isActive }));
     },
 
     setPlanEditMode: (isActive: boolean) => {
-      setNavigationState((prev) => ({ ...prev, isInPlanEditMode: isActive }))
+      setNavigationState((prev) => ({ ...prev, isInPlanEditMode: isActive }));
     },
 
     // アナウンス機能
     announce,
-  }
+  };
 }
 
 // スクリーンリーダー用のライブリージョンコンポーネント
-export const AccessibilityLiveRegion = ({ announcements }: { announcements: AccessibilityAnnouncement[] }) => {
+export const AccessibilityLiveRegion = ({
+  announcements,
+}: {
+  announcements: AccessibilityAnnouncement[];
+}) => {
   return (
     <>
       {/* polite な更新用 */}
@@ -427,5 +450,5 @@ export const AccessibilityLiveRegion = ({ announcements }: { announcements: Acce
           .join('')}
       </div>
     </>
-  )
-}
+  );
+};

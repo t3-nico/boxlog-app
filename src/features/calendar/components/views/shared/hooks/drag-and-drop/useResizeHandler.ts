@@ -1,55 +1,60 @@
-'use client'
+'use client';
 
-import type React from 'react'
-import { useCallback } from 'react'
+import type React from 'react';
+import { useCallback } from 'react';
 
-import { MS_PER_MINUTE } from '@/constants/time'
-import useCalendarToast from '@/features/calendar/lib/toast'
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
-import { logger } from '@/lib/logger'
-import { useTranslations } from 'next-intl'
+import { MS_PER_MINUTE } from '@/constants/time';
+import useCalendarToast from '@/features/calendar/lib/toast';
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
+import { logger } from '@/lib/logger';
+import { useTranslations } from 'next-intl';
 
-import { HOUR_HEIGHT } from '@/features/calendar/components/views/shared/constants/grid.constants'
+import { HOUR_HEIGHT } from '@/features/calendar/components/views/shared/constants/grid.constants';
 
-import type { DragDataRef, DragState } from './types'
-import { snapToQuarterHour } from './utils'
+import type { DragDataRef, DragState } from './types';
+import { snapToQuarterHour } from './utils';
 
 interface UseResizeHandlerProps {
-  events: CalendarPlan[]
+  events: CalendarPlan[];
   eventUpdateHandler:
     | ((eventId: string, updates: { startTime: Date; endTime: Date }) => Promise<void> | void)
-    | undefined
-  dragDataRef: React.MutableRefObject<DragDataRef | null>
-  setDragState: React.Dispatch<React.SetStateAction<DragState>>
+    | undefined;
+  dragDataRef: React.MutableRefObject<DragDataRef | null>;
+  setDragState: React.Dispatch<React.SetStateAction<DragState>>;
 }
 
-export function useResizeHandler({ events, eventUpdateHandler, dragDataRef, setDragState }: UseResizeHandlerProps) {
-  const t = useTranslations()
-  const calendarToast = useCalendarToast()
+export function useResizeHandler({
+  events,
+  eventUpdateHandler,
+  dragDataRef,
+  setDragState,
+}: UseResizeHandlerProps) {
+  const t = useTranslations();
+  const calendarToast = useCalendarToast();
 
   // リサイズ処理（下端リサイズのみ）
   const handleResizing = useCallback(
     (constrainedX: number, constrainedY: number, deltaY: number) => {
-      const dragData = dragDataRef.current
-      if (!dragData) return
+      const dragData = dragDataRef.current;
+      if (!dragData) return;
 
-      const event = events.find((e) => e.id === dragData.eventId)
-      let previewTime = null
+      const event = events.find((e) => e.id === dragData.eventId);
+      let previewTime = null;
 
       // 下端リサイズ: 終了時刻を変更（開始時刻は固定）
-      const newHeight = Math.max(15, dragData.eventDuration + deltaY)
-      const { snappedTop: snappedHeight } = snapToQuarterHour(newHeight)
-      const finalHeight = Math.max(HOUR_HEIGHT / 4, snappedHeight)
+      const newHeight = Math.max(15, dragData.eventDuration + deltaY);
+      const { snappedTop: snappedHeight } = snapToQuarterHour(newHeight);
+      const finalHeight = Math.max(HOUR_HEIGHT / 4, snappedHeight);
 
       if (event?.startDate) {
-        const newDurationMs = (finalHeight / HOUR_HEIGHT) * 60 * 60 * 1000
-        const previewEndTime = new Date(event.startDate.getTime() + newDurationMs)
-        previewTime = { start: event.startDate, end: previewEndTime }
+        const newDurationMs = (finalHeight / HOUR_HEIGHT) * 60 * 60 * 1000;
+        const previewEndTime = new Date(event.startDate.getTime() + newDurationMs);
+        previewTime = { start: event.startDate, end: previewEndTime };
       }
 
       // サイズが変更されたらhasMovedをtrueに設定（リサイズ完了時の更新に必要）
       if (Math.abs(deltaY) > 5) {
-        dragData.hasMoved = true
+        dragData.hasMoved = true;
       }
 
       setDragState((prev) => ({
@@ -60,29 +65,29 @@ export function useResizeHandler({ events, eventUpdateHandler, dragDataRef, setD
           height: finalHeight,
         },
         previewTime,
-      }))
+      }));
     },
-    [events, dragDataRef, setDragState]
-  )
+    [events, dragDataRef, setDragState],
+  );
 
   // リサイズ完了処理（下端リサイズのみ）
   const handleResize = useCallback(
     (snappedHeight: number | undefined) => {
       if (!dragDataRef.current || !snappedHeight) {
-        return
+        return;
       }
 
       if (!eventUpdateHandler || !dragDataRef.current?.hasMoved) {
-        return
+        return;
       }
 
-      const event = events.find((e) => e.id === dragDataRef.current?.eventId)
+      const event = events.find((e) => e.id === dragDataRef.current?.eventId);
       if (!event?.startDate) {
-        return
+        return;
       }
 
-      const newDurationMs = (snappedHeight / HOUR_HEIGHT) * 60 * 60 * 1000
-      const newEndTime = new Date(event.startDate.getTime() + newDurationMs)
+      const newDurationMs = (snappedHeight / HOUR_HEIGHT) * 60 * 60 * 1000;
+      const newEndTime = new Date(event.startDate.getTime() + newDurationMs);
 
       const eventData: CalendarPlan = {
         id: event.id,
@@ -109,33 +114,33 @@ export function useResizeHandler({ events, eventUpdateHandler, dragDataRef, setD
         allDay: event.allDay,
         priority: event.priority,
         calendarId: event.calendarId,
-      }
+      };
 
       try {
         const promise = eventUpdateHandler(dragDataRef.current.eventId, {
           startTime: event.startDate,
           endTime: newEndTime,
-        })
+        });
 
         if (promise && typeof promise.then === 'function') {
           promise
             .then(() => {
-              calendarToast.eventUpdated(eventData)
+              calendarToast.eventUpdated(eventData);
             })
             .catch((error: unknown) => {
-              logger.error('Failed to resize event:', error)
-              calendarToast.error(t('calendar.event.resizeFailed'))
-            })
+              logger.error('Failed to resize event:', error);
+              calendarToast.error(t('calendar.event.resizeFailed'));
+            });
         } else {
-          calendarToast.eventUpdated(eventData)
+          calendarToast.eventUpdated(eventData);
         }
       } catch (error) {
-        logger.error('Failed to resize event:', error)
-        calendarToast.error(t('calendar.event.resizeFailed'))
+        logger.error('Failed to resize event:', error);
+        calendarToast.error(t('calendar.event.resizeFailed'));
       }
     },
-    [events, eventUpdateHandler, dragDataRef, calendarToast, t]
-  )
+    [events, eventUpdateHandler, dragDataRef, calendarToast, t],
+  );
 
   // リサイズ開始（下端リサイズのみ）
   const handleResizeStart = useCallback(
@@ -143,11 +148,11 @@ export function useResizeHandler({ events, eventUpdateHandler, dragDataRef, setD
       eventId: string,
       _direction: 'top' | 'bottom',
       e: React.MouseEvent,
-      originalPosition: { top: number; left: number; width: number; height: number }
+      originalPosition: { top: number; left: number; width: number; height: number },
     ) => {
-      if (e.button !== 0) return
+      if (e.button !== 0) return;
 
-      const startPosition = { x: e.clientX, y: e.clientY }
+      const startPosition = { x: e.clientX, y: e.clientY };
 
       dragDataRef.current = {
         eventId,
@@ -158,7 +163,7 @@ export function useResizeHandler({ events, eventUpdateHandler, dragDataRef, setD
         hasMoved: false,
         originalElement: null,
         originalDateIndex: 0,
-      }
+      };
 
       setDragState({
         isPending: false,
@@ -174,14 +179,14 @@ export function useResizeHandler({ events, eventUpdateHandler, dragDataRef, setD
         recentlyResized: false,
         dragElement: null,
         ghostElement: null,
-      })
+      });
     },
-    [dragDataRef, setDragState]
-  )
+    [dragDataRef, setDragState],
+  );
 
   return {
     handleResizing,
     handleResize,
     handleResizeStart,
-  }
+  };
 }

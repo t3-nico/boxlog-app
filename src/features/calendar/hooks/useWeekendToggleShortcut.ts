@@ -1,124 +1,131 @@
-import { useEffect } from 'react'
+import { useEffect } from 'react';
 
-import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
+import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
 
 /**
  * 週末表示切り替えのキーボードショートカット（Cmd/Ctrl + W）を管理するフック
  */
 export function useWeekendToggleShortcut() {
-  const { showWeekends, updateSettings } = useCalendarSettingsStore()
+  const { showWeekends, updateSettings } = useCalendarSettingsStore();
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       // Cmd (Mac) または Ctrl (Windows/Linux) + W
-      const isToggleShortcut = (event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'w'
+      const isToggleShortcut = (event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'w';
 
-      if (!isToggleShortcut) return
+      if (!isToggleShortcut) return;
 
       // デフォルトのブラウザ動作（ウィンドウを閉じる）を防ぐ
-      event.preventDefault()
-      event.stopPropagation()
+      event.preventDefault();
+      event.stopPropagation();
 
       // 入力フィールドにフォーカスがある場合は無視
-      const { activeElement } = document
+      const { activeElement } = document;
       const isInputField =
         activeElement &&
         (activeElement.tagName === 'INPUT' ||
           activeElement.tagName === 'TEXTAREA' ||
           activeElement.getAttribute('contenteditable') === 'true' ||
-          activeElement.getAttribute('role') === 'textbox')
+          activeElement.getAttribute('role') === 'textbox');
 
-      if (isInputField) return
+      if (isInputField) return;
 
       // モーダルやダイアログが開いている場合は無視
-      const hasOpenModal = document.querySelector('[role="dialog"]') !== null
-      if (hasOpenModal) return
+      const hasOpenModal = document.querySelector('[role="dialog"]') !== null;
+      if (hasOpenModal) return;
 
       // 週末表示を切り替え
-      updateSettings({ showWeekends: !showWeekends })
+      updateSettings({ showWeekends: !showWeekends });
 
       // 成功フィードバック（短時間のトースト風通知）
-      showToggleFeedback(!showWeekends)
-    }
+      showToggleFeedback(!showWeekends);
+    };
 
-    document.addEventListener('keydown', handleKeyDown)
+    document.addEventListener('keydown', handleKeyDown);
 
     return () => {
-      document.removeEventListener('keydown', handleKeyDown)
-    }
-  }, [showWeekends, updateSettings])
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [showWeekends, updateSettings]);
 
   return {
     showWeekends,
     toggleWeekends: () => updateSettings({ showWeekends: !showWeekends }),
-  }
+  };
 }
 
 /**
  * 切り替え時のフィードバック表示
+ * XSS対策: innerHTML を使用せず、DOM API で安全に要素を構築
  */
 function showToggleFeedback(newState: boolean) {
   // 既存の通知があれば削除
-  const existingNotification = document.getElementById('weekend-toggle-feedback')
+  const existingNotification = document.getElementById('weekend-toggle-feedback');
   if (existingNotification) {
-    existingNotification.remove()
+    existingNotification.remove();
   }
 
   // 通知要素を作成
-  const notification = document.createElement('div')
-  notification.id = 'weekend-toggle-feedback'
-  notification.className = `
-    fixed top-4 right-4 z-[300]
-    bg-white dark:bg-gray-800
-    border border-border
-    rounded-xl shadow-lg
-    px-4 py-3
-    flex items-center gap-3
-    transform transition-all duration-300 ease-out
-    translate-x-full opacity-0
-  `
-    .replace(/\s+/g, ' ')
-    .trim()
+  const notification = document.createElement('div');
+  notification.id = 'weekend-toggle-feedback';
+  notification.className = [
+    'fixed top-4 right-4 z-[300]',
+    'bg-card',
+    'border border-border',
+    'rounded-xl shadow-lg',
+    'px-4 py-3',
+    'flex items-center gap-3',
+    'transform transition-all duration-300 ease-out',
+    'translate-x-full opacity-0',
+  ].join(' ');
 
-  // 内容を設定
-  notification.innerHTML = `
-    <div class="flex items-center gap-2">
-      <div class="w-2 h-2 rounded-full ${newState ? 'bg-green-500' : 'bg-orange-500'}"></div>
-      <span class="text-sm font-medium text-gray-900 dark:text-gray-100">
-        週末表示: ${newState ? 'ON' : 'OFF'}
-      </span>
-    </div>
-    <div class="text-xs text-gray-500 dark:text-gray-400">
-      Cmd/Ctrl + W
-    </div>
-  `
+  // 内容を安全に構築（DOM API を使用）
+  const contentWrapper = document.createElement('div');
+  contentWrapper.className = 'flex items-center gap-2';
 
-  document.body.appendChild(notification)
+  const indicator = document.createElement('div');
+  indicator.className = `w-2 h-2 rounded-full ${newState ? 'bg-primary' : 'bg-muted-foreground'}`;
+
+  const label = document.createElement('span');
+  label.className = 'text-sm font-medium text-foreground';
+  label.textContent = `週末表示: ${newState ? 'ON' : 'OFF'}`;
+
+  contentWrapper.appendChild(indicator);
+  contentWrapper.appendChild(label);
+
+  const shortcutHint = document.createElement('div');
+  shortcutHint.className = 'text-xs text-muted-foreground';
+  shortcutHint.textContent = 'Cmd/Ctrl + W';
+
+  notification.appendChild(contentWrapper);
+  notification.appendChild(shortcutHint);
+
+  document.body.appendChild(notification);
 
   // アニメーションで表示
   setTimeout(() => {
-    notification.classList.remove('translate-x-full', 'opacity-0')
-    notification.classList.add('translate-x-0', 'opacity-100')
-  }, 10)
+    notification.classList.remove('translate-x-full', 'opacity-0');
+    notification.classList.add('translate-x-0', 'opacity-100');
+  }, 10);
 
   // 2秒後にフェードアウト
   setTimeout(() => {
-    notification.classList.add('translate-x-full', 'opacity-0')
+    notification.classList.add('translate-x-full', 'opacity-0');
 
     // アニメーション完了後に削除
     setTimeout(() => {
       if (notification.parentNode) {
-        notification.parentNode.removeChild(notification)
+        notification.parentNode.removeChild(notification);
       }
-    }, 300)
-  }, 2000)
+    }, 300);
+  }, 2000);
 }
 
-import { getTranslation } from '@/features/calendar/lib/toast/get-translation'
+import { getTranslation } from '@/features/calendar/lib/toast/get-translation';
 
 const CALENDAR_ACCESSIBILITY_KEYS = {
   TOGGLE_WEEKEND: 'calendar.accessibility.toggleWeekend',
-} as const
+} as const;
 
 /**
  * ショートカットキーのヘルプ情報
@@ -128,4 +135,4 @@ export const WEEKEND_TOGGLE_SHORTCUT_HELP = {
   description: getTranslation(CALENDAR_ACCESSIBILITY_KEYS.TOGGLE_WEEKEND),
   mac: '⌘W',
   windows: 'Ctrl+W',
-} as const
+} as const;

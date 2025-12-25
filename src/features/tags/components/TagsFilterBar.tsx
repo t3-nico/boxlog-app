@@ -1,21 +1,24 @@
-'use client'
+'use client';
 
-import { FolderTree, List, Plus } from 'lucide-react'
-import { useMemo } from 'react'
+import { FolderTree, List, Plus } from 'lucide-react';
+import { useMemo } from 'react';
 
-import { Button } from '@/components/ui/button'
-import { PillSwitcher } from '@/components/ui/pill-switcher'
-import { TableNavigation, type TableNavigationConfig } from '@/features/table'
-import { type TagDisplayMode, useTagDisplayModeStore } from '@/features/tags/stores/useTagDisplayModeStore'
-import { TagsSettingsContent } from './TagsSettingsContent'
+import { Button } from '@/components/ui/button';
+import { PillSwitcher } from '@/components/ui/pill-switcher';
+import { TableNavigation, type TableNavigationConfig } from '@/features/table';
+import {
+  type TagDisplayMode,
+  useTagDisplayModeStore,
+} from '@/features/tags/stores/useTagDisplayModeStore';
+import { TagsSettingsContent } from './TagsSettingsContent';
 
 interface TagsFilterBarProps {
-  onCreateClick?: () => void
+  onCreateClick?: () => void;
   /** 検索クエリ */
-  searchQuery: string
+  searchQuery: string;
   /** 検索クエリ変更時のコールバック */
-  onSearchChange: (query: string) => void
-  t: (key: string) => string
+  onSearchChange: (query: string) => void;
+  t: (key: string) => string;
 }
 
 /**
@@ -35,8 +38,13 @@ interface TagsFilterBarProps {
  * />
  * ```
  */
-export function TagsFilterBar({ onCreateClick, searchQuery, onSearchChange, t }: TagsFilterBarProps) {
-  const { displayMode, setDisplayMode } = useTagDisplayModeStore()
+export function TagsFilterBar({
+  onCreateClick,
+  searchQuery,
+  onSearchChange,
+  t,
+}: TagsFilterBarProps) {
+  const { displayMode, setDisplayMode } = useTagDisplayModeStore();
 
   // TableNavigation設定（タグはソート機能なし）
   const navigationConfig: TableNavigationConfig = useMemo(
@@ -51,19 +59,27 @@ export function TagsFilterBar({ onCreateClick, searchQuery, onSearchChange, t }:
       settingsContent: <TagsSettingsContent />,
       hasActiveSettings: searchQuery.length > 0,
       onSettingsReset: () => {
-        onSearchChange('')
+        onSearchChange('');
       },
     }),
-    [searchQuery, onSearchChange]
-  )
+    [searchQuery, onSearchChange],
+  );
 
   return (
     <div className="flex h-12 shrink-0 items-center gap-2 px-4 py-2">
       {/* 左端: 表示モード切替（モバイル・デスクトップ共通） */}
       <PillSwitcher<TagDisplayMode>
         options={[
-          { value: 'flat', label: t('tags.page.displayMode.flat'), icon: <List className="size-4" /> },
-          { value: 'grouped', label: t('tags.page.displayMode.grouped'), icon: <FolderTree className="size-4" /> },
+          {
+            value: 'flat',
+            label: t('tags.page.displayMode.flat'),
+            icon: <List className="size-4" />,
+          },
+          {
+            value: 'grouped',
+            label: t('tags.page.displayMode.grouped'),
+            icon: <FolderTree className="size-4" />,
+          },
         ]}
         value={displayMode}
         onValueChange={setDisplayMode}
@@ -88,5 +104,5 @@ export function TagsFilterBar({ onCreateClick, searchQuery, onSearchChange, t }:
         </>
       )}
     </div>
-  )
+  );
 }

@@ -16,12 +16,12 @@
  */
 export function toLocalISOString(dateStr: string, timeStr: string): string {
   // 日付と時刻をパース
-  const [year, month, day] = dateStr.split('-').map(Number)
-  const [hour, minute] = timeStr.split(':').map(Number)
+  const [year, month, day] = dateStr.split('-').map(Number);
+  const [hour, minute] = timeStr.split(':').map(Number);
 
   // ローカルタイムゾーンでDateオブジェクトを作成
-  const date = new Date(year!, month! - 1, day!, hour!, minute!, 0, 0)
+  const date = new Date(year!, month! - 1, day!, hour!, minute!, 0, 0);
 
   // ISO 8601形式に変換（ローカルタイムゾーンのオフセット付き）
-  return date.toISOString()
+  return date.toISOString();
 }

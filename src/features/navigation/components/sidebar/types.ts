@@ -1,19 +1,19 @@
-import type { ReactNode } from 'react'
+import type { ReactNode } from 'react';
 
-import type { LucideIcon } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react';
 
 /**
  * Sidebarタブの定義
  */
 export interface SidebarTab {
   /** タブの識別子 */
-  value: string
+  value: string;
   /** タブのラベル */
-  label: string
+  label: string;
   /** タブのアイコン（オプション） */
-  icon?: LucideIcon
+  icon?: LucideIcon;
   /** タブのコンテンツ */
-  content: ReactNode
+  content: ReactNode;
 }
 
 /**
@@ -21,7 +21,7 @@ export interface SidebarTab {
  */
 export interface SidebarTabLayoutProps {
   /** タブの配列（2〜4タブ対応） */
-  tabs: SidebarTab[]
+  tabs: SidebarTab[];
   /** デフォルトで選択されるタブ */
-  defaultTab?: string
+  defaultTab?: string;
 }

@@ -35,19 +35,19 @@ src/pages/
 
 ```tsx
 // ❌ Pages Routerに新規ページ追加禁止
-src / pages / about.tsx // NG
-src / pages / dashboard / index.tsx // NG
+src / pages / about.tsx; // NG
+src / pages / dashboard / index.tsx; // NG
 ```
 
 ### ✅ 正しい追加方法
 
 ```tsx
 // ✅ App Routerに追加
-src / app / about / page.tsx // OK
-src / app / dashboard / page.tsx // OK
+src / app / about / page.tsx; // OK
+src / app / dashboard / page.tsx; // OK
 
 // ✅ tRPC APIのみPages Router
-src / pages / api / trpc / [trpc].ts // OK（既存）
+src / pages / api / trpc / [trpc].ts; // OK（既存）
 ```
 
 ---
@@ -60,13 +60,13 @@ src / pages / api / trpc / [trpc].ts // OK（既存）
 
 ```typescript
 // src/pages/api/trpc/[trpc].ts
-import { createNextApiHandler } from '@trpc/server/adapters/next'
+import { createNextApiHandler } from '@trpc/server/adapters/next';
 
 export default createNextApiHandler({
   router: appRouter,
   createContext: createTRPCContext,
   // ← Pages Router形式のAPIハンドラーが必須
-})
+});
 ```
 
 **理由**:
@@ -142,15 +142,15 @@ src/
    export default createNextApiHandler({
      router: appRouter,
      createContext: createTRPCContext,
-   })
+   });
    ```
 
 2. **エラーハンドリング**
 
    ```typescript
    onError: ({ error, type, path }) => {
-     console.error('tRPC Error:', { type, path, error })
-   }
+     console.error('tRPC Error:', { type, path, error });
+   };
    ```
 
 3. **キャッシュ設定**
@@ -160,7 +160,7 @@ src/
      headers: {
        'cache-control': type === 'query' ? 's-maxage=1, stale-while-revalidate' : 'no-cache',
      },
-   })
+   });
    ```
 
 4. **リクエスト設定**
@@ -170,7 +170,7 @@ src/
        bodyParser: { sizeLimit: '10mb' },
        externalResolver: true,
      },
-   }
+   };
    ```
 
 ---
@@ -186,14 +186,14 @@ export const newFeatureRouter = createTRPCRouter({
   getAll: publicProcedure.query(async () => {
     // 実装
   }),
-})
+});
 
 // src/server/api/root.ts に追加
 export const appRouter = createTRPCRouter({
   tasks: taskRouter,
   events: eventRouter,
   newFeature: newFeatureRouter, // ← 追加
-})
+});
 ```
 
 **重要**: `src/pages/api/trpc/[trpc].ts` の変更は不要！

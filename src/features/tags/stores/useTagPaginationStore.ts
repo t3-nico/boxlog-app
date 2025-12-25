@@ -1,4 +1,4 @@
-import { createTablePaginationStore } from '@/features/table'
+import { createTablePaginationStore } from '@/features/table';
 
 /**
  * タグページネーションストア
@@ -12,4 +12,4 @@ export const useTagPaginationStore = createTablePaginationStore({
   defaultPageSize: 50,
   persistKey: 'tag-pagination-store-v1',
   storeName: 'tag-pagination-store',
-})
+});

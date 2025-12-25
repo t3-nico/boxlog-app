@@ -1,4 +1,4 @@
-import { createInspectorStore } from '@/features/inspector'
+import { createInspectorStore } from '@/features/inspector';
 
 /**
  * Tag Inspector状態管理
@@ -23,9 +23,9 @@ import { createInspectorStore } from '@/features/inspector'
 export const useTagInspectorStore = createInspectorStore({
   storeName: 'tag-inspector-store',
   persistKey: 'tag-inspector-settings',
-})
+});
 
 /**
  * @deprecated entityId を使用してください
  */
-export type TagId = string
+export type TagId = string;

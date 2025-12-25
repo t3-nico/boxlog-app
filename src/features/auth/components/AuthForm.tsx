@@ -1,31 +1,31 @@
-'use client'
+'use client';
 
-import { useMemo, useState } from 'react'
+import { useMemo, useState } from 'react';
 
-import { useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation';
 
-import { getErrorMessage } from '@/lib/errors'
-import { createClient } from '@/lib/supabase/client'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
-import { z } from 'zod'
+import { getErrorMessage } from '@/lib/errors';
+import { createClient } from '@/lib/supabase/client';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
-import { useLocale, useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl';
 
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 
 interface AuthFormProps {
-  mode: 'login' | 'signup'
+  mode: 'login' | 'signup';
 }
 
 export const AuthForm = ({ mode }: AuthFormProps) => {
-  const t = useTranslations()
-  const locale = useLocale()
-  const router = useRouter()
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const supabase = createClient()
+  const t = useTranslations();
+  const locale = useLocale();
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const supabase = createClient();
 
   const authSchema = useMemo(
     () =>
@@ -33,10 +33,10 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
         email: z.string().email(t('auth.errors.emailInvalid')),
         password: z.string().min(6, 'Password must be at least 6 characters'),
       }),
-    [t]
-  )
+    [t],
+  );
 
-  type AuthFormData = z.infer<typeof authSchema>
+  type AuthFormData = z.infer<typeof authSchema>;
 
   const {
     register,
@@ -44,11 +44,11 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
     formState: { errors },
   } = useForm<AuthFormData>({
     resolver: zodResolver(authSchema),
-  })
+  });
 
   const onSubmit = async (data: AuthFormData) => {
-    setIsLoading(true)
-    setError(null)
+    setIsLoading(true);
+    setError(null);
 
     try {
       if (mode === 'login') {
@@ -56,32 +56,33 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
         const { error: signInError } = await supabase.auth.signInWithPassword({
           email: data.email,
           password: data.password,
-        })
+        });
 
         if (signInError) {
-          setError(signInError.message)
-          return
+          setError(signInError.message);
+          return;
         }
 
         // AALレベルをチェック（正しい方法）
-        const { data: aalData, error: aalError } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel()
+        const { data: aalData, error: aalError } =
+          await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
 
-        console.log('Login successful. AAL Data:', aalData)
+        console.log('Login successful. AAL Data:', aalData);
 
         if (aalError) {
-          console.error('AAL check error:', aalError)
+          console.error('AAL check error:', aalError);
         }
 
         // currentLevel が aal1 で nextLevel が aal2 の場合、MFA検証が必要
         if (aalData && aalData.currentLevel === 'aal1' && aalData.nextLevel === 'aal2') {
           // MFA検証が必要
-          console.log('MFA verification required')
-          router.push(`/${locale}/auth/mfa-verify`)
+          console.log('MFA verification required');
+          router.push(`/${locale}/auth/mfa-verify`);
         } else {
           // MFAが不要、または既にaal2の場合は通常通りリダイレクト
-          console.log('No MFA required, proceeding to calendar')
-          router.refresh()
-          router.push(`/${locale}/calendar`)
+          console.log('No MFA required, proceeding to calendar');
+          router.refresh();
+          router.push(`/${locale}/calendar`);
         }
       } else {
         // サインアップ処理
@@ -91,26 +92,26 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
           options: {
             emailRedirectTo: `${window.location.origin}/auth/callback`,
           },
-        })
+        });
 
         if (signUpError) {
-          setError(signUpError.message)
-          return
+          setError(signUpError.message);
+          return;
         }
 
         // メール確認画面へリダイレクト
-        router.push('/auth/verify-email')
+        router.push('/auth/verify-email');
       }
     } catch (error: unknown) {
-      setError(getErrorMessage(error, 'An unknown error occurred'))
+      setError(getErrorMessage(error, 'An unknown error occurred'));
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleSocialLogin = async (provider: 'google' | 'apple') => {
-    setIsLoading(true)
-    setError(null)
+    setIsLoading(true);
+    setError(null);
 
     try {
       const { error: oauthError } = await supabase.auth.signInWithOAuth({
@@ -118,17 +119,17 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
         options: {
           redirectTo: `${window.location.origin}/auth/callback`,
         },
-      })
+      });
 
       if (oauthError) {
-        setError(oauthError.message)
+        setError(oauthError.message);
       }
     } catch (error: unknown) {
-      setError(getErrorMessage(error, 'An unknown error occurred'))
+      setError(getErrorMessage(error, 'An unknown error occurred'));
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="space-y-6">
@@ -190,16 +191,32 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
           <label htmlFor="email" className="text-muted-foreground block text-sm font-medium">
             Email address
           </label>
-          <Input {...register('email')} type="email" id="email" className="mt-1" placeholder="you@example.com" />
-          {errors.email ? <p className="text-destructive mt-1 text-sm">{errors.email.message}</p> : null}
+          <Input
+            {...register('email')}
+            type="email"
+            id="email"
+            className="mt-1"
+            placeholder="you@example.com"
+          />
+          {errors.email ? (
+            <p className="text-destructive mt-1 text-sm">{errors.email.message}</p>
+          ) : null}
         </div>
 
         <div>
           <label htmlFor="password" className="text-muted-foreground block text-sm font-medium">
             Password
           </label>
-          <Input {...register('password')} type="password" id="password" className="mt-1" placeholder="••••••••" />
-          {errors.password ? <p className="text-destructive mt-1 text-sm">{errors.password.message}</p> : null}
+          <Input
+            {...register('password')}
+            type="password"
+            id="password"
+            className="mt-1"
+            placeholder="••••••••"
+          />
+          {errors.password ? (
+            <p className="text-destructive mt-1 text-sm">{errors.password.message}</p>
+          ) : null}
         </div>
 
         {error != null && (
@@ -213,5 +230,5 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
         </Button>
       </form>
     </div>
-  )
-}
+  );
+};

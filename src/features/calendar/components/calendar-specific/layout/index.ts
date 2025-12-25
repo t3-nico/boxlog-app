@@ -2,4 +2,4 @@
  * レイアウト関連ユーティリティ
  */
 
-export * from './plan-layout'
+export * from './plan-layout';

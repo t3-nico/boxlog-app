@@ -1,1 +1,1 @@
-export { TimezoneOffset } from './TimezoneOffset'
+export { TimezoneOffset } from './TimezoneOffset';

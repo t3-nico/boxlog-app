@@ -1,15 +1,15 @@
-'use client'
+'use client';
 
-import { X } from 'lucide-react'
-import type { ReactNode } from 'react'
+import { X } from 'lucide-react';
+import type { ReactNode } from 'react';
 
-import { Button } from '@/components/ui/button'
-import { useTranslations } from 'next-intl'
+import { Button } from '@/components/ui/button';
+import { useTranslations } from 'next-intl';
 
 interface SelectionBarProps {
-  selectedCount: number
-  onClearSelection: () => void
-  actions: ReactNode
+  selectedCount: number;
+  onClearSelection: () => void;
+  actions: ReactNode;
 }
 
 /**
@@ -38,25 +38,32 @@ interface SelectionBarProps {
  * ```
  */
 export function SelectionBar({ selectedCount, onClearSelection, actions }: SelectionBarProps) {
-  const t = useTranslations()
+  const t = useTranslations();
 
-  if (selectedCount === 0) return null
+  if (selectedCount === 0) return null;
 
   return (
     <div className="flex h-12 shrink-0 items-center px-4 py-2">
       {/* 背景コンテナ（32px、角丸） */}
       <div className="bg-surface-container flex h-8 flex-1 items-center gap-2 rounded-md pl-1">
         {/* 選択解除ボタン（左端） */}
-        <Button variant="ghost" size="icon-sm" onClick={onClearSelection} aria-label={t('aria.clearSelection')}>
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          onClick={onClearSelection}
+          aria-label={t('aria.clearSelection')}
+        >
           <X className="h-3.5 w-3.5" />
         </Button>
 
         {/* 選択数表示 */}
-        <span className="text-sm font-medium">{t('common.selectedCount', { count: selectedCount })}</span>
+        <span className="text-sm font-medium">
+          {t('common.selectedCount', { count: selectedCount })}
+        </span>
 
         {/* アクションボタン */}
         <div className="flex items-center gap-1">{actions}</div>
       </div>
     </div>
-  )
+  );
 }

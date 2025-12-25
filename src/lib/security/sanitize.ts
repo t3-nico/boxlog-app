@@ -5,8 +5,8 @@
  * 企業級セキュリティベストプラクティス準拠
  */
 
-import type { Config } from 'dompurify'
-import DOMPurify from 'dompurify'
+import type { Config } from 'dompurify';
+import DOMPurify from 'dompurify';
 
 /**
  * 基本的なHTMLサニタイゼーション設定
@@ -17,7 +17,7 @@ const BASIC_CONFIG: Config = {
   ALLOWED_ATTR: ['class'],
   FORBID_ATTR: ['style', 'onclick', 'onload', 'onerror'],
   FORBID_TAGS: ['script', 'object', 'embed', 'form', 'input'],
-}
+};
 
 /**
  * リッチテキスト用設定
@@ -50,7 +50,7 @@ const RICH_TEXT_CONFIG: Config = {
   FORBID_ATTR: ['style', 'onclick', 'onload', 'onerror', 'javascript'],
   FORBID_TAGS: ['script', 'object', 'embed', 'form', 'input', 'iframe'],
   ALLOW_DATA_ATTR: false,
-}
+};
 
 /**
  * コードブロック用設定
@@ -62,7 +62,7 @@ const CODE_BLOCK_CONFIG: Config = {
   FORBID_ATTR: ['style', 'onclick', 'onload', 'onerror'],
   FORBID_TAGS: ['script', 'object', 'embed', 'form', 'input', 'iframe'],
   ALLOW_DATA_ATTR: false,
-}
+};
 
 /**
  * 基本的なHTMLコンテンツをサニタイズ
@@ -70,10 +70,10 @@ const CODE_BLOCK_CONFIG: Config = {
  */
 export function sanitizeBasicHTML(html: string): string {
   if (!html || typeof html !== 'string') {
-    return ''
+    return '';
   }
 
-  return String(DOMPurify.sanitize(html, BASIC_CONFIG))
+  return String(DOMPurify.sanitize(html, BASIC_CONFIG));
 }
 
 /**
@@ -82,10 +82,10 @@ export function sanitizeBasicHTML(html: string): string {
  */
 export function sanitizeRichText(html: string): string {
   if (!html || typeof html !== 'string') {
-    return ''
+    return '';
   }
 
-  return String(DOMPurify.sanitize(html, RICH_TEXT_CONFIG))
+  return String(DOMPurify.sanitize(html, RICH_TEXT_CONFIG));
 }
 
 /**
@@ -94,10 +94,10 @@ export function sanitizeRichText(html: string): string {
  */
 export function sanitizeCodeBlock(html: string): string {
   if (!html || typeof html !== 'string') {
-    return ''
+    return '';
   }
 
-  return String(DOMPurify.sanitize(html, CODE_BLOCK_CONFIG))
+  return String(DOMPurify.sanitize(html, CODE_BLOCK_CONFIG));
 }
 
 /**
@@ -106,10 +106,10 @@ export function sanitizeCodeBlock(html: string): string {
  */
 export function sanitizeCustomHTML(html: string, config: Config): string {
   if (!html || typeof html !== 'string') {
-    return ''
+    return '';
   }
 
-  return String(DOMPurify.sanitize(html, config))
+  return String(DOMPurify.sanitize(html, config));
 }
 
 /**
@@ -118,11 +118,11 @@ export function sanitizeCustomHTML(html: string, config: Config): string {
  */
 export function detectDangerousContent(html: string): boolean {
   if (!html || typeof html !== 'string') {
-    return false
+    return false;
   }
 
-  const sanitized = sanitizeBasicHTML(html)
-  return html !== sanitized
+  const sanitized = sanitizeBasicHTML(html);
+  return html !== sanitized;
 }
 
 /**
@@ -130,13 +130,13 @@ export function detectDangerousContent(html: string): boolean {
  * 開発環境でのデバッグ用
  */
 export function validateSafeHTML(html: string): {
-  isSafe: boolean
-  issues: string[]
+  isSafe: boolean;
+  issues: string[];
 } {
-  const issues: string[] = []
+  const issues: string[] = [];
 
   if (!html || typeof html !== 'string') {
-    return { isSafe: true, issues: [] }
+    return { isSafe: true, issues: [] };
   }
 
   // 危険なパターンをチェック
@@ -149,16 +149,16 @@ export function validateSafeHTML(html: string): {
     /<embed/i,
     /eval\(/i,
     /expression\(/i,
-  ]
+  ];
 
   dangerousPatterns.forEach((pattern, index) => {
     if (pattern.test(html)) {
-      issues.push(`Dangerous pattern ${index + 1} detected`)
+      issues.push(`Dangerous pattern ${index + 1} detected`);
     }
-  })
+  });
 
   return {
     isSafe: issues.length === 0,
     issues,
-  }
+  };
 }

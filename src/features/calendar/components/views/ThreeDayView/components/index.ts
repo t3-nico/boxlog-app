@@ -1,1 +1,1 @@
-export { ThreeDayContent } from './ThreeDayContent'
+export { ThreeDayContent } from './ThreeDayContent';

@@ -1,17 +1,17 @@
-import { redirect } from 'next/navigation'
+import { redirect } from 'next/navigation';
 
-import type { Locale } from '@/lib/i18n'
+import type { Locale } from '@/lib/i18n';
 
 interface PageProps {
-  params: { locale: Locale }
+  params: Promise<{ locale: Locale }>;
 }
 
 // ロケール付きのホームページ
 export default async function LocaleHomePage({ params }: PageProps) {
-  const { locale } = await params
+  const { locale } = await params;
   // カレンダーページにリダイレクト
-  redirect(`/${locale}/calendar`)
+  redirect(`/${locale}/calendar`);
 }
 
 // 静的生成無効化
-export const dynamic = 'force-dynamic'
+export const dynamic = 'force-dynamic';

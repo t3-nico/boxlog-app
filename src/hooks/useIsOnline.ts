@@ -1,4 +1,4 @@
-import { useEffect, useState, useSyncExternalStore } from 'react'
+import { useEffect, useState, useSyncExternalStore } from 'react';
 
 /**
  * オンライン状態を監視するシンプルなhook
@@ -16,25 +16,25 @@ import { useEffect, useState, useSyncExternalStore } from 'react'
  */
 export function useIsOnline(): boolean {
   // SSR対応: サーバーサイドではtrue（オンライン）と仮定
-  const [isOnline, setIsOnline] = useState(true)
+  const [isOnline, setIsOnline] = useState(true);
 
   useEffect(() => {
     // クライアントサイドでのみnavigator.onLineを使用
-    setIsOnline(navigator.onLine)
+    setIsOnline(navigator.onLine);
 
-    const handleOnline = () => setIsOnline(true)
-    const handleOffline = () => setIsOnline(false)
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
 
-    window.addEventListener('online', handleOnline)
-    window.addEventListener('offline', handleOffline)
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
 
     return () => {
-      window.removeEventListener('online', handleOnline)
-      window.removeEventListener('offline', handleOffline)
-    }
-  }, [])
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
 
-  return isOnline
+  return isOnline;
 }
 
 /**
@@ -42,22 +42,22 @@ export function useIsOnline(): boolean {
  * より正確な状態同期が可能
  */
 function subscribe(callback: () => void) {
-  window.addEventListener('online', callback)
-  window.addEventListener('offline', callback)
+  window.addEventListener('online', callback);
+  window.addEventListener('offline', callback);
   return () => {
-    window.removeEventListener('online', callback)
-    window.removeEventListener('offline', callback)
-  }
+    window.removeEventListener('online', callback);
+    window.removeEventListener('offline', callback);
+  };
 }
 
 function getSnapshot() {
-  return navigator.onLine
+  return navigator.onLine;
 }
 
 function getServerSnapshot() {
-  return true // SSRではオンラインと仮定
+  return true; // SSRではオンラインと仮定
 }
 
 export function useIsOnlineSync(): boolean {
-  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
+  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 }

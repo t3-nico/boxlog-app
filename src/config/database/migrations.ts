@@ -25,7 +25,7 @@ export const MIGRATION_CONFIG = {
     'seed_data',
     'fix_data',
   ] as const,
-} as const
+} as const;
 
 /**
  * マイグレーション履歴
@@ -36,7 +36,7 @@ export const MIGRATION_CONFIG = {
 export const MIGRATION_HISTORY = [
   '20250206_calendar_improvements.sql',
   // 新しいマイグレーションをここに追加
-] as const
+] as const;
 
 /**
  * マイグレーション作成用ヘルパー
@@ -44,15 +44,15 @@ export const MIGRATION_HISTORY = [
 export const MIGRATION_HELPERS = {
   // 現在時刻のタイムスタンプを生成
   generateTimestamp: (): string => {
-    const now = new Date()
-    const year = now.getFullYear()
-    const month = String(now.getMonth() + 1).padStart(2, '0')
-    const day = String(now.getDate()).padStart(2, '0')
-    const hour = String(now.getHours()).padStart(2, '0')
-    const minute = String(now.getMinutes()).padStart(2, '0')
-    const second = String(now.getSeconds()).padStart(2, '0')
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hour = String(now.getHours()).padStart(2, '0');
+    const minute = String(now.getMinutes()).padStart(2, '0');
+    const second = String(now.getSeconds()).padStart(2, '0');
 
-    return `${year}${month}${day}_${hour}${minute}${second}`
+    return `${year}${month}${day}_${hour}${minute}${second}`;
   },
 
   // 説明からファイル名を生成
@@ -63,17 +63,17 @@ export const MIGRATION_HELPERS = {
       .replace(/\s+/g, '_')
       .replace(/-+/g, '_')
       .replace(/_+/g, '_')
-      .replace(/^_|_$/g, '')
+      .replace(/^_|_$/g, '');
   },
 
   // 完全なマイグレーションファイル名を生成
   generateFilename: (description: string): string => {
-    const timestamp = MIGRATION_HELPERS.generateTimestamp()
-    const formatted = MIGRATION_HELPERS.formatFilename(description)
-    return `${timestamp}_${formatted}.sql`
+    const timestamp = MIGRATION_HELPERS.generateTimestamp();
+    const formatted = MIGRATION_HELPERS.formatFilename(description);
+    return `${timestamp}_${formatted}.sql`;
   },
-} as const
+} as const;
 
 // Type definitions
-export type MigrationType = (typeof MIGRATION_CONFIG.migrationTypes)[number]
-export type MigrationFilename = (typeof MIGRATION_HISTORY)[number]
+export type MigrationType = (typeof MIGRATION_CONFIG.migrationTypes)[number];
+export type MigrationFilename = (typeof MIGRATION_HISTORY)[number];

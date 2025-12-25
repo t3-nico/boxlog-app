@@ -1,8 +1,8 @@
-'use client'
+'use client';
 
-import { Button } from '@/components/ui/button'
-import { Bell, Check } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import { Button } from '@/components/ui/button';
+import { Bell, Check } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 
 // 通知オプションの定義（UI表示文字列）
 export const REMINDER_OPTIONS = [
@@ -13,13 +13,13 @@ export const REMINDER_OPTIONS = [
   { value: '1時間前', label: '1時間前' },
   { value: '1日前', label: '1日前' },
   { value: '1週間前', label: '1週間前' },
-] as const
+] as const;
 
 interface ReminderSelectProps {
-  value: string // UI表示文字列（'', '開始時刻', '10分前', ...）
-  onChange: (value: string) => void
-  variant?: 'inspector' | 'compact' | 'button' // inspectorスタイル、compactスタイル、または buttonスタイル
-  disabled?: boolean // 無効化フラグ
+  value: string; // UI表示文字列（'', '開始時刻', '10分前', ...）
+  onChange: (value: string) => void;
+  variant?: 'inspector' | 'compact' | 'button'; // inspectorスタイル、compactスタイル、または buttonスタイル
+  disabled?: boolean; // 無効化フラグ
 }
 
 /**
@@ -30,33 +30,38 @@ interface ReminderSelectProps {
  * - compact: Card/Tableで使用するコンパクトスタイル（Bell のみ）
  * - button: Card/Tableポップオーバー内で使用する標準ボタンスタイル（繰り返しと同じ）
  */
-export function ReminderSelect({ value, onChange, variant = 'inspector', disabled = false }: ReminderSelectProps) {
-  const reminderRef = useRef<HTMLDivElement>(null)
-  const [showPopover, setShowPopover] = useState(false)
+export function ReminderSelect({
+  value,
+  onChange,
+  variant = 'inspector',
+  disabled = false,
+}: ReminderSelectProps) {
+  const reminderRef = useRef<HTMLDivElement>(null);
+  const [showPopover, setShowPopover] = useState(false);
 
   // 外側クリックでポップアップを閉じる
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (reminderRef.current && !reminderRef.current.contains(event.target as Node)) {
-        setShowPopover(false)
+        setShowPopover(false);
       }
-    }
+    };
 
-    document.addEventListener('mousedown', handleClickOutside)
+    document.addEventListener('mousedown', handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [])
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   // 通知が設定されているかどうか
-  const hasReminder = value && value !== ''
+  const hasReminder = value && value !== '';
 
   // 表示ラベルを取得
   const getDisplayLabel = () => {
-    if (!value || value === '') return 'なし'
-    const option = REMINDER_OPTIONS.find((opt) => opt.value === value)
-    return option?.label || value
-  }
+    if (!value || value === '') return 'なし';
+    const option = REMINDER_OPTIONS.find((opt) => opt.value === value);
+    return option?.label || value;
+  };
 
   return (
     <div className="relative" ref={reminderRef}>
@@ -65,9 +70,9 @@ export function ReminderSelect({ value, onChange, variant = 'inspector', disable
           type="button"
           disabled={disabled}
           onClick={(e) => {
-            e.stopPropagation()
+            e.stopPropagation();
             if (!disabled) {
-              setShowPopover(!showPopover)
+              setShowPopover(!showPopover);
             }
           }}
           className="border-border bg-secondary text-secondary-foreground hover:bg-state-hover focus-visible:border-ring focus-visible:ring-ring/50 flex h-9 w-fit items-center gap-1 rounded-md border px-2 py-0 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50"
@@ -97,7 +102,7 @@ export function ReminderSelect({ value, onChange, variant = 'inspector', disable
           disabled={disabled}
           onClick={() => {
             if (!disabled) {
-              setShowPopover(!showPopover)
+              setShowPopover(!showPopover);
             }
           }}
         >
@@ -112,7 +117,7 @@ export function ReminderSelect({ value, onChange, variant = 'inspector', disable
           disabled={disabled}
           onClick={() => {
             if (!disabled) {
-              setShowPopover(!showPopover)
+              setShowPopover(!showPopover);
             }
           }}
         >
@@ -130,8 +135,8 @@ export function ReminderSelect({ value, onChange, variant = 'inspector', disable
                   key={option.value}
                   className="hover:bg-state-hover flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-left text-sm"
                   onClick={() => {
-                    onChange(option.value)
-                    setShowPopover(false)
+                    onChange(option.value);
+                    setShowPopover(false);
                   }}
                   type="button"
                 >
@@ -144,5 +149,5 @@ export function ReminderSelect({ value, onChange, variant = 'inspector', disable
         </div>
       )}
     </div>
-  )
+  );
 }

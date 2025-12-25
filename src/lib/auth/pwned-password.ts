@@ -17,14 +17,14 @@
  * SHA-1ハッシュを計算（Web Crypto API使用）
  */
 async function sha1(text: string): Promise<string> {
-  const encoder = new TextEncoder()
-  const data = encoder.encode(text)
-  const hashBuffer = await crypto.subtle.digest('SHA-1', data)
-  const hashArray = Array.from(new Uint8Array(hashBuffer))
+  const encoder = new TextEncoder();
+  const data = encoder.encode(text);
+  const hashBuffer = await crypto.subtle.digest('SHA-1', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
   return hashArray
     .map((b) => b.toString(16).padStart(2, '0'))
     .join('')
-    .toUpperCase()
+    .toUpperCase();
 }
 
 /**
@@ -50,48 +50,48 @@ async function sha1(text: string): Promise<string> {
 export async function checkPasswordPwned(password: string): Promise<boolean> {
   try {
     // ステップ1: SHA-1ハッシュ化
-    const hash = await sha1(password)
+    const hash = await sha1(password);
 
     // ステップ2: 最初の5文字とそれ以降に分割
-    const prefix = hash.substring(0, 5)
-    const suffix = hash.substring(5)
+    const prefix = hash.substring(0, 5);
+    const suffix = hash.substring(5);
 
     // ステップ3: Have I Been Pwned API呼び出し（k-Anonymity）
-    const apiUrl = `https://api.pwnedpasswords.com/range/${prefix}`
+    const apiUrl = `https://api.pwnedpasswords.com/range/${prefix}`;
     const response = await fetch(apiUrl, {
       method: 'GET',
       headers: {
         'User-Agent': 'BoxLog-App', // API推奨のUser-Agent
       },
-    })
+    });
 
     if (!response.ok) {
       // APIエラー時は安全側に倒す（チェックをスキップ）
-      console.warn(`Pwned Passwords API error: ${response.status}`)
-      return false
+      console.warn(`Pwned Passwords API error: ${response.status}`);
+      return false;
     }
 
     // ステップ4: レスポンス解析
-    const text = await response.text()
+    const text = await response.text();
 
     // レスポンス形式: "HASH_SUFFIX:COUNT\r\n" の繰り返し
     // 例: "003D68EB55068C33ACE09247EE4C639306B:3\r\n"
-    const lines = text.split('\r\n')
+    const lines = text.split('\r\n');
 
     for (const line of lines) {
-      const [hashSuffix] = line.split(':')
+      const [hashSuffix] = line.split(':');
       if (hashSuffix === suffix) {
         // 漏洩パスワードと一致
-        return true
+        return true;
       }
     }
 
     // どれとも一致しない（安全）
-    return false
+    return false;
   } catch (err) {
     // ネットワークエラー等の場合は安全側に倒す
-    console.error('Pwned password check error:', err)
-    return false
+    console.error('Pwned password check error:', err);
+    return false;
   }
 }
 
@@ -103,35 +103,35 @@ export async function checkPasswordPwned(password: string): Promise<boolean> {
  */
 export async function getPasswordPwnedCount(password: string): Promise<number> {
   try {
-    const hash = await sha1(password)
-    const prefix = hash.substring(0, 5)
-    const suffix = hash.substring(5)
+    const hash = await sha1(password);
+    const prefix = hash.substring(0, 5);
+    const suffix = hash.substring(5);
 
-    const apiUrl = `https://api.pwnedpasswords.com/range/${prefix}`
+    const apiUrl = `https://api.pwnedpasswords.com/range/${prefix}`;
     const response = await fetch(apiUrl, {
       method: 'GET',
       headers: {
         'User-Agent': 'BoxLog-App',
       },
-    })
+    });
 
     if (!response.ok) {
-      return 0
+      return 0;
     }
 
-    const text = await response.text()
-    const lines = text.split('\r\n')
+    const text = await response.text();
+    const lines = text.split('\r\n');
 
     for (const line of lines) {
-      const [hashSuffix, count] = line.split(':')
+      const [hashSuffix, count] = line.split(':');
       if (hashSuffix === suffix && count) {
-        return parseInt(count, 10)
+        return parseInt(count, 10);
       }
     }
 
-    return 0
+    return 0;
   } catch (err) {
-    console.error('Pwned password count check error:', err)
-    return 0
+    console.error('Pwned password count check error:', err);
+    return 0;
   }
 }

@@ -1,30 +1,30 @@
-'use client'
+'use client';
 
-import { Suspense } from 'react'
+import { Suspense } from 'react';
 
-import { InboxBoardView } from '@/features/inbox/components/InboxBoardView'
-import { InboxTableView } from '@/features/inbox/components/InboxTableView'
-import { InboxToolbar } from '@/features/inbox/components/InboxToolbar'
-import { useInboxViewStore } from '@/features/inbox/stores/useInboxViewStore'
+import { InboxBoardView } from '@/features/inbox/components/InboxBoardView';
+import { InboxTableView } from '@/features/inbox/components/InboxTableView';
+import { InboxToolbar } from '@/features/inbox/components/InboxToolbar';
+import { useInboxViewStore } from '@/features/inbox/stores/useInboxViewStore';
 
 /**
  * Inboxコンテンツ（カスタムビュー）
  */
 function InboxContent() {
-  const displayMode = useInboxViewStore((state) => state.displayMode)
+  const displayMode = useInboxViewStore((state) => state.displayMode);
 
   // 表示形式に応じて表示を切り替え
   if (displayMode === 'table') {
-    return <InboxTableView />
+    return <InboxTableView />;
   }
 
-  return <InboxBoardView />
+  return <InboxBoardView />;
 }
 
 interface InboxViewPageProps {
   params: Promise<{
-    id: string
-  }>
+    id: string;
+  }>;
 }
 
 /**
@@ -50,5 +50,5 @@ export default function InboxViewPage({ params: _params }: InboxViewPageProps) {
         <InboxContent />
       </Suspense>
     </div>
-  )
+  );
 }

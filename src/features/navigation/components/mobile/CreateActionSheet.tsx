@@ -1,19 +1,25 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
+import { useState } from 'react';
 
-import { Calendar, CheckSquare, FileText, History } from 'lucide-react'
+import { Calendar, CheckSquare, FileText, History } from 'lucide-react';
 
-import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from '@/components/ui/drawer'
-import { cn } from '@/lib/utils'
-import { useTranslations } from 'next-intl'
+import {
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerTitle,
+} from '@/components/ui/drawer';
+import { cn } from '@/lib/utils';
+import { useTranslations } from 'next-intl';
 
-export type CreateActionType = 'plan' | 'record' | 'template' | 'history'
+export type CreateActionType = 'plan' | 'record' | 'template' | 'history';
 
 interface CreateActionSheetProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  onSelect: (type: CreateActionType) => void
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onSelect: (type: CreateActionType) => void;
 }
 
 /**
@@ -28,7 +34,7 @@ interface CreateActionSheetProps {
  * Material Design 3のBottom Sheet / Action Sheetパターンに準拠
  */
 export function CreateActionSheet({ open, onOpenChange, onSelect }: CreateActionSheetProps) {
-  const t = useTranslations()
+  const t = useTranslations();
 
   const actions = [
     {
@@ -63,12 +69,12 @@ export function CreateActionSheet({ open, onOpenChange, onSelect }: CreateAction
       color: 'text-warning',
       bgColor: 'bg-warning/10',
     },
-  ]
+  ];
 
   const handleSelect = (type: CreateActionType) => {
-    onSelect(type)
-    onOpenChange(false)
-  }
+    onSelect(type);
+    onOpenChange(false);
+  };
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
@@ -80,7 +86,7 @@ export function CreateActionSheet({ open, onOpenChange, onSelect }: CreateAction
 
         <div className="flex flex-col gap-2 px-4 pb-6">
           {actions.map((action) => {
-            const Icon = action.icon
+            const Icon = action.icon;
 
             return (
               <button
@@ -92,10 +98,15 @@ export function CreateActionSheet({ open, onOpenChange, onSelect }: CreateAction
                   'bg-card hover:bg-state-hover',
                   'border-border border',
                   'text-left transition-colors',
-                  'active:scale-[0.98]'
+                  'active:scale-[0.98]',
                 )}
               >
-                <div className={cn('flex size-12 items-center justify-center rounded-full', action.bgColor)}>
+                <div
+                  className={cn(
+                    'flex size-12 items-center justify-center rounded-full',
+                    action.bgColor,
+                  )}
+                >
                   <Icon className={cn('size-6', action.color)} />
                 </div>
                 <div className="flex-1">
@@ -103,27 +114,27 @@ export function CreateActionSheet({ open, onOpenChange, onSelect }: CreateAction
                   <p className="text-muted-foreground text-sm">{action.description}</p>
                 </div>
               </button>
-            )
+            );
           })}
         </div>
       </DrawerContent>
     </Drawer>
-  )
+  );
 }
 
 /**
  * CreateActionSheetの状態管理用hook
  */
 export function useCreateActionSheet() {
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false);
 
-  const open = () => setIsOpen(true)
-  const close = () => setIsOpen(false)
+  const open = () => setIsOpen(true);
+  const close = () => setIsOpen(false);
 
   return {
     isOpen,
     open,
     close,
     setIsOpen,
-  }
+  };
 }

@@ -1,28 +1,46 @@
-'use client'
+'use client';
 
-import { Archive, Folder, FolderX, Hash, PanelLeftClose, PanelLeftOpen, Plus, Search, Tags, X } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
+import {
+  Archive,
+  Folder,
+  FolderX,
+  Hash,
+  PanelLeftClose,
+  PanelLeftOpen,
+  Plus,
+  Search,
+  Tags,
+  X,
+} from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
 
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Input } from '@/components/ui/input'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { HoverTooltip } from '@/components/ui/tooltip'
-import { DEFAULT_TAG_COLOR } from '@/config/ui/colors'
-import { useTagGroups } from '@/features/tags/hooks/use-tag-groups'
-import { useCreateTag, useTags } from '@/features/tags/hooks/use-tags'
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { HoverTooltip } from '@/components/ui/tooltip';
+import { DEFAULT_TAG_COLOR } from '@/config/ui/colors';
+import { useTagGroups } from '@/features/tags/hooks/use-tag-groups';
+import { useCreateTag, useTags } from '@/features/tags/hooks/use-tags';
 
 interface PlanTagSelectDialogEnhancedProps {
-  children: React.ReactNode
-  selectedTagIds: string[]
-  onTagsChange: (tagIds: string[]) => void
-  align?: 'start' | 'center' | 'end' | undefined
-  side?: 'top' | 'right' | 'bottom' | 'left' | undefined
-  alignOffset?: number | undefined
-  sideOffset?: number | undefined
+  children: React.ReactNode;
+  selectedTagIds: string[];
+  onTagsChange: (tagIds: string[]) => void;
+  align?: 'start' | 'center' | 'end' | undefined;
+  side?: 'top' | 'right' | 'bottom' | 'left' | undefined;
+  alignOffset?: number | undefined;
+  sideOffset?: number | undefined;
 }
 
 export function PlanTagSelectDialogEnhanced({
@@ -34,168 +52,176 @@ export function PlanTagSelectDialogEnhanced({
   alignOffset = 0,
   sideOffset = 8,
 }: PlanTagSelectDialogEnhancedProps) {
-  const [isOpen, setIsOpen] = useState(false)
-  const [searchQuery, setSearchQuery] = useState('')
-  const [isCreating, setIsCreating] = useState(false)
-  const [newTagName, setNewTagName] = useState('')
-  const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null)
-  const [showArchived, setShowArchived] = useState(false)
-  const [showSidebar, setShowSidebar] = useState(true)
+  const [isOpen, setIsOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isCreating, setIsCreating] = useState(false);
+  const [newTagName, setNewTagName] = useState('');
+  const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
+  const [showArchived, setShowArchived] = useState(false);
+  const [showSidebar, setShowSidebar] = useState(true);
 
-  const { data: tagsData } = useTags(true)
-  const { data: groups = [] } = useTagGroups()
-  const createTagMutation = useCreateTag()
+  const { data: tagsData } = useTags(true);
+  const { data: groups = [] } = useTagGroups();
+  const createTagMutation = useCreateTag();
 
-  const allTags = tagsData ?? []
+  const allTags = useMemo(() => tagsData ?? [], [tagsData]);
 
   // フィルタリング
   const filteredTags = useMemo(() => {
-    let filtered = allTags
+    let filtered = allTags;
 
     // アクティブ/アーカイブフィルタ
     if (!showArchived) {
-      filtered = filtered.filter((tag) => tag.is_active)
+      filtered = filtered.filter((tag) => tag.is_active);
     } else {
-      filtered = filtered.filter((tag) => !tag.is_active)
+      filtered = filtered.filter((tag) => !tag.is_active);
     }
 
     // グループフィルタ
     if (selectedGroupId === 'uncategorized') {
-      filtered = filtered.filter((tag) => !tag.group_id)
+      filtered = filtered.filter((tag) => !tag.group_id);
     } else if (selectedGroupId) {
-      filtered = filtered.filter((tag) => tag.group_id === selectedGroupId)
+      filtered = filtered.filter((tag) => tag.group_id === selectedGroupId);
     }
 
     // 検索フィルタ
     if (searchQuery) {
-      filtered = filtered.filter((tag) => tag.name.toLowerCase().includes(searchQuery.toLowerCase()))
+      filtered = filtered.filter((tag) =>
+        tag.name.toLowerCase().includes(searchQuery.toLowerCase()),
+      );
     }
 
-    return filtered
-  }, [allTags, showArchived, selectedGroupId, searchQuery])
+    return filtered;
+  }, [allTags, showArchived, selectedGroupId, searchQuery]);
 
   // 選択済み・未選択タグに分割
   const selectedTags = useMemo(() => {
-    return filteredTags.filter((tag) => selectedTagIds.includes(tag.id))
-  }, [filteredTags, selectedTagIds])
+    return filteredTags.filter((tag) => selectedTagIds.includes(tag.id));
+  }, [filteredTags, selectedTagIds]);
 
   const unselectedTags = useMemo(() => {
-    return filteredTags.filter((tag) => !selectedTagIds.includes(tag.id))
-  }, [filteredTags, selectedTagIds])
+    return filteredTags.filter((tag) => !selectedTagIds.includes(tag.id));
+  }, [filteredTags, selectedTagIds]);
 
   // タグの選択/解除
   const handleToggleTag = (tagId: string) => {
     if (selectedTagIds.includes(tagId)) {
-      onTagsChange(selectedTagIds.filter((id) => id !== tagId))
+      onTagsChange(selectedTagIds.filter((id) => id !== tagId));
     } else {
-      onTagsChange([...selectedTagIds, tagId])
+      onTagsChange([...selectedTagIds, tagId]);
     }
-  }
+  };
 
   // 全選択/全解除
   const handleToggleAll = () => {
-    const activeFilteredTagIds = filteredTags.filter((tag) => tag.is_active).map((tag) => tag.id)
+    const activeFilteredTagIds = filteredTags.filter((tag) => tag.is_active).map((tag) => tag.id);
 
-    if (activeFilteredTagIds.length === 0) return
+    if (activeFilteredTagIds.length === 0) return;
 
-    const allSelected = activeFilteredTagIds.every((id) => selectedTagIds.includes(id))
+    const allSelected = activeFilteredTagIds.every((id) => selectedTagIds.includes(id));
 
     if (allSelected) {
       // 全解除: フィルタされたタグを選択から除外
-      onTagsChange(selectedTagIds.filter((id) => !activeFilteredTagIds.includes(id)))
+      onTagsChange(selectedTagIds.filter((id) => !activeFilteredTagIds.includes(id)));
     } else {
       // 全選択: フィルタされたタグを選択に追加（重複除外）
-      const newSelection = [...new Set([...selectedTagIds, ...activeFilteredTagIds])]
-      onTagsChange(newSelection)
+      const newSelection = [...new Set([...selectedTagIds, ...activeFilteredTagIds])];
+      onTagsChange(newSelection);
     }
-  }
+  };
 
   // チェックボックスの状態を計算
   const getCheckboxState = (): boolean | 'indeterminate' => {
-    const activeFilteredTagIds = filteredTags.filter((tag) => tag.is_active).map((tag) => tag.id)
-    if (activeFilteredTagIds.length === 0) return false
+    const activeFilteredTagIds = filteredTags.filter((tag) => tag.is_active).map((tag) => tag.id);
+    if (activeFilteredTagIds.length === 0) return false;
 
-    const selectedCount = activeFilteredTagIds.filter((id) => selectedTagIds.includes(id)).length
+    const selectedCount = activeFilteredTagIds.filter((id) => selectedTagIds.includes(id)).length;
 
-    if (selectedCount === 0) return false
-    if (selectedCount === activeFilteredTagIds.length) return true
-    return 'indeterminate'
-  }
+    if (selectedCount === 0) return false;
+    if (selectedCount === activeFilteredTagIds.length) return true;
+    return 'indeterminate';
+  };
 
-  const checkboxState = getCheckboxState()
+  const checkboxState = getCheckboxState();
 
   // タグ作成
   const handleCreateTag = async () => {
-    if (!newTagName.trim()) return
+    if (!newTagName.trim()) return;
 
     try {
       const createdTag = await createTagMutation.mutateAsync({
         name: newTagName.trim(),
         color: DEFAULT_TAG_COLOR,
         description: undefined,
-        group_id: selectedGroupId && selectedGroupId !== 'uncategorized' ? selectedGroupId : undefined,
-      })
+        group_id:
+          selectedGroupId && selectedGroupId !== 'uncategorized' ? selectedGroupId : undefined,
+      });
 
       if (createdTag && createdTag.id) {
-        onTagsChange([...selectedTagIds, createdTag.id])
+        onTagsChange([...selectedTagIds, createdTag.id]);
       }
 
-      setNewTagName('')
-      setIsCreating(false)
-      setSearchQuery('')
+      setNewTagName('');
+      setIsCreating(false);
+      setSearchQuery('');
     } catch (error) {
-      console.error('Failed to create tag:', error)
+      console.error('Failed to create tag:', error);
     }
-  }
+  };
 
   // Enter キーでタグ作成
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      e.preventDefault()
-      handleCreateTag()
+      e.preventDefault();
+      handleCreateTag();
     } else if (e.key === 'Escape') {
-      setIsCreating(false)
-      setNewTagName('')
+      setIsCreating(false);
+      setNewTagName('');
     }
-  }
+  };
 
   // グループごとのタグ数
   const getGroupTagCount = (groupId: string) => {
-    return allTags.filter((tag) => tag.group_id === groupId && tag.is_active).length
-  }
+    return allTags.filter((tag) => tag.group_id === groupId && tag.is_active).length;
+  };
 
   // 未分類タグ数
-  const uncategorizedCount = allTags.filter((tag) => !tag.group_id && tag.is_active).length
+  const uncategorizedCount = allTags.filter((tag) => !tag.group_id && tag.is_active).length;
 
   // アーカイブ数
-  const archivedCount = allTags.filter((tag) => !tag.is_active).length
+  const archivedCount = allTags.filter((tag) => !tag.is_active).length;
 
   // アクティブタグ数
-  const activeCount = allTags.filter((tag) => tag.is_active).length
+  const activeCount = allTags.filter((tag) => tag.is_active).length;
 
   // Popoverを閉じた時に状態をリセット
   useEffect(() => {
     if (!isOpen) {
-      setSearchQuery('')
+      setSearchQuery('');
 
-      setIsCreating(false)
+      setIsCreating(false);
 
-      setNewTagName('')
+      setNewTagName('');
 
-      setSelectedGroupId(null)
+      setSelectedGroupId(null);
 
-      setShowArchived(false)
+      setShowArchived(false);
 
-      setShowSidebar(true)
+      setShowSidebar(true);
     }
-  }, [isOpen])
+  }, [isOpen]);
 
   return (
     <Popover modal={false} open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>{children}</PopoverTrigger>
       <PopoverContent
         className="!border-border bg-popover dark:bg-popover flex flex-col gap-0 !border p-0"
-        style={{ width: '720px', maxWidth: 'calc(100vw - 160px)', height: '50vh', maxHeight: '80vh' }}
+        style={{
+          width: '720px',
+          maxWidth: 'calc(100vw - 160px)',
+          height: '50vh',
+          maxHeight: '80vh',
+        }}
         align={align}
         side={side}
         sideOffset={sideOffset}
@@ -218,20 +244,31 @@ export function PlanTagSelectDialogEnhanced({
             </div>
 
             {/* 新規作成ボタン */}
-            <Button variant="primary" onClick={() => setIsCreating(!isCreating)} className="shrink-0">
+            <Button
+              variant="primary"
+              onClick={() => setIsCreating(!isCreating)}
+              className="shrink-0"
+            >
               <Plus className="mr-2 h-4 w-4" />
               新しいタグ
             </Button>
 
             {/* サイドバー開閉ボタン */}
-            <HoverTooltip content={showSidebar ? 'サイドバーを閉じる' : 'サイドバーを開く'} side="bottom">
+            <HoverTooltip
+              content={showSidebar ? 'サイドバーを閉じる' : 'サイドバーを開く'}
+              side="bottom"
+            >
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setShowSidebar(!showSidebar)}
                 className="hidden shrink-0 md:flex"
               >
-                {showSidebar ? <PanelLeftClose className="h-4 w-4" /> : <PanelLeftOpen className="h-4 w-4" />}
+                {showSidebar ? (
+                  <PanelLeftClose className="h-4 w-4" />
+                ) : (
+                  <PanelLeftOpen className="h-4 w-4" />
+                )}
               </Button>
             </HoverTooltip>
           </div>
@@ -253,8 +290,8 @@ export function PlanTagSelectDialogEnhanced({
               <Button
                 variant="ghost"
                 onClick={() => {
-                  setIsCreating(false)
-                  setNewTagName('')
+                  setIsCreating(false);
+                  setNewTagName('');
                 }}
               >
                 <X className="h-4 w-4" />
@@ -276,8 +313,8 @@ export function PlanTagSelectDialogEnhanced({
                   <button
                     type="button"
                     onClick={() => {
-                      setSelectedGroupId(null)
-                      setShowArchived(false)
+                      setSelectedGroupId(null);
+                      setShowArchived(false);
                     }}
                     className={`w-full rounded-md px-3 py-2 text-left text-xs transition-colors ${
                       !selectedGroupId && !showArchived
@@ -296,8 +333,8 @@ export function PlanTagSelectDialogEnhanced({
                   <button
                     type="button"
                     onClick={() => {
-                      setSelectedGroupId('uncategorized')
-                      setShowArchived(false)
+                      setSelectedGroupId('uncategorized');
+                      setShowArchived(false);
                     }}
                     className={`w-full rounded-md px-3 py-2 text-left text-xs transition-colors ${
                       selectedGroupId === 'uncategorized' && !showArchived
@@ -306,7 +343,7 @@ export function PlanTagSelectDialogEnhanced({
                     }`}
                   >
                     <div className="flex items-center gap-2">
-                      <FolderX className="h-4 w-4 shrink-0 text-neutral-600 dark:text-neutral-400" />
+                      <FolderX className="text-muted-foreground h-4 w-4 shrink-0" />
                       <span className="flex-1 truncate">未分類</span>
                       <span className="text-muted-foreground shrink-0">{uncategorizedCount}</span>
                     </div>
@@ -316,11 +353,13 @@ export function PlanTagSelectDialogEnhanced({
                   <button
                     type="button"
                     onClick={() => {
-                      setSelectedGroupId(null)
-                      setShowArchived(true)
+                      setSelectedGroupId(null);
+                      setShowArchived(true);
                     }}
                     className={`w-full rounded-md px-3 py-2 text-left text-xs transition-colors ${
-                      showArchived ? 'bg-state-selected text-foreground' : 'text-muted-foreground hover:bg-state-hover'
+                      showArchived
+                        ? 'bg-state-selected text-foreground'
+                        : 'text-muted-foreground hover:bg-state-hover'
                     }`}
                   >
                     <div className="flex items-center gap-2">
@@ -337,14 +376,14 @@ export function PlanTagSelectDialogEnhanced({
                         グループ
                       </div>
                       {groups.map((group) => {
-                        const groupTagCount = getGroupTagCount(group.id)
+                        const groupTagCount = getGroupTagCount(group.id);
                         return (
                           <button
                             key={group.id}
                             type="button"
                             onClick={() => {
-                              setSelectedGroupId(group.id)
-                              setShowArchived(false)
+                              setSelectedGroupId(group.id);
+                              setShowArchived(false);
                             }}
                             className={`w-full rounded-md px-3 py-2 text-left text-xs transition-colors ${
                               selectedGroupId === group.id && !showArchived
@@ -353,12 +392,17 @@ export function PlanTagSelectDialogEnhanced({
                             }`}
                           >
                             <div className="flex items-center gap-2">
-                              <Folder className="h-4 w-4 shrink-0" style={{ color: group.color || '#6B7280' }} />
+                              <Folder
+                                className="h-4 w-4 shrink-0"
+                                style={{ color: group.color || '#6B7280' }}
+                              />
                               <span className="flex-1 truncate">{group.name}</span>
-                              <span className="text-muted-foreground shrink-0">{groupTagCount}</span>
+                              <span className="text-muted-foreground shrink-0">
+                                {groupTagCount}
+                              </span>
                             </div>
                           </button>
-                        )
+                        );
                       })}
                     </>
                   )}
@@ -380,7 +424,11 @@ export function PlanTagSelectDialogEnhanced({
                   <TableHeader>
                     <TableRow>
                       <TableHead className="w-12 text-xs">
-                        <Checkbox checked={checkboxState} onCheckedChange={handleToggleAll} aria-label="すべて選択" />
+                        <Checkbox
+                          checked={checkboxState}
+                          onCheckedChange={handleToggleAll}
+                          aria-label="すべて選択"
+                        />
                       </TableHead>
                       <TableHead className="w-8 text-xs"></TableHead>
                       <TableHead className="w-60 text-xs">名前</TableHead>
@@ -397,7 +445,7 @@ export function PlanTagSelectDialogEnhanced({
                           </TableCell>
                         </TableRow>
                         {selectedTags.map((tag) => {
-                          const isSelected = true
+                          const isSelected = true;
                           return (
                             <TableRow
                               key={tag.id}
@@ -435,7 +483,7 @@ export function PlanTagSelectDialogEnhanced({
                                 <span className="line-clamp-2">{tag.description || '-'}</span>
                               </TableCell>
                             </TableRow>
-                          )
+                          );
                         })}
                       </>
                     )}
@@ -449,7 +497,7 @@ export function PlanTagSelectDialogEnhanced({
                           </TableCell>
                         </TableRow>
                         {unselectedTags.map((tag) => {
-                          const isSelected = false
+                          const isSelected = false;
                           return (
                             <TableRow
                               key={tag.id}
@@ -485,7 +533,7 @@ export function PlanTagSelectDialogEnhanced({
                                 <span className="line-clamp-2">{tag.description || '-'}</span>
                               </TableCell>
                             </TableRow>
-                          )
+                          );
                         })}
                       </>
                     )}
@@ -497,5 +545,5 @@ export function PlanTagSelectDialogEnhanced({
         </div>
       </PopoverContent>
     </Popover>
-  )
+  );
 }

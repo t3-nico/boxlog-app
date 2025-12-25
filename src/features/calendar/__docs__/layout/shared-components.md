@@ -19,8 +19,8 @@
 
 ```typescript
 interface SharedComponentProps {
-  className?: string // カスタムスタイル
-  children?: React.ReactNode // 拡張コンテンツ
+  className?: string; // カスタムスタイル
+  children?: React.ReactNode; // 拡張コンテンツ
   // コンポーネント固有のProps...
 }
 ```
@@ -265,13 +265,13 @@ interface EventBlockProps {
 
 ```typescript
 interface EventActionMenuProps {
-  event: CalendarEvent
-  position: { x: number; y: number }
-  onEdit?: (event: CalendarEvent) => void
-  onDelete?: (event: CalendarEvent) => void
-  onDuplicate?: (event: CalendarEvent) => void
-  onClose?: () => void
-  visible: boolean
+  event: CalendarEvent;
+  position: { x: number; y: number };
+  onEdit?: (event: CalendarEvent) => void;
+  onDelete?: (event: CalendarEvent) => void;
+  onDuplicate?: (event: CalendarEvent) => void;
+  onClose?: () => void;
+  visible: boolean;
 }
 ```
 
@@ -323,11 +323,11 @@ interface GridBackgroundProps {
 
 ```typescript
 interface ScrollContainerProps {
-  direction: 'vertical' | 'horizontal' | 'both'
-  className?: string
-  onScroll?: (event: React.UIEvent) => void
-  scrollToTime?: string // 初期スクロール位置
-  children: React.ReactNode
+  direction: 'vertical' | 'horizontal' | 'both';
+  className?: string;
+  onScroll?: (event: React.UIEvent) => void;
+  scrollToTime?: string; // 初期スクロール位置
+  children: React.ReactNode;
 }
 ```
 
@@ -349,13 +349,13 @@ interface ScrollContainerProps {
 ```typescript
 interface DragSelectionOverlayProps {
   dragState: {
-    isDragging: boolean
-    dragStartTime: string | null
-    dragEndTime: string | null
-    dragDate: Date | null
-  }
-  hourHeight?: number
-  className?: string
+    isDragging: boolean;
+    dragStartTime: string | null;
+    dragEndTime: string | null;
+    dragDate: Date | null;
+  };
+  hourHeight?: number;
+  className?: string;
 }
 ```
 
@@ -372,18 +372,18 @@ interface DragSelectionOverlayProps {
 
 ```typescript
 interface UndoToastProps {
-  action: UndoAction | null
-  onUndo: (action: UndoAction) => void
-  onDismiss: () => void
-  autoHideDelay?: number
+  action: UndoAction | null;
+  onUndo: (action: UndoAction) => void;
+  onDismiss: () => void;
+  autoHideDelay?: number;
 }
 
 interface UndoAction {
-  id: string
-  type: 'create' | 'delete' | 'edit' | 'move'
-  description: string
-  data: Record<string, unknown>
-  timestamp: number
+  id: string;
+  type: 'create' | 'delete' | 'edit' | 'move';
+  description: string;
+  data: Record<string, unknown>;
+  timestamp: number;
 }
 ```
 
@@ -401,11 +401,11 @@ interface UndoAction {
 
 ```typescript
 interface EventColors {
-  primary: string // #3b82f6 (Blue)
-  secondary: string // #8b5cf6 (Purple)
-  success: string // #10b981 (Green)
-  warning: string // #f59e0b (Amber)
-  danger: string // #ef4444 (Red)
+  primary: string; // #3b82f6 (Blue)
+  secondary: string; // #8b5cf6 (Purple)
+  success: string; // #10b981 (Green)
+  warning: string; // #f59e0b (Amber)
+  danger: string; // #ef4444 (Red)
   // 8色のカテゴリ色
 }
 ```
@@ -414,11 +414,11 @@ interface EventColors {
 
 ```typescript
 interface Typography {
-  eventTitle: 'text-sm font-medium'
-  eventTime: 'text-xs font-mono'
-  eventLocation: 'text-xs text-muted-foreground'
-  dateHeader: 'text-lg font-semibold'
-  timeLabel: 'text-xs text-muted-foreground'
+  eventTitle: 'text-sm font-medium';
+  eventTime: 'text-xs font-mono';
+  eventLocation: 'text-xs text-muted-foreground';
+  dateHeader: 'text-lg font-semibold';
+  timeLabel: 'text-xs text-muted-foreground';
 }
 ```
 
@@ -426,10 +426,10 @@ interface Typography {
 
 ```typescript
 interface Spacing {
-  hourHeight: 72 // 1時間 = 72px
-  timeColumnWidth: 64 // 時間軸 = 64px
-  eventPadding: 4 // イベント内余白
-  gridGap: 1 // グリッド間隔
+  hourHeight: 72; // 1時間 = 72px
+  timeColumnWidth: 64; // 時間軸 = 64px
+  eventPadding: 4; // イベント内余白
+  gridGap: 1; // グリッド間隔
 }
 ```
 
@@ -485,16 +485,16 @@ interface EventBlockProps {
 ```typescript
 // 共通コンポーネントから専用フックを提供
 export function useEventBlock(event: CalendarEvent) {
-  const [isSelected, setIsSelected] = useState(false)
-  const [isHovered, setIsHovered] = useState(false)
+  const [isSelected, setIsSelected] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
   const handlers = {
     onClick: () => setIsSelected(!isSelected),
     onMouseEnter: () => setIsHovered(true),
     onMouseLeave: () => setIsHovered(false),
-  }
+  };
 
-  return { isSelected, isHovered, handlers }
+  return { isSelected, isHovered, handlers };
 }
 ```
 

@@ -1,23 +1,23 @@
-'use client'
+'use client';
 
-import type { ReactNode } from 'react'
+import type { ReactNode } from 'react';
 
 /**
  * メニューアクション定義
  */
 export interface MenuAction<T = unknown> {
   /** アクションのキー */
-  key: string
+  key: string;
   /** アイコン */
-  icon: ReactNode
+  icon: ReactNode;
   /** ラベル */
-  label: string
+  label: string;
   /** クリック時の処理 */
-  onClick: (item: T) => void
+  onClick: (item: T) => void;
   /** 表示スタイル */
-  variant?: 'default' | 'destructive' | undefined
+  variant?: 'default' | 'destructive' | undefined;
   /** 無効化フラグ */
-  disabled?: boolean | undefined
+  disabled?: boolean | undefined;
 }
 
 /**
@@ -25,19 +25,19 @@ export interface MenuAction<T = unknown> {
  */
 export interface SubMenuAction<T = unknown> {
   /** サブメニューのキー */
-  key: string
+  key: string;
   /** トリガー情報 */
   trigger: {
-    icon: ReactNode
-    label: string
-  }
+    icon: ReactNode;
+    label: string;
+  };
   /** サブメニュー項目 */
   items: Array<{
-    key: string
-    icon?: ReactNode | undefined
-    label: string
-    onClick: (item: T) => void
-  }>
+    key: string;
+    icon?: ReactNode | undefined;
+    label: string;
+    onClick: (item: T) => void;
+  }>;
 }
 
 /**
@@ -45,11 +45,11 @@ export interface SubMenuAction<T = unknown> {
  */
 export interface ActionGroup<T = unknown> {
   /** グループのキー */
-  key: string
+  key: string;
   /** 通常アクション */
-  actions?: MenuAction<T>[]
+  actions?: MenuAction<T>[];
   /** サブメニューアクション */
-  subMenus?: SubMenuAction<T>[]
+  subMenus?: SubMenuAction<T>[];
 }
 
 /**
@@ -57,32 +57,32 @@ export interface ActionGroup<T = unknown> {
  */
 export interface ActionMenuItemsProps<T = unknown> {
   /** 対象アイテム */
-  item: T
+  item: T;
   /** アクショングループのリスト */
-  groups: ActionGroup<T>[]
+  groups: ActionGroup<T>[];
   /** メニュー項目をレンダリングするための関数 */
   renderMenuItem: (props: {
-    key?: string | undefined
-    icon: ReactNode
-    label: string
-    onClick: () => void
-    variant?: 'default' | 'destructive' | undefined
-    disabled?: boolean | undefined
-  }) => ReactNode
+    key?: string | undefined;
+    icon: ReactNode;
+    label: string;
+    onClick: () => void;
+    variant?: 'default' | 'destructive' | undefined;
+    disabled?: boolean | undefined;
+  }) => ReactNode;
   /** サブメニューをレンダリングするための関数（オプション） */
   renderSubMenu?:
     | ((props: {
-        trigger: { icon: ReactNode; label: string }
+        trigger: { icon: ReactNode; label: string };
         items: Array<{
-          key: string
-          icon?: ReactNode | undefined
-          label: string
-          onClick: () => void
-        }>
+          key: string;
+          icon?: ReactNode | undefined;
+          label: string;
+          onClick: () => void;
+        }>;
       }) => ReactNode)
-    | undefined
+    | undefined;
   /** セパレーターをレンダリングするための関数（オプション） */
-  renderSeparator?: (() => ReactNode) | undefined
+  renderSeparator?: (() => ReactNode) | undefined;
 }
 
 /**
@@ -127,7 +127,7 @@ export function ActionMenuItems<T = unknown>({
   renderSubMenu,
   renderSeparator,
 }: ActionMenuItemsProps<T>) {
-  const elements: ReactNode[] = []
+  const elements: ReactNode[] = [];
 
   groups.forEach((group, groupIndex) => {
     // 通常アクション
@@ -141,9 +141,9 @@ export function ActionMenuItems<T = unknown>({
             onClick: () => action.onClick(item),
             ...(action.variant !== undefined && { variant: action.variant }),
             ...(action.disabled !== undefined && { disabled: action.disabled }),
-          })
-        )
-      })
+          }),
+        );
+      });
     }
 
     // サブメニューアクション
@@ -158,16 +158,16 @@ export function ActionMenuItems<T = unknown>({
               label: subItem.label,
               onClick: () => subItem.onClick(item),
             })),
-          })
-        )
-      })
+          }),
+        );
+      });
     }
 
     // セパレーター（最後のグループ以外）
     if (renderSeparator && groupIndex < groups.length - 1) {
-      elements.push(renderSeparator())
+      elements.push(renderSeparator());
     }
-  })
+  });
 
-  return <>{elements}</>
+  return <>{elements}</>;
 }
