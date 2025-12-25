@@ -60,6 +60,13 @@ export const CalendarDragSelection = ({
   const isDragging = useRef(false);
   const [dropTime, setDropTime] = useState<string | null>(null);
 
+  // 長押し検出用（モバイル標準: 300ms）
+  const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const touchStartPos = useRef<{ x: number; y: number } | null>(null);
+  const [isLongPressActive, setIsLongPressActive] = useState(false);
+  const LONG_PRESS_DURATION = 300; // Google/Apple標準: 300-500ms
+  const LONG_PRESS_MOVE_THRESHOLD = 10; // 長押し中の許容移動距離（px）
+
   // ドロップ可能エリアとして設定
   // ドロップ先データ: { date: Date, time: string }
   const { setNodeRef, isOver } = useDroppable({
@@ -70,14 +77,25 @@ export const CalendarDragSelection = ({
     },
   });
 
+  // 長押しタイマーをクリア
+  const clearLongPressTimer = useCallback(() => {
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+    }
+    touchStartPos.current = null;
+    setIsLongPressActive(false);
+  }, []);
+
   // 状態をクリアするヘルパー関数
-  const clearSelectionState = () => {
+  const clearSelectionState = useCallback(() => {
     setIsSelecting(false);
     setSelection(null);
     setSelectionStart(null);
     setShowSelectionPreview(false);
     isDragging.current = false;
-  };
+    clearLongPressTimer();
+  }, [clearLongPressTimer]);
 
   // 時間をフォーマットするヘルパー関数
   const formatTime = useCallback((hour: number, minute: number): string => {
@@ -181,6 +199,52 @@ export const CalendarDragSelection = ({
       e.stopPropagation();
     },
     [pixelsToTime, disabled],
+  );
+
+  // タッチ開始（モバイル用・長押し検出）
+  const handleTouchStart = useCallback(
+    (e: React.TouchEvent) => {
+      if (disabled) return;
+
+      const touch = e.touches[0];
+      if (!touch) return;
+
+      // イベントブロック上のタッチは無視
+      const target = e.target as HTMLElement;
+      const eventBlock =
+        target.closest('[data-event-block]') || target.closest('[data-plan-block]');
+
+      if (eventBlock) return;
+
+      // タッチ開始位置を記録
+      touchStartPos.current = { x: touch.clientX, y: touch.clientY };
+
+      const rect = e.currentTarget.getBoundingClientRect();
+      const y = touch.clientY - rect.top;
+      const startTime = pixelsToTime(y);
+
+      // 長押しタイマーを開始（300ms後にドラッグモード有効化）
+      clearLongPressTimer();
+      longPressTimer.current = setTimeout(() => {
+        // 長押し完了 - ドラッグモード開始
+        setIsLongPressActive(true);
+        setSelectionStart(startTime);
+        setSelection({
+          startHour: startTime.hour,
+          startMinute: startTime.minute,
+          endHour: startTime.hour,
+          endMinute: startTime.minute + 15,
+        });
+        setIsSelecting(true);
+        isDragging.current = false;
+
+        // ハプティックフィードバック（対応デバイスのみ）
+        if (navigator.vibrate) {
+          navigator.vibrate(10);
+        }
+      }, LONG_PRESS_DURATION);
+    },
+    [pixelsToTime, disabled, clearLongPressTimer],
   );
 
   // マウスムーブ時にドロップ時刻を更新（ドラッグ中でない場合も）
@@ -301,14 +365,134 @@ export const CalendarDragSelection = ({
       }
     };
 
+    // タッチムーブ（モバイル用）
+    const handleGlobalTouchMove = (e: TouchEvent) => {
+      const touch = e.touches[0];
+      if (!touch) return;
+
+      // 長押し完了前の移動検出（スクロールとの区別）
+      if (touchStartPos.current && !isLongPressActive) {
+        const deltaX = Math.abs(touch.clientX - touchStartPos.current.x);
+        const deltaY = Math.abs(touch.clientY - touchStartPos.current.y);
+
+        // 閾値以上移動したら長押しをキャンセル（スクロール優先）
+        if (deltaX > LONG_PRESS_MOVE_THRESHOLD || deltaY > LONG_PRESS_MOVE_THRESHOLD) {
+          clearLongPressTimer();
+          return;
+        }
+      }
+
+      // 長押し完了後のドラッグ処理
+      if (!containerRef.current || !selectionStart || !isLongPressActive) return;
+
+      const rect = containerRef.current.getBoundingClientRect();
+      const y = touch.clientY - rect.top;
+      const currentTime = pixelsToTime(y);
+
+      // 5px以上の移動があった場合のみドラッグとして扱う
+      const startY = (selectionStart.hour * 60 + selectionStart.minute) * (HOUR_HEIGHT / 60);
+      const deltaY = Math.abs(y - startY);
+      if (deltaY > 5) {
+        isDragging.current = true;
+        setShowSelectionPreview(true);
+        // 垂直スクロールを防止
+        e.preventDefault();
+      }
+
+      let startHour, startMinute, endHour, endMinute;
+
+      if (
+        currentTime.hour < selectionStart.hour ||
+        (currentTime.hour === selectionStart.hour && currentTime.minute < selectionStart.minute)
+      ) {
+        startHour = currentTime.hour;
+        startMinute = currentTime.minute;
+        endHour = selectionStart.hour;
+        endMinute = selectionStart.minute;
+      } else {
+        startHour = selectionStart.hour;
+        startMinute = selectionStart.minute;
+        endHour = currentTime.hour;
+        endMinute = currentTime.minute;
+      }
+
+      if (endHour === startHour && endMinute <= startMinute) {
+        endMinute = startMinute + 15;
+        if (endMinute >= 60) {
+          endHour += 1;
+          endMinute = 0;
+        }
+      }
+
+      const newSelection = {
+        startHour: Math.max(0, startHour),
+        startMinute: Math.max(0, startMinute),
+        endHour: Math.min(23, endHour),
+        endMinute: Math.min(59, endMinute),
+      };
+
+      setSelection(newSelection);
+    };
+
+    // タッチ終了（モバイル用）
+    const handleGlobalTouchEnd = () => {
+      // 長押し完了前に離した場合は何もしない
+      if (!isLongPressActive) {
+        clearLongPressTimer();
+        return;
+      }
+
+      if (disabled) {
+        clearSelectionState();
+        return;
+      }
+
+      if (selection && selectionStart) {
+        const handler = onDoubleClick || onTimeRangeSelect;
+        if (isDragging.current && onTimeRangeSelect) {
+          // ドラッグした場合：選択範囲でプラン作成
+          const dateTimeSelection: DateTimeSelection = {
+            date,
+            startHour: selection.startHour,
+            startMinute: selection.startMinute,
+            endHour: selection.endHour,
+            endMinute: selection.endMinute,
+          };
+          onTimeRangeSelect(dateTimeSelection);
+        } else if (handler) {
+          // 長押し後にドラッグせず離した場合：シングルタップとしてイベント作成
+          // （モバイルではダブルタップの代わりにこの操作でイベント作成）
+          const startTotalMinutes = selection.startHour * 60 + selection.startMinute;
+          const endTotalMinutes = Math.min(startTotalMinutes + defaultDuration, 24 * 60 - 1);
+          const endHour = Math.floor(endTotalMinutes / 60);
+          const endMinute = endTotalMinutes % 60;
+
+          const dateTimeSelection: DateTimeSelection = {
+            date,
+            startHour: selection.startHour,
+            startMinute: selection.startMinute,
+            endHour,
+            endMinute,
+          };
+          handler(dateTimeSelection);
+        }
+      }
+
+      clearSelectionState();
+    };
+
     document.addEventListener('mousemove', handleGlobalMouseMove);
     document.addEventListener('mouseup', handleGlobalMouseUp);
     document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('touchmove', handleGlobalTouchMove, { passive: false });
+    document.addEventListener('touchend', handleGlobalTouchEnd);
 
     return () => {
       document.removeEventListener('mousemove', handleGlobalMouseMove);
       document.removeEventListener('mouseup', handleGlobalMouseUp);
       document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('touchmove', handleGlobalTouchMove);
+      document.removeEventListener('touchend', handleGlobalTouchEnd);
     };
   }, [
     isSelecting,
@@ -316,9 +500,14 @@ export const CalendarDragSelection = ({
     selection,
     pixelsToTime,
     onTimeRangeSelect,
+    onDoubleClick,
     date,
     disabled,
     formatTime,
+    isLongPressActive,
+    clearLongPressTimer,
+    clearSelectionState,
+    defaultDuration,
   ]);
 
   // モーダルキャンセル時のカスタムイベントリスナー
@@ -329,7 +518,7 @@ export const CalendarDragSelection = ({
 
     window.addEventListener('calendar-drag-cancel', handleCalendarDragCancel);
     return () => window.removeEventListener('calendar-drag-cancel', handleCalendarDragCancel);
-  }, []);
+  }, [clearSelectionState]);
 
   // 選択範囲のスタイルを計算
   const selectionStyle: React.CSSProperties | null = selection
@@ -373,6 +562,7 @@ export const CalendarDragSelection = ({
       aria-label="Calendar drag selection area"
       onMouseDown={handleMouseDown}
       onDoubleClick={handleDoubleClick}
+      onTouchStart={handleTouchStart}
       onClick={(e) => {
         // クリックイベントの伝播を停止して、ScrollableCalendarLayoutのonClickが呼ばれないようにする
         e.stopPropagation();

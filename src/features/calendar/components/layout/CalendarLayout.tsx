@@ -78,7 +78,7 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
     }, [onNavigate]);
 
     const { handlers, ref } = useSwipeGesture(handleSwipeLeft, handleSwipeRight, {
-      threshold: 50,
+      // threshold未指定で画面幅ベースの相対値を使用
       touchOnly: true,
       disabled: !isTouchDevice,
     });
@@ -107,6 +107,7 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
           data-calendar-main
           className="flex min-h-0 flex-1 flex-col overflow-hidden"
           onTouchStart={handlers.onTouchStart}
+          onTouchMove={handlers.onTouchMove}
           onTouchEnd={handlers.onTouchEnd}
         >
           <div className="flex min-h-0 flex-1 flex-col overflow-hidden">{children}</div>

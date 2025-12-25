@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef } from 'react';
 import { MEDIA_QUERIES } from '@/config/ui/breakpoints';
 
 export interface SwipeGestureOptions {
-  /** スワイプと判定する最小距離（px）*/
+  /** スワイプと判定する最小距離（px）。未指定時は画面幅の12%を使用 */
   threshold?: number;
   /** 垂直移動に対する水平移動の最小比率 */
   directionRatio?: number;
@@ -16,6 +16,14 @@ export interface SwipeGestureOptions {
   /** 無効化 */
   disabled?: boolean;
 }
+
+/** 画面幅に基づくスワイプ閾値を計算（業界標準: 10-15%） */
+const getResponsiveThreshold = (): number => {
+  if (typeof window === 'undefined') return 50;
+  // 画面幅の12% を閾値として使用（最小40px、最大80px）
+  const calculated = Math.round(window.innerWidth * 0.12);
+  return Math.min(Math.max(calculated, 40), 80);
+};
 
 export interface SwipeGestureResult {
   /** スワイプ方向を検出するハンドラーを取得 */
@@ -52,7 +60,14 @@ export function useSwipeGesture(
   onSwipeRight?: () => void,
   options: SwipeGestureOptions = {},
 ): SwipeGestureResult {
-  const { threshold = 50, directionRatio = 1.5, touchOnly = true, disabled = false } = options;
+  // 閾値未指定時は画面幅ベースの相対値を使用
+  const defaultThreshold = typeof window !== 'undefined' ? getResponsiveThreshold() : 50;
+  const {
+    threshold = defaultThreshold,
+    directionRatio = 1.5,
+    touchOnly = true,
+    disabled = false,
+  } = options;
 
   const ref = useRef<HTMLElement | null>(null);
   const touchStartX = useRef<number>(0);
