@@ -11,6 +11,8 @@
 import { Ratelimit } from '@upstash/ratelimit';
 import { Redis } from '@upstash/redis';
 
+import { extractClientIp } from '@/lib/security/ip-validation';
+
 /**
  * 環境変数チェック
  */
@@ -145,9 +147,11 @@ function getClientIdentifier(request: Request): string {
   // const userId = await getUserIdFromRequest(request)
   // if (userId) return `user:${userId}`
 
-  // IPアドレスをフォールバック
-  const forwardedFor = request.headers.get('x-forwarded-for');
-  const ip = forwardedFor?.split(',')[0]?.trim() || 'unknown';
+  // IPアドレスをフォールバック（検証済み）
+  const ip = extractClientIp(
+    request.headers.get('x-forwarded-for'),
+    request.headers.get('x-real-ip'),
+  );
 
   return `ip:${ip}`;
 }

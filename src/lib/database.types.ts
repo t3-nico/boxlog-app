@@ -28,6 +28,126 @@ export type Database = {
   };
   public: {
     Tables: {
+      audit_logs: {
+        Row: {
+          id: string;
+          timestamp: string;
+          event_type: string;
+          severity: string;
+          user_id: string | null;
+          session_id: string | null;
+          ip_address: string | null;
+          user_agent: string | null;
+          resource: string | null;
+          action: string | null;
+          metadata: Json;
+          success: boolean;
+          error_message: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          timestamp?: string;
+          event_type: string;
+          severity: string;
+          user_id?: string | null;
+          session_id?: string | null;
+          ip_address?: string | null;
+          user_agent?: string | null;
+          resource?: string | null;
+          action?: string | null;
+          metadata?: Json;
+          success?: boolean;
+          error_message?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          timestamp?: string;
+          event_type?: string;
+          severity?: string;
+          user_id?: string | null;
+          session_id?: string | null;
+          ip_address?: string | null;
+          user_agent?: string | null;
+          resource?: string | null;
+          action?: string | null;
+          metadata?: Json;
+          success?: boolean;
+          error_message?: string | null;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'audit_logs_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      mfa_recovery_codes: {
+        Row: {
+          id: string;
+          user_id: string;
+          code_hash: string;
+          used_at: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          code_hash: string;
+          used_at?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          code_hash?: string;
+          used_at?: string | null;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'mfa_recovery_codes_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      password_history: {
+        Row: {
+          id: string;
+          user_id: string;
+          password_hash: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          password_hash: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          password_hash?: string;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'password_history_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       login_attempts: {
         Row: {
           attempt_time: string;

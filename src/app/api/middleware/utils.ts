@@ -4,6 +4,7 @@
 
 import type { ErrorCode } from '@/config/error-patterns';
 import { ERROR_CODES } from '@/config/error-patterns';
+import { extractClientIp } from '@/lib/security/ip-validation';
 import { NextRequest, NextResponse } from 'next/server';
 import type { ApiContext } from './types';
 
@@ -131,8 +132,8 @@ export function recordMetrics(
 
 /**
  * クライアント識別子を取得
+ * IP検証によりヘッダーインジェクション攻撃を防止
  */
 export function getClientId(req: NextRequest): string {
-  // IP アドレスまたはユーザー ID をクライアント識別子として使用
-  return req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
+  return extractClientIp(req.headers.get('x-forwarded-for'), req.headers.get('x-real-ip'));
 }

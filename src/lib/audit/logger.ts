@@ -14,6 +14,8 @@
  * @see Issue #487 - OWASP準拠のセキュリティ強化 Phase 3
  */
 
+import type { Json } from '@/lib/database.types';
+
 /**
  * 監査イベント種別
  */
@@ -191,27 +193,28 @@ function getSeverityLevel(severity: AuditSeverity): 'log' | 'warn' | 'error' | '
  */
 async function saveToDatabase(entry: AuditLogEntry): Promise<void> {
   try {
-    // @see Issue - Supabase統合実装予定
-    // const { createServerClient } = await import('@/lib/supabase/server')
-    // const supabase = createServerClient()
-    //
-    // await supabase.from('audit_logs').insert({
-    //   event_type: entry.eventType,
-    //   severity: entry.severity,
-    //   user_id: entry.userId,
-    //   session_id: entry.sessionId,
-    //   ip_address: entry.ipAddress,
-    //   user_agent: entry.userAgent,
-    //   resource: entry.resource,
-    //   action: entry.action,
-    //   metadata: entry.metadata,
-    //   success: entry.success,
-    //   error_message: entry.errorMessage,
-    //   timestamp: entry.timestamp,
-    // })
+    const { createClient } = await import('@/lib/supabase/server');
+    const supabase = await createClient();
 
-    // 一時的なフォールバック: ファイルログ
-    console.info('[AUDIT:DB]', entry);
+    const { error } = await supabase.from('audit_logs').insert({
+      event_type: entry.eventType,
+      severity: entry.severity,
+      user_id: entry.userId ?? null,
+      session_id: entry.sessionId ?? null,
+      ip_address: entry.ipAddress ?? null,
+      user_agent: entry.userAgent ?? null,
+      resource: entry.resource ?? null,
+      action: entry.action ?? null,
+      metadata: (entry.metadata as Json) ?? {},
+      success: entry.success,
+      error_message: entry.errorMessage ?? null,
+      timestamp: entry.timestamp,
+    });
+
+    if (error) {
+      // RLSエラーやその他のDB保存エラー
+      console.error('[AUDIT:DB:ERROR]', error.message);
+    }
   } catch (error) {
     // ログ保存失敗時もアプリケーションは継続
     console.error('[AUDIT:DB:ERROR]', error);
@@ -223,21 +226,28 @@ async function saveToDatabase(entry: AuditLogEntry): Promise<void> {
  */
 async function sendToSentry(entry: AuditLogEntry): Promise<void> {
   try {
-    // @see Issue - Sentry統合実装予定
-    // const Sentry = await import('@sentry/nextjs')
-    // Sentry.captureMessage(`Security Event: ${entry.eventType}`, {
-    //   level: entry.severity === AuditSeverity.CRITICAL ? 'error' : 'warning',
-    //   contexts: {
-    //     audit: entry,
-    //   },
-    //   tags: {
-    //     event_type: entry.eventType,
-    //     severity: entry.severity,
-    //   },
-    // })
-
-    // 一時的なフォールバック: コンソールログ
-    console.error('[AUDIT:SENTRY]', entry);
+    const Sentry = await import('@sentry/nextjs');
+    Sentry.captureMessage(`Security Event: ${entry.eventType}`, {
+      level: entry.severity === AuditSeverity.CRITICAL ? 'error' : 'warning',
+      contexts: {
+        audit: {
+          event_type: entry.eventType,
+          severity: entry.severity,
+          user_id: entry.userId,
+          ip_address: entry.ipAddress,
+          resource: entry.resource,
+          action: entry.action,
+          success: entry.success,
+          error_message: entry.errorMessage,
+          timestamp: entry.timestamp,
+        },
+      },
+      tags: {
+        event_type: entry.eventType,
+        severity: entry.severity,
+        success: String(entry.success),
+      },
+    });
   } catch (error) {
     console.error('[AUDIT:SENTRY:ERROR]', error);
   }
@@ -332,60 +342,7 @@ export async function logSensitiveDataAccess(
 }
 
 /**
- * Supabase Migration SQL
+ * Supabase Migration
  *
- * データベーステーブル作成用SQLスクリプト
- * Supabase Dashboard > SQL Editor で実行
- *
- * ```sql
- * -- 監査ログテーブル
- * CREATE TABLE IF NOT EXISTS audit_logs (
- *   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
- *   timestamp TIMESTAMPTZ NOT NULL DEFAULT NOW(),
- *   event_type TEXT NOT NULL,
- *   severity TEXT NOT NULL,
- *   user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
- *   session_id TEXT,
- *   ip_address INET,
- *   user_agent TEXT,
- *   resource TEXT,
- *   action TEXT,
- *   metadata JSONB,
- *   success BOOLEAN NOT NULL DEFAULT true,
- *   error_message TEXT,
- *   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
- * );
- *
- * -- インデックス作成
- * CREATE INDEX idx_audit_logs_timestamp ON audit_logs(timestamp DESC);
- * CREATE INDEX idx_audit_logs_user_id ON audit_logs(user_id);
- * CREATE INDEX idx_audit_logs_event_type ON audit_logs(event_type);
- * CREATE INDEX idx_audit_logs_severity ON audit_logs(severity);
- * CREATE INDEX idx_audit_logs_ip_address ON audit_logs(ip_address);
- *
- * -- RLS（Row Level Security）有効化
- * ALTER TABLE audit_logs ENABLE ROW LEVEL SECURITY;
- *
- * -- 管理者のみ閲覧可能
- * CREATE POLICY "Admin can view audit logs"
- *   ON audit_logs FOR SELECT
- *   USING (auth.jwt() ->> 'role' = 'admin');
- *
- * -- システムのみ挿入可能（service_roleキー使用）
- * CREATE POLICY "System can insert audit logs"
- *   ON audit_logs FOR INSERT
- *   WITH CHECK (true);
- *
- * -- 保持期間ポリシー（90日後自動削除）
- * CREATE OR REPLACE FUNCTION delete_old_audit_logs()
- * RETURNS void AS $$
- * BEGIN
- *   DELETE FROM audit_logs
- *   WHERE timestamp < NOW() - INTERVAL '90 days';
- * END;
- * $$ LANGUAGE plpgsql;
- *
- * -- 日次実行（pg_cron拡張が必要）
- * -- SELECT cron.schedule('delete-old-audit-logs', '0 0 * * *', 'SELECT delete_old_audit_logs()');
- * ```
+ * @see supabase/migrations/20251226090755_create_audit_logs.sql
  */

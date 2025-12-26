@@ -7,6 +7,8 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 
+import { extractClientIp } from '@/lib/security/ip-validation';
+
 import { safeJsonStringify } from './json-utils';
 import type { ApiRequest } from './versioning';
 import { withApiVersioning } from './versioning';
@@ -250,12 +252,14 @@ export class ApiMiddleware {
 
   /**
    * 🆔 クライアント識別子の取得
+   * IP検証によりヘッダーインジェクション攻撃を防止
    */
   private getClientIdentifier(request: NextRequest): string {
-    // IP アドレスやユーザーIDなどを使用
-    const forwarded = request.headers.get('x-forwarded-for');
-    const realIp = request.headers.get('x-real-ip');
-    const ip = forwarded ? forwarded.split(',')[0] : realIp || 'unknown';
+    // IP アドレス（検証済み）
+    const ip = extractClientIp(
+      request.headers.get('x-forwarded-for'),
+      request.headers.get('x-real-ip'),
+    );
     const userAgent = request.headers.get('user-agent') || 'unknown';
 
     // 実際の実装では、認証情報がある場合はユーザーIDを使用
@@ -296,7 +300,7 @@ export class ApiMiddleware {
         ? { headers: Object.fromEntries(request.headers) }
         : {}),
       timestamp: new Date().toISOString(),
-      ip: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || null,
+      ip: extractClientIp(request.headers.get('x-forwarded-for'), request.headers.get('x-real-ip')),
       userAgent: request.headers.get('user-agent'),
     };
 
