@@ -13,9 +13,6 @@ export * from './calendar-specific';
 // Animation Components
 export * from './animations';
 
-// Overlay Components
-export * from './overlays';
-
 // Common Components
 export * from './common';
 

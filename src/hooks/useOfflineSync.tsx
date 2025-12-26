@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { ConflictResolutionModal } from '@/features/offline/components';
+import { ConflictResolutionModal } from '@/features/offline/components/ConflictResolutionModal';
 import { offlineManager } from '@/features/offline/services/offline-manager';
 import type { ConflictResolution, OfflineAction } from '@/features/offline/types';
 
