@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useCallback, useState } from 'react';
+import { memo, useCallback, useEffect, useState } from 'react';
 
 import {
   Bot,
@@ -9,7 +9,9 @@ import {
   ExternalLink,
   Eye,
   EyeOff,
+  Loader2,
   MessageSquare,
+  Trash2,
   Unplug,
 } from 'lucide-react';
 
@@ -17,6 +19,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
+import { useAuthStore } from '@/features/auth/stores/useAuthStore';
+import { ApiKeyStorage } from '@/lib/security/encryption';
 
 import { SettingField } from './fields/SettingField';
 import { SettingsCard } from './SettingsCard';
@@ -53,6 +57,8 @@ const AI_PROVIDERS: AIProvider[] = [
 ];
 
 export const IntegrationSettings = memo(function IntegrationSettings() {
+  const user = useAuthStore((state) => state.user);
+
   // AI API Keys state
   const [aiKeys, setAiKeys] = useState<Record<string, string>>({
     anthropic: '',
@@ -62,18 +68,67 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
     anthropic: false,
     openai: false,
   });
+  const [savedKeys, setSavedKeys] = useState<Record<string, boolean>>({
+    anthropic: false,
+    openai: false,
+  });
+  const [savingKeys, setSavingKeys] = useState<Record<string, boolean>>({
+    anthropic: false,
+    openai: false,
+  });
+
+  // 保存済みのAPIキーを読み込み
+  useEffect(() => {
+    const loadSavedKeys = async () => {
+      if (!user?.id) return;
+
+      for (const provider of AI_PROVIDERS) {
+        const exists = ApiKeyStorage.exists(provider.id);
+        if (exists) {
+          const key = await ApiKeyStorage.load(provider.id, user.id);
+          if (key) {
+            setAiKeys((prev) => ({ ...prev, [provider.id]: key }));
+            setSavedKeys((prev) => ({ ...prev, [provider.id]: true }));
+          }
+        }
+      }
+    };
+
+    loadSavedKeys();
+  }, [user?.id]);
 
   const handleAiKeyChange = useCallback((providerId: string, value: string) => {
     setAiKeys((prev) => ({ ...prev, [providerId]: value }));
+    // キーが変更されたら保存済みフラグをリセット
+    setSavedKeys((prev) => ({ ...prev, [providerId]: false }));
   }, []);
 
   const toggleKeyVisibility = useCallback((providerId: string) => {
     setShowKeys((prev) => ({ ...prev, [providerId]: !prev[providerId] }));
   }, []);
 
-  const handleSaveApiKey = useCallback((providerId: string) => {
-    // TODO: 実際の保存処理を実装（暗号化してlocalStorageまたはサーバーに保存）
-    console.log(`Saving API key for ${providerId}`);
+  const handleSaveApiKey = useCallback(
+    async (providerId: string) => {
+      if (!user?.id || !aiKeys[providerId]) return;
+
+      setSavingKeys((prev) => ({ ...prev, [providerId]: true }));
+
+      try {
+        const success = await ApiKeyStorage.save(providerId, aiKeys[providerId], user.id);
+        if (success) {
+          setSavedKeys((prev) => ({ ...prev, [providerId]: true }));
+        }
+      } finally {
+        setSavingKeys((prev) => ({ ...prev, [providerId]: false }));
+      }
+    },
+    [user?.id, aiKeys],
+  );
+
+  const handleDeleteApiKey = useCallback((providerId: string) => {
+    ApiKeyStorage.delete(providerId);
+    setAiKeys((prev) => ({ ...prev, [providerId]: '' }));
+    setSavedKeys((prev) => ({ ...prev, [providerId]: false }));
   }, []);
 
   const [integrations, setIntegrations] = useState<Integration[]>([
@@ -138,10 +193,16 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
                   <Bot className="text-primary h-5 w-5" />
                 </div>
                 <div className="min-w-0 flex-1 space-y-3">
-                  <div>
+                  <div className="flex items-center gap-2">
                     <h4 className="text-sm font-medium">{provider.name}</h4>
-                    <p className="text-muted-foreground text-sm">{provider.description}</p>
+                    {savedKeys[provider.id] && (
+                      <Badge variant="outline" className="text-success gap-1">
+                        <CheckCircle2 className="h-3 w-3" />
+                        保存済み
+                      </Badge>
+                    )}
                   </div>
+                  <p className="text-muted-foreground text-sm">{provider.description}</p>
                   <div className="flex gap-2">
                     <div className="relative flex-1">
                       <Input
@@ -169,10 +230,24 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
                       variant="outline"
                       size="sm"
                       onClick={() => handleSaveApiKey(provider.id)}
-                      disabled={!aiKeys[provider.id]}
+                      disabled={!aiKeys[provider.id] || savingKeys[provider.id]}
                     >
-                      保存
+                      {savingKeys[provider.id] ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        '保存'
+                      )}
                     </Button>
+                    {savedKeys[provider.id] && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleDeleteApiKey(provider.id)}
+                        className="text-destructive hover:text-destructive"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    )}
                   </div>
                 </div>
               </div>

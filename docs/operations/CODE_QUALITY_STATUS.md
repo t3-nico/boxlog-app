@@ -71,17 +71,17 @@ BoxLogのコード品質の現状と、改善が必要な項目をまとめた�
 
 ### TODO/FIXME コメント
 
-| 優先度 | 件数 | 内容                                 |
-| ------ | ---- | ------------------------------------ |
-| HIGH   | 3    | AI Inspector、暗号化保存、認証テスト |
-| MEDIUM | 10   | 各種機能の未実装部分                 |
-| LOW    | 5    | 改善余地のある実装                   |
+| 優先度 | 件数 | 内容                 |
+| ------ | ---- | -------------------- |
+| HIGH   | 1    | AI Inspector         |
+| MEDIUM | 10   | 各種機能の未実装部分 |
+| LOW    | 5    | 改善余地のある実装   |
 
 ### 主要なTODO
 
 1. `src/features/ai/components/AIInspectorContent.tsx` - AI SDK統合
-2. `src/features/settings/components/integration-settings.tsx` - 暗号化保存
-3. `src/features/auth/hooks/useAuth.test.ts` - テスト修正
+2. ~~`src/features/settings/components/integration-settings.tsx` - 暗号化保存~~ ✅ Web Crypto API実装完了
+3. ~~`src/features/auth/hooks/useAuth.test.ts` - テスト修正~~ ✅ Supabaseモック対応完了
 
 ---
 
@@ -173,11 +173,13 @@ src/features/
 
 ## 改善計画
 
-### Phase 1: 技術的負債返済（優先度HIGH）✅ 完了
+### Phase 1: 技術的負債返済（優先度HIGH）
 
 - [x] any型除去（3箇所修正、外部ライブラリ1件は保留）
 - [x] eslint-disable削減（1件削減、意図的使用は保持）
-- [ ] 主要TODO対応（AI Inspector、暗号化保存等）
+- [x] 認証テスト修正（Supabaseモック対応、23テストパス）
+- [x] APIキー暗号化保存（Web Crypto API、AES-GCM）
+- [ ] 主要TODO対応（AI Inspector）
 
 ### Phase 2: コード構造改善 ✅ 完了
 
@@ -222,8 +224,10 @@ src/features/
 
 ## 改訂履歴
 
-| 日付       | バージョン | 変更内容                              |
-| ---------- | ---------- | ------------------------------------- |
-| 2025-12-26 | v1.2       | 大規模ファイル4件分割完了で88点へ     |
-| 2025-12-26 | v1.1       | any型削減、eslint-disable削減で85点へ |
-| 2025-12-26 | v1.0       | 初版作成                              |
+| 日付       | バージョン | 変更内容                                 |
+| ---------- | ---------- | ---------------------------------------- |
+| 2025-12-26 | v1.4       | APIキー暗号化保存をWeb Crypto APIで実装  |
+| 2025-12-26 | v1.3       | 認証テストをSupabaseモック対応で書き直し |
+| 2025-12-26 | v1.2       | 大規模ファイル4件分割完了で88点へ        |
+| 2025-12-26 | v1.1       | any型削減、eslint-disable削減で85点へ    |
+| 2025-12-26 | v1.0       | 初版作成                                 |
