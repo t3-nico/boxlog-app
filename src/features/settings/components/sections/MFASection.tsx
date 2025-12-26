@@ -23,11 +23,15 @@ export function MFASection() {
     error,
     success,
     isLoading,
+    recoveryCodes,
+    recoveryCodeCount,
     setVerificationCode,
     enrollMFA,
     verifyMFA,
     disableMFA,
     cancelSetup,
+    regenerateRecoveryCodes,
+    dismissRecoveryCodes,
   } = useMFA();
 
   return (
@@ -40,6 +44,38 @@ export function MFASection() {
         {success && (
           <div className="border-success/30 bg-success/5 text-success rounded-lg border p-3 text-sm">
             {success}
+          </div>
+        )}
+
+        {/* リカバリーコード表示 */}
+        {recoveryCodes && (
+          <div className="border-warning/30 bg-warning/5 space-y-4 rounded-lg border p-4">
+            <div>
+              <h3 className="text-warning mb-2 text-lg font-semibold">
+                ⚠️ リカバリーコードを保存してください
+              </h3>
+              <p className="text-muted-foreground text-sm">
+                認証アプリにアクセスできなくなった場合、これらのコードでログインできます。
+                <strong className="text-foreground"> 各コードは1回のみ使用可能です。</strong>
+              </p>
+            </div>
+
+            <div className="bg-surface-container grid grid-cols-2 gap-2 rounded-lg p-4 font-mono text-sm">
+              {recoveryCodes.map((code, index) => (
+                <div key={index} className="text-foreground">
+                  {code}
+                </div>
+              ))}
+            </div>
+
+            <div className="flex items-center justify-between">
+              <p className="text-muted-foreground text-xs">
+                これらのコードを安全な場所に保存してください。この画面を閉じると再表示できません。
+              </p>
+              <Button variant="outline" size="sm" onClick={dismissRecoveryCodes}>
+                保存しました
+              </Button>
+            </div>
           </div>
         )}
 
@@ -116,7 +152,7 @@ export function MFASection() {
         )}
 
         {/* MFA有効時の表示 */}
-        {hasMFA && (
+        {hasMFA && !recoveryCodes && (
           <div className="space-y-4">
             <div className="border-success/30 bg-success/5 rounded-lg border p-4">
               <div className="mb-2 flex items-center gap-2">
@@ -128,6 +164,30 @@ export function MFASection() {
               <p className="text-success/80 text-xs">
                 ログイン時に認証アプリで生成されるコードが必要になります
               </p>
+            </div>
+
+            {/* リカバリーコード状態 */}
+            <div className="bg-muted rounded-lg p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="text-sm font-medium">リカバリーコード</div>
+                  <p className="text-muted-foreground mt-1 text-xs">
+                    {recoveryCodeCount > 0 ? (
+                      <>残り {recoveryCodeCount} 個のコードが利用可能です</>
+                    ) : (
+                      <>リカバリーコードがありません</>
+                    )}
+                  </p>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={regenerateRecoveryCodes}
+                  disabled={isLoading}
+                >
+                  {isLoading ? '生成中...' : '再生成'}
+                </Button>
+              </div>
             </div>
 
             <div className="flex justify-end">

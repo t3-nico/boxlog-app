@@ -728,6 +728,19 @@ export type Database = {
         Args: { p_user_id: string };
         Returns: Array<{ tag_id: string; plan_count: number; last_used: string | null }>;
       };
+      // MFA Recovery Codes
+      count_unused_recovery_codes: { Args: { p_user_id: string }; Returns: number };
+      use_recovery_code: { Args: { p_user_id: string; p_code_hash: string }; Returns: boolean };
+      // Password History
+      check_password_reuse: {
+        Args: { p_user_id: string; p_new_password: string };
+        Returns: boolean;
+      };
+      add_password_to_history: {
+        Args: { p_user_id: string; p_new_password: string };
+        Returns: undefined;
+      };
+      get_password_history_count: { Args: { p_user_id: string }; Returns: number };
     };
     Enums: {
       [_ in never]: never;

@@ -17,6 +17,10 @@ interface MFAState {
   error: string | null;
   success: string | null;
   isLoading: boolean;
+  /** 新しく生成されたリカバリーコード（表示後はnull） */
+  recoveryCodes: string[] | null;
+  /** 残りのリカバリーコード数 */
+  recoveryCodeCount: number;
 }
 
 interface UseMFAReturn extends MFAState {
@@ -25,6 +29,10 @@ interface UseMFAReturn extends MFAState {
   verifyMFA: () => Promise<void>;
   disableMFA: () => Promise<void>;
   cancelSetup: () => void;
+  /** リカバリーコードを再生成 */
+  regenerateRecoveryCodes: () => Promise<void>;
+  /** リカバリーコード表示を閉じる */
+  dismissRecoveryCodes: () => void;
 }
 
 /**
@@ -43,6 +51,8 @@ export function useMFA(): UseMFAReturn {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [recoveryCodes, setRecoveryCodes] = useState<string[] | null>(null);
+  const [recoveryCodeCount, setRecoveryCodeCount] = useState(0);
 
   const supabase = createClient();
 
@@ -53,9 +63,54 @@ export function useMFA(): UseMFAReturn {
       if (factors && factors.totp.length > 0) {
         const verifiedFactor = factors.totp.find((f) => f.status === 'verified');
         setHasMFA(!!verifiedFactor);
+
+        // リカバリーコード数を取得
+        if (verifiedFactor) {
+          const { data: userData } = await supabase.auth.getUser();
+          if (userData.user?.id) {
+            const { data: countData } = await supabase.rpc('count_unused_recovery_codes', {
+              p_user_id: userData.user.id,
+            });
+            setRecoveryCodeCount(typeof countData === 'number' ? countData : 0);
+          }
+        }
       }
     } catch (err) {
       console.error('MFA status check error:', err);
+    }
+  }, [supabase]);
+
+  // リカバリーコード生成・保存
+  const generateAndSaveRecoveryCodes = useCallback(async (): Promise<string[] | null> => {
+    try {
+      const { generateRecoveryCodes, hashRecoveryCode } = await import('@/lib/auth/recovery-codes');
+      const codes = generateRecoveryCodes();
+
+      const { data: userData } = await supabase.auth.getUser();
+      if (!userData.user) {
+        throw new Error('User not found');
+      }
+
+      // 既存のコードを削除
+      await supabase.from('mfa_recovery_codes').delete().eq('user_id', userData.user.id);
+
+      // 新しいコードを保存
+      const codesForDb = codes.map((code) => ({
+        user_id: userData.user!.id,
+        code_hash: hashRecoveryCode(code),
+      }));
+
+      const { error: insertError } = await supabase.from('mfa_recovery_codes').insert(codesForDb);
+
+      if (insertError) {
+        console.error('Failed to save recovery codes:', insertError);
+        return null;
+      }
+
+      return codes;
+    } catch (err) {
+      console.error('Recovery code generation error:', err);
+      return null;
     }
   }, [supabase]);
 
@@ -139,6 +194,13 @@ export function useMFA(): UseMFAReturn {
         await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
       }
 
+      // リカバリーコードを生成
+      const codes = await generateAndSaveRecoveryCodes();
+      if (codes) {
+        setRecoveryCodes(codes);
+        setRecoveryCodeCount(codes.length);
+      }
+
       setSuccess(t('errors.mfa.enabled'));
       setHasMFA(true);
       setShowMFASetup(false);
@@ -156,7 +218,7 @@ export function useMFA(): UseMFAReturn {
     } finally {
       setIsLoading(false);
     }
-  }, [factorId, verificationCode, supabase, checkMFAStatus, t]);
+  }, [factorId, verificationCode, supabase, checkMFAStatus, generateAndSaveRecoveryCodes, t]);
 
   // MFA無効化
   const disableMFA = useCallback(async () => {
@@ -241,6 +303,38 @@ export function useMFA(): UseMFAReturn {
     setVerificationCode('');
   }, []);
 
+  // リカバリーコード再生成
+  const regenerateRecoveryCodes = useCallback(async () => {
+    const confirmRegenerate = window.confirm(
+      '新しいリカバリーコードを生成すると、既存のコードは無効になります。続行しますか？',
+    );
+    if (!confirmRegenerate) return;
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const codes = await generateAndSaveRecoveryCodes();
+      if (codes) {
+        setRecoveryCodes(codes);
+        setRecoveryCodeCount(codes.length);
+        setSuccess('新しいリカバリーコードが生成されました。安全な場所に保存してください。');
+      } else {
+        setError('リカバリーコードの生成に失敗しました');
+      }
+    } catch (err) {
+      console.error('Recovery code regeneration error:', err);
+      setError('リカバリーコードの再生成に失敗しました');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [generateAndSaveRecoveryCodes]);
+
+  // リカバリーコード表示を閉じる
+  const dismissRecoveryCodes = useCallback(() => {
+    setRecoveryCodes(null);
+  }, []);
+
   return {
     hasMFA,
     showMFASetup,
@@ -251,10 +345,14 @@ export function useMFA(): UseMFAReturn {
     error,
     success,
     isLoading,
+    recoveryCodes,
+    recoveryCodeCount,
     setVerificationCode,
     enrollMFA,
     verifyMFA,
     disableMFA,
     cancelSetup,
+    regenerateRecoveryCodes,
+    dismissRecoveryCodes,
   };
 }
