@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 
 import type { CalendarViewType } from '@/features/calendar/types/calendar.types';
 import type { Locale } from '@/i18n/routing';
+import { createServerHelpers, dehydrate, HydrationBoundary } from '@/lib/trpc/server';
 import { getTranslations } from 'next-intl/server';
 
 import { CalendarViewClient } from './client';
@@ -51,8 +52,18 @@ const CalendarViewPage = async ({ params, searchParams }: CalendarViewPageProps)
     reloadButton: t('common.reload'),
   };
 
+  // Server-side prefetch: クライアントでのデータ取得を高速化
+  const helpers = await createServerHelpers();
+  await Promise.all([helpers.plans.list.prefetch({}), helpers.plans.getTagStats.prefetch()]);
+
   return (
-    <CalendarViewClient view={view} initialDate={initialDate ?? null} translations={translations} />
+    <HydrationBoundary state={dehydrate(helpers.queryClient)}>
+      <CalendarViewClient
+        view={view}
+        initialDate={initialDate ?? null}
+        translations={translations}
+      />
+    </HydrationBoundary>
   );
 };
 

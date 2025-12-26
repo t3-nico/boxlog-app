@@ -1,4 +1,5 @@
 import type { Locale } from '@/lib/i18n';
+import { createServerHelpers, dehydrate, HydrationBoundary } from '@/lib/trpc/server';
 import { getTranslations } from 'next-intl/server';
 
 import { CalendarViewClient } from './[view]/client';
@@ -13,7 +14,7 @@ interface CalendarPageProps {
  *
  * リダイレクトではなく、直接 day ビューをレンダリング（パフォーマンス最適化）
  * 以前: redirect → /calendar/day?date=today（余分なSSR処理）
- * 現在: 直接レンダリング（リダイレクト不要）
+ * 現在: 直接レンダリング（リダイレクト不要）+ Server-side prefetch
  */
 export default async function CalendarPage({ params, searchParams }: CalendarPageProps) {
   const { locale } = await params;
@@ -37,7 +38,17 @@ export default async function CalendarPage({ params, searchParams }: CalendarPag
     reloadButton: t('common.reload'),
   };
 
+  // Server-side prefetch: クライアントでのデータ取得を高速化
+  const helpers = await createServerHelpers();
+  await Promise.all([helpers.plans.list.prefetch({}), helpers.plans.getTagStats.prefetch()]);
+
   return (
-    <CalendarViewClient view="day" initialDate={initialDate ?? null} translations={translations} />
+    <HydrationBoundary state={dehydrate(helpers.queryClient)}>
+      <CalendarViewClient
+        view="day"
+        initialDate={initialDate ?? null}
+        translations={translations}
+      />
+    </HydrationBoundary>
   );
 }

@@ -1,0 +1,143 @@
+/**
+ * tRPC Server-side Helpers（App Router用）
+ *
+ * React Server ComponentsでtRPCクエリをprefetchし、
+ * HydrationBoundaryでクライアントに引き継ぐ
+ *
+ * @example
+ * ```tsx
+ * // Server Component (page.tsx)
+ * import { createServerHelpers, HydrationBoundary, dehydrate } from '@/lib/trpc/server'
+ *
+ * export default async function Page() {
+ *   const helpers = await createServerHelpers()
+ *   await helpers.plans.list.prefetch()
+ *
+ *   return (
+ *     <HydrationBoundary state={dehydrate(helpers.queryClient)}>
+ *       <ClientComponent />
+ *     </HydrationBoundary>
+ *   )
+ * }
+ * ```
+ */
+
+import { cookies } from 'next/headers';
+import { cache } from 'react';
+
+import { createServerClient } from '@supabase/ssr';
+import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query';
+import { createServerSideHelpers } from '@trpc/react-query/server';
+import superjson from 'superjson';
+
+import type { Database } from '@/lib/database.types';
+import { appRouter } from '@/server/api/root';
+import type { Context } from '@/server/api/trpc';
+
+// Re-export for convenience
+export { dehydrate, HydrationBoundary };
+
+/**
+ * React Server Component用のSupabaseクライアントを作成
+ */
+async function createSupabaseServerClient() {
+  const cookieStore = await cookies();
+
+  return createServerClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return cookieStore.getAll();
+        },
+        setAll(cookiesToSet) {
+          try {
+            cookiesToSet.forEach(({ name, value, options }) => {
+              cookieStore.set(name, value, options);
+            });
+          } catch {
+            // Server Componentからの呼び出しでは設定できない場合がある
+          }
+        },
+      },
+    },
+  );
+}
+
+/**
+ * Server Component用のtRPCコンテキストを作成
+ */
+async function createServerContext(): Promise<Context> {
+  const supabase = await createSupabaseServerClient();
+
+  let userId: string | undefined;
+  let sessionId: string | undefined;
+
+  try {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (session?.user) {
+      userId = session.user.id;
+      sessionId = session.access_token;
+    }
+  } catch (error) {
+    console.error('Server context auth error:', error);
+  }
+
+  // Server Componentではreq/resは不要なのでダミーを渡す
+  return {
+    req: {} as Context['req'],
+    res: {} as Context['res'],
+    userId,
+    sessionId,
+    supabase,
+  };
+}
+
+/**
+ * Server-side tRPC helpersを作成
+ *
+ * React.cache()でリクエストごとにメモ化
+ * 同一リクエスト内で複数回呼ばれても同じインスタンスを返す
+ */
+export const createServerHelpers = cache(async () => {
+  const ctx = await createServerContext();
+
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 5 * 60 * 1000, // 5分
+      },
+    },
+  });
+
+  const helpers = createServerSideHelpers({
+    router: appRouter,
+    ctx,
+    transformer: superjson,
+  });
+
+  return {
+    ...helpers,
+    queryClient,
+  };
+});
+
+/**
+ * 認証済みかどうかを確認するヘルパー
+ * prefetch前に認証チェックが必要な場合に使用
+ */
+export async function getServerAuthStatus() {
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  return {
+    isAuthenticated: !!session?.user,
+    userId: session?.user?.id,
+  };
+}

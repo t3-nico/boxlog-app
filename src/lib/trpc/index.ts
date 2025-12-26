@@ -15,3 +15,8 @@ export const api = createTRPCReact<AppRouter>();
  * APIの型定義をエクスポート
  */
 export type { AppRouter } from '@/server/api/root';
+
+/**
+ * Server-side helpers（RSC prefetch用）
+ */
+export { createServerHelpers, dehydrate, getServerAuthStatus, HydrationBoundary } from './server';
