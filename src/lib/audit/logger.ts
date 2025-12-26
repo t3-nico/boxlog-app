@@ -71,6 +71,18 @@ export enum AuditSeverity {
 }
 
 /**
+ * GeoIP情報
+ */
+export interface GeoInfo {
+  country?: string | undefined;
+  countryName?: string | undefined;
+  region?: string | undefined;
+  city?: string | undefined;
+  timezone?: string | undefined;
+  source?: 'vercel' | 'api' | 'unknown' | undefined;
+}
+
+/**
  * 監査ログエントリ
  */
 export interface AuditLogEntry {
@@ -87,6 +99,7 @@ export interface AuditLogEntry {
   metadata?: Record<string, unknown> | undefined;
   success: boolean;
   errorMessage?: string | undefined;
+  geo?: GeoInfo | undefined;
 }
 
 /**
@@ -102,6 +115,9 @@ export interface AuditLogOptions {
   metadata?: Record<string, unknown> | undefined;
   success?: boolean | undefined;
   errorMessage?: string | undefined;
+  geo?: GeoInfo | undefined;
+  /** Headersを渡すとGeoIP情報を自動取得 */
+  headers?: Headers | undefined;
 }
 
 /**
@@ -136,6 +152,12 @@ export async function logAuditEvent(
   severity: AuditSeverity,
   options: AuditLogOptions = {},
 ): Promise<void> {
+  // GeoIP情報を取得（headersが渡された場合）
+  let geo = options.geo;
+  if (!geo && options.headers) {
+    geo = await getGeoFromHeaders(options.headers, options.ipAddress);
+  }
+
   const entry: AuditLogEntry = {
     timestamp: new Date().toISOString(),
     eventType,
@@ -149,6 +171,7 @@ export async function logAuditEvent(
     metadata: options.metadata,
     success: options.success ?? true,
     errorMessage: options.errorMessage,
+    geo,
   };
 
   // 開発環境: コンソールログ
@@ -169,6 +192,27 @@ export async function logAuditEvent(
     if (severity === AuditSeverity.CRITICAL || severity === AuditSeverity.ERROR) {
       await sendToSentry(entry);
     }
+  }
+}
+
+/**
+ * HeadersからGeoIP情報を取得
+ */
+async function getGeoFromHeaders(headers: Headers, ip?: string): Promise<GeoInfo | undefined> {
+  try {
+    const { getGeoLocation } = await import('@/lib/security/geolocation');
+    const geo = await getGeoLocation(headers, ip);
+    return {
+      country: geo.country ?? undefined,
+      countryName: geo.countryName ?? undefined,
+      region: geo.region ?? undefined,
+      city: geo.city ?? undefined,
+      timezone: geo.timezone ?? undefined,
+      source: geo.source,
+    };
+  } catch {
+    // GeoIP取得失敗時は静かに失敗
+    return undefined;
   }
 }
 
@@ -209,6 +253,13 @@ async function saveToDatabase(entry: AuditLogEntry): Promise<void> {
       success: entry.success,
       error_message: entry.errorMessage ?? null,
       timestamp: entry.timestamp,
+      // GeoIP情報
+      geo_country: entry.geo?.country ?? null,
+      geo_country_name: entry.geo?.countryName ?? null,
+      geo_region: entry.geo?.region ?? null,
+      geo_city: entry.geo?.city ?? null,
+      geo_timezone: entry.geo?.timezone ?? null,
+      geo_source: entry.geo?.source ?? null,
     });
 
     if (error) {

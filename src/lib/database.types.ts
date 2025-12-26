@@ -44,6 +44,12 @@ export type Database = {
           success: boolean;
           error_message: string | null;
           created_at: string;
+          geo_country: string | null;
+          geo_country_name: string | null;
+          geo_region: string | null;
+          geo_city: string | null;
+          geo_timezone: string | null;
+          geo_source: string | null;
         };
         Insert: {
           id?: string;
@@ -60,6 +66,12 @@ export type Database = {
           success?: boolean;
           error_message?: string | null;
           created_at?: string;
+          geo_country?: string | null;
+          geo_country_name?: string | null;
+          geo_region?: string | null;
+          geo_city?: string | null;
+          geo_timezone?: string | null;
+          geo_source?: string | null;
         };
         Update: {
           id?: string;
@@ -76,6 +88,12 @@ export type Database = {
           success?: boolean;
           error_message?: string | null;
           created_at?: string;
+          geo_country?: string | null;
+          geo_country_name?: string | null;
+          geo_region?: string | null;
+          geo_city?: string | null;
+          geo_timezone?: string | null;
+          geo_source?: string | null;
         };
         Relationships: [
           {
