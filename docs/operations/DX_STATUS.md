@@ -4,14 +4,14 @@
 
 ## 総合評価
 
-**スコア**: 92点（A評価）
+**スコア**: 94点（A評価）
 
 | カテゴリ     | スコア | 評価 |
 | ------------ | ------ | ---- |
 | CI/CD        | 95点   | A+   |
-| 開発環境     | 90点   | A    |
+| 開発環境     | 95点   | A+   |
 | ドキュメント | 95点   | A+   |
-| 自動化       | 88点   | B+   |
+| 自動化       | 90点   | A    |
 
 ## 1. CI/CD（95点）
 
@@ -46,11 +46,11 @@
 
 ### 改善余地
 
-- [ ] Dependabot/Renovate による依存関係自動更新
+- [x] ~~Dependabot による依存関係自動更新~~ ✅ 設定済み
 - [ ] テストカバレッジをPRコメントに表示
 - [ ] マトリクスビルド拡張（Node 20, 22）
 
-## 2. 開発環境（90点）
+## 2. 開発環境（95点）
 
 ### 現状
 
@@ -72,12 +72,15 @@
 - Error Lens (usernamehw.errorlens)
 - Code Spell Checker
 
-#### Git Hooks（Husky + lint-staged）
+#### Git Hooks（Husky + lint-staged + commitlint）
 
 ```bash
 # pre-commit
 npx lint-staged          # Prettier + ESLint
 npm run license:check    # package.json変更時のみ
+
+# commit-msg
+npx commitlint --edit    # Conventional Commits検証
 ```
 
 #### lint-staged設定
@@ -95,12 +98,14 @@ npm run license:check    # package.json変更時のみ
 - **Tailwind IntelliSense**: cn(), clsx()内の補完対応
 - **型チェック**: TypeScript厳格モード
 - **ライセンス検証**: 依存追加時に自動チェック
+- **Node.jsバージョン固定**: `.nvmrc`でNode 20を指定
+- **コミットメッセージ検証**: commitlintでConventional Commits強制
 
 ### 改善余地
 
-- [ ] commitlint設定ファイルの追加（現在package.jsonベース）
+- [x] ~~commitlint設定ファイルの追加~~ ✅ 対応済み
+- [x] ~~.nvmrcによるNode.jsバージョン固定~~ ✅ 対応済み
 - [ ] pre-pushフック追加（typecheck + test）
-- [ ] .nvmrcによるNode.jsバージョン固定
 
 ## 3. ドキュメント（95点）
 
@@ -150,7 +155,7 @@ docs/
 - [ ] ドキュメント品質スコアのCI組み込み
 - [ ] ADR（Architecture Decision Records）の導入
 
-## 4. 自動化（88点）
+## 4. 自動化（90点）
 
 ### 現状
 
@@ -197,13 +202,13 @@ docs/
 
 ## 改善優先度
 
-### 優先度: 高
+### 優先度: 高（対応済み）
 
-| 項目                  | 現状               | 改善内容                |
-| --------------------- | ------------------ | ----------------------- |
-| 依存関係自動更新      | 手動               | Dependabot/Renovate導入 |
-| Node.jsバージョン固定 | なし               | .nvmrc追加              |
-| commitlint設定        | package.jsonベース | 設定ファイル化          |
+| 項目                  | 状態    | 対応内容                        |
+| --------------------- | ------- | ------------------------------- |
+| 依存関係自動更新      | ✅ 完了 | Dependabot設定済み（週次更新）  |
+| Node.jsバージョン固定 | ✅ 完了 | .nvmrc追加（Node 20）           |
+| commitlint設定        | ✅ 完了 | 設定ファイル + commit-msgフック |
 
 ### 優先度: 中
 

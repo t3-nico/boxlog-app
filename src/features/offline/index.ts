@@ -1,9 +1,5 @@
 // Offline Feature Exports
 
-// Components
-export { ConflictResolutionModal } from './components/ConflictResolutionModal';
-export type { ConflictContext } from './components/ConflictResolutionModal';
-
 // Services
 export { OfflineManager, offlineManager } from './services/offline-manager';
 

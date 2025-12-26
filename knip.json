@@ -9,7 +9,9 @@
     "src/types/**/*",
     "src/instrumentation.ts",
     "**/*.d.ts",
-    ".github/**/*"
+    ".github/**/*",
+    "src/features/**/index.ts",
+    "src/i18n/**/*"
   ],
   "ignoreDependencies": [
     "@prisma/instrumentation",
