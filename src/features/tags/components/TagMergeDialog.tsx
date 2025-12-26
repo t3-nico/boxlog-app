@@ -5,7 +5,7 @@ import { createPortal } from 'react-dom';
 
 import { Button } from '@/components/ui/button';
 import { DEFAULT_TAG_COLOR } from '@/config/ui/colors';
-import { useMergeTag, useTags } from '@/features/tags/hooks/use-tags';
+import { useMergeTag, useTags } from '@/features/tags/hooks/useTags';
 import type { Tag } from '@/features/tags/types';
 import { cn } from '@/lib/utils';
 import { AlertCircle, Check, ChevronDown, GitMerge } from 'lucide-react';

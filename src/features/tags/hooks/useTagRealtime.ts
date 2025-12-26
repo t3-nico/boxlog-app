@@ -37,7 +37,7 @@ import { useQueryClient } from '@tanstack/react-query';
 
 import { useRealtimeSubscription } from '@/lib/supabase/realtime/useRealtimeSubscription';
 
-import { tagKeys } from './use-tags';
+import { tagKeys } from './useTags';
 
 interface UseTagRealtimeOptions {
   /** 購読を有効化するか（デフォルト: true） */

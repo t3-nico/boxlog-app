@@ -30,8 +30,8 @@ import {
 } from '@/components/ui/table';
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { DEFAULT_TAG_COLOR } from '@/config/ui/colors';
-import { useTagGroups } from '@/features/tags/hooks/use-tag-groups';
-import { useCreateTag, useTags } from '@/features/tags/hooks/use-tags';
+import { useTagGroups } from '@/features/tags/hooks/useTagGroups';
+import { useCreateTag, useTags } from '@/features/tags/hooks/useTags';
 
 interface PlanTagSelectDialogEnhancedProps {
   children: React.ReactNode;

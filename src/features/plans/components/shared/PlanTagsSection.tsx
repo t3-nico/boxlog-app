@@ -2,7 +2,7 @@
 
 import { Badge } from '@/components/ui/badge';
 import { HoverTooltip } from '@/components/ui/tooltip';
-import { useTags } from '@/features/tags/hooks/use-tags';
+import { useTags } from '@/features/tags/hooks/useTags';
 import { Plus, Tag, X } from 'lucide-react';
 
 import { PlanTagSelectDialogEnhanced } from './PlanTagSelectDialogEnhanced';

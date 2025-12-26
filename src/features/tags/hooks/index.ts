@@ -20,7 +20,7 @@ export {
   useTags,
   useUpdateTag,
   useUpdateTagColor,
-} from './use-tags';
+} from './useTags';
 
 // Tag Groups
 export {
@@ -31,10 +31,10 @@ export {
   useTagGroup,
   useTagGroups,
   useUpdateTagGroup,
-} from './use-tag-groups';
+} from './useTagGroups';
 
 // Tag Group DnD
-export { useTagGroupsDnd } from './use-tag-groups-dnd';
+export { useTagGroupsDnd } from './useTagGroupsDnd';
 
 // Item Tags (Plan, Task etc.)
 export {
@@ -46,13 +46,13 @@ export {
   useItemTagsByItem,
   useItemTagsOptimisticUpdate,
   useItemsByTags,
-} from './use-item-tags';
+} from './useItemTags';
 
 // Tag Operations
-export { useTagOperations } from './use-tag-operations';
+export { useTagOperations } from './useTagOperations';
 
 // Tags Page Data (パフォーマンス最適化用)
-export { useTagsPageData } from './use-tags-page-data';
+export { useTagsPageData } from './useTagsPageData';
 
 // Tag Stats
 export {
@@ -61,7 +61,7 @@ export {
   useTagExpandedState,
   useTagStats,
   useTagUsageCounts,
-} from './use-tag-stats';
+} from './useTagStats';
 
 // Realtime
 export { useTagRealtime } from './useTagRealtime';

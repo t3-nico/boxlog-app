@@ -11,7 +11,7 @@
  *
  * // ❌ 非推奨: 深いパス指定
  * import { TagsSidebar } from '@/features/tags/components/TagsSidebar'
- * import { useTags } from '@/features/tags/hooks/use-tags'
+ * import { useTags } from '@/features/tags/hooks/useTags'
  * ```
  */
 

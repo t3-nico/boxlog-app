@@ -10,8 +10,8 @@
 import { useMemo } from 'react';
 
 import type { DataTableGroupedData } from '@/features/table';
-import { useTagGroups } from '@/features/tags/hooks/use-tag-groups';
-import { useTags } from '@/features/tags/hooks/use-tags';
+import { useTagGroups } from '@/features/tags/hooks/useTagGroups';
+import { useTags } from '@/features/tags/hooks/useTags';
 import { useTagDisplayModeStore } from '@/features/tags/stores/useTagDisplayModeStore';
 import { useTagSearchStore } from '@/features/tags/stores/useTagSearchStore';
 import { useTagSortStore } from '@/features/tags/stores/useTagSortStore';

@@ -44,8 +44,8 @@ import {
 import { usePathname, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
-import { useTagGroups } from '../../hooks/use-tag-groups';
-import { useDeleteTag, useTags, useUpdateTag, useUpdateTagColor } from '../../hooks/use-tags';
+import { useTagGroups } from '../../hooks/useTagGroups';
+import { useDeleteTag, useTags, useUpdateTag, useUpdateTagColor } from '../../hooks/useTags';
 import { useTagInspectorStore } from '../../stores/useTagInspectorStore';
 import { TagArchiveDialog } from '../TagArchiveDialog';
 import { TagDeleteDialog } from '../TagDeleteDialog';

@@ -18,7 +18,7 @@ import { usePlans } from '@/features/plans/hooks';
 import { useTagStore } from '@/features/tags/stores/useTagStore';
 import { cn } from '@/lib/utils';
 
-import { useSearchHistory } from '../hooks/use-search';
+import { useSearchHistory } from '../hooks/useSearch';
 import type { SearchResultType } from '../types';
 
 // Helper function to get tags from plan_tags

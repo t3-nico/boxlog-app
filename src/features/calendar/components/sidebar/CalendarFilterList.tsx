@@ -10,8 +10,8 @@ import { cn } from '@/lib/utils';
 import { type ItemType, useCalendarFilterStore } from '../../stores/useCalendarFilterStore';
 
 import { SidebarSection } from '@/features/navigation/components/sidebar/SidebarSection';
-import { useTagGroups } from '@/features/tags/hooks/use-tag-groups';
-import { useTags } from '@/features/tags/hooks/use-tags';
+import { useTagGroups } from '@/features/tags/hooks/useTagGroups';
+import { useTags } from '@/features/tags/hooks/useTags';
 
 import { Checkbox } from '@/components/ui/checkbox';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';

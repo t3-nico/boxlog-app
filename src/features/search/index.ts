@@ -9,7 +9,7 @@ export { CompactSearchBar, SearchBar } from './components/search-bar';
 
 // Hooks
 export { GlobalSearchProvider, useGlobalSearch } from './hooks/use-global-search';
-export { useSearchHistory } from './hooks/use-search';
+export { useSearchHistory } from './hooks/useSearch';
 
 // Lib
 export { commandRegistry, registerDefaultCommands } from './lib/command-registry';

@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import { useCalendarColors, useCalendarSelection } from './use-calendars';
+import { useCalendarColors, useCalendarSelection } from './useCalendars';
 
 describe('useCalendarSelection', () => {
   it('should initialize with provided calendar IDs', () => {

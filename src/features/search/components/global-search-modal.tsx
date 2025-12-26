@@ -37,8 +37,8 @@ import { useTagStore } from '@/features/tags/stores/useTagStore';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 
 import type { PlanStatus } from '@/features/plans/types';
-import { useRecentPlans } from '../hooks/use-recent-plans';
-import { useSearchHistory } from '../hooks/use-search';
+import { useRecentPlans } from '../hooks/useRecentPlans';
+import { useSearchHistory } from '../hooks/useSearch';
 import { commandRegistry, registerDefaultCommands } from '../lib/command-registry';
 import { HighlightedText } from '../lib/highlight-text';
 import { getFilterHints, parseSearchQuery } from '../lib/query-parser';

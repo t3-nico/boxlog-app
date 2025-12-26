@@ -41,8 +41,8 @@ import {
   useDeleteTagGroup,
   useTagGroups,
   useUpdateTagGroup,
-} from '@/features/tags/hooks/use-tag-groups';
-import { useTags } from '@/features/tags/hooks/use-tags';
+} from '@/features/tags/hooks/useTagGroups';
+import { useTags } from '@/features/tags/hooks/useTags';
 import type { TagGroup } from '@/features/tags/types';
 import { useHapticFeedback } from '@/hooks/useHapticFeedback';
 import { useTranslations } from 'next-intl';

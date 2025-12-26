@@ -16,7 +16,7 @@ import {
 import { useEffect, useRef, useState } from 'react';
 
 import type { TagGroup } from '@/features/tags/types';
-import { useReorderTagGroups } from './use-tag-groups';
+import { useReorderTagGroups } from './useTagGroups';
 
 /**
  * タググループのドラッグアンドドロップ用フック（シンプル版）

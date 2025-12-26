@@ -1,6 +1,6 @@
 'use client';
 
-import { useTags } from '@/features/tags/hooks/use-tags';
+import { useTags } from '@/features/tags/hooks/useTags';
 import { useTagInspectorStore } from '@/features/tags/stores/useTagInspectorStore';
 import { useEffect } from 'react';
 
