@@ -61,7 +61,16 @@ export function useServiceWorker(): UseServiceWorkerResult {
 
     const registerSW = async () => {
       try {
-        const reg = await navigator.serviceWorker.register('/sw.js', {
+        // デプロイごとにSWを更新するためのバージョン文字列
+        // Vercel: NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA
+        // フォールバック: ビルド時刻ベース
+        const swVersion =
+          process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA?.slice(0, 8) ||
+          process.env.NEXT_PUBLIC_BUILD_ID ||
+          '';
+        const swUrl = swVersion ? `/sw.js?v=${swVersion}` : '/sw.js';
+
+        const reg = await navigator.serviceWorker.register(swUrl, {
           scope: '/',
         });
 

@@ -2,11 +2,18 @@
  * BoxLog Service Worker
  *
  * オフライン対応とキャッシング戦略を提供
+ *
+ * バージョニング戦略:
+ * - SW自体はクエリパラメータでバージョン管理（useServiceWorker.ts）
+ * - キャッシュ名にはメジャーバージョンのみ含める
+ * - 破壊的変更がない限りキャッシュは引き継ぐ
  */
 
-const CACHE_NAME = 'boxlog-v1'
-const STATIC_CACHE_NAME = 'boxlog-static-v1'
-const DYNAMIC_CACHE_NAME = 'boxlog-dynamic-v1'
+// キャッシュバージョン: 破壊的変更時のみインクリメント
+const CACHE_VERSION = '2';
+const CACHE_NAME = `boxlog-v${CACHE_VERSION}`;
+const STATIC_CACHE_NAME = `boxlog-static-v${CACHE_VERSION}`;
+const DYNAMIC_CACHE_NAME = `boxlog-dynamic-v${CACHE_VERSION}`;
 
 // 静的アセット（ビルド時に確定するファイル）
 const STATIC_ASSETS = [
@@ -16,7 +23,7 @@ const STATIC_ASSETS = [
   '/favicon.ico',
   '/icon-192.png',
   '/icon-512.png',
-]
+];
 
 // キャッシュ対象のパターン
 const CACHE_PATTERNS = {
@@ -26,14 +33,14 @@ const CACHE_PATTERNS = {
   api: /^\/api\//,
   // Next.jsの静的ファイル
   nextStatic: /^\/_next\/static\//,
-}
+};
 
 // キャッシュしないパターン
 const NO_CACHE_PATTERNS = [
   /^\/_next\/webpack-hmr/, // HMR
   /^\/api\/auth/, // 認証API
   /^\/api\/trpc/, // tRPC API（動的データ）
-]
+];
 
 /**
  * Service Worker インストール
@@ -43,12 +50,12 @@ self.addEventListener('install', (event) => {
     caches
       .open(STATIC_CACHE_NAME)
       .then((cache) => {
-        console.log('[SW] Caching static assets')
-        return cache.addAll(STATIC_ASSETS)
+        console.log('[SW] Caching static assets');
+        return cache.addAll(STATIC_ASSETS);
       })
-      .then(() => self.skipWaiting())
-  )
-})
+      .then(() => self.skipWaiting()),
+  );
+});
 
 /**
  * Service Worker アクティベート
@@ -62,50 +69,54 @@ self.addEventListener('activate', (event) => {
           cacheNames
             .filter((name) => {
               // 古いキャッシュを削除
-              return name.startsWith('boxlog-') && name !== STATIC_CACHE_NAME && name !== DYNAMIC_CACHE_NAME
+              return (
+                name.startsWith('boxlog-') &&
+                name !== STATIC_CACHE_NAME &&
+                name !== DYNAMIC_CACHE_NAME
+              );
             })
             .map((name) => {
-              console.log('[SW] Deleting old cache:', name)
-              return caches.delete(name)
-            })
-        )
+              console.log('[SW] Deleting old cache:', name);
+              return caches.delete(name);
+            }),
+        );
       })
-      .then(() => self.clients.claim())
-  )
-})
+      .then(() => self.clients.claim()),
+  );
+});
 
 /**
  * フェッチイベントハンドラー
  */
 self.addEventListener('fetch', (event) => {
-  const { request } = event
-  const url = new URL(request.url)
+  const { request } = event;
+  const url = new URL(request.url);
 
   // 同一オリジンのみ処理
   if (url.origin !== location.origin) {
-    return
+    return;
   }
 
   // キャッシュしないパターンをチェック
   if (NO_CACHE_PATTERNS.some((pattern) => pattern.test(url.pathname))) {
-    return
+    return;
   }
 
   // ナビゲーションリクエスト（HTMLページ）
   if (request.mode === 'navigate') {
-    event.respondWith(handleNavigationRequest(request))
-    return
+    event.respondWith(handleNavigationRequest(request));
+    return;
   }
 
   // 静的アセット
   if (CACHE_PATTERNS.static.test(url.pathname) || CACHE_PATTERNS.nextStatic.test(url.pathname)) {
-    event.respondWith(handleStaticRequest(request))
-    return
+    event.respondWith(handleStaticRequest(request));
+    return;
   }
 
   // その他のリクエスト
-  event.respondWith(handleDynamicRequest(request))
-})
+  event.respondWith(handleDynamicRequest(request));
+});
 
 /**
  * ナビゲーションリクエストの処理
@@ -113,28 +124,28 @@ self.addEventListener('fetch', (event) => {
  */
 async function handleNavigationRequest(request) {
   try {
-    const networkResponse = await fetch(request)
+    const networkResponse = await fetch(request);
     // 成功したらキャッシュに保存
     if (networkResponse.ok) {
-      const cache = await caches.open(DYNAMIC_CACHE_NAME)
-      cache.put(request, networkResponse.clone())
+      const cache = await caches.open(DYNAMIC_CACHE_NAME);
+      cache.put(request, networkResponse.clone());
     }
-    return networkResponse
+    return networkResponse;
   } catch (error) {
     // オフラインの場合はキャッシュまたはオフラインページを返す
-    const cachedResponse = await caches.match(request)
+    const cachedResponse = await caches.match(request);
     if (cachedResponse) {
-      return cachedResponse
+      return cachedResponse;
     }
     // オフラインフォールバックページ
-    const offlineResponse = await caches.match('/offline')
+    const offlineResponse = await caches.match('/offline');
     if (offlineResponse) {
-      return offlineResponse
+      return offlineResponse;
     }
     return new Response('オフラインです', {
       status: 503,
       headers: { 'Content-Type': 'text/plain; charset=utf-8' },
-    })
+    });
   }
 }
 
@@ -143,20 +154,20 @@ async function handleNavigationRequest(request) {
  * Cache First with Network Fallback
  */
 async function handleStaticRequest(request) {
-  const cachedResponse = await caches.match(request)
+  const cachedResponse = await caches.match(request);
   if (cachedResponse) {
-    return cachedResponse
+    return cachedResponse;
   }
 
   try {
-    const networkResponse = await fetch(request)
+    const networkResponse = await fetch(request);
     if (networkResponse.ok) {
-      const cache = await caches.open(STATIC_CACHE_NAME)
-      cache.put(request, networkResponse.clone())
+      const cache = await caches.open(STATIC_CACHE_NAME);
+      cache.put(request, networkResponse.clone());
     }
-    return networkResponse
+    return networkResponse;
   } catch (error) {
-    return new Response('Resource not available', { status: 404 })
+    return new Response('Resource not available', { status: 404 });
   }
 }
 
@@ -166,18 +177,18 @@ async function handleStaticRequest(request) {
  */
 async function handleDynamicRequest(request) {
   try {
-    const networkResponse = await fetch(request)
+    const networkResponse = await fetch(request);
     if (networkResponse.ok && request.method === 'GET') {
-      const cache = await caches.open(DYNAMIC_CACHE_NAME)
-      cache.put(request, networkResponse.clone())
+      const cache = await caches.open(DYNAMIC_CACHE_NAME);
+      cache.put(request, networkResponse.clone());
     }
-    return networkResponse
+    return networkResponse;
   } catch (error) {
-    const cachedResponse = await caches.match(request)
+    const cachedResponse = await caches.match(request);
     if (cachedResponse) {
-      return cachedResponse
+      return cachedResponse;
     }
-    throw error
+    throw error;
   }
 }
 
@@ -186,16 +197,18 @@ async function handleDynamicRequest(request) {
  */
 self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
-    self.skipWaiting()
+    self.skipWaiting();
   }
 
   if (event.data && event.data.type === 'CLEAR_CACHE') {
     event.waitUntil(
       caches.keys().then((cacheNames) => {
         return Promise.all(
-          cacheNames.filter((name) => name.startsWith('boxlog-')).map((name) => caches.delete(name))
-        )
-      })
-    )
+          cacheNames
+            .filter((name) => name.startsWith('boxlog-'))
+            .map((name) => caches.delete(name)),
+        );
+      }),
+    );
   }
-})
+});

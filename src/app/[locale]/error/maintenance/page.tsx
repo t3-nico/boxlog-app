@@ -16,6 +16,7 @@ export default function UnderMaintenancePage() {
         alt="placeholder image"
         width={960}
         height={540}
+        priority
         className="aspect-video w-240 rounded-xl object-cover dark:invert"
       />
       <div className="text-center">

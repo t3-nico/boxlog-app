@@ -21,6 +21,7 @@ import {
   Trash2,
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import dynamic from 'next/dynamic';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
@@ -34,10 +35,20 @@ import { useDeleteConfirmStore } from '../../stores/useDeleteConfirmStore';
 import { usePlanCacheStore } from '../../stores/usePlanCacheStore';
 import { usePlanInspectorStore } from '../../stores/usePlanInspectorStore';
 import type { Plan } from '../../types/plan';
-import { NovelDescriptionEditor } from '../shared/NovelDescriptionEditor';
 import { PlanScheduleSection } from '../shared/PlanScheduleSection';
 import { PlanTagsSection } from '../shared/PlanTagsSection';
 import { ReminderSelect } from '../shared/ReminderSelect';
+
+// Novel エディターは重いため遅延ロード（~300KB削減）
+const NovelDescriptionEditor = dynamic(
+  () => import('../shared/NovelDescriptionEditor').then((mod) => mod.NovelDescriptionEditor),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="text-muted-foreground min-h-8 px-2 py-1 text-sm">読み込み中...</div>
+    ),
+  },
+);
 
 import { ActivityTab } from './components';
 import { useInspectorAutoSave, useInspectorNavigation } from './hooks';
