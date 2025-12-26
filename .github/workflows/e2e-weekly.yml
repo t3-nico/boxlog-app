@@ -64,9 +64,10 @@ jobs:
         id: e2e
         run: npm run test:e2e -- --project="${{ matrix.project }}"
         env:
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://dummy.supabase.co' }}
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1bW15IiXJvbGUiOiJhbm9uIiwiaWF0IjoxNjQ1MTkyMDAwLCJleHAiOjE5NjA1NjgwMDB9.DUMMY_KEY_FOR_TESTING' }}
-          NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL || 'http://localhost:3000' }}
+          # vars: 公開環境変数（NEXT_PUBLIC_*）はRepository Variablesで管理
+          NEXT_PUBLIC_SUPABASE_URL: ${{ vars.NEXT_PUBLIC_SUPABASE_URL || 'https://dummy.supabase.co' }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ vars.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1bW15IiXJvbGUiOiJhbm9uIiwiaWF0IjoxNjQ1MTkyMDAwLCJleHAiOjE5NjA1NjgwMDB9.DUMMY_KEY_FOR_TESTING' }}
+          NEXT_PUBLIC_APP_URL: ${{ vars.NEXT_PUBLIC_APP_URL || 'http://localhost:3000' }}
 
       - name: 📊 Upload Playwright Report
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
@@ -109,33 +110,36 @@ jobs:
         with:
           script: |
             const today = new Date().toISOString().split('T')[0];
+            const runUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
 
-            const body = `## 🚨 Weekly E2E Test Failure
-
-**Date**: ${today}
-**Workflow Run**: [View Details](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})
-
-### Summary
-
-The weekly full browser E2E test has detected failures. This may indicate browser compatibility issues that need attention.
-
-### Tested Browsers
-- Chrome (Chromium)
-- Firefox
-- Safari (WebKit)
-- Mobile Chrome (Pixel 5)
-- Mobile Safari (iPhone 12)
-- iPad Pro
-
-### Action Required
-
-1. Review the [workflow logs](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})
-2. Download the Playwright reports from artifacts
-3. Identify and fix browser-specific issues
-4. Consider if the issue affects production users
-
----
-<sub>🤖 Automated by Weekly E2E Test</sub>`;
+            const body = [
+              '## 🚨 Weekly E2E Test Failure',
+              '',
+              `**Date**: ${today}`,
+              `**Workflow Run**: [View Details](${runUrl})`,
+              '',
+              '### Summary',
+              '',
+              'The weekly full browser E2E test has detected failures. This may indicate browser compatibility issues that need attention.',
+              '',
+              '### Tested Browsers',
+              '- Chrome (Chromium)',
+              '- Firefox',
+              '- Safari (WebKit)',
+              '- Mobile Chrome (Pixel 5)',
+              '- Mobile Safari (iPhone 12)',
+              '- iPad Pro',
+              '',
+              '### Action Required',
+              '',
+              `1. Review the [workflow logs](${runUrl})`,
+              '2. Download the Playwright reports from artifacts',
+              '3. Identify and fix browser-specific issues',
+              '4. Consider if the issue affects production users',
+              '',
+              '---',
+              '<sub>🤖 Automated by Weekly E2E Test</sub>',
+            ].join('\n');
 
             // 同じ日のIssueが既に存在するかチェック
             const { data: existingIssues } = await github.rest.issues.listForRepo({

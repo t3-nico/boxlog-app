@@ -18,8 +18,8 @@ import { createContext, useCallback, useContext, useState, type ReactNode } from
 import { toast } from 'sonner';
 
 import { DEFAULT_TAG_COLOR } from '@/config/ui/colors';
-import { useTagGroups } from '@/features/tags/hooks/use-tag-groups';
-import { useUpdateTag } from '@/features/tags/hooks/use-tags';
+import { useTagGroups } from '@/features/tags/hooks/useTagGroups';
+import { useUpdateTag } from '@/features/tags/hooks/useTags';
 import type { Tag } from '@/features/tags/types';
 
 interface TagsPageContextValue {

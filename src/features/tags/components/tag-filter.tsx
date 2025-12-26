@@ -11,7 +11,7 @@ import {
 
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { useTags } from '@/features/tags/hooks/use-tags';
+import { useTags } from '@/features/tags/hooks/useTags';
 import type { Tag } from '@/features/tags/types';
 import { cn } from '@/lib/utils';
 import { useTranslations } from 'next-intl';

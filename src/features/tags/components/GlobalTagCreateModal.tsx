@@ -1,6 +1,6 @@
 'use client';
 
-import { useCreateTag } from '../hooks/use-tags';
+import { useCreateTag } from '../hooks/useTags';
 import { useTagCreateModalStore } from '../stores/useTagCreateModalStore';
 import { TagCreateModal } from './tag-create-modal';
 

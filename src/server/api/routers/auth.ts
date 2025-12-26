@@ -15,6 +15,7 @@ import {
 } from '@/features/auth/lib/audit-log';
 import { checkIpRateLimit } from '@/features/auth/lib/ip-rate-limit';
 import { RECAPTCHA_CONFIG, verifyRecaptchaV3 } from '@/lib/recaptcha';
+import { extractClientIp } from '@/lib/security/ip-validation';
 
 import { createTRPCRouter, protectedProcedure, publicProcedure } from '../trpc';
 
@@ -92,11 +93,15 @@ export const authRouter = createTRPCRouter({
    * @description ログイン試行前にIP単位のレート制限を確認
    */
   checkIpRateLimit: publicProcedure.input(checkIpRateLimitInput).query(async ({ ctx }) => {
-    // クライアントIPを取得
-    const forwarded = ctx.req?.headers?.['x-forwarded-for'];
+    // クライアントIPを取得（検証済み）
+    const forwarded =
+      typeof ctx.req?.headers?.['x-forwarded-for'] === 'string'
+        ? ctx.req.headers['x-forwarded-for']
+        : null;
+    const realIp =
+      typeof ctx.req?.headers?.['x-real-ip'] === 'string' ? ctx.req.headers['x-real-ip'] : null;
     const remoteAddress = ctx.req?.socket?.remoteAddress;
-    const firstForwarded = typeof forwarded === 'string' ? forwarded.split(',')[0] : undefined;
-    const ipAddress = firstForwarded?.trim() ?? remoteAddress ?? null;
+    const ipAddress = extractClientIp(forwarded, realIp) || remoteAddress || null;
 
     if (!ipAddress) {
       return {
@@ -140,11 +145,15 @@ export const authRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { email, isSuccessful } = input;
 
-      // クライアントIPを取得
-      const forwarded = ctx.req?.headers?.['x-forwarded-for'];
+      // クライアントIPを取得（検証済み）
+      const forwarded =
+        typeof ctx.req?.headers?.['x-forwarded-for'] === 'string'
+          ? ctx.req.headers['x-forwarded-for']
+          : null;
+      const realIp =
+        typeof ctx.req?.headers?.['x-real-ip'] === 'string' ? ctx.req.headers['x-real-ip'] : null;
       const remoteAddress = ctx.req?.socket?.remoteAddress;
-      const firstForwarded = typeof forwarded === 'string' ? forwarded.split(',')[0] : undefined;
-      const ipAddress = firstForwarded?.trim() ?? remoteAddress ?? null;
+      const ipAddress = extractClientIp(forwarded, realIp) || remoteAddress || null;
       const userAgent = ctx.req?.headers?.['user-agent'] ?? null;
 
       try {
@@ -190,11 +199,15 @@ export const authRouter = createTRPCRouter({
       const { eventType, metadata } = input;
       const userId = ctx.userId;
 
-      // クライアントIPとUser-Agentを取得
-      const forwarded = ctx.req?.headers?.['x-forwarded-for'];
+      // クライアントIPとUser-Agentを取得（検証済み）
+      const forwarded =
+        typeof ctx.req?.headers?.['x-forwarded-for'] === 'string'
+          ? ctx.req.headers['x-forwarded-for']
+          : null;
+      const realIp =
+        typeof ctx.req?.headers?.['x-real-ip'] === 'string' ? ctx.req.headers['x-real-ip'] : null;
       const remoteAddress = ctx.req?.socket?.remoteAddress;
-      const firstForwarded = typeof forwarded === 'string' ? forwarded.split(',')[0] : undefined;
-      const ipAddress = firstForwarded?.trim() ?? remoteAddress ?? null;
+      const ipAddress = extractClientIp(forwarded, realIp) || remoteAddress || null;
       const userAgent = ctx.req?.headers?.['user-agent'] ?? null;
 
       // User-Agentを解析

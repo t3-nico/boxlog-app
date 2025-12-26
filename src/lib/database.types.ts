@@ -28,6 +28,144 @@ export type Database = {
   };
   public: {
     Tables: {
+      audit_logs: {
+        Row: {
+          id: string;
+          timestamp: string;
+          event_type: string;
+          severity: string;
+          user_id: string | null;
+          session_id: string | null;
+          ip_address: string | null;
+          user_agent: string | null;
+          resource: string | null;
+          action: string | null;
+          metadata: Json;
+          success: boolean;
+          error_message: string | null;
+          created_at: string;
+          geo_country: string | null;
+          geo_country_name: string | null;
+          geo_region: string | null;
+          geo_city: string | null;
+          geo_timezone: string | null;
+          geo_source: string | null;
+        };
+        Insert: {
+          id?: string;
+          timestamp?: string;
+          event_type: string;
+          severity: string;
+          user_id?: string | null;
+          session_id?: string | null;
+          ip_address?: string | null;
+          user_agent?: string | null;
+          resource?: string | null;
+          action?: string | null;
+          metadata?: Json;
+          success?: boolean;
+          error_message?: string | null;
+          created_at?: string;
+          geo_country?: string | null;
+          geo_country_name?: string | null;
+          geo_region?: string | null;
+          geo_city?: string | null;
+          geo_timezone?: string | null;
+          geo_source?: string | null;
+        };
+        Update: {
+          id?: string;
+          timestamp?: string;
+          event_type?: string;
+          severity?: string;
+          user_id?: string | null;
+          session_id?: string | null;
+          ip_address?: string | null;
+          user_agent?: string | null;
+          resource?: string | null;
+          action?: string | null;
+          metadata?: Json;
+          success?: boolean;
+          error_message?: string | null;
+          created_at?: string;
+          geo_country?: string | null;
+          geo_country_name?: string | null;
+          geo_region?: string | null;
+          geo_city?: string | null;
+          geo_timezone?: string | null;
+          geo_source?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'audit_logs_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      mfa_recovery_codes: {
+        Row: {
+          id: string;
+          user_id: string;
+          code_hash: string;
+          used_at: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          code_hash: string;
+          used_at?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          code_hash?: string;
+          used_at?: string | null;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'mfa_recovery_codes_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      password_history: {
+        Row: {
+          id: string;
+          user_id: string;
+          password_hash: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          password_hash: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          password_hash?: string;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'password_history_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       login_attempts: {
         Row: {
           attempt_time: string;
@@ -590,6 +728,19 @@ export type Database = {
         Args: { p_user_id: string };
         Returns: Array<{ tag_id: string; plan_count: number; last_used: string | null }>;
       };
+      // MFA Recovery Codes
+      count_unused_recovery_codes: { Args: { p_user_id: string }; Returns: number };
+      use_recovery_code: { Args: { p_user_id: string; p_code_hash: string }; Returns: boolean };
+      // Password History
+      check_password_reuse: {
+        Args: { p_user_id: string; p_new_password: string };
+        Returns: boolean;
+      };
+      add_password_to_history: {
+        Args: { p_user_id: string; p_new_password: string };
+        Returns: undefined;
+      };
+      get_password_history_count: { Args: { p_user_id: string }; Returns: number };
     };
     Enums: {
       [_ in never]: never;

@@ -146,15 +146,19 @@ describe('recurrence', () => {
         start_time: '2025-01-01T09:00:00Z',
         end_time: '2025-01-01T10:00:00Z',
       });
-      const rangeStart = new Date('2025-01-01');
-      const rangeEnd = new Date('2025-01-05');
+      // UTC形式で指定してタイムゾーンの影響を排除
+      const rangeStart = new Date('2025-01-01T00:00:00Z');
+      const rangeEnd = new Date('2025-01-05T00:00:00Z');
 
       const occurrences = expandRecurrence(plan, rangeStart, rangeEnd);
 
       expect(occurrences.length).toBeGreaterThanOrEqual(4);
       expect(occurrences[0]?.planId).toBe('plan-1');
-      expect(occurrences[0]?.startTime).toBe('09:00');
-      expect(occurrences[0]?.endTime).toBe('10:00');
+      // toTimeString()はローカルタイムを返すため、期待値も動的に計算
+      const expectedStartTime = new Date('2025-01-01T09:00:00Z').toTimeString().slice(0, 5);
+      const expectedEndTime = new Date('2025-01-01T10:00:00Z').toTimeString().slice(0, 5);
+      expect(occurrences[0]?.startTime).toBe(expectedStartTime);
+      expect(occurrences[0]?.endTime).toBe(expectedEndTime);
     });
 
     it('weekdaysタイプは平日のみにオカレンスを生成する', () => {

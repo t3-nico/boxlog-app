@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 
 import { getTranslation } from './get-translation';
 import { CALENDAR_TOAST_KEYS } from './translation-keys';
-import { useCalendarToast } from './use-calendar-toast';
+import { useCalendarToast } from './useCalendarToast';
 
 // ネットワークエラーの種類
 export type NetworkErrorType =

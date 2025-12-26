@@ -10,7 +10,7 @@ import superjson from 'superjson';
 import { z } from 'zod';
 
 import { createAppError, ERROR_CODES } from '@/config/error-patterns';
-import { trackError } from '@/lib/analytics/vercel-analytics';
+import { extractClientIp } from '@/lib/security/ip-validation';
 
 import type { Database } from '@/lib/database.types';
 
@@ -89,16 +89,6 @@ const t = initTRPC.context<Context>().create({
       isProduction && error.code === 'INTERNAL_SERVER_ERROR'
         ? 'サーバーエラーが発生しました'
         : shape.message;
-
-    // Analyticsにエラーを送信
-    if (error.code === 'INTERNAL_SERVER_ERROR') {
-      trackError({
-        errorCode: 500,
-        errorCategory: 'API',
-        severity: 'high',
-        wasRecovered: false,
-      });
-    }
 
     return {
       ...shape,
@@ -208,10 +198,12 @@ async function checkRateLimit(_ip: string): Promise<boolean> {
 }
 
 function getClientIP(req: CreateNextContextOptions['req']): string {
-  const forwarded = req.headers['x-forwarded-for'];
-  const ip = typeof forwarded === 'string' ? forwarded.split(',')[0] : req.socket.remoteAddress;
+  const forwarded =
+    typeof req.headers['x-forwarded-for'] === 'string' ? req.headers['x-forwarded-for'] : null;
+  const realIp = typeof req.headers['x-real-ip'] === 'string' ? req.headers['x-real-ip'] : null;
+  const remoteAddress = req.socket?.remoteAddress;
 
-  return ip || 'unknown';
+  return extractClientIp(forwarded, realIp) || remoteAddress || 'unknown';
 }
 
 /**

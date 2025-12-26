@@ -23,7 +23,7 @@ import {
 import { DEFAULT_GROUP_COLOR, DEFAULT_TAG_COLOR } from '@/config/ui/colors';
 import { DraggableTagRow } from '@/features/tags/components/DraggableTagRow';
 import { TagActionMenuItems } from '@/features/tags/components/TagActionMenuItems';
-import { useUpdateTag } from '@/features/tags/hooks/use-tags';
+import { useUpdateTag } from '@/features/tags/hooks/useTags';
 import { useTagInspectorStore } from '@/features/tags/stores/useTagInspectorStore';
 import { useTagSelectionStore } from '@/features/tags/stores/useTagSelectionStore';
 import type { Tag, TagGroup } from '@/features/tags/types';

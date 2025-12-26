@@ -11,7 +11,7 @@
  *
  * // ❌ 非推奨: 深いパス指定
  * import { TagsSidebar } from '@/features/tags/components/TagsSidebar'
- * import { useTags } from '@/features/tags/hooks/use-tags'
+ * import { useTags } from '@/features/tags/hooks/useTags'
  * ```
  */
 
@@ -95,18 +95,15 @@ export {
 } from './hooks';
 
 // Stores
-export { colorCategories, tagColors, useTagStore } from './stores';
+export { colorCategories, tagColors, useTagStore } from './stores/useTagStore';
 
-// Constants
-export {
-  DEFAULT_TAG_COLOR,
-  TAG_COLOR_PALETTE,
-  TAG_PRESET_COLORS,
-  tagIconCategories,
-  tagIconMapping,
-} from './constants';
+// Constants - Colors
+export { DEFAULT_TAG_COLOR, TAG_COLOR_PALETTE, TAG_PRESET_COLORS } from './constants/colors';
 
-export type { TagIconName } from './constants';
+// Constants - Icons
+export { tagIconCategories, tagIconMapping } from './constants/icons';
+
+export type { TagIconName } from './constants/icons';
 
 // Context
 export { TagsPageProvider, useTagsPageContext } from './contexts/TagsPageContext';

@@ -1,6 +1,6 @@
 {
   "name": "boxlog-app",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "private": true,
   "sideEffects": [
     "*.css",
@@ -234,10 +234,10 @@
     "@tiptap/pm": "^3.10.1",
     "@tiptap/react": "^3.10.1",
     "@tiptap/starter-kit": "^3.10.1",
-    "@trpc/client": "^11.6.0",
-    "@trpc/next": "^11.6.0",
-    "@trpc/react-query": "^11.6.0",
-    "@trpc/server": "^11.6.0",
+    "@trpc/client": "^11.8.1",
+    "@trpc/next": "^11.8.1",
+    "@trpc/react-query": "^11.8.1",
+    "@trpc/server": "^11.8.1",
     "@types/dompurify": "^3.0.5",
     "@types/qrcode": "^1.5.5",
     "@types/react-window": "^1.8.8",
@@ -302,6 +302,7 @@
     "sharp": false
   },
   "devDependencies": {
+    "@axe-core/react": "^4.11.0",
     "@commitlint/cli": "^20.1.0",
     "@commitlint/config-conventional": "^20.0.0",
     "@eslint/eslintrc": "^3.3.1",
@@ -326,6 +327,7 @@
     "@vitejs/plugin-react": "^5.0.4",
     "@vitest/coverage-v8": "^4.0.14",
     "@vitest/ui": "^4.0.14",
+    "axe-core": "^4.11.0",
     "eslint": "^9.39.1",
     "eslint-config-next": "^15.5.6",
     "eslint-plugin-import": "^2.32.0",
@@ -333,7 +335,7 @@
     "eslint-plugin-security": "^3.0.1",
     "eslint-plugin-unused-imports": "^4.2.0",
     "eslint-plugin-vitest": "^0.5.4",
-    "happy-dom": "^19.0.2",
+    "happy-dom": "^20.0.11",
     "husky": "^9.1.7",
     "jsdom": "^27.0.0",
     "knip": "^5.64.1",

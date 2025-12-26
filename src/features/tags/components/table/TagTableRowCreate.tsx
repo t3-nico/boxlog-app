@@ -7,7 +7,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { TableCell, TableRow } from '@/components/ui/table';
 import { DEFAULT_GROUP_COLOR, DEFAULT_TAG_COLOR } from '@/config/ui/colors';
 import { TAG_DESCRIPTION_MAX_LENGTH, TAG_NAME_MAX_LENGTH } from '@/features/tags/constants/colors';
-import { useCreateTag } from '@/features/tags/hooks/use-tags';
+import { useCreateTag } from '@/features/tags/hooks/useTags';
 import { useTagColumnStore } from '@/features/tags/stores/useTagColumnStore';
 import type { Tag, TagGroup } from '@/features/tags/types';
 import { Folder, Hash } from 'lucide-react';

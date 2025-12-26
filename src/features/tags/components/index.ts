@@ -36,6 +36,7 @@ export { TagGroupDeleteDialog } from './tag-group-delete-dialog';
 export { TagManagementModal } from './tag-management-modal';
 export { TagArchiveDialog } from './TagArchiveDialog';
 export { TagDeleteDialog } from './TagDeleteDialog';
+export { TagsDialogs } from './TagsDialogs';
 
 // Actions
 export { TagActionMenuItems } from './TagActionMenuItems';

@@ -1,0 +1,100 @@
+name: 📅 Monthly Operations Reminder
+
+on:
+  schedule:
+    # 毎月1日の朝9時（JST）に実行
+    - cron: '0 0 1 * *'
+  workflow_dispatch: # 手動実行も可能
+
+permissions:
+  issues: write
+
+jobs:
+  create-gameday-issue:
+    name: 🎮 GameDay Reminder
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create GameDay Issue
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        with:
+          script: |
+            const today = new Date();
+            const month = today.toLocaleDateString('ja-JP', { year: 'numeric', month: 'long' });
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `🎮 ${month} GameDay 実施`,
+              body: `## 月次障害訓練リマインダー
+
+            今月のGameDay（障害訓練）を実施してください。
+
+            ### チェックリスト
+
+            - [ ] シナリオ選択（[GAMEDAY.md](docs/operations/GAMEDAY.md) 参照）
+            - [ ] Staging環境で訓練実施
+            - [ ] 振り返りをこのIssueにコメント
+            - [ ] Runbook更新（必要に応じて）
+
+            ### シナリオ候補
+
+            1. **API障害**（難易度: 易）- 初回推奨
+            2. **認証サービス障害**（難易度: 中）
+            3. **デプロイ失敗**（難易度: 中）
+            4. **大量トラフィック**（難易度: 難）
+
+            ### 参考ドキュメント
+
+            - [GAMEDAY.md](docs/operations/GAMEDAY.md)
+            - [RUNBOOK.md](docs/operations/RUNBOOK.md)
+
+            ---
+            🤖 このIssueは自動生成されました`,
+              labels: ['operations', 'gameday']
+            });
+
+  create-slo-review-issue:
+    name: 📊 SLO Review Reminder
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create SLO Review Issue
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        with:
+          script: |
+            const today = new Date();
+            const month = today.toLocaleDateString('ja-JP', { year: 'numeric', month: 'long' });
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `📊 ${month} SLO/SLI レビュー`,
+              body: `## 月次SLOレビュー
+
+            先月のSLO達成状況を確認してください。
+
+            ### チェックリスト
+
+            - [ ] Sentry Performance 確認（p50/p95）
+            - [ ] Sentry Error Rate 確認
+            - [ ] Vercel Analytics 確認（Web Vitals）
+            - [ ] エラーバジェット消費率を記録
+
+            ### 確認項目
+
+            | 指標 | SLO | 実績 | 達成 |
+            |------|-----|------|------|
+            | API可用性 | 99.5% | ___% | ⬜ |
+            | API p95 | < 500ms | ___ms | ⬜ |
+            | LCP | < 2.5s | ___s | ⬜ |
+            | サーバーエラー率 | < 0.1% | ___% | ⬜ |
+
+            ### 参考
+
+            - [Sentry Dashboard](https://sentry.io)
+            - [Vercel Analytics](https://vercel.com/analytics)
+            - [SLO_SLI.md](docs/operations/SLO_SLI.md)
+
+            ---
+            🤖 このIssueは自動生成されました`,
+              labels: ['operations', 'slo-review']
+            });

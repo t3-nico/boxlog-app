@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { useCalendarToast } from '@/features/calendar/hooks/use-calendar-toast';
+import { useCalendarToast } from '@/features/calendar/hooks/useCalendarToast';
 
 import type { TimedPlan } from '../types/plan.types';
 

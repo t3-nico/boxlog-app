@@ -1,0 +1,41 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "entry": ["src/app/**/*.{ts,tsx}", "src/pages/**/*.{ts,tsx}", "src/middleware.ts"],
+  "project": ["src/**/*.{ts,tsx}"],
+  "ignore": [
+    "src/**/*.test.{ts,tsx}",
+    "src/**/*.spec.{ts,tsx}",
+    "src/test/**/*",
+    "src/types/**/*",
+    "src/instrumentation.ts",
+    "**/*.d.ts",
+    ".github/**/*",
+    "src/features/**/index.ts",
+    "src/i18n/**/*"
+  ],
+  "ignoreDependencies": [
+    "@prisma/instrumentation",
+    "@sentry/nextjs",
+    "@vercel/analytics",
+    "@vercel/speed-insights",
+    "husky",
+    "lint-staged",
+    "prettier-plugin-organize-imports",
+    "prettier-plugin-tailwindcss",
+    "tw-animate-css",
+    "lightningcss"
+  ],
+  "ignoreBinaries": ["supabase", "vercel"],
+  "github-actions": false,
+  "next": {
+    "entry": [
+      "src/app/**/page.{ts,tsx}",
+      "src/app/**/layout.{ts,tsx}",
+      "src/app/**/loading.{ts,tsx}",
+      "src/app/**/error.{ts,tsx}",
+      "src/app/**/not-found.{ts,tsx}",
+      "src/app/api/**/*.{ts,tsx}",
+      "src/middleware.ts"
+    ]
+  }
+}

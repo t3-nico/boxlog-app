@@ -1,6 +1,14 @@
 'use client';
 
-import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from 'react';
+import {
+  createContext,
+  ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 
 import { GlobalSearchModal } from '../components/global-search-modal';
 
@@ -31,24 +39,31 @@ export const GlobalSearchProvider = ({ children }: { children: ReactNode }) => {
     setIsOpen(false);
   }, []);
 
+  const toggle = useCallback(() => {
+    setIsOpen((prev) => !prev);
+  }, []);
+
   // Keyboard shortcut: Cmd/Ctrl + K
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
-        setIsOpen((prev) => !prev);
+        toggle();
       }
     };
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [toggle]);
 
-  const contextValue = {
-    open,
-    close,
-    isOpen,
-  };
+  const contextValue = useMemo(
+    () => ({
+      open,
+      close,
+      isOpen,
+    }),
+    [open, close, isOpen],
+  );
 
   return (
     <GlobalSearchContext.Provider value={contextValue}>

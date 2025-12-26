@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { getTranslation } from './get-translation';
 import { useNetworkErrorHandler } from './network-handler';
 import { CALENDAR_TOAST_KEYS } from './translation-keys';
-import { useCalendarToast } from './use-calendar-toast';
+import { useCalendarToast } from './useCalendarToast';
 
 // 楽観的更新の結果
 export interface OptimisticUpdateResult<T> {

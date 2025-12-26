@@ -5,7 +5,7 @@ import type { CalendarAction, CalendarToastOptions } from './types';
 import { getTranslation } from './get-translation';
 import { CALENDAR_TOAST_KEYS } from './translation-keys';
 import { toExternalToast } from './types';
-import { useCalendarToast } from './use-calendar-toast';
+import { useCalendarToast } from './useCalendarToast';
 
 // デバウンス設定
 export interface DebounceConfig {

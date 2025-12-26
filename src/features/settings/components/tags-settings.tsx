@@ -8,8 +8,8 @@ import { Plus, Search } from 'lucide-react';
 import { ErrorBoundary } from '@/components/error-boundary';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useTagOperations } from '@/features/tags/hooks/use-tag-operations';
-import { useTags } from '@/features/tags/hooks/use-tags';
+import { useTagOperations } from '@/features/tags/hooks/useTagOperations';
+import { useTags } from '@/features/tags/hooks/useTags';
 import { useTranslations } from 'next-intl';
 
 import { SettingsCard } from './SettingsCard';

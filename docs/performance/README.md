@@ -6,6 +6,18 @@ BoxLogのパフォーマンス最適化、コード品質管理、アクセシ�
 
 ### 🚀 パフォーマンス最適化
 
+#### [Next.js App Router最適化](./NEXTJS_OPTIMIZATION.md)
+
+**GAFAレベル達成** - 推定スコア88-92点
+
+- PPR (Partial Prerendering) 有効化
+- tRPC Server-side prefetch + HydrationBoundary
+- Link prefetch条件化（ネットワーク考慮）
+- LCP画像priority属性
+- Service Workerキャッシュ自動バージョニング
+- optimizePackageImports拡張
+- Heavy Component遅延ロード
+
 #### [Bundle Size監視](./BUNDLE_MONITORING.md)
 
 **継続監視システム** - 企業級Bundle最適化
@@ -128,5 +140,5 @@ npm test:coverage         # カバレッジ80%確認
 ---
 
 **種類**: 📙 リファレンス
-**最終更新**: 2025-12-11
+**最終更新**: 2024-12-26
 **所有者**: BoxLog 開発チーム

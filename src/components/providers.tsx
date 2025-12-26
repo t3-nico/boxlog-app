@@ -39,6 +39,20 @@ const ReactQueryDevtools =
       )
     : () => null;
 
+// axe-core アクセシビリティチェッカー: 開発環境のみ
+const AxeAccessibilityChecker =
+  process.env.NODE_ENV === 'development'
+    ? dynamic(
+        () =>
+          import('@/components/dev/AxeAccessibilityChecker').then(
+            (mod) => mod.AxeAccessibilityChecker,
+          ),
+        {
+          ssr: false,
+        },
+      )
+    : () => null;
+
 import { RealtimeProvider } from '@/components/providers/RealtimeProvider';
 import { ThemeProvider } from '@/contexts/theme-context';
 import { AuthStoreInitializer } from '@/features/auth/stores/AuthStoreInitializer';
@@ -125,10 +139,15 @@ export function Providers({ children }: ProvidersProps) {
     }),
   );
 
+  // Provider階層（最適化済み）
+  // Context Provider: QueryClientProvider → api.Provider → ThemeProvider → GlobalSearchProvider
+  // 非Context: AuthStoreInitializer（並列配置）、RealtimeProvider（ページ別購読）
   return (
     <QueryClientProvider client={queryClient}>
       <api.Provider client={trpcClient} queryClient={queryClient}>
+        {/* 認証ストア初期化（Contextを提供しないので並列配置可能） */}
         <AuthStoreInitializer />
+        {/* Realtime購読（ページ別遅延初期化で最適化済み） */}
         <RealtimeProvider>
           <ThemeProvider>
             <GlobalSearchProvider>
@@ -139,9 +158,12 @@ export function Providers({ children }: ProvidersProps) {
             </GlobalSearchProvider>
           </ThemeProvider>
         </RealtimeProvider>
-        {/* React Query DevTools（開発環境のみ） */}
+        {/* 開発ツール（開発環境のみ） */}
         {process.env.NODE_ENV === 'development' && (
-          <ReactQueryDevtools initialIsOpen={false} buttonPosition="bottom-right" />
+          <>
+            <ReactQueryDevtools initialIsOpen={false} buttonPosition="bottom-right" />
+            <AxeAccessibilityChecker />
+          </>
         )}
       </api.Provider>
     </QueryClientProvider>
