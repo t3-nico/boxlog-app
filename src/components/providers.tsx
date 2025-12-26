@@ -39,6 +39,20 @@ const ReactQueryDevtools =
       )
     : () => null;
 
+// axe-core アクセシビリティチェッカー: 開発環境のみ
+const AxeAccessibilityChecker =
+  process.env.NODE_ENV === 'development'
+    ? dynamic(
+        () =>
+          import('@/components/dev/AxeAccessibilityChecker').then(
+            (mod) => mod.AxeAccessibilityChecker,
+          ),
+        {
+          ssr: false,
+        },
+      )
+    : () => null;
+
 import { RealtimeProvider } from '@/components/providers/RealtimeProvider';
 import { ThemeProvider } from '@/contexts/theme-context';
 import { AuthStoreInitializer } from '@/features/auth/stores/AuthStoreInitializer';
@@ -144,9 +158,12 @@ export function Providers({ children }: ProvidersProps) {
             </GlobalSearchProvider>
           </ThemeProvider>
         </RealtimeProvider>
-        {/* React Query DevTools（開発環境のみ） */}
+        {/* 開発ツール（開発環境のみ） */}
         {process.env.NODE_ENV === 'development' && (
-          <ReactQueryDevtools initialIsOpen={false} buttonPosition="bottom-right" />
+          <>
+            <ReactQueryDevtools initialIsOpen={false} buttonPosition="bottom-right" />
+            <AxeAccessibilityChecker />
+          </>
         )}
       </api.Provider>
     </QueryClientProvider>

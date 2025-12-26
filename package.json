@@ -302,6 +302,7 @@
     "sharp": false
   },
   "devDependencies": {
+    "@axe-core/react": "^4.11.0",
     "@commitlint/cli": "^20.1.0",
     "@commitlint/config-conventional": "^20.0.0",
     "@eslint/eslintrc": "^3.3.1",
@@ -326,6 +327,7 @@
     "@vitejs/plugin-react": "^5.0.4",
     "@vitest/coverage-v8": "^4.0.14",
     "@vitest/ui": "^4.0.14",
+    "axe-core": "^4.11.0",
     "eslint": "^9.39.1",
     "eslint-config-next": "^15.5.6",
     "eslint-plugin-import": "^2.32.0",
