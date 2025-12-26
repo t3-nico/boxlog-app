@@ -10,6 +10,8 @@ import { memo } from 'react';
 
 import { useTranslations } from 'next-intl';
 
+import type { LucideIcon } from 'lucide-react';
+
 import { EmptyState as BaseEmptyState } from '@/components/common';
 
 import type { EmptyStateProps } from '../../types/view.types';
@@ -33,13 +35,11 @@ export const EmptyState = memo<EmptyStateProps>(function EmptyState({
   const displayTitle = title ?? t('calendar.emptyState.defaultTitle');
   const displayDescription = description ?? t('calendar.emptyState.defaultDescription');
 
-  // アイコンがコンポーネント型かどうかを判定
-  const isIconComponent =
-    typeof icon === 'function' ||
-    (typeof icon === 'object' && icon !== null && '$$typeof' in icon && 'render' in icon);
+  // アイコンがLucideIconコンポーネント型かどうかを判定
+  const isLucideIcon = typeof icon === 'function';
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const IconComponent = isIconComponent ? (icon as any) : undefined;
+  // LucideIconの場合のみBaseEmptyStateに渡す
+  const IconComponent = isLucideIcon ? (icon as LucideIcon) : undefined;
 
   return (
     <BaseEmptyState

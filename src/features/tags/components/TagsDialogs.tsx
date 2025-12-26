@@ -15,6 +15,8 @@ import { TagArchiveDialog } from '@/features/tags/components/TagArchiveDialog';
 import { TagDeleteDialog } from '@/features/tags/components/TagDeleteDialog';
 import { TagMergeDialog } from '@/features/tags/components/TagMergeDialog';
 import { TagCreateModal } from '@/features/tags/components/tag-create-modal';
+import type { TranslationValues } from 'next-intl';
+
 import type { CreateTagInput, Tag } from '@/features/tags/types';
 
 interface TagsDialogsProps {
@@ -40,8 +42,7 @@ interface TagsDialogsProps {
   selectedCount: number;
   isBulkDeleting: boolean;
   // Translations (useTranslationsの戻り値)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  t: (key: string, values?: Record<string, any>) => string;
+  t: (key: string, values?: TranslationValues) => string;
 }
 
 export function TagsDialogs({

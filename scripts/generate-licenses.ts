@@ -16,89 +16,86 @@
  * @see Issue #545 - 第三者ライセンス表記整備 Phase 2
  */
 
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
-import { dirname, join } from 'node:path'
-// @ts-expect-error - license-checker has no type definitions
-import licenseChecker from 'license-checker'
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+// @ts-expect-error - license-checker has incomplete type definitions
+import licenseChecker from 'license-checker';
 
-/**
- * ライセンス情報の型定義
- */
 interface LicenseInfo {
-  licenses: string
-  repository?: string
-  licenseFile?: string
-  publisher?: string
-  email?: string
-  url?: string
-  copyright?: string
+  licenses: string;
+  repository?: string;
+  licenseFile?: string;
+  publisher?: string;
+  email?: string;
+  url?: string;
+  copyright?: string;
 }
 
 /**
  * 公開用クレジット情報の型定義
  */
 interface CreditInfo {
-  name: string
-  version: string
-  license: string
-  repository?: string
-  publisher?: string
-  copyright?: string
+  name: string;
+  version: string;
+  license: string;
+  repository?: string;
+  publisher?: string;
+  copyright?: string;
 }
 
 /**
  * メイン処理
  */
 async function generateLicenses(): Promise<void> {
-  console.log('📄 License Information Generator')
-  console.log('='.repeat(50))
+  console.log('📄 License Information Generator');
+  console.log('='.repeat(50));
 
   try {
     // 1. license-checkerで依存関係を収集
-    console.log('\n📦 Collecting dependency licenses...')
-    const packages = await collectLicenses()
-    console.log(`   ✅ Found ${Object.keys(packages).length} packages`)
+    console.log('\n📦 Collecting dependency licenses...');
+    const packages = await collectLicenses();
+    console.log(`   ✅ Found ${Object.keys(packages).length} packages`);
 
     // 2. Apache-2.0のNOTICEファイルを抽出
-    console.log('\n📋 Extracting Apache-2.0 NOTICE files...')
-    const notices = extractNotices(packages)
-    console.log(`   ✅ Found ${notices.length} NOTICE files`)
+    console.log('\n📋 Extracting Apache-2.0 NOTICE files...');
+    const notices = extractNotices(packages);
+    console.log(`   ✅ Found ${notices.length} NOTICE files`);
 
     // 3. JSON形式で公開用データを生成
-    console.log('\n🔧 Generating oss-credits.json...')
-    const credits = generateCredits(packages)
-    const outputDir = join(process.cwd(), 'public')
-    const jsonPath = join(outputDir, 'oss-credits.json')
+    console.log('\n🔧 Generating oss-credits.json...');
+    const credits = generateCredits(packages);
+    const outputDir = join(process.cwd(), 'public');
+    const jsonPath = join(outputDir, 'oss-credits.json');
 
     // ディレクトリが存在しない場合は作成
     if (!existsSync(outputDir)) {
-      mkdirSync(outputDir, { recursive: true })
+      mkdirSync(outputDir, { recursive: true });
     }
 
-    writeFileSync(jsonPath, JSON.stringify(credits, null, 2), 'utf-8')
-    console.log(`   ✅ Created: ${jsonPath}`)
+    writeFileSync(jsonPath, JSON.stringify(credits, null, 2), 'utf-8');
+    console.log(`   ✅ Created: ${jsonPath}`);
 
     // 4. THIRD_PARTY_NOTICES.txt を生成
-    console.log('\n📝 Generating THIRD_PARTY_NOTICES.txt...')
-    const noticesPath = join(outputDir, 'THIRD_PARTY_NOTICES.txt')
-    const noticesContent = generateNoticesFile(notices)
-    writeFileSync(noticesPath, noticesContent, 'utf-8')
-    console.log(`   ✅ Created: ${noticesPath}`)
+    console.log('\n📝 Generating THIRD_PARTY_NOTICES.txt...');
+    const noticesPath = join(outputDir, 'THIRD_PARTY_NOTICES.txt');
+    const noticesContent = generateNoticesFile(notices);
+    writeFileSync(noticesPath, noticesContent, 'utf-8');
+    console.log(`   ✅ Created: ${noticesPath}`);
 
     // 5. 統計情報を表示
-    console.log('\n📊 License Statistics:')
-    const licenseStats = calculateLicenseStats(packages)
+    console.log('\n📊 License Statistics:');
+    const licenseStats = calculateLicenseStats(packages);
     Object.entries(licenseStats)
       .sort(([, a], [, b]) => b - a)
       .forEach(([license, count]) => {
-        console.log(`   ${license}: ${count} packages`)
-      })
+        console.log(`   ${license}: ${count} packages`);
+      });
 
-    console.log('\n✅ License information generated successfully!')
-    console.log('='.repeat(50))
+    console.log('\n✅ License information generated successfully!');
+    console.log('='.repeat(50));
   } catch (error) {
-    console.error('\n❌ Error generating licenses:', error)
-    process.exit(1)
+    console.error('\n❌ Error generating licenses:', error);
+    process.exit(1);
   }
 }
 
@@ -115,38 +112,38 @@ async function collectLicenses(): Promise<Record<string, LicenseInfo>> {
       },
       (err: Error | null, packages: Record<string, LicenseInfo>) => {
         if (err) {
-          reject(err)
+          reject(err);
         } else {
-          resolve(packages)
+          resolve(packages);
         }
-      }
-    )
-  })
+      },
+    );
+  });
 }
 
 /**
  * Apache-2.0のNOTICEファイルを抽出
  */
 function extractNotices(packages: Record<string, LicenseInfo>): string[] {
-  const notices: string[] = []
+  const notices: string[] = [];
 
   Object.entries(packages).forEach(([name, info]) => {
     if (info.licenses.includes('Apache-2.0') && info.licenseFile) {
-      const licenseDir = dirname(info.licenseFile)
-      const noticeFile = join(licenseDir, 'NOTICE')
+      const licenseDir = dirname(info.licenseFile);
+      const noticeFile = join(licenseDir, 'NOTICE');
 
       if (existsSync(noticeFile)) {
         try {
-          const noticeContent = readFileSync(noticeFile, 'utf-8')
-          notices.push(`\n${'='.repeat(80)}\n${name}\n${'='.repeat(80)}\n\n${noticeContent}`)
+          const noticeContent = readFileSync(noticeFile, 'utf-8');
+          notices.push(`\n${'='.repeat(80)}\n${name}\n${'='.repeat(80)}\n\n${noticeContent}`);
         } catch (error) {
-          console.warn(`   ⚠️  Failed to read NOTICE for ${name}:`, error)
+          console.warn(`   ⚠️  Failed to read NOTICE for ${name}:`, error);
         }
       }
     }
-  })
+  });
 
-  return notices
+  return notices;
 }
 
 /**
@@ -156,9 +153,9 @@ function generateCredits(packages: Record<string, LicenseInfo>): CreditInfo[] {
   return Object.entries(packages)
     .map(([nameWithVersion, info]) => {
       // "package@version" の形式から name と version を分離
-      const lastAtIndex = nameWithVersion.lastIndexOf('@')
-      const name = nameWithVersion.substring(0, lastAtIndex)
-      const version = nameWithVersion.substring(lastAtIndex + 1)
+      const lastAtIndex = nameWithVersion.lastIndexOf('@');
+      const name = nameWithVersion.substring(0, lastAtIndex);
+      const version = nameWithVersion.substring(lastAtIndex + 1);
 
       return {
         name,
@@ -167,9 +164,9 @@ function generateCredits(packages: Record<string, LicenseInfo>): CreditInfo[] {
         ...(info.repository ? { repository: info.repository } : {}),
         ...(info.publisher ? { publisher: info.publisher } : {}),
         ...(info.copyright ? { copyright: info.copyright } : {}),
-      }
+      };
     })
-    .sort((a, b) => a.name.localeCompare(b.name)) // アルファベット順にソート
+    .sort((a, b) => a.name.localeCompare(b.name)); // アルファベット順にソート
 }
 
 /**
@@ -186,7 +183,7 @@ ${'-'.repeat(80)}
 The following components are licensed under the Apache License 2.0 and include
 NOTICE files that must be preserved according to the license terms.
 
-`
+`;
 
   const footer = `
 ${'-'.repeat(80)}
@@ -195,31 +192,31 @@ For a complete list of all third-party software and their licenses,
 please visit: /legal/oss-credits
 
 Generated: ${new Date().toISOString()}
-`
+`;
 
   if (notices.length === 0) {
-    return header + '\n(No Apache-2.0 packages with NOTICE files found)\n' + footer
+    return header + '\n(No Apache-2.0 packages with NOTICE files found)\n' + footer;
   }
 
-  return header + notices.join('\n\n') + footer
+  return header + notices.join('\n\n') + footer;
 }
 
 /**
  * ライセンスごとの統計を計算
  */
 function calculateLicenseStats(packages: Record<string, LicenseInfo>): Record<string, number> {
-  const stats: Record<string, number> = {}
+  const stats: Record<string, number> = {};
 
   Object.values(packages).forEach((info) => {
-    const license = info.licenses
-    stats[license] = (stats[license] || 0) + 1
-  })
+    const license = info.licenses;
+    stats[license] = (stats[license] || 0) + 1;
+  });
 
-  return stats
+  return stats;
 }
 
 // 実行
 generateLicenses().catch((error) => {
-  console.error('❌ Fatal error:', error)
-  process.exit(1)
-})
+  console.error('❌ Fatal error:', error);
+  process.exit(1);
+});

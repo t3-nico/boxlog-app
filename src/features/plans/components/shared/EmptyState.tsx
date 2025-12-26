@@ -15,7 +15,7 @@ interface EmptyStateProps {
   description?: string;
   actionLabel?: string;
   onAction?: () => void;
-  icon?: LucideIcon | React.ReactNode;
+  icon?: LucideIcon;
 }
 
 /**
@@ -24,19 +24,11 @@ interface EmptyStateProps {
  * 共通EmptyStateのラッパー。後方互換性のために残存。
  */
 export function EmptyState({ title, description, actionLabel, onAction, icon }: EmptyStateProps) {
-  // アイコンがコンポーネント型かどうかを判定
-  const isIconComponent =
-    typeof icon === 'function' ||
-    (typeof icon === 'object' && icon !== null && '$$typeof' in icon && 'render' in icon);
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const IconComponent = isIconComponent ? (icon as any) : undefined;
-
   return (
     <BaseEmptyState
       title={title}
       description={description}
-      icon={IconComponent}
+      icon={icon}
       actionLabel={actionLabel}
       onAction={onAction}
     />
