@@ -109,33 +109,36 @@ jobs:
         with:
           script: |
             const today = new Date().toISOString().split('T')[0];
+            const runUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
 
-            const body = `## 🚨 Weekly E2E Test Failure
-
-**Date**: ${today}
-**Workflow Run**: [View Details](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})
-
-### Summary
-
-The weekly full browser E2E test has detected failures. This may indicate browser compatibility issues that need attention.
-
-### Tested Browsers
-- Chrome (Chromium)
-- Firefox
-- Safari (WebKit)
-- Mobile Chrome (Pixel 5)
-- Mobile Safari (iPhone 12)
-- iPad Pro
-
-### Action Required
-
-1. Review the [workflow logs](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})
-2. Download the Playwright reports from artifacts
-3. Identify and fix browser-specific issues
-4. Consider if the issue affects production users
-
----
-<sub>🤖 Automated by Weekly E2E Test</sub>`;
+            const body = [
+              '## 🚨 Weekly E2E Test Failure',
+              '',
+              `**Date**: ${today}`,
+              `**Workflow Run**: [View Details](${runUrl})`,
+              '',
+              '### Summary',
+              '',
+              'The weekly full browser E2E test has detected failures. This may indicate browser compatibility issues that need attention.',
+              '',
+              '### Tested Browsers',
+              '- Chrome (Chromium)',
+              '- Firefox',
+              '- Safari (WebKit)',
+              '- Mobile Chrome (Pixel 5)',
+              '- Mobile Safari (iPhone 12)',
+              '- iPad Pro',
+              '',
+              '### Action Required',
+              '',
+              `1. Review the [workflow logs](${runUrl})`,
+              '2. Download the Playwright reports from artifacts',
+              '3. Identify and fix browser-specific issues',
+              '4. Consider if the issue affects production users',
+              '',
+              '---',
+              '<sub>🤖 Automated by Weekly E2E Test</sub>',
+            ].join('\n');
 
             // 同じ日のIssueが既に存在するかチェック
             const { data: existingIssues } = await github.rest.issues.listForRepo({
