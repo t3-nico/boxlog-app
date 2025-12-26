@@ -1,0 +1,48 @@
+/**
+ * CalendarDragSelection 型定義
+ */
+
+export interface TimeRange {
+  startHour: number;
+  startMinute: number;
+  endHour: number;
+  endMinute: number;
+}
+
+export interface DateTimeSelection extends TimeRange {
+  date: Date;
+}
+
+export interface CalendarDragSelectionProps {
+  /** 必須：この列が担当する日付 */
+  date: Date;
+  className?: string | undefined;
+  onTimeRangeSelect?: ((selection: DateTimeSelection) => void) | undefined;
+  /** ダブルクリック専用ハンドラー（オプション、未指定時はonTimeRangeSelectが呼ばれる） */
+  onDoubleClick?: ((selection: DateTimeSelection) => void) | undefined;
+  children?: React.ReactNode | undefined;
+  /** ドラッグ選択を無効にする */
+  disabled?: boolean | undefined;
+}
+
+/** ドラッグ状態 */
+export interface DragSelectionState {
+  isSelecting: boolean;
+  selection: TimeRange | null;
+  selectionStart: { hour: number; minute: number } | null;
+  showSelectionPreview: boolean;
+  isLongPressActive: boolean;
+  dropTime: string | null;
+}
+
+/** 定数 */
+export const DRAG_CONSTANTS = {
+  /** 長押し検出時間（Google/Apple標準: 300-500ms） */
+  LONG_PRESS_DURATION: 300,
+  /** 長押し中の許容移動距離（px） */
+  LONG_PRESS_MOVE_THRESHOLD: 10,
+  /** シングルタップの最大時間（ms） */
+  SINGLE_TAP_MAX_DURATION: 200,
+  /** ドラッグとみなす最小移動距離（px） */
+  MIN_DRAG_DISTANCE: 5,
+} as const;

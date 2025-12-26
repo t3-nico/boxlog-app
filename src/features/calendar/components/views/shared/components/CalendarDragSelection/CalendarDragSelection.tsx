@@ -1,0 +1,83 @@
+'use client';
+
+/**
+ * カレンダードラッグ選択コンポーネント
+ *
+ * - 各カレンダー列が担当する日付を明確に持つ
+ * - 全ビュー共通のドラッグ選択動作を提供
+ * - ドラッグ操作で時間範囲選択、ダブルクリックでプラン作成
+ * - 統一されたDateTimeSelectionを出力
+ */
+
+import { useDroppable } from '@dnd-kit/core';
+
+import { cn } from '@/lib/utils';
+
+import { DragSelectionPreview } from './DragSelectionPreview';
+import type { CalendarDragSelectionProps } from './types';
+import { useDragSelection } from './useDragSelection';
+
+export const CalendarDragSelection = ({
+  date,
+  className,
+  onTimeRangeSelect,
+  onDoubleClick,
+  children,
+  disabled = false,
+}: CalendarDragSelectionProps) => {
+  const {
+    selection,
+    showSelectionPreview,
+    isOver,
+    containerRef,
+    handleMouseDown,
+    handleDoubleClick,
+    handleTouchStart,
+    formatTime,
+    droppableId,
+    droppableData,
+  } = useDragSelection({
+    date,
+    disabled,
+    onTimeRangeSelect,
+    onDoubleClick,
+  });
+
+  // ドロップ可能エリアとして設定
+  const { setNodeRef, isOver: dndIsOver } = useDroppable({
+    id: droppableId,
+    data: droppableData,
+  });
+
+  return (
+    <div
+      ref={(node) => {
+        // 両方のrefを設定
+        (containerRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
+        setNodeRef(node);
+      }}
+      className={cn('relative', className, (isOver || dndIsOver) && 'bg-primary/5')}
+      role="button"
+      tabIndex={0}
+      aria-label="Calendar drag selection area"
+      onMouseDown={handleMouseDown}
+      onDoubleClick={handleDoubleClick}
+      onTouchStart={handleTouchStart}
+      onClick={(e) => {
+        e.stopPropagation();
+      }}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+        }
+      }}
+    >
+      {children}
+
+      {/* ドラッグ選択範囲の表示 - 5px以上ドラッグした場合のみ表示 */}
+      {showSelectionPreview && selection && (
+        <DragSelectionPreview selection={selection} formatTime={formatTime} />
+      )}
+    </div>
+  );
+};
