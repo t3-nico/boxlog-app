@@ -38,5 +38,4 @@ export {
 } from './constants/calendar-constants';
 
 // Calendar Utils/Lib (excluding conflicting exports)
-export { isValidViewType } from './lib/calendar-helpers';
 export { calculateViewDateRange, getNextPeriod, getPreviousPeriod } from './lib/view-helpers';
