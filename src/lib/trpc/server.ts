@@ -98,6 +98,20 @@ async function createServerContext(): Promise<Context> {
 }
 
 /**
+ * QueryClientのシングルトン（リクエストごとにキャッシュ）
+ */
+const getQueryClient = cache(
+  () =>
+    new QueryClient({
+      defaultOptions: {
+        queries: {
+          staleTime: 5 * 60 * 1000, // 5分
+        },
+      },
+    }),
+);
+
+/**
  * Server-side tRPC helpersを作成
  *
  * React.cache()でリクエストごとにメモ化
@@ -105,14 +119,7 @@ async function createServerContext(): Promise<Context> {
  */
 export const createServerHelpers = cache(async () => {
   const ctx = await createServerContext();
-
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        staleTime: 5 * 60 * 1000, // 5分
-      },
-    },
-  });
+  const queryClient = getQueryClient();
 
   const helpers = createServerSideHelpers({
     router: appRouter,
@@ -120,10 +127,9 @@ export const createServerHelpers = cache(async () => {
     transformer: superjson,
   });
 
-  return {
-    ...helpers,
-    queryClient,
-  };
+  // Object.assignを使用してhelpersのプロパティを保持
+  // スプレッド演算子ではtRPCのプロキシプロパティが失われる
+  return Object.assign(helpers, { queryClient });
 });
 
 /**

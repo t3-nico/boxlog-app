@@ -183,10 +183,11 @@ const nextConfig = {
 
   // 実験的機能
   experimental: {
-    // Partial Prerendering（PPR）
-    // 静的シェルを即座に表示し、動的部分をストリーミング
+    // Partial Prerendering（PPR）- 現在無効化
+    // Next.js canary版でのみ利用可能なため、stable版では無効化
+    // TODO: Next.js 16以降でstableになったら再有効化を検討
     // @see https://nextjs.org/docs/app/building-your-application/rendering/partial-prerendering
-    ppr: 'incremental',
+    // ppr: 'incremental',
 
     // Next.js 15 Router Cache再有効化（デフォルトで無効化された）
     // ページ遷移パフォーマンス向上のため、クライアント側キャッシュを有効化
