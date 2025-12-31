@@ -220,10 +220,10 @@ export class TagService {
   }
 
   /**
-   * タグマージ
+   * タグマージ（トランザクション対応）
    *
-   * ソースタグの関連付けをターゲットタグに移行し、
-   * オプションでソースタグを削除します。
+   * PL/pgSQL Stored Procedureを使用してトランザクション的にタグをマージします。
+   * ソースタグの関連付けをターゲットタグに移行し、ソースタグを削除します。
    *
    * @param options - マージオプション
    * @returns マージ結果
@@ -237,77 +237,44 @@ export class TagService {
       deleteSource = true,
     } = options
 
-    // バリデーション
+    // バリデーション（所有権チェックはRPC内で実行される）
     if (sourceTagId === targetTagId) {
       throw new TagServiceError('SAME_TAG_MERGE', 'Cannot merge a tag with itself')
     }
 
-    // 両方のタグの所有権チェック
-    const sourceTag = await this.getById({ userId, tagId: sourceTagId })
-    const targetTag = await this.getById({ userId, tagId: targetTagId })
+    try {
+      // PL/pgSQL Stored Procedureを呼び出し
+      const { data, error } = await this.supabase.rpc('merge_tags', {
+        p_user_id: userId,
+        p_source_tag_ids: [sourceTagId],
+        p_target_tag_id: targetTagId,
+      })
 
-    let mergedAssociations = 0
+      if (error) {
+        throw new TagServiceError('MERGE_FAILED', `Failed to merge tags: ${error.message}`)
+      }
 
-    // 関連付けのマージ
-    if (mergeAssociations) {
-      // ターゲットタグに既に関連付けられているplan_idを取得
-      const { data: existingPlanTags } = await this.supabase
-        .from('plan_tags')
-        .select('plan_id')
-        .eq('tag_id', targetTagId)
+      // RPC結果を解析
+      const result = data as {
+        success: boolean
+        merged_associations: number
+        deleted_tags: number
+        target_tag: TagRow
+      }
 
-      const existingPlanIds = new Set((existingPlanTags ?? []).map((pt) => pt.plan_id))
-
-      // ソースタグの関連付けを取得
-      const { data: sourcePlanTags } = await this.supabase
-        .from('plan_tags')
-        .select('*')
-        .eq('tag_id', sourceTagId)
-
-      // 重複しない関連付けを移行
-      const tagsToMigrate = (sourcePlanTags ?? []).filter(
-        (pt) => !existingPlanIds.has(pt.plan_id),
+      return {
+        success: result.success,
+        mergedAssociations: result.merged_associations,
+        targetTag: result.target_tag,
+      }
+    } catch (error) {
+      if (error instanceof TagServiceError) {
+        throw error
+      }
+      throw new TagServiceError(
+        'MERGE_FAILED',
+        error instanceof Error ? error.message : 'Unknown error',
       )
-
-      if (tagsToMigrate.length > 0) {
-        const { error: updateError } = await this.supabase
-          .from('plan_tags')
-          .update({ tag_id: targetTagId })
-          .eq('tag_id', sourceTagId)
-          .in(
-            'plan_id',
-            tagsToMigrate.map((pt) => pt.plan_id),
-          )
-
-        if (updateError) {
-          throw new TagServiceError('MERGE_FAILED', `Failed to merge associations: ${updateError.message}`)
-        }
-
-        mergedAssociations = tagsToMigrate.length
-      }
-
-      // 重複していた関連付けは削除
-      if (sourcePlanTags && sourcePlanTags.length > tagsToMigrate.length) {
-        await this.supabase.from('plan_tags').delete().eq('tag_id', sourceTagId)
-      }
-    }
-
-    // ソースタグの削除
-    if (deleteSource) {
-      const { error: deleteError } = await this.supabase
-        .from('tags')
-        .delete()
-        .eq('id', sourceTagId)
-
-      if (deleteError) {
-        throw new TagServiceError('DELETE_FAILED', `Failed to delete source tag: ${deleteError.message}`)
-      }
-    }
-
-    return {
-      success: true,
-      mergedAssociations,
-      targetTag,
     }
   }
 
