@@ -11,6 +11,14 @@ import { z } from 'zod';
 
 import { createAppError, ERROR_CODES } from '@/config/error-patterns';
 import { extractClientIp } from '@/lib/security/ip-validation';
+import {
+  AuthMode,
+  createServiceRoleClient,
+  detectAuthMode,
+  extractBearerToken,
+  OAuthError,
+  verifyOAuthToken,
+} from '@/lib/supabase/oauth';
 
 import type { Database } from '@/lib/database.types';
 
@@ -23,48 +31,110 @@ export interface Context {
   userId?: string | undefined;
   sessionId?: string | undefined;
   supabase: SupabaseClient<Database>;
+  /** 認証モード（session, oauth, service-role） */
+  authMode: AuthMode;
+  /** OAuth 2.1トークン（oauth modeの場合のみ） */
+  accessToken?: string;
 }
 
 /**
  * コンテキスト作成関数
+ *
+ * 3つの認証モードをサポート：
+ * 1. session: Cookie認証（既存、ブラウザ用）
+ * 2. oauth: OAuth 2.1トークン認証（MCP用）
+ * 3. service-role: Service Role Key認証（管理者用）
  */
 export async function createTRPCContext(opts: CreateNextContextOptions): Promise<Context> {
   const { req, res } = opts;
 
+  // リクエストヘッダーから認証モードを自動検出
+  const authMode = detectAuthMode(req.headers as Record<string, string>);
+
   // 認証情報の取得
   let userId: string | undefined;
   let sessionId: string | undefined;
+  let accessToken: string | undefined;
+  let supabase: SupabaseClient<Database>;
 
-  // Supabaseのセッションクッキーから認証情報を取得
-  const { createServerClient } = await import('@supabase/ssr');
+  // 1. OAuth 2.1トークン認証（MCP用）
+  if (authMode === 'oauth') {
+    try {
+      const authHeader =
+        typeof req.headers['authorization'] === 'string' ? req.headers['authorization'] : null;
+      const token = extractBearerToken(authHeader);
 
-  const supabase = createServerClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get: (name) => {
-          const cookie = req.cookies[name];
-          return cookie;
-        },
-        set: () => {},
-        remove: () => {},
-      },
-    },
-  );
+      const verificationResult = await verifyOAuthToken(token);
 
-  try {
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-
-    if (session?.user) {
-      userId = session.user.id;
-      sessionId = session.access_token;
+      userId = verificationResult.userId;
+      accessToken = verificationResult.accessToken;
+      sessionId = verificationResult.accessToken;
+      supabase = verificationResult.client;
+    } catch (error) {
+      if (error instanceof OAuthError) {
+        console.error('OAuth token verification failed:', error.message);
+      }
+      throw new TRPCError({
+        code: 'UNAUTHORIZED',
+        message: error instanceof OAuthError ? error.message : 'OAuth authentication failed',
+        cause: error,
+      });
     }
-  } catch (error) {
-    console.error('Auth context creation error:', error);
-    // 認証エラーは無視（ゲストユーザーとして扱う）
+  }
+  // 2. Service Role認証（管理者用）
+  else if (authMode === 'service-role') {
+    try {
+      const apiKey =
+        typeof req.headers['x-api-key'] === 'string' ? req.headers['x-api-key'] : null;
+      const expectedKey = process.env.SERVICE_ROLE_KEY;
+
+      if (!apiKey || apiKey !== expectedKey) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'Invalid or missing API key',
+        });
+      }
+
+      // Service Role Client作成（RLSバイパス）
+      supabase = createServiceRoleClient();
+      userId = undefined; // Admin操作ではuserIdはundefined
+    } catch (error) {
+      console.error('Service role authentication failed:', error);
+      throw error;
+    }
+  }
+  // 3. Session Cookie認証（既存、ブラウザ用）
+  else {
+    const { createServerClient } = await import('@supabase/ssr');
+
+    supabase = createServerClient<Database>(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          get: (name) => {
+            const cookie = req.cookies[name];
+            return cookie;
+          },
+          set: () => {},
+          remove: () => {},
+        },
+      },
+    );
+
+    try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (session?.user) {
+        userId = session.user.id;
+        sessionId = session.access_token;
+      }
+    } catch (error) {
+      console.error('Session auth context creation error:', error);
+      // 認証エラーは無視（ゲストユーザーとして扱う）
+    }
   }
 
   return {
@@ -72,7 +142,9 @@ export async function createTRPCContext(opts: CreateNextContextOptions): Promise
     res,
     userId,
     sessionId,
-    supabase: supabase as unknown as SupabaseClient<Database>,
+    accessToken,
+    supabase,
+    authMode,
   };
 }
 
