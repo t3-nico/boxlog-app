@@ -1,0 +1,10 @@
+# Build output
+dist/
+*.js
+*.js.map
+
+# Keep TypeScript files
+!*.ts
+
+# Node modules
+node_modules/

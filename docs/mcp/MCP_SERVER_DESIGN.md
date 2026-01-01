@@ -37,6 +37,21 @@ Claude: 統計情報を取得 → 「今週は15時間です」
 Claude: タグマージ → 「統合しました」
 ```
 
+### 4. 通知確認
+```
+ユーザー: 「未読通知を教えて」
+Claude: 通知一覧を取得 → 「3件の未読通知があります」
+
+ユーザー: 「全部既読にして」
+Claude: 各通知を既読化 → 「すべて既読にしました」
+```
+
+### 5. 変更履歴確認
+```
+ユーザー: 「このタスクの変更履歴を見せて」
+Claude: アクティビティログ取得 → 「12/25にタイトル変更、12/26にタグ追加されています」
+```
+
 ---
 
 ## 🏗️ MCP Resources 設計
@@ -80,7 +95,7 @@ URI: logs://boxlog/tags
 説明: 全タグ一覧
 ```
 
-### 4. 統計情報
+### 4. 統計情報（サマリー）
 ```
 URI: logs://boxlog/statistics/summary
 説明: 全体統計（総タスク数、完了率、総時間等）
@@ -89,6 +104,51 @@ URI: logs://boxlog/statistics/summary
 **データ取得:**
 ```typescript
 const stats = await trpc.plans.getStats.query()
+```
+
+### 5. 統計情報（日次）
+```
+URI: logs://boxlog/statistics/daily-hours
+説明: 日次の作業時間
+```
+
+**データ取得:**
+```typescript
+const dailyHours = await trpc.plans.getDailyHours.query()
+```
+
+### 6. 統計情報（タグ別）
+```
+URI: logs://boxlog/statistics/tag-breakdown
+説明: タグ別の統計情報（使用回数、最終使用日等）
+```
+
+**データ取得:**
+```typescript
+const tagStats = await trpc.plans.getTagStats.query()
+```
+
+### 7. 通知一覧
+```
+URI: logs://boxlog/notifications
+説明: 未読通知一覧
+```
+
+**データ取得:**
+```typescript
+const notifications = await trpc.notifications.list.query()
+```
+
+### 8. アクティビティログ
+```
+URI: logs://boxlog/activities/{plan-id}
+説明: 特定プランの変更履歴
+例: logs://boxlog/activities/uuid-1234
+```
+
+**データ取得:**
+```typescript
+const activities = await trpc.plans.activities.query({ planId })
 ```
 
 ---
@@ -224,6 +284,30 @@ async function createEntry(args) {
 }
 ```
 
+### 7. mark_notification_read - 通知既読化
+```typescript
+{
+  name: "mark_notification_read",
+  description: "Mark a notification as read",
+  inputSchema: {
+    type: "object",
+    properties: {
+      notificationId: { type: "string", description: "Notification ID" },
+    },
+    required: ["notificationId"],
+  },
+}
+```
+
+**実装:**
+```typescript
+async function markNotificationRead(args) {
+  return await trpc.notifications.markAsRead.mutate({
+    id: args.notificationId,
+  })
+}
+```
+
 ---
 
 ## 🔐 認証設計
@@ -315,6 +399,27 @@ boxlog-app/
 期待結果: 統計情報が表示される
 ```
 
+### 4. 通知管理テスト
+```
+ユーザー: 「未読通知を教えて」
+期待結果: 未読通知一覧が表示される
+
+ユーザー: 「最初の通知を既読にして」
+期待結果: 指定の通知が既読になる
+```
+
+### 5. アクティビティログテスト
+```
+ユーザー: 「このタスクの変更履歴を見せて」
+期待結果: タスクの変更履歴が時系列で表示される
+```
+
+### 6. タグ別統計テスト
+```
+ユーザー: 「各タグの使用状況を教えて」
+期待結果: タグ別の使用回数と最終使用日が表示される
+```
+
 ---
 
 ## 📊 実装優先度
@@ -325,9 +430,11 @@ boxlog-app/
 | 🔴 P0 | リソース（logs, tags） | 0.5日 |
 | 🟡 P1 | update_entry, delete_entry | 0.5日 |
 | 🟡 P1 | create_tag, merge_tags | 0.5日 |
-| 🟢 P2 | 統計リソース | 0.5日 |
+| 🟡 P1 | 統計リソース（summary, daily-hours, tag-breakdown） | 0.5日 |
+| 🟢 P2 | 通知リソース・既読化ツール | 0.5日 |
+| 🟢 P2 | アクティビティログリソース | 0.5日 |
 
-**合計**: 2.5日
+**合計**: 3.5日
 
 ---
 
