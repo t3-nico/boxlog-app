@@ -1,96 +1,64 @@
 // タグ使用統計とサイドバー表示用のフック
 
-import { useMemo } from 'react';
+import { useMemo } from 'react'
 
-import { useQuery } from '@tanstack/react-query';
-
-import type { Tag, TagUsageStats } from '@/features/tags/types';
-import { getCacheStrategy } from '@/lib/tanstack-query/cache-config';
+import type { Tag, TagUsageStats } from '@/features/tags/types'
+import { getCacheStrategy } from '@/lib/tanstack-query/cache-config'
+import { trpc } from '@/lib/trpc/client'
 
 interface TagWithUsage extends Tag {
-  usage_count: number;
-  task_count: number;
-  event_count: number;
-  record_count: number;
-  last_used_at: Date | null;
+  usage_count: number
+  task_count: number
+  event_count: number
+  record_count: number
+  last_used_at: Date | null
 }
 
 interface SidebarTagsOptions {
-  maxTags?: number;
-  minUsageCount?: number;
+  maxTags?: number
+  minUsageCount?: number
 }
-
-/** API レスポンス型 */
-interface TagStatsResponse {
-  data: Array<{
-    id: string;
-    name: string;
-    color: string | null;
-    plan_count: number;
-    total_count: number;
-    last_used_at: string | null;
-  }>;
-  count: number;
-}
-
-// タグ使用統計API
-const tagStatsAPI = {
-  // タグ使用統計取得
-  async fetchTagStats(): Promise<TagUsageStats[]> {
-    const response = await fetch('/api/tags/stats');
-    if (!response.ok) throw new Error('Failed to fetch tag stats');
-
-    const json: TagStatsResponse = await response.json();
-    // API レスポンスを TagUsageStats 型に変換
-    return json.data.map((item) => ({
-      id: item.id,
-      name: item.name,
-      color: item.color ?? '#3B82F6',
-      usage_count: item.total_count,
-      task_count: 0, // 現在未実装
-      event_count: 0, // 現在未実装
-      record_count: 0, // 現在未実装
-      last_used_at: item.last_used_at ? new Date(item.last_used_at) : null,
-    }));
-  },
-
-  // タグ使用数カウント（タグID -> 使用数のマップ）
-  async fetchTagUsageCounts(): Promise<Record<string, number>> {
-    const response = await fetch('/api/tags/stats');
-    if (!response.ok) throw new Error('Failed to fetch tag usage counts');
-
-    const json: TagStatsResponse = await response.json();
-    const counts: Record<string, number> = {};
-    json.data.forEach((item) => {
-      counts[item.id] = item.total_count;
-    });
-    return counts;
-  },
-};
 
 // クエリキー
 export const tagStatsKeys = {
   all: ['tag-stats'] as const,
   stats: () => [...tagStatsKeys.all, 'stats'] as const,
   counts: () => [...tagStatsKeys.all, 'counts'] as const,
-};
+}
 
 // タグ使用統計フック
 export function useTagStats() {
-  return useQuery({
-    queryKey: tagStatsKeys.stats(),
-    queryFn: tagStatsAPI.fetchTagStats,
+  return trpc.tags.getStats.useQuery(undefined, {
     ...getCacheStrategy('tagStats'),
-  });
+    select: (data) => {
+      // tRPCレスポンスをTagUsageStats型に変換
+      return data.data.map((item) => ({
+        id: item.id,
+        name: item.name,
+        color: item.color ?? '#3B82F6',
+        usage_count: item.total_count,
+        task_count: 0, // 現在未実装
+        event_count: 0, // 現在未実装
+        record_count: 0, // 現在未実装
+        last_used_at: item.last_used_at ? new Date(item.last_used_at) : null,
+      })) as TagUsageStats[]
+    },
+  })
 }
 
 // タグ使用数カウントフック
 export function useTagUsageCounts() {
-  return useQuery({
-    queryKey: tagStatsKeys.counts(),
-    queryFn: tagStatsAPI.fetchTagUsageCounts,
+  return trpc.tags.getStats.useQuery(undefined, {
     ...getCacheStrategy('tagStats'),
-  });
+    select: (data) => {
+      // タグID -> 使用数のマップに変換
+      const counts: Record<string, number> = {}
+      data.data.forEach((item) => {
+        counts[item.id] = item.total_count
+      })
+      return counts
+    },
+  })
 }
 
 // サイドバー表示用タグフック（フラット構造）

@@ -302,6 +302,90 @@ export class TagService {
 
     return tag
   }
+
+  /**
+   * タグ使用統計取得
+   *
+   * @param options - userId
+   * @returns タグ統計の配列
+   */
+  async getStats(options: { userId: string }): Promise<TagStatsRow[]> {
+    const { userId } = options
+
+    // ユーザーの全タグを取得（アクティブなもののみ）
+    const { data: tags, error: tagsError } = await this.supabase
+      .from('tags')
+      .select('id, name, color')
+      .eq('user_id', userId)
+      .eq('is_active', true)
+
+    if (tagsError) {
+      throw new TagServiceError('FETCH_FAILED', `Failed to fetch tags: ${tagsError.message}`)
+    }
+
+    if (!tags || tags.length === 0) {
+      return []
+    }
+
+    // 各タグのプラン紐付け数を取得
+    const tagIds = tags.map((t) => t.id)
+    const { data: planTagCounts, error: countError } = await this.supabase
+      .from('plan_tags')
+      .select('tag_id')
+      .in('tag_id', tagIds)
+
+    if (countError) {
+      throw new TagServiceError('FETCH_FAILED', `Failed to fetch counts: ${countError.message}`)
+    }
+
+    // タグIDごとのカウントを集計
+    const countMap = new Map<string, number>()
+    planTagCounts?.forEach((pt) => {
+      countMap.set(pt.tag_id, (countMap.get(pt.tag_id) || 0) + 1)
+    })
+
+    // 最終使用日を取得（最新のplan_tags作成日）
+    const { data: lastUsedData } = await this.supabase
+      .from('plan_tags')
+      .select('tag_id, created_at')
+      .in('tag_id', tagIds)
+      .order('created_at', { ascending: false })
+
+    const lastUsedMap = new Map<string, string | null>()
+    lastUsedData?.forEach((pt) => {
+      if (!lastUsedMap.has(pt.tag_id) && pt.created_at) {
+        lastUsedMap.set(pt.tag_id, pt.created_at)
+      }
+    })
+
+    // レスポンスデータを構築
+    const statsData: TagStatsRow[] = tags.map((tag) => {
+      const planCount = countMap.get(tag.id) || 0
+      return {
+        id: tag.id,
+        name: tag.name,
+        color: tag.color,
+        plan_count: planCount,
+        total_count: planCount, // 現在はプランのみ
+        last_used_at: lastUsedMap.get(tag.id) || null,
+      }
+    })
+
+    // 使用数でソート（多い順）
+    statsData.sort((a, b) => b.total_count - a.total_count)
+
+    return statsData
+  }
+}
+
+/** タグ統計の型 */
+export interface TagStatsRow {
+  id: string
+  name: string
+  color: string | null
+  plan_count: number
+  total_count: number
+  last_used_at: string | null
 }
 
 /**

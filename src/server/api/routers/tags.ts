@@ -227,4 +227,23 @@ export const tagsRouter = createTRPCRouter({
         return handleServiceError(error)
       }
     }),
+
+  /**
+   * タグ使用統計取得
+   */
+  getStats: protectedProcedure.query(async ({ ctx }) => {
+    try {
+      const service = createTagService(ctx.supabase)
+      const stats = await service.getStats({
+        userId: ctx.userId!,
+      })
+
+      return {
+        data: stats,
+        count: stats.length,
+      }
+    } catch (error) {
+      return handleServiceError(error)
+    }
+  }),
 })
