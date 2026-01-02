@@ -45,7 +45,7 @@ export function useTagsSidebarLogic({
   const { selection } = useHapticFeedback();
   const { setIsCreatingGroup } = useTagsPageContext();
   const { data: groups = [] } = useTagGroups();
-  const { data: allTags = [] } = useTags(true);
+  const { data: allTags = [] } = useTags();
   const createGroupMutation = useCreateTagGroup();
   const updateGroupMutation = useUpdateTagGroup();
   const deleteGroupMutation = useDeleteTagGroup();

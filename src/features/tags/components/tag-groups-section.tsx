@@ -47,7 +47,7 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
   ({ onSelectGroup: _onSelectGroup, selectedGroupId, onClose }, ref) => {
     const t = useTranslations();
     const { data: groups = [] as TagGroup[], isPending } = useTagGroups();
-    const { data: allTags = [] } = useTags(true); // タグ数カウント用
+    const { data: allTags = [] } = useTags(); // タグ数カウント用
     const createGroupMutation = useCreateTagGroup();
     const updateGroupMutation = useUpdateTagGroup();
     const deleteGroupMutation = useDeleteTagGroup();

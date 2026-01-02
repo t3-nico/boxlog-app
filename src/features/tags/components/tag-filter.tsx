@@ -51,7 +51,7 @@ export const TagFilter = ({
   className = '',
 }: TagFilterProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const { data: allTags = [], isPending } = useTags(true);
+  const { data: allTags = [], isPending } = useTags();
   const t = useTranslations();
   // Use a simple local state for tag filtering for now
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
@@ -244,7 +244,7 @@ export const TagChip = ({ tag, isSelected, onToggle }: TagChipProps) => {
  * 横並びタグフィルター（チップ形式）
  */
 export const TagFilterChips = ({ className = '' }: { className?: string }) => {
-  const { data: allTags = [], isPending } = useTags(true);
+  const { data: allTags = [], isPending } = useTags();
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
   const toggleTag = (tagId: string) => {
     setSelectedTagIds((prev) =>

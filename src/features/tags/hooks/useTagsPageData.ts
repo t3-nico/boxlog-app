@@ -32,7 +32,7 @@ export function useTagsPageData({
   t,
 }: UseTagsPageDataOptions) {
   // データ取得
-  const { data: fetchedTags = [], isLoading: isFetching } = useTags(true);
+  const { data: fetchedTags = [], isLoading: isFetching } = useTags();
   const { data: groups = [] as TagGroup[] } = useTagGroups();
 
   // 最適化: 2つのクエリを1つに統合（DB側でGROUP BY集計）

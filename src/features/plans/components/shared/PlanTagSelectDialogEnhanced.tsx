@@ -60,7 +60,7 @@ export function PlanTagSelectDialogEnhanced({
   const [showArchived, setShowArchived] = useState(false);
   const [showSidebar, setShowSidebar] = useState(true);
 
-  const { data: tagsData } = useTags(true);
+  const { data: tagsData } = useTags();
   const { data: groups = [] } = useTagGroups();
   const createTagMutation = useCreateTag();
 

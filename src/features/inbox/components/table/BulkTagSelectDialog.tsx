@@ -58,7 +58,7 @@ export function BulkTagSelectDialog({
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { bulkAddTags } = usePlanMutations();
-  const { data: tagsData } = useTags(true);
+  const { data: tagsData } = useTags();
 
   // フラット構造のタグデータからアクティブなタグのみを抽出
   const activeTags = useMemo(() => {

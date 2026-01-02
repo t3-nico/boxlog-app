@@ -29,7 +29,7 @@ export function PlanTagsSection({
   popoverSideOffset,
 }: PlanTagsSectionProps) {
   // データベースからタグを取得
-  const { data: allTags = [] } = useTags(true);
+  const { data: allTags = [] } = useTags();
 
   const selectedTags = allTags.filter((tag) => selectedTagIds.includes(tag.id));
 

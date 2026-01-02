@@ -12,7 +12,7 @@ interface TagInspectorOpenerProps {
  * URLからタグ番号を受け取り、対応するタグのInspectorを自動的に開くコンポーネント
  */
 export function TagInspectorOpener({ tagNumber }: TagInspectorOpenerProps) {
-  const { data: tags = [], isPending } = useTags(true);
+  const { data: tags = [], isPending } = useTags();
   const { openInspector, isOpen } = useTagInspectorStore();
 
   useEffect(() => {

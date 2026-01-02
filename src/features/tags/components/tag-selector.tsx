@@ -42,7 +42,7 @@ export const TagSelector = ({
   const createTagMutation = useCreateTag();
 
   // データベースからタグを取得
-  const { data: allTags = [] } = useTags(true);
+  const { data: allTags = [] } = useTags();
   // アクティブなタグのみを使用（アーカイブ済みタグを除外）
   const activeTags = allTags.filter((tag) => tag.is_active);
   const selectedTags = activeTags.filter((tag) => selectedTagIds.includes(tag.id));
