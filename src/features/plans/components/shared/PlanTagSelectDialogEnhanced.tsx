@@ -153,7 +153,7 @@ export function PlanTagSelectDialogEnhanced({
         name: newTagName.trim(),
         color: DEFAULT_TAG_COLOR,
         description: undefined,
-        group_id:
+        groupId:
           selectedGroupId && selectedGroupId !== 'uncategorized' ? selectedGroupId : undefined,
       });
 

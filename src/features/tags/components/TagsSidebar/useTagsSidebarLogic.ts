@@ -185,7 +185,7 @@ export function useTagsSidebarLogic({
     if (!deletingGroup) return;
 
     try {
-      await deleteGroupMutation.mutateAsync(deletingGroup.id);
+      await deleteGroupMutation.mutateAsync({ id: deletingGroup.id });
       toast.success(t('tags.toast.groupDeleted', { name: deletingGroup.name }));
       setDeletingGroup(null);
 
@@ -271,7 +271,7 @@ export function useTagsSidebarLogic({
       const tagCount = getGroupTagCount(group.id);
       if (tagCount === 0) {
         deleteGroupMutation
-          .mutateAsync(group.id)
+          .mutateAsync({ id: group.id })
           .then(() => {
             toast.success(t('tags.toast.groupDeleted', { name: group.name }));
             if (currentGroupNumber === group.group_number) {

@@ -17,7 +17,12 @@ export function GlobalTagCreateModal() {
   const createTagMutation = useCreateTag();
 
   const handleCreateTag = async (data: CreateTagInput) => {
-    await createTagMutation.mutateAsync(data);
+    await createTagMutation.mutateAsync({
+      name: data.name,
+      color: data.color,
+      description: data.description ?? undefined,
+      groupId: data.group_id ?? undefined,
+    });
   };
 
   return <TagCreateModal isOpen={isOpen} onClose={closeModal} onSave={handleCreateTag} />;
