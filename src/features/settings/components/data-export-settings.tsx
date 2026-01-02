@@ -6,6 +6,7 @@ import { Download, FileJson, History, Upload } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
+import { trpc } from '@/lib/trpc/client';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
@@ -14,35 +15,31 @@ import { SettingsCard } from './SettingsCard';
 
 export const DataExportSettings = memo(function DataExportSettings() {
   const t = useTranslations();
-  const [isExporting, setIsExporting] = useState(false);
   const [autoBackup, setAutoBackup] = useState(true);
 
+  const exportDataQuery = trpc.user.exportData.useQuery(undefined, {
+    enabled: false, // 手動で実行
+  });
+
   const handleExport = useCallback(async () => {
-    setIsExporting(true);
+    console.info('Data export initiated', {
+      component: 'data-export-settings',
+    });
 
     try {
-      console.info('Data export initiated', {
-        component: 'data-export-settings',
-      });
+      const result = await exportDataQuery.refetch();
 
-      const response = await fetch('/api/user/export-data', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Export failed');
+      if (!result.data) {
+        throw new Error('Export failed');
       }
 
-      // JSON データをダウンロード
-      const blob = await response.blob();
+      // JSONデータをダウンロード
+      const jsonString = JSON.stringify(result.data, null, 2);
+      const blob = new Blob([jsonString], { type: 'application/json' });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `boxlog-data-export-${Date.now()}.json`;
+      a.download = `boxlog-data-export-${result.data.userId}-${Date.now()}.json`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -59,10 +56,8 @@ export const DataExportSettings = memo(function DataExportSettings() {
       });
 
       toast.error(t('settings.account.dataExport.error'));
-    } finally {
-      setIsExporting(false);
     }
-  }, [t]);
+  }, [exportDataQuery, t]);
 
   const handleAutoBackupChange = useCallback((checked: boolean) => {
     setAutoBackup(checked);
@@ -90,9 +85,15 @@ export const DataExportSettings = memo(function DataExportSettings() {
           </div>
 
           {/* エクスポートボタン */}
-          <Button onClick={handleExport} disabled={isExporting} className="w-full">
+          <Button
+            onClick={handleExport}
+            disabled={exportDataQuery.isLoading || exportDataQuery.isFetching}
+            className="w-full"
+          >
             <Download className="mr-2 h-4 w-4" />
-            {isExporting ? 'エクスポート中...' : 'データをエクスポート'}
+            {exportDataQuery.isLoading || exportDataQuery.isFetching
+              ? 'エクスポート中...'
+              : 'データをエクスポート'}
           </Button>
         </div>
       </SettingsCard>

@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { trpc } from '@/lib/trpc/client';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
@@ -33,48 +34,9 @@ export function AccountDeletionDialog() {
   const [isOpen, setIsOpen] = useState(false);
   const [password, setPassword] = useState('');
   const [confirmText, setConfirmText] = useState('');
-  const [isDeleting, setIsDeleting] = useState(false);
 
-  const handleDelete = async () => {
-    if (confirmText !== 'DELETE') {
-      toast.error(t('settings.account.deletion.confirmTextError'));
-      return;
-    }
-
-    if (!password) {
-      toast.error(t('settings.account.deletion.passwordRequired'));
-      return;
-    }
-
-    setIsDeleting(true);
-
-    try {
-      console.info('Account deletion initiated', {
-        component: 'account-deletion-dialog',
-      });
-
-      const response = await fetch('/api/user/delete-account', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          password,
-          confirmText,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        if (data.error === 'INVALID_PASSWORD') {
-          toast.error(t('settings.account.deletion.invalidPassword'));
-        } else {
-          toast.error(data.message || t('settings.account.deletion.error'));
-        }
-        return;
-      }
-
+  const deleteAccountMutation = trpc.user.deleteAccount.useMutation({
+    onSuccess: (data) => {
       console.info('Account deletion scheduled', {
         component: 'account-deletion-dialog',
         scheduledDate: data.scheduledDeletionDate,
@@ -87,15 +49,39 @@ export function AccountDeletionDialog() {
       setTimeout(() => {
         window.location.href = '/auth/signout';
       }, 5000);
-    } catch (error) {
-      console.error('Account deletion failed', error as Error, {
+    },
+    onError: (error) => {
+      console.error('Account deletion failed', error, {
         component: 'account-deletion-dialog',
       });
 
-      toast.error(t('settings.account.deletion.error'));
-    } finally {
-      setIsDeleting(false);
+      if (error.message.includes('Invalid password')) {
+        toast.error(t('settings.account.deletion.invalidPassword'));
+      } else {
+        toast.error(error.message || t('settings.account.deletion.error'));
+      }
+    },
+  });
+
+  const handleDelete = async () => {
+    if (confirmText !== 'DELETE') {
+      toast.error(t('settings.account.deletion.confirmTextError'));
+      return;
     }
+
+    if (!password) {
+      toast.error(t('settings.account.deletion.passwordRequired'));
+      return;
+    }
+
+    console.info('Account deletion initiated', {
+      component: 'account-deletion-dialog',
+    });
+
+    deleteAccountMutation.mutate({
+      password,
+      confirmText: 'DELETE',
+    });
   };
 
   return (
@@ -125,9 +111,9 @@ export function AccountDeletionDialog() {
             onClick={() => setIsOpen(true)}
             variant="destructive"
             className="ml-4"
-            disabled={isDeleting}
+            disabled={deleteAccountMutation.isPending}
           >
-            {isDeleting
+            {deleteAccountMutation.isPending
               ? t('settings.account.deletion.deleting')
               : `🗑️ ${t('settings.account.deletion.buttonText')}`}
           </Button>
@@ -160,7 +146,7 @@ export function AccountDeletionDialog() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder={t('settings.account.deletion.passwordPlaceholder')}
-                  disabled={isDeleting}
+                  disabled={deleteAccountMutation.isPending}
                 />
               </div>
 
@@ -173,7 +159,7 @@ export function AccountDeletionDialog() {
                   value={confirmText}
                   onChange={(e) => setConfirmText(e.target.value)}
                   placeholder="DELETE"
-                  disabled={isDeleting}
+                  disabled={deleteAccountMutation.isPending}
                 />
                 <p className="text-muted-foreground text-xs">
                   {t('settings.account.deletion.confirmTextHint')}
@@ -182,7 +168,7 @@ export function AccountDeletionDialog() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeleting}>
+            <AlertDialogCancel disabled={deleteAccountMutation.isPending}>
               {t('settings.account.deletion.cancel')}
             </AlertDialogCancel>
             <AlertDialogAction
@@ -190,10 +176,10 @@ export function AccountDeletionDialog() {
                 e.preventDefault();
                 handleDelete();
               }}
-              disabled={isDeleting || !password || confirmText !== 'DELETE'}
+              disabled={deleteAccountMutation.isPending || !password || confirmText !== 'DELETE'}
               className="bg-destructive text-destructive-foreground hover:bg-destructive-hover"
             >
-              {isDeleting
+              {deleteAccountMutation.isPending
                 ? t('settings.account.deletion.deleting')
                 : t('settings.account.deletion.confirm')}
             </AlertDialogAction>
