@@ -84,12 +84,15 @@ export function useTagGroupsDnd(groups: TagGroup[]) {
 
     // APIに反映
     const groupIds = reordered.map((g) => g.id);
-    reorderMutation.mutate(groupIds, {
-      onError: () => {
-        // エラー時はロールバック
-        setLocalGroups(groups);
+    reorderMutation.mutate(
+      { groupIds },
+      {
+        onError: () => {
+          // エラー時はロールバック
+          setLocalGroups(groups);
+        },
       },
-    });
+    );
 
     setActiveGroup(null);
   };

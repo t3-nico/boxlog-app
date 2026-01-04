@@ -35,7 +35,9 @@ export interface CreateTagInput {
   color: string;
   description?: string | null | undefined;
   icon?: string | null | undefined;
+  /** @deprecated use groupId instead */
   group_id?: string | null | undefined;
+  groupId?: string | null | undefined;
 }
 
 // タグ更新用入力型
@@ -45,7 +47,9 @@ export interface UpdateTagInput {
   description?: string | null | undefined;
   icon?: string | null | undefined;
   is_active?: boolean | undefined;
+  /** @deprecated use groupId instead */
   group_id?: string | null | undefined;
+  groupId?: string | null | undefined;
   sort_order?: number | undefined;
 }
 

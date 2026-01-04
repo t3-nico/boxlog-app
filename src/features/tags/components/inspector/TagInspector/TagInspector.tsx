@@ -255,7 +255,7 @@ export function TagInspector() {
         onClose={() => setShowDeleteDialog(false)}
         onConfirm={async () => {
           if (!tagId) return;
-          await deleteTagMutation.mutateAsync(tagId);
+          await deleteTagMutation.mutateAsync({ id: tagId });
           setShowDeleteDialog(false);
           closeInspector();
         }}

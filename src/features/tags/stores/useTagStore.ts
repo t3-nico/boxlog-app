@@ -136,10 +136,10 @@ export const useTagStore = create<TagStore>()(
               description: tagData.description || null,
               icon: tagData.icon || null,
               is_active: true,
-              group_id: tagData.group_id || null,
+              group_id: tagData.groupId || null,
               sort_order: tags.length,
-              created_at: new Date(),
-              updated_at: new Date(),
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
             };
 
             set({ tags: [...tags, newTag] });
@@ -169,9 +169,9 @@ export const useTagStore = create<TagStore>()(
                     ...(updates.description !== undefined && { description: updates.description }),
                     ...(updates.icon !== undefined && { icon: updates.icon }),
                     ...(updates.is_active !== undefined && { is_active: updates.is_active }),
-                    ...(updates.group_id !== undefined && { group_id: updates.group_id }),
+                    ...(updates.groupId !== undefined && { group_id: updates.groupId }),
                     ...(updates.sort_order !== undefined && { sort_order: updates.sort_order }),
-                    updated_at: new Date(),
+                    updated_at: new Date().toISOString(),
                   } as Tag;
                 }
                 return tag;

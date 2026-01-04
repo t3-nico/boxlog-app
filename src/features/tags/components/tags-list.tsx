@@ -312,7 +312,7 @@ export const TagsList = ({
 
       updateTag(editingTag.id, {
         name: updatedTag.name,
-        color: updatedTag.color,
+        color: updatedTag.color ?? undefined,
         icon: updatedTag.icon,
       });
       setEditingTag(null);

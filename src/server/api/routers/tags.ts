@@ -13,45 +13,43 @@
  * - tags.delete: タグ削除
  */
 
-import { TRPCError } from '@trpc/server'
-import { z } from 'zod'
+import { TRPCError } from '@trpc/server';
+import { z } from 'zod';
 
-import { createTRPCRouter, protectedProcedure } from '../trpc'
-import {
-  createTagService,
-  TagServiceError,
-  type CreateTagInput,
-  type UpdateTagInput,
-} from '@/server/services/tags/tag-service'
+import { createTagService, TagServiceError } from '@/server/services/tags/tag-service';
+import { createTRPCRouter, protectedProcedure } from '../trpc';
 
 /**
  * エラーハンドリングヘルパー
  */
 function handleServiceError(error: unknown): never {
   if (error instanceof TagServiceError) {
-    const codeMap: Record<TagServiceError['code'], 'BAD_REQUEST' | 'NOT_FOUND' | 'INTERNAL_SERVER_ERROR'> = {
-      'FETCH_FAILED': 'INTERNAL_SERVER_ERROR',
-      'CREATE_FAILED': 'INTERNAL_SERVER_ERROR',
-      'UPDATE_FAILED': 'INTERNAL_SERVER_ERROR',
-      'DELETE_FAILED': 'INTERNAL_SERVER_ERROR',
-      'NOT_FOUND': 'NOT_FOUND',
-      'DUPLICATE_NAME': 'BAD_REQUEST',
-      'INVALID_INPUT': 'BAD_REQUEST',
-      'MERGE_FAILED': 'INTERNAL_SERVER_ERROR',
-      'SAME_TAG_MERGE': 'BAD_REQUEST',
-      'TARGET_NOT_FOUND': 'NOT_FOUND',
-    }
+    const codeMap: Record<
+      TagServiceError['code'],
+      'BAD_REQUEST' | 'NOT_FOUND' | 'INTERNAL_SERVER_ERROR'
+    > = {
+      FETCH_FAILED: 'INTERNAL_SERVER_ERROR',
+      CREATE_FAILED: 'INTERNAL_SERVER_ERROR',
+      UPDATE_FAILED: 'INTERNAL_SERVER_ERROR',
+      DELETE_FAILED: 'INTERNAL_SERVER_ERROR',
+      NOT_FOUND: 'NOT_FOUND',
+      DUPLICATE_NAME: 'BAD_REQUEST',
+      INVALID_INPUT: 'BAD_REQUEST',
+      MERGE_FAILED: 'INTERNAL_SERVER_ERROR',
+      SAME_TAG_MERGE: 'BAD_REQUEST',
+      TARGET_NOT_FOUND: 'NOT_FOUND',
+    };
 
     throw new TRPCError({
       code: codeMap[error.code],
       message: error.message,
-    })
+    });
   }
 
   throw new TRPCError({
     code: 'INTERNAL_SERVER_ERROR',
     message: error instanceof Error ? error.message : 'Unknown error',
-  })
+  });
 }
 
 /**
@@ -63,26 +61,28 @@ export const tagsRouter = createTRPCRouter({
    */
   list: protectedProcedure
     .input(
-      z.object({
-        sortField: z.enum(['name', 'created_at', 'updated_at', 'tag_number']).default('name'),
-        sortOrder: z.enum(['asc', 'desc']).default('asc'),
-      }).optional(),
+      z
+        .object({
+          sortField: z.enum(['name', 'created_at', 'updated_at', 'tag_number']).default('name'),
+          sortOrder: z.enum(['asc', 'desc']).default('asc'),
+        })
+        .optional(),
     )
     .query(async ({ ctx, input }) => {
       try {
-        const service = createTagService(ctx.supabase)
+        const service = createTagService(ctx.supabase);
         const tags = await service.list({
           userId: ctx.userId!,
           sortField: input?.sortField,
           sortOrder: input?.sortOrder,
-        })
+        });
 
         return {
           data: tags,
           count: tags.length,
-        }
+        };
       } catch (error) {
-        return handleServiceError(error)
+        return handleServiceError(error);
       }
     }),
 
@@ -97,15 +97,15 @@ export const tagsRouter = createTRPCRouter({
     )
     .query(async ({ ctx, input }) => {
       try {
-        const service = createTagService(ctx.supabase)
+        const service = createTagService(ctx.supabase);
         const tag = await service.getById({
           userId: ctx.userId!,
           tagId: input.id,
-        })
+        });
 
-        return tag
+        return tag;
       } catch (error) {
-        return handleServiceError(error)
+        return handleServiceError(error);
       }
     }),
 
@@ -116,14 +116,17 @@ export const tagsRouter = createTRPCRouter({
     .input(
       z.object({
         name: z.string().min(1).max(50),
-        color: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional(),
+        color: z
+          .string()
+          .regex(/^#[0-9A-Fa-f]{6}$/)
+          .optional(),
         description: z.string().optional(),
         groupId: z.string().uuid().nullable().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       try {
-        const service = createTagService(ctx.supabase)
+        const service = createTagService(ctx.supabase);
         const tag = await service.create({
           userId: ctx.userId!,
           input: {
@@ -132,11 +135,11 @@ export const tagsRouter = createTRPCRouter({
             description: input.description,
             groupId: input.groupId,
           },
-        })
+        });
 
-        return tag
+        return tag;
       } catch (error) {
-        return handleServiceError(error)
+        return handleServiceError(error);
       }
     }),
 
@@ -148,14 +151,17 @@ export const tagsRouter = createTRPCRouter({
       z.object({
         id: z.string().uuid(),
         name: z.string().min(1).max(50).optional(),
-        color: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional(),
+        color: z
+          .string()
+          .regex(/^#[0-9A-Fa-f]{6}$/)
+          .optional(),
         description: z.string().nullable().optional(),
         groupId: z.string().uuid().nullable().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       try {
-        const service = createTagService(ctx.supabase)
+        const service = createTagService(ctx.supabase);
         const tag = await service.update({
           userId: ctx.userId!,
           tagId: input.id,
@@ -165,11 +171,11 @@ export const tagsRouter = createTRPCRouter({
             description: input.description,
             groupId: input.groupId,
           },
-        })
+        });
 
-        return tag
+        return tag;
       } catch (error) {
-        return handleServiceError(error)
+        return handleServiceError(error);
       }
     }),
 
@@ -190,18 +196,18 @@ export const tagsRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       try {
-        const service = createTagService(ctx.supabase)
+        const service = createTagService(ctx.supabase);
         const result = await service.merge({
           userId: ctx.userId!,
           sourceTagId: input.sourceTagId,
           targetTagId: input.targetTagId,
           mergeAssociations: input.mergeAssociations,
           deleteSource: input.deleteSource,
-        })
+        });
 
-        return result
+        return result;
       } catch (error) {
-        return handleServiceError(error)
+        return handleServiceError(error);
       }
     }),
 
@@ -216,15 +222,15 @@ export const tagsRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       try {
-        const service = createTagService(ctx.supabase)
+        const service = createTagService(ctx.supabase);
         const deletedTag = await service.delete({
           userId: ctx.userId!,
           tagId: input.id,
-        })
+        });
 
-        return deletedTag
+        return deletedTag;
       } catch (error) {
-        return handleServiceError(error)
+        return handleServiceError(error);
       }
     }),
 
@@ -233,17 +239,17 @@ export const tagsRouter = createTRPCRouter({
    */
   getStats: protectedProcedure.query(async ({ ctx }) => {
     try {
-      const service = createTagService(ctx.supabase)
+      const service = createTagService(ctx.supabase);
       const stats = await service.getStats({
         userId: ctx.userId!,
-      })
+      });
 
       return {
         data: stats,
         count: stats.length,
-      }
+      };
     } catch (error) {
-      return handleServiceError(error)
+      return handleServiceError(error);
     }
   }),
-})
+});

@@ -21,71 +21,71 @@
  * ```
  */
 
-import type { ServiceSupabaseClient } from './types'
+import type { ServiceSupabaseClient } from './types';
 
 /** プラン作成（タグ付き）のオプション */
 export interface CreatePlanWithTagsOptions {
-  userId: string
-  title: string
-  description?: string
-  scheduledDate?: string
-  tagIds?: string[]
+  userId: string;
+  title: string;
+  description?: string | undefined;
+  scheduledDate?: string | undefined;
+  tagIds?: string[] | undefined;
 }
 
 /** プラン更新（タグ付き）のオプション */
 export interface UpdatePlanWithTagsOptions {
-  userId: string
-  planId: string
-  title?: string
-  description?: string | null
-  scheduledDate?: string | null
-  tagIds?: string[]
+  userId: string;
+  planId: string;
+  title?: string | undefined;
+  description?: string | null | undefined;
+  scheduledDate?: string | null | undefined;
+  tagIds?: string[] | undefined;
 }
 
 /** プラン削除のオプション */
 export interface DeletePlanWithCleanupOptions {
-  userId: string
-  planId: string
+  userId: string;
+  planId: string;
 }
 
 /**
  * RPC呼び出しの結果型（create_plan_with_tags）
  */
 interface CreatePlanWithTagsResult {
-  id: string
-  user_id: string
-  title: string
-  description: string | null
-  scheduled_date: string | null
-  created_at: string
-  updated_at: string
-  tag_ids: string[]
+  id: string;
+  user_id: string;
+  title: string;
+  description: string | null;
+  scheduled_date: string | null;
+  created_at: string;
+  updated_at: string;
+  tag_ids: string[];
 }
 
 /**
  * RPC呼び出しの結果型（update_plan_with_tags）
  */
 interface UpdatePlanWithTagsResult {
-  id: string
-  user_id: string
-  title: string
-  description: string | null
-  scheduled_date: string | null
-  created_at: string
-  updated_at: string
-  tag_ids: string[] | null
+  id: string;
+  user_id: string;
+  title: string;
+  description: string | null;
+  scheduled_date: string | null;
+  created_at: string;
+  updated_at: string;
+  tag_ids: string[] | null;
 }
 
 /**
  * RPC呼び出しの結果型（delete_plan_with_cleanup）
  */
 interface DeletePlanWithCleanupResult {
-  success: boolean
+  success: boolean;
   deleted_plan: {
-    id: string
-    title: string
-  }
-  deleted_tags_associations: number
+    id: string;
+    title: string;
+  };
+  deleted_tags_associations: number;
 }
 
 /**
@@ -100,8 +100,8 @@ export class PlanTransactionServiceError extends Error {
       | 'RPC_CALL_FAILED',
     message: string,
   ) {
-    super(message)
-    this.name = 'PlanTransactionServiceError'
+    super(message);
+    this.name = 'PlanTransactionServiceError';
   }
 }
 
@@ -121,33 +121,42 @@ export class PlanTransactionService {
    * @returns 作成されたプラン
    */
   async createWithTags(options: CreatePlanWithTagsOptions): Promise<CreatePlanWithTagsResult> {
-    const { userId, title, description, scheduledDate, tagIds } = options
+    const { userId, title, description, scheduledDate, tagIds } = options;
 
     try {
-      const { data, error } = await this.supabase.rpc('create_plan_with_tags', {
+      // Note: This RPC function is planned but may not exist yet in the database
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data, error } = await (this.supabase.rpc as any)('create_plan_with_tags', {
         p_user_id: userId,
         p_title: title,
         p_description: description || null,
         p_scheduled_date: scheduledDate || null,
         p_tag_ids: tagIds || [],
-      })
+      });
 
       if (error) {
         throw new PlanTransactionServiceError(
           'CREATE_WITH_TAGS_FAILED',
           `Failed to create plan with tags: ${error.message}`,
-        )
+        );
       }
 
-      return data as CreatePlanWithTagsResult
+      if (!data) {
+        throw new PlanTransactionServiceError(
+          'CREATE_WITH_TAGS_FAILED',
+          'No data returned from RPC',
+        );
+      }
+
+      return data as CreatePlanWithTagsResult;
     } catch (error) {
       if (error instanceof PlanTransactionServiceError) {
-        throw error
+        throw error;
       }
       throw new PlanTransactionServiceError(
         'RPC_CALL_FAILED',
         error instanceof Error ? error.message : 'Unknown error',
-      )
+      );
     }
   }
 
@@ -161,34 +170,43 @@ export class PlanTransactionService {
    * @returns 更新されたプラン
    */
   async updateWithTags(options: UpdatePlanWithTagsOptions): Promise<UpdatePlanWithTagsResult> {
-    const { userId, planId, title, description, scheduledDate, tagIds } = options
+    const { userId, planId, title, description, scheduledDate, tagIds } = options;
 
     try {
-      const { data, error } = await this.supabase.rpc('update_plan_with_tags', {
+      // Note: This RPC function is planned but may not exist yet in the database
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data, error } = await (this.supabase.rpc as any)('update_plan_with_tags', {
         p_user_id: userId,
         p_plan_id: planId,
         p_title: title || null,
         p_description: description === undefined ? null : description,
         p_scheduled_date: scheduledDate === undefined ? null : scheduledDate,
         p_tag_ids: tagIds || null,
-      })
+      });
 
       if (error) {
         throw new PlanTransactionServiceError(
           'UPDATE_WITH_TAGS_FAILED',
           `Failed to update plan with tags: ${error.message}`,
-        )
+        );
       }
 
-      return data as UpdatePlanWithTagsResult
+      if (!data) {
+        throw new PlanTransactionServiceError(
+          'UPDATE_WITH_TAGS_FAILED',
+          'No data returned from RPC',
+        );
+      }
+
+      return data as UpdatePlanWithTagsResult;
     } catch (error) {
       if (error instanceof PlanTransactionServiceError) {
-        throw error
+        throw error;
       }
       throw new PlanTransactionServiceError(
         'RPC_CALL_FAILED',
         error instanceof Error ? error.message : 'Unknown error',
-      )
+      );
     }
   }
 
@@ -204,30 +222,39 @@ export class PlanTransactionService {
   async deleteWithCleanup(
     options: DeletePlanWithCleanupOptions,
   ): Promise<DeletePlanWithCleanupResult> {
-    const { userId, planId } = options
+    const { userId, planId } = options;
 
     try {
-      const { data, error } = await this.supabase.rpc('delete_plan_with_cleanup', {
+      // Note: This RPC function is planned but may not exist yet in the database
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data, error } = await (this.supabase.rpc as any)('delete_plan_with_cleanup', {
         p_user_id: userId,
         p_plan_id: planId,
-      })
+      });
 
       if (error) {
         throw new PlanTransactionServiceError(
           'DELETE_WITH_CLEANUP_FAILED',
           `Failed to delete plan with cleanup: ${error.message}`,
-        )
+        );
       }
 
-      return data as DeletePlanWithCleanupResult
+      if (!data) {
+        throw new PlanTransactionServiceError(
+          'DELETE_WITH_CLEANUP_FAILED',
+          'No data returned from RPC',
+        );
+      }
+
+      return data as DeletePlanWithCleanupResult;
     } catch (error) {
       if (error instanceof PlanTransactionServiceError) {
-        throw error
+        throw error;
       }
       throw new PlanTransactionServiceError(
         'RPC_CALL_FAILED',
         error instanceof Error ? error.message : 'Unknown error',
-      )
+      );
     }
   }
 }
@@ -239,5 +266,5 @@ export class PlanTransactionService {
  * @returns PlanTransactionService
  */
 export function createPlanTransactionService(supabase: ServiceSupabaseClient) {
-  return new PlanTransactionService(supabase)
+  return new PlanTransactionService(supabase);
 }

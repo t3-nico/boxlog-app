@@ -234,7 +234,7 @@ export const TagChip = ({ tag, isSelected, onToggle }: TagChipProps) => {
           : 'bg-surface-container',
       )}
     >
-      <TagIcon className="h-4 w-4" style={{ color: tag.color }} />
+      <TagIcon className="h-4 w-4" style={{ color: tag.color ?? undefined }} />
       {tag.name}
     </Button>
   );

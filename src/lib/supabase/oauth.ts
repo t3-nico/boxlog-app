@@ -25,23 +25,23 @@
  * ```
  */
 
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@supabase/supabase-js';
 
-import type { Database } from '@/lib/database.types'
-import type { SupabaseClient } from '@supabase/supabase-js'
+import type { Database } from '@/lib/database.types';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 /**
  * OAuth 2.1トークン検証結果
  */
 export interface OAuthVerificationResult {
   /** 認証されたユーザーID */
-  userId: string
+  userId: string;
   /** ユーザー情報付きSupabaseクライアント */
-  client: SupabaseClient<Database>
+  client: SupabaseClient<Database>;
   /** アクセストークン（再利用用） */
-  accessToken: string
+  accessToken: string;
   /** トークンの有効期限（Unix timestamp） */
-  expiresAt: number
+  expiresAt: number;
 }
 
 /**
@@ -52,8 +52,8 @@ export class OAuthError extends Error {
     public readonly code: 'INVALID_TOKEN' | 'EXPIRED_TOKEN' | 'MISSING_TOKEN' | 'INVALID_RESOURCE',
     message: string,
   ) {
-    super(message)
-    this.name = 'OAuthError'
+    super(message);
+    this.name = 'OAuthError';
   }
 }
 
@@ -72,18 +72,18 @@ export class OAuthError extends Error {
  */
 export function extractBearerToken(authHeader: string | null): string {
   if (!authHeader) {
-    throw new OAuthError('MISSING_TOKEN', 'Authorization header is missing')
+    throw new OAuthError('MISSING_TOKEN', 'Authorization header is missing');
   }
 
-  const match = authHeader.match(/^Bearer\s+(.+)$/i)
-  if (!match) {
+  const match = authHeader.match(/^Bearer\s+(.+)$/i);
+  if (!match || !match[1]) {
     throw new OAuthError(
       'INVALID_TOKEN',
       'Authorization header must be in "Bearer <token>" format',
-    )
+    );
   }
 
-  return match[1]
+  return match[1];
 }
 
 /**
@@ -113,14 +113,14 @@ export async function verifyOAuthToken(
      * トークンが特定のリソース向けであることを確認
      * @default undefined（リソース検証なし）
      */
-    resourceIndicator?: string
+    resourceIndicator?: string;
   },
 ): Promise<OAuthVerificationResult> {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   if (!supabaseUrl || !supabaseAnonKey) {
-    throw new Error('Supabase environment variables are not set')
+    throw new Error('Supabase environment variables are not set');
   }
 
   // トークン付きクライアント作成
@@ -130,32 +130,32 @@ export async function verifyOAuthToken(
         Authorization: `Bearer ${accessToken}`,
       },
     },
-  })
+  });
 
   // トークン検証 + ユーザー情報取得
-  const { data, error } = await client.auth.getUser(accessToken)
+  const { data, error } = await client.auth.getUser(accessToken);
 
   if (error || !data.user) {
-    throw new OAuthError('INVALID_TOKEN', error?.message || 'Token verification failed')
+    throw new OAuthError('INVALID_TOKEN', error?.message || 'Token verification failed');
   }
 
   // Resource Indicators (RFC 8707) 検証
   if (options?.resourceIndicator) {
     // トークンのカスタムクレームから対象リソースを確認
-    const tokenResource = data.user.app_metadata?.resource_indicator as string | undefined
+    const tokenResource = data.user.app_metadata?.resource_indicator as string | undefined;
 
     if (tokenResource && tokenResource !== options.resourceIndicator) {
       throw new OAuthError(
         'INVALID_RESOURCE',
         `Token is not valid for resource: ${options.resourceIndicator}`,
-      )
+      );
     }
   }
 
   // トークンの有効期限を確認
-  const expiresAt = data.user.user_metadata?.exp as number | undefined
+  const expiresAt = data.user.user_metadata?.exp as number | undefined;
   if (expiresAt && expiresAt * 1000 < Date.now()) {
-    throw new OAuthError('EXPIRED_TOKEN', 'Access token has expired')
+    throw new OAuthError('EXPIRED_TOKEN', 'Access token has expired');
   }
 
   return {
@@ -163,7 +163,7 @@ export async function verifyOAuthToken(
     client,
     accessToken,
     expiresAt: expiresAt || 0,
-  }
+  };
 }
 
 /**
@@ -192,13 +192,11 @@ export async function verifyOAuthToken(
  * ```
  */
 export function createServiceRoleClient(): SupabaseClient<Database> {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
   if (!supabaseUrl || !serviceRoleKey) {
-    throw new Error(
-      'SUPABASE_SERVICE_ROLE_KEY is not set. This is required for admin operations.',
-    )
+    throw new Error('SUPABASE_SERVICE_ROLE_KEY is not set. This is required for admin operations.');
   }
 
   return createClient<Database>(supabaseUrl, serviceRoleKey, {
@@ -206,7 +204,7 @@ export function createServiceRoleClient(): SupabaseClient<Database> {
       autoRefreshToken: false,
       persistSession: false,
     },
-  })
+  });
 }
 
 /**
@@ -231,20 +229,20 @@ export async function verifyScopes(
   client: SupabaseClient<Database>,
   requiredScopes: string[],
 ): Promise<boolean> {
-  const { data } = await client.auth.getUser()
-  if (!data.user) return false
+  const { data } = await client.auth.getUser();
+  if (!data.user) return false;
 
   // トークンのカスタムクレームからスコープを取得
-  const tokenScopes = (data.user.app_metadata?.scopes as string[]) || []
+  const tokenScopes = (data.user.app_metadata?.scopes as string[]) || [];
 
   // すべての要求されたスコープが含まれているか確認
-  return requiredScopes.every((scope) => tokenScopes.includes(scope))
+  return requiredScopes.every((scope) => tokenScopes.includes(scope));
 }
 
 /**
  * 認証モードの型定義
  */
-export type AuthMode = 'session' | 'oauth' | 'service-role'
+export type AuthMode = 'session' | 'oauth' | 'service-role';
 
 /**
  * 認証モード検出
@@ -265,23 +263,23 @@ export type AuthMode = 'session' | 'oauth' | 'service-role'
 export function detectAuthMode(headers: Headers | Record<string, string>): AuthMode {
   const getHeader = (name: string): string | null => {
     if (headers instanceof Headers) {
-      return headers.get(name)
+      return headers.get(name);
     }
-    return headers[name] || headers[name.toLowerCase()] || null
-  }
+    return headers[name] || headers[name.toLowerCase()] || null;
+  };
 
   // OAuth 2.1トークン認証
-  const authHeader = getHeader('Authorization')
+  const authHeader = getHeader('Authorization');
   if (authHeader?.startsWith('Bearer ')) {
-    return 'oauth'
+    return 'oauth';
   }
 
   // Service Role認証
-  const apiKey = getHeader('X-API-Key')
+  const apiKey = getHeader('X-API-Key');
   if (apiKey) {
-    return 'service-role'
+    return 'service-role';
   }
 
   // デフォルト: Session Cookie認証
-  return 'session'
+  return 'session';
 }

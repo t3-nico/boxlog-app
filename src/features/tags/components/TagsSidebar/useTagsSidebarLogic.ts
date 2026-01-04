@@ -399,10 +399,14 @@ export function useTagsSidebarLogic({
         sorted.sort((a, b) => b.name.localeCompare(a.name, 'ja'));
         break;
       case 'createdAsc':
-        sorted.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+        sorted.sort(
+          (a, b) => new Date(a.created_at ?? 0).getTime() - new Date(b.created_at ?? 0).getTime(),
+        );
         break;
       case 'createdDesc':
-        sorted.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+        sorted.sort(
+          (a, b) => new Date(b.created_at ?? 0).getTime() - new Date(a.created_at ?? 0).getTime(),
+        );
         break;
       case 'tagCountDesc':
         sorted.sort((a, b) => getGroupTagCount(b.id) - getGroupTagCount(a.id));

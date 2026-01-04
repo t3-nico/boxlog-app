@@ -192,7 +192,7 @@ export function TagRow({
             className="text-muted-foreground text-xs"
             style={{ width: `${columnWidths.created_at}px` }}
           >
-            {formatDate(tag.created_at)}
+            {tag.created_at ? formatDate(tag.created_at) : '-'}
           </TableCell>
         </TableRow>
       </ContextMenuTrigger>

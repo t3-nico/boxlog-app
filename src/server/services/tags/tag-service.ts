@@ -12,49 +12,49 @@
  * - タグ削除
  */
 
-import type { Database } from '@/lib/database.types'
-import type { SupabaseClient } from '@supabase/supabase-js'
+import type { Database } from '@/lib/database.types';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 /** タグ行の型 */
-type TagRow = Database['public']['Tables']['tags']['Row']
+type TagRow = Database['public']['Tables']['tags']['Row'];
 
 /** タグ作成入力 */
 export interface CreateTagInput {
-  name: string
-  color?: string
-  description?: string
-  groupId?: string | null
+  name: string;
+  color?: string | undefined;
+  description?: string | undefined;
+  groupId?: string | null | undefined;
 }
 
 /** タグ更新入力 */
 export interface UpdateTagInput {
-  name?: string
-  color?: string
-  description?: string | null
-  groupId?: string | null
+  name?: string | undefined;
+  color?: string | undefined;
+  description?: string | null | undefined;
+  groupId?: string | null | undefined;
 }
 
 /** タグ一覧取得オプション */
 export interface ListTagsOptions {
-  userId: string
-  sortField?: 'name' | 'created_at' | 'updated_at' | 'tag_number'
-  sortOrder?: 'asc' | 'desc'
+  userId: string;
+  sortField?: 'name' | 'created_at' | 'updated_at' | 'tag_number' | undefined;
+  sortOrder?: 'asc' | 'desc' | undefined;
 }
 
 /** タグマージオプション */
 export interface MergeTagsOptions {
-  userId: string
-  sourceTagId: string
-  targetTagId: string
-  mergeAssociations?: boolean
-  deleteSource?: boolean
+  userId: string;
+  sourceTagId: string;
+  targetTagId: string;
+  mergeAssociations?: boolean | undefined;
+  deleteSource?: boolean | undefined;
 }
 
 /** タグマージ結果 */
 export interface MergeTagsResult {
-  success: true
-  mergedAssociations: number
-  targetTag: TagRow
+  success: true;
+  mergedAssociations: number;
+  targetTag: TagRow;
 }
 
 /**
@@ -75,8 +75,8 @@ export class TagServiceError extends Error {
       | 'TARGET_NOT_FOUND',
     message: string,
   ) {
-    super(message)
-    this.name = 'TagServiceError'
+    super(message);
+    this.name = 'TagServiceError';
   }
 }
 
@@ -93,19 +93,19 @@ export class TagService {
    * @returns タグ配列
    */
   async list(options: ListTagsOptions): Promise<TagRow[]> {
-    const { userId, sortField = 'name', sortOrder = 'asc' } = options
+    const { userId, sortField = 'name', sortOrder = 'asc' } = options;
 
     const { data, error } = await this.supabase
       .from('tags')
       .select('*')
       .eq('user_id', userId)
-      .order(sortField, { ascending: sortOrder === 'asc' })
+      .order(sortField, { ascending: sortOrder === 'asc' });
 
     if (error) {
-      throw new TagServiceError('FETCH_FAILED', `Failed to fetch tags: ${error.message}`)
+      throw new TagServiceError('FETCH_FAILED', `Failed to fetch tags: ${error.message}`);
     }
 
-    return data
+    return data;
   }
 
   /**
@@ -115,20 +115,20 @@ export class TagService {
    * @returns タグ
    */
   async getById(options: { userId: string; tagId: string }): Promise<TagRow> {
-    const { userId, tagId } = options
+    const { userId, tagId } = options;
 
     const { data, error } = await this.supabase
       .from('tags')
       .select('*')
       .eq('id', tagId)
       .eq('user_id', userId)
-      .single()
+      .single();
 
     if (error || !data) {
-      throw new TagServiceError('NOT_FOUND', `Tag not found: ${tagId}`)
+      throw new TagServiceError('NOT_FOUND', `Tag not found: ${tagId}`);
     }
 
-    return data
+    return data;
   }
 
   /**
@@ -138,15 +138,15 @@ export class TagService {
    * @returns 作成されたタグ
    */
   async create(options: { userId: string; input: CreateTagInput }): Promise<TagRow> {
-    const { userId, input } = options
+    const { userId, input } = options;
 
     // バリデーション
     if (!input.name || input.name.trim().length === 0) {
-      throw new TagServiceError('INVALID_INPUT', 'Tag name is required')
+      throw new TagServiceError('INVALID_INPUT', 'Tag name is required');
     }
 
     if (input.name.trim().length > 50) {
-      throw new TagServiceError('INVALID_INPUT', 'Tag name must be 50 characters or less')
+      throw new TagServiceError('INVALID_INPUT', 'Tag name must be 50 characters or less');
     }
 
     // タグデータ作成
@@ -157,19 +157,19 @@ export class TagService {
       description: input.description?.trim() || null,
       is_active: true,
       group_id: input.groupId || null,
-    }
+    };
 
-    const { data, error } = await this.supabase.from('tags').insert(tagData).select().single()
+    const { data, error } = await this.supabase.from('tags').insert(tagData).select().single();
 
     if (error) {
       // 重複エラーの場合
       if (error.code === '23505') {
-        throw new TagServiceError('DUPLICATE_NAME', 'Tag with this name already exists')
+        throw new TagServiceError('DUPLICATE_NAME', 'Tag with this name already exists');
       }
-      throw new TagServiceError('CREATE_FAILED', `Failed to create tag: ${error.message}`)
+      throw new TagServiceError('CREATE_FAILED', `Failed to create tag: ${error.message}`);
     }
 
-    return data
+    return data;
   }
 
   /**
@@ -179,44 +179,45 @@ export class TagService {
    * @returns 更新されたタグ
    */
   async update(options: {
-    userId: string
-    tagId: string
-    updates: UpdateTagInput
+    userId: string;
+    tagId: string;
+    updates: UpdateTagInput;
   }): Promise<TagRow> {
-    const { userId, tagId, updates } = options
+    const { userId, tagId, updates } = options;
 
     // 所有権チェック
-    await this.getById({ userId, tagId })
+    await this.getById({ userId, tagId });
 
     // バリデーション
     if (updates.name !== undefined) {
       if (updates.name.trim().length === 0) {
-        throw new TagServiceError('INVALID_INPUT', 'Tag name cannot be empty')
+        throw new TagServiceError('INVALID_INPUT', 'Tag name cannot be empty');
       }
       if (updates.name.trim().length > 50) {
-        throw new TagServiceError('INVALID_INPUT', 'Tag name must be 50 characters or less')
+        throw new TagServiceError('INVALID_INPUT', 'Tag name must be 50 characters or less');
       }
     }
 
     // 更新データ準備
-    const updateData: Record<string, unknown> = {}
-    if (updates.name !== undefined) updateData.name = updates.name.trim()
-    if (updates.color !== undefined) updateData.color = updates.color
-    if (updates.description !== undefined) updateData.description = updates.description?.trim() || null
-    if (updates.groupId !== undefined) updateData.group_id = updates.groupId
+    const updateData: Record<string, unknown> = {};
+    if (updates.name !== undefined) updateData.name = updates.name.trim();
+    if (updates.color !== undefined) updateData.color = updates.color;
+    if (updates.description !== undefined)
+      updateData.description = updates.description?.trim() || null;
+    if (updates.groupId !== undefined) updateData.group_id = updates.groupId;
 
     const { data, error } = await this.supabase
       .from('tags')
       .update(updateData)
       .eq('id', tagId)
       .select()
-      .single()
+      .single();
 
     if (error) {
-      throw new TagServiceError('UPDATE_FAILED', `Failed to update tag: ${error.message}`)
+      throw new TagServiceError('UPDATE_FAILED', `Failed to update tag: ${error.message}`);
     }
 
-    return data
+    return data;
   }
 
   /**
@@ -233,48 +234,52 @@ export class TagService {
       userId,
       sourceTagId,
       targetTagId,
-      mergeAssociations = true,
-      deleteSource = true,
-    } = options
+      // mergeAssociations and deleteSource are handled by the RPC function
+    } = options;
 
     // バリデーション（所有権チェックはRPC内で実行される）
     if (sourceTagId === targetTagId) {
-      throw new TagServiceError('SAME_TAG_MERGE', 'Cannot merge a tag with itself')
+      throw new TagServiceError('SAME_TAG_MERGE', 'Cannot merge a tag with itself');
     }
 
     try {
-      // PL/pgSQL Stored Procedureを呼び出し
-      const { data, error } = await this.supabase.rpc('merge_tags', {
+      // Note: This RPC function is planned but may not exist yet in the database
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data, error } = await (this.supabase.rpc as any)('merge_tags', {
         p_user_id: userId,
         p_source_tag_ids: [sourceTagId],
         p_target_tag_id: targetTagId,
-      })
+      });
 
       if (error) {
-        throw new TagServiceError('MERGE_FAILED', `Failed to merge tags: ${error.message}`)
+        throw new TagServiceError('MERGE_FAILED', `Failed to merge tags: ${error.message}`);
       }
 
       // RPC結果を解析
       const result = data as {
-        success: boolean
-        merged_associations: number
-        deleted_tags: number
-        target_tag: TagRow
+        success: boolean;
+        merged_associations: number;
+        deleted_tags: number;
+        target_tag: TagRow;
+      } | null;
+
+      if (!result || !result.success) {
+        throw new TagServiceError('MERGE_FAILED', 'Merge operation failed');
       }
 
       return {
-        success: result.success,
+        success: true,
         mergedAssociations: result.merged_associations,
         targetTag: result.target_tag,
-      }
+      };
     } catch (error) {
       if (error instanceof TagServiceError) {
-        throw error
+        throw error;
       }
       throw new TagServiceError(
         'MERGE_FAILED',
         error instanceof Error ? error.message : 'Unknown error',
-      )
+      );
     }
   }
 
@@ -285,22 +290,22 @@ export class TagService {
    * @returns 削除されたタグ
    */
   async delete(options: { userId: string; tagId: string }): Promise<TagRow> {
-    const { userId, tagId } = options
+    const { userId, tagId } = options;
 
     // 所有権チェック
-    const tag = await this.getById({ userId, tagId })
+    const tag = await this.getById({ userId, tagId });
 
     // plan_tagsの関連付けを先に削除
-    await this.supabase.from('plan_tags').delete().eq('tag_id', tagId)
+    await this.supabase.from('plan_tags').delete().eq('tag_id', tagId);
 
     // タグ削除
-    const { error } = await this.supabase.from('tags').delete().eq('id', tagId)
+    const { error } = await this.supabase.from('tags').delete().eq('id', tagId);
 
     if (error) {
-      throw new TagServiceError('DELETE_FAILED', `Failed to delete tag: ${error.message}`)
+      throw new TagServiceError('DELETE_FAILED', `Failed to delete tag: ${error.message}`);
     }
 
-    return tag
+    return tag;
   }
 
   /**
@@ -310,57 +315,57 @@ export class TagService {
    * @returns タグ統計の配列
    */
   async getStats(options: { userId: string }): Promise<TagStatsRow[]> {
-    const { userId } = options
+    const { userId } = options;
 
     // ユーザーの全タグを取得（アクティブなもののみ）
     const { data: tags, error: tagsError } = await this.supabase
       .from('tags')
       .select('id, name, color')
       .eq('user_id', userId)
-      .eq('is_active', true)
+      .eq('is_active', true);
 
     if (tagsError) {
-      throw new TagServiceError('FETCH_FAILED', `Failed to fetch tags: ${tagsError.message}`)
+      throw new TagServiceError('FETCH_FAILED', `Failed to fetch tags: ${tagsError.message}`);
     }
 
     if (!tags || tags.length === 0) {
-      return []
+      return [];
     }
 
     // 各タグのプラン紐付け数を取得
-    const tagIds = tags.map((t) => t.id)
+    const tagIds = tags.map((t) => t.id);
     const { data: planTagCounts, error: countError } = await this.supabase
       .from('plan_tags')
       .select('tag_id')
-      .in('tag_id', tagIds)
+      .in('tag_id', tagIds);
 
     if (countError) {
-      throw new TagServiceError('FETCH_FAILED', `Failed to fetch counts: ${countError.message}`)
+      throw new TagServiceError('FETCH_FAILED', `Failed to fetch counts: ${countError.message}`);
     }
 
     // タグIDごとのカウントを集計
-    const countMap = new Map<string, number>()
+    const countMap = new Map<string, number>();
     planTagCounts?.forEach((pt) => {
-      countMap.set(pt.tag_id, (countMap.get(pt.tag_id) || 0) + 1)
-    })
+      countMap.set(pt.tag_id, (countMap.get(pt.tag_id) || 0) + 1);
+    });
 
     // 最終使用日を取得（最新のplan_tags作成日）
     const { data: lastUsedData } = await this.supabase
       .from('plan_tags')
       .select('tag_id, created_at')
       .in('tag_id', tagIds)
-      .order('created_at', { ascending: false })
+      .order('created_at', { ascending: false });
 
-    const lastUsedMap = new Map<string, string | null>()
+    const lastUsedMap = new Map<string, string | null>();
     lastUsedData?.forEach((pt) => {
       if (!lastUsedMap.has(pt.tag_id) && pt.created_at) {
-        lastUsedMap.set(pt.tag_id, pt.created_at)
+        lastUsedMap.set(pt.tag_id, pt.created_at);
       }
-    })
+    });
 
     // レスポンスデータを構築
     const statsData: TagStatsRow[] = tags.map((tag) => {
-      const planCount = countMap.get(tag.id) || 0
+      const planCount = countMap.get(tag.id) || 0;
       return {
         id: tag.id,
         name: tag.name,
@@ -368,24 +373,24 @@ export class TagService {
         plan_count: planCount,
         total_count: planCount, // 現在はプランのみ
         last_used_at: lastUsedMap.get(tag.id) || null,
-      }
-    })
+      };
+    });
 
     // 使用数でソート（多い順）
-    statsData.sort((a, b) => b.total_count - a.total_count)
+    statsData.sort((a, b) => b.total_count - a.total_count);
 
-    return statsData
+    return statsData;
   }
 }
 
 /** タグ統計の型 */
 export interface TagStatsRow {
-  id: string
-  name: string
-  color: string | null
-  plan_count: number
-  total_count: number
-  last_used_at: string | null
+  id: string;
+  name: string;
+  color: string | null;
+  plan_count: number;
+  total_count: number;
+  last_used_at: string | null;
 }
 
 /**
@@ -395,5 +400,5 @@ export interface TagStatsRow {
  * @returns TagService
  */
 export function createTagService(supabase: SupabaseClient<Database>) {
-  return new TagService(supabase)
+  return new TagService(supabase);
 }

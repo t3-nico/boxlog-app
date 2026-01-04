@@ -34,7 +34,7 @@ export interface Context {
   /** 認証モード（session, oauth, service-role） */
   authMode: AuthMode;
   /** OAuth 2.1トークン（oauth modeの場合のみ） */
-  accessToken?: string;
+  accessToken?: string | undefined;
 }
 
 /**
@@ -84,8 +84,7 @@ export async function createTRPCContext(opts: CreateNextContextOptions): Promise
   // 2. Service Role認証（管理者用）
   else if (authMode === 'service-role') {
     try {
-      const apiKey =
-        typeof req.headers['x-api-key'] === 'string' ? req.headers['x-api-key'] : null;
+      const apiKey = typeof req.headers['x-api-key'] === 'string' ? req.headers['x-api-key'] : null;
       const expectedKey = process.env.SERVICE_ROLE_KEY;
 
       if (!apiKey || apiKey !== expectedKey) {
