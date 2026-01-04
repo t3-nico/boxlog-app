@@ -46,11 +46,11 @@ export function PlanTagsSection({
               <Badge
                 variant="outline"
                 style={{
-                  borderColor: tag.color,
+                  borderColor: tag.color || undefined,
                 }}
                 className="group relative gap-0.5 pr-6 text-xs font-normal"
               >
-                <span className="font-medium" style={{ color: tag.color }}>
+                <span className="font-medium" style={{ color: tag.color || undefined }}>
                   #
                 </span>
                 {tag.name}

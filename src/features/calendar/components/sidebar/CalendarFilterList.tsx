@@ -111,7 +111,12 @@ export function CalendarFilterList() {
                     key={group.id}
                     groupName={group.name}
                     groupColor={group.color || undefined}
-                    tags={groupTags}
+                    tags={groupTags.map((t) => ({
+                      id: t.id,
+                      name: t.name,
+                      color: t.color || '#3B82F6',
+                      description: t.description,
+                    }))}
                     visibleTagIds={visibleTagIds}
                     onToggleTag={toggleTag}
                     onToggleGroup={() => toggleGroupTags(groupTags.map((t) => t.id))}
@@ -125,7 +130,12 @@ export function CalendarFilterList() {
             {groupedTags.ungrouped.length > 0 && (
               <TagGroupSection
                 groupName={t('calendar.filter.ungrouped')}
-                tags={groupedTags.ungrouped}
+                tags={groupedTags.ungrouped.map((t) => ({
+                  id: t.id,
+                  name: t.name,
+                  color: t.color || '#3B82F6',
+                  description: t.description,
+                }))}
                 visibleTagIds={visibleTagIds}
                 onToggleTag={toggleTag}
                 onToggleGroup={() => toggleGroupTags(groupedTags.ungrouped.map((t) => t.id))}

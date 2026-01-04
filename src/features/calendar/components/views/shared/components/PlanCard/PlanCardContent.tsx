@@ -135,16 +135,16 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
                   key={tag.id}
                   className="inline-flex flex-shrink-0 items-center gap-0.5 rounded-sm border px-1.5 py-0.5 text-xs leading-tight"
                   style={{
-                    borderColor: tag.color,
+                    borderColor: tag.color || undefined,
                   }}
                   title={tag.name}
                 >
                   {tag.icon && (
-                    <span className="flex-shrink-0" style={{ color: tag.color }}>
+                    <span className="flex-shrink-0" style={{ color: tag.color || undefined }}>
                       {tag.icon}
                     </span>
                   )}
-                  <span className="flex-shrink-0 font-medium" style={{ color: tag.color }}>
+                  <span className="flex-shrink-0 font-medium" style={{ color: tag.color || undefined }}>
                     #
                   </span>
                   <span className="truncate">{tag.name}</span>

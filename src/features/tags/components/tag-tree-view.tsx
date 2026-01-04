@@ -93,7 +93,7 @@ const TagTreeNode = ({ tag, onEditTag, onDeleteTag, onRenameTag }: TagTreeNodePr
       <div className="hover:bg-state-hover group flex items-center gap-2 rounded-lg px-3 py-2 transition-colors">
         {/* タグアイコン */}
         <div className="flex-shrink-0">
-          <TagIcon className="h-4 w-4" style={{ color: tag.color }} data-slot="icon" />
+          <TagIcon className="h-4 w-4" style={{ color: tag.color || undefined }} data-slot="icon" />
         </div>
 
         {/* タグ名 */}

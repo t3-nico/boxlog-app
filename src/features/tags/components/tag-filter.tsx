@@ -38,7 +38,7 @@ const TagFilterItem = ({ tag, isSelected, onToggle }: TagFilterItemProps) => {
   return (
     <label className="hover:bg-state-hover flex cursor-pointer items-center gap-2 px-3 py-2 text-sm transition-colors">
       <Checkbox checked={isSelected} onCheckedChange={handleCheckedChange} />
-      <TagIcon className="h-4 w-4 flex-shrink-0" style={{ color: tag.color }} />
+      <TagIcon className="h-4 w-4 flex-shrink-0" style={{ color: tag.color || undefined }} />
       <span className="flex-1 truncate">{tag.name}</span>
     </label>
   );
@@ -118,7 +118,7 @@ export const TagFilter = ({
               key={tag.id}
               className="bg-primary/10 text-primary inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium"
             >
-              <TagIcon className="h-4 w-4" style={{ color: tag.color }} />
+              <TagIcon className="h-4 w-4" style={{ color: tag.color || undefined }} />
               {tag.name}
               <Button
                 type="button"
