@@ -3,16 +3,16 @@
 export interface Tag {
   id: string;
   name: string;
-  user_id: string;
-  color: string;
+  user_id: string | null;
+  color: string | null;
   tag_number: number;
   description: string | null;
   icon: string | null;
   is_active: boolean;
   group_id: string | null;
-  sort_order: number;
-  created_at: Date;
-  updated_at: Date;
+  sort_order?: number | null;
+  created_at: string | null;
+  updated_at: string | null;
 }
 
 // タググループ
@@ -24,9 +24,9 @@ export interface TagGroup {
   group_number: number;
   description: string | null;
   color: string | null;
-  sort_order: number;
-  created_at: Date;
-  updated_at: Date;
+  sort_order: number | null;
+  created_at: string | null;
+  updated_at: string | null;
 }
 
 // タグ作成用入力型
@@ -97,7 +97,7 @@ export interface CreateTagAssociationInput {
 export interface TagUsageStats {
   id: string;
   name: string;
-  color: string;
+  color: string | null;
   usage_count: number;
   task_count: number;
   event_count: number;
@@ -109,7 +109,7 @@ export interface TagUsageStats {
 export interface TagOption {
   value: string;
   label: string;
-  color: string;
+  color: string | null;
   groupId?: string | null;
   disabled?: boolean;
 }
