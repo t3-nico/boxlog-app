@@ -12,6 +12,9 @@ const withBundleAnalyzer = bundleAnalyzer({
 const nextConfig = {
   reactStrictMode: true,
 
+  // セキュリティ: X-Powered-By ヘッダーを削除（サーバー情報漏洩防止）
+  poweredByHeader: false,
+
   // 環境変数設定
   env: {
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
