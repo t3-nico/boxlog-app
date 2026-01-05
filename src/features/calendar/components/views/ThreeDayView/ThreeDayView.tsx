@@ -193,6 +193,7 @@ export const ThreeDayView = ({
                 <ThreeDayContent
                   date={date}
                   plans={dayPlans}
+                  allEventsForOverlapCheck={plans}
                   planStyles={planStyles}
                   onPlanClick={onPlanClick}
                   onPlanContextMenu={onPlanContextMenu}

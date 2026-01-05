@@ -15,12 +15,16 @@ import {
   calculateEventDuration,
   calculatePreviewTime,
   calculateSnappedPosition,
+  checkClientSideOverlap,
+  updateDragElementOverlapStyle,
   updateDragElementPosition,
   updateTimeDisplay,
 } from './utils';
 
 interface UseDragHandlerProps {
   events: CalendarPlan[];
+  /** 重複チェック用の全イベント（週/複数日表示で別日への移動時に使用） */
+  allEventsForOverlapCheck?: CalendarPlan[] | undefined;
   date: Date;
   displayDates: Date[] | undefined;
   viewMode: string;
@@ -34,6 +38,7 @@ interface UseDragHandlerProps {
 
 export function useDragHandler({
   events,
+  allEventsForOverlapCheck,
   date,
   displayDates,
   viewMode,
@@ -108,6 +113,7 @@ export function useDragHandler({
         originalDateIndex: dateIndex,
         targetDateIndex: dateIndex,
         ghostElement: null,
+        isOverlapping: false,
       });
     },
     [viewMode, displayDates, dragDataRef, setDragState],
@@ -158,6 +164,27 @@ export function useDragHandler({
 
       updateTimeDisplay(dragData.dragElement || null, previewStartTime, previewEndTime);
 
+      // クライアント側で重複チェック（全イベントを使用して別日への移動もチェック）
+      const eventsToCheck = allEventsForOverlapCheck ?? events;
+      const isOverlapping = checkClientSideOverlap(
+        eventsToCheck,
+        dragData.eventId,
+        previewStartTime,
+        previewEndTime,
+      );
+
+      // デバッグログ
+      console.log('[DnD Overlap Check]', {
+        isOverlapping,
+        previewStartTime: previewStartTime.toISOString(),
+        previewEndTime: previewEndTime.toISOString(),
+        eventsCount: eventsToCheck.length,
+        dragElementExists: !!dragData.dragElement,
+      });
+
+      // ゴースト要素のスタイルを重複状態に応じて更新
+      updateDragElementOverlapStyle(dragData.dragElement || null, isOverlapping);
+
       setDragState((prev) => ({
         ...prev,
         currentPosition: { x: constrainedX, y: constrainedY },
@@ -167,6 +194,7 @@ export function useDragHandler({
         },
         previewTime: { start: previewStartTime, end: previewEndTime },
         targetDateIndex,
+        isOverlapping,
       }));
     },
     [events, date, viewMode, displayDates, dragDataRef, setDragState],

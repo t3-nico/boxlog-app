@@ -1,4 +1,5 @@
 import { calendarColors } from '@/features/calendar/theme';
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
 
 /**
  * ドラッグ要素を作成する（position: fixed で自由移動）
@@ -123,4 +124,77 @@ export function calculateColumnWidth(
   }
 
   return columnWidth;
+}
+
+/**
+ * クライアント側で時間重複をチェックする
+ * @param events - 現在表示中のプラン一覧
+ * @param draggedEventId - ドラッグ中のプランID（自分自身は除外）
+ * @param previewStartTime - プレビュー開始時刻
+ * @param previewEndTime - プレビュー終了時刻
+ * @returns 重複している場合はtrue
+ */
+export function checkClientSideOverlap(
+  events: CalendarPlan[],
+  draggedEventId: string,
+  previewStartTime: Date,
+  previewEndTime: Date,
+): boolean {
+  // 自分自身を除外した他のプランとの重複チェック
+  const result = events.some((event) => {
+    // 自分自身はスキップ
+    if (event.id === draggedEventId) return false;
+
+    // startDate/endDateがない場合はスキップ
+    if (!event.startDate || !event.endDate) {
+      console.log('[Overlap] Skipping event without dates:', event.id, event.title);
+      return false;
+    }
+
+    const eventStart = event.startDate;
+    const eventEnd = event.endDate;
+
+    // 時間重複条件: 既存の開始時刻 < 新規の終了時刻 AND 既存の終了時刻 > 新規の開始時刻
+    const overlaps = eventStart < previewEndTime && eventEnd > previewStartTime;
+    if (overlaps) {
+      console.log('[Overlap] Found overlap with:', {
+        eventId: event.id,
+        eventTitle: event.title,
+        eventStart: eventStart.toISOString(),
+        eventEnd: eventEnd.toISOString(),
+      });
+    }
+    return overlaps;
+  });
+
+  return result;
+}
+
+/**
+ * ドラッグ要素の重複状態のスタイルを更新する
+ * @param dragElement - ドラッグ中の要素
+ * @param isOverlapping - 重複しているか
+ */
+export function updateDragElementOverlapStyle(
+  dragElement: HTMLElement | null,
+  isOverlapping: boolean,
+): void {
+  console.log('[Overlap Style] Updating style:', { dragElement: !!dragElement, isOverlapping });
+
+  if (!dragElement) return;
+
+  if (isOverlapping) {
+    // 重複時: 赤いボーダー、薄い表示、禁止カーソル
+    dragElement.style.border = '2px solid #ef4444'; // red-500
+    dragElement.style.opacity = '0.5';
+    dragElement.style.cursor = 'not-allowed';
+    dragElement.classList.add('drag-overlap');
+    console.log('[Overlap Style] Applied overlap style (red border)');
+  } else {
+    // 正常時: 通常のスタイルに戻す
+    dragElement.style.border = '';
+    dragElement.style.opacity = '0.8';
+    dragElement.style.cursor = 'grabbing';
+    dragElement.classList.remove('drag-overlap');
+  }
 }

@@ -22,6 +22,8 @@ import type { WeekPlanPosition } from '../WeekView.types';
 interface WeekContentProps {
   date: Date;
   plans: CalendarPlan[];
+  /** 重複チェック用の全イベント（週全体のイベント） */
+  allEventsForOverlapCheck?: CalendarPlan[] | undefined;
   planPositions: WeekPlanPosition[];
   onPlanClick?: ((plan: CalendarPlan) => void) | undefined;
   onPlanContextMenu?: ((plan: CalendarPlan, e: React.MouseEvent) => void) | undefined;
@@ -38,6 +40,7 @@ interface WeekContentProps {
 export const WeekContent = ({
   date,
   plans,
+  allEventsForOverlapCheck,
   planPositions,
   onPlanClick,
   onPlanContextMenu,
@@ -79,6 +82,7 @@ export const WeekContent = ({
     onPlanClick,
     date,
     events: plans,
+    allEventsForOverlapCheck,
     displayDates,
     viewMode: 'week',
     disabledPlanId,

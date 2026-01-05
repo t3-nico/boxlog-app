@@ -20,6 +20,8 @@ import { useDragAndDrop } from '../../shared/hooks/useDragAndDrop';
 interface ThreeDayContentProps {
   date: Date;
   plans: CalendarPlan[];
+  /** 重複チェック用の全イベント（3日間全体のイベント） */
+  allEventsForOverlapCheck?: CalendarPlan[] | undefined;
   planStyles: Record<string, React.CSSProperties>;
   onPlanClick?: ((plan: CalendarPlan) => void) | undefined;
   onPlanContextMenu?: ((plan: CalendarPlan, e: React.MouseEvent) => void) | undefined;
@@ -36,6 +38,7 @@ interface ThreeDayContentProps {
 export const ThreeDayContent = ({
   date,
   plans,
+  allEventsForOverlapCheck,
   planStyles,
   onPlanClick,
   onPlanContextMenu,
@@ -77,6 +80,7 @@ export const ThreeDayContent = ({
     onPlanClick,
     date,
     events: plans,
+    allEventsForOverlapCheck,
     displayDates,
     viewMode: '3day',
     disabledPlanId,

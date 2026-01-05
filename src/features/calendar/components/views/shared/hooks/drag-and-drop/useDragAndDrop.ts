@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+import useCalendarToast from '@/features/calendar/lib/toast';
 import { useCalendarDragStore } from '@/features/calendar/stores/useCalendarDragStore';
 
 import type { DragDataRef, DragState, UseDragAndDropProps } from './types';
@@ -11,6 +12,7 @@ import { useResizeHandler } from './useResizeHandler';
 import {
   calculateNewTime,
   calculateTargetDateIndex,
+  checkClientSideOverlap,
   cleanupDragElements,
   createDragElement,
   getConstrainedPosition,
@@ -28,6 +30,7 @@ export function useDragAndDrop({
   onPlanClick,
   date,
   events,
+  allEventsForOverlapCheck,
   displayDates,
   viewMode = 'day',
   disabledPlanId,
@@ -38,6 +41,9 @@ export function useDragAndDrop({
   // グローバルドラッグ状態（日付間移動用）
   const { startDrag, updateDrag, endDrag } = useCalendarDragStore();
 
+  // トースト通知
+  const calendarToast = useCalendarToast();
+
   // eventClickHandler の最新参照を保持（クロージャー問題を回避）
   // 重要: useRef の初期値として eventClickHandler を設定し、毎回の render で同期更新も行う
   const eventClickHandlerRef = useRef(eventClickHandler);
@@ -47,6 +53,10 @@ export function useDragAndDrop({
   // events の最新参照を保持
   const eventsRef = useRef(events);
   eventsRef.current = events;
+
+  // 重複チェック用の全イベント（提供されていればそれを使用、なければeventsを使用）
+  const allEventsRef = useRef(allEventsForOverlapCheck ?? events);
+  allEventsRef.current = allEventsForOverlapCheck ?? events;
 
   const [dragState, setDragState] = useState<DragState>(initialDragState);
   const dragDataRef = useRef<DragDataRef | null>(null);
@@ -84,6 +94,7 @@ export function useDragAndDrop({
   const { handleMouseDown, handleDragging, handleEventDrop, handleEventClick, executeEventUpdate } =
     useDragHandler({
       events,
+      allEventsForOverlapCheck,
       date,
       displayDates,
       viewMode,
@@ -276,6 +287,40 @@ export function useDragAndDrop({
       dragDataRef.current,
     );
 
+    // ドロップ時に最終重複チェック（全イベントを使用して別日への移動もチェック）
+    const draggedEvent = eventsRef.current.find((e) => e.id === dragDataRef.current?.eventId);
+    if (draggedEvent) {
+      const durationMs =
+        draggedEvent.endDate && draggedEvent.startDate
+          ? draggedEvent.endDate.getTime() - draggedEvent.startDate.getTime()
+          : 60 * 60 * 1000; // デフォルト1時間
+      const newEndTime = new Date(newStartTime.getTime() + durationMs);
+
+      // allEventsRef を使用して週全体のイベントと重複チェック
+      const isOverlapping = checkClientSideOverlap(
+        allEventsRef.current,
+        dragDataRef.current.eventId,
+        newStartTime,
+        newEndTime,
+      );
+
+      console.log('[DnD Drop] Final overlap check:', {
+        isOverlapping,
+        newStartTime: newStartTime.toISOString(),
+        newEndTime: newEndTime.toISOString(),
+        allEventsCount: allEventsRef.current.length,
+      });
+
+      if (isOverlapping) {
+        calendarToast.warning('時間が重複しています', {
+          description: '既存の予定と時間が重複しています',
+        });
+        completeDragOperation(false);
+        endDrag();
+        return;
+      }
+    }
+
     await executeEventUpdate(newStartTime);
 
     const actuallyDragged = dragDataRef.current?.hasMoved || false;
@@ -293,6 +338,7 @@ export function useDragAndDrop({
     executeEventUpdate,
     completeDragOperation,
     endDrag,
+    calendarToast,
   ]);
 
   // handleMouseDown をラップして disabledPlanId をチェック

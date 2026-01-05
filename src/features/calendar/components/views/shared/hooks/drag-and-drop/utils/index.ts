@@ -15,7 +15,9 @@ export {
 
 export {
   calculateColumnWidth,
+  checkClientSideOverlap,
   cleanupDragElements,
   createDragElement,
+  updateDragElementOverlapStyle,
   updateDragElementPosition,
 } from './dragElement';

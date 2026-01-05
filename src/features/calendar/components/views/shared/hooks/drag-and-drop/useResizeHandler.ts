@@ -179,6 +179,7 @@ export function useResizeHandler({
         recentlyResized: false,
         dragElement: null,
         ghostElement: null,
+        isOverlapping: false,
       });
     },
     [dragDataRef, setDragState],

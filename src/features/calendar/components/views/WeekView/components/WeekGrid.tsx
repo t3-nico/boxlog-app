@@ -140,6 +140,7 @@ export const WeekGrid = ({
               <WeekContent
                 date={date}
                 plans={dayEvents}
+                allEventsForOverlapCheck={events}
                 planPositions={eventPositions}
                 onPlanClick={onEventClick}
                 onPlanContextMenu={onEventContextMenu}

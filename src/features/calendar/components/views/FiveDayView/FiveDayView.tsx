@@ -194,6 +194,7 @@ export const FiveDayView = ({
                 <FiveDayContent
                   date={date}
                   plans={dayPlans}
+                  allEventsForOverlapCheck={plans}
                   planStyles={planStyles}
                   onPlanClick={onPlanClick}
                   onPlanContextMenu={onPlanContextMenu}
