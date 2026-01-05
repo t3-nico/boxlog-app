@@ -226,7 +226,7 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
                   e.preventDefault();
                   e.stopPropagation();
                   const locale = pathname?.split('/')[1] || 'ja';
-                  const targetUrl = `/${locale}/tags/g-${group.group_number}`;
+                  const targetUrl = `/${locale}/tags/g-${group.id}`;
                   router.push(targetUrl);
                   onClose?.();
                 }}
@@ -277,7 +277,7 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
                       <span className="text-muted-foreground font-mono text-xs">
-                        g-{group.group_number}
+                        g-{group.id.slice(0, 8)}
                       </span>
                       {editingGroupId === group.id ? (
                         <Input

@@ -135,7 +135,6 @@ export const useTagStore = create<TagStore>()(
               name: tagData.name,
               user_id: 'current-user', // Auth integration tracked in Issue #87
               color: tagData.color,
-              tag_number: 0, // 仮の値、実際の値はサーバー側で自動採番される
               description: tagData.description || null,
               icon: tagData.icon || null,
               is_active: true,

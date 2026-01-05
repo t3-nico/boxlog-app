@@ -48,7 +48,7 @@ export function TagsSidebar({
     isAllTagsActive,
     isArchivePage,
     isUncategorizedPage,
-    currentGroupNumber,
+    currentGroupId,
     sortType,
     sortedGroups,
     deletingGroup,
@@ -178,7 +178,7 @@ export function TagsSidebar({
                     <SortableGroupItem
                       key={group.id}
                       group={group}
-                      isActive={currentGroupNumber === group.group_number}
+                      isActive={currentGroupId === group.id}
                       tagCount={getGroupTagCount(group.id)}
                       onGroupClick={handleGroupClick}
                       onStartEdit={handleStartEditing}

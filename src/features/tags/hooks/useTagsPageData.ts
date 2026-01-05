@@ -140,8 +140,8 @@ export function useTagsPageData({
 
     const result: DataTableGroupedData<Tag>[] = [];
 
-    // グループを group_number でソートして追加
-    const sortedGroups = [...groups].sort((a, b) => a.group_number - b.group_number);
+    // グループを sort_order または created_at でソートして追加
+    const sortedGroups = [...groups].sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
     for (const group of sortedGroups) {
       const items = groupMap.get(group.id) ?? [];
       if (items.length > 0) {
