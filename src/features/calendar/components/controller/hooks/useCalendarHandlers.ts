@@ -58,9 +58,14 @@ export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandle
   // プラン関連のハンドラー
   const handlePlanClick = useCallback(
     (plan: CalendarPlan) => {
-      // プランIDでplan Inspectorを開く
-      openInspector(plan.id);
-      logger.log('📋 Opening plan Inspector:', { planId: plan.id, title: plan.title });
+      // 繰り返しインスタンスの場合は親プランIDを使用
+      const planIdToOpen = plan.calendarId ?? plan.id;
+      openInspector(planIdToOpen);
+      logger.log('📋 Opening plan Inspector:', {
+        planId: planIdToOpen,
+        title: plan.title,
+        isRecurringInstance: !!plan.calendarId,
+      });
     },
     [openInspector],
   );
