@@ -4,6 +4,7 @@ import { Search } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { useGlobalSearch } from '@/features/search/hooks/use-global-search';
+import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
 
 import type { CalendarViewType } from '../../../types/calendar.types';
 
@@ -77,6 +78,7 @@ export const CalendarHeader = ({
   displayRange,
 }: CalendarHeaderProps) => {
   const { open: openSearch } = useGlobalSearch();
+  const showWeekNumbers = useCalendarSettingsStore((state) => state.showWeekNumbers);
 
   return (
     <header className="bg-background relative h-12 px-4 py-2">
@@ -90,7 +92,7 @@ export const CalendarHeader = ({
           <DateRangeDisplay
             date={currentDate}
             viewType={viewType}
-            showWeekNumber={true}
+            showWeekNumber={showWeekNumbers}
             clickable={showMiniCalendar}
             onDateSelect={onDateSelect ? (date) => date && onDateSelect(date) : undefined}
             displayRange={displayRange}

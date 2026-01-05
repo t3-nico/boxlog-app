@@ -8,6 +8,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useCalendarScrollStore } from '@/features/calendar/stores';
+import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
 import { cn } from '@/lib/utils';
 
 import { TimeColumn } from '../grid/TimeColumn/TimeColumn';
@@ -57,6 +58,11 @@ export const CalendarDateHeader = ({
   timezone,
   weekNumber,
 }: CalendarDateHeaderProps) => {
+  const showWeekNumbers = useCalendarSettingsStore((state) => state.showWeekNumbers);
+
+  // 設定がオンで週番号が渡されている場合のみ表示
+  const shouldShowWeekNumber = showWeekNumbers && weekNumber != null;
+
   return (
     <div className="flex h-12 shrink-0 flex-col justify-center py-2">
       <div className="flex items-center px-4">
@@ -67,7 +73,7 @@ export const CalendarDateHeader = ({
             style={{ width: timeColumnWidth }}
           >
             {/* 週番号バッジ（Googleカレンダースタイル） - モバイルのみ表示 */}
-            {weekNumber != null ? (
+            {shouldShowWeekNumber ? (
               <span className="bg-muted text-muted-foreground flex size-6 items-center justify-center rounded-full text-xs font-medium md:hidden">
                 {weekNumber}
               </span>
@@ -76,7 +82,7 @@ export const CalendarDateHeader = ({
             {showTimezone && timezone ? (
               <TimezoneOffset
                 timezone={timezone}
-                className={cn('text-xs', weekNumber != null && 'hidden md:flex')}
+                className={cn('text-xs', shouldShowWeekNumber && 'hidden md:flex')}
               />
             ) : null}
           </div>
