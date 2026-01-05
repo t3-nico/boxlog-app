@@ -9,15 +9,15 @@ import { usePathname, useRouter } from 'next/navigation';
  * - all: すべてのタグ
  * - uncategorized: 未分類タグ
  * - archive: アーカイブ
- * - group-{number}: グループ番号
+ * - group-{uuid}: グループID（UUID）
  */
-export type TagsFilter = 'all' | 'uncategorized' | 'archive' | `group-${number}`;
+export type TagsFilter = 'all' | 'uncategorized' | 'archive' | `group-${string}`;
 
 interface TagsNavigationContextValue {
   filter: TagsFilter;
-  groupNumber: number | null;
+  groupId: string | null;
   navigateToFilter: (filter: TagsFilter) => void;
-  navigateToGroup: (groupNumber: number) => void;
+  navigateToGroup: (groupId: string) => void;
 }
 
 const TagsNavigationContext = createContext<TagsNavigationContextValue | null>(null);
@@ -43,10 +43,8 @@ export function TagsNavigationProvider({
   // 現在のlocaleを取得
   const locale = pathname?.split('/')[1] || 'ja';
 
-  // グループ番号を抽出
-  const groupNumber = filter.startsWith('group-')
-    ? parseInt(filter.replace('group-', ''), 10)
-    : null;
+  // グループIDを抽出
+  const groupId = filter.startsWith('group-') ? filter.replace('group-', '') : null;
 
   const navigateToFilter = useCallback(
     (newFilter: TagsFilter) => {
@@ -59,8 +57,8 @@ export function TagsNavigationProvider({
       } else if (newFilter === 'archive') {
         url = `/${locale}/tags/archive`;
       } else if (newFilter.startsWith('group-')) {
-        const num = newFilter.replace('group-', '');
-        url = `/${locale}/tags/g-${num}`;
+        const id = newFilter.replace('group-', '');
+        url = `/${locale}/tags/g-${id}`;
       }
 
       router.push(url, { scroll: false });
@@ -69,8 +67,8 @@ export function TagsNavigationProvider({
   );
 
   const navigateToGroup = useCallback(
-    (num: number) => {
-      navigateToFilter(`group-${num}`);
+    (id: string) => {
+      navigateToFilter(`group-${id}`);
     },
     [navigateToFilter],
   );
@@ -79,7 +77,7 @@ export function TagsNavigationProvider({
     <TagsNavigationContext.Provider
       value={{
         filter,
-        groupNumber,
+        groupId,
         navigateToFilter,
         navigateToGroup,
       }}
