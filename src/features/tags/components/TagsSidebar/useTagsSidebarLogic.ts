@@ -45,7 +45,7 @@ export function useTagsSidebarLogic({
   const { selection } = useHapticFeedback();
   const { setIsCreatingGroup } = useTagsPageContext();
   const { data: groups = [] } = useTagGroups();
-  const { data: allTags = [] } = useTags(true);
+  const { data: allTags = [] } = useTags();
   const createGroupMutation = useCreateTagGroup();
   const updateGroupMutation = useUpdateTagGroup();
   const deleteGroupMutation = useDeleteTagGroup();
@@ -185,7 +185,7 @@ export function useTagsSidebarLogic({
     if (!deletingGroup) return;
 
     try {
-      await deleteGroupMutation.mutateAsync(deletingGroup.id);
+      await deleteGroupMutation.mutateAsync({ id: deletingGroup.id });
       toast.success(t('tags.toast.groupDeleted', { name: deletingGroup.name }));
       setDeletingGroup(null);
 
@@ -271,7 +271,7 @@ export function useTagsSidebarLogic({
       const tagCount = getGroupTagCount(group.id);
       if (tagCount === 0) {
         deleteGroupMutation
-          .mutateAsync(group.id)
+          .mutateAsync({ id: group.id })
           .then(() => {
             toast.success(t('tags.toast.groupDeleted', { name: group.name }));
             if (currentGroupNumber === group.group_number) {
@@ -399,10 +399,14 @@ export function useTagsSidebarLogic({
         sorted.sort((a, b) => b.name.localeCompare(a.name, 'ja'));
         break;
       case 'createdAsc':
-        sorted.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+        sorted.sort(
+          (a, b) => new Date(a.created_at ?? 0).getTime() - new Date(b.created_at ?? 0).getTime(),
+        );
         break;
       case 'createdDesc':
-        sorted.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+        sorted.sort(
+          (a, b) => new Date(b.created_at ?? 0).getTime() - new Date(a.created_at ?? 0).getTime(),
+        );
         break;
       case 'tagCountDesc':
         sorted.sort((a, b) => getGroupTagCount(b.id) - getGroupTagCount(a.id));

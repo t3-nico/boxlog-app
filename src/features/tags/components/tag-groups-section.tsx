@@ -47,7 +47,7 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
   ({ onSelectGroup: _onSelectGroup, selectedGroupId, onClose }, ref) => {
     const t = useTranslations();
     const { data: groups = [] as TagGroup[], isPending } = useTagGroups();
-    const { data: allTags = [] } = useTags(true); // タグ数カウント用
+    const { data: allTags = [] } = useTags(); // タグ数カウント用
     const createGroupMutation = useCreateTagGroup();
     const updateGroupMutation = useUpdateTagGroup();
     const deleteGroupMutation = useDeleteTagGroup();
@@ -161,7 +161,7 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
       if (!deletingGroup) return;
 
       try {
-        await deleteGroupMutation.mutateAsync(deletingGroup.id);
+        await deleteGroupMutation.mutateAsync({ id: deletingGroup.id });
         toast.success(t('tag.toast.groupDeleted', { name: deletingGroup.name }));
         setDeletingGroup(null);
       } catch (error) {
@@ -339,7 +339,7 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
                         // タグ数が0件の場合は即削除
                         if (tagCount === 0) {
                           try {
-                            await deleteGroupMutation.mutateAsync(group.id);
+                            await deleteGroupMutation.mutateAsync({ id: group.id });
                             toast.success(t('tag.toast.groupDeleted', { name: group.name }));
                           } catch (error) {
                             console.error('Failed to delete tag group:', error);

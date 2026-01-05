@@ -7,6 +7,9 @@ import { authRouter } from './routers/auth';
 import { notificationsRouter } from './routers/notifications';
 import { plansRouter } from './routers/plans';
 import { profileRouter } from './routers/profile';
+import { tagGroupsRouter } from './routers/tag-groups';
+import { tagsRouter } from './routers/tags';
+import { userRouter } from './routers/user';
 import { userSettingsRouter } from './routers/userSettings';
 import { createTRPCRouter } from './trpc';
 
@@ -17,6 +20,9 @@ export const appRouter = createTRPCRouter({
   auth: authRouter,
   profile: profileRouter,
   plans: plansRouter,
+  tags: tagsRouter,
+  tagGroups: tagGroupsRouter,
+  user: userRouter,
   notifications: notificationsRouter,
   userSettings: userSettingsRouter,
 });

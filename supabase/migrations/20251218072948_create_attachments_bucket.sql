@@ -51,6 +51,3 @@ USING (
   bucket_id = 'attachments'
   AND (storage.foldername(name))[1] = auth.uid()::text
 );
-
--- コメント追加
-COMMENT ON COLUMN storage.buckets.id IS 'attachments: プラン添付ファイル用バケット';

@@ -77,7 +77,7 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
         deleteSource: true,
       });
 
-      toast.success(t('tags.merge.success', { count: result.merged_associations || 0 }));
+      toast.success(t('tags.merge.success', { count: result.mergedAssociations || 0 }));
       // 統合先タグIDを渡して閉じる（インスペクターで統合先を開くため）
       onClose(targetTagId);
     } catch (err) {

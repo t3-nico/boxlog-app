@@ -94,6 +94,7 @@ async function createServerContext(): Promise<Context> {
     userId,
     sessionId,
     supabase,
+    authMode: 'session' as const, // Server Componentは常にsession認証
   };
 }
 

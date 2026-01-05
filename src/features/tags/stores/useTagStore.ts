@@ -127,6 +127,9 @@ export const useTagStore = create<TagStore>()(
           try {
             const { tags } = get();
 
+            // 後方互換性のため group_id と groupId の両方をサポート
+            const groupId = tagData.groupId ?? tagData.group_id ?? null;
+
             const newTag: Tag = {
               id: generateId(),
               name: tagData.name,
@@ -136,10 +139,10 @@ export const useTagStore = create<TagStore>()(
               description: tagData.description || null,
               icon: tagData.icon || null,
               is_active: true,
-              group_id: tagData.group_id || null,
+              group_id: groupId,
               sort_order: tags.length,
-              created_at: new Date(),
-              updated_at: new Date(),
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
             };
 
             set({ tags: [...tags, newTag] });
@@ -159,6 +162,9 @@ export const useTagStore = create<TagStore>()(
               throw new Error('Tag not found');
             }
 
+            // 後方互換性のため group_id と groupId の両方をサポート
+            const newGroupId = updates.groupId ?? updates.group_id;
+
             set((state) => ({
               tags: state.tags.map((tag) => {
                 if (tag.id === id) {
@@ -169,9 +175,9 @@ export const useTagStore = create<TagStore>()(
                     ...(updates.description !== undefined && { description: updates.description }),
                     ...(updates.icon !== undefined && { icon: updates.icon }),
                     ...(updates.is_active !== undefined && { is_active: updates.is_active }),
-                    ...(updates.group_id !== undefined && { group_id: updates.group_id }),
+                    ...(newGroupId !== undefined && { group_id: newGroupId }),
                     ...(updates.sort_order !== undefined && { sort_order: updates.sort_order }),
-                    updated_at: new Date(),
+                    updated_at: new Date().toISOString(),
                   } as Tag;
                 }
                 return tag;

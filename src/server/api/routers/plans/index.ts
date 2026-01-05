@@ -14,6 +14,7 @@ import { plansCrudRouter } from './crud';
 import { instancesRouter } from './instances';
 import { statisticsRouter } from './statistics';
 import { tagsRouter } from './tags';
+import { plansTransactionRouter } from './transaction';
 
 const bulkAliasRouter = createTRPCRouter({
   bulkUpdate: bulkRouter.update,
@@ -52,7 +53,7 @@ const tagsAliasRouter = createTRPCRouter({
 });
 
 // Merge all routers to create final plansRouter
-// Note: Tag CRUD is managed via REST API (/api/tags), but plan-tag associations use tRPC
+// Note: Tag CRUD is managed via tRPC (tags router), plan-tag associations also use tRPC
 export const plansRouter = mergeRouters(
   plansCrudRouter,
   bulkAliasRouter,
@@ -60,4 +61,5 @@ export const plansRouter = mergeRouters(
   activitiesAliasRouter,
   instancesAliasRouter,
   tagsAliasRouter,
+  plansTransactionRouter,
 );

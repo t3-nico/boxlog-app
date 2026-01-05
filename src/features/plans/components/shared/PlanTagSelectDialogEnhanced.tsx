@@ -60,7 +60,7 @@ export function PlanTagSelectDialogEnhanced({
   const [showArchived, setShowArchived] = useState(false);
   const [showSidebar, setShowSidebar] = useState(true);
 
-  const { data: tagsData } = useTags(true);
+  const { data: tagsData } = useTags();
   const { data: groups = [] } = useTagGroups();
   const createTagMutation = useCreateTag();
 
@@ -153,7 +153,7 @@ export function PlanTagSelectDialogEnhanced({
         name: newTagName.trim(),
         color: DEFAULT_TAG_COLOR,
         description: undefined,
-        group_id:
+        groupId:
           selectedGroupId && selectedGroupId !== 'uncategorized' ? selectedGroupId : undefined,
       });
 

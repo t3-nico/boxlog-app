@@ -30,7 +30,7 @@ export const TagBadge = ({
       className={`inline-flex cursor-pointer items-center gap-1 transition-all ${sizeClasses[size]} ${onClick ? 'hover:opacity-80' : ''} `}
       style={{
         backgroundColor: `${tag.color}20`,
-        color: tag.color,
+        color: tag.color || undefined,
         border: `1px solid ${tag.color}40`,
       }}
       onClick={onClick}

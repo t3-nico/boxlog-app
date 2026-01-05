@@ -49,7 +49,7 @@ export function TagsSettings() {
   }, []);
 
   // データ取得
-  const { data: tags = [], isPending, error } = useTags(true);
+  const { data: tags = [], isPending, error } = useTags();
 
   // タグ操作
   const {

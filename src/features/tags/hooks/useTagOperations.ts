@@ -51,18 +51,20 @@ export function useTagOperations(tags: Tag[]) {
           description: data.description || null,
           icon: null,
           is_active: true,
-          group_id: data.group_id ?? createGroupId,
+          group_id: data.groupId ?? createGroupId,
           sort_order: tags.length,
-          created_at: new Date(),
-          updated_at: new Date(),
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
         };
 
         addTagOptimistically(tempTag);
 
         // 実際の作成
         await createTagMutation.mutateAsync({
-          ...data,
-          group_id: data.group_id ?? createGroupId,
+          name: data.name,
+          color: data.color,
+          description: data.description ?? undefined,
+          groupId: data.groupId ?? createGroupId ?? undefined,
         });
       } catch (error) {
         console.error('Failed to create tag:', error);
@@ -107,7 +109,7 @@ export function useTagOperations(tags: Tag[]) {
         removeTagOptimistically(tag.id);
 
         // 実際の削除
-        await deleteTagMutation.mutateAsync(tag.id);
+        await deleteTagMutation.mutateAsync({ id: tag.id });
       } catch (error) {
         console.error('Failed to delete tag:', error);
         throw error;
@@ -126,7 +128,7 @@ export function useTagOperations(tags: Tag[]) {
         // 実際の移動
         await moveTagMutation.mutateAsync({
           id: tag.id,
-          newGroupId,
+          groupId: newGroupId,
         });
       } catch (error) {
         console.error('Failed to move tag:', error);

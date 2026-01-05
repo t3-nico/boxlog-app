@@ -84,9 +84,9 @@ export const TagTableRowCreate = forwardRef<TagTableRowCreateHandle, TagTableRow
       try {
         await createTagMutation.mutateAsync({
           name: newTagName.trim(),
-          description: newTagDescription.trim() || null,
+          description: newTagDescription.trim() || undefined,
           color: newTagColor,
-          group_id: selectedGroupId,
+          groupId: selectedGroupId ?? undefined,
         });
         toast.success(t('tags.page.tagCreated', { name: newTagName }));
         setIsCreating(false);

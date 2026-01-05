@@ -40,8 +40,10 @@ npm run lint         # コード品質（AI必須：コミット前）
 
 ### データフェッチング
 
-- ❌ `useEffect`でのfetch, `getServerSideProps`
-- ✅ Server Components, TanStack Query
+- ❌ `useEffect`でのfetch, `getServerSideProps`, REST API (`fetch('/api/...')`)
+- ✅ tRPC (アプリ内部API), Server Components, TanStack Query
+
+**重要**: アプリ内部のAPIは全てtRPC化完了。新規APIは必ずtRPCで実装すること。
 
 ### 状態管理
 
@@ -197,7 +199,48 @@ npm ls --all | grep -E "UNMET|invalid"  # 依存整合性
 npm audit                                # セキュリティ
 ```
 
+## 🔌 API設計原則（tRPC統一完了）
+
+### tRPC vs REST の使い分け
+
+| 用途 | 使用技術 | 理由 |
+|-----|---------|------|
+| **アプリ内部API** | ✅ tRPC | E2E型安全、自動補完、コード量削減 |
+| **外部公開API** | ⚠️ REST | 外部ツール連携（監視、認証フローなど） |
+
+### tRPC化完了エリア（15エンドポイント）
+
+✅ **Tags** (7): list, getById, create, update, merge, delete, getStats
+✅ **Tag Groups** (6): list, getById, create, update, delete, reorder
+✅ **User** (2): deleteAccount (GDPR), exportData (GDPR)
+
+### REST API維持エリア（外部アクセス用）
+
+⚠️ **Auth**: `/api/auth/*` - 認証フロー、外部連携
+⚠️ **System**: `/api/health/*`, `/api/v1/system/*` - 外部監視ツール
+⚠️ **Config**: `/api/config/*` - 設定検証・デバッグ
+⚠️ **CSP**: `/api/csp-report/*` - ブラウザCSPレポート
+
+### 新規API実装ルール
+
+1. **アプリ内部API**: 必ずtRPCで実装
+2. **Service層**: ビジネスロジックはService層に分離
+3. **バリデーション**: Zodスキーマで型安全に
+4. **エラーハンドリング**: TRPCErrorで統一
+
+```typescript
+// ✅ 正しい実装例
+export const myRouter = createTRPCRouter({
+  myEndpoint: protectedProcedure
+    .input(z.object({ id: z.string().uuid() }))
+    .query(async ({ ctx, input }) => {
+      const service = createMyService(ctx.supabase)
+      return await service.getData({ userId: ctx.userId, id: input.id })
+    }),
+})
+```
+
 ---
 
-**📖 最終更新**: 2025-12-25 | **バージョン**: v11.5
+**📖 最終更新**: 2026-01-02 | **バージョン**: v11.6
 **変更履歴**: [`docs/development/CLAUDE_MD_CHANGELOG.md`](docs/development/CLAUDE_MD_CHANGELOG.md)

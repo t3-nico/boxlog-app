@@ -239,7 +239,11 @@ export function TagCellContent({
       );
 
     case 'created_at':
-      return <span className="text-muted-foreground text-xs">{formatDate(tag.created_at)}</span>;
+      return (
+        <span className="text-muted-foreground text-xs">
+          {tag.created_at ? formatDate(tag.created_at) : '-'}
+        </span>
+      );
 
     case 'last_used': {
       const lastUsedDate = lastUsed[tag.id];

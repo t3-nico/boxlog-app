@@ -110,6 +110,7 @@ export function createMockContext(options: MockContextOptions = {}): Context {
     userId,
     sessionId,
     supabase: mockSupabase as unknown as SupabaseClient<Database>,
+    authMode: 'session' as const,
   };
 }
 

@@ -32,7 +32,7 @@ export function useTagsPageData({
   t,
 }: UseTagsPageDataOptions) {
   // データ取得
-  const { data: fetchedTags = [], isLoading: isFetching } = useTags(true);
+  const { data: fetchedTags = [], isLoading: isFetching } = useTags();
   const { data: groups = [] as TagGroup[] } = useTagGroups();
 
   // 最適化: 2つのクエリを1つに統合（DB側でGROUP BY集計）
@@ -90,7 +90,8 @@ export function useTagsPageData({
           comparison = a.name.localeCompare(b.name);
           break;
         case 'created_at':
-          comparison = new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+          comparison =
+            new Date(a.created_at ?? 0).getTime() - new Date(b.created_at ?? 0).getTime();
           break;
         case 'tag_number':
           comparison = a.tag_number - b.tag_number;

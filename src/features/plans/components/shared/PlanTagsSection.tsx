@@ -29,7 +29,7 @@ export function PlanTagsSection({
   popoverSideOffset,
 }: PlanTagsSectionProps) {
   // データベースからタグを取得
-  const { data: allTags = [] } = useTags(true);
+  const { data: allTags = [] } = useTags();
 
   const selectedTags = allTags.filter((tag) => selectedTagIds.includes(tag.id));
 
@@ -46,11 +46,11 @@ export function PlanTagsSection({
               <Badge
                 variant="outline"
                 style={{
-                  borderColor: tag.color,
+                  borderColor: tag.color || undefined,
                 }}
                 className="group relative gap-0.5 pr-6 text-xs font-normal"
               >
-                <span className="font-medium" style={{ color: tag.color }}>
+                <span className="font-medium" style={{ color: tag.color || undefined }}>
                   #
                 </span>
                 {tag.name}

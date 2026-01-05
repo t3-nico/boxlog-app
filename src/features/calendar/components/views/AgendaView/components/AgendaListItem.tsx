@@ -159,7 +159,7 @@ export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemP
                 <span
                   key={tag.id}
                   className="inline-flex max-w-16 items-center gap-0.5 truncate rounded border px-1 py-0.5 text-xs md:max-w-20 md:px-1.5"
-                  style={{ borderColor: tag.color, color: tag.color }}
+                  style={{ borderColor: tag.color || undefined, color: tag.color || undefined }}
                   title={tag.name}
                 >
                   <span className="truncate">{tag.name}</span>
@@ -170,7 +170,10 @@ export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemP
                 <span
                   key={displayTags[2].id}
                   className="hidden items-center gap-0.5 truncate rounded border px-1.5 py-0.5 text-xs md:inline-flex md:max-w-20"
-                  style={{ borderColor: displayTags[2].color, color: displayTags[2].color }}
+                  style={{
+                    borderColor: displayTags[2].color || undefined,
+                    color: displayTags[2].color || undefined,
+                  }}
                   title={displayTags[2].name}
                 >
                   <span className="truncate">{displayTags[2].name}</span>

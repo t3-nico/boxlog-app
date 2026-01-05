@@ -38,7 +38,7 @@ const TagFilterItem = ({ tag, isSelected, onToggle }: TagFilterItemProps) => {
   return (
     <label className="hover:bg-state-hover flex cursor-pointer items-center gap-2 px-3 py-2 text-sm transition-colors">
       <Checkbox checked={isSelected} onCheckedChange={handleCheckedChange} />
-      <TagIcon className="h-4 w-4 flex-shrink-0" style={{ color: tag.color }} />
+      <TagIcon className="h-4 w-4 flex-shrink-0" style={{ color: tag.color || undefined }} />
       <span className="flex-1 truncate">{tag.name}</span>
     </label>
   );
@@ -51,7 +51,7 @@ export const TagFilter = ({
   className = '',
 }: TagFilterProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const { data: allTags = [], isPending } = useTags(true);
+  const { data: allTags = [], isPending } = useTags();
   const t = useTranslations();
   // Use a simple local state for tag filtering for now
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
@@ -118,7 +118,7 @@ export const TagFilter = ({
               key={tag.id}
               className="bg-primary/10 text-primary inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium"
             >
-              <TagIcon className="h-4 w-4" style={{ color: tag.color }} />
+              <TagIcon className="h-4 w-4" style={{ color: tag.color || undefined }} />
               {tag.name}
               <Button
                 type="button"
@@ -234,7 +234,7 @@ export const TagChip = ({ tag, isSelected, onToggle }: TagChipProps) => {
           : 'bg-surface-container',
       )}
     >
-      <TagIcon className="h-4 w-4" style={{ color: tag.color }} />
+      <TagIcon className="h-4 w-4" style={{ color: tag.color ?? undefined }} />
       {tag.name}
     </Button>
   );
@@ -244,7 +244,7 @@ export const TagChip = ({ tag, isSelected, onToggle }: TagChipProps) => {
  * 横並びタグフィルター（チップ形式）
  */
 export const TagFilterChips = ({ className = '' }: { className?: string }) => {
-  const { data: allTags = [], isPending } = useTags(true);
+  const { data: allTags = [], isPending } = useTags();
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
   const toggleTag = (tagId: string) => {
     setSelectedTagIds((prev) =>
