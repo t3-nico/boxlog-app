@@ -4,14 +4,9 @@
 
 import { useMemo } from 'react';
 
-import { useCollapsedSectionsContext } from '../../../../contexts/CollapsedSectionsContext';
 import { HOUR_HEIGHT } from '../constants/grid.constants';
 import type { EventPosition, TimedEvent } from '../types/plan.types';
-import {
-  calculateEventPosition,
-  calculateEventPositionWithCollapse,
-  calculateViewEventColumns,
-} from '../utils/planPositioning';
+import { calculateEventPosition, calculateViewEventColumns } from '../utils/planPositioning';
 
 export interface UseEventPositionOptions {
   hourHeight?: number;
@@ -23,7 +18,6 @@ export interface PositionedEvent extends TimedEvent {
 
 export function useEventPosition(events: TimedEvent[], options: UseEventPositionOptions = {}) {
   const { hourHeight = HOUR_HEIGHT } = options;
-  const collapsedContext = useCollapsedSectionsContext();
 
   const eventPositions = useMemo(() => {
     const positions = new Map<string, EventPosition>();
@@ -33,46 +27,24 @@ export function useEventPosition(events: TimedEvent[], options: UseEventPosition
     // イベントの列配置を計算
     const columns = calculateViewEventColumns(events);
 
-    // 折りたたみがある場合は折りたたみ考慮の計算を使用
-    if (collapsedContext?.hasCollapsedSections) {
-      events.forEach((event) => {
-        const column = columns.get(event.id);
-        if (!column) return;
+    // 各イベントの位置を計算
+    events.forEach((event) => {
+      const column = columns.get(event.id);
+      if (!column) return;
 
-        const position = calculateEventPositionWithCollapse(
-          event,
-          column,
-          collapsedContext.timeToPixels,
-        );
+      const position = calculateEventPosition(event, column, hourHeight);
 
-        positions.set(event.id, {
-          top: position.top,
-          left: position.left,
-          width: position.width,
-          height: position.height,
-          zIndex: 10,
-        });
+      positions.set(event.id, {
+        top: position.top,
+        left: position.left,
+        width: position.width,
+        height: position.height,
+        zIndex: 10,
       });
-    } else {
-      // 通常の計算
-      events.forEach((event) => {
-        const column = columns.get(event.id);
-        if (!column) return;
-
-        const position = calculateEventPosition(event, column, hourHeight);
-
-        positions.set(event.id, {
-          top: position.top,
-          left: position.left,
-          width: position.width,
-          height: position.height,
-          zIndex: 10,
-        });
-      });
-    }
+    });
 
     return positions;
-  }, [events, hourHeight, collapsedContext]);
+  }, [events, hourHeight]);
 
   return eventPositions;
 }

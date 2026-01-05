@@ -169,8 +169,6 @@ export const ThreeDayView = ({
           scrollToHour={isCurrentDay ? undefined : 8}
           displayDates={displayDates}
           viewMode="3day"
-          plans={plans}
-          // onTimeClickは削除: CalendarDragSelectionがクリック処理を担当
           enableKeyboardNavigation={true}
         >
           {/* 3日分のグリッド */}

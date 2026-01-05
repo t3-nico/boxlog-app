@@ -2,10 +2,6 @@
  * グリッドシステムの型定義
  */
 
-import type { GridSection } from '../../../../types/collapsedSection.types';
-
-export type { GridSection };
-
 export interface GridDimensions {
   width: number;
   height: number;
@@ -49,10 +45,6 @@ export interface TimeColumnProps {
   hourHeight?: number | undefined;
   format?: '12h' | '24h' | undefined; // 時刻表示形式
   className?: string | undefined;
-  /** 折りたたみセクション情報 */
-  sections?: GridSection[] | undefined;
-  /** 折りたたみ適用時の総高さ */
-  totalHeight?: number | undefined;
 }
 
 export interface GridLinesProps {

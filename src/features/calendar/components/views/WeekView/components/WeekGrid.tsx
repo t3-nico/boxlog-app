@@ -120,8 +120,6 @@ export const WeekGrid = ({
         scrollToHour={todayIndex !== -1 ? undefined : 8}
         displayDates={currentTimeDisplayDates}
         viewMode="week"
-        plans={events}
-        // onTimeClickは削除: CalendarDragSelectionがクリック処理を担当
         enableKeyboardNavigation={true}
       >
         {/* 7日分のグリッド */}

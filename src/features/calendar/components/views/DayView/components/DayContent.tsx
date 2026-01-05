@@ -5,7 +5,6 @@ import React, { useCallback } from 'react';
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
 import { cn } from '@/lib/utils';
 
-import { useCollapsedSectionsContext } from '../../../../contexts/CollapsedSectionsContext';
 import {
   CalendarDragSelection,
   EventBlock,
@@ -17,47 +16,6 @@ import { useGlobalDragCursor } from '../../shared/hooks/useGlobalDragCursor';
 import type { CalendarPlan } from '../../shared/types/base.types';
 import type { DayContentProps } from '../DayView.types';
 import { useDragAndDrop } from '../hooks/useDragAndDrop';
-
-// 折りたたみセクション用のグリッド生成
-function generateCollapsedTimeGrid(
-  sections: {
-    type: 'normal' | 'collapsed';
-    startHour: number;
-    endHour: number;
-    heightPx: number;
-  }[],
-  hourHeight: number,
-) {
-  const elements: React.ReactNode[] = [];
-
-  sections.forEach((section, sectionIndex) => {
-    if (section.type === 'collapsed') {
-      elements.push(
-        <div
-          key={`collapsed-${section.startHour}`}
-          className="border-border bg-surface-container/30 relative border-b"
-          style={{ height: section.heightPx }}
-        />,
-      );
-    } else {
-      for (let hour = section.startHour; hour < section.endHour; hour++) {
-        const isLastInSection = hour === section.endHour - 1;
-        const isLastSection = sectionIndex === sections.length - 1;
-        const showBorder = !(isLastInSection && isLastSection);
-
-        elements.push(
-          <div
-            key={`hour-${hour}`}
-            className={`relative ${showBorder ? 'border-border border-b' : ''}`}
-            style={{ height: hourHeight }}
-          />,
-        );
-      }
-    }
-  });
-
-  return elements;
-}
 
 export const DayContent = ({
   date,
@@ -74,38 +32,8 @@ export const DayContent = ({
   const inspectorPlanId = usePlanInspectorStore((state) => state.planId);
   const isInspectorOpen = usePlanInspectorStore((state) => state.isOpen);
 
-  // 折りたたみセクションのコンテキストを取得
-  const collapsedContext = useCollapsedSectionsContext();
-  const hasCollapsedSections = collapsedContext?.hasCollapsedSections ?? false;
-  const gridHeight =
-    hasCollapsedSections && collapsedContext ? collapsedContext.totalHeight : 24 * HOUR_HEIGHT;
-
-  // 折りたたみを考慮したイベントスタイルを再計算
-  const adjustedEventStyles = React.useMemo(() => {
-    if (!hasCollapsedSections || !collapsedContext || !eventStyles || !events) {
-      return eventStyles;
-    }
-
-    const adjusted: Record<string, React.CSSProperties> = {};
-    for (const event of events) {
-      const originalStyle = eventStyles[event.id];
-      if (!originalStyle) continue;
-
-      // 折りたたみを考慮した位置を計算（文字列の場合はDate変換）
-      const startDate = event.startDate ? new Date(event.startDate) : new Date();
-      const endDate = event.endDate ? new Date(event.endDate) : new Date();
-      const top = collapsedContext.timeToPixels(startDate);
-      const bottom = collapsedContext.timeToPixels(endDate);
-      const height = Math.max(bottom - top, 20);
-
-      adjusted[event.id] = {
-        ...originalStyle,
-        top,
-        height,
-      };
-    }
-    return adjusted;
-  }, [hasCollapsedSections, collapsedContext, eventStyles, events]);
+  // グリッド高さ（24時間）
+  const gridHeight = 24 * HOUR_HEIGHT;
 
   // ドラッグ&ドロップ機能用にonEventUpdateを変換
   const handleEventUpdate = useCallback(
@@ -145,19 +73,18 @@ export const DayContent = ({
     [onPlanContextMenu, dragState.isDragging, dragState.isResizing],
   );
 
-  // 時間グリッドの生成（折りたたみ対応）
-  const timeGrid = React.useMemo(() => {
-    if (hasCollapsedSections && collapsedContext?.sections) {
-      return generateCollapsedTimeGrid(collapsedContext.sections, HOUR_HEIGHT);
-    }
-    return Array.from({ length: 24 }, (_, hour) => (
-      <div
-        key={hour}
-        className={`relative ${hour < 23 ? 'border-border border-b' : ''}`}
-        style={{ height: HOUR_HEIGHT }}
-      />
-    ));
-  }, [hasCollapsedSections, collapsedContext?.sections]);
+  // 時間グリッドの生成
+  const timeGrid = React.useMemo(
+    () =>
+      Array.from({ length: 24 }, (_, hour) => (
+        <div
+          key={hour}
+          className={`relative ${hour < 23 ? 'border-border border-b' : ''}`}
+          style={{ height: HOUR_HEIGHT }}
+        />
+      )),
+    [],
+  );
 
   return (
     <div
@@ -172,7 +99,7 @@ export const DayContent = ({
         disabled={dragState.isPending || dragState.isDragging || dragState.isResizing}
         plans={events}
       >
-        {/* 背景グリッド（折りたたみ対応） */}
+        {/* 背景グリッド */}
         <div className="absolute inset-0" style={{ height: gridHeight }}>
           {timeGrid}
         </div>
@@ -183,7 +110,7 @@ export const DayContent = ({
         {events &&
           Array.isArray(events) &&
           events.map((event) => {
-            const style = adjustedEventStyles?.[event.id];
+            const style = eventStyles?.[event.id];
             if (!style) return null;
 
             const isDragging = dragState.draggedEventId === event.id && dragState.isDragging;

@@ -20,11 +20,7 @@ import { TimeColumn } from '../grid/TimeColumn/TimeColumn';
 
 import { useResponsiveHourHeight } from '../hooks/useResponsiveHourHeight';
 
-import { CollapsedSectionRow } from './CollapsedSectionRow';
 import { TimezoneOffset } from './TimezoneOffset';
-
-import { CollapsedSectionsProvider } from '../../../../contexts/CollapsedSectionsContext';
-import { useCollapsedSections } from '../../../../hooks/useCollapsedSections';
 
 interface ScrollableCalendarLayoutProps {
   children: React.ReactNode;
@@ -38,8 +34,6 @@ interface ScrollableCalendarLayoutProps {
   onTimeClick?: ((hour: number, minute: number) => void) | undefined;
   displayDates?: Date[] | undefined;
   viewMode?: 'day' | '3day' | '5day' | 'week' | 'agenda' | undefined;
-  /** プラン/イベントの配列（折りたたみ判定用） */
-  plans?: Array<{ startDate?: Date | string | null; endDate?: Date | string | null }> | undefined;
 
   // スクロール機能の追加
   enableKeyboardNavigation?: boolean | undefined;
@@ -56,7 +50,7 @@ interface CalendarDateHeaderProps {
   weekNumber?: number | undefined;
 }
 
-const TIME_COLUMN_WIDTH = 48;
+const TIME_COLUMN_WIDTH = 64;
 
 /**
  * カレンダー日付ヘッダー（固定）
@@ -121,7 +115,6 @@ export const ScrollableCalendarLayout = ({
   onTimeClick,
   displayDates = [],
   viewMode = 'week',
-  plans = [],
   enableKeyboardNavigation = true,
   onScrollPositionChange,
 }: ScrollableCalendarLayoutProps) => {
@@ -132,12 +125,6 @@ export const ScrollableCalendarLayout = ({
   const [_isScrolling, setIsScrolling] = useState(false);
   const [_containerWidth, setContainerWidth] = useState(800);
   const hasRestoredScroll = useRef(false);
-
-  // 手動展開状態（クリックで展開、リロードでリセット）
-  const [isManuallyExpanded, setIsManuallyExpanded] = useState(false);
-  const toggleExpand = useCallback(() => {
-    setIsManuallyExpanded((prev) => !prev);
-  }, []);
 
   // スクロール位置ストア
   const { setScrollPosition, getScrollPosition, setLastActiveView } = useCalendarScrollStore();
@@ -151,26 +138,8 @@ export const ScrollableCalendarLayout = ({
     desktop: 72,
   });
 
-  // 折りたたみセクション計算
-  const {
-    sections,
-    totalHeight: collapsedTotalHeight,
-    hasCollapsedSections,
-    timeToPixels: collapsedTimeToPixels,
-    pixelsToTime: collapsedPixelsToTime,
-    hourToPixels: collapsedHourToPixels,
-  } = useCollapsedSections({
-    chronotypeEnabled: chronotype.enabled,
-    chronotypeType: chronotype.type,
-    customZones: chronotype.customZones,
-    displayDates,
-    plans,
-    hourHeight: HOUR_HEIGHT,
-    isManuallyExpanded, // 手動展開時は折りたたみなし
-  });
-
-  // グリッド高さ（折りたたみ適用）
-  const gridHeight = hasCollapsedSections ? collapsedTotalHeight : 24 * HOUR_HEIGHT;
+  // グリッド高さ
+  const gridHeight = 24 * HOUR_HEIGHT;
 
   // 今日の列の位置を計算
   const todayColumnPosition = useMemo(() => {
@@ -217,17 +186,14 @@ export const ScrollableCalendarLayout = ({
   // 今日が表示範囲に含まれるか
   const hasToday = todayColumnPosition !== null;
 
-  // 現在時刻の位置を計算（折りたたみ考慮）
+  // 現在時刻の位置を計算
   const [currentTime, setCurrentTime] = useState(new Date());
   const currentTimePosition = useMemo(() => {
-    if (hasCollapsedSections) {
-      return collapsedTimeToPixels(currentTime);
-    }
     const hours = currentTime.getHours();
     const minutes = currentTime.getMinutes();
     const totalHours = hours + minutes / 60;
     return totalHours * HOUR_HEIGHT;
-  }, [currentTime, HOUR_HEIGHT, hasCollapsedSections, collapsedTimeToPixels]);
+  }, [currentTime, HOUR_HEIGHT]);
 
   // 現在時刻のクロノタイプゾーン色を取得（セマンティックトークン）
   const currentTimeLineColor = useMemo(() => {
@@ -462,115 +428,93 @@ export const ScrollableCalendarLayout = ({
   );
 
   return (
-    <CollapsedSectionsProvider
-      hasCollapsedSections={hasCollapsedSections}
-      sections={sections}
-      totalHeight={gridHeight}
-      hourHeight={HOUR_HEIGHT}
-      timeToPixels={collapsedTimeToPixels}
-      pixelsToTime={collapsedPixelsToTime}
-      hourToPixels={collapsedHourToPixels}
-      isManuallyExpanded={isManuallyExpanded}
-      toggleExpand={toggleExpand}
-    >
-      <ScrollArea className={cn('relative min-h-0 flex-1', className)} data-calendar-scroll>
-        <div
-          ref={scrollContainerRef}
-          className="relative flex w-full px-4"
-          style={{ height: `${gridHeight}px` }}
-          onClick={handleGridClick}
-          onKeyDown={handleKeyDown}
-          tabIndex={enableKeyboardNavigation ? 0 : -1}
-          role={enableKeyboardNavigation ? 'grid' : undefined}
-          aria-label={enableKeyboardNavigation ? `${viewMode} view calendar` : undefined}
-        >
-          {/* 時間軸列 */}
-          {showTimeColumn && (
-            <div className="sticky left-0 z-10 shrink-0" style={{ width: timeColumnWidth }}>
-              <TimeColumn
-                startHour={0}
-                endHour={24}
-                hourHeight={HOUR_HEIGHT}
-                format="24h"
-                className="h-full"
-                sections={hasCollapsedSections ? sections : undefined}
-                totalHeight={hasCollapsedSections ? collapsedTotalHeight : undefined}
-              />
-            </div>
-          )}
-
-          {/* グリッドコンテンツエリア */}
-          <div className="relative flex flex-1">
-            {/* 折りたたみセクションの表示 */}
-            {hasCollapsedSections &&
-              sections
-                .filter((s) => s.type === 'collapsed')
-                .map((section) => (
-                  <CollapsedSectionRow
-                    key={`collapsed-${section.startHour}-${section.endHour}`}
-                    section={section}
-                  />
-                ))}
-
-            {/* メインコンテンツ */}
-            {children}
-
-            {/* 現在時刻線 - 全ての列に表示 */}
-            {shouldShowCurrentTimeLine && displayDates && displayDates.length > 0 ? (
-              <>
-                {/* 全列に薄い線を表示 */}
-                <div
-                  className={cn(
-                    'pointer-events-none absolute z-40 h-px',
-                    !currentTimeLineColor && 'bg-primary/50',
-                  )}
-                  style={{
-                    top: `${currentTimePosition}px`,
-                    left: 0,
-                    right: 0,
-                    ...(currentTimeLineColor && {
-                      backgroundColor: currentTimeLineColor,
-                      opacity: 0.5,
-                    }),
-                  }}
-                />
-
-                {/* 今日の列のみ濃い線を上書き */}
-                {hasToday && todayColumnPosition ? (
-                  <>
-                    {/* 横線 - 今日の列のみ濃く */}
-                    <div
-                      className={cn(
-                        'pointer-events-none absolute z-40 h-[2px] shadow-sm',
-                        !currentTimeLineColor && 'bg-primary',
-                      )}
-                      style={{
-                        top: `${currentTimePosition}px`,
-                        left: todayColumnPosition.left,
-                        width: todayColumnPosition.width,
-                        ...(currentTimeLineColor && { backgroundColor: currentTimeLineColor }),
-                      }}
-                    />
-
-                    {/* 点 - 今日の列の左端 */}
-                    <div
-                      className={cn(
-                        'border-background pointer-events-none absolute z-40 h-2 w-2 rounded-full border shadow-md',
-                        !currentTimeLineColor && 'bg-primary',
-                      )}
-                      style={{
-                        top: `${currentTimePosition - 4}px`,
-                        left: todayColumnPosition.left === 0 ? '-4px' : todayColumnPosition.left,
-                        ...(currentTimeLineColor && { backgroundColor: currentTimeLineColor }),
-                      }}
-                    />
-                  </>
-                ) : null}
-              </>
-            ) : null}
+    <ScrollArea className={cn('relative min-h-0 flex-1', className)} data-calendar-scroll>
+      <div
+        ref={scrollContainerRef}
+        className="relative flex w-full pr-4"
+        style={{ height: `${gridHeight}px` }}
+        onClick={handleGridClick}
+        onKeyDown={handleKeyDown}
+        tabIndex={enableKeyboardNavigation ? 0 : -1}
+        role={enableKeyboardNavigation ? 'grid' : undefined}
+        aria-label={enableKeyboardNavigation ? `${viewMode} view calendar` : undefined}
+      >
+        {/* 時間軸列 */}
+        {showTimeColumn && (
+          <div
+            className="border-border sticky left-0 z-10 shrink-0 border-r"
+            style={{ width: timeColumnWidth }}
+          >
+            <TimeColumn
+              startHour={0}
+              endHour={24}
+              hourHeight={HOUR_HEIGHT}
+              format="24h"
+              className="h-full"
+            />
           </div>
+        )}
+
+        {/* グリッドコンテンツエリア */}
+        <div className="relative flex flex-1">
+          {/* メインコンテンツ */}
+          {children}
+
+          {/* 現在時刻線 - 全ての列に表示 */}
+          {shouldShowCurrentTimeLine && displayDates && displayDates.length > 0 ? (
+            <>
+              {/* 全列に薄い線を表示 */}
+              <div
+                className={cn(
+                  'pointer-events-none absolute z-40 h-px',
+                  !currentTimeLineColor && 'bg-primary/50',
+                )}
+                style={{
+                  top: `${currentTimePosition}px`,
+                  left: 0,
+                  right: 0,
+                  ...(currentTimeLineColor && {
+                    backgroundColor: currentTimeLineColor,
+                    opacity: 0.5,
+                  }),
+                }}
+              />
+
+              {/* 今日の列のみ濃い線を上書き */}
+              {hasToday && todayColumnPosition ? (
+                <>
+                  {/* 横線 - 今日の列のみ濃く */}
+                  <div
+                    className={cn(
+                      'pointer-events-none absolute z-40 h-[2px] shadow-sm',
+                      !currentTimeLineColor && 'bg-primary',
+                    )}
+                    style={{
+                      top: `${currentTimePosition}px`,
+                      left: todayColumnPosition.left,
+                      width: todayColumnPosition.width,
+                      ...(currentTimeLineColor && { backgroundColor: currentTimeLineColor }),
+                    }}
+                  />
+
+                  {/* 点 - 今日の列の左端 */}
+                  <div
+                    className={cn(
+                      'border-background pointer-events-none absolute z-40 h-2 w-2 rounded-full border shadow-md',
+                      !currentTimeLineColor && 'bg-primary',
+                    )}
+                    style={{
+                      top: `${currentTimePosition - 4}px`,
+                      left: todayColumnPosition.left === 0 ? '-4px' : todayColumnPosition.left,
+                      ...(currentTimeLineColor && { backgroundColor: currentTimeLineColor }),
+                    }}
+                  />
+                </>
+              ) : null}
+            </>
+          ) : null}
         </div>
-      </ScrollArea>
-    </CollapsedSectionsProvider>
+      </div>
+    </ScrollArea>
   );
 };
