@@ -29,7 +29,7 @@ export function useTimeGrid(options: UseTimeGridOptions = {}) {
     for (let hour = startHour; hour < endHour; hour++) {
       const label =
         format === '24h'
-          ? `${hour}:00`
+          ? `${String(hour).padStart(2, '0')}:00`
           : `${hour === 0 ? 12 : hour > 12 ? hour - 12 : hour}:00 ${hour >= 12 ? 'PM' : 'AM'}`;
 
       result.push({

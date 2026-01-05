@@ -187,7 +187,7 @@ export const FiveDayView = ({
                 key={date.toISOString()}
                 className={cn(
                   'relative flex-1',
-                  dayIndex < displayDates.length - 1 ? 'border-border border-r' : '',
+                  dayIndex < displayDates.length - 1 && 'border-border border-r',
                 )}
                 style={{ width: `${100 / displayDates.length}%` }}
               >
