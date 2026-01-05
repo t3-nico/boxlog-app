@@ -173,15 +173,6 @@ export function useDragHandler({
         previewEndTime,
       );
 
-      // デバッグログ
-      console.log('[DnD Overlap Check]', {
-        isOverlapping,
-        previewStartTime: previewStartTime.toISOString(),
-        previewEndTime: previewEndTime.toISOString(),
-        eventsCount: eventsToCheck.length,
-        dragElementExists: !!dragData.dragElement,
-      });
-
       // ゴースト要素のスタイルを重複状態に応じて更新
       updateDragElementOverlapStyle(dragData.dragElement || null, isOverlapping);
 
@@ -197,7 +188,7 @@ export function useDragHandler({
         isOverlapping,
       }));
     },
-    [events, date, viewMode, displayDates, dragDataRef, setDragState],
+    [events, allEventsForOverlapCheck, date, viewMode, displayDates, dragDataRef, setDragState],
   );
 
   // プランドロップのヘルパー

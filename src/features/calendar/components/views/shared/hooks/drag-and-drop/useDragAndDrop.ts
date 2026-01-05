@@ -10,6 +10,7 @@ import { initialDragState } from './types';
 import { useDragHandler } from './useDragHandler';
 import { useResizeHandler } from './useResizeHandler';
 import {
+  animateSnapBack,
   calculateNewTime,
   calculateTargetDateIndex,
   checkClientSideOverlap,
@@ -304,19 +305,18 @@ export function useDragAndDrop({
         newEndTime,
       );
 
-      console.log('[DnD Drop] Final overlap check:', {
-        isOverlapping,
-        newStartTime: newStartTime.toISOString(),
-        newEndTime: newEndTime.toISOString(),
-        allEventsCount: allEventsRef.current.length,
-      });
-
       if (isOverlapping) {
-        calendarToast.warning('時間が重複しています', {
-          description: '既存の予定と時間が重複しています',
+        // GAFA準拠: スナップバックアニメーション + トースト通知
+        const dragElement = dragDataRef.current.dragElement ?? null;
+        const originalRect = dragDataRef.current.originalElementRect ?? null;
+
+        animateSnapBack(dragElement, originalRect, () => {
+          calendarToast.warning('時間が重複しています', {
+            description: '既存の予定と時間が重複しています',
+          });
+          completeDragOperation(false);
+          endDrag();
         });
-        completeDragOperation(false);
-        endDrag();
         return;
       }
     }
