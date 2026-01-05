@@ -159,7 +159,6 @@ export function TagInspector() {
                   >
                     {tag.name}
                   </span>
-                  <span className="text-muted-foreground ml-2 text-sm">t-{tag.tag_number}</span>
                 </div>
               </div>
 

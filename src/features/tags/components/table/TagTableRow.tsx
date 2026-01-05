@@ -112,9 +112,6 @@ export function TagCellContent({
   const group = tag.group_id ? groups.find((g) => g.id === tag.group_id) : null;
 
   switch (columnId) {
-    case 'id':
-      return <span className="text-muted-foreground font-mono text-sm">t-{tag.tag_number}</span>;
-
     case 'name':
       return (
         <div className="flex items-center gap-2">
