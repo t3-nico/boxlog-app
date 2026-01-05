@@ -10,6 +10,11 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { useCalendarScrollStore } from '@/features/calendar/stores';
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
 import { cn } from '@/lib/utils';
+import {
+  CHRONOTYPE_PRESETS,
+  getChronotypeColor,
+  getProductivityZoneForHour,
+} from '@/types/chronotype';
 
 import { TimeColumn } from '../grid/TimeColumn/TimeColumn';
 
@@ -128,6 +133,12 @@ export const ScrollableCalendarLayout = ({
   const [_containerWidth, setContainerWidth] = useState(800);
   const hasRestoredScroll = useRef(false);
 
+  // 手動展開状態（クリックで展開、リロードでリセット）
+  const [isManuallyExpanded, setIsManuallyExpanded] = useState(false);
+  const toggleExpand = useCallback(() => {
+    setIsManuallyExpanded((prev) => !prev);
+  }, []);
+
   // スクロール位置ストア
   const { setScrollPosition, getScrollPosition, setLastActiveView } = useCalendarScrollStore();
 
@@ -155,6 +166,7 @@ export const ScrollableCalendarLayout = ({
     displayDates,
     plans,
     hourHeight: HOUR_HEIGHT,
+    isManuallyExpanded, // 手動展開時は折りたたみなし
   });
 
   // グリッド高さ（折りたたみ適用）
@@ -216,6 +228,28 @@ export const ScrollableCalendarLayout = ({
     const totalHours = hours + minutes / 60;
     return totalHours * HOUR_HEIGHT;
   }, [currentTime, HOUR_HEIGHT, hasCollapsedSections, collapsedTimeToPixels]);
+
+  // 現在時刻のクロノタイプゾーン色を取得（セマンティックトークン）
+  const currentTimeLineColor = useMemo(() => {
+    if (!chronotype.enabled) {
+      return null; // クロノタイプ無効時はデフォルト色（bg-primary）
+    }
+
+    const profile =
+      chronotype.type === 'custom' && chronotype.customZones
+        ? { ...CHRONOTYPE_PRESETS.custom, productivityZones: chronotype.customZones }
+        : CHRONOTYPE_PRESETS[chronotype.type];
+
+    const currentHour = currentTime.getHours();
+    const zone = getProductivityZoneForHour(profile, currentHour);
+
+    if (!zone) {
+      return null;
+    }
+
+    // levelベースでクロノタイプ専用色（CSS変数）を取得
+    return getChronotypeColor(zone.level);
+  }, [chronotype.enabled, chronotype.type, chronotype.customZones, currentTime]);
 
   // ScrollableCalendarLayoutの初期化完了
 
@@ -436,6 +470,8 @@ export const ScrollableCalendarLayout = ({
       timeToPixels={collapsedTimeToPixels}
       pixelsToTime={collapsedPixelsToTime}
       hourToPixels={collapsedHourToPixels}
+      isManuallyExpanded={isManuallyExpanded}
+      toggleExpand={toggleExpand}
     >
       <ScrollArea className={cn('relative min-h-0 flex-1', className)} data-calendar-scroll>
         <div
@@ -484,11 +520,18 @@ export const ScrollableCalendarLayout = ({
               <>
                 {/* 全列に薄い線を表示 */}
                 <div
-                  className={cn('bg-primary/50 pointer-events-none absolute z-40 h-px')}
+                  className={cn(
+                    'pointer-events-none absolute z-40 h-px',
+                    !currentTimeLineColor && 'bg-primary/50',
+                  )}
                   style={{
                     top: `${currentTimePosition}px`,
                     left: 0,
                     right: 0,
+                    ...(currentTimeLineColor && {
+                      backgroundColor: currentTimeLineColor,
+                      opacity: 0.5,
+                    }),
                   }}
                 />
 
@@ -498,23 +541,27 @@ export const ScrollableCalendarLayout = ({
                     {/* 横線 - 今日の列のみ濃く */}
                     <div
                       className={cn(
-                        'bg-primary pointer-events-none absolute z-40 h-[2px] shadow-sm',
+                        'pointer-events-none absolute z-40 h-[2px] shadow-sm',
+                        !currentTimeLineColor && 'bg-primary',
                       )}
                       style={{
                         top: `${currentTimePosition}px`,
                         left: todayColumnPosition.left,
                         width: todayColumnPosition.width,
+                        ...(currentTimeLineColor && { backgroundColor: currentTimeLineColor }),
                       }}
                     />
 
                     {/* 点 - 今日の列の左端 */}
                     <div
                       className={cn(
-                        'border-background bg-primary pointer-events-none absolute z-40 h-2 w-2 rounded-full border shadow-md',
+                        'border-background pointer-events-none absolute z-40 h-2 w-2 rounded-full border shadow-md',
+                        !currentTimeLineColor && 'bg-primary',
                       )}
                       style={{
                         top: `${currentTimePosition - 4}px`,
                         left: todayColumnPosition.left === 0 ? '-4px' : todayColumnPosition.left,
+                        ...(currentTimeLineColor && { backgroundColor: currentTimeLineColor }),
                       }}
                     />
                   </>
