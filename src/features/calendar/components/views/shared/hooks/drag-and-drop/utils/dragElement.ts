@@ -186,6 +186,7 @@ export function updateDragElementOverlapStyle(
     dragElement.classList.add('drag-overlap');
 
     // 禁止アイコン（⊘）オーバーレイを追加（Apple HIG準拠）
+    // 注意: dragElementはposition: fixedなので変更しない（子要素のabsoluteは正しく動作する）
     if (!dragElement.querySelector(`#${OVERLAY_ID}`)) {
       const iconOverlay = document.createElement('div');
       iconOverlay.id = OVERLAY_ID;
@@ -194,28 +195,24 @@ export function updateDragElementOverlapStyle(
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        width: 32px;
-        height: 32px;
-        background: rgba(220, 38, 38, 0.9);
+        width: 28px;
+        height: 28px;
+        background: rgba(220, 38, 38, 0.95);
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 20px;
-        color: white;
-        font-weight: bold;
         z-index: 10;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
         pointer-events: none;
       `;
       // SVG禁止アイコン（circle with slash）
       iconOverlay.innerHTML = `
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round">
           <circle cx="12" cy="12" r="10"/>
           <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>
         </svg>
       `;
-      dragElement.style.position = 'relative';
       dragElement.appendChild(iconOverlay);
     }
 
