@@ -303,6 +303,9 @@ export function expandRecurrence(
 /**
  * 繰り返しプランかどうかを判定
  */
-export function isRecurringPlan(plan: Plan): boolean {
+export function isRecurringPlan(plan: {
+  recurrence_type?: string | null;
+  recurrence_rule?: string | null;
+}): boolean {
   return !!((plan.recurrence_type && plan.recurrence_type !== 'none') || plan.recurrence_rule);
 }

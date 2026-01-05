@@ -188,14 +188,14 @@ export function safeEventsToTimedEvents(events: (Event | Partial<Event>)[]): Tim
 /**
  * 繰り返しプランを展開してCalendarPlan配列に変換
  *
- * @param plans - プラン配列
+ * @param plans - プラン配列（タグ情報付き）
  * @param rangeStart - 表示範囲の開始日
  * @param rangeEnd - 表示範囲の終了日
  * @param exceptions - DBから取得した例外情報のマップ（planId -> exceptions）
  * @returns 展開されたCalendarPlan配列
  */
 export function expandRecurringPlansToCalendarPlans(
-  plans: Plan[],
+  plans: PlanWithTags[],
   rangeStart: Date,
   rangeEnd: Date,
   exceptionsMap: Map<string, PlanInstanceException[]> = new Map(),
@@ -225,7 +225,10 @@ export function expandRecurringPlansToCalendarPlans(
 /**
  * オカレンスをCalendarPlanに変換
  */
-function occurrenceToCalendarPlan(basePlan: Plan, occurrence: ExpandedOccurrence): CalendarPlan {
+function occurrenceToCalendarPlan(
+  basePlan: PlanWithTags,
+  occurrence: ExpandedOccurrence,
+): CalendarPlan {
   const createdAt = basePlan.created_at ? new Date(basePlan.created_at) : new Date();
   const updatedAt = basePlan.updated_at ? new Date(basePlan.updated_at) : new Date();
 
@@ -269,7 +272,7 @@ function occurrenceToCalendarPlan(basePlan: Plan, occurrence: ExpandedOccurrence
     color: '#3b82f6',
     plan_number: basePlan.plan_number,
     reminder_minutes: basePlan.reminder_minutes,
-    tags: [],
+    tags: basePlan.tags ?? [], // 親プランのタグを引き継ぐ
     createdAt,
     updatedAt,
     displayStartDate: startDate,
