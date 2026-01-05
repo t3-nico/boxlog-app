@@ -101,11 +101,6 @@ const buttonVariants = cva(
           'relative after:absolute after:inset-0 after:m-auto after:size-11 after:content-[""]',
           "[&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
         ].join(' '),
-        // icon-lg: 40x40px
-        'icon-lg': [
-          'size-10',
-          "[&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-5 [&_svg]:shrink-0",
-        ].join(' '),
       },
     },
     defaultVariants: {
