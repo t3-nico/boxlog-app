@@ -158,9 +158,8 @@ export function checkClientSideOverlap(
 /**
  * ドラッグ要素の重複状態のスタイルを更新する
  * GAFA準拠の視覚的フィードバック（Apple HIG + Material Design）:
- * - 赤い背景色 + ボーダー + グロー
- * - 禁止アイコン（⊘）オーバーレイ
- * - パルスアニメーション
+ * - 赤いオーバーレイ + ボーダー + グロー
+ * - 禁止アイコン（⊘）
  * - 禁止カーソル（not-allowed）
  *
  * @param dragElement - ドラッグ中の要素
@@ -172,87 +171,78 @@ export function updateDragElementOverlapStyle(
 ): void {
   if (!dragElement) return;
 
-  // 禁止アイコンオーバーレイのID
-  const OVERLAY_ID = 'drag-overlap-icon';
+  // オーバーレイのID
+  const OVERLAY_ID = 'drag-overlap-overlay';
 
   if (isOverlapping) {
-    // 重複時: 赤い背景 + ボーダー + グロー + 禁止アイコン
-    dragElement.style.backgroundColor = 'rgba(239, 68, 68, 0.4)'; // red-500 with 40% opacity
-    dragElement.style.border = '2px solid #dc2626'; // red-600
-    dragElement.style.boxShadow = '0 0 16px rgba(239, 68, 68, 0.6)'; // stronger red glow
-    dragElement.style.opacity = '0.95';
+    // 子要素のbg-*クラスを削除して透明にする（オーバーレイが見えるように）
+    const children = dragElement.querySelectorAll('*');
+    children.forEach((child) => {
+      const el = child as HTMLElement;
+      if (el.id === OVERLAY_ID) return; // オーバーレイ自体はスキップ
+      const childBgClasses = Array.from(el.classList).filter((cls) => cls.startsWith('bg-'));
+      childBgClasses.forEach((cls) => el.classList.remove(cls));
+      el.style.setProperty('background', 'transparent', 'important');
+    });
+
+    // 重複時: 赤いボーダー + 赤いグロー
+    dragElement.style.setProperty('border', '2px solid #ef4444', 'important');
+    dragElement.style.setProperty(
+      'box-shadow',
+      '0 0 0 2px rgba(239, 68, 68, 0.3), 0 4px 12px rgba(239, 68, 68, 0.4)',
+      'important',
+    );
+    dragElement.style.setProperty('opacity', '0.95', 'important');
     dragElement.style.cursor = 'not-allowed';
-    dragElement.style.animation = 'pulse-error 0.6s ease-in-out infinite';
     dragElement.classList.add('drag-overlap');
 
-    // 禁止アイコン（⊘）オーバーレイを追加（Apple HIG準拠）
-    // 注意: dragElementはposition: fixedなので変更しない（子要素のabsoluteは正しく動作する）
+    // 赤いオーバーレイ + 禁止アイコンを追加
     if (!dragElement.querySelector(`#${OVERLAY_ID}`)) {
-      const iconOverlay = document.createElement('div');
-      iconOverlay.id = OVERLAY_ID;
-      iconOverlay.style.cssText = `
+      const overlay = document.createElement('div');
+      overlay.id = OVERLAY_ID;
+      overlay.style.cssText = `
         position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 28px;
-        height: 28px;
-        background: rgba(220, 38, 38, 0.95);
-        border-radius: 50%;
+        inset: 0;
+        background: rgba(239, 68, 68, 0.35);
+        border-radius: inherit;
         display: flex;
         align-items: center;
         justify-content: center;
-        z-index: 10;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+        z-index: 100;
         pointer-events: none;
       `;
-      // SVG禁止アイコン（circle with slash）
-      iconOverlay.innerHTML = `
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round">
-          <circle cx="12" cy="12" r="10"/>
-          <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>
-        </svg>
+      overlay.innerHTML = `
+        <div style="
+          width: 28px;
+          height: 28px;
+          background: rgba(220, 38, 38, 0.95);
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+        ">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>
+          </svg>
+        </div>
       `;
-      dragElement.appendChild(iconOverlay);
-    }
-
-    // アニメーション用キーフレームを動的に追加（一度だけ）
-    if (!document.getElementById('drag-overlap-keyframes')) {
-      const style = document.createElement('style');
-      style.id = 'drag-overlap-keyframes';
-      style.textContent = `
-        @keyframes pulse-error {
-          0%, 100% {
-            transform: scale(1);
-            box-shadow: 0 0 16px rgba(239, 68, 68, 0.6);
-          }
-          50% {
-            transform: scale(1.02);
-            box-shadow: 0 0 24px rgba(239, 68, 68, 0.8);
-          }
-        }
-        @keyframes snap-back {
-          0% { opacity: 0.95; }
-          50% { opacity: 0.6; transform: scale(0.95); }
-          100% { opacity: 0; transform: scale(0.9); }
-        }
-      `;
-      document.head.appendChild(style);
+      dragElement.appendChild(overlay);
     }
   } else {
     // 正常時: 通常のスタイルに戻す
-    dragElement.style.backgroundColor = '';
-    dragElement.style.border = '';
-    dragElement.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
-    dragElement.style.opacity = '0.8';
+    dragElement.style.removeProperty('background');
+    dragElement.style.removeProperty('border');
+    dragElement.style.setProperty('box-shadow', '0 4px 12px rgba(0, 0, 0, 0.15)', 'important');
+    dragElement.style.setProperty('opacity', '0.8', 'important');
     dragElement.style.cursor = 'grabbing';
-    dragElement.style.animation = '';
     dragElement.classList.remove('drag-overlap');
 
-    // 禁止アイコンを削除
-    const iconOverlay = dragElement.querySelector(`#${OVERLAY_ID}`);
-    if (iconOverlay) {
-      iconOverlay.remove();
+    // オーバーレイを削除
+    const overlay = dragElement.querySelector(`#${OVERLAY_ID}`);
+    if (overlay) {
+      overlay.remove();
     }
   }
 }

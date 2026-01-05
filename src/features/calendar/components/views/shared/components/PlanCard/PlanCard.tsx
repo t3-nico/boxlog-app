@@ -27,6 +27,7 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
   onClick,
   onContextMenu,
   onDragStart,
+  onTouchStart,
   onDragEnd,
   onResizeStart,
   isDragging = false,
@@ -102,6 +103,19 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
       }
     },
     [onDragStart, plan, safePosition],
+  );
+
+  // モバイル用タッチ開始
+  const handleTouchStart = useCallback(
+    (e: React.TouchEvent) => {
+      onTouchStart?.(plan, e, {
+        top: safePosition.top,
+        left: safePosition.left,
+        width: safePosition.width,
+        height: safePosition.height,
+      });
+    },
+    [onTouchStart, plan, safePosition],
   );
 
   const handleMouseUp = useCallback(() => {
@@ -206,6 +220,7 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
       onMouseUp={handleMouseUp}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      onTouchStart={handleTouchStart}
       onKeyDown={handleKeyDown}
       draggable={false} // HTML5 draggableは使わない
       role="button"

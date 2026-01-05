@@ -2,8 +2,11 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+import { useTranslations } from 'next-intl';
+
 import useCalendarToast from '@/features/calendar/lib/toast';
 import { useCalendarDragStore } from '@/features/calendar/stores/useCalendarDragStore';
+import { useHapticFeedback } from '@/hooks/useHapticFeedback';
 
 import type { DragDataRef, DragState, UseDragAndDropProps } from './types';
 import { initialDragState } from './types';
@@ -11,6 +14,7 @@ import { useDragHandler } from './useDragHandler';
 import { useResizeHandler } from './useResizeHandler';
 import {
   animateSnapBack,
+  calculateColumnWidth,
   calculateNewTime,
   calculateTargetDateIndex,
   checkClientSideOverlap,
@@ -39,11 +43,22 @@ export function useDragAndDrop({
   const eventUpdateHandler = onEventUpdate || onPlanUpdate;
   const eventClickHandler = onEventClick || onPlanClick;
 
+  // 翻訳
+  const t = useTranslations('calendar');
+
   // グローバルドラッグ状態（日付間移動用）
   const { startDrag, updateDrag, endDrag } = useCalendarDragStore();
 
   // トースト通知
   const calendarToast = useCalendarToast();
+
+  // ハプティックフィードバック
+  const { tap, impact, error: hapticError } = useHapticFeedback();
+
+  // 長押しタイマー（モバイル用）
+  const longPressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const touchStartPosRef = useRef<{ x: number; y: number } | null>(null);
+  const isLongPressActiveRef = useRef(false);
 
   // eventClickHandler の最新参照を保持（クロージャー問題を回避）
   // 重要: useRef の初期値として eventClickHandler を設定し、毎回の render で同期更新も行う
@@ -311,8 +326,8 @@ export function useDragAndDrop({
         const originalRect = dragDataRef.current.originalElementRect ?? null;
 
         animateSnapBack(dragElement, originalRect, () => {
-          calendarToast.warning('時間が重複しています', {
-            description: '既存の予定と時間が重複しています',
+          calendarToast.error(t('toast.conflict'), {
+            description: t('toast.conflictDescription'),
           });
           completeDragOperation(false);
           endDrag();
@@ -339,6 +354,263 @@ export function useDragAndDrop({
     completeDragOperation,
     endDrag,
     calendarToast,
+    t,
+  ]);
+
+  // 長押しタイマーをクリア
+  const clearLongPressTimer = useCallback(() => {
+    if (longPressTimerRef.current) {
+      clearTimeout(longPressTimerRef.current);
+      longPressTimerRef.current = null;
+    }
+    touchStartPosRef.current = null;
+    isLongPressActiveRef.current = false;
+  }, []);
+
+  // タッチ開始（長押しでドラッグ開始）
+  const handleTouchStart = useCallback(
+    (
+      eventId: string,
+      e: React.TouchEvent,
+      originalPosition: { top: number; left: number; width: number; height: number },
+      dateIndex: number = 0,
+    ) => {
+      // 無効化されたプランの場合はDnDを開始しない
+      if (disabledPlanId && eventId === disabledPlanId) {
+        return;
+      }
+
+      const touch = e.touches[0];
+      if (!touch) return;
+
+      touchStartPosRef.current = { x: touch.clientX, y: touch.clientY };
+
+      // 長押しタイマーを設定（500ms）
+      clearLongPressTimer();
+      longPressTimerRef.current = setTimeout(() => {
+        isLongPressActiveRef.current = true;
+        impact(); // 長押し開始時にハプティックフィードバック
+
+        // ドラッグを開始
+        const originalElement =
+          ((e.target as HTMLElement).closest('[data-event-wrapper="true"]') as HTMLElement) ||
+          ((e.target as HTMLElement).closest('[data-plan-block="true"]') as HTMLElement) ||
+          ((e.target as HTMLElement).closest('[data-event-block="true"]') as HTMLElement);
+
+        const columnWidth = calculateColumnWidth(originalElement, viewMode, displayDates);
+        const originalElementRect = originalElement?.getBoundingClientRect() ?? null;
+
+        // ゴースト要素を作成
+        let dragElement: HTMLElement | null = null;
+        let initialRect: DOMRect | null = null;
+        if (originalElement) {
+          const result = createDragElement(originalElement);
+          dragElement = result.dragElement;
+          initialRect = result.initialRect;
+        }
+
+        dragDataRef.current = {
+          eventId,
+          startX: touch.clientX,
+          startY: touch.clientY,
+          originalTop: originalPosition.top,
+          eventDuration: originalPosition.height,
+          hasMoved: false,
+          originalElement,
+          originalDateIndex: dateIndex,
+          columnWidth,
+          dragElement,
+          initialRect,
+          originalElementRect,
+        };
+
+        // グローバルストアにドラッグ開始を通知
+        const draggedPlan = eventsRef.current.find((ev) => ev.id === eventId);
+        if (draggedPlan) {
+          startDrag(eventId, draggedPlan, dateIndex);
+        }
+
+        setDragState({
+          isPending: false,
+          isDragging: true,
+          isResizing: false,
+          draggedEventId: eventId,
+          dragStartPosition: { x: touch.clientX, y: touch.clientY },
+          currentPosition: { x: touch.clientX, y: touch.clientY },
+          originalPosition,
+          snappedPosition: {
+            top: originalPosition.top,
+            height: originalPosition.height,
+          },
+          previewTime: null,
+          recentlyDragged: false,
+          recentlyResized: false,
+          dragElement,
+          originalDateIndex: dateIndex,
+          targetDateIndex: dateIndex,
+          ghostElement: null,
+          isOverlapping: false,
+        });
+      }, 500);
+    },
+    [disabledPlanId, viewMode, displayDates, clearLongPressTimer, impact, startDrag],
+  );
+
+  // タッチ移動
+  const handleTouchMove = useCallback(
+    (e: TouchEvent) => {
+      const touch = e.touches[0];
+      if (!touch) return;
+
+      // 長押し前の移動はタイマーをキャンセル
+      if (!isLongPressActiveRef.current && touchStartPosRef.current) {
+        const deltaX = Math.abs(touch.clientX - touchStartPosRef.current.x);
+        const deltaY = Math.abs(touch.clientY - touchStartPosRef.current.y);
+
+        if (deltaX > 10 || deltaY > 10) {
+          clearLongPressTimer();
+          return;
+        }
+      }
+
+      // ドラッグ中でなければ終了
+      if (!dragState.isDragging || !dragDataRef.current) return;
+
+      e.preventDefault(); // スクロールを防止
+
+      const dragData = dragDataRef.current;
+      const { constrainedX, constrainedY } = getConstrainedPosition(touch.clientX, touch.clientY);
+      const deltaX = constrainedX - dragData.startX;
+      const deltaY = constrainedY - dragData.startY;
+
+      dragData.hasMoved = true;
+
+      const targetDateIndex = calculateTargetDateIndex(
+        constrainedX,
+        dragData.originalDateIndex,
+        dragData.hasMoved,
+        dragData.originalElement,
+        dragData.columnWidth,
+        deltaX,
+        viewMode,
+        displayDates,
+      );
+
+      handleDragging(constrainedX, constrainedY, deltaX, deltaY, targetDateIndex);
+
+      // グローバルストアを更新
+      updateDrag({
+        targetDateIndex,
+        isDragging: true,
+      });
+
+      // ハプティックフィードバック（15分ごとにtap）
+      tap();
+    },
+    [
+      dragState.isDragging,
+      viewMode,
+      displayDates,
+      clearLongPressTimer,
+      handleDragging,
+      updateDrag,
+      tap,
+    ],
+  );
+
+  // タッチ終了
+  const handleTouchEnd = useCallback(async () => {
+    clearLongPressTimer();
+
+    // ドラッグ中でなければ終了
+    if (!dragState.isDragging || !dragDataRef.current) {
+      // クリックとして処理
+      if (!dragDataRef.current?.hasMoved && dragDataRef.current?.eventId) {
+        const eventToClick = eventsRef.current.find((ev) => ev.id === dragDataRef.current?.eventId);
+        if (eventToClick && eventClickHandlerRef.current) {
+          eventClickHandlerRef.current(eventToClick);
+        }
+      }
+      resetDragState();
+      endDrag();
+      return;
+    }
+
+    cleanupDrag();
+
+    if (!dragState.currentPosition || !dragState.dragStartPosition) {
+      resetDragState();
+      endDrag();
+      return;
+    }
+
+    const deltaY = dragState.currentPosition.y - dragState.dragStartPosition.y;
+    const newTop = dragDataRef.current.originalTop + deltaY;
+    const targetDateIndex =
+      dragState.targetDateIndex !== undefined
+        ? dragState.targetDateIndex
+        : dragDataRef.current.originalDateIndex;
+
+    const newStartTime = calculateNewTime(
+      newTop,
+      targetDateIndex,
+      date,
+      viewMode,
+      displayDates,
+      dragDataRef.current,
+    );
+
+    // 重複チェック
+    const draggedEvent = eventsRef.current.find((ev) => ev.id === dragDataRef.current?.eventId);
+    if (draggedEvent) {
+      const durationMs =
+        draggedEvent.endDate && draggedEvent.startDate
+          ? draggedEvent.endDate.getTime() - draggedEvent.startDate.getTime()
+          : 60 * 60 * 1000;
+      const newEndTime = new Date(newStartTime.getTime() + durationMs);
+
+      const isOverlapping = checkClientSideOverlap(
+        allEventsRef.current,
+        dragDataRef.current.eventId,
+        newStartTime,
+        newEndTime,
+      );
+
+      if (isOverlapping) {
+        const dragElement = dragDataRef.current.dragElement ?? null;
+        const originalRect = dragDataRef.current.originalElementRect ?? null;
+
+        hapticError(); // エラー時のハプティック
+        animateSnapBack(dragElement, originalRect, () => {
+          calendarToast.error(t('toast.conflict'), {
+            description: t('toast.conflictDescription'),
+          });
+          completeDragOperation(false);
+          endDrag();
+        });
+        return;
+      }
+    }
+
+    await executeEventUpdate(newStartTime);
+
+    const actuallyDragged = dragDataRef.current?.hasMoved || false;
+    completeDragOperation(actuallyDragged);
+    endDrag();
+  }, [
+    dragState,
+    date,
+    viewMode,
+    displayDates,
+    cleanupDrag,
+    resetDragState,
+    clearLongPressTimer,
+    executeEventUpdate,
+    completeDragOperation,
+    endDrag,
+    calendarToast,
+    hapticError,
+    t,
   ]);
 
   // handleMouseDown をラップして disabledPlanId をチェック
@@ -367,16 +639,24 @@ export function useDragAndDrop({
     [handleMouseDown, eventClickHandler, events, disabledPlanId],
   );
 
-  // マウスイベントリスナーを設定（ドラッグ/リサイズ用）
+  // マウス/タッチイベントリスナーを設定（ドラッグ/リサイズ用）
   // isPending状態でもリスナーを登録（5px移動検知のため）
   useEffect(() => {
     if (dragState.isPending || dragState.isDragging || dragState.isResizing) {
+      // マウスイベント
       document.addEventListener('mousemove', handleMouseMove, { passive: false });
       document.addEventListener('mouseup', handleMouseUp);
+      // タッチイベント
+      document.addEventListener('touchmove', handleTouchMove, { passive: false });
+      document.addEventListener('touchend', handleTouchEnd);
+      document.addEventListener('touchcancel', handleTouchEnd);
 
       return () => {
         document.removeEventListener('mousemove', handleMouseMove);
         document.removeEventListener('mouseup', handleMouseUp);
+        document.removeEventListener('touchmove', handleTouchMove);
+        document.removeEventListener('touchend', handleTouchEnd);
+        document.removeEventListener('touchcancel', handleTouchEnd);
       };
     }
     return undefined;
@@ -386,17 +666,24 @@ export function useDragAndDrop({
     dragState.isResizing,
     handleMouseMove,
     handleMouseUp,
+    handleTouchMove,
+    handleTouchEnd,
   ]);
 
   return {
     dragState,
     disabledPlanId,
     handlers: {
+      // マウスイベント
       handleMouseDown: wrappedHandleMouseDown,
       handleMouseMove,
       handleMouseUp,
       handleEventDrop,
       handleResizeStart,
+      // タッチイベント
+      handleTouchStart,
+      handleTouchMove,
+      handleTouchEnd,
     },
   };
 }

@@ -191,6 +191,20 @@ export const ThreeDayContent = ({
                     ); // 日付インデックスを渡す
                   }
                 }}
+                onTouchStart={(e) => {
+                  // モバイル: タッチでドラッグ開始（長押しで開始）
+                  handlers.handleTouchStart(
+                    plan.id,
+                    e,
+                    {
+                      top: currentTop,
+                      left: 0,
+                      width: 100,
+                      height: currentHeight,
+                    },
+                    dayIndex,
+                  );
+                }}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();

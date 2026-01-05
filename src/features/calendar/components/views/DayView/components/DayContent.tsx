@@ -141,6 +141,15 @@ export const DayContent = ({
                       });
                     }
                   }}
+                  onTouchStart={(e) => {
+                    // モバイル: タッチでドラッグ開始（長押しで開始）
+                    handlers.handleTouchStart(event.id, e, {
+                      top: currentTop,
+                      left: 0,
+                      width: 100,
+                      height: currentHeight,
+                    });
+                  }}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
                       e.preventDefault();
