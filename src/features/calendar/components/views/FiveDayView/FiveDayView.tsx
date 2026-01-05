@@ -138,8 +138,14 @@ export const FiveDayView = ({
   const headerComponent = (
     <div className="bg-background flex h-8">
       {/* 表示日数分のヘッダー（週末フィルタリング対応） */}
-      {displayDates.map((date) => (
-        <div key={date.toISOString()} className="flex flex-1 items-center justify-center px-1">
+      {displayDates.map((date, index) => (
+        <div
+          key={date.toISOString()}
+          className={cn(
+            'flex flex-1 items-center justify-center px-1',
+            index < displayDates.length - 1 && 'border-border border-r',
+          )}
+        >
           <DateDisplay
             date={date}
             className="text-center"

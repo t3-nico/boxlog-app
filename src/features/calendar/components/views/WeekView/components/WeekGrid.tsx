@@ -85,10 +85,13 @@ export const WeekGrid = ({
   const headerComponent = (
     <div className="bg-background flex h-8 flex-1">
       {/* 7日分の日付ヘッダー */}
-      {weekDates.map((date) => (
+      {weekDates.map((date, index) => (
         <div
           key={date.toISOString()}
-          className="flex items-center justify-center px-1"
+          className={cn(
+            'flex items-center justify-center px-1',
+            index < weekDates.length - 1 && 'border-border border-r',
+          )}
           style={{ width: `${100 / 7}%` }}
         >
           <DateDisplay
