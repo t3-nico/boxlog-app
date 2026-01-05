@@ -201,6 +201,12 @@ export function useResizeHandler({
 
       const startPosition = { x: e.clientX, y: e.clientY };
 
+      // リサイズ対象の要素を取得（視覚的フィードバック用）
+      const originalElement =
+        ((e.target as HTMLElement).closest('[data-event-wrapper="true"]') as HTMLElement) ||
+        ((e.target as HTMLElement).closest('[data-plan-block="true"]') as HTMLElement) ||
+        ((e.target as HTMLElement).closest('[data-event-block="true"]') as HTMLElement);
+
       dragDataRef.current = {
         eventId,
         startX: e.clientX,
@@ -208,7 +214,7 @@ export function useResizeHandler({
         originalTop: originalPosition.top,
         eventDuration: originalPosition.height,
         hasMoved: false,
-        originalElement: null,
+        originalElement,
         originalDateIndex: 0,
       };
 
