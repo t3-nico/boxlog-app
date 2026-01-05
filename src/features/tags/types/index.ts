@@ -5,7 +5,6 @@ export interface Tag {
   name: string;
   user_id: string | null;
   color: string | null;
-  tag_number: number;
   description: string | null;
   icon: string | null;
   is_active: boolean;
@@ -21,7 +20,6 @@ export interface TagGroup {
   user_id: string;
   name: string;
   slug: string;
-  group_number: number;
   description: string | null;
   color: string | null;
   sort_order: number | null;
