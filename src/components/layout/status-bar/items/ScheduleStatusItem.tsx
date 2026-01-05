@@ -11,8 +11,14 @@ import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { PlanCreateTrigger } from '@/features/plans/components/shared/PlanCreateTrigger';
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
+import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
 import { api } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
+import {
+  CHRONOTYPE_PRESETS,
+  getChronotypeColor,
+  getProductivityZoneForHour,
+} from '@/types/chronotype';
 
 /**
  * 現在の予定をステータスバーに表示
@@ -24,6 +30,7 @@ import { cn } from '@/lib/utils';
 export function ScheduleStatusItem() {
   const t = useTranslations('calendar');
   const openInspector = usePlanInspectorStore((state) => state.openInspector);
+  const chronotype = useCalendarSettingsStore((state) => state.chronotype);
   const [currentTime, setCurrentTime] = useState(() => new Date());
 
   // 1分ごとに現在時刻を更新
@@ -34,6 +41,21 @@ export function ScheduleStatusItem() {
 
     return () => clearInterval(timer);
   }, []);
+
+  // 現在時刻のクロノタイプゾーン色を取得
+  const chronotypeColor = useMemo(() => {
+    if (!chronotype.enabled) return null;
+
+    const profile =
+      chronotype.type === 'custom' && chronotype.customZones
+        ? { ...CHRONOTYPE_PRESETS.custom, productivityZones: chronotype.customZones }
+        : CHRONOTYPE_PRESETS[chronotype.type];
+
+    const currentHour = currentTime.getHours();
+    const zone = getProductivityZoneForHour(profile, currentHour);
+
+    return zone ? getChronotypeColor(zone.level) : null;
+  }, [chronotype.enabled, chronotype.type, chronotype.customZones, currentTime]);
 
   // 今日の予定を取得
   const { data: plans, isPending } = api.plans.list.useQuery(undefined, {
@@ -128,8 +150,13 @@ export function ScheduleStatusItem() {
     return t('statusBar.noSchedule');
   }, [currentPlan, formatTime, t]);
 
-  // アイコン（ローディング時はスピナー）
-  const icon = isPending ? <Spinner className="h-3 w-3" /> : <Calendar className="h-3 w-3" />;
+  // アイコン（ローディング時はスピナー、クロノタイプ色適用）
+  const iconStyle = chronotypeColor ? { color: chronotypeColor } : undefined;
+  const icon = isPending ? (
+    <Spinner className="h-3 w-3" />
+  ) : (
+    <Calendar className="h-3 w-3" style={iconStyle} />
+  );
 
   // ツールチップ
   const tooltip = currentPlan ? t('statusBar.openSchedule') : t('statusBar.createNewPlan');
@@ -165,9 +192,14 @@ export function ScheduleStatusItem() {
             <div
               className={cn(
                 'h-full rounded-full transition-all duration-300',
-                progressPercent < 80 ? 'bg-primary' : 'bg-destructive',
+                !chronotypeColor && (progressPercent < 80 ? 'bg-primary' : 'bg-destructive'),
+                progressPercent >= 80 && 'bg-destructive',
               )}
-              style={{ width: `${progressPercent}%` }}
+              style={{
+                width: `${progressPercent}%`,
+                ...(chronotypeColor &&
+                  progressPercent < 80 && { backgroundColor: chronotypeColor }),
+              }}
             />
           </div>
           <span className="text-muted-foreground text-xs tabular-nums">{progressPercent}%</span>
@@ -204,9 +236,14 @@ export function ScheduleStatusItem() {
             <div
               className={cn(
                 'h-full rounded-full transition-all duration-300',
-                progressPercent < 80 ? 'bg-primary' : 'bg-destructive',
+                !chronotypeColor && (progressPercent < 80 ? 'bg-primary' : 'bg-destructive'),
+                progressPercent >= 80 && 'bg-destructive',
               )}
-              style={{ width: `${progressPercent}%` }}
+              style={{
+                width: `${progressPercent}%`,
+                ...(chronotypeColor &&
+                  progressPercent < 80 && { backgroundColor: chronotypeColor }),
+              }}
             />
           </div>
           <span className="text-muted-foreground text-xs tabular-nums">{progressPercent}%</span>
