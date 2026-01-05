@@ -191,7 +191,13 @@
       "createNewPlan": "新規プラン作成"
     },
     "overdue": {
-      "badge": "{count}件の未完了",
+      "badge": "{count}件の保留中",
+      "title": "保留中のタスク",
+      "period": "過去365日間",
+      "helpText": "ここには、過去365日以内に期限を迎えた未完了タスクが表示されます。ToDoリストを表示するかどうかは、左サイドパネルの「マイカレンダー」セクションで切り替えられます。ToDoリストの使い方についてのヘルプ記事をご覧ください。",
+      "openTodoList": "ToDoリストを開く",
+      "noTitle": "(タイトルなし)",
+      "timeUnset": "時間は未指定",
       "popoverTitle": "期限切れのプラン",
       "overdueBy": "{time}超過"
     },

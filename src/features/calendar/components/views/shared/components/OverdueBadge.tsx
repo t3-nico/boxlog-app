@@ -1,10 +1,14 @@
 'use client';
 
-import { AlertCircle } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { format, isToday, isYesterday } from 'date-fns';
+import { AlertCircle, HelpCircle } from 'lucide-react';
+import { useLocale, useTranslations } from 'next-intl';
+import { useCallback, useRef, useState } from 'react';
 
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
+import { useDateFormat } from '@/features/settings/hooks/useDateFormat';
 import { cn } from '@/lib/utils';
 
 import type { OverduePlan } from '../../../../hooks/useOverduePlans';
@@ -19,33 +23,32 @@ interface OverdueBadgeProps {
 }
 
 /**
- * 超過時間をフォーマット
- * @param minutes 超過時間（分）
- * @returns フォーマット済み文字列（例: "2h 30m", "45m"）
- */
-function formatOverdueTime(minutes: number): string {
-  if (minutes < 60) {
-    return `${minutes}m`;
-  }
-  const hours = Math.floor(minutes / 60);
-  const mins = minutes % 60;
-  if (mins === 0) {
-    return `${hours}h`;
-  }
-  return `${hours}h ${mins}m`;
-}
-
-/**
- * OverdueBadge - 未完了プランのバッジコンポーネント
+ * OverdueBadge - 未完了プランのバッジコンポーネント（Googleカレンダー風）
  *
  * @description
  * 未完了で期限切れのプランの件数を表示するバッジ。
- * クリックするとポップオーバーでプラン一覧を表示し、
- * 各プランをクリックするとInspectorを開く。
+ * クリックするとGoogleカレンダー風のポップオーバーでプラン一覧を表示。
  */
 export function OverdueBadge({ overduePlans, className, style }: OverdueBadgeProps) {
   const t = useTranslations('calendar.overdue');
+  const locale = useLocale();
   const openInspector = usePlanInspectorStore((state) => state.openInspector);
+  const { formatTime: formatTimeWithSettings } = useDateFormat();
+
+  // HoverCardの表示位置を動的に決定
+  const helpButtonRef = useRef<HTMLButtonElement>(null);
+  const [hoverCardSide, setHoverCardSide] = useState<'left' | 'right'>('right');
+
+  // HoverCard幅(w-64=256px) + sideOffset(8px) + 余裕(16px)
+  const HOVER_CARD_WIDTH = 280;
+
+  const updateHoverCardSide = useCallback(() => {
+    if (!helpButtonRef.current) return;
+    const rect = helpButtonRef.current.getBoundingClientRect();
+    const spaceOnRight = window.innerWidth - rect.right;
+    // 右側に十分なスペースがあれば右に、なければ左に表示
+    setHoverCardSide(spaceOnRight >= HOVER_CARD_WIDTH ? 'right' : 'left');
+  }, []);
 
   // 未完了プランがない場合は非表示
   if (overduePlans.length === 0) {
@@ -54,6 +57,24 @@ export function OverdueBadge({ overduePlans, className, style }: OverdueBadgePro
 
   const handlePlanClick = (planId: string) => {
     openInspector(planId);
+  };
+
+  // 日付のフォーマット（アジェンダ風）
+  const formatDate = (date: Date | null) => {
+    if (!date) return '';
+    if (isToday(date)) {
+      return locale === 'ja' ? '今日' : 'Today';
+    }
+    if (isYesterday(date)) {
+      return locale === 'ja' ? '昨日' : 'Yesterday';
+    }
+    return format(date, 'M/d');
+  };
+
+  // 時間のフォーマット
+  const formatTime = (date: Date | null) => {
+    if (!date) return '';
+    return formatTimeWithSettings(date);
   };
 
   return (
@@ -74,41 +95,86 @@ export function OverdueBadge({ overduePlans, className, style }: OverdueBadgePro
         </button>
       </PopoverTrigger>
       <PopoverContent
-        className="w-72 p-0"
+        className="w-80 p-0"
         align="start"
         sideOffset={4}
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
-        <div className="border-border border-b px-3 py-2">
-          <h4 className="text-sm font-semibold">{t('popoverTitle')}</h4>
-        </div>
-        <div className="max-h-64 overflow-y-auto">
-          {overduePlans.map(({ plan, overdueMinutes }) => (
-            <button
-              key={plan.id}
-              type="button"
-              onClick={() => handlePlanClick(plan.id)}
-              className={cn(
-                'hover:bg-state-hover w-full px-3 py-2 text-left transition-colors',
-                'border-border border-b last:border-b-0',
-                'focus:bg-state-focus focus:outline-none',
-              )}
+        {/* ヘッダー: タイトル + ヘルプ */}
+        <div className="border-border flex items-start justify-between border-b px-4 py-3">
+          <div className="flex-1">
+            <h4 className="text-foreground text-sm font-semibold">{t('title')}</h4>
+            <p className="text-muted-foreground text-xs">{t('period')}</p>
+          </div>
+          {/* ヘルプアイコン with HoverCard */}
+          <HoverCard openDelay={200} onOpenChange={(open) => open && updateHoverCardSide()}>
+            <HoverCardTrigger asChild>
+              <button
+                ref={helpButtonRef}
+                type="button"
+                className="text-muted-foreground hover:text-foreground hover:bg-state-hover rounded-full p-1.5 transition-colors"
+                aria-label="Help"
+              >
+                <HelpCircle className="size-4" />
+              </button>
+            </HoverCardTrigger>
+            <HoverCardContent
+              side={hoverCardSide}
+              align="start"
+              alignOffset={16}
+              className="bg-surface-bright border-border z-[250] w-64 rounded-xl shadow-lg"
+              sideOffset={24}
+              avoidCollisions={false}
             >
-              <div className="flex items-start justify-between gap-2">
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium">{plan.title}</p>
-                  <p className="text-muted-foreground text-xs">
-                    {t('overdueBy', { time: formatOverdueTime(overdueMinutes) })}
-                  </p>
+              <p className="text-muted-foreground text-sm leading-relaxed">{t('helpText')}</p>
+            </HoverCardContent>
+          </HoverCard>
+        </div>
+
+        {/* プランリスト（アジェンダ風） */}
+        <div className="divide-border max-h-64 divide-y overflow-y-auto">
+          {overduePlans.map(({ plan }) => {
+            const dateLabel = formatDate(plan.endDate);
+            const timeLabel = formatTime(plan.endDate);
+
+            return (
+              <button
+                key={plan.id}
+                type="button"
+                onClick={() => handlePlanClick(plan.id)}
+                className={cn(
+                  'group w-full px-4 py-2',
+                  'flex items-center gap-2',
+                  'hover:bg-state-hover focus-visible:bg-state-focus',
+                  'focus-visible:outline-none',
+                  'transition-colors duration-150',
+                  'cursor-pointer text-left',
+                )}
+              >
+                {/* 日付 */}
+                <div className="text-muted-foreground w-10 shrink-0 text-right text-sm">
+                  {dateLabel}
                 </div>
-                <div
-                  className="mt-1 size-2 flex-shrink-0 rounded-full"
-                  style={{ backgroundColor: plan.color }}
-                  aria-hidden="true"
-                />
-              </div>
-            </button>
-          ))}
+
+                {/* タイトル */}
+                <div className="flex min-w-0 flex-1 items-center gap-2">
+                  <div
+                    className="size-2 shrink-0 rounded-full"
+                    style={{ backgroundColor: plan.color }}
+                    aria-hidden="true"
+                  />
+                  <span className="text-foreground truncate text-sm group-hover:underline">
+                    {plan.title || t('noTitle')}
+                  </span>
+                </div>
+
+                {/* 時間 */}
+                <div className="text-muted-foreground shrink-0 text-sm">
+                  {timeLabel || t('timeUnset')}
+                </div>
+              </button>
+            );
+          })}
         </div>
       </PopoverContent>
     </Popover>
