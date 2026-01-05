@@ -84,6 +84,7 @@ export function useDragAndDrop({
     handleResizeStart: originalHandleResizeStart,
   } = useResizeHandler({
     events,
+    allEventsForOverlapCheck,
     eventUpdateHandler,
     dragDataRef,
     setDragState,
