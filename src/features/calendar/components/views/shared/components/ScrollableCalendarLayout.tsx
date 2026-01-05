@@ -66,15 +66,18 @@ export const CalendarDateHeader = ({
             className="flex shrink-0 items-center justify-center"
             style={{ width: timeColumnWidth }}
           >
-            {/* 週番号バッジ（Googleカレンダースタイル） - 丸いバッジ */}
+            {/* 週番号バッジ（Googleカレンダースタイル） - モバイルのみ表示 */}
             {weekNumber != null ? (
-              <span className="bg-muted text-muted-foreground flex size-6 items-center justify-center rounded-full text-xs font-medium">
+              <span className="bg-muted text-muted-foreground flex size-6 items-center justify-center rounded-full text-xs font-medium md:hidden">
                 {weekNumber}
               </span>
             ) : null}
-            {/* タイムゾーン表示（showTimezone=trueの場合のみ、週番号がない場合） */}
-            {showTimezone && timezone && weekNumber == null ? (
-              <TimezoneOffset timezone={timezone} className="text-xs" />
+            {/* タイムゾーン表示（PC: 常に表示、モバイル: 週番号がない場合のみ） */}
+            {showTimezone && timezone ? (
+              <TimezoneOffset
+                timezone={timezone}
+                className={cn('text-xs', weekNumber != null && 'hidden md:flex')}
+              />
             ) : null}
           </div>
         ) : null}

@@ -21,7 +21,7 @@ export const HOUR_LINE_COLOR = 'border-border';
 export const HALF_HOUR_LINE_COLOR = 'border-border/50'; // より薄い線用
 
 // 現在時刻線
-export const CURRENT_TIME_LINE_COLOR = 'bg-blue-500';
+export const CURRENT_TIME_LINE_COLOR = 'bg-primary';
 export const CURRENT_TIME_DOT_SIZE = 8; // 現在時刻のドットサイズ(px)
 
 // イベント配置

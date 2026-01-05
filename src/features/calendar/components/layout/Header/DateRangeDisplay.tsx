@@ -5,7 +5,6 @@ import { ChevronDown } from 'lucide-react';
 
 import { MiniCalendar } from '@/components/common/MiniCalendar';
 import { cn } from '@/lib/utils';
-import { useTranslations } from 'next-intl';
 
 interface DateRangeDisplayProps {
   date: Date;
@@ -14,7 +13,6 @@ interface DateRangeDisplayProps {
   showWeekNumber?: boolean | undefined;
   formatPattern?: string | undefined;
   className?: string | undefined;
-  weekBadgeClassName?: string | undefined;
   onDateSelect?: ((date: Date | undefined) => void) | undefined;
   clickable?: boolean | undefined;
   // 現在表示している期間（MiniCalendarでのハイライト用）
@@ -46,33 +44,8 @@ const generateRangeText = (date: Date, endDate: Date): string => {
 };
 
 /**
- * 週番号バッジ
- */
-const WeekBadge = ({
-  weekNumber,
-  className,
-}: {
-  weekNumber: number;
-  className?: string | undefined;
-}) => {
-  const t = useTranslations();
-
-  return (
-    <span
-      className={cn(
-        'text-muted-foreground inline-flex items-center text-sm font-normal',
-        className,
-      )}
-      aria-label={t('calendar.dateRange.weekLabel', { weekNumber })}
-    >
-      week{weekNumber}
-    </span>
-  );
-};
-
-/**
  * 日付範囲表示
- * 単一日付または期間を表示し、オプションで週番号も表示
+ * 単一日付または期間を表示
  *
  * **モバイル対応**:
  * - モバイル（md未満）: クリックでMiniCalendarポップアップを表示
@@ -81,16 +54,12 @@ const WeekBadge = ({
 export const DateRangeDisplay = ({
   date,
   endDate,
-  showWeekNumber = true,
   formatPattern = 'MMMM yyyy',
   className,
-  weekBadgeClassName,
   onDateSelect,
   clickable = false,
   displayRange,
 }: DateRangeDisplayProps) => {
-  const weekNumber = getWeek(date, { weekStartsOn: 1 });
-
   // 表示テキストを決定
   const displayText =
     endDate && date.getTime() !== endDate.getTime()
@@ -126,12 +95,9 @@ export const DateRangeDisplay = ({
     />
   );
 
-  // PC用: 静的表示
+  // PC用: 静的表示（週番号はモバイルのカレンダーグリッドにのみ表示）
   const desktopContent = (
-    <div className={cn('hidden items-center gap-2 md:flex', className)}>
-      {dateContent}
-      {showWeekNumber && <WeekBadge weekNumber={weekNumber} className={weekBadgeClassName} />}
-    </div>
+    <div className={cn('hidden items-center gap-2 md:flex', className)}>{dateContent}</div>
   );
 
   // クリック可能な場合: モバイル（ポップアップ）+ PC（静的）
@@ -144,13 +110,8 @@ export const DateRangeDisplay = ({
     );
   }
 
-  // クリック不可の場合: 静的表示のみ
-  return (
-    <div className={cn('flex items-center gap-2', className)}>
-      {dateContent}
-      {showWeekNumber && <WeekBadge weekNumber={weekNumber} className={weekBadgeClassName} />}
-    </div>
-  );
+  // クリック不可の場合: 静的表示のみ（PC用、週番号なし）
+  return <div className={cn('flex items-center gap-2', className)}>{dateContent}</div>;
 };
 
 /**

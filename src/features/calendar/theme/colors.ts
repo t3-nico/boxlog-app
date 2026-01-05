@@ -36,11 +36,11 @@ interface ColorSet {
 // カレンダー専用カラー（既存テーマシステム準拠）
 export const calendarColors: CalendarColors = {
   event: {
-    // scheduled - プライマリー系（青）
+    // scheduled - プライマリー系（セマンティック）
     scheduled: {
-      background: 'bg-blue-50 dark:bg-blue-950',
-      text: 'text-blue-800 dark:text-blue-200',
-      active: 'bg-blue-200 dark:bg-blue-900/40',
+      background: 'bg-primary/10',
+      text: 'text-primary',
+      active: 'bg-primary/20',
     },
 
     // backlog - セカンダリー系（グレー）
@@ -83,10 +83,10 @@ export const calendarColors: CalendarColors = {
       active: 'bg-neutral-300 dark:bg-neutral-600',
     },
 
-    // task - タスク系（青ベース）
+    // task - タスク系（セマンティック）
     task: {
-      background: 'bg-blue-50 dark:bg-blue-950/50',
-      text: 'text-blue-800 dark:text-blue-200',
+      background: 'bg-primary/10',
+      text: 'text-primary',
     },
 
     // log - ログ系（緑ベース）
@@ -103,15 +103,15 @@ export const calendarColors: CalendarColors = {
       text: 'text-neutral-600 dark:text-neutral-400',
     },
 
-    // selected - 選択時（青、濃い）
+    // selected - 選択時（セマンティック、濃い）
     selected: {
-      background: 'bg-blue-200 dark:bg-blue-800/60',
+      background: 'bg-primary/20',
       text: 'inherit',
     },
 
-    // displayPeriod - 表示期間（青、薄い）
+    // displayPeriod - 表示期間（セマンティック、薄い）
     displayPeriod: {
-      background: 'bg-blue-50 dark:bg-blue-900/30',
+      background: 'bg-primary/10',
       text: 'inherit',
     },
 

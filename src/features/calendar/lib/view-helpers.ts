@@ -70,7 +70,7 @@ export function getDateStyleClass(date: Date): string {
   const classes = ['transition-colors duration-150'];
 
   if (isToday(date)) {
-    classes.push('bg-blue-50 dark:bg-blue-900/20 ring-2 ring-blue-500');
+    classes.push('bg-primary/10 ring-2 ring-primary');
   }
 
   if (isWeekend(date)) {
