@@ -21,12 +21,16 @@ export const TimeColumn = memo<TimeColumnProps>(function TimeColumn({
   hourHeight = 72,
   format = '24h',
   className = '',
+  sections,
+  totalHeight,
 }) {
   const { hours, gridHeight } = useTimeGrid({
     startHour,
     endHour,
     hourHeight,
     format,
+    sections,
+    totalHeight,
   });
 
   return (
@@ -39,13 +43,14 @@ export const TimeColumn = memo<TimeColumnProps>(function TimeColumn({
     >
       {hours.map((hour, index) => (
         <TimeLabel
-          key={hour.hour}
+          key={`${hour.hour}-${hour.position}`}
           hour={hour.hour}
           label={hour.label}
           position={hour.position}
           hourHeight={hourHeight}
           isFirst={index === 0}
           isLast={index === hours.length - 1}
+          isCollapsedBoundary={hour.isCollapsedBoundary}
         />
       ))}
     </div>

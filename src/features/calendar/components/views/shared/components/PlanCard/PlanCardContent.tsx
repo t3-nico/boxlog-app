@@ -114,7 +114,9 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
             className="opacity-75"
           />
           {/* 通知アイコン（reminder_minutesが設定されている場合） */}
-          {plan.reminder_minutes != null && <Bell className="h-3 w-3 flex-shrink-0 opacity-75" />}
+          {plan.reminder_minutes != null && (
+            <Bell className="text-muted-foreground h-3 w-3 flex-shrink-0 opacity-75" />
+          )}
         </div>
       )}
 

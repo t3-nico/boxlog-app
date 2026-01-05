@@ -204,6 +204,9 @@
     "agenda": {
       "emptyTitle": "No upcoming events in the next 14 days",
       "emptyDescription": "Create a new event in the calendar"
+    },
+    "collapsedSection": {
+      "expandLabel": "Expand {timeRange}"
     }
   }
 }

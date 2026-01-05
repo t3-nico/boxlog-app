@@ -170,6 +170,7 @@ export const FiveDayView = ({
           scrollToHour={isCurrentDay ? undefined : 8}
           displayDates={displayDates}
           viewMode="5day"
+          plans={plans}
           // onTimeClickは削除: CalendarDragSelectionがクリック処理を担当
           enableKeyboardNavigation={true}
         >

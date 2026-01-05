@@ -1,7 +1,5 @@
 import { useMemo } from 'react';
 
-import { useCalendarToast } from '@/features/calendar/hooks/useCalendarToast';
-
 import type { TimedPlan } from '../types/plan.types';
 
 // レイアウト情報の型定義
@@ -24,11 +22,7 @@ interface OverlapGroup {
  * プランの重複レイアウト計算フック
  * Googleカレンダー風の横並び配置を実現
  */
-export function usePlanLayoutCalculator(
-  plans: TimedPlan[],
-  options?: { notifyConflicts?: boolean },
-): PlanLayout[] {
-  const { eventConflict } = useCalendarToast();
+export function usePlanLayoutCalculator(plans: TimedPlan[]): PlanLayout[] {
   return useMemo(() => {
     if (plans.length === 0) return [];
 
@@ -47,39 +41,11 @@ export function usePlanLayoutCalculator(
 
     overlapGroups.forEach((group) => {
       const groupLayouts = calculateGroupLayout(group.plans);
-
-      // 重複が発生している場合（2つ以上のプラン）にToast通知
-      if (options?.notifyConflicts && group.plans.length > 1) {
-        // 最近作成/更新されたプランがある場合のみ通知
-        const hasRecentPlan = group.plans.some((plan) => {
-          const updatedAt = plan.updatedAt ? new Date(plan.updatedAt) : null;
-          if (!updatedAt) return false;
-          const now = new Date();
-          return now.getTime() - updatedAt.getTime() < 5000; // 5秒以内に更新されたプラン
-        });
-
-        if (hasRecentPlan) {
-          eventConflict();
-        }
-      }
-
-      console.log('🔧 重複レイアウト計算:', {
-        グループサイズ: group.plans.length,
-        プランタイトル: group.plans.map((e) => e.title),
-        レイアウト結果: groupLayouts.map((l) => ({
-          title: l.plan.title,
-          column: l.column,
-          totalColumns: l.totalColumns,
-          width: l.width,
-          left: l.left,
-        })),
-        重複通知: options?.notifyConflicts && group.plans.length > 1,
-      });
       layouts.push(...groupLayouts);
     });
 
     return layouts;
-  }, [plans, eventConflict, options?.notifyConflicts]);
+  }, [plans]);
 }
 
 /**

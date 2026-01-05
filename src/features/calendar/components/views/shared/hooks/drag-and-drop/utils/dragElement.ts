@@ -175,35 +175,25 @@ export function updateDragElementOverlapStyle(
   const OVERLAY_ID = 'drag-overlap-overlay';
 
   if (isOverlapping) {
-    // 子要素のbg-*クラスを削除して透明にする（オーバーレイが見えるように）
-    const children = dragElement.querySelectorAll('*');
-    children.forEach((child) => {
-      const el = child as HTMLElement;
-      if (el.id === OVERLAY_ID) return; // オーバーレイ自体はスキップ
-      const childBgClasses = Array.from(el.classList).filter((cls) => cls.startsWith('bg-'));
-      childBgClasses.forEach((cls) => el.classList.remove(cls));
-      el.style.setProperty('background', 'transparent', 'important');
-    });
-
     // 重複時: 赤いボーダー + 赤いグロー
+    // 注意: 子要素のbg-*クラスは変更しない（リサイズ時は実際のDOM要素を操作するため）
     dragElement.style.setProperty('border', '2px solid #ef4444', 'important');
     dragElement.style.setProperty(
       'box-shadow',
       '0 0 0 2px rgba(239, 68, 68, 0.3), 0 4px 12px rgba(239, 68, 68, 0.4)',
       'important',
     );
-    dragElement.style.setProperty('opacity', '0.95', 'important');
     dragElement.style.cursor = 'not-allowed';
     dragElement.classList.add('drag-overlap');
 
-    // 赤いオーバーレイ + 禁止アイコンを追加
+    // 赤いオーバーレイ + 禁止アイコンを追加（不透明度を上げて背景色の上から見えるように）
     if (!dragElement.querySelector(`#${OVERLAY_ID}`)) {
       const overlay = document.createElement('div');
       overlay.id = OVERLAY_ID;
       overlay.style.cssText = `
         position: absolute;
         inset: 0;
-        background: rgba(239, 68, 68, 0.35);
+        background: rgba(239, 68, 68, 0.5);
         border-radius: inherit;
         display: flex;
         align-items: center;
@@ -232,11 +222,9 @@ export function updateDragElementOverlapStyle(
     }
   } else {
     // 正常時: 通常のスタイルに戻す
-    dragElement.style.removeProperty('background');
     dragElement.style.removeProperty('border');
-    dragElement.style.setProperty('box-shadow', '0 4px 12px rgba(0, 0, 0, 0.15)', 'important');
-    dragElement.style.setProperty('opacity', '0.8', 'important');
-    dragElement.style.cursor = 'grabbing';
+    dragElement.style.removeProperty('box-shadow');
+    dragElement.style.cursor = '';
     dragElement.classList.remove('drag-overlap');
 
     // オーバーレイを削除

@@ -38,13 +38,6 @@ export function useCalendarToast() {
     });
   };
 
-  const eventConflict = () => {
-    toast.warning(t('calendar.toast.conflict'), {
-      description: t('calendar.toast.conflictDescription'),
-      duration: 4000,
-    });
-  };
-
   const eventSaving = () => {
     return toast.loading(t('calendar.toast.saving'));
   };
@@ -141,7 +134,6 @@ export function useCalendarToast() {
     eventCreated,
     eventUpdated,
     eventDeleted,
-    eventConflict,
     eventSaving,
     eventMoved,
     eventResized,

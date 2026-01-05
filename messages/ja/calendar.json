@@ -204,6 +204,9 @@
     "agenda": {
       "emptyTitle": "今後14日間に予定はありません",
       "emptyDescription": "カレンダーで新しい予定を作成してください"
+    },
+    "collapsedSection": {
+      "expandLabel": "{timeRange} を展開"
     }
   }
 }

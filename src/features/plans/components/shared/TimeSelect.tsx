@@ -75,6 +75,8 @@ interface TimeSelectProps {
   label: string; // "開始" または "終了"
   disabled?: boolean;
   minTime?: string; // 最小時刻（この時刻以降のみ選択可能、HH:MM形式）
+  /** 外部からのエラー状態（重複エラーなど） */
+  hasError?: boolean;
 }
 
 /**
@@ -82,7 +84,14 @@ interface TimeSelectProps {
  * - クリック → 15分刻みのドロップダウン
  * - 直接入力も可能（スマートパース対応）
  */
-export function TimeSelect({ value, onChange, label, disabled = false, minTime }: TimeSelectProps) {
+export function TimeSelect({
+  value,
+  onChange,
+  label,
+  disabled = false,
+  minTime,
+  hasError = false,
+}: TimeSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState(value);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
@@ -119,6 +128,13 @@ export function TimeSelect({ value, onChange, label, disabled = false, minTime }
   useEffect(() => {
     setInputValue(value);
   }, [value]);
+
+  // エラー時は入力値を元に戻す
+  useEffect(() => {
+    if (hasError) {
+      setInputValue(value);
+    }
+  }, [hasError, value]);
 
   // 外側クリックでポップアップを閉じる
   useEffect(() => {
@@ -321,7 +337,9 @@ export function TimeSelect({ value, onChange, label, disabled = false, minTime }
     <div className={label ? 'space-y-1' : ''}>
       {label && <label className="text-muted-foreground text-xs">{label}</label>}
       <div
-        className="hover:bg-state-hover relative flex items-center rounded-md transition-colors"
+        className={`relative flex items-center rounded-md transition-colors ${
+          hasError ? 'ring-destructive/50 bg-destructive/10 ring-2' : 'hover:bg-state-hover'
+        }`}
         ref={containerRef}
       >
         <input
@@ -333,6 +351,7 @@ export function TimeSelect({ value, onChange, label, disabled = false, minTime }
           aria-expanded={isOpen}
           aria-controls="time-listbox"
           aria-autocomplete="list"
+          aria-invalid={hasError || !!error}
           value={inputValue}
           onChange={handleInputChange}
           onBlur={handleInputBlur}
@@ -342,7 +361,7 @@ export function TimeSelect({ value, onChange, label, disabled = false, minTime }
           placeholder="--:--"
           className={`flex h-8 w-14 rounded-md bg-transparent px-2 py-1 text-sm outline-none disabled:cursor-not-allowed disabled:opacity-50 ${
             value ? 'text-foreground' : 'text-muted-foreground'
-          } ${error ? 'text-destructive' : ''}`}
+          } ${error || hasError ? 'text-destructive' : ''}`}
         />
         {/* クリアボタン（値がある場合のみ表示） */}
         {value && !disabled && (

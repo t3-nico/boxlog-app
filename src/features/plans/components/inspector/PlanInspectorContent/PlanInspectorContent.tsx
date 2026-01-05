@@ -46,6 +46,7 @@ export function PlanInspectorContent() {
     endTime,
     reminderType,
     setReminderType,
+    timeConflictError,
     handleDateChange,
     handleStartTimeChange,
     handleEndTimeChange,
@@ -235,6 +236,7 @@ export function PlanInspectorContent() {
               if (!planId) return;
               updatePlan.mutate({ id: planId, data: { recurrence_rule: rrule } });
             }}
+            timeConflictError={timeConflictError}
           />
         </TabsContent>
 

@@ -5,10 +5,14 @@
  */
 
 import { format } from 'date-fns';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+import useCalendarToast from '@/features/calendar/lib/toast';
 import { parseDateString, parseDatetimeString } from '@/features/calendar/utils/dateUtils';
 import type { InspectorDisplayMode } from '@/features/inspector';
+import { useHapticFeedback } from '@/hooks/useHapticFeedback';
+import { api } from '@/lib/trpc';
 
 import { usePlan } from '../../../hooks/usePlan';
 import { usePlanTags } from '../../../hooks/usePlanTags';
@@ -19,6 +23,14 @@ import type { Plan } from '../../../types/plan';
 import { useInspectorAutoSave, useInspectorNavigation } from '../hooks';
 
 export function usePlanInspectorContentLogic() {
+  const t = useTranslations();
+  const utils = api.useUtils();
+  const calendarToast = useCalendarToast();
+  const { error: hapticError } = useHapticFeedback();
+
+  // 時間重複エラー状態（視覚的フィードバック用）
+  const [timeConflictError, setTimeConflictError] = useState(false);
+
   const planId = usePlanInspectorStore((state) => state.planId);
   const initialData = usePlanInspectorStore((state) => state.initialData);
   const closeInspector = usePlanInspectorStore((state) => state.closeInspector);
@@ -30,6 +42,30 @@ export function usePlanInspectorContentLogic() {
 
   const { data: planData } = usePlan(planId!, { includeTags: true, enabled: !!planId });
   const plan = (planData ?? null) as unknown as Plan | null;
+
+  // 時間重複チェック関数
+  const checkTimeOverlap = useCallback(
+    (newStartTime: Date, newEndTime: Date): boolean => {
+      if (!planId) return false;
+
+      // キャッシュからプラン一覧を取得
+      const plans = utils.plans.list.getData();
+      if (!plans || plans.length === 0) return false;
+
+      // 自分以外のプランとの重複をチェック
+      return plans.some((p) => {
+        if (p.id === planId) return false;
+        if (!p.start_time || !p.end_time) return false;
+
+        const pStart = new Date(p.start_time);
+        const pEnd = new Date(p.end_time);
+
+        // 時間重複条件: 既存の開始 < 新規の終了 AND 既存の終了 > 新規の開始
+        return pStart < newEndTime && pEnd > newStartTime;
+      });
+    },
+    [planId, utils.plans.list],
+  );
 
   // Custom hooks
   const { hasPrevious, hasNext, goToPrevious, goToNext } = useInspectorNavigation(planId);
@@ -225,32 +261,84 @@ export function usePlanInspectorContentLogic() {
 
   const handleStartTimeChange = useCallback(
     (time: string) => {
-      setStartTime(time);
-      if (time && selectedDate) {
+      if (time && selectedDate && endTime) {
+        // 新しい開始時刻を計算
+        const [hours, minutes] = time.split(':').map(Number);
+        const newStartDateTime = new Date(selectedDate);
+        newStartDateTime.setHours(hours ?? 0, minutes ?? 0, 0, 0);
+
+        // 現在の終了時刻を取得
+        const [endHours, endMinutes] = endTime.split(':').map(Number);
+        const endDateTime = new Date(selectedDate);
+        endDateTime.setHours(endHours ?? 0, endMinutes ?? 0, 0, 0);
+
+        // 事前重複チェック
+        if (checkTimeOverlap(newStartDateTime, endDateTime)) {
+          // GAFA基準のフィードバック: ハプティック + トースト + 視覚的FB
+          hapticError();
+          calendarToast.error(t('calendar.toast.conflict'), {
+            description: t('calendar.toast.conflictDescription'),
+          });
+          setTimeConflictError(true);
+          setTimeout(() => setTimeConflictError(false), 500); // シェイクアニメーション後にリセット
+          return; // 更新をキャンセル
+        }
+
+        setStartTime(time);
+        autoSave('start_time', newStartDateTime.toISOString());
+      } else if (time && selectedDate) {
         const [hours, minutes] = time.split(':').map(Number);
         const dateTime = new Date(selectedDate);
         dateTime.setHours(hours ?? 0, minutes ?? 0, 0, 0);
+        setStartTime(time);
         autoSave('start_time', dateTime.toISOString());
       } else {
+        setStartTime(time);
         autoSave('start_time', undefined);
       }
     },
-    [selectedDate, autoSave],
+    [selectedDate, endTime, autoSave, checkTimeOverlap, hapticError, calendarToast, t],
   );
 
   const handleEndTimeChange = useCallback(
     (time: string) => {
-      setEndTime(time);
-      if (time && selectedDate) {
+      if (time && selectedDate && startTime) {
+        // 現在の開始時刻を取得
+        const [startHours, startMinutes] = startTime.split(':').map(Number);
+        const startDateTime = new Date(selectedDate);
+        startDateTime.setHours(startHours ?? 0, startMinutes ?? 0, 0, 0);
+
+        // 新しい終了時刻を計算
+        const [hours, minutes] = time.split(':').map(Number);
+        const newEndDateTime = new Date(selectedDate);
+        newEndDateTime.setHours(hours ?? 0, minutes ?? 0, 0, 0);
+
+        // 事前重複チェック
+        if (checkTimeOverlap(startDateTime, newEndDateTime)) {
+          // GAFA基準のフィードバック: ハプティック + トースト + 視覚的FB
+          hapticError();
+          calendarToast.error(t('calendar.toast.conflict'), {
+            description: t('calendar.toast.conflictDescription'),
+          });
+          setTimeConflictError(true);
+          setTimeout(() => setTimeConflictError(false), 500); // シェイクアニメーション後にリセット
+          return; // 更新をキャンセル
+        }
+
+        setEndTime(time);
+        autoSave('end_time', newEndDateTime.toISOString());
+      } else if (time && selectedDate) {
         const [hours, minutes] = time.split(':').map(Number);
         const dateTime = new Date(selectedDate);
         dateTime.setHours(hours ?? 0, minutes ?? 0, 0, 0);
+        setEndTime(time);
         autoSave('end_time', dateTime.toISOString());
       } else {
+        setEndTime(time);
         autoSave('end_time', undefined);
       }
     },
-    [selectedDate, autoSave],
+    [selectedDate, startTime, autoSave, checkTimeOverlap, hapticError, calendarToast, t],
   );
 
   // Menu handlers
@@ -312,6 +400,7 @@ export function usePlanInspectorContentLogic() {
     endTime,
     reminderType,
     setReminderType,
+    timeConflictError,
 
     // Form handlers
     handleDateChange,

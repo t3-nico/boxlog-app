@@ -6,6 +6,7 @@
 
 import React, { memo, useMemo } from 'react';
 
+import { useCollapsedSectionsContext } from '../../../../../contexts/CollapsedSectionsContext';
 import { GRID_BACKGROUND, HOUR_HEIGHT } from '../../constants/grid.constants';
 import { usePlanPosition } from '../../hooks/usePlanPosition';
 import type { DayColumnProps } from '../../types/view.types';
@@ -28,6 +29,9 @@ export const DayColumn = memo<DayColumnProps>(function DayColumn({
   // 今日・週末の判定（propsで上書き可能）
   const isWeekendActual = isWeekendProp ?? isWeekend(date);
 
+  // 折りたたみセクションのContext
+  const collapsedContext = useCollapsedSectionsContext();
+
   // この日のイベントをフィルタリング
   const dayEvents = useMemo(() => {
     // CalendarPlanをTimedPlanに変換
@@ -43,6 +47,11 @@ export const DayColumn = memo<DayColumnProps>(function DayColumn({
   // プランの位置を計算
   const eventPositions = usePlanPosition(dayEvents, { hourHeight });
 
+  // グリッド高さ（折りたたみ考慮）
+  const columnHeight = collapsedContext?.hasCollapsedSections
+    ? collapsedContext.totalHeight
+    : 24 * hourHeight;
+
   // 時間クリックハンドラー
   const handleTimeClick = (e: React.MouseEvent) => {
     if (!onTimeClick) return;
@@ -50,12 +59,19 @@ export const DayColumn = memo<DayColumnProps>(function DayColumn({
     const rect = e.currentTarget.getBoundingClientRect();
     const y = e.clientY - rect.top;
 
-    // 時間を計算（15分単位で丸める）
-    const totalMinutes = (y * 60) / hourHeight;
-    const hour = Math.floor(totalMinutes / 60);
-    const minute = Math.floor((totalMinutes % 60) / 15) * 15;
-
-    onTimeClick(date, hour, minute);
+    // 折りたたみ考慮の時間計算
+    if (collapsedContext?.hasCollapsedSections) {
+      const time = collapsedContext.pixelsToTime(y, date);
+      const hour = time.getHours();
+      const minute = Math.floor(time.getMinutes() / 15) * 15;
+      onTimeClick(date, hour, minute);
+    } else {
+      // 通常の時間計算（15分単位で丸める）
+      const totalMinutes = (y * 60) / hourHeight;
+      const hour = Math.floor(totalMinutes / 60);
+      const minute = Math.floor((totalMinutes % 60) / 15) * 15;
+      onTimeClick(date, hour, minute);
+    }
   };
 
   // カラムのスタイル
@@ -84,7 +100,7 @@ export const DayColumn = memo<DayColumnProps>(function DayColumn({
           }
         }}
         style={{
-          minHeight: `${24 * hourHeight}px`,
+          minHeight: `${columnHeight}px`,
         }}
         aria-label={`Day column for ${date.toDateString()}`}
       >

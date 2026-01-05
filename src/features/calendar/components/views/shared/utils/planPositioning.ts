@@ -203,6 +203,36 @@ export function calculateEventPosition(
 }
 
 /**
+ * プランの表示位置を計算（折りたたみ考慮版）
+ */
+export function calculatePlanPositionWithCollapse(
+  plan: TimedPlan,
+  column: PlanColumn,
+  timeToPixels: (time: Date) => number,
+): { top: number; height: number; left: number; width: number } {
+  // 折りたたみ考慮の変換関数を使用
+  const top = timeToPixels(plan.start);
+  const bottom = timeToPixels(plan.end);
+  const height = Math.max(bottom - top, 20); // 最小高さ20px
+
+  // 列配置から横位置を計算（幅は100%、マージンで間隔調整）
+  const width = 100 / column.totalColumns;
+  const left = width * column.columnIndex;
+
+  return { top, height, left, width };
+}
+
+// 後方互換性のためのエイリアス
+/** @deprecated Use calculatePlanPositionWithCollapse instead */
+export function calculateEventPositionWithCollapse(
+  event: TimedEvent,
+  column: PlanColumn,
+  timeToPixels: (time: Date) => number,
+): { top: number; height: number; left: number; width: number } {
+  return calculatePlanPositionWithCollapse(event, column, timeToPixels);
+}
+
+/**
  * 時間指定プランをソート（開始時刻順）
  */
 export function sortTimedPlans(plans: TimedPlan[]): TimedPlan[] {

@@ -66,7 +66,7 @@ export function usePlanMutations() {
       console.error('[usePlanMutations] Create error:', error);
       // TIME_OVERLAPエラー（重複防止）の場合は専用のトースト
       if (error.message.includes('既に予定があります') || error.message.includes('TIME_OVERLAP')) {
-        toast.warning(t('calendar.toast.conflict'), {
+        toast.error(t('calendar.toast.conflict'), {
           description: t('calendar.toast.conflictDescription'),
           duration: 4000,
         });
@@ -173,7 +173,7 @@ export function usePlanMutations() {
     onError: (err, _variables, context) => {
       // TIME_OVERLAPエラー（重複防止）の場合は専用のトースト
       if (err.message.includes('既に予定があります') || err.message.includes('TIME_OVERLAP')) {
-        toast.warning(t('calendar.toast.conflict'), {
+        toast.error(t('calendar.toast.conflict'), {
           description: t('calendar.toast.conflictDescription'),
           duration: 4000,
         });

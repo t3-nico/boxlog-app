@@ -13,6 +13,8 @@ interface TimeLabelProps {
   hourHeight: number;
   isFirst: boolean;
   isLast: boolean;
+  /** 折りたたみセクションの境界かどうか */
+  isCollapsedBoundary?: boolean | undefined;
 }
 
 export const TimeLabel = memo<TimeLabelProps>(function TimeLabel({
@@ -20,6 +22,7 @@ export const TimeLabel = memo<TimeLabelProps>(function TimeLabel({
   label,
   position,
   isFirst,
+  isCollapsedBoundary,
 }) {
   return (
     <div
@@ -34,8 +37,10 @@ export const TimeLabel = memo<TimeLabelProps>(function TimeLabel({
         paddingRight: '4px',
       }}
     >
-      {/* 0時は表示しない（見た目がすっきりする） */}
-      {!(hour === 0 && isFirst) && <span className="bg-background">{label}</span>}
+      {/* 0時は表示しない（見た目がすっきりする） - ただし折りたたみ境界では表示 */}
+      {(!(hour === 0 && isFirst) || isCollapsedBoundary) && (
+        <span className="bg-background">{label}</span>
+      )}
     </div>
   );
 });
