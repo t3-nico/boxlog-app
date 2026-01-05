@@ -8,7 +8,6 @@ import type { ColumnConfig, ColumnId } from '../types/column';
  */
 const DEFAULT_COLUMNS: ColumnConfig[] = [
   { id: 'selection', label: '', visible: true, width: 50, resizable: false },
-  { id: 'id', label: 'ID', visible: false, width: 100, resizable: true },
   { id: 'title', label: 'タイトル', visible: true, width: 300, resizable: true },
   { id: 'status', label: 'ステータス', visible: true, width: 120, resizable: true },
   { id: 'tags', label: 'タグ', visible: true, width: 200, resizable: true },

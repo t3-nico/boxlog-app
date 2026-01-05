@@ -31,23 +31,6 @@ export function useTagTableColumns({
   return useMemo(() => {
     const allColumnDefs: ColumnDef<Tag>[] = [
       {
-        id: 'id',
-        label: 'ID',
-        width: 80,
-        resizable: true,
-        sortKey: 'tag_number',
-        render: (tag) => (
-          <TagCellContent
-            tag={tag}
-            columnId="id"
-            groups={groups}
-            allTags={allTags}
-            planCounts={planCounts}
-            lastUsed={lastUsed}
-          />
-        ),
-      },
-      {
         id: 'name',
         label: t('tags.page.name'),
         width: 200,
@@ -151,7 +134,6 @@ export function getTagColumnSettings(
   t: (key: string) => string,
 ): { id: TagColumnId; label: string }[] {
   return [
-    { id: 'id', label: 'ID' },
     { id: 'description', label: t('tags.page.description') },
     { id: 'group', label: t('tags.sidebar.groups') },
     { id: 'created_at', label: t('tags.page.createdAt') },
