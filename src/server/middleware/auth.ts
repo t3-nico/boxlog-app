@@ -17,12 +17,12 @@
  * ```
  */
 
-import { TRPCError } from '@trpc/server'
+import { TRPCError } from '@trpc/server';
 
-import type { AuthMode } from '@/lib/supabase/oauth'
-import { verifyScopes } from '@/lib/supabase/oauth'
+import type { AuthMode } from '@/lib/supabase/oauth';
+import { verifyScopes } from '@/lib/supabase/oauth';
 
-import type { Context } from '../api/trpc'
+import type { Context } from '../api/trpc';
 
 /**
  * 認証モード制限ミドルウェア
@@ -50,11 +50,11 @@ export function requireAuthMode(allowedModes: AuthMode[]) {
       throw new TRPCError({
         code: 'FORBIDDEN',
         message: `This endpoint only accepts ${allowedModes.join(' or ')} authentication`,
-      })
+      });
     }
 
-    return next()
-  }
+    return next();
+  };
 }
 
 /**
@@ -86,20 +86,20 @@ export function requireScopes(requiredScopes: string[]) {
   return async ({ ctx, next }: { ctx: Context; next: () => Promise<unknown> }) => {
     // OAuth認証の場合のみスコープチェック
     if (ctx.authMode === 'oauth') {
-      const hasRequiredScopes = await verifyScopes(ctx.supabase, requiredScopes)
+      const hasRequiredScopes = await verifyScopes(ctx.supabase, requiredScopes);
 
       if (!hasRequiredScopes) {
         throw new TRPCError({
           code: 'FORBIDDEN',
           message: `Insufficient permissions. Required scopes: ${requiredScopes.join(', ')}`,
-        })
+        });
       }
     }
     // Session認証やService Role認証の場合はスキップ
     // （既存のprotectedProcedureやadminProcedureで制御）
 
-    return next()
-  }
+    return next();
+  };
 }
 
 /**
@@ -120,7 +120,7 @@ export function requireScopes(requiredScopes: string[]) {
  * ```
  */
 export function requireServiceRole() {
-  return requireAuthMode(['service-role'])
+  return requireAuthMode(['service-role']);
 }
 
 /**
@@ -143,7 +143,7 @@ export function requireServiceRole() {
  * ```
  */
 export function requireMCPAuth() {
-  return requireAuthMode(['oauth'])
+  return requireAuthMode(['oauth']);
 }
 
 /**
@@ -172,5 +172,5 @@ export function getAuthInfo(ctx: Context) {
     userId: ctx.userId,
     hasToken: !!ctx.accessToken,
     isAuthenticated: !!ctx.userId,
-  }
+  };
 }

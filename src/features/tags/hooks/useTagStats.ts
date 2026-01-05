@@ -1,22 +1,22 @@
 // タグ使用統計とサイドバー表示用のフック
 
-import { useMemo } from 'react'
+import { useMemo } from 'react';
 
-import type { Tag, TagUsageStats } from '@/features/tags/types'
-import { getCacheStrategy } from '@/lib/tanstack-query/cache-config'
-import { trpc } from '@/lib/trpc/client'
+import type { Tag, TagUsageStats } from '@/features/tags/types';
+import { getCacheStrategy } from '@/lib/tanstack-query/cache-config';
+import { trpc } from '@/lib/trpc/client';
 
 interface TagWithUsage extends Tag {
-  usage_count: number
-  task_count: number
-  event_count: number
-  record_count: number
-  last_used_at: Date | null
+  usage_count: number;
+  task_count: number;
+  event_count: number;
+  record_count: number;
+  last_used_at: Date | null;
 }
 
 interface SidebarTagsOptions {
-  maxTags?: number
-  minUsageCount?: number
+  maxTags?: number;
+  minUsageCount?: number;
 }
 
 // クエリキー
@@ -24,7 +24,7 @@ export const tagStatsKeys = {
   all: ['tag-stats'] as const,
   stats: () => [...tagStatsKeys.all, 'stats'] as const,
   counts: () => [...tagStatsKeys.all, 'counts'] as const,
-}
+};
 
 // タグ使用統計フック
 export function useTagStats() {
@@ -41,9 +41,9 @@ export function useTagStats() {
         event_count: 0, // 現在未実装
         record_count: 0, // 現在未実装
         last_used_at: item.last_used_at ? new Date(item.last_used_at) : null,
-      })) as TagUsageStats[]
+      })) as TagUsageStats[];
     },
-  })
+  });
 }
 
 // タグ使用数カウントフック
@@ -52,13 +52,13 @@ export function useTagUsageCounts() {
     ...getCacheStrategy('tagStats'),
     select: (data) => {
       // タグID -> 使用数のマップに変換
-      const counts: Record<string, number> = {}
+      const counts: Record<string, number> = {};
       data.data.forEach((item) => {
-        counts[item.id] = item.total_count
-      })
-      return counts
+        counts[item.id] = item.total_count;
+      });
+      return counts;
     },
-  })
+  });
 }
 
 // サイドバー表示用タグフック（フラット構造）

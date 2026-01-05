@@ -9,14 +9,11 @@
  * - user.exportData: ユーザーデータエクスポート
  */
 
-import { TRPCError } from '@trpc/server'
-import { z } from 'zod'
+import { TRPCError } from '@trpc/server';
+import { z } from 'zod';
 
-import { createTRPCRouter, protectedProcedure } from '../trpc'
-import {
-  createUserService,
-  UserServiceError,
-} from '@/server/services/user/user-service'
+import { createUserService, UserServiceError } from '@/server/services/user/user-service';
+import { createTRPCRouter, protectedProcedure } from '../trpc';
 
 /**
  * エラーハンドリングヘルパー
@@ -32,18 +29,18 @@ function handleServiceError(error: unknown): never {
       UNAUTHORIZED: 'UNAUTHORIZED',
       INVALID_PASSWORD: 'UNAUTHORIZED',
       INVALID_INPUT: 'BAD_REQUEST',
-    }
+    };
 
     throw new TRPCError({
       code: codeMap[error.code],
       message: error.message,
-    })
+    });
   }
 
   throw new TRPCError({
     code: 'INTERNAL_SERVER_ERROR',
     message: error instanceof Error ? error.message : 'Unknown error',
-  })
+  });
 }
 
 /**
@@ -64,23 +61,26 @@ export const userRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       try {
         // ユーザー情報取得
-        const { data: { user }, error: authError } = await ctx.supabase.auth.getUser()
+        const {
+          data: { user },
+          error: authError,
+        } = await ctx.supabase.auth.getUser();
 
         if (authError || !user || !user.email) {
-          throw new UserServiceError('UNAUTHORIZED', 'Authentication required')
+          throw new UserServiceError('UNAUTHORIZED', 'Authentication required');
         }
 
-        const service = createUserService(ctx.supabase)
+        const service = createUserService(ctx.supabase);
         const result = await service.deleteAccount({
           userId: ctx.userId!,
           userEmail: user.email,
           password: input.password,
           confirmText: input.confirmText,
-        })
+        });
 
-        return result
+        return result;
       } catch (error) {
-        return handleServiceError(error)
+        return handleServiceError(error);
       }
     }),
 
@@ -90,14 +90,14 @@ export const userRouter = createTRPCRouter({
    */
   exportData: protectedProcedure.query(async ({ ctx }) => {
     try {
-      const service = createUserService(ctx.supabase)
+      const service = createUserService(ctx.supabase);
       const result = await service.exportData({
         userId: ctx.userId!,
-      })
+      });
 
-      return result
+      return result;
     } catch (error) {
-      return handleServiceError(error)
+      return handleServiceError(error);
     }
   }),
-})
+});

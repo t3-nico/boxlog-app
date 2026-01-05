@@ -144,7 +144,10 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
                       {tag.icon}
                     </span>
                   )}
-                  <span className="flex-shrink-0 font-medium" style={{ color: tag.color || undefined }}>
+                  <span
+                    className="flex-shrink-0 font-medium"
+                    style={{ color: tag.color || undefined }}
+                  >
                     #
                   </span>
                   <span className="truncate">{tag.name}</span>

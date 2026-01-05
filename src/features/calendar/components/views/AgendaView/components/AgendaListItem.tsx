@@ -170,7 +170,10 @@ export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemP
                 <span
                   key={displayTags[2].id}
                   className="hidden items-center gap-0.5 truncate rounded border px-1.5 py-0.5 text-xs md:inline-flex md:max-w-20"
-                  style={{ borderColor: displayTags[2].color || undefined, color: displayTags[2].color || undefined }}
+                  style={{
+                    borderColor: displayTags[2].color || undefined,
+                    color: displayTags[2].color || undefined,
+                  }}
                   title={displayTags[2].name}
                 >
                   <span className="truncate">{displayTags[2].name}</span>
