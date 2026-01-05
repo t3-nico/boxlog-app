@@ -8,7 +8,6 @@ import { canRevertToTodo, getEffectiveStatus, isOverdue } from './status';
 const createMockPlan = (overrides: Partial<Plan>): Plan => ({
   id: 'plan-1',
   user_id: 'user-1',
-  plan_number: '#1',
   title: 'テスト',
   description: null,
   status: 'todo',

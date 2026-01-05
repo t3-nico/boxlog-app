@@ -143,7 +143,6 @@ export function planToInboxItem(plan: PlanWithPlanTags): InboxItem {
     status: getEffectiveStatus(plan),
     created_at: plan.created_at ?? new Date().toISOString(),
     updated_at: plan.updated_at ?? new Date().toISOString(),
-    plan_number: plan.plan_number,
     description: plan.description ?? undefined,
     due_date: plan.due_date,
     start_time: plan.start_time,

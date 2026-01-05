@@ -8,7 +8,6 @@ import { expandRecurrence, getPlanRecurrenceConfig, isRecurringPlan } from './re
 const createMockPlan = (overrides: Partial<Plan> = {}): Plan => ({
   id: 'plan-1',
   user_id: 'user-1',
-  plan_number: '#1',
   title: 'テストプラン',
   description: null,
   status: 'todo',

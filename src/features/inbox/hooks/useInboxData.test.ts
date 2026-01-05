@@ -6,7 +6,6 @@ import { matchesDueDateFilter, planToInboxItem, type PlanWithPlanTags } from './
 const createMockPlan = (overrides: Partial<PlanWithPlanTags> = {}): PlanWithPlanTags => ({
   id: 'test-id',
   user_id: 'user-1',
-  plan_number: 'PLN-001',
   title: 'テストプラン',
   description: null,
   status: 'todo',
@@ -300,17 +299,6 @@ describe('useInboxData', () => {
       const result = planToInboxItem(plan);
 
       expect(result.description).toBeUndefined();
-    });
-
-    it('plan_numberを正しく変換する', () => {
-      const plan = createMockPlan({
-        id: 'plan-1',
-        plan_number: 'PLN-123',
-      });
-
-      const result = planToInboxItem(plan);
-
-      expect(result.plan_number).toBe('PLN-123');
     });
   });
 });
