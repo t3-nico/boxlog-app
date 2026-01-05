@@ -99,8 +99,8 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
 
       {/* 時間表示 + アイコン（第2優先） */}
       {showTime != null && (
-        <div className="event-time pointer-events-none flex flex-shrink-0 items-center gap-1 text-xs leading-tight opacity-75">
-          <span>
+        <div className="event-time text-muted-foreground pointer-events-none flex flex-shrink-0 items-center gap-1 text-xs leading-tight">
+          <span className="mr-1">
             {previewTime
               ? formatTimeRange(previewTime.start, previewTime.end, timeFormat)
               : planStart && planEnd
@@ -108,15 +108,9 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
                 : t('calendar.event.noTimeSet')}
           </span>
           {/* 繰り返しアイコン */}
-          <RecurringIndicatorFromFlag
-            isRecurring={plan.isRecurring}
-            size="xs"
-            className="opacity-75"
-          />
+          <RecurringIndicatorFromFlag isRecurring={plan.isRecurring} size="xs" />
           {/* 通知アイコン（reminder_minutesが設定されている場合） */}
-          {plan.reminder_minutes != null && (
-            <Bell className="text-muted-foreground h-3 w-3 flex-shrink-0 opacity-75" />
-          )}
+          {plan.reminder_minutes != null && <Bell className="h-3 w-3 flex-shrink-0" />}
         </div>
       )}
 
