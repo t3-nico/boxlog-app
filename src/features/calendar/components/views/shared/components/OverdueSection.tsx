@@ -33,11 +33,11 @@ export function OverdueSection({ dates, plans, timezone, className }: OverdueSec
   const overduePlans = useAllOverduePlans(plans);
 
   return (
-    <div className={cn('bg-background flex h-6 pr-4', className)}>
-      {/* タイムゾーン表示（左端） - モバイルでは非表示 */}
+    <div className={cn('bg-background flex h-6 px-4', className)}>
+      {/* タイムゾーン表示（左端） - デスクトップのみ */}
       <div
         className="border-border hidden flex-shrink-0 items-center justify-end border-r md:flex"
-        style={{ width: 64, paddingRight: 8 }}
+        style={{ width: 48, paddingRight: 8 }}
       >
         {timezone ? <TimezoneOffset timezone={timezone} className="text-xs" /> : null}
       </div>

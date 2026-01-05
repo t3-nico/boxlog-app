@@ -33,14 +33,14 @@ interface ColorSet {
   active?: string;
 }
 
-// カレンダー専用カラー（既存テーマシステム準拠）
+// カレンダー専用カラー（既存テーマシステム準拠、M3原則）
 export const calendarColors: CalendarColors = {
   event: {
-    // scheduled - プライマリー系（セマンティック）
+    // scheduled - M3: surface-container使用、コントラスト比確保
     scheduled: {
-      background: 'bg-primary/10',
-      text: 'text-primary',
-      active: 'bg-primary/20',
+      background: 'bg-surface-container',
+      text: 'text-foreground',
+      active: 'bg-surface-container-high',
     },
 
     // backlog - セカンダリー系（グレー）
@@ -83,10 +83,10 @@ export const calendarColors: CalendarColors = {
       active: 'bg-neutral-300 dark:bg-neutral-600',
     },
 
-    // task - タスク系（セマンティック）
+    // task - M3: surface-container使用、コントラスト比確保
     task: {
-      background: 'bg-primary/10',
-      text: 'text-primary',
+      background: 'bg-surface-container',
+      text: 'text-foreground',
     },
 
     // log - ログ系（緑ベース）
@@ -97,28 +97,28 @@ export const calendarColors: CalendarColors = {
   },
 
   states: {
-    // ghost - ゴースト表示（コントラスト比改善: 視認性向上）
+    // ghost - ゴースト表示（M3: muted使用）
     ghost: {
-      background: 'bg-neutral-200/50 dark:bg-neutral-700/50',
-      text: 'text-neutral-600 dark:text-neutral-400',
+      background: 'bg-muted',
+      text: 'text-muted-foreground',
     },
 
-    // selected - 選択時（セマンティック、濃い）
+    // selected - 選択時（M3: surface-container-high使用）
     selected: {
-      background: 'bg-primary/20',
+      background: 'bg-surface-container-high',
       text: 'inherit',
     },
 
-    // displayPeriod - 表示期間（セマンティック、薄い）
+    // displayPeriod - 表示期間（M3: surface-container使用）
     displayPeriod: {
-      background: 'bg-primary/10',
+      background: 'bg-surface-container',
       text: 'inherit',
     },
 
-    // conflict - 衝突時（薄い赤）
+    // conflict - 衝突時（M3: destructive系）
     conflict: {
-      background: 'bg-red-50/50 dark:bg-red-950/30',
-      text: 'text-red-600 dark:text-red-400',
+      background: 'bg-destructive/10',
+      text: 'text-destructive',
     },
   },
 } as const;
