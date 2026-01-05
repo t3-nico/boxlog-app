@@ -65,7 +65,7 @@
   --chronotype-good: oklch(0.85 0.12 145);        /* 集中 - 薄緑 */
   --chronotype-moderate: oklch(0.85 0.08 250);    /* 通常 - 青 */
   --chronotype-low: oklch(0.92 0.01 250);         /* 低調 - グレー */
-  --chronotype-sleep: oklch(0.55 0.18 280);       /* 睡眠 - インディゴ */
+  --chronotype-sleep: oklch(0.65 0.20 310);       /* 睡眠 - 紫 */
 
   /* Tooltip（反転デザイン） */
   --tooltip: oklch(0.25 0 0);
@@ -135,7 +135,7 @@
   --chronotype-good: oklch(0.55 0.14 145);        /* 集中 - 緑（暗め） */
   --chronotype-moderate: oklch(0.50 0.10 250);    /* 通常 - 青（暗め） */
   --chronotype-low: oklch(0.45 0.02 250);         /* 低調 - グレー（暗め） */
-  --chronotype-sleep: oklch(0.45 0.16 280);       /* 睡眠 - インディゴ（暗め） */
+  --chronotype-sleep: oklch(0.50 0.18 310);       /* 睡眠 - 紫（暗め） */
 
   /* Tooltip（反転デザイン - ダークモードでは明るい背景） */
   --tooltip: oklch(0.9 0 0);
