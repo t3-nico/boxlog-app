@@ -146,13 +146,66 @@ export class PlanService {
   }
 
   /**
+   * 時間重複をチェック
+   * @returns 重複しているプランのIDリスト（空なら重複なし）
+   */
+  async checkTimeOverlap(options: {
+    userId: string;
+    startTime: string;
+    endTime: string;
+    excludePlanId?: string;
+  }): Promise<string[]> {
+    const { userId, startTime, endTime, excludePlanId } = options;
+
+    // 時間重複条件: 既存の開始時刻 < 新規の終了時刻 AND 既存の終了時刻 > 新規の開始時刻
+    let query = this.supabase
+      .from('plans')
+      .select('id')
+      .eq('user_id', userId)
+      .not('start_time', 'is', null)
+      .not('end_time', 'is', null)
+      .lt('start_time', endTime)
+      .gt('end_time', startTime);
+
+    // 自分自身を除外（更新時）
+    if (excludePlanId) {
+      query = query.neq('id', excludePlanId);
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      console.error('Time overlap check failed:', error);
+      return [];
+    }
+
+    return data?.map((row) => row.id) ?? [];
+  }
+
+  /**
    * プランを作成
    */
   async create(options: CreatePlanOptions): Promise<PlanRow> {
-    const { userId, input } = options;
+    const { userId, input, preventOverlappingPlans } = options;
 
     // 日時の正規化
     const normalizedInput = this.normalizeDateTimeFields(input);
+
+    // 重複チェック（設定がONで、時間指定がある場合）
+    if (preventOverlappingPlans && normalizedInput.start_time && normalizedInput.end_time) {
+      const overlappingIds = await this.checkTimeOverlap({
+        userId,
+        startTime: normalizedInput.start_time as string,
+        endTime: normalizedInput.end_time as string,
+      });
+
+      if (overlappingIds.length > 0) {
+        throw new PlanServiceError(
+          'TIME_OVERLAP',
+          `この時間帯には既に予定があります（${overlappingIds.length}件）`,
+        );
+      }
+    }
 
     const insertData = {
       user_id: userId,
@@ -180,13 +233,34 @@ export class PlanService {
    * プランを更新
    */
   async update(options: UpdatePlanOptions): Promise<PlanRow> {
-    const { userId, planId, input } = options;
+    const { userId, planId, input, preventOverlappingPlans } = options;
 
     // 既存データを取得
     const oldData = await this.getExistingPlan(planId, userId);
 
     // 日時の正規化（既存データとマージ）
     const normalizedInput = this.normalizeDateTimeFieldsForUpdate(input, oldData);
+
+    // 重複チェック（設定がONで、時間が変更される場合）
+    const finalStartTime =
+      (normalizedInput as { start_time?: string }).start_time ?? oldData?.start_time;
+    const finalEndTime = (normalizedInput as { end_time?: string }).end_time ?? oldData?.end_time;
+
+    if (preventOverlappingPlans && finalStartTime && finalEndTime) {
+      const overlappingIds = await this.checkTimeOverlap({
+        userId,
+        startTime: finalStartTime,
+        endTime: finalEndTime,
+        excludePlanId: planId, // 自分自身は除外
+      });
+
+      if (overlappingIds.length > 0) {
+        throw new PlanServiceError(
+          'TIME_OVERLAP',
+          `この時間帯には既に予定があります（${overlappingIds.length}件）`,
+        );
+      }
+    }
 
     const updateData = removeUndefinedFields(normalizedInput) as Record<string, unknown>;
 

@@ -33,6 +33,7 @@ function handleServiceError(error: unknown): never {
       UPDATE_FAILED: 'INTERNAL_SERVER_ERROR',
       DELETE_FAILED: 'INTERNAL_SERVER_ERROR',
       TAG_FILTER_FAILED: 'INTERNAL_SERVER_ERROR',
+      TIME_OVERLAP: 'BAD_REQUEST', // 時間重複エラー
     };
 
     throw new TRPCError({
@@ -96,6 +97,7 @@ export const plansCrudRouter = createTRPCRouter({
       return await service.create({
         userId,
         input,
+        preventOverlappingPlans: true, // 重複は常にブロック
       });
     } catch (error) {
       handleServiceError(error);
@@ -116,6 +118,7 @@ export const plansCrudRouter = createTRPCRouter({
           userId,
           planId: input.id,
           input: input.data,
+          preventOverlappingPlans: true, // 重複は常にブロック
         });
       } catch (error) {
         handleServiceError(error);

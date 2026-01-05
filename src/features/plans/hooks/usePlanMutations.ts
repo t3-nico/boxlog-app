@@ -64,11 +64,19 @@ export function usePlanMutations() {
     },
     onError: (error) => {
       console.error('[usePlanMutations] Create error:', error);
-      // エラーメッセージがZodバリデーションエラーの翻訳キー形式の場合、直接表示
-      const errorMessage = error.message.includes('validation.')
-        ? t(error.message as Parameters<typeof t>[0])
-        : error.message;
-      toast.error(t('common.plan.createFailed', { error: errorMessage }));
+      // TIME_OVERLAPエラー（重複防止）の場合は専用のトースト
+      if (error.message.includes('既に予定があります') || error.message.includes('TIME_OVERLAP')) {
+        toast.warning(t('calendar.toast.conflict'), {
+          description: t('calendar.toast.conflictDescription'),
+          duration: 4000,
+        });
+      } else {
+        // エラーメッセージがZodバリデーションエラーの翻訳キー形式の場合、直接表示
+        const errorMessage = error.message.includes('validation.')
+          ? t(error.message as Parameters<typeof t>[0])
+          : error.message;
+        toast.error(t('common.plan.createFailed', { error: errorMessage }));
+      }
     },
   });
 
@@ -162,8 +170,16 @@ export function usePlanMutations() {
       }
       // その他の自動保存（title、description、日時など）はtoast非表示
     },
-    onError: (_err, _variables, context) => {
-      toast.error(t('common.plan.updateFailed'));
+    onError: (err, _variables, context) => {
+      // TIME_OVERLAPエラー（重複防止）の場合は専用のトースト
+      if (err.message.includes('既に予定があります') || err.message.includes('TIME_OVERLAP')) {
+        toast.warning(t('calendar.toast.conflict'), {
+          description: t('calendar.toast.conflictDescription'),
+          duration: 4000,
+        });
+      } else {
+        toast.error(t('common.plan.updateFailed'));
+      }
 
       // エラー時: 楽観的更新をロールバック
       if (context?.previousPlans) {
