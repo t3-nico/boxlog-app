@@ -24,10 +24,12 @@ export const CalendarDragSelection = ({
   onDoubleClick,
   children,
   disabled = false,
+  plans = [],
 }: CalendarDragSelectionProps) => {
   const {
     selection,
     showSelectionPreview,
+    isOverlapping,
     containerRef,
     handleMouseDown,
     handleDoubleClick,
@@ -40,6 +42,7 @@ export const CalendarDragSelection = ({
     disabled,
     onTimeRangeSelect,
     onDoubleClick,
+    plans,
   });
 
   // ドロップ可能エリアとして設定
@@ -75,7 +78,11 @@ export const CalendarDragSelection = ({
 
       {/* ドラッグ選択範囲の表示 - 5px以上ドラッグした場合のみ表示 */}
       {showSelectionPreview && selection && (
-        <DragSelectionPreview selection={selection} formatTime={formatTime} />
+        <DragSelectionPreview
+          selection={selection}
+          formatTime={formatTime}
+          isOverlapping={isOverlapping}
+        />
       )}
     </div>
   );

@@ -113,9 +113,9 @@ export const FiveDayContent = ({
       const originalStyle = planStyles[plan.id];
       if (!originalStyle) continue;
 
-      // 折りたたみを考慮した位置を計算
-      const startDate = plan.startDate || new Date();
-      const endDate = plan.endDate || new Date();
+      // 折りたたみを考慮した位置を計算（文字列の場合はDate変換）
+      const startDate = plan.startDate ? new Date(plan.startDate) : new Date();
+      const endDate = plan.endDate ? new Date(plan.endDate) : new Date();
       const top = collapsedContext.timeToPixels(startDate);
       const bottom = collapsedContext.timeToPixels(endDate);
       const height = Math.max(bottom - top, 20);
@@ -202,6 +202,7 @@ export const FiveDayContent = ({
         className="absolute inset-0"
         onTimeRangeSelect={onTimeRangeSelect}
         disabled={dragState.isPending || dragState.isDragging || dragState.isResizing}
+        plans={allEventsForOverlapCheck ?? plans}
       >
         {/* 背景グリッド（折りたたみ対応） */}
         <div className="absolute inset-0" style={{ height: gridHeight }}>

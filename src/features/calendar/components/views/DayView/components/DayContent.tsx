@@ -91,9 +91,9 @@ export const DayContent = ({
       const originalStyle = eventStyles[event.id];
       if (!originalStyle) continue;
 
-      // 折りたたみを考慮した位置を計算
-      const startDate = event.startDate || new Date();
-      const endDate = event.endDate || new Date();
+      // 折りたたみを考慮した位置を計算（文字列の場合はDate変換）
+      const startDate = event.startDate ? new Date(event.startDate) : new Date();
+      const endDate = event.endDate ? new Date(event.endDate) : new Date();
       const top = collapsedContext.timeToPixels(startDate);
       const bottom = collapsedContext.timeToPixels(endDate);
       const height = Math.max(bottom - top, 20);
@@ -170,6 +170,7 @@ export const DayContent = ({
         className="absolute inset-0"
         onTimeRangeSelect={onTimeRangeSelect}
         disabled={dragState.isPending || dragState.isDragging || dragState.isResizing}
+        plans={events}
       >
         {/* 背景グリッド（折りたたみ対応） */}
         <div className="absolute inset-0" style={{ height: gridHeight }}>

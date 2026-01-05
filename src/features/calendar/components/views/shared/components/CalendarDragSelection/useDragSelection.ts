@@ -13,6 +13,7 @@ import { useHapticFeedback } from '@/hooks/useHapticFeedback';
 
 import { HOUR_HEIGHT } from '../../constants/grid.constants';
 
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
 import type { DateTimeSelection, TimeRange } from './types';
 import { DRAG_CONSTANTS } from './types';
 
@@ -21,6 +22,8 @@ interface UseDragSelectionOptions {
   disabled?: boolean | undefined;
   onTimeRangeSelect?: ((selection: DateTimeSelection) => void) | undefined;
   onDoubleClick?: ((selection: DateTimeSelection) => void) | undefined;
+  /** 重複チェック用のプラン一覧 */
+  plans?: CalendarPlan[] | undefined;
 }
 
 interface UseDragSelectionReturn {
@@ -30,6 +33,8 @@ interface UseDragSelectionReturn {
   showSelectionPreview: boolean;
   dropTime: string | null;
   isOver: boolean;
+  /** 選択範囲が既存プランと重複しているか */
+  isOverlapping: boolean;
 
   // Refs
   containerRef: React.RefObject<HTMLDivElement | null>;
@@ -53,6 +58,7 @@ export function useDragSelection({
   disabled = false,
   onTimeRangeSelect,
   onDoubleClick: onDoubleClickProp,
+  plans = [],
 }: UseDragSelectionOptions): UseDragSelectionReturn {
   // 設定からデフォルト時間を取得
   const defaultDuration = useCalendarSettingsStore((state) => state.defaultDuration);
@@ -77,6 +83,32 @@ export function useDragSelection({
   const [isLongPressActive, setIsLongPressActive] = useState(false);
   const [dropTime, setDropTime] = useState<string | null>(null);
   const [isOver, setIsOver] = useState(false);
+  const [isOverlapping, setIsOverlapping] = useState(false);
+
+  // 重複チェック関数
+  const checkOverlap = useCallback(
+    (sel: TimeRange): boolean => {
+      if (!plans || plans.length === 0) return false;
+
+      // 選択範囲の開始・終了時刻をDateに変換
+      const selStartTime = new Date(date);
+      selStartTime.setHours(sel.startHour, sel.startMinute, 0, 0);
+      const selEndTime = new Date(date);
+      selEndTime.setHours(sel.endHour, sel.endMinute, 0, 0);
+
+      // 既存プランとの重複をチェック
+      return plans.some((plan) => {
+        if (!plan.startDate || !plan.endDate) return false;
+
+        const planStart = new Date(plan.startDate);
+        const planEnd = new Date(plan.endDate);
+
+        // 時間重複条件: 既存の開始 < 新規の終了 AND 既存の終了 > 新規の開始
+        return planStart < selEndTime && planEnd > selStartTime;
+      });
+    },
+    [plans, date],
+  );
 
   // Droppable ID and data
   const droppableId = `calendar-droppable-${format(date, 'yyyy-MM-dd')}`;
@@ -119,6 +151,7 @@ export function useDragSelection({
     setSelection(null);
     setSelectionStart(null);
     setShowSelectionPreview(false);
+    setIsOverlapping(false);
     isDragging.current = false;
     lastSelectionRef.current = null;
     clearLongPressTimer();
@@ -301,6 +334,8 @@ export function useDragSelection({
       lastSelectionRef.current = { startMinutes: newStartMinutes, endMinutes: newEndMinutes };
 
       setSelection(newSelection);
+      // リアルタイム重複チェック
+      setIsOverlapping(checkOverlap(newSelection));
     };
 
     const handleGlobalMouseUp = () => {
@@ -376,6 +411,8 @@ export function useDragSelection({
       lastSelectionRef.current = { startMinutes: newStartMinutes, endMinutes: newEndMinutes };
 
       setSelection(newSelection);
+      // リアルタイム重複チェック
+      setIsOverlapping(checkOverlap(newSelection));
     };
 
     const handleGlobalTouchEnd = (e: TouchEvent) => {
@@ -489,6 +526,7 @@ export function useDragSelection({
     clearSelectionState,
     defaultDuration,
     tap,
+    checkOverlap,
   ]);
 
   // Effect: モーダルキャンセル時のカスタムイベント
@@ -507,6 +545,7 @@ export function useDragSelection({
     showSelectionPreview,
     dropTime,
     isOver,
+    isOverlapping,
     containerRef,
     handleMouseDown,
     handleDoubleClick,

@@ -6,6 +6,8 @@
 
 import { memo } from 'react';
 
+import { Ban } from 'lucide-react';
+
 import { getEventColor } from '@/features/calendar/theme';
 import { calendarStyles } from '@/features/calendar/theme/styles';
 import { cn } from '@/lib/utils';
@@ -17,6 +19,8 @@ import type { TimeRange } from './types';
 interface DragSelectionPreviewProps {
   selection: TimeRange;
   formatTime: (hour: number, minute: number) => string;
+  /** 既存プランと重複しているか */
+  isOverlapping?: boolean;
 }
 
 /**
@@ -27,6 +31,7 @@ interface DragSelectionPreviewProps {
 export const DragSelectionPreview = memo(function DragSelectionPreview({
   selection,
   formatTime,
+  isOverlapping = false,
 }: DragSelectionPreviewProps) {
   // 選択範囲のスタイルを計算
   const startMinutes = selection.startHour * 60 + selection.startMinute;
@@ -44,13 +49,13 @@ export const DragSelectionPreview = memo(function DragSelectionPreview({
     zIndex: 1000,
   };
 
-  // scheduledカラーベースのクラス名を生成（イベントカードと同じスタイル）
+  // 重複時は赤、通常時はscheduledカラー
   const className = cn(
-    getEventColor('scheduled', 'background'),
+    isOverlapping ? 'bg-destructive/60' : getEventColor('scheduled', 'background'),
     calendarStyles.event.borderRadius,
     calendarStyles.event.shadow.default,
     'pointer-events-none',
-    'opacity-80',
+    isOverlapping ? 'opacity-90' : 'opacity-80',
   );
 
   // 時間幅を計算
@@ -62,24 +67,31 @@ export const DragSelectionPreview = memo(function DragSelectionPreview({
   const durationText =
     hours > 0 ? (minutes > 0 ? `${hours}時間${minutes}分` : `${hours}時間`) : `${minutes}分`;
 
+  // テキスト色（重複時は白）
+  const textColorClass = isOverlapping ? 'text-white' : getEventColor('scheduled', 'text');
+
   return (
     <div style={style} className={className}>
       <div className={cn('flex h-full flex-col', calendarStyles.event.padding)}>
-        {/* タイトル */}
-        <div
-          className={cn(
-            getEventColor('scheduled', 'text'),
-            calendarStyles.event.fontSize.title,
-            'mb-1 leading-tight font-medium',
-          )}
-        >
-          新しいイベント
+        {/* タイトル行 */}
+        <div className="mb-1 flex items-center gap-1">
+          {/* 重複時は⊘アイコンを表示 */}
+          {isOverlapping && <Ban className="size-3 flex-shrink-0 text-white" />}
+          <div
+            className={cn(
+              textColorClass,
+              calendarStyles.event.fontSize.title,
+              'leading-tight font-medium',
+            )}
+          >
+            {isOverlapping ? '時間が重複しています' : '新しいイベント'}
+          </div>
         </div>
 
         {/* 時間表示（ドラッグ中にリアルタイム更新） */}
         <div
           className={cn(
-            getEventColor('scheduled', 'text'),
+            textColorClass,
             calendarStyles.event.fontSize.time,
             'leading-tight opacity-75',
           )}
@@ -91,7 +103,7 @@ export const DragSelectionPreview = memo(function DragSelectionPreview({
         {/* 時間幅の表示 */}
         <div
           className={cn(
-            getEventColor('scheduled', 'text'),
+            textColorClass,
             calendarStyles.event.fontSize.duration,
             'mt-auto opacity-60',
           )}
