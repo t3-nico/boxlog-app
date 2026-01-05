@@ -270,9 +270,6 @@ export function PlanCard({ item }: PlanCardProps) {
               <h3 className="text-foreground min-w-0 text-base leading-tight font-semibold hover:underline">
                 {item.title}
               </h3>
-              {item.plan_number && (
-                <span className="text-muted-foreground shrink-0 text-sm">#{item.plan_number}</span>
-              )}
             </div>
 
             {/* 2. 日付・時間 */}

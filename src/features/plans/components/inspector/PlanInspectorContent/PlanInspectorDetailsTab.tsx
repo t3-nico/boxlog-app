@@ -87,9 +87,6 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
           >
             {plan.title}
           </span>
-          {plan.plan_number && (
-            <span className="text-muted-foreground ml-2 text-sm">#{plan.plan_number}</span>
-          )}
         </div>
       </div>
 

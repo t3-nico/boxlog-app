@@ -152,21 +152,11 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
           </TableCell>
         );
 
-      case 'id':
-        return (
-          <TableCell key={columnId} className="font-mono text-sm" style={style}>
-            <div className="truncate">{item.plan_number || '-'}</div>
-          </TableCell>
-        );
-
       case 'title':
         return (
           <TableCell key={columnId} className="font-medium" style={style}>
             <div className="group flex cursor-pointer items-center gap-2 overflow-hidden">
               <span className="min-w-0 truncate group-hover:underline">{item.title}</span>
-              {item.plan_number && (
-                <span className="text-muted-foreground shrink-0 text-sm">#{item.plan_number}</span>
-              )}
             </div>
           </TableCell>
         );

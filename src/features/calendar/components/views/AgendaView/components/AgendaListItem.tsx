@@ -141,9 +141,6 @@ export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemP
           <span className="text-foreground truncate font-medium group-hover:underline md:max-w-48">
             {plan.title}
           </span>
-          {plan.plan_number && (
-            <span className="text-muted-foreground shrink-0 text-sm">#{plan.plan_number}</span>
-          )}
         </div>
 
         {/* タグ */}

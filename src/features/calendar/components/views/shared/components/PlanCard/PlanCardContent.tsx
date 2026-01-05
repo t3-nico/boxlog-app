@@ -65,17 +65,12 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
   }
 
   if (isCompact) {
-    // コンパクト表示：タイトル #番号
+    // コンパクト表示：タイトルのみ
     return (
       <div className={`flex h-full items-center gap-1 ${hasCheckbox ? 'pl-4' : ''}`}>
         <span className="text-foreground truncate text-sm leading-tight font-medium">
           {plan.title}
         </span>
-        {plan.plan_number && (
-          <span className="flex-shrink-0 text-sm leading-tight opacity-75">
-            #{plan.plan_number}
-          </span>
-        )}
       </div>
     );
   }
@@ -90,11 +85,6 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
         <span className={`${isCompact ? 'line-clamp-1' : 'line-clamp-2'} text-foreground`}>
           {plan.title}
         </span>
-        {plan.plan_number && (
-          <span className="flex-shrink-0 text-sm leading-tight opacity-75">
-            #{plan.plan_number}
-          </span>
-        )}
       </div>
 
       {/* 時間表示 + アイコン（第2優先） */}

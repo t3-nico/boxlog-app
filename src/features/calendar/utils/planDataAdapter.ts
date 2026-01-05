@@ -69,7 +69,6 @@ export function planToCalendarPlan(plan: PlanWithTags): CalendarPlan {
     endDate,
     status: mapPlanStatusToCalendarStatus(plan.status),
     color: '#3b82f6', // デフォルトカラー
-    plan_number: plan.plan_number,
     reminder_minutes: plan.reminder_minutes,
     tags: plan.tags ?? [], // タグ情報を引き継ぐ
     createdAt,
@@ -224,6 +223,9 @@ export function expandRecurringPlansToCalendarPlans(
 
 /**
  * オカレンスをCalendarPlanに変換
+ *
+ * @param basePlan - 親プラン
+ * @param occurrence - 展開されたオカレンス
  */
 function occurrenceToCalendarPlan(
   basePlan: PlanWithTags,
@@ -270,7 +272,7 @@ function occurrenceToCalendarPlan(
     endDate,
     status: mapPlanStatusToCalendarStatus(basePlan.status),
     color: '#3b82f6',
-    plan_number: basePlan.plan_number,
+    plan_number: undefined, // 繰り返しインスタンスでは表示しない
     reminder_minutes: basePlan.reminder_minutes,
     tags: basePlan.tags ?? [], // 親プランのタグを引き継ぐ
     createdAt,
