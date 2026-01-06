@@ -46,7 +46,7 @@ export function Actions({ onSearch, onToggleTheme, resolvedTheme, t }: ActionsPr
           <PlanCreateTrigger
             triggerElement={
               <Button variant="ghost" size="icon" aria-label={t('actions.create')}>
-                <Plus className="h-5 w-5 shrink-0" aria-hidden="true" />
+                <Plus className="h-6 w-6 shrink-0" aria-hidden="true" />
               </Button>
             }
           />
