@@ -107,7 +107,7 @@ export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemP
         'group w-full px-3 py-2.5 md:px-4 md:py-3',
         // モバイル: 2列レイアウト、PC: 横並び
         'flex flex-col gap-1 md:flex-row md:items-center md:gap-4',
-        'hover:bg-secondary focus-visible:bg-secondary',
+        'hover:bg-state-hover focus-visible:bg-state-hover',
         'focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset',
         'transition-colors duration-150',
         'cursor-pointer text-left',

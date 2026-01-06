@@ -86,7 +86,7 @@ export function KanbanColumn({ column, onAddCard, onEditCard, onDeleteCard }: Ka
         <Button
           variant="ghost"
           size="icon"
-          className="hover:bg-background size-7"
+          className="hover:bg-state-hover size-7"
           onClick={() => onAddCard?.(column.id)}
           aria-label={`${column.title}にカードを追加`}
         >
@@ -123,7 +123,7 @@ export function KanbanColumn({ column, onAddCard, onEditCard, onDeleteCard }: Ka
       <Button
         variant="ghost"
         size="sm"
-        className="text-muted-foreground hover:bg-background w-full justify-start gap-2"
+        className="text-muted-foreground hover:bg-state-hover w-full justify-start gap-2"
         onClick={() => onAddCard?.(column.id)}
       >
         <Plus className="size-4" />
