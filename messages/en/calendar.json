@@ -210,7 +210,8 @@
     },
     "sleepHours": {
       "collapse": "Collapse sleep hours",
-      "expand": "Expand sleep hours"
+      "expand": "Expand sleep hours",
+      "collapsed": "{start} - {end}"
     }
   }
 }

@@ -52,12 +52,12 @@ interface CalendarSettings {
 
   // 睡眠スケジュール設定
   sleepSchedule: {
-    enabled: boolean; // 睡眠時間帯機能の有効/無効
+    enabled: boolean; // 睡眠時間帯の表示オン/オフ
     bedtime: number; // 就寝時刻（0-23）
     wakeTime: number; // 起床時刻（0-23）
   };
 
-  // 睡眠時間帯折りたたみ設定
+  // 睡眠時間帯折りたたみ
   sleepHoursCollapsed: boolean;
 }
 

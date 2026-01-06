@@ -5,7 +5,6 @@ import { useTranslations } from 'next-intl';
 
 import { Button } from '@/components/ui/button';
 import { HoverTooltip } from '@/components/ui/tooltip';
-import { useSleepHours } from '@/features/calendar/hooks/useSleepHours';
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
 import { cn } from '@/lib/utils';
 
@@ -16,16 +15,16 @@ interface SleepHoursToggleProps {
 
 /**
  * 睡眠時間帯折りたたみトグルボタン
- * カレンダーヘッダーに配置して、睡眠時間帯の表示/非表示を切り替える
+ * カレンダーヘッダーに配置して、睡眠時間帯の折りたたみ/展開を切り替える
  */
 export function SleepHoursToggle({ className }: SleepHoursToggleProps) {
   const t = useTranslations('calendar');
-  const sleepHours = useSleepHours();
+  const sleepScheduleEnabled = useCalendarSettingsStore((state) => state.sleepSchedule.enabled);
   const sleepHoursCollapsed = useCalendarSettingsStore((state) => state.sleepHoursCollapsed);
   const updateSettings = useCalendarSettingsStore((state) => state.updateSettings);
 
-  // クロノタイプが無効または睡眠時間帯がない場合は非表示
-  if (!sleepHours) {
+  // 睡眠スケジュールが無効の場合は非表示
+  if (!sleepScheduleEnabled) {
     return null;
   }
 
@@ -48,7 +47,7 @@ export function SleepHoursToggle({ className }: SleepHoursToggleProps) {
         <Moon
           className={cn(
             'size-4 transition-colors',
-            sleepHoursCollapsed ? 'text-primary' : 'text-muted-foreground',
+            sleepHoursCollapsed ? 'text-muted-foreground' : 'text-primary',
           )}
         />
       </Button>

@@ -7,6 +7,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { useSleepHours } from '@/features/calendar/hooks/useSleepHours';
 import { useCalendarScrollStore } from '@/features/calendar/stores';
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
 import { cn } from '@/lib/utils';
@@ -20,6 +21,8 @@ import { TimeColumn } from '../grid/TimeColumn/TimeColumn';
 
 import { useResponsiveHourHeight } from '../hooks/useResponsiveHourHeight';
 
+import { COLLAPSED_SECTION_HEIGHT, CollapsedSleepSection } from './CollapsedSleepSection';
+import { SleepHoursToggle } from './SleepHoursToggle';
 import { TimezoneOffset } from './TimezoneOffset';
 
 interface ScrollableCalendarLayoutProps {
@@ -95,6 +98,9 @@ export const CalendarDateHeader = ({
 
         {/* 各ビューが独自のヘッダーを配置するエリア */}
         <div className="flex-1">{header}</div>
+
+        {/* 睡眠時間帯トグル */}
+        <SleepHoursToggle />
       </div>
     </div>
   );
@@ -132,14 +138,53 @@ export const ScrollableCalendarLayout = ({
   // クロノタイプ設定
   const chronotype = useCalendarSettingsStore((state) => state.chronotype);
 
+  // 睡眠時間帯設定
+  const sleepHours = useSleepHours();
+  const sleepHoursCollapsed = useCalendarSettingsStore((state) => state.sleepHoursCollapsed);
+
   const HOUR_HEIGHT = useResponsiveHourHeight({
     mobile: 48,
     tablet: 60,
     desktop: 72,
   });
 
+  // 折りたたみ時のグリッドレイアウト計算
+  const collapsedLayout = useMemo(() => {
+    if (!sleepHours || !sleepHoursCollapsed) {
+      return null;
+    }
+
+    const { morningRange, eveningRange, wakeTime, bedtime } = sleepHours;
+
+    // 起きている時間（時間数）
+    const awakeHours = bedtime >= wakeTime ? bedtime - wakeTime : 24 - wakeTime + bedtime;
+
+    // 各セクションの高さ
+    const morningHeight = morningRange ? COLLAPSED_SECTION_HEIGHT : 0;
+    const eveningHeight = eveningRange ? COLLAPSED_SECTION_HEIGHT : 0;
+    const awakeHeight = awakeHours * HOUR_HEIGHT;
+
+    // 起きている時間帯の開始位置（Y座標）
+    const awakeStartY = morningHeight;
+
+    // 夕方セクションの開始位置
+    const eveningStartY = morningHeight + awakeHeight;
+
+    return {
+      morningHeight,
+      eveningHeight,
+      awakeHeight,
+      awakeStartY,
+      eveningStartY,
+      totalHeight: morningHeight + awakeHeight + eveningHeight,
+      // 時間→Y座標変換用
+      wakeTime,
+      bedtime,
+    };
+  }, [sleepHours, sleepHoursCollapsed, HOUR_HEIGHT]);
+
   // グリッド高さ
-  const gridHeight = 24 * HOUR_HEIGHT;
+  const gridHeight = collapsedLayout ? collapsedLayout.totalHeight : 24 * HOUR_HEIGHT;
 
   // 今日の列の位置を計算
   const todayColumnPosition = useMemo(() => {
@@ -427,6 +472,34 @@ export const ScrollableCalendarLayout = ({
     [onTimeClick, HOUR_HEIGHT, showTimeColumn, timeColumnWidth],
   );
 
+  // 折りたたみ時の現在時刻線位置を計算
+  const collapsedCurrentTimePosition = useMemo(() => {
+    if (!collapsedLayout) return currentTimePosition;
+
+    const currentHour = currentTime.getHours();
+    const currentMinutes = currentTime.getMinutes();
+
+    // 睡眠時間帯（上部）内の場合
+    if (sleepHours?.morningRange && currentHour < sleepHours.morningRange.endHour) {
+      // 上部の折りたたみセクション内（比例配置）
+      const ratio = (currentHour + currentMinutes / 60) / sleepHours.morningRange.endHour;
+      return ratio * COLLAPSED_SECTION_HEIGHT;
+    }
+
+    // 睡眠時間帯（下部）内の場合
+    if (sleepHours?.eveningRange && currentHour >= sleepHours.eveningRange.startHour) {
+      // 下部の折りたたみセクション内（比例配置）
+      const hoursInEvening = currentHour - sleepHours.eveningRange.startHour + currentMinutes / 60;
+      const eveningHours = 24 - sleepHours.eveningRange.startHour;
+      const ratio = hoursInEvening / eveningHours;
+      return collapsedLayout.eveningStartY + ratio * COLLAPSED_SECTION_HEIGHT;
+    }
+
+    // 起きている時間帯の場合
+    const hoursFromWake = currentHour - collapsedLayout.wakeTime + currentMinutes / 60;
+    return collapsedLayout.awakeStartY + hoursFromWake * HOUR_HEIGHT;
+  }, [collapsedLayout, currentTimePosition, currentTime, sleepHours, HOUR_HEIGHT]);
+
   return (
     <ScrollArea className={cn('relative min-h-0 flex-1', className)} data-calendar-scroll>
       <div
@@ -445,74 +518,232 @@ export const ScrollableCalendarLayout = ({
             className="border-border sticky left-0 z-10 shrink-0 border-r"
             style={{ width: timeColumnWidth }}
           >
-            <TimeColumn
-              startHour={0}
-              endHour={24}
-              hourHeight={HOUR_HEIGHT}
-              format="24h"
-              className="h-full"
-            />
+            {collapsedLayout ? (
+              // 折りたたみ時の時間列
+              <div className="relative h-full">
+                {/* 上部の折りたたみセクション（時間列部分） */}
+                {sleepHours?.morningRange ? (
+                  <div
+                    className="bg-accent/10 flex items-center justify-center"
+                    style={{ height: COLLAPSED_SECTION_HEIGHT }}
+                  >
+                    <span className="text-muted-foreground text-xs">
+                      0-{sleepHours.morningRange.endHour}
+                    </span>
+                  </div>
+                ) : null}
+
+                {/* 起きている時間帯の時間列 */}
+                <TimeColumn
+                  startHour={collapsedLayout.wakeTime}
+                  endHour={collapsedLayout.bedtime}
+                  hourHeight={HOUR_HEIGHT}
+                  format="24h"
+                  className=""
+                />
+
+                {/* 下部の折りたたみセクション（時間列部分） */}
+                {sleepHours?.eveningRange ? (
+                  <div
+                    className="bg-accent/10 flex items-center justify-center"
+                    style={{ height: COLLAPSED_SECTION_HEIGHT }}
+                  >
+                    <span className="text-muted-foreground text-xs">
+                      {sleepHours.eveningRange.startHour}-0
+                    </span>
+                  </div>
+                ) : null}
+              </div>
+            ) : (
+              // 通常時の時間列
+              <TimeColumn
+                startHour={0}
+                endHour={24}
+                hourHeight={HOUR_HEIGHT}
+                format="24h"
+                className="h-full"
+              />
+            )}
           </div>
         )}
 
         {/* グリッドコンテンツエリア */}
-        <div className="relative flex flex-1">
-          {/* メインコンテンツ */}
-          {children}
-
-          {/* 現在時刻線 - 全ての列に表示 */}
-          {shouldShowCurrentTimeLine && displayDates && displayDates.length > 0 ? (
+        <div className="relative flex flex-1 flex-col">
+          {collapsedLayout ? (
+            // 折りたたみ時のレイアウト
             <>
-              {/* 全列に薄い線を表示 */}
+              {/* 上部の折りたたみセクション */}
+              {sleepHours?.morningRange ? (
+                <CollapsedSleepSection
+                  startHour={0}
+                  endHour={sleepHours.morningRange.endHour}
+                  position="top"
+                />
+              ) : null}
+
+              {/* 起きている時間帯のコンテンツ */}
               <div
-                className={cn(
-                  'pointer-events-none absolute z-40 h-px',
-                  !currentTimeLineColor && 'bg-primary/50',
-                )}
-                style={{
-                  top: `${currentTimePosition}px`,
-                  left: 0,
-                  right: 0,
-                  ...(currentTimeLineColor && {
-                    backgroundColor: currentTimeLineColor,
-                    opacity: 0.5,
-                  }),
-                }}
-              />
+                className="relative flex-1 overflow-hidden"
+                style={{ height: collapsedLayout.awakeHeight }}
+              >
+                {/* 子要素を負のマージンでオフセット（flex で横並びを維持） */}
+                <div
+                  className="relative flex"
+                  style={{
+                    marginTop: -(collapsedLayout.wakeTime * HOUR_HEIGHT),
+                    height: 24 * HOUR_HEIGHT,
+                  }}
+                >
+                  {children}
+                </div>
+              </div>
 
-              {/* 今日の列のみ濃い線を上書き */}
-              {hasToday && todayColumnPosition ? (
+              {/* 下部の折りたたみセクション */}
+              {sleepHours?.eveningRange ? (
+                <CollapsedSleepSection
+                  startHour={sleepHours.eveningRange.startHour}
+                  endHour={24}
+                  position="bottom"
+                />
+              ) : null}
+
+              {/* 現在時刻線（折りたたみ時） */}
+              {shouldShowCurrentTimeLine && displayDates && displayDates.length > 0 ? (
                 <>
-                  {/* 横線 - 今日の列のみ濃く */}
                   <div
                     className={cn(
-                      'pointer-events-none absolute z-40 h-[2px] shadow-sm',
-                      !currentTimeLineColor && 'bg-primary',
+                      'pointer-events-none absolute z-40 h-px',
+                      !currentTimeLineColor && 'bg-primary/50',
                     )}
                     style={{
-                      top: `${currentTimePosition}px`,
-                      left: todayColumnPosition.left,
-                      width: todayColumnPosition.width,
-                      ...(currentTimeLineColor && { backgroundColor: currentTimeLineColor }),
+                      top: `${collapsedCurrentTimePosition}px`,
+                      left: 0,
+                      right: 0,
+                      ...(currentTimeLineColor && {
+                        backgroundColor: currentTimeLineColor,
+                        opacity: 0.5,
+                      }),
                     }}
                   />
-
-                  {/* 点 - 今日の列の左端 */}
-                  <div
-                    className={cn(
-                      'border-background pointer-events-none absolute z-40 h-2 w-2 rounded-full border shadow-md',
-                      !currentTimeLineColor && 'bg-primary',
-                    )}
-                    style={{
-                      top: `${currentTimePosition - 4}px`,
-                      left: todayColumnPosition.left === 0 ? '-4px' : todayColumnPosition.left,
-                      ...(currentTimeLineColor && { backgroundColor: currentTimeLineColor }),
-                    }}
-                  />
+                  {hasToday && todayColumnPosition ? (
+                    <>
+                      <div
+                        className={cn(
+                          'pointer-events-none absolute z-40 h-[2px] shadow-sm',
+                          !currentTimeLineColor && 'bg-primary',
+                        )}
+                        style={{
+                          top: `${collapsedCurrentTimePosition}px`,
+                          left: todayColumnPosition.left,
+                          width: todayColumnPosition.width,
+                          ...(currentTimeLineColor && { backgroundColor: currentTimeLineColor }),
+                        }}
+                      />
+                      <div
+                        className={cn(
+                          'border-background pointer-events-none absolute z-40 h-2 w-2 rounded-full border shadow-md',
+                          !currentTimeLineColor && 'bg-primary',
+                        )}
+                        style={{
+                          top: `${collapsedCurrentTimePosition - 4}px`,
+                          left: todayColumnPosition.left === 0 ? '-4px' : todayColumnPosition.left,
+                          ...(currentTimeLineColor && { backgroundColor: currentTimeLineColor }),
+                        }}
+                      />
+                    </>
+                  ) : null}
                 </>
               ) : null}
             </>
-          ) : null}
+          ) : (
+            // 通常時のレイアウト
+            <>
+              {/* 睡眠時間帯の背景オーバーレイ */}
+              {sleepHours ? (
+                <>
+                  {/* 上部の睡眠時間帯（0:00〜起床時間） */}
+                  {sleepHours.morningRange ? (
+                    <div
+                      className="bg-accent/20 pointer-events-none absolute inset-x-0 z-[5]"
+                      style={{
+                        top: 0,
+                        height: `${sleepHours.morningRange.endHour * HOUR_HEIGHT}px`,
+                      }}
+                      aria-hidden="true"
+                    />
+                  ) : null}
+                  {/* 下部の睡眠時間帯（就寝時間〜24:00） */}
+                  {sleepHours.eveningRange ? (
+                    <div
+                      className="bg-accent/20 pointer-events-none absolute inset-x-0 z-[5]"
+                      style={{
+                        top: `${sleepHours.eveningRange.startHour * HOUR_HEIGHT}px`,
+                        height: `${(24 - sleepHours.eveningRange.startHour) * HOUR_HEIGHT}px`,
+                      }}
+                      aria-hidden="true"
+                    />
+                  ) : null}
+                </>
+              ) : null}
+
+              {/* メインコンテンツ（flex で横並びを維持） */}
+              <div className="relative flex h-full">{children}</div>
+
+              {/* 現在時刻線 - 全ての列に表示 */}
+              {shouldShowCurrentTimeLine && displayDates && displayDates.length > 0 ? (
+                <>
+                  {/* 全列に薄い線を表示 */}
+                  <div
+                    className={cn(
+                      'pointer-events-none absolute z-40 h-px',
+                      !currentTimeLineColor && 'bg-primary/50',
+                    )}
+                    style={{
+                      top: `${currentTimePosition}px`,
+                      left: 0,
+                      right: 0,
+                      ...(currentTimeLineColor && {
+                        backgroundColor: currentTimeLineColor,
+                        opacity: 0.5,
+                      }),
+                    }}
+                  />
+
+                  {/* 今日の列のみ濃い線を上書き */}
+                  {hasToday && todayColumnPosition ? (
+                    <>
+                      {/* 横線 - 今日の列のみ濃く */}
+                      <div
+                        className={cn(
+                          'pointer-events-none absolute z-40 h-[2px] shadow-sm',
+                          !currentTimeLineColor && 'bg-primary',
+                        )}
+                        style={{
+                          top: `${currentTimePosition}px`,
+                          left: todayColumnPosition.left,
+                          width: todayColumnPosition.width,
+                          ...(currentTimeLineColor && { backgroundColor: currentTimeLineColor }),
+                        }}
+                      />
+
+                      {/* 点 - 今日の列の左端 */}
+                      <div
+                        className={cn(
+                          'border-background pointer-events-none absolute z-40 h-2 w-2 rounded-full border shadow-md',
+                          !currentTimeLineColor && 'bg-primary',
+                        )}
+                        style={{
+                          top: `${currentTimePosition - 4}px`,
+                          left: todayColumnPosition.left === 0 ? '-4px' : todayColumnPosition.left,
+                          ...(currentTimeLineColor && { backgroundColor: currentTimeLineColor }),
+                        }}
+                      />
+                    </>
+                  ) : null}
+                </>
+              ) : null}
+            </>
+          )}
         </div>
       </div>
     </ScrollArea>
