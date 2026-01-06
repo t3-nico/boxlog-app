@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -14,13 +14,16 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { parseDateString, parseDatetimeString } from '@/features/calendar/utils/dateUtils';
 import type { InboxItem } from '@/features/inbox/hooks/useInboxData';
+import type { RecurringEditScope } from '@/features/plans/components/RecurringEditConfirmDialog';
 import { DateTimePopoverContent } from '@/features/plans/components/shared/DateTimePopoverContent';
 import { PlanTagSelectDialogEnhanced } from '@/features/plans/components/shared/PlanTagSelectDialogEnhanced';
 import { RecurringIndicator } from '@/features/plans/components/shared/RecurringIndicator';
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
 import { useplanTags } from '@/features/plans/hooks/usePlanTags';
+import { useDeleteConfirmStore } from '@/features/plans/stores/useDeleteConfirmStore';
 import { useplanCacheStore } from '@/features/plans/stores/usePlanCacheStore';
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
+import { useRecurringEditConfirmStore } from '@/features/plans/stores/useRecurringEditConfirmStore';
 import { toLocalISOString } from '@/features/plans/utils/datetime';
 import { minutesToReminderType, reminderTypeToMinutes } from '@/features/plans/utils/reminder';
 import { getEffectiveStatus } from '@/features/plans/utils/status';
@@ -54,12 +57,17 @@ export function PlanCard({ item }: PlanCardProps) {
   const { openInspector, planId } = usePlanInspectorStore();
   const { focusedId, setFocusedId } = useBoardFocusStore();
   const { addplanTag, removeplanTag } = useplanTags();
-  const { updatePlan } = usePlanMutations();
+  const { updatePlan, deletePlan } = usePlanMutations();
   const { getCache } = useplanCacheStore();
+  const openDeleteDialog = useDeleteConfirmStore((state) => state.openDialog);
+  const openRecurringDialog = useRecurringEditConfirmStore((state) => state.openDialog);
   const { formatDate: formatDateWithSettings, formatTime: formatTimeWithSettings } =
     useDateFormat();
   const isActive = planId === item.id;
   const isFocused = focusedId === item.id;
+
+  // 繰り返しプラン削除用のターゲットをrefで保持
+  const recurringDeleteTargetRef = useRef<InboxItem | null>(null);
 
   // ドラッグ可能にする
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
@@ -185,6 +193,39 @@ export function PlanCard({ item }: PlanCardProps) {
     }
   };
 
+  // 繰り返しプラン削除確認ハンドラー
+  const handleRecurringDeleteConfirm = useCallback(
+    async (scope: RecurringEditScope) => {
+      const target = recurringDeleteTargetRef.current;
+      if (!target) return;
+
+      try {
+        // InboxItemは親プラン（展開されていない）ので、IDがそのまま親プランID
+        const parentPlanId = target.id;
+
+        // 繰り返しプランは「すべて削除」のみ有効（個別インスタンスはカレンダーでのみ操作可能）
+        // Boardビューでは展開されたインスタンスではなく親プランを表示しているため
+        switch (scope) {
+          case 'this':
+          case 'thisAndFuture':
+            // Board/Tableビューでは親プラン表示のため、この選択肢は実質「すべて」と同じ
+            // ただしダイアログでは選択肢を表示するため、すべてと同じ動作にする
+            await deletePlan.mutateAsync({ id: parentPlanId });
+            break;
+
+          case 'all':
+            await deletePlan.mutateAsync({ id: parentPlanId });
+            break;
+        }
+      } catch (err) {
+        console.error('Failed to delete recurring plan:', err);
+      } finally {
+        recurringDeleteTargetRef.current = null;
+      }
+    },
+    [deletePlan],
+  );
+
   // コンテキストメニューアクション
   const handleEdit = (item: InboxItem) => {
     openInspector(item.id);
@@ -206,9 +247,29 @@ export function PlanCard({ item }: PlanCardProps) {
     console.log('Archive:', item.id);
   };
 
-  const handleDelete = (item: InboxItem) => {
-    console.log('Delete:', item.id);
-  };
+  const handleDelete = useCallback(
+    (item: InboxItem) => {
+      // 繰り返しプランの場合はスコープ選択ダイアログを表示
+      const isRecurring =
+        item.recurrence_type && item.recurrence_type !== 'none' && item.recurrence_type !== null;
+
+      if (isRecurring) {
+        recurringDeleteTargetRef.current = item;
+        openRecurringDialog(item.title, 'delete', handleRecurringDeleteConfirm);
+        return;
+      }
+
+      // 通常プラン: 削除確認ダイアログを使用
+      openDeleteDialog(item.id, item.title, async () => {
+        try {
+          await deletePlan.mutateAsync({ id: item.id });
+        } catch (err) {
+          console.error('Failed to delete plan:', err);
+        }
+      });
+    },
+    [deletePlan, openDeleteDialog, openRecurringDialog, handleRecurringDeleteConfirm],
+  );
 
   return (
     <>
