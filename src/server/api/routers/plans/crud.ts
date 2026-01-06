@@ -8,7 +8,6 @@
  * ルーターの責務は入力バリデーションとエラーハンドリングのみです。
  */
 
-import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
 import {
@@ -19,34 +18,8 @@ import {
   updatePlanSchema,
 } from '@/schemas/plans';
 import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc';
-import { createPlanService, PlanServiceError } from '@/server/services/plans';
-
-/**
- * サービスエラーをTRPCエラーに変換
- */
-function handleServiceError(error: unknown): never {
-  if (error instanceof PlanServiceError) {
-    const codeMap: Record<string, 'INTERNAL_SERVER_ERROR' | 'NOT_FOUND' | 'BAD_REQUEST'> = {
-      FETCH_FAILED: 'INTERNAL_SERVER_ERROR',
-      NOT_FOUND: 'NOT_FOUND',
-      CREATE_FAILED: 'INTERNAL_SERVER_ERROR',
-      UPDATE_FAILED: 'INTERNAL_SERVER_ERROR',
-      DELETE_FAILED: 'INTERNAL_SERVER_ERROR',
-      TAG_FILTER_FAILED: 'INTERNAL_SERVER_ERROR',
-      TIME_OVERLAP: 'BAD_REQUEST', // 時間重複エラー
-    };
-
-    throw new TRPCError({
-      code: codeMap[error.code] ?? 'INTERNAL_SERVER_ERROR',
-      message: error.message,
-    });
-  }
-
-  throw new TRPCError({
-    code: 'INTERNAL_SERVER_ERROR',
-    message: error instanceof Error ? error.message : 'Unknown error',
-  });
-}
+import { handleServiceError } from '@/server/services/errors';
+import { createPlanService } from '@/server/services/plans';
 
 export const plansCrudRouter = createTRPCRouter({
   /**

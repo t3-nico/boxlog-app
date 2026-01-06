@@ -148,34 +148,15 @@ export function create{Entity}Service(supabase: SupabaseClient) {
 
 ```typescript
 // src/server/api/routers/{entity}/crud.ts
-import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 
 import { create{Entity}Schema, {entity}IdSchema, update{Entity}Schema } from '@/schemas/{entity}'
 import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc'
-import { create{Entity}Service, {Entity}ServiceError } from '@/server/services/{entity}'
+import { handleServiceError } from '@/server/services/errors'
+import { create{Entity}Service } from '@/server/services/{entity}'
 
-function handleServiceError(error: unknown): never {
-  if (error instanceof {Entity}ServiceError) {
-    const codeMap: Record<string, 'INTERNAL_SERVER_ERROR' | 'NOT_FOUND' | 'BAD_REQUEST'> = {
-      FETCH_FAILED: 'INTERNAL_SERVER_ERROR',
-      NOT_FOUND: 'NOT_FOUND',
-      CREATE_FAILED: 'INTERNAL_SERVER_ERROR',
-      UPDATE_FAILED: 'INTERNAL_SERVER_ERROR',
-      DELETE_FAILED: 'INTERNAL_SERVER_ERROR',
-    }
-
-    throw new TRPCError({
-      code: codeMap[error.code] ?? 'INTERNAL_SERVER_ERROR',
-      message: error.message,
-    })
-  }
-
-  throw new TRPCError({
-    code: 'INTERNAL_SERVER_ERROR',
-    message: error instanceof Error ? error.message : 'Unknown error',
-  })
-}
+// handleServiceErrorは共通モジュールを使用
+// 新しいエラーコードが必要な場合は src/server/services/errors.ts の ERROR_CODE_MAP に追加
 
 export const {entity}CrudRouter = createTRPCRouter({
   list: protectedProcedure.query(async ({ ctx }) => {

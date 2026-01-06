@@ -23,32 +23,75 @@ export class ServiceError extends Error {
 }
 
 /**
- * エラーコードとTRPCエラーコードのマッピング
+ * codeプロパティを持つエラーかどうかを判定
  */
-const ERROR_CODE_MAP: Record<
-  string,
-  'INTERNAL_SERVER_ERROR' | 'NOT_FOUND' | 'BAD_REQUEST' | 'FORBIDDEN' | 'UNAUTHORIZED'
-> = {
-  // 共通エラー
+function hasErrorCode(error: unknown): error is Error & { code: string } {
+  return (
+    error instanceof Error &&
+    'code' in error &&
+    typeof (error as { code: unknown }).code === 'string'
+  );
+}
+
+type TRPCErrorCode =
+  | 'INTERNAL_SERVER_ERROR'
+  | 'NOT_FOUND'
+  | 'BAD_REQUEST'
+  | 'FORBIDDEN'
+  | 'UNAUTHORIZED';
+
+/**
+ * エラーコードとTRPCエラーコードのマッピング
+ *
+ * 全サービスのエラーコードを一元管理
+ */
+const ERROR_CODE_MAP: Record<string, TRPCErrorCode> = {
+  // ===== 共通エラー =====
   FETCH_FAILED: 'INTERNAL_SERVER_ERROR',
   NOT_FOUND: 'NOT_FOUND',
   CREATE_FAILED: 'INTERNAL_SERVER_ERROR',
   UPDATE_FAILED: 'INTERNAL_SERVER_ERROR',
   DELETE_FAILED: 'INTERNAL_SERVER_ERROR',
   VALIDATION_FAILED: 'BAD_REQUEST',
+  INVALID_INPUT: 'BAD_REQUEST',
 
-  // 認証・認可エラー
+  // ===== 認証・認可エラー =====
   UNAUTHORIZED: 'UNAUTHORIZED',
   FORBIDDEN: 'FORBIDDEN',
+  INVALID_PASSWORD: 'UNAUTHORIZED',
 
-  // ドメイン固有エラー
+  // ===== Tag関連 =====
+  DUPLICATE_NAME: 'BAD_REQUEST',
+  MERGE_FAILED: 'INTERNAL_SERVER_ERROR',
+  SAME_TAG_MERGE: 'BAD_REQUEST',
+  TARGET_NOT_FOUND: 'NOT_FOUND',
+
+  // ===== TagGroup関連 =====
+  REORDER_FAILED: 'INTERNAL_SERVER_ERROR',
+
+  // ===== Plan関連 =====
   TAG_FILTER_FAILED: 'INTERNAL_SERVER_ERROR',
+  TIME_OVERLAP: 'BAD_REQUEST',
+
+  // ===== Plan Transaction関連 =====
+  CREATE_WITH_TAGS_FAILED: 'INTERNAL_SERVER_ERROR',
+  UPDATE_WITH_TAGS_FAILED: 'INTERNAL_SERVER_ERROR',
+  DELETE_WITH_CLEANUP_FAILED: 'INTERNAL_SERVER_ERROR',
+  RPC_CALL_FAILED: 'INTERNAL_SERVER_ERROR',
+
+  // ===== User関連 =====
+  EXPORT_FAILED: 'INTERNAL_SERVER_ERROR',
+
+  // ===== Notification関連 =====
   NOTIFICATION_SEND_FAILED: 'INTERNAL_SERVER_ERROR',
   PROFILE_UPDATE_FAILED: 'INTERNAL_SERVER_ERROR',
 };
 
 /**
  * サービスエラーをTRPCエラーに変換
+ *
+ * codeプロパティを持つ任意のErrorに対応。
+ * ServiceErrorを継承していないエラークラスも処理可能。
  *
  * @param error - キャッチしたエラー
  * @throws TRPCError - 常にスローされる（戻り値はnever）
@@ -63,8 +106,13 @@ const ERROR_CODE_MAP: Record<
  * ```
  */
 export function handleServiceError(error: unknown): never {
-  // ServiceError（またはその派生クラス）の場合
-  if (error instanceof ServiceError) {
+  // TRPCError の場合はそのまま再スロー
+  if (error instanceof TRPCError) {
+    throw error;
+  }
+
+  // codeプロパティを持つエラー（ServiceError, TagServiceError等）
+  if (hasErrorCode(error)) {
     const trpcCode = ERROR_CODE_MAP[error.code] ?? 'INTERNAL_SERVER_ERROR';
 
     throw new TRPCError({
@@ -72,11 +120,6 @@ export function handleServiceError(error: unknown): never {
       message: error.message,
       cause: error,
     });
-  }
-
-  // TRPCError の場合はそのまま再スロー
-  if (error instanceof TRPCError) {
-    throw error;
   }
 
   // その他のエラー

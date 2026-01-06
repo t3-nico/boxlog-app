@@ -9,39 +9,11 @@
  * - user.exportData: ユーザーデータエクスポート
  */
 
-import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
+import { handleServiceError } from '@/server/services/errors';
 import { createUserService, UserServiceError } from '@/server/services/user/user-service';
 import { createTRPCRouter, protectedProcedure } from '../trpc';
-
-/**
- * エラーハンドリングヘルパー
- */
-function handleServiceError(error: unknown): never {
-  if (error instanceof UserServiceError) {
-    const codeMap: Record<
-      UserServiceError['code'],
-      'BAD_REQUEST' | 'NOT_FOUND' | 'UNAUTHORIZED' | 'INTERNAL_SERVER_ERROR'
-    > = {
-      DELETE_FAILED: 'INTERNAL_SERVER_ERROR',
-      EXPORT_FAILED: 'INTERNAL_SERVER_ERROR',
-      UNAUTHORIZED: 'UNAUTHORIZED',
-      INVALID_PASSWORD: 'UNAUTHORIZED',
-      INVALID_INPUT: 'BAD_REQUEST',
-    };
-
-    throw new TRPCError({
-      code: codeMap[error.code],
-      message: error.message,
-    });
-  }
-
-  throw new TRPCError({
-    code: 'INTERNAL_SERVER_ERROR',
-    message: error instanceof Error ? error.message : 'Unknown error',
-  });
-}
 
 /**
  * User Router

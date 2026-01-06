@@ -61,31 +61,25 @@ export const badRouter = createTRPCRouter({
 
 ### 3. エラーハンドリング
 
-**統一パターン**: `handleServiceError()` を使用
+**統一パターン**: 共通モジュール `@/server/services/errors` の `handleServiceError()` を使用
 
 ```typescript
 // src/server/api/routers/plans/crud.ts
-function handleServiceError(error: unknown): never {
-  if (error instanceof PlanServiceError) {
-    const codeMap: Record<string, TRPCErrorCode> = {
-      FETCH_FAILED: 'INTERNAL_SERVER_ERROR',
-      NOT_FOUND: 'NOT_FOUND',
-      CREATE_FAILED: 'INTERNAL_SERVER_ERROR',
-      // ...
-    };
+import { handleServiceError } from '@/server/services/errors';
 
-    throw new TRPCError({
-      code: codeMap[error.code] ?? 'INTERNAL_SERVER_ERROR',
-      message: error.message,
-    });
-  }
-
-  throw new TRPCError({
-    code: 'INTERNAL_SERVER_ERROR',
-    message: error instanceof Error ? error.message : 'Unknown error',
-  });
-}
+export const plansCrudRouter = createTRPCRouter({
+  list: protectedProcedure.input(filterSchema).query(async ({ ctx, input }) => {
+    const service = createPlanService(ctx.supabase);
+    try {
+      return await service.list({ userId: ctx.userId, ...input });
+    } catch (error) {
+      handleServiceError(error); // 共通モジュールを使用
+    }
+  }),
+});
 ```
+
+**注意**: 各ルーターに独自の `handleServiceError` を定義しない。新しいエラーコードが必要な場合は `src/server/services/errors.ts` の `ERROR_CODE_MAP` に追加する。
 
 ---
 
@@ -253,4 +247,4 @@ describe('notificationsRouter', () => {
 
 ---
 
-**最終更新**: 2025-12-09
+**最終更新**: 2026-01-06

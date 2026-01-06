@@ -10,41 +10,11 @@
  * - plans.deleteWithCleanup: プラン削除 + カスケード削除 + アクティビティ記録（アトミック）
  */
 
-import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
-import {
-  createPlanTransactionService,
-  PlanTransactionServiceError,
-} from '@/server/services/plans/transaction-service';
+import { handleServiceError } from '@/server/services/errors';
+import { createPlanTransactionService } from '@/server/services/plans/transaction-service';
 import { createTRPCRouter, protectedProcedure } from '../../trpc';
-
-/**
- * エラーハンドリングヘルパー
- */
-function handleServiceError(error: unknown): never {
-  if (error instanceof PlanTransactionServiceError) {
-    const codeMap: Record<
-      PlanTransactionServiceError['code'],
-      'BAD_REQUEST' | 'NOT_FOUND' | 'INTERNAL_SERVER_ERROR'
-    > = {
-      CREATE_WITH_TAGS_FAILED: 'INTERNAL_SERVER_ERROR',
-      UPDATE_WITH_TAGS_FAILED: 'INTERNAL_SERVER_ERROR',
-      DELETE_WITH_CLEANUP_FAILED: 'INTERNAL_SERVER_ERROR',
-      RPC_CALL_FAILED: 'INTERNAL_SERVER_ERROR',
-    };
-
-    throw new TRPCError({
-      code: codeMap[error.code],
-      message: error.message,
-    });
-  }
-
-  throw new TRPCError({
-    code: 'INTERNAL_SERVER_ERROR',
-    message: error instanceof Error ? error.message : 'Unknown error',
-  });
-}
 
 /**
  * Plans Transaction Router
