@@ -48,10 +48,22 @@ function calculateSleepHours(bedtime: number, wakeTime: number): number {
   }
 }
 
+interface SleepTimelineBarProps {
+  bedtime: number;
+  wakeTime: number;
+  legendSleep: string;
+  legendActivity: string;
+}
+
 /**
  * 24時間タイムラインバーコンポーネント（睡眠時間帯用）
  */
-function SleepTimelineBar({ bedtime, wakeTime }: { bedtime: number; wakeTime: number }) {
+function SleepTimelineBar({
+  bedtime,
+  wakeTime,
+  legendSleep,
+  legendActivity,
+}: SleepTimelineBarProps) {
   const segments = useMemo(() => {
     const result: Array<{ hour: number; isSleep: boolean }> = [];
     const isCrossingMidnight = bedtime >= wakeTime;
@@ -101,11 +113,11 @@ function SleepTimelineBar({ bedtime, wakeTime }: { bedtime: number; wakeTime: nu
       <div className="flex gap-4 text-xs">
         <div className="flex items-center gap-1">
           <div className="bg-accent h-3 w-3 rounded" />
-          <span className="text-muted-foreground">睡眠</span>
+          <span className="text-muted-foreground">{legendSleep}</span>
         </div>
         <div className="flex items-center gap-1">
           <div className="bg-muted/50 h-3 w-3 rounded" />
-          <span className="text-muted-foreground">活動</span>
+          <span className="text-muted-foreground">{legendActivity}</span>
         </div>
       </div>
     </div>
@@ -184,14 +196,17 @@ export function SleepScheduleSettings() {
     <SettingsCard title={t('settings.sleepSchedule.title')} isSaving={autoSave.isSaving}>
       <div className="space-y-6">
         {/* 有効/無効トグル */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Moon className="text-muted-foreground size-4" />
-            <Label htmlFor="sleep-schedule-enabled" className="cursor-pointer">
-              {t('settings.sleepSchedule.enabled')}
-            </Label>
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Moon className="text-muted-foreground size-4" />
+              <Label htmlFor="sleep-schedule-enabled" className="cursor-pointer">
+                {t('settings.sleepSchedule.enabled')}
+              </Label>
+            </div>
+            <Switch id="sleep-schedule-enabled" checked={enabled} onCheckedChange={handleToggle} />
           </div>
-          <Switch id="sleep-schedule-enabled" checked={enabled} onCheckedChange={handleToggle} />
+          <p className="text-muted-foreground text-sm">{t('settings.sleepSchedule.description')}</p>
         </div>
 
         {/* 時刻設定（有効時のみ表示） */}
@@ -247,7 +262,12 @@ export function SleepScheduleSettings() {
             {/* 24時間タイムライン */}
             <div className="pt-2">
               <h5 className="mb-3 text-sm font-medium">{t('settings.sleepSchedule.preview')}</h5>
-              <SleepTimelineBar bedtime={bedtime} wakeTime={wakeTime} />
+              <SleepTimelineBar
+                bedtime={bedtime}
+                wakeTime={wakeTime}
+                legendSleep={t('settings.sleepSchedule.legendSleep')}
+                legendActivity={t('settings.sleepSchedule.legendActivity')}
+              />
             </div>
           </>
         )}
