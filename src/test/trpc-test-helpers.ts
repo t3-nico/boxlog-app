@@ -124,22 +124,27 @@ export function createAuthenticatedContext(
   return createMockContext({ ...options, userId });
 }
 
+// tRPCインスタンス（テスト用）- createCallerFactoryの型推論に必要
+const testTrpc = initTRPC.context<Context>().create({
+  transformer: superjson,
+});
+
 /**
  * tRPCテスト用のcallerを作成
  *
  * @param router - テスト対象のルーター
  * @param ctx - モックコンテキスト
  * @returns ルーターのcaller
+ *
+ * @example
+ * ```typescript
+ * // 型安全な使用方法
+ * const caller = createTestCaller(plansCrudRouter, ctx);
+ * const result = await caller.list(); // 型推論される
+ * ```
  */
 export function createTestCaller<TRouter extends AnyRouter>(router: TRouter, ctx: Context) {
-  // tRPCインスタンスを作成（テスト用）
-  const t = initTRPC.context<Context>().create({
-    transformer: superjson,
-  });
-
-  // callerFactoryを作成
-  const createCaller = t.createCallerFactory(router);
-
+  const createCaller = testTrpc.createCallerFactory(router);
   return createCaller(ctx);
 }
 

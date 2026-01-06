@@ -299,7 +299,7 @@ describe('time-grid-helpers', () => {
       expect(position.width).toBe('100%');
     });
 
-    it.skip('重複タスクの幅を計算する', () => {
+    it('重複タスクの幅を計算する', () => {
       const task: CalendarTask = {
         id: 'task-1',
         title: 'タスク',
