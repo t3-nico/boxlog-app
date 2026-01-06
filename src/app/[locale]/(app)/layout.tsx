@@ -17,7 +17,11 @@ import { Providers } from '@/components/providers';
 import { Toaster } from '@/components/ui/sonner';
 import { AIInspector } from '@/features/ai';
 import { SessionMonitorProvider } from '@/features/auth/components/SessionMonitorProvider';
-import { PlanDeleteConfirmDialog, PlanInspector } from '@/features/plans/components';
+import {
+  PlanDeleteConfirmDialog,
+  PlanInspector,
+  RecurringEditConfirmDialog,
+} from '@/features/plans/components';
 import { TagInspector } from '@/features/tags/components/inspector';
 
 const AppLayout = async ({ children }: { children: React.ReactNode }) => {
@@ -28,6 +32,7 @@ const AppLayout = async ({ children }: { children: React.ReactNode }) => {
           {children}
           <PlanInspector />
           <PlanDeleteConfirmDialog />
+          <RecurringEditConfirmDialog />
           <TagInspector />
           <AIInspector />
           <Toaster />
