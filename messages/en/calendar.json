@@ -207,6 +207,10 @@
     },
     "collapsedSection": {
       "expandLabel": "Expand {timeRange}"
+    },
+    "sleepHours": {
+      "collapse": "Collapse sleep hours",
+      "expand": "Expand sleep hours"
     }
   }
 }

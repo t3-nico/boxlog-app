@@ -49,6 +49,16 @@ interface CalendarSettings {
 
   // Plan/Record表示設定
   planRecordMode: 'plan' | 'record' | 'both';
+
+  // 睡眠スケジュール設定
+  sleepSchedule: {
+    enabled: boolean; // 睡眠時間帯機能の有効/無効
+    bedtime: number; // 就寝時刻（0-23）
+    wakeTime: number; // 起床時刻（0-23）
+  };
+
+  // 睡眠時間帯折りたたみ設定
+  sleepHoursCollapsed: boolean;
 }
 
 interface CalendarSettingsStore extends CalendarSettings {
@@ -79,6 +89,12 @@ const defaultSettings: CalendarSettings = {
     opacity: 90,
   },
   planRecordMode: 'both',
+  sleepSchedule: {
+    enabled: true,
+    bedtime: 23,
+    wakeTime: 7,
+  },
+  sleepHoursCollapsed: false,
 };
 
 export const useCalendarSettingsStore = create<CalendarSettingsStore>()(

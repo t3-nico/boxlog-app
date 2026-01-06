@@ -207,6 +207,10 @@
     },
     "collapsedSection": {
       "expandLabel": "{timeRange} を展開"
+    },
+    "sleepHours": {
+      "collapse": "睡眠時間帯を折りたたむ",
+      "expand": "睡眠時間帯を展開"
     }
   }
 }
