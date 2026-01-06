@@ -95,7 +95,7 @@ export function OverdueBadge({ overduePlans, className, style }: OverdueBadgePro
         <button
           type="button"
           className={cn(
-            'text-destructive',
+            'text-warning',
             'flex items-center justify-center gap-1 text-xs font-medium md:gap-1.5',
             'transition-colors focus:outline-none',
             className,
