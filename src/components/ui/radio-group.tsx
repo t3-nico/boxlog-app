@@ -28,13 +28,14 @@ function RadioGroupItem({
       data-slot="radio-group-item"
       className={cn(
         // 視覚サイズ: 16x16px、タッチターゲット: 44x44px (Apple HIG準拠)
-        'border-input relative aspect-square size-4 shrink-0 rounded-full border shadow-xs',
+        'bg-surface-container border-border relative aspect-square size-4 shrink-0 rounded-full border shadow-xs',
         // タッチターゲット拡大用の疑似要素
         'before:absolute before:-inset-3.5 before:content-[""]',
-        'text-primary transition-[color,box-shadow] outline-none',
+        'text-primary transition-colors outline-none',
+        'hover:bg-state-hover',
         'focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]',
         'aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive',
-        'dark:bg-input/30 disabled:cursor-not-allowed disabled:opacity-50',
+        'disabled:cursor-not-allowed disabled:opacity-50',
         className,
       )}
       {...props}
