@@ -43,7 +43,6 @@ export interface RecurrenceConfig {
 export interface Plan {
   id: string;
   user_id: string;
-  plan_number: string;
   title: string;
   description: string | null;
   status: PlanStatus;

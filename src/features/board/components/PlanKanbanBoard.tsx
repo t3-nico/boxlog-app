@@ -154,11 +154,6 @@ export function PlanKanbanBoard({ items }: PlanKanbanBoardProps) {
               <h3 className="text-foreground min-w-0 text-base leading-tight font-semibold">
                 {activeItem.title}
               </h3>
-              {activeItem.plan_number && (
-                <span className="text-muted-foreground shrink-0 text-sm">
-                  #{activeItem.plan_number}
-                </span>
-              )}
             </div>
 
             {/* 2. 日付・時間 */}

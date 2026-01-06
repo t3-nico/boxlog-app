@@ -33,13 +33,13 @@ import { usePathname } from 'next/navigation';
 import { toast } from 'sonner';
 
 interface TagsPageClientProps {
-  initialGroupNumber?: string;
+  initialGroupId?: string;
   showUncategorizedOnly?: boolean;
   showArchiveOnly?: boolean;
 }
 
 export function TagsPageClient({
-  initialGroupNumber,
+  initialGroupId,
   showUncategorizedOnly = false,
   showArchiveOnly = false,
 }: TagsPageClientProps = {}) {
@@ -51,8 +51,8 @@ export function TagsPageClient({
   const effectiveFilter = tagsNav?.filter ?? (showUncategorizedOnly ? 'uncategorized' : 'all');
   const isUncategorizedFilter = effectiveFilter === 'uncategorized';
   const isArchiveFilter = effectiveFilter === 'archive' || pathname?.includes('/archive');
-  const contextGroupNumber = effectiveFilter.startsWith('group-')
-    ? parseInt(effectiveFilter.replace('group-', ''), 10)
+  const contextGroupId = effectiveFilter.startsWith('group-')
+    ? effectiveFilter.replace('group-', '')
     : null;
 
   // ローカル状態
@@ -108,13 +108,12 @@ export function TagsPageClient({
   const selectedTagIds = getSelectedIds();
   const selectedCount = getSelectedCount();
 
-  // グループ番号からグループIDを解決
-  const effectiveGroupNumber =
-    contextGroupNumber ?? (initialGroupNumber ? Number(initialGroupNumber) : null);
+  // グループIDを解決
+  const effectiveGroupId = contextGroupId ?? initialGroupId ?? null;
   const initialGroup = useMemo(() => {
-    if (!effectiveGroupNumber) return null;
-    return groups.find((g) => g.group_number === effectiveGroupNumber) ?? null;
-  }, [effectiveGroupNumber, groups]);
+    if (!effectiveGroupId) return null;
+    return groups.find((g) => g.id === effectiveGroupId) ?? null;
+  }, [effectiveGroupId, groups]);
 
   // 選択されたグループ情報
   const selectedGroup = useMemo(() => {
@@ -155,13 +154,13 @@ export function TagsPageClient({
 
   // ページタイトルにタグ数を表示
   useEffect(() => {
-    if (!isUncategorizedFilter && !effectiveGroupNumber) {
+    if (!isUncategorizedFilter && !effectiveGroupId) {
       document.title = `${t('tags.page.title')} (${activeTagsCount})`;
     }
     return () => {
       document.title = t('tags.page.title');
     };
-  }, [activeTagsCount, isUncategorizedFilter, effectiveGroupNumber, t]);
+  }, [activeTagsCount, isUncategorizedFilter, effectiveGroupId, t]);
 
   // ソート変更時にページ1に戻る
   useEffect(() => {

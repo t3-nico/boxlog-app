@@ -15,12 +15,16 @@ import {
   calculateEventDuration,
   calculatePreviewTime,
   calculateSnappedPosition,
+  checkClientSideOverlap,
+  updateDragElementOverlapStyle,
   updateDragElementPosition,
   updateTimeDisplay,
 } from './utils';
 
 interface UseDragHandlerProps {
   events: CalendarPlan[];
+  /** 重複チェック用の全イベント（週/複数日表示で別日への移動時に使用） */
+  allEventsForOverlapCheck?: CalendarPlan[] | undefined;
   date: Date;
   displayDates: Date[] | undefined;
   viewMode: string;
@@ -34,6 +38,7 @@ interface UseDragHandlerProps {
 
 export function useDragHandler({
   events,
+  allEventsForOverlapCheck,
   date,
   displayDates,
   viewMode,
@@ -108,6 +113,7 @@ export function useDragHandler({
         originalDateIndex: dateIndex,
         targetDateIndex: dateIndex,
         ghostElement: null,
+        isOverlapping: false,
       });
     },
     [viewMode, displayDates, dragDataRef, setDragState],
@@ -158,6 +164,18 @@ export function useDragHandler({
 
       updateTimeDisplay(dragData.dragElement || null, previewStartTime, previewEndTime);
 
+      // クライアント側で重複チェック（全イベントを使用して別日への移動もチェック）
+      const eventsToCheck = allEventsForOverlapCheck ?? events;
+      const isOverlapping = checkClientSideOverlap(
+        eventsToCheck,
+        dragData.eventId,
+        previewStartTime,
+        previewEndTime,
+      );
+
+      // ゴースト要素のスタイルを重複状態に応じて更新
+      updateDragElementOverlapStyle(dragData.dragElement || null, isOverlapping);
+
       setDragState((prev) => ({
         ...prev,
         currentPosition: { x: constrainedX, y: constrainedY },
@@ -167,9 +185,10 @@ export function useDragHandler({
         },
         previewTime: { start: previewStartTime, end: previewEndTime },
         targetDateIndex,
+        isOverlapping,
       }));
     },
-    [events, date, viewMode, displayDates, dragDataRef, setDragState],
+    [events, allEventsForOverlapCheck, date, viewMode, displayDates, dragDataRef, setDragState],
   );
 
   // プランドロップのヘルパー
@@ -291,12 +310,18 @@ export function useDragHandler({
       }
 
       try {
-        const result = eventUpdateHandler(dragDataRef.current.eventId, {
+        // eventUpdateHandler は { skipToast: true } を返す可能性がある（繰り返しプランのダイアログ表示時）
+        const result = (await eventUpdateHandler(dragDataRef.current.eventId, {
           startTime: newStartTime,
           endTime: newEndTime,
-        });
+        })) as { skipToast?: boolean } | void;
 
-        await handleEventUpdateToast(Promise.resolve(result), event, newStartTime, durationMs);
+        // ダイアログが表示された場合はtoastをスキップ
+        if (result && typeof result === 'object' && result.skipToast) {
+          return;
+        }
+
+        await handleEventUpdateToast(Promise.resolve(), event, newStartTime, durationMs);
       } catch (error) {
         logger.error('Failed to update event time:', error);
         calendarToast.error(t('calendar.event.moveFailed'));

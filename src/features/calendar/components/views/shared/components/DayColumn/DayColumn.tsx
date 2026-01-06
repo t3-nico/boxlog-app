@@ -43,6 +43,9 @@ export const DayColumn = memo<DayColumnProps>(function DayColumn({
   // プランの位置を計算
   const eventPositions = usePlanPosition(dayEvents, { hourHeight });
 
+  // グリッド高さ
+  const columnHeight = 24 * hourHeight;
+
   // 時間クリックハンドラー
   const handleTimeClick = (e: React.MouseEvent) => {
     if (!onTimeClick) return;
@@ -50,11 +53,10 @@ export const DayColumn = memo<DayColumnProps>(function DayColumn({
     const rect = e.currentTarget.getBoundingClientRect();
     const y = e.clientY - rect.top;
 
-    // 時間を計算（15分単位で丸める）
+    // 時間計算（15分単位で丸める）
     const totalMinutes = (y * 60) / hourHeight;
     const hour = Math.floor(totalMinutes / 60);
     const minute = Math.floor((totalMinutes % 60) / 15) * 15;
-
     onTimeClick(date, hour, minute);
   };
 
@@ -84,7 +86,7 @@ export const DayColumn = memo<DayColumnProps>(function DayColumn({
           }
         }}
         style={{
-          minHeight: `${24 * hourHeight}px`,
+          minHeight: `${columnHeight}px`,
         }}
         aria-label={`Day column for ${date.toDateString()}`}
       >

@@ -2,6 +2,8 @@
  * CalendarDragSelection 型定義
  */
 
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
+
 export interface TimeRange {
   startHour: number;
   startMinute: number;
@@ -23,6 +25,8 @@ export interface CalendarDragSelectionProps {
   children?: React.ReactNode | undefined;
   /** ドラッグ選択を無効にする */
   disabled?: boolean | undefined;
+  /** 重複チェック用のプラン一覧 */
+  plans?: CalendarPlan[] | undefined;
 }
 
 /** ドラッグ状態 */

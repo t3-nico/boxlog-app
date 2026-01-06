@@ -11,11 +11,15 @@ import { useTranslations } from 'next-intl';
 
 import { HOUR_HEIGHT } from '@/features/calendar/components/views/shared/constants/grid.constants';
 
+import { useHapticFeedback } from '@/hooks/useHapticFeedback';
+
 import type { DragDataRef, DragState } from './types';
-import { snapToQuarterHour } from './utils';
+import { checkClientSideOverlap, snapToQuarterHour, updateDragElementOverlapStyle } from './utils';
 
 interface UseResizeHandlerProps {
   events: CalendarPlan[];
+  /** 重複チェック用の全イベント（週ビューなど複数日表示時に使用） */
+  allEventsForOverlapCheck?: CalendarPlan[] | undefined;
   eventUpdateHandler:
     | ((eventId: string, updates: { startTime: Date; endTime: Date }) => Promise<void> | void)
     | undefined;
@@ -25,12 +29,17 @@ interface UseResizeHandlerProps {
 
 export function useResizeHandler({
   events,
+  allEventsForOverlapCheck,
   eventUpdateHandler,
   dragDataRef,
   setDragState,
 }: UseResizeHandlerProps) {
   const t = useTranslations();
   const calendarToast = useCalendarToast();
+  const { error: hapticError } = useHapticFeedback();
+
+  // 重複チェック用のイベント一覧
+  const allEvents = allEventsForOverlapCheck ?? events;
 
   // リサイズ処理（下端リサイズのみ）
   const handleResizing = useCallback(
@@ -40,6 +49,7 @@ export function useResizeHandler({
 
       const event = events.find((e) => e.id === dragData.eventId);
       let previewTime = null;
+      let isOverlapping = false;
 
       // 下端リサイズ: 終了時刻を変更（開始時刻は固定）
       const newHeight = Math.max(15, dragData.eventDuration + deltaY);
@@ -50,6 +60,20 @@ export function useResizeHandler({
         const newDurationMs = (finalHeight / HOUR_HEIGHT) * 60 * 60 * 1000;
         const previewEndTime = new Date(event.startDate.getTime() + newDurationMs);
         previewTime = { start: event.startDate, end: previewEndTime };
+
+        // リアルタイム重複チェック
+        isOverlapping = checkClientSideOverlap(
+          allEvents,
+          dragData.eventId,
+          event.startDate,
+          previewEndTime,
+        );
+
+        // 視覚的フィードバック（赤オーバーレイ + ⊘アイコン）
+        const resizeElement = dragData.originalElement;
+        if (resizeElement) {
+          updateDragElementOverlapStyle(resizeElement, isOverlapping);
+        }
       }
 
       // サイズが変更されたらhasMovedをtrueに設定（リサイズ完了時の更新に必要）
@@ -65,9 +89,10 @@ export function useResizeHandler({
           height: finalHeight,
         },
         previewTime,
+        isOverlapping,
       }));
     },
-    [events, dragDataRef, setDragState],
+    [events, allEvents, dragDataRef, setDragState],
   );
 
   // リサイズ完了処理（下端リサイズのみ）
@@ -88,6 +113,28 @@ export function useResizeHandler({
 
       const newDurationMs = (snappedHeight / HOUR_HEIGHT) * 60 * 60 * 1000;
       const newEndTime = new Date(event.startDate.getTime() + newDurationMs);
+
+      // 重複チェック
+      const isOverlapping = checkClientSideOverlap(
+        allEvents,
+        event.id,
+        event.startDate,
+        newEndTime,
+      );
+
+      if (isOverlapping) {
+        // ハプティックフィードバック + エラートースト
+        hapticError();
+        calendarToast.error(t('calendar.toast.conflict'), {
+          description: t('calendar.toast.conflictDescription'),
+        });
+        // 視覚的フィードバックをクリア
+        const resizeElement = dragDataRef.current.originalElement;
+        if (resizeElement) {
+          updateDragElementOverlapStyle(resizeElement, false);
+        }
+        return; // 更新をキャンセル
+      }
 
       const eventData: CalendarPlan = {
         id: event.id,
@@ -139,7 +186,7 @@ export function useResizeHandler({
         calendarToast.error(t('calendar.event.resizeFailed'));
       }
     },
-    [events, eventUpdateHandler, dragDataRef, calendarToast, t],
+    [events, allEvents, eventUpdateHandler, dragDataRef, calendarToast, hapticError, t],
   );
 
   // リサイズ開始（下端リサイズのみ）
@@ -154,6 +201,12 @@ export function useResizeHandler({
 
       const startPosition = { x: e.clientX, y: e.clientY };
 
+      // リサイズ対象の要素を取得（視覚的フィードバック用）
+      const originalElement =
+        ((e.target as HTMLElement).closest('[data-event-wrapper="true"]') as HTMLElement) ||
+        ((e.target as HTMLElement).closest('[data-plan-block="true"]') as HTMLElement) ||
+        ((e.target as HTMLElement).closest('[data-event-block="true"]') as HTMLElement);
+
       dragDataRef.current = {
         eventId,
         startX: e.clientX,
@@ -161,7 +214,7 @@ export function useResizeHandler({
         originalTop: originalPosition.top,
         eventDuration: originalPosition.height,
         hasMoved: false,
-        originalElement: null,
+        originalElement,
         originalDateIndex: 0,
       };
 
@@ -179,6 +232,7 @@ export function useResizeHandler({
         recentlyResized: false,
         dragElement: null,
         ghostElement: null,
+        isOverlapping: false,
       });
     },
     [dragDataRef, setDragState],

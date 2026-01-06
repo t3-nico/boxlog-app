@@ -5,7 +5,6 @@ import { createTableColumnStore, type ColumnConfig } from '@/features/table';
  */
 export type TagColumnId =
   | 'selection'
-  | 'id'
   | 'name'
   | 'description'
   | 'group'
@@ -22,7 +21,6 @@ export type TagColumnConfig = ColumnConfig<TagColumnId>;
  */
 const DEFAULT_COLUMNS: TagColumnConfig[] = [
   { id: 'selection', label: '', visible: true, width: 48, resizable: false },
-  { id: 'id', label: 'ID', visible: true, width: 80, resizable: true },
   { id: 'name', label: 'タグ名', visible: true, width: 232, resizable: true },
   { id: 'description', label: '説明', visible: true, width: 300, resizable: true },
   { id: 'group', label: 'グループ', visible: true, width: 120, resizable: true },

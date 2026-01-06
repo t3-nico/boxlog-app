@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { format, isToday, isWeekend } from 'date-fns';
+import { format, isToday } from 'date-fns';
 
 import { cn } from '@/lib/utils';
 
@@ -29,7 +29,6 @@ const useDateFormats = (
 // スタイルクラスを生成
 const generateDateClassName = (
   today: boolean,
-  weekend: boolean,
   isSelected: boolean,
   onClick?: Function,
   className?: string,
@@ -56,11 +55,6 @@ const generateDateClassName = (
   // 選択状態（当日以外）
   if (isSelected && !today) {
     classes.push('bg-primary/10 text-primary');
-  }
-
-  // 週末（当日以外）
-  if (weekend && !today) {
-    classes.push('text-muted-foreground');
   }
 
   if (className) {
@@ -141,7 +135,6 @@ export const DateDisplay = ({
   onDoubleClick,
 }: DateDisplayProps) => {
   const today = todayProp ?? isToday(date);
-  const weekend = isWeekend(date);
 
   const { dayName, dateString, monthYear } = useDateFormats(
     date,
@@ -150,7 +143,7 @@ export const DateDisplay = ({
     dayNameFormat,
     dateFormat,
   );
-  const dateClassName = generateDateClassName(today, weekend, isSelected, onClick, className);
+  const dateClassName = generateDateClassName(today, isSelected, onClick, className);
   const keyDownHandler = createKeyDownHandler(onClick, date);
   const accessibilityProps = generateAccessibilityProps(onClick, dateFormat, date);
 

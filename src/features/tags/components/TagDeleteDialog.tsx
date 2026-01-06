@@ -153,7 +153,7 @@ export function TagDeleteDialog({ tag, onClose, onConfirm }: TagDeleteDialogProp
           <div className="space-y-2">
             <p className="text-sm font-medium">{t('tag.delete.afterDeletion')}:</p>
             <ul className="text-muted-foreground space-y-1 text-sm">
-              <li>• {t('tag.delete.willBeDeleted', { number: tag.tag_number || '' })}</li>
+              <li>• {t('tag.delete.willBeDeleted', { name: tag.name })}</li>
               <li>• {t('tag.delete.willBeRemovedFromItems')}</li>
               <li>• {t('tag.delete.willBeRemovedFromStats')}</li>
             </ul>

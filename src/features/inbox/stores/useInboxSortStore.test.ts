@@ -74,7 +74,7 @@ describe('useInboxSortStore', () => {
     });
 
     it('全てのソートフィールドに対応', () => {
-      const fields = ['id', 'title', 'status', 'duration', 'created_at', 'updated_at'] as const;
+      const fields = ['title', 'status', 'duration', 'created_at', 'updated_at'] as const;
 
       fields.forEach((field) => {
         act(() => {

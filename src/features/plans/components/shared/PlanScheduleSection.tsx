@@ -35,6 +35,8 @@ interface PlanScheduleSectionProps {
   // オプション
   showBorderTop?: boolean;
   disabled?: boolean;
+  /** 時間重複エラー状態（視覚的フィードバック用） */
+  timeConflictError?: boolean;
 }
 
 /**
@@ -55,6 +57,7 @@ export function PlanScheduleSection({
   onRecurrenceRuleChange,
   showBorderTop = false,
   disabled = false,
+  timeConflictError = false,
 }: PlanScheduleSectionProps) {
   const [showRecurrencePopover, setShowRecurrencePopover] = useState(false);
   const [showCustomDialog, setShowCustomDialog] = useState(false);
@@ -132,6 +135,7 @@ export function PlanScheduleSection({
               onChange={handleStartTimeChange}
               label=""
               disabled={disabled}
+              hasError={timeConflictError}
             />
             <span className="text-muted-foreground mx-1">→</span>
             <TimeSelect
@@ -140,6 +144,7 @@ export function PlanScheduleSection({
               label=""
               disabled={disabled || !startTime}
               minTime={startTime}
+              hasError={timeConflictError}
             />
           </div>
 

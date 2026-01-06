@@ -14,8 +14,11 @@ export {
 } from './time';
 
 export {
+  animateSnapBack,
   calculateColumnWidth,
+  checkClientSideOverlap,
   cleanupDragElements,
   createDragElement,
+  updateDragElementOverlapStyle,
   updateDragElementPosition,
 } from './dragElement';

@@ -65,17 +65,12 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
   }
 
   if (isCompact) {
-    // コンパクト表示：タイトル #番号
+    // コンパクト表示：タイトルのみ
     return (
       <div className={`flex h-full items-center gap-1 ${hasCheckbox ? 'pl-4' : ''}`}>
         <span className="text-foreground truncate text-sm leading-tight font-medium">
           {plan.title}
         </span>
-        {plan.plan_number && (
-          <span className="flex-shrink-0 text-sm leading-tight opacity-75">
-            #{plan.plan_number}
-          </span>
-        )}
       </div>
     );
   }
@@ -90,17 +85,12 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
         <span className={`${isCompact ? 'line-clamp-1' : 'line-clamp-2'} text-foreground`}>
           {plan.title}
         </span>
-        {plan.plan_number && (
-          <span className="flex-shrink-0 text-sm leading-tight opacity-75">
-            #{plan.plan_number}
-          </span>
-        )}
       </div>
 
       {/* 時間表示 + アイコン（第2優先） */}
       {showTime != null && (
-        <div className="event-time pointer-events-none flex flex-shrink-0 items-center gap-1 text-xs leading-tight opacity-75">
-          <span>
+        <div className="event-time text-muted-foreground pointer-events-none flex flex-shrink-0 items-center gap-1 text-xs leading-tight">
+          <span className="mr-1">
             {previewTime
               ? formatTimeRange(previewTime.start, previewTime.end, timeFormat)
               : planStart && planEnd
@@ -108,13 +98,9 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
                 : t('calendar.event.noTimeSet')}
           </span>
           {/* 繰り返しアイコン */}
-          <RecurringIndicatorFromFlag
-            isRecurring={plan.isRecurring}
-            size="xs"
-            className="opacity-75"
-          />
+          <RecurringIndicatorFromFlag isRecurring={plan.isRecurring} size="xs" />
           {/* 通知アイコン（reminder_minutesが設定されている場合） */}
-          {plan.reminder_minutes != null && <Bell className="h-3 w-3 flex-shrink-0 opacity-75" />}
+          {plan.reminder_minutes != null && <Bell className="h-3 w-3 flex-shrink-0" />}
         </div>
       )}
 

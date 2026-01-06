@@ -24,7 +24,6 @@ import { cn } from '@/lib/utils';
  * |---------|-------|----------------------------------------------|------------------------------|
  * | sm      | 24px  | コンパクトUI、テーブル内、ドロップダウン     | フィルター、ソート、タグ     |
  * | default | 32px  | 標準的なアクション、ほとんどの場面           | ダイアログボタン、ツールバー |
- * | lg      | 40px  | 主要なCTA、フォーム送信、ランディング        | ログイン、登録、購入         |
  *
  * ## アイコンボタンサイズ
  *
@@ -32,7 +31,6 @@ import { cn } from '@/lib/utils';
  * |---------|--------|----------------------------------------------|
  * | icon-sm | 24px   | コンパクトなアイコン操作                     |
  * | icon    | 32px   | 標準的なアイコンボタン                       |
- * | icon-lg | 40px   | 強調されたアイコンボタン                     |
  *
  * ## スペック詳細
  *
@@ -40,7 +38,6 @@ import { cn } from '@/lib/utils';
  * |---------|-------|------------|----------|----------|
  * | sm      | 24px  | 12px       | 14px     | text-xs  |
  * | default | 32px  | 16px       | 16px     | text-sm  |
- * | lg      | 40px  | 24px       | 20px     | text-base|
  */
 const buttonVariants = cva(
   [
@@ -91,11 +88,6 @@ const buttonVariants = cva(
           'h-8 px-4 text-sm',
           "[&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
         ].join(' '),
-        // lg: 40px高さ、24pxパディング、20pxアイコン
-        lg: [
-          'h-10 px-6 text-base',
-          "[&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-5 [&_svg]:shrink-0",
-        ].join(' '),
         // アイコンボタン: 8pxグリッド準拠の正方形
         // icon-sm: 24x24px、タップターゲット44px確保
         'icon-sm': [
@@ -108,11 +100,6 @@ const buttonVariants = cva(
           'size-8',
           'relative after:absolute after:inset-0 after:m-auto after:size-11 after:content-[""]',
           "[&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
-        ].join(' '),
-        // icon-lg: 40x40px
-        'icon-lg': [
-          'size-10',
-          "[&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-5 [&_svg]:shrink-0",
         ].join(' '),
       },
     },

@@ -19,6 +19,8 @@ export interface DragState {
   targetDateIndex?: number;
   originalDateIndex?: number;
   ghostElement: HTMLElement | null;
+  /** ドラッグ中に重複が検出されたか */
+  isOverlapping: boolean;
 }
 
 export interface DragHandlers {
@@ -50,6 +52,8 @@ export interface UseDragAndDropProps {
   onPlanClick?: ((plan: CalendarPlan) => void) | undefined;
   date: Date;
   events: CalendarPlan[];
+  /** 重複チェック用の全イベント（週/複数日表示で別日への移動時に使用） */
+  allEventsForOverlapCheck?: CalendarPlan[] | undefined;
   displayDates?: Date[] | undefined;
   viewMode?: 'day' | '3day' | '5day' | 'week' | 'agenda' | undefined;
   /** DnDを無効化するプランID（Inspector表示中のプランなど） */
@@ -86,4 +90,5 @@ export const initialDragState: DragState = {
   recentlyResized: false,
   dragElement: null,
   ghostElement: null,
+  isOverlapping: false,
 };

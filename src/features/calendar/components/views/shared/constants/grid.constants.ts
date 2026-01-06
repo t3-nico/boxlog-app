@@ -13,7 +13,7 @@ export const EVENT_HORIZONTAL_PADDING = 4; // イベントの左右パディン�
 export const EVENT_VERTICAL_PADDING = 2; // イベントの上下パディング(px)
 
 // 時間列
-export const TIME_COLUMN_WIDTH = 48; // 時間列の幅(px)
+export const TIME_COLUMN_WIDTH = 64; // 時間列の幅(px) - 左16px + コンテンツ40px + 右8px
 export const TIME_LABEL_HEIGHT = HOUR_HEIGHT; // 時間ラベルの高さ(px)
 
 // グリッド線のスタイル（セマンティックトークン）
@@ -21,7 +21,7 @@ export const HOUR_LINE_COLOR = 'border-border';
 export const HALF_HOUR_LINE_COLOR = 'border-border/50'; // より薄い線用
 
 // 現在時刻線
-export const CURRENT_TIME_LINE_COLOR = 'bg-blue-500';
+export const CURRENT_TIME_LINE_COLOR = 'bg-primary';
 export const CURRENT_TIME_DOT_SIZE = 8; // 現在時刻のドットサイズ(px)
 
 // イベント配置

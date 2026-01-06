@@ -13,7 +13,6 @@ BoxLogアプリケーションの設定機能を提供するfeatureモジュー�
 - **通知設定**: 通知の有効化・無効化、タイミング設定
 - **統合設定**: 外部サービスとの連携設定
 - **データエクスポート**: データのバックアップ・エクスポート
-- **タグ設定**: タグの管理・設定
 - **テンプレート設定**: イベント・タスクテンプレート管理
 
 ## ディレクトリ構成
@@ -33,7 +32,6 @@ src/features/settings/
 │   ├── plan-billing-settings.tsx    # プラン・課金設定
 │   ├── preferences-settings.tsx     # 一般設定
 │   ├── settings-navigation.tsx      # 設定ナビゲーション
-│   ├── tags-settings.tsx            # タグ設定
 │   ├── templates-settings.tsx       # テンプレート設定
 │   ├── examples/
 │   │   └── AccountSettingsAutoSave.tsx  # 自動保存設定例

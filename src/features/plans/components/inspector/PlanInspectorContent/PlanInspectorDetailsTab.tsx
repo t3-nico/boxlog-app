@@ -38,6 +38,8 @@ interface PlanInspectorDetailsTabProps {
   selectedTagIds: string[];
   recurrenceRule: string | null;
   recurrenceType: RecurrenceType;
+  /** 時間重複エラー状態（視覚的フィードバック用） */
+  timeConflictError?: boolean;
   onAutoSave: (field: string, value: string | undefined) => void;
   onDateChange: (date: Date | undefined) => void;
   onStartTimeChange: (time: string) => void;
@@ -59,6 +61,7 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
   selectedTagIds,
   recurrenceRule,
   recurrenceType,
+  timeConflictError = false,
   onAutoSave,
   onDateChange,
   onStartTimeChange,
@@ -84,9 +87,6 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
           >
             {plan.title}
           </span>
-          {plan.plan_number && (
-            <span className="text-muted-foreground ml-2 text-sm">#{plan.plan_number}</span>
-          )}
         </div>
       </div>
 
@@ -103,6 +103,7 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
         onRepeatTypeChange={onRepeatTypeChange}
         onRecurrenceRuleChange={onRecurrenceRuleChange}
         showBorderTop={true}
+        timeConflictError={timeConflictError}
       />
 
       {/* Tags */}

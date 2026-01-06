@@ -25,11 +25,10 @@ export function useTimeGrid(options: UseTimeGridOptions = {}) {
   const hours = useMemo(() => {
     const result: TimeGridHours[] = [];
 
-    // 通常の時間ラベル（0時から23時まで）
     for (let hour = startHour; hour < endHour; hour++) {
       const label =
         format === '24h'
-          ? `${hour}:00`
+          ? `${String(hour).padStart(2, '0')}:00`
           : `${hour === 0 ? 12 : hour > 12 ? hour - 12 : hour}:00 ${hour >= 12 ? 'PM' : 'AM'}`;
 
       result.push({

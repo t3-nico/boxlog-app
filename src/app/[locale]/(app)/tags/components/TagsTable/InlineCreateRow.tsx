@@ -17,7 +17,6 @@ import type { useTranslations } from 'next-intl';
 
 interface ColumnWidths {
   select: number;
-  id: number;
   color: number;
   name: number;
   description: number;
@@ -70,12 +69,6 @@ export const InlineCreateRow = forwardRef<HTMLTableRowElement, InlineCreateRowPr
     return (
       <TableRow ref={ref} className="bg-surface-container">
         <TableCell style={{ width: `${columnWidths.select}px` }}></TableCell>
-        <TableCell
-          className="text-muted-foreground font-mono text-sm"
-          style={{ width: `${columnWidths.id}px` }}
-        >
-          -
-        </TableCell>
         <TableCell style={{ width: `${columnWidths.color + columnWidths.name}px` }}>
           <div className="flex items-center gap-2">
             <Popover>

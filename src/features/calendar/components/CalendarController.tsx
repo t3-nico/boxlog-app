@@ -19,6 +19,7 @@ import { useCalendarKeyboard } from '../hooks/useCalendarKeyboard';
 import { useCalendarPlanKeyboard } from '../hooks/useCalendarPlanKeyboard';
 import { usePlanContextActions } from '../hooks/usePlanContextActions';
 import { usePlanOperations } from '../hooks/usePlanOperations';
+import { useRecurringPlanDrag } from '../hooks/useRecurringPlanDrag';
 import { useWeekendToggleShortcut } from '../hooks/useWeekendToggleShortcut';
 import { DnDProvider } from '../providers/DnDProvider';
 
@@ -109,7 +110,7 @@ export const CalendarController = ({
     usePlanContextActions();
 
   // プラン操作（CRUD）をフック化
-  const { handlePlanDelete: deletePlan, handlePlanRestore, handleUpdatePlan } = usePlanOperations();
+  const { handlePlanDelete: deletePlan, handlePlanRestore } = usePlanOperations();
 
   // selector化: 必要な値だけ監視（他の設定変更時の再レンダリングを防止）
   const timezone = useCalendarSettingsStore((state) => state.timezone);
@@ -179,6 +180,11 @@ export const CalendarController = ({
   } = useCalendarHandlers({
     viewType,
     currentDate,
+  });
+
+  // 繰り返しプランのドラッグ処理（Googleカレンダー準拠）
+  const { handleUpdatePlan } = useRecurringPlanDrag({
+    plans: allCalendarPlans,
   });
 
   // ナビゲーションハンドラー（フック化）

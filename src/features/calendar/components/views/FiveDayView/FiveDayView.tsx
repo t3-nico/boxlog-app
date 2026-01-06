@@ -170,7 +170,7 @@ export const FiveDayView = ({
           scrollToHour={isCurrentDay ? undefined : 8}
           displayDates={displayDates}
           viewMode="5day"
-          // onTimeClickは削除: CalendarDragSelectionがクリック処理を担当
+          plans={plans}
           enableKeyboardNavigation={true}
         >
           {/* 5日分のグリッド */}
@@ -187,13 +187,14 @@ export const FiveDayView = ({
                 key={date.toISOString()}
                 className={cn(
                   'relative flex-1',
-                  dayIndex < displayDates.length - 1 ? 'border-border border-r' : '',
+                  dayIndex < displayDates.length - 1 && 'border-border border-r',
                 )}
                 style={{ width: `${100 / displayDates.length}%` }}
               >
                 <FiveDayContent
                   date={date}
                   plans={dayPlans}
+                  allEventsForOverlapCheck={plans}
                   planStyles={planStyles}
                   onPlanClick={onPlanClick}
                   onPlanContextMenu={onPlanContextMenu}
@@ -203,7 +204,8 @@ export const FiveDayView = ({
                       ? (planId, updates) => {
                           const plan = plans.find((p) => p.id === planId);
                           if (plan) {
-                            onUpdatePlan({ ...plan, ...updates });
+                            // 返り値を伝播（繰り返しプラン編集時の skipToast フラグ用）
+                            return onUpdatePlan({ ...plan, ...updates });
                           }
                         }
                       : undefined

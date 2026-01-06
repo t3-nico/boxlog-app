@@ -47,7 +47,6 @@ export function useTagOperations(tags: Tag[]) {
           name: data.name,
           user_id: 'current-user',
           color: data.color || '#3B82F6',
-          tag_number: 0, // 仮の値、実際の値はサーバー側で自動採番される
           description: data.description || null,
           icon: null,
           is_active: true,

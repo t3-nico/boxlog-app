@@ -151,7 +151,7 @@ export const LoadingButton = ({
     <Button
       type="button"
       variant={buttonVariant}
-      size="lg"
+      size="default"
       className={className}
       disabled={disabled}
       isLoading={isLoading}

@@ -31,6 +31,14 @@ export interface PlanCardProps {
         position: { top: number; left: number; width: number; height: number },
       ) => void)
     | undefined;
+  /** モバイル用タッチ開始ハンドラー */
+  onTouchStart?:
+    | ((
+        plan: CalendarPlan,
+        touchEvent: React.TouchEvent,
+        position: { top: number; left: number; width: number; height: number },
+      ) => void)
+    | undefined;
   onDragEnd?: ((plan: CalendarPlan) => void) | undefined;
   onResizeStart?:
     | ((

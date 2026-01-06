@@ -61,7 +61,8 @@ export const WeekGrid = ({
       if (!onEventUpdate) return;
       const plan = events.find((e) => e.id === planId);
       if (!plan) return;
-      onEventUpdate({ ...plan, ...updates });
+      // 返り値を伝播（繰り返しプラン編集時の skipToast フラグ用）
+      return onEventUpdate({ ...plan, ...updates });
     },
     [onEventUpdate, events],
   );
@@ -120,7 +121,7 @@ export const WeekGrid = ({
         scrollToHour={todayIndex !== -1 ? undefined : 8}
         displayDates={currentTimeDisplayDates}
         viewMode="week"
-        // onTimeClickは削除: CalendarDragSelectionがクリック処理を担当
+        plans={events}
         enableKeyboardNavigation={true}
       >
         {/* 7日分のグリッド */}
@@ -140,6 +141,7 @@ export const WeekGrid = ({
               <WeekContent
                 date={date}
                 plans={dayEvents}
+                allEventsForOverlapCheck={events}
                 planPositions={eventPositions}
                 onPlanClick={onEventClick}
                 onPlanContextMenu={onEventContextMenu}

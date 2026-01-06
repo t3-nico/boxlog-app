@@ -23,7 +23,6 @@ import type { useTranslations } from 'next-intl';
 
 interface ColumnWidths {
   select: number;
-  id: number;
   color: number;
   name: number;
   description: number;
@@ -103,12 +102,6 @@ export function TagRow({
               onCheckedChange={() => onSelect(tag.id)}
               aria-label={t('tag.page.selectTag', { name: tag.name })}
             />
-          </TableCell>
-          <TableCell
-            className="text-muted-foreground font-mono text-sm"
-            style={{ width: `${columnWidths.id}px` }}
-          >
-            t-{tag.tag_number}
           </TableCell>
           <TableCell
             className="font-medium"

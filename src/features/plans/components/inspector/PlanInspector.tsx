@@ -14,6 +14,7 @@ import {
 import { usePlan } from '../../hooks/usePlan';
 import { useDeleteConfirmStore } from '../../stores/useDeleteConfirmStore';
 import { usePlanInspectorStore } from '../../stores/usePlanInspectorStore';
+import { useRecurringEditConfirmStore } from '../../stores/useRecurringEditConfirmStore';
 import type { Plan } from '../../types/plan';
 
 import { useInspectorAutoSave, useInspectorNavigation } from './hooks';
@@ -34,6 +35,14 @@ export function PlanInspector() {
   const { data: planData, isLoading } = usePlan(planId!, { includeTags: true, enabled: !!planId });
   const plan = (planData ?? null) as unknown as Plan | null;
 
+  // 繰り返しダイアログが開いている間はInspectorを閉じない
+  const handleClose = useCallback(() => {
+    const isRecurringDialogOpen = useRecurringEditConfirmStore.getState().isOpen;
+    if (!isRecurringDialogOpen) {
+      closeInspector();
+    }
+  }, [closeInspector]);
+
   // ナビゲーション
   const { hasPrevious, hasNext, goToPrevious, goToNext } = useInspectorNavigation(planId);
 
@@ -46,7 +55,7 @@ export function PlanInspector() {
     isOpen,
     hasPrevious,
     hasNext,
-    onClose: closeInspector,
+    onClose: handleClose,
     onPrevious: goToPrevious,
     onNext: goToNext,
   });
@@ -101,7 +110,7 @@ export function PlanInspector() {
   return (
     <InspectorShell
       isOpen={isOpen}
-      onClose={closeInspector}
+      onClose={handleClose}
       displayMode={displayMode}
       title={plan?.title || '予定の詳細'}
       resizable={displayMode === 'sheet'}

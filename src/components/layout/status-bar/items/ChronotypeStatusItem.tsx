@@ -12,20 +12,10 @@ import { StatusBarItem } from '../StatusBarItem';
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
 import {
   CHRONOTYPE_PRESETS,
+  getChronotypeColor,
   getProductivityZoneForHour,
-} from '@/features/settings/types/chronotype';
+} from '@/types/chronotype';
 import { useLocale } from 'next-intl';
-
-import type { ProductivityZone } from '@/features/settings/types/chronotype';
-
-// ゾーンレベルに応じたアイコンの色
-const LEVEL_ICON_COLORS: Record<ProductivityZone['level'], string> = {
-  peak: 'text-success',
-  good: 'text-success',
-  moderate: 'text-primary',
-  low: 'text-muted-foreground',
-  sleep: 'text-primary',
-};
 
 /**
  * クロノタイプ（現在の生産性ゾーン）をステータスバーに表示
@@ -113,12 +103,17 @@ export function ChronotypeStatusItem() {
     return `${zoneInfo.label} (${formatRemaining(zoneInfo.remainingMinutes)})`;
   }, [zoneInfo, formatRemaining]);
 
-  // アイコンの色を決定
-  const iconColor = zoneInfo ? LEVEL_ICON_COLORS[zoneInfo.level] : 'text-muted-foreground';
+  // アイコンの色を決定（クロノタイプ専用セマンティックトークン）
+  const iconColorStyle = zoneInfo ? { color: getChronotypeColor(zoneInfo.level) } : undefined;
 
   return (
     <StatusBarItem
-      icon={<Dna className={cn('h-3 w-3', iconColor)} />}
+      icon={
+        <Dna
+          className={cn('h-3 w-3', !zoneInfo && 'text-muted-foreground')}
+          style={iconColorStyle}
+        />
+      }
       label={label}
       onClick={handleClick}
       tooltip={zoneInfo ? '生産性ゾーン設定を開く' : 'クロノタイプを設定'}

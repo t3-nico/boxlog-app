@@ -134,3 +134,17 @@ export function getProductivityLevelColor(level: ProductivityZone['level']): str
       return 'bg-gray-200';
   }
 }
+
+// セマンティックトークン（CSS変数）によるクロノタイプカラー
+export const CHRONOTYPE_LEVEL_COLORS: Record<ProductivityZone['level'], string> = {
+  peak: 'var(--chronotype-peak)',
+  good: 'var(--chronotype-good)',
+  moderate: 'var(--chronotype-moderate)',
+  low: 'var(--chronotype-low)',
+  sleep: 'var(--chronotype-sleep)',
+};
+
+// levelからCSS変数値を取得
+export function getChronotypeColor(level: ProductivityZone['level']): string {
+  return CHRONOTYPE_LEVEL_COLORS[level];
+}

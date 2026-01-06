@@ -29,7 +29,7 @@ interface GroupItemProps {
   group: TagGroup;
   isActive: boolean;
   tagCount: number;
-  onGroupClick: (groupNumber: number) => void;
+  onGroupClick: (groupId: string) => void;
   onStartEdit: (group: TagGroup) => void;
   onCancelEdit: () => void;
   onSaveEdit: (group: TagGroup) => Promise<void>;
@@ -115,11 +115,11 @@ export function SortableGroupItem({
     <div
       ref={setNodeRef}
       style={style}
-      onClick={() => onGroupClick(group.group_number)}
+      onClick={() => onGroupClick(group.id)}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
-          onGroupClick(group.group_number);
+          onGroupClick(group.id);
         }
       }}
       className={`group hover:bg-state-hover flex w-full cursor-pointer items-center rounded-md px-2 py-2 text-sm transition-colors ${

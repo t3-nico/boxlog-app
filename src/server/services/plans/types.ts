@@ -53,6 +53,8 @@ export interface ListPlansOptions extends PlanFilter {
 export interface CreatePlanOptions {
   userId: string;
   input: CreatePlanInput;
+  /** 重複防止設定（ONの場合、時間重複をブロック） */
+  preventOverlappingPlans?: boolean;
 }
 
 /**
@@ -62,6 +64,8 @@ export interface UpdatePlanOptions {
   userId: string;
   planId: string;
   input: UpdatePlanInput;
+  /** 重複防止設定（ONの場合、時間重複をブロック） */
+  preventOverlappingPlans?: boolean;
 }
 
 /**

@@ -52,7 +52,6 @@ export function PlanCard({ plan, onEdit, onDelete, onClick, tags = [] }: PlanCar
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-2">
           <div className="flex-1 space-y-1">
-            <p className="text-muted-foreground font-mono text-xs">{plan.plan_number}</p>
             <h3 className="text-foreground line-clamp-2 font-semibold">{plan.title}</h3>
           </div>
 

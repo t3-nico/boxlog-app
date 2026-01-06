@@ -32,5 +32,5 @@ export const calendarAnimations: CalendarAnimations = {
   dragScale: 'scale-105 transition-transform duration-200',
 
   // ドロップゾーンのハイライト
-  dropZone: 'ring-2 ring-blue-400 ring-opacity-50 transition-all duration-150',
+  dropZone: 'ring-2 ring-primary/50 transition-all duration-150',
 } as const;

@@ -24,11 +24,12 @@ export const CalendarDragSelection = ({
   onDoubleClick,
   children,
   disabled = false,
+  plans = [],
 }: CalendarDragSelectionProps) => {
   const {
     selection,
     showSelectionPreview,
-    isOver,
+    isOverlapping,
     containerRef,
     handleMouseDown,
     handleDoubleClick,
@@ -41,6 +42,7 @@ export const CalendarDragSelection = ({
     disabled,
     onTimeRangeSelect,
     onDoubleClick,
+    plans,
   });
 
   // ドロップ可能エリアとして設定
@@ -56,7 +58,7 @@ export const CalendarDragSelection = ({
         (containerRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
         setNodeRef(node);
       }}
-      className={cn('relative', className, (isOver || dndIsOver) && 'bg-primary/5')}
+      className={cn('relative', className, dndIsOver && 'bg-primary/5')}
       role="button"
       tabIndex={0}
       aria-label="Calendar drag selection area"
@@ -76,7 +78,11 @@ export const CalendarDragSelection = ({
 
       {/* ドラッグ選択範囲の表示 - 5px以上ドラッグした場合のみ表示 */}
       {showSelectionPreview && selection && (
-        <DragSelectionPreview selection={selection} formatTime={formatTime} />
+        <DragSelectionPreview
+          selection={selection}
+          formatTime={formatTime}
+          isOverlapping={isOverlapping}
+        />
       )}
     </div>
   );

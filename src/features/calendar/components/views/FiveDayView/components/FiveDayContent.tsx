@@ -21,6 +21,8 @@ import { useDragAndDrop } from '../../shared/hooks/useDragAndDrop';
 interface FiveDayContentProps {
   date: Date;
   plans: CalendarPlan[];
+  /** 重複チェック用の全イベント（5日間全体のイベント） */
+  allEventsForOverlapCheck?: CalendarPlan[] | undefined;
   planStyles: Record<string, React.CSSProperties>;
   onPlanClick?: ((plan: CalendarPlan) => void) | undefined;
   onPlanContextMenu?: ((plan: CalendarPlan, e: React.MouseEvent) => void) | undefined;
@@ -37,6 +39,7 @@ interface FiveDayContentProps {
 export const FiveDayContent = ({
   date,
   plans,
+  allEventsForOverlapCheck,
   planStyles,
   onPlanClick,
   onPlanContextMenu,
@@ -51,6 +54,9 @@ export const FiveDayContent = ({
   const inspectorPlanId = usePlanInspectorStore((state) => state.planId);
   const isInspectorOpen = usePlanInspectorStore((state) => state.isOpen);
 
+  // グリッド高さ
+  const gridHeight = 24 * HOUR_HEIGHT;
+
   // グローバルドラッグ状態（日付間移動用）
   const globalDragState = useCalendarDragStore();
   const isGlobalDragging = globalDragState.isDragging;
@@ -63,8 +69,8 @@ export const FiveDayContent = ({
     async (planId: string, updates: { startTime: Date; endTime: Date }) => {
       if (!onPlanUpdate) return;
 
-      // handleUpdatePlan形式で呼び出し
-      await onPlanUpdate(planId, {
+      // handleUpdatePlan形式で呼び出し（返り値を伝播）
+      return await onPlanUpdate(planId, {
         startDate: updates.startTime,
         endDate: updates.endTime,
       });
@@ -78,6 +84,7 @@ export const FiveDayContent = ({
     onPlanClick,
     date,
     events: plans,
+    allEventsForOverlapCheck,
     displayDates,
     viewMode: '5day',
     disabledPlanId,
@@ -98,14 +105,18 @@ export const FiveDayContent = ({
     [onPlanContextMenu, dragState.isDragging, dragState.isResizing],
   );
 
-  // 時間グリッドの生成（DayViewと同じパターン）
-  const timeGrid = Array.from({ length: 24 }, (_, hour) => (
-    <div
-      key={hour}
-      className={`relative ${hour < 23 ? 'border-border border-b' : ''}`}
-      style={{ height: HOUR_HEIGHT }}
-    />
-  ));
+  // 時間グリッドの生成
+  const timeGrid = React.useMemo(
+    () =>
+      Array.from({ length: 24 }, (_, hour) => (
+        <div
+          key={hour}
+          className={`relative ${hour < 23 ? 'border-border border-b' : ''}`}
+          style={{ height: HOUR_HEIGHT }}
+        />
+      )),
+    [],
+  );
 
   return (
     <div
@@ -118,18 +129,16 @@ export const FiveDayContent = ({
         className="absolute inset-0"
         onTimeRangeSelect={onTimeRangeSelect}
         disabled={dragState.isPending || dragState.isDragging || dragState.isResizing}
+        plans={allEventsForOverlapCheck ?? plans}
       >
-        {/* 背景グリッド（DayViewと同じパターン） */}
-        <div className="absolute inset-0" style={{ height: 24 * HOUR_HEIGHT }}>
+        {/* 背景グリッド */}
+        <div className="absolute inset-0" style={{ height: gridHeight }}>
           {timeGrid}
         </div>
       </CalendarDragSelection>
 
       {/* プラン表示エリア - CalendarDragSelectionより上にz-indexを設定 */}
-      <div
-        className="pointer-events-none absolute inset-0 z-20"
-        style={{ height: 24 * HOUR_HEIGHT }}
-      >
+      <div className="pointer-events-none absolute inset-0 z-20" style={{ height: gridHeight }}>
         {plans.map((plan) => {
           const style = planStyles[plan.id];
           if (!style) return null;
@@ -183,6 +192,20 @@ export const FiveDayContent = ({
                       dayIndex,
                     ); // 日付インデックスを渡す
                   }
+                }}
+                onTouchStart={(e) => {
+                  // モバイル: タッチでドラッグ開始（長押しで開始）
+                  handlers.handleTouchStart(
+                    plan.id,
+                    e,
+                    {
+                      top: currentTop,
+                      left: 0,
+                      width: 100,
+                      height: currentHeight,
+                    },
+                    dayIndex,
+                  );
                 }}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {

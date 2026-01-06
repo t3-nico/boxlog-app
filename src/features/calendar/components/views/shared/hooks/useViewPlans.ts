@@ -65,7 +65,7 @@ export function useViewPlans({ date, plans = [] }: UseViewPlansOptions): UseView
   }, [dayPlans]);
 
   // 新しいレイアウト計算システムを使用
-  const planLayouts = usePlanLayoutCalculator(convertedPlans, { notifyConflicts: false });
+  const planLayouts = usePlanLayoutCalculator(convertedPlans);
 
   // レイアウト情報をPlanPositionに変換
   const planPositions = useMemo((): PlanPosition[] => {

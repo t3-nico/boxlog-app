@@ -264,12 +264,12 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
 
   // Handle tag selection
   const handleTagSelect = useCallback(
-    (tagNumber: number) => {
+    (tagId: string) => {
       if (query) {
         addToHistory(query);
       }
       onClose();
-      router.push(`/tags/${tagNumber}`);
+      router.push(`/tags/${tagId}`);
     },
     [query, addToHistory, router, onClose],
   );
@@ -454,7 +454,7 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
                   <CommandItem
                     key={`tag-${tag.id}`}
                     value={`${tag.name} ${tag.description || ''}`}
-                    onSelect={() => handleTagSelect(tag.tag_number)}
+                    onSelect={() => handleTagSelect(tag.id)}
                     className="flex items-center gap-2"
                   >
                     <Tag className="h-4 w-4 shrink-0" />

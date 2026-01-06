@@ -2,15 +2,22 @@
 
 import { useMemo } from 'react';
 
+import { format } from 'date-fns';
+
 import { usePlans } from '@/features/plans/hooks/usePlans';
 import type { Plan } from '@/features/plans/types/plan';
+import { isRecurringPlan } from '@/features/plans/utils/recurrence';
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
 import { logger } from '@/lib/logger';
+import { api } from '@/lib/trpc';
 
 import { useCalendarFilterStore } from '../../../stores/useCalendarFilterStore';
 
 import { calculateViewDateRange } from '../../../lib/view-helpers';
-import { plansToCalendarPlans } from '../../../utils/planDataAdapter';
+import {
+  expandRecurringPlansToCalendarPlans,
+  type PlanInstanceException,
+} from '../../../utils/planDataAdapter';
 
 import type { CalendarPlan, CalendarViewType, ViewDateRange } from '../../../types/calendar.types';
 
@@ -54,7 +61,47 @@ export function useCalendarData({
     return calculateViewDateRange(viewType, currentDate, weekStartsOn);
   }, [viewType, currentDate, weekStartsOn]);
 
-  // 全プランをCalendarPlan型に変換（期限切れ未完了表示用）
+  // 繰り返しプランのIDを抽出
+  const recurringPlanIds = useMemo(() => {
+    if (!plansData) return [];
+    return plansData.filter((plan) => isRecurringPlan(plan)).map((plan) => plan.id);
+  }, [plansData]);
+
+  // 繰り返しプランの例外情報を取得（繰り返しプランがある場合のみ）
+  const { data: instancesData } = api.plans.getInstances.useQuery(
+    {
+      planIds: recurringPlanIds,
+      startDate: format(viewDateRange.start, 'yyyy-MM-dd'),
+      endDate: format(viewDateRange.end, 'yyyy-MM-dd'),
+    },
+    {
+      enabled: recurringPlanIds.length > 0,
+      staleTime: 30 * 1000, // 30秒キャッシュ
+    },
+  );
+
+  // 例外情報をMapに変換
+  const exceptionsMap = useMemo(() => {
+    const map = new Map<string, PlanInstanceException[]>();
+    if (!instancesData) return map;
+
+    for (const inst of instancesData) {
+      const planId = inst.plan_id;
+      if (!map.has(planId)) {
+        map.set(planId, []);
+      }
+      map.get(planId)!.push({
+        instanceDate: inst.instance_date,
+        isException: inst.is_exception,
+        exceptionType: inst.exception_type as 'modified' | 'cancelled' | 'moved' | undefined,
+        overrides: inst.overrides as Record<string, unknown> | undefined,
+        originalDate: inst.original_date ?? undefined,
+      });
+    }
+    return map;
+  }, [instancesData]);
+
+  // 全プランをCalendarPlan型に変換（繰り返しプランを展開）
   const allCalendarPlans = useMemo(() => {
     if (!plansData) {
       return [];
@@ -68,9 +115,14 @@ export function useCalendarData({
       return plan.start_time && plan.end_time;
     });
 
-    // planをCalendarPlanに変換
-    return plansToCalendarPlans(plansWithTime);
-  }, [plansData]);
+    // 繰り返しプランを展開してCalendarPlanに変換
+    return expandRecurringPlansToCalendarPlans(
+      plansWithTime,
+      viewDateRange.start,
+      viewDateRange.end,
+      exceptionsMap,
+    );
+  }, [plansData, viewDateRange, exceptionsMap]);
 
   // 表示範囲のイベントをフィルタリング
   const filteredEvents = useMemo(() => {

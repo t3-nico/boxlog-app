@@ -32,13 +32,16 @@ export const DayContent = ({
   const inspectorPlanId = usePlanInspectorStore((state) => state.planId);
   const isInspectorOpen = usePlanInspectorStore((state) => state.isOpen);
 
+  // グリッド高さ（24時間）
+  const gridHeight = 24 * HOUR_HEIGHT;
+
   // ドラッグ&ドロップ機能用にonEventUpdateを変換
   const handleEventUpdate = useCallback(
     async (eventId: string, updates: { startTime: Date; endTime: Date }) => {
       if (!onEventUpdate) return;
 
-      // handleUpdatePlan形式で呼び出し
-      await onEventUpdate(eventId, {
+      // handleUpdatePlan形式で呼び出し（返り値を伝播）
+      return await onEventUpdate(eventId, {
         startTime: updates.startTime,
         endTime: updates.endTime,
       });
@@ -70,14 +73,18 @@ export const DayContent = ({
     [onPlanContextMenu, dragState.isDragging, dragState.isResizing],
   );
 
-  // 時間グリッドの生成（1時間単位、23時は下線なし）
-  const timeGrid = Array.from({ length: 24 }, (_, hour) => (
-    <div
-      key={hour}
-      className={`relative ${hour < 23 ? 'border-border border-b' : ''}`}
-      style={{ height: HOUR_HEIGHT }}
-    />
-  ));
+  // 時間グリッドの生成
+  const timeGrid = React.useMemo(
+    () =>
+      Array.from({ length: 24 }, (_, hour) => (
+        <div
+          key={hour}
+          className={`relative ${hour < 23 ? 'border-border border-b' : ''}`}
+          style={{ height: HOUR_HEIGHT }}
+        />
+      )),
+    [],
+  );
 
   return (
     <div
@@ -90,18 +97,16 @@ export const DayContent = ({
         className="absolute inset-0"
         onTimeRangeSelect={onTimeRangeSelect}
         disabled={dragState.isPending || dragState.isDragging || dragState.isResizing}
+        plans={events}
       >
-        {/* 背景グリッド（CalendarDragSelectionが全イベントを処理） */}
-        <div className={`absolute inset-0`} style={{ height: 24 * HOUR_HEIGHT }}>
+        {/* 背景グリッド */}
+        <div className="absolute inset-0" style={{ height: gridHeight }}>
           {timeGrid}
         </div>
       </CalendarDragSelection>
 
       {/* イベント表示エリア - CalendarDragSelectionより上にz-indexを設定 */}
-      <div
-        className="pointer-events-none absolute inset-0 z-20"
-        style={{ height: 24 * HOUR_HEIGHT }}
-      >
+      <div className="pointer-events-none absolute inset-0 z-20" style={{ height: gridHeight }}>
         {events &&
           Array.isArray(events) &&
           events.map((event) => {
@@ -140,6 +145,15 @@ export const DayContent = ({
                         height: currentHeight,
                       });
                     }
+                  }}
+                  onTouchStart={(e) => {
+                    // モバイル: タッチでドラッグ開始（長押しで開始）
+                    handlers.handleTouchStart(event.id, e, {
+                      top: currentTop,
+                      left: 0,
+                      width: 100,
+                      height: currentHeight,
+                    });
                   }}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {

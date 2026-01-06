@@ -57,7 +57,12 @@ export interface CalendarPlan {
   url?: string | undefined; // 関連URL
   allDay?: boolean | undefined; // 終日予定
   priority?: 'urgent' | 'important' | 'necessary' | 'delegate' | 'optional' | undefined; // 優先度
-  calendarId?: string | undefined; // カレンダーID
+  calendarId?: string | undefined; // カレンダーID（繰り返しの場合は親プランID）
+  // 繰り返し例外情報
+  isException?: boolean | undefined; // 例外インスタンスかどうか
+  exceptionType?: 'modified' | 'cancelled' | 'moved' | undefined; // 例外タイプ
+  originalPlanId?: string | undefined; // 繰り返しインスタンスの親プランID
+  instanceDate?: string | undefined; // インスタンス日付（YYYY-MM-DD）
 }
 
 // 後方互換性のためのエイリアス

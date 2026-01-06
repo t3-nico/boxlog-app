@@ -187,6 +187,19 @@
       "peakTime": "Peak Time",
       "learnMore": "Learn more about chronotypes"
     },
+    "sleepSchedule": {
+      "title": "Sleep Schedule",
+      "enabled": "Show sleep hours",
+      "description": "Highlight sleep hours with background color on the calendar grid",
+      "bedtime": "Bedtime",
+      "wakeTime": "Wake time",
+      "duration": "Sleep duration",
+      "hours": "{hours} hours",
+      "preview": "Preview",
+      "legendSleep": "Sleep",
+      "legendActivity": "Active",
+      "settingsSaved": "Sleep schedule saved"
+    },
     "preferences": {
       "settingsSaved": "Preferences saved successfully",
       "theme": "Theme",

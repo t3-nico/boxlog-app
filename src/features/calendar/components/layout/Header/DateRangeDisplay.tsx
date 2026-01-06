@@ -1,11 +1,14 @@
 'use client';
 
 import { format, getWeek } from 'date-fns';
+import { enUS, ja } from 'date-fns/locale';
 import { ChevronDown } from 'lucide-react';
+import { useLocale, useTranslations } from 'next-intl';
 
 import { MiniCalendar } from '@/components/common/MiniCalendar';
 import { cn } from '@/lib/utils';
-import { useTranslations } from 'next-intl';
+
+import type { Locale } from 'date-fns';
 
 interface DateRangeDisplayProps {
   date: Date;
@@ -14,7 +17,6 @@ interface DateRangeDisplayProps {
   showWeekNumber?: boolean | undefined;
   formatPattern?: string | undefined;
   className?: string | undefined;
-  weekBadgeClassName?: string | undefined;
   onDateSelect?: ((date: Date | undefined) => void) | undefined;
   clickable?: boolean | undefined;
   // 現在表示している期間（MiniCalendarでのハイライト用）
@@ -29,50 +31,40 @@ interface DateRangeDisplayProps {
 /**
  * 日付範囲のテキストを生成
  */
-const generateRangeText = (date: Date, endDate: Date): string => {
+const generateRangeText = (
+  date: Date,
+  endDate: Date,
+  dateFnsLocale: Locale,
+  localeCode: string,
+): string => {
   const sameMonth = date.getMonth() === endDate.getMonth();
   const sameYear = date.getFullYear() === endDate.getFullYear();
+  const isJa = localeCode === 'ja';
 
   if (sameYear && sameMonth) {
-    // 同月の場合: "1-7 January 2025"
-    return `${format(date, 'd')}-${format(endDate, 'd')} ${format(date, 'MMMM yyyy')}`;
+    // 同月の場合: "2025年1月 1-7日" / "1-7 January 2025"
+    if (isJa) {
+      return `${format(date, 'yyyy年M月', { locale: dateFnsLocale })} ${format(date, 'd')}-${format(endDate, 'd')}日`;
+    }
+    return `${format(date, 'd')}-${format(endDate, 'd')} ${format(date, 'MMMM yyyy', { locale: dateFnsLocale })}`;
   } else if (sameYear) {
-    // 同年異月の場合: "30 Dec - 5 Jan 2025"
-    return `${format(date, 'd MMM')} - ${format(endDate, 'd MMM yyyy')}`;
+    // 同年異月の場合: "2025年 12月30日 - 1月5日" / "30 Dec - 5 Jan 2025"
+    if (isJa) {
+      return `${format(date, 'yyyy年 M月d日', { locale: dateFnsLocale })} - ${format(endDate, 'M月d日', { locale: dateFnsLocale })}`;
+    }
+    return `${format(date, 'd MMM', { locale: dateFnsLocale })} - ${format(endDate, 'd MMM yyyy', { locale: dateFnsLocale })}`;
   } else {
-    // 異年の場合: "30 Dec 2024 - 5 Jan 2025"
-    return `${format(date, 'd MMM yyyy')} - ${format(endDate, 'd MMM yyyy')}`;
+    // 異年の場合: "2024年12月30日 - 2025年1月5日" / "30 Dec 2024 - 5 Jan 2025"
+    if (isJa) {
+      return `${format(date, 'yyyy年M月d日', { locale: dateFnsLocale })} - ${format(endDate, 'yyyy年M月d日', { locale: dateFnsLocale })}`;
+    }
+    return `${format(date, 'd MMM yyyy', { locale: dateFnsLocale })} - ${format(endDate, 'd MMM yyyy', { locale: dateFnsLocale })}`;
   }
 };
 
 /**
- * 週番号バッジ
- */
-const WeekBadge = ({
-  weekNumber,
-  className,
-}: {
-  weekNumber: number;
-  className?: string | undefined;
-}) => {
-  const t = useTranslations();
-
-  return (
-    <span
-      className={cn(
-        'text-muted-foreground inline-flex items-center text-sm font-normal',
-        className,
-      )}
-      aria-label={t('calendar.dateRange.weekLabel', { weekNumber })}
-    >
-      week{weekNumber}
-    </span>
-  );
-};
-
-/**
  * 日付範囲表示
- * 単一日付または期間を表示し、オプションで週番号も表示
+ * 単一日付または期間を表示
  *
  * **モバイル対応**:
  * - モバイル（md未満）: クリックでMiniCalendarポップアップを表示
@@ -81,21 +73,25 @@ const WeekBadge = ({
 export const DateRangeDisplay = ({
   date,
   endDate,
-  showWeekNumber = true,
+  showWeekNumber = false,
   formatPattern = 'MMMM yyyy',
   className,
-  weekBadgeClassName,
   onDateSelect,
   clickable = false,
   displayRange,
 }: DateRangeDisplayProps) => {
-  const weekNumber = getWeek(date, { weekStartsOn: 1 });
+  const t = useTranslations('calendar.dateRange');
+  const locale = useLocale();
+  const dateFnsLocale = locale === 'ja' ? ja : enUS;
+
+  // ロケールに応じたフォーマットパターン
+  const localizedFormatPattern = locale === 'ja' ? 'yyyy年M月' : formatPattern;
 
   // 表示テキストを決定
   const displayText =
     endDate && date.getTime() !== endDate.getTime()
-      ? generateRangeText(date, endDate)
-      : format(date, formatPattern);
+      ? generateRangeText(date, endDate, dateFnsLocale, locale)
+      : format(date, localizedFormatPattern, { locale: dateFnsLocale });
 
   // 日付コンテンツ
   const dateContent = <h2 className="text-lg font-semibold">{displayText}</h2>;
@@ -126,11 +122,15 @@ export const DateRangeDisplay = ({
     />
   );
 
-  // PC用: 静的表示
+  // PC用: 静的表示（週番号付き）
   const desktopContent = (
     <div className={cn('hidden items-center gap-2 md:flex', className)}>
       {dateContent}
-      {showWeekNumber && <WeekBadge weekNumber={weekNumber} className={weekBadgeClassName} />}
+      {showWeekNumber ? (
+        <span className="text-muted-foreground text-sm font-medium">
+          {t('weekLabel', { weekNumber: getWeek(date, { weekStartsOn: 1 }) })}
+        </span>
+      ) : null}
     </div>
   );
 
@@ -144,13 +144,8 @@ export const DateRangeDisplay = ({
     );
   }
 
-  // クリック不可の場合: 静的表示のみ
-  return (
-    <div className={cn('flex items-center gap-2', className)}>
-      {dateContent}
-      {showWeekNumber && <WeekBadge weekNumber={weekNumber} className={weekBadgeClassName} />}
-    </div>
-  );
+  // クリック不可の場合: 静的表示のみ（PC用、週番号なし）
+  return <div className={cn('flex items-center gap-2', className)}>{dateContent}</div>;
 };
 
 /**
@@ -161,11 +156,22 @@ export const CompactDateDisplay = ({
   showWeekNumber = false,
   className,
 }: Pick<DateRangeDisplayProps, 'date' | 'showWeekNumber' | 'className'>) => {
+  const t = useTranslations('calendar.dateRange');
+  const locale = useLocale();
+  const dateFnsLocale = locale === 'ja' ? ja : enUS;
+
+  // ロケールに応じたフォーマット
+  const dateFormat = locale === 'ja' ? 'M月d日' : 'MMM d';
+
   return (
     <div className={cn('flex items-center gap-1', className)}>
-      <span className="text-base font-medium">{format(date, 'MMM d')}</span>
+      <span className="text-base font-medium">
+        {format(date, dateFormat, { locale: dateFnsLocale })}
+      </span>
       {showWeekNumber ? (
-        <span className="text-muted-foreground text-xs">W{getWeek(date, { weekStartsOn: 1 })}</span>
+        <span className="text-muted-foreground text-xs">
+          {t('weekLabel', { weekNumber: getWeek(date, { weekStartsOn: 1 }) })}
+        </span>
       ) : null}
     </div>
   );

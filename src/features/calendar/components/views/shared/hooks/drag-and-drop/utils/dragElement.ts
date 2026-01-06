@@ -1,4 +1,5 @@
 import { calendarColors } from '@/features/calendar/theme';
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
 
 /**
  * ドラッグ要素を作成する（position: fixed で自由移動）
@@ -123,4 +124,150 @@ export function calculateColumnWidth(
   }
 
   return columnWidth;
+}
+
+/**
+ * クライアント側で時間重複をチェックする
+ * @param events - 現在表示中のプラン一覧
+ * @param draggedEventId - ドラッグ中のプランID（自分自身は除外）
+ * @param previewStartTime - プレビュー開始時刻
+ * @param previewEndTime - プレビュー終了時刻
+ * @returns 重複している場合はtrue
+ */
+export function checkClientSideOverlap(
+  events: CalendarPlan[],
+  draggedEventId: string,
+  previewStartTime: Date,
+  previewEndTime: Date,
+): boolean {
+  // 自分自身を除外した他のプランとの重複チェック
+  const result = events.some((event) => {
+    if (event.id === draggedEventId) return false;
+    if (!event.startDate || !event.endDate) return false;
+
+    const eventStart = event.startDate;
+    const eventEnd = event.endDate;
+
+    // 時間重複条件: 既存の開始時刻 < 新規の終了時刻 AND 既存の終了時刻 > 新規の開始時刻
+    return eventStart < previewEndTime && eventEnd > previewStartTime;
+  });
+
+  return result;
+}
+
+/**
+ * ドラッグ要素の重複状態のスタイルを更新する
+ * GAFA準拠の視覚的フィードバック（Apple HIG + Material Design）:
+ * - 赤いオーバーレイ + ボーダー + グロー
+ * - 禁止アイコン（⊘）
+ * - 禁止カーソル（not-allowed）
+ *
+ * @param dragElement - ドラッグ中の要素
+ * @param isOverlapping - 重複しているか
+ */
+export function updateDragElementOverlapStyle(
+  dragElement: HTMLElement | null,
+  isOverlapping: boolean,
+): void {
+  if (!dragElement) return;
+
+  // オーバーレイのID
+  const OVERLAY_ID = 'drag-overlap-overlay';
+
+  if (isOverlapping) {
+    // 重複時: 赤いボーダー + 赤いグロー
+    // 注意: 子要素のbg-*クラスは変更しない（リサイズ時は実際のDOM要素を操作するため）
+    dragElement.style.setProperty('border', '2px solid #ef4444', 'important');
+    dragElement.style.setProperty(
+      'box-shadow',
+      '0 0 0 2px rgba(239, 68, 68, 0.3), 0 4px 12px rgba(239, 68, 68, 0.4)',
+      'important',
+    );
+    dragElement.style.cursor = 'not-allowed';
+    dragElement.classList.add('drag-overlap');
+
+    // 赤いオーバーレイ + 禁止アイコンを追加（不透明度を上げて背景色の上から見えるように）
+    if (!dragElement.querySelector(`#${OVERLAY_ID}`)) {
+      const overlay = document.createElement('div');
+      overlay.id = OVERLAY_ID;
+      overlay.style.cssText = `
+        position: absolute;
+        inset: 0;
+        background: rgba(239, 68, 68, 0.5);
+        border-radius: inherit;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 100;
+        pointer-events: none;
+      `;
+      overlay.innerHTML = `
+        <div style="
+          width: 28px;
+          height: 28px;
+          background: rgba(220, 38, 38, 0.95);
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+        ">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>
+          </svg>
+        </div>
+      `;
+      dragElement.appendChild(overlay);
+    }
+  } else {
+    // 正常時: 通常のスタイルに戻す
+    dragElement.style.removeProperty('border');
+    dragElement.style.removeProperty('box-shadow');
+    dragElement.style.cursor = '';
+    dragElement.classList.remove('drag-overlap');
+
+    // オーバーレイを削除
+    const overlay = dragElement.querySelector(`#${OVERLAY_ID}`);
+    if (overlay) {
+      overlay.remove();
+    }
+  }
+}
+
+/**
+ * ドロップ失敗時のスナップバックアニメーション（Apple HIG準拠）
+ * 要素が元の位置に戻る/消えるアニメーションを実行
+ *
+ * @param dragElement - ドラッグ中の要素
+ * @param originalRect - 元の位置情報
+ * @param onComplete - アニメーション完了時のコールバック
+ */
+export function animateSnapBack(
+  dragElement: HTMLElement | null,
+  originalRect: DOMRect | null,
+  onComplete: () => void,
+): void {
+  if (!dragElement) {
+    onComplete();
+    return;
+  }
+
+  if (originalRect) {
+    // 元の位置にスナップバック
+    dragElement.style.transition = 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)';
+    dragElement.style.left = `${originalRect.left}px`;
+    dragElement.style.top = `${originalRect.top}px`;
+    dragElement.style.opacity = '0.3';
+    dragElement.style.transform = 'scale(0.95)';
+
+    setTimeout(() => {
+      dragElement.style.opacity = '0';
+      setTimeout(onComplete, 100);
+    }, 200);
+  } else {
+    // 元の位置が不明な場合はフェードアウト
+    dragElement.style.animation = 'snap-back 0.3s ease-out forwards';
+    setTimeout(onComplete, 300);
+  }
 }

@@ -78,14 +78,14 @@ export function useTagsSidebarLogic({
   const isUncategorizedPage =
     tagsNav?.filter === 'uncategorized' || pathname?.includes('/uncategorized');
 
-  const currentGroupNumber = useMemo(() => {
-    if (tagsNav?.groupNumber !== undefined) return tagsNav.groupNumber;
+  const currentGroupId = useMemo(() => {
+    if (tagsNav?.groupId !== undefined) return tagsNav.groupId;
     if (!pathname) return null;
-    const match = pathname.match(/\/tags\/g-(\d+)/);
-    return match ? Number(match[1]) : null;
-  }, [tagsNav?.groupNumber, pathname]);
+    const match = pathname.match(/\/tags\/g-([a-f0-9-]+)/);
+    return match ? match[1] : null;
+  }, [tagsNav?.groupId, pathname]);
 
-  const isAllTagsActive = !isArchivePage && !isUncategorizedPage && !currentGroupNumber;
+  const isAllTagsActive = !isArchivePage && !isUncategorizedPage && !currentGroupId;
 
   const uncategorizedTagsCount = useMemo(() => {
     return allTags.filter((tag) => !tag.group_id && tag.is_active).length;
@@ -160,10 +160,10 @@ export function useTagsSidebarLogic({
       setNewGroupColor(DEFAULT_GROUP_COLOR);
 
       if (tagsNav) {
-        tagsNav.navigateToGroup(result.group_number);
+        tagsNav.navigateToGroup(result.id);
       } else {
         const locale = pathname?.split('/')[1] || 'ja';
-        router.push(`/${locale}/tags/g-${result.group_number}`);
+        router.push(`/${locale}/tags/g-${result.id}`);
       }
     } catch (error) {
       console.error('Failed to create tag group:', error);
@@ -189,7 +189,7 @@ export function useTagsSidebarLogic({
       toast.success(t('tags.toast.groupDeleted', { name: deletingGroup.name }));
       setDeletingGroup(null);
 
-      if (currentGroupNumber === deletingGroup.group_number) {
+      if (currentGroupId === deletingGroup.id) {
         if (tagsNav) {
           tagsNav.navigateToFilter('all');
         } else {
@@ -201,7 +201,7 @@ export function useTagsSidebarLogic({
       console.error('Failed to delete tag group:', error);
       toast.error(t('tag.toast.groupDeleteFailed'));
     }
-  }, [deletingGroup, deleteGroupMutation, currentGroupNumber, router, pathname, t, tagsNav]);
+  }, [deletingGroup, deleteGroupMutation, currentGroupId, router, pathname, t, tagsNav]);
 
   // Handler: インライン編集を開始
   const handleStartEditing = useCallback((group: TagGroup) => {
@@ -274,7 +274,7 @@ export function useTagsSidebarLogic({
           .mutateAsync({ id: group.id })
           .then(() => {
             toast.success(t('tags.toast.groupDeleted', { name: group.name }));
-            if (currentGroupNumber === group.group_number) {
+            if (currentGroupId === group.id) {
               if (tagsNav) {
                 tagsNav.navigateToFilter('all');
               } else {
@@ -291,7 +291,7 @@ export function useTagsSidebarLogic({
         setDeletingGroup(group);
       }
     },
-    [getGroupTagCount, deleteGroupMutation, t, currentGroupNumber, pathname, router, tagsNav],
+    [getGroupTagCount, deleteGroupMutation, t, currentGroupId, pathname, router, tagsNav],
   );
 
   // Navigation handlers
@@ -322,12 +322,12 @@ export function useTagsSidebarLogic({
   }, [tagsNav, router, pathname]);
 
   const handleGroupClick = useCallback(
-    (groupNumber: number) => {
+    (groupId: string) => {
       if (tagsNav) {
-        tagsNav.navigateToGroup(groupNumber);
+        tagsNav.navigateToGroup(groupId);
       } else {
         const locale = pathname?.split('/')[1] || 'ja';
-        router.push(`/${locale}/tags/g-${groupNumber}`);
+        router.push(`/${locale}/tags/g-${groupId}`);
       }
     },
     [tagsNav, router, pathname],
@@ -426,7 +426,7 @@ export function useTagsSidebarLogic({
     isAllTagsActive,
     isArchivePage,
     isUncategorizedPage,
-    currentGroupNumber,
+    currentGroupId,
     sortType,
     sortedGroups,
     deletingGroup,

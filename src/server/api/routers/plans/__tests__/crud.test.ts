@@ -295,6 +295,11 @@ function createChainableMockQuery<T>(
     delete: vi.fn(),
     eq: vi.fn(),
     neq: vi.fn(),
+    not: vi.fn(),
+    lt: vi.fn(),
+    lte: vi.fn(),
+    gt: vi.fn(),
+    gte: vi.fn(),
     in: vi.fn(),
     or: vi.fn(),
     order: vi.fn(),
@@ -375,12 +380,56 @@ function setupMockInsertQuery<T>(
   _tableName: string,
   data: T,
 ): void {
-  const mockQuery = createChainableMockQuery(data);
-
   mockFrom.mockImplementation((table: string) => {
     if (table === 'plan_activities' || table === 'plan_tags') {
       return createChainableMockQuery(null);
     }
+
+    // SELECT（重複チェック）とINSERTを区別するモック
+    let isInsert = false;
+    const mockQuery: Record<string, ReturnType<typeof vi.fn>> = {
+      select: vi.fn(),
+      insert: vi.fn().mockImplementation(() => {
+        isInsert = true;
+        return mockQuery;
+      }),
+      update: vi.fn(),
+      delete: vi.fn(),
+      eq: vi.fn(),
+      neq: vi.fn(),
+      not: vi.fn(),
+      lt: vi.fn(),
+      lte: vi.fn(),
+      gt: vi.fn(),
+      gte: vi.fn(),
+      in: vi.fn(),
+      or: vi.fn(),
+      order: vi.fn(),
+      limit: vi.fn(),
+      range: vi.fn(),
+      single: vi.fn().mockImplementation(() => {
+        // INSERTならデータを返す、SELECTなら空（重複なし）
+        return Promise.resolve({
+          data: isInsert ? data : null,
+          error: null,
+        });
+      }),
+      then: vi.fn().mockImplementation((resolve) => {
+        // INSERTならデータを返す、SELECTなら空（重複なし）
+        return resolve({
+          data: isInsert ? (Array.isArray(data) ? data : [data]) : [],
+          error: null,
+        });
+      }),
+    };
+
+    // 全メソッドをチェーン可能に（single, then, insert以外）
+    Object.keys(mockQuery).forEach((key) => {
+      if (key !== 'single' && key !== 'then' && key !== 'insert') {
+        mockQuery[key].mockReturnValue(mockQuery);
+      }
+    });
+
     return mockQuery;
   });
 }
@@ -408,6 +457,11 @@ function setupMockUpdateQuery<T>(
       delete: vi.fn(),
       eq: vi.fn(),
       neq: vi.fn(),
+      not: vi.fn(),
+      lt: vi.fn(),
+      lte: vi.fn(),
+      gt: vi.fn(),
+      gte: vi.fn(),
       in: vi.fn(),
       or: vi.fn(),
       order: vi.fn(),

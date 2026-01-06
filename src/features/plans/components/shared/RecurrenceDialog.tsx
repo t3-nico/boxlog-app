@@ -2,6 +2,7 @@
 
 import * as Portal from '@radix-ui/react-portal';
 import { format } from 'date-fns';
+import { useTranslations } from 'next-intl';
 import { useEffect, useRef, useState } from 'react';
 
 import { MiniCalendar } from '@/components/common/MiniCalendar';
@@ -52,6 +53,7 @@ export function RecurrenceDialog({
   triggerRef,
   placement = 'bottom',
 }: RecurrenceDialogProps) {
+  const t = useTranslations('common');
   const dialogRef = useRef<HTMLDivElement>(null);
   const [showCalendar, setShowCalendar] = useState(false);
   const [position, setPosition] = useState({ top: 0, left: 0 });
@@ -86,26 +88,51 @@ export function RecurrenceDialog({
 
   // 位置を動的に計算（useEffect内でref参照）
   useEffect(() => {
-    if (!open || !triggerRef?.current) return;
+    if (!open) return;
+
+    const dialogWidth = 400; // w-[25rem]
+    const dialogHeight = 500; // 推定高さ
+
+    // triggerRefがない場合は画面中央に表示
+    if (!triggerRef?.current) {
+      setPosition({
+        top: Math.max(16, (window.innerHeight - dialogHeight) / 2),
+        left: Math.max(16, (window.innerWidth - dialogWidth) / 2),
+      });
+      return;
+    }
 
     const rect = triggerRef.current.getBoundingClientRect();
-    const dialogWidth = 400; // w-[25rem]
 
+    // viewport相対で計算（scrollY/Xは使わない - fixedポジショニングのため）
     if (placement === 'right') {
       setPosition({
-        top: rect.top + window.scrollY,
-        left: rect.right + window.scrollX + 4,
+        top: Math.max(8, Math.min(rect.top, window.innerHeight - dialogHeight - 8)),
+        left: Math.min(rect.right + 4, window.innerWidth - dialogWidth - 8),
       });
     } else if (placement === 'left') {
       setPosition({
-        top: rect.top + window.scrollY,
-        left: rect.left + window.scrollX - dialogWidth - 4,
+        top: Math.max(8, Math.min(rect.top, window.innerHeight - dialogHeight - 8)),
+        left: Math.max(8, rect.left - dialogWidth - 4),
       });
     } else {
-      setPosition({
-        top: rect.bottom + window.scrollY + 4,
-        left: rect.left + window.scrollX,
-      });
+      // bottom (default)
+      // 画面下にはみ出す場合は上に表示
+      const spaceBelow = window.innerHeight - rect.bottom;
+
+      if (spaceBelow < dialogHeight && rect.top > spaceBelow) {
+        // 上に表示
+        setPosition({
+          top: Math.max(8, rect.top - dialogHeight - 4),
+          left: Math.max(8, Math.min(rect.left, window.innerWidth - dialogWidth - 8)),
+        });
+      } else {
+        // 下に表示
+        setPosition({
+          top: Math.min(rect.bottom + 4, window.innerHeight - dialogHeight - 8),
+          left: Math.max(8, Math.min(rect.left, window.innerWidth - dialogWidth - 8)),
+        });
+      }
     }
   }, [open, triggerRef, placement]);
 
@@ -182,7 +209,7 @@ export function RecurrenceDialog({
                 max="365"
                 value={config.interval}
                 onChange={(e) => setConfig({ ...config, interval: Number(e.target.value) || 1 })}
-                className="w-16"
+                className="border-border bg-secondary h-8 w-16 rounded-md border text-center"
               />
               <Select
                 value={config.frequency}
@@ -196,7 +223,7 @@ export function RecurrenceDialog({
                   })
                 }
               >
-                <SelectTrigger className="w-20">
+                <SelectTrigger className="w-24">
                   <SelectValue />
                 </SelectTrigger>
                 <Portal.Root>
@@ -379,7 +406,7 @@ export function RecurrenceDialog({
                         setShowCalendar(false);
                       }
                     }}
-                    className="rounded-md border"
+                    className="border-border rounded-md border"
                   />
                 </div>
               )}
@@ -398,7 +425,7 @@ export function RecurrenceDialog({
                     setConfig({ ...config, count: Number(e.target.value) || 4, endType: 'count' })
                   }
                   disabled={config.endType !== 'count'}
-                  className="w-20"
+                  className="border-border bg-secondary h-8 w-20 rounded-md border text-center disabled:opacity-50"
                 />
                 <span className="text-foreground text-sm">回 実施</span>
               </div>
@@ -407,12 +434,12 @@ export function RecurrenceDialog({
         </div>
 
         {/* フッター */}
-        <div className="border-border flex items-center justify-between border-t px-6 py-4">
+        <div className="border-border flex justify-end gap-2 border-t px-6 py-4">
           <Button variant="outline" onClick={() => onOpenChange(false)} type="button">
-            キャンセル
+            {t('cancel')}
           </Button>
           <Button onClick={handleSave} type="button">
-            完了
+            {t('apply')}
           </Button>
         </div>
       </div>

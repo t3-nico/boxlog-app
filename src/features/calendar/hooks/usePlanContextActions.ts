@@ -1,33 +1,88 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useRef } from 'react';
 
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
-import type { RecurringEditScope } from '@/features/plans/components/shared/RecurringEditDialog';
+import type { RecurringEditScope } from '@/features/plans/components/RecurringEditConfirmDialog';
 import { usePlanInstanceMutations } from '@/features/plans/hooks/usePlanInstances';
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
 import { usePlanTags } from '@/features/plans/hooks/usePlanTags';
 import { useDeleteConfirmStore } from '@/features/plans/stores/useDeleteConfirmStore';
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
+import { useRecurringEditConfirmStore } from '@/features/plans/stores/useRecurringEditConfirmStore';
 import { format } from 'date-fns';
 
 export function usePlanContextActions() {
   const { openInspector } = usePlanInspectorStore();
   const openDeleteDialog = useDeleteConfirmStore((state) => state.openDialog);
+  const openRecurringDialog = useRecurringEditConfirmStore((state) => state.openDialog);
   const { createPlan, deletePlan, updatePlan } = usePlanMutations();
   const { createInstance } = usePlanInstanceMutations();
   const { addPlanTag } = usePlanTags();
 
-  // 繰り返しプラン削除用の状態
-  const [recurringDeleteTarget, setRecurringDeleteTarget] = useState<CalendarPlan | null>(null);
-  const [recurringDialogOpen, setRecurringDialogOpen] = useState(false);
+  // 繰り返しプラン削除用のターゲットをrefで保持（ダイアログのコールバックで参照）
+  const recurringDeleteTargetRef = useRef<CalendarPlan | null>(null);
+
+  // 繰り返しプラン削除確認ハンドラー（ダイアログのコールバック）
+  const handleRecurringDeleteConfirm = useCallback(
+    async (scope: RecurringEditScope) => {
+      const target = recurringDeleteTargetRef.current;
+      if (!target) return;
+
+      try {
+        // 親プランID（展開されたオカレンスの場合はcalendarIdが親ID）
+        const parentPlanId = target.calendarId || target.id;
+
+        // インスタンスの日付を取得（展開されたオカレンスのIDから抽出）
+        // ID形式: {parentPlanId}_{YYYY-MM-DD}
+        const instanceDate = target.id.includes('_')
+          ? (target.id.split('_').pop() ?? '')
+          : (target.startDate?.toISOString().slice(0, 10) ?? '');
+
+        switch (scope) {
+          case 'this':
+            // この日のみ例外として削除（cancelled例外を作成）
+            await createInstance.mutateAsync({
+              planId: parentPlanId,
+              instanceDate,
+              exceptionType: 'cancelled',
+            });
+            break;
+
+          case 'thisAndFuture': {
+            // この日以降を終了: 親プランの recurrence_end_date を更新
+            // 前日を終了日にする（この日は含めない）
+            const endDate = new Date(instanceDate);
+            endDate.setDate(endDate.getDate() - 1);
+            await updatePlan.mutateAsync({
+              id: parentPlanId,
+              data: {
+                recurrence_end_date: endDate.toISOString().slice(0, 10),
+              },
+            });
+            break;
+          }
+
+          case 'all':
+            // 親プラン自体を削除
+            await deletePlan.mutateAsync({ id: parentPlanId });
+            break;
+        }
+      } catch (err) {
+        console.error('Failed to delete recurring plan:', err);
+      } finally {
+        recurringDeleteTargetRef.current = null;
+      }
+    },
+    [deletePlan, createInstance, updatePlan],
+  );
 
   const handleDeletePlan = useCallback(
     (plan: CalendarPlan) => {
-      // 繰り返しプランの場合はダイアログを表示
+      // 繰り返しプランの場合はスコープ選択ダイアログを表示
       if (plan.isRecurring) {
-        setRecurringDeleteTarget(plan);
-        setRecurringDialogOpen(true);
+        recurringDeleteTargetRef.current = plan;
+        openRecurringDialog(plan.title, 'delete', handleRecurringDeleteConfirm);
         return;
       }
 
@@ -41,66 +96,8 @@ export function usePlanContextActions() {
         }
       });
     },
-    [deletePlan, openDeleteDialog],
+    [deletePlan, openDeleteDialog, openRecurringDialog, handleRecurringDeleteConfirm],
   );
-
-  // 繰り返しプラン削除確認ハンドラー
-  const handleRecurringDeleteConfirm = useCallback(
-    async (scope: RecurringEditScope) => {
-      if (!recurringDeleteTarget) return;
-
-      try {
-        // 親プランID（展開されたオカレンスの場合はcalendarIdが親ID）
-        const parentPlanId = recurringDeleteTarget.calendarId || recurringDeleteTarget.id;
-
-        // インスタンスの日付を取得（展開されたオカレンスのIDから抽出）
-        // ID形式: {parentPlanId}_{YYYY-MM-DD}
-        const instanceDate = recurringDeleteTarget.id.includes('_')
-          ? (recurringDeleteTarget.id.split('_').pop() ?? '')
-          : (recurringDeleteTarget.startDate?.toISOString().slice(0, 10) ?? '');
-
-        switch (scope) {
-          case 'this':
-            // この日のみ例外として削除（cancelled例外を作成）
-            await createInstance.mutateAsync({
-              planId: parentPlanId,
-              instanceDate,
-              exceptionType: 'cancelled',
-            });
-            break;
-
-          case 'thisAndFuture':
-            // この日以降を終了: 親プランの recurrence_end_date を更新
-            // 前日を終了日にする（この日は含めない）
-            const endDate = new Date(instanceDate);
-            endDate.setDate(endDate.getDate() - 1);
-            await updatePlan.mutateAsync({
-              id: parentPlanId,
-              data: {
-                recurrence_end_date: endDate.toISOString().slice(0, 10),
-              },
-            });
-            break;
-
-          case 'all':
-            // 親プラン自体を削除
-            await deletePlan.mutateAsync({ id: parentPlanId });
-            break;
-        }
-      } catch (err) {
-        console.error('Failed to delete recurring plan:', err);
-      } finally {
-        setRecurringDialogOpen(false);
-        setRecurringDeleteTarget(null);
-      }
-    },
-    [recurringDeleteTarget, deletePlan, createInstance, updatePlan],
-  );
-
-  const handleRecurringDialogClose = useCallback(() => {
-    setRecurringDialogOpen(false);
-    setRecurringDeleteTarget(null);
-  }, []);
 
   const handleEditPlan = useCallback(
     (plan: CalendarPlan) => {
@@ -178,10 +175,5 @@ export function usePlanContextActions() {
     handleEditPlan,
     handleDuplicatePlan,
     handleViewDetails,
-    // 繰り返しプラン削除用
-    recurringDialogOpen,
-    recurringDeleteTarget,
-    handleRecurringDeleteConfirm,
-    handleRecurringDialogClose,
   };
 }

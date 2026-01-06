@@ -9,7 +9,6 @@
  */
 export type ColumnId =
   | 'selection'
-  | 'id'
   | 'title'
   | 'status'
   | 'tags'
