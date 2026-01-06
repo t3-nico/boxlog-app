@@ -42,16 +42,6 @@ export const TimeGrid = memo<TimeGridProps>(function TimeGrid({
     timeColumnWidth: TIME_COLUMN_WIDTH,
     onTimeRangeSelect: onTimeRangeSelect
       ? (selection) => {
-          // TimeSelectionをDate形式に変換してコールバックを呼ぶ
-
-          // 時間範囲の文字列を作成
-          const startTimeStr = `${String(selection.startHour).padStart(2, '0')}:${String(selection.startMinute).padStart(2, '0')}`;
-          const endTimeStr = `${String(selection.endHour).padStart(2, '0')}:${String(selection.endMinute).padStart(2, '0')}`;
-          const timeRangeStr = `${startTimeStr}-${endTimeStr}`;
-
-          console.log('🎯 Time range selected:', { selection, timeRangeStr });
-
-          // onTimeRangeSelectに渡すためのカスタムコールバック
           onTimeRangeSelect(selection);
         }
       : undefined,

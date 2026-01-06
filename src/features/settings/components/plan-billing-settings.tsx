@@ -48,8 +48,8 @@ export const PlanBillingSettings = memo(function PlanBillingSettings() {
   const [currentPlan] = useState('free');
   const [billingPeriod, setBillingPeriod] = useState<'month' | 'year'>('month');
 
-  const handleUpgrade = useCallback((planId: string) => {
-    console.log('Upgrade to:', planId);
+  const handleUpgrade = useCallback((_planId: string) => {
+    // Stub: アップグレード機能は未実装
   }, []);
 
   const handlePeriodChange = useCallback((period: 'month' | 'year') => {

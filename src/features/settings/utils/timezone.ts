@@ -57,7 +57,6 @@ export const setUserTimezone = (timezone: string): void => {
 
   try {
     localStorage.setItem('user-timezone', timezone);
-    console.log('タイムゾーン設定を保存:', timezone);
 
     // タイムゾーン変更を他のコンポーネントに通知
     window.dispatchEvent(new CustomEvent(TIMEZONE_CHANGE_EVENT, { detail: { timezone } }));
@@ -91,13 +90,10 @@ export const listenToTimezoneChange = (callback: (timezone: string) => void): ((
 export const getCurrentTimezone = (): string => {
   const userTimezone = getUserTimezone();
   if (userTimezone) {
-    console.log('ユーザー設定のタイムゾーンを使用:', userTimezone);
     return userTimezone;
   }
 
-  const browserTimezone = getBrowserTimezone();
-  console.log('ブラウザ検出のタイムゾーンを使用:', browserTimezone);
-  return browserTimezone;
+  return getBrowserTimezone();
 };
 
 /**
@@ -108,7 +104,6 @@ export const getTimezoneOffset = (timezone: string): number => {
   try {
     // UTCの場合は0を返す
     if (timezone === 'UTC') {
-      console.log(`タイムゾーン ${timezone} のオフセット: 0分`);
       return 0;
     }
 
@@ -165,13 +160,6 @@ export const getTimezoneOffset = (timezone: string): number => {
     // オフセットを分で計算
     const offsetMs = targetDate.getTime() - utcDate.getTime();
     const offsetMinutes = Math.round(offsetMs / 60000);
-
-    console.log(`🌐 タイムゾーン ${timezone} のオフセット計算:`, {
-      now: now.toISOString(),
-      utc: `${utcYear}-${utcMonth.toString().padStart(2, '0')}-${utcDay.toString().padStart(2, '0')} ${utcHour.toString().padStart(2, '0')}:${utcMinute.toString().padStart(2, '0')}`,
-      target: `${targetYear}-${targetMonth.toString().padStart(2, '0')}-${targetDay.toString().padStart(2, '0')} ${targetHour.toString().padStart(2, '0')}:${targetMinute.toString().padStart(2, '0')}`,
-      offsetMinutes,
-    });
 
     return offsetMinutes;
   } catch (error) {
@@ -246,11 +234,6 @@ export const userTimezoneToUtc = (localDate: Date): Date => {
 
   // UTCの場合はそのまま返す
   if (timezone === 'UTC') {
-    console.log('UTC → UTC変換（変換なし）:', {
-      timezone,
-      local: localDate.toISOString(),
-      result: localDate.toISOString(),
-    });
     return new Date(localDate);
   }
 
@@ -305,22 +288,6 @@ export const userTimezoneToUtc = (localDate: Date): Date => {
 
     // 差分を適用してUTC時刻を調整
     const utcDate = new Date(testUtc.getTime() + diff);
-
-    console.log('ユーザータイムゾーン → UTC変換（Intl API）:', {
-      timezone,
-      local: localDate.toISOString(),
-      target: { year, month: month + 1, day, hour, minute, second },
-      display: {
-        year: displayYear,
-        month: displayMonth + 1,
-        day: displayDay,
-        hour: displayHour,
-        minute: displayMinute,
-        second: displaySecond,
-      },
-      diff: `${diff / 60000}分`,
-      utc: utcDate.toISOString(),
-    });
 
     return utcDate;
   } catch (error) {
@@ -425,16 +392,6 @@ export const getCalendarTimezoneLabel = (): string => {
     const minutes = Math.abs(offsetMinutes) % 60;
     const sign = offsetMinutes >= 0 ? '+' : '-';
 
-    console.log('🌐 タイムゾーンオフセット計算:', {
-      timezone,
-      utc: `${utcYear}-${utcMonth}-${utcDay} ${utcHour}:${utcMinute}`,
-      local: `${localYear}-${localMonth}-${localDay} ${localHour}:${localMinute}`,
-      offsetMinutes,
-      hours,
-      minutes,
-      sign,
-    });
-
     if (minutes === 0) {
       return `UTC${sign}${hours}`;
     } else {
@@ -487,27 +444,13 @@ export const getCurrentTimeInUserTimezone = (): Date => {
 
   // UTCの場合は現在のUTC時刻を返す
   if (timezone === 'UTC') {
-    const utcTime = new Date(now.getTime() + now.getTimezoneOffset() * 60000);
-    console.log('🌐 現在のUTC時刻:', {
-      local: now.toLocaleString(),
-      utc: utcTime.toISOString(),
-    });
-    return utcTime;
+    return new Date(now.getTime() + now.getTimezoneOffset() * 60000);
   }
 
   // ブラウザネイティブのtoLocaleString()を使用してタイムゾーン変換
   try {
     const timeString = now.toLocaleString('sv-SE', { timeZone: timezone });
-    const userTime = new Date(timeString);
-
-    console.log('🌐 現在のユーザータイムゾーン時刻:', {
-      timezone,
-      now: now.toISOString(),
-      timeString,
-      userTime: userTime.toISOString(),
-    });
-
-    return userTime;
+    return new Date(timeString);
   } catch (error) {
     console.error(`タイムゾーン ${timezone} での時刻取得に失敗:`, error);
     // フォールバック: UTC時刻をオフセット計算で変換

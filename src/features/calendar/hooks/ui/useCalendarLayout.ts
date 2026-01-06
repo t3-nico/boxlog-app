@@ -222,9 +222,7 @@ export function useCalendarLayout(options?: {
   // カレンダー日付ナビゲーション
   const navigateToDate = useCallback(
     (date: Date) => {
-      console.log('📅 navigateToDate called:', date);
       setState((prev) => ({ ...prev, currentDate: date }));
-      console.log('📅 calling onDateChange with:', date);
       onDateChange?.(date);
     },
     [onDateChange],
@@ -232,11 +230,6 @@ export function useCalendarLayout(options?: {
 
   const navigateRelative = useCallback(
     (direction: 'prev' | 'next' | 'today') => {
-      console.log('📅 navigateRelative called:', {
-        direction,
-        currentViewType: state.viewType,
-        currentDate: state.currentDate,
-      });
       let newDate: Date;
 
       if (direction === 'today') {
@@ -271,7 +264,6 @@ export function useCalendarLayout(options?: {
         }
       }
 
-      console.log('📅 navigateRelative computed newDate:', newDate);
       navigateToDate(newDate);
     },
     [state.viewType, state.currentDate, navigateToDate],

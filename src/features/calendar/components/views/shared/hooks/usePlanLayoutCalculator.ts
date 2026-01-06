@@ -196,17 +196,14 @@ function calculateMaxConcurrent(plans: TimedPlan[]): number {
   let current = 0;
   let max = 0;
 
-  timePoints.forEach((point, index) => {
+  timePoints.forEach((point) => {
     if (point.type === 'start') {
       current++;
       max = Math.max(max, current);
-      console.log(`${index}: START (${point.planId}) - current=${current}, max=${max}`);
     } else {
       current--;
-      console.log(`${index}: END (${point.planId}) - current=${current}, max=${max}`);
     }
   });
 
-  console.log('🎯 最大同時重複数:', max);
   return max;
 }

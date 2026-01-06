@@ -190,12 +190,8 @@ export function useMemoizedPlans(
     return result;
   }, [memoKey, events, startDate, endDate, filters]);
 
-  // パフォーマンス監視
+  // パフォーマンス監視（キー変更のみトラック）
   useEffect(() => {
-    if (previousKey.current && previousKey.current !== memoKey) {
-      const isHit = eventCache.get(memoKey) !== undefined;
-      console.log(`Cache ${isHit ? 'HIT' : 'MISS'} for key: ${memoKey.substring(0, 8)}...`);
-    }
     previousKey.current = memoKey;
   }, [memoKey]);
 
