@@ -63,14 +63,21 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
 
   const rowRef = useRef<HTMLTableRowElement>(null);
   const recurringDeleteTargetRef = useRef<InboxItem | null>(null);
+  // 繰り返しプラン編集用のペンディングデータをrefで保持
+  const pendingEditRef = useRef<
+    | {
+        type: 'status';
+        data: { status: PlanStatus };
+      }
+    | {
+        type: 'datetime';
+        data: { start_time: string | undefined; end_time: string | undefined };
+      }
+    | null
+  >(null);
   const selected = isSelected(item.id);
   const isFocused = focusedId === item.id;
   const visibleColumns = getVisibleColumns();
-
-  // インライン編集ハンドラー
-  const handleStatusChange = (status: PlanStatus) => {
-    console.log('Update status:', item.id, status);
-  };
 
   const handleTagsChange = async (tagIds: string[]) => {
     const currentTagIds = item.tags?.map((tag) => tag.id) ?? [];
@@ -118,6 +125,96 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
     },
     [deletePlan],
   );
+
+  // 繰り返しプラン編集確認ハンドラー
+  const handleRecurringEditConfirm = useCallback(
+    async (scope: RecurringEditScope) => {
+      const pending = pendingEditRef.current;
+      if (!pending) return;
+
+      try {
+        // Board/Tableビューでは親プラン表示のため、すべてのスコープで親プランを更新
+        switch (scope) {
+          case 'this':
+          case 'thisAndFuture':
+          case 'all':
+            if (pending.type === 'status' && pending.data.status) {
+              await updatePlan.mutateAsync({
+                id: item.id,
+                data: { status: pending.data.status },
+              });
+            } else if (pending.type === 'datetime') {
+              await updatePlan.mutateAsync({
+                id: item.id,
+                data: {
+                  start_time: pending.data.start_time || undefined,
+                  end_time: pending.data.end_time || undefined,
+                },
+              });
+            }
+            break;
+        }
+      } catch (err) {
+        console.error('Failed to update recurring plan:', err);
+      } finally {
+        pendingEditRef.current = null;
+      }
+    },
+    [updatePlan, item.id],
+  );
+
+  // インライン編集ハンドラー
+  const handleStatusChange = (status: PlanStatus) => {
+    const isRecurring =
+      item.recurrence_type && item.recurrence_type !== 'none' && item.recurrence_type !== null;
+
+    if (isRecurring) {
+      // 繰り返しプランの場合はスコープ選択ダイアログを表示
+      pendingEditRef.current = { type: 'status', data: { status } };
+      openRecurringDialog(item.title, 'edit', handleRecurringEditConfirm);
+      return;
+    }
+
+    updatePlan.mutate({
+      id: item.id,
+      data: { status },
+    });
+  };
+
+  // 日時変更ハンドラー（DateTimeUnifiedCell用）
+  const handleDateTimeChange = (data: {
+    date: string | null;
+    startTime: string | null;
+    endTime: string | null;
+  }) => {
+    const isRecurring =
+      item.recurrence_type && item.recurrence_type !== 'none' && item.recurrence_type !== null;
+
+    // 日付+時刻をISO 8601形式に変換
+    const startTime = data.date && data.startTime ? `${data.date}T${data.startTime}:00Z` : null;
+    const endTime = data.date && data.endTime ? `${data.date}T${data.endTime}:00Z` : null;
+
+    if (isRecurring) {
+      // 繰り返しプランの場合はスコープ選択ダイアログを表示
+      pendingEditRef.current = {
+        type: 'datetime',
+        data: {
+          start_time: startTime || undefined,
+          end_time: endTime || undefined,
+        },
+      };
+      openRecurringDialog(item.title, 'edit', handleRecurringEditConfirm);
+      return;
+    }
+
+    updatePlan.mutate({
+      id: item.id,
+      data: {
+        start_time: startTime || undefined,
+        end_time: endTime || undefined,
+      },
+    });
+  };
 
   // コンテキストメニューアクション
   const handleEdit = (item: InboxItem) => {
@@ -263,20 +360,7 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
               recurrence: null,
             }}
             {...(column?.width !== undefined && { width: column.width })}
-            onChange={(data) => {
-              // 日付+時刻をISO 8601形式に変換
-              const startTime =
-                data.date && data.startTime ? `${data.date}T${data.startTime}:00Z` : null;
-              const endTime = data.date && data.endTime ? `${data.date}T${data.endTime}:00Z` : null;
-
-              updatePlan.mutate({
-                id: item.id,
-                data: {
-                  start_time: startTime || undefined,
-                  end_time: endTime || undefined,
-                },
-              });
-            }}
+            onChange={handleDateTimeChange}
           />
         );
 

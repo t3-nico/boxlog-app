@@ -69,6 +69,17 @@ export function PlanCard({ item }: PlanCardProps) {
   // 繰り返しプラン削除用のターゲットをrefで保持
   const recurringDeleteTargetRef = useRef<InboxItem | null>(null);
 
+  // 繰り返しプラン日時編集用のペンディングデータをrefで保持
+  const pendingDateTimeEditRef = useRef<{
+    type: 'change' | 'clear';
+    data?: {
+      due_date: string | undefined;
+      start_time: string | undefined;
+      end_time: string | undefined;
+      reminder_minutes: number | null | undefined;
+    };
+  } | null>(null);
+
   // ドラッグ可能にする
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: item.id,
@@ -129,25 +140,47 @@ export function PlanCard({ item }: PlanCardProps) {
 
   // 日時データ変更ハンドラー
   const handleDateTimeChange = () => {
+    const isRecurring =
+      item.recurrence_type && item.recurrence_type !== 'none' && item.recurrence_type !== null;
+
+    const updateData = {
+      due_date: selectedDate ? format(selectedDate, 'yyyy-MM-dd') : undefined,
+      start_time:
+        selectedDate && startTime
+          ? toLocalISOString(format(selectedDate, 'yyyy-MM-dd'), startTime)
+          : undefined,
+      end_time:
+        selectedDate && endTime
+          ? toLocalISOString(format(selectedDate, 'yyyy-MM-dd'), endTime)
+          : undefined,
+      reminder_minutes: reminderTypeToMinutes(reminderType),
+    };
+
+    if (isRecurring) {
+      // 繰り返しプランの場合はスコープ選択ダイアログを表示
+      pendingDateTimeEditRef.current = { type: 'change', data: updateData };
+      openRecurringDialog(item.title, 'edit', handleRecurringDateTimeEditConfirm);
+      return;
+    }
+
     updatePlan.mutate({
       id: item.id,
-      data: {
-        due_date: selectedDate ? format(selectedDate, 'yyyy-MM-dd') : undefined,
-        start_time:
-          selectedDate && startTime
-            ? toLocalISOString(format(selectedDate, 'yyyy-MM-dd'), startTime)
-            : undefined,
-        end_time:
-          selectedDate && endTime
-            ? toLocalISOString(format(selectedDate, 'yyyy-MM-dd'), endTime)
-            : undefined,
-        reminder_minutes: reminderTypeToMinutes(reminderType),
-      },
+      data: updateData,
     });
   };
 
   // 日時クリアハンドラー
   const handleDateTimeClear = () => {
+    const isRecurring =
+      item.recurrence_type && item.recurrence_type !== 'none' && item.recurrence_type !== null;
+
+    if (isRecurring) {
+      // 繰り返しプランの場合はスコープ選択ダイアログを表示
+      pendingDateTimeEditRef.current = { type: 'clear' };
+      openRecurringDialog(item.title, 'edit', handleRecurringDateTimeEditConfirm);
+      return;
+    }
+
     updatePlan.mutate({
       id: item.id,
       data: {
@@ -224,6 +257,54 @@ export function PlanCard({ item }: PlanCardProps) {
       }
     },
     [deletePlan],
+  );
+
+  // 繰り返しプラン日時編集確認ハンドラー
+  const handleRecurringDateTimeEditConfirm = useCallback(
+    async (scope: RecurringEditScope) => {
+      const pending = pendingDateTimeEditRef.current;
+      if (!pending) return;
+
+      try {
+        // Board/Tableビューでは親プラン表示のため、すべてのスコープで親プランを更新
+        switch (scope) {
+          case 'this':
+          case 'thisAndFuture':
+          case 'all':
+            if (pending.type === 'clear') {
+              // 日時クリア
+              await updatePlan.mutateAsync({
+                id: item.id,
+                data: {
+                  due_date: undefined,
+                  start_time: undefined,
+                  end_time: undefined,
+                  reminder_minutes: null,
+                  recurrence_type: 'none',
+                  recurrence_rule: null,
+                },
+              });
+              setSelectedDate(undefined);
+              setStartTime('');
+              setEndTime('');
+              setReminderType('');
+              setDateTimeOpen(false);
+            } else if (pending.data) {
+              // 日時変更
+              await updatePlan.mutateAsync({
+                id: item.id,
+                data: pending.data,
+              });
+            }
+            break;
+        }
+      } catch (err) {
+        console.error('Failed to update recurring plan datetime:', err);
+      } finally {
+        pendingDateTimeEditRef.current = null;
+      }
+    },
+    [updatePlan, item.id],
   );
 
   // コンテキストメニューアクション
