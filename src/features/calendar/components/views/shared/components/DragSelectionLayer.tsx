@@ -133,12 +133,6 @@ export const DragSelectionLayer = ({
         const endTotalMinutes = selection.endHour * 60 + selection.endMinute;
         const durationMinutes = endTotalMinutes - startTotalMinutes;
 
-        console.log('🎯 時間範囲選択完了', {
-          start: `${selection.startHour}:${selection.startMinute.toString().padStart(2, '0')}`,
-          end: `${selection.endHour}:${selection.endMinute.toString().padStart(2, '0')}`,
-          duration: durationMinutes,
-        });
-
         if (durationMinutes >= 15 && onTimeRangeSelect) {
           onTimeRangeSelect(selection);
         }
@@ -171,15 +165,6 @@ export const DragSelectionLayer = ({
         const endMinutes = selection.endHour * 60 + selection.endMinute;
         const top = startMinutes * (HOUR_HEIGHT / 60);
         const height = (endMinutes - startMinutes) * (HOUR_HEIGHT / 60);
-
-        console.log('📏 選択範囲計算', {
-          selection,
-          startMinutes,
-          endMinutes,
-          top: `${top}px`,
-          height: `${height}px`,
-          HOUR_HEIGHT,
-        });
 
         return {
           position: 'absolute',
@@ -228,23 +213,13 @@ export const DragSelectionLayer = ({
       {children}
 
       {/* ドラッグ選択範囲の表示 */}
-      {(() => {
-        console.log('🎨 レンダリング条件', {
-          hasSelection: !!selection,
-          hasSelectionStyle: !!selectionStyle,
-          isSelecting,
-          selection,
-        });
-        return (
-          selectionStyle && (
-            <div style={selectionStyle}>
-              <span className="bg-primary text-primary-foreground rounded px-2 py-1 text-sm font-medium">
-                新しいイベント
-              </span>
-            </div>
-          )
-        );
-      })()}
+      {selectionStyle && (
+        <div style={selectionStyle}>
+          <span className="bg-primary text-primary-foreground rounded px-2 py-1 text-sm font-medium">
+            新しいイベント
+          </span>
+        </div>
+      )}
     </div>
   );
 };

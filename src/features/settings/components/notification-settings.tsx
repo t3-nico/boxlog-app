@@ -31,10 +31,9 @@ export function NotificationSettings() {
       weeklyDigest: true,
       systemNotifications: true,
     },
-    onSave: async (values) => {
-      // 通知設定API呼び出しシミュレーション
+    onSave: async (_values) => {
+      // Stub: 通知設定API呼び出しシミュレーション
       await new Promise((resolve) => setTimeout(resolve, 500));
-      console.log('Saving notification settings:', values);
     },
     successMessage: t('notifications.settings.saveSuccess'),
     debounceMs: 800,

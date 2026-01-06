@@ -471,8 +471,8 @@ export function usePlanInspectorContentLogic() {
   }, [planId]);
 
   const handleDuplicate = useCallback(() => {
-    console.log('Duplicate plan:', plan);
-  }, [plan]);
+    // Stub: 複製機能は未実装
+  }, []);
 
   const handleCopyLink = useCallback(() => {
     if (planId) {
@@ -482,8 +482,8 @@ export function usePlanInspectorContentLogic() {
   }, [planId]);
 
   const handleSaveAsTemplate = useCallback(() => {
-    console.log('Save as template:', plan);
-  }, [plan]);
+    // Stub: テンプレート保存機能は未実装
+  }, []);
 
   return {
     // Store state

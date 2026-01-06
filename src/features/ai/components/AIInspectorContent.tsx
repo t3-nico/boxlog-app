@@ -28,8 +28,7 @@ export const AIInspectorContent = memo(function AIInspectorContent() {
       e.preventDefault();
       if (!input.trim()) return;
 
-      // TODO: AI SDKを使用してメッセージを送信
-      console.log('Sending message:', input);
+      // Stub: AI SDKを使用してメッセージを送信
       setInput('');
     },
     [input],

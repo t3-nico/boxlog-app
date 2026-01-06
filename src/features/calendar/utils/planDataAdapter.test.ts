@@ -156,11 +156,6 @@ describe('planDataAdapter', () => {
       expect(result[0]!.id).toBe('plan-1');
       expect(result[1]!.id).toBe('plan-2');
     });
-
-    it.skip('削除済みイベントは除外される（廃止予定の機能）', () => {
-      // Note: isDeletedフィルタリングは現在の実装にはありません
-      // 削除済みプランはデータベースクエリレベルでフィルタリングされます
-    });
   });
 
   describe('timedEventToEventUpdate', () => {

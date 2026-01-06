@@ -106,7 +106,6 @@ export const useCalendarSettingsStore = create<CalendarSettingsStore>()(
           listenToTimezoneChange((newTimezone) => {
             const currentState = get();
             if (currentState.timezone !== newTimezone) {
-              console.log('📅 Preferencesからのタイムゾーン変更を検出:', newTimezone);
               set({ ...currentState, timezone: newTimezone });
             }
           });

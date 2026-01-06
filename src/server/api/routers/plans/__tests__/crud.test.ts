@@ -1,4 +1,3 @@
-// @ts-nocheck - TODO: tRPC v11の型システムとの互換性問題を解決する
 /**
  * Plans CRUD Router Tests
  *
@@ -8,9 +7,11 @@
  * - エラーハンドリング
  */
 
+import type { inferRouterOutputs } from '@trpc/server';
 import { TRPCError } from '@trpc/server';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import type { PlanFilter } from '@/schemas/plans';
 import {
   createAuthenticatedContext,
   createMockContext,
@@ -21,6 +22,34 @@ import {
 } from '@/test/trpc-test-helpers';
 
 import { plansCrudRouter } from '../crud';
+
+// Caller型を明示的に定義（tRPC v11の型推論問題を解決）
+type RouterOutputs = inferRouterOutputs<typeof plansCrudRouter>;
+
+interface PlansCrudCaller {
+  list: (input?: PlanFilter) => Promise<RouterOutputs['list']>;
+  getById: (input: {
+    id: string;
+    include?: { tags?: boolean };
+  }) => Promise<RouterOutputs['getById']>;
+  create: (input: {
+    title: string;
+    status: string;
+    due_date?: string;
+    start_time?: string;
+    end_time?: string;
+  }) => Promise<RouterOutputs['create']>;
+  update: (input: { id: string; data: { title?: string } }) => Promise<RouterOutputs['update']>;
+  delete: (input: { id: string }) => Promise<RouterOutputs['delete']>;
+}
+
+/** 型安全なcallerを作成 */
+function createTypedCaller(
+  router: typeof plansCrudRouter,
+  ctx: Parameters<typeof createTestCaller>[1],
+): PlansCrudCaller {
+  return createTestCaller(router, ctx) as unknown as PlansCrudCaller;
+}
 
 // モジュールモック
 vi.mock('@/server/utils/activity-tracker', () => ({
@@ -35,7 +64,7 @@ describe('plansCrudRouter', () => {
   describe('list', () => {
     it('should throw UNAUTHORIZED when user is not authenticated', async () => {
       const ctx = createMockContext(); // userId なし
-      const caller = createTestCaller(plansCrudRouter, ctx);
+      const caller = createTypedCaller(plansCrudRouter, ctx);
 
       await expect(caller.list()).rejects.toThrow(TRPCError);
 
@@ -58,7 +87,7 @@ describe('plansCrudRouter', () => {
       const ctx = createAuthenticatedContext('test-user-id', {
         supabaseOverrides: mockSupabase,
       });
-      const caller = createTestCaller(plansCrudRouter, ctx);
+      const caller = createTypedCaller(plansCrudRouter, ctx);
 
       const result = await caller.list();
 
@@ -77,7 +106,7 @@ describe('plansCrudRouter', () => {
       const ctx = createAuthenticatedContext('test-user-id', {
         supabaseOverrides: mockSupabase,
       });
-      const caller = createTestCaller(plansCrudRouter, ctx);
+      const caller = createTypedCaller(plansCrudRouter, ctx);
 
       await caller.list({ status: 'doing' });
 
@@ -93,7 +122,7 @@ describe('plansCrudRouter', () => {
       const ctx = createAuthenticatedContext('test-user-id', {
         supabaseOverrides: mockSupabase,
       });
-      const caller = createTestCaller(plansCrudRouter, ctx);
+      const caller = createTypedCaller(plansCrudRouter, ctx);
 
       await caller.list({ search: 'Meeting' });
 
@@ -109,7 +138,7 @@ describe('plansCrudRouter', () => {
       const ctx = createAuthenticatedContext('test-user-id', {
         supabaseOverrides: mockSupabase,
       });
-      const caller = createTestCaller(plansCrudRouter, ctx);
+      const caller = createTypedCaller(plansCrudRouter, ctx);
 
       await caller.list({ sortBy: 'title', sortOrder: 'asc' });
 
@@ -123,7 +152,7 @@ describe('plansCrudRouter', () => {
       const ctx = createAuthenticatedContext('test-user-id', {
         supabaseOverrides: mockSupabase,
       });
-      const caller = createTestCaller(plansCrudRouter, ctx);
+      const caller = createTypedCaller(plansCrudRouter, ctx);
 
       await caller.list({ limit: 10, offset: 20 });
 
@@ -145,7 +174,7 @@ describe('plansCrudRouter', () => {
       const ctx = createAuthenticatedContext('test-user-id', {
         supabaseOverrides: mockSupabase,
       });
-      const caller = createTestCaller(plansCrudRouter, ctx);
+      const caller = createTypedCaller(plansCrudRouter, ctx);
 
       const result = await caller.getById({ id: validPlanId });
 
@@ -159,7 +188,7 @@ describe('plansCrudRouter', () => {
       const ctx = createAuthenticatedContext('test-user-id', {
         supabaseOverrides: mockSupabase,
       });
-      const caller = createTestCaller(plansCrudRouter, ctx);
+      const caller = createTypedCaller(plansCrudRouter, ctx);
 
       try {
         await caller.getById({ id: nonExistentId });
@@ -180,7 +209,7 @@ describe('plansCrudRouter', () => {
       const ctx = createAuthenticatedContext('test-user-id', {
         supabaseOverrides: mockSupabase,
       });
-      const caller = createTestCaller(plansCrudRouter, ctx);
+      const caller = createTypedCaller(plansCrudRouter, ctx);
 
       const result = await caller.create({
         title: 'New Plan',
@@ -205,7 +234,7 @@ describe('plansCrudRouter', () => {
       const ctx = createAuthenticatedContext('test-user-id', {
         supabaseOverrides: mockSupabase,
       });
-      const caller = createTestCaller(plansCrudRouter, ctx);
+      const caller = createTypedCaller(plansCrudRouter, ctx);
 
       const result = await caller.create({
         title: 'New Plan',
@@ -232,7 +261,7 @@ describe('plansCrudRouter', () => {
       const ctx = createAuthenticatedContext('test-user-id', {
         supabaseOverrides: mockSupabase,
       });
-      const caller = createTestCaller(plansCrudRouter, ctx);
+      const caller = createTypedCaller(plansCrudRouter, ctx);
 
       const result = await caller.update({
         id: validPlanId,
@@ -255,7 +284,7 @@ describe('plansCrudRouter', () => {
       const ctx = createAuthenticatedContext('test-user-id', {
         supabaseOverrides: mockSupabase,
       });
-      const caller = createTestCaller(plansCrudRouter, ctx);
+      const caller = createTypedCaller(plansCrudRouter, ctx);
 
       const result = await caller.delete({ id: validPlanId });
 
@@ -320,7 +349,7 @@ function createChainableMockQuery<T>(
   // 全メソッドをチェーン可能に
   Object.keys(mockQuery).forEach((key) => {
     if (key !== 'single' && key !== 'then') {
-      mockQuery[key].mockReturnValue(mockQuery);
+      mockQuery[key]!.mockReturnValue(mockQuery);
     }
   });
 
@@ -426,7 +455,7 @@ function setupMockInsertQuery<T>(
     // 全メソッドをチェーン可能に（single, then, insert以外）
     Object.keys(mockQuery).forEach((key) => {
       if (key !== 'single' && key !== 'then' && key !== 'insert') {
-        mockQuery[key].mockReturnValue(mockQuery);
+        mockQuery[key]!.mockReturnValue(mockQuery);
       }
     });
 
@@ -476,7 +505,7 @@ function setupMockUpdateQuery<T>(
 
     Object.keys(mockQuery).forEach((key) => {
       if (key !== 'single') {
-        mockQuery[key].mockReturnValue(mockQuery);
+        mockQuery[key]!.mockReturnValue(mockQuery);
       }
     });
 
@@ -520,7 +549,7 @@ function setupMockDeleteQuery<T>(
 
     Object.keys(mockQuery).forEach((key) => {
       if (key !== 'single' && key !== 'then') {
-        mockQuery[key].mockReturnValue(mockQuery);
+        mockQuery[key]!.mockReturnValue(mockQuery);
       }
     });
 

@@ -221,20 +221,20 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
     openInspector(item.id);
   };
 
-  const handleDuplicate = (item: InboxItem) => {
-    console.log('Duplicate:', item.id);
+  const handleDuplicate = (_item: InboxItem) => {
+    // Stub: 複製機能は未実装
   };
 
-  const handleAddTags = (item: InboxItem) => {
-    console.log('Add tags:', item.id);
+  const handleAddTags = (_item: InboxItem) => {
+    // Stub: タグ追加機能は未実装
   };
 
-  const handleChangeDueDate = (item: InboxItem) => {
-    console.log('Change due date:', item.id);
+  const handleChangeDueDate = (_item: InboxItem) => {
+    // Stub: 期限変更機能は未実装
   };
 
-  const handleArchive = (item: InboxItem) => {
-    console.log('Archive:', item.id);
+  const handleArchive = (_item: InboxItem) => {
+    // Stub: アーカイブ機能は未実装
   };
 
   const handleDelete = useCallback(

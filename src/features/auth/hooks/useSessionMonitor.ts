@@ -78,8 +78,6 @@ export function useSessionMonitor(): SessionMonitorState {
       recordActivity();
       setShowTimeoutWarning(false);
       setRemainingTime(SESSION_CONFIG.idleTimeout);
-
-      console.log('[SessionMonitor] Session extended successfully');
     } catch (err) {
       console.error('[SessionMonitor] Session extension error:', err);
     }

@@ -13,45 +13,11 @@
  * - tagGroups.reorder: グループ並び順一括更新
  */
 
-import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
-import {
-  createTagGroupService,
-  TagGroupServiceError,
-} from '@/server/services/tag-groups/tag-group-service';
+import { handleServiceError } from '@/server/services/errors';
+import { createTagGroupService } from '@/server/services/tag-groups/tag-group-service';
 import { createTRPCRouter, protectedProcedure } from '../trpc';
-
-/**
- * エラーハンドリングヘルパー
- */
-function handleServiceError(error: unknown): never {
-  if (error instanceof TagGroupServiceError) {
-    const codeMap: Record<
-      TagGroupServiceError['code'],
-      'BAD_REQUEST' | 'NOT_FOUND' | 'INTERNAL_SERVER_ERROR'
-    > = {
-      FETCH_FAILED: 'INTERNAL_SERVER_ERROR',
-      CREATE_FAILED: 'INTERNAL_SERVER_ERROR',
-      UPDATE_FAILED: 'INTERNAL_SERVER_ERROR',
-      DELETE_FAILED: 'INTERNAL_SERVER_ERROR',
-      REORDER_FAILED: 'INTERNAL_SERVER_ERROR',
-      NOT_FOUND: 'NOT_FOUND',
-      DUPLICATE_NAME: 'BAD_REQUEST',
-      INVALID_INPUT: 'BAD_REQUEST',
-    };
-
-    throw new TRPCError({
-      code: codeMap[error.code],
-      message: error.message,
-    });
-  }
-
-  throw new TRPCError({
-    code: 'INTERNAL_SERVER_ERROR',
-    message: error instanceof Error ? error.message : 'Unknown error',
-  });
-}
 
 /**
  * Tag Groups Router

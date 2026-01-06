@@ -74,7 +74,6 @@ interface TagUsage {
 
 // タグ使用状況取得フック（互換性のため残す - 未実装）
 export function useTagUsage(_id: string | undefined) {
-  // TODO: tRPCルーターに使用状況エンドポイントを追加
   return {
     data: undefined as TagUsage | undefined,
     isPending: false,

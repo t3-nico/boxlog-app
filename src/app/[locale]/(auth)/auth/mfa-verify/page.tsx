@@ -35,14 +35,12 @@ export default function MFAVerifyPage() {
 
   const checkMFARequired = async () => {
     try {
-      console.log('MFA検証ページ: ファクターをチェック中...');
       const { data: factors } = await supabase.auth.mfa.listFactors();
 
       if (factors && factors.totp.length > 0) {
         // 最初の有効なTOTPファクターを使用
         const verifiedFactor = factors.totp.find((f) => f.status === 'verified');
         if (verifiedFactor) {
-          console.log('検証済みファクター発見:', verifiedFactor.id);
           setFactorId(verifiedFactor.id);
 
           // MFAチャレンジを発行（公式ベストプラクティス）
@@ -51,27 +49,22 @@ export default function MFAVerifyPage() {
           });
 
           if (challengeError) {
-            console.error('Challenge error:', challengeError);
             setError('MFAチャレンジの作成に失敗しました');
             return;
           }
 
           if (challengeData) {
-            console.log('チャレンジ作成成功:', challengeData.id);
             setChallengeId(challengeData.id);
           }
         } else {
           // MFAが設定されていない場合はリダイレクト
-          console.log('検証済みファクターなし、カレンダーへリダイレクト');
           router.push('/calendar');
         }
       } else {
         // MFAが設定されていない場合はリダイレクト
-        console.log('TOTPファクターなし、カレンダーへリダイレクト');
         router.push('/calendar');
       }
-    } catch (err) {
-      console.error('MFA check error:', err);
+    } catch {
       setError('MFA状態の確認に失敗しました');
     }
   };
@@ -91,28 +84,22 @@ export default function MFAVerifyPage() {
     setError(null);
 
     try {
-      console.log('MFA検証開始:', { factorId, challengeId, codeLength: verificationCode.length });
-
       // 公式ベストプラクティス: 保存済みのchallengeIdを使用
-      const { data: verifyData, error: verifyError } = await supabase.auth.mfa.verify({
+      const { error: verifyError } = await supabase.auth.mfa.verify({
         factorId,
         challengeId,
         code: verificationCode,
       });
 
       if (verifyError) {
-        console.error('Verify error:', verifyError);
         throw new Error(verifyError.message);
       }
-
-      console.log('MFA検証成功:', verifyData);
 
       // 検証成功、次のページへリダイレクト
       const next = searchParams?.get('next') || `/${locale}/calendar`;
       router.refresh();
       router.push(next);
     } catch (err) {
-      console.error('Verification error:', err);
       const errorMessage =
         err instanceof Error ? err.message : '無効なコードです。もう一度お試しください';
       setError(errorMessage);

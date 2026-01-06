@@ -13,44 +13,11 @@
  * - tags.delete: タグ削除
  */
 
-import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
-import { createTagService, TagServiceError } from '@/server/services/tags/tag-service';
+import { handleServiceError } from '@/server/services/errors';
+import { createTagService } from '@/server/services/tags/tag-service';
 import { createTRPCRouter, protectedProcedure } from '../trpc';
-
-/**
- * エラーハンドリングヘルパー
- */
-function handleServiceError(error: unknown): never {
-  if (error instanceof TagServiceError) {
-    const codeMap: Record<
-      TagServiceError['code'],
-      'BAD_REQUEST' | 'NOT_FOUND' | 'INTERNAL_SERVER_ERROR'
-    > = {
-      FETCH_FAILED: 'INTERNAL_SERVER_ERROR',
-      CREATE_FAILED: 'INTERNAL_SERVER_ERROR',
-      UPDATE_FAILED: 'INTERNAL_SERVER_ERROR',
-      DELETE_FAILED: 'INTERNAL_SERVER_ERROR',
-      NOT_FOUND: 'NOT_FOUND',
-      DUPLICATE_NAME: 'BAD_REQUEST',
-      INVALID_INPUT: 'BAD_REQUEST',
-      MERGE_FAILED: 'INTERNAL_SERVER_ERROR',
-      SAME_TAG_MERGE: 'BAD_REQUEST',
-      TARGET_NOT_FOUND: 'NOT_FOUND',
-    };
-
-    throw new TRPCError({
-      code: codeMap[error.code],
-      message: error.message,
-    });
-  }
-
-  throw new TRPCError({
-    code: 'INTERNAL_SERVER_ERROR',
-    message: error instanceof Error ? error.message : 'Unknown error',
-  });
-}
 
 /**
  * Tags Router

@@ -21,7 +21,7 @@
  * ```
  */
 
-import type { ServiceSupabaseClient } from './types';
+import { callPlanRpc, type ServiceSupabaseClient } from './types';
 
 /** プラン作成（タグ付き）のオプション */
 export interface CreatePlanWithTagsOptions {
@@ -124,9 +124,8 @@ export class PlanTransactionService {
     const { userId, title, description, scheduledDate, tagIds } = options;
 
     try {
-      // Note: This RPC function is planned but may not exist yet in the database
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data, error } = await (this.supabase.rpc as any)('create_plan_with_tags', {
+      // Note: RPC関数はDBマイグレーションで作成が必要
+      const { data, error } = await callPlanRpc(this.supabase, 'create_plan_with_tags', {
         p_user_id: userId,
         p_title: title,
         p_description: description || null,
@@ -173,9 +172,8 @@ export class PlanTransactionService {
     const { userId, planId, title, description, scheduledDate, tagIds } = options;
 
     try {
-      // Note: This RPC function is planned but may not exist yet in the database
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data, error } = await (this.supabase.rpc as any)('update_plan_with_tags', {
+      // Note: RPC関数はDBマイグレーションで作成が必要
+      const { data, error } = await callPlanRpc(this.supabase, 'update_plan_with_tags', {
         p_user_id: userId,
         p_plan_id: planId,
         p_title: title || null,
@@ -225,9 +223,8 @@ export class PlanTransactionService {
     const { userId, planId } = options;
 
     try {
-      // Note: This RPC function is planned but may not exist yet in the database
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data, error } = await (this.supabase.rpc as any)('delete_plan_with_cleanup', {
+      // Note: RPC関数はDBマイグレーションで作成が必要
+      const { data, error } = await callPlanRpc(this.supabase, 'delete_plan_with_cleanup', {
         p_user_id: userId,
         p_plan_id: planId,
       });
@@ -246,7 +243,15 @@ export class PlanTransactionService {
         );
       }
 
-      return data as DeletePlanWithCleanupResult;
+      // DeletePlanWithCleanupResultへの変換
+      return {
+        success: data.success,
+        deleted_plan: {
+          id: data.deleted_plan_id,
+          title: '', // RPC関数がtitleを返す場合は更新が必要
+        },
+        deleted_tags_associations: 0, // RPC関数が返す場合は更新が必要
+      } as DeletePlanWithCleanupResult;
     } catch (error) {
       if (error instanceof PlanTransactionServiceError) {
         throw error;

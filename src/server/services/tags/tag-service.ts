@@ -18,6 +18,43 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 /** タグ行の型 */
 type TagRow = Database['public']['Tables']['tags']['Row'];
 
+/**
+ * Tag RPC関数の型定義
+ * これらのRPC関数はDBマイグレーションで作成が必要
+ */
+interface TagRpcFunctions {
+  merge_tags: {
+    Args: {
+      p_user_id: string;
+      p_source_tag_ids: string[];
+      p_target_tag_id: string;
+    };
+    Returns: {
+      success: boolean;
+      merged_associations: number;
+      deleted_tags: number;
+      target_tag: TagRow;
+    };
+  };
+}
+
+/**
+ * 型安全なTag RPC呼び出しヘルパー
+ * TODO: DBマイグレーションでRPC関数を作成後、database.types.tsを再生成してこのヘルパーを削除
+ */
+function callTagRpc<T extends keyof TagRpcFunctions>(
+  supabase: SupabaseClient<Database>,
+  functionName: T,
+  args: TagRpcFunctions[T]['Args'],
+): Promise<{ data: TagRpcFunctions[T]['Returns'] | null; error: Error | null }> {
+  // DBの型定義にRPC関数が存在しないため、unknownを経由してキャスト
+  const rpcCall = supabase.rpc as unknown as (
+    fn: string,
+    params: Record<string, unknown>,
+  ) => Promise<{ data: TagRpcFunctions[T]['Returns'] | null; error: Error | null }>;
+  return rpcCall(functionName, args as Record<string, unknown>);
+}
+
 /** タグ作成入力 */
 export interface CreateTagInput {
   name: string;
@@ -243,9 +280,8 @@ export class TagService {
     }
 
     try {
-      // Note: This RPC function is planned but may not exist yet in the database
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data, error } = await (this.supabase.rpc as any)('merge_tags', {
+      // Note: RPC関数はDBマイグレーションで作成が必要
+      const { data, error } = await callTagRpc(this.supabase, 'merge_tags', {
         p_user_id: userId,
         p_source_tag_ids: [sourceTagId],
         p_target_tag_id: targetTagId,
@@ -255,22 +291,14 @@ export class TagService {
         throw new TagServiceError('MERGE_FAILED', `Failed to merge tags: ${error.message}`);
       }
 
-      // RPC結果を解析
-      const result = data as {
-        success: boolean;
-        merged_associations: number;
-        deleted_tags: number;
-        target_tag: TagRow;
-      } | null;
-
-      if (!result || !result.success) {
+      if (!data || !data.success) {
         throw new TagServiceError('MERGE_FAILED', 'Merge operation failed');
       }
 
       return {
         success: true,
-        mergedAssociations: result.merged_associations,
-        targetTag: result.target_tag,
+        mergedAssociations: data.merged_associations,
+        targetTag: data.target_tag,
       };
     } catch (error) {
       if (error instanceof TagServiceError) {

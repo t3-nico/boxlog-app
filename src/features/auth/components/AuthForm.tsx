@@ -67,20 +67,15 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
         const { data: aalData, error: aalError } =
           await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
 
-        console.log('Login successful. AAL Data:', aalData);
-
         if (aalError) {
           console.error('AAL check error:', aalError);
         }
 
         // currentLevel が aal1 で nextLevel が aal2 の場合、MFA検証が必要
         if (aalData && aalData.currentLevel === 'aal1' && aalData.nextLevel === 'aal2') {
-          // MFA検証が必要
-          console.log('MFA verification required');
           router.push(`/${locale}/auth/mfa-verify`);
         } else {
           // MFAが不要、または既にaal2の場合は通常通りリダイレクト
-          console.log('No MFA required, proceeding to calendar');
           router.refresh();
           router.push(`/${locale}/calendar`);
         }

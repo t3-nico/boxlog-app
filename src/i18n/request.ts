@@ -16,7 +16,6 @@ const NAMESPACES = [
   'legal',
   'navigation',
   'notification',
-  'offline',
   'settings',
   'stats',
   'tag',

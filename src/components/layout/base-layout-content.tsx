@@ -78,19 +78,8 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
   const createActionSheet = useCreateActionSheet();
 
   // FABからのアクション選択ハンドラー
-  const handleCreateAction = useCallback((type: CreateActionType) => {
-    // TODO: 各アクションの実装
-    switch (type) {
-      case 'plan':
-        console.log('Create new plan');
-        break;
-      case 'record':
-        console.log('Create new record');
-        break;
-      case 'template':
-        console.log('Add from template');
-        break;
-    }
+  const handleCreateAction = useCallback((_type: CreateActionType) => {
+    // Stub: 各アクションの実装は未完了
   }, []);
 
   // メモ化: コンテンツ部分（children, isMobile, localeに依存）
