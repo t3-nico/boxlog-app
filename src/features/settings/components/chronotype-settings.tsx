@@ -31,13 +31,13 @@ const CHRONOTYPE_LABEL: Record<Exclude<ChronotypeType, 'custom'>, string> = {
   dolphin: '不規則型',
 };
 
-// 生産性レベルの色
+// 生産性レベルの色（クロノタイプセマンティックトークン）
 const LEVEL_COLORS: Record<ProductivityZone['level'], string> = {
-  peak: 'bg-success',
-  good: 'bg-success/60',
-  moderate: 'bg-primary/40',
-  low: 'bg-muted',
-  sleep: 'bg-accent',
+  peak: 'bg-[var(--chronotype-peak)]',
+  good: 'bg-[var(--chronotype-good)]',
+  moderate: 'bg-[var(--chronotype-moderate)]',
+  low: 'bg-[var(--chronotype-low)]',
+  sleep: 'bg-[var(--chronotype-sleep)]',
 };
 
 // 生産性レベルの日本語ラベル
