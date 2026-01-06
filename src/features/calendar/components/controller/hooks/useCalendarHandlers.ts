@@ -8,6 +8,7 @@ import { useTranslations } from 'next-intl';
 import useCalendarToast from '@/features/calendar/lib/toast';
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
+import { useRecurringEditConfirmStore } from '@/features/plans/stores/useRecurringEditConfirmStore';
 import { useHapticFeedback } from '@/hooks/useHapticFeedback';
 import { logger } from '@/lib/logger';
 import { api } from '@/lib/trpc';
@@ -58,13 +59,29 @@ export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandle
   // プラン関連のハンドラー
   const handlePlanClick = useCallback(
     (plan: CalendarPlan) => {
+      // ドラッグ操作で開いたダイアログが残っている場合は閉じる
+      const { closeDialog } = useRecurringEditConfirmStore.getState();
+      closeDialog();
+
       // 繰り返しインスタンスの場合は親プランIDを使用
       const planIdToOpen = plan.calendarId ?? plan.id;
-      openInspector(planIdToOpen);
+
+      // 繰り返しプランの場合はインスタンス日付を渡す
+      const instanceDateRaw =
+        plan.isRecurring && plan.id.includes('_')
+          ? plan.id.split('_').pop()
+          : plan.startDate?.toISOString().slice(0, 10);
+
+      openInspector(
+        planIdToOpen,
+        instanceDateRaw && plan.isRecurring ? { instanceDate: instanceDateRaw } : undefined,
+      );
+
       logger.log('📋 Opening plan Inspector:', {
         planId: planIdToOpen,
         title: plan.title,
         isRecurringInstance: !!plan.calendarId,
+        instanceDate: instanceDateRaw,
       });
     },
     [openInspector],

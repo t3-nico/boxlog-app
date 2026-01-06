@@ -170,6 +170,7 @@ export const FiveDayView = ({
           scrollToHour={isCurrentDay ? undefined : 8}
           displayDates={displayDates}
           viewMode="5day"
+          plans={plans}
           enableKeyboardNavigation={true}
         >
           {/* 5日分のグリッド */}
@@ -203,7 +204,8 @@ export const FiveDayView = ({
                       ? (planId, updates) => {
                           const plan = plans.find((p) => p.id === planId);
                           if (plan) {
-                            onUpdatePlan({ ...plan, ...updates });
+                            // 返り値を伝播（繰り返しプラン編集時の skipToast フラグ用）
+                            return onUpdatePlan({ ...plan, ...updates });
                           }
                         }
                       : undefined

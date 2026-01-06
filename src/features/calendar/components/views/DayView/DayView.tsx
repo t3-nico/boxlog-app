@@ -59,7 +59,8 @@ export const DayView = ({
   const handleEventTimeUpdate = React.useCallback(
     async (eventId: string, updates: { startTime: Date; endTime: Date }) => {
       if (onUpdatePlan) {
-        await onUpdatePlan(eventId, updates);
+        // 返り値を伝播（繰り返しプラン編集時の skipToast フラグ用）
+        return await onUpdatePlan(eventId, updates);
       }
     },
     [onUpdatePlan],
@@ -122,6 +123,7 @@ export const DayView = ({
           {...(isToday && { scrollToHour: 8 })}
           displayDates={displayDates}
           viewMode="day"
+          plans={plans}
         >
           {/* 日のコンテンツ */}
           <DayContent

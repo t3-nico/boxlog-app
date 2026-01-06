@@ -55,8 +55,20 @@ export function OverdueBadge({ overduePlans, className, style }: OverdueBadgePro
     return null;
   }
 
-  const handlePlanClick = (planId: string) => {
-    openInspector(planId);
+  const handlePlanClick = (plan: OverduePlan['plan']) => {
+    // 繰り返しインスタンスの場合は親プランIDを使用
+    const planIdToOpen = plan.calendarId ?? plan.id;
+
+    // 繰り返しプランの場合はインスタンス日付を渡す
+    const instanceDateRaw =
+      plan.isRecurring && plan.id.includes('_')
+        ? plan.id.split('_').pop()
+        : plan.startDate?.toISOString().slice(0, 10);
+
+    openInspector(
+      planIdToOpen,
+      instanceDateRaw && plan.isRecurring ? { instanceDate: instanceDateRaw } : undefined,
+    );
   };
 
   // 日付のフォーマット（アジェンダ風）
@@ -141,7 +153,7 @@ export function OverdueBadge({ overduePlans, className, style }: OverdueBadgePro
               <button
                 key={plan.id}
                 type="button"
-                onClick={() => handlePlanClick(plan.id)}
+                onClick={() => handlePlanClick(plan)}
                 className={cn(
                   'group w-full px-4 py-2',
                   'flex items-center gap-2',

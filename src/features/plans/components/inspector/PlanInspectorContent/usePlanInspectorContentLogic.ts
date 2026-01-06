@@ -14,13 +14,20 @@ import type { InspectorDisplayMode } from '@/features/inspector';
 import { useHapticFeedback } from '@/hooks/useHapticFeedback';
 import { api } from '@/lib/trpc';
 
+import type { RecurringEditScope } from '../../../components/RecurringEditConfirmDialog';
 import { usePlan } from '../../../hooks/usePlan';
+import { usePlanInstanceMutations } from '../../../hooks/usePlanInstances';
 import { usePlanTags } from '../../../hooks/usePlanTags';
 import { useDeleteConfirmStore } from '../../../stores/useDeleteConfirmStore';
 import { usePlanCacheStore } from '../../../stores/usePlanCacheStore';
 import { usePlanInspectorStore } from '../../../stores/usePlanInspectorStore';
+import { useRecurringEditConfirmStore } from '../../../stores/useRecurringEditConfirmStore';
 import type { Plan } from '../../../types/plan';
-import { useInspectorAutoSave, useInspectorNavigation } from '../hooks';
+import { useInspectorAutoSave, useInspectorNavigation, useRecurringPlanEdit } from '../hooks';
+
+// スコープダイアログを表示するフィールド（日付・時間）
+// title/descriptionは即座に保存（Googleカレンダー準拠）
+const SCOPE_DIALOG_FIELDS = ['due_date', 'start_time', 'end_time'] as const;
 
 export function usePlanInspectorContentLogic() {
   const t = useTranslations();
@@ -32,16 +39,51 @@ export function usePlanInspectorContentLogic() {
   const [timeConflictError, setTimeConflictError] = useState(false);
 
   const planId = usePlanInspectorStore((state) => state.planId);
+  const instanceDate = usePlanInspectorStore((state) => state.instanceDate);
   const initialData = usePlanInspectorStore((state) => state.initialData);
   const closeInspector = usePlanInspectorStore((state) => state.closeInspector);
   const displayMode = usePlanInspectorStore((state) => state.displayMode) as InspectorDisplayMode;
   const setDisplayMode = usePlanInspectorStore((state) => state.setDisplayMode);
 
   const openDeleteDialog = useDeleteConfirmStore((state) => state.openDialog);
+  const openRecurringDialog = useRecurringEditConfirmStore((state) => state.openDialog);
   const getCache = usePlanCacheStore((state) => state.getCache);
+  const { createInstance } = usePlanInstanceMutations();
+
+  // Inspectorマウント時にグローバルダイアログをリセット
+  // （ドラッグ操作で開いたダイアログが残っている場合があるため）
+  // 次のティックで閉じることで、他の操作より後に実行されることを保証
+  useEffect(() => {
+    const { closeDialog } = useRecurringEditConfirmStore.getState();
+    closeDialog();
+    // 念のため遅延しても閉じる（タイミング問題対策）
+    const timer = setTimeout(() => {
+      const { closeDialog: close } = useRecurringEditConfirmStore.getState();
+      close();
+    }, 50);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // planIdが変わったときもリセット
+  useEffect(() => {
+    const { closeDialog } = useRecurringEditConfirmStore.getState();
+    closeDialog();
+    const timer = setTimeout(() => {
+      const { closeDialog: close } = useRecurringEditConfirmStore.getState();
+      close();
+    }, 50);
+    return () => clearTimeout(timer);
+  }, [planId]);
 
   const { data: planData } = usePlan(planId!, { includeTags: true, enabled: !!planId });
   const plan = (planData ?? null) as unknown as Plan | null;
+
+  // 繰り返しプラン編集フック
+  const recurringEdit = useRecurringPlanEdit({
+    plan,
+    planId,
+    instanceDate,
+  });
 
   // 時間重複チェック関数
   const checkTimeOverlap = useCallback(
@@ -69,7 +111,25 @@ export function usePlanInspectorContentLogic() {
 
   // Custom hooks
   const { hasPrevious, hasNext, goToPrevious, goToNext } = useInspectorNavigation(planId);
-  const { autoSave, updatePlan, deletePlan } = useInspectorAutoSave({ planId, plan });
+  const { autoSave: baseAutoSave, updatePlan, deletePlan } = useInspectorAutoSave({ planId, plan });
+
+  // 繰り返しインスタンス対応のautoSave
+  // 時間変更の場合のみスコープダイアログを表示
+  const autoSave = useCallback(
+    (field: string, value: string | undefined) => {
+      // 繰り返しインスタンスの場合、時間フィールドはスコープダイアログを表示
+      if (
+        recurringEdit.isRecurringInstance &&
+        SCOPE_DIALOG_FIELDS.includes(field as (typeof SCOPE_DIALOG_FIELDS)[number])
+      ) {
+        recurringEdit.openScopeDialog(field, value);
+        return;
+      }
+      // 通常の保存処理（title, descriptionなど）
+      baseAutoSave(field, value);
+    },
+    [baseAutoSave, recurringEdit],
+  );
 
   // Activity state
   const [activityOrder, setActivityOrder] = useState<'asc' | 'desc'>('desc');
@@ -243,13 +303,73 @@ export function usePlanInspectorContentLogic() {
     [planId, removePlanTag],
   );
 
+  // 繰り返しプラン削除確認ハンドラー（ダイアログのコールバック）
+  const handleRecurringDeleteConfirm = useCallback(
+    async (scope: RecurringEditScope) => {
+      if (!planId || !instanceDate) return;
+
+      try {
+        switch (scope) {
+          case 'this':
+            // この日のみ例外として削除（cancelled例外を作成）
+            await createInstance.mutateAsync({
+              planId,
+              instanceDate,
+              exceptionType: 'cancelled',
+            });
+            break;
+
+          case 'thisAndFuture': {
+            // この日以降を終了: 親プランの recurrence_end_date を更新
+            // 前日を終了日にする（この日は含めない）
+            const endDate = new Date(instanceDate);
+            endDate.setDate(endDate.getDate() - 1);
+            await updatePlan.mutateAsync({
+              id: planId,
+              data: {
+                recurrence_end_date: endDate.toISOString().slice(0, 10),
+              },
+            });
+            break;
+          }
+
+          case 'all':
+            // 親プラン自体を削除
+            await deletePlan.mutateAsync({ id: planId });
+            break;
+        }
+        closeInspector();
+      } catch (err) {
+        console.error('Failed to delete recurring plan:', err);
+      }
+    },
+    [planId, instanceDate, createInstance, updatePlan, deletePlan, closeInspector],
+  );
+
   const handleDelete = useCallback(() => {
     if (!planId) return;
+
+    // 繰り返しインスタンスの場合はスコープ選択ダイアログを表示
+    if (recurringEdit.isRecurringInstance) {
+      openRecurringDialog(plan?.title ?? '', 'delete', handleRecurringDeleteConfirm);
+      return;
+    }
+
+    // 通常プラン: カスタム削除確認ダイアログを使用
     openDeleteDialog(planId, plan?.title ?? null, async () => {
       await deletePlan.mutateAsync({ id: planId });
       closeInspector();
     });
-  }, [planId, plan?.title, openDeleteDialog, deletePlan, closeInspector]);
+  }, [
+    planId,
+    plan?.title,
+    recurringEdit.isRecurringInstance,
+    openDeleteDialog,
+    openRecurringDialog,
+    handleRecurringDeleteConfirm,
+    deletePlan,
+    closeInspector,
+  ]);
 
   const handleDateChange = useCallback(
     (date: Date | undefined) => {

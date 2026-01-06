@@ -1,6 +1,7 @@
 // Inspector Components
 export { PlanInspector } from './inspector/PlanInspector';
 export { PlanDeleteConfirmDialog } from './PlanDeleteConfirmDialog';
+export { RecurringEditConfirmDialog } from './RecurringEditConfirmDialog';
 
 // Display Components
 export { PlanCard } from './display/PlanCard';
@@ -13,4 +14,6 @@ export { PlanFilters as PlanFiltersComponent } from './filters/PlanFilters';
 export { EmptyState } from './shared/EmptyState';
 export { LoadingState } from './shared/LoadingState';
 export { PlanCreateTrigger } from './shared/PlanCreateTrigger';
-export { RecurringEditDialog } from './shared/RecurringEditDialog';
+
+// Types
+export type { RecurringEditScope } from './RecurringEditConfirmDialog';

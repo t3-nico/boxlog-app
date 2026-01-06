@@ -12,6 +12,7 @@ import { activitiesRouter } from './activities';
 import { bulkRouter } from './bulk';
 import { plansCrudRouter } from './crud';
 import { instancesRouter } from './instances';
+import { recurrenceRouter } from './recurrence';
 import { statisticsRouter } from './statistics';
 import { tagsRouter } from './tags';
 import { plansTransactionRouter } from './transaction';
@@ -52,6 +53,10 @@ const tagsAliasRouter = createTRPCRouter({
   setTags: tagsRouter.setTags,
 });
 
+const recurrenceAliasRouter = createTRPCRouter({
+  splitRecurrence: recurrenceRouter.splitRecurrence,
+});
+
 // Merge all routers to create final plansRouter
 // Note: Tag CRUD is managed via tRPC (tags router), plan-tag associations also use tRPC
 export const plansRouter = mergeRouters(
@@ -61,5 +66,6 @@ export const plansRouter = mergeRouters(
   activitiesAliasRouter,
   instancesAliasRouter,
   tagsAliasRouter,
+  recurrenceAliasRouter,
   plansTransactionRouter,
 );

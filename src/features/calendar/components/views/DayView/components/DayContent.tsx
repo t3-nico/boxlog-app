@@ -40,8 +40,8 @@ export const DayContent = ({
     async (eventId: string, updates: { startTime: Date; endTime: Date }) => {
       if (!onEventUpdate) return;
 
-      // handleUpdatePlan形式で呼び出し
-      await onEventUpdate(eventId, {
+      // handleUpdatePlan形式で呼び出し（返り値を伝播）
+      return await onEventUpdate(eventId, {
         startTime: updates.startTime,
         endTime: updates.endTime,
       });

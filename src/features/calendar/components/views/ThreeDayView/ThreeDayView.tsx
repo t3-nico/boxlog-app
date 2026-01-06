@@ -169,6 +169,7 @@ export const ThreeDayView = ({
           scrollToHour={isCurrentDay ? undefined : 8}
           displayDates={displayDates}
           viewMode="3day"
+          plans={plans}
           enableKeyboardNavigation={true}
         >
           {/* 3日分のグリッド */}
@@ -202,7 +203,8 @@ export const ThreeDayView = ({
                       ? (planId, updates) => {
                           const plan = plans.find((p) => p.id === planId);
                           if (plan) {
-                            onUpdatePlan({ ...plan, ...updates });
+                            // 返り値を伝播（繰り返しプラン編集時の skipToast フラグ用）
+                            return onUpdatePlan({ ...plan, ...updates });
                           }
                         }
                       : undefined

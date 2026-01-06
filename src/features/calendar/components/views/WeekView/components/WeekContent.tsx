@@ -70,8 +70,8 @@ export const WeekContent = ({
     async (planId: string, updates: { startTime: Date; endTime: Date }) => {
       if (!onPlanUpdate) return;
 
-      // handleUpdatePlan形式で呼び出し
-      await onPlanUpdate(planId, {
+      // handleUpdatePlan形式で呼び出し（返り値を伝播）
+      return await onPlanUpdate(planId, {
         startDate: updates.startTime,
         endDate: updates.endTime,
       });

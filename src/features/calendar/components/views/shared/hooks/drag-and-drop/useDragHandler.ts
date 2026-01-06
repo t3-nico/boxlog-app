@@ -310,12 +310,18 @@ export function useDragHandler({
       }
 
       try {
-        const result = eventUpdateHandler(dragDataRef.current.eventId, {
+        // eventUpdateHandler は { skipToast: true } を返す可能性がある（繰り返しプランのダイアログ表示時）
+        const result = (await eventUpdateHandler(dragDataRef.current.eventId, {
           startTime: newStartTime,
           endTime: newEndTime,
-        });
+        })) as { skipToast?: boolean } | void;
 
-        await handleEventUpdateToast(Promise.resolve(result), event, newStartTime, durationMs);
+        // ダイアログが表示された場合はtoastをスキップ
+        if (result && typeof result === 'object' && result.skipToast) {
+          return;
+        }
+
+        await handleEventUpdateToast(Promise.resolve(), event, newStartTime, durationMs);
       } catch (error) {
         logger.error('Failed to update event time:', error);
         calendarToast.error(t('calendar.event.moveFailed'));
