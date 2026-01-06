@@ -126,11 +126,19 @@ npm run lint         # コード品質（AI必須：コミット前）
 
 ### カスタムコマンド（/.claude/commands/）
 
-- `/review` - コードレビュー
+- `/review` - コードレビュー（なぜそうすべきかも説明）
 - `/fix-types` - 型エラー修正
 - `/new-feature` - 新機能実装
 - `/test` - テスト作成
 - `/debug` - デバッグ
+- `/cleanup` - 不要コード削除
+- `/learn` - 概念・ツールの解説
+
+### カスタムスキル（/.claude/skills/）
+
+- `/brainstorming` - 壁打ち・相談
+- `/explain` - コードの「なぜ」を解説
+- `/health-check` - 技術的健全性チェック
 
 ## 🎯 意思決定の優先順位（GAFA-First原則）
 
