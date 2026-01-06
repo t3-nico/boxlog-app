@@ -6,9 +6,14 @@
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { format } from 'date-fns';
+import { ChevronDown, ChevronUp, Moon } from 'lucide-react';
+
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { HoverTooltip } from '@/components/ui/tooltip';
 import { useSleepHours } from '@/features/calendar/hooks/useSleepHours';
 import { useCalendarScrollStore } from '@/features/calendar/stores';
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
 import { cn } from '@/lib/utils';
 import {
@@ -22,7 +27,6 @@ import { TimeColumn } from '../grid/TimeColumn/TimeColumn';
 import { useResponsiveHourHeight } from '../hooks/useResponsiveHourHeight';
 
 import { COLLAPSED_SECTION_HEIGHT, CollapsedSleepSection } from './CollapsedSleepSection';
-import { SleepHoursToggle } from './SleepHoursToggle';
 import { TimezoneOffset } from './TimezoneOffset';
 
 interface ScrollableCalendarLayoutProps {
@@ -37,6 +41,8 @@ interface ScrollableCalendarLayoutProps {
   onTimeClick?: ((hour: number, minute: number) => void) | undefined;
   displayDates?: Date[] | undefined;
   viewMode?: 'day' | '3day' | '5day' | 'week' | 'agenda' | undefined;
+  /** 睡眠時間帯内のプラン数計算用 */
+  plans?: CalendarPlan[] | undefined;
 
   // スクロール機能の追加
   enableKeyboardNavigation?: boolean | undefined;
@@ -73,11 +79,11 @@ export const CalendarDateHeader = ({
 
   return (
     <div className="flex h-12 shrink-0 flex-col justify-center py-2">
-      <div className="flex items-center px-4">
+      <div className="flex items-center">
         {/* 左スペーサー（時間列と揃えるため） */}
         {showTimeColumn ? (
           <div
-            className="flex shrink-0 items-center justify-center"
+            className="flex shrink-0 flex-col items-center justify-center"
             style={{ width: timeColumnWidth }}
           >
             {/* 週番号バッジ（Googleカレンダースタイル） - モバイルのみ表示 */}
@@ -98,9 +104,6 @@ export const CalendarDateHeader = ({
 
         {/* 各ビューが独自のヘッダーを配置するエリア */}
         <div className="flex-1">{header}</div>
-
-        {/* 睡眠時間帯トグル */}
-        <SleepHoursToggle />
       </div>
     </div>
   );
@@ -121,6 +124,7 @@ export const ScrollableCalendarLayout = ({
   onTimeClick,
   displayDates = [],
   viewMode = 'week',
+  plans,
   enableKeyboardNavigation = true,
   onScrollPositionChange,
 }: ScrollableCalendarLayoutProps) => {
@@ -141,6 +145,8 @@ export const ScrollableCalendarLayout = ({
   // 睡眠時間帯設定
   const sleepHours = useSleepHours();
   const sleepHoursCollapsed = useCalendarSettingsStore((state) => state.sleepHoursCollapsed);
+  const sleepScheduleEnabled = useCalendarSettingsStore((state) => state.sleepSchedule.enabled);
+  const updateSettings = useCalendarSettingsStore((state) => state.updateSettings);
 
   const HOUR_HEIGHT = useResponsiveHourHeight({
     mobile: 48,
@@ -148,35 +154,85 @@ export const ScrollableCalendarLayout = ({
     desktop: 72,
   });
 
+  // 睡眠時間帯の折りたたみトグル（スクロール位置を維持）
+  const handleToggleSleepHours = useCallback(() => {
+    if (!sleepHours || !scrollContainerRef.current) {
+      updateSettings({ sleepHoursCollapsed: !sleepHoursCollapsed });
+      return;
+    }
+
+    const { wakeTime } = sleepHours;
+    const currentScrollTop = scrollContainerRef.current.scrollTop;
+
+    // 現在見ている時間を計算
+    let currentHour: number;
+    if (sleepHoursCollapsed) {
+      // 折りたたみ → 展開: 折りたたみセクション後の位置から時間を計算
+      if (currentScrollTop <= COLLAPSED_SECTION_HEIGHT) {
+        currentHour = wakeTime; // 睡眠セクション内なら起床時間
+      } else {
+        currentHour = wakeTime + (currentScrollTop - COLLAPSED_SECTION_HEIGHT) / HOUR_HEIGHT;
+      }
+    } else {
+      // 展開 → 折りたたみ: 通常の位置から時間を計算
+      currentHour = currentScrollTop / HOUR_HEIGHT;
+    }
+
+    // 状態を更新
+    updateSettings({ sleepHoursCollapsed: !sleepHoursCollapsed });
+
+    // 次のレンダリング後にスクロール位置を調整
+    setTimeout(() => {
+      if (!scrollContainerRef.current) return;
+
+      let newScrollTop: number;
+      if (!sleepHoursCollapsed) {
+        // 展開 → 折りたたみ: 起きている時間帯に変換
+        if (currentHour < wakeTime) {
+          // 睡眠時間帯（朝）→ 折りたたみセクションへ
+          newScrollTop = 0;
+        } else if (currentHour >= sleepHours.bedtime) {
+          // 睡眠時間帯（夜）→ 折りたたみセクションへ
+          newScrollTop = 0;
+        } else {
+          // 起きている時間帯
+          newScrollTop = COLLAPSED_SECTION_HEIGHT + (currentHour - wakeTime) * HOUR_HEIGHT;
+        }
+      } else {
+        // 折りたたみ → 展開: 通常の位置に変換
+        newScrollTop = currentHour * HOUR_HEIGHT;
+      }
+
+      scrollContainerRef.current.scrollTo({
+        top: Math.max(0, newScrollTop),
+        behavior: 'instant',
+      });
+    }, 0);
+  }, [updateSettings, sleepHoursCollapsed, sleepHours, HOUR_HEIGHT]);
+
   // 折りたたみ時のグリッドレイアウト計算
   const collapsedLayout = useMemo(() => {
     if (!sleepHours || !sleepHoursCollapsed) {
       return null;
     }
 
-    const { morningRange, eveningRange, wakeTime, bedtime } = sleepHours;
+    const { wakeTime, bedtime, totalHours } = sleepHours;
 
-    // 起きている時間（時間数）
-    const awakeHours = bedtime >= wakeTime ? bedtime - wakeTime : 24 - wakeTime + bedtime;
+    // 起きている時間（時間数）= 24時間 - 睡眠時間
+    const awakeHours = 24 - totalHours;
 
-    // 各セクションの高さ
-    const morningHeight = morningRange ? COLLAPSED_SECTION_HEIGHT : 0;
-    const eveningHeight = eveningRange ? COLLAPSED_SECTION_HEIGHT : 0;
+    // 折りたたみセクションは上部に1つだけ（睡眠時間帯全体を表示）
+    const collapsedHeight = COLLAPSED_SECTION_HEIGHT;
     const awakeHeight = awakeHours * HOUR_HEIGHT;
 
-    // 起きている時間帯の開始位置（Y座標）
-    const awakeStartY = morningHeight;
-
-    // 夕方セクションの開始位置
-    const eveningStartY = morningHeight + awakeHeight;
+    // 起きている時間帯の開始位置（Y座標）= 折りたたみセクションの直後
+    const awakeStartY = collapsedHeight;
 
     return {
-      morningHeight,
-      eveningHeight,
+      collapsedHeight,
       awakeHeight,
       awakeStartY,
-      eveningStartY,
-      totalHeight: morningHeight + awakeHeight + eveningHeight,
+      totalHeight: collapsedHeight + awakeHeight,
       // 時間→Y座標変換用
       wakeTime,
       bedtime,
@@ -185,6 +241,41 @@ export const ScrollableCalendarLayout = ({
 
   // グリッド高さ
   const gridHeight = collapsedLayout ? collapsedLayout.totalHeight : 24 * HOUR_HEIGHT;
+
+  // 睡眠時間帯内のプラン数を日ごとに計算
+  const sleepHoursPlanCountByDate = useMemo(() => {
+    if (!sleepHours || !plans || plans.length === 0 || !displayDates || displayDates.length === 0) {
+      return [];
+    }
+
+    const { wakeTime, bedtime } = sleepHours;
+    // 日跨ぎの場合（bedtime >= wakeTime、例: 23:00-07:00）
+    const isCrossingMidnight = bedtime >= wakeTime;
+
+    // プランが睡眠時間帯内かどうかをチェック
+    const isInSleepHours = (plan: CalendarPlan): boolean => {
+      if (!plan.startDate) return false;
+      const startHour = new Date(plan.startDate).getHours();
+
+      if (isCrossingMidnight) {
+        // 日跨ぎ: 23:00以降 または 7:00未満
+        return startHour >= bedtime || startHour < wakeTime;
+      } else {
+        // 同日: 1:00以上 かつ 9:00未満
+        return startHour >= bedtime && startHour < wakeTime;
+      }
+    };
+
+    // 日ごとにカウント
+    return displayDates.map((date) => {
+      const dateStr = format(date, 'yyyy-MM-dd');
+      return plans.filter((plan) => {
+        if (!plan.startDate) return false;
+        const planDateStr = format(new Date(plan.startDate), 'yyyy-MM-dd');
+        return planDateStr === dateStr && isInSleepHours(plan);
+      }).length;
+    });
+  }, [sleepHours, plans, displayDates]);
 
   // 今日の列の位置を計算
   const todayColumnPosition = useMemo(() => {
@@ -474,29 +565,37 @@ export const ScrollableCalendarLayout = ({
 
   // 折りたたみ時の現在時刻線位置を計算
   const collapsedCurrentTimePosition = useMemo(() => {
-    if (!collapsedLayout) return currentTimePosition;
+    if (!collapsedLayout || !sleepHours) return currentTimePosition;
 
     const currentHour = currentTime.getHours();
     const currentMinutes = currentTime.getMinutes();
+    const { wakeTime, bedtime, totalHours } = sleepHours;
 
-    // 睡眠時間帯（上部）内の場合
-    if (sleepHours?.morningRange && currentHour < sleepHours.morningRange.endHour) {
-      // 上部の折りたたみセクション内（比例配置）
-      const ratio = (currentHour + currentMinutes / 60) / sleepHours.morningRange.endHour;
+    // 睡眠時間帯内かどうか判定
+    const isCrossingMidnight = bedtime >= wakeTime;
+    const isInSleepHours = isCrossingMidnight
+      ? currentHour >= bedtime || currentHour < wakeTime
+      : currentHour >= bedtime && currentHour < wakeTime;
+
+    if (isInSleepHours) {
+      // 睡眠時間帯内の場合、折りたたみセクション内に比例配置
+      let hoursIntoSleep: number;
+      if (isCrossingMidnight) {
+        // 日跨ぎ: bedtime(23)から深夜0時、そして0時からwakeTime(7)まで
+        if (currentHour >= bedtime) {
+          hoursIntoSleep = currentHour - bedtime + currentMinutes / 60;
+        } else {
+          hoursIntoSleep = 24 - bedtime + currentHour + currentMinutes / 60;
+        }
+      } else {
+        hoursIntoSleep = currentHour - bedtime + currentMinutes / 60;
+      }
+      const ratio = hoursIntoSleep / totalHours;
       return ratio * COLLAPSED_SECTION_HEIGHT;
     }
 
-    // 睡眠時間帯（下部）内の場合
-    if (sleepHours?.eveningRange && currentHour >= sleepHours.eveningRange.startHour) {
-      // 下部の折りたたみセクション内（比例配置）
-      const hoursInEvening = currentHour - sleepHours.eveningRange.startHour + currentMinutes / 60;
-      const eveningHours = 24 - sleepHours.eveningRange.startHour;
-      const ratio = hoursInEvening / eveningHours;
-      return collapsedLayout.eveningStartY + ratio * COLLAPSED_SECTION_HEIGHT;
-    }
-
     // 起きている時間帯の場合
-    const hoursFromWake = currentHour - collapsedLayout.wakeTime + currentMinutes / 60;
+    const hoursFromWake = currentHour - wakeTime + currentMinutes / 60;
     return collapsedLayout.awakeStartY + hoursFromWake * HOUR_HEIGHT;
   }, [collapsedLayout, currentTimePosition, currentTime, sleepHours, HOUR_HEIGHT]);
 
@@ -518,68 +617,106 @@ export const ScrollableCalendarLayout = ({
             className="border-border sticky left-0 z-10 shrink-0 border-r"
             style={{ width: timeColumnWidth }}
           >
-            {collapsedLayout ? (
+            {collapsedLayout && sleepHours ? (
               // 折りたたみ時の時間列
               <div className="relative h-full">
-                {/* 上部の折りたたみセクション（時間列部分） */}
-                {sleepHours?.morningRange ? (
-                  <div
-                    className="bg-accent/10 flex items-center justify-center"
-                    style={{ height: COLLAPSED_SECTION_HEIGHT }}
-                  >
-                    <span className="text-muted-foreground text-xs">
-                      0-{sleepHours.morningRange.endHour}
-                    </span>
-                  </div>
-                ) : null}
+                {/* 上部の折りたたみセクション（時間列部分）- 睡眠時間帯全体を1行で表示 */}
+                <div
+                  className="bg-accent/10 relative z-10 flex w-full items-center gap-1 pl-2"
+                  style={{ height: COLLAPSED_SECTION_HEIGHT }}
+                >
+                  <Moon className="text-muted-foreground size-3" />
+                  <span className="text-muted-foreground text-xs">
+                    {sleepHours.bedtime}-{sleepHours.wakeTime}
+                  </span>
+                </div>
 
                 {/* 起きている時間帯の時間列 */}
-                <TimeColumn
-                  startHour={collapsedLayout.wakeTime}
-                  endHour={collapsedLayout.bedtime}
-                  hourHeight={HOUR_HEIGHT}
-                  format="24h"
-                  className=""
-                />
-
-                {/* 下部の折りたたみセクション（時間列部分） */}
-                {sleepHours?.eveningRange ? (
-                  <div
-                    className="bg-accent/10 flex items-center justify-center"
-                    style={{ height: COLLAPSED_SECTION_HEIGHT }}
-                  >
-                    <span className="text-muted-foreground text-xs">
-                      {sleepHours.eveningRange.startHour}-0
-                    </span>
+                <div className="relative" style={{ height: collapsedLayout.awakeHeight }}>
+                  {/* 起床時間の位置（最上部）に展開ボタン */}
+                  <div className="absolute top-0 right-0 z-20 flex items-center justify-end pr-2">
+                    <HoverTooltip content="睡眠時間帯を展開" side="right">
+                      <button
+                        type="button"
+                        onClick={handleToggleSleepHours}
+                        className="hover:bg-state-hover flex size-6 cursor-pointer items-center justify-center rounded-md transition-colors"
+                        aria-label="睡眠時間帯を展開"
+                      >
+                        <ChevronUp className="text-muted-foreground size-4" />
+                      </button>
+                    </HoverTooltip>
                   </div>
-                ) : null}
+                  <div className="overflow-hidden" style={{ height: collapsedLayout.awakeHeight }}>
+                    <TimeColumn
+                      startHour={collapsedLayout.wakeTime}
+                      endHour={collapsedLayout.bedtime}
+                      hourHeight={HOUR_HEIGHT}
+                      format="24h"
+                      className=""
+                    />
+                  </div>
+                </div>
               </div>
             ) : (
               // 通常時の時間列
-              <TimeColumn
-                startHour={0}
-                endHour={24}
-                hourHeight={HOUR_HEIGHT}
-                format="24h"
-                className="h-full"
-              />
+              <div className="relative h-full">
+                <TimeColumn
+                  startHour={0}
+                  endHour={24}
+                  hourHeight={HOUR_HEIGHT}
+                  format="24h"
+                  className="h-full"
+                />
+                {/* 起床時間の位置に折りたたみボタンを表示 */}
+                {sleepScheduleEnabled && sleepHours && (
+                  <div
+                    className="absolute right-0 z-20 flex items-center justify-end pr-2"
+                    style={{ top: `${sleepHours.wakeTime * HOUR_HEIGHT - 40}px` }}
+                  >
+                    <HoverTooltip content="睡眠時間帯を折りたたむ" side="right">
+                      <button
+                        type="button"
+                        onClick={handleToggleSleepHours}
+                        className="hover:bg-state-hover flex size-6 cursor-pointer items-center justify-center rounded-md transition-colors"
+                        aria-label="睡眠時間帯を折りたたむ"
+                      >
+                        <ChevronDown className="text-muted-foreground size-4" />
+                      </button>
+                    </HoverTooltip>
+                  </div>
+                )}
+              </div>
             )}
           </div>
         )}
 
         {/* グリッドコンテンツエリア */}
         <div className="relative flex flex-1 flex-col">
-          {collapsedLayout ? (
+          {collapsedLayout && sleepHours ? (
             // 折りたたみ時のレイアウト
             <>
-              {/* 上部の折りたたみセクション */}
-              {sleepHours?.morningRange ? (
-                <CollapsedSleepSection
-                  startHour={0}
-                  endHour={sleepHours.morningRange.endHour}
-                  position="top"
-                />
-              ) : null}
+              {/* 上部の折りたたみセクション（睡眠時間帯全体を1行で表示） */}
+              <CollapsedSleepSection
+                startHour={sleepHours.bedtime}
+                endHour={sleepHours.wakeTime}
+                position="top"
+                planCountsByDate={sleepHoursPlanCountByDate}
+              />
+
+              {/* 縦の区切り線（折りたたみセクション上にも表示） */}
+              {displayDates && displayDates.length > 1 && (
+                <div className="pointer-events-none absolute inset-0 z-10 flex">
+                  {displayDates.map((_, index) => (
+                    <div
+                      key={index}
+                      className={cn(
+                        'flex-1',
+                        index < displayDates.length - 1 && 'border-border border-r',
+                      )}
+                    />
+                  ))}
+                </div>
+              )}
 
               {/* 起きている時間帯のコンテンツ */}
               <div
@@ -597,15 +734,6 @@ export const ScrollableCalendarLayout = ({
                   {children}
                 </div>
               </div>
-
-              {/* 下部の折りたたみセクション */}
-              {sleepHours?.eveningRange ? (
-                <CollapsedSleepSection
-                  startHour={sleepHours.eveningRange.startHour}
-                  endHour={24}
-                  position="bottom"
-                />
-              ) : null}
 
               {/* 現在時刻線（折りたたみ時） */}
               {shouldShowCurrentTimeLine && displayDates && displayDates.length > 0 ? (

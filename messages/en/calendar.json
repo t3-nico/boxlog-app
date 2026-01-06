@@ -211,7 +211,8 @@
     "sleepHours": {
       "collapse": "Collapse sleep hours",
       "expand": "Expand sleep hours",
-      "collapsed": "{start} - {end}"
+      "collapsed": "{start} - {end}",
+      "planCount": "{count, plural, one {# plan} other {# plans}}"
     }
   }
 }

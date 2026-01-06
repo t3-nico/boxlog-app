@@ -82,38 +82,6 @@ export function useSleepHours(): SleepHoursRange | null {
 }
 
 /**
- * 睡眠時間帯の折りたたみ時のグリッド高さを計算
- */
-export function calculateCollapsedGridHeight(
-  sleepHours: SleepHoursRange | null,
-  hourHeight: number,
-  collapsedHeight: number,
-): number {
-  if (!sleepHours) {
-    return 24 * hourHeight;
-  }
-
-  let height = 0;
-
-  // 上部の折りたたみセクション
-  if (sleepHours.morningRange) {
-    height += collapsedHeight;
-  }
-
-  // 通常の時間帯
-  const normalStartHour = sleepHours.morningRange?.endHour ?? 0;
-  const normalEndHour = sleepHours.eveningRange?.startHour ?? 24;
-  height += (normalEndHour - normalStartHour) * hourHeight;
-
-  // 下部の折りたたみセクション
-  if (sleepHours.eveningRange) {
-    height += collapsedHeight;
-  }
-
-  return height;
-}
-
-/**
  * 指定した時間が睡眠時間帯に含まれるかチェック
  */
 export function isInSleepRange(hour: number, sleepHours: SleepHoursRange | null): boolean {

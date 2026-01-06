@@ -40,8 +40,8 @@ export const TimeColumn = memo<TimeColumnProps>(function TimeColumn({
     const rows: React.ReactNode[] = [];
     for (let hour = startHour; hour < endHour; hour++) {
       const label = formatHourLabel(hour, format);
-      // 0時はラベルを表示しない（見た目がすっきりする）
-      const showLabel = hour !== 0;
+      // 0時と折りたたみ時の最初の時間はラベルを表示しない
+      const showLabel = hour !== 0 && !(hour === startHour && startHour > 0);
 
       rows.push(
         <div

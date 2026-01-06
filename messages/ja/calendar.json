@@ -211,7 +211,8 @@
     "sleepHours": {
       "collapse": "睡眠時間帯を折りたたむ",
       "expand": "睡眠時間帯を展開",
-      "collapsed": "{start} - {end}"
+      "collapsed": "{start} - {end}",
+      "planCount": "{count}件のプラン"
     }
   }
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { Moon } from 'lucide-react';
+import { FoldVertical, UnfoldVertical } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { Button } from '@/components/ui/button';
@@ -44,12 +44,11 @@ export function SleepHoursToggle({ className }: SleepHoursToggleProps) {
         aria-label={tooltipText}
         aria-pressed={sleepHoursCollapsed}
       >
-        <Moon
-          className={cn(
-            'size-4 transition-colors',
-            sleepHoursCollapsed ? 'text-muted-foreground' : 'text-primary',
-          )}
-        />
+        {sleepHoursCollapsed ? (
+          <UnfoldVertical className="text-muted-foreground size-4" />
+        ) : (
+          <FoldVertical className="text-primary size-4" />
+        )}
       </Button>
     </HoverTooltip>
   );

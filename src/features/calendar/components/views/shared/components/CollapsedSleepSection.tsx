@@ -1,6 +1,5 @@
 'use client';
 
-import { Moon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { cn } from '@/lib/utils';
@@ -14,6 +13,8 @@ interface CollapsedSleepSectionProps {
   className?: string;
   /** セクションの位置（上部/下部） */
   position: 'top' | 'bottom';
+  /** 睡眠時間帯内のプラン数（日ごと） */
+  planCountsByDate?: number[];
 }
 
 /**
@@ -25,22 +26,24 @@ function formatHour(hour: number): string {
 
 /**
  * 折りたたまれた睡眠時間帯セクション
- * 睡眠時間帯を1行に圧縮して表示
+ * 睡眠時間帯を1行に圧縮して表示（日ごとのバッジのみ）
  */
 export function CollapsedSleepSection({
   startHour,
   endHour,
   className,
   position,
+  planCountsByDate,
 }: CollapsedSleepSectionProps) {
   const t = useTranslations('calendar');
-  const timeRange = `${formatHour(startHour)} - ${formatHour(endHour === 24 ? 0 : endHour)}`;
-  const duration = endHour - startHour;
+
+  // 日が1つだけの場合は従来通りのレイアウト
+  const isSingleDay = !planCountsByDate || planCountsByDate.length <= 1;
 
   return (
     <div
       className={cn(
-        'bg-accent/10 border-accent/30 flex h-12 items-center gap-2 px-3',
+        'bg-accent/10 border-accent/30 relative z-10 flex h-12 items-center',
         position === 'top' && 'border-b',
         position === 'bottom' && 'border-t',
         className,
@@ -51,9 +54,32 @@ export function CollapsedSleepSection({
         end: formatHour(endHour === 24 ? 0 : endHour),
       })}
     >
-      <Moon className="text-accent-foreground/60 size-4" />
-      <span className="text-muted-foreground text-sm font-medium">{timeRange}</span>
-      <span className="text-muted-foreground/60 text-xs">({duration}h)</span>
+      {/* 日ごとのプラン数表示エリア */}
+      {!isSingleDay && planCountsByDate && (
+        <div className="flex flex-1">
+          {planCountsByDate.map((count, index) => (
+            <div key={index} className="flex flex-1 items-center pl-2">
+              {count > 0 && (
+                <span className="text-muted-foreground text-xs">
+                  {t('sleepHours.planCount', { count })}
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* 単一日の場合（中央配置） */}
+      {isSingleDay &&
+        planCountsByDate &&
+        planCountsByDate[0] != null &&
+        planCountsByDate[0] > 0 && (
+          <div className="flex flex-1 items-center pl-2">
+            <span className="text-muted-foreground text-xs">
+              {t('sleepHours.planCount', { count: planCountsByDate[0] })}
+            </span>
+          </div>
+        )}
     </div>
   );
 }
