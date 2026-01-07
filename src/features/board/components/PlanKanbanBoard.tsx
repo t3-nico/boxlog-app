@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { HoverTooltip } from '@/components/ui/tooltip';
-import type { InboxItem } from '@/features/inbox/hooks/useInboxData';
+import type { PlanItem } from '@/features/inbox/hooks/useInboxData';
 import { DateTimePopoverContent } from '@/features/plans/components/shared/DateTimePopoverContent';
 import { PlanTagSelectDialogEnhanced } from '@/features/plans/components/shared/PlanTagSelectDialogEnhanced';
 import { RecurringIndicator } from '@/features/plans/components/shared/RecurringIndicator';
@@ -38,13 +38,13 @@ import { useBoardStatusFilterStore } from '../stores/useBoardStatusFilterStore';
 import { PlanCard } from './shared/PlanCard';
 
 interface PlanKanbanBoardProps {
-  items: InboxItem[];
+  items: PlanItem[];
 }
 
 /**
  * Plan/Session用Kanbanボード
  *
- * InboxItemをステータスごとに3カラムに分類して表示
+ * PlanItemをステータスごとに分類して表示
  */
 export function PlanKanbanBoard({ items }: PlanKanbanBoardProps) {
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -54,10 +54,9 @@ export function PlanKanbanBoard({ items }: PlanKanbanBoardProps) {
   const { formatDate: formatDateWithSettings, formatTime: formatTimeWithSettings } =
     useDateFormat();
 
-  // Planデータをカラムごとに分類（3段階ステータス: todo/doing/done）
+  // Planデータをカラムごとに分類（2段階ステータス: open/done）
   const columns = {
-    todo: items.filter((item) => item.status === 'todo'),
-    doing: items.filter((item) => item.status === 'doing'),
+    open: items.filter((item) => item.status === 'open'),
     done: items.filter((item) => item.status === 'done'),
   };
 
@@ -117,19 +116,10 @@ export function PlanKanbanBoard({ items }: PlanKanbanBoardProps) {
         className="flex h-full gap-4 overflow-x-auto px-4 pb-4"
         style={{ touchAction: 'pan-y pinch-zoom' }}
       >
-        {/* Todo カラム */}
-        {isStatusVisible('todo') && (
-          <KanbanColumn title="Todo" count={columns.todo.length} variant="todo" status="todo">
-            {columns.todo.map((item) => (
-              <PlanCard key={item.id} item={item} />
-            ))}
-          </KanbanColumn>
-        )}
-
-        {/* Doing カラム */}
-        {isStatusVisible('doing') && (
-          <KanbanColumn title="Doing" count={columns.doing.length} variant="doing" status="doing">
-            {columns.doing.map((item) => (
+        {/* Open カラム */}
+        {isStatusVisible('open') && (
+          <KanbanColumn title="Open" count={columns.open.length} variant="open" status="open">
+            {columns.open.map((item) => (
               <PlanCard key={item.id} item={item} />
             ))}
           </KanbanColumn>
@@ -210,7 +200,7 @@ export function PlanKanbanBoard({ items }: PlanKanbanBoardProps) {
 interface KanbanColumnProps {
   title: string;
   count: number;
-  variant: 'todo' | 'doing' | 'done';
+  variant: 'open' | 'done';
   status: PlanStatus;
   children: React.ReactNode;
 }
@@ -270,8 +260,7 @@ function KanbanColumn({ title, count: _count, variant, status, children }: Kanba
   });
 
   const bgColor = {
-    todo: 'bg-muted',
-    doing: 'bg-muted',
+    open: 'bg-muted',
     done: 'bg-success/10',
   }[variant];
 

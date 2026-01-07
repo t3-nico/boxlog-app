@@ -4,10 +4,10 @@ import { Archive, Calendar, Copy, Pencil, Tag, Trash2 } from 'lucide-react';
 
 import { ActionMenuItems, type ActionGroup } from '@/components/common/ActionMenuItems';
 
-import type { InboxItem } from '@/features/inbox/hooks/useInboxData';
+import type { PlanItem } from '@/features/inbox/hooks/useInboxData';
 
 interface BoardActionMenuItemsProps {
-  item: InboxItem;
+  item: PlanItem;
   /** メニュー項目をレンダリングするための関数 */
   renderMenuItem: (props: {
     key?: string | undefined;
@@ -20,12 +20,12 @@ interface BoardActionMenuItemsProps {
   /** セパレーターをレンダリングするための関数 */
   renderSeparator?: (() => React.ReactNode) | undefined;
   /** アクションハンドラー */
-  onEdit?: ((item: InboxItem) => void) | undefined;
-  onDuplicate?: ((item: InboxItem) => void) | undefined;
-  onAddTags?: ((item: InboxItem) => void) | undefined;
-  onChangeDueDate?: ((item: InboxItem) => void) | undefined;
-  onArchive?: ((item: InboxItem) => void) | undefined;
-  onDelete: (item: InboxItem) => void;
+  onEdit?: ((item: PlanItem) => void) | undefined;
+  onDuplicate?: ((item: PlanItem) => void) | undefined;
+  onAddTags?: ((item: PlanItem) => void) | undefined;
+  onChangeDueDate?: ((item: PlanItem) => void) | undefined;
+  onArchive?: ((item: PlanItem) => void) | undefined;
+  onDelete: (item: PlanItem) => void;
 }
 
 /**
@@ -45,7 +45,7 @@ export function BoardActionMenuItems({
   onArchive,
   onDelete,
 }: BoardActionMenuItemsProps) {
-  const groups: ActionGroup<InboxItem>[] = [];
+  const groups: ActionGroup<PlanItem>[] = [];
 
   // 編集・複製・タグ・期限グループ
   const editActions = [];
