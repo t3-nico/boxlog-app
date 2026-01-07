@@ -60,6 +60,12 @@
       "trendsDescription": "View long-term trends",
       "goalsDescription": "Track goal achievement"
     },
+    "sleep": {
+      "title": "Sleep",
+      "description": "Estimated sleep time",
+      "dailyAverage": "Daily avg",
+      "reducedBy": "Reduced by {hours} due to events"
+    },
     "toolbar": {
       "settings": "Settings",
       "periodType": "Period Type",
