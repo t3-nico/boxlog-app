@@ -46,6 +46,10 @@
         "profile": "Profile",
         "settings": "Settings",
         "createEvent": "Create new event"
+      },
+      "touchHint": {
+        "title": "Tip: Long press to create",
+        "description": "Press and hold on the calendar to create a new schedule"
       }
     },
     "event": {
@@ -129,7 +133,8 @@
       "undo": "Undo",
       "undone": "Operation undone",
       "view": "View",
-      "goToToday": "Go to today"
+      "goToToday": "Go to today",
+      "close": "Close"
     },
     "navigation": {
       "previous": "Previous",
@@ -158,7 +163,7 @@
     },
     "sidebar": {
       "tabs": {
-        "todo": "Todo",
+        "open": "Open",
         "view": "View"
       }
     },
@@ -170,7 +175,7 @@
       "noTags": "No tags available",
       "comingSoon": "Coming soon"
     },
-    "todo": {
+    "open": {
       "navigation": {
         "period": "Period",
         "sortBy": "Sort by",
@@ -178,8 +183,8 @@
         "today": "Today",
         "overdue": "Overdue",
         "dueDate": "Due date",
-        "priority": "Priority",
-        "created": "Created"
+        "created": "Created",
+        "updated": "Updated"
       },
       "loading": "Loading...",
       "noTasks": "No tasks",
@@ -213,6 +218,11 @@
       "expand": "Expand sleep hours",
       "collapsed": "{start} - {end}",
       "planCount": "{count, plural, one {# plan} other {# plans}}"
+    },
+    "segment": {
+      "start": "(Start)",
+      "middle": "(Cont.)",
+      "end": "(End)"
     }
   }
 }
