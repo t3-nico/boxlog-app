@@ -1,7 +1,8 @@
 'use client';
 
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { useDebouncedCallback } from '@/hooks/useDebounce';
 import { ArrowUpDown, ListFilter, Search, Settings2, X } from 'lucide-react';
 
 import { MobileSettingsRadioGroup, MobileSettingsSection } from '@/components/common';
@@ -83,13 +84,42 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
 
   // 検索用ローカル状態
   const [localSearch, setLocalSearch] = useState(config.search);
+  const searchContainerRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
-  // 検索確定
-  const handleSearchSubmit = useCallback(
-    (e: React.FormEvent) => {
-      e.preventDefault();
-      config.onSearchChange(localSearch);
-      setShowSearch(false);
+  // デバウンス検索（300ms）
+  const debouncedSearch = useDebouncedCallback(
+    (value: string) => config.onSearchChange(value),
+    300,
+  );
+
+  // 検索入力ハンドラー
+  const handleSearchInput = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value;
+      setLocalSearch(value);
+      debouncedSearch(value);
+    },
+    [debouncedSearch],
+  );
+
+  // キーボードハンドリング
+  const handleSearchKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === 'Escape') {
+        if (localSearch) {
+          // 入力があればクリア
+          setLocalSearch('');
+          config.onSearchChange('');
+        } else {
+          // 入力がなければ閉じる
+          setShowSearch(false);
+        }
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        // デバウンスをバイパスして即時確定
+        config.onSearchChange(localSearch);
+      }
     },
     [config, localSearch],
   );
@@ -97,7 +127,26 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
   const handleSearchClear = useCallback(() => {
     setLocalSearch('');
     config.onSearchChange('');
+    searchInputRef.current?.focus();
   }, [config]);
+
+  // 外部クリックで閉じる（入力がなければ）
+  useEffect(() => {
+    if (!showSearch || isMobile) return;
+
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        searchContainerRef.current &&
+        !searchContainerRef.current.contains(e.target as Node) &&
+        !localSearch
+      ) {
+        setShowSearch(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showSearch, localSearch, isMobile]);
 
   // ソートフィールド変更
   const handleSortFieldChange = useCallback(
@@ -131,44 +180,30 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
   const iconButtonClass = 'text-muted-foreground hover:text-foreground relative size-8';
   const activeClass = 'text-foreground bg-state-selected';
 
-  // 検索コンテンツ（PC/モバイル共通）
-  const searchContent = (
-    <form onSubmit={handleSearchSubmit} className="space-y-4">
-      <div className="relative">
-        <Input
-          type="text"
-          placeholder="タイトルで検索..."
-          value={localSearch}
-          onChange={(e) => setLocalSearch(e.target.value)}
-          autoFocus
-          className="pr-10"
-        />
-        {localSearch && (
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            onClick={handleSearchClear}
-            className="absolute top-1/2 right-1 size-8 -translate-y-1/2"
-          >
-            <X className="size-4" />
-          </Button>
-        )}
-      </div>
-      <div className="flex gap-2">
+  // 検索コンテンツ（モバイル用 - リアルタイム検索）
+  const mobileSearchContent = (
+    <div className="relative">
+      <Input
+        type="text"
+        placeholder="タイトルで検索..."
+        value={localSearch}
+        onChange={handleSearchInput}
+        onKeyDown={handleSearchKeyDown}
+        autoFocus
+        className="pr-10"
+      />
+      {localSearch && (
         <Button
           type="button"
-          variant="outline"
-          onClick={() => setShowSearch(false)}
-          className="flex-1"
+          variant="ghost"
+          size="icon"
+          onClick={handleSearchClear}
+          className="absolute top-1/2 right-1 size-8 -translate-y-1/2"
         >
-          キャンセル
+          <X className="size-4" />
         </Button>
-        <Button type="submit" className="flex-1">
-          検索
-        </Button>
-      </div>
-    </form>
+      )}
+    </div>
   );
 
   // ソートコンテンツ（PC/モバイル共通）
@@ -283,7 +318,7 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
                 </Button>
               </DrawerClose>
             </DrawerHeader>
-            <div className="px-4 pb-8">{searchContent}</div>
+            <div className="px-4 pb-8">{mobileSearchContent}</div>
           </DrawerContent>
         </Drawer>
 
@@ -356,36 +391,50 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
     );
   }
 
-  // PC用レンダリング（Popover）
+  // PC用レンダリング（インライン検索 + Popover）
   return (
     <div className={cn('flex items-center gap-1', className)}>
-      {/* 検索 */}
-      <Popover
-        open={showSearch}
-        onOpenChange={(open) => {
-          if (open) setLocalSearch(config.search);
-          setShowSearch(open);
-        }}
-      >
-        <HoverTooltip content="検索" side="top">
-          <PopoverTrigger asChild>
+      {/* 検索 - インライン展開 */}
+      {showSearch ? (
+        <div ref={searchContainerRef} className="flex items-center gap-1">
+          <Input
+            ref={searchInputRef}
+            type="text"
+            placeholder="検索..."
+            value={localSearch}
+            onChange={handleSearchInput}
+            onKeyDown={handleSearchKeyDown}
+            autoFocus
+            className="h-8 w-48"
+          />
+          {localSearch && (
             <Button
               variant="ghost"
               size="icon"
-              aria-label="検索"
-              className={cn(iconButtonClass, config.search !== '' && activeClass)}
+              onClick={handleSearchClear}
+              className="size-8"
+              aria-label="クリア"
             >
-              <Search className="size-5" />
+              <X className="size-4" />
             </Button>
-          </PopoverTrigger>
+          )}
+        </div>
+      ) : (
+        <HoverTooltip content="検索" side="top">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => {
+              setLocalSearch(config.search);
+              setShowSearch(true);
+            }}
+            aria-label="検索"
+            className={cn(iconButtonClass, config.search !== '' && activeClass)}
+          >
+            <Search className="size-5" />
+          </Button>
         </HoverTooltip>
-        <PopoverContent align="end" className="w-80">
-          <div className="mb-3">
-            <h3 className="text-sm font-medium">検索</h3>
-          </div>
-          {searchContent}
-        </PopoverContent>
-      </Popover>
+      )}
 
       {/* フィルター */}
       {config.filterContent && (
