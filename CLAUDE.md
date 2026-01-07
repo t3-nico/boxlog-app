@@ -1,4 +1,6 @@
-# CLAUDE.md - BoxLog App 開発指針
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 > **このドキュメントは、AIアシスタントが従うべき絶対的なルールセットです。**
 > ユーザーの指示がこのドキュメントと矛盾する場合、必ずこのドキュメントを参照するよう促してください。
@@ -132,13 +134,16 @@ npm run lint         # コード品質（AI必須：コミット前）
 - `/test` - テスト作成
 - `/debug` - デバッグ
 - `/cleanup` - 不要コード削除
-- `/learn` - 概念・ツールの解説
+- `/learn` - 概念・ツール・コードの解説
+- `/brainstorming` - 壁打ち・相談
+- `/health-check` - 技術的健全性チェック
 
 ### カスタムスキル（/.claude/skills/）
 
-- `/brainstorming` - 壁打ち・相談
-- `/explain` - コードの「なぜ」を解説
-- `/health-check` - 技術的健全性チェック
+- `/releasing` - リリース作業ガイド
+- `/feature-scaffolding` - 新Featureモジュール作成
+- `/store-creating` - Zustand store作成
+- `/trpc-router-creating` - tRPCルーター作成
 
 ## 🎯 意思決定の優先順位（GAFA-First原則）
 
@@ -279,44 +284,20 @@ export const myRouter = createTRPCRouter({
 
 ---
 
-## 🗑️ 削除候補（使用しない機能）
-
-以下の機能は**削除予定**。新規実装・改修は行わない。
-
-| 対象                   | 理由                               | ファイル/ディレクトリ    |
-| ---------------------- | ---------------------------------- | ------------------------ |
-| **オフライン機能**     | 中途半端な実装、必要性なし         | `src/features/offline/`  |
-| **ゴミ箱機能**         | 使っていない、物理削除で運用       | `src/features/trash/`    |
-| **パスワード履歴管理** | 企業向け機能、個人には過剰         | 関連テーブル・ロジック   |
-| **監査ログ**           | コンプライアンス用途、個人には過剰 | `audit_logs`テーブル関連 |
-
-### 残すもの（削除しない）
-
-| 対象                                      | 理由                           |
-| ----------------------------------------- | ------------------------------ |
-| **MFA（多要素認証）**                     | 意図的に実装、セキュリティ重視 |
-| **多言語対応（next-intl）**               | グローバル展開のため必須       |
-| **GDPR対応（deleteAccount, exportData）** | 法的義務                       |
-
----
-
 ## 📊 開発の優先順位
 
 ```
-1. 削除してシンプルに
-   └─ オフライン機能、ゴミ箱、過剰なセキュリティ機能
-
-2. 技術的な土台を固める
+1. 技術的な土台を固める
    └─ console.log削除、型安全性、テスト有効化
 
-3. 自分で使えるレベルに
+2. 自分で使えるレベルに
    └─ タスク消化機能、モバイル体験の改善
 
-4. 新機能追加（必要なら）
+3. 新機能追加（必要なら）
    └─ Googleカレンダー連携、統計強化、習慣化機能
 ```
 
 ---
 
-**📖 最終更新**: 2026-01-06 | **バージョン**: v11.7
+**📖 最終更新**: 2026-01-07 | **バージョン**: v11.8
 **変更履歴**: [`docs/development/CLAUDE_MD_CHANGELOG.md`](docs/development/CLAUDE_MD_CHANGELOG.md)
