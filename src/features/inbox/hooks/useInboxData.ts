@@ -6,7 +6,7 @@
 
 import { useplans } from '@/features/plans/hooks/usePlans';
 import type { Plan, PlanStatus } from '@/features/plans/types/plan';
-import { getEffectiveStatus } from '@/features/plans/utils/status';
+import { normalizeStatus } from '@/features/plans/utils/status';
 import type { DueDateFilter } from '../stores/useInboxFilterStore';
 
 /**
@@ -140,7 +140,7 @@ export function planToInboxItem(plan: PlanWithPlanTags): InboxItem {
     id: plan.id,
     type: 'plan',
     title: plan.title,
-    status: getEffectiveStatus(plan),
+    status: normalizeStatus(plan.status),
     created_at: plan.created_at ?? new Date().toISOString(),
     updated_at: plan.updated_at ?? new Date().toISOString(),
     description: plan.description ?? undefined,
@@ -231,3 +231,9 @@ export function useInboxData(filters: InboxFilters = {}) {
 export function useInboxplans(filters: InboxFilters = {}) {
   return useInboxData(filters);
 }
+
+/**
+ * PlanItem型（InboxItemのエイリアス）
+ * ボードコンポーネント等との後方互換性のため
+ */
+export type PlanItem = InboxItem;

@@ -1,6 +1,6 @@
 'use client';
 
-import { Columns3, MoreHorizontal, Pencil, Table2, Trash2 } from 'lucide-react';
+import { MoreHorizontal, Pencil, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -17,7 +17,7 @@ import {
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 import { useInboxViewStore } from '../stores/useInboxViewStore';
-import type { DisplayMode, InboxView } from '../types/view';
+import type { InboxView } from '../types/view';
 
 /**
  * Inbox View Tabs Component
@@ -35,8 +35,7 @@ export function InboxViewTabs() {
   const params = useParams();
   const locale = params?.locale as string;
 
-  const { views, activeViewId, setActiveView, deleteView, displayMode, setDisplayMode } =
-    useInboxViewStore();
+  const { views, activeViewId, setActiveView, deleteView } = useInboxViewStore();
   const [editingView, setEditingView] = useState<InboxView | null>(null);
   const [deleteConfirmView, setDeleteConfirmView] = useState<InboxView | null>(null);
 
@@ -62,30 +61,9 @@ export function InboxViewTabs() {
     }
   };
 
-  const getDisplayModeIcon = (mode: DisplayMode) => {
-    switch (mode) {
-      case 'board':
-        return <Columns3 className="h-4 w-4" />;
-      case 'table':
-        return <Table2 className="h-4 w-4" />;
-      default:
-        return null;
-    }
-  };
-
-  const handleDisplayModeToggle = () => {
-    setDisplayMode(displayMode === 'board' ? 'table' : 'board');
-  };
-
   return (
     <>
       <div className="flex h-10 items-center gap-4">
-        {/* Board/Table 切り替えボタン */}
-        <Button variant="ghost" onClick={handleDisplayModeToggle} className="gap-2">
-          {getDisplayModeIcon(displayMode)}
-          <span>{displayMode === 'board' ? 'Board' : 'Table'}</span>
-        </Button>
-
         {/* View タブ - pill形式 */}
         <Tabs value={activeViewId ?? 'default-all'} onValueChange={handleViewChange}>
           <TabsList className="bg-secondary h-8 rounded-lg p-0.5">

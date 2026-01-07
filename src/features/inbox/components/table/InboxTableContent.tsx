@@ -4,7 +4,7 @@ import { memo, useMemo } from 'react';
 
 import { Checkbox } from '@/components/ui/checkbox';
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Activity, Calendar, CalendarRange, FileText, Tag } from 'lucide-react';
+import { Calendar, CalendarRange, FileText, Tag } from 'lucide-react';
 
 import type { InboxItem } from '../../hooks/useInboxData';
 import { useInboxColumnStore } from '../../stores/useInboxColumnStore';
@@ -23,7 +23,6 @@ import { ResizableTableHead } from './ResizableTableHead';
 // 列IDとアイコンのマッピング
 const columnIcons = {
   title: FileText,
-  status: Activity,
   tags: Tag,
   duration: CalendarRange,
   created_at: Calendar,
@@ -133,10 +132,6 @@ const TableBodySection = memo(function TableBodySection({
         case 'title':
           aValue = a.title;
           bValue = b.title;
-          break;
-        case 'status':
-          aValue = a.status;
-          bValue = b.status;
           break;
         case 'duration':
           aValue = a.start_time ? new Date(a.start_time).getTime() : 0;
@@ -251,10 +246,6 @@ export const InboxTableContent = memo(function InboxTableContent({
         case 'title':
           aValue = a.title;
           bValue = b.title;
-          break;
-        case 'status':
-          aValue = a.status;
-          bValue = b.status;
           break;
         case 'duration':
           aValue = a.start_time ? new Date(a.start_time).getTime() : 0;

@@ -62,7 +62,7 @@ export const InboxTableRowCreate = forwardRef<InboxTableRowCreateHandle>((_props
       // 空のプランを作成（楽観的更新）
       const newplan = await createPlan.mutateAsync({
         title: '無題のプラン',
-        status: 'todo',
+        status: 'open',
       });
 
       if (newplan?.id) {
@@ -87,7 +87,7 @@ export const InboxTableRowCreate = forwardRef<InboxTableRowCreateHandle>((_props
         // タイトルを更新
         await createPlan.mutateAsync({
           title: title.trim(),
-          status: 'todo',
+          status: 'open',
         });
       } else {
         // タイトルが空の場合は削除

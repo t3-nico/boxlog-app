@@ -2,22 +2,7 @@
 
 import { Suspense } from 'react';
 
-import { InboxBoardView } from '@/features/inbox/components/InboxBoardView';
 import { InboxTableView } from '@/features/inbox/components/InboxTableView';
-import { useInboxViewStore } from '@/features/inbox/stores/useInboxViewStore';
-
-/**
- * Inboxコンテンツ（すべてのPlan）
- */
-function InboxContentInner() {
-  const displayMode = useInboxViewStore((state) => state.displayMode);
-
-  if (displayMode === 'table') {
-    return <InboxTableView />;
-  }
-
-  return <InboxBoardView />;
-}
 
 /**
  * Inboxコンテンツ with Suspense
@@ -35,7 +20,7 @@ export function InboxContent() {
           </div>
         }
       >
-        <InboxContentInner />
+        <InboxTableView />
       </Suspense>
     </div>
   );

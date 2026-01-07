@@ -17,7 +17,6 @@ import { useplanTags } from '@/features/plans/hooks/usePlanTags';
 import { useDeleteConfirmStore } from '@/features/plans/stores/useDeleteConfirmStore';
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
 import { useRecurringEditConfirmStore } from '@/features/plans/stores/useRecurringEditConfirmStore';
-import type { PlanStatus } from '@/features/plans/types/plan';
 import { useDateFormat } from '@/features/settings/hooks/useDateFormat';
 import { cn } from '@/lib/utils';
 import { useCallback, useEffect, useRef } from 'react';
@@ -27,7 +26,6 @@ import { useInboxFocusStore } from '../../stores/useInboxFocusStore';
 import { useInboxSelectionStore } from '../../stores/useInboxSelectionStore';
 import { DateTimeUnifiedCell } from './DateTimeUnifiedCell';
 import { InboxActionMenuItems } from './InboxActionMenuItems';
-import { StatusEditCell } from './StatusEditCell';
 import { TagsCell } from './TagsCell';
 
 interface InboxTableRowProps {
@@ -64,17 +62,10 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
   const rowRef = useRef<HTMLTableRowElement>(null);
   const recurringDeleteTargetRef = useRef<InboxItem | null>(null);
   // 繰り返しプラン編集用のペンディングデータをrefで保持
-  const pendingEditRef = useRef<
-    | {
-        type: 'status';
-        data: { status: PlanStatus };
-      }
-    | {
-        type: 'datetime';
-        data: { start_time: string | undefined; end_time: string | undefined };
-      }
-    | null
-  >(null);
+  const pendingEditRef = useRef<{
+    type: 'datetime';
+    data: { start_time: string | undefined; end_time: string | undefined };
+  } | null>(null);
   const selected = isSelected(item.id);
   const isFocused = focusedId === item.id;
   const visibleColumns = getVisibleColumns();
@@ -138,20 +129,13 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
           case 'this':
           case 'thisAndFuture':
           case 'all':
-            if (pending.type === 'status' && pending.data.status) {
-              await updatePlan.mutateAsync({
-                id: item.id,
-                data: { status: pending.data.status },
-              });
-            } else if (pending.type === 'datetime') {
-              await updatePlan.mutateAsync({
-                id: item.id,
-                data: {
-                  start_time: pending.data.start_time || undefined,
-                  end_time: pending.data.end_time || undefined,
-                },
-              });
-            }
+            await updatePlan.mutateAsync({
+              id: item.id,
+              data: {
+                start_time: pending.data.start_time || undefined,
+                end_time: pending.data.end_time || undefined,
+              },
+            });
             break;
         }
       } catch (err) {
@@ -162,24 +146,6 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
     },
     [updatePlan, item.id],
   );
-
-  // インライン編集ハンドラー
-  const handleStatusChange = (status: PlanStatus) => {
-    const isRecurring =
-      item.recurrence_type && item.recurrence_type !== 'none' && item.recurrence_type !== null;
-
-    if (isRecurring) {
-      // 繰り返しプランの場合はスコープ選択ダイアログを表示
-      pendingEditRef.current = { type: 'status', data: { status } };
-      openRecurringDialog(item.title, 'edit', handleRecurringEditConfirm);
-      return;
-    }
-
-    updatePlan.mutate({
-      id: item.id,
-      data: { status },
-    });
-  };
 
   // 日時変更ハンドラー（DateTimeUnifiedCell用）
   const handleDateTimeChange = (data: {
@@ -321,16 +287,6 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
           </TableCell>
         );
       }
-
-      case 'status':
-        return (
-          <StatusEditCell
-            key={columnId}
-            status={item.status}
-            width={column?.width}
-            onStatusChange={handleStatusChange}
-          />
-        );
 
       case 'tags':
         return (

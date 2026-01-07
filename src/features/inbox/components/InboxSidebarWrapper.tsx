@@ -70,7 +70,7 @@ export function InboxSidebarWrapper() {
       // 新規プラン作成
       createPlan.mutate({
         title: '',
-        status: 'todo',
+        status: 'open',
         start_time: startTime.toISOString(),
         end_time: endTime.toISOString(),
         due_date: date.toISOString().split('T')[0],

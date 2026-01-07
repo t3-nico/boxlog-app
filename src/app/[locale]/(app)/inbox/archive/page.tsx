@@ -2,23 +2,7 @@
 
 import { Suspense } from 'react';
 
-import { InboxBoardView } from '@/features/inbox/components/InboxBoardView';
 import { InboxTableView } from '@/features/inbox/components/InboxTableView';
-import { useInboxViewStore } from '@/features/inbox/stores/useInboxViewStore';
-
-/**
- * Inboxコンテンツ（アーカイブ）
- */
-function InboxContent() {
-  const displayMode = useInboxViewStore((state) => state.displayMode);
-
-  // 表示形式に応じて表示を切り替え
-  if (displayMode === 'table') {
-    return <InboxTableView />;
-  }
-
-  return <InboxBoardView />;
-}
 
 /**
  * アーカイブ ページ
@@ -36,7 +20,7 @@ export default function InboxArchivePage() {
           </div>
         }
       >
-        <InboxContent />
+        <InboxTableView />
       </Suspense>
     </div>
   );

@@ -6,10 +6,9 @@ import {
   MobileSettingsSection,
 } from '@/components/common';
 import { Button } from '@/components/ui/button';
-import { Columns3, Group, Settings2, Table2 } from 'lucide-react';
+import { Group, Settings2 } from 'lucide-react';
 import { useInboxColumnStore } from '../../stores/useInboxColumnStore';
 import { useInboxGroupStore } from '../../stores/useInboxGroupStore';
-import { useInboxViewStore } from '../../stores/useInboxViewStore';
 import type { GroupByField } from '../../types/group';
 
 /**
@@ -26,16 +25,12 @@ const GROUP_BY_OPTIONS: Array<{ value: GroupByField; label: string }> = [
  * Inbox設定コンテンツ
  *
  * TableNavigationの設定シートに表示する内容
- * - 表示モード切替（Board/Table）
  * - グループ化設定
  * - 列設定
  *
  * フィルターはフィルターシートで表示（InboxFilterContent）
  */
 export function InboxSettingsContent() {
-  // 表示モード
-  const { displayMode, setDisplayMode } = useInboxViewStore();
-
   // グループ化
   const { groupBy, setGroupBy } = useInboxGroupStore();
 
@@ -45,19 +40,6 @@ export function InboxSettingsContent() {
 
   return (
     <div className="space-y-6">
-      {/* 表示モード */}
-      <MobileSettingsSection icon={<Table2 />} title="表示モード">
-        <MobileSettingsButtonGroup
-          options={[
-            { value: 'board', label: 'Board', icon: <Columns3 /> },
-            { value: 'table', label: 'Table', icon: <Table2 /> },
-          ]}
-          value={displayMode}
-          onValueChange={setDisplayMode}
-          fullWidth
-        />
-      </MobileSettingsSection>
-
       {/* グループ化 */}
       <MobileSettingsSection icon={<Group />} title="グループ化">
         <MobileSettingsButtonGroup

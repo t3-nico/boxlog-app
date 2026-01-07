@@ -5,6 +5,7 @@ import { ChevronDown, Plus } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MEDIA_QUERIES } from '@/config/ui/breakpoints';
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
@@ -19,7 +20,6 @@ import { useInboxPaginationStore } from '../stores/useInboxPaginationStore';
 import { useInboxSelectionStore } from '../stores/useInboxSelectionStore';
 import { useInboxSortStore } from '../stores/useInboxSortStore';
 import { useInboxViewStore } from '../stores/useInboxViewStore';
-import { DisplayModeSwitcher } from './DisplayModeSwitcher';
 import { BulkDatePickerDialog } from './table/BulkDatePickerDialog';
 import { BulkTagSelectDialog } from './table/BulkTagSelectDialog';
 import { InboxFilterContent } from './table/InboxFilterContent';
@@ -186,13 +186,12 @@ export function InboxTableView() {
       { value: 'title', label: 'タイトル' },
       { value: 'created_at', label: '作成日' },
       { value: 'updated_at', label: '更新日' },
-      { value: 'status', label: 'ステータス' },
     ],
     [],
   );
 
-  // フィルター数をカウント
-  const filterCount = filterStatus.length + (filterDueDate !== 'all' ? 1 : 0);
+  // フィルター数をカウント（ステータスはタブで管理するため除外）
+  const filterCount = filterDueDate !== 'all' ? 1 : 0;
 
   // TableNavigation設定
   const navigationConfig: TableNavigationConfig = useMemo(
@@ -305,31 +304,49 @@ export function InboxTableView() {
           }
         />
       ) : (
-        <div className="flex h-12 shrink-0 items-center gap-2 px-4 py-2">
-          {/* 左端: 表示モード切替（モバイル・デスクトップ共通） */}
-          <DisplayModeSwitcher />
-
-          {/* スペーサー */}
-          <div className="flex-1" />
-
-          {/* Notion風アイコンナビゲーション（検索・ソート・設定）- PC・モバイル共通 */}
-          <TableNavigation config={navigationConfig} />
-
-          {/* 作成ボタン: 固定位置（モバイル: アイコンのみ、PC: テキスト付き） */}
-          <Button
-            onClick={() => createRowRef.current?.startCreate()}
-            size="icon"
-            className="shrink-0 md:hidden"
+        <div className="flex h-12 shrink-0 items-center justify-between gap-2 px-4 py-2">
+          {/* 左側: Open/Done切り替えタブ */}
+          <Tabs
+            value={filterStatus[0] || 'open'}
+            onValueChange={(value) => setStatus([value as PlanStatus])}
           >
-            <Plus className="size-4" />
-          </Button>
-          <Button
-            onClick={() => createRowRef.current?.startCreate()}
-            className="hidden shrink-0 md:inline-flex"
-          >
-            <Plus className="size-4" />
-            {t('common.inbox.createNew')}
-          </Button>
+            <TabsList className="bg-secondary h-8 rounded-lg p-0.5">
+              <TabsTrigger
+                value="open"
+                className="data-[state=inactive]:hover:bg-state-hover data-[state=active]:bg-background data-[state=active]:text-foreground h-7 rounded-md px-3 text-xs"
+              >
+                Open
+              </TabsTrigger>
+              <TabsTrigger
+                value="done"
+                className="data-[state=inactive]:hover:bg-state-hover data-[state=active]:bg-background data-[state=active]:text-foreground h-7 rounded-md px-3 text-xs"
+              >
+                Done
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+
+          {/* 右側: ナビゲーション・作成ボタン */}
+          <div className="flex items-center gap-2">
+            {/* Notion風アイコンナビゲーション（検索・ソート・設定）- PC・モバイル共通 */}
+            <TableNavigation config={navigationConfig} />
+
+            {/* 作成ボタン: 固定位置（モバイル: アイコンのみ、PC: テキスト付き） */}
+            <Button
+              onClick={() => createRowRef.current?.startCreate()}
+              size="icon"
+              className="shrink-0 md:hidden"
+            >
+              <Plus className="size-4" />
+            </Button>
+            <Button
+              onClick={() => createRowRef.current?.startCreate()}
+              className="hidden shrink-0 md:inline-flex"
+            >
+              <Plus className="size-4" />
+              {t('common.inbox.createNew')}
+            </Button>
+          </div>
         </div>
       )}
 

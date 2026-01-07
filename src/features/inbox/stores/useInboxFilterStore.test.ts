@@ -45,25 +45,25 @@ describe('useInboxFilterStore', () => {
   describe('setStatus', () => {
     it('単一のステータスを設定できる', () => {
       act(() => {
-        useInboxFilterStore.getState().setStatus(['todo']);
+        useInboxFilterStore.getState().setStatus(['open']);
       });
 
       const { status } = useInboxFilterStore.getState();
-      expect(status).toEqual(['todo']);
+      expect(status).toEqual(['open']);
     });
 
     it('複数のステータスを設定できる', () => {
       act(() => {
-        useInboxFilterStore.getState().setStatus(['todo', 'doing']);
+        useInboxFilterStore.getState().setStatus(['open', 'done']);
       });
 
       const { status } = useInboxFilterStore.getState();
-      expect(status).toEqual(['todo', 'doing']);
+      expect(status).toEqual(['open', 'done']);
     });
 
     it('空配列で解除できる', () => {
       act(() => {
-        useInboxFilterStore.getState().setStatus(['todo']);
+        useInboxFilterStore.getState().setStatus(['open']);
         useInboxFilterStore.getState().setStatus([]);
       });
 
@@ -195,7 +195,7 @@ describe('useInboxFilterStore', () => {
     it('全てのフィルターを初期状態に戻す', () => {
       // 各種フィルターを設定
       act(() => {
-        useInboxFilterStore.getState().setStatus(['todo', 'doing']);
+        useInboxFilterStore.getState().setStatus(['open', 'done']);
         useInboxFilterStore.getState().setTags(['tag-1']);
         useInboxFilterStore.getState().setSearch('検索');
         useInboxFilterStore.getState().setAssignee('user-1');
@@ -219,14 +219,14 @@ describe('useInboxFilterStore', () => {
   describe('複合フィルター', () => {
     it('複数のフィルターを同時に設定できる', () => {
       act(() => {
-        useInboxFilterStore.getState().setStatus(['todo']);
+        useInboxFilterStore.getState().setStatus(['open']);
         useInboxFilterStore.getState().setTags(['tag-1']);
         useInboxFilterStore.getState().setDueDate('this_week');
         useInboxFilterStore.getState().setSearch('重要');
       });
 
       const state = useInboxFilterStore.getState();
-      expect(state.status).toEqual(['todo']);
+      expect(state.status).toEqual(['open']);
       expect(state.tags).toEqual(['tag-1']);
       expect(state.dueDate).toBe('this_week');
       expect(state.search).toBe('重要');

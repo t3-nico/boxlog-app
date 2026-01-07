@@ -8,7 +8,8 @@ const createMockPlan = (overrides: Partial<PlanWithPlanTags> = {}): PlanWithPlan
   user_id: 'user-1',
   title: 'テストプラン',
   description: null,
-  status: 'todo',
+  status: 'open',
+  completed_at: null,
   due_date: null,
   start_time: null,
   end_time: null,
@@ -144,7 +145,7 @@ describe('useInboxData', () => {
       const plan = createMockPlan({
         id: 'plan-1',
         title: 'タスク1',
-        status: 'todo',
+        status: 'open',
         description: '説明文',
       });
 
@@ -153,22 +154,22 @@ describe('useInboxData', () => {
       expect(result.id).toBe('plan-1');
       expect(result.type).toBe('plan');
       expect(result.title).toBe('タスク1');
-      expect(result.status).toBe('todo');
+      expect(result.status).toBe('open');
       expect(result.description).toBe('説明文');
     });
 
-    it('start_timeがあるプランはdoingとして変換される', () => {
+    it('start_timeがあるプランでもopenのまま（doingは廃止）', () => {
       const plan = createMockPlan({
         id: 'plan-2',
         title: 'スケジュール済みタスク',
-        status: 'todo', // DBではtodoだが
-        start_time: '2025-01-20T09:00:00Z', // start_timeがあるので
+        status: 'open',
+        start_time: '2025-01-20T09:00:00Z',
         end_time: '2025-01-20T10:00:00Z',
       });
 
       const result = planToInboxItem(plan);
 
-      expect(result.status).toBe('doing'); // doingとして計算される
+      expect(result.status).toBe('open'); // doing廃止によりopenのまま
     });
 
     it('doneのプランはstart_timeに関係なくdoneのまま', () => {
