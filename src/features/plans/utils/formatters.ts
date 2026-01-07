@@ -20,8 +20,7 @@ export function formatplanNumber(planNumber: string): string {
  */
 export function formatplanStatus(status: PlanStatus): string {
   const statusMap: Record<PlanStatus, string> = {
-    todo: 'Todo',
-    doing: 'Doing',
+    open: 'Open',
     done: 'Done',
   };
   return statusMap[status];

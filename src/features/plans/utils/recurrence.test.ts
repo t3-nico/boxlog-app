@@ -10,7 +10,7 @@ const createMockPlan = (overrides: Partial<Plan> = {}): Plan => ({
   user_id: 'user-1',
   title: 'テストプラン',
   description: null,
-  status: 'todo',
+  status: 'open',
   due_date: null,
   start_time: '2025-01-01T09:00:00Z',
   end_time: '2025-01-01T10:00:00Z',
@@ -20,6 +20,7 @@ const createMockPlan = (overrides: Partial<Plan> = {}): Plan => ({
   reminder_minutes: null,
   created_at: '2025-01-01T00:00:00Z',
   updated_at: '2025-01-01T00:00:00Z',
+  completed_at: null,
   ...overrides,
 });
 

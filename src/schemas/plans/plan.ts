@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 // Plan用Zodスキーマ
 
-export const planStatusSchema = z.enum(['todo', 'doing', 'done']);
+export const planStatusSchema = z.enum(['open', 'done']);
 export const recurrenceTypeSchema = z.enum([
   'none',
   'daily',

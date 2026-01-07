@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import type { Plan } from '../types/plan';
 
-import { canRevertToTodo, getEffectiveStatus, isOverdue } from './status';
+import { isOverdue, isScheduled, normalizeStatus } from './status';
 
 // テスト用のモックプラン作成ヘルパー
 const createMockPlan = (overrides: Partial<Plan>): Plan => ({
@@ -10,7 +10,8 @@ const createMockPlan = (overrides: Partial<Plan>): Plan => ({
   user_id: 'user-1',
   title: 'テスト',
   description: null,
-  status: 'todo',
+  status: 'open',
+  completed_at: null,
   due_date: null,
   start_time: null,
   end_time: null,
@@ -24,103 +25,83 @@ const createMockPlan = (overrides: Partial<Plan>): Plan => ({
 });
 
 describe('status', () => {
-  describe('getEffectiveStatus', () => {
+  describe('normalizeStatus', () => {
     describe('新ステータス値', () => {
-      it('todoはtodoを返す', () => {
-        expect(getEffectiveStatus({ status: 'todo' })).toBe('todo');
-      });
-
-      it('doingはdoingを返す', () => {
-        expect(getEffectiveStatus({ status: 'doing' })).toBe('doing');
+      it('openはopenを返す', () => {
+        expect(normalizeStatus('open')).toBe('open');
       });
 
       it('doneはdoneを返す', () => {
-        expect(getEffectiveStatus({ status: 'done' })).toBe('done');
+        expect(normalizeStatus('done')).toBe('done');
       });
     });
 
     describe('旧ステータス値のマッピング', () => {
-      it('backlogはtodoにマッピングされる', () => {
-        expect(getEffectiveStatus({ status: 'backlog' })).toBe('todo');
+      it('todoはopenにマッピングされる', () => {
+        expect(normalizeStatus('todo')).toBe('open');
       });
 
-      it('readyはtodoにマッピングされる', () => {
-        expect(getEffectiveStatus({ status: 'ready' })).toBe('todo');
+      it('doingはopenにマッピングされる', () => {
+        expect(normalizeStatus('doing')).toBe('open');
       });
 
-      it('activeはdoingにマッピングされる', () => {
-        expect(getEffectiveStatus({ status: 'active' })).toBe('doing');
+      it('backlogはopenにマッピングされる', () => {
+        expect(normalizeStatus('backlog')).toBe('open');
       });
 
-      it('waitはdoingにマッピングされる', () => {
-        expect(getEffectiveStatus({ status: 'wait' })).toBe('doing');
+      it('readyはopenにマッピングされる', () => {
+        expect(normalizeStatus('ready')).toBe('open');
+      });
+
+      it('activeはopenにマッピングされる', () => {
+        expect(normalizeStatus('active')).toBe('open');
+      });
+
+      it('waitはopenにマッピングされる', () => {
+        expect(normalizeStatus('wait')).toBe('open');
       });
 
       it('cancelはdoneにマッピングされる', () => {
-        expect(getEffectiveStatus({ status: 'cancel' })).toBe('done');
+        expect(normalizeStatus('cancel')).toBe('done');
       });
 
-      it('未知のステータスはtodoにマッピングされる', () => {
-        expect(getEffectiveStatus({ status: 'unknown_status' })).toBe('todo');
-      });
-    });
-
-    describe('start_timeによるステータス導出', () => {
-      it('start_timeがあればdoingを返す（todoの場合）', () => {
-        expect(
-          getEffectiveStatus({
-            status: 'todo',
-            start_time: '2025-01-01T09:00:00Z',
-          }),
-        ).toBe('doing');
-      });
-
-      it('start_timeがあってもdoneはdoneのまま', () => {
-        expect(
-          getEffectiveStatus({
-            status: 'done',
-            start_time: '2025-01-01T09:00:00Z',
-          }),
-        ).toBe('done');
-      });
-
-      it('start_timeがnullならtodoはtodoのまま', () => {
-        expect(
-          getEffectiveStatus({
-            status: 'todo',
-            start_time: null,
-          }),
-        ).toBe('todo');
-      });
-
-      it('start_timeがundefinedならtodoはtodoのまま', () => {
-        expect(
-          getEffectiveStatus({
-            status: 'todo',
-            start_time: undefined,
-          }),
-        ).toBe('todo');
+      it('未知のステータスはopenにマッピングされる', () => {
+        expect(normalizeStatus('unknown_status')).toBe('open');
       });
     });
   });
 
-  describe('canRevertToTodo', () => {
-    it('start_timeがなければtrueを返す', () => {
+  describe('isScheduled', () => {
+    it('start_timeとend_timeが両方あればtrueを返す', () => {
       const plan = createMockPlan({
-        status: 'doing',
-        start_time: null,
-        end_time: null,
-      });
-      expect(canRevertToTodo(plan)).toBe(true);
-    });
-
-    it('start_timeがあればfalseを返す', () => {
-      const plan = createMockPlan({
-        status: 'doing',
         start_time: '2025-01-01T09:00:00Z',
         end_time: '2025-01-01T10:00:00Z',
       });
-      expect(canRevertToTodo(plan)).toBe(false);
+      expect(isScheduled(plan)).toBe(true);
+    });
+
+    it('start_timeがなければfalseを返す', () => {
+      const plan = createMockPlan({
+        start_time: null,
+        end_time: '2025-01-01T10:00:00Z',
+      });
+      expect(isScheduled(plan)).toBe(false);
+    });
+
+    it('end_timeがなければfalseを返す', () => {
+      const plan = createMockPlan({
+        start_time: '2025-01-01T09:00:00Z',
+        end_time: null,
+      });
+      expect(isScheduled(plan)).toBe(false);
+    });
+
+    it('両方なければfalseを返す', () => {
+      const plan = createMockPlan({
+        start_time: null,
+        end_time: null,
+      });
+      expect(isScheduled(plan)).toBe(false);
     });
   });
 
@@ -136,7 +117,7 @@ describe('status', () => {
 
     it('end_timeがなければfalseを返す', () => {
       const plan = createMockPlan({
-        status: 'todo',
+        status: 'open',
         start_time: null,
         end_time: null,
       });
@@ -145,7 +126,7 @@ describe('status', () => {
 
     it('end_timeが過去で未完了ならtrueを返す', () => {
       const plan = createMockPlan({
-        status: 'todo',
+        status: 'open',
         start_time: null,
         end_time: '2020-01-01T10:00:00Z', // 過去
       });
@@ -154,7 +135,7 @@ describe('status', () => {
 
     it('end_timeが未来で未完了ならfalseを返す', () => {
       const plan = createMockPlan({
-        status: 'todo',
+        status: 'open',
         start_time: null,
         end_time: '2099-01-01T10:00:00Z', // 未来
       });
@@ -163,7 +144,7 @@ describe('status', () => {
 
     it('旧ステータス（backlog）でも正しく判定する', () => {
       const plan = createMockPlan({
-        status: 'backlog' as unknown as 'todo',
+        status: 'backlog' as unknown as 'open',
         start_time: null,
         end_time: '2020-01-01T10:00:00Z', // 過去
       });

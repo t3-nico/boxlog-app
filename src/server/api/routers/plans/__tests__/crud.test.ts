@@ -98,7 +98,7 @@ describe('plansCrudRouter', () => {
     });
 
     it('should apply status filter', async () => {
-      const mockPlans = [createMockPlan({ id: 'plan-1', status: 'doing' })];
+      const mockPlans = [createMockPlan({ id: 'plan-1', status: 'open' })];
 
       const mockSupabase = createMockSupabase();
       const mockQuery = setupMockQuery(mockSupabase.from, 'plans', mockPlans);
@@ -108,9 +108,9 @@ describe('plansCrudRouter', () => {
       });
       const caller = createTypedCaller(plansCrudRouter, ctx);
 
-      await caller.list({ status: 'doing' });
+      await caller.list({ status: 'open' });
 
-      expect(mockQuery.eq).toHaveBeenCalledWith('status', 'doing');
+      expect(mockQuery.eq).toHaveBeenCalledWith('status', 'open');
     });
 
     it('should apply search filter', async () => {
@@ -213,7 +213,7 @@ describe('plansCrudRouter', () => {
 
       const result = await caller.create({
         title: 'New Plan',
-        status: 'todo',
+        status: 'open',
       });
 
       expect(result).toEqual(mockPlan);
@@ -238,7 +238,7 @@ describe('plansCrudRouter', () => {
 
       const result = await caller.create({
         title: 'New Plan',
-        status: 'todo',
+        status: 'open',
         due_date: '2024-01-15',
         start_time: '2024-01-15T10:00:00.000Z',
         end_time: '2024-01-15T11:00:00.000Z',

@@ -20,11 +20,15 @@ export function formatActivity(activity: PlanActivity): PlanActivityDisplay {
 
     case 'status_changed': {
       const statusLabels: Record<string, string> = {
+        open: '未完了',
+        done: '完了',
+        // 後方互換: 旧ステータス値
+        todo: '未完了',
+        doing: '進行中',
         backlog: '準備中',
         ready: '配置済み',
         active: '作業中',
         wait: '待ち',
-        done: '完了',
         cancel: '中止',
       };
       const oldLabel = activity.old_value

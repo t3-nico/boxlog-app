@@ -1,16 +1,13 @@
 // Plan型定義
 
 /**
- * プランステータス（3段階）
- * - todo: 未着手
- * - doing: 作業中（自動判定: カレンダー配置 or Log紐づけ）
- * - done: 完了（手動）
+ * プランステータス（2段階）
+ * - open: 未完了
+ * - done: 完了
  *
- * 注意: DBには 'done' かどうかのみ保存。
- * 'doing' は start_time / log_id から計算で導出。
- * 詳細は getEffectiveStatus() を参照。
+ * シンプルな2択。カレンダー配置の有無は start_time で判断。
  */
-export type PlanStatus = 'todo' | 'doing' | 'done';
+export type PlanStatus = 'open' | 'done';
 
 /**
  * 繰り返しタイプ（シンプル版）
@@ -46,6 +43,7 @@ export interface Plan {
   title: string;
   description: string | null;
   status: PlanStatus;
+  completed_at: string | null; // TIMESTAMPTZ型（完了時刻、status='done'時に自動設定）
   due_date: string | null; // DATE型（YYYY-MM-DD）
   start_time: string | null; // TIMESTAMPTZ型（ISO 8601）
   end_time: string | null; // TIMESTAMPTZ型（ISO 8601）

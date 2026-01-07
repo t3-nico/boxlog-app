@@ -129,7 +129,7 @@ export const recurrenceRouter = createTRPCRouter({
               overrides?.description !== undefined
                 ? (overrides.description ?? undefined)
                 : (parentPlan.description ?? undefined),
-            status: parentPlan.status as 'todo' | 'doing' | 'done',
+            status: parentPlan.status as 'open' | 'done',
             due_date: splitDate,
             start_time: newStartTime,
             end_time: newEndTime,

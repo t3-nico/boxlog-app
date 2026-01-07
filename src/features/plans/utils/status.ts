@@ -1,79 +1,37 @@
 import type { Plan, PlanStatus } from '../types/plan';
 
 /**
- * getEffectiveStatusに必要な最小プロパティ
- * InboxItemとPlan両方に対応するため、start_timeはundefinedも許容
- * DBには旧ステータス値が残っている可能性があるため、stringも許容
- */
-type StatusInput = {
-  status: PlanStatus | string;
-  start_time?: string | null | undefined;
-};
-
-/**
  * 旧ステータス値を新ステータス値にマッピング
- * DB移行完了後は削除可能
+ *
+ * DBに旧ステータス値（todo, doing, backlog, ready, active, wait, cancel）が
+ * 残っている可能性があるため、全て 'open' または 'done' に変換する。
+ *
+ * @param status - DBから取得したステータス値
+ * @returns 正規化されたステータス ('open' | 'done')
  */
-function normalizeStatus(status: string): PlanStatus {
+export function normalizeStatus(status: string): PlanStatus {
   // 新ステータス値はそのまま
-  if (status === 'todo' || status === 'doing' || status === 'done') {
+  if (status === 'open' || status === 'done') {
     return status;
   }
 
   // 旧ステータス値のマッピング
   switch (status) {
+    // 完了系 → done
+    case 'done':
+    case 'cancel':
+      return 'done';
+
+    // 未完了系 → open
+    case 'todo':
+    case 'doing':
     case 'backlog':
     case 'ready':
-      return 'todo';
     case 'active':
     case 'wait':
-      return 'doing';
-    case 'cancel':
-      return 'done'; // cancelはdoneとして扱う
     default:
-      // 未知のステータスはtodoとして扱う
-      return 'todo';
+      return 'open';
   }
-}
-
-/**
- * プランの実効ステータスを計算する
- *
- * DBには 'done' かどうかのみ保存。
- * 'doing' は start_time / log_id から計算で導出。
- * 旧ステータス値（backlog, ready, active, wait, cancel）も正しく変換。
- *
- * @param plan - プランオブジェクト（statusとstart_timeが必要）
- * @returns 実効ステータス ('todo' | 'doing' | 'done')
- */
-export function getEffectiveStatus(plan: StatusInput): PlanStatus {
-  // まずステータスを正規化
-  const normalizedStatus = normalizeStatus(plan.status);
-
-  // 明示的にdoneならdone
-  if (normalizedStatus === 'done') {
-    return 'done';
-  }
-
-  // カレンダー配置あり（start_time がある）→ doing
-  if (plan.start_time) {
-    return 'doing';
-  }
-
-  // それ以外 → 正規化されたステータス（todoまたはdoing）
-  return normalizedStatus;
-}
-
-/**
- * プランをTodoに戻せるかどうかを判定する
- *
- * Logが紐づいている場合は戻せない
- *
- * @param plan - プランオブジェクト
- * @returns Todoに戻せる場合 true
- */
-export function canRevertToTodo(plan: Plan): boolean {
-  return !plan.start_time;
 }
 
 /**
@@ -85,8 +43,8 @@ export function canRevertToTodo(plan: Plan): boolean {
  * @returns やり残しの場合 true
  */
 export function isOverdue(plan: Plan): boolean {
-  // 実効ステータスで判定（旧ステータス値も考慮）
-  if (getEffectiveStatus(plan) === 'done') {
+  // 正規化したステータスで判定（旧ステータス値も考慮）
+  if (normalizeStatus(plan.status) === 'done') {
     return false;
   }
 
@@ -95,4 +53,14 @@ export function isOverdue(plan: Plan): boolean {
   }
 
   return new Date(plan.end_time) < new Date();
+}
+
+/**
+ * プランがカレンダーに配置済みかどうかを判定する
+ *
+ * @param plan - プランオブジェクト
+ * @returns 配置済みの場合 true
+ */
+export function isScheduled(plan: Plan): boolean {
+  return plan.start_time !== null && plan.end_time !== null;
 }

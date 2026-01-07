@@ -28,12 +28,8 @@ describe('formatters', () => {
   });
 
   describe('formatplanStatus', () => {
-    it('todoをTodoに変換する', () => {
-      expect(formatplanStatus('todo')).toBe('Todo');
-    });
-
-    it('doingをDoingに変換する', () => {
-      expect(formatplanStatus('doing')).toBe('Doing');
+    it('openをOpenに変換する', () => {
+      expect(formatplanStatus('open')).toBe('Open');
     });
 
     it('doneをDoneに変換する', () => {

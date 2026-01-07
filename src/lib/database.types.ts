@@ -30,141 +30,102 @@ export type Database = {
     Tables: {
       audit_logs: {
         Row: {
-          id: string;
-          timestamp: string;
-          event_type: string;
-          severity: string;
-          user_id: string | null;
-          session_id: string | null;
-          ip_address: string | null;
-          user_agent: string | null;
-          resource: string | null;
           action: string | null;
-          metadata: Json;
-          success: boolean;
-          error_message: string | null;
           created_at: string;
+          error_message: string | null;
+          event_type: string;
+          geo_city: string | null;
           geo_country: string | null;
           geo_country_name: string | null;
           geo_region: string | null;
-          geo_city: string | null;
-          geo_timezone: string | null;
           geo_source: string | null;
-        };
-        Insert: {
-          id?: string;
-          timestamp?: string;
-          event_type: string;
+          geo_timezone: string | null;
+          id: string;
+          ip_address: unknown;
+          metadata: Json | null;
+          resource: string | null;
+          session_id: string | null;
           severity: string;
-          user_id?: string | null;
-          session_id?: string | null;
-          ip_address?: string | null;
-          user_agent?: string | null;
-          resource?: string | null;
+          success: boolean;
+          timestamp: string;
+          user_agent: string | null;
+          user_id: string | null;
+        };
+        Insert: {
           action?: string | null;
-          metadata?: Json;
-          success?: boolean;
-          error_message?: string | null;
           created_at?: string;
+          error_message?: string | null;
+          event_type: string;
+          geo_city?: string | null;
           geo_country?: string | null;
           geo_country_name?: string | null;
           geo_region?: string | null;
-          geo_city?: string | null;
-          geo_timezone?: string | null;
           geo_source?: string | null;
-        };
-        Update: {
+          geo_timezone?: string | null;
           id?: string;
+          ip_address?: unknown;
+          metadata?: Json | null;
+          resource?: string | null;
+          session_id?: string | null;
+          severity: string;
+          success?: boolean;
           timestamp?: string;
-          event_type?: string;
-          severity?: string;
-          user_id?: string | null;
-          session_id?: string | null;
-          ip_address?: string | null;
           user_agent?: string | null;
-          resource?: string | null;
+          user_id?: string | null;
+        };
+        Update: {
           action?: string | null;
-          metadata?: Json;
-          success?: boolean;
-          error_message?: string | null;
           created_at?: string;
+          error_message?: string | null;
+          event_type?: string;
+          geo_city?: string | null;
           geo_country?: string | null;
           geo_country_name?: string | null;
           geo_region?: string | null;
-          geo_city?: string | null;
-          geo_timezone?: string | null;
           geo_source?: string | null;
+          geo_timezone?: string | null;
+          id?: string;
+          ip_address?: unknown;
+          metadata?: Json | null;
+          resource?: string | null;
+          session_id?: string | null;
+          severity?: string;
+          success?: boolean;
+          timestamp?: string;
+          user_agent?: string | null;
+          user_id?: string | null;
         };
-        Relationships: [
-          {
-            foreignKeyName: 'audit_logs_user_id_fkey';
-            columns: ['user_id'];
-            isOneToOne: false;
-            referencedRelation: 'users';
-            referencedColumns: ['id'];
-          },
-        ];
+        Relationships: [];
       };
-      mfa_recovery_codes: {
+      auth_audit_logs: {
         Row: {
-          id: string;
-          user_id: string;
-          code_hash: string;
-          used_at: string | null;
           created_at: string;
+          event_type: string;
+          id: string;
+          ip_address: string | null;
+          metadata: Json | null;
+          user_agent: string | null;
+          user_id: string;
         };
         Insert: {
-          id?: string;
-          user_id: string;
-          code_hash: string;
-          used_at?: string | null;
           created_at?: string;
+          event_type: string;
+          id?: string;
+          ip_address?: string | null;
+          metadata?: Json | null;
+          user_agent?: string | null;
+          user_id: string;
         };
         Update: {
+          created_at?: string;
+          event_type?: string;
           id?: string;
+          ip_address?: string | null;
+          metadata?: Json | null;
+          user_agent?: string | null;
           user_id?: string;
-          code_hash?: string;
-          used_at?: string | null;
-          created_at?: string;
         };
-        Relationships: [
-          {
-            foreignKeyName: 'mfa_recovery_codes_user_id_fkey';
-            columns: ['user_id'];
-            isOneToOne: false;
-            referencedRelation: 'users';
-            referencedColumns: ['id'];
-          },
-        ];
-      };
-      password_history: {
-        Row: {
-          id: string;
-          user_id: string;
-          password_hash: string;
-          created_at: string;
-        };
-        Insert: {
-          id?: string;
-          user_id: string;
-          password_hash: string;
-          created_at?: string;
-        };
-        Update: {
-          id?: string;
-          user_id?: string;
-          password_hash?: string;
-          created_at?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: 'password_history_user_id_fkey';
-            columns: ['user_id'];
-            isOneToOne: false;
-            referencedRelation: 'users';
-            referencedColumns: ['id'];
-          },
-        ];
+        Relationships: [];
       };
       login_attempts: {
         Row: {
@@ -193,6 +154,30 @@ export type Database = {
           ip_address?: string | null;
           is_successful?: boolean;
           user_agent?: string | null;
+        };
+        Relationships: [];
+      };
+      mfa_recovery_codes: {
+        Row: {
+          code_hash: string;
+          created_at: string;
+          id: string;
+          used_at: string | null;
+          user_id: string;
+        };
+        Insert: {
+          code_hash: string;
+          created_at?: string;
+          id?: string;
+          used_at?: string | null;
+          user_id: string;
+        };
+        Update: {
+          code_hash?: string;
+          created_at?: string;
+          id?: string;
+          used_at?: string | null;
+          user_id?: string;
         };
         Relationships: [];
       };
@@ -312,6 +297,27 @@ export type Database = {
             referencedColumns: ['id'];
           },
         ];
+      };
+      password_history: {
+        Row: {
+          created_at: string;
+          id: string;
+          password_hash: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          password_hash: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          password_hash?: string;
+          user_id?: string;
+        };
+        Relationships: [];
       };
       plan_activities: {
         Row: {
@@ -448,12 +454,12 @@ export type Database = {
       };
       plans: {
         Row: {
+          completed_at: string | null;
           created_at: string | null;
           description: string | null;
           due_date: string | null;
           end_time: string | null;
           id: string;
-          plan_number: string;
           recurrence_end_date: string | null;
           recurrence_rule: string | null;
           recurrence_type: string | null;
@@ -467,12 +473,12 @@ export type Database = {
           user_id: string;
         };
         Insert: {
+          completed_at?: string | null;
           created_at?: string | null;
           description?: string | null;
           due_date?: string | null;
           end_time?: string | null;
           id?: string;
-          plan_number: string;
           recurrence_end_date?: string | null;
           recurrence_rule?: string | null;
           recurrence_type?: string | null;
@@ -486,12 +492,12 @@ export type Database = {
           user_id: string;
         };
         Update: {
+          completed_at?: string | null;
           created_at?: string | null;
           description?: string | null;
           due_date?: string | null;
           end_time?: string | null;
           id?: string;
-          plan_number?: string;
           recurrence_end_date?: string | null;
           recurrence_rule?: string | null;
           recurrence_type?: string | null;
@@ -544,7 +550,6 @@ export type Database = {
           color: string | null;
           created_at: string | null;
           description: string | null;
-          group_number: number;
           id: string;
           name: string;
           slug: string;
@@ -556,7 +561,6 @@ export type Database = {
           color?: string | null;
           created_at?: string | null;
           description?: string | null;
-          group_number?: number;
           id?: string;
           name: string;
           slug: string;
@@ -568,7 +572,6 @@ export type Database = {
           color?: string | null;
           created_at?: string | null;
           description?: string | null;
-          group_number?: number;
           id?: string;
           name?: string;
           slug?: string;
@@ -577,94 +580,6 @@ export type Database = {
           user_id?: string;
         };
         Relationships: [];
-      };
-      user_settings: {
-        Row: {
-          id: string;
-          user_id: string;
-          timezone: string;
-          show_utc_offset: boolean;
-          time_format: string;
-          date_format: string;
-          week_starts_on: number;
-          show_weekends: boolean;
-          show_week_numbers: boolean;
-          default_duration: number;
-          snap_interval: number;
-          business_hours_start: number;
-          business_hours_end: number;
-          show_declined_events: boolean;
-          chronotype_enabled: boolean;
-          chronotype_type: string;
-          chronotype_custom_zones: Json | null;
-          chronotype_display_mode: string;
-          chronotype_opacity: number;
-          plan_record_mode: string;
-          theme: string;
-          color_scheme: string;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: {
-          id?: string;
-          user_id: string;
-          timezone?: string;
-          show_utc_offset?: boolean;
-          time_format?: string;
-          date_format?: string;
-          week_starts_on?: number;
-          show_weekends?: boolean;
-          show_week_numbers?: boolean;
-          default_duration?: number;
-          snap_interval?: number;
-          business_hours_start?: number;
-          business_hours_end?: number;
-          show_declined_events?: boolean;
-          chronotype_enabled?: boolean;
-          chronotype_type?: string;
-          chronotype_custom_zones?: Json | null;
-          chronotype_display_mode?: string;
-          chronotype_opacity?: number;
-          plan_record_mode?: string;
-          theme?: string;
-          color_scheme?: string;
-          created_at?: string;
-          updated_at?: string;
-        };
-        Update: {
-          id?: string;
-          user_id?: string;
-          timezone?: string;
-          show_utc_offset?: boolean;
-          time_format?: string;
-          date_format?: string;
-          week_starts_on?: number;
-          show_weekends?: boolean;
-          show_week_numbers?: boolean;
-          default_duration?: number;
-          snap_interval?: number;
-          business_hours_start?: number;
-          business_hours_end?: number;
-          show_declined_events?: boolean;
-          chronotype_enabled?: boolean;
-          chronotype_type?: string;
-          chronotype_custom_zones?: Json | null;
-          chronotype_display_mode?: string;
-          chronotype_opacity?: number;
-          plan_record_mode?: string;
-          theme?: string;
-          color_scheme?: string;
-          created_at?: string;
-          updated_at?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: 'user_settings_user_id_fkey';
-            columns: ['user_id'];
-            referencedRelation: 'users';
-            referencedColumns: ['id'];
-          },
-        ];
       };
       tags: {
         Row: {
@@ -676,7 +591,6 @@ export type Database = {
           id: string;
           is_active: boolean;
           name: string;
-          tag_number: number;
           updated_at: string | null;
           user_id: string | null;
         };
@@ -689,7 +603,6 @@ export type Database = {
           id?: string;
           is_active?: boolean;
           name: string;
-          tag_number?: number;
           updated_at?: string | null;
           user_id?: string | null;
         };
@@ -702,7 +615,6 @@ export type Database = {
           id?: string;
           is_active?: boolean;
           name?: string;
-          tag_number?: number;
           updated_at?: string | null;
           user_id?: string | null;
         };
@@ -716,31 +628,180 @@ export type Database = {
           },
         ];
       };
+      user_settings: {
+        Row: {
+          business_hours_end: number;
+          business_hours_start: number;
+          chronotype_custom_zones: Json | null;
+          chronotype_display_mode: string;
+          chronotype_enabled: boolean;
+          chronotype_opacity: number;
+          chronotype_type: string;
+          color_scheme: string;
+          created_at: string;
+          date_format: string;
+          default_duration: number;
+          id: string;
+          plan_record_mode: string;
+          show_declined_events: boolean;
+          show_utc_offset: boolean;
+          show_week_numbers: boolean;
+          show_weekends: boolean;
+          snap_interval: number;
+          theme: string;
+          time_format: string;
+          timezone: string;
+          updated_at: string;
+          user_id: string;
+          week_starts_on: number;
+        };
+        Insert: {
+          business_hours_end?: number;
+          business_hours_start?: number;
+          chronotype_custom_zones?: Json | null;
+          chronotype_display_mode?: string;
+          chronotype_enabled?: boolean;
+          chronotype_opacity?: number;
+          chronotype_type?: string;
+          color_scheme?: string;
+          created_at?: string;
+          date_format?: string;
+          default_duration?: number;
+          id?: string;
+          plan_record_mode?: string;
+          show_declined_events?: boolean;
+          show_utc_offset?: boolean;
+          show_week_numbers?: boolean;
+          show_weekends?: boolean;
+          snap_interval?: number;
+          theme?: string;
+          time_format?: string;
+          timezone?: string;
+          updated_at?: string;
+          user_id: string;
+          week_starts_on?: number;
+        };
+        Update: {
+          business_hours_end?: number;
+          business_hours_start?: number;
+          chronotype_custom_zones?: Json | null;
+          chronotype_display_mode?: string;
+          chronotype_enabled?: boolean;
+          chronotype_opacity?: number;
+          chronotype_type?: string;
+          color_scheme?: string;
+          created_at?: string;
+          date_format?: string;
+          default_duration?: number;
+          id?: string;
+          plan_record_mode?: string;
+          show_declined_events?: boolean;
+          show_utc_offset?: boolean;
+          show_week_numbers?: boolean;
+          show_weekends?: boolean;
+          snap_interval?: number;
+          theme?: string;
+          time_format?: string;
+          timezone?: string;
+          updated_at?: string;
+          user_id?: string;
+          week_starts_on?: number;
+        };
+        Relationships: [];
+      };
     };
     Views: {
-      [_ in never]: never;
+      user_recent_logins: {
+        Row: {
+          created_at: string | null;
+          ip_address: string | null;
+          location: string | null;
+          user_agent: string | null;
+          user_id: string | null;
+        };
+        Insert: {
+          created_at?: string | null;
+          ip_address?: string | null;
+          location?: never;
+          user_agent?: string | null;
+          user_id?: string | null;
+        };
+        Update: {
+          created_at?: string | null;
+          ip_address?: string | null;
+          location?: never;
+          user_agent?: string | null;
+          user_id?: string | null;
+        };
+        Relationships: [];
+      };
     };
     Functions: {
-      cleanup_old_login_attempts: { Args: never; Returns: undefined };
-      delete_old_notifications: { Args: never; Returns: undefined };
-      get_next_tag_number: { Args: { p_user_id: string }; Returns: number };
-      get_tag_stats: {
-        Args: { p_user_id: string };
-        Returns: Array<{ tag_id: string; plan_count: number; last_used: string | null }>;
-      };
-      // MFA Recovery Codes
-      count_unused_recovery_codes: { Args: { p_user_id: string }; Returns: number };
-      use_recovery_code: { Args: { p_user_id: string; p_code_hash: string }; Returns: boolean };
-      // Password History
-      check_password_reuse: {
-        Args: { p_user_id: string; p_new_password: string };
-        Returns: boolean;
-      };
       add_password_to_history: {
-        Args: { p_user_id: string; p_new_password: string };
+        Args: { p_new_password: string; p_user_id: string };
         Returns: undefined;
       };
-      get_password_history_count: { Args: { p_user_id: string }; Returns: number };
+      check_password_reuse: {
+        Args: { p_new_password: string; p_user_id: string };
+        Returns: boolean;
+      };
+      cleanup_old_audit_logs: { Args: never; Returns: undefined };
+      cleanup_old_auth_audit_logs: { Args: never; Returns: undefined };
+      cleanup_old_login_attempts: { Args: never; Returns: undefined };
+      count_unused_recovery_codes: {
+        Args: { p_user_id: string };
+        Returns: number;
+      };
+      create_plan_with_tags: {
+        Args: {
+          p_description?: string;
+          p_scheduled_date?: string;
+          p_tag_ids?: string[];
+          p_title: string;
+          p_user_id: string;
+        };
+        Returns: Json;
+      };
+      delete_old_notifications: { Args: never; Returns: undefined };
+      delete_plan_with_cleanup: {
+        Args: { p_plan_id: string; p_user_id: string };
+        Returns: Json;
+      };
+      get_password_history_count: {
+        Args: { p_user_id: string };
+        Returns: number;
+      };
+      get_tag_stats: {
+        Args: { p_user_id: string };
+        Returns: {
+          last_used: string;
+          plan_count: number;
+          tag_id: string;
+        }[];
+      };
+      merge_tags: {
+        Args: {
+          p_source_tag_ids: string[];
+          p_target_tag_id: string;
+          p_user_id: string;
+        };
+        Returns: Json;
+      };
+      update_plan_with_tags: {
+        Args: {
+          p_description?: string;
+          p_plan_id: string;
+          p_scheduled_date?: string;
+          p_tag_ids?: string[];
+          p_title?: string;
+          p_user_id: string;
+        };
+        Returns: Json;
+      };
+      use_recovery_code: {
+        Args: { p_code_hash: string; p_user_id: string };
+        Returns: boolean;
+      };
     };
     Enums: {
       [_ in never]: never;
