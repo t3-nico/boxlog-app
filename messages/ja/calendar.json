@@ -177,12 +177,6 @@
     },
     "open": {
       "navigation": {
-        "period": "期間",
-        "sortBy": "並べ替え",
-        "all": "すべて",
-        "today": "今日",
-        "overdue": "期限切れ",
-        "dueDate": "期限日順",
         "created": "作成日順",
         "updated": "更新日順"
       },

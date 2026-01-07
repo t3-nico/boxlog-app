@@ -177,12 +177,6 @@
     },
     "open": {
       "navigation": {
-        "period": "Period",
-        "sortBy": "Sort by",
-        "all": "All",
-        "today": "Today",
-        "overdue": "Overdue",
-        "dueDate": "Due date",
         "created": "Created",
         "updated": "Updated"
       },

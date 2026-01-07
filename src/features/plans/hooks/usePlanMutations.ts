@@ -161,8 +161,7 @@ export function usePlanMutations() {
       // 重要な更新のみtoast表示（status変更、タグ変更など）
       if (variables.data.status) {
         const statusMap: Record<string, string> = {
-          todo: 'Todo',
-          doing: 'Doing',
+          open: 'Open',
           done: 'Done',
         };
         const statusLabel = statusMap[variables.data.status] || variables.data.status;
@@ -244,7 +243,7 @@ export function usePlanMutations() {
         const restoreData = {
           title: previousPlan.title,
           description: previousPlan.description ?? undefined,
-          status: previousPlan.status as 'todo' | 'doing' | 'done',
+          status: previousPlan.status as 'open' | 'done',
           start_time: normalizeDateTime(previousPlan.start_time),
           end_time: normalizeDateTime(previousPlan.end_time),
           due_date: previousPlan.due_date ?? undefined,

@@ -24,11 +24,12 @@ const STATUS_MAP: Record<string, PlanStatus> = {
   done: 'done',
   completed: 'done',
   complete: 'done',
-  todo: 'todo',
-  pending: 'todo',
-  in_progress: 'doing',
-  inprogress: 'doing',
-  doing: 'doing',
+  open: 'open',
+  todo: 'open', // 後方互換: 旧構文対応
+  pending: 'open',
+  in_progress: 'open', // 後方互換: 旧構文対応
+  inprogress: 'open',
+  doing: 'open', // 後方互換: 旧構文対応
 };
 
 const DUE_MAP: Record<string, SearchFilters['dueDate']> = {
@@ -104,9 +105,8 @@ export function parseSearchQuery(query: string): ParsedQuery {
 export function getFilterHints(): Array<{ syntax: string; description: string }> {
   return [
     { syntax: '#タグ名', description: 'タグでフィルター' },
+    { syntax: 'status:open', description: '未完了を表示' },
     { syntax: 'status:done', description: '完了済みを表示' },
-    { syntax: 'status:todo', description: '未着手を表示' },
-    { syntax: 'status:in_progress', description: '進行中を表示' },
     { syntax: 'due:today', description: '今日が期限' },
     { syntax: 'due:overdue', description: '期限超過' },
   ];

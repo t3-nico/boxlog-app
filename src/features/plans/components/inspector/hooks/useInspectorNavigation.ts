@@ -2,14 +2,14 @@
 
 import { useCallback, useMemo } from 'react';
 
-import { useInboxFocusStore } from '@/features/inbox/stores/useInboxFocusStore';
+import { useTableFocusStore } from '@/features/table';
 
 import { usePlans } from '../../../hooks/usePlans';
 import { usePlanInspectorStore } from '../../../stores/usePlanInspectorStore';
 
 export function useInspectorNavigation(planId: string | null) {
   const openInspector = usePlanInspectorStore((state) => state.openInspector);
-  const setFocusedId = useInboxFocusStore((state) => state.setFocusedId);
+  const setFocusedId = useTableFocusStore((state) => state.setFocusedId);
 
   const { data: allPlans = [] } = usePlans();
 

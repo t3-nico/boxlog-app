@@ -107,9 +107,9 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
         setNewGroupName('');
         setNewGroupColor(DEFAULT_GROUP_COLOR);
 
-        // 作成したグループのページに遷移
+        // 作成したグループのページに遷移（UUIDベース）
         const locale = pathname?.split('/')[1] || 'ja';
-        router.push(`/${locale}/tags/g-${result.group_number}`);
+        router.push(`/${locale}/tags/${result.id}`);
       } catch (error) {
         console.error('Failed to create tag group:', error);
         toast.error(t('tag.toast.groupCreateFailed'));

@@ -9,7 +9,7 @@ import { memo, useCallback } from 'react';
 import { CheckCircle2, Circle, MoveUpRight } from 'lucide-react';
 
 import type { PlanStatus } from '@/features/plans/types';
-import { getEffectiveStatus } from '@/features/plans/utils/status';
+import { normalizeStatus } from '@/features/plans/utils/status';
 
 /** プランリスト用の最小インターフェース */
 interface PlanListItem {
@@ -101,7 +101,7 @@ export const TagInspectorPlanList = memo(function TagInspectorPlanList({
       ) : (
         <div>
           {plans.slice(0, 20).map((plan) => {
-            const effectiveStatus = getEffectiveStatus(plan);
+            const currentStatus = normalizeStatus(plan.status);
             const dateTime = getFormattedDateTime(plan);
 
             return (
@@ -113,15 +113,13 @@ export const TagInspectorPlanList = memo(function TagInspectorPlanList({
                   type="button"
                   onClick={(e) => {
                     e.stopPropagation();
-                    onStatusToggle(plan.id, effectiveStatus);
+                    onStatusToggle(plan.id, currentStatus);
                   }}
                   className="hover:bg-state-hover shrink-0 rounded p-0.5 transition-colors"
-                  aria-label={effectiveStatus === 'done' ? '未完了に戻す' : '完了にする'}
+                  aria-label={currentStatus === 'done' ? '未完了に戻す' : '完了にする'}
                 >
-                  {effectiveStatus === 'done' ? (
+                  {currentStatus === 'done' ? (
                     <CheckCircle2 className="text-success size-4" />
-                  ) : effectiveStatus === 'doing' ? (
-                    <Circle className="text-primary size-4" />
                   ) : (
                     <Circle className="text-muted-foreground size-4" />
                   )}

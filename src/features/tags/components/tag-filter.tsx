@@ -9,6 +9,7 @@ import {
   X as XMarkIcon,
 } from 'lucide-react';
 
+import { LoadingSpinner } from '@/components/common/Loading/LoadingStates';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useTags } from '@/features/tags/hooks/useTags';
@@ -170,7 +171,7 @@ export const TagFilter = ({
             <div className="max-h-80 overflow-y-auto">
               {isPending ? (
                 <div className="flex items-center justify-center py-8">
-                  <div className="border-primary h-6 w-6 animate-spin rounded-full border-b-2"></div>
+                  <LoadingSpinner size="md" />
                 </div>
               ) : allTags.length > 0 ? (
                 <div className="py-2">

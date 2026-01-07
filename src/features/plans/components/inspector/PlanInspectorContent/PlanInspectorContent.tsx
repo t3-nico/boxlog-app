@@ -41,13 +41,15 @@ export function PlanInspectorContent() {
     handleTagsChange,
     handleRemoveTag,
     titleRef,
-    selectedDate,
+    scheduleDate,
+    dueDate,
     startTime,
     endTime,
     reminderType,
     setReminderType,
     timeConflictError,
-    handleDateChange,
+    handleScheduleDateChange,
+    handleDueDateChange,
     handleStartTimeChange,
     handleEndTimeChange,
     autoSave,
@@ -172,7 +174,8 @@ export function PlanInspectorContent() {
             plan={plan}
             planId={planId!}
             titleRef={titleRef}
-            selectedDate={selectedDate}
+            scheduleDate={scheduleDate}
+            dueDate={dueDate}
             startTime={startTime}
             endTime={endTime}
             reminderType={reminderType}
@@ -192,7 +195,8 @@ export function PlanInspectorContent() {
                 : (plan?.recurrence_type ?? null);
             })()}
             onAutoSave={autoSave}
-            onDateChange={handleDateChange}
+            onScheduleDateChange={handleScheduleDateChange}
+            onDueDateChange={handleDueDateChange}
             onStartTimeChange={handleStartTimeChange}
             onEndTimeChange={handleEndTimeChange}
             onReminderChange={(type) => {

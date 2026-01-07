@@ -6,10 +6,11 @@
 
 import { memo } from 'react';
 
-import { Bell, CheckSquare, FileText } from 'lucide-react';
+import { Bell, CalendarDays, CheckSquare, FileText } from 'lucide-react';
 import dynamic from 'next/dynamic';
 
 import type { Plan } from '../../../types/plan';
+import { DatePickerPopover } from '../../shared/DatePickerPopover';
 import { PlanScheduleSection } from '../../shared/PlanScheduleSection';
 import { PlanTagsSection } from '../../shared/PlanTagsSection';
 import { ReminderSelect } from '../../shared/ReminderSelect';
@@ -31,7 +32,8 @@ interface PlanInspectorDetailsTabProps {
   plan: Plan;
   planId: string;
   titleRef: React.RefObject<HTMLSpanElement | null>;
-  selectedDate: Date | undefined;
+  scheduleDate: Date | undefined; // スケジュール日（カレンダー配置用）
+  dueDate: Date | undefined; // 期限日
   startTime: string;
   endTime: string;
   reminderType: string;
@@ -41,7 +43,8 @@ interface PlanInspectorDetailsTabProps {
   /** 時間重複エラー状態（視覚的フィードバック用） */
   timeConflictError?: boolean;
   onAutoSave: (field: string, value: string | undefined) => void;
-  onDateChange: (date: Date | undefined) => void;
+  onScheduleDateChange: (date: Date | undefined) => void;
+  onDueDateChange: (date: Date | undefined) => void;
   onStartTimeChange: (time: string) => void;
   onEndTimeChange: (time: string) => void;
   onReminderChange: (type: string) => void;
@@ -54,7 +57,8 @@ interface PlanInspectorDetailsTabProps {
 export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
   plan,
   titleRef,
-  selectedDate,
+  scheduleDate,
+  dueDate,
   startTime,
   endTime,
   reminderType,
@@ -63,7 +67,8 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
   recurrenceType,
   timeConflictError = false,
   onAutoSave,
-  onDateChange,
+  onScheduleDateChange,
+  onDueDateChange,
   onStartTimeChange,
   onEndTimeChange,
   onReminderChange,
@@ -92,10 +97,10 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
 
       {/* Schedule */}
       <PlanScheduleSection
-        selectedDate={selectedDate}
+        selectedDate={scheduleDate}
         startTime={startTime}
         endTime={endTime}
-        onDateChange={onDateChange}
+        onDateChange={onScheduleDateChange}
         onStartTimeChange={onStartTimeChange}
         onEndTimeChange={onEndTimeChange}
         recurrenceRule={recurrenceRule}
@@ -105,6 +110,18 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
         showBorderTop={true}
         timeConflictError={timeConflictError}
       />
+
+      {/* Due Date - 期限 */}
+      <div className="border-border/50 flex min-h-10 items-start gap-2 border-t px-4 py-2">
+        <CalendarDays className="text-muted-foreground mt-2 size-4 flex-shrink-0" />
+        <div className="flex h-8 flex-1 items-center">
+          <DatePickerPopover
+            selectedDate={dueDate}
+            onDateChange={onDueDateChange}
+            placeholder="期限を設定"
+          />
+        </div>
+      </div>
 
       {/* Tags */}
       <PlanTagsSection

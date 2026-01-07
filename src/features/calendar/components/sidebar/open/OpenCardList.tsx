@@ -6,13 +6,11 @@ import { useTranslations } from 'next-intl';
 
 import { PlanCard } from '@/features/board/components/shared/PlanCard';
 import { useCalendarFilterStore } from '@/features/calendar/stores/useCalendarFilterStore';
-import { parseDateString } from '@/features/calendar/utils/dateUtils';
 import { useInboxData } from '@/features/inbox/hooks/useInboxData';
 
-import type { OpenFilter, OpenSort } from './OpenNavigation';
+import type { OpenSort } from './OpenNavigation';
 
 interface OpenCardListProps {
-  filter: OpenFilter;
   sort: OpenSort;
 }
 
@@ -21,14 +19,14 @@ interface OpenCardListProps {
  *
  * **機能**:
  * - usePlansData でデータ取得
- * - フィルター・ソート
+ * - ソート（作成日/更新日）
  * - カレンダーにスケジュールされていないプランのみ表示
  * - PlanCard を再利用（ドラッグ可能）
  *
  * **Note**: PlanCard の useDraggable は既に実装済みなので、
  * DndContext 内に配置すれば自動的にドラッグ可能になる
  */
-export function OpenCardList({ filter, sort }: OpenCardListProps) {
+export function OpenCardList({ sort }: OpenCardListProps) {
   const t = useTranslations('calendar.open');
 
   // status: 'open' のプランのみ取得
@@ -50,36 +48,9 @@ export function OpenCardList({ filter, sort }: OpenCardListProps) {
       return isPlanVisible(tagIds);
     });
 
-    // 2. 期間フィルター
-    if (filter !== 'all') {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-
-      result = result.filter((item) => {
-        if (!item.due_date) return false;
-
-        // タイムゾーン問題を回避: YYYY-MM-DD をローカル日付として解釈
-        const itemDate = parseDateString(item.due_date);
-        itemDate.setHours(0, 0, 0, 0);
-
-        if (filter === 'today') {
-          return itemDate.getTime() === today.getTime();
-        } else if (filter === 'overdue') {
-          return itemDate < today;
-        }
-        return true;
-      });
-    }
-
-    // 3. ソート
+    // 2. ソート
     result.sort((a, b) => {
-      if (sort === 'due') {
-        // 期限日順（期限なしは最後）
-        if (!a.due_date) return 1;
-        if (!b.due_date) return -1;
-        // タイムゾーン問題を回避: YYYY-MM-DD をローカル日付として解釈
-        return parseDateString(a.due_date).getTime() - parseDateString(b.due_date).getTime();
-      } else if (sort === 'created') {
+      if (sort === 'created') {
         // 作成日順（新しい順）
         return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
       } else if (sort === 'updated') {
@@ -90,7 +61,7 @@ export function OpenCardList({ filter, sort }: OpenCardListProps) {
     });
 
     return result;
-  }, [items, filter, sort, isPlanVisible]);
+  }, [items, sort, isPlanVisible]);
 
   // ローディング表示
   if (isPending) {

@@ -19,15 +19,14 @@ Feature-specific types should be colocated with their features.
 
 ## Type Placement Rules
 
-| Type Category                             | Location                    |
-| ----------------------------------------- | --------------------------- |
-| **Core entities** (Task, Profile)         | `@/types`                   |
-| **API types** (ApiResponse)               | `@/types` (via api.ts)      |
-| **Feature types** (Tag, CalendarPlan)     | `features/*/types.ts`       |
-| **DB types** (Database)                   | `lib/database.types.ts`     |
-| **i18n types** (Locale, TranslatedString) | `lib/i18n/types.ts`         |
-| **Settings types** (Chronotype)           | `features/settings/types/`  |
-| **Offline types** (OfflineAction)         | `features/offline/types.ts` |
+| Type Category                             | Location                   |
+| ----------------------------------------- | -------------------------- |
+| **Core entities** (Task, Profile)         | `@/types`                  |
+| **API types** (ApiResponse)               | `@/types` (via api.ts)     |
+| **Feature types** (Tag, CalendarPlan)     | `features/*/types.ts`      |
+| **DB types** (Database)                   | `lib/database.types.ts`    |
+| **i18n types** (Locale, TranslatedString) | `lib/i18n/types.ts`        |
+| **Settings types** (Chronotype)           | `features/settings/types/` |
 
 ## Usage
 

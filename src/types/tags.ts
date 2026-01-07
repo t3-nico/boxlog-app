@@ -1,14 +1,15 @@
 /**
- * タグ型定義 - 後方互換性のための再エクスポート
+ * タグ型定義の再エクスポート
  *
- * @deprecated `@/features/tags/types` から直接インポートしてください
- *
- * @example
- * // Before
- * import type { Tag } from '@/types/tags'
- *
- * // After (推奨)
- * import type { Tag } from '@/features/tags/types'
+ * 実際の定義は src/features/tags/types にあります。
+ * 後方互換性のためにここから再エクスポートしています。
  */
 
-export * from '@/features/tags/types';
+export type {
+  CreateTagInput,
+  Tag,
+  TagGroup,
+  TagOption,
+  TagWithChildren,
+  UpdateTagInput,
+} from '@/features/tags/types';

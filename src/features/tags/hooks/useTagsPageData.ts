@@ -94,7 +94,9 @@ export function useTagsPageData({
             new Date(a.created_at ?? 0).getTime() - new Date(b.created_at ?? 0).getTime();
           break;
         case 'tag_number':
-          comparison = a.tag_number - b.tag_number;
+          // tag_numberは削除されたため、作成日時でソート
+          comparison =
+            new Date(a.created_at ?? 0).getTime() - new Date(b.created_at ?? 0).getTime();
           break;
         case 'group': {
           const groupA = a.group_id ? groups.find((g) => g.id === a.group_id)?.name || '' : '';

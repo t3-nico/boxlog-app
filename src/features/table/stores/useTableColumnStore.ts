@@ -9,7 +9,6 @@ import type { ColumnConfig, ColumnId } from '../types/column';
 const DEFAULT_COLUMNS: ColumnConfig[] = [
   { id: 'selection', label: '', visible: true, width: 50, resizable: false },
   { id: 'title', label: 'タイトル', visible: true, width: 300, resizable: true },
-  { id: 'status', label: 'ステータス', visible: true, width: 120, resizable: true },
   { id: 'tags', label: 'タグ', visible: true, width: 200, resizable: true },
   { id: 'duration', label: '期間', visible: true, width: 200, resizable: true },
   { id: 'created_at', label: '作成日', visible: true, width: 120, resizable: true },
@@ -79,8 +78,8 @@ export const useTableColumnStore = create<TableColumnState>()(
         getVisibleColumns: () => get().columns.filter((col) => col.visible),
       }),
       {
-        // 後方互換性のため inbox-column-store-v9 を維持
-        name: 'inbox-column-store-v9',
+        // ステータスカラム削除に伴いv11に更新（古いlocalStorageデータを無効化）
+        name: 'inbox-column-store-v11',
       },
     ),
     { name: 'table-column-store' },

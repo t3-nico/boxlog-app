@@ -7,14 +7,7 @@
 /**
  * 列ID
  */
-export type ColumnId =
-  | 'selection'
-  | 'title'
-  | 'status'
-  | 'tags'
-  | 'duration'
-  | 'created_at'
-  | 'updated_at';
+export type ColumnId = 'selection' | 'title' | 'tags' | 'duration' | 'created_at' | 'updated_at';
 
 /**
  * 列設定

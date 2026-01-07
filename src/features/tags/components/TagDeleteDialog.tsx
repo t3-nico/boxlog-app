@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
+import { LoadingSpinner } from '@/components/common/Loading/LoadingStates';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -124,7 +125,7 @@ export function TagDeleteDialog({ tag, onClose, onConfirm }: TagDeleteDialogProp
           {/* 使用状況 */}
           {isPending ? (
             <div className="bg-surface-container flex items-center justify-center rounded-xl p-4">
-              <div className="border-primary size-5 animate-spin rounded-full border-b-2"></div>
+              <LoadingSpinner size="sm" />
             </div>
           ) : usage ? (
             <div className="bg-surface-container rounded-xl p-4">
