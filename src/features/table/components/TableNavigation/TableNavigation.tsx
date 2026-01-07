@@ -25,6 +25,10 @@ export interface TableNavigationConfig {
   search: string;
   /** 検索値の更新 */
   onSearchChange: (value: string) => void;
+  /** 検索UIの展開状態（外部制御、再マウント耐性用） */
+  isSearchOpen?: boolean;
+  /** 検索UIの展開状態変更（外部制御、再マウント耐性用） */
+  onSearchOpenChange?: (isOpen: boolean) => void;
   /** ソートフィールド（null = ソートなし） */
   sortField: string | null;
   /** ソート方向 */
@@ -77,32 +81,64 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
   const isMobile = useMediaQuery(MEDIA_QUERIES.mobile);
 
   // config から必要な関数を分割代入（ESLint依存配列対応）
-  const { onSearchChange } = config;
+  const { onSearchChange, isSearchOpen, onSearchOpenChange } = config;
 
-  const [showSearch, setShowSearch] = useState(false);
+  // 検索UIの展開状態: 外部制御がある場合はそれを使用、なければローカルステート
+  const [localShowSearch, setLocalShowSearch] = useState(false);
+  const showSearch = isSearchOpen ?? localShowSearch;
+  const setShowSearch = onSearchOpenChange ?? setLocalShowSearch;
+
   const [showFilter, setShowFilter] = useState(false);
   const [showSort, setShowSort] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
 
-  // === shadcn公式方式（同期的、親の状態を直接使用） ===
+  // === ローカルステート方式：即時フィードバック + 親への通知 ===
   const searchContainerRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  // デバッグ: config.searchの変化を追跡
-  console.log('[TableNavigation] config.search:', config.search, 'showSearch:', showSearch);
+  // ローカル検索値（即時UI更新用）
+  const [localSearch, setLocalSearch] = useState(config.search);
 
-  // デバッグ: マウント/アンマウントを追跡
-  useEffect(() => {
-    console.log('[TableNavigation] MOUNTED');
-    return () => console.log('[TableNavigation] UNMOUNTED');
+  // 親に同期済みの値を追跡（デバウンス用）
+  const syncedSearchRef = useRef(config.search);
+
+  // 親の値が外部から変更された場合のみ同期（リセットボタン等）
+  const prevConfigSearch = useRef(config.search);
+  if (config.search !== prevConfigSearch.current) {
+    // 親の値が変わった場合、ローカル値と同期状態を更新
+    if (config.search !== localSearch) {
+      setLocalSearch(config.search);
+    }
+    syncedSearchRef.current = config.search;
+    prevConfigSearch.current = config.search;
+  }
+
+  // 入力ハンドラー：ローカル更新のみ（親への通知はデバウンス）
+  const handleSearchInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setLocalSearch(e.target.value);
   }, []);
+
+  // デバウンス: 300ms後に親へ通知（タイピング中はAPI呼び出しを抑制）
+  useEffect(() => {
+    // ローカル値が同期済みの値と同じなら何もしない
+    if (localSearch === syncedSearchRef.current) return;
+
+    const timer = setTimeout(() => {
+      syncedSearchRef.current = localSearch;
+      onSearchChange(localSearch);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [localSearch, onSearchChange]);
 
   // キーボードハンドリング
   const handleSearchKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === 'Escape') {
-        if (config.search) {
-          // 検索中ならクリア
+        if (localSearch) {
+          // 検索中ならクリア（即時反映）
+          setLocalSearch('');
+          syncedSearchRef.current = '';
           onSearchChange('');
         } else {
           // 何もなければ閉じる
@@ -110,11 +146,13 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
         }
       }
     },
-    [onSearchChange, config.search],
+    [localSearch, onSearchChange, setShowSearch],
   );
 
-  // クリアボタン
+  // クリアボタン（即時反映）
   const handleSearchClear = useCallback(() => {
+    setLocalSearch('');
+    syncedSearchRef.current = '';
     onSearchChange('');
     searchInputRef.current?.focus();
   }, [onSearchChange]);
@@ -122,30 +160,25 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
   // 検索を開く
   const handleOpenSearch = useCallback(() => {
     setShowSearch(true);
-  }, []);
+  }, [setShowSearch]);
 
   // 外部クリックで閉じる（検索が空の時のみ）
   useEffect(() => {
     if (!showSearch || isMobile) return;
 
     const handleClickOutside = (e: MouseEvent) => {
-      console.log('[TableNavigation] Click outside check:', {
-        contains: searchContainerRef.current?.contains(e.target as Node),
-        configSearch: config.search,
-      });
       if (
         searchContainerRef.current &&
         !searchContainerRef.current.contains(e.target as Node) &&
-        !config.search
+        !localSearch
       ) {
-        console.log('[TableNavigation] Closing due to outside click');
         setShowSearch(false);
       }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [showSearch, isMobile, config.search]);
+  }, [showSearch, isMobile, localSearch, setShowSearch]);
 
   // ソートフィールド変更
   const handleSortFieldChange = useCallback(
@@ -179,20 +212,20 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
   const iconButtonClass = 'text-muted-foreground hover:text-foreground relative size-8';
   const activeClass = 'text-foreground bg-state-selected';
 
-  // 検索コンテンツ（モバイル用 - shadcn方式）
+  // 検索コンテンツ（モバイル用 - ローカルステート使用）
   const mobileSearchContent = (
     <div className="relative">
       <Input
         ref={searchInputRef}
         type="text"
         placeholder="検索..."
-        value={config.search}
-        onChange={(e) => onSearchChange(e.target.value)}
+        value={localSearch}
+        onChange={handleSearchInputChange}
         onKeyDown={handleSearchKeyDown}
         autoFocus
         className="pr-10"
       />
-      {config.search && (
+      {localSearch && (
         <Button
           type="button"
           variant="ghost"
@@ -243,7 +276,7 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
               size="icon"
               onClick={handleOpenSearch}
               aria-label="検索"
-              className={cn(iconButtonClass, config.search !== '' && activeClass)}
+              className={cn(iconButtonClass, localSearch !== '' && activeClass)}
             >
               <Search className="size-5" />
             </Button>
@@ -394,20 +427,20 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
   // PC用レンダリング（インライン検索 + Popover）
   return (
     <div className={cn('flex items-center gap-1', className)}>
-      {/* 検索 - インライン展開（shadcn方式: 同期的更新） */}
+      {/* 検索 - インライン展開（ローカルステート使用） */}
       {showSearch ? (
         <div ref={searchContainerRef} className="flex items-center gap-1">
           <Input
             ref={searchInputRef}
             type="text"
             placeholder="検索..."
-            value={config.search}
-            onChange={(e) => onSearchChange(e.target.value)}
+            value={localSearch}
+            onChange={handleSearchInputChange}
             onKeyDown={handleSearchKeyDown}
             autoFocus
             className="h-8 w-48"
           />
-          {config.search && (
+          {localSearch && (
             <Button
               variant="ghost"
               size="icon"
@@ -426,7 +459,7 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
             size="icon"
             onClick={handleOpenSearch}
             aria-label="検索"
-            className={cn(iconButtonClass, config.search !== '' && activeClass)}
+            className={cn(iconButtonClass, localSearch !== '' && activeClass)}
           >
             <Search className="size-5" />
           </Button>

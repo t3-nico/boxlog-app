@@ -24,6 +24,8 @@ interface InboxFilterState {
   search: string;
   assignee: string;
   dueDate: DueDateFilter;
+  /** 検索UIの展開状態（再マウント耐性のため） */
+  isSearchOpen: boolean;
 }
 
 /**
@@ -35,6 +37,7 @@ interface InboxFilterStore extends InboxFilterState {
   setSearch: (search: string) => void;
   setAssignee: (assignee: string) => void;
   setDueDate: (dueDate: DueDateFilter) => void;
+  setIsSearchOpen: (isOpen: boolean) => void;
   reset: () => void;
 }
 
@@ -47,6 +50,7 @@ const initialState: InboxFilterState = {
   search: '',
   assignee: '',
   dueDate: 'all',
+  isSearchOpen: false,
 };
 
 /**
@@ -64,10 +68,19 @@ export const useInboxFilterStore = create<InboxFilterStore>()(
       setSearch: (search) => set({ search }),
       setAssignee: (assignee) => set({ assignee }),
       setDueDate: (dueDate) => set({ dueDate }),
+      setIsSearchOpen: (isSearchOpen) => set({ isSearchOpen }),
       reset: () => set(initialState),
     }),
     {
       name: 'inbox-filter',
+      // isSearchOpenは永続化しない（ページリロード時は閉じているべき）
+      partialize: (state) => ({
+        status: state.status,
+        tags: state.tags,
+        search: state.search,
+        assignee: state.assignee,
+        dueDate: state.dueDate,
+      }),
     },
   ),
 );

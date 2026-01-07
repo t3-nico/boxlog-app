@@ -56,8 +56,10 @@ export function InboxTableView() {
   const filterSearch = useInboxFilterStore((state) => state.search);
   const filterTags = useInboxFilterStore((state) => state.tags);
   const filterDueDate = useInboxFilterStore((state) => state.dueDate);
+  const isSearchOpen = useInboxFilterStore((state) => state.isSearchOpen);
   const setStatus = useInboxFilterStore((state) => state.setStatus);
   const setSearch = useInboxFilterStore((state) => state.setSearch);
+  const setIsSearchOpen = useInboxFilterStore((state) => state.setIsSearchOpen);
 
   // ソート関連
   const setSort = useInboxSortStore((state) => state.setSort);
@@ -194,10 +196,13 @@ export function InboxTableView() {
   const filterCount = filterDueDate !== 'all' ? 1 : 0;
 
   // TableNavigation設定
+  // NOTE: Zustand setterは参照が安定しているため依存配列から除外
   const navigationConfig: TableNavigationConfig = useMemo(
     () => ({
       search: filterSearch,
       onSearchChange: setSearch,
+      isSearchOpen,
+      onSearchOpenChange: setIsSearchOpen,
       sortField,
       sortDirection,
       onSortChange: setSort,
@@ -213,19 +218,8 @@ export function InboxTableView() {
         setGroupBy(null);
       },
     }),
-    [
-      filterSearch,
-      setSearch,
-      sortField,
-      sortDirection,
-      setSort,
-      clearSort,
-      sortFieldOptions,
-      filterCount,
-      resetFilters,
-      groupBy,
-      setGroupBy,
-    ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [filterSearch, isSearchOpen, sortField, sortDirection, sortFieldOptions, filterCount, groupBy],
   );
 
   // アクティブビュー変更時にフィルター・ソート・ページサイズを適用
@@ -234,14 +228,11 @@ export function InboxTableView() {
   useEffect(() => {
     if (!activeView) return;
 
-    console.log('[InboxTableView] activeView changed:', activeViewId, activeView.filters);
-
     // フィルター適用
     if (activeView.filters.status) {
       setStatus(activeView.filters.status as PlanStatus[]);
     }
     if (activeView.filters.search) {
-      console.log('[InboxTableView] Setting search from view:', activeView.filters.search);
       setSearch(activeView.filters.search);
     }
 
@@ -258,10 +249,12 @@ export function InboxTableView() {
   }, [activeViewId]); // activeView.idのみで依存管理
 
   // フィルター変更時にページ1に戻る＆モバイル表示件数リセット
+  // NOTE: Zustand setterは参照が安定しているため依存配列から除外
   useEffect(() => {
     setCurrentPage(1);
     setMobileDisplayLimit(MOBILE_INITIAL_LIMIT);
-  }, [filterStatus, filterSearch, setCurrentPage]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filterStatus, filterSearch]);
 
   // エラー表示
   if (error) {
