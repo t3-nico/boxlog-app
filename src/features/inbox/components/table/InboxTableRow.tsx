@@ -17,6 +17,7 @@ import { useplanTags } from '@/features/plans/hooks/usePlanTags';
 import { useDeleteConfirmStore } from '@/features/plans/stores/useDeleteConfirmStore';
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
 import { useRecurringEditConfirmStore } from '@/features/plans/stores/useRecurringEditConfirmStore';
+import type { PlanStatus } from '@/features/plans/types/plan';
 import { useDateFormat } from '@/features/settings/hooks/useDateFormat';
 import { cn } from '@/lib/utils';
 import { useCallback, useEffect, useRef } from 'react';
@@ -199,8 +200,11 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
     // Stub: 期限変更機能は未実装
   };
 
-  const handleArchive = (_item: InboxItem) => {
-    // Stub: アーカイブ機能は未実装
+  const handleStatusChange = (item: InboxItem, status: PlanStatus) => {
+    updatePlan.mutate({
+      id: item.id,
+      data: { status },
+    });
   };
 
   const handleDelete = useCallback(
@@ -375,7 +379,7 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
           onDuplicate={handleDuplicate}
           onAddTags={handleAddTags}
           onChangeDueDate={handleChangeDueDate}
-          onArchive={handleArchive}
+          onStatusChange={handleStatusChange}
           onDelete={handleDelete}
           renderMenuItem={({ icon, label, onClick, variant }) => (
             <ContextMenuItem

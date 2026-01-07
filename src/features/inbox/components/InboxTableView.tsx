@@ -11,6 +11,7 @@ import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
 import { TableNavigation, TablePagination, type TableNavigationConfig } from '@/features/table';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { api } from '@/lib/trpc';
 import { useTranslations } from 'next-intl';
 import type { InboxItem } from '../hooks/useInboxData';
 import { useInboxData } from '../hooks/useInboxData';
@@ -51,11 +52,18 @@ export function InboxTableView() {
   const t = useTranslations();
   const { bulkUpdatePlan, bulkDeletePlan, createPlan } = usePlanMutations();
 
+  // ステータス別件数取得
+  const { data: stats } = api.plans.getStats.useQuery();
+  const openCount = stats?.byStatus?.open ?? 0;
+  const doneCount = stats?.byStatus?.done ?? 0;
+
   // フィルター関連：必要な値のみselectorで取得
   const filterStatus = useInboxFilterStore((state) => state.status);
   const filterSearch = useInboxFilterStore((state) => state.search);
   const filterTags = useInboxFilterStore((state) => state.tags);
   const filterDueDate = useInboxFilterStore((state) => state.dueDate);
+  const filterRecurrence = useInboxFilterStore((state) => state.recurrence);
+  const filterReminder = useInboxFilterStore((state) => state.reminder);
   const isSearchOpen = useInboxFilterStore((state) => state.isSearchOpen);
   const setStatus = useInboxFilterStore((state) => state.setStatus);
   const setSearch = useInboxFilterStore((state) => state.setSearch);
@@ -107,19 +115,19 @@ export function InboxTableView() {
   // 選択数
   const selectedCount = selectedIds.size;
 
-  // アクションハンドラー: アーカイブ（status を 'done' に変更）
-  const handleArchive = async () => {
+  // アクションハンドラー: ステータス一括変更（Open/Done）
+  const handleStatusChange = async (status: PlanStatus) => {
     const ids = Array.from(selectedIds);
     if (ids.length === 0) return;
 
     try {
       await bulkUpdatePlan.mutateAsync({
         ids,
-        data: { status: 'done' },
+        data: { status },
       });
       clearSelection();
     } catch (error) {
-      console.error('Archive error:', error);
+      console.error('Status change error:', error);
     }
   };
 
@@ -193,7 +201,12 @@ export function InboxTableView() {
   );
 
   // フィルター数をカウント（ステータスはタブで管理するため除外）
-  const filterCount = filterDueDate !== 'all' ? 1 : 0;
+  const dueDateFilterCount = filterDueDate !== 'all' ? 1 : 0;
+  const tagFilterCount = filterTags.length;
+  const recurrenceFilterCount = filterRecurrence !== 'all' ? 1 : 0;
+  const reminderFilterCount = filterReminder !== 'all' ? 1 : 0;
+  const filterCount =
+    dueDateFilterCount + tagFilterCount + recurrenceFilterCount + reminderFilterCount;
 
   // TableNavigation設定
   // NOTE: Zustand setterは参照が安定しているため依存配列から除外
@@ -219,7 +232,16 @@ export function InboxTableView() {
       },
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [filterSearch, isSearchOpen, sortField, sortDirection, sortFieldOptions, filterCount, groupBy],
+    [
+      filterSearch,
+      isSearchOpen,
+      sortField,
+      sortDirection,
+      sortFieldOptions,
+      filterCount,
+      filterTags,
+      groupBy,
+    ],
   );
 
   // アクティブビュー変更時にフィルター・ソート・ページサイズを適用
@@ -293,7 +315,7 @@ export function InboxTableView() {
               selectedCount={selectedCount}
               selectedIds={Array.from(selectedIds)}
               items={items}
-              onArchive={handleArchive}
+              onStatusChange={handleStatusChange}
               onDelete={handleDelete}
               onEdit={handleEdit}
               onDuplicate={handleDuplicate}
@@ -313,15 +335,21 @@ export function InboxTableView() {
             <TabsList className="bg-secondary h-8 rounded-lg p-0.5">
               <TabsTrigger
                 value="open"
-                className="data-[state=inactive]:hover:bg-state-hover data-[state=active]:bg-background data-[state=active]:text-foreground h-7 rounded-md px-3 text-xs"
+                className="data-[state=inactive]:hover:bg-state-hover data-[state=active]:bg-background data-[state=active]:text-foreground h-7 gap-1.5 rounded-md px-3 text-xs"
               >
                 Open
+                <span className="bg-background flex size-4 items-center justify-center rounded-full text-[10px] tabular-nums">
+                  {openCount}
+                </span>
               </TabsTrigger>
               <TabsTrigger
                 value="done"
-                className="data-[state=inactive]:hover:bg-state-hover data-[state=active]:bg-background data-[state=active]:text-foreground h-7 rounded-md px-3 text-xs"
+                className="data-[state=inactive]:hover:bg-state-hover data-[state=active]:bg-background data-[state=active]:text-foreground h-7 gap-1.5 rounded-md px-3 text-xs"
               >
                 Done
+                <span className="bg-background flex size-4 items-center justify-center rounded-full text-[10px] tabular-nums">
+                  {doneCount}
+                </span>
               </TabsTrigger>
             </TabsList>
           </Tabs>
