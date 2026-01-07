@@ -297,7 +297,7 @@ export const InboxTableContent = memo(function InboxTableContent({
   };
 
   return (
-    <Table className="w-full">
+    <Table className="w-full min-w-full">
       <TableHeaderSection
         allSelected={allSelected}
         someSelected={someSelected}

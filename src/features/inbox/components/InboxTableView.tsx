@@ -229,14 +229,19 @@ export function InboxTableView() {
   );
 
   // アクティブビュー変更時にフィルター・ソート・ページサイズを適用
+  // NOTE: activeView.idで依存管理し、不要な再実行を防ぐ
+  const activeViewId = activeView?.id;
   useEffect(() => {
     if (!activeView) return;
+
+    console.log('[InboxTableView] activeView changed:', activeViewId, activeView.filters);
 
     // フィルター適用
     if (activeView.filters.status) {
       setStatus(activeView.filters.status as PlanStatus[]);
     }
     if (activeView.filters.search) {
+      console.log('[InboxTableView] Setting search from view:', activeView.filters.search);
       setSearch(activeView.filters.search);
     }
 
@@ -249,7 +254,8 @@ export function InboxTableView() {
     if (activeView.pageSize) {
       setPageSize(activeView.pageSize);
     }
-  }, [activeView, setStatus, setSearch, setSort, setPageSize]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeViewId]); // activeView.idのみで依存管理
 
   // フィルター変更時にページ1に戻る＆モバイル表示件数リセット
   useEffect(() => {
@@ -269,8 +275,9 @@ export function InboxTableView() {
     );
   }
 
-  // ローディング表示
-  if (isPending) {
+  // ローディング表示（初回ロード時のみ）
+  // データ更新中（リフェッチ中）はUIを維持してTableNavigationの再マウントを防ぐ
+  if (isPending && items.length === 0) {
     return (
       <div className="flex h-full items-center justify-center">
         <div className="flex flex-col items-center gap-2">

@@ -95,7 +95,15 @@ export function InboxTableEmptyState({
   return (
     <TableRow>
       <TableCell colSpan={columnCount} className="h-[28rem]">
-        <EmptyState icon={icon} title={title} description={description} actions={action} />
+        <div className="flex w-full min-w-[300px] items-center justify-center">
+          <EmptyState
+            icon={icon}
+            title={title}
+            description={description}
+            actions={action}
+            className="w-full max-w-md"
+          />
+        </div>
       </TableCell>
     </TableRow>
   );

@@ -1,21 +1,16 @@
-import { createServerHelpers, dehydrate, HydrationBoundary } from '@/lib/trpc/server';
+import { redirect } from 'next/navigation';
 
-import { InboxContent } from './inbox-content';
+interface PageProps {
+  params: Promise<{ locale: string }>;
+}
 
 /**
  * Inboxルートページ
  *
- * リダイレクトではなく、直接 all ビューをレンダリング（パフォーマンス最適化）
- * + Server-side prefetchでデータを事前取得
+ * /inbox/plan にリダイレクト
+ * 将来的に /inbox/record を追加しやすい構造
  */
-export default async function InboxPage() {
-  // Server-side prefetch: クライアントでのデータ取得を高速化
-  const helpers = await createServerHelpers();
-  await Promise.all([helpers.plans.list.prefetch({}), helpers.plans.getTagStats.prefetch()]);
-
-  return (
-    <HydrationBoundary state={dehydrate(helpers.queryClient)}>
-      <InboxContent />
-    </HydrationBoundary>
-  );
+export default async function InboxPage({ params }: PageProps) {
+  const { locale } = await params;
+  redirect(`/${locale}/inbox/plan`);
 }

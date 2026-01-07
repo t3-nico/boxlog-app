@@ -1,6 +1,14 @@
 'use client';
 
-import { BarChart3, Box, Calendar, Inbox, PanelLeftClose, PanelLeftOpen, Tag } from 'lucide-react';
+import {
+  BarChart3,
+  Box,
+  Calendar,
+  CircleCheckBig,
+  PanelLeftClose,
+  PanelLeftOpen,
+  Tag,
+} from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -63,7 +71,7 @@ export function AppBar() {
       },
       {
         id: 'inbox',
-        icon: Inbox,
+        icon: CircleCheckBig,
         label: t('sidebar.navigation.inbox'),
         url: `/${locale}/inbox`,
       },

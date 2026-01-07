@@ -1,0 +1,15 @@
+{
+  "inbox": {
+    "sidebar": {
+      "tabs": {
+        "calendar": "Calendar",
+        "list": "List"
+      },
+      "list": {
+        "nav": {
+          "plan": "Plan"
+        }
+      }
+    }
+  }
+}

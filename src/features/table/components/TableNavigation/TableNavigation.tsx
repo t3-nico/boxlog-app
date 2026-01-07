@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { useDebouncedCallback } from '@/hooks/useDebounce';
 import { ArrowUpDown, ListFilter, Search, Settings2, X } from 'lucide-react';
 
 import { MobileSettingsRadioGroup, MobileSettingsSection } from '@/components/common';
@@ -77,76 +76,76 @@ const SORT_DIRECTION_OPTIONS: Array<{ value: 'asc' | 'desc'; label: string }> = 
 export function TableNavigation({ config, className }: TableNavigationProps) {
   const isMobile = useMediaQuery(MEDIA_QUERIES.mobile);
 
+  // config から必要な関数を分割代入（ESLint依存配列対応）
+  const { onSearchChange } = config;
+
   const [showSearch, setShowSearch] = useState(false);
   const [showFilter, setShowFilter] = useState(false);
   const [showSort, setShowSort] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
 
-  // 検索用ローカル状態
-  const [localSearch, setLocalSearch] = useState(config.search);
+  // === shadcn公式方式（同期的、親の状態を直接使用） ===
   const searchContainerRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  // デバウンス検索（300ms）
-  const debouncedSearch = useDebouncedCallback(
-    (value: string) => config.onSearchChange(value),
-    300,
-  );
+  // デバッグ: config.searchの変化を追跡
+  console.log('[TableNavigation] config.search:', config.search, 'showSearch:', showSearch);
 
-  // 検索入力ハンドラー
-  const handleSearchInput = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const value = e.target.value;
-      setLocalSearch(value);
-      debouncedSearch(value);
-    },
-    [debouncedSearch],
-  );
+  // デバッグ: マウント/アンマウントを追跡
+  useEffect(() => {
+    console.log('[TableNavigation] MOUNTED');
+    return () => console.log('[TableNavigation] UNMOUNTED');
+  }, []);
 
   // キーボードハンドリング
   const handleSearchKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === 'Escape') {
-        if (localSearch) {
-          // 入力があればクリア
-          setLocalSearch('');
-          config.onSearchChange('');
+        if (config.search) {
+          // 検索中ならクリア
+          onSearchChange('');
         } else {
-          // 入力がなければ閉じる
+          // 何もなければ閉じる
           setShowSearch(false);
         }
-      } else if (e.key === 'Enter') {
-        e.preventDefault();
-        // デバウンスをバイパスして即時確定
-        config.onSearchChange(localSearch);
       }
     },
-    [config, localSearch],
+    [onSearchChange, config.search],
   );
 
+  // クリアボタン
   const handleSearchClear = useCallback(() => {
-    setLocalSearch('');
-    config.onSearchChange('');
+    onSearchChange('');
     searchInputRef.current?.focus();
-  }, [config]);
+  }, [onSearchChange]);
 
-  // 外部クリックで閉じる（入力がなければ）
+  // 検索を開く
+  const handleOpenSearch = useCallback(() => {
+    setShowSearch(true);
+  }, []);
+
+  // 外部クリックで閉じる（検索が空の時のみ）
   useEffect(() => {
     if (!showSearch || isMobile) return;
 
     const handleClickOutside = (e: MouseEvent) => {
+      console.log('[TableNavigation] Click outside check:', {
+        contains: searchContainerRef.current?.contains(e.target as Node),
+        configSearch: config.search,
+      });
       if (
         searchContainerRef.current &&
         !searchContainerRef.current.contains(e.target as Node) &&
-        !localSearch
+        !config.search
       ) {
+        console.log('[TableNavigation] Closing due to outside click');
         setShowSearch(false);
       }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [showSearch, localSearch, isMobile]);
+  }, [showSearch, isMobile, config.search]);
 
   // ソートフィールド変更
   const handleSortFieldChange = useCallback(
@@ -180,19 +179,20 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
   const iconButtonClass = 'text-muted-foreground hover:text-foreground relative size-8';
   const activeClass = 'text-foreground bg-state-selected';
 
-  // 検索コンテンツ（モバイル用 - リアルタイム検索）
+  // 検索コンテンツ（モバイル用 - shadcn方式）
   const mobileSearchContent = (
     <div className="relative">
       <Input
+        ref={searchInputRef}
         type="text"
-        placeholder="タイトルで検索..."
-        value={localSearch}
-        onChange={handleSearchInput}
+        placeholder="検索..."
+        value={config.search}
+        onChange={(e) => onSearchChange(e.target.value)}
         onKeyDown={handleSearchKeyDown}
         autoFocus
         className="pr-10"
       />
-      {localSearch && (
+      {config.search && (
         <Button
           type="button"
           variant="ghost"
@@ -241,10 +241,7 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => {
-                setLocalSearch(config.search);
-                setShowSearch(true);
-              }}
+              onClick={handleOpenSearch}
               aria-label="検索"
               className={cn(iconButtonClass, config.search !== '' && activeClass)}
             >
@@ -305,8 +302,11 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
         <Drawer
           open={showSearch}
           onOpenChange={(open) => {
-            if (open) setLocalSearch(config.search);
-            setShowSearch(open);
+            if (open) {
+              handleOpenSearch();
+            } else {
+              setShowSearch(false);
+            }
           }}
         >
           <DrawerContent>
@@ -394,20 +394,20 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
   // PC用レンダリング（インライン検索 + Popover）
   return (
     <div className={cn('flex items-center gap-1', className)}>
-      {/* 検索 - インライン展開 */}
+      {/* 検索 - インライン展開（shadcn方式: 同期的更新） */}
       {showSearch ? (
         <div ref={searchContainerRef} className="flex items-center gap-1">
           <Input
             ref={searchInputRef}
             type="text"
             placeholder="検索..."
-            value={localSearch}
-            onChange={handleSearchInput}
+            value={config.search}
+            onChange={(e) => onSearchChange(e.target.value)}
             onKeyDown={handleSearchKeyDown}
             autoFocus
             className="h-8 w-48"
           />
-          {localSearch && (
+          {config.search && (
             <Button
               variant="ghost"
               size="icon"
@@ -424,10 +424,7 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => {
-              setLocalSearch(config.search);
-              setShowSearch(true);
-            }}
+            onClick={handleOpenSearch}
             aria-label="検索"
             className={cn(iconButtonClass, config.search !== '' && activeClass)}
           >
