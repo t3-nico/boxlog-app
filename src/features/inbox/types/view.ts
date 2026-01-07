@@ -5,17 +5,9 @@
  */
 
 /**
- * Display Mode
- * 表示形式（BoardビューまたはTableビュー）
- * Viewとは独立して、ユーザーがヘッダーで切り替え可能
- */
-export type DisplayMode = 'board' | 'table';
-
-/**
  * Inbox View Configuration
  *
  * ユーザーが保存できるView設定（フィルタ条件のみ）
- * 表示形式（Board/Table）はdisplayModeで別途管理
  *
  * @example
  * ```typescript

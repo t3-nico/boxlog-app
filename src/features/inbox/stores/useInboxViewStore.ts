@@ -1,12 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-import type {
-  CreateInboxViewInput,
-  DisplayMode,
-  InboxView,
-  UpdateInboxViewInput,
-} from '../types/view';
+import type { CreateInboxViewInput, InboxView, UpdateInboxViewInput } from '../types/view';
 
 /**
  * Inbox View Store State
@@ -17,9 +12,6 @@ type InboxViewState = {
 
   /** 現在アクティブなView ID */
   activeViewId: string | null;
-
-  /** 現在の表示形式（Board/Table） */
-  displayMode: DisplayMode;
 
   /** View作成 */
   createView: (input: CreateInboxViewInput) => InboxView;
@@ -32,9 +24,6 @@ type InboxViewState = {
 
   /** アクティブなViewを設定 */
   setActiveView: (id: string) => void;
-
-  /** 表示形式を設定 */
-  setDisplayMode: (mode: DisplayMode) => void;
 
   /** View IDから取得 */
   getViewById: (id: string) => InboxView | undefined;
@@ -87,7 +76,7 @@ const DEFAULT_VIEWS: InboxView[] = [
  *
  * @example
  * ```typescript
- * const { views, createView, setActiveView, displayMode, setDisplayMode } = useInboxViewStore()
+ * const { views, createView, setActiveView } = useInboxViewStore()
  *
  * // View作成
  * const newView = createView({
@@ -97,9 +86,6 @@ const DEFAULT_VIEWS: InboxView[] = [
  *
  * // View切り替え
  * setActiveView(newView.id)
- *
- * // 表示形式切り替え
- * setDisplayMode('table')
  * ```
  */
 export const useInboxViewStore = create<InboxViewState>()(
@@ -107,7 +93,6 @@ export const useInboxViewStore = create<InboxViewState>()(
     (set, get) => ({
       views: DEFAULT_VIEWS,
       activeViewId: 'default-all',
-      displayMode: 'table',
 
       createView: (input) => {
         const newView: InboxView = {
@@ -165,10 +150,6 @@ export const useInboxViewStore = create<InboxViewState>()(
         set({ activeViewId: id });
       },
 
-      setDisplayMode: (mode) => {
-        set({ displayMode: mode });
-      },
-
       getViewById: (id) => {
         return get().views.find((view) => view.id === id);
       },
@@ -188,7 +169,7 @@ export const useInboxViewStore = create<InboxViewState>()(
       },
     }),
     {
-      name: 'inbox-view-storage-v3',
+      name: 'inbox-view-storage-v4', // バージョンアップ（displayMode削除）
     },
   ),
 );
