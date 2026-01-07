@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { useCurrentPeriod, useDateUtilities, useEventsByDate } from '../../shared';
+import { useCurrentPeriod, useDateUtilities, usePlansByDate } from '../../shared';
 import type { UseFiveDayViewOptions, UseFiveDayViewReturn } from '../FiveDayView.types';
 
 /**
@@ -32,10 +32,10 @@ export function useFiveDayView({
   // 中央の日付のインデックス（常に2）
   const centerIndex = 2;
 
-  // Phase 3統合フック: イベント日付グループ化
-  const { eventsByDate } = useEventsByDate({
+  // Phase 3統合フック: プラン日付グループ化
+  const { plansByDate: eventsByDate } = usePlansByDate({
     dates: fiveDayDates,
-    events,
+    plans: events,
     sortType: 'standard',
   });
 

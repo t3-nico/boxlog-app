@@ -15,10 +15,6 @@ export type TimedPlan = CalendarPlan & {
   isReadOnly?: boolean;
 };
 
-// 後方互換性のためのエイリアス
-/** @deprecated Use TimedPlan instead */
-export type TimedEvent = TimedPlan;
-
 export interface PlanCardProps {
   plan: CalendarPlan;
   position?: PlanCardPosition | undefined;
@@ -59,10 +55,6 @@ export interface PlanCardProps {
   previewTime?: ({ start: Date; end: Date } | null) | undefined;
 }
 
-// 後方互換性のためのエイリアス
-/** @deprecated Use PlanCardProps instead */
-export type EventBlockProps = PlanCardProps;
-
 export interface PlanCardPosition {
   top: number; // px
   left: number; // %
@@ -70,10 +62,6 @@ export interface PlanCardPosition {
   height: number; // px
   zIndex?: number;
 }
-
-// 後方互換性のためのエイリアス
-/** @deprecated Use PlanCardPosition instead */
-export type EventPosition = PlanCardPosition;
 
 export interface PlanGroup {
   plans: CalendarPlan[];
@@ -86,10 +74,6 @@ export interface PlanColumn {
   totalColumns: number;
 }
 
-// 後方互換性のためのエイリアス
-/** @deprecated Use PlanColumn instead */
-export type EventColumn = PlanColumn;
-
 export type PlanInteractionHandler = {
   onClick?: (plan: CalendarPlan) => void;
   onContextMenu?: (plan: CalendarPlan, e: React.MouseEvent) => void;
@@ -99,7 +83,3 @@ export type PlanInteractionHandler = {
   onDrop?: (plan: CalendarPlan, date: Date, time: Date) => void;
   onResize?: (plan: CalendarPlan, newStart: Date, newEnd: Date) => void;
 };
-
-// 後方互換性のためのエイリアス
-/** @deprecated Use PlanInteractionHandler instead */
-export type EventInteractionHandler = PlanInteractionHandler;

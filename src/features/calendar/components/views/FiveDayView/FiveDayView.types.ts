@@ -1,9 +1,9 @@
 import type { CSSProperties } from 'react';
 
-import type { BaseViewProps, CalendarPlan } from '../shared';
+import type { CalendarPlan, GridViewProps } from '../shared';
 
-// FiveDayViewの固有Props（BaseViewPropsを継承）
-export interface FiveDayViewProps extends BaseViewProps {
+// FiveDayViewの固有Props（GridViewPropsを継承して時間グリッド機能を使用）
+export interface FiveDayViewProps extends GridViewProps {
   centerDate?: Date; // 中央に表示する日付（指定がない場合はcurrentDateを使用）
 }
 
@@ -24,8 +24,8 @@ export interface UseFiveDayViewReturn {
   isCurrentDay: boolean; // 中央の日付が今日かどうか
 }
 
-// 5日ビューでのイベント位置情報
-export interface FiveDayEventPosition {
+// 5日ビューでのプラン位置情報
+export interface FiveDayPlanPosition {
   plan: CalendarPlan;
   dayIndex: number;
   top: number;

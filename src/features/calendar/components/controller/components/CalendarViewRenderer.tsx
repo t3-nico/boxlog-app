@@ -3,8 +3,9 @@
 import React, { Suspense, useMemo } from 'react';
 
 import type { CalendarViewType } from '../../../types/calendar.types';
-import type { BaseViewProps } from '../../views/shared/types/base.types';
+import type { GridViewProps } from '../../views/shared/types/base.types';
 
+import { AgendaViewSkeleton } from './AgendaViewSkeleton';
 import { CalendarViewSkeleton } from './CalendarViewSkeleton';
 
 // 遅延ロード: カレンダービューコンポーネントは大きいため、使用時のみロード（絶対パスで指定）
@@ -37,17 +38,8 @@ const AgendaView = React.lazy(() =>
 
 interface CalendarViewRendererProps {
   viewType: CalendarViewType;
-  showWeekends: boolean;
-  commonProps: BaseViewProps;
-}
-
-// LCP改善: 軽量なインラインスケルトン（個別ビュー用）
-function ViewLoadingSkeleton() {
-  return (
-    <div className="flex h-full items-center justify-center">
-      <div className="bg-surface-container/50 h-8 w-8 animate-pulse rounded-full motion-reduce:animate-none" />
-    </div>
-  );
+  /** GridViewPropsを渡す（showWeekendsは含まれる） */
+  commonProps: GridViewProps;
 }
 
 /**
@@ -59,50 +51,58 @@ function ViewLoadingSkeleton() {
  */
 export const CalendarViewRenderer = React.memo(function CalendarViewRenderer({
   viewType,
-  showWeekends,
   commonProps,
 }: CalendarViewRendererProps) {
   // LCP改善: ビューをメモ化して不要な再生成を防止
   const viewContent = useMemo(() => {
+    // AgendaView用のBaseViewPropsを抽出（GridViewPropsの一部）
+    const baseProps = {
+      plans: commonProps.plans,
+      currentDate: commonProps.currentDate,
+      className: commonProps.className,
+      onPlanClick: commonProps.onPlanClick,
+      onPlanContextMenu: commonProps.onPlanContextMenu,
+    };
+
     switch (viewType) {
       case 'day':
         return (
-          <Suspense fallback={<ViewLoadingSkeleton />}>
-            <DayView {...commonProps} showWeekends={showWeekends} />
+          <Suspense fallback={<CalendarViewSkeleton />}>
+            <DayView {...commonProps} />
           </Suspense>
         );
       case '3day':
         return (
-          <Suspense fallback={<ViewLoadingSkeleton />}>
-            <ThreeDayView {...commonProps} showWeekends={showWeekends} />
+          <Suspense fallback={<CalendarViewSkeleton />}>
+            <ThreeDayView {...commonProps} />
           </Suspense>
         );
       case '5day':
         return (
-          <Suspense fallback={<ViewLoadingSkeleton />}>
-            <FiveDayView {...commonProps} showWeekends={showWeekends} />
+          <Suspense fallback={<CalendarViewSkeleton />}>
+            <FiveDayView {...commonProps} />
           </Suspense>
         );
       case 'week':
         return (
-          <Suspense fallback={<ViewLoadingSkeleton />}>
-            <WeekView {...commonProps} showWeekends={showWeekends} />
+          <Suspense fallback={<CalendarViewSkeleton />}>
+            <WeekView {...commonProps} />
           </Suspense>
         );
       case 'agenda':
         return (
-          <Suspense fallback={<ViewLoadingSkeleton />}>
-            <AgendaView {...commonProps} showWeekends={showWeekends} />
+          <Suspense fallback={<AgendaViewSkeleton />}>
+            <AgendaView {...baseProps} />
           </Suspense>
         );
       default:
         return (
-          <Suspense fallback={<ViewLoadingSkeleton />}>
-            <DayView {...commonProps} showWeekends={showWeekends} />
+          <Suspense fallback={<CalendarViewSkeleton />}>
+            <DayView {...commonProps} />
           </Suspense>
         );
     }
-  }, [viewType, showWeekends, commonProps]);
+  }, [viewType, commonProps]);
 
   // 外側のSuspenseはフォールバック用（初回ロード時のスケルトン表示）
   return <Suspense fallback={<CalendarViewSkeleton />}>{viewContent}</Suspense>;

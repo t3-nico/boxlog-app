@@ -16,7 +16,6 @@ export {
   getBorderDefault,
   getCalendarAnimation,
   getCalendarGridClassName,
-  getCalendarStyle,
   getCurrentTimeLineClassName,
   getDropZoneClassName,
   getErrorBorder,

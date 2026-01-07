@@ -56,11 +56,8 @@ export function useCalendarRealtime(
       const newRecord = payload.new as { id: string } | undefined;
       const oldRecord = payload.old as { id: string } | undefined;
 
-      console.debug('[Calendar Realtime] Event detected:', payload.eventType, newRecord?.id);
-
       // 自分のmutation中はRealtime経由の更新をスキップ（二重更新防止）
       if (isMutating) {
-        console.debug('[Calendar Realtime] Skipping invalidation (mutation in progress)');
         return;
       }
 
@@ -75,8 +72,8 @@ export function useCalendarRealtime(
         void utils.plans.getById.invalidate({ id: oldRecord.id });
       }
     },
-    onError: (error) => {
-      console.error('[Calendar Realtime] Subscription error:', error);
+    onError: () => {
+      // Silently handle subscription errors
     },
   });
 }

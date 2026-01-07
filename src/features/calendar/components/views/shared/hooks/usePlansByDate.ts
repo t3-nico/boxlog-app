@@ -1,6 +1,5 @@
 /**
- * イベント日付グループ化統一フック
- * 6箇所で重複していた80-90行のロジックを統合
+ * プラン日付グループ化統一フック
  */
 
 import { useMemo } from 'react';
@@ -11,34 +10,34 @@ import type { CalendarPlan } from '../types/base.types';
 import { getDateKey, isValidEvent } from '../utils/dateHelpers';
 import { sortAgendaEventsByDateKeys, sortEventsByDateKeys } from '../utils/planSorting';
 
-export interface UseEventsByDateOptions {
+export interface UsePlansByDateOptions {
   dates: Date[];
-  events: CalendarPlan[];
-  sortType?: 'standard' | 'agenda'; // agenda = 終日イベント優先
+  plans: CalendarPlan[];
+  sortType?: 'standard' | 'agenda'; // agenda = 終日プラン優先
 }
 
-export interface UseEventsByDateReturn {
-  eventsByDate: Record<string, CalendarPlan[]>;
-  totalEvents: number;
-  hasEvents: boolean;
+export interface UsePlansByDateReturn {
+  plansByDate: Record<string, CalendarPlan[]>;
+  totalPlans: number;
+  hasPlans: boolean;
 }
 
 /**
- * イベントを日付ごとにグループ化する統一フック
+ * プランを日付ごとにグループ化する統一フック
  *
  * @description
  * 以前は各ビューで80-90行の重複ロジックがあったが、これで統一
  * - WeekView, ThreeDayView, FiveDayView, AgendaView で共通使用
- * - マルチデイイベント対応
- * - 無効イベントの自動フィルタリング
+ * - マルチデイプラン対応
+ * - 無効プランの自動フィルタリング
  * - 時刻ソート（標準 or Agenda用）
  */
-export function useEventsByDate({
+export function usePlansByDate({
   dates,
-  events = [],
+  plans = [],
   sortType = 'standard',
-}: UseEventsByDateOptions): UseEventsByDateReturn {
-  const eventsByDate = useMemo(() => {
+}: UsePlansByDateOptions): UsePlansByDateReturn {
+  const plansByDate = useMemo(() => {
     const grouped: Record<string, CalendarPlan[]> = {};
 
     // Step 1: 各日付のキーを初期化
@@ -47,37 +46,36 @@ export function useEventsByDate({
       grouped[dateKey] = [];
     });
 
-    // Step 2: イベントを適切な日付に配置
-    events.forEach((event) => {
-      if (!isValidEvent(event)) {
+    // Step 2: プランを適切な日付に配置
+    plans.forEach((plan) => {
+      if (!isValidEvent(plan)) {
         return;
       }
 
       // startDateがnullまたはundefinedの場合はスキップ
-      if (!event.startDate) {
+      if (!plan.startDate) {
         return;
       }
 
       // より柔軟な日付正規化
-      const eventStart =
-        event.startDate instanceof Date ? event.startDate : new Date(event.startDate);
+      const planStart = plan.startDate instanceof Date ? plan.startDate : new Date(plan.startDate);
 
       // 無効な日付は除外
-      if (isNaN(eventStart.getTime())) {
+      if (isNaN(planStart.getTime())) {
         return;
       }
 
-      // マルチデイイベントの場合は複数日にまたがって表示
-      if (event.isMultiDay && event.endDate) {
-        const eventEnd = event.endDate instanceof Date ? event.endDate : new Date(event.endDate);
+      // マルチデイプランの場合は複数日にまたがって表示
+      if (plan.isMultiDay && plan.endDate) {
+        const planEnd = plan.endDate instanceof Date ? plan.endDate : new Date(plan.endDate);
 
-        if (!isNaN(eventEnd.getTime())) {
+        if (!isNaN(planEnd.getTime())) {
           // 期間内の日付のみ処理
           dates.forEach((date) => {
-            if (date >= eventStart && date <= eventEnd) {
+            if (date >= planStart && date <= planEnd) {
               const dateKey = getDateKey(date);
               if (grouped[dateKey]) {
-                grouped[dateKey].push(event);
+                grouped[dateKey].push(plan);
               }
             }
           });
@@ -85,34 +83,34 @@ export function useEventsByDate({
         }
       }
 
-      // 単日イベントの場合
+      // 単日プランの場合
       dates.forEach((date) => {
-        if (isSameDay(eventStart, date)) {
+        if (isSameDay(planStart, date)) {
           const dateKey = getDateKey(date);
           if (grouped[dateKey]) {
-            grouped[dateKey].push(event);
+            grouped[dateKey].push(plan);
           }
         }
       });
     });
 
-    // Step 3: 各日のイベントを適切にソート
+    // Step 3: 各日のプランを適切にソート
     const sortedResult =
       sortType === 'agenda' ? sortAgendaEventsByDateKeys(grouped) : sortEventsByDateKeys(grouped);
 
     return sortedResult;
-  }, [dates, events, sortType]);
+  }, [dates, plans, sortType]);
 
   // 統計情報も提供
-  const totalEvents = useMemo(() => {
-    return Object.values(eventsByDate).reduce((total, dayEvents) => total + dayEvents.length, 0);
-  }, [eventsByDate]);
+  const totalPlans = useMemo(() => {
+    return Object.values(plansByDate).reduce((total, dayPlans) => total + dayPlans.length, 0);
+  }, [plansByDate]);
 
-  const hasEvents = totalEvents > 0;
+  const hasPlans = totalPlans > 0;
 
   return {
-    eventsByDate,
-    totalEvents,
-    hasEvents,
+    plansByDate,
+    totalPlans,
+    hasPlans,
   };
 }

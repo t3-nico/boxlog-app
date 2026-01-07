@@ -13,11 +13,10 @@ import {
   DateDisplay,
   OverdueSection,
   ScrollableCalendarLayout,
+  useMultiDayPlanPositions,
   usePlanStyles,
 } from '../shared';
 import { useResponsiveHourHeight } from '../shared/hooks/useResponsiveHourHeight';
-
-import type { PlanPosition } from '../shared/hooks/useViewPlans';
 
 import { ThreeDayContent } from './components';
 import { useThreeDayView } from './hooks/useThreeDayView';
@@ -75,51 +74,12 @@ export const ThreeDayView = ({
     return threeDayDates;
   }, [threeDayDates]);
 
-  // プラン位置計算（統一された日付配列ベース）
-  const planPositions = useMemo(() => {
-    const positions: PlanPosition[] = [];
-
-    // displayDates（統一フィルタリング済み）を基準にプランを配置
-    displayDates.forEach((displayDate) => {
-      const dateKey = format(displayDate, 'yyyy-MM-dd');
-
-      // 元のplans配列から直接フィルタリング（週末設定に依存しない）
-      const dayPlans = plans.filter((plan) => {
-        const planDate = plan.startDate || new Date();
-        return format(planDate, 'yyyy-MM-dd') === dateKey;
-      });
-
-      dayPlans.forEach((plan) => {
-        const startDate = plan.startDate || new Date();
-        const startHour = startDate.getHours();
-        const startMinute = startDate.getMinutes();
-        const top = (startHour + startMinute / 60) * HOUR_HEIGHT;
-
-        // 高さ計算
-        let height = HOUR_HEIGHT; // デフォルト1時間
-        if (plan.endDate) {
-          const endHour = plan.endDate.getHours();
-          const endMinute = plan.endDate.getMinutes();
-          const duration = endHour + endMinute / 60 - (startHour + startMinute / 60);
-          height = Math.max(20, duration * HOUR_HEIGHT); // 最小20px
-        }
-
-        positions.push({
-          plan,
-          top,
-          height,
-          left: 1, // 各カラム内での位置（%）
-          width: 98, // カラム幅の98%を使用
-          zIndex: 20,
-          column: 0, // 単独カラム
-          totalColumns: 1, // 単独カラム
-          opacity: 1.0,
-        });
-      });
-    });
-
-    return positions;
-  }, [plans, displayDates, HOUR_HEIGHT]);
+  // プラン位置計算（共通フック使用 - 重複プランのカラム配置を正しく計算）
+  const { planPositions } = useMultiDayPlanPositions({
+    displayDates,
+    plans,
+    hourHeight: HOUR_HEIGHT,
+  });
 
   // 共通フック使用してスタイル計算
   const planStyles = usePlanStyles(planPositions);

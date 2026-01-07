@@ -18,15 +18,9 @@ export { CurrentTimeLine as SimpleCurrentTimeLine } from '../../CurrentTimeLine'
 export { CurrentTimeLine, CurrentTimeLineForColumn } from './grid/CurrentTimeLine';
 
 // ===== UIコンポーネント =====
-// planCard - プラン表示（EventBlock から名称変更）
+// PlanCard - プラン表示
 export type * from './components/PlanCard';
-export {
-  EventBlock,
-  EventContent,
-  PlanBlock,
-  planCard,
-  planCardContent,
-} from './components/PlanCard';
+export { PlanCard, PlanCardContent } from './components/PlanCard';
 
 // DayColumn - 日列（イベント表示エリアのみ）
 export { DayColumn } from './components/DayColumn';
@@ -61,7 +55,7 @@ export { useGlobalDragCursor } from './hooks/useGlobalDragCursor';
 export { useIsToday } from './hooks/useIsToday';
 export { usePlanLayoutCalculator } from './hooks/usePlanLayoutCalculator';
 export type { PlanLayout } from './hooks/usePlanLayoutCalculator';
-export { useEventPosition, usePositionedEvents } from './hooks/usePlanPosition';
+export { usePlanPosition, usePositionedPlans } from './hooks/usePlanPosition';
 export { usePlanStyles } from './hooks/usePlanStyles';
 export { useBreakpoint, useResponsiveHourHeight } from './hooks/useResponsiveHourHeight';
 export { useScrollSync } from './hooks/useScrollSync';
@@ -70,16 +64,17 @@ export type { TimeCalculationResult, UseTimeCalculationOptions } from './hooks/u
 export { useTimeGrid } from './hooks/useTimeGrid';
 export { useTimeSlots } from './hooks/useTimeSlots';
 export { useViewDimensions } from './hooks/useViewDimensions';
-export { useViewPlans as useViewEvents, useViewPlans } from './hooks/useViewPlans';
-export type { PlanPosition as EventPosition, PlanPosition } from './hooks/useViewPlans';
+export { useViewPlans } from './hooks/useViewPlans';
+export type { PlanPosition } from './hooks/useViewPlans';
 
 // Phase 3: 統合カスタムフック
 export { useCurrentPeriod } from './hooks/useCurrentPeriod';
 export type { UseCurrentPeriodOptions, UseCurrentPeriodReturn } from './hooks/useCurrentPeriod';
 export { useDateUtilities } from './hooks/useDateUtilities';
 export type { UseDateUtilitiesOptions, UseDateUtilitiesReturn } from './hooks/useDateUtilities';
-export { useEventsByDate } from './hooks/usePlansByDate';
-export type { UseEventsByDateOptions, UseEventsByDateReturn } from './hooks/usePlansByDate';
+export { useMultiDayPlanPositions } from './hooks/useMultiDayPlanPositions';
+export { usePlansByDate } from './hooks/usePlansByDate';
+export type { UsePlansByDateOptions, UsePlansByDateReturn } from './hooks/usePlansByDate';
 
 // ===== プロバイダー =====
 export { CalendarGridProvider, useCalendarGridVars } from './components/CalendarGridProvider';
@@ -90,8 +85,8 @@ export {
   ScrollableCalendarLayout,
 } from './components/ScrollableCalendarLayout';
 
-// 型定義のエクスポート（互換性のため）
-export type { PositionedEvent } from './hooks/usePlanPosition';
+// 型定義のエクスポート
+export type { PositionedPlan } from './hooks/usePlanPosition';
 
 // ===== ユーティリティ関数 =====
 export * from './utils/dateHelpers';
@@ -99,11 +94,6 @@ export * from './utils/gridCalculator';
 export * from './utils/planGhost';
 export * from './utils/planPositioning';
 export * from './utils/planSorting';
-
-// 後方互換性のためのエイリアス
-export * from './utils/planGhost'; // eventGhost からリネーム
-export * from './utils/planPositioning'; // eventPositioning からリネーム
-export * from './utils/planSorting'; // eventSorting からリネーム
 
 // ===== 定数 =====
 export * from './constants/grid.constants';

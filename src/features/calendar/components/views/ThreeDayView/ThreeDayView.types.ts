@@ -1,9 +1,9 @@
 import type { CSSProperties } from 'react';
 
-import type { BaseViewProps, CalendarPlan } from '../shared';
+import type { CalendarPlan, GridViewProps } from '../shared';
 
-// ThreeDayViewの固有Props（BaseViewPropsを継承して95%削減）
-export interface ThreeDayViewProps extends BaseViewProps {
+// ThreeDayViewの固有Props（GridViewPropsを継承して時間グリッド機能を使用）
+export interface ThreeDayViewProps extends GridViewProps {
   centerDate?: Date; // 中央に表示する日付（指定がない場合はcurrentDateを使用）
 }
 
@@ -24,8 +24,8 @@ export interface UseThreeDayViewReturn {
   isCurrentDay: boolean; // 中央の日付が今日かどうか
 }
 
-// 3日ビューでのイベント位置情報
-export interface ThreeDayEventPosition {
+// 3日ビューでのプラン位置情報
+export interface ThreeDayPlanPosition {
   plan: CalendarPlan;
   dayIndex: number;
   top: number;

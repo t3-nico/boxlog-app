@@ -21,7 +21,10 @@ interface UseResizeHandlerProps {
   /** 重複チェック用の全イベント（週ビューなど複数日表示時に使用） */
   allEventsForOverlapCheck?: CalendarPlan[] | undefined;
   eventUpdateHandler:
-    | ((eventId: string, updates: { startTime: Date; endTime: Date }) => Promise<void> | void)
+    | ((
+        eventId: string,
+        updates: { startTime: Date; endTime: Date },
+      ) => Promise<void | { skipToast: true }> | void)
     | undefined;
   dragDataRef: React.MutableRefObject<DragDataRef | null>;
   setDragState: React.Dispatch<React.SetStateAction<DragState>>;
@@ -144,7 +147,6 @@ export function useResizeHandler({
         endDate: newEndTime,
         status: event.status,
         color: event.color,
-        plan_number: event.plan_number,
         reminder_minutes: event.reminder_minutes,
         tags: event.tags,
         createdAt: event.createdAt,

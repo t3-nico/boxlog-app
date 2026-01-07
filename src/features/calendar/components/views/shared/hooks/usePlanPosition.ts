@@ -1,40 +1,40 @@
 /**
- * イベント配置計算フック
+ * プラン配置計算フック
  */
 
 import { useMemo } from 'react';
 
 import { HOUR_HEIGHT } from '../constants/grid.constants';
-import type { EventPosition, TimedEvent } from '../types/plan.types';
-import { calculateEventPosition, calculateViewEventColumns } from '../utils/planPositioning';
+import type { PlanCardPosition, TimedPlan } from '../types/plan.types';
+import { calculatePlanPosition, calculateViewPlanColumns } from '../utils/planPositioning';
 
-export interface UseEventPositionOptions {
+export interface UsePlanPositionOptions {
   hourHeight?: number;
 }
 
-export interface PositionedEvent extends TimedEvent {
-  position: EventPosition;
+export interface PositionedPlan extends TimedPlan {
+  position: PlanCardPosition;
 }
 
-export function useEventPosition(events: TimedEvent[], options: UseEventPositionOptions = {}) {
+export function usePlanPosition(plans: TimedPlan[], options: UsePlanPositionOptions = {}) {
   const { hourHeight = HOUR_HEIGHT } = options;
 
-  const eventPositions = useMemo(() => {
-    const positions = new Map<string, EventPosition>();
+  const planPositions = useMemo(() => {
+    const positions = new Map<string, PlanCardPosition>();
 
-    if (events.length === 0) return positions;
+    if (plans.length === 0) return positions;
 
-    // イベントの列配置を計算
-    const columns = calculateViewEventColumns(events);
+    // プランの列配置を計算
+    const columns = calculateViewPlanColumns(plans);
 
-    // 各イベントの位置を計算
-    events.forEach((event) => {
-      const column = columns.get(event.id);
+    // 各プランの位置を計算
+    plans.forEach((plan) => {
+      const column = columns.get(plan.id);
       if (!column) return;
 
-      const position = calculateEventPosition(event, column, hourHeight);
+      const position = calculatePlanPosition(plan, column, hourHeight);
 
-      positions.set(event.id, {
+      positions.set(plan.id, {
         top: position.top,
         left: position.left,
         width: position.width,
@@ -44,25 +44,24 @@ export function useEventPosition(events: TimedEvent[], options: UseEventPosition
     });
 
     return positions;
-  }, [events, hourHeight]);
+  }, [plans, hourHeight]);
 
-  return eventPositions;
+  return planPositions;
 }
 
 /**
- * イベントと位置を結合して配置済みイベントを返すフック
- * （既存の /shared/hooks との互換性のため）
+ * プランと位置を結合して配置済みプランを返すフック
  */
-export function usePositionedEvents(
-  events: TimedEvent[],
-  options: UseEventPositionOptions = {},
-): PositionedEvent[] {
-  const positions = useEventPosition(events, options);
+export function usePositionedPlans(
+  plans: TimedPlan[],
+  options: UsePlanPositionOptions = {},
+): PositionedPlan[] {
+  const positions = usePlanPosition(plans, options);
 
   return useMemo(() => {
-    return events.map((event) => ({
-      ...event,
-      position: positions.get(event.id) || {
+    return plans.map((plan) => ({
+      ...plan,
+      position: positions.get(plan.id) || {
         top: 0,
         left: 0,
         width: 100,
@@ -70,8 +69,5 @@ export function usePositionedEvents(
         zIndex: 10,
       },
     }));
-  }, [events, positions]);
+  }, [plans, positions]);
 }
-
-// 後方互換性のためのエイリアス
-export { useEventPosition as usePlanPosition };

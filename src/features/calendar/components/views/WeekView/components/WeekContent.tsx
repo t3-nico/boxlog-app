@@ -11,7 +11,7 @@ import {
   calculatePlanGhostStyle,
   calculatePreviewTime,
   CalendarDragSelection,
-  PlanBlock,
+  PlanCard,
   useGlobalDragCursor,
   usePlanStyles,
 } from '../../shared';
@@ -201,7 +201,7 @@ export const WeekContent = ({
               className="pointer-events-none absolute"
               data-plan-block="true"
             >
-              {/* PlanBlockの内容部分のみクリック可能 */}
+              {/* PlanCardの内容部分のみクリック可能 */}
               <div
                 className="focus:ring-ring pointer-events-auto absolute inset-0 rounded focus:ring-2 focus:ring-offset-1 focus:outline-none"
                 role="button"
@@ -245,7 +245,7 @@ export const WeekContent = ({
                   }
                 }}
               >
-                <PlanBlock
+                <PlanCard
                   plan={plan}
                   position={{
                     top: 0,

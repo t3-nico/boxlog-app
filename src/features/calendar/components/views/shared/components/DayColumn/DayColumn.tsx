@@ -10,7 +10,7 @@ import { GRID_BACKGROUND, HOUR_HEIGHT } from '../../constants/grid.constants';
 import { usePlanPosition } from '../../hooks/usePlanPosition';
 import type { DayColumnProps } from '../../types/view.types';
 import { isWeekend } from '../../utils/dateHelpers';
-import { filterEventsByDate, sortTimedEvents } from '../../utils/planPositioning';
+import { filterPlansByDate, sortTimedPlans } from '../../utils/planPositioning';
 import { EmptyState } from '../EmptyState';
 import { PlanCard } from '../PlanCard/PlanCard';
 
@@ -28,20 +28,20 @@ export const DayColumn = memo<DayColumnProps>(function DayColumn({
   // 今日・週末の判定（propsで上書き可能）
   const isWeekendActual = isWeekendProp ?? isWeekend(date);
 
-  // この日のイベントをフィルタリング
-  const dayEvents = useMemo(() => {
+  // この日のプランをフィルタリング
+  const dayPlans = useMemo(() => {
     // CalendarPlanをTimedPlanに変換
-    const timedEvents = events.map((event) => ({
-      ...event,
-      start: event.startDate || new Date(),
-      end: event.endDate || new Date(),
+    const timedPlans = events.map((plan) => ({
+      ...plan,
+      start: plan.startDate || new Date(),
+      end: plan.endDate || new Date(),
     }));
-    const filtered = filterEventsByDate(timedEvents, date);
-    return sortTimedEvents(filtered);
+    const filtered = filterPlansByDate(timedPlans, date);
+    return sortTimedPlans(filtered);
   }, [events, date]);
 
   // プランの位置を計算
-  const eventPositions = usePlanPosition(dayEvents, { hourHeight });
+  const planPositions = usePlanPosition(dayPlans, { hourHeight });
 
   // グリッド高さ
   const columnHeight = 24 * hourHeight;
@@ -92,15 +92,15 @@ export const DayColumn = memo<DayColumnProps>(function DayColumn({
       >
         {/* 現在時刻線はScrollableCalendarLayoutで統一表示 */}
 
-        {/* イベント */}
-        {dayEvents.map((event) => {
-          const position = eventPositions.get(event.id);
+        {/* プラン */}
+        {dayPlans.map((plan) => {
+          const position = planPositions.get(plan.id);
           // positionが見つからない場合は、デフォルト位置を使用してレンダリング
 
           return (
             <PlanCard
-              key={event.id}
-              plan={event}
+              key={plan.id}
+              plan={plan}
               position={position} // undefinedでも大丈夫（PlanCard側で対応済み）
               onClick={onEventClick}
               onContextMenu={onEventContextMenu}
@@ -108,8 +108,8 @@ export const DayColumn = memo<DayColumnProps>(function DayColumn({
           );
         })}
 
-        {/* 空状態（イベントがない場合） */}
-        {dayEvents.length === 0 && (
+        {/* 空状態（プランがない場合） */}
+        {dayPlans.length === 0 && (
           <div className="absolute inset-0 flex items-center justify-center opacity-30">
             <EmptyState
               title=""

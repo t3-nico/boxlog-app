@@ -19,6 +19,8 @@ export interface PlanSegment extends CalendarPlan {
   isPartialSegment: boolean;
   segmentType: 'start' | 'middle' | 'end' | 'full';
   originalDuration: number;
+  /** 翻訳キー: 'calendar.segment.start' | 'calendar.segment.middle' | 'calendar.segment.end' | null */
+  segmentLabelKey: string | null;
 }
 
 /**
@@ -46,6 +48,7 @@ export function splitCrossWeekPlans(
         isPartialSegment: false,
         segmentType: 'full',
         originalDuration: plan.duration || 60,
+        segmentLabelKey: null,
       });
       return;
     }
@@ -63,6 +66,7 @@ export function splitCrossWeekPlans(
         isPartialSegment: false,
         segmentType: 'full',
         originalDuration: plan.duration || 60,
+        segmentLabelKey: null,
       });
       return;
     }
@@ -144,8 +148,10 @@ function createPlanSegments(
       isPartialSegment: segmentType !== 'full',
       segmentType,
       originalDuration,
-      // タイトルにセグメント情報を追加
-      title: segmentType === 'full' ? plan.title : `${plan.title} ${getSegmentLabel(segmentType)}`,
+      // 翻訳キーを設定（UIコンポーネントで翻訳して表示）
+      segmentLabelKey: getSegmentLabelKey(segmentType),
+      // タイトルはそのまま保持（翻訳済みラベルはUIで結合）
+      title: plan.title,
       // 分割されたセグメントの継続時間を計算
       duration: Math.ceil((segmentEnd.getTime() - segmentStart.getTime()) / MS_PER_MINUTE),
     });
@@ -158,19 +164,20 @@ function createPlanSegments(
 }
 
 /**
- * セグメントタイプに応じたラベルを取得
+ * セグメントタイプに応じた翻訳キーを取得
+ * @returns 翻訳キー（calendar.segment.start 等）またはnull
  */
-function getSegmentLabel(segmentType: 'start' | 'middle' | 'end' | 'full'): string {
+function getSegmentLabelKey(segmentType: 'start' | 'middle' | 'end' | 'full'): string | null {
   switch (segmentType) {
     case 'start':
-      return '(開始)';
+      return 'calendar.segment.start';
     case 'middle':
-      return '(継続)';
+      return 'calendar.segment.middle';
     case 'end':
-      return '(終了)';
+      return 'calendar.segment.end';
     case 'full':
     default:
-      return '';
+      return null;
   }
 }
 

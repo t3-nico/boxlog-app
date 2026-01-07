@@ -29,9 +29,10 @@ export interface CalendarPlan {
   description?: string | undefined;
   startDate: Date | null;
   endDate: Date | null;
-  status: 'todo' | 'doing' | 'done';
+  status: 'open' | 'done';
   color: string;
-  plan_number?: string | undefined; // プラン番号（#123 形式）
+  plan_number?: number | null | undefined; // プラン番号
+  completed_at?: string | null | undefined; // 完了日時
   reminder_minutes?: number | null | undefined; // 通知タイミング（開始時刻の何分前か）
   tags?:
     | Array<{
@@ -86,7 +87,6 @@ export interface Calendar {
   syncToken?: string;
   lastSyncedAt?: Date;
   isShared: boolean;
-  shareSettings?: Record<string, unknown>;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -162,7 +162,6 @@ export interface CalendarViewState {
   showWeekNumbers: boolean;
   firstDayOfWeek: number; // 0=日曜, 1=月曜
   timeFormat: '12h' | '24h';
-  customSettings?: Record<string, unknown>;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -180,7 +179,6 @@ export interface UpdateCalendarInput {
   description?: string;
   color?: string;
   isVisible?: boolean;
-  shareSettings?: Record<string, unknown>;
 }
 
 export interface CreatePlanInput {

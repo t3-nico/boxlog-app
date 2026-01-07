@@ -11,7 +11,7 @@ import {
   calculatePlanGhostStyle,
   calculatePreviewTime,
   CalendarDragSelection,
-  PlanBlock,
+  PlanCard,
   useGlobalDragCursor,
 } from '../../shared';
 import { HOUR_HEIGHT } from '../../shared/constants/grid.constants';
@@ -173,7 +173,7 @@ export const ThreeDayContent = ({
               className="pointer-events-none absolute"
               data-plan-block="true"
             >
-              {/* PlanBlockの内容部分のみクリック可能 */}
+              {/* PlanCardの内容部分のみクリック可能 */}
               <div
                 className="focus:ring-ring pointer-events-auto absolute inset-0 rounded focus:ring-2 focus:ring-offset-1 focus:outline-none"
                 role="button"
@@ -217,7 +217,7 @@ export const ThreeDayContent = ({
                   }
                 }}
               >
-                <PlanBlock
+                <PlanCard
                   plan={plan}
                   position={{
                     top: 0,

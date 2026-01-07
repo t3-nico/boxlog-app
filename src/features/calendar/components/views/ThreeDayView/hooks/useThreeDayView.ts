@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { useCurrentPeriod, useDateUtilities, useEventsByDate } from '../../shared';
+import { useCurrentPeriod, useDateUtilities, usePlansByDate } from '../../shared';
 import type { UseThreeDayViewOptions, UseThreeDayViewReturn } from '../ThreeDayView.types';
 
 /**
@@ -33,10 +33,10 @@ export function useThreeDayView({
   // 中央の日付のインデックス（常に1）
   const centerIndex = 1;
 
-  // Phase 3統合フック: イベント日付グループ化（60-80行が1行に！）
-  const { eventsByDate } = useEventsByDate({
+  // Phase 3統合フック: プラン日付グループ化
+  const { plansByDate: eventsByDate } = usePlansByDate({
     dates: threeDayDates,
-    events,
+    plans: events,
     sortType: 'standard',
   });
 

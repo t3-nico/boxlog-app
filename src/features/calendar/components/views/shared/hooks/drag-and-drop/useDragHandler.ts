@@ -29,7 +29,10 @@ interface UseDragHandlerProps {
   displayDates: Date[] | undefined;
   viewMode: string;
   eventUpdateHandler:
-    | ((eventId: string, updates: { startTime: Date; endTime: Date }) => Promise<void> | void)
+    | ((
+        eventId: string,
+        updates: { startTime: Date; endTime: Date },
+      ) => Promise<void | { skipToast: true }> | void)
     | undefined;
   eventClickHandler: ((plan: CalendarPlan) => void) | undefined;
   dragDataRef: React.MutableRefObject<DragDataRef | null>;
@@ -237,7 +240,6 @@ export function useDragHandler({
         endDate: new Date(newStartTime.getTime() + durationMs),
         status: plan.status,
         color: plan.color,
-        plan_number: plan.plan_number,
         reminder_minutes: plan.reminder_minutes,
         tags: plan.tags,
         createdAt: plan.createdAt,

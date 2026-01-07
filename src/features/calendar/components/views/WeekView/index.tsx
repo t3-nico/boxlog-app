@@ -5,7 +5,7 @@ export { WeekView } from './WeekView';
 export type * from './WeekView.types';
 
 // フック
-export { useWeekEvents } from './hooks/useWeekPlans';
+export { useWeekPlans } from './hooks/useWeekPlans';
 export { useWeekView } from './hooks/useWeekView';
 
 // サブコンポーネント

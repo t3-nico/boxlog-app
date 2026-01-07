@@ -141,14 +141,13 @@ export function useRecurringPlanDrag({ plans }: UseRecurringPlanDragOptions) {
    * - (plan: CalendarPlan) - カレンダーオブジェクト形式
    *
    * Note: 繰り返しプラン編集時は { skipToast: true } を返し、
-   * 呼び出し元でtoast表示をスキップする（型はvoidだがランタイムで値を返す）
+   * 呼び出し元でtoast表示をスキップする
    */
   const handleUpdatePlan = useCallback(
     async (
       planIdOrPlan: string | CalendarPlan,
       updates?: { startTime: Date; endTime: Date },
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ): Promise<any> => {
+    ): Promise<{ skipToast: true } | void> => {
       // プランIDとupdatesを取得
       let plan: CalendarPlan | undefined;
       let resolvedUpdates: { startTime: Date; endTime: Date } | undefined;

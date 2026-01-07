@@ -8,7 +8,7 @@ import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { calendarColors } from '@/features/calendar/theme';
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
-import { getEffectiveStatus } from '@/features/plans/utils/status';
+import { normalizeStatus } from '@/features/plans/utils/status';
 import { CheckCircle2, Circle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
@@ -206,7 +206,6 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
 
   // planがundefinedの場合は何も表示しない（全hooks実行後）
   if (!plan || !plan.id) {
-    console.error('PlanCard: plan is undefined or missing id', { plan, position });
     return null;
   }
 
@@ -233,8 +232,8 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
         type="button"
         onClick={(e) => {
           e.stopPropagation();
-          const effectiveStatus = getEffectiveStatus(plan);
-          const newStatus = effectiveStatus === 'done' ? 'todo' : 'done';
+          const currentStatus = normalizeStatus(plan.status);
+          const newStatus = currentStatus === 'done' ? 'open' : 'done';
           updatePlan.mutate({
             id: plan.id,
             data: { status: newStatus },
@@ -248,10 +247,10 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
           isMobile ? 'relative' : 'absolute flex items-center justify-center',
           !isMobile && (safePosition.height < 30 ? 'top-0.5 left-0.5' : 'top-2 left-2'),
         )}
-        aria-label={getEffectiveStatus(plan) === 'done' ? '未完了に戻す' : '完了にする'}
+        aria-label={normalizeStatus(plan.status) === 'done' ? '未完了に戻す' : '完了にする'}
       >
         {(() => {
-          const status = getEffectiveStatus(plan);
+          const status = normalizeStatus(plan.status);
           const iconClass = isMobile
             ? 'h-3.5 w-3.5'
             : safePosition.height < 30
@@ -264,10 +263,7 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
           if (isCheckboxHovered) {
             return <CheckCircle2 className={cn('text-success', iconClass)} />;
           }
-          if (status === 'doing') {
-            return <Circle className={cn('text-primary', iconClass)} />;
-          }
-          // todo
+          // open（未完了）
           return <Circle className={cn('text-muted-foreground', iconClass)} />;
         })()}
       </button>

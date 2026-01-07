@@ -11,20 +11,20 @@ import type { DragState } from '../hooks/useDragAndDrop';
  * - リサイズ中: サイズをリアルタイム調整
  *
  * @param originalStyle 元のプランスタイル
- * @param eventId プランID
+ * @param planId プランID
  * @param dragState ドラッグ状態
  * @returns ゴースト表示を考慮した調整済みスタイル
  */
 export function calculatePlanGhostStyle(
   originalStyle: CSSProperties,
-  eventId: string,
+  planId: string,
   dragState: DragState,
 ): CSSProperties {
   // isDragging または isPending（5px移動後の遷移中）でもゴースト表示を適用
   const isDragging =
-    dragState.draggedEventId === eventId &&
+    dragState.draggedEventId === planId &&
     (dragState.isDragging || (dragState.isPending && dragState.snappedPosition));
-  const isResizing = dragState.isResizing && dragState.draggedEventId === eventId;
+  const isResizing = dragState.isResizing && dragState.draggedEventId === planId;
 
   let adjustedStyle = { ...originalStyle };
 
@@ -48,10 +48,6 @@ export function calculatePlanGhostStyle(
   return adjustedStyle;
 }
 
-// 後方互換性のためのエイリアス
-/** @deprecated Use calculatePlanGhostStyle instead */
-export const calculateEventGhostStyle = calculatePlanGhostStyle;
-
 /**
  * ドラッグ/リサイズ中のプレビュー時間計算
  * 全カレンダービューで共通利用
@@ -63,15 +59,15 @@ export const calculateEventGhostStyle = calculatePlanGhostStyle;
  * この関数はゴースト用なので、ドラッグ中は null を返して元の時間を表示する
  * リサイズ中のみプレビュー時間を返す（その場でサイズ変更するため）
  *
- * @param eventId プランID
+ * @param planId プランID
  * @param dragState ドラッグ状態
  * @returns プレビュー時間（リサイズ中のみ）
  */
 export function calculatePreviewTime(
-  eventId: string,
+  planId: string,
   dragState: DragState,
 ): { start: Date; end: Date } | null {
-  const isResizing = dragState.isResizing && dragState.draggedEventId === eventId;
+  const isResizing = dragState.isResizing && dragState.draggedEventId === planId;
 
   // リサイズ中のみプレビュー時間を返す
   // ドラッグ中はゴーストに元の時間を表示するためnullを返す
