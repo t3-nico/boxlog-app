@@ -10,6 +10,23 @@
           "plan": "Plan"
         }
       }
+    },
+    "emptyState": {
+      "noResults": {
+        "title": "No results",
+        "description": "Try a different search",
+        "action": "Clear search"
+      },
+      "noMatching": {
+        "title": "No matching items",
+        "description": "Adjust or clear filters",
+        "action": "Clear filters"
+      },
+      "empty": {
+        "title": "No plans yet",
+        "description": "Create your first plan",
+        "action": "Create plan"
+      }
     }
   }
 }

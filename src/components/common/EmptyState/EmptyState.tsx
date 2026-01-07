@@ -18,45 +18,37 @@ export interface EmptyStateProps {
   onAction?: (() => void) | undefined;
   /** カスタムアクション（Buttonなど） */
   actions?: React.ReactNode | undefined;
-  /** ヒントテキスト */
-  hint?: string | undefined;
+  /** サイズ: sm=コンパクト, md=標準, lg=大きめ */
+  size?: 'sm' | 'md' | 'lg' | undefined;
+  /** 親要素内で中央配置 (業界標準: テーブル/カード内で使用時) */
+  centered?: boolean | undefined;
   /** 追加のクラス名 */
   className?: string | undefined;
 }
 
 /**
- * 統一EmptyStateコンポーネント
+ * EmptyStateコンポーネント（業界標準準拠）
  *
- * GAFA風のシンプルなデザイン：
- * - アイコン: 48px、装飾なし
- * - タイトル: text-lg font-semibold
- * - 説明: text-sm text-muted-foreground
+ * PatternFly/GitLab基準:
+ * - centered=true: 親要素内で水平・垂直中央配置
+ * - テーブル/カード内では centered + size="sm"
+ * - フルページでは size="lg"
  *
  * @example
  * ```tsx
- * import { EmptyState } from '@/components/common'
- * import { CalendarDays } from 'lucide-react'
- *
- * // 基本
- * <EmptyState
- *   icon={CalendarDays}
- *   title="予定がありません"
- *   description="カレンダーで新しい予定を作成してください"
- * />
- *
- * // アクションボタン付き
+ * // テーブル内（中央配置）
  * <EmptyState
  *   icon={Inbox}
- *   title="メッセージがありません"
- *   actionLabel="新規作成"
- *   onAction={() => openDialog()}
+ *   title="No items"
+ *   centered
+ *   size="sm"
  * />
  *
- * // カスタムアクション
+ * // フルページ
  * <EmptyState
- *   icon={Search}
- *   title="検索結果がありません"
- *   actions={<Button variant="outline" onClick={reset}>フィルターをリセット</Button>}
+ *   icon={Inbox}
+ *   title="No items"
+ *   size="lg"
  * />
  * ```
  */
@@ -67,35 +59,42 @@ export function EmptyState({
   actionLabel,
   onAction,
   actions,
-  hint,
+  size = 'md',
+  centered = false,
   className,
 }: EmptyStateProps) {
-  return (
-    <div
-      className={cn(
-        'flex h-full flex-col items-center justify-center px-4 py-8 text-center md:p-8',
-        className,
+  const sizeStyles = {
+    sm: { icon: 'size-10', title: 'text-sm', desc: 'text-xs', gap: 'py-4' },
+    md: { icon: 'size-12', title: 'text-base', desc: 'text-sm', gap: 'py-6' },
+    lg: { icon: 'size-16', title: 'text-lg', desc: 'text-sm', gap: 'py-8' },
+  };
+
+  const s = sizeStyles[size];
+
+  const content = (
+    <div role="status" className={cn('text-center', s.gap, !centered && className)}>
+      {Icon && (
+        <div className="mb-3">
+          <Icon className={cn(s.icon, 'text-muted-foreground mx-auto')} />
+        </div>
       )}
-    >
-      {/* アイコン */}
-      {Icon && <Icon className="text-muted-foreground size-12" />}
-
-      {/* タイトル */}
-      <h3 className="text-foreground mt-6 text-lg font-semibold">{title}</h3>
-
-      {/* 説明 */}
-      {description && (
-        <p className="text-muted-foreground mt-2 mb-6 text-sm md:max-w-md">{description}</p>
+      {title && <p className={cn('text-foreground font-medium', s.title)}>{title}</p>}
+      {description && <p className={cn('text-muted-foreground mt-1', s.desc)}>{description}</p>}
+      {actionLabel && onAction && (
+        <div className="mt-4">
+          <Button onClick={onAction} size={size === 'sm' ? 'sm' : 'default'}>
+            {actionLabel}
+          </Button>
+        </div>
       )}
-
-      {/* アクションボタン */}
-      {actionLabel && onAction && <Button onClick={onAction}>{actionLabel}</Button>}
-
-      {/* カスタムアクション */}
-      {actions && <div>{actions}</div>}
-
-      {/* ヒント */}
-      {hint && <p className="text-muted-foreground mt-8 max-w-xs text-xs md:max-w-sm">{hint}</p>}
+      {actions && <div className="mt-4">{actions}</div>}
     </div>
   );
+
+  // 中央配置: CSS Gridで安全に中央寄せ（Radix競合回避）
+  if (centered) {
+    return <div className={cn('grid h-full w-full place-items-center', className)}>{content}</div>;
+  }
+
+  return content;
 }

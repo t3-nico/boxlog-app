@@ -8,7 +8,6 @@ export { PlanCard } from './display/PlanCard';
 export { PlanStatusBadge } from './display/PlanStatusBadge';
 
 // Shared Components
-export { EmptyState } from './shared/EmptyState';
 export { LoadingState } from './shared/LoadingState';
 export { PlanCreateTrigger } from './shared/PlanCreateTrigger';
 

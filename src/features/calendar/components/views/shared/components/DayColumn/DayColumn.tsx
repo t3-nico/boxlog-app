@@ -4,14 +4,16 @@
 
 'use client';
 
+import { Calendar } from 'lucide-react';
 import React, { memo, useMemo } from 'react';
 
+import { EmptyState } from '@/components/common';
 import { GRID_BACKGROUND, HOUR_HEIGHT } from '../../constants/grid.constants';
 import { usePlanPosition } from '../../hooks/usePlanPosition';
 import type { DayColumnProps } from '../../types/view.types';
 import { isWeekend } from '../../utils/dateHelpers';
+
 import { filterPlansByDate, sortTimedPlans } from '../../utils/planPositioning';
-import { EmptyState } from '../EmptyState';
 import { PlanCard } from '../PlanCard/PlanCard';
 
 export const DayColumn = memo<DayColumnProps>(function DayColumn({
@@ -111,12 +113,7 @@ export const DayColumn = memo<DayColumnProps>(function DayColumn({
         {/* 空状態（プランがない場合） */}
         {dayPlans.length === 0 && (
           <div className="absolute inset-0 flex items-center justify-center opacity-30">
-            <EmptyState
-              title=""
-              description=""
-              icon={<div className="text-muted-foreground text-4xl">📅</div>}
-              className="p-4"
-            />
+            <EmptyState title="" icon={Calendar} size="sm" />
           </div>
         )}
       </div>

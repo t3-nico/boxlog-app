@@ -33,9 +33,6 @@ export type { DateTimeSelection, TimeRange } from './components/CalendarDragSele
 export { DragSelectionLayer } from './components/DragSelectionLayer';
 export type { TimeSelection } from './components/DragSelectionLayer';
 
-// EmptyState - 空状態
-export { EmptyState } from './components/EmptyState';
-
 // OverdueSection - 未完了プランバッジ
 export { OverdueBadge } from './components/OverdueBadge';
 export { OverdueSection, OverdueSectionSingle } from './components/OverdueSection';

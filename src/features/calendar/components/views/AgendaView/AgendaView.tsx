@@ -8,8 +8,9 @@ import { CalendarDays } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
 
+import { EmptyState } from '@/components/common';
+
 import { CalendarViewAnimation } from '../../animations/ViewTransition';
-import { EmptyState } from '../shared/components/EmptyState';
 
 import type { AgendaViewProps } from './AgendaView.types';
 import { AgendaListItem } from './components/AgendaListItem';
