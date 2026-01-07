@@ -241,6 +241,10 @@ export function PlanInspectorContent() {
               updatePlan.mutate({ id: planId, data: { recurrence_rule: rrule } });
             }}
             timeConflictError={timeConflictError}
+            onStatusChange={(status) => {
+              if (!planId) return;
+              updatePlan.mutate({ id: planId, data: { status } });
+            }}
           />
         </TabsContent>
 

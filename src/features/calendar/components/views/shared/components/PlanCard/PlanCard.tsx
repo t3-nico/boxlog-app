@@ -246,6 +246,8 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
           // モバイル: インライン配置、デスクトップ: 絶対配置
           isMobile ? 'relative' : 'absolute flex items-center justify-center',
           !isMobile && (safePosition.height < 30 ? 'top-0.5 left-0.5' : 'top-2 left-2'),
+          // ホバー領域を確保（小さい予定でもホバーしやすく）
+          'min-h-4 min-w-4',
         )}
         aria-label={normalizeStatus(plan.status) === 'done' ? '未完了に戻す' : '完了にする'}
       >
@@ -275,6 +277,8 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
         previewTime={previewTime}
         hasCheckbox={!isMobile} // デスクトップのみ左パディング必要
         isMobile={isMobile}
+        isHovered={isHovered}
+        isCheckboxHovered={isCheckboxHovered}
       />
 
       {/* 下端リサイズハンドル */}

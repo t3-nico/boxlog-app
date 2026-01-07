@@ -4,10 +4,14 @@
  * PlanInspector の詳細タブ
  */
 
-import { memo } from 'react';
+import { memo, useCallback, useState } from 'react';
 
-import { Bell, CalendarDays, CheckSquare, FileText } from 'lucide-react';
+import { Bell, CalendarDays, CheckCircle2, Circle, FileText } from 'lucide-react';
 import dynamic from 'next/dynamic';
+
+import { cn } from '@/lib/utils';
+
+import { normalizeStatus } from '../../../utils/status';
 
 import type { Plan } from '../../../types/plan';
 import { DatePickerPopover } from '../../shared/DatePickerPopover';
@@ -52,6 +56,8 @@ interface PlanInspectorDetailsTabProps {
   onRemoveTag: (tagId: string) => void;
   onRepeatTypeChange: (type: string) => void;
   onRecurrenceRuleChange: (rrule: string | null) => void;
+  /** ステータス変更ハンドラー */
+  onStatusChange: (status: 'open' | 'done') => void;
 }
 
 export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
@@ -76,12 +82,39 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
   onRemoveTag,
   onRepeatTypeChange,
   onRecurrenceRuleChange,
+  onStatusChange,
 }: PlanInspectorDetailsTabProps) {
+  const [isCheckboxHovered, setIsCheckboxHovered] = useState(false);
+  const status = normalizeStatus(plan.status);
+
+  const handleStatusClick = useCallback(() => {
+    const newStatus = status === 'done' ? 'open' : 'done';
+    onStatusChange(newStatus);
+  }, [status, onStatusChange]);
   return (
     <>
       {/* Title */}
       <div className="flex min-h-10 items-start gap-2 px-4 py-2">
-        <CheckSquare className="text-muted-foreground mt-1.5 size-4 flex-shrink-0" />
+        <button
+          type="button"
+          onClick={handleStatusClick}
+          onMouseEnter={() => setIsCheckboxHovered(true)}
+          onMouseLeave={() => setIsCheckboxHovered(false)}
+          className={cn(
+            'mt-0.5 flex-shrink-0 cursor-pointer rounded-md transition-all',
+            'hover:bg-state-hover flex min-h-7 min-w-7 items-center justify-center',
+            'hover:scale-105 active:scale-95',
+          )}
+          aria-label={status === 'done' ? '未完了に戻す' : '完了にする'}
+        >
+          {status === 'done' ? (
+            <CheckCircle2 className="text-success size-6" />
+          ) : isCheckboxHovered ? (
+            <CheckCircle2 className="text-success size-6" />
+          ) : (
+            <Circle className="text-muted-foreground size-6" />
+          )}
+        </button>
         <div className="flex min-h-8 flex-1 items-center">
           <span
             ref={titleRef}
