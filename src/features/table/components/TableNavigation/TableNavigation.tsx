@@ -226,15 +226,18 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
         className="pr-10"
       />
       {localSearch && (
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          onClick={handleSearchClear}
-          className="absolute top-1/2 right-1 size-8 -translate-y-1/2"
-        >
-          <X className="size-4" />
-        </Button>
+        <HoverTooltip content="クリア" side="top">
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={handleSearchClear}
+            className="absolute top-1/2 right-1 size-8 -translate-y-1/2"
+            aria-label="検索をクリア"
+          >
+            <X className="size-4" />
+          </Button>
+        </HoverTooltip>
       )}
     </div>
   );
@@ -441,15 +444,17 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
             className="h-8 w-48"
           />
           {localSearch && (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleSearchClear}
-              className="size-8"
-              aria-label="クリア"
-            >
-              <X className="size-4" />
-            </Button>
+            <HoverTooltip content="クリア" side="top">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleSearchClear}
+                className="size-8"
+                aria-label="クリア"
+              >
+                <X className="size-4" />
+              </Button>
+            </HoverTooltip>
           )}
         </div>
       ) : (
