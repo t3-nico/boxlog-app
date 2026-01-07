@@ -12,46 +12,43 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-export type TodoFilter = 'all' | 'today' | 'overdue';
-export type TodoSort = 'due' | 'priority' | 'created';
+export type OpenFilter = 'all' | 'today' | 'overdue';
+export type OpenSort = 'due' | 'created' | 'updated';
 
-interface TodoNavigationProps {
-  filter: TodoFilter;
-  onFilterChange: (filter: TodoFilter) => void;
-  sort: TodoSort;
-  onSortChange: (sort: TodoSort) => void;
+interface OpenNavigationProps {
+  filter: OpenFilter;
+  onFilterChange: (filter: OpenFilter) => void;
+  sort: OpenSort;
+  onSortChange: (sort: OpenSort) => void;
 }
 
 /**
- * TodoNavigation - Todoタブのフィルター・ソート設定
+ * OpenNavigation - Openタブのフィルター・ソート設定
  *
  * **構成**:
  * - 期間フィルター: ドロップダウンボタン（All / Today / Overdue）
- * - ソート順: ドロップダウンボタン（Due / Priority / Created）
- *
- * **Note**: 優先度フィルターはDBスキーマにpriorityフィールドが
- * 追加された後に実装予定
+ * - ソート順: ドロップダウンボタン（Due / Created / Updated）
  */
-export function TodoNavigation({
+export function OpenNavigation({
   filter,
   onFilterChange,
   sort,
   onSortChange,
-}: TodoNavigationProps) {
-  const t = useTranslations('calendar.todo.navigation');
+}: OpenNavigationProps) {
+  const t = useTranslations('calendar.open.navigation');
 
   // フィルターラベルのマッピング
-  const filterLabels: Record<TodoFilter, string> = {
+  const filterLabels: Record<OpenFilter, string> = {
     all: t('all'),
     today: t('today'),
     overdue: t('overdue'),
   };
 
   // ソートラベルのマッピング
-  const sortLabels: Record<TodoSort, string> = {
+  const sortLabels: Record<OpenSort, string> = {
     due: t('dueDate'),
-    priority: t('priority'),
     created: t('created'),
+    updated: t('updated'),
   };
 
   return (
@@ -67,7 +64,7 @@ export function TodoNavigation({
         <DropdownMenuContent align="start" className="w-32">
           <DropdownMenuRadioGroup
             value={filter}
-            onValueChange={(value) => onFilterChange(value as TodoFilter)}
+            onValueChange={(value) => onFilterChange(value as OpenFilter)}
           >
             <DropdownMenuRadioItem value="all">{t('all')}</DropdownMenuRadioItem>
             <DropdownMenuRadioItem value="today">{t('today')}</DropdownMenuRadioItem>
@@ -87,11 +84,11 @@ export function TodoNavigation({
         <DropdownMenuContent align="start" className="w-32">
           <DropdownMenuRadioGroup
             value={sort}
-            onValueChange={(value) => onSortChange(value as TodoSort)}
+            onValueChange={(value) => onSortChange(value as OpenSort)}
           >
             <DropdownMenuRadioItem value="due">{t('dueDate')}</DropdownMenuRadioItem>
-            <DropdownMenuRadioItem value="priority">{t('priority')}</DropdownMenuRadioItem>
             <DropdownMenuRadioItem value="created">{t('created')}</DropdownMenuRadioItem>
+            <DropdownMenuRadioItem value="updated">{t('updated')}</DropdownMenuRadioItem>
           </DropdownMenuRadioGroup>
         </DropdownMenuContent>
       </DropdownMenu>

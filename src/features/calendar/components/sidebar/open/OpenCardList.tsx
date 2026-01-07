@@ -9,29 +9,30 @@ import { useCalendarFilterStore } from '@/features/calendar/stores/useCalendarFi
 import { parseDateString } from '@/features/calendar/utils/dateUtils';
 import { useInboxData } from '@/features/inbox/hooks/useInboxData';
 
-import type { TodoFilter, TodoSort } from './TodoNavigation';
+import type { OpenFilter, OpenSort } from './OpenNavigation';
 
-interface TodoCardListProps {
-  filter: TodoFilter;
-  sort: TodoSort;
+interface OpenCardListProps {
+  filter: OpenFilter;
+  sort: OpenSort;
 }
 
 /**
- * TodoCardList - Calendar Sidebar用カードリスト（status: todoのプラン）
+ * OpenCardList - Calendar Sidebar用カードリスト（status: openかつ未スケジュールのプラン）
  *
  * **機能**:
- * - useInboxData でデータ取得
- * - フィルター・ソート・優先度フィルタリング
+ * - usePlansData でデータ取得
+ * - フィルター・ソート
+ * - カレンダーにスケジュールされていないプランのみ表示
  * - PlanCard を再利用（ドラッグ可能）
  *
  * **Note**: PlanCard の useDraggable は既に実装済みなので、
  * DndContext 内に配置すれば自動的にドラッグ可能になる
  */
-export function TodoCardList({ filter, sort }: TodoCardListProps) {
-  const t = useTranslations('calendar.todo');
+export function OpenCardList({ filter, sort }: OpenCardListProps) {
+  const t = useTranslations('calendar.open');
 
-  // status: 'todo' のプランのみ取得
-  const { items, isPending, error } = useInboxData({ status: 'todo' });
+  // status: 'open' のプランのみ取得
+  const { items, isPending, error } = useInboxData({ status: 'open' });
 
   // カレンダーフィルター（タグフィルター）
   const isPlanVisible = useCalendarFilterStore((state) => state.isPlanVisible);
@@ -40,13 +41,16 @@ export function TodoCardList({ filter, sort }: TodoCardListProps) {
   const filteredAndSortedItems = useMemo(() => {
     let result = [...items];
 
-    // 0. カレンダーフィルター（タグによる表示/非表示）
+    // 0. スケジュール済みを除外（start_time がないもののみ表示）
+    result = result.filter((item) => !item.start_time);
+
+    // 1. カレンダーフィルター（タグによる表示/非表示）
     result = result.filter((item) => {
       const tagIds = item.tags?.map((tag) => tag.id) || [];
       return isPlanVisible(tagIds);
     });
 
-    // 1. 期間フィルター
+    // 2. 期間フィルター
     if (filter !== 'all') {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
@@ -67,10 +71,6 @@ export function TodoCardList({ filter, sort }: TodoCardListProps) {
       });
     }
 
-    // 2. 優先度フィルター
-    // NOTE: Plan/InboxItem には現在 priority フィールドが存在しない
-    // 将来の機能追加時に実装予定（DBスキーマ変更が必要）
-
     // 3. ソート
     result.sort((a, b) => {
       if (sort === 'due') {
@@ -79,12 +79,12 @@ export function TodoCardList({ filter, sort }: TodoCardListProps) {
         if (!b.due_date) return -1;
         // タイムゾーン問題を回避: YYYY-MM-DD をローカル日付として解釈
         return parseDateString(a.due_date).getTime() - parseDateString(b.due_date).getTime();
-      } else if (sort === 'priority') {
-        // NOTE: priority フィールド未実装のため、作成日順でソート
-        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
       } else if (sort === 'created') {
         // 作成日順（新しい順）
         return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      } else if (sort === 'updated') {
+        // 更新日順（新しい順）
+        return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
       }
       return 0;
     });
