@@ -3,12 +3,13 @@ import { devtools } from 'zustand/middleware';
 
 /**
  * テーブルページネーション状態
+ *
+ * ページサイズは動的計算（useDynamicPageSize）に移行したため、
+ * currentPageのみを管理
  */
 interface TablePaginationState {
   currentPage: number;
-  pageSize: number;
   setCurrentPage: (page: number) => void;
-  setPageSize: (size: number) => void;
   reset: () => void;
 }
 
@@ -17,28 +18,24 @@ interface TablePaginationState {
  *
  * テーブルビューのページネーション状態を管理
  * - currentPage: 現在のページ番号（1始まり）
- * - pageSize: 1ページあたりの表示件数
+ *
+ * NOTE: pageSizeは動的計算（useDynamicPageSize）に移行
  *
  * @example
  * ```tsx
- * const { currentPage, pageSize, setCurrentPage, setPageSize } = useTablePaginationStore()
+ * const { currentPage, setCurrentPage } = useTablePaginationStore()
  *
  * // ページ切り替え
  * setCurrentPage(2)
- *
- * // 表示件数変更
- * setPageSize(50)
  * ```
  */
 export const useTablePaginationStore = create<TablePaginationState>()(
   devtools(
     (set) => ({
       currentPage: 1,
-      pageSize: 25,
 
       setCurrentPage: (page) => set({ currentPage: page }),
-      setPageSize: (size) => set({ pageSize: size, currentPage: 1 }),
-      reset: () => set({ currentPage: 1, pageSize: 25 }),
+      reset: () => set({ currentPage: 1 }),
     }),
     { name: 'table-pagination-store' },
   ),

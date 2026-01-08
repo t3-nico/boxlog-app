@@ -13,6 +13,7 @@ import { TableNavigation, TablePagination, type TableNavigationConfig } from '@/
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { api } from '@/lib/trpc';
 import { useTranslations } from 'next-intl';
+import { useDynamicPageSize } from '../hooks/useDynamicPageSize';
 import type { InboxItem } from '../hooks/useInboxData';
 import { useInboxData } from '../hooks/useInboxData';
 import { useInboxFilterStore } from '../stores/useInboxFilterStore';
@@ -77,9 +78,11 @@ export function InboxTableView() {
 
   // ページネーション関連
   const currentPage = useInboxPaginationStore((state) => state.currentPage);
-  const pageSize = useInboxPaginationStore((state) => state.pageSize);
   const setCurrentPage = useInboxPaginationStore((state) => state.setCurrentPage);
-  const setPageSize = useInboxPaginationStore((state) => state.setPageSize);
+
+  // テーブルコンテナref（動的ページサイズ計算用）
+  const tableContainerRef = useRef<HTMLDivElement>(null);
+  const pageSize = useDynamicPageSize(tableContainerRef);
 
   // 選択関連
   const selectedIds = useInboxSelectionStore((state) => state.selectedIds);
@@ -282,11 +285,6 @@ export function InboxTableView() {
     if (activeView.sorting) {
       setSort(activeView.sorting.field, activeView.sorting.direction);
     }
-
-    // ページサイズ適用
-    if (activeView.pageSize) {
-      setPageSize(activeView.pageSize);
-    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeViewId]); // activeView.idのみで依存管理
 
@@ -407,11 +405,15 @@ export function InboxTableView() {
           }
         }}
       >
-        <div className="border-border flex flex-1 flex-col overflow-auto rounded-xl border [&::-webkit-scrollbar-corner]:rounded-xl [&::-webkit-scrollbar-track]:rounded-xl">
+        <div
+          ref={tableContainerRef}
+          className="border-border flex flex-1 flex-col overflow-auto rounded-xl border [&::-webkit-scrollbar-corner]:rounded-xl [&::-webkit-scrollbar-track]:rounded-xl"
+        >
           <InboxTableContent
             items={items}
             createRowRef={createRowRef}
             mobileDisplayLimit={isMobile ? mobileDisplayLimit : undefined}
+            pageSize={pageSize}
           />
         </div>
 
@@ -440,7 +442,6 @@ export function InboxTableView() {
                 currentPage={currentPage}
                 pageSize={pageSize}
                 onPageChange={setCurrentPage}
-                onPageSizeChange={setPageSize}
               />
             </div>
           </>
