@@ -126,8 +126,8 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
       <main
         className={cn(
           'bg-surface-bright flex h-full min-h-0 flex-1 flex-col overflow-hidden',
-          // モバイル: カテゴリ選択時のみ表示、PC: 常時表示
-          isInCategory ? 'block' : 'hidden md:block',
+          // モバイル: カテゴリ未選択時は非表示、PC: 常時表示
+          !isInCategory && 'hidden md:flex',
         )}
       >
         {children}
