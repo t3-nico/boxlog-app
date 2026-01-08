@@ -1,4 +1,5 @@
-import { TagsPageClient } from '../tags-page-client';
+import { TagsPageClient } from '@/features/tags/components/TagsPageClient';
+
 import { TagInspectorOpener } from './tag-inspector-opener';
 
 interface TagDetailPageProps {
@@ -8,7 +9,7 @@ interface TagDetailPageProps {
   }>;
 }
 
-export default async function TagDetailPage({ params }: TagDetailPageProps) {
+export default async function SettingsTagDetailPage({ params }: TagDetailPageProps) {
   const { tagId } = await params;
 
   // g-{uuid} 形式の場合はグループページを表示

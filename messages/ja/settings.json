@@ -248,7 +248,9 @@
         "subscription": "サブスクリプション",
         "subscriptionDesc": "プランと課金管理",
         "about": "このアプリについて",
-        "aboutDesc": "法的情報とバージョン"
+        "aboutDesc": "法的情報とバージョン",
+        "tags": "タグ管理",
+        "tagsDesc": "タグとグループの作成・編集"
       }
     },
     "legal": {

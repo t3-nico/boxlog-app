@@ -1,6 +1,6 @@
 'use client';
 
-import { TagsPageClient } from '../tags-page-client';
+import { TagsPageClient } from '@/features/tags/components/TagsPageClient';
 
 /**
  * アーカイブされたタグページ（is_active = false のタグを表示）

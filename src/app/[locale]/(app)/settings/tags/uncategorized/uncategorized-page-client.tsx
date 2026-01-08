@@ -1,6 +1,6 @@
 'use client';
 
-import { TagsPageClient } from '../tags-page-client';
+import { TagsPageClient } from '@/features/tags/components/TagsPageClient';
 
 /**
  * 未分類タグページ（group_id = null のタグを表示）

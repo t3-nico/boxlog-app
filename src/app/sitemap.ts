@@ -42,7 +42,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const appPages: MetadataRoute.Sitemap = [
     ...createLocalizedUrls('/calendar', 'daily', 0.9),
     ...createLocalizedUrls('/inbox', 'daily', 0.8),
-    ...createLocalizedUrls('/tags', 'daily', 0.8),
+    ...createLocalizedUrls('/settings/tags', 'daily', 0.8),
     ...createLocalizedUrls('/stats', 'weekly', 0.7),
     ...createLocalizedUrls('/trash', 'weekly', 0.5),
   ];

@@ -1,16 +1,15 @@
 'use client';
 
-import { Plus } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { PageHeader } from '@/components/common/PageHeader';
-import { Button } from '@/components/ui/button';
 import { DataTable, type SortState } from '@/features/table';
 import {
   TagRowWrapper,
   TagTableRowCreate,
   type TagTableRowCreateHandle,
+  TagsTableEmptyState,
 } from '@/features/tags/components/table';
 import { TagsDialogs } from '@/features/tags/components/TagsDialogs';
 import { TagSelectionActions } from '@/features/tags/components/TagSelectionActions';
@@ -432,7 +431,6 @@ export function TagsPageClient({
           showPagination={displayMode === 'flat'}
           paginationState={{ currentPage, pageSize }}
           onPaginationChange={handlePaginationChange}
-          pageSizeOptions={[10, 25, 50, 100]}
           columnWidths={columnWidths}
           onColumnWidthChange={handleColumnWidthChange}
           {...(groupedData && {
@@ -455,19 +453,12 @@ export function TagsPageClient({
             )
           }
           emptyState={
-            <div className="border-border flex h-64 items-center justify-center rounded-xl border-2 border-dashed">
-              <div className="text-center">
-                <p className="text-muted-foreground mb-4">
-                  {showArchiveOnly ? t('tag.archive.noArchivedTags') : t('tags.page.noTags')}
-                </p>
-                {!showArchiveOnly && (
-                  <Button onClick={() => createRowRef.current?.startCreate()}>
-                    <Plus className="mr-2 h-4 w-4" />
-                    {t('tags.page.addFirstTag')}
-                  </Button>
-                )}
-              </div>
-            </div>
+            <TagsTableEmptyState
+              searchQuery={searchQuery}
+              isArchiveView={isArchiveFilter ?? false}
+              onClearSearch={() => setSearchQuery('')}
+              onCreate={() => createRowRef.current?.startCreate()}
+            />
           }
         />
       </div>

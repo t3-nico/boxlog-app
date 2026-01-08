@@ -174,7 +174,7 @@ export const registerDefaultCommands = (actions: CommandActions) => {
       icon: 'tag',
       shortcut: ['G', 'T'],
       keywords: ['tags', 'タグ', 'ラベル'],
-      action: () => router.push('/tags'),
+      action: () => router.push('/settings/tags'),
     },
 
     // Creation commands

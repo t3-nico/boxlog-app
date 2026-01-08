@@ -248,7 +248,9 @@
         "subscription": "Subscription",
         "subscriptionDesc": "Plan and billing management",
         "about": "About",
-        "aboutDesc": "Legal information and version"
+        "aboutDesc": "Legal information and version",
+        "tags": "Tags",
+        "tagsDesc": "Create and edit tags and groups"
       }
     },
     "legal": {

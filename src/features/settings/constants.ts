@@ -6,6 +6,7 @@ import {
   Info,
   Settings as SettingsIcon,
   Sliders,
+  Tag,
   User,
   type LucideIcon,
 } from 'lucide-react';
@@ -57,6 +58,12 @@ export const SETTINGS_CATEGORIES: readonly SettingsCategoryMeta[] = [
     icon: Sliders,
     labelKey: 'settings.dialog.categories.personalization',
     descKey: 'settings.dialog.categories.personalizationDesc',
+  },
+  {
+    id: 'tags',
+    icon: Tag,
+    labelKey: 'settings.dialog.categories.tags',
+    descKey: 'settings.dialog.categories.tagsDesc',
   },
   {
     id: 'notifications',

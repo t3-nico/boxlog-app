@@ -8,6 +8,7 @@ import { updateSession } from '@/lib/supabase/middleware';
 const intlMiddleware = createMiddleware(routing);
 
 // 認証が必要なパス
+// Note: /tags は /settings/tags に移動したため削除（/settings で保護）
 const protectedPaths = [
   '/tasks',
   '/settings',
@@ -18,7 +19,6 @@ const protectedPaths = [
   '/stats',
   '/review',
   '/notifications',
-  '/tags',
   '/add',
 ];
 

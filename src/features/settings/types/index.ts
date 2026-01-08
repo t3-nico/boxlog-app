@@ -19,7 +19,8 @@ import type { TranslatedString } from '@/lib/i18n';
 export type SettingsCategory =
   | 'general' // 言語、テーマ、起動画面
   | 'calendar' // カレンダー設定（タイムゾーン、表示、デフォルトビュー）
-  | 'personalization' // クロノタイプ、タグ
+  | 'personalization' // クロノタイプ
+  | 'tags' // タグ管理
   | 'notifications' // 通知設定
   | 'data-controls' // エクスポート、連携
   | 'account' // プロフィール、セキュリティ

@@ -6,6 +6,8 @@ interface UncategorizedPageProps {
   }>;
 }
 
-export default async function UncategorizedPage({ params: _params }: UncategorizedPageProps) {
+export default async function SettingsTagsUncategorizedPage({
+  params: _params,
+}: UncategorizedPageProps) {
   return <UncategorizedPageClient />;
 }
