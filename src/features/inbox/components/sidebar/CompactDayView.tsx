@@ -2,15 +2,16 @@
 
 import { addDays, format, isToday, subDays } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { MiniCalendar } from '@/components/common/MiniCalendar';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { cn } from '@/lib/utils';
-
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
+import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
+import { cn } from '@/lib/utils';
 
 // コンパクト版の定数（カレンダーDayViewに近い設定）
 const COMPACT_HOUR_HEIGHT = 64; // 1時間あたりの高さ
@@ -61,6 +62,10 @@ export const CompactDayView = memo(function CompactDayView({
   const [dragOverHour, setDragOverHour] = useState<number | null>(null);
   const [draggingPlanId, setDraggingPlanId] = useState<string | null>(null);
 
+  // Inspector連携
+  const inspectorPlanId = usePlanInspectorStore((state) => state.planId);
+  const isInspectorOpen = usePlanInspectorStore((state) => state.isOpen);
+
   const isTodayDate = useMemo(() => isToday(date), [date]);
 
   // 現在時刻の位置（px）
@@ -81,13 +86,19 @@ export const CompactDayView = memo(function CompactDayView({
     return () => clearInterval(timer);
   }, [isTodayDate]);
 
-  // 初期スクロール位置（8時付近）
+  // 初期スクロール位置（今日は現在時刻付近、他の日は8時付近）
   useEffect(() => {
     if (scrollRef.current) {
-      const scrollTop = Math.max(0, (8 - 1) * COMPACT_HOUR_HEIGHT);
+      let scrollTop: number;
+      if (isTodayDate) {
+        const currentHour = new Date().getHours();
+        scrollTop = Math.max(0, (currentHour - 1) * COMPACT_HOUR_HEIGHT);
+      } else {
+        scrollTop = Math.max(0, (8 - 1) * COMPACT_HOUR_HEIGHT);
+      }
       scrollRef.current.scrollTo({ top: scrollTop, behavior: 'smooth' });
     }
-  }, [date]);
+  }, [date, isTodayDate]);
 
   // ナビゲーション
   const handlePrev = useCallback(() => {
@@ -189,20 +200,27 @@ export const CompactDayView = memo(function CompactDayView({
     <div className={cn('flex h-full flex-col', className)}>
       {/* ヘッダー: 日付 + ナビゲーション */}
       <div className="flex shrink-0 items-center justify-between py-2 pr-1 pl-2">
-        <div className="flex items-center gap-1 text-sm font-medium">
-          <span>{format(date, 'M月d日', locale === 'ja' ? { locale: ja } : {})}</span>
-          <span className="text-muted-foreground">
-            ({format(date, 'E', locale === 'ja' ? { locale: ja } : {})})
-          </span>
-        </div>
+        <MiniCalendar
+          asPopover
+          popoverTrigger={
+            <button
+              type="button"
+              className="hover:bg-state-hover flex items-center gap-1 rounded-md px-2 py-1 text-sm font-medium transition-colors"
+            >
+              <span>{format(date, 'M月d日', locale === 'ja' ? { locale: ja } : {})}</span>
+              <span className="text-muted-foreground">
+                ({format(date, 'E', locale === 'ja' ? { locale: ja } : {})})
+              </span>
+              <ChevronDown className="text-muted-foreground size-3" />
+            </button>
+          }
+          selectedDate={date}
+          onDateSelect={(newDate) => newDate && onDateChange(newDate)}
+          popoverAlign="start"
+        />
 
         <div className="flex items-center gap-1">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleToday}
-            className={cn('h-10 px-2 text-xs sm:h-6', isTodayDate && 'text-primary font-semibold')}
-          >
+          <Button variant="outline" size="sm" onClick={handleToday}>
             {t('time.today')}
           </Button>
           <Button
@@ -291,32 +309,48 @@ export const CompactDayView = memo(function CompactDayView({
               )}
 
               {/* プラン表示 */}
-              {dayPlans.map(({ plan, top, height }) => (
-                <div
-                  key={plan.id}
-                  draggable={!!onDrop}
-                  onDragStart={(e) => handlePlanDragStart(e, plan.id)}
-                  onDragEnd={handlePlanDragEnd}
-                  className={cn(
-                    'absolute right-1 left-1 overflow-hidden rounded px-1 text-left text-[10px] leading-tight',
-                    'bg-primary/20 hover:bg-primary/30 border-primary/50 border-l-2 transition-colors',
-                    'focus:ring-ring focus:ring-1 focus:outline-none',
-                    onDrop && 'cursor-grab active:cursor-grabbing',
-                    draggingPlanId === plan.id && 'opacity-50',
-                  )}
-                  style={{ top, height, minHeight: COMPACT_MIN_EVENT_HEIGHT }}
-                  onClick={() => onPlanClick?.(plan)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      onPlanClick?.(plan);
-                    }
-                  }}
-                  role="button"
-                  tabIndex={0}
-                >
-                  <span className="line-clamp-2 font-medium">{plan.title}</span>
-                </div>
-              ))}
+              {dayPlans.map(({ plan, top, height }) => {
+                const isActive = isInspectorOpen && inspectorPlanId === plan.id;
+                const planColor = plan.tags?.[0]?.color || plan.color;
+
+                return (
+                  <div
+                    key={plan.id}
+                    draggable={!!onDrop}
+                    onDragStart={(e) => handlePlanDragStart(e, plan.id)}
+                    onDragEnd={handlePlanDragEnd}
+                    className={cn(
+                      'absolute right-1 left-1 overflow-hidden rounded px-1 text-left text-[10px] leading-tight',
+                      'border-l-2 transition-colors',
+                      'focus:ring-ring focus:ring-1 focus:outline-none',
+                      onDrop && 'cursor-grab active:cursor-grabbing',
+                      draggingPlanId === plan.id && 'opacity-50',
+                      isActive && 'ring-primary ring-2',
+                      !planColor && 'bg-primary/20 hover:bg-primary/30 border-primary/50',
+                    )}
+                    style={{
+                      top,
+                      height,
+                      minHeight: COMPACT_MIN_EVENT_HEIGHT,
+                      ...(planColor && {
+                        backgroundColor: `${planColor}20`,
+                        borderLeftColor: planColor,
+                      }),
+                    }}
+                    onClick={() => onPlanClick?.(plan)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        onPlanClick?.(plan);
+                      }
+                    }}
+                    role="button"
+                    tabIndex={0}
+                    title={plan.title}
+                  >
+                    <span className="line-clamp-2 font-medium">{plan.title}</span>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
