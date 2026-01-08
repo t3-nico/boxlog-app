@@ -2,9 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { ArrowUpDown, ListFilter, Search, Settings2, X } from 'lucide-react';
+import { ArrowDown, ArrowUp, ArrowUpDown, ListFilter, Search, Settings2, X } from 'lucide-react';
 
-import { MobileSettingsRadioGroup, MobileSettingsSection } from '@/components/common';
 import { Button } from '@/components/ui/button';
 import {
   Drawer,
@@ -13,6 +12,11 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from '@/components/ui/drawer';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { HoverTooltip } from '@/components/ui/tooltip';
@@ -63,12 +67,85 @@ export interface TableNavigationProps {
 }
 
 /**
- * ソート順選択肢
+ * インライントグル付きソートオプション行
  */
-const SORT_DIRECTION_OPTIONS: Array<{ value: 'asc' | 'desc'; label: string }> = [
-  { value: 'asc', label: '昇順 (A → Z)' },
-  { value: 'desc', label: '降順 (Z → A)' },
-];
+function SortOptionRow({
+  field,
+  label,
+  isSelected,
+  direction,
+  onSelect,
+  onDirectionChange,
+}: {
+  field: string;
+  label: string;
+  isSelected: boolean;
+  direction: 'asc' | 'desc' | null;
+  onSelect: () => void;
+  onDirectionChange: (dir: 'asc' | 'desc') => void;
+}) {
+  return (
+    <div
+      className={cn(
+        'flex items-center justify-between rounded-lg px-3 py-2 transition-colors',
+        isSelected ? 'bg-state-selected' : 'hover:bg-state-hover cursor-pointer',
+      )}
+      onClick={() => !isSelected && onSelect()}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          if (!isSelected) onSelect();
+        }
+      }}
+      role="button"
+      tabIndex={0}
+    >
+      <div className="flex items-center gap-2">
+        <div
+          className={cn(
+            'flex size-4 items-center justify-center rounded-full border',
+            isSelected ? 'border-primary bg-primary' : 'border-input',
+          )}
+        >
+          {isSelected && <div className="size-2 rounded-full bg-white" />}
+        </div>
+        <span className={cn('text-sm', isSelected && 'font-medium')}>{label}</span>
+      </div>
+
+      {/* 昇順/降順トグル */}
+      {isSelected && field !== 'none' && (
+        <div className="flex items-center gap-0.5">
+          <Button
+            type="button"
+            variant={direction === 'asc' ? 'default' : 'ghost'}
+            size="icon"
+            className="size-7"
+            onClick={(e) => {
+              e.stopPropagation();
+              onDirectionChange('asc');
+            }}
+            aria-label="昇順"
+          >
+            <ArrowUp className="size-3.5" />
+          </Button>
+          <Button
+            type="button"
+            variant={direction === 'desc' ? 'default' : 'ghost'}
+            size="icon"
+            className="size-7"
+            onClick={(e) => {
+              e.stopPropagation();
+              onDirectionChange('desc');
+            }}
+            aria-label="降順"
+          >
+            <ArrowDown className="size-3.5" />
+          </Button>
+        </div>
+      )}
+    </div>
+  );
+}
 
 /**
  * テーブル用Notion風ナビゲーション
@@ -242,28 +319,26 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
     </div>
   );
 
-  // ソートコンテンツ（PC/モバイル共通）
+  // ソートコンテンツ（PC/モバイル共通 - インライントグル形式）
   const sortContent = (
-    <div className="space-y-6">
-      <MobileSettingsSection icon={<ArrowUpDown />} title="並び替えの基準">
-        <MobileSettingsRadioGroup
-          options={allSortFieldOptions}
-          value={config.sortField || 'none'}
-          onValueChange={handleSortFieldChange}
-          idPrefix="table-sort-field"
+    <div className="space-y-1">
+      <div className="text-muted-foreground mb-2 flex items-center gap-2 px-3 text-xs font-medium">
+        <ArrowUpDown className="size-3.5" />
+        Sort by
+      </div>
+      {allSortFieldOptions.map((option) => (
+        <SortOptionRow
+          key={option.value}
+          field={option.value}
+          label={option.label}
+          isSelected={
+            option.value === 'none' ? config.sortField === null : config.sortField === option.value
+          }
+          direction={config.sortDirection}
+          onSelect={() => handleSortFieldChange(option.value)}
+          onDirectionChange={handleSortDirectionChange}
         />
-      </MobileSettingsSection>
-
-      {config.sortField && (
-        <MobileSettingsSection icon={<ArrowUpDown />} title="並び順" showSeparator={false}>
-          <MobileSettingsRadioGroup
-            options={SORT_DIRECTION_OPTIONS}
-            value={config.sortDirection || 'asc'}
-            onValueChange={handleSortDirectionChange}
-            idPrefix="table-sort-direction"
-          />
-        </MobileSettingsSection>
-      )}
+      ))}
     </div>
   );
 
@@ -473,9 +548,9 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
 
       {/* フィルター */}
       {config.filterContent && (
-        <Popover open={showFilter} onOpenChange={setShowFilter}>
+        <DropdownMenu open={showFilter} onOpenChange={setShowFilter}>
           <HoverTooltip content="フィルター" side="top">
-            <PopoverTrigger asChild>
+            <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
                 size="icon"
@@ -489,25 +564,12 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
                   </span>
                 )}
               </Button>
-            </PopoverTrigger>
+            </DropdownMenuTrigger>
           </HoverTooltip>
-          <PopoverContent align="end" className="w-80">
-            <div className="mb-3 flex items-center justify-between">
-              <h3 className="text-sm font-medium">フィルター</h3>
-              {config.hasActiveFilters && config.onFilterReset && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={config.onFilterReset}
-                  className="h-auto p-0 text-xs"
-                >
-                  リセット
-                </Button>
-              )}
-            </div>
-            <div className="max-h-[400px] overflow-y-auto">{config.filterContent}</div>
-          </PopoverContent>
-        </Popover>
+          <DropdownMenuContent align="end" className="border-input min-w-56 rounded-xl">
+            {config.filterContent}
+          </DropdownMenuContent>
+        </DropdownMenu>
       )}
 
       {/* ソート */}

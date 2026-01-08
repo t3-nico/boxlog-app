@@ -64,6 +64,9 @@ export function InboxTableView() {
   const filterDueDate = useInboxFilterStore((state) => state.dueDate);
   const filterRecurrence = useInboxFilterStore((state) => state.recurrence);
   const filterReminder = useInboxFilterStore((state) => state.reminder);
+  const filterSchedule = useInboxFilterStore((state) => state.schedule);
+  const filterCreatedAt = useInboxFilterStore((state) => state.createdAt);
+  const filterUpdatedAt = useInboxFilterStore((state) => state.updatedAt);
   const isSearchOpen = useInboxFilterStore((state) => state.isSearchOpen);
   const setStatus = useInboxFilterStore((state) => state.setStatus);
   const setSearch = useInboxFilterStore((state) => state.setSearch);
@@ -101,13 +104,21 @@ export function InboxTableView() {
   // タグ一括追加ダイアログの状態
   const [showTagDialog, setShowTagDialog] = useState(false);
 
-  // データ取得
-  const { items, isPending, error } = useInboxData({
-    status: filterStatus[0] as PlanStatus | undefined,
-    search: filterSearch,
-    tags: filterTags,
-    dueDate: filterDueDate,
-  });
+  // ソート状態取得（useInboxDataより前に取得）
+  const sortField = useInboxSortStore((state) => state.sortField);
+  const sortDirection = useInboxSortStore((state) => state.sortDirection);
+  const clearSort = useInboxSortStore((state) => state.clearSort);
+
+  // データ取得（ソートオプション付き）
+  const { items, isPending, error } = useInboxData(
+    {
+      status: filterStatus[0] as PlanStatus | undefined,
+      search: filterSearch,
+      tags: filterTags,
+      dueDate: filterDueDate,
+    },
+    { field: sortField, direction: sortDirection },
+  );
 
   // 新規作成行のref
   const createRowRef = useRef<InboxTableRowCreateHandle>(null);
@@ -181,11 +192,6 @@ export function InboxTableView() {
   // アクティブなビューを取得
   const activeView = getActiveView();
 
-  // ソート状態取得
-  const sortField = useInboxSortStore((state) => state.sortField);
-  const sortDirection = useInboxSortStore((state) => state.sortDirection);
-  const clearSort = useInboxSortStore((state) => state.clearSort);
-
   // フィルターリセット
   const resetFilters = useInboxFilterStore((state) => state.reset);
   const setGroupBy = useInboxGroupStore((state) => state.setGroupBy);
@@ -205,8 +211,17 @@ export function InboxTableView() {
   const tagFilterCount = filterTags.length;
   const recurrenceFilterCount = filterRecurrence !== 'all' ? 1 : 0;
   const reminderFilterCount = filterReminder !== 'all' ? 1 : 0;
+  const scheduleFilterCount = filterSchedule !== 'all' ? 1 : 0;
+  const createdAtFilterCount = filterCreatedAt !== 'all' ? 1 : 0;
+  const updatedAtFilterCount = filterUpdatedAt !== 'all' ? 1 : 0;
   const filterCount =
-    dueDateFilterCount + tagFilterCount + recurrenceFilterCount + reminderFilterCount;
+    dueDateFilterCount +
+    tagFilterCount +
+    recurrenceFilterCount +
+    reminderFilterCount +
+    scheduleFilterCount +
+    createdAtFilterCount +
+    updatedAtFilterCount;
 
   // TableNavigation設定
   // NOTE: Zustand setterは参照が安定しているため依存配列から除外
