@@ -4,12 +4,12 @@
  * PlanInspector の詳細タブ
  */
 
-import { memo, useCallback, useState } from 'react';
+import { memo } from 'react';
 
 import { Bell, CalendarDays, CheckCircle2, Circle, FileText } from 'lucide-react';
-import dynamic from 'next/dynamic';
 
-import { cn } from '@/lib/utils';
+import { Badge } from '@/components/ui/badge';
+import dynamic from 'next/dynamic';
 
 import { normalizeStatus } from '../../../utils/status';
 
@@ -84,48 +84,21 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
   onRecurrenceRuleChange,
   onStatusChange,
 }: PlanInspectorDetailsTabProps) {
-  const [isCheckboxHovered, setIsCheckboxHovered] = useState(false);
   const status = normalizeStatus(plan.status);
 
-  const handleStatusClick = useCallback(() => {
-    const newStatus = status === 'done' ? 'open' : 'done';
-    onStatusChange(newStatus);
-  }, [status, onStatusChange]);
   return (
     <>
       {/* Title */}
-      <div className="flex min-h-10 items-start gap-2 px-4 py-2">
-        <button
-          type="button"
-          onClick={handleStatusClick}
-          onMouseEnter={() => setIsCheckboxHovered(true)}
-          onMouseLeave={() => setIsCheckboxHovered(false)}
-          className={cn(
-            'mt-0.5 flex-shrink-0 cursor-pointer rounded-md transition-all',
-            'hover:bg-state-hover flex min-h-7 min-w-7 items-center justify-center',
-            'hover:scale-105 active:scale-95',
-          )}
-          aria-label={status === 'done' ? '未完了に戻す' : '完了にする'}
+      <div className="px-4 py-3">
+        <span
+          ref={titleRef}
+          contentEditable
+          suppressContentEditableWarning
+          onBlur={(e) => onAutoSave('title', e.currentTarget.textContent || '')}
+          className="block w-full border-0 text-lg font-semibold outline-none"
         >
-          {status === 'done' ? (
-            <CheckCircle2 className="text-success size-6" />
-          ) : isCheckboxHovered ? (
-            <CheckCircle2 className="text-success size-6" />
-          ) : (
-            <Circle className="text-muted-foreground size-6" />
-          )}
-        </button>
-        <div className="flex min-h-8 flex-1 items-center">
-          <span
-            ref={titleRef}
-            contentEditable
-            suppressContentEditableWarning
-            onBlur={(e) => onAutoSave('title', e.currentTarget.textContent || '')}
-            className="bg-popover border-0 px-0 text-lg font-semibold outline-none"
-          >
-            {plan.title}
-          </span>
-        </div>
+          {plan.title}
+        </span>
       </div>
 
       {/* Schedule */}
@@ -144,14 +117,16 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
         timeConflictError={timeConflictError}
       />
 
-      {/* Due Date - 期限 */}
-      <div className="border-border/50 flex min-h-10 items-start gap-2 border-t px-4 py-2">
-        <CalendarDays className="text-muted-foreground mt-2 size-4 flex-shrink-0" />
+      {/* Due Date */}
+      <div className="border-border/50 flex min-h-10 items-center gap-2 border-t px-4 py-2">
+        <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center">
+          <CalendarDays className="text-muted-foreground size-4" />
+        </div>
         <div className="flex h-8 flex-1 items-center">
           <DatePickerPopover
             selectedDate={dueDate}
             onDateChange={onDueDateChange}
-            placeholder="期限を設定"
+            placeholder="期限を設定..."
           />
         </div>
       </div>
@@ -167,9 +142,29 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
         popoverAlignOffset={-80}
       />
 
+      {/* Status */}
+      <div className="border-border/50 flex min-h-10 items-center gap-2 border-t px-4 py-2">
+        <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center">
+          {status === 'done' ? (
+            <CheckCircle2 className="text-success size-4" />
+          ) : (
+            <Circle className="text-muted-foreground size-4" />
+          )}
+        </div>
+        <Badge
+          variant={status === 'done' ? 'success' : 'secondary'}
+          className="hover:bg-state-hover cursor-pointer transition-colors"
+          onClick={() => onStatusChange(status === 'done' ? 'open' : 'done')}
+        >
+          {status === 'done' ? 'Done' : 'Open'}
+        </Badge>
+      </div>
+
       {/* Description */}
       <div className="border-border/50 flex min-h-10 items-start gap-2 border-t px-4 py-2">
-        <FileText className="text-muted-foreground mt-2 size-4 flex-shrink-0" />
+        <div className="mt-1 flex h-6 w-6 flex-shrink-0 items-center justify-center">
+          <FileText className="text-muted-foreground size-4" />
+        </div>
         <div className="max-h-52 min-h-8 min-w-0 flex-1 overflow-y-auto">
           <NovelDescriptionEditor
             key={plan.id}
@@ -181,8 +176,10 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
       </div>
 
       {/* Reminder */}
-      <div className="border-border/50 flex min-h-10 items-start gap-2 border-t px-4 py-2">
-        <Bell className="text-muted-foreground mt-2 size-4 flex-shrink-0" />
+      <div className="border-border/50 flex min-h-10 items-center gap-2 border-t px-4 py-2">
+        <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center">
+          <Bell className="text-muted-foreground size-4" />
+        </div>
         <div className="flex h-8 flex-1 items-center">
           <ReminderSelect value={reminderType} onChange={onReminderChange} variant="inspector" />
         </div>
