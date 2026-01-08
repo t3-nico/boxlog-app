@@ -50,15 +50,15 @@ export function TagsNavigationProvider({
     (newFilter: TagsFilter) => {
       setFilter(newFilter); // 即座に状態更新
 
-      // URLを同期（履歴用）
-      let url = `/${locale}/tags`;
+      // URLを同期（履歴用）- /settings/tags に移動
+      let url = `/${locale}/settings/tags`;
       if (newFilter === 'uncategorized') {
-        url = `/${locale}/tags/uncategorized`;
+        url = `/${locale}/settings/tags/uncategorized`;
       } else if (newFilter === 'archive') {
-        url = `/${locale}/tags/archive`;
+        url = `/${locale}/settings/tags/archive`;
       } else if (newFilter.startsWith('group-')) {
         const id = newFilter.replace('group-', '');
-        url = `/${locale}/tags/g-${id}`;
+        url = `/${locale}/settings/tags/g-${id}`;
       }
 
       router.push(url, { scroll: false });

@@ -17,9 +17,9 @@ export function TagsSidebarWrapper() {
   const pathname = usePathname();
 
   const handleAllTagsClick = useCallback(() => {
-    // URLを /tags に変更
+    // URLを /settings/tags に変更
     const locale = pathname?.split('/')[1] || 'ja';
-    router.push(`/${locale}/tags`);
+    router.push(`/${locale}/settings/tags`);
   }, [router, pathname]);
 
   // アクティブなタグの数をカウント（is_active = true のみ）
