@@ -118,7 +118,13 @@ export function PlanKanbanBoard({ items }: PlanKanbanBoardProps) {
       >
         {/* Open カラム */}
         {isStatusVisible('open') && (
-          <KanbanColumn title="Open" count={columns.open.length} variant="open" status="open">
+          <KanbanColumn
+            title="Open"
+            count={columns.open.length}
+            variant="open"
+            status="open"
+            isEmpty={columns.open.length === 0}
+          >
             {columns.open.map((item) => (
               <PlanCard key={item.id} item={item} />
             ))}
@@ -127,7 +133,13 @@ export function PlanKanbanBoard({ items }: PlanKanbanBoardProps) {
 
         {/* Done カラム */}
         {isStatusVisible('done') && (
-          <KanbanColumn title="Done" count={columns.done.length} variant="done" status="done">
+          <KanbanColumn
+            title="Done"
+            count={columns.done.length}
+            variant="done"
+            status="done"
+            isEmpty={columns.done.length === 0}
+          >
             {columns.done.map((item) => (
               <PlanCard key={item.id} item={item} />
             ))}
@@ -203,9 +215,17 @@ interface KanbanColumnProps {
   variant: 'open' | 'done';
   status: PlanStatus;
   children: React.ReactNode;
+  isEmpty: boolean;
 }
 
-function KanbanColumn({ title, count: _count, variant, status, children }: KanbanColumnProps) {
+function KanbanColumn({
+  title,
+  count: _count,
+  variant,
+  status,
+  children,
+  isEmpty,
+}: KanbanColumnProps) {
   const [isAdding, setIsAdding] = useState(false);
   const [newTitle, setNewTitle] = useState('');
   const [selectedDate, setSelectedDate] = useState<Date>();
@@ -359,6 +379,13 @@ function KanbanColumn({ title, count: _count, variant, status, children }: Kanba
         </div>
       </div>
       <div className={`${bgColor} flex-1 space-y-2 overflow-y-auto rounded-b-lg px-4 pt-4 pb-2`}>
+        {/* 空状態 */}
+        {isEmpty && !isAdding && (
+          <div className="border-border flex h-20 items-center justify-center rounded-lg border-2 border-dashed">
+            <p className="text-muted-foreground text-sm">{t('board.kanban.dropOrAdd')}</p>
+          </div>
+        )}
+
         {children}
 
         {/* 新規作成フォーム（入力中） */}

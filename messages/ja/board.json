@@ -32,6 +32,7 @@
       "addTag": "タグを追加",
       "add": "追加",
       "addNew": "新規追加",
+      "dropOrAdd": "ドロップまたは追加",
       "recurrence": {
         "daily": "毎日",
         "weekly": "毎週",
