@@ -62,7 +62,8 @@ export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
   const currentPage = useMemo(() => {
     if (pathname?.startsWith(`/${locale}/calendar`)) return 'calendar';
     if (pathname?.startsWith(`/${locale}/inbox`)) return 'inbox';
-    if (pathname?.startsWith(`/${locale}/tags`)) return 'tags';
+    // /settings/tags は tags として扱う（settings より前に判定）
+    if (pathname?.startsWith(`/${locale}/settings/tags`)) return 'tags';
     if (pathname?.startsWith(`/${locale}/stats`)) return 'stats';
     if (pathname?.startsWith(`/${locale}/settings`)) return 'settings';
     return 'default';

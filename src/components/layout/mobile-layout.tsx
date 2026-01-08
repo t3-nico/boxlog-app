@@ -55,7 +55,8 @@ export function MobileLayout({ children, locale }: MobileLayoutProps) {
   // ページごとにSidebarを切り替え
   const isCalendarPage = pathname?.startsWith(`/${locale}/calendar`) ?? false;
   const isInboxPage = pathname?.startsWith(`/${locale}/inbox`) ?? false;
-  const isTagsPage = pathname?.startsWith(`/${locale}/tags`) ?? false;
+  // /settings/tags はタグページとして扱う
+  const isTagsPage = pathname?.startsWith(`/${locale}/settings/tags`) ?? false;
   const isStatsPage = pathname?.startsWith(`/${locale}/stats`) ?? false;
 
   // サイドバーコンポーネントを決定

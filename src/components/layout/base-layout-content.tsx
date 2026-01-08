@@ -55,20 +55,20 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
     searchParams || new URLSearchParams(),
   );
 
-  // メモ化: タグページかどうかを判定
+  // メモ化: タグページかどうかを判定（/settings/tags に移動）
   const isTagsPage = useMemo(() => {
-    return pathname?.startsWith(`/${localeFromPath}/tags`) ?? false;
+    return pathname?.startsWith(`/${localeFromPath}/settings/tags`) ?? false;
   }, [pathname, localeFromPath]);
 
   // メモ化: タグページの初期フィルターをURLから解析
   const initialTagsFilter = useMemo((): TagsFilter => {
     if (!isTagsPage) return 'all';
-    const tagsPath = pathname?.replace(`/${localeFromPath}/tags`, '') || '';
+    const tagsPath = pathname?.replace(`/${localeFromPath}/settings/tags`, '') || '';
     if (tagsPath === '/uncategorized') return 'uncategorized';
     if (tagsPath === '/archive') return 'archive';
-    // /tags/g-{number} → group-{number}
-    const groupMatch = tagsPath.match(/^\/g-(\d+)$/);
-    if (groupMatch?.[1]) return `group-${parseInt(groupMatch[1], 10)}`;
+    // /settings/tags/g-{uuid} → group-{uuid}
+    const groupMatch = tagsPath.match(/^\/g-(.+)$/);
+    if (groupMatch?.[1]) return `group-${groupMatch[1]}`;
     return 'all';
   }, [isTagsPage, pathname, localeFromPath]);
 
