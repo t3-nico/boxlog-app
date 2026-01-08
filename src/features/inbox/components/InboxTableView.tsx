@@ -1,7 +1,7 @@
 'use client';
 
 import type { PlanStatus } from '@/features/plans/types/plan';
-import { ChevronDown, Plus } from 'lucide-react';
+import { Calendar, ChevronDown, FileText, Plus } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -116,6 +116,11 @@ export function InboxTableView() {
       search: filterSearch,
       tags: filterTags,
       dueDate: filterDueDate,
+      recurrence: filterRecurrence,
+      reminder: filterReminder,
+      schedule: filterSchedule,
+      createdAt: filterCreatedAt,
+      updatedAt: filterUpdatedAt,
     },
     { field: sortField, direction: sortDirection },
   );
@@ -196,12 +201,12 @@ export function InboxTableView() {
   const resetFilters = useInboxFilterStore((state) => state.reset);
   const setGroupBy = useInboxGroupStore((state) => state.setGroupBy);
 
-  // ソートフィールドオプション
+  // ソートフィールドオプション（テーブルヘッダーと同じアイコン）
   const sortFieldOptions = useMemo(
     () => [
-      { value: 'title', label: 'タイトル' },
-      { value: 'created_at', label: '作成日' },
-      { value: 'updated_at', label: '更新日' },
+      { value: 'title', label: 'タイトル', icon: FileText },
+      { value: 'created_at', label: '作成日', icon: Calendar },
+      { value: 'updated_at', label: '更新日', icon: Calendar },
     ],
     [],
   );

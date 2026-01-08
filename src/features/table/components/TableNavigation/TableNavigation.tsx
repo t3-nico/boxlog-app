@@ -1,8 +1,17 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { ArrowDown, ArrowUp, ArrowUpDown, ListFilter, Search, Settings2, X } from 'lucide-react';
+import {
+  ArrowDownAZ,
+  ArrowUpAZ,
+  ArrowUpDown,
+  ListFilter,
+  RotateCcw,
+  Search,
+  Settings2,
+  X,
+} from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -15,10 +24,17 @@ import {
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { MEDIA_QUERIES } from '@/config/ui/breakpoints';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
@@ -42,7 +58,11 @@ export interface TableNavigationConfig {
   /** ソートクリア */
   onSortClear: () => void;
   /** ソートフィールドオプション */
-  sortFieldOptions: Array<{ value: string; label: string }>;
+  sortFieldOptions: Array<{
+    value: string;
+    label: string;
+    icon?: React.ComponentType<{ className?: string }>;
+  }>;
   /** フィルターシートの内容（カスタム） */
   filterContent?: React.ReactNode;
   /** フィルター数（バッジ表示用） */
@@ -64,87 +84,6 @@ export interface TableNavigationProps {
   config: TableNavigationConfig;
   /** 追加のクラス名 */
   className?: string;
-}
-
-/**
- * インライントグル付きソートオプション行
- */
-function SortOptionRow({
-  field,
-  label,
-  isSelected,
-  direction,
-  onSelect,
-  onDirectionChange,
-}: {
-  field: string;
-  label: string;
-  isSelected: boolean;
-  direction: 'asc' | 'desc' | null;
-  onSelect: () => void;
-  onDirectionChange: (dir: 'asc' | 'desc') => void;
-}) {
-  return (
-    <div
-      className={cn(
-        'flex items-center justify-between rounded-lg px-3 py-2 transition-colors',
-        isSelected ? 'bg-state-selected' : 'hover:bg-state-hover cursor-pointer',
-      )}
-      onClick={() => !isSelected && onSelect()}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          if (!isSelected) onSelect();
-        }
-      }}
-      role="button"
-      tabIndex={0}
-    >
-      <div className="flex items-center gap-2">
-        <div
-          className={cn(
-            'flex size-4 items-center justify-center rounded-full border',
-            isSelected ? 'border-primary bg-primary' : 'border-input',
-          )}
-        >
-          {isSelected && <div className="size-2 rounded-full bg-white" />}
-        </div>
-        <span className={cn('text-sm', isSelected && 'font-medium')}>{label}</span>
-      </div>
-
-      {/* 昇順/降順トグル */}
-      {isSelected && field !== 'none' && (
-        <div className="flex items-center gap-0.5">
-          <Button
-            type="button"
-            variant={direction === 'asc' ? 'default' : 'ghost'}
-            size="icon"
-            className="size-7"
-            onClick={(e) => {
-              e.stopPropagation();
-              onDirectionChange('asc');
-            }}
-            aria-label="昇順"
-          >
-            <ArrowUp className="size-3.5" />
-          </Button>
-          <Button
-            type="button"
-            variant={direction === 'desc' ? 'default' : 'ghost'}
-            size="icon"
-            className="size-7"
-            onClick={(e) => {
-              e.stopPropagation();
-              onDirectionChange('desc');
-            }}
-            aria-label="降順"
-          >
-            <ArrowDown className="size-3.5" />
-          </Button>
-        </div>
-      )}
-    </div>
-  );
 }
 
 /**
@@ -257,34 +196,6 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showSearch, isMobile, localSearch, setShowSearch]);
 
-  // ソートフィールド変更
-  const handleSortFieldChange = useCallback(
-    (value: string) => {
-      if (value === 'none') {
-        config.onSortClear();
-      } else {
-        config.onSortChange(value, config.sortDirection || 'asc');
-      }
-    },
-    [config],
-  );
-
-  // ソート方向変更
-  const handleSortDirectionChange = useCallback(
-    (value: 'asc' | 'desc') => {
-      if (config.sortField) {
-        config.onSortChange(config.sortField, value);
-      }
-    },
-    [config],
-  );
-
-  // ソートフィールドオプション（noneを追加）
-  const allSortFieldOptions = useMemo(
-    () => [{ value: 'none', label: 'なし' }, ...config.sortFieldOptions],
-    [config.sortFieldOptions],
-  );
-
   // 共通のアイコンボタンスタイル
   const iconButtonClass = 'text-muted-foreground hover:text-foreground relative size-8';
   const activeClass = 'text-foreground bg-state-selected';
@@ -319,27 +230,71 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
     </div>
   );
 
-  // ソートコンテンツ（PC/モバイル共通 - インライントグル形式）
+  // ソート方向変更ハンドラー
+  const handleSortDirectionChange = useCallback(
+    (field: string, direction: 'asc' | 'desc') => {
+      config.onSortChange(field, direction);
+      setShowSort(false);
+    },
+    [config, setShowSort],
+  );
+
+  // ソートコンテンツ（2列サブメニュー構造）
   const sortContent = (
-    <div className="space-y-1">
-      <div className="text-muted-foreground mb-2 flex items-center gap-2 px-3 text-xs font-medium">
-        <ArrowUpDown className="size-3.5" />
-        Sort by
-      </div>
-      {allSortFieldOptions.map((option) => (
-        <SortOptionRow
-          key={option.value}
-          field={option.value}
-          label={option.label}
-          isSelected={
-            option.value === 'none' ? config.sortField === null : config.sortField === option.value
-          }
-          direction={config.sortDirection}
-          onSelect={() => handleSortFieldChange(option.value)}
-          onDirectionChange={handleSortDirectionChange}
-        />
-      ))}
-    </div>
+    <>
+      <DropdownMenuGroup>
+        {config.sortFieldOptions.map((option) => {
+          const isSelected = config.sortField === option.value;
+          const Icon = option.icon || ArrowUpDown;
+
+          return (
+            <DropdownMenuSub key={option.value}>
+              <DropdownMenuSubTrigger>
+                <Icon className="size-4" />
+                <span className="flex-1">{option.label}</span>
+                {isSelected && (
+                  <span className="bg-primary text-primary-foreground flex size-5 items-center justify-center rounded-full text-xs">
+                    {config.sortDirection === 'asc' ? '↑' : '↓'}
+                  </span>
+                )}
+              </DropdownMenuSubTrigger>
+              <DropdownMenuSubContent className="border-input">
+                <DropdownMenuRadioGroup
+                  value={isSelected ? config.sortDirection || '' : ''}
+                  onValueChange={(v) =>
+                    handleSortDirectionChange(option.value, v as 'asc' | 'desc')
+                  }
+                >
+                  <DropdownMenuRadioItem value="asc">
+                    <span className="flex items-center gap-2">
+                      <ArrowUpAZ className="size-4" />
+                      昇順
+                    </span>
+                  </DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="desc">
+                    <span className="flex items-center gap-2">
+                      <ArrowDownAZ className="size-4" />
+                      降順
+                    </span>
+                  </DropdownMenuRadioItem>
+                </DropdownMenuRadioGroup>
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
+          );
+        })}
+      </DropdownMenuGroup>
+
+      {/* リセットボタン（ソートがアクティブな場合のみ表示） */}
+      {config.sortField && (
+        <>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={config.onSortClear}>
+            <RotateCcw className="size-4" />
+            ソートをリセット
+          </DropdownMenuItem>
+        </>
+      )}
+    </>
   );
 
   // モバイル用レンダリング（Drawer）
@@ -368,7 +323,7 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
                 size="icon"
                 onClick={() => setShowFilter(true)}
                 aria-label="フィルター"
-                className={cn(iconButtonClass, config.hasActiveFilters && activeClass)}
+                className={iconButtonClass}
               >
                 <ListFilter className="size-5" />
                 {config.filterCount != null && config.filterCount > 0 && (
@@ -387,9 +342,14 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
               size="icon"
               onClick={() => setShowSort(true)}
               aria-label="ソート"
-              className={cn(iconButtonClass, config.sortField !== null && activeClass)}
+              className={iconButtonClass}
             >
               <ArrowUpDown className="size-5" />
+              {config.sortField !== null && (
+                <span className="bg-primary text-primary-foreground absolute -top-1 -right-1 flex size-4 items-center justify-center rounded-full text-xs">
+                  1
+                </span>
+              )}
             </Button>
           </HoverTooltip>
 
@@ -401,7 +361,10 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
                 size="icon"
                 onClick={() => setShowSettings(true)}
                 aria-label="設定"
-                className={cn(iconButtonClass, config.hasActiveSettings && activeClass)}
+                className={cn(
+                  iconButtonClass,
+                  (showSettings || config.hasActiveSettings) && activeClass,
+                )}
               >
                 <Settings2 className="size-5" />
               </Button>
@@ -555,7 +518,7 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
                 variant="ghost"
                 size="icon"
                 aria-label="フィルター"
-                className={cn(iconButtonClass, config.hasActiveFilters && activeClass)}
+                className={iconButtonClass}
               >
                 <ListFilter className="size-5" />
                 {config.filterCount != null && config.filterCount > 0 && (
@@ -572,70 +535,47 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
         </DropdownMenu>
       )}
 
-      {/* ソート */}
-      <Popover open={showSort} onOpenChange={setShowSort}>
+      {/* ソート - Notion風シンプルメニュー */}
+      <DropdownMenu open={showSort} onOpenChange={setShowSort}>
         <HoverTooltip content="ソート" side="top">
-          <PopoverTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              aria-label="ソート"
-              className={cn(iconButtonClass, config.sortField !== null && activeClass)}
-            >
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon" aria-label="ソート" className={iconButtonClass}>
               <ArrowUpDown className="size-5" />
+              {config.sortField !== null && (
+                <span className="bg-primary text-primary-foreground absolute -top-1 -right-1 flex size-4 items-center justify-center rounded-full text-xs">
+                  1
+                </span>
+              )}
             </Button>
-          </PopoverTrigger>
+          </DropdownMenuTrigger>
         </HoverTooltip>
-        <PopoverContent align="end" className="w-80">
-          <div className="mb-3 flex items-center justify-between">
-            <h3 className="text-sm font-medium">ソート</h3>
-            {config.sortField && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={config.onSortClear}
-                className="h-auto p-0 text-xs"
-              >
-                リセット
-              </Button>
-            )}
-          </div>
-          <div className="max-h-[400px] overflow-y-auto">{sortContent}</div>
-        </PopoverContent>
-      </Popover>
+        <DropdownMenuContent align="end" className="min-w-48">
+          {sortContent}
+        </DropdownMenuContent>
+      </DropdownMenu>
 
       {/* 設定 */}
       {config.settingsContent && (
-        <Popover open={showSettings} onOpenChange={setShowSettings}>
+        <DropdownMenu open={showSettings} onOpenChange={setShowSettings}>
           <HoverTooltip content="設定" side="top">
-            <PopoverTrigger asChild>
+            <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
                 size="icon"
                 aria-label="設定"
-                className={cn(iconButtonClass, config.hasActiveSettings && activeClass)}
+                className={cn(
+                  iconButtonClass,
+                  (showSettings || config.hasActiveSettings) && activeClass,
+                )}
               >
                 <Settings2 className="size-5" />
               </Button>
-            </PopoverTrigger>
+            </DropdownMenuTrigger>
           </HoverTooltip>
-          <PopoverContent align="end" className="w-80">
-            <div className="mb-3 flex items-center justify-between">
-              <h3 className="text-sm font-medium">設定</h3>
-              {config.hasActiveSettings && config.onSettingsReset && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={config.onSettingsReset}
-                  className="h-auto p-0 text-xs"
-                >
-                  リセット
-                </Button>
-              )}
-            </div>
-            <div className="max-h-[400px] overflow-y-auto">{config.settingsContent}</div>
-          </PopoverContent>
-        </Popover>
+          <DropdownMenuContent align="end" className="border-input min-w-56 rounded-xl">
+            {config.settingsContent}
+          </DropdownMenuContent>
+        </DropdownMenu>
       )}
     </div>
   );

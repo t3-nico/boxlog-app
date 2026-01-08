@@ -123,6 +123,15 @@
     "lastPage": "最後のページ",
     "loadMore": "さらに{count}件を表示",
     "title": "テーブルビュー",
+    "sort": {
+      "label": "並び替え",
+      "none": "なし",
+      "title": "タイトル",
+      "createdAt": "作成日",
+      "updatedAt": "更新日",
+      "ascending": "昇順",
+      "descending": "降順"
+    },
     "description": "タスクをテーブル形式で表示",
     "comingSoon": "タスクテーブルコンポーネントは近日公開予定...",
     "willDisplay": "タスクをテーブル形式で表示します",

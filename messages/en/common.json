@@ -123,6 +123,15 @@
     "lastPage": "Last page",
     "loadMore": "Show {count} more",
     "title": "Table View",
+    "sort": {
+      "label": "Sort by",
+      "none": "None",
+      "title": "Title",
+      "createdAt": "Created",
+      "updatedAt": "Updated",
+      "ascending": "Ascending",
+      "descending": "Descending"
+    },
     "description": "Display tasks in table format",
     "comingSoon": "Task table component coming soon...",
     "willDisplay": "This will display tasks in a table format",
