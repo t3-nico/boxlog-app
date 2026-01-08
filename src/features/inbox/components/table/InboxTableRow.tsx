@@ -354,7 +354,7 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
             e.dataTransfer.effectAllowed = 'move';
           }}
           className={cn(
-            'hover:bg-state-hover cursor-pointer transition-colors',
+            'hover:bg-state-hover h-12 cursor-pointer transition-colors',
             selected && 'bg-primary-state-selected hover:bg-state-dragged',
             isFocused && 'ring-primary ring-2 ring-inset',
           )}

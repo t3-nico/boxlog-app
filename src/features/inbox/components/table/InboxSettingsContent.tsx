@@ -1,12 +1,17 @@
 'use client';
 
 import {
-  MobileSettingsButtonGroup,
-  MobileSettingsChip,
-  MobileSettingsSection,
-} from '@/components/common';
-import { Button } from '@/components/ui/button';
-import { Group, Settings2 } from 'lucide-react';
+  DropdownMenuCheckboxItem,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Columns3, Group, RotateCcw } from 'lucide-react';
 import { useInboxColumnStore } from '../../stores/useInboxColumnStore';
 import { useInboxGroupStore } from '../../stores/useInboxGroupStore';
 import type { GroupByField } from '../../types/group';
@@ -24,11 +29,10 @@ const GROUP_BY_OPTIONS: Array<{ value: GroupByField; label: string }> = [
 /**
  * Inbox設定コンテンツ
  *
- * TableNavigationの設定シートに表示する内容
- * - グループ化設定
- * - 列設定
- *
- * フィルターはフィルターシートで表示（InboxFilterContent）
+ * Linear/Account.tsx風の2カラム構造
+ * - DropdownMenuSub でカテゴリ → サブメニュー
+ * - グループ化: RadioGroup（単一選択）
+ * - 列の表示: CheckboxItem（複数選択）
  */
 export function InboxSettingsContent() {
   // グループ化
@@ -38,45 +42,81 @@ export function InboxSettingsContent() {
   const { columns, toggleColumnVisibility, resetColumns } = useInboxColumnStore();
   const configurableColumns = columns.filter((col) => col.id !== 'selection');
 
-  return (
-    <div className="space-y-6">
-      {/* グループ化 */}
-      <MobileSettingsSection icon={<Group />} title="グループ化">
-        <MobileSettingsButtonGroup
-          options={GROUP_BY_OPTIONS.map((opt) => ({
-            value: opt.value,
-            label: opt.label,
-          }))}
-          value={groupBy}
-          onValueChange={setGroupBy}
-        />
-      </MobileSettingsSection>
+  // 非表示の列数をカウント
+  const hiddenColumnCount = configurableColumns.filter((col) => !col.visible).length;
 
-      {/* 列設定 */}
-      <MobileSettingsSection
-        icon={<Settings2 />}
-        title={
-          <div className="flex items-center justify-between">
-            <span>列の表示</span>
-            <Button variant="ghost" size="sm" onClick={resetColumns} className="h-auto p-0 text-xs">
-              リセット
-            </Button>
-          </div>
-        }
-        showSeparator={false}
-      >
-        <div className="flex flex-wrap gap-2">
-          {configurableColumns.map((column) => (
-            <MobileSettingsChip
-              key={column.id}
-              id={`settings-column-${column.id}`}
-              label={column.label}
-              checked={column.visible}
-              onCheckedChange={() => toggleColumnVisibility(column.id)}
-            />
-          ))}
-        </div>
-      </MobileSettingsSection>
-    </div>
+  // 設定がアクティブかどうか
+  const hasActiveSettings = groupBy !== null || hiddenColumnCount > 0;
+
+  // リセット
+  const handleReset = () => {
+    setGroupBy(null);
+    resetColumns();
+  };
+
+  return (
+    <>
+      <DropdownMenuGroup>
+        {/* グループ化 */}
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger>
+            <Group />
+            <span className="flex-1">グループ化</span>
+            {groupBy !== null && (
+              <span className="bg-primary text-primary-foreground flex size-5 items-center justify-center rounded-full text-xs">
+                1
+              </span>
+            )}
+          </DropdownMenuSubTrigger>
+          <DropdownMenuSubContent className="border-input">
+            <DropdownMenuRadioGroup
+              value={groupBy ?? ''}
+              onValueChange={(v) => setGroupBy((v === '' ? null : v) as GroupByField)}
+            >
+              {GROUP_BY_OPTIONS.map((option) => (
+                <DropdownMenuRadioItem key={option.value ?? 'none'} value={option.value ?? ''}>
+                  {option.label}
+                </DropdownMenuRadioItem>
+              ))}
+            </DropdownMenuRadioGroup>
+          </DropdownMenuSubContent>
+        </DropdownMenuSub>
+
+        {/* 列の表示 */}
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger>
+            <Columns3 />
+            <span className="flex-1">列の表示</span>
+            {hiddenColumnCount > 0 && (
+              <span className="bg-primary text-primary-foreground flex size-5 items-center justify-center rounded-full text-xs">
+                {hiddenColumnCount}
+              </span>
+            )}
+          </DropdownMenuSubTrigger>
+          <DropdownMenuSubContent className="border-input">
+            {configurableColumns.map((column) => (
+              <DropdownMenuCheckboxItem
+                key={column.id}
+                checked={column.visible}
+                onCheckedChange={() => toggleColumnVisibility(column.id)}
+              >
+                {column.label}
+              </DropdownMenuCheckboxItem>
+            ))}
+          </DropdownMenuSubContent>
+        </DropdownMenuSub>
+      </DropdownMenuGroup>
+
+      {/* リセットボタン（設定がアクティブな場合のみ表示） */}
+      {hasActiveSettings && (
+        <>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={handleReset}>
+            <RotateCcw />
+            設定をリセット
+          </DropdownMenuItem>
+        </>
+      )}
+    </>
   );
 }

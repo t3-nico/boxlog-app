@@ -84,6 +84,7 @@ export interface InboxFilters {
   schedule?: ScheduleFilter | undefined; // スケジュールフィルター
   createdAt?: DateRangeFilter | undefined; // 作成日フィルター
   updatedAt?: DateRangeFilter | undefined; // 更新日フィルター
+  hideCompleted?: boolean | undefined; // 完了を非表示
 }
 
 /**
@@ -346,6 +347,11 @@ export function useInboxData(filters: InboxFilters = {}, sort?: InboxSortOptions
   // 更新日フィルタリング（クライアント側）
   if (filters.updatedAt && filters.updatedAt !== 'all') {
     items = items.filter((item) => matchesDateRangeFilter(item.updated_at, filters.updatedAt!));
+  }
+
+  // 完了を非表示フィルタリング（クライアント側）
+  if (filters.hideCompleted) {
+    items = items.filter((item) => item.status !== 'done');
   }
 
   // ソート適用
