@@ -7,7 +7,6 @@ import {
   CircleCheckBig,
   PanelLeftClose,
   PanelLeftOpen,
-  Tag,
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
@@ -60,7 +59,7 @@ export function AppBar() {
     avatar: user?.user_metadata?.avatar_url || null,
   };
 
-  // ナビゲーションアイテム
+  // ナビゲーションアイテム（タグは Settings 内に移動したため除外）
   const navItems: AppBarNavItem[] = useMemo(
     () => [
       {
@@ -80,12 +79,6 @@ export function AppBar() {
         icon: BarChart3,
         label: t('sidebar.navigation.stats'),
         url: `/${locale}/stats`,
-      },
-      {
-        id: 'tags',
-        icon: Tag,
-        label: t('sidebar.navigation.tags'),
-        url: `/${locale}/tags`,
       },
     ],
     [t, locale],

@@ -73,6 +73,8 @@ export interface TableNavigationConfig {
   onFilterReset?: () => void;
   /** 設定シートの内容（カスタム） */
   settingsContent?: React.ReactNode;
+  /** 設定数（バッジ表示用） */
+  settingsCount?: number;
   /** 設定のリセットハンドラー */
   onSettingsReset?: () => void;
   /** アクティブな設定があるか */
@@ -361,12 +363,14 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
                 size="icon"
                 onClick={() => setShowSettings(true)}
                 aria-label="設定"
-                className={cn(
-                  iconButtonClass,
-                  (showSettings || config.hasActiveSettings) && activeClass,
-                )}
+                className={iconButtonClass}
               >
                 <Settings2 className="size-5" />
+                {config.settingsCount != null && config.settingsCount > 0 && (
+                  <span className="bg-primary text-primary-foreground absolute -top-1 -right-1 flex size-4 items-center justify-center rounded-full text-xs">
+                    {config.settingsCount > 9 ? '9+' : config.settingsCount}
+                  </span>
+                )}
               </Button>
             </HoverTooltip>
           )}
@@ -559,16 +563,13 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
         <DropdownMenu open={showSettings} onOpenChange={setShowSettings}>
           <HoverTooltip content="設定" side="top">
             <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                aria-label="設定"
-                className={cn(
-                  iconButtonClass,
-                  (showSettings || config.hasActiveSettings) && activeClass,
-                )}
-              >
+              <Button variant="ghost" size="icon" aria-label="設定" className={iconButtonClass}>
                 <Settings2 className="size-5" />
+                {config.settingsCount != null && config.settingsCount > 0 && (
+                  <span className="bg-primary text-primary-foreground absolute -top-1 -right-1 flex size-4 items-center justify-center rounded-full text-xs">
+                    {config.settingsCount > 9 ? '9+' : config.settingsCount}
+                  </span>
+                )}
               </Button>
             </DropdownMenuTrigger>
           </HoverTooltip>

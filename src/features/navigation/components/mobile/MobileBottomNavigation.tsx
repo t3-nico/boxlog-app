@@ -5,7 +5,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-import { BarChart3, Calendar, Inbox, MoreHorizontal, Tag } from 'lucide-react';
+import { BarChart3, Calendar, Inbox, MoreHorizontal } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 import { useLocale, useTranslations } from 'next-intl';
@@ -15,10 +15,9 @@ import { MoreActionSheet } from './MoreActionSheet';
 /**
  * モバイル用ボトムナビゲーション
  *
- * 5項目構成:
+ * 4項目構成:
  * - Calendar: カレンダーページ
  * - Inbox: 受信箱ページ
- * - Tags: タグ管理ページ
  * - Stats: 統計ページ
  * - More: その他メニュー（ボトムシート展開）
  *
@@ -35,7 +34,7 @@ export function MobileBottomNavigation() {
   const t = useTranslations();
   const locale = useLocale() as 'ja' | 'en';
 
-  // ナビゲーション項目
+  // ナビゲーション項目（タグは Settings 内に移動したため除外）
   const navItems = [
     {
       id: 'calendar',
@@ -50,13 +49,6 @@ export function MobileBottomNavigation() {
       href: `/${locale}/inbox`,
       icon: Inbox,
       isActive: pathname?.includes('/inbox') ?? false,
-    },
-    {
-      id: 'tags',
-      label: t('sidebar.navigation.tags'),
-      href: `/${locale}/tags`,
-      icon: Tag,
-      isActive: pathname?.includes('/tags') ?? false,
     },
     {
       id: 'stats',
