@@ -123,7 +123,7 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
       </aside>
 
       {/* メインコンテンツ */}
-      <main
+      <div
         className={cn(
           'bg-surface-bright flex h-full min-h-0 flex-1 flex-col overflow-hidden',
           // モバイル: カテゴリ未選択時は非表示、PC: 常時表示
@@ -131,7 +131,7 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
         )}
       >
         {children}
-      </main>
+      </div>
     </div>
   );
 }

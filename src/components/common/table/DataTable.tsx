@@ -385,10 +385,8 @@ export function DataTable<T>({
     ],
   );
 
-  // 空状態
-  if (paginatedData.length === 0 && emptyState) {
-    return <>{emptyState}</>;
-  }
+  // 空状態判定
+  const isEmpty = paginatedData.length === 0;
 
   return (
     <div
@@ -495,6 +493,14 @@ export function DataTable<T>({
               : // 通常表示
                 paginatedData.map((item, index) => renderRow(item, index))}
             {!isGrouped && extraRows}
+            {/* 空状態: データがなく、extraRowsもない場合にemptyStateを表示 */}
+            {isEmpty && emptyState && (
+              <TableRow>
+                <TableCell colSpan={columnCount} className="h-64 p-0">
+                  {emptyState}
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </div>

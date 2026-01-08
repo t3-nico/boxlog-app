@@ -1,16 +1,11 @@
 'use client';
 
 import type { ReactNode } from 'react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { PageHeader } from '@/components/common/PageHeader';
 import { DataTable, type SortState } from '@/features/table';
-import {
-  TagRowWrapper,
-  TagTableRowCreate,
-  type TagTableRowCreateHandle,
-  TagsTableEmptyState,
-} from '@/features/tags/components/table';
+import { TagRowWrapper, TagsTableEmptyState } from '@/features/tags/components/table';
 import { TagsDialogs } from '@/features/tags/components/TagsDialogs';
 import { TagSelectionActions } from '@/features/tags/components/TagSelectionActions';
 import { TagsFilterBar } from '@/features/tags/components/TagsFilterBar';
@@ -22,6 +17,7 @@ import { useUpdateTag } from '@/features/tags/hooks/useTags';
 import { useTagsPageData } from '@/features/tags/hooks/useTagsPageData';
 import { useTagTableColumns } from '@/features/tags/hooks/useTagTableColumns';
 import { type TagColumnId, useTagColumnStore } from '@/features/tags/stores/useTagColumnStore';
+import { useTagInspectorStore } from '@/features/tags/stores/useTagInspectorStore';
 import { useTagPaginationStore } from '@/features/tags/stores/useTagPaginationStore';
 import { useTagSearchStore } from '@/features/tags/stores/useTagSearchStore';
 import { useTagSelectionStore } from '@/features/tags/stores/useTagSelectionStore';
@@ -49,7 +45,6 @@ export function TagsPageClient() {
   const [bulkDeleteDialogOpen, setBulkDeleteDialogOpen] = useState(false);
   const [isBulkDeleting, setIsBulkDeleting] = useState(false);
   const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set());
-  const createRowRef = useRef<TagTableRowCreateHandle>(null);
 
   // カスタムフックでデータ処理ロジックを分離（フィルター状態はストアから取得）
   const {
@@ -82,10 +77,18 @@ export function TagsPageClient() {
   // コンテキスト
   const { tags, setTags, setIsLoading } = useTagsPageContext();
 
+  // Inspector
+  const { openInspector } = useTagInspectorStore();
+
   // タグ操作
   const updateTagMutation = useUpdateTag();
-  const { showCreateModal, handleCreateTag, handleSaveNewTag, handleDeleteTag, handleCloseModals } =
+  const { showCreateModal, handleSaveNewTag, handleDeleteTag, handleCloseModals } =
     useTagOperations(tags);
+
+  // 新規作成ハンドラー（Inspectorを開く）
+  const handleOpenCreateInspector = useCallback(() => {
+    openInspector(null, { initialData: { groupId: selectedGroupId } });
+  }, [openInspector, selectedGroupId]);
 
   // 表示列
   const visibleColumns = getVisibleColumns();
@@ -364,14 +367,7 @@ export function TagsPageClient() {
           {/* 右側: ナビゲーション・作成ボタン */}
           <TagsFilterBar
             {...(!showArchiveOnly && {
-              onCreateClick: () => {
-                // グループ別表示の場合はモーダル、フラット表示の場合はインライン作成
-                if (displayMode === 'grouped') {
-                  handleCreateTag(selectedGroupId);
-                } else {
-                  createRowRef.current?.startCreate();
-                }
-              },
+              onCreateClick: handleOpenCreateInspector,
             })}
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
@@ -405,29 +401,12 @@ export function TagsPageClient() {
           onOutsideClick={clearSelection}
           selectAllLabel={t('tags.page.selectAll')}
           getSelectLabel={(tag) => t('tags.page.selectTag', { name: tag.name })}
-          extraRows={
-            showArchiveOnly || displayMode === 'grouped' ? undefined : (
-              <TagTableRowCreate
-                ref={createRowRef}
-                selectedGroupId={selectedGroupId}
-                groups={groups}
-                allTags={tags}
-              />
-            )
-          }
           emptyState={
             <TagsTableEmptyState
               searchQuery={searchQuery}
               isArchiveView={showArchiveOnly}
               onClearSearch={() => setSearchQuery('')}
-              onCreate={() => {
-                // グループ別表示の場合はモーダル、フラット表示の場合はインライン作成
-                if (displayMode === 'grouped') {
-                  handleCreateTag(selectedGroupId);
-                } else {
-                  createRowRef.current?.startCreate();
-                }
-              }}
+              onCreate={handleOpenCreateInspector}
             />
           }
         />
