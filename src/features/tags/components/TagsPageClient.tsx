@@ -84,7 +84,7 @@ export function TagsPageClient() {
 
   // タグ操作
   const updateTagMutation = useUpdateTag();
-  const { showCreateModal, handleSaveNewTag, handleDeleteTag, handleCloseModals } =
+  const { showCreateModal, handleCreateTag, handleSaveNewTag, handleDeleteTag, handleCloseModals } =
     useTagOperations(tags);
 
   // 表示列
@@ -365,7 +365,12 @@ export function TagsPageClient() {
           <TagsFilterBar
             {...(!showArchiveOnly && {
               onCreateClick: () => {
-                createRowRef.current?.startCreate();
+                // グループ別表示の場合はモーダル、フラット表示の場合はインライン作成
+                if (displayMode === 'grouped') {
+                  handleCreateTag(selectedGroupId);
+                } else {
+                  createRowRef.current?.startCreate();
+                }
               },
             })}
             searchQuery={searchQuery}
@@ -415,7 +420,14 @@ export function TagsPageClient() {
               searchQuery={searchQuery}
               isArchiveView={showArchiveOnly}
               onClearSearch={() => setSearchQuery('')}
-              onCreate={() => createRowRef.current?.startCreate()}
+              onCreate={() => {
+                // グループ別表示の場合はモーダル、フラット表示の場合はインライン作成
+                if (displayMode === 'grouped') {
+                  handleCreateTag(selectedGroupId);
+                } else {
+                  createRowRef.current?.startCreate();
+                }
+              }}
             />
           }
         />
