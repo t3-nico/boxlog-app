@@ -105,8 +105,6 @@ export interface DataTableProps<T> {
   paginationState?: PaginationState;
   /** ページネーション変更時のコールバック */
   onPaginationChange?: (paginationState: PaginationState) => void;
-  /** ページサイズの選択肢 */
-  pageSizeOptions?: number[];
 
   // 列幅関連
   /** 列幅の状態（id -> width） */
@@ -167,7 +165,6 @@ export function DataTable<T>({
   showPagination = true,
   paginationState = { currentPage: 1, pageSize: 50 },
   onPaginationChange,
-  pageSizeOptions = [10, 25, 50, 100],
   columnWidths: externalColumnWidths,
   onColumnWidthChange,
   groupedData,
@@ -388,8 +385,8 @@ export function DataTable<T>({
     ],
   );
 
-  // 空状態（extraRowsがある場合はテーブルを表示）
-  if (paginatedData.length === 0 && emptyState && !extraRows) {
+  // 空状態
+  if (paginatedData.length === 0 && emptyState) {
     return <>{emptyState}</>;
   }
 
@@ -509,8 +506,6 @@ export function DataTable<T>({
           currentPage={paginationState.currentPage}
           pageSize={paginationState.pageSize}
           onPageChange={(page) => onPaginationChange({ ...paginationState, currentPage: page })}
-          onPageSizeChange={(size) => onPaginationChange({ currentPage: 1, pageSize: size })}
-          pageSizeOptions={pageSizeOptions}
         />
       )}
     </div>
