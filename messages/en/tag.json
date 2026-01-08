@@ -204,6 +204,13 @@
         "flat": "Flat",
         "grouped": "Grouped"
       },
+      "sortFields": {
+        "tagNumber": "Number",
+        "name": "Name",
+        "group": "Group",
+        "createdAt": "Created",
+        "lastUsed": "Last Used"
+      },
       "settings": "Settings",
       "search": "Search"
     },
@@ -452,6 +459,13 @@
         "title": "Display Mode",
         "flat": "Flat",
         "grouped": "Grouped"
+      },
+      "sortFields": {
+        "tagNumber": "Number",
+        "name": "Name",
+        "group": "Group",
+        "createdAt": "Created",
+        "lastUsed": "Last Used"
       },
       "settings": "Settings",
       "search": "Search"

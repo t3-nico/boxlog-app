@@ -204,6 +204,13 @@
         "flat": "フラット",
         "grouped": "グループ別"
       },
+      "sortFields": {
+        "tagNumber": "番号",
+        "name": "名前",
+        "group": "グループ",
+        "createdAt": "作成日",
+        "lastUsed": "最終使用"
+      },
       "settings": "表示設定",
       "search": "検索"
     },
@@ -452,6 +459,13 @@
         "title": "表示モード",
         "flat": "フラット",
         "grouped": "グループ別"
+      },
+      "sortFields": {
+        "tagNumber": "番号",
+        "name": "名前",
+        "group": "グループ",
+        "createdAt": "作成日",
+        "lastUsed": "最終使用"
       },
       "settings": "表示設定",
       "search": "検索"
