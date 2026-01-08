@@ -2,6 +2,7 @@
 
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Check } from 'lucide-react';
 
 interface MobileSettingsRadioOption<T> {
   value: T;
@@ -17,20 +18,29 @@ interface MobileSettingsRadioGroupProps<T extends string> {
   onValueChange: (value: T) => void;
   /** IDプレフィックス */
   idPrefix: string;
+  /** 表示バリアント: chip（横並びチップ）, list（縦並びリスト） */
+  variant?: 'chip' | 'list';
 }
 
 /**
  * モバイル設定シート用ラジオグループコンポーネント
  *
- * 複数の選択肢から1つを選ぶラジオボタングループ（チップ型）
+ * 複数の選択肢から1つを選ぶラジオボタングループ
  *
  * @example
  * ```tsx
+ * // Chip形式（デフォルト）
  * <MobileSettingsRadioGroup
- *   options={[
- *     { value: 'all', label: 'すべて' },
- *     { value: 'today', label: '今日' },
- *   ]}
+ *   options={[{ value: 'all', label: 'すべて' }]}
+ *   value={dueDate}
+ *   onValueChange={setDueDate}
+ *   idPrefix="mobile-due-date"
+ * />
+ *
+ * // List形式（Apple Settings風）
+ * <MobileSettingsRadioGroup
+ *   variant="list"
+ *   options={[{ value: 'all', label: 'すべて' }]}
  *   value={dueDate}
  *   onValueChange={setDueDate}
  *   idPrefix="mobile-due-date"
@@ -42,7 +52,34 @@ export function MobileSettingsRadioGroup<T extends string>({
   value,
   onValueChange,
   idPrefix,
+  variant = 'chip',
 }: MobileSettingsRadioGroupProps<T>) {
+  if (variant === 'list') {
+    return (
+      <RadioGroup value={value} onValueChange={(v) => onValueChange(v as T)}>
+        <div className="border-border bg-card rounded-lg border">
+          {options.map((option, index) => (
+            <Label
+              key={option.value}
+              htmlFor={`${idPrefix}-${option.value}`}
+              className={`hover:bg-state-hover flex cursor-pointer items-center justify-between px-4 py-2 text-sm transition-colors ${
+                index !== options.length - 1 ? 'border-border border-b' : ''
+              }`}
+            >
+              <span>{option.label}</span>
+              <RadioGroupItem
+                value={option.value}
+                id={`${idPrefix}-${option.value}`}
+                className="sr-only"
+              />
+              {value === option.value && <Check className="text-primary size-4" />}
+            </Label>
+          ))}
+        </div>
+      </RadioGroup>
+    );
+  }
+
   return (
     <RadioGroup value={value} onValueChange={(v) => onValueChange(v as T)}>
       <div className="flex flex-wrap gap-2">
