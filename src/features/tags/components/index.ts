@@ -3,14 +3,12 @@
  *
  * @example
  * ```tsx
- * import { TagsSidebar, TagSelector, TagBadge } from '@/features/tags/components'
+ * import { TagSelector, TagBadge, TagsPageClient } from '@/features/tags/components'
  * ```
  */
 
 // Main components
 export { TagsSelectionBar } from './TagsSelectionBar';
-export { TagsSidebar } from './TagsSidebar';
-export { TagsSidebarWrapper } from './TagsSidebarWrapper';
 
 // Selection & Display
 export { TagBadge } from './tag-badge';

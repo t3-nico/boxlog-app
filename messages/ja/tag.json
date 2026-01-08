@@ -191,6 +191,7 @@
       "bulkDeleteConfirmTitle": "{count}件のタグを削除しますか？",
       "bulkDeleteConfirmDescription": "選択した{count}件のタグを完全に削除します。この操作は取り消せません。",
       "bulkArchived": "{count}件のタグをアーカイブしました",
+      "bulkRestored": "{count}件のタグを復元しました",
       "bulkArchiveFailed": "タグのアーカイブに失敗しました",
       "addDescription": "説明を追加...",
       "addGroup": "グループを追加...",
@@ -272,6 +273,58 @@
     }
   },
   "tag": {
+    "status": {
+      "all": "すべて",
+      "archive": "アーカイブ"
+    },
+    "filter": {
+      "group": "グループ",
+      "all": "すべて",
+      "uncategorized": "未分類",
+      "usage": "使用状況",
+      "unused": "未使用",
+      "frequentlyUsed": "よく使う",
+      "createdAt": "作成日",
+      "today": "今日",
+      "thisWeek": "今週",
+      "thisMonth": "今月",
+      "reset": "フィルターをリセット"
+    },
+    "settings": {
+      "manageGroups": "グループ管理",
+      "createGroup": "新規グループ",
+      "noGroups": "グループがありません",
+      "displayMode": "表示モード",
+      "columns": "列の表示",
+      "reset": "リセット"
+    },
+    "group": {
+      "createTitle": "新規グループ作成",
+      "createDescription": "新しいグループを作成します",
+      "editTitle": "グループを編集",
+      "editDescription": "グループ名とカラーを変更します",
+      "nameRequired": "グループ名 *",
+      "namePlaceholder": "例: プロジェクト",
+      "deleteTitle": "グループを削除",
+      "deleteDescription": "グループ「{name}」を削除しますか？グループ内のタグは未分類になります。"
+    },
+    "toast": {
+      "groupNameRequired": "グループ名を入力してください",
+      "groupCreated": "グループ「{name}」を作成しました",
+      "groupUpdated": "グループ「{name}」を更新しました",
+      "groupUpdateFailed": "グループの更新に失敗しました",
+      "groupDeleted": "グループ「{name}」を削除しました",
+      "groupDeleteFailed": "グループの削除に失敗しました",
+      "groupCreateFailed": "グループの作成に失敗しました"
+    },
+    "actions": {
+      "cancel": "キャンセル",
+      "delete": "削除",
+      "create": "作成",
+      "creating": "作成中...",
+      "save": "保存",
+      "saving": "保存中..."
+    },
     "modal": {
       "createTitle": "新規タグ作成",
       "createDescription": "新しいタグを作成します",
@@ -447,6 +500,7 @@
       "bulkDeleteConfirmTitle": "{count}件のタグを削除しますか？",
       "bulkDeleteConfirmDescription": "選択した{count}件のタグを完全に削除します。この操作は取り消せません。",
       "bulkArchived": "{count}件のタグをアーカイブしました",
+      "bulkRestored": "{count}件のタグを復元しました",
       "bulkArchiveFailed": "タグのアーカイブに失敗しました",
       "addDescription": "説明を追加...",
       "addGroup": "グループを追加...",

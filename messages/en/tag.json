@@ -191,6 +191,7 @@
       "bulkDeleteConfirmTitle": "Delete {count} tags?",
       "bulkDeleteConfirmDescription": "This will permanently delete {count} selected tags. This action cannot be undone.",
       "bulkArchived": "Archived {count} tags",
+      "bulkRestored": "Restored {count} tags",
       "bulkArchiveFailed": "Failed to archive tags",
       "addDescription": "Add description...",
       "addGroup": "Add to group...",
@@ -272,6 +273,58 @@
     }
   },
   "tag": {
+    "status": {
+      "all": "All",
+      "archive": "Archive"
+    },
+    "filter": {
+      "group": "Group",
+      "all": "All",
+      "uncategorized": "Uncategorized",
+      "usage": "Usage",
+      "unused": "Unused",
+      "frequentlyUsed": "Frequently Used",
+      "createdAt": "Created Date",
+      "today": "Today",
+      "thisWeek": "This Week",
+      "thisMonth": "This Month",
+      "reset": "Reset Filters"
+    },
+    "settings": {
+      "manageGroups": "Manage Groups",
+      "createGroup": "Create Group",
+      "noGroups": "No groups",
+      "displayMode": "Display Mode",
+      "columns": "Columns",
+      "reset": "Reset"
+    },
+    "group": {
+      "createTitle": "Create New Group",
+      "createDescription": "Create a new tag group",
+      "editTitle": "Edit Group",
+      "editDescription": "Edit group name and color",
+      "nameRequired": "Group Name *",
+      "namePlaceholder": "e.g., Project",
+      "deleteTitle": "Delete Group",
+      "deleteDescription": "Are you sure you want to delete \"{name}\"? Tags in this group will become uncategorized."
+    },
+    "toast": {
+      "groupNameRequired": "Please enter a group name",
+      "groupCreated": "Group \"{name}\" created",
+      "groupUpdated": "Group \"{name}\" updated",
+      "groupUpdateFailed": "Failed to update group",
+      "groupDeleted": "Group \"{name}\" deleted",
+      "groupDeleteFailed": "Failed to delete group",
+      "groupCreateFailed": "Failed to create group"
+    },
+    "actions": {
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "create": "Create",
+      "creating": "Creating...",
+      "save": "Save",
+      "saving": "Saving..."
+    },
     "modal": {
       "createTitle": "Create New Tag",
       "createDescription": "Create a new tag",
@@ -447,6 +500,7 @@
       "bulkDeleteConfirmTitle": "Delete {count} tags?",
       "bulkDeleteConfirmDescription": "This will permanently delete {count} selected tags. This action cannot be undone.",
       "bulkArchived": "Archived {count} tags",
+      "bulkRestored": "Restored {count} tags",
       "bulkArchiveFailed": "Failed to archive tags",
       "addDescription": "Add description...",
       "addGroup": "Add to group...",

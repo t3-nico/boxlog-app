@@ -10,10 +10,6 @@ import {
   type CreateActionType,
 } from '@/features/navigation/components/mobile/CreateActionSheet';
 import { MobileBottomNavigation } from '@/features/navigation/components/mobile/MobileBottomNavigation';
-import {
-  TagsNavigationProvider,
-  type TagsFilter,
-} from '@/features/tags/contexts/TagsNavigationContext';
 import { TagsPageProvider } from '@/features/tags/contexts/TagsPageContext';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { Plus } from 'lucide-react';
@@ -59,18 +55,6 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
   const isTagsPage = useMemo(() => {
     return pathname?.startsWith(`/${localeFromPath}/settings/tags`) ?? false;
   }, [pathname, localeFromPath]);
-
-  // メモ化: タグページの初期フィルターをURLから解析
-  const initialTagsFilter = useMemo((): TagsFilter => {
-    if (!isTagsPage) return 'all';
-    const tagsPath = pathname?.replace(`/${localeFromPath}/settings/tags`, '') || '';
-    if (tagsPath === '/uncategorized') return 'uncategorized';
-    if (tagsPath === '/archive') return 'archive';
-    // /settings/tags/g-{uuid} → group-{uuid}
-    const groupMatch = tagsPath.match(/^\/g-(.+)$/);
-    if (groupMatch?.[1]) return `group-${groupMatch[1]}`;
-    return 'all';
-  }, [isTagsPage, pathname, localeFromPath]);
 
   // 注: Realtime通知購読はRealtimeProviderで一元管理
 
@@ -147,13 +131,9 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
     );
   }
 
-  // タグページの場合はTagsNavigationProvider + TagsPageProviderでラップ
+  // タグページの場合はTagsPageProviderでラップ
   if (isTagsPage) {
-    return (
-      <TagsNavigationProvider initialFilter={initialTagsFilter}>
-        <TagsPageProvider>{content}</TagsPageProvider>
-      </TagsNavigationProvider>
-    );
+    return <TagsPageProvider>{content}</TagsPageProvider>;
   }
 
   return content;

@@ -1,7 +1,6 @@
 'use client';
 
 import {
-  DropdownMenuCheckboxItem,
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuRadioGroup,
@@ -11,64 +10,83 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
 } from '@/components/ui/dropdown-menu';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { useTagGroups } from '@/features/tags/hooks/useTagGroups';
 import {
   type DateRangeFilter,
+  type GroupFilter,
   type UsageFilter,
   useTagFilterStore,
 } from '@/features/tags/stores/useTagFilterStore';
-import { BarChart3, Calendar, FolderTree, RotateCcw } from 'lucide-react';
-
-/**
- * 使用状況フィルター選択肢
- */
-const USAGE_OPTIONS: Array<{ value: UsageFilter; label: string }> = [
-  { value: 'all', label: 'すべて' },
-  { value: 'unused', label: '未使用' },
-  { value: 'frequently_used', label: 'よく使う' },
-];
-
-/**
- * 日付範囲フィルター選択肢
- */
-const DATE_RANGE_OPTIONS: Array<{ value: DateRangeFilter; label: string }> = [
-  { value: 'all', label: 'すべて' },
-  { value: 'today', label: '今日' },
-  { value: 'this_week', label: '今週' },
-  { value: 'this_month', label: '今月' },
-];
+import { BarChart3, Calendar, Folder, FolderTree, RotateCcw } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 /**
  * タグフィルターコンテンツ
  *
  * Linear/Account.tsx風の2カラム構造
  * - DropdownMenuSub でカテゴリ → サブメニュー
- * - 使用状況・作成日: RadioGroup（単一選択）
- * - グループ: CheckboxItem（複数選択）
+ * - 使用状況・作成日・グループ: RadioGroup（単一選択）
  */
 export function TagsFilterContent() {
-  const {
-    usage,
-    setUsage,
-    groups: selectedGroups,
-    toggleGroup,
-    createdAt,
-    setCreatedAt,
-    reset,
-  } = useTagFilterStore();
+  const t = useTranslations('tag');
+  const { usage, setUsage, selectedGroup, setSelectedGroup, createdAt, setCreatedAt, reset } =
+    useTagFilterStore();
   const { data: allGroups } = useTagGroups();
 
   // フィルターがアクティブかどうか
-  const hasActiveFilters = usage !== 'all' || selectedGroups.length > 0 || createdAt !== 'all';
+  const hasActiveFilters = usage !== 'all' || selectedGroup !== 'all' || createdAt !== 'all';
 
   return (
     <>
       <DropdownMenuGroup>
+        {/* グループフィルター（単一選択） */}
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger>
+            <FolderTree />
+            <span className="flex-1">{t('filter.group')}</span>
+            {selectedGroup !== 'all' && (
+              <span className="bg-primary text-primary-foreground flex size-5 items-center justify-center rounded-full text-xs">
+                1
+              </span>
+            )}
+          </DropdownMenuSubTrigger>
+          <DropdownMenuSubContent className="border-input">
+            <ScrollArea className="max-h-64">
+              <DropdownMenuRadioGroup
+                value={selectedGroup}
+                onValueChange={(v) => setSelectedGroup(v as GroupFilter)}
+              >
+                {/* すべて */}
+                <DropdownMenuRadioItem value="all">{t('filter.all')}</DropdownMenuRadioItem>
+
+                {/* 未分類 */}
+                <DropdownMenuRadioItem value="uncategorized">
+                  <span className="flex items-center gap-2">
+                    <Folder className="text-muted-foreground size-4" />
+                    {t('filter.uncategorized')}
+                  </span>
+                </DropdownMenuRadioItem>
+
+                {/* グループ一覧 */}
+                {allGroups?.map((group) => (
+                  <DropdownMenuRadioItem key={group.id} value={group.id}>
+                    <span className="flex items-center gap-2">
+                      <Folder className="size-4" style={{ color: group.color ?? undefined }} />
+                      {group.name}
+                    </span>
+                  </DropdownMenuRadioItem>
+                ))}
+              </DropdownMenuRadioGroup>
+            </ScrollArea>
+          </DropdownMenuSubContent>
+        </DropdownMenuSub>
+
         {/* 使用状況フィルター */}
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>
             <BarChart3 />
-            <span className="flex-1">使用状況</span>
+            <span className="flex-1">{t('filter.usage')}</span>
             {usage !== 'all' && (
               <span className="bg-primary text-primary-foreground flex size-5 items-center justify-center rounded-full text-xs">
                 1
@@ -77,40 +95,12 @@ export function TagsFilterContent() {
           </DropdownMenuSubTrigger>
           <DropdownMenuSubContent className="border-input">
             <DropdownMenuRadioGroup value={usage} onValueChange={(v) => setUsage(v as UsageFilter)}>
-              {USAGE_OPTIONS.map((option) => (
-                <DropdownMenuRadioItem key={option.value} value={option.value}>
-                  {option.label}
-                </DropdownMenuRadioItem>
-              ))}
+              <DropdownMenuRadioItem value="all">{t('filter.all')}</DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="unused">{t('filter.unused')}</DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="frequently_used">
+                {t('filter.frequentlyUsed')}
+              </DropdownMenuRadioItem>
             </DropdownMenuRadioGroup>
-          </DropdownMenuSubContent>
-        </DropdownMenuSub>
-
-        {/* グループフィルター */}
-        <DropdownMenuSub>
-          <DropdownMenuSubTrigger>
-            <FolderTree />
-            <span className="flex-1">グループ</span>
-            {selectedGroups.length > 0 && (
-              <span className="bg-primary text-primary-foreground flex size-5 items-center justify-center rounded-full text-xs">
-                {selectedGroups.length}
-              </span>
-            )}
-          </DropdownMenuSubTrigger>
-          <DropdownMenuSubContent className="border-input">
-            {allGroups && allGroups.length > 0 ? (
-              allGroups.map((group) => (
-                <DropdownMenuCheckboxItem
-                  key={group.id}
-                  checked={selectedGroups.includes(group.id)}
-                  onCheckedChange={() => toggleGroup(group.id)}
-                >
-                  {group.name}
-                </DropdownMenuCheckboxItem>
-              ))
-            ) : (
-              <div className="text-muted-foreground px-2 py-2 text-sm">グループがありません</div>
-            )}
           </DropdownMenuSubContent>
         </DropdownMenuSub>
 
@@ -118,7 +108,7 @@ export function TagsFilterContent() {
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>
             <Calendar />
-            <span className="flex-1">作成日</span>
+            <span className="flex-1">{t('filter.createdAt')}</span>
             {createdAt !== 'all' && (
               <span className="bg-primary text-primary-foreground flex size-5 items-center justify-center rounded-full text-xs">
                 1
@@ -130,11 +120,14 @@ export function TagsFilterContent() {
               value={createdAt}
               onValueChange={(v) => setCreatedAt(v as DateRangeFilter)}
             >
-              {DATE_RANGE_OPTIONS.map((option) => (
-                <DropdownMenuRadioItem key={option.value} value={option.value}>
-                  {option.label}
-                </DropdownMenuRadioItem>
-              ))}
+              <DropdownMenuRadioItem value="all">{t('filter.all')}</DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="today">{t('filter.today')}</DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="this_week">
+                {t('filter.thisWeek')}
+              </DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="this_month">
+                {t('filter.thisMonth')}
+              </DropdownMenuRadioItem>
             </DropdownMenuRadioGroup>
           </DropdownMenuSubContent>
         </DropdownMenuSub>
@@ -146,7 +139,7 @@ export function TagsFilterContent() {
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={reset}>
             <RotateCcw />
-            フィルターをリセット
+            {t('filter.reset')}
           </DropdownMenuItem>
         </>
       )}

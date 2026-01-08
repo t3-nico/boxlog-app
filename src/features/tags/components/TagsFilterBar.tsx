@@ -58,7 +58,7 @@ export function TagsFilterBar({
 
   // フィルター
   const usage = useTagFilterStore((state) => state.usage);
-  const groups = useTagFilterStore((state) => state.groups);
+  const selectedGroup = useTagFilterStore((state) => state.selectedGroup);
   const createdAt = useTagFilterStore((state) => state.createdAt);
   const resetFilters = useTagFilterStore((state) => state.reset);
 
@@ -86,10 +86,11 @@ export function TagsFilterBar({
   const settingsCount = (displayMode === 'grouped' ? 1 : 0) + hiddenColumnCount;
 
   // フィルターがアクティブかどうか
-  const hasActiveFilters = usage !== 'all' || groups.length > 0 || createdAt !== 'all';
+  const hasActiveFilters = usage !== 'all' || selectedGroup !== 'all' || createdAt !== 'all';
 
   // フィルターバッジ数
-  const filterCount = (usage !== 'all' ? 1 : 0) + groups.length + (createdAt !== 'all' ? 1 : 0);
+  const filterCount =
+    (usage !== 'all' ? 1 : 0) + (selectedGroup !== 'all' ? 1 : 0) + (createdAt !== 'all' ? 1 : 0);
 
   // ソートがデフォルトかどうか
   const isDefaultSort = sortField === 'created_at' && sortDirection === 'desc';
@@ -145,7 +146,7 @@ export function TagsFilterBar({
   );
 
   return (
-    <div className="flex h-12 shrink-0 items-center justify-end gap-2 px-4 py-2">
+    <div className="flex items-center gap-2">
       {/* Notion風アイコンナビゲーション（検索・ソート・設定）*/}
       <TableNavigation config={navigationConfig} />
 

@@ -23,8 +23,6 @@ import { toast } from 'sonner';
  *
  * PCではDesktopLayoutがSettingsSidebarを表示するため、
  * このlayout.tsxはモバイル用のサイドバーとコンテンツの表示切り替えを担当。
- *
- * 例外: /settings/tags は独自のTagsSidebarを使用するため、このlayoutをバイパス
  */
 export default function SettingsLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -32,12 +30,6 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
   const t = useTranslations();
   const router = useRouter();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-
-  // /settings/tags は独自レイアウトを使用（TagsSidebar + TagsPageClient）
-  const isTagsPage = pathname?.includes('/settings/tags') ?? false;
-  if (isTagsPage) {
-    return <>{children}</>;
-  }
 
   // 現在のカテゴリを判定
   const currentCategory = SETTINGS_CATEGORIES.find((cat) =>

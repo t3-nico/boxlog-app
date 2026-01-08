@@ -1,5 +1,6 @@
 import { TagsPageClient } from '@/features/tags/components/TagsPageClient';
 
+import { GroupFilterSetter } from './group-filter-setter';
 import { TagInspectorOpener } from './tag-inspector-opener';
 
 interface TagDetailPageProps {
@@ -15,7 +16,12 @@ export default async function SettingsTagDetailPage({ params }: TagDetailPagePro
   // g-{uuid} 形式の場合はグループページを表示
   if (tagId.startsWith('g-')) {
     const groupId = tagId.slice(2);
-    return <TagsPageClient initialGroupId={groupId} />;
+    return (
+      <>
+        <GroupFilterSetter groupId={groupId} />
+        <TagsPageClient />
+      </>
+    );
   }
 
   // タグID（UUID）でタグ一覧 + Inspector表示

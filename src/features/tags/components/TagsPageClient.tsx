@@ -15,7 +15,7 @@ import { TagsDialogs } from '@/features/tags/components/TagsDialogs';
 import { TagSelectionActions } from '@/features/tags/components/TagSelectionActions';
 import { TagsFilterBar } from '@/features/tags/components/TagsFilterBar';
 import { TagsSelectionBar } from '@/features/tags/components/TagsSelectionBar';
-import { useTagsNavigation } from '@/features/tags/contexts/TagsNavigationContext';
+import { TagsStatusTabs } from '@/features/tags/components/TagsStatusTabs';
 import { useTagsPageContext } from '@/features/tags/contexts/TagsPageContext';
 import { useTagOperations } from '@/features/tags/hooks/useTagOperations';
 import { useUpdateTag } from '@/features/tags/hooks/useTags';
@@ -28,34 +28,21 @@ import { useTagSelectionStore } from '@/features/tags/stores/useTagSelectionStor
 import { useTagSortStore } from '@/features/tags/stores/useTagSortStore';
 import type { Tag } from '@/features/tags/types';
 import { useTranslations } from 'next-intl';
-import { usePathname } from 'next/navigation';
 import { toast } from 'sonner';
 
-interface TagsPageClientProps {
-  initialGroupId?: string;
-  showUncategorizedOnly?: boolean;
-  showArchiveOnly?: boolean;
-}
-
-export function TagsPageClient({
-  initialGroupId,
-  showUncategorizedOnly = false,
-  showArchiveOnly = false,
-}: TagsPageClientProps = {}) {
+/**
+ * タグページクライアントコンポーネント
+ *
+ * サイドバーレス設計:
+ * - All/Archive切り替えはヘッダーのタブで
+ * - グループ選択はFilterドロップダウンで
+ * - グループ管理はSettingsドロップダウンで
+ * - すべてのフィルタリングはZustandストアで管理
+ */
+export function TagsPageClient() {
   const t = useTranslations();
-  const pathname = usePathname();
-  const tagsNav = useTagsNavigation();
-
-  // Contextからフィルター状態を導出（propsはフォールバック）
-  const effectiveFilter = tagsNav?.filter ?? (showUncategorizedOnly ? 'uncategorized' : 'all');
-  const isUncategorizedFilter = effectiveFilter === 'uncategorized';
-  const isArchiveFilter = effectiveFilter === 'archive' || pathname?.includes('/archive');
-  const contextGroupId = effectiveFilter.startsWith('group-')
-    ? effectiveFilter.replace('group-', '')
-    : null;
 
   // ローカル状態
-  const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
   const [deleteConfirmTag, setDeleteConfirmTag] = useState<Tag | null>(null);
   const [archiveConfirmTag, setArchiveConfirmTag] = useState<Tag | null>(null);
   const [singleMergeTag, setSingleMergeTag] = useState<Tag | null>(null);
@@ -64,7 +51,7 @@ export function TagsPageClient({
   const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set());
   const createRowRef = useRef<TagTableRowCreateHandle>(null);
 
-  // カスタムフックでデータ処理ロジックを分離
+  // カスタムフックでデータ処理ロジックを分離（フィルター状態はストアから取得）
   const {
     fetchedTags,
     groups,
@@ -72,17 +59,15 @@ export function TagsPageClient({
     tagLastUsed,
     isFetching,
     activeTagsCount,
-    filteredTags,
     sortedTags,
     groupedData,
     displayMode,
     sortField,
     sortDirection,
     searchQuery,
-  } = useTagsPageData({
-    selectedGroupId,
-    isUncategorizedFilter,
     showArchiveOnly,
+    selectedGroupId,
+  } = useTagsPageData({
     t: (key: string) => t(key),
   });
 
@@ -107,39 +92,6 @@ export function TagsPageClient({
   const selectedTagIds = getSelectedIds();
   const selectedCount = getSelectedCount();
 
-  // グループIDを解決
-  const effectiveGroupId = contextGroupId ?? initialGroupId ?? null;
-  const initialGroup = useMemo(() => {
-    if (!effectiveGroupId) return null;
-    return groups.find((g) => g.id === effectiveGroupId) ?? null;
-  }, [effectiveGroupId, groups]);
-
-  // 選択されたグループ情報
-  const selectedGroup = useMemo(() => {
-    return selectedGroupId ? groups.find((g) => g.id === selectedGroupId) : null;
-  }, [selectedGroupId, groups]);
-
-  // ページタイトル
-  const pageTitle = useMemo(() => {
-    if (isUncategorizedFilter) return t('tags.sidebar.uncategorized');
-    if (isArchiveFilter) return t('tags.sidebar.archive');
-    if (selectedGroup) return selectedGroup.name;
-    return t('tags.sidebar.allTags');
-  }, [isUncategorizedFilter, isArchiveFilter, selectedGroup, t]);
-
-  // フィルター状態に応じてselectedGroupIdを更新
-  useEffect(() => {
-    if (initialGroup) {
-      if (selectedGroupId !== initialGroup.id) {
-        setSelectedGroupId(initialGroup.id);
-      }
-    } else if (['all', 'uncategorized', 'archive'].includes(effectiveFilter)) {
-      if (selectedGroupId !== null) {
-        setSelectedGroupId(null);
-      }
-    }
-  }, [initialGroup, effectiveFilter, selectedGroupId]);
-
   // タグデータをContextに同期
   const fetchedTagIds = fetchedTags.map((t) => t.id).join(',');
   useEffect(() => {
@@ -153,13 +105,11 @@ export function TagsPageClient({
 
   // ページタイトルにタグ数を表示
   useEffect(() => {
-    if (!isUncategorizedFilter && !effectiveGroupId) {
-      document.title = `${t('tags.page.title')} (${activeTagsCount})`;
-    }
+    document.title = `${t('tags.page.title')} (${activeTagsCount})`;
     return () => {
       document.title = t('tags.page.title');
     };
-  }, [activeTagsCount, isUncategorizedFilter, effectiveGroupId, t]);
+  }, [activeTagsCount, t]);
 
   // ソート変更時にページ1に戻る
   useEffect(() => {
@@ -226,7 +176,7 @@ export function TagsPageClient({
             await updateTagMutation.mutateAsync({ id: tag.id, data: { is_active: true } });
           }
         }
-        toast.success(t('tag.archive.restoreSuccess', { name: `${tagIds.length}個のタグ` }));
+        toast.success(t('tags.page.bulkRestored', { count: tagIds.length }));
       } catch {
         toast.error(t('tag.archive.restoreFailed'));
       }
@@ -372,9 +322,9 @@ export function TagsPageClient({
   return (
     <div className="flex h-full flex-col">
       {/* ヘッダー */}
-      <PageHeader title={pageTitle} count={filteredTags.length} />
+      <PageHeader title={t('tags.page.title')} count={activeTagsCount} />
 
-      {/* フィルターバー または 選択バー */}
+      {/* ツールバー または 選択バー（Inbox風レイアウト） */}
       {selectedCount > 0 ? (
         <TagsSelectionBar
           selectedCount={selectedCount}
@@ -406,15 +356,23 @@ export function TagsPageClient({
             )
           }
         />
-      ) : showArchiveOnly ? (
-        <TagsFilterBar searchQuery={searchQuery} onSearchChange={setSearchQuery} t={t} />
       ) : (
-        <TagsFilterBar
-          onCreateClick={() => createRowRef.current?.startCreate()}
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-          t={t}
-        />
+        <div className="flex h-12 shrink-0 items-center justify-between gap-2 px-4 py-2">
+          {/* 左側: All/Archive切り替えタブ */}
+          <TagsStatusTabs />
+
+          {/* 右側: ナビゲーション・作成ボタン */}
+          <TagsFilterBar
+            {...(!showArchiveOnly && {
+              onCreateClick: () => {
+                createRowRef.current?.startCreate();
+              },
+            })}
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            t={t}
+          />
+        </div>
       )}
 
       {/* テーブル */}
@@ -455,7 +413,7 @@ export function TagsPageClient({
           emptyState={
             <TagsTableEmptyState
               searchQuery={searchQuery}
-              isArchiveView={isArchiveFilter ?? false}
+              isArchiveView={showArchiveOnly}
               onClearSearch={() => setSearchQuery('')}
               onCreate={() => createRowRef.current?.startCreate()}
             />
