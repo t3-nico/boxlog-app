@@ -3,7 +3,7 @@ import {
   Calendar,
   CreditCard,
   Database,
-  Info,
+  Plug,
   Settings as SettingsIcon,
   Sliders,
   Tag,
@@ -78,6 +78,12 @@ export const SETTINGS_CATEGORIES: readonly SettingsCategoryMeta[] = [
     descKey: 'settings.dialog.categories.dataControlsDesc',
   },
   {
+    id: 'integrations',
+    icon: Plug,
+    labelKey: 'settings.dialog.categories.integrations',
+    descKey: 'settings.dialog.categories.integrationsDesc',
+  },
+  {
     id: 'account',
     icon: User,
     labelKey: 'settings.dialog.categories.account',
@@ -88,11 +94,5 @@ export const SETTINGS_CATEGORIES: readonly SettingsCategoryMeta[] = [
     icon: CreditCard,
     labelKey: 'settings.dialog.categories.subscription',
     descKey: 'settings.dialog.categories.subscriptionDesc',
-  },
-  {
-    id: 'about',
-    icon: Info,
-    labelKey: 'settings.dialog.categories.about',
-    descKey: 'settings.dialog.categories.aboutDesc',
   },
 ] as const;
