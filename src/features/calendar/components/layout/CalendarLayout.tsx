@@ -1,7 +1,7 @@
 'use client';
 
-import { memo, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
+import { memo, useCallback } from 'react';
 
 import { MobileMenuButton } from '@/features/navigation/components/mobile/MobileMenuButton';
 import { cn } from '@/lib/utils';
