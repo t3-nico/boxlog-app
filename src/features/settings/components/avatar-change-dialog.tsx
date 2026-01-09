@@ -1,0 +1,126 @@
+'use client';
+
+import { useCallback, useState } from 'react';
+
+import { useTranslations } from 'next-intl';
+
+import { AvatarDropzone } from '@/components/ui/avatar-dropzone';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { useAuthStore } from '@/features/auth/stores/useAuthStore';
+import { createClient } from '@/lib/supabase/client';
+import { deleteAvatar, uploadAvatar } from '@/lib/supabase/storage';
+
+interface AvatarChangeDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}
+
+/**
+ * アバター変更ダイアログ
+ */
+export function AvatarChangeDialog({ open, onOpenChange }: AvatarChangeDialogProps) {
+  const t = useTranslations();
+  const user = useAuthStore((state) => state.user);
+  const supabase = createClient();
+
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(
+    user?.user_metadata?.avatar_url || null,
+  );
+  const [isUploading, setIsUploading] = useState(false);
+
+  const handleUpload = useCallback(
+    async (file: File) => {
+      if (!user?.id) return;
+
+      setIsUploading(true);
+      try {
+        const publicUrl = await uploadAvatar(file, user.id);
+        setAvatarUrl(publicUrl);
+
+        // Update profile
+        await supabase
+          .from('profiles')
+          .update({
+            avatar_url: publicUrl,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', user.id);
+
+        await supabase.auth.updateUser({
+          data: { avatar_url: publicUrl },
+        });
+      } catch (error) {
+        console.error('Avatar upload error:', error);
+        throw error;
+      } finally {
+        setIsUploading(false);
+      }
+    },
+    [user?.id, supabase],
+  );
+
+  const handleRemove = useCallback(async () => {
+    if (!user?.id) return;
+
+    setIsUploading(true);
+    try {
+      await deleteAvatar(user.id);
+      setAvatarUrl(null);
+
+      // Update profile
+      await supabase
+        .from('profiles')
+        .update({
+          avatar_url: null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', user.id);
+
+      await supabase.auth.updateUser({
+        data: { avatar_url: null },
+      });
+    } catch (error) {
+      console.error('Avatar delete error:', error);
+      throw error;
+    } finally {
+      setIsUploading(false);
+    }
+  }, [user?.id, supabase]);
+
+  const handleClose = useCallback(() => {
+    onOpenChange(false);
+  }, [onOpenChange]);
+
+  return (
+    <Dialog open={open} onOpenChange={handleClose}>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle>{t('settings.account.profilePicture')}</DialogTitle>
+          <DialogDescription>{t('settings.account.profilePictureDesc')}</DialogDescription>
+        </DialogHeader>
+
+        <div className="flex justify-center py-6">
+          <AvatarDropzone
+            currentAvatarUrl={avatarUrl}
+            onUpload={handleUpload}
+            onRemove={handleRemove}
+            isUploading={isUploading}
+            size={120}
+          />
+        </div>
+
+        <DialogFooter>
+          <Button onClick={handleClose}>{t('common.close')}</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
