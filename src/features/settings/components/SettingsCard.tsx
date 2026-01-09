@@ -13,8 +13,6 @@ interface SettingsCardProps {
   actions?: React.ReactNode;
   noPadding?: boolean;
   isSaving?: boolean;
-  /** 最後のセクションの場合はセパレーターを非表示 */
-  isLast?: boolean;
 }
 
 /**
@@ -30,17 +28,9 @@ export const SettingsCard = ({
   actions,
   noPadding = false,
   isSaving = false,
-  isLast = false,
 }: SettingsCardProps) => {
   return (
-    <section
-      className={cn(
-        'text-foreground',
-        !isLast && 'border-border border-b pb-6',
-        isSaving && 'opacity-70',
-        className,
-      )}
-    >
+    <section className={cn('text-foreground', isSaving && 'opacity-70', className)}>
       <div className={cn(noPadding ? '' : '')}>
         {(title || actions || isSaving) && (
           <div className="mb-4 flex items-center justify-between">

@@ -105,7 +105,6 @@ export function AccountSettings() {
       {/* Danger Zone */}
       <SettingsCard
         title={<span className="text-destructive">{t('settings.account.dangerZone')}</span>}
-        isLast
       >
         <AccountDeletionDialog />
       </SettingsCard>
