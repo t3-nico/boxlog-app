@@ -395,6 +395,7 @@
     "delete": {
       "confirmTitle": "タグを削除しますか？",
       "confirmMessage": "「{name}」を削除します。この操作は取り消せません。",
+      "description": "このタグを削除すると、関連するすべてのアイテムからタグが外されます。この操作は取り消せません。",
       "childWarning": "このタグには {count} 個の子タグがあります。削除するには先に子タグを削除または移動してください。",
       "confirmButton": "削除する",
       "confirmTitleWithName": "「{name}」を削除しますか？",
