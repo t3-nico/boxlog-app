@@ -39,7 +39,7 @@ export const getStatusColor = (
 // 共通Tailwindクラスを取得するヘルパー
 export const getTextMuted = (): string => 'text-neutral-600 dark:text-neutral-400';
 export const getBorderDefault = (): string => 'border-border';
-export const getSelectionBg = (): string => 'bg-primary/10';
+export const getSelectionBg = (): string => 'bg-primary-container';
 export const getSurfaceBg = (): string => 'bg-neutral-50 dark:bg-neutral-900';
 export const getErrorBorder = (): string => 'border-red-500 dark:border-red-400';
 
@@ -166,8 +166,8 @@ export const getDropZoneClassName = (isActive: boolean = false): string => {
 // プレースホルダーのクラス名を生成（scheduledカラー + 透明度）
 export const getPlaceholderClassName = (): string => {
   return [
-    // セマンティックカラー + 透明度
-    'bg-primary/5',
+    // セマンティックカラー
+    'bg-primary-state-hover',
     'border-l-4 border-primary',
     'text-transparent',
     calendarStyles.event.borderRadius,

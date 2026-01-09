@@ -271,8 +271,8 @@ export const MiniCalendar = memo<MiniCalendarProps>(
           {/* 前月ボタン */}
           <Button
             variant="ghost"
-            size="icon"
-            className="text-muted-foreground hover:bg-state-hover hover:text-foreground size-8 rounded-sm"
+            size="icon-sm"
+            className="text-muted-foreground hover:bg-state-hover hover:text-foreground rounded-sm"
             onClick={handlePrevMonth}
             aria-label="前の月"
           >
@@ -317,8 +317,8 @@ export const MiniCalendar = memo<MiniCalendarProps>(
           {/* 次月ボタン */}
           <Button
             variant="ghost"
-            size="icon"
-            className="text-muted-foreground hover:bg-state-hover hover:text-foreground size-8 rounded-sm"
+            size="icon-sm"
+            className="text-muted-foreground hover:bg-state-hover hover:text-foreground rounded-sm"
             onClick={handleNextMonth}
             aria-label="次の月"
           >
@@ -387,7 +387,7 @@ export const MiniCalendar = memo<MiniCalendarProps>(
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-muted-foreground hover:text-foreground h-8 w-full text-sm"
+                className="text-muted-foreground hover:text-foreground w-full"
                 onClick={handleClearDate}
               >
                 {locale === 'ja' ? '日付なし' : 'No date'}

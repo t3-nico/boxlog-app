@@ -4,6 +4,7 @@ import type { PlanStatus } from '@/features/plans/types/plan';
 import { Calendar, ChevronDown, FileText, Plus } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
+import { LoadingSpinner } from '@/components/common/Loading/LoadingStates';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MEDIA_QUERIES } from '@/config/ui/breakpoints';
@@ -300,7 +301,7 @@ export function InboxTableView() {
   if (error) {
     return (
       <div className="flex h-full items-center justify-center">
-        <div className="border-destructive bg-destructive/12 text-destructive rounded-xl border p-4">
+        <div className="border-destructive bg-destructive-container text-destructive rounded-xl border p-4">
           <p className="font-medium">エラーが発生しました</p>
           <p className="mt-1 text-sm">{error.message}</p>
         </div>
@@ -314,7 +315,7 @@ export function InboxTableView() {
     return (
       <div className="flex h-full items-center justify-center">
         <div className="flex flex-col items-center gap-2">
-          <div className="border-primary size-8 animate-spin rounded-full border-4 border-t-transparent" />
+          <LoadingSpinner size="lg" />
           <p className="text-muted-foreground text-sm">読み込み中...</p>
         </div>
       </div>

@@ -163,8 +163,8 @@ export function useTimeSelection({
         right: 0,
         top: `${(selection.startHour * 60 + selection.startMinute) * (hourHeight / 60)}px`,
         height: `${(selection.endHour * 60 + selection.endMinute - (selection.startHour * 60 + selection.startMinute)) * (hourHeight / 60)}px`,
-        backgroundColor: 'oklch(0.5 0.188 259.8145 / 0.2)', // primary with opacity
-        border: '2px solid oklch(0.5 0.188 259.8145)', // primary
+        backgroundColor: 'oklch(from var(--primary) l c h / 20%)',
+        border: '2px solid var(--primary)',
         borderRadius: '4px',
         pointerEvents: 'none',
         zIndex: 1000,

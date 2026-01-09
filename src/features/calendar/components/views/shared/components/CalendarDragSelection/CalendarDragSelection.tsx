@@ -58,7 +58,7 @@ export const CalendarDragSelection = ({
         (containerRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
         setNodeRef(node);
       }}
-      className={cn('relative', className, dndIsOver && 'bg-primary/5')}
+      className={cn('relative', className, dndIsOver && 'bg-primary-state-hover')}
       role="button"
       tabIndex={0}
       aria-label="Calendar drag selection area"

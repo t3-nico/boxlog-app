@@ -284,7 +284,7 @@ export const WeekCalendarLayout = ({
                     {Array.from({ length: 24 }, (_, hour) => (
                       <div
                         key={hour}
-                        className="border-border hover:bg-primary/5 border-b transition-colors last:border-b-0"
+                        className="border-border hover:bg-primary-state-hover border-b transition-colors last:border-b-0"
                         style={{ height: `${HOUR_HEIGHT}px` }}
                         title={`${hour}:00 - ${hour + 1}:00`}
                       />

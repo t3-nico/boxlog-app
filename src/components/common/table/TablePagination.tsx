@@ -55,20 +55,18 @@ export function TablePagination({
       <div className="flex items-center gap-1">
         <Button
           variant="ghost"
-          size="icon"
+          size="icon-sm"
           onClick={goToPreviousPage}
           disabled={currentPage === 1}
-          className="size-8"
         >
           <ChevronLeft className="size-4" />
           <span className="sr-only">{t('table.previousPage')}</span>
         </Button>
         <Button
           variant="ghost"
-          size="icon"
+          size="icon-sm"
           onClick={goToNextPage}
           disabled={currentPage === totalPages || totalPages === 0}
-          className="size-8"
         >
           <ChevronRight className="size-4" />
           <span className="sr-only">{t('table.nextPage')}</span>

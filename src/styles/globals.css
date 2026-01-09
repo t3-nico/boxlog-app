@@ -193,6 +193,18 @@
   --color-success-container: oklch(from var(--success) l c h / 12%);
   --color-on-success-container: var(--success);
 
+  /* Destructive ステートレイヤー */
+  --color-destructive-container: oklch(from var(--destructive) l c h / 12%);
+  --color-on-destructive-container: var(--destructive);
+  --color-destructive-state-hover: oklch(from var(--destructive) l c h / 10%);
+
+  /* Accent（睡眠セクション用） */
+  --color-accent-container: oklch(from var(--accent) l c h / 10%);
+  --color-accent-state-selected: oklch(from var(--accent) l c h / 20%);
+
+  /* Secondary ホバー */
+  --color-secondary-hover: oklch(from var(--secondary) l c h / 80%);
+
   /* ============================================
    * Surface トークン（M3準拠）
    * background: 最背面（1種類）

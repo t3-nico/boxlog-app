@@ -131,7 +131,7 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
       >
         {/* Header */}
         <div className="mb-6 flex items-start gap-4">
-          <div className="bg-primary/10 flex size-10 shrink-0 items-center justify-center rounded-full">
+          <div className="bg-primary-container flex size-10 shrink-0 items-center justify-center rounded-full">
             <GitMerge className="text-primary size-5" />
           </div>
           <div className="flex-1">

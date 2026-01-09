@@ -16,8 +16,8 @@ const Switch = React.forwardRef<
       'focus-visible:ring-ring focus-visible:ring-offset-background focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
       'disabled:cursor-not-allowed disabled:opacity-50',
       'data-[state=checked]:bg-primary',
-      'data-[state=unchecked]:bg-secondary data-[state=unchecked]:hover:bg-secondary/80',
-      'data-[state=checked]:hover:bg-primary/90',
+      'data-[state=unchecked]:bg-secondary data-[state=unchecked]:hover:bg-secondary-hover',
+      'data-[state=checked]:hover:bg-primary-hover',
       className,
     )}
     {...props}

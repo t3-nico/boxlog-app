@@ -158,7 +158,7 @@ export const EventContextMenu = ({
               className={cn(
                 'flex w-full items-center gap-3 rounded-sm px-3 py-2 text-left transition-colors',
                 item.dangerous
-                  ? 'text-destructive hover:bg-destructive/10 dark:hover:bg-destructive/20'
+                  ? 'text-destructive hover:bg-destructive-state-hover'
                   : 'text-foreground hover:bg-state-hover',
               )}
             >

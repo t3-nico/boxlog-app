@@ -18,26 +18,29 @@ import { cn } from '@/lib/utils';
  * | text        | テキストリンク風、インライン操作             | 詳細を見る、もっと見る       |
  * | destructive | 破壊的アクション、確認ダイアログ内           | 削除、解除、退会             |
  *
- * ## サイズ設計（8pxグリッド準拠）
+ * ## サイズ設計（GAFA準拠）
  *
- * | size    | 高さ  | 用途                                         | 例                           |
- * |---------|-------|----------------------------------------------|------------------------------|
- * | sm      | 24px  | コンパクトUI、テーブル内、ドロップダウン     | フィルター、ソート、タグ     |
- * | default | 32px  | 標準的なアクション、ほとんどの場面           | ダイアログボタン、ツールバー |
+ * | size    | 高さ  | 根拠                              | 用途                           |
+ * |---------|-------|-----------------------------------|--------------------------------|
+ * | sm      | 32px  | M3 XS、shadcn/ui icon-sm          | コンパクトUI、ツールバー       |
+ * | default | 36px  | M3 Small（デフォルト）            | 標準的なアクション             |
+ * | lg      | 44px  | Apple HIG最小タップターゲット     | CTA、モバイル主要アクション    |
  *
  * ## アイコンボタンサイズ
  *
  * | size    | サイズ | 用途                                         |
  * |---------|--------|----------------------------------------------|
- * | icon-sm | 24px   | コンパクトなアイコン操作                     |
- * | icon    | 32px   | 標準的なアイコンボタン                       |
+ * | icon-sm | 32px   | コンパクトなアイコン操作                     |
+ * | icon    | 36px   | 標準的なアイコンボタン                       |
+ * | icon-lg | 44px   | ナビゲーション、モバイル主要                 |
  *
  * ## スペック詳細
  *
- * | size    | 高さ  | パディング | アイコン | フォント |
- * |---------|-------|------------|----------|----------|
- * | sm      | 24px  | 12px       | 14px     | text-xs  |
- * | default | 32px  | 16px       | 16px     | text-sm  |
+ * | size    | 高さ  | パディング | アイコン | フォント  | Tailwind |
+ * |---------|-------|------------|----------|-----------|----------|
+ * | sm      | 32px  | 12px       | 16px     | text-xs   | h-8      |
+ * | default | 36px  | 16px       | 16px     | text-sm   | h-9      |
+ * | lg      | 44px  | 20px       | 20px     | text-base | h-11     |
  */
 const buttonVariants = cva(
   [
@@ -78,28 +81,37 @@ const buttonVariants = cva(
         ].join(' '),
       },
       size: {
-        // sm: 24px高さ、12pxパディング、14pxアイコン
+        // sm: 32px高さ、12pxパディング、16pxアイコン
         sm: [
-          'h-6 px-3 text-xs',
-          "[&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-3.5 [&_svg]:shrink-0",
-        ].join(' '),
-        // default: 32px高さ、16pxパディング、16pxアイコン
-        default: [
-          'h-8 px-4 text-sm',
+          'h-8 px-3 text-xs',
           "[&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
         ].join(' '),
-        // アイコンボタン: 8pxグリッド準拠の正方形
-        // icon-sm: 24x24px、タップターゲット44px確保
-        'icon-sm': [
-          'size-6',
-          'relative after:absolute after:inset-0 after:m-auto after:size-11 after:content-[""]',
-          "[&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-3.5 [&_svg]:shrink-0",
+        // default: 36px高さ（M3 Small準拠）、16pxパディング、16pxアイコン
+        default: [
+          'h-9 px-4 text-sm',
+          "[&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
         ].join(' '),
-        // icon: 32x32px、タップターゲット44px確保
-        icon: [
+        // lg: 44px高さ（Apple HIG準拠）、20pxパディング、20pxアイコン
+        lg: [
+          'h-11 px-5 text-base',
+          "[&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-5 [&_svg]:shrink-0",
+        ].join(' '),
+        // icon-sm: 32x32px、タップターゲット44px確保
+        'icon-sm': [
           'size-8',
           'relative after:absolute after:inset-0 after:m-auto after:size-11 after:content-[""]',
           "[&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
+        ].join(' '),
+        // icon: 36x36px（M3準拠）、タップターゲット44px確保
+        icon: [
+          'size-9',
+          'relative after:absolute after:inset-0 after:m-auto after:size-11 after:content-[""]',
+          "[&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
+        ].join(' '),
+        // icon-lg: 44x44px（Apple HIG準拠）
+        'icon-lg': [
+          'size-11',
+          "[&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-5 [&_svg]:shrink-0",
         ].join(' '),
       },
     },

@@ -56,7 +56,7 @@ export function AlertDialogConfirm({
             disabled={isLoading}
             className={
               variant === 'destructive'
-                ? 'bg-destructive text-destructive-foreground hover:bg-destructive/90'
+                ? 'bg-destructive text-destructive-foreground hover:bg-destructive-hover'
                 : undefined
             }
           >

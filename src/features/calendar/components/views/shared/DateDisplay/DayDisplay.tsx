@@ -33,7 +33,7 @@ const generateHeaderClasses = (
   const statusClasses = isToday
     ? 'bg-primary text-primary-foreground font-semibold'
     : isSelected
-      ? 'bg-primary/10 text-primary'
+      ? 'bg-primary-state-selected text-primary'
       : isWeekend
         ? 'text-muted-foreground'
         : 'text-foreground';

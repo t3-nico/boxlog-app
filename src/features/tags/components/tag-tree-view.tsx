@@ -10,6 +10,7 @@ import {
   Trash2 as TrashIcon,
 } from 'lucide-react';
 
+import { LoadingSpinner } from '@/components/common/Loading/LoadingStates';
 import { Button } from '@/components/ui/button';
 import type { Tag } from '@/features/tags/types';
 import { useTranslations } from 'next-intl';
@@ -158,7 +159,7 @@ const TagTreeNode = ({ tag, onEditTag, onDeleteTag, onRenameTag }: TagTreeNodePr
                   type="button"
                   variant="ghost"
                   onClick={handleDeleteTag}
-                  className="text-destructive hover:bg-destructive/10 dark:hover:bg-destructive/20 flex w-full justify-start gap-2"
+                  className="text-destructive hover:bg-destructive-state-hover flex w-full justify-start gap-2"
                 >
                   <TrashIcon className="h-4 w-4" data-slot="icon" />
                   {t('tag.actions.delete')}
@@ -190,7 +191,7 @@ export const TagTreeView = ({
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-8">
-        <div className="border-primary h-8 w-8 animate-spin rounded-full border-b-2"></div>
+        <LoadingSpinner size="lg" />
       </div>
     );
   }

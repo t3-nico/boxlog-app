@@ -303,17 +303,17 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
                 <Filter className="text-muted-foreground h-4 w-4" />
                 <span className="text-muted-foreground text-xs">フィルター適用中:</span>
                 {parsedQuery.filters.status && (
-                  <span className="bg-primary/10 text-primary rounded px-2 py-1 text-xs">
+                  <span className="bg-primary-container text-on-primary-container rounded px-2 py-1 text-xs">
                     status: {parsedQuery.filters.status.join(', ')}
                   </span>
                 )}
                 {parsedQuery.filters.tags && (
-                  <span className="bg-primary/10 text-primary rounded px-2 py-1 text-xs">
+                  <span className="bg-primary-container text-on-primary-container rounded px-2 py-1 text-xs">
                     #{parsedQuery.filters.tags.join(', #')}
                   </span>
                 )}
                 {parsedQuery.filters.dueDate && (
-                  <span className="bg-primary/10 text-primary rounded px-2 py-1 text-xs">
+                  <span className="bg-primary-container text-on-primary-container rounded px-2 py-1 text-xs">
                     due: {parsedQuery.filters.dueDate}
                   </span>
                 )}

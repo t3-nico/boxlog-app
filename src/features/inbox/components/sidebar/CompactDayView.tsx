@@ -317,7 +317,7 @@ export const CompactDayView = memo(function CompactDayView({
                 <>
                   {/* 折りたたみセクション（睡眠時間） */}
                   <div
-                    className="bg-accent/10 flex items-center justify-center"
+                    className="bg-accent-container flex items-center justify-center"
                     style={{ height: COMPACT_COLLAPSED_SLEEP_HEIGHT }}
                   >
                     <Moon className="text-muted-foreground size-3" />
@@ -383,7 +383,7 @@ export const CompactDayView = memo(function CompactDayView({
                 <>
                   {/* 折りたたみセクション */}
                   <div
-                    className="bg-accent/10 border-border flex w-full items-center justify-center border-b"
+                    className="bg-accent-container border-border flex w-full items-center justify-center border-b"
                     style={{ height: COMPACT_COLLAPSED_SLEEP_HEIGHT }}
                   >
                     <span className="text-muted-foreground text-[10px]">
@@ -400,7 +400,7 @@ export const CompactDayView = memo(function CompactDayView({
                         key={hour}
                         className={cn(
                           'border-border border-b transition-colors',
-                          isDragOver && dragOverHour === hour && 'bg-primary/10',
+                          isDragOver && dragOverHour === hour && 'bg-primary-state-hover',
                         )}
                         style={{ height: COMPACT_HOUR_HEIGHT }}
                         onClick={() => handleTimeClick(hour)}
@@ -425,7 +425,7 @@ export const CompactDayView = memo(function CompactDayView({
                       {/* 上部の睡眠時間帯（0:00〜起床時間） */}
                       {sleepHours.morningRange && (
                         <div
-                          className="bg-accent/20 pointer-events-none absolute inset-x-0 z-[1]"
+                          className="bg-accent-state-selected pointer-events-none absolute inset-x-0 z-[1]"
                           style={{
                             top: 0,
                             height: sleepHours.morningRange.endHour * COMPACT_HOUR_HEIGHT,
@@ -436,7 +436,7 @@ export const CompactDayView = memo(function CompactDayView({
                       {/* 下部の睡眠時間帯（就寝時間〜24:00） */}
                       {sleepHours.eveningRange && (
                         <div
-                          className="bg-accent/20 pointer-events-none absolute inset-x-0 z-[1]"
+                          className="bg-accent-state-selected pointer-events-none absolute inset-x-0 z-[1]"
                           style={{
                             top: sleepHours.eveningRange.startHour * COMPACT_HOUR_HEIGHT,
                             height: (24 - sleepHours.eveningRange.startHour) * COMPACT_HOUR_HEIGHT,
@@ -453,7 +453,7 @@ export const CompactDayView = memo(function CompactDayView({
                       key={hour}
                       className={cn(
                         'border-border border-b transition-colors',
-                        isDragOver && dragOverHour === hour && 'bg-primary/10',
+                        isDragOver && dragOverHour === hour && 'bg-primary-state-hover',
                       )}
                       style={{ height: COMPACT_HOUR_HEIGHT }}
                       onClick={() => handleTimeClick(hour)}
@@ -503,7 +503,8 @@ export const CompactDayView = memo(function CompactDayView({
                       onDrop && 'cursor-grab active:cursor-grabbing',
                       draggingPlanId === plan.id && 'opacity-50',
                       isActive && 'ring-primary ring-2',
-                      !planColor && 'bg-primary/20 hover:bg-primary/30 border-primary/50',
+                      !planColor &&
+                        'bg-primary-container hover:bg-primary-state-hover border-primary',
                     )}
                     style={{
                       top,

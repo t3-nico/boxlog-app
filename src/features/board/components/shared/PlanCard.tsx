@@ -415,7 +415,7 @@ export function PlanCard({ item }: PlanCardProps) {
             <Popover open={dateTimeOpen} onOpenChange={setDateTimeOpen}>
               <PopoverTrigger asChild>
                 <div
-                  className="text-foreground hover:bg-primary/8 group/date flex w-fit cursor-pointer items-center gap-2 rounded py-0.5 text-sm transition-colors"
+                  className="text-foreground hover:bg-primary-state-hover group/date flex w-fit cursor-pointer items-center gap-2 rounded py-0.5 text-sm transition-colors"
                   onClick={(e) => {
                     // カードクリックイベントの伝播を防止
                     e.stopPropagation();
@@ -537,7 +537,7 @@ export function PlanCard({ item }: PlanCardProps) {
                     onClick={handleDateTimeClear}
                     variant="ghost"
                     size="sm"
-                    className="text-destructive hover:bg-destructive/10 h-6 px-2 text-xs"
+                    className="text-destructive hover:bg-destructive-state-hover h-6 px-2 text-xs"
                   >
                     クリア
                   </Button>
@@ -589,7 +589,7 @@ export function PlanCard({ item }: PlanCardProps) {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="hover:bg-primary/8 text-muted-foreground h-5 w-5 shrink-0"
+                    className="hover:bg-primary-state-hover text-muted-foreground h-5 w-5 shrink-0"
                   >
                     <Plus className="h-3 w-3" />
                   </Button>
@@ -597,7 +597,7 @@ export function PlanCard({ item }: PlanCardProps) {
               ) : (
                 /* タグなしの場合は「タグを追加」 */
                 <div
-                  className="hover:bg-primary/8 group/tags flex w-fit cursor-pointer flex-wrap gap-1 rounded py-0.5 transition-colors"
+                  className="hover:bg-primary-state-hover group/tags flex w-fit cursor-pointer flex-wrap gap-1 rounded py-0.5 transition-colors"
                   onClick={(e) => {
                     // カードクリックイベントの伝播を防止
                     e.stopPropagation();

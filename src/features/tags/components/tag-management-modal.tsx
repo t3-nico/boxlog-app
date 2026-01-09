@@ -437,7 +437,7 @@ export const TagManagementModal = ({
                             size="icon-sm"
                             onClick={handleEditClick}
                             data-tag-id={tag.id}
-                            className="text-primary size-7"
+                            className="text-primary"
                             title="Edit tag"
                           >
                             <Edit2 className="h-4 w-4" />
@@ -449,7 +449,7 @@ export const TagManagementModal = ({
                             onClick={handleDeleteClick}
                             data-tag-id={tag.id}
                             data-tag-name={tag.name}
-                            className="text-destructive size-7"
+                            className="text-destructive"
                             title="Delete tag"
                           >
                             <Trash2 className="h-4 w-4" />

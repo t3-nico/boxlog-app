@@ -98,7 +98,7 @@ export const MobileNavigation = ({
               'transition-colors duration-200',
               'disabled:cursor-not-allowed disabled:opacity-50',
               activeItem === item.id
-                ? 'text-primary bg-primary/10'
+                ? 'text-primary bg-primary-state-selected'
                 : 'text-muted-foreground hover:bg-state-hover',
             )}
           >

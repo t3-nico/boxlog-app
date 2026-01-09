@@ -99,7 +99,7 @@ export function DeleteConfirmDialog({
         {/* Header: gap-4準拠 */}
         <div className="mb-6 flex items-start gap-4">
           {/* 警告アイコン: destructive系カラー */}
-          <div className="bg-destructive/10 flex size-10 shrink-0 items-center justify-center rounded-full">
+          <div className="bg-destructive-container flex size-10 shrink-0 items-center justify-center rounded-full">
             <AlertTriangle className="text-destructive size-5" />
           </div>
           <div className="flex-1">

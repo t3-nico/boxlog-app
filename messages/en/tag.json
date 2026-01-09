@@ -395,6 +395,7 @@
     "delete": {
       "confirmTitle": "Delete this tag?",
       "confirmMessage": "Deleting \"{name}\". This action cannot be undone.",
+      "description": "Deleting this tag will remove it from all associated items. This action cannot be undone.",
       "childWarning": "This tag has {count} child tags. Please delete or move child tags first.",
       "confirmButton": "Delete",
       "confirmTitleWithName": "Delete \"{name}\"?",

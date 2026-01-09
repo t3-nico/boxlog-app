@@ -46,7 +46,7 @@ export const TagBadge = ({
             e.stopPropagation();
             onRemove();
           }}
-          className="hover:bg-destructive/10 dark:hover:bg-destructive/20 hover:text-destructive ml-1 h-4 w-4 text-xs"
+          className="hover:bg-destructive-state-hover hover:text-destructive ml-1 h-4 w-4 text-xs"
         >
           ×
         </Button>

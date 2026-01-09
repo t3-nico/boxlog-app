@@ -112,15 +112,15 @@ export function NotificationItem({
         {/* 削除ボタン */}
         <Button
           variant="ghost"
-          size="sm"
-          className="h-7 w-7 shrink-0 p-0"
+          size="icon-sm"
+          className="shrink-0"
           onClick={(e) => {
             e.stopPropagation();
             onDelete(id);
           }}
           disabled={isDeleting}
         >
-          <Trash2 className="h-3.5 w-3.5" />
+          <Trash2 className="size-4" />
         </Button>
       </div>
     </div>

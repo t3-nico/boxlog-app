@@ -62,7 +62,7 @@ export const PlanBillingSettings = memo(function PlanBillingSettings() {
       <SettingsCard title="現在のプラン">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="bg-primary/12 flex h-12 w-12 items-center justify-center rounded-xl">
+            <div className="bg-primary-container flex h-12 w-12 items-center justify-center rounded-xl">
               <Zap className="text-primary h-6 w-6" />
             </div>
             <div>
