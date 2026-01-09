@@ -5,6 +5,9 @@
       "activity": "Activity",
       "comments": "Comments"
     },
+    "activity": {
+      "noActivity": "No activity yet"
+    },
     "account": {
       "profileUpdated": "Profile updated successfully",
       "passwordUpdated": "Password updated successfully",
@@ -152,6 +155,17 @@
       "timezone": "Timezone",
       "timezoneDesc": "Timezone used for calendar display",
       "selectTimezone": "Select timezone",
+      "timezoneLabels": {
+        "japan": "Japan (JST)",
+        "utc": "Coordinated Universal Time (UTC)",
+        "usEastern": "US Eastern (EST/EDT)",
+        "usPacific": "US Pacific (PST/PDT)",
+        "uk": "UK (GMT/BST)",
+        "centralEurope": "Central Europe (CET/CEST)",
+        "australiaEastern": "Australia Eastern (AEST/AEDT)",
+        "china": "China (CST)",
+        "korea": "Korea (KST)"
+      },
       "timeFormat": "Time format",
       "timeFormatDesc": "Select 12-hour or 24-hour time format",
       "selectTimeFormat": "Select time format",

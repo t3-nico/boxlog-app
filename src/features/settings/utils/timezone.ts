@@ -5,15 +5,60 @@
 
 // サポートするタイムゾーンの定義
 export const SUPPORTED_TIMEZONES = [
-  { value: 'Asia/Tokyo', label: '日本 (JST)', offset: '+09:00' },
-  { value: 'UTC', label: '協定世界時 (UTC)', offset: '+00:00' },
-  { value: 'America/New_York', label: 'アメリカ東部 (EST/EDT)', offset: '-05:00/-04:00' },
-  { value: 'America/Los_Angeles', label: 'アメリカ西部 (PST/PDT)', offset: '-08:00/-07:00' },
-  { value: 'Europe/London', label: 'イギリス (GMT/BST)', offset: '+00:00/+01:00' },
-  { value: 'Europe/Paris', label: 'ヨーロッパ中央 (CET/CEST)', offset: '+01:00/+02:00' },
-  { value: 'Australia/Sydney', label: 'オーストラリア東部 (AEST/AEDT)', offset: '+10:00/+11:00' },
-  { value: 'Asia/Shanghai', label: '中国 (CST)', offset: '+08:00' },
-  { value: 'Asia/Seoul', label: '韓国 (KST)', offset: '+09:00' },
+  {
+    value: 'Asia/Tokyo',
+    label: 'Japan (JST)',
+    labelKey: 'settings.calendar.timezoneLabels.japan',
+    offset: '+09:00',
+  },
+  {
+    value: 'UTC',
+    label: 'Coordinated Universal Time (UTC)',
+    labelKey: 'settings.calendar.timezoneLabels.utc',
+    offset: '+00:00',
+  },
+  {
+    value: 'America/New_York',
+    label: 'US Eastern (EST/EDT)',
+    labelKey: 'settings.calendar.timezoneLabels.usEastern',
+    offset: '-05:00/-04:00',
+  },
+  {
+    value: 'America/Los_Angeles',
+    label: 'US Pacific (PST/PDT)',
+    labelKey: 'settings.calendar.timezoneLabels.usPacific',
+    offset: '-08:00/-07:00',
+  },
+  {
+    value: 'Europe/London',
+    label: 'UK (GMT/BST)',
+    labelKey: 'settings.calendar.timezoneLabels.uk',
+    offset: '+00:00/+01:00',
+  },
+  {
+    value: 'Europe/Paris',
+    label: 'Central Europe (CET/CEST)',
+    labelKey: 'settings.calendar.timezoneLabels.centralEurope',
+    offset: '+01:00/+02:00',
+  },
+  {
+    value: 'Australia/Sydney',
+    label: 'Australia Eastern (AEST/AEDT)',
+    labelKey: 'settings.calendar.timezoneLabels.australiaEastern',
+    offset: '+10:00/+11:00',
+  },
+  {
+    value: 'Asia/Shanghai',
+    label: 'China (CST)',
+    labelKey: 'settings.calendar.timezoneLabels.china',
+    offset: '+08:00',
+  },
+  {
+    value: 'Asia/Seoul',
+    label: 'Korea (KST)',
+    labelKey: 'settings.calendar.timezoneLabels.korea',
+    offset: '+09:00',
+  },
 ] as const;
 
 export type TimezoneValue = (typeof SUPPORTED_TIMEZONES)[number]['value'];
@@ -25,8 +70,8 @@ export const getBrowserTimezone = (): string => {
   try {
     return Intl.DateTimeFormat().resolvedOptions().timeZone;
   } catch (error) {
-    console.warn('ブラウザのタイムゾーン検出に失敗:', error);
-    return 'Asia/Tokyo'; // フォールバック
+    console.warn('Failed to detect browser timezone:', error);
+    return 'Asia/Tokyo'; // fallback
   }
 };
 
@@ -39,7 +84,7 @@ export const getUserTimezone = (): string | null => {
   try {
     return localStorage.getItem('user-timezone');
   } catch (error) {
-    console.warn('ローカルストレージからタイムゾーン設定の取得に失敗:', error);
+    console.warn('Failed to get timezone from localStorage:', error);
     return null;
   }
 };
@@ -58,10 +103,10 @@ export const setUserTimezone = (timezone: string): void => {
   try {
     localStorage.setItem('user-timezone', timezone);
 
-    // タイムゾーン変更を他のコンポーネントに通知
+    // Notify other components of timezone change
     window.dispatchEvent(new CustomEvent(TIMEZONE_CHANGE_EVENT, { detail: { timezone } }));
   } catch (error) {
-    console.error('タイムゾーン設定の保存に失敗:', error);
+    console.error('Failed to save timezone setting:', error);
   }
 };
 
@@ -163,7 +208,7 @@ export const getTimezoneOffset = (timezone: string): number => {
 
     return offsetMinutes;
   } catch (error) {
-    console.error(`タイムゾーン ${timezone} のオフセット計算に失敗:`, error);
+    console.error(`Failed to calculate timezone offset for ${timezone}:`, error);
     // フォールバック: 既知のタイムゾーンの固定値
     const knownOffsets: { [key: string]: number } = {
       'Asia/Tokyo': 540, // UTC+9
@@ -220,7 +265,7 @@ export const utcToUserTimezone = (utcDate: Date): Date => {
 
     return convertedDate;
   } catch (error) {
-    console.error(`UTC→タイムゾーン変換エラー (${timezone}):`, error);
+    console.error(`UTC to timezone conversion error (${timezone}):`, error);
     // フォールバック: 元の日付をそのまま返す
     return new Date(utcDate);
   }
@@ -291,7 +336,7 @@ export const userTimezoneToUtc = (localDate: Date): Date => {
 
     return utcDate;
   } catch (error) {
-    console.error(`タイムゾーン→UTC変換エラー (${timezone}):`, error);
+    console.error(`Timezone to UTC conversion error (${timezone}):`, error);
     // フォールバック: 元の日付をそのまま返す
     return new Date(localDate);
   }
@@ -398,7 +443,7 @@ export const getCalendarTimezoneLabel = (): string => {
       return `UTC${sign}${hours}:${minutes.toString().padStart(2, '0')}`;
     }
   } catch (error) {
-    console.error('タイムゾーンラベル生成エラー:', error);
+    console.error('Timezone label generation error:', error);
     // フォールバック: 既知のオフセットを使用
     const knownOffsets: { [key: string]: string } = {
       'Asia/Tokyo': 'UTC+9',
@@ -452,7 +497,7 @@ export const getCurrentTimeInUserTimezone = (): Date => {
     const timeString = now.toLocaleString('sv-SE', { timeZone: timezone });
     return new Date(timeString);
   } catch (error) {
-    console.error(`タイムゾーン ${timezone} での時刻取得に失敗:`, error);
+    console.error(`Failed to get time for timezone ${timezone}:`, error);
     // フォールバック: UTC時刻をオフセット計算で変換
     const utcTime = new Date(now.getTime() + now.getTimezoneOffset() * 60000);
     return utcToUserTimezone(utcTime);
@@ -472,11 +517,14 @@ export const getCurrentTimePosition = (): number => {
 
 /**
  * ユーザーのタイムゾーンで時刻をフォーマット
+ * @param date - フォーマットする日時（省略時は現在時刻）
+ * @param locale - 'en' | 'ja' (デフォルト: 'en')
  */
-export const formatCurrentTime = (date?: Date): string => {
+export const formatCurrentTime = (date?: Date, locale: string = 'en'): string => {
   const currentTime = date || getCurrentTimeInUserTimezone();
+  const dateLocale = locale === 'ja' ? 'ja-JP' : 'en-US';
 
-  return currentTime.toLocaleTimeString('ja-JP', {
+  return currentTime.toLocaleTimeString(dateLocale, {
     hour: '2-digit',
     minute: '2-digit',
     hour12: false,

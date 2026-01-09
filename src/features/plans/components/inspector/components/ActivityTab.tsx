@@ -1,6 +1,7 @@
 'use client';
 
 import { CheckCircle, Edit, Plus, Tag, Trash } from 'lucide-react';
+import { useLocale, useTranslations } from 'next-intl';
 
 import { usePlanActivities } from '../../../hooks/usePlanActivities';
 import { formatActivity, formatRelativeTime } from '../../../utils/activityFormatter';
@@ -11,6 +12,8 @@ interface ActivityTabProps {
 }
 
 export function ActivityTab({ planId, order }: ActivityTabProps) {
+  const locale = useLocale();
+  const t = useTranslations('settings');
   const { data: activities, isPending } = usePlanActivities(planId, { order });
 
   if (isPending) {
@@ -24,7 +27,7 @@ export function ActivityTab({ planId, order }: ActivityTabProps) {
   if (!activities || activities.length === 0) {
     return (
       <div className="text-muted-foreground py-8 text-center text-sm">
-        まだアクティビティがありません
+        {t('activity.noActivity')}
       </div>
     );
   }
@@ -51,7 +54,7 @@ export function ActivityTab({ planId, order }: ActivityTabProps) {
               <div className="flex-1 space-y-1 pb-6">
                 <p className="text-sm">{formatted.message}</p>
                 <p className="text-muted-foreground text-xs">
-                  {formatRelativeTime(activity.created_at)}
+                  {formatRelativeTime(activity.created_at, locale)}
                 </p>
               </div>
             </div>

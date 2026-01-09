@@ -5,6 +5,9 @@
       "activity": "アクティビティ",
       "comments": "コメント"
     },
+    "activity": {
+      "noActivity": "まだアクティビティがありません"
+    },
     "account": {
       "profileUpdated": "プロフィールを更新しました",
       "passwordUpdated": "パスワードを更新しました",
@@ -152,6 +155,17 @@
       "timezone": "タイムゾーン",
       "timezoneDesc": "カレンダー表示に使用するタイムゾーン",
       "selectTimezone": "タイムゾーンを選択",
+      "timezoneLabels": {
+        "japan": "日本 (JST)",
+        "utc": "協定世界時 (UTC)",
+        "usEastern": "アメリカ東部 (EST/EDT)",
+        "usPacific": "アメリカ西部 (PST/PDT)",
+        "uk": "イギリス (GMT/BST)",
+        "centralEurope": "ヨーロッパ中央 (CET/CEST)",
+        "australiaEastern": "オーストラリア東部 (AEST/AEDT)",
+        "china": "中国 (CST)",
+        "korea": "韓国 (KST)"
+      },
       "timeFormat": "時間表示形式",
       "timeFormatDesc": "12時間表記または24時間表記を選択",
       "selectTimeFormat": "時間表示形式を選択",

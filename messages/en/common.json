@@ -207,7 +207,8 @@
     "previous": "Previous",
     "next": "Next",
     "selectColor": "Select {color}",
-    "openAIAssistant": "Open AI Assistant"
+    "openAIAssistant": "Open AI Assistant",
+    "selectDate": "Select {date}"
   },
   "status": {
     "loading": "Loading...",
@@ -226,7 +227,10 @@
     "nextMonth": "Next Month",
     "daysAgo": " days ago",
     "weeksAgo": " weeks ago",
-    "monthsAgo": " months ago"
+    "monthsAgo": " months ago",
+    "justNow": "just now",
+    "minutesAgo": "{count} min ago",
+    "hoursAgo": "{count}h ago"
   },
   "reminder": {
     "label": "Reminder",
