@@ -5,6 +5,7 @@
 'use client';
 
 import { Calendar } from 'lucide-react';
+import { useFormatter, useTranslations } from 'next-intl';
 import React, { memo, useMemo } from 'react';
 
 import { EmptyState } from '@/components/common';
@@ -27,6 +28,9 @@ export const DayColumn = memo<DayColumnProps>(function DayColumn({
   onEventContextMenu,
   className = '',
 }) {
+  const t = useTranslations('common.aria');
+  const format = useFormatter();
+
   // 今日・週末の判定（propsで上書き可能）
   const isWeekendActual = isWeekendProp ?? isWeekend(date);
 
@@ -73,8 +77,14 @@ export const DayColumn = memo<DayColumnProps>(function DayColumn({
     .filter(Boolean)
     .join(' ');
 
+  const formattedDate = format.dateTime(date, { dateStyle: 'full' });
+
   return (
-    <div className={columnClasses}>
+    <div
+      role="gridcell"
+      className={columnClasses}
+      aria-label={t('selectDate', { date: formattedDate })}
+    >
       {/* イベント表示エリア */}
       <div
         role="button"
@@ -90,7 +100,6 @@ export const DayColumn = memo<DayColumnProps>(function DayColumn({
         style={{
           minHeight: `${columnHeight}px`,
         }}
-        aria-label={`Day column for ${date.toDateString()}`}
       >
         {/* 現在時刻線はScrollableCalendarLayoutで統一表示 */}
 
