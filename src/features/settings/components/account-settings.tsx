@@ -43,7 +43,7 @@ export function AccountSettings() {
   }, []);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Profile Section */}
       <SettingsCard title={t('settings.account.profile')}>
         <div className="space-y-0">
@@ -55,21 +55,14 @@ export function AccountSettings() {
                 <AvatarFallback className="text-xs">{getInitials(displayName)}</AvatarFallback>
               </Avatar>
             }
-            action={
-              <Button size="sm" onClick={() => setShowAvatarDialog(true)}>
-                {t('common.change')}
-              </Button>
-            }
+            action={<Button onClick={() => setShowAvatarDialog(true)}>{t('common.change')}</Button>}
           />
           <SettingRow
             label={t('settings.account.displayName')}
             value={displayName}
             action={
-              <Button size="sm" onClick={() => setShowDisplayNameDialog(true)}>
-                {t('common.change')}
-              </Button>
+              <Button onClick={() => setShowDisplayNameDialog(true)}>{t('common.change')}</Button>
             }
-            isLast
           />
         </div>
       </SettingsCard>
@@ -80,21 +73,14 @@ export function AccountSettings() {
           <SettingRow
             label={t('settings.account.email')}
             value={email}
-            action={
-              <Button size="sm" onClick={() => setShowEmailDialog(true)}>
-                {t('common.change')}
-              </Button>
-            }
+            action={<Button onClick={() => setShowEmailDialog(true)}>{t('common.change')}</Button>}
           />
           <SettingRow
             label={t('settings.account.password')}
             value="••••••••"
             action={
-              <Button size="sm" onClick={() => setShowPasswordDialog(true)}>
-                {t('common.change')}
-              </Button>
+              <Button onClick={() => setShowPasswordDialog(true)}>{t('common.change')}</Button>
             }
-            isLast
           />
         </div>
       </SettingsCard>

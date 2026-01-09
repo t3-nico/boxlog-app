@@ -47,7 +47,7 @@ export function SettingsPageWrapper({ title, children }: SettingsPageWrapperProp
 
       {/* コンテンツ */}
       <ScrollArea className="flex-1">
-        <div className="p-4 md:p-6">{children}</div>
+        <div className="p-4">{children}</div>
       </ScrollArea>
     </div>
   );

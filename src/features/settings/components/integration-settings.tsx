@@ -175,7 +175,7 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
   }, []);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* AI設定 */}
       <SettingsCard title="AI設定">
         <div className="space-y-4">
@@ -215,7 +215,6 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
                       <Button
                         type="button"
                         variant="ghost"
-                        size="sm"
                         className="absolute top-1/2 right-1 h-7 w-7 -translate-y-1/2 p-0"
                         onClick={() => toggleKeyVisibility(provider.id)}
                       >
@@ -228,7 +227,6 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
                     </div>
                     <Button
                       variant="outline"
-                      size="sm"
                       onClick={() => handleSaveApiKey(provider.id)}
                       disabled={!aiKeys[provider.id] || savingKeys[provider.id]}
                     >
@@ -241,7 +239,6 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
                     {savedKeys[provider.id] && (
                       <Button
                         variant="ghost"
-                        size="sm"
                         onClick={() => handleDeleteApiKey(provider.id)}
                         className="text-destructive hover:text-destructive"
                       >
@@ -305,7 +302,6 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
           <SettingRow
             label="自動同期を有効にする"
             value={<Switch checked={syncEnabled} onCheckedChange={handleSyncChange} />}
-            isLast
           />
         </div>
         {syncEnabled && (

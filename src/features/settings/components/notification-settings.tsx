@@ -113,12 +113,7 @@ function DeliveryMethodDropdown({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant="outline"
-          size="sm"
-          className="flex items-center gap-2"
-          disabled={isPending}
-        >
+        <Button variant="outline" className="flex items-center gap-2" disabled={isPending}>
           <span className="text-sm">{getSelectedLabel()}</span>
           <ChevronDown className="size-4 opacity-50" />
         </Button>
@@ -212,7 +207,7 @@ export function NotificationSettings() {
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
+      <div className="space-y-8">
         <SettingsCard>
           <div className="animate-pulse space-y-4">
             <div className="bg-muted h-12 rounded-md" />
@@ -225,10 +220,10 @@ export function NotificationSettings() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <SettingsCard isSaving={updateMutation.isPending}>
         <div className="space-y-0">
-          {NOTIFICATION_TYPES.map(({ type, labelKey }, index) => (
+          {NOTIFICATION_TYPES.map(({ type, labelKey }) => (
             <SettingRow
               key={type}
               label={t(labelKey)}
@@ -240,7 +235,6 @@ export function NotificationSettings() {
                   browserPermission={browserPermission}
                 />
               }
-              isLast={index === NOTIFICATION_TYPES.length - 1}
             />
           ))}
         </div>

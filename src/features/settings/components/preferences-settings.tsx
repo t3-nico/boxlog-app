@@ -70,7 +70,7 @@ export function PreferencesSettings() {
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* 言語とテーマ */}
       <SettingsCard
         title={t('settings.preferences.languageAndTheme')}
@@ -108,7 +108,6 @@ export function PreferencesSettings() {
                 </SelectContent>
               </Select>
             }
-            isLast
           />
         </div>
       </SettingsCard>
@@ -135,7 +134,6 @@ export function PreferencesSettings() {
                 </SelectContent>
               </Select>
             }
-            isLast
           />
         </div>
       </SettingsCard>

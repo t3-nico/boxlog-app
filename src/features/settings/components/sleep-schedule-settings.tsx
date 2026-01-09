@@ -198,7 +198,6 @@ export function SleepScheduleSettings() {
         <SettingRow
           label={t('settings.sleepSchedule.enabled')}
           value={<Switch checked={enabled} onCheckedChange={handleToggle} />}
-          isLast={!enabled}
         />
 
         {enabled && (
@@ -236,7 +235,6 @@ export function SleepScheduleSettings() {
                   </SelectContent>
                 </Select>
               }
-              isLast
             />
           </>
         )}

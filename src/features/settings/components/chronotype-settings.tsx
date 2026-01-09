@@ -176,7 +176,7 @@ export function ChronotypeSettings() {
   const selectedProfile = selectedType !== 'custom' ? CHRONOTYPE_PRESETS[selectedType] : null;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* タイプ選択セクション */}
       <SettingsCard title={t('settings.chronotype.title')} isSaving={autoSave.isSaving}>
         <div className="space-y-0">
@@ -196,7 +196,6 @@ export function ChronotypeSettings() {
                 </SelectContent>
               </Select>
             }
-            isLast
           />
         </div>
 

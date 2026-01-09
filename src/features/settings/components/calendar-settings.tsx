@@ -135,7 +135,7 @@ export function CalendarSettings() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Time & Timezone Section */}
       <SettingsCard title={t('settings.calendar.timeAndTimezone')} isSaving={isSaving}>
         <div className="space-y-0">
@@ -186,7 +186,6 @@ export function CalendarSettings() {
                 </SelectContent>
               </Select>
             }
-            isLast
           />
         </div>
       </SettingsCard>
@@ -209,7 +208,6 @@ export function CalendarSettings() {
                 </SelectContent>
               </Select>
             }
-            isLast
           />
         </div>
       </SettingsCard>
@@ -252,7 +250,6 @@ export function CalendarSettings() {
                 onCheckedChange={handleShowDeclinedEventsChange}
               />
             }
-            isLast
           />
         </div>
       </SettingsCard>
@@ -298,7 +295,6 @@ export function CalendarSettings() {
                 </SelectContent>
               </Select>
             }
-            isLast
           />
         </div>
       </SettingsCard>
@@ -345,7 +341,6 @@ export function CalendarSettings() {
                 </SelectContent>
               </Select>
             }
-            isLast
           />
         </div>
         {/* 営業時間プレビュー */}
@@ -362,7 +357,7 @@ export function CalendarSettings() {
 
       {/* Reset Settings Section */}
       <SettingsCard title={t('settings.calendar.resetSettings')}>
-        <Button variant="destructive" size="sm" onClick={handleResetSettings}>
+        <Button variant="destructive" onClick={handleResetSettings}>
           {t('settings.calendar.resetToDefault')}
         </Button>
       </SettingsCard>
