@@ -10,7 +10,7 @@ import { trpc } from '@/lib/trpc/client';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
-import { SettingField } from './fields/SettingField';
+import { SettingRow } from './fields/SettingRow';
 import { SettingsCard } from './SettingsCard';
 
 export const DataExportSettings = memo(function DataExportSettings() {
@@ -116,23 +116,21 @@ export const DataExportSettings = memo(function DataExportSettings() {
 
       {/* 自動バックアップ */}
       <SettingsCard title="自動バックアップ">
-        <div className="space-y-4">
-          <SettingField
+        <div className="space-y-0">
+          <SettingRow
             label="自動バックアップを有効にする"
-            description="毎日自動的にデータをバックアップします"
-          >
-            <Switch checked={autoBackup} onCheckedChange={handleAutoBackupChange} />
-          </SettingField>
-
-          {autoBackup && (
-            <div className="bg-surface-container rounded-xl p-4">
-              <div className="flex items-center gap-2">
-                <History className="text-muted-foreground h-4 w-4" />
-                <span className="text-sm">最終バックアップ: 未実行</span>
-              </div>
-            </div>
-          )}
+            value={<Switch checked={autoBackup} onCheckedChange={handleAutoBackupChange} />}
+            isLast
+          />
         </div>
+        {autoBackup && (
+          <div className="bg-surface-container mt-4 rounded-xl p-4">
+            <div className="flex items-center gap-2">
+              <History className="text-muted-foreground h-4 w-4" />
+              <span className="text-sm">最終バックアップ: 未実行</span>
+            </div>
+          </div>
+        )}
       </SettingsCard>
     </div>
   );

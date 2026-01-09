@@ -22,7 +22,7 @@ import { Switch } from '@/components/ui/switch';
 import { useAuthStore } from '@/features/auth/stores/useAuthStore';
 import { ApiKeyStorage } from '@/lib/security/encryption';
 
-import { SettingField } from './fields/SettingField';
+import { SettingRow } from './fields/SettingRow';
 import { SettingsCard } from './SettingsCard';
 
 interface Integration {
@@ -301,22 +301,20 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
 
       {/* 同期設定 */}
       <SettingsCard title="同期設定">
-        <div className="space-y-4">
-          <SettingField
+        <div className="space-y-0">
+          <SettingRow
             label="自動同期を有効にする"
-            description="連携サービスのデータを自動的に同期します"
-          >
-            <Switch checked={syncEnabled} onCheckedChange={handleSyncChange} />
-          </SettingField>
-
-          {syncEnabled && (
-            <div className="bg-surface-container rounded-xl p-4">
-              <p className="text-muted-foreground text-sm">
-                同期は5分ごとに自動実行されます。手動で同期する場合は各サービスの設定から実行できます。
-              </p>
-            </div>
-          )}
+            value={<Switch checked={syncEnabled} onCheckedChange={handleSyncChange} />}
+            isLast
+          />
         </div>
+        {syncEnabled && (
+          <div className="bg-surface-container mt-4 rounded-xl p-4">
+            <p className="text-muted-foreground text-sm">
+              同期は5分ごとに自動実行されます。手動で同期する場合は各サービスの設定から実行できます。
+            </p>
+          </div>
+        )}
       </SettingsCard>
 
       {/* API連携 */}
