@@ -5,7 +5,6 @@ import { useCallback, useMemo } from 'react';
 import { Moon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
@@ -18,6 +17,7 @@ import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettin
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
 import { cn } from '@/lib/utils';
 
+import { SettingRow } from './fields/SettingRow';
 import { SettingsCard } from './SettingsCard';
 
 interface SleepScheduleAutoSaveSettings {
@@ -194,30 +194,20 @@ export function SleepScheduleSettings() {
 
   return (
     <SettingsCard title={t('settings.sleepSchedule.title')} isSaving={autoSave.isSaving}>
-      <div className="space-y-6">
-        {/* 有効/無効トグル */}
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Moon className="text-muted-foreground size-4" />
-              <Label htmlFor="sleep-schedule-enabled" className="cursor-pointer">
-                {t('settings.sleepSchedule.enabled')}
-              </Label>
-            </div>
-            <Switch id="sleep-schedule-enabled" checked={enabled} onCheckedChange={handleToggle} />
-          </div>
-          <p className="text-muted-foreground text-sm">{t('settings.sleepSchedule.description')}</p>
-        </div>
+      <div className="space-y-0">
+        <SettingRow
+          label={t('settings.sleepSchedule.enabled')}
+          value={<Switch checked={enabled} onCheckedChange={handleToggle} />}
+          isLast={!enabled}
+        />
 
-        {/* 時刻設定（有効時のみ表示） */}
         {enabled && (
           <>
-            <div className="grid grid-cols-2 gap-4">
-              {/* 就寝時刻 */}
-              <div className="space-y-2">
-                <Label htmlFor="bedtime">{t('settings.sleepSchedule.bedtime')}</Label>
+            <SettingRow
+              label={t('settings.sleepSchedule.bedtime')}
+              value={
                 <Select value={bedtime.toString()} onValueChange={handleBedtimeChange}>
-                  <SelectTrigger id="bedtime">
+                  <SelectTrigger className="w-[100px]">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -228,13 +218,13 @@ export function SleepScheduleSettings() {
                     ))}
                   </SelectContent>
                 </Select>
-              </div>
-
-              {/* 起床時刻 */}
-              <div className="space-y-2">
-                <Label htmlFor="wake-time">{t('settings.sleepSchedule.wakeTime')}</Label>
+              }
+            />
+            <SettingRow
+              label={t('settings.sleepSchedule.wakeTime')}
+              value={
                 <Select value={wakeTime.toString()} onValueChange={handleWakeTimeChange}>
-                  <SelectTrigger id="wake-time">
+                  <SelectTrigger className="w-[100px]">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -245,33 +235,39 @@ export function SleepScheduleSettings() {
                     ))}
                   </SelectContent>
                 </Select>
-              </div>
-            </div>
-
-            {/* 睡眠時間表示 */}
-            <div className="bg-accent/20 flex items-center gap-2 rounded-lg p-3">
-              <Moon className="text-accent-foreground size-4" />
-              <div>
-                <span className="text-sm font-medium">{t('settings.sleepSchedule.duration')}</span>
-                <span className="text-muted-foreground ml-2 text-sm">
-                  {t('settings.sleepSchedule.hours', { hours: sleepHours })}
-                </span>
-              </div>
-            </div>
-
-            {/* 24時間タイムライン */}
-            <div className="pt-2">
-              <h5 className="mb-3 text-sm font-medium">{t('settings.sleepSchedule.preview')}</h5>
-              <SleepTimelineBar
-                bedtime={bedtime}
-                wakeTime={wakeTime}
-                legendSleep={t('settings.sleepSchedule.legendSleep')}
-                legendActivity={t('settings.sleepSchedule.legendActivity')}
-              />
-            </div>
+              }
+              isLast
+            />
           </>
         )}
       </div>
+
+      {/* 睡眠時間表示とタイムライン（有効時のみ） */}
+      {enabled && (
+        <div className="mt-4 space-y-4">
+          {/* 睡眠時間表示 */}
+          <div className="bg-accent/20 flex items-center gap-2 rounded-lg p-3">
+            <Moon className="text-accent-foreground size-4" />
+            <div>
+              <span className="text-sm font-medium">{t('settings.sleepSchedule.duration')}</span>
+              <span className="text-muted-foreground ml-2 text-sm">
+                {t('settings.sleepSchedule.hours', { hours: sleepHours })}
+              </span>
+            </div>
+          </div>
+
+          {/* 24時間タイムライン */}
+          <div>
+            <h5 className="mb-3 text-sm font-medium">{t('settings.sleepSchedule.preview')}</h5>
+            <SleepTimelineBar
+              bedtime={bedtime}
+              wakeTime={wakeTime}
+              legendSleep={t('settings.sleepSchedule.legendSleep')}
+              legendActivity={t('settings.sleepSchedule.legendActivity')}
+            />
+          </div>
+        </div>
+      )}
     </SettingsCard>
   );
 }

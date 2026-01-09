@@ -4,12 +4,20 @@ import { useCallback, useMemo } from 'react';
 
 import { ExternalLink, Star } from 'lucide-react';
 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 
 import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings';
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
 import { useTranslations } from 'next-intl';
 
+import { SettingRow } from './fields/SettingRow';
 import { SettingsCard } from './SettingsCard';
 
 import type { ChronotypeType, ProductivityZone } from '@/features/settings/types/chronotype';
@@ -21,14 +29,6 @@ const CHRONOTYPE_EMOJI: Record<Exclude<ChronotypeType, 'custom'>, string> = {
   bear: '🐻',
   wolf: '🐺',
   dolphin: '🐬',
-};
-
-// クロノタイプごとの日本語ラベル
-const CHRONOTYPE_LABEL: Record<Exclude<ChronotypeType, 'custom'>, string> = {
-  lion: '早起き型',
-  bear: '標準型',
-  wolf: '夜型',
-  dolphin: '不規則型',
 };
 
 // 生産性レベルの色（クロノタイプセマンティックトークン）
@@ -162,10 +162,10 @@ export function ChronotypeSettings() {
 
   // タイプ選択ハンドラー
   const handleTypeSelect = useCallback(
-    (type: ChronotypeType) => {
+    (type: string) => {
       autoSave.updateValue('chronotype', {
         ...autoSave.values.chronotype,
-        type,
+        type: type as ChronotypeType,
       });
     },
     [autoSave],
@@ -179,47 +179,38 @@ export function ChronotypeSettings() {
     <div className="space-y-6">
       {/* タイプ選択セクション */}
       <SettingsCard title={t('settings.chronotype.title')} isSaving={autoSave.isSaving}>
-        <div className="space-y-4">
-          {/* 説明・参考リンク */}
-          <div className="space-y-3">
-            <p className="text-muted-foreground text-sm">{t('settings.chronotype.description')}</p>
-            <a
-              href="https://sleepdoctor.com/pages/chronotypes"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1 text-xs underline transition-colors"
-            >
-              <span>{t('settings.chronotype.learnMore')}</span>
-              <ExternalLink className="h-3 w-3" />
-            </a>
-          </div>
+        <div className="space-y-0">
+          <SettingRow
+            label={t('settings.chronotype.title')}
+            value={
+              <Select value={selectedType} onValueChange={handleTypeSelect}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {selectableTypes.map((type) => (
+                    <SelectItem key={type} value={type}>
+                      {CHRONOTYPE_EMOJI[type]} {CHRONOTYPE_PRESETS[type].name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            }
+            isLast
+          />
+        </div>
 
-          {/* タイプ選択ボタン */}
-          <div className="grid grid-cols-2 gap-2">
-            {selectableTypes.map((type) => {
-              const isSelected = selectedType === type;
-              return (
-                <button
-                  key={type}
-                  type="button"
-                  onClick={() => handleTypeSelect(type)}
-                  className={cn(
-                    'flex items-center gap-2 rounded-lg border p-3 text-left transition-colors outline-none',
-                    isSelected
-                      ? 'border-foreground bg-secondary text-secondary-foreground'
-                      : 'border-border hover:bg-state-hover',
-                  )}
-                >
-                  <span className="text-xl">{CHRONOTYPE_EMOJI[type]}</span>
-                  <div>
-                    <div className="font-medium">{CHRONOTYPE_PRESETS[type].name}</div>
-                    <div className="text-muted-foreground text-xs">{CHRONOTYPE_LABEL[type]}</div>
-                  </div>
-                  {isSelected && <div className="text-foreground ml-auto">✓</div>}
-                </button>
-              );
-            })}
-          </div>
+        {/* 参考リンク */}
+        <div className="mt-4">
+          <a
+            href="https://sleepdoctor.com/pages/chronotypes"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1 text-xs underline transition-colors"
+          >
+            <span>{t('settings.chronotype.learnMore')}</span>
+            <ExternalLink className="h-3 w-3" />
+          </a>
         </div>
       </SettingsCard>
 
@@ -233,10 +224,7 @@ export function ChronotypeSettings() {
                 {CHRONOTYPE_EMOJI[selectedType as Exclude<ChronotypeType, 'custom'>]}
               </span>
               <div>
-                <h4 className="font-medium">
-                  {selectedProfile.name} -{' '}
-                  {CHRONOTYPE_LABEL[selectedType as Exclude<ChronotypeType, 'custom'>]}
-                </h4>
+                <h4 className="font-medium">{selectedProfile.name}</h4>
                 <p className="text-muted-foreground mt-1 text-sm">{selectedProfile.description}</p>
               </div>
             </div>

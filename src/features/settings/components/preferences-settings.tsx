@@ -16,7 +16,7 @@ import { routing, type Locale } from '@/i18n/routing';
 import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings';
 import { useLocale, useTranslations } from 'next-intl';
 
-import { SettingField } from './fields/SettingField';
+import { SettingRow } from './fields/SettingRow';
 import { SettingsCard } from './SettingsCard';
 
 interface PreferencesSettingsData {
@@ -76,60 +76,67 @@ export function PreferencesSettings() {
         title={t('settings.preferences.languageAndTheme')}
         isSaving={preferences.isSaving}
       >
-        <div className="space-y-4">
-          <SettingField label={t('settings.preferences.language')}>
-            <Select value={locale} onValueChange={handleLanguageChange}>
-              <SelectTrigger>
-                <SelectValue placeholder={t('settings.preferences.selectLanguage')} />
-              </SelectTrigger>
-              <SelectContent>
-                {routing.locales.map((loc) => (
-                  <SelectItem key={loc} value={loc}>
-                    {loc === 'ja' ? '🇯🇵 日本語' : '🇺🇸 English'}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </SettingField>
-
-          <SettingField label={t('settings.preferences.themeLabel')}>
-            <Select value={theme} onValueChange={handleThemeChange}>
-              <SelectTrigger>
-                <SelectValue placeholder={t('settings.preferences.selectTheme')} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="system">{t('settings.preferences.themeSystem')}</SelectItem>
-                <SelectItem value="light">{t('settings.preferences.themeLight')}</SelectItem>
-                <SelectItem value="dark">{t('settings.preferences.themeDark')}</SelectItem>
-              </SelectContent>
-            </Select>
-          </SettingField>
+        <div className="space-y-0">
+          <SettingRow
+            label={t('settings.preferences.language')}
+            value={
+              <Select value={locale} onValueChange={handleLanguageChange}>
+                <SelectTrigger className="w-[160px]">
+                  <SelectValue placeholder={t('settings.preferences.selectLanguage')} />
+                </SelectTrigger>
+                <SelectContent>
+                  {routing.locales.map((loc) => (
+                    <SelectItem key={loc} value={loc}>
+                      {loc === 'ja' ? '日本語' : 'English'}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            }
+          />
+          <SettingRow
+            label={t('settings.preferences.themeLabel')}
+            value={
+              <Select value={theme} onValueChange={handleThemeChange}>
+                <SelectTrigger className="w-[160px]">
+                  <SelectValue placeholder={t('settings.preferences.selectTheme')} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="system">{t('settings.preferences.themeSystem')}</SelectItem>
+                  <SelectItem value="light">{t('settings.preferences.themeLight')}</SelectItem>
+                  <SelectItem value="dark">{t('settings.preferences.themeDark')}</SelectItem>
+                </SelectContent>
+              </Select>
+            }
+            isLast
+          />
         </div>
       </SettingsCard>
 
       {/* 起動設定 */}
       <SettingsCard title={t('settings.preferences.startup')} isSaving={preferences.isSaving}>
-        <div className="space-y-4">
-          <SettingField
+        <div className="space-y-0">
+          <SettingRow
             label={t('settings.preferences.startupScreen')}
-            description={t('settings.preferences.startupScreenDesc')}
-          >
-            <Select
-              value={preferences.values.startupScreen}
-              onValueChange={handleStartupScreenChange}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder={t('settings.preferences.selectStartupScreen')} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="last">{t('settings.preferences.startupLast')}</SelectItem>
-                <SelectItem value="inbox">{t('settings.preferences.startupInbox')}</SelectItem>
-                <SelectItem value="calendar">
-                  {t('settings.preferences.startupCalendar')}
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          </SettingField>
+            value={
+              <Select
+                value={preferences.values.startupScreen}
+                onValueChange={handleStartupScreenChange}
+              >
+                <SelectTrigger className="w-[200px]">
+                  <SelectValue placeholder={t('settings.preferences.selectStartupScreen')} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="last">{t('settings.preferences.startupLast')}</SelectItem>
+                  <SelectItem value="inbox">{t('settings.preferences.startupInbox')}</SelectItem>
+                  <SelectItem value="calendar">
+                    {t('settings.preferences.startupCalendar')}
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            }
+            isLast
+          />
         </div>
       </SettingsCard>
     </div>

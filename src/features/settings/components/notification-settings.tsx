@@ -19,6 +19,7 @@ import { trpc } from '@/lib/trpc/client';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
+import { SettingRow } from './fields/SettingRow';
 import { SettingsCard } from './SettingsCard';
 
 // 配信方法の型
@@ -41,23 +42,10 @@ const DEFAULT_DELIVERY_SETTINGS: DeliverySettings = {
 const NOTIFICATION_TYPES: {
   type: NotificationType;
   labelKey: string;
-  descriptionKey: string;
 }[] = [
-  {
-    type: 'reminders',
-    labelKey: 'notification.settings.types.reminders.label',
-    descriptionKey: 'notification.settings.types.reminders.description',
-  },
-  {
-    type: 'plan_updates',
-    labelKey: 'notification.settings.types.plan_updates.label',
-    descriptionKey: 'notification.settings.types.plan_updates.description',
-  },
-  {
-    type: 'system',
-    labelKey: 'notification.settings.types.system.label',
-    descriptionKey: 'notification.settings.types.system.description',
-  },
+  { type: 'reminders', labelKey: 'notification.settings.types.reminders.label' },
+  { type: 'plan_updates', labelKey: 'notification.settings.types.plan_updates.label' },
+  { type: 'system', labelKey: 'notification.settings.types.system.label' },
 ];
 
 // 配信方法の設定
@@ -71,23 +59,19 @@ const DELIVERY_METHODS: {
   { method: 'email', labelKey: 'notification.settings.methods.email', disabled: true },
 ];
 
-interface NotificationTypeRowProps {
-  label: string;
-  description: string;
+interface DeliveryMethodDropdownProps {
   selectedMethods: DeliveryMethod[];
   onMethodsChange: (methods: DeliveryMethod[]) => void;
   isPending: boolean;
   browserPermission: NotificationPermission | null;
 }
 
-function NotificationTypeRow({
-  label,
-  description,
+function DeliveryMethodDropdown({
   selectedMethods,
   onMethodsChange,
   isPending,
   browserPermission,
-}: NotificationTypeRowProps) {
+}: DeliveryMethodDropdownProps) {
   const t = useTranslations();
 
   // 選択中の配信方法のラベルを生成
@@ -127,53 +111,47 @@ function NotificationTypeRow({
   const isBrowserPermissionDenied = browserPermission === 'denied';
 
   return (
-    <div className="border-border flex items-start justify-between gap-4 border-b py-4 last:border-b-0">
-      <div className="flex-1 space-y-1">
-        <div className="text-foreground font-medium">{label}</div>
-        <div className="text-muted-foreground text-sm">{description}</div>
-      </div>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="outline"
+          size="sm"
+          className="flex items-center gap-2"
+          disabled={isPending}
+        >
+          <span className="text-sm">{getSelectedLabel()}</span>
+          <ChevronDown className="size-4 opacity-50" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-48">
+        {DELIVERY_METHODS.map(({ method, labelKey, disabled }) => {
+          const isDisabledByPermission = method === 'browser' && isBrowserPermissionDenied;
+          const isChecked = selectedMethods.includes(method);
 
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="ghost"
-            className="border-border bg-secondary text-secondary-foreground hover:bg-state-hover flex h-8 items-center gap-2 rounded-md border px-2 shadow-xs"
-            disabled={isPending}
-          >
-            <span className="text-sm">{getSelectedLabel()}</span>
-            <ChevronDown className="size-4 opacity-50" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-48">
-          {DELIVERY_METHODS.map(({ method, labelKey, disabled }) => {
-            const isDisabledByPermission = method === 'browser' && isBrowserPermissionDenied;
-            const isChecked = selectedMethods.includes(method);
-
-            return (
-              <DropdownMenuCheckboxItem
-                key={method}
-                checked={isChecked}
-                onCheckedChange={() => handleMethodToggle(method)}
-                disabled={disabled || isDisabledByPermission}
-                className="flex items-center gap-2"
-              >
-                {t(labelKey)}
-                {disabled && (
-                  <span className="text-muted-foreground ml-auto text-xs">
-                    {t('notification.settings.comingSoon')}
-                  </span>
-                )}
-                {isDisabledByPermission && (
-                  <span className="text-destructive ml-auto text-xs">
-                    {t('notification.settings.permissionDenied')}
-                  </span>
-                )}
-              </DropdownMenuCheckboxItem>
-            );
-          })}
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
+          return (
+            <DropdownMenuCheckboxItem
+              key={method}
+              checked={isChecked}
+              onCheckedChange={() => handleMethodToggle(method)}
+              disabled={disabled || isDisabledByPermission}
+              className="flex items-center gap-2"
+            >
+              {t(labelKey)}
+              {disabled && (
+                <span className="text-muted-foreground ml-auto text-xs">
+                  {t('notification.settings.comingSoon')}
+                </span>
+              )}
+              {isDisabledByPermission && (
+                <span className="text-destructive ml-auto text-xs">
+                  {t('notification.settings.permissionDenied')}
+                </span>
+              )}
+            </DropdownMenuCheckboxItem>
+          );
+        })}
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 
@@ -237,9 +215,9 @@ export function NotificationSettings() {
       <div className="space-y-6">
         <SettingsCard>
           <div className="animate-pulse space-y-4">
-            <div className="bg-muted h-16 rounded-md" />
-            <div className="bg-muted h-16 rounded-md" />
-            <div className="bg-muted h-16 rounded-md" />
+            <div className="bg-muted h-12 rounded-md" />
+            <div className="bg-muted h-12 rounded-md" />
+            <div className="bg-muted h-12 rounded-md" />
           </div>
         </SettingsCard>
       </div>
@@ -249,16 +227,20 @@ export function NotificationSettings() {
   return (
     <div className="space-y-6">
       <SettingsCard isSaving={updateMutation.isPending}>
-        <div className="divide-y-0">
-          {NOTIFICATION_TYPES.map(({ type, labelKey, descriptionKey }) => (
-            <NotificationTypeRow
+        <div className="space-y-0">
+          {NOTIFICATION_TYPES.map(({ type, labelKey }, index) => (
+            <SettingRow
               key={type}
               label={t(labelKey)}
-              description={t(descriptionKey)}
-              selectedMethods={localSettings[type] ?? []}
-              onMethodsChange={(methods) => handleMethodsChange(type, methods)}
-              isPending={updateMutation.isPending}
-              browserPermission={browserPermission}
+              value={
+                <DeliveryMethodDropdown
+                  selectedMethods={localSettings[type] ?? []}
+                  onMethodsChange={(methods) => handleMethodsChange(type, methods)}
+                  isPending={updateMutation.isPending}
+                  browserPermission={browserPermission}
+                />
+              }
+              isLast={index === NOTIFICATION_TYPES.length - 1}
             />
           ))}
         </div>
