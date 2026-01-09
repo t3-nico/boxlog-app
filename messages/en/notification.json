@@ -47,6 +47,33 @@
     "dateGroups": {
       "older": "Older"
     },
-    "settings": "Notification Settings"
+    "settings": {
+      "title": "Notifications",
+      "types": {
+        "reminders": {
+          "label": "Reminders",
+          "description": "Get notified before your scheduled plans start"
+        },
+        "plan_updates": {
+          "label": "Plan Updates",
+          "description": "Notifications when plans are created, updated, or completed"
+        },
+        "system": {
+          "label": "System",
+          "description": "Important updates and system messages"
+        }
+      },
+      "methods": {
+        "browser": "Browser",
+        "push": "Push",
+        "email": "Email",
+        "none": "None"
+      },
+      "browserPermissionDenied": "Browser notification permission was denied",
+      "permissionDenied": "Denied",
+      "comingSoon": "Soon",
+      "saveError": "Failed to save settings: {message}",
+      "tip": "Browser notifications only work when the app is open. Push notifications (coming soon) will work even when the app is closed."
+    }
   }
 }
