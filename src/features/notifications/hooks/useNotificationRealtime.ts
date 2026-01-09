@@ -16,7 +16,6 @@ import {
   showBrowserNotification,
 } from '../utils/notification-helpers';
 
-import { useNotificationDialogStore } from '../stores/useNotificationDialogStore';
 import { useNotificationPreferences } from './useNotificationPreferences';
 
 interface NotificationPayload {
@@ -30,7 +29,6 @@ interface NotificationPayload {
 }
 
 export function useNotificationRealtime(userId: string | undefined, enabled = true) {
-  const { open } = useNotificationDialogStore();
   const utils = trpc.useUtils();
   const channelRef = useRef<ReturnType<ReturnType<typeof createClient>['channel']> | null>(null);
 
@@ -99,5 +97,5 @@ export function useNotificationRealtime(userId: string | undefined, enabled = tr
         supabase.removeChannel(channelRef.current);
       }
     };
-  }, [userId, enabled, open, utils, shouldShowNotification, shouldShowBrowserNotification]);
+  }, [userId, enabled, utils, shouldShowNotification, shouldShowBrowserNotification]);
 }
