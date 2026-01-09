@@ -37,6 +37,7 @@
       "update": "Update"
     },
     "group": {
+      "create": "Create New Group",
       "createTitle": "Create New Group",
       "createDescription": "Create a new group",
       "nameRequired": "Group Name *",

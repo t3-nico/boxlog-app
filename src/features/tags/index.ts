@@ -19,7 +19,6 @@
 export {
   GroupNameWithTooltip,
   QuickTagCreateModal,
-  SortableGroupItem,
   // Actions
   TagActionMenuItems,
   TagArchiveDialog,
@@ -27,15 +26,11 @@ export {
   TagChip,
   // Modals & Dialogs
   TagCreateModal,
-  TagDeleteDialog,
   TagEditDialog,
   TagEditModal,
   TagFilterChips,
   TagFilter as TagFilterComponent,
   TagGroupCreateModal,
-  TagGroupDeleteDialog,
-  // Groups
-  TagGroupsSection,
   TagManagementModal,
   TagSelectionActions,
   // Selection & Display
@@ -44,8 +39,6 @@ export {
   TagsList,
   TagsSelectionBar,
 } from './components';
-
-export type { TagGroupsSectionRef } from './components';
 
 // Hooks
 export {
@@ -75,8 +68,6 @@ export {
   useTagGroup,
   // Tag Groups
   useTagGroups,
-  // Tag Group DnD
-  useTagGroupsDnd,
   // Operations
   useTagOperations,
   // Realtime

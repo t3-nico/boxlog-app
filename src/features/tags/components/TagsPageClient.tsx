@@ -3,15 +3,18 @@
 import type { ReactNode } from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { DeleteConfirmDialog } from '@/components/common/DeleteConfirmDialog';
 import { PageHeader } from '@/components/common/PageHeader';
-import { DataTable, type SortState } from '@/features/table';
+import { DataTable, type GroupedData, type SortState } from '@/features/table';
 import { TagRowWrapper, TagsTableEmptyState } from '@/features/tags/components/table';
+import { TagGroupHeader } from '@/features/tags/components/TagGroupHeader';
 import { TagsDialogs } from '@/features/tags/components/TagsDialogs';
 import { TagSelectionActions } from '@/features/tags/components/TagSelectionActions';
 import { TagsFilterBar } from '@/features/tags/components/TagsFilterBar';
 import { TagsSelectionBar } from '@/features/tags/components/TagsSelectionBar';
 import { TagsStatusTabs } from '@/features/tags/components/TagsStatusTabs';
 import { useTagsPageContext } from '@/features/tags/contexts/TagsPageContext';
+import { useCreateTagGroup, useDeleteTagGroup } from '@/features/tags/hooks/useTagGroups';
 import { useTagOperations } from '@/features/tags/hooks/useTagOperations';
 import { useUpdateTag } from '@/features/tags/hooks/useTags';
 import { useTagsPageData } from '@/features/tags/hooks/useTagsPageData';
@@ -22,7 +25,7 @@ import { useTagPaginationStore } from '@/features/tags/stores/useTagPaginationSt
 import { useTagSearchStore } from '@/features/tags/stores/useTagSearchStore';
 import { useTagSelectionStore } from '@/features/tags/stores/useTagSelectionStore';
 import { useTagSortStore } from '@/features/tags/stores/useTagSortStore';
-import type { Tag } from '@/features/tags/types';
+import type { Tag, TagGroup } from '@/features/tags/types';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
@@ -43,8 +46,8 @@ export function TagsPageClient() {
   const [archiveConfirmTag, setArchiveConfirmTag] = useState<Tag | null>(null);
   const [singleMergeTag, setSingleMergeTag] = useState<Tag | null>(null);
   const [bulkDeleteDialogOpen, setBulkDeleteDialogOpen] = useState(false);
-  const [isBulkDeleting, setIsBulkDeleting] = useState(false);
   const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set());
+  const [deletingGroup, setDeletingGroup] = useState<TagGroup | null>(null);
 
   // カスタムフックでデータ処理ロジックを分離（フィルター状態はストアから取得）
   const {
@@ -82,6 +85,8 @@ export function TagsPageClient() {
 
   // タグ操作
   const updateTagMutation = useUpdateTag();
+  const deleteGroupMutation = useDeleteTagGroup();
+  const createGroupMutation = useCreateTagGroup();
   const { showCreateModal, handleSaveNewTag, handleDeleteTag, handleCloseModals } =
     useTagOperations(tags);
 
@@ -131,6 +136,44 @@ export function TagsPageClient() {
       return next;
     });
   }, []);
+
+  // ハンドラー: グループ削除
+  const handleDeleteGroup = useCallback((group: TagGroup) => {
+    setDeletingGroup(group);
+  }, []);
+
+  const handleConfirmDeleteGroup = useCallback(async () => {
+    if (!deletingGroup) return;
+    try {
+      await deleteGroupMutation.mutateAsync({ id: deletingGroup.id });
+      toast.success(t('tag.toast.groupDeleted', { name: deletingGroup.name }));
+      setDeletingGroup(null);
+    } catch {
+      toast.error(t('tag.toast.groupDeleteFailed'));
+    }
+  }, [deletingGroup, deleteGroupMutation, t]);
+
+  // カスタムグループヘッダーレンダラー
+  const renderGroupHeader = useCallback(
+    (group: GroupedData<Tag>, columnCount: number, isCollapsed: boolean) => {
+      const tagGroup = groups.find((g) => g.id === group.groupKey);
+
+      return (
+        <TagGroupHeader
+          key={`group-${group.groupKey}`}
+          groupKey={group.groupKey}
+          groupLabel={group.groupLabel}
+          count={group.count}
+          columnCount={columnCount}
+          isCollapsed={isCollapsed}
+          tagGroup={tagGroup}
+          onToggleCollapse={handleToggleGroupCollapse}
+          onDeleteGroup={handleDeleteGroup}
+        />
+      );
+    },
+    [groups, handleToggleGroupCollapse, handleDeleteGroup],
+  );
 
   // ハンドラー: グループ移動
   const handleMoveToGroup = useCallback(
@@ -195,17 +238,12 @@ export function TagsPageClient() {
 
   const handleBulkDeleteConfirm = useCallback(async () => {
     if (selectedTagIds.size === 0) return;
-    setIsBulkDeleting(true);
-    try {
-      for (const tagId of selectedTagIds) {
-        const tag = sortedTags.find((item) => item.id === tagId);
-        if (tag) await handleDeleteTag(tag);
-      }
-      clearSelection();
-    } finally {
-      setIsBulkDeleting(false);
-      setBulkDeleteDialogOpen(false);
+    for (const tagId of selectedTagIds) {
+      const tag = sortedTags.find((item) => item.id === tagId);
+      if (tag) await handleDeleteTag(tag);
     }
+    clearSelection();
+    setBulkDeleteDialogOpen(false);
   }, [selectedTagIds, sortedTags, handleDeleteTag, clearSelection]);
 
   // ハンドラー: 単一タグマージ
@@ -242,6 +280,16 @@ export function TagsPageClient() {
       toast.error(t('tags.page.tagDeleteFailed'));
     }
   }, [deleteConfirmTag, handleDeleteTag, t]);
+
+  // ハンドラー: グループ作成（インライン）
+  const handleCreateGroup = useCallback(
+    async (name: string) => {
+      const result = await createGroupMutation.mutateAsync({ name });
+      toast.success(t('tag.toast.groupCreated', { name }));
+      return result;
+    },
+    [createGroupMutation, t],
+  );
 
   // DataTable用のソート状態
   const sortState: SortState = useMemo(
@@ -284,6 +332,7 @@ export function TagsPageClient() {
     lastUsed: tagLastUsed,
     visibleColumns,
     t,
+    onCreateGroup: handleCreateGroup,
   });
 
   // DataTable用の列幅マップ
@@ -396,6 +445,7 @@ export function TagsPageClient() {
             groupedData,
             collapsedGroups,
             onToggleGroupCollapse: handleToggleGroupCollapse,
+            renderGroupHeader,
           })}
           rowWrapper={rowWrapper}
           onOutsideClick={clearSelection}
@@ -429,8 +479,16 @@ export function TagsPageClient() {
         setBulkDeleteDialogOpen={setBulkDeleteDialogOpen}
         onBulkDeleteConfirm={handleBulkDeleteConfirm}
         selectedCount={selectedTagIds.size}
-        isBulkDeleting={isBulkDeleting}
         t={t}
+      />
+
+      {/* グループ削除確認ダイアログ */}
+      <DeleteConfirmDialog
+        open={!!deletingGroup}
+        onClose={() => setDeletingGroup(null)}
+        onConfirm={handleConfirmDeleteGroup}
+        title={t('tag.group.deleteTitle', { name: deletingGroup?.name ?? '' })}
+        description={t('tag.group.deleteDescription')}
       />
     </div>
   );

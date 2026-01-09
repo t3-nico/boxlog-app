@@ -37,6 +37,7 @@
       "update": "更新"
     },
     "group": {
+      "create": "新規グループ作成",
       "createTitle": "新規グループ作成",
       "createDescription": "新しいグループを作成します",
       "nameRequired": "グループ名 *",

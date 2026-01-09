@@ -9,11 +9,18 @@
  * - 各フィールド変更時に自動保存（デバウンス処理あり）
  */
 
-import { FileText, Folder, FolderX, MoveUpRight, Save } from 'lucide-react';
+import { FileText, Folder, FolderX, Hash, MoveUpRight, Save } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import { ColorPalettePicker } from '@/components/ui/color-palette-picker';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { DEFAULT_TAG_COLOR } from '@/config/ui/colors';
@@ -24,8 +31,8 @@ import {
   TAG_NAME_MAX_LENGTH,
 } from '@/features/tags/constants/colors';
 
+import { DeleteConfirmDialog } from '@/components/common/DeleteConfirmDialog';
 import { TagArchiveDialog } from '../../TagArchiveDialog';
-import { TagDeleteDialog } from '../../TagDeleteDialog';
 import { TagMergeDialog } from '../../TagMergeDialog';
 
 import { TagInspectorMenu } from './TagInspectorMenu';
@@ -81,9 +88,12 @@ export function TagInspector() {
     newTagColor,
     setNewTagColor,
     newTagGroupId,
+    setNewTagGroupId,
     handleCreateTag,
     isCreating,
   } = useTagInspectorLogic();
+
+  const t = useTranslations();
 
   const menuContent = (
     <TagInspectorMenu
@@ -134,10 +144,11 @@ export function TagInspector() {
                   variant="ghost"
                   size="icon-sm"
                   onClick={() => setShowColorPicker(!showColorPicker)}
-                  className="size-4 rounded-full p-0"
-                  style={{ backgroundColor: newTagColor }}
+                  className="size-5 p-0"
                   aria-label="カラー変更"
-                />
+                >
+                  <Hash className="size-5" style={{ color: newTagColor }} />
+                </Button>
                 {showColorPicker && (
                   <div className="bg-popover border-border absolute top-6 left-0 z-20 rounded-lg border p-3 shadow-lg">
                     <ColorPalettePicker
@@ -176,9 +187,33 @@ export function TagInspector() {
                 <FolderX className="text-muted-foreground mt-2 size-4 flex-shrink-0" />
               )}
               <div className="flex min-h-8 flex-1 items-center">
-                <span className="text-muted-foreground text-sm">
-                  {newTagGroup?.name || 'グループなし'}
-                </span>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="text-muted-foreground h-8 px-2 text-sm"
+                    >
+                      {newTagGroup?.name || 'グループを選択...'}
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start">
+                    <DropdownMenuItem onClick={() => setNewTagGroupId(null)}>
+                      <FolderX className="text-muted-foreground mr-2 size-4" />
+                      グループなし
+                    </DropdownMenuItem>
+                    {groups.map((group) => (
+                      <DropdownMenuItem key={group.id} onClick={() => setNewTagGroupId(group.id)}>
+                        <Folder
+                          className="mr-2 size-4"
+                          style={{ color: group.color || DEFAULT_GROUP_COLOR }}
+                        />
+                        {group.name}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             </div>
 
@@ -228,16 +263,17 @@ export function TagInspector() {
 
                 {/* タグ名とカラー */}
                 <div className="flex min-h-10 items-start gap-2 px-4 py-2">
-                  <div className="relative mt-1.5">
+                  <div className="relative mt-2">
                     <Button
                       type="button"
                       variant="ghost"
                       size="icon-sm"
                       onClick={() => setShowColorPicker(!showColorPicker)}
-                      className="size-4 rounded-full p-0"
-                      style={{ backgroundColor: tag.color || DEFAULT_TAG_COLOR }}
+                      className="size-5 p-0"
                       aria-label="カラー変更"
-                    />
+                    >
+                      <Hash className="size-5" style={{ color: tag.color || DEFAULT_TAG_COLOR }} />
+                    </Button>
                     {showColorPicker && (
                       <div className="bg-popover border-border absolute top-6 left-0 z-20 rounded-lg border p-3 shadow-lg">
                         <ColorPalettePicker
@@ -286,15 +322,36 @@ export function TagInspector() {
                     <FolderX className="text-muted-foreground mt-2 size-4 flex-shrink-0" />
                   )}
                   <div className="flex min-h-8 flex-1 items-center">
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => {}}
-                      className="text-muted-foreground h-8 px-2 text-sm"
-                    >
-                      {tagGroup ? tagGroup.name : 'グループを選択...'}
-                    </Button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="text-muted-foreground h-8 px-2 text-sm"
+                        >
+                          {tagGroup?.name || 'グループを選択...'}
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="start">
+                        <DropdownMenuItem onClick={() => handleChangeGroup(null)}>
+                          <FolderX className="text-muted-foreground mr-2 size-4" />
+                          グループなし
+                        </DropdownMenuItem>
+                        {groups.map((group) => (
+                          <DropdownMenuItem
+                            key={group.id}
+                            onClick={() => handleChangeGroup(group.id)}
+                          >
+                            <Folder
+                              className="mr-2 size-4"
+                              style={{ color: group.color || DEFAULT_GROUP_COLOR }}
+                            />
+                            {group.name}
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
                 </div>
 
@@ -363,8 +420,8 @@ export function TagInspector() {
       </InspectorShell>
 
       {/* 削除ダイアログ */}
-      <TagDeleteDialog
-        tag={showDeleteDialog ? tag : null}
+      <DeleteConfirmDialog
+        open={showDeleteDialog}
         onClose={() => setShowDeleteDialog(false)}
         onConfirm={async () => {
           if (!tagId) return;
@@ -372,6 +429,8 @@ export function TagInspector() {
           setShowDeleteDialog(false);
           closeInspector();
         }}
+        title={t('tag.delete.confirmTitleWithName', { name: tag?.name ?? '' })}
+        description={t('tag.delete.description')}
       />
 
       {/* アーカイブダイアログ */}

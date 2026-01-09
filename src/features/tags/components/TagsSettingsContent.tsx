@@ -1,17 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
+import { DeleteConfirmDialog } from '@/components/common/DeleteConfirmDialog';
+import { Button } from '@/components/ui/button';
+import { ColorPalettePicker } from '@/components/ui/color-palette-picker';
 import {
   DropdownMenuCheckboxItem,
   DropdownMenuGroup,
@@ -23,21 +16,31 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Input } from '@/components/ui/input';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { DEFAULT_GROUP_COLOR } from '@/config/ui/colors';
 import {
   useCreateTagGroup,
   useDeleteTagGroup,
   useTagGroups,
-  useUpdateTagGroup,
 } from '@/features/tags/hooks/useTagGroups';
 import { useTagColumnStore, type TagColumnId } from '@/features/tags/stores/useTagColumnStore';
 import { useTagDisplayModeStore } from '@/features/tags/stores/useTagDisplayModeStore';
 import type { TagGroup } from '@/features/tags/types';
-import { Columns3, Folder, FolderTree, List, Pencil, Plus, RotateCcw, Trash2 } from 'lucide-react';
+import {
+  Check,
+  Columns3,
+  Folder,
+  FolderTree,
+  List,
+  Plus,
+  RotateCcw,
+  Trash2,
+  X,
+} from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
-
-import { TagGroupManageDialog } from './TagGroupManageDialog';
 
 /**
  * 表示モードオプション（valueとiconのみ定義、labelは翻訳から取得）
@@ -50,11 +53,9 @@ const DISPLAY_MODE_OPTIONS = [
 /**
  * タグ設定コンテンツ
  *
- * Linear/Account.tsx風の2カラム構造
- * - DropdownMenuSub でカテゴリ → サブメニュー
  * - 表示モード: RadioGroup（単一選択）
  * - 列の表示: CheckboxItem（複数選択）
- * - グループ管理: 作成・編集・削除
+ * - グループ管理: インライン作成・削除（編集はグループヘッダーで）
  */
 export function TagsSettingsContent() {
   const t = useTranslations('tag');
@@ -71,12 +72,15 @@ export function TagsSettingsContent() {
   // グループ関連
   const { data: groups = [] } = useTagGroups();
   const createGroupMutation = useCreateTagGroup();
-  const updateGroupMutation = useUpdateTagGroup();
   const deleteGroupMutation = useDeleteTagGroup();
 
-  // ダイアログ状態
-  const [isGroupDialogOpen, setIsGroupDialogOpen] = useState(false);
-  const [editingGroup, setEditingGroup] = useState<TagGroup | null>(null);
+  // インライン作成状態
+  const [isCreating, setIsCreating] = useState(false);
+  const [newGroupName, setNewGroupName] = useState('');
+  const [newGroupColor, setNewGroupColor] = useState(DEFAULT_GROUP_COLOR);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // 削除ダイアログ状態
   const [deletingGroup, setDeletingGroup] = useState<TagGroup | null>(null);
 
   // 設定可能な列（selectionとname以外）
@@ -94,49 +98,47 @@ export function TagsSettingsContent() {
     resetColumns();
   };
 
-  // グループ作成を開く
-  const handleOpenCreateGroup = () => {
-    setEditingGroup(null);
-    setIsGroupDialogOpen(true);
-  };
+  // インライン作成を開始
+  const handleStartCreate = useCallback(() => {
+    setIsCreating(true);
+    setNewGroupName('');
+    setNewGroupColor(DEFAULT_GROUP_COLOR);
+    // 次のレンダリング後にフォーカス
+    setTimeout(() => inputRef.current?.focus(), 0);
+  }, []);
 
-  // グループ編集を開く
-  const handleOpenEditGroup = (group: TagGroup) => {
-    setEditingGroup(group);
-    setIsGroupDialogOpen(true);
-  };
+  // インライン作成をキャンセル
+  const handleCancelCreate = useCallback(() => {
+    setIsCreating(false);
+    setNewGroupName('');
+    setNewGroupColor(DEFAULT_GROUP_COLOR);
+  }, []);
 
-  // グループ保存
-  const handleSaveGroup = async (data: { name: string; color: string }) => {
-    if (editingGroup) {
-      // 編集
-      await updateGroupMutation.mutateAsync({
-        id: editingGroup.id,
-        data: {
-          name: data.name,
-          description: editingGroup.description,
-          color: data.color,
-        },
-      });
-      toast.success(t('toast.groupUpdated', { name: data.name }));
-    } else {
-      // 作成
-      const slug = data.name
-        .trim()
-        .toLowerCase()
-        .replace(/\s+/g, '-')
-        .replace(/[^\w\-]+/g, '')
-        .replace(/\-\-+/g, '-');
+  // インライン作成を保存
+  const handleSaveCreate = useCallback(async () => {
+    if (!newGroupName.trim()) return;
 
+    const slug = newGroupName
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, '-')
+      .replace(/[^\w\-]+/g, '')
+      .replace(/\-\-+/g, '-');
+
+    try {
       await createGroupMutation.mutateAsync({
-        name: data.name,
+        name: newGroupName.trim(),
         slug: slug || `group-${Date.now()}`,
         description: null,
-        color: data.color,
+        color: newGroupColor,
       });
-      toast.success(t('toast.groupCreated', { name: data.name }));
+      toast.success(t('toast.groupCreated', { name: newGroupName.trim() }));
+      handleCancelCreate();
+    } catch (error) {
+      console.error('Failed to create tag group:', error);
+      toast.error(t('toast.groupCreateFailed'));
     }
-  };
+  }, [newGroupName, newGroupColor, createGroupMutation, t, handleCancelCreate]);
 
   // グループ削除確認
   const handleConfirmDelete = async () => {
@@ -162,21 +164,14 @@ export function TagsSettingsContent() {
             <span className="flex-1">{t('settings.manageGroups')}</span>
             <span className="text-muted-foreground text-xs">{groups.length}</span>
           </DropdownMenuSubTrigger>
-          <DropdownMenuSubContent className="border-input w-56">
+          <DropdownMenuSubContent className="border-input w-64">
             <ScrollArea className="max-h-64">
-              {/* グループ一覧 */}
+              {/* グループ一覧（表示のみ、編集はグループヘッダーで） */}
               {groups.map((group) => (
                 <div key={group.id} className="group flex items-center">
-                  <DropdownMenuItem
-                    className="flex-1"
-                    onSelect={(e) => {
-                      e.preventDefault();
-                      handleOpenEditGroup(group);
-                    }}
-                  >
+                  <DropdownMenuItem className="flex-1" onSelect={(e) => e.preventDefault()}>
                     <Folder className="size-4" style={{ color: group.color ?? undefined }} />
                     <span className="flex-1 truncate">{group.name}</span>
-                    <Pencil className="text-muted-foreground size-3 opacity-0 group-hover:opacity-100" />
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     className="text-destructive hover:text-destructive px-2"
@@ -190,7 +185,7 @@ export function TagsSettingsContent() {
                 </div>
               ))}
 
-              {groups.length === 0 && (
+              {groups.length === 0 && !isCreating && (
                 <div className="text-muted-foreground px-2 py-2 text-center text-sm">
                   {t('settings.noGroups')}
                 </div>
@@ -199,16 +194,83 @@ export function TagsSettingsContent() {
 
             <DropdownMenuSeparator />
 
-            {/* 新規作成 */}
-            <DropdownMenuItem
-              onSelect={(e) => {
-                e.preventDefault();
-                handleOpenCreateGroup();
-              }}
-            >
-              <Plus className="size-4" />
-              {t('settings.createGroup')}
-            </DropdownMenuItem>
+            {/* インライン作成フォーム */}
+            {isCreating ? (
+              <div
+                className="flex items-center gap-1 px-2 py-1.5"
+                onClick={(e) => e.stopPropagation()}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleSaveCreate();
+                  } else if (e.key === 'Escape') {
+                    handleCancelCreate();
+                  }
+                }}
+              >
+                {/* カラーピッカー */}
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon-sm"
+                      className="size-7 shrink-0 p-0"
+                    >
+                      <Folder className="size-4" style={{ color: newGroupColor }} />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-2" align="start" side="left">
+                    <ColorPalettePicker
+                      selectedColor={newGroupColor}
+                      onColorSelect={setNewGroupColor}
+                    />
+                  </PopoverContent>
+                </Popover>
+
+                {/* 名前入力 */}
+                <Input
+                  ref={inputRef}
+                  value={newGroupName}
+                  onChange={(e) => setNewGroupName(e.target.value)}
+                  placeholder={t('group.namePlaceholder')}
+                  className="h-7 flex-1 text-sm"
+                />
+
+                {/* 保存ボタン */}
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon-sm"
+                  className="size-7 shrink-0"
+                  onClick={handleSaveCreate}
+                  disabled={!newGroupName.trim() || createGroupMutation.isPending}
+                >
+                  <Check className="size-4" />
+                </Button>
+
+                {/* キャンセルボタン */}
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon-sm"
+                  className="size-7 shrink-0"
+                  onClick={handleCancelCreate}
+                >
+                  <X className="size-4" />
+                </Button>
+              </div>
+            ) : (
+              <DropdownMenuItem
+                onSelect={(e) => {
+                  e.preventDefault();
+                  handleStartCreate();
+                }}
+              >
+                <Plus className="size-4" />
+                {t('settings.createGroup')}
+              </DropdownMenuItem>
+            )}
           </DropdownMenuSubContent>
         </DropdownMenuSub>
 
@@ -276,34 +338,14 @@ export function TagsSettingsContent() {
         </>
       )}
 
-      {/* グループ作成/編集ダイアログ */}
-      <TagGroupManageDialog
-        isOpen={isGroupDialogOpen}
-        onClose={() => setIsGroupDialogOpen(false)}
-        group={editingGroup}
-        onSave={handleSaveGroup}
-      />
-
       {/* グループ削除確認ダイアログ */}
-      <AlertDialog open={!!deletingGroup} onOpenChange={() => setDeletingGroup(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{t('group.deleteTitle')}</AlertDialogTitle>
-            <AlertDialogDescription>
-              {t('group.deleteDescription', { name: deletingGroup?.name ?? '' })}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>{t('actions.cancel')}</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleConfirmDelete}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              {t('actions.delete')}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <DeleteConfirmDialog
+        open={!!deletingGroup}
+        onClose={() => setDeletingGroup(null)}
+        onConfirm={handleConfirmDelete}
+        title={t('group.deleteTitle', { name: deletingGroup?.name ?? '' })}
+        description={t('group.deleteDescription')}
+      />
     </>
   );
 }

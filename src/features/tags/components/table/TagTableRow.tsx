@@ -17,11 +17,12 @@ import {
   Select,
   SelectContent,
   SelectItem,
+  SelectSeparator,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { TableRow } from '@/components/ui/table';
 import { DEFAULT_GROUP_COLOR, DEFAULT_TAG_COLOR } from '@/config/ui/colors';
-import { DraggableTagRow } from '@/features/tags/components/DraggableTagRow';
 import { TagActionMenuItems } from '@/features/tags/components/TagActionMenuItems';
 import { useUpdateTag } from '@/features/tags/hooks/useTags';
 import { useTagInspectorStore } from '@/features/tags/stores/useTagInspectorStore';
@@ -30,7 +31,7 @@ import type { Tag, TagGroup } from '@/features/tags/types';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import { Check, Folder, FolderX, Hash } from 'lucide-react';
+import { Folder, FolderX, Hash, Plus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import type { ReactNode } from 'react';
 import { useCallback, useState } from 'react';
@@ -52,6 +53,8 @@ interface TagCellContentProps {
   planCounts: Record<string, number>;
   /** 最終使用日時のマップ */
   lastUsed: Record<string, string>;
+  /** グループ作成コールバック（インライン作成用） */
+  onCreateGroup?: (name: string) => Promise<TagGroup>;
 }
 
 /**
@@ -65,6 +68,7 @@ export function TagCellContent({
   allTags: _allTags,
   planCounts: _planCounts,
   lastUsed,
+  onCreateGroup,
 }: TagCellContentProps) {
   const t = useTranslations();
   const { openInspector } = useTagInspectorStore();
@@ -73,6 +77,10 @@ export function TagCellContent({
   // インライン編集の状態
   const [editingField, setEditingField] = useState<'name' | 'description' | null>(null);
   const [editValue, setEditValue] = useState('');
+
+  // インライングループ作成の状態
+  const [isCreatingGroup, setIsCreatingGroup] = useState(false);
+  const [newGroupName, setNewGroupName] = useState('');
 
   // 日時フォーマット関数
   const formatDate = (date: Date | string) => {
@@ -186,15 +194,48 @@ export function TagCellContent({
       );
 
     case 'group':
+      // インライングループ作成モード
+      if (isCreatingGroup) {
+        return (
+          <Input
+            value={newGroupName}
+            onChange={(e) => setNewGroupName(e.target.value)}
+            onKeyDown={async (e) => {
+              if (e.key === 'Enter' && newGroupName.trim() && onCreateGroup) {
+                e.preventDefault();
+                const newGroup = await onCreateGroup(newGroupName.trim());
+                updateTagMutation.mutate({ id: tag.id, data: { group_id: newGroup.id } });
+                setIsCreatingGroup(false);
+                setNewGroupName('');
+              } else if (e.key === 'Escape') {
+                setIsCreatingGroup(false);
+                setNewGroupName('');
+              }
+            }}
+            onBlur={() => {
+              setIsCreatingGroup(false);
+              setNewGroupName('');
+            }}
+            placeholder={t('tag.group.namePlaceholder')}
+            className="h-7 w-32 text-sm sm:w-[160px]"
+            autoFocus
+          />
+        );
+      }
+
       return (
         <Select
           value={tag.group_id || 'uncategorized'}
           onValueChange={(value) => {
+            if (value === '__create_new__') {
+              setIsCreatingGroup(true);
+              return;
+            }
             const newGroupId = value === 'uncategorized' ? null : value;
             updateTagMutation.mutate({ id: tag.id, data: { group_id: newGroupId } });
           }}
         >
-          <SelectTrigger className="h-auto w-32 justify-start border-none bg-transparent p-0 shadow-none focus:ring-0 sm:w-[160px]">
+          <SelectTrigger className="h-auto w-32 justify-start border-none bg-transparent p-0 shadow-none focus:ring-0 sm:w-[160px] [&>svg:last-child]:hidden">
             <SelectValue>
               {group ? (
                 <div className="flex items-center gap-2">
@@ -219,7 +260,6 @@ export function TagCellContent({
               <div className="flex items-center gap-2">
                 <FolderX className="text-muted-foreground h-4 w-4" />
                 <span>{t('tags.sidebar.uncategorized')}</span>
-                {!tag.group_id && <Check className="ml-auto h-4 w-4" />}
               </div>
             </SelectItem>
             {groups.map((g) => (
@@ -227,10 +267,16 @@ export function TagCellContent({
                 <div className="flex items-center gap-2">
                   <Folder className="h-4 w-4" style={{ color: g.color || DEFAULT_GROUP_COLOR }} />
                   <span>{g.name}</span>
-                  {tag.group_id === g.id && <Check className="ml-auto h-4 w-4" />}
                 </div>
               </SelectItem>
             ))}
+            <SelectSeparator />
+            <SelectItem value="__create_new__">
+              <div className="flex items-center gap-2">
+                <Plus className="text-muted-foreground h-4 w-4" />
+                <span>{t('tag.group.create')}</span>
+              </div>
+            </SelectItem>
           </SelectContent>
         </Select>
       );
@@ -278,7 +324,7 @@ interface TagRowWrapperProps {
 }
 
 /**
- * タグ行のラッパー（コンテキストメニュー + ドラッグ&ドロップ）
+ * タグ行のラッパー（コンテキストメニュー）
  * DataTableのrowWrapper propから使用
  */
 export function TagRowWrapper({
@@ -309,8 +355,7 @@ export function TagRowWrapper({
   return (
     <ContextMenu modal={false}>
       <ContextMenuTrigger asChild>
-        <DraggableTagRow
-          id={tag.id}
+        <TableRow
           className={cn(
             isSelected && 'bg-primary-state-selected hover:bg-state-dragged',
             !isSelected && isInspectorActive && 'bg-state-hover',
@@ -322,7 +367,7 @@ export function TagRowWrapper({
           }}
         >
           {children}
-        </DraggableTagRow>
+        </TableRow>
       </ContextMenuTrigger>
       <ContextMenuContent>
         <TagActionMenuItems

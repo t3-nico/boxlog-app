@@ -4,15 +4,14 @@
  * TagsPageClientから抽出してパフォーマンス最適化:
  * - TagCreateModal
  * - TagArchiveDialog
- * - TagDeleteDialog
+ * - DeleteConfirmDialog (タグ削除)
  * - TagMergeDialog
- * - 一括削除確認ダイアログ
+ * - DeleteConfirmDialog (一括削除)
  */
 'use client';
 
-import { AlertDialogConfirm } from '@/components/ui/alert-dialog-confirm';
+import { DeleteConfirmDialog } from '@/components/common/DeleteConfirmDialog';
 import { TagArchiveDialog } from '@/features/tags/components/TagArchiveDialog';
-import { TagDeleteDialog } from '@/features/tags/components/TagDeleteDialog';
 import { TagMergeDialog } from '@/features/tags/components/TagMergeDialog';
 import { TagCreateModal } from '@/features/tags/components/tag-create-modal';
 import type { TranslationValues } from 'next-intl';
@@ -40,7 +39,6 @@ interface TagsDialogsProps {
   setBulkDeleteDialogOpen: (open: boolean) => void;
   onBulkDeleteConfirm: () => Promise<void>;
   selectedCount: number;
-  isBulkDeleting: boolean;
   // Translations (useTranslationsの戻り値)
   t: (key: string, values?: TranslationValues) => string;
 }
@@ -61,7 +59,6 @@ export function TagsDialogs({
   setBulkDeleteDialogOpen,
   onBulkDeleteConfirm,
   selectedCount,
-  isBulkDeleting,
   t,
 }: TagsDialogsProps) {
   return (
@@ -77,28 +74,24 @@ export function TagsDialogs({
       />
 
       {/* 削除確認ダイアログ */}
-      <TagDeleteDialog
-        tag={deleteConfirmTag}
+      <DeleteConfirmDialog
+        open={!!deleteConfirmTag}
         onClose={onCloseDeleteConfirm}
         onConfirm={onConfirmDelete}
+        title={t('tag.delete.confirmTitleWithName', { name: deleteConfirmTag?.name ?? '' })}
+        description={t('tag.delete.description')}
       />
 
       {/* 単一タグマージダイアログ */}
       <TagMergeDialog tag={singleMergeTag} onClose={onCloseSingleMerge} />
 
       {/* 一括削除確認ダイアログ */}
-      <AlertDialogConfirm
+      <DeleteConfirmDialog
         open={bulkDeleteDialogOpen}
-        onOpenChange={setBulkDeleteDialogOpen}
+        onClose={() => setBulkDeleteDialogOpen(false)}
         onConfirm={onBulkDeleteConfirm}
         title={t('tags.page.bulkDeleteConfirmTitle', { count: selectedCount })}
         description={t('tags.page.bulkDeleteConfirmDescription', { count: selectedCount })}
-        confirmText={
-          isBulkDeleting ? t('common.plan.delete.deleting') : t('common.plan.delete.confirm')
-        }
-        cancelText={t('actions.cancel')}
-        isLoading={isBulkDeleting}
-        variant="destructive"
       />
     </>
   );
