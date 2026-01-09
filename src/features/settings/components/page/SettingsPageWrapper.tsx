@@ -28,11 +28,11 @@ export function SettingsPageWrapper({ title, children }: SettingsPageWrapperProp
     <div className="flex h-full flex-col">
       {/* PC: 共通PageHeader（背景は親のbg-surface-brightを継承） */}
       <div className="hidden md:block">
-        <PageHeader title={title} showMobileMenu={false} className="bg-transparent" />
+        <PageHeader title={title} showMobileMenu={false} className="bg-transparent px-6" />
       </div>
 
       {/* モバイル: 戻るボタン付きヘッダー（背景は親を継承） */}
-      <header className="flex h-12 shrink-0 items-center gap-2 px-4 py-2 md:hidden">
+      <header className="flex h-12 shrink-0 items-center gap-2 px-6 py-2 md:hidden">
         <Button
           variant="ghost"
           size="icon"
@@ -47,7 +47,7 @@ export function SettingsPageWrapper({ title, children }: SettingsPageWrapperProp
 
       {/* コンテンツ */}
       <ScrollArea className="flex-1">
-        <div className="p-4">{children}</div>
+        <div className="p-6">{children}</div>
       </ScrollArea>
     </div>
   );
