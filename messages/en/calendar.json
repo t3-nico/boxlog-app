@@ -217,6 +217,9 @@
       "start": "(Start)",
       "middle": "(Cont.)",
       "end": "(End)"
+    },
+    "timeGrid": {
+      "ariaLabel": "Calendar time grid - click or press Enter to create event"
     }
   }
 }
