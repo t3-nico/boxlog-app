@@ -312,6 +312,59 @@
         "tagsDesc": "タグとグループの作成・編集"
       }
     },
+    "dataControls": {
+      "export": {
+        "title": "データエクスポート",
+        "includedDataTitle": "エクスポートされるデータ",
+        "profileInfo": "プロフィール情報",
+        "tasksEvents": "タスク・イベント",
+        "tagSettings": "タグ設定",
+        "calendarSettings": "カレンダー設定",
+        "notificationSettings": "通知設定",
+        "otherSettings": "その他の設定",
+        "exporting": "エクスポート中...",
+        "exportButton": "データをエクスポート"
+      },
+      "import": {
+        "title": "データインポート",
+        "dropzone": "JSONファイルをドロップまたはクリックして選択",
+        "selectFile": "ファイルを選択",
+        "comingSoon": "※ インポート機能は現在開発中です"
+      },
+      "backup": {
+        "title": "自動バックアップ",
+        "enableLabel": "自動バックアップを有効にする",
+        "lastBackup": "最終バックアップ: 未実行"
+      }
+    },
+    "integrations": {
+      "ai": {
+        "title": "AI設定",
+        "description": "AIアシスタント機能を使用するには、各プロバイダーのAPIキーを設定してください。APIキーはブラウザのローカルストレージに暗号化して保存されます。",
+        "anthropicDesc": "Anthropic社のClaudeを使用します",
+        "openaiDesc": "OpenAI社のGPTモデルを使用します",
+        "saved": "保存済み",
+        "save": "保存"
+      },
+      "services": {
+        "title": "連携サービス",
+        "googleCalendarDesc": "Googleカレンダーと予定を同期します",
+        "slackDesc": "Slackにリマインダーや通知を送信します",
+        "connected": "接続済み",
+        "disconnect": "解除",
+        "connect": "接続"
+      },
+      "sync": {
+        "title": "同期設定",
+        "enableLabel": "自動同期を有効にする",
+        "description": "同期は5分ごとに自動実行されます。手動で同期する場合は各サービスの設定から実行できます。"
+      },
+      "api": {
+        "title": "API連携",
+        "description": "APIキーの発行やWebhookの設定は開発者ポータルから行えます。",
+        "openPortal": "開発者ポータルを開く（準備中）"
+      }
+    },
     "legal": {
       "title": "法的情報",
       "description": "利用規約やプライバシーポリシー、Cookie設定を管理します",

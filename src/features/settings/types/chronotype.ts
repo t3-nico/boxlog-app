@@ -12,7 +12,6 @@ export interface ProductivityZone {
   endHour: number; // 0-23
   level: 'peak' | 'good' | 'moderate' | 'low' | 'sleep';
   label: string;
-  color: string; // Tailwind color class or hex
 }
 
 // プリセットのクロノタイプ定義
@@ -24,12 +23,12 @@ export const CHRONOTYPE_PRESETS: Record<ChronotypeType, ChronotypeProfile> = {
     description:
       '目覚まし不要で早朝に自然と起きる超朝型。午前中にエネルギーがピークを迎え、夕方以降は早めに眠くなる。楽観的で規律正しく、目標志向。人口の約15-20%。',
     productivityZones: [
-      { startHour: 6, endHour: 8, level: 'good', label: '準備時間', color: 'bg-yellow-300' },
-      { startHour: 8, endHour: 12, level: 'peak', label: 'ピーク', color: 'bg-green-500' },
-      { startHour: 12, endHour: 14, level: 'good', label: '集中時間', color: 'bg-green-300' },
-      { startHour: 14, endHour: 18, level: 'moderate', label: '通常', color: 'bg-blue-200' },
-      { startHour: 18, endHour: 22, level: 'low', label: '低調', color: 'bg-gray-200' },
-      { startHour: 22, endHour: 6, level: 'sleep', label: '睡眠', color: 'bg-indigo-500' },
+      { startHour: 6, endHour: 8, level: 'good', label: '準備時間' },
+      { startHour: 8, endHour: 12, level: 'peak', label: 'ピーク' },
+      { startHour: 12, endHour: 14, level: 'good', label: '集中時間' },
+      { startHour: 14, endHour: 18, level: 'moderate', label: '通常' },
+      { startHour: 18, endHour: 22, level: 'low', label: '低調' },
+      { startHour: 22, endHour: 6, level: 'sleep', label: '睡眠' },
     ],
   },
 
@@ -39,12 +38,12 @@ export const CHRONOTYPE_PRESETS: Record<ChronotypeType, ChronotypeProfile> = {
     description:
       '太陽のリズムに沿った生活が自然にできる標準型。7時頃に起床し、午前中から午後前半にかけて生産性が高まる。9-5の生活スタイルに最も適応しやすい。人口の約55%。',
     productivityZones: [
-      { startHour: 7, endHour: 10, level: 'moderate', label: '準備時間', color: 'bg-yellow-200' },
-      { startHour: 10, endHour: 14, level: 'peak', label: 'ピーク', color: 'bg-green-500' },
-      { startHour: 14, endHour: 16, level: 'low', label: '低調', color: 'bg-gray-200' },
-      { startHour: 16, endHour: 21, level: 'moderate', label: '通常', color: 'bg-blue-200' },
-      { startHour: 21, endHour: 23, level: 'low', label: '就寝準備', color: 'bg-gray-200' },
-      { startHour: 23, endHour: 7, level: 'sleep', label: '睡眠', color: 'bg-indigo-500' },
+      { startHour: 7, endHour: 10, level: 'moderate', label: '準備時間' },
+      { startHour: 10, endHour: 14, level: 'peak', label: 'ピーク' },
+      { startHour: 14, endHour: 16, level: 'low', label: '低調' },
+      { startHour: 16, endHour: 21, level: 'moderate', label: '通常' },
+      { startHour: 21, endHour: 23, level: 'low', label: '就寝準備' },
+      { startHour: 23, endHour: 7, level: 'sleep', label: '睡眠' },
     ],
   },
 
@@ -54,12 +53,12 @@ export const CHRONOTYPE_PRESETS: Record<ChronotypeType, ChronotypeProfile> = {
     description:
       '午前中は苦手で、夕方から夜にかけてエンジンがかかる夜型。深夜まで眠くならず、クリエイティブで感情豊か。アーティストやミュージシャンに多い。人口の約15%。',
     productivityZones: [
-      { startHour: 9, endHour: 12, level: 'low', label: '低調', color: 'bg-gray-200' },
-      { startHour: 12, endHour: 14, level: 'moderate', label: '準備時間', color: 'bg-yellow-200' },
-      { startHour: 14, endHour: 17, level: 'good', label: '集中時間', color: 'bg-green-300' },
-      { startHour: 17, endHour: 20, level: 'peak', label: 'ピーク', color: 'bg-green-500' },
-      { startHour: 20, endHour: 24, level: 'good', label: '創造時間', color: 'bg-purple-300' },
-      { startHour: 0, endHour: 9, level: 'sleep', label: '睡眠', color: 'bg-indigo-500' },
+      { startHour: 9, endHour: 12, level: 'low', label: '低調' },
+      { startHour: 12, endHour: 14, level: 'moderate', label: '準備時間' },
+      { startHour: 14, endHour: 17, level: 'good', label: '集中時間' },
+      { startHour: 17, endHour: 20, level: 'peak', label: 'ピーク' },
+      { startHour: 20, endHour: 24, level: 'good', label: '創造時間' },
+      { startHour: 0, endHour: 9, level: 'sleep', label: '睡眠' },
     ],
   },
 
@@ -69,12 +68,12 @@ export const CHRONOTYPE_PRESETS: Record<ChronotypeType, ChronotypeProfile> = {
     description:
       '睡眠が浅く不規則なパターンを持つ。午前中に集中力がピークを迎え、午後は低調になりやすい。知能が高く、慎重で完璧主義な傾向。人口の約10%。',
     productivityZones: [
-      { startHour: 6, endHour: 8, level: 'moderate', label: '起床', color: 'bg-blue-200' },
-      { startHour: 8, endHour: 11, level: 'peak', label: 'ピーク', color: 'bg-green-500' },
-      { startHour: 11, endHour: 14, level: 'good', label: '創造時間', color: 'bg-green-300' },
-      { startHour: 14, endHour: 17, level: 'low', label: '低調', color: 'bg-gray-200' },
-      { startHour: 17, endHour: 22, level: 'moderate', label: '通常', color: 'bg-blue-200' },
-      { startHour: 22, endHour: 6, level: 'sleep', label: '睡眠', color: 'bg-indigo-500' },
+      { startHour: 6, endHour: 8, level: 'moderate', label: '起床' },
+      { startHour: 8, endHour: 11, level: 'peak', label: 'ピーク' },
+      { startHour: 11, endHour: 14, level: 'good', label: '創造時間' },
+      { startHour: 14, endHour: 17, level: 'low', label: '低調' },
+      { startHour: 17, endHour: 22, level: 'moderate', label: '通常' },
+      { startHour: 22, endHour: 6, level: 'sleep', label: '睡眠' },
     ],
   },
 
@@ -86,18 +85,16 @@ export const CHRONOTYPE_PRESETS: Record<ChronotypeType, ChronotypeProfile> = {
   },
 };
 
-// 色のマッピング (より鮮明で目立つ色に変更)
-export const PRODUCTIVITY_COLORS = {
-  'bg-green-500': { bg: 'rgb(34 197 94)', border: 'rgb(22 163 74)' }, // Peak - 濃い緑
-  'bg-green-300': { bg: 'rgb(134 239 172)', border: 'rgb(34 197 94)' }, // Good - 緑
-  'bg-blue-200': { bg: 'rgb(191 219 254)', border: 'rgb(59 130 246)' }, // Moderate - 青
-  'bg-yellow-300': { bg: 'rgb(253 224 71)', border: 'rgb(245 158 11)' }, // 準備時間 - 黄色
-  'bg-yellow-200': { bg: 'rgb(254 240 138)', border: 'rgb(245 158 11)' }, // 起床時間 - 薄い黄色
-  'bg-purple-300': { bg: 'rgb(196 181 253)', border: 'rgb(147 51 234)' }, // 創造時間 - 紫
-  'bg-gray-200': { bg: 'rgb(229 231 235)', border: 'rgb(107 114 128)' }, // Low - グレー
-  'bg-gray-300': { bg: 'rgb(209 213 219)', border: 'rgb(107 114 128)' }, // 睡眠試行 - グレー
-  'bg-gray-400': { bg: 'rgb(156 163 175)', border: 'rgb(75 85 99)' }, // 睡眠推奨 - 濃いグレー
-  'bg-indigo-500': { bg: 'rgb(99 102 241)', border: 'rgb(67 56 202)' }, // Sleep - インディゴ
+/**
+ * 生産性レベルに対応するセマンティックカラークラス
+ * globals.css で定義された --chronotype-* CSS変数を使用
+ */
+export const LEVEL_COLORS: Record<ProductivityZone['level'], string> = {
+  peak: 'bg-[var(--chronotype-peak)]',
+  good: 'bg-[var(--chronotype-good)]',
+  moderate: 'bg-[var(--chronotype-moderate)]',
+  low: 'bg-[var(--chronotype-low)]',
+  sleep: 'bg-[var(--chronotype-sleep)]',
 };
 
 // ヘルパー関数
@@ -119,18 +116,5 @@ export function getProductivityZoneForHour(
 }
 
 export function getProductivityLevelColor(level: ProductivityZone['level']): string {
-  switch (level) {
-    case 'peak':
-      return 'bg-green-500';
-    case 'good':
-      return 'bg-green-300';
-    case 'moderate':
-      return 'bg-blue-200';
-    case 'low':
-      return 'bg-gray-200';
-    case 'sleep':
-      return 'bg-indigo-500';
-    default:
-      return 'bg-gray-200';
-  }
+  return LEVEL_COLORS[level] ?? LEVEL_COLORS.low;
 }

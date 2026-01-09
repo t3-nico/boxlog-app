@@ -21,7 +21,7 @@ import { SettingRow } from './fields/SettingRow';
 import { SettingsCard } from './SettingsCard';
 
 import type { ChronotypeType, ProductivityZone } from '@/features/settings/types/chronotype';
-import { CHRONOTYPE_PRESETS } from '@/features/settings/types/chronotype';
+import { CHRONOTYPE_PRESETS, LEVEL_COLORS } from '@/features/settings/types/chronotype';
 
 // クロノタイプごとの絵文字アイコン
 const CHRONOTYPE_EMOJI: Record<Exclude<ChronotypeType, 'custom'>, string> = {
@@ -29,15 +29,6 @@ const CHRONOTYPE_EMOJI: Record<Exclude<ChronotypeType, 'custom'>, string> = {
   bear: '🐻',
   wolf: '🐺',
   dolphin: '🐬',
-};
-
-// 生産性レベルの色（クロノタイプセマンティックトークン）
-const LEVEL_COLORS: Record<ProductivityZone['level'], string> = {
-  peak: 'bg-[var(--chronotype-peak)]',
-  good: 'bg-[var(--chronotype-good)]',
-  moderate: 'bg-[var(--chronotype-moderate)]',
-  low: 'bg-[var(--chronotype-low)]',
-  sleep: 'bg-[var(--chronotype-sleep)]',
 };
 
 // 生産性レベルの日本語ラベル

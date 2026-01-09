@@ -312,6 +312,59 @@
         "tagsDesc": "Create and edit tags and groups"
       }
     },
+    "dataControls": {
+      "export": {
+        "title": "Data Export",
+        "includedDataTitle": "Exported Data",
+        "profileInfo": "Profile information",
+        "tasksEvents": "Tasks & Events",
+        "tagSettings": "Tag settings",
+        "calendarSettings": "Calendar settings",
+        "notificationSettings": "Notification settings",
+        "otherSettings": "Other settings",
+        "exporting": "Exporting...",
+        "exportButton": "Export Data"
+      },
+      "import": {
+        "title": "Data Import",
+        "dropzone": "Drop JSON file or click to select",
+        "selectFile": "Select File",
+        "comingSoon": "* Import feature is currently under development"
+      },
+      "backup": {
+        "title": "Auto Backup",
+        "enableLabel": "Enable automatic backup",
+        "lastBackup": "Last backup: Not yet executed"
+      }
+    },
+    "integrations": {
+      "ai": {
+        "title": "AI Settings",
+        "description": "To use AI assistant features, configure API keys for each provider. API keys are encrypted and stored in your browser's local storage.",
+        "anthropicDesc": "Use Claude by Anthropic",
+        "openaiDesc": "Use OpenAI's GPT models",
+        "saved": "Saved",
+        "save": "Save"
+      },
+      "services": {
+        "title": "Connected Services",
+        "googleCalendarDesc": "Sync events with Google Calendar",
+        "slackDesc": "Send reminders and notifications to Slack",
+        "connected": "Connected",
+        "disconnect": "Disconnect",
+        "connect": "Connect"
+      },
+      "sync": {
+        "title": "Sync Settings",
+        "enableLabel": "Enable automatic sync",
+        "description": "Sync runs automatically every 5 minutes. For manual sync, use each service's settings."
+      },
+      "api": {
+        "title": "API Integration",
+        "description": "Issue API keys and configure Webhooks from the developer portal.",
+        "openPortal": "Open Developer Portal (Coming Soon)"
+      }
+    },
     "legal": {
       "title": "Legal Information",
       "description": "Manage terms of service, privacy policy, and cookie settings",
