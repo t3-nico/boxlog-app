@@ -117,7 +117,7 @@ export const calendarColors: CalendarColors = {
 
     // conflict - 衝突時（M3: destructive系）
     conflict: {
-      background: 'bg-destructive/10',
+      background: 'bg-destructive-container',
       text: 'text-destructive',
     },
   },

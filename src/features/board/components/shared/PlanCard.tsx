@@ -537,7 +537,7 @@ export function PlanCard({ item }: PlanCardProps) {
                     onClick={handleDateTimeClear}
                     variant="ghost"
                     size="sm"
-                    className="text-destructive hover:bg-destructive/10 h-6 px-2 text-xs"
+                    className="text-destructive hover:bg-destructive-state-hover h-6 px-2 text-xs"
                   >
                     クリア
                   </Button>

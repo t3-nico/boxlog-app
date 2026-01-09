@@ -249,7 +249,7 @@ export function PasswordChangeDialog({ open, onOpenChange }: PasswordChangeDialo
               </div>
 
               {error && (
-                <div className="bg-destructive/12 text-destructive rounded-md p-3 text-sm">
+                <div className="bg-destructive-container text-destructive rounded-md p-3 text-sm">
                   {error}
                 </div>
               )}

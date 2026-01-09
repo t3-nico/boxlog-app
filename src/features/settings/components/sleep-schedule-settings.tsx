@@ -244,7 +244,7 @@ export function SleepScheduleSettings() {
       {enabled && (
         <div className="mt-4 space-y-4">
           {/* 睡眠時間表示 */}
-          <div className="bg-accent/20 flex items-center gap-2 rounded-lg p-3">
+          <div className="bg-accent-state-selected flex items-center gap-2 rounded-lg p-3">
             <Moon className="text-accent-foreground size-4" />
             <div>
               <span className="text-sm font-medium">{t('settings.sleepSchedule.duration')}</span>

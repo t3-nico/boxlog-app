@@ -338,7 +338,7 @@ export function TimeSelect({
       {label && <label className="text-muted-foreground text-xs">{label}</label>}
       <div
         className={`relative flex items-center rounded-md transition-colors ${
-          hasError ? 'ring-destructive/50 bg-destructive/10 ring-2' : 'hover:bg-state-hover'
+          hasError ? 'ring-destructive/50 bg-destructive-container ring-2' : 'hover:bg-state-hover'
         }`}
         ref={containerRef}
       >

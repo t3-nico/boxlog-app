@@ -234,7 +234,7 @@ const TagItem = ({
                   type="button"
                   variant="ghost"
                   onClick={handleDeleteTag}
-                  className="text-destructive hover:bg-destructive/10 dark:hover:bg-destructive/20 flex w-full justify-start gap-2"
+                  className="text-destructive hover:bg-destructive-state-hover flex w-full justify-start gap-2"
                 >
                   <TrashIcon className="h-4 w-4" />
                   削除
