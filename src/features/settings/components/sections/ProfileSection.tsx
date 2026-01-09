@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { useTranslations } from 'next-intl';
 
@@ -30,7 +30,10 @@ export function ProfileSection() {
   const t = useTranslations();
   const supabase = createClient();
 
-  const [uploadedAvatar, setUploadedAvatar] = useState<string | null>(null);
+  // 初期値を user から直接取得（useEffect での事後更新を避ける）
+  const [uploadedAvatar, setUploadedAvatar] = useState<string | null>(
+    user?.user_metadata?.avatar_url || null,
+  );
   const [isUploading, setIsUploading] = useState(false);
 
   const profile = useAutoSaveSettings<ProfileSettings>({
@@ -71,19 +74,6 @@ export function ProfileSection() {
     successMessage: t('settings.account.profileUpdated'),
     debounceMs: 1000,
   });
-
-  // ユーザー情報を初期値として設定
-  useEffect(() => {
-    if (user) {
-      profile.updateValues({
-        username: user.user_metadata?.username || user.email?.split('@')[0] || '',
-        email: user.email || '',
-        uploadedAvatar: user.user_metadata?.avatar_url || null,
-      });
-      setUploadedAvatar(user.user_metadata?.avatar_url || null);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user?.id, user?.email]);
 
   const handleAvatarUpload = useCallback(
     async (file: File) => {
