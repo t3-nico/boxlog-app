@@ -4,6 +4,7 @@ import type { PlanStatus } from '@/features/plans/types/plan';
 import { Calendar, ChevronDown, FileText, Plus } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
+import { LoadingSpinner } from '@/components/common/Loading/LoadingStates';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MEDIA_QUERIES } from '@/config/ui/breakpoints';
@@ -314,7 +315,7 @@ export function InboxTableView() {
     return (
       <div className="flex h-full items-center justify-center">
         <div className="flex flex-col items-center gap-2">
-          <div className="border-primary size-8 animate-spin rounded-full border-4 border-t-transparent" />
+          <LoadingSpinner size="lg" />
           <p className="text-muted-foreground text-sm">読み込み中...</p>
         </div>
       </div>

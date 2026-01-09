@@ -166,8 +166,8 @@ export const getDropZoneClassName = (isActive: boolean = false): string => {
 // プレースホルダーのクラス名を生成（scheduledカラー + 透明度）
 export const getPlaceholderClassName = (): string => {
   return [
-    // セマンティックカラー + 透明度
-    'bg-primary/5',
+    // セマンティックカラー
+    'bg-primary-state-hover',
     'border-l-4 border-primary',
     'text-transparent',
     calendarStyles.event.borderRadius,

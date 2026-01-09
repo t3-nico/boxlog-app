@@ -3,6 +3,7 @@
 import { CheckCircle, Edit, Plus, Tag, Trash } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 
+import { LoadingSpinner } from '@/components/common/Loading/LoadingStates';
 import { usePlanActivities } from '../../../hooks/usePlanActivities';
 import { formatActivity, formatRelativeTime } from '../../../utils/activityFormatter';
 
@@ -19,7 +20,7 @@ export function ActivityTab({ planId, order }: ActivityTabProps) {
   if (isPending) {
     return (
       <div className="flex items-center justify-center py-8">
-        <div className="border-primary h-6 w-6 animate-spin rounded-full border-b-2" />
+        <LoadingSpinner size="md" />
       </div>
     );
   }

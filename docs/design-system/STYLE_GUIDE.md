@@ -359,6 +359,59 @@ shadcn/uiは `hover:bg-accent hover:text-accent-foreground` パターンをデ�
 - リンク（`text-primary`）
 - バッジ・装飾背景（`bg-primary-container text-on-primary-container`）
 
+### Primary使用シーンガイド
+
+**基本原則**: Primary = 「**ユーザーアクションを促す要素**」にのみ使用
+
+#### ✅ Primaryを使うべき場面
+
+| 用途                      | 例                                     | 理由                     |
+| ------------------------- | -------------------------------------- | ------------------------ |
+| **CTAボタン**             | 保存、送信、作成                       | 主要アクションを示す     |
+| **リンク/ナビゲーション** | アクティブタブ、現在地                 | 現在位置・選択状態       |
+| **フォーカスリング**      | `ring-primary`                         | アクセシビリティ         |
+| **選択ハイライト**        | `bg-primary-state-selected`            | 選択状態を示す           |
+| **装飾背景**              | `bg-primary-container`                 | 強調したいコンテナ       |
+| **進行中インジケーター**  | プログレスバー                         | 進行状況を示す           |
+| **アクション中表示**      | リフレッシュスピナー（RefreshSpinner） | ユーザー起動アクション中 |
+
+#### ❌ Primaryを使うべきでない場面
+
+| 用途                     | 正しい選択               | 理由                               |
+| ------------------------ | ------------------------ | ---------------------------------- |
+| **ローディングスピナー** | `text-muted-foreground`  | 待機状態であり、アクションではない |
+| **中立的な情報表示**     | `text-foreground`        | 強調の必要なし                     |
+| **背景の汎用グレー**     | `bg-surface-container`   | Primaryは装飾専用                  |
+| **エラー/警告**          | `destructive`, `warning` | セマンティックカラーを使用         |
+| **成功/情報**            | `success`, `info`        | セマンティックカラーを使用         |
+
+#### 判断基準フローチャート
+
+```
+この要素はユーザーのアクションを促すか？
+├─ Yes → Primary使用OK
+│   └─ ボタン、リンク、フォーカス、選択状態、プログレス
+└─ No → Primary使用NG
+    ├─ 待機状態 → muted-foreground
+    ├─ エラー → destructive
+    ├─ 成功 → success
+    └─ 中立 → foreground
+```
+
+#### ローディングスピナーの正しい実装
+
+```tsx
+// ✅ 推奨: LoadingSpinnerコンポーネント使用（text-muted-foreground）
+import { LoadingSpinner } from '@/components/common/Loading/LoadingStates';
+<LoadingSpinner size="md" />
+
+// ✅ 推奨: カスタムスピナーの場合
+<div className="border-muted-foreground size-8 animate-spin rounded-full border-4 border-t-transparent" />
+
+// ❌ 禁止: border-primary（待機状態にPrimaryは不適切）
+<div className="border-primary size-8 animate-spin rounded-full border-4 border-t-transparent" />
+```
+
 ### Primary透明度の使い分けガイド
 
 | 用途                | トークン                         | Tailwindクラス                 | 透明度 |
@@ -932,11 +985,12 @@ boxlog-app と boxlog-web のデザインシステムは共通化されていま
 ---
 
 **最終更新**: 2026-01-09
-**バージョン**: v1.5
+**バージョン**: v1.6
 **管理**: BoxLog デザインシステムチーム
 
 ### 更新履歴
 
+- **v1.6** (2026-01-09): Primary使用シーンガイド追加（ユーザーアクションを促す要素のみ使用）、ローディングスピナーの正しい実装例追記
 - **v1.5** (2026-01-09): Primary透明度の使い分けガイド追加、禁止パターン・例外ケースの明文化、`bg-primary/10`→`bg-primary-container`等の統一ルール追記
 - **v1.4** (2025-12-11): z-index階層セクション追加（dropdown:50 → contextMenu:350の7段階）、スタッキング順序の一元管理
 - **v1.3** (2025-12-05): M3 Surfaceシステム導入（surface-dim/surface/surface-bright/surface-container/surface-container-high）、Primary Containerトークン追加、既存トークンを互換性エイリアス化

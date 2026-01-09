@@ -8,6 +8,7 @@ import { memo, useCallback } from 'react';
 
 import { CheckCircle2, Circle, MoveUpRight } from 'lucide-react';
 
+import { LoadingSpinner } from '@/components/common/Loading/LoadingStates';
 import type { PlanStatus } from '@/features/plans/types';
 import { normalizeStatus } from '@/features/plans/utils/status';
 
@@ -92,7 +93,7 @@ export const TagInspectorPlanList = memo(function TagInspectorPlanList({
       </h3>
       {isLoading ? (
         <div className="flex h-24 items-center justify-center">
-          <div className="border-primary h-6 w-6 animate-spin rounded-full border-b-2" />
+          <LoadingSpinner size="md" />
         </div>
       ) : plans.length === 0 ? (
         <div className="text-muted-foreground py-6 text-center text-sm">

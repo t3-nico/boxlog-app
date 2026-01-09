@@ -10,6 +10,7 @@ import {
   Trash2 as TrashIcon,
 } from 'lucide-react';
 
+import { LoadingSpinner } from '@/components/common/Loading/LoadingStates';
 import { Button } from '@/components/ui/button';
 import type { Tag } from '@/features/tags/types';
 import { useTranslations } from 'next-intl';
@@ -190,7 +191,7 @@ export const TagTreeView = ({
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-8">
-        <div className="border-primary h-8 w-8 animate-spin rounded-full border-b-2"></div>
+        <LoadingSpinner size="lg" />
       </div>
     );
   }

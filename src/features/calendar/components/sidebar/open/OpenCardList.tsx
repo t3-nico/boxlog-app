@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 
 import { useTranslations } from 'next-intl';
 
+import { LoadingSpinner } from '@/components/common/Loading/LoadingStates';
 import { PlanCard } from '@/features/board/components/shared/PlanCard';
 import { useCalendarFilterStore } from '@/features/calendar/stores/useCalendarFilterStore';
 import { useInboxData } from '@/features/inbox/hooks/useInboxData';
@@ -67,7 +68,7 @@ export function OpenCardList({ sort }: OpenCardListProps) {
   if (isPending) {
     return (
       <div className="flex flex-col items-center justify-center py-8">
-        <div className="border-primary size-8 animate-spin rounded-full border-4 border-t-transparent" />
+        <LoadingSpinner size="lg" />
         <p className="text-muted-foreground mt-2 text-sm">{t('loading')}</p>
       </div>
     );

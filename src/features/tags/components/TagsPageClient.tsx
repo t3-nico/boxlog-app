@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { DeleteConfirmDialog } from '@/components/common/DeleteConfirmDialog';
+import { LoadingSpinner } from '@/components/common/Loading/LoadingStates';
 import { PageHeader } from '@/components/common/PageHeader';
 import { DataTable, type GroupedData, type SortState } from '@/features/table';
 import { TagRowWrapper, TagsTableEmptyState } from '@/features/tags/components/table';
@@ -366,7 +367,7 @@ export function TagsPageClient() {
   if (isFetching) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <div className="border-primary h-8 w-8 animate-spin rounded-full border-b-2" />
+        <LoadingSpinner size="lg" />
       </div>
     );
   }

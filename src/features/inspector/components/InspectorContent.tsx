@@ -2,6 +2,8 @@
 
 import type { ReactNode } from 'react';
 
+import { LoadingSpinner } from '@/components/common/Loading/LoadingStates';
+
 interface InspectorContentProps {
   /** ローディング中かどうか */
   isLoading?: boolean;
@@ -48,7 +50,7 @@ export function InspectorContent({
     }
     return (
       <div className="flex h-full flex-1 items-center justify-center">
-        <div className="border-primary h-8 w-8 animate-spin rounded-full border-b-2" />
+        <LoadingSpinner size="lg" />
       </div>
     );
   }

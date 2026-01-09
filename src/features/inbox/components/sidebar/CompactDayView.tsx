@@ -503,7 +503,8 @@ export const CompactDayView = memo(function CompactDayView({
                       onDrop && 'cursor-grab active:cursor-grabbing',
                       draggingPlanId === plan.id && 'opacity-50',
                       isActive && 'ring-primary ring-2',
-                      !planColor && 'bg-primary/20 hover:bg-primary/30 border-primary/50',
+                      !planColor &&
+                        'bg-primary-container hover:bg-primary-state-hover border-primary',
                     )}
                     style={{
                       top,

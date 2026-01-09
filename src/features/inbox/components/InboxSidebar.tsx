@@ -4,6 +4,7 @@ import { useState } from 'react';
 
 import { CalendarDays, List } from 'lucide-react';
 
+import { LoadingSpinner } from '@/components/common/Loading/LoadingStates';
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
 import { SidebarShell } from '@/features/navigation/components/sidebar/SidebarShell';
 import { SidebarTabLayout } from '@/features/navigation/components/sidebar/SidebarTabLayout';
@@ -67,7 +68,7 @@ export function InboxSidebar({
     return (
       <SidebarShell title={t('sidebar.navigation.inbox')}>
         <div className="flex flex-1 items-center justify-center">
-          <div className="border-primary h-8 w-8 animate-spin rounded-full border-b-2"></div>
+          <LoadingSpinner size="lg" />
         </div>
       </SidebarShell>
     );
