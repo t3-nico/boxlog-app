@@ -27,7 +27,7 @@ export function SettingsSidebar() {
   return (
     <SidebarShell title={t('settings.dialog.title')}>
       {/* カテゴリリスト */}
-      <nav className="flex-1 overflow-y-auto p-2">
+      <nav className="flex-1 overflow-y-auto px-2 py-2">
         <div className="flex flex-col gap-1">
           {SETTINGS_CATEGORIES.map((category) => {
             const Icon = category.icon;
