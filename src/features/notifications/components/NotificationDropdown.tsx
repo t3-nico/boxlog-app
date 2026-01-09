@@ -268,14 +268,14 @@ export function NotificationDropdown({ className: _className }: NotificationDrop
               </span>
             )}
           </div>
-          <HoverTooltip content={t('notification.settings')} side="top">
+          <HoverTooltip content={t('notification.settings.title')} side="top">
             <button
               type="button"
               onClick={handleOpenSettings}
               className="hover:bg-state-hover flex h-10 w-10 items-center justify-center rounded-md transition-colors"
             >
               <Settings className="h-4 w-4" />
-              <span className="sr-only">{t('notification.settings')}</span>
+              <span className="sr-only">{t('notification.settings.title')}</span>
             </button>
           </HoverTooltip>
         </DropdownMenuLabel>
