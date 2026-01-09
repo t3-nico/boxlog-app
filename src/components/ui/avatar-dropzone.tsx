@@ -181,7 +181,7 @@ function AvatarDropzone({
               'flex h-full w-full items-center justify-center rounded-full',
               'border-2 border-dashed transition-colors',
               isDragActive
-                ? 'border-primary bg-primary/10'
+                ? 'border-primary bg-primary-container'
                 : 'border-border bg-muted hover:border-primary/50 hover:bg-muted/80',
             )}
           >

@@ -201,7 +201,7 @@ export const MobileDrawer = ({
                   sizes="40px"
                 />
               ) : (
-                <div className="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-full">
+                <div className="bg-primary-container flex h-10 w-10 items-center justify-center rounded-full">
                   <User className="text-primary h-5 w-5" />
                 </div>
               )}

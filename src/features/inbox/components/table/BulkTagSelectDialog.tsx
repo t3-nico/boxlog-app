@@ -179,7 +179,7 @@ export function BulkTagSelectDialog({
                       onClick={() => handleToggleTag(tag.id)}
                       className={`flex w-full items-center gap-3 rounded-md px-3 py-2 text-left text-sm transition-colors ${
                         isSelected
-                          ? 'bg-primary/10 text-foreground'
+                          ? 'bg-primary-state-selected text-foreground'
                           : 'hover:bg-state-hover text-muted-foreground'
                       }`}
                     >

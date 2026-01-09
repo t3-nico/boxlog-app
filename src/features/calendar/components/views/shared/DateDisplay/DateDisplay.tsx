@@ -54,7 +54,7 @@ const generateDateClassName = (
 
   // 選択状態（当日以外）
   if (isSelected && !today) {
-    classes.push('bg-primary/10 text-primary');
+    classes.push('bg-primary-state-selected text-primary');
   }
 
   if (className) {

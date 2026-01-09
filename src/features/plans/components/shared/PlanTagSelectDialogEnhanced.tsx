@@ -450,7 +450,7 @@ export function PlanTagSelectDialogEnhanced({
                             <TableRow
                               key={tag.id}
                               className={`cursor-pointer text-xs ${!tag.is_active ? 'opacity-50' : ''} ${
-                                isSelected ? 'bg-primary/10' : ''
+                                isSelected ? 'bg-primary-state-selected' : ''
                               }`}
                               onClick={() => tag.is_active && handleToggleTag(tag.id)}
                             >

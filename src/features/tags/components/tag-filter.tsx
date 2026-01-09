@@ -98,7 +98,8 @@ export const TagFilter = ({
         variant="outline"
         onClick={handleToggleOpen}
         className={cn(
-          hasTagFilters && 'border-primary/30 bg-primary/10 text-primary hover:bg-primary/20',
+          hasTagFilters &&
+            'border-primary/30 bg-primary-container text-on-primary-container hover:bg-primary-state-hover',
         )}
       >
         <FunnelIcon className="h-4 w-4" />
@@ -117,7 +118,7 @@ export const TagFilter = ({
           {selectedTags.map((tag) => (
             <span
               key={tag.id}
-              className="bg-primary/10 text-primary inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium"
+              className="bg-primary-container text-on-primary-container inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium"
             >
               <TagIcon className="h-4 w-4" style={{ color: tag.color || undefined }} />
               {tag.name}
@@ -231,7 +232,7 @@ export const TagChip = ({ tag, isSelected, onToggle }: TagChipProps) => {
       className={cn(
         'h-auto px-2 py-1 text-xs font-medium',
         isSelected
-          ? 'border-primary/30 bg-primary/10 text-primary hover:bg-primary/20'
+          ? 'border-primary/30 bg-primary-container text-on-primary-container hover:bg-primary-state-hover'
           : 'bg-surface-container',
       )}
     >

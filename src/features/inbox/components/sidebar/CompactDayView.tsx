@@ -400,7 +400,7 @@ export const CompactDayView = memo(function CompactDayView({
                         key={hour}
                         className={cn(
                           'border-border border-b transition-colors',
-                          isDragOver && dragOverHour === hour && 'bg-primary/10',
+                          isDragOver && dragOverHour === hour && 'bg-primary-state-hover',
                         )}
                         style={{ height: COMPACT_HOUR_HEIGHT }}
                         onClick={() => handleTimeClick(hour)}
@@ -453,7 +453,7 @@ export const CompactDayView = memo(function CompactDayView({
                       key={hour}
                       className={cn(
                         'border-border border-b transition-colors',
-                        isDragOver && dragOverHour === hour && 'bg-primary/10',
+                        isDragOver && dragOverHour === hour && 'bg-primary-state-hover',
                       )}
                       style={{ height: COMPACT_HOUR_HEIGHT }}
                       onClick={() => handleTimeClick(hour)}

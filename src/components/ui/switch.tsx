@@ -17,7 +17,7 @@ const Switch = React.forwardRef<
       'disabled:cursor-not-allowed disabled:opacity-50',
       'data-[state=checked]:bg-primary',
       'data-[state=unchecked]:bg-secondary data-[state=unchecked]:hover:bg-secondary/80',
-      'data-[state=checked]:hover:bg-primary/90',
+      'data-[state=checked]:hover:bg-primary-hover',
       className,
     )}
     {...props}

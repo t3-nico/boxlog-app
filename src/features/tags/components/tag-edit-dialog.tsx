@@ -171,7 +171,7 @@ export const TagEditDialog = ({ tag, open, onClose, onSave }: TagEditDialogProps
                             onClick={() => setIcon(iconName as TagIconName)}
                             className={`rounded-md p-2 ${
                               icon === iconName
-                                ? 'border-primary bg-primary/12 border-2'
+                                ? 'border-primary bg-primary-state-selected border-2'
                                 : 'border-border bg-secondary text-secondary-foreground border'
                             }`}
                             title={iconName}
