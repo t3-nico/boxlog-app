@@ -131,7 +131,11 @@ export function ProfileSection() {
           />
         </SettingField>
 
-        <SettingField label="ユーザー名" description="アプリ内で表示される名前です" required>
+        <SettingField
+          label={t('settings.account.displayName')}
+          description={t('settings.account.displayNameDesc')}
+          required
+        >
           <Input
             value={profile.values.username}
             onChange={handleUsernameChange}

@@ -52,11 +52,14 @@ export function MFASection() {
           <div className="border-warning/30 bg-warning/5 space-y-4 rounded-lg border p-4">
             <div>
               <h3 className="text-warning mb-2 text-lg font-semibold">
-                ⚠️ リカバリーコードを保存してください
+                ⚠️ {t('settings.account.mfa.recoveryCodes.title')}
               </h3>
               <p className="text-muted-foreground text-sm">
-                認証アプリにアクセスできなくなった場合、これらのコードでログインできます。
-                <strong className="text-foreground"> 各コードは1回のみ使用可能です。</strong>
+                {t('settings.account.mfa.recoveryCodes.description')}
+                <strong className="text-foreground">
+                  {' '}
+                  {t('settings.account.mfa.recoveryCodes.oneTimeUse')}
+                </strong>
               </p>
             </div>
 
@@ -70,10 +73,10 @@ export function MFASection() {
 
             <div className="flex items-center justify-between">
               <p className="text-muted-foreground text-xs">
-                これらのコードを安全な場所に保存してください。この画面を閉じると再表示できません。
+                {t('settings.account.mfa.recoveryCodes.saveWarning')}
               </p>
               <Button variant="outline" size="sm" onClick={dismissRecoveryCodes}>
-                保存しました
+                {t('settings.account.mfa.recoveryCodes.saved')}
               </Button>
             </div>
           </div>
@@ -83,13 +86,13 @@ export function MFASection() {
         {!hasMFA && !showMFASetup && (
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-base font-medium">Two-Factor Authentication (MFA)</div>
+              <div className="text-base font-medium">{t('settings.account.mfa.title')}</div>
               <p className="text-muted-foreground mt-1 text-sm">
-                認証アプリを使って、ログイン時に追加のセキュリティ層を追加します
+                {t('settings.account.mfa.description')}
               </p>
             </div>
             <Button type="button" variant="ghost" onClick={enrollMFA} disabled={isLoading}>
-              {isLoading ? '読み込み中...' : 'MFAを有効にする'}
+              {isLoading ? t('settings.account.mfa.loading') : t('settings.account.mfa.enableMFA')}
             </Button>
           </div>
         )}
@@ -98,36 +101,37 @@ export function MFASection() {
         {!hasMFA && showMFASetup && qrCode && (
           <div className="bg-muted space-y-4 rounded-lg p-6">
             <div>
-              <h3 className="mb-2 text-lg font-semibold">2段階認証を設定</h3>
+              <h3 className="mb-2 text-lg font-semibold">
+                {t('settings.account.mfa.setup.title')}
+              </h3>
               <p className="text-muted-foreground text-sm">
-                以下の手順に従って、認証アプリで2段階認証を設定してください。
+                {t('settings.account.mfa.setup.description')}
               </p>
             </div>
 
             <div className="space-y-4">
               <div>
-                <p className="mb-2 text-sm font-medium">1. QRコードをスキャン</p>
+                <p className="mb-2 text-sm font-medium">{t('settings.account.mfa.setup.step1')}</p>
                 <div className="flex justify-center rounded-lg bg-white p-4">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={qrCode} alt="QR Code" className="h-48 w-48" />
                 </div>
                 <p className="text-muted-foreground mt-2 text-xs">
-                  Google Authenticator、Microsoft
-                  Authenticator、Authyなどの認証アプリでスキャンしてください
+                  {t('settings.account.mfa.setup.step1Desc')}
                 </p>
               </div>
 
               {secret && (
                 <div>
-                  <p className="mb-2 text-sm font-medium">またはこのコードを手動で入力:</p>
+                  <p className="mb-2 text-sm font-medium">
+                    {t('settings.account.mfa.setup.manualEntry')}
+                  </p>
                   <code className="bg-surface-container block rounded p-2 text-xs">{secret}</code>
                 </div>
               )}
 
               <div>
-                <p className="mb-2 text-sm font-medium">
-                  2. 認証アプリに表示された6桁のコードを入力
-                </p>
+                <p className="mb-2 text-sm font-medium">{t('settings.account.mfa.setup.step2')}</p>
                 <div className="flex items-center gap-4">
                   <InputOTP maxLength={6} value={verificationCode} onChange={setVerificationCode}>
                     <InputOTPGroup>
@@ -140,10 +144,12 @@ export function MFASection() {
                     </InputOTPGroup>
                   </InputOTP>
                   <Button onClick={verifyMFA} disabled={isLoading || verificationCode.length !== 6}>
-                    {isLoading ? '検証中...' : '確認'}
+                    {isLoading
+                      ? t('settings.account.mfa.verifying')
+                      : t('settings.account.mfa.verify')}
                   </Button>
                   <Button variant="ghost" onClick={cancelSetup}>
-                    キャンセル
+                    {t('settings.account.mfa.cancel')}
                   </Button>
                 </div>
               </div>
@@ -158,11 +164,11 @@ export function MFASection() {
               <div className="mb-2 flex items-center gap-2">
                 <div className="bg-success h-2 w-2 rounded-full"></div>
                 <span className="text-success text-sm font-medium">
-                  2段階認証が有効になっています
+                  {t('settings.account.mfa.enabled.title')}
                 </span>
               </div>
               <p className="text-success/80 text-xs">
-                ログイン時に認証アプリで生成されるコードが必要になります
+                {t('settings.account.mfa.enabled.description')}
               </p>
             </div>
 
@@ -170,13 +176,15 @@ export function MFASection() {
             <div className="bg-muted rounded-lg p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="text-sm font-medium">リカバリーコード</div>
+                  <div className="text-sm font-medium">
+                    {t('settings.account.mfa.recoveryCodes.sectionTitle')}
+                  </div>
                   <p className="text-muted-foreground mt-1 text-xs">
-                    {recoveryCodeCount > 0 ? (
-                      <>残り {recoveryCodeCount} 個のコードが利用可能です</>
-                    ) : (
-                      <>リカバリーコードがありません</>
-                    )}
+                    {recoveryCodeCount > 0
+                      ? t('settings.account.mfa.recoveryCodes.remaining', {
+                          count: recoveryCodeCount,
+                        })
+                      : t('settings.account.mfa.recoveryCodes.noCodesLeft')}
                   </p>
                 </div>
                 <Button
@@ -185,14 +193,18 @@ export function MFASection() {
                   onClick={regenerateRecoveryCodes}
                   disabled={isLoading}
                 >
-                  {isLoading ? '生成中...' : '再生成'}
+                  {isLoading
+                    ? t('settings.account.mfa.generating')
+                    : t('settings.account.mfa.regenerate')}
                 </Button>
               </div>
             </div>
 
             <div className="flex justify-end">
               <Button variant="destructive" onClick={disableMFA} disabled={isLoading}>
-                {isLoading ? '処理中...' : 'MFAを無効にする'}
+                {isLoading
+                  ? t('settings.account.mfa.processing')
+                  : t('settings.account.mfa.disableMFA')}
               </Button>
             </div>
           </div>

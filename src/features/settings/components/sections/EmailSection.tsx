@@ -27,13 +27,13 @@ export function EmailSection() {
         <div className="flex items-center justify-between">
           <div className="flex-1">
             <p className="text-muted-foreground mb-2 text-xs">
-              ログインとアカウント回復に使用されます
+              {t('settings.account.emailUsedFor')}
             </p>
             <p className="text-sm font-medium">{email}</p>
-            <p className="text-muted-foreground text-xs">確認済み</p>
+            <p className="text-muted-foreground text-xs">{t('settings.account.emailVerified')}</p>
           </div>
           <Button type="button" variant="ghost" onClick={() => setShowEmailDialog(true)}>
-            変更
+            {t('common.change')}
           </Button>
         </div>
       </SettingsCard>

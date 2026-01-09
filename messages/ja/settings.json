@@ -50,6 +50,43 @@
       "twoFactorPrompt": "サインイン時に認証コードを要求します",
       "twoFactorActive": "2要素認証が有効",
       "twoFactorProtection": "アカウントが追加のセキュリティ層で保護されています。",
+      "emailUsedFor": "ログインや通知に使用されます",
+      "emailVerified": "認証済み",
+      "mfa": {
+        "title": "2要素認証 (MFA)",
+        "description": "認証アプリを使って、ログイン時に追加のセキュリティ層を追加します",
+        "enableMFA": "MFAを有効にする",
+        "disableMFA": "MFAを無効にする",
+        "loading": "読み込み中...",
+        "verifying": "検証中...",
+        "verify": "確認",
+        "cancel": "キャンセル",
+        "processing": "処理中...",
+        "generating": "生成中...",
+        "regenerate": "再生成",
+        "setup": {
+          "title": "2段階認証を設定",
+          "description": "以下の手順に従って、認証アプリで2段階認証を設定してください。",
+          "step1": "1. QRコードをスキャン",
+          "step1Desc": "Google Authenticator、Microsoft Authenticator、Authyなどの認証アプリでスキャンしてください",
+          "manualEntry": "またはこのコードを手動で入力:",
+          "step2": "2. 認証アプリに表示された6桁のコードを入力"
+        },
+        "enabled": {
+          "title": "2段階認証が有効になっています",
+          "description": "ログイン時に認証アプリで生成されるコードが必要になります"
+        },
+        "recoveryCodes": {
+          "title": "リカバリーコードを保存してください",
+          "description": "認証アプリにアクセスできなくなった場合、これらのコードでログインできます。",
+          "oneTimeUse": "各コードは1回のみ使用可能です。",
+          "saveWarning": "これらのコードを安全な場所に保存してください。この画面を閉じると再表示できません。",
+          "saved": "保存しました",
+          "sectionTitle": "リカバリーコード",
+          "remaining": "残り {count} 個のコードが利用可能です",
+          "noCodesLeft": "リカバリーコードがありません"
+        }
+      },
       "session": "セッション",
       "dangerZone": "危険な操作",
       "dangerZoneDesc": "取り消すことのできない破壊的なアクション",

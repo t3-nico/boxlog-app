@@ -3,7 +3,6 @@
 import {
   DangerZoneSection,
   EmailSection,
-  LogoutSection,
   MFASection,
   PasswordSection,
   ProfileSection,
@@ -17,8 +16,9 @@ import {
  * - EmailSection: メールアドレス
  * - PasswordSection: パスワード変更
  * - MFASection: 二段階認証
- * - LogoutSection: ログアウト
  * - DangerZoneSection: アカウント削除
+ *
+ * Note: ログアウトはユーザーメニューに配置（GAFA標準）
  */
 export function AccountSettings() {
   return (
@@ -27,7 +27,6 @@ export function AccountSettings() {
       <EmailSection />
       <PasswordSection />
       <MFASection />
-      <LogoutSection />
       <DangerZoneSection />
     </div>
   );
