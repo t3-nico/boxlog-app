@@ -131,10 +131,11 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
                   disabled={isSubmitting}
                   autoComplete="email"
                   aria-invalid={!!errors.email}
+                  aria-describedby={errors.email ? 'email-error' : undefined}
                   {...register('email')}
                 />
                 {errors.email && (
-                  <p className="text-destructive text-sm" role="alert">
+                  <p id="email-error" className="text-destructive text-sm" role="alert">
                     {errors.email.message}
                   </p>
                 )}
@@ -158,6 +159,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
                     disabled={isSubmitting}
                     autoComplete="current-password"
                     aria-invalid={!!errors.password}
+                    aria-describedby={errors.password ? 'password-error' : undefined}
                     {...register('password')}
                   />
                   <HoverTooltip
@@ -186,7 +188,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
                   </HoverTooltip>
                 </div>
                 {errors.password && (
-                  <p className="text-destructive text-sm" role="alert">
+                  <p id="password-error" className="text-destructive text-sm" role="alert">
                     {errors.password.message}
                   </p>
                 )}
@@ -242,7 +244,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
           <div className="bg-surface-container relative hidden md:block">
             <Image
               src="/placeholder.svg"
-              alt="Image"
+              alt=""
               fill
               className="object-cover dark:brightness-[0.2] dark:grayscale"
             />

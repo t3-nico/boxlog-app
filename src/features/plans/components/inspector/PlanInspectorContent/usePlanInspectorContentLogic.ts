@@ -145,7 +145,8 @@ export function usePlanInspectorContentLogic() {
   // UI state
   const titleRef = useRef<HTMLSpanElement>(null);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>();
+  const [scheduleDate, setScheduleDate] = useState<Date | undefined>(); // スケジュール日（start_time/end_time用）
+  const [dueDate, setDueDate] = useState<Date | undefined>(); // 期限日（due_date用）
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
   const [reminderType, setReminderType] = useState<string>('');
@@ -168,14 +169,18 @@ export function usePlanInspectorContentLogic() {
   // Initialize state from plan data
   useEffect(() => {
     if (plan && 'id' in plan) {
-      setSelectedDate(plan.due_date ? parseDateString(plan.due_date) : undefined);
+      // 期限日（due_date）を設定
+      setDueDate(plan.due_date ? parseDateString(plan.due_date) : undefined);
 
+      // スケジュール日と時間を設定
       if (plan.start_time) {
         const date = parseDatetimeString(plan.start_time);
+        setScheduleDate(date); // スケジュール日はstart_timeから取得
         setStartTime(
           `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`,
         );
       } else {
+        setScheduleDate(undefined);
         setStartTime('');
       }
 
@@ -205,7 +210,7 @@ export function usePlanInspectorContentLogic() {
     } else if (!plan && initialData) {
       if (initialData.start_time) {
         const startDate = new Date(initialData.start_time);
-        setSelectedDate(startDate);
+        setScheduleDate(startDate);
         setStartTime(
           `${startDate.getHours().toString().padStart(2, '0')}:${startDate.getMinutes().toString().padStart(2, '0')}`,
         );
@@ -217,7 +222,8 @@ export function usePlanInspectorContentLogic() {
         );
       }
     } else if (!plan && !initialData) {
-      setSelectedDate(undefined);
+      setScheduleDate(undefined);
+      setDueDate(undefined);
       setStartTime('');
       setEndTime('');
       setReminderType('');
@@ -371,9 +377,31 @@ export function usePlanInspectorContentLogic() {
     closeInspector,
   ]);
 
-  const handleDateChange = useCallback(
+  // スケジュール日変更ハンドラー（start_time/end_timeの日付部分）
+  const handleScheduleDateChange = useCallback(
     (date: Date | undefined) => {
-      setSelectedDate(date);
+      setScheduleDate(date);
+      // スケジュール日が変更されたら、start_time/end_timeの日付部分を更新
+      if (date && startTime) {
+        const [hours, minutes] = startTime.split(':').map(Number);
+        const newStartDateTime = new Date(date);
+        newStartDateTime.setHours(hours ?? 0, minutes ?? 0, 0, 0);
+        autoSave('start_time', newStartDateTime.toISOString());
+      }
+      if (date && endTime) {
+        const [hours, minutes] = endTime.split(':').map(Number);
+        const newEndDateTime = new Date(date);
+        newEndDateTime.setHours(hours ?? 0, minutes ?? 0, 0, 0);
+        autoSave('end_time', newEndDateTime.toISOString());
+      }
+    },
+    [autoSave, startTime, endTime],
+  );
+
+  // 期限日変更ハンドラー（due_date）
+  const handleDueDateChange = useCallback(
+    (date: Date | undefined) => {
+      setDueDate(date);
       autoSave('due_date', date ? format(date, 'yyyy-MM-dd') : undefined);
     },
     [autoSave],
@@ -381,15 +409,15 @@ export function usePlanInspectorContentLogic() {
 
   const handleStartTimeChange = useCallback(
     (time: string) => {
-      if (time && selectedDate && endTime) {
+      if (time && scheduleDate && endTime) {
         // 新しい開始時刻を計算
         const [hours, minutes] = time.split(':').map(Number);
-        const newStartDateTime = new Date(selectedDate);
+        const newStartDateTime = new Date(scheduleDate);
         newStartDateTime.setHours(hours ?? 0, minutes ?? 0, 0, 0);
 
         // 現在の終了時刻を取得
         const [endHours, endMinutes] = endTime.split(':').map(Number);
-        const endDateTime = new Date(selectedDate);
+        const endDateTime = new Date(scheduleDate);
         endDateTime.setHours(endHours ?? 0, endMinutes ?? 0, 0, 0);
 
         // 事前重複チェック
@@ -406,9 +434,9 @@ export function usePlanInspectorContentLogic() {
 
         setStartTime(time);
         autoSave('start_time', newStartDateTime.toISOString());
-      } else if (time && selectedDate) {
+      } else if (time && scheduleDate) {
         const [hours, minutes] = time.split(':').map(Number);
-        const dateTime = new Date(selectedDate);
+        const dateTime = new Date(scheduleDate);
         dateTime.setHours(hours ?? 0, minutes ?? 0, 0, 0);
         setStartTime(time);
         autoSave('start_time', dateTime.toISOString());
@@ -417,20 +445,20 @@ export function usePlanInspectorContentLogic() {
         autoSave('start_time', undefined);
       }
     },
-    [selectedDate, endTime, autoSave, checkTimeOverlap, hapticError, calendarToast, t],
+    [scheduleDate, endTime, autoSave, checkTimeOverlap, hapticError, calendarToast, t],
   );
 
   const handleEndTimeChange = useCallback(
     (time: string) => {
-      if (time && selectedDate && startTime) {
+      if (time && scheduleDate && startTime) {
         // 現在の開始時刻を取得
         const [startHours, startMinutes] = startTime.split(':').map(Number);
-        const startDateTime = new Date(selectedDate);
+        const startDateTime = new Date(scheduleDate);
         startDateTime.setHours(startHours ?? 0, startMinutes ?? 0, 0, 0);
 
         // 新しい終了時刻を計算
         const [hours, minutes] = time.split(':').map(Number);
-        const newEndDateTime = new Date(selectedDate);
+        const newEndDateTime = new Date(scheduleDate);
         newEndDateTime.setHours(hours ?? 0, minutes ?? 0, 0, 0);
 
         // 事前重複チェック
@@ -447,9 +475,9 @@ export function usePlanInspectorContentLogic() {
 
         setEndTime(time);
         autoSave('end_time', newEndDateTime.toISOString());
-      } else if (time && selectedDate) {
+      } else if (time && scheduleDate) {
         const [hours, minutes] = time.split(':').map(Number);
-        const dateTime = new Date(selectedDate);
+        const dateTime = new Date(scheduleDate);
         dateTime.setHours(hours ?? 0, minutes ?? 0, 0, 0);
         setEndTime(time);
         autoSave('end_time', dateTime.toISOString());
@@ -458,7 +486,7 @@ export function usePlanInspectorContentLogic() {
         autoSave('end_time', undefined);
       }
     },
-    [selectedDate, startTime, autoSave, checkTimeOverlap, hapticError, calendarToast, t],
+    [scheduleDate, startTime, autoSave, checkTimeOverlap, hapticError, calendarToast, t],
   );
 
   // Menu handlers
@@ -515,7 +543,8 @@ export function usePlanInspectorContentLogic() {
 
     // Form state
     titleRef,
-    selectedDate,
+    scheduleDate, // スケジュール日（カレンダー配置用）
+    dueDate, // 期限日
     startTime,
     endTime,
     reminderType,
@@ -523,7 +552,8 @@ export function usePlanInspectorContentLogic() {
     timeConflictError,
 
     // Form handlers
-    handleDateChange,
+    handleScheduleDateChange, // スケジュール日変更
+    handleDueDateChange, // 期限日変更
     handleStartTimeChange,
     handleEndTimeChange,
     autoSave,

@@ -50,6 +50,8 @@ export function TableEmptyState({
           icon={icon}
           title={message}
           description={subMessage}
+          size="sm"
+          centered
           actions={
             isFiltered && onResetFilter ? (
               <Button type="button" variant="outline" onClick={onResetFilter}>

@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  BookOpen,
   Building,
   ExternalLink,
   FileText,
@@ -12,7 +13,6 @@ import {
   Settings,
   Shield,
   Sparkles,
-  UserCircle,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -23,7 +23,6 @@ import {
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuSub,
   DropdownMenuSubContent,
@@ -83,28 +82,22 @@ export function Account({ userData, locale }: AccountProps) {
           align="start"
           sideOffset={8}
         >
-          <DropdownMenuLabel className="p-0 font-normal">
-            <div className="flex items-center gap-2 px-2 py-2 text-left text-sm">
-              <Avatar className="h-6 w-6 rounded-xl">
-                {userData.avatar ? <AvatarImage src={userData.avatar} alt={userData.name} /> : null}
-                <AvatarFallback className="rounded-xl text-xs">
-                  {userData.name.charAt(0).toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{userData.name}</span>
-                <span className="text-muted-foreground truncate text-xs">{userData.email}</span>
-              </div>
+          <DropdownMenuItem className="font-normal" onClick={() => navigateToSettings('account')}>
+            <Avatar className="h-6 w-6 rounded-xl">
+              {userData.avatar ? <AvatarImage src={userData.avatar} alt={userData.name} /> : null}
+              <AvatarFallback className="rounded-xl text-xs">
+                {userData.name.charAt(0).toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+            <div className="grid flex-1 text-left text-sm leading-tight">
+              <span className="truncate font-medium">{userData.name}</span>
+              <span className="text-muted-foreground truncate text-xs">{userData.email}</span>
             </div>
-          </DropdownMenuLabel>
+          </DropdownMenuItem>
           <DropdownMenuSeparator />
 
           {/* アカウント関連 */}
           <DropdownMenuGroup>
-            <DropdownMenuItem onClick={() => navigateToSettings('account')}>
-              <UserCircle />
-              {t('navUser.account')}
-            </DropdownMenuItem>
             <DropdownMenuItem onClick={() => navigateToSettings('subscription')}>
               <Sparkles />
               {t('navUser.upgradePlan')}
@@ -137,6 +130,14 @@ export function Account({ userData, locale }: AccountProps) {
                   >
                     <Megaphone />
                     <span className="flex-1">{t('navUser.helpSubmenu.releaseNotes')}</span>
+                    <ExternalLink className="text-muted-foreground size-3" />
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  {/* TODO: ドキュメントURLを設定 */}
+                  <Link href="#" target="_blank" rel="noopener noreferrer">
+                    <BookOpen />
+                    <span className="flex-1">{t('navUser.helpSubmenu.documentation')}</span>
                     <ExternalLink className="text-muted-foreground size-3" />
                   </Link>
                 </DropdownMenuItem>

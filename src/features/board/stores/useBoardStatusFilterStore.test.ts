@@ -12,8 +12,7 @@ describe('useBoardStatusFilterStore', () => {
     it('すべてのステータスが表示状態', () => {
       const { isStatusVisible } = useBoardStatusFilterStore.getState();
 
-      expect(isStatusVisible('todo')).toBe(true);
-      expect(isStatusVisible('doing')).toBe(true);
+      expect(isStatusVisible('open')).toBe(true);
       expect(isStatusVisible('done')).toBe(true);
     });
   });
@@ -35,51 +34,47 @@ describe('useBoardStatusFilterStore', () => {
     it('他のステータスに影響しない', () => {
       useBoardStatusFilterStore.getState().toggleStatus('done');
 
-      expect(useBoardStatusFilterStore.getState().isStatusVisible('todo')).toBe(true);
-      expect(useBoardStatusFilterStore.getState().isStatusVisible('doing')).toBe(true);
+      expect(useBoardStatusFilterStore.getState().isStatusVisible('open')).toBe(true);
     });
 
     it('複数のステータスを非表示にできる', () => {
-      useBoardStatusFilterStore.getState().toggleStatus('todo');
+      useBoardStatusFilterStore.getState().toggleStatus('open');
       useBoardStatusFilterStore.getState().toggleStatus('done');
 
-      expect(useBoardStatusFilterStore.getState().isStatusVisible('todo')).toBe(false);
-      expect(useBoardStatusFilterStore.getState().isStatusVisible('doing')).toBe(true);
+      expect(useBoardStatusFilterStore.getState().isStatusVisible('open')).toBe(false);
       expect(useBoardStatusFilterStore.getState().isStatusVisible('done')).toBe(false);
     });
   });
 
   describe('isStatusVisible', () => {
     it('表示中のステータスにtrueを返す', () => {
-      expect(useBoardStatusFilterStore.getState().isStatusVisible('todo')).toBe(true);
+      expect(useBoardStatusFilterStore.getState().isStatusVisible('open')).toBe(true);
     });
 
     it('非表示のステータスにfalseを返す', () => {
-      useBoardStatusFilterStore.getState().toggleStatus('todo');
+      useBoardStatusFilterStore.getState().toggleStatus('open');
 
-      expect(useBoardStatusFilterStore.getState().isStatusVisible('todo')).toBe(false);
+      expect(useBoardStatusFilterStore.getState().isStatusVisible('open')).toBe(false);
     });
   });
 
   describe('resetFilters', () => {
     it('すべてのステータスを表示状態にリセットする', () => {
       // いくつかのステータスを非表示に
-      useBoardStatusFilterStore.getState().toggleStatus('todo');
+      useBoardStatusFilterStore.getState().toggleStatus('open');
       useBoardStatusFilterStore.getState().toggleStatus('done');
 
       // リセット
       useBoardStatusFilterStore.getState().resetFilters();
 
-      expect(useBoardStatusFilterStore.getState().isStatusVisible('todo')).toBe(true);
-      expect(useBoardStatusFilterStore.getState().isStatusVisible('doing')).toBe(true);
+      expect(useBoardStatusFilterStore.getState().isStatusVisible('open')).toBe(true);
       expect(useBoardStatusFilterStore.getState().isStatusVisible('done')).toBe(true);
     });
 
     it('既にデフォルト状態でも安全にリセットできる', () => {
       useBoardStatusFilterStore.getState().resetFilters();
 
-      expect(useBoardStatusFilterStore.getState().isStatusVisible('todo')).toBe(true);
-      expect(useBoardStatusFilterStore.getState().isStatusVisible('doing')).toBe(true);
+      expect(useBoardStatusFilterStore.getState().isStatusVisible('open')).toBe(true);
       expect(useBoardStatusFilterStore.getState().isStatusVisible('done')).toBe(true);
     });
   });
@@ -88,8 +83,7 @@ describe('useBoardStatusFilterStore', () => {
     it('表示中のステータスのセットを取得できる', () => {
       const { visibleStatuses } = useBoardStatusFilterStore.getState();
 
-      expect(visibleStatuses.has('todo')).toBe(true);
-      expect(visibleStatuses.has('doing')).toBe(true);
+      expect(visibleStatuses.has('open')).toBe(true);
       expect(visibleStatuses.has('done')).toBe(true);
     });
 
@@ -98,8 +92,7 @@ describe('useBoardStatusFilterStore', () => {
 
       const { visibleStatuses } = useBoardStatusFilterStore.getState();
 
-      expect(visibleStatuses.has('todo')).toBe(true);
-      expect(visibleStatuses.has('doing')).toBe(true);
+      expect(visibleStatuses.has('open')).toBe(true);
       expect(visibleStatuses.has('done')).toBe(false);
     });
   });

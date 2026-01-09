@@ -67,22 +67,28 @@ describe('query-parser', () => {
         expect(result.hasFilters).toBe(true);
       });
 
-      it('status:todoを抽出できる', () => {
+      it('status:openを抽出できる', () => {
+        const result = parseSearchQuery('status:open');
+
+        expect(result.filters.status).toEqual(['open']);
+      });
+
+      it('後方互換: status:todoをopenにマッピング', () => {
         const result = parseSearchQuery('status:todo');
 
-        expect(result.filters.status).toEqual(['todo']);
+        expect(result.filters.status).toEqual(['open']);
       });
 
-      it('status:in_progressをdoingにマッピングする', () => {
+      it('後方互換: status:in_progressをopenにマッピング', () => {
         const result = parseSearchQuery('status:in_progress');
 
-        expect(result.filters.status).toEqual(['doing']);
+        expect(result.filters.status).toEqual(['open']);
       });
 
-      it('status:doingを抽出できる', () => {
+      it('後方互換: status:doingをopenにマッピング', () => {
         const result = parseSearchQuery('status:doing');
 
-        expect(result.filters.status).toEqual(['doing']);
+        expect(result.filters.status).toEqual(['open']);
       });
 
       it('大文字小文字を区別しない', () => {
@@ -97,16 +103,16 @@ describe('query-parser', () => {
         expect(result.filters.status).toEqual(['done']);
       });
 
-      it('エイリアス: pendingはtodoにマッピング', () => {
+      it('エイリアス: pendingはopenにマッピング', () => {
         const result = parseSearchQuery('status:pending');
 
-        expect(result.filters.status).toEqual(['todo']);
+        expect(result.filters.status).toEqual(['open']);
       });
 
       it('複数のステータスを抽出できる', () => {
-        const result = parseSearchQuery('status:todo status:doing');
+        const result = parseSearchQuery('status:open status:done');
 
-        expect(result.filters.status).toEqual(['todo', 'doing']);
+        expect(result.filters.status).toEqual(['open', 'done']);
       });
 
       it('不明なステータスは無視される', () => {
@@ -169,11 +175,11 @@ describe('query-parser', () => {
 
     describe('複合フィルター', () => {
       it('すべてのフィルタータイプを組み合わせられる', () => {
-        const result = parseSearchQuery('ミーティング #仕事 status:todo due:today');
+        const result = parseSearchQuery('ミーティング #仕事 status:open due:today');
 
         expect(result.text).toBe('ミーティング');
         expect(result.filters.tags).toEqual(['仕事']);
-        expect(result.filters.status).toEqual(['todo']);
+        expect(result.filters.status).toEqual(['open']);
         expect(result.filters.dueDate).toBe('today');
         expect(result.hasFilters).toBe(true);
       });

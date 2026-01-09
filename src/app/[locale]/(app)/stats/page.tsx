@@ -75,6 +75,14 @@ const MonthlyTrendChart = dynamic(
   },
 );
 
+const SleepStatsCard = dynamic(
+  () => import('@/features/stats/components/charts').then((mod) => mod.SleepStatsCard),
+  {
+    ssr: false,
+    loading: () => <Skeleton className="h-[160px] w-full" />,
+  },
+);
+
 /**
  * 統計ページ - ダッシュボード
  *
@@ -89,8 +97,11 @@ export default function StatsPage() {
       {/* 年次グリッド（GitHub風ヒートマップ） */}
       <YearlyHeatmap />
 
-      {/* ストリーク */}
-      <StreakCard />
+      {/* ストリーク + 睡眠 */}
+      <div className="grid gap-4 lg:grid-cols-2">
+        <StreakCard />
+        <SleepStatsCard />
+      </div>
 
       {/* 予定合計時間 + タグ別時間 */}
       <div className="grid gap-4 lg:grid-cols-2">

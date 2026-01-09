@@ -181,12 +181,6 @@ export function useMemoizedPlans(
     // キャッシュに保存
     eventCache.set(memoKey, result);
 
-    const computationTime = performance.now() - computationStartTime.current;
-    if (computationTime > 16) {
-      // 1フレーム以上かかった場合は警告
-      console.warn(`Heavy computation detected: ${computationTime}ms for ${events.length} events`);
-    }
-
     return result;
   }, [memoKey, events, startDate, endDate, filters]);
 
@@ -281,10 +275,6 @@ function findOverlappingEvents(events: CalendarPlan[]): CalendarPlan[][] {
   return overlappingGroups;
 }
 
-// 後方互換性のためのエイリアス
-/** @deprecated Use useMemoizedPlans instead */
-export const useMemoizedEvents = useMemoizedPlans;
-
 // 計算結果のメモ化用フック
 export function useMemoizedComputation<T>(
   computeFunction: () => T,
@@ -373,7 +363,7 @@ export function useMemoizedCalendarData(
     }
   }, [viewDate, viewType]);
 
-  return useMemoizedEvents(events, startDate, endDate, {}, viewType);
+  return useMemoizedPlans(events, startDate, endDate, {}, viewType);
 }
 
 // キャッシュ管理のユーティリティ

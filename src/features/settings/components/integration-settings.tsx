@@ -14,6 +14,7 @@ import {
   Trash2,
   Unplug,
 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -22,13 +23,13 @@ import { Switch } from '@/components/ui/switch';
 import { useAuthStore } from '@/features/auth/stores/useAuthStore';
 import { ApiKeyStorage } from '@/lib/security/encryption';
 
-import { SettingField } from './fields/SettingField';
+import { SettingRow } from './fields/SettingRow';
 import { SettingsCard } from './SettingsCard';
 
 interface Integration {
   id: string;
   name: string;
-  description: string;
+  descriptionKey: 'googleCalendarDesc' | 'slackDesc';
   icon: React.ReactNode;
   connected: boolean;
   status?: 'active' | 'inactive' | 'error';
@@ -37,7 +38,7 @@ interface Integration {
 interface AIProvider {
   id: string;
   name: string;
-  description: string;
+  descriptionKey: 'anthropicDesc' | 'openaiDesc';
   keyPrefix: string;
 }
 
@@ -45,18 +46,19 @@ const AI_PROVIDERS: AIProvider[] = [
   {
     id: 'anthropic',
     name: 'Claude (Anthropic)',
-    description: 'Anthropic社のClaudeを使用します',
+    descriptionKey: 'anthropicDesc',
     keyPrefix: 'sk-ant-',
   },
   {
     id: 'openai',
     name: 'OpenAI',
-    description: 'OpenAI社のGPTモデルを使用します',
+    descriptionKey: 'openaiDesc',
     keyPrefix: 'sk-',
   },
 ];
 
 export const IntegrationSettings = memo(function IntegrationSettings() {
+  const t = useTranslations();
   const user = useAuthStore((state) => state.user);
 
   // AI API Keys state
@@ -135,14 +137,14 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
     {
       id: 'google-calendar',
       name: 'Google Calendar',
-      description: 'Googleカレンダーと予定を同期します',
+      descriptionKey: 'googleCalendarDesc',
       icon: <Calendar className="text-primary h-5 w-5" />,
       connected: false,
     },
     {
       id: 'slack',
       name: 'Slack',
-      description: 'Slackにリマインダーや通知を送信します',
+      descriptionKey: 'slackDesc',
       icon: <MessageSquare className="text-primary h-5 w-5" />,
       connected: false,
     },
@@ -175,14 +177,13 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
   }, []);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* AI設定 */}
-      <SettingsCard title="AI設定">
+      <SettingsCard title={t('settings.integrations.ai.title')}>
         <div className="space-y-4">
           <div className="bg-surface-container rounded-xl p-4">
             <p className="text-muted-foreground text-sm">
-              AIアシスタント機能を使用するには、各プロバイダーのAPIキーを設定してください。
-              APIキーはブラウザのローカルストレージに暗号化して保存されます。
+              {t('settings.integrations.ai.description')}
             </p>
           </div>
 
@@ -198,11 +199,13 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
                     {savedKeys[provider.id] && (
                       <Badge variant="outline" className="text-success gap-1">
                         <CheckCircle2 className="h-3 w-3" />
-                        保存済み
+                        {t('settings.integrations.ai.saved')}
                       </Badge>
                     )}
                   </div>
-                  <p className="text-muted-foreground text-sm">{provider.description}</p>
+                  <p className="text-muted-foreground text-sm">
+                    {t(`settings.integrations.ai.${provider.descriptionKey}`)}
+                  </p>
                   <div className="flex gap-2">
                     <div className="relative flex-1">
                       <Input
@@ -215,7 +218,6 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
                       <Button
                         type="button"
                         variant="ghost"
-                        size="sm"
                         className="absolute top-1/2 right-1 h-7 w-7 -translate-y-1/2 p-0"
                         onClick={() => toggleKeyVisibility(provider.id)}
                       >
@@ -228,20 +230,18 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
                     </div>
                     <Button
                       variant="outline"
-                      size="sm"
                       onClick={() => handleSaveApiKey(provider.id)}
                       disabled={!aiKeys[provider.id] || savingKeys[provider.id]}
                     >
                       {savingKeys[provider.id] ? (
                         <Loader2 className="h-4 w-4 animate-spin" />
                       ) : (
-                        '保存'
+                        t('settings.integrations.ai.save')
                       )}
                     </Button>
                     {savedKeys[provider.id] && (
                       <Button
                         variant="ghost"
-                        size="sm"
                         onClick={() => handleDeleteApiKey(provider.id)}
                         className="text-destructive hover:text-destructive"
                       >
@@ -257,7 +257,7 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
       </SettingsCard>
 
       {/* 連携サービス一覧 */}
-      <SettingsCard title="連携サービス">
+      <SettingsCard title={t('settings.integrations.services.title')}>
         <div className="space-y-4">
           {integrations.map((integration) => (
             <div
@@ -274,23 +274,25 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
                     {integration.connected && (
                       <Badge variant="outline" className="text-success gap-1">
                         <CheckCircle2 className="h-3 w-3" />
-                        接続済み
+                        {t('settings.integrations.services.connected')}
                       </Badge>
                     )}
                   </div>
-                  <p className="text-muted-foreground text-sm">{integration.description}</p>
+                  <p className="text-muted-foreground text-sm">
+                    {t(`settings.integrations.services.${integration.descriptionKey}`)}
+                  </p>
                 </div>
               </div>
               <div>
                 {integration.connected ? (
                   <Button variant="outline" onClick={() => handleDisconnect(integration.id)}>
                     <Unplug className="mr-2 h-4 w-4" />
-                    解除
+                    {t('settings.integrations.services.disconnect')}
                   </Button>
                 ) : (
                   <Button variant="outline" onClick={() => handleConnect(integration.id)}>
                     <ExternalLink className="mr-2 h-4 w-4" />
-                    接続
+                    {t('settings.integrations.services.connect')}
                   </Button>
                 )}
               </div>
@@ -300,36 +302,33 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
       </SettingsCard>
 
       {/* 同期設定 */}
-      <SettingsCard title="同期設定">
-        <div className="space-y-4">
-          <SettingField
-            label="自動同期を有効にする"
-            description="連携サービスのデータを自動的に同期します"
-          >
-            <Switch checked={syncEnabled} onCheckedChange={handleSyncChange} />
-          </SettingField>
-
-          {syncEnabled && (
-            <div className="bg-surface-container rounded-xl p-4">
-              <p className="text-muted-foreground text-sm">
-                同期は5分ごとに自動実行されます。手動で同期する場合は各サービスの設定から実行できます。
-              </p>
-            </div>
-          )}
+      <SettingsCard title={t('settings.integrations.sync.title')}>
+        <div className="space-y-0">
+          <SettingRow
+            label={t('settings.integrations.sync.enableLabel')}
+            value={<Switch checked={syncEnabled} onCheckedChange={handleSyncChange} />}
+          />
         </div>
+        {syncEnabled && (
+          <div className="bg-surface-container mt-4 rounded-xl p-4">
+            <p className="text-muted-foreground text-sm">
+              {t('settings.integrations.sync.description')}
+            </p>
+          </div>
+        )}
       </SettingsCard>
 
       {/* API連携 */}
-      <SettingsCard title="API連携">
+      <SettingsCard title={t('settings.integrations.api.title')}>
         <div className="space-y-4">
           <div className="bg-surface-container rounded-xl p-4">
             <p className="text-muted-foreground text-sm">
-              APIキーの発行やWebhookの設定は開発者ポータルから行えます。
+              {t('settings.integrations.api.description')}
             </p>
           </div>
           <Button variant="outline" disabled>
             <ExternalLink className="mr-2 h-4 w-4" />
-            開発者ポータルを開く（準備中）
+            {t('settings.integrations.api.openPortal')}
           </Button>
         </div>
       </SettingsCard>

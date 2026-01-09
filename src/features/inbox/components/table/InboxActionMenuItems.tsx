@@ -1,6 +1,8 @@
 'use client';
 
-import { Archive, Calendar, Copy, Pencil, Tag, Trash2 } from 'lucide-react';
+import { Calendar, CheckCircle2, Circle, Copy, Pencil, Tag, Trash2 } from 'lucide-react';
+
+import type { PlanStatus } from '@/features/plans/types/plan';
 
 import { ActionMenuItems, type ActionGroup } from '@/components/common/ActionMenuItems';
 
@@ -24,7 +26,7 @@ interface InboxActionMenuItemsProps {
   onDuplicate?: ((item: InboxItem) => void) | undefined;
   onAddTags?: ((item: InboxItem) => void) | undefined;
   onChangeDueDate?: ((item: InboxItem) => void) | undefined;
-  onArchive?: ((item: InboxItem) => void) | undefined;
+  onStatusChange?: ((item: InboxItem, status: PlanStatus) => void) | undefined;
   onDelete: (item: InboxItem) => void;
 }
 
@@ -42,7 +44,7 @@ export function InboxActionMenuItems({
   onDuplicate,
   onAddTags,
   onChangeDueDate,
-  onArchive,
+  onStatusChange,
   onDelete,
 }: InboxActionMenuItemsProps) {
   const groups: ActionGroup<InboxItem>[] = [];
@@ -89,27 +91,46 @@ export function InboxActionMenuItems({
     });
   }
 
-  // アーカイブ・削除グループ
-  const dangerActions = [];
-  if (onArchive) {
-    dangerActions.push({
-      key: 'archive',
-      icon: <Archive className="mr-2 size-4" />,
-      label: 'アーカイブ',
-      onClick: onArchive,
-    });
+  // ステータス変更グループ
+  if (onStatusChange) {
+    const statusActions = [];
+    // 現在のステータスと逆のオプションを表示
+    if (item.status !== 'open') {
+      statusActions.push({
+        key: 'status-open',
+        icon: <Circle className="mr-2 size-4" />,
+        label: 'Open',
+        onClick: (i: InboxItem) => onStatusChange(i, 'open'),
+      });
+    }
+    if (item.status !== 'done') {
+      statusActions.push({
+        key: 'status-done',
+        icon: <CheckCircle2 className="text-success mr-2 size-4" />,
+        label: 'Done',
+        onClick: (i: InboxItem) => onStatusChange(i, 'done'),
+      });
+    }
+    if (statusActions.length > 0) {
+      groups.push({
+        key: 'status',
+        actions: statusActions,
+      });
+    }
   }
-  dangerActions.push({
-    key: 'delete',
-    icon: <Trash2 className="mr-2 size-4" />,
-    label: '削除',
-    onClick: onDelete,
-    variant: 'destructive' as const,
-  });
 
+  // 削除グループ
   groups.push({
     key: 'danger',
-    actions: dangerActions,
+    actions: [
+      {
+        key: 'delete',
+        icon: <Trash2 className="mr-2 size-4" />,
+        label: '削除',
+        onClick: onDelete,
+        variant: 'destructive' as const,
+      },
+    ],
   });
 
   return (

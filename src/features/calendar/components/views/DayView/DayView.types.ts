@@ -1,45 +1,12 @@
 import type { CSSProperties } from 'react';
 
-import type {
-  CalendarPlan,
-  CalendarViewType,
-  ViewDateRange,
-} from '@/features/calendar/types/calendar.types';
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
 
-import type { DateTimeSelection, TimeSlot } from '../shared';
+import type { DateTimeSelection, GridViewProps, TimeSlot } from '../shared';
 
-// OldDayViewのPropsを統合した完全版
-export interface DayViewProps {
-  dateRange: ViewDateRange;
-  plans: CalendarPlan[];
-  /** 全プラン（期限切れ未完了表示用、日付フィルタリング前） */
-  allPlans?: CalendarPlan[] | undefined;
-  currentDate: Date;
-  showWeekends?: boolean | undefined; // 週末の表示/非表示（デフォルト: true）
-  className?: string | undefined;
-  /** DnDを無効化するプランID（Inspector表示中のプランなど） */
-  disabledPlanId?: string | null | undefined;
-
-  // Plan handlers
-  onPlanClick?: ((plan: CalendarPlan) => void) | undefined;
-  onPlanContextMenu?: ((plan: CalendarPlan, mouseEvent: React.MouseEvent) => void) | undefined;
-  onCreatePlan?: ((date: Date, time?: string) => void) | undefined;
-  onUpdatePlan?:
-    | ((
-        planIdOrPlan: string | CalendarPlan,
-        updates?: { startTime: Date; endTime: Date },
-      ) => void | Promise<void>)
-    | undefined;
-  onDeletePlan?: ((planId: string) => void) | undefined;
-  onRestorePlan?: ((plan: CalendarPlan) => Promise<void>) | undefined;
-  onEmptyClick?: ((date: Date, time: string) => void) | undefined;
-  onTimeRangeSelect?: ((selection: DateTimeSelection) => void) | undefined;
-
-  // Navigation handlers
-  onViewChange?: ((viewType: CalendarViewType) => void) | undefined;
-  onNavigatePrev?: (() => void) | undefined;
-  onNavigateNext?: (() => void) | undefined;
-  onNavigateToday?: (() => void) | undefined;
+// DayViewの固有Props（GridViewPropsを継承して時間グリッド機能を使用）
+export interface DayViewProps extends GridViewProps {
+  // DayView固有のプロパティがあれば追加
 }
 
 // シンプル版のProps（後方互換性のため）
@@ -65,7 +32,10 @@ export interface DayContentProps {
   onEmptyClick?: ((date: Date, time: string) => void) | undefined;
   onPlanUpdate?: ((plan: CalendarPlan) => void) | undefined;
   onEventUpdate?:
-    | ((eventId: string, updates: { startTime: Date; endTime: Date }) => Promise<void>)
+    | ((
+        eventId: string,
+        updates: { startTime: Date; endTime: Date },
+      ) => Promise<void | { skipToast: true }>)
     | undefined; // D&D用
   onTimeRangeSelect?: ((selection: DateTimeSelection) => void) | undefined;
   className?: string | undefined;

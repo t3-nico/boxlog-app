@@ -2,24 +2,7 @@
 
 import { Suspense } from 'react';
 
-import { InboxBoardView } from '@/features/inbox/components/InboxBoardView';
 import { InboxTableView } from '@/features/inbox/components/InboxTableView';
-import { InboxToolbar } from '@/features/inbox/components/InboxToolbar';
-import { useInboxViewStore } from '@/features/inbox/stores/useInboxViewStore';
-
-/**
- * Inboxコンテンツ（カスタムビュー）
- */
-function InboxContent() {
-  const displayMode = useInboxViewStore((state) => state.displayMode);
-
-  // 表示形式に応じて表示を切り替え
-  if (displayMode === 'table') {
-    return <InboxTableView />;
-  }
-
-  return <InboxBoardView />;
-}
 
 interface InboxViewPageProps {
   params: Promise<{
@@ -33,10 +16,6 @@ interface InboxViewPageProps {
 export default function InboxViewPage({ params: _params }: InboxViewPageProps) {
   return (
     <div className="flex flex-1 flex-col">
-      {/* ツールバー：表示モード別ナビゲーション */}
-      <InboxToolbar />
-
-      {/* コンテンツ：Board/Table */}
       <Suspense
         fallback={
           <div className="flex h-full items-center justify-center">
@@ -47,7 +26,7 @@ export default function InboxViewPage({ params: _params }: InboxViewPageProps) {
           </div>
         }
       >
-        <InboxContent />
+        <InboxTableView />
       </Suspense>
     </div>
   );

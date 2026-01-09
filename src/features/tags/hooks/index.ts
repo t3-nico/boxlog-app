@@ -33,9 +33,6 @@ export {
   useUpdateTagGroup,
 } from './useTagGroups';
 
-// Tag Group DnD
-export { useTagGroupsDnd } from './useTagGroupsDnd';
-
 // Item Tags (Plan, Task etc.)
 export {
   itemTagsKeys,

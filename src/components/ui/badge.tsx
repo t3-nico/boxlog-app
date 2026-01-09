@@ -32,9 +32,9 @@ const badgeVariants = cva(
           'border-transparent bg-secondary text-secondary-foreground [a&]:hover:bg-state-hover',
         // 軽量 - ボーダー付き
         outline: 'border-border bg-background text-foreground [a&]:hover:bg-state-hover',
-        // 成功 - 完了、プラス
+        // 成功 - 完了、プラス（M3 Container トークン）
         success:
-          'border-transparent bg-success/10 text-success dark:bg-success/20 dark:text-success',
+          'border-transparent bg-success-container text-on-success-container [a&]:hover:bg-state-hover',
         // 警告 - 注意
         warning:
           'border-transparent bg-warning/10 text-warning dark:bg-warning/20 dark:text-warning',

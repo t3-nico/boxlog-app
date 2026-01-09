@@ -5,6 +5,9 @@
       "activity": "アクティビティ",
       "comments": "コメント"
     },
+    "activity": {
+      "noActivity": "まだアクティビティがありません"
+    },
     "account": {
       "profileUpdated": "プロフィールを更新しました",
       "passwordUpdated": "パスワードを更新しました",
@@ -50,6 +53,43 @@
       "twoFactorPrompt": "サインイン時に認証コードを要求します",
       "twoFactorActive": "2要素認証が有効",
       "twoFactorProtection": "アカウントが追加のセキュリティ層で保護されています。",
+      "emailUsedFor": "ログインや通知に使用されます",
+      "emailVerified": "認証済み",
+      "mfa": {
+        "title": "2要素認証 (MFA)",
+        "description": "認証アプリを使って、ログイン時に追加のセキュリティ層を追加します",
+        "enableMFA": "MFAを有効にする",
+        "disableMFA": "MFAを無効にする",
+        "loading": "読み込み中...",
+        "verifying": "検証中...",
+        "verify": "確認",
+        "cancel": "キャンセル",
+        "processing": "処理中...",
+        "generating": "生成中...",
+        "regenerate": "再生成",
+        "setup": {
+          "title": "2段階認証を設定",
+          "description": "以下の手順に従って、認証アプリで2段階認証を設定してください。",
+          "step1": "1. QRコードをスキャン",
+          "step1Desc": "Google Authenticator、Microsoft Authenticator、Authyなどの認証アプリでスキャンしてください",
+          "manualEntry": "またはこのコードを手動で入力:",
+          "step2": "2. 認証アプリに表示された6桁のコードを入力"
+        },
+        "enabled": {
+          "title": "2段階認証が有効になっています",
+          "description": "ログイン時に認証アプリで生成されるコードが必要になります"
+        },
+        "recoveryCodes": {
+          "title": "リカバリーコードを保存してください",
+          "description": "認証アプリにアクセスできなくなった場合、これらのコードでログインできます。",
+          "oneTimeUse": "各コードは1回のみ使用可能です。",
+          "saveWarning": "これらのコードを安全な場所に保存してください。この画面を閉じると再表示できません。",
+          "saved": "保存しました",
+          "sectionTitle": "リカバリーコード",
+          "remaining": "残り {count} 個のコードが利用可能です",
+          "noCodesLeft": "リカバリーコードがありません"
+        }
+      },
       "session": "セッション",
       "dangerZone": "危険な操作",
       "dangerZoneDesc": "取り消すことのできない破壊的なアクション",
@@ -115,6 +155,17 @@
       "timezone": "タイムゾーン",
       "timezoneDesc": "カレンダー表示に使用するタイムゾーン",
       "selectTimezone": "タイムゾーンを選択",
+      "timezoneLabels": {
+        "japan": "日本 (JST)",
+        "utc": "協定世界時 (UTC)",
+        "usEastern": "アメリカ東部 (EST/EDT)",
+        "usPacific": "アメリカ西部 (PST/PDT)",
+        "uk": "イギリス (GMT/BST)",
+        "centralEurope": "ヨーロッパ中央 (CET/CEST)",
+        "australiaEastern": "オーストラリア東部 (AEST/AEDT)",
+        "china": "中国 (CST)",
+        "korea": "韓国 (KST)"
+      },
       "timeFormat": "時間表示形式",
       "timeFormatDesc": "12時間表記または24時間表記を選択",
       "selectTimeFormat": "時間表示形式を選択",
@@ -202,24 +253,30 @@
     },
     "preferences": {
       "settingsSaved": "環境設定を保存しました",
+      "languageAndTheme": "言語とテーマ",
+      "language": "言語",
+      "selectLanguage": "言語を選択",
       "theme": "テーマ",
       "themeDesc": "アプリケーションの外観の設定",
       "themeLabel": "テーマ",
       "themeLabelDesc": "アプリケーションの外観テーマ",
       "selectTheme": "テーマを選択",
+      "themeSystem": "システム設定に従う",
+      "themeLight": "ライト",
+      "themeDark": "ダーク",
+      "startup": "起動設定",
+      "startupScreen": "起動画面",
+      "startupScreenDesc": "アプリを開いたときに表示する画面を選択",
+      "selectStartupScreen": "起動画面を選択",
+      "startupLast": "前回の画面を表示",
+      "startupInbox": "Inbox",
+      "startupCalendar": "カレンダー",
       "userExperience": "ユーザーエクスペリエンス",
       "userExperienceDesc": "アニメーションやサウンドの設定",
       "animations": "アニメーション",
       "animationsDesc": "画面遷移やボタンのアニメーション効果を有効にする",
       "soundEffects": "サウンド効果",
-      "soundEffectsDesc": "通知音やクリック音を再生する",
-      "dataPrivacy": "データとプライバシー",
-      "dataPrivacyDesc": "データのバックアップと開発者向け機能",
-      "autoBackup": "自動バックアップ",
-      "autoBackupDesc": "データを定期的に自動でバックアップする",
-      "developerMode": "開発者モード",
-      "developerModeDesc": "高度な機能とデバッグ情報を表示する",
-      "language": "言語"
+      "soundEffectsDesc": "通知音やクリック音を再生する"
     },
     "common": {
       "saved": "設定を保存しました",
@@ -242,13 +299,70 @@
         "notifications": "通知",
         "notificationsDesc": "通知とリマインダーの設定",
         "dataControls": "データ管理",
-        "dataControlsDesc": "エクスポートと外部サービス連携",
+        "dataControlsDesc": "エクスポート、インポート、バックアップ設定",
+        "integrations": "連携",
+        "integrationsDesc": "AIプロバイダーと外部サービス連携",
         "account": "アカウント",
         "accountDesc": "プロフィールとセキュリティ",
         "subscription": "サブスクリプション",
         "subscriptionDesc": "プランと課金管理",
         "about": "このアプリについて",
-        "aboutDesc": "法的情報とバージョン"
+        "aboutDesc": "法的情報とバージョン",
+        "tags": "タグ管理",
+        "tagsDesc": "タグとグループの作成・編集"
+      }
+    },
+    "dataControls": {
+      "export": {
+        "title": "データエクスポート",
+        "includedDataTitle": "エクスポートされるデータ",
+        "profileInfo": "プロフィール情報",
+        "tasksEvents": "タスク・イベント",
+        "tagSettings": "タグ設定",
+        "calendarSettings": "カレンダー設定",
+        "notificationSettings": "通知設定",
+        "otherSettings": "その他の設定",
+        "exporting": "エクスポート中...",
+        "exportButton": "データをエクスポート"
+      },
+      "import": {
+        "title": "データインポート",
+        "dropzone": "JSONファイルをドロップまたはクリックして選択",
+        "selectFile": "ファイルを選択",
+        "comingSoon": "※ インポート機能は現在開発中です"
+      },
+      "backup": {
+        "title": "自動バックアップ",
+        "enableLabel": "自動バックアップを有効にする",
+        "lastBackup": "最終バックアップ: 未実行"
+      }
+    },
+    "integrations": {
+      "ai": {
+        "title": "AI設定",
+        "description": "AIアシスタント機能を使用するには、各プロバイダーのAPIキーを設定してください。APIキーはブラウザのローカルストレージに暗号化して保存されます。",
+        "anthropicDesc": "Anthropic社のClaudeを使用します",
+        "openaiDesc": "OpenAI社のGPTモデルを使用します",
+        "saved": "保存済み",
+        "save": "保存"
+      },
+      "services": {
+        "title": "連携サービス",
+        "googleCalendarDesc": "Googleカレンダーと予定を同期します",
+        "slackDesc": "Slackにリマインダーや通知を送信します",
+        "connected": "接続済み",
+        "disconnect": "解除",
+        "connect": "接続"
+      },
+      "sync": {
+        "title": "同期設定",
+        "enableLabel": "自動同期を有効にする",
+        "description": "同期は5分ごとに自動実行されます。手動で同期する場合は各サービスの設定から実行できます。"
+      },
+      "api": {
+        "title": "API連携",
+        "description": "APIキーの発行やWebhookの設定は開発者ポータルから行えます。",
+        "openPortal": "開発者ポータルを開く（準備中）"
       }
     },
     "legal": {

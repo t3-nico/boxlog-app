@@ -1,6 +1,5 @@
 // Shared components for all calendar views
-export { CalendarDragSelection } from './CalendarDragSelection';
-export { EmptyState } from './EmptyState';
+export { CalendarDragSelection, MobileTouchHint } from './CalendarDragSelection';
 export { OverdueBadge } from './OverdueBadge';
 export { OverdueSection, OverdueSectionSingle } from './OverdueSection';
 export { EventBlock, planCard } from './PlanCard';

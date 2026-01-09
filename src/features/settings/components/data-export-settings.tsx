@@ -10,7 +10,7 @@ import { trpc } from '@/lib/trpc/client';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
-import { SettingField } from './fields/SettingField';
+import { SettingRow } from './fields/SettingRow';
 import { SettingsCard } from './SettingsCard';
 
 export const DataExportSettings = memo(function DataExportSettings() {
@@ -22,10 +22,6 @@ export const DataExportSettings = memo(function DataExportSettings() {
   });
 
   const handleExport = useCallback(async () => {
-    console.info('Data export initiated', {
-      component: 'data-export-settings',
-    });
-
     try {
       const result = await exportDataQuery.refetch();
 
@@ -45,16 +41,8 @@ export const DataExportSettings = memo(function DataExportSettings() {
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
 
-      console.info('Data export completed', {
-        component: 'data-export-settings',
-      });
-
       toast.success(t('settings.account.dataExport.success'));
-    } catch (error) {
-      console.error('Data export failed', error as Error, {
-        component: 'data-export-settings',
-      });
-
+    } catch {
       toast.error(t('settings.account.dataExport.error'));
     }
   }, [exportDataQuery, t]);
@@ -64,23 +52,23 @@ export const DataExportSettings = memo(function DataExportSettings() {
   }, []);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* データエクスポート */}
-      <SettingsCard title="データエクスポート">
+      <SettingsCard title={t('settings.dataControls.export.title')}>
         <div className="space-y-4">
           {/* エクスポート対象の説明 */}
           <div className="bg-surface-container rounded-xl p-4">
             <h4 className="mb-2 flex items-center gap-2 text-sm font-medium">
               <FileJson className="h-4 w-4" />
-              エクスポートされるデータ
+              {t('settings.dataControls.export.includedDataTitle')}
             </h4>
             <ul className="text-muted-foreground grid grid-cols-2 gap-1 text-sm">
-              <li>• プロフィール情報</li>
-              <li>• タスク・イベント</li>
-              <li>• タグ設定</li>
-              <li>• カレンダー設定</li>
-              <li>• 通知設定</li>
-              <li>• その他の設定</li>
+              <li>• {t('settings.dataControls.export.profileInfo')}</li>
+              <li>• {t('settings.dataControls.export.tasksEvents')}</li>
+              <li>• {t('settings.dataControls.export.tagSettings')}</li>
+              <li>• {t('settings.dataControls.export.calendarSettings')}</li>
+              <li>• {t('settings.dataControls.export.notificationSettings')}</li>
+              <li>• {t('settings.dataControls.export.otherSettings')}</li>
             </ul>
           </div>
 
@@ -92,47 +80,46 @@ export const DataExportSettings = memo(function DataExportSettings() {
           >
             <Download className="mr-2 h-4 w-4" />
             {exportDataQuery.isLoading || exportDataQuery.isFetching
-              ? 'エクスポート中...'
-              : 'データをエクスポート'}
+              ? t('settings.dataControls.export.exporting')
+              : t('settings.dataControls.export.exportButton')}
           </Button>
         </div>
       </SettingsCard>
 
       {/* データインポート */}
-      <SettingsCard title="データインポート">
+      <SettingsCard title={t('settings.dataControls.import.title')}>
         <div className="space-y-4">
           <div className="border-border flex flex-col items-center justify-center rounded-xl border-2 border-dashed p-8">
             <Upload className="text-muted-foreground mb-2 h-8 w-8" />
             <p className="text-muted-foreground text-sm">
-              JSONファイルをドロップまたはクリックして選択
+              {t('settings.dataControls.import.dropzone')}
             </p>
             <Button variant="outline" className="mt-4" disabled>
-              ファイルを選択
+              {t('settings.dataControls.import.selectFile')}
             </Button>
           </div>
-          <p className="text-muted-foreground text-xs">※ インポート機能は現在開発中です</p>
+          <p className="text-muted-foreground text-xs">
+            {t('settings.dataControls.import.comingSoon')}
+          </p>
         </div>
       </SettingsCard>
 
       {/* 自動バックアップ */}
-      <SettingsCard title="自動バックアップ">
-        <div className="space-y-4">
-          <SettingField
-            label="自動バックアップを有効にする"
-            description="毎日自動的にデータをバックアップします"
-          >
-            <Switch checked={autoBackup} onCheckedChange={handleAutoBackupChange} />
-          </SettingField>
-
-          {autoBackup && (
-            <div className="bg-surface-container rounded-xl p-4">
-              <div className="flex items-center gap-2">
-                <History className="text-muted-foreground h-4 w-4" />
-                <span className="text-sm">最終バックアップ: 未実行</span>
-              </div>
-            </div>
-          )}
+      <SettingsCard title={t('settings.dataControls.backup.title')}>
+        <div className="space-y-0">
+          <SettingRow
+            label={t('settings.dataControls.backup.enableLabel')}
+            value={<Switch checked={autoBackup} onCheckedChange={handleAutoBackupChange} />}
+          />
         </div>
+        {autoBackup && (
+          <div className="bg-surface-container mt-4 rounded-xl p-4">
+            <div className="flex items-center gap-2">
+              <History className="text-muted-foreground h-4 w-4" />
+              <span className="text-sm">{t('settings.dataControls.backup.lastBackup')}</span>
+            </div>
+          </div>
+        )}
       </SettingsCard>
     </div>
   );

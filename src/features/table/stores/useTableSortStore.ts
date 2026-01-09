@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { devtools } from 'zustand/middleware';
+import { devtools, persist } from 'zustand/middleware';
 
 import type { SortDirection, SortField } from '../types/sort';
 
@@ -30,32 +30,41 @@ interface TableSortState {
  */
 export const useTableSortStore = create<TableSortState>()(
   devtools(
-    (set, get) => ({
-      sortField: null,
-      sortDirection: null,
+    persist(
+      (set, get) => ({
+        sortField: null,
+        sortDirection: null,
 
-      setSortField: (field) => {
-        const { sortField, sortDirection } = get();
+        setSortField: (field) => {
+          const { sortField, sortDirection } = get();
 
-        if (sortField === field) {
-          // 同じフィールド: asc → desc → null
-          set({
-            sortDirection:
-              sortDirection === 'asc' ? 'desc' : sortDirection === 'desc' ? null : 'asc',
-            sortField: sortDirection === 'desc' ? null : field,
-          });
-        } else {
-          // 別フィールド: asc から開始
-          set({ sortField: field, sortDirection: 'asc' });
-        }
+          if (sortField === field) {
+            // 同じフィールド: asc → desc → null
+            set({
+              sortDirection:
+                sortDirection === 'asc' ? 'desc' : sortDirection === 'desc' ? null : 'asc',
+              sortField: sortDirection === 'desc' ? null : field,
+            });
+          } else {
+            // 別フィールド: asc から開始
+            set({ sortField: field, sortDirection: 'asc' });
+          }
+        },
+
+        setSort: (field, direction) => {
+          set({ sortField: field as SortField, sortDirection: direction });
+        },
+
+        clearSort: () => set({ sortField: null, sortDirection: null }),
+      }),
+      {
+        name: 'inbox-sort-store',
+        partialize: (state) => ({
+          sortField: state.sortField,
+          sortDirection: state.sortDirection,
+        }),
       },
-
-      setSort: (field, direction) => {
-        set({ sortField: field as SortField, sortDirection: direction });
-      },
-
-      clearSort: () => set({ sortField: null, sortDirection: null }),
-    }),
+    ),
     { name: 'table-sort-store' },
   ),
 );

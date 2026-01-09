@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/context-menu';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { parseDateString, parseDatetimeString } from '@/features/calendar/utils/dateUtils';
-import type { InboxItem } from '@/features/inbox/hooks/useInboxData';
+import type { PlanItem } from '@/features/inbox/hooks/useInboxData';
 import type { RecurringEditScope } from '@/features/plans/components/RecurringEditConfirmDialog';
 import { DateTimePopoverContent } from '@/features/plans/components/shared/DateTimePopoverContent';
 import { PlanTagSelectDialogEnhanced } from '@/features/plans/components/shared/PlanTagSelectDialogEnhanced';
@@ -26,7 +26,7 @@ import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorS
 import { useRecurringEditConfirmStore } from '@/features/plans/stores/useRecurringEditConfirmStore';
 import { toLocalISOString } from '@/features/plans/utils/datetime';
 import { minutesToReminderType, reminderTypeToMinutes } from '@/features/plans/utils/reminder';
-import { getEffectiveStatus } from '@/features/plans/utils/status';
+import { normalizeStatus } from '@/features/plans/utils/status';
 import { useDateFormat } from '@/features/settings/hooks/useDateFormat';
 import { cn } from '@/lib/utils';
 import { useDraggable } from '@dnd-kit/core';
@@ -37,7 +37,7 @@ import { useBoardFocusStore } from '../../stores/useBoardFocusStore';
 import { BoardActionMenuItems } from '../BoardActionMenuItems';
 
 interface PlanCardProps {
-  item: InboxItem;
+  item: PlanItem;
 }
 
 /**
@@ -67,7 +67,7 @@ export function PlanCard({ item }: PlanCardProps) {
   const isFocused = focusedId === item.id;
 
   // 繰り返しプラン削除用のターゲットをrefで保持
-  const recurringDeleteTargetRef = useRef<InboxItem | null>(null);
+  const recurringDeleteTargetRef = useRef<PlanItem | null>(null);
 
   // 繰り返しプラン日時編集用のペンディングデータをrefで保持
   const pendingDateTimeEditRef = useRef<{
@@ -233,7 +233,7 @@ export function PlanCard({ item }: PlanCardProps) {
       if (!target) return;
 
       try {
-        // InboxItemは親プラン（展開されていない）ので、IDがそのまま親プランID
+        // PlanItemは親プラン（展開されていない）ので、IDがそのまま親プランID
         const parentPlanId = target.id;
 
         // 繰り返しプランは「すべて削除」のみ有効（個別インスタンスはカレンダーでのみ操作可能）
@@ -308,28 +308,28 @@ export function PlanCard({ item }: PlanCardProps) {
   );
 
   // コンテキストメニューアクション
-  const handleEdit = (item: InboxItem) => {
+  const handleEdit = (item: PlanItem) => {
     openInspector(item.id);
   };
 
-  const handleDuplicate = (_item: InboxItem) => {
+  const handleDuplicate = (_item: PlanItem) => {
     // Stub: 複製機能は未実装
   };
 
-  const handleAddTags = (_item: InboxItem) => {
+  const handleAddTags = (_item: PlanItem) => {
     // Stub: タグ追加機能は未実装
   };
 
-  const handleChangeDueDate = (_item: InboxItem) => {
+  const handleChangeDueDate = (_item: PlanItem) => {
     // Stub: 期限変更機能は未実装
   };
 
-  const handleArchive = (_item: InboxItem) => {
+  const handleArchive = (_item: PlanItem) => {
     // Stub: アーカイブ機能は未実装
   };
 
   const handleDelete = useCallback(
-    (item: InboxItem) => {
+    (item: PlanItem) => {
       // 繰り返しプランの場合はスコープ選択ダイアログを表示
       const isRecurring =
         item.recurrence_type && item.recurrence_type !== 'none' && item.recurrence_type !== null;
@@ -387,25 +387,22 @@ export function PlanCard({ item }: PlanCardProps) {
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  const effectiveStatus = getEffectiveStatus(item);
-                  const newStatus = effectiveStatus === 'done' ? 'todo' : 'done';
+                  const currentStatus = normalizeStatus(item.status);
+                  const newStatus = currentStatus === 'done' ? 'open' : 'done';
                   updatePlan.mutate({
                     id: item.id,
                     data: { status: newStatus },
                   });
                 }}
                 className="flex-shrink-0 transition-colors hover:opacity-80"
-                aria-label={getEffectiveStatus(item) === 'done' ? '未完了に戻す' : '完了にする'}
+                aria-label={normalizeStatus(item.status) === 'done' ? '未完了に戻す' : '完了にする'}
               >
                 {(() => {
-                  const status = getEffectiveStatus(item);
+                  const status = normalizeStatus(item.status);
                   if (status === 'done') {
                     return <CheckCircle2 className="text-success h-4 w-4" />;
                   }
-                  if (status === 'doing') {
-                    return <Circle className="text-primary h-4 w-4" />;
-                  }
-                  // todo
+                  // open
                   return <Circle className="text-muted-foreground h-4 w-4" />;
                 })()}
               </button>

@@ -13,8 +13,8 @@ import type { SidebarTab } from '@/features/navigation/components/sidebar/types'
 import { useTranslations } from 'next-intl';
 
 import { CalendarFilterList } from './CalendarFilterList';
-import { TodoCardList } from './todo/TodoCardList';
-import { TodoNavigation, type TodoFilter, type TodoSort } from './todo/TodoNavigation';
+import { OpenCardList } from './open/OpenCardList';
+import { OpenNavigation, type OpenSort } from './open/OpenNavigation';
 import { ViewSwitcherList } from './ViewSwitcherList';
 
 /**
@@ -24,15 +24,14 @@ import { ViewSwitcherList } from './ViewSwitcherList';
  * SidebarTabLayoutでタブUIを実装。
  *
  * **タブ構成**:
- * - Todo: フィルターナビゲーション（ステータス: todo のプラン一覧）
+ * - Open: 未スケジュールのopenプラン一覧（ソート機能付き）
  * - View: ミニカレンダー（日付選択・月移動）
  */
 export function CalendarSidebar() {
   const navigation = useCalendarNavigation();
   const t = useTranslations();
 
-  const [filter, setFilter] = useState<TodoFilter>('all');
-  const [sort, setSort] = useState<TodoSort>('due');
+  const [sort, setSort] = useState<OpenSort>('updated');
 
   // ビュータイプに応じた表示範囲を計算
   const displayRange = useMemo(() => {
@@ -101,23 +100,18 @@ export function CalendarSidebar() {
       ),
     },
     {
-      value: 'todo',
-      label: t('calendar.sidebar.tabs.todo'),
+      value: 'open',
+      label: t('calendar.sidebar.tabs.open'),
       icon: ListTodo,
       content: (
         <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
           {/* ナビゲーションコンテナ: 上padding 8pxのみ */}
           <div className="shrink-0 px-4 pt-2">
-            <TodoNavigation
-              filter={filter}
-              onFilterChange={setFilter}
-              sort={sort}
-              onSortChange={setSort}
-            />
+            <OpenNavigation sort={sort} onSortChange={setSort} />
           </div>
-          {/* カードリストコンテナ - パディングはTodoCardList内で管理 */}
+          {/* カードリストコンテナ - パディングはOpenCardList内で管理 */}
           <div className="min-h-0 flex-1 overflow-hidden">
-            <TodoCardList filter={filter} sort={sort} />
+            <OpenCardList sort={sort} />
           </div>
         </div>
       ),

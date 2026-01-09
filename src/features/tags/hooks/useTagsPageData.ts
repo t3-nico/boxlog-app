@@ -6,6 +6,10 @@
  * - フィルタリング
  * - ソート
  * - グループ化
+ *
+ * フィルター状態はすべてZustandストアから取得:
+ * - useTagStatusStore: All/Archive切り替え
+ * - useTagFilterStore: グループ選択、使用状況、作成日
  */
 import { useMemo } from 'react';
 
@@ -13,24 +17,18 @@ import type { DataTableGroupedData } from '@/features/table';
 import { useTagGroups } from '@/features/tags/hooks/useTagGroups';
 import { useTags } from '@/features/tags/hooks/useTags';
 import { useTagDisplayModeStore } from '@/features/tags/stores/useTagDisplayModeStore';
+import { useTagFilterStore } from '@/features/tags/stores/useTagFilterStore';
 import { useTagSearchStore } from '@/features/tags/stores/useTagSearchStore';
 import { useTagSortStore } from '@/features/tags/stores/useTagSortStore';
+import { useTagStatusStore } from '@/features/tags/stores/useTagStatusStore';
 import type { Tag, TagGroup } from '@/features/tags/types';
 import { api } from '@/lib/trpc';
 
 interface UseTagsPageDataOptions {
-  selectedGroupId: string | null;
-  isUncategorizedFilter: boolean;
-  showArchiveOnly: boolean;
   t: (key: string) => string;
 }
 
-export function useTagsPageData({
-  selectedGroupId,
-  isUncategorizedFilter,
-  showArchiveOnly,
-  t,
-}: UseTagsPageDataOptions) {
+export function useTagsPageData({ t }: UseTagsPageDataOptions) {
   // データ取得
   const { data: fetchedTags = [], isLoading: isFetching } = useTags();
   const { data: groups = [] as TagGroup[] } = useTagGroups();
@@ -44,6 +42,14 @@ export function useTagsPageData({
   const { sortField, sortDirection } = useTagSortStore();
   const { searchQuery } = useTagSearchStore();
   const { displayMode } = useTagDisplayModeStore();
+  const { status } = useTagStatusStore();
+  const { selectedGroup, usage, createdAt } = useTagFilterStore();
+
+  // ステータスから派生
+  const showArchiveOnly = status === 'archive';
+  const isUncategorizedFilter = selectedGroup === 'uncategorized';
+  const selectedGroupId =
+    selectedGroup !== 'all' && selectedGroup !== 'uncategorized' ? selectedGroup : null;
 
   // アクティブなタグ数
   const activeTagsCount = useMemo(() => {
@@ -58,7 +64,7 @@ export function useTagsPageData({
     return fetchedTags.filter((tag) => tag.is_active);
   }, [fetchedTags, showArchiveOnly]);
 
-  // 検索とグループフィルタ適用
+  // 検索とフィルタ適用
   const filteredTags = useMemo(() => {
     let filtered = baseTags;
 
@@ -67,6 +73,33 @@ export function useTagsPageData({
       filtered = filtered.filter((tag) => !tag.group_id);
     } else if (selectedGroupId) {
       filtered = filtered.filter((tag) => tag.group_id === selectedGroupId);
+    }
+
+    // 使用状況フィルタ
+    if (usage !== 'all') {
+      filtered = filtered.filter((tag) => {
+        const planCount = tagPlanCounts[tag.id] ?? 0;
+        if (usage === 'unused') return planCount === 0;
+        if (usage === 'frequently_used') return planCount >= 3;
+        return true;
+      });
+    }
+
+    // 作成日フィルタ
+    if (createdAt !== 'all') {
+      const now = new Date();
+      const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const startOfWeek = new Date(startOfDay);
+      startOfWeek.setDate(startOfDay.getDate() - startOfDay.getDay());
+      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+      filtered = filtered.filter((tag) => {
+        const tagDate = new Date(tag.created_at ?? 0);
+        if (createdAt === 'today') return tagDate >= startOfDay;
+        if (createdAt === 'this_week') return tagDate >= startOfWeek;
+        if (createdAt === 'this_month') return tagDate >= startOfMonth;
+        return true;
+      });
     }
 
     // 検索フィルタ
@@ -79,7 +112,15 @@ export function useTagsPageData({
     }
 
     return filtered;
-  }, [baseTags, selectedGroupId, isUncategorizedFilter, searchQuery]);
+  }, [
+    baseTags,
+    selectedGroupId,
+    isUncategorizedFilter,
+    searchQuery,
+    usage,
+    createdAt,
+    tagPlanCounts,
+  ]);
 
   // ソート適用
   const sortedTags = useMemo(() => {
@@ -94,7 +135,9 @@ export function useTagsPageData({
             new Date(a.created_at ?? 0).getTime() - new Date(b.created_at ?? 0).getTime();
           break;
         case 'tag_number':
-          comparison = a.tag_number - b.tag_number;
+          // tag_numberは削除されたため、作成日時でソート
+          comparison =
+            new Date(a.created_at ?? 0).getTime() - new Date(b.created_at ?? 0).getTime();
           break;
         case 'group': {
           const groupA = a.group_id ? groups.find((g) => g.id === a.group_id)?.name || '' : '';
@@ -185,5 +228,9 @@ export function useTagsPageData({
     sortField,
     sortDirection,
     searchQuery,
+    // ステータス・フィルター
+    status,
+    showArchiveOnly,
+    selectedGroupId,
   };
 }

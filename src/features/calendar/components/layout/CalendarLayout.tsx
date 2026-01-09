@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { memo, useCallback } from 'react';
 
 import { MobileMenuButton } from '@/features/navigation/components/mobile/MobileMenuButton';
@@ -63,6 +64,8 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
     onDateSelect,
     displayRange,
   }) => {
+    const t = useTranslations('calendar');
+
     // スワイプで前後の期間に移動
     const handleSwipeLeft = useCallback(() => {
       onNavigate('next');
@@ -77,6 +80,8 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
 
     return (
       <div className={cn('calendar-layout bg-background flex h-full flex-col', className)}>
+        {/* スクリーンリーダー用のページタイトル */}
+        <h1 className="sr-only">{t('title')}</h1>
         {/* ヘッダー */}
         <CalendarHeader
           viewType={viewType}

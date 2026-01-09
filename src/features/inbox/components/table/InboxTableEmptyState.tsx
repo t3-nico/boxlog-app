@@ -1,6 +1,7 @@
 'use client';
 
-import { FileSearch, Filter, Inbox, Plus } from 'lucide-react';
+import { FileSearch, Filter, Inbox, Plus, X } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import { EmptyState } from '@/components/common';
 import { Button } from '@/components/ui/button';
@@ -19,30 +20,22 @@ interface InboxTableEmptyStateProps {
 /**
  * Inboxテーブル空状態コンポーネント
  *
- * 状況に応じて異なるメッセージとアクションを表示
- * - フィルター適用中で0件 → フィルタークリアを提案
- * - 検索中で0件 → 検索クリアを提案
- * - 完全に0件 → 新規作成を提案
- *
- * @example
- * ```tsx
- * <InboxTableEmptyState columnCount={5} totalItems={0} />
- * ```
+ * 状況に応じて異なるメッセージとアクションを表示:
+ * - 検索中で0件 → Clear search
+ * - フィルター適用中で0件 → Clear filters
+ * - 完全に0件 → Create plan
  */
 export function InboxTableEmptyState({
   columnCount,
   totalItems: _totalItems,
 }: InboxTableEmptyStateProps) {
+  const t = useTranslations('inbox.emptyState');
   const { search, status, reset } = useInboxFilterStore();
   const { openInspector } = usePlanInspectorStore();
 
-  // フィルター適用中かどうか
   const isFiltered = search !== '' || status.length > 0;
-
-  // 検索中かどうか
   const isSearching = search !== '';
 
-  // 新規作成ハンドラー
   const handleCreate = () => {
     openInspector('new');
   };
@@ -52,12 +45,12 @@ export function InboxTableEmptyState({
     if (isSearching) {
       return {
         icon: FileSearch,
-        title: '検索結果が見つかりませんでした',
-        description: `"${search}" に一致するプランがありません。別のキーワードで検索してください。`,
+        title: t('noResults.title'),
+        description: t('noResults.description'),
         action: (
           <Button onClick={reset} variant="outline">
-            <Filter className="mr-2 size-4" />
-            検索をクリア
+            <X className="mr-2 size-4" />
+            {t('noResults.action')}
           </Button>
         ),
       };
@@ -66,12 +59,12 @@ export function InboxTableEmptyState({
     if (isFiltered) {
       return {
         icon: Filter,
-        title: 'フィルター条件に一致するアイテムがありません',
-        description: '別の条件で絞り込むか、フィルターをクリアしてください。',
+        title: t('noMatching.title'),
+        description: t('noMatching.description'),
         action: (
           <Button onClick={reset} variant="outline">
-            <Filter className="mr-2 size-4" />
-            フィルターをクリア
+            <X className="mr-2 size-4" />
+            {t('noMatching.action')}
           </Button>
         ),
       };
@@ -79,12 +72,12 @@ export function InboxTableEmptyState({
 
     return {
       icon: Inbox,
-      title: 'まだプランがありません',
-      description: '新しいプランを作成して、タスク管理を始めましょう。',
+      title: t('empty.title'),
+      description: t('empty.description'),
       action: (
         <Button onClick={handleCreate}>
           <Plus className="mr-2 size-4" />
-          新規作成
+          {t('empty.action')}
         </Button>
       ),
     };
@@ -95,7 +88,14 @@ export function InboxTableEmptyState({
   return (
     <TableRow>
       <TableCell colSpan={columnCount} className="h-[28rem]">
-        <EmptyState icon={icon} title={title} description={description} actions={action} />
+        <EmptyState
+          icon={icon}
+          title={title}
+          description={description}
+          actions={action}
+          size="sm"
+          centered
+        />
       </TableCell>
     </TableRow>
   );

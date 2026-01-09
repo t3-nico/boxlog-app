@@ -13,6 +13,7 @@ const NAMESPACES = [
   'calendar',
   'common',
   'error',
+  'inbox',
   'legal',
   'navigation',
   'notification',

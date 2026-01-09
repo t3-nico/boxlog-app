@@ -1,39 +1,39 @@
 /**
- * イベント選択機能を管理するフック
+ * プラン選択機能を管理するフック
  */
 
 'use client';
 
 import { useCallback, useState } from 'react';
 
-export interface EventSelectionState {
-  selectedEventId: string | null;
-  hoveredEventId: string | null;
+export interface PlanSelectionState {
+  selectedPlanId: string | null;
+  hoveredPlanId: string | null;
 }
 
-export interface UseEventSelectionOptions {
-  onSelectionChange?: (eventId: string | null) => void;
+export interface UsePlanSelectionOptions {
+  onSelectionChange?: (planId: string | null) => void;
 }
 
-const defaultState: EventSelectionState = {
-  selectedEventId: null,
-  hoveredEventId: null,
+const defaultState: PlanSelectionState = {
+  selectedPlanId: null,
+  hoveredPlanId: null,
 };
 
-export function useEventSelection(options: UseEventSelectionOptions = {}) {
+export function usePlanSelection(options: UsePlanSelectionOptions = {}) {
   const { onSelectionChange } = options;
-  const [state, setState] = useState<EventSelectionState>(defaultState);
+  const [state, setState] = useState<PlanSelectionState>(defaultState);
 
-  const selectEvent = useCallback(
-    (eventId: string | null) => {
-      setState((prev) => ({ ...prev, selectedEventId: eventId }));
-      onSelectionChange?.(eventId);
+  const selectPlan = useCallback(
+    (planId: string | null) => {
+      setState((prev) => ({ ...prev, selectedPlanId: planId }));
+      onSelectionChange?.(planId);
     },
     [onSelectionChange],
   );
 
-  const setHoveredEvent = useCallback((eventId: string | null) => {
-    setState((prev) => ({ ...prev, hoveredEventId: eventId }));
+  const setHoveredPlan = useCallback((planId: string | null) => {
+    setState((prev) => ({ ...prev, hoveredPlanId: planId }));
   }, []);
 
   const clearSelection = useCallback(() => {
@@ -44,8 +44,8 @@ export function useEventSelection(options: UseEventSelectionOptions = {}) {
   return {
     state,
     actions: {
-      selectEvent,
-      setHoveredEvent,
+      selectPlan,
+      setHoveredPlan,
       clearSelection,
     },
   };

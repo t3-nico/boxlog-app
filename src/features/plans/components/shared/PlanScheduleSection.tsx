@@ -119,7 +119,9 @@ export function PlanScheduleSection({
       {/* 時間グループ */}
       <div className="flex gap-2 px-4 py-2">
         {/* グループアイコン */}
-        <Clock className="text-muted-foreground mt-2 size-4 flex-shrink-0" />
+        <div className="mt-1 flex h-6 w-6 flex-shrink-0 items-center justify-center">
+          <Clock className="text-muted-foreground size-4" />
+        </div>
 
         {/* グループコンテンツ */}
         <div className="flex flex-1 flex-col gap-1">

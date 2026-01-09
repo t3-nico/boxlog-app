@@ -7,8 +7,7 @@ import type { GroupByField, GroupedData } from '../types/group';
  * ステータスラベルマップ
  */
 const STATUS_LABELS: Record<PlanStatus, string> = {
-  todo: 'Todo',
-  doing: 'Doing',
+  open: 'Open',
   done: 'Done',
 };
 
@@ -61,7 +60,7 @@ export function groupItems(items: InboxItem[], groupBy: GroupByField): GroupedDa
     .sort((a, b) => {
       // グループの並び順を定義
       if (groupBy === 'status') {
-        const statusOrder: PlanStatus[] = ['doing', 'todo', 'done'];
+        const statusOrder: PlanStatus[] = ['open', 'done'];
         return (
           statusOrder.indexOf(a.groupKey as PlanStatus) -
           statusOrder.indexOf(b.groupKey as PlanStatus)

@@ -33,7 +33,7 @@ export function PlanCreateTrigger({
     try {
       const planData = {
         title: '新しい予定',
-        status: 'todo' as const,
+        status: 'open' as const,
         due_date: initialDate ? format(initialDate, 'yyyy-MM-dd') : undefined,
         start_time:
           initialDate && initialStartTime

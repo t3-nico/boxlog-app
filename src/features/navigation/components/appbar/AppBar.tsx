@@ -1,6 +1,13 @@
 'use client';
 
-import { BarChart3, Box, Calendar, Inbox, PanelLeftClose, PanelLeftOpen, Tag } from 'lucide-react';
+import {
+  BarChart3,
+  Box,
+  Calendar,
+  CircleCheckBig,
+  PanelLeftClose,
+  PanelLeftOpen,
+} from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -52,7 +59,7 @@ export function AppBar() {
     avatar: user?.user_metadata?.avatar_url || null,
   };
 
-  // ナビゲーションアイテム
+  // ナビゲーションアイテム（タグは Settings 内に移動したため除外）
   const navItems: AppBarNavItem[] = useMemo(
     () => [
       {
@@ -63,7 +70,7 @@ export function AppBar() {
       },
       {
         id: 'inbox',
-        icon: Inbox,
+        icon: CircleCheckBig,
         label: t('sidebar.navigation.inbox'),
         url: `/${locale}/inbox`,
       },
@@ -72,12 +79,6 @@ export function AppBar() {
         icon: BarChart3,
         label: t('sidebar.navigation.stats'),
         url: `/${locale}/stats`,
-      },
-      {
-        id: 'tags',
-        icon: Tag,
-        label: t('sidebar.navigation.tags'),
-        url: `/${locale}/tags`,
       },
     ],
     [t, locale],

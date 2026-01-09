@@ -7,10 +7,10 @@
  * @example
  * ```tsx
  * // ✅ 推奨: バレルファイル経由
- * import { TagsSidebar, useTags, useTagStore } from '@/features/tags'
+ * import { TagSelector, useTags, useTagStore } from '@/features/tags'
  *
  * // ❌ 非推奨: 深いパス指定
- * import { TagsSidebar } from '@/features/tags/components/TagsSidebar'
+ * import { TagSelector } from '@/features/tags/components/tag-selector'
  * import { useTags } from '@/features/tags/hooks/useTags'
  * ```
  */
@@ -19,7 +19,6 @@
 export {
   GroupNameWithTooltip,
   QuickTagCreateModal,
-  SortableGroupItem,
   // Actions
   TagActionMenuItems,
   TagArchiveDialog,
@@ -27,15 +26,11 @@ export {
   TagChip,
   // Modals & Dialogs
   TagCreateModal,
-  TagDeleteDialog,
   TagEditDialog,
   TagEditModal,
   TagFilterChips,
   TagFilter as TagFilterComponent,
   TagGroupCreateModal,
-  TagGroupDeleteDialog,
-  // Groups
-  TagGroupsSection,
   TagManagementModal,
   TagSelectionActions,
   // Selection & Display
@@ -43,12 +38,7 @@ export {
   TagTreeView,
   TagsList,
   TagsSelectionBar,
-  // Main
-  TagsSidebar,
-  TagsSidebarWrapper,
 } from './components';
-
-export type { TagGroupsSectionRef } from './components';
 
 // Hooks
 export {
@@ -78,8 +68,6 @@ export {
   useTagGroup,
   // Tag Groups
   useTagGroups,
-  // Tag Group DnD
-  useTagGroupsDnd,
   // Operations
   useTagOperations,
   // Realtime

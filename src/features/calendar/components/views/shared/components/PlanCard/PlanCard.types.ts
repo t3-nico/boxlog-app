@@ -2,32 +2,23 @@
  * PlanCard専用の型定義
  */
 
-export interface planInteractionState {
+export interface PlanInteractionState {
   isHovered: boolean;
   isSelected: boolean;
   isDragging: boolean;
   isResizing: boolean;
 }
 
-// 後方互換性のためのエイリアス
-export type EventInteractionState = planInteractionState;
-
-export interface planDragData {
+export interface PlanDragData {
   planId: string;
   startPosition: { x: number; y: number };
   originalStart: Date;
   originalEnd: Date;
 }
 
-// 後方互換性のためのエイリアス
-export type EventDragData = planDragData;
-
-export interface planResizeData {
+export interface PlanResizeData {
   planId: string;
   resizeDirection: 'top' | 'bottom';
   originalStart: Date;
   originalEnd: Date;
 }
-
-// 後方互換性のためのエイリアス
-export type EventResizeData = planResizeData;

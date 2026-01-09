@@ -5,6 +5,7 @@ export { HourlyDistributionChart } from './hourly-distribution-chart';
 export { LineChartMultiple } from './line-chart-multiple';
 export { MonthlyTrendChart } from './monthly-trend-chart';
 export { PieChartDonut } from './pie-chart-donut';
+export { SleepStatsCard } from './sleep-stats-card';
 export { StatsSummary } from './stats-summary';
 export { StreakCard } from './streak-card';
 export { TagTimeChart } from './tag-time-chart';

@@ -12,6 +12,7 @@
 
 import { useEffect } from 'react';
 
+import { Button } from '@/components/ui/button';
 import * as Sentry from '@sentry/nextjs';
 
 interface GlobalErrorProps {
@@ -87,19 +88,17 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
             )}
 
             <div className="space-y-3">
-              <button
-                onClick={reset}
-                className="bg-primary text-primary-foreground hover:bg-primary-hover w-full rounded-md px-4 py-3 font-medium transition-colors"
-              >
+              <Button onClick={reset} className="w-full">
                 {ERROR_TEXT.retry}
-              </button>
+              </Button>
 
-              <button
+              <Button
+                variant="outline"
                 onClick={() => (window.location.href = '/')}
-                className="bg-surface-container text-foreground hover:bg-state-hover w-full rounded-md px-4 py-3 transition-colors"
+                className="w-full"
               >
                 {ERROR_TEXT.goHome}
-              </button>
+              </Button>
             </div>
 
             <p className="text-muted-foreground mt-6 text-center text-xs">

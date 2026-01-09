@@ -9,7 +9,7 @@ const createMockItem = (overrides: Partial<InboxItem> = {}): InboxItem => ({
   id: 'test-id',
   type: 'plan',
   title: 'テストプラン',
-  status: 'todo',
+  status: 'open',
   created_at: '2025-01-15T10:00:00Z',
   updated_at: '2025-01-15T10:00:00Z',
   ...overrides,
@@ -20,8 +20,8 @@ describe('grouping', () => {
     describe('グループ化なし（null）', () => {
       it('nullの場合はすべてのアイテムを1グループにまとめる', () => {
         const items = [
-          createMockItem({ id: '1', status: 'todo' }),
-          createMockItem({ id: '2', status: 'doing' }),
+          createMockItem({ id: '1', status: 'open' }),
+          createMockItem({ id: '2', status: 'open' }),
           createMockItem({ id: '3', status: 'done' }),
         ];
 
@@ -46,53 +46,49 @@ describe('grouping', () => {
     describe('ステータスでグループ化', () => {
       it('ステータスごとにグループ分けされる', () => {
         const items = [
-          createMockItem({ id: '1', status: 'todo' }),
-          createMockItem({ id: '2', status: 'doing' }),
-          createMockItem({ id: '3', status: 'todo' }),
+          createMockItem({ id: '1', status: 'open' }),
+          createMockItem({ id: '2', status: 'open' }),
+          createMockItem({ id: '3', status: 'done' }),
           createMockItem({ id: '4', status: 'done' }),
         ];
 
         const result = groupItems(items, 'status');
 
-        // doing, todo, done の順序
-        expect(result).toHaveLength(3);
-        expect(result[0]?.groupKey).toBe('doing');
-        expect(result[1]?.groupKey).toBe('todo');
-        expect(result[2]?.groupKey).toBe('done');
+        // open, done の順序
+        expect(result).toHaveLength(2);
+        expect(result[0]?.groupKey).toBe('open');
+        expect(result[1]?.groupKey).toBe('done');
       });
 
       it('ステータスラベルが正しく設定される', () => {
         const items = [
-          createMockItem({ id: '1', status: 'todo' }),
-          createMockItem({ id: '2', status: 'doing' }),
-          createMockItem({ id: '3', status: 'done' }),
+          createMockItem({ id: '1', status: 'open' }),
+          createMockItem({ id: '2', status: 'done' }),
         ];
 
         const result = groupItems(items, 'status');
 
-        const todoGroup = result.find((g) => g.groupKey === 'todo');
-        const doingGroup = result.find((g) => g.groupKey === 'doing');
+        const openGroup = result.find((g) => g.groupKey === 'open');
         const doneGroup = result.find((g) => g.groupKey === 'done');
 
-        expect(todoGroup?.groupLabel).toBe('Todo');
-        expect(doingGroup?.groupLabel).toBe('Doing');
+        expect(openGroup?.groupLabel).toBe('Open');
         expect(doneGroup?.groupLabel).toBe('Done');
       });
 
       it('アイテム数が正しくカウントされる', () => {
         const items = [
-          createMockItem({ id: '1', status: 'todo' }),
-          createMockItem({ id: '2', status: 'todo' }),
-          createMockItem({ id: '3', status: 'doing' }),
+          createMockItem({ id: '1', status: 'open' }),
+          createMockItem({ id: '2', status: 'open' }),
+          createMockItem({ id: '3', status: 'done' }),
         ];
 
         const result = groupItems(items, 'status');
 
-        const todoGroup = result.find((g) => g.groupKey === 'todo');
-        const doingGroup = result.find((g) => g.groupKey === 'doing');
+        const openGroup = result.find((g) => g.groupKey === 'open');
+        const doneGroup = result.find((g) => g.groupKey === 'done');
 
-        expect(todoGroup?.count).toBe(2);
-        expect(doingGroup?.count).toBe(1);
+        expect(openGroup?.count).toBe(2);
+        expect(doneGroup?.count).toBe(1);
       });
     });
 
@@ -228,7 +224,7 @@ describe('grouping', () => {
 
     describe('グループ結果の構造', () => {
       it('各グループにgroupKey, groupLabel, items, countが含まれる', () => {
-        const items = [createMockItem({ id: '1', status: 'todo' })];
+        const items = [createMockItem({ id: '1', status: 'open' })];
 
         const result = groupItems(items, 'status');
 

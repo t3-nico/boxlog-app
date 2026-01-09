@@ -5,21 +5,12 @@
 import { MAX_EVENT_COLUMNS } from '../constants/grid.constants';
 import type { PlanColumn, TimedPlan } from '../types/plan.types';
 
-// 後方互換性のためのエイリアス
-type TimedEvent = TimedPlan;
-
 /**
  * プランが時間的に重複しているか判定
  */
 export function plansOverlap(plan1: TimedPlan, plan2: TimedPlan): boolean {
   // plan1がplan2より前に終わる、またはplan2がplan1より前に終わる場合は重複しない
   return !(plan1.end <= plan2.start || plan2.end <= plan1.start);
-}
-
-// 後方互換性のためのエイリアス
-/** @deprecated Use plansOverlap instead */
-export function eventsOverlap(event1: TimedEvent, event2: TimedEvent): boolean {
-  return plansOverlap(event1, event2);
 }
 
 /**
@@ -83,12 +74,6 @@ export function calculateViewPlanColumns(plans: TimedPlan[]): Map<string, PlanCo
   }
 
   return columnMap;
-}
-
-// 後方互換性のためのエイリアス
-/** @deprecated Use calculateViewPlanColumns instead */
-export function calculateViewEventColumns(events: TimedEvent[]): Map<string, PlanColumn> {
-  return calculateViewPlanColumns(events);
 }
 
 /**
@@ -192,16 +177,6 @@ export function calculatePlanPosition(
   return { top, height, left, width };
 }
 
-// 後方互換性のためのエイリアス
-/** @deprecated Use calculatePlanPosition instead */
-export function calculateEventPosition(
-  event: TimedEvent,
-  column: PlanColumn,
-  hourHeight: number = 60,
-): { top: number; height: number; left: number; width: number } {
-  return calculatePlanPosition(event, column, hourHeight);
-}
-
 /**
  * プランの表示位置を計算（折りたたみ考慮版）
  */
@@ -222,16 +197,6 @@ export function calculatePlanPositionWithCollapse(
   return { top, height, left, width };
 }
 
-// 後方互換性のためのエイリアス
-/** @deprecated Use calculatePlanPositionWithCollapse instead */
-export function calculateEventPositionWithCollapse(
-  event: TimedEvent,
-  column: PlanColumn,
-  timeToPixels: (time: Date) => number,
-): { top: number; height: number; left: number; width: number } {
-  return calculatePlanPositionWithCollapse(event, column, timeToPixels);
-}
-
 /**
  * 時間指定プランをソート（開始時刻順）
  */
@@ -243,12 +208,6 @@ export function sortTimedPlans(plans: TimedPlan[]): TimedPlan[] {
     // 開始時刻が同じ場合は終了時刻で比較
     return a.end.getTime() - b.end.getTime();
   });
-}
-
-// 後方互換性のためのエイリアス
-/** @deprecated Use sortTimedPlans instead */
-export function sortTimedEvents(events: TimedEvent[]): TimedEvent[] {
-  return sortTimedPlans(events);
 }
 
 /**
@@ -265,10 +224,4 @@ export function filterPlansByDate(plans: TimedPlan[], date: Date): TimedPlan[] {
     // 時間指定プランは時間範囲で比較
     return plan.start < dayEnd && plan.end > dayStart;
   });
-}
-
-// 後方互換性のためのエイリアス
-/** @deprecated Use filterPlansByDate instead */
-export function filterEventsByDate(events: TimedPlan[], date: Date): TimedPlan[] {
-  return filterPlansByDate(events, date);
 }

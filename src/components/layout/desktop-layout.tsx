@@ -12,7 +12,6 @@ import { AppSidebar } from '@/features/navigation/components/sidebar/app-sidebar
 import { useSidebarStore } from '@/features/navigation/stores/useSidebarStore';
 import { SettingsSidebar } from '@/features/settings/components/sidebar';
 import { StatsSidebar } from '@/features/stats';
-import { TagsSidebarWrapper } from '@/features/tags/components/TagsSidebarWrapper';
 
 import { MainContentWrapper } from './main-content-wrapper';
 import { StatusBar } from './status-bar';
@@ -62,8 +61,8 @@ export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
   const currentPage = useMemo(() => {
     if (pathname?.startsWith(`/${locale}/calendar`)) return 'calendar';
     if (pathname?.startsWith(`/${locale}/inbox`)) return 'inbox';
-    if (pathname?.startsWith(`/${locale}/tags`)) return 'tags';
     if (pathname?.startsWith(`/${locale}/stats`)) return 'stats';
+    // /settings/tags は settings として扱う（共通サイドバーを使用）
     if (pathname?.startsWith(`/${locale}/settings`)) return 'settings';
     return 'default';
   }, [pathname, locale]);
@@ -75,8 +74,6 @@ export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
         return CalendarSidebar;
       case 'inbox':
         return InboxSidebarWrapper;
-      case 'tags':
-        return TagsSidebarWrapper;
       case 'stats':
         return StatsSidebar;
       case 'settings':

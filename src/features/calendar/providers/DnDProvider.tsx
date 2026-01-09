@@ -132,7 +132,6 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
       // ドロップ先のデータ
       const dropData = over.data?.current;
       if (!dropData || !dropData.date) {
-        console.warn('[DnDProvider] ドロップ先データが不正:', dropData);
         toast.error(t('calendar.toast.dropInvalid'));
         setActiveId(null);
         return;
@@ -212,7 +211,6 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
         // カレンダーへのドロップ成功時のHaptic Feedback
         success();
       } catch (error) {
-        console.error('[DnDProvider] ドロップ処理エラー:', error);
         toast.error(error instanceof Error ? error.message : t('calendar.toast.dropFailed'));
       } finally {
         // ドラッグ終了時にactiveIdをクリア
@@ -255,7 +253,6 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
       if (dragType === 'calendar-event') {
         const calendarEvent = dragData?.event;
         if (!calendarEvent?.id) {
-          console.warn('[DnDProvider] カレンダープランIDが取得できません');
           setActiveId(null);
           return;
         }

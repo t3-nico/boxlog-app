@@ -4,6 +4,7 @@
 
 'use client';
 
+import { useTranslations } from 'next-intl';
 import React, { memo, useCallback, useEffect, useRef } from 'react';
 
 import {
@@ -31,6 +32,7 @@ export const TimeGrid = memo<TimeGridProps>(function TimeGrid({
   onTimeRangeSelect,
   scrollToHour = SCROLL_TO_HOUR,
 }) {
+  const t = useTranslations('calendar');
   const { containerRef, dimensions } = useViewDimensions({
     hourHeight,
     timeColumnWidth: TIME_COLUMN_WIDTH,
@@ -94,8 +96,10 @@ export const TimeGrid = memo<TimeGridProps>(function TimeGrid({
   return (
     <div
       ref={containerRef}
-      role="button"
+      role="grid"
       tabIndex={0}
+      aria-label={t('timeGrid.ariaLabel')}
+      aria-rowcount={endHour - startHour}
       className={`relative overflow-auto ${GRID_BACKGROUND} ${className} ${isSelecting ? 'select-none' : ''}`}
       style={{ height: '100%' }}
       onClick={handleGridClick}
@@ -116,7 +120,6 @@ export const TimeGrid = memo<TimeGridProps>(function TimeGrid({
           }
         }
       }}
-      aria-label="Time grid - click to create event"
     >
       {/* スクロールバーはglobals.cssのグローバルスタイルを使用 */}
       {/* 時間列（固定） */}

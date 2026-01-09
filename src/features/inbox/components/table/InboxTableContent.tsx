@@ -4,7 +4,7 @@ import { memo, useMemo } from 'react';
 
 import { Checkbox } from '@/components/ui/checkbox';
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Activity, Calendar, CalendarRange, FileText, Tag } from 'lucide-react';
+import { Calendar, CalendarRange, FileText, Tag } from 'lucide-react';
 
 import type { InboxItem } from '../../hooks/useInboxData';
 import { useInboxColumnStore } from '../../stores/useInboxColumnStore';
@@ -23,7 +23,6 @@ import { ResizableTableHead } from './ResizableTableHead';
 // 列IDとアイコンのマッピング
 const columnIcons = {
   title: FileText,
-  status: Activity,
   tags: Tag,
   duration: CalendarRange,
   created_at: Calendar,
@@ -35,6 +34,8 @@ interface InboxTableContentProps {
   createRowRef: React.RefObject<InboxTableRowCreateHandle | null>;
   /** モバイル用表示件数上限（undefinedの場合は通常のページネーション使用） */
   mobileDisplayLimit?: number | undefined;
+  /** 1ページあたりの表示件数（動的計算で親から渡される） */
+  pageSize: number;
 }
 
 /**
@@ -106,16 +107,17 @@ const TableBodySection = memo(function TableBodySection({
   items,
   createRowRef,
   mobileDisplayLimit,
+  pageSize,
 }: {
   items: InboxItem[];
   createRowRef: React.RefObject<InboxTableRowCreateHandle | null>;
   mobileDisplayLimit?: number | undefined;
+  pageSize: number;
 }) {
   // 必要な値だけをselectorで取得
   const sortField = useInboxSortStore((state) => state.sortField);
   const sortDirection = useInboxSortStore((state) => state.sortDirection);
   const currentPage = useInboxPaginationStore((state) => state.currentPage);
-  const pageSize = useInboxPaginationStore((state) => state.pageSize);
   const groupBy = useInboxGroupStore((state) => state.groupBy);
   const collapsedGroups = useInboxGroupStore((state) => state.collapsedGroups);
   const columns = useInboxColumnStore((state) => state.columns);
@@ -133,10 +135,6 @@ const TableBodySection = memo(function TableBodySection({
         case 'title':
           aValue = a.title;
           bValue = b.title;
-          break;
-        case 'status':
-          aValue = a.status;
-          bValue = b.status;
           break;
         case 'duration':
           aValue = a.start_time ? new Date(a.start_time).getTime() : 0;
@@ -229,6 +227,7 @@ export const InboxTableContent = memo(function InboxTableContent({
   items,
   createRowRef,
   mobileDisplayLimit,
+  pageSize,
 }: InboxTableContentProps) {
   // 選択関連のみ監視
   const selectedIds = useInboxSelectionStore((state) => state.selectedIds);
@@ -238,7 +237,6 @@ export const InboxTableContent = memo(function InboxTableContent({
   const sortField = useInboxSortStore((state) => state.sortField);
   const sortDirection = useInboxSortStore((state) => state.sortDirection);
   const currentPage = useInboxPaginationStore((state) => state.currentPage);
-  const pageSize = useInboxPaginationStore((state) => state.pageSize);
   const groupBy = useInboxGroupStore((state) => state.groupBy);
 
   // 選択状態の計算用にソート・ページネーション適用
@@ -251,10 +249,6 @@ export const InboxTableContent = memo(function InboxTableContent({
         case 'title':
           aValue = a.title;
           bValue = b.title;
-          break;
-        case 'status':
-          aValue = a.status;
-          bValue = b.status;
           break;
         case 'duration':
           aValue = a.start_time ? new Date(a.start_time).getTime() : 0;
@@ -306,7 +300,7 @@ export const InboxTableContent = memo(function InboxTableContent({
   };
 
   return (
-    <Table className="w-full">
+    <Table className="w-full min-w-full">
       <TableHeaderSection
         allSelected={allSelected}
         someSelected={someSelected}
@@ -316,6 +310,7 @@ export const InboxTableContent = memo(function InboxTableContent({
         items={items}
         createRowRef={createRowRef}
         mobileDisplayLimit={mobileDisplayLimit}
+        pageSize={pageSize}
       />
     </Table>
   );

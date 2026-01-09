@@ -7,7 +7,7 @@
 /**
  * ソート対象フィールド
  */
-export type SortField = 'title' | 'status' | 'duration' | 'created_at' | 'updated_at';
+export type SortField = 'title' | 'duration' | 'created_at' | 'updated_at';
 
 /**
  * ソート方向

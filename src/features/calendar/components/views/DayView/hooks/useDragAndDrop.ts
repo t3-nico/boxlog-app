@@ -8,7 +8,7 @@ interface UseDragAndDropProps {
   onEventUpdate?: (
     eventId: string,
     updates: { startTime: Date; endTime: Date },
-  ) => Promise<void> | void;
+  ) => Promise<void | { skipToast: true }> | void;
   onEventClick?: (plan: CalendarPlan) => void;
   date: Date;
   events: CalendarPlan[];

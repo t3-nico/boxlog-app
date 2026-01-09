@@ -8,6 +8,7 @@ export {
   CalendarDragSelection,
   DRAG_CONSTANTS,
   DragSelectionPreview,
+  MobileTouchHint,
   useDragSelection,
 } from './CalendarDragSelection/index';
 

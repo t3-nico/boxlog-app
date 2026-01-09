@@ -26,6 +26,23 @@ const nextConfig = {
     ignoreBuildErrors: false,
   },
 
+  // リダイレクト設定（旧URL → 新URL）
+  async redirects() {
+    return [
+      // /tags → /settings/tags へのリダイレクト（タグ管理がSettingsに移動）
+      {
+        source: '/:locale/tags',
+        destination: '/:locale/settings/tags',
+        permanent: true,
+      },
+      {
+        source: '/:locale/tags/:path*',
+        destination: '/:locale/settings/tags/:path*',
+        permanent: true,
+      },
+    ]
+  },
+
   // セキュリティヘッダー設定
   async headers() {
     // 開発環境ではローカルSupabaseへの接続を許可

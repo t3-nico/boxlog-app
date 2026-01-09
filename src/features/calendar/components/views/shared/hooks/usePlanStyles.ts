@@ -17,13 +17,6 @@ export function usePlanStyles(planPositions: PlanPosition[]): Record<string, CSS
     planPositions.forEach(({ plan, top, height, left, width, zIndex, opacity }) => {
       // planがundefinedの場合はスキップ
       if (!plan || !plan.id) {
-        console.warn('usePlanStyles: Invalid plan position detected', {
-          plan,
-          top,
-          height,
-          left,
-          width,
-        });
         return;
       }
 

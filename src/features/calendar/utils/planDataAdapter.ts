@@ -16,25 +16,12 @@ import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
 
 import type { TimedPlan } from '../components/views/shared/types/plan.types';
 
-// 後方互換性のためのエイリアス
-type Event = CalendarPlan;
-type TimedEvent = TimedPlan;
-
 /**
  * データベースPlan型のステータスをCalendarPlan型のステータスに変換
- * 3段階ステータス: todo, doing, done
+ * 2段階ステータス: open, done
  */
-function mapPlanStatusToCalendarStatus(status: string): 'todo' | 'doing' | 'done' {
-  switch (status) {
-    case 'todo':
-      return 'todo';
-    case 'doing':
-      return 'doing';
-    case 'done':
-      return 'done';
-    default:
-      return 'todo';
-  }
+function mapPlanStatusToCalendarStatus(status: string): 'open' | 'done' {
+  return status === 'done' ? 'done' : 'open';
 }
 
 // タグ付きPlan型
@@ -100,23 +87,11 @@ export function planToTimedPlan(plan: CalendarPlan): TimedPlan {
   };
 }
 
-// 後方互換性のためのエイリアス
-/** @deprecated Use planToTimedPlan instead */
-export function eventToTimedEvent(event: Event): TimedEvent {
-  return planToTimedPlan(event);
-}
-
 /**
  * 複数のPlan形式プランをCalendarView形式に変換
  */
 export function plansToTimedPlans(plans: CalendarPlan[]): TimedPlan[] {
   return plans.map(planToTimedPlan);
-}
-
-// 後方互換性のためのエイリアス
-/** @deprecated Use plansToTimedPlans instead */
-export function eventsToTimedEvents(events: Event[]): TimedEvent[] {
-  return plansToTimedPlans(events);
 }
 
 /**
@@ -131,12 +106,6 @@ export function timedPlanToPlanUpdate(timedPlan: TimedPlan): Partial<CalendarPla
     endDate: timedPlan.end,
     color: timedPlan.color,
   };
-}
-
-// 後方互換性のためのエイリアス
-/** @deprecated Use timedPlanToPlanUpdate instead */
-export function timedEventToEventUpdate(timedEvent: TimedEvent): Partial<Event> {
-  return timedPlanToPlanUpdate(timedEvent);
 }
 
 /**
@@ -163,12 +132,6 @@ export function safePlanToTimedPlan(plan: Partial<CalendarPlan>): TimedPlan | nu
   } as TimedPlan;
 }
 
-// 後方互換性のためのエイリアス
-/** @deprecated Use safePlanToTimedPlan instead */
-export function safeEventToTimedEvent(event: Partial<Event>): TimedEvent | null {
-  return safePlanToTimedPlan(event);
-}
-
 /**
  * プランリストの安全な変換（nullを除外）
  */
@@ -176,12 +139,6 @@ export function safePlansToTimedPlans(
   plans: (CalendarPlan | Partial<CalendarPlan>)[],
 ): TimedPlan[] {
   return plans.map(safePlanToTimedPlan).filter((plan): plan is TimedPlan => plan !== null);
-}
-
-// 後方互換性のためのエイリアス
-/** @deprecated Use safePlansToTimedPlans instead */
-export function safeEventsToTimedEvents(events: (Event | Partial<Event>)[]): TimedEvent[] {
-  return safePlansToTimedPlans(events);
 }
 
 /**
@@ -284,7 +241,6 @@ function occurrenceToCalendarPlan(
     endDate,
     status: mapPlanStatusToCalendarStatus(basePlan.status),
     color: '#3b82f6',
-    plan_number: undefined, // 繰り返しインスタンスでは表示しない
     reminder_minutes: basePlan.reminder_minutes,
     tags: basePlan.tags ?? [], // 親プランのタグを引き継ぐ
     createdAt,

@@ -37,7 +37,9 @@ export function PlanTagsSection({
     <div
       className={`flex min-h-10 items-start gap-2 px-4 py-2 ${showBorderTop ? 'border-border/50 border-t' : ''}`}
     >
-      <Tag className="text-muted-foreground mt-2 size-4 flex-shrink-0" />
+      <div className="mt-1 flex h-6 w-6 flex-shrink-0 items-center justify-center">
+        <Tag className="text-muted-foreground size-4" />
+      </div>
       <div className="flex min-h-8 flex-1 items-center">
         <div className="flex max-h-[5.25rem] flex-wrap items-center gap-1.5 overflow-y-auto">
           {/* 選択済みタグを表示 */}

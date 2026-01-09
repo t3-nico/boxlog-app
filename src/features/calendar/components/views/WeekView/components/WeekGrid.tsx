@@ -68,7 +68,7 @@ export const WeekGrid = ({
   );
 
   // プラン位置計算
-  const { eventPositions } = useWeekPlans({
+  const { planPositions } = useWeekPlans({
     weekDates,
     events,
   });
@@ -142,7 +142,7 @@ export const WeekGrid = ({
                 date={date}
                 plans={dayEvents}
                 allEventsForOverlapCheck={events}
-                planPositions={eventPositions}
+                planPositions={planPositions}
                 onPlanClick={onEventClick}
                 onPlanContextMenu={onEventContextMenu}
                 onEmptyClick={onEmptyClick}

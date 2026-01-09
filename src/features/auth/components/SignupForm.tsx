@@ -140,14 +140,17 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                   disabled={isSubmitting}
                   autoComplete="email"
                   aria-invalid={!!errors.email}
+                  aria-describedby={errors.email ? 'email-error' : 'email-description'}
                   {...register('email')}
                 />
                 {errors.email ? (
-                  <p className="text-destructive text-sm" role="alert">
+                  <p id="email-error" className="text-destructive text-sm" role="alert">
                     {errors.email.message}
                   </p>
                 ) : (
-                  <FieldDescription>{t('auth.signupForm.emailDescription')}</FieldDescription>
+                  <FieldDescription id="email-description">
+                    {t('auth.signupForm.emailDescription')}
+                  </FieldDescription>
                 )}
               </Field>
 
@@ -163,6 +166,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                         disabled={isSubmitting}
                         autoComplete="new-password"
                         aria-invalid={!!errors.password}
+                        aria-describedby={errors.password ? 'password-error' : undefined}
                         {...register('password')}
                       />
                       <HoverTooltip
@@ -195,7 +199,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                       </HoverTooltip>
                     </div>
                     {errors.password && (
-                      <p className="text-destructive text-sm" role="alert">
+                      <p id="password-error" className="text-destructive text-sm" role="alert">
                         {errors.password.message}
                       </p>
                     )}
@@ -212,6 +216,9 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                         disabled={isSubmitting}
                         autoComplete="new-password"
                         aria-invalid={!!errors.confirmPassword}
+                        aria-describedby={
+                          errors.confirmPassword ? 'confirm-password-error' : undefined
+                        }
                         {...register('confirmPassword')}
                       />
                       <HoverTooltip
@@ -244,7 +251,11 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                       </HoverTooltip>
                     </div>
                     {errors.confirmPassword && (
-                      <p className="text-destructive text-sm" role="alert">
+                      <p
+                        id="confirm-password-error"
+                        className="text-destructive text-sm"
+                        role="alert"
+                      >
                         {errors.confirmPassword.message}
                       </p>
                     )}
@@ -386,7 +397,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
           <div className="bg-surface-container relative hidden md:block">
             <NextImage
               src="/placeholder.svg"
-              alt="Image"
+              alt=""
               fill
               className="object-cover dark:brightness-[0.2] dark:grayscale"
             />

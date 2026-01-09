@@ -19,7 +19,8 @@ describe('timezone', () => {
     it('日本（Asia/Tokyo）が含まれている', () => {
       const tokyo = SUPPORTED_TIMEZONES.find((tz) => tz.value === 'Asia/Tokyo');
       expect(tokyo).toBeDefined();
-      expect(tokyo?.label).toBe('日本 (JST)');
+      expect(tokyo?.label).toBe('Japan (JST)');
+      expect(tokyo?.labelKey).toBe('settings.calendar.timezoneLabels.japan');
       expect(tokyo?.offset).toBe('+09:00');
     });
 
@@ -29,10 +30,11 @@ describe('timezone', () => {
       expect(utc?.offset).toBe('+00:00');
     });
 
-    it('すべてのタイムゾーンにvalue, label, offsetが定義されている', () => {
+    it('すべてのタイムゾーンにvalue, label, labelKey, offsetが定義されている', () => {
       SUPPORTED_TIMEZONES.forEach((tz) => {
         expect(tz.value).toBeTruthy();
         expect(tz.label).toBeTruthy();
+        expect(tz.labelKey).toBeTruthy();
         expect(tz.offset).toBeTruthy();
       });
     });
@@ -123,7 +125,7 @@ describe('timezone', () => {
   describe('formatTimezoneInfo', () => {
     it('サポートされているタイムゾーンはラベルとオフセットを含む', () => {
       const result = formatTimezoneInfo('Asia/Tokyo');
-      expect(result).toContain('日本');
+      expect(result).toContain('Japan');
       expect(result).toContain('JST');
       expect(result).toContain('+09:00');
     });

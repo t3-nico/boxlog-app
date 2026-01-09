@@ -28,12 +28,8 @@ describe('formatters', () => {
   });
 
   describe('formatplanStatus', () => {
-    it('todoをTodoに変換する', () => {
-      expect(formatplanStatus('todo')).toBe('Todo');
-    });
-
-    it('doingをDoingに変換する', () => {
-      expect(formatplanStatus('doing')).toBe('Doing');
+    it('openをOpenに変換する', () => {
+      expect(formatplanStatus('open')).toBe('Open');
     });
 
     it('doneをDoneに変換する', () => {
@@ -42,26 +38,47 @@ describe('formatters', () => {
   });
 
   describe('formatplanDate', () => {
-    it('YYYY-MM-DD形式をYYYY年MM月DD日に変換する', () => {
-      expect(formatplanDate('2025-01-15')).toBe('2025年1月15日');
+    describe('日本語 (locale: ja)', () => {
+      it('YYYY-MM-DD形式をYYYY/MM/DD形式に変換する', () => {
+        const result = formatplanDate('2025-01-15', 'ja');
+        expect(result).toMatch(/2025\/1\/15/);
+      });
+
+      it('ISO 8601形式も正しく変換する', () => {
+        const result = formatplanDate('2025-12-25T00:00:00Z', 'ja');
+        expect(result).toMatch(/2025\/12\/2[45]/);
+      });
     });
 
-    it('ISO 8601形式も正しく変換する', () => {
-      // タイムゾーンの影響を受けるため、UTCの日付を使用
-      const result = formatplanDate('2025-12-25T00:00:00Z');
-      expect(result).toMatch(/2025年12月2[45]日/); // タイムゾーンによって24日か25日
+    describe('英語 (locale: en)', () => {
+      it('YYYY-MM-DD形式をMM DD, YYYY形式に変換する', () => {
+        const result = formatplanDate('2025-01-15', 'en');
+        expect(result).toMatch(/Jan 15, 2025/);
+      });
+
+      it('ISO 8601形式も正しく変換する', () => {
+        const result = formatplanDate('2025-12-25T00:00:00Z', 'en');
+        expect(result).toMatch(/Dec 2[45], 2025/);
+      });
     });
 
-    it('nullの場合は-を返す', () => {
-      expect(formatplanDate(null)).toBe('-');
-    });
+    describe('デフォルト動作', () => {
+      it('localeを指定しない場合はenがデフォルト', () => {
+        const result = formatplanDate('2025-01-15');
+        expect(result).toMatch(/Jan 15, 2025/);
+      });
 
-    it('undefinedの場合は-を返す', () => {
-      expect(formatplanDate(undefined)).toBe('-');
-    });
+      it('nullの場合は-を返す', () => {
+        expect(formatplanDate(null)).toBe('-');
+      });
 
-    it('空文字列の場合は-を返す', () => {
-      expect(formatplanDate('')).toBe('-');
+      it('undefinedの場合は-を返す', () => {
+        expect(formatplanDate(undefined)).toBe('-');
+      });
+
+      it('空文字列の場合は-を返す', () => {
+        expect(formatplanDate('')).toBe('-');
+      });
     });
   });
 
@@ -98,42 +115,79 @@ describe('formatters', () => {
       vi.useRealTimers();
     });
 
-    it('1分未満は「たった今」を返す', () => {
-      const date = new Date('2025-01-15T11:59:30Z').toISOString();
-      expect(formatRelativeTime(date)).toBe('たった今');
+    describe('日本語 (locale: ja)', () => {
+      it('1分未満は「たった今」を返す', () => {
+        const date = new Date('2025-01-15T11:59:30Z').toISOString();
+        expect(formatRelativeTime(date, 'ja')).toBe('たった今');
+      });
+
+      it('1分以上60分未満は「X分前」を返す', () => {
+        const date = new Date('2025-01-15T11:30:00Z').toISOString();
+        expect(formatRelativeTime(date, 'ja')).toBe('30分前');
+      });
+
+      it('1時間以上24時間未満は「X時間前」を返す', () => {
+        const date = new Date('2025-01-15T09:00:00Z').toISOString();
+        expect(formatRelativeTime(date, 'ja')).toBe('3時間前');
+      });
+
+      it('1日以上30日未満は「X日前」を返す', () => {
+        const date = new Date('2025-01-10T12:00:00Z').toISOString();
+        expect(formatRelativeTime(date, 'ja')).toBe('5日前');
+      });
+
+      it('30日以上は日付形式を返す', () => {
+        const date = new Date('2024-12-01T12:00:00Z').toISOString();
+        const result = formatRelativeTime(date, 'ja');
+        expect(result).toMatch(/2024年12月1日/);
+      });
     });
 
-    it('1分以上60分未満は「X分前」を返す', () => {
-      const date = new Date('2025-01-15T11:30:00Z').toISOString();
-      expect(formatRelativeTime(date)).toBe('30分前');
+    describe('英語 (locale: en)', () => {
+      it('1分未満は "just now" を返す', () => {
+        const date = new Date('2025-01-15T11:59:30Z').toISOString();
+        expect(formatRelativeTime(date, 'en')).toBe('just now');
+      });
+
+      it('1分以上60分未満は "X min ago" を返す', () => {
+        const date = new Date('2025-01-15T11:30:00Z').toISOString();
+        expect(formatRelativeTime(date, 'en')).toBe('30 min ago');
+      });
+
+      it('1時間以上24時間未満は "Xh ago" を返す', () => {
+        const date = new Date('2025-01-15T09:00:00Z').toISOString();
+        expect(formatRelativeTime(date, 'en')).toBe('3h ago');
+      });
+
+      it('1日以上30日未満は "Xd ago" を返す', () => {
+        const date = new Date('2025-01-10T12:00:00Z').toISOString();
+        expect(formatRelativeTime(date, 'en')).toBe('5d ago');
+      });
+
+      it('30日以上は日付形式を返す', () => {
+        const date = new Date('2024-12-01T12:00:00Z').toISOString();
+        const result = formatRelativeTime(date, 'en');
+        expect(result).toMatch(/Dec 1, 2024/);
+      });
     });
 
-    it('1時間以上24時間未満は「X時間前」を返す', () => {
-      const date = new Date('2025-01-15T09:00:00Z').toISOString();
-      expect(formatRelativeTime(date)).toBe('3時間前');
-    });
+    describe('デフォルト動作', () => {
+      it('localeを指定しない場合はenがデフォルト', () => {
+        const date = new Date('2025-01-15T11:59:30Z').toISOString();
+        expect(formatRelativeTime(date)).toBe('just now');
+      });
 
-    it('1日以上30日未満は「X日前」を返す', () => {
-      const date = new Date('2025-01-10T12:00:00Z').toISOString();
-      expect(formatRelativeTime(date)).toBe('5日前');
-    });
+      it('nullの場合は-を返す', () => {
+        expect(formatRelativeTime(null)).toBe('-');
+      });
 
-    it('30日以上は日付形式を返す', () => {
-      const date = new Date('2024-12-01T12:00:00Z').toISOString();
-      const result = formatRelativeTime(date);
-      expect(result).toMatch(/2024年12月1日/);
-    });
+      it('undefinedの場合は-を返す', () => {
+        expect(formatRelativeTime(undefined)).toBe('-');
+      });
 
-    it('nullの場合は-を返す', () => {
-      expect(formatRelativeTime(null)).toBe('-');
-    });
-
-    it('undefinedの場合は-を返す', () => {
-      expect(formatRelativeTime(undefined)).toBe('-');
-    });
-
-    it('空文字列の場合は-を返す', () => {
-      expect(formatRelativeTime('')).toBe('-');
+      it('空文字列の場合は-を返す', () => {
+        expect(formatRelativeTime('')).toBe('-');
+      });
     });
   });
 });

@@ -15,13 +15,9 @@ const STATUS_CONFIG: Record<
     className: string;
   }
 > = {
-  todo: {
-    label: 'Todo',
+  open: {
+    label: 'Open',
     className: 'bg-surface-container text-muted-foreground border-border',
-  },
-  doing: {
-    label: 'Doing',
-    className: 'bg-primary/10 text-primary border-primary/30',
   },
   done: {
     label: 'Done',
@@ -36,8 +32,8 @@ const SIZE_CLASSES = {
 };
 
 export function PlanStatusBadge({ status, size = 'sm' }: PlanStatusBadgeProps) {
-  // フォールバック: 未知のステータスの場合はtodoとして扱う
-  const config = STATUS_CONFIG[status] ?? STATUS_CONFIG.todo;
+  // フォールバック: 未知のステータスの場合はopenとして扱う
+  const config = STATUS_CONFIG[status] ?? STATUS_CONFIG.open;
 
   return (
     <Badge variant="outline" className={`${config.className} ${SIZE_CLASSES[size]} font-medium`}>

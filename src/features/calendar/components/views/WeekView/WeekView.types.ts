@@ -1,9 +1,9 @@
 import type { CSSProperties } from 'react';
 
-import type { BasePlanPosition, BaseViewProps, CalendarPlan, DateTimeSelection } from '../shared';
+import type { BasePlanPosition, CalendarPlan, DateTimeSelection, GridViewProps } from '../shared';
 
-// WeekViewの固有Props（BaseViewPropsを継承して95%削減）
-export interface WeekViewProps extends BaseViewProps {
+// WeekViewの固有Props（GridViewPropsを継承して時間グリッド機能を使用）
+export interface WeekViewProps extends GridViewProps {
   weekStartsOn?: 0 | 1 | 6; // 0: 日曜始まり, 1: 月曜始まり, 6: 土曜始まり
 }
 
@@ -43,17 +43,17 @@ export interface UseWeekViewReturn {
   isCurrentWeek: boolean;
 }
 
-// useWeekEventsフックのオプション
-export interface UseWeekEventsOptions {
+// useWeekPlansフックのオプション
+export interface UseWeekPlansOptions {
   weekDates: Date[];
   events: CalendarPlan[];
 }
 
-// useWeekEventsフックの返却値
-export interface UseWeekEventsReturn {
-  eventsByDate: Record<string, CalendarPlan[]>;
-  eventPositions: WeekEventPosition[];
-  maxConcurrentEvents: number;
+// useWeekPlansフックの返却値
+export interface UseWeekPlansReturn {
+  plansByDate: Record<string, CalendarPlan[]>;
+  planPositions: WeekPlanPosition[];
+  maxConcurrentPlans: number;
 }
 
 // 週ビューでのプラン位置情報
@@ -61,10 +61,6 @@ export interface UseWeekEventsReturn {
 export interface WeekPlanPosition extends BasePlanPosition {
   dayIndex: number;
 }
-
-// 後方互換性のためのエイリアス
-/** @deprecated Use WeekPlanPosition instead */
-export type WeekEventPosition = WeekPlanPosition;
 
 // 時間スロット情報
 export interface WeekTimeSlot {

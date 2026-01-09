@@ -8,8 +8,8 @@ import { CalendarSidebar } from '@/features/calendar/components/sidebar/Calendar
 import { InboxSidebar } from '@/features/inbox/components/InboxSidebar';
 import { AppSidebar } from '@/features/navigation/components/sidebar/app-sidebar';
 import { useSidebarStore } from '@/features/navigation/stores/useSidebarStore';
+import { SettingsSidebar } from '@/features/settings/components/sidebar';
 import { StatsSidebar } from '@/features/stats';
-import { TagsSidebarWrapper } from '@/features/tags/components/TagsSidebarWrapper';
 
 import { MainContentWrapper } from './main-content-wrapper';
 
@@ -55,15 +55,16 @@ export function MobileLayout({ children, locale }: MobileLayoutProps) {
   // ページごとにSidebarを切り替え
   const isCalendarPage = pathname?.startsWith(`/${locale}/calendar`) ?? false;
   const isInboxPage = pathname?.startsWith(`/${locale}/inbox`) ?? false;
-  const isTagsPage = pathname?.startsWith(`/${locale}/tags`) ?? false;
   const isStatsPage = pathname?.startsWith(`/${locale}/stats`) ?? false;
+  // /settings/tags は settings として扱う（共通サイドバーを使用）
+  const isSettingsPage = pathname?.startsWith(`/${locale}/settings`) ?? false;
 
   // サイドバーコンポーネントを決定
   const renderSidebar = () => {
     if (isCalendarPage) return <CalendarSidebar />;
     if (isInboxPage) return <InboxSidebar />;
-    if (isTagsPage) return <TagsSidebarWrapper />;
     if (isStatsPage) return <StatsSidebar />;
+    if (isSettingsPage) return <SettingsSidebar />;
     return <AppSidebar />;
   };
 

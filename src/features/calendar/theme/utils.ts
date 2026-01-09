@@ -43,34 +43,6 @@ export const getSelectionBg = (): string => 'bg-primary/10';
 export const getSurfaceBg = (): string => 'bg-neutral-50 dark:bg-neutral-900';
 export const getErrorBorder = (): string => 'border-red-500 dark:border-red-400';
 
-// スタイルクラスを取得
-export const getCalendarStyle = (
-  category: keyof typeof calendarStyles,
-  property?: string,
-): unknown => {
-  const styles = Object.prototype.hasOwnProperty.call(calendarStyles, category)
-    ? calendarStyles[category]
-    : null;
-
-  if (!property) return styles;
-
-  // ネストされたプロパティの場合 (例: 'fontSize.title')
-  const keys = property.split('.');
-  let result: unknown = styles;
-
-  for (const key of keys) {
-    if (result && typeof result === 'object' && key in result) {
-      result = Object.prototype.hasOwnProperty.call(result, key)
-        ? (result as Record<string, unknown>)[key]
-        : undefined;
-    } else {
-      return undefined;
-    }
-  }
-
-  return result;
-};
-
 // アニメーションクラスを取得
 export const getCalendarAnimation = (type: keyof typeof calendarAnimations): string => {
   return Object.prototype.hasOwnProperty.call(calendarAnimations, type)

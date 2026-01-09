@@ -6,10 +6,15 @@
 
 import { memo } from 'react';
 
-import { Bell, CheckSquare, FileText } from 'lucide-react';
+import { Bell, CalendarDays, CheckCircle2, Circle, FileText } from 'lucide-react';
+
+import { Badge } from '@/components/ui/badge';
 import dynamic from 'next/dynamic';
 
+import { normalizeStatus } from '../../../utils/status';
+
 import type { Plan } from '../../../types/plan';
+import { DatePickerPopover } from '../../shared/DatePickerPopover';
 import { PlanScheduleSection } from '../../shared/PlanScheduleSection';
 import { PlanTagsSection } from '../../shared/PlanTagsSection';
 import { ReminderSelect } from '../../shared/ReminderSelect';
@@ -31,7 +36,8 @@ interface PlanInspectorDetailsTabProps {
   plan: Plan;
   planId: string;
   titleRef: React.RefObject<HTMLSpanElement | null>;
-  selectedDate: Date | undefined;
+  scheduleDate: Date | undefined; // スケジュール日（カレンダー配置用）
+  dueDate: Date | undefined; // 期限日
   startTime: string;
   endTime: string;
   reminderType: string;
@@ -41,7 +47,8 @@ interface PlanInspectorDetailsTabProps {
   /** 時間重複エラー状態（視覚的フィードバック用） */
   timeConflictError?: boolean;
   onAutoSave: (field: string, value: string | undefined) => void;
-  onDateChange: (date: Date | undefined) => void;
+  onScheduleDateChange: (date: Date | undefined) => void;
+  onDueDateChange: (date: Date | undefined) => void;
   onStartTimeChange: (time: string) => void;
   onEndTimeChange: (time: string) => void;
   onReminderChange: (type: string) => void;
@@ -49,12 +56,15 @@ interface PlanInspectorDetailsTabProps {
   onRemoveTag: (tagId: string) => void;
   onRepeatTypeChange: (type: string) => void;
   onRecurrenceRuleChange: (rrule: string | null) => void;
+  /** ステータス変更ハンドラー */
+  onStatusChange: (status: 'open' | 'done') => void;
 }
 
 export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
   plan,
   titleRef,
-  selectedDate,
+  scheduleDate,
+  dueDate,
   startTime,
   endTime,
   reminderType,
@@ -63,7 +73,8 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
   recurrenceType,
   timeConflictError = false,
   onAutoSave,
-  onDateChange,
+  onScheduleDateChange,
+  onDueDateChange,
   onStartTimeChange,
   onEndTimeChange,
   onReminderChange,
@@ -71,31 +82,31 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
   onRemoveTag,
   onRepeatTypeChange,
   onRecurrenceRuleChange,
+  onStatusChange,
 }: PlanInspectorDetailsTabProps) {
+  const status = normalizeStatus(plan.status);
+
   return (
     <>
       {/* Title */}
-      <div className="flex min-h-10 items-start gap-2 px-4 py-2">
-        <CheckSquare className="text-muted-foreground mt-1.5 size-4 flex-shrink-0" />
-        <div className="flex min-h-8 flex-1 items-center">
-          <span
-            ref={titleRef}
-            contentEditable
-            suppressContentEditableWarning
-            onBlur={(e) => onAutoSave('title', e.currentTarget.textContent || '')}
-            className="bg-popover border-0 px-0 text-lg font-semibold outline-none"
-          >
-            {plan.title}
-          </span>
-        </div>
+      <div className="px-4 py-3">
+        <span
+          ref={titleRef}
+          contentEditable
+          suppressContentEditableWarning
+          onBlur={(e) => onAutoSave('title', e.currentTarget.textContent || '')}
+          className="block w-full border-0 text-lg font-semibold outline-none"
+        >
+          {plan.title}
+        </span>
       </div>
 
       {/* Schedule */}
       <PlanScheduleSection
-        selectedDate={selectedDate}
+        selectedDate={scheduleDate}
         startTime={startTime}
         endTime={endTime}
-        onDateChange={onDateChange}
+        onDateChange={onScheduleDateChange}
         onStartTimeChange={onStartTimeChange}
         onEndTimeChange={onEndTimeChange}
         recurrenceRule={recurrenceRule}
@@ -105,6 +116,20 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
         showBorderTop={true}
         timeConflictError={timeConflictError}
       />
+
+      {/* Due Date */}
+      <div className="border-border/50 flex min-h-10 items-center gap-2 border-t px-4 py-2">
+        <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center">
+          <CalendarDays className="text-muted-foreground size-4" />
+        </div>
+        <div className="flex h-8 flex-1 items-center">
+          <DatePickerPopover
+            selectedDate={dueDate}
+            onDateChange={onDueDateChange}
+            placeholder="期限を設定..."
+          />
+        </div>
+      </div>
 
       {/* Tags */}
       <PlanTagsSection
@@ -117,9 +142,29 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
         popoverAlignOffset={-80}
       />
 
+      {/* Status */}
+      <div className="border-border/50 flex min-h-10 items-center gap-2 border-t px-4 py-2">
+        <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center">
+          {status === 'done' ? (
+            <CheckCircle2 className="text-success size-4" />
+          ) : (
+            <Circle className="text-muted-foreground size-4" />
+          )}
+        </div>
+        <Badge
+          variant={status === 'done' ? 'success' : 'secondary'}
+          className="hover:bg-state-hover cursor-pointer transition-colors"
+          onClick={() => onStatusChange(status === 'done' ? 'open' : 'done')}
+        >
+          {status === 'done' ? 'Done' : 'Open'}
+        </Badge>
+      </div>
+
       {/* Description */}
       <div className="border-border/50 flex min-h-10 items-start gap-2 border-t px-4 py-2">
-        <FileText className="text-muted-foreground mt-2 size-4 flex-shrink-0" />
+        <div className="mt-1 flex h-6 w-6 flex-shrink-0 items-center justify-center">
+          <FileText className="text-muted-foreground size-4" />
+        </div>
         <div className="max-h-52 min-h-8 min-w-0 flex-1 overflow-y-auto">
           <NovelDescriptionEditor
             key={plan.id}
@@ -131,8 +176,10 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
       </div>
 
       {/* Reminder */}
-      <div className="border-border/50 flex min-h-10 items-start gap-2 border-t px-4 py-2">
-        <Bell className="text-muted-foreground mt-2 size-4 flex-shrink-0" />
+      <div className="border-border/50 flex min-h-10 items-center gap-2 border-t px-4 py-2">
+        <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center">
+          <Bell className="text-muted-foreground size-4" />
+        </div>
         <div className="flex h-8 flex-1 items-center">
           <ReminderSelect value={reminderType} onChange={onReminderChange} variant="inspector" />
         </div>

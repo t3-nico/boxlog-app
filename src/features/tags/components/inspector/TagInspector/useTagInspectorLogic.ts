@@ -13,6 +13,7 @@ import { usePlans } from '@/features/plans/hooks/usePlans';
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
 import { useTagGroups } from '@/features/tags/hooks/useTagGroups';
 import {
+  useCreateTag,
   useDeleteTag,
   useTags,
   useUpdateTag,
@@ -25,10 +26,14 @@ export function useTagInspectorLogic() {
     isOpen,
     entityId: tagId,
     displayMode,
+    initialData,
     closeInspector: closeInspectorStore,
     openInspector,
     setDisplayMode,
   } = useTagInspectorStore();
+
+  // 新規作成モード判定
+  const isCreateMode = isOpen && tagId === null;
   const { openInspector: openPlanInspector } = usePlanInspectorStore();
   const { updatePlan } = usePlanMutations();
   const router = useRouter();
@@ -76,6 +81,7 @@ export function useTagInspectorLogic() {
   }, [groups, tag]);
 
   // Mutations
+  const createTagMutation = useCreateTag();
   const updateTagMutation = useUpdateTag();
   const deleteTagMutation = useDeleteTag();
   const updateColorMutation = useUpdateTagColor();
@@ -85,6 +91,22 @@ export function useTagInspectorLogic() {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showArchiveDialog, setShowArchiveDialog] = useState(false);
   const [showMergeDialog, setShowMergeDialog] = useState(false);
+
+  // 新規作成用の状態
+  const [newTagName, setNewTagName] = useState('');
+  const [newTagDescription, setNewTagDescription] = useState('');
+  const [newTagColor, setNewTagColor] = useState(initialData?.color || '#3B82F6');
+  const [newTagGroupId, setNewTagGroupId] = useState<string | null>(initialData?.groupId ?? null);
+
+  // 新規作成モード開始時に初期値をセット
+  useEffect(() => {
+    if (isCreateMode && initialData) {
+      setNewTagName(initialData.name || '');
+      setNewTagDescription(initialData.description || '');
+      setNewTagColor(initialData.color || '#3B82F6');
+      setNewTagGroupId(initialData.groupId ?? null);
+    }
+  }, [isCreateMode, initialData]);
 
   // Refs
   const titleRef = useRef<HTMLSpanElement>(null);
@@ -174,6 +196,43 @@ export function useTagInspectorLogic() {
     [tagId, tag, updateTagMutation],
   );
 
+  // 新規作成の保存
+  const handleCreateTag = useCallback(async () => {
+    if (!newTagName.trim()) return;
+
+    try {
+      const result = await createTagMutation.mutateAsync({
+        name: newTagName.trim(),
+        description: newTagDescription.trim() || undefined,
+        color: newTagColor,
+        groupId: newTagGroupId ?? undefined,
+      });
+
+      // 作成成功後、作成されたタグを開く
+      if (result?.id) {
+        openInspector(result.id);
+      } else {
+        closeInspector();
+      }
+
+      // 状態をリセット
+      setNewTagName('');
+      setNewTagDescription('');
+      setNewTagColor('#3B82F6');
+      setNewTagGroupId(null);
+    } catch (error) {
+      console.error('Failed to create tag:', error);
+    }
+  }, [
+    newTagName,
+    newTagDescription,
+    newTagColor,
+    newTagGroupId,
+    createTagMutation,
+    openInspector,
+    closeInspector,
+  ]);
+
   // Cleanup
   useEffect(() => {
     return () => {
@@ -191,6 +250,10 @@ export function useTagInspectorLogic() {
     setDisplayMode,
     openInspector,
     closeInspector,
+
+    // 新規作成モード
+    isCreateMode,
+    initialData,
 
     // Data
     tag,
@@ -227,6 +290,18 @@ export function useTagInspectorLogic() {
     handleArchive,
     handleMerge,
     handleChangeGroup,
+
+    // 新規作成用の状態とハンドラー
+    newTagName,
+    setNewTagName,
+    newTagDescription,
+    setNewTagDescription,
+    newTagColor,
+    setNewTagColor,
+    newTagGroupId,
+    setNewTagGroupId,
+    handleCreateTag,
+    isCreating: createTagMutation.isPending,
 
     // Plan mutations
     updatePlan,

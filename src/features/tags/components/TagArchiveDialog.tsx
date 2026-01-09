@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
+import { LoadingSpinner } from '@/components/common/Loading/LoadingStates';
 import { Button } from '@/components/ui/button';
 import { useTagUsage } from '@/features/tags/hooks';
 import type { Tag } from '@/features/tags/types';
@@ -109,7 +110,7 @@ export function TagArchiveDialog({ tag, onClose, onConfirm }: TagArchiveDialogPr
           {/* 使用状況 */}
           {isPending ? (
             <div className="bg-surface-container flex items-center justify-center rounded-xl p-4">
-              <div className="border-primary size-5 animate-spin rounded-full border-b-2"></div>
+              <LoadingSpinner size="sm" />
             </div>
           ) : usage ? (
             <div className="bg-surface-container rounded-xl p-4">

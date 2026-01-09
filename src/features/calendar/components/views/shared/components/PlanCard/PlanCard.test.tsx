@@ -21,7 +21,7 @@ describe('PlanCard', () => {
     description: 'テスト説明',
     startDate: new Date('2025-01-15T10:00:00'),
     endDate: new Date('2025-01-15T11:00:00'),
-    status: 'todo',
+    status: 'open',
     color: '#3b82f6',
     tags: [],
     createdAt: new Date(),

@@ -12,9 +12,9 @@ import {
 } from '@/components/ui/dialog';
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
 import { format } from 'date-fns';
-import { ja } from 'date-fns/locale';
+import { enUS, ja } from 'date-fns/locale';
 import { Calendar as CalendarIcon, Loader2, X } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
@@ -53,7 +53,10 @@ export function BulkDatePickerDialog({
   selectedIds,
   onSuccess,
 }: BulkDatePickerDialogProps) {
+  const locale = useLocale();
   const t = useTranslations();
+  const dateLocale = locale === 'ja' ? ja : enUS;
+  const dateFormat = locale === 'ja' ? 'yyyy年MM月dd日 (E)' : 'MMM d, yyyy (E)';
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { bulkUpdatePlan } = usePlanMutations();
@@ -129,7 +132,7 @@ export function BulkDatePickerDialog({
                 <div className="flex items-center gap-2">
                   <CalendarIcon className="text-muted-foreground size-4" />
                   <span className="font-medium">
-                    {format(selectedDate, 'yyyy年MM月dd日 (E)', { locale: ja })}
+                    {format(selectedDate, dateFormat, { locale: dateLocale })}
                   </span>
                 </div>
                 <Button

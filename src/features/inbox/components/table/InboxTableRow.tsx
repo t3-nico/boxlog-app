@@ -27,7 +27,6 @@ import { useInboxFocusStore } from '../../stores/useInboxFocusStore';
 import { useInboxSelectionStore } from '../../stores/useInboxSelectionStore';
 import { DateTimeUnifiedCell } from './DateTimeUnifiedCell';
 import { InboxActionMenuItems } from './InboxActionMenuItems';
-import { StatusEditCell } from './StatusEditCell';
 import { TagsCell } from './TagsCell';
 
 interface InboxTableRowProps {
@@ -64,17 +63,10 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
   const rowRef = useRef<HTMLTableRowElement>(null);
   const recurringDeleteTargetRef = useRef<InboxItem | null>(null);
   // 繰り返しプラン編集用のペンディングデータをrefで保持
-  const pendingEditRef = useRef<
-    | {
-        type: 'status';
-        data: { status: PlanStatus };
-      }
-    | {
-        type: 'datetime';
-        data: { start_time: string | undefined; end_time: string | undefined };
-      }
-    | null
-  >(null);
+  const pendingEditRef = useRef<{
+    type: 'datetime';
+    data: { start_time: string | undefined; end_time: string | undefined };
+  } | null>(null);
   const selected = isSelected(item.id);
   const isFocused = focusedId === item.id;
   const visibleColumns = getVisibleColumns();
@@ -138,20 +130,13 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
           case 'this':
           case 'thisAndFuture':
           case 'all':
-            if (pending.type === 'status' && pending.data.status) {
-              await updatePlan.mutateAsync({
-                id: item.id,
-                data: { status: pending.data.status },
-              });
-            } else if (pending.type === 'datetime') {
-              await updatePlan.mutateAsync({
-                id: item.id,
-                data: {
-                  start_time: pending.data.start_time || undefined,
-                  end_time: pending.data.end_time || undefined,
-                },
-              });
-            }
+            await updatePlan.mutateAsync({
+              id: item.id,
+              data: {
+                start_time: pending.data.start_time || undefined,
+                end_time: pending.data.end_time || undefined,
+              },
+            });
             break;
         }
       } catch (err) {
@@ -162,24 +147,6 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
     },
     [updatePlan, item.id],
   );
-
-  // インライン編集ハンドラー
-  const handleStatusChange = (status: PlanStatus) => {
-    const isRecurring =
-      item.recurrence_type && item.recurrence_type !== 'none' && item.recurrence_type !== null;
-
-    if (isRecurring) {
-      // 繰り返しプランの場合はスコープ選択ダイアログを表示
-      pendingEditRef.current = { type: 'status', data: { status } };
-      openRecurringDialog(item.title, 'edit', handleRecurringEditConfirm);
-      return;
-    }
-
-    updatePlan.mutate({
-      id: item.id,
-      data: { status },
-    });
-  };
 
   // 日時変更ハンドラー（DateTimeUnifiedCell用）
   const handleDateTimeChange = (data: {
@@ -233,8 +200,11 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
     // Stub: 期限変更機能は未実装
   };
 
-  const handleArchive = (_item: InboxItem) => {
-    // Stub: アーカイブ機能は未実装
+  const handleStatusChange = (item: InboxItem, status: PlanStatus) => {
+    updatePlan.mutate({
+      id: item.id,
+      data: { status },
+    });
   };
 
   const handleDelete = useCallback(
@@ -322,16 +292,6 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
         );
       }
 
-      case 'status':
-        return (
-          <StatusEditCell
-            key={columnId}
-            status={item.status}
-            width={column?.width}
-            onStatusChange={handleStatusChange}
-          />
-        );
-
       case 'tags':
         return (
           <TagsCell
@@ -394,7 +354,7 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
             e.dataTransfer.effectAllowed = 'move';
           }}
           className={cn(
-            'hover:bg-state-hover cursor-pointer transition-colors',
+            'hover:bg-state-hover h-12 cursor-pointer transition-colors',
             selected && 'bg-primary-state-selected hover:bg-state-dragged',
             isFocused && 'ring-primary ring-2 ring-inset',
           )}
@@ -419,7 +379,7 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
           onDuplicate={handleDuplicate}
           onAddTags={handleAddTags}
           onChangeDueDate={handleChangeDueDate}
-          onArchive={handleArchive}
+          onStatusChange={handleStatusChange}
           onDelete={handleDelete}
           renderMenuItem={({ icon, label, onClick, variant }) => (
             <ContextMenuItem

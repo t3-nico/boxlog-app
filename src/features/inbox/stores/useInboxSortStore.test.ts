@@ -74,7 +74,7 @@ describe('useInboxSortStore', () => {
     });
 
     it('全てのソートフィールドに対応', () => {
-      const fields = ['title', 'status', 'duration', 'created_at', 'updated_at'] as const;
+      const fields = ['title', 'duration', 'created_at', 'updated_at'] as const;
 
       fields.forEach((field) => {
         act(() => {
@@ -91,11 +91,11 @@ describe('useInboxSortStore', () => {
   describe('setSort', () => {
     it('フィールドと方向を直接設定できる', () => {
       act(() => {
-        useInboxSortStore.getState().setSort('status', 'desc');
+        useInboxSortStore.getState().setSort('created_at', 'desc');
       });
 
       const { sortField, sortDirection } = useInboxSortStore.getState();
-      expect(sortField).toBe('status');
+      expect(sortField).toBe('created_at');
       expect(sortDirection).toBe('desc');
     });
 

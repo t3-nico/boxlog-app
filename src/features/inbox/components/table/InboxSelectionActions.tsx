@@ -1,6 +1,8 @@
 'use client';
 
-import { Archive, Calendar, MoreHorizontal, Tag, Trash2 } from 'lucide-react';
+import { Calendar, CheckCircle2, Circle, MoreHorizontal, Tag, Trash2 } from 'lucide-react';
+
+import type { PlanStatus } from '@/features/plans/types/plan';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -19,7 +21,7 @@ interface InboxSelectionActionsProps {
   selectedCount: number;
   selectedIds: string[];
   items: InboxItem[];
-  onArchive: () => void;
+  onStatusChange: (status: PlanStatus) => void;
   onDelete: () => void;
   onEdit?: (item: InboxItem) => void;
   onDuplicate?: (item: InboxItem) => void;
@@ -34,7 +36,7 @@ interface InboxSelectionActionsProps {
  * 構成:
  * - タグ一括追加
  * - 期限一括変更
- * - アーカイブ
+ * - ステータス変更（Open/Done）
  * - 削除
  * - その他メニュー（単一選択時のみ: 編集・複製）
  */
@@ -42,7 +44,7 @@ export function InboxSelectionActions({
   selectedCount,
   selectedIds,
   items,
-  onArchive,
+  onStatusChange,
   onDelete,
   onEdit,
   onDuplicate,
@@ -79,20 +81,31 @@ export function InboxSelectionActions({
         </HoverTooltip>
       )}
 
-      {/* アーカイブ */}
-      <HoverTooltip content="アーカイブ" side="top">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => {
-            onArchive();
-            onClearSelection();
-          }}
-          aria-label="アーカイブ"
-        >
-          <Archive className="size-4" />
-        </Button>
-      </HoverTooltip>
+      {/* ステータス変更（選択中のアイテムに応じてトグル） */}
+      {(() => {
+        // 選択中のアイテムのステータスを確認
+        const selectedItems = items.filter((item) => selectedIds.includes(item.id));
+        const hasOpenItems = selectedItems.some((item) => item.status === 'open');
+        // openがあればdoneに、全部doneならopenに戻す
+        const targetStatus = hasOpenItems ? 'done' : 'open';
+        const tooltipText = hasOpenItems ? 'Done にする' : 'Open に戻す';
+
+        return (
+          <HoverTooltip content={tooltipText} side="top">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => {
+                onStatusChange(targetStatus);
+                onClearSelection();
+              }}
+              aria-label={tooltipText}
+            >
+              {hasOpenItems ? <CheckCircle2 className="size-4" /> : <Circle className="size-4" />}
+            </Button>
+          </HoverTooltip>
+        );
+      })()}
 
       {/* 削除 */}
       <HoverTooltip content="削除" side="top">
@@ -127,10 +140,6 @@ export function InboxSelectionActions({
               onDuplicate={onDuplicate ? () => handleSingleItemAction(onDuplicate) : undefined}
               onAddTags={onAddTags ? () => onAddTags() : undefined}
               onChangeDueDate={onChangeDueDate ? () => onChangeDueDate() : undefined}
-              onArchive={() => {
-                onArchive();
-                onClearSelection();
-              }}
               onDelete={() => {
                 onDelete();
                 onClearSelection();

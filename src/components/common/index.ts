@@ -8,6 +8,9 @@ export { SelectionBar } from './SelectionBar';
 // Boxes
 export { InfoBox, WarningBox } from './Boxes';
 
+// Dialogs
+export { DeleteConfirmDialog } from './DeleteConfirmDialog';
+
 // Menu
 export {
   ActionMenuItems,

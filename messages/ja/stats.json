@@ -60,6 +60,12 @@
       "trendsDescription": "長期的なトレンドを確認",
       "goalsDescription": "目標の達成状況を追跡"
     },
+    "sleep": {
+      "title": "睡眠",
+      "description": "推定睡眠時間",
+      "dailyAverage": "1日平均",
+      "reducedBy": "予定により{hours}減少"
+    },
     "toolbar": {
       "settings": "設定",
       "periodType": "期間タイプ",

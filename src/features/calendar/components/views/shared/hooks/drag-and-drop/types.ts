@@ -43,10 +43,16 @@ export interface DragHandlers {
 
 export interface UseDragAndDropProps {
   onEventUpdate?:
-    | ((eventId: string, updates: { startTime: Date; endTime: Date }) => Promise<void> | void)
+    | ((
+        eventId: string,
+        updates: { startTime: Date; endTime: Date },
+      ) => Promise<void | { skipToast: true }> | void)
     | undefined;
   onPlanUpdate?:
-    | ((eventId: string, updates: { startTime: Date; endTime: Date }) => Promise<void> | void)
+    | ((
+        eventId: string,
+        updates: { startTime: Date; endTime: Date },
+      ) => Promise<void | { skipToast: true }> | void)
     | undefined;
   onEventClick?: ((plan: CalendarPlan) => void) | undefined;
   onPlanClick?: ((plan: CalendarPlan) => void) | undefined;

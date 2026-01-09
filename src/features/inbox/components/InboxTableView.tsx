@@ -1,16 +1,19 @@
 'use client';
 
 import type { PlanStatus } from '@/features/plans/types/plan';
-import { ChevronDown, Plus } from 'lucide-react';
+import { Calendar, ChevronDown, FileText, Plus } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MEDIA_QUERIES } from '@/config/ui/breakpoints';
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
 import { TableNavigation, TablePagination, type TableNavigationConfig } from '@/features/table';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { api } from '@/lib/trpc';
 import { useTranslations } from 'next-intl';
+import { useDynamicPageSize } from '../hooks/useDynamicPageSize';
 import type { InboxItem } from '../hooks/useInboxData';
 import { useInboxData } from '../hooks/useInboxData';
 import { useInboxFilterStore } from '../stores/useInboxFilterStore';
@@ -19,7 +22,6 @@ import { useInboxPaginationStore } from '../stores/useInboxPaginationStore';
 import { useInboxSelectionStore } from '../stores/useInboxSelectionStore';
 import { useInboxSortStore } from '../stores/useInboxSortStore';
 import { useInboxViewStore } from '../stores/useInboxViewStore';
-import { DisplayModeSwitcher } from './DisplayModeSwitcher';
 import { BulkDatePickerDialog } from './table/BulkDatePickerDialog';
 import { BulkTagSelectDialog } from './table/BulkTagSelectDialog';
 import { InboxFilterContent } from './table/InboxFilterContent';
@@ -51,22 +53,36 @@ export function InboxTableView() {
   const t = useTranslations();
   const { bulkUpdatePlan, bulkDeletePlan, createPlan } = usePlanMutations();
 
+  // ステータス別件数取得
+  const { data: stats } = api.plans.getStats.useQuery();
+  const openCount = stats?.byStatus?.open ?? 0;
+  const doneCount = stats?.byStatus?.done ?? 0;
+
   // フィルター関連：必要な値のみselectorで取得
   const filterStatus = useInboxFilterStore((state) => state.status);
   const filterSearch = useInboxFilterStore((state) => state.search);
   const filterTags = useInboxFilterStore((state) => state.tags);
   const filterDueDate = useInboxFilterStore((state) => state.dueDate);
+  const filterRecurrence = useInboxFilterStore((state) => state.recurrence);
+  const filterReminder = useInboxFilterStore((state) => state.reminder);
+  const filterSchedule = useInboxFilterStore((state) => state.schedule);
+  const filterCreatedAt = useInboxFilterStore((state) => state.createdAt);
+  const filterUpdatedAt = useInboxFilterStore((state) => state.updatedAt);
+  const isSearchOpen = useInboxFilterStore((state) => state.isSearchOpen);
   const setStatus = useInboxFilterStore((state) => state.setStatus);
   const setSearch = useInboxFilterStore((state) => state.setSearch);
+  const setIsSearchOpen = useInboxFilterStore((state) => state.setIsSearchOpen);
 
   // ソート関連
   const setSort = useInboxSortStore((state) => state.setSort);
 
   // ページネーション関連
   const currentPage = useInboxPaginationStore((state) => state.currentPage);
-  const pageSize = useInboxPaginationStore((state) => state.pageSize);
   const setCurrentPage = useInboxPaginationStore((state) => state.setCurrentPage);
-  const setPageSize = useInboxPaginationStore((state) => state.setPageSize);
+
+  // テーブルコンテナref（動的ページサイズ計算用）
+  const tableContainerRef = useRef<HTMLDivElement>(null);
+  const pageSize = useDynamicPageSize(tableContainerRef);
 
   // 選択関連
   const selectedIds = useInboxSelectionStore((state) => state.selectedIds);
@@ -91,13 +107,26 @@ export function InboxTableView() {
   // タグ一括追加ダイアログの状態
   const [showTagDialog, setShowTagDialog] = useState(false);
 
-  // データ取得
-  const { items, isPending, error } = useInboxData({
-    status: filterStatus[0] as PlanStatus | undefined,
-    search: filterSearch,
-    tags: filterTags,
-    dueDate: filterDueDate,
-  });
+  // ソート状態取得（useInboxDataより前に取得）
+  const sortField = useInboxSortStore((state) => state.sortField);
+  const sortDirection = useInboxSortStore((state) => state.sortDirection);
+  const clearSort = useInboxSortStore((state) => state.clearSort);
+
+  // データ取得（ソートオプション付き）
+  const { items, isPending, error } = useInboxData(
+    {
+      status: filterStatus[0] as PlanStatus | undefined,
+      search: filterSearch,
+      tags: filterTags,
+      dueDate: filterDueDate,
+      recurrence: filterRecurrence,
+      reminder: filterReminder,
+      schedule: filterSchedule,
+      createdAt: filterCreatedAt,
+      updatedAt: filterUpdatedAt,
+    },
+    { field: sortField, direction: sortDirection },
+  );
 
   // 新規作成行のref
   const createRowRef = useRef<InboxTableRowCreateHandle>(null);
@@ -105,19 +134,19 @@ export function InboxTableView() {
   // 選択数
   const selectedCount = selectedIds.size;
 
-  // アクションハンドラー: アーカイブ（status を 'done' に変更）
-  const handleArchive = async () => {
+  // アクションハンドラー: ステータス一括変更（Open/Done）
+  const handleStatusChange = async (status: PlanStatus) => {
     const ids = Array.from(selectedIds);
     if (ids.length === 0) return;
 
     try {
       await bulkUpdatePlan.mutateAsync({
         ids,
-        data: { status: 'done' },
+        data: { status },
       });
       clearSelection();
     } catch (error) {
-      console.error('Archive error:', error);
+      console.error('Status change error:', error);
     }
   };
 
@@ -171,34 +200,45 @@ export function InboxTableView() {
   // アクティブなビューを取得
   const activeView = getActiveView();
 
-  // ソート状態取得
-  const sortField = useInboxSortStore((state) => state.sortField);
-  const sortDirection = useInboxSortStore((state) => state.sortDirection);
-  const clearSort = useInboxSortStore((state) => state.clearSort);
-
   // フィルターリセット
   const resetFilters = useInboxFilterStore((state) => state.reset);
   const setGroupBy = useInboxGroupStore((state) => state.setGroupBy);
 
-  // ソートフィールドオプション
+  // ソートフィールドオプション（テーブルヘッダーと同じアイコン）
   const sortFieldOptions = useMemo(
     () => [
-      { value: 'title', label: 'タイトル' },
-      { value: 'created_at', label: '作成日' },
-      { value: 'updated_at', label: '更新日' },
-      { value: 'status', label: 'ステータス' },
+      { value: 'title', label: 'タイトル', icon: FileText },
+      { value: 'created_at', label: '作成日', icon: Calendar },
+      { value: 'updated_at', label: '更新日', icon: Calendar },
     ],
     [],
   );
 
-  // フィルター数をカウント
-  const filterCount = filterStatus.length + (filterDueDate !== 'all' ? 1 : 0);
+  // フィルター数をカウント（ステータスはタブで管理するため除外）
+  const dueDateFilterCount = filterDueDate !== 'all' ? 1 : 0;
+  const tagFilterCount = filterTags.length;
+  const recurrenceFilterCount = filterRecurrence !== 'all' ? 1 : 0;
+  const reminderFilterCount = filterReminder !== 'all' ? 1 : 0;
+  const scheduleFilterCount = filterSchedule !== 'all' ? 1 : 0;
+  const createdAtFilterCount = filterCreatedAt !== 'all' ? 1 : 0;
+  const updatedAtFilterCount = filterUpdatedAt !== 'all' ? 1 : 0;
+  const filterCount =
+    dueDateFilterCount +
+    tagFilterCount +
+    recurrenceFilterCount +
+    reminderFilterCount +
+    scheduleFilterCount +
+    createdAtFilterCount +
+    updatedAtFilterCount;
 
   // TableNavigation設定
+  // NOTE: Zustand setterは参照が安定しているため依存配列から除外
   const navigationConfig: TableNavigationConfig = useMemo(
     () => ({
       search: filterSearch,
       onSearchChange: setSearch,
+      isSearchOpen,
+      onSearchOpenChange: setIsSearchOpen,
       sortField,
       sortDirection,
       onSortChange: setSort,
@@ -214,22 +254,22 @@ export function InboxTableView() {
         setGroupBy(null);
       },
     }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       filterSearch,
-      setSearch,
+      isSearchOpen,
       sortField,
       sortDirection,
-      setSort,
-      clearSort,
       sortFieldOptions,
       filterCount,
-      resetFilters,
+      filterTags,
       groupBy,
-      setGroupBy,
     ],
   );
 
   // アクティブビュー変更時にフィルター・ソート・ページサイズを適用
+  // NOTE: activeView.idで依存管理し、不要な再実行を防ぐ
+  const activeViewId = activeView?.id;
   useEffect(() => {
     if (!activeView) return;
 
@@ -245,18 +285,16 @@ export function InboxTableView() {
     if (activeView.sorting) {
       setSort(activeView.sorting.field, activeView.sorting.direction);
     }
-
-    // ページサイズ適用
-    if (activeView.pageSize) {
-      setPageSize(activeView.pageSize);
-    }
-  }, [activeView, setStatus, setSearch, setSort, setPageSize]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeViewId]); // activeView.idのみで依存管理
 
   // フィルター変更時にページ1に戻る＆モバイル表示件数リセット
+  // NOTE: Zustand setterは参照が安定しているため依存配列から除外
   useEffect(() => {
     setCurrentPage(1);
     setMobileDisplayLimit(MOBILE_INITIAL_LIMIT);
-  }, [filterStatus, filterSearch, setCurrentPage]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filterStatus, filterSearch]);
 
   // エラー表示
   if (error) {
@@ -270,8 +308,9 @@ export function InboxTableView() {
     );
   }
 
-  // ローディング表示
-  if (isPending) {
+  // ローディング表示（初回ロード時のみ）
+  // データ更新中（リフェッチ中）はUIを維持してTableNavigationの再マウントを防ぐ
+  if (isPending && items.length === 0) {
     return (
       <div className="flex h-full items-center justify-center">
         <div className="flex flex-col items-center gap-2">
@@ -294,7 +333,7 @@ export function InboxTableView() {
               selectedCount={selectedCount}
               selectedIds={Array.from(selectedIds)}
               items={items}
-              onArchive={handleArchive}
+              onStatusChange={handleStatusChange}
               onDelete={handleDelete}
               onEdit={handleEdit}
               onDuplicate={handleDuplicate}
@@ -305,31 +344,55 @@ export function InboxTableView() {
           }
         />
       ) : (
-        <div className="flex h-12 shrink-0 items-center gap-2 px-4 py-2">
-          {/* 左端: 表示モード切替（モバイル・デスクトップ共通） */}
-          <DisplayModeSwitcher />
-
-          {/* スペーサー */}
-          <div className="flex-1" />
-
-          {/* Notion風アイコンナビゲーション（検索・ソート・設定）- PC・モバイル共通 */}
-          <TableNavigation config={navigationConfig} />
-
-          {/* 作成ボタン: 固定位置（モバイル: アイコンのみ、PC: テキスト付き） */}
-          <Button
-            onClick={() => createRowRef.current?.startCreate()}
-            size="icon"
-            className="shrink-0 md:hidden"
+        <div className="flex h-12 shrink-0 items-center justify-between gap-2 px-4 py-2">
+          {/* 左側: Open/Done切り替えタブ */}
+          <Tabs
+            value={filterStatus[0] || 'open'}
+            onValueChange={(value) => setStatus([value as PlanStatus])}
           >
-            <Plus className="size-4" />
-          </Button>
-          <Button
-            onClick={() => createRowRef.current?.startCreate()}
-            className="hidden shrink-0 md:inline-flex"
-          >
-            <Plus className="size-4" />
-            {t('common.inbox.createNew')}
-          </Button>
+            <TabsList className="bg-secondary h-8 rounded-lg p-0.5">
+              <TabsTrigger
+                value="open"
+                className="data-[state=inactive]:hover:bg-state-hover data-[state=active]:bg-background data-[state=active]:text-foreground h-7 gap-1.5 rounded-md px-3 text-xs"
+              >
+                Open
+                <span className="bg-background flex size-4 items-center justify-center rounded-full text-[10px] tabular-nums">
+                  {openCount}
+                </span>
+              </TabsTrigger>
+              <TabsTrigger
+                value="done"
+                className="data-[state=inactive]:hover:bg-state-hover data-[state=active]:bg-background data-[state=active]:text-foreground h-7 gap-1.5 rounded-md px-3 text-xs"
+              >
+                Done
+                <span className="bg-background flex size-4 items-center justify-center rounded-full text-[10px] tabular-nums">
+                  {doneCount}
+                </span>
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+
+          {/* 右側: ナビゲーション・作成ボタン */}
+          <div className="flex items-center gap-2">
+            {/* Notion風アイコンナビゲーション（検索・ソート・設定）- PC・モバイル共通 */}
+            <TableNavigation config={navigationConfig} />
+
+            {/* 作成ボタン: 固定位置（モバイル: アイコンのみ、PC: テキスト付き） */}
+            <Button
+              onClick={() => createRowRef.current?.startCreate()}
+              size="icon"
+              className="shrink-0 md:hidden"
+            >
+              <Plus className="size-4" />
+            </Button>
+            <Button
+              onClick={() => createRowRef.current?.startCreate()}
+              className="hidden shrink-0 md:inline-flex"
+            >
+              <Plus className="size-4" />
+              {t('common.inbox.createNew')}
+            </Button>
+          </div>
         </div>
       )}
 
@@ -342,11 +405,15 @@ export function InboxTableView() {
           }
         }}
       >
-        <div className="border-border flex flex-1 flex-col overflow-auto rounded-xl border [&::-webkit-scrollbar-corner]:rounded-xl [&::-webkit-scrollbar-track]:rounded-xl">
+        <div
+          ref={tableContainerRef}
+          className="border-border flex flex-1 flex-col overflow-auto rounded-xl border [&::-webkit-scrollbar-corner]:rounded-xl [&::-webkit-scrollbar-track]:rounded-xl"
+        >
           <InboxTableContent
             items={items}
             createRowRef={createRowRef}
             mobileDisplayLimit={isMobile ? mobileDisplayLimit : undefined}
+            pageSize={pageSize}
           />
         </div>
 
@@ -375,7 +442,6 @@ export function InboxTableView() {
                 currentPage={currentPage}
                 pageSize={pageSize}
                 onPageChange={setCurrentPage}
-                onPageSizeChange={setPageSize}
               />
             </div>
           </>

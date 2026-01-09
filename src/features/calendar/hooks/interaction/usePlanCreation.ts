@@ -1,36 +1,36 @@
 /**
- * イベント作成機能を管理するフック
+ * プラン作成機能を管理するフック
  */
 
 'use client';
 
 import { useCallback, useState } from 'react';
 
-export interface CreatingEvent {
+export interface CreatingPlan {
   date: Date;
   startTime: string;
   endTime: string;
   isVisible: boolean;
 }
 
-export interface EventCreationState {
+export interface PlanCreationState {
   isCreating: boolean;
-  creatingEvent: CreatingEvent | null;
+  creatingPlan: CreatingPlan | null;
 }
 
-export interface UseEventCreationOptions {
-  onConfirmCreate?: (event: CreatingEvent) => void;
+export interface UsePlanCreationOptions {
+  onConfirmCreate?: (plan: CreatingPlan) => void;
   defaultDurationMinutes?: number;
 }
 
-const defaultState: EventCreationState = {
+const defaultState: PlanCreationState = {
   isCreating: false,
-  creatingEvent: null,
+  creatingPlan: null,
 };
 
-export function useEventCreation(options: UseEventCreationOptions = {}) {
+export function usePlanCreation(options: UsePlanCreationOptions = {}) {
   const { onConfirmCreate, defaultDurationMinutes = 30 } = options;
-  const [state, setState] = useState<EventCreationState>(defaultState);
+  const [state, setState] = useState<PlanCreationState>(defaultState);
 
   const startCreating = useCallback(
     (date: Date, startTime: string, endTime?: string) => {
@@ -38,7 +38,7 @@ export function useEventCreation(options: UseEventCreationOptions = {}) {
 
       setState({
         isCreating: true,
-        creatingEvent: {
+        creatingPlan: {
           date,
           startTime,
           endTime: finalEndTime,
@@ -49,14 +49,14 @@ export function useEventCreation(options: UseEventCreationOptions = {}) {
     [defaultDurationMinutes],
   );
 
-  const updateCreatingEvent = useCallback((updates: Partial<CreatingEvent>) => {
+  const updateCreatingPlan = useCallback((updates: Partial<CreatingPlan>) => {
     setState((prev) => {
-      if (!prev.creatingEvent) return prev;
+      if (!prev.creatingPlan) return prev;
 
       return {
         ...prev,
-        creatingEvent: {
-          ...prev.creatingEvent,
+        creatingPlan: {
+          ...prev.creatingPlan,
           ...updates,
         },
       };
@@ -65,8 +65,8 @@ export function useEventCreation(options: UseEventCreationOptions = {}) {
 
   const confirmCreate = useCallback(() => {
     setState((prev) => {
-      if (prev.creatingEvent) {
-        onConfirmCreate?.(prev.creatingEvent);
+      if (prev.creatingPlan) {
+        onConfirmCreate?.(prev.creatingPlan);
       }
       return defaultState;
     });
@@ -80,7 +80,7 @@ export function useEventCreation(options: UseEventCreationOptions = {}) {
     state,
     actions: {
       startCreating,
-      updateCreatingEvent,
+      updateCreatingPlan,
       confirmCreate,
       cancelCreating,
     },

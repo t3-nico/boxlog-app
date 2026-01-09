@@ -19,9 +19,10 @@ import { DEFAULT_TAG_COLOR } from '@/config/ui/colors';
 import { useTagStore } from '@/features/tags/stores/useTagStore';
 import { Tag } from '@/features/tags/types';
 import { useActiveState } from '@/hooks/useActiveState';
+import { useTranslations } from 'next-intl';
 import { tagIconMapping, TagIconName } from '../constants/icons';
 
-import { TagDeleteDialog } from './TagDeleteDialog';
+import { DeleteConfirmDialog } from '@/components/common/DeleteConfirmDialog';
 import { TagEditDialog } from './tag-edit-dialog';
 
 interface TagsListProps {
@@ -254,6 +255,7 @@ export const TagsList = ({
   onSelectTag = () => {},
   selectedTagIds = [],
 }: TagsListProps) => {
+  const t = useTranslations();
   const [isExpanded, setIsExpanded] = useState(false);
 
   // Zustandストアからデータを取得
@@ -424,11 +426,13 @@ export const TagsList = ({
         onSave={handleSaveTag}
       />
 
-      {/* タグ削除ダイアログ（使用状況チェック付き） */}
-      <TagDeleteDialog
-        tag={deletingTag}
+      {/* タグ削除ダイアログ */}
+      <DeleteConfirmDialog
+        open={!!deletingTag}
         onClose={handleCloseDeleteDialog}
         onConfirm={handleConfirmDelete}
+        title={t('tag.delete.confirmTitleWithName', { name: deletingTag?.name ?? '' })}
+        description={t('tag.delete.description')}
       />
     </div>
   );

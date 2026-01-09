@@ -33,7 +33,7 @@ import {
 } from './controller/hooks';
 import { initializePreload } from './controller/utils';
 import { CalendarLayout } from './layout/CalendarLayout';
-import { EventContextMenu } from './views/shared/components';
+import { EventContextMenu, MobileTouchHint } from './views/shared/components';
 
 // 初回ロード時にビューをプリロード
 initializePreload();
@@ -253,6 +253,7 @@ export const CalendarController = ({
       plans: filteredEvents,
       allPlans: allCalendarPlans,
       currentDate,
+      showWeekends,
       disabledPlanId,
       onPlanClick: handlePlanClick,
       onPlanContextMenu: handleEventContextMenu,
@@ -272,6 +273,7 @@ export const CalendarController = ({
       filteredEvents,
       allCalendarPlans,
       currentDate,
+      showWeekends,
       disabledPlanId,
       handlePlanClick,
       handleEventContextMenu,
@@ -303,11 +305,7 @@ export const CalendarController = ({
           end: viewDateRange.end,
         }}
       >
-        <CalendarViewRenderer
-          viewType={viewType}
-          showWeekends={showWeekends}
-          commonProps={commonProps}
-        />
+        <CalendarViewRenderer viewType={viewType} commonProps={commonProps} />
       </CalendarLayout>
 
       {contextMenuEvent && contextMenuPosition ? (
@@ -321,6 +319,9 @@ export const CalendarController = ({
           onOpen={handleViewDetails}
         />
       ) : null}
+
+      {/* モバイル操作ヒント（初回のみ表示） */}
+      <MobileTouchHint />
     </DnDProvider>
   );
 };

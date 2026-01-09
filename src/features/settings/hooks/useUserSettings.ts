@@ -30,6 +30,8 @@ export function useUserSettings() {
   } = api.userSettings.get.useQuery(undefined, {
     staleTime: CACHE_5_MINUTES,
     refetchOnWindowFocus: false,
+    refetchOnMount: false, // ページ遷移時の再取得を無効化
+    refetchOnReconnect: false, // 再接続時の再取得を無効化
   });
 
   // DB更新用mutation

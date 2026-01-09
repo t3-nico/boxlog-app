@@ -15,6 +15,7 @@ interface UseTagTableColumnsParams {
   lastUsed: Record<string, string>;
   visibleColumns: { id: string; width: number }[];
   t: (key: string) => string;
+  onCreateGroup?: (name: string) => Promise<TagGroup>;
 }
 
 /**
@@ -27,6 +28,7 @@ export function useTagTableColumns({
   lastUsed,
   visibleColumns,
   t,
+  onCreateGroup,
 }: UseTagTableColumnsParams): ColumnDef<Tag>[] {
   return useMemo(() => {
     const allColumnDefs: ColumnDef<Tag>[] = [
@@ -80,6 +82,7 @@ export function useTagTableColumns({
             allTags={allTags}
             planCounts={planCounts}
             lastUsed={lastUsed}
+            {...(onCreateGroup ? { onCreateGroup } : {})}
           />
         ),
       },
@@ -124,7 +127,7 @@ export function useTagTableColumns({
     // Filter to visible columns only
     const visibleColumnIds = visibleColumns.filter((c) => c.id !== 'selection').map((c) => c.id);
     return allColumnDefs.filter((col) => visibleColumnIds.includes(col.id as TagColumnId));
-  }, [t, groups, allTags, planCounts, lastUsed, visibleColumns]);
+  }, [t, groups, allTags, planCounts, lastUsed, visibleColumns, onCreateGroup]);
 }
 
 /**

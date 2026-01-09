@@ -9,7 +9,7 @@ interface BoardStatusFilterState {
   resetFilters: () => void;
 }
 
-const defaultStatuses: PlanStatus[] = ['todo', 'doing', 'done'];
+const defaultStatuses: PlanStatus[] = ['open', 'done'];
 
 /**
  * Boardのステータスフィルター管理用Store

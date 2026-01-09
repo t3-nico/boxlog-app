@@ -57,7 +57,7 @@ export const PlanBillingSettings = memo(function PlanBillingSettings() {
   }, []);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* 現在のプラン */}
       <SettingsCard title="現在のプラン">
         <div className="flex items-center justify-between">

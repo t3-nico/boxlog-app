@@ -2,20 +2,24 @@
 
 import { addDays, format, isToday, subDays } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Moon } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { MiniCalendar } from '@/components/common/MiniCalendar';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { cn } from '@/lib/utils';
-
+import { useSleepHours } from '@/features/calendar/hooks/useSleepHours';
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
+import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
+import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
+import { cn } from '@/lib/utils';
 
 // コンパクト版の定数（カレンダーDayViewに近い設定）
 const COMPACT_HOUR_HEIGHT = 64; // 1時間あたりの高さ
 const COMPACT_TIME_COLUMN_WIDTH = 40; // 時間ラベル列の幅
 const COMPACT_MIN_EVENT_HEIGHT = 20;
+const COMPACT_COLLAPSED_SLEEP_HEIGHT = 32; // 折りたたみ時の睡眠セクション高さ
 
 interface CompactDayViewProps {
   /** 表示する日付 */
@@ -61,6 +65,42 @@ export const CompactDayView = memo(function CompactDayView({
   const [dragOverHour, setDragOverHour] = useState<number | null>(null);
   const [draggingPlanId, setDraggingPlanId] = useState<string | null>(null);
 
+  // Inspector連携
+  const inspectorPlanId = usePlanInspectorStore((state) => state.planId);
+  const isInspectorOpen = usePlanInspectorStore((state) => state.isOpen);
+
+  // 睡眠時間帯
+  const sleepHours = useSleepHours();
+  const sleepHoursCollapsed = useCalendarSettingsStore((state) => state.sleepHoursCollapsed);
+  const updateSettings = useCalendarSettingsStore((state) => state.updateSettings);
+
+  // 睡眠時間帯の折りたたみトグル
+  const handleToggleSleepHours = useCallback(() => {
+    updateSettings({ sleepHoursCollapsed: !sleepHoursCollapsed });
+  }, [updateSettings, sleepHoursCollapsed]);
+
+  // 折りたたみ時のレイアウト計算
+  const collapsedLayout = useMemo(() => {
+    if (!sleepHours || !sleepHoursCollapsed) {
+      return null;
+    }
+
+    const { wakeTime, totalHours } = sleepHours;
+    const awakeHours = 24 - totalHours;
+    const awakeHeight = awakeHours * COMPACT_HOUR_HEIGHT;
+
+    return {
+      collapsedHeight: COMPACT_COLLAPSED_SLEEP_HEIGHT,
+      awakeHeight,
+      awakeStartY: COMPACT_COLLAPSED_SLEEP_HEIGHT,
+      totalHeight: COMPACT_COLLAPSED_SLEEP_HEIGHT + awakeHeight,
+      wakeTime,
+    };
+  }, [sleepHours, sleepHoursCollapsed]);
+
+  // グリッド高さ
+  const gridHeight = collapsedLayout ? collapsedLayout.totalHeight : 24 * COMPACT_HOUR_HEIGHT;
+
   const isTodayDate = useMemo(() => isToday(date), [date]);
 
   // 現在時刻の位置（px）
@@ -81,13 +121,19 @@ export const CompactDayView = memo(function CompactDayView({
     return () => clearInterval(timer);
   }, [isTodayDate]);
 
-  // 初期スクロール位置（8時付近）
+  // 初期スクロール位置（今日は現在時刻付近、他の日は8時付近）
   useEffect(() => {
     if (scrollRef.current) {
-      const scrollTop = Math.max(0, (8 - 1) * COMPACT_HOUR_HEIGHT);
+      let scrollTop: number;
+      if (isTodayDate) {
+        const currentHour = new Date().getHours();
+        scrollTop = Math.max(0, (currentHour - 1) * COMPACT_HOUR_HEIGHT);
+      } else {
+        scrollTop = Math.max(0, (8 - 1) * COMPACT_HOUR_HEIGHT);
+      }
       scrollRef.current.scrollTo({ top: scrollTop, behavior: 'smooth' });
     }
-  }, [date]);
+  }, [date, isTodayDate]);
 
   // ナビゲーション
   const handlePrev = useCallback(() => {
@@ -177,32 +223,57 @@ export const CompactDayView = memo(function CompactDayView({
         const endHour = end.getHours() + end.getMinutes() / 60;
         const duration = Math.max(endHour - startHour, 0.5);
 
+        // 折りたたみ時の位置計算
+        let top: number;
+        if (collapsedLayout && sleepHours) {
+          // 睡眠時間帯内のプランは非表示（折りたたみセクション内）
+          const isInSleepHours =
+            startHour < collapsedLayout.wakeTime || startHour >= sleepHours.bedtime;
+          if (isInSleepHours) {
+            top = -1000; // 画面外に配置（非表示）
+          } else {
+            // 起きている時間帯のプラン
+            top =
+              COMPACT_COLLAPSED_SLEEP_HEIGHT +
+              (startHour - collapsedLayout.wakeTime) * COMPACT_HOUR_HEIGHT;
+          }
+        } else {
+          top = startHour * COMPACT_HOUR_HEIGHT;
+        }
+
         return {
           plan,
-          top: startHour * COMPACT_HOUR_HEIGHT,
+          top,
           height: Math.max(duration * COMPACT_HOUR_HEIGHT, COMPACT_MIN_EVENT_HEIGHT),
         };
       });
-  }, [plans, date]);
+  }, [plans, date, collapsedLayout, sleepHours]);
 
   return (
     <div className={cn('flex h-full flex-col', className)}>
       {/* ヘッダー: 日付 + ナビゲーション */}
       <div className="flex shrink-0 items-center justify-between py-2 pr-1 pl-2">
-        <div className="flex items-center gap-1 text-sm font-medium">
-          <span>{format(date, 'M月d日', locale === 'ja' ? { locale: ja } : {})}</span>
-          <span className="text-muted-foreground">
-            ({format(date, 'E', locale === 'ja' ? { locale: ja } : {})})
-          </span>
-        </div>
+        <MiniCalendar
+          asPopover
+          popoverTrigger={
+            <button
+              type="button"
+              className="hover:bg-state-hover flex items-center gap-1 rounded-md px-2 py-1 text-sm font-medium transition-colors"
+            >
+              <span>{format(date, 'M月d日', locale === 'ja' ? { locale: ja } : {})}</span>
+              <span className="text-muted-foreground">
+                ({format(date, 'E', locale === 'ja' ? { locale: ja } : {})})
+              </span>
+              <ChevronDown className="text-muted-foreground size-3" />
+            </button>
+          }
+          selectedDate={date}
+          onDateSelect={(newDate) => newDate && onDateChange(newDate)}
+          popoverAlign="start"
+        />
 
         <div className="flex items-center gap-1">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleToday}
-            className={cn('h-10 px-2 text-xs sm:h-6', isTodayDate && 'text-primary font-semibold')}
-          >
+          <Button variant="outline" size="sm" onClick={handleToday}>
             {t('time.today')}
           </Button>
           <Button
@@ -231,7 +302,7 @@ export const CompactDayView = memo(function CompactDayView({
         <div
           ref={scrollRef}
           className="relative w-full"
-          style={{ height: 24 * COMPACT_HOUR_HEIGHT }}
+          style={{ height: gridHeight }}
           onDragLeave={handleDragLeave}
         >
           {/* 時間列 + グリッド */}
@@ -241,43 +312,167 @@ export const CompactDayView = memo(function CompactDayView({
               className="border-border sticky left-0 z-10 shrink-0 border-r bg-inherit"
               style={{ width: COMPACT_TIME_COLUMN_WIDTH }}
             >
-              {timeLabels.map(({ hour, label }) => (
-                <div
-                  key={hour}
-                  className="text-muted-foreground relative text-right text-[10px]"
-                  style={{ height: COMPACT_HOUR_HEIGHT }}
-                >
-                  <span className="absolute -top-2 right-1">{hour > 0 ? label : ''}</span>
+              {collapsedLayout && sleepHours ? (
+                // 折りたたみ時の時間列
+                <>
+                  {/* 折りたたみセクション（睡眠時間） */}
+                  <div
+                    className="bg-accent/10 flex items-center justify-center"
+                    style={{ height: COMPACT_COLLAPSED_SLEEP_HEIGHT }}
+                  >
+                    <Moon className="text-muted-foreground size-3" />
+                  </div>
+                  {/* 起きている時間帯 */}
+                  <div className="relative" style={{ height: collapsedLayout.awakeHeight }}>
+                    {/* 展開ボタン（最上部） */}
+                    <button
+                      type="button"
+                      onClick={handleToggleSleepHours}
+                      className="hover:bg-state-hover absolute -top-1 right-0 z-20 flex size-6 items-center justify-center rounded transition-colors"
+                      aria-label="睡眠時間帯を展開"
+                    >
+                      <ChevronUp className="text-muted-foreground size-4" />
+                    </button>
+                    {timeLabels
+                      .filter(
+                        ({ hour }) => hour >= collapsedLayout.wakeTime && hour < sleepHours.bedtime,
+                      )
+                      .map(({ hour, label }) => (
+                        <div
+                          key={hour}
+                          className="text-muted-foreground relative text-right text-[10px]"
+                          style={{ height: COMPACT_HOUR_HEIGHT }}
+                        >
+                          <span className="absolute -top-2 right-1">{label}</span>
+                        </div>
+                      ))}
+                  </div>
+                </>
+              ) : (
+                // 通常時の時間列
+                <div className="relative h-full">
+                  {timeLabels.map(({ hour, label }) => (
+                    <div
+                      key={hour}
+                      className="text-muted-foreground relative text-right text-[10px]"
+                      style={{ height: COMPACT_HOUR_HEIGHT }}
+                    >
+                      <span className="absolute -top-2 right-1">{hour > 0 ? label : ''}</span>
+                    </div>
+                  ))}
+                  {/* 折りたたみボタン（起床時間の位置） */}
+                  {sleepHours && (
+                    <button
+                      type="button"
+                      onClick={handleToggleSleepHours}
+                      className="hover:bg-state-hover absolute right-0 z-20 flex size-6 items-center justify-center rounded transition-colors"
+                      style={{ top: sleepHours.wakeTime * COMPACT_HOUR_HEIGHT - 28 }}
+                      aria-label="睡眠時間帯を折りたたむ"
+                    >
+                      <ChevronDown className="text-muted-foreground size-4" />
+                    </button>
+                  )}
                 </div>
-              ))}
+              )}
             </div>
 
             {/* グリッド領域 */}
             <div className="relative flex-1">
-              {/* 時間グリッド線 */}
-              {timeLabels.map(({ hour }) => (
-                <div
-                  key={hour}
-                  className={cn(
-                    'border-border border-b transition-colors',
-                    isDragOver && dragOverHour === hour && 'bg-primary/10',
+              {collapsedLayout && sleepHours ? (
+                // 折りたたみ時のグリッド
+                <>
+                  {/* 折りたたみセクション */}
+                  <div
+                    className="bg-accent/10 border-border flex w-full items-center justify-center border-b"
+                    style={{ height: COMPACT_COLLAPSED_SLEEP_HEIGHT }}
+                  >
+                    <span className="text-muted-foreground text-[10px]">
+                      {sleepHours.bedtime}:00 - {sleepHours.wakeTime}:00
+                    </span>
+                  </div>
+                  {/* 起きている時間帯のグリッド線 */}
+                  {timeLabels
+                    .filter(
+                      ({ hour }) => hour >= collapsedLayout.wakeTime && hour < sleepHours.bedtime,
+                    )
+                    .map(({ hour }) => (
+                      <div
+                        key={hour}
+                        className={cn(
+                          'border-border border-b transition-colors',
+                          isDragOver && dragOverHour === hour && 'bg-primary/10',
+                        )}
+                        style={{ height: COMPACT_HOUR_HEIGHT }}
+                        onClick={() => handleTimeClick(hour)}
+                        onDragOver={(e) => handleDragOver(e, hour)}
+                        onDrop={(e) => handleDropOnHour(e, hour)}
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            handleTimeClick(hour);
+                          }
+                        }}
+                      />
+                    ))}
+                </>
+              ) : (
+                // 通常時のグリッド
+                <>
+                  {/* 睡眠時間帯の背景オーバーレイ */}
+                  {sleepHours && (
+                    <>
+                      {/* 上部の睡眠時間帯（0:00〜起床時間） */}
+                      {sleepHours.morningRange && (
+                        <div
+                          className="bg-accent/20 pointer-events-none absolute inset-x-0 z-[1]"
+                          style={{
+                            top: 0,
+                            height: sleepHours.morningRange.endHour * COMPACT_HOUR_HEIGHT,
+                          }}
+                          aria-hidden="true"
+                        />
+                      )}
+                      {/* 下部の睡眠時間帯（就寝時間〜24:00） */}
+                      {sleepHours.eveningRange && (
+                        <div
+                          className="bg-accent/20 pointer-events-none absolute inset-x-0 z-[1]"
+                          style={{
+                            top: sleepHours.eveningRange.startHour * COMPACT_HOUR_HEIGHT,
+                            height: (24 - sleepHours.eveningRange.startHour) * COMPACT_HOUR_HEIGHT,
+                          }}
+                          aria-hidden="true"
+                        />
+                      )}
+                    </>
                   )}
-                  style={{ height: COMPACT_HOUR_HEIGHT }}
-                  onClick={() => handleTimeClick(hour)}
-                  onDragOver={(e) => handleDragOver(e, hour)}
-                  onDrop={(e) => handleDropOnHour(e, hour)}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      handleTimeClick(hour);
-                    }
-                  }}
-                />
-              ))}
+
+                  {/* 時間グリッド線 */}
+                  {timeLabels.map(({ hour }) => (
+                    <div
+                      key={hour}
+                      className={cn(
+                        'border-border border-b transition-colors',
+                        isDragOver && dragOverHour === hour && 'bg-primary/10',
+                      )}
+                      style={{ height: COMPACT_HOUR_HEIGHT }}
+                      onClick={() => handleTimeClick(hour)}
+                      onDragOver={(e) => handleDragOver(e, hour)}
+                      onDrop={(e) => handleDropOnHour(e, hour)}
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          handleTimeClick(hour);
+                        }
+                      }}
+                    />
+                  ))}
+                </>
+              )}
 
               {/* 現在時刻線 */}
-              {isTodayDate && (
+              {isTodayDate && !collapsedLayout && (
                 <>
                   <div
                     className="bg-primary pointer-events-none absolute right-0 left-0 z-20 h-[2px]"
@@ -291,32 +486,48 @@ export const CompactDayView = memo(function CompactDayView({
               )}
 
               {/* プラン表示 */}
-              {dayPlans.map(({ plan, top, height }) => (
-                <div
-                  key={plan.id}
-                  draggable={!!onDrop}
-                  onDragStart={(e) => handlePlanDragStart(e, plan.id)}
-                  onDragEnd={handlePlanDragEnd}
-                  className={cn(
-                    'absolute right-1 left-1 overflow-hidden rounded px-1 text-left text-[10px] leading-tight',
-                    'bg-primary/20 hover:bg-primary/30 border-primary/50 border-l-2 transition-colors',
-                    'focus:ring-ring focus:ring-1 focus:outline-none',
-                    onDrop && 'cursor-grab active:cursor-grabbing',
-                    draggingPlanId === plan.id && 'opacity-50',
-                  )}
-                  style={{ top, height, minHeight: COMPACT_MIN_EVENT_HEIGHT }}
-                  onClick={() => onPlanClick?.(plan)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      onPlanClick?.(plan);
-                    }
-                  }}
-                  role="button"
-                  tabIndex={0}
-                >
-                  <span className="line-clamp-2 font-medium">{plan.title}</span>
-                </div>
-              ))}
+              {dayPlans.map(({ plan, top, height }) => {
+                const isActive = isInspectorOpen && inspectorPlanId === plan.id;
+                const planColor = plan.tags?.[0]?.color || plan.color;
+
+                return (
+                  <div
+                    key={plan.id}
+                    draggable={!!onDrop}
+                    onDragStart={(e) => handlePlanDragStart(e, plan.id)}
+                    onDragEnd={handlePlanDragEnd}
+                    className={cn(
+                      'absolute right-1 left-1 overflow-hidden rounded px-1 text-left text-[10px] leading-tight',
+                      'border-l-2 transition-colors',
+                      'focus:ring-ring focus:ring-1 focus:outline-none',
+                      onDrop && 'cursor-grab active:cursor-grabbing',
+                      draggingPlanId === plan.id && 'opacity-50',
+                      isActive && 'ring-primary ring-2',
+                      !planColor && 'bg-primary/20 hover:bg-primary/30 border-primary/50',
+                    )}
+                    style={{
+                      top,
+                      height,
+                      minHeight: COMPACT_MIN_EVENT_HEIGHT,
+                      ...(planColor && {
+                        backgroundColor: `${planColor}20`,
+                        borderLeftColor: planColor,
+                      }),
+                    }}
+                    onClick={() => onPlanClick?.(plan)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        onPlanClick?.(plan);
+                      }
+                    }}
+                    role="button"
+                    tabIndex={0}
+                    title={plan.title}
+                  >
+                    <span className="line-clamp-2 font-medium">{plan.title}</span>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>

@@ -136,8 +136,12 @@ export function usePlanMutations() {
         ) as typeof oldData;
       });
 
-      // 個別プランキャッシュを更新
+      // 個別プランキャッシュを更新（tagsなし/あり両方）
       utils.plans.getById.setData({ id }, (oldData) => {
+        if (!oldData) return undefined;
+        return Object.assign({}, oldData, updateData);
+      });
+      utils.plans.getById.setData({ id, include: { tags: true } }, (oldData) => {
         if (!oldData) return undefined;
         return Object.assign({}, oldData, updateData);
       });
@@ -161,12 +165,14 @@ export function usePlanMutations() {
       // 重要な更新のみtoast表示（status変更、タグ変更など）
       if (variables.data.status) {
         const statusMap: Record<string, string> = {
-          todo: 'Todo',
-          doing: 'Doing',
+          open: 'Open',
           done: 'Done',
         };
         const statusLabel = statusMap[variables.data.status] || variables.data.status;
         toast.success(t('common.plan.statusChanged', { status: statusLabel }));
+
+        // ステータス変更時は全リストキャッシュを無効化（Open/Doneタブ切り替え反映）
+        void utils.plans.list.invalidate(undefined, { refetchType: 'all' });
       }
       // その他の自動保存（title、description、日時など）はtoast非表示
     },
@@ -244,7 +250,7 @@ export function usePlanMutations() {
         const restoreData = {
           title: previousPlan.title,
           description: previousPlan.description ?? undefined,
-          status: previousPlan.status as 'todo' | 'doing' | 'done',
+          status: previousPlan.status as 'open' | 'done',
           start_time: normalizeDateTime(previousPlan.start_time),
           end_time: normalizeDateTime(previousPlan.end_time),
           due_date: previousPlan.due_date ?? undefined,

@@ -2,7 +2,7 @@
  * ビュー関連の型定義
  */
 
-import type { CalendarPlan, EventInteractionHandler } from './plan.types';
+import type { CalendarPlan, PlanInteractionHandler } from './plan.types';
 
 export type ViewType = 'day' | '3day' | '5day' | 'week' | 'agenda';
 
@@ -87,7 +87,7 @@ export interface ViewConfiguration {
   scrollToHour: number;
 }
 
-export interface ViewContextValue extends ViewConfiguration, EventInteractionHandler {
+export interface ViewContextValue extends ViewConfiguration, PlanInteractionHandler {
   dates: Date[];
   events: CalendarPlan[];
   currentDate: Date;

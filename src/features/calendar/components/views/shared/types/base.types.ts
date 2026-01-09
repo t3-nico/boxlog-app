@@ -14,32 +14,45 @@ export type { ViewDateRange } from '../../../../types/calendar.types';
 export type CalendarViewType = 'day' | '3day' | '5day' | 'week' | 'agenda';
 
 /**
- * 全ビューで共通するベースプロパティ
+ * 全ビューで共通する最小限のプロパティ
+ * AgendaViewなどリスト表示ビュー向け
  */
 export interface BaseViewProps {
   // Core data
-  dateRange: ViewDateRange;
   plans: CalendarPlan[];
-  /** 全プラン（期限切れ未完了表示用、日付フィルタリング前） */
-  allPlans?: CalendarPlan[] | undefined;
   currentDate: Date;
 
   // Display options
-  showWeekends?: boolean | undefined;
   className?: string | undefined;
+
+  // Plan handlers（最小限）
+  onPlanClick?: ((plan: CalendarPlan) => void) | undefined;
+  onPlanContextMenu?: ((plan: CalendarPlan, mouseEvent: React.MouseEvent) => void) | undefined;
+}
+
+/**
+ * 時間グリッドビュー用の拡張プロパティ
+ * DayView, ThreeDayView, FiveDayView, WeekView向け
+ */
+export interface GridViewProps extends BaseViewProps {
+  // Core data
+  dateRange: ViewDateRange;
+  /** 全プラン（期限切れ未完了表示用、日付フィルタリング前） */
+  allPlans?: CalendarPlan[] | undefined;
+
+  // Display options
+  showWeekends?: boolean | undefined;
 
   /** DnDを無効化するプランID（Inspector表示中のプランなど） */
   disabledPlanId?: string | null | undefined;
 
-  // Plan handlers
-  onPlanClick?: ((plan: CalendarPlan) => void) | undefined;
-  onPlanContextMenu?: ((plan: CalendarPlan, mouseEvent: React.MouseEvent) => void) | undefined;
+  // Plan handlers（グリッド操作用）
   onCreatePlan?: ((date: Date, time?: string) => void) | undefined;
   onUpdatePlan?:
     | ((
         planIdOrPlan: string | CalendarPlan,
         updates?: { startTime: Date; endTime: Date },
-      ) => void | Promise<void>)
+      ) => void | Promise<void> | Promise<{ skipToast: true } | void>)
     | undefined;
   onDeletePlan?: ((planId: string) => void) | undefined;
   onRestorePlan?: ((plan: CalendarPlan) => Promise<void>) | undefined;

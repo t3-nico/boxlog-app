@@ -144,7 +144,7 @@ export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandle
         createPlan.mutate(
           {
             title: '新規プラン',
-            status: 'todo',
+            status: 'open',
             due_date: format(date, 'yyyy-MM-dd'),
             start_time: startTime.toISOString(),
             end_time: endTime.toISOString(),
@@ -227,7 +227,7 @@ export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandle
       createPlan.mutate(
         {
           title: '新規プラン',
-          status: 'todo',
+          status: 'open',
           due_date: format(selection.date, 'yyyy-MM-dd'),
           start_time: startTime.toISOString(),
           end_time: endTime.toISOString(),

@@ -68,8 +68,6 @@ export function usePlanContextActions() {
             await deletePlan.mutateAsync({ id: parentPlanId });
             break;
         }
-      } catch (err) {
-        console.error('Failed to delete recurring plan:', err);
       } finally {
         recurringDeleteTargetRef.current = null;
       }
@@ -89,11 +87,7 @@ export function usePlanContextActions() {
       // 通常プラン: カスタム削除確認ダイアログを使用
       const planIdToDelete = plan.calendarId || plan.id;
       openDeleteDialog(planIdToDelete, plan.title, async () => {
-        try {
-          await deletePlan.mutateAsync({ id: planIdToDelete });
-        } catch (err) {
-          console.error('Failed to delete plan:', err);
-        }
+        await deletePlan.mutateAsync({ id: planIdToDelete });
       });
     },
     [deletePlan, openDeleteDialog, openRecurringDialog, handleRecurringDeleteConfirm],
@@ -129,7 +123,7 @@ export function usePlanContextActions() {
         const newPlan = await createPlan.mutateAsync({
           title: `${plan.title}のコピー`,
           description: plan.description ?? undefined,
-          status: 'todo', // 複製時はtodoにリセット
+          status: 'open', // 複製時はopenにリセット
           due_date: dueDate,
           start_time: startTime,
           end_time: endTime,
@@ -146,8 +140,8 @@ export function usePlanContextActions() {
 
         // 複製したプランをInspectorで開く
         openInspector(newPlan.id);
-      } catch (err) {
-        console.error('Failed to duplicate plan:', err);
+      } catch {
+        // Error handled silently
       }
     },
     [createPlan, addPlanTag, openInspector],

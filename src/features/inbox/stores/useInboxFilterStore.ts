@@ -15,6 +15,32 @@ export type DueDateFilter =
   | 'all';
 
 /**
+ * 繰り返しフィルタータイプ
+ */
+export type RecurrenceFilter = 'all' | 'yes' | 'no';
+
+/**
+ * リマインダーフィルタータイプ
+ */
+export type ReminderFilter = 'all' | 'yes' | 'no';
+
+/**
+ * スケジュールフィルタータイプ
+ */
+export type ScheduleFilter = 'all' | 'scheduled' | 'unscheduled';
+
+/**
+ * 日付範囲フィルタータイプ（作成日・更新日共通）
+ */
+export type DateRangeFilter =
+  | 'all'
+  | 'today'
+  | 'yesterday'
+  | 'this_week'
+  | 'last_week'
+  | 'this_month';
+
+/**
  * Inbox共通フィルタ状態
  * Board/Table両方で共有するフィルター
  */
@@ -24,6 +50,13 @@ interface InboxFilterState {
   search: string;
   assignee: string;
   dueDate: DueDateFilter;
+  recurrence: RecurrenceFilter;
+  reminder: ReminderFilter;
+  schedule: ScheduleFilter;
+  createdAt: DateRangeFilter;
+  updatedAt: DateRangeFilter;
+  /** 検索UIの展開状態（再マウント耐性のため） */
+  isSearchOpen: boolean;
 }
 
 /**
@@ -35,6 +68,12 @@ interface InboxFilterStore extends InboxFilterState {
   setSearch: (search: string) => void;
   setAssignee: (assignee: string) => void;
   setDueDate: (dueDate: DueDateFilter) => void;
+  setRecurrence: (recurrence: RecurrenceFilter) => void;
+  setReminder: (reminder: ReminderFilter) => void;
+  setSchedule: (schedule: ScheduleFilter) => void;
+  setCreatedAt: (createdAt: DateRangeFilter) => void;
+  setUpdatedAt: (updatedAt: DateRangeFilter) => void;
+  setIsSearchOpen: (isOpen: boolean) => void;
   reset: () => void;
 }
 
@@ -47,6 +86,12 @@ const initialState: InboxFilterState = {
   search: '',
   assignee: '',
   dueDate: 'all',
+  recurrence: 'all',
+  reminder: 'all',
+  schedule: 'all',
+  createdAt: 'all',
+  updatedAt: 'all',
+  isSearchOpen: false,
 };
 
 /**
@@ -64,10 +109,29 @@ export const useInboxFilterStore = create<InboxFilterStore>()(
       setSearch: (search) => set({ search }),
       setAssignee: (assignee) => set({ assignee }),
       setDueDate: (dueDate) => set({ dueDate }),
+      setRecurrence: (recurrence) => set({ recurrence }),
+      setReminder: (reminder) => set({ reminder }),
+      setSchedule: (schedule) => set({ schedule }),
+      setCreatedAt: (createdAt) => set({ createdAt }),
+      setUpdatedAt: (updatedAt) => set({ updatedAt }),
+      setIsSearchOpen: (isSearchOpen) => set({ isSearchOpen }),
       reset: () => set(initialState),
     }),
     {
       name: 'inbox-filter',
+      // isSearchOpenは永続化しない（ページリロード時は閉じているべき）
+      partialize: (state) => ({
+        status: state.status,
+        tags: state.tags,
+        search: state.search,
+        assignee: state.assignee,
+        dueDate: state.dueDate,
+        recurrence: state.recurrence,
+        reminder: state.reminder,
+        schedule: state.schedule,
+        createdAt: state.createdAt,
+        updatedAt: state.updatedAt,
+      }),
     },
   ),
 );

@@ -32,6 +32,7 @@
       "addTag": "Add tag",
       "add": "Add",
       "addNew": "Add new",
+      "dropOrAdd": "Drop or add a plan",
       "recurrence": {
         "daily": "Daily",
         "weekly": "Weekly",

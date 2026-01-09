@@ -4,6 +4,7 @@
 
 'use client';
 
+import { useLocale, useTranslations } from 'next-intl';
 import { memo } from 'react';
 
 import { cn } from '@/lib/utils';
@@ -57,6 +58,10 @@ export const DayDisplay = memo<DayDisplayProps>(function DayDisplay({
   onClick,
   className = '',
 }) {
+  const locale = useLocale();
+  const t = useTranslations('common');
+  const dateLocale = locale === 'ja' ? 'ja-JP' : 'en-US';
+
   const handleClick = () => {
     onClick?.(date);
   };
@@ -71,13 +76,13 @@ export const DayDisplay = memo<DayDisplayProps>(function DayDisplay({
     <button
       className={headerClasses}
       onClick={handleClick}
-      aria-label={`${dateDisplay}を選択`}
+      aria-label={t('aria.selectDate', { date: dateDisplay })}
       type="button"
     >
       <div className="flex min-w-0 flex-col items-center">
         {/* 曜日 */}
         <div className={cn('text-xs', getTextClasses(isToday))}>
-          {date.toLocaleDateString('ja-JP', { weekday: 'short' })}
+          {date.toLocaleDateString(dateLocale, { weekday: 'short' })}
         </div>
 
         {/* 日付 */}
@@ -88,7 +93,7 @@ export const DayDisplay = memo<DayDisplayProps>(function DayDisplay({
         {/* 月（異なる月の場合のみ表示） */}
         {format === 'long' && (
           <div className={cn('text-xs', getTextClasses(isToday))}>
-            {date.toLocaleDateString('ja-JP', { month: 'short' })}
+            {date.toLocaleDateString(dateLocale, { month: 'short' })}
           </div>
         )}
       </div>
@@ -98,7 +103,7 @@ export const DayDisplay = memo<DayDisplayProps>(function DayDisplay({
       <div className="flex min-w-0 flex-col items-center">
         {/* 曜日 */}
         <div className={`text-xs ${getTextClasses(isToday)}`}>
-          {date.toLocaleDateString('ja-JP', { weekday: 'short' })}
+          {date.toLocaleDateString(dateLocale, { weekday: 'short' })}
         </div>
 
         {/* 日付 */}
@@ -109,7 +114,7 @@ export const DayDisplay = memo<DayDisplayProps>(function DayDisplay({
         {/* 月（異なる月の場合のみ表示） */}
         {format === 'long' && (
           <div className={`text-xs ${getTextClasses(isToday)}`}>
-            {date.toLocaleDateString('ja-JP', { month: 'short' })}
+            {date.toLocaleDateString(dateLocale, { month: 'short' })}
           </div>
         )}
       </div>

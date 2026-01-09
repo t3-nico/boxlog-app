@@ -130,7 +130,7 @@ test.describe('BoxLog App - Plan Status Management', () => {
     await page.waitForLoadState('networkidle');
   });
 
-  test('ステータスカラム（todo/doing/done）が表示される', async ({ page }) => {
+  test('ステータスカラム（open/done）が表示される', async ({ page }) => {
     // ログインページの場合はスキップ
     const currentUrl = page.url();
     if (currentUrl.includes('login') || currentUrl.includes('auth')) {
@@ -138,16 +138,12 @@ test.describe('BoxLog App - Plan Status Management', () => {
       return;
     }
 
-    // ステータスカラムを探す（v0.7.0で3段階に簡素化）
-    const todoColumn = page.locator('text=todo, text=Todo, text=TODO, text=未着手').first();
-    const doingColumn = page.locator('text=doing, text=Doing, text=DOING, text=進行中').first();
+    // ステータスカラムを探す（v0.11.xで2段階に簡素化: open/done）
+    const openColumn = page.locator('text=open, text=Open, text=OPEN, text=未完了').first();
     const doneColumn = page.locator('text=done, text=Done, text=DONE, text=完了').first();
 
     // いずれかのステータスカラムが存在することを確認
-    const hasStatusColumns =
-      (await todoColumn.count()) > 0 ||
-      (await doingColumn.count()) > 0 ||
-      (await doneColumn.count()) > 0;
+    const hasStatusColumns = (await openColumn.count()) > 0 || (await doneColumn.count()) > 0;
 
     if (hasStatusColumns) {
       console.log('✅ ステータスカラムが表示されている');
