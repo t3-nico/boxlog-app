@@ -91,7 +91,7 @@ export function MFASection() {
                 {t('settings.account.mfa.description')}
               </p>
             </div>
-            <Button type="button" variant="ghost" onClick={enrollMFA} disabled={isLoading}>
+            <Button type="button" size="sm" onClick={enrollMFA} disabled={isLoading}>
               {isLoading ? t('settings.account.mfa.loading') : t('settings.account.mfa.enableMFA')}
             </Button>
           </div>
@@ -187,12 +187,7 @@ export function MFASection() {
                       : t('settings.account.mfa.recoveryCodes.noCodesLeft')}
                   </p>
                 </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={regenerateRecoveryCodes}
-                  disabled={isLoading}
-                >
+                <Button size="sm" onClick={regenerateRecoveryCodes} disabled={isLoading}>
                   {isLoading
                     ? t('settings.account.mfa.generating')
                     : t('settings.account.mfa.regenerate')}

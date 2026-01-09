@@ -56,7 +56,7 @@ export function AccountSettings() {
               </Avatar>
             }
             action={
-              <Button variant="ghost" size="sm" onClick={() => setShowAvatarDialog(true)}>
+              <Button size="sm" onClick={() => setShowAvatarDialog(true)}>
                 {t('common.change')}
               </Button>
             }
@@ -65,7 +65,7 @@ export function AccountSettings() {
             label={t('settings.account.displayName')}
             value={displayName}
             action={
-              <Button variant="ghost" size="sm" onClick={() => setShowDisplayNameDialog(true)}>
+              <Button size="sm" onClick={() => setShowDisplayNameDialog(true)}>
                 {t('common.change')}
               </Button>
             }
@@ -81,7 +81,7 @@ export function AccountSettings() {
             label={t('settings.account.email')}
             value={email}
             action={
-              <Button variant="ghost" size="sm" onClick={() => setShowEmailDialog(true)}>
+              <Button size="sm" onClick={() => setShowEmailDialog(true)}>
                 {t('common.change')}
               </Button>
             }
@@ -90,7 +90,7 @@ export function AccountSettings() {
             label={t('settings.account.password')}
             value="••••••••"
             action={
-              <Button variant="ghost" size="sm" onClick={() => setShowPasswordDialog(true)}>
+              <Button size="sm" onClick={() => setShowPasswordDialog(true)}>
                 {t('common.change')}
               </Button>
             }
