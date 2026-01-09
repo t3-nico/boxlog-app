@@ -211,12 +211,7 @@ export function TagsSettingsContent() {
                 {/* カラーピッカー */}
                 <Popover>
                   <PopoverTrigger asChild>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon-sm"
-                      className="size-7 shrink-0 p-0"
-                    >
+                    <Button type="button" variant="ghost" size="icon-sm" className="shrink-0">
                       <Folder className="size-4" style={{ color: newGroupColor }} />
                     </Button>
                   </PopoverTrigger>
@@ -242,7 +237,7 @@ export function TagsSettingsContent() {
                   type="button"
                   variant="ghost"
                   size="icon-sm"
-                  className="size-7 shrink-0"
+                  className="shrink-0"
                   onClick={handleSaveCreate}
                   disabled={!newGroupName.trim() || createGroupMutation.isPending}
                 >
@@ -254,7 +249,7 @@ export function TagsSettingsContent() {
                   type="button"
                   variant="ghost"
                   size="icon-sm"
-                  className="size-7 shrink-0"
+                  className="shrink-0"
                   onClick={handleCancelCreate}
                 >
                   <X className="size-4" />

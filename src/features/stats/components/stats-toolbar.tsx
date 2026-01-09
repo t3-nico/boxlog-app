@@ -87,21 +87,21 @@ export function StatsToolbar() {
       {/* 期間ナビゲーション */}
       <div className="flex items-center gap-1">
         <HoverTooltip content={t('stats.toolbar.previous')} side="bottom">
-          <Button variant="ghost" size="icon" className="size-8" onClick={goToPrevious}>
+          <Button variant="ghost" size="icon-sm" onClick={goToPrevious}>
             <ChevronLeft className="size-4" />
             <span className="sr-only">{t('stats.toolbar.previous')}</span>
           </Button>
         </HoverTooltip>
 
         <HoverTooltip content={t('stats.toolbar.next')} side="bottom">
-          <Button variant="ghost" size="icon" className="size-8" onClick={goToNext}>
+          <Button variant="ghost" size="icon-sm" onClick={goToNext}>
             <ChevronRight className="size-4" />
             <span className="sr-only">{t('stats.toolbar.next')}</span>
           </Button>
         </HoverTooltip>
 
         <HoverTooltip content={t('stats.toolbar.current')} side="bottom">
-          <Button variant="ghost" size="icon" className="size-8" onClick={goToCurrent}>
+          <Button variant="ghost" size="icon-sm" onClick={goToCurrent}>
             <RotateCcw className="size-4" />
             <span className="sr-only">{t('stats.toolbar.current')}</span>
           </Button>

@@ -90,13 +90,7 @@ export function InspectorHeader({
       <div className="flex items-center gap-1">
         {/* 閉じるボタン */}
         <HoverTooltip content={closeLabel} side="bottom">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="size-8"
-            onClick={onClose}
-            aria-label={closeLabel}
-          >
+          <Button variant="ghost" size="icon-sm" onClick={onClose} aria-label={closeLabel}>
             {displayMode === 'popover' ? (
               <X className="size-5" />
             ) : (
@@ -111,8 +105,7 @@ export function InspectorHeader({
             <HoverTooltip content={previousLabel} side="bottom">
               <Button
                 variant="ghost"
-                size="icon"
-                className="size-8"
+                size="icon-sm"
                 onClick={onPrevious}
                 disabled={!hasPrevious}
                 aria-label={previousLabel}
@@ -123,8 +116,7 @@ export function InspectorHeader({
             <HoverTooltip content={nextLabel} side="bottom">
               <Button
                 variant="ghost"
-                size="icon"
-                className="size-8"
+                size="icon-sm"
                 onClick={onNext}
                 disabled={!hasNext}
                 aria-label={nextLabel}
@@ -145,8 +137,8 @@ export function InspectorHeader({
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
-                size="icon"
-                className="size-8 focus-visible:ring-0"
+                size="icon-sm"
+                className="focus-visible:ring-0"
                 aria-label="オプション"
               >
                 <MoreHorizontal className="size-5" />

@@ -42,7 +42,7 @@ export function OpenNavigation({ sort, onSortChange }: OpenNavigationProps) {
       {/* ソート順 */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" size="sm" className="h-7 gap-1 px-2 text-xs">
+          <Button variant="outline" size="sm" className="gap-1 text-xs">
             <span>{sortLabels[sort]}</span>
             <ChevronDown className="size-3" />
           </Button>

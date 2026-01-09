@@ -176,8 +176,8 @@ export function PasswordChangeDialog({ open, onOpenChange }: PasswordChangeDialo
                   <Button
                     type="button"
                     variant="ghost"
-                    size="icon"
-                    className="absolute top-1/2 right-1 h-7 w-7 -translate-y-1/2"
+                    size="icon-sm"
+                    className="absolute top-1/2 right-1 -translate-y-1/2"
                     onClick={() => setShowCurrentPassword(!showCurrentPassword)}
                   >
                     {showCurrentPassword ? (
@@ -206,8 +206,8 @@ export function PasswordChangeDialog({ open, onOpenChange }: PasswordChangeDialo
                   <Button
                     type="button"
                     variant="ghost"
-                    size="icon"
-                    className="absolute top-1/2 right-1 h-7 w-7 -translate-y-1/2"
+                    size="icon-sm"
+                    className="absolute top-1/2 right-1 -translate-y-1/2"
                     onClick={() => setShowNewPassword(!showNewPassword)}
                   >
                     {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -235,8 +235,8 @@ export function PasswordChangeDialog({ open, onOpenChange }: PasswordChangeDialo
                   <Button
                     type="button"
                     variant="ghost"
-                    size="icon"
-                    className="absolute top-1/2 right-1 h-7 w-7 -translate-y-1/2"
+                    size="icon-sm"
+                    className="absolute top-1/2 right-1 -translate-y-1/2"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   >
                     {showConfirmPassword ? (

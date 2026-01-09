@@ -135,21 +135,20 @@ export function NotificationDropdown({ className: _className }: NotificationDrop
             <Button
               variant="ghost"
               size="sm"
-              className="h-7 px-2 text-xs"
+              className="text-xs"
               onClick={handleMarkAllAsRead}
               disabled={markAllAsRead.isPending}
             >
-              <CheckCheck className="mr-1 h-3 w-3" />
+              <CheckCheck className="size-4" />
               {t('notification.actions.markAllAsRead')}
             </Button>
             <Button
               variant="ghost"
-              size="sm"
-              className="h-7 px-2 text-xs"
+              size="icon-sm"
               onClick={handleDeleteAllRead}
               disabled={deleteAllRead.isPending}
             >
-              <Trash2 className="h-3 w-3" />
+              <Trash2 className="size-4" />
             </Button>
           </div>
         </div>

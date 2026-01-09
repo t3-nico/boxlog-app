@@ -34,7 +34,7 @@ export interface IconNavigationProps {
  *
  * **デザイン仕様:**
  * - アイコンサイズ: 20px (size-5)
- * - ボタンサイズ: 32px (size-8)
+ * - ボタンサイズ: 28px (icon-sm)
  * - 8pxグリッドシステム準拠
  *
  * @example
@@ -60,11 +60,11 @@ export function IconNavigation({ items, className }: IconNavigationProps) {
           <HoverTooltip key={item.label} content={item.label} side="top">
             <Button
               variant="ghost"
-              size="icon"
+              size="icon-sm"
               onClick={item.onClick}
               aria-label={item.label}
               className={cn(
-                'text-muted-foreground hover:text-foreground relative size-8',
+                'text-muted-foreground hover:text-foreground relative',
                 item.isActive && 'text-foreground bg-state-selected',
               )}
             >

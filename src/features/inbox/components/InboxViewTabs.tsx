@@ -83,7 +83,7 @@ export function InboxViewTabs() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="absolute top-1/2 -right-2 h-10 w-10 -translate-y-1/2 p-0 opacity-100 sm:h-7 sm:w-7 sm:opacity-0 sm:group-hover:opacity-100"
+                        className="absolute top-1/2 -right-2 h-10 w-10 -translate-y-1/2 p-0 opacity-100 sm:size-8 sm:opacity-0 sm:group-hover:opacity-100"
                       >
                         <MoreHorizontal className="h-4 w-4" />
                         <span className="sr-only">メニュー</span>

@@ -104,19 +104,19 @@ export const CalendarHeader = ({
           {/* 検索ボタン */}
           <Button
             variant="ghost"
-            size="icon"
-            className="text-muted-foreground hover:text-foreground size-8"
+            size="icon-sm"
+            className="text-muted-foreground hover:text-foreground"
             onClick={openSearch}
             aria-label="検索"
           >
-            <Search className="size-6" />
+            <Search className="size-5" />
           </Button>
 
           {/* Todayボタン（今日の日付を表示するカレンダーアイコン風） */}
           <Button
             variant="ghost"
-            size="icon"
-            className="text-muted-foreground hover:text-foreground size-8"
+            size="icon-sm"
+            className="text-muted-foreground hover:text-foreground"
             onClick={() => onNavigate('today')}
             aria-label="今日に戻る"
           >

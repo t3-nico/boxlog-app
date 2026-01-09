@@ -199,7 +199,7 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
   }, [showSearch, isMobile, localSearch, setShowSearch]);
 
   // 共通のアイコンボタンスタイル
-  const iconButtonClass = 'text-muted-foreground hover:text-foreground relative size-8';
+  const iconButtonClass = 'text-muted-foreground hover:text-foreground relative';
   const activeClass = 'text-foreground bg-state-selected';
 
   // 検索コンテンツ（モバイル用 - ローカルステート使用）
@@ -220,9 +220,9 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
           <Button
             type="button"
             variant="ghost"
-            size="icon"
+            size="icon-sm"
             onClick={handleSearchClear}
-            className="absolute top-1/2 right-1 size-8 -translate-y-1/2"
+            className="absolute top-1/2 right-1 -translate-y-1/2"
             aria-label="検索をクリア"
           >
             <X className="size-4" />
@@ -489,9 +489,8 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
             <HoverTooltip content="クリア" side="top">
               <Button
                 variant="ghost"
-                size="icon"
+                size="icon-sm"
                 onClick={handleSearchClear}
-                className="size-8"
                 aria-label="クリア"
               >
                 <X className="size-4" />

@@ -77,17 +77,34 @@ function InputGroupAddon({
   );
 }
 
+/**
+ * InputGroupButton サイズ定義（Button と統一）
+ *
+ * | size    | 高さ  | 用途                           |
+ * |---------|-------|--------------------------------|
+ * | sm      | 32px  | コンパクトUI                   |
+ * | default | 36px  | 標準                           |
+ * | lg      | 44px  | モバイル主要                   |
+ */
 const inputGroupButtonVariants = cva('text-sm shadow-none flex gap-2 items-center', {
   variants: {
     size: {
-      xs: "h-6 gap-1 px-2 rounded-[calc(var(--radius)-5px)] [&>svg:not([class*='size-'])]:size-3.5 has-[>svg]:px-2",
-      sm: 'h-8 px-2.5 gap-1.5 rounded-md has-[>svg]:px-2.5',
-      'icon-xs': 'size-6 rounded-[calc(var(--radius)-5px)] p-0 has-[>svg]:p-0',
-      'icon-sm': 'size-8 p-0 has-[>svg]:p-0',
+      // sm: 32px高さ
+      sm: "h-8 gap-1 px-2 rounded-[calc(var(--radius)-5px)] [&>svg:not([class*='size-'])]:size-4 has-[>svg]:px-2",
+      // default: 36px高さ（M3 Small準拠）
+      default: 'h-9 px-2.5 gap-1.5 rounded-md has-[>svg]:px-2.5',
+      // lg: 44px高さ（Apple HIG準拠）
+      lg: 'h-11 px-3 gap-2 rounded-md has-[>svg]:px-3',
+      // icon-sm: 32x32px
+      'icon-sm': 'size-8 rounded-[calc(var(--radius)-5px)] p-0 has-[>svg]:p-0',
+      // icon: 36x36px（M3準拠）
+      icon: 'size-9 p-0 has-[>svg]:p-0',
+      // icon-lg: 44x44px（Apple HIG準拠）
+      'icon-lg': 'size-11 p-0 has-[>svg]:p-0',
     },
   },
   defaultVariants: {
-    size: 'xs',
+    size: 'sm',
   },
 });
 
@@ -95,7 +112,7 @@ function InputGroupButton({
   className,
   type = 'button',
   variant = 'ghost',
-  size = 'xs',
+  size = 'sm',
   ...props
 }: Omit<React.ComponentProps<typeof Button>, 'size'> &
   VariantProps<typeof inputGroupButtonVariants>) {
