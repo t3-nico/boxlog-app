@@ -9,33 +9,31 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Switch } from '@/components/ui/switch';
 import { useTheme } from '@/contexts/theme-context';
+import { usePathname, useRouter } from '@/i18n/navigation';
+import { routing, type Locale } from '@/i18n/routing';
 
 import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 
 import { SettingField } from './fields/SettingField';
 import { SettingsCard } from './SettingsCard';
 
 interface PreferencesSettingsData {
-  animations: boolean;
-  sounds: boolean;
-  autoBackup: boolean;
-  developerMode: boolean;
+  startupScreen: 'last' | 'inbox' | 'calendar';
 }
 
 export function PreferencesSettings() {
   const t = useTranslations();
   const { theme, setTheme } = useTheme();
+  const locale = useLocale();
+  const router = useRouter();
+  const pathname = usePathname();
 
-  // 設定の自動保存（テーマ以外）
+  // 設定の自動保存
   const preferences = useAutoSaveSettings<PreferencesSettingsData>({
     initialValues: {
-      animations: true,
-      sounds: false,
-      autoBackup: true,
-      developerMode: false,
+      startupScreen: 'last',
     },
     onSave: async (_values) => {
       // 環境設定API呼び出しシミュレーション
@@ -46,6 +44,17 @@ export function PreferencesSettings() {
   });
 
   // Handler functions
+  const handleLanguageChange = useCallback(
+    (value: string) => {
+      const newLocale = value as Locale;
+      if (newLocale !== locale) {
+        router.replace(pathname, { locale: newLocale });
+        router.refresh();
+      }
+    },
+    [locale, pathname, router],
+  );
+
   const handleThemeChange = useCallback(
     (value: string) => {
       setTheme(value as 'system' | 'light' | 'dark');
@@ -53,30 +62,9 @@ export function PreferencesSettings() {
     [setTheme],
   );
 
-  const handleAnimationsChange = useCallback(
-    (checked: boolean) => {
-      preferences.updateValue('animations', checked);
-    },
-    [preferences],
-  );
-
-  const handleSoundsChange = useCallback(
-    (checked: boolean) => {
-      preferences.updateValue('sounds', checked);
-    },
-    [preferences],
-  );
-
-  const handleAutoBackupChange = useCallback(
-    (checked: boolean) => {
-      preferences.updateValue('autoBackup', checked);
-    },
-    [preferences],
-  );
-
-  const handleDeveloperModeChange = useCallback(
-    (checked: boolean) => {
-      preferences.updateValue('developerMode', checked);
+  const handleStartupScreenChange = useCallback(
+    (value: string) => {
+      preferences.updateValue('startupScreen', value as 'last' | 'inbox' | 'calendar');
     },
     [preferences],
   );
@@ -84,57 +72,63 @@ export function PreferencesSettings() {
   return (
     <div className="space-y-6">
       {/* 言語とテーマ */}
-      <SettingsCard title={t('settings.preferences.theme')} isSaving={preferences.isSaving}>
+      <SettingsCard
+        title={t('settings.preferences.languageAndTheme')}
+        isSaving={preferences.isSaving}
+      >
         <div className="space-y-4">
+          <SettingField label={t('settings.preferences.language')}>
+            <Select value={locale} onValueChange={handleLanguageChange}>
+              <SelectTrigger>
+                <SelectValue placeholder={t('settings.preferences.selectLanguage')} />
+              </SelectTrigger>
+              <SelectContent>
+                {routing.locales.map((loc) => (
+                  <SelectItem key={loc} value={loc}>
+                    {loc === 'ja' ? '🇯🇵 日本語' : '🇺🇸 English'}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </SettingField>
+
           <SettingField label={t('settings.preferences.themeLabel')}>
             <Select value={theme} onValueChange={handleThemeChange}>
               <SelectTrigger>
                 <SelectValue placeholder={t('settings.preferences.selectTheme')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="system">🖥️ システム設定に従う</SelectItem>
-                <SelectItem value="light">☀️ ライトテーマ</SelectItem>
-                <SelectItem value="dark">🌙 ダークテーマ</SelectItem>
+                <SelectItem value="system">{t('settings.preferences.themeSystem')}</SelectItem>
+                <SelectItem value="light">{t('settings.preferences.themeLight')}</SelectItem>
+                <SelectItem value="dark">{t('settings.preferences.themeDark')}</SelectItem>
               </SelectContent>
             </Select>
           </SettingField>
         </div>
       </SettingsCard>
 
-      {/* ユーザーエクスペリエンス */}
-      <SettingsCard
-        title={t('settings.preferences.userExperience')}
-        isSaving={preferences.isSaving}
-      >
+      {/* 起動設定 */}
+      <SettingsCard title={t('settings.preferences.startup')} isSaving={preferences.isSaving}>
         <div className="space-y-4">
-          <SettingField label={t('settings.preferences.animations')}>
-            <Switch
-              checked={preferences.values.animations}
-              onCheckedChange={handleAnimationsChange}
-            />
-          </SettingField>
-
-          <SettingField label={t('settings.preferences.soundEffects')}>
-            <Switch checked={preferences.values.sounds} onCheckedChange={handleSoundsChange} />
-          </SettingField>
-        </div>
-      </SettingsCard>
-
-      {/* データとプライバシー */}
-      <SettingsCard title={t('settings.preferences.dataPrivacy')} isSaving={preferences.isSaving}>
-        <div className="space-y-4">
-          <SettingField label={t('settings.preferences.autoBackup')}>
-            <Switch
-              checked={preferences.values.autoBackup}
-              onCheckedChange={handleAutoBackupChange}
-            />
-          </SettingField>
-
-          <SettingField label={t('settings.preferences.developerMode')}>
-            <Switch
-              checked={preferences.values.developerMode}
-              onCheckedChange={handleDeveloperModeChange}
-            />
+          <SettingField
+            label={t('settings.preferences.startupScreen')}
+            description={t('settings.preferences.startupScreenDesc')}
+          >
+            <Select
+              value={preferences.values.startupScreen}
+              onValueChange={handleStartupScreenChange}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder={t('settings.preferences.selectStartupScreen')} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="last">{t('settings.preferences.startupLast')}</SelectItem>
+                <SelectItem value="inbox">{t('settings.preferences.startupInbox')}</SelectItem>
+                <SelectItem value="calendar">
+                  {t('settings.preferences.startupCalendar')}
+                </SelectItem>
+              </SelectContent>
+            </Select>
           </SettingField>
         </div>
       </SettingsCard>
