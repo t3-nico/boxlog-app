@@ -35,15 +35,8 @@ export default defineConfig({
         'cypress/',
         'compass/',
       ],
-      // カバレッジ目標: 60%（React公式ベストプラクティス準拠）
-      thresholds: {
-        global: {
-          branches: 60,
-          functions: 60,
-          lines: 60,
-          statements: 60,
-        },
-      },
+      // 固定閾値は使用しない（CIで「低下のみFail」方式を採用）
+      // baseline比較は .github/workflows/coverage.yml で実施
     },
   },
   resolve: {
