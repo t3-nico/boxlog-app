@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { logger } from '@/lib/logger';
 import { trpc } from '@/lib/trpc/client';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
@@ -37,7 +38,7 @@ export function AccountDeletionDialog() {
 
   const deleteAccountMutation = trpc.user.deleteAccount.useMutation({
     onSuccess: (data) => {
-      console.info('Account deletion scheduled', {
+      logger.info('Account deletion scheduled', {
         component: 'account-deletion-dialog',
         scheduledDate: data.scheduledDeletionDate,
       });
@@ -51,7 +52,7 @@ export function AccountDeletionDialog() {
       }, 5000);
     },
     onError: (error) => {
-      console.error('Account deletion failed', error, {
+      logger.error('Account deletion failed', error, {
         component: 'account-deletion-dialog',
       });
 
@@ -74,7 +75,7 @@ export function AccountDeletionDialog() {
       return;
     }
 
-    console.info('Account deletion initiated', {
+    logger.info('Account deletion initiated', {
       component: 'account-deletion-dialog',
     });
 
