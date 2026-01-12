@@ -1,7 +1,7 @@
-import path from 'path'
+import path from 'path';
 
-import react from '@vitejs/plugin-react'
-import { defineConfig } from 'vitest/config'
+import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   plugins: [react()],
@@ -17,6 +17,7 @@ export default defineConfig({
       'cypress',
       'compass',
       '**/e2e/**', // Playwright E2Eテストを除外
+      '**/integration/**', // 統合テストを除外（npm run test:integrationで実行）
     ],
     css: true,
     coverage: {
@@ -35,15 +36,8 @@ export default defineConfig({
         'cypress/',
         'compass/',
       ],
-      // カバレッジ目標: 60%（React公式ベストプラクティス準拠）
-      thresholds: {
-        global: {
-          branches: 60,
-          functions: 60,
-          lines: 60,
-          statements: 60,
-        },
-      },
+      // 固定閾値は使用しない（CIで「低下のみFail」方式を採用）
+      // baseline比較は .github/workflows/coverage.yml で実施
     },
   },
   resolve: {
@@ -51,4 +45,4 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
-})
+});
