@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { SESSION_CONFIG, SESSION_SECURITY } from '@/lib/auth/session-config';
+import { logger } from '@/lib/logger';
 import { createClient } from '@/lib/supabase/client';
 
 import { useAuthStore } from '../stores/useAuthStore';
@@ -101,7 +102,7 @@ export function useSessionMonitor(): SessionMonitorState {
    * タイムアウト時の処理
    */
   const handleTimeout = useCallback(async () => {
-    console.log('[SessionMonitor] Session timed out');
+    logger.log('[SessionMonitor] Session timed out');
     setIsSessionValid(false);
     setShowTimeoutWarning(false);
 
@@ -134,7 +135,7 @@ export function useSessionMonitor(): SessionMonitorState {
     // 警告表示（5分前）
     if (remaining <= SESSION_SECURITY.timeoutWarning && !showTimeoutWarning) {
       setShowTimeoutWarning(true);
-      console.log('[SessionMonitor] Timeout warning triggered');
+      logger.log('[SessionMonitor] Timeout warning triggered');
     }
   }, [session, showTimeoutWarning, handleTimeout]);
 

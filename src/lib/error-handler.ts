@@ -12,6 +12,7 @@ import {
   executeWithAutoRecovery,
   getErrorCategory,
 } from '@/config/error-patterns/index';
+import { logger } from '@/lib/logger';
 
 // 型のインポート
 import type { ErrorCode, ErrorHandlingResult, ErrorMetadata } from '@/config/error-patterns/index';
@@ -332,17 +333,17 @@ export class ErrorHandler {
     // デフォルトのコンソールログ
     switch (level) {
       case 'error':
-        console.error(message, error);
+        logger.error(message, error);
         break;
       case 'warn':
-        console.warn(message, error);
+        logger.warn(message, error);
         break;
       case 'info':
-        console.info(message, error);
+        logger.info(message, error);
         break;
       case 'debug':
       default:
-        console.debug(message, error);
+        logger.debug(message, error);
     }
   }
 
@@ -367,7 +368,7 @@ export class ErrorHandler {
       try {
         handler(message, config);
       } catch (handlerError) {
-        console.error('Notification handler failed:', handlerError);
+        logger.error('Notification handler failed:', handlerError);
       }
     });
   }
@@ -390,7 +391,7 @@ export class ErrorHandler {
       executionTime: result.executionTime,
     };
 
-    console.info(message, details);
+    logger.info(message, details);
   }
 
   /**
