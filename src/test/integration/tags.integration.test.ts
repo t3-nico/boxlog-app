@@ -28,8 +28,7 @@ const SUPABASE_SERVICE_KEY =
 const TEST_USER_ID = 'test-user-' + Date.now();
 
 // テストをスキップするかどうか（CI環境でSupabaseが起動していない場合）
-const SKIP_INTEGRATION =
-  process.env.SKIP_INTEGRATION_TESTS === 'true' || process.env.CI !== 'true';
+const SKIP_INTEGRATION = process.env.SKIP_INTEGRATION_TESTS === 'true' || process.env.CI !== 'true';
 
 describe.skipIf(SKIP_INTEGRATION)('Tags Router Integration', () => {
   let supabase: ReturnType<typeof createClient<Database>>;

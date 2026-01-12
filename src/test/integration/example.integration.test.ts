@@ -5,7 +5,7 @@
  * 実際のテストを追加する際は、このパターンを参考にしてください。
  */
 
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 describe('Integration Test Setup', () => {
   beforeAll(async () => {
