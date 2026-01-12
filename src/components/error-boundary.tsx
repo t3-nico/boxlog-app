@@ -7,6 +7,7 @@
 
 import { Component, ErrorInfo, ReactNode } from 'react';
 
+import { logger } from '@/lib/logger';
 import { handleReactError, SentryErrorHandler } from '@/lib/sentry';
 import { useTranslations } from 'next-intl';
 
@@ -169,12 +170,13 @@ export function DetailedErrorBoundary({
   return (
     <ErrorBoundary
       onError={(error, errorInfo) => {
-        if (process.env.NODE_ENV === 'development') {
-          console.group(`🚨 Error in ${componentName || 'Unknown Component'}`);
-          console.error('Error:', error);
-          console.error('Component Stack:', errorInfo.componentStack);
-          console.groupEnd();
-        }
+        logger.error(
+          `🚨 Error in ${componentName || 'Unknown Component'}`,
+          'Error:',
+          error,
+          'Component Stack:',
+          errorInfo.componentStack,
+        );
       }}
       fallback={
         process.env.NODE_ENV === 'development' ? (
