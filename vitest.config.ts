@@ -1,7 +1,7 @@
-import path from 'path'
+import path from 'path';
 
-import react from '@vitejs/plugin-react'
-import { defineConfig } from 'vitest/config'
+import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   plugins: [react()],
@@ -17,6 +17,7 @@ export default defineConfig({
       'cypress',
       'compass',
       '**/e2e/**', // Playwright E2Eテストを除外
+      '**/integration/**', // 統合テストを除外（npm run test:integrationで実行）
     ],
     css: true,
     coverage: {
@@ -44,4 +45,4 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
-})
+});

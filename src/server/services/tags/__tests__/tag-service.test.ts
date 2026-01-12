@@ -18,7 +18,7 @@ describe('TagService', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockSupabase = createMockSupabase();
-    service = createTagService(mockSupabase as Parameters<typeof createTagService>[0]);
+    service = createTagService(mockSupabase as unknown as Parameters<typeof createTagService>[0]);
   });
 
   describe('list', () => {
@@ -312,7 +312,10 @@ describe('TagService', () => {
 
 // ヘルパー関数
 
-function createChainableMock(data: unknown, error: { message: string; code?: string } | null = null) {
+function createChainableMock(
+  data: unknown,
+  error: { message: string; code?: string } | null = null,
+) {
   const mock: Record<string, ReturnType<typeof vi.fn>> = {
     select: vi.fn().mockReturnThis(),
     insert: vi.fn().mockReturnThis(),
@@ -344,47 +347,31 @@ function createChainableMock(data: unknown, error: { message: string; code?: str
   return mock;
 }
 
-function setupMockQuery(
-  mockFrom: ReturnType<typeof vi.fn>,
-  data: unknown[],
-) {
+function setupMockQuery(mockFrom: ReturnType<typeof vi.fn>, data: unknown[]) {
   const mock = createChainableMock(data);
   mockFrom.mockReturnValue(mock);
   return mock;
 }
 
-function setupMockQueryError(
-  mockFrom: ReturnType<typeof vi.fn>,
-  errorMessage: string,
-) {
+function setupMockQueryError(mockFrom: ReturnType<typeof vi.fn>, errorMessage: string) {
   const mock = createChainableMock(null, { message: errorMessage });
   mockFrom.mockReturnValue(mock);
   return mock;
 }
 
-function setupMockSingleQuery(
-  mockFrom: ReturnType<typeof vi.fn>,
-  data: unknown,
-) {
+function setupMockSingleQuery(mockFrom: ReturnType<typeof vi.fn>, data: unknown) {
   const mock = createChainableMock(data, data ? null : { message: 'Not found', code: 'PGRST116' });
   mockFrom.mockReturnValue(mock);
   return mock;
 }
 
-function setupMockInsertQuery(
-  mockFrom: ReturnType<typeof vi.fn>,
-  data: unknown,
-) {
+function setupMockInsertQuery(mockFrom: ReturnType<typeof vi.fn>, data: unknown) {
   const mock = createChainableMock(data);
   mockFrom.mockReturnValue(mock);
   return mock;
 }
 
-function setupMockInsertError(
-  mockFrom: ReturnType<typeof vi.fn>,
-  code: string,
-  message: string,
-) {
+function setupMockInsertError(mockFrom: ReturnType<typeof vi.fn>, code: string, message: string) {
   const mock = createChainableMock(null, { message, code });
   mockFrom.mockReturnValue(mock);
   return mock;
@@ -411,10 +398,7 @@ function setupMockUpdateQuery(
   return mock;
 }
 
-function setupMockDeleteQuery(
-  mockFrom: ReturnType<typeof vi.fn>,
-  existingData: unknown,
-) {
+function setupMockDeleteQuery(mockFrom: ReturnType<typeof vi.fn>, existingData: unknown) {
   let callCount = 0;
 
   mockFrom.mockImplementation((table: string) => {
@@ -429,9 +413,7 @@ function setupMockDeleteQuery(
       data: callCount === 1 ? existingData : null,
       error: null,
     });
-    mock.then = vi.fn().mockImplementation((resolve) =>
-      resolve({ data: null, error: null }),
-    );
+    mock.then = vi.fn().mockImplementation((resolve) => resolve({ data: null, error: null }));
 
     return mock;
   });
