@@ -1,6 +1,20 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { ErrorHandler } from './error-handler';
+import * as loggerModule from './logger';
+
+// loggerのモック
+vi.mock('./logger', () => ({
+  logger: {
+    log: vi.fn(),
+    error: vi.fn(),
+    warn: vi.fn(),
+    info: vi.fn(),
+    debug: vi.fn(),
+  },
+}));
+
+const mockLogger = vi.mocked(loggerModule.logger);
 
 // error-patternsのモック
 vi.mock('@/config/error-patterns/index', () => ({
@@ -114,23 +128,17 @@ describe('ErrorHandler', () => {
 
   describe('handleError', () => {
     it('エラーを処理できる', async () => {
-      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-
       await errorHandler.handleError(new Error('Test error'));
 
-      expect(consoleSpy).toHaveBeenCalled();
-      consoleSpy.mockRestore();
+      expect(mockLogger.error).toHaveBeenCalled();
     });
 
     it('オプションでログレベルを指定できる', async () => {
-      const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-
       await errorHandler.handleError(new Error('Test warning'), undefined, {
         logLevel: 'warn',
       });
 
-      expect(consoleWarnSpy).toHaveBeenCalled();
-      consoleWarnSpy.mockRestore();
+      expect(mockLogger.warn).toHaveBeenCalled();
     });
 
     it('通知ハンドラーが呼ばれる', async () => {
