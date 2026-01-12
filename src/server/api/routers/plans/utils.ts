@@ -3,6 +3,8 @@
  * Helper functions for plan operations
  */
 
+import { logger } from '@/lib/logger';
+
 /**
  * Remove undefined fields from an object (for exactOptionalPropertyTypes)
  */
@@ -54,7 +56,7 @@ export function normalizeDateTimeConsistency(data: {
   const dueDateMatches = data.due_date === expectedDueDate;
   const endAfterStart = endDate.getTime() >= startDate.getTime();
 
-  console.debug('[normalizeDateTimeConsistency] Check:', {
+  logger.debug('[normalizeDateTimeConsistency] Check:', {
     startDate: startDate.toISOString(),
     endDate: endDate.toISOString(),
     startLocalDate: `${startYear}-${String(startMonth + 1).padStart(2, '0')}-${String(startDay).padStart(2, '0')}`,
@@ -67,11 +69,11 @@ export function normalizeDateTimeConsistency(data: {
   });
 
   if (datesMatch && dueDateMatches && endAfterStart) {
-    console.debug('[normalizeDateTimeConsistency] Already consistent, skipping');
+    logger.debug('[normalizeDateTimeConsistency] Already consistent, skipping');
     return;
   }
 
-  console.debug('[normalizeDateTimeConsistency] Inconsistency detected - normalizing');
+  logger.debug('[normalizeDateTimeConsistency] Inconsistency detected - normalizing');
 
   // 1. Align due_date with start_time's date
   data.due_date = expectedDueDate;
@@ -92,7 +94,7 @@ export function normalizeDateTimeConsistency(data: {
     data.end_time = fixedEndDate.toISOString();
   }
 
-  console.debug('[normalizeDateTimeConsistency] Normalized:', {
+  logger.debug('[normalizeDateTimeConsistency] Normalized:', {
     due_date: data.due_date,
     start_time: data.start_time,
     end_time: data.end_time,

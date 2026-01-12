@@ -3,6 +3,8 @@
  * エラーカテゴリ別の自動リトライ・復旧ロジックを提供
  */
 
+import { logger } from '@/lib/logger';
+
 import { ErrorCategory, ErrorCode, getErrorCategory } from './categories';
 
 /**
@@ -330,8 +332,7 @@ export async function executeWithRetry<T>(
         strategy.jitter,
       );
 
-      // ログ出力
-      console.log(
+      logger.log(
         `Retry attempt ${attempt}/${strategy.maxAttempts} for error code ${errorCode}, waiting ${delay}ms`,
       );
 
@@ -445,7 +446,7 @@ export async function executeWithFallback<T>(
   try {
     return await primary();
   } catch (error) {
-    console.log('Primary operation failed, executing fallback');
+    logger.log('Primary operation failed, executing fallback');
 
     if (fallback.timeout) {
       return (await Promise.race([

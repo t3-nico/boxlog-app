@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 
+import { logger } from '@/lib/logger';
 import { useRouter } from 'next/navigation';
 
 /**
@@ -51,10 +52,10 @@ export function initializeCacheStrategy() {
       navigator.serviceWorker
         .register('/sw.js')
         .then((registration) => {
-          console.log('SW registered: ', registration);
+          logger.log('SW registered: ', registration);
         })
         .catch((registrationError) => {
-          console.log('SW registration failed: ', registrationError);
+          logger.log('SW registration failed: ', registrationError);
         });
     });
   }

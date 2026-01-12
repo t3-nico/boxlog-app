@@ -1,10 +1,24 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import * as loggerModule from '@/lib/logger';
 import { ErrorHandler } from './error-handler';
 import * as loggerModule from './logger';
 
 // loggerのモック
 vi.mock('./logger', () => ({
+  logger: {
+    log: vi.fn(),
+    error: vi.fn(),
+    warn: vi.fn(),
+    info: vi.fn(),
+    debug: vi.fn(),
+  },
+}));
+
+const mockLogger = vi.mocked(loggerModule.logger);
+
+// loggerのモック
+vi.mock('@/lib/logger', () => ({
   logger: {
     log: vi.fn(),
     error: vi.fn(),

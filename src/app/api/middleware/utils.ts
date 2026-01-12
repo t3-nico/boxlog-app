@@ -4,6 +4,7 @@
 
 import type { ErrorCode } from '@/config/error-patterns';
 import { ERROR_CODES } from '@/config/error-patterns';
+import { logger } from '@/lib/logger';
 import { extractClientIp } from '@/lib/security/ip-validation';
 import { NextRequest, NextResponse } from 'next/server';
 import type { ApiContext } from './types';
@@ -97,7 +98,7 @@ export function createJsonResponse(
  * リクエストをログ出力
  */
 export function logRequest(req: NextRequest, context: ApiContext): void {
-  console.log(`[API] ${req.method} ${req.url}`, {
+  logger.log(`[API] ${req.method} ${req.url}`, {
     requestId: context.requestId,
     userId: context.userId,
     userAgent: req.headers.get('user-agent'),
@@ -126,7 +127,7 @@ export function recordMetrics(
     timestamp: Date.now(),
   };
 
-  console.log('[METRICS]', metrics);
+  logger.log('[METRICS]', metrics);
   // 実際の実装では適切なメトリクス収集サービスに送信
 }
 
