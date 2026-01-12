@@ -4,6 +4,7 @@
  * @see https://tanstack.com/query/latest/docs/framework/react/guides/query-retries
  */
 
+import { logger } from '@/lib/logger';
 import * as Sentry from '@sentry/nextjs';
 
 /**
@@ -19,7 +20,7 @@ export interface ErrorContext {
  * クエリエラーをハンドリングする統一関数
  */
 export function handleQueryError(error: unknown, context: ErrorContext): void {
-  console.error(`Query error [${context.operation}]:`, context.queryKey, error);
+  logger.error(`Query error [${context.operation}]:`, context.queryKey, error);
 
   // Sentryに送信
   Sentry.captureException(error, {
@@ -75,22 +76,20 @@ export function getRetryDelay(attemptIndex: number, error: unknown): number {
  * クエリエラーのログ出力（開発環境専用）
  */
 export function logQueryError(error: unknown, context: ErrorContext): void {
-  if (process.env.NODE_ENV === 'development') {
-    console.group(`🔴 TanStack Query Error [${context.operation}]`);
-    console.error('Query Key:', context.queryKey);
-    console.error('Error:', error);
-    console.error('Context:', context);
-    console.groupEnd();
-  }
+  logger.error(
+    `🔴 TanStack Query Error [${context.operation}]`,
+    'Query Key:',
+    context.queryKey,
+    'Error:',
+    error,
+    'Context:',
+    context,
+  );
 }
 
 /**
  * Mutation成功時のログ出力（開発環境専用）
  */
 export function logMutationSuccess(operation: string, data?: unknown): void {
-  if (process.env.NODE_ENV === 'development') {
-    console.group(`✅ TanStack Query Success [${operation}]`);
-    if (data) console.log('Data:', data);
-    console.groupEnd();
-  }
+  logger.log(`✅ TanStack Query Success [${operation}]`, data ? { data } : '');
 }

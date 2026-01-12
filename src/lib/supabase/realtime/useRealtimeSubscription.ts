@@ -27,6 +27,8 @@
 
 'use client';
 
+import { logger } from '@/lib/logger';
+
 import { useEffect, useRef, useState } from 'react';
 
 import { createClient } from '@/lib/supabase/client';
@@ -50,7 +52,7 @@ export function useRealtimeSubscription<
 
     // enabled=false の場合は購読をスキップ
     if (!enabled) {
-      console.debug(`[Realtime] Subscription disabled: ${channelName}`);
+      logger.debug(`[Realtime] Subscription disabled: ${channelName}`);
       return;
     }
 
@@ -91,7 +93,7 @@ export function useRealtimeSubscription<
             if (onError) {
               onError(subscriptionError);
             } else {
-              console.error(subscriptionError);
+              logger.error(subscriptionError);
             }
           }
         },
@@ -100,7 +102,7 @@ export function useRealtimeSubscription<
       // 購読開始
       channel.subscribe((status) => {
         if (status === 'SUBSCRIBED') {
-          console.debug(`[Realtime] Subscribed to channel: ${channelName}`);
+          logger.debug(`[Realtime] Subscribed to channel: ${channelName}`);
         } else if (status === 'CHANNEL_ERROR') {
           const error = new RealtimeSubscriptionError(
             `Failed to subscribe to channel: ${channelName}`,
@@ -109,7 +111,7 @@ export function useRealtimeSubscription<
           if (onError) {
             onError(error);
           } else {
-            console.error(error);
+            logger.error(error);
           }
         }
       });
@@ -133,7 +135,7 @@ export function useRealtimeSubscription<
       if (onError) {
         onError(subscriptionError);
       } else {
-        console.error(subscriptionError);
+        logger.error(subscriptionError);
       }
     }
 
@@ -142,7 +144,7 @@ export function useRealtimeSubscription<
       if (channelRef.current) {
         const { channel } = channelRef.current;
         supabase.removeChannel(channel);
-        console.debug(`[Realtime] Unsubscribed from channel: ${channelName}`);
+        logger.debug(`[Realtime] Unsubscribed from channel: ${channelName}`);
         channelRef.current = null;
         setChannelManager(null);
       }

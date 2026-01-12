@@ -3,6 +3,8 @@
  * アバター画像のアップロード・削除を管理
  */
 
+import { logger } from '@/lib/logger';
+
 import { createClient } from './client';
 
 const AVATARS_BUCKET = 'avatars';
@@ -95,7 +97,7 @@ export async function uploadAvatar(file: File, userId: string): Promise<string> 
     await supabase.storage.from(AVATARS_BUCKET).remove([fileName]);
   } catch (error) {
     // 既存ファイルがない場合はエラーを無視（ログのみ）
-    console.debug('[Storage] No existing avatar to delete or delete failed:', {
+    logger.debug('[Storage] No existing avatar to delete or delete failed:', {
       userId,
       fileName,
       error: error instanceof Error ? error.message : String(error),
@@ -111,7 +113,7 @@ export async function uploadAvatar(file: File, userId: string): Promise<string> 
     });
 
   if (uploadError) {
-    console.error('[Storage] Upload failed:', {
+    logger.error('[Storage] Upload failed:', {
       message: uploadError.message,
       bucket: AVATARS_BUCKET,
       fileName,
@@ -150,7 +152,7 @@ export async function deleteAvatar(userId: string): Promise<void> {
     .list(userId);
 
   if (listError) {
-    console.error('[Storage] List files failed:', {
+    logger.error('[Storage] List files failed:', {
       message: listError.message,
       bucket: AVATARS_BUCKET,
       userId,
@@ -167,7 +169,7 @@ export async function deleteAvatar(userId: string): Promise<void> {
   }
 
   if (!files || files.length === 0) {
-    console.debug('[Storage] No files to delete for user:', { userId });
+    logger.debug('[Storage] No files to delete for user:', { userId });
     return; // 削除するファイルがない
   }
 
@@ -176,7 +178,7 @@ export async function deleteAvatar(userId: string): Promise<void> {
   const { error: deleteError } = await supabase.storage.from(AVATARS_BUCKET).remove(filePaths);
 
   if (deleteError) {
-    console.error('[Storage] Delete files failed:', {
+    logger.error('[Storage] Delete files failed:', {
       message: deleteError.message,
       bucket: AVATARS_BUCKET,
       userId,
@@ -194,7 +196,7 @@ export async function deleteAvatar(userId: string): Promise<void> {
     );
   }
 
-  console.debug('[Storage] Successfully deleted avatar files:', {
+  logger.debug('[Storage] Successfully deleted avatar files:', {
     userId,
     count: filePaths.length,
   });
