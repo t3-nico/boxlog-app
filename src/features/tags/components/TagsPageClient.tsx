@@ -5,7 +5,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { DeleteConfirmDialog } from '@/components/common/DeleteConfirmDialog';
 import { LoadingSpinner } from '@/components/common/Loading/LoadingStates';
-import { PageHeader } from '@/components/common/PageHeader';
+import { usePageTitle } from '@/features/navigation/hooks/usePageTitle';
 import { DataTable, type GroupedData, type SortState } from '@/features/table';
 import { TagRowWrapper, TagsTableEmptyState } from '@/features/tags/components/table';
 import { TagGroupHeader } from '@/features/tags/components/TagGroupHeader';
@@ -41,6 +41,9 @@ import { toast } from 'sonner';
  */
 export function TagsPageClient() {
   const t = useTranslations();
+
+  // タイトルをZustand Storeにセット（PageHeaderはレイアウト層でレンダリング）
+  usePageTitle(t('tags.page.title'));
 
   // ローカル状態
   const [deleteConfirmTag, setDeleteConfirmTag] = useState<Tag | null>(null);
@@ -374,9 +377,6 @@ export function TagsPageClient() {
 
   return (
     <div className="flex h-full flex-col">
-      {/* ヘッダー */}
-      <PageHeader title={t('tags.page.title')} count={activeTagsCount} />
-
       {/* ツールバー または 選択バー（Inbox風レイアウト） */}
       {selectedCount > 0 ? (
         <TagsSelectionBar

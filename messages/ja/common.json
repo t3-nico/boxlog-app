@@ -261,6 +261,12 @@
   "search": {
     "shortcut": "⌘K"
   },
+  "createNew": {
+    "plan": "予定を作成",
+    "task": "タスクを作成",
+    "defaultPlanTitle": "新しい予定"
+  },
+  "comingSoon": "近日公開",
   "theme": {
     "light": "ライトモード",
     "dark": "ダークモード"

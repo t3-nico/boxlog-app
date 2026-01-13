@@ -9,7 +9,6 @@ import {
   useCreateActionSheet,
   type CreateActionType,
 } from '@/features/navigation/components/mobile/CreateActionSheet';
-import { MobileBottomNavigation } from '@/features/navigation/components/mobile/MobileBottomNavigation';
 import { TagsPageProvider } from '@/features/tags/contexts/TagsPageContext';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { Plus } from 'lucide-react';
@@ -69,7 +68,7 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
   // メモ化: コンテンツ部分（children, isMobile, localeに依存）
   const content = useMemo(
     () => (
-      <div className="flex h-screen flex-col pb-16 md:pb-0">
+      <div className="flex h-screen flex-col">
         {/* アクセシビリティ: スキップリンク */}
         <a
           href="#main-content"
@@ -87,15 +86,15 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
 
         {/* 注: CookieConsentBannerはsrc/app/[locale]/layout.tsxで一元管理 */}
 
-        {/* Mobile FAB - BottomNavigationの上に配置（iOS Safe Area対応） */}
+        {/* Mobile FAB（iOS Safe Area対応） */}
         {isMobile ? (
           <Button
             size="icon"
             aria-label={t('common.createNewEvent')}
             className="fixed right-4 z-50 size-14 rounded-2xl shadow-lg"
             style={{
-              // iOS Safe Area対応: ボトムナビ(64px) + 余白(16px) + Safe Area
-              bottom: 'calc(80px + env(safe-area-inset-bottom, 0px))',
+              // iOS Safe Area対応: 余白(16px) + Safe Area
+              bottom: 'calc(16px + env(safe-area-inset-bottom, 0px))',
             }}
             onClick={createActionSheet.open}
           >
@@ -111,9 +110,6 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
             onSelect={handleCreateAction}
           />
         ) : null}
-
-        {/* Mobile Bottom Navigation */}
-        {isMobile ? <MobileBottomNavigation /> : null}
       </div>
     ),
     [children, isMobile, localeFromPath, t, createActionSheet, handleCreateAction],

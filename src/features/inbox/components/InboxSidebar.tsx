@@ -66,7 +66,7 @@ export function InboxSidebar({
 
   if (isLoading) {
     return (
-      <SidebarShell title={t('sidebar.navigation.inbox')}>
+      <SidebarShell>
         <div className="flex flex-1 items-center justify-center">
           <LoadingSpinner size="lg" />
         </div>
@@ -75,7 +75,7 @@ export function InboxSidebar({
   }
 
   return (
-    <SidebarShell title={t('sidebar.navigation.inbox')}>
+    <SidebarShell>
       <SidebarTabLayout tabs={tabs} defaultTab="list" />
     </SidebarShell>
   );

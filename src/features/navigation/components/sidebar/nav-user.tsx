@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  Book,
   Building,
   ChevronDown,
   ExternalLink,
@@ -147,6 +148,13 @@ export function NavUser({
                 >
                   <Megaphone />
                   {t('navUser.helpSubmenu.releaseNotes')}
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="https://docs.boxlog.app" target="_blank" rel="noopener noreferrer">
+                  <Book />
+                  <span className="flex-1">{t('navUser.helpSubmenu.documentation')}</span>
+                  <ExternalLink className="text-muted-foreground size-3" />
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
