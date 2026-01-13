@@ -12,6 +12,10 @@ const withBundleAnalyzer = bundleAnalyzer({
 const nextConfig = {
   reactStrictMode: true,
 
+  // Multi-zones設定: LP（web）とアプリ（app）を同一ドメインで運用
+  // @see https://nextjs.org/docs/app/building-your-application/deploying/multi-zones
+  assetPrefix: process.env.NODE_ENV === 'production' ? '/app-static' : undefined,
+
   // セキュリティ: X-Powered-By ヘッダーを削除（サーバー情報漏洩防止）
   poweredByHeader: false,
 
@@ -41,6 +45,19 @@ const nextConfig = {
         permanent: true,
       },
     ]
+  },
+
+  // Multi-zones用リライト設定
+  // assetPrefixで設定したパスを実際の_nextパスにリライト
+  async rewrites() {
+    return {
+      beforeFiles: [
+        {
+          source: '/app-static/_next/:path*',
+          destination: '/_next/:path*',
+        },
+      ],
+    }
   },
 
   // セキュリティヘッダー設定
@@ -291,7 +308,8 @@ const sentryOptions = {
 
   // Next.js固有設定
   hideSourceMaps: true, // 本番環境でソースマップを非公開
-  tunnelRoute: '/monitoring-tunnel', // CSP回避用トンネル（オプション）
+  // NOTE: tunnelRouteは削除済み - CSPヘッダーでSentryドメインを許可しているため不要
+  // tunnelRoute有効時、ルートハンドラーが自動生成されない問題でイベントが失われていた
 }
 
 // withNextIntl → withBundleAnalyzer → withSentryConfig の順で適用
