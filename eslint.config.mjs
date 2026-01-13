@@ -35,6 +35,8 @@ const config = [
     rules: {
       // any型禁止（CLAUDE.md準拠）
       '@typescript-eslint/no-explicit-any': 'error',
+      // console.log禁止（warn/errorは許可）
+      'no-console': ['error', { allow: ['warn', 'error'] }],
     },
   },
 
@@ -53,6 +55,42 @@ const config = [
         beforeAll: 'readonly',
         afterAll: 'readonly',
       },
+    },
+    rules: {
+      // テストファイルではconsole許可
+      'no-console': 'off',
+    },
+  },
+
+  // logger.tsではconsole許可（開発用ロガー）
+  {
+    files: ['**/logger.ts'],
+    rules: {
+      'no-console': 'off',
+    },
+  },
+
+  // scripts/ではconsole許可（CLIツール）
+  {
+    files: ['scripts/**/*.{js,ts}'],
+    rules: {
+      'no-console': 'off',
+    },
+  },
+
+  // src/test/ではconsole許可（テストユーティリティ）
+  {
+    files: ['src/test/**/*.{js,ts,tsx}'],
+    rules: {
+      'no-console': 'off',
+    },
+  },
+
+  // 開発専用コンポーネントではconsole許可
+  {
+    files: ['**/components/dev/**/*.{js,ts,tsx}'],
+    rules: {
+      'no-console': 'off',
     },
   },
 ]

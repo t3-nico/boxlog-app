@@ -7,6 +7,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 
+import { logger } from '@/lib/logger';
 import { extractClientIp } from '@/lib/security/ip-validation';
 
 import { safeJsonStringify } from './json-utils';
@@ -304,7 +305,7 @@ export class ApiMiddleware {
       userAgent: request.headers.get('user-agent'),
     };
 
-    console.log(
+    logger.log(
       '[API Request]',
       safeJsonStringify(logData as Parameters<typeof safeJsonStringify>[0], 2),
     );
@@ -323,7 +324,7 @@ export class ApiMiddleware {
       timestamp: new Date().toISOString(),
     };
 
-    console.log('[API Response]', safeJsonStringify(logData, 2));
+    logger.log('[API Response]', safeJsonStringify(logData, 2));
   }
 
   /**

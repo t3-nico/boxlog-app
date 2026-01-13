@@ -33,6 +33,7 @@
 
 'use client';
 
+import { logger } from '@/lib/logger';
 import { api } from '@/lib/trpc';
 
 import { useRealtimeSubscription } from '@/lib/supabase/realtime/useRealtimeSubscription';
@@ -58,11 +59,11 @@ export function usePlanRealtime(userId: string | undefined, options: UsePlanReal
       const newRecord = payload.new as { id: string } | undefined;
       const oldRecord = payload.old as { id: string } | undefined;
 
-      console.debug('[plan Realtime] Event detected:', payload.eventType, newRecord?.id);
+      logger.debug('[plan Realtime] Event detected:', payload.eventType, newRecord?.id);
 
       // 自分のmutation中はRealtime経由の更新をスキップ（二重更新防止）
       if (isMutating) {
-        console.debug('[plan Realtime] Skipping invalidation (mutation in progress)');
+        logger.debug('[plan Realtime] Skipping invalidation (mutation in progress)');
         return;
       }
 
