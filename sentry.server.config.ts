@@ -7,11 +7,13 @@
  * @see https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
  */
 
-import * as Sentry from '@sentry/nextjs'
+import * as Sentry from '@sentry/nextjs';
 
-const SENTRY_DSN = process.env.NEXT_PUBLIC_SENTRY_DSN
-const VERCEL_ENV = process.env.NEXT_PUBLIC_VERCEL_ENV || process.env.NODE_ENV || 'development'
-const IS_PRODUCTION = process.env.NODE_ENV === 'production'
+// サーバーサイドではSENTRY_DSNを優先（ランタイム環境変数）
+const SENTRY_DSN = process.env.SENTRY_DSN || process.env.NEXT_PUBLIC_SENTRY_DSN;
+// VERCEL_ENVはVercelが自動設定（production, preview, development）
+const VERCEL_ENV = process.env.VERCEL_ENV || process.env.NODE_ENV || 'development';
+const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
 // DSNが設定されている場合のみ初期化
 if (SENTRY_DSN) {
@@ -39,21 +41,21 @@ if (SENTRY_DSN) {
     beforeSend(event, _hint) {
       // 開発環境のノイズ除去
       if (!IS_PRODUCTION) {
-        const errorMessage = event.exception?.values?.[0]?.value || ''
+        const errorMessage = event.exception?.values?.[0]?.value || '';
 
         // 無視するエラーパターン
         const ignoredPatterns = [
           'ECONNREFUSED', // ローカルDB接続エラー
           'ENOTFOUND', // DNS解決エラー
           'Module not found', // ビルド時エラー
-        ]
+        ];
 
         if (ignoredPatterns.some((pattern) => errorMessage.includes(pattern))) {
-          return null
+          return null;
         }
       }
 
-      return event
+      return event;
     },
 
     // サーバーサイド用インテグレーション
@@ -63,5 +65,5 @@ if (SENTRY_DSN) {
         depth: 5,
       }),
     ],
-  })
+  });
 }
