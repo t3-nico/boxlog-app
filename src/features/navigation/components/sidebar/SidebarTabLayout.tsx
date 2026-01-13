@@ -41,7 +41,7 @@ export function SidebarTabLayout({ tabs, defaultTab }: SidebarTabLayoutProps) {
       <Tabs defaultValue={initialTab} className="flex flex-1 flex-col overflow-hidden">
         {/* TabsList - Slack風アンダーラインデザイン（48px = 8px + 32px + 8px） */}
         <TabsList
-          className="grid h-12 w-full shrink-0 rounded-none bg-transparent p-0 py-2"
+          className="grid h-12 w-full shrink-0 rounded-none border-0 bg-transparent p-0 py-2"
           style={{
             gridTemplateColumns: `repeat(${tabs.length}, 1fr)`,
           }}
@@ -52,7 +52,7 @@ export function SidebarTabLayout({ tabs, defaultTab }: SidebarTabLayoutProps) {
               <TabsTrigger
                 key={tab.value}
                 value={tab.value}
-                className="border-border data-[state=active]:border-foreground hover:border-foreground/50 h-8 gap-2 rounded-none border-b-2 p-0 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+                className="data-[state=active]:border-foreground h-8 gap-2 rounded-none border-b-2 border-transparent p-0 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
               >
                 {Icon && <Icon className="size-4" />}
                 {tab.label}
