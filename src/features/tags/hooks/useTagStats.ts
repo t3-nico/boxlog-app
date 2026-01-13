@@ -3,6 +3,7 @@
 import { useMemo } from 'react';
 
 import type { Tag, TagUsageStats } from '@/features/tags/types';
+import { logger } from '@/lib/logger';
 import { getCacheStrategy } from '@/lib/tanstack-query/cache-config';
 import { trpc } from '@/lib/trpc/client';
 
@@ -116,7 +117,7 @@ export function useTagExpandedState() {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(expandedIds)));
     } catch (error) {
-      console.error('Failed to save expanded state:', error);
+      logger.error('Failed to save expanded state:', error);
     }
   };
 

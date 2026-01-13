@@ -16,7 +16,6 @@ export {
   useOptimisticTagUpdate,
   useRenameTag,
   useTag,
-  useTagUsage,
   useTags,
   useUpdateTag,
   useUpdateTagColor,
@@ -32,18 +31,6 @@ export {
   useTagGroups,
   useUpdateTagGroup,
 } from './useTagGroups';
-
-// Item Tags (Plan, Task etc.)
-export {
-  itemTagsKeys,
-  useBatchUpdateItemTags,
-  useCreateItemTag,
-  useDeleteItemTag,
-  useItemTags,
-  useItemTagsByItem,
-  useItemTagsOptimisticUpdate,
-  useItemsByTags,
-} from './useItemTags';
 
 // Tag Operations
 export { useTagOperations } from './useTagOperations';

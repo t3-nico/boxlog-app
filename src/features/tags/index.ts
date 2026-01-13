@@ -30,7 +30,6 @@ export {
   TagEditModal,
   TagFilterChips,
   TagFilter as TagFilterComponent,
-  TagGroupCreateModal,
   TagManagementModal,
   TagSelectionActions,
   // Selection & Display
@@ -42,22 +41,13 @@ export {
 
 // Hooks
 export {
-  itemTagsKeys,
   tagGroupKeys,
   tagKeys,
   tagStatsKeys,
-  useBatchUpdateItemTags,
-  useCreateItemTag,
   useCreateTag,
   useCreateTagGroup,
-  useDeleteItemTag,
   useDeleteTag,
   useDeleteTagGroup,
-  // Item Tags
-  useItemTags,
-  useItemTagsByItem,
-  useItemTagsOptimisticUpdate,
-  useItemsByTags,
   useMoveTag,
   useOptimisticTagUpdate,
   useRenameTag,

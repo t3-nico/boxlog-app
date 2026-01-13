@@ -11,6 +11,7 @@ import {
   useUpdateTag,
 } from '@/features/tags/hooks/useTags';
 import type { CreateTagInput, Tag, UpdateTagInput } from '@/features/tags/types';
+import { logger } from '@/lib/logger';
 import { useCallback, useState } from 'react';
 
 export function useTagOperations(tags: Tag[]) {
@@ -66,7 +67,7 @@ export function useTagOperations(tags: Tag[]) {
           groupId: data.groupId ?? createGroupId ?? undefined,
         });
       } catch (error) {
-        console.error('Failed to create tag:', error);
+        logger.error('Failed to create tag:', error);
         throw error;
       }
     },
@@ -93,7 +94,7 @@ export function useTagOperations(tags: Tag[]) {
           data,
         });
       } catch (error) {
-        console.error('Failed to update tag:', error);
+        logger.error('Failed to update tag:', error);
         throw error;
       }
     },
@@ -110,7 +111,7 @@ export function useTagOperations(tags: Tag[]) {
         // 実際の削除
         await deleteTagMutation.mutateAsync({ id: tag.id });
       } catch (error) {
-        console.error('Failed to delete tag:', error);
+        logger.error('Failed to delete tag:', error);
         throw error;
       }
     },
@@ -130,7 +131,7 @@ export function useTagOperations(tags: Tag[]) {
           groupId: newGroupId,
         });
       } catch (error) {
-        console.error('Failed to move tag:', error);
+        logger.error('Failed to move tag:', error);
         throw error;
       }
     },
@@ -150,7 +151,7 @@ export function useTagOperations(tags: Tag[]) {
           name: newName,
         });
       } catch (error) {
-        console.error('Failed to rename tag:', error);
+        logger.error('Failed to rename tag:', error);
         throw error;
       }
     },

@@ -64,24 +64,6 @@ export function useTag(id: string) {
   );
 }
 
-// タグ使用状況の型定義
-interface TagUsage {
-  planCount: number;
-  eventCount: number;
-  taskCount: number;
-  totalCount: number;
-}
-
-// タグ使用状況取得フック（互換性のため残す - 未実装）
-export function useTagUsage(_id: string | undefined) {
-  return {
-    data: undefined as TagUsage | undefined,
-    isPending: false,
-    isLoading: false,
-    error: null,
-  };
-}
-
 // タグ作成フック
 export function useCreateTag() {
   const queryClient = useQueryClient();

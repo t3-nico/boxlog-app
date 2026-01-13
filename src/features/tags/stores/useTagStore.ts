@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 
 import { CreateTagInput, Tag, UpdateTagInput } from '@/features/tags/types';
+import { logger } from '@/lib/logger';
 
 interface TagStore {
   tags: Tag[];
@@ -147,7 +148,7 @@ export const useTagStore = create<TagStore>()(
             set({ tags: [...tags, newTag] });
             return true;
           } catch (error) {
-            console.error('Failed to add tag:', error);
+            logger.error('Failed to add tag:', error);
             return false;
           }
         },
@@ -184,7 +185,7 @@ export const useTagStore = create<TagStore>()(
             }));
             return true;
           } catch (error) {
-            console.error('Failed to update tag:', error);
+            logger.error('Failed to update tag:', error);
             return false;
           }
         },
@@ -203,7 +204,7 @@ export const useTagStore = create<TagStore>()(
             }));
             return true;
           } catch (error) {
-            console.error('Failed to delete tag:', error);
+            logger.error('Failed to delete tag:', error);
             return false;
           }
         },
