@@ -261,6 +261,12 @@
   "search": {
     "shortcut": "⌘K"
   },
+  "createNew": {
+    "plan": "Create Plan",
+    "task": "Create Task",
+    "defaultPlanTitle": "New Plan"
+  },
+  "comingSoon": "Coming Soon",
   "theme": {
     "light": "Light Mode",
     "dark": "Dark Mode"
