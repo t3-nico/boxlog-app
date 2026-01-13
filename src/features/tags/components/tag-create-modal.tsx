@@ -25,6 +25,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { TAG_DESCRIPTION_MAX_LENGTH, TAG_NAME_MAX_LENGTH } from '@/features/tags/constants/colors';
 import { useTagGroups } from '@/features/tags/hooks/useTagGroups';
 import type { CreateTagInput, TagGroup } from '@/features/tags/types';
+import { logger } from '@/lib/logger';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
@@ -77,7 +78,7 @@ export const TagCreateModal = ({ isOpen, onClose, onSave }: TagCreateModalProps)
         });
         onClose();
       } catch (err) {
-        console.error('Tag creation failed:', err);
+        logger.error('Tag creation failed:', err);
         // エラーメッセージから重複エラーを検出
         const errorMessage = err instanceof Error ? err.message : String(err);
         if (
@@ -154,9 +155,14 @@ export const TagCreateModal = ({ isOpen, onClose, onSave }: TagCreateModalProps)
                   if (e.target.value.length <= TAG_DESCRIPTION_MAX_LENGTH) {
                     setDescription(e.target.value);
                   } else {
-                    toast.info(`説明は${TAG_DESCRIPTION_MAX_LENGTH}文字までです`, {
-                      id: 'description-limit',
-                    });
+                    toast.info(
+                      t('tag.validation.descriptionLimitReached', {
+                        max: TAG_DESCRIPTION_MAX_LENGTH,
+                      }),
+                      {
+                        id: 'description-limit',
+                      },
+                    );
                   }
                 }}
                 placeholder={t('tag.form.descriptionPlaceholder')}

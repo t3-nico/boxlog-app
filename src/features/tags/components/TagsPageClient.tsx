@@ -1,13 +1,18 @@
 'use client';
 
 import type { ReactNode } from 'react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { DeleteConfirmDialog } from '@/components/common/DeleteConfirmDialog';
 import { LoadingSpinner } from '@/components/common/Loading/LoadingStates';
-import { PageHeader } from '@/components/common/PageHeader';
+import { usePageTitle } from '@/features/navigation/hooks/usePageTitle';
 import { DataTable, type GroupedData, type SortState } from '@/features/table';
-import { TagRowWrapper, TagsTableEmptyState } from '@/features/tags/components/table';
+import {
+  TagGroupCreateRow,
+  type TagGroupCreateRowHandle,
+  TagRowWrapper,
+  TagsTableEmptyState,
+} from '@/features/tags/components/table';
 import { TagGroupHeader } from '@/features/tags/components/TagGroupHeader';
 import { TagsDialogs } from '@/features/tags/components/TagsDialogs';
 import { TagSelectionActions } from '@/features/tags/components/TagSelectionActions';
@@ -42,6 +47,9 @@ import { toast } from 'sonner';
 export function TagsPageClient() {
   const t = useTranslations();
 
+  // タイトルをZustand Storeにセット（PageHeaderはレイアウト層でレンダリング）
+  usePageTitle(t('tags.page.title'));
+
   // ローカル状態
   const [deleteConfirmTag, setDeleteConfirmTag] = useState<Tag | null>(null);
   const [archiveConfirmTag, setArchiveConfirmTag] = useState<Tag | null>(null);
@@ -49,6 +57,9 @@ export function TagsPageClient() {
   const [bulkDeleteDialogOpen, setBulkDeleteDialogOpen] = useState(false);
   const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set());
   const [deletingGroup, setDeletingGroup] = useState<TagGroup | null>(null);
+
+  // グループ作成行のref
+  const groupCreateRowRef = useRef<TagGroupCreateRowHandle>(null);
 
   // カスタムフックでデータ処理ロジックを分離（フィルター状態はストアから取得）
   const {
@@ -95,6 +106,11 @@ export function TagsPageClient() {
   const handleOpenCreateInspector = useCallback(() => {
     openInspector(null, { initialData: { groupId: selectedGroupId } });
   }, [openInspector, selectedGroupId]);
+
+  // グループ作成行を開くハンドラー
+  const handleOpenGroupCreate = useCallback(() => {
+    groupCreateRowRef.current?.startCreate();
+  }, []);
 
   // 表示列
   const visibleColumns = getVisibleColumns();
@@ -374,9 +390,6 @@ export function TagsPageClient() {
 
   return (
     <div className="flex h-full flex-col">
-      {/* ヘッダー */}
-      <PageHeader title={t('tags.page.title')} count={activeTagsCount} />
-
       {/* ツールバー または 選択バー（Inbox風レイアウト） */}
       {selectedCount > 0 ? (
         <TagsSelectionBar
@@ -418,6 +431,7 @@ export function TagsPageClient() {
           <TagsFilterBar
             {...(!showArchiveOnly && {
               onCreateClick: handleOpenCreateInspector,
+              onCreateGroupClick: handleOpenGroupCreate,
             })}
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
@@ -459,6 +473,11 @@ export function TagsPageClient() {
               onClearSearch={() => setSearchQuery('')}
               onCreate={handleOpenCreateInspector}
             />
+          }
+          extraRows={
+            displayMode === 'grouped' && !showArchiveOnly ? (
+              <TagGroupCreateRow ref={groupCreateRowRef} columnCount={columns.length} />
+            ) : undefined
           }
         />
       </div>

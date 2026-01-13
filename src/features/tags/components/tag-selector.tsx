@@ -15,6 +15,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { useCreateTag, useTags } from '@/features/tags/hooks/useTags';
 import type { Tag } from '@/features/tags/types';
+import { logger } from '@/lib/logger';
 import { useTranslations } from 'next-intl';
 
 import { QuickTagCreateModal } from './quick-tag-create-modal';
@@ -77,7 +78,7 @@ export const TagSelector = ({
 
       setShowCreateModal(false);
     } catch (error) {
-      console.error('Failed to create tag:', error);
+      logger.error('Failed to create tag:', error);
     }
   };
 

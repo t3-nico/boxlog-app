@@ -10,6 +10,7 @@ import { TAG_DESCRIPTION_MAX_LENGTH, TAG_NAME_MAX_LENGTH } from '@/features/tags
 import { useCreateTag } from '@/features/tags/hooks/useTags';
 import { useTagColumnStore } from '@/features/tags/stores/useTagColumnStore';
 import type { Tag, TagGroup } from '@/features/tags/types';
+import { logger } from '@/lib/logger';
 import { Folder, Hash } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
@@ -95,7 +96,7 @@ export const TagTableRowCreate = forwardRef<TagTableRowCreateHandle, TagTableRow
         setNewTagColor(DEFAULT_TAG_COLOR);
         onCreated?.();
       } catch (error) {
-        console.error('Failed to create tag:', error);
+        logger.error('Failed to create tag:', error);
         toast.error(t('tags.page.tagCreateFailed'));
       }
     }, [
@@ -200,9 +201,12 @@ export const TagTableRowCreate = forwardRef<TagTableRowCreateHandle, TagTableRow
                   onChange={(e) => {
                     const value = e.target.value;
                     if (value.length >= TAG_NAME_MAX_LENGTH) {
-                      toast.info(`タグ名は${TAG_NAME_MAX_LENGTH}文字までです`, {
-                        id: 'name-limit',
-                      });
+                      toast.info(
+                        t('tag.validation.nameLimitReached', { max: TAG_NAME_MAX_LENGTH }),
+                        {
+                          id: 'name-limit',
+                        },
+                      );
                     }
                     setNewTagName(value);
                   }}
@@ -231,9 +235,14 @@ export const TagTableRowCreate = forwardRef<TagTableRowCreateHandle, TagTableRow
                 onChange={(e) => {
                   const value = e.target.value;
                   if (value.length >= TAG_DESCRIPTION_MAX_LENGTH) {
-                    toast.info(`説明は${TAG_DESCRIPTION_MAX_LENGTH}文字までです`, {
-                      id: 'description-limit',
-                    });
+                    toast.info(
+                      t('tag.validation.descriptionLimitReached', {
+                        max: TAG_DESCRIPTION_MAX_LENGTH,
+                      }),
+                      {
+                        id: 'description-limit',
+                      },
+                    );
                   }
                   setNewTagDescription(value);
                 }}

@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { DEFAULT_TAG_COLOR } from '@/config/ui/colors';
 import { useMergeTag, useTags } from '@/features/tags/hooks/useTags';
 import type { Tag } from '@/features/tags/types';
+import { logger } from '@/lib/logger';
 import { cn } from '@/lib/utils';
 import { AlertCircle, Check, ChevronDown, GitMerge } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -81,7 +82,7 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
       // 統合先タグIDを渡して閉じる（インスペクターで統合先を開くため）
       onClose(targetTagId);
     } catch (err) {
-      console.error('Merge failed:', err);
+      logger.error('Merge failed:', err);
       setError(t('tags.merge.failed'));
     } finally {
       setIsMerging(false);

@@ -26,7 +26,6 @@ export { QuickTagCreateModal } from './quick-tag-create-modal';
 export { TagCreateModal } from './tag-create-modal';
 export { TagEditDialog } from './tag-edit-dialog';
 export { TagEditModal } from './tag-edit-modal';
-export { TagGroupCreateModal } from './tag-group-create-modal';
 export { TagManagementModal } from './tag-management-modal';
 export { TagArchiveDialog } from './TagArchiveDialog';
 export { TagsDialogs } from './TagsDialogs';

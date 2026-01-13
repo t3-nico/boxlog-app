@@ -103,7 +103,9 @@ export const TagFilter = ({
         )}
       >
         <FunnelIcon className="h-4 w-4" />
-        {showTitle ? <span className={compact ? 'hidden sm:inline' : ''}>Tags</span> : null}
+        {showTitle ? (
+          <span className={compact ? 'hidden sm:inline' : ''}>{t('tags.filter.tags')}</span>
+        ) : null}
         {showSelectedCount && selectedTagIds.length > 0 ? (
           <span className="bg-surface-container text-muted-foreground rounded px-2 py-1 text-xs">
             {selectedTagIds.length}
@@ -154,7 +156,7 @@ export const TagFilter = ({
           <div className="border-border bg-popover text-popover-foreground absolute z-50 mt-1 max-h-96 w-80 overflow-hidden rounded-md border shadow-lg">
             {/* ヘッダー */}
             <div className="border-border flex items-center justify-between border-b p-3">
-              <h3 className="text-foreground text-sm font-medium">Filter by Tags</h3>
+              <h3 className="text-foreground text-sm font-medium">{t('tags.filter.title')}</h3>
               {hasTagFilters === true && (
                 <Button
                   type="button"
@@ -163,7 +165,7 @@ export const TagFilter = ({
                   onClick={clearTags}
                   className="h-auto p-0 text-xs"
                 >
-                  Clear all
+                  {t('tags.filter.clearAll')}
                 </Button>
               )}
             </div>
@@ -188,7 +190,7 @@ export const TagFilter = ({
               ) : (
                 <div className="text-muted-foreground flex flex-col items-center justify-center py-8">
                   <TagIcon className="mb-2 h-8 w-8" />
-                  <p className="text-sm">No tags available</p>
+                  <p className="text-sm">{t('tags.search.noTags')}</p>
                 </div>
               )}
             </div>
@@ -197,7 +199,7 @@ export const TagFilter = ({
             {hasTagFilters === true && (
               <div className="border-border bg-surface-container border-t p-3">
                 <p className="text-muted-foreground text-xs">
-                  {selectedTagIds.length} tag{selectedTagIds.length !== 1 ? 's' : ''} selected
+                  {t('tags.filter.selectedCount', { count: selectedTagIds.length })}
                 </p>
               </div>
             )}

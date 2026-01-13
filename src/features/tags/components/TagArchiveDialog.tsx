@@ -3,9 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-import { LoadingSpinner } from '@/components/common/Loading/LoadingStates';
 import { Button } from '@/components/ui/button';
-import { useTagUsage } from '@/features/tags/hooks';
 import type { Tag } from '@/features/tags/types';
 import { Archive } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -31,9 +29,6 @@ export function TagArchiveDialog({ tag, onClose, onConfirm }: TagArchiveDialogPr
   const t = useTranslations();
   const [isArchiving, setIsArchiving] = useState(false);
   const [mounted, setMounted] = useState(false);
-
-  // TanStack Queryでタグ使用状況を取得
-  const { data: usage, isPending } = useTagUsage(tag?.id);
 
   // クライアントサイドでのみマウント
   useEffect(() => {
@@ -106,34 +101,6 @@ export function TagArchiveDialog({ tag, onClose, onConfirm }: TagArchiveDialogPr
             <Archive className="size-4 shrink-0" />
             <p className="text-sm font-medium">{t('tag.archive.warning')}</p>
           </div>
-
-          {/* 使用状況 */}
-          {isPending ? (
-            <div className="bg-surface-container flex items-center justify-center rounded-xl p-4">
-              <LoadingSpinner size="sm" />
-            </div>
-          ) : usage ? (
-            <div className="bg-surface-container rounded-xl p-4">
-              <p className="mb-2 text-sm font-medium">{t('tag.archive.currentUsage')}</p>
-              <ul className="text-muted-foreground space-y-1 text-sm">
-                <li>
-                  • {t('tag.delete.plans')}:{' '}
-                  {t('tag.delete.itemsCount', { count: usage.planCount })}
-                </li>
-                <li>
-                  • {t('tag.delete.events')}:{' '}
-                  {t('tag.delete.itemsCount', { count: usage.eventCount })}
-                </li>
-                <li>
-                  • {t('tag.delete.tasks')}:{' '}
-                  {t('tag.delete.itemsCount', { count: usage.taskCount })}
-                </li>
-              </ul>
-              <p className="text-muted-foreground mt-2 text-sm font-medium">
-                {t('tag.delete.total')}: {t('tag.delete.itemsCount', { count: usage.totalCount })}
-              </p>
-            </div>
-          ) : null}
 
           {/* アーカイブ後の処理 */}
           <div className="space-y-2">

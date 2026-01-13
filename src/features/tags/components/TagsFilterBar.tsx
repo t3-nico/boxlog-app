@@ -1,6 +1,6 @@
 'use client';
 
-import { Calendar, Clock, FolderTree, Hash, Plus, Tag } from 'lucide-react';
+import { Calendar, Clock, FolderPlus, FolderTree, Hash, Plus, Tag } from 'lucide-react';
 import { useMemo } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -14,6 +14,8 @@ import { TagsSettingsContent } from './TagsSettingsContent';
 
 interface TagsFilterBarProps {
   onCreateClick?: () => void;
+  /** グループ作成クリック時のコールバック */
+  onCreateGroupClick?: () => void;
   /** 検索クエリ */
   searchQuery: string;
   /** 検索クエリ変更時のコールバック */
@@ -40,6 +42,7 @@ interface TagsFilterBarProps {
  */
 export function TagsFilterBar({
   onCreateClick,
+  onCreateGroupClick,
   searchQuery,
   onSearchChange,
   t,
@@ -150,7 +153,29 @@ export function TagsFilterBar({
       {/* Notion風アイコンナビゲーション（検索・ソート・設定）*/}
       <TableNavigation config={navigationConfig} />
 
-      {/* 作成ボタン: 固定位置（モバイル: アイコンのみ、PC: テキスト付き） */}
+      {/* グループ作成ボタン: グループ表示モード時のみ表示 */}
+      {displayMode === 'grouped' && onCreateGroupClick && (
+        <>
+          <Button
+            onClick={onCreateGroupClick}
+            variant="outline"
+            size="icon"
+            className="shrink-0 md:hidden"
+          >
+            <FolderPlus className="size-4" />
+          </Button>
+          <Button
+            onClick={onCreateGroupClick}
+            variant="outline"
+            className="hidden shrink-0 md:inline-flex"
+          >
+            <FolderPlus className="size-4" />
+            {t('tags.page.createGroup')}
+          </Button>
+        </>
+      )}
+
+      {/* タグ作成ボタン: 固定位置（モバイル: アイコンのみ、PC: テキスト付き） */}
       {onCreateClick && (
         <>
           <Button onClick={onCreateClick} size="icon" className="shrink-0 md:hidden">

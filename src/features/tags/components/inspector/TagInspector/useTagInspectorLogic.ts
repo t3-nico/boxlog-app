@@ -20,6 +20,7 @@ import {
   useUpdateTagColor,
 } from '@/features/tags/hooks/useTags';
 import { useTagInspectorStore } from '@/features/tags/stores/useTagInspectorStore';
+import { logger } from '@/lib/logger';
 
 export function useTagInspectorLogic() {
   const {
@@ -221,7 +222,7 @@ export function useTagInspectorLogic() {
       setNewTagColor('#3B82F6');
       setNewTagGroupId(null);
     } catch (error) {
-      console.error('Failed to create tag:', error);
+      logger.error('Failed to create tag:', error);
     }
   }, [
     newTagName,

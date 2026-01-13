@@ -121,7 +121,7 @@ export function TagInspector() {
           closeInspector();
         }}
         displayMode={displayMode}
-        title={isCreateMode ? '新規タグ' : tag?.name || 'タグの詳細'}
+        title={isCreateMode ? t('tag.inspector.newTag') : tag?.name || t('tag.inspector.tagDetail')}
         resizable={true}
         modal={false}
       >
@@ -145,7 +145,7 @@ export function TagInspector() {
                   size="icon-sm"
                   onClick={() => setShowColorPicker(!showColorPicker)}
                   className="size-5 p-0"
-                  aria-label="カラー変更"
+                  aria-label={t('tag.inspector.changeColor')}
                 >
                   <Hash className="size-5" style={{ color: newTagColor }} />
                 </Button>
@@ -164,7 +164,7 @@ export function TagInspector() {
               <Input
                 value={newTagName}
                 onChange={(e) => setNewTagName(e.target.value)}
-                placeholder="タグ名を入力..."
+                placeholder={t('tag.inspector.namePlaceholder')}
                 maxLength={TAG_NAME_MAX_LENGTH}
                 autoFocus
                 className="flex-1 border-0 bg-transparent px-0 text-lg font-semibold shadow-none focus-visible:ring-0"
@@ -195,13 +195,13 @@ export function TagInspector() {
                       size="sm"
                       className="text-muted-foreground h-8 px-2 text-sm"
                     >
-                      {newTagGroup?.name || 'グループを選択...'}
+                      {newTagGroup?.name || t('tag.inspector.selectGroup')}
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="start">
                     <DropdownMenuItem onClick={() => setNewTagGroupId(null)}>
                       <FolderX className="text-muted-foreground mr-2 size-4" />
-                      グループなし
+                      {t('tags.page.noGroup')}
                     </DropdownMenuItem>
                     {groups.map((group) => (
                       <DropdownMenuItem key={group.id} onClick={() => setNewTagGroupId(group.id)}>
@@ -223,7 +223,7 @@ export function TagInspector() {
               <Textarea
                 value={newTagDescription}
                 onChange={(e) => setNewTagDescription(e.target.value)}
-                placeholder="説明を追加..."
+                placeholder={t('tag.inspector.addDescription')}
                 maxLength={TAG_DESCRIPTION_MAX_LENGTH}
                 className="min-h-20 flex-1 resize-none border-0 bg-transparent p-0 text-sm shadow-none focus-visible:ring-0"
               />
@@ -232,11 +232,11 @@ export function TagInspector() {
             {/* 保存ボタン */}
             <div className="border-border/50 flex items-center justify-end gap-2 border-t px-4 py-3">
               <Button variant="ghost" onClick={closeInspector} disabled={isCreating}>
-                キャンセル
+                {t('tag.actions.cancel')}
               </Button>
               <Button onClick={handleCreateTag} disabled={!newTagName.trim() || isCreating}>
                 <Save className="mr-2 size-4" />
-                {isCreating ? '作成中...' : '作成'}
+                {isCreating ? t('tag.actions.creating') : t('tag.actions.create')}
               </Button>
             </div>
           </div>
@@ -244,7 +244,7 @@ export function TagInspector() {
           <InspectorContent
             isLoading={isPending}
             hasData={!!tag}
-            emptyMessage="タグが見つかりません"
+            emptyMessage={t('tags.search.noTags')}
           >
             {tag && (
               <div className="flex h-full flex-col overflow-hidden">
@@ -255,8 +255,8 @@ export function TagInspector() {
                   onClose={closeInspector}
                   onPrevious={goToPrevious}
                   onNext={goToNext}
-                  previousLabel="前のタグ"
-                  nextLabel="次のタグ"
+                  previousLabel={t('tag.inspector.previousTag')}
+                  nextLabel={t('tag.inspector.nextTag')}
                   displayMode={displayMode}
                   menuContent={menuContent}
                 />
@@ -270,7 +270,7 @@ export function TagInspector() {
                       size="icon-sm"
                       onClick={() => setShowColorPicker(!showColorPicker)}
                       className="size-5 p-0"
-                      aria-label="カラー変更"
+                      aria-label={t('tag.inspector.changeColor')}
                     >
                       <Hash className="size-5" style={{ color: tag.color || DEFAULT_TAG_COLOR }} />
                     </Button>
@@ -298,9 +298,12 @@ export function TagInspector() {
                           range.collapse(false);
                           selection?.removeAllRanges();
                           selection?.addRange(range);
-                          toast.info(`タグ名は${TAG_NAME_MAX_LENGTH}文字までです`, {
-                            id: 'name-limit',
-                          });
+                          toast.info(
+                            t('tag.validation.nameLimitReached', { max: TAG_NAME_MAX_LENGTH }),
+                            {
+                              id: 'name-limit',
+                            },
+                          );
                         }
                       }}
                       onBlur={(e) => autoSave('name', e.currentTarget.textContent || '')}
@@ -330,13 +333,13 @@ export function TagInspector() {
                           size="sm"
                           className="text-muted-foreground h-8 px-2 text-sm"
                         >
-                          {tagGroup?.name || 'グループを選択...'}
+                          {tagGroup?.name || t('tag.inspector.selectGroup')}
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="start">
                         <DropdownMenuItem onClick={() => handleChangeGroup(null)}>
                           <FolderX className="text-muted-foreground mr-2 size-4" />
-                          グループなし
+                          {t('tags.page.noGroup')}
                         </DropdownMenuItem>
                         {groups.map((group) => (
                           <DropdownMenuItem
@@ -373,9 +376,14 @@ export function TagInspector() {
                           range.collapse(false);
                           selection?.removeAllRanges();
                           selection?.addRange(range);
-                          toast.info(`説明は${TAG_DESCRIPTION_MAX_LENGTH}文字までです`, {
-                            id: 'description-limit',
-                          });
+                          toast.info(
+                            t('tag.validation.descriptionLimitReached', {
+                              max: TAG_DESCRIPTION_MAX_LENGTH,
+                            }),
+                            {
+                              id: 'description-limit',
+                            },
+                          );
                         }
                       }}
                       onBlur={(e) => autoSave('description', e.currentTarget.textContent || '')}
@@ -406,10 +414,10 @@ export function TagInspector() {
                   <div>
                     <h3 className="text-muted-foreground mb-2 flex items-center gap-1 text-sm font-medium">
                       <MoveUpRight className="size-4" />
-                      紐づくレコード (0)
+                      {t('tag.inspector.linkedRecords', { count: 0 })}
                     </h3>
                     <div className="text-muted-foreground py-6 text-center text-sm">
-                      このタグに紐づくレコードはありません
+                      {t('tag.inspector.noLinkedRecords')}
                     </div>
                   </div>
                 </div>

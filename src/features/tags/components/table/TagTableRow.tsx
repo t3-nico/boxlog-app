@@ -28,6 +28,7 @@ import { useUpdateTag } from '@/features/tags/hooks/useTags';
 import { useTagInspectorStore } from '@/features/tags/stores/useTagInspectorStore';
 import { useTagSelectionStore } from '@/features/tags/stores/useTagSelectionStore';
 import type { Tag, TagGroup } from '@/features/tags/types';
+import { logger } from '@/lib/logger';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
@@ -112,7 +113,7 @@ export function TagCellContent({
       });
       cancelEditing();
     } catch (error) {
-      console.error('Failed to update tag:', error);
+      logger.error('Failed to update tag:', error);
     }
   }, [editingField, editValue, updateTagMutation, tag.id, cancelEditing]);
 

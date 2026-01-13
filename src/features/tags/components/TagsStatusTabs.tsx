@@ -37,10 +37,10 @@ export function TagsStatusTabs() {
 
   return (
     <Tabs value={status} onValueChange={(value) => setStatus(value as TagStatus)}>
-      <TabsList className="bg-secondary h-8 rounded-lg p-0.5">
+      <TabsList className="bg-secondary border-border h-9 rounded-full border p-0.5">
         <TabsTrigger
           value="all"
-          className="data-[state=inactive]:hover:bg-state-hover data-[state=active]:bg-background data-[state=active]:text-foreground h-7 gap-1.5 rounded-md px-3 text-xs"
+          className="data-[state=inactive]:hover:bg-state-hover data-[state=active]:bg-background data-[state=active]:text-foreground h-7 gap-1.5 rounded-full px-3 text-xs"
         >
           {t('status.all')}
           <span className="bg-background flex size-4 items-center justify-center rounded-full text-[10px] tabular-nums">
@@ -49,7 +49,7 @@ export function TagsStatusTabs() {
         </TabsTrigger>
         <TabsTrigger
           value="archive"
-          className="data-[state=inactive]:hover:bg-state-hover data-[state=active]:bg-background data-[state=active]:text-foreground h-7 gap-1.5 rounded-md px-3 text-xs"
+          className="data-[state=inactive]:hover:bg-state-hover data-[state=active]:bg-background data-[state=active]:text-foreground h-7 gap-1.5 rounded-full px-3 text-xs"
         >
           {t('status.archive')}
           <span className="bg-background flex size-4 items-center justify-center rounded-full text-[10px] tabular-nums">

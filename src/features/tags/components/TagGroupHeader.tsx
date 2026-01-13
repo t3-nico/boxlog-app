@@ -185,7 +185,7 @@ export function TagGroupHeader({
             <span
               className="font-semibold"
               onDoubleClick={handleDoubleClick}
-              title={isUncategorized ? undefined : 'ダブルクリックで名前を編集'}
+              title={isUncategorized ? undefined : t('group.doubleClickToEdit')}
             >
               {groupLabel}
             </span>
@@ -201,7 +201,7 @@ export function TagGroupHeader({
             <Button
               variant="ghost"
               size="icon-sm"
-              className="text-muted-foreground hover:text-destructive ml-auto size-6 opacity-0 group-hover:opacity-100"
+              className="text-muted-foreground hover:text-destructive ml-1 size-6 opacity-0 group-hover:opacity-100"
               onClick={(e) => {
                 e.stopPropagation();
                 onDeleteGroup(tagGroup);
