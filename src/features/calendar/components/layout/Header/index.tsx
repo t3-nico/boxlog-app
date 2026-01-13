@@ -101,7 +101,7 @@ export const CalendarHeader = ({
           />
 
           {/* ビュー切り替え - PC */}
-          <div className="hidden md:block">
+          <div className="ml-2 hidden md:block">
             <ViewSwitcher
               options={viewOptions}
               currentView={viewType}
