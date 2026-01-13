@@ -32,7 +32,7 @@ function initPostHog() {
   // 環境変数が未設定の場合はスキップ（開発環境での柔軟性）
   if (!apiKey) {
     if (process.env.NODE_ENV === 'development') {
-      console.info('[PostHog] NEXT_PUBLIC_POSTHOG_KEY not set, analytics disabled');
+      console.warn('[PostHog] NEXT_PUBLIC_POSTHOG_KEY not set, analytics disabled');
     }
     return;
   }
