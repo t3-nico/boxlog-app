@@ -90,8 +90,8 @@ export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
 
         {/* PageHeader + Main Content + Inspector */}
         <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
-          {/* PageHeader（Calendarは独自ヘッダーを持つため非表示） */}
-          {currentPage !== 'calendar' && <PageHeader />}
+          {/* PageHeader（Calendar/Statsは独自ヘッダーを持つため非表示） */}
+          {currentPage !== 'calendar' && currentPage !== 'stats' && <PageHeader />}
 
           {/* Main Content + Inspector（自動的に残りのスペースを使用） */}
           <div className="min-w-0 flex-1 overflow-hidden">
