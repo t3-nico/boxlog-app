@@ -23,6 +23,7 @@ import type { Metadata, Viewport } from 'next';
 import { Inter, Noto_Sans_JP } from 'next/font/google';
 import { Suspense } from 'react';
 
+import { PostHogProvider } from '@/components/providers/PostHogProvider';
 import { WebVitalsReporter } from '@/components/WebVitalsReporter';
 import { cn } from '@/lib/utils';
 
@@ -119,12 +120,14 @@ const RootLayout = async ({ children, params }: RootLayoutProps) => {
       className={`${inter.variable} ${notoSansJP.variable}`}
     >
       <body className={cn('bg-background')} suppressHydrationWarning>
-        <Suspense fallback={null}>
-          {children}
-          <WebVitalsReporter />
-          <SpeedInsights />
-          <Analytics />
-        </Suspense>
+        <PostHogProvider>
+          <Suspense fallback={null}>
+            {children}
+            <WebVitalsReporter />
+            <SpeedInsights />
+            <Analytics />
+          </Suspense>
+        </PostHogProvider>
       </body>
     </html>
   );
