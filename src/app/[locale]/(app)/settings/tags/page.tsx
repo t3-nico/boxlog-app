@@ -1,26 +1,26 @@
-import type { Metadata } from 'next';
+'use client';
 
-import { createServerHelpers, dehydrate, HydrationBoundary } from '@/lib/trpc/server';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
-import { SettingsTagsPageClient } from './settings-tags-page-client';
+import { useLocale } from 'next-intl';
 
-export const metadata: Metadata = {
-  title: 'タグ管理',
-  description: 'タグとグループの管理',
-};
+import { useSettingsModalStore } from '@/features/settings/stores/useSettingsModalStore';
 
 /**
- * タグ管理ページ（Settings内）
+ * タグ管理ページ
  *
- * Server-side prefetchでtRPCデータを事前取得
+ * 後方互換性のため、直接アクセス時はホームにリダイレクトしモーダルを開く
  */
-export default async function SettingsTagsPage() {
-  const helpers = await createServerHelpers();
-  await helpers.plans.getTagStats.prefetch();
+export default function SettingsTagsPage() {
+  const router = useRouter();
+  const locale = useLocale();
+  const openModal = useSettingsModalStore((state) => state.openModal);
 
-  return (
-    <HydrationBoundary state={dehydrate(helpers.queryClient)}>
-      <SettingsTagsPageClient />
-    </HydrationBoundary>
-  );
+  useEffect(() => {
+    openModal('tags');
+    router.replace(`/${locale}`);
+  }, [locale, router, openModal]);
+
+  return null;
 }

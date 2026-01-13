@@ -1,13 +1,26 @@
-import { UncategorizedPageClient } from './uncategorized-page-client';
+'use client';
 
-interface UncategorizedPageProps {
-  params: Promise<{
-    locale: string;
-  }>;
-}
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
-export default async function SettingsTagsUncategorizedPage({
-  params: _params,
-}: UncategorizedPageProps) {
-  return <UncategorizedPageClient />;
+import { useLocale } from 'next-intl';
+
+import { useSettingsModalStore } from '@/features/settings/stores/useSettingsModalStore';
+
+/**
+ * 未分類タグページ
+ *
+ * 後方互換性のため、直接アクセス時はホームにリダイレクトしモーダルを開く
+ */
+export default function SettingsTagsUncategorizedPage() {
+  const router = useRouter();
+  const locale = useLocale();
+  const openModal = useSettingsModalStore((state) => state.openModal);
+
+  useEffect(() => {
+    openModal('tags');
+    router.replace(`/${locale}`);
+  }, [locale, router, openModal]);
+
+  return null;
 }

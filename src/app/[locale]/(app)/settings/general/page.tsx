@@ -1,20 +1,26 @@
 'use client';
 
-import { SettingsPageWrapper } from '@/features/settings/components/page/SettingsPageWrapper';
-import { PreferencesSettings } from '@/features/settings/components/preferences-settings';
-import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+
+import { useLocale } from 'next-intl';
+
+import { useSettingsModalStore } from '@/features/settings/stores/useSettingsModalStore';
 
 /**
  * 一般設定ページ
  *
- * 言語、テーマ、起動画面などの一般的な設定
+ * 後方互換性のため、直接アクセス時はホームにリダイレクトしモーダルを開く
  */
 export default function GeneralSettingsPage() {
-  const t = useTranslations();
+  const router = useRouter();
+  const locale = useLocale();
+  const openModal = useSettingsModalStore((state) => state.openModal);
 
-  return (
-    <SettingsPageWrapper title={t('settings.dialog.categories.general')}>
-      <PreferencesSettings />
-    </SettingsPageWrapper>
-  );
+  useEffect(() => {
+    openModal('general');
+    router.replace(`/${locale}`);
+  }, [locale, router, openModal]);
+
+  return null;
 }

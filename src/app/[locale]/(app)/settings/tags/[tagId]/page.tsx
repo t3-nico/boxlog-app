@@ -1,34 +1,26 @@
-import { TagsPageClient } from '@/features/tags/components/TagsPageClient';
+'use client';
 
-import { GroupFilterSetter } from './group-filter-setter';
-import { TagInspectorOpener } from './tag-inspector-opener';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
-interface TagDetailPageProps {
-  params: Promise<{
-    locale: string;
-    tagId: string;
-  }>;
-}
+import { useLocale } from 'next-intl';
 
-export default async function SettingsTagDetailPage({ params }: TagDetailPageProps) {
-  const { tagId } = await params;
+import { useSettingsModalStore } from '@/features/settings/stores/useSettingsModalStore';
 
-  // g-{uuid} 形式の場合はグループページを表示
-  if (tagId.startsWith('g-')) {
-    const groupId = tagId.slice(2);
-    return (
-      <>
-        <GroupFilterSetter groupId={groupId} />
-        <TagsPageClient />
-      </>
-    );
-  }
+/**
+ * タグ詳細ページ
+ *
+ * 後方互換性のため、直接アクセス時はホームにリダイレクトしモーダルを開く
+ */
+export default function SettingsTagDetailPage() {
+  const router = useRouter();
+  const locale = useLocale();
+  const openModal = useSettingsModalStore((state) => state.openModal);
 
-  // タグID（UUID）でタグ一覧 + Inspector表示
-  return (
-    <>
-      <TagsPageClient />
-      <TagInspectorOpener tagId={tagId} />
-    </>
-  );
+  useEffect(() => {
+    openModal('tags');
+    router.replace(`/${locale}`);
+  }, [locale, router, openModal]);
+
+  return null;
 }

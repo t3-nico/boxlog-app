@@ -1,20 +1,26 @@
 'use client';
 
-import { CalendarSettings } from '@/features/settings/components/calendar-settings';
-import { SettingsPageWrapper } from '@/features/settings/components/page/SettingsPageWrapper';
-import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+
+import { useLocale } from 'next-intl';
+
+import { useSettingsModalStore } from '@/features/settings/stores/useSettingsModalStore';
 
 /**
  * カレンダー設定ページ
  *
- * タイムゾーン、表示設定、デフォルトビュー
+ * 後方互換性のため、直接アクセス時はホームにリダイレクトしモーダルを開く
  */
 export default function CalendarSettingsPage() {
-  const t = useTranslations();
+  const router = useRouter();
+  const locale = useLocale();
+  const openModal = useSettingsModalStore((state) => state.openModal);
 
-  return (
-    <SettingsPageWrapper title={t('settings.dialog.categories.calendar')}>
-      <CalendarSettings />
-    </SettingsPageWrapper>
-  );
+  useEffect(() => {
+    openModal('calendar');
+    router.replace(`/${locale}`);
+  }, [locale, router, openModal]);
+
+  return null;
 }

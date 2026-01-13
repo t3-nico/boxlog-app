@@ -5,29 +5,24 @@ import { useEffect } from 'react';
 
 import { useLocale } from 'next-intl';
 
-import { BREAKPOINT_VALUES } from '@/config/ui/breakpoints';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { useSettingsModalStore } from '@/features/settings/stores/useSettingsModalStore';
 
 /**
  * 設定ページ（インデックス）
  *
- * PC: /settings/general にリダイレクト（サイドバーがあるため）
- * モバイル: 空のコンテンツ（layout.tsxのカテゴリ一覧が表示される）
+ * 後方互換性のため、直接アクセス時はホームページにリダイレクトし、
+ * 設定モーダルを開く。
  */
 export default function SettingsPage() {
   const router = useRouter();
   const locale = useLocale();
-  // md breakpoint (768px) 以上でリダイレクト
-  const isDesktop = useMediaQuery(`(min-width: ${BREAKPOINT_VALUES.md}px)`);
+  const openModal = useSettingsModalStore((state) => state.openModal);
 
   useEffect(() => {
-    // PCの場合のみリダイレクト
-    if (isDesktop) {
-      router.replace(`/${locale}/settings/general`);
-    }
-  }, [isDesktop, locale, router]);
+    // モーダルを開いてホームにリダイレクト
+    openModal('general');
+    router.replace(`/${locale}`);
+  }, [locale, router, openModal]);
 
-  // モバイルでは空のコンテンツ（layout.tsxのasideが表示される）
-  // PCではリダイレクト中の一瞬だけ表示されるが、すぐにgeneralページに遷移
   return null;
 }
