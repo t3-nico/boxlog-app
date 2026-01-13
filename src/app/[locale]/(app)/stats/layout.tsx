@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 
-import { PageHeader } from '@/components/common/PageHeader';
+import { usePageTitle } from '@/features/navigation/hooks/usePageTitle';
 import { MobileStatsSettingsSheet } from '@/features/stats/components/MobileStatsSettingsSheet';
 import { StatsToolbar } from '@/features/stats/components/stats-toolbar';
 
@@ -23,11 +23,11 @@ interface StatsLayoutProps {
 export default function StatsLayout({ children }: StatsLayoutProps) {
   const t = useTranslations();
 
+  // タイトルをZustand Storeにセット（PageHeaderはレイアウト層でレンダリング）
+  usePageTitle(t('stats.sidebar.overview'));
+
   return (
     <div className="flex h-full flex-col">
-      {/* ページヘッダー */}
-      <PageHeader title={t('stats.sidebar.overview')} />
-
       {/* ツールバー: 高さ48px固定（8px + 32px + 8px） */}
       <div className="flex h-12 shrink-0 items-center gap-2 px-4 py-2">
         {/* デスクトップ: フルツールバー */}

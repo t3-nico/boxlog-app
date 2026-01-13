@@ -43,7 +43,7 @@ export function StatsSidebar() {
   ];
 
   return (
-    <SidebarShell title={t('sidebar.navigation.stats')}>
+    <SidebarShell>
       {/* Navigation */}
       <nav className="flex min-h-0 min-w-0 flex-1 flex-col overflow-y-auto px-2 py-2">
         <ul className="space-y-1">

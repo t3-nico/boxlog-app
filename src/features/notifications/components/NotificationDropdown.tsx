@@ -37,6 +37,8 @@ interface NotificationData {
 
 interface NotificationDropdownProps {
   className?: string;
+  /** ボタンサイズ: 'default' = 40px, 'sm' = 32px */
+  size?: 'default' | 'sm';
 }
 
 /**
@@ -47,7 +49,10 @@ interface NotificationDropdownProps {
  * - 未読バッジ表示
  * - 日付グループ化、一括操作
  */
-export function NotificationDropdown({ className: _className }: NotificationDropdownProps) {
+export function NotificationDropdown({
+  className: _className,
+  size = 'default',
+}: NotificationDropdownProps) {
   const router = useRouter();
   const locale = useLocale();
   const t = useTranslations();
@@ -193,12 +198,20 @@ export function NotificationDropdown({ className: _className }: NotificationDrop
       <DropdownMenuTrigger asChild>
         <button
           type="button"
-          className="hover:bg-state-hover data-[state=open]:bg-state-selected relative flex h-10 w-10 items-center justify-center rounded-xl outline-hidden transition-colors"
+          className={`hover:bg-state-hover data-[state=open]:bg-state-selected relative flex items-center justify-center rounded-xl outline-hidden transition-colors ${
+            size === 'sm' ? 'h-8 w-8' : 'h-10 w-10'
+          }`}
           aria-label={t('notification.title')}
         >
-          <Bell className="h-5 w-5" />
+          <Bell className={size === 'sm' ? 'h-4 w-4' : 'h-5 w-5'} />
           {unreadCount > 0 && (
-            <span className="bg-destructive text-destructive-foreground absolute top-0.5 right-0 flex h-4 w-4 items-center justify-center rounded-full text-xs font-semibold">
+            <span
+              className={`bg-destructive text-destructive-foreground absolute flex items-center justify-center rounded-full font-semibold ${
+                size === 'sm'
+                  ? 'top-0 right-0 h-3.5 w-3.5 text-xs'
+                  : 'top-0.5 right-0 h-4 w-4 text-xs'
+              }`}
+            >
               {unreadCount > 9 ? '9+' : unreadCount}
             </span>
           )}

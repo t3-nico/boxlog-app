@@ -3,6 +3,8 @@
 import { Search } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
+import { MobileMenuButton } from '@/features/navigation/components/mobile/MobileMenuButton';
+import { NavigationTabs } from '@/features/navigation/components/navigation-tabs/NavigationTabs';
 import { useGlobalSearch } from '@/features/search/hooks/use-global-search';
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
 
@@ -83,10 +85,10 @@ export const CalendarHeader = ({
   return (
     <header className="bg-background relative h-12 px-4 py-2">
       <div className="flex h-8 items-center justify-between">
-        {/* 左側: カスタムスロット + 日付表示 */}
-        <div className="flex items-center gap-4">
-          {/* カスタムスロット（モバイルメニューボタンなど） */}
-          {leftSlot}
+        {/* 左側: メニュー + 日付表示 + 日付ナビゲーション */}
+        <div className="flex items-center gap-2">
+          {/* モバイルメニューボタン */}
+          <MobileMenuButton className="md:hidden" />
 
           {/* 現在の日付表示 */}
           <DateRangeDisplay
@@ -97,54 +99,65 @@ export const CalendarHeader = ({
             onDateSelect={onDateSelect ? (date) => date && onDateSelect(date) : undefined}
             displayRange={displayRange}
           />
+
+          {/* ビュー切り替え - PC */}
+          <div className="hidden md:block">
+            <ViewSwitcher
+              options={viewOptions}
+              currentView={viewType}
+              onChange={(view) => onViewChange(view as CalendarViewType)}
+            />
+          </div>
+
+          {/* 日付ナビゲーション（Today + 矢印）- PC */}
+          <div className="hidden md:block">
+            <DateNavigator onNavigate={onNavigate} arrowSize="md" />
+          </div>
+
+          {/* カスタムスロット（必要に応じて） */}
+          {leftSlot}
         </div>
 
-        {/* 右側（モバイル）: 検索 + Todayボタン */}
-        <div className="flex items-center gap-1 md:hidden">
-          {/* 検索ボタン */}
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            className="text-muted-foreground hover:text-foreground"
-            onClick={openSearch}
-            aria-label="検索"
-          >
-            <Search className="size-5" />
-          </Button>
-
-          {/* Todayボタン（今日の日付を表示するカレンダーアイコン風） */}
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            className="text-muted-foreground hover:text-foreground"
-            onClick={() => onNavigate('today')}
-            aria-label="今日に戻る"
-          >
-            <div className="relative flex size-6 flex-col">
-              <div className="h-1.5 w-full border-b-2 border-current" />
-              <div className="flex flex-1 items-center justify-center">
-                <span className="text-xs leading-none font-semibold">{new Date().getDate()}</span>
+        {/* 右側: アクション */}
+        <div className="flex items-center gap-2">
+          {/* モバイル: 検索 + Today + ページ切り替え */}
+          <div className="flex items-center gap-1 md:hidden">
+            {/* ページ切り替えタブ */}
+            <NavigationTabs />
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              className="text-muted-foreground hover:text-foreground"
+              onClick={openSearch}
+              aria-label="検索"
+            >
+              <Search className="size-5" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              className="text-muted-foreground hover:text-foreground"
+              onClick={() => onNavigate('today')}
+              aria-label="今日に戻る"
+            >
+              <div className="relative flex size-6 flex-col">
+                <div className="h-1.5 w-full border-b-2 border-current" />
+                <div className="flex flex-1 items-center justify-center">
+                  <span className="text-xs leading-none font-semibold">{new Date().getDate()}</span>
+                </div>
               </div>
-            </div>
-          </Button>
-        </div>
+            </Button>
+          </div>
 
-        {/* 右側（PC）: ビュー切り替え + ナビゲーション + アクション */}
-        <div className="hidden items-center gap-2 md:flex">
-          {/* ビュー切り替え */}
-          <ViewSwitcher
-            options={viewOptions}
-            currentView={viewType}
-            onChange={(view) => onViewChange(view as CalendarViewType)}
-          />
-
-          {/* 日付ナビゲーション（Today + 矢印） */}
-          <DateNavigator onNavigate={onNavigate} arrowSize="md" />
-
-          {/* アクションボタン */}
-          {showActions != null && (
-            <HeaderActions onSettings={onSettings} onExport={onExport} onImport={onImport} />
-          )}
+          {/* PC: ページ切り替え + アクション */}
+          <div className="hidden items-center gap-2 md:flex">
+            {/* アクションボタン */}
+            {showActions != null && (
+              <HeaderActions onSettings={onSettings} onExport={onExport} onImport={onImport} />
+            )}
+            {/* ページ切り替えタブ */}
+            <NavigationTabs />
+          </div>
         </div>
       </div>
     </header>

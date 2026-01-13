@@ -351,10 +351,10 @@ export function InboxTableView() {
             value={filterStatus[0] || 'open'}
             onValueChange={(value) => setStatus([value as PlanStatus])}
           >
-            <TabsList className="bg-secondary h-8 rounded-lg p-0.5">
+            <TabsList className="bg-secondary border-border h-9 rounded-full border p-0.5">
               <TabsTrigger
                 value="open"
-                className="data-[state=inactive]:hover:bg-state-hover data-[state=active]:bg-background data-[state=active]:text-foreground h-7 gap-1.5 rounded-md px-3 text-xs"
+                className="data-[state=inactive]:hover:bg-state-hover data-[state=active]:bg-background data-[state=active]:text-foreground h-7 gap-1.5 rounded-full px-3 text-xs"
               >
                 Open
                 <span className="bg-background flex size-4 items-center justify-center rounded-full text-[10px] tabular-nums">
@@ -363,7 +363,7 @@ export function InboxTableView() {
               </TabsTrigger>
               <TabsTrigger
                 value="done"
-                className="data-[state=inactive]:hover:bg-state-hover data-[state=active]:bg-background data-[state=active]:text-foreground h-7 gap-1.5 rounded-md px-3 text-xs"
+                className="data-[state=inactive]:hover:bg-state-hover data-[state=active]:bg-background data-[state=active]:text-foreground h-7 gap-1.5 rounded-full px-3 text-xs"
               >
                 Done
                 <span className="bg-background flex size-4 items-center justify-center rounded-full text-[10px] tabular-nums">
