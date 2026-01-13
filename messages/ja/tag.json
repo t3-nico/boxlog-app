@@ -116,6 +116,12 @@
       "levelInvalid": "レベルは0または1である必要があります",
       "validationFailed": "入力内容に誤りがあります"
     },
+    "filter": {
+      "tags": "タグ",
+      "title": "タグでフィルター",
+      "clearAll": "すべてクリア",
+      "selectedCount": "{count}件選択中"
+    },
     "sidebar": {
       "allTags": "すべてのタグ",
       "uncategorized": "未分類",
@@ -302,12 +308,18 @@
     "group": {
       "createTitle": "新規グループ作成",
       "createDescription": "新しいグループを作成します",
+      "createInline": "新規グループを作成...",
       "editTitle": "グループを編集",
       "editDescription": "グループ名とカラーを変更します",
       "nameRequired": "グループ名 *",
       "namePlaceholder": "例: プロジェクト",
+      "nameLimitReached": "グループ名は{max}文字以内で入力してください",
       "deleteTitle": "グループを削除",
-      "deleteDescription": "グループ「{name}」を削除しますか？グループ内のタグは未分類になります。"
+      "deleteDescription": "グループ「{name}」を削除しますか？グループ内のタグは未分類になります。",
+      "changeColor": "カラーを変更",
+      "doubleClickToEdit": "ダブルクリックで名前を編集",
+      "save": "保存",
+      "cancel": "キャンセル"
     },
     "toast": {
       "groupNameRequired": "グループ名を入力してください",
@@ -418,13 +430,27 @@
       "nameRequired": "タグ名は必須です",
       "nameEmpty": "タグ名を入力してください",
       "nameMaxLength": "タグ名は50文字以内で入力してください",
+      "nameLimitReached": "タグ名は{max}文字までです",
       "colorInvalid": "有効なカラーコード（例: #3B82F6）を入力してください",
       "descriptionMaxLength": "説明は500文字以内で入力してください",
+      "descriptionLimitReached": "説明は{max}文字までです",
       "iconMaxLength": "アイコンは10文字以内で入力してください",
       "parentIdInvalid": "親タグIDが無効です",
       "groupIdInvalid": "グループIDが無効です",
       "levelInvalid": "レベルは0または1である必要があります",
       "validationFailed": "入力内容に誤りがあります"
+    },
+    "inspector": {
+      "newTag": "新規タグ",
+      "tagDetail": "タグの詳細",
+      "changeColor": "カラー変更",
+      "namePlaceholder": "タグ名を入力...",
+      "selectGroup": "グループを選択...",
+      "addDescription": "説明を追加...",
+      "previousTag": "前のタグ",
+      "nextTag": "次のタグ",
+      "linkedRecords": "紐づくレコード ({count})",
+      "noLinkedRecords": "このタグに紐づくレコードはありません"
     },
     "sidebar": {
       "allTags": "すべてのタグ",

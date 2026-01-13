@@ -116,6 +116,12 @@
       "levelInvalid": "Level must be 0 or 1",
       "validationFailed": "Validation failed"
     },
+    "filter": {
+      "tags": "Tags",
+      "title": "Filter by Tags",
+      "clearAll": "Clear all",
+      "selectedCount": "{count} tag(s) selected"
+    },
     "sidebar": {
       "allTags": "All Tags",
       "uncategorized": "Uncategorized",
@@ -302,12 +308,18 @@
     "group": {
       "createTitle": "Create New Group",
       "createDescription": "Create a new tag group",
+      "createInline": "Create new group...",
       "editTitle": "Edit Group",
       "editDescription": "Edit group name and color",
       "nameRequired": "Group Name *",
       "namePlaceholder": "e.g., Project",
+      "nameLimitReached": "Group name must be {max} characters or less",
       "deleteTitle": "Delete Group",
-      "deleteDescription": "Are you sure you want to delete \"{name}\"? Tags in this group will become uncategorized."
+      "deleteDescription": "Are you sure you want to delete \"{name}\"? Tags in this group will become uncategorized.",
+      "changeColor": "Change color",
+      "doubleClickToEdit": "Double-click to edit name",
+      "save": "Save",
+      "cancel": "Cancel"
     },
     "toast": {
       "groupNameRequired": "Please enter a group name",
@@ -418,13 +430,27 @@
       "nameRequired": "Tag name is required",
       "nameEmpty": "Please enter a tag name",
       "nameMaxLength": "Tag name must be 50 characters or less",
+      "nameLimitReached": "Tag name must be {max} characters or less",
       "colorInvalid": "Please enter a valid color code (e.g., #3B82F6)",
       "descriptionMaxLength": "Description must be 500 characters or less",
+      "descriptionLimitReached": "Description must be {max} characters or less",
       "iconMaxLength": "Icon must be 10 characters or less",
       "parentIdInvalid": "Invalid parent tag ID",
       "groupIdInvalid": "Invalid group ID",
       "levelInvalid": "Level must be 0 or 1",
       "validationFailed": "Validation failed"
+    },
+    "inspector": {
+      "newTag": "New Tag",
+      "tagDetail": "Tag Details",
+      "changeColor": "Change color",
+      "namePlaceholder": "Enter tag name...",
+      "selectGroup": "Select group...",
+      "addDescription": "Add description...",
+      "previousTag": "Previous tag",
+      "nextTag": "Next tag",
+      "linkedRecords": "Linked Records ({count})",
+      "noLinkedRecords": "No records linked to this tag"
     },
     "sidebar": {
       "allTags": "All Tags",
