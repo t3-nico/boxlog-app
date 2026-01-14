@@ -32,8 +32,8 @@ describe('formatters', () => {
       expect(formatplanStatus('open')).toBe('Open');
     });
 
-    it('doneをDoneに変換する', () => {
-      expect(formatplanStatus('closed')).toBe('Done');
+    it('closedをClosedに変換する', () => {
+      expect(formatplanStatus('closed')).toBe('Closed');
     });
   });
 

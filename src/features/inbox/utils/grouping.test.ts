@@ -72,7 +72,7 @@ describe('grouping', () => {
         const doneGroup = result.find((g) => g.groupKey === 'closed');
 
         expect(openGroup?.groupLabel).toBe('Open');
-        expect(doneGroup?.groupLabel).toBe('Done');
+        expect(doneGroup?.groupLabel).toBe('Closed');
       });
 
       it('アイテム数が正しくカウントされる', () => {
