@@ -166,12 +166,12 @@ export function usePlanMutations() {
       if (variables.data.status) {
         const statusMap: Record<string, string> = {
           open: 'Open',
-          done: 'Done',
+          closed: 'Closed',
         };
         const statusLabel = statusMap[variables.data.status] || variables.data.status;
         toast.success(t('common.plan.statusChanged', { status: statusLabel }));
 
-        // ステータス変更時は全リストキャッシュを無効化（Open/Doneタブ切り替え反映）
+        // ステータス変更時は全リストキャッシュを無効化（Open/Closedタブ切り替え反映）
         void utils.plans.list.invalidate(undefined, { refetchType: 'all' });
       }
       // その他の自動保存（title、description、日時など）はtoast非表示
@@ -250,7 +250,7 @@ export function usePlanMutations() {
         const restoreData = {
           title: previousPlan.title,
           description: previousPlan.description ?? undefined,
-          status: previousPlan.status as 'open' | 'done',
+          status: previousPlan.status as 'open' | 'closed',
           start_time: normalizeDateTime(previousPlan.start_time),
           end_time: normalizeDateTime(previousPlan.end_time),
           due_date: previousPlan.due_date ?? undefined,

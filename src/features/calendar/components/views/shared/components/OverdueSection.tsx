@@ -107,9 +107,7 @@ export function OverdueSectionSingle({
     >
       {/* タイムゾーン表示（左端） - モバイルでは小さく */}
       <div className="border-border flex w-8 flex-shrink-0 items-center border-r md:w-12">
-        {timezone ? (
-          <TimezoneOffset timezone={timezone} className="text-[10px] md:text-xs" />
-        ) : null}
+        {timezone ? <TimezoneOffset timezone={timezone} className="text-xs" /> : null}
       </div>
 
       {/* バッジエリア（今日の場合のみ表示） */}

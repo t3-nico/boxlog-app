@@ -20,8 +20,8 @@ import type { TimedPlan } from '../components/views/shared/types/plan.types';
  * データベースPlan型のステータスをCalendarPlan型のステータスに変換
  * 2段階ステータス: open, done
  */
-function mapPlanStatusToCalendarStatus(status: string): 'open' | 'done' {
-  return status === 'done' ? 'done' : 'open';
+function mapPlanStatusToCalendarStatus(status: string): 'open' | 'closed' {
+  return status === 'closed' ? 'closed' : 'open';
 }
 
 // タグ付きPlan型
@@ -83,7 +83,7 @@ export function planToTimedPlan(plan: CalendarPlan): TimedPlan {
     ...plan,
     start: plan.startDate || new Date(),
     end: plan.endDate || new Date(),
-    isReadOnly: plan.status === 'done',
+    isReadOnly: plan.status === 'closed',
   };
 }
 
@@ -128,7 +128,7 @@ export function safePlanToTimedPlan(plan: Partial<CalendarPlan>): TimedPlan | nu
     color: plan.color || '#3b82f6',
     start: plan.startDate || now,
     end: plan.endDate || defaultEnd,
-    isReadOnly: plan.status === 'done',
+    isReadOnly: plan.status === 'closed',
   } as TimedPlan;
 }
 

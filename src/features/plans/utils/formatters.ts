@@ -21,7 +21,7 @@ export function formatplanNumber(planNumber: string): string {
 export function formatplanStatus(status: PlanStatus): string {
   const statusMap: Record<PlanStatus, string> = {
     open: 'Open',
-    done: 'Done',
+    closed: 'Closed',
   };
   return statusMap[status];
 }

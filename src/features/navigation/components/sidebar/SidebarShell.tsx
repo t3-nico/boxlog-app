@@ -4,6 +4,7 @@ import { Moon, Search, Sun } from 'lucide-react';
 import type { ReactNode } from 'react';
 
 import { Button } from '@/components/ui/button';
+import { HoverTooltip } from '@/components/ui/tooltip';
 import { useTheme } from '@/contexts/theme-context';
 import { useAuthStore } from '@/features/auth/stores/useAuthStore';
 import { NotificationDropdown } from '@/features/notifications';
@@ -74,15 +75,19 @@ export function SidebarShell({ children, className, hideNavUser = false }: Sideb
         <div className="flex h-12 shrink-0 items-center justify-between px-2">
           <NavUser user={userData} />
           <div className="flex items-center gap-1">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="size-8"
-              onClick={() => openGlobalSearch()}
-            >
-              <Search className="size-4" />
-            </Button>
-            <CreateNewDropdown size="sm" />
+            <HoverTooltip content={t('sidebar.navigation.search')} side="bottom">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="size-8"
+                onClick={() => openGlobalSearch()}
+              >
+                <Search className="size-4" />
+              </Button>
+            </HoverTooltip>
+            <HoverTooltip content={t('sidebar.quickCreate')} side="bottom">
+              <CreateNewDropdown size="sm" />
+            </HoverTooltip>
           </div>
         </div>
       )}

@@ -233,7 +233,7 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
         onClick={(e) => {
           e.stopPropagation();
           const currentStatus = normalizeStatus(plan.status);
-          const newStatus = currentStatus === 'done' ? 'open' : 'done';
+          const newStatus = currentStatus === 'closed' ? 'open' : 'closed';
           updatePlan.mutate({
             id: plan.id,
             data: { status: newStatus },
@@ -249,7 +249,7 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
           // ホバー領域を確保（小さい予定でもホバーしやすく）
           'min-h-4 min-w-4',
         )}
-        aria-label={normalizeStatus(plan.status) === 'done' ? '未完了に戻す' : '完了にする'}
+        aria-label={normalizeStatus(plan.status) === 'closed' ? '未完了に戻す' : '完了にする'}
       >
         {(() => {
           const status = normalizeStatus(plan.status);
@@ -258,7 +258,7 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
             : safePosition.height < 30
               ? 'h-3 w-3'
               : 'h-4 w-4';
-          if (status === 'done') {
+          if (status === 'closed') {
             return <CheckCircle2 className={cn('text-success', iconClass)} />;
           }
           // ホバー時はチェックマークを表示（完了予告）

@@ -43,7 +43,7 @@ export function TagsStatusTabs() {
           className="data-[state=inactive]:hover:bg-state-hover data-[state=active]:bg-background data-[state=active]:text-foreground h-7 gap-1.5 rounded-md px-3 text-xs"
         >
           {t('status.all')}
-          <span className="bg-background flex size-4 items-center justify-center rounded-full text-[10px] tabular-nums">
+          <span className="bg-background flex size-4 items-center justify-center rounded-full text-xs tabular-nums">
             {activeCount}
           </span>
         </TabsTrigger>
@@ -52,7 +52,7 @@ export function TagsStatusTabs() {
           className="data-[state=inactive]:hover:bg-state-hover data-[state=active]:bg-background data-[state=active]:text-foreground h-7 gap-1.5 rounded-md px-3 text-xs"
         >
           {t('status.archive')}
-          <span className="bg-background flex size-4 items-center justify-center rounded-full text-[10px] tabular-nums">
+          <span className="bg-background flex size-4 items-center justify-center rounded-full text-xs tabular-nums">
             {archiveCount}
           </span>
         </TabsTrigger>

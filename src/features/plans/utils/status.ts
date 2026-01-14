@@ -4,23 +4,23 @@ import type { Plan, PlanStatus } from '../types/plan';
  * 旧ステータス値を新ステータス値にマッピング
  *
  * DBに旧ステータス値（todo, doing, backlog, ready, active, wait, cancel）が
- * 残っている可能性があるため、全て 'open' または 'done' に変換する。
+ * 残っている可能性があるため、全て 'open' または 'closed' に変換する。
  *
  * @param status - DBから取得したステータス値
- * @returns 正規化されたステータス ('open' | 'done')
+ * @returns 正規化されたステータス ('open' | 'closed')
  */
 export function normalizeStatus(status: string): PlanStatus {
   // 新ステータス値はそのまま
-  if (status === 'open' || status === 'done') {
+  if (status === 'open' || status === 'closed') {
     return status;
   }
 
   // 旧ステータス値のマッピング
   switch (status) {
     // 完了系 → done
-    case 'done':
+    case 'closed':
     case 'cancel':
-      return 'done';
+      return 'closed';
 
     // 未完了系 → open
     case 'todo':
@@ -44,7 +44,7 @@ export function normalizeStatus(status: string): PlanStatus {
  */
 export function isOverdue(plan: Plan): boolean {
   // 正規化したステータスで判定（旧ステータス値も考慮）
-  if (normalizeStatus(plan.status) === 'done') {
+  if (normalizeStatus(plan.status) === 'closed') {
     return false;
   }
 

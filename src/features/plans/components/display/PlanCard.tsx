@@ -1,6 +1,7 @@
 'use client';
 
 import { Calendar, MoreVertical } from 'lucide-react';
+import { useCallback } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -32,17 +33,22 @@ interface PlanCardProps {
 }
 
 export function PlanCard({ plan, onEdit, onDelete, onClick, tags = [] }: PlanCardProps) {
-  const handleCardClick = () => {
+  // パフォーマンス最適化: useCallbackでメモ化してリスト内での不要な再生成を防止
+  const handleCardClick = useCallback(() => {
     if (onClick) {
       onClick(plan);
     }
-  };
+  }, [onClick, plan]);
 
-  const handleMenuAction = (action: () => void) => (e: Event) => {
-    e.preventDefault();
-    e.stopPropagation();
-    action();
-  };
+  // メニューアクション用ハンドラー（内部でuseCallbackできないためファクトリ関数として維持）
+  const handleMenuAction = useCallback(
+    (action: () => void) => (e: Event) => {
+      e.preventDefault();
+      e.stopPropagation();
+      action();
+    },
+    [],
+  );
 
   return (
     <Card

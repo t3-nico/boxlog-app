@@ -57,7 +57,7 @@ interface PlanInspectorDetailsTabProps {
   onRepeatTypeChange: (type: string) => void;
   onRecurrenceRuleChange: (rrule: string | null) => void;
   /** ステータス変更ハンドラー */
-  onStatusChange: (status: 'open' | 'done') => void;
+  onStatusChange: (status: 'open' | 'closed') => void;
 }
 
 export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
@@ -145,18 +145,18 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
       {/* Status */}
       <div className="border-border/50 flex min-h-10 items-center gap-2 border-t px-4 py-2">
         <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center">
-          {status === 'done' ? (
+          {status === 'closed' ? (
             <CheckCircle2 className="text-success size-4" />
           ) : (
             <Circle className="text-muted-foreground size-4" />
           )}
         </div>
         <Badge
-          variant={status === 'done' ? 'success' : 'secondary'}
+          variant={status === 'closed' ? 'success' : 'secondary'}
           className="hover:bg-state-hover cursor-pointer transition-colors"
-          onClick={() => onStatusChange(status === 'done' ? 'open' : 'done')}
+          onClick={() => onStatusChange(status === 'closed' ? 'open' : 'closed')}
         >
-          {status === 'done' ? 'Done' : 'Open'}
+          {status === 'closed' ? 'Closed' : 'Open'}
         </Badge>
       </div>
 

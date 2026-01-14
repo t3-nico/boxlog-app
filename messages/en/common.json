@@ -59,7 +59,7 @@
       "statusReady": "Ready",
       "statusActive": "Active",
       "statusWait": "Wait",
-      "statusDone": "Done",
+      "statusClosed": "Closed",
       "statusCancel": "Cancel",
       "dueDate": "Due Date",
       "archive": "Archive",
@@ -267,6 +267,10 @@
     "defaultPlanTitle": "New Plan"
   },
   "comingSoon": "Coming Soon",
+  "userProfile": {
+    "comingSoon": "Profile page coming soon",
+    "notFound": "User not found"
+  },
   "theme": {
     "light": "Light Mode",
     "dark": "Dark Mode"

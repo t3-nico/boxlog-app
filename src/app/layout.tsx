@@ -39,9 +39,10 @@ const inter = Inter({
 });
 
 // 日本語フォント（GAFA方針準拠: Google = Noto Sans JP）
+// weight: 400, 700のみ（500削減で5-10KB軽量化）- font-mediumは400でフォールバック
 const notoSansJP = Noto_Sans_JP({
   subsets: ['latin'],
-  weight: ['400', '500', '700'],
+  weight: ['400', '700'],
   display: 'swap',
   variable: '--font-noto-jp',
   preload: true,

@@ -209,7 +209,6 @@ export class PlanService {
 
     const insertData = {
       user_id: userId,
-      plan_number: '', // トリガーで自動生成
       ...removeUndefinedFields(normalizedInput),
     };
 
@@ -266,10 +265,10 @@ export class PlanService {
 
     // completed_at の自動設定（status 変更時）
     const inputWithStatus = input as { status?: string };
-    if (inputWithStatus.status === 'done' && oldData?.status !== 'done') {
+    if (inputWithStatus.status === 'closed' && oldData?.status !== 'closed') {
       // open → done: 完了時刻を記録
       updateData.completed_at = new Date().toISOString();
-    } else if (inputWithStatus.status === 'open' && oldData?.status === 'done') {
+    } else if (inputWithStatus.status === 'open' && oldData?.status === 'closed') {
       // done → open: 完了時刻をクリア
       updateData.completed_at = null;
     }
