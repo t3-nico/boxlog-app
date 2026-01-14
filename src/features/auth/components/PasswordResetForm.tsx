@@ -66,8 +66,10 @@ export function PasswordResetForm({ className, ...props }: React.ComponentProps<
             <div className="bg-surface-container relative hidden md:block">
               <NextImage
                 src="/placeholder.svg"
-                alt="Image"
+                alt="Decorative background"
                 fill
+                priority
+                sizes="(min-width: 768px) 50vw, 0vw"
                 className="object-cover dark:brightness-[0.2] dark:grayscale"
               />
             </div>
@@ -123,8 +125,10 @@ export function PasswordResetForm({ className, ...props }: React.ComponentProps<
           <div className="bg-surface-container relative hidden md:block">
             <NextImage
               src="/placeholder.svg"
-              alt="Image"
+              alt="Decorative background"
               fill
+              priority
+              sizes="(min-width: 768px) 50vw, 0vw"
               className="object-cover dark:brightness-[0.2] dark:grayscale"
             />
           </div>
