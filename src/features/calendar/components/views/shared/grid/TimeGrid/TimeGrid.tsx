@@ -17,6 +17,7 @@ import { useTimeSelection } from '../../hooks/useTimeSelection';
 import { useViewDimensions } from '../../hooks/useViewDimensions';
 import type { TimeGridProps } from '../../types/grid.types';
 import { calculateScrollPosition, pixelsToTimeValues } from '../../utils/gridCalculator';
+import { ChronotypeBackground } from '../ChronotypeBackground';
 import { HalfHourLines, HourLines, QuarterHourLines } from '../GridLines';
 import { TimeColumn } from '../TimeColumn';
 
@@ -134,6 +135,9 @@ export const TimeGrid = memo<TimeGridProps>(function TimeGrid({
           minHeight: `${gridHeight}px`,
         }}
       >
+        {/* クロノタイプ背景（最下層） */}
+        <ChronotypeBackground startHour={startHour} endHour={endHour} hourHeight={hourHeight} />
+
         {/* グリッド線 */}
         <HourLines startHour={startHour} endHour={endHour} hourHeight={hourHeight} />
 

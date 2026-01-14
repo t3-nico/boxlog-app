@@ -83,8 +83,8 @@ const defaultSettings: CalendarSettings = {
   showDeclinedEvents: false,
   showWeekends: true, // デフォルトは週末も表示
   chronotype: {
-    enabled: true,
-    type: 'bear',
+    enabled: false,
+    type: 'bear', // デフォルト選択肢（enabled: false なので未設定扱い）
     displayMode: 'border',
     opacity: 90,
   },
