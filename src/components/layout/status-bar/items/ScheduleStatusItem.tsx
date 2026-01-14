@@ -82,7 +82,7 @@ export function ScheduleStatusItem() {
       })
       .filter((plan) => {
         // 完了・キャンセル以外
-        return plan.status !== 'done' && plan.status !== 'cancel';
+        return plan.status !== 'closed' && plan.status !== 'cancel';
       })
       .sort((a, b) => {
         // start_time でソート
