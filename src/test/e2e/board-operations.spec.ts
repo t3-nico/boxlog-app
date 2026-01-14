@@ -48,7 +48,9 @@ test.describe('Board Operations - Status Toggle', () => {
     // ステータスカラム（open/closed）またはカードが表示されている
     // ボード要素の存在確認
     const hasBoard = await page
-      .locator('text=open, text=Open, text=closed, text=Closed, [class*="kanban"], [class*="board"]')
+      .locator(
+        'text=open, text=Open, text=closed, text=Closed, [class*="kanban"], [class*="board"]',
+      )
       .first()
       .isVisible()
       .catch(() => false);

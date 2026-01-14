@@ -6,9 +6,9 @@
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
+import { isReservedPath } from '@/config/reserved-paths';
 import type { Database } from '@/lib/database.types';
 import { createClient } from '@/lib/supabase/server';
-import { isReservedPath } from '@/config/reserved-paths';
 import { createTRPCRouter, protectedProcedure, publicProcedure } from '@/server/api/trpc';
 
 export const profileRouter = createTRPCRouter({

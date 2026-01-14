@@ -51,7 +51,10 @@ test.describe('Auth Flow - Login Page', () => {
     await expect(submitButton).toBeVisible();
   });
 
-  test('空のフォームを送信するとバリデーションエラーが表示される', async ({ page, browserName }) => {
+  test('空のフォームを送信するとバリデーションエラーが表示される', async ({
+    page,
+    browserName,
+  }) => {
     // WebKitでは form validation の挙動が異なるためスキップ
     test.skip(isWebKit(browserName), 'WebKitはform validationの挙動が異なる');
 
@@ -255,7 +258,10 @@ test.describe('Auth Flow - Protected Routes', () => {
 });
 
 test.describe('Auth Flow - Full Login/Logout Flow', () => {
-  test.skip(!isRealSupabase || !TEST_EMAIL || !TEST_PASSWORD, 'テスト用認証情報が設定されていないためスキップ');
+  test.skip(
+    !isRealSupabase || !TEST_EMAIL || !TEST_PASSWORD,
+    'テスト用認証情報が設定されていないためスキップ',
+  );
 
   test('有効な認証情報でログイン・ログアウトが成功する', async ({ page }) => {
     // ログインページに移動
@@ -283,12 +289,20 @@ test.describe('Auth Flow - Full Login/Logout Flow', () => {
 
     // ログアウト（ユーザーメニューから）
     // ユーザーアバターまたはメニューボタンをクリック
-    const userMenu = page.locator('[data-testid="user-menu"], button[aria-label*="user"], button[aria-label*="ユーザー"]').first();
+    const userMenu = page
+      .locator(
+        '[data-testid="user-menu"], button[aria-label*="user"], button[aria-label*="ユーザー"]',
+      )
+      .first();
     if (await userMenu.isVisible()) {
       await userMenu.click();
 
       // ログアウトボタンをクリック
-      const logoutButton = page.locator('button:has-text("ログアウト"), button:has-text("Logout"), a:has-text("ログアウト")').first();
+      const logoutButton = page
+        .locator(
+          'button:has-text("ログアウト"), button:has-text("Logout"), a:has-text("ログアウト")',
+        )
+        .first();
       if (await logoutButton.isVisible()) {
         await logoutButton.click();
 

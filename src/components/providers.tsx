@@ -27,8 +27,7 @@ import dynamic from 'next/dynamic';
 import { useState } from 'react';
 
 import { MutationCache, QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { TRPCClientError } from '@trpc/client';
-import { httpBatchLink, loggerLink } from '@trpc/client';
+import { httpBatchLink, loggerLink, TRPCClientError } from '@trpc/client';
 import superjson from 'superjson';
 
 // React Query DevTools: 本番環境では完全に除外（バンドルサイズ削減）

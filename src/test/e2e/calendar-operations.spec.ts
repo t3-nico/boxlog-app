@@ -210,7 +210,10 @@ test.describe('Calendar Operations - Plan Resize', () => {
         const originalHeight = planBox?.height || 0;
 
         // 下方向に36px（30分分）リサイズ
-        await page.mouse.move(handleBox.x + handleBox.width / 2, handleBox.y + handleBox.height / 2);
+        await page.mouse.move(
+          handleBox.x + handleBox.width / 2,
+          handleBox.y + handleBox.height / 2,
+        );
         await page.mouse.down();
         await page.mouse.move(
           handleBox.x + handleBox.width / 2,
@@ -254,7 +257,10 @@ test.describe('Calendar Operations - Plan Resize', () => {
 
       if (handleBox) {
         // 17px（約14分、スナップ閾値未満）リサイズ
-        await page.mouse.move(handleBox.x + handleBox.width / 2, handleBox.y + handleBox.height / 2);
+        await page.mouse.move(
+          handleBox.x + handleBox.width / 2,
+          handleBox.y + handleBox.height / 2,
+        );
         await page.mouse.down();
         await page.mouse.move(
           handleBox.x + handleBox.width / 2,

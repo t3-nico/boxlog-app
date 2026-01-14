@@ -8,9 +8,9 @@
  * @example
  * dayopt.app/tomoya → tomoyaさんの公開プロフィール
  */
+import { getTranslations } from 'next-intl/server';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
-import { getTranslations } from 'next-intl/server';
 
 import { isReservedPath } from '@/config/reserved-paths';
 import { createClient } from '@/lib/supabase/server';
@@ -62,7 +62,7 @@ export default async function UserProfilePage({ params }: PageProps) {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-background">
+    <div className="bg-background flex min-h-screen flex-col items-center justify-center">
       <div className="text-center">
         {profile.avatar_url && (
           <Image
@@ -73,18 +73,10 @@ export default async function UserProfilePage({ params }: PageProps) {
             className="mx-auto mb-4 rounded-full"
           />
         )}
-        <h1 className="text-2xl font-bold text-foreground">
-          @{profile.username}
-        </h1>
-        {profile.full_name && (
-          <p className="mt-1 text-lg text-foreground">{profile.full_name}</p>
-        )}
-        {profile.bio && (
-          <p className="mt-2 max-w-md text-muted-foreground">{profile.bio}</p>
-        )}
-        <p className="mt-4 text-sm text-muted-foreground">
-          {t('userProfile.comingSoon')}
-        </p>
+        <h1 className="text-foreground text-2xl font-bold">@{profile.username}</h1>
+        {profile.full_name && <p className="text-foreground mt-1 text-lg">{profile.full_name}</p>}
+        {profile.bio && <p className="text-muted-foreground mt-2 max-w-md">{profile.bio}</p>}
+        <p className="text-muted-foreground mt-4 text-sm">{t('userProfile.comingSoon')}</p>
       </div>
     </div>
   );

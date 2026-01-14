@@ -38,9 +38,11 @@ test.describe('Time Boxing - Calendar View', () => {
     await expect(body).toBeVisible();
 
     // カレンダーグリッドまたは時間スロットが存在
-    const calendarElement = page.locator(
-      '[data-calendar-grid], [class*="calendar"], [class*="day-view"], [class*="time-grid"]',
-    ).first();
+    const calendarElement = page
+      .locator(
+        '[data-calendar-grid], [class*="calendar"], [class*="day-view"], [class*="time-grid"]',
+      )
+      .first();
     await expect(calendarElement).toBeVisible({ timeout: 10000 });
   });
 
@@ -64,12 +66,14 @@ test.describe('Time Boxing - Calendar View', () => {
     }
 
     // 「前へ」「次へ」ボタンを探す
-    const prevButton = page.locator(
-      'button[aria-label*="前"], button[aria-label*="previous"], button[aria-label*="prev"], [data-testid="prev-day"]',
-    ).first();
-    const nextButton = page.locator(
-      'button[aria-label*="次"], button[aria-label*="next"], [data-testid="next-day"]',
-    ).first();
+    const prevButton = page
+      .locator(
+        'button[aria-label*="前"], button[aria-label*="previous"], button[aria-label*="prev"], [data-testid="prev-day"]',
+      )
+      .first();
+    const nextButton = page
+      .locator('button[aria-label*="次"], button[aria-label*="next"], [data-testid="next-day"]')
+      .first();
 
     // いずれかのナビゲーションボタンが存在する場合
     if ((await prevButton.count()) > 0) {
@@ -94,9 +98,11 @@ test.describe('Time Boxing - Calendar View', () => {
     }
 
     // 「今日」ボタンを探す
-    const todayButton = page.locator(
-      'button:has-text("今日"), button:has-text("Today"), button[aria-label*="today"], [data-testid="today-button"]',
-    ).first();
+    const todayButton = page
+      .locator(
+        'button:has-text("今日"), button:has-text("Today"), button[aria-label*="today"], [data-testid="today-button"]',
+      )
+      .first();
 
     if ((await todayButton.count()) > 0) {
       await expect(todayButton).toBeVisible();
@@ -192,9 +198,11 @@ test.describe('Time Boxing - Status Toggle', () => {
 
     if ((await planBlocks.count()) > 0) {
       // プランカード内のチェックボックスを探す
-      const checkbox = planBlocks.first().locator(
-        'button[aria-label*="完了"], button[aria-label*="complete"], [role="checkbox"], input[type="checkbox"]',
-      );
+      const checkbox = planBlocks
+        .first()
+        .locator(
+          'button[aria-label*="完了"], button[aria-label*="complete"], [role="checkbox"], input[type="checkbox"]',
+        );
 
       if ((await checkbox.count()) > 0) {
         await expect(checkbox.first()).toBeVisible();
@@ -203,9 +211,9 @@ test.describe('Time Boxing - Status Toggle', () => {
         await planBlocks.first().hover();
         await page.waitForTimeout(300);
 
-        const hoverCheckbox = planBlocks.first().locator(
-          'button[aria-label*="完了"], button[aria-label*="complete"], [role="checkbox"]',
-        );
+        const hoverCheckbox = planBlocks
+          .first()
+          .locator('button[aria-label*="完了"], button[aria-label*="complete"], [role="checkbox"]');
 
         if ((await hoverCheckbox.count()) > 0) {
           await expect(hoverCheckbox.first()).toBeVisible();
@@ -228,9 +236,11 @@ test.describe('Time Boxing - Create Plan', () => {
     }
 
     // カレンダーの空きスロットをダブルクリックするか、作成ボタンをクリック
-    const createButton = page.locator(
-      'button:has-text("新規"), button:has-text("作成"), button[aria-label*="作成"], [data-testid="create-plan"]',
-    ).first();
+    const createButton = page
+      .locator(
+        'button:has-text("新規"), button:has-text("作成"), button[aria-label*="作成"], [data-testid="create-plan"]',
+      )
+      .first();
 
     if ((await createButton.count()) > 0) {
       await createButton.click();
@@ -321,9 +331,11 @@ test.describe('Time Boxing - Week View', () => {
     }
 
     // 週表示ボタンを探す
-    const weekViewButton = page.locator(
-      'button:has-text("週"), button:has-text("Week"), button[aria-label*="week"], [data-testid="week-view"]',
-    ).first();
+    const weekViewButton = page
+      .locator(
+        'button:has-text("週"), button:has-text("Week"), button[aria-label*="week"], [data-testid="week-view"]',
+      )
+      .first();
 
     if ((await weekViewButton.count()) > 0) {
       await weekViewButton.click();
