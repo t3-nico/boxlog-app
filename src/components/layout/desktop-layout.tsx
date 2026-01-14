@@ -9,6 +9,7 @@ import { useAuthStore } from '@/features/auth/stores/useAuthStore';
 import { CalendarSidebar } from '@/features/calendar/components/sidebar/CalendarSidebar';
 import { InboxSidebarWrapper } from '@/features/inbox/components/InboxSidebarWrapper';
 import { AppSidebar } from '@/features/navigation/components/sidebar/app-sidebar';
+import { OnboardingBanner } from '@/features/onboarding';
 import { SettingsSidebar } from '@/features/settings/components/sidebar';
 import { StatsSidebar } from '@/features/stats';
 
@@ -81,6 +82,9 @@ export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
+      {/* オンボーディングバナー（クロノタイプ未設定時のみ表示） */}
+      {isAuthenticated && <OnboardingBanner />}
+
       {/* 上部エリア（サイドバー + コンテンツ） */}
       <div className="flex min-h-0 flex-1">
         {/* Sidebar（240px固定、常に表示）← ページごとに動的切り替え */}

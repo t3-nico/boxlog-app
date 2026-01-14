@@ -4,7 +4,6 @@ import { useTranslations } from 'next-intl';
 import { memo, useCallback } from 'react';
 
 import { MobileMenuButton } from '@/features/navigation/components/mobile/MobileMenuButton';
-import { OnboardingBanner } from '@/features/onboarding/components/OnboardingBanner';
 import { cn } from '@/lib/utils';
 
 import { useSwipeGesture } from '../../hooks/useSwipeGesture';
@@ -98,9 +97,6 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
           showMiniCalendar={true}
           displayRange={displayRange}
         />
-
-        {/* オンボーディングバナー（クロノタイプ未設定時のみ表示） */}
-        <OnboardingBanner />
 
         {/* メインコンテンツ（スワイプ対応） */}
         <main
