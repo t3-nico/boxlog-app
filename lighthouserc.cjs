@@ -28,7 +28,10 @@ module.exports = {
       startServerCommand: 'npm run start',
       startServerReadyPattern: 'Ready in', // Next.js起動完了の検出パターン
       startServerReadyTimeout: 30000, // サーバー起動タイムアウト（30秒）
-      url: ['http://localhost:3000'],
+      // ログインページを直接テスト（認証チェックをバイパス）
+      // ルートURLはMiddlewareでSupabase認証チェックが走り、
+      // CI環境では接続タイムアウト（5秒）でLCPが悪化するため
+      url: ['http://localhost:3000/en/auth/login'],
       numberOfRuns, // PR: 1回（高速化）、main: 3回（精度重視）
       maxWaitForLoad: 45000, // ページ読み込みタイムアウト（45秒）
       // CI環境用Chromeフラグ（安定性向上）
