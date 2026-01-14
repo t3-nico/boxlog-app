@@ -12,7 +12,7 @@
  *
  * // 同期処理
  * const result = withTrace('filter-tasks', () => {
- *   return tasks.filter(t => t.status === 'done')
+ *   return tasks.filter(t => t.status === 'closed')
  * })
  * ```
  */

@@ -46,7 +46,7 @@ export const statisticsRouter = createTRPCRouter({
 
     for (const plan of plans) {
       // Count completed tasks
-      if (plan.status === 'done') {
+      if (plan.status === 'closed') {
         completedTasks++;
         if (plan.updated_at) {
           const updatedAt = new Date(plan.updated_at);

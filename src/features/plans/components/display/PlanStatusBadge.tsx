@@ -19,8 +19,8 @@ const STATUS_CONFIG: Record<
     label: 'Open',
     className: 'bg-surface-container text-muted-foreground border-border',
   },
-  done: {
-    label: 'Done',
+  closed: {
+    label: 'Closed',
     className: 'bg-success/10 text-success border-success/30',
   },
 };

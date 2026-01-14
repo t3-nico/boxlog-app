@@ -33,7 +33,7 @@ describe('formatters', () => {
     });
 
     it('doneをDoneに変換する', () => {
-      expect(formatplanStatus('done')).toBe('Done');
+      expect(formatplanStatus('closed')).toBe('Done');
     });
   });
 

@@ -176,14 +176,14 @@ describe('useInboxData', () => {
       const plan = createMockPlan({
         id: 'plan-3',
         title: '完了済みタスク',
-        status: 'done',
+        status: 'closed',
         start_time: '2025-01-20T09:00:00Z',
         end_time: '2025-01-20T10:00:00Z',
       });
 
       const result = planToInboxItem(plan);
 
-      expect(result.status).toBe('done');
+      expect(result.status).toBe('closed');
     });
 
     it('plan_tagsからtagsを抽出できる', () => {

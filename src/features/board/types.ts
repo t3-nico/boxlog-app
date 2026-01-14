@@ -3,7 +3,7 @@ import { z } from 'zod';
 /**
  * Kanbanカードのステータス
  */
-export const kanbanStatusSchema = z.enum(['todo', 'in_progress', 'done']);
+export const kanbanStatusSchema = z.enum(['todo', 'in_progress', 'closed']);
 export type KanbanStatus = z.infer<typeof kanbanStatusSchema>;
 
 /**

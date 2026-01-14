@@ -32,7 +32,7 @@ describe('status', () => {
       });
 
       it('doneはdoneを返す', () => {
-        expect(normalizeStatus('done')).toBe('done');
+        expect(normalizeStatus('closed')).toBe('closed');
       });
     });
 
@@ -62,7 +62,7 @@ describe('status', () => {
       });
 
       it('cancelはdoneにマッピングされる', () => {
-        expect(normalizeStatus('cancel')).toBe('done');
+        expect(normalizeStatus('cancel')).toBe('closed');
       });
 
       it('未知のステータスはopenにマッピングされる', () => {
@@ -108,7 +108,7 @@ describe('status', () => {
   describe('isOverdue', () => {
     it('doneステータスはfalseを返す', () => {
       const plan = createMockPlan({
-        status: 'done',
+        status: 'closed',
         start_time: null,
         end_time: '2020-01-01T10:00:00Z', // 過去
       });

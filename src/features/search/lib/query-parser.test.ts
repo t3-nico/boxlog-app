@@ -63,7 +63,7 @@ describe('query-parser', () => {
       it('status:doneを抽出できる', () => {
         const result = parseSearchQuery('status:done');
 
-        expect(result.filters.status).toEqual(['done']);
+        expect(result.filters.status).toEqual(['closed']);
         expect(result.hasFilters).toBe(true);
       });
 
@@ -94,13 +94,13 @@ describe('query-parser', () => {
       it('大文字小文字を区別しない', () => {
         const result = parseSearchQuery('STATUS:DONE');
 
-        expect(result.filters.status).toEqual(['done']);
+        expect(result.filters.status).toEqual(['closed']);
       });
 
       it('エイリアス: completedはdoneにマッピング', () => {
         const result = parseSearchQuery('status:completed');
 
-        expect(result.filters.status).toEqual(['done']);
+        expect(result.filters.status).toEqual(['closed']);
       });
 
       it('エイリアス: pendingはopenにマッピング', () => {
@@ -112,7 +112,7 @@ describe('query-parser', () => {
       it('複数のステータスを抽出できる', () => {
         const result = parseSearchQuery('status:open status:done');
 
-        expect(result.filters.status).toEqual(['open', 'done']);
+        expect(result.filters.status).toEqual(['open', 'closed']);
       });
 
       it('不明なステータスは無視される', () => {
@@ -189,7 +189,7 @@ describe('query-parser', () => {
 
         expect(result.text).toBe('');
         expect(result.filters.tags).toEqual(['仕事']);
-        expect(result.filters.status).toEqual(['done']);
+        expect(result.filters.status).toEqual(['closed']);
         expect(result.filters.dueDate).toBe('overdue');
       });
     });

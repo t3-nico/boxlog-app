@@ -48,7 +48,7 @@ describe('planDataAdapter', () => {
         title: 'ミーティング',
         startDate: new Date(),
         endDate: new Date(),
-        status: 'done',
+        status: 'closed',
         color: '#3b82f6',
         displayStartDate: new Date(),
         displayEndDate: new Date(),

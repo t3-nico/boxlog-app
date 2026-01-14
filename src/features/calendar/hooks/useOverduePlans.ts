@@ -25,7 +25,7 @@ export interface OverduePlan {
  *
  * @description
  * フィルタ条件:
- * - status !== 'done' (todo または doing)
+ * - status !== 'closed' (todo または doing)
  * - endDate !== null
  * - endDate < now (期限切れ)
  * - 当日の場合: endDateが今日で、かつ現在時刻を過ぎているもの
@@ -40,7 +40,7 @@ export function useOverduePlans(plans: CalendarPlan[], date: Date): OverduePlan[
     return plans
       .filter((plan) => {
         // 完了済みは除外
-        if (plan.status === 'done') return false;
+        if (plan.status === 'closed') return false;
 
         // 終了日がないプランは除外
         if (!plan.endDate) return false;
@@ -69,7 +69,7 @@ export function useOverduePlans(plans: CalendarPlan[], date: Date): OverduePlan[
  *
  * @description
  * フィルタ条件:
- * - status !== 'done' (todo または doing)
+ * - status !== 'closed' (todo または doing)
  * - endDate !== null
  * - endDate < now (現在時刻より前に終了予定だった)
  */
@@ -80,7 +80,7 @@ export function useAllOverduePlans(plans: CalendarPlan[]): OverduePlan[] {
     return plans
       .filter((plan) => {
         // 完了済みは除外
-        if (plan.status === 'done') return false;
+        if (plan.status === 'closed') return false;
 
         // 終了日がないプランは除外
         if (!plan.endDate) return false;
