@@ -22,7 +22,7 @@ describe('grouping', () => {
         const items = [
           createMockItem({ id: '1', status: 'open' }),
           createMockItem({ id: '2', status: 'open' }),
-          createMockItem({ id: '3', status: 'done' }),
+          createMockItem({ id: '3', status: 'closed' }),
         ];
 
         const result = groupItems(items, null);
@@ -48,8 +48,8 @@ describe('grouping', () => {
         const items = [
           createMockItem({ id: '1', status: 'open' }),
           createMockItem({ id: '2', status: 'open' }),
-          createMockItem({ id: '3', status: 'done' }),
-          createMockItem({ id: '4', status: 'done' }),
+          createMockItem({ id: '3', status: 'closed' }),
+          createMockItem({ id: '4', status: 'closed' }),
         ];
 
         const result = groupItems(items, 'status');
@@ -57,35 +57,35 @@ describe('grouping', () => {
         // open, done の順序
         expect(result).toHaveLength(2);
         expect(result[0]?.groupKey).toBe('open');
-        expect(result[1]?.groupKey).toBe('done');
+        expect(result[1]?.groupKey).toBe('closed');
       });
 
       it('ステータスラベルが正しく設定される', () => {
         const items = [
           createMockItem({ id: '1', status: 'open' }),
-          createMockItem({ id: '2', status: 'done' }),
+          createMockItem({ id: '2', status: 'closed' }),
         ];
 
         const result = groupItems(items, 'status');
 
         const openGroup = result.find((g) => g.groupKey === 'open');
-        const doneGroup = result.find((g) => g.groupKey === 'done');
+        const doneGroup = result.find((g) => g.groupKey === 'closed');
 
         expect(openGroup?.groupLabel).toBe('Open');
-        expect(doneGroup?.groupLabel).toBe('Done');
+        expect(doneGroup?.groupLabel).toBe('Closed');
       });
 
       it('アイテム数が正しくカウントされる', () => {
         const items = [
           createMockItem({ id: '1', status: 'open' }),
           createMockItem({ id: '2', status: 'open' }),
-          createMockItem({ id: '3', status: 'done' }),
+          createMockItem({ id: '3', status: 'closed' }),
         ];
 
         const result = groupItems(items, 'status');
 
         const openGroup = result.find((g) => g.groupKey === 'open');
-        const doneGroup = result.find((g) => g.groupKey === 'done');
+        const doneGroup = result.find((g) => g.groupKey === 'closed');
 
         expect(openGroup?.count).toBe(2);
         expect(doneGroup?.count).toBe(1);

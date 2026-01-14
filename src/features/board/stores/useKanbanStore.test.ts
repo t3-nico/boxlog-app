@@ -48,7 +48,7 @@ describe('useKanbanStore', () => {
       const statuses = activeBoard?.columns.map((col) => col.status);
       expect(statuses).toContain('todo');
       expect(statuses).toContain('in_progress');
-      expect(statuses).toContain('done');
+      expect(statuses).toContain('closed');
     });
 
     it('初期状態でカードは空', () => {
@@ -298,7 +298,7 @@ describe('useKanbanStore', () => {
       const doingCards = useKanbanStore.getState().getCardsByStatus('in_progress');
       expect(doingCards.length).toBe(1);
 
-      const doneCards = useKanbanStore.getState().getCardsByStatus('done');
+      const doneCards = useKanbanStore.getState().getCardsByStatus('closed');
       expect(doneCards.length).toBe(0);
     });
 

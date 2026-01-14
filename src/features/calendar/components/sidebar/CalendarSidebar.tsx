@@ -119,7 +119,7 @@ export function CalendarSidebar() {
   ];
 
   return (
-    <SidebarShell title={t('sidebar.navigation.calendar')}>
+    <SidebarShell>
       <SidebarTabLayout tabs={tabs} defaultTab="view" />
     </SidebarShell>
   );

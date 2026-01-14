@@ -83,7 +83,8 @@
       "lastYear": "Same period last year",
       "export": "Export",
       "exportTooltip": "Export data",
-      "exportData": "Export Data"
+      "exportData": "Export Data",
+      "customRange": "Custom range..."
     }
   }
 }

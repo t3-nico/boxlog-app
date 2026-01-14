@@ -397,8 +397,10 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
           <div className="bg-surface-container relative hidden md:block">
             <NextImage
               src="/placeholder.svg"
-              alt=""
+              alt="Decorative background"
               fill
+              priority
+              sizes="(min-width: 768px) 50vw, 0vw"
               className="object-cover dark:brightness-[0.2] dark:grayscale"
             />
           </div>

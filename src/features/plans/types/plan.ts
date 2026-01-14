@@ -3,11 +3,11 @@
 /**
  * プランステータス（2段階）
  * - open: 未完了
- * - done: 完了
+ * - closed: 完了
  *
  * シンプルな2択。カレンダー配置の有無は start_time で判断。
  */
-export type PlanStatus = 'open' | 'done';
+export type PlanStatus = 'open' | 'closed';
 
 /**
  * 繰り返しタイプ（シンプル版）
@@ -43,7 +43,7 @@ export interface Plan {
   title: string;
   description: string | null;
   status: PlanStatus;
-  completed_at: string | null; // TIMESTAMPTZ型（完了時刻、status='done'時に自動設定）
+  completed_at: string | null; // TIMESTAMPTZ型（完了時刻、status='closed'時に自動設定）
   due_date: string | null; // DATE型（YYYY-MM-DD）
   start_time: string | null; // TIMESTAMPTZ型（ISO 8601）
   end_time: string | null; // TIMESTAMPTZ型（ISO 8601）

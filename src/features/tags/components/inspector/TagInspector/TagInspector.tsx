@@ -402,7 +402,7 @@ export function TagInspector() {
                     isLoading={isLoadingPlans}
                     onPlanClick={openPlanInspector}
                     onStatusToggle={(planId, currentStatus) => {
-                      const newStatus = currentStatus === 'done' ? 'open' : 'done';
+                      const newStatus = currentStatus === 'closed' ? 'open' : 'closed';
                       updatePlan.mutate({
                         id: planId,
                         data: { status: newStatus },

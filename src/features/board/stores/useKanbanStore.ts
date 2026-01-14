@@ -95,7 +95,7 @@ function createDefaultColumns(): KanbanColumn[] {
     {
       id: generateId(),
       title: 'Done',
-      status: 'done',
+      status: 'closed',
       cards: [],
       order: 2,
       wipLimit: undefined, // Doneは制限なし
@@ -209,7 +209,7 @@ export const useKanbanStore = create<KanbanStore>()(
                 movedCard.startedAt = now;
               }
               // Doneに移動した場合、completedAtを記録
-              if (targetColumn.status === 'done' && !movedCard.completedAt) {
+              if (targetColumn.status === 'closed' && !movedCard.completedAt) {
                 movedCard.completedAt = now;
               }
             }

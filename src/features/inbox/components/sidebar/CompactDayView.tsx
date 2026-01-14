@@ -340,7 +340,7 @@ export const CompactDayView = memo(function CompactDayView({
                       .map(({ hour, label }) => (
                         <div
                           key={hour}
-                          className="text-muted-foreground relative text-right text-[10px]"
+                          className="text-muted-foreground relative text-right text-xs"
                           style={{ height: COMPACT_HOUR_HEIGHT }}
                         >
                           <span className="absolute -top-2 right-1">{label}</span>
@@ -354,7 +354,7 @@ export const CompactDayView = memo(function CompactDayView({
                   {timeLabels.map(({ hour, label }) => (
                     <div
                       key={hour}
-                      className="text-muted-foreground relative text-right text-[10px]"
+                      className="text-muted-foreground relative text-right text-xs"
                       style={{ height: COMPACT_HOUR_HEIGHT }}
                     >
                       <span className="absolute -top-2 right-1">{hour > 0 ? label : ''}</span>
@@ -386,7 +386,7 @@ export const CompactDayView = memo(function CompactDayView({
                     className="bg-accent-container border-border flex w-full items-center justify-center border-b"
                     style={{ height: COMPACT_COLLAPSED_SLEEP_HEIGHT }}
                   >
-                    <span className="text-muted-foreground text-[10px]">
+                    <span className="text-muted-foreground text-xs">
                       {sleepHours.bedtime}:00 - {sleepHours.wakeTime}:00
                     </span>
                   </div>
@@ -475,7 +475,7 @@ export const CompactDayView = memo(function CompactDayView({
               {isTodayDate && !collapsedLayout && (
                 <>
                   <div
-                    className="bg-primary pointer-events-none absolute right-0 left-0 z-20 h-[2px]"
+                    className="bg-primary pointer-events-none absolute right-0 left-0 z-20 h-0.5"
                     style={{ top: currentTimePosition }}
                   />
                   <div
@@ -497,7 +497,7 @@ export const CompactDayView = memo(function CompactDayView({
                     onDragStart={(e) => handlePlanDragStart(e, plan.id)}
                     onDragEnd={handlePlanDragEnd}
                     className={cn(
-                      'absolute right-1 left-1 overflow-hidden rounded px-1 text-left text-[10px] leading-tight',
+                      'absolute right-1 left-1 overflow-hidden rounded px-1 text-left text-xs leading-tight',
                       'border-l-2 transition-colors',
                       'focus:ring-ring focus:ring-1 focus:outline-none',
                       onDrop && 'cursor-grab active:cursor-grabbing',

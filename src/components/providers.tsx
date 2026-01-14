@@ -26,8 +26,8 @@
 import dynamic from 'next/dynamic';
 import { useState } from 'react';
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { httpBatchLink, loggerLink } from '@trpc/client';
+import { MutationCache, QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { httpBatchLink, loggerLink, TRPCClientError } from '@trpc/client';
 import superjson from 'superjson';
 
 // React Query DevTools: 本番環境では完全に除外（バンドルサイズ削減）
@@ -95,10 +95,48 @@ interface ProvidersProps {
   children: React.ReactNode;
 }
 
+/**
+ * 認証エラーかどうかを判定
+ * UNAUTHORIZED(401)エラーの場合はログインページへリダイレクト
+ */
+function isAuthError(error: unknown): boolean {
+  if (error instanceof TRPCClientError) {
+    // tRPCエラーの場合、data.codeまたはHTTPステータスをチェック
+    const code = error.data?.code;
+    if (code === 'UNAUTHORIZED') return true;
+
+    // HTTPステータスコードもチェック
+    const httpStatus = error.data?.httpStatus;
+    if (httpStatus === 401) return true;
+  }
+  return false;
+}
+
+/**
+ * 認証エラー時にログインページへリダイレクト
+ */
+function handleAuthError(error: unknown): void {
+  if (typeof window === 'undefined') return;
+
+  if (isAuthError(error)) {
+    // 現在のパスを保存して、ログイン後にリダイレクトできるようにする
+    const currentPath = window.location.pathname + window.location.search;
+    const loginUrl = `/auth/login?redirect=${encodeURIComponent(currentPath)}`;
+    window.location.href = loginUrl;
+  }
+}
+
 export function Providers({ children }: ProvidersProps) {
   const [queryClient] = useState(
     () =>
       new QueryClient({
+        // グローバルエラーハンドリング: 認証エラー時は自動でログインページへリダイレクト
+        queryCache: new QueryCache({
+          onError: (error) => handleAuthError(error),
+        }),
+        mutationCache: new MutationCache({
+          onError: (error) => handleAuthError(error),
+        }),
         defaultOptions: {
           queries: {
             staleTime: 5 * 60 * 1000, // 5分（一般的なデータのデフォルト）
@@ -106,14 +144,20 @@ export function Providers({ children }: ProvidersProps) {
             refetchOnWindowFocus: true, // 業界標準：タブ切り替え時にstaleなデータのみ再フェッチ
             refetchOnReconnect: 'always',
             retry: (failureCount, error) => {
-              // エラーによってリトライ戦略を変更
+              // 認証エラーはリトライしない（すぐにリダイレクト）
+              if (isAuthError(error)) return false;
+              // 404もリトライしない
               if (error && 'status' in error && error.status === 404) return false;
               return failureCount < 3;
             },
             retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
           },
           mutations: {
-            retry: 1,
+            retry: (failureCount, error) => {
+              // 認証エラーはリトライしない
+              if (isAuthError(error)) return false;
+              return failureCount < 1;
+            },
           },
         },
       }),

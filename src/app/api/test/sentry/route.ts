@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
         try {
           throw new Error('Test error from BoxLog API');
         } catch (error) {
-          Sentry.captureException(error, {
+          const eventId = Sentry.captureException(error, {
             tags: {
               test: true,
               endpoint: 'test-sentry',
@@ -53,10 +53,13 @@ export async function GET(request: NextRequest) {
               url: request.url,
             },
           });
+          // フラッシュして確実に送信
+          await Sentry.flush(2000);
           return NextResponse.json({
             success: true,
             sent: 'error',
             message: 'Test error sent to Sentry',
+            eventId: eventId || 'none',
           });
         }
 
@@ -106,16 +109,32 @@ export async function GET(request: NextRequest) {
           message: 'Breadcrumb added and message sent to Sentry',
         });
 
+      case 'debug':
+        // Sentry初期化状態の確認
+        const client = Sentry.getClient();
+        const dsnValue = process.env.SENTRY_DSN || process.env.NEXT_PUBLIC_SENTRY_DSN;
+        return NextResponse.json({
+          initialized: !!client,
+          sentryDsn: process.env.SENTRY_DSN ? 'set' : 'not set',
+          nextPublicSentryDsn: process.env.NEXT_PUBLIC_SENTRY_DSN ? 'set' : 'not set',
+          dsnPrefix: dsnValue?.substring(0, 30) || 'none',
+          environment: process.env.VERCEL_ENV || process.env.NODE_ENV,
+          nodeEnv: process.env.NODE_ENV,
+          nextRuntime: process.env.NEXT_RUNTIME || 'not set',
+          vercelEnv: process.env.VERCEL_ENV || 'not set',
+        });
+
       default:
         // 使用方法の表示
         return NextResponse.json({
-          available_types: ['message', 'error', 'performance', 'breadcrumb'],
+          available_types: ['message', 'error', 'performance', 'breadcrumb', 'debug'],
           usage: '/api/test/sentry?type=<type>',
           examples: [
             '/api/test/sentry?type=message',
             '/api/test/sentry?type=error',
             '/api/test/sentry?type=performance',
             '/api/test/sentry?type=breadcrumb',
+            '/api/test/sentry?type=debug',
           ],
           note: 'Check Sentry dashboard at https://sentry.io after 5 minutes',
         });

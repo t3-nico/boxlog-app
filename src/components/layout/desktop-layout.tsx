@@ -4,12 +4,11 @@ import dynamic from 'next/dynamic';
 import { usePathname } from 'next/navigation';
 import { Suspense, useMemo } from 'react';
 
+import { PageHeader } from '@/components/common/PageHeader';
 import { useAuthStore } from '@/features/auth/stores/useAuthStore';
 import { CalendarSidebar } from '@/features/calendar/components/sidebar/CalendarSidebar';
 import { InboxSidebarWrapper } from '@/features/inbox/components/InboxSidebarWrapper';
-import { AppBar } from '@/features/navigation/components/appbar';
 import { AppSidebar } from '@/features/navigation/components/sidebar/app-sidebar';
-import { useSidebarStore } from '@/features/navigation/stores/useSidebarStore';
 import { SettingsSidebar } from '@/features/settings/components/sidebar';
 import { StatsSidebar } from '@/features/stats';
 
@@ -45,14 +44,11 @@ function StatusBarItemSkeleton() {
 /**
  * デスクトップ用レイアウト
  *
- * 3カラムレイアウト:
- * - AppBar（64px、常に表示）
- * - Sidebar（240px、開閉可能）← ページごとに動的切り替え
- * - MainContent + Inspector
+ * 2カラムレイアウト:
+ * - Sidebar（240px、常に表示）← ページごとに動的切り替え
+ * - PageHeader + MainContent + Inspector
  */
 export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
-  // selector化: isOpenのみ監視（toggle変更時の再レンダリングを防止）
-  const isOpen = useSidebarStore((state) => state.isOpen);
   const pathname = usePathname();
   const user = useAuthStore((state) => state.user);
   const isAuthenticated = !!user;
@@ -85,34 +81,28 @@ export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-      {/* 上部エリア（AppBar + サイドバー + コンテンツ） */}
+      {/* 上部エリア（サイドバー + コンテンツ） */}
       <div className="flex min-h-0 flex-1">
-        {/* AppBar（56px、固定幅、常に表示） */}
-        <div className="w-14 shrink-0">
-          <AppBar />
+        {/* Sidebar（240px固定、常に表示）← ページごとに動的切り替え */}
+        <div className="h-full w-60 shrink-0">
+          <SidebarComponent />
         </div>
 
-        {/* サイドバー + コンテンツ */}
-        <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
-          <div className="flex min-h-0 flex-1">
-            {/* Sidebar（240px固定、開閉可能）← ページごとに動的切り替え */}
-            {isOpen && (
-              <div className="h-full w-60 shrink-0">
-                <SidebarComponent />
-              </div>
-            )}
+        {/* PageHeader + Main Content + Inspector */}
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+          {/* PageHeader（Calendar/Statsは独自ヘッダーを持つため非表示） */}
+          {currentPage !== 'calendar' && currentPage !== 'stats' && <PageHeader />}
 
-            {/* Main Content + Inspector（自動的に残りのスペースを使用） */}
-            <div className="min-w-0 flex-1 overflow-hidden">
-              <div className="relative flex h-full min-h-0 flex-col">
-                <MainContentWrapper>{children}</MainContentWrapper>
-              </div>
+          {/* Main Content + Inspector（自動的に残りのスペースを使用） */}
+          <div className="min-w-0 flex-1 overflow-hidden">
+            <div className="relative flex h-full min-h-0 flex-col">
+              <MainContentWrapper>{children}</MainContentWrapper>
             </div>
           </div>
         </div>
       </div>
 
-      {/* ステータスバー（全幅、AppBarの下まで伸びる、ログイン後のみ表示） */}
+      {/* ステータスバー（全幅、ログイン後のみ表示） */}
       {isAuthenticated ? (
         <StatusBar>
           <StatusBar.Left>

@@ -59,7 +59,7 @@
       "statusReady": "配置済み",
       "statusActive": "作業中",
       "statusWait": "待ち",
-      "statusDone": "完了",
+      "statusClosed": "完了",
       "statusCancel": "中止",
       "dueDate": "期限",
       "archive": "アーカイブ",
@@ -260,6 +260,16 @@
   },
   "search": {
     "shortcut": "⌘K"
+  },
+  "createNew": {
+    "plan": "予定を作成",
+    "task": "タスクを作成",
+    "defaultPlanTitle": "新しい予定"
+  },
+  "comingSoon": "近日公開",
+  "userProfile": {
+    "comingSoon": "プロフィールページは近日公開予定です",
+    "notFound": "ユーザーが見つかりません"
   },
   "theme": {
     "light": "ライトモード",

@@ -54,11 +54,11 @@ describe('useInboxFilterStore', () => {
 
     it('複数のステータスを設定できる', () => {
       act(() => {
-        useInboxFilterStore.getState().setStatus(['open', 'done']);
+        useInboxFilterStore.getState().setStatus(['open', 'closed']);
       });
 
       const { status } = useInboxFilterStore.getState();
-      expect(status).toEqual(['open', 'done']);
+      expect(status).toEqual(['open', 'closed']);
     });
 
     it('空配列で解除できる', () => {
@@ -195,7 +195,7 @@ describe('useInboxFilterStore', () => {
     it('全てのフィルターを初期状態に戻す', () => {
       // 各種フィルターを設定
       act(() => {
-        useInboxFilterStore.getState().setStatus(['open', 'done']);
+        useInboxFilterStore.getState().setStatus(['open', 'closed']);
         useInboxFilterStore.getState().setTags(['tag-1']);
         useInboxFilterStore.getState().setSearch('検索');
         useInboxFilterStore.getState().setAssignee('user-1');

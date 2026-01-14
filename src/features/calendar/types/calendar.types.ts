@@ -29,7 +29,7 @@ export interface CalendarPlan {
   description?: string | undefined;
   startDate: Date | null;
   endDate: Date | null;
-  status: 'open' | 'done';
+  status: 'open' | 'closed';
   color: string;
   plan_number?: number | null | undefined; // プラン番号
   completed_at?: string | null | undefined; // 完了日時
@@ -188,7 +188,7 @@ export interface CreatePlanInput {
   plannedStart?: Date;
   plannedEnd?: Date;
   allDay?: boolean;
-  status?: 'todo' | 'doing' | 'done';
+  status?: 'todo' | 'doing' | 'closed';
   priority?: 'urgent' | 'important' | 'necessary' | 'delegate' | 'optional';
   color?: string;
   location?: string;

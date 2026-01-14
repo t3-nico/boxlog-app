@@ -3,6 +3,7 @@
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
+import { PageHeader } from '@/components/common/PageHeader';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { CalendarSidebar } from '@/features/calendar/components/sidebar/CalendarSidebar';
 import { InboxSidebar } from '@/features/inbox/components/InboxSidebar';
@@ -22,12 +23,13 @@ interface MobileLayoutProps {
  * モバイル用レイアウト
  *
  * **構成**:
+ * - PageHeader（ナビゲーション + 検索）
  * - Sheet（左オーバーレイ）でサイドバーを表示
  * - MainContent
  *
  * **ドロワー仕様**:
  * - モーダル動作（オーバーレイシェードで親要素を覆う）
- * - オーバーレイまたはハンバーガーメニューで開閉
+ * - ハンバーガーメニューで開閉
  * - エレベーション付き
  */
 export function MobileLayout({ children, locale }: MobileLayoutProps) {
@@ -82,8 +84,12 @@ export function MobileLayout({ children, locale }: MobileLayoutProps) {
         </SheetContent>
       </Sheet>
 
-      {/* Main Content */}
+      {/* PageHeader + Main Content */}
       <div className="flex h-full flex-1 flex-col">
+        {/* PageHeader（Calendarは独自ヘッダーを持つため非表示） */}
+        {!isCalendarPage && <PageHeader />}
+
+        {/* Main Content */}
         <MainContentWrapper>{children}</MainContentWrapper>
       </div>
     </>

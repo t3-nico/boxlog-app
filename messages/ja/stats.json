@@ -83,7 +83,8 @@
       "lastYear": "前年同期",
       "export": "エクスポート",
       "exportTooltip": "データをエクスポート",
-      "exportData": "データをエクスポート"
+      "exportData": "データをエクスポート",
+      "customRange": "カスタム範囲..."
     }
   }
 }

@@ -12,8 +12,8 @@ export default function InternalServerErrorPage() {
   return (
     <div className="mx-auto flex min-h-dvh flex-col items-center justify-center gap-8 p-8 md:gap-12 md:p-16">
       <Image
-        src="https://ui.shadcn.com/placeholder.svg"
-        alt="placeholder image"
+        src="/placeholder.svg"
+        alt="Error illustration"
         width={960}
         height={540}
         priority

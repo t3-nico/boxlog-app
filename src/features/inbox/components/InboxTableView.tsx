@@ -57,7 +57,7 @@ export function InboxTableView() {
   // ステータス別件数取得
   const { data: stats } = api.plans.getStats.useQuery();
   const openCount = stats?.byStatus?.open ?? 0;
-  const doneCount = stats?.byStatus?.done ?? 0;
+  const closedCount = stats?.byStatus?.closed ?? 0;
 
   // フィルター関連：必要な値のみselectorで取得
   const filterStatus = useInboxFilterStore((state) => state.status);
@@ -114,7 +114,8 @@ export function InboxTableView() {
   const clearSort = useInboxSortStore((state) => state.clearSort);
 
   // データ取得（ソートオプション付き）
-  const { items, isPending, error } = useInboxData(
+  // 認証エラーはグローバルハンドラーで自動リダイレクトされるため、errorは不要
+  const { items, isPending } = useInboxData(
     {
       status: filterStatus[0] as PlanStatus | undefined,
       search: filterSearch,
@@ -135,7 +136,7 @@ export function InboxTableView() {
   // 選択数
   const selectedCount = selectedIds.size;
 
-  // アクションハンドラー: ステータス一括変更（Open/Done）
+  // アクションハンドラー: ステータス一括変更（Open/Closed）
   const handleStatusChange = async (status: PlanStatus) => {
     const ids = Array.from(selectedIds);
     if (ids.length === 0) return;
@@ -297,18 +298,6 @@ export function InboxTableView() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterStatus, filterSearch]);
 
-  // エラー表示
-  if (error) {
-    return (
-      <div className="flex h-full items-center justify-center">
-        <div className="border-destructive bg-destructive-container text-destructive rounded-xl border p-4">
-          <p className="font-medium">エラーが発生しました</p>
-          <p className="mt-1 text-sm">{error.message}</p>
-        </div>
-      </div>
-    );
-  }
-
   // ローディング表示（初回ロード時のみ）
   // データ更新中（リフェッチ中）はUIを維持してTableNavigationの再マウントを防ぐ
   if (isPending && items.length === 0) {
@@ -346,28 +335,28 @@ export function InboxTableView() {
         />
       ) : (
         <div className="flex h-12 shrink-0 items-center justify-between gap-2 px-4 py-2">
-          {/* 左側: Open/Done切り替えタブ */}
+          {/* 左側: Open/Closed切り替えタブ */}
           <Tabs
             value={filterStatus[0] || 'open'}
             onValueChange={(value) => setStatus([value as PlanStatus])}
           >
-            <TabsList className="bg-secondary h-8 rounded-lg p-0.5">
+            <TabsList className="bg-secondary border-border h-10 rounded-full border p-1">
               <TabsTrigger
                 value="open"
-                className="data-[state=inactive]:hover:bg-state-hover data-[state=active]:bg-background data-[state=active]:text-foreground h-7 gap-1.5 rounded-md px-3 text-xs"
+                className="data-[state=inactive]:hover:bg-state-hover data-[state=active]:bg-background data-[state=active]:text-foreground h-8 gap-2 rounded-full px-4 text-sm"
               >
                 Open
-                <span className="bg-background flex size-4 items-center justify-center rounded-full text-[10px] tabular-nums">
+                <span className="bg-background flex size-5 items-center justify-center rounded-full text-xs tabular-nums">
                   {openCount}
                 </span>
               </TabsTrigger>
               <TabsTrigger
-                value="done"
-                className="data-[state=inactive]:hover:bg-state-hover data-[state=active]:bg-background data-[state=active]:text-foreground h-7 gap-1.5 rounded-md px-3 text-xs"
+                value="closed"
+                className="data-[state=inactive]:hover:bg-state-hover data-[state=active]:bg-background data-[state=active]:text-foreground h-8 gap-2 rounded-full px-4 text-sm"
               >
-                Done
-                <span className="bg-background flex size-4 items-center justify-center rounded-full text-[10px] tabular-nums">
-                  {doneCount}
+                Closed
+                <span className="bg-background flex size-5 items-center justify-center rounded-full text-xs tabular-nums">
+                  {closedCount}
                 </span>
               </TabsTrigger>
             </TabsList>

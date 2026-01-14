@@ -1,13 +1,7 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-
-import { ChevronLeft } from 'lucide-react';
-
-import { PageHeader } from '@/components/common/PageHeader';
-import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useTranslations } from 'next-intl';
+import { usePageTitle } from '@/features/navigation/hooks/usePageTitle';
 
 interface SettingsPageWrapperProps {
   title: string;
@@ -17,34 +11,17 @@ interface SettingsPageWrapperProps {
 /**
  * 設定ページの共通ラッパー
  *
- * - ヘッダー（PageHeaderを使用、モバイルは戻るボタン）
+ * - タイトル管理（usePageTitleでZustand Storeにセット）
  * - スクロール可能なコンテンツ領域
+ *
+ * PageHeaderはレイアウト層（desktop-layout/mobile-layout）でレンダリングされる
  */
 export function SettingsPageWrapper({ title, children }: SettingsPageWrapperProps) {
-  const router = useRouter();
-  const t = useTranslations();
+  // タイトルをZustand Storeにセット
+  usePageTitle(title);
 
   return (
     <div className="flex h-full flex-col">
-      {/* PC: 共通PageHeader（背景は親のbg-surface-brightを継承） */}
-      <div className="hidden md:block">
-        <PageHeader title={title} showMobileMenu={false} className="bg-transparent px-6" />
-      </div>
-
-      {/* モバイル: 戻るボタン付きヘッダー（背景は親を継承） */}
-      <header className="flex h-12 shrink-0 items-center gap-2 px-6 py-2 md:hidden">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => router.back()}
-          className="-ml-2 size-8"
-          aria-label={t('common.back')}
-        >
-          <ChevronLeft className="size-5" />
-        </Button>
-        <h1 className="truncate text-lg font-semibold">{title}</h1>
-      </header>
-
       {/* コンテンツ */}
       <ScrollArea className="flex-1">
         <div className="p-6">{children}</div>

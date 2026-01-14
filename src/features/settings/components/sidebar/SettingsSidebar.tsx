@@ -25,7 +25,7 @@ export function SettingsSidebar() {
   )?.id;
 
   return (
-    <SidebarShell title={t('settings.dialog.title')}>
+    <SidebarShell>
       {/* カテゴリリスト */}
       <nav className="flex-1 overflow-y-auto px-2 py-2">
         <div className="flex flex-col gap-1">

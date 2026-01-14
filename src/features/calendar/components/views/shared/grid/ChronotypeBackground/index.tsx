@@ -1,0 +1,1 @@
+export { ChronotypeBackground } from './ChronotypeBackground';

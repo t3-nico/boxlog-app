@@ -56,7 +56,7 @@ export function SettingsLayoutClient({ children }: { children: React.ReactNode }
   };
 
   return (
-    <div className="bg-background flex h-full w-full">
+    <div className="flex h-full w-full">
       {/* モバイル用サイドバー: カテゴリ未選択時のみ表示（PCでは非表示） */}
       <aside
         className={cn(
@@ -125,7 +125,7 @@ export function SettingsLayoutClient({ children }: { children: React.ReactNode }
       {/* メインコンテンツ */}
       <div
         className={cn(
-          'bg-surface-bright flex h-full min-h-0 flex-1 flex-col overflow-hidden',
+          'flex h-full min-h-0 flex-1 flex-col overflow-hidden',
           // モバイル: カテゴリ未選択時は非表示、PC: 常時表示
           !isInCategory && 'hidden md:flex',
         )}

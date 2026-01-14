@@ -3,8 +3,8 @@
 import { usePathname } from 'next/navigation';
 import { useEffect, type ReactNode } from 'react';
 
-import { PageHeader } from '@/components/common/PageHeader';
 import { useInboxViewStore } from '@/features/inbox/stores/useInboxViewStore';
+import { usePageTitle } from '@/features/navigation/hooks/usePageTitle';
 
 interface InboxLayoutProps {
   children: ReactNode;
@@ -43,10 +43,8 @@ export default function InboxLayout({ children }: InboxLayoutProps) {
     setActiveView(viewId);
   }, [pathname, setActiveView]);
 
-  return (
-    <div className="flex h-full min-h-0 flex-1 flex-col overflow-hidden">
-      <PageHeader title={activeView?.name || 'Inbox'} />
-      {children}
-    </div>
-  );
+  // タイトルをZustand Storeにセット（PageHeaderはレイアウト層でレンダリング）
+  usePageTitle(activeView?.name || 'Inbox');
+
+  return <div className="flex h-full min-h-0 flex-1 flex-col overflow-hidden">{children}</div>;
 }

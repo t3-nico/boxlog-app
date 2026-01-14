@@ -757,7 +757,7 @@ export const ScrollableCalendarLayout = ({
                     <>
                       <div
                         className={cn(
-                          'pointer-events-none absolute z-40 h-[2px] shadow-sm',
+                          'pointer-events-none absolute z-40 h-0.5 shadow-sm',
                           !currentTimeLineColor && 'bg-primary',
                         )}
                         style={{
@@ -843,7 +843,7 @@ export const ScrollableCalendarLayout = ({
                       {/* 横線 - 今日の列のみ濃く */}
                       <div
                         className={cn(
-                          'pointer-events-none absolute z-40 h-[2px] shadow-sm',
+                          'pointer-events-none absolute z-40 h-0.5 shadow-sm',
                           !currentTimeLineColor && 'bg-primary',
                         )}
                         style={{

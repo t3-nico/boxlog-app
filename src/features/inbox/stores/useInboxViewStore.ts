@@ -54,7 +54,7 @@ const DEFAULT_VIEWS: InboxView[] = [
   },
   {
     id: 'default-archive',
-    name: 'アーカイブ',
+    name: 'Archive',
     filters: {
       archived: true,
     },
@@ -169,7 +169,7 @@ export const useInboxViewStore = create<InboxViewState>()(
       },
     }),
     {
-      name: 'inbox-view-storage-v4', // バージョンアップ（displayMode削除）
+      name: 'inbox-view-storage-v5', // v5: View名を英語に統一
     },
   ),
 );

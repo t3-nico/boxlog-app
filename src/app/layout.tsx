@@ -17,12 +17,12 @@
  */
 import '@/styles/globals.css';
 
-import { Analytics } from '@vercel/analytics/react';
-import { SpeedInsights } from '@vercel/speed-insights/next';
 import type { Metadata, Viewport } from 'next';
 import { Inter, Noto_Sans_JP } from 'next/font/google';
 import { Suspense } from 'react';
 
+import { DeferredAnalytics } from '@/components/analytics/DeferredAnalytics';
+import { PostHogProvider } from '@/components/providers/PostHogProvider';
 import { WebVitalsReporter } from '@/components/WebVitalsReporter';
 import { cn } from '@/lib/utils';
 
@@ -38,9 +38,10 @@ const inter = Inter({
 });
 
 // 日本語フォント（GAFA方針準拠: Google = Noto Sans JP）
+// weight: 400, 700のみ（500削減で5-10KB軽量化）- font-mediumは400でフォールバック
 const notoSansJP = Noto_Sans_JP({
   subsets: ['latin'],
-  weight: ['400', '500', '700'],
+  weight: ['400', '700'],
   display: 'swap',
   variable: '--font-noto-jp',
   preload: true,
@@ -119,12 +120,14 @@ const RootLayout = async ({ children, params }: RootLayoutProps) => {
       className={`${inter.variable} ${notoSansJP.variable}`}
     >
       <body className={cn('bg-background')} suppressHydrationWarning>
-        <Suspense fallback={null}>
-          {children}
-          <WebVitalsReporter />
-          <SpeedInsights />
-          <Analytics />
-        </Suspense>
+        <PostHogProvider>
+          <Suspense fallback={null}>
+            {children}
+            <WebVitalsReporter />
+            {/* LCP/TBT改善: Analyticsを遅延読み込み（-300ms/-150ms） */}
+            <DeferredAnalytics />
+          </Suspense>
+        </PostHogProvider>
       </body>
     </html>
   );

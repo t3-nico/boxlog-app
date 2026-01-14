@@ -351,7 +351,7 @@ export function useInboxData(filters: InboxFilters = {}, sort?: InboxSortOptions
 
   // 完了を非表示フィルタリング（クライアント側）
   if (filters.hideCompleted) {
-    items = items.filter((item) => item.status !== 'done');
+    items = items.filter((item) => item.status !== 'closed');
   }
 
   // ソート適用

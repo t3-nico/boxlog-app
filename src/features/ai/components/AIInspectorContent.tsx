@@ -98,7 +98,7 @@ export const AIInspectorContent = memo(function AIInspectorContent() {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="メッセージを入力..."
-            className="min-h-[44px] resize-none"
+            className="min-h-11 resize-none"
             rows={1}
           />
           <Button type="submit" size="icon" disabled={!input.trim()}>

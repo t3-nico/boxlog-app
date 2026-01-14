@@ -21,9 +21,9 @@ const FILTER_PATTERNS = {
 };
 
 const STATUS_MAP: Record<string, PlanStatus> = {
-  done: 'done',
-  completed: 'done',
-  complete: 'done',
+  done: 'closed',
+  completed: 'closed',
+  complete: 'closed',
   open: 'open',
   todo: 'open', // 後方互換: 旧構文対応
   pending: 'open',

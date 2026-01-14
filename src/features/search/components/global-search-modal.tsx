@@ -211,7 +211,7 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
           case 'this_week':
             return dueDate >= today && dueDate < weekEnd;
           case 'overdue':
-            return dueDate < today && plan.status !== 'done';
+            return dueDate < today && plan.status !== 'closed';
           case 'no_due_date':
             return false;
           default:

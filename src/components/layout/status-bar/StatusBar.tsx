@@ -39,7 +39,7 @@ export function StatusBar({ children, className }: StatusBarProps) {
         // レイアウト（20px = 1.25rem）、縮小防止
         'flex h-5 w-full shrink-0 items-center justify-between',
         // 背景・ボーダー
-        'border-border bg-surface-dim border-t',
+        'border-border bg-surface-container border-t',
         // パディング（8pxグリッド準拠）
         'px-4',
         // テキストスタイル（12px）

@@ -492,7 +492,7 @@ export function DataTable<T>({
                 })
               : // 通常表示
                 paginatedData.map((item, index) => renderRow(item, index))}
-            {!isGrouped && extraRows}
+            {extraRows}
             {/* 空状態: データがなく、extraRowsもない場合にemptyStateを表示 */}
             {isEmpty && emptyState && (
               <TableRow>
