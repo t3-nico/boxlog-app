@@ -1,11 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { acceptAllCookies, acceptNecessaryOnly, needsCookieConsent } from '@/lib/cookie-consent';
 import { useLocale, useTranslations } from 'next-intl';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 /**
  * Cookie同意バナー
@@ -14,9 +15,11 @@ import Link from 'next/link';
  *
  * 機能：
  * - 初回訪問時のみ表示（同意済みの場合は非表示）
+ * - authページでは非表示（LCP改善: 認証後に表示）
  * - 3つの選択肢：すべて同意、必須のみ、カスタマイズ
  * - 固定位置（画面下部）
  * - レスポンシブ対応
+ * - LCP改善のため遅延表示（requestIdleCallback後）
  *
  * 法的準拠：
  * - GDPR Article 7: 同意条件
@@ -27,17 +30,36 @@ import Link from 'next/link';
  * @see /src/lib/cookie-consent.ts - Cookie管理機能
  * @see /src/app/legal/cookies - Cookie設定ページ
  */
-// SSR対応の遅延初期化
-const getInitialShowBanner = (): boolean => {
-  if (typeof window === 'undefined') return false;
-  return needsCookieConsent();
-};
-
 export function CookieConsentBanner() {
   const t = useTranslations();
   const locale = useLocale();
-  // 遅延初期化でクッキー同意状態を確認
-  const [showBanner, setShowBanner] = useState(getInitialShowBanner);
+  const pathname = usePathname();
+  // LCP改善: 初期値falseで遅延表示
+  const [showBanner, setShowBanner] = useState(false);
+
+  // LCP改善: authページでは非表示（認証後のページで表示）
+  const isAuthPage = pathname?.includes('/auth');
+
+  // LCP改善: requestIdleCallbackで遅延チェック
+  useEffect(() => {
+    // authページではスキップ
+    if (isAuthPage) return;
+
+    const checkConsent = () => {
+      if (needsCookieConsent()) {
+        setShowBanner(true);
+      }
+    };
+
+    if ('requestIdleCallback' in window) {
+      const handle = requestIdleCallback(checkConsent, { timeout: 2000 });
+      return () => cancelIdleCallback(handle);
+    } else {
+      // フォールバック: 1秒後にチェック
+      const timer = setTimeout(checkConsent, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [isAuthPage]);
 
   const handleAcceptAll = () => {
     acceptAllCookies();

@@ -1,0 +1,10 @@
+{
+  "onboarding": {
+    "banner": {
+      "message": "Set up your focus hours to personalize your calendar",
+      "setup": "Set up",
+      "dismiss": "Dismiss",
+      "ariaLabel": "Onboarding banner"
+    }
+  }
+}

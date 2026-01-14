@@ -1,0 +1,10 @@
+{
+  "onboarding": {
+    "banner": {
+      "message": "集中時間帯を設定して、カレンダーをパーソナライズ",
+      "setup": "設定する",
+      "dismiss": "閉じる",
+      "ariaLabel": "オンボーディングバナー"
+    }
+  }
+}
