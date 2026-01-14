@@ -284,6 +284,36 @@ export const myRouter = createTRPCRouter({
 
 ---
 
+## 📈 パフォーマンス監視の原則
+
+**大前提: 平均は見ない。p95だけを見る。**
+
+### 速度指標（p95で判断）
+
+| 指標 | 目標 | 意味 |
+|------|------|------|
+| **LCP** | ≤ 2.5s | 画面表示の体感速度 |
+| **INP** | ≤ 200ms | 操作への応答速度 |
+| **API latency** | ≤ 300ms | バックエンド処理速度 |
+| **DBクエリ** | ≤ 100ms | 基礎体力 |
+
+### 安定性指標
+
+| 指標 | 目標 |
+|------|------|
+| 主要導線エラー率 | < 0.1% |
+| p95悪化時 | **改善Issue必須** |
+
+### 行動ルール
+
+- p95が悪化 → 必ずIssueを作成
+- p95が良化 → 正解パターンとして記録
+- 平均値は参考程度（判断には使わない）
+
+**詳細**: [`docs/performance/PERFORMANCE_MONITORING_PRINCIPLES.md`](docs/performance/PERFORMANCE_MONITORING_PRINCIPLES.md)
+
+---
+
 ## 📊 開発の優先順位
 
 ```
@@ -299,5 +329,5 @@ export const myRouter = createTRPCRouter({
 
 ---
 
-**📖 最終更新**: 2026-01-07 | **バージョン**: v11.8
+**📖 最終更新**: 2026-01-13 | **バージョン**: v11.9
 **変更履歴**: [`docs/development/CLAUDE_MD_CHANGELOG.md`](docs/development/CLAUDE_MD_CHANGELOG.md)

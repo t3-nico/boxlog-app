@@ -1,8 +1,12 @@
-name: ⚡ Lighthouse CI (Post-merge)
+name: ⚡ Lighthouse CI
 
-# mainマージ後に本番URLのパフォーマンスを測定
+# PRとmain pushでパフォーマンスを測定
+# - PR時: 1回実行（高速化）、警告コメント
+# - main push: 3回実行（精度重視）
 on:
   push:
+    branches: [main]
+  pull_request:
     branches: [main]
   workflow_dispatch:
 
@@ -17,13 +21,14 @@ concurrency:
 # セキュリティ: 最小権限の原則
 permissions:
   contents: read
+  pull-requests: write # PRコメント用
 
 jobs:
   lighthouse:
     name: ⚡ Lighthouse CI
     runs-on: ubuntu-latest
     environment: development
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - name: 📥 Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
@@ -37,14 +42,21 @@ jobs:
       - name: 📦 Install dependencies
         run: npm ci
 
+      - name: 🔨 Build Next.js
+        run: npm run build
+        env:
+          # ビルドに必要な環境変数（ダミー値でOK）
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://dummy.supabase.co' }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'dummy-key' }}
+
       - name: ⚡ Run Lighthouse CI
         run: npm run perf:lighthouse
-        continue-on-error: true
+        continue-on-error: ${{ github.event_name == 'pull_request' }}
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
           LHCI_BUILD_CONTEXT__CURRENT_BRANCH: ${{ github.ref_name }}
-          # mainブランチは3回（精度重視）
-          LHCI_NUMBER_OF_RUNS: '3'
+          # PR: 1回（高速化）、main: 3回（精度重視）
+          LHCI_NUMBER_OF_RUNS: ${{ github.event_name == 'pull_request' && '1' || '3' }}
 
       - name: 📊 Upload Lighthouse reports
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
@@ -53,3 +65,56 @@ jobs:
           name: lighthouse-reports-${{ github.sha }}
           path: .lighthouseci
           retention-days: 30
+
+      - name: 💬 Comment on PR
+        if: github.event_name == 'pull_request' && always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+
+            // Lighthouse結果を読み取り
+            const lhciDir = '.lighthouseci';
+            let summary = '## ⚡ Lighthouse CI Results\n\n';
+
+            try {
+              const files = fs.readdirSync(lhciDir);
+              const manifestFile = files.find(f => f.startsWith('manifest'));
+
+              if (manifestFile) {
+                const manifest = JSON.parse(fs.readFileSync(path.join(lhciDir, manifestFile), 'utf8'));
+                const result = manifest[0];
+
+                if (result && result.summary) {
+                  const scores = result.summary;
+                  summary += '| Category | Score |\n';
+                  summary += '|----------|-------|\n';
+                  summary += `| Performance | ${Math.round(scores.performance * 100)} |\n`;
+                  summary += `| Accessibility | ${Math.round(scores.accessibility * 100)} |\n`;
+                  summary += `| Best Practices | ${Math.round(scores['best-practices'] * 100)} |\n`;
+                  summary += `| SEO | ${Math.round(scores.seo * 100)} |\n`;
+                  summary += '\n';
+
+                  // 警告表示
+                  if (scores.performance < 0.9) {
+                    summary += '⚠️ **Warning**: Performance score is below 90\n';
+                  }
+                  if (scores.accessibility < 0.95) {
+                    summary += '⚠️ **Warning**: Accessibility score is below 95\n';
+                  }
+                }
+              }
+            } catch (e) {
+              summary += '❌ Failed to parse Lighthouse results\n';
+            }
+
+            summary += '\n📊 [View full report in Artifacts](../actions/runs/' + context.runId + ')';
+
+            // PRにコメント
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: summary
+            });
