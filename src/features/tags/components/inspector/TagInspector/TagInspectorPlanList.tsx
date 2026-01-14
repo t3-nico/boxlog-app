@@ -117,9 +117,9 @@ export const TagInspectorPlanList = memo(function TagInspectorPlanList({
                     onStatusToggle(plan.id, currentStatus);
                   }}
                   className="hover:bg-state-hover shrink-0 rounded p-0.5 transition-colors"
-                  aria-label={currentStatus === 'done' ? '未完了に戻す' : '完了にする'}
+                  aria-label={currentStatus === 'closed' ? '未完了に戻す' : '完了にする'}
                 >
-                  {currentStatus === 'done' ? (
+                  {currentStatus === 'closed' ? (
                     <CheckCircle2 className="text-success size-4" />
                   ) : (
                     <Circle className="text-muted-foreground size-4" />

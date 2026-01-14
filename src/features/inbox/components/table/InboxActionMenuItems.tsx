@@ -103,12 +103,12 @@ export function InboxActionMenuItems({
         onClick: (i: InboxItem) => onStatusChange(i, 'open'),
       });
     }
-    if (item.status !== 'done') {
+    if (item.status !== 'closed') {
       statusActions.push({
-        key: 'status-done',
+        key: 'status-closed',
         icon: <CheckCircle2 className="text-success mr-2 size-4" />,
-        label: 'Done',
-        onClick: (i: InboxItem) => onStatusChange(i, 'done'),
+        label: 'Closed',
+        onClick: (i: InboxItem) => onStatusChange(i, 'closed'),
       });
     }
     if (statusActions.length > 0) {
