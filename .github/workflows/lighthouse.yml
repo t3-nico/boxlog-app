@@ -52,6 +52,9 @@ jobs:
       - name: ⚡ Run Lighthouse CI
         run: npm run perf:lighthouse
         env:
+          # ランタイムにも必要（SSR時にSupabaseクライアントが接続を試みる）
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://dummy.supabase.co' }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'dummy-key' }}
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
           LHCI_BUILD_CONTEXT__CURRENT_BRANCH: ${{ github.ref_name }}
           # PR: 1回（高速化）、main: 3回（精度重視）
