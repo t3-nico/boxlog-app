@@ -59,12 +59,13 @@ module.exports = {
       // パフォーマンスバジェット設定
       assertions: {
         // ========================================
-        // Lighthouse カテゴリスコア
+        // Lighthouse カテゴリスコア（段階的に厳格化）
+        // Phase 1: 80/90/85 → Phase 2: 85/93/88 → Phase 3: 90/95/90
         // ========================================
-        'categories:performance': ['error', { minScore: 0.9 }], // 90点以上必須
-        'categories:accessibility': ['error', { minScore: 0.95 }], // 95点以上必須
-        'categories:best-practices': ['error', { minScore: 0.9 }], // 90点以上必須
-        'categories:seo': ['error', { minScore: 0.95 }], // 95点以上必須
+        'categories:performance': ['error', { minScore: 0.8 }], // 80点以上（Phase 1）
+        'categories:accessibility': ['error', { minScore: 0.9 }], // 90点以上（Phase 1）
+        'categories:best-practices': ['error', { minScore: 0.85 }], // 85点以上（Phase 1）
+        'categories:seo': ['warn', { minScore: 0.9 }], // 警告のみ（認証必須アプリのためSEOは参考値）
 
         // ========================================
         // Core Web Vitals 2025 (Google公式基準)

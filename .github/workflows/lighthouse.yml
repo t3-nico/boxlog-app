@@ -51,7 +51,6 @@ jobs:
 
       - name: ⚡ Run Lighthouse CI
         run: npm run perf:lighthouse
-        continue-on-error: ${{ github.event_name == 'pull_request' }}
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
           LHCI_BUILD_CONTEXT__CURRENT_BRANCH: ${{ github.ref_name }}
