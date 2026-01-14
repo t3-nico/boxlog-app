@@ -31,7 +31,8 @@ export function OpenCardList({ sort }: OpenCardListProps) {
   const t = useTranslations('calendar.open');
 
   // status: 'open' のプランのみ取得
-  const { items, isPending, error } = useInboxData({ status: 'open' });
+  // 認証エラーはグローバルハンドラーで自動リダイレクトされるため、errorは不要
+  const { items, isPending } = useInboxData({ status: 'open' });
 
   // カレンダーフィルター（タグフィルター）
   const isPlanVisible = useCalendarFilterStore((state) => state.isPlanVisible);
@@ -70,16 +71,6 @@ export function OpenCardList({ sort }: OpenCardListProps) {
       <div className="flex flex-col items-center justify-center py-8">
         <LoadingSpinner size="lg" />
         <p className="text-muted-foreground mt-2 text-sm">{t('loading')}</p>
-      </div>
-    );
-  }
-
-  // エラー表示
-  if (error) {
-    return (
-      <div className="flex flex-col items-center justify-center py-8">
-        <p className="text-destructive text-sm font-medium">{t('error')}</p>
-        <p className="text-muted-foreground mt-1 text-xs">{error.message}</p>
       </div>
     );
   }
