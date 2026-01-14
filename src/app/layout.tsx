@@ -17,12 +17,11 @@
  */
 import '@/styles/globals.css';
 
-import { Analytics } from '@vercel/analytics/react';
-import { SpeedInsights } from '@vercel/speed-insights/next';
 import type { Metadata, Viewport } from 'next';
 import { Inter, Noto_Sans_JP } from 'next/font/google';
 import { Suspense } from 'react';
 
+import { DeferredAnalytics } from '@/components/analytics/DeferredAnalytics';
 import { PostHogProvider } from '@/components/providers/PostHogProvider';
 import { WebVitalsReporter } from '@/components/WebVitalsReporter';
 import { cn } from '@/lib/utils';
@@ -125,8 +124,8 @@ const RootLayout = async ({ children, params }: RootLayoutProps) => {
           <Suspense fallback={null}>
             {children}
             <WebVitalsReporter />
-            <SpeedInsights />
-            <Analytics />
+            {/* LCP/TBT改善: Analyticsを遅延読み込み（-300ms/-150ms） */}
+            <DeferredAnalytics />
           </Suspense>
         </PostHogProvider>
       </body>
