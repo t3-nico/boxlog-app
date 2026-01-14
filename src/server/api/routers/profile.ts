@@ -6,53 +6,11 @@
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
-import { isReservedPath } from '@/config/reserved-paths';
 import type { Database } from '@/lib/database.types';
 import { createClient } from '@/lib/supabase/server';
-import { createTRPCRouter, protectedProcedure, publicProcedure } from '@/server/api/trpc';
+import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc';
 
 export const profileRouter = createTRPCRouter({
-  /**
-   * ユーザー名で公開プロフィールを取得（認証不要）
-   * 公開プロフィールページ用
-   */
-  getByUsername: publicProcedure
-    .input(
-      z.object({
-        username: z.string().min(1).max(50),
-      }),
-    )
-    .query(async ({ ctx, input }) => {
-      const { username } = input;
-
-      // 予約パスの場合はnullを返す
-      if (isReservedPath(username)) {
-        return null;
-      }
-
-      const supabase = ctx.supabase;
-
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('id, username, full_name, avatar_url, bio, created_at')
-        .eq('username', username)
-        .single();
-
-      if (error) {
-        // ユーザーが見つからない場合はnullを返す（404ではなく）
-        if (error.code === 'PGRST116') {
-          return null;
-        }
-        console.error('Profile fetch by username error:', error);
-        throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'プロフィールの取得に失敗しました',
-        });
-      }
-
-      return data;
-    }),
-
   /**
    * プロフィール更新
    */
