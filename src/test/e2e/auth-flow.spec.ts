@@ -166,7 +166,7 @@ test.describe('Auth Flow - Signup Page', () => {
     await expect(indicatorArea).toBeVisible({ timeout: 10000 });
   });
 
-  test('パスワード一致時にサクセス表示がある', async ({ page, browserName }) => {
+  test('パスワード一致時にサクセス表示がある', async ({ page }) => {
     // 実際のUIの実装待ち - 現在はサクセス表示のclass名が異なる可能性
     test.skip(true, 'UIの成功表示の実装確認待ち');
 
