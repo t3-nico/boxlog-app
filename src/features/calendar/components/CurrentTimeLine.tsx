@@ -12,9 +12,9 @@ const currentTimeLineStyles = {
   label:
     'absolute bg-primary text-primary-foreground text-xs font-medium px-2 py-0.5 rounded-md shadow-sm top-[-11px] left-0',
   dot: 'absolute w-2.5 h-2.5 bg-primary rounded-full top-[-4px] shadow-sm',
-  line: 'absolute h-[2px] bg-primary shadow-sm',
+  line: 'absolute h-0.5 bg-primary shadow-sm',
   // 他の日用（薄い表示）
-  lineFaded: 'absolute h-[1px] bg-primary/50',
+  lineFaded: 'absolute h-px bg-primary/50',
 } as const;
 
 interface CurrentTimeLineProps {

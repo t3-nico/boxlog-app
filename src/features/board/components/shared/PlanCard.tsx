@@ -388,18 +388,20 @@ export function PlanCard({ item }: PlanCardProps) {
                 onClick={(e) => {
                   e.stopPropagation();
                   const currentStatus = normalizeStatus(item.status);
-                  const newStatus = currentStatus === 'done' ? 'open' : 'done';
+                  const newStatus = currentStatus === 'closed' ? 'open' : 'closed';
                   updatePlan.mutate({
                     id: item.id,
                     data: { status: newStatus },
                   });
                 }}
                 className="flex-shrink-0 transition-colors hover:opacity-80"
-                aria-label={normalizeStatus(item.status) === 'done' ? '未完了に戻す' : '完了にする'}
+                aria-label={
+                  normalizeStatus(item.status) === 'closed' ? '未完了に戻す' : '完了にする'
+                }
               >
                 {(() => {
                   const status = normalizeStatus(item.status);
-                  if (status === 'done') {
+                  if (status === 'closed') {
                     return <CheckCircle2 className="text-success h-4 w-4" />;
                   }
                   // open
