@@ -96,13 +96,20 @@ interface PostHogProviderProps {
 }
 
 export function PostHogProvider({ children }: PostHogProviderProps) {
-  useEffect(() => {
-    initPostHog();
-  }, []);
+  const pathname = usePathname();
 
-  // PostHogが初期化されていない場合でも子要素をレンダリング
+  // authページではPostHogを初期化しない（LCP/TBT改善: -800ms/-500ms）
+  const isAuthPage = pathname?.includes('/auth');
+
+  useEffect(() => {
+    if (!isAuthPage) {
+      initPostHog();
+    }
+  }, [isAuthPage]);
+
+  // PostHogが初期化されていない場合、またはauthページの場合は子要素のみをレンダリング
   const apiKey = process.env.NEXT_PUBLIC_POSTHOG_KEY;
-  if (!apiKey) {
+  if (!apiKey || isAuthPage) {
     return <>{children}</>;
   }
 
