@@ -31,7 +31,7 @@ export function HourlyDistributionChart() {
 
   if (isPending) {
     return (
-      <Card className="bg-background">
+      <Card>
         <CardHeader>
           <CardTitle>時間帯別分布</CardTitle>
           <CardDescription>いつ作業しているか</CardDescription>
@@ -45,7 +45,7 @@ export function HourlyDistributionChart() {
 
   if (!data || data.length === 0) {
     return (
-      <Card className="bg-background">
+      <Card>
         <CardHeader>
           <CardTitle>時間帯別分布</CardTitle>
           <CardDescription>いつ作業しているか</CardDescription>
@@ -67,7 +67,7 @@ export function HourlyDistributionChart() {
   const totalHours = data.reduce((sum, item) => sum + item.hours, 0);
 
   return (
-    <Card className="bg-background">
+    <Card>
       <CardHeader>
         <CardTitle>時間帯別分布</CardTitle>
         <CardDescription>

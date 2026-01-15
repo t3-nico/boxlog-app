@@ -41,7 +41,7 @@ export function YearlyHeatmap() {
 
   if (isPending) {
     return (
-      <Card className="bg-background">
+      <Card>
         <CardHeader>
           <CardTitle>年次グリッド</CardTitle>
           <CardDescription>年間の活動量</CardDescription>
@@ -54,7 +54,7 @@ export function YearlyHeatmap() {
   }
 
   return (
-    <Card className="bg-background">
+    <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <div>
           <CardTitle>年次グリッド</CardTitle>

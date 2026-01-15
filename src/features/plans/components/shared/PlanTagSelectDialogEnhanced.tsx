@@ -79,9 +79,9 @@ export function PlanTagSelectDialogEnhanced({
 
     // グループフィルタ
     if (selectedGroupId === 'uncategorized') {
-      filtered = filtered.filter((tag) => !tag.group_id);
+      filtered = filtered.filter((tag) => !tag.parent_id);
     } else if (selectedGroupId) {
-      filtered = filtered.filter((tag) => tag.group_id === selectedGroupId);
+      filtered = filtered.filter((tag) => tag.parent_id === selectedGroupId);
     }
 
     // 検索フィルタ
@@ -182,11 +182,11 @@ export function PlanTagSelectDialogEnhanced({
 
   // グループごとのタグ数
   const getGroupTagCount = (groupId: string) => {
-    return allTags.filter((tag) => tag.group_id === groupId && tag.is_active).length;
+    return allTags.filter((tag) => tag.parent_id === groupId && tag.is_active).length;
   };
 
   // 未分類タグ数
-  const uncategorizedCount = allTags.filter((tag) => !tag.group_id && tag.is_active).length;
+  const uncategorizedCount = allTags.filter((tag) => !tag.parent_id && tag.is_active).length;
 
   // アーカイブ数
   const archivedCount = allTags.filter((tag) => !tag.is_active).length;

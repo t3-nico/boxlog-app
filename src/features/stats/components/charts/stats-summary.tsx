@@ -20,7 +20,7 @@ export function StatsSummary() {
   if (isPending) {
     return (
       <div className="grid gap-4 md:grid-cols-3">
-        <Card className="bg-background">
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <Skeleton className="h-4 w-24" />
             <Skeleton className="size-4" />
@@ -30,7 +30,7 @@ export function StatsSummary() {
             <Skeleton className="mt-2 h-4 w-32" />
           </CardContent>
         </Card>
-        <Card className="bg-background">
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <Skeleton className="h-4 w-24" />
             <Skeleton className="size-4" />
@@ -40,7 +40,7 @@ export function StatsSummary() {
             <Skeleton className="mt-2 h-4 w-32" />
           </CardContent>
         </Card>
-        <Card className="bg-background">
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <Skeleton className="h-4 w-24" />
             <Skeleton className="size-4" />
@@ -63,7 +63,7 @@ export function StatsSummary() {
   return (
     <div className="grid gap-4 md:grid-cols-3">
       {/* 完了タスク */}
-      <Card className="bg-background">
+      <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">完了タスク</CardTitle>
           <CheckCircle2 className="text-muted-foreground size-4" />
@@ -75,7 +75,7 @@ export function StatsSummary() {
       </Card>
 
       {/* 今月の作業時間 */}
-      <Card className="bg-background">
+      <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">今月の作業時間</CardTitle>
           <Clock className="text-muted-foreground size-4" />
@@ -94,7 +94,7 @@ export function StatsSummary() {
       </Card>
 
       {/* 累計時間 */}
-      <Card className="bg-background">
+      <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">累計時間</CardTitle>
           {isPositive ? (

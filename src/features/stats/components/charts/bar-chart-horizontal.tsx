@@ -30,7 +30,7 @@ const chartConfig = {
 
 export function BarChartHorizontal() {
   return (
-    <Card className="bg-background">
+    <Card>
       <CardHeader>
         <CardTitle>時間帯別作業分布</CardTitle>
         <CardDescription>1日の作業時間帯パターン</CardDescription>

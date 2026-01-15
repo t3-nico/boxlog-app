@@ -21,7 +21,7 @@ export function TotalTimeCard() {
 
   if (isPending) {
     return (
-      <Card className="bg-background">
+      <Card>
         <CardHeader className="pb-2">
           <Skeleton className="h-5 w-24" />
           <Skeleton className="h-4 w-32" />
@@ -35,7 +35,7 @@ export function TotalTimeCard() {
 
   if (!data) {
     return (
-      <Card className="bg-background">
+      <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-base">予定の合計時間</CardTitle>
           <CardDescription>すべての予定の時間</CardDescription>
@@ -50,7 +50,7 @@ export function TotalTimeCard() {
   }
 
   return (
-    <Card className="bg-background">
+    <Card>
       <CardHeader className="pb-2">
         <CardTitle className="text-base">予定の合計時間</CardTitle>
         <CardDescription>すべての予定の時間</CardDescription>

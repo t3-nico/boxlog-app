@@ -11,7 +11,7 @@ export function StreakCard() {
 
   if (isPending) {
     return (
-      <Card className="bg-background">
+      <Card>
         <CardHeader className="pb-2">
           <Skeleton className="h-5 w-24" />
           <Skeleton className="h-4 w-32" />
@@ -28,7 +28,7 @@ export function StreakCard() {
   }
 
   return (
-    <Card className="bg-background">
+    <Card>
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center gap-2 text-base">
           <Flame className="text-warning size-5" />

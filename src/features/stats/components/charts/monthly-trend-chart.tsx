@@ -31,7 +31,7 @@ export function MonthlyTrendChart() {
 
   if (isPending) {
     return (
-      <Card className="bg-background">
+      <Card>
         <CardHeader>
           <CardTitle>月次トレンド</CardTitle>
           <CardDescription>過去12ヶ月の推移</CardDescription>
@@ -45,7 +45,7 @@ export function MonthlyTrendChart() {
 
   if (!data || data.length === 0) {
     return (
-      <Card className="bg-background">
+      <Card>
         <CardHeader>
           <CardTitle>月次トレンド</CardTitle>
           <CardDescription>過去12ヶ月の推移</CardDescription>
@@ -73,7 +73,7 @@ export function MonthlyTrendChart() {
   }
 
   return (
-    <Card className="bg-background">
+    <Card>
       <CardHeader>
         <CardTitle>月次トレンド</CardTitle>
         <CardDescription>

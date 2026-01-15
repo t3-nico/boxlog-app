@@ -37,7 +37,7 @@ export function TagTimeChart() {
 
   if (isPending) {
     return (
-      <Card className="bg-background">
+      <Card>
         <CardHeader>
           <CardTitle>タグ別時間</CardTitle>
           <CardDescription>タグごとの作業時間</CardDescription>
@@ -51,7 +51,7 @@ export function TagTimeChart() {
 
   if (!data || data.length === 0) {
     return (
-      <Card className="bg-background">
+      <Card>
         <CardHeader>
           <CardTitle>タグ別時間</CardTitle>
           <CardDescription>タグごとの作業時間</CardDescription>
@@ -85,7 +85,7 @@ export function TagTimeChart() {
   }, {} as ChartConfig);
 
   return (
-    <Card className="bg-background">
+    <Card>
       <CardHeader>
         <CardTitle>タグ別時間</CardTitle>
         <CardDescription>
