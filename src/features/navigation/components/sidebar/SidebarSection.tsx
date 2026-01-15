@@ -16,7 +16,7 @@ interface SidebarSectionProps {
   defaultOpen?: boolean;
   /** 追加のクラス名（コンテンツ部分） */
   className?: string;
-  /** ヘッダー右端に表示するアクション（閉じるアイコンの左隣） */
+  /** ヘッダーに表示するアクション（開閉アイコンの左隣） */
   action?: ReactNode | undefined;
 }
 
@@ -52,15 +52,17 @@ export function SidebarSection({
   return (
     <Collapsible defaultOpen={defaultOpen} className="min-w-0 overflow-hidden">
       <div className="flex h-8 items-center">
-        <CollapsibleTrigger className="text-muted-foreground hover:bg-state-hover flex h-8 min-w-0 flex-1 items-center justify-between rounded px-2 text-left text-xs font-semibold transition-colors">
+        <CollapsibleTrigger className="text-muted-foreground hover:bg-state-hover flex h-8 min-w-0 flex-1 items-center rounded px-2 text-left text-xs font-semibold transition-colors">
           <span className="truncate">{title}</span>
-          <ChevronRight className="ml-auto size-4 w-4 shrink-0 transition-transform [[data-state=open]>&]:rotate-90" />
         </CollapsibleTrigger>
         {action && (
-          <div className="shrink-0 pr-1" onClick={(e) => e.stopPropagation()}>
+          <div className="shrink-0" onClick={(e) => e.stopPropagation()}>
             {action}
           </div>
         )}
+        <CollapsibleTrigger className="text-muted-foreground hover:bg-state-hover flex size-6 shrink-0 items-center justify-center rounded transition-colors">
+          <ChevronRight className="size-4 transition-transform [[data-state=open]>&]:rotate-90" />
+        </CollapsibleTrigger>
       </div>
       <CollapsibleContent>
         <div className={cn('min-w-0 overflow-hidden', className)}>{children}</div>
