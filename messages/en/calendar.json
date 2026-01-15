@@ -173,7 +173,8 @@
       "ungrouped": "Ungrouped",
       "untagged": "Untagged",
       "noTags": "No tags available",
-      "comingSoon": "Coming soon"
+      "comingSoon": "Coming soon",
+      "createTag": "Create tag"
     },
     "open": {
       "navigation": {

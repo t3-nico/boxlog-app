@@ -173,7 +173,8 @@
       "ungrouped": "グループなし",
       "untagged": "タグなし",
       "noTags": "タグがありません",
-      "comingSoon": "近日公開予定"
+      "comingSoon": "近日公開予定",
+      "createTag": "タグを作成"
     },
     "open": {
       "navigation": {

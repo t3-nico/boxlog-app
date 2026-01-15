@@ -100,7 +100,11 @@
         "deleteConfirm": "Delete"
       }
     },
-    "moreActions": "More actions"
+    "moreActions": "More actions",
+    "form": {
+      "required": "Required",
+      "optional": "Optional"
+    }
   },
   "actions": {
     "save": "Save",

@@ -100,7 +100,11 @@
         "deleteConfirm": "削除"
       }
     },
-    "moreActions": "その他のアクション"
+    "moreActions": "その他のアクション",
+    "form": {
+      "required": "※必須",
+      "optional": "※任意"
+    }
   },
   "actions": {
     "save": "保存",
