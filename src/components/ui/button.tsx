@@ -71,7 +71,7 @@ const buttonVariants = cva(
         // アイコンボタン・ツールバー - 背景なし、ホバーで背景出現
         ghost: 'text-foreground hover:bg-state-hover active:bg-state-hover',
         // テキストリンク風 - 下線スタイル
-        text: 'text-primary underline-offset-4 hover:underline',
+        text: 'underline underline-offset-4 hover:text-foreground',
         // 破壊的アクション - 削除、解除など
         destructive: [
           'bg-destructive text-destructive-foreground shadow-sm',
