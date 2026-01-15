@@ -42,7 +42,7 @@ const badgeVariants = cva(
         info: 'border-transparent bg-info/10 text-info dark:bg-info/20 dark:text-info',
         // エラー - マイナス、削除
         destructive:
-          'border-transparent bg-destructive text-white [a&]:hover:bg-destructive-hover focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60',
+          'border-transparent bg-destructive text-destructive-foreground [a&]:hover:bg-destructive-hover focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60',
       },
     },
     defaultVariants: {
