@@ -63,7 +63,6 @@ export interface ExportDataResult {
     profile: unknown;
     plans: unknown[];
     tags: unknown[];
-    tagGroups: unknown[];
     userSettings: unknown;
   };
 }
@@ -134,15 +133,13 @@ export function createUserService(supabase: SupabaseClient<Database>) {
     async exportData(options: ExportDataOptions): Promise<ExportDataResult> {
       const { userId } = options;
 
-      // データ取得
-      const [profileResult, plansResult, tagsResult, tagGroupsResult, userSettingsResult] =
-        await Promise.all([
-          supabase.from('profiles').select('*').eq('id', userId).single(),
-          supabase.from('plans').select('*').eq('user_id', userId),
-          supabase.from('tags').select('*').eq('user_id', userId),
-          supabase.from('tag_groups').select('*').eq('user_id', userId),
-          supabase.from('user_settings').select('*').eq('user_id', userId).single(),
-        ]);
+      // データ取得（tag_groups は廃止され、tags の parent_id で管理）
+      const [profileResult, plansResult, tagsResult, userSettingsResult] = await Promise.all([
+        supabase.from('profiles').select('*').eq('id', userId).single(),
+        supabase.from('plans').select('*').eq('user_id', userId),
+        supabase.from('tags').select('*').eq('user_id', userId),
+        supabase.from('user_settings').select('*').eq('user_id', userId).single(),
+      ]);
 
       // エラーチェック（PGRST116 = no rows returned はOK）
       if (profileResult.error && profileResult.error.code !== 'PGRST116') {
@@ -163,12 +160,6 @@ export function createUserService(supabase: SupabaseClient<Database>) {
           `Tags fetch error: ${tagsResult.error.message}`,
         );
       }
-      if (tagGroupsResult.error) {
-        throw new UserServiceError(
-          'EXPORT_FAILED',
-          `Tag groups fetch error: ${tagGroupsResult.error.message}`,
-        );
-      }
 
       return {
         exportedAt: new Date().toISOString(),
@@ -177,7 +168,6 @@ export function createUserService(supabase: SupabaseClient<Database>) {
           profile: profileResult.data || null,
           plans: plansResult.data || [],
           tags: tagsResult.data || [],
-          tagGroups: tagGroupsResult.data || [],
           userSettings: userSettingsResult.data || null,
         },
       };
