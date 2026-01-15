@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo } from 'react';
 
-import { ChevronRight, CircleDashed } from 'lucide-react';
+import { ChevronRight, CircleDashed, Plus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { cn } from '@/lib/utils';
@@ -12,6 +12,7 @@ import { type ItemType, useCalendarFilterStore } from '../../stores/useCalendarF
 import { SidebarSection } from '@/features/navigation/components/sidebar/SidebarSection';
 import { useTagGroups } from '@/features/tags/hooks/useTagGroups';
 import { useTags } from '@/features/tags/hooks/useTags';
+import { useTagInspectorStore } from '@/features/tags/stores/useTagInspectorStore';
 
 import { Checkbox } from '@/components/ui/checkbox';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
@@ -63,10 +64,10 @@ export function CalendarFilterList() {
 
     const grouped = (groups || []).map((group) => ({
       group,
-      tags: tags.filter((tag) => tag.group_id === group.id),
+      tags: tags.filter((tag) => tag.parent_id === group.id),
     }));
 
-    const ungrouped = tags.filter((tag) => !tag.group_id);
+    const ungrouped = tags.filter((tag) => !tag.parent_id);
 
     return { grouped, ungrouped };
   }, [tags, groups]);
@@ -94,7 +95,12 @@ export function CalendarFilterList() {
       </SidebarSection>
 
       {/* タグ */}
-      <SidebarSection title={t('calendar.filter.tags')} defaultOpen className="space-y-1 py-1">
+      <SidebarSection
+        title={t('calendar.filter.tags')}
+        defaultOpen
+        className="space-y-1 py-1"
+        action={<CreateTagButton />}
+      >
         {isLoading ? (
           <div className="space-y-1 py-1">
             <Skeleton className="h-6 w-full" />
@@ -213,6 +219,7 @@ function TagGroupSection({
             <FilterItem
               key={tag.id}
               label={tag.name}
+              tagId={tag.id}
               description={tag.description}
               checkboxColor={tag.color || undefined}
               checked={visibleTagIds.has(tag.id)}
@@ -228,6 +235,8 @@ function TagGroupSection({
 
 interface FilterItemProps {
   label: string;
+  /** タグID（クリックでInspector表示用） */
+  tagId?: string | undefined;
   /** タグの説明（ツールチップで表示） */
   description?: string | null | undefined;
   /** チェックボックスの色（hex値） */
@@ -243,6 +252,7 @@ interface FilterItemProps {
 
 function FilterItem({
   label,
+  tagId,
   description,
   checkboxColor,
   icon,
@@ -252,6 +262,8 @@ function FilterItem({
   disabledReason,
   count,
 }: FilterItemProps) {
+  const { openInspector } = useTagInspectorStore();
+
   // チェックボックスのカスタムスタイル
   const checkboxStyle = checkboxColor
     ? ({
@@ -260,13 +272,22 @@ function FilterItem({
       } as React.CSSProperties)
     : undefined;
 
+  // 名前クリックでInspectorを開く
+  const handleNameClick = (e: React.MouseEvent) => {
+    if (tagId && !disabled) {
+      e.preventDefault();
+      e.stopPropagation();
+      openInspector(tagId);
+    }
+  };
+
   // 親幅 w-60 (240px) - padding 16px = 224px
   // チェックボックス 16px + gap 8px + 数字用 24px + gap 8px = 56px
   // ラベル最大幅 = 224px - 56px = 168px
   const content = (
-    <label
+    <div
       className={cn(
-        'hover:bg-state-hover flex w-full cursor-pointer items-center gap-2 rounded px-2 py-1 text-sm',
+        'hover:bg-state-hover flex w-full items-center gap-2 rounded px-2 py-1 text-sm',
         disabled && 'cursor-not-allowed opacity-50',
       )}
       title={disabled ? disabledReason : undefined}
@@ -275,23 +296,49 @@ function FilterItem({
         checked={checked}
         onCheckedChange={onCheckedChange}
         disabled={disabled}
-        className="h-4 w-4 shrink-0"
+        className="h-4 w-4 shrink-0 cursor-pointer"
         style={checkboxStyle}
       />
       {icon && <span className="text-muted-foreground shrink-0">{icon}</span>}
-      <span className="max-w-[140px] truncate">{label}</span>
+      <span
+        className={cn(
+          'max-w-[140px] truncate',
+          tagId && !disabled && 'cursor-pointer hover:underline',
+        )}
+        onClick={handleNameClick}
+      >
+        {label}
+      </span>
       {count !== undefined && (
         <span className="text-muted-foreground ml-auto w-4 shrink-0 text-right text-xs tabular-nums">
           {count}
         </span>
       )}
-    </label>
+    </div>
   );
 
   // 説明がある場合はツールチップで表示
   return (
     <HoverTooltip content={description} side="right" disabled={!description}>
       {content}
+    </HoverTooltip>
+  );
+}
+
+/** 新規タグ作成ボタン */
+function CreateTagButton() {
+  const t = useTranslations();
+  const { openInspector } = useTagInspectorStore();
+
+  return (
+    <HoverTooltip content={t('calendar.filter.createTag')} side="bottom">
+      <button
+        type="button"
+        className="text-muted-foreground hover:text-foreground hover:bg-state-hover flex size-6 items-center justify-center rounded"
+        onClick={() => openInspector(null)}
+      >
+        <Plus className="size-4" />
+      </button>
     </HoverTooltip>
   );
 }

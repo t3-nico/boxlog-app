@@ -36,11 +36,11 @@ interface ColorSet {
 // カレンダー専用カラー（既存テーマシステム準拠、M3原則）
 export const calendarColors: CalendarColors = {
   event: {
-    // scheduled - M3: surface-container使用、コントラスト比確保
+    // scheduled - GAFA準拠: container使用、コントラスト比確保
     scheduled: {
-      background: 'bg-surface-container',
+      background: 'bg-container',
       text: 'text-foreground',
-      active: 'bg-surface-container-high',
+      active: 'bg-container',
     },
 
     // backlog - セカンダリー系（グレー）
@@ -83,9 +83,9 @@ export const calendarColors: CalendarColors = {
       active: 'bg-neutral-300 dark:bg-neutral-600',
     },
 
-    // task - M3: surface-container使用、コントラスト比確保
+    // task - GAFA準拠: container使用、コントラスト比確保
     task: {
-      background: 'bg-surface-container',
+      background: 'bg-container',
       text: 'text-foreground',
     },
 
@@ -97,21 +97,21 @@ export const calendarColors: CalendarColors = {
   },
 
   states: {
-    // ghost - ゴースト表示（M3: muted使用）
+    // ghost - ゴースト表示（GAFA準拠: container使用）
     ghost: {
-      background: 'bg-muted',
+      background: 'bg-container',
       text: 'text-muted-foreground',
     },
 
-    // selected - 選択時（M3: surface-container-high使用）
+    // selected - 選択時（GAFA準拠: container使用）
     selected: {
-      background: 'bg-surface-container-high',
+      background: 'bg-container',
       text: 'inherit',
     },
 
-    // displayPeriod - 表示期間（M3: surface-container使用）
+    // displayPeriod - 表示期間（GAFA準拠: container使用）
     displayPeriod: {
-      background: 'bg-surface-container',
+      background: 'bg-container',
       text: 'inherit',
     },
 
