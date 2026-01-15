@@ -1,10 +1,17 @@
-// タググループ管理用のtRPCフック
+/**
+ * 親タグ管理用のtRPCフック
+ *
+ * 以前は tag_groups テーブルを使用していたが、
+ * マイグレーション後は tags テーブルの parent_id = null のタグを「親タグ」として扱う
+ *
+ * @deprecated これらのhookは後方互換性のために残されています。
+ * 新しいコードでは useParentTags, useTags を使用してください。
+ */
 
 import { useQueryClient } from '@tanstack/react-query';
 
+import type { Tag } from '@/features/tags/types';
 import { trpc } from '@/lib/trpc/client';
-
-// 型はtRPCから推論されるため、明示的なインポートは不要
 
 // 後方互換性のための入力型
 interface LegacyUpdateInput {
@@ -32,7 +39,7 @@ function isLegacyInput(input: UpdateTagGroupInput): input is LegacyUpdateInput {
   return 'data' in input;
 }
 
-// Query Keys
+// Query Keys（後方互換性のために維持）
 export const tagGroupKeys = {
   all: ['tag-groups'] as const,
   lists: () => [...tagGroupKeys.all, 'list'] as const,
@@ -43,23 +50,28 @@ export const tagGroupKeys = {
 };
 
 /**
- * 全タググループ取得
+ * 全親タグ取得（Tag 型で返す）
  * @param options - React Query オプション（enabledなど）
+ * @returns Tag[] - 親タグ（parent_id = null）一覧
+ *
+ * @deprecated 新しいコードでは useParentTags を使用してください
  */
 export function useTagGroups(options?: { enabled?: boolean }) {
-  return trpc.tagGroups.list.useQuery(undefined, {
+  return trpc.tags.listParentTags.useQuery(undefined, {
     staleTime: 5 * 60 * 1000, // 5分間キャッシュ
-    select: (data) => data.data, // { data: TagGroup[], count: number } → TagGroup[]
+    select: (data): Tag[] => data.data,
     ...options,
   });
 }
 
 /**
- * 個別タググループ取得
+ * 個別親タグ取得
+ * @deprecated 新しいコードでは useTags を使用してください
  */
-export function useTagGroup(id: string, withTags = false) {
-  return trpc.tagGroups.getById.useQuery(
-    { id, withTags },
+export function useTagGroup(id: string, _withTags = false) {
+  // withTags パラメータは無視（後方互換性のため引数として残す）
+  return trpc.tags.getById.useQuery(
+    { id },
     {
       enabled: !!id,
       staleTime: 5 * 60 * 1000,
@@ -68,30 +80,55 @@ export function useTagGroup(id: string, withTags = false) {
 }
 
 /**
- * タググループ作成
+ * 親タグ作成（parent_id = null のタグを作成）
+ * @deprecated 新しいコードでは useCreateTag を使用してください
  */
 export function useCreateTagGroup() {
   const queryClient = useQueryClient();
   const utils = trpc.useUtils();
 
-  return trpc.tagGroups.create.useMutation({
+  const mutation = trpc.tags.create.useMutation({
     onSuccess: () => {
       // キャッシュを無効化して再取得
-      utils.tagGroups.list.invalidate();
+      utils.tags.listParentTags.invalidate();
+      utils.tags.list.invalidate();
       queryClient.invalidateQueries({ queryKey: tagGroupKeys.all });
     },
   });
+
+  return {
+    ...mutation,
+    // 後方互換性: parentId を強制的に null にして親タグとして作成
+    mutate: (input: { name: string; color?: string; description?: string }) => {
+      return mutation.mutate({
+        name: input.name,
+        color: input.color,
+        description: input.description,
+        parentId: null,
+      });
+    },
+    mutateAsync: async (input: { name: string; color?: string; description?: string }) => {
+      return mutation.mutateAsync({
+        name: input.name,
+        color: input.color,
+        description: input.description,
+        parentId: null,
+      });
+    },
+  };
 }
 
 /**
- * タググループ更新
+ * 親タグ更新
+ * @deprecated 新しいコードでは useUpdateTag を使用してください
  */
 export function useUpdateTagGroup() {
   const queryClient = useQueryClient();
   const utils = trpc.useUtils();
-  const mutation = trpc.tagGroups.update.useMutation({
+  const mutation = trpc.tags.update.useMutation({
     onSuccess: () => {
-      utils.tagGroups.list.invalidate();
+      utils.tags.listParentTags.invalidate();
+      utils.tags.list.invalidate();
       queryClient.invalidateQueries({ queryKey: tagGroupKeys.all });
     },
   });
@@ -104,56 +141,80 @@ export function useUpdateTagGroup() {
         return mutation.mutate({
           id: input.id,
           name: input.data.name,
-          description: input.data.description,
-          color: input.data.color,
-          sortOrder: input.data.sort_order,
+          description: input.data.description ?? undefined,
+          color: input.data.color ?? undefined,
         });
       }
-      return mutation.mutate(input);
+      return mutation.mutate({
+        id: input.id,
+        name: input.name,
+        description: input.description ?? undefined,
+        color: input.color ?? undefined,
+      });
     },
     mutateAsync: async (input: UpdateTagGroupInput) => {
       if (isLegacyInput(input)) {
         return mutation.mutateAsync({
           id: input.id,
           name: input.data.name,
-          description: input.data.description,
-          color: input.data.color,
-          sortOrder: input.data.sort_order,
+          description: input.data.description ?? undefined,
+          color: input.data.color ?? undefined,
         });
       }
-      return mutation.mutateAsync(input);
+      return mutation.mutateAsync({
+        id: input.id,
+        name: input.name,
+        description: input.description ?? undefined,
+        color: input.color ?? undefined,
+      });
     },
   };
 }
 
 /**
- * タググループ削除
+ * 親タグ削除
+ * @deprecated 新しいコードでは useDeleteTag を使用してください
  */
 export function useDeleteTagGroup() {
   const queryClient = useQueryClient();
   const utils = trpc.useUtils();
 
-  return trpc.tagGroups.delete.useMutation({
+  return trpc.tags.delete.useMutation({
     onSuccess: () => {
-      utils.tagGroups.list.invalidate();
+      utils.tags.listParentTags.invalidate();
+      utils.tags.list.invalidate();
       queryClient.invalidateQueries({ queryKey: tagGroupKeys.all });
-      // タグ一覧も無効化（group_idがNULLになったタグがあるため）
+      // タグ一覧も無効化（parent_id が NULL になったタグがあるため）
       queryClient.invalidateQueries({ queryKey: ['tags'] });
     },
   });
 }
 
 /**
- * タググループの並び替え（バルク更新）
+ * 親タグの並び替え（バルク更新）
+ * @deprecated この機能は現在使用されていません
  */
 export function useReorderTagGroups() {
   const queryClient = useQueryClient();
   const utils = trpc.useUtils();
 
-  return trpc.tagGroups.reorder.useMutation({
-    onSuccess: () => {
-      utils.tagGroups.list.invalidate();
+  // TODO: tags router に reorder endpoint を追加する場合はここを更新
+  // 現在は未使用のため、空のミューテーションを返す
+  return {
+    mutate: (_input: { items: Array<{ id: string; sort_order: number }> }) => {
+      console.warn('useReorderTagGroups is not implemented yet');
+    },
+    mutateAsync: async (_input: { items: Array<{ id: string; sort_order: number }> }) => {
+      console.warn('useReorderTagGroups is not implemented yet');
+      utils.tags.listParentTags.invalidate();
       queryClient.invalidateQueries({ queryKey: tagGroupKeys.all });
     },
-  });
+    isLoading: false,
+    isPending: false,
+    isError: false,
+    error: null,
+    isSuccess: false,
+    data: undefined,
+    reset: () => {},
+  };
 }

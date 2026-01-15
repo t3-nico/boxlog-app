@@ -70,9 +70,9 @@ export function useTagsPageData({ t }: UseTagsPageDataOptions) {
 
     // グループフィルタ
     if (isUncategorizedFilter) {
-      filtered = filtered.filter((tag) => !tag.group_id);
+      filtered = filtered.filter((tag) => !tag.parent_id);
     } else if (selectedGroupId) {
-      filtered = filtered.filter((tag) => tag.group_id === selectedGroupId);
+      filtered = filtered.filter((tag) => tag.parent_id === selectedGroupId);
     }
 
     // 使用状況フィルタ
@@ -140,8 +140,8 @@ export function useTagsPageData({ t }: UseTagsPageDataOptions) {
             new Date(a.created_at ?? 0).getTime() - new Date(b.created_at ?? 0).getTime();
           break;
         case 'group': {
-          const groupA = a.group_id ? groups.find((g) => g.id === a.group_id)?.name || '' : '';
-          const groupB = b.group_id ? groups.find((g) => g.id === b.group_id)?.name || '' : '';
+          const groupA = a.parent_id ? groups.find((g) => g.id === a.parent_id)?.name || '' : '';
+          const groupB = b.parent_id ? groups.find((g) => g.id === b.parent_id)?.name || '' : '';
           if (!groupA && groupB) return 1;
           if (groupA && !groupB) return -1;
           comparison = groupA.localeCompare(groupB);
@@ -172,10 +172,10 @@ export function useTagsPageData({ t }: UseTagsPageDataOptions) {
     const uncategorized: Tag[] = [];
 
     for (const tag of sortedTags) {
-      if (tag.group_id) {
-        const existing = groupMap.get(tag.group_id) ?? [];
+      if (tag.parent_id) {
+        const existing = groupMap.get(tag.parent_id) ?? [];
         existing.push(tag);
-        groupMap.set(tag.group_id, existing);
+        groupMap.set(tag.parent_id, existing);
       } else {
         uncategorized.push(tag);
       }

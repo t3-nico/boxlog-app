@@ -15,7 +15,11 @@ interface LegacyTagUpdateInput {
     description?: string | null | undefined;
     icon?: string | null | undefined;
     is_active?: boolean | undefined;
+    /** 親タグのID */
+    parentId?: string | null | undefined;
+    /** @deprecated use parentId instead */
     group_id?: string | null | undefined;
+    /** @deprecated use parentId instead */
     groupId?: string | null | undefined;
     sort_order?: number | undefined;
   };
@@ -27,6 +31,9 @@ interface TrpcTagUpdateInput {
   name?: string | undefined;
   color?: string | undefined;
   description?: string | null | undefined;
+  /** 親タグのID */
+  parentId?: string | null | undefined;
+  /** @deprecated use parentId instead */
   groupId?: string | null | undefined;
 }
 
@@ -96,24 +103,28 @@ export function useUpdateTag() {
     ...mutation,
     mutate: (input: UpdateTagInput) => {
       if (isLegacyTagInput(input)) {
+        // parentId を優先、後方互換のため groupId, group_id もサポート
+        const parentId = input.data.parentId ?? input.data.groupId ?? input.data.group_id;
         return mutation.mutate({
           id: input.id,
           name: input.data.name,
           color: input.data.color,
           description: input.data.description,
-          groupId: input.data.group_id,
+          parentId,
         });
       }
       return mutation.mutate(input);
     },
     mutateAsync: async (input: UpdateTagInput) => {
       if (isLegacyTagInput(input)) {
+        // parentId を優先、後方互換のため groupId, group_id もサポート
+        const parentId = input.data.parentId ?? input.data.groupId ?? input.data.group_id;
         return mutation.mutateAsync({
           id: input.id,
           name: input.data.name,
           color: input.data.color,
           description: input.data.description,
-          groupId: input.data.group_id,
+          parentId,
         });
       }
       return mutation.mutateAsync(input);

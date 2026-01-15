@@ -51,7 +51,7 @@ export function useTagOperations(tags: Tag[]) {
           description: data.description || null,
           icon: null,
           is_active: true,
-          group_id: data.groupId ?? createGroupId,
+          parent_id: data.parentId ?? data.groupId ?? createGroupId,
           sort_order: tags.length,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
@@ -123,7 +123,7 @@ export function useTagOperations(tags: Tag[]) {
     async (tag: Tag, newGroupId: string | null) => {
       try {
         // 楽観的更新
-        updateTagOptimistically(tag.id, { group_id: newGroupId });
+        updateTagOptimistically(tag.id, { parent_id: newGroupId });
 
         // 実際の移動
         await moveTagMutation.mutateAsync({
