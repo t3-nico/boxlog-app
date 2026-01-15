@@ -51,8 +51,8 @@ export function SidebarSection({
 }: SidebarSectionProps) {
   return (
     <Collapsible defaultOpen={defaultOpen} className="min-w-0 overflow-hidden">
-      <div className="flex h-8 items-center">
-        <CollapsibleTrigger className="text-muted-foreground hover:bg-state-hover flex h-8 min-w-0 flex-1 items-center rounded px-2 text-left text-xs font-semibold transition-colors">
+      <div className="hover:bg-state-hover flex h-8 items-center rounded transition-colors">
+        <CollapsibleTrigger className="text-muted-foreground flex h-8 min-w-0 flex-1 items-center px-2 text-left text-xs font-semibold">
           <span className="truncate">{title}</span>
         </CollapsibleTrigger>
         {action && (
@@ -60,7 +60,7 @@ export function SidebarSection({
             {action}
           </div>
         )}
-        <CollapsibleTrigger className="text-muted-foreground hover:bg-state-hover flex size-6 shrink-0 items-center justify-center rounded transition-colors">
+        <CollapsibleTrigger className="text-muted-foreground flex size-6 shrink-0 items-center justify-center">
           <ChevronRight className="size-4 transition-transform [[data-state=open]>&]:rotate-90" />
         </CollapsibleTrigger>
       </div>

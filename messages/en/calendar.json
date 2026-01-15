@@ -174,7 +174,14 @@
       "untagged": "Untagged",
       "noTags": "No tags available",
       "comingSoon": "Coming soon",
-      "createTag": "Create tag"
+      "createTag": "Create tag",
+      "addChildTag": "Add child tag",
+      "rename": "Rename",
+      "changeColor": "Change color",
+      "deleteParentTag": {
+        "title": "Delete Tag",
+        "description": "Delete this tag? Child tags will remain as root tags."
+      }
     },
     "open": {
       "navigation": {

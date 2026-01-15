@@ -174,7 +174,14 @@
       "untagged": "タグなし",
       "noTags": "タグがありません",
       "comingSoon": "近日公開予定",
-      "createTag": "タグを作成"
+      "createTag": "タグを作成",
+      "addChildTag": "子タグを追加",
+      "rename": "名前を変更",
+      "changeColor": "カラーを変更",
+      "deleteParentTag": {
+        "title": "タグを削除",
+        "description": "このタグを削除しますか？子タグはルートタグとして残ります。"
+      }
     },
     "open": {
       "navigation": {
