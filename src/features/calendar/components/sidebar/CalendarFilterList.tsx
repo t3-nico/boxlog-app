@@ -12,6 +12,7 @@ import { type ItemType, useCalendarFilterStore } from '../../stores/useCalendarF
 import { SidebarSection } from '@/features/navigation/components/sidebar/SidebarSection';
 import { useTagGroups } from '@/features/tags/hooks/useTagGroups';
 import { useTags } from '@/features/tags/hooks/useTags';
+import { useTagCreateModalStore } from '@/features/tags/stores/useTagCreateModalStore';
 import { useTagInspectorStore } from '@/features/tags/stores/useTagInspectorStore';
 
 import { Checkbox } from '@/components/ui/checkbox';
@@ -328,14 +329,14 @@ function FilterItem({
 /** 新規タグ作成ボタン */
 function CreateTagButton() {
   const t = useTranslations();
-  const { openInspector } = useTagInspectorStore();
+  const openModal = useTagCreateModalStore((state) => state.openModal);
 
   return (
     <HoverTooltip content={t('calendar.filter.createTag')} side="bottom">
       <button
         type="button"
         className="text-muted-foreground hover:text-foreground hover:bg-state-hover flex size-6 items-center justify-center rounded"
-        onClick={() => openInspector(null)}
+        onClick={() => openModal()}
       >
         <Plus className="size-4" />
       </button>
