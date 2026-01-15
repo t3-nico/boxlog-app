@@ -125,6 +125,13 @@ export interface MergeTagsResult {
   targetTag: Tag;
 }
 
+/** タグ並び替え更新 */
+export interface ReorderTagUpdate {
+  id: string;
+  sort_order: number;
+  parent_id: string | null;
+}
+
 /**
  * Tag Service エラー
  */
@@ -478,6 +485,70 @@ export class TagService {
     }
 
     return tag;
+  }
+
+  /**
+   * タグ並び替え（バッチ更新）
+   *
+   * sort_orderとparent_idをバッチ更新します。
+   * 楽観的更新との併用を想定。
+   *
+   * @param options - userId と更新配列
+   * @returns 更新されたタグ数
+   */
+  async reorder(options: {
+    userId: string;
+    updates: ReorderTagUpdate[];
+  }): Promise<{ count: number }> {
+    const { userId, updates } = options;
+
+    if (updates.length === 0) {
+      return { count: 0 };
+    }
+
+    // 所有権チェック: 更新対象のタグがすべてユーザーのものか確認
+    const tagIds = updates.map((u) => u.id);
+    const { data: existingTags, error: fetchError } = await this.supabase
+      .from('tags')
+      .select('id')
+      .eq('user_id', userId)
+      .in('id', tagIds);
+
+    if (fetchError) {
+      throw new TagServiceError('FETCH_FAILED', `Failed to verify tags: ${fetchError.message}`);
+    }
+
+    const existingIds = new Set(existingTags?.map((t) => t.id) || []);
+    const invalidIds = tagIds.filter((id) => !existingIds.has(id));
+    if (invalidIds.length > 0) {
+      throw new TagServiceError('NOT_FOUND', `Tags not found: ${invalidIds.join(', ')}`);
+    }
+
+    // バッチ更新（並列実行）
+    const updatePromises = updates.map((update) =>
+      this.supabase
+        .from('tags')
+        .update({
+          sort_order: update.sort_order,
+          parent_id: update.parent_id,
+        })
+        .eq('id', update.id)
+        .eq('user_id', userId),
+    );
+
+    const results = await Promise.all(updatePromises);
+
+    // エラーチェック
+    const errors = results.filter((r) => r.error);
+    if (errors.length > 0) {
+      const firstError = errors[0];
+      throw new TagServiceError(
+        'UPDATE_FAILED',
+        `Failed to reorder tags: ${firstError?.error?.message ?? 'Unknown error'}`,
+      );
+    }
+
+    return { count: updates.length };
   }
 
   /**

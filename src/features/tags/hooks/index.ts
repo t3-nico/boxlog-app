@@ -15,11 +15,13 @@ export {
   useMoveTag,
   useOptimisticTagUpdate,
   useRenameTag,
+  useReorderTags,
   useTag,
   useTags,
   useUpdateTag,
   useUpdateTagColor,
 } from './useTags';
+export type { ReorderTagInput } from './useTags';
 
 // Tag Groups
 export {

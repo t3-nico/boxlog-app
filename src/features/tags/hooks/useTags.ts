@@ -92,6 +92,7 @@ export function useUpdateTag() {
   const mutation = trpc.tags.update.useMutation({
     onSuccess: () => {
       utils.tags.list.invalidate();
+      utils.tags.listParentTags.invalidate();
       queryClient.invalidateQueries({ queryKey: tagKeys.all });
       // plansのキャッシュも無効化（タグ情報を含むため）
       queryClient.invalidateQueries({ queryKey: ['plans'] });
@@ -183,6 +184,7 @@ export function useUpdateTagColor() {
   return trpc.tags.update.useMutation({
     onSuccess: () => {
       utils.tags.list.invalidate();
+      utils.tags.listParentTags.invalidate();
       queryClient.invalidateQueries({ queryKey: tagKeys.all });
       // plansのキャッシュも無効化（タグ情報を含むため）
       queryClient.invalidateQueries({ queryKey: ['plans'] });
@@ -201,6 +203,64 @@ export function useMergeTag() {
       queryClient.invalidateQueries({ queryKey: tagKeys.all });
       // plansのキャッシュも無効化（タグ情報を含むため）
       queryClient.invalidateQueries({ queryKey: ['plans'] });
+    },
+  });
+}
+
+// タグ並び替え入力型
+export interface ReorderTagInput {
+  id: string;
+  sort_order: number;
+  parent_id: string | null;
+}
+
+// タグ並び替えフック（楽観的更新付き）
+export function useReorderTags() {
+  const queryClient = useQueryClient();
+  const utils = trpc.useUtils();
+
+  return trpc.tags.reorder.useMutation({
+    // 楽観的更新: ドロップ直後に即座にUIを更新
+    onMutate: async ({ updates }) => {
+      // 進行中のクエリをキャンセル
+      await queryClient.cancelQueries({ queryKey: tagKeys.list() });
+
+      // 現在のデータをスナップショット
+      const previousTags = queryClient.getQueryData<{ data: Tag[] }>(tagKeys.list());
+
+      // 楽観的にキャッシュを更新
+      queryClient.setQueryData<{ data: Tag[] }>(tagKeys.list(), (oldData) => {
+        if (!oldData) return oldData;
+
+        const newData = oldData.data.map((tag) => {
+          const update = updates.find((u) => u.id === tag.id);
+          if (update) {
+            return {
+              ...tag,
+              sort_order: update.sort_order,
+              parent_id: update.parent_id,
+            };
+          }
+          return tag;
+        });
+
+        return { ...oldData, data: newData };
+      });
+
+      // ロールバック用にスナップショットを返す
+      return { previousTags };
+    },
+    // エラー時はロールバック
+    onError: (_err, _variables, context) => {
+      if (context?.previousTags) {
+        queryClient.setQueryData(tagKeys.list(), context.previousTags);
+      }
+    },
+    // 成功・エラー問わず最新データを取得
+    onSettled: () => {
+      utils.tags.list.invalidate();
+      utils.tags.listParentTags.invalidate();
+      queryClient.invalidateQueries({ queryKey: tagKeys.all });
     },
   });
 }

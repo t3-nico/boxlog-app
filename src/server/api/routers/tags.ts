@@ -13,6 +13,7 @@
  * - tags.update: タグ更新
  * - tags.merge: タグマージ
  * - tags.delete: タグ削除
+ * - tags.reorder: タグ並び替え（sort_order, parent_id更新）
  */
 
 import { z } from 'zod';
@@ -242,6 +243,35 @@ export const tagsRouter = createTRPCRouter({
         });
 
         return deletedTag;
+      } catch (error) {
+        return handleServiceError(error);
+      }
+    }),
+
+  /**
+   * タグ並び替え（バッチ更新）
+   */
+  reorder: protectedProcedure
+    .input(
+      z.object({
+        updates: z.array(
+          z.object({
+            id: z.string().uuid(),
+            sort_order: z.number().int(),
+            parent_id: z.string().uuid().nullable(),
+          }),
+        ),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      try {
+        const service = createTagService(ctx.supabase);
+        const result = await service.reorder({
+          userId: ctx.userId!,
+          updates: input.updates,
+        });
+
+        return result;
       } catch (error) {
         return handleServiceError(error);
       }
