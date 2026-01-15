@@ -5,7 +5,9 @@
  * REST API（src/app/api/tags/route.ts）をtRPC化
  *
  * エンドポイント:
- * - tags.list: タグ一覧取得
+ * - tags.list: タグ一覧取得（フラット）
+ * - tags.listHierarchy: 階層構造でタグ取得
+ * - tags.listParentTags: 親タグ一覧取得
  * - tags.getById: タグID指定で取得
  * - tags.create: タグ作成
  * - tags.update: タグ更新
@@ -54,6 +56,40 @@ export const tagsRouter = createTRPCRouter({
     }),
 
   /**
+   * 階層構造でタグ取得
+   * 親タグとその子タグをネスト構造で返す
+   */
+  listHierarchy: protectedProcedure.query(async ({ ctx }) => {
+    try {
+      const service = createTagService(ctx.supabase);
+      return await service.listHierarchy({
+        userId: ctx.userId!,
+      });
+    } catch (error) {
+      return handleServiceError(error);
+    }
+  }),
+
+  /**
+   * 親タグ一覧取得（ドロップダウン用）
+   * parent_id = null のタグのみ
+   */
+  listParentTags: protectedProcedure.query(async ({ ctx }) => {
+    try {
+      const service = createTagService(ctx.supabase);
+      const tags = await service.listParentTags({
+        userId: ctx.userId!,
+      });
+      return {
+        data: tags,
+        count: tags.length,
+      };
+    } catch (error) {
+      return handleServiceError(error);
+    }
+  }),
+
+  /**
    * タグID指定で取得
    */
   getById: protectedProcedure
@@ -88,19 +124,24 @@ export const tagsRouter = createTRPCRouter({
           .regex(/^#[0-9A-Fa-f]{6}$/)
           .optional(),
         description: z.string().optional(),
+        /** 親タグID */
+        parentId: z.string().uuid().nullable().optional(),
+        /** @deprecated use parentId instead */
         groupId: z.string().uuid().nullable().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       try {
         const service = createTagService(ctx.supabase);
+        // parentId を優先、後方互換のため groupId もサポート
+        const parentId = input.parentId ?? input.groupId;
         const tag = await service.create({
           userId: ctx.userId!,
           input: {
             name: input.name,
             color: input.color,
             description: input.description,
-            groupId: input.groupId,
+            parentId,
           },
         });
 
@@ -123,12 +164,17 @@ export const tagsRouter = createTRPCRouter({
           .regex(/^#[0-9A-Fa-f]{6}$/)
           .optional(),
         description: z.string().nullable().optional(),
+        /** 親タグID */
+        parentId: z.string().uuid().nullable().optional(),
+        /** @deprecated use parentId instead */
         groupId: z.string().uuid().nullable().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       try {
         const service = createTagService(ctx.supabase);
+        // parentId を優先、後方互換のため groupId もサポート
+        const parentId = input.parentId !== undefined ? input.parentId : input.groupId;
         const tag = await service.update({
           userId: ctx.userId!,
           tagId: input.id,
@@ -136,7 +182,7 @@ export const tagsRouter = createTRPCRouter({
             name: input.name,
             color: input.color,
             description: input.description,
-            groupId: input.groupId,
+            parentId,
           },
         });
 

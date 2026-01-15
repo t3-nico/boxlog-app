@@ -73,7 +73,7 @@ export const notificationPreferencesRouter = createTRPCRouter({
 
     // delivery_settingsがない場合はデフォルト値を使用
     const deliverySettings =
-      (data as { delivery_settings?: DeliverySettings }).delivery_settings ??
+      (data as unknown as { delivery_settings?: DeliverySettings }).delivery_settings ??
       DEFAULT_DELIVERY_SETTINGS;
 
     return {
@@ -144,7 +144,8 @@ export const notificationPreferencesRouter = createTRPCRouter({
       return {
         success: true,
         deliverySettings:
-          (data as { delivery_settings?: DeliverySettings }).delivery_settings ?? newSettings,
+          (data as unknown as { delivery_settings?: DeliverySettings }).delivery_settings ??
+          newSettings,
       };
     }),
 
