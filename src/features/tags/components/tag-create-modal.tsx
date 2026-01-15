@@ -5,18 +5,21 @@ import { createPortal } from 'react-dom';
 
 import { Button } from '@/components/ui/button';
 import { ColorPalettePicker } from '@/components/ui/color-palette-picker';
+import { Field, FieldError, FieldGroup, FieldLabel, FieldSupportText } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { TAG_NAME_MAX_LENGTH } from '@/features/tags/constants/colors';
 import { useTagGroups } from '@/features/tags/hooks/useTagGroups';
 import type { CreateTagInput, TagGroup } from '@/features/tags/types';
 import { logger } from '@/lib/logger';
-import { ChevronDown, Tag } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 interface TagCreateModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (data: CreateTagInput) => Promise<void>;
+  /** デフォルトの親タグID（子タグ作成時にプリセット） */
+  defaultParentId?: string | null;
 }
 
 /**
@@ -29,7 +32,12 @@ interface TagCreateModalProps {
  * - 角丸: rounded-xl（16px）for ダイアログ
  * - Surface: bg-surface（カード、ダイアログ用）
  */
-export const TagCreateModal = ({ isOpen, onClose, onSave }: TagCreateModalProps) => {
+export const TagCreateModal = ({
+  isOpen,
+  onClose,
+  onSave,
+  defaultParentId,
+}: TagCreateModalProps) => {
   const t = useTranslations();
   const [name, setName] = useState('');
   const [color, setColor] = useState('#3B82F6');
@@ -47,16 +55,16 @@ export const TagCreateModal = ({ isOpen, onClose, onSave }: TagCreateModalProps)
     setMounted(true);
   }, []);
 
-  // モーダルが開いたらリセット
+  // モーダルが開いたらリセット（defaultParentIdがあればプリセット）
   useEffect(() => {
     if (isOpen) {
       setName('');
       setColor('#3B82F6');
-      setParentId(null);
+      setParentId(defaultParentId ?? null);
       setError('');
       setIsParentDropdownOpen(false);
     }
-  }, [isOpen]);
+  }, [isOpen, defaultParentId]);
 
   // ESCキーでダイアログを閉じる
   useEffect(() => {
@@ -162,49 +170,48 @@ export const TagCreateModal = ({ isOpen, onClose, onSave }: TagCreateModalProps)
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="mb-6 flex items-start gap-4">
-          <div className="bg-primary/10 flex size-10 shrink-0 items-center justify-center rounded-full">
-            <Tag className="text-primary size-5" />
-          </div>
-          <div className="flex-1">
-            <h2 id="tag-create-dialog-title" className="text-lg leading-tight font-semibold">
-              {t('tag.modal.createTitle')}
-            </h2>
-            <p className="text-muted-foreground mt-1 text-sm">{t('tag.modal.createDescription')}</p>
-          </div>
-        </div>
+        <h2 id="tag-create-dialog-title" className="mb-6 text-lg font-semibold">
+          {t('tag.modal.createTitle')}
+        </h2>
 
         {/* Form */}
-        <div className="mb-6 space-y-4">
+        <FieldGroup className="mb-6">
           {/* タグ名 */}
-          <div>
-            <label htmlFor="tag-name" className="text-sm font-medium">
-              {t('tag.form.tagNameRequired')}
-            </label>
+          <Field>
+            <FieldLabel htmlFor="tag-name" required requiredLabel={t('common.form.required')}>
+              {t('tag.form.tagName')}
+            </FieldLabel>
+            <FieldSupportText id="tag-name-support">
+              {t('tag.form.examplePlaceholder')}
+            </FieldSupportText>
             <Input
               id="tag-name"
               value={name}
               onChange={(e) => setName(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder={t('tag.form.examplePlaceholder')}
               maxLength={TAG_NAME_MAX_LENGTH}
-              className="mt-1.5"
+              aria-invalid={!!error}
+              aria-describedby={error ? 'tag-name-error tag-name-support' : 'tag-name-support'}
               autoFocus
             />
-          </div>
+            {error && (
+              <FieldError id="tag-name-error" announceImmediately>
+                {error}
+              </FieldError>
+            )}
+          </Field>
 
           {/* カラー */}
-          <div>
-            <label className="text-sm font-medium">{t('tag.form.color')}</label>
-            <div className="mt-1.5">
-              <ColorPalettePicker selectedColor={color} onColorSelect={setColor} />
-            </div>
-          </div>
+          <Field>
+            <FieldLabel>{t('tag.form.color')}</FieldLabel>
+            <ColorPalettePicker selectedColor={color} onColorSelect={setColor} />
+          </Field>
 
           {/* 親タグ選択 */}
-          <div>
-            <label className="text-sm font-medium">{t('tag.form.group')}</label>
-            <div className="relative mt-1.5">
+          <Field>
+            <FieldLabel>{t('tag.form.group')}</FieldLabel>
+            <FieldSupportText>{t('tag.form.groupSupportText')}</FieldSupportText>
+            <div className="relative">
               <button
                 type="button"
                 onClick={(e) => {
@@ -252,11 +259,8 @@ export const TagCreateModal = ({ isOpen, onClose, onSave }: TagCreateModalProps)
                 </div>
               )}
             </div>
-          </div>
-
-          {/* エラー表示 */}
-          {error && <p className="text-destructive text-sm">{error}</p>}
-        </div>
+          </Field>
+        </FieldGroup>
 
         {/* Footer */}
         <div className="flex justify-end gap-2">
@@ -268,7 +272,7 @@ export const TagCreateModal = ({ isOpen, onClose, onSave }: TagCreateModalProps)
           >
             {t('tag.actions.cancel')}
           </Button>
-          <Button onClick={handleSubmit} disabled={isLoading || !name.trim()}>
+          <Button onClick={handleSubmit} disabled={isLoading}>
             {isLoading ? t('tag.actions.creating') : t('tag.actions.create')}
           </Button>
         </div>

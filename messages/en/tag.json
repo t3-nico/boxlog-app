@@ -366,8 +366,9 @@
       "preview": "Preview",
       "tagNamePlaceholder": "(Tag Name)",
       "parentTagPrefix": "Parent Tag:",
-      "examplePlaceholder": "e.g., Work, Project A",
+      "examplePlaceholder": "A label to categorize your time entries",
       "group": "Group",
+      "groupSupportText": "Group similar tags together",
       "selectGroupPlaceholder": "Select group (optional)"
     },
     "actions": {

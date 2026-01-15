@@ -366,8 +366,9 @@
       "preview": "プレビュー",
       "tagNamePlaceholder": "（タグ名）",
       "parentTagPrefix": "親タグ:",
-      "examplePlaceholder": "例: 仕事、プロジェクトA",
+      "examplePlaceholder": "時間記録を分類するためのラベル",
       "group": "グループ",
+      "groupSupportText": "同じ種類のタグをまとめて管理できます",
       "selectGroupPlaceholder": "グループを選択（任意）"
     },
     "actions": {

@@ -17,6 +17,7 @@ import type { CreateTagInput } from '@/features/tags/types';
 export function GlobalTagCreateModal() {
   const t = useTranslations();
   const isOpen = useTagCreateModalStore((state) => state.isOpen);
+  const defaultParentId = useTagCreateModalStore((state) => state.defaultParentId);
   const closeModal = useTagCreateModalStore((state) => state.closeModal);
   const createTagMutation = useCreateTag();
 
@@ -30,5 +31,12 @@ export function GlobalTagCreateModal() {
     toast.success(t('tag.toast.created', { name: result.name }));
   };
 
-  return <TagCreateModal isOpen={isOpen} onClose={closeModal} onSave={handleCreateTag} />;
+  return (
+    <TagCreateModal
+      isOpen={isOpen}
+      onClose={closeModal}
+      onSave={handleCreateTag}
+      defaultParentId={defaultParentId}
+    />
+  );
 }
