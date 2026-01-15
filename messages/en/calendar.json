@@ -181,6 +181,13 @@
       "deleteParentTag": {
         "title": "Delete Tag",
         "description": "Delete this tag? Child tags will remain as root tags."
+      },
+      "changeParent": "Change parent",
+      "merge": "Merge into another tag",
+      "noParent": "No parent",
+      "deleteTag": {
+        "title": "Delete Tag",
+        "description": "Delete this tag?"
       }
     },
     "open": {

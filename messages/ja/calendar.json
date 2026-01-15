@@ -181,6 +181,13 @@
       "deleteParentTag": {
         "title": "タグを削除",
         "description": "このタグを削除しますか？子タグはルートタグとして残ります。"
+      },
+      "changeParent": "親タグを変更",
+      "merge": "他のタグにマージ",
+      "noParent": "親タグなし",
+      "deleteTag": {
+        "title": "タグを削除",
+        "description": "このタグを削除しますか？"
       }
     },
     "open": {
