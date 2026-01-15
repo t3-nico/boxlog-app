@@ -50,8 +50,8 @@ export function SidebarSection({
   action,
 }: SidebarSectionProps) {
   return (
-    <Collapsible defaultOpen={defaultOpen} className="min-w-0 overflow-hidden">
-      <div className="hover:bg-state-hover flex h-8 items-center rounded transition-colors">
+    <Collapsible defaultOpen={defaultOpen} className="w-full min-w-0 overflow-hidden">
+      <div className="hover:bg-state-hover flex h-8 w-full items-center rounded transition-colors">
         <CollapsibleTrigger className="text-muted-foreground flex h-8 min-w-0 flex-1 items-center px-2 text-left text-xs font-semibold">
           <span className="truncate">{title}</span>
         </CollapsibleTrigger>
@@ -65,7 +65,7 @@ export function SidebarSection({
         </CollapsibleTrigger>
       </div>
       <CollapsibleContent>
-        <div className={cn('min-w-0 overflow-hidden', className)}>{children}</div>
+        <div className={cn('w-full min-w-0 overflow-hidden', className)}>{children}</div>
       </CollapsibleContent>
     </Collapsible>
   );

@@ -93,7 +93,9 @@ export function SidebarShell({ children, className, hideNavUser = false }: Sideb
       )}
 
       {/* Content */}
-      <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-y-auto">{children}</div>
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-x-hidden overflow-y-auto">
+        {children}
+      </div>
 
       {/* Footer - 通知・テーマ切替（VS Code風） */}
       <div className="flex h-12 shrink-0 items-center justify-between px-2">
