@@ -185,6 +185,7 @@ export type Database = {
         Row: {
           created_at: string;
           default_reminder_minutes: number | null;
+          delivery_settings: Json | null;
           enable_browser_notifications: boolean;
           enable_email_notifications: boolean;
           enable_plan_updates: boolean;
@@ -199,6 +200,7 @@ export type Database = {
         Insert: {
           created_at?: string;
           default_reminder_minutes?: number | null;
+          delivery_settings?: Json | null;
           enable_browser_notifications?: boolean;
           enable_email_notifications?: boolean;
           enable_plan_updates?: boolean;
@@ -213,6 +215,7 @@ export type Database = {
         Update: {
           created_at?: string;
           default_reminder_minutes?: number | null;
+          delivery_settings?: Json | null;
           enable_browser_notifications?: boolean;
           enable_email_notifications?: boolean;
           enable_plan_updates?: boolean;
@@ -545,52 +548,17 @@ export type Database = {
         };
         Relationships: [];
       };
-      tag_groups: {
-        Row: {
-          color: string | null;
-          created_at: string | null;
-          description: string | null;
-          id: string;
-          name: string;
-          slug: string;
-          sort_order: number | null;
-          updated_at: string | null;
-          user_id: string;
-        };
-        Insert: {
-          color?: string | null;
-          created_at?: string | null;
-          description?: string | null;
-          id?: string;
-          name: string;
-          slug: string;
-          sort_order?: number | null;
-          updated_at?: string | null;
-          user_id: string;
-        };
-        Update: {
-          color?: string | null;
-          created_at?: string | null;
-          description?: string | null;
-          id?: string;
-          name?: string;
-          slug?: string;
-          sort_order?: number | null;
-          updated_at?: string | null;
-          user_id?: string;
-        };
-        Relationships: [];
-      };
       tags: {
         Row: {
           color: string | null;
           created_at: string | null;
           description: string | null;
-          group_id: string | null;
           icon: string | null;
           id: string;
           is_active: boolean;
           name: string;
+          parent_id: string | null;
+          sort_order: number | null;
           updated_at: string | null;
           user_id: string | null;
         };
@@ -598,11 +566,12 @@ export type Database = {
           color?: string | null;
           created_at?: string | null;
           description?: string | null;
-          group_id?: string | null;
           icon?: string | null;
           id?: string;
           is_active?: boolean;
           name: string;
+          parent_id?: string | null;
+          sort_order?: number | null;
           updated_at?: string | null;
           user_id?: string | null;
         };
@@ -610,20 +579,21 @@ export type Database = {
           color?: string | null;
           created_at?: string | null;
           description?: string | null;
-          group_id?: string | null;
           icon?: string | null;
           id?: string;
           is_active?: boolean;
           name?: string;
+          parent_id?: string | null;
+          sort_order?: number | null;
           updated_at?: string | null;
           user_id?: string | null;
         };
         Relationships: [
           {
-            foreignKeyName: 'tags_group_id_fkey';
-            columns: ['group_id'];
+            foreignKeyName: 'tags_parent_id_fkey';
+            columns: ['parent_id'];
             isOneToOne: false;
-            referencedRelation: 'tag_groups';
+            referencedRelation: 'tags';
             referencedColumns: ['id'];
           },
         ];
