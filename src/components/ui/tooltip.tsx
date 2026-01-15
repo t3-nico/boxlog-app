@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 import { zIndex } from '@/config/ui/z-index';
 import { cn } from '@/lib/utils';
@@ -137,24 +138,26 @@ function HoverTooltip({
       >
         {children}
       </span>
-      {isVisible && (
-        <div
-          ref={tooltipRef}
-          role="tooltip"
-          className={cn(
-            'bg-tooltip text-tooltip-foreground animate-in fade-in-0 zoom-in-95 pointer-events-none fixed rounded-md px-2 py-1 text-xs',
-            className,
-          )}
-          style={{
-            top: position.top,
-            left: position.left,
-            maxWidth,
-            zIndex: zIndex.tooltip,
-          }}
-        >
-          {content}
-        </div>
-      )}
+      {isVisible &&
+        createPortal(
+          <div
+            ref={tooltipRef}
+            role="tooltip"
+            className={cn(
+              'bg-tooltip text-tooltip-foreground animate-in fade-in-0 zoom-in-95 pointer-events-none fixed rounded-md px-2 py-1 text-xs',
+              className,
+            )}
+            style={{
+              top: position.top,
+              left: position.left,
+              maxWidth,
+              zIndex: zIndex.tooltip,
+            }}
+          >
+            {content}
+          </div>,
+          document.body,
+        )}
     </>
   );
 }
