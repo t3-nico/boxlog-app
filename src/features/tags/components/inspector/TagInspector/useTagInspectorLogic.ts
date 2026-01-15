@@ -77,8 +77,8 @@ export function useTagInspectorLogic() {
   );
 
   const tagGroup = useMemo(() => {
-    if (!tag?.group_id) return null;
-    return groups.find((g) => g.id === tag.group_id) || null;
+    if (!tag?.parent_id) return null;
+    return groups.find((g) => g.id === tag.parent_id) || null;
   }, [groups, tag]);
 
   // Mutations
@@ -184,14 +184,14 @@ export function useTagInspectorLogic() {
     setShowMergeDialog(true);
   }, []);
 
-  // Group change
+  // Group change (parent tag change)
   const handleChangeGroup = useCallback(
-    (groupId: string | null) => {
+    (newParentId: string | null) => {
       if (!tagId || !tag) return;
-      if (tag.group_id === groupId) return;
+      if (tag.parent_id === newParentId) return;
       updateTagMutation.mutate({
         id: tagId,
-        data: { group_id: groupId },
+        data: { parentId: newParentId },
       });
     },
     [tagId, tag, updateTagMutation],

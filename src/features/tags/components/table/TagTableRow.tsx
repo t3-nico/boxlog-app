@@ -118,7 +118,7 @@ export function TagCellContent({
   }, [editingField, editValue, updateTagMutation, tag.id, cancelEditing]);
 
   // グループ情報
-  const group = tag.group_id ? groups.find((g) => g.id === tag.group_id) : null;
+  const group = tag.parent_id ? groups.find((g) => g.id === tag.parent_id) : null;
 
   switch (columnId) {
     case 'name':
@@ -205,7 +205,7 @@ export function TagCellContent({
               if (e.key === 'Enter' && newGroupName.trim() && onCreateGroup) {
                 e.preventDefault();
                 const newGroup = await onCreateGroup(newGroupName.trim());
-                updateTagMutation.mutate({ id: tag.id, data: { group_id: newGroup.id } });
+                updateTagMutation.mutate({ id: tag.id, data: { parentId: newGroup.id } });
                 setIsCreatingGroup(false);
                 setNewGroupName('');
               } else if (e.key === 'Escape') {
@@ -226,14 +226,14 @@ export function TagCellContent({
 
       return (
         <Select
-          value={tag.group_id || 'uncategorized'}
+          value={tag.parent_id || 'uncategorized'}
           onValueChange={(value) => {
             if (value === '__create_new__') {
               setIsCreatingGroup(true);
               return;
             }
             const newGroupId = value === 'uncategorized' ? null : value;
-            updateTagMutation.mutate({ id: tag.id, data: { group_id: newGroupId } });
+            updateTagMutation.mutate({ id: tag.id, data: { parentId: newGroupId } });
           }}
         >
           <SelectTrigger className="h-auto w-32 justify-start border-none bg-transparent p-0 shadow-none focus:ring-0 sm:w-[160px] [&>svg:last-child]:hidden">

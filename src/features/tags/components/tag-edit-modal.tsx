@@ -53,7 +53,7 @@ export const TagEditModal = ({ isOpen, onClose, onSave, tag }: TagEditModalProps
       setName(tag.name);
       setColor(tag.color || '#3B82F6');
       setDescription(tag.description || '');
-      setGroupId(tag.group_id || '__none__');
+      setGroupId(tag.parent_id || '__none__');
       setError('');
     }
   }, [isOpen, tag]);
@@ -74,7 +74,7 @@ export const TagEditModal = ({ isOpen, onClose, onSave, tag }: TagEditModalProps
           name: name.trim(),
           color,
           description: description.trim() || undefined,
-          group_id: groupId && groupId !== '__none__' ? groupId : null,
+          parentId: groupId && groupId !== '__none__' ? groupId : null,
         });
         onClose();
       } catch (err) {
