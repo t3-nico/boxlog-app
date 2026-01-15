@@ -73,11 +73,8 @@ const ServiceWorkerProvider = dynamic(
   { ssr: false },
 );
 
-// GlobalTagCreateModalを遅延ロード
-const GlobalTagCreateModal = dynamic(
-  () => import('@/features/tags/components').then((mod) => mod.GlobalTagCreateModal),
-  { ssr: false },
-);
+// GlobalTagCreateModal（直接import - 軽量なのでdynamic不要）
+import { GlobalTagCreateModal } from '@/features/tags/components';
 
 // SettingsModalを遅延ロード
 const SettingsModal = dynamic(

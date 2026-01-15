@@ -1,33 +1,17 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 import { Button } from '@/components/ui/button';
 import { ColorPalettePicker } from '@/components/ui/color-palette-picker';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
-import { TAG_DESCRIPTION_MAX_LENGTH, TAG_NAME_MAX_LENGTH } from '@/features/tags/constants/colors';
+import { TAG_NAME_MAX_LENGTH } from '@/features/tags/constants/colors';
 import { useTagGroups } from '@/features/tags/hooks/useTagGroups';
 import type { CreateTagInput, TagGroup } from '@/features/tags/types';
 import { logger } from '@/lib/logger';
+import { ChevronDown, Tag } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { toast } from 'sonner';
 
 interface TagCreateModalProps {
   isOpen: boolean;
@@ -35,156 +19,262 @@ interface TagCreateModalProps {
   onSave: (data: CreateTagInput) => Promise<void>;
 }
 
+/**
+ * タグ作成モーダル
+ *
+ * ReactのcreatePortalを使用してdocument.bodyに直接レンダリング
+ *
+ * スタイルガイド準拠:
+ * - 8pxグリッドシステム（p-6, gap-4, mb-6等）
+ * - 角丸: rounded-xl（16px）for ダイアログ
+ * - Surface: bg-surface（カード、ダイアログ用）
+ */
 export const TagCreateModal = ({ isOpen, onClose, onSave }: TagCreateModalProps) => {
   const t = useTranslations();
   const [name, setName] = useState('');
   const [color, setColor] = useState('#3B82F6');
-  const [description, setDescription] = useState('');
-  const [groupId, setGroupId] = useState<string>('');
+  const [parentId, setParentId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [mounted, setMounted] = useState(false);
+  const [isParentDropdownOpen, setIsParentDropdownOpen] = useState(false);
 
-  // タググループ取得 - モーダルが開いている時だけフェッチ（未認証ページでの401エラー防止）
-  const { data: groups = [] as TagGroup[] } = useTagGroups({ enabled: isOpen });
+  // タググループ（親タグ）取得 - モーダルが開いている時だけフェッチ
+  const { data: parentTags = [] as TagGroup[] } = useTagGroups({ enabled: isOpen });
+
+  // クライアントサイドでのみマウント
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // モーダルが開いたらリセット
   useEffect(() => {
     if (isOpen) {
       setName('');
       setColor('#3B82F6');
-      setDescription('');
-      setGroupId('');
+      setParentId(null);
       setError('');
+      setIsParentDropdownOpen(false);
     }
   }, [isOpen]);
 
-  const handleSubmit = useCallback(
-    async (e: React.FormEvent) => {
-      e.preventDefault();
-      setError('');
+  // ESCキーでダイアログを閉じる
+  useEffect(() => {
+    if (!isOpen) return;
 
-      if (!name.trim()) {
-        setError(t('tag.validation.nameEmpty'));
-        return;
-      }
-
-      setIsLoading(true);
-      try {
-        await onSave({
-          name: name.trim(),
-          color,
-          description: description.trim() || null,
-          group_id: groupId && groupId !== '__none__' ? groupId : null,
-        });
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && !isLoading) {
         onClose();
-      } catch (err) {
-        logger.error('Tag creation failed:', err);
-        // エラーメッセージから重複エラーを検出
-        const errorMessage = err instanceof Error ? err.message : String(err);
-        if (
-          errorMessage.includes('duplicate') ||
-          errorMessage.includes('unique') ||
-          errorMessage.includes('重複') ||
-          errorMessage.includes('既に存在')
-        ) {
-          setError(t('tag.form.duplicateName'));
-        } else {
-          setError(t('tag.errors.createFailed'));
-        }
-      } finally {
-        setIsLoading(false);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, isLoading, onClose]);
+
+  // ドロップダウン外クリックで閉じる
+  useEffect(() => {
+    if (!isParentDropdownOpen) return;
+
+    const handleClickOutside = () => {
+      setIsParentDropdownOpen(false);
+    };
+
+    const timeoutId = setTimeout(() => {
+      document.addEventListener('click', handleClickOutside);
+    }, 0);
+
+    return () => {
+      clearTimeout(timeoutId);
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [isParentDropdownOpen]);
+
+  const handleSubmit = useCallback(async () => {
+    setError('');
+
+    if (!name.trim()) {
+      setError(t('tag.validation.nameEmpty'));
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      await onSave({
+        name: name.trim(),
+        color,
+        parentId: parentId,
+      });
+      onClose();
+    } catch (err) {
+      logger.error('Tag creation failed:', err);
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      if (
+        errorMessage.includes('duplicate') ||
+        errorMessage.includes('unique') ||
+        errorMessage.includes('重複') ||
+        errorMessage.includes('既に存在')
+      ) {
+        setError(t('tag.form.duplicateName'));
+      } else {
+        setError(t('tag.errors.createFailed'));
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  }, [name, color, parentId, onSave, onClose, t]);
+
+  const handleBackdropClick = useCallback(
+    (e: React.MouseEvent) => {
+      if (e.target === e.currentTarget && !isLoading) {
+        onClose();
       }
     },
-    [name, color, description, groupId, onSave, onClose, t],
+    [isLoading, onClose],
   );
 
-  return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
-          <DialogTitle>{t('tag.modal.createTitle')}</DialogTitle>
-          <DialogDescription>{t('tag.modal.createDescription')}</DialogDescription>
-        </DialogHeader>
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter' && !isLoading && name.trim()) {
+        e.preventDefault();
+        handleSubmit();
+      }
+    },
+    [handleSubmit, isLoading, name],
+  );
 
-        <form onSubmit={handleSubmit}>
-          <div className="grid gap-4 py-4">
-            {/* タグ名 */}
-            <div className="grid gap-2">
-              <Label htmlFor="name">{t('tag.form.tagNameRequired')}</Label>
-              <Input
-                id="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder={t('tag.form.examplePlaceholder')}
-                maxLength={TAG_NAME_MAX_LENGTH}
-                required
-              />
-            </div>
+  const selectedParent = parentTags.find((p) => p.id === parentId);
 
-            {/* カラー */}
-            <div className="grid gap-2">
-              <Label htmlFor="color">{t('tag.form.color')}</Label>
-              <ColorPalettePicker selectedColor={color} onColorSelect={setColor} />
-            </div>
+  if (!mounted || !isOpen) return null;
 
-            {/* グループ */}
-            <div className="grid gap-2">
-              <Label htmlFor="group">{t('tag.form.group')}</Label>
-              <Select value={groupId ?? undefined} onValueChange={(value) => setGroupId(value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder={t('tag.form.selectGroupPlaceholder')} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="__none__">{t('tag.sidebar.uncategorized')}</SelectItem>
-                  {groups.map((group) => (
-                    <SelectItem key={group.id} value={group.id}>
-                      {group.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+  const dialog = (
+    <div
+      className="animate-in fade-in bg-overlay-heavy fixed inset-0 z-[250] flex items-center justify-center duration-150"
+      onClick={handleBackdropClick}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="tag-create-dialog-title"
+    >
+      {/* ダイアログコンテンツ: bg-surface, rounded-xl, p-6 */}
+      <div
+        className="animate-in zoom-in-95 fade-in bg-surface text-foreground border-border rounded-xl border p-6 shadow-lg duration-150"
+        style={{ width: 'min(calc(100vw - 32px), 400px)' }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="mb-6 flex items-start gap-4">
+          <div className="bg-primary/10 flex size-10 shrink-0 items-center justify-center rounded-full">
+            <Tag className="text-primary size-5" />
+          </div>
+          <div className="flex-1">
+            <h2 id="tag-create-dialog-title" className="text-lg leading-tight font-semibold">
+              {t('tag.modal.createTitle')}
+            </h2>
+            <p className="text-muted-foreground mt-1 text-sm">{t('tag.modal.createDescription')}</p>
+          </div>
+        </div>
 
-            {/* 説明 */}
-            <div className="grid gap-2">
-              <Label htmlFor="description">{t('tag.form.description')}</Label>
-              <Textarea
-                id="description"
-                value={description}
-                onChange={(e) => {
-                  if (e.target.value.length <= TAG_DESCRIPTION_MAX_LENGTH) {
-                    setDescription(e.target.value);
-                  } else {
-                    toast.info(
-                      t('tag.validation.descriptionLimitReached', {
-                        max: TAG_DESCRIPTION_MAX_LENGTH,
-                      }),
-                      {
-                        id: 'description-limit',
-                      },
-                    );
-                  }
-                }}
-                placeholder={t('tag.form.descriptionPlaceholder')}
-                rows={3}
-                maxLength={TAG_DESCRIPTION_MAX_LENGTH}
-              />
-            </div>
-
-            {/* エラー表示 */}
-            {error && <p className="text-destructive text-sm">{error}</p>}
+        {/* Form */}
+        <div className="mb-6 space-y-4">
+          {/* タグ名 */}
+          <div>
+            <label htmlFor="tag-name" className="text-sm font-medium">
+              {t('tag.form.tagNameRequired')}
+            </label>
+            <Input
+              id="tag-name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder={t('tag.form.examplePlaceholder')}
+              maxLength={TAG_NAME_MAX_LENGTH}
+              className="mt-1.5"
+              autoFocus
+            />
           </div>
 
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={onClose} disabled={isLoading}>
-              {t('tag.actions.cancel')}
-            </Button>
-            <Button type="submit" disabled={isLoading || !name.trim()}>
-              {isLoading ? t('tag.actions.creating') : t('tag.actions.create')}
-            </Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
+          {/* カラー */}
+          <div>
+            <label className="text-sm font-medium">{t('tag.form.color')}</label>
+            <div className="mt-1.5">
+              <ColorPalettePicker selectedColor={color} onColorSelect={setColor} />
+            </div>
+          </div>
+
+          {/* 親タグ選択 */}
+          <div>
+            <label className="text-sm font-medium">{t('tag.form.group')}</label>
+            <div className="relative mt-1.5">
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsParentDropdownOpen(!isParentDropdownOpen);
+                }}
+                className="border-input bg-background hover:bg-state-hover flex h-9 w-full items-center justify-between rounded-md border px-3 text-sm"
+              >
+                <span className={selectedParent ? 'text-foreground' : 'text-muted-foreground'}>
+                  {selectedParent ? selectedParent.name : t('tag.sidebar.uncategorized')}
+                </span>
+                <ChevronDown className="text-muted-foreground size-4" />
+              </button>
+
+              {/* Dropdown menu */}
+              {isParentDropdownOpen && (
+                <div className="bg-surface border-border absolute top-full z-10 mt-1 w-full rounded-md border py-1 shadow-lg">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setParentId(null);
+                      setIsParentDropdownOpen(false);
+                    }}
+                    className="hover:bg-state-hover w-full px-3 py-2 text-left text-sm"
+                  >
+                    {t('tag.sidebar.uncategorized')}
+                  </button>
+                  {parentTags.map((parent) => (
+                    <button
+                      key={parent.id}
+                      type="button"
+                      onClick={() => {
+                        setParentId(parent.id);
+                        setIsParentDropdownOpen(false);
+                      }}
+                      className="hover:bg-state-hover flex w-full items-center gap-2 px-3 py-2 text-left text-sm"
+                    >
+                      <span
+                        className="size-3 rounded-full"
+                        style={{ backgroundColor: parent.color ?? '#6B7280' }}
+                      />
+                      {parent.name}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* エラー表示 */}
+          {error && <p className="text-destructive text-sm">{error}</p>}
+        </div>
+
+        {/* Footer */}
+        <div className="flex justify-end gap-2">
+          <Button
+            variant="outline"
+            onClick={onClose}
+            disabled={isLoading}
+            className="hover:bg-state-hover"
+          >
+            {t('tag.actions.cancel')}
+          </Button>
+          <Button onClick={handleSubmit} disabled={isLoading || !name.trim()}>
+            {isLoading ? t('tag.actions.creating') : t('tag.actions.create')}
+          </Button>
+        </div>
+      </div>
+    </div>
   );
+
+  return createPortal(dialog, document.body);
 };

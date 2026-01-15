@@ -1,36 +1,29 @@
 'use client';
 
-import type { ReactNode } from 'react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { DeleteConfirmDialog } from '@/components/common/DeleteConfirmDialog';
 import { LoadingSpinner } from '@/components/common/Loading/LoadingStates';
 import { usePageTitle } from '@/features/navigation/hooks/usePageTitle';
-import { DataTable, type GroupedData, type SortState } from '@/features/table';
 import {
-  TagGroupCreateRow,
-  type TagGroupCreateRowHandle,
-  TagRowWrapper,
-  TagsTableEmptyState,
-} from '@/features/tags/components/table';
-import { TagGroupHeader } from '@/features/tags/components/TagGroupHeader';
+  TagList,
+  TagListGroupCreateRow,
+  type TagListGroupCreateRowHandle,
+} from '@/features/tags/components/list';
+import { TagsTableEmptyState } from '@/features/tags/components/table';
 import { TagsDialogs } from '@/features/tags/components/TagsDialogs';
 import { TagSelectionActions } from '@/features/tags/components/TagSelectionActions';
 import { TagsFilterBar } from '@/features/tags/components/TagsFilterBar';
 import { TagsSelectionBar } from '@/features/tags/components/TagsSelectionBar';
 import { TagsStatusTabs } from '@/features/tags/components/TagsStatusTabs';
 import { useTagsPageContext } from '@/features/tags/contexts/TagsPageContext';
-import { useCreateTagGroup, useDeleteTagGroup } from '@/features/tags/hooks/useTagGroups';
+import { useDeleteTagGroup } from '@/features/tags/hooks/useTagGroups';
 import { useTagOperations } from '@/features/tags/hooks/useTagOperations';
 import { useUpdateTag } from '@/features/tags/hooks/useTags';
 import { useTagsPageData } from '@/features/tags/hooks/useTagsPageData';
-import { useTagTableColumns } from '@/features/tags/hooks/useTagTableColumns';
-import { type TagColumnId, useTagColumnStore } from '@/features/tags/stores/useTagColumnStore';
-import { useTagInspectorStore } from '@/features/tags/stores/useTagInspectorStore';
-import { useTagPaginationStore } from '@/features/tags/stores/useTagPaginationStore';
+import { useTagCreateModalStore } from '@/features/tags/stores/useTagCreateModalStore';
 import { useTagSearchStore } from '@/features/tags/stores/useTagSearchStore';
 import { useTagSelectionStore } from '@/features/tags/stores/useTagSelectionStore';
-import { useTagSortStore } from '@/features/tags/stores/useTagSortStore';
 import type { Tag, TagGroup } from '@/features/tags/types';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
@@ -59,61 +52,51 @@ export function TagsPageClient() {
   const [deletingGroup, setDeletingGroup] = useState<TagGroup | null>(null);
 
   // グループ作成行のref
-  const groupCreateRowRef = useRef<TagGroupCreateRowHandle>(null);
+  const groupCreateRowRef = useRef<TagListGroupCreateRowHandle>(null);
 
   // カスタムフックでデータ処理ロジックを分離（フィルター状態はストアから取得）
   const {
     fetchedTags,
     groups,
     tagPlanCounts,
-    tagLastUsed,
     isFetching,
     activeTagsCount,
     sortedTags,
     groupedData,
     displayMode,
-    sortField,
-    sortDirection,
     searchQuery,
     showArchiveOnly,
-    selectedGroupId,
   } = useTagsPageData({
     t: (key: string) => t(key),
   });
 
   // Zustand stores
-  const { selectedIds, setSelectedIds, clearSelection, getSelectedIds, getSelectedCount } =
-    useTagSelectionStore();
-  const { setSort } = useTagSortStore();
-  const { currentPage, pageSize, setCurrentPage, setPageSize } = useTagPaginationStore();
-  const { getVisibleColumns, setColumnWidth } = useTagColumnStore();
+  const { selectedIds, clearSelection, getSelectedIds, getSelectedCount } = useTagSelectionStore();
   const { setSearchQuery } = useTagSearchStore();
 
   // コンテキスト
   const { tags, setTags, setIsLoading } = useTagsPageContext();
 
-  // Inspector
-  const { openInspector } = useTagInspectorStore();
+  // モーダル
+  const openModal = useTagCreateModalStore((state) => state.openModal);
 
   // タグ操作
   const updateTagMutation = useUpdateTag();
   const deleteGroupMutation = useDeleteTagGroup();
-  const createGroupMutation = useCreateTagGroup();
   const { showCreateModal, handleSaveNewTag, handleDeleteTag, handleCloseModals } =
     useTagOperations(tags);
 
-  // 新規作成ハンドラー（Inspectorを開く）
-  const handleOpenCreateInspector = useCallback(() => {
-    openInspector(null, { initialData: { groupId: selectedGroupId } });
-  }, [openInspector, selectedGroupId]);
+  // 新規作成ハンドラー（モーダルを開く）
+  const handleOpenCreateModal = useCallback(() => {
+    openModal();
+  }, [openModal]);
 
   // グループ作成行を開くハンドラー
   const handleOpenGroupCreate = useCallback(() => {
     groupCreateRowRef.current?.startCreate();
   }, []);
 
-  // 表示列
-  const visibleColumns = getVisibleColumns();
+  // 選択状態
   const selectedTagIds = getSelectedIds();
   const selectedCount = getSelectedCount();
 
@@ -135,11 +118,6 @@ export function TagsPageClient() {
       document.title = t('tags.page.title');
     };
   }, [activeTagsCount, t]);
-
-  // ソート変更時にページ1に戻る
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [sortField, sortDirection, pageSize, setCurrentPage]);
 
   // ハンドラー: グループ折りたたみ
   const handleToggleGroupCollapse = useCallback((groupKey: string) => {
@@ -170,35 +148,13 @@ export function TagsPageClient() {
     }
   }, [deletingGroup, deleteGroupMutation, t]);
 
-  // カスタムグループヘッダーレンダラー
-  const renderGroupHeader = useCallback(
-    (group: GroupedData<Tag>, columnCount: number, isCollapsed: boolean) => {
-      const tagGroup = groups.find((g) => g.id === group.groupKey);
-
-      return (
-        <TagGroupHeader
-          key={`group-${group.groupKey}`}
-          groupKey={group.groupKey}
-          groupLabel={group.groupLabel}
-          count={group.count}
-          columnCount={columnCount}
-          isCollapsed={isCollapsed}
-          tagGroup={tagGroup}
-          onToggleCollapse={handleToggleGroupCollapse}
-          onDeleteGroup={handleDeleteGroup}
-        />
-      );
-    },
-    [groups, handleToggleGroupCollapse, handleDeleteGroup],
-  );
-
   // ハンドラー: グループ移動
   const handleMoveToGroup = useCallback(
     async (tag: Tag, groupId: string | null) => {
       try {
         await updateTagMutation.mutateAsync({
           id: tag.id,
-          data: { group_id: groupId },
+          data: { parentId: groupId },
         });
         const group = groupId ? groups.find((g) => g.id === groupId) : null;
         toast.success(
@@ -298,87 +254,6 @@ export function TagsPageClient() {
     }
   }, [deleteConfirmTag, handleDeleteTag, t]);
 
-  // ハンドラー: グループ作成（インライン）
-  const handleCreateGroup = useCallback(
-    async (name: string) => {
-      const result = await createGroupMutation.mutateAsync({ name });
-      toast.success(t('tag.toast.groupCreated', { name }));
-      return result;
-    },
-    [createGroupMutation, t],
-  );
-
-  // DataTable用のソート状態
-  const sortState: SortState = useMemo(
-    () => ({ field: sortField, direction: sortDirection }),
-    [sortField, sortDirection],
-  );
-
-  const handleSortChange = useCallback(
-    (newSortState: SortState) => {
-      if (newSortState.field) {
-        setSort(newSortState.field as typeof sortField, newSortState.direction);
-      }
-    },
-    [setSort],
-  );
-
-  const handleSelectionChange = useCallback(
-    (newSelectedIds: Set<string>) => setSelectedIds(Array.from(newSelectedIds)),
-    [setSelectedIds],
-  );
-
-  const handlePaginationChange = useCallback(
-    (state: { currentPage: number; pageSize: number }) => {
-      setCurrentPage(state.currentPage);
-      setPageSize(state.pageSize);
-    },
-    [setCurrentPage, setPageSize],
-  );
-
-  const handleColumnWidthChange = useCallback(
-    (columnId: string, width: number) => setColumnWidth(columnId as TagColumnId, width),
-    [setColumnWidth],
-  );
-
-  // DataTable用の列定義
-  const columns = useTagTableColumns({
-    groups,
-    allTags: tags,
-    planCounts: tagPlanCounts,
-    lastUsed: tagLastUsed,
-    visibleColumns,
-    t,
-    onCreateGroup: handleCreateGroup,
-  });
-
-  // DataTable用の列幅マップ
-  const columnWidths = useMemo(() => {
-    const widths: Record<string, number> = {};
-    visibleColumns.forEach((col) => {
-      widths[col.id] = col.width;
-    });
-    return widths;
-  }, [visibleColumns]);
-
-  // 行ラッパー
-  const rowWrapper = useCallback(
-    ({ item, children, isSelected }: { item: Tag; children: ReactNode; isSelected: boolean }) => (
-      <TagRowWrapper
-        key={item.id}
-        tag={item}
-        isSelected={isSelected}
-        groups={groups}
-        onMoveToGroup={handleMoveToGroup}
-        onArchiveConfirm={handleOpenArchiveConfirm}
-        onDeleteConfirm={handleOpenDeleteConfirm}
-      >
-        {children}
-      </TagRowWrapper>
-    ),
-    [groups, handleMoveToGroup, handleOpenArchiveConfirm, handleOpenDeleteConfirm],
-  );
-
   // ローディング表示
   if (isFetching) {
     return (
@@ -430,7 +305,7 @@ export function TagsPageClient() {
           {/* 右側: ナビゲーション・作成ボタン */}
           <TagsFilterBar
             {...(!showArchiveOnly && {
-              onCreateClick: handleOpenCreateInspector,
+              onCreateClick: handleOpenCreateModal,
               onCreateGroupClick: handleOpenGroupCreate,
             })}
             searchQuery={searchQuery}
@@ -440,46 +315,33 @@ export function TagsPageClient() {
         </div>
       )}
 
-      {/* テーブル */}
+      {/* タグリスト */}
       <div className="flex flex-1 flex-col overflow-auto px-4">
-        <DataTable
-          data={sortedTags}
-          columns={columns}
-          getRowKey={(tag) => tag.id}
-          selectable
+        <TagList
+          tags={sortedTags}
+          groupedData={groupedData}
+          groups={groups}
+          planCounts={tagPlanCounts}
+          collapsedGroups={collapsedGroups}
+          onToggleGroupCollapse={handleToggleGroupCollapse}
           selectedIds={selectedIds}
-          onSelectionChange={handleSelectionChange}
-          sortState={sortState}
-          onSortChange={handleSortChange}
-          showPagination={displayMode === 'flat'}
-          paginationState={{ currentPage, pageSize }}
-          onPaginationChange={handlePaginationChange}
-          columnWidths={columnWidths}
-          onColumnWidthChange={handleColumnWidthChange}
-          {...(groupedData && {
-            groupedData,
-            collapsedGroups,
-            onToggleGroupCollapse: handleToggleGroupCollapse,
-            renderGroupHeader,
-          })}
-          rowWrapper={rowWrapper}
-          onOutsideClick={clearSelection}
-          selectAllLabel={t('tags.page.selectAll')}
-          getSelectLabel={(tag) => t('tags.page.selectTag', { name: tag.name })}
+          onMoveToGroup={handleMoveToGroup}
+          onArchiveConfirm={handleOpenArchiveConfirm}
+          onDeleteConfirm={handleOpenDeleteConfirm}
+          onDeleteGroup={handleDeleteGroup}
           emptyState={
             <TagsTableEmptyState
               searchQuery={searchQuery}
               isArchiveView={showArchiveOnly}
               onClearSearch={() => setSearchQuery('')}
-              onCreate={handleOpenCreateInspector}
+              onCreate={handleOpenCreateModal}
             />
           }
-          extraRows={
-            displayMode === 'grouped' && !showArchiveOnly ? (
-              <TagGroupCreateRow ref={groupCreateRowRef} columnCount={columns.length} />
-            ) : undefined
-          }
         />
+        {/* グループ作成行（グループ表示モード時のみ） */}
+        {displayMode === 'grouped' && !showArchiveOnly && (
+          <TagListGroupCreateRow ref={groupCreateRowRef} />
+        )}
       </div>
 
       {/* ダイアログ群（分離済み） */}
