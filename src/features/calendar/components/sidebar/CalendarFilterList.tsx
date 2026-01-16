@@ -42,6 +42,7 @@ import { useCalendarFilterStore, type ItemType } from '../../stores/useCalendarF
 
 import { SidebarSection } from '@/features/navigation/components/sidebar/SidebarSection';
 import { TagMergeModal } from '@/features/tags/components/tag-merge-modal';
+import { TAG_NAME_MAX_LENGTH } from '@/features/tags/constants/colors';
 import { useTagGroups } from '@/features/tags/hooks/useTagGroups';
 import { useDeleteTag, useReorderTags, useTags, useUpdateTag } from '@/features/tags/hooks/useTags';
 import { useTagCreateModalStore } from '@/features/tags/stores/useTagCreateModalStore';
@@ -160,6 +161,7 @@ export function CalendarFilterList() {
     toggleGroupTags,
     getGroupVisibility,
     initializeWithTags,
+    showOnlyTag,
     showOnlyUntagged,
     showOnlyGroupTags,
   } = useCalendarFilterStore();
@@ -521,6 +523,11 @@ export function CalendarFilterList() {
                               groupedTags.grouped.find((g) => g.group.id === item.id)?.tags || [];
                             toggleGroupTags(groupTags.map((t) => t.id));
                           }}
+                          onShowOnlyGroup={() => {
+                            const groupTags =
+                              groupedTags.grouped.find((g) => g.group.id === item.id)?.tags || [];
+                            showOnlyGroupTags(groupTags.map((t) => t.id));
+                          }}
                           onAddChildTag={() => handleAddChildTag(item.id)}
                           onDeleteGroup={() => handleDeleteParentTag(item.id)}
                         />
@@ -539,6 +546,7 @@ export function CalendarFilterList() {
                             color: g.color,
                           }))}
                           onDeleteTag={() => handleDeleteParentTag(item.id)}
+                          onShowOnlyThis={() => showOnlyTag(item.id)}
                         />
                       );
                     case 'ungrouped-header':
@@ -572,6 +580,7 @@ export function CalendarFilterList() {
                             color: g.color,
                           }))}
                           onDeleteTag={() => handleDeleteParentTag(item.id)}
+                          onShowOnlyThis={() => showOnlyTag(item.id)}
                         />
                       );
                     default:
@@ -580,12 +589,14 @@ export function CalendarFilterList() {
                 })}
               </SortableContext>
 
-              {/* タグなし */}
+              {/* タグなし（システム項目：薄いテキスト + グレーチェックボックス） */}
               <FilterItem
                 label={t('calendar.filter.untagged')}
                 checked={showUntagged}
                 onCheckedChange={toggleUntagged}
                 onShowOnlyThis={showOnlyUntagged}
+                checkboxColor="#6B7280"
+                labelClassName="text-muted-foreground"
               />
 
               {/* ドラッグオーバーレイ（カレンダーDnDと統一スタイル） */}
@@ -632,6 +643,8 @@ interface FilterItemProps {
   description?: string | null | undefined;
   /** チェックボックスの色（hex値） */
   checkboxColor?: string | undefined;
+  /** ラベルの追加クラス名（システム項目用） */
+  labelClassName?: string | undefined;
   icon?: React.ReactNode;
   checked: boolean;
   onCheckedChange: () => void;
@@ -656,6 +669,7 @@ function FilterItem({
   tagId,
   description,
   checkboxColor,
+  labelClassName,
   icon,
   checked,
   onCheckedChange,
@@ -950,17 +964,23 @@ function FilterItem({
       />
       {icon && <span className="text-muted-foreground shrink-0">{icon}</span>}
       {isEditing ? (
-        <Input
-          ref={inputRef}
-          value={editName}
-          onChange={(e) => setEditName(e.target.value)}
-          onBlur={handleSaveName}
-          onKeyDown={handleKeyDown}
-          onClick={(e) => e.stopPropagation()}
-          className="border-border bg-background focus-visible:ring-ring h-auto flex-1 rounded px-2 py-0.5 text-sm shadow-none focus-visible:ring-1"
-        />
+        <div className="flex flex-1 items-center gap-1">
+          <Input
+            ref={inputRef}
+            value={editName}
+            onChange={(e) => setEditName(e.target.value)}
+            onBlur={handleSaveName}
+            onKeyDown={handleKeyDown}
+            onClick={(e) => e.stopPropagation()}
+            maxLength={TAG_NAME_MAX_LENGTH}
+            className="border-border bg-background focus-visible:ring-ring h-auto flex-1 rounded px-2 py-0.5 text-sm shadow-none focus-visible:ring-1"
+          />
+          <span className="text-muted-foreground shrink-0 text-[10px] tabular-nums">
+            {editName.length}/{TAG_NAME_MAX_LENGTH}
+          </span>
+        </div>
       ) : (
-        <span className="min-w-0 flex-1 truncate">{label}</span>
+        <span className={cn('min-w-0 flex-1 truncate', labelClassName)}>{label}</span>
       )}
       {/* メニュー */}
       {(tagId || onShowOnlyThis) && !disabled && (
@@ -1052,6 +1072,8 @@ interface FlatGroupHeaderProps {
   onToggleGroup: () => void;
   onAddChildTag: () => void;
   onDeleteGroup: () => void;
+  /** このグループだけ表示 */
+  onShowOnlyGroup: () => void;
 }
 
 /** フラットなグループヘッダー（useSortable対応） */
@@ -1063,14 +1085,28 @@ function FlatGroupHeader({
   onToggleGroup,
   onAddChildTag,
   onDeleteGroup,
+  onShowOnlyGroup,
 }: FlatGroupHeaderProps) {
   const t = useTranslations();
   const updateTagMutation = useUpdateTag();
+  const { removeTag } = useCalendarFilterStore();
   const { attributes, listeners, setNodeRef, transform, transition, isDragging, isOver } =
     useSortable({ id: item.id });
   const [menuOpen, setMenuOpen] = useState(false);
   const [optimisticColor, setOptimisticColor] = useState<string | null>(null);
   const displayColor = optimisticColor ?? item.color;
+
+  // インライン編集
+  const [isEditing, setIsEditing] = useState(false);
+  const [editName, setEditName] = useState(item.name);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // 説明編集
+  const [editDescription, setEditDescription] = useState(item.description ?? '');
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // マージモーダル
+  const [mergeModalOpen, setMergeModalOpen] = useState(false);
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -1083,6 +1119,56 @@ function FlatGroupHeader({
     await updateTagMutation.mutateAsync({ id: item.id, data: { color } });
     setOptimisticColor(null);
   };
+
+  // 名前変更開始
+  const handleStartRename = useCallback(() => {
+    setMenuOpen(false);
+    setEditName(item.name);
+    setTimeout(() => {
+      setIsEditing(true);
+      setTimeout(() => inputRef.current?.focus(), 50);
+    }, 50);
+  }, [item.name]);
+
+  // 名前保存
+  const handleSaveName = useCallback(async () => {
+    setIsEditing(false);
+    const trimmed = editName.trim();
+    if (!trimmed || trimmed === item.name) {
+      setEditName(item.name);
+      return;
+    }
+    await updateTagMutation.mutateAsync({ id: item.id, data: { name: trimmed } });
+  }, [editName, item.id, item.name, updateTagMutation]);
+
+  // キーボード操作
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        handleSaveName();
+      } else if (e.key === 'Escape') {
+        setIsEditing(false);
+        setEditName(item.name);
+      }
+    },
+    [handleSaveName, item.name],
+  );
+
+  // 説明保存
+  const handleSaveDescription = useCallback(async () => {
+    const trimmed = editDescription.trim();
+    if (trimmed === (item.description ?? '')) return;
+    await updateTagMutation.mutateAsync({
+      id: item.id,
+      data: { description: trimmed || null },
+    });
+  }, [editDescription, item.id, item.description, updateTagMutation]);
+
+  // マージ成功時
+  const handleMergeSuccess = useCallback(() => {
+    removeTag(item.id);
+  }, [item.id, removeTag]);
 
   return (
     <div
@@ -1114,7 +1200,25 @@ function FlatGroupHeader({
             } as React.CSSProperties
           }
         />
-        <span className="text-foreground flex-1 truncate text-sm font-medium">{item.name}</span>
+        {isEditing ? (
+          <div className="flex flex-1 items-center gap-1">
+            <Input
+              ref={inputRef}
+              value={editName}
+              onChange={(e) => setEditName(e.target.value)}
+              onBlur={handleSaveName}
+              onKeyDown={handleKeyDown}
+              onClick={(e) => e.stopPropagation()}
+              maxLength={TAG_NAME_MAX_LENGTH}
+              className="border-border bg-background focus-visible:ring-ring h-auto flex-1 rounded px-2 py-0.5 text-sm shadow-none focus-visible:ring-1"
+            />
+            <span className="text-muted-foreground shrink-0 text-[10px] tabular-nums">
+              {editName.length}/{TAG_NAME_MAX_LENGTH}
+            </span>
+          </div>
+        ) : (
+          <span className="text-foreground flex-1 truncate text-sm font-medium">{item.name}</span>
+        )}
         <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
           <DropdownMenuTrigger asChild>
             <button
@@ -1125,7 +1229,13 @@ function FlatGroupHeader({
               <MoreHorizontal className="size-4" />
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
+          <DropdownMenuContent align="start" side="right">
+            {/* 名前を変更 */}
+            <DropdownMenuItem onClick={handleStartRename}>
+              <Pencil className="mr-2 size-4" />
+              {t('calendar.filter.rename')}
+            </DropdownMenuItem>
+            {/* カラーを変更 */}
             <DropdownMenuSub>
               <DropdownMenuSubTrigger>
                 <Palette className="mr-2 size-4" />
@@ -1138,10 +1248,65 @@ function FlatGroupHeader({
                 />
               </DropdownMenuSubContent>
             </DropdownMenuSub>
+            {/* 説明を編集 */}
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger>
+                <FileText className="mr-2 size-4" />
+                {t('calendar.filter.editDescription')}
+              </DropdownMenuSubTrigger>
+              <DropdownMenuSubContent className="w-[280px] p-3">
+                <Field>
+                  <FieldLabel htmlFor={`tag-description-${item.id}`}>
+                    {t('calendar.filter.descriptionLabel')}
+                  </FieldLabel>
+                  <div className="flex items-center justify-between">
+                    <FieldSupportText id={`tag-description-support-${item.id}`}>
+                      {t('calendar.filter.descriptionHint')}
+                    </FieldSupportText>
+                    <span className="text-muted-foreground text-xs tabular-nums">
+                      {editDescription.length}/100
+                    </span>
+                  </div>
+                  <Textarea
+                    id={`tag-description-${item.id}`}
+                    ref={textareaRef}
+                    value={editDescription}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (value.length <= 100) {
+                        setEditDescription(value);
+                        const textarea = e.target;
+                        textarea.style.height = 'auto';
+                        textarea.style.height = `${textarea.scrollHeight}px`;
+                      }
+                    }}
+                    onBlur={handleSaveDescription}
+                    maxLength={100}
+                    aria-describedby={`tag-description-support-${item.id}`}
+                    className="border-border min-h-[60px] w-full resize-none border text-sm"
+                  />
+                  {editDescription.length >= 100 && (
+                    <FieldError noPrefix>{t('calendar.filter.descriptionMaxLength')}</FieldError>
+                  )}
+                </Field>
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
+            {/* マージ */}
+            <DropdownMenuItem onClick={() => setMergeModalOpen(true)}>
+              <Merge className="mr-2 size-4" />
+              {t('calendar.filter.merge')}
+            </DropdownMenuItem>
+            {/* このタグだけ表示 */}
+            <DropdownMenuItem onClick={onShowOnlyGroup}>
+              <Eye className="mr-2 size-4" />
+              {t('calendar.filter.showOnlyThis')}
+            </DropdownMenuItem>
+            {/* 子タグを追加 */}
             <DropdownMenuItem onClick={onAddChildTag}>
               <Plus className="mr-2 size-4" />
               {t('calendar.filter.addChildTag')}
             </DropdownMenuItem>
+            {/* 削除 */}
             <DropdownMenuItem variant="destructive" onClick={onDeleteGroup}>
               <Trash2 className="mr-2 size-4" />
               {t('actions.delete')}
@@ -1159,6 +1324,15 @@ function FlatGroupHeader({
           <ChevronRight className={cn('size-4 transition-transform', isExpanded && 'rotate-90')} />
         </button>
       </div>
+
+      {/* マージモーダル */}
+      <TagMergeModal
+        open={mergeModalOpen}
+        onClose={() => setMergeModalOpen(false)}
+        sourceTag={{ id: item.id, name: item.name, color: item.color }}
+        hasChildren={true}
+        onMergeSuccess={handleMergeSuccess}
+      />
     </div>
   );
 }
@@ -1170,6 +1344,8 @@ interface FlatChildTagProps {
   count: number;
   parentTags?: Array<{ id: string; name: string; color?: string | null }> | undefined;
   onDeleteTag: () => void;
+  /** このタグだけ表示 */
+  onShowOnlyThis: () => void;
 }
 
 /** フラットな子タグ（useSortable対応、CSSでインデント） */
@@ -1180,14 +1356,28 @@ function FlatChildTag({
   count,
   parentTags,
   onDeleteTag,
+  onShowOnlyThis,
 }: FlatChildTagProps) {
   const t = useTranslations();
   const updateTagMutation = useUpdateTag();
+  const { removeTag } = useCalendarFilterStore();
   const { attributes, listeners, setNodeRef, transform, transition, isDragging, isOver } =
     useSortable({ id: item.id });
   const [menuOpen, setMenuOpen] = useState(false);
   const [optimisticColor, setOptimisticColor] = useState<string | null>(null);
   const displayColor = optimisticColor ?? item.color;
+
+  // インライン編集
+  const [isEditing, setIsEditing] = useState(false);
+  const [editName, setEditName] = useState(item.name);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // 説明編集
+  const [editDescription, setEditDescription] = useState(item.description ?? '');
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // マージモーダル
+  const [mergeModalOpen, setMergeModalOpen] = useState(false);
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -1204,6 +1394,56 @@ function FlatChildTag({
   const handleChangeParent = async (newParentId: string | null) => {
     await updateTagMutation.mutateAsync({ id: item.id, data: { parentId: newParentId } });
   };
+
+  // 名前変更開始
+  const handleStartRename = useCallback(() => {
+    setMenuOpen(false);
+    setEditName(item.name);
+    setTimeout(() => {
+      setIsEditing(true);
+      setTimeout(() => inputRef.current?.focus(), 50);
+    }, 50);
+  }, [item.name]);
+
+  // 名前保存
+  const handleSaveName = useCallback(async () => {
+    setIsEditing(false);
+    const trimmed = editName.trim();
+    if (!trimmed || trimmed === item.name) {
+      setEditName(item.name);
+      return;
+    }
+    await updateTagMutation.mutateAsync({ id: item.id, data: { name: trimmed } });
+  }, [editName, item.id, item.name, updateTagMutation]);
+
+  // キーボード操作
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        handleSaveName();
+      } else if (e.key === 'Escape') {
+        setIsEditing(false);
+        setEditName(item.name);
+      }
+    },
+    [handleSaveName, item.name],
+  );
+
+  // 説明保存
+  const handleSaveDescription = useCallback(async () => {
+    const trimmed = editDescription.trim();
+    if (trimmed === (item.description ?? '')) return;
+    await updateTagMutation.mutateAsync({
+      id: item.id,
+      data: { description: trimmed || null },
+    });
+  }, [editDescription, item.id, item.description, updateTagMutation]);
+
+  // マージ成功時
+  const handleMergeSuccess = useCallback(() => {
+    removeTag(item.id);
+  }, [item.id, removeTag]);
 
   return (
     <div
@@ -1235,7 +1475,25 @@ function FlatChildTag({
             } as React.CSSProperties
           }
         />
-        <span className="text-foreground flex-1 truncate">{item.name}</span>
+        {isEditing ? (
+          <div className="flex flex-1 items-center gap-1">
+            <Input
+              ref={inputRef}
+              value={editName}
+              onChange={(e) => setEditName(e.target.value)}
+              onBlur={handleSaveName}
+              onKeyDown={handleKeyDown}
+              onClick={(e) => e.stopPropagation()}
+              maxLength={TAG_NAME_MAX_LENGTH}
+              className="border-border bg-background focus-visible:ring-ring h-auto flex-1 rounded px-2 py-0.5 text-sm shadow-none focus-visible:ring-1"
+            />
+            <span className="text-muted-foreground shrink-0 text-[10px] tabular-nums">
+              {editName.length}/{TAG_NAME_MAX_LENGTH}
+            </span>
+          </div>
+        ) : (
+          <span className="text-foreground flex-1 truncate">{item.name}</span>
+        )}
         {count > 0 && (
           <span className="text-muted-foreground shrink-0 text-xs tabular-nums">{count}</span>
         )}
@@ -1249,7 +1507,13 @@ function FlatChildTag({
               <MoreHorizontal className="size-3.5" />
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
+          <DropdownMenuContent align="start" side="right">
+            {/* 名前を変更 */}
+            <DropdownMenuItem onClick={handleStartRename}>
+              <Pencil className="mr-2 size-4" />
+              {t('calendar.filter.rename')}
+            </DropdownMenuItem>
+            {/* カラーを変更 */}
             <DropdownMenuSub>
               <DropdownMenuSubTrigger>
                 <Palette className="mr-2 size-4" />
@@ -1262,6 +1526,50 @@ function FlatChildTag({
                 />
               </DropdownMenuSubContent>
             </DropdownMenuSub>
+            {/* 説明を編集 */}
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger>
+                <FileText className="mr-2 size-4" />
+                {t('calendar.filter.editDescription')}
+              </DropdownMenuSubTrigger>
+              <DropdownMenuSubContent className="w-[280px] p-3">
+                <Field>
+                  <FieldLabel htmlFor={`tag-description-${item.id}`}>
+                    {t('calendar.filter.descriptionLabel')}
+                  </FieldLabel>
+                  <div className="flex items-center justify-between">
+                    <FieldSupportText id={`tag-description-support-${item.id}`}>
+                      {t('calendar.filter.descriptionHint')}
+                    </FieldSupportText>
+                    <span className="text-muted-foreground text-xs tabular-nums">
+                      {editDescription.length}/100
+                    </span>
+                  </div>
+                  <Textarea
+                    id={`tag-description-${item.id}`}
+                    ref={textareaRef}
+                    value={editDescription}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (value.length <= 100) {
+                        setEditDescription(value);
+                        const textarea = e.target;
+                        textarea.style.height = 'auto';
+                        textarea.style.height = `${textarea.scrollHeight}px`;
+                      }
+                    }}
+                    onBlur={handleSaveDescription}
+                    maxLength={100}
+                    aria-describedby={`tag-description-support-${item.id}`}
+                    className="border-border min-h-[60px] w-full resize-none border text-sm"
+                  />
+                  {editDescription.length >= 100 && (
+                    <FieldError noPrefix>{t('calendar.filter.descriptionMaxLength')}</FieldError>
+                  )}
+                </Field>
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
+            {/* 親タグを変更 */}
             {parentTags && parentTags.length > 0 && (
               <DropdownMenuSub>
                 <DropdownMenuSubTrigger>
@@ -1289,6 +1597,17 @@ function FlatChildTag({
                 </DropdownMenuSubContent>
               </DropdownMenuSub>
             )}
+            {/* マージ */}
+            <DropdownMenuItem onClick={() => setMergeModalOpen(true)}>
+              <Merge className="mr-2 size-4" />
+              {t('calendar.filter.merge')}
+            </DropdownMenuItem>
+            {/* このタグだけ表示 */}
+            <DropdownMenuItem onClick={onShowOnlyThis}>
+              <Eye className="mr-2 size-4" />
+              {t('calendar.filter.showOnlyThis')}
+            </DropdownMenuItem>
+            {/* 削除 */}
             <DropdownMenuItem variant="destructive" onClick={onDeleteTag}>
               <Trash2 className="mr-2 size-4" />
               {t('actions.delete')}
@@ -1296,6 +1615,15 @@ function FlatChildTag({
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+
+      {/* マージモーダル */}
+      <TagMergeModal
+        open={mergeModalOpen}
+        onClose={() => setMergeModalOpen(false)}
+        sourceTag={{ id: item.id, name: item.name, color: item.color }}
+        hasChildren={false}
+        onMergeSuccess={handleMergeSuccess}
+      />
     </div>
   );
 }
@@ -1321,6 +1649,9 @@ function FlatUngroupedHeader({
   const { setNodeRef, isOver } = useDroppable({ id: 'ungrouped-header' });
   const [menuOpen, setMenuOpen] = useState(false);
 
+  // システム項目用のグレー色
+  const systemGray = '#6B7280';
+
   return (
     <div
       ref={setNodeRef}
@@ -1339,6 +1670,10 @@ function FlatUngroupedHeader({
           checked={groupVisibility === 'some' ? 'indeterminate' : groupVisibility === 'all'}
           onCheckedChange={onToggleGroup}
           className="mx-2 shrink-0"
+          style={{
+            borderColor: systemGray,
+            backgroundColor: groupVisibility !== 'none' ? systemGray : 'transparent',
+          }}
         />
         <span className="text-muted-foreground ml-2 flex-1 truncate text-sm">
           {t('calendar.filter.ungrouped')}
@@ -1354,7 +1689,7 @@ function FlatUngroupedHeader({
               <MoreHorizontal className="size-4" />
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
+          <DropdownMenuContent align="start" side="right">
             <DropdownMenuItem onClick={onShowOnlyGroup}>
               <Eye className="mr-2 size-4" />
               {t('calendar.filter.showOnlyThis')}
@@ -1380,6 +1715,8 @@ interface FlatUngroupedTagProps {
   count: number;
   parentTags?: Array<{ id: string; name: string; color?: string | null }> | undefined;
   onDeleteTag: () => void;
+  /** このタグだけ表示 */
+  onShowOnlyThis: () => void;
 }
 
 /** フラットなグループなしタグ（useSortable対応） */
@@ -1390,14 +1727,28 @@ function FlatUngroupedTag({
   count,
   parentTags,
   onDeleteTag,
+  onShowOnlyThis,
 }: FlatUngroupedTagProps) {
   const t = useTranslations();
   const updateTagMutation = useUpdateTag();
+  const { removeTag } = useCalendarFilterStore();
   const { attributes, listeners, setNodeRef, transform, transition, isDragging, isOver } =
     useSortable({ id: item.id });
   const [menuOpen, setMenuOpen] = useState(false);
   const [optimisticColor, setOptimisticColor] = useState<string | null>(null);
   const displayColor = optimisticColor ?? item.color;
+
+  // インライン編集
+  const [isEditing, setIsEditing] = useState(false);
+  const [editName, setEditName] = useState(item.name);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // 説明編集
+  const [editDescription, setEditDescription] = useState(item.description ?? '');
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // マージモーダル
+  const [mergeModalOpen, setMergeModalOpen] = useState(false);
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -1414,6 +1765,56 @@ function FlatUngroupedTag({
   const handleChangeParent = async (newParentId: string) => {
     await updateTagMutation.mutateAsync({ id: item.id, data: { parentId: newParentId } });
   };
+
+  // 名前変更開始
+  const handleStartRename = useCallback(() => {
+    setMenuOpen(false);
+    setEditName(item.name);
+    setTimeout(() => {
+      setIsEditing(true);
+      setTimeout(() => inputRef.current?.focus(), 50);
+    }, 50);
+  }, [item.name]);
+
+  // 名前保存
+  const handleSaveName = useCallback(async () => {
+    setIsEditing(false);
+    const trimmed = editName.trim();
+    if (!trimmed || trimmed === item.name) {
+      setEditName(item.name);
+      return;
+    }
+    await updateTagMutation.mutateAsync({ id: item.id, data: { name: trimmed } });
+  }, [editName, item.id, item.name, updateTagMutation]);
+
+  // キーボード操作
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        handleSaveName();
+      } else if (e.key === 'Escape') {
+        setIsEditing(false);
+        setEditName(item.name);
+      }
+    },
+    [handleSaveName, item.name],
+  );
+
+  // 説明保存
+  const handleSaveDescription = useCallback(async () => {
+    const trimmed = editDescription.trim();
+    if (trimmed === (item.description ?? '')) return;
+    await updateTagMutation.mutateAsync({
+      id: item.id,
+      data: { description: trimmed || null },
+    });
+  }, [editDescription, item.id, item.description, updateTagMutation]);
+
+  // マージ成功時
+  const handleMergeSuccess = useCallback(() => {
+    removeTag(item.id);
+  }, [item.id, removeTag]);
 
   return (
     <div
@@ -1445,7 +1846,25 @@ function FlatUngroupedTag({
             } as React.CSSProperties
           }
         />
-        <span className="text-foreground flex-1 truncate">{item.name}</span>
+        {isEditing ? (
+          <div className="flex flex-1 items-center gap-1">
+            <Input
+              ref={inputRef}
+              value={editName}
+              onChange={(e) => setEditName(e.target.value)}
+              onBlur={handleSaveName}
+              onKeyDown={handleKeyDown}
+              onClick={(e) => e.stopPropagation()}
+              maxLength={TAG_NAME_MAX_LENGTH}
+              className="border-border bg-background focus-visible:ring-ring h-auto flex-1 rounded px-2 py-0.5 text-sm shadow-none focus-visible:ring-1"
+            />
+            <span className="text-muted-foreground shrink-0 text-[10px] tabular-nums">
+              {editName.length}/{TAG_NAME_MAX_LENGTH}
+            </span>
+          </div>
+        ) : (
+          <span className="text-foreground flex-1 truncate">{item.name}</span>
+        )}
         {count > 0 && (
           <span className="text-muted-foreground shrink-0 text-xs tabular-nums">{count}</span>
         )}
@@ -1459,7 +1878,13 @@ function FlatUngroupedTag({
               <MoreHorizontal className="size-3.5" />
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
+          <DropdownMenuContent align="start" side="right">
+            {/* 名前を変更 */}
+            <DropdownMenuItem onClick={handleStartRename}>
+              <Pencil className="mr-2 size-4" />
+              {t('calendar.filter.rename')}
+            </DropdownMenuItem>
+            {/* カラーを変更 */}
             <DropdownMenuSub>
               <DropdownMenuSubTrigger>
                 <Palette className="mr-2 size-4" />
@@ -1472,6 +1897,50 @@ function FlatUngroupedTag({
                 />
               </DropdownMenuSubContent>
             </DropdownMenuSub>
+            {/* 説明を編集 */}
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger>
+                <FileText className="mr-2 size-4" />
+                {t('calendar.filter.editDescription')}
+              </DropdownMenuSubTrigger>
+              <DropdownMenuSubContent className="w-[280px] p-3">
+                <Field>
+                  <FieldLabel htmlFor={`tag-description-${item.id}`}>
+                    {t('calendar.filter.descriptionLabel')}
+                  </FieldLabel>
+                  <div className="flex items-center justify-between">
+                    <FieldSupportText id={`tag-description-support-${item.id}`}>
+                      {t('calendar.filter.descriptionHint')}
+                    </FieldSupportText>
+                    <span className="text-muted-foreground text-xs tabular-nums">
+                      {editDescription.length}/100
+                    </span>
+                  </div>
+                  <Textarea
+                    id={`tag-description-${item.id}`}
+                    ref={textareaRef}
+                    value={editDescription}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (value.length <= 100) {
+                        setEditDescription(value);
+                        const textarea = e.target;
+                        textarea.style.height = 'auto';
+                        textarea.style.height = `${textarea.scrollHeight}px`;
+                      }
+                    }}
+                    onBlur={handleSaveDescription}
+                    maxLength={100}
+                    aria-describedby={`tag-description-support-${item.id}`}
+                    className="border-border min-h-[60px] w-full resize-none border text-sm"
+                  />
+                  {editDescription.length >= 100 && (
+                    <FieldError noPrefix>{t('calendar.filter.descriptionMaxLength')}</FieldError>
+                  )}
+                </Field>
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
+            {/* 親タグを変更 */}
             {parentTags && parentTags.length > 0 && (
               <DropdownMenuSub>
                 <DropdownMenuSubTrigger>
@@ -1491,6 +1960,17 @@ function FlatUngroupedTag({
                 </DropdownMenuSubContent>
               </DropdownMenuSub>
             )}
+            {/* マージ */}
+            <DropdownMenuItem onClick={() => setMergeModalOpen(true)}>
+              <Merge className="mr-2 size-4" />
+              {t('calendar.filter.merge')}
+            </DropdownMenuItem>
+            {/* このタグだけ表示 */}
+            <DropdownMenuItem onClick={onShowOnlyThis}>
+              <Eye className="mr-2 size-4" />
+              {t('calendar.filter.showOnlyThis')}
+            </DropdownMenuItem>
+            {/* 削除 */}
             <DropdownMenuItem variant="destructive" onClick={onDeleteTag}>
               <Trash2 className="mr-2 size-4" />
               {t('actions.delete')}
@@ -1498,6 +1978,15 @@ function FlatUngroupedTag({
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+
+      {/* マージモーダル */}
+      <TagMergeModal
+        open={mergeModalOpen}
+        onClose={() => setMergeModalOpen(false)}
+        sourceTag={{ id: item.id, name: item.name, color: item.color }}
+        hasChildren={false}
+        onMergeSuccess={handleMergeSuccess}
+      />
     </div>
   );
 }

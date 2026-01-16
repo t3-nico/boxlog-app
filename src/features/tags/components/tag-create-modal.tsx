@@ -181,9 +181,14 @@ export const TagCreateModal = ({
             <FieldLabel htmlFor="tag-name" required requiredLabel={t('common.form.required')}>
               {t('tag.form.tagName')}
             </FieldLabel>
-            <FieldSupportText id="tag-name-support">
-              {t('tag.form.examplePlaceholder')}
-            </FieldSupportText>
+            <div className="flex items-center justify-between">
+              <FieldSupportText id="tag-name-support">
+                {t('tag.form.examplePlaceholder')}
+              </FieldSupportText>
+              <span className="text-muted-foreground text-xs tabular-nums">
+                {name.length}/{TAG_NAME_MAX_LENGTH}
+              </span>
+            </div>
             <Input
               id="tag-name"
               value={name}
