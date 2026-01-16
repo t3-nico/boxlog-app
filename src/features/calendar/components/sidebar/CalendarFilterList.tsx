@@ -8,7 +8,6 @@ import {
   DragOverlay,
   KeyboardSensor,
   PointerSensor,
-  useDroppable,
   useSensor,
   useSensors,
   type DragEndEvent,
@@ -91,13 +90,13 @@ interface DragItem {
 /** フラットリスト用のアイテム型（dnd-kit対応） */
 interface FlatItem {
   id: string;
-  type: 'group-header' | 'child-tag' | 'ungrouped-header' | 'ungrouped-tag';
+  type: 'group-header' | 'child-tag' | 'ungrouped-tag';
   name: string;
   color: string;
   description?: string | null;
   parentId: string | null;
   sortOrder: number;
-  /** グループヘッダー/グループなしヘッダーは常にtrueで、子タグは展開状態に依存 */
+  /** グループヘッダーは常にtrue、子タグ/ungroupedタグは常に表示 */
   isVisible: boolean;
 }
 
@@ -266,20 +265,7 @@ export function CalendarFilterList() {
       }
     });
 
-    // 2. グループなしセクション
-    const isUngroupedExpanded = expandedGroups.has('ungrouped');
-    items.push({
-      id: 'ungrouped-header',
-      type: 'ungrouped-header',
-      name: t('calendar.filter.ungrouped'),
-      color: '#6B7280',
-      description: null,
-      parentId: null,
-      sortOrder: 9999,
-      isVisible: true,
-    });
-
-    // グループなしタグ（展開時のみ表示）
+    // 2. グループなしタグ（ルートレベルで表示）
     groupedTags.ungrouped.forEach((tag, index) => {
       items.push({
         id: tag.id,
@@ -289,7 +275,7 @@ export function CalendarFilterList() {
         description: tag.description,
         parentId: null,
         sortOrder: tag.sort_order ?? index,
-        isVisible: isUngroupedExpanded,
+        isVisible: true,
       });
     });
 
@@ -351,13 +337,13 @@ export function CalendarFilterList() {
       // 「グループなし」へのドロップ（ルートに移動）
       if (overId === 'ungrouped-drop-zone' || overId === 'ungrouped-header') {
         const activeTag = tags.find((t) => t.id === activeId);
-        // グループ（親タグ）の場合や、既にルートの場合は何もしない
-        if (!activeTag || groups.some((g) => g.id === activeId)) return;
+        // グループヘッダー（子を持つ親タグ）の場合や、既にルートの場合は何もしない
+        if (!activeTag || sortableGroupIds.includes(activeId)) return;
         if (activeTag.parent_id === null) return;
 
         // ルートに移動（parent_id: null）
         const ungroupedTags = tags.filter(
-          (t) => t.parent_id === null && !groups.some((g) => g.id === t.id),
+          (t) => t.parent_id === null && !sortableGroupIds.includes(t.id),
         );
         const updates = [
           {
@@ -371,8 +357,10 @@ export function CalendarFilterList() {
       }
 
       // アクティブアイテムがグループかタグか
-      const isActiveGroup = groups.some((g) => g.id === activeId);
-      const isOverGroup = groups.some((g) => g.id === overId);
+      // 重要: sortableGroupIdsを使用（子タグを持つ親タグのみ）
+      // groups配列には子を持たないタグも含まれる可能性があるため
+      const isActiveGroup = sortableGroupIds.includes(activeId);
+      const isOverGroup = sortableGroupIds.includes(overId);
 
       if (isActiveGroup && isOverGroup) {
         // グループ同士の並び替え
@@ -417,10 +405,10 @@ export function CalendarFilterList() {
 
           if (activeTag.parent_id === targetParentId) {
             // 同じグループ内での並び替え
-            // 注意: ルートレベル(parent_id: null)の場合、親タグ(グループ)を除外する必要がある
+            // 注意: ルートレベル(parent_id: null)の場合、親タグ(グループヘッダー)を除外する必要がある
             const siblingTags = tags
               .filter((t) => t.parent_id === targetParentId)
-              .filter((t) => targetParentId !== null || !groups.some((g) => g.id === t.id))
+              .filter((t) => targetParentId !== null || !sortableGroupIds.includes(t.id))
               .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
 
             const oldIndex = siblingTags.findIndex((t) => t.id === activeId);
@@ -437,10 +425,10 @@ export function CalendarFilterList() {
             }
           } else {
             // グループ間移動（タグの位置に挿入）
-            // 注意: ルートレベル(parent_id: null)の場合、親タグ(グループ)を除外する必要がある
+            // 注意: ルートレベル(parent_id: null)の場合、親タグ(グループヘッダー)を除外する必要がある
             const targetSiblings = tags
               .filter((t) => t.parent_id === targetParentId)
-              .filter((t) => targetParentId !== null || !groups.some((g) => g.id === t.id))
+              .filter((t) => targetParentId !== null || !sortableGroupIds.includes(t.id))
               .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
 
             const insertIndex = targetSiblings.findIndex((t) => t.id === overId);
@@ -531,7 +519,6 @@ export function CalendarFilterList() {
                           }}
                           onAddChildTag={() => handleAddChildTag(item.id)}
                           onDeleteGroup={() => handleDeleteParentTag(item.id)}
-                          count={tagPlanCounts[item.id] ?? 0}
                         />
                       );
                     case 'child-tag':
@@ -549,23 +536,6 @@ export function CalendarFilterList() {
                           }))}
                           onDeleteTag={() => handleDeleteParentTag(item.id)}
                           onShowOnlyThis={() => showOnlyTag(item.id)}
-                        />
-                      );
-                    case 'ungrouped-header':
-                      return (
-                        <FlatUngroupedHeader
-                          key={item.id}
-                          isExpanded={expandedGroups.has('ungrouped')}
-                          onToggleExpand={() => toggleGroupExpand('ungrouped')}
-                          groupVisibility={getGroupVisibility(
-                            groupedTags.ungrouped.map((t) => t.id),
-                          )}
-                          onToggleGroup={() =>
-                            toggleGroupTags(groupedTags.ungrouped.map((t) => t.id))
-                          }
-                          onShowOnlyGroup={() =>
-                            showOnlyGroupTags(groupedTags.ungrouped.map((t) => t.id))
-                          }
                         />
                       );
                     case 'ungrouped-tag':
@@ -591,14 +561,15 @@ export function CalendarFilterList() {
                 })}
               </SortableContext>
 
-              {/* タグなし（システム項目：薄いテキスト + グレーチェックボックス） */}
+              {/* タグなし（システム項目：セパレーター + イタリック + グレー） */}
+              <div className="border-border my-1 border-t" />
               <FilterItem
                 label={t('calendar.filter.untagged')}
                 checked={showUntagged}
                 onCheckedChange={toggleUntagged}
                 onShowOnlyThis={showOnlyUntagged}
                 checkboxColor="#6B7280"
-                labelClassName="text-muted-foreground"
+                labelClassName="text-muted-foreground italic"
               />
 
               {/* ドラッグオーバーレイ（TickTickスタイル: シンプル + 軽いリフト） */}
@@ -1092,8 +1063,6 @@ interface FlatGroupHeaderProps {
   onDeleteGroup: () => void;
   /** このグループだけ表示 */
   onShowOnlyGroup: () => void;
-  /** プランの件数 */
-  count: number;
 }
 
 /** フラットなグループヘッダー（useSortable対応） */
@@ -1106,7 +1075,6 @@ function FlatGroupHeader({
   onAddChildTag,
   onDeleteGroup,
   onShowOnlyGroup,
-  count,
 }: FlatGroupHeaderProps) {
   const t = useTranslations();
   const updateTagMutation = useUpdateTag();
@@ -1203,7 +1171,7 @@ function FlatGroupHeader({
       {isOver && !isDragging && <div className="bg-primary mx-2 h-0.5 rounded-full" />}
       <div
         className={cn(
-          'group/item hover:bg-state-hover flex w-full min-w-0 items-center rounded transition-colors',
+          'group/item hover:bg-state-hover flex w-full min-w-0 items-center gap-1.5 rounded px-2 py-1 text-sm transition-colors',
           'cursor-pointer',
           menuOpen && 'bg-state-selected',
         )}
@@ -1482,7 +1450,7 @@ function FlatChildTag({
       ref={setNodeRef}
       style={style}
       {...attributes}
-      className="w-full rounded-md pl-4 transition-colors"
+      className="w-full rounded-md transition-colors"
     >
       {/* 挿入線インジケーター（TickTickスタイル） */}
       {isOver && !isDragging && <div className="bg-primary mx-2 h-0.5 rounded-full" />}
@@ -1497,7 +1465,7 @@ function FlatChildTag({
         <Checkbox
           checked={checked}
           onCheckedChange={onToggle}
-          className="shrink-0"
+          className="ml-4 shrink-0"
           style={
             {
               '--checkbox-color': displayColor,
@@ -1532,7 +1500,6 @@ function FlatChildTag({
         ) : (
           <span className="text-foreground flex-1 truncate">{item.name}</span>
         )}
-        <span className="text-muted-foreground shrink-0 text-xs tabular-nums">{count}</span>
         <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
           <DropdownMenuTrigger asChild>
             <button
@@ -1651,6 +1618,9 @@ function FlatChildTag({
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+        <span className="text-muted-foreground flex size-6 shrink-0 items-center justify-center text-xs tabular-nums">
+          {count}
+        </span>
       </div>
 
       {/* マージモーダル */}
@@ -1661,86 +1631,6 @@ function FlatChildTag({
         hasChildren={false}
         onMergeSuccess={handleMergeSuccess}
       />
-    </div>
-  );
-}
-
-interface FlatUngroupedHeaderProps {
-  isExpanded: boolean;
-  onToggleExpand: () => void;
-  groupVisibility: 'all' | 'none' | 'some';
-  onToggleGroup: () => void;
-  /** このグループだけ表示 */
-  onShowOnlyGroup: () => void;
-}
-
-/** フラットなグループなしヘッダー（useDroppable対応） */
-function FlatUngroupedHeader({
-  isExpanded,
-  onToggleExpand,
-  groupVisibility,
-  onToggleGroup,
-  onShowOnlyGroup,
-}: FlatUngroupedHeaderProps) {
-  const t = useTranslations();
-  const { setNodeRef, isOver } = useDroppable({ id: 'ungrouped-header' });
-  const [menuOpen, setMenuOpen] = useState(false);
-
-  // システム項目用のグレー色
-  const systemGray = '#6B7280';
-
-  return (
-    <div
-      ref={setNodeRef}
-      className={cn(
-        'w-full rounded-md transition-colors',
-        isOver && 'bg-state-hover ring-primary/30 ring-2',
-      )}
-    >
-      <div
-        className={cn(
-          'group hover:bg-state-hover flex w-full min-w-0 items-center rounded transition-colors',
-          menuOpen && 'bg-state-selected',
-        )}
-      >
-        <Checkbox
-          checked={groupVisibility === 'some' ? 'indeterminate' : groupVisibility === 'all'}
-          onCheckedChange={onToggleGroup}
-          className="mx-2 shrink-0"
-          style={{
-            borderColor: systemGray,
-            backgroundColor: groupVisibility !== 'none' ? systemGray : 'transparent',
-          }}
-        />
-        <span className="text-muted-foreground ml-2 flex-1 truncate text-sm">
-          {t('calendar.filter.ungrouped')}
-        </span>
-        {/* メニュー */}
-        <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
-          <DropdownMenuTrigger asChild>
-            <button
-              type="button"
-              className="text-muted-foreground hover:text-foreground hover:bg-state-hover flex size-6 shrink-0 items-center justify-center rounded opacity-0 transition-opacity group-hover:opacity-100"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <MoreHorizontal className="size-4" />
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" side="right">
-            <DropdownMenuItem onClick={onShowOnlyGroup}>
-              <Eye className="mr-2 size-4" />
-              {t('calendar.filter.showOnlyThis')}
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-        <button
-          type="button"
-          className="flex size-6 shrink-0 items-center justify-center"
-          onClick={onToggleExpand}
-        >
-          <ChevronRight className={cn('size-4 transition-transform', isExpanded && 'rotate-90')} />
-        </button>
-      </div>
     </div>
   );
 }
@@ -1756,7 +1646,7 @@ interface FlatUngroupedTagProps {
   onShowOnlyThis: () => void;
 }
 
-/** フラットなグループなしタグ（useSortable対応） */
+/** フラットなグループなしタグ（useSortable対応、ルートレベル表示） */
 function FlatUngroupedTag({
   item,
   checked,
@@ -1859,13 +1749,13 @@ function FlatUngroupedTag({
       ref={setNodeRef}
       style={style}
       {...attributes}
-      className="w-full rounded-md pl-4 transition-colors"
+      className="w-full rounded-md transition-colors"
     >
       {/* 挿入線インジケーター（TickTickスタイル） */}
       {isOver && !isDragging && <div className="bg-primary mx-2 h-0.5 rounded-full" />}
       <div
         className={cn(
-          'group/item hover:bg-state-hover flex w-full items-center gap-1.5 rounded px-2 py-1 text-sm',
+          'group/item hover:bg-state-hover flex w-full min-w-0 items-center gap-1.5 rounded px-2 py-1 text-sm transition-colors',
           'cursor-grab active:cursor-grabbing',
           menuOpen && 'bg-state-selected',
         )}
@@ -1874,7 +1764,7 @@ function FlatUngroupedTag({
         <Checkbox
           checked={checked}
           onCheckedChange={onToggle}
-          className="shrink-0"
+          className="mx-2 shrink-0"
           style={
             {
               '--checkbox-color': displayColor,
@@ -1909,7 +1799,6 @@ function FlatUngroupedTag({
         ) : (
           <span className="text-foreground flex-1 truncate">{item.name}</span>
         )}
-        <span className="text-muted-foreground shrink-0 text-xs tabular-nums">{count}</span>
         <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
           <DropdownMenuTrigger asChild>
             <button
@@ -2020,6 +1909,9 @@ function FlatUngroupedTag({
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+        <span className="text-muted-foreground flex size-6 shrink-0 items-center justify-center text-xs tabular-nums">
+          {count}
+        </span>
       </div>
 
       {/* マージモーダル */}
