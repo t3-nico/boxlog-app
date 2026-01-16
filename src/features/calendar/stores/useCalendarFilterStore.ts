@@ -56,6 +56,15 @@ export interface CalendarFilterActions {
   /** 特定のタグを削除（マージ後などに使用） */
   removeTag: (tagId: string) => void;
 
+  /** このタグだけ表示（他を全てOFF） */
+  showOnlyTag: (tagId: string) => void;
+
+  /** タグなしだけ表示（全タグOFF） */
+  showOnlyUntagged: () => void;
+
+  /** 指定タグだけ表示（グループ用） */
+  showOnlyGroupTags: (tagIds: string[]) => void;
+
   /** 種類が表示中かチェック */
   isTypeVisible: (type: ItemType) => boolean;
 
@@ -194,6 +203,24 @@ export const useCalendarFilterStore = create<CalendarFilterStore>()(
           newSet.delete(tagId);
           return { visibleTagIds: newSet };
         }),
+
+      showOnlyTag: (tagId) =>
+        set(() => ({
+          visibleTagIds: new Set([tagId]),
+          showUntagged: false,
+        })),
+
+      showOnlyUntagged: () =>
+        set(() => ({
+          visibleTagIds: new Set(),
+          showUntagged: true,
+        })),
+
+      showOnlyGroupTags: (tagIds) =>
+        set(() => ({
+          visibleTagIds: new Set(tagIds),
+          showUntagged: false,
+        })),
 
       isTypeVisible: (type) => get().visibleTypes[type],
 

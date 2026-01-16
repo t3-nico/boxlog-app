@@ -243,7 +243,8 @@ export function useReorderTags() {
           return tag;
         });
 
-        return { ...oldData, data: newData };
+        // 明示的に新しい配列参照を作成（useMemo再計算のトリガー）
+        return { ...oldData, data: [...newData] };
       });
 
       // ロールバック用にスナップショットを返す

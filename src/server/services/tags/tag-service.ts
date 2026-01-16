@@ -316,6 +316,20 @@ export class TagService {
       }
     }
 
+    // 兄弟タグの最大sort_orderを取得（末尾に追加するため）
+    let siblingsQuery = this.supabase.from('tags').select('sort_order').eq('user_id', userId);
+
+    // parent_idがnullの場合は.is()、それ以外は.eq()を使用
+    siblingsQuery = parentId
+      ? siblingsQuery.eq('parent_id', parentId)
+      : siblingsQuery.is('parent_id', null);
+
+    const { data: siblings } = await siblingsQuery
+      .order('sort_order', { ascending: false })
+      .limit(1);
+
+    const maxSortOrder = siblings?.[0]?.sort_order ?? -1;
+
     // タグデータ作成
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const tagData: any = {
@@ -325,6 +339,7 @@ export class TagService {
       description: input.description?.trim() || null,
       is_active: true,
       parent_id: parentId,
+      sort_order: maxSortOrder + 1,
     };
 
     const { data, error } = await this.supabase.from('tags').insert(tagData).select().single();

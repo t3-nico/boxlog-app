@@ -24,6 +24,7 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import {
   ChevronRight,
+  Eye,
   FileText,
   FolderUp,
   Merge,
@@ -47,7 +48,6 @@ import { useTagCreateModalStore } from '@/features/tags/stores/useTagCreateModal
 
 import { DeleteConfirmDialog } from '@/components/common/DeleteConfirmDialog';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { ColorPalettePicker } from '@/components/ui/color-palette-picker';
 import {
   DropdownMenu,
@@ -86,6 +86,19 @@ interface DragItem {
   parentId: string | null;
 }
 
+/** フラットリスト用のアイテム型（dnd-kit対応） */
+interface FlatItem {
+  id: string;
+  type: 'group-header' | 'child-tag' | 'ungrouped-header' | 'ungrouped-tag';
+  name: string;
+  color: string;
+  description?: string | null;
+  parentId: string | null;
+  sortOrder: number;
+  /** グループヘッダー/グループなしヘッダーは常にtrueで、子タグは展開状態に依存 */
+  isVisible: boolean;
+}
+
 export function CalendarFilterList() {
   const t = useTranslations();
   const { data: tags, isLoading: tagsLoading } = useTags();
@@ -97,6 +110,33 @@ export function CalendarFilterList() {
 
   // DnD state
   const [activeItem, setActiveItem] = useState<DragItem | null>(null);
+
+  // 展開状態管理（Collapsible代替 - DnDのDOM順序問題を解決）
+  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(() => new Set(['ungrouped']));
+
+  // グループ展開状態の初期化（グループデータ取得後）
+  useEffect(() => {
+    if (groups && groups.length > 0) {
+      setExpandedGroups((prev) => {
+        const next = new Set(prev);
+        groups.forEach((g) => next.add(g.id));
+        return next;
+      });
+    }
+  }, [groups]);
+
+  // グループの展開/折りたたみトグル
+  const toggleGroupExpand = useCallback((groupId: string) => {
+    setExpandedGroups((prev) => {
+      const next = new Set(prev);
+      if (next.has(groupId)) {
+        next.delete(groupId);
+      } else {
+        next.add(groupId);
+      }
+      return next;
+    });
+  }, []);
 
   // DnD sensors
   const sensors = useSensors(
@@ -120,6 +160,8 @@ export function CalendarFilterList() {
     toggleGroupTags,
     getGroupVisibility,
     initializeWithTags,
+    showOnlyUntagged,
+    showOnlyGroupTags,
   } = useCalendarFilterStore();
 
   // タグ一覧取得後に初期化
@@ -185,24 +227,77 @@ export function CalendarFilterList() {
     return groupedTags.grouped.filter(({ tags: t }) => t.length > 0).map(({ group }) => group.id);
   }, [groupedTags.grouped]);
 
-  // DnD: すべてのソート可能なIDリスト（グループ + 全子タグ + グループなしタグ）
-  // 重要: dnd-kit の SortableContext には全アイテムを含める必要がある
-  const allSortableIds = useMemo(() => {
-    const ids: string[] = [];
+  // DnD: フラットアイテムリスト（DOM順序とSortableContext items順序を一致させる）
+  // Google Drive方式: 全アイテムを同一DOMレベルでレンダリング、CSSで視覚的階層を表現
+  const flatItems = useMemo(() => {
+    const items: FlatItem[] = [];
 
-    // グループとその子タグを追加
-    groupedTags.grouped.forEach(({ group, tags: groupTags }) => {
-      if (groupTags.length > 0) {
-        ids.push(group.id);
-        groupTags.forEach((tag) => ids.push(tag.id));
+    // 1. グループヘッダー + 子タグ
+    groupedTags.grouped.forEach(({ group, tags: children }) => {
+      if (children.length > 0) {
+        const isExpanded = expandedGroups.has(group.id);
+        // グループヘッダー
+        items.push({
+          id: group.id,
+          type: 'group-header',
+          name: group.name,
+          color: group.color || '#3B82F6',
+          description: group.description,
+          parentId: null,
+          sortOrder: group.sort_order ?? 0,
+          isVisible: true,
+        });
+        // 子タグ（展開時のみ表示）
+        children.forEach((child, index) => {
+          items.push({
+            id: child.id,
+            type: 'child-tag',
+            name: child.name,
+            color: child.color || '#3B82F6',
+            description: child.description,
+            parentId: group.id,
+            sortOrder: child.sort_order ?? index,
+            isVisible: isExpanded,
+          });
+        });
       }
     });
 
-    // グループなしタグを追加
-    groupedTags.ungrouped.forEach((tag) => ids.push(tag.id));
+    // 2. グループなしセクション
+    const isUngroupedExpanded = expandedGroups.has('ungrouped');
+    items.push({
+      id: 'ungrouped-header',
+      type: 'ungrouped-header',
+      name: t('calendar.filter.ungrouped'),
+      color: '#6B7280',
+      description: null,
+      parentId: null,
+      sortOrder: 9999,
+      isVisible: true,
+    });
 
-    return ids;
-  }, [groupedTags]);
+    // グループなしタグ（展開時のみ表示）
+    groupedTags.ungrouped.forEach((tag, index) => {
+      items.push({
+        id: tag.id,
+        type: 'ungrouped-tag',
+        name: tag.name,
+        color: tag.color || '#3B82F6',
+        description: tag.description,
+        parentId: null,
+        sortOrder: tag.sort_order ?? index,
+        isVisible: isUngroupedExpanded,
+      });
+    });
+
+    return items;
+  }, [groupedTags, expandedGroups, t]);
+
+  // DnD: SortableContext用のIDリスト（表示中のアイテムのみ）
+  // 重要: dnd-kit の SortableContext には表示中の全アイテムを含める必要がある
+  const allSortableIds = useMemo(() => {
+    return flatItems.filter((item) => item.isVisible).map((item) => item.id);
+  }, [flatItems]);
 
   // DnD: ドラッグ開始
   const handleDragStart = useCallback(
@@ -251,7 +346,7 @@ export function CalendarFilterList() {
       const overId = over.id as string;
 
       // 「グループなし」へのドロップ（ルートに移動）
-      if (overId === 'ungrouped-drop-zone') {
+      if (overId === 'ungrouped-drop-zone' || overId === 'ungrouped-header') {
         const activeTag = tags.find((t) => t.id === activeId);
         // グループ（親タグ）の場合や、既にルートの場合は何もしない
         if (!activeTag || groups.some((g) => g.id === activeId)) return;
@@ -403,58 +498,86 @@ export function CalendarFilterList() {
               onDragStart={handleDragStart}
               onDragEnd={handleDragEnd}
             >
-              {/* 全アイテムを1つのSortableContextに統合（ネストしたコンテキストでの並び替え問題を解決） */}
+              {/* フラットレンダリング: 全アイテムを同一DOMレベルで表示（Google Drive方式） */}
               <SortableContext items={allSortableIds} strategy={verticalListSortingStrategy}>
-                {/* グループ別タグ */}
-                {groupedTags.grouped.map(
-                  ({ group, tags: groupTags }) =>
-                    groupTags.length > 0 && (
-                      <SortableTagGroup
-                        key={group.id}
-                        groupId={group.id}
-                        groupName={group.name}
-                        groupColor={group.color || undefined}
-                        groupDescription={group.description}
-                        tags={groupTags.map((tg) => ({
-                          id: tg.id,
-                          name: tg.name,
-                          color: tg.color || '#3B82F6',
-                          description: tg.description,
-                        }))}
-                        visibleTagIds={visibleTagIds}
-                        onToggleTag={toggleTag}
-                        onToggleGroup={() => toggleGroupTags(groupTags.map((tg) => tg.id))}
-                        groupVisibility={getGroupVisibility(groupTags.map((tg) => tg.id))}
-                        tagPlanCounts={tagPlanCounts}
-                        onAddChildTag={handleAddChildTag}
-                        onDeleteGroup={handleDeleteParentTag}
-                        parentTags={groups?.map((g) => ({
-                          id: g.id,
-                          name: g.name,
-                          color: g.color,
-                        }))}
-                        onDeleteTag={handleDeleteParentTag}
-                      />
-                    ),
-                )}
+                {flatItems.map((item) => {
+                  if (!item.isVisible) return null;
 
-                {/* グループなしタグ（常に表示 - ドロップターゲットとして必要） */}
-                <DroppableUngroupedSection
-                  groupName={t('calendar.filter.ungrouped')}
-                  tags={groupedTags.ungrouped.map((tg) => ({
-                    id: tg.id,
-                    name: tg.name,
-                    color: tg.color || '#3B82F6',
-                    description: tg.description,
-                  }))}
-                  visibleTagIds={visibleTagIds}
-                  onToggleTag={toggleTag}
-                  onToggleGroup={() => toggleGroupTags(groupedTags.ungrouped.map((tg) => tg.id))}
-                  groupVisibility={getGroupVisibility(groupedTags.ungrouped.map((tg) => tg.id))}
-                  tagPlanCounts={tagPlanCounts}
-                  parentTags={groups?.map((g) => ({ id: g.id, name: g.name, color: g.color }))}
-                  onDeleteTag={handleDeleteParentTag}
-                />
+                  switch (item.type) {
+                    case 'group-header':
+                      return (
+                        <FlatGroupHeader
+                          key={item.id}
+                          item={item}
+                          isExpanded={expandedGroups.has(item.id)}
+                          onToggleExpand={() => toggleGroupExpand(item.id)}
+                          groupVisibility={getGroupVisibility(
+                            groupedTags.grouped
+                              .find((g) => g.group.id === item.id)
+                              ?.tags.map((t) => t.id) || [],
+                          )}
+                          onToggleGroup={() => {
+                            const groupTags =
+                              groupedTags.grouped.find((g) => g.group.id === item.id)?.tags || [];
+                            toggleGroupTags(groupTags.map((t) => t.id));
+                          }}
+                          onAddChildTag={() => handleAddChildTag(item.id)}
+                          onDeleteGroup={() => handleDeleteParentTag(item.id)}
+                        />
+                      );
+                    case 'child-tag':
+                      return (
+                        <FlatChildTag
+                          key={item.id}
+                          item={item}
+                          checked={visibleTagIds.has(item.id)}
+                          onToggle={() => toggleTag(item.id)}
+                          count={tagPlanCounts[item.id] ?? 0}
+                          parentTags={groups?.map((g) => ({
+                            id: g.id,
+                            name: g.name,
+                            color: g.color,
+                          }))}
+                          onDeleteTag={() => handleDeleteParentTag(item.id)}
+                        />
+                      );
+                    case 'ungrouped-header':
+                      return (
+                        <FlatUngroupedHeader
+                          key={item.id}
+                          isExpanded={expandedGroups.has('ungrouped')}
+                          onToggleExpand={() => toggleGroupExpand('ungrouped')}
+                          groupVisibility={getGroupVisibility(
+                            groupedTags.ungrouped.map((t) => t.id),
+                          )}
+                          onToggleGroup={() =>
+                            toggleGroupTags(groupedTags.ungrouped.map((t) => t.id))
+                          }
+                          onShowOnlyGroup={() =>
+                            showOnlyGroupTags(groupedTags.ungrouped.map((t) => t.id))
+                          }
+                        />
+                      );
+                    case 'ungrouped-tag':
+                      return (
+                        <FlatUngroupedTag
+                          key={item.id}
+                          item={item}
+                          checked={visibleTagIds.has(item.id)}
+                          onToggle={() => toggleTag(item.id)}
+                          count={tagPlanCounts[item.id] ?? 0}
+                          parentTags={groups?.map((g) => ({
+                            id: g.id,
+                            name: g.name,
+                            color: g.color,
+                          }))}
+                          onDeleteTag={() => handleDeleteParentTag(item.id)}
+                        />
+                      );
+                    default:
+                      return null;
+                  }
+                })}
               </SortableContext>
 
               {/* タグなし */}
@@ -462,6 +585,7 @@ export function CalendarFilterList() {
                 label={t('calendar.filter.untagged')}
                 checked={showUntagged}
                 onCheckedChange={toggleUntagged}
+                onShowOnlyThis={showOnlyUntagged}
               />
 
               {/* ドラッグオーバーレイ（カレンダーDnDと統一スタイル） */}
@@ -500,407 +624,6 @@ export function CalendarFilterList() {
   );
 }
 
-/** タググループセクション Props */
-interface TagGroupSectionProps {
-  groupName: string;
-  groupId?: string | undefined;
-  groupColor?: string | undefined;
-  /** 親タグの説明 */
-  groupDescription?: string | null | undefined;
-  tags: Array<{ id: string; name: string; color: string; description?: string | null }>;
-  visibleTagIds: Set<string>;
-  onToggleTag: (tagId: string) => void;
-  onToggleGroup: () => void;
-  groupVisibility: 'all' | 'none' | 'some';
-  tagPlanCounts: Record<string, number>;
-  onAddChildTag?: ((groupId: string) => void) | undefined;
-  onDeleteGroup?: ((groupId: string) => void) | undefined;
-  /** DnDハンドル用props（行全体をドラッグ可能に） */
-  dragHandleProps?: React.HTMLAttributes<HTMLElement> | undefined;
-  /** 親タグ候補一覧（子タグの親変更メニュー用） */
-  parentTags?: Array<{ id: string; name: string; color?: string | null }> | undefined;
-  /** 子タグ削除ハンドラー */
-  onDeleteTag?: ((tagId: string) => void) | undefined;
-}
-
-/** ソート可能なタググループ（DnDラッパー） */
-function SortableTagGroup(props: Omit<TagGroupSectionProps, 'dragHandleProps'>) {
-  const { groupId } = props;
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging, isOver } =
-    useSortable({
-      id: groupId || '',
-    });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.5 : 1,
-  };
-
-  return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      className={cn(
-        'w-full rounded-md transition-colors',
-        isOver && !isDragging && 'bg-state-hover ring-primary/30 ring-2',
-      )}
-    >
-      <TagGroupSection {...props} dragHandleProps={listeners} />
-    </div>
-  );
-}
-
-/** タググループセクション */
-function TagGroupSection({
-  groupName,
-  groupId,
-  groupColor,
-  groupDescription,
-  tags,
-  visibleTagIds,
-  onToggleTag,
-  onToggleGroup,
-  groupVisibility,
-  tagPlanCounts,
-  onAddChildTag,
-  onDeleteGroup,
-  dragHandleProps,
-  parentTags,
-  onDeleteTag,
-}: TagGroupSectionProps) {
-  const t = useTranslations();
-  const updateTagMutation = useUpdateTag();
-  const { removeTag } = useCalendarFilterStore();
-
-  // インライン編集状態
-  const [isEditing, setIsEditing] = useState(false);
-  const [editName, setEditName] = useState(groupName);
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  // 楽観的更新用の色（即座にUIに反映）
-  const [optimisticColor, setOptimisticColor] = useState<string | null>(null);
-  const displayColor = optimisticColor ?? groupColor ?? '#3B82F6';
-
-  // メニュー開閉状態（ボタンクリック・右クリック共通）
-  const [menuOpen, setMenuOpen] = useState(false);
-
-  // マージモーダル状態
-  const [mergeModalOpen, setMergeModalOpen] = useState(false);
-
-  // 説明編集状態
-  const [editDescription, setEditDescription] = useState(groupDescription ?? '');
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-
-  // description prop と editDescription を同期
-  useEffect(() => {
-    setEditDescription(groupDescription ?? '');
-  }, [groupDescription]);
-
-  // 編集開始時にフォーカス（カーソルを先頭に）
-  useEffect(() => {
-    if (!isEditing) return;
-    // DropdownMenuが閉じた後にフォーカスを当てる
-    const timer = setTimeout(() => {
-      if (inputRef.current) {
-        inputRef.current.focus();
-        inputRef.current.setSelectionRange(0, 0);
-      }
-    }, 50);
-    return () => clearTimeout(timer);
-  }, [isEditing]);
-
-  // 名前変更開始
-  const handleStartRename = useCallback(() => {
-    setEditName(groupName);
-    setIsEditing(true);
-  }, [groupName]);
-
-  // 名前保存
-  const handleSaveName = useCallback(async () => {
-    if (!groupId || !editName.trim()) {
-      setIsEditing(false);
-      return;
-    }
-    if (editName.trim() === groupName) {
-      setIsEditing(false);
-      return;
-    }
-    await updateTagMutation.mutateAsync({
-      id: groupId,
-      data: { name: editName.trim() },
-    });
-    setIsEditing(false);
-  }, [groupId, editName, groupName, updateTagMutation]);
-
-  // キーボード操作
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        handleSaveName();
-      } else if (e.key === 'Escape') {
-        setIsEditing(false);
-      }
-    },
-    [handleSaveName],
-  );
-
-  // カラー変更（楽観的更新）
-  const handleColorChange = useCallback(
-    async (color: string) => {
-      if (!groupId) return;
-      // 即座にUIに反映
-      setOptimisticColor(color);
-      try {
-        await updateTagMutation.mutateAsync({
-          id: groupId,
-          data: { color },
-        });
-      } catch {
-        // 失敗時は元に戻す
-        setOptimisticColor(null);
-      }
-    },
-    [groupId, updateTagMutation],
-  );
-
-  // サーバーからの色が更新されたら楽観的更新をクリア
-  useEffect(() => {
-    if (groupColor && optimisticColor && groupColor === optimisticColor) {
-      setOptimisticColor(null);
-    }
-  }, [groupColor, optimisticColor]);
-
-  // 説明保存
-  const handleSaveDescription = useCallback(async () => {
-    if (!groupId) return;
-    const trimmed = editDescription.trim();
-    // 変更がなければスキップ
-    if (trimmed === (groupDescription ?? '')) return;
-    await updateTagMutation.mutateAsync({
-      id: groupId,
-      data: { description: trimmed || null },
-    });
-  }, [groupId, editDescription, groupDescription, updateTagMutation]);
-
-  const groupCheckboxStyle = {
-    borderColor: displayColor,
-    backgroundColor: groupVisibility === 'all' ? displayColor : 'transparent',
-  } as React.CSSProperties;
-
-  // 右クリックでメニューを開く
-  const handleContextMenu = useCallback(
-    (e: React.MouseEvent) => {
-      if (!groupId || (!onAddChildTag && !onDeleteGroup)) return;
-      e.preventDefault();
-      setMenuOpen(true);
-    },
-    [groupId, onAddChildTag, onDeleteGroup],
-  );
-
-  // マージ成功時のコールバック
-  const handleMergeSuccess = useCallback(() => {
-    if (groupId) {
-      removeTag(groupId);
-    }
-  }, [groupId, removeTag]);
-
-  // メニュー項目をレンダリング
-  const menuItems = (
-    <>
-      {/* 名前を変更 */}
-      <DropdownMenuItem onClick={handleStartRename}>
-        <Pencil className="mr-2 size-4" />
-        {t('calendar.filter.rename')}
-      </DropdownMenuItem>
-      {/* カラーを変更（サブメニュー） */}
-      <DropdownMenuSub>
-        <DropdownMenuSubTrigger>
-          <Palette className="mr-2 size-4" />
-          {t('calendar.filter.changeColor')}
-        </DropdownMenuSubTrigger>
-        <DropdownMenuSubContent className="p-2">
-          <ColorPalettePicker selectedColor={displayColor} onColorSelect={handleColorChange} />
-        </DropdownMenuSubContent>
-      </DropdownMenuSub>
-      {/* 説明を編集 */}
-      {groupId && (
-        <DropdownMenuSub>
-          <DropdownMenuSubTrigger>
-            <FileText className="mr-2 size-4" />
-            {t('calendar.filter.editDescription')}
-          </DropdownMenuSubTrigger>
-          <DropdownMenuSubContent className="w-[280px] p-3">
-            <Field>
-              <FieldLabel htmlFor={`parent-tag-description-${groupId}`}>
-                {t('calendar.filter.descriptionLabel')}
-              </FieldLabel>
-              <div className="flex items-center justify-between">
-                <FieldSupportText id={`parent-tag-description-support-${groupId}`}>
-                  {t('calendar.filter.descriptionHint')}
-                </FieldSupportText>
-                <span className="text-muted-foreground text-xs tabular-nums">
-                  {editDescription.length}/100
-                </span>
-              </div>
-              <Textarea
-                id={`parent-tag-description-${groupId}`}
-                ref={textareaRef}
-                value={editDescription}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  if (value.length <= 100) {
-                    setEditDescription(value);
-                    // 自動高さ調整
-                    const textarea = e.target;
-                    textarea.style.height = 'auto';
-                    textarea.style.height = `${textarea.scrollHeight}px`;
-                  }
-                }}
-                onBlur={handleSaveDescription}
-                maxLength={100}
-                aria-describedby={`parent-tag-description-support-${groupId}`}
-                className="border-border min-h-[60px] w-full resize-none border text-sm"
-              />
-              {editDescription.length >= 100 && (
-                <FieldError noPrefix>{t('calendar.filter.descriptionMaxLength')}</FieldError>
-              )}
-            </Field>
-          </DropdownMenuSubContent>
-        </DropdownMenuSub>
-      )}
-      {onAddChildTag && groupId && (
-        <DropdownMenuItem onClick={() => onAddChildTag(groupId)}>
-          <Plus className="mr-2 size-4" />
-          {t('calendar.filter.addChildTag')}
-        </DropdownMenuItem>
-      )}
-      {/* マージ */}
-      {groupId && (
-        <DropdownMenuItem onClick={() => setMergeModalOpen(true)}>
-          <Merge className="mr-2 size-4" />
-          {t('calendar.filter.merge')}
-        </DropdownMenuItem>
-      )}
-      {onDeleteGroup && groupId && (
-        <DropdownMenuItem
-          className="text-destructive focus:text-destructive"
-          onClick={() => onDeleteGroup(groupId)}
-        >
-          <Trash2 className="mr-2 size-4" />
-          {t('actions.delete')}
-        </DropdownMenuItem>
-      )}
-    </>
-  );
-
-  // 行のコンテンツ
-  const rowContent = (
-    <div
-      className={cn(
-        'group hover:bg-state-hover flex w-full min-w-0 items-center rounded transition-colors',
-        dragHandleProps && 'cursor-grab active:cursor-grabbing',
-        menuOpen && 'bg-state-selected',
-      )}
-      onContextMenu={handleContextMenu}
-      {...(dragHandleProps || {})}
-    >
-      {/* グループチェックボックス */}
-      <Checkbox
-        checked={groupVisibility === 'some' ? 'indeterminate' : groupVisibility === 'all'}
-        onCheckedChange={onToggleGroup}
-        className="ml-2 size-4"
-        style={groupCheckboxStyle}
-      />
-      {/* 折りたたみトリガー / インライン編集 */}
-      {isEditing ? (
-        <Input
-          ref={inputRef}
-          value={editName}
-          onChange={(e) => setEditName(e.target.value)}
-          onBlur={handleSaveName}
-          onKeyDown={handleKeyDown}
-          onClick={(e) => e.stopPropagation()}
-          className="border-border bg-background focus-visible:ring-ring h-auto flex-1 rounded px-2 py-1 text-sm font-medium shadow-none focus-visible:ring-1"
-        />
-      ) : (
-        <CollapsibleTrigger className="flex min-w-0 flex-1 items-center overflow-hidden px-2 py-1 text-sm font-medium">
-          <span className="min-w-0 truncate">{groupName}</span>
-        </CollapsibleTrigger>
-      )}
-      {/* アクションメニュー（ホバーで表示 / 右クリック共通） */}
-      {groupId && (onAddChildTag || onDeleteGroup) && (
-        <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
-          <DropdownMenuTrigger asChild>
-            <button
-              type="button"
-              className="text-muted-foreground hover:text-foreground hover:bg-state-hover flex size-6 shrink-0 items-center justify-center rounded opacity-0 transition-opacity group-hover:opacity-100"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <MoreHorizontal className="size-4" />
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" side="right">
-            {menuItems}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )}
-      {/* 折りたたみアイコン */}
-      <CollapsibleTrigger className="flex size-6 shrink-0 items-center justify-center">
-        <ChevronRight className="size-4 transition-transform [[data-state=open]>&]:rotate-90" />
-      </CollapsibleTrigger>
-    </div>
-  );
-
-  // 子タグ一覧（SortableContextは親で統合済み）
-  const childContent = (
-    <CollapsibleContent>
-      <div className="w-full min-w-0 space-y-1 overflow-hidden pl-4">
-        {tags.map((tag) => (
-          <SortableFilterItem
-            key={tag.id}
-            id={tag.id}
-            label={tag.name}
-            tagId={tag.id}
-            description={tag.description}
-            checkboxColor={tag.color || undefined}
-            checked={visibleTagIds.has(tag.id)}
-            onCheckedChange={() => onToggleTag(tag.id)}
-            count={tagPlanCounts[tag.id] ?? 0}
-            parentId={groupId}
-            parentTags={parentTags}
-            onDeleteTag={onDeleteTag}
-          />
-        ))}
-      </div>
-    </CollapsibleContent>
-  );
-
-  return (
-    <>
-      <Collapsible defaultOpen className="w-full min-w-0">
-        <HoverTooltip content={groupDescription} side="top" disabled={!groupDescription}>
-          {rowContent}
-        </HoverTooltip>
-        {childContent}
-      </Collapsible>
-
-      {/* マージモーダル */}
-      {groupId && (
-        <TagMergeModal
-          open={mergeModalOpen}
-          onClose={() => setMergeModalOpen(false)}
-          sourceTag={{ id: groupId, name: groupName, color: groupColor ?? null }}
-          hasChildren={tags.length > 0}
-          onMergeSuccess={handleMergeSuccess}
-        />
-      )}
-    </>
-  );
-}
-
 interface FilterItemProps {
   label: string;
   /** タグID */
@@ -924,53 +647,8 @@ interface FilterItemProps {
   parentTags?: Array<{ id: string; name: string; color?: string | null }> | undefined;
   /** 削除ハンドラー */
   onDeleteTag?: ((tagId: string) => void) | undefined;
-}
-
-/** ソート可能なフィルターアイテム（DnDラッパー） */
-function SortableFilterItem(props: FilterItemProps & { id: string }) {
-  const { id, ...rest } = props;
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging, isOver } =
-    useSortable({
-      id,
-    });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.5 : 1,
-  };
-
-  return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      className={cn('w-full rounded transition-colors', isOver && !isDragging && 'bg-state-hover')}
-    >
-      <FilterItem {...rest} dragHandleProps={listeners} />
-    </div>
-  );
-}
-
-/** グループなしセクション（ルートへのドロップターゲット） */
-function DroppableUngroupedSection(
-  props: Omit<TagGroupSectionProps, 'groupId' | 'dragHandleProps'>,
-) {
-  const { setNodeRef, isOver } = useDroppable({
-    id: 'ungrouped-drop-zone',
-  });
-
-  return (
-    <div
-      ref={setNodeRef}
-      className={cn(
-        'rounded-md transition-colors',
-        isOver && 'bg-state-hover ring-primary/30 ring-2',
-      )}
-    >
-      <TagGroupSection {...props} />
-    </div>
-  );
+  /** このアイテムだけ表示（タグなし用） */
+  onShowOnlyThis?: (() => void) | undefined;
 }
 
 function FilterItem({
@@ -988,10 +666,11 @@ function FilterItem({
   parentId,
   parentTags,
   onDeleteTag,
+  onShowOnlyThis,
 }: FilterItemProps) {
   const t = useTranslations();
   const updateTagMutation = useUpdateTag();
-  const { removeTag } = useCalendarFilterStore();
+  const { removeTag, showOnlyTag } = useCalendarFilterStore();
 
   // インライン編集状態
   const [isEditing, setIsEditing] = useState(false);
@@ -1233,6 +912,13 @@ function FilterItem({
         <Merge className="mr-2 size-4" />
         {t('calendar.filter.merge')}
       </DropdownMenuItem>
+      {/* このタグだけ表示 */}
+      {tagId && (
+        <DropdownMenuItem onClick={() => showOnlyTag(tagId)}>
+          <Eye className="mr-2 size-4" />
+          {t('calendar.filter.showOnlyThis')}
+        </DropdownMenuItem>
+      )}
       {/* 削除 */}
       {onDeleteTag && (
         <DropdownMenuItem
@@ -1280,7 +966,7 @@ function FilterItem({
         <span className="min-w-0 flex-1 truncate">{label}</span>
       )}
       {/* メニュー */}
-      {tagId && !disabled && (
+      {(tagId || onShowOnlyThis) && !disabled && (
         <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
           <DropdownMenuTrigger asChild>
             <button
@@ -1292,7 +978,14 @@ function FilterItem({
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" side="right">
-            {menuItems}
+            {tagId ? (
+              menuItems
+            ) : onShowOnlyThis ? (
+              <DropdownMenuItem onClick={onShowOnlyThis}>
+                <Eye className="mr-2 size-4" />
+                {t('calendar.filter.showOnlyThis')}
+              </DropdownMenuItem>
+            ) : null}
           </DropdownMenuContent>
         </DropdownMenu>
       )}
@@ -1308,7 +1001,12 @@ function FilterItem({
   // 説明がある場合はツールチップで表示
   return (
     <>
-      <HoverTooltip content={description} side="top" disabled={!description}>
+      <HoverTooltip
+        content={description}
+        side="top"
+        disabled={!description || menuOpen}
+        wrapperClassName="w-full"
+      >
         {content}
       </HoverTooltip>
 
@@ -1341,5 +1039,488 @@ function CreateTagButton() {
         <Plus className="size-4" />
       </button>
     </HoverTooltip>
+  );
+}
+
+// ==========================================
+// フラットレンダリング用コンポーネント
+// Google Drive方式: 全アイテムを同一DOMレベルでレンダリング
+// ==========================================
+
+interface FlatGroupHeaderProps {
+  item: FlatItem;
+  isExpanded: boolean;
+  onToggleExpand: () => void;
+  groupVisibility: 'all' | 'none' | 'some';
+  onToggleGroup: () => void;
+  onAddChildTag: () => void;
+  onDeleteGroup: () => void;
+}
+
+/** フラットなグループヘッダー（useSortable対応） */
+function FlatGroupHeader({
+  item,
+  isExpanded,
+  onToggleExpand,
+  groupVisibility,
+  onToggleGroup,
+  onAddChildTag,
+  onDeleteGroup,
+}: FlatGroupHeaderProps) {
+  const t = useTranslations();
+  const updateTagMutation = useUpdateTag();
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging, isOver } =
+    useSortable({ id: item.id });
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [optimisticColor, setOptimisticColor] = useState<string | null>(null);
+  const displayColor = optimisticColor ?? item.color;
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  const handleColorChange = async (color: string) => {
+    setOptimisticColor(color);
+    await updateTagMutation.mutateAsync({ id: item.id, data: { color } });
+    setOptimisticColor(null);
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      className={cn(
+        'w-full rounded-md transition-colors',
+        isOver && !isDragging && 'bg-state-hover ring-primary/30 ring-2',
+      )}
+    >
+      <div
+        className={cn(
+          'group hover:bg-state-hover flex w-full min-w-0 items-center rounded transition-colors',
+          'cursor-grab active:cursor-grabbing',
+          menuOpen && 'bg-state-selected',
+        )}
+        {...listeners}
+      >
+        <Checkbox
+          checked={groupVisibility === 'some' ? 'indeterminate' : groupVisibility === 'all'}
+          onCheckedChange={onToggleGroup}
+          className="mx-2 shrink-0"
+          style={
+            {
+              '--checkbox-color': displayColor,
+              borderColor: displayColor,
+              backgroundColor: groupVisibility !== 'none' ? displayColor : undefined,
+            } as React.CSSProperties
+          }
+        />
+        <div className="h-4 w-1 shrink-0 rounded-full" style={{ backgroundColor: displayColor }} />
+        <span className="text-foreground ml-2 flex-1 truncate text-sm font-medium">
+          {item.name}
+        </span>
+        <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
+          <DropdownMenuTrigger asChild>
+            <button
+              type="button"
+              className="text-muted-foreground hover:text-foreground flex size-6 shrink-0 items-center justify-center rounded opacity-0 group-hover:opacity-100"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <MoreHorizontal className="size-4" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger>
+                <Palette className="mr-2 size-4" />
+                {t('calendar.filter.changeColor')}
+              </DropdownMenuSubTrigger>
+              <DropdownMenuSubContent className="p-2">
+                <ColorPalettePicker
+                  selectedColor={displayColor}
+                  onColorSelect={handleColorChange}
+                />
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
+            <DropdownMenuItem onClick={onAddChildTag}>
+              <Plus className="mr-2 size-4" />
+              {t('calendar.filter.addChildTag')}
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="text-destructive focus:text-destructive"
+              onClick={onDeleteGroup}
+            >
+              <Trash2 className="mr-2 size-4" />
+              {t('actions.delete')}
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <button
+          type="button"
+          className="flex size-6 shrink-0 items-center justify-center"
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleExpand();
+          }}
+        >
+          <ChevronRight className={cn('size-4 transition-transform', isExpanded && 'rotate-90')} />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+interface FlatChildTagProps {
+  item: FlatItem;
+  checked: boolean;
+  onToggle: () => void;
+  count: number;
+  parentTags?: Array<{ id: string; name: string; color?: string | null }> | undefined;
+  onDeleteTag: () => void;
+}
+
+/** フラットな子タグ（useSortable対応、CSSでインデント） */
+function FlatChildTag({
+  item,
+  checked,
+  onToggle,
+  count,
+  parentTags,
+  onDeleteTag,
+}: FlatChildTagProps) {
+  const t = useTranslations();
+  const updateTagMutation = useUpdateTag();
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging, isOver } =
+    useSortable({ id: item.id });
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [optimisticColor, setOptimisticColor] = useState<string | null>(null);
+  const displayColor = optimisticColor ?? item.color;
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  const handleColorChange = async (color: string) => {
+    setOptimisticColor(color);
+    await updateTagMutation.mutateAsync({ id: item.id, data: { color } });
+    setOptimisticColor(null);
+  };
+
+  const handleChangeParent = async (newParentId: string | null) => {
+    await updateTagMutation.mutateAsync({ id: item.id, data: { parentId: newParentId } });
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      className={cn(
+        'w-full rounded-md pl-4 transition-colors', // pl-4 for visual indentation
+        isOver && !isDragging && 'bg-state-hover ring-primary/30 ring-2',
+      )}
+    >
+      <div
+        className={cn(
+          'group/item hover:bg-state-hover flex w-full items-center gap-1.5 rounded px-2 py-1 text-sm',
+          'cursor-grab active:cursor-grabbing',
+          menuOpen && 'bg-state-selected',
+        )}
+        {...listeners}
+      >
+        <Checkbox
+          checked={checked}
+          onCheckedChange={onToggle}
+          className="shrink-0"
+          style={
+            {
+              '--checkbox-color': displayColor,
+              borderColor: displayColor,
+              backgroundColor: checked ? displayColor : undefined,
+            } as React.CSSProperties
+          }
+        />
+        <div
+          className="h-3 w-0.5 shrink-0 rounded-full"
+          style={{ backgroundColor: displayColor }}
+        />
+        <span className="text-foreground flex-1 truncate">{item.name}</span>
+        {count > 0 && (
+          <span className="text-muted-foreground shrink-0 text-xs tabular-nums">{count}</span>
+        )}
+        <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
+          <DropdownMenuTrigger asChild>
+            <button
+              type="button"
+              className="text-muted-foreground hover:text-foreground flex size-5 shrink-0 items-center justify-center rounded opacity-0 group-hover/item:opacity-100"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <MoreHorizontal className="size-3.5" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger>
+                <Palette className="mr-2 size-4" />
+                {t('calendar.filter.changeColor')}
+              </DropdownMenuSubTrigger>
+              <DropdownMenuSubContent className="p-2">
+                <ColorPalettePicker
+                  selectedColor={displayColor}
+                  onColorSelect={handleColorChange}
+                />
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
+            {parentTags && parentTags.length > 0 && (
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger>
+                  <FolderUp className="mr-2 size-4" />
+                  {t('calendar.filter.changeParent')}
+                </DropdownMenuSubTrigger>
+                <DropdownMenuSubContent>
+                  <DropdownMenuItem onClick={() => handleChangeParent(null)}>
+                    {t('calendar.filter.ungrouped')}
+                  </DropdownMenuItem>
+                  {parentTags
+                    .filter((p) => p.id !== item.parentId)
+                    .map((parent) => (
+                      <DropdownMenuItem
+                        key={parent.id}
+                        onClick={() => handleChangeParent(parent.id)}
+                      >
+                        <div
+                          className="mr-2 h-3 w-1 rounded-full"
+                          style={{ backgroundColor: parent.color || '#3B82F6' }}
+                        />
+                        {parent.name}
+                      </DropdownMenuItem>
+                    ))}
+                </DropdownMenuSubContent>
+              </DropdownMenuSub>
+            )}
+            <DropdownMenuItem
+              className="text-destructive focus:text-destructive"
+              onClick={onDeleteTag}
+            >
+              <Trash2 className="mr-2 size-4" />
+              {t('actions.delete')}
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    </div>
+  );
+}
+
+interface FlatUngroupedHeaderProps {
+  isExpanded: boolean;
+  onToggleExpand: () => void;
+  groupVisibility: 'all' | 'none' | 'some';
+  onToggleGroup: () => void;
+  /** このグループだけ表示 */
+  onShowOnlyGroup: () => void;
+}
+
+/** フラットなグループなしヘッダー（useDroppable対応） */
+function FlatUngroupedHeader({
+  isExpanded,
+  onToggleExpand,
+  groupVisibility,
+  onToggleGroup,
+  onShowOnlyGroup,
+}: FlatUngroupedHeaderProps) {
+  const t = useTranslations();
+  const { setNodeRef, isOver } = useDroppable({ id: 'ungrouped-header' });
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  return (
+    <div
+      ref={setNodeRef}
+      className={cn(
+        'w-full rounded-md transition-colors',
+        isOver && 'bg-state-hover ring-primary/30 ring-2',
+      )}
+    >
+      <div
+        className={cn(
+          'group hover:bg-state-hover flex w-full min-w-0 items-center rounded transition-colors',
+          menuOpen && 'bg-state-selected',
+        )}
+      >
+        <Checkbox
+          checked={groupVisibility === 'some' ? 'indeterminate' : groupVisibility === 'all'}
+          onCheckedChange={onToggleGroup}
+          className="mx-2 shrink-0"
+        />
+        <span className="text-muted-foreground ml-2 flex-1 truncate text-sm">
+          {t('calendar.filter.ungrouped')}
+        </span>
+        {/* メニュー */}
+        <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
+          <DropdownMenuTrigger asChild>
+            <button
+              type="button"
+              className="text-muted-foreground hover:text-foreground hover:bg-state-hover flex size-6 shrink-0 items-center justify-center rounded opacity-0 transition-opacity group-hover:opacity-100"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <MoreHorizontal className="size-4" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={onShowOnlyGroup}>
+              <Eye className="mr-2 size-4" />
+              {t('calendar.filter.showOnlyThis')}
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <button
+          type="button"
+          className="flex size-6 shrink-0 items-center justify-center"
+          onClick={onToggleExpand}
+        >
+          <ChevronRight className={cn('size-4 transition-transform', isExpanded && 'rotate-90')} />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+interface FlatUngroupedTagProps {
+  item: FlatItem;
+  checked: boolean;
+  onToggle: () => void;
+  count: number;
+  parentTags?: Array<{ id: string; name: string; color?: string | null }> | undefined;
+  onDeleteTag: () => void;
+}
+
+/** フラットなグループなしタグ（useSortable対応） */
+function FlatUngroupedTag({
+  item,
+  checked,
+  onToggle,
+  count,
+  parentTags,
+  onDeleteTag,
+}: FlatUngroupedTagProps) {
+  const t = useTranslations();
+  const updateTagMutation = useUpdateTag();
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging, isOver } =
+    useSortable({ id: item.id });
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [optimisticColor, setOptimisticColor] = useState<string | null>(null);
+  const displayColor = optimisticColor ?? item.color;
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  const handleColorChange = async (color: string) => {
+    setOptimisticColor(color);
+    await updateTagMutation.mutateAsync({ id: item.id, data: { color } });
+    setOptimisticColor(null);
+  };
+
+  const handleChangeParent = async (newParentId: string) => {
+    await updateTagMutation.mutateAsync({ id: item.id, data: { parentId: newParentId } });
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      className={cn(
+        'w-full rounded-md pl-4 transition-colors', // pl-4 for visual indentation
+        isOver && !isDragging && 'bg-state-hover ring-primary/30 ring-2',
+      )}
+    >
+      <div
+        className={cn(
+          'group/item hover:bg-state-hover flex w-full items-center gap-1.5 rounded px-2 py-1 text-sm',
+          'cursor-grab active:cursor-grabbing',
+          menuOpen && 'bg-state-selected',
+        )}
+        {...listeners}
+      >
+        <Checkbox
+          checked={checked}
+          onCheckedChange={onToggle}
+          className="shrink-0"
+          style={
+            {
+              '--checkbox-color': displayColor,
+              borderColor: displayColor,
+              backgroundColor: checked ? displayColor : undefined,
+            } as React.CSSProperties
+          }
+        />
+        <div
+          className="h-3 w-0.5 shrink-0 rounded-full"
+          style={{ backgroundColor: displayColor }}
+        />
+        <span className="text-foreground flex-1 truncate">{item.name}</span>
+        {count > 0 && (
+          <span className="text-muted-foreground shrink-0 text-xs tabular-nums">{count}</span>
+        )}
+        <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
+          <DropdownMenuTrigger asChild>
+            <button
+              type="button"
+              className="text-muted-foreground hover:text-foreground flex size-5 shrink-0 items-center justify-center rounded opacity-0 group-hover/item:opacity-100"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <MoreHorizontal className="size-3.5" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger>
+                <Palette className="mr-2 size-4" />
+                {t('calendar.filter.changeColor')}
+              </DropdownMenuSubTrigger>
+              <DropdownMenuSubContent className="p-2">
+                <ColorPalettePicker
+                  selectedColor={displayColor}
+                  onColorSelect={handleColorChange}
+                />
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
+            {parentTags && parentTags.length > 0 && (
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger>
+                  <FolderUp className="mr-2 size-4" />
+                  {t('calendar.filter.changeParent')}
+                </DropdownMenuSubTrigger>
+                <DropdownMenuSubContent>
+                  {parentTags.map((parent) => (
+                    <DropdownMenuItem key={parent.id} onClick={() => handleChangeParent(parent.id)}>
+                      <div
+                        className="mr-2 h-3 w-1 rounded-full"
+                        style={{ backgroundColor: parent.color || '#3B82F6' }}
+                      />
+                      {parent.name}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuSubContent>
+              </DropdownMenuSub>
+            )}
+            <DropdownMenuItem
+              className="text-destructive focus:text-destructive"
+              onClick={onDeleteTag}
+            >
+              <Trash2 className="mr-2 size-4" />
+              {t('actions.delete')}
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    </div>
   );
 }

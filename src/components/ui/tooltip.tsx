@@ -35,6 +35,8 @@ interface HoverTooltipProps {
   maxWidth?: number;
   /** 追加のクラス名 */
   className?: string;
+  /** ラッパー要素の追加クラス名（フルwidth要素をラップする場合は"w-full"を指定） */
+  wrapperClassName?: string;
   /** 無効化 */
   disabled?: boolean;
 }
@@ -46,6 +48,7 @@ function HoverTooltip({
   delayMs = 300,
   maxWidth = 200,
   className,
+  wrapperClassName,
   disabled = false,
 }: HoverTooltipProps) {
   const [isVisible, setIsVisible] = useState(false);
@@ -134,7 +137,7 @@ function HoverTooltip({
         onMouseLeave={hideTooltip}
         onFocus={showTooltip}
         onBlur={hideTooltip}
-        className="inline-flex"
+        className={cn('inline-flex', wrapperClassName)}
       >
         {children}
       </span>

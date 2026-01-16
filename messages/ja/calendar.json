@@ -179,7 +179,7 @@
       "rename": "名前を変更",
       "changeColor": "カラーを変更",
       "editDescription": "説明を編集",
-      "descriptionLabel": "説明を追加（最大100文字）",
+      "descriptionLabel": "説明を追加",
       "descriptionHint": "ツールチップに表示されます",
       "descriptionMaxLength": "上限に達しました",
       "deleteParentTag": {
@@ -188,6 +188,7 @@
       },
       "changeParent": "親タグを変更",
       "merge": "他のタグに統合",
+      "showOnlyThis": "このタグだけ表示",
       "noParent": "親タグなし",
       "deleteTag": {
         "title": "タグを削除",

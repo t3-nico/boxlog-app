@@ -179,7 +179,7 @@
       "rename": "Rename",
       "changeColor": "Change color",
       "editDescription": "Edit description",
-      "descriptionLabel": "Add a description (max 100 chars)",
+      "descriptionLabel": "Add a description",
       "descriptionHint": "Displayed in tooltip",
       "descriptionMaxLength": "Limit reached",
       "deleteParentTag": {
@@ -188,6 +188,7 @@
       },
       "changeParent": "Change parent",
       "merge": "Merge into another tag",
+      "showOnlyThis": "Show only this",
       "noParent": "No parent",
       "deleteTag": {
         "title": "Delete Tag",
