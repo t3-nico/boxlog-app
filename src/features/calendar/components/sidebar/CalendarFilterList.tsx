@@ -54,6 +54,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
@@ -601,7 +602,12 @@ export function CalendarFilterList() {
               />
 
               {/* ドラッグオーバーレイ（TickTickスタイル: シンプル + 軽いリフト） */}
-              <DragOverlay>
+              <DragOverlay
+                dropAnimation={{
+                  duration: 150,
+                  easing: 'ease-out',
+                }}
+              >
                 {activeItem && (
                   <div className="bg-card flex items-center gap-2 rounded-md px-3 py-1.5 shadow-md">
                     <Checkbox
@@ -937,10 +943,13 @@ function FilterItem({
       )}
       {/* 削除 */}
       {onDeleteTag && (
-        <DropdownMenuItem variant="destructive" onClick={() => onDeleteTag(tagId)}>
-          <Trash2 className="mr-2 size-4" />
-          {t('actions.delete')}
-        </DropdownMenuItem>
+        <>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem variant="destructive" onClick={() => onDeleteTag(tagId)}>
+            <Trash2 className="mr-2 size-4" />
+            {t('actions.delete')}
+          </DropdownMenuItem>
+        </>
       )}
     </>
   );
@@ -1120,9 +1129,10 @@ function FlatGroupHeader({
   // マージモーダル
   const [mergeModalOpen, setMergeModalOpen] = useState(false);
 
+  // 高速トランジション（150ms）でリアルタイム感を演出
   const style = {
     transform: CSS.Transform.toString(transform),
-    transition,
+    transition: transition ?? 'transform 150ms ease-out',
     visibility: isDragging ? 'hidden' : 'visible',
   } as React.CSSProperties;
 
@@ -1189,6 +1199,8 @@ function FlatGroupHeader({
       {...attributes}
       className="w-full rounded-md transition-colors"
     >
+      {/* 挿入線インジケーター（TickTickスタイル） */}
+      {isOver && !isDragging && <div className="bg-primary mx-2 h-0.5 rounded-full" />}
       <div
         className={cn(
           'group/item hover:bg-state-hover flex w-full min-w-0 items-center rounded transition-colors',
@@ -1237,14 +1249,11 @@ function FlatGroupHeader({
         ) : (
           <span className="text-foreground flex-1 truncate text-sm font-medium">{item.name}</span>
         )}
-        {count > 0 && (
-          <span className="text-muted-foreground shrink-0 text-xs tabular-nums">{count}</span>
-        )}
         <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
           <DropdownMenuTrigger asChild>
             <button
               type="button"
-              className="text-muted-foreground hover:text-foreground flex size-6 shrink-0 items-center justify-center rounded opacity-0 group-hover/item:opacity-100"
+              className="text-muted-foreground hover:text-foreground hover:bg-state-hover flex size-6 shrink-0 items-center justify-center rounded opacity-0 transition-opacity group-hover/item:opacity-100"
               onClick={(e) => e.stopPropagation()}
             >
               <MoreHorizontal className="size-4" />
@@ -1327,6 +1336,7 @@ function FlatGroupHeader({
               <Plus className="mr-2 size-4" />
               {t('calendar.filter.addChildTag')}
             </DropdownMenuItem>
+            <DropdownMenuSeparator />
             {/* 削除 */}
             <DropdownMenuItem variant="destructive" onClick={onDeleteGroup}>
               <Trash2 className="mr-2 size-4" />
@@ -1400,9 +1410,10 @@ function FlatChildTag({
   // マージモーダル
   const [mergeModalOpen, setMergeModalOpen] = useState(false);
 
+  // 高速トランジション（150ms）でリアルタイム感を演出
   const style = {
     transform: CSS.Transform.toString(transform),
-    transition,
+    transition: transition ?? 'transform 150ms ease-out',
     visibility: isDragging ? 'hidden' : 'visible',
   } as React.CSSProperties;
 
@@ -1471,11 +1482,10 @@ function FlatChildTag({
       ref={setNodeRef}
       style={style}
       {...attributes}
-      className={cn(
-        'w-full rounded-md pl-4 transition-colors', // pl-4 for visual indentation
-        isOver && !isDragging && 'bg-state-hover ring-primary/30 ring-2',
-      )}
+      className="w-full rounded-md pl-4 transition-colors"
     >
+      {/* 挿入線インジケーター（TickTickスタイル） */}
+      {isOver && !isDragging && <div className="bg-primary mx-2 h-0.5 rounded-full" />}
       <div
         className={cn(
           'group/item hover:bg-state-hover flex w-full items-center gap-1.5 rounded px-2 py-1 text-sm',
@@ -1522,14 +1532,12 @@ function FlatChildTag({
         ) : (
           <span className="text-foreground flex-1 truncate">{item.name}</span>
         )}
-        {count > 0 && (
-          <span className="text-muted-foreground shrink-0 text-xs tabular-nums">{count}</span>
-        )}
+        <span className="text-muted-foreground shrink-0 text-xs tabular-nums">{count}</span>
         <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
           <DropdownMenuTrigger asChild>
             <button
               type="button"
-              className="text-muted-foreground hover:text-foreground flex size-5 shrink-0 items-center justify-center rounded opacity-0 group-hover/item:opacity-100"
+              className="text-muted-foreground hover:text-foreground hover:bg-state-hover flex size-5 shrink-0 items-center justify-center rounded opacity-0 transition-opacity group-hover/item:opacity-100"
               onClick={(e) => e.stopPropagation()}
             >
               <MoreHorizontal className="size-3.5" />
@@ -1635,6 +1643,7 @@ function FlatChildTag({
               <Eye className="mr-2 size-4" />
               {t('calendar.filter.showOnlyThis')}
             </DropdownMenuItem>
+            <DropdownMenuSeparator />
             {/* 削除 */}
             <DropdownMenuItem variant="destructive" onClick={onDeleteTag}>
               <Trash2 className="mr-2 size-4" />
@@ -1778,9 +1787,10 @@ function FlatUngroupedTag({
   // マージモーダル
   const [mergeModalOpen, setMergeModalOpen] = useState(false);
 
+  // 高速トランジション（150ms）でリアルタイム感を演出
   const style = {
     transform: CSS.Transform.toString(transform),
-    transition,
+    transition: transition ?? 'transform 150ms ease-out',
     visibility: isDragging ? 'hidden' : 'visible',
   } as React.CSSProperties;
 
@@ -1849,11 +1859,10 @@ function FlatUngroupedTag({
       ref={setNodeRef}
       style={style}
       {...attributes}
-      className={cn(
-        'w-full rounded-md pl-4 transition-colors', // pl-4 for visual indentation
-        isOver && !isDragging && 'bg-state-hover ring-primary/30 ring-2',
-      )}
+      className="w-full rounded-md pl-4 transition-colors"
     >
+      {/* 挿入線インジケーター（TickTickスタイル） */}
+      {isOver && !isDragging && <div className="bg-primary mx-2 h-0.5 rounded-full" />}
       <div
         className={cn(
           'group/item hover:bg-state-hover flex w-full items-center gap-1.5 rounded px-2 py-1 text-sm',
@@ -1900,14 +1909,12 @@ function FlatUngroupedTag({
         ) : (
           <span className="text-foreground flex-1 truncate">{item.name}</span>
         )}
-        {count > 0 && (
-          <span className="text-muted-foreground shrink-0 text-xs tabular-nums">{count}</span>
-        )}
+        <span className="text-muted-foreground shrink-0 text-xs tabular-nums">{count}</span>
         <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
           <DropdownMenuTrigger asChild>
             <button
               type="button"
-              className="text-muted-foreground hover:text-foreground flex size-5 shrink-0 items-center justify-center rounded opacity-0 group-hover/item:opacity-100"
+              className="text-muted-foreground hover:text-foreground hover:bg-state-hover flex size-5 shrink-0 items-center justify-center rounded opacity-0 transition-opacity group-hover/item:opacity-100"
               onClick={(e) => e.stopPropagation()}
             >
               <MoreHorizontal className="size-3.5" />
@@ -2005,6 +2012,7 @@ function FlatUngroupedTag({
               <Eye className="mr-2 size-4" />
               {t('calendar.filter.showOnlyThis')}
             </DropdownMenuItem>
+            <DropdownMenuSeparator />
             {/* 削除 */}
             <DropdownMenuItem variant="destructive" onClick={onDeleteTag}>
               <Trash2 className="mr-2 size-4" />
