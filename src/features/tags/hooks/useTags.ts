@@ -216,20 +216,19 @@ export interface ReorderTagInput {
 
 // タグ並び替えフック（楽観的更新付き）
 export function useReorderTags() {
-  const queryClient = useQueryClient();
   const utils = trpc.useUtils();
 
   return trpc.tags.reorder.useMutation({
     // 楽観的更新: ドロップ直後に即座にUIを更新
     onMutate: async ({ updates }) => {
-      // 進行中のクエリをキャンセル
-      await queryClient.cancelQueries({ queryKey: tagKeys.list() });
+      // tRPC のキャッシュをキャンセル
+      await utils.tags.list.cancel();
 
       // 現在のデータをスナップショット
-      const previousTags = queryClient.getQueryData<{ data: Tag[] }>(tagKeys.list());
+      const previousData = utils.tags.list.getData();
 
-      // 楽観的にキャッシュを更新
-      queryClient.setQueryData<{ data: Tag[] }>(tagKeys.list(), (oldData) => {
+      // tRPC utils で楽観的にキャッシュを更新
+      utils.tags.list.setData(undefined, (oldData) => {
         if (!oldData) return oldData;
 
         const newData = oldData.data.map((tag) => {
@@ -248,19 +247,18 @@ export function useReorderTags() {
       });
 
       // ロールバック用にスナップショットを返す
-      return { previousTags };
+      return { previousData };
     },
     // エラー時はロールバック
     onError: (_err, _variables, context) => {
-      if (context?.previousTags) {
-        queryClient.setQueryData(tagKeys.list(), context.previousTags);
+      if (context?.previousData) {
+        utils.tags.list.setData(undefined, context.previousData);
       }
     },
     // 成功・エラー問わず最新データを取得
     onSettled: () => {
       utils.tags.list.invalidate();
       utils.tags.listParentTags.invalidate();
-      queryClient.invalidateQueries({ queryKey: tagKeys.all });
     },
   });
 }

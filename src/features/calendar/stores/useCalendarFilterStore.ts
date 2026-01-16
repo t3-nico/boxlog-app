@@ -53,6 +53,9 @@ export interface CalendarFilterActions {
   /** タグ一覧で初期化（まだ設定がないタグを追加） */
   initializeWithTags: (tagIds: string[]) => void;
 
+  /** 特定のタグを削除（マージ後などに使用） */
+  removeTag: (tagId: string) => void;
+
   /** 種類が表示中かチェック */
   isTypeVisible: (type: ItemType) => boolean;
 
@@ -183,6 +186,13 @@ export const useCalendarFilterStore = create<CalendarFilterStore>()(
             visibleTagIds: new Set(tagIds),
             initialized: true,
           };
+        }),
+
+      removeTag: (tagId) =>
+        set((state) => {
+          const newSet = new Set(state.visibleTagIds);
+          newSet.delete(tagId);
+          return { visibleTagIds: newSet };
         }),
 
       isTypeVisible: (type) => get().visibleTypes[type],
