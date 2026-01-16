@@ -182,6 +182,7 @@
       "descriptionLabel": "説明を追加",
       "descriptionHint": "ツールチップに表示されます",
       "descriptionMaxLength": "上限に達しました",
+      "nameMaxLength": "上限に達しました",
       "deleteParentTag": {
         "title": "タグを削除",
         "description": "このタグを削除しますか？子タグはルートタグとして残ります。"

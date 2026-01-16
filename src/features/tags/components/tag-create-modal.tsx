@@ -204,6 +204,9 @@ export const TagCreateModal = ({
                 {error}
               </FieldError>
             )}
+            {name.length >= TAG_NAME_MAX_LENGTH && (
+              <FieldError noPrefix>{t('calendar.filter.nameMaxLength')}</FieldError>
+            )}
           </Field>
 
           {/* カラー */}
