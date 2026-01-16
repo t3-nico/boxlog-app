@@ -921,10 +921,7 @@ function FilterItem({
       )}
       {/* 削除 */}
       {onDeleteTag && (
-        <DropdownMenuItem
-          className="text-destructive focus:text-destructive"
-          onClick={() => onDeleteTag(tagId)}
-        >
+        <DropdownMenuItem variant="destructive" onClick={() => onDeleteTag(tagId)}>
           <Trash2 className="mr-2 size-4" />
           {t('actions.delete')}
         </DropdownMenuItem>
@@ -1117,10 +1114,7 @@ function FlatGroupHeader({
             } as React.CSSProperties
           }
         />
-        <div className="h-4 w-1 shrink-0 rounded-full" style={{ backgroundColor: displayColor }} />
-        <span className="text-foreground ml-2 flex-1 truncate text-sm font-medium">
-          {item.name}
-        </span>
+        <span className="text-foreground flex-1 truncate text-sm font-medium">{item.name}</span>
         <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
           <DropdownMenuTrigger asChild>
             <button
@@ -1148,10 +1142,7 @@ function FlatGroupHeader({
               <Plus className="mr-2 size-4" />
               {t('calendar.filter.addChildTag')}
             </DropdownMenuItem>
-            <DropdownMenuItem
-              className="text-destructive focus:text-destructive"
-              onClick={onDeleteGroup}
-            >
+            <DropdownMenuItem variant="destructive" onClick={onDeleteGroup}>
               <Trash2 className="mr-2 size-4" />
               {t('actions.delete')}
             </DropdownMenuItem>
@@ -1244,10 +1235,6 @@ function FlatChildTag({
             } as React.CSSProperties
           }
         />
-        <div
-          className="h-3 w-0.5 shrink-0 rounded-full"
-          style={{ backgroundColor: displayColor }}
-        />
         <span className="text-foreground flex-1 truncate">{item.name}</span>
         {count > 0 && (
           <span className="text-muted-foreground shrink-0 text-xs tabular-nums">{count}</span>
@@ -1302,10 +1289,7 @@ function FlatChildTag({
                 </DropdownMenuSubContent>
               </DropdownMenuSub>
             )}
-            <DropdownMenuItem
-              className="text-destructive focus:text-destructive"
-              onClick={onDeleteTag}
-            >
+            <DropdownMenuItem variant="destructive" onClick={onDeleteTag}>
               <Trash2 className="mr-2 size-4" />
               {t('actions.delete')}
             </DropdownMenuItem>
@@ -1461,10 +1445,6 @@ function FlatUngroupedTag({
             } as React.CSSProperties
           }
         />
-        <div
-          className="h-3 w-0.5 shrink-0 rounded-full"
-          style={{ backgroundColor: displayColor }}
-        />
         <span className="text-foreground flex-1 truncate">{item.name}</span>
         {count > 0 && (
           <span className="text-muted-foreground shrink-0 text-xs tabular-nums">{count}</span>
@@ -1511,10 +1491,7 @@ function FlatUngroupedTag({
                 </DropdownMenuSubContent>
               </DropdownMenuSub>
             )}
-            <DropdownMenuItem
-              className="text-destructive focus:text-destructive"
-              onClick={onDeleteTag}
-            >
+            <DropdownMenuItem variant="destructive" onClick={onDeleteTag}>
               <Trash2 className="mr-2 size-4" />
               {t('actions.delete')}
             </DropdownMenuItem>
