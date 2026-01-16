@@ -25,7 +25,6 @@ import { TableRow } from '@/components/ui/table';
 import { DEFAULT_GROUP_COLOR, DEFAULT_TAG_COLOR } from '@/config/ui/colors';
 import { TagActionMenuItems } from '@/features/tags/components/TagActionMenuItems';
 import { useUpdateTag } from '@/features/tags/hooks/useTags';
-import { useTagInspectorStore } from '@/features/tags/stores/useTagInspectorStore';
 import { useTagSelectionStore } from '@/features/tags/stores/useTagSelectionStore';
 import type { Tag, TagGroup } from '@/features/tags/types';
 import { logger } from '@/lib/logger';
@@ -72,7 +71,6 @@ export function TagCellContent({
   onCreateGroup,
 }: TagCellContentProps) {
   const t = useTranslations();
-  const { openInspector } = useTagInspectorStore();
   const updateTagMutation = useUpdateTag();
 
   // インライン編集の状態
@@ -158,12 +156,7 @@ export function TagCellContent({
               className="h-7 px-2"
             />
           ) : (
-            <span
-              className="min-w-0 flex-1 cursor-pointer truncate font-medium hover:underline"
-              onClick={() => openInspector(tag.id)}
-            >
-              {tag.name}
-            </span>
+            <span className="min-w-0 flex-1 truncate font-medium">{tag.name}</span>
           )}
         </div>
       );
@@ -338,29 +331,13 @@ export function TagRowWrapper({
   onDeleteConfirm,
 }: TagRowWrapperProps) {
   const t = useTranslations();
-  const {
-    openInspector,
-    entityId: inspectorTagId,
-    isOpen: isInspectorOpen,
-  } = useTagInspectorStore();
   const { setSelectedIds } = useTagSelectionStore();
-
-  // Inspectorで開いているタグかどうか
-  const isInspectorActive = isInspectorOpen && inspectorTagId === tag.id;
-
-  // インライン編集開始（名前編集）
-  // Note: インライン編集はTagCellContent内で状態管理されるため、
-  // ここでは何もしない（将来的にはコンテキストで共有することも可能）
-  const handleStartEdit = useCallback(() => {}, []);
 
   return (
     <ContextMenu modal={false}>
       <ContextMenuTrigger asChild>
         <TableRow
-          className={cn(
-            isSelected && 'bg-primary-state-selected hover:bg-state-dragged',
-            !isSelected && isInspectorActive && 'bg-state-hover',
-          )}
+          className={cn(isSelected && 'bg-primary-state-selected hover:bg-state-dragged')}
           onContextMenu={() => {
             if (!isSelected) {
               setSelectedIds([tag.id]);
@@ -374,8 +351,6 @@ export function TagRowWrapper({
         <TagActionMenuItems
           tag={tag}
           groups={groups}
-          onView={() => openInspector(tag.id)}
-          onEdit={handleStartEdit}
           onMoveToGroup={onMoveToGroup}
           onArchive={onArchiveConfirm}
           onDelete={onDeleteConfirm}

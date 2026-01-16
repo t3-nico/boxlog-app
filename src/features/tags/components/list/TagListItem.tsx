@@ -11,7 +11,6 @@ import {
 } from '@/components/ui/context-menu';
 import { DEFAULT_TAG_COLOR } from '@/config/ui/colors';
 import { TagActionMenuItems } from '@/features/tags/components/TagActionMenuItems';
-import { useTagInspectorStore } from '@/features/tags/stores/useTagInspectorStore';
 import { useTagSelectionStore } from '@/features/tags/stores/useTagSelectionStore';
 import type { Tag, TagGroup } from '@/features/tags/types';
 import { cn } from '@/lib/utils';
@@ -48,15 +47,7 @@ export function TagListItem({
   onDeleteConfirm,
 }: TagListItemProps) {
   const t = useTranslations();
-  const {
-    openInspector,
-    entityId: inspectorTagId,
-    isOpen: isInspectorOpen,
-  } = useTagInspectorStore();
   const { toggleSelection, setSelectedIds } = useTagSelectionStore();
-
-  // Inspectorで開いているタグかどうか
-  const isInspectorActive = isInspectorOpen && inspectorTagId === tag.id;
 
   // チェックボックスクリック
   const handleCheckboxClick = useCallback(
@@ -67,10 +58,10 @@ export function TagListItem({
     [tag.id, toggleSelection],
   );
 
-  // 行クリック（Inspector を開く）
+  // 行クリック（選択をトグル）
   const handleRowClick = useCallback(() => {
-    openInspector(tag.id);
-  }, [tag.id, openInspector]);
+    toggleSelection(tag.id);
+  }, [tag.id, toggleSelection]);
 
   // コンテキストメニュー表示時に選択
   const handleContextMenu = useCallback(() => {
@@ -89,7 +80,6 @@ export function TagListItem({
             'group flex cursor-pointer items-center gap-3 rounded-md px-3 py-2 transition-colors',
             'hover:bg-state-hover',
             isSelected && 'bg-primary-state-selected hover:bg-state-dragged',
-            !isSelected && isInspectorActive && 'bg-state-hover',
           )}
           onClick={handleRowClick}
           onContextMenu={handleContextMenu}
@@ -150,7 +140,6 @@ export function TagListItem({
         <TagActionMenuItems
           tag={tag}
           groups={groups}
-          onView={() => openInspector(tag.id)}
           onMoveToGroup={onMoveToGroup}
           onArchive={onArchiveConfirm}
           onDelete={onDeleteConfirm}

@@ -22,7 +22,6 @@ import {
   PlanInspector,
   RecurringEditConfirmDialog,
 } from '@/features/plans/components';
-import { TagInspector } from '@/features/tags/components/inspector';
 
 const AppLayout = async ({ children }: { children: React.ReactNode }) => {
   return (
@@ -33,7 +32,6 @@ const AppLayout = async ({ children }: { children: React.ReactNode }) => {
           <PlanInspector />
           <PlanDeleteConfirmDialog />
           <RecurringEditConfirmDialog />
-          <TagInspector />
           <AIInspector />
           <Toaster />
         </BaseLayout>
