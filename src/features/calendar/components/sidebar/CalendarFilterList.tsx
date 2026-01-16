@@ -1764,7 +1764,7 @@ function FlatUngroupedTag({
         <Checkbox
           checked={checked}
           onCheckedChange={onToggle}
-          className="mx-2 shrink-0"
+          className="size-4 shrink-0"
           style={
             {
               '--checkbox-color': displayColor,

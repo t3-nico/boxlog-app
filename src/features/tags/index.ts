@@ -43,7 +43,6 @@ export {
 export {
   tagGroupKeys,
   tagKeys,
-  tagStatsKeys,
   useCreateTag,
   useCreateTagGroup,
   useDeleteTag,
@@ -52,9 +51,7 @@ export {
   useOptimisticTagUpdate,
   useRenameTag,
   useReorderTagGroups,
-  useSidebarTags,
   useTag,
-  useTagExpandedState,
   useTagGroup,
   // Tag Groups
   useTagGroups,
@@ -62,9 +59,6 @@ export {
   useTagOperations,
   // Realtime
   useTagRealtime,
-  // Stats
-  useTagStats,
-  useTagUsageCounts,
   // Tags CRUD
   useTags,
   useUpdateTag,

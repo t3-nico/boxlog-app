@@ -40,17 +40,5 @@ export { useTagOperations } from './useTagOperations';
 // Tags Page Data (パフォーマンス最適化用)
 export { useTagsPageData } from './useTagsPageData';
 
-// Tag Stats
-export {
-  tagStatsKeys,
-  useSidebarTags,
-  useTagExpandedState,
-  useTagStats,
-  useTagUsageCounts,
-} from './useTagStats';
-
 // Realtime
 export { useTagRealtime } from './useTagRealtime';
-
-// Table Columns
-export { getTagColumnSettings, useTagTableColumns } from './useTagTableColumns';
