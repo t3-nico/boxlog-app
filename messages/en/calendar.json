@@ -178,6 +178,10 @@
       "addChildTag": "Add child tag",
       "rename": "Rename",
       "changeColor": "Change color",
+      "editDescription": "Edit description",
+      "descriptionLabel": "Add a description (max 100 chars)",
+      "descriptionHint": "Displayed in tooltip",
+      "descriptionMaxLength": "Limit reached",
       "deleteParentTag": {
         "title": "Delete Tag",
         "description": "Delete this tag? Child tags will remain as root tags."
@@ -188,6 +192,16 @@
       "deleteTag": {
         "title": "Delete Tag",
         "description": "Delete this tag?"
+      },
+      "mergeTag": {
+        "title": "Merge Tag",
+        "selectTarget": "Select the tag to merge into",
+        "searchPlaceholder": "Search tags...",
+        "noResults": "No tags found",
+        "confirm": "Merge",
+        "selectRequired": "Please select a tag to merge into",
+        "description": "Merge \"{sourceName}\" into \"{targetName}\"? This action cannot be undone.",
+        "descriptionWithChildren": "Merge \"{sourceName}\" into \"{targetName}\"? Child tags will become root tags. This action cannot be undone."
       }
     },
     "open": {

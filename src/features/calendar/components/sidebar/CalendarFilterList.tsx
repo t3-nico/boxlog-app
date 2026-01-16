@@ -8,6 +8,7 @@ import {
   DragOverlay,
   KeyboardSensor,
   PointerSensor,
+  useDroppable,
   useSensor,
   useSensors,
   type DragEndEvent,
@@ -23,7 +24,9 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import {
   ChevronRight,
+  FileText,
   FolderUp,
+  Merge,
   MoreHorizontal,
   Palette,
   Pencil,
@@ -37,10 +40,10 @@ import { cn } from '@/lib/utils';
 import { useCalendarFilterStore, type ItemType } from '../../stores/useCalendarFilterStore';
 
 import { SidebarSection } from '@/features/navigation/components/sidebar/SidebarSection';
+import { TagMergeModal } from '@/features/tags/components/tag-merge-modal';
 import { useTagGroups } from '@/features/tags/hooks/useTagGroups';
 import { useDeleteTag, useReorderTags, useTags, useUpdateTag } from '@/features/tags/hooks/useTags';
 import { useTagCreateModalStore } from '@/features/tags/stores/useTagCreateModalStore';
-import { useTagInspectorStore } from '@/features/tags/stores/useTagInspectorStore';
 
 import { DeleteConfirmDialog } from '@/components/common/DeleteConfirmDialog';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -55,8 +58,10 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Field, FieldError, FieldLabel, FieldSupportText } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Textarea } from '@/components/ui/textarea';
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { api } from '@/lib/trpc';
 
@@ -124,13 +129,16 @@ export function CalendarFilterList() {
     }
   }, [tags, initializeWithTags]);
 
-  // タグをグループ別に整理
+  // タグをグループ別に整理（sort_order順でソート）
   const groupedTags = useMemo(() => {
     if (!tags) return { grouped: [], ungrouped: [] };
 
     const grouped = (groups || []).map((group) => ({
       group,
-      tags: tags.filter((tag) => tag.parent_id === group.id),
+      // 子タグを sort_order 順でソート（DnDのインデックス計算に必須）
+      tags: tags
+        .filter((tag) => tag.parent_id === group.id)
+        .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0)),
     }));
 
     // 子タグを持つ親タグのIDセット（グループヘッダーとして表示される）
@@ -139,7 +147,10 @@ export function CalendarFilterList() {
     );
 
     // ungrouped: 子を持たないルートタグのみ（親タグとして表示されているものは除外）
-    const ungrouped = tags.filter((tag) => !tag.parent_id && !parentIdsWithChildren.has(tag.id));
+    // sort_order順でソート
+    const ungrouped = tags
+      .filter((tag) => !tag.parent_id && !parentIdsWithChildren.has(tag.id))
+      .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
 
     return { grouped, ungrouped };
   }, [tags, groups]);
@@ -173,6 +184,25 @@ export function CalendarFilterList() {
   const sortableGroupIds = useMemo(() => {
     return groupedTags.grouped.filter(({ tags: t }) => t.length > 0).map(({ group }) => group.id);
   }, [groupedTags.grouped]);
+
+  // DnD: すべてのソート可能なIDリスト（グループ + 全子タグ + グループなしタグ）
+  // 重要: dnd-kit の SortableContext には全アイテムを含める必要がある
+  const allSortableIds = useMemo(() => {
+    const ids: string[] = [];
+
+    // グループとその子タグを追加
+    groupedTags.grouped.forEach(({ group, tags: groupTags }) => {
+      if (groupTags.length > 0) {
+        ids.push(group.id);
+        groupTags.forEach((tag) => ids.push(tag.id));
+      }
+    });
+
+    // グループなしタグを追加
+    groupedTags.ungrouped.forEach((tag) => ids.push(tag.id));
+
+    return ids;
+  }, [groupedTags]);
 
   // DnD: ドラッグ開始
   const handleDragStart = useCallback(
@@ -219,6 +249,28 @@ export function CalendarFilterList() {
 
       const activeId = active.id as string;
       const overId = over.id as string;
+
+      // 「グループなし」へのドロップ（ルートに移動）
+      if (overId === 'ungrouped-drop-zone') {
+        const activeTag = tags.find((t) => t.id === activeId);
+        // グループ（親タグ）の場合や、既にルートの場合は何もしない
+        if (!activeTag || groups.some((g) => g.id === activeId)) return;
+        if (activeTag.parent_id === null) return;
+
+        // ルートに移動（parent_id: null）
+        const ungroupedTags = tags.filter(
+          (t) => t.parent_id === null && !groups.some((g) => g.id === t.id),
+        );
+        const updates = [
+          {
+            id: activeId,
+            sort_order: ungroupedTags.length,
+            parent_id: null,
+          },
+        ];
+        reorderTagsMutation.mutate({ updates });
+        return;
+      }
 
       // アクティブアイテムがグループかタグか
       const isActiveGroup = groups.some((g) => g.id === activeId);
@@ -267,8 +319,10 @@ export function CalendarFilterList() {
 
           if (activeTag.parent_id === targetParentId) {
             // 同じグループ内での並び替え
+            // 注意: ルートレベル(parent_id: null)の場合、親タグ(グループ)を除外する必要がある
             const siblingTags = tags
               .filter((t) => t.parent_id === targetParentId)
+              .filter((t) => targetParentId !== null || !groups.some((g) => g.id === t.id))
               .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
 
             const oldIndex = siblingTags.findIndex((t) => t.id === activeId);
@@ -285,8 +339,10 @@ export function CalendarFilterList() {
             }
           } else {
             // グループ間移動（タグの位置に挿入）
+            // 注意: ルートレベル(parent_id: null)の場合、親タグ(グループ)を除外する必要がある
             const targetSiblings = tags
               .filter((t) => t.parent_id === targetParentId)
+              .filter((t) => targetParentId !== null || !groups.some((g) => g.id === t.id))
               .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
 
             const insertIndex = targetSiblings.findIndex((t) => t.id === overId);
@@ -347,7 +403,8 @@ export function CalendarFilterList() {
               onDragStart={handleDragStart}
               onDragEnd={handleDragEnd}
             >
-              <SortableContext items={sortableGroupIds} strategy={verticalListSortingStrategy}>
+              {/* 全アイテムを1つのSortableContextに統合（ネストしたコンテキストでの並び替え問題を解決） */}
+              <SortableContext items={allSortableIds} strategy={verticalListSortingStrategy}>
                 {/* グループ別タグ */}
                 {groupedTags.grouped.map(
                   ({ group, tags: groupTags }) =>
@@ -357,6 +414,7 @@ export function CalendarFilterList() {
                         groupId={group.id}
                         groupName={group.name}
                         groupColor={group.color || undefined}
+                        groupDescription={group.description}
                         tags={groupTags.map((tg) => ({
                           id: tg.id,
                           name: tg.name,
@@ -379,32 +437,25 @@ export function CalendarFilterList() {
                       />
                     ),
                 )}
-              </SortableContext>
 
-              {/* グループなしタグ */}
-              {groupedTags.ungrouped.length > 0 && (
-                <SortableContext
-                  items={groupedTags.ungrouped.map((tg) => tg.id)}
-                  strategy={verticalListSortingStrategy}
-                >
-                  <TagGroupSection
-                    groupName={t('calendar.filter.ungrouped')}
-                    tags={groupedTags.ungrouped.map((tg) => ({
-                      id: tg.id,
-                      name: tg.name,
-                      color: tg.color || '#3B82F6',
-                      description: tg.description,
-                    }))}
-                    visibleTagIds={visibleTagIds}
-                    onToggleTag={toggleTag}
-                    onToggleGroup={() => toggleGroupTags(groupedTags.ungrouped.map((tg) => tg.id))}
-                    groupVisibility={getGroupVisibility(groupedTags.ungrouped.map((tg) => tg.id))}
-                    tagPlanCounts={tagPlanCounts}
-                    parentTags={groups?.map((g) => ({ id: g.id, name: g.name, color: g.color }))}
-                    onDeleteTag={handleDeleteParentTag}
-                  />
-                </SortableContext>
-              )}
+                {/* グループなしタグ（常に表示 - ドロップターゲットとして必要） */}
+                <DroppableUngroupedSection
+                  groupName={t('calendar.filter.ungrouped')}
+                  tags={groupedTags.ungrouped.map((tg) => ({
+                    id: tg.id,
+                    name: tg.name,
+                    color: tg.color || '#3B82F6',
+                    description: tg.description,
+                  }))}
+                  visibleTagIds={visibleTagIds}
+                  onToggleTag={toggleTag}
+                  onToggleGroup={() => toggleGroupTags(groupedTags.ungrouped.map((tg) => tg.id))}
+                  groupVisibility={getGroupVisibility(groupedTags.ungrouped.map((tg) => tg.id))}
+                  tagPlanCounts={tagPlanCounts}
+                  parentTags={groups?.map((g) => ({ id: g.id, name: g.name, color: g.color }))}
+                  onDeleteTag={handleDeleteParentTag}
+                />
+              </SortableContext>
 
               {/* タグなし */}
               <FilterItem
@@ -413,15 +464,18 @@ export function CalendarFilterList() {
                 onCheckedChange={toggleUntagged}
               />
 
-              {/* ドラッグオーバーレイ */}
+              {/* ドラッグオーバーレイ（カレンダーDnDと統一スタイル） */}
               <DragOverlay>
                 {activeItem && (
-                  <div className="bg-surface border-border flex items-center gap-2 rounded-md border px-2 py-1 text-sm shadow-lg">
+                  <div className="bg-card border-primary flex items-center gap-2 rounded-xl border-2 px-3 py-2 shadow-lg">
+                    {/* 左側のカラーバー（カレンダーDnDと統一） */}
                     <div
-                      className="size-3 shrink-0 rounded-full"
+                      className="h-6 w-1 shrink-0 rounded-full"
                       style={{ backgroundColor: activeItem.color }}
                     />
-                    <span className="truncate">{activeItem.name}</span>
+                    <span className="text-foreground truncate text-sm font-medium">
+                      {activeItem.name}
+                    </span>
                   </div>
                 )}
               </DragOverlay>
@@ -451,6 +505,8 @@ interface TagGroupSectionProps {
   groupName: string;
   groupId?: string | undefined;
   groupColor?: string | undefined;
+  /** 親タグの説明 */
+  groupDescription?: string | null | undefined;
   tags: Array<{ id: string; name: string; color: string; description?: string | null }>;
   visibleTagIds: Set<string>;
   onToggleTag: (tagId: string) => void;
@@ -470,9 +526,10 @@ interface TagGroupSectionProps {
 /** ソート可能なタググループ（DnDラッパー） */
 function SortableTagGroup(props: Omit<TagGroupSectionProps, 'dragHandleProps'>) {
   const { groupId } = props;
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
-    id: groupId || '',
-  });
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging, isOver } =
+    useSortable({
+      id: groupId || '',
+    });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -481,7 +538,15 @@ function SortableTagGroup(props: Omit<TagGroupSectionProps, 'dragHandleProps'>) 
   };
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes}>
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      className={cn(
+        'w-full rounded-md transition-colors',
+        isOver && !isDragging && 'bg-state-hover ring-primary/30 ring-2',
+      )}
+    >
       <TagGroupSection {...props} dragHandleProps={listeners} />
     </div>
   );
@@ -492,6 +557,7 @@ function TagGroupSection({
   groupName,
   groupId,
   groupColor,
+  groupDescription,
   tags,
   visibleTagIds,
   onToggleTag,
@@ -506,6 +572,7 @@ function TagGroupSection({
 }: TagGroupSectionProps) {
   const t = useTranslations();
   const updateTagMutation = useUpdateTag();
+  const { removeTag } = useCalendarFilterStore();
 
   // インライン編集状態
   const [isEditing, setIsEditing] = useState(false);
@@ -518,6 +585,18 @@ function TagGroupSection({
 
   // メニュー開閉状態（ボタンクリック・右クリック共通）
   const [menuOpen, setMenuOpen] = useState(false);
+
+  // マージモーダル状態
+  const [mergeModalOpen, setMergeModalOpen] = useState(false);
+
+  // 説明編集状態
+  const [editDescription, setEditDescription] = useState(groupDescription ?? '');
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // description prop と editDescription を同期
+  useEffect(() => {
+    setEditDescription(groupDescription ?? '');
+  }, [groupDescription]);
 
   // 編集開始時にフォーカス（カーソルを先頭に）
   useEffect(() => {
@@ -594,6 +673,18 @@ function TagGroupSection({
     }
   }, [groupColor, optimisticColor]);
 
+  // 説明保存
+  const handleSaveDescription = useCallback(async () => {
+    if (!groupId) return;
+    const trimmed = editDescription.trim();
+    // 変更がなければスキップ
+    if (trimmed === (groupDescription ?? '')) return;
+    await updateTagMutation.mutateAsync({
+      id: groupId,
+      data: { description: trimmed || null },
+    });
+  }, [groupId, editDescription, groupDescription, updateTagMutation]);
+
   const groupCheckboxStyle = {
     borderColor: displayColor,
     backgroundColor: groupVisibility === 'all' ? displayColor : 'transparent',
@@ -608,6 +699,13 @@ function TagGroupSection({
     },
     [groupId, onAddChildTag, onDeleteGroup],
   );
+
+  // マージ成功時のコールバック
+  const handleMergeSuccess = useCallback(() => {
+    if (groupId) {
+      removeTag(groupId);
+    }
+  }, [groupId, removeTag]);
 
   // メニュー項目をレンダリング
   const menuItems = (
@@ -627,10 +725,63 @@ function TagGroupSection({
           <ColorPalettePicker selectedColor={displayColor} onColorSelect={handleColorChange} />
         </DropdownMenuSubContent>
       </DropdownMenuSub>
+      {/* 説明を編集 */}
+      {groupId && (
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger>
+            <FileText className="mr-2 size-4" />
+            {t('calendar.filter.editDescription')}
+          </DropdownMenuSubTrigger>
+          <DropdownMenuSubContent className="w-[280px] p-3">
+            <Field>
+              <FieldLabel htmlFor={`parent-tag-description-${groupId}`}>
+                {t('calendar.filter.descriptionLabel')}
+              </FieldLabel>
+              <div className="flex items-center justify-between">
+                <FieldSupportText id={`parent-tag-description-support-${groupId}`}>
+                  {t('calendar.filter.descriptionHint')}
+                </FieldSupportText>
+                <span className="text-muted-foreground text-xs tabular-nums">
+                  {editDescription.length}/100
+                </span>
+              </div>
+              <Textarea
+                id={`parent-tag-description-${groupId}`}
+                ref={textareaRef}
+                value={editDescription}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value.length <= 100) {
+                    setEditDescription(value);
+                    // 自動高さ調整
+                    const textarea = e.target;
+                    textarea.style.height = 'auto';
+                    textarea.style.height = `${textarea.scrollHeight}px`;
+                  }
+                }}
+                onBlur={handleSaveDescription}
+                maxLength={100}
+                aria-describedby={`parent-tag-description-support-${groupId}`}
+                className="border-border min-h-[60px] w-full resize-none border text-sm"
+              />
+              {editDescription.length >= 100 && (
+                <FieldError noPrefix>{t('calendar.filter.descriptionMaxLength')}</FieldError>
+              )}
+            </Field>
+          </DropdownMenuSubContent>
+        </DropdownMenuSub>
+      )}
       {onAddChildTag && groupId && (
         <DropdownMenuItem onClick={() => onAddChildTag(groupId)}>
           <Plus className="mr-2 size-4" />
           {t('calendar.filter.addChildTag')}
+        </DropdownMenuItem>
+      )}
+      {/* マージ */}
+      {groupId && (
+        <DropdownMenuItem onClick={() => setMergeModalOpen(true)}>
+          <Merge className="mr-2 size-4" />
+          {t('calendar.filter.merge')}
         </DropdownMenuItem>
       )}
       {onDeleteGroup && groupId && (
@@ -651,6 +802,7 @@ function TagGroupSection({
       className={cn(
         'group hover:bg-state-hover flex w-full min-w-0 items-center rounded transition-colors',
         dragHandleProps && 'cursor-grab active:cursor-grabbing',
+        menuOpen && 'bg-state-selected',
       )}
       onContextMenu={handleContextMenu}
       {...(dragHandleProps || {})}
@@ -702,46 +854,56 @@ function TagGroupSection({
     </div>
   );
 
-  // 子タグのIDリスト（SortableContext用）
-  const childTagIds = useMemo(() => tags.map((tag) => tag.id), [tags]);
-
-  // 子タグ一覧
+  // 子タグ一覧（SortableContextは親で統合済み）
   const childContent = (
     <CollapsibleContent>
-      <SortableContext items={childTagIds} strategy={verticalListSortingStrategy}>
-        <div className="w-full min-w-0 space-y-1 overflow-hidden pl-4">
-          {tags.map((tag) => (
-            <SortableFilterItem
-              key={tag.id}
-              id={tag.id}
-              label={tag.name}
-              tagId={tag.id}
-              description={tag.description}
-              checkboxColor={tag.color || undefined}
-              checked={visibleTagIds.has(tag.id)}
-              onCheckedChange={() => onToggleTag(tag.id)}
-              count={tagPlanCounts[tag.id] ?? 0}
-              parentId={groupId}
-              parentTags={parentTags}
-              onDeleteTag={onDeleteTag}
-            />
-          ))}
-        </div>
-      </SortableContext>
+      <div className="w-full min-w-0 space-y-1 overflow-hidden pl-4">
+        {tags.map((tag) => (
+          <SortableFilterItem
+            key={tag.id}
+            id={tag.id}
+            label={tag.name}
+            tagId={tag.id}
+            description={tag.description}
+            checkboxColor={tag.color || undefined}
+            checked={visibleTagIds.has(tag.id)}
+            onCheckedChange={() => onToggleTag(tag.id)}
+            count={tagPlanCounts[tag.id] ?? 0}
+            parentId={groupId}
+            parentTags={parentTags}
+            onDeleteTag={onDeleteTag}
+          />
+        ))}
+      </div>
     </CollapsibleContent>
   );
 
   return (
-    <Collapsible defaultOpen className="w-full min-w-0">
-      {rowContent}
-      {childContent}
-    </Collapsible>
+    <>
+      <Collapsible defaultOpen className="w-full min-w-0">
+        <HoverTooltip content={groupDescription} side="top" disabled={!groupDescription}>
+          {rowContent}
+        </HoverTooltip>
+        {childContent}
+      </Collapsible>
+
+      {/* マージモーダル */}
+      {groupId && (
+        <TagMergeModal
+          open={mergeModalOpen}
+          onClose={() => setMergeModalOpen(false)}
+          sourceTag={{ id: groupId, name: groupName, color: groupColor ?? null }}
+          hasChildren={tags.length > 0}
+          onMergeSuccess={handleMergeSuccess}
+        />
+      )}
+    </>
   );
 }
 
 interface FilterItemProps {
   label: string;
-  /** タグID（クリックでInspector表示用） */
+  /** タグID */
   tagId?: string | undefined;
   /** タグの説明（ツールチップで表示） */
   description?: string | null | undefined;
@@ -767,9 +929,10 @@ interface FilterItemProps {
 /** ソート可能なフィルターアイテム（DnDラッパー） */
 function SortableFilterItem(props: FilterItemProps & { id: string }) {
   const { id, ...rest } = props;
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
-    id,
-  });
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging, isOver } =
+    useSortable({
+      id,
+    });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -778,8 +941,34 @@ function SortableFilterItem(props: FilterItemProps & { id: string }) {
   };
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes}>
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      className={cn('w-full rounded transition-colors', isOver && !isDragging && 'bg-state-hover')}
+    >
       <FilterItem {...rest} dragHandleProps={listeners} />
+    </div>
+  );
+}
+
+/** グループなしセクション（ルートへのドロップターゲット） */
+function DroppableUngroupedSection(
+  props: Omit<TagGroupSectionProps, 'groupId' | 'dragHandleProps'>,
+) {
+  const { setNodeRef, isOver } = useDroppable({
+    id: 'ungrouped-drop-zone',
+  });
+
+  return (
+    <div
+      ref={setNodeRef}
+      className={cn(
+        'rounded-md transition-colors',
+        isOver && 'bg-state-hover ring-primary/30 ring-2',
+      )}
+    >
+      <TagGroupSection {...props} />
     </div>
   );
 }
@@ -801,8 +990,8 @@ function FilterItem({
   onDeleteTag,
 }: FilterItemProps) {
   const t = useTranslations();
-  const { openInspector } = useTagInspectorStore();
   const updateTagMutation = useUpdateTag();
+  const { removeTag } = useCalendarFilterStore();
 
   // インライン編集状態
   const [isEditing, setIsEditing] = useState(false);
@@ -815,6 +1004,18 @@ function FilterItem({
 
   // メニュー開閉状態
   const [menuOpen, setMenuOpen] = useState(false);
+
+  // マージモーダル状態
+  const [mergeModalOpen, setMergeModalOpen] = useState(false);
+
+  // 説明編集状態
+  const [editDescription, setEditDescription] = useState(description ?? '');
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // description prop と editDescription を同期
+  useEffect(() => {
+    setEditDescription(description ?? '');
+  }, [description]);
 
   // 編集開始時にフォーカス
   useEffect(() => {
@@ -900,17 +1101,24 @@ function FilterItem({
     [tagId, updateTagMutation],
   );
 
-  // 名前クリックでInspectorを開く
-  const handleNameClick = useCallback(
-    (e: React.MouseEvent) => {
-      if (tagId && !disabled && !isEditing) {
-        e.preventDefault();
-        e.stopPropagation();
-        openInspector(tagId);
-      }
-    },
-    [tagId, disabled, isEditing, openInspector],
-  );
+  // 説明保存
+  const handleSaveDescription = useCallback(async () => {
+    if (!tagId) return;
+    const trimmed = editDescription.trim();
+    // 変更がなければスキップ
+    if (trimmed === (description ?? '')) return;
+    await updateTagMutation.mutateAsync({
+      id: tagId,
+      data: { description: trimmed || null },
+    });
+  }, [tagId, editDescription, description, updateTagMutation]);
+
+  // マージ成功時のコールバック
+  const handleMergeSuccess = useCallback(() => {
+    if (tagId) {
+      removeTag(tagId);
+    }
+  }, [tagId, removeTag]);
 
   // 右クリックでメニューを開く
   const handleContextMenu = useCallback(
@@ -946,6 +1154,50 @@ function FilterItem({
           <ColorPalettePicker selectedColor={displayColor} onColorSelect={handleColorChange} />
         </DropdownMenuSubContent>
       </DropdownMenuSub>
+      {/* 説明を編集 */}
+      <DropdownMenuSub>
+        <DropdownMenuSubTrigger>
+          <FileText className="mr-2 size-4" />
+          {t('calendar.filter.editDescription')}
+        </DropdownMenuSubTrigger>
+        <DropdownMenuSubContent className="w-[280px] p-3">
+          <Field>
+            <FieldLabel htmlFor={`tag-description-${tagId}`}>
+              {t('calendar.filter.descriptionLabel')}
+            </FieldLabel>
+            <div className="flex items-center justify-between">
+              <FieldSupportText id={`tag-description-support-${tagId}`}>
+                {t('calendar.filter.descriptionHint')}
+              </FieldSupportText>
+              <span className="text-muted-foreground text-xs tabular-nums">
+                {editDescription.length}/100
+              </span>
+            </div>
+            <Textarea
+              id={`tag-description-${tagId}`}
+              ref={textareaRef}
+              value={editDescription}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (value.length <= 100) {
+                  setEditDescription(value);
+                  // 自動高さ調整
+                  const textarea = e.target;
+                  textarea.style.height = 'auto';
+                  textarea.style.height = `${textarea.scrollHeight}px`;
+                }
+              }}
+              onBlur={handleSaveDescription}
+              maxLength={100}
+              aria-describedby={`tag-description-support-${tagId}`}
+              className="border-border min-h-[60px] w-full resize-none border text-sm"
+            />
+            {editDescription.length >= 100 && (
+              <FieldError noPrefix>{t('calendar.filter.descriptionMaxLength')}</FieldError>
+            )}
+          </Field>
+        </DropdownMenuSubContent>
+      </DropdownMenuSub>
       {/* 親タグを変更 */}
       {parentTags && parentTags.length > 0 && (
         <DropdownMenuSub>
@@ -976,6 +1228,11 @@ function FilterItem({
           </DropdownMenuSubContent>
         </DropdownMenuSub>
       )}
+      {/* マージ */}
+      <DropdownMenuItem onClick={() => setMergeModalOpen(true)}>
+        <Merge className="mr-2 size-4" />
+        {t('calendar.filter.merge')}
+      </DropdownMenuItem>
       {/* 削除 */}
       {onDeleteTag && (
         <DropdownMenuItem
@@ -995,6 +1252,7 @@ function FilterItem({
         'group/item hover:bg-state-hover flex w-full items-center gap-1.5 rounded px-2 py-1 text-sm',
         disabled && 'cursor-not-allowed opacity-50',
         dragHandleProps && 'cursor-grab active:cursor-grabbing',
+        menuOpen && 'bg-state-selected',
       )}
       title={disabled ? disabledReason : undefined}
       onContextMenu={handleContextMenu}
@@ -1019,15 +1277,7 @@ function FilterItem({
           className="border-border bg-background focus-visible:ring-ring h-auto flex-1 rounded px-2 py-0.5 text-sm shadow-none focus-visible:ring-1"
         />
       ) : (
-        <span
-          className={cn(
-            'min-w-0 flex-1 truncate',
-            tagId && !disabled && 'cursor-pointer hover:underline',
-          )}
-          onClick={handleNameClick}
-        >
-          {label}
-        </span>
+        <span className="min-w-0 flex-1 truncate">{label}</span>
       )}
       {/* メニュー */}
       {tagId && !disabled && (
@@ -1057,9 +1307,22 @@ function FilterItem({
 
   // 説明がある場合はツールチップで表示
   return (
-    <HoverTooltip content={description} side="right" disabled={!description}>
-      {content}
-    </HoverTooltip>
+    <>
+      <HoverTooltip content={description} side="top" disabled={!description}>
+        {content}
+      </HoverTooltip>
+
+      {/* マージモーダル */}
+      {tagId && (
+        <TagMergeModal
+          open={mergeModalOpen}
+          onClose={() => setMergeModalOpen(false)}
+          sourceTag={{ id: tagId, name: label, color: checkboxColor ?? null }}
+          hasChildren={false}
+          onMergeSuccess={handleMergeSuccess}
+        />
+      )}
+    </>
   );
 }
 
