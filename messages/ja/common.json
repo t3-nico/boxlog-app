@@ -337,7 +337,8 @@
     "username": {
       "required": "ユーザー名は必須です",
       "maxLength": "ユーザー名は{max}文字以内で入力してください"
-    }
+    },
+    "limitReached": "上限に達しました"
   },
   "errors": {
     "generic": "エラーが発生しました",

@@ -337,7 +337,8 @@
     "username": {
       "required": "Username is required",
       "maxLength": "Username must be {max} characters or less"
-    }
+    },
+    "limitReached": "Limit reached"
   },
   "errors": {
     "generic": "An error occurred",

@@ -205,7 +205,7 @@ export const TagCreateModal = ({
               </FieldError>
             )}
             {name.length >= TAG_NAME_MAX_LENGTH && (
-              <FieldError noPrefix>{t('calendar.filter.nameMaxLength')}</FieldError>
+              <FieldError noPrefix>{t('common.validation.limitReached')}</FieldError>
             )}
           </Field>
 

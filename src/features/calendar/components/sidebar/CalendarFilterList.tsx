@@ -530,6 +530,7 @@ export function CalendarFilterList() {
                           }}
                           onAddChildTag={() => handleAddChildTag(item.id)}
                           onDeleteGroup={() => handleDeleteParentTag(item.id)}
+                          count={tagPlanCounts[item.id] ?? 0}
                         />
                       );
                     case 'child-tag':
@@ -599,18 +600,19 @@ export function CalendarFilterList() {
                 labelClassName="text-muted-foreground"
               />
 
-              {/* ドラッグオーバーレイ（カレンダーDnDと統一スタイル） */}
+              {/* ドラッグオーバーレイ（TickTickスタイル: シンプル + 軽いリフト） */}
               <DragOverlay>
                 {activeItem && (
-                  <div className="bg-card border-primary flex items-center gap-2 rounded-xl border-2 px-3 py-2 shadow-lg">
-                    {/* 左側のカラーバー（カレンダーDnDと統一） */}
-                    <div
-                      className="h-6 w-1 shrink-0 rounded-full"
-                      style={{ backgroundColor: activeItem.color }}
+                  <div className="bg-card flex items-center gap-2 rounded-md px-3 py-1.5 shadow-md">
+                    <Checkbox
+                      checked={true}
+                      className="h-4 w-4 shrink-0"
+                      style={{
+                        borderColor: activeItem.color,
+                        backgroundColor: activeItem.color,
+                      }}
                     />
-                    <span className="text-foreground truncate text-sm font-medium">
-                      {activeItem.name}
-                    </span>
+                    <span className="text-foreground truncate text-sm">{activeItem.name}</span>
                   </div>
                 )}
               </DragOverlay>
@@ -886,7 +888,7 @@ function FilterItem({
               className="border-border min-h-[60px] w-full resize-none border text-sm"
             />
             {editDescription.length >= 100 && (
-              <FieldError noPrefix>{t('calendar.filter.descriptionMaxLength')}</FieldError>
+              <FieldError noPrefix>{t('common.validation.limitReached')}</FieldError>
             )}
           </Field>
         </DropdownMenuSubContent>
@@ -964,20 +966,27 @@ function FilterItem({
       />
       {icon && <span className="text-muted-foreground shrink-0">{icon}</span>}
       {isEditing ? (
-        <div className="flex flex-1 items-center gap-1">
-          <Input
-            ref={inputRef}
-            value={editName}
-            onChange={(e) => setEditName(e.target.value)}
-            onBlur={handleSaveName}
-            onKeyDown={handleKeyDown}
-            onClick={(e) => e.stopPropagation()}
-            maxLength={TAG_NAME_MAX_LENGTH}
-            className="border-border bg-background focus-visible:ring-ring h-auto flex-1 rounded px-2 py-0.5 text-sm shadow-none focus-visible:ring-1"
-          />
-          <span className="text-muted-foreground shrink-0 text-[10px] tabular-nums">
-            {editName.length}/{TAG_NAME_MAX_LENGTH}
-          </span>
+        <div className="flex flex-1 flex-col gap-0.5">
+          <div className="flex items-center gap-1">
+            <Input
+              ref={inputRef}
+              value={editName}
+              onChange={(e) => setEditName(e.target.value)}
+              onBlur={handleSaveName}
+              onKeyDown={handleKeyDown}
+              onClick={(e) => e.stopPropagation()}
+              maxLength={TAG_NAME_MAX_LENGTH}
+              className="border-border bg-background focus-visible:ring-ring h-auto flex-1 rounded px-2 py-0.5 text-sm shadow-none focus-visible:ring-1"
+            />
+            <span className="text-muted-foreground shrink-0 text-[10px] tabular-nums">
+              {editName.length}/{TAG_NAME_MAX_LENGTH}
+            </span>
+          </div>
+          {editName.length >= TAG_NAME_MAX_LENGTH && (
+            <span className="text-destructive text-[10px]">
+              {t('common.validation.limitReached')}
+            </span>
+          )}
         </div>
       ) : (
         <span className={cn('min-w-0 flex-1 truncate', labelClassName)}>{label}</span>
@@ -1074,6 +1083,8 @@ interface FlatGroupHeaderProps {
   onDeleteGroup: () => void;
   /** このグループだけ表示 */
   onShowOnlyGroup: () => void;
+  /** プランの件数 */
+  count: number;
 }
 
 /** フラットなグループヘッダー（useSortable対応） */
@@ -1086,6 +1097,7 @@ function FlatGroupHeader({
   onAddChildTag,
   onDeleteGroup,
   onShowOnlyGroup,
+  count,
 }: FlatGroupHeaderProps) {
   const t = useTranslations();
   const updateTagMutation = useUpdateTag();
@@ -1111,8 +1123,8 @@ function FlatGroupHeader({
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    opacity: isDragging ? 0.5 : 1,
-  };
+    visibility: isDragging ? 'hidden' : 'visible',
+  } as React.CSSProperties;
 
   const handleColorChange = async (color: string) => {
     setOptimisticColor(color);
@@ -1175,22 +1187,21 @@ function FlatGroupHeader({
       ref={setNodeRef}
       style={style}
       {...attributes}
-      className={cn(
-        'w-full rounded-md transition-colors',
-        isOver && !isDragging && 'bg-state-hover ring-primary/30 ring-2',
-      )}
+      className="w-full rounded-md transition-colors"
     >
       <div
         className={cn(
-          'group hover:bg-state-hover flex w-full min-w-0 items-center rounded transition-colors',
-          'cursor-grab active:cursor-grabbing',
+          'group/item hover:bg-state-hover flex w-full min-w-0 items-center rounded transition-colors',
+          'cursor-pointer',
           menuOpen && 'bg-state-selected',
         )}
+        onClick={onToggleExpand}
         {...listeners}
       >
         <Checkbox
           checked={groupVisibility === 'some' ? 'indeterminate' : groupVisibility === 'all'}
           onCheckedChange={onToggleGroup}
+          onClick={(e) => e.stopPropagation()}
           className="mx-2 shrink-0"
           style={
             {
@@ -1201,29 +1212,39 @@ function FlatGroupHeader({
           }
         />
         {isEditing ? (
-          <div className="flex flex-1 items-center gap-1">
-            <Input
-              ref={inputRef}
-              value={editName}
-              onChange={(e) => setEditName(e.target.value)}
-              onBlur={handleSaveName}
-              onKeyDown={handleKeyDown}
-              onClick={(e) => e.stopPropagation()}
-              maxLength={TAG_NAME_MAX_LENGTH}
-              className="border-border bg-background focus-visible:ring-ring h-auto flex-1 rounded px-2 py-0.5 text-sm shadow-none focus-visible:ring-1"
-            />
-            <span className="text-muted-foreground shrink-0 text-[10px] tabular-nums">
-              {editName.length}/{TAG_NAME_MAX_LENGTH}
-            </span>
+          <div className="flex flex-1 flex-col gap-0.5" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center gap-1">
+              <Input
+                ref={inputRef}
+                value={editName}
+                onChange={(e) => setEditName(e.target.value)}
+                onBlur={handleSaveName}
+                onKeyDown={handleKeyDown}
+                onClick={(e) => e.stopPropagation()}
+                maxLength={TAG_NAME_MAX_LENGTH}
+                className="border-border bg-background focus-visible:ring-ring h-auto flex-1 rounded px-2 py-0.5 text-sm shadow-none focus-visible:ring-1"
+              />
+              <span className="text-muted-foreground shrink-0 text-[10px] tabular-nums">
+                {editName.length}/{TAG_NAME_MAX_LENGTH}
+              </span>
+            </div>
+            {editName.length >= TAG_NAME_MAX_LENGTH && (
+              <span className="text-destructive text-[10px]">
+                {t('common.validation.limitReached')}
+              </span>
+            )}
           </div>
         ) : (
           <span className="text-foreground flex-1 truncate text-sm font-medium">{item.name}</span>
+        )}
+        {count > 0 && (
+          <span className="text-muted-foreground shrink-0 text-xs tabular-nums">{count}</span>
         )}
         <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
           <DropdownMenuTrigger asChild>
             <button
               type="button"
-              className="text-muted-foreground hover:text-foreground flex size-6 shrink-0 items-center justify-center rounded opacity-0 group-hover:opacity-100"
+              className="text-muted-foreground hover:text-foreground flex size-6 shrink-0 items-center justify-center rounded opacity-0 group-hover/item:opacity-100"
               onClick={(e) => e.stopPropagation()}
             >
               <MoreHorizontal className="size-4" />
@@ -1286,7 +1307,7 @@ function FlatGroupHeader({
                     className="border-border min-h-[60px] w-full resize-none border text-sm"
                   />
                   {editDescription.length >= 100 && (
-                    <FieldError noPrefix>{t('calendar.filter.descriptionMaxLength')}</FieldError>
+                    <FieldError noPrefix>{t('common.validation.limitReached')}</FieldError>
                   )}
                 </Field>
               </DropdownMenuSubContent>
@@ -1382,8 +1403,8 @@ function FlatChildTag({
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    opacity: isDragging ? 0.5 : 1,
-  };
+    visibility: isDragging ? 'hidden' : 'visible',
+  } as React.CSSProperties;
 
   const handleColorChange = async (color: string) => {
     setOptimisticColor(color);
@@ -1476,20 +1497,27 @@ function FlatChildTag({
           }
         />
         {isEditing ? (
-          <div className="flex flex-1 items-center gap-1">
-            <Input
-              ref={inputRef}
-              value={editName}
-              onChange={(e) => setEditName(e.target.value)}
-              onBlur={handleSaveName}
-              onKeyDown={handleKeyDown}
-              onClick={(e) => e.stopPropagation()}
-              maxLength={TAG_NAME_MAX_LENGTH}
-              className="border-border bg-background focus-visible:ring-ring h-auto flex-1 rounded px-2 py-0.5 text-sm shadow-none focus-visible:ring-1"
-            />
-            <span className="text-muted-foreground shrink-0 text-[10px] tabular-nums">
-              {editName.length}/{TAG_NAME_MAX_LENGTH}
-            </span>
+          <div className="flex flex-1 flex-col gap-0.5">
+            <div className="flex items-center gap-1">
+              <Input
+                ref={inputRef}
+                value={editName}
+                onChange={(e) => setEditName(e.target.value)}
+                onBlur={handleSaveName}
+                onKeyDown={handleKeyDown}
+                onClick={(e) => e.stopPropagation()}
+                maxLength={TAG_NAME_MAX_LENGTH}
+                className="border-border bg-background focus-visible:ring-ring h-auto flex-1 rounded px-2 py-0.5 text-sm shadow-none focus-visible:ring-1"
+              />
+              <span className="text-muted-foreground shrink-0 text-[10px] tabular-nums">
+                {editName.length}/{TAG_NAME_MAX_LENGTH}
+              </span>
+            </div>
+            {editName.length >= TAG_NAME_MAX_LENGTH && (
+              <span className="text-destructive text-[10px]">
+                {t('common.validation.limitReached')}
+              </span>
+            )}
           </div>
         ) : (
           <span className="text-foreground flex-1 truncate">{item.name}</span>
@@ -1564,7 +1592,7 @@ function FlatChildTag({
                     className="border-border min-h-[60px] w-full resize-none border text-sm"
                   />
                   {editDescription.length >= 100 && (
-                    <FieldError noPrefix>{t('calendar.filter.descriptionMaxLength')}</FieldError>
+                    <FieldError noPrefix>{t('common.validation.limitReached')}</FieldError>
                   )}
                 </Field>
               </DropdownMenuSubContent>
@@ -1753,8 +1781,8 @@ function FlatUngroupedTag({
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    opacity: isDragging ? 0.5 : 1,
-  };
+    visibility: isDragging ? 'hidden' : 'visible',
+  } as React.CSSProperties;
 
   const handleColorChange = async (color: string) => {
     setOptimisticColor(color);
@@ -1847,20 +1875,27 @@ function FlatUngroupedTag({
           }
         />
         {isEditing ? (
-          <div className="flex flex-1 items-center gap-1">
-            <Input
-              ref={inputRef}
-              value={editName}
-              onChange={(e) => setEditName(e.target.value)}
-              onBlur={handleSaveName}
-              onKeyDown={handleKeyDown}
-              onClick={(e) => e.stopPropagation()}
-              maxLength={TAG_NAME_MAX_LENGTH}
-              className="border-border bg-background focus-visible:ring-ring h-auto flex-1 rounded px-2 py-0.5 text-sm shadow-none focus-visible:ring-1"
-            />
-            <span className="text-muted-foreground shrink-0 text-[10px] tabular-nums">
-              {editName.length}/{TAG_NAME_MAX_LENGTH}
-            </span>
+          <div className="flex flex-1 flex-col gap-0.5">
+            <div className="flex items-center gap-1">
+              <Input
+                ref={inputRef}
+                value={editName}
+                onChange={(e) => setEditName(e.target.value)}
+                onBlur={handleSaveName}
+                onKeyDown={handleKeyDown}
+                onClick={(e) => e.stopPropagation()}
+                maxLength={TAG_NAME_MAX_LENGTH}
+                className="border-border bg-background focus-visible:ring-ring h-auto flex-1 rounded px-2 py-0.5 text-sm shadow-none focus-visible:ring-1"
+              />
+              <span className="text-muted-foreground shrink-0 text-[10px] tabular-nums">
+                {editName.length}/{TAG_NAME_MAX_LENGTH}
+              </span>
+            </div>
+            {editName.length >= TAG_NAME_MAX_LENGTH && (
+              <span className="text-destructive text-[10px]">
+                {t('common.validation.limitReached')}
+              </span>
+            )}
           </div>
         ) : (
           <span className="text-foreground flex-1 truncate">{item.name}</span>
@@ -1935,7 +1970,7 @@ function FlatUngroupedTag({
                     className="border-border min-h-[60px] w-full resize-none border text-sm"
                   />
                   {editDescription.length >= 100 && (
-                    <FieldError noPrefix>{t('calendar.filter.descriptionMaxLength')}</FieldError>
+                    <FieldError noPrefix>{t('common.validation.limitReached')}</FieldError>
                   )}
                 </Field>
               </DropdownMenuSubContent>
