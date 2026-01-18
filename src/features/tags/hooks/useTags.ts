@@ -256,10 +256,24 @@ export function useReorderTags() {
         utils.tags.list.setData(undefined, context.previousData);
       }
     },
-    // 成功・エラー問わず最新データを取得
-    onSettled: () => {
-      utils.tags.list.invalidate();
-      utils.tags.listParentTags.invalidate();
+    // 成功時は楽観的更新を信頼（再フェッチしない）
+    // listParentTagsも楽観的に更新
+    onSuccess: () => {
+      // 親タグリストも同期的に更新（invalidateせず直接更新）
+      utils.tags.listParentTags.setData(undefined, (oldData) => {
+        if (!oldData) return oldData;
+        // tags.listから最新の親タグ情報を取得して反映
+        const currentTags = utils.tags.list.getData();
+        if (!currentTags) return oldData;
+
+        // 親タグ（parent_id = null かつ子を持つもの）を再計算
+        const parentIds = new Set(
+          currentTags.data.filter((t) => t.parent_id !== null).map((t) => t.parent_id),
+        );
+        const parentTags = currentTags.data.filter((t) => parentIds.has(t.id));
+
+        return { ...oldData, data: parentTags };
+      });
     },
   });
 }

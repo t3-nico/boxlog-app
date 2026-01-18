@@ -20,7 +20,6 @@ import {
   useSortable,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
 import {
   ChevronRight,
   Eye,
@@ -381,21 +380,41 @@ export function CalendarFilterList() {
         const activeTag = tags.find((t) => t.id === activeId);
         if (!activeTag) return;
 
-        // ドロップ先がグループヘッダーの場合、そのグループに移動
+        // ドロップ先がグループヘッダーの場合、そのグループの「前」にルートレベルとして配置
         if (isOverGroup) {
-          const newParentId = overId;
-          if (activeTag.parent_id !== newParentId) {
-            // 別グループへの移動
-            const siblingTags = tags.filter((t) => t.parent_id === newParentId);
-            const updates = [
-              {
-                id: activeId,
-                sort_order: siblingTags.length,
-                parent_id: newParentId,
-              },
-            ];
-            reorderTagsMutation.mutate({ updates });
-          }
+          // ルートレベルのタグ（グループなしタグ）を取得
+          const rootLevelTags = tags
+            .filter((t) => t.parent_id === null && !sortableGroupIds.includes(t.id))
+            .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
+
+          // アクティブタグを除外したリスト
+          const filteredRootTags = rootLevelTags.filter((t) => t.id !== activeId);
+
+          // グループヘッダーの順序（sort_order）を取得
+          const targetGroup = groups?.find((g) => g.id === overId);
+          const targetGroupSortOrder = targetGroup?.sort_order ?? 0;
+
+          // アクティブタグを新しいsort_orderで追加（グループの前に配置）
+          const updates = [
+            {
+              id: activeId,
+              sort_order: targetGroupSortOrder,
+              parent_id: null,
+            },
+          ];
+
+          // 他のルートレベルタグのsort_orderも更新（衝突を避ける）
+          filteredRootTags.forEach((tag) => {
+            if ((tag.sort_order ?? 0) >= targetGroupSortOrder) {
+              updates.push({
+                id: tag.id,
+                sort_order: (tag.sort_order ?? 0) + 1,
+                parent_id: null,
+              });
+            }
+          });
+
+          reorderTagsMutation.mutate({ updates });
         } else {
           // ドロップ先がタグの場合
           const overTag = tags.find((t) => t.id === overId);
@@ -572,18 +591,13 @@ export function CalendarFilterList() {
                 labelClassName="text-muted-foreground italic"
               />
 
-              {/* ドラッグオーバーレイ（TickTickスタイル: シンプル + 軽いリフト） */}
-              <DragOverlay
-                dropAnimation={{
-                  duration: 150,
-                  easing: 'ease-out',
-                }}
-              >
+              {/* ドラッグオーバーレイ（瞬時にドロップ、アニメーションなし） */}
+              <DragOverlay dropAnimation={null}>
                 {activeItem && (
                   <div className="bg-card flex items-center gap-2 rounded-md px-3 py-1.5 shadow-md">
                     <Checkbox
                       checked={true}
-                      className="h-4 w-4 shrink-0"
+                      className="shrink-0"
                       style={{
                         borderColor: activeItem.color,
                         backgroundColor: activeItem.color,
@@ -928,7 +942,7 @@ function FilterItem({
   const content = (
     <div
       className={cn(
-        'group/item hover:bg-state-hover flex w-full items-center gap-1.5 rounded px-2 py-1 text-sm',
+        'group/item hover:bg-state-hover flex w-full items-center gap-2 rounded px-2 py-1 text-sm',
         disabled && 'cursor-not-allowed opacity-50',
         dragHandleProps && 'cursor-grab active:cursor-grabbing',
         menuOpen && 'bg-state-selected',
@@ -941,7 +955,7 @@ function FilterItem({
         checked={checked}
         onCheckedChange={onCheckedChange}
         disabled={disabled}
-        className="h-4 w-4 shrink-0 cursor-pointer"
+        className="shrink-0 cursor-pointer"
         style={checkboxStyle}
       />
       {icon && <span className="text-muted-foreground shrink-0">{icon}</span>}
@@ -977,10 +991,10 @@ function FilterItem({
           <DropdownMenuTrigger asChild>
             <button
               type="button"
-              className="text-muted-foreground hover:text-foreground hover:bg-state-hover flex size-4 shrink-0 items-center justify-center rounded opacity-0 transition-opacity group-hover/item:opacity-100"
+              className="text-muted-foreground hover:text-foreground hover:bg-state-hover flex size-6 shrink-0 items-center justify-center rounded opacity-0 transition-opacity group-hover/item:opacity-100"
               onClick={(e) => e.stopPropagation()}
             >
-              <MoreHorizontal className="size-3.5" />
+              <MoreHorizontal className="size-4" />
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" side="right">
@@ -1079,8 +1093,7 @@ function FlatGroupHeader({
   const t = useTranslations();
   const updateTagMutation = useUpdateTag();
   const { removeTag } = useCalendarFilterStore();
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging, isOver } =
-    useSortable({ id: item.id });
+  const { attributes, listeners, setNodeRef, isDragging, isOver } = useSortable({ id: item.id });
   const [menuOpen, setMenuOpen] = useState(false);
   const [optimisticColor, setOptimisticColor] = useState<string | null>(null);
   const displayColor = optimisticColor ?? item.color;
@@ -1097,11 +1110,10 @@ function FlatGroupHeader({
   // マージモーダル
   const [mergeModalOpen, setMergeModalOpen] = useState(false);
 
-  // 高速トランジション（150ms）でリアルタイム感を演出
+  // 元のアイテムは固定位置（DragOverlayがマウスに追従）
+  // ドラッグ中は元位置を半透明に（操作対象を実線で表示）
   const style = {
-    transform: CSS.Transform.toString(transform),
-    transition: transition ?? 'transform 150ms ease-out',
-    visibility: isDragging ? 'hidden' : 'visible',
+    opacity: isDragging ? 0.4 : 1,
   } as React.CSSProperties;
 
   const handleColorChange = async (color: string) => {
@@ -1165,13 +1177,14 @@ function FlatGroupHeader({
       ref={setNodeRef}
       style={style}
       {...attributes}
-      className="w-full rounded-md transition-colors"
+      className={cn(
+        'w-full border-t-2 border-transparent',
+        isOver && !isDragging && 'border-primary',
+      )}
     >
-      {/* 挿入線インジケーター（TickTickスタイル） */}
-      {isOver && !isDragging && <div className="bg-primary mx-2 h-0.5 rounded-full" />}
       <div
         className={cn(
-          'group/item hover:bg-state-hover flex w-full min-w-0 items-center gap-1.5 rounded px-2 py-1 text-sm transition-colors',
+          'group/item hover:bg-state-hover flex w-full min-w-0 items-center rounded py-1 text-sm transition-colors',
           'cursor-pointer',
           menuOpen && 'bg-state-selected',
         )}
@@ -1182,7 +1195,7 @@ function FlatGroupHeader({
           checked={groupVisibility === 'some' ? 'indeterminate' : groupVisibility === 'all'}
           onCheckedChange={onToggleGroup}
           onClick={(e) => e.stopPropagation()}
-          className="mx-2 shrink-0"
+          className="ml-2 shrink-0"
           style={
             {
               '--checkbox-color': displayColor,
@@ -1192,7 +1205,7 @@ function FlatGroupHeader({
           }
         />
         {isEditing ? (
-          <div className="flex flex-1 flex-col gap-0.5" onClick={(e) => e.stopPropagation()}>
+          <div className="ml-2 flex flex-1 flex-col gap-0.5" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center gap-1">
               <Input
                 ref={inputRef}
@@ -1215,7 +1228,9 @@ function FlatGroupHeader({
             )}
           </div>
         ) : (
-          <span className="text-foreground flex-1 truncate text-sm font-medium">{item.name}</span>
+          <span className="text-foreground ml-2 flex-1 truncate text-sm font-medium">
+            {item.name}
+          </span>
         )}
         <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
           <DropdownMenuTrigger asChild>
@@ -1360,8 +1375,7 @@ function FlatChildTag({
   const t = useTranslations();
   const updateTagMutation = useUpdateTag();
   const { removeTag } = useCalendarFilterStore();
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging, isOver } =
-    useSortable({ id: item.id });
+  const { attributes, listeners, setNodeRef, isDragging, isOver } = useSortable({ id: item.id });
   const [menuOpen, setMenuOpen] = useState(false);
   const [optimisticColor, setOptimisticColor] = useState<string | null>(null);
   const displayColor = optimisticColor ?? item.color;
@@ -1378,11 +1392,10 @@ function FlatChildTag({
   // マージモーダル
   const [mergeModalOpen, setMergeModalOpen] = useState(false);
 
-  // 高速トランジション（150ms）でリアルタイム感を演出
+  // 元のアイテムは固定位置（DragOverlayがマウスに追従）
+  // ドラッグ中は元位置を半透明に（操作対象を実線で表示）
   const style = {
-    transform: CSS.Transform.toString(transform),
-    transition: transition ?? 'transform 150ms ease-out',
-    visibility: isDragging ? 'hidden' : 'visible',
+    opacity: isDragging ? 0.4 : 1,
   } as React.CSSProperties;
 
   const handleColorChange = async (color: string) => {
@@ -1450,13 +1463,14 @@ function FlatChildTag({
       ref={setNodeRef}
       style={style}
       {...attributes}
-      className="w-full rounded-md transition-colors"
+      className={cn(
+        'w-full border-t-2 border-transparent',
+        isOver && !isDragging && 'border-primary',
+      )}
     >
-      {/* 挿入線インジケーター（TickTickスタイル） */}
-      {isOver && !isDragging && <div className="bg-primary mx-2 h-0.5 rounded-full" />}
       <div
         className={cn(
-          'group/item hover:bg-state-hover flex w-full items-center gap-1.5 rounded px-2 py-1 text-sm',
+          'group/item hover:bg-state-hover flex w-full min-w-0 items-center rounded py-1 text-sm',
           'cursor-grab active:cursor-grabbing',
           menuOpen && 'bg-state-selected',
         )}
@@ -1475,7 +1489,7 @@ function FlatChildTag({
           }
         />
         {isEditing ? (
-          <div className="flex flex-1 flex-col gap-0.5">
+          <div className="ml-2 flex flex-1 flex-col gap-0.5">
             <div className="flex items-center gap-1">
               <Input
                 ref={inputRef}
@@ -1498,16 +1512,16 @@ function FlatChildTag({
             )}
           </div>
         ) : (
-          <span className="text-foreground flex-1 truncate">{item.name}</span>
+          <span className="text-foreground ml-2 flex-1 truncate">{item.name}</span>
         )}
         <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
           <DropdownMenuTrigger asChild>
             <button
               type="button"
-              className="text-muted-foreground hover:text-foreground hover:bg-state-hover flex size-5 shrink-0 items-center justify-center rounded opacity-0 transition-opacity group-hover/item:opacity-100"
+              className="text-muted-foreground hover:text-foreground hover:bg-state-hover flex size-6 shrink-0 items-center justify-center rounded opacity-0 transition-opacity group-hover/item:opacity-100"
               onClick={(e) => e.stopPropagation()}
             >
-              <MoreHorizontal className="size-3.5" />
+              <MoreHorizontal className="size-4" />
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" side="right">
@@ -1659,8 +1673,7 @@ function FlatUngroupedTag({
   const t = useTranslations();
   const updateTagMutation = useUpdateTag();
   const { removeTag } = useCalendarFilterStore();
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging, isOver } =
-    useSortable({ id: item.id });
+  const { attributes, listeners, setNodeRef, isDragging, isOver } = useSortable({ id: item.id });
   const [menuOpen, setMenuOpen] = useState(false);
   const [optimisticColor, setOptimisticColor] = useState<string | null>(null);
   const displayColor = optimisticColor ?? item.color;
@@ -1677,11 +1690,10 @@ function FlatUngroupedTag({
   // マージモーダル
   const [mergeModalOpen, setMergeModalOpen] = useState(false);
 
-  // 高速トランジション（150ms）でリアルタイム感を演出
+  // 元のアイテムは固定位置（DragOverlayがマウスに追従）
+  // ドラッグ中は元位置を半透明に（操作対象を実線で表示）
   const style = {
-    transform: CSS.Transform.toString(transform),
-    transition: transition ?? 'transform 150ms ease-out',
-    visibility: isDragging ? 'hidden' : 'visible',
+    opacity: isDragging ? 0.4 : 1,
   } as React.CSSProperties;
 
   const handleColorChange = async (color: string) => {
@@ -1749,13 +1761,14 @@ function FlatUngroupedTag({
       ref={setNodeRef}
       style={style}
       {...attributes}
-      className="w-full rounded-md transition-colors"
+      className={cn(
+        'w-full border-t-2 border-transparent',
+        isOver && !isDragging && 'border-primary',
+      )}
     >
-      {/* 挿入線インジケーター（TickTickスタイル） */}
-      {isOver && !isDragging && <div className="bg-primary mx-2 h-0.5 rounded-full" />}
       <div
         className={cn(
-          'group/item hover:bg-state-hover flex w-full min-w-0 items-center gap-1.5 rounded px-2 py-1 text-sm transition-colors',
+          'group/item hover:bg-state-hover flex w-full min-w-0 items-center rounded py-1 text-sm transition-colors',
           'cursor-grab active:cursor-grabbing',
           menuOpen && 'bg-state-selected',
         )}
@@ -1764,7 +1777,7 @@ function FlatUngroupedTag({
         <Checkbox
           checked={checked}
           onCheckedChange={onToggle}
-          className="size-4 shrink-0"
+          className="ml-2 shrink-0"
           style={
             {
               '--checkbox-color': displayColor,
@@ -1774,7 +1787,7 @@ function FlatUngroupedTag({
           }
         />
         {isEditing ? (
-          <div className="flex flex-1 flex-col gap-0.5">
+          <div className="ml-2 flex flex-1 flex-col gap-0.5">
             <div className="flex items-center gap-1">
               <Input
                 ref={inputRef}
@@ -1797,16 +1810,16 @@ function FlatUngroupedTag({
             )}
           </div>
         ) : (
-          <span className="text-foreground flex-1 truncate">{item.name}</span>
+          <span className="text-foreground ml-2 flex-1 truncate">{item.name}</span>
         )}
         <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
           <DropdownMenuTrigger asChild>
             <button
               type="button"
-              className="text-muted-foreground hover:text-foreground hover:bg-state-hover flex size-5 shrink-0 items-center justify-center rounded opacity-0 transition-opacity group-hover/item:opacity-100"
+              className="text-muted-foreground hover:text-foreground hover:bg-state-hover flex size-6 shrink-0 items-center justify-center rounded opacity-0 transition-opacity group-hover/item:opacity-100"
               onClick={(e) => e.stopPropagation()}
             >
-              <MoreHorizontal className="size-3.5" />
+              <MoreHorizontal className="size-4" />
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" side="right">
