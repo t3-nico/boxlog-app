@@ -27,6 +27,8 @@ import { useStatsPeriodStore } from '@/features/stats/stores';
 import { cn } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
 
+import { useStatsURLSync } from '../hooks/useStatsURLSync';
+
 /**
  * 統計ページ用ツールバー
  *
@@ -43,6 +45,9 @@ export function StatsToolbar() {
   const localeFromPath = (pathname?.split('/')[1] || 'ja') as 'ja' | 'en';
   const t = useTranslations();
   const dateLocale = localeFromPath === 'ja' ? ja : undefined;
+
+  // URL同期（期間設定永続化）
+  useStatsURLSync();
 
   const {
     periodType,

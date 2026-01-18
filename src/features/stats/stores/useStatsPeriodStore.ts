@@ -35,6 +35,8 @@ interface StatsPeriodState {
   compareEnabled: boolean;
   /** 比較期間 */
   comparePeriod: ComparePeriod;
+  /** ヒートマップ表示年度 */
+  heatmapYear: number;
 
   /** 期間タイプを設定 */
   setPeriodType: (type: PeriodType) => void;
@@ -52,6 +54,8 @@ interface StatsPeriodState {
   setComparePeriod: (period: ComparePeriod) => void;
   /** 比較期間の日付範囲を取得 */
   getCompareDateRange: () => { start: Date; end: Date } | null;
+  /** ヒートマップ年度を設定 */
+  setHeatmapYear: (year: number) => void;
 }
 
 /**
@@ -150,6 +154,7 @@ export const useStatsPeriodStore = create<StatsPeriodState>()(
         endDate: initialRange.end,
         compareEnabled: false,
         comparePeriod: 'previous',
+        heatmapYear: new Date().getFullYear(),
 
         setPeriodType: (type) => {
           const range = calculateDateRange(type);
@@ -186,6 +191,10 @@ export const useStatsPeriodStore = create<StatsPeriodState>()(
           set({ comparePeriod: period });
         },
 
+        setHeatmapYear: (year) => {
+          set({ heatmapYear: year });
+        },
+
         getCompareDateRange: () => {
           const { compareEnabled, comparePeriod, startDate, endDate, periodType } = get();
           if (!compareEnabled || comparePeriod === 'none') return null;
@@ -211,6 +220,7 @@ export const useStatsPeriodStore = create<StatsPeriodState>()(
           periodType: state.periodType,
           compareEnabled: state.compareEnabled,
           comparePeriod: state.comparePeriod,
+          heatmapYear: state.heatmapYear,
         }),
       },
     ),

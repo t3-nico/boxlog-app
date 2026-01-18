@@ -1,12 +1,12 @@
 'use client';
 
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { useState } from 'react';
 import CalendarHeatmap from 'react-calendar-heatmap';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useStatsPeriodStore } from '@/features/stats/stores';
 import { api } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
 
@@ -26,7 +26,8 @@ function formatHours(hours: number): string {
 
 export function YearlyHeatmap() {
   const currentYear = new Date().getFullYear();
-  const [year, setYear] = useState(currentYear);
+  const year = useStatsPeriodStore((state) => state.heatmapYear);
+  const setYear = useStatsPeriodStore((state) => state.setHeatmapYear);
 
   const { data, isPending } = api.plans.getDailyHours.useQuery({ year });
 
@@ -66,7 +67,7 @@ export function YearlyHeatmap() {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => setYear((y) => y - 1)}
+            onClick={() => setYear(year - 1)}
             disabled={year <= 2020}
             aria-label="前年"
           >
@@ -76,7 +77,7 @@ export function YearlyHeatmap() {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => setYear((y) => y + 1)}
+            onClick={() => setYear(year + 1)}
             disabled={year >= currentYear}
             aria-label="翌年"
           >
