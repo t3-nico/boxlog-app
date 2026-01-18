@@ -125,14 +125,21 @@ interface CommandActions {
   router: { push: (path: string) => void };
   openPlanInspector: (planId: string | null) => void;
   openTagCreateModal: () => void;
+  openSettingsModal: (category: 'tags' | 'general') => void;
   navigateToSettings: () => void;
   toggleTheme: () => void;
 }
 
 // Default commands that are always available
 export const registerDefaultCommands = (actions: CommandActions) => {
-  const { router, openPlanInspector, openTagCreateModal, navigateToSettings, toggleTheme } =
-    actions;
+  const {
+    router,
+    openPlanInspector,
+    openTagCreateModal,
+    openSettingsModal,
+    navigateToSettings,
+    toggleTheme,
+  } = actions;
 
   const defaultCommands: Command[] = [
     // Navigation commands
@@ -174,7 +181,7 @@ export const registerDefaultCommands = (actions: CommandActions) => {
       icon: 'tag',
       shortcut: ['G', 'T'],
       keywords: ['tags', 'タグ', 'ラベル'],
-      action: () => router.push('/settings/tags'),
+      action: () => openSettingsModal('tags'),
     },
 
     // Creation commands
