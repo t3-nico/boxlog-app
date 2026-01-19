@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   closestCenter,
   DndContext,
+  DragOverlay,
   KeyboardSensor,
   PointerSensor,
   useSensor,
@@ -19,7 +20,6 @@ import {
   useSortable,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
 import {
   ChevronRight,
   Eye,
@@ -396,39 +396,21 @@ export function CalendarFilterList() {
       const activeTag = tags.find((t) => t.id === activeId);
       if (!activeTag) return;
 
-      // ドロップ先がグループヘッダーの場合、そのグループの「前」にルートレベルとして配置
+      // ドロップ先がグループヘッダーの場合、そのグループの子タグになる
       if (isOverGroup) {
-        // ルートレベルのタグ（グループなしタグ）を取得
-        const rootLevelTags = tags
-          .filter((t) => t.parent_id === null && !sortableGroupIds.includes(t.id))
+        // 対象グループの子タグを取得
+        const targetChildren = tags
+          .filter((t) => t.parent_id === overId)
           .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
 
-        // アクティブタグを除外したリスト
-        const filteredRootTags = rootLevelTags.filter((t) => t.id !== activeId);
-
-        // グループヘッダーの順序（sort_order）を取得
-        const targetGroup = groups?.find((g) => g.id === overId);
-        const targetGroupSortOrder = targetGroup?.sort_order ?? 0;
-
-        // アクティブタグを新しいsort_orderで追加（グループの前に配置）
+        // 末尾に追加（グループの子になる）
         const updates = [
           {
             id: activeId,
-            sort_order: targetGroupSortOrder,
-            parent_id: null,
+            sort_order: targetChildren.length,
+            parent_id: overId,
           },
         ];
-
-        // 他のルートレベルタグのsort_orderも更新（衝突を避ける）
-        filteredRootTags.forEach((tag) => {
-          if ((tag.sort_order ?? 0) >= targetGroupSortOrder) {
-            updates.push({
-              id: tag.id,
-              sort_order: (tag.sort_order ?? 0) + 1,
-              parent_id: null,
-            });
-          }
-        });
 
         reorderTagsMutation.mutate({ updates });
       } else {
@@ -610,7 +592,18 @@ export function CalendarFilterList() {
                 labelClassName="text-muted-foreground italic"
               />
 
-              {/* DragOverlay削除: 元の要素がそのままドラッグされる（Issue #355対策） */}
+              {/* DragOverlay: ドラッグ中のプレビュー（カレンダーカードと同じパターン） */}
+              <DragOverlay dropAnimation={null}>
+                {activeItem && (
+                  <div className="bg-card flex h-8 w-48 items-center gap-2 rounded-md border px-3 shadow-lg">
+                    <div
+                      className="h-3 w-3 shrink-0 rounded-sm"
+                      style={{ backgroundColor: activeItem.color }}
+                    />
+                    <span className="truncate text-sm">{activeItem.name}</span>
+                  </div>
+                )}
+              </DragOverlay>
             </DndContext>
           ) : (
             <div className="text-muted-foreground px-2 py-2 text-xs">
@@ -1099,8 +1092,7 @@ function FlatGroupHeader({
   const t = useTranslations();
   const updateTagMutation = useUpdateTag();
   const { removeTag } = useCalendarFilterStore();
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging, isOver } =
-    useSortable({ id: item.id });
+  const { attributes, listeners, setNodeRef, isDragging, isOver } = useSortable({ id: item.id });
   const [menuOpen, setMenuOpen] = useState(false);
 
   const [optimisticColor, setOptimisticColor] = useState<string | null>(null);
@@ -1118,15 +1110,9 @@ function FlatGroupHeader({
   // マージモーダル
   const [mergeModalOpen, setMergeModalOpen] = useState(false);
 
-  // DragOverlay削除: 元の要素がそのままドラッグされる
-  // pointerEvents: 'none' でドラッグ中の要素を collision detection から除外
+  // 元の位置は薄く固定表示、DragOverlayでプレビュー（カレンダーカードと同じパターン）
   const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.5 : 1,
-    zIndex: isDragging ? 50 : undefined,
-    boxShadow: isDragging ? '0 4px 12px rgba(0,0,0,0.15)' : undefined,
-    pointerEvents: isDragging ? 'none' : undefined,
+    opacity: isDragging ? 0.4 : 1,
   } as React.CSSProperties;
 
   const handleColorChange = async (color: string) => {
@@ -1185,8 +1171,8 @@ function FlatGroupHeader({
     removeTag(item.id);
   }, [item.id, removeTag]);
 
-  // 親タグドラッグ時（ルートレベル並び替え）+ 子タグドラッグ時（グループ移動）ともにボーダー表示
-  const showDropIndicator = isOver && !isDragging && activeItem !== null;
+  // 子タグ/ungroupedタグドラッグ時のみボーダー表示（親タグはグループに入れないためボーダー非表示）
+  const showDropIndicator = isOver && !isDragging && activeItem?.type !== 'group';
 
   return (
     <div
@@ -1391,8 +1377,7 @@ function FlatChildTag({
   const t = useTranslations();
   const updateTagMutation = useUpdateTag();
   const { removeTag } = useCalendarFilterStore();
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging, isOver } =
-    useSortable({ id: item.id });
+  const { attributes, listeners, setNodeRef, isDragging, isOver } = useSortable({ id: item.id });
   const [menuOpen, setMenuOpen] = useState(false);
   const [optimisticColor, setOptimisticColor] = useState<string | null>(null);
   const displayColor = optimisticColor ?? item.color;
@@ -1409,15 +1394,9 @@ function FlatChildTag({
   // マージモーダル
   const [mergeModalOpen, setMergeModalOpen] = useState(false);
 
-  // DragOverlay削除: 元の要素がそのままドラッグされる
-  // pointerEvents: 'none' でドラッグ中の要素を collision detection から除外
+  // 元の位置は薄く固定表示、DragOverlayでプレビュー（カレンダーカードと同じパターン）
   const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.5 : 1,
-    zIndex: isDragging ? 50 : undefined,
-    boxShadow: isDragging ? '0 4px 12px rgba(0,0,0,0.15)' : undefined,
-    pointerEvents: isDragging ? 'none' : undefined,
+    opacity: isDragging ? 0.4 : 1,
   } as React.CSSProperties;
 
   const handleColorChange = async (color: string) => {
@@ -1703,8 +1682,7 @@ function FlatUngroupedTag({
   const t = useTranslations();
   const updateTagMutation = useUpdateTag();
   const { removeTag } = useCalendarFilterStore();
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging, isOver } =
-    useSortable({ id: item.id });
+  const { attributes, listeners, setNodeRef, isDragging, isOver } = useSortable({ id: item.id });
   const [menuOpen, setMenuOpen] = useState(false);
   const [optimisticColor, setOptimisticColor] = useState<string | null>(null);
   const displayColor = optimisticColor ?? item.color;
@@ -1721,15 +1699,9 @@ function FlatUngroupedTag({
   // マージモーダル
   const [mergeModalOpen, setMergeModalOpen] = useState(false);
 
-  // DragOverlay削除: 元の要素がそのままドラッグされる
-  // pointerEvents: 'none' でドラッグ中の要素を collision detection から除外
+  // 元の位置は薄く固定表示、DragOverlayでプレビュー（カレンダーカードと同じパターン）
   const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.5 : 1,
-    zIndex: isDragging ? 50 : undefined,
-    boxShadow: isDragging ? '0 4px 12px rgba(0,0,0,0.15)' : undefined,
-    pointerEvents: isDragging ? 'none' : undefined,
+    opacity: isDragging ? 0.4 : 1,
   } as React.CSSProperties;
 
   const handleColorChange = async (color: string) => {
