@@ -11,6 +11,7 @@ DECLARE
   merged_count integer := 0;
   deleted_count integer := 0;
   promoted_count integer := 0;
+  row_affected integer := 0;
   target_tag tags;
   result json;
 BEGIN
@@ -59,7 +60,8 @@ BEGIN
     SET parent_id = NULL, updated_at = NOW()
     WHERE user_id = p_user_id AND parent_id = source_tag_id;
 
-    GET DIAGNOSTICS promoted_count = promoted_count + ROW_COUNT;
+    GET DIAGNOSTICS row_affected = ROW_COUNT;
+    promoted_count := promoted_count + row_affected;
 
     -- ソースタグを削除
     DELETE FROM tags WHERE id = source_tag_id AND user_id = p_user_id;
