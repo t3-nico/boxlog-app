@@ -5,7 +5,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   closestCenter,
   DndContext,
-  DragOverlay,
   KeyboardSensor,
   PointerSensor,
   useSensor,
@@ -20,6 +19,7 @@ import {
   useSortable,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import {
   ChevronRight,
   Eye,
@@ -486,7 +486,7 @@ export function CalendarFilterList() {
     <>
       <div className="w-full min-w-0 space-y-2 overflow-hidden p-2">
         {/* 種類（Plan / Record） */}
-        <SidebarSection title={t('calendar.filter.type')} defaultOpen className="space-y-1 py-1">
+        <SidebarSection title={t('calendar.filter.type')} defaultOpen className="py-1">
           <FilterItem
             label="Plan"
             checkboxColor={PLAN_COLOR}
@@ -610,22 +610,7 @@ export function CalendarFilterList() {
                 labelClassName="text-muted-foreground italic"
               />
 
-              {/* ドラッグオーバーレイ（瞬時にドロップ、アニメーションなし） */}
-              <DragOverlay dropAnimation={null}>
-                {activeItem && (
-                  <div className="bg-card flex items-center gap-2 rounded-md px-3 py-1.5 shadow-md">
-                    <Checkbox
-                      checked={true}
-                      className="shrink-0"
-                      style={{
-                        borderColor: activeItem.color,
-                        backgroundColor: activeItem.color,
-                      }}
-                    />
-                    <span className="text-foreground truncate text-sm">{activeItem.name}</span>
-                  </div>
-                )}
-              </DragOverlay>
+              {/* DragOverlay削除: 元の要素がそのままドラッグされる（Issue #355対策） */}
             </DndContext>
           ) : (
             <div className="text-muted-foreground px-2 py-2 text-xs">
@@ -960,7 +945,7 @@ function FilterItem({
   const content = (
     <div
       className={cn(
-        'group/item hover:bg-state-hover flex w-full items-center gap-2 rounded px-2 py-1 text-sm',
+        'group/item hover:bg-state-hover flex h-8 w-full min-w-0 items-center gap-2 rounded text-sm',
         disabled && 'cursor-not-allowed opacity-50',
         dragHandleProps && 'cursor-grab active:cursor-grabbing',
         menuOpen && 'bg-state-selected',
@@ -973,7 +958,7 @@ function FilterItem({
         checked={checked}
         onCheckedChange={onCheckedChange}
         disabled={disabled}
-        className="shrink-0 cursor-pointer"
+        className="ml-2 shrink-0 cursor-pointer"
         style={checkboxStyle}
       />
       {icon && <span className="text-muted-foreground shrink-0">{icon}</span>}
@@ -1114,16 +1099,10 @@ function FlatGroupHeader({
   const t = useTranslations();
   const updateTagMutation = useUpdateTag();
   const { removeTag } = useCalendarFilterStore();
-  const { attributes, listeners, setNodeRef, isDragging, isOver } = useSortable({ id: item.id });
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging, isOver } =
+    useSortable({ id: item.id });
   const [menuOpen, setMenuOpen] = useState(false);
 
-  // ドラッグ終了後のクリックを抑制するためのフラグ
-  const wasDraggingRef = useRef(false);
-  useEffect(() => {
-    if (isDragging) {
-      wasDraggingRef.current = true;
-    }
-  }, [isDragging]);
   const [optimisticColor, setOptimisticColor] = useState<string | null>(null);
   const displayColor = optimisticColor ?? item.color;
 
@@ -1139,10 +1118,15 @@ function FlatGroupHeader({
   // マージモーダル
   const [mergeModalOpen, setMergeModalOpen] = useState(false);
 
-  // 元のアイテムは固定位置（DragOverlayがマウスに追従）
-  // ドラッグ中は元位置を半透明に（操作対象を実線で表示）
+  // DragOverlay削除: 元の要素がそのままドラッグされる
+  // pointerEvents: 'none' でドラッグ中の要素を collision detection から除外
   const style = {
-    opacity: isDragging ? 0.4 : 1,
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+    zIndex: isDragging ? 50 : undefined,
+    boxShadow: isDragging ? '0 4px 12px rgba(0,0,0,0.15)' : undefined,
+    pointerEvents: isDragging ? 'none' : undefined,
   } as React.CSSProperties;
 
   const handleColorChange = async (color: string) => {
@@ -1201,8 +1185,8 @@ function FlatGroupHeader({
     removeTag(item.id);
   }, [item.id, removeTag]);
 
-  // ルートタグドラッグ時のみボーダー表示（子タグドラッグ時は表示しない）
-  const showDropIndicator = isOver && !isDragging && activeItem?.type === 'group';
+  // 親タグドラッグ時（ルートレベル並び替え）+ 子タグドラッグ時（グループ移動）ともにボーダー表示
+  const showDropIndicator = isOver && !isDragging && activeItem !== null;
 
   return (
     <div
@@ -1214,18 +1198,11 @@ function FlatGroupHeader({
       <div
         className={cn(
           'group/item hover:bg-state-hover flex h-8 w-full min-w-0 items-center rounded text-sm',
-          'cursor-pointer',
+          isDragging ? 'cursor-grabbing' : 'cursor-pointer',
           menuOpen && 'bg-state-selected',
         )}
-        onClick={() => {
-          // ドラッグ終了直後のクリックは無視（展開状態の誤切り替え防止）
-          if (wasDraggingRef.current) {
-            wasDraggingRef.current = false;
-            return;
-          }
-          onToggleExpand();
-        }}
         {...listeners}
+        onClick={onToggleExpand}
       >
         <Checkbox
           checked={groupVisibility === 'some' ? 'indeterminate' : groupVisibility === 'all'}
@@ -1414,7 +1391,8 @@ function FlatChildTag({
   const t = useTranslations();
   const updateTagMutation = useUpdateTag();
   const { removeTag } = useCalendarFilterStore();
-  const { attributes, listeners, setNodeRef, isDragging, isOver } = useSortable({ id: item.id });
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging, isOver } =
+    useSortable({ id: item.id });
   const [menuOpen, setMenuOpen] = useState(false);
   const [optimisticColor, setOptimisticColor] = useState<string | null>(null);
   const displayColor = optimisticColor ?? item.color;
@@ -1431,10 +1409,15 @@ function FlatChildTag({
   // マージモーダル
   const [mergeModalOpen, setMergeModalOpen] = useState(false);
 
-  // 元のアイテムは固定位置（DragOverlayがマウスに追従）
-  // ドラッグ中は元位置を半透明に（操作対象を実線で表示）
+  // DragOverlay削除: 元の要素がそのままドラッグされる
+  // pointerEvents: 'none' でドラッグ中の要素を collision detection から除外
   const style = {
-    opacity: isDragging ? 0.4 : 1,
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+    zIndex: isDragging ? 50 : undefined,
+    boxShadow: isDragging ? '0 4px 12px rgba(0,0,0,0.15)' : undefined,
+    pointerEvents: isDragging ? 'none' : undefined,
   } as React.CSSProperties;
 
   const handleColorChange = async (color: string) => {
@@ -1720,7 +1703,8 @@ function FlatUngroupedTag({
   const t = useTranslations();
   const updateTagMutation = useUpdateTag();
   const { removeTag } = useCalendarFilterStore();
-  const { attributes, listeners, setNodeRef, isDragging, isOver } = useSortable({ id: item.id });
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging, isOver } =
+    useSortable({ id: item.id });
   const [menuOpen, setMenuOpen] = useState(false);
   const [optimisticColor, setOptimisticColor] = useState<string | null>(null);
   const displayColor = optimisticColor ?? item.color;
@@ -1737,10 +1721,15 @@ function FlatUngroupedTag({
   // マージモーダル
   const [mergeModalOpen, setMergeModalOpen] = useState(false);
 
-  // 元のアイテムは固定位置（DragOverlayがマウスに追従）
-  // ドラッグ中は元位置を半透明に（操作対象を実線で表示）
+  // DragOverlay削除: 元の要素がそのままドラッグされる
+  // pointerEvents: 'none' でドラッグ中の要素を collision detection から除外
   const style = {
-    opacity: isDragging ? 0.4 : 1,
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+    zIndex: isDragging ? 50 : undefined,
+    boxShadow: isDragging ? '0 4px 12px rgba(0,0,0,0.15)' : undefined,
+    pointerEvents: isDragging ? 'none' : undefined,
   } as React.CSSProperties;
 
   const handleColorChange = async (color: string) => {

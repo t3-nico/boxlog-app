@@ -223,9 +223,11 @@ export function useReorderTags() {
     onMutate: async ({ updates }) => {
       // tRPC のキャッシュをキャンセル
       await utils.tags.list.cancel();
+      await utils.tags.listParentTags.cancel();
 
       // 現在のデータをスナップショット
       const previousData = utils.tags.list.getData();
+      const previousParentTags = utils.tags.listParentTags.getData();
 
       // tRPC utils で楽観的にキャッシュを更新
       utils.tags.list.setData(undefined, (oldData) => {
@@ -247,34 +249,41 @@ export function useReorderTags() {
         return { ...oldData, data: [...newData] };
       });
 
+      // listParentTagsも楽観的に更新（親タグ並び替え用）
+      utils.tags.listParentTags.setData(undefined, (oldData) => {
+        if (!oldData) return oldData;
+
+        const newData = oldData.data.map((tag) => {
+          const update = updates.find((u) => u.id === tag.id);
+          if (update) {
+            return {
+              ...tag,
+              sort_order: update.sort_order,
+              parent_id: update.parent_id,
+            };
+          }
+          return tag;
+        });
+
+        // sort_order順でソート
+        newData.sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
+
+        return { ...oldData, data: [...newData] };
+      });
+
       // ロールバック用にスナップショットを返す
-      return { previousData };
+      return { previousData, previousParentTags };
     },
     // エラー時はロールバック
     onError: (_err, _variables, context) => {
       if (context?.previousData) {
         utils.tags.list.setData(undefined, context.previousData);
       }
+      if (context?.previousParentTags) {
+        utils.tags.listParentTags.setData(undefined, context.previousParentTags);
+      }
     },
-    // 成功時は楽観的更新を信頼（再フェッチしない）
-    // listParentTagsも楽観的に更新
-    onSuccess: () => {
-      // 親タグリストも同期的に更新（invalidateせず直接更新）
-      utils.tags.listParentTags.setData(undefined, (oldData) => {
-        if (!oldData) return oldData;
-        // tags.listから最新の親タグ情報を取得して反映
-        const currentTags = utils.tags.list.getData();
-        if (!currentTags) return oldData;
-
-        // 親タグ（parent_id = null かつ子を持つもの）を再計算
-        const parentIds = new Set(
-          currentTags.data.filter((t) => t.parent_id !== null).map((t) => t.parent_id),
-        );
-        const parentTags = currentTags.data.filter((t) => parentIds.has(t.id));
-
-        return { ...oldData, data: parentTags };
-      });
-    },
+    // 成功時は何もしない（楽観的更新を信頼）
   });
 }
 
