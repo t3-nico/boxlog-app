@@ -140,10 +140,19 @@ npm run lint         # コード品質（AI必須：コミット前）
 
 ### カスタムスキル（/.claude/skills/）
 
+**プロジェクト固有**:
+
 - `/releasing` - リリース作業ガイド
 - `/feature-scaffolding` - 新Featureモジュール作成
 - `/store-creating` - Zustand store作成
 - `/trpc-router-creating` - tRPCルーター作成
+- `/weekend-remote` - 土日リモート用タスク発見
+- `/frontend-design` - UI設計ガイドライン（STYLE_GUIDE.md補完）
+
+**汎用スキル**:
+
+- `/react-best-practices` - Vercel公式React/Next.js最適化ルール（45ルール）
+- `/ask-questions-if-underspecified` - 曖昧な指示への確認プロセス
 
 ## 🎯 意思決定の優先順位（GAFA-First原則）
 
@@ -290,19 +299,19 @@ export const myRouter = createTRPCRouter({
 
 ### 速度指標（p95で判断）
 
-| 指標 | 目標 | 意味 |
-|------|------|------|
-| **LCP** | ≤ 2.5s | 画面表示の体感速度 |
-| **INP** | ≤ 200ms | 操作への応答速度 |
+| 指標            | 目標    | 意味                 |
+| --------------- | ------- | -------------------- |
+| **LCP**         | ≤ 2.5s  | 画面表示の体感速度   |
+| **INP**         | ≤ 200ms | 操作への応答速度     |
 | **API latency** | ≤ 300ms | バックエンド処理速度 |
-| **DBクエリ** | ≤ 100ms | 基礎体力 |
+| **DBクエリ**    | ≤ 100ms | 基礎体力             |
 
 ### 安定性指標
 
-| 指標 | 目標 |
-|------|------|
-| 主要導線エラー率 | < 0.1% |
-| p95悪化時 | **改善Issue必須** |
+| 指標             | 目標              |
+| ---------------- | ----------------- |
+| 主要導線エラー率 | < 0.1%            |
+| p95悪化時        | **改善Issue必須** |
 
 ### 行動ルール
 
