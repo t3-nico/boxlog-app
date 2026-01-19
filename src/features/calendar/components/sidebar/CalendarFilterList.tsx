@@ -84,6 +84,7 @@ interface DragItem {
   name: string;
   color: string;
   parentId: string | null;
+  sortOrder: number;
 }
 
 /** フラットリスト用のアイテム型（dnd-kit対応） */
@@ -321,6 +322,10 @@ export function CalendarFilterList() {
       const { active } = event;
       const id = active.id as string;
 
+      // flatItemsから該当アイテムを取得（sortOrder用）
+      const flatItem = flatItems.find((item) => item.id === id);
+      const sortOrder = flatItem?.sortOrder ?? 0;
+
       // グループ（親タグ）かタグかを判別
       const group = groups?.find((g) => g.id === id);
       if (group) {
@@ -330,6 +335,7 @@ export function CalendarFilterList() {
           name: group.name,
           color: group.color || '#3B82F6',
           parentId: null,
+          sortOrder,
         });
         return;
       }
@@ -342,10 +348,11 @@ export function CalendarFilterList() {
           name: tag.name,
           color: tag.color || '#3B82F6',
           parentId: tag.parent_id,
+          sortOrder,
         });
       }
     },
-    [groups, tags],
+    [groups, tags, flatItems],
   );
 
   // DnD: ドラッグ終了
@@ -589,7 +596,7 @@ export function CalendarFilterList() {
                 onCheckedChange={toggleUntagged}
                 onShowOnlyThis={showOnlyUntagged}
                 checkboxColor="#6B7280"
-                labelClassName="text-muted-foreground italic"
+                labelClassName="text-muted-foreground"
               />
 
               {/* DragOverlay: ドラッグ中のプレビュー（カレンダーカードと同じパターン） */}
@@ -1173,13 +1180,24 @@ function FlatGroupHeader({
 
   // 子タグ/ungroupedタグドラッグ時のみボーダー表示（親タグはグループに入れないためボーダー非表示）
   const showDropIndicator = isOver && !isDragging && activeItem?.type !== 'group';
+  // ドラッグ方向に応じてボーダー位置を決定
+  // activeItemのsortOrderとこのアイテムのsortOrderを比較
+  // activeのsortOrderが小さい（上にある）→ 下に動かしている → 下ボーダー
+  // activeのsortOrderが大きい（下にある）→ 上に動かしている → 上ボーダー
+  const isDraggingDown = activeItem && activeItem.sortOrder < item.sortOrder;
+  const showTopBorder = showDropIndicator && !isDraggingDown;
+  const showBottomBorder = showDropIndicator && isDraggingDown;
 
   return (
     <div
       ref={setNodeRef}
       style={style}
       {...attributes}
-      className={cn('w-full border-t-2 border-transparent', showDropIndicator && 'border-primary')}
+      className={cn(
+        'w-full border-y-2 border-transparent',
+        showTopBorder && 'border-t-primary',
+        showBottomBorder && 'border-b-primary',
+      )}
     >
       <div
         className={cn(
@@ -1461,13 +1479,21 @@ function FlatChildTag({
 
   // 子タグドラッグ時のみボーダー表示（ルートタグドラッグ時は表示しない）
   const showDropIndicator = isOver && !isDragging && activeItem?.type === 'tag';
+  // ドラッグ方向に応じてボーダー位置を決定
+  const isDraggingDown = activeItem && activeItem.sortOrder < item.sortOrder;
+  const showTopBorder = showDropIndicator && !isDraggingDown;
+  const showBottomBorder = showDropIndicator && isDraggingDown;
 
   return (
     <div
       ref={setNodeRef}
       style={style}
       {...attributes}
-      className={cn('w-full border-t-2 border-transparent', showDropIndicator && 'border-primary')}
+      className={cn(
+        'w-full border-y-2 border-transparent',
+        showTopBorder && 'border-t-primary',
+        showBottomBorder && 'border-b-primary',
+      )}
     >
       <div
         className={cn(
@@ -1766,13 +1792,21 @@ function FlatUngroupedTag({
 
   // 両方のドラッグ時にボーダー表示（ルートでもあり、タグでもある）
   const showDropIndicator = isOver && !isDragging && activeItem !== null;
+  // ドラッグ方向に応じてボーダー位置を決定
+  const isDraggingDown = activeItem && activeItem.sortOrder < item.sortOrder;
+  const showTopBorder = showDropIndicator && !isDraggingDown;
+  const showBottomBorder = showDropIndicator && isDraggingDown;
 
   return (
     <div
       ref={setNodeRef}
       style={style}
       {...attributes}
-      className={cn('w-full border-t-2 border-transparent', showDropIndicator && 'border-primary')}
+      className={cn(
+        'w-full border-y-2 border-transparent',
+        showTopBorder && 'border-t-primary',
+        showBottomBorder && 'border-b-primary',
+      )}
     >
       <div
         className={cn(
