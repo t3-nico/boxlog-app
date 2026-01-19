@@ -1,6 +1,6 @@
 'use client';
 
-import type { ReactNode } from 'react';
+import { useMemo, type ReactNode } from 'react';
 
 import type { GroupedData } from '@/features/table';
 import type { Tag, TagGroup } from '@/features/tags/types';
@@ -53,6 +53,9 @@ export function TagList({
   onDeleteGroup,
   emptyState,
 }: TagListProps) {
+  // O(1) ルックアップ用の Map を事前計算（js-index-maps）
+  const groupsMap = useMemo(() => new Map(groups.map((g) => [g.id, g])), [groups]);
+
   // 空状態
   if (tags.length === 0 && emptyState) {
     return <>{emptyState}</>;
@@ -63,7 +66,7 @@ export function TagList({
     return (
       <div role="list" className="flex flex-col">
         {groupedData.map((group) => {
-          const tagGroup = groups.find((g) => g.id === group.groupKey);
+          const tagGroup = groupsMap.get(group.groupKey);
           const isCollapsed = collapsedGroups.has(group.groupKey);
 
           return (
