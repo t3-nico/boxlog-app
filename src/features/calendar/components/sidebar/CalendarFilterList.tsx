@@ -116,10 +116,21 @@ export function CalendarFilterList() {
   const [activeItem, setActiveItem] = useState<DragItem | null>(null);
   // ポインタ位置追跡（pointermoveイベントでリアルタイム更新）
   const pointerPositionRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
-  // ドロップゾーン状態（ungroupedタグの位置ベースドロップ用）
+  // ドロップゾーン状態（位置ベースドロップ用）
+  // useRefで最新値を保持（handleDragEnd時にstateが古い可能性があるため）
+  // ゾーン: top/center-top/center/center-bottom/bottom
+  // - top: ルートレベルで前に挿入
+  // - center-top: グループの最初の子として追加
+  // - center: ungroupedタグ同士の場合に親子関係を作成
+  // - center-bottom: グループの最後の子として追加
+  // - bottom: ルートレベルで後に挿入
+  const dropZoneRef = useRef<{
+    targetId: string | null;
+    zone: 'top' | 'center-top' | 'center' | 'center-bottom' | 'bottom' | null;
+  }>({ targetId: null, zone: null });
   const [dropZone, setDropZone] = useState<{
     targetId: string | null;
-    zone: 'top' | 'center' | 'bottom' | null;
+    zone: 'top' | 'center-top' | 'center' | 'center-bottom' | 'bottom' | null;
   }>({ targetId: null, zone: null });
 
   // 展開状態管理（Collapsible代替 - DnDのDOM順序問題を解決）
@@ -377,40 +388,63 @@ export function CalendarFilterList() {
     [groups, tags, flatItems],
   );
 
-  // DnD: ドラッグ移動（ungroupedタグの位置ベースドロップゾーン判定）
+  // DnD: ドラッグ移動（位置ベースドロップゾーン判定）
+  // 対象: ungroupedタグ、グループヘッダー
   const handleDragMove = useCallback(
     (event: DragMoveEvent) => {
       const { over } = event;
 
+      // ヘルパー: dropZoneをリセット（refとstate両方）
+      const resetDropZone = () => {
+        dropZoneRef.current = { targetId: null, zone: null };
+        setDropZone({ targetId: null, zone: null });
+      };
+
       // ドロップ先がない場合はリセット
       if (!over) {
-        setDropZone({ targetId: null, zone: null });
-        return;
-      }
-
-      // ungroupedタグ以外は対象外（位置ベースドロップはungroupedタグ同士のみ）
-      const overItem = flatItems.find((i) => i.id === over.id);
-      if (!overItem || overItem.type !== 'ungrouped-tag') {
-        setDropZone({ targetId: null, zone: null });
+        resetDropZone();
         return;
       }
 
       // 自分自身へのドロップは対象外
       if (activeItem?.id === over.id) {
-        setDropZone({ targetId: null, zone: null });
+        resetDropZone();
         return;
       }
 
-      // ドラッグ中のアイテムがungroupedタグでない場合も対象外
-      if (activeItem?.type !== 'tag' || activeItem?.parentId !== null) {
-        setDropZone({ targetId: null, zone: null });
+      const overItem = flatItems.find((i) => i.id === over.id);
+      if (!overItem) {
+        resetDropZone();
+        return;
+      }
+
+      // 位置ベースドロップの対象を判定
+      let elementId: string | null = null;
+      let isGroupHeader = false;
+
+      if (overItem.type === 'ungrouped-tag') {
+        // ungroupedタグ同士の場合のみ位置ベースドロップ
+        if (activeItem?.type === 'tag' && activeItem?.parentId === null) {
+          elementId = `ungrouped-tag-${over.id}`;
+        }
+      } else if (overItem.type === 'group-header') {
+        // グループヘッダーへのドロップ（タグをルートに出す or グループの子にする）
+        // ドラッグ中がタグ（子タグ or ungroupedタグ）の場合のみ
+        if (activeItem?.type === 'tag') {
+          elementId = `group-header-${over.id}`;
+          isGroupHeader = true;
+        }
+      }
+
+      if (!elementId) {
+        resetDropZone();
         return;
       }
 
       // ドロップ先の要素を取得
-      const element = document.getElementById(`ungrouped-tag-${over.id}`);
+      const element = document.getElementById(elementId);
       if (!element) {
-        setDropZone({ targetId: null, zone: null });
+        resetDropZone();
         return;
       }
 
@@ -420,12 +454,31 @@ export function CalendarFilterList() {
       const relativeY = pointerY - rect.top;
       const percentage = relativeY / rect.height;
 
-      // ゾーン判定（上25%、中50%、下25%）
-      let zone: 'top' | 'center' | 'bottom';
-      if (percentage < 0.25) zone = 'top';
-      else if (percentage > 0.75) zone = 'bottom';
-      else zone = 'center';
+      // ゾーン判定
+      let zone: 'top' | 'center-top' | 'center' | 'center-bottom' | 'bottom';
 
+      if (isGroupHeader) {
+        // グループヘッダー: 4分割（ルート並び替え or グループの子として追加）
+        // - top (0-25%): ルートレベルで前に挿入
+        // - center-top (25-50%): グループの最初の子として追加
+        // - center-bottom (50-75%): グループの最後の子として追加
+        // - bottom (75-100%): ルートレベルで後に挿入
+        if (percentage < 0.25) zone = 'top';
+        else if (percentage < 0.5) zone = 'center-top';
+        else if (percentage < 0.75) zone = 'center-bottom';
+        else zone = 'bottom';
+      } else {
+        // ungroupedタグ: 3分割（並び替え or 親子関係作成）
+        // - top (0-25%): 前に挿入
+        // - center (25-75%): 親子関係を作成
+        // - bottom (75-100%): 後に挿入
+        if (percentage < 0.25) zone = 'top';
+        else if (percentage > 0.75) zone = 'bottom';
+        else zone = 'center';
+      }
+
+      // refとstateの両方を更新（refはhandleDragEnd用、stateは視覚フィードバック用）
+      dropZoneRef.current = { targetId: over.id as string, zone };
       setDropZone({ targetId: over.id as string, zone });
     },
     [flatItems, activeItem],
@@ -437,8 +490,10 @@ export function CalendarFilterList() {
       const { active, over } = event;
 
       // ドロップゾーン情報を保存してからリセット
-      const currentDropZone = dropZone;
+      // refから最新のdropZone値を取得（stateは古い可能性があるため）
+      const currentDropZone = dropZoneRef.current;
       setActiveItem(null);
+      dropZoneRef.current = { targetId: null, zone: null };
       setDropZone({ targetId: null, zone: null });
 
       if (!over || active.id === over.id) return;
@@ -482,23 +537,80 @@ export function CalendarFilterList() {
       const activeTag = tags.find((t) => t.id === activeId);
       if (!activeTag) return;
 
-      // ドロップ先がグループヘッダーの場合、そのグループの子タグになる
+      // ドロップ先がグループヘッダーの場合
       if (isOverGroup) {
-        // 対象グループの子タグを取得
-        const targetChildren = tags
-          .filter((t) => t.parent_id === overId)
-          .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
+        // 位置ベースドロップ: ゾーンに応じて処理を分岐
+        const zone = currentDropZone.zone;
 
-        // 末尾に追加（グループの子になる）
-        const updates = [
-          {
-            id: activeId,
-            sort_order: targetChildren.length,
-            parent_id: overId,
-          },
-        ];
+        if (zone === 'center-top' || zone === 'center-bottom') {
+          // 中央上/中央下ゾーン → グループの子タグになる（位置指定あり）
+          const targetChildren = tags
+            .filter((t) => t.parent_id === overId)
+            .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
 
-        reorderTagsMutation.mutate({ updates });
+          if (zone === 'center-top') {
+            // center-top: 最初の子として追加（既存の子を後ろにシフト）
+            const reorderedUpdates = [
+              { id: activeId, sort_order: 0, parent_id: overId },
+              ...targetChildren.map((t, index) => ({
+                id: t.id,
+                sort_order: index + 1,
+                parent_id: overId,
+              })),
+            ];
+            reorderTagsMutation.mutate({ updates: reorderedUpdates });
+          } else {
+            // center-bottom: 最後の子として追加
+            reorderTagsMutation.mutate({
+              updates: [{ id: activeId, sort_order: targetChildren.length, parent_id: overId }],
+            });
+          }
+        } else if (zone === 'top' || zone === 'bottom') {
+          // 上/下ゾーン → ルートレベルで並び替え（グループヘッダーの前/後に挿入）
+          const allRootTags = flatItems
+            .filter((item) => item.parentId === null && item.type !== 'child-tag')
+            .map((item) => item.id);
+
+          // ドロップ先のインデックス
+          const overIndex = allRootTags.indexOf(overId);
+          if (overIndex === -1) return;
+
+          // アクティブタグがすでにルートにいるかチェック
+          const activeIndex = allRootTags.indexOf(activeId);
+
+          let newRootTags: string[];
+          if (activeIndex !== -1) {
+            // すでにルートにいる場合は移動
+            newRootTags = allRootTags.filter((id) => id !== activeId);
+          } else {
+            // ルートにいない場合（子タグからの昇格）
+            newRootTags = [...allRootTags];
+          }
+
+          // 挿入位置を決定（上ゾーン→前に、下ゾーン→後に）
+          const insertIndex =
+            zone === 'top' ? newRootTags.indexOf(overId) : newRootTags.indexOf(overId) + 1;
+
+          newRootTags.splice(insertIndex, 0, activeId);
+
+          const updates = newRootTags.map((id, index) => ({
+            id,
+            sort_order: index,
+            parent_id: null,
+          }));
+
+          reorderTagsMutation.mutate({ updates });
+        } else {
+          // dropZone未設定 or center → そのグループの子タグになる（末尾に追加）
+          const targetChildren = tags
+            .filter((t) => t.parent_id === overId)
+            .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
+
+          reorderTagsMutation.mutate({
+            updates: [{ id: activeId, sort_order: targetChildren.length, parent_id: overId }],
+          });
+        }
+        return;
       } else {
         // ドロップ先がタグの場合
         const overTag = tags.find((t) => t.id === overId);
@@ -569,7 +681,7 @@ export function CalendarFilterList() {
         }
       }
     },
-    [tags, groups, sortableGroupIds, flatItems, reorderTagsMutation, dropZone],
+    [tags, groups, sortableGroupIds, flatItems, reorderTagsMutation],
   );
 
   return (
@@ -626,6 +738,7 @@ export function CalendarFilterList() {
                           key={item.id}
                           item={item}
                           activeItem={activeItem}
+                          dropZone={dropZone}
                           isExpanded={expandedGroups.has(item.id)}
                           onToggleExpand={() => toggleGroupExpand(item.id)}
                           groupVisibility={getGroupVisibility(
@@ -917,11 +1030,12 @@ function FilterItem({
   // 右クリックでメニューを開く
   const handleContextMenu = useCallback(
     (e: React.MouseEvent) => {
-      if (!tagId || disabled) return;
+      // tagIdがなくてもonShowOnlyThisがあれば右クリックメニューを表示（タグなし用）
+      if ((!tagId && !onShowOnlyThis) || disabled) return;
       e.preventDefault();
       setMenuOpen(true);
     },
-    [tagId, disabled],
+    [tagId, onShowOnlyThis, disabled],
   );
 
   // チェックボックスのカスタムスタイル
@@ -1098,7 +1212,8 @@ function FilterItem({
           <DropdownMenuTrigger asChild>
             <button
               type="button"
-              className="text-muted-foreground hover:text-foreground hover:bg-state-hover flex size-6 shrink-0 items-center justify-center rounded opacity-0 transition-opacity group-hover/item:opacity-100"
+              aria-label={t('calendar.filter.tagMenu')}
+              className="text-muted-foreground hover:text-foreground hover:bg-state-hover relative flex size-6 shrink-0 items-center justify-center rounded opacity-0 transition-opacity group-hover/item:opacity-100 before:absolute before:-inset-2 before:content-['']"
               onClick={(e) => e.stopPropagation()}
             >
               <MoreHorizontal className="size-4" />
@@ -1178,6 +1293,11 @@ interface FlatGroupHeaderProps {
   item: FlatItem;
   /** ドラッグ中のアイテム（ボーダー表示制御用） */
   activeItem: DragItem | null;
+  /** ドロップゾーン状態（位置ベースドロップ用） */
+  dropZone: {
+    targetId: string | null;
+    zone: 'top' | 'center-top' | 'center' | 'center-bottom' | 'bottom' | null;
+  };
   isExpanded: boolean;
   onToggleExpand: () => void;
   groupVisibility: 'all' | 'none' | 'some';
@@ -1192,6 +1312,7 @@ interface FlatGroupHeaderProps {
 function FlatGroupHeader({
   item,
   activeItem,
+  dropZone,
   isExpanded,
   onToggleExpand,
   groupVisibility,
@@ -1225,6 +1346,12 @@ function FlatGroupHeader({
   const style = {
     opacity: isDragging ? 0.4 : 1,
   } as React.CSSProperties;
+
+  // 右クリックでメニューを開く
+  const handleContextMenu = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    setMenuOpen(true);
+  }, []);
 
   const handleColorChange = async (color: string) => {
     setOptimisticColor(color);
@@ -1282,35 +1409,60 @@ function FlatGroupHeader({
     removeTag(item.id);
   }, [item.id, removeTag]);
 
-  // 子タグ/ungroupedタグドラッグ時のみボーダー表示（親タグはグループに入れないためボーダー非表示）
-  const showDropIndicator = isOver && !isDragging && activeItem?.type !== 'group';
-  // ドラッグ方向に応じてボーダー位置を決定
-  // activeItemのsortOrderとこのアイテムのsortOrderを比較
-  // activeのsortOrderが小さい（上にある）→ 下に動かしている → 下ボーダー
-  // activeのsortOrderが大きい（下にある）→ 上に動かしている → 上ボーダー
-  const isDraggingDown = activeItem && activeItem.sortOrder < item.sortOrder;
-  const showTopBorder = showDropIndicator && !isDraggingDown;
-  const showBottomBorder = showDropIndicator && isDraggingDown;
+  // dropZoneベースの視覚フィードバック（位置ベースドロップ）
+  // 4ゾーン構成:
+  // - top: 外側上ボーダー（ルートレベルで前に挿入）
+  // - center-top: 内側上ボーダー（最初の子として追加）
+  // - center-bottom: 内側下ボーダー（最後の子として追加）
+  // - bottom: 外側下ボーダー（ルートレベルで後に挿入）
+  const isTargetItem = dropZone.targetId === item.id;
+  const isTopZone = isTargetItem && dropZone.zone === 'top';
+  const isCenterTopZone = isTargetItem && dropZone.zone === 'center-top';
+  const isCenterBottomZone = isTargetItem && dropZone.zone === 'center-bottom';
+  const isBottomZone = isTargetItem && dropZone.zone === 'bottom';
 
-  return (
+  // 外側ボーダー（ルートレベル並び替え）
+  const showOuterTopBorder = isTopZone;
+  const showOuterBottomBorder = isBottomZone;
+  // 内側ボーダー（グループの子になる - 位置指定）
+  const showInnerTopBorder = isCenterTopZone;
+  const showInnerBottomBorder = isCenterBottomZone;
+
+  // 他のグループからのドロップ時（dropZone未設定の場合）は従来のボーダー表示
+  const showFallbackBorder = !isTargetItem && isOver && !isDragging && activeItem?.type === 'group';
+  const isDraggingDown = activeItem && activeItem.sortOrder < item.sortOrder;
+  const showFallbackTopBorder = showFallbackBorder && !isDraggingDown;
+  const showFallbackBottomBorder = showFallbackBorder && isDraggingDown;
+
+  const content = (
     <div
+      id={`group-header-${item.id}`}
       ref={setNodeRef}
       style={style}
       {...attributes}
       className={cn(
         'w-full border-y-2 border-transparent',
-        showTopBorder && 'border-t-primary',
-        showBottomBorder && 'border-b-primary',
+        // 外側ボーダー（ルートレベル並び替え）
+        showOuterTopBorder && 'border-t-primary',
+        showOuterBottomBorder && 'border-b-primary',
+        // フォールバックボーダー（グループ同士のドラッグ時）
+        showFallbackTopBorder && 'border-t-primary',
+        showFallbackBottomBorder && 'border-b-primary',
       )}
     >
       <div
         className={cn(
           'group/item hover:bg-state-hover flex h-8 w-full min-w-0 items-center rounded text-sm',
+          'border-y-2 border-transparent',
           isDragging ? 'cursor-grabbing' : 'cursor-pointer',
           menuOpen && 'bg-state-selected',
+          // 内側ボーダー（グループの子になる - 位置指定）
+          showInnerTopBorder && 'border-t-primary',
+          showInnerBottomBorder && 'border-b-primary',
         )}
         {...listeners}
         onClick={onToggleExpand}
+        onContextMenu={handleContextMenu}
       >
         <Checkbox
           checked={groupVisibility === 'some' ? 'indeterminate' : groupVisibility === 'all'}
@@ -1357,7 +1509,8 @@ function FlatGroupHeader({
           <DropdownMenuTrigger asChild>
             <button
               type="button"
-              className="text-muted-foreground hover:text-foreground hover:bg-state-hover flex size-6 shrink-0 items-center justify-center rounded opacity-0 transition-opacity group-hover/item:opacity-100"
+              aria-label={t('calendar.filter.tagMenu')}
+              className="text-muted-foreground hover:text-foreground hover:bg-state-hover relative flex size-6 shrink-0 items-center justify-center rounded opacity-0 transition-opacity group-hover/item:opacity-100 before:absolute before:-inset-2 before:content-['']"
               onClick={(e) => e.stopPropagation()}
             >
               <MoreHorizontal className="size-4" />
@@ -1450,7 +1603,9 @@ function FlatGroupHeader({
         </DropdownMenu>
         <button
           type="button"
-          className="flex size-6 shrink-0 items-center justify-center"
+          aria-expanded={isExpanded}
+          aria-label={isExpanded ? t('calendar.filter.collapse') : t('calendar.filter.expand')}
+          className="relative flex size-6 shrink-0 items-center justify-center before:absolute before:-inset-2 before:content-['']"
           onClick={(e) => {
             e.stopPropagation();
             onToggleExpand();
@@ -1459,6 +1614,20 @@ function FlatGroupHeader({
           <ChevronRight className={cn('size-4 transition-transform', isExpanded && 'rotate-90')} />
         </button>
       </div>
+    </div>
+  );
+
+  // 説明がある場合はツールチップで表示
+  return (
+    <>
+      <HoverTooltip
+        content={item.description}
+        side="top"
+        disabled={!item.description || menuOpen}
+        wrapperClassName="w-full"
+      >
+        {content}
+      </HoverTooltip>
 
       {/* マージモーダル */}
       <TagMergeModal
@@ -1468,7 +1637,7 @@ function FlatGroupHeader({
         hasChildren={true}
         onMergeSuccess={handleMergeSuccess}
       />
-    </div>
+    </>
   );
 }
 
@@ -1520,6 +1689,12 @@ function FlatChildTag({
   const style = {
     opacity: isDragging ? 0.4 : 1,
   } as React.CSSProperties;
+
+  // 右クリックでメニューを開く
+  const handleContextMenu = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    setMenuOpen(true);
+  }, []);
 
   const handleColorChange = async (color: string) => {
     setOptimisticColor(color);
@@ -1588,7 +1763,7 @@ function FlatChildTag({
   const showTopBorder = showDropIndicator && !isDraggingDown;
   const showBottomBorder = showDropIndicator && isDraggingDown;
 
-  return (
+  const content = (
     <div
       ref={setNodeRef}
       style={style}
@@ -1606,6 +1781,7 @@ function FlatChildTag({
           menuOpen && 'bg-state-selected',
         )}
         {...listeners}
+        onContextMenu={handleContextMenu}
       >
         <Checkbox
           checked={checked}
@@ -1649,7 +1825,8 @@ function FlatChildTag({
           <DropdownMenuTrigger asChild>
             <button
               type="button"
-              className="text-muted-foreground hover:text-foreground hover:bg-state-hover flex size-6 shrink-0 items-center justify-center rounded opacity-0 transition-opacity group-hover/item:opacity-100"
+              aria-label={t('calendar.filter.tagMenu')}
+              className="text-muted-foreground hover:text-foreground hover:bg-state-hover relative flex size-6 shrink-0 items-center justify-center rounded opacity-0 transition-opacity group-hover/item:opacity-100 before:absolute before:-inset-2 before:content-['']"
               onClick={(e) => e.stopPropagation()}
             >
               <MoreHorizontal className="size-4" />
@@ -1769,6 +1946,20 @@ function FlatChildTag({
           {count}
         </span>
       </div>
+    </div>
+  );
+
+  // 説明がある場合はツールチップで表示
+  return (
+    <>
+      <HoverTooltip
+        content={item.description}
+        side="top"
+        disabled={!item.description || menuOpen}
+        wrapperClassName="w-full"
+      >
+        {content}
+      </HoverTooltip>
 
       {/* マージモーダル */}
       <TagMergeModal
@@ -1778,7 +1969,7 @@ function FlatChildTag({
         hasChildren={false}
         onMergeSuccess={handleMergeSuccess}
       />
-    </div>
+    </>
   );
 }
 
@@ -1787,7 +1978,10 @@ interface FlatUngroupedTagProps {
   /** ドラッグ中のアイテム（ボーダー表示制御用） */
   activeItem: DragItem | null;
   /** ドロップゾーン状態（位置ベースドロップ用） */
-  dropZone: { targetId: string | null; zone: 'top' | 'center' | 'bottom' | null };
+  dropZone: {
+    targetId: string | null;
+    zone: 'top' | 'center-top' | 'center' | 'center-bottom' | 'bottom' | null;
+  };
   checked: boolean;
   onToggle: () => void;
   count: number;
@@ -1836,6 +2030,12 @@ function FlatUngroupedTag({
   const style = {
     opacity: isDragging ? 0.4 : 1,
   } as React.CSSProperties;
+
+  // 右クリックでメニューを開く
+  const handleContextMenu = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    setMenuOpen(true);
+  }, []);
 
   const handleColorChange = async (color: string) => {
     setOptimisticColor(color);
@@ -1918,7 +2118,7 @@ function FlatUngroupedTag({
   const showFallbackTopBorder = showFallbackBorder && !isDraggingDown;
   const showFallbackBottomBorder = showFallbackBorder && isDraggingDown;
 
-  return (
+  const content = (
     <div
       id={`ungrouped-tag-${item.id}`}
       ref={setNodeRef}
@@ -1943,6 +2143,7 @@ function FlatUngroupedTag({
           showParentHighlight && 'bg-state-selected ring-primary ring-2',
         )}
         {...listeners}
+        onContextMenu={handleContextMenu}
       >
         <Checkbox
           checked={checked}
@@ -1986,7 +2187,8 @@ function FlatUngroupedTag({
           <DropdownMenuTrigger asChild>
             <button
               type="button"
-              className="text-muted-foreground hover:text-foreground hover:bg-state-hover flex size-6 shrink-0 items-center justify-center rounded opacity-0 transition-opacity group-hover/item:opacity-100"
+              aria-label={t('calendar.filter.tagMenu')}
+              className="text-muted-foreground hover:text-foreground hover:bg-state-hover relative flex size-6 shrink-0 items-center justify-center rounded opacity-0 transition-opacity group-hover/item:opacity-100 before:absolute before:-inset-2 before:content-['']"
               onClick={(e) => e.stopPropagation()}
             >
               <MoreHorizontal className="size-4" />
@@ -2108,6 +2310,20 @@ function FlatUngroupedTag({
           {count}
         </span>
       </div>
+    </div>
+  );
+
+  // 説明がある場合はツールチップで表示
+  return (
+    <>
+      <HoverTooltip
+        content={item.description}
+        side="top"
+        disabled={!item.description || menuOpen}
+        wrapperClassName="w-full"
+      >
+        {content}
+      </HoverTooltip>
 
       {/* マージモーダル */}
       <TagMergeModal
@@ -2117,6 +2333,6 @@ function FlatUngroupedTag({
         hasChildren={false}
         onMergeSuccess={handleMergeSuccess}
       />
-    </div>
+    </>
   );
 }

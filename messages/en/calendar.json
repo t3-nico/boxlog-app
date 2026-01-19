@@ -203,7 +203,10 @@
         "selectRequired": "Please select a tag to merge into",
         "description": "Merge \"{sourceName}\" into \"{targetName}\"? This action cannot be undone.",
         "descriptionWithChildren": "Merge \"{sourceName}\" into \"{targetName}\"? Child tags will become root tags. This action cannot be undone."
-      }
+      },
+      "tagMenu": "Tag menu",
+      "expand": "Expand",
+      "collapse": "Collapse"
     },
     "open": {
       "navigation": {

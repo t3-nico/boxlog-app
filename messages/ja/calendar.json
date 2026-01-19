@@ -203,7 +203,10 @@
         "selectRequired": "統合先のタグを選択してください",
         "description": "「{sourceName}」を「{targetName}」に統合しますか？この操作は取り消せません。",
         "descriptionWithChildren": "「{sourceName}」を「{targetName}」に統合しますか？子タグはルートタグに昇格します。この操作は取り消せません。"
-      }
+      },
+      "tagMenu": "タグメニュー",
+      "expand": "展開",
+      "collapse": "折りたたむ"
     },
     "open": {
       "navigation": {
