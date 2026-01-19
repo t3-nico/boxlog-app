@@ -1610,7 +1610,7 @@ function FlatChildTag({
         <Checkbox
           checked={checked}
           onCheckedChange={onToggle}
-          className="ml-4 shrink-0"
+          className="ml-6 shrink-0"
           style={
             {
               '--checkbox-color': displayColor,
