@@ -73,14 +73,16 @@ export function useTag(id: string) {
 
 // タグ作成フック
 export function useCreateTag() {
-  const queryClient = useQueryClient();
   const utils = trpc.useUtils();
 
   return trpc.tags.create.useMutation({
-    onSuccess: () => {
-      // キャッシュを無効化して再取得
-      utils.tags.list.invalidate();
-      queryClient.invalidateQueries({ queryKey: tagKeys.all });
+    onSuccess: async () => {
+      // キャッシュを無効化して即座に再取得
+      // invalidate()だけではstaleにするだけで再フェッチされない場合がある
+      await utils.tags.list.invalidate();
+      await utils.tags.list.refetch();
+      // 親タグリストも更新（新規タグが親になる可能性）
+      await utils.tags.listParentTags.invalidate();
     },
   });
 }
