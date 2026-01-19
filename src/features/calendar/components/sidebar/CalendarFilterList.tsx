@@ -11,6 +11,7 @@ import {
   useSensor,
   useSensors,
   type DragEndEvent,
+  type DragMoveEvent,
   type DragStartEvent,
 } from '@dnd-kit/core';
 import {
@@ -22,6 +23,7 @@ import {
 } from '@dnd-kit/sortable';
 import {
   ChevronRight,
+  CircleSlash,
   Eye,
   FileText,
   FolderUp,
@@ -106,11 +108,19 @@ export function CalendarFilterList() {
   const { data: groups, isLoading: groupsLoading } = useTagGroups();
   const { data: tagStats } = api.plans.getTagStats.useQuery();
   const tagPlanCounts = tagStats?.counts ?? {};
+  const untaggedCount = tagStats?.untaggedCount ?? 0;
   const deleteTagMutation = useDeleteTag();
   const reorderTagsMutation = useReorderTags();
 
   // DnD state
   const [activeItem, setActiveItem] = useState<DragItem | null>(null);
+  // ポインタ位置追跡（pointermoveイベントでリアルタイム更新）
+  const pointerPositionRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+  // ドロップゾーン状態（ungroupedタグの位置ベースドロップ用）
+  const [dropZone, setDropZone] = useState<{
+    targetId: string | null;
+    zone: 'top' | 'center' | 'bottom' | null;
+  }>({ targetId: null, zone: null });
 
   // 展開状態管理（Collapsible代替 - DnDのDOM順序問題を解決）
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(() => new Set(['ungrouped']));
@@ -125,6 +135,18 @@ export function CalendarFilterList() {
       });
     }
   }, [groups]);
+
+  // ドラッグ中のポインタ位置をリアルタイム追跡
+  useEffect(() => {
+    if (!activeItem) return;
+
+    const handlePointerMove = (e: PointerEvent) => {
+      pointerPositionRef.current = { x: e.clientX, y: e.clientY };
+    };
+
+    window.addEventListener('pointermove', handlePointerMove);
+    return () => window.removeEventListener('pointermove', handlePointerMove);
+  }, [activeItem]);
 
   // グループの展開/折りたたみトグル
   const toggleGroupExpand = useCallback((groupId: string) => {
@@ -355,12 +377,69 @@ export function CalendarFilterList() {
     [groups, tags, flatItems],
   );
 
+  // DnD: ドラッグ移動（ungroupedタグの位置ベースドロップゾーン判定）
+  const handleDragMove = useCallback(
+    (event: DragMoveEvent) => {
+      const { over } = event;
+
+      // ドロップ先がない場合はリセット
+      if (!over) {
+        setDropZone({ targetId: null, zone: null });
+        return;
+      }
+
+      // ungroupedタグ以外は対象外（位置ベースドロップはungroupedタグ同士のみ）
+      const overItem = flatItems.find((i) => i.id === over.id);
+      if (!overItem || overItem.type !== 'ungrouped-tag') {
+        setDropZone({ targetId: null, zone: null });
+        return;
+      }
+
+      // 自分自身へのドロップは対象外
+      if (activeItem?.id === over.id) {
+        setDropZone({ targetId: null, zone: null });
+        return;
+      }
+
+      // ドラッグ中のアイテムがungroupedタグでない場合も対象外
+      if (activeItem?.type !== 'tag' || activeItem?.parentId !== null) {
+        setDropZone({ targetId: null, zone: null });
+        return;
+      }
+
+      // ドロップ先の要素を取得
+      const element = document.getElementById(`ungrouped-tag-${over.id}`);
+      if (!element) {
+        setDropZone({ targetId: null, zone: null });
+        return;
+      }
+
+      const rect = element.getBoundingClientRect();
+      // ポインタ位置を取得（pointermoveイベントでリアルタイム追跡）
+      const pointerY = pointerPositionRef.current.y;
+      const relativeY = pointerY - rect.top;
+      const percentage = relativeY / rect.height;
+
+      // ゾーン判定（上25%、中50%、下25%）
+      let zone: 'top' | 'center' | 'bottom';
+      if (percentage < 0.25) zone = 'top';
+      else if (percentage > 0.75) zone = 'bottom';
+      else zone = 'center';
+
+      setDropZone({ targetId: over.id as string, zone });
+    },
+    [flatItems, activeItem],
+  );
+
   // DnD: ドラッグ終了
   const handleDragEnd = useCallback(
     (event: DragEndEvent) => {
       const { active, over } = event;
 
+      // ドロップゾーン情報を保存してからリセット
+      const currentDropZone = dropZone;
       setActiveItem(null);
+      setDropZone({ targetId: null, zone: null });
 
       if (!over || active.id === over.id) return;
       if (!tags || !groups) return;
@@ -425,6 +504,28 @@ export function CalendarFilterList() {
         const overTag = tags.find((t) => t.id === overId);
         if (!overTag) return;
 
+        // 両方ともルートレベルのタグ（ungrouped）の場合、ドラッグしたタグが子タグになる
+        const isActiveRootTag =
+          activeTag.parent_id === null && !sortableGroupIds.includes(activeId);
+        const isOverRootTag = overTag.parent_id === null && !sortableGroupIds.includes(overId);
+
+        if (isActiveRootTag && isOverRootTag) {
+          // 位置ベースドロップ: ゾーンに応じて処理を分岐
+          if (currentDropZone.zone === 'center') {
+            // 中央ゾーン → ドラッグしたタグをドロップ先の子にする
+            const updates = [
+              {
+                id: activeId,
+                sort_order: 0, // 最初の子として追加
+                parent_id: overId, // ドロップ先が親になる
+              },
+            ];
+            reorderTagsMutation.mutate({ updates });
+            return;
+          }
+          // 上/下ゾーン → 並び替え（下のロジックにフォールスルー）
+        }
+
         const targetParentId = overTag.parent_id;
 
         if (activeTag.parent_id === targetParentId) {
@@ -468,7 +569,7 @@ export function CalendarFilterList() {
         }
       }
     },
-    [tags, groups, sortableGroupIds, flatItems, reorderTagsMutation],
+    [tags, groups, sortableGroupIds, flatItems, reorderTagsMutation, dropZone],
   );
 
   return (
@@ -510,6 +611,7 @@ export function CalendarFilterList() {
               sensors={sensors}
               collisionDetection={closestCenter}
               onDragStart={handleDragStart}
+              onDragMove={handleDragMove}
               onDragEnd={handleDragEnd}
             >
               {/* フラットレンダリング: 全アイテムを同一DOMレベルで表示（Google Drive方式） */}
@@ -569,6 +671,7 @@ export function CalendarFilterList() {
                           key={item.id}
                           item={item}
                           activeItem={activeItem}
+                          dropZone={dropZone}
                           checked={visibleTagIds.has(item.id)}
                           onToggle={() => toggleTag(item.id)}
                           count={tagPlanCounts[item.id] ?? 0}
@@ -588,8 +691,7 @@ export function CalendarFilterList() {
                 })}
               </SortableContext>
 
-              {/* タグなし（システム項目：セパレーター + イタリック + グレー） */}
-              <div className="border-border my-1 border-t" />
+              {/* タグなし（システム項目：グレーで区別） */}
               <FilterItem
                 label={t('calendar.filter.untagged')}
                 checked={showUntagged}
@@ -597,6 +699,8 @@ export function CalendarFilterList() {
                 onShowOnlyThis={showOnlyUntagged}
                 checkboxColor="#6B7280"
                 labelClassName="text-muted-foreground"
+                count={untaggedCount}
+                icon={<CircleSlash className="size-4" />}
               />
 
               {/* DragOverlay: ドラッグ中のプレビュー（カレンダーカードと同じパターン） */}
@@ -945,7 +1049,7 @@ function FilterItem({
   const content = (
     <div
       className={cn(
-        'group/item hover:bg-state-hover flex h-8 w-full min-w-0 items-center gap-2 rounded text-sm',
+        'group/item hover:bg-state-hover flex h-8 w-full min-w-0 items-center rounded text-sm',
         disabled && 'cursor-not-allowed opacity-50',
         dragHandleProps && 'cursor-grab active:cursor-grabbing',
         menuOpen && 'bg-state-selected',
@@ -961,9 +1065,9 @@ function FilterItem({
         className="ml-2 shrink-0 cursor-pointer"
         style={checkboxStyle}
       />
-      {icon && <span className="text-muted-foreground shrink-0">{icon}</span>}
+      {icon && <span className="text-muted-foreground ml-2 shrink-0">{icon}</span>}
       {isEditing ? (
-        <div className="flex flex-1 flex-col gap-0.5">
+        <div className="ml-2 flex flex-1 flex-col gap-0.5">
           <div className="flex items-center gap-1">
             <Input
               ref={inputRef}
@@ -986,7 +1090,7 @@ function FilterItem({
           )}
         </div>
       ) : (
-        <span className={cn('min-w-0 flex-1 truncate', labelClassName)}>{label}</span>
+        <span className={cn('ml-1 min-w-0 flex-1 truncate', labelClassName)}>{label}</span>
       )}
       {/* メニュー */}
       {(tagId || onShowOnlyThis) && !disabled && (
@@ -1014,7 +1118,7 @@ function FilterItem({
       )}
       {/* カウント（右端に表示） */}
       {count !== undefined && (
-        <span className="text-muted-foreground shrink-0 text-right text-xs tabular-nums">
+        <span className="text-muted-foreground flex size-6 shrink-0 items-center justify-center text-xs tabular-nums">
           {count}
         </span>
       )}
@@ -1682,6 +1786,8 @@ interface FlatUngroupedTagProps {
   item: FlatItem;
   /** ドラッグ中のアイテム（ボーダー表示制御用） */
   activeItem: DragItem | null;
+  /** ドロップゾーン状態（位置ベースドロップ用） */
+  dropZone: { targetId: string | null; zone: 'top' | 'center' | 'bottom' | null };
   checked: boolean;
   onToggle: () => void;
   count: number;
@@ -1697,6 +1803,7 @@ interface FlatUngroupedTagProps {
 function FlatUngroupedTag({
   item,
   activeItem,
+  dropZone,
   checked,
   onToggle,
   count,
@@ -1790,22 +1897,41 @@ function FlatUngroupedTag({
     removeTag(item.id);
   }, [item.id, removeTag]);
 
-  // 両方のドラッグ時にボーダー表示（ルートでもあり、タグでもある）
-  const showDropIndicator = isOver && !isDragging && activeItem !== null;
-  // ドラッグ方向に応じてボーダー位置を決定
+  // dropZoneベースの視覚フィードバック（位置ベースドロップ）
+  // - 上端/下端 → ボーダー表示（並び替え）
+  // - 中央 → ハイライト表示（子タグにする）
+  const isTargetItem = dropZone.targetId === item.id;
+  const isTopZone = isTargetItem && dropZone.zone === 'top';
+  const isCenterZone = isTargetItem && dropZone.zone === 'center';
+  const isBottomZone = isTargetItem && dropZone.zone === 'bottom';
+
+  // 中央ゾーン → 親になることを示すハイライト
+  const showParentHighlight = isCenterZone;
+  // 上/下ゾーン → 並び替え位置を示すボーダー
+  const showTopBorder = isTopZone;
+  const showBottomBorder = isBottomZone;
+
+  // 他のタグからのドロップ時（dropZone未設定の場合）は従来のボーダー表示
+  const showFallbackBorder =
+    !isTargetItem && isOver && !isDragging && activeItem !== null && activeItem.id !== item.id;
   const isDraggingDown = activeItem && activeItem.sortOrder < item.sortOrder;
-  const showTopBorder = showDropIndicator && !isDraggingDown;
-  const showBottomBorder = showDropIndicator && isDraggingDown;
+  const showFallbackTopBorder = showFallbackBorder && !isDraggingDown;
+  const showFallbackBottomBorder = showFallbackBorder && isDraggingDown;
 
   return (
     <div
+      id={`ungrouped-tag-${item.id}`}
       ref={setNodeRef}
       style={style}
       {...attributes}
       className={cn(
-        'w-full border-y-2 border-transparent',
+        'w-full overflow-visible border-y-2 border-transparent',
+        // dropZoneベースのボーダー（位置ベースドロップ時）
         showTopBorder && 'border-t-primary',
         showBottomBorder && 'border-b-primary',
+        // フォールバックボーダー（他タグからのドロップ時）
+        showFallbackTopBorder && 'border-t-primary',
+        showFallbackBottomBorder && 'border-b-primary',
       )}
     >
       <div
@@ -1813,6 +1939,8 @@ function FlatUngroupedTag({
           'group/item hover:bg-state-hover flex h-8 w-full min-w-0 items-center rounded text-sm',
           'cursor-grab active:cursor-grabbing',
           menuOpen && 'bg-state-selected',
+          // 中央ゾーン → 親になることを示すハイライト
+          showParentHighlight && 'bg-state-selected ring-primary ring-2',
         )}
         {...listeners}
       >

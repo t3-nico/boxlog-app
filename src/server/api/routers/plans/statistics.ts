@@ -581,20 +581,26 @@ export const statisticsRouter = createTRPCRouter({
     // Transform array result into lookup objects
     const counts: Record<string, number> = {};
     const lastUsed: Record<string, string> = {};
+    let untaggedCount = 0;
 
     if (data) {
       for (const row of data as Array<{
-        tag_id: string;
+        tag_id: string | null;
         plan_count: number;
         last_used: string | null;
       }>) {
-        counts[row.tag_id] = row.plan_count;
-        if (row.last_used) {
-          lastUsed[row.tag_id] = row.last_used;
+        if (row.tag_id === null) {
+          // タグなしプランの件数
+          untaggedCount = row.plan_count;
+        } else {
+          counts[row.tag_id] = row.plan_count;
+          if (row.last_used) {
+            lastUsed[row.tag_id] = row.last_used;
+          }
         }
       }
     }
 
-    return { counts, lastUsed };
+    return { counts, lastUsed, untaggedCount };
   }),
 });
