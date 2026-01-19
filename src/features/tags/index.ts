@@ -23,18 +23,12 @@ export {
   TagActionMenuItems,
   TagArchiveDialog,
   TagBadge,
-  TagChip,
   // Modals & Dialogs
   TagCreateModal,
   TagEditDialog,
-  TagEditModal,
-  TagFilterChips,
-  TagFilter as TagFilterComponent,
-  TagManagementModal,
   TagSelectionActions,
   // Selection & Display
   TagSelector,
-  TagTreeView,
   TagsList,
   TagsSelectionBar,
 } from './components';
