@@ -1,7 +1,21 @@
 {
   "common": {
     "dates": {
-      "format": "MM/DD/YYYY"
+      "format": "MM/DD/YYYY",
+      "formats": {
+        "monthDay": "MMM d",
+        "monthDayYear": "MMM d, yyyy",
+        "dayMonth": "d MMM",
+        "dayMonthYear": "d MMM yyyy",
+        "monthYear": "MMMM yyyy",
+        "yearMonth": "yyyy MMMM",
+        "yearMonthDay": "yyyy MMM d",
+        "withDayOfWeek": "EEE, M/d",
+        "dateTime": "MMM d HH:mm",
+        "dayRangeSameMonth": "{start}-{end}",
+        "dayRangeDiffMonth": "{startDay} {startMonth} - {endDay} {endMonth}",
+        "dayRangeDiffYear": "{startDay} {startMonth} {startYear} - {endDay} {endMonth} {endYear}"
+      }
     },
     "reload": "Reload Page",
     "back": "Back",
@@ -21,7 +35,7 @@
     "toast": {
       "eventDeleted": "Event deleted"
     },
-    "selectedCount": "{count} selected",
+    "selectedCount": "{count, plural, one {1 selected} other {# selected}}",
     "plan": {
       "created": "\"{title}\" created",
       "createFailed": "Failed to create: {error}",
@@ -103,7 +117,8 @@
     "moreActions": "More actions",
     "form": {
       "required": "Required",
-      "optional": "Optional"
+      "optional": "Optional",
+      "processing": "Processing..."
     }
   },
   "actions": {
@@ -116,7 +131,49 @@
     "update": "Update",
     "search": "Search",
     "filter": "Filter",
-    "sort": "Sort"
+    "sort": "Sort",
+    "confirm": "Confirm",
+    "rename": "Rename",
+    "archive": "Archive",
+    "restore": "Restore",
+    "add": "Add",
+    "remove": "Remove",
+    "view": "View",
+    "duplicate": "Duplicate",
+    "move": "Move",
+    "createNew": "Create New",
+    "saving": "Saving...",
+    "creating": "Creating...",
+    "deleting": "Deleting...",
+    "updating": "Updating...",
+    "archiving": "Archiving...",
+    "restoring": "Restoring...",
+    "clear": "Clear"
+  },
+  "confirm": {
+    "delete": {
+      "title": "Delete {name}?",
+      "titleGeneric": "Delete this item?",
+      "description": "This action cannot be undone.",
+      "button": "Delete"
+    },
+    "archive": {
+      "title": "Archive {name}?",
+      "description": "Archived items can be restored later.",
+      "button": "Archive"
+    },
+    "bulkDelete": {
+      "title": "Delete {count} items?",
+      "description": "This will permanently delete {count} selected items. This action cannot be undone."
+    },
+    "recurring": {
+      "editTitle": "Edit recurring event",
+      "deleteTitle": "Delete recurring event",
+      "thisOnly": "This event only",
+      "thisAndFuture": "This and future events",
+      "allEvents": "All events",
+      "apply": "Apply"
+    }
   },
   "table": {
     "rowsPerPage": "Rows per page",
@@ -229,12 +286,12 @@
     "nextWeek": "Next Week",
     "thisMonth": "This Month",
     "nextMonth": "Next Month",
-    "daysAgo": " days ago",
-    "weeksAgo": " weeks ago",
-    "monthsAgo": " months ago",
+    "daysAgo": "{count, plural, one {1 day ago} other {# days ago}}",
+    "weeksAgo": "{count, plural, one {1 week ago} other {# weeks ago}}",
+    "monthsAgo": "{count, plural, one {1 month ago} other {# months ago}}",
     "justNow": "just now",
-    "minutesAgo": "{count} min ago",
-    "hoursAgo": "{count}h ago"
+    "minutesAgo": "{count, plural, one {1 min ago} other {# min ago}}",
+    "hoursAgo": "{count, plural, one {1h ago} other {#h ago}}"
   },
   "reminder": {
     "label": "Reminder",
