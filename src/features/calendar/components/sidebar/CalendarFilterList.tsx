@@ -176,13 +176,16 @@ export function CalendarFilterList() {
   const groupedTags = useMemo(() => {
     if (!tags) return { grouped: [], ungrouped: [] };
 
-    const grouped = (groups || []).map((group) => ({
-      group,
-      // 子タグを sort_order 順でソート（DnDのインデックス計算に必須）
-      tags: tags
-        .filter((tag) => tag.parent_id === group.id)
-        .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0)),
-    }));
+    const grouped = (groups || [])
+      .map((group) => ({
+        group,
+        // 子タグを sort_order 順でソート（DnDのインデックス計算に必須）
+        tags: tags
+          .filter((tag) => tag.parent_id === group.id)
+          .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0)),
+      }))
+      // グループ自体も sort_order 順でソート（DnD後の順序反映に必須）
+      .sort((a, b) => (a.group.sort_order ?? 0) - (b.group.sort_order ?? 0));
 
     // 子タグを持つ親タグのIDセット（グループヘッダーとして表示される）
     const parentIdsWithChildren = new Set(
@@ -233,9 +236,35 @@ export function CalendarFilterList() {
   const flatItems = useMemo(() => {
     const items: FlatItem[] = [];
 
-    // 1. グループヘッダー + 子タグ
-    groupedTags.grouped.forEach(({ group, tags: children }) => {
-      if (children.length > 0) {
+    // 子タグを持つグループのみ抽出
+    const groupsWithChildren = groupedTags.grouped.filter(
+      ({ tags: children }) => children.length > 0,
+    );
+
+    // 全ルートタグを統一したsort_order順でソート
+    // 重要: グループヘッダーとungroupedタグを混在させてDnD順序を正しく維持
+    type RootItem =
+      | { type: 'group'; data: (typeof groupsWithChildren)[0] }
+      | { type: 'ungrouped'; data: (typeof groupedTags.ungrouped)[0] };
+
+    const allRootItems: Array<{ item: RootItem; sortOrder: number }> = [
+      ...groupsWithChildren.map((g) => ({
+        item: { type: 'group' as const, data: g },
+        sortOrder: g.group.sort_order ?? 0,
+      })),
+      ...groupedTags.ungrouped.map((tag) => ({
+        item: { type: 'ungrouped' as const, data: tag },
+        sortOrder: tag.sort_order ?? 0,
+      })),
+    ];
+
+    // sort_order順でソート
+    allRootItems.sort((a, b) => a.sortOrder - b.sortOrder);
+
+    // フラットリストを構築（ルートタグがsort_order順で並ぶ）
+    allRootItems.forEach(({ item }) => {
+      if (item.type === 'group') {
+        const { group, tags: children } = item.data;
         const isExpanded = expandedGroups.has(group.id);
         // グループヘッダー
         items.push({
@@ -261,25 +290,24 @@ export function CalendarFilterList() {
             isVisible: isExpanded,
           });
         });
+      } else {
+        // ungrouped タグ
+        const tag = item.data;
+        items.push({
+          id: tag.id,
+          type: 'ungrouped-tag',
+          name: tag.name,
+          color: tag.color || '#3B82F6',
+          description: tag.description,
+          parentId: null,
+          sortOrder: tag.sort_order ?? 0,
+          isVisible: true,
+        });
       }
     });
 
-    // 2. グループなしタグ（ルートレベルで表示）
-    groupedTags.ungrouped.forEach((tag, index) => {
-      items.push({
-        id: tag.id,
-        type: 'ungrouped-tag',
-        name: tag.name,
-        color: tag.color || '#3B82F6',
-        description: tag.description,
-        parentId: null,
-        sortOrder: tag.sort_order ?? index,
-        isVisible: true,
-      });
-    });
-
     return items;
-  }, [groupedTags, expandedGroups, t]);
+  }, [groupedTags, expandedGroups]);
 
   // DnD: SortableContext用のIDリスト（表示中のアイテムのみ）
   // 重要: dnd-kit の SortableContext には表示中の全アイテムを含める必要がある
@@ -333,138 +361,125 @@ export function CalendarFilterList() {
       const activeId = active.id as string;
       const overId = over.id as string;
 
-      // 「グループなし」へのドロップ（ルートに移動）
-      if (overId === 'ungrouped-drop-zone' || overId === 'ungrouped-header') {
-        const activeTag = tags.find((t) => t.id === activeId);
-        // グループヘッダー（子を持つ親タグ）の場合や、既にルートの場合は何もしない
-        if (!activeTag || sortableGroupIds.includes(activeId)) return;
-        if (activeTag.parent_id === null) return;
+      // アクティブアイテムがグループ（ルートタグ）かタグか
+      // 重要: sortableGroupIdsを使用（子タグを持つ親タグのみ）
+      const isActiveGroup = sortableGroupIds.includes(activeId);
 
-        // ルートに移動（parent_id: null）
-        const ungroupedTags = tags.filter(
-          (t) => t.parent_id === null && !sortableGroupIds.includes(t.id),
-        );
+      if (isActiveGroup) {
+        // グループ（ルートタグ）をドラッグ中
+        // ドロップ先がルートタグ（グループヘッダー or ungroupedタグ）かチェック
+        const overItem = flatItems.find((i) => i.id === overId);
+        if (overItem && overItem.parentId === null) {
+          // 全ルートタグをDOM順（現在のsort_order順）で取得
+          const allRootTags = flatItems
+            .filter((item) => item.parentId === null && item.type !== 'child-tag')
+            .map((item) => item.id);
+
+          const oldIndex = allRootTags.indexOf(activeId);
+          const newIndex = allRootTags.indexOf(overId);
+
+          if (oldIndex !== -1 && newIndex !== -1) {
+            const newOrder = arrayMove(allRootTags, oldIndex, newIndex);
+            const updates = newOrder.map((id, index) => ({
+              id,
+              sort_order: index,
+              parent_id: null,
+            }));
+            reorderTagsMutation.mutate({ updates });
+          }
+        }
+        return; // 早期リターン（グループドラッグ時はタグ移動ロジックをスキップ）
+      }
+
+      // タグの移動（グループ内並び替え or グループ間移動）
+      const isOverGroup = sortableGroupIds.includes(overId);
+      const activeTag = tags.find((t) => t.id === activeId);
+      if (!activeTag) return;
+
+      // ドロップ先がグループヘッダーの場合、そのグループの「前」にルートレベルとして配置
+      if (isOverGroup) {
+        // ルートレベルのタグ（グループなしタグ）を取得
+        const rootLevelTags = tags
+          .filter((t) => t.parent_id === null && !sortableGroupIds.includes(t.id))
+          .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
+
+        // アクティブタグを除外したリスト
+        const filteredRootTags = rootLevelTags.filter((t) => t.id !== activeId);
+
+        // グループヘッダーの順序（sort_order）を取得
+        const targetGroup = groups?.find((g) => g.id === overId);
+        const targetGroupSortOrder = targetGroup?.sort_order ?? 0;
+
+        // アクティブタグを新しいsort_orderで追加（グループの前に配置）
         const updates = [
           {
             id: activeId,
-            sort_order: ungroupedTags.length,
+            sort_order: targetGroupSortOrder,
             parent_id: null,
           },
         ];
+
+        // 他のルートレベルタグのsort_orderも更新（衝突を避ける）
+        filteredRootTags.forEach((tag) => {
+          if ((tag.sort_order ?? 0) >= targetGroupSortOrder) {
+            updates.push({
+              id: tag.id,
+              sort_order: (tag.sort_order ?? 0) + 1,
+              parent_id: null,
+            });
+          }
+        });
+
         reorderTagsMutation.mutate({ updates });
-        return;
-      }
+      } else {
+        // ドロップ先がタグの場合
+        const overTag = tags.find((t) => t.id === overId);
+        if (!overTag) return;
 
-      // アクティブアイテムがグループかタグか
-      // 重要: sortableGroupIdsを使用（子タグを持つ親タグのみ）
-      // groups配列には子を持たないタグも含まれる可能性があるため
-      const isActiveGroup = sortableGroupIds.includes(activeId);
-      const isOverGroup = sortableGroupIds.includes(overId);
+        const targetParentId = overTag.parent_id;
 
-      if (isActiveGroup && isOverGroup) {
-        // グループ同士の並び替え
-        const oldIndex = sortableGroupIds.indexOf(activeId);
-        const newIndex = sortableGroupIds.indexOf(overId);
-
-        if (oldIndex !== -1 && newIndex !== -1) {
-          const newOrder = arrayMove(sortableGroupIds, oldIndex, newIndex);
-          const updates = newOrder.map((id, index) => ({
-            id,
-            sort_order: index,
-            parent_id: null,
-          }));
-          reorderTagsMutation.mutate({ updates });
-        }
-      } else if (!isActiveGroup) {
-        // タグの移動（グループ内並び替え or グループ間移動）
-        const activeTag = tags.find((t) => t.id === activeId);
-        if (!activeTag) return;
-
-        // ドロップ先がグループヘッダーの場合、そのグループの「前」にルートレベルとして配置
-        if (isOverGroup) {
-          // ルートレベルのタグ（グループなしタグ）を取得
-          const rootLevelTags = tags
-            .filter((t) => t.parent_id === null && !sortableGroupIds.includes(t.id))
+        if (activeTag.parent_id === targetParentId) {
+          // 同じグループ内での並び替え
+          // 注意: ルートレベル(parent_id: null)の場合、親タグ(グループヘッダー)を除外する必要がある
+          const siblingTags = tags
+            .filter((t) => t.parent_id === targetParentId)
+            .filter((t) => targetParentId !== null || !sortableGroupIds.includes(t.id))
             .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
 
-          // アクティブタグを除外したリスト
-          const filteredRootTags = rootLevelTags.filter((t) => t.id !== activeId);
+          const oldIndex = siblingTags.findIndex((t) => t.id === activeId);
+          const newIndex = siblingTags.findIndex((t) => t.id === overId);
 
-          // グループヘッダーの順序（sort_order）を取得
-          const targetGroup = groups?.find((g) => g.id === overId);
-          const targetGroupSortOrder = targetGroup?.sort_order ?? 0;
-
-          // アクティブタグを新しいsort_orderで追加（グループの前に配置）
-          const updates = [
-            {
-              id: activeId,
-              sort_order: targetGroupSortOrder,
-              parent_id: null,
-            },
-          ];
-
-          // 他のルートレベルタグのsort_orderも更新（衝突を避ける）
-          filteredRootTags.forEach((tag) => {
-            if ((tag.sort_order ?? 0) >= targetGroupSortOrder) {
-              updates.push({
-                id: tag.id,
-                sort_order: (tag.sort_order ?? 0) + 1,
-                parent_id: null,
-              });
-            }
-          });
-
-          reorderTagsMutation.mutate({ updates });
-        } else {
-          // ドロップ先がタグの場合
-          const overTag = tags.find((t) => t.id === overId);
-          if (!overTag) return;
-
-          const targetParentId = overTag.parent_id;
-
-          if (activeTag.parent_id === targetParentId) {
-            // 同じグループ内での並び替え
-            // 注意: ルートレベル(parent_id: null)の場合、親タグ(グループヘッダー)を除外する必要がある
-            const siblingTags = tags
-              .filter((t) => t.parent_id === targetParentId)
-              .filter((t) => targetParentId !== null || !sortableGroupIds.includes(t.id))
-              .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
-
-            const oldIndex = siblingTags.findIndex((t) => t.id === activeId);
-            const newIndex = siblingTags.findIndex((t) => t.id === overId);
-
-            if (oldIndex !== -1 && newIndex !== -1) {
-              const newOrder = arrayMove(siblingTags, oldIndex, newIndex);
-              const updates = newOrder.map((tag, index) => ({
-                id: tag.id,
-                sort_order: index,
-                parent_id: targetParentId,
-              }));
-              reorderTagsMutation.mutate({ updates });
-            }
-          } else {
-            // グループ間移動（タグの位置に挿入）
-            // 注意: ルートレベル(parent_id: null)の場合、親タグ(グループヘッダー)を除外する必要がある
-            const targetSiblings = tags
-              .filter((t) => t.parent_id === targetParentId)
-              .filter((t) => targetParentId !== null || !sortableGroupIds.includes(t.id))
-              .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
-
-            const insertIndex = targetSiblings.findIndex((t) => t.id === overId);
-            const newSiblings = [...targetSiblings];
-            newSiblings.splice(insertIndex, 0, activeTag);
-
-            const updates = newSiblings.map((tag, index) => ({
+          if (oldIndex !== -1 && newIndex !== -1) {
+            const newOrder = arrayMove(siblingTags, oldIndex, newIndex);
+            const updates = newOrder.map((tag, index) => ({
               id: tag.id,
               sort_order: index,
               parent_id: targetParentId,
             }));
             reorderTagsMutation.mutate({ updates });
           }
+        } else {
+          // グループ間移動（タグの位置に挿入）
+          // 注意: ルートレベル(parent_id: null)の場合、親タグ(グループヘッダー)を除外する必要がある
+          const targetSiblings = tags
+            .filter((t) => t.parent_id === targetParentId)
+            .filter((t) => targetParentId !== null || !sortableGroupIds.includes(t.id))
+            .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
+
+          const insertIndex = targetSiblings.findIndex((t) => t.id === overId);
+          const newSiblings = [...targetSiblings];
+          newSiblings.splice(insertIndex, 0, activeTag);
+
+          const updates = newSiblings.map((tag, index) => ({
+            id: tag.id,
+            sort_order: index,
+            parent_id: targetParentId,
+          }));
+          reorderTagsMutation.mutate({ updates });
         }
       }
     },
-    [tags, groups, sortableGroupIds, reorderTagsMutation],
+    [tags, groups, sortableGroupIds, flatItems, reorderTagsMutation],
   );
 
   return (
@@ -492,7 +507,7 @@ export function CalendarFilterList() {
         <SidebarSection
           title={t('calendar.filter.tags')}
           defaultOpen
-          className="space-y-1 py-1"
+          className="py-1"
           action={<CreateTagButton />}
         >
           {isLoading ? (
@@ -519,6 +534,7 @@ export function CalendarFilterList() {
                         <FlatGroupHeader
                           key={item.id}
                           item={item}
+                          activeItem={activeItem}
                           isExpanded={expandedGroups.has(item.id)}
                           onToggleExpand={() => toggleGroupExpand(item.id)}
                           groupVisibility={getGroupVisibility(
@@ -545,6 +561,7 @@ export function CalendarFilterList() {
                         <FlatChildTag
                           key={item.id}
                           item={item}
+                          activeItem={activeItem}
                           checked={visibleTagIds.has(item.id)}
                           onToggle={() => toggleTag(item.id)}
                           count={tagPlanCounts[item.id] ?? 0}
@@ -562,6 +579,7 @@ export function CalendarFilterList() {
                         <FlatUngroupedTag
                           key={item.id}
                           item={item}
+                          activeItem={activeItem}
                           checked={visibleTagIds.has(item.id)}
                           onToggle={() => toggleTag(item.id)}
                           count={tagPlanCounts[item.id] ?? 0}
@@ -572,6 +590,7 @@ export function CalendarFilterList() {
                           }))}
                           onDeleteTag={() => handleDeleteParentTag(item.id)}
                           onShowOnlyThis={() => showOnlyTag(item.id)}
+                          onAddChildTag={() => handleAddChildTag(item.id)}
                         />
                       );
                     default:
@@ -904,10 +923,9 @@ function FilterItem({
                 onClick={() => handleChangeParent(parent.id)}
                 className={cn(parentId === parent.id && 'bg-state-selected')}
               >
-                <span
-                  className="mr-2 size-3 rounded-full"
-                  style={{ backgroundColor: parent.color || '#3B82F6' }}
-                />
+                <span className="mr-1 font-medium" style={{ color: parent.color || '#3B82F6' }}>
+                  #
+                </span>
                 {parent.name}
               </DropdownMenuItem>
             ))}
@@ -1069,6 +1087,8 @@ function CreateTagButton() {
 
 interface FlatGroupHeaderProps {
   item: FlatItem;
+  /** ドラッグ中のアイテム（ボーダー表示制御用） */
+  activeItem: DragItem | null;
   isExpanded: boolean;
   onToggleExpand: () => void;
   groupVisibility: 'all' | 'none' | 'some';
@@ -1082,6 +1102,7 @@ interface FlatGroupHeaderProps {
 /** フラットなグループヘッダー（useSortable対応） */
 function FlatGroupHeader({
   item,
+  activeItem,
   isExpanded,
   onToggleExpand,
   groupVisibility,
@@ -1095,6 +1116,14 @@ function FlatGroupHeader({
   const { removeTag } = useCalendarFilterStore();
   const { attributes, listeners, setNodeRef, isDragging, isOver } = useSortable({ id: item.id });
   const [menuOpen, setMenuOpen] = useState(false);
+
+  // ドラッグ終了後のクリックを抑制するためのフラグ
+  const wasDraggingRef = useRef(false);
+  useEffect(() => {
+    if (isDragging) {
+      wasDraggingRef.current = true;
+    }
+  }, [isDragging]);
   const [optimisticColor, setOptimisticColor] = useState<string | null>(null);
   const displayColor = optimisticColor ?? item.color;
 
@@ -1172,23 +1201,30 @@ function FlatGroupHeader({
     removeTag(item.id);
   }, [item.id, removeTag]);
 
+  // ルートタグドラッグ時のみボーダー表示（子タグドラッグ時は表示しない）
+  const showDropIndicator = isOver && !isDragging && activeItem?.type === 'group';
+
   return (
     <div
       ref={setNodeRef}
       style={style}
       {...attributes}
-      className={cn(
-        'w-full border-t-2 border-transparent',
-        isOver && !isDragging && 'border-primary',
-      )}
+      className={cn('w-full border-t-2 border-transparent', showDropIndicator && 'border-primary')}
     >
       <div
         className={cn(
-          'group/item hover:bg-state-hover flex w-full min-w-0 items-center rounded py-1 text-sm transition-colors',
+          'group/item hover:bg-state-hover flex h-8 w-full min-w-0 items-center rounded text-sm',
           'cursor-pointer',
           menuOpen && 'bg-state-selected',
         )}
-        onClick={onToggleExpand}
+        onClick={() => {
+          // ドラッグ終了直後のクリックは無視（展開状態の誤切り替え防止）
+          if (wasDraggingRef.current) {
+            wasDraggingRef.current = false;
+            return;
+          }
+          onToggleExpand();
+        }}
         {...listeners}
       >
         <Checkbox
@@ -1353,6 +1389,8 @@ function FlatGroupHeader({
 
 interface FlatChildTagProps {
   item: FlatItem;
+  /** ドラッグ中のアイテム（ボーダー表示制御用） */
+  activeItem: DragItem | null;
   checked: boolean;
   onToggle: () => void;
   count: number;
@@ -1365,6 +1403,7 @@ interface FlatChildTagProps {
 /** フラットな子タグ（useSortable対応、CSSでインデント） */
 function FlatChildTag({
   item,
+  activeItem,
   checked,
   onToggle,
   count,
@@ -1458,19 +1497,19 @@ function FlatChildTag({
     removeTag(item.id);
   }, [item.id, removeTag]);
 
+  // 子タグドラッグ時のみボーダー表示（ルートタグドラッグ時は表示しない）
+  const showDropIndicator = isOver && !isDragging && activeItem?.type === 'tag';
+
   return (
     <div
       ref={setNodeRef}
       style={style}
       {...attributes}
-      className={cn(
-        'w-full border-t-2 border-transparent',
-        isOver && !isDragging && 'border-primary',
-      )}
+      className={cn('w-full border-t-2 border-transparent', showDropIndicator && 'border-primary')}
     >
       <div
         className={cn(
-          'group/item hover:bg-state-hover flex w-full min-w-0 items-center rounded py-1 text-sm',
+          'group/item hover:bg-state-hover flex h-8 w-full min-w-0 items-center rounded text-sm',
           'cursor-grab active:cursor-grabbing',
           menuOpen && 'bg-state-selected',
         )}
@@ -1604,10 +1643,12 @@ function FlatChildTag({
                         key={parent.id}
                         onClick={() => handleChangeParent(parent.id)}
                       >
-                        <div
-                          className="mr-2 h-3 w-1 rounded-full"
-                          style={{ backgroundColor: parent.color || '#3B82F6' }}
-                        />
+                        <span
+                          className="mr-1 font-medium"
+                          style={{ color: parent.color || '#3B82F6' }}
+                        >
+                          #
+                        </span>
                         {parent.name}
                       </DropdownMenuItem>
                     ))}
@@ -1651,6 +1692,8 @@ function FlatChildTag({
 
 interface FlatUngroupedTagProps {
   item: FlatItem;
+  /** ドラッグ中のアイテム（ボーダー表示制御用） */
+  activeItem: DragItem | null;
   checked: boolean;
   onToggle: () => void;
   count: number;
@@ -1658,17 +1701,21 @@ interface FlatUngroupedTagProps {
   onDeleteTag: () => void;
   /** このタグだけ表示 */
   onShowOnlyThis: () => void;
+  /** 子タグを追加 */
+  onAddChildTag: () => void;
 }
 
 /** フラットなグループなしタグ（useSortable対応、ルートレベル表示） */
 function FlatUngroupedTag({
   item,
+  activeItem,
   checked,
   onToggle,
   count,
   parentTags,
   onDeleteTag,
   onShowOnlyThis,
+  onAddChildTag,
 }: FlatUngroupedTagProps) {
   const t = useTranslations();
   const updateTagMutation = useUpdateTag();
@@ -1756,19 +1803,19 @@ function FlatUngroupedTag({
     removeTag(item.id);
   }, [item.id, removeTag]);
 
+  // 両方のドラッグ時にボーダー表示（ルートでもあり、タグでもある）
+  const showDropIndicator = isOver && !isDragging && activeItem !== null;
+
   return (
     <div
       ref={setNodeRef}
       style={style}
       {...attributes}
-      className={cn(
-        'w-full border-t-2 border-transparent',
-        isOver && !isDragging && 'border-primary',
-      )}
+      className={cn('w-full border-t-2 border-transparent', showDropIndicator && 'border-primary')}
     >
       <div
         className={cn(
-          'group/item hover:bg-state-hover flex w-full min-w-0 items-center rounded py-1 text-sm transition-colors',
+          'group/item hover:bg-state-hover flex h-8 w-full min-w-0 items-center rounded text-sm',
           'cursor-grab active:cursor-grabbing',
           menuOpen && 'bg-state-selected',
         )}
@@ -1884,23 +1931,30 @@ function FlatUngroupedTag({
                 </Field>
               </DropdownMenuSubContent>
             </DropdownMenuSub>
-            {/* 親タグを変更 */}
+            {/* グループに追加 */}
             {parentTags && parentTags.length > 0 && (
               <DropdownMenuSub>
                 <DropdownMenuSubTrigger>
                   <FolderUp className="mr-2 size-4" />
-                  {t('calendar.filter.changeParent')}
+                  {t('calendar.filter.moveToGroup')}
                 </DropdownMenuSubTrigger>
                 <DropdownMenuSubContent>
-                  {parentTags.map((parent) => (
-                    <DropdownMenuItem key={parent.id} onClick={() => handleChangeParent(parent.id)}>
-                      <div
-                        className="mr-2 h-3 w-1 rounded-full"
-                        style={{ backgroundColor: parent.color || '#3B82F6' }}
-                      />
-                      {parent.name}
-                    </DropdownMenuItem>
-                  ))}
+                  {parentTags
+                    .filter((p) => p.id !== item.id)
+                    .map((parent) => (
+                      <DropdownMenuItem
+                        key={parent.id}
+                        onClick={() => handleChangeParent(parent.id)}
+                      >
+                        <span
+                          className="mr-1 font-medium"
+                          style={{ color: parent.color || '#3B82F6' }}
+                        >
+                          #
+                        </span>
+                        {parent.name}
+                      </DropdownMenuItem>
+                    ))}
                 </DropdownMenuSubContent>
               </DropdownMenuSub>
             )}
@@ -1913,6 +1967,11 @@ function FlatUngroupedTag({
             <DropdownMenuItem onClick={onShowOnlyThis}>
               <Eye className="mr-2 size-4" />
               {t('calendar.filter.showOnlyThis')}
+            </DropdownMenuItem>
+            {/* 子タグを追加 */}
+            <DropdownMenuItem onClick={onAddChildTag}>
+              <Plus className="mr-2 size-4" />
+              {t('calendar.filter.addChildTag')}
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             {/* 削除 */}

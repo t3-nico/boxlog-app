@@ -186,6 +186,7 @@
         "description": "このタグを削除しますか？子タグはルートタグとして残ります。"
       },
       "changeParent": "親タグを変更",
+      "moveToGroup": "グループに追加",
       "merge": "他のタグに統合",
       "showOnlyThis": "このタグだけ表示",
       "noParent": "親タグなし",

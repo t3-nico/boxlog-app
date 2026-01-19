@@ -186,6 +186,7 @@
         "description": "Delete this tag? Child tags will remain as root tags."
       },
       "changeParent": "Change parent",
+      "moveToGroup": "Move to group",
       "merge": "Merge into another tag",
       "showOnlyThis": "Show only this",
       "noParent": "No parent",
