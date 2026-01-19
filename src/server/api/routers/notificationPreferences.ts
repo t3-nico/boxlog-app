@@ -6,6 +6,7 @@
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
+import { logger } from '@/lib/logger';
 import { createClient } from '@/lib/supabase/server';
 import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc';
 
@@ -56,7 +57,7 @@ export const notificationPreferencesRouter = createTRPCRouter({
       .single();
 
     if (error && error.code !== 'PGRST116') {
-      console.error('NotificationPreferences fetch error:', error);
+      logger.error('NotificationPreferences fetch error:', error);
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
         message: `通知設定の取得に失敗しました: ${error.message}`,
@@ -134,7 +135,7 @@ export const notificationPreferencesRouter = createTRPCRouter({
         .single();
 
       if (error) {
-        console.error('NotificationPreferences update error:', error);
+        logger.error('NotificationPreferences update error:', error);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: `通知設定の更新に失敗しました: ${error.message}`,
@@ -175,7 +176,7 @@ export const notificationPreferencesRouter = createTRPCRouter({
       );
 
       if (error) {
-        console.error('NotificationPreferences update error:', error);
+        logger.error('NotificationPreferences update error:', error);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: `リマインダー設定の更新に失敗しました: ${error.message}`,

@@ -76,14 +76,9 @@ export function useCalendarNavigationHandlers({
       // フォールバックとして通常処理
       navigateRelative(direction);
     },
-    [
-      navigateRelative,
-      currentDate,
-      viewType,
-      showWeekends,
-      handleTodayWithWeekendSkip,
-      handleWeekendSkipNavigation,
-    ],
+    // handleTodayWithWeekendSkip, handleWeekendSkipNavigation は
+    // advanced-use-latest パターンで安定化済み
+    [navigateRelative, currentDate, viewType, showWeekends],
   );
 
   const handleViewChange = useCallback(
@@ -104,12 +99,13 @@ export function useCalendarNavigationHandlers({
   }, [updateSettings, showWeekends]);
 
   // 日付選択ハンドラー（週末調整フック使用）
+  // adjustWeekendDate は advanced-use-latest パターンで安定化済み
   const handleDateSelect = useCallback(
     (date: Date) => {
       const adjustedDate = adjustWeekendDate(date);
       navigateToDate(adjustedDate);
     },
-    [navigateToDate, adjustWeekendDate],
+    [navigateToDate],
   );
 
   return {

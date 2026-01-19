@@ -217,10 +217,9 @@ export function DataTable<T>({
   const paginatedData = useMemo(() => {
     if (isGrouped) return data; // グループ化時は全データ表示
     if (!showPagination) return data;
-    const { currentPage, pageSize } = paginationState;
-    const startIndex = (currentPage - 1) * pageSize;
-    return data.slice(startIndex, startIndex + pageSize);
-  }, [data, showPagination, paginationState, isGrouped]);
+    const startIndex = (paginationState.currentPage - 1) * paginationState.pageSize;
+    return data.slice(startIndex, startIndex + paginationState.pageSize);
+  }, [data, showPagination, paginationState.currentPage, paginationState.pageSize, isGrouped]);
 
   // 現在ページのID一覧
   const currentPageIds = useMemo(() => paginatedData.map(getRowKey), [paginatedData, getRowKey]);

@@ -14,6 +14,7 @@ import {
   recordAuthAuditLog,
 } from '@/features/auth/lib/audit-log';
 import { checkIpRateLimit } from '@/features/auth/lib/ip-rate-limit';
+import { logger } from '@/lib/logger';
 import { RECAPTCHA_CONFIG, verifyRecaptchaV3 } from '@/lib/recaptcha';
 import { extractClientIp } from '@/lib/security/ip-validation';
 
@@ -80,7 +81,7 @@ export const authRouter = createTRPCRouter({
         throw error;
       }
 
-      console.error('[Auth] reCAPTCHA verification error:', error);
+      logger.error('[Auth] reCAPTCHA verification error:', error);
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
         message: 'reCAPTCHA検証中にエラーが発生しました',
@@ -121,7 +122,7 @@ export const authRouter = createTRPCRouter({
         ipAddress, // デバッグ用（本番では削除可）
       };
     } catch (error) {
-      console.error('[Auth] IP rate limit check error:', error);
+      logger.error('[Auth] IP rate limit check error:', error);
       // エラー時はブロックしない（可用性優先）
       return {
         isBlocked: false,
@@ -166,12 +167,12 @@ export const authRouter = createTRPCRouter({
         });
 
         if (error) {
-          console.error('[Auth] Failed to record login attempt:', error);
+          logger.error('[Auth] Failed to record login attempt:', error);
         }
 
         return { success: !error };
       } catch (error) {
-        console.error('[Auth] Exception recording login attempt:', error);
+        logger.error('[Auth] Exception recording login attempt:', error);
         return { success: false };
       }
     }),
