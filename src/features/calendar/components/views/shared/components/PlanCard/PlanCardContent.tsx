@@ -12,6 +12,7 @@ import { useTranslations } from 'next-intl';
 
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
 import { formatTimeRange } from '../../utils/dateHelpers';
+import { TagsContainer } from './TagsContainer';
 
 interface PlanCardContentProps {
   plan: CalendarPlan;
@@ -23,7 +24,6 @@ interface PlanCardContentProps {
   isMobile?: boolean; // モバイル表示（Googleカレンダー風シンプル表示）
   isHovered?: boolean; // カードがホバーされているか
   isCheckboxHovered?: boolean; // チェックボックスがホバーされているか
-  maxTags?: number; // 表示するタグの最大数（デフォルト: 2）
 }
 
 // Helper function: Parse plan start date
@@ -52,7 +52,6 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
   isMobile = false,
   isHovered = false,
   isCheckboxHovered = false,
-  maxTags = 2,
 }) {
   // タイトルに下線を表示する条件: カードがホバーされている & チェックボックスがホバーされていない
   const showTitleUnderline = isHovered && !isCheckboxHovered;
@@ -118,38 +117,8 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
         </div>
       )}
 
-      {/* タグ表示（残りスペースがあれば表示、maxTagsに基づく） */}
-      {plan.tags && plan.tags.length > 0 && maxTags > 0 ? (
-        <div className="flex min-h-0 flex-shrink flex-wrap gap-1 overflow-hidden pt-1">
-          {plan.tags
-            .slice(0, maxTags)
-            .map(
-              (tag: {
-                id: string;
-                name: string;
-                color: string;
-                icon?: string | undefined;
-                parent_id?: string | undefined;
-              }) => (
-                <span
-                  key={tag.id}
-                  className="inline-flex flex-shrink-0 items-center rounded-sm border px-1.5 py-0.5 text-xs leading-tight"
-                  style={{
-                    borderColor: tag.color || undefined,
-                  }}
-                  title={tag.name}
-                >
-                  <span className="truncate">{tag.name}</span>
-                </span>
-              ),
-            )}
-          {plan.tags.length > maxTags && (
-            <span className="inline-flex items-center px-1 text-xs opacity-75">
-              +{plan.tags.length - maxTags}
-            </span>
-          )}
-        </div>
-      ) : null}
+      {/* タグ表示（横幅いっぱいに表示、入りきらないものは+Nで表示） */}
+      {plan.tags && plan.tags.length > 0 && <TagsContainer tags={plan.tags} />}
     </div>
   );
 });
