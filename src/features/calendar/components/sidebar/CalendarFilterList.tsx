@@ -109,6 +109,26 @@ export function CalendarFilterList() {
   const { data: tagStats } = api.plans.getTagStats.useQuery();
   const tagPlanCounts = tagStats?.counts ?? {};
   const untaggedCount = tagStats?.untaggedCount ?? 0;
+
+  // 親タグ用のカウント計算（親タグ自体 + 子タグ合計）
+  const parentTagCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    tags?.forEach((tag) => {
+      // 親タグ（parent_idがnull）のみ処理
+      if (tag.parent_id === null) {
+        // 親タグ自体のカウント
+        const parentCount = tagPlanCounts[tag.id] ?? 0;
+        // 子タグの合計カウント
+        const childrenCount =
+          tags
+            ?.filter((t) => t.parent_id === tag.id)
+            .reduce((sum, t) => sum + (tagPlanCounts[t.id] ?? 0), 0) ?? 0;
+        counts[tag.id] = parentCount + childrenCount;
+      }
+    });
+    return counts;
+  }, [tags, tagPlanCounts]);
+
   const deleteTagMutation = useDeleteTag();
   const reorderTagsMutation = useReorderTags();
 
@@ -423,6 +443,11 @@ export function CalendarFilterList() {
         return;
       }
 
+      // DEBUG: handleDragMove でのoverItem確認
+      console.warn(
+        `[DEBUG] handleDragMove: overItem.type="${overItem.type}", activeItem.type="${activeItem?.type}"`,
+      );
+
       // 位置ベースドロップの対象を判定
       let elementId: string | null = null;
       let isGroupHeader = false;
@@ -440,9 +465,15 @@ export function CalendarFilterList() {
           elementId = `group-header-${over.id}`;
           isGroupHeader = true;
         }
+      } else if (overItem.type === 'child-tag') {
+        // 子タグへのドロップ（並び替え or グループ間移動）
+        if (activeItem?.type === 'tag') {
+          elementId = `child-tag-${over.id}`;
+        }
       }
 
       if (!elementId) {
+        console.warn(`[DEBUG] elementId is null, resetting dropZone`);
         resetDropZone();
         return;
       }
@@ -450,6 +481,7 @@ export function CalendarFilterList() {
       // ドロップ先の要素を取得
       const element = document.getElementById(elementId);
       if (!element) {
+        console.warn(`[DEBUG] element not found: ${elementId}`);
         resetDropZone();
         return;
       }
@@ -462,16 +494,23 @@ export function CalendarFilterList() {
 
       // ゾーン判定
       let zone: 'top' | 'center-top' | 'center' | 'center-bottom' | 'bottom';
+      const isChildTag = overItem.type === 'child-tag';
 
       if (isGroupHeader) {
         // グループヘッダー: 4分割（ルート並び替え or グループの子として追加）
-        // - top (0-25%): ルートレベルで前に挿入
-        // - center-top (25-50%): グループの最初の子として追加
-        // - center-bottom (50-75%): グループの最後の子として追加
-        // - bottom (75-100%): ルートレベルで後に挿入
-        if (percentage < 0.25) zone = 'top';
+        // - top (0-33%): ルートレベルで前に挿入
+        // - center-top (33-50%): グループの最初の子として追加
+        // - center-bottom (50-67%): グループの最後の子として追加
+        // - bottom (67-100%): ルートレベルで後に挿入
+        if (percentage < 0.33) zone = 'top';
         else if (percentage < 0.5) zone = 'center-top';
-        else if (percentage < 0.75) zone = 'center-bottom';
+        else if (percentage < 0.67) zone = 'center-bottom';
+        else zone = 'bottom';
+      } else if (isChildTag) {
+        // 子タグ: 2分割（並び替えのみ）
+        // - top (0-50%): 前に挿入
+        // - bottom (50-100%): 後に挿入
+        if (percentage < 0.5) zone = 'top';
         else zone = 'bottom';
       } else {
         // ungroupedタグ: 3分割（並び替え or 親子関係作成）
@@ -548,6 +587,11 @@ export function CalendarFilterList() {
         // 位置ベースドロップ: ゾーンに応じて処理を分岐
         const zone = currentDropZone.zone;
 
+        // DEBUG: グループヘッダーへのドロップ
+        console.warn(
+          `[DEBUG] グループヘッダーへのドロップ: zone="${zone}", targetId="${currentDropZone.targetId}"`,
+        );
+
         if (zone === 'center-top' || zone === 'center-bottom') {
           // 中央上/中央下ゾーン → グループの子タグになる（位置指定あり）
           const targetChildren = tags
@@ -573,16 +617,23 @@ export function CalendarFilterList() {
           }
         } else if (zone === 'top' || zone === 'bottom') {
           // 上/下ゾーン → ルートレベルで並び替え（グループヘッダーの前/後に挿入）
+          console.warn(`[DEBUG] top/bottomゾーン処理: zone="${zone}"`);
+
           const allRootTags = flatItems
             .filter((item) => item.parentId === null && item.type !== 'child-tag')
             .map((item) => item.id);
 
           // ドロップ先のインデックス
           const overIndex = allRootTags.indexOf(overId);
-          if (overIndex === -1) return;
+          console.warn(`[DEBUG] overIndex=${overIndex}, allRootTags.length=${allRootTags.length}`);
+          if (overIndex === -1) {
+            console.warn(`[DEBUG] overIndex === -1, returning`);
+            return;
+          }
 
           // アクティブタグがすでにルートにいるかチェック
           const activeIndex = allRootTags.indexOf(activeId);
+          console.warn(`[DEBUG] activeIndex=${activeIndex}`);
 
           let newRootTags: string[];
           if (activeIndex !== -1) {
@@ -594,8 +645,20 @@ export function CalendarFilterList() {
           }
 
           // 挿入位置を決定（上ゾーン→前に、下ゾーン→後に）
-          const insertIndex =
-            zone === 'top' ? newRootTags.indexOf(overId) : newRootTags.indexOf(overId) + 1;
+          // activeIdを除外した後のリストでoverIdを探すため、インデックス調整が必要
+          let insertIndex = newRootTags.indexOf(overId);
+          if (insertIndex === -1) {
+            // overIdが見つからない場合（activeId === overIdの場合など）
+            // activeIndexを使用してinsertIndexを計算
+            insertIndex = activeIndex !== -1 && activeIndex < overIndex ? overIndex - 1 : overIndex;
+          }
+          if (zone === 'bottom') {
+            insertIndex = insertIndex + 1;
+          }
+
+          console.warn(
+            `[DEBUG] insertIndex=${insertIndex}, newRootTags.length=${newRootTags.length}`,
+          );
 
           newRootTags.splice(insertIndex, 0, activeId);
 
@@ -605,6 +668,7 @@ export function CalendarFilterList() {
             parent_id: null,
           }));
 
+          console.warn(`[DEBUG] updates:`, updates);
           reorderTagsMutation.mutate({ updates });
         } else {
           // dropZone未設定 or center → そのグループの子タグになる（末尾に追加）
@@ -657,14 +721,17 @@ export function CalendarFilterList() {
           const oldIndex = siblingTags.findIndex((t) => t.id === activeId);
           let overIndex = siblingTags.findIndex((t) => t.id === overId);
 
-          // bottom ゾーンの場合、ターゲットの後に挿入
-          // ただし、上から下への移動時は調整不要（arrayMoveの仕様）
+          // top/bottom ゾーンに応じてインデックス調整
           if (currentDropZone.zone === 'bottom' && oldIndex < overIndex) {
             // 上から下へ移動 && bottomゾーン → そのまま
           } else if (currentDropZone.zone === 'bottom' && oldIndex > overIndex) {
             // 下から上へ移動 && bottomゾーン → 1つ後ろに
             overIndex = overIndex + 1;
+          } else if (currentDropZone.zone === 'top' && oldIndex < overIndex) {
+            // 上から下へ移動 && topゾーン → 1つ前に
+            overIndex = overIndex - 1;
           }
+          // topゾーン && 下から上への移動 → そのまま（overIndexの前に挿入）
 
           if (oldIndex !== -1 && overIndex !== -1) {
             const newOrder = arrayMove(siblingTags, oldIndex, overIndex);
@@ -777,6 +844,7 @@ export function CalendarFilterList() {
                           }}
                           onAddChildTag={() => handleAddChildTag(item.id)}
                           onDeleteGroup={() => handleDeleteParentTag(item.id)}
+                          count={parentTagCounts[item.id] ?? 0}
                         />
                       );
                     case 'child-tag':
@@ -785,6 +853,7 @@ export function CalendarFilterList() {
                           key={item.id}
                           item={item}
                           activeItem={activeItem}
+                          dropZone={dropZone}
                           checked={visibleTagIds.has(item.id)}
                           onToggle={() => toggleTag(item.id)}
                           count={tagPlanCounts[item.id] ?? 0}
@@ -1081,29 +1150,28 @@ function FilterItem({
           <ColorPalettePicker selectedColor={displayColor} onColorSelect={handleColorChange} />
         </DropdownMenuSubContent>
       </DropdownMenuSub>
-      {/* 説明を編集 */}
+      {/* ノートを編集 */}
       <DropdownMenuSub>
         <DropdownMenuSubTrigger>
           <FileText className="mr-2 size-4" />
-          {t('calendar.filter.editDescription')}
+          {t('calendar.filter.editNote')}
         </DropdownMenuSubTrigger>
         <DropdownMenuSubContent className="w-[280px] p-3">
           <Field>
-            <FieldLabel htmlFor={`tag-description-${tagId}`}>
-              {t('calendar.filter.descriptionLabel')}
-            </FieldLabel>
+            <FieldLabel htmlFor={`tag-note-${tagId}`}>{t('calendar.filter.noteLabel')}</FieldLabel>
             <div className="flex items-center justify-between">
-              <FieldSupportText id={`tag-description-support-${tagId}`}>
-                {t('calendar.filter.descriptionHint')}
+              <FieldSupportText id={`tag-note-support-${tagId}`}>
+                {t('calendar.filter.noteHint')}
               </FieldSupportText>
               <span className="text-muted-foreground text-xs tabular-nums">
                 {editDescription.length}/100
               </span>
             </div>
             <Textarea
-              id={`tag-description-${tagId}`}
+              id={`tag-note-${tagId}`}
               ref={textareaRef}
               value={editDescription}
+              placeholder={t('calendar.filter.notePlaceholder')}
               onChange={(e) => {
                 const value = e.target.value;
                 if (value.length <= 100) {
@@ -1116,7 +1184,7 @@ function FilterItem({
               }}
               onBlur={handleSaveDescription}
               maxLength={100}
-              aria-describedby={`tag-description-support-${tagId}`}
+              aria-describedby={`tag-note-support-${tagId}`}
               className="border-border min-h-[60px] w-full resize-none border text-sm"
             />
             {editDescription.length >= 100 && (
@@ -1323,6 +1391,8 @@ interface FlatGroupHeaderProps {
   onDeleteGroup: () => void;
   /** このグループだけ表示 */
   onShowOnlyGroup: () => void;
+  /** プラン数（親タグ自体 + 子タグ合計） */
+  count: number;
 }
 
 /** フラットなグループヘッダー（useSortable対応） */
@@ -1336,6 +1406,7 @@ function FlatGroupHeader({
   onAddChildTag,
   onDeleteGroup,
   onShowOnlyGroup,
+  count,
 }: FlatGroupHeaderProps) {
   const t = useTranslations();
   const updateTagMutation = useUpdateTag();
@@ -1495,10 +1566,21 @@ function FlatGroupHeader({
             )}
           </div>
         ) : (
-          <span className="text-foreground ml-2 flex-1 truncate text-sm font-medium">
-            {item.name}
-          </span>
+          <span className="text-foreground ml-2 truncate text-sm font-medium">{item.name}</span>
         )}
+        <button
+          type="button"
+          aria-expanded={isExpanded}
+          aria-label={isExpanded ? t('calendar.filter.collapse') : t('calendar.filter.expand')}
+          className="relative ml-1 flex size-6 shrink-0 items-center justify-center before:absolute before:-inset-2 before:content-['']"
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleExpand();
+          }}
+        >
+          <ChevronRight className={cn('size-4 transition-transform', isExpanded && 'rotate-90')} />
+        </button>
+        <div className="flex-1" />
         <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
           <DropdownMenuTrigger asChild>
             <button
@@ -1529,20 +1611,20 @@ function FlatGroupHeader({
                 />
               </DropdownMenuSubContent>
             </DropdownMenuSub>
-            {/* 説明を編集 */}
+            {/* ノートを編集 */}
             <DropdownMenuSub>
               <DropdownMenuSubTrigger>
                 <FileText className="mr-2 size-4" />
-                {t('calendar.filter.editDescription')}
+                {t('calendar.filter.editNote')}
               </DropdownMenuSubTrigger>
               <DropdownMenuSubContent className="w-[280px] p-3">
                 <Field>
                   <FieldLabel htmlFor={`tag-description-${item.id}`}>
-                    {t('calendar.filter.descriptionLabel')}
+                    {t('calendar.filter.noteLabel')}
                   </FieldLabel>
                   <div className="flex items-center justify-between">
                     <FieldSupportText id={`tag-description-support-${item.id}`}>
-                      {t('calendar.filter.descriptionHint')}
+                      {t('calendar.filter.noteHint')}
                     </FieldSupportText>
                     <span className="text-muted-foreground text-xs tabular-nums">
                       {editDescription.length}/100
@@ -1563,6 +1645,7 @@ function FlatGroupHeader({
                     }}
                     onBlur={handleSaveDescription}
                     maxLength={100}
+                    placeholder={t('calendar.filter.notePlaceholder')}
                     aria-describedby={`tag-description-support-${item.id}`}
                     className="border-border min-h-[60px] w-full resize-none border text-sm"
                   />
@@ -1595,18 +1678,9 @@ function FlatGroupHeader({
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-        <button
-          type="button"
-          aria-expanded={isExpanded}
-          aria-label={isExpanded ? t('calendar.filter.collapse') : t('calendar.filter.expand')}
-          className="relative flex size-6 shrink-0 items-center justify-center before:absolute before:-inset-2 before:content-['']"
-          onClick={(e) => {
-            e.stopPropagation();
-            onToggleExpand();
-          }}
-        >
-          <ChevronRight className={cn('size-4 transition-transform', isExpanded && 'rotate-90')} />
-        </button>
+        <span className="text-muted-foreground flex size-6 shrink-0 items-center justify-center text-xs tabular-nums">
+          {count}
+        </span>
       </div>
     </div>
   );
@@ -1639,6 +1713,11 @@ interface FlatChildTagProps {
   item: FlatItem;
   /** ドラッグ中のアイテム（ボーダー表示制御用） */
   activeItem: DragItem | null;
+  /** ドロップゾーン情報（top/bottom判定用） */
+  dropZone: {
+    targetId: string | null;
+    zone: 'top' | 'center-top' | 'center' | 'center-bottom' | 'bottom' | null;
+  };
   checked: boolean;
   onToggle: () => void;
   count: number;
@@ -1652,6 +1731,7 @@ interface FlatChildTagProps {
 function FlatChildTag({
   item,
   activeItem,
+  dropZone,
   checked,
   onToggle,
   count,
@@ -1662,7 +1742,7 @@ function FlatChildTag({
   const t = useTranslations();
   const updateTagMutation = useUpdateTag();
   const { removeTag } = useCalendarFilterStore();
-  const { attributes, listeners, setNodeRef, isDragging, isOver } = useSortable({ id: item.id });
+  const { attributes, listeners, setNodeRef, isDragging } = useSortable({ id: item.id });
   const [menuOpen, setMenuOpen] = useState(false);
   const [optimisticColor, setOptimisticColor] = useState<string | null>(null);
   const displayColor = optimisticColor ?? item.color;
@@ -1750,15 +1830,16 @@ function FlatChildTag({
     removeTag(item.id);
   }, [item.id, removeTag]);
 
-  // 子タグドラッグ時のみボーダー表示（ルートタグドラッグ時は表示しない）
-  const showDropIndicator = isOver && !isDragging && activeItem?.type === 'tag';
-  // ドラッグ方向に応じてボーダー位置を決定
-  const isDraggingDown = activeItem && activeItem.sortOrder < item.sortOrder;
-  const showTopBorder = showDropIndicator && !isDraggingDown;
-  const showBottomBorder = showDropIndicator && isDraggingDown;
+  // ドロップゾーン情報からボーダー表示を決定
+  const isTargetItem = dropZone.targetId === item.id;
+  const showTopBorder =
+    isTargetItem && !isDragging && activeItem?.type === 'tag' && dropZone.zone === 'top';
+  const showBottomBorder =
+    isTargetItem && !isDragging && activeItem?.type === 'tag' && dropZone.zone === 'bottom';
 
   const content = (
     <div
+      id={`child-tag-${item.id}`}
       ref={setNodeRef}
       style={style}
       {...attributes}
@@ -1845,20 +1926,20 @@ function FlatChildTag({
                 />
               </DropdownMenuSubContent>
             </DropdownMenuSub>
-            {/* 説明を編集 */}
+            {/* ノートを編集 */}
             <DropdownMenuSub>
               <DropdownMenuSubTrigger>
                 <FileText className="mr-2 size-4" />
-                {t('calendar.filter.editDescription')}
+                {t('calendar.filter.editNote')}
               </DropdownMenuSubTrigger>
               <DropdownMenuSubContent className="w-[280px] p-3">
                 <Field>
                   <FieldLabel htmlFor={`tag-description-${item.id}`}>
-                    {t('calendar.filter.descriptionLabel')}
+                    {t('calendar.filter.noteLabel')}
                   </FieldLabel>
                   <div className="flex items-center justify-between">
                     <FieldSupportText id={`tag-description-support-${item.id}`}>
-                      {t('calendar.filter.descriptionHint')}
+                      {t('calendar.filter.noteHint')}
                     </FieldSupportText>
                     <span className="text-muted-foreground text-xs tabular-nums">
                       {editDescription.length}/100
@@ -1879,6 +1960,7 @@ function FlatChildTag({
                     }}
                     onBlur={handleSaveDescription}
                     maxLength={100}
+                    placeholder={t('calendar.filter.notePlaceholder')}
                     aria-describedby={`tag-description-support-${item.id}`}
                     className="border-border min-h-[60px] w-full resize-none border text-sm"
                   />
@@ -1888,36 +1970,32 @@ function FlatChildTag({
                 </Field>
               </DropdownMenuSubContent>
             </DropdownMenuSub>
-            {/* 親タグを変更 */}
-            {parentTags && parentTags.length > 0 && (
-              <DropdownMenuSub>
-                <DropdownMenuSubTrigger>
-                  <FolderUp className="mr-2 size-4" />
-                  {t('calendar.filter.changeParent')}
-                </DropdownMenuSubTrigger>
-                <DropdownMenuSubContent>
-                  <DropdownMenuItem onClick={() => handleChangeParent(null)}>
-                    {t('calendar.filter.ungrouped')}
-                  </DropdownMenuItem>
-                  {parentTags
-                    .filter((p) => p.id !== item.parentId)
-                    .map((parent) => (
-                      <DropdownMenuItem
-                        key={parent.id}
-                        onClick={() => handleChangeParent(parent.id)}
+            {/* 親タグを変更 - 子タグは常にグループなしへ移動可能 */}
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger>
+                <FolderUp className="mr-2 size-4" />
+                {t('calendar.filter.changeParent')}
+              </DropdownMenuSubTrigger>
+              <DropdownMenuSubContent>
+                <DropdownMenuItem onClick={() => handleChangeParent(null)}>
+                  <span className="text-muted-foreground mr-2">—</span>
+                  {t('calendar.filter.noParent')}
+                </DropdownMenuItem>
+                {(parentTags ?? [])
+                  .filter((p) => p.id !== item.parentId)
+                  .map((parent) => (
+                    <DropdownMenuItem key={parent.id} onClick={() => handleChangeParent(parent.id)}>
+                      <span
+                        className="mr-1 font-medium"
+                        style={{ color: parent.color || '#3B82F6' }}
                       >
-                        <span
-                          className="mr-1 font-medium"
-                          style={{ color: parent.color || '#3B82F6' }}
-                        >
-                          #
-                        </span>
-                        {parent.name}
-                      </DropdownMenuItem>
-                    ))}
-                </DropdownMenuSubContent>
-              </DropdownMenuSub>
-            )}
+                        #
+                      </span>
+                      {parent.name}
+                    </DropdownMenuItem>
+                  ))}
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
             {/* マージ */}
             <DropdownMenuItem onClick={() => setMergeModalOpen(true)}>
               <Merge className="mr-2 size-4" />
@@ -2213,20 +2291,20 @@ function FlatUngroupedTag({
                 />
               </DropdownMenuSubContent>
             </DropdownMenuSub>
-            {/* 説明を編集 */}
+            {/* ノートを編集 */}
             <DropdownMenuSub>
               <DropdownMenuSubTrigger>
                 <FileText className="mr-2 size-4" />
-                {t('calendar.filter.editDescription')}
+                {t('calendar.filter.editNote')}
               </DropdownMenuSubTrigger>
               <DropdownMenuSubContent className="w-[280px] p-3">
                 <Field>
                   <FieldLabel htmlFor={`tag-description-${item.id}`}>
-                    {t('calendar.filter.descriptionLabel')}
+                    {t('calendar.filter.noteLabel')}
                   </FieldLabel>
                   <div className="flex items-center justify-between">
                     <FieldSupportText id={`tag-description-support-${item.id}`}>
-                      {t('calendar.filter.descriptionHint')}
+                      {t('calendar.filter.noteHint')}
                     </FieldSupportText>
                     <span className="text-muted-foreground text-xs tabular-nums">
                       {editDescription.length}/100
@@ -2247,6 +2325,7 @@ function FlatUngroupedTag({
                     }}
                     onBlur={handleSaveDescription}
                     maxLength={100}
+                    placeholder={t('calendar.filter.notePlaceholder')}
                     aria-describedby={`tag-description-support-${item.id}`}
                     className="border-border min-h-[60px] w-full resize-none border text-sm"
                   />

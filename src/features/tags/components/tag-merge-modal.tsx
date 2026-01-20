@@ -1,23 +1,17 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-import { Check } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { useMergeTag, useTags } from '@/features/tags/hooks/useTags';
 import { cn } from '@/lib/utils';
 
 import { Button } from '@/components/ui/button';
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from '@/components/ui/command';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 interface TagMergeModalProps {
   open: boolean;
@@ -46,10 +40,8 @@ export function TagMergeModal({
   const { data: tags } = useTags();
   const mergeTagMutation = useMergeTag();
 
-  const [selectedTarget, setSelectedTarget] = useState<{
-    id: string;
-    name: string;
-  } | null>(null);
+  const [selectedTargetId, setSelectedTargetId] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState('');
   const [mounted, setMounted] = useState(false);
   const [error, setError] = useState('');
 
@@ -61,7 +53,8 @@ export function TagMergeModal({
   // モーダルが開いたらリセット
   useEffect(() => {
     if (open) {
-      setSelectedTarget(null);
+      setSelectedTargetId('');
+      setSearchQuery('');
       setError('');
     }
   }, [open]);
@@ -81,29 +74,41 @@ export function TagMergeModal({
   }, [open, mergeTagMutation.isPending, onClose]);
 
   // マージ対象のタグ一覧（自分を除外、アクティブなもののみ）
-  const mergeTargetTags =
-    tags?.filter((tag) => tag.id !== sourceTag.id && tag.is_active !== false) ?? [];
+  const mergeTargetTags = useMemo(
+    () => tags?.filter((tag) => tag.id !== sourceTag.id && tag.is_active !== false) ?? [],
+    [tags, sourceTag.id],
+  );
 
-  const handleSelect = useCallback((tag: { id: string; name: string }) => {
-    setSelectedTarget(tag);
-    setError('');
-  }, []);
+  // 検索でフィルタリング
+  const filteredTags = useMemo(() => {
+    if (!searchQuery.trim()) return mergeTargetTags;
+    const query = searchQuery.toLowerCase();
+    return mergeTargetTags.filter((tag) => tag.name.toLowerCase().includes(query));
+  }, [mergeTargetTags, searchQuery]);
+
+  // 選択されたタグを取得
+  const selectedTarget = mergeTargetTags.find((tag) => tag.id === selectedTargetId);
 
   const handleMerge = useCallback(async () => {
-    if (!selectedTarget) {
+    if (!selectedTargetId) {
       setError(t('calendar.filter.mergeTag.selectRequired'));
       return;
     }
 
-    await mergeTagMutation.mutateAsync({
-      sourceTagId: sourceTag.id,
-      targetTagId: selectedTarget.id,
-    });
+    try {
+      await mergeTagMutation.mutateAsync({
+        sourceTagId: sourceTag.id,
+        targetTagId: selectedTargetId,
+      });
 
-    onMergeSuccess?.();
-    setSelectedTarget(null);
-    onClose();
-  }, [selectedTarget, sourceTag.id, mergeTagMutation, onMergeSuccess, onClose, t]);
+      onMergeSuccess?.();
+      setSelectedTargetId('');
+      onClose();
+    } catch (err) {
+      console.error('Merge failed:', err);
+      setError(t('tags.merge.failed'));
+    }
+  }, [selectedTargetId, sourceTag.id, mergeTagMutation, onMergeSuccess, onClose, t]);
 
   const handleBackdropClick = useCallback(
     (e: React.MouseEvent) => {
@@ -151,35 +156,54 @@ export function TagMergeModal({
           {selectedTarget ? confirmationMessage : t('calendar.filter.mergeTag.selectTarget')}
         </p>
 
-        {/* タグ検索・選択 */}
-        <Command className="border-border rounded-md border">
-          <CommandInput placeholder={t('calendar.filter.mergeTag.searchPlaceholder')} />
-          <CommandList className="max-h-[200px]">
-            <CommandEmpty>{t('calendar.filter.mergeTag.noResults')}</CommandEmpty>
-            <CommandGroup>
-              {mergeTargetTags.map((tag) => (
-                <CommandItem
+        {/* 検索ボックス */}
+        <Input
+          type="text"
+          placeholder={t('calendar.filter.mergeTag.searchPlaceholder')}
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="mb-2"
+        />
+
+        {/* タグ選択（ラジオボタンリスト） */}
+        <div className="border-border max-h-[200px] overflow-y-auto rounded-md border">
+          {filteredTags.length === 0 ? (
+            <p className="text-muted-foreground p-4 text-center text-sm">
+              {t('calendar.filter.mergeTag.noResults')}
+            </p>
+          ) : (
+            <RadioGroup
+              value={selectedTargetId}
+              onValueChange={(value) => {
+                setSelectedTargetId(value);
+                setError('');
+              }}
+              className="p-1"
+            >
+              {filteredTags.map((tag) => (
+                <Label
                   key={tag.id}
-                  value={tag.name}
-                  onSelect={() => handleSelect({ id: tag.id, name: tag.name })}
+                  htmlFor={`merge-target-${tag.id}`}
                   className={cn(
-                    'cursor-pointer',
-                    selectedTarget?.id === tag.id && 'bg-state-selected',
+                    'flex cursor-pointer items-center gap-3 rounded-md px-3 py-2 transition-colors',
+                    'hover:bg-state-hover',
+                    selectedTargetId === tag.id && 'bg-state-selected',
                   )}
                 >
-                  <span
-                    className="size-3 shrink-0 rounded-full"
-                    style={{ backgroundColor: tag.color || '#3B82F6' }}
+                  <RadioGroupItem
+                    value={tag.id}
+                    id={`merge-target-${tag.id}`}
+                    className="shrink-0"
                   />
-                  <span className="flex-1">{tag.name}</span>
-                  {selectedTarget?.id === tag.id && (
-                    <Check className="text-primary ml-auto size-4" />
-                  )}
-                </CommandItem>
+                  <span className="shrink-0 font-medium" style={{ color: tag.color || '#3B82F6' }}>
+                    #
+                  </span>
+                  <span className="flex-1 truncate text-sm">{tag.name}</span>
+                </Label>
               ))}
-            </CommandGroup>
-          </CommandList>
-        </Command>
+            </RadioGroup>
+          )}
+        </div>
 
         {/* エラーメッセージ */}
         {error && (

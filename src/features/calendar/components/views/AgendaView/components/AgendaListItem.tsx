@@ -7,7 +7,7 @@ import { ja } from 'date-fns/locale';
 import { Tag } from 'lucide-react';
 
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
-import { PlanTagSelectDialogEnhanced } from '@/features/plans/components/shared/PlanTagSelectDialogEnhanced';
+import { TagSelectCombobox } from '@/features/plans/components/shared/TagSelectCombobox';
 import { usePlanTags } from '@/features/plans/hooks/usePlanTags';
 import { useDateFormat } from '@/features/settings/hooks/useDateFormat';
 import { cn } from '@/lib/utils';
@@ -188,7 +188,7 @@ export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemP
               )}
             </>
           ) : (
-            <PlanTagSelectDialogEnhanced
+            <TagSelectCombobox
               selectedTagIds={selectedTagIds}
               onTagsChange={handleTagsChange}
               align="end"
@@ -202,7 +202,7 @@ export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemP
                   </span>
                 </div>
               </div>
-            </PlanTagSelectDialogEnhanced>
+            </TagSelectCombobox>
           )}
         </div>
       </div>

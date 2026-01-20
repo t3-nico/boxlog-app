@@ -122,16 +122,16 @@ function ParentTagHeader({
         </button>
 
         {/* 名前（行クリックで展開/折りたたみ） */}
-        <span className="flex-1 truncate font-medium">{tag.name}</span>
+        <span className="truncate font-medium">{tag.name}</span>
 
-        {/* 展開/折りたたみアイコン（右端） */}
+        {/* 展開/折りたたみアイコン（タイトルのすぐ右） */}
         <button
           type="button"
           onClick={(e) => {
             e.stopPropagation();
             onToggleExpand();
           }}
-          className="hover:bg-state-hover flex size-6 shrink-0 items-center justify-center rounded"
+          className="hover:bg-state-hover -ml-1 flex size-6 shrink-0 items-center justify-center rounded"
         >
           <ChevronRight
             className={cn(
@@ -262,6 +262,7 @@ export function TagSelectCombobox({
         side={side}
         alignOffset={alignOffset}
         sideOffset={sideOffset}
+        updatePositionStrategy="optimized"
       >
         <Command shouldFilter={false}>
           <CommandInput

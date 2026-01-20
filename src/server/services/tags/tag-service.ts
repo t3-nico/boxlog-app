@@ -68,16 +68,18 @@ interface TagRpcFunctions {
 /**
  * 型安全なTag RPC呼び出しヘルパー
  */
-function callTagRpc<T extends keyof TagRpcFunctions>(
+async function callTagRpc<T extends keyof TagRpcFunctions>(
   supabase: SupabaseClient<Database>,
   functionName: T,
   args: TagRpcFunctions[T]['Args'],
 ): Promise<{ data: TagRpcFunctions[T]['Returns'] | null; error: Error | null }> {
-  const rpcCall = supabase.rpc as unknown as (
-    fn: string,
-    params: Record<string, unknown>,
-  ) => Promise<{ data: TagRpcFunctions[T]['Returns'] | null; error: Error | null }>;
-  return rpcCall(functionName, args as Record<string, unknown>);
+  // supabase.rpc は直接呼び出す（型キャストで対応）
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const result = await (supabase.rpc as any)(functionName, args);
+  return {
+    data: result.data as TagRpcFunctions[T]['Returns'] | null,
+    error: result.error,
+  };
 }
 
 /** タグ作成入力 */
@@ -316,21 +318,31 @@ export class TagService {
       }
     }
 
-    // 兄弟タグの最大sort_orderを取得（末尾に追加するため）
-    let siblingsQuery = this.supabase.from('tags').select('sort_order').eq('user_id', userId);
+    // 新規タグを先頭に表示するため、既存の兄弟タグのsort_orderをインクリメント
+    let siblingsUpdateQuery = this.supabase
+      .from('tags')
+      .select('id, sort_order')
+      .eq('user_id', userId);
 
     // parent_idがnullの場合は.is()、それ以外は.eq()を使用
-    siblingsQuery = parentId
-      ? siblingsQuery.eq('parent_id', parentId)
-      : siblingsQuery.is('parent_id', null);
+    siblingsUpdateQuery = parentId
+      ? siblingsUpdateQuery.eq('parent_id', parentId)
+      : siblingsUpdateQuery.is('parent_id', null);
 
-    const { data: siblings } = await siblingsQuery
-      .order('sort_order', { ascending: false })
-      .limit(1);
+    const { data: siblings } = await siblingsUpdateQuery;
 
-    const maxSortOrder = siblings?.[0]?.sort_order ?? -1;
+    // 既存の兄弟タグのsort_orderを+1インクリメント
+    if (siblings && siblings.length > 0) {
+      const incrementPromises = siblings.map((sibling) =>
+        this.supabase
+          .from('tags')
+          .update({ sort_order: (sibling.sort_order ?? 0) + 1 })
+          .eq('id', sibling.id),
+      );
+      await Promise.all(incrementPromises);
+    }
 
-    // タグデータ作成
+    // タグデータ作成（sort_order = 0で先頭に追加）
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const tagData: any = {
       user_id: userId,
@@ -339,7 +351,7 @@ export class TagService {
       description: input.description?.trim() || null,
       is_active: true,
       parent_id: parentId,
-      sort_order: maxSortOrder + 1,
+      sort_order: 0,
     };
 
     const { data, error } = await this.supabase.from('tags').insert(tagData).select().single();

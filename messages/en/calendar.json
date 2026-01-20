@@ -178,9 +178,10 @@
       "addChildTag": "Add child tag",
       "rename": "Rename",
       "changeColor": "Change color",
-      "editDescription": "Edit description",
-      "descriptionLabel": "Add a description",
-      "descriptionHint": "Displayed in tooltip",
+      "editNote": "Edit note",
+      "noteLabel": "Note",
+      "noteHint": "Displayed in tooltip",
+      "notePlaceholder": "Add a note...",
       "deleteParentTag": {
         "title": "Delete Tag",
         "description": "Delete this tag? Child tags will remain as root tags."
