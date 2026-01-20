@@ -368,14 +368,61 @@ export function usePlanMutations() {
     },
   });
 
-  // ✨ 一括更新
+  // ✨ 一括更新（楽観的更新付き）
   const bulkUpdatePlan = api.plans.bulkUpdate.useMutation({
+    onMutate: async ({ ids, data }) => {
+      // mutation開始フラグを設定（Realtime二重更新防止）
+      setIsMutating(true);
+
+      // 進行中のクエリをキャンセル
+      await utils.plans.list.cancel();
+
+      // 現在のデータをスナップショット（ロールバック用）
+      const previousPlans = utils.plans.list.getData();
+
+      // 楽観的更新用のヘルパー関数（型はキャッシュから推論）
+      const updatePlanData = <T extends { id: string }>(plan: T): T => {
+        if (!ids.includes(plan.id)) return plan;
+        return {
+          ...plan,
+          ...(data.status !== undefined && { status: data.status }),
+          ...(data.title !== undefined && { title: data.title }),
+          ...(data.description !== undefined && { description: data.description }),
+          ...(data.due_date !== undefined && { due_date: data.due_date }),
+          ...(data.start_time !== undefined && { start_time: data.start_time }),
+          ...(data.end_time !== undefined && { end_time: data.end_time }),
+          updated_at: new Date().toISOString(),
+        } as T;
+      };
+
+      // 楽観的更新: プランを即座に更新
+      utils.plans.list.setData(undefined, (oldData) => {
+        if (!oldData) return oldData;
+        return oldData.map(updatePlanData);
+      });
+
+      utils.plans.list.setData({}, (oldData) => {
+        if (!oldData) return oldData;
+        return oldData.map(updatePlanData);
+      });
+
+      return { previousPlans };
+    },
     onSuccess: (result) => {
       toast.success(t('common.plan.bulkUpdated', { count: result.count }));
       void utils.plans.list.invalidate(undefined, { refetchType: 'active' });
     },
-    onError: (error) => {
+    onError: (error, _variables, context) => {
       toast.error(t('common.plan.bulkUpdateFailed', { error: error.message }));
+
+      // エラー時: 楽観的更新をロールバック
+      if (context?.previousPlans) {
+        utils.plans.list.setData(undefined, context.previousPlans);
+      }
+    },
+    onSettled: () => {
+      // mutation完了後にフラグをリセット
+      setIsMutating(false);
     },
   });
 

@@ -291,6 +291,64 @@ export const myRouter = createTRPCRouter({
 });
 ```
 
+## 🔄 楽観的更新（Optimistic Updates）
+
+### 基本方針
+
+**ユーザー操作に対応する全mutationで楽観的更新を実装する**
+
+楽観的更新により、ユーザーはサーバーレスポンスを待たずに即座にUIフィードバックを得られる。
+これは体感速度を200-800ms改善し、アプリケーションの応答性を大幅に向上させる。
+
+### 実装パターン（テンプレート）
+
+```typescript
+const myMutation = api.myRouter.myEndpoint.useMutation({
+  // 1. 楽観的更新
+  onMutate: async (input) => {
+    // 進行中のクエリをキャンセル（競合防止）
+    await utils.myRouter.list.cancel();
+
+    // 現在のキャッシュをスナップショット（ロールバック用）
+    const previous = utils.myRouter.list.getData();
+
+    // キャッシュを楽観的に更新
+    utils.myRouter.list.setData(undefined, (old) => {
+      if (!old) return old;
+      return /* 更新後のデータ */;
+    });
+
+    return { previous };
+  },
+
+  // 2. エラー時ロールバック
+  onError: (_err, _input, context) => {
+    if (context?.previous) {
+      utils.myRouter.list.setData(undefined, context.previous);
+    }
+  },
+
+  // 3. 完了時に再検証
+  onSettled: () => {
+    void utils.myRouter.list.invalidate();
+  },
+});
+```
+
+### 楽観的更新が不要な場合
+
+以下のケースでは楽観的更新を適用しない：
+
+1. **不可逆操作**: アカウント削除、支払い処理など
+2. **サーバー計算が必要**: IDの発行、複雑な集計など（ただし一時IDで対応可能な場合は実装する）
+3. **低頻度操作**: 月1回程度の設定変更など（ただし一貫性のため実装を推奨）
+
+### 新規mutation作成時のチェックリスト
+
+- [ ] ユーザー操作に対応するか？ → 楽観的更新を実装
+- [ ] 不可逆操作か？ → 楽観的更新なし、確認ダイアログを表示
+- [ ] 複数キャッシュに影響するか？ → 全キャッシュを更新
+
 ---
 
 ## 📈 パフォーマンス監視の原則
@@ -338,5 +396,5 @@ export const myRouter = createTRPCRouter({
 
 ---
 
-**📖 最終更新**: 2026-01-13 | **バージョン**: v11.9
+**📖 最終更新**: 2026-01-21 | **バージョン**: v12.0
 **変更履歴**: [`docs/development/CLAUDE_MD_CHANGELOG.md`](docs/development/CLAUDE_MD_CHANGELOG.md)
