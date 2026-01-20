@@ -443,11 +443,6 @@ export function CalendarFilterList() {
         return;
       }
 
-      // DEBUG: handleDragMove でのoverItem確認
-      console.warn(
-        `[DEBUG] handleDragMove: overItem.type="${overItem.type}", activeItem.type="${activeItem?.type}"`,
-      );
-
       // 位置ベースドロップの対象を判定
       let elementId: string | null = null;
       let isGroupHeader = false;
@@ -473,7 +468,6 @@ export function CalendarFilterList() {
       }
 
       if (!elementId) {
-        console.warn(`[DEBUG] elementId is null, resetting dropZone`);
         resetDropZone();
         return;
       }
@@ -481,7 +475,6 @@ export function CalendarFilterList() {
       // ドロップ先の要素を取得
       const element = document.getElementById(elementId);
       if (!element) {
-        console.warn(`[DEBUG] element not found: ${elementId}`);
         resetDropZone();
         return;
       }
@@ -583,103 +576,15 @@ export function CalendarFilterList() {
       if (!activeTag) return;
 
       // ドロップ先がグループヘッダーの場合
+      // シンプル化: グループの子タグとして末尾に追加
       if (isOverGroup) {
-        // 位置ベースドロップ: ゾーンに応じて処理を分岐
-        const zone = currentDropZone.zone;
+        const targetChildren = tags
+          .filter((t) => t.parent_id === overId)
+          .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
 
-        // DEBUG: グループヘッダーへのドロップ
-        console.warn(
-          `[DEBUG] グループヘッダーへのドロップ: zone="${zone}", targetId="${currentDropZone.targetId}"`,
-        );
-
-        if (zone === 'center-top' || zone === 'center-bottom') {
-          // 中央上/中央下ゾーン → グループの子タグになる（位置指定あり）
-          const targetChildren = tags
-            .filter((t) => t.parent_id === overId)
-            .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
-
-          if (zone === 'center-top') {
-            // center-top: 最初の子として追加（既存の子を後ろにシフト）
-            const reorderedUpdates = [
-              { id: activeId, sort_order: 0, parent_id: overId },
-              ...targetChildren.map((t, index) => ({
-                id: t.id,
-                sort_order: index + 1,
-                parent_id: overId,
-              })),
-            ];
-            reorderTagsMutation.mutate({ updates: reorderedUpdates });
-          } else {
-            // center-bottom: 最後の子として追加
-            reorderTagsMutation.mutate({
-              updates: [{ id: activeId, sort_order: targetChildren.length, parent_id: overId }],
-            });
-          }
-        } else if (zone === 'top' || zone === 'bottom') {
-          // 上/下ゾーン → ルートレベルで並び替え（グループヘッダーの前/後に挿入）
-          console.warn(`[DEBUG] top/bottomゾーン処理: zone="${zone}"`);
-
-          const allRootTags = flatItems
-            .filter((item) => item.parentId === null && item.type !== 'child-tag')
-            .map((item) => item.id);
-
-          // ドロップ先のインデックス
-          const overIndex = allRootTags.indexOf(overId);
-          console.warn(`[DEBUG] overIndex=${overIndex}, allRootTags.length=${allRootTags.length}`);
-          if (overIndex === -1) {
-            console.warn(`[DEBUG] overIndex === -1, returning`);
-            return;
-          }
-
-          // アクティブタグがすでにルートにいるかチェック
-          const activeIndex = allRootTags.indexOf(activeId);
-          console.warn(`[DEBUG] activeIndex=${activeIndex}`);
-
-          let newRootTags: string[];
-          if (activeIndex !== -1) {
-            // すでにルートにいる場合は移動
-            newRootTags = allRootTags.filter((id) => id !== activeId);
-          } else {
-            // ルートにいない場合（子タグからの昇格）
-            newRootTags = [...allRootTags];
-          }
-
-          // 挿入位置を決定（上ゾーン→前に、下ゾーン→後に）
-          // activeIdを除外した後のリストでoverIdを探すため、インデックス調整が必要
-          let insertIndex = newRootTags.indexOf(overId);
-          if (insertIndex === -1) {
-            // overIdが見つからない場合（activeId === overIdの場合など）
-            // activeIndexを使用してinsertIndexを計算
-            insertIndex = activeIndex !== -1 && activeIndex < overIndex ? overIndex - 1 : overIndex;
-          }
-          if (zone === 'bottom') {
-            insertIndex = insertIndex + 1;
-          }
-
-          console.warn(
-            `[DEBUG] insertIndex=${insertIndex}, newRootTags.length=${newRootTags.length}`,
-          );
-
-          newRootTags.splice(insertIndex, 0, activeId);
-
-          const updates = newRootTags.map((id, index) => ({
-            id,
-            sort_order: index,
-            parent_id: null,
-          }));
-
-          console.warn(`[DEBUG] updates:`, updates);
-          reorderTagsMutation.mutate({ updates });
-        } else {
-          // dropZone未設定 or center → そのグループの子タグになる（末尾に追加）
-          const targetChildren = tags
-            .filter((t) => t.parent_id === overId)
-            .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
-
-          reorderTagsMutation.mutate({
-            updates: [{ id: activeId, sort_order: targetChildren.length, parent_id: overId }],
-          });
-        }
+        reorderTagsMutation.mutate({
+          updates: [{ id: activeId, sort_order: targetChildren.length, parent_id: overId }],
+        });
         return;
       } else {
         // ドロップ先がタグの場合
@@ -711,7 +616,7 @@ export function CalendarFilterList() {
         const targetParentId = overTag.parent_id;
 
         if (activeTag.parent_id === targetParentId) {
-          // 同じグループ内での並び替え
+          // 同じグループ内での並び替え（シンプルにarrayMoveのみ）
           // 注意: ルートレベル(parent_id: null)の場合、親タグ(グループヘッダー)を除外する必要がある
           const siblingTags = tags
             .filter((t) => t.parent_id === targetParentId)
@@ -719,19 +624,7 @@ export function CalendarFilterList() {
             .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
 
           const oldIndex = siblingTags.findIndex((t) => t.id === activeId);
-          let overIndex = siblingTags.findIndex((t) => t.id === overId);
-
-          // top/bottom ゾーンに応じてインデックス調整
-          if (currentDropZone.zone === 'bottom' && oldIndex < overIndex) {
-            // 上から下へ移動 && bottomゾーン → そのまま
-          } else if (currentDropZone.zone === 'bottom' && oldIndex > overIndex) {
-            // 下から上へ移動 && bottomゾーン → 1つ後ろに
-            overIndex = overIndex + 1;
-          } else if (currentDropZone.zone === 'top' && oldIndex < overIndex) {
-            // 上から下へ移動 && topゾーン → 1つ前に
-            overIndex = overIndex - 1;
-          }
-          // topゾーン && 下から上への移動 → そのまま（overIndexの前に挿入）
+          const overIndex = siblingTags.findIndex((t) => t.id === overId);
 
           if (oldIndex !== -1 && overIndex !== -1) {
             const newOrder = arrayMove(siblingTags, oldIndex, overIndex);
@@ -743,18 +636,15 @@ export function CalendarFilterList() {
             reorderTagsMutation.mutate({ updates });
           }
         } else {
-          // グループ間移動（タグの位置に挿入）
+          // グループ間移動（ドロップしたタグの位置に挿入）
           // 注意: ルートレベル(parent_id: null)の場合、親タグ(グループヘッダー)を除外する必要がある
           const targetSiblings = tags
             .filter((t) => t.parent_id === targetParentId)
             .filter((t) => targetParentId !== null || !sortableGroupIds.includes(t.id))
             .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
 
-          let insertIndex = targetSiblings.findIndex((t) => t.id === overId);
-          // bottom ゾーンの場合、ターゲットの後に挿入
-          if (currentDropZone.zone === 'bottom') {
-            insertIndex = insertIndex + 1;
-          }
+          const insertIndex = targetSiblings.findIndex((t) => t.id === overId);
+          if (insertIndex === -1) return;
 
           const newSiblings = [...targetSiblings];
           newSiblings.splice(insertIndex, 0, activeTag);
@@ -1413,6 +1303,26 @@ function FlatGroupHeader({
   const { removeTag } = useCalendarFilterStore();
   const { attributes, listeners, setNodeRef, isDragging } = useSortable({ id: item.id });
   const [menuOpen, setMenuOpen] = useState(false);
+  const wasDragging = useRef(false);
+  const clickDisabledUntil = useRef(0);
+
+  // ドラッグ発生を追跡（ドラッグ後のクリック誤発火を防ぐ）
+  useEffect(() => {
+    if (isDragging) {
+      wasDragging.current = true;
+    } else if (wasDragging.current) {
+      // ドラッグ終了後100msはクリックを無視
+      clickDisabledUntil.current = Date.now() + 100;
+      wasDragging.current = false;
+    }
+  }, [isDragging]);
+
+  const handleRowClick = useCallback(() => {
+    if (Date.now() < clickDisabledUntil.current) {
+      return;
+    }
+    onToggleExpand();
+  }, [onToggleExpand]);
 
   const [optimisticColor, setOptimisticColor] = useState<string | null>(null);
   const displayColor = optimisticColor ?? item.color;
@@ -1526,7 +1436,7 @@ function FlatGroupHeader({
           showInnerBottomBorder && 'border-b-primary',
         )}
         {...listeners}
-        onClick={onToggleExpand}
+        onClick={handleRowClick}
         onContextMenu={handleContextMenu}
       >
         <Checkbox
@@ -1543,7 +1453,10 @@ function FlatGroupHeader({
           }
         />
         {isEditing ? (
-          <div className="ml-2 flex flex-1 flex-col gap-0.5" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="mr-2 ml-2 flex flex-1 flex-col gap-0.5"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex items-center gap-1">
               <Input
                 ref={inputRef}
@@ -1566,21 +1479,25 @@ function FlatGroupHeader({
             )}
           </div>
         ) : (
-          <span className="text-foreground ml-2 truncate text-sm font-medium">{item.name}</span>
+          <>
+            <span className="text-foreground ml-2 truncate text-sm font-medium">{item.name}</span>
+            <button
+              type="button"
+              aria-expanded={isExpanded}
+              aria-label={isExpanded ? t('calendar.filter.collapse') : t('calendar.filter.expand')}
+              className="relative ml-1 flex size-6 shrink-0 items-center justify-center before:absolute before:-inset-2 before:content-['']"
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleExpand();
+              }}
+            >
+              <ChevronRight
+                className={cn('size-4 transition-transform', isExpanded && 'rotate-90')}
+              />
+            </button>
+            <div className="flex-1" />
+          </>
         )}
-        <button
-          type="button"
-          aria-expanded={isExpanded}
-          aria-label={isExpanded ? t('calendar.filter.collapse') : t('calendar.filter.expand')}
-          className="relative ml-1 flex size-6 shrink-0 items-center justify-center before:absolute before:-inset-2 before:content-['']"
-          onClick={(e) => {
-            e.stopPropagation();
-            onToggleExpand();
-          }}
-        >
-          <ChevronRight className={cn('size-4 transition-transform', isExpanded && 'rotate-90')} />
-        </button>
-        <div className="flex-1" />
         <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
           <DropdownMenuTrigger asChild>
             <button

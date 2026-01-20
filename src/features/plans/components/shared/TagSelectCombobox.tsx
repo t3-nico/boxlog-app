@@ -39,7 +39,7 @@ function TagItem({
   onToggle,
   indent = false,
 }: {
-  tag: { id: string; name: string; color: string | null };
+  tag: { id: string; name: string; color: string | null; icon?: string | null };
   isSelected: boolean;
   onToggle: () => void;
   indent?: boolean;
@@ -65,6 +65,7 @@ function TagItem({
       >
         {isSelected && <Check className="size-3 text-white" />}
       </div>
+      {tag.icon && <span className="shrink-0">{tag.icon}</span>}
       <span className="truncate">{tag.name}</span>
     </CommandItem>
   );
@@ -86,7 +87,7 @@ function ParentTagHeader({
   onToggleSelect,
   onToggleExpand,
 }: {
-  tag: { id: string; name: string; color: string | null };
+  tag: { id: string; name: string; color: string | null; icon?: string | null };
   isSelected: boolean;
   isExpanded: boolean;
   onToggleSelect: () => void;
@@ -121,7 +122,8 @@ function ParentTagHeader({
           </div>
         </button>
 
-        {/* 名前（行クリックで展開/折りたたみ） */}
+        {/* アイコン + 名前（行クリックで展開/折りたたみ） */}
+        {tag.icon && <span className="shrink-0">{tag.icon}</span>}
         <span className="truncate font-medium">{tag.name}</span>
 
         {/* 展開/折りたたみアイコン（タイトルのすぐ右） */}

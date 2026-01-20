@@ -94,38 +94,53 @@ export function useUpdateTag() {
   const mutation = trpc.tags.update.useMutation({
     // 楽観的更新: mutation開始時に即座にUIを更新
     onMutate: async (newData) => {
-      // 進行中のフェッチをキャンセル
+      // 進行中のフェッチをキャンセル（両方のキャッシュ）
       await utils.tags.list.cancel();
+      await utils.tags.listParentTags.cancel();
 
       // 現在のキャッシュを保存（ロールバック用）
       const previousData = utils.tags.list.getData();
+      const previousParentTags = utils.tags.listParentTags.getData();
 
-      // 楽観的にキャッシュを更新
+      // タグ更新のヘルパー関数
+      const updateTag = (tag: Tag) => {
+        if (tag.id !== newData.id) return tag;
+        return {
+          ...tag,
+          name: newData.name ?? tag.name,
+          color: newData.color ?? tag.color,
+          description: newData.description !== undefined ? newData.description : tag.description,
+          parent_id: newData.parentId !== undefined ? newData.parentId : tag.parent_id,
+        };
+      };
+
+      // tags.list キャッシュを楽観的に更新
       utils.tags.list.setData(undefined, (old) => {
         if (!old) return old;
         return {
           ...old,
-          data: old.data.map((tag) =>
-            tag.id === newData.id
-              ? {
-                  ...tag,
-                  name: newData.name ?? tag.name,
-                  color: newData.color ?? tag.color,
-                  description:
-                    newData.description !== undefined ? newData.description : tag.description,
-                  parent_id: newData.parentId !== undefined ? newData.parentId : tag.parent_id,
-                }
-              : tag,
-          ),
+          data: old.data.map(updateTag),
         };
       });
 
-      return { previousData };
+      // tags.listParentTags キャッシュも楽観的に更新（親タグの名前変更等に対応）
+      utils.tags.listParentTags.setData(undefined, (old) => {
+        if (!old) return old;
+        return {
+          ...old,
+          data: old.data.map(updateTag),
+        };
+      });
+
+      return { previousData, previousParentTags };
     },
     // エラー時: 元のキャッシュにロールバック
     onError: (_err, _newData, context) => {
       if (context?.previousData) {
         utils.tags.list.setData(undefined, context.previousData);
+      }
+      if (context?.previousParentTags) {
+        utils.tags.listParentTags.setData(undefined, context.previousParentTags);
       }
     },
     // 完了時: サーバーと同期

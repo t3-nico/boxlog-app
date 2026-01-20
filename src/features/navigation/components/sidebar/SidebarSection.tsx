@@ -51,18 +51,20 @@ export function SidebarSection({
 }: SidebarSectionProps) {
   return (
     <Collapsible defaultOpen={defaultOpen} className="w-full min-w-0 overflow-hidden">
-      <div className="hover:bg-state-hover flex h-8 w-full items-center rounded transition-colors">
-        <CollapsibleTrigger className="text-muted-foreground flex h-8 min-w-0 items-center px-2 text-left text-xs font-semibold">
-          <span className="truncate">{title}</span>
-          <ChevronRight className="ml-1 size-4 shrink-0 transition-transform [[data-state=open]>&]:rotate-90" />
-        </CollapsibleTrigger>
-        <div className="flex-1" />
-        {action && (
-          <div className="shrink-0" onClick={(e) => e.stopPropagation()}>
-            {action}
+      <CollapsibleTrigger asChild>
+        <div className="hover:bg-state-hover flex h-8 w-full cursor-pointer items-center rounded transition-colors">
+          <div className="text-muted-foreground flex h-8 min-w-0 items-center px-2 text-left text-xs font-semibold">
+            <span className="truncate">{title}</span>
+            <ChevronRight className="ml-1 size-4 shrink-0 transition-transform [[data-state=open]_&]:rotate-90" />
           </div>
-        )}
-      </div>
+          <div className="flex-1" />
+          {action && (
+            <div className="shrink-0" onClick={(e) => e.stopPropagation()}>
+              {action}
+            </div>
+          )}
+        </div>
+      </CollapsibleTrigger>
       <CollapsibleContent>
         <div className={cn('w-full min-w-0 overflow-hidden', className)}>{children}</div>
       </CollapsibleContent>

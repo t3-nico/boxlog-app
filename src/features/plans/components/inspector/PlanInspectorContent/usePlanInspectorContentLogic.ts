@@ -140,7 +140,7 @@ export function usePlanInspectorContentLogic() {
   // Tags state
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
   const selectedTagIdsRef = useRef<string[]>(selectedTagIds);
-  const { addPlanTag, removePlanTag } = usePlanTags();
+  const { setplanTags, removePlanTag } = usePlanTags();
 
   // UI state
   const titleRef = useRef<HTMLSpanElement>(null);
@@ -264,28 +264,30 @@ export function usePlanInspectorContentLogic() {
       if (!planId) return;
 
       const oldTagIds = selectedTagIdsRef.current;
-      const added = newTagIds.filter((id) => !oldTagIds.includes(id));
-      const removed = oldTagIds.filter((id) => !newTagIds.includes(id));
 
-      if (added.length === 0 && removed.length === 0) return;
+      // 変更がない場合は何もしない
+      if (
+        newTagIds.length === oldTagIds.length &&
+        newTagIds.every((id) => oldTagIds.includes(id))
+      ) {
+        return;
+      }
 
+      // ローカル状態を即座に更新（楽観的UI）
       setSelectedTagIds(newTagIds);
       selectedTagIdsRef.current = newTagIds;
 
       try {
-        for (const tagId of added) {
-          await addPlanTag(planId, tagId);
-        }
-        for (const tagId of removed) {
-          await removePlanTag(planId, tagId);
-        }
+        // 一括設定API（setTags）を使用して安定した更新を実現
+        await setplanTags(planId, newTagIds);
       } catch (error) {
         console.error('Failed to update tags:', error);
+        // エラー時はロールバック
         setSelectedTagIds(oldTagIds);
         selectedTagIdsRef.current = oldTagIds;
       }
     },
-    [planId, addPlanTag, removePlanTag],
+    [planId, setplanTags],
   );
 
   const handleRemoveTag = useCallback(
