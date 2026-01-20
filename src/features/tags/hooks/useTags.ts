@@ -71,18 +71,96 @@ export function useTag(id: string) {
   );
 }
 
-// タグ作成フック
+// タグ作成フック（楽観的更新付き）
 export function useCreateTag() {
   const utils = trpc.useUtils();
 
   return trpc.tags.create.useMutation({
-    onSuccess: async () => {
-      // キャッシュを無効化して即座に再取得
-      // invalidate()だけではstaleにするだけで再フェッチされない場合がある
-      await utils.tags.list.invalidate();
-      await utils.tags.list.refetch();
-      // 親タグリストも更新（新規タグが親になる可能性）
-      await utils.tags.listParentTags.invalidate();
+    // 楽観的更新: 作成直後に即座にUIを更新
+    onMutate: async (input) => {
+      // 進行中のフェッチをキャンセル
+      await utils.tags.list.cancel();
+      await utils.tags.listParentTags.cancel();
+
+      // 現在のキャッシュを保存（ロールバック用）
+      const previousData = utils.tags.list.getData();
+      const previousParentTags = utils.tags.listParentTags.getData();
+
+      // 一時的なタグを作成（IDは仮）
+      const tempId = `temp-${Date.now()}`;
+      const tempTag: Tag = {
+        id: tempId,
+        name: input.name,
+        color: input.color || '#3B82F6',
+        description: input.description ?? null,
+        icon: null, // サーバーで設定される
+        parent_id: input.parentId ?? null,
+        sort_order: 0, // 新規タグは先頭に表示
+        is_active: true,
+        user_id: '', // サーバーで設定される
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
+
+      // 楽観的にキャッシュを更新（先頭に追加）
+      utils.tags.list.setData(undefined, (old) => {
+        if (!old) return { data: [tempTag], count: 1 };
+        return {
+          ...old,
+          data: [tempTag, ...old.data],
+          count: old.count + 1,
+        };
+      });
+
+      // 親タグリストも更新（親タグがない場合のみ追加）
+      if (!input.parentId) {
+        utils.tags.listParentTags.setData(undefined, (old) => {
+          if (!old) return { data: [tempTag], count: 1 };
+          return {
+            ...old,
+            data: [tempTag, ...old.data],
+            count: (old.count ?? old.data.length) + 1,
+          };
+        });
+      }
+
+      return { previousData, previousParentTags, tempId };
+    },
+    // 成功時: 一時IDを本来のIDに置換
+    onSuccess: (result, _input, context) => {
+      if (!context?.tempId) return;
+
+      // tags.listの一時タグを本来のタグに置換
+      utils.tags.list.setData(undefined, (old) => {
+        if (!old) return old;
+        return {
+          ...old,
+          data: old.data.map((tag) => (tag.id === context.tempId ? result : tag)),
+        };
+      });
+
+      // listParentTagsも同様に置換
+      utils.tags.listParentTags.setData(undefined, (old) => {
+        if (!old) return old;
+        return {
+          ...old,
+          data: old.data.map((tag) => (tag.id === context.tempId ? result : tag)),
+        };
+      });
+    },
+    // エラー時: 元のキャッシュにロールバック
+    onError: (_err, _input, context) => {
+      if (context?.previousData) {
+        utils.tags.list.setData(undefined, context.previousData);
+      }
+      if (context?.previousParentTags) {
+        utils.tags.listParentTags.setData(undefined, context.previousParentTags);
+      }
+    },
+    // 完了時: サーバーと同期（念のため）
+    onSettled: () => {
+      void utils.tags.list.invalidate();
+      void utils.tags.listParentTags.invalidate();
     },
   });
 }
@@ -198,14 +276,65 @@ export function useUpdateTag() {
   };
 }
 
-// タグ削除フック
+// タグ削除フック（楽観的更新付き）
 export function useDeleteTag() {
   const queryClient = useQueryClient();
   const utils = trpc.useUtils();
 
   return trpc.tags.delete.useMutation({
-    onSuccess: () => {
-      utils.tags.list.invalidate();
+    // 楽観的更新: 削除直後に即座にUIを更新
+    onMutate: async ({ id }) => {
+      // 進行中のフェッチをキャンセル
+      await utils.tags.list.cancel();
+      await utils.tags.listParentTags.cancel();
+
+      // 現在のキャッシュを保存（ロールバック用）
+      const previousData = utils.tags.list.getData();
+      const previousParentTags = utils.tags.listParentTags.getData();
+
+      // 削除するタグの子タグを特定（子タグはルートに昇格させる）
+      const deletedTag = previousData?.data.find((tag) => tag.id === id);
+      const childTags = previousData?.data.filter((tag) => tag.parent_id === id) ?? [];
+
+      // 楽観的にキャッシュを更新（タグを削除、子タグはルートに昇格）
+      utils.tags.list.setData(undefined, (old) => {
+        if (!old) return old;
+        return {
+          ...old,
+          data: old.data
+            .filter((tag) => tag.id !== id)
+            .map((tag) => (tag.parent_id === id ? { ...tag, parent_id: null } : tag)),
+          count: old.count - 1,
+        };
+      });
+
+      // 親タグリストも更新
+      utils.tags.listParentTags.setData(undefined, (old) => {
+        if (!old) return old;
+        // 削除対象を除外し、子タグを追加（ルートに昇格）
+        const filteredData = old.data.filter((tag) => tag.id !== id);
+        const promotedChildren = childTags.map((tag) => ({ ...tag, parent_id: null }));
+        return {
+          ...old,
+          data: [...filteredData, ...promotedChildren],
+        };
+      });
+
+      return { previousData, previousParentTags, deletedTag };
+    },
+    // エラー時: 元のキャッシュにロールバック
+    onError: (_err, _input, context) => {
+      if (context?.previousData) {
+        utils.tags.list.setData(undefined, context.previousData);
+      }
+      if (context?.previousParentTags) {
+        utils.tags.listParentTags.setData(undefined, context.previousParentTags);
+      }
+    },
+    // 完了時: サーバーと同期
+    onSettled: () => {
+      void utils.tags.list.invalidate();
+      void utils.tags.listParentTags.invalidate();
       queryClient.invalidateQueries({ queryKey: tagKeys.all });
       // plansのキャッシュも無効化（タグ情報を含むため）
       queryClient.invalidateQueries({ queryKey: ['plans'] });
