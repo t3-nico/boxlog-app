@@ -252,10 +252,13 @@ export function useReorderTags() {
       });
 
       // listParentTagsも楽観的に更新（親タグ並び替え用）
+      // 注意: 子タグ→ルートへの昇格も反映する必要がある
+      const allTags = previousData?.data ?? [];
       utils.tags.listParentTags.setData(undefined, (oldData) => {
         if (!oldData) return oldData;
 
-        const newData = oldData.data.map((tag) => {
+        // 1. 既存の親タグを更新
+        let newData = oldData.data.map((tag) => {
           const update = updates.find((u) => u.id === tag.id);
           if (update) {
             return {
@@ -266,6 +269,25 @@ export function useReorderTags() {
           }
           return tag;
         });
+
+        // 2. 子→ルートに昇格したタグを追加
+        const promotedToRoot = updates.filter(
+          (u) => u.parent_id === null && !oldData.data.some((t) => t.id === u.id),
+        );
+        for (const promoted of promotedToRoot) {
+          const fullTag = allTags.find((t) => t.id === promoted.id);
+          if (fullTag) {
+            newData.push({
+              ...fullTag,
+              sort_order: promoted.sort_order,
+              parent_id: null,
+            });
+          }
+        }
+
+        // 3. ルート→子に降格したタグを削除
+        const demotedFromRoot = updates.filter((u) => u.parent_id !== null);
+        newData = newData.filter((tag) => !demotedFromRoot.some((d) => d.id === tag.id));
 
         // sort_order順でソート
         newData.sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
