@@ -6,6 +6,7 @@ import { createPortal } from 'react-dom';
 
 import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { useTranslations } from 'next-intl';
 
 import { useRecurringEditConfirmStore } from '../stores/useRecurringEditConfirmStore';
 
@@ -34,6 +35,7 @@ export type RecurringEditScope = 'this' | 'thisAndFuture' | 'all';
  * - Surface: bg-surface（カード、ダイアログ用）
  */
 export function RecurringEditConfirmDialog() {
+  const t = useTranslations();
   const [isProcessing, setIsProcessing] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [scope, setScope] = useState<RecurringEditScope>('this');
@@ -97,7 +99,9 @@ export function RecurringEditConfirmDialog() {
   if (!mounted || !isOpen) return null;
 
   const isEdit = mode === 'edit';
-  const title = isEdit ? '繰り返しイベントを編集' : '繰り返しイベントを削除';
+  const title = t(
+    isEdit ? 'common.confirm.recurring.editTitle' : 'common.confirm.recurring.deleteTitle',
+  );
 
   const dialog = (
     <div
@@ -125,29 +129,33 @@ export function RecurringEditConfirmDialog() {
         >
           <label htmlFor="scope-this" className="flex cursor-pointer items-center gap-4">
             <RadioGroupItem value="this" id="scope-this" />
-            <span className="text-sm">このイベントのみ</span>
+            <span className="text-sm">{t('common.confirm.recurring.thisOnly')}</span>
           </label>
           <label htmlFor="scope-future" className="flex cursor-pointer items-center gap-4">
             <RadioGroupItem value="thisAndFuture" id="scope-future" />
-            <span className="text-sm">このイベント以降すべて</span>
+            <span className="text-sm">{t('common.confirm.recurring.thisAndFuture')}</span>
           </label>
           <label htmlFor="scope-all" className="flex cursor-pointer items-center gap-4">
             <RadioGroupItem value="all" id="scope-all" />
-            <span className="text-sm">すべてのイベント</span>
+            <span className="text-sm">{t('common.confirm.recurring.allEvents')}</span>
           </label>
         </RadioGroup>
 
         {/* Footer */}
         <div className="flex justify-end gap-2">
           <Button variant="outline" onClick={closeDialog} disabled={isProcessing}>
-            キャンセル
+            {t('common.actions.cancel')}
           </Button>
           <Button
             variant={isEdit ? 'primary' : 'destructive'}
             onClick={handleConfirm}
             disabled={isProcessing}
           >
-            {isProcessing ? '処理中...' : isEdit ? '適用' : '削除'}
+            {isProcessing
+              ? t('common.form.processing')
+              : isEdit
+                ? t('common.confirm.recurring.apply')
+                : t('common.actions.delete')}
           </Button>
         </div>
       </div>
