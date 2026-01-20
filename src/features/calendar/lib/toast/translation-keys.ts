@@ -19,6 +19,10 @@ export const CALENDAR_TOAST_KEYS = {
   EVENT_MOVED_TO: 'calendar.event.movedTo',
   EVENT_MOVED_TO_SUFFIX: 'calendar.event.movedToSuffix',
 
+  // Date formats
+  DATES_FORMAT_DATE_TIME: 'calendar.dates.formats.dateTime',
+  DATES_FORMAT_MONTH_DAY: 'calendar.dates.formats.monthDay',
+
   // Toast messages
   TOAST_MOVED: 'calendar.toast.moved',
   TOAST_RESIZED: 'calendar.toast.resized',

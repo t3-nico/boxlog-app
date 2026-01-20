@@ -81,11 +81,13 @@ export const DateRangeDisplay = ({
   displayRange,
 }: DateRangeDisplayProps) => {
   const t = useTranslations('calendar.dateRange');
+  const tCommon = useTranslations('common');
   const locale = useLocale();
   const dateFnsLocale = locale === 'ja' ? ja : enUS;
 
-  // ロケールに応じたフォーマットパターン
-  const localizedFormatPattern = locale === 'ja' ? 'yyyy年M月' : formatPattern;
+  // ロケールに応じたフォーマットパターン（翻訳ファイルから取得）
+  const localizedFormatPattern =
+    formatPattern === 'MMMM yyyy' ? tCommon('dates.formats.monthYear') : formatPattern;
 
   // 表示テキストを決定
   const displayText =
@@ -157,11 +159,12 @@ export const CompactDateDisplay = ({
   className,
 }: Pick<DateRangeDisplayProps, 'date' | 'showWeekNumber' | 'className'>) => {
   const t = useTranslations('calendar.dateRange');
+  const tCommon = useTranslations('common');
   const locale = useLocale();
   const dateFnsLocale = locale === 'ja' ? ja : enUS;
 
-  // ロケールに応じたフォーマット
-  const dateFormat = locale === 'ja' ? 'M月d日' : 'MMM d';
+  // ロケールに応じたフォーマット（翻訳ファイルから取得）
+  const dateFormat = tCommon('dates.formats.monthDay');
 
   return (
     <div className={cn('flex items-center gap-1', className)}>

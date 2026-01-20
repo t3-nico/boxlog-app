@@ -37,6 +37,12 @@ export function getTranslation(key: string, locale: 'ja' | 'en' = 'ja'): string 
           movedTo: 'を',
           movedToSuffix: 'に移動',
         },
+        dates: {
+          formats: {
+            dateTime: 'M月d日 HH:mm',
+            monthDay: 'M月d日',
+          },
+        },
         toast: {
           moved: '予定を移動しました',
           resized: '時間を変更しました',
@@ -108,6 +114,12 @@ export function getTranslation(key: string, locale: 'ja' | 'en' = 'ja'): string 
           bulkDeletedDesc: ' events deleted',
           movedTo: ' moved to ',
           movedToSuffix: '',
+        },
+        dates: {
+          formats: {
+            dateTime: 'MMM d HH:mm',
+            monthDay: 'MMM d',
+          },
         },
         toast: {
           moved: 'Plan moved',

@@ -3,11 +3,11 @@
 import { useCallback, useState } from 'react';
 
 import { format, getWeek } from 'date-fns';
-import { ja } from 'date-fns/locale';
+import { enUS, ja } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight, Menu } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 
 import type { CalendarViewType } from '../../../types/calendar.types';
 
@@ -41,6 +41,9 @@ export const MobileHeader = ({
   className,
 }: MobileHeaderProps) => {
   const t = useTranslations();
+  const tCommon = useTranslations('common');
+  const locale = useLocale();
+  const dateFnsLocale = locale === 'ja' ? ja : enUS;
   const [isViewMenuOpen, setIsViewMenuOpen] = useState(false);
   const weekNumber = getWeek(currentDate, { weekStartsOn: 1 });
 
@@ -86,15 +89,19 @@ export const MobileHeader = ({
     [onViewChange],
   );
 
-  // 日付の表示形式をモバイル用に短縮
+  // 日付の表示形式をモバイル用に短縮（翻訳ファイルから取得）
   const getDateDisplay = () => {
+    const withDayOfWeekFormat = tCommon('dates.formats.withDayOfWeek');
     switch (viewType) {
       case 'day':
-        return format(currentDate, 'M/d (E)', { locale: ja });
+        return format(currentDate, withDayOfWeekFormat, { locale: dateFnsLocale });
       case 'week':
-        return `${format(currentDate, 'M月')} W${weekNumber}`;
+        // 週表示: "1月 W3" / "Jan W3"
+        return locale === 'ja'
+          ? `${format(currentDate, 'M月')} W${weekNumber}`
+          : `${format(currentDate, 'MMM', { locale: dateFnsLocale })} W${weekNumber}`;
       default:
-        return format(currentDate, 'M/d (E)', { locale: ja });
+        return format(currentDate, withDayOfWeekFormat, { locale: dateFnsLocale });
     }
   };
 
