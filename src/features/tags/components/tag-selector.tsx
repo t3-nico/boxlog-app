@@ -37,7 +37,7 @@ export const TagSelector = ({
   enableCreate = true,
 }: TagSelectorProps) => {
   const t = useTranslations();
-  const effectivePlaceholder = placeholder ?? t('tag.selector.placeholder');
+  const effectivePlaceholder = placeholder ?? t('tags.selector.placeholder');
   const [searchQuery, setSearchQuery] = useState('');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const createTagMutation = useCreateTag();
@@ -104,7 +104,7 @@ export const TagSelector = ({
             >
               <span className="text-left">
                 {selectedTags.length > 0
-                  ? t('tag.selector.tagsSelected', { count: selectedTags.length })
+                  ? t('tags.selector.tagsSelected', { count: selectedTags.length })
                   : effectivePlaceholder}
               </span>
               <ChevronDownIcon className="h-4 w-4" />
@@ -113,7 +113,7 @@ export const TagSelector = ({
           <DropdownMenuContent className="w-64 p-0">
             <div className="p-2">
               <Input
-                placeholder={t('tag.selector.searchPlaceholder')}
+                placeholder={t('tags.selector.searchPlaceholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="h-8"
@@ -137,7 +137,7 @@ export const TagSelector = ({
                 ))
               ) : (
                 <div className="text-muted-foreground p-2 text-center text-sm">
-                  {searchQuery ? t('tag.search.noTags') : t('tag.search.noMoreTags')}
+                  {searchQuery ? t('tags.search.noTags') : t('tags.search.noMoreTags')}
                 </div>
               )}
             </div>
@@ -146,7 +146,7 @@ export const TagSelector = ({
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => setShowCreateModal(true)} className="p-2">
                   <Plus className="mr-2 h-4 w-4" />
-                  {t('tag.actions.createNew')}
+                  {t('common.actions.createNew')}
                 </DropdownMenuItem>
               </>
             )}
@@ -155,7 +155,7 @@ export const TagSelector = ({
 
         {maxTags != null && (
           <div className="text-muted-foreground text-xs">
-            {t('tag.selector.tagsCount', { current: selectedTagIds.length, max: maxTags })}
+            {t('tags.selector.tagsCount', { current: selectedTagIds.length, max: maxTags })}
           </div>
         )}
       </div>

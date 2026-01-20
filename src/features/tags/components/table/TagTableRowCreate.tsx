@@ -202,7 +202,7 @@ export const TagTableRowCreate = forwardRef<TagTableRowCreateHandle, TagTableRow
                     const value = e.target.value;
                     if (value.length >= TAG_NAME_MAX_LENGTH) {
                       toast.info(
-                        t('tag.validation.nameLimitReached', { max: TAG_NAME_MAX_LENGTH }),
+                        t('tags.validation.nameLimitReached', { max: TAG_NAME_MAX_LENGTH }),
                         {
                           id: 'name-limit',
                         },
@@ -236,7 +236,7 @@ export const TagTableRowCreate = forwardRef<TagTableRowCreateHandle, TagTableRow
                   const value = e.target.value;
                   if (value.length >= TAG_DESCRIPTION_MAX_LENGTH) {
                     toast.info(
-                      t('tag.validation.descriptionLimitReached', {
+                      t('tags.validation.descriptionLimitReached', {
                         max: TAG_DESCRIPTION_MAX_LENGTH,
                       }),
                       {

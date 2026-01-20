@@ -102,7 +102,7 @@ export const TagCreateModal = ({
     setError('');
 
     if (!name.trim()) {
-      setError(t('tag.validation.nameEmpty'));
+      setError(t('tags.validation.nameEmpty'));
       return;
     }
 
@@ -123,9 +123,9 @@ export const TagCreateModal = ({
         errorMessage.includes('重複') ||
         errorMessage.includes('既に存在')
       ) {
-        setError(t('tag.form.duplicateName'));
+        setError(t('tags.form.duplicateName'));
       } else {
-        setError(t('tag.errors.createFailed'));
+        setError(t('tags.errors.createFailed'));
       }
     } finally {
       setIsLoading(false);
@@ -171,7 +171,7 @@ export const TagCreateModal = ({
       >
         {/* Header */}
         <h2 id="tag-create-dialog-title" className="mb-6 text-lg font-semibold">
-          {t('tag.modal.createTitle')}
+          {t('tags.modal.createTitle')}
         </h2>
 
         {/* Form */}
@@ -179,11 +179,11 @@ export const TagCreateModal = ({
           {/* タグ名 */}
           <Field>
             <FieldLabel htmlFor="tag-name" required requiredLabel={t('common.form.required')}>
-              {t('tag.form.tagName')}
+              {t('tags.form.tagName')}
             </FieldLabel>
             <div className="flex items-center justify-between">
               <FieldSupportText id="tag-name-support">
-                {t('tag.form.examplePlaceholder')}
+                {t('tags.form.examplePlaceholder')}
               </FieldSupportText>
               <span className="text-muted-foreground text-xs tabular-nums">
                 {name.length}/{TAG_NAME_MAX_LENGTH}
@@ -211,14 +211,14 @@ export const TagCreateModal = ({
 
           {/* カラー */}
           <Field>
-            <FieldLabel>{t('tag.form.color')}</FieldLabel>
+            <FieldLabel>{t('tags.form.color')}</FieldLabel>
             <ColorPalettePicker selectedColor={color} onColorSelect={setColor} />
           </Field>
 
           {/* 親タグ選択 */}
           <Field>
-            <FieldLabel>{t('tag.form.group')}</FieldLabel>
-            <FieldSupportText>{t('tag.form.groupSupportText')}</FieldSupportText>
+            <FieldLabel>{t('tags.form.group')}</FieldLabel>
+            <FieldSupportText>{t('tags.form.groupSupportText')}</FieldSupportText>
             <div className="relative">
               <button
                 type="button"
@@ -229,7 +229,7 @@ export const TagCreateModal = ({
                 className="border-input bg-background hover:bg-state-hover flex h-9 w-full items-center justify-between rounded-md border px-3 text-sm"
               >
                 <span className={selectedParent ? 'text-foreground' : 'text-muted-foreground'}>
-                  {selectedParent ? selectedParent.name : t('tag.sidebar.uncategorized')}
+                  {selectedParent ? selectedParent.name : t('tags.sidebar.uncategorized')}
                 </span>
                 <ChevronDown className="text-muted-foreground size-4" />
               </button>
@@ -245,7 +245,7 @@ export const TagCreateModal = ({
                     }}
                     className="hover:bg-state-hover w-full px-3 py-2 text-left text-sm"
                   >
-                    {t('tag.sidebar.uncategorized')}
+                    {t('tags.sidebar.uncategorized')}
                   </button>
                   {parentTags.map((parent) => (
                     <button
@@ -278,10 +278,10 @@ export const TagCreateModal = ({
             disabled={isLoading}
             className="hover:bg-state-hover"
           >
-            {t('tag.actions.cancel')}
+            {t('common.actions.cancel')}
           </Button>
           <Button onClick={handleSubmit} disabled={isLoading}>
-            {isLoading ? t('tag.actions.creating') : t('tag.actions.create')}
+            {isLoading ? t('common.actions.creating') : t('common.actions.create')}
           </Button>
         </div>
       </div>

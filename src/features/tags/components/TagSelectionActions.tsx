@@ -67,9 +67,9 @@ export function TagSelectionActions({
       {/* グループに移動 */}
       {hasGroups && (
         <DropdownMenu modal={false}>
-          <HoverTooltip content={t('tag.page.moveToGroup')} side="top">
+          <HoverTooltip content={t('tags.page.moveToGroup')} side="top">
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" aria-label={t('tag.page.moveToGroup')}>
+              <Button variant="ghost" size="icon" aria-label={t('tags.page.moveToGroup')}>
                 <Folder className="size-4" />
               </Button>
             </DropdownMenuTrigger>
@@ -84,7 +84,7 @@ export function TagSelectionActions({
               }}
             >
               <FolderX className="text-muted-foreground mr-2 h-4 w-4" />
-              {t('tag.page.noGroup')}
+              {t('tags.page.noGroup')}
             </DropdownMenuItem>
             {groups.map((group) => (
               <DropdownMenuItem
@@ -109,7 +109,7 @@ export function TagSelectionActions({
 
       {/* 復元（アーカイブモード用） */}
       {onRestore && (
-        <HoverTooltip content={t('tag.archive.restore')} side="top">
+        <HoverTooltip content={t('tags.archive.restore')} side="top">
           <Button
             variant="ghost"
             size="icon"
@@ -117,7 +117,7 @@ export function TagSelectionActions({
               await onRestore(selectedTagIds);
               onClearSelection();
             }}
-            aria-label={t('tag.archive.restore')}
+            aria-label={t('tags.archive.restore')}
           >
             <RotateCcw className="size-4" />
           </Button>
@@ -126,7 +126,7 @@ export function TagSelectionActions({
 
       {/* アーカイブ */}
       {onArchive && (
-        <HoverTooltip content={t('tag.page.archive')} side="top">
+        <HoverTooltip content={t('tags.page.archive')} side="top">
           <Button
             variant="ghost"
             size="icon"
@@ -134,7 +134,7 @@ export function TagSelectionActions({
               await onArchive(selectedTagIds);
               onClearSelection();
             }}
-            aria-label={t('tag.page.archive')}
+            aria-label={t('tags.page.archive')}
           >
             <Archive className="size-4" />
           </Button>
@@ -156,13 +156,13 @@ export function TagSelectionActions({
       )}
 
       {/* 完全削除 */}
-      <HoverTooltip content={t('tag.page.delete')} side="top">
+      <HoverTooltip content={t('tags.page.delete')} side="top">
         <Button
           variant="ghost"
           size="icon"
           onClick={onDelete}
           className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
-          aria-label={t('tag.page.delete')}
+          aria-label={t('tags.page.delete')}
         >
           <Trash2 className="size-4" />
         </Button>

@@ -141,10 +141,10 @@ export function TagsPageClient() {
     if (!deletingGroup) return;
     try {
       await deleteGroupMutation.mutateAsync({ id: deletingGroup.id });
-      toast.success(t('tag.toast.groupDeleted', { name: deletingGroup.name }));
+      toast.success(t('tags.toast.groupDeleted', { name: deletingGroup.name }));
       setDeletingGroup(null);
     } catch {
-      toast.error(t('tag.toast.groupDeleteFailed'));
+      toast.error(t('tags.toast.groupDeleteFailed'));
     }
   }, [deletingGroup, deleteGroupMutation, t]);
 
@@ -197,7 +197,7 @@ export function TagsPageClient() {
         }
         toast.success(t('tags.page.bulkRestored', { count: tagIds.length }));
       } catch {
-        toast.error(t('tag.archive.restoreFailed'));
+        toast.error(t('tags.archive.restoreFailed'));
       }
     },
     [tags, updateTagMutation, t],
@@ -369,8 +369,8 @@ export function TagsPageClient() {
         open={!!deletingGroup}
         onClose={() => setDeletingGroup(null)}
         onConfirm={handleConfirmDeleteGroup}
-        title={t('tag.group.deleteTitle', { name: deletingGroup?.name ?? '' })}
-        description={t('tag.group.deleteDescription')}
+        title={t('tags.group.deleteTitle', { name: deletingGroup?.name ?? '' })}
+        description={t('tags.group.deleteDescription')}
       />
     </div>
   );

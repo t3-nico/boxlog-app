@@ -40,7 +40,7 @@ export function TagsTableEmptyState({
     if (isSearching) {
       return {
         icon: FileSearch,
-        title: t('tag.search.noTags'),
+        title: t('tags.search.noTags'),
         description: undefined,
         action: (
           <Button onClick={onClearSearch} variant="outline">
@@ -53,7 +53,7 @@ export function TagsTableEmptyState({
     if (isArchiveView) {
       return {
         icon: Archive,
-        title: t('tag.archive.noArchivedTags'),
+        title: t('tags.archive.noArchivedTags'),
         description: undefined,
         action: null,
       };
@@ -61,12 +61,12 @@ export function TagsTableEmptyState({
 
     return {
       icon: Tag,
-      title: t('tag.page.noTags'),
-      description: t('tag.page.addFirstTag'),
+      title: t('tags.page.noTags'),
+      description: t('tags.page.addFirstTag'),
       action: (
         <Button onClick={onCreate}>
           <Plus className="mr-2 size-4" />
-          {t('tag.page.createTag')}
+          {t('tags.page.createTag')}
         </Button>
       ),
     };

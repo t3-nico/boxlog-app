@@ -176,7 +176,7 @@ export const QuickTagCreateModal = ({ isOpen, onClose, onCreateTag }: QuickTagCr
         {/* Footer */}
         <div className="border-border flex justify-end gap-2 border-t p-4">
           <Button type="button" variant="ghost" onClick={handleClose}>
-            {t('tags.actions.cancel')}
+            {t('common.actions.cancel')}
           </Button>
           <Button type="button" onClick={handleCreateTag} disabled={!tagName.trim()}>
             <Plus className="h-4 w-4" />

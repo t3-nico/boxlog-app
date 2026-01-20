@@ -431,8 +431,8 @@ export const TagsList = ({
         open={!!deletingTag}
         onClose={handleCloseDeleteDialog}
         onConfirm={handleConfirmDelete}
-        title={t('tag.delete.confirmTitleWithName', { name: deletingTag?.name ?? '' })}
-        description={t('tag.delete.description')}
+        title={t('tags.delete.confirmTitleWithName', { name: deletingTag?.name ?? '' })}
+        description={t('tags.delete.description')}
       />
     </div>
   );

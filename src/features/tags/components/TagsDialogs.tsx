@@ -78,8 +78,8 @@ export function TagsDialogs({
         open={!!deleteConfirmTag}
         onClose={onCloseDeleteConfirm}
         onConfirm={onConfirmDelete}
-        title={t('tag.delete.confirmTitleWithName', { name: deleteConfirmTag?.name ?? '' })}
-        description={t('tag.delete.description')}
+        title={t('tags.delete.confirmTitleWithName', { name: deleteConfirmTag?.name ?? '' })}
+        description={t('tags.delete.description')}
       />
 
       {/* 単一タグマージダイアログ */}

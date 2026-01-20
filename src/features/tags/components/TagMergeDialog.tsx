@@ -237,7 +237,7 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
             disabled={isMerging}
             className="hover:bg-state-hover"
           >
-            {t('tags.actions.cancel')}
+            {t('common.actions.cancel')}
           </Button>
           <Button
             type="button"

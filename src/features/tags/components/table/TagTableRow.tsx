@@ -210,7 +210,7 @@ export function TagCellContent({
               setIsCreatingGroup(false);
               setNewGroupName('');
             }}
-            placeholder={t('tag.group.namePlaceholder')}
+            placeholder={t('tags.group.namePlaceholder')}
             className="h-7 w-32 text-sm sm:w-[160px]"
             autoFocus
           />
@@ -268,7 +268,7 @@ export function TagCellContent({
             <SelectItem value="__create_new__">
               <div className="flex items-center gap-2">
                 <Plus className="text-muted-foreground h-4 w-4" />
-                <span>{t('tag.group.create')}</span>
+                <span>{t('tags.group.create')}</span>
               </div>
             </SelectItem>
           </SelectContent>

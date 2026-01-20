@@ -28,7 +28,7 @@ export function GlobalTagCreateModal() {
       description: data.description ?? undefined,
       parentId: data.parentId ?? undefined,
     });
-    toast.success(t('tag.toast.created', { name: result.name }));
+    toast.success(t('tags.toast.created', { name: result.name }));
   };
 
   return (
