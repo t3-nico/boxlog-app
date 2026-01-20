@@ -2,7 +2,7 @@
 
 import { Badge } from '@/components/ui/badge';
 import { TableCell } from '@/components/ui/table';
-import { PlanTagSelectDialogEnhanced } from '@/features/plans/components/shared/PlanTagSelectDialogEnhanced';
+import { TagSelectCombobox } from '@/features/plans/components/shared/TagSelectCombobox';
 import { useEffect, useRef, useState } from 'react';
 
 interface Tag {
@@ -83,13 +83,13 @@ export function TagsCell({ tags = [], width, onTagsChange }: TagsCellProps) {
       className="group hover:bg-state-hover cursor-pointer transition-colors"
       style={style}
     >
-      <PlanTagSelectDialogEnhanced selectedTagIds={selectedTagIds} onTagsChange={onTagsChange}>
+      <TagSelectCombobox selectedTagIds={selectedTagIds} onTagsChange={onTagsChange}>
         <div ref={containerRef} className="flex gap-1 overflow-hidden">
           {tags.slice(0, visibleCount).map((tag) => (
             <Badge
               key={tag.id}
               variant="outline"
-              className="shrink-0 gap-0.5 text-xs font-normal"
+              className="shrink-0 text-xs font-normal"
               style={
                 tag.color
                   ? {
@@ -98,9 +98,6 @@ export function TagsCell({ tags = [], width, onTagsChange }: TagsCellProps) {
                   : undefined
               }
             >
-              <span className="font-medium" style={tag.color ? { color: tag.color } : undefined}>
-                #
-              </span>
               {tag.name}
             </Badge>
           ))}
@@ -111,7 +108,7 @@ export function TagsCell({ tags = [], width, onTagsChange }: TagsCellProps) {
           )}
           {tags.length === 0 && <span className="text-muted-foreground text-xs">-</span>}
         </div>
-      </PlanTagSelectDialogEnhanced>
+      </TagSelectCombobox>
     </TableCell>
   );
 }

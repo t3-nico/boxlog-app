@@ -16,8 +16,8 @@ import { parseDateString, parseDatetimeString } from '@/features/calendar/utils/
 import type { PlanItem } from '@/features/inbox/hooks/useInboxData';
 import type { RecurringEditScope } from '@/features/plans/components/RecurringEditConfirmDialog';
 import { DateTimePopoverContent } from '@/features/plans/components/shared/DateTimePopoverContent';
-import { PlanTagSelectDialogEnhanced } from '@/features/plans/components/shared/PlanTagSelectDialogEnhanced';
 import { RecurringIndicator } from '@/features/plans/components/shared/RecurringIndicator';
+import { TagSelectCombobox } from '@/features/plans/components/shared/TagSelectCombobox';
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
 import { useplanTags } from '@/features/plans/hooks/usePlanTags';
 import { useDeleteConfirmStore } from '@/features/plans/stores/useDeleteConfirmStore';
@@ -548,7 +548,7 @@ export function PlanCard({ item }: PlanCardProps) {
             </Popover>
 
             {/* 3. Tags */}
-            <PlanTagSelectDialogEnhanced
+            <TagSelectCombobox
               selectedTagIds={item.tags?.map((tag) => tag.id) ?? []}
               onTagsChange={handleTagsChange}
             >
@@ -564,7 +564,7 @@ export function PlanCard({ item }: PlanCardProps) {
                     <Badge
                       key={tag.id}
                       variant="outline"
-                      className="shrink-0 gap-0.5 text-xs font-normal"
+                      className="shrink-0 text-xs font-normal"
                       style={
                         tag.color
                           ? {
@@ -573,12 +573,6 @@ export function PlanCard({ item }: PlanCardProps) {
                           : undefined
                       }
                     >
-                      <span
-                        className="font-medium"
-                        style={tag.color ? { color: tag.color } : undefined}
-                      >
-                        #
-                      </span>
                       {tag.name}
                     </Badge>
                   ))}
@@ -611,7 +605,7 @@ export function PlanCard({ item }: PlanCardProps) {
                   </div>
                 </div>
               )}
-            </PlanTagSelectDialogEnhanced>
+            </TagSelectCombobox>
           </div>
         </ContextMenuTrigger>
         <ContextMenuContent>
