@@ -1,7 +1,19 @@
+import { useQueryClient } from '@tanstack/react-query';
+
 import { CACHE_2_MINUTES, CACHE_5_MINUTES } from '@/constants/time';
 import { api } from '@/lib/trpc';
 
 import type { PlanInstanceException } from '../utils/recurrence';
+
+// plan_instances テーブルの行型
+interface PlanInstance {
+  plan_id: string;
+  instance_date: string;
+  is_exception: boolean;
+  exception_type: 'modified' | 'cancelled' | 'moved' | null;
+  overrides: Record<string, unknown> | null;
+  original_date: string | null;
+}
 
 /**
  * プランインスタンス（例外情報）取得フック
@@ -73,21 +85,85 @@ export function instancesToExceptionsMap(
 }
 
 /**
- * プランインスタンス作成mutation
+ * プランインスタンス作成/削除mutation（楽観的更新付き）
+ *
+ * @description 繰り返しプランの例外（キャンセル/変更/移動）を作成・削除するmutation
+ * 楽観的更新により、サーバーレスポンスを待たずに即座にUIが更新される
  */
 export function usePlanInstanceMutations() {
   const utils = api.useUtils();
+  const queryClient = useQueryClient();
 
+  // ✨ 例外作成（楽観的更新付き）
   const createInstance = api.plans.createInstance.useMutation({
+    // 楽観的更新: 例外作成直後に即座にUIを更新
+    onMutate: async (input) => {
+      // 進行中のクエリをキャンセル
+      await utils.plans.getInstances.cancel();
+
+      // 一時的な例外を作成
+      const tempInstance: PlanInstance = {
+        plan_id: input.planId,
+        instance_date: input.instanceDate,
+        is_exception: true,
+        exception_type: input.exceptionType,
+        overrides: input.overrides ? JSON.parse(JSON.stringify(input.overrides)) : null,
+        original_date: input.originalDate ?? null,
+      };
+
+      // 該当planIdを含むすべてのキャッシュを楽観的に更新
+      // getInstancesはplanIds[]をキーにするため、部分一致で更新が必要
+      queryClient.setQueriesData<PlanInstance[]>(
+        { queryKey: [['plans', 'getInstances']], exact: false },
+        (oldData) => {
+          if (!oldData) return oldData;
+          // 既存の同一日付の例外があれば置換、なければ追加
+          const filtered = oldData.filter(
+            (inst) => !(inst.plan_id === input.planId && inst.instance_date === input.instanceDate),
+          );
+          return [...filtered, tempInstance];
+        },
+      );
+
+      return { tempInstance };
+    },
     onSuccess: () => {
-      // キャッシュを無効化して再フェッチ
-      utils.plans.getInstances.invalidate();
+      // サーバーからの実データで同期（IDなどが付与される可能性）
+      void utils.plans.getInstances.invalidate();
+      void utils.plans.list.invalidate();
+    },
+    onError: () => {
+      // エラー時: ロールバック（invalidateで元の状態に戻す）
+      void utils.plans.getInstances.invalidate();
     },
   });
 
+  // ✨ 例外削除（楽観的更新付き）
   const deleteInstance = api.plans.deleteInstance.useMutation({
+    // 楽観的更新: 例外削除直後に即座にUIを更新
+    onMutate: async (input) => {
+      // 進行中のクエリをキャンセル
+      await utils.plans.getInstances.cancel();
+
+      // 該当planIdを含むすべてのキャッシュから例外を削除
+      queryClient.setQueriesData<PlanInstance[]>(
+        { queryKey: [['plans', 'getInstances']], exact: false },
+        (oldData) => {
+          if (!oldData) return oldData;
+          return oldData.filter(
+            (inst) => !(inst.plan_id === input.planId && inst.instance_date === input.instanceDate),
+          );
+        },
+      );
+
+      return { deletedPlanId: input.planId, deletedDate: input.instanceDate };
+    },
     onSuccess: () => {
-      utils.plans.getInstances.invalidate();
+      void utils.plans.getInstances.invalidate();
+    },
+    onError: () => {
+      // エラー時: ロールバック
+      void utils.plans.getInstances.invalidate();
     },
   });
 
