@@ -60,6 +60,15 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
     [position],
   );
 
+  // 高さベースでタグ表示数を計算
+  const maxTags = useMemo(() => {
+    const height = safePosition.height;
+    if (height < 40) return 0; // isCompactでタグ非表示
+    if (height < 60) return 1; // 短い予定
+    if (height < 90) return 2; // 中程度の予定
+    return 3; // 長い予定
+  }, [safePosition.height]);
+
   // 動的スタイルを計算
   const dynamicStyle: React.CSSProperties = {
     position: 'absolute',
@@ -279,6 +288,7 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
         isMobile={isMobile}
         isHovered={isHovered}
         isCheckboxHovered={isCheckboxHovered}
+        maxTags={maxTags}
       />
 
       {/* 下端リサイズハンドル */}
