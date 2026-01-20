@@ -325,6 +325,7 @@
   "createNew": {
     "plan": "Create Plan",
     "task": "Create Task",
+    "tag": "Create Tag",
     "defaultPlanTitle": "New Plan"
   },
   "comingSoon": "Coming Soon",

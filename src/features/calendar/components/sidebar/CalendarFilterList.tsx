@@ -591,15 +591,56 @@ export function CalendarFilterList() {
       if (!activeTag) return;
 
       // ドロップ先がグループヘッダーの場合
-      // シンプル化: グループの子タグとして末尾に追加
       if (isOverGroup) {
+        // dropZoneに応じて処理を分岐
+        // - top/bottom: ルートレベルで並び替え（グループヘッダーを含む全ルートタグ）
+        // - center-top/center-bottom: グループの子タグとして追加
+        const zone = currentDropZone.zone;
+        if (zone === 'top' || zone === 'bottom') {
+          // ルートレベルで並び替え
+          const allRootTags = flatItems
+            .filter((item) => item.parentId === null && item.type !== 'child-tag')
+            .map((item) => item.id);
+
+          const oldIndex = allRootTags.indexOf(activeId);
+          let newIndex = allRootTags.indexOf(overId);
+
+          // bottomの場合は1つ後ろに挿入
+          if (zone === 'bottom' && oldIndex < newIndex) {
+            // 上から下への移動、そのまま
+          } else if (zone === 'bottom' && oldIndex > newIndex) {
+            newIndex = newIndex + 1;
+          }
+
+          if (oldIndex !== -1 && newIndex !== -1 && oldIndex !== newIndex) {
+            const newOrder = arrayMove(allRootTags, oldIndex, newIndex);
+            const updates = newOrder.map((id, index) => ({
+              id,
+              sort_order: index,
+              parent_id: null,
+            }));
+            reorderTagsMutation.mutate({ updates });
+          }
+          return;
+        }
+
+        // center-top/center-bottom: グループの子タグとして追加
         const targetChildren = tags
           .filter((t) => t.parent_id === overId)
           .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
 
-        reorderTagsMutation.mutate({
-          updates: [{ id: activeId, sort_order: targetChildren.length, parent_id: overId }],
-        });
+        const insertIndex = zone === 'center-top' ? 0 : targetChildren.length;
+
+        // 挿入位置以降のタグのsort_orderを更新
+        const updates = [
+          { id: activeId, sort_order: insertIndex, parent_id: overId },
+          ...targetChildren.map((t, i) => ({
+            id: t.id,
+            sort_order: i >= insertIndex ? i + 1 : i,
+            parent_id: overId,
+          })),
+        ];
+        reorderTagsMutation.mutate({ updates });
         return;
       } else {
         // ドロップ先がタグの場合
