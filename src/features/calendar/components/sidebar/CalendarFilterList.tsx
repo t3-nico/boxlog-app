@@ -1303,26 +1303,33 @@ function FlatGroupHeader({
   const { removeTag } = useCalendarFilterStore();
   const { attributes, listeners, setNodeRef, isDragging } = useSortable({ id: item.id });
   const [menuOpen, setMenuOpen] = useState(false);
-  const wasDragging = useRef(false);
-  const clickDisabledUntil = useRef(0);
 
-  // ドラッグ発生を追跡（ドラッグ後のクリック誤発火を防ぐ）
-  useEffect(() => {
-    if (isDragging) {
-      wasDragging.current = true;
-    } else if (wasDragging.current) {
-      // ドラッグ終了後100msはクリックを無視
-      clickDisabledUntil.current = Date.now() + 100;
-      wasDragging.current = false;
-    }
-  }, [isDragging]);
+  // ドラッグとクリックを区別するためのポインター位置追跡
+  const pointerStartPos = useRef<{ x: number; y: number } | null>(null);
 
-  const handleRowClick = useCallback(() => {
-    if (Date.now() < clickDisabledUntil.current) {
-      return;
-    }
-    onToggleExpand();
-  }, [onToggleExpand]);
+  const handlePointerDown = useCallback(
+    (e: React.PointerEvent) => {
+      pointerStartPos.current = { x: e.clientX, y: e.clientY };
+      // dnd-kitのリスナーを呼び出し
+      listeners?.onPointerDown?.(e as unknown as PointerEvent);
+    },
+    [listeners],
+  );
+
+  const handlePointerUp = useCallback(
+    (e: React.PointerEvent) => {
+      if (pointerStartPos.current) {
+        const dx = Math.abs(e.clientX - pointerStartPos.current.x);
+        const dy = Math.abs(e.clientY - pointerStartPos.current.y);
+        // 移動距離が5px未満ならクリックとして処理
+        if (dx < 5 && dy < 5) {
+          onToggleExpand();
+        }
+      }
+      pointerStartPos.current = null;
+    },
+    [onToggleExpand],
+  );
 
   const [optimisticColor, setOptimisticColor] = useState<string | null>(null);
   const displayColor = optimisticColor ?? item.color;
@@ -1435,8 +1442,8 @@ function FlatGroupHeader({
           showInnerTopBorder && 'border-t-primary',
           showInnerBottomBorder && 'border-b-primary',
         )}
-        {...listeners}
-        onClick={handleRowClick}
+        onPointerDown={handlePointerDown}
+        onPointerUp={handlePointerUp}
         onContextMenu={handleContextMenu}
       >
         <Checkbox
