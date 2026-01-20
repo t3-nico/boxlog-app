@@ -140,6 +140,8 @@ export function usePlanInspectorContentLogic() {
   // Tags state
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
   const selectedTagIdsRef = useRef<string[]>(selectedTagIds);
+  // Flag to prevent server sync from overwriting optimistic updates during mutations
+  const isTagMutationInProgressRef = useRef(false);
   const { setplanTags, removePlanTag } = usePlanTags();
 
   // UI state
@@ -151,13 +153,20 @@ export function usePlanInspectorContentLogic() {
   const [endTime, setEndTime] = useState('');
   const [reminderType, setReminderType] = useState<string>('');
 
-  // Sync tags from plan data
+  // Sync tags from plan data (skip when mutation is in progress to preserve optimistic updates)
   useEffect(() => {
+    // Skip sync if user has pending tag changes - prevents race condition
+    // where refetch returns stale data before server processes all mutations
+    if (isTagMutationInProgressRef.current) {
+      return;
+    }
     if (planData && 'tags' in planData) {
       const tagIds = (planData.tags as Array<{ id: string }>).map((tag) => tag.id);
       setSelectedTagIds(tagIds);
+      selectedTagIdsRef.current = tagIds;
     } else {
       setSelectedTagIds([]);
+      selectedTagIdsRef.current = [];
     }
   }, [planData]);
 
@@ -273,6 +282,9 @@ export function usePlanInspectorContentLogic() {
         return;
       }
 
+      // Set flag to prevent server sync from overwriting optimistic updates
+      isTagMutationInProgressRef.current = true;
+
       // ローカル状態を即座に更新（楽観的UI）
       setSelectedTagIds(newTagIds);
       selectedTagIdsRef.current = newTagIds;
@@ -285,6 +297,11 @@ export function usePlanInspectorContentLogic() {
         // エラー時はロールバック
         setSelectedTagIds(oldTagIds);
         selectedTagIdsRef.current = oldTagIds;
+      } finally {
+        // Clear flag after mutation settles (small delay to handle any pending refetch)
+        setTimeout(() => {
+          isTagMutationInProgressRef.current = false;
+        }, 100);
       }
     },
     [planId, setplanTags],
@@ -297,6 +314,9 @@ export function usePlanInspectorContentLogic() {
       const oldTagIds = selectedTagIdsRef.current;
       const newTagIds = oldTagIds.filter((id) => id !== tagId);
 
+      // Set flag to prevent server sync from overwriting optimistic updates
+      isTagMutationInProgressRef.current = true;
+
       setSelectedTagIds(newTagIds);
       selectedTagIdsRef.current = newTagIds;
 
@@ -306,6 +326,11 @@ export function usePlanInspectorContentLogic() {
         console.error('Failed to remove tag:', error);
         setSelectedTagIds(oldTagIds);
         selectedTagIdsRef.current = oldTagIds;
+      } finally {
+        // Clear flag after mutation settles
+        setTimeout(() => {
+          isTagMutationInProgressRef.current = false;
+        }, 100);
       }
     },
     [planId, removePlanTag],
