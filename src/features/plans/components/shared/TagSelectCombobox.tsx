@@ -2,11 +2,10 @@
 
 import { useCallback, useMemo, useState } from 'react';
 
-import { Check, ChevronRight, Plus } from 'lucide-react';
+import { Check, ChevronRight } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { useTags } from '@/features/tags/hooks/useTags';
-import { useTagCreateModalStore } from '@/features/tags/stores/useTagCreateModalStore';
 import { cn } from '@/lib/utils';
 
 import {
@@ -16,7 +15,6 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-  CommandSeparator,
 } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
@@ -162,7 +160,6 @@ export function TagSelectCombobox({
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
 
   const { data: allTags = [] } = useTags();
-  const openTagCreateModal = useTagCreateModalStore((s) => s.openModal);
 
   const toggleExpand = useCallback((parentId: string) => {
     setExpandedGroups((prev) => {
@@ -248,11 +245,6 @@ export function TagSelectCombobox({
     }
   }, []);
 
-  const handleCreateTag = useCallback(() => {
-    openTagCreateModal();
-    setIsOpen(false);
-  }, [openTagCreateModal]);
-
   const hasResults = filteredParentTags.length > 0 || filteredUngroupedTags.length > 0;
 
   return (
@@ -264,7 +256,6 @@ export function TagSelectCombobox({
         side={side}
         alignOffset={alignOffset}
         sideOffset={sideOffset}
-        updatePositionStrategy="optimized"
       >
         <Command shouldFilter={false}>
           <CommandInput
@@ -325,16 +316,6 @@ export function TagSelectCombobox({
                 ))}
               </CommandGroup>
             )}
-
-            <CommandSeparator />
-
-            {/* 新規作成ボタン */}
-            <CommandGroup>
-              <CommandItem onSelect={handleCreateTag} className="cursor-pointer">
-                <Plus className="text-muted-foreground size-4" />
-                <span>{t('tags.page.createTag')}</span>
-              </CommandItem>
-            </CommandGroup>
           </CommandList>
         </Command>
       </PopoverContent>

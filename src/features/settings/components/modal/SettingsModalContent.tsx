@@ -24,18 +24,6 @@ const categoryComponents: Record<
   personalization: lazy(() =>
     import('../chronotype-settings').then((m) => ({ default: m.ChronotypeSettings })),
   ),
-  tags: lazy(() =>
-    Promise.all([
-      import('@/features/tags/components/TagsPageClient'),
-      import('@/features/tags/contexts/TagsPageContext'),
-    ]).then(([{ TagsPageClient }, { TagsPageProvider }]) => ({
-      default: () => (
-        <TagsPageProvider>
-          <TagsPageClient />
-        </TagsPageProvider>
-      ),
-    })),
-  ),
   notifications: lazy(() =>
     import('../notification-settings').then((m) => ({ default: m.NotificationSettings })),
   ),
@@ -67,9 +55,6 @@ export function SettingsModalContent() {
   const currentCategory = SETTINGS_CATEGORIES.find((cat) => cat.id === selectedCategory);
   const categoryLabel = currentCategory ? t(currentCategory.labelKey) : '';
 
-  // Tagsカテゴリは独自のレイアウトを持つため、パディングなしで表示
-  const isTagsCategory = selectedCategory === 'tags';
-
   return (
     <div className="flex h-full min-w-0 flex-1 flex-col">
       {/* ヘッダー - サイドバーと同じ高さ */}
@@ -77,20 +62,11 @@ export function SettingsModalContent() {
         <h2 className="text-lg font-semibold">{categoryLabel}</h2>
       </div>
       {/* コンテンツ */}
-      {isTagsCategory ? (
-        // Tagsカテゴリは独自のスクロール・レイアウトを持つため、ScrollAreaなしで表示
-        <div className="min-h-0 flex-1 overflow-hidden">
-          <Suspense fallback={<SettingsLoadingSkeleton />}>
-            <CategoryComponent />
-          </Suspense>
-        </div>
-      ) : (
-        <div className="min-h-0 flex-1 overflow-auto p-6 pt-0">
-          <Suspense fallback={<SettingsLoadingSkeleton />}>
-            <CategoryComponent />
-          </Suspense>
-        </div>
-      )}
+      <div className="min-h-0 flex-1 overflow-auto p-6 pt-0">
+        <Suspense fallback={<SettingsLoadingSkeleton />}>
+          <CategoryComponent />
+        </Suspense>
+      </div>
     </div>
   );
 }

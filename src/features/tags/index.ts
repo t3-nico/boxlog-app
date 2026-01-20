@@ -26,11 +26,9 @@ export {
   // Modals & Dialogs
   TagCreateModal,
   TagEditDialog,
-  TagSelectionActions,
   // Selection & Display
   TagSelector,
   TagsList,
-  TagsSelectionBar,
 } from './components';
 
 // Hooks
@@ -70,9 +68,6 @@ export { DEFAULT_TAG_COLOR, TAG_COLOR_PALETTE, TAG_PRESET_COLORS } from './const
 export { tagIconCategories, tagIconMapping } from './constants/icons';
 
 export type { TagIconName } from './constants/icons';
-
-// Context
-export { TagsPageProvider, useTagsPageContext } from './contexts/TagsPageContext';
 
 // Types
 export type {

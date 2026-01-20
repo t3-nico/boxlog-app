@@ -375,6 +375,11 @@ export function CalendarFilterList() {
       const { active } = event;
       const id = active.id as string;
 
+      const groupNames = sortableGroupIds.map(
+        (gid) => tags?.find((t) => t.id === gid)?.name || gid.slice(0, 8),
+      );
+      console.warn('=== handleDragStart ===', { id, sortableGroupIds: groupNames });
+
       // flatItemsから該当アイテムを取得（sortOrder用）
       const flatItem = flatItems.find((item) => item.id === id);
       const sortOrder = flatItem?.sortOrder ?? 0;
@@ -383,6 +388,7 @@ export function CalendarFilterList() {
       // 重要: sortableGroupIdsを使用（子タグを持つ親タグのみがグループ）
       // groups?.find()だと子を持たないルートタグ（ungrouped）もマッチしてしまう
       const isGroup = sortableGroupIds.includes(id);
+      console.warn('isGroup:', isGroup);
       if (isGroup) {
         const group = groups?.find((g) => g.id === id);
         if (group) {
@@ -557,13 +563,22 @@ export function CalendarFilterList() {
           const oldIndex = allRootTags.indexOf(activeId);
           const newIndex = allRootTags.indexOf(overId);
 
+          // デバッグ: タグ名も表示
+          const getName = (id: string) => tags?.find((t) => t.id === id)?.name || id.slice(0, 8);
+          console.warn('=== Group reorder ===');
+          console.warn('現在の順序:', allRootTags.map(getName));
+          console.warn('ドラッグ:', getName(activeId), '→', getName(overId));
+          console.warn('oldIndex:', oldIndex, 'newIndex:', newIndex);
+
           if (oldIndex !== -1 && newIndex !== -1) {
             const newOrder = arrayMove(allRootTags, oldIndex, newIndex);
+            console.warn('新しい順序:', newOrder.map(getName));
             const updates = newOrder.map((id, index) => ({
               id,
               sort_order: index,
               parent_id: null,
             }));
+            console.warn('updates:', updates);
             reorderTagsMutation.mutate({ updates });
           }
         }
@@ -1304,33 +1319,6 @@ function FlatGroupHeader({
   const { attributes, listeners, setNodeRef, isDragging } = useSortable({ id: item.id });
   const [menuOpen, setMenuOpen] = useState(false);
 
-  // ドラッグとクリックを区別するためのポインター位置追跡
-  const pointerStartPos = useRef<{ x: number; y: number } | null>(null);
-
-  const handlePointerDown = useCallback(
-    (e: React.PointerEvent) => {
-      pointerStartPos.current = { x: e.clientX, y: e.clientY };
-      // dnd-kitのリスナーを呼び出し
-      listeners?.onPointerDown?.(e as unknown as PointerEvent);
-    },
-    [listeners],
-  );
-
-  const handlePointerUp = useCallback(
-    (e: React.PointerEvent) => {
-      if (pointerStartPos.current) {
-        const dx = Math.abs(e.clientX - pointerStartPos.current.x);
-        const dy = Math.abs(e.clientY - pointerStartPos.current.y);
-        // 移動距離が5px未満ならクリックとして処理
-        if (dx < 5 && dy < 5) {
-          onToggleExpand();
-        }
-      }
-      pointerStartPos.current = null;
-    },
-    [onToggleExpand],
-  );
-
   const [optimisticColor, setOptimisticColor] = useState<string | null>(null);
   const displayColor = optimisticColor ?? item.color;
 
@@ -1442,8 +1430,8 @@ function FlatGroupHeader({
           showInnerTopBorder && 'border-t-primary',
           showInnerBottomBorder && 'border-b-primary',
         )}
-        onPointerDown={handlePointerDown}
-        onPointerUp={handlePointerUp}
+        {...listeners}
+        onClick={onToggleExpand}
         onContextMenu={handleContextMenu}
       >
         <Checkbox

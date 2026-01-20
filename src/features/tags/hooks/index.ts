@@ -37,8 +37,5 @@ export {
 // Tag Operations
 export { useTagOperations } from './useTagOperations';
 
-// Tags Page Data (パフォーマンス最適化用)
-export { useTagsPageData } from './useTagsPageData';
-
 // Realtime
 export { useTagRealtime } from './useTagRealtime';

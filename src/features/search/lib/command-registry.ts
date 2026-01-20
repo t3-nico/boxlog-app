@@ -125,21 +125,14 @@ interface CommandActions {
   router: { push: (path: string) => void };
   openPlanInspector: (planId: string | null) => void;
   openTagCreateModal: () => void;
-  openSettingsModal: (category: 'tags' | 'general') => void;
   navigateToSettings: () => void;
   toggleTheme: () => void;
 }
 
 // Default commands that are always available
 export const registerDefaultCommands = (actions: CommandActions) => {
-  const {
-    router,
-    openPlanInspector,
-    openTagCreateModal,
-    openSettingsModal,
-    navigateToSettings,
-    toggleTheme,
-  } = actions;
+  const { router, openPlanInspector, openTagCreateModal, navigateToSettings, toggleTheme } =
+    actions;
 
   const defaultCommands: Command[] = [
     // Navigation commands
@@ -172,16 +165,6 @@ export const registerDefaultCommands = (actions: CommandActions) => {
       shortcut: ['G', 'S'],
       keywords: ['stats', 'analytics', '統計', 'レポート'],
       action: () => router.push('/stats'),
-    },
-    {
-      id: 'nav:tags',
-      title: 'タグを開く',
-      description: 'タグ一覧を表示',
-      category: 'navigation',
-      icon: 'tag',
-      shortcut: ['G', 'T'],
-      keywords: ['tags', 'タグ', 'ラベル'],
-      action: () => openSettingsModal('tags'),
     },
 
     // Creation commands
