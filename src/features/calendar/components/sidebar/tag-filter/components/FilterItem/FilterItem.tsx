@@ -8,8 +8,8 @@ import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 
 import { useCalendarFilterStore } from '@/features/calendar/stores/useCalendarFilterStore';
-import { TagMergeModal } from '@/features/tags/components/tag-merge-modal';
 import { TAG_NAME_MAX_LENGTH } from '@/features/tags/constants/colors';
+import { useTagModalNavigation } from '@/features/tags/hooks/useTagModalNavigation';
 import { useUpdateTag } from '@/features/tags/hooks/useTags';
 
 import { Checkbox } from '@/components/ui/checkbox';
@@ -59,13 +59,11 @@ export function FilterItem({
 }: FilterItemProps) {
   const t = useTranslations();
   const updateTagMutation = useUpdateTag();
-  const { removeTag, showOnlyTag } = useCalendarFilterStore();
+  const { showOnlyTag } = useCalendarFilterStore();
+  const { openTagMergeModal } = useTagModalNavigation();
 
   // Menu open state
   const [menuOpen, setMenuOpen] = useState(false);
-
-  // Merge modal state
-  const [mergeModalOpen, setMergeModalOpen] = useState(false);
 
   // Edit hook
   const {
@@ -100,13 +98,6 @@ export function FilterItem({
     },
     [tagId, updateTagMutation],
   );
-
-  // Merge success callback
-  const handleMergeSuccess = useCallback(() => {
-    if (tagId) {
-      removeTag(tagId);
-    }
-  }, [tagId, removeTag]);
 
   // Context menu handler
   const handleContextMenu = useCallback(
@@ -197,7 +188,7 @@ export function FilterItem({
               onDescriptionChange={setEditDescription}
               onSaveDescription={handleSaveDescription}
               onChangeParent={parentTags && parentTags.length > 0 ? handleChangeParent : undefined}
-              onOpenMergeModal={() => setMergeModalOpen(true)}
+              onOpenMergeModal={() => openTagMergeModal(tagId)}
               onShowOnlyTag={() => showOnlyTag(tagId)}
               onDeleteTag={onDeleteTag ? () => onDeleteTag(tagId) : undefined}
             />
@@ -217,26 +208,13 @@ export function FilterItem({
   );
 
   return (
-    <>
-      <HoverTooltip
-        content={description}
-        side="top"
-        disabled={!description || menuOpen}
-        wrapperClassName="w-full"
-      >
-        {content}
-      </HoverTooltip>
-
-      {/* Merge modal */}
-      {tagId && (
-        <TagMergeModal
-          open={mergeModalOpen}
-          onClose={() => setMergeModalOpen(false)}
-          sourceTag={{ id: tagId, name: label, color: checkboxColor ?? null }}
-          hasChildren={false}
-          onMergeSuccess={handleMergeSuccess}
-        />
-      )}
-    </>
+    <HoverTooltip
+      content={description}
+      side="top"
+      disabled={!description || menuOpen}
+      wrapperClassName="w-full"
+    >
+      {content}
+    </HoverTooltip>
   );
 }
