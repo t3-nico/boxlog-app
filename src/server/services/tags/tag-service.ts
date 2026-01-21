@@ -10,11 +10,18 @@
  * - タグマージ（関連付け移行 + ソース削除）
  * - タグ削除
  * - 階層構造取得（親タグと子タグ）
+ *
+ * キャッシュ戦略:
+ * - unstable_cache()によるサーバーサイドキャッシュ（5分TTL）
+ * - TanStack Queryのクライアントキャッシュと相互補完
+ * - mutation時にrevalidateTag()で無効化
  */
 
 import type { Tag, TagWithChildren } from '@/features/tags/types';
 import type { Database } from '@/lib/database.types';
 import type { SupabaseClient } from '@supabase/supabase-js';
+
+import { createCachedParentTagsFetcher, createCachedTagsFetcher } from '@/lib/cache';
 
 /** DB タグ行の型（マイグレーション前は group_id、後は parent_id） */
 type DbTagRow = Database['public']['Tables']['tags']['Row'];
@@ -167,17 +174,31 @@ export class TagService {
   /**
    * タグ一覧取得
    *
+   * デフォルトソート（sort_order, name）の場合はサーバーサイドキャッシュを使用。
+   * カスタムソートの場合は直接DBクエリを実行。
+   *
    * @param options - 取得オプション（userId, ソート条件）
    * @returns タグ配列
    */
   async list(options: ListTagsOptions): Promise<Tag[]> {
-    const { userId, sortField = 'name', sortOrder = 'asc' } = options;
+    const { userId, sortField, sortOrder } = options;
 
+    // デフォルトソートの場合はキャッシュを使用（最も一般的なケース）
+    // カレンダーサイドバーなど頻繁にアクセスされる箇所で効果的
+    const useCache = !sortField && !sortOrder;
+
+    if (useCache) {
+      const getCachedTags = createCachedTagsFetcher(this.supabase, userId);
+      const data = await getCachedTags();
+      return data.map(transformDbTag);
+    }
+
+    // カスタムソートの場合は直接クエリ
     const { data, error } = await this.supabase
       .from('tags')
       .select('*')
       .eq('user_id', userId)
-      .order(sortField, { ascending: sortOrder === 'asc' });
+      .order(sortField ?? 'name', { ascending: (sortOrder ?? 'asc') === 'asc' });
 
     if (error) {
       throw new TagServiceError('FETCH_FAILED', `Failed to fetch tags: ${error.message}`);
@@ -239,28 +260,19 @@ export class TagService {
   /**
    * 親タグのみ取得（ドロップダウン用）
    *
+   * サーバーサイドキャッシュを使用してパフォーマンスを最適化。
+   *
    * @param options - userId
    * @returns 親タグの配列（子を持つタグ、または子を持つ可能性のあるルートタグ）
    */
   async listParentTags(options: { userId: string }): Promise<Tag[]> {
     const { userId } = options;
 
-    const { data, error } = await this.supabase
-      .from('tags')
-      .select('*')
-      .eq('user_id', userId)
-      .order('sort_order', { ascending: true })
-      .order('name', { ascending: true });
+    // キャッシュを使用（parent_id = null のタグのみをキャッシュ）
+    const getCachedParentTags = createCachedParentTagsFetcher(this.supabase, userId);
+    const data = await getCachedParentTags();
 
-    if (error) {
-      throw new TagServiceError('FETCH_FAILED', `Failed to fetch tags: ${error.message}`);
-    }
-
-    const tags = data.map(transformDbTag);
-
-    // parent_id を持たないタグ（ルートレベル）のみを返す
-    // これらは親タグとして選択可能
-    return tags.filter((t) => !t.parent_id);
+    return data.map(transformDbTag);
   }
 
   /**

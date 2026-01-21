@@ -18,6 +18,7 @@
 
 import { z } from 'zod';
 
+import { invalidateUserTagsCache } from '@/lib/cache';
 import { handleServiceError } from '@/server/services/errors';
 import { createTagService } from '@/server/services/tags/tag-service';
 import { createTRPCRouter, protectedProcedure } from '../trpc';
@@ -146,6 +147,9 @@ export const tagsRouter = createTRPCRouter({
           },
         });
 
+        // サーバーサイドキャッシュを無効化（次のリクエストで最新データ取得）
+        await invalidateUserTagsCache(ctx.userId!);
+
         return tag;
       } catch (error) {
         return handleServiceError(error);
@@ -187,6 +191,9 @@ export const tagsRouter = createTRPCRouter({
           },
         });
 
+        // サーバーサイドキャッシュを無効化
+        await invalidateUserTagsCache(ctx.userId!);
+
         return tag;
       } catch (error) {
         return handleServiceError(error);
@@ -219,6 +226,9 @@ export const tagsRouter = createTRPCRouter({
           deleteSource: input.deleteSource,
         });
 
+        // サーバーサイドキャッシュを無効化
+        await invalidateUserTagsCache(ctx.userId!);
+
         return result;
       } catch (error) {
         return handleServiceError(error);
@@ -241,6 +251,9 @@ export const tagsRouter = createTRPCRouter({
           userId: ctx.userId!,
           tagId: input.id,
         });
+
+        // サーバーサイドキャッシュを無効化
+        await invalidateUserTagsCache(ctx.userId!);
 
         return deletedTag;
       } catch (error) {
@@ -270,6 +283,9 @@ export const tagsRouter = createTRPCRouter({
           userId: ctx.userId!,
           updates: input.updates,
         });
+
+        // サーバーサイドキャッシュを無効化
+        await invalidateUserTagsCache(ctx.userId!);
 
         return result;
       } catch (error) {
