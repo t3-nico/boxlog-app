@@ -12,9 +12,9 @@ import { SidebarTabLayout } from '@/features/navigation/components/sidebar/Sideb
 import type { SidebarTab } from '@/features/navigation/components/sidebar/types';
 import { useTranslations } from 'next-intl';
 
-import { CalendarFilterList } from './CalendarFilterList';
 import { OpenCardList } from './open/OpenCardList';
 import { OpenNavigation, type OpenSort } from './open/OpenNavigation';
+import { CalendarFilterList } from './tag-filter/CalendarFilterList';
 import { ViewSwitcherList } from './ViewSwitcherList';
 
 /**

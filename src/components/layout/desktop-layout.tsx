@@ -87,8 +87,8 @@ export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
 
       {/* 上部エリア（サイドバー + コンテンツ） */}
       <div className="flex min-h-0 flex-1">
-        {/* Sidebar（240px固定、常に表示）← ページごとに動的切り替え */}
-        <div className="h-full w-60 shrink-0">
+        {/* Sidebar（256px固定、常に表示）← ページごとに動的切り替え */}
+        <div className="h-full w-64 shrink-0">
           <SidebarComponent />
         </div>
 
