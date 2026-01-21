@@ -8,7 +8,6 @@ import { useTranslations } from 'next-intl';
 import { useCalendarFilterStore, type ItemType } from '../../../stores/useCalendarFilterStore';
 
 import { SidebarSection } from '@/features/navigation/components/sidebar/SidebarSection';
-import { TagMergeModal } from '@/features/tags/components/tag-merge-modal';
 import { useTagGroups } from '@/features/tags/hooks/useTagGroups';
 import { useTagModalNavigation } from '@/features/tags/hooks/useTagModalNavigation';
 import { useDeleteTag, useReorderTags, useTags, useUpdateTag } from '@/features/tags/hooks/useTags';
@@ -17,7 +16,6 @@ import { DeleteConfirmDialog } from '@/components/common/DeleteConfirmDialog';
 import { Skeleton } from '@/components/ui/skeleton';
 import { api } from '@/lib/trpc';
 
-import { SortableTree } from '../sortable-tree/SortableTree';
 import { TagSortableTree } from '../sortable-tree/TagSortableTree';
 import { CreateTagButton } from './components/CreateTagButton';
 import { FilterItem } from './components/FilterItem';
@@ -61,9 +59,6 @@ export function CalendarFilterList() {
   const deleteTagMutation = useDeleteTag();
   const reorderTagsMutation = useReorderTags();
   const updateTagMutation = useUpdateTag();
-
-  // マージモーダル用の状態
-  const [mergeTargetId, setMergeTargetId] = useState<string | null>(null);
 
   // TagSortableTree用のタグ更新ハンドラー
   const handleUpdateTag = useCallback(
@@ -122,7 +117,7 @@ export function CalendarFilterList() {
   const isLoading = tagsLoading || groupsLoading;
 
   // タグモーダルナビゲーション
-  const { openTagCreateModal } = useTagModalNavigation();
+  const { openTagCreateModal, openTagMergeModal } = useTagModalNavigation();
 
   // 削除確認ダイアログの状態
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
@@ -191,7 +186,7 @@ export function CalendarFilterList() {
                 onAddChildTag={handleAddChildTag}
                 onShowOnlyTag={showOnlyTag}
                 onShowOnlyGroupTags={showOnlyGroupTags}
-                onOpenMergeModal={(tagId) => setMergeTargetId(tagId)}
+                onOpenMergeModal={openTagMergeModal}
                 onReorder={handleReorder}
                 indentationWidth={16}
               />
@@ -214,11 +209,6 @@ export function CalendarFilterList() {
             </div>
           )}
         </SidebarSection>
-
-        {/* 見本（公式SortableTree） */}
-        <SidebarSection title="見本" defaultOpen className="py-1">
-          <SortableTree collapsible indicator indentationWidth={24} />
-        </SidebarSection>
       </div>
 
       {/* 親タグ削除確認ダイアログ */}
@@ -229,23 +219,6 @@ export function CalendarFilterList() {
         title={t('calendar.filter.deleteParentTag.title')}
         description={t('calendar.filter.deleteParentTag.description')}
       />
-
-      {/* タグマージモーダル */}
-      {mergeTargetId &&
-        tags &&
-        (() => {
-          const sourceTag = tags.find((t) => t.id === mergeTargetId);
-          if (!sourceTag) return null;
-          const hasChildren = tags.some((t) => t.parent_id === mergeTargetId);
-          return (
-            <TagMergeModal
-              open={mergeTargetId !== null}
-              onClose={() => setMergeTargetId(null)}
-              sourceTag={{ id: sourceTag.id, name: sourceTag.name, color: sourceTag.color }}
-              hasChildren={hasChildren}
-            />
-          );
-        })()}
     </>
   );
 }

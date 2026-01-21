@@ -9,7 +9,7 @@
  * - URL共有でモーダル状態を共有可能
  *
  * @example
- * const { openTagCreateModal, openTagEditModal } = useTagModalNavigation();
+ * const { openTagCreateModal, openTagEditModal, openTagMergeModal } = useTagModalNavigation();
  *
  * // タグ作成モーダルを開く
  * openTagCreateModal();
@@ -19,6 +19,9 @@
  *
  * // タグ編集モーダルを開く
  * openTagEditModal('tag-id');
+ *
+ * // タグマージモーダルを開く（マージ元のタグIDを指定）
+ * openTagMergeModal('source-tag-id');
  */
 
 import { useLocale } from 'next-intl';
@@ -58,8 +61,23 @@ export function useTagModalNavigation() {
     [locale, router],
   );
 
+  /**
+   * タグマージモーダルを開く
+   *
+   * /tags/merge/[id] へ遷移し、Intercepting Route でモーダルとして表示
+   *
+   * @param sourceTagId - マージ元（消える側）のタグID
+   */
+  const openTagMergeModal = useCallback(
+    (sourceTagId: string) => {
+      router.push(`/${locale}/tags/merge/${sourceTagId}`);
+    },
+    [locale, router],
+  );
+
   return {
     openTagCreateModal,
     openTagEditModal,
+    openTagMergeModal,
   };
 }
