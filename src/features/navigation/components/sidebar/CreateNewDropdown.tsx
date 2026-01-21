@@ -1,5 +1,7 @@
 'use client';
 
+import { useState } from 'react';
+
 import { CalendarPlus, Clock, FileText, History, Plus, Tag } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -10,6 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { HoverTooltip } from '@/components/ui/tooltip';
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
 import { useTagModalNavigation } from '@/features/tags/hooks/useTagModalNavigation';
@@ -18,6 +21,10 @@ import { useTranslations } from 'next-intl';
 interface CreateNewDropdownProps {
   /** ボタンサイズ: 'default' = 40px, 'sm' = 32px */
   size?: 'default' | 'sm';
+  /** ツールチップのテキスト */
+  tooltipContent?: string;
+  /** ツールチップの表示位置 */
+  tooltipSide?: 'top' | 'bottom' | 'left' | 'right';
 }
 
 /**
@@ -26,11 +33,16 @@ interface CreateNewDropdownProps {
  * Plan/Record/History/Templates/Tagsを選択して新規作成できるドロップダウンメニュー
  * - サイズはsize propsで制御（'default' = 40px, 'sm' = 32px）
  */
-export function CreateNewDropdown({ size = 'default' }: CreateNewDropdownProps) {
+export function CreateNewDropdown({
+  size = 'default',
+  tooltipContent,
+  tooltipSide = 'bottom',
+}: CreateNewDropdownProps) {
   const t = useTranslations();
   const { createPlan } = usePlanMutations();
   const { openInspector } = usePlanInspectorStore();
   const { openTagCreateModal } = useTagModalNavigation();
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleCreatePlan = async () => {
     try {
@@ -77,13 +89,23 @@ export function CreateNewDropdown({ size = 'default' }: CreateNewDropdownProps) 
     openTagCreateModal();
   };
 
+  const trigger = (
+    <DropdownMenuTrigger asChild>
+      <Button variant="ghost" size="icon" className={size === 'sm' ? 'size-8' : 'size-10'}>
+        <Plus className={size === 'sm' ? 'size-4' : 'size-5'} />
+      </Button>
+    </DropdownMenuTrigger>
+  );
+
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className={size === 'sm' ? 'size-8' : 'size-10'}>
-          <Plus className={size === 'sm' ? 'size-4' : 'size-5'} />
-        </Button>
-      </DropdownMenuTrigger>
+    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+      {tooltipContent ? (
+        <HoverTooltip content={tooltipContent} side={tooltipSide} disabled={isOpen}>
+          {trigger}
+        </HoverTooltip>
+      ) : (
+        trigger
+      )}
       <DropdownMenuContent side="right" align="start" sideOffset={4}>
         {/* Plan - 予定を作成 */}
         <DropdownMenuItem onClick={handleCreatePlan}>
@@ -91,10 +113,11 @@ export function CreateNewDropdown({ size = 'default' }: CreateNewDropdownProps) 
           {t('createSheet.plan')}
         </DropdownMenuItem>
 
-        {/* Record - 実績を記録 */}
-        <DropdownMenuItem onClick={handleCreateRecord}>
+        {/* Record - 記録 */}
+        <DropdownMenuItem onClick={handleCreateRecord} disabled>
           <Clock className="size-4" />
           {t('createSheet.record')}
+          <span className="text-muted-foreground ml-auto text-xs">{t('comingSoon')}</span>
         </DropdownMenuItem>
 
         <DropdownMenuSeparator />

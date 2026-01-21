@@ -85,9 +85,11 @@ export function SidebarShell({ children, className, hideNavUser = false }: Sideb
                 <Search className="size-4" />
               </Button>
             </HoverTooltip>
-            <HoverTooltip content={t('sidebar.quickCreate')} side="bottom">
-              <CreateNewDropdown size="sm" />
-            </HoverTooltip>
+            <CreateNewDropdown
+              size="sm"
+              tooltipContent={t('sidebar.quickCreate')}
+              tooltipSide="bottom"
+            />
           </div>
         </div>
       )}

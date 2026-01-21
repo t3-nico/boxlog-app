@@ -342,7 +342,7 @@
     "description": "追加するアイテムの種類を選択してください",
     "plan": "予定",
     "planDescription": "新しい予定を作成します",
-    "record": "実績",
+    "record": "記録",
     "recordDescription": "実際に行ったことを記録します",
     "template": "テンプレート",
     "templateDescription": "保存済みテンプレートから追加します",
