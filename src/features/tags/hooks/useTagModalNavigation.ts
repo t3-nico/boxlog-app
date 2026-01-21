@@ -9,13 +9,16 @@
  * - URL共有でモーダル状態を共有可能
  *
  * @example
- * const { openTagCreateModal } = useTagModalNavigation();
+ * const { openTagCreateModal, openTagEditModal } = useTagModalNavigation();
  *
  * // タグ作成モーダルを開く
  * openTagCreateModal();
  *
  * // 親タグを指定してタグ作成モーダルを開く
  * openTagCreateModal('parent-tag-id');
+ *
+ * // タグ編集モーダルを開く
+ * openTagEditModal('tag-id');
  */
 
 import { useLocale } from 'next-intl';
@@ -41,7 +44,22 @@ export function useTagModalNavigation() {
     [locale, router],
   );
 
+  /**
+   * タグ編集モーダルを開く
+   *
+   * /tags/edit/[id] へ遷移し、Intercepting Route でモーダルとして表示
+   *
+   * @param tagId - 編集するタグのID
+   */
+  const openTagEditModal = useCallback(
+    (tagId: string) => {
+      router.push(`/${locale}/tags/edit/${tagId}`);
+    },
+    [locale, router],
+  );
+
   return {
     openTagCreateModal,
+    openTagEditModal,
   };
 }

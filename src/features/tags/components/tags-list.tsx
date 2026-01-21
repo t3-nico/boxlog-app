@@ -23,7 +23,7 @@ import { useTranslations } from 'next-intl';
 import { tagIconMapping, TagIconName } from '../constants/icons';
 
 import { DeleteConfirmDialog } from '@/components/common/DeleteConfirmDialog';
-import { TagEditDialog } from './tag-edit-dialog';
+import { useTagModalNavigation } from '../hooks/useTagModalNavigation';
 
 interface TagsListProps {
   collapsed?: boolean;
@@ -285,14 +285,16 @@ export const TagsList = ({
     [toggleTagExpansion],
   );
 
-  const [editingTag, setEditingTag] = useState<Tag | null>(null);
   const [deletingTag, setDeletingTag] = useState<Tag | null>(null);
-  const updateTag = useTagStore((state) => state.updateTag);
   const deleteTag = useTagStore((state) => state.deleteTag);
+  const { openTagEditModal, openTagCreateModal } = useTagModalNavigation();
 
-  const handleEditTag = useCallback((tag: Tag) => {
-    setEditingTag(tag);
-  }, []);
+  const handleEditTag = useCallback(
+    (tag: Tag) => {
+      openTagEditModal(tag.id);
+    },
+    [openTagEditModal],
+  );
 
   const handleDeleteTag = useCallback((tag: Tag) => {
     setDeletingTag(tag);
@@ -308,36 +310,18 @@ export const TagsList = ({
     setDeletingTag(null);
   }, []);
 
-  const handleSaveTag = useCallback(
-    (updatedTag: Partial<Tag>) => {
-      if (!editingTag) return;
-
-      updateTag(editingTag.id, {
-        name: updatedTag.name,
-        color: updatedTag.color ?? undefined,
-        icon: updatedTag.icon,
-      });
-      setEditingTag(null);
-    },
-    [editingTag, updateTag],
-  );
-
   // jsx-no-bind optimization handlers
   const handleToggleExpansion = useCallback(() => {
     setIsExpanded(!isExpanded);
   }, [isExpanded]);
 
   const handleCreateNewTag = useCallback(() => {
-    // タグ作成処理は親コンポーネントで実装
-  }, []);
+    openTagCreateModal();
+  }, [openTagCreateModal]);
 
   const handleCreateNewTagCollapsed = useCallback(() => {
-    // タグ作成処理は親コンポーネントで実装
-  }, []);
-
-  const handleCloseEditDialog = useCallback(() => {
-    setEditingTag(null);
-  }, []);
+    openTagCreateModal();
+  }, [openTagCreateModal]);
 
   if (collapsed) {
     return null;
@@ -418,13 +402,7 @@ export const TagsList = ({
         </div>
       )}
 
-      {/* タグ編集ダイアログ */}
-      <TagEditDialog
-        tag={editingTag}
-        open={!!editingTag}
-        onClose={handleCloseEditDialog}
-        onSave={handleSaveTag}
-      />
+      {/* タグ編集ダイアログは Intercepting Routes に移行 (@modal/(.)tags/edit/[id]) */}
 
       {/* タグ削除ダイアログ */}
       <DeleteConfirmDialog
