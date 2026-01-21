@@ -3,17 +3,12 @@
 import { Badge } from '@/components/ui/badge';
 import { TableCell } from '@/components/ui/table';
 import { TagSelectCombobox } from '@/features/plans/components/shared/TagSelectCombobox';
+import { useTagsMap } from '@/features/tags/hooks/useTagsMap';
 import { useEffect, useRef, useState } from 'react';
 
-interface Tag {
-  id: string;
-  name: string;
-  color?: string | undefined;
-}
-
 interface TagsCellProps {
-  /** 現在のタグ */
-  tags?: Tag[] | undefined;
+  /** 現在のタグIDリスト */
+  tagIds?: string[] | undefined;
   /** 列幅 */
   width?: number | undefined;
   /** タグ変更時のコールバック */
@@ -26,21 +21,24 @@ interface TagsCellProps {
  * クリックでタグ選択ダイアログを開く
  * - 行クリックイベントの伝播を防止
  * - タグのカラー表示に対応
+ * - tagIdsを受け取り、タグマスタからルックアップ
  *
  * @example
  * ```tsx
  * <TagsCell
- *   tags={item.tags}
+ *   tagIds={item.tagIds}
  *   width={column?.width}
  *   onTagsChange={(tagIds) => updateTags(item.id, tagIds)}
  * />
  * ```
  */
-export function TagsCell({ tags = [], width, onTagsChange }: TagsCellProps) {
+export function TagsCell({ tagIds = [], width, onTagsChange }: TagsCellProps) {
   const [visibleCount, setVisibleCount] = useState(2);
   const containerRef = useRef<HTMLDivElement>(null);
+  const { getTagsByIds } = useTagsMap();
 
-  const selectedTagIds = tags.map((tag) => tag.id);
+  // タグマスタからタグ情報を取得
+  const tags = getTagsByIds(tagIds);
 
   // 列幅に応じて表示可能なタグ数を計算
   useEffect(() => {
@@ -83,7 +81,7 @@ export function TagsCell({ tags = [], width, onTagsChange }: TagsCellProps) {
       className="group hover:bg-state-hover cursor-pointer transition-colors"
       style={style}
     >
-      <TagSelectCombobox selectedTagIds={selectedTagIds} onTagsChange={onTagsChange}>
+      <TagSelectCombobox selectedTagIds={tagIds} onTagsChange={onTagsChange}>
         <div ref={containerRef} className="flex gap-1 overflow-hidden">
           {tags.slice(0, visibleCount).map((tag) => (
             <Badge

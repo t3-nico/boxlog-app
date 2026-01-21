@@ -202,7 +202,8 @@ function applyFilters(events: CalendarPlan[], filters: Record<string, unknown>):
     // タグフィルター
     const filterTags = filters.tags as string[] | undefined;
     if (filterTags && Array.isArray(filterTags) && filterTags.length > 0) {
-      if (!event.tags || !event.tags.some((tag) => filterTags.includes(tag.id))) {
+      const eventTagIds = event.tagIds ?? [];
+      if (!eventTagIds.some((tagId) => filterTags.includes(tagId))) {
         return false;
       }
     }

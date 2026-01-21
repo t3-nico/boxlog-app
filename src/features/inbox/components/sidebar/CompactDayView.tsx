@@ -13,6 +13,7 @@ import { useSleepHours } from '@/features/calendar/hooks/useSleepHours';
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
+import { useTagsMap } from '@/features/tags/hooks/useTagsMap';
 import { cn } from '@/lib/utils';
 
 // コンパクト版の定数（カレンダーDayViewに近い設定）
@@ -64,6 +65,9 @@ export const CompactDayView = memo(function CompactDayView({
   const [isDragOver, setIsDragOver] = useState(false);
   const [dragOverHour, setDragOverHour] = useState<number | null>(null);
   const [draggingPlanId, setDraggingPlanId] = useState<string | null>(null);
+
+  // タグ情報取得用
+  const { getTagById } = useTagsMap();
 
   // Inspector連携
   const inspectorPlanId = usePlanInspectorStore((state) => state.planId);
@@ -488,7 +492,8 @@ export const CompactDayView = memo(function CompactDayView({
               {/* プラン表示 */}
               {dayPlans.map(({ plan, top, height }) => {
                 const isActive = isInspectorOpen && inspectorPlanId === plan.id;
-                const planColor = plan.tags?.[0]?.color || plan.color;
+                const firstTagId = plan.tagIds?.[0];
+                const planColor = (firstTagId && getTagById(firstTagId)?.color) || plan.color;
 
                 return (
                   <div

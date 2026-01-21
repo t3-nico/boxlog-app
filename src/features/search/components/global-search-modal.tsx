@@ -43,7 +43,7 @@ import { commandRegistry, registerDefaultCommands } from '../lib/command-registr
 import { HighlightedText } from '../lib/highlight-text';
 import { getFilterHints, parseSearchQuery } from '../lib/query-parser';
 
-// Helper function to convert plan_tags to tags format
+// APIレスポンスの型（tagIdsのみ）
 type PlanFromAPI = {
   id: string;
   user_id: string;
@@ -60,10 +60,7 @@ type PlanFromAPI = {
   reminder_minutes: number | null;
   created_at: string | null;
   updated_at: string | null;
-  plan_tags: Array<{
-    tag_id: string;
-    tags: { id: string; name: string; color: string } | null;
-  }>;
+  tagIds?: string[];
 };
 
 interface GlobalSearchModalProps {
@@ -158,18 +155,22 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
 
   // Convert and filter plans
   const filteredPlans = useMemo(() => {
-    const converted = (plans as unknown as PlanFromAPI[]).map((plan) => ({
-      id: plan.id,
-      title: plan.title,
-      description: plan.description,
-      status: plan.status,
-      due_date: plan.due_date,
-      plan_number: plan.plan_number,
-      tags:
-        plan.plan_tags
-          ?.map((pt) => pt.tags)
-          .filter((tag): tag is { id: string; name: string; color: string } => tag !== null) || [],
-    }));
+    // タグIDからタグ情報を解決してconvertedに含める
+    const converted = (plans as unknown as PlanFromAPI[]).map((plan) => {
+      const planTagIds = plan.tagIds ?? [];
+      const resolvedTags = planTagIds
+        .map((tagId) => tags.find((t) => t.id === tagId))
+        .filter((tag): tag is (typeof tags)[0] => tag !== undefined);
+      return {
+        id: plan.id,
+        title: plan.title,
+        description: plan.description,
+        status: plan.status,
+        due_date: plan.due_date,
+        plan_number: plan.plan_number,
+        tags: resolvedTags,
+      };
+    });
 
     // Apply custom filters from parsed query
     let filtered = converted;
@@ -221,7 +222,7 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
     }
 
     return filtered;
-  }, [plans, parsedQuery.filters]);
+  }, [plans, tags, parsedQuery.filters]);
 
   // Get group label
   const getGroupLabel = (key: string): string => {

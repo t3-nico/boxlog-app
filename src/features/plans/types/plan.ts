@@ -86,10 +86,13 @@ export interface UpdatePlanInput {
 }
 
 /**
- * タグ付きプラン（リレーション取得時）
+ * タグID付きプラン（リレーション取得時）
+ *
+ * タグの詳細情報（name, color等）はtags.listキャッシュから取得する。
+ * これにより、タグマスタの変更が全UIで即時反映される。
  */
 export interface PlanWithTags extends Plan {
-  tags: Array<{ id: string; name: string; color: string; description?: string }>;
+  tagIds: string[];
 }
 
 /**

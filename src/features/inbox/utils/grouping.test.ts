@@ -97,29 +97,30 @@ describe('grouping', () => {
         const items = [
           createMockItem({
             id: '1',
-            tags: [{ id: 'tag-1', name: '仕事' }],
+            tagIds: ['tag-1'],
           }),
           createMockItem({
             id: '2',
-            tags: [{ id: 'tag-2', name: 'プライベート' }],
+            tagIds: ['tag-2'],
           }),
           createMockItem({
             id: '3',
-            tags: [{ id: 'tag-1', name: '仕事' }],
+            tagIds: ['tag-1'],
           }),
         ];
 
         const result = groupItems(items, 'tags');
 
         expect(result).toHaveLength(2);
-        expect(result.some((g) => g.groupKey === '仕事')).toBe(true);
-        expect(result.some((g) => g.groupKey === 'プライベート')).toBe(true);
+        // tagIdsベースのグループ化ではタグIDがgroupKeyになる
+        expect(result.some((g) => g.groupKey === 'tag-1')).toBe(true);
+        expect(result.some((g) => g.groupKey === 'tag-2')).toBe(true);
       });
 
       it('タグがない場合は「タグなし」グループに分類される', () => {
         const items = [
-          createMockItem({ id: '1', tags: undefined }),
-          createMockItem({ id: '2', tags: [] }),
+          createMockItem({ id: '1', tagIds: undefined }),
+          createMockItem({ id: '2', tagIds: [] }),
         ];
 
         const result = groupItems(items, 'tags');

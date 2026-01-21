@@ -91,7 +91,8 @@ function getGroupKey(item: InboxItem, groupBy: GroupByField): string {
       return getDueDateGroup(item.due_date || null);
 
     case 'tags':
-      return item.tags && item.tags.length > 0 ? item.tags[0]!.name : 'タグなし';
+      // tagIdsの最初のIDをグループキーとして使用（タグ名の解決はUI側で行う）
+      return item.tagIds && item.tagIds.length > 0 ? item.tagIds[0]! : 'タグなし';
 
     default:
       return 'unknown';

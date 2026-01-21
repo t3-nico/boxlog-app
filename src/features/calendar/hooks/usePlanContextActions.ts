@@ -132,9 +132,9 @@ export function usePlanContextActions() {
         });
 
         // タグも複製
-        if (plan.tags && plan.tags.length > 0) {
-          for (const tag of plan.tags) {
-            await addPlanTag(newPlan.id, tag.id);
+        if (plan.tagIds && plan.tagIds.length > 0) {
+          for (const tagId of plan.tagIds) {
+            await addPlanTag(newPlan.id, tagId);
           }
         }
 

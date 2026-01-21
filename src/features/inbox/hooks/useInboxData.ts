@@ -26,18 +26,11 @@ export interface InboxSortOptions {
 
 /**
  * APIから返されるプランデータの型
- * plan_tagsはJOINで取得される中間テーブル形式
+ * tagIdsはplan-serviceのformatPlanWithTagsで変換済み
  * @internal テスト用にエクスポート
  */
-export type PlanWithPlanTags = Plan & {
-  plan_tags?: Array<{
-    tag_id: string;
-    tags: {
-      id: string;
-      name: string;
-      color?: string;
-    } | null;
-  }> | null;
+export type PlanWithTagIds = Plan & {
+  tagIds?: string[];
 };
 
 /**
@@ -68,7 +61,7 @@ export interface InboxItem {
     | undefined; // 繰り返しタイプ（シンプル版）
   recurrence_end_date?: string | null | undefined; // 繰り返し終了日（YYYY-MM-DD）
   recurrence_rule?: string | null | undefined; // カスタム繰り返し（RRULE形式）
-  tags?: Array<{ id: string; name: string; color?: string | undefined }> | undefined; // タグ情報
+  tagIds?: string[] | undefined; // タグIDリスト（タグ情報はtags.listキャッシュから取得）
 }
 
 /**
@@ -237,16 +230,7 @@ function matchesScheduleFilter(
  * PlanをInboxItemに変換
  * @internal テスト用にエクスポート
  */
-export function planToInboxItem(plan: PlanWithPlanTags): InboxItem {
-  // plan_tags から tags を抽出
-  const tags =
-    plan.plan_tags
-      ?.map((pt) => pt.tags)
-      .filter(
-        (tag): tag is { id: string; name: string; color?: string } =>
-          tag !== null && tag !== undefined,
-      ) || [];
-
+export function planToInboxItem(plan: PlanWithTagIds): InboxItem {
   return {
     id: plan.id,
     type: 'plan',
@@ -261,7 +245,7 @@ export function planToInboxItem(plan: PlanWithPlanTags): InboxItem {
     recurrence_type: plan.recurrence_type,
     recurrence_end_date: plan.recurrence_end_date,
     recurrence_rule: plan.recurrence_rule,
-    tags: tags.length > 0 ? tags : undefined,
+    tagIds: plan.tagIds,
   };
 }
 
@@ -303,15 +287,13 @@ export function useInboxData(filters: InboxFilters = {}, sort?: InboxSortOptions
   });
 
   // PlanをInboxItemに変換
-  // APIレスポンスの型はPlanWithPlanTagsと互換性がある
-  let items: InboxItem[] =
-    plansData?.map((plan) => planToInboxItem(plan as PlanWithPlanTags)) || [];
+  // APIレスポンスの型はPlanWithTagIdsと互換性がある
+  let items: InboxItem[] = plansData?.map((plan) => planToInboxItem(plan as PlanWithTagIds)) || [];
 
   // タグフィルタリング（クライアント側）
   if (filters.tags && filters.tags.length > 0) {
     items = items.filter((item) => {
-      // アイテムのタグIDを抽出
-      const itemTagIds = item.tags?.map((tag) => tag.id) || [];
+      const itemTagIds = item.tagIds ?? [];
       // フィルタータグのいずれかに一致するかチェック（OR条件）
       return filters.tags!.some((filterTagId) => itemTagIds.includes(filterTagId));
     });

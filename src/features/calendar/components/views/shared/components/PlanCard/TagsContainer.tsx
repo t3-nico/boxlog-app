@@ -1,26 +1,28 @@
 /**
  * タグコンテナ - 横幅に応じて表示できるだけタグを表示し、隠れたタグは+Nで表示
  * IntersectionObserverを使用して可視タグ数を検出
+ *
+ * tagIdsを受け取り、タグマスタから詳細情報をルックアップする。
+ * これにより、タグマスタの変更が即時反映される。
  */
 
 'use client';
 
 import { memo, useEffect, useRef, useState } from 'react';
 
-interface Tag {
-  id: string;
-  name: string;
-  color: string;
-  icon?: string | undefined;
-  parent_id?: string | undefined;
-}
+import { useTagsMap } from '@/features/tags/hooks/useTagsMap';
 
 interface TagsContainerProps {
-  tags: Tag[];
+  tagIds: string[];
 }
 
-export const TagsContainer = memo<TagsContainerProps>(function TagsContainer({ tags }) {
+export const TagsContainer = memo<TagsContainerProps>(function TagsContainer({ tagIds }) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const { getTagsByIds } = useTagsMap();
+
+  // タグマスタからタグ情報を取得
+  const tags = getTagsByIds(tagIds);
+
   const [visibleCount, setVisibleCount] = useState(tags.length);
 
   useEffect(() => {

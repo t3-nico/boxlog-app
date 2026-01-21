@@ -1,9 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { matchesDueDateFilter, planToInboxItem, type PlanWithPlanTags } from './useInboxData';
+import { matchesDueDateFilter, planToInboxItem, type PlanWithTagIds } from './useInboxData';
 
 // テスト用のモックプラン
-const createMockPlan = (overrides: Partial<PlanWithPlanTags> = {}): PlanWithPlanTags => ({
+const createMockPlan = (overrides: Partial<PlanWithTagIds> = {}): PlanWithTagIds => ({
   id: 'test-id',
   user_id: 'user-1',
   title: 'テストプラン',
@@ -186,69 +186,39 @@ describe('useInboxData', () => {
       expect(result.status).toBe('closed');
     });
 
-    it('plan_tagsからtagsを抽出できる', () => {
+    it('tagIdsが正しくパススルーされる', () => {
       const plan = createMockPlan({
         id: 'plan-1',
-        plan_tags: [
-          {
-            tag_id: 'tag-1',
-            tags: { id: 'tag-1', name: '仕事', color: '#FF0000' },
-          },
-          {
-            tag_id: 'tag-2',
-            tags: { id: 'tag-2', name: 'プライベート', color: '#00FF00' },
-          },
-        ],
+        tagIds: ['tag-1', 'tag-2'],
       });
 
       const result = planToInboxItem(plan);
 
-      expect(result.tags).toHaveLength(2);
-      expect(result.tags?.[0]).toEqual({ id: 'tag-1', name: '仕事', color: '#FF0000' });
-      expect(result.tags?.[1]).toEqual({ id: 'tag-2', name: 'プライベート', color: '#00FF00' });
+      expect(result.tagIds).toHaveLength(2);
+      expect(result.tagIds?.[0]).toBe('tag-1');
+      expect(result.tagIds?.[1]).toBe('tag-2');
     });
 
-    it('nullのtagsはフィルタリングされる', () => {
+    it('tagIdsがない場合はundefinedになる', () => {
       const plan = createMockPlan({
         id: 'plan-1',
-        plan_tags: [
-          {
-            tag_id: 'tag-1',
-            tags: { id: 'tag-1', name: '仕事' },
-          },
-          {
-            tag_id: 'tag-2',
-            tags: null, // 削除されたタグ
-          },
-        ],
+        // tagIdsを省略
       });
 
       const result = planToInboxItem(plan);
 
-      expect(result.tags).toHaveLength(1);
-      expect(result.tags?.[0]?.name).toBe('仕事');
+      expect(result.tagIds).toBeUndefined();
     });
 
-    it('plan_tagsがない場合はtagsはundefined', () => {
+    it('tagIdsが空配列の場合は空配列がパススルーされる', () => {
       const plan = createMockPlan({
         id: 'plan-1',
-        plan_tags: null,
+        tagIds: [],
       });
 
       const result = planToInboxItem(plan);
 
-      expect(result.tags).toBeUndefined();
-    });
-
-    it('plan_tagsが空配列の場合はtagsはundefined', () => {
-      const plan = createMockPlan({
-        id: 'plan-1',
-        plan_tags: [],
-      });
-
-      const result = planToInboxItem(plan);
-
-      expect(result.tags).toBeUndefined();
+      expect(result.tagIds).toEqual([]);
     });
 
     it('期限関連のフィールドを正しく変換する', () => {

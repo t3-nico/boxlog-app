@@ -10,6 +10,7 @@ import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
 import { TagSelectCombobox } from '@/features/plans/components/shared/TagSelectCombobox';
 import { usePlanTags } from '@/features/plans/hooks/usePlanTags';
 import { useDateFormat } from '@/features/settings/hooks/useDateFormat';
+import { useTagsMap } from '@/features/tags/hooks/useTagsMap';
 import { cn } from '@/lib/utils';
 import { useLocale } from 'next-intl';
 
@@ -29,14 +30,15 @@ export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemP
   const dateLocale = locale === 'ja' ? ja : undefined;
   const { addPlanTag, removePlanTag } = usePlanTags();
   const { formatTime: formatTimeWithSettings } = useDateFormat();
+  const { getTagsByIds } = useTagsMap();
 
   // プランの実際のIDを取得（繰り返しプランの場合はcalendarIdを使用）
   const planId = plan.calendarId ?? plan.id;
 
   // 選択中のタグID
   const selectedTagIds = useMemo(() => {
-    return plan.tags?.map((t) => t.id) ?? [];
-  }, [plan.tags]);
+    return plan.tagIds ?? [];
+  }, [plan.tagIds]);
 
   const handleClick = () => {
     onClick?.(plan);
@@ -97,8 +99,9 @@ export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemP
       ? `${startTime}-${endTime}`
       : startTime || (locale === 'ja' ? '終日' : 'All day');
 
-  // タグの表示
-  const displayTags = plan.tags?.slice(0, 3) ?? [];
+  // タグの表示（tagIdsからタグ情報を取得）
+  const tags = getTagsByIds(selectedTagIds);
+  const displayTags = tags.slice(0, 3);
 
   return (
     <button
@@ -176,15 +179,13 @@ export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemP
                   <span className="truncate">{displayTags[2].name}</span>
                 </span>
               )}
-              {(plan.tags?.length ?? 0) > 3 && (
+              {tags.length > 3 && (
                 <span className="text-muted-foreground hidden text-xs md:inline">
-                  +{(plan.tags?.length ?? 0) - 3}
+                  +{tags.length - 3}
                 </span>
               )}
-              {(plan.tags?.length ?? 0) > 2 && (
-                <span className="text-muted-foreground text-xs md:hidden">
-                  +{(plan.tags?.length ?? 0) - 2}
-                </span>
+              {tags.length > 2 && (
+                <span className="text-muted-foreground text-xs md:hidden">+{tags.length - 2}</span>
               )}
             </>
           ) : (

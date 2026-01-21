@@ -160,11 +160,16 @@ export function usePlanInspectorContentLogic() {
     if (isTagMutationInProgressRef.current) {
       return;
     }
-    if (planData && 'tags' in planData) {
-      const tagIds = (planData.tags as Array<{ id: string }>).map((tag) => tag.id);
-      setSelectedTagIds(tagIds);
-      selectedTagIdsRef.current = tagIds;
-    } else {
+    // データ未ロード時は何もしない（空配列をセットしない）
+    // これにより、ローディング中にタグが消えるのを防ぐ
+    if (planData === undefined) {
+      return;
+    }
+    if (planData && 'tagIds' in planData && Array.isArray(planData.tagIds)) {
+      setSelectedTagIds(planData.tagIds);
+      selectedTagIdsRef.current = planData.tagIds;
+    } else if (planData) {
+      // planDataがnullの場合（存在しないプラン）のみ空にする
       setSelectedTagIds([]);
       selectedTagIdsRef.current = [];
     }

@@ -24,15 +24,15 @@ function mapPlanStatusToCalendarStatus(status: string): 'open' | 'closed' {
   return status === 'closed' ? 'closed' : 'open';
 }
 
-// タグ付きPlan型
-type PlanWithTags = Plan & {
-  tags?: Array<{ id: string; name: string; color: string; icon?: string; parent_id?: string }>;
+// タグID付きPlan型
+type PlanWithTagIds = Plan & {
+  tagIds?: string[];
 };
 
 /**
  * データベースPlan型をCalendarPlan型に変換
  */
-export function planToCalendarPlan(plan: PlanWithTags): CalendarPlan {
+export function planToCalendarPlan(plan: PlanWithTagIds): CalendarPlan {
   const startDate = plan.start_time ? new Date(plan.start_time) : new Date();
   const endDate = plan.end_time ? new Date(plan.end_time) : new Date();
   const createdAt = plan.created_at ? new Date(plan.created_at) : new Date();
@@ -57,7 +57,7 @@ export function planToCalendarPlan(plan: PlanWithTags): CalendarPlan {
     status: mapPlanStatusToCalendarStatus(plan.status),
     color: '#3b82f6', // デフォルトカラー
     reminder_minutes: plan.reminder_minutes,
-    tags: plan.tags ?? [], // タグ情報を引き継ぐ
+    tagIds: plan.tagIds ?? [], // タグIDを引き継ぐ
     createdAt,
     updatedAt,
     displayStartDate: startDate,
@@ -71,7 +71,7 @@ export function planToCalendarPlan(plan: PlanWithTags): CalendarPlan {
 /**
  * データベースPlan型の配列をCalendarPlan型の配列に変換
  */
-export function plansToCalendarPlans(plans: PlanWithTags[]): CalendarPlan[] {
+export function plansToCalendarPlans(plans: PlanWithTagIds[]): CalendarPlan[] {
   return plans.map(planToCalendarPlan);
 }
 
@@ -144,14 +144,14 @@ export function safePlansToTimedPlans(
 /**
  * 繰り返しプランを展開してCalendarPlan配列に変換
  *
- * @param plans - プラン配列（タグ情報付き）
+ * @param plans - プラン配列（タグID付き）
  * @param rangeStart - 表示範囲の開始日
  * @param rangeEnd - 表示範囲の終了日
  * @param exceptions - DBから取得した例外情報のマップ（planId -> exceptions）
  * @returns 展開されたCalendarPlan配列
  */
 export function expandRecurringPlansToCalendarPlans(
-  plans: PlanWithTags[],
+  plans: PlanWithTagIds[],
   rangeStart: Date,
   rangeEnd: Date,
   exceptionsMap: Map<string, PlanInstanceException[]> = new Map(),
@@ -185,7 +185,7 @@ export function expandRecurringPlansToCalendarPlans(
  * @param occurrence - 展開されたオカレンス
  */
 function occurrenceToCalendarPlan(
-  basePlan: PlanWithTags,
+  basePlan: PlanWithTagIds,
   occurrence: ExpandedOccurrence,
 ): CalendarPlan {
   const createdAt = basePlan.created_at ? new Date(basePlan.created_at) : new Date();
@@ -242,7 +242,7 @@ function occurrenceToCalendarPlan(
     status: mapPlanStatusToCalendarStatus(basePlan.status),
     color: '#3b82f6',
     reminder_minutes: basePlan.reminder_minutes,
-    tags: basePlan.tags ?? [], // 親プランのタグを引き継ぐ
+    tagIds: basePlan.tagIds ?? [], // 親プランのタグIDを引き継ぐ
     createdAt,
     updatedAt,
     displayStartDate: startDate,

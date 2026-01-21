@@ -46,7 +46,7 @@ export function OpenCardList({ sort }: OpenCardListProps) {
 
     // 1. カレンダーフィルター（タグによる表示/非表示）
     result = result.filter((item) => {
-      const tagIds = item.tags?.map((tag) => tag.id) || [];
+      const tagIds = item.tagIds ?? [];
       return isPlanVisible(tagIds);
     });
 

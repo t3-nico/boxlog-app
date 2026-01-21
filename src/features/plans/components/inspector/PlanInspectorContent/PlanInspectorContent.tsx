@@ -148,7 +148,7 @@ export function PlanInspectorContent() {
               {isHoveringSort && (
                 <Portal.Root>
                   <div
-                    className="bg-tooltip text-tooltip-foreground fixed z-[9999] -translate-x-1/2 -translate-y-full rounded-md px-3 py-1.5 text-xs whitespace-nowrap"
+                    className="bg-foreground text-background fixed z-[9999] -translate-x-1/2 -translate-y-full rounded-md px-3 py-1.5 text-xs whitespace-nowrap"
                     style={{
                       top: `${tooltipPosition.top}px`,
                       left: `${tooltipPosition.left}px`,

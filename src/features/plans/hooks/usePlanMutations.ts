@@ -64,19 +64,7 @@ export function usePlanMutations() {
         user_id: '',
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
-        tags: [] as {
-          color: string | null;
-          created_at: string | null;
-          description: string | null;
-          icon: string | null;
-          id: string;
-          is_active: boolean;
-          name: string;
-          parent_id: string | null;
-          sort_order: number | null;
-          updated_at: string | null;
-          user_id: string | null;
-        }[],
+        tagIds: [] as string[],
       };
 
       // 楽観的にキャッシュを更新
@@ -89,14 +77,14 @@ export function usePlanMutations() {
     },
     onSuccess: (newPlan, _input, context) => {
       // 一時プランを本来のプランに置換
-      const newPlanWithTags = { ...newPlan, tags: [] };
+      const newPlanWithTagIds = { ...newPlan, tagIds: [] as string[] };
 
       utils.plans.list.setData(undefined, (oldData) => {
-        if (!oldData) return [newPlanWithTags];
+        if (!oldData) return [newPlanWithTagIds];
         // 一時プランを本来のプランに置き換え、重複を防ぐ
         return oldData
           .filter((p) => p.id !== context?.tempId && p.id !== newPlan.id)
-          .concat(newPlanWithTags);
+          .concat(newPlanWithTagIds);
       });
 
       // Toast通知
@@ -210,13 +198,13 @@ export function usePlanMutations() {
     },
     onSuccess: (updatedPlan, variables) => {
       // サーバーから返ってきた最新データでキャッシュを更新
-      // tags などのリレーションデータは保持する（サーバーのupdateはタグをJOINしていない）
+      // tagIds などのリレーションデータは保持する（サーバーのupdateはタグをJOINしていない）
       utils.plans.list.setData(undefined, (oldData) => {
         if (!oldData) return oldData;
         return oldData.map((plan) => {
           if (plan.id === variables.id) {
-            // 既存のtagsを保持しつつ、サーバーデータで更新
-            return { ...updatedPlan, tags: plan.tags ?? [] };
+            // 既存のtagIdsを保持しつつ、サーバーデータで更新
+            return { ...updatedPlan, tagIds: plan.tagIds ?? [] };
           }
           return plan;
         });
@@ -483,36 +471,17 @@ export function usePlanMutations() {
       // 現在のデータをスナップショット（ロールバック用）
       const previousPlans = utils.plans.list.getData();
 
-      // タグデータを取得（キャッシュから）- 完全なタグオブジェクトを使用
-      const tagsData = utils.tags.list.getData();
-      const tagsToAdd =
-        tagsData?.data
-          .filter((tag) => tagIds.includes(tag.id))
-          .map((tag) => ({
-            id: tag.id,
-            name: tag.name,
-            color: tag.color,
-            description: tag.description,
-            icon: tag.icon,
-            parent_id: tag.parent_id,
-            sort_order: tag.sort_order ?? null,
-            is_active: tag.is_active,
-            user_id: tag.user_id,
-            created_at: tag.created_at,
-            updated_at: tag.updated_at,
-          })) ?? [];
-
-      // 楽観的にキャッシュを更新
+      // 楽観的にキャッシュを更新（tagIdsのみ管理）
       utils.plans.list.setData(undefined, (oldData) => {
         if (!oldData) return oldData;
         return oldData.map((plan) => {
           if (planIds.includes(plan.id)) {
-            // 既存のタグに新しいタグを追加（重複を除外）
-            const existingTagIds = new Set(plan.tags?.map((t) => t.id) ?? []);
-            const newTags = tagsToAdd.filter((t) => !existingTagIds.has(t.id));
+            // 既存のタグIDに新しいタグIDを追加（重複を除外）
+            const existingTagIds = new Set(plan.tagIds ?? []);
+            const newTagIds = tagIds.filter((id) => !existingTagIds.has(id));
             return {
               ...plan,
-              tags: [...(plan.tags ?? []), ...newTags],
+              tagIds: [...(plan.tagIds ?? []), ...newTagIds],
             };
           }
           return plan;

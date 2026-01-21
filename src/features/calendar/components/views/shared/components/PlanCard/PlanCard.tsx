@@ -193,9 +193,9 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
     scheduledColors.text,
     // 状態別スタイル
     isDragging ? 'cursor-grabbing' : 'cursor-pointer',
-    isSelected && 'ring-primary ring-2 ring-offset-1',
+    isSelected && 'bg-state-hover',
     // Inspectorで開いているプランのハイライト
-    isActive && 'ring-primary ring-2',
+    isActive && 'bg-state-hover',
     // モバイル: Googleカレンダー風（左ボーダー、チェックボックス+タイトル横並び、上寄せ）
     // デスクトップ: 通常のカード表示
     isMobile

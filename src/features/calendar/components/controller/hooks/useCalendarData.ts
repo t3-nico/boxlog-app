@@ -26,9 +26,9 @@ interface UseCalendarDataOptions {
   currentDate: Date;
 }
 
-// サーバーからはformatPlanWithTagsで変換済みの形式が返る
-interface PlanWithTags extends Plan {
-  tags?: Array<{ id: string; name: string; color: string }>;
+// サーバーからはformatPlanWithTagsで変換済みの形式が返る（tagIdsのみ）
+interface PlanWithTagIds extends Plan {
+  tagIds?: string[];
 }
 
 // tRPCから返る型（API定義から推論される）
@@ -107,11 +107,11 @@ export function useCalendarData({
       return [];
     }
 
-    // サーバーからはformatPlanWithTagsで変換済みのtags配列が返る
-    const plansWithTags = plansData as PlanWithTags[];
+    // サーバーからはformatPlanWithTagsで変換済みのtagIds配列が返る
+    const plansWithTagIds = plansData as PlanWithTagIds[];
 
     // start_time/end_timeが設定されているplanのみを抽出
-    const plansWithTime = plansWithTags.filter((plan) => {
+    const plansWithTime = plansWithTagIds.filter((plan) => {
       return plan.start_time && plan.end_time;
     });
 
@@ -172,7 +172,7 @@ export function useCalendarData({
         return false;
       }
 
-      const tagIds = event.tags?.map((tag) => tag.id) ?? [];
+      const tagIds = event.tagIds ?? [];
 
       // タグなしの場合
       if (tagIds.length === 0) {
@@ -195,7 +195,7 @@ export function useCalendarData({
         title: e.title,
         startDate: e.startDate?.toISOString() ?? null,
         endDate: e.endDate?.toISOString() ?? null,
-        tags: e.tags,
+        tagIds: e.tagIds,
       })),
     });
 

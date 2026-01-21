@@ -28,6 +28,7 @@ import { toLocalISOString } from '@/features/plans/utils/datetime';
 import { minutesToReminderType, reminderTypeToMinutes } from '@/features/plans/utils/reminder';
 import { normalizeStatus } from '@/features/plans/utils/status';
 import { useDateFormat } from '@/features/settings/hooks/useDateFormat';
+import { useTagsMap } from '@/features/tags/hooks/useTagsMap';
 import { cn } from '@/lib/utils';
 import { useDraggable } from '@dnd-kit/core';
 import { format } from 'date-fns';
@@ -58,6 +59,7 @@ export function PlanCard({ item }: PlanCardProps) {
   const { focusedId, setFocusedId } = useBoardFocusStore();
   const { addplanTag, removeplanTag } = useplanTags();
   const { updatePlan, deletePlan } = usePlanMutations();
+  const { getTagsByIds } = useTagsMap();
   const { getCache } = useplanCacheStore();
   const openDeleteDialog = useDeleteConfirmStore((state) => state.openDialog);
   const openRecurringDialog = useRecurringEditConfirmStore((state) => state.openDialog);
@@ -122,10 +124,10 @@ export function PlanCard({ item }: PlanCardProps) {
     cache?.recurrence_rule !== undefined ? cache.recurrence_rule : (item.recurrence_rule ?? null);
 
   // タグ変更ハンドラー
-  const handleTagsChange = async (tagIds: string[]) => {
-    const currentTagIds = item.tags?.map((tag) => tag.id) ?? [];
-    const addedTagIds = tagIds.filter((id) => !currentTagIds.includes(id));
-    const removedTagIds = currentTagIds.filter((id) => !tagIds.includes(id));
+  const handleTagsChange = async (newTagIds: string[]) => {
+    const currentTagIds = item.tagIds ?? [];
+    const addedTagIds = newTagIds.filter((id) => !currentTagIds.includes(id));
+    const removedTagIds = currentTagIds.filter((id) => !newTagIds.includes(id));
 
     // タグを追加
     for (const tagId of addedTagIds) {
@@ -137,6 +139,9 @@ export function PlanCard({ item }: PlanCardProps) {
       await removeplanTag(item.id, tagId);
     }
   };
+
+  // タグ情報をtagIdsから取得
+  const tags = getTagsByIds(item.tagIds ?? []);
 
   // 日時データ変更ハンドラー
   const handleDateTimeChange = () => {
@@ -548,11 +553,8 @@ export function PlanCard({ item }: PlanCardProps) {
             </Popover>
 
             {/* 3. Tags */}
-            <TagSelectCombobox
-              selectedTagIds={item.tags?.map((tag) => tag.id) ?? []}
-              onTagsChange={handleTagsChange}
-            >
-              {item.tags && item.tags.length > 0 ? (
+            <TagSelectCombobox selectedTagIds={item.tagIds ?? []} onTagsChange={handleTagsChange}>
+              {tags.length > 0 ? (
                 <div
                   className="group/tags flex flex-wrap gap-1"
                   onClick={(e) => {
@@ -560,7 +562,7 @@ export function PlanCard({ item }: PlanCardProps) {
                     e.stopPropagation();
                   }}
                 >
-                  {item.tags.slice(0, 4).map((tag) => (
+                  {tags.slice(0, 4).map((tag) => (
                     <Badge
                       key={tag.id}
                       variant="outline"
@@ -576,9 +578,9 @@ export function PlanCard({ item }: PlanCardProps) {
                       {tag.name}
                     </Badge>
                   ))}
-                  {item.tags.length > 4 && (
+                  {tags.length > 4 && (
                     <Badge variant="secondary" className="shrink-0 text-xs">
-                      +{item.tags.length - 4}
+                      +{tags.length - 4}
                     </Badge>
                   )}
                   {/* +アイコン（常時表示） */}
