@@ -287,14 +287,12 @@ export const TagsList = ({
 
   const [deletingTag, setDeletingTag] = useState<Tag | null>(null);
   const deleteTag = useTagStore((state) => state.deleteTag);
-  const { openTagEditModal, openTagCreateModal } = useTagModalNavigation();
+  const { openTagCreateModal } = useTagModalNavigation();
 
-  const handleEditTag = useCallback(
-    (tag: Tag) => {
-      openTagEditModal(tag.id);
-    },
-    [openTagEditModal],
-  );
+  // TODO: タグ編集モーダルは廃止されインライン編集に置き換え（CalendarFilterList参照）
+  const handleEditTag = useCallback((_tag: Tag) => {
+    // 現在は編集モーダルなし - インライン編集に移行予定
+  }, []);
 
   const handleDeleteTag = useCallback((tag: Tag) => {
     setDeletingTag(tag);

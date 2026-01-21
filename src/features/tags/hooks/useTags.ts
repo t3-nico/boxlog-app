@@ -54,11 +54,16 @@ export const tagKeys = {
 };
 
 // タグ一覧取得フック
+// Note: selectオプションは楽観的更新との相性が悪いため、返り値で変換する
 export function useTags() {
-  return trpc.tags.list.useQuery(undefined, {
+  const query = trpc.tags.list.useQuery(undefined, {
     staleTime: 5 * 60 * 1000, // 5分間キャッシュ
-    select: (data) => data.data, // { data: Tag[], count: number } → Tag[]
   });
+
+  return {
+    ...query,
+    data: query.data?.data, // { data: Tag[], count: number } → Tag[]
+  };
 }
 
 // 単一タグ取得フック（ID別）

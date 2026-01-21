@@ -73,8 +73,21 @@ const ServiceWorkerProvider = dynamic(
   { ssr: false },
 );
 
-// GlobalTagCreateModal は Intercepting Routes に移行 (@modal/(.)tags/new)
-// useTagModalNavigation.openTagCreateModal() で URL ベースの状態管理
+// GlobalTagCreateModalを遅延ロード
+const GlobalTagCreateModal = dynamic(
+  () =>
+    import('@/features/tags/components/GlobalTagCreateModal').then(
+      (mod) => mod.GlobalTagCreateModal,
+    ),
+  { ssr: false },
+);
+
+// GlobalTagMergeModalを遅延ロード
+const GlobalTagMergeModal = dynamic(
+  () =>
+    import('@/features/tags/components/GlobalTagMergeModal').then((mod) => mod.GlobalTagMergeModal),
+  { ssr: false },
+);
 
 // SettingsModalを遅延ロード
 const SettingsModal = dynamic(
@@ -200,7 +213,8 @@ export function Providers({ children }: ProvidersProps) {
             <GlobalSearchProvider>
               <ServiceWorkerProvider>
                 {children}
-                {/* GlobalTagCreateModal は Intercepting Routes (@modal/(.)tags/new) に移行済み */}
+                <GlobalTagCreateModal />
+                <GlobalTagMergeModal />
                 <SettingsModal />
               </ServiceWorkerProvider>
             </GlobalSearchProvider>

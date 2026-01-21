@@ -278,10 +278,10 @@ export const TagCreateModal = ({
             disabled={isLoading}
             className="hover:bg-state-hover"
           >
-            {t('common.actions.cancel')}
+            {t('actions.cancel')}
           </Button>
           <Button onClick={handleSubmit} disabled={isLoading}>
-            {isLoading ? t('common.actions.creating') : t('common.actions.create')}
+            {isLoading ? t('actions.creating') : t('actions.create')}
           </Button>
         </div>
       </div>

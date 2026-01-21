@@ -109,7 +109,10 @@ interface TagSortableTreeProps {
   /** グループのタグだけ表示 */
   onShowOnlyGroupTags: (tagIds: string[]) => void;
   /** マージモーダルを開く */
-  onOpenMergeModal: (tagId: string) => void;
+  onOpenMergeModal: (
+    sourceTag: { id: string; name: string; color?: string | null },
+    hasChildren?: boolean,
+  ) => void;
   /** 並び替え完了時のコールバック */
   onReorder: (updates: Array<{ id: string; sort_order: number; parent_id: string | null }>) => void;
   /** インデント幅 */
@@ -425,7 +428,9 @@ export function TagSortableTree({
                     onShowOnlyTag(id as string);
                   }
                 }}
-                onOpenMergeModal={() => onOpenMergeModal(id as string)}
+                onOpenMergeModal={() =>
+                  onOpenMergeModal({ id: tag.id, name: tag.name, color: tag.color }, hasChildren)
+                }
                 parentTags={depth > 0 ? parentTags : undefined}
               />
             );

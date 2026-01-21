@@ -30,23 +30,6 @@ const nextConfig = {
     ignoreBuildErrors: false,
   },
 
-  // リダイレクト設定（旧URL → 新URL）
-  async redirects() {
-    return [
-      // /tags → /settings/tags へのリダイレクト（タグ管理がSettingsに移動）
-      {
-        source: '/:locale/tags',
-        destination: '/:locale/settings/tags',
-        permanent: true,
-      },
-      {
-        source: '/:locale/tags/:path*',
-        destination: '/:locale/settings/tags/:path*',
-        permanent: true,
-      },
-    ]
-  },
-
   // Multi-zones用リライト設定
   // assetPrefixで設定したパスを実際の_nextパスにリライト
   async rewrites() {

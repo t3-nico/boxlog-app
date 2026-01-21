@@ -188,7 +188,9 @@ export function FilterItem({
               onDescriptionChange={setEditDescription}
               onSaveDescription={handleSaveDescription}
               onChangeParent={parentTags && parentTags.length > 0 ? handleChangeParent : undefined}
-              onOpenMergeModal={() => openTagMergeModal(tagId)}
+              onOpenMergeModal={() =>
+                openTagMergeModal({ id: tagId, name: label, color: checkboxColor ?? null })
+              }
               onShowOnlyTag={() => showOnlyTag(tagId)}
               onDeleteTag={onDeleteTag ? () => onDeleteTag(tagId) : undefined}
             />

@@ -93,8 +93,8 @@ export function RealtimeProvider({ children }: RealtimeProviderProps) {
       calendar: normalizedPath.startsWith('/calendar'),
       // Inboxページ: プランの購読が必要
       inbox: normalizedPath.startsWith('/inbox'),
-      // タグページ: タグの購読が必要（/settings/tags に移動）
-      tags: normalizedPath.startsWith('/settings/tags'),
+      // タグページ / カレンダー: タグの購読が必要
+      tags: normalizedPath.startsWith('/tags') || normalizedPath.startsWith('/calendar'),
       // 通知は全ページで必要
       notifications: true,
     };

@@ -61,7 +61,6 @@ export function MobileLayout({ children, locale }: MobileLayoutProps) {
     if (pathname?.startsWith(`/${locale}/calendar`)) return 'calendar';
     if (pathname?.startsWith(`/${locale}/inbox`)) return 'inbox';
     if (pathname?.startsWith(`/${locale}/stats`)) return 'stats';
-    // /settings/tags は settings として扱う（共通サイドバーを使用）
     if (pathname?.startsWith(`/${locale}/settings`)) return 'settings';
     return 'default';
   }, [pathname, locale]);
