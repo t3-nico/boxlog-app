@@ -256,11 +256,10 @@ export const TagTreeItem = forwardRef<HTMLDivElement, TagTreeItemProps>(
           style={{ paddingLeft: `${indentationWidth * depth}px` } as CSSProperties}
           {...props}
         >
-          <div
-            className="relative h-2 border border-[#2389ff] bg-[#56a1f8] p-0"
-            ref={ref}
-            style={style}
-          />
+          <div className="flex items-center" ref={ref} style={style}>
+            <div className="bg-primary size-1.5 shrink-0 rounded-full" />
+            <div className="bg-primary h-0.5 flex-1" />
+          </div>
         </li>
       );
     }

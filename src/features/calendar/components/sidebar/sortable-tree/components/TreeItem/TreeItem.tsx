@@ -66,7 +66,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
           className={cn(
             'bg-card border-border text-foreground relative box-border flex items-center border px-2.5 py-2.5',
             clone && 'rounded py-1.5 pr-6 shadow-lg',
-            ghost && indicator && 'h-2 border-[#2389ff] bg-[#56a1f8] p-0',
+            ghost && indicator && 'bg-primary h-0.5 border-0 p-0',
           )}
           ref={ref}
           style={style}
