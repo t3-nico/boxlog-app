@@ -315,6 +315,13 @@ export const TagTreeItem = forwardRef<HTMLDivElement, TagTreeItemProps>(
           ref={ref}
           style={style}
           onContextMenu={handleContextMenu}
+          onClick={(e) => {
+            // 親タグの場合、行クリックで折りたたみを切り替え
+            if (hasChildren && onCollapse) {
+              e.stopPropagation();
+              onCollapse();
+            }
+          }}
           {...handleProps}
         >
           <Checkbox
@@ -349,29 +356,18 @@ export const TagTreeItem = forwardRef<HTMLDivElement, TagTreeItemProps>(
               )}
             </div>
           ) : (
-            <>
-              <span className="text-foreground ml-2 min-w-0 flex-1 truncate">{tag.name}</span>
-              {/* 折りたたみボタン（子タグがある場合のみ） */}
+            <div className="ml-2 flex min-w-0 flex-1 items-center">
+              <span className="text-foreground min-w-0 truncate">{tag.name}</span>
+              {/* 折りたたみアイコン（子タグがある場合のみ、タグ名の直後） */}
               {hasChildren && onCollapse && (
-                <button
-                  type="button"
-                  aria-expanded={!collapsed}
-                  aria-label={
-                    collapsed ? t('calendar.filter.expand') : t('calendar.filter.collapse')
-                  }
-                  className="relative flex size-6 shrink-0 items-center justify-center before:absolute before:-inset-2 before:content-['']"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onCollapse();
-                  }}
-                  onPointerDown={(e) => e.stopPropagation()}
-                >
-                  <ChevronRight
-                    className={cn('size-4 transition-transform', !collapsed && 'rotate-90')}
-                  />
-                </button>
+                <ChevronRight
+                  className={cn(
+                    'ml-1 size-4 shrink-0 transition-transform',
+                    !collapsed && 'rotate-90',
+                  )}
+                />
               )}
-            </>
+            </div>
           )}
 
           {/* メニュー */}

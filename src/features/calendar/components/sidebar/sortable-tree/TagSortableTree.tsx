@@ -186,9 +186,23 @@ export function TagSortableTree({
   const [overId, setOverId] = useState<UniqueIdentifier | null>(null);
   const [offsetLeft, setOffsetLeft] = useState(0);
 
-  // タグが変更されたらitemsを更新
+  // タグが変更されたらitemsを更新（collapsed状態は保持）
   useEffect(() => {
-    setItems(tagsToTreeItems(tags));
+    setItems((prevItems) => {
+      const newItems = tagsToTreeItems(tags);
+      // 既存のcollapsed状態を保持
+      const collapsedMap = new Map<string, boolean>();
+      prevItems.forEach((item) => {
+        if (item.collapsed !== undefined) {
+          collapsedMap.set(item.id as string, item.collapsed);
+        }
+      });
+      // 新しいアイテムにcollapsed状態をマージ
+      return newItems.map((item) => ({
+        ...item,
+        collapsed: collapsedMap.get(item.id as string) ?? false,
+      }));
+    });
   }, [tags]);
 
   const flattenedItems = useMemo(() => {
@@ -207,17 +221,34 @@ export function TagSortableTree({
   // 2階層制限: maxDepthLimit = 1
   const MAX_DEPTH_LIMIT = 1;
 
-  const projected =
-    activeId && overId
-      ? getProjection(
-          flattenedItems,
-          activeId,
-          overId,
-          offsetLeft,
-          indentationWidth,
-          MAX_DEPTH_LIMIT,
-        )
-      : null;
+  // ドラッグ中のアイテムが子を持つか判定
+  const activeItemHasChildren = useMemo(() => {
+    if (!activeId) return false;
+    const item = flattenedItems.find(({ id }) => id === activeId);
+    return item ? item.children.length > 0 : false;
+  }, [activeId, flattenedItems]);
+
+  const projected = useMemo(() => {
+    if (!activeId || !overId) return null;
+
+    const projection = getProjection(
+      flattenedItems,
+      activeId,
+      overId,
+      offsetLeft,
+      indentationWidth,
+      MAX_DEPTH_LIMIT,
+    );
+
+    if (!projection) return null;
+
+    // 子を持つタグは親タグ（depth 0）のままにする
+    if (activeItemHasChildren && projection.depth > 0) {
+      return { ...projection, depth: 0, parentId: null };
+    }
+
+    return projection;
+  }, [activeId, overId, flattenedItems, offsetLeft, indentationWidth, activeItemHasChildren]);
 
   const sensorContext: SensorContext = useRef({
     items: flattenedItems,

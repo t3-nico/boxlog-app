@@ -172,19 +172,20 @@ export function setProperty<T extends keyof TreeItem>(
   id: UniqueIdentifier,
   property: T,
   setter: (value: TreeItem[T]) => TreeItem[T],
-) {
-  for (const item of items) {
+): TreeItems {
+  return items.map((item) => {
     if (item.id === id) {
-      item[property] = setter(item[property]);
-      continue;
+      // 新しいオブジェクト参照を作成（Reactが変更を検知できるように）
+      return { ...item, [property]: setter(item[property]) };
     }
 
     if (item.children.length) {
-      item.children = setProperty(item.children, id, property, setter);
+      // 子の中で変更があった場合も新しい参照を作成
+      return { ...item, children: setProperty(item.children, id, property, setter) };
     }
-  }
 
-  return [...items];
+    return item;
+  });
 }
 
 function countChildren(items: TreeItem[], count = 0): number {
