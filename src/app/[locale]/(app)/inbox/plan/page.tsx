@@ -10,7 +10,11 @@ import { InboxContent } from '../inbox-content';
 export default async function InboxPlanPage() {
   // Server-side prefetch: クライアントでのデータ取得を高速化
   const helpers = await createServerHelpers();
-  await Promise.all([helpers.plans.list.prefetch({}), helpers.plans.getTagStats.prefetch()]);
+  await Promise.all([
+    helpers.plans.list.prefetch({}),
+    helpers.plans.getTagStats.prefetch(),
+    helpers.tags.list.prefetch(),
+  ]);
 
   return (
     <HydrationBoundary state={dehydrate(helpers.queryClient)}>

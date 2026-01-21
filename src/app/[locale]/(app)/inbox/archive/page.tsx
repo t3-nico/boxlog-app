@@ -1,28 +1,24 @@
-'use client';
+import { createServerHelpers, dehydrate, HydrationBoundary } from '@/lib/trpc/server';
 
-import { Suspense } from 'react';
-
-import { LoadingSpinner } from '@/components/common/Loading/LoadingStates';
-import { InboxTableView } from '@/features/inbox/components/InboxTableView';
+import { InboxContent } from '../inbox-content';
 
 /**
  * アーカイブ ページ
+ *
+ * Server-side prefetchでデータを事前取得
  */
-export default function InboxArchivePage() {
+export default async function InboxArchivePage() {
+  // Server-side prefetch: クライアントでのデータ取得を高速化
+  const helpers = await createServerHelpers();
+  await Promise.all([
+    helpers.plans.list.prefetch({}),
+    helpers.plans.getTagStats.prefetch(),
+    helpers.tags.list.prefetch(),
+  ]);
+
   return (
-    <div className="flex flex-1 flex-col">
-      <Suspense
-        fallback={
-          <div className="flex h-full items-center justify-center">
-            <div className="flex flex-col items-center gap-2">
-              <LoadingSpinner size="lg" />
-              <p className="text-muted-foreground text-sm">読み込み中...</p>
-            </div>
-          </div>
-        }
-      >
-        <InboxTableView />
-      </Suspense>
-    </div>
+    <HydrationBoundary state={dehydrate(helpers.queryClient)}>
+      <InboxContent />
+    </HydrationBoundary>
   );
 }

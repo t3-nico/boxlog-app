@@ -7,6 +7,13 @@ import { getTranslations } from 'next-intl/server';
 
 import { CalendarViewClient } from './client';
 
+/**
+ * Route Segment Config
+ *
+ * カレンダーはリアルタイムデータを表示するため、常に動的レンダリング
+ */
+export const dynamic = 'force-dynamic';
+
 interface CalendarViewPageProps {
   params: Promise<{
     view: string;
@@ -53,8 +60,14 @@ const CalendarViewPage = async ({ params, searchParams }: CalendarViewPageProps)
   };
 
   // Server-side prefetch: クライアントでのデータ取得を高速化
+  // タグ関連もプリフェッチして初期読み込みを高速化
   const helpers = await createServerHelpers();
-  await Promise.all([helpers.plans.list.prefetch({}), helpers.plans.getTagStats.prefetch()]);
+  await Promise.all([
+    helpers.plans.list.prefetch({}),
+    helpers.plans.getTagStats.prefetch(),
+    helpers.tags.list.prefetch(),
+    helpers.tags.listParentTags.prefetch(),
+  ]);
 
   return (
     <HydrationBoundary state={dehydrate(helpers.queryClient)}>
