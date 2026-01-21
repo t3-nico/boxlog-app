@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
-import { useTagCreateModalStore } from '@/features/tags/stores/useTagCreateModalStore';
+import { useTagModalNavigation } from '@/features/tags/hooks/useTagModalNavigation';
 import { useTranslations } from 'next-intl';
 
 interface CreateNewDropdownProps {
@@ -30,7 +30,7 @@ export function CreateNewDropdown({ size = 'default' }: CreateNewDropdownProps) 
   const t = useTranslations();
   const { createPlan } = usePlanMutations();
   const { openInspector } = usePlanInspectorStore();
-  const { openModal: openTagCreateModal } = useTagCreateModalStore();
+  const { openTagCreateModal } = useTagModalNavigation();
 
   const handleCreatePlan = async () => {
     try {

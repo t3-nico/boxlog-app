@@ -32,7 +32,7 @@ import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { useTheme } from '@/contexts/theme-context';
 import { usePlans } from '@/features/plans/hooks';
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
-import { useTagCreateModalStore } from '@/features/tags/stores/useTagCreateModalStore';
+import { useTagModalNavigation } from '@/features/tags/hooks/useTagModalNavigation';
 import { useTagStore } from '@/features/tags/stores/useTagStore';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 
@@ -109,7 +109,7 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
 
   // Get actions from stores
   const openPlanInspector = usePlanInspectorStore((state) => state.openInspector);
-  const openTagCreateModal = useTagCreateModalStore((state) => state.openModal);
+  const { openTagCreateModal } = useTagModalNavigation();
   const { resolvedTheme, setTheme } = useTheme();
 
   const toggleTheme = useCallback(() => {

@@ -24,8 +24,8 @@ import { SidebarSection } from '@/features/navigation/components/sidebar/Sidebar
 import { TagMergeModal } from '@/features/tags/components/tag-merge-modal';
 import { TAG_NAME_MAX_LENGTH } from '@/features/tags/constants/colors';
 import { useTagGroups } from '@/features/tags/hooks/useTagGroups';
+import { useTagModalNavigation } from '@/features/tags/hooks/useTagModalNavigation';
 import { useDeleteTag, useReorderTags, useTags, useUpdateTag } from '@/features/tags/hooks/useTags';
-import { useTagCreateModalStore } from '@/features/tags/stores/useTagCreateModalStore';
 
 import { DeleteConfirmDialog } from '@/components/common/DeleteConfirmDialog';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -152,15 +152,15 @@ export function CalendarFilterList() {
 
   const isLoading = tagsLoading || groupsLoading;
 
-  // TagCreateModal
-  const openCreateModal = useTagCreateModalStore((state) => state.openModal);
+  // タグモーダルナビゲーション（Intercepting Routes ベース）
+  const { openTagCreateModal } = useTagModalNavigation();
 
   // 削除確認ダイアログの状態
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 
   // 子タグ追加ハンドラー（親タグがプリセットされた作成モーダルを開く）
   const handleAddChildTag = (parentId: string) => {
-    openCreateModal(parentId);
+    openTagCreateModal(parentId);
   };
 
   // 親タグ削除ハンドラー（確認ダイアログを表示）
@@ -701,14 +701,14 @@ function FilterItem({
 /** 新規タグ作成ボタン */
 function CreateTagButton() {
   const t = useTranslations();
-  const openModal = useTagCreateModalStore((state) => state.openModal);
+  const { openTagCreateModal } = useTagModalNavigation();
 
   return (
     <HoverTooltip content={t('calendar.filter.createTag')} side="top">
       <button
         type="button"
         className="text-muted-foreground hover:text-foreground hover:bg-state-hover flex size-6 items-center justify-center rounded"
-        onClick={() => openModal()}
+        onClick={() => openTagCreateModal()}
       >
         <Plus className="size-4" />
       </button>
