@@ -23,7 +23,13 @@ import {
   RecurringEditConfirmDialog,
 } from '@/features/plans/components';
 
-const AppLayout = async ({ children }: { children: React.ReactNode }) => {
+interface AppLayoutProps {
+  children: React.ReactNode;
+  /** Parallel Route: モーダルスロット (@modal) */
+  modal: React.ReactNode;
+}
+
+const AppLayout = async ({ children, modal }: AppLayoutProps) => {
   return (
     <Providers>
       <SessionMonitorProvider>
@@ -34,6 +40,8 @@ const AppLayout = async ({ children }: { children: React.ReactNode }) => {
           <RecurringEditConfirmDialog />
           <AIInspector />
           <Toaster />
+          {/* Intercepting Routes: モーダル */}
+          {modal}
         </BaseLayout>
       </SessionMonitorProvider>
     </Providers>
