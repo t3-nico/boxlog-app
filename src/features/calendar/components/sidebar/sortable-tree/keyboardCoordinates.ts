@@ -22,8 +22,9 @@ export const sortableTreeKeyboardCoordinates: (
   context: SensorContext,
   indicator: boolean,
   indentationWidth: number,
+  maxDepthLimit?: number,
 ) => KeyboardCoordinateGetter =
-  (context, indicator, indentationWidth) =>
+  (context, indicator, indentationWidth, maxDepthLimit) =>
   (
     event,
     {
@@ -43,7 +44,14 @@ export const sortableTreeKeyboardCoordinates: (
       } = context;
 
       if (horizontal.includes(event.code) && over?.id) {
-        const projection = getProjection(items, active.id, over.id, offset, indentationWidth);
+        const projection = getProjection(
+          items,
+          active.id,
+          over.id,
+          offset,
+          indentationWidth,
+          maxDepthLimit,
+        );
 
         if (!projection) {
           return undefined;
@@ -131,6 +139,7 @@ export const sortableTreeKeyboardCoordinates: (
               closestId,
               (newItem.depth - activeItem.depth) * indentationWidth,
               indentationWidth,
+              maxDepthLimit,
             );
 
             if (!projection) {

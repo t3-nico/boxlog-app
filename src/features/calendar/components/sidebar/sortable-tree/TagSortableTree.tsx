@@ -256,7 +256,7 @@ export function TagSortableTree({
   });
 
   const [coordinateGetter] = useState(() =>
-    sortableTreeKeyboardCoordinates(sensorContext, true, indentationWidth),
+    sortableTreeKeyboardCoordinates(sensorContext, true, indentationWidth, MAX_DEPTH_LIMIT),
   );
 
   const sensors = useSensors(
