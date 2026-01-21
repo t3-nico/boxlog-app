@@ -70,10 +70,6 @@
   --chronotype-low: oklch(0.92 0.01 250);         /* 低調 - グレー */
   --chronotype-sleep: oklch(0.65 0.20 310);       /* 睡眠 - 紫 */
 
-  /* Tooltip（反転デザイン） */
-  --tooltip: oklch(0.25 0 0);
-  --tooltip-foreground: oklch(0.95 0 0);
-
   /* Borders & Inputs */
   --border: oklch(0.80 0.01 264.54);
   --input: var(--overlay);
@@ -139,10 +135,6 @@
   --chronotype-moderate: oklch(0.50 0.10 250);    /* 通常 - 青（暗め） */
   --chronotype-low: oklch(0.45 0.02 250);         /* 低調 - グレー（暗め） */
   --chronotype-sleep: oklch(0.50 0.18 310);       /* 睡眠 - 紫（暗め） */
-
-  /* Tooltip（反転デザイン - ダークモードでは明るい背景） */
-  --tooltip: oklch(0.9 0 0);
-  --tooltip-foreground: oklch(0.2 0 0);
 
   /* Borders & Inputs */
   --border: oklch(0.3715 0 0);
@@ -230,12 +222,8 @@
   --color-muted: var(--container);
   --color-muted-foreground: var(--muted-foreground);
 
-  /* 後方互換エイリアス（移行期間用・将来削除予定） */
-  --color-surface-dim: var(--container);
-  --color-surface: var(--card);
-  --color-surface-bright: var(--overlay);
+  /* 後方互換エイリアス（shadcn/ui互換） */
   --color-surface-container: var(--container);
-  --color-surface-container-high: var(--container);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
@@ -246,8 +234,6 @@
   --color-success-foreground: var(--success-foreground);
   --color-info: var(--info);
   --color-info-foreground: var(--info-foreground);
-  --color-tooltip: var(--tooltip);
-  --color-tooltip-foreground: var(--tooltip-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
@@ -267,11 +253,13 @@
   --color-chart-muted: var(--muted-foreground);
 
   /* ============================================
-   * Overlay トークン（モーダル背景、バックドロップ）
+   * Backdrop トークン（モーダル背景、バックドロップ）
    * bg-black/80 等のハードコードを置き換え
    * ============================================ */
-  --color-overlay: oklch(0 0 0 / 50%);
-  --color-overlay-heavy: oklch(0 0 0 / 80%);
+  --color-backdrop: oklch(0 0 0 / 50%);
+  --color-backdrop-heavy: oklch(0 0 0 / 80%);
+  /* 後方互換エイリアス */
+  --color-overlay-heavy: var(--color-backdrop-heavy);
 
   /* ============================================
    * Shadow トークン（ドラッグ、ホバー時のシャドウ）
@@ -310,7 +298,6 @@
   /* ============================================
    * シャドウ（modern-minimal準拠）
    * ============================================ */
-  --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
   --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
   --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
   --shadow: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
@@ -381,9 +368,13 @@ body {
   font-variation-settings: 'opsz' 32;
 }
 
-/* ブラウザUIのダークモード対応 */
+/* ブラウザUI・タッチ最適化 */
 html {
   color-scheme: light;
+  /* タップハイライト無効化（独自フィードバック使用） */
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-overflow-scrolling: touch;
 }
 
 html.dark {
@@ -443,18 +434,6 @@ html.dark {
     line-height: var(--line-height-normal);
   }
 
-  .text-heading-h5 {
-    font-size: var(--font-size-base);
-    font-weight: var(--font-weight-semibold);
-    line-height: var(--line-height-normal);
-  }
-
-  .text-heading-h6 {
-    font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-semibold);
-    line-height: var(--line-height-normal);
-  }
-
   /* タイポグラフィ - 本文 */
   .text-body-base {
     font-size: var(--font-size-base);
@@ -482,28 +461,6 @@ html.dark {
  * ============================================ */
 @layer utilities {
   /* Keyframes */
-  @keyframes enter {
-    from {
-      opacity: 0;
-      transform: scale(0.95);
-    }
-    to {
-      opacity: 1;
-      transform: scale(1);
-    }
-  }
-
-  @keyframes exit {
-    from {
-      opacity: 1;
-      transform: scale(1);
-    }
-    to {
-      opacity: 0;
-      transform: scale(0.95);
-    }
-  }
-
   @keyframes slideInFromRight {
     from {
       transform: translateX(100%);
@@ -1320,16 +1277,6 @@ input[type='time']::-webkit-datetime-edit-minute-field {
  * @see https://developer.mozilla.org/en-US/docs/Web/CSS/-webkit-tap-highlight-color
  * @see https://css-tricks.com/16px-or-larger-text-prevents-ios-form-zoom/
  * ============================================ */
-
-/* タッチハイライトの最適化（iOS/Android） */
-html {
-  /* デフォルトのタップハイライトを無効化（独自のフィードバックを使用） */
-  -webkit-tap-highlight-color: transparent;
-  /* タッチ操作の最適化 */
-  -webkit-touch-callout: none;
-  /* スクロールの滑らかさ */
-  -webkit-overflow-scrolling: touch;
-}
 
 /* スクロールチェーン防止（モーダル、ドロワー等で使用） */
 .overscroll-none {

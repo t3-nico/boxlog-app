@@ -147,7 +147,7 @@ function HoverTooltip({
             ref={tooltipRef}
             role="tooltip"
             className={cn(
-              'bg-tooltip text-tooltip-foreground animate-in fade-in-0 zoom-in-95 pointer-events-none fixed rounded-md px-2 py-1 text-xs',
+              'bg-foreground text-background animate-in fade-in-0 zoom-in-95 pointer-events-none fixed rounded-md px-2 py-1 text-xs',
               className,
             )}
             style={{
