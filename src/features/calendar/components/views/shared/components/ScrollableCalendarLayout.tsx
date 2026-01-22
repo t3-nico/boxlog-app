@@ -9,7 +9,6 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { format } from 'date-fns';
 import { ChevronDown, ChevronUp, Moon } from 'lucide-react';
 
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { useSleepHours } from '@/features/calendar/hooks/useSleepHours';
 import { useCalendarScrollStore } from '@/features/calendar/stores';
@@ -600,9 +599,12 @@ export const ScrollableCalendarLayout = ({
   }, [collapsedLayout, currentTimePosition, currentTime, sleepHours, HOUR_HEIGHT]);
 
   return (
-    <ScrollArea className={cn('relative min-h-0 flex-1', className)} data-calendar-scroll>
+    <div
+      ref={scrollContainerRef}
+      className={cn('relative min-h-0 flex-1 overflow-y-auto', className)}
+      data-calendar-scroll
+    >
       <div
-        ref={scrollContainerRef}
         className="relative flex w-full pr-4"
         style={{ height: `${gridHeight}px` }}
         onClick={handleGridClick}
@@ -874,6 +876,6 @@ export const ScrollableCalendarLayout = ({
           )}
         </div>
       </div>
-    </ScrollArea>
+    </div>
   );
 };

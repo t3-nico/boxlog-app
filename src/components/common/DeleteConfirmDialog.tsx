@@ -28,7 +28,7 @@ interface DeleteConfirmDialogProps {
  * スタイルガイド準拠:
  * - 8pxグリッドシステム（p-6, gap-4, mb-6等）
  * - 角丸: rounded-xl（16px）for ダイアログ
- * - Surface: bg-surface（カード、ダイアログ用）
+ * - Card: bg-card（カード、ダイアログ用）
  * - セマンティックカラー: destructive系トークン使用
  */
 export function DeleteConfirmDialog({
@@ -90,9 +90,9 @@ export function DeleteConfirmDialog({
       aria-labelledby="delete-dialog-title"
       aria-describedby="delete-dialog-description"
     >
-      {/* ダイアログコンテンツ: bg-surface, rounded-xl, p-6 */}
+      {/* ダイアログコンテンツ: bg-card, rounded-xl, p-6 */}
       <div
-        className="animate-in zoom-in-95 fade-in bg-surface text-foreground border-border rounded-xl border p-6 shadow-lg duration-150"
+        className="animate-in zoom-in-95 fade-in bg-card text-foreground border-border rounded-xl border p-6 shadow-lg duration-150"
         style={{ width: 'min(calc(100vw - 32px), 448px)' }}
         onClick={(e) => e.stopPropagation()}
       >

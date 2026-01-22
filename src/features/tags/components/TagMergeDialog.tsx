@@ -123,7 +123,7 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
       aria-labelledby="tag-merge-dialog-title"
     >
       <div
-        className="animate-in zoom-in-95 fade-in bg-surface text-foreground border-border rounded-xl border p-6 shadow-lg duration-150"
+        className="animate-in zoom-in-95 fade-in bg-card text-foreground border-border rounded-xl border p-6 shadow-lg duration-150"
         style={{ width: 'min(calc(100vw - 32px), 448px)' }}
         onMouseDown={(e) => e.stopPropagation()}
       >

@@ -142,9 +142,9 @@ export function TagMergeModal({
       aria-modal="true"
       aria-labelledby="tag-merge-dialog-title"
     >
-      {/* ダイアログコンテンツ: bg-surface, rounded-xl, p-6 */}
+      {/* ダイアログコンテンツ: bg-card, rounded-xl, p-6 */}
       <div
-        className="animate-in zoom-in-95 fade-in bg-surface text-foreground border-border rounded-xl border p-6 shadow-lg duration-150"
+        className="animate-in zoom-in-95 fade-in bg-card text-foreground border-border rounded-xl border p-6 shadow-lg duration-150"
         style={{ width: 'min(calc(100vw - 32px), 400px)' }}
         onClick={(e) => e.stopPropagation()}
       >

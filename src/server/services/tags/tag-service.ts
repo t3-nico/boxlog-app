@@ -12,16 +12,17 @@
  * - 階層構造取得（親タグと子タグ）
  *
  * キャッシュ戦略:
- * - unstable_cache()によるサーバーサイドキャッシュ（5分TTL）
- * - TanStack Queryのクライアントキャッシュと相互補完
- * - mutation時にrevalidateTag()で無効化
+ * - [一時的に無効化] unstable_cache()によるサーバーサイドキャッシュ
+ *   → Next.js 15 + tRPCでrevalidateTag()が正しく動作しないため
+ * - TanStack Queryのクライアントキャッシュ（5分）で対応
  */
 
 import type { Tag, TagWithChildren } from '@/features/tags/types';
 import type { Database } from '@/lib/database.types';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
-import { createCachedParentTagsFetcher, createCachedTagsFetcher } from '@/lib/cache';
+// Note: サーバーサイドキャッシュは一時的に無効化（revalidateTagがtRPCコンテキストで動作しない問題）
+// import { createCachedParentTagsFetcher, createCachedTagsFetcher } from '@/lib/cache';
 
 /** DB タグ行の型（マイグレーション前は group_id、後は parent_id） */
 type DbTagRow = Database['public']['Tables']['tags']['Row'];
@@ -174,8 +175,10 @@ export class TagService {
   /**
    * タグ一覧取得
    *
-   * デフォルトソート（sort_order, name）の場合はサーバーサイドキャッシュを使用。
-   * カスタムソートの場合は直接DBクエリを実行。
+   * Note: サーバーサイドキャッシュ（unstable_cache）は一時的に無効化。
+   * Next.js 15 + tRPCではrevalidateTag()がtRPCコンテキストで正しく動作せず、
+   * タグ作成後もキャッシュが古いデータを返す問題があるため。
+   * TanStack Queryのクライアントキャッシュ（5分）で十分にパフォーマンスは確保できる。
    *
    * @param options - 取得オプション（userId, ソート条件）
    * @returns タグ配列
@@ -183,22 +186,17 @@ export class TagService {
   async list(options: ListTagsOptions): Promise<Tag[]> {
     const { userId, sortField, sortOrder } = options;
 
-    // デフォルトソートの場合はキャッシュを使用（最も一般的なケース）
-    // カレンダーサイドバーなど頻繁にアクセスされる箇所で効果的
-    const useCache = !sortField && !sortOrder;
-
-    if (useCache) {
-      const getCachedTags = createCachedTagsFetcher(this.supabase, userId);
-      const data = await getCachedTags();
-      return data.map(transformDbTag);
-    }
-
-    // カスタムソートの場合は直接クエリ
+    // 直接DBクエリを実行（サーバーサイドキャッシュは一時的に無効化）
     const { data, error } = await this.supabase
       .from('tags')
       .select('*')
       .eq('user_id', userId)
-      .order(sortField ?? 'name', { ascending: (sortOrder ?? 'asc') === 'asc' });
+      .eq('is_active', true)
+      .order(sortField ?? 'sort_order', {
+        ascending: (sortOrder ?? 'asc') === 'asc',
+        nullsFirst: false,
+      })
+      .order('name', { ascending: true });
 
     if (error) {
       throw new TagServiceError('FETCH_FAILED', `Failed to fetch tags: ${error.message}`);
@@ -260,7 +258,7 @@ export class TagService {
   /**
    * 親タグのみ取得（ドロップダウン用）
    *
-   * サーバーサイドキャッシュを使用してパフォーマンスを最適化。
+   * Note: サーバーサイドキャッシュは一時的に無効化（list()と同じ理由）
    *
    * @param options - userId
    * @returns 親タグの配列（子を持つタグ、または子を持つ可能性のあるルートタグ）
@@ -268,9 +266,19 @@ export class TagService {
   async listParentTags(options: { userId: string }): Promise<Tag[]> {
     const { userId } = options;
 
-    // キャッシュを使用（parent_id = null のタグのみをキャッシュ）
-    const getCachedParentTags = createCachedParentTagsFetcher(this.supabase, userId);
-    const data = await getCachedParentTags();
+    // 直接DBクエリを実行（サーバーサイドキャッシュは一時的に無効化）
+    const { data, error } = await this.supabase
+      .from('tags')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('is_active', true)
+      .is('parent_id', null)
+      .order('sort_order', { ascending: true, nullsFirst: false })
+      .order('name', { ascending: true });
+
+    if (error) {
+      throw new TagServiceError('FETCH_FAILED', `Failed to fetch parent tags: ${error.message}`);
+    }
 
     return data.map(transformDbTag);
   }

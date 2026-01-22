@@ -22,7 +22,7 @@ interface TagArchiveDialogProps {
  * スタイルガイド準拠:
  * - 8pxグリッドシステム（p-6, gap-4, mb-6等）
  * - 角丸: rounded-xl（16px）for ダイアログ
- * - Surface: bg-surface（カード、ダイアログ用）
+ * - Card: bg-card（カード、ダイアログ用）
  * - セマンティックカラー: warning系トークン使用
  */
 export function TagArchiveDialog({ tag, onClose, onConfirm }: TagArchiveDialogProps) {
@@ -78,7 +78,7 @@ export function TagArchiveDialog({ tag, onClose, onConfirm }: TagArchiveDialogPr
       aria-labelledby="tag-archive-dialog-title"
     >
       <div
-        className="animate-in zoom-in-95 fade-in bg-surface text-foreground border-border rounded-xl border p-6 shadow-lg duration-150"
+        className="animate-in zoom-in-95 fade-in bg-card text-foreground border-border rounded-xl border p-6 shadow-lg duration-150"
         style={{ width: 'min(calc(100vw - 32px), 512px)' }}
         onClick={(e) => e.stopPropagation()}
       >

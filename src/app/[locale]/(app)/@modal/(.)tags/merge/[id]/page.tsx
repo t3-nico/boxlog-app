@@ -132,7 +132,7 @@ export default function TagMergeInterceptedModal() {
         aria-modal="true"
       >
         <div
-          className="bg-surface text-foreground border-border rounded-xl border p-6 shadow-lg"
+          className="bg-card text-foreground border-border rounded-xl border p-6 shadow-lg"
           style={{ width: 'min(calc(100vw - 32px), 400px)' }}
         >
           <Skeleton className="mb-2 h-6 w-32" />
@@ -153,7 +153,7 @@ export default function TagMergeInterceptedModal() {
         aria-modal="true"
       >
         <div
-          className="bg-surface text-foreground border-border rounded-xl border p-6 shadow-lg"
+          className="bg-card text-foreground border-border rounded-xl border p-6 shadow-lg"
           style={{ width: 'min(calc(100vw - 32px), 400px)' }}
         >
           <h2 className="mb-2 text-lg font-bold">{t('common.error')}</h2>
@@ -176,7 +176,7 @@ export default function TagMergeInterceptedModal() {
     >
       {/* ダイアログコンテンツ */}
       <div
-        className="animate-in zoom-in-95 fade-in bg-surface text-foreground border-border rounded-xl border p-6 shadow-lg duration-150"
+        className="animate-in zoom-in-95 fade-in bg-card text-foreground border-border rounded-xl border p-6 shadow-lg duration-150"
         style={{ width: 'min(calc(100vw - 32px), 400px)' }}
         onClick={(e) => e.stopPropagation()}
       >

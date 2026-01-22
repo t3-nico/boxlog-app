@@ -254,6 +254,9 @@ export const useCalendarFilterStore = create<CalendarFilterStore>()(
     }),
     {
       name: 'calendar-filter-storage',
+      // バージョンを上げるとlocalStorageがリセットされる
+      // v2: visibleTagIds競合問題の修正に伴いリセット
+      version: 2,
       storage: {
         getItem: (name) => {
           const str = localStorage.getItem(name);
@@ -272,6 +275,19 @@ export const useCalendarFilterStore = create<CalendarFilterStore>()(
           localStorage.setItem(name, JSON.stringify(serialized));
         },
         removeItem: (name) => localStorage.removeItem(name),
+      },
+      // バージョンマイグレーション: 古いバージョンからの移行時はリセット
+      migrate: (persistedState, version) => {
+        // v1 → v2: visibleTagIds競合問題の修正、initializedをfalseにリセット
+        if (version < 2) {
+          return {
+            visibleTypes: { plan: true, record: true },
+            visibleTagIds: new Set<string>(),
+            showUntagged: true,
+            initialized: false,
+          } as unknown as CalendarFilterStore;
+        }
+        return persistedState as CalendarFilterStore;
       },
     },
   ),

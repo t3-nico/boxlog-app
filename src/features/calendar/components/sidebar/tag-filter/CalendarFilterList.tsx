@@ -38,6 +38,7 @@ export function CalendarFilterList() {
   const { data: tags, isLoading: tagsLoading } = useTags();
   const { isLoading: groupsLoading } = useTagGroups();
   const { data: tagStats } = api.plans.getTagStats.useQuery();
+
   const tagPlanCounts = useMemo(() => tagStats?.counts ?? {}, [tagStats?.counts]);
   const untaggedCount = tagStats?.untaggedCount ?? 0;
 
@@ -109,18 +110,19 @@ export function CalendarFilterList() {
   } = useCalendarFilterStore();
 
   // タグミューテーション状態を監視（Race Condition防止）
-  const isMutating = useTagCacheStore((state) => state.isMutating);
+  // mutationCountは参照カウント方式：複数mutation同時実行に対応
+  const mutationCount = useTagCacheStore((state) => state.mutationCount);
   const isSettling = useTagCacheStore((state) => state.isSettling);
 
   // タグ一覧取得後に初期化（mutation中・settling中は競合防止のためスキップ）
   useEffect(() => {
-    // mutation中またはinvalidate完了待機中はスキップ
-    if (isMutating || isSettling) return;
+    // mutation中（カウント > 0）またはinvalidate完了待機中はスキップ
+    if (mutationCount > 0 || isSettling) return;
 
     if (tags && tags.length > 0) {
       initializeWithTags(tags.map((tag) => tag.id));
     }
-  }, [tags, initializeWithTags, isMutating, isSettling]);
+  }, [tags, initializeWithTags, mutationCount, isSettling]);
 
   const isLoading = tagsLoading || groupsLoading;
 

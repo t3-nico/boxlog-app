@@ -30,7 +30,7 @@ interface TagCreateModalProps {
  * スタイルガイド準拠:
  * - 8pxグリッドシステム（p-6, gap-4, mb-6等）
  * - 角丸: rounded-xl（16px）for ダイアログ
- * - Surface: bg-surface（カード、ダイアログ用）
+ * - Card: bg-card（カード、ダイアログ用）
  */
 export const TagCreateModal = ({
   isOpen,
@@ -164,9 +164,9 @@ export const TagCreateModal = ({
       aria-modal="true"
       aria-labelledby="tag-create-dialog-title"
     >
-      {/* ダイアログコンテンツ: bg-surface, rounded-xl, p-6 */}
+      {/* ダイアログコンテンツ: bg-card, rounded-xl, p-6 */}
       <div
-        className="animate-in zoom-in-95 fade-in bg-surface text-foreground border-border rounded-xl border p-6 shadow-lg duration-150"
+        className="animate-in zoom-in-95 fade-in bg-card text-foreground border-border rounded-xl border p-6 shadow-lg duration-150"
         style={{ width: 'min(calc(100vw - 32px), 400px)' }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -193,7 +193,11 @@ export const TagCreateModal = ({
             <Input
               id="tag-name"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => {
+                setName(e.target.value);
+                // 入力変更時にエラーをクリア
+                if (error) setError('');
+              }}
               onKeyDown={handleKeyDown}
               maxLength={TAG_NAME_MAX_LENGTH}
               aria-invalid={!!error}
@@ -237,7 +241,7 @@ export const TagCreateModal = ({
 
               {/* Dropdown menu */}
               {isParentDropdownOpen && (
-                <div className="bg-surface border-border absolute top-full z-10 mt-1 w-full rounded-md border py-1 shadow-lg">
+                <div className="bg-card border-border absolute top-full z-10 mt-1 w-full rounded-md border py-1 shadow-lg">
                   <button
                     type="button"
                     onClick={() => {

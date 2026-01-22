@@ -1,9 +1,6 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
-import { toast } from 'sonner';
-
-import { useCreateTag } from '../hooks/useTags';
+import { useCreateTag, useTags } from '../hooks/useTags';
 import { useTagCreateModalStore } from '../stores/useTagCreateModalStore';
 import { TagCreateModal } from './tag-create-modal';
 
@@ -15,21 +12,31 @@ import type { CreateTagInput } from '@/features/tags/types';
  * providers.tsxで配置し、どこからでもuseTagCreateModalStore.openModal()で開ける
  */
 export function GlobalTagCreateModal() {
-  const t = useTranslations();
   const isOpen = useTagCreateModalStore((state) => state.isOpen);
   const defaultParentId = useTagCreateModalStore((state) => state.defaultParentId);
   const closeModal = useTagCreateModalStore((state) => state.closeModal);
   const createTagMutation = useCreateTag();
+  const { data: existingTags } = useTags();
 
+  // 楽観的更新: mutateを使用（awaitしない）→ モーダルは即座に閉じる
+  // ただし重複チェックはクライアント側で先に行い、エラーはモーダル内で表示
   const handleCreateTag = async (data: CreateTagInput) => {
-    const result = await createTagMutation.mutateAsync({
+    // クライアント側で重複チェック（大文字小文字を区別しない）
+    const isDuplicate = existingTags?.some(
+      (tag) => tag.name.toLowerCase() === data.name.trim().toLowerCase(),
+    );
+    if (isDuplicate) {
+      // TagCreateModalのcatch句でエラーメッセージを表示
+      throw new Error('duplicate');
+    }
+
+    // 重複なし → mutateで楽観的更新（awaitしない）
+    createTagMutation.mutate({
       name: data.name,
       color: data.color,
       description: data.description ?? undefined,
       parentId: data.parentId ?? undefined,
     });
-    // Note: initializeWithTagsはuseCreateTag.onMutate/onSuccessで既に呼ばれているため不要
-    toast.success(t('tags.toast.created', { name: result.name }));
   };
 
   return (

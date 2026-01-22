@@ -47,7 +47,8 @@ interface UseTagRealtimeOptions {
 export function useTagRealtime(userId: string | undefined, options: UseTagRealtimeOptions = {}) {
   const { enabled = true } = options;
   const utils = api.useUtils();
-  const isMutating = useTagCacheStore((state) => state.isMutating);
+  // mutationCountは参照カウント方式：複数mutation同時実行に対応
+  const mutationCount = useTagCacheStore((state) => state.mutationCount);
 
   useRealtimeSubscription<{ id: string }>({
     channelName: `tag-changes-${userId}`,
@@ -61,8 +62,8 @@ export function useTagRealtime(userId: string | undefined, options: UseTagRealti
 
       logger.debug('[Tag Realtime] Event detected:', payload.eventType, newRecord?.id);
 
-      // 自分のmutation中はRealtime経由の更新をスキップ（二重更新防止）
-      if (isMutating) {
+      // 自分のmutation中（カウント > 0）はRealtime経由の更新をスキップ（二重更新防止）
+      if (mutationCount > 0) {
         logger.debug('[Tag Realtime] Skipping invalidation (mutation in progress)');
         return;
       }
