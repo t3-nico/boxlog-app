@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { ColorPalettePicker } from '@/components/ui/color-palette-picker';
 import { Field, FieldError, FieldGroup, FieldLabel, FieldSupportText } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
+import { TagNoteField } from '@/features/tags/components/tag-note-field';
 import { TAG_NAME_MAX_LENGTH } from '@/features/tags/constants/colors';
 import { useTagGroups } from '@/features/tags/hooks/useTagGroups';
 import type { CreateTagInput, TagGroup } from '@/features/tags/types';
@@ -42,6 +43,7 @@ export const TagCreateModal = ({
   const [name, setName] = useState('');
   const [color, setColor] = useState('#3B82F6');
   const [parentId, setParentId] = useState<string | null>(null);
+  const [description, setDescription] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [mounted, setMounted] = useState(false);
@@ -60,6 +62,7 @@ export const TagCreateModal = ({
     if (isOpen) {
       setName('');
       setColor('#3B82F6');
+      setDescription('');
       setParentId(defaultParentId ?? null);
       setError('');
       setIsParentDropdownOpen(false);
@@ -111,6 +114,7 @@ export const TagCreateModal = ({
       await onSave({
         name: name.trim(),
         color,
+        description: description.trim() || undefined,
         parentId: parentId,
       });
       onClose();
@@ -131,7 +135,7 @@ export const TagCreateModal = ({
     } finally {
       setIsLoading(false);
     }
-  }, [name, color, parentId, onSave, onClose, t]);
+  }, [name, color, description, parentId, onSave, onClose, t]);
 
   const handleBackdropClick = useCallback(
     (e: React.MouseEvent) => {
@@ -219,6 +223,9 @@ export const TagCreateModal = ({
             <FieldLabel>{t('tags.form.color')}</FieldLabel>
             <ColorPalettePicker selectedColor={color} onColorSelect={setColor} />
           </Field>
+
+          {/* ノート（説明） */}
+          <TagNoteField id="tag-note" value={description} onChange={setDescription} />
 
           {/* 親タグ選択 */}
           <Field>

@@ -14,8 +14,7 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Field, FieldError, FieldLabel, FieldSupportText } from '@/components/ui/field';
-import { Textarea } from '@/components/ui/textarea';
+import { TagNoteField } from '@/features/tags/components/tag-note-field';
 
 interface FilterItemMenuProps {
   tagId: string;
@@ -80,40 +79,13 @@ export function FilterItemMenu({
           {t('calendar.filter.editNote')}
         </DropdownMenuSubTrigger>
         <DropdownMenuSubContent className="w-[280px] p-3">
-          <Field>
-            <FieldLabel htmlFor={`tag-note-${tagId}`}>{t('calendar.filter.noteLabel')}</FieldLabel>
-            <div className="flex items-center justify-between">
-              <FieldSupportText id={`tag-note-support-${tagId}`}>
-                {t('calendar.filter.noteHint')}
-              </FieldSupportText>
-              <span className="text-muted-foreground text-xs tabular-nums">
-                {editDescription.length}/100
-              </span>
-            </div>
-            <Textarea
-              id={`tag-note-${tagId}`}
-              ref={textareaRef}
-              value={editDescription}
-              placeholder={t('calendar.filter.notePlaceholder')}
-              onChange={(e) => {
-                const value = e.target.value;
-                if (value.length <= 100) {
-                  onDescriptionChange(value);
-                  // Auto height adjustment
-                  const textarea = e.target;
-                  textarea.style.height = 'auto';
-                  textarea.style.height = `${textarea.scrollHeight}px`;
-                }
-              }}
-              onBlur={onSaveDescription}
-              maxLength={100}
-              aria-describedby={`tag-note-support-${tagId}`}
-              className="border-border min-h-[60px] w-full resize-none border text-sm"
-            />
-            {editDescription.length >= 100 && (
-              <FieldError noPrefix>{t('common.validation.limitReached')}</FieldError>
-            )}
-          </Field>
+          <TagNoteField
+            id={`tag-note-${tagId}`}
+            value={editDescription}
+            onChange={onDescriptionChange}
+            onBlur={onSaveDescription}
+            textareaRef={textareaRef}
+          />
         </DropdownMenuSubContent>
       </DropdownMenuSub>
 
