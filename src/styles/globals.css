@@ -33,6 +33,9 @@
   --container: oklch(0.96 0 0);                   /* サイドバー、セクション */
   --overlay: oklch(0.98 0 0);                     /* ポップオーバー */
 
+  /* Calendar Boxes（カレンダー専用Surface） */
+  --plan-box: oklch(0.88 0 0);                    /* vs background(0.99): より強調 */
+
   /* 互換性エイリアス（shadcn/ui用） */
   --card-foreground: oklch(0.25 0 0);
   --popover: var(--overlay);
@@ -98,6 +101,9 @@
   --card: oklch(0.20 0 0);                        /* カード、ダイアログ */
   --container: oklch(0.22 0 0);                   /* サイドバー、セクション */
   --overlay: oklch(0.18 0 0);                     /* ポップオーバー（最暗） */
+
+  /* Calendar Boxes（カレンダー専用Surface） */
+  --plan-box: oklch(0.16 0 0);                    /* vs background(0.24): より強調 */
 
   /* 互換性エイリアス（shadcn/ui用） */
   --card-foreground: oklch(0.9219 0 0);
@@ -213,6 +219,7 @@
   --color-card-foreground: var(--card-foreground);
   --color-container: var(--container);
   --color-overlay: var(--overlay);
+  --color-plan-box: var(--plan-box);
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);

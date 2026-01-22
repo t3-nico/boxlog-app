@@ -64,11 +64,11 @@ export const calendarStyles: CalendarStyles = {
     // 最小高さ（8pxグリッドに合わせて）
     minHeight: 'min-h-[32px]', // 32px = 8px * 4
 
-    // 影（elevation準拠）
+    // 影（フローティング状態のみ使用）
     shadow: {
-      default: 'shadow-sm', // 通常時
-      hover: 'shadow-md', // ホバー時
-      dragging: 'shadow-lg', // ドラッグ時
+      default: '', // 通常時：shadowなし（フラットデザイン）
+      hover: '', // ホバー時：shadowなし
+      dragging: 'shadow-lg', // ドラッグ時：浮いていることを示す
     },
   },
 

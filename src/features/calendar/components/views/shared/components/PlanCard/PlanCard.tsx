@@ -183,24 +183,22 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
   }, [isDragging, onDragEnd, plan]);
 
   // 状態に応じたスタイルを決定
-  // CSSクラスを組み立て（colors.tsのscheduledを参照）
+  // CSSクラスを組み立て
   const planCardClasses = cn(
     // 基本スタイル
-    'overflow-hidden shadow-sm',
+    'overflow-hidden',
     'focus:outline-none focus:ring-2 focus:ring-offset-1',
-    // colors.tsのscheduledカラーを参照（ドラッグ中はactive）
-    isDragging ? scheduledColors.active : scheduledColors.background,
+    // 背景色（選択/アクティブ時はstate-hover、通常時はplan-box）
+    isSelected || isActive ? 'bg-state-hover' : 'bg-plan-box',
+    // テキスト色
     scheduledColors.text,
     // 状態別スタイル
     isDragging ? 'cursor-grabbing' : 'cursor-pointer',
-    isSelected && 'bg-state-hover',
-    // Inspectorで開いているプランのハイライト
-    isActive && 'bg-state-hover',
     // モバイル: Googleカレンダー風（左ボーダー、チェックボックス+タイトル横並び、上寄せ）
     // デスクトップ: 通常のカード表示
     isMobile
-      ? 'border-l-2 border-l-primary rounded-r-sm pl-1 pr-1 pt-0.5 text-xs flex items-start gap-1'
-      : 'rounded-md border border-transparent p-2 text-sm',
+      ? 'border-l-2 rounded-r-sm pl-1 pr-1 pt-0.5 text-xs flex items-start gap-1'
+      : 'rounded-md p-2 text-sm',
     className,
   );
 
@@ -212,7 +210,11 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
   return (
     <div
       className={planCardClasses}
-      style={dynamicStyle}
+      style={{
+        ...dynamicStyle,
+        // モバイルの左ボーダー色はタグ色
+        borderLeftColor: isMobile && plan.color ? plan.color : undefined,
+      }}
       onClick={handleClick}
       onContextMenu={handleContextMenu}
       onMouseDown={handleMouseDown}
