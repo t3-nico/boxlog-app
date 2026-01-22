@@ -2,7 +2,6 @@
 
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
-import { useMemo } from 'react';
 import { toast } from 'sonner';
 
 import { trpc } from '@/lib/trpc/client';
@@ -61,19 +60,16 @@ export const tagKeys = {
 };
 
 // タグ一覧取得フック
-// Note: selectオプションは楽観的更新との相性が悪いため、返り値で変換する
-// useMemoで明示的に依存関係を設定し、キャッシュ更新時に新しい参照を返す
+// Note: selectを使わず直接data.dataにアクセスする
+// selectを使うとsetData()でキャッシュ更新しても再評価がトリガーされない場合がある
 export function useTags() {
   const query = trpc.tags.list.useQuery(undefined, {
     staleTime: 5 * 60 * 1000, // 5分間キャッシュ
   });
 
-  // query.dataが変わったときに確実に新しい配列参照を返す
-  const data = useMemo(() => query.data?.data, [query.data]);
-
   return {
     ...query,
-    data,
+    data: query.data?.data, // 直接アクセスで楽観的更新の検出を確実に
   };
 }
 
@@ -91,18 +87,20 @@ export function useTag(id: string) {
 // タグ作成フック（楽観的更新付き）
 export function useCreateTag() {
   const utils = trpc.useUtils();
-  const setIsMutating = useTagCacheStore((state) => state.setIsMutating);
-  const setIsSettling = useTagCacheStore((state) => state.setIsSettling);
+  const incrementMutation = useTagCacheStore((state) => state.incrementMutation);
+  const decrementMutation = useTagCacheStore((state) => state.decrementMutation);
 
   return trpc.tags.create.useMutation({
     // 楽観的更新: 作成直後に即座にUIを更新
     onMutate: async (input) => {
-      // mutation開始フラグを設定（Realtime二重更新防止）
-      setIsMutating(true);
+      // mutationカウントをインクリメント（複数mutation同時実行対応）
+      incrementMutation();
 
       // 進行中のフェッチをキャンセル
-      await utils.tags.list.cancel();
-      await utils.tags.listParentTags.cancel();
+      // Note: cancel()の完了を待たずに即座にキャッシュ操作を行う
+      // これにより連続mutation時のRace Conditionを防止
+      void utils.tags.list.cancel();
+      void utils.tags.listParentTags.cancel();
 
       // 現在のキャッシュを保存（ロールバック用）
       const previousData = utils.tags.list.getData();
@@ -149,9 +147,9 @@ export function useCreateTag() {
       // カレンダーフィルターストアも楽観的に更新（即座にサイドバーに表示）
       useCalendarFilterStore.getState().initializeWithTags([tempId]);
 
-      return { previousData, previousParentTags, tempId };
+      return { previousData, previousParentTags, tempId, tagName: input.name };
     },
-    // 成功時: 一時IDを本来のIDに置換
+    // 成功時: 一時IDを本来のIDに置換 + Toast表示
     onSuccess: (result, _input, context) => {
       if (!context?.tempId) return;
 
@@ -180,6 +178,9 @@ export function useCreateTag() {
       const filterStore = useCalendarFilterStore.getState();
       filterStore.removeTag(context.tempId); // 一時IDを削除
       filterStore.initializeWithTags([result.id]); // 実際のIDを追加
+
+      // Toast表示（楽観的更新なのでonSuccessで表示）
+      toast.success(`タグ「${result.name}」を作成しました`);
     },
     // エラー時: 元のキャッシュにロールバック
     onError: (_err, _input, context) => {
@@ -193,21 +194,16 @@ export function useCreateTag() {
       if (context?.tempId) {
         useCalendarFilterStore.getState().removeTag(context.tempId);
       }
+      // エラーToast表示
+      toast.error('タグの作成に失敗しました');
     },
-    // 完了時: サーバーと同期（念のため）
+    // 完了時: mutationカウントをデクリメント
+    // Note: invalidate()は呼ばない
+    // - onMutateで楽観的更新、onSuccessで実際のIDに置換済み
+    // - invalidate()はサーバーサイドキャッシュ（unstable_cache）が
+    //   更新されていない可能性があり、古いデータで上書きしてしまう
     onSettled: () => {
-      // invalidate完了待機中フラグを設定（Race Condition防止）
-      setIsSettling(true);
-
-      // Promise.allで両方のinvalidateが完了するまで待機
-      void Promise.all([
-        utils.tags.list.invalidate(),
-        utils.tags.listParentTags.invalidate(),
-      ]).finally(() => {
-        // invalidate完了後にフラグをリセット
-        setIsSettling(false);
-        setIsMutating(false);
-      });
+      decrementMutation();
     },
   });
 }
@@ -216,13 +212,14 @@ export function useCreateTag() {
 export function useUpdateTag() {
   const utils = trpc.useUtils();
   const t = useTranslations('tags');
-  const setIsMutating = useTagCacheStore((state) => state.setIsMutating);
+  const incrementMutation = useTagCacheStore((state) => state.incrementMutation);
+  const decrementMutation = useTagCacheStore((state) => state.decrementMutation);
 
   const mutation = trpc.tags.update.useMutation({
     // 楽観的更新: mutation開始時に即座にUIを更新
     onMutate: async (newData) => {
       // mutation開始フラグを設定（Realtime二重更新防止）
-      setIsMutating(true);
+      incrementMutation();
 
       // 進行中のフェッチをキャンセル（両方のキャッシュ）
       await utils.tags.list.cancel();
@@ -316,7 +313,7 @@ export function useUpdateTag() {
     // 完了時: フラグをリセット + キャッシュ無効化
     onSettled: (_data, _err, input) => {
       // mutation完了後にフラグをリセット
-      setIsMutating(false);
+      decrementMutation();
       // plansのキャッシュは無効化（タグ情報を含むため）
       // Note: tRPCのutilsを使用（queryClientでは['plans']キーが一致しない）
       void utils.plans.list.invalidate();
@@ -378,13 +375,14 @@ export function useUpdateTag() {
 // タグ削除フック（楽観的更新付き）
 export function useDeleteTag() {
   const utils = trpc.useUtils();
-  const setIsMutating = useTagCacheStore((state) => state.setIsMutating);
+  const incrementMutation = useTagCacheStore((state) => state.incrementMutation);
+  const decrementMutation = useTagCacheStore((state) => state.decrementMutation);
 
   return trpc.tags.delete.useMutation({
     // 楽観的更新: 削除直後に即座にUIを更新
     onMutate: async ({ id }) => {
       // mutation開始フラグを設定（Realtime二重更新防止）
-      setIsMutating(true);
+      incrementMutation();
 
       // 進行中のフェッチをキャンセル
       await utils.tags.list.cancel();
@@ -444,7 +442,7 @@ export function useDeleteTag() {
     // 完了時: サーバーと同期
     onSettled: (_data, _err, input) => {
       // mutation完了後にフラグをリセット
-      setIsMutating(false);
+      decrementMutation();
       void utils.tags.list.invalidate();
       void utils.tags.listParentTags.invalidate();
       void utils.tags.getById.invalidate({ id: input.id });
@@ -457,13 +455,14 @@ export function useDeleteTag() {
 // タググループ移動フック（グループ間移動）（楽観的更新付き）
 export function useMoveTag() {
   const utils = trpc.useUtils();
-  const setIsMutating = useTagCacheStore((state) => state.setIsMutating);
+  const incrementMutation = useTagCacheStore((state) => state.incrementMutation);
+  const decrementMutation = useTagCacheStore((state) => state.decrementMutation);
 
   return trpc.tags.update.useMutation({
     // 楽観的更新: 移動直後に即座にUIを更新
     onMutate: async (input) => {
       // mutation開始フラグを設定（Realtime二重更新防止）
-      setIsMutating(true);
+      incrementMutation();
 
       await utils.tags.list.cancel();
       await utils.tags.listParentTags.cancel();
@@ -523,7 +522,7 @@ export function useMoveTag() {
     },
     onSettled: (_data, _err, input) => {
       // mutation完了後にフラグをリセット
-      setIsMutating(false);
+      decrementMutation();
       void utils.tags.list.invalidate();
       void utils.tags.listParentTags.invalidate();
       void utils.tags.getById.invalidate({ id: input.id });
@@ -535,13 +534,14 @@ export function useMoveTag() {
 export function useRenameTag() {
   const utils = trpc.useUtils();
   const t = useTranslations('tags');
-  const setIsMutating = useTagCacheStore((state) => state.setIsMutating);
+  const incrementMutation = useTagCacheStore((state) => state.incrementMutation);
+  const decrementMutation = useTagCacheStore((state) => state.decrementMutation);
 
   return trpc.tags.update.useMutation({
     // 楽観的更新: 名前変更直後に即座にUIを更新
     onMutate: async (input) => {
       // mutation開始フラグを設定（Realtime二重更新防止）
-      setIsMutating(true);
+      incrementMutation();
 
       await utils.tags.list.cancel();
       await utils.tags.listParentTags.cancel();
@@ -602,7 +602,7 @@ export function useRenameTag() {
     },
     onSettled: (_data, _err, input) => {
       // mutation完了後にフラグをリセット
-      setIsMutating(false);
+      decrementMutation();
       void utils.tags.list.invalidate();
       void utils.tags.listParentTags.invalidate();
       void utils.tags.getById.invalidate({ id: input.id });
@@ -615,13 +615,14 @@ export function useRenameTag() {
 // タグ色変更フック（楽観的更新付き）
 export function useUpdateTagColor() {
   const utils = trpc.useUtils();
-  const setIsMutating = useTagCacheStore((state) => state.setIsMutating);
+  const incrementMutation = useTagCacheStore((state) => state.incrementMutation);
+  const decrementMutation = useTagCacheStore((state) => state.decrementMutation);
 
   return trpc.tags.update.useMutation({
     // 楽観的更新: 色変更直後に即座にUIを更新
     onMutate: async (input) => {
       // mutation開始フラグを設定（Realtime二重更新防止）
-      setIsMutating(true);
+      incrementMutation();
 
       await utils.tags.list.cancel();
       await utils.tags.listParentTags.cancel();
@@ -673,7 +674,7 @@ export function useUpdateTagColor() {
     },
     onSettled: (_data, _err, input) => {
       // mutation完了後にフラグをリセット
-      setIsMutating(false);
+      decrementMutation();
       void utils.tags.list.invalidate();
       void utils.tags.listParentTags.invalidate();
       void utils.tags.getById.invalidate({ id: input.id });
@@ -686,13 +687,14 @@ export function useUpdateTagColor() {
 // タグマージフック（楽観的更新付き）
 export function useMergeTag() {
   const utils = trpc.useUtils();
-  const setIsMutating = useTagCacheStore((state) => state.setIsMutating);
+  const incrementMutation = useTagCacheStore((state) => state.incrementMutation);
+  const decrementMutation = useTagCacheStore((state) => state.decrementMutation);
 
   return trpc.tags.merge.useMutation({
     // 楽観的更新: マージ直後に即座にUIを更新
     onMutate: async ({ sourceTagId, targetTagId }) => {
       // mutation開始フラグを設定（Realtime二重更新防止）
-      setIsMutating(true);
+      incrementMutation();
 
       // 進行中のフェッチをキャンセル
       await utils.tags.list.cancel();
@@ -757,7 +759,7 @@ export function useMergeTag() {
     // 完了時: サーバーと同期
     onSettled: (_data, _err, input) => {
       // mutation完了後にフラグをリセット
-      setIsMutating(false);
+      decrementMutation();
       void utils.tags.list.invalidate();
       void utils.tags.listParentTags.invalidate();
       void utils.tags.getById.invalidate({ id: input.sourceTagId });
@@ -778,13 +780,14 @@ export interface ReorderTagInput {
 // タグ並び替えフック（楽観的更新付き）
 export function useReorderTags() {
   const utils = trpc.useUtils();
-  const setIsMutating = useTagCacheStore((state) => state.setIsMutating);
+  const incrementMutation = useTagCacheStore((state) => state.incrementMutation);
+  const decrementMutation = useTagCacheStore((state) => state.decrementMutation);
 
   return trpc.tags.reorder.useMutation({
     // 楽観的更新: ドロップ直後に即座にUIを更新
     onMutate: async ({ updates }) => {
       // mutation開始フラグを設定（Realtime二重更新防止）
-      setIsMutating(true);
+      incrementMutation();
 
       // tRPC のキャッシュをキャンセル
       await utils.tags.list.cancel();
@@ -872,7 +875,7 @@ export function useReorderTags() {
     },
     // 完了時: フラグをリセット（楽観的更新を信頼、invalidateは不要）
     onSettled: () => {
-      setIsMutating(false);
+      decrementMutation();
     },
   });
 }
