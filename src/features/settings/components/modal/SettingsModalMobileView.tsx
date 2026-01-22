@@ -72,7 +72,7 @@ export function SettingsModalMobileView() {
                 key={category.id}
                 type="button"
                 onClick={() => handleCategorySelect(category.id)}
-                className="text-foreground active:bg-state-hover flex w-full items-center gap-3 rounded-lg px-3 py-3 text-left text-sm transition-colors"
+                className="text-foreground active:bg-state-hover flex w-full items-center gap-3 rounded-md px-3 py-3 text-left text-sm transition-colors"
               >
                 <Icon className="size-5 shrink-0" />
                 <span className="flex-1 font-normal">{t(category.labelKey)}</span>

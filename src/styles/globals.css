@@ -410,29 +410,36 @@ html.dark {
  * カスタムユーティリティクラス
  * ============================================ */
 @layer utilities {
-  /* タイポグラフィ - 見出し */
+  /* タイポグラフィ - 見出し
+   * letter-spacing: -0.025em は大きい文字の視覚的バランス改善用
+   * Interはtext typeフォントのため、大きいサイズでは文字間隔が広く見える
+   */
   .text-heading-h1 {
     font-size: var(--font-size-heading-h1);
     font-weight: 700;
     line-height: var(--line-height-tight);
+    letter-spacing: -0.025em;
   }
 
   .text-heading-h2 {
     font-size: var(--font-size-heading-h2);
     font-weight: 700;
     line-height: var(--line-height-tight);
+    letter-spacing: -0.025em;
   }
 
   .text-heading-h3 {
     font-size: var(--font-size-heading-h3);
     font-weight: 700;
     line-height: var(--line-height-tight);
+    letter-spacing: -0.025em;
   }
 
   .text-heading-h4 {
     font-size: var(--font-size-heading-h4);
     font-weight: 700;
     line-height: var(--line-height-normal);
+    letter-spacing: -0.025em;
   }
 
   /* タイポグラフィ - 本文 */

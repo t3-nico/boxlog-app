@@ -178,7 +178,7 @@ export default function TagEditInterceptedModal() {
 
                 {/* 現在選択されているアイコンのプレビュー */}
                 <div
-                  className="border-border bg-surface-container mb-3 flex items-center gap-3 rounded-lg border p-3"
+                  className="border-border bg-surface-container mb-3 flex items-center gap-3 rounded-xl border p-3"
                   style={{ '--tag-color': color } as React.CSSProperties}
                 >
                   {(() => {
@@ -195,7 +195,7 @@ export default function TagEditInterceptedModal() {
 
                 {/* アイコン選択 */}
                 <div
-                  className="border-border max-h-64 overflow-y-auto rounded-lg border"
+                  className="border-border max-h-64 overflow-y-auto rounded-xl border"
                   aria-labelledby="icon-label"
                 >
                   {Object.entries(tagIconCategories).map(([category, icons]) => (

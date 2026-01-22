@@ -148,7 +148,7 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
           <p className="text-muted-foreground text-sm">{t('tags.merge.autoMergeDescription')}</p>
 
           {/* ターゲットタグ選択（ラジオボタンリスト） */}
-          <div className="border-border max-h-60 overflow-y-auto rounded-lg border">
+          <div className="border-border max-h-60 overflow-y-auto rounded-xl border">
             {availableTags.length === 0 ? (
               <p className="text-muted-foreground p-4 text-center text-sm">
                 {t('tags.search.noTags')}

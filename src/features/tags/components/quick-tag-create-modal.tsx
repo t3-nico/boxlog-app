@@ -101,7 +101,7 @@ export const QuickTagCreateModal = ({ isOpen, onClose, onCreateTag }: QuickTagCr
       />
 
       {/* Modal */}
-      <div className="bg-popover fixed top-1/2 left-1/2 z-50 w-80 -translate-x-1/2 -translate-y-1/2 transform rounded-lg shadow-xl">
+      <div className="bg-popover fixed top-1/2 left-1/2 z-50 w-80 -translate-x-1/2 -translate-y-1/2 transform rounded-xl shadow-xl">
         {/* Header */}
         <div className="border-border flex items-center justify-between border-b p-4">
           <h2 className="text-foreground text-lg font-bold">{t('tags.modal.createTitle')}</h2>
@@ -149,7 +149,7 @@ export const QuickTagCreateModal = ({ isOpen, onClose, onCreateTag }: QuickTagCr
                   variant="ghost"
                   onClick={createColorHandler(color)}
                   className={cn(
-                    'h-10 w-10 rounded-lg p-0 transition-all hover:scale-105 hover:bg-transparent',
+                    'h-10 w-10 rounded-xl p-0 transition-all hover:scale-105 hover:bg-transparent',
                     selectedColor === color && 'ring-primary ring-2 ring-offset-2',
                   )}
                   style={{ backgroundColor: color }}
@@ -160,7 +160,7 @@ export const QuickTagCreateModal = ({ isOpen, onClose, onCreateTag }: QuickTagCr
           </div>
 
           {/* Preview */}
-          <div className="bg-surface-container rounded-lg p-3">
+          <div className="bg-surface-container rounded-xl p-3">
             <div className="text-muted-foreground mb-2 text-xs font-normal">
               {t('tags.form.preview')}:
             </div>
