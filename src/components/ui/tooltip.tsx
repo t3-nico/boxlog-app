@@ -37,6 +37,10 @@ interface HoverTooltipProps {
   className?: string;
   /** ラッパー要素の追加クラス名（フルwidth要素をラップする場合は"w-full"を指定） */
   wrapperClassName?: string;
+  /** ラッパー要素のdisplayモード（デフォルト: 'inline-flex'） */
+  wrapperDisplay?: 'inline-flex' | 'flex' | 'block' | 'inline';
+  /** ラッパー要素のHTML要素（デフォルト: 'span'） */
+  as?: 'span' | 'div' | 'li';
   /** 無効化 */
   disabled?: boolean;
 }
@@ -49,11 +53,13 @@ function HoverTooltip({
   maxWidth = 200,
   className,
   wrapperClassName,
+  wrapperDisplay = 'inline-flex',
+  as: Component = 'span',
   disabled = false,
 }: HoverTooltipProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [position, setPosition] = useState({ top: 0, left: 0 });
-  const triggerRef = useRef<HTMLSpanElement>(null);
+  const triggerRef = useRef<HTMLElement>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -125,23 +131,23 @@ function HoverTooltip({
     };
   }, []);
 
-  if (disabled || !content) {
-    return <>{children}</>;
-  }
+  // 常にラッパーを描画（DOM構造の一貫性のため）
+  const isTooltipEnabled = !disabled && !!content;
 
   return (
     <>
-      <span
-        ref={triggerRef}
-        onMouseEnter={showTooltip}
-        onMouseLeave={hideTooltip}
-        onFocus={showTooltip}
-        onBlur={hideTooltip}
-        className={cn('inline-flex', wrapperClassName)}
+      <Component
+        ref={triggerRef as React.RefObject<HTMLSpanElement & HTMLDivElement & HTMLLIElement>}
+        onMouseEnter={isTooltipEnabled ? showTooltip : undefined}
+        onMouseLeave={isTooltipEnabled ? hideTooltip : undefined}
+        onFocus={isTooltipEnabled ? showTooltip : undefined}
+        onBlur={isTooltipEnabled ? hideTooltip : undefined}
+        className={cn(wrapperDisplay, wrapperClassName)}
       >
         {children}
-      </span>
-      {isVisible &&
+      </Component>
+      {isTooltipEnabled &&
+        isVisible &&
         createPortal(
           <div
             ref={tooltipRef}

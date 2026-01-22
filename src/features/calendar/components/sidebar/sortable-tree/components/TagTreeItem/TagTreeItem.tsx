@@ -357,7 +357,14 @@ export const TagTreeItem = forwardRef<HTMLDivElement, TagTreeItemProps>(
             </div>
           ) : (
             <div className="ml-2 flex min-w-0 flex-1 items-center">
-              <span className="text-foreground min-w-0 truncate">{tag.name}</span>
+              <HoverTooltip
+                content={tag.description}
+                side="top"
+                disabled={!tag.description || menuOpen}
+                wrapperClassName="min-w-0"
+              >
+                <span className="text-foreground min-w-0 truncate">{tag.name}</span>
+              </HoverTooltip>
               {/* 折りたたみアイコン（子タグがある場合のみ、タグ名の直後） */}
               {hasChildren && onCollapse && (
                 <ChevronRight
@@ -403,7 +410,12 @@ export const TagTreeItem = forwardRef<HTMLDivElement, TagTreeItemProps>(
                 </DropdownMenuSubContent>
               </DropdownMenuSub>
               {/* ノートを編集 */}
-              <DropdownMenuSub>
+              <DropdownMenuSub
+                onOpenChange={(open) => {
+                  // サブメニューが閉じる際に説明を保存
+                  if (!open) handleSaveDescription();
+                }}
+              >
                 <DropdownMenuSubTrigger>
                   <FileText className="mr-2 size-4" />
                   {t('calendar.filter.editNote')}
@@ -511,24 +523,14 @@ export const TagTreeItem = forwardRef<HTMLDivElement, TagTreeItemProps>(
           </DropdownMenu>
 
           {/* カウント */}
-          <span className="text-muted-foreground flex size-6 shrink-0 items-center justify-center text-xs tabular-nums">
+          <span className="text-muted-foreground ml-1 shrink-0 pr-2 text-xs tabular-nums">
             {count}
           </span>
         </div>
       </li>
     );
 
-    // 説明がある場合はツールチップで表示
-    return (
-      <HoverTooltip
-        content={tag.description}
-        side="top"
-        disabled={!tag.description || menuOpen}
-        wrapperClassName="w-full"
-      >
-        {content}
-      </HoverTooltip>
-    );
+    return content;
   },
 );
 

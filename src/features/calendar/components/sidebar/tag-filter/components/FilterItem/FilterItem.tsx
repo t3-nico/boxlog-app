@@ -159,7 +159,14 @@ export function FilterItem({
           )}
         </div>
       ) : (
-        <span className={cn('ml-1 min-w-0 flex-1 truncate', labelClassName)}>{label}</span>
+        <HoverTooltip
+          content={description}
+          side="top"
+          disabled={!description || menuOpen}
+          wrapperClassName="ml-1 min-w-0 flex-1"
+        >
+          <span className={cn('min-w-0 truncate', labelClassName)}>{label}</span>
+        </HoverTooltip>
       )}
 
       {/* Menu trigger */}
@@ -202,21 +209,12 @@ export function FilterItem({
 
       {/* Count */}
       {count !== undefined && (
-        <span className="text-muted-foreground flex size-6 shrink-0 items-center justify-center text-xs tabular-nums">
+        <span className="text-muted-foreground ml-1 shrink-0 pr-2 text-xs tabular-nums">
           {count}
         </span>
       )}
     </div>
   );
 
-  return (
-    <HoverTooltip
-      content={description}
-      side="top"
-      disabled={!description || menuOpen}
-      wrapperClassName="w-full"
-    >
-      {content}
-    </HoverTooltip>
-  );
+  return content;
 }
