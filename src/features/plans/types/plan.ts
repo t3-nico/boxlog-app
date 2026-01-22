@@ -102,6 +102,9 @@ export interface PlanFilters {
   status?: PlanStatus;
   search?: string;
   tagId?: string; // タグIDでフィルタ
+  // 日付範囲フィルタ（カレンダー表示高速化用）
+  startDate?: string; // 開始日時（ISO 8601形式）
+  endDate?: string; // 終了日時（ISO 8601形式）
   sortBy?: 'created_at' | 'updated_at' | 'due_date' | 'title';
   sortOrder?: 'asc' | 'desc';
   limit?: number;

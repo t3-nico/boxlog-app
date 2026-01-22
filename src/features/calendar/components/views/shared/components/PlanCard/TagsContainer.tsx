@@ -18,12 +18,15 @@ interface TagsContainerProps {
 
 export const TagsContainer = memo<TagsContainerProps>(function TagsContainer({ tagIds }) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const { getTagsByIds } = useTagsMap();
+  const { getTagsByIds, isLoading } = useTagsMap();
 
   // タグマスタからタグ情報を取得
   const tags = getTagsByIds(tagIds);
 
   const [visibleCount, setVisibleCount] = useState(tags.length);
+
+  // tagIdsはあるがタグ情報がまだ取得できていない場合のスケルトン表示
+  const showSkeleton = isLoading && tagIds.length > 0 && tags.length === 0;
 
   useEffect(() => {
     const container = containerRef.current;
@@ -62,6 +65,25 @@ export const TagsContainer = memo<TagsContainerProps>(function TagsContainer({ t
   }, [tags]);
 
   const hiddenCount = tags.length - visibleCount;
+
+  // ローディング中でタグIDがある場合はスケルトン表示
+  if (showSkeleton) {
+    return (
+      <div className="flex min-h-0 flex-shrink flex-wrap gap-1 overflow-hidden pt-1">
+        {tagIds.slice(0, 3).map((id) => (
+          <span
+            key={id}
+            className="bg-muted inline-flex h-5 w-12 animate-pulse items-center rounded-sm"
+          />
+        ))}
+        {tagIds.length > 3 && (
+          <span className="inline-flex items-center px-1 text-xs opacity-75">
+            +{tagIds.length - 3}
+          </span>
+        )}
+      </div>
+    );
+  }
 
   if (tags.length === 0) return null;
 

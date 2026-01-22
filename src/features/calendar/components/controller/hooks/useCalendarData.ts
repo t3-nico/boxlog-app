@@ -1,13 +1,14 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 
-import { format } from 'date-fns';
+import { addDays, format, subDays } from 'date-fns';
 
 import { usePlans } from '@/features/plans/hooks/usePlans';
 import type { Plan } from '@/features/plans/types/plan';
 import { isRecurringPlan } from '@/features/plans/utils/recurrence';
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
+import { useTags } from '@/features/tags/hooks/useTags';
 import { logger } from '@/lib/logger';
 import { api } from '@/lib/trpc';
 
@@ -45,21 +46,59 @@ export function useCalendarData({
   viewType,
   currentDate,
 }: UseCalendarDataOptions): UseCalendarDataResult {
-  // plansを取得（リアルタイム性最優化済み）
-  const { data: plansData } = usePlans();
-
-  // 週の開始日設定を取得
+  // 週の開始日設定を取得（usePlansに渡すため先に取得）
   const weekStartsOn = useCalendarSettingsStore((state) => state.weekStartsOn);
+
+  // ビューに応じた期間計算（週の開始日設定を反映）
+  // usePlansに日付範囲を渡すため、先に計算
+  const viewDateRange = useMemo(() => {
+    return calculateViewDateRange(viewType, currentDate, weekStartsOn);
+  }, [viewType, currentDate, weekStartsOn]);
+
+  // 日付範囲をISO 8601形式に変換（サーバーサイドフィルタ用）
+  const dateFilter = useMemo(
+    () => ({
+      startDate: viewDateRange.start.toISOString(),
+      endDate: viewDateRange.end.toISOString(),
+    }),
+    [viewDateRange],
+  );
+
+  // plansを取得（日付範囲フィルタで高速化）
+  const { data: plansData } = usePlans(dateFilter);
+
+  // タグマスタをプリフェッチ（TagsContainerで使用するためキャッシュをwarm up）
+  // これにより、カードがレンダリングされる時点でタグ情報がキャッシュに存在する
+  useTags();
+
+  // tRPC utils（プリフェッチ用）
+  const utils = api.useUtils();
+
+  // 隣接期間のプリフェッチ（ナビゲーション高速化）
+  useEffect(() => {
+    const prefetchAdjacentPeriods = () => {
+      // 前の期間
+      const prevRange = calculateViewDateRange(viewType, subDays(currentDate, 7), weekStartsOn);
+      void utils.plans.list.prefetch({
+        startDate: prevRange.start.toISOString(),
+        endDate: prevRange.end.toISOString(),
+      });
+
+      // 次の期間
+      const nextRange = calculateViewDateRange(viewType, addDays(currentDate, 7), weekStartsOn);
+      void utils.plans.list.prefetch({
+        startDate: nextRange.start.toISOString(),
+        endDate: nextRange.end.toISOString(),
+      });
+    };
+
+    prefetchAdjacentPeriods();
+  }, [currentDate, viewType, weekStartsOn, utils.plans.list]);
 
   // フィルター設定を取得（状態の値を直接参照して変更を検知）
   const visibleTypes = useCalendarFilterStore((state) => state.visibleTypes);
   const visibleTagIds = useCalendarFilterStore((state) => state.visibleTagIds);
   const showUntagged = useCalendarFilterStore((state) => state.showUntagged);
-
-  // ビューに応じた期間計算（週の開始日設定を反映）
-  const viewDateRange = useMemo(() => {
-    return calculateViewDateRange(viewType, currentDate, weekStartsOn);
-  }, [viewType, currentDate, weekStartsOn]);
 
   // 繰り返しプランのIDを抽出
   const recurringPlanIds = useMemo(() => {

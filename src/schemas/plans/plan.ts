@@ -35,6 +35,9 @@ export const planFilterSchema = z.object({
   status: planStatusSchema.optional(),
   search: z.string().optional(),
   tagId: z.string().uuid().optional(), // タグIDでフィルタ
+  // 日付範囲フィルタ（カレンダー表示高速化用）
+  startDate: z.string().datetime().optional(), // 開始日時（ISO 8601形式）
+  endDate: z.string().datetime().optional(), // 終了日時（ISO 8601形式）
   // ソート
   sortBy: z.enum(['created_at', 'updated_at', 'due_date', 'title']).optional(),
   sortOrder: z.enum(['asc', 'desc']).optional(),

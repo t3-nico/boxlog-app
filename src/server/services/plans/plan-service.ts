@@ -47,6 +47,8 @@ export class PlanService {
       tagId,
       status,
       search,
+      startDate,
+      endDate,
       sortBy = 'created_at',
       sortOrder = 'desc',
       limit,
@@ -82,6 +84,15 @@ export class PlanService {
     // 検索フィルター
     if (search) {
       query = query.or(`title.ilike.%${search}%,description.ilike.%${search}%`);
+    }
+
+    // 日付範囲フィルタ（start_time基準）
+    // カレンダー表示高速化: 表示範囲のプランのみを取得
+    if (startDate) {
+      query = query.gte('start_time', startDate);
+    }
+    if (endDate) {
+      query = query.lte('start_time', endDate);
     }
 
     // ソート
