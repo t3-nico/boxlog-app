@@ -605,7 +605,7 @@ export const ScrollableCalendarLayout = ({
       data-calendar-scroll
     >
       <div
-        className="relative flex w-full pr-4"
+        className="relative flex w-full"
         style={{ height: `${gridHeight}px` }}
         onClick={handleGridClick}
         onKeyDown={handleKeyDown}
