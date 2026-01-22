@@ -101,7 +101,7 @@ export const AIInspectorContent = memo(function AIInspectorContent() {
             className="min-h-11 resize-none"
             rows={1}
           />
-          <Button type="submit" size="icon" disabled={!input.trim()}>
+          <Button type="submit" size="icon" disabled={!input.trim()} aria-label="送信">
             <Send className="h-4 w-4" />
           </Button>
         </form>

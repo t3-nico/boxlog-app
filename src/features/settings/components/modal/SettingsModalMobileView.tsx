@@ -41,7 +41,7 @@ export function SettingsModalMobileView() {
     return (
       <div className="flex h-full flex-col">
         <header className="border-border flex h-14 shrink-0 items-center gap-2 border-b px-4">
-          <Button variant="ghost" size="icon" onClick={handleBack}>
+          <Button variant="ghost" size="icon" onClick={handleBack} aria-label={t('common.back')}>
             <ChevronLeft className="size-5" />
           </Button>
           <h1 className="text-lg font-semibold">
@@ -58,7 +58,7 @@ export function SettingsModalMobileView() {
     <div className="flex h-full flex-col">
       <header className="border-border flex h-14 shrink-0 items-center justify-between border-b px-4">
         <h1 className="text-lg font-semibold">{t('settings.dialog.title')}</h1>
-        <Button variant="ghost" size="icon" onClick={closeModal}>
+        <Button variant="ghost" size="icon" onClick={closeModal} aria-label={t('common.close')}>
           <X className="size-5" />
         </Button>
       </header>

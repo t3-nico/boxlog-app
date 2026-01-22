@@ -91,7 +91,12 @@ export function CreateNewDropdown({
 
   const trigger = (
     <DropdownMenuTrigger asChild>
-      <Button variant="ghost" size="icon" className={size === 'sm' ? 'size-8' : 'size-10'}>
+      <Button
+        variant="ghost"
+        size="icon"
+        className={size === 'sm' ? 'size-8' : 'size-10'}
+        aria-label={t('sidebar.quickCreate')}
+      >
         <Plus className={size === 'sm' ? 'size-4' : 'size-5'} />
       </Button>
     </DropdownMenuTrigger>
