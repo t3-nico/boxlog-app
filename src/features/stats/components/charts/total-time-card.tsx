@@ -68,7 +68,7 @@ export function TotalTimeCard() {
 
           {/* 予定数 */}
           <div className="text-center">
-            <div className="text-lg font-semibold">{data.planCount}</div>
+            <div className="text-lg font-bold">{data.planCount}</div>
             <div className="text-muted-foreground text-xs">件の予定</div>
           </div>
 
@@ -77,7 +77,7 @@ export function TotalTimeCard() {
 
           {/* 平均時間 */}
           <div className="text-center">
-            <div className="text-lg font-semibold">{formatHours(data.avgHoursPerPlan)}</div>
+            <div className="text-lg font-bold">{formatHours(data.avgHoursPerPlan)}</div>
             <div className="text-muted-foreground text-xs">平均 / 件</div>
           </div>
         </div>

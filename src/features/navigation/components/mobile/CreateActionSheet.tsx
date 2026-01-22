@@ -110,7 +110,7 @@ export function CreateActionSheet({ open, onOpenChange, onSelect }: CreateAction
                   <Icon className={cn('size-6', action.color)} />
                 </div>
                 <div className="flex-1">
-                  <p className="text-foreground font-medium">{action.label}</p>
+                  <p className="text-foreground font-normal">{action.label}</p>
                   <p className="text-muted-foreground text-sm">{action.description}</p>
                 </div>
               </button>

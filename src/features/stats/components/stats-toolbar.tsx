@@ -114,7 +114,7 @@ export function StatsToolbar() {
       </div>
 
       {/* 日付範囲表示 */}
-      <div className="bg-surface-container text-foreground flex h-8 items-center gap-2 rounded-md px-3 text-sm font-medium">
+      <div className="bg-surface-container text-foreground flex h-8 items-center gap-2 rounded-md px-3 text-sm font-normal">
         <Calendar className="text-muted-foreground size-4" />
         <span>{formatDateRange()}</span>
       </div>

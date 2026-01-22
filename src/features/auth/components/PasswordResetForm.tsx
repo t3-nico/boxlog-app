@@ -60,7 +60,7 @@ export function PasswordResetForm({ className, ...props }: React.ComponentProps<
                   <h1 className="text-2xl font-bold">{t('auth.passwordResetForm.checkEmail')}</h1>
                   <p className="text-muted-foreground text-balance">
                     {t('auth.passwordResetForm.sentResetLink')}{' '}
-                    <span className="font-medium">{email}</span>
+                    <span className="font-normal">{email}</span>
                   </p>
                 </div>
                 <Field>

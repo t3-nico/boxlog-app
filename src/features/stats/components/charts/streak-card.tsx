@@ -51,7 +51,7 @@ export function StreakCard() {
           <div className="flex items-center gap-2 text-center">
             <Trophy className="text-warning size-4" />
             <div>
-              <div className="text-lg font-semibold">{data.longestStreak}</div>
+              <div className="text-lg font-bold">{data.longestStreak}</div>
               <div className="text-muted-foreground text-xs">最長記録</div>
             </div>
           </div>
@@ -61,7 +61,7 @@ export function StreakCard() {
 
           {/* アクティブ日数 */}
           <div className="text-center">
-            <div className="text-lg font-semibold">{data.totalActiveDays}</div>
+            <div className="text-lg font-bold">{data.totalActiveDays}</div>
             <div className="text-muted-foreground text-xs">日 / 年</div>
           </div>
         </div>

@@ -96,7 +96,7 @@ export function OverdueBadge({ overduePlans, className, style }: OverdueBadgePro
           type="button"
           className={cn(
             'text-warning',
-            'flex items-center justify-center gap-1 text-xs font-medium md:gap-1.5',
+            'flex items-center justify-center gap-1 text-xs font-normal md:gap-1.5',
             'transition-colors focus:outline-none',
             className,
           )}
@@ -115,7 +115,7 @@ export function OverdueBadge({ overduePlans, className, style }: OverdueBadgePro
         {/* ヘッダー: タイトル + ヘルプ */}
         <div className="border-border flex items-start justify-between border-b px-4 py-3">
           <div className="flex-1">
-            <h4 className="text-foreground text-sm font-semibold">{t('title')}</h4>
+            <h4 className="text-foreground text-sm font-bold">{t('title')}</h4>
             <p className="text-muted-foreground text-xs">{t('period')}</p>
           </div>
           {/* ヘルプアイコン with HoverCard */}

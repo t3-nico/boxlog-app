@@ -51,7 +51,7 @@ export function AuthPageLayout({
       <div className="flex flex-col gap-4 p-6 md:p-10">
         {/* ロゴ */}
         <div className="flex justify-center gap-2 md:justify-start">
-          <Link href="/" className="flex items-center gap-2 font-medium">
+          <Link href="/" className="flex items-center gap-2 font-normal">
             {logo}
           </Link>
         </div>

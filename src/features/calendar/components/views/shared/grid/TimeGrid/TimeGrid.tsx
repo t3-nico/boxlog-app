@@ -161,7 +161,7 @@ export const TimeGrid = memo<TimeGridProps>(function TimeGrid({
         {/* ドラッグ選択範囲の表示 */}
         {selectionStyle != null && (
           <div style={selectionStyle} className="drag-selection">
-            <div className="absolute inset-0 flex items-center justify-center text-sm font-medium text-white">
+            <div className="absolute inset-0 flex items-center justify-center text-sm font-normal text-white">
               新しいイベント
             </div>
           </div>

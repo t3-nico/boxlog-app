@@ -284,7 +284,7 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
           <div className="bg-card border-primary flex h-20 w-64 flex-col gap-1 rounded-xl border-2 p-3 shadow-lg">
             <div className="flex items-center gap-2">
               <div className="bg-primary h-8 w-1 rounded-full" />
-              <div className="text-foreground flex-1 text-sm font-semibold">{activeplan.title}</div>
+              <div className="text-foreground flex-1 text-sm font-bold">{activeplan.title}</div>
             </div>
             <div className="text-muted-foreground ml-3 space-y-0.5 text-xs">
               {/* ドラッグ中の時間をリアルタイム表示 */}

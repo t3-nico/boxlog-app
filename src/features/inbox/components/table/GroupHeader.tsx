@@ -43,7 +43,7 @@ export function GroupHeader({ groupKey, groupLabel, count, columnCount }: GroupH
       <TableCell colSpan={columnCount} className="py-3">
         <div className="flex items-center gap-2">
           {isCollapsed ? <ChevronRight className="size-4" /> : <ChevronDown className="size-4" />}
-          <span className="font-semibold">{groupLabel}</span>
+          <span className="font-bold">{groupLabel}</span>
           <Badge variant="secondary" className="ml-1">
             {count}
           </Badge>

@@ -123,7 +123,7 @@ export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemP
         {/* 日付 */}
         <div
           className={cn(
-            'shrink-0 text-sm font-medium md:w-12',
+            'shrink-0 text-sm font-normal md:w-12',
             isToday(plan.startDate ?? new Date()) ? 'text-primary' : 'text-muted-foreground',
           )}
         >
@@ -141,7 +141,7 @@ export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemP
       <div className="flex min-w-0 flex-1 items-center gap-2 md:gap-4">
         {/* タイトル + # */}
         <div className="flex min-w-0 flex-1 items-baseline gap-1 md:gap-1.5">
-          <span className="text-foreground truncate font-medium group-hover:underline md:max-w-48">
+          <span className="text-foreground truncate font-normal group-hover:underline md:max-w-48">
             {plan.title}
           </span>
         </div>

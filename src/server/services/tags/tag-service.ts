@@ -445,6 +445,9 @@ export class TagService {
       .single();
 
     if (error) {
+      if (error.code === '23505') {
+        throw new TagServiceError('DUPLICATE_NAME', 'Tag with this name already exists');
+      }
       throw new TagServiceError('UPDATE_FAILED', `Failed to update tag: ${error.message}`);
     }
 

@@ -61,7 +61,7 @@ export const AIInspectorContent = memo(function AIInspectorContent() {
             <Bot className="text-primary h-8 w-8" />
           </div>
           <div className="space-y-2">
-            <h3 className="text-lg font-medium">AIアシスタント</h3>
+            <h3 className="text-lg font-normal">AIアシスタント</h3>
             <p className="text-muted-foreground max-w-[280px] text-sm">
               質問や操作の依頼をどうぞ。現在のページの情報を元に回答します。
             </p>

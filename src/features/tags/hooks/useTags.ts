@@ -1,11 +1,18 @@
 // タグ管理用のtRPCフック
 
 import { useQueryClient } from '@tanstack/react-query';
+import { useTranslations } from 'next-intl';
+import { useMemo } from 'react';
+import { toast } from 'sonner';
 
 import { trpc } from '@/lib/trpc/client';
 
 import type { Tag } from '@/features/tags/types';
 import { useTagCacheStore } from '../stores/useTagCacheStore';
+
+// カレンダーフィルターストアへの参照（楽観的更新用）
+// Note: フック外からストアにアクセスするため、getStateを使用
+import { useCalendarFilterStore } from '@/features/calendar/stores/useCalendarFilterStore';
 
 // 後方互換性のための入力型
 interface LegacyTagUpdateInput {
@@ -55,14 +62,18 @@ export const tagKeys = {
 
 // タグ一覧取得フック
 // Note: selectオプションは楽観的更新との相性が悪いため、返り値で変換する
+// useMemoで明示的に依存関係を設定し、キャッシュ更新時に新しい参照を返す
 export function useTags() {
   const query = trpc.tags.list.useQuery(undefined, {
     staleTime: 5 * 60 * 1000, // 5分間キャッシュ
   });
 
+  // query.dataが変わったときに確実に新しい配列参照を返す
+  const data = useMemo(() => query.data?.data, [query.data]);
+
   return {
     ...query,
-    data: query.data?.data, // { data: Tag[], count: number } → Tag[]
+    data,
   };
 }
 
@@ -81,6 +92,7 @@ export function useTag(id: string) {
 export function useCreateTag() {
   const utils = trpc.useUtils();
   const setIsMutating = useTagCacheStore((state) => state.setIsMutating);
+  const setIsSettling = useTagCacheStore((state) => state.setIsSettling);
 
   return trpc.tags.create.useMutation({
     // 楽観的更新: 作成直後に即座にUIを更新
@@ -134,6 +146,9 @@ export function useCreateTag() {
         });
       }
 
+      // カレンダーフィルターストアも楽観的に更新（即座にサイドバーに表示）
+      useCalendarFilterStore.getState().initializeWithTags([tempId]);
+
       return { previousData, previousParentTags, tempId };
     },
     // 成功時: 一時IDを本来のIDに置換
@@ -160,6 +175,11 @@ export function useCreateTag() {
 
       // 新しいタグのgetByIdキャッシュを設定
       utils.tags.getById.setData({ id: result.id }, result);
+
+      // カレンダーフィルターストアに実際のIDを追加（tempIdからの移行）
+      const filterStore = useCalendarFilterStore.getState();
+      filterStore.removeTag(context.tempId); // 一時IDを削除
+      filterStore.initializeWithTags([result.id]); // 実際のIDを追加
     },
     // エラー時: 元のキャッシュにロールバック
     onError: (_err, _input, context) => {
@@ -169,21 +189,33 @@ export function useCreateTag() {
       if (context?.previousParentTags) {
         utils.tags.listParentTags.setData(undefined, context.previousParentTags);
       }
+      // カレンダーフィルターストアから一時IDを削除
+      if (context?.tempId) {
+        useCalendarFilterStore.getState().removeTag(context.tempId);
+      }
     },
     // 完了時: サーバーと同期（念のため）
     onSettled: () => {
-      // mutation完了後にフラグをリセット
-      setIsMutating(false);
-      void utils.tags.list.invalidate();
-      void utils.tags.listParentTags.invalidate();
+      // invalidate完了待機中フラグを設定（Race Condition防止）
+      setIsSettling(true);
+
+      // Promise.allで両方のinvalidateが完了するまで待機
+      void Promise.all([
+        utils.tags.list.invalidate(),
+        utils.tags.listParentTags.invalidate(),
+      ]).finally(() => {
+        // invalidate完了後にフラグをリセット
+        setIsSettling(false);
+        setIsMutating(false);
+      });
     },
   });
 }
 
 // タグ更新フック（楽観的更新付き）
 export function useUpdateTag() {
-  const queryClient = useQueryClient();
   const utils = trpc.useUtils();
+  const t = useTranslations('tags');
   const setIsMutating = useTagCacheStore((state) => state.setIsMutating);
 
   const mutation = trpc.tags.update.useMutation({
@@ -237,8 +269,33 @@ export function useUpdateTag() {
 
       return { previousData, previousParentTags, previousDetail };
     },
-    // エラー時: 元のキャッシュにロールバック
-    onError: (_err, newData, context) => {
+    // 成功時: サーバーからの戻り値でキャッシュを確定更新
+    // （サーバーサイドキャッシュの無効化タイミングに依存しない）
+    onSuccess: (result) => {
+      // tags.listのキャッシュを更新
+      utils.tags.list.setData(undefined, (old) => {
+        if (!old) return old;
+        return {
+          ...old,
+          data: old.data.map((tag) => (tag.id === result.id ? result : tag)),
+        };
+      });
+
+      // tags.listParentTagsのキャッシュも更新
+      utils.tags.listParentTags.setData(undefined, (old) => {
+        if (!old) return old;
+        return {
+          ...old,
+          data: old.data.map((tag) => (tag.id === result.id ? result : tag)),
+        };
+      });
+
+      // getByIdキャッシュも更新
+      utils.tags.getById.setData({ id: result.id }, result);
+    },
+    // エラー時: 元のキャッシュにロールバック + エラー通知
+    onError: (err, newData, context) => {
+      // キャッシュロールバック
       if (context?.previousData) {
         utils.tags.list.setData(undefined, context.previousData);
       }
@@ -248,15 +305,27 @@ export function useUpdateTag() {
       if (context?.previousDetail) {
         utils.tags.getById.setData({ id: newData.id }, context.previousDetail);
       }
+      // エラー通知
+      const message = err.message;
+      if (message.includes('already exists') || message.includes('DUPLICATE_NAME')) {
+        toast.error(t('errors.duplicateName'));
+      } else {
+        toast.error(t('errors.updateFailed'));
+      }
     },
-    // 完了時: サーバーと同期
+    // 完了時: フラグをリセット + キャッシュ無効化
     onSettled: (_data, _err, input) => {
       // mutation完了後にフラグをリセット
       setIsMutating(false);
+      // plansのキャッシュは無効化（タグ情報を含むため）
+      // Note: tRPCのutilsを使用（queryClientでは['plans']キーが一致しない）
+      void utils.plans.list.invalidate();
+      // タグキャッシュを無効化してサーバーから最新データを取得
+      // setDataによる楽観的更新だけでは、一部のコンポーネント（サイドバー等）が
+      // 再レンダリングされない場合があるため、invalidateも実行する
       void utils.tags.list.invalidate();
       void utils.tags.listParentTags.invalidate();
       void utils.tags.getById.invalidate({ id: input.id });
-      queryClient.invalidateQueries({ queryKey: ['plans'] });
     },
   });
 
@@ -308,7 +377,6 @@ export function useUpdateTag() {
 
 // タグ削除フック（楽観的更新付き）
 export function useDeleteTag() {
-  const queryClient = useQueryClient();
   const utils = trpc.useUtils();
   const setIsMutating = useTagCacheStore((state) => state.setIsMutating);
 
@@ -381,7 +449,7 @@ export function useDeleteTag() {
       void utils.tags.listParentTags.invalidate();
       void utils.tags.getById.invalidate({ id: input.id });
       // plansのキャッシュも無効化（タグ情報を含むため）
-      queryClient.invalidateQueries({ queryKey: ['plans'] });
+      void utils.plans.list.invalidate();
     },
   });
 }
@@ -465,8 +533,8 @@ export function useMoveTag() {
 
 // タグリネームフック（楽観的更新付き）
 export function useRenameTag() {
-  const queryClient = useQueryClient();
   const utils = trpc.useUtils();
+  const t = useTranslations('tags');
   const setIsMutating = useTagCacheStore((state) => state.setIsMutating);
 
   return trpc.tags.update.useMutation({
@@ -512,7 +580,9 @@ export function useRenameTag() {
 
       return { previousData, previousParentTags, previousDetail };
     },
-    onError: (_err, input, context) => {
+    // エラー時: 元のキャッシュにロールバック + エラー通知
+    onError: (err, input, context) => {
+      // キャッシュロールバック
       if (context?.previousData) {
         utils.tags.list.setData(undefined, context.previousData);
       }
@@ -522,6 +592,13 @@ export function useRenameTag() {
       if (context?.previousDetail) {
         utils.tags.getById.setData({ id: input.id }, context.previousDetail);
       }
+      // エラー通知
+      const message = err.message;
+      if (message.includes('already exists') || message.includes('DUPLICATE_NAME')) {
+        toast.error(t('errors.duplicateName'));
+      } else {
+        toast.error(t('errors.updateFailed'));
+      }
     },
     onSettled: (_data, _err, input) => {
       // mutation完了後にフラグをリセット
@@ -530,14 +607,13 @@ export function useRenameTag() {
       void utils.tags.listParentTags.invalidate();
       void utils.tags.getById.invalidate({ id: input.id });
       // plansのキャッシュも無効化（タグ情報を含むため）
-      queryClient.invalidateQueries({ queryKey: ['plans'] });
+      void utils.plans.list.invalidate();
     },
   });
 }
 
 // タグ色変更フック（楽観的更新付き）
 export function useUpdateTagColor() {
-  const queryClient = useQueryClient();
   const utils = trpc.useUtils();
   const setIsMutating = useTagCacheStore((state) => state.setIsMutating);
 
@@ -602,14 +678,13 @@ export function useUpdateTagColor() {
       void utils.tags.listParentTags.invalidate();
       void utils.tags.getById.invalidate({ id: input.id });
       // plansのキャッシュも無効化（タグ情報を含むため）
-      queryClient.invalidateQueries({ queryKey: ['plans'] });
+      void utils.plans.list.invalidate();
     },
   });
 }
 
 // タグマージフック（楽観的更新付き）
 export function useMergeTag() {
-  const queryClient = useQueryClient();
   const utils = trpc.useUtils();
   const setIsMutating = useTagCacheStore((state) => state.setIsMutating);
 
@@ -688,7 +763,7 @@ export function useMergeTag() {
       void utils.tags.getById.invalidate({ id: input.sourceTagId });
       void utils.tags.getById.invalidate({ id: input.targetTagId });
       // plansのキャッシュも無効化（タグ情報を含むため）
-      queryClient.invalidateQueries({ queryKey: ['plans'] });
+      void utils.plans.list.invalidate();
     },
   });
 }

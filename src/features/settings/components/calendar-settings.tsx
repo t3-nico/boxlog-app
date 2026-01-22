@@ -347,7 +347,7 @@ export function CalendarSettings() {
         <div className="bg-surface-container mt-4 rounded-lg p-4">
           <p className="text-muted-foreground text-sm">
             {t('settings.calendar.businessHoursPreview')}{' '}
-            <span className="text-foreground font-medium">
+            <span className="text-foreground font-normal">
               {formatHour(settings.businessHours.start, settings.timeFormat)} -{' '}
               {formatHour(settings.businessHours.end, settings.timeFormat)}
             </span>

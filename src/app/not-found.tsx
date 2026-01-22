@@ -29,7 +29,7 @@ export default function RootNotFound() {
       />
       <div className="text-center">
         <h1 className="mb-4 text-3xl font-bold">404</h1>
-        <h2 className="mb-4 text-2xl font-semibold">Page Not Found</h2>
+        <h2 className="mb-4 text-2xl font-bold">Page Not Found</h2>
         <p className="text-muted-foreground">The page you are looking for does not exist.</p>
         <div className="mt-6 flex items-center justify-center gap-4 md:mt-8">
           <Button className="cursor-pointer" onClick={() => router.push('/')}>

@@ -5,6 +5,23 @@ import { revalidateTag } from 'next/cache';
 import { getUserParentTagsCacheTag, getUserTagsCacheTag } from './tag-cache';
 
 /**
+ * Next.js revalidateTagを安全に呼び出す
+ *
+ * tRPCルーター内など、Next.jsのリクエストコンテキスト外から呼ばれた場合は
+ * エラーを無視する。クライアント側のTanStack Query invalidateが
+ * UIの更新を担保するため、サーバーサイドキャッシュの無効化失敗は許容できる。
+ */
+function safeRevalidateTag(tag: string): void {
+  try {
+    revalidateTag(tag);
+  } catch {
+    // Next.js 15ではtRPCルーター内からの呼び出しで
+    // "static generation store missing" エラーが発生する場合がある
+    // クライアント側のinvalidateで同期されるため、ここでは無視
+  }
+}
+
+/**
  * ユーザーのタグキャッシュを無効化
  *
  * タグのmutation（create/update/delete/merge/reorder）後に呼び出す。
@@ -18,8 +35,8 @@ import { getUserParentTagsCacheTag, getUserTagsCacheTag } from './tag-cache';
  * await invalidateUserTagsCache(ctx.userId!);
  */
 export async function invalidateUserTagsCache(userId: string): Promise<void> {
-  revalidateTag(getUserTagsCacheTag(userId));
-  revalidateTag(getUserParentTagsCacheTag(userId));
+  safeRevalidateTag(getUserTagsCacheTag(userId));
+  safeRevalidateTag(getUserParentTagsCacheTag(userId));
 }
 
 /**
@@ -30,5 +47,5 @@ export async function invalidateUserTagsCache(userId: string): Promise<void> {
  * @param userId - ユーザーID
  */
 export async function invalidateUserParentTagsCache(userId: string): Promise<void> {
-  revalidateTag(getUserParentTagsCacheTag(userId));
+  safeRevalidateTag(getUserParentTagsCacheTag(userId));
 }

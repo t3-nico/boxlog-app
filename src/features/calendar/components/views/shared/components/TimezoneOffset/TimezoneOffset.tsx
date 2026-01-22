@@ -61,7 +61,7 @@ export function TimezoneOffset({ timezone, className }: TimezoneOffsetProps) {
         className,
       )}
     >
-      <span className="font-medium">UTC{offset}</span>
+      <span className="font-normal">UTC{offset}</span>
     </button>
   );
 }

@@ -58,7 +58,7 @@ export const DataExportSettings = memo(function DataExportSettings() {
         <div className="space-y-4">
           {/* エクスポート対象の説明 */}
           <div className="bg-surface-container rounded-xl p-4">
-            <h4 className="mb-2 flex items-center gap-2 text-sm font-medium">
+            <h4 className="mb-2 flex items-center gap-2 text-sm font-normal">
               <FileJson className="h-4 w-4" />
               {t('settings.dataControls.export.includedDataTitle')}
             </h4>

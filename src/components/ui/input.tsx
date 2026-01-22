@@ -25,7 +25,7 @@ const inputVariants = cva(
     'placeholder:text-muted-foreground',
     'selection:bg-primary selection:text-primary-foreground',
     // ファイル入力
-    'file:text-foreground file:inline-flex file:border-0 file:bg-transparent file:font-medium',
+    'file:text-foreground file:inline-flex file:border-0 file:bg-transparent file:font-normal',
     // フォーカス
     'focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]',
     // 無効状態（disabled + aria-disabled両対応）

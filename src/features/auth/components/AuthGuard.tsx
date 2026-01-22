@@ -49,7 +49,7 @@ export const AuthGuard = ({ children, fallback }: AuthGuardProps) => {
       fallback || (
         <div className="flex h-screen items-center justify-center">
           <div className="text-center">
-            <p className="text-lg font-medium">Authentication Required</p>
+            <p className="text-lg font-normal">Authentication Required</p>
             <p className="text-muted-foreground mt-2 text-sm">Redirecting to login page...</p>
           </div>
         </div>

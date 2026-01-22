@@ -36,7 +36,7 @@ export function WarningBox({ children, icon: Icon = AlertTriangle, className }: 
       )}
     >
       <Icon className="h-4 w-4 shrink-0" />
-      <p className="text-sm font-medium">{children}</p>
+      <p className="text-sm font-normal">{children}</p>
     </div>
   );
 }
@@ -57,7 +57,7 @@ interface InfoBoxProps {
  * @example
  * ```tsx
  * <InfoBox>
- *   <p className="mb-2 text-sm font-medium">使用状況:</p>
+ *   <p className="mb-2 text-sm font-normal">使用状況:</p>
  *   <ul>...</ul>
  * </InfoBox>
  * ```

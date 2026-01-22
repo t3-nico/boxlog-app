@@ -156,7 +156,7 @@ export default function TagMergeInterceptedModal() {
           className="bg-surface text-foreground border-border rounded-xl border p-6 shadow-lg"
           style={{ width: 'min(calc(100vw - 32px), 400px)' }}
         >
-          <h2 className="mb-2 text-lg font-semibold">{t('common.error')}</h2>
+          <h2 className="mb-2 text-lg font-bold">{t('common.error')}</h2>
           <p className="text-muted-foreground mb-4 text-sm">{t('tags.error.notFound')}</p>
           <div className="flex justify-end">
             <Button onClick={handleClose}>{t('common.actions.close')}</Button>
@@ -181,7 +181,7 @@ export default function TagMergeInterceptedModal() {
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <h2 id="tag-merge-dialog-title" className="mb-2 text-lg font-semibold">
+        <h2 id="tag-merge-dialog-title" className="mb-2 text-lg font-bold">
           {t('calendar.filter.mergeTag.title')}
         </h2>
         <p className="text-muted-foreground mb-4 text-sm">
@@ -227,7 +227,7 @@ export default function TagMergeInterceptedModal() {
                     id={`merge-target-${tag.id}`}
                     className="shrink-0"
                   />
-                  <span className="shrink-0 font-medium" style={{ color: tag.color || '#3B82F6' }}>
+                  <span className="shrink-0 font-normal" style={{ color: tag.color || '#3B82F6' }}>
                     #
                   </span>
                   <span className="flex-1 truncate text-sm">{tag.name}</span>

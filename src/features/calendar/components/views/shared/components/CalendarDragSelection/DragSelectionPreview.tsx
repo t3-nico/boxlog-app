@@ -99,7 +99,7 @@ export const DragSelectionPreview = memo(function DragSelectionPreview({
               textColorClass,
               // モバイルでは大きめのフォント
               isMobile ? 'text-sm' : calendarStyles.event.fontSize.title,
-              'leading-tight font-medium',
+              'leading-tight font-normal',
             )}
           >
             {isOverlapping ? '時間が重複しています' : '新しいイベント'}

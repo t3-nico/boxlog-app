@@ -276,7 +276,7 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
         const isRecurring =
           item.recurrence_type && item.recurrence_type !== 'none' && item.recurrence_type !== null;
         return (
-          <TableCell key={columnId} className="font-medium" style={style}>
+          <TableCell key={columnId} className="font-normal" style={style}>
             <div className="group flex cursor-pointer items-center gap-2 overflow-hidden">
               <span className="min-w-0 truncate group-hover:underline">{item.title}</span>
               {isRecurring && item.recurrence_type && (

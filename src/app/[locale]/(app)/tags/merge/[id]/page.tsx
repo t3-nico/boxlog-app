@@ -200,7 +200,7 @@ export default function TagMergePage() {
                       className="shrink-0"
                     />
                     <span
-                      className="shrink-0 font-medium"
+                      className="shrink-0 font-normal"
                       style={{ color: tag.color || '#3B82F6' }}
                     >
                       #

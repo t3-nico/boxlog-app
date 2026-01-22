@@ -284,7 +284,7 @@ export const TagTreeItem = forwardRef<HTMLDivElement, TagTreeItemProps>(
               {tag.name}
             </span>
             {childCount && childCount > 1 && (
-              <span className="bg-primary text-primary-foreground absolute -top-2.5 -right-2.5 flex h-6 w-6 items-center justify-center rounded-full text-xs font-semibold">
+              <span className="bg-primary text-primary-foreground absolute -top-2.5 -right-2.5 flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold">
                 {childCount}
               </span>
             )}
@@ -477,7 +477,7 @@ export const TagTreeItem = forwardRef<HTMLDivElement, TagTreeItemProps>(
                           onClick={() => handleChangeParent(parent.id)}
                         >
                           <span
-                            className="mr-1 font-medium"
+                            className="mr-1 font-normal"
                             style={{ color: parent.color || '#3B82F6' }}
                           >
                             #

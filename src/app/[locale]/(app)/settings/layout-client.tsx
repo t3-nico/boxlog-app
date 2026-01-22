@@ -80,7 +80,7 @@ export function SettingsLayoutClient({ children }: { children: React.ReactNode }
             >
               <ChevronLeft className="size-5" />
             </Button>
-            <h1 className="text-lg font-semibold">{t('settings.dialog.title')}</h1>
+            <h1 className="text-lg font-bold">{t('settings.dialog.title')}</h1>
           </header>
 
           {/* カテゴリリスト */}
@@ -97,7 +97,7 @@ export function SettingsLayoutClient({ children }: { children: React.ReactNode }
                     className="text-muted-foreground active:bg-state-hover flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm transition-colors"
                   >
                     <Icon className="size-4 shrink-0" />
-                    <span className="font-medium">{t(category.labelKey)}</span>
+                    <span className="font-normal">{t(category.labelKey)}</span>
                   </Link>
                 );
               })}
@@ -113,7 +113,7 @@ export function SettingsLayoutClient({ children }: { children: React.ReactNode }
                 className="text-destructive active:bg-state-hover flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm transition-colors disabled:opacity-50"
               >
                 <LogOut className="size-4 shrink-0" />
-                <span className="font-medium">
+                <span className="font-normal">
                   {isLoggingOut ? t('navUser.loggingOut') : t('navUser.logout')}
                 </span>
               </button>

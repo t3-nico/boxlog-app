@@ -36,7 +36,7 @@ export function PlanStatusBadge({ status, size = 'sm' }: PlanStatusBadgeProps) {
   const config = STATUS_CONFIG[status] ?? STATUS_CONFIG.open;
 
   return (
-    <Badge variant="outline" className={`${config.className} ${SIZE_CLASSES[size]} font-medium`}>
+    <Badge variant="outline" className={`${config.className} ${SIZE_CLASSES[size]} font-normal`}>
       {config.label}
     </Badge>
   );

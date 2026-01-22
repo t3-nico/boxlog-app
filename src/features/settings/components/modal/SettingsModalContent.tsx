@@ -59,7 +59,7 @@ export function SettingsModalContent() {
     <div className="flex h-full min-w-0 flex-1 flex-col">
       {/* ヘッダー - サイドバーと同じ高さ */}
       <div className="flex h-12 shrink-0 items-center px-6">
-        <h2 className="text-lg font-semibold">{categoryLabel}</h2>
+        <h2 className="text-lg font-bold">{categoryLabel}</h2>
       </div>
       {/* コンテンツ */}
       <div className="min-h-0 flex-1 overflow-auto p-6 pt-0">

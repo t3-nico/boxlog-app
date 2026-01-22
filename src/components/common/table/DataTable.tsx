@@ -311,7 +311,7 @@ export function DataTable<T>({
         <TableCell colSpan={colCount} className="py-3">
           <div className="flex items-center gap-2">
             {isCollapsed ? <ChevronRight className="size-4" /> : <ChevronDown className="size-4" />}
-            <span className="font-semibold">{group.groupLabel}</span>
+            <span className="font-bold">{group.groupLabel}</span>
             <Badge variant="secondary" className="ml-1">
               {group.count}
             </Badge>

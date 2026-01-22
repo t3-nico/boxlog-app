@@ -193,7 +193,7 @@ const TagItem = ({
           {/* タグ名 */}
           {!isCollapsed && (
             <div className="flex min-w-0 flex-1 items-center gap-2">
-              <span className="text-foreground truncate text-sm font-medium" title={tag.name}>
+              <span className="text-foreground truncate text-sm font-normal" title={tag.name}>
                 {tag.name}
               </span>
               {/* アクティブドット */}
@@ -334,7 +334,7 @@ export const TagsList = ({
           variant="ghost"
           size="sm"
           onClick={handleToggleExpansion}
-          className="text-muted-foreground section-header-toggle mb-2 gap-1 px-2 text-xs/6 font-medium"
+          className="text-muted-foreground section-header-toggle mb-2 gap-1 px-2 text-xs/6 font-normal"
         >
           {isExpanded ? (
             <ChevronDownIcon className="text-muted-foreground h-4 w-4" />

@@ -29,7 +29,7 @@ export function EmailSection() {
             <p className="text-muted-foreground mb-2 text-xs">
               {t('settings.account.emailUsedFor')}
             </p>
-            <p className="text-sm font-medium">{email}</p>
+            <p className="text-sm font-normal">{email}</p>
             <p className="text-muted-foreground text-xs">{t('settings.account.emailVerified')}</p>
           </div>
           <Button type="button" variant="ghost" onClick={() => setShowEmailDialog(true)}>

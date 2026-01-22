@@ -149,7 +149,7 @@ export function TagMergeModal({
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <h2 id="tag-merge-dialog-title" className="mb-2 text-lg font-semibold">
+        <h2 id="tag-merge-dialog-title" className="mb-2 text-lg font-bold">
           {t('calendar.filter.mergeTag.title')}
         </h2>
         <p className="text-muted-foreground mb-4 text-sm">
@@ -195,7 +195,7 @@ export function TagMergeModal({
                     id={`merge-target-${tag.id}`}
                     className="shrink-0"
                   />
-                  <span className="shrink-0 font-medium" style={{ color: tag.color || '#3B82F6' }}>
+                  <span className="shrink-0 font-normal" style={{ color: tag.color || '#3B82F6' }}>
                     #
                   </span>
                   <span className="flex-1 truncate text-sm">{tag.name}</span>

@@ -66,7 +66,7 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
   if (isMobile) {
     return (
       <span
-        className={`text-foreground min-w-0 flex-1 truncate text-xs leading-tight font-medium ${showTitleUnderline ? 'underline' : ''}`}
+        className={`text-foreground min-w-0 flex-1 truncate text-xs leading-tight font-normal ${showTitleUnderline ? 'underline' : ''}`}
       >
         {plan.title || t('calendar.event.noTitle')}
       </span>
@@ -78,7 +78,7 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
     return (
       <div className={`flex h-full items-center gap-1 ${hasCheckbox ? 'pl-4' : ''}`}>
         <span
-          className={`text-foreground truncate text-sm leading-tight font-medium ${showTitleUnderline ? 'underline' : ''}`}
+          className={`text-foreground truncate text-sm leading-tight font-normal ${showTitleUnderline ? 'underline' : ''}`}
         >
           {plan.title}
         </span>
@@ -92,7 +92,7 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
       className={`relative flex h-full flex-col gap-0.5 overflow-hidden ${hasCheckbox ? 'pl-6' : ''}`}
     >
       {/* タイトル（最優先） */}
-      <div className="flex flex-shrink-0 items-baseline gap-1 text-sm leading-tight font-medium">
+      <div className="flex flex-shrink-0 items-baseline gap-1 text-sm leading-tight font-normal">
         <span
           className={`${isCompact ? 'line-clamp-1' : 'line-clamp-2'} text-foreground ${showTitleUnderline ? 'underline' : ''}`}
         >

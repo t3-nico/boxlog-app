@@ -32,7 +32,7 @@ export function ServiceWorkerProvider({ children }: { children: React.ReactNode 
           <div className="bg-card border-border flex items-center gap-3 rounded-lg border p-4 shadow-lg">
             <RefreshCw className="text-primary h-5 w-5" />
             <div className="flex-1">
-              <p className="text-foreground text-sm font-medium">アップデートがあります</p>
+              <p className="text-foreground text-sm font-normal">アップデートがあります</p>
               <p className="text-muted-foreground text-xs">再読み込みして最新版を適用</p>
             </div>
             <div className="flex gap-2">
@@ -46,7 +46,7 @@ export function ServiceWorkerProvider({ children }: { children: React.ReactNode 
               <button
                 type="button"
                 onClick={applyUpdate}
-                className="bg-primary text-primary-foreground hover:bg-primary-hover rounded-md px-3 py-1.5 text-sm font-medium transition-colors"
+                className="bg-primary text-primary-foreground hover:bg-primary-hover rounded-md px-3 py-1.5 text-sm font-normal transition-colors"
               >
                 更新
               </button>

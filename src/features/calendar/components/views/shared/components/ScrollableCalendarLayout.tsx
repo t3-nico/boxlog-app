@@ -88,7 +88,7 @@ export const CalendarDateHeader = ({
           >
             {/* 週番号バッジ（Googleカレンダースタイル） - モバイルのみ表示 */}
             {shouldShowWeekNumber ? (
-              <span className="bg-muted text-muted-foreground flex size-6 items-center justify-center rounded-full text-xs font-medium md:hidden">
+              <span className="bg-muted text-muted-foreground flex size-6 items-center justify-center rounded-full text-xs font-normal md:hidden">
                 {weekNumber}
               </span>
             ) : null}

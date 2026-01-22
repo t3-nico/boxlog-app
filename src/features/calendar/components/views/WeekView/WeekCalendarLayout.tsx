@@ -343,7 +343,7 @@ export const WeekCalendarLayout = ({
                         <div className="h-full overflow-hidden p-1 text-white sm:p-2">
                           <div className="flex h-full flex-col">
                             <div className="min-h-0 flex-1">
-                              <div className="mb-0.5 line-clamp-2 text-xs leading-tight font-medium">
+                              <div className="mb-0.5 line-clamp-2 text-xs leading-tight font-normal">
                                 {plan.title}
                               </div>
                               {height > 30 ? (

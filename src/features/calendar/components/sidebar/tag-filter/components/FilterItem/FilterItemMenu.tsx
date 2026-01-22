@@ -137,7 +137,7 @@ export function FilterItemMenu({
                 onClick={() => onChangeParent(parent.id)}
                 className={cn(parentId === parent.id && 'bg-state-selected')}
               >
-                <span className="mr-1 font-medium" style={{ color: parent.color || '#3B82F6' }}>
+                <span className="mr-1 font-normal" style={{ color: parent.color || '#3B82F6' }}>
                   #
                 </span>
                 {parent.name}

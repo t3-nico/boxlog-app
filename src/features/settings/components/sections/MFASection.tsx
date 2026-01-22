@@ -53,7 +53,7 @@ export function MFASection() {
         {recoveryCodes && (
           <div className="border-warning/30 bg-warning/5 space-y-4 rounded-lg border p-4">
             <div>
-              <h3 className="text-warning mb-2 text-lg font-semibold">
+              <h3 className="text-warning mb-2 text-lg font-bold">
                 ⚠️ {t('settings.account.mfa.recoveryCodes.title')}
               </h3>
               <p className="text-muted-foreground text-sm">
@@ -88,7 +88,7 @@ export function MFASection() {
         {!hasMFA && !showMFASetup && (
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-base font-medium">{t('settings.account.mfa.title')}</div>
+              <div className="text-base font-normal">{t('settings.account.mfa.title')}</div>
               <p className="text-muted-foreground mt-1 text-sm">
                 {t('settings.account.mfa.description')}
               </p>
@@ -103,9 +103,7 @@ export function MFASection() {
         {!hasMFA && showMFASetup && qrCode && (
           <div className="bg-muted space-y-4 rounded-lg p-6">
             <div>
-              <h3 className="mb-2 text-lg font-semibold">
-                {t('settings.account.mfa.setup.title')}
-              </h3>
+              <h3 className="mb-2 text-lg font-bold">{t('settings.account.mfa.setup.title')}</h3>
               <p className="text-muted-foreground text-sm">
                 {t('settings.account.mfa.setup.description')}
               </p>
@@ -113,7 +111,7 @@ export function MFASection() {
 
             <div className="space-y-4">
               <div>
-                <p className="mb-2 text-sm font-medium">{t('settings.account.mfa.setup.step1')}</p>
+                <p className="mb-2 text-sm font-normal">{t('settings.account.mfa.setup.step1')}</p>
                 <div className="flex justify-center rounded-lg bg-white p-4">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={qrCode} alt="QR Code" className="h-48 w-48" />
@@ -125,7 +123,7 @@ export function MFASection() {
 
               {secret && (
                 <div>
-                  <p className="mb-2 text-sm font-medium">
+                  <p className="mb-2 text-sm font-normal">
                     {t('settings.account.mfa.setup.manualEntry')}
                   </p>
                   <code className="bg-surface-container block rounded p-2 text-xs">{secret}</code>
@@ -133,7 +131,7 @@ export function MFASection() {
               )}
 
               <div>
-                <p className="mb-2 text-sm font-medium">{t('settings.account.mfa.setup.step2')}</p>
+                <p className="mb-2 text-sm font-normal">{t('settings.account.mfa.setup.step2')}</p>
                 <div className="flex items-center gap-4">
                   <InputOTP maxLength={6} value={verificationCode} onChange={setVerificationCode}>
                     <InputOTPGroup>
@@ -165,7 +163,7 @@ export function MFASection() {
             <div className="border-success/30 bg-success/5 rounded-lg border p-4">
               <div className="mb-2 flex items-center gap-2">
                 <div className="bg-success h-2 w-2 rounded-full"></div>
-                <span className="text-success text-sm font-medium">
+                <span className="text-success text-sm font-normal">
                   {t('settings.account.mfa.enabled.title')}
                 </span>
               </div>
@@ -178,7 +176,7 @@ export function MFASection() {
             <div className="bg-muted rounded-lg p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="text-sm font-medium">
+                  <div className="text-sm font-normal">
                     {t('settings.account.mfa.recoveryCodes.sectionTitle')}
                   </div>
                   <p className="text-muted-foreground mt-1 text-xs">

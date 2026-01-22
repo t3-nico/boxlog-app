@@ -95,7 +95,7 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
           contentEditable
           suppressContentEditableWarning
           onBlur={(e) => onAutoSave('title', e.currentTarget.textContent || '')}
-          className="block w-full border-0 text-lg font-semibold outline-none"
+          className="block w-full border-0 text-lg font-bold outline-none"
         >
           {plan.title}
         </span>

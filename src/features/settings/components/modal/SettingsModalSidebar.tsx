@@ -25,7 +25,7 @@ export function SettingsModalSidebar({ className }: SettingsModalSidebarProps) {
   return (
     <aside className={cn('bg-card flex flex-col', className)}>
       <div className="flex h-12 items-center px-4">
-        <h2 className="text-lg font-semibold">{t('settings.dialog.title')}</h2>
+        <h2 className="text-lg font-bold">{t('settings.dialog.title')}</h2>
       </div>
       <ScrollArea className="flex-1">
         <nav className="flex flex-col gap-1 p-2">
@@ -46,7 +46,7 @@ export function SettingsModalSidebar({ className }: SettingsModalSidebarProps) {
                 )}
               >
                 <Icon className="size-4 shrink-0" />
-                <span className="font-medium">{t(category.labelKey)}</span>
+                <span className="font-normal">{t(category.labelKey)}</span>
               </button>
             );
           })}

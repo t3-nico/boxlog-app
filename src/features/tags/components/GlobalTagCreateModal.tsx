@@ -28,6 +28,7 @@ export function GlobalTagCreateModal() {
       description: data.description ?? undefined,
       parentId: data.parentId ?? undefined,
     });
+    // Note: initializeWithTagsはuseCreateTag.onMutate/onSuccessで既に呼ばれているため不要
     toast.success(t('tags.toast.created', { name: result.name }));
   };
 

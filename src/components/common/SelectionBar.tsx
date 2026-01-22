@@ -57,7 +57,7 @@ export function SelectionBar({ selectedCount, onClearSelection, actions }: Selec
         </Button>
 
         {/* 選択数表示 */}
-        <span className="text-sm font-medium">
+        <span className="text-sm font-normal">
           {t('common.selectedCount', { count: selectedCount })}
         </span>
 

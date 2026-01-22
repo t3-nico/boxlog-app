@@ -150,7 +150,8 @@
     "errors": {
       "createFailed": "タグの作成に失敗しました",
       "updateFailed": "タグの更新に失敗しました",
-      "deleteFailed": "タグの削除に失敗しました"
+      "deleteFailed": "タグの削除に失敗しました",
+      "duplicateName": "この名前のタグは既に存在します"
     },
     "delete": {
       "confirmTitle": "タグを削除しますか？",

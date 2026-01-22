@@ -150,7 +150,8 @@
     "errors": {
       "createFailed": "Failed to create tag",
       "updateFailed": "Failed to update tag",
-      "deleteFailed": "Failed to delete tag"
+      "deleteFailed": "Failed to delete tag",
+      "duplicateName": "A tag with this name already exists"
     },
     "delete": {
       "confirmTitle": "Delete this tag?",

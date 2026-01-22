@@ -67,7 +67,7 @@ export const PlanBillingSettings = memo(function PlanBillingSettings() {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h4 className="text-lg font-semibold">Free プラン</h4>
+                <h4 className="text-lg font-bold">Free プラン</h4>
                 <Badge variant="secondary">現在のプラン</Badge>
               </div>
               <p className="text-muted-foreground text-sm">基本機能をご利用いただけます</p>
@@ -119,7 +119,7 @@ export const PlanBillingSettings = memo(function PlanBillingSettings() {
               <div className="mb-4">
                 <div className="flex items-center gap-2">
                   {plan.id === 'team' && <Crown className="text-primary h-4 w-4" />}
-                  <h4 className="font-semibold">{plan.name}</h4>
+                  <h4 className="font-bold">{plan.name}</h4>
                 </div>
                 <div className="mt-2">
                   <span className="text-2xl font-bold">

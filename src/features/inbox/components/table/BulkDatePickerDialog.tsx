@@ -131,7 +131,7 @@ export function BulkDatePickerDialog({
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <CalendarIcon className="text-muted-foreground size-4" />
-                  <span className="font-medium">
+                  <span className="font-normal">
                     {format(selectedDate, dateFormat, { locale: dateLocale })}
                   </span>
                 </div>

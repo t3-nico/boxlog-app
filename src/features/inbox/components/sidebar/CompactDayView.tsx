@@ -262,7 +262,7 @@ export const CompactDayView = memo(function CompactDayView({
           popoverTrigger={
             <button
               type="button"
-              className="hover:bg-state-hover flex items-center gap-1 rounded-md px-2 py-1 text-sm font-medium transition-colors"
+              className="hover:bg-state-hover flex items-center gap-1 rounded-md px-2 py-1 text-sm font-normal transition-colors"
             >
               <span>{format(date, 'M月d日', locale === 'ja' ? { locale: ja } : {})}</span>
               <span className="text-muted-foreground">
@@ -530,7 +530,7 @@ export const CompactDayView = memo(function CompactDayView({
                     tabIndex={0}
                     title={plan.title}
                   >
-                    <span className="line-clamp-2 font-medium">{plan.title}</span>
+                    <span className="line-clamp-2 font-normal">{plan.title}</span>
                   </div>
                 );
               })}

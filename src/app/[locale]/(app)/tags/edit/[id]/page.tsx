@@ -106,7 +106,7 @@ export default function TagEditPage() {
               <div>
                 <label
                   htmlFor="tag-name-input"
-                  className="text-foreground mb-2 block text-sm font-medium"
+                  className="text-foreground mb-2 block text-sm font-normal"
                 >
                   {t('tags.form.tagName')}
                 </label>
@@ -119,7 +119,7 @@ export default function TagEditPage() {
                 />
               </div>
               <div>
-                <div id="color-label" className="text-foreground mb-2 block text-sm font-medium">
+                <div id="color-label" className="text-foreground mb-2 block text-sm font-normal">
                   {t('tags.form.color')}
                 </div>
 
@@ -166,7 +166,7 @@ export default function TagEditPage() {
               </div>
 
               <div>
-                <div id="icon-label" className="text-foreground mb-2 block text-sm font-medium">
+                <div id="icon-label" className="text-foreground mb-2 block text-sm font-normal">
                   {t('tags.labels.icon')}
                 </div>
 
@@ -184,7 +184,7 @@ export default function TagEditPage() {
                       />
                     );
                   })()}
-                  <span className="text-foreground text-sm font-medium">{icon}</span>
+                  <span className="text-foreground text-sm font-normal">{icon}</span>
                 </div>
 
                 {/* アイコン選択 */}
@@ -194,7 +194,7 @@ export default function TagEditPage() {
                 >
                   {Object.entries(tagIconCategories).map(([category, icons]) => (
                     <div key={category} className="border-border border-b p-3 last:border-b-0">
-                      <p className="text-muted-foreground mb-2 text-xs font-medium">{category}</p>
+                      <p className="text-muted-foreground mb-2 text-xs font-normal">{category}</p>
                       <div className="grid grid-cols-6 gap-2">
                         {icons.map((iconName) => {
                           const IconComponent = tagIconMapping[iconName as TagIconName];

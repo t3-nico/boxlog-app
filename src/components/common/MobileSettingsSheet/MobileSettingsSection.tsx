@@ -36,7 +36,7 @@ export function MobileSettingsSection({
       <section className="py-2">
         <div className="mb-2 flex flex-1 items-center gap-2">
           <span className="text-muted-foreground [&>svg]:size-4">{icon}</span>
-          <h3 className="flex-1 text-sm font-medium">{title}</h3>
+          <h3 className="flex-1 text-sm font-normal">{title}</h3>
         </div>
         {children}
       </section>

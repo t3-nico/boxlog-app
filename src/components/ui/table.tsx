@@ -36,7 +36,7 @@ const TableFooter = React.forwardRef<
   <tfoot
     ref={ref}
     className={cn(
-      'bg-surface-container/50 border-t-border border-t font-medium [&>tr]:last:border-b-0',
+      'bg-surface-container/50 border-t-border border-t font-normal [&>tr]:last:border-b-0',
       className,
     )}
     {...props}
@@ -65,7 +65,7 @@ const TableHead = React.forwardRef<
   <th
     ref={ref}
     className={cn(
-      'text-foreground h-10 px-4 text-left align-middle font-semibold [&:has([role=checkbox])]:pr-0',
+      'text-foreground h-10 px-4 text-left align-middle font-bold [&:has([role=checkbox])]:pr-0',
       className,
     )}
     {...props}

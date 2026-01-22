@@ -164,7 +164,7 @@ export function DateTimeUnifiedCell({ data, width, onChange }: DateTimeUnifiedCe
           <div className="space-y-4">
             {/* 日付選択 */}
             <div className="space-y-2">
-              <div className="flex items-center text-sm font-medium">
+              <div className="flex items-center text-sm font-normal">
                 <CalendarIcon className="mr-2 size-4" />
                 <span>日付</span>
               </div>
@@ -180,7 +180,7 @@ export function DateTimeUnifiedCell({ data, width, onChange }: DateTimeUnifiedCe
 
             {/* 時刻設定 */}
             <div className="space-y-2">
-              <div className="flex items-center text-sm font-medium">
+              <div className="flex items-center text-sm font-normal">
                 <Clock className="mr-2 size-4" />
                 <span>時刻</span>
               </div>
@@ -215,7 +215,7 @@ export function DateTimeUnifiedCell({ data, width, onChange }: DateTimeUnifiedCe
 
             {/* 通知設定 */}
             <div className="space-y-2">
-              <div className="flex items-center text-sm font-medium">
+              <div className="flex items-center text-sm font-normal">
                 <Bell className="mr-2 size-4" />
                 <span>通知</span>
               </div>
@@ -231,7 +231,7 @@ export function DateTimeUnifiedCell({ data, width, onChange }: DateTimeUnifiedCe
 
             {/* 繰り返し設定 */}
             <div className="space-y-2">
-              <div className="flex items-center text-sm font-medium">
+              <div className="flex items-center text-sm font-normal">
                 <Repeat className="mr-2 size-4" />
                 <span>繰り返し</span>
               </div>

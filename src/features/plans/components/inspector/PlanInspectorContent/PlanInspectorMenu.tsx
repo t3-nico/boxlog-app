@@ -65,7 +65,7 @@ export const PlanInspectorMenu = memo(function PlanInspectorMenu({
         新しいタブで開く
       </DropdownMenuItem>
       <DropdownMenuSeparator />
-      <div className="text-muted-foreground px-2 py-2 text-xs font-medium">表示モード</div>
+      <div className="text-muted-foreground px-2 py-2 text-xs font-normal">表示モード</div>
       <button
         type="button"
         onClick={() => onDisplayModeChange('sheet')}

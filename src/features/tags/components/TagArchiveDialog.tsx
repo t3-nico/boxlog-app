@@ -88,7 +88,7 @@ export function TagArchiveDialog({ tag, onClose, onConfirm }: TagArchiveDialogPr
             <Archive className="text-warning size-5" />
           </div>
           <div className="flex-1">
-            <h2 id="tag-archive-dialog-title" className="text-lg leading-tight font-semibold">
+            <h2 id="tag-archive-dialog-title" className="text-lg leading-tight font-bold">
               {t('tags.archive.confirmTitle', { name: tag.name })}
             </h2>
           </div>
@@ -99,12 +99,12 @@ export function TagArchiveDialog({ tag, onClose, onConfirm }: TagArchiveDialogPr
           {/* 警告 */}
           <div className="bg-warning/10 text-warning border-warning/20 flex items-center gap-2 rounded-xl border p-4">
             <Archive className="size-4 shrink-0" />
-            <p className="text-sm font-medium">{t('tags.archive.warning')}</p>
+            <p className="text-sm font-normal">{t('tags.archive.warning')}</p>
           </div>
 
           {/* アーカイブ後の処理 */}
           <div className="space-y-2">
-            <p className="text-sm font-medium">{t('tags.archive.afterArchive')}</p>
+            <p className="text-sm font-normal">{t('tags.archive.afterArchive')}</p>
             <ul className="text-muted-foreground space-y-1 text-sm">
               <li>• {t('tags.archive.noNewTagging')}</li>
               <li>• {t('tags.archive.existingItemsStillShown')}</li>

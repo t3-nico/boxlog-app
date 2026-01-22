@@ -133,7 +133,7 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
             <GitMerge className="text-primary size-5" />
           </div>
           <div className="flex-1">
-            <h2 id="tag-merge-dialog-title" className="text-lg leading-tight font-semibold">
+            <h2 id="tag-merge-dialog-title" className="text-lg leading-tight font-bold">
               {t('tags.merge.title')}
             </h2>
             <p className="text-muted-foreground mt-1 text-sm">
@@ -178,7 +178,7 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
                       className="shrink-0"
                     />
                     <span
-                      className="shrink-0 font-medium"
+                      className="shrink-0 font-normal"
                       style={{ color: tagItem.color || DEFAULT_TAG_COLOR }}
                     >
                       #

@@ -281,7 +281,7 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
         <VisuallyHidden>
           <DialogTitle>グローバル検索</DialogTitle>
         </VisuallyHidden>
-        <Command className="[&_[cmdk-group-heading]]:text-muted-foreground !rounded-none [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group]]:px-2 [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-2">
+        <Command className="[&_[cmdk-group-heading]]:text-muted-foreground !rounded-none [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-normal [&_[cmdk-group]]:px-2 [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-2">
           <div className="relative">
             <CommandInput
               placeholder="検索... (コマンド、プラン、タグ)"
@@ -290,7 +290,7 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
             />
             {/* ESCバッジ（PCのみ表示） */}
             <div className="absolute top-1/2 right-3 hidden -translate-y-1/2 items-center gap-1 md:flex">
-              <kbd className="bg-surface-container text-muted-foreground inline-flex h-6 items-center gap-1 rounded border px-2 font-mono text-xs font-medium opacity-100 select-none">
+              <kbd className="bg-surface-container text-muted-foreground inline-flex h-6 items-center gap-1 rounded border px-2 font-mono text-xs font-normal opacity-100 select-none">
                 ESC
               </kbd>
             </div>
@@ -406,7 +406,7 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
                           {command.shortcut.map((key, index) => (
                             <kbd
                               key={index}
-                              className="bg-surface-container text-muted-foreground inline-flex h-6 min-w-6 items-center justify-center rounded border px-2 font-mono text-xs font-medium"
+                              className="bg-surface-container text-muted-foreground inline-flex h-6 min-w-6 items-center justify-center rounded border px-2 font-mono text-xs font-normal"
                             >
                               {key}
                             </kbd>

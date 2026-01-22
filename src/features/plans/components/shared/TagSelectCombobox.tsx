@@ -122,7 +122,7 @@ function ParentTagHeader({
 
         {/* アイコン + 名前（行クリックで展開/折りたたみ） */}
         {tag.icon && <span className="shrink-0">{tag.icon}</span>}
-        <span className="truncate font-medium">{tag.name}</span>
+        <span className="truncate font-normal">{tag.name}</span>
 
         {/* 展開/折りたたみアイコン（タイトルのすぐ右） */}
         <button

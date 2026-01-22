@@ -79,7 +79,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
                   {ERROR_TEXT.showDetails}
                 </summary>
                 <div className="bg-surface-container mt-3 rounded p-3">
-                  <p className="mb-2 text-xs font-semibold">{error.name}</p>
+                  <p className="mb-2 text-xs font-bold">{error.name}</p>
                   <pre className="text-muted-foreground max-h-40 overflow-auto text-xs">
                     {error.message}
                   </pre>

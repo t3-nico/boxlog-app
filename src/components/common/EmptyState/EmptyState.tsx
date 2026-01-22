@@ -78,7 +78,7 @@ export function EmptyState({
           <Icon className={cn(s.icon, 'text-muted-foreground mx-auto')} />
         </div>
       )}
-      {title && <p className={cn('text-foreground font-medium', s.title)}>{title}</p>}
+      {title && <p className={cn('text-foreground font-normal', s.title)}>{title}</p>}
       {description && <p className={cn('text-muted-foreground mt-1', s.desc)}>{description}</p>}
       {actionLabel && onAction && (
         <div className="mt-4">

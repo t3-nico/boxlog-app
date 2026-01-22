@@ -247,7 +247,7 @@ export function SleepScheduleSettings() {
           <div className="bg-accent-state-selected flex items-center gap-2 rounded-lg p-3">
             <Moon className="text-accent-foreground size-4" />
             <div>
-              <span className="text-sm font-medium">{t('settings.sleepSchedule.duration')}</span>
+              <span className="text-sm font-normal">{t('settings.sleepSchedule.duration')}</span>
               <span className="text-muted-foreground ml-2 text-sm">
                 {t('settings.sleepSchedule.hours', { hours: sleepHours })}
               </span>
@@ -256,7 +256,7 @@ export function SleepScheduleSettings() {
 
           {/* 24時間タイムライン */}
           <div>
-            <h5 className="mb-3 text-sm font-medium">{t('settings.sleepSchedule.preview')}</h5>
+            <h5 className="mb-3 text-sm font-normal">{t('settings.sleepSchedule.preview')}</h5>
             <SleepTimelineBar
               bedtime={bedtime}
               wakeTime={wakeTime}

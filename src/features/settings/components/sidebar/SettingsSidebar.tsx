@@ -47,7 +47,7 @@ export function SettingsSidebar() {
                 aria-current={isActive ? 'page' : undefined}
               >
                 <Icon className="size-4 shrink-0" />
-                <span className="font-medium">{t(category.labelKey)}</span>
+                <span className="font-normal">{t(category.labelKey)}</span>
               </Link>
             );
           })}

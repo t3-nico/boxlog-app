@@ -103,7 +103,7 @@ export function DeleteConfirmDialog({
             <AlertTriangle className="text-destructive size-5" />
           </div>
           <div className="flex-1">
-            <h2 id="delete-dialog-title" className="text-lg leading-tight font-semibold">
+            <h2 id="delete-dialog-title" className="text-lg leading-tight font-bold">
               {title}
             </h2>
             <p id="delete-dialog-description" className="text-muted-foreground mt-2 text-sm">

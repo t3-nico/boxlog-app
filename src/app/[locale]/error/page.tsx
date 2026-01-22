@@ -97,7 +97,7 @@ const ErrorPage = () => {
             Need help?{' '}
             <a
               href="mailto:support@boxlog.com"
-              className="text-primary hover:text-primary/80 font-medium"
+              className="text-primary hover:text-primary/80 font-normal"
             >
               Contact Support
             </a>

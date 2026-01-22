@@ -183,7 +183,7 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
       {/* Email Form */}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div>
-          <label htmlFor="email" className="text-muted-foreground block text-sm font-medium">
+          <label htmlFor="email" className="text-muted-foreground block text-sm font-normal">
             Email address
           </label>
           <Input
@@ -199,7 +199,7 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
         </div>
 
         <div>
-          <label htmlFor="password" className="text-muted-foreground block text-sm font-medium">
+          <label htmlFor="password" className="text-muted-foreground block text-sm font-normal">
             Password
           </label>
           <Input

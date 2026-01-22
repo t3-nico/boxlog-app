@@ -117,7 +117,7 @@ export function RecurringEditConfirmDialog() {
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <h2 id="recurring-edit-dialog-title" className="mb-6 text-lg font-semibold">
+        <h2 id="recurring-edit-dialog-title" className="mb-6 text-lg font-bold">
           {title}
         </h2>
 

@@ -120,6 +120,7 @@ export const TagCreateModal = ({
       if (
         errorMessage.includes('duplicate') ||
         errorMessage.includes('unique') ||
+        errorMessage.includes('already exists') ||
         errorMessage.includes('重複') ||
         errorMessage.includes('既に存在')
       ) {
@@ -170,7 +171,7 @@ export const TagCreateModal = ({
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <h2 id="tag-create-dialog-title" className="mb-6 text-lg font-semibold">
+        <h2 id="tag-create-dialog-title" className="mb-6 text-lg font-bold">
           {t('tags.modal.createTitle')}
         </h2>
 

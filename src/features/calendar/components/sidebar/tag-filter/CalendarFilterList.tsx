@@ -11,6 +11,7 @@ import { SidebarSection } from '@/features/navigation/components/sidebar/Sidebar
 import { useTagGroups } from '@/features/tags/hooks/useTagGroups';
 import { useTagModalNavigation } from '@/features/tags/hooks/useTagModalNavigation';
 import { useDeleteTag, useReorderTags, useTags, useUpdateTag } from '@/features/tags/hooks/useTags';
+import { useTagCacheStore } from '@/features/tags/stores/useTagCacheStore';
 
 import { DeleteConfirmDialog } from '@/components/common/DeleteConfirmDialog';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -37,7 +38,7 @@ export function CalendarFilterList() {
   const { data: tags, isLoading: tagsLoading } = useTags();
   const { isLoading: groupsLoading } = useTagGroups();
   const { data: tagStats } = api.plans.getTagStats.useQuery();
-  const tagPlanCounts = tagStats?.counts ?? {};
+  const tagPlanCounts = useMemo(() => tagStats?.counts ?? {}, [tagStats?.counts]);
   const untaggedCount = tagStats?.untaggedCount ?? 0;
 
   // 親タグ用のカウント計算（親タグ自体 + 子タグ合計）
@@ -107,12 +108,19 @@ export function CalendarFilterList() {
     showOnlyGroupTags,
   } = useCalendarFilterStore();
 
-  // タグ一覧取得後に初期化
+  // タグミューテーション状態を監視（Race Condition防止）
+  const isMutating = useTagCacheStore((state) => state.isMutating);
+  const isSettling = useTagCacheStore((state) => state.isSettling);
+
+  // タグ一覧取得後に初期化（mutation中・settling中は競合防止のためスキップ）
   useEffect(() => {
+    // mutation中またはinvalidate完了待機中はスキップ
+    if (isMutating || isSettling) return;
+
     if (tags && tags.length > 0) {
       initializeWithTags(tags.map((tag) => tag.id));
     }
-  }, [tags, initializeWithTags]);
+  }, [tags, initializeWithTags, isMutating, isSettling]);
 
   const isLoading = tagsLoading || groupsLoading;
 

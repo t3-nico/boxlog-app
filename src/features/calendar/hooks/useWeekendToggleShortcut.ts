@@ -87,7 +87,7 @@ function showToggleFeedback(newState: boolean) {
   indicator.className = `w-2 h-2 rounded-full ${newState ? 'bg-primary' : 'bg-muted-foreground'}`;
 
   const label = document.createElement('span');
-  label.className = 'text-sm font-medium text-foreground';
+  label.className = 'text-sm font-normal text-foreground';
   label.textContent = `週末表示: ${newState ? 'ON' : 'OFF'}`;
 
   contentWrapper.appendChild(indicator);

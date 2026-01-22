@@ -337,16 +337,17 @@
   --font-size-heading-h3: 1.5rem; /* 24px */
   --font-size-heading-h4: 1.25rem; /* 20px - 例外: 視覚的バランス用 */
 
-  /* フォントウェイト */
-  --font-weight-normal: 400;
-  --font-weight-medium: 500;
-  --font-weight-semibold: 600;
-  --font-weight-bold: 700;
-
   /* 行間 */
   --line-height-tight: 1.2;
   --line-height-normal: 1.5;
   --line-height-relaxed: 1.75;
+
+  /* フォントウェイト
+   * Tailwindデフォルトを使用（CSS変数不要）
+   * - font-normal: 400（本文）
+   * - font-bold: 700（見出し、強調）
+   * ダークモードで切り替える必要がないため、トークン化しない
+   */
 }
 
 /* next/font 最適化フォント適用（GAFA方針準拠フォールバックスタック） */
@@ -412,25 +413,25 @@ html.dark {
   /* タイポグラフィ - 見出し */
   .text-heading-h1 {
     font-size: var(--font-size-heading-h1);
-    font-weight: var(--font-weight-bold);
+    font-weight: 700;
     line-height: var(--line-height-tight);
   }
 
   .text-heading-h2 {
     font-size: var(--font-size-heading-h2);
-    font-weight: var(--font-weight-bold);
+    font-weight: 700;
     line-height: var(--line-height-tight);
   }
 
   .text-heading-h3 {
     font-size: var(--font-size-heading-h3);
-    font-weight: var(--font-weight-semibold);
+    font-weight: 700;
     line-height: var(--line-height-tight);
   }
 
   .text-heading-h4 {
     font-size: var(--font-size-heading-h4);
-    font-weight: var(--font-weight-semibold);
+    font-weight: 700;
     line-height: var(--line-height-normal);
   }
 
@@ -850,7 +851,7 @@ html.dark {
   /* マークダウン要素のスタイリング */
   & .wmde-markdown h1 {
     font-size: var(--font-size-heading-h3);
-    font-weight: var(--font-weight-bold);
+    font-weight: 700;
     margin-top: var(--spacing-lg);
     margin-bottom: var(--spacing-sm);
     color: var(--color-foreground);
@@ -860,7 +861,7 @@ html.dark {
 
   & .wmde-markdown h2 {
     font-size: var(--font-size-heading-h4);
-    font-weight: var(--font-weight-bold);
+    font-weight: 700;
     margin-top: var(--spacing-md);
     margin-bottom: var(--spacing-xs);
     color: var(--color-foreground);
@@ -868,7 +869,7 @@ html.dark {
 
   & .wmde-markdown h3 {
     font-size: var(--font-size-lg);
-    font-weight: var(--font-weight-semibold);
+    font-weight: 700;
     margin-top: var(--spacing-md);
     margin-bottom: var(--spacing-xs);
     color: var(--color-foreground);
@@ -949,7 +950,7 @@ html.dark {
 
   & .wmde-markdown th {
     background: var(--color-muted);
-    font-weight: var(--font-weight-semibold);
+    font-weight: 700;
   }
 
   & .wmde-markdown hr {
@@ -1055,7 +1056,7 @@ input[type='time']::-webkit-datetime-edit-minute-field {
 /* 見出し */
 .ProseMirror h1 {
   font-size: var(--font-size-heading-h1);
-  font-weight: var(--font-weight-bold);
+  font-weight: 700;
   line-height: var(--line-height-tight);
   margin-top: 1rem;
   margin-bottom: 0.5rem;
@@ -1063,7 +1064,7 @@ input[type='time']::-webkit-datetime-edit-minute-field {
 
 .ProseMirror h2 {
   font-size: var(--font-size-heading-h2);
-  font-weight: var(--font-weight-bold);
+  font-weight: 700;
   line-height: var(--line-height-tight);
   margin-top: 0.75rem;
   margin-bottom: 0.5rem;
@@ -1071,7 +1072,7 @@ input[type='time']::-webkit-datetime-edit-minute-field {
 
 .ProseMirror h3 {
   font-size: var(--font-size-heading-h3);
-  font-weight: var(--font-weight-semibold);
+  font-weight: 700;
   line-height: var(--line-height-normal);
   margin-top: 0.75rem;
   margin-bottom: 0.5rem;

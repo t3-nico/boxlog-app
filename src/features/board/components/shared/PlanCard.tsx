@@ -413,7 +413,7 @@ export function PlanCard({ item }: PlanCardProps) {
                   return <Circle className="text-muted-foreground h-4 w-4" />;
                 })()}
               </button>
-              <h3 className="text-foreground min-w-0 text-base leading-tight font-semibold hover:underline">
+              <h3 className="text-foreground min-w-0 text-base leading-tight font-bold hover:underline">
                 {item.title}
               </h3>
             </div>

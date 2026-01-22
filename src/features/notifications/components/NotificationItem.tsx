@@ -98,7 +98,7 @@ export function NotificationItem({
         {/* コンテンツ */}
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            <h4 className="truncate text-sm font-medium">{title}</h4>
+            <h4 className="truncate text-sm font-normal">{title}</h4>
             {!isRead && (
               <span className="bg-primary h-1.5 w-1.5 shrink-0 rounded-full" aria-label="未読" />
             )}

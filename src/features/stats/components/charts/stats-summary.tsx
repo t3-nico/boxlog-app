@@ -65,7 +65,7 @@ export function StatsSummary() {
       {/* 完了タスク */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">完了タスク</CardTitle>
+          <CardTitle className="text-sm font-normal">完了タスク</CardTitle>
           <CheckCircle2 className="text-muted-foreground size-4" />
         </CardHeader>
         <CardContent>
@@ -77,7 +77,7 @@ export function StatsSummary() {
       {/* 今月の作業時間 */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">今月の作業時間</CardTitle>
+          <CardTitle className="text-sm font-normal">今月の作業時間</CardTitle>
           <Clock className="text-muted-foreground size-4" />
         </CardHeader>
         <CardContent>
@@ -96,7 +96,7 @@ export function StatsSummary() {
       {/* 累計時間 */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">累計時間</CardTitle>
+          <CardTitle className="text-sm font-normal">累計時間</CardTitle>
           {isPositive ? (
             <TrendingUp className="text-muted-foreground size-4" />
           ) : (

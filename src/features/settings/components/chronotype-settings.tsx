@@ -214,14 +214,14 @@ export function ChronotypeSettings() {
                 {CHRONOTYPE_EMOJI[selectedType as Exclude<ChronotypeType, 'custom'>]}
               </span>
               <div>
-                <h4 className="font-medium">{selectedProfile.name}</h4>
+                <h4 className="font-normal">{selectedProfile.name}</h4>
                 <p className="text-muted-foreground mt-1 text-sm">{selectedProfile.description}</p>
               </div>
             </div>
 
             {/* 24時間タイムライン */}
             <div className="pt-2">
-              <h5 className="mb-3 text-sm font-medium">{t('settings.chronotype.timeline')}</h5>
+              <h5 className="mb-3 text-sm font-normal">{t('settings.chronotype.timeline')}</h5>
               <TimelineBar zones={selectedProfile.productivityZones} />
             </div>
 
@@ -229,7 +229,7 @@ export function ChronotypeSettings() {
             <div className="bg-success/12 flex items-center gap-2 rounded-lg p-3">
               <Star className="text-success h-4 w-4" />
               <div>
-                <span className="text-sm font-medium">{t('settings.chronotype.peakTime')}</span>
+                <span className="text-sm font-normal">{t('settings.chronotype.peakTime')}</span>
                 <span className="text-muted-foreground ml-2 text-sm">
                   {getPeakHours(selectedProfile.productivityZones)}
                 </span>

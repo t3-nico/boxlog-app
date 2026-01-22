@@ -140,11 +140,11 @@ export const MobileHeader = ({
       {/* 中央: 日付とビュー表示 */}
       <div className="flex min-w-0 flex-1 flex-col items-center">
         {title ? (
-          <h1 className="truncate text-lg font-semibold">{title}</h1>
+          <h1 className="truncate text-lg font-bold">{title}</h1>
         ) : (
           <>
             {/* 日付表示 */}
-            <div className="text-lg font-semibold">{getDateDisplay()}</div>
+            <div className="text-lg font-bold">{getDateDisplay()}</div>
             {/* ビュー表示 */}
             <button
               type="button"
@@ -201,7 +201,7 @@ export const MobileHeader = ({
                   onClick={createViewChangeHandler(value as CalendarViewType)}
                   className={cn(
                     'hover:bg-state-hover w-full px-4 py-3 text-left text-sm transition-colors',
-                    viewType === value && 'bg-state-selected text-foreground font-medium',
+                    viewType === value && 'bg-state-selected text-foreground font-normal',
                   )}
                 >
                   {label}

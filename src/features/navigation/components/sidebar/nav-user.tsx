@@ -83,7 +83,7 @@ export function NavUser({
               {user.name.charAt(0).toUpperCase()}
             </AvatarFallback>
           </Avatar>
-          <span className="max-w-20 truncate font-medium">{user.name}</span>
+          <span className="max-w-20 truncate font-normal">{user.name}</span>
           <ChevronDown className="text-muted-foreground size-4 shrink-0" />
         </button>
       </DropdownMenuTrigger>
@@ -102,7 +102,7 @@ export function NavUser({
               </AvatarFallback>
             </Avatar>
             <div className="grid flex-1 text-left text-sm leading-tight">
-              <span className="truncate font-medium">{user.name}</span>
+              <span className="truncate font-normal">{user.name}</span>
               <span className="text-muted-foreground truncate text-xs">{user.email}</span>
             </div>
           </div>

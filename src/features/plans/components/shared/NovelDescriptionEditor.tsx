@@ -99,7 +99,7 @@ export function NovelDescriptionEditor({
                   {item.icon}
                 </div>
                 <div>
-                  <p className="font-medium">{item.title}</p>
+                  <p className="font-normal">{item.title}</p>
                   <p className="text-muted-foreground text-xs">{item.description}</p>
                 </div>
               </EditorCommandItem>
