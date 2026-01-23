@@ -1,5 +1,6 @@
 import { api } from '@/lib/trpc';
 import type { UpdatePlanInput } from '@/schemas/plans/plan';
+import { useQueryClient } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 import { usePlanCacheStore } from '../stores/usePlanCacheStore';
@@ -30,6 +31,7 @@ import { usePlanInspectorStore } from '../stores/usePlanInspectorStore';
  */
 export function usePlanMutations() {
   const t = useTranslations();
+  const queryClient = useQueryClient();
   const utils = api.useUtils();
   const { closeInspector, openInspector } = usePlanInspectorStore();
   const { updateCache, clearCache, setIsMutating } = usePlanCacheStore();
@@ -139,7 +141,11 @@ export function usePlanMutations() {
       await utils.plans.getById.cancel({ id });
 
       // 2. 現在のデータをスナップショット（ロールバック用）
-      const previousPlans = utils.plans.list.getData();
+      // 全ての plans.list キャッシュをスナップショット（日付フィルター付きも含む）
+      type PlanListData = Awaited<ReturnType<typeof utils.plans.list.fetch>>;
+      const previousPlansList = queryClient.getQueriesData<PlanListData>({
+        queryKey: [['plans', 'list']],
+      });
       const previousPlan = utils.plans.getById.getData({ id });
 
       // 3. 楽観的更新: Zustandキャッシュを即座に更新（全コンポーネントに即座に反映）
@@ -168,20 +174,13 @@ export function usePlanMutations() {
       }
 
       // 4. TanStack Queryキャッシュを楽観的に更新
-      // リストキャッシュを更新（フィルターなし）
-      utils.plans.list.setData(undefined, (oldData): typeof oldData => {
-        if (!oldData) return undefined;
+      // 全ての plans.list キャッシュを更新（日付フィルター付きのキャッシュも含む）
+      // tRPCのquery keyは [['plans', 'list'], { input: filters, type: 'query' }] の形式
+      queryClient.setQueriesData<PlanListData>({ queryKey: [['plans', 'list']] }, (oldData) => {
+        if (!oldData) return oldData;
         return oldData.map((plan) =>
-          plan.id === id ? ({ ...plan, ...updateData } as typeof plan) : plan,
-        ) as typeof oldData;
-      });
-
-      // リストキャッシュを更新（空オブジェクトフィルター）
-      utils.plans.list.setData({}, (oldData): typeof oldData => {
-        if (!oldData) return undefined;
-        return oldData.map((plan) =>
-          plan.id === id ? ({ ...plan, ...updateData } as typeof plan) : plan,
-        ) as typeof oldData;
+          plan.id === id ? (Object.assign({}, plan, updateData) as typeof plan) : plan,
+        );
       });
 
       // 個別プランキャッシュを更新（tagsなし/あり両方）
@@ -194,12 +193,13 @@ export function usePlanMutations() {
         return Object.assign({}, oldData, updateData);
       });
 
-      return { id, previousPlans, previousPlan };
+      return { id, previousPlansList, previousPlan };
     },
     onSuccess: (updatedPlan, variables) => {
       // サーバーから返ってきた最新データでキャッシュを更新
       // tagIds などのリレーションデータは保持する（サーバーのupdateはタグをJOINしていない）
-      utils.plans.list.setData(undefined, (oldData) => {
+      type PlanListData = Awaited<ReturnType<typeof utils.plans.list.fetch>>;
+      queryClient.setQueriesData<PlanListData>({ queryKey: [['plans', 'list']] }, (oldData) => {
         if (!oldData) return oldData;
         return oldData.map((plan) => {
           if (plan.id === variables.id) {
@@ -235,9 +235,11 @@ export function usePlanMutations() {
         toast.error(t('common.plan.updateFailed'));
       }
 
-      // エラー時: 楽観的更新をロールバック
-      if (context?.previousPlans) {
-        utils.plans.list.setData(undefined, context.previousPlans);
+      // エラー時: 全ての plans.list キャッシュをロールバック
+      if (context?.previousPlansList) {
+        for (const [queryKey, data] of context.previousPlansList) {
+          queryClient.setQueryData(queryKey, data);
+        }
       }
       if (context?.previousPlan) {
         utils.plans.getById.setData({ id: context.id }, context.previousPlan);

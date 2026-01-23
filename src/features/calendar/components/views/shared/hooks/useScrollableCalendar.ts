@@ -1,0 +1,259 @@
+/**
+ * スクロール可能カレンダーのスクロール管理・キーボードナビゲーション
+ *
+ * ScrollableCalendarLayoutから抽出したカスタムフック
+ */
+
+import { useCallback, useEffect, useRef, useState, type RefObject } from 'react';
+
+import { useCalendarScrollStore } from '@/features/calendar/stores';
+
+import { COLLAPSED_SECTION_HEIGHT } from '../components/CollapsedSleepSection';
+
+export type CalendarViewModeForScroll = 'day' | '3day' | '5day' | 'week';
+
+interface SleepHoursForScroll {
+  wakeTime: number;
+  bedtime: number;
+}
+
+interface UseScrollableCalendarOptions {
+  viewMode: 'day' | '3day' | '5day' | 'week' | 'agenda';
+  hourHeight: number;
+  sleepHoursCollapsed: boolean;
+  sleepHours: SleepHoursForScroll | null;
+  enableKeyboardNavigation?: boolean | undefined;
+  onScrollPositionChange?: ((scrollTop: number) => void) | undefined;
+  onToggleSleepHours?: (() => void) | undefined;
+}
+
+interface UseScrollableCalendarReturn {
+  scrollContainerRef: RefObject<HTMLDivElement | null>;
+  handleKeyDown: (e: React.KeyboardEvent | KeyboardEvent) => void;
+  handleToggleSleepHours: () => void;
+}
+
+/**
+ * スクロール可能カレンダーのスクロール管理・キーボードナビゲーション
+ */
+export const useScrollableCalendar = ({
+  viewMode,
+  hourHeight,
+  sleepHoursCollapsed,
+  sleepHours,
+  enableKeyboardNavigation = true,
+  onScrollPositionChange,
+  onToggleSleepHours,
+}: UseScrollableCalendarOptions): UseScrollableCalendarReturn => {
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
+  const scrollTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
+  const hasRestoredScroll = useRef(false);
+  const [_isScrolling, setIsScrolling] = useState(false);
+
+  // スクロール位置ストア
+  const { setScrollPosition, getScrollPosition, setLastActiveView } = useCalendarScrollStore();
+
+  // 睡眠時間帯の折りたたみトグル（スクロール位置を維持）
+  const handleToggleSleepHours = useCallback(() => {
+    if (!sleepHours || !scrollContainerRef.current) {
+      onToggleSleepHours?.();
+      return;
+    }
+
+    const { wakeTime } = sleepHours;
+    const currentScrollTop = scrollContainerRef.current.scrollTop;
+
+    // 現在見ている時間を計算
+    let currentHour: number;
+    if (sleepHoursCollapsed) {
+      // 折りたたみ → 展開: 折りたたみセクション後の位置から時間を計算
+      if (currentScrollTop <= COLLAPSED_SECTION_HEIGHT) {
+        currentHour = wakeTime; // 睡眠セクション内なら起床時間
+      } else {
+        currentHour = wakeTime + (currentScrollTop - COLLAPSED_SECTION_HEIGHT) / hourHeight;
+      }
+    } else {
+      // 展開 → 折りたたみ: 通常の位置から時間を計算
+      currentHour = currentScrollTop / hourHeight;
+    }
+
+    // 状態を更新
+    onToggleSleepHours?.();
+
+    // 次のレンダリング後にスクロール位置を調整
+    setTimeout(() => {
+      if (!scrollContainerRef.current || !sleepHours) return;
+
+      let newScrollTop: number;
+      if (!sleepHoursCollapsed) {
+        // 展開 → 折りたたみ: 起きている時間帯に変換
+        if (currentHour < wakeTime) {
+          // 睡眠時間帯（朝）→ 折りたたみセクションへ
+          newScrollTop = 0;
+        } else if (currentHour >= sleepHours.bedtime) {
+          // 睡眠時間帯（夜）→ 折りたたみセクションへ
+          newScrollTop = 0;
+        } else {
+          // 起きている時間帯
+          newScrollTop = COLLAPSED_SECTION_HEIGHT + (currentHour - wakeTime) * hourHeight;
+        }
+      } else {
+        // 折りたたみ → 展開: 通常の位置に変換
+        newScrollTop = currentHour * hourHeight;
+      }
+
+      scrollContainerRef.current.scrollTo({
+        top: Math.max(0, newScrollTop),
+        behavior: 'instant',
+      });
+    }, 0);
+  }, [onToggleSleepHours, sleepHoursCollapsed, sleepHours, hourHeight]);
+
+  // アクティブビューの更新
+  useEffect(() => {
+    if (viewMode !== 'agenda') {
+      setLastActiveView(viewMode as CalendarViewModeForScroll);
+    }
+  }, [viewMode, setLastActiveView]);
+
+  // 初期スクロール位置の設定（保存された位置を優先、なければ現在時刻を中央に）
+  useEffect(() => {
+    if (!scrollContainerRef.current || hasRestoredScroll.current) return;
+
+    // viewModeが有効なタイプの場合のみ処理
+    if (viewMode === 'agenda') return;
+
+    const savedPosition = getScrollPosition(viewMode as CalendarViewModeForScroll);
+
+    let targetScroll: number;
+    if (savedPosition > 0) {
+      // 保存された位置がある場合は復元
+      targetScroll = savedPosition;
+    } else {
+      // 保存がない場合は現在時刻を画面中央に
+      const now = new Date();
+      const currentHour = now.getHours() + now.getMinutes() / 60;
+      const currentPosition = currentHour * hourHeight;
+      const containerHeight = scrollContainerRef.current.clientHeight;
+      // 現在時刻が画面中央に来るように調整
+      targetScroll = Math.max(0, currentPosition - containerHeight / 2);
+    }
+
+    hasRestoredScroll.current = true;
+
+    setTimeout(() => {
+      scrollContainerRef.current?.scrollTo({
+        top: targetScroll,
+        behavior: savedPosition > 0 ? 'instant' : 'smooth',
+      });
+    }, 50);
+  }, [viewMode, getScrollPosition, hourHeight]);
+
+  // viewMode変更時にhasRestoredScrollをリセット
+  useEffect(() => {
+    hasRestoredScroll.current = false;
+  }, [viewMode]);
+
+  // スクロールイベントの処理
+  const handleScroll = useCallback(() => {
+    if (!scrollContainerRef.current) return;
+
+    const { scrollTop } = scrollContainerRef.current;
+    setIsScrolling(true);
+
+    if (onScrollPositionChange) {
+      onScrollPositionChange(scrollTop);
+    }
+
+    // スクロール位置をストアに保存（agendaビュー以外）
+    if (viewMode !== 'agenda') {
+      setScrollPosition(viewMode as CalendarViewModeForScroll, scrollTop);
+    }
+
+    if (scrollTimeoutRef.current) {
+      clearTimeout(scrollTimeoutRef.current);
+    }
+    scrollTimeoutRef.current = setTimeout(() => {
+      setIsScrolling(false);
+    }, 150);
+  }, [onScrollPositionChange, viewMode, setScrollPosition]);
+
+  // スクロールリスナーの設定
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    container.addEventListener('scroll', handleScroll, { passive: true });
+    return () => container.removeEventListener('scroll', handleScroll);
+  }, [handleScroll]);
+
+  // キーボードナビゲーション
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent | KeyboardEvent) => {
+      if (!enableKeyboardNavigation || !scrollContainerRef.current) {
+        return;
+      }
+
+      const container = scrollContainerRef.current;
+      const currentScroll = container.scrollTop;
+
+      switch (e.key) {
+        case 'PageUp':
+          e.preventDefault();
+          container.scrollTop = Math.max(0, currentScroll - container.clientHeight);
+          break;
+        case 'PageDown':
+          e.preventDefault();
+          container.scrollTop = currentScroll + container.clientHeight;
+          break;
+        case 'Home':
+          if (e.ctrlKey) {
+            e.preventDefault();
+            container.scrollTop = 0;
+          }
+          break;
+        case 'End':
+          if (e.ctrlKey) {
+            e.preventDefault();
+            container.scrollTop = container.scrollHeight;
+          }
+          break;
+        case 'ArrowUp':
+          if (e.ctrlKey) {
+            e.preventDefault();
+            container.scrollTop = Math.max(0, currentScroll - hourHeight);
+          }
+          break;
+        case 'ArrowDown':
+          if (e.ctrlKey) {
+            e.preventDefault();
+            container.scrollTop = currentScroll + hourHeight;
+          }
+          break;
+      }
+    },
+    [enableKeyboardNavigation, hourHeight],
+  );
+
+  // グローバルキーボードイベントのリスナー
+  useEffect(() => {
+    if (!enableKeyboardNavigation) {
+      return;
+    }
+
+    const handleGlobalKeyDown = (e: KeyboardEvent) => {
+      handleKeyDown(e);
+    };
+
+    document.addEventListener('keydown', handleGlobalKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleGlobalKeyDown);
+    };
+  }, [enableKeyboardNavigation, handleKeyDown]);
+
+  return {
+    scrollContainerRef,
+    handleKeyDown,
+    handleToggleSleepHours,
+  };
+};

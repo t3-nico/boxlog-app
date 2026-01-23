@@ -1,5 +1,8 @@
 {
   "calendar": {
+    "meta": {
+      "description": "Plan your schedule with time boxing. View and manage your plans by day, week, or month."
+    },
     "title": "Calendar",
     "views": {
       "day": "Day View",

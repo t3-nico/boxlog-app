@@ -73,6 +73,11 @@ export { useMultiDayPlanPositions } from './hooks/useMultiDayPlanPositions';
 export { usePlansByDate } from './hooks/usePlansByDate';
 export type { UsePlansByDateOptions, UsePlansByDateReturn } from './hooks/usePlansByDate';
 
+// ScrollableCalendarLayout関連フック
+export { useCurrentTimeLine } from './hooks/useCurrentTimeLine';
+export { useScrollableCalendar } from './hooks/useScrollableCalendar';
+export { useSleepHoursLayout } from './hooks/useSleepHoursLayout';
+
 // ===== プロバイダー =====
 export { CalendarGridProvider, useCalendarGridVars } from './components/CalendarGridProvider';
 
@@ -86,14 +91,88 @@ export {
 export type { PositionedPlan } from './hooks/usePlanPosition';
 
 // ===== ユーティリティ関数 =====
-export * from './utils/dateHelpers';
-export * from './utils/gridCalculator';
-export * from './utils/planGhost';
-export * from './utils/planPositioning';
-export * from './utils/planSorting';
+// dateHelpers
+export {
+  addDays,
+  addMinutes,
+  endOfDay,
+  formatDate,
+  formatTime,
+  formatTimeRange,
+  generateDateRange,
+  getDateKey,
+  getDaysDifference,
+  getMonthEnd,
+  getMonthStart,
+  getTodayIndex,
+  getWeekEnd,
+  getWeekStart,
+  isSameDay,
+  isToday,
+  isValidEvent,
+  isWeekend,
+  normalizeEventDate,
+  startOfDay,
+} from './utils/dateHelpers';
+
+// gridCalculator
+export {
+  calculateGridHeight,
+  calculateScrollPosition,
+  getDurationInMinutes,
+  getEventStyle,
+  isTimeInRange,
+  pixelsToTime,
+  pixelsToTimeValues,
+  roundToQuarterHour,
+  timeToPixels,
+} from './utils/gridCalculator';
+
+// planGhost
+export { calculatePlanGhostStyle, calculatePreviewTime } from './utils/planGhost';
+
+// planPositioning
+export {
+  calculatePlanPosition,
+  calculatePlanPositionWithCollapse,
+  calculateViewPlanColumns,
+  detectOverlapGroups,
+  filterPlansByDate,
+  plansOverlap,
+  sortTimedPlans,
+} from './utils/planPositioning';
+
+// planSorting
+export {
+  sortAgendaEventsByDateKeys,
+  sortEventsByDateKeys,
+  sortEventsByTime,
+  sortEventsForAgenda,
+} from './utils/planSorting';
 
 // ===== 定数 =====
-export * from './constants/grid.constants';
+export {
+  CURRENT_TIME_DOT_SIZE,
+  CURRENT_TIME_LINE_COLOR,
+  EVENT_GAP,
+  EVENT_HORIZONTAL_PADDING,
+  EVENT_VERTICAL_PADDING,
+  GRID_BACKGROUND,
+  GRID_BORDER,
+  HALF_HOUR_HEIGHT,
+  HALF_HOUR_LINE_COLOR,
+  HOUR_HEIGHT,
+  HOUR_LINE_COLOR,
+  MAX_EVENT_COLUMNS,
+  MINUTE_HEIGHT,
+  MIN_EVENT_HEIGHT,
+  SCROLL_BEHAVIOR,
+  SCROLL_TO_HOUR,
+  TIME_COLUMN_WIDTH,
+  TIME_LABEL_HEIGHT,
+  TRANSITION_DURATION,
+  Z_INDEX,
+} from './constants/grid.constants';
 
 // ===== 型定義 =====
 export type * from './types/base.types';

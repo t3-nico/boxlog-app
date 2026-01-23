@@ -2,7 +2,8 @@
  * ビュー関連の型定義
  */
 
-import type { CalendarPlan, PlanInteractionHandler } from './plan.types';
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
+import type { PlanInteractionHandler } from './plan.types';
 
 export type ViewType = 'day' | '3day' | '5day' | 'week' | 'agenda';
 

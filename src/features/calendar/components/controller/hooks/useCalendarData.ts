@@ -95,10 +95,8 @@ export function useCalendarData({
     prefetchAdjacentPeriods();
   }, [currentDate, viewType, weekStartsOn, utils.plans.list]);
 
-  // フィルター設定を取得（状態の値を直接参照して変更を検知）
-  const visibleTypes = useCalendarFilterStore((state) => state.visibleTypes);
-  const visibleTagIds = useCalendarFilterStore((state) => state.visibleTagIds);
-  const showUntagged = useCalendarFilterStore((state) => state.showUntagged);
+  // フィルター関数を取得（ストアに統一）
+  const isPlanVisible = useCalendarFilterStore((state) => state.isPlanVisible);
 
   // 繰り返しプランのIDを抽出
   const recurringPlanIds = useMemo(() => {
@@ -204,23 +202,8 @@ export function useCalendarData({
       );
     });
 
-    // サイドバーのフィルター設定を適用
-    const visibilityFiltered = filtered.filter((event) => {
-      // 種類チェック（現時点ではPlanのみ）
-      if (!visibleTypes.plan) {
-        return false;
-      }
-
-      const tagIds = event.tagIds ?? [];
-
-      // タグなしの場合
-      if (tagIds.length === 0) {
-        return showUntagged;
-      }
-
-      // いずれかのタグが表示中なら表示
-      return tagIds.some((tagId) => visibleTagIds.has(tagId));
-    });
+    // サイドバーのフィルター設定を適用（ストアのisPlanVisibleに統一）
+    const visibilityFiltered = filtered.filter((event) => isPlanVisible(event.tagIds ?? []));
 
     logger.log(`[useCalendarData] plansフィルタリング:`, {
       totalPlans: allCalendarPlans.length,
@@ -239,7 +222,7 @@ export function useCalendarData({
     });
 
     return visibilityFiltered;
-  }, [viewDateRange, allCalendarPlans, visibleTypes, visibleTagIds, showUntagged]);
+  }, [viewDateRange, allCalendarPlans, isPlanVisible]);
 
   return {
     viewDateRange,

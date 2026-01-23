@@ -1,11 +1,10 @@
 /**
  * プラン関連の型定義
+ *
+ * NOTE: CalendarPlan は @/features/calendar/types/calendar.types から直接インポートすること
  */
 
-import type { CalendarPlan as BaseCalendarPlan } from '@/features/calendar/types/calendar.types';
-
-// CalendarPlanを再エクスポート
-export type CalendarPlan = BaseCalendarPlan;
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
 
 // 時間指定プラン（start/endを持つプラン）
 // CalendarPlanの startDate/endDate を start/end に変換した型

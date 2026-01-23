@@ -1,6 +1,9 @@
+import type { Metadata } from 'next';
+import { getTranslations } from 'next-intl/server';
+
+import { calculateViewDateRange } from '@/features/calendar/lib/view-helpers';
 import type { Locale } from '@/lib/i18n';
 import { createServerHelpers, dehydrate, HydrationBoundary } from '@/lib/trpc/server';
-import { getTranslations } from 'next-intl/server';
 
 import { CalendarViewClient } from './[view]/client';
 
@@ -10,6 +13,23 @@ import { CalendarViewClient } from './[view]/client';
  * カレンダーはリアルタイムデータを表示するため、常に動的レンダリング
  */
 export const dynamic = 'force-dynamic';
+
+/**
+ * メタデータ生成
+ */
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: Locale }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'calendar' });
+
+  return {
+    title: t('views.day'),
+    description: t('meta.description'),
+  };
+}
 
 interface CalendarPageProps {
   params: Promise<{ locale: Locale }>;
@@ -46,10 +66,21 @@ export default async function CalendarPage({ params, searchParams }: CalendarPag
   };
 
   // Server-side prefetch: クライアントでのデータ取得を高速化
-  // タグ関連もプリフェッチして初期読み込みを高速化
+  // クライアントと同じクエリキーでprefetchしてキャッシュヒット率を向上
   const helpers = await createServerHelpers();
+
+  // 日付範囲を計算（dayビューのデフォルト）
+  // weekStartsOnはZustandストアなのでSSRではデフォルト値1（月曜日）を使用
+  const targetDate = initialDate ?? new Date();
+  const viewDateRange = calculateViewDateRange('day', targetDate, 1);
+  const dateFilter = {
+    startDate: viewDateRange.start.toISOString(),
+    endDate: viewDateRange.end.toISOString(),
+  };
+
   await Promise.all([
-    helpers.plans.list.prefetch({}),
+    // 日付フィルタ付きでprefetch（クライアントと同じクエリキー）
+    helpers.plans.list.prefetch(dateFilter),
     helpers.plans.getTagStats.prefetch(),
     helpers.tags.list.prefetch(),
     helpers.tags.listParentTags.prefetch(),
