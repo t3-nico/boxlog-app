@@ -194,9 +194,9 @@ export function TagSortableTree({
 
   // タグが変更されたらitemsを更新（collapsed状態は保持）
   useEffect(() => {
-    // タグデータをハッシュ化（ID、名前、親ID、色を含む）
+    // タグデータをハッシュ化（ID、名前、親ID、色、ソート順、説明を含む）
     const currentHash = tags
-      .map((t) => `${t.id}|${t.name}|${t.parent_id}|${t.color}|${t.sort_order}`)
+      .map((t) => `${t.id}|${t.name}|${t.parent_id}|${t.color}|${t.sort_order}|${t.description}`)
       .join(',');
 
     // 実際にタグデータが変わっていなければスキップ
