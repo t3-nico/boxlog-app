@@ -32,15 +32,23 @@ describe('TagService', () => {
 
       const result = await service.list({ userId });
 
-      expect(result).toEqual(mockTags);
+      // transformDbTagにより追加フィールドが付与されるためtoMatchObjectを使用
+      expect(result).toHaveLength(2);
+      expect(result[0]).toMatchObject({ id: 'tag-1', name: 'Tag 1', user_id: userId });
+      expect(result[1]).toMatchObject({ id: 'tag-2', name: 'Tag 2', user_id: userId });
       expect(mockSupabase.from).toHaveBeenCalledWith('tags');
     });
 
-    it('should apply default sort (name, asc)', async () => {
+    it('should apply default sort (sort_order + name)', async () => {
       const mockQuery = setupMockQuery(mockSupabase.from, []);
 
       await service.list({ userId });
 
+      // デフォルトではsort_orderでソート後、名前でセカンダリソート
+      expect(mockQuery.order).toHaveBeenCalledWith('sort_order', {
+        ascending: true,
+        nullsFirst: false,
+      });
       expect(mockQuery.order).toHaveBeenCalledWith('name', { ascending: true });
     });
 
@@ -49,7 +57,12 @@ describe('TagService', () => {
 
       await service.list({ userId, sortField: 'created_at', sortOrder: 'desc' });
 
-      expect(mockQuery.order).toHaveBeenCalledWith('created_at', { ascending: false });
+      // カスタムソート後、名前でセカンダリソート
+      expect(mockQuery.order).toHaveBeenCalledWith('created_at', {
+        ascending: false,
+        nullsFirst: false,
+      });
+      expect(mockQuery.order).toHaveBeenCalledWith('name', { ascending: true });
     });
 
     it('should throw TagServiceError on fetch failure', async () => {
@@ -68,7 +81,7 @@ describe('TagService', () => {
 
       const result = await service.getById({ userId, tagId: 'tag-1' });
 
-      expect(result).toEqual(mockTag);
+      expect(result).toMatchObject(mockTag);
     });
 
     it('should throw NOT_FOUND when tag does not exist', async () => {
@@ -102,7 +115,7 @@ describe('TagService', () => {
         input: { name: 'New Tag' },
       });
 
-      expect(result).toEqual(mockTag);
+      expect(result).toMatchObject(mockTag);
     });
 
     it('should create a tag with custom color', async () => {
@@ -275,7 +288,7 @@ describe('TagService', () => {
 
       const result = await service.delete({ userId, tagId: 'tag-1' });
 
-      expect(result).toEqual(existingTag);
+      expect(result).toMatchObject(existingTag);
     });
 
     it('should throw NOT_FOUND when tag does not exist', async () => {
@@ -324,6 +337,7 @@ function createChainableMock(
     eq: vi.fn().mockReturnThis(),
     neq: vi.fn().mockReturnThis(),
     in: vi.fn().mockReturnThis(),
+    is: vi.fn().mockReturnThis(),
     or: vi.fn().mockReturnThis(),
     order: vi.fn().mockReturnThis(),
     limit: vi.fn().mockReturnThis(),
