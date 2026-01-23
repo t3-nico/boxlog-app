@@ -5,7 +5,9 @@ import { createPortal } from 'react-dom';
 
 import { useTranslations } from 'next-intl';
 
+import { DEFAULT_TAG_COLOR } from '@/features/tags/constants/colors';
 import { useMergeTag, useTags } from '@/features/tags/hooks/useTags';
+import { logger } from '@/lib/logger';
 import { cn } from '@/lib/utils';
 
 import { Button } from '@/components/ui/button';
@@ -143,7 +145,7 @@ export function TagMergeModal({
       setSelectedTargetId('');
       onClose();
     } catch (err) {
-      console.error('Merge failed:', err);
+      logger.error('Merge failed:', err);
       setError(t('tags.merge.failed'));
     }
   }, [selectedTargetId, sourceTag.id, mergeTagMutation, onMergeSuccess, onClose, t]);
@@ -237,7 +239,7 @@ export function TagMergeModal({
                       />
                       <span
                         className="shrink-0 font-normal"
-                        style={{ color: parent.color || '#3B82F6' }}
+                        style={{ color: parent.color || DEFAULT_TAG_COLOR }}
                       >
                         #
                       </span>
@@ -262,7 +264,7 @@ export function TagMergeModal({
                       />
                       <span
                         className="shrink-0 font-normal"
-                        style={{ color: child.color || parent?.color || '#3B82F6' }}
+                        style={{ color: child.color || parent?.color || DEFAULT_TAG_COLOR }}
                       >
                         #
                       </span>

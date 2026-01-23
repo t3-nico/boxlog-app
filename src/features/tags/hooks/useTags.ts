@@ -2,11 +2,11 @@
 
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
-import { useMemo } from 'react';
 import { toast } from 'sonner';
 
 import { trpc } from '@/lib/trpc/client';
 
+import { DEFAULT_TAG_COLOR } from '@/features/tags/constants/colors';
 import type { Tag } from '@/features/tags/types';
 import { useTagCacheStore } from '../stores/useTagCacheStore';
 
@@ -68,14 +68,12 @@ export function useTags() {
     staleTime: 5 * 60 * 1000, // 5分間キャッシュ
   });
 
-  // データの参照を安定化（親コンポーネントの再レンダー時に不要なuseEffect発火を防ぐ）
-  // query.dataはTanStack Queryにより安定しているが、.dataアクセスを毎回評価すると
-  // 無関係なstate更新でも参照が変わる可能性があるためuseMemoで固定
-  const stableData = useMemo(() => query.data?.data, [query.data]);
-
+  // Note: useMemoを使わずquery.data?.dataを直接返す
+  // TanStack Queryの構造共有により、データが変わっていなければ参照は安定している
+  // useMemoを使うとsetData()によるキャッシュ更新が検出されない場合がある
   return {
     ...query,
-    data: stableData,
+    data: query.data?.data,
   };
 }
 
@@ -117,7 +115,7 @@ export function useCreateTag() {
       const tempTag: Tag = {
         id: tempId,
         name: input.name,
-        color: input.color || '#3B82F6',
+        color: input.color || DEFAULT_TAG_COLOR,
         description: input.description ?? null,
         icon: null, // サーバーで設定される
         parent_id: input.parentId ?? null,
@@ -227,10 +225,12 @@ export function useUpdateTag() {
       // mutation開始フラグを設定（Realtime二重更新防止）
       incrementMutation();
 
-      // 進行中のフェッチをキャンセル（両方のキャッシュ）
-      await utils.tags.list.cancel();
-      await utils.tags.listParentTags.cancel();
-      await utils.tags.getById.cancel({ id: newData.id });
+      // 進行中のフェッチをキャンセル（並列実行で高速化）
+      await Promise.all([
+        utils.tags.list.cancel(),
+        utils.tags.listParentTags.cancel(),
+        utils.tags.getById.cancel({ id: newData.id }),
+      ]);
 
       // 現在のキャッシュを保存（ロールバック用）
       const previousData = utils.tags.list.getData();

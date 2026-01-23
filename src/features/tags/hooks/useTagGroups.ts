@@ -11,6 +11,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 
 import type { Tag } from '@/features/tags/types';
+import { logger } from '@/lib/logger';
 import { trpc } from '@/lib/trpc/client';
 
 // 後方互換性のための入力型
@@ -202,10 +203,10 @@ export function useReorderTagGroups() {
   // 現在は未使用のため、空のミューテーションを返す
   return {
     mutate: (_input: { items: Array<{ id: string; sort_order: number }> }) => {
-      console.warn('useReorderTagGroups is not implemented yet');
+      logger.warn('useReorderTagGroups is not implemented yet');
     },
     mutateAsync: async (_input: { items: Array<{ id: string; sort_order: number }> }) => {
-      console.warn('useReorderTagGroups is not implemented yet');
+      logger.warn('useReorderTagGroups is not implemented yet');
       utils.tags.listParentTags.invalidate();
       queryClient.invalidateQueries({ queryKey: tagGroupKeys.all });
     },

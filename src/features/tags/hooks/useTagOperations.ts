@@ -2,6 +2,7 @@
  * タグ操作のビジネスロジックを管理するカスタムフック
  */
 
+import { DEFAULT_TAG_COLOR } from '@/features/tags/constants/colors';
 import {
   useCreateTag,
   useDeleteTag,
@@ -47,7 +48,7 @@ export function useTagOperations(tags: Tag[]) {
           id: `temp-${Date.now()}`,
           name: data.name,
           user_id: 'current-user',
-          color: data.color || '#3B82F6',
+          color: data.color || DEFAULT_TAG_COLOR,
           description: data.description || null,
           icon: null,
           is_active: true,

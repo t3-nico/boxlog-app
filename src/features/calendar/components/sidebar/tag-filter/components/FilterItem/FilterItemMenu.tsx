@@ -14,21 +14,17 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
 } from '@/components/ui/dropdown-menu';
-import { TagNoteField } from '@/features/tags/components/tag-note-field';
+import { DEFAULT_TAG_COLOR } from '@/features/tags/constants/colors';
 
 interface FilterItemMenuProps {
-  tagId: string;
   displayColor: string;
-  editDescription: string;
   parentId: string | null | undefined;
   parentTags: Array<{ id: string; name: string; color?: string | null }> | undefined;
-  textareaRef: React.RefObject<HTMLTextAreaElement | null>;
 
   // Handlers
-  onStartRename: () => void;
+  onOpenRenameDialog: () => void;
   onColorChange: (color: string) => void;
-  onDescriptionChange: (description: string) => void;
-  onSaveDescription: () => void;
+  onOpenNoteDialog: () => void;
   onChangeParent: ((newParentId: string | null) => void) | undefined;
   onOpenMergeModal: () => void;
   onShowOnlyTag: () => void;
@@ -36,16 +32,12 @@ interface FilterItemMenuProps {
 }
 
 export function FilterItemMenu({
-  tagId,
   displayColor,
-  editDescription,
   parentId,
   parentTags,
-  textareaRef,
-  onStartRename,
+  onOpenRenameDialog,
   onColorChange,
-  onDescriptionChange,
-  onSaveDescription,
+  onOpenNoteDialog,
   onChangeParent,
   onOpenMergeModal,
   onShowOnlyTag,
@@ -56,7 +48,7 @@ export function FilterItemMenu({
   return (
     <DropdownMenuContent align="start" side="right">
       {/* 名前を変更 */}
-      <DropdownMenuItem onClick={onStartRename}>
+      <DropdownMenuItem onClick={onOpenRenameDialog}>
         <Pencil className="mr-2 size-4" />
         {t('calendar.filter.rename')}
       </DropdownMenuItem>
@@ -67,27 +59,16 @@ export function FilterItemMenu({
           <Palette className="mr-2 size-4" />
           {t('calendar.filter.changeColor')}
         </DropdownMenuSubTrigger>
-        <DropdownMenuSubContent className="p-2">
+        <DropdownMenuSubContent className="p-2" onClick={(e) => e.stopPropagation()}>
           <ColorPalettePicker selectedColor={displayColor} onColorSelect={onColorChange} />
         </DropdownMenuSubContent>
       </DropdownMenuSub>
 
       {/* ノートを編集 */}
-      <DropdownMenuSub>
-        <DropdownMenuSubTrigger>
-          <FileText className="mr-2 size-4" />
-          {t('calendar.filter.editNote')}
-        </DropdownMenuSubTrigger>
-        <DropdownMenuSubContent className="w-[280px] p-3">
-          <TagNoteField
-            id={`tag-note-${tagId}`}
-            value={editDescription}
-            onChange={onDescriptionChange}
-            onBlur={onSaveDescription}
-            textareaRef={textareaRef}
-          />
-        </DropdownMenuSubContent>
-      </DropdownMenuSub>
+      <DropdownMenuItem onClick={onOpenNoteDialog}>
+        <FileText className="mr-2 size-4" />
+        {t('calendar.filter.editNote')}
+      </DropdownMenuItem>
 
       {/* 親タグを変更 */}
       {parentTags && parentTags.length > 0 && onChangeParent && (
@@ -109,7 +90,10 @@ export function FilterItemMenu({
                 onClick={() => onChangeParent(parent.id)}
                 className={cn(parentId === parent.id && 'bg-state-selected')}
               >
-                <span className="mr-1 font-normal" style={{ color: parent.color || '#3B82F6' }}>
+                <span
+                  className="mr-1 font-normal"
+                  style={{ color: parent.color || DEFAULT_TAG_COLOR }}
+                >
                   #
                 </span>
                 {parent.name}

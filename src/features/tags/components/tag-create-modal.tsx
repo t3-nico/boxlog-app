@@ -8,7 +8,11 @@ import { ColorPalettePicker } from '@/components/ui/color-palette-picker';
 import { Field, FieldError, FieldGroup, FieldLabel, FieldSupportText } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { TagNoteField } from '@/features/tags/components/tag-note-field';
-import { TAG_NAME_MAX_LENGTH } from '@/features/tags/constants/colors';
+import {
+  DEFAULT_GROUP_COLOR,
+  DEFAULT_TAG_COLOR,
+  TAG_NAME_MAX_LENGTH,
+} from '@/features/tags/constants/colors';
 import { useTagGroups } from '@/features/tags/hooks/useTagGroups';
 import type { CreateTagInput, TagGroup } from '@/features/tags/types';
 import { logger } from '@/lib/logger';
@@ -41,7 +45,7 @@ export const TagCreateModal = ({
 }: TagCreateModalProps) => {
   const t = useTranslations();
   const [name, setName] = useState('');
-  const [color, setColor] = useState('#3B82F6');
+  const [color, setColor] = useState<string>(DEFAULT_TAG_COLOR);
   const [parentId, setParentId] = useState<string | null>(null);
   const [description, setDescription] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -61,7 +65,7 @@ export const TagCreateModal = ({
   useEffect(() => {
     if (isOpen) {
       setName('');
-      setColor('#3B82F6');
+      setColor(DEFAULT_TAG_COLOR);
       setDescription('');
       setParentId(defaultParentId ?? null);
       setError('');
@@ -271,7 +275,7 @@ export const TagCreateModal = ({
                     >
                       <span
                         className="size-3 rounded-full"
-                        style={{ backgroundColor: parent.color ?? '#6B7280' }}
+                        style={{ backgroundColor: parent.color ?? DEFAULT_GROUP_COLOR }}
                       />
                       {parent.name}
                     </button>
