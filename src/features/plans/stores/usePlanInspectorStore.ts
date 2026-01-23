@@ -27,6 +27,14 @@ export interface PlanInitialData {
 }
 
 /**
+ * Popover位置情報
+ */
+export interface PopoverPosition {
+  x: number;
+  y: number;
+}
+
+/**
  * Plan Inspector Store の状態
  */
 interface PlanInspectorState {
@@ -42,6 +50,8 @@ interface PlanInspectorState {
   displayMode: InspectorDisplayMode;
   /** Popoverのアンカー要素の位置情報 */
   popoverAnchor?: { x: number; y: number } | undefined;
+  /** Popoverの保存された位置（ドラッグ移動後） */
+  popoverPosition: PopoverPosition | null;
 }
 
 /**
@@ -61,6 +71,8 @@ interface PlanInspectorActions {
   closeInspector: () => void;
   /** 表示モードを変更する */
   setDisplayMode: (mode: InspectorDisplayMode) => void;
+  /** Popoverの位置を保存する */
+  setPopoverPosition: (position: PopoverPosition | null) => void;
 }
 
 /**
@@ -78,6 +90,7 @@ export const usePlanInspectorStore = create<PlanInspectorStore>()(
         initialData: undefined,
         displayMode: 'sheet',
         popoverAnchor: undefined,
+        popoverPosition: null,
 
         openInspector: (planId, options) =>
           set(
@@ -106,11 +119,17 @@ export const usePlanInspectorStore = create<PlanInspectorStore>()(
           ),
 
         setDisplayMode: (mode) => set({ displayMode: mode }, false, 'setDisplayMode'),
+
+        setPopoverPosition: (position) =>
+          set({ popoverPosition: position }, false, 'setPopoverPosition'),
       }),
       {
         name: 'plan-inspector-settings',
-        // displayModeのみ永続化（isOpenやplanIdは永続化しない）
-        partialize: (state) => ({ displayMode: state.displayMode }),
+        // displayModeとpopoverPositionのみ永続化
+        partialize: (state) => ({
+          displayMode: state.displayMode,
+          popoverPosition: state.popoverPosition,
+        }),
       },
     ),
     { name: 'plan-inspector-store' },

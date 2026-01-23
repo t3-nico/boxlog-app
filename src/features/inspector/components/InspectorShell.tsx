@@ -4,7 +4,6 @@ import { MoreHorizontal } from 'lucide-react';
 import { type ReactNode, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Drawer, DrawerContent, DrawerTitle } from '@/components/ui/drawer';
 import {
   DropdownMenu,
@@ -15,7 +14,10 @@ import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
 import { zIndex } from '@/config/ui/z-index';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 
+import type { PopoverPosition } from '@/features/plans/stores/usePlanInspectorStore';
+
 import { INSPECTOR_SIZE, useInspectorResize } from '../hooks';
+import { DraggableInspector } from './DraggableInspector';
 
 // モバイルDrawerのスナップポイント
 // Apple HIG準拠: medium(50%) → large(97% - セーフエリア考慮)
@@ -45,6 +47,10 @@ interface InspectorShellProps {
   modal?: boolean;
   /** モバイル用メニューコンテンツ（ドラッグハンドル行に表示） */
   mobileMenuContent?: ReactNode;
+  /** Popoverの保存位置（popoverモードのみ） */
+  popoverPosition?: PopoverPosition | null;
+  /** Popover位置変更時のコールバック */
+  onPopoverPositionChange?: (position: PopoverPosition) => void;
 }
 
 /**
@@ -77,6 +83,8 @@ export function InspectorShell({
   initialWidth = INSPECTOR_SIZE.default,
   modal = false,
   mobileMenuContent,
+  popoverPosition,
+  onPopoverPositionChange,
 }: InspectorShellProps) {
   const isMobile = useMediaQuery('(max-width: 767px)');
   const { inspectorWidth, isResizing, handleMouseDown } = useInspectorResize({
@@ -183,17 +191,15 @@ export function InspectorShell({
     );
   }
 
-  // PC: Dialog/Popover mode
+  // PC: Draggable Popover mode
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()} modal={modal}>
-      <DialogContent
-        className="flex h-[40rem] w-[95vw] max-w-[28rem] flex-col gap-0 overflow-hidden p-0"
-        style={{ zIndex: zIndex.modal }}
-        showCloseButton={false}
-      >
-        <DialogTitle className="sr-only">{title}</DialogTitle>
-        {children}
-      </DialogContent>
-    </Dialog>
+    <DraggableInspector
+      position={popoverPosition ?? null}
+      onPositionChange={onPopoverPositionChange ?? (() => {})}
+      onClose={onClose}
+      title={title}
+    >
+      {children}
+    </DraggableInspector>
   );
 }

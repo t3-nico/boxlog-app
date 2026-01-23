@@ -31,6 +31,8 @@ export function PlanInspector() {
   const planId = usePlanInspectorStore((state) => state.planId);
   const displayMode = usePlanInspectorStore((state) => state.displayMode) as InspectorDisplayMode;
   const closeInspector = usePlanInspectorStore((state) => state.closeInspector);
+  const popoverPosition = usePlanInspectorStore((state) => state.popoverPosition);
+  const setPopoverPosition = usePlanInspectorStore((state) => state.setPopoverPosition);
 
   const { data: planData, isLoading } = usePlan(planId!, { includeTags: true, enabled: !!planId });
   const plan = (planData ?? null) as unknown as Plan | null;
@@ -116,6 +118,8 @@ export function PlanInspector() {
       resizable={displayMode === 'sheet'}
       modal={false}
       mobileMenuContent={mobileMenuContent}
+      popoverPosition={popoverPosition}
+      onPopoverPositionChange={setPopoverPosition}
     >
       <InspectorContent
         isLoading={isLoading}

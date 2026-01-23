@@ -14,6 +14,7 @@ import { InspectorHeader } from '@/features/inspector';
 
 import { ActivityTab } from '../components';
 
+import { DisplayModeSwitcher } from './DisplayModeSwitcher';
 import { PlanInspectorDetailsTab } from './PlanInspectorDetailsTab';
 import { PlanInspectorMenu } from './PlanInspectorMenu';
 import { usePlanInspectorContentLogic } from './usePlanInspectorContentLogic';
@@ -65,15 +66,17 @@ export function PlanInspectorContent() {
 
   const menuContent = (
     <PlanInspectorMenu
-      displayMode={displayMode}
       onDuplicate={handleDuplicate}
       onCopyLink={handleCopyLink}
       onSaveAsTemplate={handleSaveAsTemplate}
       onCopyId={handleCopyId}
       onOpenInNewTab={handleOpenInNewTab}
       onDelete={handleDelete}
-      onDisplayModeChange={setDisplayMode}
     />
+  );
+
+  const displayModeSwitcher = (
+    <DisplayModeSwitcher displayMode={displayMode} onDisplayModeChange={setDisplayMode} />
   );
 
   if (!plan) return null;
@@ -91,11 +94,12 @@ export function PlanInspectorContent() {
         closeLabel={t('actions.close')}
         previousLabel={t('aria.previous')}
         nextLabel={t('aria.next')}
+        rightContent={displayModeSwitcher}
         menuContent={menuContent}
       />
 
-      <Tabs defaultValue="details" className="flex flex-1 flex-col overflow-hidden pt-2">
-        <TabsList className="border-border bg-popover sticky top-0 z-10 grid h-10 w-full shrink-0 grid-cols-3 rounded-none border-b p-0">
+      <Tabs defaultValue="details" className="flex flex-1 flex-col overflow-hidden">
+        <TabsList className="bg-popover sticky top-0 z-10 grid h-10 w-full shrink-0 grid-cols-3 rounded-none border-0 p-0">
           <TabsTrigger
             value="details"
             className="data-[state=active]:border-foreground hover:border-foreground/50 flex h-10 items-center justify-center gap-2 rounded-none border-b-2 border-transparent p-0 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
