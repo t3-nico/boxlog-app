@@ -1,9 +1,9 @@
 'use client';
 
 import { format } from 'date-fns';
-import { cloneElement, isValidElement, type ReactNode } from 'react';
+import { cloneElement, isValidElement, useCallback, type ReactNode } from 'react';
 
-import { toLocalISOString } from '@/features/plans/utils/datetime';
+import { api } from '@/lib/trpc';
 
 import { usePlanInspectorStore } from '../../stores/usePlanInspectorStore';
 
@@ -12,38 +12,99 @@ interface PlanCreateTriggerProps {
   onSuccess?: () => void;
   /** 初期日付 */
   initialDate?: Date;
-  /** 初期開始時刻（HH:mm形式） */
-  initialStartTime?: string;
-  /** 初期終了時刻（HH:mm形式） */
-  initialEndTime?: string;
 }
 
 export function PlanCreateTrigger({
   triggerElement,
   onSuccess,
   initialDate,
-  initialStartTime,
-  initialEndTime,
 }: PlanCreateTriggerProps) {
   const { openInspectorWithDraft } = usePlanInspectorStore();
+  const utils = api.useUtils();
 
-  const handleClick = () => {
+  // 次の15分単位の時刻を取得
+  const getNextQuarterHour = useCallback((date: Date): Date => {
+    const result = new Date(date);
+    const minutes = result.getMinutes();
+    const nextQuarter = Math.ceil(minutes / 15) * 15;
+    result.setMinutes(nextQuarter, 0, 0);
+    if (nextQuarter >= 60) {
+      result.setHours(result.getHours() + 1);
+      result.setMinutes(0);
+    }
+    return result;
+  }, []);
+
+  // 時間が重複しているかチェック
+  const checkOverlap = useCallback(
+    (start: Date, end: Date): boolean => {
+      const plans = utils.plans.list.getData();
+      if (!plans || plans.length === 0) return false;
+
+      return plans.some((p) => {
+        if (!p.start_time || !p.end_time) return false;
+        const pStart = new Date(p.start_time);
+        const pEnd = new Date(p.end_time);
+        // 同じ日のみチェック
+        if (pStart.toDateString() !== start.toDateString()) return false;
+        return pStart < end && pEnd > start;
+      });
+    },
+    [utils.plans.list],
+  );
+
+  // 空き時間を探す（最大2時間先まで）
+  const findAvailableSlot = useCallback(
+    (baseTime: Date): { start: Date; end: Date } => {
+      let start = getNextQuarterHour(baseTime);
+      let end = new Date(start.getTime() + 60 * 60 * 1000); // 1時間後
+
+      // 最大8回（2時間分）試行
+      for (let i = 0; i < 8; i++) {
+        if (!checkOverlap(start, end)) {
+          return { start, end };
+        }
+        // 15分ずらす
+        start = new Date(start.getTime() + 15 * 60 * 1000);
+        end = new Date(end.getTime() + 15 * 60 * 1000);
+      }
+
+      // 見つからなければ最初の候補を返す
+      return {
+        start: getNextQuarterHour(baseTime),
+        end: new Date(getNextQuarterHour(baseTime).getTime() + 60 * 60 * 1000),
+      };
+    },
+    [getNextQuarterHour, checkOverlap],
+  );
+
+  const handleClick = useCallback(() => {
+    // 日付が指定されている場合は空き時間を探す
+    const baseDate = initialDate || new Date();
+    const { start, end } = findAvailableSlot(baseDate);
+
+    // カレンダーに選択範囲を表示
+    window.dispatchEvent(
+      new CustomEvent('calendar-show-selection', {
+        detail: {
+          date: start,
+          startHour: start.getHours(),
+          startMinute: start.getMinutes(),
+          endHour: end.getHours(),
+          endMinute: end.getMinutes(),
+        },
+      }),
+    );
+
     // ドラフトモードでInspectorを開く（DB未保存）
-    // 任意の入力があった時点で初めてDBに保存される
     openInspectorWithDraft({
       title: '',
-      due_date: initialDate ? format(initialDate, 'yyyy-MM-dd') : null,
-      start_time:
-        initialDate && initialStartTime
-          ? toLocalISOString(format(initialDate, 'yyyy-MM-dd'), initialStartTime)
-          : null,
-      end_time:
-        initialDate && initialEndTime
-          ? toLocalISOString(format(initialDate, 'yyyy-MM-dd'), initialEndTime)
-          : null,
+      due_date: format(start, 'yyyy-MM-dd'),
+      start_time: start.toISOString(),
+      end_time: end.toISOString(),
     });
     onSuccess?.();
-  };
+  }, [initialDate, findAvailableSlot, openInspectorWithDraft, onSuccess]);
 
   // triggerElementにonClickを追加
   if (isValidElement(triggerElement)) {

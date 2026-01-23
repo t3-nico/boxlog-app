@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
+import { format } from 'date-fns';
 import { CalendarPlus, Clock, FileText, History, Plus, Tag } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -15,6 +16,7 @@ import {
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
 import { useTagModalNavigation } from '@/features/tags/hooks/useTagModalNavigation';
+import { api } from '@/lib/trpc';
 import { useTranslations } from 'next-intl';
 
 interface CreateNewDropdownProps {
@@ -41,13 +43,89 @@ export function CreateNewDropdown({
   const { openInspectorWithDraft } = usePlanInspectorStore();
   const { openTagCreateModal } = useTagModalNavigation();
   const [isOpen, setIsOpen] = useState(false);
+  const utils = api.useUtils();
+
+  // 次の15分単位の時刻を取得
+  const getNextQuarterHour = useCallback((date: Date): Date => {
+    const result = new Date(date);
+    const minutes = result.getMinutes();
+    const nextQuarter = Math.ceil(minutes / 15) * 15;
+    result.setMinutes(nextQuarter, 0, 0);
+    if (nextQuarter >= 60) {
+      result.setHours(result.getHours() + 1);
+      result.setMinutes(0);
+    }
+    return result;
+  }, []);
+
+  // 時間が重複しているかチェック
+  const checkOverlap = useCallback(
+    (start: Date, end: Date): boolean => {
+      const plans = utils.plans.list.getData();
+      if (!plans || plans.length === 0) return false;
+
+      return plans.some((p) => {
+        if (!p.start_time || !p.end_time) return false;
+        const pStart = new Date(p.start_time);
+        const pEnd = new Date(p.end_time);
+        // 同じ日のみチェック
+        if (pStart.toDateString() !== start.toDateString()) return false;
+        return pStart < end && pEnd > start;
+      });
+    },
+    [utils.plans.list],
+  );
+
+  // 空き時間を探す（最大2時間先まで）
+  const findAvailableSlot = useCallback(
+    (baseTime: Date): { start: Date; end: Date } => {
+      let start = getNextQuarterHour(baseTime);
+      let end = new Date(start.getTime() + 60 * 60 * 1000); // 1時間後
+
+      // 最大8回（2時間分）試行
+      for (let i = 0; i < 8; i++) {
+        if (!checkOverlap(start, end)) {
+          return { start, end };
+        }
+        // 15分ずらす
+        start = new Date(start.getTime() + 15 * 60 * 1000);
+        end = new Date(end.getTime() + 15 * 60 * 1000);
+      }
+
+      // 見つからなければ最初の候補を返す
+      return {
+        start: getNextQuarterHour(baseTime),
+        end: new Date(getNextQuarterHour(baseTime).getTime() + 60 * 60 * 1000),
+      };
+    },
+    [getNextQuarterHour, checkOverlap],
+  );
 
   // ドラフトモードでInspectorを開く（DB保存は入力時に遅延実行）
-  const handleCreatePlan = () => {
+  const handleCreatePlan = useCallback(() => {
+    const now = new Date();
+    const { start, end } = findAvailableSlot(now);
+
+    // カレンダーに選択範囲を表示
+    window.dispatchEvent(
+      new CustomEvent('calendar-show-selection', {
+        detail: {
+          date: start,
+          startHour: start.getHours(),
+          startMinute: start.getMinutes(),
+          endHour: end.getHours(),
+          endMinute: end.getMinutes(),
+        },
+      }),
+    );
+
     openInspectorWithDraft({
       title: '',
+      due_date: format(start, 'yyyy-MM-dd'),
+      start_time: start.toISOString(),
+      end_time: end.toISOString(),
     });
-  };
+  }, [findAvailableSlot, openInspectorWithDraft]);
 
   const handleCreateRecord = () => {
     // TODO: Record機能 - start_time=nowでプラン作成し、記録モードで開く

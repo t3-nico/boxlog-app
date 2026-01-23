@@ -161,18 +161,8 @@ export function ScheduleStatusItem() {
   // ツールチップ
   const tooltip = currentPlan ? t('statusBar.openSchedule') : t('statusBar.createNewPlan');
 
-  // 予定がない場合の初期値を計算
+  // 予定がない場合の初期日付（時間は PlanCreateTrigger 内で自動計算）
   const initialDate = useMemo(() => new Date(), []);
-  const initialStartTime = useMemo(() => {
-    const now = new Date();
-    const hours = now.getHours().toString().padStart(2, '0');
-    return `${hours}:00`;
-  }, []);
-  const initialEndTime = useMemo(() => {
-    const now = new Date();
-    const endHours = (now.getHours() + 1) % 24;
-    return `${endHours.toString().padStart(2, '0')}:00`;
-  }, []);
 
   // 現在の予定がある場合は通常のStatusBarItem、ない場合はPlanCreateTriggerでラップ
   const hasActivePlan = !!currentPlan;
@@ -227,8 +217,6 @@ export function ScheduleStatusItem() {
           </Button>
         }
         initialDate={initialDate}
-        initialStartTime={initialStartTime}
-        initialEndTime={initialEndTime}
       />
       {progressPercent !== null && (
         <div className="flex items-center gap-1.5" title={`${progressPercent}% 経過`}>

@@ -554,6 +554,32 @@ export function useDragSelection({
     return () => window.removeEventListener('calendar-drag-cancel', handleCalendarDragCancel);
   }, [clearSelectionState]);
 
+  // Effect: 外部からの選択範囲表示（サイドバーからの作成時）
+  useEffect(() => {
+    const handleShowSelection = (e: CustomEvent) => {
+      const { date: eventDate, startHour, startMinute, endHour, endMinute } = e.detail;
+
+      // この列の日付と一致するかチェック
+      const eventDateStr = new Date(eventDate).toDateString();
+      const columnDateStr = date.toDateString();
+
+      if (eventDateStr === columnDateStr) {
+        setSelection({
+          startHour,
+          startMinute,
+          endHour,
+          endMinute,
+        });
+        setShowSelectionPreview(true);
+        setIsOverlapping(false);
+      }
+    };
+
+    window.addEventListener('calendar-show-selection', handleShowSelection as EventListener);
+    return () =>
+      window.removeEventListener('calendar-show-selection', handleShowSelection as EventListener);
+  }, [date]);
+
   return {
     isSelecting,
     selection,
