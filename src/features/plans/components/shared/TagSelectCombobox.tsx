@@ -232,7 +232,8 @@ export function TagSelectCombobox({
       if (selectedTagIds.includes(tagId)) {
         onTagsChange(selectedTagIds.filter((id) => id !== tagId));
       } else {
-        onTagsChange([...selectedTagIds, tagId]);
+        // 新しいタグを先頭に追加（最新が左に表示される）
+        onTagsChange([tagId, ...selectedTagIds]);
       }
     },
     [selectedTagIds, onTagsChange],

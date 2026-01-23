@@ -31,7 +31,11 @@ export function PlanTagsSection({
   // データベースからタグを取得
   const { data: allTags = [] } = useTags();
 
-  const selectedTags = allTags.filter((tag) => selectedTagIds.includes(tag.id));
+  // selectedTagIds の順序（追加順）を維持して表示
+  // allTags.filter() だと sort_order 順になるため、selectedTagIds を基準にマッピング
+  const selectedTags = selectedTagIds
+    .map((id) => allTags.find((tag) => tag.id === id))
+    .filter((tag): tag is NonNullable<typeof tag> => tag !== undefined);
 
   return (
     <div

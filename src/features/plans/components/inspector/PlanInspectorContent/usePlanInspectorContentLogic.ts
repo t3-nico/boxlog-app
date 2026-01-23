@@ -17,6 +17,7 @@ import { api } from '@/lib/trpc';
 import type { RecurringEditScope } from '../../../components/RecurringEditConfirmDialog';
 import { usePlan } from '../../../hooks/usePlan';
 import { usePlanInstanceMutations } from '../../../hooks/usePlanInstances';
+import { usePlanMutations } from '../../../hooks/usePlanMutations';
 import { usePlanTags } from '../../../hooks/usePlanTags';
 import { useDeleteConfirmStore } from '../../../stores/useDeleteConfirmStore';
 import { usePlanCacheStore } from '../../../stores/usePlanCacheStore';
@@ -44,11 +45,19 @@ export function usePlanInspectorContentLogic() {
   const closeInspector = usePlanInspectorStore((state) => state.closeInspector);
   const displayMode = usePlanInspectorStore((state) => state.displayMode) as InspectorDisplayMode;
   const setDisplayMode = usePlanInspectorStore((state) => state.setDisplayMode);
+  const draftPlan = usePlanInspectorStore((state) => state.draftPlan);
+  const clearDraft = usePlanInspectorStore((state) => state.clearDraft);
+  const updateDraft = usePlanInspectorStore((state) => state.updateDraft);
+  const openInspector = usePlanInspectorStore((state) => state.openInspector);
+
+  // ドラフトモード判定: draftPlanがあり、planIdがない場合
+  const isDraftMode = draftPlan !== null && planId === null;
 
   const openDeleteDialog = useDeleteConfirmStore((state) => state.openDialog);
   const openRecurringDialog = useRecurringEditConfirmStore((state) => state.openDialog);
   const getCache = usePlanCacheStore((state) => state.getCache);
   const { createInstance } = usePlanInstanceMutations();
+  const { createPlan } = usePlanMutations();
 
   // Inspectorマウント時にグローバルダイアログをリセット
   // （ドラッグ操作で開いたダイアログが残っている場合があるため）
@@ -75,8 +84,15 @@ export function usePlanInspectorContentLogic() {
     return () => clearTimeout(timer);
   }, [planId]);
 
-  const { data: planData } = usePlan(planId!, { includeTags: true, enabled: !!planId });
-  const plan = (planData ?? null) as unknown as Plan | null;
+  const { data: planData } = usePlan(planId!, {
+    includeTags: true,
+    enabled: !!planId && !isDraftMode,
+  });
+
+  // ドラフトモードの場合はdraftPlanを使用、それ以外はfetchしたplanDataを使用
+  const plan = isDraftMode
+    ? (draftPlan as unknown as Plan | null)
+    : ((planData ?? null) as unknown as Plan | null);
 
   // 繰り返しプラン編集フック
   const recurringEdit = useRecurringPlanEdit({
@@ -113,10 +129,66 @@ export function usePlanInspectorContentLogic() {
   const { hasPrevious, hasNext, goToPrevious, goToNext } = useInspectorNavigation(planId);
   const { autoSave: baseAutoSave, updatePlan, deletePlan } = useInspectorAutoSave({ planId, plan });
 
+  // ドラフトモード用の初回保存（DBに新規作成）
+  const saveDraftToDb = useCallback(
+    async (field: string, value: string | undefined): Promise<string | null> => {
+      if (!draftPlan) return null;
+
+      try {
+        // ドラフトデータに変更を適用してDB保存
+        // description は null を undefined に変換（API仕様に合わせる）
+        // タイトルが空の場合も空のまま保存（Google Calendar準拠）
+        const planData = {
+          title: draftPlan.title.trim(),
+          description: draftPlan.description ?? undefined,
+          status: 'open' as const,
+          due_date: draftPlan.due_date,
+          start_time: draftPlan.start_time,
+          end_time: draftPlan.end_time,
+          [field]: value,
+        };
+
+        const newPlan = await createPlan.mutateAsync(planData);
+
+        if (newPlan?.id) {
+          // ドラフトをクリアして通常モードに切り替え
+          clearDraft();
+          openInspector(newPlan.id);
+          return newPlan.id;
+        }
+        return null;
+      } catch (error) {
+        console.error('Failed to create plan from draft:', error);
+        return null;
+      }
+    },
+    [draftPlan, createPlan, clearDraft, openInspector],
+  );
+
   // 繰り返しインスタンス対応のautoSave
   // 時間変更の場合のみスコープダイアログを表示
   const autoSave = useCallback(
-    (field: string, value: string | undefined) => {
+    async (field: string, value: string | undefined) => {
+      // ドラフトモードの場合
+      if (isDraftMode) {
+        // タイトルを判定（今回の変更がtitleならその値、それ以外ならdraftPlanのtitle）
+        const effectiveTitle = field === 'title' ? value : draftPlan?.title;
+        const hasTitle = effectiveTitle && effectiveTitle.trim() !== '';
+
+        // タイトルがなければドラフトをローカル更新のみ（DBには保存しない）
+        if (!hasTitle) {
+          // タイトル以外のフィールド変更はドラフトに保持
+          if (field !== 'title' && field !== 'description') {
+            updateDraft({ [field]: value } as Partial<typeof draftPlan>);
+          }
+          return;
+        }
+
+        // タイトルがあればDBに保存
+        await saveDraftToDb(field, value);
+        return;
+      }
+
       // 繰り返しインスタンスの場合、時間フィールドはスコープダイアログを表示
       if (
         recurringEdit.isRecurringInstance &&
@@ -128,7 +200,7 @@ export function usePlanInspectorContentLogic() {
       // 通常の保存処理（title, descriptionなど）
       baseAutoSave(field, value);
     },
-    [baseAutoSave, recurringEdit],
+    [baseAutoSave, recurringEdit, isDraftMode, saveDraftToDb, draftPlan, updateDraft],
   );
 
   // Activity state
@@ -145,7 +217,7 @@ export function usePlanInspectorContentLogic() {
   const { setplanTags, removePlanTag } = usePlanTags();
 
   // UI state
-  const titleRef = useRef<HTMLSpanElement>(null);
+  const titleRef = useRef<HTMLInputElement>(null);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
   const [scheduleDate, setScheduleDate] = useState<Date | undefined>(); // スケジュール日（start_time/end_time用）
   const [dueDate, setDueDate] = useState<Date | undefined>(); // 期限日（due_date用）
@@ -180,8 +252,36 @@ export function usePlanInspectorContentLogic() {
     selectedTagIdsRef.current = selectedTagIds;
   }, [selectedTagIds]);
 
-  // Initialize state from plan data
+  // Initialize state from plan data or draftPlan
   useEffect(() => {
+    // ドラフトモードの場合はdraftPlanから初期化
+    if (isDraftMode && draftPlan) {
+      setDueDate(draftPlan.due_date ? parseDateString(draftPlan.due_date) : undefined);
+
+      if (draftPlan.start_time) {
+        const date = parseDatetimeString(draftPlan.start_time);
+        setScheduleDate(date);
+        setStartTime(
+          `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`,
+        );
+      } else {
+        setScheduleDate(undefined);
+        setStartTime('');
+      }
+
+      if (draftPlan.end_time) {
+        const date = parseDatetimeString(draftPlan.end_time);
+        setEndTime(
+          `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`,
+        );
+      } else {
+        setEndTime('');
+      }
+
+      setReminderType('');
+      return;
+    }
+
     if (plan && 'id' in plan) {
       // 期限日（due_date）を設定
       setDueDate(plan.due_date ? parseDateString(plan.due_date) : undefined);
@@ -242,20 +342,14 @@ export function usePlanInspectorContentLogic() {
       setEndTime('');
       setReminderType('');
     }
-  }, [plan, initialData]);
+  }, [plan, initialData, isDraftMode, draftPlan]);
 
   // Focus title on open
   useEffect(() => {
     if (titleRef.current) {
       const timer = setTimeout(() => {
         titleRef.current?.focus();
-        const range = document.createRange();
-        const selection = window.getSelection();
-        if (selection && titleRef.current) {
-          range.selectNodeContents(titleRef.current);
-          selection.removeAllRanges();
-          selection.addRange(range);
-        }
+        titleRef.current?.select(); // input要素の全選択
       }, 100);
       return () => clearTimeout(timer);
     }
@@ -552,6 +646,7 @@ export function usePlanInspectorContentLogic() {
     displayMode,
     setDisplayMode,
     closeInspector,
+    isDraftMode,
 
     // Navigation
     hasPrevious,

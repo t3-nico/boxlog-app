@@ -2,6 +2,7 @@
 
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
+import { useMemo } from 'react';
 import { toast } from 'sonner';
 
 import { trpc } from '@/lib/trpc/client';
@@ -67,9 +68,14 @@ export function useTags() {
     staleTime: 5 * 60 * 1000, // 5分間キャッシュ
   });
 
+  // データの参照を安定化（親コンポーネントの再レンダー時に不要なuseEffect発火を防ぐ）
+  // query.dataはTanStack Queryにより安定しているが、.dataアクセスを毎回評価すると
+  // 無関係なstate更新でも参照が変わる可能性があるためuseMemoで固定
+  const stableData = useMemo(() => query.data?.data, [query.data]);
+
   return {
     ...query,
-    data: query.data?.data, // 直接アクセスで楽観的更新の検出を確実に
+    data: stableData,
   };
 }
 
@@ -701,6 +707,9 @@ export function useMergeTag() {
       await utils.tags.listParentTags.cancel();
       await utils.tags.getById.cancel({ id: sourceTagId });
       await utils.tags.getById.cancel({ id: targetTagId });
+      // プラン統計の進行中クエリもキャンセル（古いデータで上書きされるのを防ぐ）
+      await utils.plans.getTagStats.cancel();
+      await utils.plans.list.cancel();
 
       // 現在のキャッシュを保存（ロールバック用）
       const previousData = utils.tags.list.getData();
@@ -766,6 +775,8 @@ export function useMergeTag() {
       void utils.tags.getById.invalidate({ id: input.targetTagId });
       // plansのキャッシュも無効化（タグ情報を含むため）
       void utils.plans.list.invalidate();
+      // タグ統計（サイドバーのプランカウント）を強制再取得
+      void utils.plans.getTagStats.refetch();
     },
   });
 }

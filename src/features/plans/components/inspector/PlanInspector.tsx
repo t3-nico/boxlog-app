@@ -33,17 +33,32 @@ export function PlanInspector() {
   const closeInspector = usePlanInspectorStore((state) => state.closeInspector);
   const popoverPosition = usePlanInspectorStore((state) => state.popoverPosition);
   const setPopoverPosition = usePlanInspectorStore((state) => state.setPopoverPosition);
+  const draftPlan = usePlanInspectorStore((state) => state.draftPlan);
+  const clearDraft = usePlanInspectorStore((state) => state.clearDraft);
 
-  const { data: planData, isLoading } = usePlan(planId!, { includeTags: true, enabled: !!planId });
-  const plan = (planData ?? null) as unknown as Plan | null;
+  // ドラフトモード判定
+  const isDraftMode = draftPlan !== null && planId === null;
+
+  const { data: planData, isLoading } = usePlan(planId!, {
+    includeTags: true,
+    enabled: !!planId && !isDraftMode,
+  });
+  // ドラフトモードの場合はdraftPlanを使用
+  const plan = isDraftMode
+    ? (draftPlan as unknown as Plan | null)
+    : ((planData ?? null) as unknown as Plan | null);
 
   // 繰り返しダイアログが開いている間はInspectorを閉じない
   const handleClose = useCallback(() => {
     const isRecurringDialogOpen = useRecurringEditConfirmStore.getState().isOpen;
     if (!isRecurringDialogOpen) {
+      // ドラフトモードの場合はドラフトをクリア（何も保存されない）
+      if (isDraftMode) {
+        clearDraft();
+      }
       closeInspector();
     }
-  }, [closeInspector]);
+  }, [closeInspector, isDraftMode, clearDraft]);
 
   // ナビゲーション
   const { hasPrevious, hasNext, goToPrevious, goToNext } = useInspectorNavigation(planId);
@@ -114,16 +129,16 @@ export function PlanInspector() {
       isOpen={isOpen}
       onClose={handleClose}
       displayMode={displayMode}
-      title={plan?.title || '予定の詳細'}
+      title={isDraftMode ? '' : plan?.title || '（タイトルなし）'}
       resizable={displayMode === 'sheet'}
       modal={false}
-      mobileMenuContent={mobileMenuContent}
+      mobileMenuContent={isDraftMode ? undefined : mobileMenuContent}
       popoverPosition={popoverPosition}
       onPopoverPositionChange={setPopoverPosition}
     >
       <InspectorContent
-        isLoading={isLoading}
-        hasData={!!plan}
+        isLoading={isDraftMode ? false : isLoading}
+        hasData={isDraftMode ? true : !!plan}
         emptyMessage="プランが見つかりません"
       >
         <PlanInspectorContent />

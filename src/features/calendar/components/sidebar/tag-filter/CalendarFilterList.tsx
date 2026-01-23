@@ -129,8 +129,8 @@ export function CalendarFilterList() {
   // タグモーダルナビゲーション
   const { openTagCreateModal, openTagMergeModal } = useTagModalNavigation();
 
-  // 削除確認ダイアログの状態
-  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
+  // 削除確認ダイアログの状態（IDと名前を保持）
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
 
   // 子タグ追加ハンドラー
   const handleAddChildTag = (parentId: string) => {
@@ -138,15 +138,15 @@ export function CalendarFilterList() {
   };
 
   // 親タグ削除ハンドラー
-  const handleDeleteParentTag = (groupId: string) => {
-    setDeleteTargetId(groupId);
+  const handleDeleteParentTag = (tagId: string, tagName: string) => {
+    setDeleteTarget({ id: tagId, name: tagName });
   };
 
   // 削除確認後のハンドラー
   const handleConfirmDelete = async () => {
-    if (!deleteTargetId) return;
-    await deleteTagMutation.mutateAsync({ id: deleteTargetId });
-    setDeleteTargetId(null);
+    if (!deleteTarget) return;
+    await deleteTagMutation.mutateAsync({ id: deleteTarget.id });
+    setDeleteTarget(null);
   };
 
   return (
@@ -192,7 +192,7 @@ export function CalendarFilterList() {
                 parentTagCounts={parentTagCounts}
                 onToggleTag={toggleTag}
                 onUpdateTag={handleUpdateTag}
-                onDeleteTag={(tagId) => handleDeleteParentTag(tagId)}
+                onDeleteTag={(tagId, tagName) => handleDeleteParentTag(tagId, tagName)}
                 onAddChildTag={handleAddChildTag}
                 onShowOnlyTag={showOnlyTag}
                 onShowOnlyGroupTags={showOnlyGroupTags}
@@ -223,10 +223,10 @@ export function CalendarFilterList() {
 
       {/* 親タグ削除確認ダイアログ */}
       <DeleteConfirmDialog
-        open={deleteTargetId !== null}
-        onClose={() => setDeleteTargetId(null)}
+        open={deleteTarget !== null}
+        onClose={() => setDeleteTarget(null)}
         onConfirm={handleConfirmDelete}
-        title={t('calendar.filter.deleteParentTag.title')}
+        title={t('calendar.filter.deleteParentTag.title', { name: deleteTarget?.name ?? '' })}
         description={t('calendar.filter.deleteParentTag.description')}
       />
     </>

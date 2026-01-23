@@ -77,7 +77,7 @@
       "noSlash": "タグ名にスラッシュ（/）は使用できません",
       "noHashPrefix": "タグ名は#で始めることはできません",
       "descriptionMaxLength": "説明は200文字以内で入力してください",
-      "duplicateName": "同じ親階層に同名のタグが既に存在します",
+      "duplicateName": "同名のTagsがすでに存在します",
       "namePlaceholder": "タグ名を入力",
       "rootLevel": "ルートレベル（親なし）",
       "tagName": "タグ名",

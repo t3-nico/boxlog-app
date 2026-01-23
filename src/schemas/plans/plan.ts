@@ -13,7 +13,8 @@ export const recurrenceTypeSchema = z.enum([
 ]);
 
 export const createPlanSchema = z.object({
-  title: z.string().min(1, 'validation.title.required').max(200, 'validation.title.maxLength'),
+  // Google Calendar準拠: 空タイトルを許可（表示時に「（タイトルなし）」）
+  title: z.string().max(200, 'validation.title.maxLength'),
   description: z.string().max(10000, 'validation.description.maxLength').optional(), // Markdown対応のため拡張
   status: planStatusSchema,
   due_date: z.string().nullable().optional(), // 日付（YYYY-MM-DD形式）

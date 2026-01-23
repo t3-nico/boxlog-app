@@ -35,6 +35,18 @@ export interface PopoverPosition {
 }
 
 /**
+ * Draft Plan（ローカルのみ、未保存のプラン）
+ */
+export interface DraftPlan {
+  title: string;
+  description: string | null;
+  status: 'open';
+  due_date: string | null;
+  start_time: string | null;
+  end_time: string | null;
+}
+
+/**
  * Plan Inspector Store の状態
  */
 interface PlanInspectorState {
@@ -52,6 +64,8 @@ interface PlanInspectorState {
   popoverAnchor?: { x: number; y: number } | undefined;
   /** Popoverの保存された位置（ドラッグ移動後） */
   popoverPosition: PopoverPosition | null;
+  /** ローカルのみのドラフトプラン（未保存） */
+  draftPlan: DraftPlan | null;
 }
 
 /**
@@ -73,6 +87,12 @@ interface PlanInspectorActions {
   setDisplayMode: (mode: InspectorDisplayMode) => void;
   /** Popoverの位置を保存する */
   setPopoverPosition: (position: PopoverPosition | null) => void;
+  /** ドラフトモードでInspectorを開く（DB未保存） */
+  openInspectorWithDraft: (initialData?: Partial<DraftPlan>) => void;
+  /** ドラフトをクリアする */
+  clearDraft: () => void;
+  /** ドラフトを更新する */
+  updateDraft: (updates: Partial<DraftPlan>) => void;
 }
 
 /**
@@ -91,6 +111,7 @@ export const usePlanInspectorStore = create<PlanInspectorStore>()(
         displayMode: 'sheet',
         popoverAnchor: undefined,
         popoverPosition: null,
+        draftPlan: null,
 
         openInspector: (planId, options) =>
           set(
@@ -100,6 +121,7 @@ export const usePlanInspectorStore = create<PlanInspectorStore>()(
               instanceDate: options?.instanceDate ?? null,
               initialData: planId === null ? options?.initialData : undefined,
               popoverAnchor: options?.anchor,
+              draftPlan: null, // 既存プランを開く時はdraftをクリア
             },
             false,
             'openInspector',
@@ -113,6 +135,7 @@ export const usePlanInspectorStore = create<PlanInspectorStore>()(
               instanceDate: null,
               initialData: undefined,
               popoverAnchor: undefined,
+              draftPlan: null, // 閉じる時はdraftもクリア
             },
             false,
             'closeInspector',
@@ -122,6 +145,37 @@ export const usePlanInspectorStore = create<PlanInspectorStore>()(
 
         setPopoverPosition: (position) =>
           set({ popoverPosition: position }, false, 'setPopoverPosition'),
+
+        openInspectorWithDraft: (initialData) =>
+          set(
+            {
+              isOpen: true,
+              planId: null,
+              instanceDate: null,
+              initialData: undefined,
+              draftPlan: {
+                title: initialData?.title ?? '',
+                description: initialData?.description ?? null,
+                status: 'open',
+                due_date: initialData?.due_date ?? null,
+                start_time: initialData?.start_time ?? null,
+                end_time: initialData?.end_time ?? null,
+              },
+            },
+            false,
+            'openInspectorWithDraft',
+          ),
+
+        clearDraft: () => set({ draftPlan: null }, false, 'clearDraft'),
+
+        updateDraft: (updates) =>
+          set(
+            (state) => ({
+              draftPlan: state.draftPlan ? { ...state.draftPlan, ...updates } : null,
+            }),
+            false,
+            'updateDraft',
+          ),
       }),
       {
         name: 'plan-inspector-settings',

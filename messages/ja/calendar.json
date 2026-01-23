@@ -183,7 +183,7 @@
       "noteHint": "ツールチップに表示されます",
       "notePlaceholder": "ノートを追加...",
       "deleteParentTag": {
-        "title": "タグを削除",
+        "title": "「{name}」を削除",
         "description": "このタグを削除しますか？子タグはルートタグとして残ります。"
       },
       "changeParent": "親タグを変更",

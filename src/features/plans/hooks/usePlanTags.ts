@@ -182,8 +182,6 @@ export function usePlanTags() {
       void utils.plans.getById.invalidate({ id: planId });
       void utils.plans.list.invalidate();
       void utils.plans.getTagStats.invalidate();
-      // タグ構造が変更された可能性があるため、親タグリストも無効化
-      void utils.tags.listParentTags.invalidate();
     },
   });
 
@@ -256,8 +254,6 @@ export function usePlanTags() {
       void utils.plans.getById.invalidate({ id: planId });
       void utils.plans.list.invalidate();
       void utils.plans.getTagStats.invalidate();
-      // タグ構造が変更された可能性があるため、親タグリストも無効化
-      void utils.tags.listParentTags.invalidate();
     },
   });
 
@@ -363,8 +359,6 @@ export function usePlanTags() {
       void utils.plans.getById.invalidate({ id: planId });
       void utils.plans.list.invalidate();
       void utils.plans.getTagStats.invalidate();
-      // タグ構造が変更された可能性があるため、親タグリストも無効化
-      void utils.tags.listParentTags.invalidate();
     },
   });
 

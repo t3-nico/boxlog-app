@@ -3,7 +3,6 @@
 import { format } from 'date-fns';
 import { cloneElement, isValidElement, type ReactNode } from 'react';
 
-import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
 import { toLocalISOString } from '@/features/plans/utils/datetime';
 
 import { usePlanInspectorStore } from '../../stores/usePlanInspectorStore';
@@ -26,34 +25,24 @@ export function PlanCreateTrigger({
   initialStartTime,
   initialEndTime,
 }: PlanCreateTriggerProps) {
-  const { openInspector } = usePlanInspectorStore();
-  const { createPlan } = usePlanMutations();
+  const { openInspectorWithDraft } = usePlanInspectorStore();
 
-  const handleClick = async () => {
-    try {
-      const planData = {
-        title: '新しい予定',
-        status: 'open' as const,
-        due_date: initialDate ? format(initialDate, 'yyyy-MM-dd') : undefined,
-        start_time:
-          initialDate && initialStartTime
-            ? toLocalISOString(format(initialDate, 'yyyy-MM-dd'), initialStartTime)
-            : null,
-        end_time:
-          initialDate && initialEndTime
-            ? toLocalISOString(format(initialDate, 'yyyy-MM-dd'), initialEndTime)
-            : null,
-      };
-
-      const newPlan = await createPlan.mutateAsync(planData);
-
-      if (newPlan?.id) {
-        openInspector(newPlan.id);
-        onSuccess?.();
-      }
-    } catch (error) {
-      console.error('Failed to create plan:', error);
-    }
+  const handleClick = () => {
+    // ドラフトモードでInspectorを開く（DB未保存）
+    // 任意の入力があった時点で初めてDBに保存される
+    openInspectorWithDraft({
+      title: '',
+      due_date: initialDate ? format(initialDate, 'yyyy-MM-dd') : null,
+      start_time:
+        initialDate && initialStartTime
+          ? toLocalISOString(format(initialDate, 'yyyy-MM-dd'), initialStartTime)
+          : null,
+      end_time:
+        initialDate && initialEndTime
+          ? toLocalISOString(format(initialDate, 'yyyy-MM-dd'), initialEndTime)
+          : null,
+    });
+    onSuccess?.();
   };
 
   // triggerElementにonClickを追加

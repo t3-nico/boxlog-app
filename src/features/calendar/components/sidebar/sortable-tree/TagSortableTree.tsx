@@ -101,7 +101,7 @@ interface TagSortableTreeProps {
     data: { name?: string; color?: string; description?: string | null; parentId?: string | null },
   ) => void;
   /** タグ削除ハンドラー */
-  onDeleteTag: (tagId: string) => void;
+  onDeleteTag: (tagId: string, tagName: string) => void;
   /** 子タグ追加ハンドラー */
   onAddChildTag: (parentId: string) => void;
   /** このタグだけ表示 */
@@ -189,8 +189,22 @@ export function TagSortableTree({
   const [overId, setOverId] = useState<UniqueIdentifier | null>(null);
   const [offsetLeft, setOffsetLeft] = useState(0);
 
+  // タグデータのハッシュを追跡（参照ではなく実際のデータ変更を検出）
+  const tagDataHashRef = useRef<string>('');
+
   // タグが変更されたらitemsを更新（collapsed状態は保持）
   useEffect(() => {
+    // タグデータをハッシュ化（ID、名前、親ID、色を含む）
+    const currentHash = tags
+      .map((t) => `${t.id}|${t.name}|${t.parent_id}|${t.color}|${t.sort_order}`)
+      .join(',');
+
+    // 実際にタグデータが変わっていなければスキップ
+    if (tagDataHashRef.current === currentHash) {
+      return;
+    }
+    tagDataHashRef.current = currentHash;
+
     setItems((prevItems) => {
       const newItems = tagsToTreeItems(tags);
       // 既存のcollapsed状態を保持
@@ -417,7 +431,7 @@ export function TagSortableTree({
                 onToggle={() => onToggleTag(id as string)}
                 onCollapse={hasChildren ? () => handleCollapse(id) : undefined}
                 onUpdateTag={(data) => onUpdateTag(id as string, data)}
-                onDeleteTag={() => onDeleteTag(id as string)}
+                onDeleteTag={() => onDeleteTag(tag.id, tag.name)}
                 onAddChildTag={depth === 0 ? () => onAddChildTag(id as string) : undefined}
                 onShowOnlyThis={() => {
                   if (depth === 0 && hasChildren) {

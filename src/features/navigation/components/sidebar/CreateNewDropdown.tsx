@@ -13,7 +13,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { HoverTooltip } from '@/components/ui/tooltip';
-import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
 import { useTagModalNavigation } from '@/features/tags/hooks/useTagModalNavigation';
 import { useTranslations } from 'next-intl';
@@ -39,42 +38,24 @@ export function CreateNewDropdown({
   tooltipSide = 'bottom',
 }: CreateNewDropdownProps) {
   const t = useTranslations();
-  const { createPlan } = usePlanMutations();
-  const { openInspector } = usePlanInspectorStore();
+  const { openInspectorWithDraft } = usePlanInspectorStore();
   const { openTagCreateModal } = useTagModalNavigation();
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleCreatePlan = async () => {
-    try {
-      const newPlan = await createPlan.mutateAsync({
-        title: t('createNew.defaultPlanTitle'),
-        status: 'open',
-      });
-
-      if (newPlan?.id) {
-        openInspector(newPlan.id);
-      }
-    } catch (error) {
-      console.error('Failed to create plan:', error);
-    }
+  // ドラフトモードでInspectorを開く（DB保存は入力時に遅延実行）
+  const handleCreatePlan = () => {
+    openInspectorWithDraft({
+      title: '',
+    });
   };
 
-  const handleCreateRecord = async () => {
+  const handleCreateRecord = () => {
     // TODO: Record機能 - start_time=nowでプラン作成し、記録モードで開く
-    try {
-      const now = new Date().toISOString();
-      const newPlan = await createPlan.mutateAsync({
-        title: t('createNew.defaultPlanTitle'),
-        status: 'open',
-        start_time: now,
-      });
-
-      if (newPlan?.id) {
-        openInspector(newPlan.id);
-      }
-    } catch (error) {
-      console.error('Failed to create record:', error);
-    }
+    const now = new Date().toISOString();
+    openInspectorWithDraft({
+      title: '',
+      start_time: now,
+    });
   };
 
   const handleOpenHistory = () => {

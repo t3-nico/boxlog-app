@@ -29,7 +29,7 @@ export const plansTransactionRouter = createTRPCRouter({
   createWithTags: protectedProcedure
     .input(
       z.object({
-        title: z.string().min(1).max(200),
+        title: z.string().max(200),
         description: z.string().optional(),
         scheduledDate: z.string().optional(),
         tagIds: z.array(z.string().uuid()).optional(),
@@ -62,7 +62,7 @@ export const plansTransactionRouter = createTRPCRouter({
     .input(
       z.object({
         id: z.string().uuid(),
-        title: z.string().min(1).max(200).optional(),
+        title: z.string().max(200).optional(),
         description: z.string().nullable().optional(),
         scheduledDate: z.string().nullable().optional(),
         tagIds: z.array(z.string().uuid()).optional(),
