@@ -103,6 +103,9 @@
       "updating": "Updating...",
       "update": "Update"
     },
+    "dialog": {
+      "renameTitle": "Rename Tag"
+    },
     "group": {
       "create": "Create New Group",
       "createTitle": "Create New Group",

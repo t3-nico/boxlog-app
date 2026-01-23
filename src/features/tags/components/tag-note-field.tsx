@@ -21,7 +21,7 @@ interface TagNoteFieldProps {
 }
 
 /**
- * タグノート入力フィールド
+ * タグノート入力フィールド（1行のみ、折り返し表示）
  *
  * タグ作成モーダルとコンテキストメニューで共通使用
  */
@@ -43,14 +43,18 @@ export function TagNoteField({ id, value, onChange, onBlur, textareaRef }: TagNo
         value={value}
         placeholder={t('calendar.filter.notePlaceholder')}
         onChange={(e) => {
-          const newValue = e.target.value;
+          // 改行を除去して1行のみ許可
+          const newValue = e.target.value.replace(/[\r\n]/g, '');
           if (newValue.length <= MAX_LENGTH) {
             onChange(newValue);
-            // Auto height adjustment
-            const textarea = e.target;
-            textarea.style.height = 'auto';
-            textarea.style.height = `${textarea.scrollHeight}px`;
           }
+        }}
+        onKeyDown={(e) => {
+          // Enterキーを無効化（改行を防ぐ）+ DropdownMenuへの伝播を停止
+          if (e.key === 'Enter') {
+            e.preventDefault();
+          }
+          e.stopPropagation();
         }}
         onBlur={onBlur}
         maxLength={MAX_LENGTH}
