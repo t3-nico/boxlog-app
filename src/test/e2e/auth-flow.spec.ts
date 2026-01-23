@@ -192,15 +192,16 @@ test.describe('Auth Flow - Signup Page', () => {
     await expect(mismatchIndicator).toBeVisible({ timeout: 5000 });
   });
 
-  test('利用規約未同意でボタンが無効', async ({ page }) => {
+  // DADS準拠: ボタンは常に有効、バリデーションは送信時に行う
+  test('送信ボタンは常に有効（DADS準拠）', async ({ page }) => {
     // フォームを埋める（利用規約は未チェック）
     await page.fill('input#email', 'test@example.com');
     await page.fill('input#password', 'testpassword123');
     await page.fill('input#confirm-password', 'testpassword123');
 
-    // ボタンが無効になっている
+    // DADS準拠: ボタンは常に有効（バリデーションは送信時）
     const submitButton = page.locator('button[type="submit"]');
-    await expect(submitButton).toBeDisabled();
+    await expect(submitButton).toBeEnabled();
   });
 
   test('利用規約同意でボタンが有効になる', async ({ page, browserName }) => {
