@@ -154,6 +154,8 @@ export function usePlanInspectorContentLogic() {
           // ドラフトをクリアして通常モードに切り替え
           clearDraft();
           openInspector(newPlan.id);
+          // カレンダーのドラッグ選択をクリア（保存成功後）
+          window.dispatchEvent(new CustomEvent('calendar-drag-cancel'));
           return newPlan.id;
         }
         return null;

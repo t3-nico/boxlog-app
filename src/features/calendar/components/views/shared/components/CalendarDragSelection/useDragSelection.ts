@@ -355,6 +355,11 @@ export function useDragSelection({
           };
 
           onTimeRangeSelect(dateTimeSelection);
+          // 選択を維持（Inspectorが閉じるときにcalendar-drag-cancelイベントでクリア）
+          // ドラッグ状態のみリセットし、selection自体は残す
+          setIsSelecting(false);
+          isDragging.current = false;
+          return;
         }
       }
 
@@ -479,6 +484,11 @@ export function useDragSelection({
             endMinute: selection.endMinute,
           };
           onTimeRangeSelect(dateTimeSelection);
+          // 選択を維持（Inspectorが閉じるときにcalendar-drag-cancelイベントでクリア）
+          setIsSelecting(false);
+          isDragging.current = false;
+          clearLongPressTimer();
+          return;
         } else if (handler) {
           const startTotalMinutes = selection.startHour * 60 + selection.startMinute;
           const endTotalMinutes = Math.min(startTotalMinutes + defaultDuration, 24 * 60 - 1);
@@ -493,6 +503,11 @@ export function useDragSelection({
             endMinute,
           };
           handler(dateTimeSelection);
+          // タップでも選択を維持
+          setIsSelecting(false);
+          isDragging.current = false;
+          clearLongPressTimer();
+          return;
         }
       }
 

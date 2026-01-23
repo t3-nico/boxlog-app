@@ -56,6 +56,7 @@ export function PlanInspector() {
       if (isDraftMode) {
         clearDraft();
       }
+      // closeInspector内でcalendar-drag-cancelイベントを発行
       closeInspector();
     }
   }, [closeInspector, isDraftMode, clearDraft]);

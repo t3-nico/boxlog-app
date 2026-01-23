@@ -127,7 +127,11 @@ export const usePlanInspectorStore = create<PlanInspectorStore>()(
             'openInspector',
           ),
 
-        closeInspector: () =>
+        closeInspector: () => {
+          // カレンダーのドラッグ選択をクリア
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(new CustomEvent('calendar-drag-cancel'));
+          }
           set(
             {
               isOpen: false,
@@ -139,7 +143,8 @@ export const usePlanInspectorStore = create<PlanInspectorStore>()(
             },
             false,
             'closeInspector',
-          ),
+          );
+        },
 
         setDisplayMode: (mode) => set({ displayMode: mode }, false, 'setDisplayMode'),
 
