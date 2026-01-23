@@ -106,10 +106,16 @@ export function TagRenameDialog({
     } catch (err) {
       // TRPCError / TanStack Query error の各種形式に対応
       const errorMessage = err instanceof Error ? err.message : String(err);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const anyErr = err as any;
-      const errorCode = anyErr?.data?.code || anyErr?.code || anyErr?.cause?.code || '';
-      const causeMessage = anyErr?.cause?.message || '';
+
+      // 型安全なエラーコード抽出
+      interface TRPCErrorShape {
+        data?: { code?: string };
+        code?: string;
+        cause?: { code?: string; message?: string };
+      }
+      const trpcErr = err as Error & Partial<TRPCErrorShape>;
+      const errorCode = trpcErr.data?.code ?? trpcErr.code ?? trpcErr.cause?.code ?? '';
+      const causeMessage = trpcErr.cause?.message ?? '';
 
       const isDuplicate =
         errorCode === 'DUPLICATE_NAME' ||
