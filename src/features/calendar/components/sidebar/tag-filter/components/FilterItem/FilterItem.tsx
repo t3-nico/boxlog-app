@@ -8,13 +8,13 @@ import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 
 import { useCalendarFilterStore } from '@/features/calendar/stores/useCalendarFilterStore';
-import { TAG_NAME_MAX_LENGTH } from '@/features/tags/constants/colors';
+import { TagNoteDialog } from '@/features/tags/components/tag-note-dialog';
+import { TagRenameDialog } from '@/features/tags/components/tag-rename-dialog';
 import { useTagModalNavigation } from '@/features/tags/hooks/useTagModalNavigation';
 import { useUpdateTag } from '@/features/tags/hooks/useTags';
 
 import { Checkbox } from '@/components/ui/checkbox';
 import { DropdownMenu, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Input } from '@/components/ui/input';
 import { HoverTooltip } from '@/components/ui/tooltip';
 
 import { FilterItemMenu, UntaggedItemMenu } from './FilterItemMenu';
@@ -65,25 +65,13 @@ export function FilterItem({
   // Menu open state
   const [menuOpen, setMenuOpen] = useState(false);
 
-  // Edit hook
-  const {
-    isEditing,
-    editName,
-    editDescription,
-    displayColor,
-    inputRef,
-    textareaRef,
-    setEditName,
-    handleStartRename,
-    handleSaveName,
-    handleKeyDown,
-    setEditDescription,
-    handleSaveDescription,
-    handleColorChange,
-  } = useFilterItemEdit({
+  // Dialog states
+  const [showRenameDialog, setShowRenameDialog] = useState(false);
+  const [showNoteDialog, setShowNoteDialog] = useState(false);
+
+  // Edit hook (色変更のみ使用)
+  const { displayColor, handleColorChange } = useFilterItemEdit({
     tagId,
-    initialName: label,
-    initialDescription: description,
     initialColor: checkboxColor,
   });
 
@@ -94,6 +82,33 @@ export function FilterItem({
       await updateTagMutation.mutateAsync({
         id: tagId,
         data: { parentId: newParentId },
+      });
+    },
+    [tagId, updateTagMutation],
+  );
+
+  // Rename dialog save handler
+  // Note: 重複チェックは TagRenameDialog 内で行われる
+  const handleSaveRename = useCallback(
+    async (newName: string) => {
+      if (!tagId) return;
+
+      // mutate で楽観的更新（await しない）
+      updateTagMutation.mutate({
+        id: tagId,
+        data: { name: newName },
+      });
+    },
+    [tagId, updateTagMutation],
+  );
+
+  // Note dialog save handler
+  const handleSaveNote = useCallback(
+    async (newNote: string) => {
+      if (!tagId) return;
+      await updateTagMutation.mutateAsync({
+        id: tagId,
+        data: { description: newNote || null },
       });
     },
     [tagId, updateTagMutation],
@@ -135,39 +150,14 @@ export function FilterItem({
         style={checkboxStyle}
       />
       {icon && <span className="text-muted-foreground ml-2 shrink-0">{icon}</span>}
-      {isEditing ? (
-        <div className="ml-2 flex flex-1 flex-col gap-0.5">
-          <div className="flex items-center gap-1">
-            <Input
-              ref={inputRef}
-              value={editName}
-              onChange={(e) => setEditName(e.target.value)}
-              onBlur={handleSaveName}
-              onKeyDown={handleKeyDown}
-              onClick={(e) => e.stopPropagation()}
-              maxLength={TAG_NAME_MAX_LENGTH}
-              className="border-border bg-background focus-visible:ring-ring h-auto flex-1 rounded px-2 py-0.5 text-sm shadow-none focus-visible:ring-1"
-            />
-            <span className="text-muted-foreground shrink-0 text-[10px] tabular-nums">
-              {editName.length}/{TAG_NAME_MAX_LENGTH}
-            </span>
-          </div>
-          {editName.length >= TAG_NAME_MAX_LENGTH && (
-            <span className="text-destructive text-[10px]">
-              {t('common.validation.limitReached')}
-            </span>
-          )}
-        </div>
-      ) : (
-        <HoverTooltip
-          content={description}
-          side="top"
-          disabled={!description || menuOpen}
-          wrapperClassName="ml-1 min-w-0 flex-1"
-        >
-          <span className={cn('min-w-0 truncate', labelClassName)}>{label}</span>
-        </HoverTooltip>
-      )}
+      <HoverTooltip
+        content={description}
+        side="top"
+        disabled={!description || menuOpen}
+        wrapperClassName="ml-1 min-w-0 flex-1"
+      >
+        <span className={cn('min-w-0 truncate', labelClassName)}>{label}</span>
+      </HoverTooltip>
 
       {/* Menu trigger */}
       {(tagId || onShowOnlyThis) && !disabled && (
@@ -184,16 +174,12 @@ export function FilterItem({
           </DropdownMenuTrigger>
           {tagId ? (
             <FilterItemMenu
-              tagId={tagId}
               displayColor={displayColor}
-              editDescription={editDescription}
               parentId={parentId}
               parentTags={parentTags}
-              textareaRef={textareaRef}
-              onStartRename={handleStartRename}
+              onOpenRenameDialog={() => setShowRenameDialog(true)}
               onColorChange={handleColorChange}
-              onDescriptionChange={setEditDescription}
-              onSaveDescription={handleSaveDescription}
+              onOpenNoteDialog={() => setShowNoteDialog(true)}
               onChangeParent={parentTags && parentTags.length > 0 ? handleChangeParent : undefined}
               onOpenMergeModal={() =>
                 openTagMergeModal({ id: tagId, name: label, color: checkboxColor ?? null })
@@ -216,5 +202,30 @@ export function FilterItem({
     </div>
   );
 
-  return content;
+  return (
+    <>
+      {content}
+
+      {/* Rename Dialog */}
+      {tagId && (
+        <TagRenameDialog
+          isOpen={showRenameDialog}
+          onClose={() => setShowRenameDialog(false)}
+          onSave={handleSaveRename}
+          currentName={label}
+          tagId={tagId}
+        />
+      )}
+
+      {/* Note Dialog */}
+      {tagId && (
+        <TagNoteDialog
+          isOpen={showNoteDialog}
+          onClose={() => setShowNoteDialog(false)}
+          onSave={handleSaveNote}
+          currentNote={description ?? ''}
+        />
+      )}
+    </>
+  );
 }
