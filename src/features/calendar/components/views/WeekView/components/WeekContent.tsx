@@ -59,11 +59,11 @@ export const WeekContent = ({
   const gridHeight = 24 * HOUR_HEIGHT;
 
   // グローバルドラッグ状態（日付間移動用）
-  const globalDragState = useCalendarDragStore();
-  const isGlobalDragging = globalDragState.isDragging;
-  const globalDraggedPlan = globalDragState.draggedPlan;
-  const globalTargetDateIndex = globalDragState.targetDateIndex;
-  const globalOriginalDateIndex = globalDragState.originalDateIndex;
+  // セレクター形式で必要な値のみ取得（不要な再レンダリングを防止）
+  const isGlobalDragging = useCalendarDragStore((s) => s.isDragging);
+  const globalDraggedPlan = useCalendarDragStore((s) => s.draggedPlan);
+  const globalTargetDateIndex = useCalendarDragStore((s) => s.targetDateIndex);
+  const globalOriginalDateIndex = useCalendarDragStore((s) => s.originalDateIndex);
 
   // ドラッグ&ドロップ機能用にonPlanUpdateを変換
   const handlePlanUpdate = useCallback(

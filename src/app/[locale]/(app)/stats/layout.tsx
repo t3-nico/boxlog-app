@@ -64,14 +64,14 @@ export default function StatsLayout({ children }: StatsLayoutProps) {
         {/* 左: モバイルメニュー + タイトル + 期間セレクター */}
         <div className="flex items-center gap-2">
           <MobileMenuButton className="md:hidden" />
-          <h1 className="text-lg font-semibold">{t('stats.sidebar.overview')}</h1>
+          <h1 className="text-lg font-bold">{t('stats.sidebar.overview')}</h1>
 
           {/* 期間セレクター（GA4スタイル） */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="h-8 gap-2">
                 <Calendar className="size-4" />
-                <span className="font-medium">{formatDateRange()}</span>
+                <span className="font-normal">{formatDateRange()}</span>
                 <ChevronDown className="text-muted-foreground size-4" />
               </Button>
             </DropdownMenuTrigger>

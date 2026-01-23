@@ -171,6 +171,89 @@ export function useDragAndDrop({
     }
   }, []);
 
+  /**
+   * ドラッグ終了時の共通処理（重複排除）
+   * Mouse/Touch両方で使用
+   * 注意: クロージャー問題を避けるため、状態は引数として渡す
+   */
+  const executeEventUpdateWithOverlapCheck = useCallback(
+    async (options: {
+      currentPosition: { x: number; y: number };
+      dragStartPosition: { x: number; y: number };
+      targetDateIndex: number | undefined;
+      onOverlapError?: () => void;
+    }): Promise<boolean> => {
+      if (!dragDataRef.current) {
+        return false;
+      }
+
+      const deltaY = options.currentPosition.y - options.dragStartPosition.y;
+      const newTop = dragDataRef.current.originalTop + deltaY;
+      const finalTargetDateIndex =
+        options.targetDateIndex !== undefined
+          ? options.targetDateIndex
+          : dragDataRef.current.originalDateIndex;
+
+      const newStartTime = calculateNewTime(
+        newTop,
+        finalTargetDateIndex,
+        date,
+        viewMode,
+        displayDates,
+        dragDataRef.current,
+      );
+
+      // 重複チェック
+      const draggedEvent = eventsRef.current.find((ev) => ev.id === dragDataRef.current?.eventId);
+      if (draggedEvent) {
+        const durationMs =
+          draggedEvent.endDate && draggedEvent.startDate
+            ? draggedEvent.endDate.getTime() - draggedEvent.startDate.getTime()
+            : 60 * 60 * 1000;
+        const newEndTime = new Date(newStartTime.getTime() + durationMs);
+
+        const isOverlapping = checkClientSideOverlap(
+          allEventsRef.current,
+          dragDataRef.current.eventId,
+          newStartTime,
+          newEndTime,
+        );
+
+        if (isOverlapping) {
+          const dragElement = dragDataRef.current.dragElement ?? null;
+          const originalRect = dragDataRef.current.originalElementRect ?? null;
+
+          options.onOverlapError?.();
+          animateSnapBack(dragElement, originalRect, () => {
+            calendarToast.error(t('toast.conflict'), {
+              description: t('toast.conflictDescription'),
+            });
+            completeDragOperation(false);
+            endDrag();
+          });
+          return false;
+        }
+      }
+
+      await executeEventUpdate(newStartTime);
+
+      const actuallyDragged = dragDataRef.current?.hasMoved || false;
+      completeDragOperation(actuallyDragged);
+      endDrag();
+      return true;
+    },
+    [
+      date,
+      viewMode,
+      displayDates,
+      executeEventUpdate,
+      completeDragOperation,
+      endDrag,
+      calendarToast,
+      t,
+    ],
+  );
+
   // マウス移動処理
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {
@@ -265,7 +348,7 @@ export function useDragAndDrop({
     if (dragState.isPending && !dragState.isDragging && !dragState.isResizing) {
       handleEventClick();
       resetDragState();
-      endDrag(); // グローバルストアをリセット
+      endDrag();
       return;
     }
 
@@ -277,85 +360,36 @@ export function useDragAndDrop({
       !dragState.dragStartPosition
     ) {
       resetDragState();
-      endDrag(); // グローバルストアをリセット
+      endDrag();
       return;
     }
 
-    // リサイズ完了処理（クリック処理は行わない）
+    // リサイズ完了処理
     if (dragState.isResizing) {
       handleResizeComplete();
-      endDrag(); // グローバルストアをリセット
+      endDrag();
       return;
     }
 
-    const deltaY = dragState.currentPosition.y - dragState.dragStartPosition.y;
-    const newTop = dragDataRef.current.originalTop + deltaY;
-    const targetDateIndex =
-      dragState.targetDateIndex !== undefined
-        ? dragState.targetDateIndex
-        : dragDataRef.current.originalDateIndex;
-
-    const newStartTime = calculateNewTime(
-      newTop,
-      targetDateIndex,
-      date,
-      viewMode,
-      displayDates,
-      dragDataRef.current,
-    );
-
-    // ドロップ時に最終重複チェック（全イベントを使用して別日への移動もチェック）
-    const draggedEvent = eventsRef.current.find((e) => e.id === dragDataRef.current?.eventId);
-    if (draggedEvent) {
-      const durationMs =
-        draggedEvent.endDate && draggedEvent.startDate
-          ? draggedEvent.endDate.getTime() - draggedEvent.startDate.getTime()
-          : 60 * 60 * 1000; // デフォルト1時間
-      const newEndTime = new Date(newStartTime.getTime() + durationMs);
-
-      // allEventsRef を使用して週全体のイベントと重複チェック
-      const isOverlapping = checkClientSideOverlap(
-        allEventsRef.current,
-        dragDataRef.current.eventId,
-        newStartTime,
-        newEndTime,
-      );
-
-      if (isOverlapping) {
-        // GAFA準拠: スナップバックアニメーション + トースト通知
-        const dragElement = dragDataRef.current.dragElement ?? null;
-        const originalRect = dragDataRef.current.originalElementRect ?? null;
-
-        animateSnapBack(dragElement, originalRect, () => {
-          calendarToast.error(t('toast.conflict'), {
-            description: t('toast.conflictDescription'),
-          });
-          completeDragOperation(false);
-          endDrag();
-        });
-        return;
-      }
-    }
-
-    await executeEventUpdate(newStartTime);
-
-    const actuallyDragged = dragDataRef.current?.hasMoved || false;
-    completeDragOperation(actuallyDragged);
-    endDrag(); // グローバルストアをリセット
+    // 共通のドラッグ終了処理（重複チェック + イベント更新）
+    await executeEventUpdateWithOverlapCheck({
+      currentPosition: dragState.currentPosition,
+      dragStartPosition: dragState.dragStartPosition,
+      targetDateIndex: dragState.targetDateIndex,
+    });
   }, [
-    dragState,
-    date,
-    viewMode,
-    displayDates,
+    dragState.isPending,
+    dragState.isDragging,
+    dragState.isResizing,
+    dragState.currentPosition,
+    dragState.dragStartPosition,
+    dragState.targetDateIndex,
     cleanupDrag,
     handleEventClick,
     resetDragState,
     handleResizeComplete,
-    executeEventUpdate,
-    completeDragOperation,
+    executeEventUpdateWithOverlapCheck,
     endDrag,
-    calendarToast,
-    t,
   ]);
 
   // 長押しタイマーをクリア
@@ -545,73 +579,25 @@ export function useDragAndDrop({
       return;
     }
 
-    const deltaY = dragState.currentPosition.y - dragState.dragStartPosition.y;
-    const newTop = dragDataRef.current.originalTop + deltaY;
-    const targetDateIndex =
-      dragState.targetDateIndex !== undefined
-        ? dragState.targetDateIndex
-        : dragDataRef.current.originalDateIndex;
-
-    const newStartTime = calculateNewTime(
-      newTop,
-      targetDateIndex,
-      date,
-      viewMode,
-      displayDates,
-      dragDataRef.current,
-    );
-
-    // 重複チェック
-    const draggedEvent = eventsRef.current.find((ev) => ev.id === dragDataRef.current?.eventId);
-    if (draggedEvent) {
-      const durationMs =
-        draggedEvent.endDate && draggedEvent.startDate
-          ? draggedEvent.endDate.getTime() - draggedEvent.startDate.getTime()
-          : 60 * 60 * 1000;
-      const newEndTime = new Date(newStartTime.getTime() + durationMs);
-
-      const isOverlapping = checkClientSideOverlap(
-        allEventsRef.current,
-        dragDataRef.current.eventId,
-        newStartTime,
-        newEndTime,
-      );
-
-      if (isOverlapping) {
-        const dragElement = dragDataRef.current.dragElement ?? null;
-        const originalRect = dragDataRef.current.originalElementRect ?? null;
-
-        hapticError(); // エラー時のハプティック
-        animateSnapBack(dragElement, originalRect, () => {
-          calendarToast.error(t('toast.conflict'), {
-            description: t('toast.conflictDescription'),
-          });
-          completeDragOperation(false);
-          endDrag();
-        });
-        return;
-      }
-    }
-
-    await executeEventUpdate(newStartTime);
-
-    const actuallyDragged = dragDataRef.current?.hasMoved || false;
-    completeDragOperation(actuallyDragged);
-    endDrag();
+    // 共通のドラッグ終了処理（重複チェック + イベント更新）
+    // タッチ操作時はエラー時にハプティックフィードバックを追加
+    await executeEventUpdateWithOverlapCheck({
+      currentPosition: dragState.currentPosition,
+      dragStartPosition: dragState.dragStartPosition,
+      targetDateIndex: dragState.targetDateIndex,
+      onOverlapError: hapticError,
+    });
   }, [
-    dragState,
-    date,
-    viewMode,
-    displayDates,
+    dragState.isDragging,
+    dragState.currentPosition,
+    dragState.dragStartPosition,
+    dragState.targetDateIndex,
     cleanupDrag,
     resetDragState,
     clearLongPressTimer,
-    executeEventUpdate,
-    completeDragOperation,
-    endDrag,
-    calendarToast,
+    executeEventUpdateWithOverlapCheck,
     hapticError,
-    t,
+    endDrag,
   ]);
 
   // handleMouseDown をラップして disabledPlanId をチェック

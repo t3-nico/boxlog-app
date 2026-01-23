@@ -23,48 +23,27 @@ export {
   TagActionMenuItems,
   TagArchiveDialog,
   TagBadge,
-  TagChip,
   // Modals & Dialogs
   TagCreateModal,
   TagEditDialog,
-  TagEditModal,
-  TagFilterChips,
-  TagFilter as TagFilterComponent,
-  TagGroupCreateModal,
-  TagManagementModal,
-  TagSelectionActions,
   // Selection & Display
   TagSelector,
-  TagTreeView,
   TagsList,
-  TagsSelectionBar,
 } from './components';
 
 // Hooks
 export {
-  itemTagsKeys,
   tagGroupKeys,
   tagKeys,
-  tagStatsKeys,
-  useBatchUpdateItemTags,
-  useCreateItemTag,
   useCreateTag,
   useCreateTagGroup,
-  useDeleteItemTag,
   useDeleteTag,
   useDeleteTagGroup,
-  // Item Tags
-  useItemTags,
-  useItemTagsByItem,
-  useItemTagsOptimisticUpdate,
-  useItemsByTags,
   useMoveTag,
   useOptimisticTagUpdate,
   useRenameTag,
   useReorderTagGroups,
-  useSidebarTags,
   useTag,
-  useTagExpandedState,
   useTagGroup,
   // Tag Groups
   useTagGroups,
@@ -72,9 +51,6 @@ export {
   useTagOperations,
   // Realtime
   useTagRealtime,
-  // Stats
-  useTagStats,
-  useTagUsageCounts,
   // Tags CRUD
   useTags,
   useUpdateTag,
@@ -92,9 +68,6 @@ export { DEFAULT_TAG_COLOR, TAG_COLOR_PALETTE, TAG_PRESET_COLORS } from './const
 export { tagIconCategories, tagIconMapping } from './constants/icons';
 
 export type { TagIconName } from './constants/icons';
-
-// Context
-export { TagsPageProvider, useTagsPageContext } from './contexts/TagsPageContext';
 
 // Types
 export type {

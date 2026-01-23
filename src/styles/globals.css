@@ -15,31 +15,37 @@
 /* ライトモード（CSS変数定義） */
 :root {
   /* ============================================
-   * Background & Surface（M3準拠）
-   * background: 最背面（1種類のみ）
-   * surface: 段階的レイヤー（dim → bright）
+   * Surface体系（GAFA準拠・4段階）
+   * Material Design 3 / Apple HIG の共通原則に基づく意味ベース設計
+   *
+   * Background: ページ背景（最明）
+   * Card: カード、ダイアログ
+   * Container: サイドバー、セクション
+   * Overlay: ポップオーバー（background直下の明度）
+   *
+   * 明度順（ライト）: background > overlay > card > container
    * ============================================ */
-  --background: oklch(0.99 0 0);                  /* 最背面（ほぼ純白、眩しさ軽減） */
-  --foreground: oklch(0.3211 0 0);
+  --background: oklch(0.99 0 0);                  /* ページ背景 */
+  --foreground: oklch(0.25 0 0);
 
-  /* Surface 段階的レイヤー（明るい順） */
-  --surface-bright: oklch(0.98 0 0);              /* ポップオーバー、ドロップダウン */
-  --surface: oklch(0.97 0 0);                     /* カード、ダイアログ */
-  --surface-container: oklch(0.96 0 0);           /* セクション区切り */
-  --surface-container-high: oklch(0.94 0 0);      /* 強調コンテナ */
-  --surface-dim: oklch(0.93 0 0);                 /* サイドバー、ヘッダー（最暗） */
+  /* Surface（意味ベース4段階） */
+  --card: oklch(0.97 0 0);                        /* カード、ダイアログ */
+  --container: oklch(0.96 0 0);                   /* サイドバー、セクション */
+  --overlay: oklch(0.98 0 0);                     /* ポップオーバー */
 
-  /* 互換性エイリアス（既存コード用） */
-  --card: var(--surface);
-  --card-foreground: oklch(0.3211 0 0);
-  --popover: var(--surface-bright);
-  --popover-foreground: oklch(0.3211 0 0);
-  --secondary: var(--surface-container);
+  /* Calendar Boxes（カレンダー専用Surface） */
+  --plan-box: oklch(0.88 0 0);                    /* vs background(0.99): より強調 */
+
+  /* 互換性エイリアス（shadcn/ui用） */
+  --card-foreground: oklch(0.25 0 0);
+  --popover: var(--overlay);
+  --popover-foreground: oklch(0.25 0 0);
+  --secondary: var(--container);
   --secondary-foreground: oklch(0.25 0 0);
-  --muted-foreground: oklch(0.45 0.02 264.54);
+  --muted-foreground: oklch(0.35 0.02 264.54);
 
   /* Primary */
-  --primary: oklch(0.5 0.188 259.8145);
+  --primary: oklch(0.45 0.188 259.8145);
   --primary-foreground: oklch(1 0 0);
 
   /* State: Active（選択中・アクティブ状態） */
@@ -57,7 +63,7 @@
   --warning-foreground: oklch(1 0 0);
   --success: oklch(0.5859 0.1684 149.2);
   --success-foreground: oklch(1 0 0);
-  --info: oklch(0.5851 0.1538 241.9);
+  --info: oklch(0.6 0.18 230);
   --info-foreground: oklch(1 0 0);
 
   /* Chronotype Colors（生産性ゾーン） */
@@ -67,13 +73,9 @@
   --chronotype-low: oklch(0.92 0.01 250);         /* 低調 - グレー */
   --chronotype-sleep: oklch(0.65 0.20 310);       /* 睡眠 - 紫 */
 
-  /* Tooltip（反転デザイン） */
-  --tooltip: oklch(0.25 0 0);
-  --tooltip-foreground: oklch(0.95 0 0);
-
   /* Borders & Inputs */
-  --border: oklch(0.9 0.006 264.54);
-  --input: var(--surface-bright);
+  --border: oklch(0.80 0.01 264.54);
+  --input: var(--overlay);
   --ring: oklch(0.6231 0.188 259.8145);
 
   /* Charts - Comparison（比較用、shadcn準拠） */
@@ -87,24 +89,27 @@
 /* ダークモード（CSS変数上書き） */
 .dark {
   /* ============================================
-   * Background & Surface（M3準拠）
+   * Surface体系（GAFA準拠・4段階）
+   * ダークモードでは明度順が反転
+   *
+   * 明度順（ダーク）: background > container > card > overlay
    * ============================================ */
-  --background: oklch(0.26 0 0);                  /* 最背面（最明） */
+  --background: oklch(0.24 0 0);                  /* ページ背景（最明） */
   --foreground: oklch(0.9219 0 0);
 
-  /* Surface 段階的レイヤー（暗い順） */
-  --surface-bright: oklch(0.24 0 0);              /* ポップオーバー、ドロップダウン */
-  --surface: oklch(0.22 0 0);                     /* カード、ダイアログ */
-  --surface-container: oklch(0.20 0 0);           /* セクション区切り */
-  --surface-container-high: oklch(0.18 0 0);      /* 強調コンテナ */
-  --surface-dim: oklch(0.16 0 0);                 /* サイドバー、ヘッダー（最暗） */
+  /* Surface（意味ベース4段階） */
+  --card: oklch(0.20 0 0);                        /* カード、ダイアログ */
+  --container: oklch(0.22 0 0);                   /* サイドバー、セクション */
+  --overlay: oklch(0.18 0 0);                     /* ポップオーバー（最暗） */
 
-  /* 互換性エイリアス（既存コード用） */
-  --card: var(--surface);
+  /* Calendar Boxes（カレンダー専用Surface） */
+  --plan-box: oklch(0.16 0 0);                    /* vs background(0.24): より強調 */
+
+  /* 互換性エイリアス（shadcn/ui用） */
   --card-foreground: oklch(0.9219 0 0);
-  --popover: var(--surface-bright);
+  --popover: var(--overlay);
   --popover-foreground: oklch(0.9219 0 0);
-  --secondary: var(--surface-container);
+  --secondary: var(--container);
   --secondary-foreground: oklch(0.95 0 0);
   --muted-foreground: oklch(0.78 0 0);
 
@@ -127,7 +132,7 @@
   --warning-foreground: oklch(1 0 0);
   --success: oklch(0.5859 0.1684 149.2);
   --success-foreground: oklch(1 0 0);
-  --info: oklch(0.5851 0.1538 241.9);
+  --info: oklch(0.6 0.18 230);
   --info-foreground: oklch(1 0 0);
 
   /* Chronotype Colors（生産性ゾーン - ダークモード用） */
@@ -137,13 +142,9 @@
   --chronotype-low: oklch(0.45 0.02 250);         /* 低調 - グレー（暗め） */
   --chronotype-sleep: oklch(0.50 0.18 310);       /* 睡眠 - 紫（暗め） */
 
-  /* Tooltip（反転デザイン - ダークモードでは明るい背景） */
-  --tooltip: oklch(0.9 0 0);
-  --tooltip-foreground: oklch(0.2 0 0);
-
   /* Borders & Inputs */
   --border: oklch(0.3715 0 0);
-  --input: var(--surface-bright);
+  --input: var(--overlay);
   --ring: oklch(0.6231 0.188 259.8145);
 
   /* Charts - Comparison（比較用、shadcn準拠） */
@@ -206,28 +207,30 @@
   --color-secondary-hover: oklch(from var(--secondary) l c h / 80%);
 
   /* ============================================
-   * Surface トークン（M3準拠）
-   * background: 最背面（1種類）
-   * surface: 段階的レイヤー（dim → bright）
+   * Surface トークン（GAFA準拠・4段階）
+   * background: ページ背景
+   * card: カード、ダイアログ
+   * container: サイドバー、セクション
+   * overlay: ポップオーバー
    * ============================================ */
-  --color-surface-dim: var(--surface-dim);
-  --color-surface: var(--surface);
-  --color-surface-bright: var(--surface-bright);
-  --color-surface-container: var(--surface-container);
-  --color-surface-container-high: var(--surface-container-high);
-
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
+  --color-container: var(--container);
+  --color-overlay: var(--overlay);
+  --color-plan-box: var(--plan-box);
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--surface-dim);
+  --color-muted: var(--container);
   --color-muted-foreground: var(--muted-foreground);
+
+  /* 後方互換エイリアス（shadcn/ui互換） */
+  --color-surface-container: var(--container);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
@@ -238,8 +241,6 @@
   --color-success-foreground: var(--success-foreground);
   --color-info: var(--info);
   --color-info-foreground: var(--info-foreground);
-  --color-tooltip: var(--tooltip);
-  --color-tooltip-foreground: var(--tooltip-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
@@ -259,11 +260,13 @@
   --color-chart-muted: var(--muted-foreground);
 
   /* ============================================
-   * Overlay トークン（モーダル背景、バックドロップ）
+   * Backdrop トークン（モーダル背景、バックドロップ）
    * bg-black/80 等のハードコードを置き換え
    * ============================================ */
-  --color-overlay: oklch(0 0 0 / 50%);
-  --color-overlay-heavy: oklch(0 0 0 / 80%);
+  --color-backdrop: oklch(0 0 0 / 50%);
+  --color-backdrop-heavy: oklch(0 0 0 / 80%);
+  /* 後方互換エイリアス */
+  --color-overlay-heavy: var(--color-backdrop-heavy);
 
   /* ============================================
    * Shadow トークン（ドラッグ、ホバー時のシャドウ）
@@ -302,7 +305,6 @@
   /* ============================================
    * シャドウ（modern-minimal準拠）
    * ============================================ */
-  --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
   --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
   --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
   --shadow: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
@@ -342,16 +344,17 @@
   --font-size-heading-h3: 1.5rem; /* 24px */
   --font-size-heading-h4: 1.25rem; /* 20px - 例外: 視覚的バランス用 */
 
-  /* フォントウェイト */
-  --font-weight-normal: 400;
-  --font-weight-medium: 500;
-  --font-weight-semibold: 600;
-  --font-weight-bold: 700;
-
   /* 行間 */
   --line-height-tight: 1.2;
   --line-height-normal: 1.5;
   --line-height-relaxed: 1.75;
+
+  /* フォントウェイト
+   * Tailwindデフォルトを使用（CSS変数不要）
+   * - font-normal: 400（本文）
+   * - font-bold: 700（見出し、強調）
+   * ダークモードで切り替える必要がないため、トークン化しない
+   */
 }
 
 /* next/font 最適化フォント適用（GAFA方針準拠フォールバックスタック） */
@@ -373,9 +376,13 @@ body {
   font-variation-settings: 'opsz' 32;
 }
 
-/* ブラウザUIのダークモード対応 */
+/* ブラウザUI・タッチ最適化 */
 html {
   color-scheme: light;
+  /* タップハイライト無効化（独自フィードバック使用） */
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-overflow-scrolling: touch;
 }
 
 html.dark {
@@ -410,41 +417,36 @@ html.dark {
  * カスタムユーティリティクラス
  * ============================================ */
 @layer utilities {
-  /* タイポグラフィ - 見出し */
+  /* タイポグラフィ - 見出し
+   * letter-spacing: -0.025em は大きい文字の視覚的バランス改善用
+   * Interはtext typeフォントのため、大きいサイズでは文字間隔が広く見える
+   */
   .text-heading-h1 {
     font-size: var(--font-size-heading-h1);
-    font-weight: var(--font-weight-bold);
+    font-weight: 700;
     line-height: var(--line-height-tight);
+    letter-spacing: -0.025em;
   }
 
   .text-heading-h2 {
     font-size: var(--font-size-heading-h2);
-    font-weight: var(--font-weight-bold);
+    font-weight: 700;
     line-height: var(--line-height-tight);
+    letter-spacing: -0.025em;
   }
 
   .text-heading-h3 {
     font-size: var(--font-size-heading-h3);
-    font-weight: var(--font-weight-semibold);
+    font-weight: 700;
     line-height: var(--line-height-tight);
+    letter-spacing: -0.025em;
   }
 
   .text-heading-h4 {
     font-size: var(--font-size-heading-h4);
-    font-weight: var(--font-weight-semibold);
+    font-weight: 700;
     line-height: var(--line-height-normal);
-  }
-
-  .text-heading-h5 {
-    font-size: var(--font-size-base);
-    font-weight: var(--font-weight-semibold);
-    line-height: var(--line-height-normal);
-  }
-
-  .text-heading-h6 {
-    font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-semibold);
-    line-height: var(--line-height-normal);
+    letter-spacing: -0.025em;
   }
 
   /* タイポグラフィ - 本文 */
@@ -474,28 +476,6 @@ html.dark {
  * ============================================ */
 @layer utilities {
   /* Keyframes */
-  @keyframes enter {
-    from {
-      opacity: 0;
-      transform: scale(0.95);
-    }
-    to {
-      opacity: 1;
-      transform: scale(1);
-    }
-  }
-
-  @keyframes exit {
-    from {
-      opacity: 1;
-      transform: scale(1);
-    }
-    to {
-      opacity: 0;
-      transform: scale(0.95);
-    }
-  }
-
   @keyframes slideInFromRight {
     from {
       transform: translateX(100%);
@@ -706,9 +686,9 @@ html.dark {
   .animate-shimmer {
     background: linear-gradient(
       90deg,
-      var(--surface-container) 0%,
-      var(--surface-bright) 50%,
-      var(--surface-container) 100%
+      var(--container) 0%,
+      var(--overlay) 50%,
+      var(--container) 100%
     );
     background-size: 200% 100%;
     animation: shimmer 1.5s ease-in-out infinite;
@@ -718,9 +698,9 @@ html.dark {
   .dark .animate-shimmer {
     background: linear-gradient(
       90deg,
-      var(--surface-container) 0%,
-      var(--surface) 50%,
-      var(--surface-container) 100%
+      var(--container) 0%,
+      var(--card) 50%,
+      var(--container) 100%
     );
     background-size: 200% 100%;
   }
@@ -885,7 +865,7 @@ html.dark {
   /* マークダウン要素のスタイリング */
   & .wmde-markdown h1 {
     font-size: var(--font-size-heading-h3);
-    font-weight: var(--font-weight-bold);
+    font-weight: 700;
     margin-top: var(--spacing-lg);
     margin-bottom: var(--spacing-sm);
     color: var(--color-foreground);
@@ -895,7 +875,7 @@ html.dark {
 
   & .wmde-markdown h2 {
     font-size: var(--font-size-heading-h4);
-    font-weight: var(--font-weight-bold);
+    font-weight: 700;
     margin-top: var(--spacing-md);
     margin-bottom: var(--spacing-xs);
     color: var(--color-foreground);
@@ -903,7 +883,7 @@ html.dark {
 
   & .wmde-markdown h3 {
     font-size: var(--font-size-lg);
-    font-weight: var(--font-weight-semibold);
+    font-weight: 700;
     margin-top: var(--spacing-md);
     margin-bottom: var(--spacing-xs);
     color: var(--color-foreground);
@@ -984,7 +964,7 @@ html.dark {
 
   & .wmde-markdown th {
     background: var(--color-muted);
-    font-weight: var(--font-weight-semibold);
+    font-weight: 700;
   }
 
   & .wmde-markdown hr {
@@ -1090,7 +1070,7 @@ input[type='time']::-webkit-datetime-edit-minute-field {
 /* 見出し */
 .ProseMirror h1 {
   font-size: var(--font-size-heading-h1);
-  font-weight: var(--font-weight-bold);
+  font-weight: 700;
   line-height: var(--line-height-tight);
   margin-top: 1rem;
   margin-bottom: 0.5rem;
@@ -1098,7 +1078,7 @@ input[type='time']::-webkit-datetime-edit-minute-field {
 
 .ProseMirror h2 {
   font-size: var(--font-size-heading-h2);
-  font-weight: var(--font-weight-bold);
+  font-weight: 700;
   line-height: var(--line-height-tight);
   margin-top: 0.75rem;
   margin-bottom: 0.5rem;
@@ -1106,7 +1086,7 @@ input[type='time']::-webkit-datetime-edit-minute-field {
 
 .ProseMirror h3 {
   font-size: var(--font-size-heading-h3);
-  font-weight: var(--font-weight-semibold);
+  font-weight: 700;
   line-height: var(--line-height-normal);
   margin-top: 0.75rem;
   margin-bottom: 0.5rem;
@@ -1313,16 +1293,6 @@ input[type='time']::-webkit-datetime-edit-minute-field {
  * @see https://css-tricks.com/16px-or-larger-text-prevents-ios-form-zoom/
  * ============================================ */
 
-/* タッチハイライトの最適化（iOS/Android） */
-html {
-  /* デフォルトのタップハイライトを無効化（独自のフィードバックを使用） */
-  -webkit-tap-highlight-color: transparent;
-  /* タッチ操作の最適化 */
-  -webkit-touch-callout: none;
-  /* スクロールの滑らかさ */
-  -webkit-overflow-scrolling: touch;
-}
-
 /* スクロールチェーン防止（モーダル、ドロワー等で使用） */
 .overscroll-none {
   overscroll-behavior: none;
@@ -1412,7 +1382,7 @@ button,
   /* Shimmerアニメーションを静的な背景に置換 */
   .animate-shimmer {
     animation: none !important;
-    background: var(--surface-container) !important;
+    background: var(--container) !important;
   }
 
   /* カレンダーアニメーションを無効化 */

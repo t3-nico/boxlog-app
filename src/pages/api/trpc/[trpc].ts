@@ -30,17 +30,17 @@ export default createNextApiHandler({
       error.message = 'サーバーエラーが発生しました';
     }
   },
-  responseMeta: ({ ctx: _ctx, paths, type, errors: _errors }) => {
-    // リクエストごとのメタデータ設定
-    const oneDay = 60 * 60 * 24;
-    const isQuery = type === 'query';
-    const isPublic = paths && paths.every((path) => !path.includes('protected'));
+  responseMeta: ({ ctx, paths: _paths, type: _type, errors: _errors }) => {
+    // 認証済みユーザーのリクエストはキャッシュしない
+    // （ユーザー固有のデータが含まれるため）
+    // 未認証のパブリッククエリのみキャッシュ可能だが、
+    // 現状ほぼ全てが認証必須なのでシンプルにno-storeを使用
+    const isAuthenticated = !!ctx?.userId;
 
     return {
       headers: {
-        // クエリの場合はキャッシュを有効化
-        'cache-control':
-          isQuery && isPublic ? `s-maxage=1, stale-while-revalidate=${oneDay}` : 'no-cache',
+        // 認証済みリクエストはキャッシュしない
+        'cache-control': isAuthenticated ? 'private, no-store' : 'no-cache',
       },
     };
   },

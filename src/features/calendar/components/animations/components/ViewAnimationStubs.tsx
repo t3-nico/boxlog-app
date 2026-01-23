@@ -16,11 +16,12 @@ interface ViewAnimationProps {
 }
 
 // CalendarViewAnimation - ビュー切り替えアニメーション（スタブ）
+// flex chainを維持するためにmin-h-0 flex-1を含む
 export const CalendarViewAnimation = memo(function CalendarViewAnimation({
   children,
   className,
 }: ViewAnimationProps) {
-  return <div className={className}>{children}</div>;
+  return <div className={`flex min-h-0 flex-1 flex-col ${className ?? ''}`}>{children}</div>;
 });
 
 // ViewTransition - 汎用ビュートランジション（スタブ）

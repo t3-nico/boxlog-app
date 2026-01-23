@@ -12,6 +12,7 @@ import {
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 
+import { useDragHandle } from './DraggableInspector';
 import type { InspectorDisplayMode } from './InspectorShell';
 
 interface InspectorHeaderProps {
@@ -79,6 +80,11 @@ export function InspectorHeader({
   const isMobile = useMediaQuery('(max-width: 767px)');
   const showNavigation = onPrevious && onNext;
 
+  // ドラッグハンドル（Popoverモード時のみ有効）
+  // Hooks は条件分岐前に呼ぶ必要がある
+  const dragHandleProps = useDragHandle();
+  const isDraggable = !!dragHandleProps;
+
   // モバイル: InspectorShell側でドラッグハンドル+メニューを表示するため非表示
   if (isMobile) {
     return null;
@@ -86,8 +92,18 @@ export function InspectorHeader({
 
   // PC: フルヘッダー
   return (
-    <div className="bg-popover sticky top-0 z-10 flex h-12 shrink-0 items-center justify-between px-1">
-      <div className="flex items-center gap-1">
+    <div className="bg-popover relative sticky top-0 z-10 flex h-12 shrink-0 items-center justify-between px-1">
+      {/* ドラッグハンドル（背景レイヤー） */}
+      {isDraggable && (
+        <div
+          {...dragHandleProps}
+          className="hover:bg-state-hover absolute inset-0 cursor-move transition-colors"
+          aria-hidden="true"
+        />
+      )}
+
+      {/* 左側ボタン（前面レイヤー） */}
+      <div className="relative z-10 flex items-center gap-1">
         {/* 閉じるボタン */}
         <HoverTooltip content={closeLabel} side="bottom">
           <Button variant="ghost" size="icon-sm" onClick={onClose} aria-label={closeLabel}>
@@ -128,7 +144,8 @@ export function InspectorHeader({
         )}
       </div>
 
-      <div className="flex items-center gap-1">
+      {/* 右側ボタン（前面レイヤー） */}
+      <div className="relative z-10 flex items-center gap-1">
         {rightContent}
 
         {/* オプションメニュー */}

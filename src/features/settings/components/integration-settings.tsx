@@ -195,7 +195,7 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
                 </div>
                 <div className="min-w-0 flex-1 space-y-3">
                   <div className="flex items-center gap-2">
-                    <h4 className="text-sm font-medium">{provider.name}</h4>
+                    <h4 className="text-sm font-normal">{provider.name}</h4>
                     {savedKeys[provider.id] && (
                       <Badge variant="outline" className="text-success gap-1">
                         <CheckCircle2 className="h-3 w-3" />
@@ -271,7 +271,7 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <h4 className="text-sm font-medium">{integration.name}</h4>
+                    <h4 className="text-sm font-normal">{integration.name}</h4>
                     {integration.connected && (
                       <Badge variant="outline" className="text-success gap-1">
                         <CheckCircle2 className="h-3 w-3" />

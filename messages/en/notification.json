@@ -23,8 +23,8 @@
       "deleteAllRead": "Delete read"
     },
     "count": {
-      "all": "{{count}} notifications",
-      "unread": "{{count}} unread notifications"
+      "all": "{count, plural, one {1 notification} other {# notifications}}",
+      "unread": "{count, plural, one {1 unread notification} other {# unread notifications}}"
     },
     "confirm": {
       "deleteAllRead": "Delete all read notifications?"

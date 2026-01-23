@@ -35,7 +35,7 @@ type RecurrenceType = 'none' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'week
 interface PlanInspectorDetailsTabProps {
   plan: Plan;
   planId: string;
-  titleRef: React.RefObject<HTMLSpanElement | null>;
+  titleRef: React.RefObject<HTMLInputElement | null>;
   scheduleDate: Date | undefined; // スケジュール日（カレンダー配置用）
   dueDate: Date | undefined; // 期限日
   startTime: string;
@@ -90,15 +90,14 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
     <>
       {/* Title */}
       <div className="px-4 py-3">
-        <span
+        <input
           ref={titleRef}
-          contentEditable
-          suppressContentEditableWarning
-          onBlur={(e) => onAutoSave('title', e.currentTarget.textContent || '')}
-          className="block w-full border-0 text-lg font-semibold outline-none"
-        >
-          {plan.title}
-        </span>
+          type="text"
+          defaultValue={plan.title}
+          placeholder="タイトルを追加"
+          onBlur={(e) => onAutoSave('title', e.target.value)}
+          className="placeholder:text-muted-foreground block w-full border-0 bg-transparent text-lg font-bold outline-none"
+        />
       </div>
 
       {/* Schedule */}

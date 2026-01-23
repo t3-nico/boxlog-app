@@ -284,7 +284,7 @@ export const MiniCalendar = memo<MiniCalendarProps>(
             <Select value={getMonth(viewMonth).toString()} onValueChange={handleMonthSelect}>
               <SelectTrigger
                 size="sm"
-                className="border-border hover:bg-state-hover h-7 gap-1 bg-transparent px-2 text-sm font-medium shadow-none focus-visible:ring-0"
+                className="border-border hover:bg-state-hover h-7 gap-1 bg-transparent px-2 text-sm font-normal shadow-none focus-visible:ring-0"
               >
                 <SelectValue />
               </SelectTrigger>
@@ -300,7 +300,7 @@ export const MiniCalendar = memo<MiniCalendarProps>(
             <Select value={getYear(viewMonth).toString()} onValueChange={handleYearSelect}>
               <SelectTrigger
                 size="sm"
-                className="border-border hover:bg-state-hover h-7 gap-1 bg-transparent px-2 text-sm font-medium shadow-none focus-visible:ring-0"
+                className="border-border hover:bg-state-hover h-7 gap-1 bg-transparent px-2 text-sm font-normal shadow-none focus-visible:ring-0"
               >
                 <SelectValue />
               </SelectTrigger>
@@ -359,7 +359,7 @@ export const MiniCalendar = memo<MiniCalendarProps>(
                       // ホバー（今日以外）
                       !isToday && 'hover:bg-state-hover hover:rounded-md',
                       // 今日: primary（ホバーの影響を受けない）
-                      isToday && 'bg-primary text-primary-foreground rounded-md font-semibold',
+                      isToday && 'bg-primary text-primary-foreground rounded-md font-bold',
                       // 範囲内（今日以外）
                       isInRange && !isToday && 'bg-state-hover text-foreground',
                       // 範囲の開始・終了のrounded

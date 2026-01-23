@@ -23,7 +23,7 @@ import { useTranslations } from 'next-intl';
 import { tagIconMapping, TagIconName } from '../constants/icons';
 
 import { DeleteConfirmDialog } from '@/components/common/DeleteConfirmDialog';
-import { TagEditDialog } from './tag-edit-dialog';
+import { useTagModalNavigation } from '../hooks/useTagModalNavigation';
 
 interface TagsListProps {
   collapsed?: boolean;
@@ -131,7 +131,7 @@ const TagItem = ({
     <div className="space-y-2">
       {/* タグアイテム */}
       <div
-        className="hover:bg-state-hover flex cursor-pointer items-center justify-between rounded-lg px-2 py-2 transition-colors duration-150"
+        className="hover:bg-state-hover flex cursor-pointer items-center justify-between rounded-xl px-2 py-2 transition-colors duration-150"
         style={{ paddingLeft: `${paddingLeft}px` }}
         onClick={handleSelectTag}
         onKeyDown={handleKeyDown}
@@ -193,7 +193,7 @@ const TagItem = ({
           {/* タグ名 */}
           {!isCollapsed && (
             <div className="flex min-w-0 flex-1 items-center gap-2">
-              <span className="text-foreground truncate text-sm font-medium" title={tag.name}>
+              <span className="text-foreground truncate text-sm font-normal" title={tag.name}>
                 {tag.name}
               </span>
               {/* アクティブドット */}
@@ -220,7 +220,7 @@ const TagItem = ({
 
             {/* コンテキストメニュー */}
             {showMenu != null && (
-              <div className="border-border bg-popover text-popover-foreground absolute top-full right-0 z-50 mt-1 min-w-36 rounded-lg border py-1 shadow-lg">
+              <div className="border-border bg-popover text-popover-foreground absolute top-full right-0 z-50 mt-1 min-w-36 rounded-xl border py-1 shadow-lg">
                 <Button
                   type="button"
                   variant="ghost"
@@ -285,13 +285,13 @@ export const TagsList = ({
     [toggleTagExpansion],
   );
 
-  const [editingTag, setEditingTag] = useState<Tag | null>(null);
   const [deletingTag, setDeletingTag] = useState<Tag | null>(null);
-  const updateTag = useTagStore((state) => state.updateTag);
   const deleteTag = useTagStore((state) => state.deleteTag);
+  const { openTagCreateModal } = useTagModalNavigation();
 
-  const handleEditTag = useCallback((tag: Tag) => {
-    setEditingTag(tag);
+  // TODO: タグ編集モーダルは廃止されインライン編集に置き換え（CalendarFilterList参照）
+  const handleEditTag = useCallback((_tag: Tag) => {
+    // 現在は編集モーダルなし - インライン編集に移行予定
   }, []);
 
   const handleDeleteTag = useCallback((tag: Tag) => {
@@ -308,36 +308,18 @@ export const TagsList = ({
     setDeletingTag(null);
   }, []);
 
-  const handleSaveTag = useCallback(
-    (updatedTag: Partial<Tag>) => {
-      if (!editingTag) return;
-
-      updateTag(editingTag.id, {
-        name: updatedTag.name,
-        color: updatedTag.color ?? undefined,
-        icon: updatedTag.icon,
-      });
-      setEditingTag(null);
-    },
-    [editingTag, updateTag],
-  );
-
   // jsx-no-bind optimization handlers
   const handleToggleExpansion = useCallback(() => {
     setIsExpanded(!isExpanded);
   }, [isExpanded]);
 
   const handleCreateNewTag = useCallback(() => {
-    // タグ作成処理は親コンポーネントで実装
-  }, []);
+    openTagCreateModal();
+  }, [openTagCreateModal]);
 
   const handleCreateNewTagCollapsed = useCallback(() => {
-    // タグ作成処理は親コンポーネントで実装
-  }, []);
-
-  const handleCloseEditDialog = useCallback(() => {
-    setEditingTag(null);
-  }, []);
+    openTagCreateModal();
+  }, [openTagCreateModal]);
 
   if (collapsed) {
     return null;
@@ -352,7 +334,7 @@ export const TagsList = ({
           variant="ghost"
           size="sm"
           onClick={handleToggleExpansion}
-          className="text-muted-foreground section-header-toggle mb-2 gap-1 px-2 text-xs/6 font-medium"
+          className="text-muted-foreground section-header-toggle mb-2 gap-1 px-2 text-xs/6 font-normal"
         >
           {isExpanded ? (
             <ChevronDownIcon className="text-muted-foreground h-4 w-4" />
@@ -418,21 +400,15 @@ export const TagsList = ({
         </div>
       )}
 
-      {/* タグ編集ダイアログ */}
-      <TagEditDialog
-        tag={editingTag}
-        open={!!editingTag}
-        onClose={handleCloseEditDialog}
-        onSave={handleSaveTag}
-      />
+      {/* タグ編集ダイアログは Intercepting Routes に移行 (@modal/(.)tags/edit/[id]) */}
 
       {/* タグ削除ダイアログ */}
       <DeleteConfirmDialog
         open={!!deletingTag}
         onClose={handleCloseDeleteDialog}
         onConfirm={handleConfirmDelete}
-        title={t('tag.delete.confirmTitleWithName', { name: deletingTag?.name ?? '' })}
-        description={t('tag.delete.description')}
+        title={t('tags.delete.confirmTitleWithName', { name: deletingTag?.name ?? '' })}
+        description={t('tags.delete.description')}
       />
     </div>
   );

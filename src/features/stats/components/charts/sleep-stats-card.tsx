@@ -33,7 +33,7 @@ export function SleepStatsCard() {
 
   if (isPending) {
     return (
-      <Card className="bg-background">
+      <Card>
         <CardHeader className="pb-2">
           <Skeleton className="h-5 w-16" />
           <Skeleton className="h-4 w-24" />
@@ -47,7 +47,7 @@ export function SleepStatsCard() {
   }
 
   return (
-    <Card className="bg-background">
+    <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <div>
           <CardTitle className="text-base">{t('title')}</CardTitle>

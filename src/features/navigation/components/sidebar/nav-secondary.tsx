@@ -30,7 +30,7 @@ export function NavSecondary({
             key={item.title}
             href={item.url}
             className={cn(
-              'flex items-center gap-2 rounded-md px-2 py-2 text-sm font-medium transition-colors',
+              'flex items-center gap-2 rounded-md px-2 py-2 text-sm font-normal transition-colors',
               isActive ? 'bg-state-active text-state-active-foreground' : 'hover:bg-state-hover',
             )}
           >

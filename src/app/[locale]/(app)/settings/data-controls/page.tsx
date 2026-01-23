@@ -1,20 +1,26 @@
 'use client';
 
-import { DataExportSettings } from '@/features/settings/components/data-export-settings';
-import { SettingsPageWrapper } from '@/features/settings/components/page/SettingsPageWrapper';
-import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+
+import { useLocale } from 'next-intl';
+
+import { useSettingsModalStore } from '@/features/settings/stores/useSettingsModalStore';
 
 /**
  * データ管理設定ページ
  *
- * エクスポート、インポート、バックアップ
+ * 後方互換性のため、直接アクセス時はホームにリダイレクトしモーダルを開く
  */
 export default function DataControlsSettingsPage() {
-  const t = useTranslations();
+  const router = useRouter();
+  const locale = useLocale();
+  const openModal = useSettingsModalStore((state) => state.openModal);
 
-  return (
-    <SettingsPageWrapper title={t('settings.dialog.categories.dataControls')}>
-      <DataExportSettings />
-    </SettingsPageWrapper>
-  );
+  useEffect(() => {
+    openModal('data-controls');
+    router.replace(`/${locale}`);
+  }, [locale, router, openModal]);
+
+  return null;
 }

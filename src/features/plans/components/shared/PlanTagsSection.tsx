@@ -5,7 +5,7 @@ import { HoverTooltip } from '@/components/ui/tooltip';
 import { useTags } from '@/features/tags/hooks/useTags';
 import { Plus, Tag, X } from 'lucide-react';
 
-import { PlanTagSelectDialogEnhanced } from './PlanTagSelectDialogEnhanced';
+import { TagSelectCombobox } from './TagSelectCombobox';
 
 interface PlanTagsSectionProps {
   selectedTagIds: string[];
@@ -31,7 +31,11 @@ export function PlanTagsSection({
   // データベースからタグを取得
   const { data: allTags = [] } = useTags();
 
-  const selectedTags = allTags.filter((tag) => selectedTagIds.includes(tag.id));
+  // selectedTagIds の順序（追加順）を維持して表示
+  // allTags.filter() だと sort_order 順になるため、selectedTagIds を基準にマッピング
+  const selectedTags = selectedTagIds
+    .map((id) => allTags.find((tag) => tag.id === id))
+    .filter((tag): tag is NonNullable<typeof tag> => tag !== undefined);
 
   return (
     <div
@@ -50,11 +54,8 @@ export function PlanTagsSection({
                 style={{
                   borderColor: tag.color || undefined,
                 }}
-                className="group relative gap-0.5 pr-6 text-xs font-normal"
+                className="group relative pr-6 text-xs font-normal"
               >
-                <span className="font-medium" style={{ color: tag.color || undefined }}>
-                  #
-                </span>
                 {tag.name}
                 {onRemoveTag && (
                   <button
@@ -84,7 +85,7 @@ export function PlanTagsSection({
           })}
 
           {/* タグ選択ダイアログ */}
-          <PlanTagSelectDialogEnhanced
+          <TagSelectCombobox
             selectedTagIds={selectedTagIds}
             onTagsChange={onTagsChange}
             align={popoverAlign}
@@ -107,7 +108,7 @@ export function PlanTagsSection({
                 <Plus className="size-4" />
               </button>
             )}
-          </PlanTagSelectDialogEnhanced>
+          </TagSelectCombobox>
         </div>
       </div>
     </div>

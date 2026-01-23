@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 
 import { CreateTagInput, Tag, UpdateTagInput } from '@/features/tags/types';
+import { logger } from '@/lib/logger';
 
 interface TagStore {
   tags: Tag[];
@@ -127,8 +128,8 @@ export const useTagStore = create<TagStore>()(
           try {
             const { tags } = get();
 
-            // 後方互換性のため group_id と groupId の両方をサポート
-            const groupId = tagData.groupId ?? tagData.group_id ?? null;
+            // 後方互換性のため parentId, groupId, group_id をサポート
+            const parentId = tagData.parentId ?? tagData.groupId ?? tagData.group_id ?? null;
 
             const newTag: Tag = {
               id: generateId(),
@@ -138,7 +139,7 @@ export const useTagStore = create<TagStore>()(
               description: tagData.description || null,
               icon: tagData.icon || null,
               is_active: true,
-              group_id: groupId,
+              parent_id: parentId,
               sort_order: tags.length,
               created_at: new Date().toISOString(),
               updated_at: new Date().toISOString(),
@@ -147,7 +148,7 @@ export const useTagStore = create<TagStore>()(
             set({ tags: [...tags, newTag] });
             return true;
           } catch (error) {
-            console.error('Failed to add tag:', error);
+            logger.error('Failed to add tag:', error);
             return false;
           }
         },
@@ -161,8 +162,8 @@ export const useTagStore = create<TagStore>()(
               throw new Error('Tag not found');
             }
 
-            // 後方互換性のため group_id と groupId の両方をサポート
-            const newGroupId = updates.groupId ?? updates.group_id;
+            // 後方互換性のため parentId, groupId, group_id をサポート
+            const newParentId = updates.parentId ?? updates.groupId ?? updates.group_id;
 
             set((state) => ({
               tags: state.tags.map((tag) => {
@@ -174,7 +175,7 @@ export const useTagStore = create<TagStore>()(
                     ...(updates.description !== undefined && { description: updates.description }),
                     ...(updates.icon !== undefined && { icon: updates.icon }),
                     ...(updates.is_active !== undefined && { is_active: updates.is_active }),
-                    ...(newGroupId !== undefined && { group_id: newGroupId }),
+                    ...(newParentId !== undefined && { parent_id: newParentId }),
                     ...(updates.sort_order !== undefined && { sort_order: updates.sort_order }),
                     updated_at: new Date().toISOString(),
                   } as Tag;
@@ -184,7 +185,7 @@ export const useTagStore = create<TagStore>()(
             }));
             return true;
           } catch (error) {
-            console.error('Failed to update tag:', error);
+            logger.error('Failed to update tag:', error);
             return false;
           }
         },
@@ -203,7 +204,7 @@ export const useTagStore = create<TagStore>()(
             }));
             return true;
           } catch (error) {
-            console.error('Failed to delete tag:', error);
+            logger.error('Failed to delete tag:', error);
             return false;
           }
         },
@@ -223,10 +224,10 @@ export const useTagStore = create<TagStore>()(
           return tags;
         },
 
-        // Group helpers
+        // Group helpers (parent_id based)
         getTagsByGroup: (groupId) => {
           const { tags } = get();
-          return tags.filter((tag) => tag.group_id === groupId && tag.is_active);
+          return tags.filter((tag) => tag.parent_id === groupId && tag.is_active);
         },
 
         getActiveTags: () => {

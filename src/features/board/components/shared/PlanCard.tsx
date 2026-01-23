@@ -16,8 +16,8 @@ import { parseDateString, parseDatetimeString } from '@/features/calendar/utils/
 import type { PlanItem } from '@/features/inbox/hooks/useInboxData';
 import type { RecurringEditScope } from '@/features/plans/components/RecurringEditConfirmDialog';
 import { DateTimePopoverContent } from '@/features/plans/components/shared/DateTimePopoverContent';
-import { PlanTagSelectDialogEnhanced } from '@/features/plans/components/shared/PlanTagSelectDialogEnhanced';
 import { RecurringIndicator } from '@/features/plans/components/shared/RecurringIndicator';
+import { TagSelectCombobox } from '@/features/plans/components/shared/TagSelectCombobox';
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
 import { useplanTags } from '@/features/plans/hooks/usePlanTags';
 import { useDeleteConfirmStore } from '@/features/plans/stores/useDeleteConfirmStore';
@@ -28,6 +28,7 @@ import { toLocalISOString } from '@/features/plans/utils/datetime';
 import { minutesToReminderType, reminderTypeToMinutes } from '@/features/plans/utils/reminder';
 import { normalizeStatus } from '@/features/plans/utils/status';
 import { useDateFormat } from '@/features/settings/hooks/useDateFormat';
+import { useTagsMap } from '@/features/tags/hooks/useTagsMap';
 import { cn } from '@/lib/utils';
 import { useDraggable } from '@dnd-kit/core';
 import { format } from 'date-fns';
@@ -58,6 +59,7 @@ export function PlanCard({ item }: PlanCardProps) {
   const { focusedId, setFocusedId } = useBoardFocusStore();
   const { addplanTag, removeplanTag } = useplanTags();
   const { updatePlan, deletePlan } = usePlanMutations();
+  const { getTagsByIds } = useTagsMap();
   const { getCache } = useplanCacheStore();
   const openDeleteDialog = useDeleteConfirmStore((state) => state.openDialog);
   const openRecurringDialog = useRecurringEditConfirmStore((state) => state.openDialog);
@@ -122,10 +124,10 @@ export function PlanCard({ item }: PlanCardProps) {
     cache?.recurrence_rule !== undefined ? cache.recurrence_rule : (item.recurrence_rule ?? null);
 
   // タグ変更ハンドラー
-  const handleTagsChange = async (tagIds: string[]) => {
-    const currentTagIds = item.tags?.map((tag) => tag.id) ?? [];
-    const addedTagIds = tagIds.filter((id) => !currentTagIds.includes(id));
-    const removedTagIds = currentTagIds.filter((id) => !tagIds.includes(id));
+  const handleTagsChange = async (newTagIds: string[]) => {
+    const currentTagIds = item.tagIds ?? [];
+    const addedTagIds = newTagIds.filter((id) => !currentTagIds.includes(id));
+    const removedTagIds = currentTagIds.filter((id) => !newTagIds.includes(id));
 
     // タグを追加
     for (const tagId of addedTagIds) {
@@ -137,6 +139,9 @@ export function PlanCard({ item }: PlanCardProps) {
       await removeplanTag(item.id, tagId);
     }
   };
+
+  // タグ情報をtagIdsから取得
+  const tags = getTagsByIds(item.tagIds ?? []);
 
   // 日時データ変更ハンドラー
   const handleDateTimeChange = () => {
@@ -408,7 +413,7 @@ export function PlanCard({ item }: PlanCardProps) {
                   return <Circle className="text-muted-foreground h-4 w-4" />;
                 })()}
               </button>
-              <h3 className="text-foreground min-w-0 text-base leading-tight font-semibold hover:underline">
+              <h3 className="text-foreground min-w-0 text-base leading-tight font-bold hover:underline">
                 {item.title}
               </h3>
             </div>
@@ -548,11 +553,8 @@ export function PlanCard({ item }: PlanCardProps) {
             </Popover>
 
             {/* 3. Tags */}
-            <PlanTagSelectDialogEnhanced
-              selectedTagIds={item.tags?.map((tag) => tag.id) ?? []}
-              onTagsChange={handleTagsChange}
-            >
-              {item.tags && item.tags.length > 0 ? (
+            <TagSelectCombobox selectedTagIds={item.tagIds ?? []} onTagsChange={handleTagsChange}>
+              {tags.length > 0 ? (
                 <div
                   className="group/tags flex flex-wrap gap-1"
                   onClick={(e) => {
@@ -560,11 +562,11 @@ export function PlanCard({ item }: PlanCardProps) {
                     e.stopPropagation();
                   }}
                 >
-                  {item.tags.slice(0, 4).map((tag) => (
+                  {tags.slice(0, 4).map((tag) => (
                     <Badge
                       key={tag.id}
                       variant="outline"
-                      className="shrink-0 gap-0.5 text-xs font-normal"
+                      className="shrink-0 text-xs font-normal"
                       style={
                         tag.color
                           ? {
@@ -573,18 +575,12 @@ export function PlanCard({ item }: PlanCardProps) {
                           : undefined
                       }
                     >
-                      <span
-                        className="font-medium"
-                        style={tag.color ? { color: tag.color } : undefined}
-                      >
-                        #
-                      </span>
                       {tag.name}
                     </Badge>
                   ))}
-                  {item.tags.length > 4 && (
+                  {tags.length > 4 && (
                     <Badge variant="secondary" className="shrink-0 text-xs">
-                      +{item.tags.length - 4}
+                      +{tags.length - 4}
                     </Badge>
                   )}
                   {/* +アイコン（常時表示） */}
@@ -611,7 +607,7 @@ export function PlanCard({ item }: PlanCardProps) {
                   </div>
                 </div>
               )}
-            </PlanTagSelectDialogEnhanced>
+            </TagSelectCombobox>
           </div>
         </ContextMenuTrigger>
         <ContextMenuContent>

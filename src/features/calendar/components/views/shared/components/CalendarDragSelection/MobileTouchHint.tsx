@@ -75,7 +75,7 @@ export const MobileTouchHint = memo(function MobileTouchHint({ className }: Mobi
       className={cn(
         'fixed right-4 bottom-20 left-4 z-50',
         'bg-primary text-primary-foreground',
-        'rounded-lg px-4 py-3 shadow-lg',
+        'rounded-xl px-4 py-3 shadow-lg',
         'animate-in slide-in-from-bottom-4 fade-in duration-300',
         className,
       )}
@@ -84,7 +84,7 @@ export const MobileTouchHint = memo(function MobileTouchHint({ className }: Mobi
     >
       <div className="flex items-start gap-3">
         <div className="flex-1">
-          <p className="text-sm font-medium">{t('mobile.touchHint.title')}</p>
+          <p className="text-sm font-normal">{t('mobile.touchHint.title')}</p>
           <p className="mt-1 text-xs opacity-90">{t('mobile.touchHint.description')}</p>
         </div>
         <button

@@ -304,4 +304,248 @@ describe.skipIf(SKIP_INTEGRATION)('Tags Router Integration', () => {
       ).rejects.toThrow();
     });
   });
+
+  describe('Merge Operations', () => {
+    it('should merge tags and transfer plan associations', async () => {
+      const caller = createTestCaller(tagsRouter, ctx);
+
+      // 1. ソースタグとターゲットタグを作成
+      const sourceTag = await caller.create({
+        name: 'Source Tag for Merge',
+        color: '#FF0000',
+      });
+      createdTagIds.push(sourceTag.id);
+
+      const targetTag = await caller.create({
+        name: 'Target Tag for Merge',
+        color: '#00FF00',
+      });
+      createdTagIds.push(targetTag.id);
+
+      // 2. プランを作成してソースタグに紐付け（adminSupabaseでRLSバイパス）
+      const { data: plan } = await adminSupabase
+        .from('plans')
+        .insert({
+          user_id: TEST_USER_ID,
+          title: 'Test Plan for Merge',
+        })
+        .select()
+        .single();
+
+      if (!plan) throw new Error('Failed to create test plan');
+
+      await adminSupabase.from('plan_tags').insert({
+        user_id: TEST_USER_ID,
+        plan_id: plan.id,
+        tag_id: sourceTag.id,
+      });
+
+      // 3. マージ実行
+      const mergeResult = await caller.merge({
+        sourceTagId: sourceTag.id,
+        targetTagId: targetTag.id,
+        mergeAssociations: true,
+        deleteSource: true,
+      });
+
+      expect(mergeResult.success).toBe(true);
+
+      // 4. プランがターゲットタグに紐付いていることを確認
+      const { data: planTags } = await adminSupabase
+        .from('plan_tags')
+        .select('tag_id')
+        .eq('plan_id', plan.id)
+        .eq('user_id', TEST_USER_ID);
+
+      expect(planTags?.some((pt) => pt.tag_id === targetTag.id)).toBe(true);
+      expect(planTags?.some((pt) => pt.tag_id === sourceTag.id)).toBe(false);
+
+      // 5. ソースタグが削除されていることを確認
+      await expect(caller.getById({ id: sourceTag.id })).rejects.toThrow();
+
+      // クリーンアップ: plan_tagsとplanを削除
+      await adminSupabase.from('plan_tags').delete().eq('plan_id', plan.id);
+      await adminSupabase.from('plans').delete().eq('id', plan.id);
+
+      // createdTagIdsからソースタグを削除（既に削除済み）
+      createdTagIds = createdTagIds.filter((id) => id !== sourceTag.id);
+    });
+
+    it('should promote child tags to root when merging parent', async () => {
+      const caller = createTestCaller(tagsRouter, ctx);
+
+      // 1. 親タグを作成
+      const parentTag = await caller.create({
+        name: 'Parent Tag for Merge',
+        color: '#0000FF',
+      });
+      createdTagIds.push(parentTag.id);
+
+      // 2. 子タグを作成（parentIdを指定）
+      const childTag = await caller.create({
+        name: 'Child Tag for Merge',
+        color: '#FFFF00',
+        parentId: parentTag.id,
+      });
+      createdTagIds.push(childTag.id);
+
+      // 3. ターゲットタグを作成
+      const targetTag = await caller.create({
+        name: 'Target for Parent Merge',
+        color: '#FF00FF',
+      });
+      createdTagIds.push(targetTag.id);
+
+      // 4. 親タグをターゲットタグにマージ
+      await caller.merge({
+        sourceTagId: parentTag.id,
+        targetTagId: targetTag.id,
+        mergeAssociations: true,
+        deleteSource: true,
+      });
+
+      // 5. 子タグがルートに昇格（parent_id = null）されていることを確認
+      const updatedChildTag = await caller.getById({ id: childTag.id });
+      expect(updatedChildTag.parent_id).toBeNull();
+
+      // createdTagIdsから親タグを削除（既に削除済み）
+      createdTagIds = createdTagIds.filter((id) => id !== parentTag.id);
+    });
+
+    it('should handle duplicate plan associations during merge', async () => {
+      const caller = createTestCaller(tagsRouter, ctx);
+
+      // 1. ソースとターゲットタグを作成
+      const sourceTag = await caller.create({
+        name: 'Source for Duplicate Test',
+        color: '#111111',
+      });
+      createdTagIds.push(sourceTag.id);
+
+      const targetTag = await caller.create({
+        name: 'Target for Duplicate Test',
+        color: '#222222',
+      });
+      createdTagIds.push(targetTag.id);
+
+      // 2. プランを作成し、両方のタグに紐付け
+      const { data: plan } = await adminSupabase
+        .from('plans')
+        .insert({
+          user_id: TEST_USER_ID,
+          title: 'Test Plan for Duplicate',
+        })
+        .select()
+        .single();
+
+      if (!plan) throw new Error('Failed to create test plan');
+
+      // 両方のタグをプランに紐付け
+      await adminSupabase.from('plan_tags').insert([
+        { user_id: TEST_USER_ID, plan_id: plan.id, tag_id: sourceTag.id },
+        { user_id: TEST_USER_ID, plan_id: plan.id, tag_id: targetTag.id },
+      ]);
+
+      // 3. マージ実行
+      await caller.merge({
+        sourceTagId: sourceTag.id,
+        targetTagId: targetTag.id,
+        mergeAssociations: true,
+        deleteSource: true,
+      });
+
+      // 4. 重複なく1つの紐付けのみ存在することを確認
+      const { data: planTags, count } = await adminSupabase
+        .from('plan_tags')
+        .select('*', { count: 'exact' })
+        .eq('plan_id', plan.id)
+        .eq('user_id', TEST_USER_ID);
+
+      expect(count).toBe(1);
+      expect(planTags?.[0].tag_id).toBe(targetTag.id);
+
+      // クリーンアップ
+      await adminSupabase.from('plan_tags').delete().eq('plan_id', plan.id);
+      await adminSupabase.from('plans').delete().eq('id', plan.id);
+      createdTagIds = createdTagIds.filter((id) => id !== sourceTag.id);
+    });
+  });
+
+  describe('Sort Order', () => {
+    it('should create new tag at top (sort_order = 0)', async () => {
+      const caller = createTestCaller(tagsRouter, ctx);
+
+      // 1. 既存タグを2つ作成
+      const tag1 = await caller.create({
+        name: 'Sort Order Tag 1',
+        color: '#AA0000',
+      });
+      createdTagIds.push(tag1.id);
+
+      const tag2 = await caller.create({
+        name: 'Sort Order Tag 2',
+        color: '#BB0000',
+      });
+      createdTagIds.push(tag2.id);
+
+      // 2. 新規タグを作成
+      const tag3 = await caller.create({
+        name: 'Sort Order Tag 3 (newest)',
+        color: '#CC0000',
+      });
+      createdTagIds.push(tag3.id);
+
+      // 3. 新規タグのsort_orderが0であることを確認
+      const { data: tags } = await adminSupabase
+        .from('tags')
+        .select('id, name, sort_order')
+        .in('id', [tag1.id, tag2.id, tag3.id])
+        .order('sort_order', { ascending: true });
+
+      const newestTag = tags?.find((t) => t.id === tag3.id);
+      expect(newestTag?.sort_order).toBe(0);
+
+      // 4. 既存タグのsort_orderがインクリメントされていることを確認
+      const olderTags = tags?.filter((t) => t.id !== tag3.id);
+      olderTags?.forEach((t) => {
+        expect(t.sort_order).toBeGreaterThan(0);
+      });
+    });
+
+    it('should maintain sort_order within parent group', async () => {
+      const caller = createTestCaller(tagsRouter, ctx);
+
+      // 1. 親タグを作成
+      const parentTag = await caller.create({
+        name: 'Parent for Sort Order',
+        color: '#DD0000',
+      });
+      createdTagIds.push(parentTag.id);
+
+      // 2. 親に属する子タグを2つ作成
+      const child1 = await caller.create({
+        name: 'Child Sort 1',
+        color: '#EE0000',
+        parentId: parentTag.id,
+      });
+      createdTagIds.push(child1.id);
+
+      const child2 = await caller.create({
+        name: 'Child Sort 2',
+        color: '#FF0000',
+        parentId: parentTag.id,
+      });
+      createdTagIds.push(child2.id);
+
+      // 3. 新しい子タグが先頭（sort_order = 0）であることを確認
+      const { data: childTags } = await adminSupabase
+        .from('tags')
+        .select('id, sort_order')
+        .eq('parent_id', parentTag.id)
+        .order('sort_order', { ascending: true });
+
+      expect(childTags?.[0].id).toBe(child2.id);
+      expect(childTags?.[0].sort_order).toBe(0);
+    });
+  });
 });

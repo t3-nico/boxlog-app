@@ -9,7 +9,6 @@ import { memo } from 'react';
 import { Ban } from 'lucide-react';
 
 import { MEDIA_QUERIES } from '@/config/ui/breakpoints';
-import { getEventColor } from '@/features/calendar/theme';
 import { calendarStyles } from '@/features/calendar/theme/styles';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { cn } from '@/lib/utils';
@@ -58,9 +57,9 @@ export const DragSelectionPreview = memo(function DragSelectionPreview({
     zIndex: 1000,
   };
 
-  // 重複時は赤、通常時はscheduledカラー
+  // 重複時は赤、通常時はplan-boxカラー
   const className = cn(
-    isOverlapping ? 'bg-destructive/60' : getEventColor('scheduled', 'background'),
+    isOverlapping ? 'bg-destructive/60' : 'bg-plan-box',
     calendarStyles.event.borderRadius,
     calendarStyles.event.shadow.default,
     'pointer-events-none',
@@ -76,8 +75,8 @@ export const DragSelectionPreview = memo(function DragSelectionPreview({
   const durationText =
     hours > 0 ? (minutes > 0 ? `${hours}時間${minutes}分` : `${hours}時間`) : `${minutes}分`;
 
-  // テキスト色（重複時は白）
-  const textColorClass = isOverlapping ? 'text-white' : getEventColor('scheduled', 'text');
+  // テキスト色（重複時は白、通常時はforeground）
+  const textColorClass = isOverlapping ? 'text-white' : 'text-foreground';
 
   return (
     <div style={style} className={className}>
@@ -99,7 +98,7 @@ export const DragSelectionPreview = memo(function DragSelectionPreview({
               textColorClass,
               // モバイルでは大きめのフォント
               isMobile ? 'text-sm' : calendarStyles.event.fontSize.title,
-              'leading-tight font-medium',
+              'leading-tight font-normal',
             )}
           >
             {isOverlapping ? '時間が重複しています' : '新しいイベント'}

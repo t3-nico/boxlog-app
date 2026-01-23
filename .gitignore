@@ -150,3 +150,5 @@ temp/
 /test-results/
 /playwright-report/
 /playwright/.auth/
+# Lighthouse CI
+.lighthouseci/

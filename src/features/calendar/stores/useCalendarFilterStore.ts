@@ -53,6 +53,18 @@ export interface CalendarFilterActions {
   /** タグ一覧で初期化（まだ設定がないタグを追加） */
   initializeWithTags: (tagIds: string[]) => void;
 
+  /** 特定のタグを削除（マージ後などに使用） */
+  removeTag: (tagId: string) => void;
+
+  /** このタグだけ表示（他を全てOFF） */
+  showOnlyTag: (tagId: string) => void;
+
+  /** タグなしだけ表示（全タグOFF） */
+  showOnlyUntagged: () => void;
+
+  /** 指定タグだけ表示（グループ用） */
+  showOnlyGroupTags: (tagIds: string[]) => void;
+
   /** 種類が表示中かチェック */
   isTypeVisible: (type: ItemType) => boolean;
 
@@ -185,6 +197,31 @@ export const useCalendarFilterStore = create<CalendarFilterStore>()(
           };
         }),
 
+      removeTag: (tagId) =>
+        set((state) => {
+          const newSet = new Set(state.visibleTagIds);
+          newSet.delete(tagId);
+          return { visibleTagIds: newSet };
+        }),
+
+      showOnlyTag: (tagId) =>
+        set(() => ({
+          visibleTagIds: new Set([tagId]),
+          showUntagged: false,
+        })),
+
+      showOnlyUntagged: () =>
+        set(() => ({
+          visibleTagIds: new Set(),
+          showUntagged: true,
+        })),
+
+      showOnlyGroupTags: (tagIds) =>
+        set(() => ({
+          visibleTagIds: new Set(tagIds),
+          showUntagged: false,
+        })),
+
       isTypeVisible: (type) => get().visibleTypes[type],
 
       isTagVisible: (tagId) => get().visibleTagIds.has(tagId),
@@ -217,6 +254,9 @@ export const useCalendarFilterStore = create<CalendarFilterStore>()(
     }),
     {
       name: 'calendar-filter-storage',
+      // バージョンを上げるとlocalStorageがリセットされる
+      // v2: visibleTagIds競合問題の修正に伴いリセット
+      version: 2,
       storage: {
         getItem: (name) => {
           const str = localStorage.getItem(name);
@@ -235,6 +275,19 @@ export const useCalendarFilterStore = create<CalendarFilterStore>()(
           localStorage.setItem(name, JSON.stringify(serialized));
         },
         removeItem: (name) => localStorage.removeItem(name),
+      },
+      // バージョンマイグレーション: 古いバージョンからの移行時はリセット
+      migrate: (persistedState, version) => {
+        // v1 → v2: visibleTagIds競合問題の修正、initializedをfalseにリセット
+        if (version < 2) {
+          return {
+            visibleTypes: { plan: true, record: true },
+            visibleTagIds: new Set<string>(),
+            showUntagged: true,
+            initialized: false,
+          } as unknown as CalendarFilterStore;
+        }
+        return persistedState as CalendarFilterStore;
       },
     },
   ),

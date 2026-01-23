@@ -151,7 +151,7 @@ export function PasswordChangeDialog({ open, onOpenChange }: PasswordChangeDialo
         {success ? (
           <div className="space-y-4 py-4">
             <div className="border-success/30 bg-success/5 rounded-xl p-4">
-              <p className="text-success text-sm font-medium">
+              <p className="text-success text-sm font-normal">
                 {t('settings.account.passwordUpdated')}
               </p>
             </div>

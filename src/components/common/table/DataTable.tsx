@@ -217,10 +217,9 @@ export function DataTable<T>({
   const paginatedData = useMemo(() => {
     if (isGrouped) return data; // グループ化時は全データ表示
     if (!showPagination) return data;
-    const { currentPage, pageSize } = paginationState;
-    const startIndex = (currentPage - 1) * pageSize;
-    return data.slice(startIndex, startIndex + pageSize);
-  }, [data, showPagination, paginationState, isGrouped]);
+    const startIndex = (paginationState.currentPage - 1) * paginationState.pageSize;
+    return data.slice(startIndex, startIndex + paginationState.pageSize);
+  }, [data, showPagination, paginationState.currentPage, paginationState.pageSize, isGrouped]);
 
   // 現在ページのID一覧
   const currentPageIds = useMemo(() => paginatedData.map(getRowKey), [paginatedData, getRowKey]);
@@ -312,7 +311,7 @@ export function DataTable<T>({
         <TableCell colSpan={colCount} className="py-3">
           <div className="flex items-center gap-2">
             {isCollapsed ? <ChevronRight className="size-4" /> : <ChevronDown className="size-4" />}
-            <span className="font-semibold">{group.groupLabel}</span>
+            <span className="font-bold">{group.groupLabel}</span>
             <Badge variant="secondary" className="ml-1">
               {group.count}
             </Badge>

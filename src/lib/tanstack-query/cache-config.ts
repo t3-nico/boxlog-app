@@ -12,11 +12,12 @@
  * - カレンダー（同期重要）
  *
  * Supabase Realtime購読により常に最新データを保持
- * staleTime=30秒: ページ遷移時の再フェッチを抑制しつつ、Realtime経由の更新は即座に反映
+ * staleTime=5分: Realtime経由の更新は即座に反映されるため、長めに設定して再フェッチを抑制
+ * gcTime=10分: ナビゲーション時のキャッシュ活用のため長めに設定
  */
 export const realtimeCache = {
-  staleTime: 30 * 1000, // 30秒（Realtime購読で更新されるため長めでOK）
-  gcTime: 2 * 60 * 1000, // 2分
+  staleTime: 5 * 60 * 1000, // 5分（Realtime購読で更新されるため長めでOK）
+  gcTime: 10 * 60 * 1000, // 10分（前後の期間をキャッシュ保持）
 };
 
 /**

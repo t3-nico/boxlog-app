@@ -1,5 +1,8 @@
 {
   "calendar": {
+    "meta": {
+      "description": "タイムボクシングでスケジュールを計画。日・週・月単位で予定を確認・管理できます。"
+    },
     "title": "カレンダー",
     "views": {
       "day": "日表示",
@@ -173,7 +176,41 @@
       "ungrouped": "グループなし",
       "untagged": "タグなし",
       "noTags": "タグがありません",
-      "comingSoon": "近日公開予定"
+      "comingSoon": "近日公開予定",
+      "createTag": "タグを作成",
+      "addChildTag": "子タグを追加",
+      "rename": "名前を変更",
+      "changeColor": "カラーを変更",
+      "editNote": "ノートを編集",
+      "noteLabel": "ノート",
+      "noteHint": "ツールチップに表示されます",
+      "notePlaceholder": "ノートを追加...",
+      "deleteParentTag": {
+        "title": "「{name}」を削除",
+        "description": "このタグを削除しますか？子タグはルートタグとして残ります。"
+      },
+      "changeParent": "親タグを変更",
+      "moveToGroup": "グループに追加",
+      "merge": "他のタグに統合",
+      "showOnlyThis": "このタグだけ表示",
+      "noParent": "親タグなし",
+      "deleteTag": {
+        "title": "タグを削除",
+        "description": "このタグを削除しますか？"
+      },
+      "mergeTag": {
+        "title": "タグを統合",
+        "selectTarget": "統合先のタグを選択してください",
+        "searchPlaceholder": "タグを検索...",
+        "noResults": "タグが見つかりません",
+        "confirm": "統合する",
+        "selectRequired": "統合先のタグを選択してください",
+        "description": "「{sourceName}」を「{targetName}」に統合しますか？この操作は取り消せません。",
+        "descriptionWithChildren": "「{sourceName}」を「{targetName}」に統合しますか？子タグはルートタグに昇格します。この操作は取り消せません。"
+      },
+      "tagMenu": "タグメニュー",
+      "expand": "展開",
+      "collapse": "折りたたむ"
     },
     "open": {
       "navigation": {

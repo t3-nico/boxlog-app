@@ -32,7 +32,7 @@ import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { useTheme } from '@/contexts/theme-context';
 import { usePlans } from '@/features/plans/hooks';
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
-import { useTagCreateModalStore } from '@/features/tags/stores/useTagCreateModalStore';
+import { useTagModalNavigation } from '@/features/tags/hooks/useTagModalNavigation';
 import { useTagStore } from '@/features/tags/stores/useTagStore';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 
@@ -43,7 +43,7 @@ import { commandRegistry, registerDefaultCommands } from '../lib/command-registr
 import { HighlightedText } from '../lib/highlight-text';
 import { getFilterHints, parseSearchQuery } from '../lib/query-parser';
 
-// Helper function to convert plan_tags to tags format
+// APIレスポンスの型（tagIdsのみ）
 type PlanFromAPI = {
   id: string;
   user_id: string;
@@ -60,10 +60,7 @@ type PlanFromAPI = {
   reminder_minutes: number | null;
   created_at: string | null;
   updated_at: string | null;
-  plan_tags: Array<{
-    tag_id: string;
-    tags: { id: string; name: string; color: string } | null;
-  }>;
+  tagIds?: string[];
 };
 
 interface GlobalSearchModalProps {
@@ -109,7 +106,7 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
 
   // Get actions from stores
   const openPlanInspector = usePlanInspectorStore((state) => state.openInspector);
-  const openTagCreateModal = useTagCreateModalStore((state) => state.openModal);
+  const { openTagCreateModal } = useTagModalNavigation();
   const { resolvedTheme, setTheme } = useTheme();
 
   const toggleTheme = useCallback(() => {
@@ -158,18 +155,22 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
 
   // Convert and filter plans
   const filteredPlans = useMemo(() => {
-    const converted = (plans as unknown as PlanFromAPI[]).map((plan) => ({
-      id: plan.id,
-      title: plan.title,
-      description: plan.description,
-      status: plan.status,
-      due_date: plan.due_date,
-      plan_number: plan.plan_number,
-      tags:
-        plan.plan_tags
-          ?.map((pt) => pt.tags)
-          .filter((tag): tag is { id: string; name: string; color: string } => tag !== null) || [],
-    }));
+    // タグIDからタグ情報を解決してconvertedに含める
+    const converted = (plans as unknown as PlanFromAPI[]).map((plan) => {
+      const planTagIds = plan.tagIds ?? [];
+      const resolvedTags = planTagIds
+        .map((tagId) => tags.find((t) => t.id === tagId))
+        .filter((tag): tag is (typeof tags)[0] => tag !== undefined);
+      return {
+        id: plan.id,
+        title: plan.title,
+        description: plan.description,
+        status: plan.status,
+        due_date: plan.due_date,
+        plan_number: plan.plan_number,
+        tags: resolvedTags,
+      };
+    });
 
     // Apply custom filters from parsed query
     let filtered = converted;
@@ -221,7 +222,7 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
     }
 
     return filtered;
-  }, [plans, parsedQuery.filters]);
+  }, [plans, tags, parsedQuery.filters]);
 
   // Get group label
   const getGroupLabel = (key: string): string => {
@@ -280,7 +281,7 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
         <VisuallyHidden>
           <DialogTitle>グローバル検索</DialogTitle>
         </VisuallyHidden>
-        <Command className="[&_[cmdk-group-heading]]:text-muted-foreground !rounded-none [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group]]:px-2 [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-2">
+        <Command className="[&_[cmdk-group-heading]]:text-muted-foreground !rounded-none [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-normal [&_[cmdk-group]]:px-2 [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-2">
           <div className="relative">
             <CommandInput
               placeholder="検索... (コマンド、プラン、タグ)"
@@ -289,7 +290,7 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
             />
             {/* ESCバッジ（PCのみ表示） */}
             <div className="absolute top-1/2 right-3 hidden -translate-y-1/2 items-center gap-1 md:flex">
-              <kbd className="bg-surface-container text-muted-foreground inline-flex h-6 items-center gap-1 rounded border px-2 font-mono text-xs font-medium opacity-100 select-none">
+              <kbd className="bg-surface-container text-muted-foreground inline-flex h-6 items-center gap-1 rounded border px-2 font-mono text-xs font-normal opacity-100 select-none">
                 ESC
               </kbd>
             </div>
@@ -405,7 +406,7 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
                           {command.shortcut.map((key, index) => (
                             <kbd
                               key={index}
-                              className="bg-surface-container text-muted-foreground inline-flex h-6 min-w-6 items-center justify-center rounded border px-2 font-mono text-xs font-medium"
+                              className="bg-surface-container text-muted-foreground inline-flex h-6 min-w-6 items-center justify-center rounded border px-2 font-mono text-xs font-normal"
                             >
                               {key}
                             </kbd>

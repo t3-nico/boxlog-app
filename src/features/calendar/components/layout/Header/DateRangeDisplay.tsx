@@ -81,11 +81,13 @@ export const DateRangeDisplay = ({
   displayRange,
 }: DateRangeDisplayProps) => {
   const t = useTranslations('calendar.dateRange');
+  const tCommon = useTranslations('common');
   const locale = useLocale();
   const dateFnsLocale = locale === 'ja' ? ja : enUS;
 
-  // ロケールに応じたフォーマットパターン
-  const localizedFormatPattern = locale === 'ja' ? 'yyyy年M月' : formatPattern;
+  // ロケールに応じたフォーマットパターン（翻訳ファイルから取得）
+  const localizedFormatPattern =
+    formatPattern === 'MMMM yyyy' ? tCommon('dates.formats.monthYear') : formatPattern;
 
   // 表示テキストを決定
   const displayText =
@@ -94,7 +96,7 @@ export const DateRangeDisplay = ({
       : format(date, localizedFormatPattern, { locale: dateFnsLocale });
 
   // 日付コンテンツ
-  const dateContent = <h2 className="text-lg font-semibold">{displayText}</h2>;
+  const dateContent = <h2 className="text-lg font-bold">{displayText}</h2>;
 
   // モバイル用: MiniCalendarポップアップ付き（週番号はカレンダーグリッドに表示するため非表示）
   const mobileContent = clickable && onDateSelect && (
@@ -127,7 +129,7 @@ export const DateRangeDisplay = ({
     <div className={cn('hidden items-center gap-2 md:flex', className)}>
       {dateContent}
       {showWeekNumber ? (
-        <span className="text-muted-foreground text-sm font-medium">
+        <span className="text-muted-foreground text-sm font-normal">
           {t('weekLabel', { weekNumber: getWeek(date, { weekStartsOn: 1 }) })}
         </span>
       ) : null}
@@ -157,15 +159,16 @@ export const CompactDateDisplay = ({
   className,
 }: Pick<DateRangeDisplayProps, 'date' | 'showWeekNumber' | 'className'>) => {
   const t = useTranslations('calendar.dateRange');
+  const tCommon = useTranslations('common');
   const locale = useLocale();
   const dateFnsLocale = locale === 'ja' ? ja : enUS;
 
-  // ロケールに応じたフォーマット
-  const dateFormat = locale === 'ja' ? 'M月d日' : 'MMM d';
+  // ロケールに応じたフォーマット（翻訳ファイルから取得）
+  const dateFormat = tCommon('dates.formats.monthDay');
 
   return (
     <div className={cn('flex items-center gap-1', className)}>
-      <span className="text-base font-medium">
+      <span className="text-base font-normal">
         {format(date, dateFormat, { locale: dateFnsLocale })}
       </span>
       {showWeekNumber ? (

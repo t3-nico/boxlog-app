@@ -3,7 +3,7 @@
 import { useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Check, Eye, EyeOff, X } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import NextImage from 'next/image';
 import Link from 'next/link';
@@ -16,9 +16,11 @@ import { Checkbox } from '@/components/ui/checkbox';
 import {
   Field,
   FieldDescription,
+  FieldError,
   FieldGroup,
   FieldLabel,
   FieldSeparator,
+  FieldSupportText,
 } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinner';
@@ -62,13 +64,10 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
 
-  const minPasswordLength = 8;
-
   const {
     register,
     control,
     handleSubmit,
-    watch,
     formState: { errors, isSubmitting },
   } = useForm<SignupFormData>({
     resolver: zodResolver(signupSchema),
@@ -78,15 +77,8 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
       confirmPassword: '',
       agreedToTerms: false as unknown as true, // 初期値はfalse、バリデーションでtrueを要求
     },
-    mode: 'onChange', // リアルタイムバリデーション
+    mode: 'onSubmit', // DADS準拠: 送信時バリデーション
   });
-
-  const password = watch('password');
-  const confirmPassword = watch('confirmPassword');
-  const agreedToTerms = watch('agreedToTerms');
-
-  const isPasswordValid = password.length >= minPasswordLength;
-  const isPasswordMatching = confirmPassword.length > 0 && password === confirmPassword;
 
   const onSubmit = async (data: SignupFormData) => {
     setServerError(null);
@@ -124,49 +116,62 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
               </div>
 
               {serverError && (
-                <div className="text-destructive text-center text-sm" role="alert">
+                <FieldError announceImmediately className="text-center">
                   {serverError}
-                </div>
+                </FieldError>
               )}
 
               <Field>
-                <FieldLabel htmlFor="email">{t('auth.signupForm.email')}</FieldLabel>
+                <FieldLabel htmlFor="email" required requiredLabel={t('common.form.required')}>
+                  {t('auth.signupForm.email')}
+                </FieldLabel>
+                <FieldSupportText id="email-support">
+                  {t('auth.signupForm.emailSupportText')}
+                </FieldSupportText>
                 <Input
                   id="email"
                   type="email"
                   inputMode="email"
                   enterKeyHint="next"
-                  placeholder={t('auth.signupForm.emailPlaceholder')}
-                  disabled={isSubmitting}
+                  aria-disabled={isSubmitting || undefined}
                   autoComplete="email"
                   aria-invalid={!!errors.email}
-                  aria-describedby={errors.email ? 'email-error' : 'email-description'}
+                  aria-describedby={
+                    [errors.email ? 'email-error' : null, 'email-support']
+                      .filter(Boolean)
+                      .join(' ') || undefined
+                  }
                   {...register('email')}
                 />
-                {errors.email ? (
-                  <p id="email-error" className="text-destructive text-sm" role="alert">
-                    {errors.email.message}
-                  </p>
-                ) : (
-                  <FieldDescription id="email-description">
-                    {t('auth.signupForm.emailDescription')}
-                  </FieldDescription>
-                )}
+                {errors.email && <FieldError id="email-error">{errors.email.message}</FieldError>}
               </Field>
 
               <Field>
                 <Field className="grid grid-cols-2 gap-4">
                   <Field>
-                    <FieldLabel htmlFor="password">{t('auth.signupForm.password')}</FieldLabel>
+                    <FieldLabel
+                      htmlFor="password"
+                      required
+                      requiredLabel={t('common.form.required')}
+                    >
+                      {t('auth.signupForm.password')}
+                    </FieldLabel>
+                    <FieldSupportText id="password-support">
+                      {t('auth.signupForm.passwordSupportText')}
+                    </FieldSupportText>
                     <div className="relative">
                       <Input
                         id="password"
                         type={showPassword ? 'text' : 'password'}
                         enterKeyHint="next"
-                        disabled={isSubmitting}
+                        aria-disabled={isSubmitting || undefined}
                         autoComplete="new-password"
                         aria-invalid={!!errors.password}
-                        aria-describedby={errors.password ? 'password-error' : undefined}
+                        aria-describedby={
+                          [errors.password ? 'password-error' : null, 'password-support']
+                            .filter(Boolean)
+                            .join(' ') || undefined
+                        }
                         {...register('password')}
                       />
                       <HoverTooltip
@@ -183,7 +188,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                           size="icon"
                           className="absolute top-0 right-0 h-full px-3"
                           onClick={() => setShowPassword(!showPassword)}
-                          disabled={isSubmitting}
+                          aria-disabled={isSubmitting || undefined}
                           aria-label={
                             showPassword
                               ? t('auth.signupForm.hidePassword')
@@ -199,25 +204,35 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                       </HoverTooltip>
                     </div>
                     {errors.password && (
-                      <p id="password-error" className="text-destructive text-sm" role="alert">
-                        {errors.password.message}
-                      </p>
+                      <FieldError id="password-error">{errors.password.message}</FieldError>
                     )}
                   </Field>
                   <Field>
-                    <FieldLabel htmlFor="confirm-password">
+                    <FieldLabel
+                      htmlFor="confirm-password"
+                      required
+                      requiredLabel={t('common.form.required')}
+                    >
                       {t('auth.signupForm.confirmPassword')}
                     </FieldLabel>
+                    <FieldSupportText id="confirm-password-support">
+                      {t('auth.signupForm.confirmPasswordSupportText')}
+                    </FieldSupportText>
                     <div className="relative">
                       <Input
                         id="confirm-password"
                         type={showConfirmPassword ? 'text' : 'password'}
                         enterKeyHint="go"
-                        disabled={isSubmitting}
+                        aria-disabled={isSubmitting || undefined}
                         autoComplete="new-password"
                         aria-invalid={!!errors.confirmPassword}
                         aria-describedby={
-                          errors.confirmPassword ? 'confirm-password-error' : undefined
+                          [
+                            errors.confirmPassword ? 'confirm-password-error' : null,
+                            'confirm-password-support',
+                          ]
+                            .filter(Boolean)
+                            .join(' ') || undefined
                         }
                         {...register('confirmPassword')}
                       />
@@ -235,7 +250,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                           size="icon"
                           className="absolute top-0 right-0 h-full px-3"
                           onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                          disabled={isSubmitting}
+                          aria-disabled={isSubmitting || undefined}
                           aria-label={
                             showConfirmPassword
                               ? t('auth.signupForm.hidePassword')
@@ -251,55 +266,12 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                       </HoverTooltip>
                     </div>
                     {errors.confirmPassword && (
-                      <p
-                        id="confirm-password-error"
-                        className="text-destructive text-sm"
-                        role="alert"
-                      >
+                      <FieldError id="confirm-password-error">
                         {errors.confirmPassword.message}
-                      </p>
+                      </FieldError>
                     )}
                   </Field>
                 </Field>
-
-                {/* パスワードバリデーション */}
-                <div className="grid grid-cols-2 gap-4">
-                  {password && (
-                    <div className="flex items-center gap-2 text-sm">
-                      {isPasswordValid ? (
-                        <Check className="text-success h-4 w-4" />
-                      ) : (
-                        <X className="text-muted-foreground h-4 w-4" />
-                      )}
-                      <span
-                        className={cn(isPasswordValid ? 'text-success' : 'text-muted-foreground')}
-                      >
-                        {password.length} / {minPasswordLength}
-                        {t('auth.passwordStrength.minCharacters')}
-                      </span>
-                    </div>
-                  )}
-                  {confirmPassword && (
-                    <div className="flex items-center gap-2 text-sm">
-                      {isPasswordMatching ? (
-                        <Check className="text-success h-4 w-4" />
-                      ) : (
-                        <X className="text-muted-foreground h-4 w-4" />
-                      )}
-                      <span
-                        className={cn(
-                          isPasswordMatching ? 'text-success' : 'text-muted-foreground',
-                        )}
-                      >
-                        {isPasswordMatching
-                          ? t('auth.signupForm.passwordMatch')
-                          : t('auth.signupForm.passwordMismatch')}
-                      </span>
-                    </div>
-                  )}
-                </div>
-
-                <FieldDescription>{t('auth.signupForm.passwordRequirement')}</FieldDescription>
               </Field>
 
               {/* 利用規約とプライバシーポリシーへの同意 */}
@@ -313,7 +285,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                         id="agree-terms"
                         checked={field.value}
                         onCheckedChange={(checked) => field.onChange(checked === true)}
-                        disabled={isSubmitting}
+                        aria-disabled={isSubmitting || undefined}
                         aria-label={t('auth.register.agreeTerms')}
                       />
                     )}
@@ -323,7 +295,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                     <Link
                       href="/legal/terms"
                       target="_blank"
-                      className="text-primary hover:underline"
+                      className="text-muted-foreground hover:text-foreground underline underline-offset-4"
                     >
                       {t('auth.signupForm.termsOfService')}
                     </Link>{' '}
@@ -331,22 +303,18 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                     <Link
                       href="/legal/privacy"
                       target="_blank"
-                      className="text-primary hover:underline"
+                      className="text-muted-foreground hover:text-foreground underline underline-offset-4"
                     >
                       {t('auth.signupForm.privacyPolicy')}
                     </Link>
                     に同意します。
                   </label>
                 </div>
-                {errors.agreedToTerms && (
-                  <p className="text-destructive text-sm" role="alert">
-                    {errors.agreedToTerms.message}
-                  </p>
-                )}
+                {errors.agreedToTerms && <FieldError>{errors.agreedToTerms.message}</FieldError>}
               </Field>
 
               <Field>
-                <Button type="submit" disabled={isSubmitting || !agreedToTerms} className="w-full">
+                <Button type="submit" className="w-full">
                   {isSubmitting && <Spinner className="mr-2" />}
                   {t('auth.signupForm.createAccountButton')}
                 </Button>
@@ -388,13 +356,11 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
 
               <FieldDescription className="text-center">
                 {t('auth.signupForm.alreadyHaveAccount')}{' '}
-                <Link href="/auth/login" className="text-primary hover:underline">
-                  {t('auth.signupForm.login')}
-                </Link>
+                <Link href="/auth/login">{t('auth.signupForm.login')}</Link>
               </FieldDescription>
             </FieldGroup>
           </form>
-          <div className="bg-surface-container relative hidden md:block">
+          <div className="bg-container relative hidden md:block">
             <NextImage
               src="/placeholder.svg"
               alt="Decorative background"

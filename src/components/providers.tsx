@@ -75,7 +75,23 @@ const ServiceWorkerProvider = dynamic(
 
 // GlobalTagCreateModalを遅延ロード
 const GlobalTagCreateModal = dynamic(
-  () => import('@/features/tags/components').then((mod) => mod.GlobalTagCreateModal),
+  () =>
+    import('@/features/tags/components/GlobalTagCreateModal').then(
+      (mod) => mod.GlobalTagCreateModal,
+    ),
+  { ssr: false },
+);
+
+// GlobalTagMergeModalを遅延ロード
+const GlobalTagMergeModal = dynamic(
+  () =>
+    import('@/features/tags/components/GlobalTagMergeModal').then((mod) => mod.GlobalTagMergeModal),
+  { ssr: false },
+);
+
+// SettingsModalを遅延ロード
+const SettingsModal = dynamic(
+  () => import('@/features/settings/components/modal').then((mod) => mod.SettingsModal),
   { ssr: false },
 );
 
@@ -198,6 +214,8 @@ export function Providers({ children }: ProvidersProps) {
               <ServiceWorkerProvider>
                 {children}
                 <GlobalTagCreateModal />
+                <GlobalTagMergeModal />
+                <SettingsModal />
               </ServiceWorkerProvider>
             </GlobalSearchProvider>
           </ThemeProvider>

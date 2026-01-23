@@ -1,4 +1,4 @@
-// タグシステムの型定義（フラット構造：グループ → タグ）
+// タグシステムの型定義（親子構造：Tag → Tag）
 
 export interface Tag {
   id: string;
@@ -8,24 +8,20 @@ export interface Tag {
   description: string | null;
   icon: string | null;
   is_active: boolean;
-  group_id: string | null;
+  /** 親タグのID。nullの場合はルートレベル。1階層のみサポート。 */
+  parent_id: string | null;
   sort_order?: number | null;
   created_at: string | null;
   updated_at: string | null;
+  /** フロントエンド用：子タグの配列（listHierarchyで使用） */
+  children?: Tag[] | undefined;
 }
 
-// タググループ
-export interface TagGroup {
-  id: string;
-  user_id: string;
-  name: string;
-  slug: string;
-  description: string | null;
-  color: string | null;
-  sort_order: number | null;
-  created_at: string | null;
-  updated_at: string | null;
-}
+/**
+ * @deprecated TagGroup は廃止されました。Tag の親子関係を使用してください。
+ * 後方互換性のため Tag のエイリアスとして残しています。
+ */
+export type TagGroup = Tag;
 
 // タグ作成用入力型
 export interface CreateTagInput {
@@ -33,9 +29,12 @@ export interface CreateTagInput {
   color: string;
   description?: string | null | undefined;
   icon?: string | null | undefined;
-  /** @deprecated use groupId instead */
-  group_id?: string | null | undefined;
+  /** 親タグのID */
+  parentId?: string | null | undefined;
+  /** @deprecated use parentId instead */
   groupId?: string | null | undefined;
+  /** @deprecated use parentId instead */
+  group_id?: string | null | undefined;
 }
 
 // タグ更新用入力型
@@ -45,13 +44,18 @@ export interface UpdateTagInput {
   description?: string | null | undefined;
   icon?: string | null | undefined;
   is_active?: boolean | undefined;
-  /** @deprecated use groupId instead */
-  group_id?: string | null | undefined;
+  /** 親タグのID */
+  parentId?: string | null | undefined;
+  /** @deprecated use parentId instead */
   groupId?: string | null | undefined;
+  /** @deprecated use parentId instead */
+  group_id?: string | null | undefined;
   sort_order?: number | undefined;
 }
 
-// タググループ作成用入力型
+/**
+ * @deprecated TagGroup は廃止されました。CreateTagInput を使用して親タグを作成してください。
+ */
 export interface CreateTagGroupInput {
   name: string;
   slug?: string;
@@ -60,7 +64,9 @@ export interface CreateTagGroupInput {
   sort_order?: number;
 }
 
-// タググループ更新用入力型
+/**
+ * @deprecated TagGroup は廃止されました。UpdateTagInput を使用してください。
+ */
 export interface UpdateTagGroupInput {
   name?: string;
   description?: string | null;
@@ -112,15 +118,21 @@ export interface TagOption {
   value: string;
   label: string;
   color: string | null;
-  groupId?: string | null;
-  disabled?: boolean;
+  /** 親タグのID */
+  parentId?: string | null | undefined;
+  /** @deprecated use parentId instead */
+  groupId?: string | null | undefined;
+  disabled?: boolean | undefined;
 }
 
 // タグフィルター用
 export interface TagFilter {
-  group_id?: string | null;
-  search?: string;
-  is_active?: boolean;
+  /** 親タグのIDでフィルタ */
+  parent_id?: string | null | undefined;
+  /** @deprecated use parent_id instead */
+  group_id?: string | null | undefined;
+  search?: string | undefined;
+  is_active?: boolean | undefined;
 }
 
 // タグ並び替え用
@@ -132,10 +144,20 @@ export interface TagSortOptions {
   order: TagSortOrder;
 }
 
-// グループに所属するタグを含むグループ型
-export interface TagGroupWithTags extends TagGroup {
+/**
+ * 親タグとその子タグを含む型
+ * @deprecated Tag.children を使用してください
+ */
+export interface TagGroupWithTags extends Tag {
   tags: Tag[];
-  totalPlans?: number;
+  totalPlans?: number | undefined;
+}
+
+/** 子タグを含む親タグ */
+export interface TagWithChildren extends Tag {
+  children: Tag[];
+  /** 親タグとその子タグのプラン総数 */
+  totalPlans?: number | undefined;
 }
 
 // API レスポンス型
@@ -145,13 +167,29 @@ export interface TagsResponse {
   has_more: boolean;
 }
 
+/**
+ * @deprecated TagGroup は廃止されました。TagsResponse を使用してください。
+ */
 export interface TagGroupsResponse {
-  data: TagGroup[];
+  data: Tag[];
   count: number;
 }
 
+/**
+ * @deprecated TagWithChildren[] を使用してください。
+ */
 export interface TagGroupWithTagsResponse {
-  data: TagGroupWithTags[];
+  data: TagWithChildren[];
+  count: number;
+}
+
+/** 階層構造のタグレスポンス */
+export interface TagHierarchyResponse {
+  /** 親タグ（子タグを含む） */
+  parentTags: TagWithChildren[];
+  /** 親を持たないルートタグ */
+  rootTags: Tag[];
+  /** 総タグ数 */
   count: number;
 }
 
@@ -159,21 +197,21 @@ export interface TagGroupWithTagsResponse {
 export interface TagError {
   code: string;
   message: string;
-  field?: string;
+  field?: string | undefined;
 }
 
 // タグ作成/更新結果
 export interface TagMutationResult {
   success: boolean;
-  data?: Tag;
-  error?: TagError;
+  data?: Tag | undefined;
+  error?: TagError | undefined;
 }
 
 // バルク操作用
 export interface BulkTagOperation {
   action: 'create' | 'update' | 'delete';
-  tag_ids?: string[];
-  data?: Partial<Tag>;
+  tag_ids?: string[] | undefined;
+  data?: Partial<Tag> | undefined;
 }
 
 export interface BulkTagResult {
@@ -248,7 +286,3 @@ export interface TagMergeResult {
   merged_associations: number;
   errors: TagError[];
 }
-
-// 後方互換性のための型エイリアス（段階的に削除予定）
-/** @deprecated フラット構造に移行。Tagを直接使用してください */
-export type TagWithChildren = Tag;

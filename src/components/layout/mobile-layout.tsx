@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { PageHeader } from '@/components/common/PageHeader';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
@@ -13,6 +13,8 @@ import { SettingsSidebar } from '@/features/settings/components/sidebar';
 import { StatsSidebar } from '@/features/stats';
 
 import { MainContentWrapper } from './main-content-wrapper';
+
+type PageType = 'calendar' | 'inbox' | 'stats' | 'settings' | 'default';
 
 interface MobileLayoutProps {
   children: React.ReactNode;
@@ -54,21 +56,32 @@ export function MobileLayout({ children, locale }: MobileLayoutProps) {
 
   const pathname = usePathname();
 
-  // ページごとにSidebarを切り替え
-  const isCalendarPage = pathname?.startsWith(`/${locale}/calendar`) ?? false;
-  const isInboxPage = pathname?.startsWith(`/${locale}/inbox`) ?? false;
-  const isStatsPage = pathname?.startsWith(`/${locale}/stats`) ?? false;
-  // /settings/tags は settings として扱う（共通サイドバーを使用）
-  const isSettingsPage = pathname?.startsWith(`/${locale}/settings`) ?? false;
+  // ページタイプをメモ化（DesktopLayoutと統一パターン）
+  const currentPage = useMemo((): PageType => {
+    if (pathname?.startsWith(`/${locale}/calendar`)) return 'calendar';
+    if (pathname?.startsWith(`/${locale}/inbox`)) return 'inbox';
+    if (pathname?.startsWith(`/${locale}/stats`)) return 'stats';
+    if (pathname?.startsWith(`/${locale}/settings`)) return 'settings';
+    return 'default';
+  }, [pathname, locale]);
 
-  // サイドバーコンポーネントを決定
-  const renderSidebar = () => {
-    if (isCalendarPage) return <CalendarSidebar />;
-    if (isInboxPage) return <InboxSidebar />;
-    if (isStatsPage) return <StatsSidebar />;
-    if (isSettingsPage) return <SettingsSidebar />;
-    return <AppSidebar />;
-  };
+  // サイドバーコンポーネントをメモ化（currentPageのみに依存）
+  const SidebarComponent = useMemo(() => {
+    switch (currentPage) {
+      case 'calendar':
+        return CalendarSidebar;
+      case 'inbox':
+        return InboxSidebar;
+      case 'stats':
+        return StatsSidebar;
+      case 'settings':
+        return SettingsSidebar;
+      default:
+        return AppSidebar;
+    }
+  }, [currentPage]);
+
+  const isCalendarPage = currentPage === 'calendar';
 
   return (
     <>
@@ -80,7 +93,7 @@ export function MobileLayout({ children, locale }: MobileLayoutProps) {
           showCloseButton={false}
           aria-label="Navigation menu"
         >
-          {renderSidebar()}
+          <SidebarComponent />
         </SheetContent>
       </Sheet>
 

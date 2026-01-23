@@ -1,7 +1,21 @@
 {
   "common": {
     "dates": {
-      "format": "YYYY/MM/DD"
+      "format": "YYYY/MM/DD",
+      "formats": {
+        "monthDay": "M月d日",
+        "monthDayYear": "yyyy年M月d日",
+        "dayMonth": "M月d日",
+        "dayMonthYear": "yyyy年M月d日",
+        "monthYear": "yyyy年M月",
+        "yearMonth": "yyyy年M月",
+        "yearMonthDay": "yyyy年M月d日",
+        "withDayOfWeek": "M/d(E)",
+        "dateTime": "M月d日 HH:mm",
+        "dayRangeSameMonth": "{start}〜{end}日",
+        "dayRangeDiffMonth": "{startMonth}月{startDay}日〜{endMonth}月{endDay}日",
+        "dayRangeDiffYear": "{startYear}年{startMonth}月{startDay}日〜{endYear}年{endMonth}月{endDay}日"
+      }
     },
     "reload": "ページをリロード",
     "back": "戻る",
@@ -100,7 +114,12 @@
         "deleteConfirm": "削除"
       }
     },
-    "moreActions": "その他のアクション"
+    "moreActions": "その他のアクション",
+    "form": {
+      "required": "※必須",
+      "optional": "※任意",
+      "processing": "処理中..."
+    }
   },
   "actions": {
     "save": "保存",
@@ -112,7 +131,49 @@
     "update": "更新",
     "search": "検索",
     "filter": "フィルター",
-    "sort": "並べ替え"
+    "sort": "並べ替え",
+    "confirm": "確認",
+    "rename": "名前を変更",
+    "archive": "アーカイブ",
+    "restore": "復元",
+    "add": "追加",
+    "remove": "削除",
+    "view": "表示",
+    "duplicate": "複製",
+    "move": "移動",
+    "createNew": "新規作成",
+    "saving": "保存中...",
+    "creating": "作成中...",
+    "deleting": "削除中...",
+    "updating": "更新中...",
+    "archiving": "アーカイブ中...",
+    "restoring": "復元中...",
+    "clear": "クリア"
+  },
+  "confirm": {
+    "delete": {
+      "title": "{name}を削除しますか？",
+      "titleGeneric": "このアイテムを削除しますか？",
+      "description": "この操作は取り消せません。",
+      "button": "削除"
+    },
+    "archive": {
+      "title": "{name}をアーカイブしますか？",
+      "description": "アーカイブしたアイテムは後で復元できます。",
+      "button": "アーカイブ"
+    },
+    "bulkDelete": {
+      "title": "{count}件を削除しますか？",
+      "description": "選択した{count}件のアイテムを完全に削除します。この操作は取り消せません。"
+    },
+    "recurring": {
+      "editTitle": "繰り返しイベントを編集",
+      "deleteTitle": "繰り返しイベントを削除",
+      "thisOnly": "このイベントのみ",
+      "thisAndFuture": "このイベント以降すべて",
+      "allEvents": "すべてのイベント",
+      "apply": "適用"
+    }
   },
   "table": {
     "rowsPerPage": "表示件数",
@@ -225,9 +286,9 @@
     "nextWeek": "来週",
     "thisMonth": "今月",
     "nextMonth": "来月",
-    "daysAgo": "日前",
-    "weeksAgo": "週間前",
-    "monthsAgo": "ヶ月前",
+    "daysAgo": "{count}日前",
+    "weeksAgo": "{count}週間前",
+    "monthsAgo": "{count}ヶ月前",
     "justNow": "たった今",
     "minutesAgo": "{count}分前",
     "hoursAgo": "{count}時間前"
@@ -264,6 +325,7 @@
   "createNew": {
     "plan": "予定を作成",
     "task": "タスクを作成",
+    "tag": "タグを作成",
     "defaultPlanTitle": "新しい予定"
   },
   "comingSoon": "近日公開",
@@ -280,7 +342,7 @@
     "description": "追加するアイテムの種類を選択してください",
     "plan": "予定",
     "planDescription": "新しい予定を作成します",
-    "record": "実績",
+    "record": "記録",
     "recordDescription": "実際に行ったことを記録します",
     "template": "テンプレート",
     "templateDescription": "保存済みテンプレートから追加します",
@@ -333,7 +395,8 @@
     "username": {
       "required": "ユーザー名は必須です",
       "maxLength": "ユーザー名は{max}文字以内で入力してください"
-    }
+    },
+    "limitReached": "上限に達しました"
   },
   "errors": {
     "generic": "エラーが発生しました",

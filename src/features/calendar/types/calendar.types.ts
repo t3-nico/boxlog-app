@@ -34,15 +34,8 @@ export interface CalendarPlan {
   plan_number?: number | null | undefined; // プラン番号
   completed_at?: string | null | undefined; // 完了日時
   reminder_minutes?: number | null | undefined; // 通知タイミング（開始時刻の何分前か）
-  tags?:
-    | Array<{
-        id: string;
-        name: string;
-        color: string;
-        icon?: string | undefined;
-        parent_id?: string | undefined;
-      }>
-    | undefined;
+  /** タグIDリスト。タグの詳細情報はtags.listキャッシュから取得する。 */
+  tagIds?: string[] | undefined;
   createdAt: Date;
   updatedAt: Date;
   // Display-specific properties

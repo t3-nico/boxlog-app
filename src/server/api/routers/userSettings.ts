@@ -7,6 +7,7 @@ import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
 import type { Database } from '@/lib/database.types';
+import { logger } from '@/lib/logger';
 import { createClient } from '@/lib/supabase/server';
 import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc';
 
@@ -79,7 +80,7 @@ export const userSettingsRouter = createTRPCRouter({
 
     if (error && error.code !== 'PGRST116') {
       // PGRST116 = no rows returned（設定がまだない場合）
-      console.error('UserSettings fetch error:', error);
+      logger.error('UserSettings fetch error:', error);
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
         message: `設定の取得に失敗しました: ${error.message}`,
@@ -177,7 +178,7 @@ export const userSettingsRouter = createTRPCRouter({
       .single();
 
     if (error) {
-      console.error('UserSettings update error:', error);
+      logger.error('UserSettings update error:', error);
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
         message: `設定の更新に失敗しました: ${error.message}`,

@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 import { zIndex } from '@/config/ui/z-index';
 import { cn } from '@/lib/utils';
@@ -34,6 +35,12 @@ interface HoverTooltipProps {
   maxWidth?: number;
   /** 追加のクラス名 */
   className?: string;
+  /** ラッパー要素の追加クラス名（フルwidth要素をラップする場合は"w-full"を指定） */
+  wrapperClassName?: string;
+  /** ラッパー要素のdisplayモード（デフォルト: 'inline-flex'） */
+  wrapperDisplay?: 'inline-flex' | 'flex' | 'block' | 'inline';
+  /** ラッパー要素のHTML要素（デフォルト: 'span'） */
+  as?: 'span' | 'div' | 'li';
   /** 無効化 */
   disabled?: boolean;
 }
@@ -45,11 +52,14 @@ function HoverTooltip({
   delayMs = 300,
   maxWidth = 200,
   className,
+  wrapperClassName,
+  wrapperDisplay = 'inline-flex',
+  as: Component = 'span',
   disabled = false,
 }: HoverTooltipProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [position, setPosition] = useState({ top: 0, left: 0 });
-  const triggerRef = useRef<HTMLSpanElement>(null);
+  const triggerRef = useRef<HTMLElement>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -121,40 +131,42 @@ function HoverTooltip({
     };
   }, []);
 
-  if (disabled || !content) {
-    return <>{children}</>;
-  }
+  // 常にラッパーを描画（DOM構造の一貫性のため）
+  const isTooltipEnabled = !disabled && !!content;
 
   return (
     <>
-      <span
-        ref={triggerRef}
-        onMouseEnter={showTooltip}
-        onMouseLeave={hideTooltip}
-        onFocus={showTooltip}
-        onBlur={hideTooltip}
-        className="inline-flex"
+      <Component
+        ref={triggerRef as React.RefObject<HTMLSpanElement & HTMLDivElement & HTMLLIElement>}
+        onMouseEnter={isTooltipEnabled ? showTooltip : undefined}
+        onMouseLeave={isTooltipEnabled ? hideTooltip : undefined}
+        onFocus={isTooltipEnabled ? showTooltip : undefined}
+        onBlur={isTooltipEnabled ? hideTooltip : undefined}
+        className={cn(wrapperDisplay, wrapperClassName)}
       >
         {children}
-      </span>
-      {isVisible && (
-        <div
-          ref={tooltipRef}
-          role="tooltip"
-          className={cn(
-            'bg-tooltip text-tooltip-foreground animate-in fade-in-0 zoom-in-95 pointer-events-none fixed rounded-md px-2 py-1 text-xs',
-            className,
-          )}
-          style={{
-            top: position.top,
-            left: position.left,
-            maxWidth,
-            zIndex: zIndex.tooltip,
-          }}
-        >
-          {content}
-        </div>
-      )}
+      </Component>
+      {isTooltipEnabled &&
+        isVisible &&
+        createPortal(
+          <div
+            ref={tooltipRef}
+            role="tooltip"
+            className={cn(
+              'bg-foreground text-background animate-in fade-in-0 zoom-in-95 pointer-events-none fixed rounded-md px-2 py-1 text-xs',
+              className,
+            )}
+            style={{
+              top: position.top,
+              left: position.left,
+              maxWidth,
+              zIndex: zIndex.tooltip,
+            }}
+          >
+            {content}
+          </div>,
+          document.body,
+        )}
     </>
   );
 }

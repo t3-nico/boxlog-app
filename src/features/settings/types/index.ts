@@ -20,7 +20,6 @@ export type SettingsCategory =
   | 'general' // 言語、テーマ、起動画面
   | 'calendar' // カレンダー設定（タイムゾーン、表示、デフォルトビュー）
   | 'personalization' // クロノタイプ
-  | 'tags' // タグ管理
   | 'notifications' // 通知設定
   | 'data-controls' // エクスポート、バックアップ
   | 'integrations' // AI連携、外部サービス
@@ -32,8 +31,7 @@ export type SettingsCategory =
  */
 export type SettingsSectionId =
   | 'calendar' // カレンダー設定
-  | 'chronotype' // クロノタイプ設定
-  | 'tags'; // タグ設定
+  | 'chronotype'; // クロノタイプ設定
 
 /**
  * 設定メニュー項目

@@ -27,6 +27,26 @@ export interface PlanInitialData {
 }
 
 /**
+ * Popover位置情報
+ */
+export interface PopoverPosition {
+  x: number;
+  y: number;
+}
+
+/**
+ * Draft Plan（ローカルのみ、未保存のプラン）
+ */
+export interface DraftPlan {
+  title: string;
+  description: string | null;
+  status: 'open';
+  due_date: string | null;
+  start_time: string | null;
+  end_time: string | null;
+}
+
+/**
  * Plan Inspector Store の状態
  */
 interface PlanInspectorState {
@@ -42,6 +62,10 @@ interface PlanInspectorState {
   displayMode: InspectorDisplayMode;
   /** Popoverのアンカー要素の位置情報 */
   popoverAnchor?: { x: number; y: number } | undefined;
+  /** Popoverの保存された位置（ドラッグ移動後） */
+  popoverPosition: PopoverPosition | null;
+  /** ローカルのみのドラフトプラン（未保存） */
+  draftPlan: DraftPlan | null;
 }
 
 /**
@@ -61,6 +85,14 @@ interface PlanInspectorActions {
   closeInspector: () => void;
   /** 表示モードを変更する */
   setDisplayMode: (mode: InspectorDisplayMode) => void;
+  /** Popoverの位置を保存する */
+  setPopoverPosition: (position: PopoverPosition | null) => void;
+  /** ドラフトモードでInspectorを開く（DB未保存） */
+  openInspectorWithDraft: (initialData?: Partial<DraftPlan>) => void;
+  /** ドラフトをクリアする */
+  clearDraft: () => void;
+  /** ドラフトを更新する */
+  updateDraft: (updates: Partial<DraftPlan>) => void;
 }
 
 /**
@@ -78,6 +110,8 @@ export const usePlanInspectorStore = create<PlanInspectorStore>()(
         initialData: undefined,
         displayMode: 'sheet',
         popoverAnchor: undefined,
+        popoverPosition: null,
+        draftPlan: null,
 
         openInspector: (planId, options) =>
           set(
@@ -87,12 +121,17 @@ export const usePlanInspectorStore = create<PlanInspectorStore>()(
               instanceDate: options?.instanceDate ?? null,
               initialData: planId === null ? options?.initialData : undefined,
               popoverAnchor: options?.anchor,
+              draftPlan: null, // 既存プランを開く時はdraftをクリア
             },
             false,
             'openInspector',
           ),
 
-        closeInspector: () =>
+        closeInspector: () => {
+          // カレンダーのドラッグ選択をクリア
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(new CustomEvent('calendar-drag-cancel'));
+          }
           set(
             {
               isOpen: false,
@@ -100,17 +139,56 @@ export const usePlanInspectorStore = create<PlanInspectorStore>()(
               instanceDate: null,
               initialData: undefined,
               popoverAnchor: undefined,
+              draftPlan: null, // 閉じる時はdraftもクリア
             },
             false,
             'closeInspector',
-          ),
+          );
+        },
 
         setDisplayMode: (mode) => set({ displayMode: mode }, false, 'setDisplayMode'),
+
+        setPopoverPosition: (position) =>
+          set({ popoverPosition: position }, false, 'setPopoverPosition'),
+
+        openInspectorWithDraft: (initialData) =>
+          set(
+            {
+              isOpen: true,
+              planId: null,
+              instanceDate: null,
+              initialData: undefined,
+              draftPlan: {
+                title: initialData?.title ?? '',
+                description: initialData?.description ?? null,
+                status: 'open',
+                due_date: initialData?.due_date ?? null,
+                start_time: initialData?.start_time ?? null,
+                end_time: initialData?.end_time ?? null,
+              },
+            },
+            false,
+            'openInspectorWithDraft',
+          ),
+
+        clearDraft: () => set({ draftPlan: null }, false, 'clearDraft'),
+
+        updateDraft: (updates) =>
+          set(
+            (state) => ({
+              draftPlan: state.draftPlan ? { ...state.draftPlan, ...updates } : null,
+            }),
+            false,
+            'updateDraft',
+          ),
       }),
       {
         name: 'plan-inspector-settings',
-        // displayModeのみ永続化（isOpenやplanIdは永続化しない）
-        partialize: (state) => ({ displayMode: state.displayMode }),
+        // displayModeとpopoverPositionのみ永続化
+        partialize: (state) => ({
+          displayMode: state.displayMode,
+          popoverPosition: state.popoverPosition,
+        }),
       },
     ),
     { name: 'plan-inspector-store' },

@@ -10,6 +10,13 @@ import { MobileHeader } from './MobileHeader';
 import type { CalendarViewType } from '../../../types/calendar.types';
 
 const messages = {
+  common: {
+    dates: {
+      formats: {
+        withDayOfWeek: "M/d'('E')'", // date-fnsフォーマット: 1/15(水)
+      },
+    },
+  },
   calendar: {
     mobile: {
       header: {

@@ -76,14 +76,8 @@ export function useCalendarNavigationHandlers({
       // フォールバックとして通常処理
       navigateRelative(direction);
     },
-    [
-      navigateRelative,
-      currentDate,
-      viewType,
-      showWeekends,
-      handleTodayWithWeekendSkip,
-      handleWeekendSkipNavigation,
-    ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- advanced-use-latest パターンで安定化済み
+    [navigateRelative, currentDate, viewType, showWeekends],
   );
 
   const handleViewChange = useCallback(
@@ -109,7 +103,8 @@ export function useCalendarNavigationHandlers({
       const adjustedDate = adjustWeekendDate(date);
       navigateToDate(adjustedDate);
     },
-    [navigateToDate, adjustWeekendDate],
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- advanced-use-latest パターンで安定化済み
+    [navigateToDate],
   );
 
   return {

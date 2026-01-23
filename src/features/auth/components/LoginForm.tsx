@@ -15,9 +15,11 @@ import { Card, CardContent } from '@/components/ui/card';
 import {
   Field,
   FieldDescription,
+  FieldError,
   FieldGroup,
   FieldLabel,
   FieldSeparator,
+  FieldSupportText,
 } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinner';
@@ -115,51 +117,64 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
               </div>
 
               {serverError && (
-                <div className="text-destructive text-center text-sm" role="alert">
+                <FieldError announceImmediately className="text-center">
                   {serverError}
-                </div>
+                </FieldError>
               )}
 
               <Field>
-                <FieldLabel htmlFor="email">{t('auth.loginForm.email')}</FieldLabel>
+                <FieldLabel htmlFor="email" required requiredLabel={t('common.form.required')}>
+                  {t('auth.loginForm.email')}
+                </FieldLabel>
+                <FieldSupportText id="email-support">
+                  {t('auth.loginForm.emailSupportText')}
+                </FieldSupportText>
                 <Input
                   id="email"
                   type="email"
                   inputMode="email"
                   enterKeyHint="next"
-                  placeholder={t('auth.loginForm.emailPlaceholder')}
-                  disabled={isSubmitting}
+                  aria-disabled={isSubmitting || undefined}
                   autoComplete="email"
                   aria-invalid={!!errors.email}
-                  aria-describedby={errors.email ? 'email-error' : undefined}
+                  aria-describedby={
+                    [errors.email ? 'email-error' : null, 'email-support']
+                      .filter(Boolean)
+                      .join(' ') || undefined
+                  }
                   {...register('email')}
                 />
-                {errors.email && (
-                  <p id="email-error" className="text-destructive text-sm" role="alert">
-                    {errors.email.message}
-                  </p>
-                )}
+                {errors.email && <FieldError id="email-error">{errors.email.message}</FieldError>}
               </Field>
 
               <Field>
                 <div className="flex items-center">
-                  <FieldLabel htmlFor="password">{t('auth.loginForm.password')}</FieldLabel>
+                  <FieldLabel htmlFor="password" required requiredLabel={t('common.form.required')}>
+                    {t('auth.loginForm.password')}
+                  </FieldLabel>
                   <Link
                     href="/auth/password"
-                    className="ml-auto text-sm underline-offset-2 hover:underline"
+                    className="text-muted-foreground hover:text-foreground ml-auto text-sm underline underline-offset-4"
                   >
                     {t('auth.loginForm.forgotPassword')}
                   </Link>
                 </div>
+                <FieldSupportText id="password-support">
+                  {t('auth.loginForm.passwordSupportText')}
+                </FieldSupportText>
                 <div className="relative">
                   <Input
                     id="password"
                     type={showPassword ? 'text' : 'password'}
                     enterKeyHint="go"
-                    disabled={isSubmitting}
+                    aria-disabled={isSubmitting || undefined}
                     autoComplete="current-password"
                     aria-invalid={!!errors.password}
-                    aria-describedby={errors.password ? 'password-error' : undefined}
+                    aria-describedby={
+                      [errors.password ? 'password-error' : null, 'password-support']
+                        .filter(Boolean)
+                        .join(' ') || undefined
+                    }
                     {...register('password')}
                   />
                   <HoverTooltip
@@ -176,7 +191,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
                       size="icon"
                       className="absolute top-0 right-0 h-full px-3"
                       onClick={() => setShowPassword(!showPassword)}
-                      disabled={isSubmitting}
+                      aria-disabled={isSubmitting || undefined}
                       aria-label={
                         showPassword
                           ? t('auth.loginForm.hidePassword')
@@ -188,9 +203,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
                   </HoverTooltip>
                 </div>
                 {errors.password && (
-                  <p id="password-error" className="text-destructive text-sm" role="alert">
-                    {errors.password.message}
-                  </p>
+                  <FieldError id="password-error">{errors.password.message}</FieldError>
                 )}
               </Field>
 
@@ -241,7 +254,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
               </FieldDescription>
             </FieldGroup>
           </form>
-          <div className="bg-surface-container relative hidden md:block">
+          <div className="bg-container relative hidden md:block">
             {/* LCP改善: デコレーション用画像はlazy load（-500ms） */}
             <Image
               src="/placeholder.svg"

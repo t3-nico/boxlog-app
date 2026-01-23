@@ -78,6 +78,12 @@ npm run lint         # コード品質（AI必須：コミット前）
 3. **Code**: CLAUDE.md準拠で実装
 4. **Commit**: `npm run typecheck` → `npm run lint` → コミット
 
+### コミットメッセージ
+
+- **日本語で記述する**
+- Conventional Commits形式を使用: `feat(scope): 説明`, `fix(scope): 説明`
+- 例: `feat(tags): タグマージモーダルをIntercepting Routesに移行`
+
 ## 🤖 AIの行動規範
 
 ### 曖昧な指示への対応
@@ -140,10 +146,19 @@ npm run lint         # コード品質（AI必須：コミット前）
 
 ### カスタムスキル（/.claude/skills/）
 
+**プロジェクト固有**:
+
 - `/releasing` - リリース作業ガイド
 - `/feature-scaffolding` - 新Featureモジュール作成
 - `/store-creating` - Zustand store作成
 - `/trpc-router-creating` - tRPCルーター作成
+- `/weekend-remote` - 土日リモート用タスク発見
+- `/frontend-design` - UI設計ガイドライン（STYLE_GUIDE.md補完）
+
+**汎用スキル**:
+
+- `/react-best-practices` - Vercel公式React/Next.js最適化ルール（45ルール）
+- `/ask-questions-if-underspecified` - 曖昧な指示への確認プロセス
 
 ## 🎯 意思決定の優先順位（GAFA-First原則）
 
@@ -282,6 +297,64 @@ export const myRouter = createTRPCRouter({
 });
 ```
 
+## 🔄 楽観的更新（Optimistic Updates）
+
+### 基本方針
+
+**ユーザー操作に対応する全mutationで楽観的更新を実装する**
+
+楽観的更新により、ユーザーはサーバーレスポンスを待たずに即座にUIフィードバックを得られる。
+これは体感速度を200-800ms改善し、アプリケーションの応答性を大幅に向上させる。
+
+### 実装パターン（テンプレート）
+
+```typescript
+const myMutation = api.myRouter.myEndpoint.useMutation({
+  // 1. 楽観的更新
+  onMutate: async (input) => {
+    // 進行中のクエリをキャンセル（競合防止）
+    await utils.myRouter.list.cancel();
+
+    // 現在のキャッシュをスナップショット（ロールバック用）
+    const previous = utils.myRouter.list.getData();
+
+    // キャッシュを楽観的に更新
+    utils.myRouter.list.setData(undefined, (old) => {
+      if (!old) return old;
+      return /* 更新後のデータ */;
+    });
+
+    return { previous };
+  },
+
+  // 2. エラー時ロールバック
+  onError: (_err, _input, context) => {
+    if (context?.previous) {
+      utils.myRouter.list.setData(undefined, context.previous);
+    }
+  },
+
+  // 3. 完了時に再検証
+  onSettled: () => {
+    void utils.myRouter.list.invalidate();
+  },
+});
+```
+
+### 楽観的更新が不要な場合
+
+以下のケースでは楽観的更新を適用しない：
+
+1. **不可逆操作**: アカウント削除、支払い処理など
+2. **サーバー計算が必要**: IDの発行、複雑な集計など（ただし一時IDで対応可能な場合は実装する）
+3. **低頻度操作**: 月1回程度の設定変更など（ただし一貫性のため実装を推奨）
+
+### 新規mutation作成時のチェックリスト
+
+- [ ] ユーザー操作に対応するか？ → 楽観的更新を実装
+- [ ] 不可逆操作か？ → 楽観的更新なし、確認ダイアログを表示
+- [ ] 複数キャッシュに影響するか？ → 全キャッシュを更新
+
 ---
 
 ## 📈 パフォーマンス監視の原則
@@ -290,19 +363,19 @@ export const myRouter = createTRPCRouter({
 
 ### 速度指標（p95で判断）
 
-| 指標 | 目標 | 意味 |
-|------|------|------|
-| **LCP** | ≤ 2.5s | 画面表示の体感速度 |
-| **INP** | ≤ 200ms | 操作への応答速度 |
+| 指標            | 目標    | 意味                 |
+| --------------- | ------- | -------------------- |
+| **LCP**         | ≤ 2.5s  | 画面表示の体感速度   |
+| **INP**         | ≤ 200ms | 操作への応答速度     |
 | **API latency** | ≤ 300ms | バックエンド処理速度 |
-| **DBクエリ** | ≤ 100ms | 基礎体力 |
+| **DBクエリ**    | ≤ 100ms | 基礎体力             |
 
 ### 安定性指標
 
-| 指標 | 目標 |
-|------|------|
-| 主要導線エラー率 | < 0.1% |
-| p95悪化時 | **改善Issue必須** |
+| 指標             | 目標              |
+| ---------------- | ----------------- |
+| 主要導線エラー率 | < 0.1%            |
+| p95悪化時        | **改善Issue必須** |
 
 ### 行動ルール
 
@@ -329,5 +402,5 @@ export const myRouter = createTRPCRouter({
 
 ---
 
-**📖 最終更新**: 2026-01-13 | **バージョン**: v11.9
+**📖 最終更新**: 2026-01-21 | **バージョン**: v12.0
 **変更履歴**: [`docs/development/CLAUDE_MD_CHANGELOG.md`](docs/development/CLAUDE_MD_CHANGELOG.md)

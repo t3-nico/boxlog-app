@@ -21,24 +21,14 @@ import { cn } from '@/lib/utils';
 import { useSearchHistory } from '../hooks/useSearch';
 import type { SearchResultType } from '../types';
 
-// Helper function to get tags from plan_tags
+// APIレスポンスの型（tagIdsのみ）
 type PlanFromAPI = {
   id: string;
   title: string;
   description: string | null;
-  plan_tags?: Array<{
-    tag_id: string;
-    tags: { id: string; name: string; color: string } | null;
-  }>;
+  tagIds?: string[];
   [key: string]: unknown;
 };
-
-function getTagsFromPlan(plan: PlanFromAPI): Array<{ id: string; name: string; color: string }> {
-  if (!plan.plan_tags) return [];
-  return plan.plan_tags
-    .map((pt) => pt.tags)
-    .filter((tag): tag is { id: string; name: string; color: string } => tag !== null);
-}
 
 interface SearchBarProps {
   className?: string;
@@ -65,15 +55,19 @@ export function SearchBar({
   const searchablePlans = useMemo(() => {
     if (!types.includes('plan')) return [];
     return (plans as unknown as PlanFromAPI[]).map((plan) => {
-      const planTags = getTagsFromPlan(plan);
+      // tagIdsからタグ情報を解決
+      const planTagIds = plan.tagIds ?? [];
+      const resolvedTags = planTagIds
+        .map((tagId) => tags.find((t) => t.id === tagId))
+        .filter((tag): tag is (typeof tags)[0] => tag !== undefined);
       return {
         id: plan.id,
         title: plan.title,
         description: plan.description || '',
-        tags: planTags,
+        tags: resolvedTags,
       };
     });
-  }, [plans, types]);
+  }, [plans, tags, types]);
 
   // Convert tags to displayable format
   const searchableTags = useMemo(() => {

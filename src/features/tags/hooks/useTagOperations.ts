@@ -2,6 +2,7 @@
  * タグ操作のビジネスロジックを管理するカスタムフック
  */
 
+import { DEFAULT_TAG_COLOR } from '@/features/tags/constants/colors';
 import {
   useCreateTag,
   useDeleteTag,
@@ -11,6 +12,7 @@ import {
   useUpdateTag,
 } from '@/features/tags/hooks/useTags';
 import type { CreateTagInput, Tag, UpdateTagInput } from '@/features/tags/types';
+import { logger } from '@/lib/logger';
 import { useCallback, useState } from 'react';
 
 export function useTagOperations(tags: Tag[]) {
@@ -46,11 +48,11 @@ export function useTagOperations(tags: Tag[]) {
           id: `temp-${Date.now()}`,
           name: data.name,
           user_id: 'current-user',
-          color: data.color || '#3B82F6',
+          color: data.color || DEFAULT_TAG_COLOR,
           description: data.description || null,
           icon: null,
           is_active: true,
-          group_id: data.groupId ?? createGroupId,
+          parent_id: data.parentId ?? data.groupId ?? createGroupId,
           sort_order: tags.length,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
@@ -66,7 +68,7 @@ export function useTagOperations(tags: Tag[]) {
           groupId: data.groupId ?? createGroupId ?? undefined,
         });
       } catch (error) {
-        console.error('Failed to create tag:', error);
+        logger.error('Failed to create tag:', error);
         throw error;
       }
     },
@@ -93,7 +95,7 @@ export function useTagOperations(tags: Tag[]) {
           data,
         });
       } catch (error) {
-        console.error('Failed to update tag:', error);
+        logger.error('Failed to update tag:', error);
         throw error;
       }
     },
@@ -110,7 +112,7 @@ export function useTagOperations(tags: Tag[]) {
         // 実際の削除
         await deleteTagMutation.mutateAsync({ id: tag.id });
       } catch (error) {
-        console.error('Failed to delete tag:', error);
+        logger.error('Failed to delete tag:', error);
         throw error;
       }
     },
@@ -122,7 +124,7 @@ export function useTagOperations(tags: Tag[]) {
     async (tag: Tag, newGroupId: string | null) => {
       try {
         // 楽観的更新
-        updateTagOptimistically(tag.id, { group_id: newGroupId });
+        updateTagOptimistically(tag.id, { parent_id: newGroupId });
 
         // 実際の移動
         await moveTagMutation.mutateAsync({
@@ -130,7 +132,7 @@ export function useTagOperations(tags: Tag[]) {
           groupId: newGroupId,
         });
       } catch (error) {
-        console.error('Failed to move tag:', error);
+        logger.error('Failed to move tag:', error);
         throw error;
       }
     },
@@ -150,7 +152,7 @@ export function useTagOperations(tags: Tag[]) {
           name: newName,
         });
       } catch (error) {
-        console.error('Failed to rename tag:', error);
+        logger.error('Failed to rename tag:', error);
         throw error;
       }
     },

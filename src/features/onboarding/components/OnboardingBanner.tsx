@@ -55,29 +55,26 @@ export function OnboardingBanner() {
 
   return (
     <div
-      className={cn(
-        'bg-surface-container border-border flex items-center justify-between border-b px-4 py-2',
-        'text-sm',
-      )}
+      className={cn('bg-accent flex items-center justify-between px-4 py-1.5', 'text-xs')}
       role="banner"
       aria-label={t('banner.ariaLabel')}
     >
       <div className="flex items-center gap-2">
-        <Zap className="text-primary h-4 w-4" />
-        <span className="text-foreground">{t('banner.message')}</span>
+        <Zap className="text-accent-foreground h-3.5 w-3.5" />
+        <span className="text-accent-foreground">{t('banner.message')}</span>
       </div>
-      <div className="flex items-center gap-2">
-        <Button variant="ghost" size="sm" onClick={handleSetup} className="h-7 text-xs">
+      <div className="flex items-center gap-1">
+        <Button variant="primary" size="sm" onClick={handleSetup} className="h-6 px-2 text-xs">
           {t('banner.setup')}
         </Button>
         <Button
           variant="ghost"
           size="icon"
           onClick={handleDismiss}
-          className="h-7 w-7"
+          className="text-accent-foreground/70 hover:text-accent-foreground hover:bg-accent-foreground/10 h-6 w-6"
           aria-label={t('banner.dismiss')}
         >
-          <X className="h-4 w-4" />
+          <X className="h-3.5 w-3.5" />
         </Button>
       </div>
     </div>

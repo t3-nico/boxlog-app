@@ -30,14 +30,16 @@ export type PlanTagRow = Database['public']['Tables']['plan_tags']['Row'];
 export type TagRow = Database['public']['Tables']['tags']['Row'];
 
 /**
- * プラン（タグ付き）
+ * プラン（タグID付き）
+ *
+ * タグの詳細情報（name, color等）はtags.listキャッシュから取得する。
+ * これにより、タグマスタの変更が全UIで即時反映される。
  */
 export interface PlanWithTags extends PlanRow {
   plan_tags?: Array<{
     tag_id: string;
-    tags: TagRow | null;
   }>;
-  tags?: TagRow[];
+  tagIds?: string[];
 }
 
 /**

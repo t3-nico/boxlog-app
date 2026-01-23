@@ -71,10 +71,10 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
   const isFocused = focusedId === item.id;
   const visibleColumns = getVisibleColumns();
 
-  const handleTagsChange = async (tagIds: string[]) => {
-    const currentTagIds = item.tags?.map((tag) => tag.id) ?? [];
-    const addedTagIds = tagIds.filter((id) => !currentTagIds.includes(id));
-    const removedTagIds = currentTagIds.filter((id) => !tagIds.includes(id));
+  const handleTagsChange = async (newTagIds: string[]) => {
+    const currentTagIds = item.tagIds ?? [];
+    const addedTagIds = newTagIds.filter((id) => !currentTagIds.includes(id));
+    const removedTagIds = currentTagIds.filter((id) => !newTagIds.includes(id));
 
     // NOTE: 現在は個別にタグを追加・削除していますが、
     // 将来的には一括設定API（setplanTags）を使用して効率化する予定です。
@@ -276,7 +276,7 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
         const isRecurring =
           item.recurrence_type && item.recurrence_type !== 'none' && item.recurrence_type !== null;
         return (
-          <TableCell key={columnId} className="font-medium" style={style}>
+          <TableCell key={columnId} className="font-normal" style={style}>
             <div className="group flex cursor-pointer items-center gap-2 overflow-hidden">
               <span className="min-w-0 truncate group-hover:underline">{item.title}</span>
               {isRecurring && item.recurrence_type && (
@@ -296,7 +296,7 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
         return (
           <TagsCell
             key={columnId}
-            tags={item.tags ?? []}
+            tagIds={item.tagIds}
             width={column?.width}
             onTagsChange={handleTagsChange}
           />

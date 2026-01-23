@@ -15,12 +15,13 @@ export {
   useMoveTag,
   useOptimisticTagUpdate,
   useRenameTag,
+  useReorderTags,
   useTag,
-  useTagUsage,
   useTags,
   useUpdateTag,
   useUpdateTagColor,
 } from './useTags';
+export type { ReorderTagInput } from './useTags';
 
 // Tag Groups
 export {
@@ -33,35 +34,8 @@ export {
   useUpdateTagGroup,
 } from './useTagGroups';
 
-// Item Tags (Plan, Task etc.)
-export {
-  itemTagsKeys,
-  useBatchUpdateItemTags,
-  useCreateItemTag,
-  useDeleteItemTag,
-  useItemTags,
-  useItemTagsByItem,
-  useItemTagsOptimisticUpdate,
-  useItemsByTags,
-} from './useItemTags';
-
 // Tag Operations
 export { useTagOperations } from './useTagOperations';
 
-// Tags Page Data (パフォーマンス最適化用)
-export { useTagsPageData } from './useTagsPageData';
-
-// Tag Stats
-export {
-  tagStatsKeys,
-  useSidebarTags,
-  useTagExpandedState,
-  useTagStats,
-  useTagUsageCounts,
-} from './useTagStats';
-
 // Realtime
 export { useTagRealtime } from './useTagRealtime';
-
-// Table Columns
-export { getTagColumnSettings, useTagTableColumns } from './useTagTableColumns';

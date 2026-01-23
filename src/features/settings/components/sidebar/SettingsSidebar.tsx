@@ -39,7 +39,7 @@ export function SettingsSidebar() {
                 key={category.id}
                 href={href}
                 className={cn(
-                  'flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm transition-colors',
+                  'flex w-full items-center gap-3 rounded-md px-3 py-2 text-left text-sm transition-colors',
                   isActive
                     ? 'bg-state-selected text-foreground'
                     : 'text-muted-foreground hover:bg-state-hover',
@@ -47,7 +47,7 @@ export function SettingsSidebar() {
                 aria-current={isActive ? 'page' : undefined}
               >
                 <Icon className="size-4 shrink-0" />
-                <span className="font-medium">{t(category.labelKey)}</span>
+                <span className="font-normal">{t(category.labelKey)}</span>
               </Link>
             );
           })}

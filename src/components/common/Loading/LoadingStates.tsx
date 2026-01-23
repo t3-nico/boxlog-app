@@ -100,7 +100,7 @@ export const LoadingOverlay = ({
           <div className="flex flex-col items-center gap-2">
             <LoadingSpinner size={spinnerSize} />
             {displayMessage ? (
-              <p className="text-foreground text-sm font-medium">{displayMessage}</p>
+              <p className="text-foreground text-sm font-normal">{displayMessage}</p>
             ) : null}
           </div>
         </div>

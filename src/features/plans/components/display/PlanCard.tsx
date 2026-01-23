@@ -58,7 +58,7 @@ export function PlanCard({ plan, onEdit, onDelete, onClick, tags = [] }: PlanCar
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-2">
           <div className="flex-1 space-y-1">
-            <h3 className="text-foreground line-clamp-2 font-semibold">{plan.title}</h3>
+            <h3 className="text-foreground line-clamp-2 font-bold">{plan.title}</h3>
           </div>
 
           <DropdownMenu>
@@ -113,7 +113,7 @@ export function PlanCard({ plan, onEdit, onDelete, onClick, tags = [] }: PlanCar
             {tags.map((tag) => (
               <span
                 key={tag.id}
-                className="inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium"
+                className="inline-flex items-center rounded-md px-2 py-0.5 text-xs font-normal"
                 style={{
                   backgroundColor: `${tag.color}20`,
                   color: tag.color,

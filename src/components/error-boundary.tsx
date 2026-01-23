@@ -35,7 +35,7 @@ function DefaultErrorFallback({
   const t = useTranslations();
 
   return (
-    <div className="border-destructive bg-surface-container rounded-lg border p-6">
+    <div className="border-destructive bg-surface-container rounded-xl border p-6">
       <div className="text-center">
         <div className="text-destructive mb-4 text-6xl">⚠️</div>
         <h2 className="text-destructive mb-2 text-3xl font-bold tracking-tight">
@@ -72,7 +72,7 @@ function DevErrorFallback({ componentName }: { componentName?: string | undefine
   const t = useTranslations();
 
   return (
-    <div className="border-border bg-surface-container rounded-lg border p-6">
+    <div className="border-border bg-surface-container rounded-xl border p-6">
       <h3 className="text-foreground mb-2 text-2xl font-bold tracking-tight">
         {t('error.boundary.devTitle')}
       </h3>

@@ -96,7 +96,7 @@ export function OverdueBadge({ overduePlans, className, style }: OverdueBadgePro
           type="button"
           className={cn(
             'text-warning',
-            'flex items-center justify-center gap-1 text-xs font-medium md:gap-1.5',
+            'flex items-center justify-center gap-1 text-xs font-normal md:gap-1.5',
             'transition-colors focus:outline-none',
             className,
           )}
@@ -115,7 +115,7 @@ export function OverdueBadge({ overduePlans, className, style }: OverdueBadgePro
         {/* ヘッダー: タイトル + ヘルプ */}
         <div className="border-border flex items-start justify-between border-b px-4 py-3">
           <div className="flex-1">
-            <h4 className="text-foreground text-sm font-semibold">{t('title')}</h4>
+            <h4 className="text-foreground text-sm font-bold">{t('title')}</h4>
             <p className="text-muted-foreground text-xs">{t('period')}</p>
           </div>
           {/* ヘルプアイコン with HoverCard */}
@@ -134,7 +134,7 @@ export function OverdueBadge({ overduePlans, className, style }: OverdueBadgePro
               side={hoverCardSide}
               align="start"
               alignOffset={16}
-              className="bg-surface-bright border-border z-[250] w-64 rounded-xl shadow-lg"
+              className="bg-overlay border-border z-[250] w-64 rounded-xl shadow-lg"
               sideOffset={24}
               avoidCollisions={false}
             >
@@ -156,7 +156,7 @@ export function OverdueBadge({ overduePlans, className, style }: OverdueBadgePro
                 onClick={() => handlePlanClick(plan)}
                 className={cn(
                   'group w-full px-4 py-2',
-                  'flex items-center gap-2',
+                  'grid grid-cols-[2.5rem_1fr_auto] items-center gap-2',
                   'hover:bg-state-hover focus-visible:bg-state-focus',
                   'focus-visible:outline-none',
                   'transition-colors duration-150',
@@ -164,13 +164,11 @@ export function OverdueBadge({ overduePlans, className, style }: OverdueBadgePro
                 )}
               >
                 {/* 日付 */}
-                <div className="text-muted-foreground w-10 shrink-0 text-right text-sm">
-                  {dateLabel}
-                </div>
+                <span className="text-muted-foreground text-right text-sm">{dateLabel}</span>
 
-                {/* タイトル */}
-                <div className="flex min-w-0 flex-1 items-center gap-2">
-                  <div
+                {/* タイトル（カラードット + テキスト） */}
+                <span className="flex min-w-0 items-center gap-2">
+                  <span
                     className="size-2 shrink-0 rounded-full"
                     style={{ backgroundColor: plan.color }}
                     aria-hidden="true"
@@ -178,12 +176,10 @@ export function OverdueBadge({ overduePlans, className, style }: OverdueBadgePro
                   <span className="text-foreground truncate text-sm group-hover:underline">
                     {plan.title || t('noTitle')}
                   </span>
-                </div>
+                </span>
 
                 {/* 時間 */}
-                <div className="text-muted-foreground shrink-0 text-sm">
-                  {timeLabel || t('timeUnset')}
-                </div>
+                <span className="text-muted-foreground text-sm">{timeLabel || t('timeUnset')}</span>
               </button>
             );
           })}

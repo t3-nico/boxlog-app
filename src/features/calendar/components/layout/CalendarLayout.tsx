@@ -4,7 +4,6 @@ import { useTranslations } from 'next-intl';
 import { memo, useCallback } from 'react';
 
 import { MobileMenuButton } from '@/features/navigation/components/mobile/MobileMenuButton';
-import { OnboardingBanner } from '@/features/onboarding/components/OnboardingBanner';
 import { cn } from '@/lib/utils';
 
 import { useSwipeGesture } from '../../hooks/useSwipeGesture';
@@ -99,19 +98,16 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
           displayRange={displayRange}
         />
 
-        {/* オンボーディングバナー（クロノタイプ未設定時のみ表示） */}
-        <OnboardingBanner />
-
         {/* メインコンテンツ（スワイプ対応） */}
         <main
           ref={ref as React.RefObject<HTMLElement>}
           data-calendar-main
-          className="flex min-h-0 flex-1 flex-col overflow-hidden"
+          className="flex min-h-0 flex-1 flex-col"
           onTouchStart={handlers.onTouchStart}
           onTouchMove={handlers.onTouchMove}
           onTouchEnd={handlers.onTouchEnd}
         >
-          <div className="flex min-h-0 flex-1 flex-col overflow-hidden">{children}</div>
+          <div className="flex min-h-0 flex-1 flex-col">{children}</div>
         </main>
       </div>
     );

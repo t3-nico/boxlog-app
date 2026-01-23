@@ -1,5 +1,6 @@
 import { api } from '@/lib/trpc';
 import type { UpdatePlanInput } from '@/schemas/plans/plan';
+import { useQueryClient } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 import { usePlanCacheStore } from '../stores/usePlanCacheStore';
@@ -30,26 +31,65 @@ import { usePlanInspectorStore } from '../stores/usePlanInspectorStore';
  */
 export function usePlanMutations() {
   const t = useTranslations();
+  const queryClient = useQueryClient();
   const utils = api.useUtils();
   const { closeInspector, openInspector } = usePlanInspectorStore();
   const { updateCache, clearCache, setIsMutating } = usePlanCacheStore();
 
-  // ✨ 作成
+  // ✨ 作成（楽観的更新付き）
   const createPlan = api.plans.create.useMutation({
-    onSuccess: (newPlan) => {
-      // 1. キャッシュを即座に更新（リアルタイム反映）
-      // tags を空配列で初期化（サーバーからはtagsが返る形式）
-      const newPlanWithTags = { ...newPlan, tags: [] };
+    // 楽観的更新: 作成直後に即座にUIを更新
+    onMutate: async (input) => {
+      // 進行中のクエリをキャンセル
+      await utils.plans.list.cancel();
 
+      // 現在のデータをスナップショット（ロールバック用）
+      const previousPlans = utils.plans.list.getData();
+
+      // 一時的なプランを作成（IDは仮）
+      const tempId = `temp-${Date.now()}`;
+      const tempPlan = {
+        id: tempId,
+        title: input.title,
+        description: input.description ?? null,
+        status: (input.status ?? 'open') as 'open' | 'closed',
+        start_time: input.start_time ?? null,
+        end_time: input.end_time ?? null,
+        due_date: input.due_date ?? null,
+        reminder_minutes: input.reminder_minutes ?? null,
+        recurrence_type: input.recurrence_type ?? null,
+        recurrence_rule: input.recurrence_rule ?? null,
+        recurrence_end_date: null,
+        completed_at: null,
+        reminder_at: null,
+        reminder_sent: false,
+        user_id: '',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        tagIds: [] as string[],
+      };
+
+      // 楽観的にキャッシュを更新
       utils.plans.list.setData(undefined, (oldData) => {
-        if (!oldData) return [newPlanWithTags];
-        // 重複を防ぐ
-        const exists = oldData.some((p) => p.id === newPlan.id);
-        if (exists) return oldData;
-        return [...oldData, newPlanWithTags];
+        if (!oldData) return [tempPlan];
+        return [...oldData, tempPlan];
       });
 
-      // 2. Toast通知
+      return { previousPlans, tempId };
+    },
+    onSuccess: (newPlan, _input, context) => {
+      // 一時プランを本来のプランに置換
+      const newPlanWithTagIds = { ...newPlan, tagIds: [] as string[] };
+
+      utils.plans.list.setData(undefined, (oldData) => {
+        if (!oldData) return [newPlanWithTagIds];
+        // 一時プランを本来のプランに置き換え、重複を防ぐ
+        return oldData
+          .filter((p) => p.id !== context?.tempId && p.id !== newPlan.id)
+          .concat(newPlanWithTagIds);
+      });
+
+      // Toast通知
       toast.success(t('common.plan.created', { title: newPlan.title }), {
         action: {
           label: t('common.plan.open'),
@@ -59,11 +99,17 @@ export function usePlanMutations() {
         },
       });
 
-      // 3. 個別プランのキャッシュを設定
+      // 個別プランのキャッシュを設定
       utils.plans.getById.setData({ id: newPlan.id }, newPlan);
     },
-    onError: (error) => {
+    onError: (error, _input, context) => {
       console.error('[usePlanMutations] Create error:', error);
+
+      // エラー時: 楽観的更新をロールバック
+      if (context?.previousPlans) {
+        utils.plans.list.setData(undefined, context.previousPlans);
+      }
+
       // TIME_OVERLAPエラー（重複防止）の場合は専用のトースト
       if (error.message.includes('既に予定があります') || error.message.includes('TIME_OVERLAP')) {
         toast.error(t('calendar.toast.conflict'), {
@@ -78,6 +124,10 @@ export function usePlanMutations() {
         toast.error(t('common.plan.createFailed', { error: errorMessage }));
       }
     },
+    onSettled: () => {
+      // サーバーと同期（念のため）
+      void utils.plans.list.invalidate();
+    },
   });
 
   // ✨ 更新
@@ -91,7 +141,11 @@ export function usePlanMutations() {
       await utils.plans.getById.cancel({ id });
 
       // 2. 現在のデータをスナップショット（ロールバック用）
-      const previousPlans = utils.plans.list.getData();
+      // 全ての plans.list キャッシュをスナップショット（日付フィルター付きも含む）
+      type PlanListData = Awaited<ReturnType<typeof utils.plans.list.fetch>>;
+      const previousPlansList = queryClient.getQueriesData<PlanListData>({
+        queryKey: [['plans', 'list']],
+      });
       const previousPlan = utils.plans.getById.getData({ id });
 
       // 3. 楽観的更新: Zustandキャッシュを即座に更新（全コンポーネントに即座に反映）
@@ -120,20 +174,13 @@ export function usePlanMutations() {
       }
 
       // 4. TanStack Queryキャッシュを楽観的に更新
-      // リストキャッシュを更新（フィルターなし）
-      utils.plans.list.setData(undefined, (oldData): typeof oldData => {
-        if (!oldData) return undefined;
+      // 全ての plans.list キャッシュを更新（日付フィルター付きのキャッシュも含む）
+      // tRPCのquery keyは [['plans', 'list'], { input: filters, type: 'query' }] の形式
+      queryClient.setQueriesData<PlanListData>({ queryKey: [['plans', 'list']] }, (oldData) => {
+        if (!oldData) return oldData;
         return oldData.map((plan) =>
-          plan.id === id ? ({ ...plan, ...updateData } as typeof plan) : plan,
-        ) as typeof oldData;
-      });
-
-      // リストキャッシュを更新（空オブジェクトフィルター）
-      utils.plans.list.setData({}, (oldData): typeof oldData => {
-        if (!oldData) return undefined;
-        return oldData.map((plan) =>
-          plan.id === id ? ({ ...plan, ...updateData } as typeof plan) : plan,
-        ) as typeof oldData;
+          plan.id === id ? (Object.assign({}, plan, updateData) as typeof plan) : plan,
+        );
       });
 
       // 個別プランキャッシュを更新（tagsなし/あり両方）
@@ -146,17 +193,18 @@ export function usePlanMutations() {
         return Object.assign({}, oldData, updateData);
       });
 
-      return { id, previousPlans, previousPlan };
+      return { id, previousPlansList, previousPlan };
     },
     onSuccess: (updatedPlan, variables) => {
       // サーバーから返ってきた最新データでキャッシュを更新
-      // tags などのリレーションデータは保持する（サーバーのupdateはタグをJOINしていない）
-      utils.plans.list.setData(undefined, (oldData) => {
+      // tagIds などのリレーションデータは保持する（サーバーのupdateはタグをJOINしていない）
+      type PlanListData = Awaited<ReturnType<typeof utils.plans.list.fetch>>;
+      queryClient.setQueriesData<PlanListData>({ queryKey: [['plans', 'list']] }, (oldData) => {
         if (!oldData) return oldData;
         return oldData.map((plan) => {
           if (plan.id === variables.id) {
-            // 既存のtagsを保持しつつ、サーバーデータで更新
-            return { ...updatedPlan, tags: plan.tags ?? [] };
+            // 既存のtagIdsを保持しつつ、サーバーデータで更新
+            return { ...updatedPlan, tagIds: plan.tagIds ?? [] };
           }
           return plan;
         });
@@ -187,9 +235,11 @@ export function usePlanMutations() {
         toast.error(t('common.plan.updateFailed'));
       }
 
-      // エラー時: 楽観的更新をロールバック
-      if (context?.previousPlans) {
-        utils.plans.list.setData(undefined, context.previousPlans);
+      // エラー時: 全ての plans.list キャッシュをロールバック
+      if (context?.previousPlansList) {
+        for (const [queryKey, data] of context.previousPlansList) {
+          queryClient.setQueryData(queryKey, data);
+        }
       }
       if (context?.previousPlan) {
         utils.plans.getById.setData({ id: context.id }, context.previousPlan);
@@ -308,14 +358,61 @@ export function usePlanMutations() {
     },
   });
 
-  // ✨ 一括更新
+  // ✨ 一括更新（楽観的更新付き）
   const bulkUpdatePlan = api.plans.bulkUpdate.useMutation({
+    onMutate: async ({ ids, data }) => {
+      // mutation開始フラグを設定（Realtime二重更新防止）
+      setIsMutating(true);
+
+      // 進行中のクエリをキャンセル
+      await utils.plans.list.cancel();
+
+      // 現在のデータをスナップショット（ロールバック用）
+      const previousPlans = utils.plans.list.getData();
+
+      // 楽観的更新用のヘルパー関数（型はキャッシュから推論）
+      const updatePlanData = <T extends { id: string }>(plan: T): T => {
+        if (!ids.includes(plan.id)) return plan;
+        return {
+          ...plan,
+          ...(data.status !== undefined && { status: data.status }),
+          ...(data.title !== undefined && { title: data.title }),
+          ...(data.description !== undefined && { description: data.description }),
+          ...(data.due_date !== undefined && { due_date: data.due_date }),
+          ...(data.start_time !== undefined && { start_time: data.start_time }),
+          ...(data.end_time !== undefined && { end_time: data.end_time }),
+          updated_at: new Date().toISOString(),
+        } as T;
+      };
+
+      // 楽観的更新: プランを即座に更新
+      utils.plans.list.setData(undefined, (oldData) => {
+        if (!oldData) return oldData;
+        return oldData.map(updatePlanData);
+      });
+
+      utils.plans.list.setData({}, (oldData) => {
+        if (!oldData) return oldData;
+        return oldData.map(updatePlanData);
+      });
+
+      return { previousPlans };
+    },
     onSuccess: (result) => {
       toast.success(t('common.plan.bulkUpdated', { count: result.count }));
       void utils.plans.list.invalidate(undefined, { refetchType: 'active' });
     },
-    onError: (error) => {
+    onError: (error, _variables, context) => {
       toast.error(t('common.plan.bulkUpdateFailed', { error: error.message }));
+
+      // エラー時: 楽観的更新をロールバック
+      if (context?.previousPlans) {
+        utils.plans.list.setData(undefined, context.previousPlans);
+      }
+    },
+    onSettled: () => {
+      // mutation完了後にフラグをリセット
+      setIsMutating(false);
     },
   });
 
@@ -366,15 +463,46 @@ export function usePlanMutations() {
     },
   });
 
-  // ✨ 一括タグ追加
+  // ✨ 一括タグ追加（楽観的更新付き）
   const bulkAddTags = api.plans.bulkAddTags.useMutation({
+    // 楽観的更新: タグ追加直後に即座にUIを更新
+    onMutate: async ({ planIds, tagIds }) => {
+      // 進行中のクエリをキャンセル
+      await utils.plans.list.cancel();
+
+      // 現在のデータをスナップショット（ロールバック用）
+      const previousPlans = utils.plans.list.getData();
+
+      // 楽観的にキャッシュを更新（tagIdsのみ管理）
+      utils.plans.list.setData(undefined, (oldData) => {
+        if (!oldData) return oldData;
+        return oldData.map((plan) => {
+          if (planIds.includes(plan.id)) {
+            // 既存のタグIDに新しいタグIDを追加（重複を除外）
+            const existingTagIds = new Set(plan.tagIds ?? []);
+            const newTagIds = tagIds.filter((id) => !existingTagIds.has(id));
+            return {
+              ...plan,
+              tagIds: [...(plan.tagIds ?? []), ...newTagIds],
+            };
+          }
+          return plan;
+        });
+      });
+
+      return { previousPlans };
+    },
     onSuccess: () => {
       toast.success(t('common.plan.tagsAdded'));
       // 全てのplans.listクエリを無効化（tagIdフィルター付きも含む）
       void utils.plans.list.invalidate(undefined, { refetchType: 'all' });
       void utils.plans.getTagStats.invalidate(); // タグページの統計を更新
     },
-    onError: (error) => {
+    onError: (error, _variables, context) => {
+      // エラー時: 楽観的更新をロールバック
+      if (context?.previousPlans) {
+        utils.plans.list.setData(undefined, context.previousPlans);
+      }
       toast.error(t('common.plan.tagsAddFailed', { error: error.message }));
     },
   });

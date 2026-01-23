@@ -3,13 +3,9 @@
  * 全カレンダービューで共通するプロパティ
  */
 
-// CalendarPlanの型定義（外部からも使用されるため再エクスポート）
-export type { CalendarPlan } from './plan.types';
-import type { ViewDateRange } from '../../../../types/calendar.types';
-import type { CalendarPlan } from './plan.types';
-
-// ViewDateRange を calendar.types.ts から再エクスポート
-export type { ViewDateRange } from '../../../../types/calendar.types';
+// CalendarPlan, ViewDateRange を Source of Truth から直接エクスポート
+export type { CalendarPlan, ViewDateRange } from '@/features/calendar/types/calendar.types';
+import type { CalendarPlan, ViewDateRange } from '@/features/calendar/types/calendar.types';
 
 export type CalendarViewType = 'day' | '3day' | '5day' | 'week' | 'agenda';
 

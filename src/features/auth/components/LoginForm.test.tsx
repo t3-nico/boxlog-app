@@ -54,8 +54,8 @@ describe('LoginForm', () => {
       renderWithProviders(<LoginForm />);
 
       expect(screen.getByRole('heading')).toBeInTheDocument();
-      expect(screen.getByLabelText('auth.loginForm.email')).toBeInTheDocument();
-      expect(screen.getByLabelText('auth.loginForm.password')).toBeInTheDocument();
+      expect(screen.getByLabelText(/auth\.loginForm\.email/)).toBeInTheDocument();
+      expect(screen.getByLabelText(/auth\.loginForm\.password/)).toBeInTheDocument();
       expect(
         screen.getByRole('button', { name: 'auth.loginForm.loginButton' }),
       ).toBeInTheDocument();
@@ -65,8 +65,8 @@ describe('LoginForm', () => {
       const user = userEvent.setup();
       renderWithProviders(<LoginForm />);
 
-      const emailInput = screen.getByLabelText('auth.loginForm.email');
-      const passwordInput = screen.getByLabelText('auth.loginForm.password');
+      const emailInput = screen.getByLabelText(/auth\.loginForm\.email/);
+      const passwordInput = screen.getByLabelText(/auth\.loginForm\.password/);
 
       await user.type(emailInput, 'test@example.com');
       await user.type(passwordInput, 'password123');
@@ -79,7 +79,7 @@ describe('LoginForm', () => {
       const user = userEvent.setup();
       renderWithProviders(<LoginForm />);
 
-      const passwordInput = screen.getByLabelText('auth.loginForm.password');
+      const passwordInput = screen.getByLabelText(/auth\.loginForm\.password/);
       expect(passwordInput).toHaveAttribute('type', 'password');
 
       // パスワード入力欄の親要素内にあるボタンを取得
@@ -103,8 +103,8 @@ describe('LoginForm', () => {
 
       renderWithProviders(<LoginForm />);
 
-      await user.type(screen.getByLabelText('auth.loginForm.email'), 'test@example.com');
-      await user.type(screen.getByLabelText('auth.loginForm.password'), 'password123');
+      await user.type(screen.getByLabelText(/auth\.loginForm\.email/), 'test@example.com');
+      await user.type(screen.getByLabelText(/auth\.loginForm\.password/), 'password123');
       await user.click(screen.getByRole('button', { name: 'auth.loginForm.loginButton' }));
 
       await waitFor(() => {
@@ -122,8 +122,8 @@ describe('LoginForm', () => {
 
       renderWithProviders(<LoginForm />);
 
-      await user.type(screen.getByLabelText('auth.loginForm.email'), 'test@example.com');
-      await user.type(screen.getByLabelText('auth.loginForm.password'), 'wrongpassword');
+      await user.type(screen.getByLabelText(/auth\.loginForm\.email/), 'test@example.com');
+      await user.type(screen.getByLabelText(/auth\.loginForm\.password/), 'wrongpassword');
       await user.click(screen.getByRole('button', { name: 'auth.loginForm.loginButton' }));
 
       await waitFor(() => {
@@ -143,8 +143,8 @@ describe('LoginForm', () => {
 
       renderWithProviders(<LoginForm />);
 
-      await user.type(screen.getByLabelText('auth.loginForm.email'), 'test@example.com');
-      await user.type(screen.getByLabelText('auth.loginForm.password'), 'password123');
+      await user.type(screen.getByLabelText(/auth\.loginForm\.email/), 'test@example.com');
+      await user.type(screen.getByLabelText(/auth\.loginForm\.password/), 'password123');
 
       const submitButton = screen.getByRole('button', { name: 'auth.loginForm.loginButton' });
       await user.click(submitButton);
@@ -159,8 +159,8 @@ describe('LoginForm', () => {
 
       renderWithProviders(<LoginForm />);
 
-      await user.type(screen.getByLabelText('auth.loginForm.email'), 'test@example.com');
-      await user.type(screen.getByLabelText('auth.loginForm.password'), 'password123');
+      await user.type(screen.getByLabelText(/auth\.loginForm\.email/), 'test@example.com');
+      await user.type(screen.getByLabelText(/auth\.loginForm\.password/), 'password123');
       await user.click(screen.getByRole('button', { name: 'auth.loginForm.loginButton' }));
 
       await waitFor(() => {
@@ -197,8 +197,8 @@ describe('LoginForm', () => {
 
       renderWithProviders(<LoginForm />);
 
-      await user.type(screen.getByLabelText('auth.loginForm.email'), 'test@example.com');
-      await user.type(screen.getByLabelText('auth.loginForm.password'), 'password123');
+      await user.type(screen.getByLabelText(/auth\.loginForm\.email/), 'test@example.com');
+      await user.type(screen.getByLabelText(/auth\.loginForm\.password/), 'password123');
       await user.click(screen.getByRole('button', { name: 'auth.loginForm.loginButton' }));
 
       await waitFor(() => {
@@ -223,8 +223,8 @@ describe('LoginForm', () => {
 
       renderWithProviders(<LoginForm />);
 
-      await user.type(screen.getByLabelText('auth.loginForm.email'), 'test@example.com');
-      await user.type(screen.getByLabelText('auth.loginForm.password'), 'password123');
+      await user.type(screen.getByLabelText(/auth\.loginForm\.email/), 'test@example.com');
+      await user.type(screen.getByLabelText(/auth\.loginForm\.password/), 'password123');
       await user.click(screen.getByRole('button', { name: 'auth.loginForm.loginButton' }));
 
       // MFAエラー時はセキュリティのためMFA検証ページへ
@@ -245,8 +245,8 @@ describe('LoginForm', () => {
 
       renderWithProviders(<LoginForm />);
 
-      await user.type(screen.getByLabelText('auth.loginForm.email'), 'test@example.com');
-      await user.type(screen.getByLabelText('auth.loginForm.password'), 'password123');
+      await user.type(screen.getByLabelText(/auth\.loginForm\.email/), 'test@example.com');
+      await user.type(screen.getByLabelText(/auth\.loginForm\.password/), 'password123');
       await user.click(screen.getByRole('button', { name: 'auth.loginForm.loginButton' }));
 
       // 例外時はエラーメッセージが表示される

@@ -23,16 +23,16 @@ describe('useTagStore', () => {
       expect(tags[0]!.is_active).toBe(true);
     });
 
-    it('グループ付きのタグを追加できる', async () => {
+    it('親タグ付きのタグを追加できる', async () => {
       const result = await useTagStore.getState().addTag({
         name: 'プロジェクトA',
         color: '#22c55e',
-        group_id: 'group-1',
+        parentId: 'parent-1',
       });
 
       expect(result).toBe(true);
       const tags = useTagStore.getState().tags;
-      expect(tags[0]!.group_id).toBe('group-1');
+      expect(tags[0]!.parent_id).toBe('parent-1');
     });
 
     it('説明付きのタグを追加できる', async () => {
@@ -68,22 +68,22 @@ describe('useTagStore', () => {
       expect(tags[0]!.color).toBe('#22c55e');
     });
 
-    it('グループを変更できる', async () => {
+    it('親タグを変更できる', async () => {
       await useTagStore.getState().addTag({
         name: '仕事',
         color: '#3b82f6',
-        group_id: 'group-1',
+        parentId: 'parent-1',
       });
 
       const tagId = useTagStore.getState().tags[0]!.id;
 
       const result = await useTagStore.getState().updateTag(tagId, {
-        group_id: 'group-2',
+        parentId: 'parent-2',
       });
 
       expect(result).toBe(true);
       const tags = useTagStore.getState().tags;
-      expect(tags[0]!.group_id).toBe('group-2');
+      expect(tags[0]!.parent_id).toBe('parent-2');
     });
 
     it('存在しないタグは更新できない', async () => {
@@ -171,33 +171,33 @@ describe('useTagStore', () => {
   });
 
   describe('getTagsByGroup', () => {
-    it('グループに属するタグを取得できる', async () => {
+    it('親タグに属するタグを取得できる', async () => {
       await useTagStore.getState().addTag({
         name: '仕事1',
         color: '#3b82f6',
-        group_id: 'group-1',
+        parentId: 'parent-1',
       });
 
       await useTagStore.getState().addTag({
         name: '仕事2',
         color: '#22c55e',
-        group_id: 'group-1',
+        parentId: 'parent-1',
       });
 
       await useTagStore.getState().addTag({
         name: '個人',
         color: '#ef4444',
-        group_id: 'group-2',
+        parentId: 'parent-2',
       });
 
-      const group1Tags = useTagStore.getState().getTagsByGroup('group-1');
+      const parent1Tags = useTagStore.getState().getTagsByGroup('parent-1');
 
-      expect(group1Tags).toHaveLength(2);
-      expect(group1Tags[0]!.name).toBe('仕事1');
-      expect(group1Tags[1]!.name).toBe('仕事2');
+      expect(parent1Tags).toHaveLength(2);
+      expect(parent1Tags[0]!.name).toBe('仕事1');
+      expect(parent1Tags[1]!.name).toBe('仕事2');
     });
 
-    it('グループなしのタグを取得できる', async () => {
+    it('親なしのタグを取得できる', async () => {
       await useTagStore.getState().addTag({
         name: 'タグ1',
         color: '#3b82f6',
@@ -206,13 +206,13 @@ describe('useTagStore', () => {
       await useTagStore.getState().addTag({
         name: 'タグ2',
         color: '#22c55e',
-        group_id: 'group-1',
+        parentId: 'parent-1',
       });
 
-      const ungroupedTags = useTagStore.getState().getTagsByGroup(null);
+      const rootTags = useTagStore.getState().getTagsByGroup(null);
 
-      expect(ungroupedTags).toHaveLength(1);
-      expect(ungroupedTags[0]!.name).toBe('タグ1');
+      expect(rootTags).toHaveLength(1);
+      expect(rootTags[0]!.name).toBe('タグ1');
     });
   });
 

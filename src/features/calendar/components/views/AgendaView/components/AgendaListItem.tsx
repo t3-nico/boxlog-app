@@ -7,9 +7,10 @@ import { ja } from 'date-fns/locale';
 import { Tag } from 'lucide-react';
 
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
-import { PlanTagSelectDialogEnhanced } from '@/features/plans/components/shared/PlanTagSelectDialogEnhanced';
+import { TagSelectCombobox } from '@/features/plans/components/shared/TagSelectCombobox';
 import { usePlanTags } from '@/features/plans/hooks/usePlanTags';
 import { useDateFormat } from '@/features/settings/hooks/useDateFormat';
+import { useTagsMap } from '@/features/tags/hooks/useTagsMap';
 import { cn } from '@/lib/utils';
 import { useLocale } from 'next-intl';
 
@@ -29,14 +30,15 @@ export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemP
   const dateLocale = locale === 'ja' ? ja : undefined;
   const { addPlanTag, removePlanTag } = usePlanTags();
   const { formatTime: formatTimeWithSettings } = useDateFormat();
+  const { getTagsByIds } = useTagsMap();
 
   // プランの実際のIDを取得（繰り返しプランの場合はcalendarIdを使用）
   const planId = plan.calendarId ?? plan.id;
 
   // 選択中のタグID
   const selectedTagIds = useMemo(() => {
-    return plan.tags?.map((t) => t.id) ?? [];
-  }, [plan.tags]);
+    return plan.tagIds ?? [];
+  }, [plan.tagIds]);
 
   const handleClick = () => {
     onClick?.(plan);
@@ -97,8 +99,9 @@ export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemP
       ? `${startTime}-${endTime}`
       : startTime || (locale === 'ja' ? '終日' : 'All day');
 
-  // タグの表示
-  const displayTags = plan.tags?.slice(0, 3) ?? [];
+  // タグの表示（tagIdsからタグ情報を取得）
+  const tags = getTagsByIds(selectedTagIds);
+  const displayTags = tags.slice(0, 3);
 
   return (
     <button
@@ -120,7 +123,7 @@ export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemP
         {/* 日付 */}
         <div
           className={cn(
-            'shrink-0 text-sm font-medium md:w-12',
+            'shrink-0 text-sm font-normal md:w-12',
             isToday(plan.startDate ?? new Date()) ? 'text-primary' : 'text-muted-foreground',
           )}
         >
@@ -138,7 +141,7 @@ export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemP
       <div className="flex min-w-0 flex-1 items-center gap-2 md:gap-4">
         {/* タイトル + # */}
         <div className="flex min-w-0 flex-1 items-baseline gap-1 md:gap-1.5">
-          <span className="text-foreground truncate font-medium group-hover:underline md:max-w-48">
+          <span className="text-foreground truncate font-normal group-hover:underline md:max-w-48">
             {plan.title}
           </span>
         </div>
@@ -176,19 +179,17 @@ export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemP
                   <span className="truncate">{displayTags[2].name}</span>
                 </span>
               )}
-              {(plan.tags?.length ?? 0) > 3 && (
+              {tags.length > 3 && (
                 <span className="text-muted-foreground hidden text-xs md:inline">
-                  +{(plan.tags?.length ?? 0) - 3}
+                  +{tags.length - 3}
                 </span>
               )}
-              {(plan.tags?.length ?? 0) > 2 && (
-                <span className="text-muted-foreground text-xs md:hidden">
-                  +{(plan.tags?.length ?? 0) - 2}
-                </span>
+              {tags.length > 2 && (
+                <span className="text-muted-foreground text-xs md:hidden">+{tags.length - 2}</span>
               )}
             </>
           ) : (
-            <PlanTagSelectDialogEnhanced
+            <TagSelectCombobox
               selectedTagIds={selectedTagIds}
               onTagsChange={handleTagsChange}
               align="end"
@@ -202,7 +203,7 @@ export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemP
                   </span>
                 </div>
               </div>
-            </PlanTagSelectDialogEnhanced>
+            </TagSelectCombobox>
           )}
         </div>
       </div>

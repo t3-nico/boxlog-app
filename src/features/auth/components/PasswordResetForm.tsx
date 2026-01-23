@@ -7,7 +7,14 @@ import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui/field';
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  FieldSupportText,
+} from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinner';
 import { useAuthStore } from '@/features/auth/stores/useAuthStore';
@@ -53,7 +60,7 @@ export function PasswordResetForm({ className, ...props }: React.ComponentProps<
                   <h1 className="text-2xl font-bold">{t('auth.passwordResetForm.checkEmail')}</h1>
                   <p className="text-muted-foreground text-balance">
                     {t('auth.passwordResetForm.sentResetLink')}{' '}
-                    <span className="font-medium">{email}</span>
+                    <span className="font-normal">{email}</span>
                   </p>
                 </div>
                 <Field>
@@ -63,7 +70,7 @@ export function PasswordResetForm({ className, ...props }: React.ComponentProps<
                 </Field>
               </FieldGroup>
             </div>
-            <div className="bg-surface-container relative hidden md:block">
+            <div className="bg-container relative hidden md:block">
               <NextImage
                 src="/placeholder.svg"
                 alt="Decorative background"
@@ -91,23 +98,32 @@ export function PasswordResetForm({ className, ...props }: React.ComponentProps<
                   {t('auth.passwordResetForm.enterEmail')}
                 </p>
               </div>
+              {error && (
+                <FieldError announceImmediately className="text-center">
+                  {error}
+                </FieldError>
+              )}
+
               <Field>
-                <FieldLabel htmlFor="email">{t('auth.passwordResetForm.email')}</FieldLabel>
+                <FieldLabel htmlFor="email" required requiredLabel={t('common.form.required')}>
+                  {t('auth.passwordResetForm.email')}
+                </FieldLabel>
+                <FieldSupportText id="email-support">
+                  {t('auth.passwordResetForm.emailSupportText')}
+                </FieldSupportText>
                 <Input
                   id="email"
                   type="email"
                   inputMode="email"
                   enterKeyHint="send"
-                  placeholder={t('auth.passwordResetForm.emailPlaceholder')}
+                  aria-disabled={loading || undefined}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   autoComplete="email"
+                  aria-describedby="email-support"
                 />
               </Field>
-              {error ? (
-                <FieldDescription className="text-destructive">{error}</FieldDescription>
-              ) : null}
               <Field>
                 <Button type="submit" disabled={loading}>
                   {loading && <Spinner className="mr-2" />}
@@ -122,7 +138,7 @@ export function PasswordResetForm({ className, ...props }: React.ComponentProps<
               </FieldDescription>
             </FieldGroup>
           </form>
-          <div className="bg-surface-container relative hidden md:block">
+          <div className="bg-container relative hidden md:block">
             <NextImage
               src="/placeholder.svg"
               alt="Decorative background"

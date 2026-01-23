@@ -3,9 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-import { LoadingSpinner } from '@/components/common/Loading/LoadingStates';
 import { Button } from '@/components/ui/button';
-import { useTagUsage } from '@/features/tags/hooks';
 import type { Tag } from '@/features/tags/types';
 import { Archive } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -24,16 +22,13 @@ interface TagArchiveDialogProps {
  * スタイルガイド準拠:
  * - 8pxグリッドシステム（p-6, gap-4, mb-6等）
  * - 角丸: rounded-xl（16px）for ダイアログ
- * - Surface: bg-surface（カード、ダイアログ用）
+ * - Card: bg-card（カード、ダイアログ用）
  * - セマンティックカラー: warning系トークン使用
  */
 export function TagArchiveDialog({ tag, onClose, onConfirm }: TagArchiveDialogProps) {
   const t = useTranslations();
   const [isArchiving, setIsArchiving] = useState(false);
   const [mounted, setMounted] = useState(false);
-
-  // TanStack Queryでタグ使用状況を取得
-  const { data: usage, isPending } = useTagUsage(tag?.id);
 
   // クライアントサイドでのみマウント
   useEffect(() => {
@@ -83,7 +78,7 @@ export function TagArchiveDialog({ tag, onClose, onConfirm }: TagArchiveDialogPr
       aria-labelledby="tag-archive-dialog-title"
     >
       <div
-        className="animate-in zoom-in-95 fade-in bg-surface text-foreground border-border rounded-xl border p-6 shadow-lg duration-150"
+        className="animate-in zoom-in-95 fade-in bg-card text-foreground border-border rounded-xl border p-6 shadow-lg duration-150"
         style={{ width: 'min(calc(100vw - 32px), 512px)' }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -93,8 +88,8 @@ export function TagArchiveDialog({ tag, onClose, onConfirm }: TagArchiveDialogPr
             <Archive className="text-warning size-5" />
           </div>
           <div className="flex-1">
-            <h2 id="tag-archive-dialog-title" className="text-lg leading-tight font-semibold">
-              {t('tag.archive.confirmTitle', { name: tag.name })}
+            <h2 id="tag-archive-dialog-title" className="text-lg leading-tight font-bold">
+              {t('tags.archive.confirmTitle', { name: tag.name })}
             </h2>
           </div>
         </div>
@@ -104,45 +99,17 @@ export function TagArchiveDialog({ tag, onClose, onConfirm }: TagArchiveDialogPr
           {/* 警告 */}
           <div className="bg-warning/10 text-warning border-warning/20 flex items-center gap-2 rounded-xl border p-4">
             <Archive className="size-4 shrink-0" />
-            <p className="text-sm font-medium">{t('tag.archive.warning')}</p>
+            <p className="text-sm font-normal">{t('tags.archive.warning')}</p>
           </div>
-
-          {/* 使用状況 */}
-          {isPending ? (
-            <div className="bg-surface-container flex items-center justify-center rounded-xl p-4">
-              <LoadingSpinner size="sm" />
-            </div>
-          ) : usage ? (
-            <div className="bg-surface-container rounded-xl p-4">
-              <p className="mb-2 text-sm font-medium">{t('tag.archive.currentUsage')}</p>
-              <ul className="text-muted-foreground space-y-1 text-sm">
-                <li>
-                  • {t('tag.delete.plans')}:{' '}
-                  {t('tag.delete.itemsCount', { count: usage.planCount })}
-                </li>
-                <li>
-                  • {t('tag.delete.events')}:{' '}
-                  {t('tag.delete.itemsCount', { count: usage.eventCount })}
-                </li>
-                <li>
-                  • {t('tag.delete.tasks')}:{' '}
-                  {t('tag.delete.itemsCount', { count: usage.taskCount })}
-                </li>
-              </ul>
-              <p className="text-muted-foreground mt-2 text-sm font-medium">
-                {t('tag.delete.total')}: {t('tag.delete.itemsCount', { count: usage.totalCount })}
-              </p>
-            </div>
-          ) : null}
 
           {/* アーカイブ後の処理 */}
           <div className="space-y-2">
-            <p className="text-sm font-medium">{t('tag.archive.afterArchive')}</p>
+            <p className="text-sm font-normal">{t('tags.archive.afterArchive')}</p>
             <ul className="text-muted-foreground space-y-1 text-sm">
-              <li>• {t('tag.archive.noNewTagging')}</li>
-              <li>• {t('tag.archive.existingItemsStillShown')}</li>
-              <li>• {t('tag.archive.statsStillIncluded')}</li>
-              <li>• {t('tag.archive.canRestoreAnytime')}</li>
+              <li>• {t('tags.archive.noNewTagging')}</li>
+              <li>• {t('tags.archive.existingItemsStillShown')}</li>
+              <li>• {t('tags.archive.statsStillIncluded')}</li>
+              <li>• {t('tags.archive.canRestoreAnytime')}</li>
             </ul>
           </div>
         </div>
@@ -155,14 +122,14 @@ export function TagArchiveDialog({ tag, onClose, onConfirm }: TagArchiveDialogPr
             disabled={isArchiving}
             className="hover:bg-state-hover"
           >
-            {t('tag.actions.cancel')}
+            {t('common.actions.cancel')}
           </Button>
           <Button
             onClick={handleConfirm}
             disabled={isArchiving}
             className="bg-warning text-warning-foreground hover:bg-warning-hover"
           >
-            {isArchiving ? t('tag.archive.archiving') : t('tag.archive.archiveButton')}
+            {isArchiving ? t('tags.archive.archiving') : t('tags.archive.archiveButton')}
           </Button>
         </div>
       </div>

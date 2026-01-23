@@ -16,6 +16,8 @@ interface SidebarSectionProps {
   defaultOpen?: boolean;
   /** 追加のクラス名（コンテンツ部分） */
   className?: string;
+  /** ヘッダーに表示するアクション（開閉アイコンの左隣） */
+  action?: ReactNode | undefined;
 }
 
 /**
@@ -29,7 +31,7 @@ interface SidebarSectionProps {
  * - 上下パディング: 8px（py-2）
  * - ホバー: bg-state-hover（Material Design 3準拠）
  * - 角丸: rounded（4px - 内部小要素用）
- * - フォント: text-xs font-semibold
+ * - フォント: text-xs font-bold
  * - アイコン: 16px（size-4）、右端配置、開閉時90度回転
  *
  * @example
@@ -45,15 +47,26 @@ export function SidebarSection({
   children,
   defaultOpen = false,
   className,
+  action,
 }: SidebarSectionProps) {
   return (
-    <Collapsible defaultOpen={defaultOpen} className="min-w-0 overflow-hidden">
-      <CollapsibleTrigger className="text-muted-foreground hover:bg-state-hover flex h-8 w-full items-center justify-between rounded px-2 text-left text-xs font-semibold transition-colors">
-        <span className="truncate">{title}</span>
-        <ChevronRight className="ml-auto size-4 w-4 shrink-0 transition-transform [[data-state=open]>&]:rotate-90" />
+    <Collapsible defaultOpen={defaultOpen} className="w-full min-w-0 overflow-hidden">
+      <CollapsibleTrigger asChild>
+        <div className="hover:bg-state-hover flex h-8 w-full cursor-pointer items-center rounded transition-colors">
+          <div className="text-muted-foreground flex h-8 min-w-0 items-center px-2 text-left text-xs font-bold">
+            <span className="truncate">{title}</span>
+            <ChevronRight className="ml-1 size-4 shrink-0 transition-transform [[data-state=open]_&]:rotate-90" />
+          </div>
+          <div className="flex-1" />
+          {action && (
+            <div className="shrink-0" onClick={(e) => e.stopPropagation()}>
+              {action}
+            </div>
+          )}
+        </div>
       </CollapsibleTrigger>
       <CollapsibleContent>
-        <div className={cn('min-w-0 overflow-hidden', className)}>{children}</div>
+        <div className={cn('w-full min-w-0 overflow-hidden', className)}>{children}</div>
       </CollapsibleContent>
     </Collapsible>
   );

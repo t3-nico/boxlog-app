@@ -31,7 +31,7 @@ export function DayOfWeekChart() {
 
   if (isPending) {
     return (
-      <Card className="bg-background">
+      <Card>
         <CardHeader>
           <CardTitle>曜日別作業時間</CardTitle>
           <CardDescription>どの曜日に多く作業しているか</CardDescription>
@@ -45,7 +45,7 @@ export function DayOfWeekChart() {
 
   if (!data || data.length === 0) {
     return (
-      <Card className="bg-background">
+      <Card>
         <CardHeader>
           <CardTitle>曜日別作業時間</CardTitle>
           <CardDescription>どの曜日に多く作業しているか</CardDescription>
@@ -70,7 +70,7 @@ export function DayOfWeekChart() {
   const weekendHours = data.slice(5).reduce((sum, item) => sum + item.hours, 0);
 
   return (
-    <Card className="bg-background">
+    <Card>
       <CardHeader>
         <CardTitle>曜日別作業時間</CardTitle>
         <CardDescription>

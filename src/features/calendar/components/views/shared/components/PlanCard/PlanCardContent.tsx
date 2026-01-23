@@ -12,6 +12,7 @@ import { useTranslations } from 'next-intl';
 
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
 import { formatTimeRange } from '../../utils/dateHelpers';
+import { TagsContainer } from './TagsContainer';
 
 interface PlanCardContentProps {
   plan: CalendarPlan;
@@ -65,7 +66,7 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
   if (isMobile) {
     return (
       <span
-        className={`text-foreground min-w-0 flex-1 truncate text-xs leading-tight font-medium ${showTitleUnderline ? 'underline' : ''}`}
+        className={`text-foreground min-w-0 flex-1 truncate text-xs leading-tight font-normal ${showTitleUnderline ? 'underline' : ''}`}
       >
         {plan.title || t('calendar.event.noTitle')}
       </span>
@@ -77,7 +78,7 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
     return (
       <div className={`flex h-full items-center gap-1 ${hasCheckbox ? 'pl-4' : ''}`}>
         <span
-          className={`text-foreground truncate text-sm leading-tight font-medium ${showTitleUnderline ? 'underline' : ''}`}
+          className={`text-foreground truncate text-sm leading-tight font-normal ${showTitleUnderline ? 'underline' : ''}`}
         >
           {plan.title}
         </span>
@@ -91,7 +92,7 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
       className={`relative flex h-full flex-col gap-0.5 overflow-hidden ${hasCheckbox ? 'pl-6' : ''}`}
     >
       {/* タイトル（最優先） */}
-      <div className="flex flex-shrink-0 items-baseline gap-1 text-sm leading-tight font-medium">
+      <div className="flex flex-shrink-0 items-baseline gap-1 text-sm leading-tight font-normal">
         <span
           className={`${isCompact ? 'line-clamp-1' : 'line-clamp-2'} text-foreground ${showTitleUnderline ? 'underline' : ''}`}
         >
@@ -116,49 +117,8 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
         </div>
       )}
 
-      {/* タグ表示（残りスペースがあれば表示） */}
-      {plan.tags && plan.tags.length > 0 ? (
-        <div className="flex min-h-0 flex-shrink flex-wrap gap-1 overflow-hidden pt-1">
-          {plan.tags
-            .slice(0, 2)
-            .map(
-              (tag: {
-                id: string;
-                name: string;
-                color: string;
-                icon?: string | undefined;
-                parent_id?: string | undefined;
-              }) => (
-                <span
-                  key={tag.id}
-                  className="inline-flex flex-shrink-0 items-center gap-0.5 rounded-sm border px-1.5 py-0.5 text-xs leading-tight"
-                  style={{
-                    borderColor: tag.color || undefined,
-                  }}
-                  title={tag.name}
-                >
-                  {tag.icon && (
-                    <span className="flex-shrink-0" style={{ color: tag.color || undefined }}>
-                      {tag.icon}
-                    </span>
-                  )}
-                  <span
-                    className="flex-shrink-0 font-medium"
-                    style={{ color: tag.color || undefined }}
-                  >
-                    #
-                  </span>
-                  <span className="truncate">{tag.name}</span>
-                </span>
-              ),
-            )}
-          {plan.tags.length > 2 && (
-            <span className="inline-flex items-center px-1 text-xs opacity-75">
-              +{plan.tags.length - 2}
-            </span>
-          )}
-        </div>
-      ) : null}
+      {/* タグ表示（横幅いっぱいに表示、入りきらないものは+Nで表示） */}
+      {plan.tagIds && plan.tagIds.length > 0 && <TagsContainer tagIds={plan.tagIds} />}
     </div>
   );
 });

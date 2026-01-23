@@ -1,20 +1,26 @@
 'use client';
 
-import { AccountSettings } from '@/features/settings/components/account-settings';
-import { SettingsPageWrapper } from '@/features/settings/components/page/SettingsPageWrapper';
-import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+
+import { useLocale } from 'next-intl';
+
+import { useSettingsModalStore } from '@/features/settings/stores/useSettingsModalStore';
 
 /**
  * アカウント設定ページ
  *
- * プロフィール、セキュリティ
+ * 後方互換性のため、直接アクセス時はホームにリダイレクトしモーダルを開く
  */
 export default function AccountSettingsPage() {
-  const t = useTranslations();
+  const router = useRouter();
+  const locale = useLocale();
+  const openModal = useSettingsModalStore((state) => state.openModal);
 
-  return (
-    <SettingsPageWrapper title={t('settings.dialog.categories.account')}>
-      <AccountSettings />
-    </SettingsPageWrapper>
-  );
+  useEffect(() => {
+    openModal('account');
+    router.replace(`/${locale}`);
+  }, [locale, router, openModal]);
+
+  return null;
 }

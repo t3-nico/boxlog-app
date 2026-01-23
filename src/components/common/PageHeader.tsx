@@ -30,7 +30,7 @@ export function PageHeader({ className }: PageHeaderProps) {
       {/* 左: モバイルメニュー + タイトル */}
       <div className="flex items-center gap-2">
         <MobileMenuButton className="md:hidden" />
-        {title && <h1 className="truncate text-lg leading-8 font-semibold">{title}</h1>}
+        {title && <h1 className="truncate text-lg leading-8 font-bold">{title}</h1>}
       </div>
 
       {/* 右: ナビゲーションタブ */}

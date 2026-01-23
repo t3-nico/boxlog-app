@@ -166,16 +166,6 @@ export const registerDefaultCommands = (actions: CommandActions) => {
       keywords: ['stats', 'analytics', '統計', 'レポート'],
       action: () => router.push('/stats'),
     },
-    {
-      id: 'nav:tags',
-      title: 'タグを開く',
-      description: 'タグ一覧を表示',
-      category: 'navigation',
-      icon: 'tag',
-      shortcut: ['G', 'T'],
-      keywords: ['tags', 'タグ', 'ラベル'],
-      action: () => router.push('/settings/tags'),
-    },
 
     // Creation commands
     {

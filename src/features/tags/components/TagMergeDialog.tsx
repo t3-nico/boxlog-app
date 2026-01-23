@@ -4,11 +4,14 @@ import { useCallback, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { DEFAULT_TAG_COLOR } from '@/config/ui/colors';
 import { useMergeTag, useTags } from '@/features/tags/hooks/useTags';
 import type { Tag } from '@/features/tags/types';
+import { logger } from '@/lib/logger';
 import { cn } from '@/lib/utils';
-import { AlertCircle, Check, ChevronDown, GitMerge } from 'lucide-react';
+import { AlertCircle, GitMerge } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
@@ -28,7 +31,6 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
   const [targetTagId, setTargetTagId] = useState<string>('');
   const [isMerging, setIsMerging] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const { data: tags = [] } = useTags();
@@ -43,7 +45,6 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
   useEffect(() => {
     if (!tag) {
       setTargetTagId('');
-      setIsDropdownOpen(false);
       setError(null);
     }
   }, [tag]);
@@ -81,7 +82,7 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
       // 統合先タグIDを渡して閉じる（インスペクターで統合先を開くため）
       onClose(targetTagId);
     } catch (err) {
-      console.error('Merge failed:', err);
+      logger.error('Merge failed:', err);
       setError(t('tags.merge.failed'));
     } finally {
       setIsMerging(false);
@@ -113,9 +114,6 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
 
   if (!mounted || !tag) return null;
 
-  // 選択中のタグを取得
-  const selectedTag = availableTags.find((t) => t.id === targetTagId);
-
   const dialog = (
     <div
       className="animate-in fade-in bg-overlay-heavy fixed inset-0 z-[250] flex items-center justify-center duration-150"
@@ -125,7 +123,7 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
       aria-labelledby="tag-merge-dialog-title"
     >
       <div
-        className="animate-in zoom-in-95 fade-in bg-surface text-foreground border-border rounded-xl border p-6 shadow-lg duration-150"
+        className="animate-in zoom-in-95 fade-in bg-card text-foreground border-border rounded-xl border p-6 shadow-lg duration-150"
         style={{ width: 'min(calc(100vw - 32px), 448px)' }}
         onMouseDown={(e) => e.stopPropagation()}
       >
@@ -135,7 +133,7 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
             <GitMerge className="text-primary size-5" />
           </div>
           <div className="flex-1">
-            <h2 id="tag-merge-dialog-title" className="text-lg leading-tight font-semibold">
+            <h2 id="tag-merge-dialog-title" className="text-lg leading-tight font-bold">
               {t('tags.merge.title')}
             </h2>
             <p className="text-muted-foreground mt-1 text-sm">
@@ -145,76 +143,50 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
         </div>
 
         {/* Content */}
-        <div className="space-y-4 overflow-visible">
+        <div className="space-y-4">
           {/* 説明 */}
           <p className="text-muted-foreground text-sm">{t('tags.merge.autoMergeDescription')}</p>
 
-          {/* ターゲットタグ選択（カスタムドロップダウン） */}
-          <div className="relative inline-block">
-            {/* トリガーボタン */}
-            <Button
-              type="button"
-              variant="outline"
-              onMouseDown={(e) => e.stopPropagation()}
-              onClick={(e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                setIsDropdownOpen((prev) => !prev);
-              }}
-              className={cn(
-                'bg-secondary text-secondary-foreground hover:bg-state-hover justify-between gap-2',
-                isDropdownOpen && 'ring-ring/50 border-ring ring-2',
-              )}
-            >
-              {selectedTag ? (
-                <div className="flex max-w-48 items-center gap-1">
-                  <span
-                    className="shrink-0"
-                    style={{ color: selectedTag.color || DEFAULT_TAG_COLOR }}
+          {/* ターゲットタグ選択（ラジオボタンリスト） */}
+          <div className="border-border max-h-60 overflow-y-auto rounded-xl border">
+            {availableTags.length === 0 ? (
+              <p className="text-muted-foreground p-4 text-center text-sm">
+                {t('tags.search.noTags')}
+              </p>
+            ) : (
+              <RadioGroup
+                value={targetTagId}
+                onValueChange={(value) => {
+                  setTargetTagId(value);
+                  setError(null);
+                }}
+                className="p-2"
+              >
+                {availableTags.map((tagItem) => (
+                  <Label
+                    key={tagItem.id}
+                    htmlFor={`merge-target-${tagItem.id}`}
+                    className={cn(
+                      'flex cursor-pointer items-center gap-3 rounded-md px-3 py-2 transition-colors',
+                      'hover:bg-state-hover',
+                      targetTagId === tagItem.id && 'bg-state-selected',
+                    )}
                   >
-                    #
-                  </span>
-                  <span className="truncate">{selectedTag.name}</span>
-                </div>
-              ) : (
-                <span className="text-muted-foreground">{t('tags.merge.selectTarget')}</span>
-              )}
-              <ChevronDown className="size-4 opacity-50" />
-            </Button>
-
-            {/* ドロップダウンリスト */}
-            {isDropdownOpen && (
-              <div className="bg-popover border-border absolute top-full left-0 z-[260] mt-1 max-h-60 max-w-72 min-w-48 overflow-y-auto rounded-md border p-1 shadow-lg">
-                {availableTags.length === 0 ? (
-                  <p className="text-muted-foreground p-3 text-center text-sm">
-                    {t('tags.search.noTags')}
-                  </p>
-                ) : (
-                  availableTags.map((tagItem) => (
-                    <Button
-                      key={tagItem.id}
-                      type="button"
-                      variant="ghost"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setTargetTagId(tagItem.id);
-                        setIsDropdownOpen(false);
-                        setError(null);
-                      }}
-                      className={cn(
-                        'flex w-full cursor-default justify-start gap-2',
-                        targetTagId === tagItem.id && 'bg-state-selected',
-                      )}
+                    <RadioGroupItem
+                      value={tagItem.id}
+                      id={`merge-target-${tagItem.id}`}
+                      className="shrink-0"
+                    />
+                    <span
+                      className="shrink-0 font-normal"
+                      style={{ color: tagItem.color || DEFAULT_TAG_COLOR }}
                     >
-                      <span style={{ color: tagItem.color || DEFAULT_TAG_COLOR }}>#</span>
-                      <span className="flex-1 truncate">{tagItem.name}</span>
-                      {targetTagId === tagItem.id && (
-                        <Check className="text-primary size-4 shrink-0" />
-                      )}
-                    </Button>
-                  ))
-                )}
-              </div>
+                      #
+                    </span>
+                    <span className="flex-1 truncate text-sm">{tagItem.name}</span>
+                  </Label>
+                ))}
+              </RadioGroup>
             )}
           </div>
 
@@ -236,7 +208,7 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
             disabled={isMerging}
             className="hover:bg-state-hover"
           >
-            {t('tags.actions.cancel')}
+            {t('common.actions.cancel')}
           </Button>
           <Button
             type="button"

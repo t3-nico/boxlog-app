@@ -33,11 +33,45 @@ export function useRecurringPlanDrag({ plans }: UseRecurringPlanDragOptions) {
   const { updatePlan } = usePlanMutations();
   const { createInstance } = usePlanInstanceMutations();
 
-  // 繰り返しプラン分割用mutation
+  // 繰り返しプラン分割用mutation（楽観的更新付き）
   const splitRecurrence = api.plans.splitRecurrence.useMutation({
+    // 楽観的更新: 分割直後に親プランの終了日を即座に更新
+    onMutate: async (input) => {
+      // 進行中のクエリをキャンセル
+      await utils.plans.list.cancel();
+      await utils.plans.getInstances.cancel();
+
+      // 現在のキャッシュを保存（ロールバック用）
+      const previousPlans = utils.plans.list.getData();
+
+      // 親プランのrecurrence_end_dateを楽観的に更新（splitDateの前日）
+      const splitDate = new Date(input.splitDate);
+      splitDate.setDate(splitDate.getDate() - 1);
+      const endDateString = splitDate.toISOString().slice(0, 10);
+
+      utils.plans.list.setData(undefined, (oldData) => {
+        if (!oldData) return oldData;
+        return oldData.map((plan) => {
+          if (plan.id === input.planId) {
+            return { ...plan, recurrence_end_date: endDateString };
+          }
+          return plan;
+        });
+      });
+
+      return { previousPlans };
+    },
     onSuccess: () => {
-      utils.plans.list.invalidate();
-      utils.plans.getInstances.invalidate();
+      // 新プランが作成されるため、必ずinvalidateで最新データを取得
+      void utils.plans.list.invalidate();
+      void utils.plans.getInstances.invalidate();
+    },
+    onError: (_err, _input, context) => {
+      // エラー時: ロールバック
+      if (context?.previousPlans) {
+        utils.plans.list.setData(undefined, context.previousPlans);
+      }
+      void utils.plans.getInstances.invalidate();
     },
   });
 

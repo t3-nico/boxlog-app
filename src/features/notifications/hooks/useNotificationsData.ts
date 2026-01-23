@@ -59,7 +59,7 @@ export function useNotification(id: string) {
 }
 
 /**
- * 通知操作（既読化・削除）
+ * 通知操作（既読化・削除）- 楽観的更新付き
  *
  * @returns mutation関数群
  */
@@ -74,20 +74,132 @@ export function useNotificationMutations() {
     void utils.notifications.unreadCount.invalidate();
   };
 
+  // 既読にする（楽観的更新付き）
   const markAsRead = api.notifications.markAsRead.useMutation({
-    onSuccess: invalidateNotifications,
+    onMutate: async ({ id }) => {
+      await utils.notifications.list.cancel();
+      await utils.notifications.unreadCount.cancel();
+
+      const previousList = utils.notifications.list.getData();
+      const previousCount = utils.notifications.unreadCount.getData();
+
+      // 通知を既読にマーク
+      utils.notifications.list.setData(undefined, (old) => {
+        if (!old) return old;
+        return old.map((n) => (n.id === id ? { ...n, is_read: true } : n));
+      });
+
+      // 未読数を減らす
+      utils.notifications.unreadCount.setData(undefined, (old) => {
+        if (old === undefined) return old;
+        return Math.max(0, old - 1);
+      });
+
+      return { previousList, previousCount };
+    },
+    onError: (_err, _input, context) => {
+      if (context?.previousList) {
+        utils.notifications.list.setData(undefined, context.previousList);
+      }
+      if (context?.previousCount !== undefined) {
+        utils.notifications.unreadCount.setData(undefined, context.previousCount);
+      }
+    },
+    onSettled: invalidateNotifications,
   });
 
+  // 全て既読にする（楽観的更新付き）
   const markAllAsRead = api.notifications.markAllAsRead.useMutation({
-    onSuccess: invalidateNotifications,
+    onMutate: async () => {
+      await utils.notifications.list.cancel();
+      await utils.notifications.unreadCount.cancel();
+
+      const previousList = utils.notifications.list.getData();
+      const previousCount = utils.notifications.unreadCount.getData();
+
+      // 全通知を既読にマーク
+      utils.notifications.list.setData(undefined, (old) => {
+        if (!old) return old;
+        return old.map((n) => ({ ...n, is_read: true }));
+      });
+
+      // 未読数を0に
+      utils.notifications.unreadCount.setData(undefined, () => 0);
+
+      return { previousList, previousCount };
+    },
+    onError: (_err, _input, context) => {
+      if (context?.previousList) {
+        utils.notifications.list.setData(undefined, context.previousList);
+      }
+      if (context?.previousCount !== undefined) {
+        utils.notifications.unreadCount.setData(undefined, context.previousCount);
+      }
+    },
+    onSettled: invalidateNotifications,
   });
 
+  // 通知削除（楽観的更新付き）
   const deleteNotification = api.notifications.delete.useMutation({
-    onSuccess: invalidateNotifications,
+    onMutate: async ({ id }) => {
+      await utils.notifications.list.cancel();
+      await utils.notifications.unreadCount.cancel();
+
+      const previousList = utils.notifications.list.getData();
+      const previousCount = utils.notifications.unreadCount.getData();
+
+      // 削除対象が未読かどうかを確認
+      const deletedNotification = previousList?.find((n) => n.id === id);
+      const wasUnread = deletedNotification && !deletedNotification.is_read;
+
+      // 通知をリストから削除
+      utils.notifications.list.setData(undefined, (old) => {
+        if (!old) return old;
+        return old.filter((n) => n.id !== id);
+      });
+
+      // 未読だった場合は未読数を減らす
+      if (wasUnread) {
+        utils.notifications.unreadCount.setData(undefined, (old) => {
+          if (old === undefined) return old;
+          return Math.max(0, old - 1);
+        });
+      }
+
+      return { previousList, previousCount };
+    },
+    onError: (_err, _input, context) => {
+      if (context?.previousList) {
+        utils.notifications.list.setData(undefined, context.previousList);
+      }
+      if (context?.previousCount !== undefined) {
+        utils.notifications.unreadCount.setData(undefined, context.previousCount);
+      }
+    },
+    onSettled: invalidateNotifications,
   });
 
+  // 既読を全て削除（楽観的更新付き）
   const deleteAllRead = api.notifications.deleteAllRead.useMutation({
-    onSuccess: invalidateNotifications,
+    onMutate: async () => {
+      await utils.notifications.list.cancel();
+
+      const previousList = utils.notifications.list.getData();
+
+      // 既読の通知をリストから削除
+      utils.notifications.list.setData(undefined, (old) => {
+        if (!old) return old;
+        return old.filter((n) => !n.is_read);
+      });
+
+      return { previousList };
+    },
+    onError: (_err, _input, context) => {
+      if (context?.previousList) {
+        utils.notifications.list.setData(undefined, context.previousList);
+      }
+    },
+    onSettled: invalidateNotifications,
   });
 
   return {

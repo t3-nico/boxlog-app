@@ -9,7 +9,6 @@ import {
   useCreateActionSheet,
   type CreateActionType,
 } from '@/features/navigation/components/mobile/CreateActionSheet';
-import { TagsPageProvider } from '@/features/tags/contexts/TagsPageContext';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { Plus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -49,11 +48,6 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
     pathname,
     searchParams || new URLSearchParams(),
   );
-
-  // メモ化: タグページかどうかを判定（/settings/tags に移動）
-  const isTagsPage = useMemo(() => {
-    return pathname?.startsWith(`/${localeFromPath}/settings/tags`) ?? false;
-  }, [pathname, localeFromPath]);
 
   // 注: Realtime通知購読はRealtimeProviderで一元管理
 
@@ -125,11 +119,6 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
         {content}
       </CalendarNavigationProvider>
     );
-  }
-
-  // タグページの場合はTagsPageProviderでラップ
-  if (isTagsPage) {
-    return <TagsPageProvider>{content}</TagsPageProvider>;
   }
 
   return content;

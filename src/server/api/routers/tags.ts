@@ -5,16 +5,20 @@
  * REST API（src/app/api/tags/route.ts）をtRPC化
  *
  * エンドポイント:
- * - tags.list: タグ一覧取得
+ * - tags.list: タグ一覧取得（フラット）
+ * - tags.listHierarchy: 階層構造でタグ取得
+ * - tags.listParentTags: 親タグ一覧取得
  * - tags.getById: タグID指定で取得
  * - tags.create: タグ作成
  * - tags.update: タグ更新
  * - tags.merge: タグマージ
  * - tags.delete: タグ削除
+ * - tags.reorder: タグ並び替え（sort_order, parent_id更新）
  */
 
 import { z } from 'zod';
 
+import { invalidateUserTagsCache } from '@/lib/cache';
 import { handleServiceError } from '@/server/services/errors';
 import { createTagService } from '@/server/services/tags/tag-service';
 import { createTRPCRouter, protectedProcedure } from '../trpc';
@@ -54,6 +58,40 @@ export const tagsRouter = createTRPCRouter({
     }),
 
   /**
+   * 階層構造でタグ取得
+   * 親タグとその子タグをネスト構造で返す
+   */
+  listHierarchy: protectedProcedure.query(async ({ ctx }) => {
+    try {
+      const service = createTagService(ctx.supabase);
+      return await service.listHierarchy({
+        userId: ctx.userId!,
+      });
+    } catch (error) {
+      return handleServiceError(error);
+    }
+  }),
+
+  /**
+   * 親タグ一覧取得（ドロップダウン用）
+   * parent_id = null のタグのみ
+   */
+  listParentTags: protectedProcedure.query(async ({ ctx }) => {
+    try {
+      const service = createTagService(ctx.supabase);
+      const tags = await service.listParentTags({
+        userId: ctx.userId!,
+      });
+      return {
+        data: tags,
+        count: tags.length,
+      };
+    } catch (error) {
+      return handleServiceError(error);
+    }
+  }),
+
+  /**
    * タグID指定で取得
    */
   getById: protectedProcedure
@@ -88,21 +126,29 @@ export const tagsRouter = createTRPCRouter({
           .regex(/^#[0-9A-Fa-f]{6}$/)
           .optional(),
         description: z.string().optional(),
+        /** 親タグID */
+        parentId: z.string().uuid().nullable().optional(),
+        /** @deprecated use parentId instead */
         groupId: z.string().uuid().nullable().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       try {
         const service = createTagService(ctx.supabase);
+        // parentId を優先、後方互換のため groupId もサポート
+        const parentId = input.parentId ?? input.groupId;
         const tag = await service.create({
           userId: ctx.userId!,
           input: {
             name: input.name,
             color: input.color,
             description: input.description,
-            groupId: input.groupId,
+            parentId,
           },
         });
+
+        // サーバーサイドキャッシュを無効化（次のリクエストで最新データ取得）
+        await invalidateUserTagsCache(ctx.userId!);
 
         return tag;
       } catch (error) {
@@ -123,12 +169,17 @@ export const tagsRouter = createTRPCRouter({
           .regex(/^#[0-9A-Fa-f]{6}$/)
           .optional(),
         description: z.string().nullable().optional(),
+        /** 親タグID */
+        parentId: z.string().uuid().nullable().optional(),
+        /** @deprecated use parentId instead */
         groupId: z.string().uuid().nullable().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       try {
         const service = createTagService(ctx.supabase);
+        // parentId を優先、後方互換のため groupId もサポート
+        const parentId = input.parentId !== undefined ? input.parentId : input.groupId;
         const tag = await service.update({
           userId: ctx.userId!,
           tagId: input.id,
@@ -136,9 +187,12 @@ export const tagsRouter = createTRPCRouter({
             name: input.name,
             color: input.color,
             description: input.description,
-            groupId: input.groupId,
+            parentId,
           },
         });
+
+        // サーバーサイドキャッシュを無効化
+        await invalidateUserTagsCache(ctx.userId!);
 
         return tag;
       } catch (error) {
@@ -172,6 +226,9 @@ export const tagsRouter = createTRPCRouter({
           deleteSource: input.deleteSource,
         });
 
+        // サーバーサイドキャッシュを無効化
+        await invalidateUserTagsCache(ctx.userId!);
+
         return result;
       } catch (error) {
         return handleServiceError(error);
@@ -195,7 +252,42 @@ export const tagsRouter = createTRPCRouter({
           tagId: input.id,
         });
 
+        // サーバーサイドキャッシュを無効化
+        await invalidateUserTagsCache(ctx.userId!);
+
         return deletedTag;
+      } catch (error) {
+        return handleServiceError(error);
+      }
+    }),
+
+  /**
+   * タグ並び替え（バッチ更新）
+   */
+  reorder: protectedProcedure
+    .input(
+      z.object({
+        updates: z.array(
+          z.object({
+            id: z.string().uuid(),
+            sort_order: z.number().int(),
+            parent_id: z.string().uuid().nullable(),
+          }),
+        ),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      try {
+        const service = createTagService(ctx.supabase);
+        const result = await service.reorder({
+          userId: ctx.userId!,
+          updates: input.updates,
+        });
+
+        // サーバーサイドキャッシュを無効化
+        await invalidateUserTagsCache(ctx.userId!);
+
+        return result;
       } catch (error) {
         return handleServiceError(error);
       }

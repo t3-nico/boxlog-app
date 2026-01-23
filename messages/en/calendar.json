@@ -1,5 +1,8 @@
 {
   "calendar": {
+    "meta": {
+      "description": "Plan your schedule with time boxing. View and manage your plans by day, week, or month."
+    },
     "title": "Calendar",
     "views": {
       "day": "Day View",
@@ -173,7 +176,41 @@
       "ungrouped": "Ungrouped",
       "untagged": "Untagged",
       "noTags": "No tags available",
-      "comingSoon": "Coming soon"
+      "comingSoon": "Coming soon",
+      "createTag": "Create tag",
+      "addChildTag": "Add child tag",
+      "rename": "Rename",
+      "changeColor": "Change color",
+      "editNote": "Edit note",
+      "noteLabel": "Note",
+      "noteHint": "Displayed in tooltip",
+      "notePlaceholder": "Add a note...",
+      "deleteParentTag": {
+        "title": "Delete \"{name}\"",
+        "description": "Delete this tag? Child tags will remain as root tags."
+      },
+      "changeParent": "Change parent",
+      "moveToGroup": "Move to group",
+      "merge": "Merge into another tag",
+      "showOnlyThis": "Show only this",
+      "noParent": "No parent",
+      "deleteTag": {
+        "title": "Delete Tag",
+        "description": "Delete this tag?"
+      },
+      "mergeTag": {
+        "title": "Merge Tag",
+        "selectTarget": "Select the tag to merge into",
+        "searchPlaceholder": "Search tags...",
+        "noResults": "No tags found",
+        "confirm": "Merge",
+        "selectRequired": "Please select a tag to merge into",
+        "description": "Merge \"{sourceName}\" into \"{targetName}\"? This action cannot be undone.",
+        "descriptionWithChildren": "Merge \"{sourceName}\" into \"{targetName}\"? Child tags will become root tags. This action cannot be undone."
+      },
+      "tagMenu": "Tag menu",
+      "expand": "Expand",
+      "collapse": "Collapse"
     },
     "open": {
       "navigation": {

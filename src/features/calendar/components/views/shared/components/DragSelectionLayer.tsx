@@ -215,7 +215,7 @@ export const DragSelectionLayer = ({
       {/* ドラッグ選択範囲の表示 */}
       {selectionStyle && (
         <div style={selectionStyle}>
-          <span className="bg-primary text-primary-foreground rounded px-2 py-1 text-sm font-medium">
+          <span className="bg-primary text-primary-foreground rounded px-2 py-1 text-sm font-normal">
             新しいイベント
           </span>
         </div>

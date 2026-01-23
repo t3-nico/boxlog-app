@@ -33,11 +33,11 @@
 
 'use client';
 
-import { useQueryClient } from '@tanstack/react-query';
-
+import { logger } from '@/lib/logger';
 import { useRealtimeSubscription } from '@/lib/supabase/realtime/useRealtimeSubscription';
+import { api } from '@/lib/trpc';
 
-import { tagKeys } from './useTags';
+import { useTagCacheStore } from '../stores/useTagCacheStore';
 
 interface UseTagRealtimeOptions {
   /** 購読を有効化するか（デフォルト: true） */
@@ -46,7 +46,9 @@ interface UseTagRealtimeOptions {
 
 export function useTagRealtime(userId: string | undefined, options: UseTagRealtimeOptions = {}) {
   const { enabled = true } = options;
-  const queryClient = useQueryClient();
+  const utils = api.useUtils();
+  // mutationCountは参照カウント方式：複数mutation同時実行に対応
+  const mutationCount = useTagCacheStore((state) => state.mutationCount);
 
   useRealtimeSubscription<{ id: string }>({
     channelName: `tag-changes-${userId}`,
@@ -58,19 +60,26 @@ export function useTagRealtime(userId: string | undefined, options: UseTagRealti
       const newRecord = payload.new as { id: string } | undefined;
       const oldRecord = payload.old as { id: string } | undefined;
 
+      logger.debug('[Tag Realtime] Event detected:', payload.eventType, newRecord?.id);
+
+      // 自分のmutation中（カウント > 0）はRealtime経由の更新をスキップ（二重更新防止）
+      if (mutationCount > 0) {
+        logger.debug('[Tag Realtime] Skipping invalidation (mutation in progress)');
+        return;
+      }
+
       // TanStack Queryキャッシュを無効化 → 自動で再フェッチ
-      // tagKeys.all を無効化することで、全てのタグ関連クエリを再フェッチ
-      queryClient.invalidateQueries({ queryKey: tagKeys.all });
+      void utils.tags.list.invalidate();
+      void utils.tags.listParentTags.invalidate();
 
       // 個別タグのキャッシュも無効化
-      if (newRecord?.id) {
-        queryClient.invalidateQueries({ queryKey: tagKeys.detail(newRecord.id) });
-      } else if (oldRecord?.id) {
-        queryClient.invalidateQueries({ queryKey: tagKeys.detail(oldRecord.id) });
+      const tagId = newRecord?.id ?? oldRecord?.id;
+      if (tagId) {
+        void utils.tags.getById.invalidate({ id: tagId });
       }
     },
     onError: (error) => {
-      console.error('[Tag Realtime] Subscription error:', error);
+      logger.error('[Tag Realtime] Subscription error:', error);
     },
   });
 }

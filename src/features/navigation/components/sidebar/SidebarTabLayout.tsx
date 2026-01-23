@@ -69,7 +69,7 @@ export function SidebarTabLayout({ tabs, defaultTab }: SidebarTabLayoutProps) {
             className="mt-0 min-h-0 min-w-0 flex-1 overflow-hidden"
           >
             <ScrollArea className="h-full w-full">
-              <div className="flex min-w-0 flex-col">{tab.content}</div>
+              <div className="flex w-full min-w-0 flex-col">{tab.content}</div>
             </ScrollArea>
           </TabsContent>
         ))}

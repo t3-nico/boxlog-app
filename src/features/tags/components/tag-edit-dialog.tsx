@@ -65,27 +65,27 @@ export const TagEditDialog = ({ tag, open, onClose, onSave }: TagEditDialogProps
       <DialogContent className="max-w-md">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>{t('tag.actions.editTag')}</DialogTitle>
+            <DialogTitle>{t('tags.actions.editTag')}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>
               <label
                 htmlFor="tag-name-input"
-                className="text-foreground mb-2 block text-sm font-medium"
+                className="text-foreground mb-2 block text-sm font-normal"
               >
-                {t('tag.form.tagName')}
+                {t('tags.form.tagName')}
               </label>
               <Input
                 id="tag-name-input"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder={t('tag.form.namePlaceholder')}
+                placeholder={t('tags.form.namePlaceholder')}
                 required
               />
             </div>
             <div>
-              <div id="color-label" className="text-foreground mb-2 block text-sm font-medium">
-                {t('tag.form.color')}
+              <div id="color-label" className="text-foreground mb-2 block text-sm font-normal">
+                {t('tags.form.color')}
               </div>
 
               {/* プリセットカラー */}
@@ -131,13 +131,13 @@ export const TagEditDialog = ({ tag, open, onClose, onSave }: TagEditDialogProps
             </div>
 
             <div>
-              <div id="icon-label" className="text-foreground mb-2 block text-sm font-medium">
-                {t('tag.labels.icon')}
+              <div id="icon-label" className="text-foreground mb-2 block text-sm font-normal">
+                {t('tags.labels.icon')}
               </div>
 
               {/* 現在選択されているアイコンのプレビュー */}
               <div
-                className="border-border bg-surface-container mb-3 flex items-center gap-3 rounded-lg border p-3"
+                className="border-border bg-surface-container mb-3 flex items-center gap-3 rounded-xl border p-3"
                 style={{ '--tag-color': color } as React.CSSProperties}
               >
                 {(() => {
@@ -149,17 +149,17 @@ export const TagEditDialog = ({ tag, open, onClose, onSave }: TagEditDialogProps
                     />
                   );
                 })()}
-                <span className="text-foreground text-sm font-medium">{icon}</span>
+                <span className="text-foreground text-sm font-normal">{icon}</span>
               </div>
 
               {/* アイコン選択 */}
               <div
-                className="border-border max-h-64 overflow-y-auto rounded-lg border"
+                className="border-border max-h-64 overflow-y-auto rounded-xl border"
                 aria-labelledby="icon-label"
               >
                 {Object.entries(tagIconCategories).map(([category, icons]) => (
                   <div key={category} className="border-border border-b p-3 last:border-b-0">
-                    <p className="text-muted-foreground mb-2 text-xs font-medium">{category}</p>
+                    <p className="text-muted-foreground mb-2 text-xs font-normal">{category}</p>
                     <div className="grid grid-cols-6 gap-2">
                       {icons.map((iconName) => {
                         const IconComponent = tagIconMapping[iconName as TagIconName];
@@ -188,9 +188,9 @@ export const TagEditDialog = ({ tag, open, onClose, onSave }: TagEditDialogProps
           </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={handleClose}>
-              {t('tag.actions.cancel')}
+              {t('common.actions.cancel')}
             </Button>
-            <Button type="submit">{t('tag.actions.save')}</Button>
+            <Button type="submit">{t('common.actions.save')}</Button>
           </DialogFooter>
         </form>
       </DialogContent>

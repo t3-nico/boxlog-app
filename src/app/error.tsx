@@ -40,7 +40,7 @@ export default function RootError({ error, reset }: ErrorProps) {
       />
       <div className="text-center">
         <h1 className="mb-4 text-3xl font-bold">Error</h1>
-        <h2 className="mb-4 text-2xl font-semibold">Something went wrong</h2>
+        <h2 className="mb-4 text-2xl font-bold">Something went wrong</h2>
         <p className="text-muted-foreground">An unexpected error occurred. Please try again.</p>
         {process.env.NODE_ENV === 'development' && (
           <div className="border-border bg-surface-container mt-4 rounded-xl border p-4 text-left">

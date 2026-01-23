@@ -13,7 +13,8 @@ export const recurrenceTypeSchema = z.enum([
 ]);
 
 export const createPlanSchema = z.object({
-  title: z.string().min(1, 'validation.title.required').max(200, 'validation.title.maxLength'),
+  // Google Calendar準拠: 空タイトルを許可（表示時に「（タイトルなし）」）
+  title: z.string().max(200, 'validation.title.maxLength'),
   description: z.string().max(10000, 'validation.description.maxLength').optional(), // Markdown対応のため拡張
   status: planStatusSchema,
   due_date: z.string().nullable().optional(), // 日付（YYYY-MM-DD形式）
@@ -35,6 +36,9 @@ export const planFilterSchema = z.object({
   status: planStatusSchema.optional(),
   search: z.string().optional(),
   tagId: z.string().uuid().optional(), // タグIDでフィルタ
+  // 日付範囲フィルタ（カレンダー表示高速化用）
+  startDate: z.string().datetime().optional(), // 開始日時（ISO 8601形式）
+  endDate: z.string().datetime().optional(), // 終了日時（ISO 8601形式）
   // ソート
   sortBy: z.enum(['created_at', 'updated_at', 'due_date', 'title']).optional(),
   sortOrder: z.enum(['asc', 'desc']).optional(),

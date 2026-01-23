@@ -355,6 +355,11 @@ export function useDragSelection({
           };
 
           onTimeRangeSelect(dateTimeSelection);
+          // 選択を維持（Inspectorが閉じるときにcalendar-drag-cancelイベントでクリア）
+          // ドラッグ状態のみリセットし、selection自体は残す
+          setIsSelecting(false);
+          isDragging.current = false;
+          return;
         }
       }
 
@@ -479,6 +484,11 @@ export function useDragSelection({
             endMinute: selection.endMinute,
           };
           onTimeRangeSelect(dateTimeSelection);
+          // 選択を維持（Inspectorが閉じるときにcalendar-drag-cancelイベントでクリア）
+          setIsSelecting(false);
+          isDragging.current = false;
+          clearLongPressTimer();
+          return;
         } else if (handler) {
           const startTotalMinutes = selection.startHour * 60 + selection.startMinute;
           const endTotalMinutes = Math.min(startTotalMinutes + defaultDuration, 24 * 60 - 1);
@@ -493,6 +503,11 @@ export function useDragSelection({
             endMinute,
           };
           handler(dateTimeSelection);
+          // タップでも選択を維持
+          setIsSelecting(false);
+          isDragging.current = false;
+          clearLongPressTimer();
+          return;
         }
       }
 
@@ -538,6 +553,32 @@ export function useDragSelection({
     window.addEventListener('calendar-drag-cancel', handleCalendarDragCancel);
     return () => window.removeEventListener('calendar-drag-cancel', handleCalendarDragCancel);
   }, [clearSelectionState]);
+
+  // Effect: 外部からの選択範囲表示（サイドバーからの作成時）
+  useEffect(() => {
+    const handleShowSelection = (e: CustomEvent) => {
+      const { date: eventDate, startHour, startMinute, endHour, endMinute } = e.detail;
+
+      // この列の日付と一致するかチェック
+      const eventDateStr = new Date(eventDate).toDateString();
+      const columnDateStr = date.toDateString();
+
+      if (eventDateStr === columnDateStr) {
+        setSelection({
+          startHour,
+          startMinute,
+          endHour,
+          endMinute,
+        });
+        setShowSelectionPreview(true);
+        setIsOverlapping(false);
+      }
+    };
+
+    window.addEventListener('calendar-show-selection', handleShowSelection as EventListener);
+    return () =>
+      window.removeEventListener('calendar-show-selection', handleShowSelection as EventListener);
+  }, [date]);
 
   return {
     isSelecting,

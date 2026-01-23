@@ -192,14 +192,14 @@ export function RecurrenceDialog({
       >
         {/* ヘッダー */}
         <div className="px-6 py-4">
-          <h3 className="text-foreground text-base font-semibold">繰り返し</h3>
+          <h3 className="text-foreground text-base font-bold">繰り返し</h3>
         </div>
 
         {/* コンテンツ */}
         <div className="space-y-6 px-6 pb-4">
           {/* 1. 間隔 */}
           <div className="space-y-2">
-            <Label className="text-foreground text-sm font-medium">間隔</Label>
+            <Label className="text-foreground text-sm font-normal">間隔</Label>
             <div className="flex items-center gap-2">
               <Input
                 type="number"
@@ -241,7 +241,7 @@ export function RecurrenceDialog({
           {/* 2. パターン（週次・月次のみ） */}
           {config.frequency === 'weekly' && (
             <div className="space-y-2">
-              <Label className="text-foreground text-sm font-medium">パターン</Label>
+              <Label className="text-foreground text-sm font-normal">パターン</Label>
               <div className="flex gap-2">
                 {['月', '火', '水', '木', '金', '土', '日'].map((day, index) => {
                   // 月=1, 火=2, ..., 日=0 に変換
@@ -265,7 +265,7 @@ export function RecurrenceDialog({
 
           {config.frequency === 'monthly' && (
             <div className="space-y-2">
-              <Label className="text-foreground text-sm font-medium">パターン</Label>
+              <Label className="text-foreground text-sm font-normal">パターン</Label>
               <Select
                 value={
                   config.bySetPos !== undefined && config.byWeekday?.[0] !== undefined
@@ -351,7 +351,7 @@ export function RecurrenceDialog({
 
           {/* 3. 期間 */}
           <div className="space-y-2">
-            <Label className="text-foreground text-sm font-medium">期間</Label>
+            <Label className="text-foreground text-sm font-normal">期間</Label>
             <RadioGroup
               value={config.endType}
               onValueChange={(value) =>

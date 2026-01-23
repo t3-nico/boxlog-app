@@ -1,11 +1,41 @@
+import type { Metadata } from 'next';
+import { getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
 
+import { calculateViewDateRange } from '@/features/calendar/lib/view-helpers';
 import type { CalendarViewType } from '@/features/calendar/types/calendar.types';
 import type { Locale } from '@/i18n/routing';
 import { createServerHelpers, dehydrate, HydrationBoundary } from '@/lib/trpc/server';
-import { getTranslations } from 'next-intl/server';
 
 import { CalendarViewClient } from './client';
+
+/**
+ * Route Segment Config
+ *
+ * カレンダーはリアルタイムデータを表示するため、常に動的レンダリング
+ */
+export const dynamic = 'force-dynamic';
+
+/**
+ * メタデータ生成（ビュータイプに応じたタイトル）
+ */
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ view: string; locale?: Locale }>;
+}): Promise<Metadata> {
+  const { view, locale = 'ja' } = await params;
+  const t = await getTranslations({ locale, namespace: 'calendar' });
+
+  // ビュータイプに応じたタイトルを取得
+  const viewKey = view === '3day' ? '3day' : view === '5day' ? '5day' : view;
+  const viewTitle = t(`views.${viewKey}` as Parameters<typeof t>[0]) || t('title');
+
+  return {
+    title: viewTitle,
+    description: t('meta.description'),
+  };
+}
 
 interface CalendarViewPageProps {
   params: Promise<{
@@ -53,8 +83,25 @@ const CalendarViewPage = async ({ params, searchParams }: CalendarViewPageProps)
   };
 
   // Server-side prefetch: クライアントでのデータ取得を高速化
+  // クライアントと同じクエリキーでprefetchしてキャッシュヒット率を向上
   const helpers = await createServerHelpers();
-  await Promise.all([helpers.plans.list.prefetch({}), helpers.plans.getTagStats.prefetch()]);
+
+  // 日付範囲を計算（ビュータイプに応じた範囲）
+  // weekStartsOnはZustandストアなのでSSRではデフォルト値1（月曜日）を使用
+  const targetDate = initialDate ?? new Date();
+  const viewDateRange = calculateViewDateRange(view, targetDate, 1);
+  const dateFilter = {
+    startDate: viewDateRange.start.toISOString(),
+    endDate: viewDateRange.end.toISOString(),
+  };
+
+  await Promise.all([
+    // 日付フィルタ付きでprefetch（クライアントと同じクエリキー）
+    helpers.plans.list.prefetch(dateFilter),
+    helpers.plans.getTagStats.prefetch(),
+    helpers.tags.list.prefetch(),
+    helpers.tags.listParentTags.prefetch(),
+  ]);
 
   return (
     <HydrationBoundary state={dehydrate(helpers.queryClient)}>

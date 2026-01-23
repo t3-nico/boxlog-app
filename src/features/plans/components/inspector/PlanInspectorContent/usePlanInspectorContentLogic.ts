@@ -17,6 +17,7 @@ import { api } from '@/lib/trpc';
 import type { RecurringEditScope } from '../../../components/RecurringEditConfirmDialog';
 import { usePlan } from '../../../hooks/usePlan';
 import { usePlanInstanceMutations } from '../../../hooks/usePlanInstances';
+import { usePlanMutations } from '../../../hooks/usePlanMutations';
 import { usePlanTags } from '../../../hooks/usePlanTags';
 import { useDeleteConfirmStore } from '../../../stores/useDeleteConfirmStore';
 import { usePlanCacheStore } from '../../../stores/usePlanCacheStore';
@@ -44,11 +45,19 @@ export function usePlanInspectorContentLogic() {
   const closeInspector = usePlanInspectorStore((state) => state.closeInspector);
   const displayMode = usePlanInspectorStore((state) => state.displayMode) as InspectorDisplayMode;
   const setDisplayMode = usePlanInspectorStore((state) => state.setDisplayMode);
+  const draftPlan = usePlanInspectorStore((state) => state.draftPlan);
+  const clearDraft = usePlanInspectorStore((state) => state.clearDraft);
+  const updateDraft = usePlanInspectorStore((state) => state.updateDraft);
+  const openInspector = usePlanInspectorStore((state) => state.openInspector);
+
+  // ドラフトモード判定: draftPlanがあり、planIdがない場合
+  const isDraftMode = draftPlan !== null && planId === null;
 
   const openDeleteDialog = useDeleteConfirmStore((state) => state.openDialog);
   const openRecurringDialog = useRecurringEditConfirmStore((state) => state.openDialog);
   const getCache = usePlanCacheStore((state) => state.getCache);
   const { createInstance } = usePlanInstanceMutations();
+  const { createPlan } = usePlanMutations();
 
   // Inspectorマウント時にグローバルダイアログをリセット
   // （ドラッグ操作で開いたダイアログが残っている場合があるため）
@@ -75,8 +84,15 @@ export function usePlanInspectorContentLogic() {
     return () => clearTimeout(timer);
   }, [planId]);
 
-  const { data: planData } = usePlan(planId!, { includeTags: true, enabled: !!planId });
-  const plan = (planData ?? null) as unknown as Plan | null;
+  const { data: planData } = usePlan(planId!, {
+    includeTags: true,
+    enabled: !!planId && !isDraftMode,
+  });
+
+  // ドラフトモードの場合はdraftPlanを使用、それ以外はfetchしたplanDataを使用
+  const plan = isDraftMode
+    ? (draftPlan as unknown as Plan | null)
+    : ((planData ?? null) as unknown as Plan | null);
 
   // 繰り返しプラン編集フック
   const recurringEdit = useRecurringPlanEdit({
@@ -113,10 +129,68 @@ export function usePlanInspectorContentLogic() {
   const { hasPrevious, hasNext, goToPrevious, goToNext } = useInspectorNavigation(planId);
   const { autoSave: baseAutoSave, updatePlan, deletePlan } = useInspectorAutoSave({ planId, plan });
 
+  // ドラフトモード用の初回保存（DBに新規作成）
+  const saveDraftToDb = useCallback(
+    async (field: string, value: string | undefined): Promise<string | null> => {
+      if (!draftPlan) return null;
+
+      try {
+        // ドラフトデータに変更を適用してDB保存
+        // description は null を undefined に変換（API仕様に合わせる）
+        // タイトルが空の場合も空のまま保存（Google Calendar準拠）
+        const planData = {
+          title: draftPlan.title.trim(),
+          description: draftPlan.description ?? undefined,
+          status: 'open' as const,
+          due_date: draftPlan.due_date,
+          start_time: draftPlan.start_time,
+          end_time: draftPlan.end_time,
+          [field]: value,
+        };
+
+        const newPlan = await createPlan.mutateAsync(planData);
+
+        if (newPlan?.id) {
+          // ドラフトをクリアして通常モードに切り替え
+          clearDraft();
+          openInspector(newPlan.id);
+          // カレンダーのドラッグ選択をクリア（保存成功後）
+          window.dispatchEvent(new CustomEvent('calendar-drag-cancel'));
+          return newPlan.id;
+        }
+        return null;
+      } catch (error) {
+        console.error('Failed to create plan from draft:', error);
+        return null;
+      }
+    },
+    [draftPlan, createPlan, clearDraft, openInspector],
+  );
+
   // 繰り返しインスタンス対応のautoSave
   // 時間変更の場合のみスコープダイアログを表示
   const autoSave = useCallback(
-    (field: string, value: string | undefined) => {
+    async (field: string, value: string | undefined) => {
+      // ドラフトモードの場合
+      if (isDraftMode) {
+        // タイトルを判定（今回の変更がtitleならその値、それ以外ならdraftPlanのtitle）
+        const effectiveTitle = field === 'title' ? value : draftPlan?.title;
+        const hasTitle = effectiveTitle && effectiveTitle.trim() !== '';
+
+        // タイトルがなければドラフトをローカル更新のみ（DBには保存しない）
+        if (!hasTitle) {
+          // タイトル以外のフィールド変更はドラフトに保持
+          if (field !== 'title' && field !== 'description') {
+            updateDraft({ [field]: value } as Partial<typeof draftPlan>);
+          }
+          return;
+        }
+
+        // タイトルがあればDBに保存
+        await saveDraftToDb(field, value);
+        return;
+      }
+
       // 繰り返しインスタンスの場合、時間フィールドはスコープダイアログを表示
       if (
         recurringEdit.isRecurringInstance &&
@@ -128,7 +202,7 @@ export function usePlanInspectorContentLogic() {
       // 通常の保存処理（title, descriptionなど）
       baseAutoSave(field, value);
     },
-    [baseAutoSave, recurringEdit],
+    [baseAutoSave, recurringEdit, isDraftMode, saveDraftToDb, draftPlan, updateDraft],
   );
 
   // Activity state
@@ -140,10 +214,12 @@ export function usePlanInspectorContentLogic() {
   // Tags state
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
   const selectedTagIdsRef = useRef<string[]>(selectedTagIds);
-  const { addPlanTag, removePlanTag } = usePlanTags();
+  // Flag to prevent server sync from overwriting optimistic updates during mutations
+  const isTagMutationInProgressRef = useRef(false);
+  const { setplanTags, removePlanTag } = usePlanTags();
 
   // UI state
-  const titleRef = useRef<HTMLSpanElement>(null);
+  const titleRef = useRef<HTMLInputElement>(null);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
   const [scheduleDate, setScheduleDate] = useState<Date | undefined>(); // スケジュール日（start_time/end_time用）
   const [dueDate, setDueDate] = useState<Date | undefined>(); // 期限日（due_date用）
@@ -151,13 +227,25 @@ export function usePlanInspectorContentLogic() {
   const [endTime, setEndTime] = useState('');
   const [reminderType, setReminderType] = useState<string>('');
 
-  // Sync tags from plan data
+  // Sync tags from plan data (skip when mutation is in progress to preserve optimistic updates)
   useEffect(() => {
-    if (planData && 'tags' in planData) {
-      const tagIds = (planData.tags as Array<{ id: string }>).map((tag) => tag.id);
-      setSelectedTagIds(tagIds);
-    } else {
+    // Skip sync if user has pending tag changes - prevents race condition
+    // where refetch returns stale data before server processes all mutations
+    if (isTagMutationInProgressRef.current) {
+      return;
+    }
+    // データ未ロード時は何もしない（空配列をセットしない）
+    // これにより、ローディング中にタグが消えるのを防ぐ
+    if (planData === undefined) {
+      return;
+    }
+    if (planData && 'tagIds' in planData && Array.isArray(planData.tagIds)) {
+      setSelectedTagIds(planData.tagIds);
+      selectedTagIdsRef.current = planData.tagIds;
+    } else if (planData) {
+      // planDataがnullの場合（存在しないプラン）のみ空にする
       setSelectedTagIds([]);
+      selectedTagIdsRef.current = [];
     }
   }, [planData]);
 
@@ -166,8 +254,36 @@ export function usePlanInspectorContentLogic() {
     selectedTagIdsRef.current = selectedTagIds;
   }, [selectedTagIds]);
 
-  // Initialize state from plan data
+  // Initialize state from plan data or draftPlan
   useEffect(() => {
+    // ドラフトモードの場合はdraftPlanから初期化
+    if (isDraftMode && draftPlan) {
+      setDueDate(draftPlan.due_date ? parseDateString(draftPlan.due_date) : undefined);
+
+      if (draftPlan.start_time) {
+        const date = parseDatetimeString(draftPlan.start_time);
+        setScheduleDate(date);
+        setStartTime(
+          `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`,
+        );
+      } else {
+        setScheduleDate(undefined);
+        setStartTime('');
+      }
+
+      if (draftPlan.end_time) {
+        const date = parseDatetimeString(draftPlan.end_time);
+        setEndTime(
+          `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`,
+        );
+      } else {
+        setEndTime('');
+      }
+
+      setReminderType('');
+      return;
+    }
+
     if (plan && 'id' in plan) {
       // 期限日（due_date）を設定
       setDueDate(plan.due_date ? parseDateString(plan.due_date) : undefined);
@@ -228,20 +344,14 @@ export function usePlanInspectorContentLogic() {
       setEndTime('');
       setReminderType('');
     }
-  }, [plan, initialData]);
+  }, [plan, initialData, isDraftMode, draftPlan]);
 
   // Focus title on open
   useEffect(() => {
     if (titleRef.current) {
       const timer = setTimeout(() => {
         titleRef.current?.focus();
-        const range = document.createRange();
-        const selection = window.getSelection();
-        if (selection && titleRef.current) {
-          range.selectNodeContents(titleRef.current);
-          selection.removeAllRanges();
-          selection.addRange(range);
-        }
+        titleRef.current?.select(); // input要素の全選択
       }, 100);
       return () => clearTimeout(timer);
     }
@@ -264,28 +374,38 @@ export function usePlanInspectorContentLogic() {
       if (!planId) return;
 
       const oldTagIds = selectedTagIdsRef.current;
-      const added = newTagIds.filter((id) => !oldTagIds.includes(id));
-      const removed = oldTagIds.filter((id) => !newTagIds.includes(id));
 
-      if (added.length === 0 && removed.length === 0) return;
+      // 変更がない場合は何もしない
+      if (
+        newTagIds.length === oldTagIds.length &&
+        newTagIds.every((id) => oldTagIds.includes(id))
+      ) {
+        return;
+      }
 
+      // Set flag to prevent server sync from overwriting optimistic updates
+      isTagMutationInProgressRef.current = true;
+
+      // ローカル状態を即座に更新（楽観的UI）
       setSelectedTagIds(newTagIds);
       selectedTagIdsRef.current = newTagIds;
 
       try {
-        for (const tagId of added) {
-          await addPlanTag(planId, tagId);
-        }
-        for (const tagId of removed) {
-          await removePlanTag(planId, tagId);
-        }
+        // 一括設定API（setTags）を使用して安定した更新を実現
+        await setplanTags(planId, newTagIds);
       } catch (error) {
         console.error('Failed to update tags:', error);
+        // エラー時はロールバック
         setSelectedTagIds(oldTagIds);
         selectedTagIdsRef.current = oldTagIds;
+      } finally {
+        // Clear flag after mutation settles (small delay to handle any pending refetch)
+        setTimeout(() => {
+          isTagMutationInProgressRef.current = false;
+        }, 100);
       }
     },
-    [planId, addPlanTag, removePlanTag],
+    [planId, setplanTags],
   );
 
   const handleRemoveTag = useCallback(
@@ -294,6 +414,9 @@ export function usePlanInspectorContentLogic() {
 
       const oldTagIds = selectedTagIdsRef.current;
       const newTagIds = oldTagIds.filter((id) => id !== tagId);
+
+      // Set flag to prevent server sync from overwriting optimistic updates
+      isTagMutationInProgressRef.current = true;
 
       setSelectedTagIds(newTagIds);
       selectedTagIdsRef.current = newTagIds;
@@ -304,6 +427,11 @@ export function usePlanInspectorContentLogic() {
         console.error('Failed to remove tag:', error);
         setSelectedTagIds(oldTagIds);
         selectedTagIdsRef.current = oldTagIds;
+      } finally {
+        // Clear flag after mutation settles
+        setTimeout(() => {
+          isTagMutationInProgressRef.current = false;
+        }, 100);
       }
     },
     [planId, removePlanTag],
@@ -520,6 +648,7 @@ export function usePlanInspectorContentLogic() {
     displayMode,
     setDisplayMode,
     closeInspector,
+    isDraftMode,
 
     // Navigation
     hasPrevious,

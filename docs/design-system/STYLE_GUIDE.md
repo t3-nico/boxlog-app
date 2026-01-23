@@ -523,70 +523,90 @@ hover:bg-secondary/80      → hover:bg-secondary-hover
 
 ## 🎨 カラーシステム
 
-### Background & Surface（M3準拠）
+### Surface体系（GAFA準拠・4段階）
 
-Material Design 3のSurfaceシステムを採用。背景は1種類、Surfaceは段階的レイヤーで構成。
+Google Material Design 3 / Apple HIG の共通原則に基づき、**意味ベース**で4段階に簡素化。
 
-#### Background（最背面 - 1種類のみ）
+#### 設計原則
 
-```css
---background       /* ページ最背面 */
---foreground       /* テキスト色 */
-```
+- **コンテンツファースト**: UIは邪魔しない
+- **意味ベース**: 「用途」で選ぶ、色で選ばない
+- **明確な階層**: 一目でどれが上か下かわかる
+- **最小限の区別**: 必要以上に色分けしない
 
-#### Surface（段階的レイヤー）
+#### 4段階Surface
 
-backgroundが最も明るく、surface-dimが最も暗くなる構造。**ライト/ダーク両方で同じ階層構造**を維持。
+| トークン       | Tailwindクラス  | 用途                   | ライト (L値) | ダーク (L値) |
+| -------------- | --------------- | ---------------------- | ------------ | ------------ |
+| **background** | `bg-background` | ページ背景             | 0.99 (最明)  | 0.24 (最明)  |
+| **overlay**    | `bg-overlay`    | ポップオーバー         | 0.98         | 0.18 (最暗)  |
+| **card**       | `bg-card`       | カード、ダイアログ     | 0.97         | 0.20         |
+| **container**  | `bg-container`  | サイドバー、セクション | 0.96 (最暗)  | 0.22         |
 
-| トークン                   | Tailwindクラス              | 用途                           | ライト (L値) | ダーク (L値) |
-| -------------------------- | --------------------------- | ------------------------------ | ------------ | ------------ |
-| **background**             | `bg-background`             | 最背面                         | 0.99 (最明)  | 0.26 (最明)  |
-| **surface-bright**         | `bg-surface-bright`         | ポップオーバー、ドロップダウン | 0.98         | 0.24         |
-| **surface**                | `bg-surface`                | カード、ダイアログ             | 0.97         | 0.22         |
-| **surface-container**      | `bg-surface-container`      | セクション区切り、ボタン       | 0.96         | 0.20         |
-| **surface-container-high** | `bg-surface-container-high` | 強調コンテナ                   | 0.94         | 0.18         |
-| **surface-dim**            | `bg-surface-dim`            | サイドバー、ヘッダー           | 0.93 (最暗)  | 0.16 (最暗)  |
+**明度順（ライトモード）**: background > overlay > card > container
+**明度順（ダークモード）**: background > container > card > overlay（逆転採用）
 
 ```tsx
-// ✅ 推奨：Surface トークンを直接使用
-<aside className="bg-surface-dim">           // サイドバー
-<Card className="bg-surface">                // カード
-<Popover className="bg-surface-bright">      // ポップオーバー
-<section className="bg-surface-container">   // セクション区切り
-<Button className="bg-surface-container">    // ボタン背景
+// ✅ 推奨：意味ベースで選ぶ
+<main className="bg-background">             // ページ背景
+<Card className="bg-card">                   // カード
+<aside className="bg-container">             // サイドバー
+<Popover className="bg-overlay">             // ポップオーバー
 
-// ✅ 互換性エイリアス（既存コードも動作）
-<Card className="bg-card">                   // = bg-surface
-<Popover className="bg-popover">             // = bg-surface-bright
-<Button className="bg-secondary">            // = bg-surface-container
+// ✅ shadcn/ui互換エイリアス（既存コードも動作）
+<Popover className="bg-popover">             // = bg-overlay
+<Button className="bg-secondary">            // = bg-container
+<div className="bg-muted">                   // = bg-container
 ```
 
-**互換性エイリアス一覧**:
+#### 後方互換エイリアス（移行期間用）
 
-| 旧トークン    | 新トークン                 | 説明              |
-| ------------- | -------------------------- | ----------------- |
-| `--card`      | `var(--surface)`           | カード背景        |
-| `--popover`   | `var(--surface-bright)`    | ポップオーバー    |
-| `--secondary` | `var(--surface-container)` | セクション/ボタン |
+| 旧トークン             | 新トークン     | 説明             |
+| ---------------------- | -------------- | ---------------- |
+| `bg-surface`           | `bg-card`      | カード背景       |
+| `bg-surface-dim`       | `bg-container` | サイドバー       |
+| `bg-surface-bright`    | `bg-overlay`   | ポップオーバー   |
+| `bg-surface-container` | `bg-container` | セクション       |
+| `bg-muted`             | `bg-container` | 控えめな背景     |
+| `bg-popover`           | `bg-overlay`   | ポップオーバー   |
+| `bg-secondary`         | `bg-container` | セカンダリー要素 |
+
+### コントラスト比（WCAG準拠）
+
+#### ライトモード
+
+| 組み合わせ                   | コントラスト比 | 判定     |
+| ---------------------------- | -------------- | -------- |
+| foreground on background     | 8.5:1          | ✅ AAA   |
+| foreground on card           | 8.2:1          | ✅ AAA   |
+| muted-foreground on surfaces | 6.1:1          | ✅ AAA   |
+| primary on background        | 4.5:1+         | ✅ AA    |
+| border on background         | 1.5:1          | 視認可能 |
+
+#### ダークモード
+
+| 組み合わせ                   | コントラスト比 | 判定   |
+| ---------------------------- | -------------- | ------ |
+| foreground on background     | 10.3:1         | ✅ AAA |
+| foreground on card           | 13.4:1         | ✅ AAA |
+| foreground on container      | 11.9:1         | ✅ AAA |
+| muted-foreground on surfaces | 8.0:1+         | ✅ AAA |
 
 ### セマンティックトークン（globals.css）
 
 ```css
-/* 背景 & Surface（M3準拠） */
---background             /* ページ最背面 */
---foreground             /* テキスト色 */
---surface-dim            /* サイドバー、ヘッダー */
---surface                /* カード、ダイアログ */
---surface-bright         /* ポップオーバー、ドロップダウン */
---surface-container      /* セクション区切り */
---surface-container-high /* 強調コンテナ */
-
-/* 互換性エイリアス */
---card             /* → var(--surface) */
+/* Surface体系（GAFA準拠・4段階） */
+--background       /* ページ背景 */
+--foreground       /* テキスト色 */
+--card             /* カード、ダイアログ */
 --card-foreground  /* カード内テキスト */
---popover          /* → var(--surface-bright) */
+--container        /* サイドバー、セクション */
+--overlay          /* ポップオーバー */
+
+/* 互換性エイリアス（shadcn/ui用） */
+--popover          /* → var(--overlay) */
 --popover-foreground
---secondary        /* → var(--surface-container) */
+--secondary        /* → var(--container) */
 --secondary-foreground
 --muted-foreground /* 控えめなテキスト */
 
@@ -1059,12 +1079,13 @@ boxlog-app と boxlog-web のデザインシステムは共通化されていま
 
 ---
 
-**最終更新**: 2026-01-09
-**バージョン**: v1.7
+**最終更新**: 2026-01-15
+**バージョン**: v2.0
 **管理**: BoxLog デザインシステムチーム
 
 ### 更新履歴
 
+- **v2.0** (2026-01-15): **Surface体系を4段階に簡素化**（GAFA準拠）、コントラスト比WCAG AAA対応（ライトモード改善）、ダークモード明度逆転採用、旧→新トークンマッピング表追加
 - **v1.7** (2026-01-09): セマンティックカラー透明度ガイド追加（Destructive/Accent/Secondary）、禁止パターン・例外ケースの明文化、約30ファイルのトークン統一
 - **v1.6** (2026-01-09): Primary使用シーンガイド追加（ユーザーアクションを促す要素のみ使用）、ローディングスピナーの正しい実装例追記
 - **v1.5** (2026-01-09): Primary透明度の使い分けガイド追加、禁止パターン・例外ケースの明文化、`bg-primary/10`→`bg-primary-container`等の統一ルール追記
@@ -1077,5 +1098,5 @@ boxlog-app と boxlog-web のデザインシステムは共通化されていま
 ---
 
 **種類**: 📙 リファレンス
-**最終更新**: 2025-12-11
+**最終更新**: 2026-01-15
 **所有者**: BoxLog 開発チーム

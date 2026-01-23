@@ -176,7 +176,7 @@ export const MobileDrawer = ({
       >
         {/* ヘッダー */}
         <div className="flex items-center justify-between p-4">
-          <h2 className="text-lg font-semibold">{menuTitle}</h2>
+          <h2 className="text-lg font-bold">{menuTitle}</h2>
           <button
             type="button"
             onClick={onClose}
@@ -206,7 +206,7 @@ export const MobileDrawer = ({
                 </div>
               )}
               <div className="min-w-0 flex-1">
-                <div className="truncate font-medium">{userInfo.name}</div>
+                <div className="truncate font-normal">{userInfo.name}</div>
                 {userInfo.email != null && (
                   <div className="text-muted-foreground truncate text-sm">{userInfo.email}</div>
                 )}
@@ -239,7 +239,7 @@ export const MobileDrawer = ({
                   <div className="flex-shrink-0">{item.icon}</div>
 
                   {/* ラベル */}
-                  <span className="flex-1 text-sm font-medium">{item.label}</span>
+                  <span className="flex-1 text-sm font-normal">{item.label}</span>
 
                   {/* バッジ */}
                   {item.badge && item.badge > 0 ? (

@@ -21,7 +21,7 @@ export default function InternalServerErrorPage() {
       />
       <div className="text-center">
         <h1 className="mb-4 text-3xl font-bold">{t('error.500.title')}</h1>
-        <h2 className="mb-4 text-2xl font-semibold">{t('error.500.heading')}</h2>
+        <h2 className="mb-4 text-2xl font-bold">{t('error.500.heading')}</h2>
         <p className="text-muted-foreground">{t('error.500.description')}</p>
         <div className="mt-6 flex items-center justify-center gap-4 md:mt-8">
           <Button className="cursor-pointer" onClick={() => router.push('/')}>

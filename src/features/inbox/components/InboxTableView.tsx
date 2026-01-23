@@ -17,6 +17,7 @@ import { useTranslations } from 'next-intl';
 import { useDynamicPageSize } from '../hooks/useDynamicPageSize';
 import type { InboxItem } from '../hooks/useInboxData';
 import { useInboxData } from '../hooks/useInboxData';
+import { useInboxURLSync } from '../hooks/useInboxURLSync';
 import { useInboxFilterStore } from '../stores/useInboxFilterStore';
 import { useInboxGroupStore } from '../stores/useInboxGroupStore';
 import { useInboxPaginationStore } from '../stores/useInboxPaginationStore';
@@ -53,6 +54,9 @@ import { type InboxTableRowCreateHandle } from './table/InboxTableRowCreate';
 export function InboxTableView() {
   const t = useTranslations();
   const { bulkUpdatePlan, bulkDeletePlan, createPlan } = usePlanMutations();
+
+  // URL同期（ページネーション永続化）
+  useInboxURLSync();
 
   // ステータス別件数取得
   const { data: stats } = api.plans.getStats.useQuery();

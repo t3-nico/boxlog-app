@@ -6,7 +6,6 @@ import { format } from 'date-fns';
 import { useTranslations } from 'next-intl';
 
 import useCalendarToast from '@/features/calendar/lib/toast';
-import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
 import { useRecurringEditConfirmStore } from '@/features/plans/stores/useRecurringEditConfirmStore';
 import { useHapticFeedback } from '@/hooks/useHapticFeedback';
@@ -27,9 +26,9 @@ export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandle
   const { error: hapticError } = useHapticFeedback();
 
   const openInspector = usePlanInspectorStore((state) => state.openInspector);
+  const openInspectorWithDraft = usePlanInspectorStore((state) => state.openInspectorWithDraft);
   const inspectorPlanId = usePlanInspectorStore((state) => state.planId);
   const inspectorIsOpen = usePlanInspectorStore((state) => state.isOpen);
-  const { createPlan } = usePlanMutations();
 
   // Inspector で開いているプランIDをDnD無効化用に計算
   // Inspector が開いている場合のみ planId を返す
@@ -130,7 +129,7 @@ export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandle
         }
       }
 
-      // プランを作成してInspectorで編集
+      // ドラフトモードでInspectorを開く（DB保存は入力時に遅延実行）
       if (startTime && endTime && date) {
         // 事前重複チェック
         if (checkTimeOverlap(startTime, endTime)) {
@@ -141,32 +140,24 @@ export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandle
           return; // 作成をキャンセル
         }
 
-        createPlan.mutate(
-          {
-            title: '新規プラン',
-            status: 'open',
-            due_date: format(date, 'yyyy-MM-dd'),
-            start_time: startTime.toISOString(),
-            end_time: endTime.toISOString(),
-          },
-          {
-            onSuccess: (newPlan) => {
-              openInspector(newPlan.id);
-              logger.log('✅ Created plan:', {
-                planId: newPlan.id,
-                title: newPlan.title,
-                dueDate: newPlan.due_date,
-              });
-            },
-          },
-        );
+        openInspectorWithDraft({
+          title: '',
+          due_date: format(date, 'yyyy-MM-dd'),
+          start_time: startTime.toISOString(),
+          end_time: endTime.toISOString(),
+        });
+
+        logger.log('📝 Opened draft plan:', {
+          dueDate: format(date, 'yyyy-MM-dd'),
+          startTime: startTime.toISOString(),
+          endTime: endTime.toISOString(),
+        });
       }
     },
     [
       viewType,
       currentDate,
-      createPlan,
-      openInspector,
+      openInspectorWithDraft,
       checkTimeOverlap,
       hapticError,
       calendarToast,
@@ -223,29 +214,21 @@ export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandle
         return; // 作成をキャンセル
       }
 
-      // プランを作成してからInspectorで編集
-      createPlan.mutate(
-        {
-          title: '新規プラン',
-          status: 'open',
-          due_date: format(selection.date, 'yyyy-MM-dd'),
-          start_time: startTime.toISOString(),
-          end_time: endTime.toISOString(),
-        },
-        {
-          onSuccess: (newplan) => {
-            // 作成されたプランをInspectorで開く
-            openInspector(newplan.id);
-            logger.log('✅ Created plan from drag selection:', {
-              planId: newplan.id,
-              title: newplan.title,
-              dueDate: newplan.due_date,
-            });
-          },
-        },
-      );
+      // ドラフトモードでInspectorを開く（DB保存は入力時に遅延実行）
+      openInspectorWithDraft({
+        title: '',
+        due_date: format(selection.date, 'yyyy-MM-dd'),
+        start_time: startTime.toISOString(),
+        end_time: endTime.toISOString(),
+      });
+
+      logger.log('📝 Opened draft plan from drag selection:', {
+        dueDate: format(selection.date, 'yyyy-MM-dd'),
+        startTime: startTime.toISOString(),
+        endTime: endTime.toISOString(),
+      });
     },
-    [createPlan, openInspector, checkTimeOverlap, hapticError, calendarToast, t],
+    [openInspectorWithDraft, checkTimeOverlap, hapticError, calendarToast, t],
   );
 
   return {

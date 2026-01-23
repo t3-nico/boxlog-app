@@ -22,9 +22,14 @@ import {
   PlanInspector,
   RecurringEditConfirmDialog,
 } from '@/features/plans/components';
-import { TagInspector } from '@/features/tags/components/inspector';
 
-const AppLayout = async ({ children }: { children: React.ReactNode }) => {
+interface AppLayoutProps {
+  children: React.ReactNode;
+  /** Parallel Route: モーダルスロット (@modal) */
+  modal: React.ReactNode;
+}
+
+const AppLayout = async ({ children, modal }: AppLayoutProps) => {
   return (
     <Providers>
       <SessionMonitorProvider>
@@ -33,9 +38,10 @@ const AppLayout = async ({ children }: { children: React.ReactNode }) => {
           <PlanInspector />
           <PlanDeleteConfirmDialog />
           <RecurringEditConfirmDialog />
-          <TagInspector />
           <AIInspector />
           <Toaster />
+          {/* Intercepting Routes: モーダル */}
+          {modal}
         </BaseLayout>
       </SessionMonitorProvider>
     </Providers>

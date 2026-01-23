@@ -47,6 +47,8 @@ export class PlanService {
       tagId,
       status,
       search,
+      startDate,
+      endDate,
       sortBy = 'created_at',
       sortOrder = 'desc',
       limit,
@@ -59,12 +61,7 @@ export class PlanService {
         `
         *,
         plan_tags (
-          tag_id,
-          tags (
-            id,
-            name,
-            color
-          )
+          tag_id
         )
       `,
       )
@@ -87,6 +84,15 @@ export class PlanService {
     // 検索フィルター
     if (search) {
       query = query.or(`title.ilike.%${search}%,description.ilike.%${search}%`);
+    }
+
+    // 日付範囲フィルタ（start_time基準）
+    // カレンダー表示高速化: 表示範囲のプランのみを取得
+    if (startDate) {
+      query = query.gte('start_time', startDate);
+    }
+    if (endDate) {
+      query = query.lte('start_time', endDate);
     }
 
     // ソート
@@ -119,7 +125,7 @@ export class PlanService {
     if (includeTags) {
       const { data, error } = await this.supabase
         .from('plans')
-        .select('*, plan_tags(tag_id, tags(*))')
+        .select('*, plan_tags(tag_id)')
         .eq('id', planId)
         .eq('user_id', userId)
         .single();
@@ -354,13 +360,14 @@ export class PlanService {
 
   /**
    * プランとタグデータをフォーマット
+   *
+   * plan_tagsのネスト構造からtagIds配列を抽出する。
+   * タグの詳細情報はクライアント側でtags.listキャッシュから取得する。
    */
   private formatPlanWithTags(plan: PlanWithTags): PlanWithTags {
-    const tags =
-      plan.plan_tags?.map((pt) => pt.tags).filter((t): t is NonNullable<typeof t> => t !== null) ??
-      [];
+    const tagIds = plan.plan_tags?.map((pt) => pt.tag_id) ?? [];
     const { plan_tags: _, ...planData } = plan;
-    return { ...planData, tags } as PlanWithTags;
+    return { ...planData, tagIds };
   }
 
   /**

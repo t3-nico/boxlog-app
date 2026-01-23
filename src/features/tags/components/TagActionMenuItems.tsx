@@ -75,7 +75,7 @@ export function TagActionMenuItems({
       renderMenuItem({
         key: 'edit',
         icon: <Pencil className="mr-2 h-4 w-4" />,
-        label: t('tag.page.edit'),
+        label: t('tags.page.edit'),
         onClick: () => onEdit(tag),
       }),
     );
@@ -87,13 +87,13 @@ export function TagActionMenuItems({
       renderSubMenu({
         trigger: {
           icon: <Folder className="mr-2 h-4 w-4" />,
-          label: t('tag.page.moveToGroup'),
+          label: t('tags.page.moveToGroup'),
         },
         items: [
           {
             key: 'no-group',
             icon: <FolderX className="text-muted-foreground mr-2 h-4 w-4" />,
-            label: t('tag.page.noGroup'),
+            label: t('tags.page.noGroup'),
             onClick: () => onMoveToGroup(tag, null),
           },
           ...groups.map((group) => ({
@@ -130,7 +130,7 @@ export function TagActionMenuItems({
       renderMenuItem({
         key: 'archive',
         icon: <Archive className="mr-2 h-4 w-4" />,
-        label: t('tag.page.archive'),
+        label: t('tags.page.archive'),
         onClick: () => onArchive(tag),
       }),
     );
@@ -141,7 +141,7 @@ export function TagActionMenuItems({
     renderMenuItem({
       key: 'delete',
       icon: <Trash2 className="mr-2 h-4 w-4" />,
-      label: t('tag.page.permanentDelete'),
+      label: t('tags.page.permanentDelete'),
       onClick: () => onDelete(tag),
       variant: 'destructive',
     }),

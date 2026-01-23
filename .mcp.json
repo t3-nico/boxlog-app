@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "supabase-local": {
+      "type": "http",
+      "url": "http://127.0.0.1:54321/mcp"
+    },
+    "context7": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp@latest"],
+      "env": {}
+    }
+  }
+}

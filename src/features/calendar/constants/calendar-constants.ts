@@ -72,8 +72,8 @@ export const CALENDAR_CLASSES = {
   businessHoursBg: 'bg-white dark:bg-neutral-950',
   nonBusinessHoursBg: 'bg-neutral-50/50 dark:bg-neutral-800/30',
 
-  // プランブロック
-  planShadow: 'shadow-sm hover:shadow-md',
+  // プランブロック（shadowなし：フラットデザイン）
+  planShadow: '',
   planBorder: 'border-l-4',
   planRounding: 'rounded-md',
   planPadding: 'px-2 py-1',

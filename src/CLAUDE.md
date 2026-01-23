@@ -85,12 +85,15 @@ p - 1; // 4px  - アイコンボタンの最小パディング
 **角丸（Border Radius）も8pxグリッド準拠：**
 
 ```tsx
-// globals.css で定義済み
---radius-sm: 4px   - 例外: 小要素用
---radius-md: 8px   - 標準
---radius-lg: 12px  - 例外: 視覚的バランス用
---radius-xl: 16px  - 大
---radius-2xl: 24px - 特大
+// globals.css で定義済み（STYLE_GUIDE.md準拠）
+--radius-sm: 4px   - 内部の小要素（Checkbox, Menu item）
+--radius-md: 8px   - インタラクティブ要素（Button, Input, Badge）
+--radius-xl: 16px  - パネル・コンテナ（Card, Dialog, Alert）
+--radius-2xl: 24px - 特大要素（必要に応じて）
+--radius-full: 50% - 円形（Avatar, Switch）
+
+// ❌ 使用禁止
+--radius-lg: 12px  - 削除済み（8の倍数でない）
 ```
 
 **タイポグラフィは視認性優先（12px, 14pxは例外として許可）：**

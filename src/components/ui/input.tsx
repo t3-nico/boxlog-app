@@ -20,16 +20,18 @@ const inputVariants = cva(
   [
     // 基本スタイル
     'w-full min-w-0 rounded-md border shadow-xs transition-[color,box-shadow] outline-none',
-    'border-input bg-input',
+    'border-border bg-input',
     // テキスト
     'placeholder:text-muted-foreground',
     'selection:bg-primary selection:text-primary-foreground',
     // ファイル入力
-    'file:text-foreground file:inline-flex file:border-0 file:bg-transparent file:font-medium',
+    'file:text-foreground file:inline-flex file:border-0 file:bg-transparent file:font-normal',
     // フォーカス
     'focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]',
-    // 無効状態
+    // 無効状態（disabled + aria-disabled両対応）
+    // DADS: disabled属性はキーボードアクセス不可のため、aria-disabled推奨
     'disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50',
+    'aria-disabled:pointer-events-none aria-disabled:cursor-not-allowed aria-disabled:opacity-50',
     // エラー状態
     'aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive',
   ].join(' '),
