@@ -2,7 +2,7 @@
 
 import { Badge } from '@/components/ui/badge';
 import { HoverTooltip } from '@/components/ui/tooltip';
-import { useTags } from '@/features/tags/hooks/useTags';
+import { useTags } from '@/features/tags/hooks';
 import { Plus, Tag, X } from 'lucide-react';
 
 import { TagSelectCombobox } from './TagSelectCombobox';

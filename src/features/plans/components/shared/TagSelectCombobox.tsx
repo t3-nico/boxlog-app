@@ -5,7 +5,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { Check, ChevronRight } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-import { useTags } from '@/features/tags/hooks/useTags';
+import { useTags } from '@/features/tags/hooks';
 import { cn } from '@/lib/utils';
 
 import {

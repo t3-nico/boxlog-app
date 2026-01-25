@@ -8,9 +8,9 @@ import { useTranslations } from 'next-intl';
 import { useCalendarFilterStore, type ItemType } from '../../../stores/useCalendarFilterStore';
 
 import { SidebarSection } from '@/features/navigation/components/sidebar/SidebarSection';
+import { useDeleteTag, useReorderTags, useTags, useUpdateTag } from '@/features/tags/hooks';
 import { useTagGroups } from '@/features/tags/hooks/useTagGroups';
 import { useTagModalNavigation } from '@/features/tags/hooks/useTagModalNavigation';
-import { useDeleteTag, useReorderTags, useTags, useUpdateTag } from '@/features/tags/hooks/useTags';
 import { useTagCacheStore } from '@/features/tags/stores/useTagCacheStore';
 
 import { DeleteConfirmDialog } from '@/components/common/DeleteConfirmDialog';

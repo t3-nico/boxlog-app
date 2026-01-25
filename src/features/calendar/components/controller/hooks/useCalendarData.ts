@@ -8,7 +8,7 @@ import { usePlans } from '@/features/plans/hooks/usePlans';
 import type { Plan } from '@/features/plans/types/plan';
 import { isRecurringPlan } from '@/features/plans/utils/recurrence';
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
-import { useTags } from '@/features/tags/hooks/useTags';
+import { useTags } from '@/features/tags/hooks';
 import { logger } from '@/lib/logger';
 import { api } from '@/lib/trpc';
 
