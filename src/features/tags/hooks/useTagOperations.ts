@@ -10,7 +10,7 @@ import {
   useOptimisticTagUpdate,
   useRenameTag,
   useUpdateTag,
-} from '@/features/tags/hooks/useTags';
+} from '@/features/tags/hooks';
 import type { CreateTagInput, Tag, UpdateTagInput } from '@/features/tags/types';
 import { logger } from '@/lib/logger';
 import { useCallback, useState } from 'react';

@@ -7,21 +7,27 @@
  * ```
  */
 
-// Tags CRUD
+// Tags Query Keys
+export { tagKeys } from './tagQueryKeys';
+
+// Tags Query Hooks
+export { useTag, useTags } from './useTagsQuery';
+
+// Tags Mutation Hooks
 export {
-  tagKeys,
   useCreateTag,
   useDeleteTag,
+  useMergeTag,
   useMoveTag,
-  useOptimisticTagUpdate,
   useRenameTag,
   useReorderTags,
-  useTag,
-  useTags,
   useUpdateTag,
   useUpdateTagColor,
-} from './useTags';
-export type { ReorderTagInput } from './useTags';
+} from './useTagsMutations';
+export type { ReorderTagInput } from './useTagsMutations';
+
+// Tags Optimistic Helpers (Legacy)
+export { useOptimisticTagUpdate } from './useTagsOptimistic';
 
 // Tag Groups
 export {
