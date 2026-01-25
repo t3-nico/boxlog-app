@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { DEFAULT_TAG_COLOR } from '@/config/ui/colors';
-import { useMergeTag, useTags } from '@/features/tags/hooks/useTags';
+import { useMergeTag, useTags } from '@/features/tags/hooks';
 import type { Tag } from '@/features/tags/types';
 import { logger } from '@/lib/logger';
 import { cn } from '@/lib/utils';

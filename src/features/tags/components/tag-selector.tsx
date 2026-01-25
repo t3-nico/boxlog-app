@@ -13,7 +13,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
-import { useCreateTag, useTags } from '@/features/tags/hooks/useTags';
+import { useCreateTag, useTags } from '@/features/tags/hooks';
 import type { Tag } from '@/features/tags/types';
 import { logger } from '@/lib/logger';
 import { useTranslations } from 'next-intl';

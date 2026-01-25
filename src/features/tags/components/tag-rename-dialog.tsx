@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Field, FieldError } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { TAG_NAME_MAX_LENGTH } from '@/features/tags/constants/colors';
-import { useTags } from '@/features/tags/hooks/useTags';
+import { useTags } from '@/features/tags/hooks';
 import { useTranslations } from 'next-intl';
 
 interface TagRenameDialogProps {
