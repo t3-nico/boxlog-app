@@ -34,10 +34,17 @@ if [ -n "$recent_sessions" ]; then
   fi
 fi
 
-# 学習済みパターンの数を表示
+# 学習パターンリマインド
+echo "" >&2
+echo "💡 [Learning Reminder]" >&2
+echo "前回セッションで発見したパターンがあれば /learn-pattern で保存" >&2
+
 learned_count=$(find "$LEARNED_DIR" -name "*.md" -type f 2>/dev/null | wc -l | tr -d ' ')
 if [ "$learned_count" -gt 0 ]; then
-  echo "[SessionStart] $learned_count learned pattern(s) available in .claude/sessions/learned/" >&2
+  echo "📚 保存済みパターン: ${learned_count}件" >&2
+  find "$LEARNED_DIR" -name "*.md" -type f 2>/dev/null | head -3 | while read -r f; do
+    echo "   - $(basename "$f" .md)" >&2
+  done
 fi
 
 # 正常終了（hookがブロックしないように）
