@@ -2,6 +2,13 @@ import { useMemo } from 'react';
 
 import type { CalendarViewType } from '../types/calendar.types';
 
+// 有効なビュータイプのリスト
+const VALID_VIEW_TYPES: CalendarViewType[] = ['day', '3day', '5day', 'week', 'agenda'];
+
+function isValidViewType(view: string): view is CalendarViewType {
+  return VALID_VIEW_TYPES.includes(view as CalendarViewType);
+}
+
 interface CalendarProviderProps {
   initialDate: Date;
   initialView: CalendarViewType;
@@ -39,7 +46,9 @@ export function useCalendarProviderProps(
     }
 
     const pathSegments = pathname.split('/');
-    const view = pathSegments[pathSegments.length - 1] as CalendarViewType;
+    const lastSegment = pathSegments[pathSegments.length - 1] ?? '';
+    // ビュータイプが有効でない場合（/calendar ルートページ等）は 'day' をデフォルトにする
+    const view: CalendarViewType = isValidViewType(lastSegment) ? lastSegment : 'day';
 
     let initialDate: Date | undefined;
     if (dateParam) {
@@ -53,7 +62,7 @@ export function useCalendarProviderProps(
       isCalendarPage,
       calendarProviderProps: {
         initialDate: initialDate || new Date(),
-        initialView: view || ('week' as CalendarViewType),
+        initialView: view,
       },
     };
   }, [pathname, dateParam]);

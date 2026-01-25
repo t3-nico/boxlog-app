@@ -13,7 +13,7 @@
 
 import { useCallback, useMemo } from 'react';
 
-import { useTags } from './useTags';
+import { useTags } from './useTagsQuery';
 
 export type TagInfo = {
   id: string;

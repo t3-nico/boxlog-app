@@ -11,7 +11,7 @@
  *
  * // ❌ 非推奨: 深いパス指定
  * import { TagSelector } from '@/features/tags/components/tag-selector'
- * import { useTags } from '@/features/tags/hooks/useTags'
+ * import { useTags } from '@/features/tags/hooks'
  * ```
  */
 

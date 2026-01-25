@@ -6,7 +6,7 @@ import { createPortal } from 'react-dom';
 import { useTranslations } from 'next-intl';
 
 import { DEFAULT_TAG_COLOR } from '@/features/tags/constants/colors';
-import { useMergeTag, useTags } from '@/features/tags/hooks/useTags';
+import { useMergeTag, useTags } from '@/features/tags/hooks';
 import { logger } from '@/lib/logger';
 import { cn } from '@/lib/utils';
 

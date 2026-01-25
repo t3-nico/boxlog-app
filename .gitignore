@@ -49,6 +49,8 @@ next-env.d.ts
 # Claude Code
 .claude/settings.local.json
 .claude-session.json
+.claude/sessions/*.tmp
+.claude/plans/
 .backup/
 
 # OS

@@ -19,7 +19,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { tagIconCategories, tagIconMapping, TagIconName } from '@/features/tags/constants/icons';
-import { useUpdateTag } from '@/features/tags/hooks/useTags';
+import { useUpdateTag } from '@/features/tags/hooks';
 import { api } from '@/lib/trpc';
 
 export default function TagEditPage() {

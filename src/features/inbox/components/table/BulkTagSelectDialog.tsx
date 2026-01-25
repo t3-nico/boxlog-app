@@ -17,7 +17,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
-import { useTags } from '@/features/tags/hooks/useTags';
+import { useTags } from '@/features/tags/hooks';
 
 interface BulkTagSelectDialogProps {
   /** ダイアログの開閉状態 */

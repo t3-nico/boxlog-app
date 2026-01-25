@@ -11,7 +11,7 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
 } from '@/components/ui/dropdown-menu';
-import { useTags } from '@/features/tags/hooks/useTags';
+import { useTags } from '@/features/tags/hooks';
 import { Bell, Calendar, CalendarClock, Clock, Pencil, Repeat, RotateCcw, Tag } from 'lucide-react';
 import {
   type DateRangeFilter,

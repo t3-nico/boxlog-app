@@ -20,7 +20,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useMergeTag, useTags } from '@/features/tags/hooks/useTags';
+import { useMergeTag, useTags } from '@/features/tags/hooks';
 import { api } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
 

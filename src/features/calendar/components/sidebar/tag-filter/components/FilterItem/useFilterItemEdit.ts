@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import { DEFAULT_TAG_COLOR } from '@/features/tags/constants/colors';
-import { useUpdateTag } from '@/features/tags/hooks/useTags';
+import { useUpdateTag } from '@/features/tags/hooks';
 
 interface UseFilterItemEditProps {
   tagId: string | undefined;

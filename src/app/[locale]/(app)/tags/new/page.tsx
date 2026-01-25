@@ -14,7 +14,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
 
 import { TagCreateModal } from '@/features/tags/components/tag-create-modal';
-import { useCreateTag } from '@/features/tags/hooks/useTags';
+import { useCreateTag } from '@/features/tags/hooks';
 import type { CreateTagInput } from '@/features/tags/types';
 
 export default function TagCreatePage() {
