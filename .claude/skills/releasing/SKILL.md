@@ -73,21 +73,70 @@ npm version minor --no-git-tag-version
 npm version major --no-git-tag-version
 ```
 
-### Phase 0.4: リリースノート
+### Phase 0.4: リリースノート作成（詳細化必須）
+
+#### Step 1: PRとコミット情報を取得
 
 ```bash
 # 前回リリース以降の全PRを取得
 gh pr list --state merged --base main --limit 100 --json number,title,mergedAt
 
-# テンプレートをコピー
-cp docs/releases/template.md docs/releases/RELEASE_NOTES_v${VERSION}.md
+# 各PRのコミット詳細を取得（重要：PRタイトルだけでは不十分）
+for pr in <PR番号リスト>; do
+  echo "=== PR #$pr ==="
+  gh pr view $pr --json title,body --jq '.title + "\n" + .body'
+  echo "--- Commits ---"
+  gh pr view $pr --json commits --jq '.commits[].messageHeadline'
+done
 ```
 
-**必須項目**:
+#### Step 2: 詳細なリリースノートを作成
 
-- [ ] 全PRが含まれている
+**粒度の基準**: 第三者が見ても「何が変わったか」がわかるレベル
+
+**❌ 悪い例（抽象的）**:
+
+```markdown
+- タグ機能リファクタリング
+- パフォーマンス改善
+```
+
+**✅ 良い例（具体的）**:
+
+```markdown
+#### タグ機能の大幅強化 ([#910])
+
+**データモデル変更**
+
+- タグの親子階層モデルへ移行（`tag_groups` テーブル → `parent_id` カラム）
+- 子タグの昇格処理を含むタグマージ機能
+
+**UI/UX改善**
+
+- タグ作成モーダルをポータルで実装（モーダル内でも正常動作）
+- カレンダーサイドバーでのタグドラッグ&ドロップ並び替え
+- 未タグ付けフィルターにアイコンと件数表示
+
+**楽観的更新**
+
+- タグ作成・編集・削除・マージ・並び替えに楽観的更新を実装
+```
+
+#### Step 3: 必須セクション
+
+1. **新機能 (Added)**: 機能名 + 具体的な実装内容
+2. **変更 (Changed)**: 何がどう変わったか + 影響範囲
+3. **バグ修正 (Fixed)**: 問題の原因 + 修正内容
+4. **パフォーマンス (Performance)**: 最適化内容 + 改善値（あれば）
+5. **破壊的変更 (Breaking Changes)**: DB変更、削除されたAPI/コンポーネント
+
+#### チェックリスト
+
+- [ ] 各PRのコミットを確認した
+- [ ] 抽象的な記述を具体化した
+- [ ] データモデル変更を明記した
+- [ ] 削除されたコンポーネント/機能をリストした
 - [ ] Full Changelogリンクがある
-- [ ] カテゴリ別に整理（Added, Changed, Fixed等）
 
 ## 詳細ドキュメント
 
@@ -95,12 +144,14 @@ cp docs/releases/template.md docs/releases/RELEASE_NOTES_v${VERSION}.md
 
 ## よくある失敗
 
-| 失敗                 | 対策                                   |
-| -------------------- | -------------------------------------- |
-| バージョン重複       | Phase 0.1で必ず `gh release view`      |
-| package.json更新忘れ | Phase 0.3でPRマージ前に更新            |
-| Full Changelog抜け   | template.mdをコピーして使用            |
-| 一部PRのみ記載       | `gh pr list --state merged` で全件取得 |
+| 失敗                   | 対策                                           |
+| ---------------------- | ---------------------------------------------- |
+| バージョン重複         | Phase 0.1で必ず `gh release view`              |
+| package.json更新忘れ   | Phase 0.3でPRマージ前に更新                    |
+| Full Changelog抜け     | template.mdをコピーして使用                    |
+| 一部PRのみ記載         | `gh pr list --state merged` で全件取得         |
+| リリースノートが抽象的 | 各PRのコミットを取得して具体的な変更内容を記載 |
+| 破壊的変更の記載漏れ   | DB変更、削除コンポーネントを明記               |
 
 ## スクリプト
 
