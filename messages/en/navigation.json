@@ -20,7 +20,7 @@
   "appbar": {
     "navigation": {
       "calendar": "Calendar",
-      "inbox": "Inbox",
+      "plan": "Plan",
       "stats": "Stats",
       "settings": "Settings"
     },
@@ -29,7 +29,6 @@
   "sidebar": {
     "views": "Views",
     "quickCreate": "Create",
-    "inbox": "Inbox",
     "theme": "Theme",
     "getHelp": "Get Help",
     "toggleSidebar": "Toggle Sidebar",
@@ -38,7 +37,7 @@
     "resize": "Resize",
     "navigation": {
       "calendar": "Calendar",
-      "inbox": "Inbox",
+      "plan": "Plan",
       "tags": "Tags",
       "stats": "Stats",
       "settings": "Settings",
