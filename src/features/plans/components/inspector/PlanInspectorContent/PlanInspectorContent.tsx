@@ -9,6 +9,7 @@ import * as Portal from '@radix-ui/react-portal';
 import { ChevronDown, ChevronUp, ClipboardList, History, MessageSquare } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
+import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { InspectorHeader } from '@/features/inspector';
 
@@ -28,6 +29,8 @@ export function PlanInspectorContent() {
     displayMode,
     setDisplayMode,
     saveAndClose,
+    cancelAndClose,
+    hasPendingChanges,
     hasPrevious,
     hasNext,
     goToPrevious,
@@ -252,6 +255,16 @@ export function PlanInspectorContent() {
           <div className="text-muted-foreground py-8 text-center">コメント機能は準備中です</div>
         </TabsContent>
       </Tabs>
+
+      {/* 保存/キャンセルボタン（未保存の変更がある場合のみ表示） */}
+      {hasPendingChanges && (
+        <div className="flex shrink-0 justify-end gap-2 border-t px-4 py-3">
+          <Button variant="ghost" onClick={cancelAndClose}>
+            キャンセル
+          </Button>
+          <Button onClick={saveAndClose}>保存</Button>
+        </div>
+      )}
     </div>
   );
 }

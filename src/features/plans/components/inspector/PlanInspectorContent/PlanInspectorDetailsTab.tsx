@@ -4,9 +4,10 @@
  * PlanInspector の詳細タブ
  */
 
-import { memo } from 'react';
+import { memo, useEffect, useState } from 'react';
 
-import { Bell, CalendarDays, CheckCircle2, Circle, FileText } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Bell, CalendarDays, CircleDot, FileText } from 'lucide-react';
 
 import dynamic from 'next/dynamic';
 
@@ -85,30 +86,47 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
 }: PlanInspectorDetailsTabProps) {
   const status = normalizeStatus(plan.status);
 
+  // タイトルのローカル状態（controlled component用）
+  const [localTitle, setLocalTitle] = useState(plan.title);
+
+  // plan.titleが変わったらローカル状態を同期（別のプランを開いた時など）
+  useEffect(() => {
+    setLocalTitle(plan.title);
+  }, [plan.title, plan.id]);
+
   return (
     <>
-      {/* Title with Status Checkbox */}
-      <div className="flex items-center gap-2 px-4 py-3">
-        <button
-          type="button"
-          onClick={() => onStatusChange(status === 'closed' ? 'open' : 'closed')}
-          className="group hover:bg-state-hover flex h-6 w-6 flex-shrink-0 items-center justify-center rounded transition-colors"
-          aria-label={status === 'closed' ? 'Mark as open' : 'Mark as closed'}
-        >
-          {status === 'closed' ? (
-            <CheckCircle2 className="text-success size-5" />
-          ) : (
-            <Circle className="text-muted-foreground group-hover:text-success size-5" />
-          )}
-        </button>
+      {/* Title */}
+      <div className="px-4 py-3">
         <input
           ref={titleRef}
           type="text"
-          defaultValue={plan.title}
+          value={localTitle}
           placeholder="タイトルを追加"
-          onBlur={(e) => onAutoSave('title', e.target.value)}
+          onChange={(e) => {
+            setLocalTitle(e.target.value);
+            onAutoSave('title', e.target.value);
+          }}
           className="placeholder:text-muted-foreground block w-full border-0 bg-transparent text-lg font-bold outline-none"
         />
+      </div>
+
+      {/* Status */}
+      <div className="border-border/50 flex min-h-10 items-center gap-2 border-t px-4 py-2">
+        <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center">
+          <CircleDot className="text-muted-foreground size-4" />
+        </div>
+        <div className="flex h-8 flex-1 items-center">
+          <button
+            type="button"
+            onClick={() => onStatusChange(status === 'closed' ? 'open' : 'closed')}
+            className="focus-visible:ring-ring rounded-md focus-visible:ring-2 focus-visible:outline-none"
+          >
+            <Badge variant={status === 'closed' ? 'success' : 'secondary'}>
+              {status === 'closed' ? 'Closed' : 'Open'}
+            </Badge>
+          </button>
+        </div>
       </div>
 
       {/* Schedule */}

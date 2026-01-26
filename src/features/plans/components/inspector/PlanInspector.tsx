@@ -12,7 +12,6 @@ import {
 } from '@/features/inspector';
 
 import { usePlan } from '../../hooks/usePlan';
-import { usePlanMutations } from '../../hooks/usePlanMutations';
 import { useDeleteConfirmStore } from '../../stores/useDeleteConfirmStore';
 import { usePlanInspectorStore } from '../../stores/usePlanInspectorStore';
 import { useRecurringEditConfirmStore } from '../../stores/useRecurringEditConfirmStore';
@@ -36,7 +35,7 @@ export function PlanInspector() {
   const setPopoverPosition = usePlanInspectorStore((state) => state.setPopoverPosition);
   const draftPlan = usePlanInspectorStore((state) => state.draftPlan);
   const clearDraft = usePlanInspectorStore((state) => state.clearDraft);
-  const consumePendingChanges = usePlanInspectorStore((state) => state.consumePendingChanges);
+  const clearPendingChanges = usePlanInspectorStore((state) => state.clearPendingChanges);
 
   // ドラフトモード判定
   const isDraftMode = draftPlan !== null && planId === null;
@@ -50,36 +49,21 @@ export function PlanInspector() {
     ? (draftPlan as unknown as Plan | null)
     : ((planData ?? null) as unknown as Plan | null);
 
-  // updatePlan mutation（未保存の変更を保存するため）
-  const { updatePlan: updatePlanMutation } = usePlanMutations();
-
   // 繰り返しダイアログが開いている間はInspectorを閉じない
-  // Google Calendar準拠: 閉じる時に未保存の変更を保存
-  const handleClose = useCallback(async () => {
+  // ×ボタン/ESC/外側クリック = キャンセル（変更を破棄）
+  const handleClose = useCallback(() => {
     const isRecurringDialogOpen = useRecurringEditConfirmStore.getState().isOpen;
     if (!isRecurringDialogOpen) {
-      // ドラフトモードの場合はドラフトをクリア（何も保存されない）
+      // ドラフトモードの場合はドラフトをクリア
       if (isDraftMode) {
         clearDraft();
-      } else if (planId) {
-        // 通常モード: 未保存の変更を保存
-        const changes = consumePendingChanges();
-        if (changes && Object.keys(changes).length > 0) {
-          try {
-            await updatePlanMutation.mutateAsync({
-              id: planId,
-              data: changes,
-            });
-          } catch (error) {
-            console.error('Failed to save pending changes:', error);
-            // エラーでも閉じる（UXを優先）
-          }
-        }
       }
+      // 未保存の変更を破棄
+      clearPendingChanges();
       // closeInspector内でcalendar-drag-cancelイベントを発行
       closeInspector();
     }
-  }, [closeInspector, isDraftMode, clearDraft, planId, consumePendingChanges, updatePlanMutation]);
+  }, [closeInspector, isDraftMode, clearDraft, clearPendingChanges]);
 
   // ナビゲーション
   const { hasPrevious, hasNext, goToPrevious, goToNext } = useInspectorNavigation(planId);

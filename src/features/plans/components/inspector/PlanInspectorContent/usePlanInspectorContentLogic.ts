@@ -60,7 +60,9 @@ export function usePlanInspectorContentLogic() {
   const updateDraft = usePlanInspectorStore((state) => state.updateDraft);
   const openInspector = usePlanInspectorStore((state) => state.openInspector);
   const addPendingChange = usePlanInspectorStore((state) => state.addPendingChange);
+  const clearPendingChanges = usePlanInspectorStore((state) => state.clearPendingChanges);
   const consumePendingChanges = usePlanInspectorStore((state) => state.consumePendingChanges);
+  const pendingChanges = usePlanInspectorStore((state) => state.pendingChanges);
 
   // ドラフトモード判定: draftPlanがあり、planIdがない場合
   const isDraftMode = draftPlan !== null && planId === null;
@@ -139,7 +141,7 @@ export function usePlanInspectorContentLogic() {
 
   // Custom hooks
   const { hasPrevious, hasNext, goToPrevious, goToNext } = useInspectorNavigation(planId);
-  const { autoSave: baseAutoSave, updatePlan, deletePlan } = useInspectorAutoSave({ planId, plan });
+  const { updatePlan, deletePlan } = useInspectorAutoSave({ planId, plan });
 
   // ドラフトモード用の初回保存（DBに新規作成）
   const saveDraftToDb = useCallback(
@@ -211,10 +213,10 @@ export function usePlanInspectorContentLogic() {
         recurringEdit.openScopeDialog(field, value);
         return;
       }
-      // 通常の保存処理（title, descriptionなど）
-      baseAutoSave(field, value);
+      // 通常の場合: pendingChanges にバッファリング（保存ボタンで一括保存）
+      addPendingChange({ [field]: value });
     },
-    [baseAutoSave, recurringEdit, isDraftMode, saveDraftToDb, draftPlan, updateDraft],
+    [addPendingChange, recurringEdit, isDraftMode, saveDraftToDb, draftPlan, updateDraft],
   );
 
   // Activity state
@@ -743,6 +745,17 @@ export function usePlanInspectorContentLogic() {
     closeInspector();
   }, [planId, consumePendingChanges, updatePlan, closeInspector]);
 
+  /**
+   * 変更を破棄してInspectorを閉じる（キャンセル）
+   */
+  const cancelAndClose = useCallback(() => {
+    clearPendingChanges();
+    closeInspector();
+  }, [clearPendingChanges, closeInspector]);
+
+  // 未保存の変更があるか判定
+  const hasPendingChanges = pendingChanges && Object.keys(pendingChanges).length > 0;
+
   return {
     // Store state
     planId,
@@ -750,7 +763,9 @@ export function usePlanInspectorContentLogic() {
     displayMode,
     setDisplayMode,
     closeInspector, // 直接閉じる（変更を破棄）
-    saveAndClose, // 変更を保存して閉じる（Google Calendar準拠）
+    saveAndClose, // 変更を保存して閉じる
+    cancelAndClose, // 変更を破棄して閉じる
+    hasPendingChanges, // 未保存の変更があるか
     isDraftMode,
 
     // Navigation
