@@ -17,7 +17,6 @@
  */
 
 import { removeUndefinedFields } from '@/server/api/routers/plans/utils';
-import { recordCreatedActivity, trackRecordChanges } from '@/server/utils/record-activity-tracker';
 
 import type {
   BulkDeleteRecordsOptions,
@@ -28,8 +27,7 @@ import type {
   ListRecordsByPlanOptions,
   ListRecordsOptions,
   RecordRow,
-  RecordWithPlanAndTags,
-  RecordWithTags,
+  RecordWithPlan,
   ServiceSupabaseClient,
   UpdateRecordOptions,
 } from './types';
@@ -41,9 +39,9 @@ export class RecordService {
   constructor(private readonly supabase: ServiceSupabaseClient) {}
 
   /**
-   * Record一覧を取得（タグID付き）
+   * Record一覧を取得
    */
-  async list(options: ListRecordsOptions): Promise<RecordWithPlanAndTags[]> {
+  async list(options: ListRecordsOptions): Promise<RecordWithPlan[]> {
     const {
       userId,
       plan_id,
@@ -57,7 +55,6 @@ export class RecordService {
       offset,
     } = options;
 
-    // レコードとPlanを取得
     let query = this.supabase
       .from('records')
       .select(
@@ -110,45 +107,43 @@ export class RecordService {
       throw new RecordServiceError('FETCH_FAILED', `Failed to fetch records: ${error.message}`);
     }
 
-    const records = data ?? [];
-    if (records.length === 0) {
-      return [];
-    }
-
-    // TagIDsを一括取得
-    const recordIds = records.map((r) => r.id);
-    const tagIdsMap = await this.getTagIdsForRecords(recordIds, userId);
-
-    // plansのネスト構造とtagIdsをフォーマット
-    return records.map((record) => {
-      const { plans, ...recordData } = record;
-      return {
-        ...recordData,
-        plan: plans ?? null,
-        tagIds: tagIdsMap.get(record.id) ?? [],
-      };
-    });
+    // plansのネスト構造をplanオブジェクトにフォーマット
+    return (data ?? []).map((record) => this.formatRecordWithPlan(record));
   }
 
   /**
-   * RecordをIDで取得（タグID付き）
+   * RecordをIDで取得
    */
-  async getById(options: GetRecordByIdOptions): Promise<RecordWithPlanAndTags> {
+  async getById(options: GetRecordByIdOptions): Promise<RecordWithPlan> {
     const { userId, recordId, includePlan } = options;
 
-    // 常にplansを含めてクエリ（型推論を安定させるため）
+    if (includePlan) {
+      const { data, error } = await this.supabase
+        .from('records')
+        .select(
+          `
+          *,
+          plans:plan_id (
+            id,
+            title,
+            status
+          )
+        `,
+        )
+        .eq('id', recordId)
+        .eq('user_id', userId)
+        .single();
+
+      if (error) {
+        throw new RecordServiceError('NOT_FOUND', `Record not found: ${error.message}`);
+      }
+
+      return this.formatRecordWithPlan(data);
+    }
+
     const { data, error } = await this.supabase
       .from('records')
-      .select(
-        `
-        *,
-        plans:plan_id (
-          id,
-          title,
-          status
-        )
-      `,
-      )
+      .select('*')
       .eq('id', recordId)
       .eq('user_id', userId)
       .single();
@@ -157,89 +152,21 @@ export class RecordService {
       throw new RecordServiceError('NOT_FOUND', `Record not found: ${error.message}`);
     }
 
-    // TagIDsを取得
-    const tagIdsMap = await this.getTagIdsForRecords([recordId], userId);
-
-    const { plans, ...rest } = data;
-
-    return {
-      ...rest,
-      plan: includePlan ? (plans ?? null) : null,
-      tagIds: tagIdsMap.get(recordId) ?? [],
-    };
+    return data as RecordWithPlan;
   }
 
   /**
-   * 時間重複をチェック
-   * @returns 重複しているRecordのIDリスト（空なら重複なし）
+   * Recordを作成
    */
-  async checkTimeOverlap(options: {
-    userId: string;
-    workedAt: string;
-    startTime: string;
-    endTime: string;
-    excludeRecordId?: string;
-  }): Promise<string[]> {
-    const { userId, workedAt, startTime, endTime, excludeRecordId } = options;
-
-    // 時間重複条件: 既存の開始時刻 < 新規の終了時刻 AND 既存の終了時刻 > 新規の開始時刻
-    let query = this.supabase
-      .from('records')
-      .select('id')
-      .eq('user_id', userId)
-      .eq('worked_at', workedAt)
-      .not('start_time', 'is', null)
-      .not('end_time', 'is', null)
-      .lt('start_time', endTime)
-      .gt('end_time', startTime);
-
-    // 自分自身を除外（更新時）
-    if (excludeRecordId) {
-      query = query.neq('id', excludeRecordId);
-    }
-
-    const { data, error } = await query;
-
-    if (error) {
-      console.error('Record time overlap check failed:', error);
-      return [];
-    }
-
-    return data?.map((row) => row.id) ?? [];
-  }
-
-  /**
-   * Recordを作成（タグも同時に設定可能）
-   */
-  async create(options: CreateRecordOptions): Promise<RecordRow & { tagIds: string[] }> {
+  async create(options: CreateRecordOptions): Promise<RecordRow> {
     const { userId, input } = options;
-    const { tagIds, ...recordInput } = input;
 
-    // Plan存在確認（plan_idがある場合のみ）
-    if (recordInput.plan_id) {
-      await this.verifyPlanOwnership(recordInput.plan_id, userId);
-    }
-
-    // 重複チェック（start_timeとend_timeの両方がある場合）
-    if (recordInput.worked_at && recordInput.start_time && recordInput.end_time) {
-      const overlappingIds = await this.checkTimeOverlap({
-        userId,
-        workedAt: recordInput.worked_at,
-        startTime: recordInput.start_time,
-        endTime: recordInput.end_time,
-      });
-
-      if (overlappingIds.length > 0) {
-        throw new RecordServiceError(
-          'TIME_OVERLAP',
-          `この時間帯には既にRecordがあります（${overlappingIds.length}件）`,
-        );
-      }
-    }
+    // Plan存在確認
+    await this.verifyPlanOwnership(input.plan_id, userId);
 
     const insertData = {
       user_id: userId,
-      ...removeUndefinedFields(recordInput),
+      ...removeUndefinedFields(input),
     };
 
     const { data, error } = await this.supabase
@@ -252,15 +179,7 @@ export class RecordService {
       throw new RecordServiceError('CREATE_FAILED', `Failed to create record: ${error.message}`);
     }
 
-    // タグを設定（指定がある場合）
-    if (tagIds && tagIds.length > 0) {
-      await this.setRecordTags(data.id, userId, tagIds);
-    }
-
-    // アクティビティを記録
-    await recordCreatedActivity(this.supabase, data.id, userId);
-
-    return { ...data, tagIds: tagIds ?? [] };
+    return data;
   }
 
   /**
@@ -273,44 +192,6 @@ export class RecordService {
 
     const updateData = removeUndefinedFields(input);
 
-    // 現在のレコードを取得（アクティビティ記録 & 重複チェック用）
-    const { data: currentRecord, error: fetchError } = await this.supabase
-      .from('records')
-      .select('*')
-      .eq('id', recordId)
-      .eq('user_id', userId)
-      .single();
-
-    if (fetchError || !currentRecord) {
-      throw new RecordServiceError('NOT_FOUND', 'Record not found');
-    }
-
-    // 時間が変更される場合は重複チェック
-    // worked_at, start_time, end_time のいずれかが変更される場合
-    if (input.worked_at || input.start_time || input.end_time) {
-      const workedAt = input.worked_at ?? currentRecord.worked_at;
-      const startTime = input.start_time ?? currentRecord.start_time;
-      const endTime = input.end_time ?? currentRecord.end_time;
-
-      // start_time と end_time の両方がある場合のみチェック
-      if (workedAt && startTime && endTime) {
-        const overlappingIds = await this.checkTimeOverlap({
-          userId,
-          workedAt,
-          startTime,
-          endTime,
-          excludeRecordId: recordId, // 自分自身は除外
-        });
-
-        if (overlappingIds.length > 0) {
-          throw new RecordServiceError(
-            'TIME_OVERLAP',
-            `この時間帯には既にRecordがあります（${overlappingIds.length}件）`,
-          );
-        }
-      }
-    }
-
     const { data, error } = await this.supabase
       .from('records')
       .update(updateData as never)
@@ -322,9 +203,6 @@ export class RecordService {
     if (error) {
       throw new RecordServiceError('UPDATE_FAILED', `Failed to update record: ${error.message}`);
     }
-
-    // アクティビティを記録（変更検出）
-    await trackRecordChanges(this.supabase, recordId, userId, currentRecord, data);
 
     return data;
   }
@@ -368,32 +246,10 @@ export class RecordService {
 
     // 新しいRecordを作成（worked_atを変更）
     const today = new Date().toISOString().split('T')[0];
-    const targetDate = workedAt ?? today;
-
-    // 重複チェック（start_timeとend_timeの両方がある場合）
-    if (original.start_time && original.end_time) {
-      const overlappingIds = await this.checkTimeOverlap({
-        userId,
-        workedAt: targetDate!,
-        startTime: original.start_time,
-        endTime: original.end_time,
-      });
-
-      if (overlappingIds.length > 0) {
-        throw new RecordServiceError(
-          'TIME_OVERLAP',
-          `この時間帯には既にRecordがあります（${overlappingIds.length}件）`,
-        );
-      }
-    }
-
-    // title は DB カラムが追加されるまで undefined の可能性あり
-    const originalWithTitle = original as typeof original & { title?: string | null };
     const newRecord = {
       user_id: userId,
       plan_id: original.plan_id,
-      title: originalWithTitle.title ?? null,
-      worked_at: targetDate,
+      worked_at: workedAt ?? today,
       start_time: original.start_time,
       end_time: original.end_time,
       duration_minutes: original.duration_minutes,
@@ -440,9 +296,9 @@ export class RecordService {
   }
 
   /**
-   * PlanのRecord一覧を取得（タグID付き）
+   * PlanのRecord一覧を取得
    */
-  async listByPlan(options: ListRecordsByPlanOptions): Promise<RecordWithTags[]> {
+  async listByPlan(options: ListRecordsByPlanOptions): Promise<RecordRow[]> {
     const { userId, planId, sortBy = 'worked_at', sortOrder = 'desc', limit } = options;
 
     let query = this.supabase
@@ -465,25 +321,13 @@ export class RecordService {
       );
     }
 
-    const records = data ?? [];
-    if (records.length === 0) {
-      return [];
-    }
-
-    // TagIDsを一括取得
-    const recordIds = records.map((r) => r.id);
-    const tagIdsMap = await this.getTagIdsForRecords(recordIds, userId);
-
-    return records.map((record) => ({
-      ...record,
-      tagIds: tagIdsMap.get(record.id) ?? [],
-    }));
+    return data ?? [];
   }
 
   /**
-   * 最近のRecordを取得（複製用、タグID付き）
+   * 最近のRecordを取得（複製用）
    */
-  async getRecentRecords(userId: string, limit: number = 5): Promise<RecordWithPlanAndTags[]> {
+  async getRecentRecords(userId: string, limit: number = 5): Promise<RecordWithPlan[]> {
     const { data, error } = await this.supabase
       .from('records')
       .select(
@@ -507,23 +351,7 @@ export class RecordService {
       );
     }
 
-    const records = data ?? [];
-    if (records.length === 0) {
-      return [];
-    }
-
-    // TagIDsを一括取得
-    const recordIds = records.map((r) => r.id);
-    const tagIdsMap = await this.getTagIdsForRecords(recordIds, userId);
-
-    return records.map((record) => {
-      const { plans, ...recordData } = record;
-      return {
-        ...recordData,
-        plan: plans ?? null,
-        tagIds: tagIdsMap.get(record.id) ?? [],
-      };
-    });
+    return (data ?? []).map((record) => this.formatRecordWithPlan(record));
   }
 
   // ========================================
@@ -531,67 +359,16 @@ export class RecordService {
   // ========================================
 
   /**
-   * 複数のRecordに対するタグIDを一括取得
+   * RecordとPlanデータをフォーマット
    */
-  private async getTagIdsForRecords(
-    recordIds: string[],
-    userId: string,
-  ): Promise<Map<string, string[]>> {
-    if (recordIds.length === 0) {
-      return new Map();
-    }
-
-    const { data, error } = await this.supabase
-      .from('record_tags')
-      .select('record_id, tag_id')
-      .in('record_id', recordIds)
-      .eq('user_id', userId);
-
-    if (error) {
-      throw new RecordServiceError(
-        'FETCH_TAGS_FAILED',
-        `Failed to fetch record tags: ${error.message}`,
-      );
-    }
-
-    // record_id -> tagIds のマップを作成
-    const map = new Map<string, string[]>();
-    for (const row of data ?? []) {
-      const existing = map.get(row.record_id) ?? [];
-      existing.push(row.tag_id);
-      map.set(row.record_id, existing);
-    }
-    return map;
-  }
-
-  /**
-   * Recordにタグを設定（既存タグをすべて置換）
-   */
-  private async setRecordTags(recordId: string, userId: string, tagIds: string[]): Promise<void> {
-    // 既存の関連をすべて削除
-    await this.supabase
-      .from('record_tags')
-      .delete()
-      .eq('record_id', recordId)
-      .eq('user_id', userId);
-
-    // 新しい関連を追加
-    if (tagIds.length > 0) {
-      const recordTagsToInsert = tagIds.map((tagId) => ({
-        user_id: userId,
-        record_id: recordId,
-        tag_id: tagId,
-      }));
-
-      const { error } = await this.supabase.from('record_tags').insert(recordTagsToInsert);
-
-      if (error) {
-        throw new RecordServiceError(
-          'SET_TAGS_FAILED',
-          `Failed to set record tags: ${error.message}`,
-        );
-      }
-    }
+  private formatRecordWithPlan(
+    record: RecordRow & { plans?: { id: string; title: string; status: string } | null },
+  ): RecordWithPlan {
+    const { plans, ...recordData } = record;
+    return {
+      ...recordData,
+      plan: plans ?? null,
+    };
   }
 
   /**

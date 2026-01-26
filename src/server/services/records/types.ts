@@ -20,9 +20,8 @@ export type ServiceSupabaseClient = SupabaseClient<Database>;
  */
 export interface RecordRow {
   id: string;
-  plan_id: string | null; // Planなしでも作成可能
+  plan_id: string;
   user_id: string;
-  title?: string | null; // マイグレーション適用前はoptional
   worked_at: string;
   start_time: string | null;
   end_time: string | null;
@@ -42,20 +41,6 @@ export interface RecordWithPlan extends RecordRow {
     title: string;
     status: string;
   } | null;
-}
-
-/**
- * タグID付き Record（PlanWithTagsと同パターン）
- */
-export interface RecordWithTags extends RecordRow {
-  tagIds: string[];
-}
-
-/**
- * Plan情報 + タグID付き Record
- */
-export interface RecordWithPlanAndTags extends RecordWithPlan {
-  tagIds: string[];
 }
 
 /**

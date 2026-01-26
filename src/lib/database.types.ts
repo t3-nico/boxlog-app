@@ -548,89 +548,6 @@ export type Database = {
         };
         Relationships: [];
       };
-      record_activities: {
-        Row: {
-          action_type: string;
-          created_at: string;
-          field_name: string | null;
-          id: string;
-          metadata: Json | null;
-          new_value: string | null;
-          old_value: string | null;
-          record_id: string | null;
-          user_id: string;
-        };
-        Insert: {
-          action_type: string;
-          created_at?: string;
-          field_name?: string | null;
-          id?: string;
-          metadata?: Json | null;
-          new_value?: string | null;
-          old_value?: string | null;
-          record_id?: string | null;
-          user_id: string;
-        };
-        Update: {
-          action_type?: string;
-          created_at?: string;
-          field_name?: string | null;
-          id?: string;
-          metadata?: Json | null;
-          new_value?: string | null;
-          old_value?: string | null;
-          record_id?: string | null;
-          user_id?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: 'record_activities_record_id_fkey';
-            columns: ['record_id'];
-            isOneToOne: false;
-            referencedRelation: 'records';
-            referencedColumns: ['id'];
-          },
-        ];
-      };
-      record_tags: {
-        Row: {
-          created_at: string;
-          id: string;
-          record_id: string;
-          tag_id: string;
-          user_id: string;
-        };
-        Insert: {
-          created_at?: string;
-          id?: string;
-          record_id: string;
-          tag_id: string;
-          user_id: string;
-        };
-        Update: {
-          created_at?: string;
-          id?: string;
-          record_id?: string;
-          tag_id?: string;
-          user_id?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: 'record_tags_record_id_fkey';
-            columns: ['record_id'];
-            isOneToOne: false;
-            referencedRelation: 'records';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'record_tags_tag_id_fkey';
-            columns: ['tag_id'];
-            isOneToOne: false;
-            referencedRelation: 'tags';
-            referencedColumns: ['id'];
-          },
-        ];
-      };
       records: {
         Row: {
           created_at: string;
@@ -639,9 +556,8 @@ export type Database = {
           fulfillment_score: number | null;
           id: string;
           note: string | null;
-          plan_id: string | null;
+          plan_id: string;
           start_time: string | null;
-          title: string | null;
           updated_at: string;
           user_id: string;
           worked_at: string;
@@ -653,9 +569,8 @@ export type Database = {
           fulfillment_score?: number | null;
           id?: string;
           note?: string | null;
-          plan_id?: string | null;
+          plan_id: string;
           start_time?: string | null;
-          title?: string | null;
           updated_at?: string;
           user_id: string;
           worked_at: string;
@@ -667,9 +582,8 @@ export type Database = {
           fulfillment_score?: number | null;
           id?: string;
           note?: string | null;
-          plan_id?: string | null;
+          plan_id?: string;
           start_time?: string | null;
-          title?: string | null;
           updated_at?: string;
           user_id?: string;
           worked_at?: string;

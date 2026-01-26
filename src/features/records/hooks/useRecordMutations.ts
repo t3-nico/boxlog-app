@@ -28,8 +28,7 @@ export function useRecordMutations() {
         const tempRecord: RecordItem = {
           id: `temp-${Date.now()}`,
           user_id: '',
-          plan_id: input.plan_id ?? null,
-          title: input.title ?? null,
+          plan_id: input.plan_id,
           worked_at: input.worked_at,
           start_time: input.start_time ?? null,
           end_time: input.end_time ?? null,
@@ -38,7 +37,6 @@ export function useRecordMutations() {
           note: input.note ?? null,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
-          tagIds: input.tagIds ?? [],
         };
         return [tempRecord, ...old];
       });
@@ -49,11 +47,9 @@ export function useRecordMutations() {
       if (context?.previous) {
         utils.records.list.setData({}, context.previous);
       }
-      // TIME_OVERLAPエラーはモーダル内でエラー表示（toastなし）
     },
     onSettled: () => {
-      // すべてのrecords.listクエリを無効化（日付フィルター付きも含む）
-      void utils.records.list.invalidate(undefined, { refetchType: 'all' });
+      void utils.records.list.invalidate();
       void utils.records.getRecent.invalidate();
     },
   });
@@ -71,7 +67,6 @@ export function useRecordMutations() {
           // 明示的に各フィールドを更新（undefined を防ぐ）
           return {
             ...record,
-            title: data.title !== undefined ? data.title : (record.title ?? null),
             worked_at: data.worked_at ?? record.worked_at,
             start_time: data.start_time !== undefined ? data.start_time : record.start_time,
             end_time: data.end_time !== undefined ? data.end_time : record.end_time,
@@ -82,7 +77,6 @@ export function useRecordMutations() {
                 : record.fulfillment_score,
             note: data.note !== undefined ? data.note : record.note,
             updated_at: new Date().toISOString(),
-            tagIds: record.tagIds, // 明示的に保持
           };
         });
       });
@@ -94,11 +88,8 @@ export function useRecordMutations() {
         utils.records.list.setData({}, context.previous);
       }
     },
-    onSettled: (_data, _error, { id }) => {
-      // すべてのrecords.listクエリを無効化（日付フィルター付きも含む）
-      void utils.records.list.invalidate(undefined, { refetchType: 'all' });
-      // 個別Recordのキャッシュも無効化（編集画面用）
-      void utils.records.getById.invalidate({ id });
+    onSettled: () => {
+      void utils.records.list.invalidate();
     },
   });
 
@@ -121,18 +112,15 @@ export function useRecordMutations() {
       }
     },
     onSettled: () => {
-      // すべてのrecords.listクエリを無効化（日付フィルター付きも含む）
-      void utils.records.list.invalidate(undefined, { refetchType: 'all' });
+      void utils.records.list.invalidate();
       void utils.records.getRecent.invalidate();
     },
   });
 
   // Record複製
   const duplicateRecord = api.records.duplicate.useMutation({
-    // TIME_OVERLAPエラーはモーダル内でエラー表示（toastなし）
     onSettled: () => {
-      // すべてのrecords.listクエリを無効化（日付フィルター付きも含む）
-      void utils.records.list.invalidate(undefined, { refetchType: 'all' });
+      void utils.records.list.invalidate();
       void utils.records.getRecent.invalidate();
     },
   });
@@ -157,8 +145,7 @@ export function useRecordMutations() {
       }
     },
     onSettled: () => {
-      // すべてのrecords.listクエリを無効化（日付フィルター付きも含む）
-      void utils.records.list.invalidate(undefined, { refetchType: 'all' });
+      void utils.records.list.invalidate();
       void utils.records.getRecent.invalidate();
     },
   });
