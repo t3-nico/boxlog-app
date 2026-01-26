@@ -571,84 +571,130 @@ export function usePlanInspectorContentLogic() {
 
   const handleStartTimeChange = useCallback(
     (time: string) => {
-      if (time && scheduleDate && endTime) {
-        // 新しい開始時刻を計算
+      // 新しい開始時刻を計算
+      const newStartDateTime = time && scheduleDate ? new Date(scheduleDate) : null;
+      if (newStartDateTime && time) {
         const [hours, minutes] = time.split(':').map(Number);
-        const newStartDateTime = new Date(scheduleDate);
         newStartDateTime.setHours(hours ?? 0, minutes ?? 0, 0, 0);
+      }
 
-        // 現在の終了時刻を取得
+      // 重複チェック（終了時刻がある場合のみ）
+      if (newStartDateTime && endTime && scheduleDate) {
         const [endHours, endMinutes] = endTime.split(':').map(Number);
         const endDateTime = new Date(scheduleDate);
         endDateTime.setHours(endHours ?? 0, endMinutes ?? 0, 0, 0);
 
-        // 事前重複チェック
         if (checkTimeOverlap(newStartDateTime, endDateTime)) {
-          // GAFA基準のフィードバック: ハプティック + トースト + 視覚的FB
           hapticError();
           calendarToast.error(t('calendar.toast.conflict'), {
             description: t('calendar.toast.conflictDescription'),
           });
           setTimeConflictError(true);
-          setTimeout(() => setTimeConflictError(false), 500); // シェイクアニメーション後にリセット
-          return; // 更新をキャンセル
+          setTimeout(() => setTimeConflictError(false), 500);
+          return;
         }
+      }
 
-        setStartTime(time);
-        autoSave('start_time', newStartDateTime.toISOString());
-      } else if (time && scheduleDate) {
-        const [hours, minutes] = time.split(':').map(Number);
-        const dateTime = new Date(scheduleDate);
-        dateTime.setHours(hours ?? 0, minutes ?? 0, 0, 0);
-        setStartTime(time);
-        autoSave('start_time', dateTime.toISOString());
-      } else {
-        setStartTime(time);
-        autoSave('start_time', undefined);
+      setStartTime(time);
+      const isoValue = newStartDateTime?.toISOString();
+
+      // ドラフトモード
+      if (isDraftMode) {
+        updateDraft({ start_time: isoValue ?? null });
+        return;
+      }
+
+      // 繰り返しインスタンス → スコープダイアログ
+      if (recurringEdit.isRecurringInstance) {
+        recurringEdit.openScopeDialog('start_time', isoValue);
+        return;
+      }
+
+      // 通常モード → 即座に更新（debounceなし）
+      if (planId) {
+        updatePlan.mutate({
+          id: planId,
+          data: { start_time: isoValue },
+        });
       }
     },
-    [scheduleDate, endTime, autoSave, checkTimeOverlap, hapticError, calendarToast, t],
+    [
+      scheduleDate,
+      endTime,
+      isDraftMode,
+      planId,
+      recurringEdit,
+      updateDraft,
+      updatePlan,
+      checkTimeOverlap,
+      hapticError,
+      calendarToast,
+      t,
+    ],
   );
 
   const handleEndTimeChange = useCallback(
     (time: string) => {
-      if (time && scheduleDate && startTime) {
-        // 現在の開始時刻を取得
+      // 新しい終了時刻を計算
+      const newEndDateTime = time && scheduleDate ? new Date(scheduleDate) : null;
+      if (newEndDateTime && time) {
+        const [hours, minutes] = time.split(':').map(Number);
+        newEndDateTime.setHours(hours ?? 0, minutes ?? 0, 0, 0);
+      }
+
+      // 重複チェック（開始時刻がある場合のみ）
+      if (newEndDateTime && startTime && scheduleDate) {
         const [startHours, startMinutes] = startTime.split(':').map(Number);
         const startDateTime = new Date(scheduleDate);
         startDateTime.setHours(startHours ?? 0, startMinutes ?? 0, 0, 0);
 
-        // 新しい終了時刻を計算
-        const [hours, minutes] = time.split(':').map(Number);
-        const newEndDateTime = new Date(scheduleDate);
-        newEndDateTime.setHours(hours ?? 0, minutes ?? 0, 0, 0);
-
-        // 事前重複チェック
         if (checkTimeOverlap(startDateTime, newEndDateTime)) {
-          // GAFA基準のフィードバック: ハプティック + トースト + 視覚的FB
           hapticError();
           calendarToast.error(t('calendar.toast.conflict'), {
             description: t('calendar.toast.conflictDescription'),
           });
           setTimeConflictError(true);
-          setTimeout(() => setTimeConflictError(false), 500); // シェイクアニメーション後にリセット
-          return; // 更新をキャンセル
+          setTimeout(() => setTimeConflictError(false), 500);
+          return;
         }
+      }
 
-        setEndTime(time);
-        autoSave('end_time', newEndDateTime.toISOString());
-      } else if (time && scheduleDate) {
-        const [hours, minutes] = time.split(':').map(Number);
-        const dateTime = new Date(scheduleDate);
-        dateTime.setHours(hours ?? 0, minutes ?? 0, 0, 0);
-        setEndTime(time);
-        autoSave('end_time', dateTime.toISOString());
-      } else {
-        setEndTime(time);
-        autoSave('end_time', undefined);
+      setEndTime(time);
+      const isoValue = newEndDateTime?.toISOString();
+
+      // ドラフトモード
+      if (isDraftMode) {
+        updateDraft({ end_time: isoValue ?? null });
+        return;
+      }
+
+      // 繰り返しインスタンス → スコープダイアログ
+      if (recurringEdit.isRecurringInstance) {
+        recurringEdit.openScopeDialog('end_time', isoValue);
+        return;
+      }
+
+      // 通常モード → 即座に更新（debounceなし）
+      if (planId) {
+        updatePlan.mutate({
+          id: planId,
+          data: { end_time: isoValue },
+        });
       }
     },
-    [scheduleDate, startTime, autoSave, checkTimeOverlap, hapticError, calendarToast, t],
+    [
+      scheduleDate,
+      startTime,
+      isDraftMode,
+      planId,
+      recurringEdit,
+      updateDraft,
+      updatePlan,
+      checkTimeOverlap,
+      hapticError,
+      calendarToast,
+      t,
+    ],
   );
 
   // Menu handlers
