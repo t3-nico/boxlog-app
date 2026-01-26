@@ -7,11 +7,8 @@ import { Suspense, useMemo } from 'react';
 import { PageHeader } from '@/components/common/PageHeader';
 import { useAuthStore } from '@/features/auth/stores/useAuthStore';
 import { CalendarSidebar } from '@/features/calendar/components/sidebar/CalendarSidebar';
-import { InboxSidebarWrapper } from '@/features/inbox/components/InboxSidebarWrapper';
-import { AppSidebar } from '@/features/navigation/components/sidebar/app-sidebar';
 import { OnboardingBanner } from '@/features/onboarding';
 import { SettingsSidebar } from '@/features/settings/components/sidebar';
-import { StatsSidebar } from '@/features/stats';
 
 import { MainContentWrapper } from './main-content-wrapper';
 import { StatusBar } from './status-bar';
@@ -57,25 +54,25 @@ export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
   // パフォーマンス最適化: ページ判定をメモ化（pathnameとlocale変更時のみ再計算）
   const currentPage = useMemo(() => {
     if (pathname?.startsWith(`/${locale}/calendar`)) return 'calendar';
-    if (pathname?.startsWith(`/${locale}/inbox`)) return 'inbox';
+    if (pathname?.startsWith(`/${locale}/plan`)) return 'plan';
+    if (pathname?.startsWith(`/${locale}/record`)) return 'record';
     if (pathname?.startsWith(`/${locale}/stats`)) return 'stats';
     if (pathname?.startsWith(`/${locale}/settings`)) return 'settings';
     return 'default';
   }, [pathname, locale]);
+
+  // Sidebarを表示するページ（Calendar, Settings のみ）
+  const showSidebar = currentPage === 'calendar' || currentPage === 'settings';
 
   // サイドバーコンポーネントをメモ化（currentPage変更時のみ再計算）
   const SidebarComponent = useMemo(() => {
     switch (currentPage) {
       case 'calendar':
         return CalendarSidebar;
-      case 'inbox':
-        return InboxSidebarWrapper;
-      case 'stats':
-        return StatsSidebar;
       case 'settings':
         return SettingsSidebar;
       default:
-        return AppSidebar;
+        return null;
     }
   }, [currentPage]);
 
@@ -86,10 +83,12 @@ export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
 
       {/* 上部エリア（サイドバー + コンテンツ） */}
       <div className="flex min-h-0 flex-1">
-        {/* Sidebar（256px固定、常に表示）← ページごとに動的切り替え */}
-        <div className="h-full w-64 shrink-0">
-          <SidebarComponent />
-        </div>
+        {/* Sidebar（256px固定）← Calendar/Settingsのみ表示 */}
+        {showSidebar && SidebarComponent && (
+          <div className="h-full w-64 shrink-0">
+            <SidebarComponent />
+          </div>
+        )}
 
         {/* PageHeader + Main Content + Inspector */}
         <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">

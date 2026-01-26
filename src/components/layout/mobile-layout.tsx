@@ -6,15 +6,15 @@ import { useEffect, useMemo, useState } from 'react';
 import { PageHeader } from '@/components/common/PageHeader';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { CalendarSidebar } from '@/features/calendar/components/sidebar/CalendarSidebar';
-import { InboxSidebar } from '@/features/inbox/components/InboxSidebar';
 import { AppSidebar } from '@/features/navigation/components/sidebar/app-sidebar';
 import { useSidebarStore } from '@/features/navigation/stores/useSidebarStore';
+import { PlanSidebar } from '@/features/plans/components/PlanSidebar';
 import { SettingsSidebar } from '@/features/settings/components/sidebar';
 import { StatsSidebar } from '@/features/stats';
 
 import { MainContentWrapper } from './main-content-wrapper';
 
-type PageType = 'calendar' | 'inbox' | 'stats' | 'settings' | 'default';
+type PageType = 'calendar' | 'plan' | 'stats' | 'settings' | 'default';
 
 interface MobileLayoutProps {
   children: React.ReactNode;
@@ -59,7 +59,7 @@ export function MobileLayout({ children, locale }: MobileLayoutProps) {
   // ページタイプをメモ化（DesktopLayoutと統一パターン）
   const currentPage = useMemo((): PageType => {
     if (pathname?.startsWith(`/${locale}/calendar`)) return 'calendar';
-    if (pathname?.startsWith(`/${locale}/inbox`)) return 'inbox';
+    if (pathname?.startsWith(`/${locale}/plan`)) return 'plan';
     if (pathname?.startsWith(`/${locale}/stats`)) return 'stats';
     if (pathname?.startsWith(`/${locale}/settings`)) return 'settings';
     return 'default';
@@ -70,8 +70,8 @@ export function MobileLayout({ children, locale }: MobileLayoutProps) {
     switch (currentPage) {
       case 'calendar':
         return CalendarSidebar;
-      case 'inbox':
-        return InboxSidebar;
+      case 'plan':
+        return PlanSidebar;
       case 'stats':
         return StatsSidebar;
       case 'settings':
