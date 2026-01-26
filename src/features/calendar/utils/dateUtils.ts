@@ -11,6 +11,8 @@
  * - Date(year, month, day) コンストラクタを使用（月は0始まり）
  */
 
+import { fromZonedTime, toZonedTime } from 'date-fns-tz';
+
 /**
  * YYYY-MM-DD文字列をローカルタイムゾーンのDateオブジェクトに変換
  *
@@ -107,4 +109,68 @@ export function parseDatetimeString(datetimeString: string, _targetTimezone?: st
   // ただし、現在の実装ではローカルタイムゾーンとして解釈
   // （注: date-fns-tzを使う完全な実装は後で追加）
   return new Date(year, month, day, hour, minute, second);
+}
+
+/**
+ * ISO 8601 datetime文字列をユーザーのタイムゾーンで解釈したDateオブジェクトに変換
+ *
+ * **重要**: この関数は「表示用」の時刻を返す。
+ * 返されたDateオブジェクトの getHours() 等は、指定タイムゾーンでの時刻を返す。
+ *
+ * @param isoString - ISO 8601形式の日時文字列（例: "2025-01-22T14:30:00+09:00" or "2025-01-22T05:30:00Z"）
+ * @param timezone - ユーザーのタイムゾーン（例: 'Asia/Tokyo'）
+ * @returns ユーザーのタイムゾーンで解釈されたDateオブジェクト
+ *
+ * @example
+ * ```typescript
+ * // UTCの05:30をJSTで表示
+ * const date = parseISOToUserTimezone('2025-01-22T05:30:00Z', 'Asia/Tokyo');
+ * date.getHours() // => 14 (JST 14:30)
+ * ```
+ */
+export function parseISOToUserTimezone(isoString: string, timezone: string): Date {
+  const utcDate = new Date(isoString);
+  if (isNaN(utcDate.getTime())) {
+    throw new Error(`Invalid ISO datetime: ${isoString}`);
+  }
+  // UTCからユーザーのタイムゾーンに変換
+  return toZonedTime(utcDate, timezone);
+}
+
+/**
+ * ユーザーのタイムゾーンの時刻をUTC ISO文字列に変換
+ *
+ * **重要**: この関数は「保存用」のISO文字列を返す。
+ *
+ * @param localDate - ユーザーのタイムゾーンでの日付
+ * @param hours - 時（0-23）
+ * @param minutes - 分（0-59）
+ * @param timezone - ユーザーのタイムゾーン（例: 'Asia/Tokyo'）
+ * @returns UTC ISO 8601文字列（例: "2025-01-22T05:30:00.000Z"）
+ *
+ * @example
+ * ```typescript
+ * // JST 14:30 をUTC ISO文字列に変換
+ * const iso = localTimeToUTCISO(new Date(2025, 0, 22), 14, 30, 'Asia/Tokyo');
+ * // => "2025-01-22T05:30:00.000Z"
+ * ```
+ */
+export function localTimeToUTCISO(
+  localDate: Date,
+  hours: number,
+  minutes: number,
+  timezone: string,
+): string {
+  // ローカル日付から年月日を取得
+  const year = localDate.getFullYear();
+  const month = localDate.getMonth();
+  const day = localDate.getDate();
+
+  // ユーザーのタイムゾーンでの時刻として新しいDateを作成
+  const zonedDate = new Date(year, month, day, hours, minutes, 0, 0);
+
+  // ユーザーのタイムゾーンからUTCに変換
+  const utcDate = fromZonedTime(zonedDate, timezone);
+
+  return utcDate.toISOString();
 }

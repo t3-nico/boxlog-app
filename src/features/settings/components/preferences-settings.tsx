@@ -127,7 +127,7 @@ export function PreferencesSettings() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="last">{t('settings.preferences.startupLast')}</SelectItem>
-                  <SelectItem value="inbox">{t('settings.preferences.startupInbox')}</SelectItem>
+                  <SelectItem value="plan">{t('settings.preferences.startupPlan')}</SelectItem>
                   <SelectItem value="calendar">
                     {t('settings.preferences.startupCalendar')}
                   </SelectItem>

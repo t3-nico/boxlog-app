@@ -47,6 +47,21 @@ export interface DraftPlan {
 }
 
 /**
+ * 未保存の変更（Google Calendar準拠: 閉じる時に保存）
+ * Note: undefined は「このフィールドを変更しない」を意味する
+ */
+export interface PendingChanges {
+  title?: string;
+  description?: string;
+  status?: 'open' | 'closed';
+  due_date?: string | null;
+  start_time?: string | null;
+  end_time?: string | null;
+  reminder_minutes?: number | null;
+  recurrence_rule?: string | null;
+}
+
+/**
  * Plan Inspector Store の状態
  */
 interface PlanInspectorState {
@@ -66,6 +81,8 @@ interface PlanInspectorState {
   popoverPosition: PopoverPosition | null;
   /** ローカルのみのドラフトプラン（未保存） */
   draftPlan: DraftPlan | null;
+  /** 未保存の変更（Google Calendar準拠: 閉じる時に一括保存） */
+  pendingChanges: PendingChanges | null;
 }
 
 /**
@@ -93,6 +110,12 @@ interface PlanInspectorActions {
   clearDraft: () => void;
   /** ドラフトを更新する */
   updateDraft: (updates: Partial<DraftPlan>) => void;
+  /** 未保存の変更を追加（Google Calendar準拠） */
+  addPendingChange: (changes: Partial<PendingChanges>) => void;
+  /** 未保存の変更をクリア */
+  clearPendingChanges: () => void;
+  /** 未保存の変更を取得してクリア（保存前に呼ぶ） */
+  consumePendingChanges: () => PendingChanges | null;
 }
 
 /**
@@ -103,7 +126,7 @@ type PlanInspectorStore = PlanInspectorState & PlanInspectorActions;
 export const usePlanInspectorStore = create<PlanInspectorStore>()(
   devtools(
     persist(
-      (set) => ({
+      (set, get) => ({
         isOpen: false,
         planId: null,
         instanceDate: null,
@@ -112,6 +135,7 @@ export const usePlanInspectorStore = create<PlanInspectorStore>()(
         popoverAnchor: undefined,
         popoverPosition: null,
         draftPlan: null,
+        pendingChanges: null,
 
         openInspector: (planId, options) =>
           set(
@@ -122,6 +146,7 @@ export const usePlanInspectorStore = create<PlanInspectorStore>()(
               initialData: planId === null ? options?.initialData : undefined,
               popoverAnchor: options?.anchor,
               draftPlan: null, // 既存プランを開く時はdraftをクリア
+              pendingChanges: null, // 別のプランを開く時は未保存の変更をクリア
             },
             false,
             'openInspector',
@@ -140,6 +165,7 @@ export const usePlanInspectorStore = create<PlanInspectorStore>()(
               initialData: undefined,
               popoverAnchor: undefined,
               draftPlan: null, // 閉じる時はdraftもクリア
+              pendingChanges: null, // 未保存の変更もクリア（saveAndClose経由で呼ばれる想定）
             },
             false,
             'closeInspector',
@@ -181,6 +207,27 @@ export const usePlanInspectorStore = create<PlanInspectorStore>()(
             false,
             'updateDraft',
           ),
+
+        addPendingChange: (changes) =>
+          set(
+            (state) => ({
+              pendingChanges: state.pendingChanges
+                ? { ...state.pendingChanges, ...changes }
+                : changes,
+            }),
+            false,
+            'addPendingChange',
+          ),
+
+        clearPendingChanges: () => set({ pendingChanges: null }, false, 'clearPendingChanges'),
+
+        consumePendingChanges: () => {
+          const { pendingChanges } = get();
+          if (pendingChanges) {
+            set({ pendingChanges: null }, false, 'consumePendingChanges');
+          }
+          return pendingChanges;
+        },
       }),
       {
         name: 'plan-inspector-settings',

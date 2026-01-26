@@ -20,7 +20,7 @@
   "appbar": {
     "navigation": {
       "calendar": "カレンダー",
-      "inbox": "Inbox",
+      "plan": "Plan",
       "stats": "統計",
       "settings": "設定"
     },
@@ -29,7 +29,6 @@
   "sidebar": {
     "views": "ビュー",
     "quickCreate": "作成",
-    "inbox": "受信箱",
     "theme": "テーマ",
     "getHelp": "ヘルプ",
     "toggleSidebar": "サイドバーを開閉",
@@ -38,7 +37,7 @@
     "resize": "サイズを変更",
     "navigation": {
       "calendar": "カレンダー",
-      "inbox": "Inbox",
+      "plan": "Plan",
       "tags": "タグ",
       "stats": "統計",
       "settings": "設定",

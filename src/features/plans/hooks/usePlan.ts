@@ -12,10 +12,13 @@ import { api } from '@/lib/trpc';
  * - staleTime: 30秒 → 30秒以内のタブ切り替えでは再フェッチをスキップ（UX向上）
  * - refetchOnWindowFocus: true（グローバル設定で有効）→ staleなデータのみ再フェッチ
  * - gcTime: 2分 → メモリからの削除は遅らせてローディング状態を回避
+ * - placeholderData: plans.list キャッシュから即座にデータを表示（UX大幅向上）
  *
  * @see {@link cacheStrategies.plans} - realtimeCache設定を使用
  */
 export function usePlan(id: string, options?: { includeTags?: boolean; enabled?: boolean }) {
+  const utils = api.useUtils();
+
   return api.plans.getById.useQuery(
     {
       id,
@@ -25,6 +28,20 @@ export function usePlan(id: string, options?: { includeTags?: boolean; enabled?:
       ...cacheStrategies.plans, // staleTime: 30秒, gcTime: 2分
       retry: 1,
       enabled: options?.enabled ?? true,
+      // plans.list キャッシュからプレースホルダーデータを即座に表示
+      // これによりローディング状態をスキップし、UXが大幅に向上
+      placeholderData: () => {
+        // 全ての plans.list キャッシュを検索してプランを見つける
+        const listData = utils.plans.list.getData();
+        if (listData) {
+          const found = listData.find((p) => p.id === id);
+          if (found) {
+            // plans.list の型を getById の戻り型に合わせる
+            return found as ReturnType<typeof utils.plans.getById.getData>;
+          }
+        }
+        return undefined;
+      },
     },
   );
 }

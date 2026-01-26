@@ -63,7 +63,7 @@
         "deleting": "Deleting..."
       }
     },
-    "inbox": {
+    "plan": {
       "createNew": "Create New",
       "selected": "{count} selected",
       "clear": "Clear",

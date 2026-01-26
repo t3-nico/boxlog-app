@@ -258,7 +258,7 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
       }
       addRecentPlan(planId, title);
       onClose();
-      router.push(`/inbox?plan=${planId}`);
+      router.push(`/plan?plan=${planId}`);
     },
     [query, addToHistory, addRecentPlan, router, onClose],
   );

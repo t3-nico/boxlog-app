@@ -35,6 +35,7 @@ export function PlanInspector() {
   const setPopoverPosition = usePlanInspectorStore((state) => state.setPopoverPosition);
   const draftPlan = usePlanInspectorStore((state) => state.draftPlan);
   const clearDraft = usePlanInspectorStore((state) => state.clearDraft);
+  const clearPendingChanges = usePlanInspectorStore((state) => state.clearPendingChanges);
 
   // ドラフトモード判定
   const isDraftMode = draftPlan !== null && planId === null;
@@ -49,17 +50,20 @@ export function PlanInspector() {
     : ((planData ?? null) as unknown as Plan | null);
 
   // 繰り返しダイアログが開いている間はInspectorを閉じない
+  // ×ボタン/ESC/外側クリック = キャンセル（変更を破棄）
   const handleClose = useCallback(() => {
     const isRecurringDialogOpen = useRecurringEditConfirmStore.getState().isOpen;
     if (!isRecurringDialogOpen) {
-      // ドラフトモードの場合はドラフトをクリア（何も保存されない）
+      // ドラフトモードの場合はドラフトをクリア
       if (isDraftMode) {
         clearDraft();
       }
+      // 未保存の変更を破棄
+      clearPendingChanges();
       // closeInspector内でcalendar-drag-cancelイベントを発行
       closeInspector();
     }
-  }, [closeInspector, isDraftMode, clearDraft]);
+  }, [closeInspector, isDraftMode, clearDraft, clearPendingChanges]);
 
   // ナビゲーション
   const { hasPrevious, hasNext, goToPrevious, goToNext } = useInspectorNavigation(planId);

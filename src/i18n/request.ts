@@ -9,11 +9,10 @@ import { routing } from './routing';
 const NAMESPACES = [
   'app',
   'auth',
-  'board',
   'calendar',
   'common',
   'error',
-  'inbox',
+  'plan',
   'legal',
   'navigation',
   'notification',

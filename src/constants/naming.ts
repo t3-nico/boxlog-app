@@ -18,7 +18,7 @@ export const SCREENS = {
   DASHBOARD: 'dashboard',
   CALENDAR: 'calendar',
   CALENDAR_VIEW: 'calendar_view', // /calendar/[view]
-  INBOX: 'inbox',
+  PLAN: 'plan',
   AI_CHAT: 'ai_chat',
   STATS: 'stats',
   STATS_DETAIL: 'stats_detail', // /stats/[id]
@@ -197,7 +197,7 @@ export const ROUTES = {
   dashboard: () => '/',
   calendar: () => '/calendar',
   calendarView: (view: string) => `/calendar/${view}`,
-  inbox: () => '/inbox',
+  plan: () => '/plan',
   stats: () => '/stats',
   statsDetail: (id: string) => `/stats/${id}`,
 

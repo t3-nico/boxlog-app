@@ -7,6 +7,21 @@ import { usePlanCacheStore } from '../stores/usePlanCacheStore';
 import { usePlanInspectorStore } from '../stores/usePlanInspectorStore';
 
 /**
+ * plans.list クエリキーにマッチする predicate
+ * tRPC v11 のクエリキー形式: [['plans', 'list'], { input, type }]
+ */
+const isPlansListQuery = (query: { queryKey: unknown }) => {
+  const key = query.queryKey;
+  return (
+    Array.isArray(key) &&
+    key.length >= 1 &&
+    Array.isArray(key[0]) &&
+    key[0][0] === 'plans' &&
+    key[0][1] === 'list'
+  );
+};
+
+/**
  * Plan Mutations Hook（作成・更新・削除）
  *
  * すべてのPlan操作を一元管理
@@ -69,19 +84,26 @@ export function usePlanMutations() {
         tagIds: [] as string[],
       };
 
-      // 楽観的にキャッシュを更新
-      utils.plans.list.setData(undefined, (oldData) => {
+      // 楽観的にキャッシュを更新（日付フィルター付きキャッシュも含む全て）
+      type PlanListData = Awaited<ReturnType<typeof utils.plans.list.fetch>>;
+      queryClient.setQueriesData<PlanListData>({ predicate: isPlansListQuery }, (oldData) => {
         if (!oldData) return [tempPlan];
         return [...oldData, tempPlan];
       });
 
-      return { previousPlans, tempId };
+      // スナップショットを保存（ロールバック用）
+      const previousPlansList = queryClient.getQueriesData<PlanListData>({
+        predicate: isPlansListQuery,
+      });
+
+      return { previousPlans, previousPlansList, tempId };
     },
     onSuccess: (newPlan, _input, context) => {
-      // 一時プランを本来のプランに置換
+      // 一時プランを本来のプランに置換（全キャッシュ対象）
       const newPlanWithTagIds = { ...newPlan, tagIds: [] as string[] };
+      type PlanListData = Awaited<ReturnType<typeof utils.plans.list.fetch>>;
 
-      utils.plans.list.setData(undefined, (oldData) => {
+      queryClient.setQueriesData<PlanListData>({ predicate: isPlansListQuery }, (oldData) => {
         if (!oldData) return [newPlanWithTagIds];
         // 一時プランを本来のプランに置き換え、重複を防ぐ
         return oldData
@@ -105,9 +127,11 @@ export function usePlanMutations() {
     onError: (error, _input, context) => {
       console.error('[usePlanMutations] Create error:', error);
 
-      // エラー時: 楽観的更新をロールバック
-      if (context?.previousPlans) {
-        utils.plans.list.setData(undefined, context.previousPlans);
+      // エラー時: 全ての plans.list キャッシュをロールバック
+      if (context?.previousPlansList) {
+        for (const [queryKey, data] of context.previousPlansList) {
+          queryClient.setQueryData(queryKey, data);
+        }
       }
 
       // TIME_OVERLAPエラー（重複防止）の場合は専用のトースト
@@ -144,7 +168,7 @@ export function usePlanMutations() {
       // 全ての plans.list キャッシュをスナップショット（日付フィルター付きも含む）
       type PlanListData = Awaited<ReturnType<typeof utils.plans.list.fetch>>;
       const previousPlansList = queryClient.getQueriesData<PlanListData>({
-        queryKey: [['plans', 'list']],
+        predicate: isPlansListQuery,
       });
       const previousPlan = utils.plans.getById.getData({ id });
 
@@ -176,7 +200,8 @@ export function usePlanMutations() {
       // 4. TanStack Queryキャッシュを楽観的に更新
       // 全ての plans.list キャッシュを更新（日付フィルター付きのキャッシュも含む）
       // tRPCのquery keyは [['plans', 'list'], { input: filters, type: 'query' }] の形式
-      queryClient.setQueriesData<PlanListData>({ queryKey: [['plans', 'list']] }, (oldData) => {
+      // predicate を使用して確実に全キャッシュをマッチさせる
+      queryClient.setQueriesData<PlanListData>({ predicate: isPlansListQuery }, (oldData) => {
         if (!oldData) return oldData;
         return oldData.map((plan) =>
           plan.id === id ? (Object.assign({}, plan, updateData) as typeof plan) : plan,
@@ -199,7 +224,7 @@ export function usePlanMutations() {
       // サーバーから返ってきた最新データでキャッシュを更新
       // tagIds などのリレーションデータは保持する（サーバーのupdateはタグをJOINしていない）
       type PlanListData = Awaited<ReturnType<typeof utils.plans.list.fetch>>;
-      queryClient.setQueriesData<PlanListData>({ queryKey: [['plans', 'list']] }, (oldData) => {
+      queryClient.setQueriesData<PlanListData>({ predicate: isPlansListQuery }, (oldData) => {
         if (!oldData) return oldData;
         return oldData.map((plan) => {
           if (plan.id === variables.id) {
@@ -267,13 +292,9 @@ export function usePlanMutations() {
       const previousPlan =
         utils.plans.getById.getData({ id }) ?? previousPlans?.find((p) => p.id === id);
 
-      // 楽観的更新: リストから即座に削除
-      utils.plans.list.setData(undefined, (oldData) => {
-        if (!oldData) return oldData;
-        return oldData.filter((plan) => plan.id !== id);
-      });
-
-      utils.plans.list.setData({}, (oldData) => {
+      // 楽観的更新: リストから即座に削除（日付フィルター付きキャッシュも含む全て）
+      type PlanListData = Awaited<ReturnType<typeof utils.plans.list.fetch>>;
+      queryClient.setQueriesData<PlanListData>({ predicate: isPlansListQuery }, (oldData) => {
         if (!oldData) return oldData;
         return oldData.filter((plan) => plan.id !== id);
       });

@@ -113,7 +113,9 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
           {/* 繰り返しアイコン */}
           <RecurringIndicatorFromFlag isRecurring={plan.isRecurring} size="xs" />
           {/* 通知アイコン（reminder_minutesが設定されている場合） */}
-          {plan.reminder_minutes != null && <Bell className="h-3 w-3 flex-shrink-0" />}
+          {plan.reminder_minutes != null && (
+            <Bell className="h-3 w-3 flex-shrink-0" aria-label={t('calendar.event.reminderSet')} />
+          )}
         </div>
       )}
 

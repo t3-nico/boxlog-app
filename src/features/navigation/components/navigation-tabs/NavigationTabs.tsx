@@ -1,6 +1,6 @@
 'use client';
 
-import { BarChart3, Calendar, CircleCheckBig } from 'lucide-react';
+import { BarChart3, Calendar, CircleCheckBig, Clock } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { useMemo } from 'react';
 
@@ -13,7 +13,7 @@ import type { NavTabItem } from './types';
  * ナビゲーションタブ
  *
  * PageHeader中央に配置する水平タブナビゲーション
- * - Calendar / Inbox / Stats の切り替え
+ * - Calendar / Plan / Record / Stats の切り替え
  */
 export function NavigationTabs() {
   const pathname = usePathname();
@@ -29,10 +29,16 @@ export function NavigationTabs() {
         url: `/${locale}/calendar`,
       },
       {
-        id: 'inbox',
+        id: 'plan',
         icon: CircleCheckBig,
-        label: t('sidebar.navigation.inbox'),
-        url: `/${locale}/inbox`,
+        label: t('sidebar.navigation.plan'),
+        url: `/${locale}/plan`,
+      },
+      {
+        id: 'record',
+        icon: Clock,
+        label: 'Record', // TODO: i18n対応
+        url: `/${locale}/record`, // 暫定: /record ページは未作成
       },
       {
         id: 'stats',

@@ -9,8 +9,14 @@ import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import useCalendarToast from '@/features/calendar/lib/toast';
-import { parseDateString, parseDatetimeString } from '@/features/calendar/utils/dateUtils';
+import {
+  localTimeToUTCISO,
+  parseDateString,
+  parseDatetimeString,
+  parseISOToUserTimezone,
+} from '@/features/calendar/utils/dateUtils';
 import type { InspectorDisplayMode } from '@/features/inspector';
+import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
 import { useHapticFeedback } from '@/hooks/useHapticFeedback';
 import { api } from '@/lib/trpc';
 
@@ -21,9 +27,10 @@ import { usePlanMutations } from '../../../hooks/usePlanMutations';
 import { usePlanTags } from '../../../hooks/usePlanTags';
 import { useDeleteConfirmStore } from '../../../stores/useDeleteConfirmStore';
 import { usePlanCacheStore } from '../../../stores/usePlanCacheStore';
-import { usePlanInspectorStore } from '../../../stores/usePlanInspectorStore';
+import { usePlanInspectorStore, type DraftPlan } from '../../../stores/usePlanInspectorStore';
 import { useRecurringEditConfirmStore } from '../../../stores/useRecurringEditConfirmStore';
 import type { Plan } from '../../../types/plan';
+import { minutesToReminderType } from '../../../utils/reminder';
 import { useInspectorAutoSave, useInspectorNavigation, useRecurringPlanEdit } from '../hooks';
 
 // スコープダイアログを表示するフィールド（日付・時間）
@@ -35,6 +42,9 @@ export function usePlanInspectorContentLogic() {
   const utils = api.useUtils();
   const calendarToast = useCalendarToast();
   const { error: hapticError } = useHapticFeedback();
+
+  // ユーザーのタイムゾーン設定
+  const timezone = useCalendarSettingsStore((state) => state.timezone);
 
   // 時間重複エラー状態（視覚的フィードバック用）
   const [timeConflictError, setTimeConflictError] = useState(false);
@@ -48,7 +58,10 @@ export function usePlanInspectorContentLogic() {
   const draftPlan = usePlanInspectorStore((state) => state.draftPlan);
   const clearDraft = usePlanInspectorStore((state) => state.clearDraft);
   const updateDraft = usePlanInspectorStore((state) => state.updateDraft);
-  const openInspector = usePlanInspectorStore((state) => state.openInspector);
+  const addPendingChange = usePlanInspectorStore((state) => state.addPendingChange);
+  const clearPendingChanges = usePlanInspectorStore((state) => state.clearPendingChanges);
+  const consumePendingChanges = usePlanInspectorStore((state) => state.consumePendingChanges);
+  const pendingChanges = usePlanInspectorStore((state) => state.pendingChanges);
 
   // ドラフトモード判定: draftPlanがあり、planIdがない場合
   const isDraftMode = draftPlan !== null && planId === null;
@@ -127,67 +140,16 @@ export function usePlanInspectorContentLogic() {
 
   // Custom hooks
   const { hasPrevious, hasNext, goToPrevious, goToNext } = useInspectorNavigation(planId);
-  const { autoSave: baseAutoSave, updatePlan, deletePlan } = useInspectorAutoSave({ planId, plan });
-
-  // ドラフトモード用の初回保存（DBに新規作成）
-  const saveDraftToDb = useCallback(
-    async (field: string, value: string | undefined): Promise<string | null> => {
-      if (!draftPlan) return null;
-
-      try {
-        // ドラフトデータに変更を適用してDB保存
-        // description は null を undefined に変換（API仕様に合わせる）
-        // タイトルが空の場合も空のまま保存（Google Calendar準拠）
-        const planData = {
-          title: draftPlan.title.trim(),
-          description: draftPlan.description ?? undefined,
-          status: 'open' as const,
-          due_date: draftPlan.due_date,
-          start_time: draftPlan.start_time,
-          end_time: draftPlan.end_time,
-          [field]: value,
-        };
-
-        const newPlan = await createPlan.mutateAsync(planData);
-
-        if (newPlan?.id) {
-          // ドラフトをクリアして通常モードに切り替え
-          clearDraft();
-          openInspector(newPlan.id);
-          // カレンダーのドラッグ選択をクリア（保存成功後）
-          window.dispatchEvent(new CustomEvent('calendar-drag-cancel'));
-          return newPlan.id;
-        }
-        return null;
-      } catch (error) {
-        console.error('Failed to create plan from draft:', error);
-        return null;
-      }
-    },
-    [draftPlan, createPlan, clearDraft, openInspector],
-  );
+  const { updatePlan, deletePlan } = useInspectorAutoSave({ planId, plan });
 
   // 繰り返しインスタンス対応のautoSave
   // 時間変更の場合のみスコープダイアログを表示
   const autoSave = useCallback(
     async (field: string, value: string | undefined) => {
-      // ドラフトモードの場合
+      // ドラフトモードの場合: ローカル更新のみ（DBには保存しない）
+      // 保存は saveAndClose() で行う
       if (isDraftMode) {
-        // タイトルを判定（今回の変更がtitleならその値、それ以外ならdraftPlanのtitle）
-        const effectiveTitle = field === 'title' ? value : draftPlan?.title;
-        const hasTitle = effectiveTitle && effectiveTitle.trim() !== '';
-
-        // タイトルがなければドラフトをローカル更新のみ（DBには保存しない）
-        if (!hasTitle) {
-          // タイトル以外のフィールド変更はドラフトに保持
-          if (field !== 'title' && field !== 'description') {
-            updateDraft({ [field]: value } as Partial<typeof draftPlan>);
-          }
-          return;
-        }
-
-        // タイトルがあればDBに保存
-        await saveDraftToDb(field, value);
+        updateDraft({ [field]: value } as Partial<DraftPlan>);
         return;
       }
 
@@ -199,17 +161,11 @@ export function usePlanInspectorContentLogic() {
         recurringEdit.openScopeDialog(field, value);
         return;
       }
-      // 通常の保存処理（title, descriptionなど）
-      baseAutoSave(field, value);
+      // 通常の場合: pendingChanges にバッファリング（保存ボタンで一括保存）
+      addPendingChange({ [field]: value });
     },
-    [baseAutoSave, recurringEdit, isDraftMode, saveDraftToDb, draftPlan, updateDraft],
+    [addPendingChange, recurringEdit, isDraftMode, updateDraft],
   );
-
-  // Activity state
-  const [activityOrder, setActivityOrder] = useState<'asc' | 'desc'>('desc');
-  const [isHoveringSort, setIsHoveringSort] = useState(false);
-  const sortButtonRef = useRef<HTMLSpanElement>(null);
-  const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
 
   // Tags state
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
@@ -288,9 +244,9 @@ export function usePlanInspectorContentLogic() {
       // 期限日（due_date）を設定
       setDueDate(plan.due_date ? parseDateString(plan.due_date) : undefined);
 
-      // スケジュール日と時間を設定
+      // スケジュール日と時間を設定（タイムゾーン対応）
       if (plan.start_time) {
-        const date = parseDatetimeString(plan.start_time);
+        const date = parseISOToUserTimezone(plan.start_time, timezone);
         setScheduleDate(date); // スケジュール日はstart_timeから取得
         setStartTime(
           `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`,
@@ -301,7 +257,7 @@ export function usePlanInspectorContentLogic() {
       }
 
       if (plan.end_time) {
-        const date = parseDatetimeString(plan.end_time);
+        const date = parseISOToUserTimezone(plan.end_time, timezone);
         setEndTime(
           `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`,
         );
@@ -310,29 +266,20 @@ export function usePlanInspectorContentLogic() {
       }
 
       if ('reminder_minutes' in plan && plan.reminder_minutes !== null) {
-        const minutes = plan.reminder_minutes;
-        const reminderMap: Record<number, string> = {
-          0: '開始時刻',
-          10: '10分前',
-          30: '30分前',
-          60: '1時間前',
-          1440: '1日前',
-          10080: '1週間前',
-        };
-        setReminderType(reminderMap[minutes] || 'カスタム');
+        setReminderType(minutesToReminderType(plan.reminder_minutes));
       } else {
         setReminderType('');
       }
     } else if (!plan && initialData) {
       if (initialData.start_time) {
-        const startDate = new Date(initialData.start_time);
+        const startDate = parseISOToUserTimezone(initialData.start_time, timezone);
         setScheduleDate(startDate);
         setStartTime(
           `${startDate.getHours().toString().padStart(2, '0')}:${startDate.getMinutes().toString().padStart(2, '0')}`,
         );
       }
       if (initialData.end_time) {
-        const endDate = new Date(initialData.end_time);
+        const endDate = parseISOToUserTimezone(initialData.end_time, timezone);
         setEndTime(
           `${endDate.getHours().toString().padStart(2, '0')}:${endDate.getMinutes().toString().padStart(2, '0')}`,
         );
@@ -344,7 +291,7 @@ export function usePlanInspectorContentLogic() {
       setEndTime('');
       setReminderType('');
     }
-  }, [plan, initialData, isDraftMode, draftPlan]);
+  }, [plan, initialData, isDraftMode, draftPlan, timezone]);
 
   // Focus title on open
   useEffect(() => {
@@ -509,21 +456,43 @@ export function usePlanInspectorContentLogic() {
   const handleScheduleDateChange = useCallback(
     (date: Date | undefined) => {
       setScheduleDate(date);
-      // スケジュール日が変更されたら、start_time/end_timeの日付部分を更新
-      if (date && startTime) {
-        const [hours, minutes] = startTime.split(':').map(Number);
-        const newStartDateTime = new Date(date);
-        newStartDateTime.setHours(hours ?? 0, minutes ?? 0, 0, 0);
-        autoSave('start_time', newStartDateTime.toISOString());
+
+      // ドラフトモードの場合はローカル更新のみ
+      if (isDraftMode) {
+        if (date && startTime) {
+          const [hours, minutes] = startTime.split(':').map(Number);
+          updateDraft({ start_time: localTimeToUTCISO(date, hours ?? 0, minutes ?? 0, timezone) });
+        }
+        if (date && endTime) {
+          const [hours, minutes] = endTime.split(':').map(Number);
+          updateDraft({ end_time: localTimeToUTCISO(date, hours ?? 0, minutes ?? 0, timezone) });
+        }
+        return;
       }
-      if (date && endTime) {
+
+      // 通常モード: ローカルにバッファリング（Google Calendar準拠: 閉じる時に保存）
+      if (date && startTime && endTime) {
+        const [startHours, startMinutes] = startTime.split(':').map(Number);
+        const [endHours, endMinutes] = endTime.split(':').map(Number);
+
+        // 両フィールドを一度にバッファリング（タイムゾーン対応）
+        addPendingChange({
+          start_time: localTimeToUTCISO(date, startHours ?? 0, startMinutes ?? 0, timezone),
+          end_time: localTimeToUTCISO(date, endHours ?? 0, endMinutes ?? 0, timezone),
+        });
+      } else if (date && startTime) {
+        const [hours, minutes] = startTime.split(':').map(Number);
+        addPendingChange({
+          start_time: localTimeToUTCISO(date, hours ?? 0, minutes ?? 0, timezone),
+        });
+      } else if (date && endTime) {
         const [hours, minutes] = endTime.split(':').map(Number);
-        const newEndDateTime = new Date(date);
-        newEndDateTime.setHours(hours ?? 0, minutes ?? 0, 0, 0);
-        autoSave('end_time', newEndDateTime.toISOString());
+        addPendingChange({
+          end_time: localTimeToUTCISO(date, hours ?? 0, minutes ?? 0, timezone),
+        });
       }
     },
-    [autoSave, startTime, endTime],
+    [isDraftMode, startTime, endTime, addPendingChange, updateDraft, timezone],
   );
 
   // 期限日変更ハンドラー（due_date）
@@ -537,84 +506,138 @@ export function usePlanInspectorContentLogic() {
 
   const handleStartTimeChange = useCallback(
     (time: string) => {
-      if (time && scheduleDate && endTime) {
-        // 新しい開始時刻を計算
-        const [hours, minutes] = time.split(':').map(Number);
-        const newStartDateTime = new Date(scheduleDate);
-        newStartDateTime.setHours(hours ?? 0, minutes ?? 0, 0, 0);
+      // 時刻をパース
+      const [hours, minutes] = time ? time.split(':').map(Number) : [0, 0];
 
-        // 現在の終了時刻を取得
+      // 新しい開始時刻を計算（重複チェック用のローカル日付）
+      const newStartDateTime = time && scheduleDate ? new Date(scheduleDate) : null;
+      if (newStartDateTime && time) {
+        newStartDateTime.setHours(hours ?? 0, minutes ?? 0, 0, 0);
+      }
+
+      // 重複チェック（終了時刻がある場合のみ）
+      if (newStartDateTime && endTime && scheduleDate) {
         const [endHours, endMinutes] = endTime.split(':').map(Number);
         const endDateTime = new Date(scheduleDate);
         endDateTime.setHours(endHours ?? 0, endMinutes ?? 0, 0, 0);
 
-        // 事前重複チェック
         if (checkTimeOverlap(newStartDateTime, endDateTime)) {
-          // GAFA基準のフィードバック: ハプティック + トースト + 視覚的FB
           hapticError();
           calendarToast.error(t('calendar.toast.conflict'), {
             description: t('calendar.toast.conflictDescription'),
           });
           setTimeConflictError(true);
-          setTimeout(() => setTimeConflictError(false), 500); // シェイクアニメーション後にリセット
-          return; // 更新をキャンセル
+          setTimeout(() => setTimeConflictError(false), 500);
+          return;
         }
+      }
 
-        setStartTime(time);
-        autoSave('start_time', newStartDateTime.toISOString());
-      } else if (time && scheduleDate) {
-        const [hours, minutes] = time.split(':').map(Number);
-        const dateTime = new Date(scheduleDate);
-        dateTime.setHours(hours ?? 0, minutes ?? 0, 0, 0);
-        setStartTime(time);
-        autoSave('start_time', dateTime.toISOString());
-      } else {
-        setStartTime(time);
-        autoSave('start_time', undefined);
+      setStartTime(time);
+
+      // タイムゾーン対応のISO文字列を生成
+      const isoValue =
+        time && scheduleDate
+          ? localTimeToUTCISO(scheduleDate, hours ?? 0, minutes ?? 0, timezone)
+          : null;
+
+      // ドラフトモード
+      if (isDraftMode) {
+        updateDraft({ start_time: isoValue });
+        return;
+      }
+
+      // 繰り返しインスタンス → スコープダイアログ
+      if (recurringEdit.isRecurringInstance) {
+        recurringEdit.openScopeDialog('start_time', isoValue ?? undefined);
+        return;
+      }
+
+      // 通常モード → ローカルにバッファリング（Google Calendar準拠: 閉じる時に保存）
+      if (isoValue) {
+        addPendingChange({ start_time: isoValue });
       }
     },
-    [scheduleDate, endTime, autoSave, checkTimeOverlap, hapticError, calendarToast, t],
+    [
+      scheduleDate,
+      endTime,
+      isDraftMode,
+      recurringEdit,
+      updateDraft,
+      addPendingChange,
+      checkTimeOverlap,
+      hapticError,
+      calendarToast,
+      t,
+      timezone,
+    ],
   );
 
   const handleEndTimeChange = useCallback(
     (time: string) => {
-      if (time && scheduleDate && startTime) {
-        // 現在の開始時刻を取得
+      // 時刻をパース
+      const [hours, minutes] = time ? time.split(':').map(Number) : [0, 0];
+
+      // 新しい終了時刻を計算（重複チェック用のローカル日付）
+      const newEndDateTime = time && scheduleDate ? new Date(scheduleDate) : null;
+      if (newEndDateTime && time) {
+        newEndDateTime.setHours(hours ?? 0, minutes ?? 0, 0, 0);
+      }
+
+      // 重複チェック（開始時刻がある場合のみ）
+      if (newEndDateTime && startTime && scheduleDate) {
         const [startHours, startMinutes] = startTime.split(':').map(Number);
         const startDateTime = new Date(scheduleDate);
         startDateTime.setHours(startHours ?? 0, startMinutes ?? 0, 0, 0);
 
-        // 新しい終了時刻を計算
-        const [hours, minutes] = time.split(':').map(Number);
-        const newEndDateTime = new Date(scheduleDate);
-        newEndDateTime.setHours(hours ?? 0, minutes ?? 0, 0, 0);
-
-        // 事前重複チェック
         if (checkTimeOverlap(startDateTime, newEndDateTime)) {
-          // GAFA基準のフィードバック: ハプティック + トースト + 視覚的FB
           hapticError();
           calendarToast.error(t('calendar.toast.conflict'), {
             description: t('calendar.toast.conflictDescription'),
           });
           setTimeConflictError(true);
-          setTimeout(() => setTimeConflictError(false), 500); // シェイクアニメーション後にリセット
-          return; // 更新をキャンセル
+          setTimeout(() => setTimeConflictError(false), 500);
+          return;
         }
+      }
 
-        setEndTime(time);
-        autoSave('end_time', newEndDateTime.toISOString());
-      } else if (time && scheduleDate) {
-        const [hours, minutes] = time.split(':').map(Number);
-        const dateTime = new Date(scheduleDate);
-        dateTime.setHours(hours ?? 0, minutes ?? 0, 0, 0);
-        setEndTime(time);
-        autoSave('end_time', dateTime.toISOString());
-      } else {
-        setEndTime(time);
-        autoSave('end_time', undefined);
+      setEndTime(time);
+
+      // タイムゾーン対応のISO文字列を生成
+      const isoValue =
+        time && scheduleDate
+          ? localTimeToUTCISO(scheduleDate, hours ?? 0, minutes ?? 0, timezone)
+          : null;
+
+      // ドラフトモード
+      if (isDraftMode) {
+        updateDraft({ end_time: isoValue });
+        return;
+      }
+
+      // 繰り返しインスタンス → スコープダイアログ
+      if (recurringEdit.isRecurringInstance) {
+        recurringEdit.openScopeDialog('end_time', isoValue ?? undefined);
+        return;
+      }
+
+      // 通常モード → ローカルにバッファリング（Google Calendar準拠: 閉じる時に保存）
+      if (isoValue) {
+        addPendingChange({ end_time: isoValue });
       }
     },
-    [scheduleDate, startTime, autoSave, checkTimeOverlap, hapticError, calendarToast, t],
+    [
+      scheduleDate,
+      startTime,
+      isDraftMode,
+      recurringEdit,
+      updateDraft,
+      addPendingChange,
+      checkTimeOverlap,
+      hapticError,
+      calendarToast,
+      t,
+      timezone,
+    ],
   );
 
   // Menu handlers
@@ -641,13 +664,82 @@ export function usePlanInspectorContentLogic() {
     // Stub: テンプレート保存機能は未実装
   }, []);
 
+  /**
+   * 未保存の変更を保存してからInspectorを閉じる（Google Calendar準拠）
+   */
+  const saveAndClose = useCallback(async () => {
+    // ドラフトモードの場合: 新規作成
+    if (isDraftMode && draftPlan) {
+      try {
+        const newPlan = await createPlan.mutateAsync({
+          title: draftPlan.title.trim() || '無題',
+          description: draftPlan.description ?? undefined,
+          status: 'open',
+          due_date: draftPlan.due_date,
+          start_time: draftPlan.start_time,
+          end_time: draftPlan.end_time,
+        });
+        if (newPlan?.id) {
+          clearDraft();
+          // カレンダーのドラッグ選択をクリア（保存成功後）
+          window.dispatchEvent(new CustomEvent('calendar-drag-cancel'));
+        }
+      } catch (error) {
+        console.error('Failed to create plan:', error);
+      }
+      closeInspector();
+      return;
+    }
+
+    // 編集モードの場合: 既存の処理
+    const changes = consumePendingChanges();
+
+    // 変更があればサーバーに保存
+    if (changes && planId && Object.keys(changes).length > 0) {
+      try {
+        await updatePlan.mutateAsync({
+          id: planId,
+          data: changes,
+        });
+      } catch (error) {
+        console.error('Failed to save pending changes:', error);
+        // エラーでも閉じる（データはローカルで失われるが、UXを優先）
+      }
+    }
+
+    closeInspector();
+  }, [
+    planId,
+    consumePendingChanges,
+    updatePlan,
+    closeInspector,
+    isDraftMode,
+    draftPlan,
+    createPlan,
+    clearDraft,
+  ]);
+
+  /**
+   * 変更を破棄してInspectorを閉じる（キャンセル）
+   */
+  const cancelAndClose = useCallback(() => {
+    clearPendingChanges();
+    closeInspector();
+  }, [clearPendingChanges, closeInspector]);
+
+  // 未保存の変更があるか判定
+  const hasPendingChanges = pendingChanges && Object.keys(pendingChanges).length > 0;
+
   return {
     // Store state
     planId,
     plan,
     displayMode,
     setDisplayMode,
-    closeInspector,
+    closeInspector, // 直接閉じる（変更を破棄）
+    saveAndClose, // 変更を保存して閉じる
+    cancelAndClose, // 変更を破棄して閉じる
+    hasPendingChanges, // 未保存の変更があるか
     isDraftMode,
 
     // Navigation
@@ -655,15 +747,6 @@ export function usePlanInspectorContentLogic() {
     hasNext,
     goToPrevious,
     goToNext,
-
-    // Activity state
-    activityOrder,
-    setActivityOrder,
-    isHoveringSort,
-    setIsHoveringSort,
-    sortButtonRef,
-    tooltipPosition,
-    setTooltipPosition,
 
     // Tags state
     selectedTagIds,
