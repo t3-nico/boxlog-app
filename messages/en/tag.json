@@ -241,6 +241,10 @@
       }
     },
     "toast": {
+      "created": "Tag \"{name}\" created",
+      "createFailed": "Failed to create tag",
+      "updated": "Tag \"{name}\" updated",
+      "updateFailed": "Failed to update tag",
       "groupNameRequired": "Please enter a group name",
       "groupCreated": "Created group \"{name}\"",
       "groupNameChanged": "Changed group name to \"{name}\"",
