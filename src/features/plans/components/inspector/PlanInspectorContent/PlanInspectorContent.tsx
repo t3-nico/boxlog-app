@@ -12,6 +12,7 @@ import { useTranslations } from 'next-intl';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { InspectorHeader } from '@/features/inspector';
 
+import { reminderTypeToMinutes } from '../../../utils/reminder';
 import { ActivityTab } from '../components';
 
 import { DisplayModeSwitcher } from './DisplayModeSwitcher';
@@ -206,18 +207,9 @@ export function PlanInspectorContent() {
             onReminderChange={(type) => {
               if (!planId) return;
               setReminderType(type);
-              const reminderMap: Record<string, number | null> = {
-                '': null,
-                開始時刻: 0,
-                '10分前': 10,
-                '30分前': 30,
-                '1時間前': 60,
-                '1日前': 1440,
-                '1週間前': 10080,
-              };
               updatePlan.mutate({
                 id: planId,
-                data: { reminder_minutes: reminderMap[type] ?? null },
+                data: { reminder_minutes: reminderTypeToMinutes(type) },
               });
             }}
             onTagsChange={handleTagsChange}

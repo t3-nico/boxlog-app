@@ -36,6 +36,7 @@ export function PlanCreateTrigger({
   }, []);
 
   // 時間が重複しているかチェック
+  // バックエンド（PlanService.checkTimeOverlap）と同じロジック
   const checkOverlap = useCallback(
     (start: Date, end: Date): boolean => {
       const plans = utils.plans.list.getData();
@@ -45,8 +46,7 @@ export function PlanCreateTrigger({
         if (!p.start_time || !p.end_time) return false;
         const pStart = new Date(p.start_time);
         const pEnd = new Date(p.end_time);
-        // 同じ日のみチェック
-        if (pStart.toDateString() !== start.toDateString()) return false;
+        // 時間重複条件: 既存の開始 < 新規の終了 AND 既存の終了 > 新規の開始
         return pStart < end && pEnd > start;
       });
     },

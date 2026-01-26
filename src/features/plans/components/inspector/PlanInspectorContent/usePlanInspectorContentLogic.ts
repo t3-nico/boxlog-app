@@ -24,6 +24,7 @@ import { usePlanCacheStore } from '../../../stores/usePlanCacheStore';
 import { usePlanInspectorStore } from '../../../stores/usePlanInspectorStore';
 import { useRecurringEditConfirmStore } from '../../../stores/useRecurringEditConfirmStore';
 import type { Plan } from '../../../types/plan';
+import { minutesToReminderType } from '../../../utils/reminder';
 import { useInspectorAutoSave, useInspectorNavigation, useRecurringPlanEdit } from '../hooks';
 
 // スコープダイアログを表示するフィールド（日付・時間）
@@ -310,16 +311,7 @@ export function usePlanInspectorContentLogic() {
       }
 
       if ('reminder_minutes' in plan && plan.reminder_minutes !== null) {
-        const minutes = plan.reminder_minutes;
-        const reminderMap: Record<number, string> = {
-          0: '開始時刻',
-          10: '10分前',
-          30: '30分前',
-          60: '1時間前',
-          1440: '1日前',
-          10080: '1週間前',
-        };
-        setReminderType(reminderMap[minutes] || 'カスタム');
+        setReminderType(minutesToReminderType(plan.reminder_minutes));
       } else {
         setReminderType('');
       }
@@ -509,21 +501,63 @@ export function usePlanInspectorContentLogic() {
   const handleScheduleDateChange = useCallback(
     (date: Date | undefined) => {
       setScheduleDate(date);
-      // スケジュール日が変更されたら、start_time/end_timeの日付部分を更新
-      if (date && startTime) {
+
+      // ドラフトモードの場合はローカル更新のみ
+      if (isDraftMode) {
+        if (date && startTime) {
+          const [hours, minutes] = startTime.split(':').map(Number);
+          const newStartDateTime = new Date(date);
+          newStartDateTime.setHours(hours ?? 0, minutes ?? 0, 0, 0);
+          updateDraft({ start_time: newStartDateTime.toISOString() });
+        }
+        if (date && endTime) {
+          const [hours, minutes] = endTime.split(':').map(Number);
+          const newEndDateTime = new Date(date);
+          newEndDateTime.setHours(hours ?? 0, minutes ?? 0, 0, 0);
+          updateDraft({ end_time: newEndDateTime.toISOString() });
+        }
+        return;
+      }
+
+      // 通常モード: start_timeとend_timeを同時に更新（debounceキャンセル回避）
+      if (!planId) return;
+
+      if (date && startTime && endTime) {
+        const [startHours, startMinutes] = startTime.split(':').map(Number);
+        const newStartDateTime = new Date(date);
+        newStartDateTime.setHours(startHours ?? 0, startMinutes ?? 0, 0, 0);
+
+        const [endHours, endMinutes] = endTime.split(':').map(Number);
+        const newEndDateTime = new Date(date);
+        newEndDateTime.setHours(endHours ?? 0, endMinutes ?? 0, 0, 0);
+
+        // 両フィールドを一度に更新
+        updatePlan.mutate({
+          id: planId,
+          data: {
+            start_time: newStartDateTime.toISOString(),
+            end_time: newEndDateTime.toISOString(),
+          },
+        });
+      } else if (date && startTime) {
         const [hours, minutes] = startTime.split(':').map(Number);
         const newStartDateTime = new Date(date);
         newStartDateTime.setHours(hours ?? 0, minutes ?? 0, 0, 0);
-        autoSave('start_time', newStartDateTime.toISOString());
-      }
-      if (date && endTime) {
+        updatePlan.mutate({
+          id: planId,
+          data: { start_time: newStartDateTime.toISOString() },
+        });
+      } else if (date && endTime) {
         const [hours, minutes] = endTime.split(':').map(Number);
         const newEndDateTime = new Date(date);
         newEndDateTime.setHours(hours ?? 0, minutes ?? 0, 0, 0);
-        autoSave('end_time', newEndDateTime.toISOString());
+        updatePlan.mutate({
+          id: planId,
+          data: { end_time: newEndDateTime.toISOString() },
+        });
       }
     },
-    [autoSave, startTime, endTime],
+    [planId, isDraftMode, startTime, endTime, updatePlan, updateDraft],
   );
 
   // 期限日変更ハンドラー（due_date）
