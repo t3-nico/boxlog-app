@@ -59,6 +59,8 @@ export function usePlanInspectorContentLogic() {
   const clearDraft = usePlanInspectorStore((state) => state.clearDraft);
   const updateDraft = usePlanInspectorStore((state) => state.updateDraft);
   const openInspector = usePlanInspectorStore((state) => state.openInspector);
+  const addPendingChange = usePlanInspectorStore((state) => state.addPendingChange);
+  const consumePendingChanges = usePlanInspectorStore((state) => state.consumePendingChanges);
 
   // ドラフトモード判定: draftPlanがあり、planIdがない場合
   const isDraftMode = draftPlan !== null && planId === null;
@@ -524,36 +526,29 @@ export function usePlanInspectorContentLogic() {
         return;
       }
 
-      // 通常モード: start_timeとend_timeを同時に更新（debounceキャンセル回避）
-      if (!planId) return;
-
+      // 通常モード: ローカルにバッファリング（Google Calendar準拠: 閉じる時に保存）
       if (date && startTime && endTime) {
         const [startHours, startMinutes] = startTime.split(':').map(Number);
         const [endHours, endMinutes] = endTime.split(':').map(Number);
 
-        // 両フィールドを一度に更新（タイムゾーン対応）
-        updatePlan.mutate({
-          id: planId,
-          data: {
-            start_time: localTimeToUTCISO(date, startHours ?? 0, startMinutes ?? 0, timezone),
-            end_time: localTimeToUTCISO(date, endHours ?? 0, endMinutes ?? 0, timezone),
-          },
+        // 両フィールドを一度にバッファリング（タイムゾーン対応）
+        addPendingChange({
+          start_time: localTimeToUTCISO(date, startHours ?? 0, startMinutes ?? 0, timezone),
+          end_time: localTimeToUTCISO(date, endHours ?? 0, endMinutes ?? 0, timezone),
         });
       } else if (date && startTime) {
         const [hours, minutes] = startTime.split(':').map(Number);
-        updatePlan.mutate({
-          id: planId,
-          data: { start_time: localTimeToUTCISO(date, hours ?? 0, minutes ?? 0, timezone) },
+        addPendingChange({
+          start_time: localTimeToUTCISO(date, hours ?? 0, minutes ?? 0, timezone),
         });
       } else if (date && endTime) {
         const [hours, minutes] = endTime.split(':').map(Number);
-        updatePlan.mutate({
-          id: planId,
-          data: { end_time: localTimeToUTCISO(date, hours ?? 0, minutes ?? 0, timezone) },
+        addPendingChange({
+          end_time: localTimeToUTCISO(date, hours ?? 0, minutes ?? 0, timezone),
         });
       }
     },
-    [planId, isDraftMode, startTime, endTime, updatePlan, updateDraft, timezone],
+    [isDraftMode, startTime, endTime, addPendingChange, updateDraft, timezone],
   );
 
   // 期限日変更ハンドラー（due_date）
@@ -613,22 +608,18 @@ export function usePlanInspectorContentLogic() {
         return;
       }
 
-      // 通常モード → 即座に更新（debounceなし）
-      if (planId && isoValue) {
-        updatePlan.mutate({
-          id: planId,
-          data: { start_time: isoValue },
-        });
+      // 通常モード → ローカルにバッファリング（Google Calendar準拠: 閉じる時に保存）
+      if (isoValue) {
+        addPendingChange({ start_time: isoValue });
       }
     },
     [
       scheduleDate,
       endTime,
       isDraftMode,
-      planId,
       recurringEdit,
       updateDraft,
-      updatePlan,
+      addPendingChange,
       checkTimeOverlap,
       hapticError,
       calendarToast,
@@ -685,22 +676,18 @@ export function usePlanInspectorContentLogic() {
         return;
       }
 
-      // 通常モード → 即座に更新（debounceなし）
-      if (planId && isoValue) {
-        updatePlan.mutate({
-          id: planId,
-          data: { end_time: isoValue },
-        });
+      // 通常モード → ローカルにバッファリング（Google Calendar準拠: 閉じる時に保存）
+      if (isoValue) {
+        addPendingChange({ end_time: isoValue });
       }
     },
     [
       scheduleDate,
       startTime,
       isDraftMode,
-      planId,
       recurringEdit,
       updateDraft,
-      updatePlan,
+      addPendingChange,
       checkTimeOverlap,
       hapticError,
       calendarToast,
@@ -733,13 +720,37 @@ export function usePlanInspectorContentLogic() {
     // Stub: テンプレート保存機能は未実装
   }, []);
 
+  /**
+   * 未保存の変更を保存してからInspectorを閉じる（Google Calendar準拠）
+   */
+  const saveAndClose = useCallback(async () => {
+    // 未保存の変更を取得
+    const changes = consumePendingChanges();
+
+    // 変更があればサーバーに保存
+    if (changes && planId && Object.keys(changes).length > 0) {
+      try {
+        await updatePlan.mutateAsync({
+          id: planId,
+          data: changes,
+        });
+      } catch (error) {
+        console.error('Failed to save pending changes:', error);
+        // エラーでも閉じる（データはローカルで失われるが、UXを優先）
+      }
+    }
+
+    closeInspector();
+  }, [planId, consumePendingChanges, updatePlan, closeInspector]);
+
   return {
     // Store state
     planId,
     plan,
     displayMode,
     setDisplayMode,
-    closeInspector,
+    closeInspector, // 直接閉じる（変更を破棄）
+    saveAndClose, // 変更を保存して閉じる（Google Calendar準拠）
     isDraftMode,
 
     // Navigation

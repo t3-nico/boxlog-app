@@ -27,7 +27,7 @@ export function PlanInspectorContent() {
     plan,
     displayMode,
     setDisplayMode,
-    closeInspector,
+    saveAndClose,
     hasPrevious,
     hasNext,
     goToPrevious,
@@ -88,7 +88,7 @@ export function PlanInspectorContent() {
       <InspectorHeader
         hasPrevious={hasPrevious}
         hasNext={hasNext}
-        onClose={closeInspector}
+        onClose={saveAndClose}
         onPrevious={goToPrevious}
         onNext={goToNext}
         displayMode={displayMode}

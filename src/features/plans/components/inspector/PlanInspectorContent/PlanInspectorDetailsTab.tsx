@@ -8,7 +8,6 @@ import { memo } from 'react';
 
 import { Bell, CalendarDays, CheckCircle2, Circle, FileText } from 'lucide-react';
 
-import { Badge } from '@/components/ui/badge';
 import dynamic from 'next/dynamic';
 
 import { normalizeStatus } from '../../../utils/status';
@@ -88,8 +87,20 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
 
   return (
     <>
-      {/* Title */}
-      <div className="px-4 py-3">
+      {/* Title with Status Checkbox */}
+      <div className="flex items-center gap-2 px-4 py-3">
+        <button
+          type="button"
+          onClick={() => onStatusChange(status === 'closed' ? 'open' : 'closed')}
+          className="group hover:bg-state-hover flex h-6 w-6 flex-shrink-0 items-center justify-center rounded transition-colors"
+          aria-label={status === 'closed' ? 'Mark as open' : 'Mark as closed'}
+        >
+          {status === 'closed' ? (
+            <CheckCircle2 className="text-success size-5" />
+          ) : (
+            <Circle className="text-muted-foreground group-hover:text-success size-5" />
+          )}
+        </button>
         <input
           ref={titleRef}
           type="text"
@@ -140,24 +151,6 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
         popoverSide="bottom"
         popoverAlignOffset={-80}
       />
-
-      {/* Status */}
-      <div className="border-border/50 flex min-h-10 items-center gap-2 border-t px-4 py-2">
-        <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center">
-          {status === 'closed' ? (
-            <CheckCircle2 className="text-success size-4" />
-          ) : (
-            <Circle className="text-muted-foreground size-4" />
-          )}
-        </div>
-        <Badge
-          variant={status === 'closed' ? 'success' : 'secondary'}
-          className="hover:bg-state-hover cursor-pointer transition-colors"
-          onClick={() => onStatusChange(status === 'closed' ? 'open' : 'closed')}
-        >
-          {status === 'closed' ? 'Closed' : 'Open'}
-        </Badge>
-      </div>
 
       {/* Description */}
       <div className="border-border/50 flex min-h-10 items-start gap-2 border-t px-4 py-2">
