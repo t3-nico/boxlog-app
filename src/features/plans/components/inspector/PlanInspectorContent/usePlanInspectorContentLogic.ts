@@ -27,7 +27,7 @@ import { usePlanMutations } from '../../../hooks/usePlanMutations';
 import { usePlanTags } from '../../../hooks/usePlanTags';
 import { useDeleteConfirmStore } from '../../../stores/useDeleteConfirmStore';
 import { usePlanCacheStore } from '../../../stores/usePlanCacheStore';
-import { usePlanInspectorStore } from '../../../stores/usePlanInspectorStore';
+import { usePlanInspectorStore, type DraftPlan } from '../../../stores/usePlanInspectorStore';
 import { useRecurringEditConfirmStore } from '../../../stores/useRecurringEditConfirmStore';
 import type { Plan } from '../../../types/plan';
 import { minutesToReminderType } from '../../../utils/reminder';
@@ -58,7 +58,6 @@ export function usePlanInspectorContentLogic() {
   const draftPlan = usePlanInspectorStore((state) => state.draftPlan);
   const clearDraft = usePlanInspectorStore((state) => state.clearDraft);
   const updateDraft = usePlanInspectorStore((state) => state.updateDraft);
-  const openInspector = usePlanInspectorStore((state) => state.openInspector);
   const addPendingChange = usePlanInspectorStore((state) => state.addPendingChange);
   const clearPendingChanges = usePlanInspectorStore((state) => state.clearPendingChanges);
   const consumePendingChanges = usePlanInspectorStore((state) => state.consumePendingChanges);
@@ -143,65 +142,14 @@ export function usePlanInspectorContentLogic() {
   const { hasPrevious, hasNext, goToPrevious, goToNext } = useInspectorNavigation(planId);
   const { updatePlan, deletePlan } = useInspectorAutoSave({ planId, plan });
 
-  // ドラフトモード用の初回保存（DBに新規作成）
-  const saveDraftToDb = useCallback(
-    async (field: string, value: string | undefined): Promise<string | null> => {
-      if (!draftPlan) return null;
-
-      try {
-        // ドラフトデータに変更を適用してDB保存
-        // description は null を undefined に変換（API仕様に合わせる）
-        // タイトルが空の場合も空のまま保存（Google Calendar準拠）
-        const planData = {
-          title: draftPlan.title.trim(),
-          description: draftPlan.description ?? undefined,
-          status: 'open' as const,
-          due_date: draftPlan.due_date,
-          start_time: draftPlan.start_time,
-          end_time: draftPlan.end_time,
-          [field]: value,
-        };
-
-        const newPlan = await createPlan.mutateAsync(planData);
-
-        if (newPlan?.id) {
-          // ドラフトをクリアして通常モードに切り替え
-          clearDraft();
-          openInspector(newPlan.id);
-          // カレンダーのドラッグ選択をクリア（保存成功後）
-          window.dispatchEvent(new CustomEvent('calendar-drag-cancel'));
-          return newPlan.id;
-        }
-        return null;
-      } catch (error) {
-        console.error('Failed to create plan from draft:', error);
-        return null;
-      }
-    },
-    [draftPlan, createPlan, clearDraft, openInspector],
-  );
-
   // 繰り返しインスタンス対応のautoSave
   // 時間変更の場合のみスコープダイアログを表示
   const autoSave = useCallback(
     async (field: string, value: string | undefined) => {
-      // ドラフトモードの場合
+      // ドラフトモードの場合: ローカル更新のみ（DBには保存しない）
+      // 保存は saveAndClose() で行う
       if (isDraftMode) {
-        // タイトルを判定（今回の変更がtitleならその値、それ以外ならdraftPlanのtitle）
-        const effectiveTitle = field === 'title' ? value : draftPlan?.title;
-        const hasTitle = effectiveTitle && effectiveTitle.trim() !== '';
-
-        // タイトルがなければドラフトをローカル更新のみ（DBには保存しない）
-        if (!hasTitle) {
-          // タイトル以外のフィールド変更はドラフトに保持
-          if (field !== 'title' && field !== 'description') {
-            updateDraft({ [field]: value } as Partial<typeof draftPlan>);
-          }
-          return;
-        }
-
-        // タイトルがあればDBに保存
-        await saveDraftToDb(field, value);
+        updateDraft({ [field]: value } as Partial<DraftPlan>);
         return;
       }
 
@@ -216,7 +164,7 @@ export function usePlanInspectorContentLogic() {
       // 通常の場合: pendingChanges にバッファリング（保存ボタンで一括保存）
       addPendingChange({ [field]: value });
     },
-    [addPendingChange, recurringEdit, isDraftMode, saveDraftToDb, draftPlan, updateDraft],
+    [addPendingChange, recurringEdit, isDraftMode, updateDraft],
   );
 
   // Activity state
@@ -726,7 +674,30 @@ export function usePlanInspectorContentLogic() {
    * 未保存の変更を保存してからInspectorを閉じる（Google Calendar準拠）
    */
   const saveAndClose = useCallback(async () => {
-    // 未保存の変更を取得
+    // ドラフトモードの場合: 新規作成
+    if (isDraftMode && draftPlan) {
+      try {
+        const newPlan = await createPlan.mutateAsync({
+          title: draftPlan.title.trim() || '無題',
+          description: draftPlan.description ?? undefined,
+          status: 'open',
+          due_date: draftPlan.due_date,
+          start_time: draftPlan.start_time,
+          end_time: draftPlan.end_time,
+        });
+        if (newPlan?.id) {
+          clearDraft();
+          // カレンダーのドラッグ選択をクリア（保存成功後）
+          window.dispatchEvent(new CustomEvent('calendar-drag-cancel'));
+        }
+      } catch (error) {
+        console.error('Failed to create plan:', error);
+      }
+      closeInspector();
+      return;
+    }
+
+    // 編集モードの場合: 既存の処理
     const changes = consumePendingChanges();
 
     // 変更があればサーバーに保存
@@ -743,7 +714,16 @@ export function usePlanInspectorContentLogic() {
     }
 
     closeInspector();
-  }, [planId, consumePendingChanges, updatePlan, closeInspector]);
+  }, [
+    planId,
+    consumePendingChanges,
+    updatePlan,
+    closeInspector,
+    isDraftMode,
+    draftPlan,
+    createPlan,
+    clearDraft,
+  ]);
 
   /**
    * 変更を破棄してInspectorを閉じる（キャンセル）

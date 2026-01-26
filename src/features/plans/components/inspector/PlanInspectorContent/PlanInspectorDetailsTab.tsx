@@ -7,7 +7,7 @@
 import { memo, useEffect, useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
-import { Bell, CalendarDays, CircleDot, FileText } from 'lucide-react';
+import { Bell, CalendarDays, CheckCircle2, Circle, FileText } from 'lucide-react';
 
 import dynamic from 'next/dynamic';
 
@@ -111,24 +111,6 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
         />
       </div>
 
-      {/* Status */}
-      <div className="border-border/50 flex min-h-10 items-center gap-2 border-t px-4 py-2">
-        <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center">
-          <CircleDot className="text-muted-foreground size-4" />
-        </div>
-        <div className="flex h-8 flex-1 items-center">
-          <button
-            type="button"
-            onClick={() => onStatusChange(status === 'closed' ? 'open' : 'closed')}
-            className="focus-visible:ring-ring rounded-md focus-visible:ring-2 focus-visible:outline-none"
-          >
-            <Badge variant={status === 'closed' ? 'success' : 'secondary'}>
-              {status === 'closed' ? 'Closed' : 'Open'}
-            </Badge>
-          </button>
-        </div>
-      </div>
-
       {/* Schedule */}
       <PlanScheduleSection
         selectedDate={scheduleDate}
@@ -169,6 +151,28 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
         popoverSide="bottom"
         popoverAlignOffset={-80}
       />
+
+      {/* Status */}
+      <div className="border-border/50 flex min-h-10 items-center gap-2 border-t px-4 py-2">
+        <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center">
+          {status === 'closed' ? (
+            <CheckCircle2 className="text-success size-4" />
+          ) : (
+            <Circle className="text-info size-4" />
+          )}
+        </div>
+        <div className="flex h-8 flex-1 items-center">
+          <button
+            type="button"
+            onClick={() => onStatusChange(status === 'closed' ? 'open' : 'closed')}
+            className="focus-visible:ring-ring rounded-md focus-visible:ring-2 focus-visible:outline-none"
+          >
+            <Badge variant={status === 'closed' ? 'success' : 'info'}>
+              {status === 'closed' ? 'Closed' : 'Open'}
+            </Badge>
+          </button>
+        </div>
+      </div>
 
       {/* Description */}
       <div className="border-border/50 flex min-h-10 items-start gap-2 border-t px-4 py-2">

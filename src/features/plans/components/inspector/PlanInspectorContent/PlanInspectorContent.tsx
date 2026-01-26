@@ -31,6 +31,7 @@ export function PlanInspectorContent() {
     saveAndClose,
     cancelAndClose,
     hasPendingChanges,
+    isDraftMode,
     hasPrevious,
     hasNext,
     goToPrevious,
@@ -91,7 +92,7 @@ export function PlanInspectorContent() {
       <InspectorHeader
         hasPrevious={hasPrevious}
         hasNext={hasNext}
-        onClose={saveAndClose}
+        onClose={cancelAndClose}
         onPrevious={goToPrevious}
         onNext={goToNext}
         displayMode={displayMode}
@@ -256,13 +257,13 @@ export function PlanInspectorContent() {
         </TabsContent>
       </Tabs>
 
-      {/* 保存/キャンセルボタン（未保存の変更がある場合のみ表示） */}
-      {hasPendingChanges && (
+      {/* 保存/キャンセルボタン（未保存の変更がある場合またはドラフトモード時に表示） */}
+      {(hasPendingChanges || isDraftMode) && (
         <div className="flex shrink-0 justify-end gap-2 border-t px-4 py-3">
           <Button variant="ghost" onClick={cancelAndClose}>
             キャンセル
           </Button>
-          <Button onClick={saveAndClose}>保存</Button>
+          <Button onClick={saveAndClose}>{isDraftMode ? '作成' : '保存'}</Button>
         </div>
       )}
     </div>
