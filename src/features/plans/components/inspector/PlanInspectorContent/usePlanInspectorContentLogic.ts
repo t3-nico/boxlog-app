@@ -9,8 +9,14 @@ import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import useCalendarToast from '@/features/calendar/lib/toast';
-import { parseDateString, parseDatetimeString } from '@/features/calendar/utils/dateUtils';
+import {
+  localTimeToUTCISO,
+  parseDateString,
+  parseDatetimeString,
+  parseISOToUserTimezone,
+} from '@/features/calendar/utils/dateUtils';
 import type { InspectorDisplayMode } from '@/features/inspector';
+import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
 import { useHapticFeedback } from '@/hooks/useHapticFeedback';
 import { api } from '@/lib/trpc';
 
@@ -36,6 +42,9 @@ export function usePlanInspectorContentLogic() {
   const utils = api.useUtils();
   const calendarToast = useCalendarToast();
   const { error: hapticError } = useHapticFeedback();
+
+  // ユーザーのタイムゾーン設定
+  const timezone = useCalendarSettingsStore((state) => state.timezone);
 
   // 時間重複エラー状態（視覚的フィードバック用）
   const [timeConflictError, setTimeConflictError] = useState(false);
@@ -289,9 +298,9 @@ export function usePlanInspectorContentLogic() {
       // 期限日（due_date）を設定
       setDueDate(plan.due_date ? parseDateString(plan.due_date) : undefined);
 
-      // スケジュール日と時間を設定
+      // スケジュール日と時間を設定（タイムゾーン対応）
       if (plan.start_time) {
-        const date = parseDatetimeString(plan.start_time);
+        const date = parseISOToUserTimezone(plan.start_time, timezone);
         setScheduleDate(date); // スケジュール日はstart_timeから取得
         setStartTime(
           `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`,
@@ -302,7 +311,7 @@ export function usePlanInspectorContentLogic() {
       }
 
       if (plan.end_time) {
-        const date = parseDatetimeString(plan.end_time);
+        const date = parseISOToUserTimezone(plan.end_time, timezone);
         setEndTime(
           `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`,
         );
@@ -317,14 +326,14 @@ export function usePlanInspectorContentLogic() {
       }
     } else if (!plan && initialData) {
       if (initialData.start_time) {
-        const startDate = new Date(initialData.start_time);
+        const startDate = parseISOToUserTimezone(initialData.start_time, timezone);
         setScheduleDate(startDate);
         setStartTime(
           `${startDate.getHours().toString().padStart(2, '0')}:${startDate.getMinutes().toString().padStart(2, '0')}`,
         );
       }
       if (initialData.end_time) {
-        const endDate = new Date(initialData.end_time);
+        const endDate = parseISOToUserTimezone(initialData.end_time, timezone);
         setEndTime(
           `${endDate.getHours().toString().padStart(2, '0')}:${endDate.getMinutes().toString().padStart(2, '0')}`,
         );
@@ -336,7 +345,7 @@ export function usePlanInspectorContentLogic() {
       setEndTime('');
       setReminderType('');
     }
-  }, [plan, initialData, isDraftMode, draftPlan]);
+  }, [plan, initialData, isDraftMode, draftPlan, timezone]);
 
   // Focus title on open
   useEffect(() => {
@@ -506,15 +515,11 @@ export function usePlanInspectorContentLogic() {
       if (isDraftMode) {
         if (date && startTime) {
           const [hours, minutes] = startTime.split(':').map(Number);
-          const newStartDateTime = new Date(date);
-          newStartDateTime.setHours(hours ?? 0, minutes ?? 0, 0, 0);
-          updateDraft({ start_time: newStartDateTime.toISOString() });
+          updateDraft({ start_time: localTimeToUTCISO(date, hours ?? 0, minutes ?? 0, timezone) });
         }
         if (date && endTime) {
           const [hours, minutes] = endTime.split(':').map(Number);
-          const newEndDateTime = new Date(date);
-          newEndDateTime.setHours(hours ?? 0, minutes ?? 0, 0, 0);
-          updateDraft({ end_time: newEndDateTime.toISOString() });
+          updateDraft({ end_time: localTimeToUTCISO(date, hours ?? 0, minutes ?? 0, timezone) });
         }
         return;
       }
@@ -524,40 +529,31 @@ export function usePlanInspectorContentLogic() {
 
       if (date && startTime && endTime) {
         const [startHours, startMinutes] = startTime.split(':').map(Number);
-        const newStartDateTime = new Date(date);
-        newStartDateTime.setHours(startHours ?? 0, startMinutes ?? 0, 0, 0);
-
         const [endHours, endMinutes] = endTime.split(':').map(Number);
-        const newEndDateTime = new Date(date);
-        newEndDateTime.setHours(endHours ?? 0, endMinutes ?? 0, 0, 0);
 
-        // 両フィールドを一度に更新
+        // 両フィールドを一度に更新（タイムゾーン対応）
         updatePlan.mutate({
           id: planId,
           data: {
-            start_time: newStartDateTime.toISOString(),
-            end_time: newEndDateTime.toISOString(),
+            start_time: localTimeToUTCISO(date, startHours ?? 0, startMinutes ?? 0, timezone),
+            end_time: localTimeToUTCISO(date, endHours ?? 0, endMinutes ?? 0, timezone),
           },
         });
       } else if (date && startTime) {
         const [hours, minutes] = startTime.split(':').map(Number);
-        const newStartDateTime = new Date(date);
-        newStartDateTime.setHours(hours ?? 0, minutes ?? 0, 0, 0);
         updatePlan.mutate({
           id: planId,
-          data: { start_time: newStartDateTime.toISOString() },
+          data: { start_time: localTimeToUTCISO(date, hours ?? 0, minutes ?? 0, timezone) },
         });
       } else if (date && endTime) {
         const [hours, minutes] = endTime.split(':').map(Number);
-        const newEndDateTime = new Date(date);
-        newEndDateTime.setHours(hours ?? 0, minutes ?? 0, 0, 0);
         updatePlan.mutate({
           id: planId,
-          data: { end_time: newEndDateTime.toISOString() },
+          data: { end_time: localTimeToUTCISO(date, hours ?? 0, minutes ?? 0, timezone) },
         });
       }
     },
-    [planId, isDraftMode, startTime, endTime, updatePlan, updateDraft],
+    [planId, isDraftMode, startTime, endTime, updatePlan, updateDraft, timezone],
   );
 
   // 期限日変更ハンドラー（due_date）
@@ -571,10 +567,12 @@ export function usePlanInspectorContentLogic() {
 
   const handleStartTimeChange = useCallback(
     (time: string) => {
-      // 新しい開始時刻を計算
+      // 時刻をパース
+      const [hours, minutes] = time ? time.split(':').map(Number) : [0, 0];
+
+      // 新しい開始時刻を計算（重複チェック用のローカル日付）
       const newStartDateTime = time && scheduleDate ? new Date(scheduleDate) : null;
       if (newStartDateTime && time) {
-        const [hours, minutes] = time.split(':').map(Number);
         newStartDateTime.setHours(hours ?? 0, minutes ?? 0, 0, 0);
       }
 
@@ -596,22 +594,27 @@ export function usePlanInspectorContentLogic() {
       }
 
       setStartTime(time);
-      const isoValue = newStartDateTime?.toISOString();
+
+      // タイムゾーン対応のISO文字列を生成
+      const isoValue =
+        time && scheduleDate
+          ? localTimeToUTCISO(scheduleDate, hours ?? 0, minutes ?? 0, timezone)
+          : null;
 
       // ドラフトモード
       if (isDraftMode) {
-        updateDraft({ start_time: isoValue ?? null });
+        updateDraft({ start_time: isoValue });
         return;
       }
 
       // 繰り返しインスタンス → スコープダイアログ
       if (recurringEdit.isRecurringInstance) {
-        recurringEdit.openScopeDialog('start_time', isoValue);
+        recurringEdit.openScopeDialog('start_time', isoValue ?? undefined);
         return;
       }
 
       // 通常モード → 即座に更新（debounceなし）
-      if (planId) {
+      if (planId && isoValue) {
         updatePlan.mutate({
           id: planId,
           data: { start_time: isoValue },
@@ -630,15 +633,18 @@ export function usePlanInspectorContentLogic() {
       hapticError,
       calendarToast,
       t,
+      timezone,
     ],
   );
 
   const handleEndTimeChange = useCallback(
     (time: string) => {
-      // 新しい終了時刻を計算
+      // 時刻をパース
+      const [hours, minutes] = time ? time.split(':').map(Number) : [0, 0];
+
+      // 新しい終了時刻を計算（重複チェック用のローカル日付）
       const newEndDateTime = time && scheduleDate ? new Date(scheduleDate) : null;
       if (newEndDateTime && time) {
-        const [hours, minutes] = time.split(':').map(Number);
         newEndDateTime.setHours(hours ?? 0, minutes ?? 0, 0, 0);
       }
 
@@ -660,22 +666,27 @@ export function usePlanInspectorContentLogic() {
       }
 
       setEndTime(time);
-      const isoValue = newEndDateTime?.toISOString();
+
+      // タイムゾーン対応のISO文字列を生成
+      const isoValue =
+        time && scheduleDate
+          ? localTimeToUTCISO(scheduleDate, hours ?? 0, minutes ?? 0, timezone)
+          : null;
 
       // ドラフトモード
       if (isDraftMode) {
-        updateDraft({ end_time: isoValue ?? null });
+        updateDraft({ end_time: isoValue });
         return;
       }
 
       // 繰り返しインスタンス → スコープダイアログ
       if (recurringEdit.isRecurringInstance) {
-        recurringEdit.openScopeDialog('end_time', isoValue);
+        recurringEdit.openScopeDialog('end_time', isoValue ?? undefined);
         return;
       }
 
       // 通常モード → 即座に更新（debounceなし）
-      if (planId) {
+      if (planId && isoValue) {
         updatePlan.mutate({
           id: planId,
           data: { end_time: isoValue },
@@ -694,6 +705,7 @@ export function usePlanInspectorContentLogic() {
       hapticError,
       calendarToast,
       t,
+      timezone,
     ],
   );
 
