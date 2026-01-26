@@ -1,0 +1,1 @@
+export { useRecordInspectorStore } from './useRecordInspectorStore';

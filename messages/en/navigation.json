@@ -38,6 +38,7 @@
     "navigation": {
       "calendar": "Calendar",
       "plan": "Plan",
+      "record": "Record",
       "tags": "Tags",
       "stats": "Stats",
       "settings": "Settings",
