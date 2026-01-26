@@ -29,13 +29,8 @@ type DbTagRow = Database['public']['Tables']['tags']['Row'];
 
 /**
  * DBのタグ行をフロントエンド用の Tag 型に変換
- * マイグレーション前: group_id → parent_id
- * マイグレーション後: parent_id をそのまま使用
  */
 function transformDbTag(dbTag: DbTagRow): Tag {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const anyTag = dbTag as any;
-
   return {
     id: dbTag.id,
     name: dbTag.name,
@@ -44,48 +39,32 @@ function transformDbTag(dbTag: DbTagRow): Tag {
     description: dbTag.description,
     icon: dbTag.icon,
     is_active: dbTag.is_active,
-    // マイグレーション後は parent_id を直接使用、前は group_id を使用
-    parent_id: anyTag.parent_id ?? anyTag.group_id ?? null,
-    // sort_order はマイグレーション後に追加予定、今は null を許容
-    sort_order: anyTag.sort_order ?? null,
+    parent_id: dbTag.parent_id,
+    sort_order: dbTag.sort_order,
     created_at: dbTag.created_at,
     updated_at: dbTag.updated_at,
   };
 }
 
-/**
- * Tag RPC関数の型定義
- * これらのRPC関数はDBマイグレーションで作成が必要
- */
-interface TagRpcFunctions {
-  merge_tags: {
-    Args: {
-      p_user_id: string;
-      p_source_tag_ids: string[];
-      p_target_tag_id: string;
-    };
-    Returns: {
-      success: boolean;
-      merged_associations: number;
-      deleted_tags: number;
-      target_tag: DbTagRow;
-    };
-  };
+/** merge_tags RPC関数の戻り値型 */
+interface MergeTagsRpcResult {
+  success: boolean;
+  merged_associations: number;
+  deleted_tags: number;
+  promoted_children: number;
+  target_tag: DbTagRow;
 }
 
 /**
- * 型安全なTag RPC呼び出しヘルパー
+ * merge_tags RPC呼び出し
  */
-async function callTagRpc<T extends keyof TagRpcFunctions>(
+async function callMergeTagsRpc(
   supabase: SupabaseClient<Database>,
-  functionName: T,
-  args: TagRpcFunctions[T]['Args'],
-): Promise<{ data: TagRpcFunctions[T]['Returns'] | null; error: Error | null }> {
-  // supabase.rpc は直接呼び出す（型キャストで対応）
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const result = await (supabase.rpc as any)(functionName, args);
+  args: Database['public']['Functions']['merge_tags']['Args'],
+): Promise<{ data: MergeTagsRpcResult | null; error: Error | null }> {
+  const result = await supabase.rpc('merge_tags', args);
   return {
-    data: result.data as TagRpcFunctions[T]['Returns'] | null,
+    data: result.data as MergeTagsRpcResult | null,
     error: result.error,
   };
 }
@@ -363,8 +342,7 @@ export class TagService {
     }
 
     // タグデータ作成（sort_order = 0で先頭に追加）
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const tagData: any = {
+    const tagData: Database['public']['Tables']['tags']['Insert'] = {
       user_id: userId,
       name: input.name.trim(),
       color: input.color || '#3B82F6',
@@ -437,8 +415,7 @@ export class TagService {
     }
 
     // 更新データ準備
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const updateData: Record<string, any> = {};
+    const updateData: Database['public']['Tables']['tags']['Update'] = {};
     if (updates.name !== undefined) updateData.name = updates.name.trim();
     if (updates.color !== undefined) updateData.color = updates.color;
     if (updates.description !== undefined)
@@ -479,7 +456,7 @@ export class TagService {
     }
 
     try {
-      const { data, error } = await callTagRpc(this.supabase, 'merge_tags', {
+      const { data, error } = await callMergeTagsRpc(this.supabase, {
         p_user_id: userId,
         p_source_tag_ids: [sourceTagId],
         p_target_tag_id: targetTagId,

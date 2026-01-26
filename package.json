@@ -289,7 +289,9 @@
     "zustand": "^5.0.6"
   },
   "overrides": {
-    "sharp": false
+    "sharp": false,
+    "tar": "^7.5.4",
+    "tmp": "^0.2.4"
   },
   "devDependencies": {
     "@axe-core/react": "^4.11.0",
