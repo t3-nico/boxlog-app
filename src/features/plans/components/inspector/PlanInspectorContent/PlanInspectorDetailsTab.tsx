@@ -19,6 +19,8 @@ import { PlanScheduleSection } from '../../shared/PlanScheduleSection';
 import { PlanTagsSection } from '../../shared/PlanTagsSection';
 import { ReminderSelect } from '../../shared/ReminderSelect';
 
+import { ActivitySection } from './ActivitySection';
+
 // Novel エディターは重いため遅延ロード
 const NovelDescriptionEditor = dynamic(
   () => import('../../shared/NovelDescriptionEditor').then((mod) => mod.NovelDescriptionEditor),
@@ -58,10 +60,13 @@ interface PlanInspectorDetailsTabProps {
   onRecurrenceRuleChange: (rrule: string | null) => void;
   /** ステータス変更ハンドラー */
   onStatusChange: (status: 'open' | 'closed') => void;
+  /** ドラフトモード（新規作成時） */
+  isDraftMode?: boolean;
 }
 
 export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
   plan,
+  planId,
   titleRef,
   scheduleDate,
   dueDate,
@@ -83,6 +88,7 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
   onRepeatTypeChange,
   onRecurrenceRuleChange,
   onStatusChange,
+  isDraftMode = false,
 }: PlanInspectorDetailsTabProps) {
   const status = normalizeStatus(plan.status);
 
@@ -152,27 +158,29 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
         popoverAlignOffset={-80}
       />
 
-      {/* Status */}
-      <div className="border-border/50 flex min-h-10 items-center gap-2 border-t px-4 py-2">
-        <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center">
-          {status === 'closed' ? (
-            <CheckCircle2 className="text-success size-4" />
-          ) : (
-            <Circle className="text-info size-4" />
-          )}
+      {/* Status - ドラフトモードでは非表示（新規作成時は常にopen） */}
+      {!isDraftMode && (
+        <div className="border-border/50 flex min-h-10 items-center gap-2 border-t px-4 py-2">
+          <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center">
+            {status === 'closed' ? (
+              <CheckCircle2 className="text-success size-4" />
+            ) : (
+              <Circle className="text-info size-4" />
+            )}
+          </div>
+          <div className="flex h-8 flex-1 items-center">
+            <button
+              type="button"
+              onClick={() => onStatusChange(status === 'closed' ? 'open' : 'closed')}
+              className="focus-visible:ring-ring rounded-md focus-visible:ring-2 focus-visible:outline-none"
+            >
+              <Badge variant={status === 'closed' ? 'success' : 'info'}>
+                {status === 'closed' ? 'Closed' : 'Open'}
+              </Badge>
+            </button>
+          </div>
         </div>
-        <div className="flex h-8 flex-1 items-center">
-          <button
-            type="button"
-            onClick={() => onStatusChange(status === 'closed' ? 'open' : 'closed')}
-            className="focus-visible:ring-ring rounded-md focus-visible:ring-2 focus-visible:outline-none"
-          >
-            <Badge variant={status === 'closed' ? 'success' : 'info'}>
-              {status === 'closed' ? 'Closed' : 'Open'}
-            </Badge>
-          </button>
-        </div>
-      </div>
+      )}
 
       {/* Description */}
       <div className="border-border/50 flex min-h-10 items-start gap-2 border-t px-4 py-2">
@@ -198,6 +206,9 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
           <ReminderSelect value={reminderType} onChange={onReminderChange} variant="inspector" />
         </div>
       </div>
+
+      {/* Activity Section - 編集モードのみ */}
+      {!isDraftMode && planId && <ActivitySection planId={planId} />}
     </>
   );
 });

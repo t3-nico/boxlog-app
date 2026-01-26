@@ -167,12 +167,6 @@ export function usePlanInspectorContentLogic() {
     [addPendingChange, recurringEdit, isDraftMode, updateDraft],
   );
 
-  // Activity state
-  const [activityOrder, setActivityOrder] = useState<'asc' | 'desc'>('desc');
-  const [isHoveringSort, setIsHoveringSort] = useState(false);
-  const sortButtonRef = useRef<HTMLSpanElement>(null);
-  const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
-
   // Tags state
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
   const selectedTagIdsRef = useRef<string[]>(selectedTagIds);
@@ -753,15 +747,6 @@ export function usePlanInspectorContentLogic() {
     hasNext,
     goToPrevious,
     goToNext,
-
-    // Activity state
-    activityOrder,
-    setActivityOrder,
-    isHoveringSort,
-    setIsHoveringSort,
-    sortButtonRef,
-    tooltipPosition,
-    setTooltipPosition,
 
     // Tags state
     selectedTagIds,

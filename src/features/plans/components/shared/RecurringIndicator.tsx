@@ -51,7 +51,7 @@ const sizeClasses: Record<RecurringIndicatorSize, string> = {
  * - Calendar PlanCard
  * - Kanban PlanCard
  * - Agenda Item
- * - Inbox DateTimeCell
+ * - Plan DateTimeCell
  *
  * @example
  * ```tsx
