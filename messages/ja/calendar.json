@@ -168,12 +168,6 @@
     "dateRange": {
       "weekLabel": "第{weekNumber}週"
     },
-    "sidebar": {
-      "tabs": {
-        "open": "Open",
-        "view": "View"
-      }
-    },
     "filter": {
       "type": "種類",
       "tags": "タグ",
@@ -215,15 +209,6 @@
       "tagMenu": "タグメニュー",
       "expand": "展開",
       "collapse": "折りたたむ"
-    },
-    "open": {
-      "navigation": {
-        "created": "作成日順",
-        "updated": "更新日順"
-      },
-      "loading": "読み込み中...",
-      "noTasks": "タスクがありません",
-      "error": "エラーが発生しました"
     },
     "statusBar": {
       "noSchedule": "予定なし",

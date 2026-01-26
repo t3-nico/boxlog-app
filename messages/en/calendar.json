@@ -168,12 +168,6 @@
     "dateRange": {
       "weekLabel": "Week {weekNumber}"
     },
-    "sidebar": {
-      "tabs": {
-        "open": "Open",
-        "view": "View"
-      }
-    },
     "filter": {
       "type": "Type",
       "tags": "Tags",
@@ -215,15 +209,6 @@
       "tagMenu": "Tag menu",
       "expand": "Expand",
       "collapse": "Collapse"
-    },
-    "open": {
-      "navigation": {
-        "created": "Created",
-        "updated": "Updated"
-      },
-      "loading": "Loading...",
-      "noTasks": "No tasks",
-      "error": "An error occurred"
     },
     "statusBar": {
       "noSchedule": "No schedule",
