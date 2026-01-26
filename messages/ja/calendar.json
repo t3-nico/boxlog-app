@@ -85,7 +85,11 @@
       "duplicateFailed": "予定の複製に失敗しました",
       "restoreError": "復元エラー",
       "createNewEvent": "新しいイベントを作成",
-      "enterEventTitle": "イベントタイトルを入力"
+      "enterEventTitle": "イベントタイトルを入力",
+      "reminderSet": "リマインダー設定済み",
+      "noTitle": "(タイトルなし)",
+      "markComplete": "完了にする",
+      "markIncomplete": "未完了に戻す"
     },
     "contextMenu": {
       "open": "開く",

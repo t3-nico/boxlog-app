@@ -6,7 +6,6 @@
 
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { calendarColors } from '@/features/calendar/theme';
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
 import { normalizeStatus } from '@/features/plans/utils/status';
 import { CheckCircle2, Circle } from 'lucide-react';
@@ -44,9 +43,6 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
   const isMobile = useMediaQuery(MEDIA_QUERIES.mobile);
 
   // すべてのプランは時間指定プラン
-
-  // カレンダーテーマのscheduledカラーを使用
-  const scheduledColors = calendarColors.event.scheduled;
 
   // positionが未定義の場合のデフォルト値
   const safePosition = useMemo(
@@ -187,11 +183,14 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
   const planCardClasses = cn(
     // 基本スタイル
     'overflow-hidden',
-    'focus:outline-none focus:ring-2 focus:ring-offset-1',
+    // フォーカスリング（キーボード操作時のみ表示、視認性向上）
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2',
     // 背景色（選択/アクティブ時はstate-hover、通常時はplan-box）
     isSelected || isActive ? 'bg-state-hover' : 'bg-plan-box',
+    // 選択状態の視覚フィードバック（色覚異常対応）
+    isSelected && 'ring-2 ring-primary',
     // テキスト色
-    scheduledColors.text,
+    'text-foreground',
     // 状態別スタイル
     isDragging ? 'cursor-grabbing' : 'cursor-pointer',
     // モバイル: Googleカレンダー風（左ボーダー、チェックボックス+タイトル横並び、上寄せ）
@@ -245,13 +244,20 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
         onMouseLeave={() => setIsCheckboxHovered(false)}
         className={cn(
           'z-10 flex-shrink-0 rounded',
-          // モバイル: インライン配置、デスクトップ: 絶対配置
-          isMobile ? 'relative' : 'absolute flex items-center justify-center',
+          // モバイル: 44x44pxタッチターゲット（Apple HIG準拠）、アイコンは中央配置
+          // デスクトップ: 絶対配置
+          isMobile
+            ? 'relative -m-3 flex min-h-[44px] min-w-[44px] items-center justify-center'
+            : 'absolute flex items-center justify-center',
           !isMobile && (safePosition.height < 30 ? 'top-0.5 left-0.5' : 'top-2 left-2'),
-          // ホバー領域を確保（小さい予定でもホバーしやすく）
-          'min-h-4 min-w-4',
+          // デスクトップ: ホバー領域を確保（小さい予定でもホバーしやすく）
+          !isMobile && 'min-h-4 min-w-4',
         )}
-        aria-label={normalizeStatus(plan.status) === 'closed' ? '未完了に戻す' : '完了にする'}
+        aria-label={
+          normalizeStatus(plan.status) === 'closed'
+            ? t('calendar.event.markIncomplete')
+            : t('calendar.event.markComplete')
+        }
       >
         {(() => {
           const status = normalizeStatus(plan.status);

@@ -1,40 +1,9 @@
 // features/calendar/theme/utils.ts
 // テーマ関連のユーティリティ関数（Tailwindクラスベース）
+// 注: カラーはglobals.cssのセマンティックトークンを直接使用
 
 import { calendarAnimations } from './animations';
-import type { CalendarColors } from './colors';
-import { calendarColors } from './colors';
 import { calendarStyles } from './styles';
-
-// イベントの色クラスを取得
-export const getEventColor = (
-  status: keyof CalendarColors['event'],
-  property: 'background' | 'text' | 'hover' = 'background',
-): string => {
-  const colors = calendarColors.event[status as keyof typeof calendarColors.event];
-  const colorValue =
-    colors && Object.prototype.hasOwnProperty.call(colors, property)
-      ? colors[property as keyof typeof colors]
-      : null;
-  return (
-    (colorValue ??
-      calendarColors.event.scheduled[property as keyof typeof calendarColors.event.scheduled]) ||
-    ''
-  );
-};
-
-// UI状態の色クラスを取得
-export const getStatusColor = (
-  state: keyof CalendarColors['states'],
-  property: 'background' | 'text' = 'background',
-): string => {
-  const colors = calendarColors.states[state];
-  return (
-    (colors && Object.prototype.hasOwnProperty.call(colors, property)
-      ? colors[property as keyof typeof colors]
-      : null) || ''
-  );
-};
 
 // 共通Tailwindクラスを取得するヘルパー
 export const getTextMuted = (): string => 'text-neutral-600 dark:text-neutral-400';
@@ -48,68 +17,6 @@ export const getCalendarAnimation = (type: keyof typeof calendarAnimations): str
   return Object.prototype.hasOwnProperty.call(calendarAnimations, type)
     ? calendarAnimations[type]
     : '';
-};
-
-// 完全なイベントクラス名を生成（すべてscheduledカラーベース）
-export const getEventClassName = (
-  options: {
-    isDragging?: boolean;
-    isGhost?: boolean;
-    isSelected?: boolean;
-    isConflict?: boolean;
-  } = {},
-): string => {
-  const { isDragging, isGhost, isSelected, isConflict } = options;
-
-  // 基本クラス（すべてscheduledカラー使用、ボーダーなし）
-  const classes = [
-    // 背景色 - scheduledカラー
-    getEventColor('scheduled', 'background'),
-    // テキスト色 - scheduledカラー
-    getEventColor('scheduled', 'text'),
-    // 基本スタイル
-    calendarStyles.event.borderRadius,
-    calendarStyles.event.padding,
-    calendarStyles.event.minHeight,
-    calendarStyles.event.fontSize.title,
-    calendarStyles.event.shadow.default,
-    calendarStyles.transitions.default,
-    // ホバー効果 - scheduledカラー
-    getEventColor('scheduled', 'hover'),
-    // カーソル
-    'cursor-pointer select-none',
-  ];
-
-  // 状態による追加クラス（scheduledカラーは維持）
-  if (isDragging) {
-    classes.push(calendarAnimations.dragScale, calendarStyles.event.shadow.dragging, 'z-50');
-  }
-
-  if (isGhost) {
-    // ゴーストのみ特別な色を使用（ボーダーなし）
-    classes.length = 0; // 基本クラスをクリア
-    classes.push(
-      getStatusColor('ghost', 'background'),
-      getStatusColor('ghost', 'text'),
-      calendarStyles.event.borderRadius,
-      calendarStyles.event.padding,
-      calendarStyles.event.minHeight,
-      calendarStyles.event.fontSize.title,
-      calendarAnimations.ghostAppear,
-    );
-  }
-
-  if (isSelected) {
-    // 選択時は背景のみ変更（ボーダーなし）
-    classes.push(getStatusColor('selected', 'background'), 'ring-2 ring-primary');
-  }
-
-  if (isConflict) {
-    // 衝突時は背景のみ変更（ボーダーなし）
-    classes.push(getStatusColor('conflict', 'background'), calendarAnimations.pulse);
-  }
-
-  return classes.filter(Boolean).join(' ');
 };
 
 // カレンダーグリッドのクラス名を生成

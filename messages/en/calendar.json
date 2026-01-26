@@ -85,7 +85,11 @@
       "duplicateFailed": "Failed to duplicate event",
       "restoreError": "Restore Error",
       "createNewEvent": "Create new event",
-      "enterEventTitle": "Enter event title"
+      "enterEventTitle": "Enter event title",
+      "reminderSet": "Reminder set",
+      "noTitle": "(No title)",
+      "markComplete": "Mark as complete",
+      "markIncomplete": "Mark as incomplete"
     },
     "contextMenu": {
       "open": "Open",

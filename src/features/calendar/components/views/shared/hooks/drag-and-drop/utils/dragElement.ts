@@ -1,4 +1,3 @@
-import { calendarColors } from '@/features/calendar/theme';
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
 
 /**
@@ -18,10 +17,8 @@ export function createDragElement(originalElement: HTMLElement): {
   dragElement.className = '';
   dragElement.classList.add('rounded-md', 'px-2', 'py-1', 'overflow-hidden');
 
-  const activeColorClasses = calendarColors.event.scheduled.active?.split(' ') || [];
-  activeColorClasses.forEach((cls) => {
-    if (cls) dragElement.classList.add(cls);
-  });
+  // セマンティックトークンを直接使用
+  dragElement.classList.add('bg-container');
 
   dragElement.style.position = 'fixed';
   dragElement.style.left = `${rect.left}px`;
