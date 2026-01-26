@@ -78,10 +78,15 @@ describe('reminder', () => {
       expect(minutesToReminderType(10080)).toBe('1週間前');
     });
 
-    it('未知の値は空文字列を返す', () => {
-      expect(minutesToReminderType(5)).toBe('');
-      expect(minutesToReminderType(120)).toBe('');
-      expect(minutesToReminderType(999)).toBe('');
+    it('未知の値は"カスタム"を返す（デフォルトfallback）', () => {
+      expect(minutesToReminderType(5)).toBe('カスタム');
+      expect(minutesToReminderType(120)).toBe('カスタム');
+      expect(minutesToReminderType(999)).toBe('カスタム');
+    });
+
+    it('fallbackを指定すると未知の値にその値を返す', () => {
+      expect(minutesToReminderType(5, '')).toBe('');
+      expect(minutesToReminderType(120, 'unknown')).toBe('unknown');
     });
   });
 
