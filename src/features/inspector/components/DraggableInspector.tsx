@@ -8,24 +8,23 @@ import {
   useSensors,
   type DragEndEvent,
 } from '@dnd-kit/core';
-import { createContext, useCallback, useContext, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
 
-import { zIndex } from '@/config/ui/z-index';
 import { cn } from '@/lib/utils';
 
-/** インスペクターのサイズ定数 */
-const INSPECTOR_MAX_WIDTH = 480; // max-w-[30rem] = 480px
-const INSPECTOR_HEIGHT = 640; // h-[40rem] = 640px
+import type { PopoverPosition } from '@/features/plans/stores/usePlanInspectorStore';
 
-/** Popover位置情報 */
-interface PopoverPosition {
-  x: number;
-  y: number;
-}
+/** インスペクターのサイズ定数（元のDialogContentと同じ） */
+const INSPECTOR_MAX_WIDTH = 448; // max-w-[28rem] = 448px
+const INSPECTOR_HEIGHT = 640; // h-[40rem] = 640px
 
 interface DraggableInspectorProps {
   /** 子要素 */
   children: ReactNode;
+  /** 現在の位置（null = 初期位置を計算） */
+  position: PopoverPosition | null;
+  /** 位置変更時のコールバック */
+  onPositionChange: (position: PopoverPosition) => void;
   /** 閉じるコールバック */
   onClose: () => void;
   /** アクセシビリティ用タイトル */
@@ -35,14 +34,21 @@ interface DraggableInspectorProps {
 /**
  * ドラッグ可能なインスペクターコンテナ
  *
- * dnd-kitを使用してドラッグ移動を実現
+ * Popoverモードでdnd-kitを使用してドラッグ移動を実現
  * - ヘッダー部分をドラッグハンドルとして使用
  * - 画面端の制約を適用
- * - 位置はセッション中のみ維持（閉じたらリセット）
+ * - 位置をlocalStorageに保存（親経由）
  */
-export function DraggableInspector({ children, onClose, title }: DraggableInspectorProps) {
-  // 初期位置を計算（画面中央寄り上）
+export function DraggableInspector({
+  children,
+  position,
+  onPositionChange,
+  onClose,
+  title,
+}: DraggableInspectorProps) {
+  // 初期位置を計算（保存された位置がなければ画面中央）
   const [currentPosition, setCurrentPosition] = useState<PopoverPosition>(() => {
+    if (position) return position;
     // SSR対応: windowがない場合はデフォルト値
     if (typeof window === 'undefined') return { x: 100, y: 100 };
     return {
@@ -50,6 +56,13 @@ export function DraggableInspector({ children, onClose, title }: DraggableInspec
       y: Math.max(0, Math.min(100, (window.innerHeight - INSPECTOR_HEIGHT) / 4)),
     };
   });
+
+  // 保存された位置が変更されたら反映
+  useEffect(() => {
+    if (position) {
+      setCurrentPosition(position);
+    }
+  }, [position]);
 
   // PointerSensorに距離制約を追加（クリックとドラッグを区別）
   const sensors = useSensors(
@@ -86,17 +99,19 @@ export function DraggableInspector({ children, onClose, title }: DraggableInspec
         Math.min(currentPosition.y + delta.y, window.innerHeight - INSPECTOR_HEIGHT),
       );
 
-      setCurrentPosition({ x: newX, y: newY });
+      const newPosition = { x: newX, y: newY };
+      setCurrentPosition(newPosition);
+      onPositionChange(newPosition);
     },
-    [currentPosition],
+    [currentPosition, onPositionChange],
   );
 
   return (
     <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
-      {/* 透明な背景（クリックで閉じる） */}
+      {/* 透明な背景（クリックで閉じる） - カレンダーのDragSelectionPreview(z-1000)より上に */}
       <div
         className="fixed inset-0"
-        style={{ zIndex: zIndex.draggableInspectorBackdrop }}
+        style={{ zIndex: 1099 }}
         onClick={handleBackdropClick}
         aria-hidden="true"
       />
@@ -122,12 +137,12 @@ function DraggableContent({ children, position, title }: DraggableContentProps) 
     id: 'inspector-popover',
   });
 
-  // ドラッグ中の位置を計算
+  // ドラッグ中の位置を計算 - カレンダーのDragSelectionPreview(z-1000)より上に
   const style: React.CSSProperties = {
     position: 'fixed',
     left: position.x + (transform?.x ?? 0),
     top: position.y + (transform?.y ?? 0),
-    zIndex: zIndex.draggableInspector,
+    zIndex: 1100,
   };
 
   return (
@@ -139,8 +154,7 @@ function DraggableContent({ children, position, title }: DraggableContentProps) 
         'border-border bg-popover text-popover-foreground',
         'rounded-xl border shadow-lg',
         // 元のInspectorShell popoverモードと同じスタイル
-        // 高さは内容に応じて可変（最大40rem）
-        'flex max-h-[40rem] w-[95vw] max-w-[30rem] flex-col gap-0 overflow-hidden p-0',
+        'flex h-[40rem] w-[95vw] max-w-[28rem] flex-col gap-0 overflow-hidden p-0',
         // ドラッグ中のスタイル
         isDragging && 'cursor-grabbing shadow-2xl',
       )}
