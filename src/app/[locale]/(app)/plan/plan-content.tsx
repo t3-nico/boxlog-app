@@ -3,20 +3,14 @@
 import { Suspense } from 'react';
 
 import { LoadingSpinner } from '@/components/common/Loading/LoadingStates';
-import { InboxTableView } from '@/features/inbox/components/InboxTableView';
-
-interface InboxViewPageProps {
-  params: Promise<{
-    id: string;
-  }>;
-}
+import { PlanTableView } from '@/features/plans/components/PlanTableView';
 
 /**
- * カスタムビュー ページ
+ * Planコンテンツ with Suspense
  */
-export default function InboxViewPage({ params: _params }: InboxViewPageProps) {
+export function PlanContent() {
   return (
-    <div className="flex flex-1 flex-col">
+    <div className="flex min-h-0 flex-1 flex-col">
       <Suspense
         fallback={
           <div className="flex h-full items-center justify-center">
@@ -27,7 +21,7 @@ export default function InboxViewPage({ params: _params }: InboxViewPageProps) {
           </div>
         }
       >
-        <InboxTableView />
+        <PlanTableView />
       </Suspense>
     </div>
   );

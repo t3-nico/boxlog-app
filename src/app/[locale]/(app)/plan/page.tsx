@@ -1,13 +1,13 @@
 import { createServerHelpers, dehydrate, HydrationBoundary } from '@/lib/trpc/server';
 
-import { InboxContent } from '../inbox-content';
+import { PlanContent } from './plan-content';
 
 /**
- * アーカイブ ページ
+ * Plan ページ
  *
  * Server-side prefetchでデータを事前取得
  */
-export default async function InboxArchivePage() {
+export default async function PlanPage() {
   // Server-side prefetch: クライアントでのデータ取得を高速化
   const helpers = await createServerHelpers();
   await Promise.all([
@@ -18,7 +18,7 @@ export default async function InboxArchivePage() {
 
   return (
     <HydrationBoundary state={dehydrate(helpers.queryClient)}>
-      <InboxContent />
+      <PlanContent />
     </HydrationBoundary>
   );
 }
