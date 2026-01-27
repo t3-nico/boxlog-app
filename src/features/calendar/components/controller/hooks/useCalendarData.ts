@@ -5,10 +5,8 @@ import { useEffect, useMemo } from 'react';
 import { addDays, format, subDays } from 'date-fns';
 
 import { usePlans } from '@/features/plans/hooks/usePlans';
-import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
 import type { Plan } from '@/features/plans/types/plan';
 import { isRecurringPlan } from '@/features/plans/utils/recurrence';
-import { useRecords } from '@/features/records/hooks';
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
 import { useTags } from '@/features/tags/hooks';
 import { logger } from '@/lib/logger';
@@ -72,8 +70,7 @@ export function useCalendarData({
 
   // recordsを取得（日付範囲フィルタ）
   // service.list は常に plan 情報を含めて返す（RecordWithPlan型）
-  // Plans と同じキャッシュ戦略・retry設定を適用（リアルタイム性が重要）
-  const { data: recordsData } = useRecords({
+  const { data: recordsData } = api.records.list.useQuery({
     worked_at_from: format(viewDateRange.start, 'yyyy-MM-dd'),
     worked_at_to: format(viewDateRange.end, 'yyyy-MM-dd'),
   });
@@ -86,7 +83,6 @@ export function useCalendarData({
   const utils = api.useUtils();
 
   // 隣接期間のプリフェッチ（ナビゲーション高速化）
-  // Plans と Records 両方をプリフェッチして、週ナビゲーション時の体験を向上
   useEffect(() => {
     const prefetchAdjacentPeriods = () => {
       // 前の期間
@@ -95,10 +91,6 @@ export function useCalendarData({
         startDate: prevRange.start.toISOString(),
         endDate: prevRange.end.toISOString(),
       });
-      void utils.records.list.prefetch({
-        worked_at_from: format(prevRange.start, 'yyyy-MM-dd'),
-        worked_at_to: format(prevRange.end, 'yyyy-MM-dd'),
-      });
 
       // 次の期間
       const nextRange = calculateViewDateRange(viewType, addDays(currentDate, 7), weekStartsOn);
@@ -106,21 +98,13 @@ export function useCalendarData({
         startDate: nextRange.start.toISOString(),
         endDate: nextRange.end.toISOString(),
       });
-      void utils.records.list.prefetch({
-        worked_at_from: format(nextRange.start, 'yyyy-MM-dd'),
-        worked_at_to: format(nextRange.end, 'yyyy-MM-dd'),
-      });
     };
 
     prefetchAdjacentPeriods();
-  }, [currentDate, viewType, weekStartsOn, utils.plans.list, utils.records.list]);
+  }, [currentDate, viewType, weekStartsOn, utils.plans.list]);
 
   // フィルター関数を取得（ストアに統一）
   const isPlanVisible = useCalendarFilterStore((state) => state.isPlanVisible);
-
-  // ドラフトプランを取得（コピー＆ペースト時のプレビュー表示用）
-  // タイトルがある場合のみ表示（ドラッグ選択時はタイトルが空なのでDragSelectionPreviewが担当）
-  const draftPlan = usePlanInspectorStore((state) => state.draftPlan);
 
   // 繰り返しプランのIDを抽出
   const recurringPlanIds = useMemo(() => {
@@ -192,35 +176,8 @@ export function useCalendarData({
       calendarPlans.push(...calendarRecords);
     }
 
-    // ドラフトプランをプレビューとして追加
-    // タイトルがある場合のみ表示（ペースト時など）
-    // ドラッグ選択時はタイトルが空なので、DragSelectionPreviewが担当
-    if (draftPlan?.start_time && draftPlan?.end_time && draftPlan?.title) {
-      const startDate = new Date(draftPlan.start_time);
-      const endDate = new Date(draftPlan.end_time);
-      const draftCalendarPlan: CalendarPlan = {
-        id: '__draft__',
-        title: draftPlan.title,
-        description: draftPlan.description ?? undefined,
-        startDate,
-        endDate,
-        status: 'open',
-        color: 'var(--primary)',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        displayStartDate: startDate,
-        displayEndDate: endDate,
-        duration: (endDate.getTime() - startDate.getTime()) / 60000,
-        isMultiDay: false,
-        isRecurring: false,
-        type: 'plan',
-        isDraft: true,
-      };
-      calendarPlans.push(draftCalendarPlan);
-    }
-
     return calendarPlans;
-  }, [plansData, recordsData, viewDateRange, exceptionsMap, draftPlan]);
+  }, [plansData, recordsData, viewDateRange, exceptionsMap]);
 
   // 表示範囲のイベントをフィルタリング
   const filteredEvents = useMemo(() => {

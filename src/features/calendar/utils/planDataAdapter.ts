@@ -65,7 +65,6 @@ export function planToCalendarPlan(plan: PlanWithTagIds): CalendarPlan {
     duration: Math.round((endDate.getTime() - startDate.getTime()) / MS_PER_MINUTE), // minutes
     isMultiDay,
     isRecurring,
-    type: 'plan', // 明示的にPlan型を設定（Record と区別するため）
   };
 }
 
@@ -251,7 +250,6 @@ function occurrenceToCalendarPlan(
     duration: Math.round((endDate.getTime() - startDate.getTime()) / MS_PER_MINUTE),
     isMultiDay: false,
     isRecurring: true,
-    type: 'plan', // 明示的にPlan型を設定（Record と区別するため）
     // 繰り返し用の追加プロパティ
     calendarId: basePlan.id, // 元プランIDを保持（後方互換性）
     originalPlanId: basePlan.id, // 親プランID
@@ -274,7 +272,7 @@ export type { ExpandedOccurrence, PlanInstanceException };
  */
 interface RecordWithPlanInfo {
   id: string;
-  plan_id: string | null; // Planなしでも作成可能
+  plan_id: string;
   title?: string | null; // マイグレーション適用前はoptional
   worked_at: string; // YYYY-MM-DD
   start_time: string | null; // HH:MM:SS or HH:MM
@@ -284,7 +282,6 @@ interface RecordWithPlanInfo {
   note: string | null;
   created_at: string;
   updated_at: string;
-  tagIds?: string[]; // Recordに紐づくタグID
   plan?: {
     id: string;
     title: string;
@@ -317,13 +314,12 @@ export function recordToCalendarPlan(record: RecordWithPlanInfo): CalendarPlan |
 
   return {
     id: `record-${record.id}`, // PlanのIDと区別するためにプレフィックスを付ける
-    title: record.title ?? record.plan?.title ?? '', // 空の場合はUI側で「(タイトルなし)」を表示
+    title: record.title ?? record.plan?.title ?? 'Record',
     description: record.note ?? undefined,
     startDate,
     endDate,
     status: 'closed', // Records は完了済みの作業ログなので常に closed
-    color: '', // デフォルト色（タグ色はTagsContainerで表示）
-    tagIds: record.tagIds ?? [], // タグIDを引き継ぐ（Planと同様に表示）
+    color: '', // Records にはタグ色がないので空（後でスタイルで対応）
     createdAt,
     updatedAt,
     displayStartDate: startDate,
@@ -335,7 +331,7 @@ export function recordToCalendarPlan(record: RecordWithPlanInfo): CalendarPlan |
     type: 'record',
     recordId: record.id,
     fulfillmentScore: record.fulfillment_score,
-    linkedPlanId: record.plan_id ?? undefined,
+    linkedPlanId: record.plan_id,
     linkedPlanTitle: record.plan?.title,
   };
 }

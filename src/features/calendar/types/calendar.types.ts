@@ -62,8 +62,6 @@ export interface CalendarPlan {
   fulfillmentScore?: number | null | undefined; // 充実度（1-5）
   linkedPlanId?: string | undefined; // 紐づくPlanのID
   linkedPlanTitle?: string | undefined; // 紐づくPlanのタイトル
-  // ドラフト状態（未保存のプレビュー）
-  isDraft?: boolean | undefined;
 }
 
 // 後方互換性のためのエイリアス
@@ -149,30 +147,18 @@ export interface CalendarShare {
   createdBy: string;
 }
 
-/**
- * カレンダービュー状態
- * ユーザーごとのカレンダー表示設定を保持
- */
+// カレンダービュー状態
 export interface CalendarViewState {
   id: string;
   userId: string;
-  /** デフォルトで表示するビュータイプ */
   defaultView: CalendarViewType;
-  /** 表示するカレンダーのID配列 */
   selectedCalendars: string[];
-  /** タグフィルター（指定タグを持つプランのみ表示） */
   filterTags?: string[];
-  /** 優先度フィルター */
   filterPriority?: string[];
-  /** ステータスフィルター */
   filterStatus?: string[];
-  /** 週末（土日）を表示するか */
   showWeekends: boolean;
-  /** 週番号を表示するか */
   showWeekNumbers: boolean;
-  /** 週の開始曜日（0=日曜, 1=月曜, ..., 6=土曜） */
-  firstDayOfWeek: number;
-  /** 時刻表示形式 */
+  firstDayOfWeek: number; // 0=日曜, 1=月曜
   timeFormat: '12h' | '24h';
   createdAt: Date;
   updatedAt: Date;
