@@ -1,10 +1,8 @@
 'use client';
 
-import { Calendar, Clock, ListChecks, Smile } from 'lucide-react';
+import { Calendar, Clock, FileText, ListChecks, Smile } from 'lucide-react';
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useState } from 'react';
 
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
@@ -12,20 +10,26 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { StarRating } from '@/components/ui/star-rating';
 import { Textarea } from '@/components/ui/textarea';
 import { useRecordMutations } from '@/features/records/hooks';
 import { api } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
 
 import { usePlanInspectorStore } from '../../../stores/usePlanInspectorStore';
+import { DatePickerPopover } from '../../shared/DatePickerPopover';
+import { TimeSelect } from '../../shared/TimeSelect';
+
+import type { FulfillmentScore } from '@/features/records/types/record';
 
 interface RecordFormData {
+  title: string;
   plan_id: string | null;
-  worked_at: string;
+  worked_at: Date | undefined;
   start_time: string;
   end_time: string;
   duration_minutes: number;
-  fulfillment_score: number | null;
+  fulfillment_score: FulfillmentScore | null;
   note: string;
 }
 
@@ -38,6 +42,7 @@ export interface RecordCreateFormRef {
  * Record 作成フォーム
  *
  * PlanInspector のドラフトモード時に表示される Record 入力フォーム
+ * PlanInspectorDetailsTab と同じUI構造
  */
 export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
   function RecordCreateForm(_props, ref) {
@@ -50,11 +55,8 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
     // Mutations
     const { createRecord } = useRecordMutations();
 
-    // 今日の日付を取得
-    const today = useMemo(() => {
-      const d = new Date();
-      return d.toISOString().split('T')[0] ?? '';
-    }, []);
+    // 今日の日付
+    const today = useMemo(() => new Date(), []);
 
     // draftPlan から初期値を取得
     const initialStartTime = useMemo(() => {
@@ -70,25 +72,31 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
     }, [draftPlan?.end_time]);
 
     const initialWorkedAt = useMemo(() => {
-      if (!draftPlan?.due_date) return today;
-      return draftPlan.due_date;
+      if (draftPlan?.due_date) {
+        return new Date(draftPlan.due_date);
+      }
+      return today;
     }, [draftPlan?.due_date, today]);
 
     // 初期duration計算
-    const initialDuration = useMemo(() => {
-      if (!draftPlan?.start_time || !draftPlan?.end_time) return 60;
-      const start = new Date(draftPlan.start_time);
-      const end = new Date(draftPlan.end_time);
-      return Math.round((end.getTime() - start.getTime()) / (1000 * 60));
-    }, [draftPlan?.start_time, draftPlan?.end_time]);
+    const calculateDuration = useCallback((start: string, end: string): number => {
+      if (!start || !end) return 60;
+      const [startH, startM] = start.split(':').map(Number);
+      const [endH, endM] = end.split(':').map(Number);
+      const startMinutes = (startH ?? 0) * 60 + (startM ?? 0);
+      const endMinutes = (endH ?? 0) * 60 + (endM ?? 0);
+      const duration = endMinutes - startMinutes;
+      return duration > 0 ? duration : 60;
+    }, []);
 
     // フォーム状態
     const [formData, setFormData] = useState<RecordFormData>({
+      title: '',
       plan_id: null,
       worked_at: initialWorkedAt,
       start_time: initialStartTime,
       end_time: initialEndTime,
-      duration_minutes: initialDuration,
+      duration_minutes: calculateDuration(initialStartTime, initialEndTime),
       fulfillment_score: null,
       note: '',
     });
@@ -100,17 +108,47 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
         worked_at: initialWorkedAt,
         start_time: initialStartTime,
         end_time: initialEndTime,
-        duration_minutes: initialDuration,
+        duration_minutes: calculateDuration(initialStartTime, initialEndTime),
       }));
-    }, [initialWorkedAt, initialStartTime, initialEndTime, initialDuration]);
+    }, [initialWorkedAt, initialStartTime, initialEndTime, calculateDuration]);
+
+    // 時間変更時にdurationを自動計算
+    useEffect(() => {
+      const duration = calculateDuration(formData.start_time, formData.end_time);
+      setFormData((prev) => ({ ...prev, duration_minutes: duration }));
+    }, [formData.start_time, formData.end_time, calculateDuration]);
 
     // フォーム変更ハンドラ
-    const handleChange = useCallback(
-      (field: keyof RecordFormData, value: string | number | null) => {
-        setFormData((prev) => ({ ...prev, [field]: value }));
-      },
-      [],
-    );
+    const handleTitleChange = useCallback((value: string) => {
+      setFormData((prev) => ({ ...prev, title: value }));
+    }, []);
+
+    const handlePlanChange = useCallback((value: string) => {
+      setFormData((prev) => ({ ...prev, plan_id: value || null }));
+    }, []);
+
+    const handleDateChange = useCallback((date: Date | undefined) => {
+      setFormData((prev) => ({ ...prev, worked_at: date }));
+    }, []);
+
+    const handleStartTimeChange = useCallback((time: string) => {
+      setFormData((prev) => ({ ...prev, start_time: time }));
+    }, []);
+
+    const handleEndTimeChange = useCallback((time: string) => {
+      setFormData((prev) => ({ ...prev, end_time: time }));
+    }, []);
+
+    const handleScoreChange = useCallback((value: number | null) => {
+      setFormData((prev) => ({
+        ...prev,
+        fulfillment_score: value as FulfillmentScore | null,
+      }));
+    }, []);
+
+    const handleNoteChange = useCallback((value: string) => {
+      setFormData((prev) => ({ ...prev, note: value }));
+    }, []);
 
     // 保存ボタンの無効化条件
     const isSaveDisabled = useCallback(() => {
@@ -119,11 +157,14 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
 
     // 保存処理
     const save = useCallback(async () => {
-      if (!formData.plan_id) return;
+      if (!formData.plan_id || !formData.worked_at) return;
+
+      const workedAtStr = formData.worked_at.toISOString().split('T')[0] ?? '';
 
       await createRecord.mutateAsync({
         plan_id: formData.plan_id,
-        worked_at: formData.worked_at,
+        title: formData.title || null,
+        worked_at: workedAtStr,
         start_time: formData.start_time || null,
         end_time: formData.end_time || null,
         duration_minutes: formData.duration_minutes,
@@ -141,122 +182,109 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
     }));
 
     return (
-      <div className="space-y-4">
+      <>
+        {/* タイトル */}
+        <div className="px-4 py-3">
+          <input
+            type="text"
+            value={formData.title}
+            placeholder="何をした？"
+            onChange={(e) => handleTitleChange(e.target.value)}
+            className="placeholder:text-muted-foreground block w-full border-0 bg-transparent text-lg font-bold outline-none"
+          />
+        </div>
+
         {/* Plan選択 */}
-        <div className="space-y-2">
-          <Label className="text-muted-foreground flex items-center gap-1 text-xs">
-            <ListChecks className="size-3" />
-            Plan
-          </Label>
-          <Select
-            value={formData.plan_id ?? ''}
-            onValueChange={(v) => handleChange('plan_id', v || null)}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Planを選択..." />
-            </SelectTrigger>
-            <SelectContent>
-              {plans?.map((plan) => (
-                <SelectItem key={plan.id} value={plan.id}>
-                  <div className="flex items-center gap-2">
-                    <div
-                      className={cn(
-                        'size-2 rounded-full',
-                        plan.status === 'open' ? 'bg-green-500' : 'bg-gray-400',
-                      )}
-                    />
-                    <span className="truncate">{plan.title}</span>
-                  </div>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+        <div className="border-border/50 flex min-h-10 items-center gap-2 border-t px-4 py-2">
+          <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center">
+            <ListChecks className="text-muted-foreground size-4" />
+          </div>
+          <div className="flex h-8 flex-1 items-center">
+            <Select value={formData.plan_id ?? ''} onValueChange={handlePlanChange}>
+              <SelectTrigger className="h-8 border-0 bg-transparent px-0 shadow-none focus:ring-0">
+                <SelectValue placeholder="Planを選択..." />
+              </SelectTrigger>
+              <SelectContent>
+                {plans?.map((plan) => (
+                  <SelectItem key={plan.id} value={plan.id}>
+                    <div className="flex items-center gap-2">
+                      <div
+                        className={cn(
+                          'size-2 rounded-full',
+                          plan.status === 'open' ? 'bg-green-500' : 'bg-gray-400',
+                        )}
+                      />
+                      <span className="truncate">{plan.title}</span>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
-        {/* 作業日 */}
-        <div className="space-y-2">
-          <Label className="text-muted-foreground flex items-center gap-1 text-xs">
-            <Calendar className="size-3" />
-            作業日
-          </Label>
-          <Input
-            type="date"
-            value={formData.worked_at}
-            onChange={(e) => handleChange('worked_at', e.target.value)}
-          />
-        </div>
-
-        {/* 時間 */}
-        <div className="grid grid-cols-2 gap-2">
-          <div className="space-y-2">
-            <Label className="text-muted-foreground text-xs">開始</Label>
-            <Input
-              type="time"
-              value={formData.start_time}
-              onChange={(e) => handleChange('start_time', e.target.value)}
+        {/* 作業日 + 時間 */}
+        <div className="border-border/50 flex min-h-10 items-center gap-2 border-t px-4 py-2">
+          <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center">
+            <Calendar className="text-muted-foreground size-4" />
+          </div>
+          <div className="flex h-8 flex-1 items-center gap-2">
+            <DatePickerPopover
+              selectedDate={formData.worked_at}
+              onDateChange={handleDateChange}
+              placeholder="作業日を選択..."
             />
           </div>
-          <div className="space-y-2">
-            <Label className="text-muted-foreground text-xs">終了</Label>
-            <Input
-              type="time"
+        </div>
+
+        {/* 開始・終了時間 */}
+        <div className="border-border/50 flex min-h-10 items-center gap-2 border-t px-4 py-2">
+          <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center">
+            <Clock className="text-muted-foreground size-4" />
+          </div>
+          <div className="flex h-8 flex-1 items-center gap-1">
+            <TimeSelect value={formData.start_time} onChange={handleStartTimeChange} label="" />
+            <span className="text-muted-foreground mx-1">-</span>
+            <TimeSelect
               value={formData.end_time}
-              onChange={(e) => handleChange('end_time', e.target.value)}
+              onChange={handleEndTimeChange}
+              label=""
+              minTime={formData.start_time}
             />
+            {formData.duration_minutes > 0 && (
+              <span className="text-muted-foreground ml-2 text-sm">
+                ({formData.duration_minutes}分)
+              </span>
+            )}
           </div>
-        </div>
-
-        {/* 作業時間 */}
-        <div className="space-y-2">
-          <Label className="text-muted-foreground flex items-center gap-1 text-xs">
-            <Clock className="size-3" />
-            作業時間（分）
-          </Label>
-          <Input
-            type="number"
-            min={1}
-            value={formData.duration_minutes}
-            onChange={(e) => handleChange('duration_minutes', parseInt(e.target.value) || 0)}
-          />
         </div>
 
         {/* 充実度 */}
-        <div className="space-y-2">
-          <Label className="text-muted-foreground flex items-center gap-1 text-xs">
-            <Smile className="size-3" />
-            充実度
-          </Label>
-          <Select
-            value={formData.fulfillment_score?.toString() ?? 'none'}
-            onValueChange={(v) =>
-              handleChange('fulfillment_score', v === 'none' ? null : parseInt(v))
-            }
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="選択してください" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="none">未設定</SelectItem>
-              <SelectItem value="1">1 - 不満</SelectItem>
-              <SelectItem value="2">2 - やや不満</SelectItem>
-              <SelectItem value="3">3 - 普通</SelectItem>
-              <SelectItem value="4">4 - 満足</SelectItem>
-              <SelectItem value="5">5 - 大満足</SelectItem>
-            </SelectContent>
-          </Select>
+        <div className="border-border/50 flex min-h-10 items-center gap-2 border-t px-4 py-2">
+          <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center">
+            <Smile className="text-muted-foreground size-4" />
+          </div>
+          <div className="flex h-8 flex-1 items-center">
+            <StarRating value={formData.fulfillment_score} onChange={handleScoreChange} max={5} />
+          </div>
         </div>
 
         {/* メモ */}
-        <div className="space-y-2">
-          <Label className="text-muted-foreground text-xs">メモ</Label>
-          <Textarea
-            value={formData.note}
-            onChange={(e) => handleChange('note', e.target.value)}
-            placeholder="メモを入力..."
-            rows={3}
-          />
+        <div className="border-border/50 flex min-h-10 items-start gap-2 border-t px-4 py-2">
+          <div className="mt-1 flex h-6 w-6 flex-shrink-0 items-center justify-center">
+            <FileText className="text-muted-foreground size-4" />
+          </div>
+          <div className="min-h-8 min-w-0 flex-1">
+            <Textarea
+              value={formData.note}
+              onChange={(e) => handleNoteChange(e.target.value)}
+              placeholder="メモを追加..."
+              className="min-h-16 resize-none border-0 bg-transparent px-0 shadow-none focus-visible:ring-0"
+              rows={2}
+            />
+          </div>
         </div>
-      </div>
+      </>
     );
   },
 );
