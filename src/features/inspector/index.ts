@@ -48,6 +48,7 @@ export {
   InspectorContent,
   InspectorHeader,
   InspectorShell,
+  useDragHandle,
   type InspectorDisplayMode,
 } from './components';
 

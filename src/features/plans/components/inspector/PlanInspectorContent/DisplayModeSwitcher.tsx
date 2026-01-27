@@ -1,9 +1,9 @@
 'use client';
 
 /**
- * 表示モード切り替えコンポーネント（Finderスタイル）
+ * 表示モード切り替えコンポーネント（ドロップダウンスタイル）
  *
- * ヘッダーのメニューアイコンの左側に配置
+ * ヘッダー右側に配置
  * アイコン + 下矢印でクリックするとドロップダウンが表示される
  */
 
@@ -16,7 +16,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { HoverTooltip } from '@/components/ui/tooltip';
 import type { InspectorDisplayMode } from '@/features/inspector';
 
 interface DisplayModeSwitcherProps {
@@ -30,18 +29,16 @@ export function DisplayModeSwitcher({
 }: DisplayModeSwitcherProps) {
   return (
     <DropdownMenu>
-      <HoverTooltip content="表示モード" side="bottom">
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="sm" className="h-8 gap-1 px-2">
-            {displayMode === 'sheet' ? (
-              <PanelRight className="size-4" />
-            ) : (
-              <SquareMousePointer className="size-4" />
-            )}
-            <ChevronDown className="size-3" />
-          </Button>
-        </DropdownMenuTrigger>
-      </HoverTooltip>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="sm" className="h-8 gap-1 px-2">
+          {displayMode === 'sheet' ? (
+            <PanelRight className="size-4" />
+          ) : (
+            <SquareMousePointer className="size-4" />
+          )}
+          <ChevronDown className="size-3" />
+        </Button>
+      </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={() => onDisplayModeChange('sheet')}>
           <PanelRight className="size-4" />

@@ -62,6 +62,11 @@ export interface PendingChanges {
 }
 
 /**
+ * 新規作成時のエントリタイプ
+ */
+export type CreateEntryType = 'plan' | 'record';
+
+/**
  * Plan Inspector Store の状態
  */
 interface PlanInspectorState {
@@ -83,6 +88,8 @@ interface PlanInspectorState {
   draftPlan: DraftPlan | null;
   /** 未保存の変更（Google Calendar準拠: 閉じる時に一括保存） */
   pendingChanges: PendingChanges | null;
+  /** 新規作成時のエントリタイプ（plan または record） */
+  createType: CreateEntryType;
 }
 
 /**
@@ -105,7 +112,9 @@ interface PlanInspectorActions {
   /** Popoverの位置を保存する */
   setPopoverPosition: (position: PopoverPosition | null) => void;
   /** ドラフトモードでInspectorを開く（DB未保存） */
-  openInspectorWithDraft: (initialData?: Partial<DraftPlan>) => void;
+  openInspectorWithDraft: (initialData?: Partial<DraftPlan>, createType?: CreateEntryType) => void;
+  /** 新規作成時のエントリタイプを変更 */
+  setCreateType: (type: CreateEntryType) => void;
   /** ドラフトをクリアする */
   clearDraft: () => void;
   /** ドラフトを更新する */
@@ -136,6 +145,7 @@ export const usePlanInspectorStore = create<PlanInspectorStore>()(
         popoverPosition: null,
         draftPlan: null,
         pendingChanges: null,
+        createType: 'plan',
 
         openInspector: (planId, options) =>
           set(
@@ -166,6 +176,7 @@ export const usePlanInspectorStore = create<PlanInspectorStore>()(
               popoverAnchor: undefined,
               draftPlan: null, // 閉じる時はdraftもクリア
               pendingChanges: null, // 未保存の変更もクリア（saveAndClose経由で呼ばれる想定）
+              createType: 'plan', // リセット
             },
             false,
             'closeInspector',
@@ -177,7 +188,7 @@ export const usePlanInspectorStore = create<PlanInspectorStore>()(
         setPopoverPosition: (position) =>
           set({ popoverPosition: position }, false, 'setPopoverPosition'),
 
-        openInspectorWithDraft: (initialData) =>
+        openInspectorWithDraft: (initialData, createType = 'plan') =>
           set(
             {
               isOpen: true,
@@ -192,10 +203,13 @@ export const usePlanInspectorStore = create<PlanInspectorStore>()(
                 start_time: initialData?.start_time ?? null,
                 end_time: initialData?.end_time ?? null,
               },
+              createType,
             },
             false,
             'openInspectorWithDraft',
           ),
+
+        setCreateType: (type) => set({ createType: type }, false, 'setCreateType'),
 
         clearDraft: () => set({ draftPlan: null }, false, 'clearDraft'),
 

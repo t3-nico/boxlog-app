@@ -10,6 +10,7 @@ import {
 } from '@dnd-kit/core';
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
 
+import { zIndex } from '@/config/ui/z-index';
 import { cn } from '@/lib/utils';
 
 import type { PopoverPosition } from '@/features/plans/stores/usePlanInspectorStore';
@@ -108,10 +109,10 @@ export function DraggableInspector({
 
   return (
     <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
-      {/* 透明な背景（クリックで閉じる） - カレンダーのDragSelectionPreview(z-1000)より上に */}
+      {/* 透明な背景（クリックで閉じる） */}
       <div
         className="fixed inset-0"
-        style={{ zIndex: 1099 }}
+        style={{ zIndex: zIndex.draggableInspectorBackdrop }}
         onClick={handleBackdropClick}
         aria-hidden="true"
       />
@@ -137,12 +138,12 @@ function DraggableContent({ children, position, title }: DraggableContentProps) 
     id: 'inspector-popover',
   });
 
-  // ドラッグ中の位置を計算 - カレンダーのDragSelectionPreview(z-1000)より上に
+  // ドラッグ中の位置を計算
   const style: React.CSSProperties = {
     position: 'fixed',
     left: position.x + (transform?.x ?? 0),
     top: position.y + (transform?.y ?? 0),
-    zIndex: 1100,
+    zIndex: zIndex.draggableInspector,
   };
 
   return (
