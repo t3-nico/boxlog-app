@@ -1,32 +1,37 @@
 'use client';
 
 /**
- * PlanInspector の詳細タブ（Toggl風3行レイアウト）
- *
- * Row 1: Title
- * Row 2: Date + Time + Duration
- * Row 3: Tags + [Records] [Due] [Description] [Status*] [Recurrence] [Reminder]
+ * PlanInspector の詳細タブ
  */
 
-import { memo } from 'react';
+import { memo, useEffect, useState } from 'react';
 
-import { NoteIconButton } from '@/components/common/NoteIconButton';
-import { ScheduleRow } from '@/components/common/ScheduleRow';
-import { TagsIconButton } from '@/components/common/TagsIconButton';
-import { TitleInput } from '@/components/common/TitleInput';
-import { HoverTooltip } from '@/components/ui/tooltip';
-import { CheckCircle2, Circle } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { Badge } from '@/components/ui/badge';
+import { Bell, CalendarDays, CheckCircle2, Circle, FileText } from 'lucide-react';
 
-import { cn } from '@/lib/utils';
+import dynamic from 'next/dynamic';
 
 import { normalizeStatus } from '../../../utils/status';
 
 import type { Plan } from '../../../types/plan';
-import { DueDateIconButton } from '../../shared/DueDateIconButton';
-import { RecordsIconButton } from '../../shared/RecordsIconButton';
-import { RecurrenceIconButton } from '../../shared/RecurrenceIconButton';
+import { DatePickerPopover } from '../../shared/DatePickerPopover';
+import { PlanScheduleSection } from '../../shared/PlanScheduleSection';
+import { PlanTagsSection } from '../../shared/PlanTagsSection';
 import { ReminderSelect } from '../../shared/ReminderSelect';
+
+import { ActivitySection } from './ActivitySection';
+import { RecordsSection } from './RecordsSection';
+
+// Novel エディターは重いため遅延ロード
+const NovelDescriptionEditor = dynamic(
+  () => import('../../shared/NovelDescriptionEditor').then((mod) => mod.NovelDescriptionEditor),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="text-muted-foreground min-h-8 px-2 py-1 text-sm">読み込み中...</div>
+    ),
+  },
+);
 
 type RecurrenceType = 'none' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'weekdays' | null;
 
@@ -80,97 +85,134 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
   onEndTimeChange,
   onReminderChange,
   onTagsChange,
+  onRemoveTag,
   onRepeatTypeChange,
   onRecurrenceRuleChange,
   onStatusChange,
   isDraftMode = false,
 }: PlanInspectorDetailsTabProps) {
-  const t = useTranslations();
   const status = normalizeStatus(plan.status);
+
+  // タイトルのローカル状態（controlled component用）
+  const [localTitle, setLocalTitle] = useState(plan.title);
+
+  // plan.titleが変わったらローカル状態を同期（別のプランを開いた時など）
+  useEffect(() => {
+    setLocalTitle(plan.title);
+  }, [plan.title, plan.id]);
 
   return (
     <>
-      {/* Row 1: Title + Status */}
-      <div className="flex items-center gap-2 px-4 pt-4 pb-2">
-        <TitleInput
+      {/* Title */}
+      <div className="px-4 py-3">
+        <input
           ref={titleRef}
-          value={plan.title}
-          onChange={(value) => onAutoSave('title', value)}
-          placeholder={isDraftMode ? 'タイトルを追加' : t('calendar.event.noTitle')}
-          className="flex-1"
+          type="text"
+          value={localTitle}
+          placeholder="タイトルを追加"
+          onChange={(e) => {
+            setLocalTitle(e.target.value);
+            onAutoSave('title', e.target.value);
+          }}
+          className="placeholder:text-muted-foreground block w-full border-0 bg-transparent text-lg font-bold outline-none"
         />
-
-        {/* Status - ドラフトモードでは非表示 */}
-        {!isDraftMode && (
-          <HoverTooltip
-            content={
-              status === 'closed' ? 'Done（クリックでOpenに戻す）' : 'Open（クリックでDoneに）'
-            }
-          >
-            <button
-              type="button"
-              onClick={() => onStatusChange(status === 'closed' ? 'open' : 'closed')}
-              className={cn(
-                'focus-visible:ring-ring shrink-0 rounded-full p-1 focus-visible:ring-2 focus-visible:outline-none',
-                status === 'closed' ? 'text-success' : 'text-foreground',
-              )}
-              aria-label={status === 'closed' ? 'ステータス: 完了' : 'ステータス: 未完了'}
-            >
-              {status === 'closed' ? (
-                <CheckCircle2 className="size-5" />
-              ) : (
-                <Circle className="size-5" />
-              )}
-            </button>
-          </HoverTooltip>
-        )}
       </div>
 
-      {/* Row 2: Date + Time + Duration */}
-      <ScheduleRow
+      {/* Schedule */}
+      <PlanScheduleSection
         selectedDate={scheduleDate}
         startTime={startTime}
         endTime={endTime}
         onDateChange={onScheduleDateChange}
         onStartTimeChange={onStartTimeChange}
         onEndTimeChange={onEndTimeChange}
+        recurrenceRule={recurrenceRule}
+        recurrenceType={recurrenceType}
+        onRepeatTypeChange={onRepeatTypeChange}
+        onRecurrenceRuleChange={onRecurrenceRuleChange}
+        showBorderTop={true}
         timeConflictError={timeConflictError}
       />
 
-      {/* Row 3: Option Icons */}
-      <div className="flex flex-wrap items-center gap-0.5 px-4 pt-2 pb-4">
-        {/* Tags */}
-        <TagsIconButton tagIds={selectedTagIds} onTagsChange={onTagsChange} popoverSide="bottom" />
-
-        {/* Records - 編集モードのみ */}
-        {!isDraftMode && planId && <RecordsIconButton planId={planId} />}
-
-        {/* Due Date */}
-        <DueDateIconButton dueDate={dueDate} onDueDateChange={onDueDateChange} />
-
-        {/* Description */}
-        <NoteIconButton
-          id={plan.id}
-          note={plan.description || ''}
-          onNoteChange={(html) => onAutoSave('description', html)}
-          labels={{
-            editTooltip: '説明を編集',
-            addTooltip: '説明を追加',
-            placeholder: '説明を追加...',
-          }}
-        />
-
-        {/* Recurrence */}
-        <RecurrenceIconButton
-          recurrenceRule={recurrenceRule}
-          recurrenceType={recurrenceType}
-          onRepeatTypeChange={onRepeatTypeChange}
-          onRecurrenceRuleChange={onRecurrenceRuleChange}
-        />
-
-        {/* Reminder */}
-        <ReminderSelect value={reminderType} onChange={onReminderChange} variant="icon" />
+      {/* Due Date */}
+      <div className="border-border/50 flex min-h-10 items-center gap-2 border-t px-4 py-2">
+        <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center">
+          <CalendarDays className="text-muted-foreground size-4" />
+        </div>
+        <div className="flex h-8 flex-1 items-center">
+          <DatePickerPopover
+            selectedDate={dueDate}
+            onDateChange={onDueDateChange}
+            placeholder="期限を設定..."
+          />
+        </div>
       </div>
+
+      {/* Tags */}
+      <PlanTagsSection
+        selectedTagIds={selectedTagIds}
+        onTagsChange={onTagsChange}
+        onRemoveTag={onRemoveTag}
+        showBorderTop={true}
+        popoverAlign="end"
+        popoverSide="bottom"
+        popoverAlignOffset={-80}
+      />
+
+      {/* Status - ドラフトモードでは非表示（新規作成時は常にopen） */}
+      {!isDraftMode && (
+        <div className="border-border/50 flex min-h-10 items-center gap-2 border-t px-4 py-2">
+          <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center">
+            {status === 'closed' ? (
+              <CheckCircle2 className="text-success size-4" />
+            ) : (
+              <Circle className="text-info size-4" />
+            )}
+          </div>
+          <div className="flex h-8 flex-1 items-center">
+            <button
+              type="button"
+              onClick={() => onStatusChange(status === 'closed' ? 'open' : 'closed')}
+              className="focus-visible:ring-ring rounded-md focus-visible:ring-2 focus-visible:outline-none"
+            >
+              <Badge variant={status === 'closed' ? 'success' : 'info'}>
+                {status === 'closed' ? 'Closed' : 'Open'}
+              </Badge>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Description */}
+      <div className="border-border/50 flex min-h-10 items-start gap-2 border-t px-4 py-2">
+        <div className="mt-1 flex h-6 w-6 flex-shrink-0 items-center justify-center">
+          <FileText className="text-muted-foreground size-4" />
+        </div>
+        <div className="max-h-52 min-h-8 min-w-0 flex-1 overflow-y-auto">
+          <NovelDescriptionEditor
+            key={plan.id}
+            content={plan.description || ''}
+            onChange={(html) => onAutoSave('description', html)}
+            placeholder="説明を追加..."
+          />
+        </div>
+      </div>
+
+      {/* Reminder */}
+      <div className="border-border/50 flex min-h-10 items-center gap-2 border-t px-4 py-2">
+        <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center">
+          <Bell className="text-muted-foreground size-4" />
+        </div>
+        <div className="flex h-8 flex-1 items-center">
+          <ReminderSelect value={reminderType} onChange={onReminderChange} variant="inspector" />
+        </div>
+      </div>
+
+      {/* Records Section - 編集モードのみ */}
+      {!isDraftMode && planId && <RecordsSection planId={planId} />}
+
+      {/* Activity Section - 編集モードのみ */}
+      {!isDraftMode && planId && <ActivitySection planId={planId} />}
     </>
   );
 });
