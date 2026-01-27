@@ -25,7 +25,6 @@ export const CURRENT_TIME_LINE_COLOR = 'bg-primary';
 export const CURRENT_TIME_DOT_SIZE = 8; // 現在時刻のドットサイズ(px)
 
 // イベント配置
-export const MAX_EVENT_COLUMNS = 3; // 同時間帯の最大列数
 export const EVENT_GAP = 2; // イベント間の隙間(px)
 
 // アニメーション

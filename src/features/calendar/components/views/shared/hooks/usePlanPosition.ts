@@ -6,7 +6,8 @@ import { useMemo } from 'react';
 
 import { HOUR_HEIGHT } from '../constants/grid.constants';
 import type { PlanCardPosition, TimedPlan } from '../types/plan.types';
-import { calculatePlanPosition, calculateViewPlanColumns } from '../utils/planPositioning';
+
+import { usePlanLayoutCalculator } from './usePlanLayoutCalculator';
 
 export interface UsePlanPositionOptions {
   hourHeight?: number;
@@ -19,32 +20,35 @@ export interface PositionedPlan extends TimedPlan {
 export function usePlanPosition(plans: TimedPlan[], options: UsePlanPositionOptions = {}) {
   const { hourHeight = HOUR_HEIGHT } = options;
 
+  // usePlanLayoutCalculator で列配置を計算
+  const layouts = usePlanLayoutCalculator(plans);
+
   const planPositions = useMemo(() => {
     const positions = new Map<string, PlanCardPosition>();
 
-    if (plans.length === 0) return positions;
-
-    // プランの列配置を計算
-    const columns = calculateViewPlanColumns(plans);
+    if (layouts.length === 0) return positions;
 
     // 各プランの位置を計算
-    plans.forEach((plan) => {
-      const column = columns.get(plan.id);
-      if (!column) return;
+    layouts.forEach((layout) => {
+      const { plan, width, left } = layout;
 
-      const position = calculatePlanPosition(plan, column, hourHeight);
+      // 時刻からピクセル位置を計算
+      const startMinutes = plan.start.getHours() * 60 + plan.start.getMinutes();
+      const endMinutes = plan.end.getHours() * 60 + plan.end.getMinutes();
+      const top = (startMinutes * hourHeight) / 60;
+      const height = Math.max(((endMinutes - startMinutes) * hourHeight) / 60, 20);
 
       positions.set(plan.id, {
-        top: position.top,
-        left: position.left,
-        width: position.width,
-        height: position.height,
+        top,
+        left,
+        width,
+        height,
         zIndex: 10,
       });
     });
 
     return positions;
-  }, [plans, hourHeight]);
+  }, [layouts, hourHeight]);
 
   return planPositions;
 }

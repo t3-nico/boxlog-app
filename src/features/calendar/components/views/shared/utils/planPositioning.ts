@@ -2,7 +2,6 @@
  * プラン配置計算ユーティリティ
  */
 
-import { MAX_EVENT_COLUMNS } from '../constants/grid.constants';
 import type { PlanColumn, TimedPlan } from '../types/plan.types';
 
 /**
@@ -43,116 +42,6 @@ export function detectOverlapGroups(plans: TimedPlan[]): TimedPlan[][] {
   }
 
   return groups;
-}
-
-/**
- * 重複するプランの列配置を計算
- */
-export function calculateViewPlanColumns(plans: TimedPlan[]): Map<string, PlanColumn> {
-  const columnMap = new Map<string, PlanColumn>();
-
-  if (plans.length === 0) return columnMap;
-
-  // 重複グループを検出
-  const groups = detectOverlapGroups(plans);
-
-  for (const group of groups) {
-    if (group.length === 1) {
-      // 重複なしの場合
-      columnMap.set(group[0]!.id, {
-        plans: group,
-        columnIndex: 0,
-        totalColumns: 1,
-      });
-    } else {
-      // 重複ありの場合、列を割り当て
-      const columns = assignColumns(group);
-      columns.forEach((col, plan) => {
-        columnMap.set(plan.id, col);
-      });
-    }
-  }
-
-  return columnMap;
-}
-
-/**
- * 重複プランに列を割り当て
- */
-function assignColumns(plans: TimedPlan[]): Map<TimedPlan, PlanColumn> {
-  const result = new Map<TimedPlan, PlanColumn>();
-
-  // 開始時刻でソート
-  const sortedPlans = [...plans].sort((a, b) => a.start.getTime() - b.start.getTime());
-
-  // 各プランに列を割り当て
-  const columns: TimedPlan[][] = [];
-
-  for (const plan of sortedPlans) {
-    // 利用可能な最初の列を探す
-    let placed = false;
-
-    for (let i = 0; i < Math.min(columns.length, MAX_EVENT_COLUMNS); i++) {
-      const column = columns[i];
-      if (!column || column.length === 0) continue;
-
-      const lastInColumn = column[column.length - 1];
-      if (!lastInColumn) continue;
-
-      // この列の最後のプランと重複しない場合、この列に配置
-      if (!plansOverlap(lastInColumn, plan)) {
-        column.push(plan);
-        placed = true;
-        break;
-      }
-    }
-
-    // どの列にも配置できない場合、新しい列を作成（最大数まで）
-    if (!placed && columns.length < MAX_EVENT_COLUMNS) {
-      columns.push([plan]);
-    } else if (!placed) {
-      // 最大列数を超える場合、最も早く終わるプランの列に配置
-      let earliestEndCol = 0;
-      const firstColumn = columns[0];
-      if (!firstColumn || firstColumn.length === 0) {
-        columns.push([plan]);
-      } else {
-        const firstLastPlan = firstColumn[firstColumn.length - 1];
-        let earliestEnd = firstLastPlan ? firstLastPlan.end : new Date();
-
-        for (let i = 1; i < columns.length; i++) {
-          const column = columns[i];
-          if (!column || column.length === 0) continue;
-
-          const lastPlan = column[column.length - 1];
-          if (lastPlan && lastPlan.end < earliestEnd) {
-            earliestEnd = lastPlan.end;
-            earliestEndCol = i;
-          }
-        }
-
-        const targetColumn = columns[earliestEndCol];
-        if (targetColumn) {
-          targetColumn.push(plan);
-        }
-      }
-    }
-  }
-
-  // 結果をマップに変換
-  const totalColumns = columns.length;
-
-  columns.forEach((column, columnIndex) => {
-    column.forEach((plan) => {
-      result.set(plan, {
-        plans: sortedPlans,
-        columnIndex,
-        totalColumns,
-      });
-    });
-  });
-
-  return result;
 }
 
 /**
