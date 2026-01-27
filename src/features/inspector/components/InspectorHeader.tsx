@@ -92,7 +92,7 @@ export function InspectorHeader({
 
   // PC: フルヘッダー
   return (
-    <div className="bg-popover relative sticky top-0 z-10 flex h-12 shrink-0 items-center justify-between px-1">
+    <div className="bg-popover relative sticky top-0 z-10 flex shrink-0 items-center justify-between px-4 py-4">
       {/* ドラッグハンドル（背景レイヤー） */}
       {isDraggable && (
         <div
