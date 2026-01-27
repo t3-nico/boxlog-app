@@ -1,5 +1,6 @@
 'use client';
 
+import { ClockTimePicker } from '@/components/common/ClockTimePicker';
 import { Button } from '@/components/ui/button';
 import { useAutoAdjustEndTime } from '@/features/plans/hooks/useAutoAdjustEndTime';
 import { configToReadable, ruleToConfig } from '@/features/plans/utils/rrule';
@@ -7,7 +8,6 @@ import { Check, Clock } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { DatePickerPopover } from './DatePickerPopover';
 import { RecurrenceDialog } from './RecurrenceDialog';
-import { TimeSelect } from './TimeSelect';
 
 // 繰り返しオプション
 const RECURRENCE_OPTIONS = [
@@ -114,6 +114,28 @@ export function PlanScheduleSection({
   // 繰り返しが設定されているか
   const hasRecurrence = recurrenceRule || (recurrenceType && recurrenceType !== 'none');
 
+  // 合計時間（分）を計算
+  const durationMinutes = useMemo(() => {
+    if (!startTime || !endTime) return 0;
+    const [startH, startM] = startTime.split(':').map(Number);
+    const [endH, endM] = endTime.split(':').map(Number);
+    if (isNaN(startH!) || isNaN(startM!) || isNaN(endH!) || isNaN(endM!)) return 0;
+    const startMinutes = startH! * 60 + startM!;
+    const endMinutes = endH! * 60 + endM!;
+    const duration = endMinutes - startMinutes;
+    return duration > 0 ? duration : 0;
+  }, [startTime, endTime]);
+
+  // 時間表示フォーマット（例: "2h 30m"）
+  const durationDisplay = useMemo(() => {
+    if (durationMinutes <= 0) return '';
+    const h = Math.floor(durationMinutes / 60);
+    const m = durationMinutes % 60;
+    if (h > 0 && m > 0) return `${h}h ${m}m`;
+    if (h > 0) return `${h}h`;
+    return `${m}m`;
+  }, [durationMinutes]);
+
   return (
     <div className={showBorderTop ? 'border-border/50 border-t' : ''}>
       {/* 時間グループ */}
@@ -132,22 +154,23 @@ export function PlanScheduleSection({
 
           {/* 2行目: 時間 */}
           <div className="flex h-8 items-center">
-            <TimeSelect
+            <ClockTimePicker
               value={startTime}
               onChange={handleStartTimeChange}
-              label=""
               disabled={disabled}
               hasError={timeConflictError}
             />
             <span className="text-muted-foreground mx-1">→</span>
-            <TimeSelect
+            <ClockTimePicker
               value={endTime}
               onChange={handleEndTimeChange}
-              label=""
               disabled={disabled || !startTime}
-              minTime={startTime}
               hasError={timeConflictError}
+              minTime={startTime}
             />
+            {durationDisplay && (
+              <span className="text-muted-foreground ml-2 text-sm">{durationDisplay}</span>
+            )}
           </div>
 
           {/* 3行目: 繰り返し */}

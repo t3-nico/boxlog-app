@@ -1580,3 +1580,34 @@ img {
   aspect-ratio: 3 / 2;
 }
 
+/* ============================================
+ * timepicker-ui カスタムスタイル
+ * セマンティックトークンを適用してデザインシステムに統合
+ * ============================================ */
+.timepicker-ui-wrapper-active {
+  --pm-bg-color: var(--popover);
+  --pm-s-line-color: var(--primary);
+  --pm-bg-time-number-select: var(--primary);
+  --pm-text-time-number-select: var(--primary-foreground);
+  --pm-text-color: var(--foreground);
+  --pm-clock-hand-color: var(--primary);
+  --pm-clock-hand-circle-color: var(--primary);
+  --pm-clock-face-bg: var(--card);
+  --pm-clock-face-bg-secondary: color-mix(in oklch, var(--card) 80%, var(--foreground) 20%);
+  --pm-button-text-color: var(--primary);
+  --pm-keyboard-icon-color: var(--muted-foreground);
+  --pm-backdrop-bg: oklch(0 0 0 / 0.5);
+}
+
+/* モーダルを最前面に表示 */
+.timepicker-ui-wrapper-active {
+  z-index: 9999 !important;
+}
+
+/* ダークモード対応 */
+.dark .timepicker-ui-wrapper-active {
+  --pm-bg-color: var(--popover);
+  --pm-clock-face-bg: var(--card);
+  --pm-clock-face-bg-secondary: color-mix(in oklch, var(--card) 70%, var(--foreground) 30%);
+}
+

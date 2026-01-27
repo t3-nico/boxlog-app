@@ -3,6 +3,7 @@
 import { Calendar, Clock, FileText, ListChecks, Smile } from 'lucide-react';
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useState } from 'react';
 
+import { ClockTimePicker } from '@/components/common/ClockTimePicker';
 import {
   Select,
   SelectContent,
@@ -18,7 +19,6 @@ import { cn } from '@/lib/utils';
 
 import { usePlanInspectorStore } from '../../../stores/usePlanInspectorStore';
 import { DatePickerPopover } from '../../shared/DatePickerPopover';
-import { TimeSelect } from '../../shared/TimeSelect';
 
 import type { FulfillmentScore } from '@/features/records/types/record';
 
@@ -117,6 +117,16 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
       const duration = calculateDuration(formData.start_time, formData.end_time);
       setFormData((prev) => ({ ...prev, duration_minutes: duration }));
     }, [formData.start_time, formData.end_time, calculateDuration]);
+
+    // 時間表示フォーマット（例: "2h 30m"）
+    const durationDisplay = useMemo(() => {
+      if (formData.duration_minutes <= 0) return '';
+      const h = Math.floor(formData.duration_minutes / 60);
+      const m = formData.duration_minutes % 60;
+      if (h > 0 && m > 0) return `${h}h ${m}m`;
+      if (h > 0) return `${h}h`;
+      return `${m}m`;
+    }, [formData.duration_minutes]);
 
     // フォーム変更ハンドラ
     const handleTitleChange = useCallback((value: string) => {
@@ -243,18 +253,11 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
             <Clock className="text-muted-foreground size-4" />
           </div>
           <div className="flex h-8 flex-1 items-center gap-1">
-            <TimeSelect value={formData.start_time} onChange={handleStartTimeChange} label="" />
+            <ClockTimePicker value={formData.start_time} onChange={handleStartTimeChange} />
             <span className="text-muted-foreground mx-1">-</span>
-            <TimeSelect
-              value={formData.end_time}
-              onChange={handleEndTimeChange}
-              label=""
-              minTime={formData.start_time}
-            />
-            {formData.duration_minutes > 0 && (
-              <span className="text-muted-foreground ml-2 text-sm">
-                ({formData.duration_minutes}分)
-              </span>
+            <ClockTimePicker value={formData.end_time} onChange={handleEndTimeChange} />
+            {durationDisplay && (
+              <span className="text-muted-foreground ml-2 text-sm">{durationDisplay}</span>
             )}
           </div>
         </div>
