@@ -346,6 +346,12 @@ export function useDragSelection({
 
       if (selection && selectionStart) {
         if (isDragging.current && onTimeRangeSelect) {
+          // 重複時はキャンセル（Googleカレンダー互換）
+          if (isOverlapping) {
+            clearSelectionState();
+            return;
+          }
+
           const dateTimeSelection: DateTimeSelection = {
             date,
             startHour: selection.startHour,
@@ -476,6 +482,12 @@ export function useDragSelection({
 
       if (selection && selectionStart) {
         if (isDragging.current && onTimeRangeSelect) {
+          // 重複時はキャンセル（Googleカレンダー互換）
+          if (isOverlapping) {
+            clearSelectionState();
+            return;
+          }
+
           const dateTimeSelection: DateTimeSelection = {
             date,
             startHour: selection.startHour,
@@ -542,6 +554,7 @@ export function useDragSelection({
     defaultDuration,
     tap,
     checkOverlap,
+    isOverlapping,
   ]);
 
   // Effect: モーダルキャンセル時のカスタムイベント
