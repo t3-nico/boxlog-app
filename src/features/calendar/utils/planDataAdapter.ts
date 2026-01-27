@@ -272,7 +272,7 @@ export type { ExpandedOccurrence, PlanInstanceException };
  */
 interface RecordWithPlanInfo {
   id: string;
-  plan_id: string;
+  plan_id: string | null; // Planなしでも作成可能
   title?: string | null; // マイグレーション適用前はoptional
   worked_at: string; // YYYY-MM-DD
   start_time: string | null; // HH:MM:SS or HH:MM
@@ -331,7 +331,7 @@ export function recordToCalendarPlan(record: RecordWithPlanInfo): CalendarPlan |
     type: 'record',
     recordId: record.id,
     fulfillmentScore: record.fulfillment_score,
-    linkedPlanId: record.plan_id,
+    linkedPlanId: record.plan_id ?? undefined,
     linkedPlanTitle: record.plan?.title,
   };
 }

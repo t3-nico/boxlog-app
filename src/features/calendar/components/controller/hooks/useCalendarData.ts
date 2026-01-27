@@ -5,6 +5,7 @@ import { useEffect, useMemo } from 'react';
 import { addDays, format, subDays } from 'date-fns';
 
 import { usePlans } from '@/features/plans/hooks/usePlans';
+import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
 import type { Plan } from '@/features/plans/types/plan';
 import { isRecurringPlan } from '@/features/plans/utils/recurrence';
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
@@ -106,6 +107,10 @@ export function useCalendarData({
   // フィルター関数を取得（ストアに統一）
   const isPlanVisible = useCalendarFilterStore((state) => state.isPlanVisible);
 
+  // ドラフトプランを取得（コピー＆ペースト時のプレビュー表示用）
+  // タイトルがある場合のみ表示（ドラッグ選択時はタイトルが空なのでDragSelectionPreviewが担当）
+  const draftPlan = usePlanInspectorStore((state) => state.draftPlan);
+
   // 繰り返しプランのIDを抽出
   const recurringPlanIds = useMemo(() => {
     if (!plansData) return [];
@@ -176,8 +181,35 @@ export function useCalendarData({
       calendarPlans.push(...calendarRecords);
     }
 
+    // ドラフトプランをプレビューとして追加
+    // タイトルがある場合のみ表示（ペースト時など）
+    // ドラッグ選択時はタイトルが空なので、DragSelectionPreviewが担当
+    if (draftPlan?.start_time && draftPlan?.end_time && draftPlan?.title) {
+      const startDate = new Date(draftPlan.start_time);
+      const endDate = new Date(draftPlan.end_time);
+      const draftCalendarPlan: CalendarPlan = {
+        id: '__draft__',
+        title: draftPlan.title,
+        description: draftPlan.description ?? undefined,
+        startDate,
+        endDate,
+        status: 'open',
+        color: 'var(--primary)',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        displayStartDate: startDate,
+        displayEndDate: endDate,
+        duration: (endDate.getTime() - startDate.getTime()) / 60000,
+        isMultiDay: false,
+        isRecurring: false,
+        type: 'plan',
+        isDraft: true,
+      };
+      calendarPlans.push(draftCalendarPlan);
+    }
+
     return calendarPlans;
-  }, [plansData, recordsData, viewDateRange, exceptionsMap]);
+  }, [plansData, recordsData, viewDateRange, exceptionsMap, draftPlan]);
 
   // 表示範囲のイベントをフィルタリング
   const filteredEvents = useMemo(() => {

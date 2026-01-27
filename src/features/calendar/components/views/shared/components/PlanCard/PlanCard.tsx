@@ -8,7 +8,7 @@ import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
 import { normalizeStatus } from '@/features/plans/utils/status';
-import { CheckCircle2, Circle, Clock } from 'lucide-react';
+import { CheckCircle2, Circle, Clock, Pencil } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { MEDIA_QUERIES } from '@/config/ui/breakpoints';
@@ -44,6 +44,9 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
 
   // Record かどうか判定（Records は作業ログなので読み取り専用）
   const isRecord = plan.type === 'record';
+
+  // ドラフト（未保存プレビュー）かどうか判定
+  const isDraft = plan.isDraft === true;
 
   // すべてのプランは時間指定プラン
 
@@ -91,8 +94,8 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
 
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
-      // Records は読み取り専用なのでドラッグ不可
-      if (isRecord) return;
+      // Records/Draft は読み取り専用なのでドラッグ不可
+      if (isRecord || isDraft) return;
       if (e.button === 0) {
         // 左クリックのみ
         onDragStart?.(plan, e, {
@@ -103,14 +106,14 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
         });
       }
     },
-    [isRecord, onDragStart, plan, safePosition],
+    [isRecord, isDraft, onDragStart, plan, safePosition],
   );
 
   // モバイル用タッチ開始
   const handleTouchStart = useCallback(
     (e: React.TouchEvent) => {
-      // Records は読み取り専用なのでドラッグ不可
-      if (isRecord) return;
+      // Records/Draft は読み取り専用なのでドラッグ不可
+      if (isRecord || isDraft) return;
       onTouchStart?.(plan, e, {
         top: safePosition.top,
         left: safePosition.left,
@@ -118,7 +121,7 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
         height: safePosition.height,
       });
     },
-    [isRecord, onTouchStart, plan, safePosition],
+    [isRecord, isDraft, onTouchStart, plan, safePosition],
   );
 
   const handleMouseUp = useCallback(() => {
@@ -194,15 +197,23 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2',
     // 背景色（選択/アクティブ時はstate-hover、通常時はplan-box）
     // Record は少し透明度を下げて区別
-    isSelected || isActive ? 'bg-state-hover' : isRecord ? 'bg-plan-box/70' : 'bg-plan-box',
+    // Draft は半透明で未保存を表現
+    isDraft
+      ? 'bg-primary/20'
+      : isSelected || isActive
+        ? 'bg-state-hover'
+        : isRecord
+          ? 'bg-plan-box/70'
+          : 'bg-plan-box',
     // 選択状態の視覚フィードバック（色覚異常対応）
     isSelected && 'ring-2 ring-primary',
     // Record は点線枠線で視覚的に区別
-    isRecord && 'border border-dashed border-border',
+    // Draft はDragSelectionPreviewと同じスタイルで統一
+    isDraft ? 'border border-primary/40' : isRecord && 'border border-dashed border-border',
     // テキスト色
     'text-foreground',
-    // 状態別スタイル（Record は読み取り専用なのでポインタースタイルのみ）
-    isRecord ? 'cursor-pointer' : isDragging ? 'cursor-grabbing' : 'cursor-pointer',
+    // 状態別スタイル（Record/Draft は読み取り専用なのでポインタースタイルのみ）
+    isDraft || isRecord ? 'cursor-default' : isDragging ? 'cursor-grabbing' : 'cursor-pointer',
     // モバイル: Googleカレンダー風（左ボーダー、チェックボックス+タイトル横並び、上寄せ）
     // デスクトップ: 通常のカード表示
     isMobile
@@ -218,6 +229,7 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
 
   return (
     <div
+      data-plan-card
       className={planCardClasses}
       style={{
         ...dynamicStyle,
@@ -235,11 +247,36 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
       draggable={false} // HTML5 draggableは使わない
       role="button"
       tabIndex={0}
-      aria-label={isRecord ? `record: ${plan.title}` : `plan: ${plan.title}`}
+      aria-label={
+        isDraft
+          ? `draft: ${plan.title}`
+          : isRecord
+            ? `record: ${plan.title}`
+            : `plan: ${plan.title}`
+      }
       aria-pressed={isSelected}
     >
-      {/* Record: 時計アイコン（読み取り専用） / Plan: チェックボックス */}
-      {isRecord ? (
+      {/* Draft: 鉛筆アイコン / Record: 時計アイコン（読み取り専用） / Plan: チェックボックス */}
+      {isDraft ? (
+        // Draft は鉛筆アイコンを表示（編集中を示す）
+        <div
+          className={cn(
+            'z-10 flex-shrink-0 rounded',
+            isMobile
+              ? 'relative -m-3 flex min-h-[44px] min-w-[44px] items-center justify-center'
+              : 'absolute flex items-center justify-center',
+            !isMobile && (safePosition.height < 30 ? 'top-0.5 left-0.5' : 'top-2 left-2'),
+            !isMobile && 'min-h-4 min-w-4',
+          )}
+        >
+          <Pencil
+            className={cn(
+              'text-primary',
+              isMobile ? 'h-3.5 w-3.5' : safePosition.height < 30 ? 'h-3 w-3' : 'h-4 w-4',
+            )}
+          />
+        </div>
+      ) : isRecord ? (
         // Record は時計アイコンを表示（状態変更不可）
         <div
           className={cn(
@@ -321,8 +358,8 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
         isCheckboxHovered={isCheckboxHovered}
       />
 
-      {/* 下端リサイズハンドル（Record は読み取り専用なので非表示） */}
-      {!isRecord && (
+      {/* 下端リサイズハンドル（Record/Draft は読み取り専用なので非表示） */}
+      {!isRecord && !isDraft && (
         <div
           className="focus:ring-ring absolute right-0 bottom-0 left-0 cursor-ns-resize focus:ring-2 focus:ring-offset-1 focus:outline-none"
           role="slider"
