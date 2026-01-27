@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronDown, ChevronUp, MoreHorizontal, X } from 'lucide-react';
+import { ChevronDown, ChevronUp, MoreHorizontal, PanelRightClose, X } from 'lucide-react';
 import type { ReactNode } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -11,13 +11,11 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { cn } from '@/lib/utils';
 
 import { useDragHandle } from './DraggableInspector';
+import type { InspectorDisplayMode } from './InspectorShell';
 
 interface InspectorHeaderProps {
-  /** Inspectorの種類（Plan/Record）で背景色を変える */
-  variant?: 'plan' | 'record';
   /** 前のアイテムが存在するか */
   hasPrevious?: boolean;
   /** 次のアイテムが存在するか */
@@ -30,14 +28,16 @@ interface InspectorHeaderProps {
   onNext?: () => void;
   /** ドロップダウンメニューの内容 */
   menuContent?: ReactNode;
-  /** メニューの左に表示する追加コンテンツ（Activityアイコンなど） */
-  extraRightContent?: ReactNode;
   /** 閉じるボタンのツールチップ */
   closeLabel?: string;
   /** 前へボタンのツールチップ */
   previousLabel?: string;
   /** 次へボタンのツールチップ */
   nextLabel?: string;
+  /** 表示モード（アイコン切り替え用） */
+  displayMode?: InspectorDisplayMode;
+  /** ヘッダー右側の追加コンテンツ（メニューの左側に表示） */
+  rightContent?: ReactNode;
 }
 
 /**
@@ -54,6 +54,7 @@ interface InspectorHeaderProps {
  *   onClose={closeInspector}
  *   onPrevious={goToPrevious}
  *   onNext={goToNext}
+ *   displayMode={displayMode}
  *   menuContent={
  *     <>
  *       <DropdownMenuItem onClick={handleEdit}>編集</DropdownMenuItem>
@@ -64,17 +65,17 @@ interface InspectorHeaderProps {
  * ```
  */
 export function InspectorHeader({
-  variant = 'plan',
   hasPrevious = false,
   hasNext = false,
   onClose,
   onPrevious,
   onNext,
   menuContent,
-  extraRightContent,
   closeLabel = '閉じる',
   previousLabel = '前へ',
   nextLabel = '次へ',
+  displayMode = 'sheet',
+  rightContent,
 }: InspectorHeaderProps) {
   const isMobile = useMediaQuery('(max-width: 767px)');
   const showNavigation = onPrevious && onNext;
@@ -91,12 +92,7 @@ export function InspectorHeader({
 
   // PC: フルヘッダー
   return (
-    <div
-      className={cn(
-        'relative sticky top-0 z-10 flex shrink-0 items-center justify-between px-4 pt-4 pb-2',
-        variant === 'record' ? 'bg-record-box' : 'bg-popover',
-      )}
-    >
+    <div className="bg-popover relative sticky top-0 z-10 flex shrink-0 items-center justify-between px-4 py-4">
       {/* ドラッグハンドル（背景レイヤー） */}
       {isDraggable && (
         <div
@@ -108,10 +104,21 @@ export function InspectorHeader({
 
       {/* 左側ボタン（前面レイヤー） */}
       <div className="relative z-10 flex items-center gap-1">
+        {/* 閉じるボタン */}
+        <HoverTooltip content={closeLabel} side="bottom">
+          <Button variant="ghost" size="icon-sm" onClick={onClose} aria-label={closeLabel}>
+            {displayMode === 'popover' ? (
+              <X className="size-5" />
+            ) : (
+              <PanelRightClose className="size-5" />
+            )}
+          </Button>
+        </HoverTooltip>
+
         {/* ナビゲーションボタン */}
         {showNavigation && (
           <div className="flex items-center">
-            <HoverTooltip content={previousLabel} side="top">
+            <HoverTooltip content={previousLabel} side="bottom">
               <Button
                 variant="ghost"
                 size="icon-sm"
@@ -122,7 +129,7 @@ export function InspectorHeader({
                 <ChevronUp className="size-5" />
               </Button>
             </HoverTooltip>
-            <HoverTooltip content={nextLabel} side="top">
+            <HoverTooltip content={nextLabel} side="bottom">
               <Button
                 variant="ghost"
                 size="icon-sm"
@@ -139,8 +146,8 @@ export function InspectorHeader({
 
       {/* 右側ボタン（前面レイヤー） */}
       <div className="relative z-10 flex items-center gap-1">
-        {/* 追加コンテンツ（Activityアイコンなど） */}
-        {extraRightContent}
+        {rightContent}
+
         {/* オプションメニュー */}
         {menuContent && (
           <DropdownMenu>
@@ -159,18 +166,6 @@ export function InspectorHeader({
             </DropdownMenuContent>
           </DropdownMenu>
         )}
-        {/* 閉じるボタン（他のアイコンと別グループとして余白を追加） */}
-        <HoverTooltip content={closeLabel} side="top">
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            onClick={onClose}
-            aria-label={closeLabel}
-            className="ml-1"
-          >
-            <X className="size-5" />
-          </Button>
-        </HoverTooltip>
       </div>
     </div>
   );
