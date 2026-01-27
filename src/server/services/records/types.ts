@@ -22,6 +22,7 @@ export interface RecordRow {
   id: string;
   plan_id: string;
   user_id: string;
+  title?: string | null; // マイグレーション適用前はoptional
   worked_at: string;
   start_time: string | null;
   end_time: string | null;

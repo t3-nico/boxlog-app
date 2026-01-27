@@ -17,6 +17,7 @@ export interface Record {
   id: string;
   plan_id: string;
   user_id: string;
+  title: string | null; // 作業タイトル（任意）
   worked_at: string; // DATE型（YYYY-MM-DD）
   start_time: string | null; // TIME型（HH:MM:SS）
   end_time: string | null; // TIME型（HH:MM:SS）
@@ -32,6 +33,7 @@ export interface Record {
  */
 export interface CreateRecordInput {
   plan_id: string;
+  title?: string | null; // 作業タイトル（任意）
   worked_at: string; // YYYY-MM-DD
   start_time?: string | null; // HH:MM or HH:MM:SS
   end_time?: string | null; // HH:MM or HH:MM:SS
@@ -44,6 +46,7 @@ export interface CreateRecordInput {
  * Record 更新入力
  */
 export interface UpdateRecordInput {
+  title?: string | null;
   worked_at?: string;
   start_time?: string | null;
   end_time?: string | null;

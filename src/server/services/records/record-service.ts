@@ -246,9 +246,12 @@ export class RecordService {
 
     // 新しいRecordを作成（worked_atを変更）
     const today = new Date().toISOString().split('T')[0];
+    // title は DB カラムが追加されるまで undefined の可能性あり
+    const originalWithTitle = original as typeof original & { title?: string | null };
     const newRecord = {
       user_id: userId,
       plan_id: original.plan_id,
+      title: originalWithTitle.title ?? null,
       worked_at: workedAt ?? today,
       start_time: original.start_time,
       end_time: original.end_time,
