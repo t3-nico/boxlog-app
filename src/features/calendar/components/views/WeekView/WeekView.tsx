@@ -45,6 +45,7 @@ export const WeekView = ({
   disabledPlanId,
   onPlanClick,
   onPlanContextMenu,
+  onEmptyAreaContextMenu,
   onUpdatePlan,
   onEmptyClick,
   onTimeRangeSelect,
@@ -84,6 +85,7 @@ export const WeekView = ({
         disabledPlanId={disabledPlanId}
         onEventClick={onPlanClick}
         onEventContextMenu={onPlanContextMenu}
+        onEmptyAreaContextMenu={onEmptyAreaContextMenu}
         onEmptyClick={(date, time) => {
           onEmptyClick?.(date, time);
         }}

@@ -46,6 +46,7 @@ export const FiveDayView = ({
   onNavigatePrev: _onNavigatePrev,
   onNavigateNext: _onNavigateNext,
   onNavigateToday: _onNavigateToday,
+  onEmptyAreaContextMenu,
 }: FiveDayViewProps) => {
   const timezone = useCalendarSettingsStore((state) => state.timezone);
 
@@ -171,6 +172,7 @@ export const FiveDayView = ({
                       : undefined
                   }
                   onTimeRangeSelect={onTimeRangeSelect}
+                  onEmptyAreaContextMenu={onEmptyAreaContextMenu}
                   disabledPlanId={disabledPlanId}
                   className="h-full"
                   dayIndex={dayIndex}

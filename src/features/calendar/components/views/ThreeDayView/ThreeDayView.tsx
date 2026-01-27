@@ -45,6 +45,7 @@ export const ThreeDayView = ({
   onNavigatePrev: _onNavigatePrev,
   onNavigateNext: _onNavigateNext,
   onNavigateToday: _onNavigateToday,
+  onEmptyAreaContextMenu,
 }: ThreeDayViewProps) => {
   const { timezone } = useCalendarSettingsStore();
 
@@ -178,6 +179,7 @@ export const ThreeDayView = ({
                     // onCreatePlanは(date: Date, time?: string)の形式なので、startTimeのみ渡す
                     onCreatePlan?.(startDate, startTime);
                   }}
+                  onEmptyAreaContextMenu={onEmptyAreaContextMenu}
                   disabledPlanId={disabledPlanId}
                   className="h-full"
                   dayIndex={dayIndex}

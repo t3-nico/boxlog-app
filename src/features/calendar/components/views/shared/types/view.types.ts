@@ -24,6 +24,9 @@ export interface DayColumnProps {
   onTimeClick?: ((date: Date, hour: number, minute: number) => void) | undefined;
   onEventClick?: ((plan: CalendarPlan) => void) | undefined;
   onEventContextMenu?: ((plan: CalendarPlan, e: React.MouseEvent) => void) | undefined;
+  onEmptyAreaContextMenu?:
+    | ((date: Date, hour: number, minute: number, e: React.MouseEvent) => void)
+    | undefined;
   className?: string | undefined;
 }
 

@@ -29,6 +29,10 @@ interface FiveDayContentProps {
   onEmptyClick?: ((date: Date, timeString: string) => void) | undefined;
   onPlanUpdate?: ((planId: string, updates: Partial<CalendarPlan>) => void) | undefined;
   onTimeRangeSelect?: ((selection: DateTimeSelection) => void) | undefined;
+  /** 空き領域の右クリックハンドラー */
+  onEmptyAreaContextMenu?:
+    | ((date: Date, hour: number, minute: number, e: React.MouseEvent) => void)
+    | undefined;
   className?: string | undefined;
   dayIndex: number; // 5日間内での日付インデックス（0-4）
   displayDates?: Date[] | undefined; // 5日間の全日付配列（日付間移動用）
@@ -45,6 +49,7 @@ export const FiveDayContent = ({
   onPlanContextMenu,
   onPlanUpdate,
   onTimeRangeSelect,
+  onEmptyAreaContextMenu,
   className,
   dayIndex,
   displayDates,
@@ -128,6 +133,7 @@ export const FiveDayContent = ({
         date={date}
         className="absolute inset-0"
         onTimeRangeSelect={onTimeRangeSelect}
+        onContextMenu={onEmptyAreaContextMenu}
         disabled={dragState.isPending || dragState.isDragging || dragState.isResizing}
         plans={allEventsForOverlapCheck ?? plans}
       >

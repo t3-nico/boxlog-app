@@ -44,6 +44,7 @@ export const WeekGrid = ({
   onTimeRangeSelect,
   timezone,
   className,
+  onEmptyAreaContextMenu,
 }: WeekGridProps) => {
   // レスポンシブな時間高さ（ThreeDayViewと同じパターン）
   useResponsiveHourHeight({
@@ -148,6 +149,7 @@ export const WeekGrid = ({
                 onEmptyClick={onEmptyClick}
                 onPlanUpdate={handlePlanUpdate}
                 onTimeRangeSelect={onTimeRangeSelect}
+                onEmptyAreaContextMenu={onEmptyAreaContextMenu}
                 disabledPlanId={disabledPlanId}
                 className="h-full"
                 dayIndex={dayIndex}
