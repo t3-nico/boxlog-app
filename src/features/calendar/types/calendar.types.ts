@@ -62,6 +62,8 @@ export interface CalendarPlan {
   fulfillmentScore?: number | null | undefined; // 充実度（1-5）
   linkedPlanId?: string | undefined; // 紐づくPlanのID
   linkedPlanTitle?: string | undefined; // 紐づくPlanのタイトル
+  // ドラフト状態（未保存のプレビュー）
+  isDraft?: boolean | undefined;
 }
 
 // 後方互換性のためのエイリアス
