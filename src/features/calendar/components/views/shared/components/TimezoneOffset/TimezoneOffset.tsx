@@ -56,7 +56,7 @@ export function TimezoneOffset({ timezone, className }: TimezoneOffsetProps) {
       type="button"
       onClick={handleClick}
       className={cn(
-        'text-muted-foreground flex items-center justify-center pr-1 text-xs',
+        'text-muted-foreground flex items-center justify-end pr-2 text-xs',
         'hover:text-foreground cursor-pointer rounded transition-colors',
         className,
       )}

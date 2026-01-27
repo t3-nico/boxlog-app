@@ -46,7 +46,7 @@ export const TimeColumn = memo<TimeColumnProps>(function TimeColumn({
       rows.push(
         <div
           key={`hour-${hour}`}
-          className="text-muted-foreground relative flex items-start pr-2 pl-4 text-xs select-none"
+          className="text-muted-foreground relative flex w-full items-start justify-end pr-2 text-xs select-none"
           style={{ height: `${hourHeight}px` }}
         >
           {showLabel && <span className="bg-background -translate-y-1/2">{label}</span>}
@@ -59,10 +59,7 @@ export const TimeColumn = memo<TimeColumnProps>(function TimeColumn({
 
   return (
     <div
-      className={cn(
-        'bg-background border-border sticky left-0 z-10 flex flex-col border-r',
-        className,
-      )}
+      className={cn('bg-background sticky left-0 z-10 flex flex-col', className)}
       style={{
         width: `${TIME_COLUMN_WIDTH}px`,
         height: `${gridHeight}px`,
