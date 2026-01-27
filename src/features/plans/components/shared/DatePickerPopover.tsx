@@ -1,6 +1,7 @@
 'use client';
 
 import { MiniCalendar } from '@/components/common/MiniCalendar';
+import { zIndex } from '@/config/ui/z-index';
 import { useDateFormat } from '@/features/settings/hooks/useDateFormat';
 
 interface DatePickerPopoverProps {
@@ -8,6 +9,8 @@ interface DatePickerPopoverProps {
   onDateChange: (date: Date | undefined) => void;
   placeholder?: string;
   className?: string;
+  /** Popover の z-index（デフォルト: overlayDropdown） */
+  popoverZIndex?: number;
 }
 
 /**
@@ -22,6 +25,7 @@ export function DatePickerPopover({
   selectedDate,
   onDateChange,
   placeholder = '日付を選択',
+  popoverZIndex = zIndex.overlayDropdown,
 }: DatePickerPopoverProps) {
   const { formatDate } = useDateFormat();
 
@@ -40,6 +44,7 @@ export function DatePickerPopover({
       selectedDate={selectedDate}
       onDateSelect={onDateChange}
       popoverAlign="start"
+      popoverZIndex={popoverZIndex}
     />
   );
 }
