@@ -1,6 +1,6 @@
 'use client';
 
-import { Clock, Plus, Smile, Trash2 } from 'lucide-react';
+import { Clock, Copy, Plus, Smile, Trash2 } from 'lucide-react';
 import { useLocale } from 'next-intl';
 import Link from 'next/link';
 
@@ -15,6 +15,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { HoverTooltip } from '@/components/ui/tooltip';
+import { api } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
 
 import { useRecordData, useRecordMutations, type RecordItem } from '../hooks';
@@ -67,10 +69,21 @@ function FulfillmentScore({ score }: { score: number | null }) {
 export function RecordTableView() {
   const locale = useLocale();
   const { items, isPending } = useRecordData();
-  const { deleteRecord } = useRecordMutations();
+  const { deleteRecord, duplicateRecord } = useRecordMutations();
   const selectedRecordId = useRecordInspectorStore((state) => state.selectedRecordId);
   const openInspector = useRecordInspectorStore((state) => state.openInspector);
+  const openInspectorWithDraft = useRecordInspectorStore((state) => state.openInspectorWithDraft);
   const isInspectorOpen = useRecordInspectorStore((state) => state.isOpen);
+
+  // 最近のRecordを取得（上位5件）
+  const { data: recentRecords } = api.records.getRecent.useQuery({ limit: 5 });
+
+  // 今日の日付で複製
+  const handleDuplicate = async (e: React.MouseEvent, recordId: string) => {
+    e.stopPropagation();
+    const today = new Date().toISOString().split('T')[0] ?? '';
+    await duplicateRecord.mutateAsync({ id: recordId, worked_at: today });
+  };
 
   // ローディング表示
   if (isPending && items.length === 0) {
@@ -93,7 +106,7 @@ export function RecordTableView() {
           <p className="text-muted-foreground">まだRecordがありません</p>
           <p className="text-muted-foreground text-sm">作業ログを記録しましょう</p>
         </div>
-        <Button>
+        <Button onClick={() => openInspectorWithDraft()}>
           <Plus className="mr-2 size-4" />
           Record作成
         </Button>
@@ -120,11 +133,46 @@ export function RecordTableView() {
           <div className="flex items-center gap-2">
             <span className="text-muted-foreground text-sm">{items.length}件のRecord</span>
           </div>
-          <Button>
+          <Button onClick={() => openInspectorWithDraft()}>
             <Plus className="mr-2 size-4" />
             Record作成
           </Button>
         </div>
+
+        {/* 最近のRecord（クイック複製用） */}
+        {recentRecords && recentRecords.length > 0 && (
+          <div className="mb-4 px-4">
+            <div className="mb-2 flex items-center justify-between">
+              <span className="text-muted-foreground text-xs font-medium">クイック複製</span>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {recentRecords.map((record) => (
+                <div
+                  key={record.id}
+                  className="border-border bg-surface-container hover:bg-state-hover flex items-center gap-2 rounded-lg border px-3 py-1.5"
+                >
+                  {record.plan && (
+                    <span className="max-w-32 truncate text-sm">{record.plan.title}</span>
+                  )}
+                  <span className="text-muted-foreground text-xs">
+                    {formatDuration(record.duration_minutes)}
+                  </span>
+                  <HoverTooltip content="今日の日付で複製" side="top">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="size-6"
+                      onClick={(e) => handleDuplicate(e, record.id)}
+                      disabled={duplicateRecord.isPending}
+                    >
+                      <Copy className="size-3" />
+                    </Button>
+                  </HoverTooltip>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* テーブル本体 */}
         <div className="h-[calc(100%-48px)] overflow-auto px-4">

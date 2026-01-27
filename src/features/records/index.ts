@@ -13,6 +13,7 @@ export type { RecordItem } from './hooks';
 
 // Stores
 export { useRecordInspectorStore } from './stores';
+export type { DraftRecord } from './stores';
 
 // Types
 export type { FulfillmentScore, Record, RecordWithPlan } from './types/record';
