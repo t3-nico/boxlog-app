@@ -191,11 +191,11 @@ export function updateDragElementOverlapStyle(
 
       const overlay = document.createElement('div');
       overlay.id = OVERLAY_ID;
-      // DragSelectionPreviewと同じ薄い赤カーテン
+      // DragSelectionPreviewと同じ薄い赤カーテン（セマンティックトークン使用）
       overlay.style.cssText = `
         position: absolute;
         inset: 0;
-        background: rgba(239, 68, 68, 0.6);
+        background: oklch(from var(--destructive) l c h / 60%);
         border-radius: inherit;
         display: flex;
         flex-direction: column;
@@ -206,11 +206,11 @@ export function updateDragElementOverlapStyle(
       // DragSelectionPreviewと同じレイアウト（アイコン + テキスト）
       overlay.innerHTML = `
         <div style="display: flex; align-items: center; gap: 4px; margin-bottom: 4px;">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" style="flex-shrink: 0;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--destructive-foreground)" stroke-width="2.5" stroke-linecap="round" style="flex-shrink: 0;">
             <circle cx="12" cy="12" r="10"/>
             <path d="m4.9 4.9 14.2 14.2"/>
           </svg>
-          <span style="color: white; font-size: 12px; font-weight: 500;">時間が重複しています</span>
+          <span style="color: var(--destructive-foreground); font-size: 12px; font-weight: 500;">時間が重複しています</span>
         </div>
       `;
       dragElement.appendChild(overlay);
