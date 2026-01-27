@@ -126,11 +126,8 @@ export function useResizeHandler({
       );
 
       if (isOverlapping) {
-        // ハプティックフィードバック + エラートースト
+        // ハプティックフィードバック（視覚的フィードバックはドラッグ中に表示済み）
         hapticError();
-        calendarToast.error(t('calendar.toast.conflict'), {
-          description: t('calendar.toast.conflictDescription'),
-        });
         // 視覚的フィードバックをクリア
         const resizeElement = dragDataRef.current.originalElement;
         if (resizeElement) {
