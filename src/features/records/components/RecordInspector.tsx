@@ -1,6 +1,6 @@
 'use client';
 
-import { Calendar, Clock, Save, Smile, Trash2, X } from 'lucide-react';
+import { Calendar, Clock, ListChecks, Save, Smile, Trash2, X } from 'lucide-react';
 import { useLocale } from 'next-intl';
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
@@ -20,42 +20,75 @@ import { api } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
 
 import { useRecordMutations, type RecordItem } from '../hooks';
-import { useRecordInspectorStore } from '../stores';
+import { useRecordInspectorStore, type DraftRecord } from '../stores';
+
+interface FormData {
+  plan_id: string | null;
+  worked_at: string;
+  start_time: string;
+  end_time: string;
+  duration_minutes: number;
+  fulfillment_score: number | null;
+  note: string;
+}
 
 /**
  * Record Inspector コンポーネント
  *
  * Record詳細表示・編集用サイドパネル
+ * - 既存Record編集モード: selectedRecordId が設定されている場合
+ * - 新規作成モード（ドラフト）: draftRecord が設定されている場合
  */
 export function RecordInspector() {
   const locale = useLocale();
   const selectedRecordId = useRecordInspectorStore((state) => state.selectedRecordId);
+  const draftRecord = useRecordInspectorStore((state) => state.draftRecord);
   const closeInspector = useRecordInspectorStore((state) => state.closeInspector);
+  const updateDraft = useRecordInspectorStore((state) => state.updateDraft);
 
-  // Record取得
+  // ドラフトモードかどうか
+  const isDraftMode = draftRecord !== null && selectedRecordId === null;
+
+  // Record取得（既存編集時のみ）
   const { data: record, isLoading } = api.records.getById.useQuery(
     { id: selectedRecordId!, include: { plan: true } },
     { enabled: !!selectedRecordId },
   );
 
+  // Plan一覧取得（ドラフトモード時のPlan選択用）
+  const { data: plans } = api.plans.list.useQuery({ status: 'open' }, { enabled: isDraftMode });
+
   // Mutations
-  const { updateRecord, deleteRecord } = useRecordMutations();
+  const { createRecord, updateRecord, deleteRecord } = useRecordMutations();
 
   // 編集状態
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
+    plan_id: null,
     worked_at: '',
     start_time: '',
     end_time: '',
     duration_minutes: 0,
-    fulfillment_score: null as number | null,
+    fulfillment_score: null,
     note: '',
   });
   const [isDirty, setIsDirty] = useState(false);
 
-  // Recordデータを編集フォームに反映
+  // ドラフトまたは既存Recordデータを編集フォームに反映
   useEffect(() => {
-    if (record) {
+    if (isDraftMode && draftRecord) {
       setFormData({
+        plan_id: draftRecord.plan_id,
+        worked_at: draftRecord.worked_at,
+        start_time: draftRecord.start_time ?? '',
+        end_time: draftRecord.end_time ?? '',
+        duration_minutes: draftRecord.duration_minutes,
+        fulfillment_score: draftRecord.fulfillment_score,
+        note: draftRecord.note ?? '',
+      });
+      setIsDirty(false);
+    } else if (record) {
+      setFormData({
+        plan_id: record.plan_id,
         worked_at: record.worked_at,
         start_time: record.start_time ?? '',
         end_time: record.end_time ?? '',
@@ -65,33 +98,55 @@ export function RecordInspector() {
       });
       setIsDirty(false);
     }
-  }, [record]);
+  }, [record, draftRecord, isDraftMode]);
 
   // フォーム変更ハンドラ
   const handleChange = useCallback(
-    (field: keyof typeof formData, value: string | number | null) => {
+    (field: keyof FormData, value: string | number | null) => {
       setFormData((prev) => ({ ...prev, [field]: value }));
       setIsDirty(true);
+
+      // ドラフトモード時はstoreも更新
+      if (isDraftMode) {
+        updateDraft({ [field]: value } as Partial<DraftRecord>);
+      }
     },
-    [],
+    [isDraftMode, updateDraft],
   );
 
   // 保存
   const handleSave = async () => {
-    if (!selectedRecordId || !isDirty) return;
-
-    await updateRecord.mutateAsync({
-      id: selectedRecordId,
-      data: {
+    if (isDraftMode) {
+      // 新規作成モード
+      if (!formData.plan_id) {
+        // Plan未選択の場合は保存しない
+        return;
+      }
+      await createRecord.mutateAsync({
+        plan_id: formData.plan_id,
         worked_at: formData.worked_at,
         start_time: formData.start_time || null,
         end_time: formData.end_time || null,
         duration_minutes: formData.duration_minutes,
         fulfillment_score: formData.fulfillment_score,
         note: formData.note || null,
-      },
-    });
-    setIsDirty(false);
+      });
+      closeInspector();
+    } else if (selectedRecordId && isDirty) {
+      // 既存Record更新モード
+      await updateRecord.mutateAsync({
+        id: selectedRecordId,
+        data: {
+          worked_at: formData.worked_at,
+          start_time: formData.start_time || null,
+          end_time: formData.end_time || null,
+          duration_minutes: formData.duration_minutes,
+          fulfillment_score: formData.fulfillment_score,
+          note: formData.note || null,
+        },
+      });
+      setIsDirty(false);
+    }
   };
 
   // 削除
@@ -105,13 +160,14 @@ export function RecordInspector() {
 
   // キャンセル
   const handleCancel = () => {
-    if (isDirty) {
+    if (isDirty && !isDraftMode) {
       if (!window.confirm('変更が保存されていません。破棄しますか？')) return;
     }
     closeInspector();
   };
 
-  if (isLoading) {
+  // ローディング状態（既存Record編集時のみ）
+  if (!isDraftMode && isLoading) {
     return (
       <div className="border-border bg-surface flex h-full w-80 flex-col border-l">
         <div className="flex h-full items-center justify-center">
@@ -121,7 +177,8 @@ export function RecordInspector() {
     );
   }
 
-  if (!record) {
+  // Record未取得（既存編集時にRecordが見つからない場合）
+  if (!isDraftMode && !record) {
     return (
       <div className="border-border bg-surface flex h-full w-80 flex-col border-l">
         <div className="flex h-full items-center justify-center">
@@ -131,13 +188,18 @@ export function RecordInspector() {
     );
   }
 
-  const typedRecord = record as RecordItem;
+  const typedRecord = record as RecordItem | undefined;
+
+  // 保存ボタンの無効化条件
+  const isSaveDisabled = isDraftMode
+    ? !formData.plan_id || formData.duration_minutes <= 0
+    : !isDirty;
 
   return (
     <div className="border-border bg-surface flex h-full w-80 flex-col border-l">
       {/* ヘッダー */}
       <div className="flex h-12 shrink-0 items-center justify-between border-b px-4">
-        <h2 className="font-medium">Record詳細</h2>
+        <h2 className="font-medium">{isDraftMode ? 'Record作成' : 'Record詳細'}</h2>
         <Button variant="ghost" size="icon" onClick={handleCancel}>
           <X className="size-4" />
         </Button>
@@ -146,10 +208,37 @@ export function RecordInspector() {
       {/* コンテンツ */}
       <div className="flex-1 overflow-auto p-4">
         <div className="space-y-4">
-          {/* Plan リンク */}
+          {/* Plan選択（ドラフトモードのみ）/ Planリンク（既存編集時） */}
           <div className="space-y-2">
-            <Label className="text-muted-foreground text-xs">Plan</Label>
-            {typedRecord.plan ? (
+            <Label className="text-muted-foreground flex items-center gap-1 text-xs">
+              <ListChecks className="size-3" />
+              Plan
+            </Label>
+            {isDraftMode ? (
+              <Select
+                value={formData.plan_id ?? ''}
+                onValueChange={(v) => handleChange('plan_id', v || null)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Planを選択..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {plans?.map((plan) => (
+                    <SelectItem key={plan.id} value={plan.id}>
+                      <div className="flex items-center gap-2">
+                        <div
+                          className={cn(
+                            'size-2 rounded-full',
+                            plan.status === 'open' ? 'bg-green-500' : 'bg-gray-400',
+                          )}
+                        />
+                        <span className="truncate">{plan.title}</span>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            ) : typedRecord?.plan ? (
               <Link
                 href={`/${locale}/plan?selected=${typedRecord.plan.id}`}
                 className="bg-surface-container hover:bg-opacity-80 flex items-center gap-2 rounded-lg p-2 text-sm"
@@ -253,17 +342,21 @@ export function RecordInspector() {
 
       {/* フッター */}
       <div className="flex shrink-0 items-center justify-between gap-2 border-t p-4">
-        <Button variant="ghost" size="sm" onClick={handleDelete} className="text-destructive">
-          <Trash2 className="mr-1 size-4" />
-          削除
-        </Button>
+        {isDraftMode ? (
+          <div /> // ドラフトモードでは削除ボタンなし
+        ) : (
+          <Button variant="ghost" size="sm" onClick={handleDelete} className="text-destructive">
+            <Trash2 className="mr-1 size-4" />
+            削除
+          </Button>
+        )}
         <div className="flex items-center gap-2">
           <Button variant="outline" size="sm" onClick={handleCancel}>
             キャンセル
           </Button>
-          <Button size="sm" onClick={handleSave} disabled={!isDirty}>
+          <Button size="sm" onClick={handleSave} disabled={isSaveDisabled}>
             <Save className="mr-1 size-4" />
-            保存
+            {isDraftMode ? '作成' : '保存'}
           </Button>
         </div>
       </div>
