@@ -53,7 +53,7 @@ import { type PlanTableRowCreateHandle } from './table/PlanTableRowCreate';
  */
 export function PlanTableView() {
   const t = useTranslations();
-  const { bulkUpdatePlan, bulkDeletePlan, createPlan } = usePlanMutations();
+  const { bulkUpdatePlan, bulkDeletePlan } = usePlanMutations();
 
   // URL同期（ページネーション永続化）
   usePlanURLSync();
@@ -179,18 +179,15 @@ export function PlanTableView() {
     usePlanInspectorStore.getState().openInspector(item.id);
   };
 
-  // アクションハンドラー: 複製
-  const handleDuplicate = async (item: PlanItem) => {
-    try {
-      await createPlan.mutateAsync({
-        title: `${item.title} (copy)`,
-        status: item.status,
-        description: item.description || undefined,
-        due_date: item.due_date || undefined,
-      });
-    } catch (error) {
-      console.error('Duplicate error:', error);
-    }
+  // アクションハンドラー: 複製（ドラフトモードで開く）
+  const handleDuplicate = (item: PlanItem) => {
+    usePlanInspectorStore.getState().openInspectorWithDraft({
+      title: `${item.title} (copy)`,
+      description: item.description ?? null,
+      due_date: item.due_date ?? null,
+      start_time: item.start_time ?? null,
+      end_time: item.end_time ?? null,
+    });
   };
 
   // アクションハンドラー: タグ一括追加（ダイアログを開く）

@@ -188,8 +188,15 @@ export function PlanTableRow({ item }: PlanTableRowProps) {
     openInspector(item.id);
   };
 
-  const handleDuplicate = (_item: PlanItem) => {
-    // Stub: 複製機能は未実装
+  const handleDuplicate = (item: PlanItem) => {
+    // ドラフトモードで開く（複製元の情報をプリフィル）
+    usePlanInspectorStore.getState().openInspectorWithDraft({
+      title: `${item.title} (copy)`,
+      description: item.description ?? null,
+      due_date: item.due_date ?? null,
+      start_time: item.start_time ?? null,
+      end_time: item.end_time ?? null,
+    });
   };
 
   const handleAddTags = (_item: PlanItem) => {

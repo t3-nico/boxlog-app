@@ -53,6 +53,7 @@ export function usePlanInspectorContentLogic() {
   const instanceDate = usePlanInspectorStore((state) => state.instanceDate);
   const initialData = usePlanInspectorStore((state) => state.initialData);
   const closeInspector = usePlanInspectorStore((state) => state.closeInspector);
+  const openInspectorWithDraft = usePlanInspectorStore((state) => state.openInspectorWithDraft);
   const displayMode = usePlanInspectorStore((state) => state.displayMode) as InspectorDisplayMode;
   const setDisplayMode = usePlanInspectorStore((state) => state.setDisplayMode);
   const draftPlan = usePlanInspectorStore((state) => state.draftPlan);
@@ -650,8 +651,22 @@ export function usePlanInspectorContentLogic() {
   }, [planId]);
 
   const handleDuplicate = useCallback(() => {
-    // Stub: 複製機能は未実装
-  }, []);
+    if (!plan || !('id' in plan)) return;
+
+    // 現在のインスペクターを閉じる
+    closeInspector();
+
+    // 少し遅延してから新規作成モードで開く（閉じるアニメーション後）
+    setTimeout(() => {
+      openInspectorWithDraft({
+        title: `${plan.title} (copy)`,
+        description: plan.description ?? null,
+        due_date: plan.due_date ?? null,
+        start_time: plan.start_time ?? null,
+        end_time: plan.end_time ?? null,
+      });
+    }, 100);
+  }, [plan, closeInspector, openInspectorWithDraft]);
 
   const handleCopyLink = useCallback(() => {
     if (planId) {

@@ -6,19 +6,17 @@ import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
 import type { RecurringEditScope } from '@/features/plans/components/RecurringEditConfirmDialog';
 import { usePlanInstanceMutations } from '@/features/plans/hooks/usePlanInstances';
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
-import { usePlanTags } from '@/features/plans/hooks/usePlanTags';
 import { useDeleteConfirmStore } from '@/features/plans/stores/useDeleteConfirmStore';
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
 import { useRecurringEditConfirmStore } from '@/features/plans/stores/useRecurringEditConfirmStore';
 import { format } from 'date-fns';
 
 export function usePlanContextActions() {
-  const { openInspector } = usePlanInspectorStore();
+  const { openInspector, openInspectorWithDraft } = usePlanInspectorStore();
   const openDeleteDialog = useDeleteConfirmStore((state) => state.openDialog);
   const openRecurringDialog = useRecurringEditConfirmStore((state) => state.openDialog);
-  const { createPlan, deletePlan, updatePlan } = usePlanMutations();
+  const { deletePlan, updatePlan } = usePlanMutations();
   const { createInstance } = usePlanInstanceMutations();
-  const { addPlanTag } = usePlanTags();
 
   // 繰り返しプラン削除用のターゲットをrefで保持（ダイアログのコールバックで参照）
   const recurringDeleteTargetRef = useRef<CalendarPlan | null>(null);
@@ -111,40 +109,23 @@ export function usePlanContextActions() {
   );
 
   const handleDuplicatePlan = useCallback(
-    async (plan: CalendarPlan) => {
-      try {
-        // 日付をフォーマット
-        const dueDate = plan.startDate ? format(plan.startDate, 'yyyy-MM-dd') : undefined;
-        const startTime = plan.startDate ? plan.startDate.toISOString() : undefined;
-        const endTime = plan.endDate ? plan.endDate.toISOString() : undefined;
+    (plan: CalendarPlan) => {
+      // 日付をフォーマット
+      const dueDate = plan.startDate ? format(plan.startDate, 'yyyy-MM-dd') : null;
+      const startTime = plan.startDate ? plan.startDate.toISOString() : null;
+      const endTime = plan.endDate ? plan.endDate.toISOString() : null;
 
-        // プランを複製（タイトルに「のコピー」を追加）
-        // 繰り返しプランの場合は、その日のインスタンスを単発プランとして複製
-        const newPlan = await createPlan.mutateAsync({
-          title: `${plan.title}のコピー`,
-          description: plan.description ?? undefined,
-          status: 'open', // 複製時はopenにリセット
-          due_date: dueDate,
-          start_time: startTime,
-          end_time: endTime,
-          reminder_minutes: plan.reminder_minutes ?? undefined,
-          // 繰り返し設定はコピーしない（単発プランとして複製）
-        });
-
-        // タグも複製
-        if (plan.tagIds && plan.tagIds.length > 0) {
-          for (const tagId of plan.tagIds) {
-            await addPlanTag(newPlan.id, tagId);
-          }
-        }
-
-        // 複製したプランをInspectorで開く
-        openInspector(newPlan.id);
-      } catch {
-        // Error handled silently
-      }
+      // ドラフトモードで開く（複製元の情報をプリフィル）
+      // ユーザーが時間を変更してから保存できる
+      openInspectorWithDraft({
+        title: `${plan.title} (copy)`,
+        description: plan.description ?? null,
+        due_date: dueDate,
+        start_time: startTime,
+        end_time: endTime,
+      });
     },
-    [createPlan, addPlanTag, openInspector],
+    [openInspectorWithDraft],
   );
 
   const handleViewDetails = useCallback(
