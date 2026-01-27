@@ -52,11 +52,13 @@ export function CreateNewDropdown({
     openInspectorWithDraft(undefined, 'record');
   }, [openInspectorWithDraft]);
 
-  // History機能: 将来実装予定（過去30件の履歴からクイック作成）
-  const handleOpenHistory = () => {};
+  const handleOpenHistory = () => {
+    // TODO: History機能 - 過去30件の履歴サブメニューを開く
+  };
 
-  // Templates機能: 将来実装予定（保存済みテンプレートから作成）
-  const handleOpenTemplates = () => {};
+  const handleOpenTemplates = () => {
+    // TODO: Templates機能 - テンプレート一覧サブメニューを開く
+  };
 
   const handleCreateTag = () => {
     openTagCreateModal();
