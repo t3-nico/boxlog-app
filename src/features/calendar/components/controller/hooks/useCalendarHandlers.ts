@@ -8,6 +8,7 @@ import { useTranslations } from 'next-intl';
 import useCalendarToast from '@/features/calendar/lib/toast';
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
 import { useRecurringEditConfirmStore } from '@/features/plans/stores/useRecurringEditConfirmStore';
+import { useRecordInspectorStore } from '@/features/records/stores';
 import { useHapticFeedback } from '@/hooks/useHapticFeedback';
 import { logger } from '@/lib/logger';
 import { api } from '@/lib/trpc';
@@ -25,10 +26,13 @@ export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandle
   const calendarToast = useCalendarToast();
   const { error: hapticError } = useHapticFeedback();
 
-  const openInspector = usePlanInspectorStore((state) => state.openInspector);
+  const openPlanInspector = usePlanInspectorStore((state) => state.openInspector);
   const openInspectorWithDraft = usePlanInspectorStore((state) => state.openInspectorWithDraft);
   const inspectorPlanId = usePlanInspectorStore((state) => state.planId);
   const inspectorIsOpen = usePlanInspectorStore((state) => state.isOpen);
+
+  // Record Inspector
+  const openRecordInspector = useRecordInspectorStore((state) => state.openInspector);
 
   // Inspector で開いているプランIDをDnD無効化用に計算
   // Inspector が開いている場合のみ planId を返す
@@ -55,13 +59,25 @@ export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandle
     [utils.plans.list],
   );
 
-  // プラン関連のハンドラー
+  // プラン/Record クリックハンドラー
   const handlePlanClick = useCallback(
     (plan: CalendarPlan) => {
       // ドラッグ操作で開いたダイアログが残っている場合は閉じる
       const { closeDialog } = useRecurringEditConfirmStore.getState();
       closeDialog();
 
+      // Record の場合は RecordInspector を開く
+      if (plan.type === 'record' && plan.recordId) {
+        openRecordInspector(plan.recordId);
+        logger.log('📋 Opening Record Inspector:', {
+          recordId: plan.recordId,
+          title: plan.title,
+          linkedPlanId: plan.linkedPlanId,
+        });
+        return;
+      }
+
+      // Plan の場合は PlanInspector を開く
       // 繰り返しインスタンスの場合は親プランIDを使用
       const planIdToOpen = plan.calendarId ?? plan.id;
 
@@ -71,19 +87,19 @@ export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandle
           ? plan.id.split('_').pop()
           : plan.startDate?.toISOString().slice(0, 10);
 
-      openInspector(
+      openPlanInspector(
         planIdToOpen,
         instanceDateRaw && plan.isRecurring ? { instanceDate: instanceDateRaw } : undefined,
       );
 
-      logger.log('📋 Opening plan Inspector:', {
+      logger.log('📋 Opening Plan Inspector:', {
         planId: planIdToOpen,
         title: plan.title,
         isRecurringInstance: !!plan.calendarId,
         instanceDate: instanceDateRaw,
       });
     },
-    [openInspector],
+    [openPlanInspector, openRecordInspector],
   );
 
   const handleCreatePlan = useCallback(
