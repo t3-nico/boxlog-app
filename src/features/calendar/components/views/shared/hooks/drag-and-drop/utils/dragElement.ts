@@ -125,17 +125,11 @@ export function calculateColumnWidth(
 
 /**
  * クライアント側で時間重複をチェックする
- *
- * 同タイプ間のみ重複チェック:
- * - Plan↔Plan: ❌ 重複禁止
- * - Record↔Record: ❌ 重複禁止
- * - Plan↔Record: ✅ 共存可能
- *
- * @param events - 全イベント
- * @param draggedEventId - ドラッグ中のイベントID
+ * @param events - 現在表示中のプラン一覧
+ * @param draggedEventId - ドラッグ中のプランID（自分自身は除外）
  * @param previewStartTime - プレビュー開始時刻
  * @param previewEndTime - プレビュー終了時刻
- * @returns 同タイプのイベントと重複している場合true
+ * @returns 重複している場合はtrue
  */
 export function checkClientSideOverlap(
   events: CalendarPlan[],
@@ -143,30 +137,19 @@ export function checkClientSideOverlap(
   previewStartTime: Date,
   previewEndTime: Date,
 ): boolean {
-  // ドラッグ中のイベントを取得
-  const draggedEvent = events.find((e) => e.id === draggedEventId);
-  if (!draggedEvent) return false;
-
-  // ドラッグ中のイベントのタイプを取得
-  const draggedType = draggedEvent.type === 'record' || draggedEvent.recordId ? 'record' : 'plan';
-
-  // 同タイプのイベントとのみ重複チェック
-  return events.some((event) => {
-    // 自分自身は除外
+  // 自分自身を除外した他のプランとの重複チェック
+  const result = events.some((event) => {
     if (event.id === draggedEventId) return false;
-
-    // イベントのタイプを取得
-    const eventType = event.type === 'record' || event.recordId ? 'record' : 'plan';
-
-    // 異なるタイプは重複OK（Plan↔Record共存可能）
-    if (eventType !== draggedType) return false;
-
-    // 時間範囲がなければスキップ
     if (!event.startDate || !event.endDate) return false;
 
-    // 時間重複チェック（同タイプ間）
-    return event.startDate < previewEndTime && event.endDate > previewStartTime;
+    const eventStart = event.startDate;
+    const eventEnd = event.endDate;
+
+    // 時間重複条件: 既存の開始時刻 < 新規の終了時刻 AND 既存の終了時刻 > 新規の開始時刻
+    return eventStart < previewEndTime && eventEnd > previewStartTime;
   });
+
+  return result;
 }
 
 /**
@@ -208,11 +191,11 @@ export function updateDragElementOverlapStyle(
 
       const overlay = document.createElement('div');
       overlay.id = OVERLAY_ID;
-      // DragSelectionPreviewと同じ薄い赤カーテン（セマンティックトークン使用）
+      // DragSelectionPreviewと同じ薄い赤カーテン
       overlay.style.cssText = `
         position: absolute;
         inset: 0;
-        background: oklch(from var(--destructive) l c h / 60%);
+        background: rgba(239, 68, 68, 0.6);
         border-radius: inherit;
         display: flex;
         flex-direction: column;
@@ -223,11 +206,11 @@ export function updateDragElementOverlapStyle(
       // DragSelectionPreviewと同じレイアウト（アイコン + テキスト）
       overlay.innerHTML = `
         <div style="display: flex; align-items: center; gap: 4px; margin-bottom: 4px;">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--destructive-foreground)" stroke-width="2.5" stroke-linecap="round" style="flex-shrink: 0;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" style="flex-shrink: 0;">
             <circle cx="12" cy="12" r="10"/>
             <path d="m4.9 4.9 14.2 14.2"/>
           </svg>
-          <span style="color: var(--destructive-foreground); font-size: 12px; font-weight: 500;">時間が重複しています</span>
+          <span style="color: white; font-size: 12px; font-weight: 500;">時間が重複しています</span>
         </div>
       `;
       dragElement.appendChild(overlay);
