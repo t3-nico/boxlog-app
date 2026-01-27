@@ -1,12 +1,12 @@
 'use client';
 
 import { ClockTimePicker } from '@/components/common/ClockTimePicker';
-import { DatePickerPopover } from '@/components/common/DatePickerPopover';
 import { Button } from '@/components/ui/button';
 import { useAutoAdjustEndTime } from '@/features/plans/hooks/useAutoAdjustEndTime';
 import { configToReadable, ruleToConfig } from '@/features/plans/utils/rrule';
-import { AlertCircle, Check, Clock, Flag } from 'lucide-react';
+import { Check, Clock } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { DatePickerPopover } from './DatePickerPopover';
 import { RecurrenceDialog } from './RecurrenceDialog';
 
 // 繰り返しオプション
@@ -153,37 +153,23 @@ export function PlanScheduleSection({
           </div>
 
           {/* 2行目: 時間 */}
-          <div className="flex flex-col">
-            <div className="flex h-8 items-center">
-              <ClockTimePicker
-                value={startTime}
-                onChange={handleStartTimeChange}
-                disabled={disabled}
-                hasError={timeConflictError}
-              />
-              <span className="text-muted-foreground mx-1">→</span>
-              <Flag className="text-muted-foreground size-4" />
-              <ClockTimePicker
-                value={endTime}
-                onChange={handleEndTimeChange}
-                disabled={disabled || !startTime}
-                hasError={timeConflictError}
-                minTime={startTime}
-              />
-              {durationDisplay && (
-                <span className="text-muted-foreground ml-2 text-sm">{durationDisplay}</span>
-              )}
-            </div>
-            {/* 時間重複エラーメッセージ */}
-            {timeConflictError && (
-              <div
-                className="text-destructive flex items-center gap-1 py-1 text-sm"
-                role="alert"
-                aria-live="assertive"
-              >
-                <AlertCircle className="size-3 flex-shrink-0" />
-                <span>この時間帯は他の予定と重複しています</span>
-              </div>
+          <div className="flex h-8 items-center">
+            <ClockTimePicker
+              value={startTime}
+              onChange={handleStartTimeChange}
+              disabled={disabled}
+              hasError={timeConflictError}
+            />
+            <span className="text-muted-foreground mx-1">→</span>
+            <ClockTimePicker
+              value={endTime}
+              onChange={handleEndTimeChange}
+              disabled={disabled || !startTime}
+              hasError={timeConflictError}
+              minTime={startTime}
+            />
+            {durationDisplay && (
+              <span className="text-muted-foreground ml-2 text-sm">{durationDisplay}</span>
             )}
           </div>
 
@@ -192,12 +178,9 @@ export function PlanScheduleSection({
             <Button
               variant="ghost"
               size="sm"
-              className={`hover:bg-state-hover focus-visible:ring-ring h-8 px-2 text-sm transition-colors focus-visible:ring-2 focus-visible:outline-none ${hasRecurrence ? 'text-foreground' : 'text-muted-foreground'}`}
+              className={`h-8 px-2 text-sm ${hasRecurrence ? 'text-foreground' : 'text-muted-foreground'}`}
               type="button"
               disabled={disabled}
-              aria-label={`繰り返し設定: ${hasRecurrence ? recurrenceDisplayText : '設定なし'}`}
-              aria-expanded={showRecurrencePopover}
-              aria-haspopup="menu"
               onClick={(e) => {
                 e.stopPropagation();
                 if (!disabled) {
@@ -209,21 +192,16 @@ export function PlanScheduleSection({
             </Button>
 
             {showRecurrencePopover && !disabled && (
-              <div
-                className="border-border bg-popover absolute top-10 left-0 z-50 w-48 rounded-md border shadow-md"
-                role="menu"
-                aria-label="繰り返しオプション"
-              >
+              <div className="border-border bg-popover absolute top-10 left-0 z-50 w-48 rounded-md border shadow-md">
                 <div className="p-1">
                   <button
-                    className="hover:bg-state-hover focus-visible:bg-state-hover flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-left text-sm transition-colors focus-visible:outline-none"
+                    className="hover:bg-state-hover flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-left text-sm"
                     onClick={() => {
                       onRepeatTypeChange('');
                       onRecurrenceRuleChange(null);
                       setShowRecurrencePopover(false);
                     }}
                     type="button"
-                    role="menuitem"
                   >
                     選択しない
                     {!hasRecurrence && <Check className="text-primary h-4 w-4" />}
@@ -232,14 +210,13 @@ export function PlanScheduleSection({
                   {RECURRENCE_OPTIONS.slice(1).map((option) => (
                     <button
                       key={option.value}
-                      className="hover:bg-state-hover focus-visible:bg-state-hover flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-left text-sm transition-colors focus-visible:outline-none"
+                      className="hover:bg-state-hover flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-left text-sm"
                       onClick={() => {
                         onRepeatTypeChange(option.value);
                         onRecurrenceRuleChange(null);
                         setShowRecurrencePopover(false);
                       }}
                       type="button"
-                      role="menuitem"
                     >
                       {option.label}
                       {recurrenceDisplayText === option.value && (
@@ -249,13 +226,12 @@ export function PlanScheduleSection({
                   ))}
                   <div className="border-border my-1 border-t" />
                   <button
-                    className="hover:bg-state-hover focus-visible:bg-state-hover flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-left text-sm transition-colors focus-visible:outline-none"
+                    className="hover:bg-state-hover flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-left text-sm"
                     onClick={() => {
                       setShowRecurrencePopover(false);
                       setShowCustomDialog(true);
                     }}
                     type="button"
-                    role="menuitem"
                   >
                     カスタム...
                   </button>
