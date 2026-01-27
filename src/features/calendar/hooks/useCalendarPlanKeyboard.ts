@@ -3,8 +3,11 @@
 import { useEffect, useRef } from 'react';
 
 import { useDeleteConfirmStore } from '@/features/plans/stores/useDeleteConfirmStore';
+import { usePlanClipboardStore } from '@/features/plans/stores/usePlanClipboardStore';
 import type { PlanInitialData } from '@/features/plans/stores/usePlanInspectorStore';
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
+import { format } from 'date-fns';
+import { toast } from 'sonner';
 
 interface UseCalendarPlanKeyboardOptions {
   /** ショートカットを有効にするか */
@@ -15,6 +18,17 @@ interface UseCalendarPlanKeyboardOptions {
   getSelectedPlanTitle?: () => string | null;
   /** 新規プラン作成時の初期データ取得関数（現在の日時など） */
   getInitialPlanData?: () => PlanInitialData | undefined;
+  /** 現在選択中のプランのコピー情報を取得する関数 */
+  getSelectedPlanForCopy?: () => {
+    title: string;
+    description: string | null;
+    startHour: number;
+    startMinute: number;
+    duration: number;
+    tagIds: string[] | undefined;
+  } | null;
+  /** ペースト先の日付を取得する関数（デフォルトは現在表示中の日付） */
+  getPasteDateForKeyboard?: () => Date;
 }
 
 /**
@@ -24,6 +38,8 @@ interface UseCalendarPlanKeyboardOptions {
  * - Delete / Backspace: 選択中のプランを削除
  * - C: 新規プラン作成（現在時刻）
  * - Shift + C: 新規プラン作成（時刻指定なし）
+ * - Cmd/Ctrl + C: 選択中のプランをコピー
+ * - Cmd/Ctrl + V: コピーしたプランをペースト（ドラフトモード）
  * - Escape: Inspectorを閉じる
  *
  * @example
@@ -45,6 +61,8 @@ export function useCalendarPlanKeyboard({
   onDeletePlan,
   getSelectedPlanTitle,
   getInitialPlanData,
+  getSelectedPlanForCopy,
+  getPasteDateForKeyboard,
 }: UseCalendarPlanKeyboardOptions) {
   const { isOpen, planId, openInspector, closeInspector } = usePlanInspectorStore();
   const { openDialog } = useDeleteConfirmStore();
@@ -53,11 +71,21 @@ export function useCalendarPlanKeyboard({
   const onDeletePlanRef = useRef(onDeletePlan);
   const getSelectedPlanTitleRef = useRef(getSelectedPlanTitle);
   const getInitialPlanDataRef = useRef(getInitialPlanData);
+  const getSelectedPlanForCopyRef = useRef(getSelectedPlanForCopy);
+  const getPasteDateForKeyboardRef = useRef(getPasteDateForKeyboard);
   useEffect(() => {
     onDeletePlanRef.current = onDeletePlan;
     getSelectedPlanTitleRef.current = getSelectedPlanTitle;
     getInitialPlanDataRef.current = getInitialPlanData;
-  }, [onDeletePlan, getSelectedPlanTitle, getInitialPlanData]);
+    getSelectedPlanForCopyRef.current = getSelectedPlanForCopy;
+    getPasteDateForKeyboardRef.current = getPasteDateForKeyboard;
+  }, [
+    onDeletePlan,
+    getSelectedPlanTitle,
+    getInitialPlanData,
+    getSelectedPlanForCopy,
+    getPasteDateForKeyboard,
+  ]);
 
   useEffect(() => {
     if (!enabled) return;
@@ -98,11 +126,53 @@ export function useCalendarPlanKeyboard({
         return;
       }
 
-      // C: 新規プラン作成
-      if (e.key === 'c' || e.key === 'C') {
-        // Cmd/Ctrl + C はコピーなのでスキップ
-        if (e.metaKey || e.ctrlKey) return;
+      // Cmd/Ctrl + C: コピー
+      if ((e.key === 'c' || e.key === 'C') && (e.metaKey || e.ctrlKey)) {
+        // Inspectorで選択中のプランがある場合のみコピー
+        if (isOpen && planId) {
+          const planData = getSelectedPlanForCopyRef.current?.();
+          if (planData) {
+            e.preventDefault();
+            usePlanClipboardStore.getState().copyPlan(planData);
+            toast.success('コピーしました');
+          }
+        }
+        return;
+      }
 
+      // Cmd/Ctrl + V: ペースト（Googleカレンダー互換: 最後にクリックした日付へ、時刻はコピー元）
+      if ((e.key === 'v' || e.key === 'V') && (e.metaKey || e.ctrlKey)) {
+        const clipboard = usePlanClipboardStore.getState();
+        const copiedPlan = clipboard.copiedPlan;
+        if (copiedPlan) {
+          e.preventDefault();
+
+          // 最後にクリックした日付があればその日付へ、なければデフォルト
+          const lastClicked = clipboard.lastClickedPosition;
+          const targetDate =
+            lastClicked?.date ?? getPasteDateForKeyboardRef.current?.() ?? new Date();
+
+          // 時刻は常にコピー元の時刻を使用
+          const startTime = new Date(targetDate);
+          startTime.setHours(copiedPlan.startHour, copiedPlan.startMinute, 0, 0);
+
+          const endTime = new Date(startTime);
+          endTime.setMinutes(endTime.getMinutes() + copiedPlan.duration);
+
+          const { openInspectorWithDraft } = usePlanInspectorStore.getState();
+          openInspectorWithDraft({
+            title: copiedPlan.title,
+            description: copiedPlan.description,
+            due_date: format(targetDate, 'yyyy-MM-dd'),
+            start_time: startTime.toISOString(),
+            end_time: endTime.toISOString(),
+          });
+        }
+        return;
+      }
+
+      // C: 新規プラン作成（単独のCキー）
+      if (e.key === 'c' || e.key === 'C') {
         e.preventDefault();
 
         if (e.shiftKey) {

@@ -2,7 +2,16 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-import { Calendar, Copy, Edit2, ExternalLink, Link, Tag, Trash2 } from 'lucide-react';
+import {
+  Calendar,
+  ClipboardCopy,
+  Copy,
+  Edit2,
+  ExternalLink,
+  Link,
+  Tag,
+  Trash2,
+} from 'lucide-react';
 
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
 import { cn } from '@/lib/utils';
@@ -15,6 +24,7 @@ interface PlanContextMenuProps {
   onEdit?: (plan: CalendarPlan) => void;
   onDelete?: (plan: CalendarPlan) => void;
   onDuplicate?: (plan: CalendarPlan) => void;
+  onCopy?: (plan: CalendarPlan) => void;
   onOpen?: (plan: CalendarPlan) => void;
   onCopyLink?: (plan: CalendarPlan) => void;
   onAddTag?: (plan: CalendarPlan) => void;
@@ -28,6 +38,7 @@ export const EventContextMenu = ({
   onEdit,
   onDelete,
   onDuplicate,
+  onCopy,
   onOpen,
   onCopyLink,
   onAddTag,
@@ -108,6 +119,12 @@ export const EventContextMenu = ({
       label: t('calendar.contextMenu.duplicate'),
       action: () => onDuplicate?.(plan),
       available: !!onDuplicate,
+    },
+    {
+      icon: ClipboardCopy,
+      label: t('calendar.contextMenu.copy'),
+      action: () => onCopy?.(plan),
+      available: !!onCopy,
     },
     {
       icon: Link,
