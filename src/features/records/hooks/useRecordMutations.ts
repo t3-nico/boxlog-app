@@ -29,6 +29,7 @@ export function useRecordMutations() {
           id: `temp-${Date.now()}`,
           user_id: '',
           plan_id: input.plan_id,
+          title: input.title ?? null,
           worked_at: input.worked_at,
           start_time: input.start_time ?? null,
           end_time: input.end_time ?? null,
@@ -67,6 +68,7 @@ export function useRecordMutations() {
           // 明示的に各フィールドを更新（undefined を防ぐ）
           return {
             ...record,
+            title: data.title !== undefined ? data.title : (record.title ?? null),
             worked_at: data.worked_at ?? record.worked_at,
             start_time: data.start_time !== undefined ? data.start_time : record.start_time,
             end_time: data.end_time !== undefined ? data.end_time : record.end_time,
