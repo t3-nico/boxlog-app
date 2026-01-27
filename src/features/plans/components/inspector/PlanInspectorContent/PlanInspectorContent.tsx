@@ -146,9 +146,7 @@ export function PlanInspectorContent() {
               isDraftMode={isDraftMode}
             />
           ) : (
-            <div className="p-4">
-              <RecordCreateForm ref={recordFormRef} />
-            </div>
+            <RecordCreateForm ref={recordFormRef} />
           )
         ) : (
           /* 既存Plan編集時はタブなし */
@@ -226,7 +224,7 @@ export function PlanInspectorContent() {
 
       {/* 保存/キャンセルボタン（未保存の変更がある場合またはドラフトモード時に表示） */}
       {(hasPendingChanges || isDraftMode) && (
-        <div className="flex shrink-0 justify-end gap-2 border-t px-4 py-3">
+        <div className="flex shrink-0 justify-end gap-2 px-4 py-4">
           <Button variant="ghost" onClick={cancelAndClose}>
             キャンセル
           </Button>
@@ -258,7 +256,7 @@ function DraftModeHeader({ createType, setCreateType, displayModeSwitcher }: Dra
   const isDraggable = !!dragHandleProps;
 
   return (
-    <div className="bg-popover relative flex h-12 shrink-0 items-center justify-between px-2">
+    <div className="bg-popover relative flex shrink-0 items-center justify-between px-4 py-4">
       {/* ドラッグハンドル（背景レイヤー） */}
       {isDraggable && (
         <div
