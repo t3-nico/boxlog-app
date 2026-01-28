@@ -15,12 +15,14 @@ import { RecurringIndicator } from '@/features/plans/components/shared/Recurring
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
 import { useplanTags } from '@/features/plans/hooks/usePlanTags';
 import { useDeleteConfirmStore } from '@/features/plans/stores/useDeleteConfirmStore';
+import { usePlanClipboardStore } from '@/features/plans/stores/usePlanClipboardStore';
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
 import { useRecurringEditConfirmStore } from '@/features/plans/stores/useRecurringEditConfirmStore';
 import type { PlanStatus } from '@/features/plans/types/plan';
 import { useDateFormat } from '@/features/settings/hooks/useDateFormat';
 import { cn } from '@/lib/utils';
 import { useCallback, useEffect, useRef } from 'react';
+import { toast } from 'sonner';
 import type { PlanItem } from '../../hooks/usePlanData';
 import { usePlanColumnStore } from '../../stores/usePlanColumnStore';
 import { usePlanFocusStore } from '../../stores/usePlanFocusStore';
@@ -197,6 +199,26 @@ export function PlanTableRow({ item }: PlanTableRowProps) {
       start_time: item.start_time ?? null,
       end_time: item.end_time ?? null,
     });
+  };
+
+  const handleCopy = (item: PlanItem) => {
+    // 開始・終了時刻をパース
+    const startDate = item.start_time ? new Date(item.start_time) : null;
+    const endDate = item.end_time ? new Date(item.end_time) : null;
+    const startHour = startDate?.getHours() ?? 0;
+    const startMinute = startDate?.getMinutes() ?? 0;
+    const duration = startDate && endDate ? (endDate.getTime() - startDate.getTime()) / 60000 : 60;
+
+    usePlanClipboardStore.getState().copyPlan({
+      title: item.title,
+      description: item.description ?? null,
+      duration,
+      startHour,
+      startMinute,
+      tagIds: item.tagIds ?? undefined,
+    });
+
+    toast.success('コピーしました');
   };
 
   const handleAddTags = (_item: PlanItem) => {
@@ -384,6 +406,7 @@ export function PlanTableRow({ item }: PlanTableRowProps) {
           item={item}
           onEdit={handleEdit}
           onDuplicate={handleDuplicate}
+          onCopy={handleCopy}
           onAddTags={handleAddTags}
           onChangeDueDate={handleChangeDueDate}
           onStatusChange={handleStatusChange}
