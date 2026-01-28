@@ -27,7 +27,7 @@ import type {
   ListRecordsByPlanOptions,
   ListRecordsOptions,
   RecordRow,
-  RecordWithPlan,
+  RecordWithPlanAndTags,
   ServiceSupabaseClient,
   UpdateRecordOptions,
 } from './types';
@@ -39,9 +39,9 @@ export class RecordService {
   constructor(private readonly supabase: ServiceSupabaseClient) {}
 
   /**
-   * Record一覧を取得
+   * Record一覧を取得（タグID付き）
    */
-  async list(options: ListRecordsOptions): Promise<RecordWithPlan[]> {
+  async list(options: ListRecordsOptions): Promise<RecordWithPlanAndTags[]> {
     const {
       userId,
       plan_id,
@@ -55,6 +55,7 @@ export class RecordService {
       offset,
     } = options;
 
+    // レコードとPlanを取得
     let query = this.supabase
       .from('records')
       .select(
@@ -107,43 +108,45 @@ export class RecordService {
       throw new RecordServiceError('FETCH_FAILED', `Failed to fetch records: ${error.message}`);
     }
 
-    // plansのネスト構造をplanオブジェクトにフォーマット
-    return (data ?? []).map((record) => this.formatRecordWithPlan(record));
+    const records = data ?? [];
+    if (records.length === 0) {
+      return [];
+    }
+
+    // TagIDsを一括取得
+    const recordIds = records.map((r) => r.id);
+    const tagIdsMap = await this.getTagIdsForRecords(recordIds, userId);
+
+    // plansのネスト構造とtagIdsをフォーマット
+    return records.map((record) => {
+      const { plans, ...recordData } = record;
+      return {
+        ...recordData,
+        plan: plans ?? null,
+        tagIds: tagIdsMap.get(record.id) ?? [],
+      };
+    });
   }
 
   /**
-   * RecordをIDで取得
+   * RecordをIDで取得（タグID付き）
    */
-  async getById(options: GetRecordByIdOptions): Promise<RecordWithPlan> {
+  async getById(options: GetRecordByIdOptions): Promise<RecordWithPlanAndTags> {
     const { userId, recordId, includePlan } = options;
 
-    if (includePlan) {
-      const { data, error } = await this.supabase
-        .from('records')
-        .select(
-          `
-          *,
-          plans:plan_id (
-            id,
-            title,
-            status
-          )
-        `,
-        )
-        .eq('id', recordId)
-        .eq('user_id', userId)
-        .single();
-
-      if (error) {
-        throw new RecordServiceError('NOT_FOUND', `Record not found: ${error.message}`);
-      }
-
-      return this.formatRecordWithPlan(data);
-    }
-
+    // 常にplansを含めてクエリ（型推論を安定させるため）
     const { data, error } = await this.supabase
       .from('records')
-      .select('*')
+      .select(
+        `
+        *,
+        plans:plan_id (
+          id,
+          title,
+          status
+        )
+      `,
+      )
       .eq('id', recordId)
       .eq('user_id', userId)
       .single();
@@ -152,21 +155,33 @@ export class RecordService {
       throw new RecordServiceError('NOT_FOUND', `Record not found: ${error.message}`);
     }
 
-    return data as RecordWithPlan;
+    // TagIDsを取得
+    const tagIdsMap = await this.getTagIdsForRecords([recordId], userId);
+
+    const { plans, ...rest } = data;
+
+    return {
+      ...rest,
+      plan: includePlan ? (plans ?? null) : null,
+      tagIds: tagIdsMap.get(recordId) ?? [],
+    };
   }
 
   /**
-   * Recordを作成
+   * Recordを作成（タグも同時に設定可能）
    */
-  async create(options: CreateRecordOptions): Promise<RecordRow> {
+  async create(options: CreateRecordOptions): Promise<RecordRow & { tagIds: string[] }> {
     const { userId, input } = options;
+    const { tagIds, ...recordInput } = input;
 
-    // Plan存在確認
-    await this.verifyPlanOwnership(input.plan_id, userId);
+    // Plan存在確認（plan_idがある場合のみ）
+    if (recordInput.plan_id) {
+      await this.verifyPlanOwnership(recordInput.plan_id, userId);
+    }
 
     const insertData = {
       user_id: userId,
-      ...removeUndefinedFields(input),
+      ...removeUndefinedFields(recordInput),
     };
 
     const { data, error } = await this.supabase
@@ -179,7 +194,12 @@ export class RecordService {
       throw new RecordServiceError('CREATE_FAILED', `Failed to create record: ${error.message}`);
     }
 
-    return data;
+    // タグを設定（指定がある場合）
+    if (tagIds && tagIds.length > 0) {
+      await this.setRecordTags(data.id, userId, tagIds);
+    }
+
+    return { ...data, tagIds: tagIds ?? [] };
   }
 
   /**
@@ -328,9 +348,9 @@ export class RecordService {
   }
 
   /**
-   * 最近のRecordを取得（複製用）
+   * 最近のRecordを取得（複製用、タグID付き）
    */
-  async getRecentRecords(userId: string, limit: number = 5): Promise<RecordWithPlan[]> {
+  async getRecentRecords(userId: string, limit: number = 5): Promise<RecordWithPlanAndTags[]> {
     const { data, error } = await this.supabase
       .from('records')
       .select(
@@ -354,7 +374,23 @@ export class RecordService {
       );
     }
 
-    return (data ?? []).map((record) => this.formatRecordWithPlan(record));
+    const records = data ?? [];
+    if (records.length === 0) {
+      return [];
+    }
+
+    // TagIDsを一括取得
+    const recordIds = records.map((r) => r.id);
+    const tagIdsMap = await this.getTagIdsForRecords(recordIds, userId);
+
+    return records.map((record) => {
+      const { plans, ...recordData } = record;
+      return {
+        ...recordData,
+        plan: plans ?? null,
+        tagIds: tagIdsMap.get(record.id) ?? [],
+      };
+    });
   }
 
   // ========================================
@@ -362,16 +398,67 @@ export class RecordService {
   // ========================================
 
   /**
-   * RecordとPlanデータをフォーマット
+   * 複数のRecordに対するタグIDを一括取得
    */
-  private formatRecordWithPlan(
-    record: RecordRow & { plans?: { id: string; title: string; status: string } | null },
-  ): RecordWithPlan {
-    const { plans, ...recordData } = record;
-    return {
-      ...recordData,
-      plan: plans ?? null,
-    };
+  private async getTagIdsForRecords(
+    recordIds: string[],
+    userId: string,
+  ): Promise<Map<string, string[]>> {
+    if (recordIds.length === 0) {
+      return new Map();
+    }
+
+    const { data, error } = await this.supabase
+      .from('record_tags')
+      .select('record_id, tag_id')
+      .in('record_id', recordIds)
+      .eq('user_id', userId);
+
+    if (error) {
+      throw new RecordServiceError(
+        'FETCH_TAGS_FAILED',
+        `Failed to fetch record tags: ${error.message}`,
+      );
+    }
+
+    // record_id -> tagIds のマップを作成
+    const map = new Map<string, string[]>();
+    for (const row of data ?? []) {
+      const existing = map.get(row.record_id) ?? [];
+      existing.push(row.tag_id);
+      map.set(row.record_id, existing);
+    }
+    return map;
+  }
+
+  /**
+   * Recordにタグを設定（既存タグをすべて置換）
+   */
+  private async setRecordTags(recordId: string, userId: string, tagIds: string[]): Promise<void> {
+    // 既存の関連をすべて削除
+    await this.supabase
+      .from('record_tags')
+      .delete()
+      .eq('record_id', recordId)
+      .eq('user_id', userId);
+
+    // 新しい関連を追加
+    if (tagIds.length > 0) {
+      const recordTagsToInsert = tagIds.map((tagId) => ({
+        user_id: userId,
+        record_id: recordId,
+        tag_id: tagId,
+      }));
+
+      const { error } = await this.supabase.from('record_tags').insert(recordTagsToInsert);
+
+      if (error) {
+        throw new RecordServiceError(
+          'SET_TAGS_FAILED',
+          `Failed to set record tags: ${error.message}`,
+        );
+      }
+    }
   }
 
   /**

@@ -602,41 +602,79 @@ export class TagService {
     }
 
     const tagIds = tags.map((t) => t.id);
-    const { data: planTagCounts, error: countError } = await this.supabase
-      .from('plan_tags')
-      .select('tag_id')
-      .in('tag_id', tagIds);
 
-    if (countError) {
-      throw new TagServiceError('FETCH_FAILED', `Failed to fetch counts: ${countError.message}`);
+    // plan_tags と record_tags の両方からカウントを取得
+    const [planTagsResult, recordTagsResult] = await Promise.all([
+      this.supabase.from('plan_tags').select('tag_id').in('tag_id', tagIds),
+      this.supabase.from('record_tags').select('tag_id').in('tag_id', tagIds),
+    ]);
+
+    if (planTagsResult.error) {
+      throw new TagServiceError(
+        'FETCH_FAILED',
+        `Failed to fetch plan tag counts: ${planTagsResult.error.message}`,
+      );
+    }
+    if (recordTagsResult.error) {
+      throw new TagServiceError(
+        'FETCH_FAILED',
+        `Failed to fetch record tag counts: ${recordTagsResult.error.message}`,
+      );
     }
 
-    const countMap = new Map<string, number>();
-    planTagCounts?.forEach((pt) => {
-      countMap.set(pt.tag_id, (countMap.get(pt.tag_id) || 0) + 1);
+    // plan_tags のカウント
+    const planCountMap = new Map<string, number>();
+    planTagsResult.data?.forEach((pt) => {
+      planCountMap.set(pt.tag_id, (planCountMap.get(pt.tag_id) || 0) + 1);
     });
 
-    const { data: lastUsedData } = await this.supabase
-      .from('plan_tags')
-      .select('tag_id, created_at')
-      .in('tag_id', tagIds)
-      .order('created_at', { ascending: false });
+    // record_tags のカウント
+    const recordCountMap = new Map<string, number>();
+    recordTagsResult.data?.forEach((rt) => {
+      recordCountMap.set(rt.tag_id, (recordCountMap.get(rt.tag_id) || 0) + 1);
+    });
+
+    // 最終使用日を両方から取得
+    const [planLastUsed, recordLastUsed] = await Promise.all([
+      this.supabase
+        .from('plan_tags')
+        .select('tag_id, created_at')
+        .in('tag_id', tagIds)
+        .order('created_at', { ascending: false }),
+      this.supabase
+        .from('record_tags')
+        .select('tag_id, created_at')
+        .in('tag_id', tagIds)
+        .order('created_at', { ascending: false }),
+    ]);
 
     const lastUsedMap = new Map<string, string | null>();
-    lastUsedData?.forEach((pt) => {
+    // plan_tags の最終使用日
+    planLastUsed.data?.forEach((pt) => {
       if (!lastUsedMap.has(pt.tag_id) && pt.created_at) {
         lastUsedMap.set(pt.tag_id, pt.created_at);
       }
     });
+    // record_tags の最終使用日（より新しい場合は上書き）
+    recordLastUsed.data?.forEach((rt) => {
+      if (rt.created_at) {
+        const existing = lastUsedMap.get(rt.tag_id);
+        if (!existing || rt.created_at > existing) {
+          lastUsedMap.set(rt.tag_id, rt.created_at);
+        }
+      }
+    });
 
     const statsData: TagStatsRow[] = tags.map((tag) => {
-      const planCount = countMap.get(tag.id) || 0;
+      const planCount = planCountMap.get(tag.id) || 0;
+      const recordCount = recordCountMap.get(tag.id) || 0;
       return {
         id: tag.id,
         name: tag.name,
         color: tag.color,
         plan_count: planCount,
-        total_count: planCount,
+        record_count: recordCount,
+        total_count: planCount + recordCount,
         last_used_at: lastUsedMap.get(tag.id) || null,
       };
     });
@@ -653,6 +691,7 @@ export interface TagStatsRow {
   name: string;
   color: string | null;
   plan_count: number;
+  record_count: number;
   total_count: number;
   last_used_at: string | null;
 }
