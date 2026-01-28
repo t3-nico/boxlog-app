@@ -2,11 +2,9 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { Clock, Flag } from 'lucide-react';
+import { Clock } from 'lucide-react';
 
-import type { TimeIconType } from '@/components/common/ClockTimePicker';
-
-import { Popover, PopoverAnchor, PopoverContent } from '@/components/ui/popover';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { zIndex } from '@/config/ui/z-index';
 
 /**
@@ -85,10 +83,6 @@ interface TimeSelectProps {
   hasError?: boolean;
   /** アイコンを表示するか（デフォルト: false） */
   showIcon?: boolean;
-  /** アイコン種別（デフォルト: clock） */
-  iconType?: TimeIconType;
-  /** ドロップダウン内に duration を表示するか（minTime からの経過時間） */
-  showDurationInMenu?: boolean;
 }
 
 /**
@@ -96,23 +90,6 @@ interface TimeSelectProps {
  * - クリック → 15分刻みのドロップダウン
  * - 直接入力も可能（スマートパース対応）
  */
-/**
- * 時間差を「Xh Xm」形式でフォーマット
- */
-function formatDuration(startTime: string, endTime: string): string {
-  const [startH, startM] = startTime.split(':').map(Number);
-  const [endH, endM] = endTime.split(':').map(Number);
-  const startMinutes = (startH ?? 0) * 60 + (startM ?? 0);
-  const endMinutes = (endH ?? 0) * 60 + (endM ?? 0);
-  const diff = endMinutes - startMinutes;
-  if (diff <= 0) return '';
-  const h = Math.floor(diff / 60);
-  const m = diff % 60;
-  if (h > 0 && m > 0) return `${h}h ${m}m`;
-  if (h > 0) return `${h}h`;
-  return `${m}m`;
-}
-
 export function TimeSelect({
   value,
   onChange,
@@ -121,8 +98,6 @@ export function TimeSelect({
   minTime,
   hasError = false,
   showIcon = false,
-  iconType = 'clock',
-  showDurationInMenu = false,
 }: TimeSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState(value);
@@ -176,63 +151,48 @@ export function TimeSelect({
     }
   };
 
-  // ドロップダウンを開いた時のスクロール位置（初回のみ）
-  // - minTime あり: 一番上から表示（終了時刻選択用）
-  // - minTime なし: 選択中の時刻または現在時刻を中央に表示
+  // ドロップダウンを開いた時、選択中の時刻または現在時刻に近い時刻を中央に表示（初回のみ）
   useEffect(() => {
-    if (isOpen && !hasScrolledRef.current) {
-      // DOM が準備できてからスクロール
-      requestAnimationFrame(() => {
-        if (!listRef.current) return;
+    if (isOpen && listRef.current && !hasScrolledRef.current) {
+      let targetIndex = -1;
 
-        // minTime が設定されている場合: 一番上から表示
-        if (minTime) {
-          listRef.current.scrollTop = 0;
-          hasScrolledRef.current = true;
-          return;
-        }
+      if (value) {
+        // 値が設定されている場合: その値を中央に表示（全オプションから検索）
+        targetIndex = timeOptions.indexOf(value);
 
-        let targetIndex = -1;
-
-        if (value) {
-          // 値が設定されている場合: その値を中央に表示（全オプションから検索）
-          targetIndex = timeOptions.indexOf(value);
-
-          // 15分刻みではない時刻の場合、最も近い15分刻みの時刻を探す
-          if (targetIndex === -1) {
-            const [hours, minutes] = value.split(':').map(Number);
-            if (!isNaN(hours!) && !isNaN(minutes!)) {
-              // 15分刻みに丸める
-              const roundedMinutes = Math.floor(minutes! / 15) * 15;
-              const roundedTimeStr = `${hours!.toString().padStart(2, '0')}:${roundedMinutes.toString().padStart(2, '0')}`;
-              targetIndex = timeOptions.indexOf(roundedTimeStr);
-            }
+        // 15分刻みではない時刻の場合、最も近い15分刻みの時刻を探す
+        if (targetIndex === -1) {
+          const [hours, minutes] = value.split(':').map(Number);
+          if (!isNaN(hours!) && !isNaN(minutes!)) {
+            // 15分刻みに丸める
+            const roundedMinutes = Math.floor(minutes! / 15) * 15;
+            const roundedTimeStr = `${hours!.toString().padStart(2, '0')}:${roundedMinutes.toString().padStart(2, '0')}`;
+            targetIndex = timeOptions.indexOf(roundedTimeStr);
           }
-        } else {
-          // 値が空の場合: 現在時刻に最も近い時刻を中央に表示
-          const now = new Date();
-          const currentHour = now.getHours();
-          const currentMinute = now.getMinutes();
-          const roundedMinutes = Math.floor(currentMinute / 15) * 15;
-          const currentTimeStr = `${currentHour.toString().padStart(2, '0')}:${roundedMinutes.toString().padStart(2, '0')}`;
-          targetIndex = timeOptions.indexOf(currentTimeStr);
         }
+      } else {
+        // 値が空の場合: 現在時刻に最も近い時刻を中央に表示
+        const now = new Date();
+        const currentHour = now.getHours();
+        const currentMinute = now.getMinutes();
+        const roundedMinutes = Math.floor(currentMinute / 15) * 15;
+        const currentTimeStr = `${currentHour.toString().padStart(2, '0')}:${roundedMinutes.toString().padStart(2, '0')}`;
+        targetIndex = timeOptions.indexOf(currentTimeStr);
+      }
 
-        if (targetIndex !== -1) {
-          const itemHeight = 32; // py-1.5 = 6px*2 + text height ≈ 32px
-          const containerHeight = 200; // max-h-52
-          // 選択された項目を中央に配置
-          listRef.current.scrollTop =
-            targetIndex * itemHeight - containerHeight / 2 + itemHeight / 2;
-          hasScrolledRef.current = true;
-        }
-      });
+      if (targetIndex !== -1) {
+        const itemHeight = 32; // py-1.5 = 6px*2 + text height ≈ 32px
+        const containerHeight = 200; // max-h-52
+        // 選択された項目を中央に配置
+        listRef.current.scrollTop = targetIndex * itemHeight - containerHeight / 2 + itemHeight / 2;
+        hasScrolledRef.current = true;
+      }
     }
     // ドロップダウンを閉じたらフラグをリセット
     if (!isOpen) {
       hasScrolledRef.current = false;
     }
-  }, [isOpen, value, timeOptions, minTime]);
+  }, [isOpen, value, filteredOptions, timeOptions]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
@@ -248,10 +208,6 @@ export function TimeSelect({
   };
 
   const handleInputBlur = () => {
-    // Popoverが開いている場合はPopover側で処理するのでスキップ
-    // （blur → popover close の順で発火するため重複を防ぐ）
-    if (isOpen) return;
-
     // フォーカスが外れたら入力値をパース
     const parsed = parseTimeInput(inputValue);
 
@@ -368,25 +324,16 @@ export function TimeSelect({
   return (
     <div className={label ? 'space-y-1' : ''}>
       {label && <label className="text-muted-foreground text-xs">{label}</label>}
-      <Popover open={isOpen} onOpenChange={handleOpenChange} modal={false}>
-        <PopoverAnchor asChild>
-          <div
-            className={`relative flex cursor-text items-center rounded-md transition-colors ${
-              hasError
-                ? 'ring-destructive/50 bg-destructive-container ring-2'
-                : 'hover:bg-state-hover'
-            } ${showIcon ? 'w-[72px] gap-2 px-2' : ''}`}
-            onClick={() => {
-              if (!isOpen) setIsOpen(true);
-              inputRef.current?.focus();
-            }}
-          >
-            {showIcon &&
-              (iconType === 'flag' ? (
-                <Flag className="text-muted-foreground size-4 shrink-0" />
-              ) : (
-                <Clock className="text-muted-foreground size-4 shrink-0" />
-              ))}
+      <Popover open={isOpen} onOpenChange={handleOpenChange}>
+        <div
+          className={`relative flex items-center rounded-md transition-colors ${
+            hasError
+              ? 'ring-destructive/50 bg-destructive-container ring-2'
+              : 'hover:bg-state-hover'
+          } ${showIcon ? 'gap-1 pl-2' : ''}`}
+        >
+          {showIcon && <Clock className="text-muted-foreground size-4" />}
+          <PopoverTrigger asChild>
             <input
               ref={inputRef}
               type="text"
@@ -404,34 +351,31 @@ export function TimeSelect({
               onFocus={handleInputFocus}
               disabled={disabled}
               placeholder="--:--"
-              className={`flex h-8 rounded-md bg-transparent text-sm outline-none disabled:cursor-not-allowed disabled:opacity-50 ${
-                showIcon ? 'w-auto' : 'w-14 px-2 text-center'
-              } ${value ? 'text-foreground' : 'text-muted-foreground'} ${error || hasError ? 'text-destructive' : ''}`}
+              className={`flex h-8 w-14 rounded-md bg-transparent px-2 py-1 text-center text-sm outline-none disabled:cursor-not-allowed disabled:opacity-50 ${
+                value ? 'text-foreground' : 'text-muted-foreground'
+              } ${error || hasError ? 'text-destructive' : ''}`}
             />
-            {error && (
-              <div className="text-destructive absolute top-full left-0 mt-1 text-xs whitespace-nowrap">
-                {error}
-              </div>
-            )}
-          </div>
-        </PopoverAnchor>
+          </PopoverTrigger>
+          {error && (
+            <div className="text-destructive absolute top-full left-0 mt-1 text-xs whitespace-nowrap">
+              {error}
+            </div>
+          )}
+        </div>
 
         {!disabled && filteredOptions.length > 0 && (
           <PopoverContent
-            className="overflow-hidden p-0"
+            className="w-20 overflow-hidden p-0"
             align="start"
             sideOffset={4}
-            style={{
-              zIndex: zIndex.overlayDropdown,
-              width: showDurationInMenu && minTime ? '140px' : '80px',
-            }}
+            style={{ zIndex: zIndex.overlayDropdown }}
             onOpenAutoFocus={(e) => e.preventDefault()}
           >
             <div
               id="time-listbox"
               ref={listRef}
               role="listbox"
-              className="scrollbar-thin max-h-52 overflow-y-auto overscroll-contain p-2"
+              className="scrollbar-thin max-h-52 overflow-y-auto overscroll-contain p-1"
               style={{
                 scrollbarColor:
                   'color-mix(in oklch, var(--color-muted-foreground) 30%, transparent) transparent',
@@ -445,7 +389,7 @@ export function TimeSelect({
                   role="option"
                   aria-selected={option === value}
                   type="button"
-                  className={`hover:bg-state-hover w-full rounded-sm px-2 py-1 text-left text-sm ${
+                  className={`hover:bg-state-hover w-full rounded-sm px-2 py-1.5 text-left text-sm ${
                     index === highlightedIndex
                       ? 'bg-state-selected'
                       : option === value
@@ -456,16 +400,7 @@ export function TimeSelect({
                   onClick={() => handleOptionClick(option)}
                   onMouseEnter={() => setHighlightedIndex(index)}
                 >
-                  {showDurationInMenu && minTime ? (
-                    <span className="flex items-center gap-2">
-                      <span className="tabular-nums">{option}</span>
-                      <span className="text-muted-foreground text-xs tabular-nums">
-                        {formatDuration(minTime, option)}
-                      </span>
-                    </span>
-                  ) : (
-                    <span className="tabular-nums">{option}</span>
-                  )}
+                  {option}
                 </button>
               ))}
             </div>

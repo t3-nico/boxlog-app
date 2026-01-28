@@ -5,6 +5,9 @@
  * 楽観的更新でUIを即座に反映
  */
 
+import { useTranslations } from 'next-intl';
+import { toast } from 'sonner';
+
 import { api } from '@/lib/trpc';
 
 import type { CreateRecordInput, UpdateRecordInput } from '@/schemas/records';
@@ -15,6 +18,7 @@ import type { RecordItem } from './useRecordData';
  */
 export function useRecordMutations() {
   const utils = api.useUtils();
+  const t = useTranslations();
 
   // Record作成
   const createRecord = api.records.create.useMutation({
@@ -45,13 +49,22 @@ export function useRecordMutations() {
 
       return { previous };
     },
-    onError: (_err, _input, context) => {
+    onError: (err, _input, context) => {
       if (context?.previous) {
         utils.records.list.setData({}, context.previous);
       }
+
+      // TIME_OVERLAPエラー（重複防止）の場合は専用のトースト
+      if (err.message.includes('既にRecord') || err.message.includes('TIME_OVERLAP')) {
+        toast.error(t('calendar.toast.conflict'), {
+          description: t('calendar.toast.conflictDescription'),
+          duration: 4000,
+        });
+      }
     },
     onSettled: () => {
-      void utils.records.list.invalidate();
+      // すべてのrecords.listクエリを無効化（日付フィルター付きも含む）
+      void utils.records.list.invalidate(undefined, { refetchType: 'all' });
       void utils.records.getRecent.invalidate();
     },
   });
@@ -92,7 +105,8 @@ export function useRecordMutations() {
       }
     },
     onSettled: () => {
-      void utils.records.list.invalidate();
+      // すべてのrecords.listクエリを無効化（日付フィルター付きも含む）
+      void utils.records.list.invalidate(undefined, { refetchType: 'all' });
     },
   });
 
@@ -115,15 +129,26 @@ export function useRecordMutations() {
       }
     },
     onSettled: () => {
-      void utils.records.list.invalidate();
+      // すべてのrecords.listクエリを無効化（日付フィルター付きも含む）
+      void utils.records.list.invalidate(undefined, { refetchType: 'all' });
       void utils.records.getRecent.invalidate();
     },
   });
 
   // Record複製
   const duplicateRecord = api.records.duplicate.useMutation({
+    onError: (err) => {
+      // TIME_OVERLAPエラー（重複防止）の場合は専用のトースト
+      if (err.message.includes('既にRecord') || err.message.includes('TIME_OVERLAP')) {
+        toast.error(t('calendar.toast.conflict'), {
+          description: t('calendar.toast.conflictDescription'),
+          duration: 4000,
+        });
+      }
+    },
     onSettled: () => {
-      void utils.records.list.invalidate();
+      // すべてのrecords.listクエリを無効化（日付フィルター付きも含む）
+      void utils.records.list.invalidate(undefined, { refetchType: 'all' });
       void utils.records.getRecent.invalidate();
     },
   });
@@ -148,7 +173,8 @@ export function useRecordMutations() {
       }
     },
     onSettled: () => {
-      void utils.records.list.invalidate();
+      // すべてのrecords.listクエリを無効化（日付フィルター付きも含む）
+      void utils.records.list.invalidate(undefined, { refetchType: 'all' });
       void utils.records.getRecent.invalidate();
     },
   });

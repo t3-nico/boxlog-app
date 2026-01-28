@@ -168,6 +168,45 @@ export class RecordService {
   }
 
   /**
+   * 時間重複をチェック
+   * @returns 重複しているRecordのIDリスト（空なら重複なし）
+   */
+  async checkTimeOverlap(options: {
+    userId: string;
+    workedAt: string;
+    startTime: string;
+    endTime: string;
+    excludeRecordId?: string;
+  }): Promise<string[]> {
+    const { userId, workedAt, startTime, endTime, excludeRecordId } = options;
+
+    // 時間重複条件: 既存の開始時刻 < 新規の終了時刻 AND 既存の終了時刻 > 新規の開始時刻
+    let query = this.supabase
+      .from('records')
+      .select('id')
+      .eq('user_id', userId)
+      .eq('worked_at', workedAt)
+      .not('start_time', 'is', null)
+      .not('end_time', 'is', null)
+      .lt('start_time', endTime)
+      .gt('end_time', startTime);
+
+    // 自分自身を除外（更新時）
+    if (excludeRecordId) {
+      query = query.neq('id', excludeRecordId);
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      console.error('Record time overlap check failed:', error);
+      return [];
+    }
+
+    return data?.map((row) => row.id) ?? [];
+  }
+
+  /**
    * Recordを作成（タグも同時に設定可能）
    */
   async create(options: CreateRecordOptions): Promise<RecordRow & { tagIds: string[] }> {
@@ -177,6 +216,23 @@ export class RecordService {
     // Plan存在確認（plan_idがある場合のみ）
     if (recordInput.plan_id) {
       await this.verifyPlanOwnership(recordInput.plan_id, userId);
+    }
+
+    // 重複チェック（start_timeとend_timeの両方がある場合）
+    if (recordInput.worked_at && recordInput.start_time && recordInput.end_time) {
+      const overlappingIds = await this.checkTimeOverlap({
+        userId,
+        workedAt: recordInput.worked_at,
+        startTime: recordInput.start_time,
+        endTime: recordInput.end_time,
+      });
+
+      if (overlappingIds.length > 0) {
+        throw new RecordServiceError(
+          'TIME_OVERLAP',
+          `この時間帯には既にRecordがあります（${overlappingIds.length}件）`,
+        );
+      }
     }
 
     const insertData = {
@@ -266,13 +322,32 @@ export class RecordService {
 
     // 新しいRecordを作成（worked_atを変更）
     const today = new Date().toISOString().split('T')[0];
+    const targetDate = workedAt ?? today;
+
+    // 重複チェック（start_timeとend_timeの両方がある場合）
+    if (original.start_time && original.end_time) {
+      const overlappingIds = await this.checkTimeOverlap({
+        userId,
+        workedAt: targetDate!,
+        startTime: original.start_time,
+        endTime: original.end_time,
+      });
+
+      if (overlappingIds.length > 0) {
+        throw new RecordServiceError(
+          'TIME_OVERLAP',
+          `この時間帯には既にRecordがあります（${overlappingIds.length}件）`,
+        );
+      }
+    }
+
     // title は DB カラムが追加されるまで undefined の可能性あり
     const originalWithTitle = original as typeof original & { title?: string | null };
     const newRecord = {
       user_id: userId,
       plan_id: original.plan_id,
       title: originalWithTitle.title ?? null,
-      worked_at: workedAt ?? today,
+      worked_at: targetDate,
       start_time: original.start_time,
       end_time: original.end_time,
       duration_minutes: original.duration_minutes,
