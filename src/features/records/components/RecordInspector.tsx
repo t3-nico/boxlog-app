@@ -120,6 +120,38 @@ export function RecordInspector() {
     [isDraftMode, updateDraft],
   );
 
+  // Plan選択ハンドラ（ドラフトモード時はPlanのタグを自動プリセット）
+  const handlePlanChange = useCallback(
+    (planId: string | null) => {
+      setFormData((prev) => {
+        const updates: Partial<FormData> = { plan_id: planId };
+
+        // ドラフトモード時はPlanのタグを自動プリセット
+        if (isDraftMode && planId && plans) {
+          const selectedPlan = plans.find((p) => p.id === planId);
+          if (selectedPlan?.tagIds && selectedPlan.tagIds.length > 0) {
+            updates.tagIds = selectedPlan.tagIds;
+          }
+        }
+
+        return { ...prev, ...updates };
+      });
+      setIsDirty(true);
+
+      // ドラフトモード時はstoreも更新
+      if (isDraftMode) {
+        updateDraft({ plan_id: planId } as Partial<DraftRecord>);
+        if (planId && plans) {
+          const selectedPlan = plans.find((p) => p.id === planId);
+          if (selectedPlan?.tagIds && selectedPlan.tagIds.length > 0) {
+            updateDraft({ tagIds: selectedPlan.tagIds } as Partial<DraftRecord>);
+          }
+        }
+      }
+    },
+    [isDraftMode, plans, updateDraft],
+  );
+
   // タグ変更ハンドラ（既存Record編集時は即座にAPIを呼ぶ）
   const handleTagsChange = useCallback(
     async (newTagIds: string[]) => {
@@ -240,7 +272,7 @@ export function RecordInspector() {
             {isDraftMode ? (
               <Select
                 value={formData.plan_id ?? ''}
-                onValueChange={(v) => handleChange('plan_id', v || null)}
+                onValueChange={(v) => handlePlanChange(v || null)}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Planを選択..." />
