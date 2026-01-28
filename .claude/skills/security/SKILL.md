@@ -162,9 +162,3 @@ npm audit
 1. **全データアクセスは `userId` でフィルタ** - RLSだけに頼らない
 2. **Service層を経由** - ルーターに直接ロジックを書かない
 3. **`handleServiceError()` を使用** - 直接TRPCErrorをthrowしない
-
-## 関連スキル
-
-- `/trpc-router-creating` - 認証付きエンドポイント作成
-- `/a11y` - セキュリティとアクセシビリティの両立
-- `/test` - セキュリティテストの作成
