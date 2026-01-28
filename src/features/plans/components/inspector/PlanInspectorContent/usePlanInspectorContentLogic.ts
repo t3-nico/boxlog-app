@@ -5,10 +5,8 @@
  */
 
 import { format } from 'date-fns';
-import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import useCalendarToast from '@/features/calendar/lib/toast';
 import {
   localTimeToUTCISO,
   parseDateString,
@@ -38,9 +36,7 @@ import { useInspectorAutoSave, useInspectorNavigation, useRecurringPlanEdit } fr
 const SCOPE_DIALOG_FIELDS = ['due_date', 'start_time', 'end_time'] as const;
 
 export function usePlanInspectorContentLogic() {
-  const t = useTranslations();
   const utils = api.useUtils();
-  const calendarToast = useCalendarToast();
   const { error: hapticError } = useHapticFeedback();
 
   // ユーザーのタイムゾーン設定
@@ -115,18 +111,18 @@ export function usePlanInspectorContentLogic() {
     instanceDate,
   });
 
-  // 時間重複チェック関数
+  // 時間重複チェック関数（クライアント側で即時チェック）
   const checkTimeOverlap = useCallback(
     (newStartTime: Date, newEndTime: Date): boolean => {
-      if (!planId) return false;
-
       // キャッシュからプラン一覧を取得
       const plans = utils.plans.list.getData();
       if (!plans || plans.length === 0) return false;
 
       // 自分以外のプランとの重複をチェック
+      // ドラフトモード（planIdがnull）ではすべてのプランと比較
       return plans.some((p) => {
-        if (p.id === planId) return false;
+        // 既存プラン編集時は自分自身を除外
+        if (planId && p.id === planId) return false;
         if (!p.start_time || !p.end_time) return false;
 
         const pStart = new Date(p.start_time);
@@ -507,6 +503,9 @@ export function usePlanInspectorContentLogic() {
 
   const handleStartTimeChange = useCallback(
     (time: string) => {
+      // 時間変更時に既存のエラーをクリア
+      setTimeConflictError(false);
+
       // 時刻をパース
       const [hours, minutes] = time ? time.split(':').map(Number) : [0, 0];
 
@@ -517,6 +516,7 @@ export function usePlanInspectorContentLogic() {
       }
 
       // 重複チェック（終了時刻がある場合のみ）
+      // Note: Plan↔Plan重複はサーバー側でブロック、視覚フィードバックのみ表示（toastなし）
       if (newStartDateTime && endTime && scheduleDate) {
         const [endHours, endMinutes] = endTime.split(':').map(Number);
         const endDateTime = new Date(scheduleDate);
@@ -524,12 +524,8 @@ export function usePlanInspectorContentLogic() {
 
         if (checkTimeOverlap(newStartDateTime, endDateTime)) {
           hapticError();
-          calendarToast.error(t('calendar.toast.conflict'), {
-            description: t('calendar.toast.conflictDescription'),
-          });
           setTimeConflictError(true);
-          setTimeout(() => setTimeConflictError(false), 500);
-          return;
+          // エラーは時間変更するまで表示し続ける（自動消去なし）
         }
       }
 
@@ -567,14 +563,15 @@ export function usePlanInspectorContentLogic() {
       addPendingChange,
       checkTimeOverlap,
       hapticError,
-      calendarToast,
-      t,
       timezone,
     ],
   );
 
   const handleEndTimeChange = useCallback(
     (time: string) => {
+      // 時間変更時に既存のエラーをクリア
+      setTimeConflictError(false);
+
       // 時刻をパース
       const [hours, minutes] = time ? time.split(':').map(Number) : [0, 0];
 
@@ -585,6 +582,7 @@ export function usePlanInspectorContentLogic() {
       }
 
       // 重複チェック（開始時刻がある場合のみ）
+      // Note: Plan↔Plan重複はサーバー側でブロック、視覚フィードバックのみ表示（toastなし）
       if (newEndDateTime && startTime && scheduleDate) {
         const [startHours, startMinutes] = startTime.split(':').map(Number);
         const startDateTime = new Date(scheduleDate);
@@ -592,12 +590,9 @@ export function usePlanInspectorContentLogic() {
 
         if (checkTimeOverlap(startDateTime, newEndDateTime)) {
           hapticError();
-          calendarToast.error(t('calendar.toast.conflict'), {
-            description: t('calendar.toast.conflictDescription'),
-          });
           setTimeConflictError(true);
-          setTimeout(() => setTimeConflictError(false), 500);
-          return;
+          // エラーは時間変更するまで表示し続ける（自動消去なし）
+          // 変更は許可（サーバー側で最終チェック）
         }
       }
 
@@ -635,8 +630,6 @@ export function usePlanInspectorContentLogic() {
       addPendingChange,
       checkTimeOverlap,
       hapticError,
-      calendarToast,
-      t,
       timezone,
     ],
   );

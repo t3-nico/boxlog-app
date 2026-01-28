@@ -58,7 +58,7 @@ export function useDragSelection({
   disabled = false,
   onTimeRangeSelect,
   onDoubleClick: onDoubleClickProp,
-  plans = [],
+  plans: _plans = [],
 }: UseDragSelectionOptions): UseDragSelectionReturn {
   // 設定からデフォルト時間を取得
   const defaultDuration = useCalendarSettingsStore((state) => state.defaultDuration);
@@ -86,29 +86,13 @@ export function useDragSelection({
   const [isOverlapping, setIsOverlapping] = useState(false);
 
   // 重複チェック関数
-  const checkOverlap = useCallback(
-    (sel: TimeRange): boolean => {
-      if (!plans || plans.length === 0) return false;
-
-      // 選択範囲の開始・終了時刻をDateに変換
-      const selStartTime = new Date(date);
-      selStartTime.setHours(sel.startHour, sel.startMinute, 0, 0);
-      const selEndTime = new Date(date);
-      selEndTime.setHours(sel.endHour, sel.endMinute, 0, 0);
-
-      // 既存プランとの重複をチェック
-      return plans.some((plan) => {
-        if (!plan.startDate || !plan.endDate) return false;
-
-        const planStart = new Date(plan.startDate);
-        const planEnd = new Date(plan.endDate);
-
-        // 時間重複条件: 既存の開始 < 新規の終了 AND 既存の終了 > 新規の開始
-        return planStart < selEndTime && planEnd > selStartTime;
-      });
-    },
-    [plans, date],
-  );
+  // 注意: ドラッグ選択時の重複チェックは無効化
+  // Plan作成時はPlan同士のみ、Record作成時はRecord同士のみサーバー側でチェック
+  // Plan↔Recordは共存可能なため、選択段階ではブロックしない
+  const checkOverlap = useCallback((_sel: TimeRange): boolean => {
+    // 常にfalseを返す（重複チェックを無効化）
+    return false;
+  }, []);
 
   // Droppable ID and data
   const droppableId = `calendar-droppable-${format(date, 'yyyy-MM-dd')}`;

@@ -13,6 +13,7 @@ import type { RecurringEditScope } from '@/features/plans/components/RecurringEd
 import { usePlanInstanceMutations } from '@/features/plans/hooks/usePlanInstances';
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
 import { useRecurringEditConfirmStore } from '@/features/plans/stores/useRecurringEditConfirmStore';
+import { useRecordMutations } from '@/features/records/hooks/useRecordMutations';
 import { logger } from '@/lib/logger';
 import { api } from '@/lib/trpc';
 
@@ -31,6 +32,7 @@ interface UseRecurringPlanDragOptions {
 export function useRecurringPlanDrag({ plans }: UseRecurringPlanDragOptions) {
   const utils = api.useUtils();
   const { updatePlan } = usePlanMutations();
+  const { updateRecord } = useRecordMutations();
   const { createInstance } = usePlanInstanceMutations();
 
   // 繰り返しプラン分割用mutation（楽観的更新付き）
@@ -211,6 +213,43 @@ export function useRecurringPlanDrag({ plans }: UseRecurringPlanDragOptions) {
         return;
       }
 
+      // Recordかどうか判定（type === 'record' または recordId が存在）
+      const isRecord = plan.type === 'record' || !!plan.recordId;
+
+      if (isRecord) {
+        // Recordの場合: Record更新mutationを使用
+        const recordId = plan.recordId;
+        if (!recordId) {
+          logger.warn('Record ID not found for update:', plan.id);
+          return;
+        }
+
+        logger.log('🔄 Recordのドラッグ更新:', {
+          recordId,
+          planId: plan.id,
+        });
+
+        // worked_at は startTime から取得（YYYY-MM-DD）
+        const workedAt = resolvedUpdates.startTime.toISOString().slice(0, 10);
+        // start_time, end_time は HH:MM:SS 形式
+        const startTime = resolvedUpdates.startTime.toTimeString().slice(0, 8);
+        const endTime = resolvedUpdates.endTime.toTimeString().slice(0, 8);
+        // duration_minutes を計算
+        const durationMs = resolvedUpdates.endTime.getTime() - resolvedUpdates.startTime.getTime();
+        const durationMinutes = Math.round(durationMs / (1000 * 60));
+
+        updateRecord.mutate({
+          id: recordId,
+          data: {
+            worked_at: workedAt,
+            start_time: startTime,
+            end_time: endTime,
+            duration_minutes: durationMinutes,
+          },
+        });
+        return;
+      }
+
       // 繰り返しインスタンスかどうか判定
       // - isRecurring が true
       // - originalPlanId が設定されている（親プランID）
@@ -242,7 +281,7 @@ export function useRecurringPlanDrag({ plans }: UseRecurringPlanDragOptions) {
         });
       }
     },
-    [plans, updatePlan, openDialog, handleScopeConfirm],
+    [plans, updatePlan, updateRecord, openDialog, handleScopeConfirm],
   );
 
   return {

@@ -224,7 +224,21 @@ export function useDragAndDrop({
         }
       }
 
-      await executeEventUpdate(newStartTime);
+      // サーバー側で更新を実行（重複チェックはサーバー側で行う）
+      const success = await executeEventUpdate(newStartTime);
+
+      if (!success) {
+        // サーバーエラー時（重複等）はスナップバック
+        const dragElement = dragDataRef.current.dragElement ?? null;
+        const originalRect = dragDataRef.current.originalElementRect ?? null;
+
+        options.onOverlapError?.(); // ハプティックフィードバック
+        animateSnapBack(dragElement, originalRect, () => {
+          completeDragOperation(false);
+          endDrag();
+        });
+        return false;
+      }
 
       const actuallyDragged = dragDataRef.current?.hasMoved || false;
       completeDragOperation(actuallyDragged);

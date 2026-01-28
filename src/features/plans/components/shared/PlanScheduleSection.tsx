@@ -153,38 +153,39 @@ export function PlanScheduleSection({
           </div>
 
           {/* 2行目: 時間 */}
-          <div className="flex h-8 items-center">
-            <ClockTimePicker
-              value={startTime}
-              onChange={handleStartTimeChange}
-              disabled={disabled}
-              hasError={timeConflictError}
-            />
-            <span className="text-muted-foreground mx-1">→</span>
-            <Flag className="text-muted-foreground size-4" />
-            <ClockTimePicker
-              value={endTime}
-              onChange={handleEndTimeChange}
-              disabled={disabled || !startTime}
-              hasError={timeConflictError}
-              minTime={startTime}
-            />
-            {durationDisplay && (
-              <span className="text-muted-foreground ml-2 text-sm">{durationDisplay}</span>
+          <div className="flex flex-col">
+            <div className="flex h-8 items-center">
+              <ClockTimePicker
+                value={startTime}
+                onChange={handleStartTimeChange}
+                disabled={disabled}
+                hasError={timeConflictError}
+              />
+              <span className="text-muted-foreground mx-1">→</span>
+              <Flag className="text-muted-foreground size-4" />
+              <ClockTimePicker
+                value={endTime}
+                onChange={handleEndTimeChange}
+                disabled={disabled || !startTime}
+                hasError={timeConflictError}
+                minTime={startTime}
+              />
+              {durationDisplay && (
+                <span className="text-muted-foreground ml-2 text-sm">{durationDisplay}</span>
+              )}
+            </div>
+            {/* 時間重複エラーメッセージ */}
+            {timeConflictError && (
+              <div
+                className="text-destructive flex items-center gap-1 py-1 text-sm"
+                role="alert"
+                aria-live="assertive"
+              >
+                <AlertCircle className="size-3 flex-shrink-0" />
+                <span>この時間帯は他の予定と重複しています</span>
+              </div>
             )}
           </div>
-
-          {/* 時間重複エラーメッセージ */}
-          {timeConflictError && (
-            <div
-              className="text-destructive flex items-center gap-1 py-1 text-sm"
-              role="alert"
-              aria-live="polite"
-            >
-              <AlertCircle className="size-3 flex-shrink-0" />
-              <span>この時間帯は他の予定と重複しています</span>
-            </div>
-          )}
 
           {/* 3行目: 繰り返し */}
           <div className="relative flex h-8 items-center" ref={recurrenceRef}>

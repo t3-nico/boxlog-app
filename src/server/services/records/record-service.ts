@@ -268,6 +268,44 @@ export class RecordService {
 
     const updateData = removeUndefinedFields(input);
 
+    // 時間が変更される場合は重複チェック
+    // worked_at, start_time, end_time のいずれかが変更される場合
+    if (input.worked_at || input.start_time || input.end_time) {
+      // 現在のレコードを取得して、変更後の値でチェック
+      const { data: currentRecord, error: fetchError } = await this.supabase
+        .from('records')
+        .select('worked_at, start_time, end_time')
+        .eq('id', recordId)
+        .eq('user_id', userId)
+        .single();
+
+      if (fetchError || !currentRecord) {
+        throw new RecordServiceError('NOT_FOUND', 'Record not found');
+      }
+
+      const workedAt = input.worked_at ?? currentRecord.worked_at;
+      const startTime = input.start_time ?? currentRecord.start_time;
+      const endTime = input.end_time ?? currentRecord.end_time;
+
+      // start_time と end_time の両方がある場合のみチェック
+      if (workedAt && startTime && endTime) {
+        const overlappingIds = await this.checkTimeOverlap({
+          userId,
+          workedAt,
+          startTime,
+          endTime,
+          excludeRecordId: recordId, // 自分自身は除外
+        });
+
+        if (overlappingIds.length > 0) {
+          throw new RecordServiceError(
+            'TIME_OVERLAP',
+            `この時間帯には既にRecordがあります（${overlappingIds.length}件）`,
+          );
+        }
+      }
+    }
+
     const { data, error } = await this.supabase
       .from('records')
       .update(updateData as never)

@@ -175,14 +175,22 @@ export function useResizeHandler({
             })
             .catch((error: unknown) => {
               logger.error('Failed to resize event:', error);
-              calendarToast.error(t('calendar.event.resizeFailed'));
+              // TIME_OVERLAPエラー（重複防止）の場合はtoastなし
+              const errorMessage = error instanceof Error ? error.message : '';
+              if (!errorMessage.includes('TIME_OVERLAP') && !errorMessage.includes('既に')) {
+                calendarToast.error(t('calendar.event.resizeFailed'));
+              }
             });
         } else {
           calendarToast.eventUpdated(eventData);
         }
       } catch (error) {
         logger.error('Failed to resize event:', error);
-        calendarToast.error(t('calendar.event.resizeFailed'));
+        // TIME_OVERLAPエラー（重複防止）の場合はtoastなし
+        const errorMessage = error instanceof Error ? error.message : '';
+        if (!errorMessage.includes('TIME_OVERLAP') && !errorMessage.includes('既に')) {
+          calendarToast.error(t('calendar.event.resizeFailed'));
+        }
       }
     },
     [events, allEvents, eventUpdateHandler, dragDataRef, calendarToast, hapticError, t],

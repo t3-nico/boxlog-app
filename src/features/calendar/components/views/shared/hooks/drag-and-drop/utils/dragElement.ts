@@ -125,31 +125,21 @@ export function calculateColumnWidth(
 
 /**
  * クライアント側で時間重複をチェックする
- * @param events - 現在表示中のプラン一覧
- * @param draggedEventId - ドラッグ中のプランID（自分自身は除外）
- * @param previewStartTime - プレビュー開始時刻
- * @param previewEndTime - プレビュー終了時刻
- * @returns 重複している場合はtrue
+ *
+ * 注意: ドラッグ中のリアルタイム重複チェックは無効化
+ * 重複チェックはサーバー側（保存時）で行う
+ *
+ * @deprecated ドラッグ中の重複チェックは無効化。サーバー側で保存時にチェック。
  */
 export function checkClientSideOverlap(
-  events: CalendarPlan[],
-  draggedEventId: string,
-  previewStartTime: Date,
-  previewEndTime: Date,
+  _events: CalendarPlan[],
+  _draggedEventId: string,
+  _previewStartTime: Date,
+  _previewEndTime: Date,
 ): boolean {
-  // 自分自身を除外した他のプランとの重複チェック
-  const result = events.some((event) => {
-    if (event.id === draggedEventId) return false;
-    if (!event.startDate || !event.endDate) return false;
-
-    const eventStart = event.startDate;
-    const eventEnd = event.endDate;
-
-    // 時間重複条件: 既存の開始時刻 < 新規の終了時刻 AND 既存の終了時刻 > 新規の開始時刻
-    return eventStart < previewEndTime && eventEnd > previewStartTime;
-  });
-
-  return result;
+  // ドラッグ中のリアルタイム重複チェックを無効化
+  // 重複チェックはサーバー側（plan-service.ts, record-service.ts）で保存時に行う
+  return false;
 }
 
 /**
