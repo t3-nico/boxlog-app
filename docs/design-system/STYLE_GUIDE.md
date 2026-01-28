@@ -94,6 +94,116 @@ p-[15px]
 
 ---
 
+## 📏 関連性に基づく余白設計
+
+### 設計原則
+
+**要素間の余白は、その関連性の強さに基づいて決定する。**
+
+- **関連性が強い** → 小さい余白（密接に配置）
+- **関連性が弱い** → 大きい余白（明確に分離）
+
+これにより、ユーザーは視覚的にグループを認識しやすくなる。
+
+### T-shirtサイズ（8pxグリッド準拠）
+
+| サイズ | 値   | Tailwind | 用途                           |
+| ------ | ---- | -------- | ------------------------------ |
+| **XS** | 8px  | `gap-2`  | 密接な要素間（同一グループ内） |
+| **S**  | 16px | `gap-4`  | 関連要素間（フォーム項目など） |
+| **M**  | 24px | `gap-6`  | セクション境界                 |
+| **L**  | 32px | `gap-8`  | 大きなセクション境界           |
+| **XL** | 40px | `gap-10` | ページレベルの分離             |
+
+### 実践例：RecordCreateForm
+
+```
+┌─────────────────────────────────┐
+│ Header (Plan/Record tabs)       │ ← ナビゲーション
+├── 24px (M) ─────────────────────┤  セクション分離
+│ Title                           │ ← プライマリコンテンツ
+├── 16px (S) ─────────────────────┤  フォーム内
+│ Date + Time                     │ ← メタデータA ┐
+├── 16px (S) ─────────────────────┤               │ 密接な関連
+│ Tags + Options                  │ ← メタデータB ┘
+├── 32px (L) ─────────────────────┤  セクション分離
+│ Footer (Save/Cancel)            │ ← アクション
+└─────────────────────────────────┘
+```
+
+### 実装例
+
+```tsx
+// ✅ 関連性に基づく余白設計
+<div className="flex flex-col">
+  {/* Header → Content: 24px（セクション分離） */}
+  {/* header pb-2 (8px) + title pt-4 (16px) = 24px */}
+
+  {/* プライマリコンテンツ */}
+  <div className="px-4 pb-2 pt-4">
+    <input className="text-xl font-bold" placeholder="タイトル" />
+  </div>
+
+  {/* メタデータグループ（密接: 16px） */}
+  {/* title pb-2 (8px) + datetime pt-2 (8px) = 16px */}
+  <div className="px-4 pb-2 pt-2">{/* 日付 + 時間 */}</div>
+
+  {/* datetime pb-2 (8px) + tags pt-2 (8px) = 16px */}
+  <div className="px-4 pb-4 pt-2">{/* Tags + オプション */}</div>
+
+  {/* Content → Footer: 32px（セクション分離） */}
+  {/* tags pb-4 (16px) + footer py-4 (16px) = 32px */}
+  <div className="px-4 py-4">
+    <Button>保存</Button>
+  </div>
+</div>
+```
+
+### 余白決定のフローチャート
+
+```
+この2つの要素は...
+
+1. 同じ概念グループか？
+   ├─ Yes → XS〜S (8-16px)
+   │   └─ 例: 日付とTime、Tagsと関連オプション
+   └─ No → 次へ
+
+2. 同じセクション内か？
+   ├─ Yes → S〜M (16-24px)
+   │   └─ 例: タイトルとメタデータ
+   └─ No → 次へ
+
+3. 異なるセクションか？
+   └─ Yes → M〜L (24-32px)
+       └─ 例: ナビゲーションとコンテンツ、コンテンツとフッター
+```
+
+### ❌ 禁止事項
+
+```tsx
+// ❌ 全要素に同じ余白
+<div className="flex flex-col gap-4">
+  <Header />
+  <Title />
+  <DateTime />
+  <Tags />
+  <Footer />
+</div>
+// → 関連性が視覚的に表現されない
+
+// ❌ 8の倍数でない余白
+<div className="py-3">  // 12px - 非推奨
+<div className="gap-5"> // 20px - 非推奨
+```
+
+### 参考資料
+
+- [Spatial Systems in Design](https://medium.com/eightshapes-llc/space-in-design-systems-188bcbae0d62)
+- [The 8-Point Grid](https://spec.fm/specifics/8-pt-grid)
+
+---
+
 ## 🖱️ ホバー状態（Material Design 3準拠）
 
 ### State Layer方式
