@@ -15,8 +15,8 @@ import { cn } from '@/lib/utils';
 
 import type { PopoverPosition } from '@/features/plans/stores/usePlanInspectorStore';
 
-/** インスペクターのサイズ定数（元のDialogContentと同じ） */
-const INSPECTOR_MAX_WIDTH = 448; // max-w-[28rem] = 448px
+/** インスペクターのサイズ定数 */
+const INSPECTOR_MAX_WIDTH = 480; // max-w-[30rem] = 480px
 const INSPECTOR_HEIGHT = 640; // h-[40rem] = 640px
 
 interface DraggableInspectorProps {
@@ -155,7 +155,8 @@ function DraggableContent({ children, position, title }: DraggableContentProps) 
         'border-border bg-popover text-popover-foreground',
         'rounded-xl border shadow-lg',
         // 元のInspectorShell popoverモードと同じスタイル
-        'flex h-[40rem] w-[95vw] max-w-[28rem] flex-col gap-0 overflow-hidden p-0',
+        // 高さは内容に応じて可変（最大40rem）
+        'flex max-h-[40rem] w-[95vw] max-w-[30rem] flex-col gap-0 overflow-hidden p-0',
         // ドラッグ中のスタイル
         isDragging && 'cursor-grabbing shadow-2xl',
       )}
