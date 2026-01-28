@@ -2,7 +2,7 @@
 
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
 
-import { Clock } from 'lucide-react';
+import { Clock, Flag } from 'lucide-react';
 import { TimepickerUI } from 'timepicker-ui';
 
 import { TimeSelect } from '@/features/plans/components/shared/TimeSelect';
@@ -10,6 +10,8 @@ import { useIsMobile } from '@/hooks/useIsMobile';
 import { cn } from '@/lib/utils';
 
 import 'timepicker-ui/index.css';
+
+export type TimeIconType = 'clock' | 'flag';
 
 export interface ClockTimePickerProps {
   /** 時刻値 "HH:MM" 形式 */
@@ -26,8 +28,12 @@ export interface ClockTimePickerProps {
   minTime?: string | undefined;
   /** アイコンを表示するか（デフォルト: false） */
   showIcon?: boolean | undefined;
+  /** アイコン種別（デフォルト: clock） */
+  iconType?: TimeIconType | undefined;
   /** カスタムクラス */
   className?: string | undefined;
+  /** ドロップダウン内に duration を表示するか（minTime からの経過時間） */
+  showDurationInMenu?: boolean | undefined;
 }
 
 /**
@@ -45,7 +51,9 @@ export const ClockTimePicker = memo<ClockTimePickerProps>(
     hasError = false,
     minTime,
     showIcon = false,
+    iconType = 'clock',
     className,
+    showDurationInMenu = false,
   }) => {
     const isMobile = useIsMobile();
 
@@ -59,6 +67,7 @@ export const ClockTimePicker = memo<ClockTimePickerProps>(
           disabled={disabled}
           hasError={hasError}
           showIcon={showIcon}
+          iconType={iconType}
           className={className}
         />
       );
@@ -73,7 +82,8 @@ export const ClockTimePicker = memo<ClockTimePickerProps>(
         disabled={disabled}
         hasError={hasError}
         showIcon={showIcon}
-        {...(minTime ? { minTime } : {})}
+        iconType={iconType}
+        {...(minTime ? { minTime, showDurationInMenu } : {})}
       />
     );
   },
@@ -92,6 +102,7 @@ function MobileClockPicker({
   disabled,
   hasError,
   showIcon,
+  iconType = 'clock',
   className,
 }: ClockTimePickerProps) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -201,7 +212,8 @@ function MobileClockPicker({
         data-state={value ? 'selected' : undefined}
         aria-label={`時刻選択: ${value || '未選択'}`}
       >
-        {showIcon && <Clock className="size-4" />}
+        {showIcon &&
+          (iconType === 'flag' ? <Flag className="size-4" /> : <Clock className="size-4" />)}
         <span>{displayValue}</span>
       </button>
     </div>

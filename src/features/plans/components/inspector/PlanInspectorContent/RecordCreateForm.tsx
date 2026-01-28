@@ -181,10 +181,14 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
     }, []);
 
     const handleStartTimeChange = useCallback((time: string) => {
+      // 時間変更時にエラーをクリア
+      setTimeConflictError(false);
       setFormData((prev) => ({ ...prev, start_time: time }));
     }, []);
 
     const handleEndTimeChange = useCallback((time: string) => {
+      // 時間変更時にエラーをクリア
+      setTimeConflictError(false);
       setFormData((prev) => ({ ...prev, end_time: time }));
     }, []);
 
@@ -248,9 +252,8 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
         // TIME_OVERLAPエラー（重複防止）の場合はフィールドにエラー表示（toastなし）
         const errorMessage = error instanceof Error ? error.message : '';
         if (errorMessage.includes('既にRecord') || errorMessage.includes('TIME_OVERLAP')) {
-          // モーダル内でエラー表示（3秒間）
+          // エラー表示（時間変更するまで維持）
           setTimeConflictError(true);
-          setTimeout(() => setTimeConflictError(false), 3000);
         }
       }
     }, [formData, createRecord, closeInspector]);
@@ -283,13 +286,13 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
             value={formData.title}
             placeholder="何をした？"
             onChange={(e) => handleTitleChange(e.target.value)}
-            className="placeholder:text-muted-foreground block w-full border-0 bg-transparent text-xl font-bold outline-none"
+            className="placeholder:text-muted-foreground block w-full border-0 bg-transparent pl-2 text-xl font-bold outline-none"
             aria-label="記録タイトル"
           />
         </div>
 
         {/* 2行目: 日付 + 時間（メタデータ） */}
-        <div className="flex items-center gap-2 px-4 py-2">
+        <div className="flex items-start gap-2 px-4 py-2">
           {/* 日付 */}
           <DatePickerPopover
             selectedDate={formData.worked_at}
@@ -326,7 +329,7 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
             {/* 時間重複エラーメッセージ */}
             {timeConflictError && (
               <div className="text-destructive flex items-center gap-1 py-1 text-sm" role="alert">
-                <AlertCircle className="size-4" />
+                <AlertCircle className="size-3 flex-shrink-0" />
                 <span>{t('calendar.toast.conflictDescription')}</span>
               </div>
             )}

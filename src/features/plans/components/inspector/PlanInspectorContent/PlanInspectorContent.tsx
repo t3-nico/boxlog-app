@@ -278,7 +278,7 @@ function DraftModeHeader({ createType, setCreateType, displayModeSwitcher }: Dra
           type="button"
           onClick={() => setCreateType('plan')}
           className={cn(
-            'flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors',
+            'flex h-8 items-center gap-1 rounded-md px-2 text-sm font-medium transition-colors',
             createType === 'plan'
               ? 'bg-state-active text-state-active-foreground'
               : 'text-muted-foreground hover:bg-state-hover hover:text-foreground',
@@ -291,7 +291,7 @@ function DraftModeHeader({ createType, setCreateType, displayModeSwitcher }: Dra
           type="button"
           onClick={() => setCreateType('record')}
           className={cn(
-            'flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors',
+            'flex h-8 items-center gap-1 rounded-md px-2 text-sm font-medium transition-colors',
             createType === 'record'
               ? 'bg-state-active text-state-active-foreground'
               : 'text-muted-foreground hover:bg-state-hover hover:text-foreground',
