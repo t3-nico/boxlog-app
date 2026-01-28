@@ -1,6 +1,6 @@
 'use client';
 
-import { Calendar, Clock, ListChecks, Save, Smile, Trash2, X } from 'lucide-react';
+import { Calendar, Clock, ListChecks, Save, Smile, Tag, Trash2, X } from 'lucide-react';
 import { useLocale } from 'next-intl';
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
@@ -16,10 +16,11 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { TagSelector } from '@/features/tags/components/tag-selector';
 import { api } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
 
-import { useRecordMutations, type RecordItem } from '../hooks';
+import { useRecordMutations, useRecordTags, type RecordItem } from '../hooks';
 import { useRecordInspectorStore, type DraftRecord } from '../stores';
 
 interface FormData {
@@ -30,6 +31,7 @@ interface FormData {
   duration_minutes: number;
   fulfillment_score: number | null;
   note: string;
+  tagIds: string[];
 }
 
 /**
@@ -60,6 +62,7 @@ export function RecordInspector() {
 
   // Mutations
   const { createRecord, updateRecord, deleteRecord } = useRecordMutations();
+  const { setRecordTags } = useRecordTags();
 
   // 編集状態
   const [formData, setFormData] = useState<FormData>({
@@ -70,6 +73,7 @@ export function RecordInspector() {
     duration_minutes: 0,
     fulfillment_score: null,
     note: '',
+    tagIds: [],
   });
   const [isDirty, setIsDirty] = useState(false);
 
@@ -84,6 +88,7 @@ export function RecordInspector() {
         duration_minutes: draftRecord.duration_minutes,
         fulfillment_score: draftRecord.fulfillment_score,
         note: draftRecord.note ?? '',
+        tagIds: draftRecord.tagIds ?? [],
       });
       setIsDirty(false);
     } else if (record) {
@@ -95,6 +100,7 @@ export function RecordInspector() {
         duration_minutes: record.duration_minutes,
         fulfillment_score: record.fulfillment_score,
         note: record.note ?? '',
+        tagIds: record.tagIds ?? [],
       });
       setIsDirty(false);
     }
@@ -114,6 +120,22 @@ export function RecordInspector() {
     [isDraftMode, updateDraft],
   );
 
+  // タグ変更ハンドラ（既存Record編集時は即座にAPIを呼ぶ）
+  const handleTagsChange = useCallback(
+    async (newTagIds: string[]) => {
+      setFormData((prev) => ({ ...prev, tagIds: newTagIds }));
+
+      if (isDraftMode) {
+        // ドラフトモード時はstoreも更新
+        updateDraft({ tagIds: newTagIds } as Partial<DraftRecord>);
+      } else if (selectedRecordId) {
+        // 既存Record編集時は即座にAPIを呼ぶ
+        await setRecordTags(selectedRecordId, newTagIds);
+      }
+    },
+    [isDraftMode, selectedRecordId, updateDraft, setRecordTags],
+  );
+
   // 保存
   const handleSave = async () => {
     if (isDraftMode) {
@@ -130,6 +152,7 @@ export function RecordInspector() {
         duration_minutes: formData.duration_minutes,
         fulfillment_score: formData.fulfillment_score,
         note: formData.note || null,
+        tagIds: formData.tagIds.length > 0 ? formData.tagIds : undefined,
       });
       closeInspector();
     } else if (selectedRecordId && isDirty) {
@@ -254,6 +277,15 @@ export function RecordInspector() {
             ) : (
               <p className="text-muted-foreground text-sm">-</p>
             )}
+          </div>
+
+          {/* タグ */}
+          <div className="space-y-2">
+            <Label className="text-muted-foreground flex items-center gap-1 text-xs">
+              <Tag className="size-3" />
+              タグ
+            </Label>
+            <TagSelector selectedTagIds={formData.tagIds} onTagsChange={handleTagsChange} />
           </div>
 
           {/* 作業日 */}
