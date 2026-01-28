@@ -1,13 +1,13 @@
 ---
-name: boxlog-frontend-design
-description: BoxLog専用のフロントエンドデザインスキル。「装飾のない基本体験」を実現するためのUI設計ガイドライン。STYLE_GUIDE.mdを補完し、フォント・アニメーション・デザイン判断基準を提供。
+name: dayopt-frontend-design
+description: Dayopt専用のフロントエンドデザインスキル。「装飾のない基本体験」を実現するためのUI設計ガイドライン。STYLE_GUIDE.mdを補完し、フォント・アニメーション・デザイン判断基準を提供。
 license: MIT
 metadata:
-  author: boxlog
+  author: dayopt
   version: '1.0.0'
 ---
 
-# BoxLog Frontend Design Skill
+# Dayopt Frontend Design Skill
 
 「GoogleカレンダーやTogglと同等の装飾のない基本体験」を実現するためのデザインスキル。
 

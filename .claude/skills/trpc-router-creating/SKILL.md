@@ -1,11 +1,11 @@
 ---
 name: trpc-router-creating
-description: BoxLogのtRPC v11ルーターを作成。サービス層分離、Zodバリデーション、エラーハンドリングを適用。
+description: DayoptのtRPC v11ルーターを作成。サービス層分離、Zodバリデーション、エラーハンドリングを適用。
 ---
 
 # tRPC Router Creating Skill
 
-BoxLogプロジェクトのtRPC v11ルーターを規約に沿って作成するスキルです。
+DayoptプロジェクトのtRPC v11ルーターを規約に沿って作成するスキルです。
 
 ## このスキルを使用するタイミング
 

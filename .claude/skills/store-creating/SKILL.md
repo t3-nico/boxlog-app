@@ -1,11 +1,11 @@
 ---
 name: store-creating
-description: BoxLogのZustand storeを作成。devtools, persist, 型安全なパターンを適用。
+description: DayoptのZustand storeを作成。devtools, persist, 型安全なパターンを適用。
 ---
 
 # Store Creating Skill
 
-BoxLogプロジェクトのZustand storeを規約に沿って作成するスキルです。
+DayoptプロジェクトのZustand storeを規約に沿って作成するスキルです。
 
 ## このスキルを使用するタイミング
 
@@ -21,23 +21,23 @@ BoxLogプロジェクトのZustand storeを規約に沿って作成するスキ�
 ### 1. 基本ストア（CRUD操作）
 
 ```typescript
-import { create } from 'zustand'
-import { devtools, persist } from 'zustand/middleware'
+import { create } from 'zustand';
+import { devtools, persist } from 'zustand/middleware';
 
 interface EntityState {
   // State
-  items: Entity[]
-  isLoading: boolean
-  error: string | null
+  items: Entity[];
+  isLoading: boolean;
+  error: string | null;
 
   // Actions
-  addItem: (item: CreateEntityInput) => Promise<boolean>
-  updateItem: (id: string, updates: UpdateEntityInput) => Promise<boolean>
-  deleteItem: (id: string) => Promise<boolean>
-  getItemById: (id: string) => Entity | undefined
+  addItem: (item: CreateEntityInput) => Promise<boolean>;
+  updateItem: (id: string, updates: UpdateEntityInput) => Promise<boolean>;
+  deleteItem: (id: string) => Promise<boolean>;
+  getItemById: (id: string) => Entity | undefined;
 
   // Helpers
-  reset: () => void
+  reset: () => void;
 }
 
 export const useEntityStore = create<EntityState>()(
@@ -50,22 +50,22 @@ export const useEntityStore = create<EntityState>()(
 
         addItem: async (data) => {
           try {
-            set({ isLoading: true, error: null })
+            set({ isLoading: true, error: null });
             // API call or local update
             const newItem: Entity = {
               id: generateId(),
               ...data,
               created_at: new Date(),
               updated_at: new Date(),
-            }
+            };
             set((state) => ({
               items: [...state.items, newItem],
               isLoading: false,
-            }))
-            return true
+            }));
+            return true;
           } catch (error) {
-            set({ error: (error as Error).message, isLoading: false })
-            return false
+            set({ error: (error as Error).message, isLoading: false });
+            return false;
           }
         },
 
@@ -73,23 +73,21 @@ export const useEntityStore = create<EntityState>()(
           try {
             set((state) => ({
               items: state.items.map((item) =>
-                item.id === id
-                  ? { ...item, ...updates, updated_at: new Date() }
-                  : item
+                item.id === id ? { ...item, ...updates, updated_at: new Date() } : item,
               ),
-            }))
-            return true
+            }));
+            return true;
           } catch (error) {
-            console.error('Failed to update:', error)
-            return false
+            console.error('Failed to update:', error);
+            return false;
           }
         },
 
         deleteItem: async (id) => {
           set((state) => ({
             items: state.items.filter((item) => item.id !== id),
-          }))
-          return true
+          }));
+          return true;
         },
 
         getItemById: (id) => get().items.find((item) => item.id === id),
@@ -99,26 +97,26 @@ export const useEntityStore = create<EntityState>()(
       {
         name: 'entity-storage',
         partialize: (state) => ({ items: state.items }),
-      }
+      },
     ),
-    { name: 'entity-store' }
-  )
-)
+    { name: 'entity-store' },
+  ),
+);
 ```
 
 ### 2. UIステートストア（persist なし）
 
 ```typescript
-import { create } from 'zustand'
-import { devtools } from 'zustand/middleware'
+import { create } from 'zustand';
+import { devtools } from 'zustand/middleware';
 
 interface UIState {
-  isOpen: boolean
-  selectedId: string | null
+  isOpen: boolean;
+  selectedId: string | null;
 
-  open: () => void
-  close: () => void
-  setSelectedId: (id: string | null) => void
+  open: () => void;
+  close: () => void;
+  setSelectedId: (id: string | null) => void;
 }
 
 export const useDialogStore = create<UIState>()(
@@ -131,41 +129,41 @@ export const useDialogStore = create<UIState>()(
       close: () => set({ isOpen: false, selectedId: null }),
       setSelectedId: (id) => set({ selectedId: id }),
     }),
-    { name: 'dialog-store' }
-  )
-)
+    { name: 'dialog-store' },
+  ),
+);
 ```
 
 ### 3. 選択ストア（ファクトリーパターン）
 
 ```typescript
-import { createTableSelectionStore } from '@/features/table'
+import { createTableSelectionStore } from '@/features/table';
 
 // 既存のファクトリーを使用
 export const useEntitySelectionStore = createTableSelectionStore({
   storeName: 'entity-selection-store',
-})
+});
 ```
 
 ### 4. フィルター/ソートストア
 
 ```typescript
-import { create } from 'zustand'
-import { devtools, persist } from 'zustand/middleware'
+import { create } from 'zustand';
+import { devtools, persist } from 'zustand/middleware';
 
-type SortField = 'name' | 'created_at' | 'updated_at'
-type SortOrder = 'asc' | 'desc'
+type SortField = 'name' | 'created_at' | 'updated_at';
+type SortOrder = 'asc' | 'desc';
 
 interface FilterState {
-  search: string
-  sortField: SortField
-  sortOrder: SortOrder
-  filters: Record<string, unknown>
+  search: string;
+  sortField: SortField;
+  sortOrder: SortOrder;
+  filters: Record<string, unknown>;
 
-  setSearch: (search: string) => void
-  setSort: (field: SortField, order: SortOrder) => void
-  setFilter: (key: string, value: unknown) => void
-  clearFilters: () => void
+  setSearch: (search: string) => void;
+  setSort: (field: SortField, order: SortOrder) => void;
+  setFilter: (key: string, value: unknown) => void;
+  clearFilters: () => void;
 }
 
 export const useEntityFilterStore = create<FilterState>()(
@@ -185,22 +183,22 @@ export const useEntityFilterStore = create<FilterState>()(
           })),
         clearFilters: () => set({ search: '', filters: {} }),
       }),
-      { name: 'entity-filter-storage' }
+      { name: 'entity-filter-storage' },
     ),
-    { name: 'entity-filter-store' }
-  )
-)
+    { name: 'entity-filter-store' },
+  ),
+);
 ```
 
 ## 命名規則
 
-| パターン | ファイル名 | export名 |
-|----------|-----------|----------|
-| メインストア | `use{Entity}Store.ts` | `use{Entity}Store` |
-| 選択ストア | `use{Entity}SelectionStore.ts` | `use{Entity}SelectionStore` |
-| フィルター | `use{Entity}FilterStore.ts` | `use{Entity}FilterStore` |
-| ソート | `use{Entity}SortStore.ts` | `use{Entity}SortStore` |
-| ダイアログ | `use{Entity}DialogStore.ts` | `use{Entity}DialogStore` |
+| パターン     | ファイル名                     | export名                    |
+| ------------ | ------------------------------ | --------------------------- |
+| メインストア | `use{Entity}Store.ts`          | `use{Entity}Store`          |
+| 選択ストア   | `use{Entity}SelectionStore.ts` | `use{Entity}SelectionStore` |
+| フィルター   | `use{Entity}FilterStore.ts`    | `use{Entity}FilterStore`    |
+| ソート       | `use{Entity}SortStore.ts`      | `use{Entity}SortStore`      |
+| ダイアログ   | `use{Entity}DialogStore.ts`    | `use{Entity}DialogStore`    |
 
 ## チェックリスト
 
