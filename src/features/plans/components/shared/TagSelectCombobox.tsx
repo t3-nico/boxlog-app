@@ -26,6 +26,8 @@ interface TagSelectComboboxProps {
   side?: 'top' | 'right' | 'bottom' | 'left' | undefined;
   alignOffset?: number | undefined;
   sideOffset?: number | undefined;
+  /** PopoverContentのz-index（Inspector内で使う場合に指定） */
+  zIndex?: number | undefined;
 }
 
 /**
@@ -153,6 +155,7 @@ export function TagSelectCombobox({
   side = 'bottom',
   alignOffset = 0,
   sideOffset = 4,
+  zIndex,
 }: TagSelectComboboxProps) {
   const t = useTranslations();
   const [isOpen, setIsOpen] = useState(false);
@@ -257,6 +260,7 @@ export function TagSelectCombobox({
         side={side}
         alignOffset={alignOffset}
         sideOffset={sideOffset}
+        style={zIndex ? { zIndex } : undefined}
       >
         <Command shouldFilter={false}>
           <CommandInput

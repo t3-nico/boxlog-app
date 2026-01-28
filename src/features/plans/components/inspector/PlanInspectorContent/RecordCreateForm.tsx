@@ -1,9 +1,11 @@
 'use client';
 
-import { Calendar, Clock, FileText, ListChecks, Smile } from 'lucide-react';
+import { FileText, Flag, FolderOpen, Smile, Tag, X } from 'lucide-react';
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useState } from 'react';
 
 import { ClockTimePicker } from '@/components/common/ClockTimePicker';
+import { Badge } from '@/components/ui/badge';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import {
   Select,
   SelectContent,
@@ -13,9 +15,14 @@ import {
 } from '@/components/ui/select';
 import { StarRating } from '@/components/ui/star-rating';
 import { Textarea } from '@/components/ui/textarea';
+import { HoverTooltip } from '@/components/ui/tooltip';
+import { zIndex } from '@/config/ui/z-index';
 import { useRecordMutations } from '@/features/records/hooks';
+import { useTags } from '@/features/tags/hooks';
 import { api } from '@/lib/trpc';
+
 import { cn } from '@/lib/utils';
+import { TagSelectCombobox } from '../../shared/TagSelectCombobox';
 
 import { usePlanInspectorStore } from '../../../stores/usePlanInspectorStore';
 import { DatePickerPopover } from '../../shared/DatePickerPopover';
@@ -31,6 +38,7 @@ interface RecordFormData {
   duration_minutes: number;
   fulfillment_score: FulfillmentScore | null;
   note: string;
+  tagIds: string[];
 }
 
 export interface RecordCreateFormRef {
@@ -39,10 +47,11 @@ export interface RecordCreateFormRef {
 }
 
 /**
- * Record 作成フォーム
+ * Record 作成フォーム（Toggl風3行構造）
  *
- * PlanInspector のドラフトモード時に表示される Record 入力フォーム
- * PlanInspectorDetailsTab と同じUI構造
+ * 1行目: タイトル（大きく）
+ * 2行目: 日付 + 時間
+ * 3行目: Tags + オプションアイコン（Plan紐付け、充実度、メモ）
  */
 export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
   function RecordCreateForm(_props, ref) {
@@ -99,7 +108,16 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
       duration_minutes: calculateDuration(initialStartTime, initialEndTime),
       fulfillment_score: null,
       note: '',
+      tagIds: [],
     });
+
+    // タグデータ取得
+    const { data: allTags = [] } = useTags();
+
+    // Popover開閉状態
+    const [isPlanPopoverOpen, setIsPlanPopoverOpen] = useState(false);
+    const [isScorePopoverOpen, setIsScorePopoverOpen] = useState(false);
+    const [isNotePopoverOpen, setIsNotePopoverOpen] = useState(false);
 
     // 初期値が変わったら反映
     useEffect(() => {
@@ -135,6 +153,7 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
 
     const handlePlanChange = useCallback((value: string) => {
       setFormData((prev) => ({ ...prev, plan_id: value || null }));
+      setIsPlanPopoverOpen(false);
     }, []);
 
     const handleDateChange = useCallback((date: Date | undefined) => {
@@ -160,14 +179,32 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
       setFormData((prev) => ({ ...prev, note: value }));
     }, []);
 
-    // 保存ボタンの無効化条件
+    const handleTagsChange = useCallback((tagIds: string[]) => {
+      setFormData((prev) => ({ ...prev, tagIds }));
+    }, []);
+
+    const handleRemoveTag = useCallback((tagId: string) => {
+      setFormData((prev) => ({
+        ...prev,
+        tagIds: prev.tagIds.filter((id) => id !== tagId),
+      }));
+    }, []);
+
+    // 選択済みタグ（追加順を維持）
+    const selectedTags = useMemo(() => {
+      return formData.tagIds
+        .map((id) => allTags.find((tag) => tag.id === id))
+        .filter((tag): tag is NonNullable<typeof tag> => tag !== undefined);
+    }, [formData.tagIds, allTags]);
+
+    // 保存ボタンの無効化条件（時間が必須）
     const isSaveDisabled = useCallback(() => {
-      return !formData.plan_id || formData.duration_minutes <= 0;
-    }, [formData.plan_id, formData.duration_minutes]);
+      return formData.duration_minutes <= 0;
+    }, [formData.duration_minutes]);
 
     // 保存処理
     const save = useCallback(async () => {
-      if (!formData.plan_id || !formData.worked_at) return;
+      if (!formData.worked_at) return;
 
       const workedAtStr = formData.worked_at.toISOString().split('T')[0] ?? '';
 
@@ -180,6 +217,7 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
         duration_minutes: formData.duration_minutes,
         fulfillment_score: formData.fulfillment_score,
         note: formData.note || null,
+        tagIds: formData.tagIds.length > 0 ? formData.tagIds : undefined,
       });
 
       closeInspector();
@@ -191,103 +229,248 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
       isSaveDisabled,
     }));
 
+    // 各オプションに値があるか
+    const hasTags = formData.tagIds.length > 0;
+    const hasPlan = !!formData.plan_id;
+    const hasScore = formData.fulfillment_score !== null;
+    const hasNote = formData.note.length > 0;
+
+    // 選択中のPlan名
+    const selectedPlanName = useMemo(() => {
+      if (!formData.plan_id || !plans) return null;
+      const plan = plans.find((p) => p.id === formData.plan_id);
+      return plan?.title ?? null;
+    }, [formData.plan_id, plans]);
+
     return (
-      <>
-        {/* タイトル */}
-        <div className="px-4 py-3">
-          <input
-            type="text"
-            value={formData.title}
-            placeholder="何をした？"
-            onChange={(e) => handleTitleChange(e.target.value)}
-            className="placeholder:text-muted-foreground block w-full border-0 bg-transparent text-lg font-bold outline-none"
+      <div className="flex flex-col gap-3 px-4">
+        {/* 1行目: タイトル（大きく） */}
+        <input
+          type="text"
+          value={formData.title}
+          placeholder="何をした？"
+          onChange={(e) => handleTitleChange(e.target.value)}
+          className="placeholder:text-muted-foreground focus-visible:ring-ring block w-full border-0 bg-transparent text-xl font-bold transition-shadow outline-none focus-visible:ring-2"
+          aria-label="記録タイトル"
+        />
+
+        {/* 2行目: 日付 + 時間 */}
+        <div className="flex items-center gap-2">
+          <DatePickerPopover
+            selectedDate={formData.worked_at}
+            onDateChange={handleDateChange}
+            placeholder="日付..."
           />
+          <span className="text-muted-foreground">·</span>
+          <ClockTimePicker value={formData.start_time} onChange={handleStartTimeChange} />
+          <span className="text-muted-foreground text-xs">→</span>
+          <Flag className="text-muted-foreground size-4" />
+          <ClockTimePicker value={formData.end_time} onChange={handleEndTimeChange} />
+          {durationDisplay && (
+            <span className="text-muted-foreground ml-auto text-sm">{durationDisplay}</span>
+          )}
         </div>
 
-        {/* Plan選択 */}
-        <div className="border-border/50 flex min-h-10 items-center gap-2 border-t px-4 py-2">
-          <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center">
-            <ListChecks className="text-muted-foreground size-4" />
+        {/* 3行目: Tags + オプションアイコン（左寄せ） */}
+        <div className="flex items-center gap-1">
+          {/* Tags（PlanTagsSectionと同じ方式） */}
+          <div className="flex flex-wrap items-center gap-1">
+            {selectedTags.map((tag) => (
+              <HoverTooltip
+                key={tag.id}
+                content={tag.description}
+                side="top"
+                disabled={!tag.description}
+              >
+                <Badge
+                  variant="outline"
+                  style={{ borderColor: tag.color || undefined }}
+                  className="group relative pr-5 text-xs font-normal"
+                >
+                  {tag.name}
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleRemoveTag(tag.id);
+                    }}
+                    className="hover:bg-state-hover absolute top-1/2 right-0.5 -translate-y-1/2 rounded-sm opacity-70 transition-opacity hover:opacity-100"
+                  >
+                    <X className="size-3" />
+                  </button>
+                </Badge>
+              </HoverTooltip>
+            ))}
+            <TagSelectCombobox
+              selectedTagIds={formData.tagIds}
+              onTagsChange={handleTagsChange}
+              side="bottom"
+              sideOffset={8}
+              zIndex={zIndex.overlayDropdown}
+            >
+              <button
+                type="button"
+                className={cn(
+                  'flex size-7 items-center justify-center rounded-md transition-colors',
+                  'hover:bg-accent focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
+                  hasTags ? 'text-primary' : 'text-muted-foreground hover:text-foreground',
+                )}
+                aria-label="タグを追加"
+              >
+                <Tag className="size-3.5" />
+              </button>
+            </TagSelectCombobox>
           </div>
-          <div className="flex h-8 flex-1 items-center">
-            <Select value={formData.plan_id ?? ''} onValueChange={handlePlanChange}>
-              <SelectTrigger className="h-8 border-0 bg-transparent px-0 shadow-none focus:ring-0">
-                <SelectValue placeholder="Planを選択..." />
-              </SelectTrigger>
-              <SelectContent>
-                {plans?.map((plan) => (
-                  <SelectItem key={plan.id} value={plan.id}>
-                    <div className="flex items-center gap-2">
-                      <div
-                        className={cn(
-                          'size-2 rounded-full',
-                          plan.status === 'open' ? 'bg-green-500' : 'bg-gray-400',
-                        )}
-                      />
-                      <span className="truncate">{plan.title}</span>
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
 
-        {/* 作業日 + 時間 */}
-        <div className="border-border/50 flex min-h-10 items-center gap-2 border-t px-4 py-2">
-          <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center">
-            <Calendar className="text-muted-foreground size-4" />
-          </div>
-          <div className="flex h-8 flex-1 items-center gap-2">
-            <DatePickerPopover
-              selectedDate={formData.worked_at}
-              onDateChange={handleDateChange}
-              placeholder="作業日を選択..."
-            />
-          </div>
-        </div>
+          {/* Plan紐付け */}
+          <Popover open={isPlanPopoverOpen} onOpenChange={setIsPlanPopoverOpen}>
+            <HoverTooltip content={selectedPlanName ?? 'Planに紐付け'} side="top">
+              <PopoverTrigger asChild>
+                <button
+                  type="button"
+                  className={cn(
+                    'flex h-7 items-center gap-1.5 rounded-md px-2 text-sm transition-colors',
+                    'hover:bg-accent focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
+                    hasPlan ? 'text-primary' : 'text-muted-foreground hover:text-foreground',
+                  )}
+                  aria-label="Planに紐付け"
+                >
+                  <FolderOpen className="size-3.5" />
+                  {hasPlan && selectedPlanName && (
+                    <span className="max-w-20 truncate text-xs">{selectedPlanName}</span>
+                  )}
+                </button>
+              </PopoverTrigger>
+            </HoverTooltip>
+            <PopoverContent
+              className="w-56 p-3"
+              side="bottom"
+              align="start"
+              sideOffset={8}
+              style={{ zIndex: zIndex.overlayDropdown }}
+            >
+              <div className="flex flex-col gap-3">
+                <span className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
+                  Plan
+                </span>
+                <Select value={formData.plan_id ?? ''} onValueChange={handlePlanChange}>
+                  <SelectTrigger className="h-9 w-full" aria-label="Plan選択">
+                    <SelectValue placeholder="選択..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {plans?.map((plan) => (
+                      <SelectItem key={plan.id} value={plan.id}>
+                        <span className="truncate">{plan.title}</span>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {formData.plan_id && (
+                  <button
+                    type="button"
+                    className="text-muted-foreground hover:text-foreground text-left text-xs transition-colors"
+                    onClick={() => handlePlanChange('')}
+                  >
+                    解除
+                  </button>
+                )}
+              </div>
+            </PopoverContent>
+          </Popover>
 
-        {/* 開始・終了時間 */}
-        <div className="border-border/50 flex min-h-10 items-center gap-2 border-t px-4 py-2">
-          <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center">
-            <Clock className="text-muted-foreground size-4" />
-          </div>
-          <div className="flex h-8 flex-1 items-center gap-1">
-            <ClockTimePicker value={formData.start_time} onChange={handleStartTimeChange} />
-            <span className="text-muted-foreground mx-1">-</span>
-            <ClockTimePicker value={formData.end_time} onChange={handleEndTimeChange} />
-            {durationDisplay && (
-              <span className="text-muted-foreground ml-2 text-sm">{durationDisplay}</span>
-            )}
-          </div>
-        </div>
+          {/* 充実度 */}
+          <Popover open={isScorePopoverOpen} onOpenChange={setIsScorePopoverOpen}>
+            <HoverTooltip
+              content={hasScore ? `充実度: ${formData.fulfillment_score}` : '充実度'}
+              side="top"
+            >
+              <PopoverTrigger asChild>
+                <button
+                  type="button"
+                  className={cn(
+                    'flex h-7 items-center gap-1.5 rounded-md px-2 text-sm transition-colors',
+                    'hover:bg-accent focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
+                    hasScore ? 'text-primary' : 'text-muted-foreground hover:text-foreground',
+                  )}
+                  aria-label="充実度"
+                >
+                  <Smile className="size-3.5" />
+                  {hasScore && (
+                    <span className="text-xs">{'★'.repeat(formData.fulfillment_score!)}</span>
+                  )}
+                </button>
+              </PopoverTrigger>
+            </HoverTooltip>
+            <PopoverContent
+              className="w-auto p-3"
+              side="bottom"
+              align="start"
+              sideOffset={8}
+              style={{ zIndex: zIndex.overlayDropdown }}
+            >
+              <div className="flex flex-col gap-3">
+                <span className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
+                  充実度
+                </span>
+                <StarRating
+                  value={formData.fulfillment_score}
+                  onChange={handleScoreChange}
+                  max={5}
+                />
+                {hasScore && (
+                  <button
+                    type="button"
+                    className="text-muted-foreground hover:text-foreground text-left text-xs transition-colors"
+                    onClick={() => handleScoreChange(null)}
+                  >
+                    クリア
+                  </button>
+                )}
+              </div>
+            </PopoverContent>
+          </Popover>
 
-        {/* 充実度 */}
-        <div className="border-border/50 flex min-h-10 items-center gap-2 border-t px-4 py-2">
-          <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center">
-            <Smile className="text-muted-foreground size-4" />
-          </div>
-          <div className="flex h-8 flex-1 items-center">
-            <StarRating value={formData.fulfillment_score} onChange={handleScoreChange} max={5} />
-          </div>
+          {/* メモ */}
+          <Popover open={isNotePopoverOpen} onOpenChange={setIsNotePopoverOpen}>
+            <HoverTooltip content={hasNote ? 'メモあり' : 'メモ'} side="top">
+              <PopoverTrigger asChild>
+                <button
+                  type="button"
+                  className={cn(
+                    'flex size-7 items-center justify-center rounded-md transition-colors',
+                    'hover:bg-accent focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
+                    hasNote ? 'text-primary' : 'text-muted-foreground hover:text-foreground',
+                  )}
+                  aria-label="メモ"
+                >
+                  <FileText className="size-3.5" />
+                </button>
+              </PopoverTrigger>
+            </HoverTooltip>
+            <PopoverContent
+              className="w-64 p-3"
+              side="bottom"
+              align="start"
+              sideOffset={8}
+              style={{ zIndex: zIndex.overlayDropdown }}
+            >
+              <div className="flex flex-col gap-3">
+                <span className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
+                  メモ
+                </span>
+                <Textarea
+                  value={formData.note}
+                  onChange={(e) => handleNoteChange(e.target.value)}
+                  placeholder="メモを追加..."
+                  className="min-h-20 resize-none text-sm"
+                  rows={3}
+                  aria-label="メモ"
+                />
+              </div>
+            </PopoverContent>
+          </Popover>
         </div>
-
-        {/* メモ */}
-        <div className="border-border/50 flex min-h-10 items-start gap-2 border-t px-4 py-2">
-          <div className="mt-1 flex h-6 w-6 flex-shrink-0 items-center justify-center">
-            <FileText className="text-muted-foreground size-4" />
-          </div>
-          <div className="min-h-8 min-w-0 flex-1">
-            <Textarea
-              value={formData.note}
-              onChange={(e) => handleNoteChange(e.target.value)}
-              placeholder="メモを追加..."
-              className="min-h-16 resize-none border-0 bg-transparent px-0 shadow-none focus-visible:ring-0"
-              rows={2}
-            />
-          </div>
-        </div>
-      </>
+      </div>
     );
   },
 );
