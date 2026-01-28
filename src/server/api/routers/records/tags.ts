@@ -11,10 +11,6 @@ import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
 import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc';
-import {
-  recordTagAddedActivity,
-  recordTagRemovedActivity,
-} from '@/server/utils/record-activity-tracker';
 
 /** レコード・タグ操作の入力スキーマ */
 const recordTagInputSchema = z.object({
@@ -55,7 +51,7 @@ export const recordTagsRouter = createTRPCRouter({
     // タグの所有権チェック
     const { data: tag, error: tagError } = await supabase
       .from('tags')
-      .select('id, name')
+      .select('id')
       .eq('id', tagId)
       .eq('user_id', userId)
       .single();
@@ -87,9 +83,6 @@ export const recordTagsRouter = createTRPCRouter({
       });
     }
 
-    // アクティビティを記録
-    await recordTagAddedActivity(supabase, recordId, userId, tag.name);
-
     return { success: true };
   }),
 
@@ -115,14 +108,6 @@ export const recordTagsRouter = createTRPCRouter({
       });
     }
 
-    // タグ名を取得（アクティビティ記録用）
-    const { data: tag } = await supabase
-      .from('tags')
-      .select('name')
-      .eq('id', tagId)
-      .eq('user_id', userId)
-      .single();
-
     // record_tagsから削除
     const { error, count } = await supabase
       .from('record_tags')
@@ -136,11 +121,6 @@ export const recordTagsRouter = createTRPCRouter({
         code: 'INTERNAL_SERVER_ERROR',
         message: `タグの削除に失敗しました: ${error.message}`,
       });
-    }
-
-    // アクティビティを記録（タグが実際に削除された場合のみ）
-    if ((count ?? 0) > 0 && tag) {
-      await recordTagRemovedActivity(supabase, recordId, userId, tag.name);
     }
 
     return { success: true, removed: (count ?? 0) > 0 };
@@ -168,28 +148,12 @@ export const recordTagsRouter = createTRPCRouter({
       });
     }
 
-    // 既存タグを取得（アクティビティ記録用）
-    const { data: existingTags } = await supabase
-      .from('record_tags')
-      .select('tag_id')
-      .eq('record_id', recordId)
-      .eq('user_id', userId);
-
-    const existingTagIds = new Set(existingTags?.map((t) => t.tag_id) ?? []);
-    const newTagIds = new Set(tagIds);
-
-    // 追加されるタグと削除されるタグを計算
-    const addedTagIds = tagIds.filter((id) => !existingTagIds.has(id));
-    const removedTagIds = [...existingTagIds].filter((id) => !newTagIds.has(id));
-
     // タグの所有権チェック（指定されたタグがすべてユーザーのものか確認）
-    let tagNameMap = new Map<string, string>();
-    if (tagIds.length > 0 || removedTagIds.length > 0) {
-      const allTagIds = [...new Set([...tagIds, ...removedTagIds])];
-      const { data: tags, error: tagsError } = await supabase
+    if (tagIds.length > 0) {
+      const { data: validTags, error: tagsError } = await supabase
         .from('tags')
-        .select('id, name')
-        .in('id', allTagIds)
+        .select('id')
+        .in('id', tagIds)
         .eq('user_id', userId);
 
       if (tagsError) {
@@ -199,14 +163,12 @@ export const recordTagsRouter = createTRPCRouter({
         });
       }
 
-      if (!tags || tags.length < tagIds.length) {
+      if (!validTags || validTags.length !== tagIds.length) {
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: '無効なタグIDが含まれています',
         });
       }
-
-      tagNameMap = new Map(tags.map((t) => [t.id, t.name]));
     }
 
     // 既存の関連をすべて削除
@@ -238,20 +200,6 @@ export const recordTagsRouter = createTRPCRouter({
           code: 'INTERNAL_SERVER_ERROR',
           message: `タグの設定に失敗しました: ${insertError.message}`,
         });
-      }
-    }
-
-    // アクティビティを記録
-    for (const tagId of addedTagIds) {
-      const tagName = tagNameMap.get(tagId);
-      if (tagName) {
-        await recordTagAddedActivity(supabase, recordId, userId, tagName);
-      }
-    }
-    for (const tagId of removedTagIds) {
-      const tagName = tagNameMap.get(tagId);
-      if (tagName) {
-        await recordTagRemovedActivity(supabase, recordId, userId, tagName);
       }
     }
 
