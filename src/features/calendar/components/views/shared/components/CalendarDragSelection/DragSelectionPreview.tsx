@@ -107,7 +107,7 @@ export const DragSelectionPreview = memo(function DragSelectionPreview({
             textColorClass,
             // モバイルでは大きめのフォント
             isMobile ? 'text-sm' : calendarStyles.event.fontSize.time,
-            'leading-tight opacity-75',
+            'leading-tight tabular-nums opacity-75',
           )}
         >
           {formatTime(selection.startHour, selection.startMinute)} -{' '}
@@ -120,7 +120,7 @@ export const DragSelectionPreview = memo(function DragSelectionPreview({
             textColorClass,
             // モバイルでは大きめのフォント
             isMobile ? 'text-xs' : calendarStyles.event.fontSize.duration,
-            'mt-auto opacity-60',
+            'mt-auto tabular-nums opacity-60',
           )}
         >
           {durationText}
