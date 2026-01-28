@@ -151,10 +151,25 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
       setFormData((prev) => ({ ...prev, title: value }));
     }, []);
 
-    const handlePlanChange = useCallback((value: string) => {
-      setFormData((prev) => ({ ...prev, plan_id: value || null }));
-      setIsPlanPopoverOpen(false);
-    }, []);
+    const handlePlanChange = useCallback(
+      (value: string) => {
+        setFormData((prev) => {
+          const updates: Partial<RecordFormData> = { plan_id: value || null };
+
+          // Planのタグを自動プリセット
+          if (value && plans) {
+            const selectedPlan = plans.find((p) => p.id === value);
+            if (selectedPlan?.tagIds && selectedPlan.tagIds.length > 0) {
+              updates.tagIds = selectedPlan.tagIds;
+            }
+          }
+
+          return { ...prev, ...updates };
+        });
+        setIsPlanPopoverOpen(false);
+      },
+      [plans],
+    );
 
     const handleDateChange = useCallback((date: Date | undefined) => {
       setFormData((prev) => ({ ...prev, worked_at: date }));
@@ -243,19 +258,21 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
     }, [formData.plan_id, plans]);
 
     return (
-      <div className="flex flex-col gap-3 px-4">
-        {/* 1行目: タイトル（大きく） */}
-        <input
-          type="text"
-          value={formData.title}
-          placeholder="何をした？"
-          onChange={(e) => handleTitleChange(e.target.value)}
-          className="placeholder:text-muted-foreground focus-visible:ring-ring block w-full border-0 bg-transparent text-xl font-bold transition-shadow outline-none focus-visible:ring-2"
-          aria-label="記録タイトル"
-        />
+      <div className="flex flex-col">
+        {/* 1行目: タイトル（プライマリ） */}
+        <div className="px-4 pt-4 pb-2">
+          <input
+            type="text"
+            value={formData.title}
+            placeholder="何をした？"
+            onChange={(e) => handleTitleChange(e.target.value)}
+            className="placeholder:text-muted-foreground block w-full border-0 bg-transparent text-xl font-bold outline-none"
+            aria-label="記録タイトル"
+          />
+        </div>
 
-        {/* 2行目: 日付 + 時間 */}
-        <div className="flex items-center gap-2">
+        {/* 2行目: 日付 + 時間（メタデータ） */}
+        <div className="flex items-center gap-2 px-4 pt-2 pb-2">
           <DatePickerPopover
             selectedDate={formData.worked_at}
             onDateChange={handleDateChange}
@@ -271,9 +288,9 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
           )}
         </div>
 
-        {/* 3行目: Tags + オプションアイコン（左寄せ） */}
-        <div className="flex items-center gap-1">
-          {/* Tags（PlanTagsSectionと同じ方式） */}
+        {/* 3行目: Tags + オプションアイコン（メタデータ） */}
+        <div className="flex items-center gap-1 px-4 pt-2 pb-4">
+          {/* Tags */}
           <div className="flex flex-wrap items-center gap-1">
             {selectedTags.map((tag) => (
               <HoverTooltip
@@ -311,13 +328,13 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
               <button
                 type="button"
                 className={cn(
-                  'flex size-7 items-center justify-center rounded-md transition-colors',
+                  'flex size-8 items-center justify-center rounded-md transition-colors',
                   'hover:bg-accent focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
                   hasTags ? 'text-primary' : 'text-muted-foreground hover:text-foreground',
                 )}
                 aria-label="タグを追加"
               >
-                <Tag className="size-3.5" />
+                <Tag className="size-4" />
               </button>
             </TagSelectCombobox>
           </div>
@@ -329,13 +346,13 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
                 <button
                   type="button"
                   className={cn(
-                    'flex h-7 items-center gap-1.5 rounded-md px-2 text-sm transition-colors',
+                    'flex h-8 items-center gap-1.5 rounded-md px-2 text-sm transition-colors',
                     'hover:bg-accent focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
                     hasPlan ? 'text-primary' : 'text-muted-foreground hover:text-foreground',
                   )}
                   aria-label="Planに紐付け"
                 >
-                  <FolderOpen className="size-3.5" />
+                  <FolderOpen className="size-4" />
                   {hasPlan && selectedPlanName && (
                     <span className="max-w-20 truncate text-xs">{selectedPlanName}</span>
                   )}
@@ -388,13 +405,13 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
                 <button
                   type="button"
                   className={cn(
-                    'flex h-7 items-center gap-1.5 rounded-md px-2 text-sm transition-colors',
+                    'flex h-8 items-center gap-1.5 rounded-md px-2 text-sm transition-colors',
                     'hover:bg-accent focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
                     hasScore ? 'text-primary' : 'text-muted-foreground hover:text-foreground',
                   )}
                   aria-label="充実度"
                 >
-                  <Smile className="size-3.5" />
+                  <Smile className="size-4" />
                   {hasScore && (
                     <span className="text-xs">{'★'.repeat(formData.fulfillment_score!)}</span>
                   )}
@@ -437,13 +454,13 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
                 <button
                   type="button"
                   className={cn(
-                    'flex size-7 items-center justify-center rounded-md transition-colors',
+                    'flex size-8 items-center justify-center rounded-md transition-colors',
                     'hover:bg-accent focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
                     hasNote ? 'text-primary' : 'text-muted-foreground hover:text-foreground',
                   )}
                   aria-label="メモ"
                 >
-                  <FileText className="size-3.5" />
+                  <FileText className="size-4" />
                 </button>
               </PopoverTrigger>
             </HoverTooltip>
