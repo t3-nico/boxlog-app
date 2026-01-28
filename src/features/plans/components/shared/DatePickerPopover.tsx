@@ -35,8 +35,9 @@ export function DatePickerPopover({
       popoverTrigger={
         <button
           type="button"
-          className="text-muted-foreground data-[state=selected]:text-foreground hover:bg-state-hover inline-flex h-8 items-center rounded-md px-2 text-sm transition-colors"
+          className="text-muted-foreground data-[state=selected]:text-foreground hover:bg-state-hover focus-visible:ring-ring inline-flex h-8 items-center rounded-md px-2 text-sm transition-colors focus-visible:ring-2 focus-visible:outline-none"
           data-state={selectedDate ? 'selected' : undefined}
+          aria-label={`日付選択: ${selectedDate ? formatDate(selectedDate) : '未選択'}`}
         >
           {selectedDate ? formatDate(selectedDate) : placeholder}
         </button>

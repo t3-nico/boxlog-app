@@ -20,6 +20,7 @@ export interface DraftRecord {
   duration_minutes: number;
   fulfillment_score: number | null;
   note: string | null;
+  tagIds: string[];
 }
 
 interface RecordInspectorState {
@@ -107,6 +108,7 @@ export const useRecordInspectorStore = create<RecordInspectorStore>()(
               duration_minutes: initialData?.duration_minutes ?? 60,
               fulfillment_score: initialData?.fulfillment_score ?? null,
               note: initialData?.note ?? null,
+              tagIds: initialData?.tagIds ?? [],
             },
           },
           false,
