@@ -36,7 +36,6 @@
   /* Calendar Boxes（カレンダー専用Surface） */
   --plan-box: oklch(0.88 0 0);                    /* vs background(0.99): より強調 */
   --record-box: oklch(0.92 0.08 55);              /* Record用: 暖色オレンジ系 */
-  --record-border: oklch(0.65 0.15 55);           /* Record左ボーダー: オレンジ系 */
 
   /* 互換性エイリアス（shadcn/ui用） */
   --card-foreground: oklch(0.25 0 0);
@@ -107,7 +106,6 @@
   /* Calendar Boxes（カレンダー専用Surface） */
   --plan-box: oklch(0.16 0 0);                    /* vs background(0.24): より強調 */
   --record-box: oklch(0.22 0.05 55);              /* Record用: 暖色オレンジ系 */
-  --record-border: oklch(0.55 0.12 55);           /* Record左ボーダー: オレンジ系 */
 
   /* 互換性エイリアス（shadcn/ui用） */
   --card-foreground: oklch(0.9219 0 0);
@@ -225,7 +223,6 @@
   --color-overlay: var(--overlay);
   --color-plan-box: var(--plan-box);
   --color-record-box: var(--record-box);
-  --color-record-border: var(--record-border);
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
@@ -790,7 +787,6 @@ html.dark {
   .calendar-scrollbar {
     scrollbar-width: auto !important;
     scrollbar-color: color-mix(in oklch, var(--color-muted-foreground) 30%, transparent) transparent !important;
-    scrollbar-gutter: stable; /* スクロールバー非表示時も余白を確保 */
   }
 
   .calendar-scrollbar:hover {

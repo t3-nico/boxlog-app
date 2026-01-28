@@ -282,6 +282,7 @@ interface RecordWithPlanInfo {
   note: string | null;
   created_at: string;
   updated_at: string;
+  tagIds?: string[]; // Recordに紐づくタグID
   plan?: {
     id: string;
     title: string;
@@ -319,7 +320,8 @@ export function recordToCalendarPlan(record: RecordWithPlanInfo): CalendarPlan |
     startDate,
     endDate,
     status: 'closed', // Records は完了済みの作業ログなので常に closed
-    color: '', // Records にはタグ色がないので空（後でスタイルで対応）
+    color: '', // デフォルト色（タグ色はTagsContainerで表示）
+    tagIds: record.tagIds ?? [], // タグIDを引き継ぐ（Planと同様に表示）
     createdAt,
     updatedAt,
     displayStartDate: startDate,
