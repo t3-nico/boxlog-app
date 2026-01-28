@@ -1,6 +1,6 @@
 'use client';
 
-import { FileText, Flag, FolderOpen, Smile, Tag, X } from 'lucide-react';
+import { FileText, FolderOpen, Smile, Tag, X } from 'lucide-react';
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useState } from 'react';
 
 import { ClockTimePicker } from '@/components/common/ClockTimePicker';
@@ -219,7 +219,9 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
 
     // 保存処理
     const save = useCallback(async () => {
-      if (!formData.worked_at) return;
+      if (!formData.worked_at) {
+        return;
+      }
 
       const workedAtStr = formData.worked_at.toISOString().split('T')[0] ?? '';
 
@@ -272,20 +274,25 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
         </div>
 
         {/* 2行目: 日付 + 時間（メタデータ） */}
-        <div className="flex items-center gap-2 px-4 pt-2 pb-2">
+        <div className="flex items-center gap-2 px-4 py-2">
+          {/* 日付 */}
           <DatePickerPopover
             selectedDate={formData.worked_at}
             onDateChange={handleDateChange}
             placeholder="日付..."
           />
-          <span className="text-muted-foreground">·</span>
-          <ClockTimePicker value={formData.start_time} onChange={handleStartTimeChange} />
-          <span className="text-muted-foreground text-xs">→</span>
-          <Flag className="text-muted-foreground size-4" />
-          <ClockTimePicker value={formData.end_time} onChange={handleEndTimeChange} />
-          {durationDisplay && (
-            <span className="text-muted-foreground ml-auto text-sm">{durationDisplay}</span>
-          )}
+
+          {/* 時間範囲 + Duration */}
+          <div className="flex items-center">
+            <ClockTimePicker value={formData.start_time} onChange={handleStartTimeChange} />
+            <span className="text-muted-foreground px-2 text-sm">–</span>
+            <ClockTimePicker value={formData.end_time} onChange={handleEndTimeChange} />
+            {durationDisplay && (
+              <span className="text-muted-foreground ml-2 text-sm tabular-nums">
+                {durationDisplay}
+              </span>
+            )}
+          </div>
         </div>
 
         {/* 3行目: Tags + オプションアイコン（メタデータ） */}
