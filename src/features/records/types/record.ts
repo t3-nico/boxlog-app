@@ -40,6 +40,7 @@ export interface CreateRecordInput {
   duration_minutes: number;
   fulfillment_score?: FulfillmentScore | null;
   note?: string | null;
+  tagIds?: string[]; // 紐付けるタグID（任意）
 }
 
 /**
@@ -63,8 +64,20 @@ export interface RecordWithPlan extends Record {
     id: string;
     title: string;
     status: 'open' | 'closed';
-  };
+  } | null;
 }
+
+/**
+ * タグID付き Record（PlanWithTagsと同パターン）
+ */
+export interface RecordWithTags extends Record {
+  tagIds: string[];
+}
+
+/**
+ * Plan情報 + タグID付き Record
+ */
+export interface RecordWithPlanAndTags extends RecordWithPlan, RecordWithTags {}
 
 /**
  * フィルター条件

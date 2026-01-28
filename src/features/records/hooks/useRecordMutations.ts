@@ -28,7 +28,7 @@ export function useRecordMutations() {
         const tempRecord: RecordItem = {
           id: `temp-${Date.now()}`,
           user_id: '',
-          plan_id: input.plan_id,
+          plan_id: input.plan_id ?? null,
           title: input.title ?? null,
           worked_at: input.worked_at,
           start_time: input.start_time ?? null,
@@ -38,6 +38,7 @@ export function useRecordMutations() {
           note: input.note ?? null,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
+          tagIds: input.tagIds ?? [],
         };
         return [tempRecord, ...old];
       });

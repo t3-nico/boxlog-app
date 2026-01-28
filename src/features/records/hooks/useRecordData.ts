@@ -8,7 +8,7 @@ import type { RecordFilter } from '@/schemas/records';
 
 export interface RecordItem {
   id: string;
-  plan_id: string;
+  plan_id: string | null; // Planなしでも作成可能
   user_id: string;
   title?: string | null; // マイグレーション適用前はoptional
   worked_at: string;
@@ -24,6 +24,7 @@ export interface RecordItem {
     title: string;
     status: string;
   } | null;
+  tagIds: string[];
 }
 
 interface UseRecordDataOptions {
