@@ -262,7 +262,7 @@ function DraftModeHeader({ createType, setCreateType, displayModeSwitcher }: Dra
   const isDraggable = !!dragHandleProps;
 
   return (
-    <div className="bg-popover relative flex shrink-0 items-center justify-between px-4 py-4">
+    <div className="bg-popover relative flex shrink-0 items-center justify-between px-4 pt-4 pb-2">
       {/* ドラッグハンドル（背景レイヤー） */}
       {isDraggable && (
         <div
