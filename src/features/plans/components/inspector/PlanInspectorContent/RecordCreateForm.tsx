@@ -319,7 +319,7 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
                 hasError={timeConflictError}
               />
               {durationDisplay && (
-                <span className="text-muted-foreground ml-2 text-sm tabular-nums">
+                <span className="text-muted-foreground ml-4 text-sm tabular-nums">
                   {durationDisplay}
                 </span>
               )}

@@ -330,9 +330,9 @@ export function TimeSelect({
             hasError
               ? 'ring-destructive/50 bg-destructive-container ring-2'
               : 'hover:bg-state-hover'
-          } ${showIcon ? 'gap-1 pl-2' : ''}`}
+          } ${showIcon ? 'w-[72px] gap-2 pr-3 pl-2' : ''}`}
         >
-          {showIcon && <Clock className="text-muted-foreground size-4" />}
+          {showIcon && <Clock className="text-muted-foreground size-4 shrink-0" />}
           <PopoverTrigger asChild>
             <input
               ref={inputRef}
@@ -351,9 +351,9 @@ export function TimeSelect({
               onFocus={handleInputFocus}
               disabled={disabled}
               placeholder="--:--"
-              className={`flex h-8 w-14 rounded-md bg-transparent px-2 py-1 text-center text-sm outline-none disabled:cursor-not-allowed disabled:opacity-50 ${
-                value ? 'text-foreground' : 'text-muted-foreground'
-              } ${error || hasError ? 'text-destructive' : ''}`}
+              className={`flex h-8 rounded-md bg-transparent text-sm outline-none disabled:cursor-not-allowed disabled:opacity-50 ${
+                showIcon ? 'w-auto' : 'w-14 px-2 text-center'
+              } ${value ? 'text-foreground' : 'text-muted-foreground'} ${error || hasError ? 'text-destructive' : ''}`}
             />
           </PopoverTrigger>
           {error && (
