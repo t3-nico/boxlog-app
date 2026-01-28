@@ -7,7 +7,7 @@ export const fulfillmentScoreSchema = z.number().int().min(1).max(5);
 
 // Record 作成スキーマ
 export const createRecordSchema = z.object({
-  plan_id: z.string().uuid('validation.invalidUuid'),
+  plan_id: z.string().uuid('validation.invalidUuid').nullable().optional(), // Planなしでも作成可能
   title: z.string().max(200, 'validation.title.maxLength').nullable().optional(), // 作業タイトル（任意）
   worked_at: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'validation.invalidDateFormat'), // YYYY-MM-DD
   start_time: z
@@ -23,6 +23,7 @@ export const createRecordSchema = z.object({
   duration_minutes: z.number().int().min(1, 'validation.durationMin'), // 1分以上
   fulfillment_score: fulfillmentScoreSchema.nullable().optional(),
   note: z.string().max(5000, 'validation.note.maxLength').nullable().optional(),
+  tagIds: z.array(z.string().uuid()).optional(), // 紐付けるタグID（任意）
 });
 
 // Record 更新スキーマ
