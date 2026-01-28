@@ -1,7 +1,9 @@
 'use client';
 
-import { FileText, FolderOpen, Smile, Tag, X } from 'lucide-react';
+import { AlertCircle, FileText, FolderOpen, Smile, Tag, X } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useState } from 'react';
+import { toast } from 'sonner';
 
 import { ClockTimePicker } from '@/components/common/ClockTimePicker';
 import { Badge } from '@/components/ui/badge';
@@ -55,8 +57,12 @@ export interface RecordCreateFormRef {
  */
 export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
   function RecordCreateForm(_props, ref) {
+    const t = useTranslations();
     const draftPlan = usePlanInspectorStore((state) => state.draftPlan);
     const closeInspector = usePlanInspectorStore((state) => state.closeInspector);
+
+    // 時間重複エラー状態（視覚的フィードバック用）
+    const [timeConflictError, setTimeConflictError] = useState(false);
 
     // Plan一覧取得
     const { data: plans } = api.plans.list.useQuery({ status: 'open' });
@@ -225,20 +231,33 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
 
       const workedAtStr = formData.worked_at.toISOString().split('T')[0] ?? '';
 
-      await createRecord.mutateAsync({
-        plan_id: formData.plan_id,
-        title: formData.title || null,
-        worked_at: workedAtStr,
-        start_time: formData.start_time || null,
-        end_time: formData.end_time || null,
-        duration_minutes: formData.duration_minutes,
-        fulfillment_score: formData.fulfillment_score,
-        note: formData.note || null,
-        tagIds: formData.tagIds.length > 0 ? formData.tagIds : undefined,
-      });
+      try {
+        await createRecord.mutateAsync({
+          plan_id: formData.plan_id,
+          title: formData.title || null,
+          worked_at: workedAtStr,
+          start_time: formData.start_time || null,
+          end_time: formData.end_time || null,
+          duration_minutes: formData.duration_minutes,
+          fulfillment_score: formData.fulfillment_score,
+          note: formData.note || null,
+          tagIds: formData.tagIds.length > 0 ? formData.tagIds : undefined,
+        });
 
-      closeInspector();
-    }, [formData, createRecord, closeInspector]);
+        closeInspector();
+      } catch (error) {
+        // TIME_OVERLAPエラー（重複防止）の場合はフィールドにエラー表示
+        const errorMessage = error instanceof Error ? error.message : '';
+        if (errorMessage.includes('既にRecord') || errorMessage.includes('TIME_OVERLAP')) {
+          toast.error(t('calendar.toast.conflict'), {
+            description: t('calendar.toast.conflictDescription'),
+            duration: 4000,
+          });
+          setTimeConflictError(true);
+          setTimeout(() => setTimeConflictError(false), 500);
+        }
+      }
+    }, [formData, createRecord, closeInspector, t]);
 
     // ref 経由で save と isSaveDisabled を公開
     useImperativeHandle(ref, () => ({
@@ -280,17 +299,37 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
             selectedDate={formData.worked_at}
             onDateChange={handleDateChange}
             placeholder="日付..."
+            showIcon
           />
 
           {/* 時間範囲 + Duration */}
-          <div className="flex items-center">
-            <ClockTimePicker value={formData.start_time} onChange={handleStartTimeChange} />
-            <span className="text-muted-foreground px-2 text-sm">–</span>
-            <ClockTimePicker value={formData.end_time} onChange={handleEndTimeChange} />
-            {durationDisplay && (
-              <span className="text-muted-foreground ml-2 text-sm tabular-nums">
-                {durationDisplay}
-              </span>
+          <div className="flex flex-col">
+            <div className="flex items-center">
+              <ClockTimePicker
+                value={formData.start_time}
+                onChange={handleStartTimeChange}
+                showIcon
+                hasError={timeConflictError}
+              />
+              <span className="text-muted-foreground px-2 text-sm">–</span>
+              <ClockTimePicker
+                value={formData.end_time}
+                onChange={handleEndTimeChange}
+                showIcon
+                hasError={timeConflictError}
+              />
+              {durationDisplay && (
+                <span className="text-muted-foreground ml-2 text-sm tabular-nums">
+                  {durationDisplay}
+                </span>
+              )}
+            </div>
+            {/* 時間重複エラーメッセージ */}
+            {timeConflictError && (
+              <div className="text-destructive flex items-center gap-1 py-1 text-sm" role="alert">
+                <AlertCircle className="size-4" />
+                <span>{t('calendar.toast.conflictDescription')}</span>
+              </div>
             )}
           </div>
         </div>

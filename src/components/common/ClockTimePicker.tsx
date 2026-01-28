@@ -72,6 +72,7 @@ export const ClockTimePicker = memo<ClockTimePickerProps>(
         label=""
         disabled={disabled}
         hasError={hasError}
+        showIcon={showIcon}
         {...(minTime ? { minTime } : {})}
       />
     );

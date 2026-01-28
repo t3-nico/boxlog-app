@@ -1,7 +1,11 @@
 'use client';
 
-import { X } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
+
+import { Clock } from 'lucide-react';
+
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { zIndex } from '@/config/ui/z-index';
 
 /**
  * 15分刻みの時刻オプションを生成（00:00 ~ 23:45）
@@ -77,6 +81,8 @@ interface TimeSelectProps {
   minTime?: string; // 最小時刻（この時刻以降のみ選択可能、HH:MM形式）
   /** 外部からのエラー状態（重複エラーなど） */
   hasError?: boolean;
+  /** アイコンを表示するか（デフォルト: false） */
+  showIcon?: boolean;
 }
 
 /**
@@ -91,6 +97,7 @@ export function TimeSelect({
   disabled = false,
   minTime,
   hasError = false,
+  showIcon = false,
 }: TimeSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState(value);
@@ -98,7 +105,6 @@ export function TimeSelect({
   const [error, setError] = useState<string>('');
   const [skipFilter, setSkipFilter] = useState(false);
   const hasScrolledRef = useRef(false);
-  const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
 
@@ -136,24 +142,14 @@ export function TimeSelect({
     }
   }, [hasError, value]);
 
-  // 外側クリックでポップアップを閉じる
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-        // フォーカスが外れた時にパース処理を実行
-        if (inputValue !== value) {
-          const parsed = parseTimeInput(inputValue);
-          onChange(parsed);
-        }
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [inputValue, value, onChange]);
+  // Popover が閉じたときに入力値をパース
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open);
+    if (!open && inputValue !== value) {
+      const parsed = parseTimeInput(inputValue);
+      onChange(parsed);
+    }
+  };
 
   // ドロップダウンを開いた時、選択中の時刻または現在時刻に近い時刻を中央に表示（初回のみ）
   useEffect(() => {
@@ -325,63 +321,56 @@ export function TimeSelect({
     setSkipFilter(false); // 選択後はフィルタリングを有効化
   };
 
-  // クリアハンドラー
-  const handleClear = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    onChange('');
-    setInputValue('');
-    setIsOpen(false);
-  };
-
   return (
     <div className={label ? 'space-y-1' : ''}>
       {label && <label className="text-muted-foreground text-xs">{label}</label>}
-      <div
-        className={`relative flex items-center rounded-md transition-colors ${
-          hasError ? 'ring-destructive/50 bg-destructive-container ring-2' : 'hover:bg-state-hover'
-        }`}
-        ref={containerRef}
-      >
-        <input
-          ref={inputRef}
-          type="text"
-          inputMode="numeric"
-          enterKeyHint="done"
-          role="combobox"
-          aria-expanded={isOpen}
-          aria-controls="time-listbox"
-          aria-autocomplete="list"
-          aria-invalid={hasError || !!error}
-          value={inputValue}
-          onChange={handleInputChange}
-          onBlur={handleInputBlur}
-          onKeyDown={handleInputKeyDown}
-          onFocus={handleInputFocus}
-          disabled={disabled}
-          placeholder="--:--"
-          className={`flex h-8 w-14 rounded-md bg-transparent px-2 py-1 text-sm outline-none disabled:cursor-not-allowed disabled:opacity-50 ${
-            value ? 'text-foreground' : 'text-muted-foreground'
-          } ${error || hasError ? 'text-destructive' : ''}`}
-        />
-        {/* クリアボタン（値がある場合のみ表示） */}
-        {value && !disabled && (
-          <button
-            type="button"
-            onClick={handleClear}
-            className="text-muted-foreground hover:text-foreground hover:bg-state-hover -ml-1 flex size-6 items-center justify-center rounded-md transition-colors"
-            aria-label="時刻をクリア"
-          >
-            <X className="size-3.5" />
-          </button>
-        )}
-        {error && (
-          <div className="text-destructive absolute top-full left-0 mt-1 text-xs whitespace-nowrap">
-            {error}
-          </div>
-        )}
+      <Popover open={isOpen} onOpenChange={handleOpenChange}>
+        <div
+          className={`relative flex items-center rounded-md transition-colors ${
+            hasError
+              ? 'ring-destructive/50 bg-destructive-container ring-2'
+              : 'hover:bg-state-hover'
+          } ${showIcon ? 'gap-1 pl-2' : ''}`}
+        >
+          {showIcon && <Clock className="text-muted-foreground size-4" />}
+          <PopoverTrigger asChild>
+            <input
+              ref={inputRef}
+              type="text"
+              inputMode="numeric"
+              enterKeyHint="done"
+              role="combobox"
+              aria-expanded={isOpen}
+              aria-controls="time-listbox"
+              aria-autocomplete="list"
+              aria-invalid={hasError || !!error}
+              value={inputValue}
+              onChange={handleInputChange}
+              onBlur={handleInputBlur}
+              onKeyDown={handleInputKeyDown}
+              onFocus={handleInputFocus}
+              disabled={disabled}
+              placeholder="--:--"
+              className={`flex h-8 w-14 rounded-md bg-transparent px-2 py-1 text-center text-sm outline-none disabled:cursor-not-allowed disabled:opacity-50 ${
+                value ? 'text-foreground' : 'text-muted-foreground'
+              } ${error || hasError ? 'text-destructive' : ''}`}
+            />
+          </PopoverTrigger>
+          {error && (
+            <div className="text-destructive absolute top-full left-0 mt-1 text-xs whitespace-nowrap">
+              {error}
+            </div>
+          )}
+        </div>
 
-        {isOpen && !disabled && filteredOptions.length > 0 && (
-          <div className="border-border bg-popover absolute top-10 left-0 z-50 w-20 overflow-hidden rounded-md border shadow-md">
+        {!disabled && filteredOptions.length > 0 && (
+          <PopoverContent
+            className="w-20 overflow-hidden p-0"
+            align="start"
+            sideOffset={4}
+            style={{ zIndex: zIndex.overlayDropdown }}
+            onOpenAutoFocus={(e) => e.preventDefault()}
+          >
             <div
               id="time-listbox"
               ref={listRef}
@@ -390,8 +379,8 @@ export function TimeSelect({
               style={{
                 scrollbarColor:
                   'color-mix(in oklch, var(--color-muted-foreground) 30%, transparent) transparent',
-                touchAction: 'pan-y', // モバイルUX: 縦スクロールを許可
-                scrollSnapType: 'y mandatory', // スナップスクロール
+                touchAction: 'pan-y',
+                scrollSnapType: 'y mandatory',
               }}
             >
               {filteredOptions.map((option, index) => (
@@ -415,9 +404,9 @@ export function TimeSelect({
                 </button>
               ))}
             </div>
-          </div>
+          </PopoverContent>
         )}
-      </div>
+      </Popover>
     </div>
   );
 }
