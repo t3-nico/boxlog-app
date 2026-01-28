@@ -115,7 +115,13 @@ export function PlanInspectorContent() {
       )}
 
       {/* コンテンツ部分 */}
-      <div className="flex-1 overflow-y-auto">
+      <div
+        className={cn(
+          'overflow-y-auto',
+          // Recordモードはコンパクトに、それ以外はflex-1で伸ばす
+          isDraftMode && createType === 'record' ? '' : 'flex-1',
+        )}
+      >
         {isDraftMode ? (
           // ドラフトモード: タイプに応じてフォームを表示
           createType === 'plan' ? (
