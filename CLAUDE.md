@@ -172,6 +172,13 @@ npm run lint         # コード品質（AI必須：コミット前）
 - `/weekend-remote` - 土日リモート用タスク発見
 - `/frontend-design` - UI設計ガイドライン（STYLE_GUIDE.md補完）
 
+**自動発動スキル**（状況に応じて自動適用）:
+
+- `/security` - セキュリティ監査（認証/認可、API、入力処理の実装時）
+- `/investigate` - API/コード調査（外部API連携、ライブラリ導入時）
+- `/design` - 設計相談（新機能、アーキテクチャ変更の計画時）
+- `/docs` - ドキュメント作成（技術ドキュメント、ADR、API説明）
+
 **汎用スキル**:
 
 - `/react-best-practices` - Vercel公式React/Next.js最適化ルール（45ルール）
