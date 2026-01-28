@@ -195,15 +195,15 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
     'overflow-hidden',
     // フォーカスリング（キーボード操作時のみ表示、視認性向上）
     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2',
-    // 背景色（選択/アクティブ時はstate-hover、通常時はplan-box）
-    // Record は少し透明度を下げて区別
+    // 背景色（選択/アクティブ時はstate-hover、通常時はplan-box/record-box）
+    // Record は専用トークン record-box で区別
     // Draft は半透明で未保存を表現
     isDraft
       ? 'bg-primary/20'
       : isSelected || isActive
         ? 'bg-state-hover'
         : isRecord
-          ? 'bg-plan-box/70'
+          ? 'bg-record-box'
           : 'bg-plan-box',
     // 選択状態の視覚フィードバック（色覚異常対応）
     isSelected && 'ring-2 ring-primary',

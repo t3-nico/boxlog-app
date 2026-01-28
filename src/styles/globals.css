@@ -35,6 +35,7 @@
 
   /* Calendar Boxes（カレンダー専用Surface） */
   --plan-box: oklch(0.88 0 0);                    /* vs background(0.99): より強調 */
+  --record-box: oklch(0.92 0.08 55);              /* Record用: 暖色オレンジ系 */
 
   /* 互換性エイリアス（shadcn/ui用） */
   --card-foreground: oklch(0.25 0 0);
@@ -104,6 +105,7 @@
 
   /* Calendar Boxes（カレンダー専用Surface） */
   --plan-box: oklch(0.16 0 0);                    /* vs background(0.24): より強調 */
+  --record-box: oklch(0.22 0.05 55);              /* Record用: 暖色オレンジ系 */
 
   /* 互換性エイリアス（shadcn/ui用） */
   --card-foreground: oklch(0.9219 0 0);
@@ -220,6 +222,7 @@
   --color-container: var(--container);
   --color-overlay: var(--overlay);
   --color-plan-box: var(--plan-box);
+  --color-record-box: var(--record-box);
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
