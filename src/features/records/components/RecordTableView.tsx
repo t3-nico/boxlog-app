@@ -154,7 +154,7 @@ export function RecordTableView() {
                   {record.plan && (
                     <span className="max-w-32 truncate text-sm">{record.plan.title}</span>
                   )}
-                  <span className="text-muted-foreground text-xs">
+                  <span className="text-muted-foreground text-xs tabular-nums">
                     {formatDuration(record.duration_minutes)}
                   </span>
                   <HoverTooltip content="今日の日付で複製" side="top">
@@ -223,7 +223,9 @@ export function RecordTableView() {
                         <span className="text-muted-foreground">-</span>
                       )}
                     </TableCell>
-                    <TableCell>{formatDuration(record.duration_minutes)}</TableCell>
+                    <TableCell className="tabular-nums">
+                      {formatDuration(record.duration_minutes)}
+                    </TableCell>
                     <TableCell>
                       <FulfillmentScore score={record.fulfillment_score} />
                     </TableCell>

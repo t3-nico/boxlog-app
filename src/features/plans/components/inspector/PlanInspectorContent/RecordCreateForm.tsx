@@ -3,7 +3,6 @@
 import { AlertCircle, FileText, FolderOpen, Smile, Tag, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useState } from 'react';
-import { toast } from 'sonner';
 
 import { ClockTimePicker } from '@/components/common/ClockTimePicker';
 import { Badge } from '@/components/ui/badge';
@@ -246,18 +245,15 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
 
         closeInspector();
       } catch (error) {
-        // TIME_OVERLAPエラー（重複防止）の場合はフィールドにエラー表示
+        // TIME_OVERLAPエラー（重複防止）の場合はフィールドにエラー表示（toastなし）
         const errorMessage = error instanceof Error ? error.message : '';
         if (errorMessage.includes('既にRecord') || errorMessage.includes('TIME_OVERLAP')) {
-          toast.error(t('calendar.toast.conflict'), {
-            description: t('calendar.toast.conflictDescription'),
-            duration: 4000,
-          });
+          // モーダル内でエラー表示（3秒間）
           setTimeConflictError(true);
-          setTimeout(() => setTimeConflictError(false), 500);
+          setTimeout(() => setTimeConflictError(false), 3000);
         }
       }
-    }, [formData, createRecord, closeInspector, t]);
+    }, [formData, createRecord, closeInspector]);
 
     // ref 経由で save と isSaveDisabled を公開
     useImperativeHandle(ref, () => ({
@@ -316,6 +312,9 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
                 value={formData.end_time}
                 onChange={handleEndTimeChange}
                 showIcon
+                iconType="flag"
+                minTime={formData.start_time}
+                showDurationInMenu
                 hasError={timeConflictError}
               />
               {durationDisplay && (
@@ -348,7 +347,7 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
                 <Badge
                   variant="outline"
                   style={{ borderColor: tag.color || undefined }}
-                  className="group relative pr-5 text-xs font-normal"
+                  className="group relative pr-4 text-xs font-normal"
                 >
                   {tag.name}
                   <button
@@ -357,7 +356,7 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
                       e.stopPropagation();
                       handleRemoveTag(tag.id);
                     }}
-                    className="hover:bg-state-hover absolute top-1/2 right-0.5 -translate-y-1/2 rounded-sm opacity-70 transition-opacity hover:opacity-100"
+                    className="hover:bg-state-hover absolute top-1/2 right-1 -translate-y-1/2 rounded-sm opacity-70 transition-opacity hover:opacity-100"
                   >
                     <X className="size-3" />
                   </button>
@@ -392,7 +391,7 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
                 <button
                   type="button"
                   className={cn(
-                    'flex h-8 items-center gap-1.5 rounded-md px-2 text-sm transition-colors',
+                    'flex h-8 items-center gap-1 rounded-md px-2 text-sm transition-colors',
                     'hover:bg-accent focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
                     hasPlan ? 'text-primary' : 'text-muted-foreground hover:text-foreground',
                   )}
@@ -406,13 +405,13 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
               </PopoverTrigger>
             </HoverTooltip>
             <PopoverContent
-              className="w-56 p-3"
+              className="w-56 p-2"
               side="bottom"
               align="start"
               sideOffset={8}
               style={{ zIndex: zIndex.overlayDropdown }}
             >
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-2">
                 <span className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
                   Plan
                 </span>
@@ -451,7 +450,7 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
                 <button
                   type="button"
                   className={cn(
-                    'flex h-8 items-center gap-1.5 rounded-md px-2 text-sm transition-colors',
+                    'flex h-8 items-center gap-1 rounded-md px-2 text-sm transition-colors',
                     'hover:bg-accent focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
                     hasScore ? 'text-primary' : 'text-muted-foreground hover:text-foreground',
                   )}
@@ -465,13 +464,13 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
               </PopoverTrigger>
             </HoverTooltip>
             <PopoverContent
-              className="w-auto p-3"
+              className="w-auto p-2"
               side="bottom"
               align="start"
               sideOffset={8}
               style={{ zIndex: zIndex.overlayDropdown }}
             >
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-2">
                 <span className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
                   充実度
                 </span>
@@ -511,13 +510,13 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
               </PopoverTrigger>
             </HoverTooltip>
             <PopoverContent
-              className="w-64 p-3"
+              className="w-64 p-2"
               side="bottom"
               align="start"
               sideOffset={8}
               style={{ zIndex: zIndex.overlayDropdown }}
             >
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-2">
                 <span className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
                   メモ
                 </span>
