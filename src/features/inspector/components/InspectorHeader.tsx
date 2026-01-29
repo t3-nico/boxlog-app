@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronDown, ChevronUp, MoreHorizontal, PanelRightClose, X } from 'lucide-react';
+import { ChevronDown, ChevronUp, MoreHorizontal, X } from 'lucide-react';
 import type { ReactNode } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -13,7 +13,6 @@ import { HoverTooltip } from '@/components/ui/tooltip';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 
 import { useDragHandle } from './DraggableInspector';
-import type { InspectorDisplayMode } from './InspectorShell';
 
 interface InspectorHeaderProps {
   /** 前のアイテムが存在するか */
@@ -34,10 +33,6 @@ interface InspectorHeaderProps {
   previousLabel?: string;
   /** 次へボタンのツールチップ */
   nextLabel?: string;
-  /** 表示モード（アイコン切り替え用） */
-  displayMode?: InspectorDisplayMode;
-  /** ヘッダー右側の追加コンテンツ（メニューの左側に表示） */
-  rightContent?: ReactNode;
 }
 
 /**
@@ -54,7 +49,6 @@ interface InspectorHeaderProps {
  *   onClose={closeInspector}
  *   onPrevious={goToPrevious}
  *   onNext={goToNext}
- *   displayMode={displayMode}
  *   menuContent={
  *     <>
  *       <DropdownMenuItem onClick={handleEdit}>編集</DropdownMenuItem>
@@ -74,8 +68,6 @@ export function InspectorHeader({
   closeLabel = '閉じる',
   previousLabel = '前へ',
   nextLabel = '次へ',
-  displayMode = 'sheet',
-  rightContent,
 }: InspectorHeaderProps) {
   const isMobile = useMediaQuery('(max-width: 767px)');
   const showNavigation = onPrevious && onNext;
@@ -92,7 +84,7 @@ export function InspectorHeader({
 
   // PC: フルヘッダー
   return (
-    <div className="bg-popover relative sticky top-0 z-10 flex h-12 shrink-0 items-center justify-between px-1">
+    <div className="bg-popover relative sticky top-0 z-10 flex shrink-0 items-center justify-between px-4 py-4">
       {/* ドラッグハンドル（背景レイヤー） */}
       {isDraggable && (
         <div
@@ -107,11 +99,7 @@ export function InspectorHeader({
         {/* 閉じるボタン */}
         <HoverTooltip content={closeLabel} side="bottom">
           <Button variant="ghost" size="icon-sm" onClick={onClose} aria-label={closeLabel}>
-            {displayMode === 'popover' ? (
-              <X className="size-5" />
-            ) : (
-              <PanelRightClose className="size-5" />
-            )}
+            <X className="size-5" />
           </Button>
         </HoverTooltip>
 
@@ -146,8 +134,6 @@ export function InspectorHeader({
 
       {/* 右側ボタン（前面レイヤー） */}
       <div className="relative z-10 flex items-center gap-1">
-        {rightContent}
-
         {/* オプションメニュー */}
         {menuContent && (
           <DropdownMenu>

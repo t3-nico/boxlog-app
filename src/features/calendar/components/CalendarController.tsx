@@ -110,8 +110,13 @@ export const CalendarController = ({
     useCalendarContextMenu();
 
   // プランコンテキストアクション
-  const { handleDeletePlan, handleEditPlan, handleDuplicatePlan, handleViewDetails } =
-    usePlanContextActions();
+  const {
+    handleDeletePlan,
+    handleEditPlan,
+    handleDuplicatePlan,
+    handleCopyPlan,
+    handleViewDetails,
+  } = usePlanContextActions();
 
   // プラン操作（CRUD）をフック化
   const { handlePlanDelete: deletePlan, handlePlanRestore } = usePlanOperations();
@@ -235,6 +240,34 @@ export const CalendarController = ({
     return plan?.title ?? null;
   }, [selectedPlanId, filteredEvents]);
 
+  // 選択中のプランをコピー用の形式で取得
+  const getSelectedPlanForCopy = useCallback(() => {
+    if (!selectedPlanId) return null;
+    const plan = filteredEvents.find((p) => p.id === selectedPlanId);
+    if (!plan) return null;
+
+    const startHour = plan.startDate?.getHours() ?? 0;
+    const startMinute = plan.startDate?.getMinutes() ?? 0;
+    const duration =
+      plan.endDate && plan.startDate
+        ? (plan.endDate.getTime() - plan.startDate.getTime()) / 60000
+        : 60;
+
+    return {
+      title: plan.title,
+      description: plan.description ?? null,
+      startHour,
+      startMinute,
+      duration,
+      tagIds: plan.tagIds,
+    };
+  }, [selectedPlanId, filteredEvents]);
+
+  // ペースト先の日付を取得（現在表示中の日付）
+  const getPasteDateForKeyboard = useCallback(() => {
+    return currentDate;
+  }, [currentDate]);
+
   // 削除関数をPromise化（既存のPlanDeleteConfirmDialogシステム用）
   const deletePlanAsync = useCallback(
     async (planId: string) => {
@@ -248,6 +281,8 @@ export const CalendarController = ({
     onDeletePlan: deletePlanAsync,
     getSelectedPlanTitle,
     getInitialPlanData,
+    getSelectedPlanForCopy,
+    getPasteDateForKeyboard,
   });
 
   // ビューコンポーネントのレンダリング用props（memo化のため安定した参照を保持）
@@ -320,6 +355,7 @@ export const CalendarController = ({
           onEdit={handleEditPlan}
           onDelete={handleDeletePlan}
           onDuplicate={handleDuplicatePlan}
+          onCopy={handleCopyPlan}
           onOpen={handleViewDetails}
         />
       ) : null}

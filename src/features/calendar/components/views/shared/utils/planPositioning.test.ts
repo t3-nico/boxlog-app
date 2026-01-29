@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import type { TimedPlan } from '../types/plan.types';
 
-import { calculateViewPlanColumns, detectOverlapGroups, plansOverlap } from './planPositioning';
+import { detectOverlapGroups, plansOverlap } from './planPositioning';
 
 describe('planPositioning', () => {
   const createTimedPlan = (
@@ -146,89 +146,6 @@ describe('planPositioning', () => {
 
       // ソートされていることを確認（グループ分けが正しいかチェック）
       expect(groups).toHaveLength(3);
-    });
-  });
-
-  describe('calculateViewPlanColumns', () => {
-    it('重複しないプランは単一列に配置される', () => {
-      const plans: TimedPlan[] = [
-        createTimedPlan('1', 10, 0, 11, 0),
-        createTimedPlan('2', 11, 0, 12, 0),
-      ];
-
-      const columnMap = calculateViewPlanColumns(plans);
-
-      expect(columnMap.get('1')?.columnIndex).toBe(0);
-      expect(columnMap.get('1')?.totalColumns).toBe(1);
-      expect(columnMap.get('2')?.columnIndex).toBe(0);
-      expect(columnMap.get('2')?.totalColumns).toBe(1);
-    });
-
-    it('重複するプランは異なる列に配置される', () => {
-      const plans: TimedPlan[] = [
-        createTimedPlan('1', 10, 0, 11, 0), // 10:00-11:00
-        createTimedPlan('2', 10, 30, 11, 30), // 10:30-11:30（重複）
-      ];
-
-      const columnMap = calculateViewPlanColumns(plans);
-
-      expect(columnMap.get('1')?.columnIndex).toBe(0);
-      expect(columnMap.get('2')?.columnIndex).toBe(1);
-      expect(columnMap.get('1')?.totalColumns).toBeGreaterThan(1);
-      expect(columnMap.get('2')?.totalColumns).toBeGreaterThan(1);
-    });
-
-    it('複数重複するプランが正しく列配置される', () => {
-      const plans: TimedPlan[] = [
-        createTimedPlan('1', 10, 0, 11, 0), // 10:00-11:00
-        createTimedPlan('2', 10, 15, 10, 45), // 10:15-10:45（plan1と重複）
-        createTimedPlan('3', 10, 30, 11, 30), // 10:30-11:30（plan1,2と重複）
-      ];
-
-      const columnMap = calculateViewPlanColumns(plans);
-
-      // すべてのプランが列を持つ
-      expect(columnMap.has('1')).toBe(true);
-      expect(columnMap.has('2')).toBe(true);
-      expect(columnMap.has('3')).toBe(true);
-
-      // totalColumnsが適切に設定されている
-      const totalColumns = columnMap.get('1')?.totalColumns;
-      expect(totalColumns).toBeGreaterThan(1);
-    });
-
-    it('空配列の場合は空のMapを返す', () => {
-      const columnMap = calculateViewPlanColumns([]);
-      expect(columnMap.size).toBe(0);
-    });
-
-    it('単一プランの場合は正しく配置される', () => {
-      const plans: TimedPlan[] = [createTimedPlan('1', 10, 0, 11, 0)];
-
-      const columnMap = calculateViewPlanColumns(plans);
-
-      expect(columnMap.size).toBe(1);
-      expect(columnMap.get('1')?.columnIndex).toBe(0);
-      expect(columnMap.get('1')?.totalColumns).toBe(1);
-    });
-
-    it('列配置が連続している', () => {
-      const plans: TimedPlan[] = [
-        createTimedPlan('1', 10, 0, 12, 0),
-        createTimedPlan('2', 10, 30, 11, 30),
-        createTimedPlan('3', 11, 0, 12, 30),
-      ];
-
-      const columnMap = calculateViewPlanColumns(plans);
-
-      const indices = [
-        columnMap.get('1')?.columnIndex,
-        columnMap.get('2')?.columnIndex,
-        columnMap.get('3')?.columnIndex,
-      ];
-
-      // すべてのインデックスが定義されている
-      expect(indices.every((idx) => idx !== undefined)).toBe(true);
     });
   });
 });

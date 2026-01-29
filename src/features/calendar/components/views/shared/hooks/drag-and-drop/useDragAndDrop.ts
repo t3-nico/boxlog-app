@@ -2,9 +2,6 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { useTranslations } from 'next-intl';
-
-import useCalendarToast from '@/features/calendar/lib/toast';
 import { useCalendarDragStore } from '@/features/calendar/stores/useCalendarDragStore';
 import { useHapticFeedback } from '@/hooks/useHapticFeedback';
 
@@ -43,14 +40,8 @@ export function useDragAndDrop({
   const eventUpdateHandler = onEventUpdate || onPlanUpdate;
   const eventClickHandler = onEventClick || onPlanClick;
 
-  // 翻訳
-  const t = useTranslations('calendar');
-
   // グローバルドラッグ状態（日付間移動用）
   const { startDrag, updateDrag, endDrag } = useCalendarDragStore();
-
-  // トースト通知
-  const calendarToast = useCalendarToast();
 
   // ハプティックフィードバック
   const { tap, impact, error: hapticError } = useHapticFeedback();
@@ -225,9 +216,7 @@ export function useDragAndDrop({
 
           options.onOverlapError?.();
           animateSnapBack(dragElement, originalRect, () => {
-            calendarToast.error(t('toast.conflict'), {
-              description: t('toast.conflictDescription'),
-            });
+            // 視覚的フィードバックはドラッグ中に表示済み
             completeDragOperation(false);
             endDrag();
           });
@@ -235,23 +224,28 @@ export function useDragAndDrop({
         }
       }
 
-      await executeEventUpdate(newStartTime);
+      // サーバー側で更新を実行（重複チェックはサーバー側で行う）
+      const success = await executeEventUpdate(newStartTime);
+
+      if (!success) {
+        // サーバーエラー時（重複等）はスナップバック
+        const dragElement = dragDataRef.current.dragElement ?? null;
+        const originalRect = dragDataRef.current.originalElementRect ?? null;
+
+        options.onOverlapError?.(); // ハプティックフィードバック
+        animateSnapBack(dragElement, originalRect, () => {
+          completeDragOperation(false);
+          endDrag();
+        });
+        return false;
+      }
 
       const actuallyDragged = dragDataRef.current?.hasMoved || false;
       completeDragOperation(actuallyDragged);
       endDrag();
       return true;
     },
-    [
-      date,
-      viewMode,
-      displayDates,
-      executeEventUpdate,
-      completeDragOperation,
-      endDrag,
-      calendarToast,
-      t,
-    ],
+    [date, viewMode, displayDates, executeEventUpdate, completeDragOperation, endDrag],
   );
 
   // マウス移動処理

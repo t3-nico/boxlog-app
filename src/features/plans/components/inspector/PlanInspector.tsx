@@ -4,12 +4,7 @@ import { Copy, ExternalLink, Link, Trash2 } from 'lucide-react';
 import { useCallback } from 'react';
 
 import { DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
-import {
-  InspectorContent,
-  InspectorShell,
-  useInspectorKeyboard,
-  type InspectorDisplayMode,
-} from '@/features/inspector';
+import { InspectorContent, InspectorShell, useInspectorKeyboard } from '@/features/inspector';
 
 import { usePlan } from '../../hooks/usePlan';
 import { useDeleteConfirmStore } from '../../stores/useDeleteConfirmStore';
@@ -24,15 +19,12 @@ import { PlanInspectorContent } from './PlanInspectorContent';
  * Plan Inspector（全ページ共通）
  *
  * 共通Inspector基盤を使用
- * displayModeに応じてSheet（サイドパネル）またはDialog（ポップアップ）で表示
+ * PC: Popover（フローティング）、モバイル: Drawer
  */
 export function PlanInspector() {
   const isOpen = usePlanInspectorStore((state) => state.isOpen);
   const planId = usePlanInspectorStore((state) => state.planId);
-  const displayMode = usePlanInspectorStore((state) => state.displayMode) as InspectorDisplayMode;
   const closeInspector = usePlanInspectorStore((state) => state.closeInspector);
-  const popoverPosition = usePlanInspectorStore((state) => state.popoverPosition);
-  const setPopoverPosition = usePlanInspectorStore((state) => state.setPopoverPosition);
   const draftPlan = usePlanInspectorStore((state) => state.draftPlan);
   const clearDraft = usePlanInspectorStore((state) => state.clearDraft);
   const clearPendingChanges = usePlanInspectorStore((state) => state.clearPendingChanges);
@@ -133,13 +125,8 @@ export function PlanInspector() {
     <InspectorShell
       isOpen={isOpen}
       onClose={handleClose}
-      displayMode={displayMode}
       title={isDraftMode ? '' : plan?.title || '（タイトルなし）'}
-      resizable={displayMode === 'sheet'}
-      modal={false}
       mobileMenuContent={isDraftMode ? undefined : mobileMenuContent}
-      popoverPosition={popoverPosition}
-      onPopoverPositionChange={setPopoverPosition}
     >
       <InspectorContent
         isLoading={isDraftMode ? false : isLoading}

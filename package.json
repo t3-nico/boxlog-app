@@ -283,13 +283,16 @@
     "superjson": "^2.2.2",
     "tailwind-merge": "^3.3.1",
     "tailwindcss-animate": "^1.0.7",
+    "timepicker-ui": "^4.0.3",
     "vaul": "^1.1.2",
     "web-vitals": "^5.1.0",
     "zod": "^3.25.76",
     "zustand": "^5.0.6"
   },
   "overrides": {
-    "sharp": false
+    "sharp": false,
+    "tar": "^7.5.4",
+    "tmp": "^0.2.4"
   },
   "devDependencies": {
     "@axe-core/react": "^4.11.0",

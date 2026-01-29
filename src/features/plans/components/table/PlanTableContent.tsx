@@ -6,13 +6,16 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Calendar, CalendarRange, FileText, Tag } from 'lucide-react';
 
+import {
+  useTableColumnStore,
+  useTableGroupStore,
+  useTablePaginationStore,
+  useTableSelectionStore,
+  useTableSortStore,
+  type SortField,
+} from '@/features/table';
+
 import type { PlanItem } from '../../hooks/usePlanData';
-import { usePlanColumnStore } from '../../stores/usePlanColumnStore';
-import { usePlanGroupStore } from '../../stores/usePlanGroupStore';
-import { usePlanPaginationStore } from '../../stores/usePlanPaginationStore';
-import { usePlanSelectionStore } from '../../stores/usePlanSelectionStore';
-import type { SortField } from '../../stores/usePlanSortStore';
-import { usePlanSortStore } from '../../stores/usePlanSortStore';
 import { groupItems } from '../../utils/grouping';
 import { GroupHeader } from './GroupHeader';
 import { PlanTableEmptyState } from './PlanTableEmptyState';
@@ -52,7 +55,7 @@ const TableHeaderSection = memo(function TableHeaderSection({
   onToggleAll: () => void;
 }) {
   // 列表示のみ監視（columnsを取得してuseMemoでフィルタリング）
-  const columns = usePlanColumnStore((state) => state.columns);
+  const columns = useTableColumnStore((state) => state.columns);
   const visibleColumns = useMemo(() => columns.filter((col) => col.visible), [columns]);
 
   return (
@@ -115,12 +118,12 @@ const TableBodySection = memo(function TableBodySection({
   pageSize: number;
 }) {
   // 必要な値だけをselectorで取得
-  const sortField = usePlanSortStore((state) => state.sortField);
-  const sortDirection = usePlanSortStore((state) => state.sortDirection);
-  const currentPage = usePlanPaginationStore((state) => state.currentPage);
-  const groupBy = usePlanGroupStore((state) => state.groupBy);
-  const collapsedGroups = usePlanGroupStore((state) => state.collapsedGroups);
-  const columns = usePlanColumnStore((state) => state.columns);
+  const sortField = useTableSortStore((state) => state.sortField);
+  const sortDirection = useTableSortStore((state) => state.sortDirection);
+  const currentPage = useTablePaginationStore((state) => state.currentPage);
+  const groupBy = useTableGroupStore((state) => state.groupBy);
+  const collapsedGroups = useTableGroupStore((state) => state.collapsedGroups);
+  const columns = useTableColumnStore((state) => state.columns);
   const visibleColumns = useMemo(() => columns.filter((col) => col.visible), [columns]);
 
   // ソート適用
@@ -230,14 +233,14 @@ export const PlanTableContent = memo(function PlanTableContent({
   pageSize,
 }: PlanTableContentProps) {
   // 選択関連のみ監視
-  const selectedIds = usePlanSelectionStore((state) => state.selectedIds);
-  const toggleAll = usePlanSelectionStore((state) => state.toggleAll);
+  const selectedIds = useTableSelectionStore((state) => state.selectedIds);
+  const toggleAll = useTableSelectionStore((state) => state.toggleAll);
 
   // ソート・ページネーション（選択状態の計算用）
-  const sortField = usePlanSortStore((state) => state.sortField);
-  const sortDirection = usePlanSortStore((state) => state.sortDirection);
-  const currentPage = usePlanPaginationStore((state) => state.currentPage);
-  const groupBy = usePlanGroupStore((state) => state.groupBy);
+  const sortField = useTableSortStore((state) => state.sortField);
+  const sortDirection = useTableSortStore((state) => state.sortDirection);
+  const currentPage = useTablePaginationStore((state) => state.currentPage);
+  const groupBy = useTableGroupStore((state) => state.groupBy);
 
   // 選択状態の計算用にソート・ページネーション適用
   const sortedItems = useMemo(() => {

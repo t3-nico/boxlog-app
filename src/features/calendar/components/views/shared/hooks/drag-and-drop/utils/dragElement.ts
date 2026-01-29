@@ -125,11 +125,17 @@ export function calculateColumnWidth(
 
 /**
  * クライアント側で時間重複をチェックする
- * @param events - 現在表示中のプラン一覧
- * @param draggedEventId - ドラッグ中のプランID（自分自身は除外）
+ *
+ * 同タイプ間のみ重複チェック:
+ * - Plan↔Plan: ❌ 重複禁止
+ * - Record↔Record: ❌ 重複禁止
+ * - Plan↔Record: ✅ 共存可能
+ *
+ * @param events - 全イベント
+ * @param draggedEventId - ドラッグ中のイベントID
  * @param previewStartTime - プレビュー開始時刻
  * @param previewEndTime - プレビュー終了時刻
- * @returns 重複している場合はtrue
+ * @returns 同タイプのイベントと重複している場合true
  */
 export function checkClientSideOverlap(
   events: CalendarPlan[],
@@ -137,19 +143,30 @@ export function checkClientSideOverlap(
   previewStartTime: Date,
   previewEndTime: Date,
 ): boolean {
-  // 自分自身を除外した他のプランとの重複チェック
-  const result = events.some((event) => {
+  // ドラッグ中のイベントを取得
+  const draggedEvent = events.find((e) => e.id === draggedEventId);
+  if (!draggedEvent) return false;
+
+  // ドラッグ中のイベントのタイプを取得
+  const draggedType = draggedEvent.type === 'record' || draggedEvent.recordId ? 'record' : 'plan';
+
+  // 同タイプのイベントとのみ重複チェック
+  return events.some((event) => {
+    // 自分自身は除外
     if (event.id === draggedEventId) return false;
+
+    // イベントのタイプを取得
+    const eventType = event.type === 'record' || event.recordId ? 'record' : 'plan';
+
+    // 異なるタイプは重複OK（Plan↔Record共存可能）
+    if (eventType !== draggedType) return false;
+
+    // 時間範囲がなければスキップ
     if (!event.startDate || !event.endDate) return false;
 
-    const eventStart = event.startDate;
-    const eventEnd = event.endDate;
-
-    // 時間重複条件: 既存の開始時刻 < 新規の終了時刻 AND 既存の終了時刻 > 新規の開始時刻
-    return eventStart < previewEndTime && eventEnd > previewStartTime;
+    // 時間重複チェック（同タイプ間）
+    return event.startDate < previewEndTime && event.endDate > previewStartTime;
   });
-
-  return result;
 }
 
 /**
@@ -172,47 +189,45 @@ export function updateDragElementOverlapStyle(
   const OVERLAY_ID = 'drag-overlap-overlay';
 
   if (isOverlapping) {
-    // 重複時: 赤いボーダー + 赤いグロー
-    // 注意: 子要素のbg-*クラスは変更しない（リサイズ時は実際のDOM要素を操作するため）
-    dragElement.style.setProperty('border', '2px solid #ef4444', 'important');
-    dragElement.style.setProperty(
-      'box-shadow',
-      '0 0 0 2px rgba(239, 68, 68, 0.3), 0 4px 12px rgba(239, 68, 68, 0.4)',
-      'important',
-    );
+    // 重複時: DragSelectionPreviewと同じシンプルなデザイン
+    // ボーダーやシャドウは付けず、赤いカーテンだけを表示
+    dragElement.style.setProperty('border', 'none', 'important');
+    dragElement.style.setProperty('box-shadow', 'none', 'important');
     dragElement.style.cursor = 'not-allowed';
     dragElement.classList.add('drag-overlap');
 
-    // 赤いオーバーレイ + 禁止アイコンを追加（不透明度を上げて背景色の上から見えるように）
+    // 赤いオーバーレイ + Banアイコン + テキスト（DragSelectionPreviewと統一）
     if (!dragElement.querySelector(`#${OVERLAY_ID}`)) {
+      // 元のカード内容を非表示にして、赤いカーテンだけを見せる
+      Array.from(dragElement.children).forEach((child) => {
+        if ((child as HTMLElement).id !== OVERLAY_ID) {
+          (child as HTMLElement).style.visibility = 'hidden';
+        }
+      });
+      dragElement.style.setProperty('background', 'transparent', 'important');
+
       const overlay = document.createElement('div');
       overlay.id = OVERLAY_ID;
+      // DragSelectionPreviewと同じ薄い赤カーテン（セマンティックトークン使用）
       overlay.style.cssText = `
         position: absolute;
         inset: 0;
-        background: rgba(239, 68, 68, 0.5);
+        background: oklch(from var(--destructive) l c h / 60%);
         border-radius: inherit;
         display: flex;
-        align-items: center;
-        justify-content: center;
+        flex-direction: column;
+        padding: 8px;
         z-index: 100;
         pointer-events: none;
       `;
+      // DragSelectionPreviewと同じレイアウト（アイコン + テキスト）
       overlay.innerHTML = `
-        <div style="
-          width: 28px;
-          height: 28px;
-          background: rgba(220, 38, 38, 0.95);
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
-        ">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round">
+        <div style="display: flex; align-items: center; gap: 4px; margin-bottom: 4px;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--destructive-foreground)" stroke-width="2.5" stroke-linecap="round" style="flex-shrink: 0;">
             <circle cx="12" cy="12" r="10"/>
-            <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>
+            <path d="m4.9 4.9 14.2 14.2"/>
           </svg>
+          <span style="color: var(--destructive-foreground); font-size: 12px; font-weight: 500;">時間が重複しています</span>
         </div>
       `;
       dragElement.appendChild(overlay);
@@ -221,8 +236,16 @@ export function updateDragElementOverlapStyle(
     // 正常時: 通常のスタイルに戻す
     dragElement.style.removeProperty('border');
     dragElement.style.removeProperty('box-shadow');
+    dragElement.style.removeProperty('background');
     dragElement.style.cursor = '';
     dragElement.classList.remove('drag-overlap');
+
+    // 元のカード内容を再表示
+    Array.from(dragElement.children).forEach((child) => {
+      if ((child as HTMLElement).id !== OVERLAY_ID) {
+        (child as HTMLElement).style.visibility = '';
+      }
+    });
 
     // オーバーレイを削除
     const overlay = dragElement.querySelector(`#${OVERLAY_ID}`);

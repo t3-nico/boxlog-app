@@ -1,11 +1,11 @@
 ---
 name: feature-scaffolding
-description: BoxLogの新しいFeatureモジュールを作成。stores, hooks, components, types の統一構造を生成。
+description: Dayoptの新しいFeatureモジュールを作成。stores, hooks, components, types の統一構造を生成。
 ---
 
 # Feature Scaffolding Skill
 
-BoxLogプロジェクトの新しいFeatureモジュールを規約に沿って作成するスキルです。
+Dayoptプロジェクトの新しいFeatureモジュールを規約に沿って作成するスキルです。
 
 ## このスキルを使用するタイミング
 
@@ -137,7 +137,7 @@ export { {Feature}Item } from './{Feature}Item'
 
 ### 7. index.ts（Public API）
 
-```typescript
+````typescript
 /**
  * {Feature} Feature - Public API
  *
@@ -162,17 +162,17 @@ export { use{Feature}Store } from './stores'
 
 // Types
 export type { } from './types'
-```
+````
 
 ## 命名規則
 
-| 種類 | 命名規則 | 例 |
-|------|----------|-----|
-| ディレクトリ | kebab-case | `user-settings` |
-| コンポーネント | PascalCase | `UserSettingsList` |
-| フック | camelCase (use prefix) | `useUserSettings` |
-| ストア | camelCase (use prefix) | `useUserSettingsStore` |
-| 型 | PascalCase | `UserSettings` |
+| 種類           | 命名規則               | 例                     |
+| -------------- | ---------------------- | ---------------------- |
+| ディレクトリ   | kebab-case             | `user-settings`        |
+| コンポーネント | PascalCase             | `UserSettingsList`     |
+| フック         | camelCase (use prefix) | `useUserSettings`      |
+| ストア         | camelCase (use prefix) | `useUserSettingsStore` |
+| 型             | PascalCase             | `UserSettings`         |
 
 ## チェックリスト
 

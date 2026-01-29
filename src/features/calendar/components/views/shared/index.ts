@@ -135,7 +135,6 @@ export { calculatePlanGhostStyle, calculatePreviewTime } from './utils/planGhost
 export {
   calculatePlanPosition,
   calculatePlanPositionWithCollapse,
-  calculateViewPlanColumns,
   detectOverlapGroups,
   filterPlansByDate,
   plansOverlap,
@@ -163,7 +162,6 @@ export {
   HALF_HOUR_LINE_COLOR,
   HOUR_HEIGHT,
   HOUR_LINE_COLOR,
-  MAX_EVENT_COLUMNS,
   MINUTE_HEIGHT,
   MIN_EVENT_HEIGHT,
   SCROLL_BEHAVIOR,

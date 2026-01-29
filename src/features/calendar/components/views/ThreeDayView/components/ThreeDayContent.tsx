@@ -28,6 +28,10 @@ interface ThreeDayContentProps {
   onEmptyClick?: ((date: Date, timeString: string) => void) | undefined;
   onPlanUpdate?: ((planId: string, updates: Partial<CalendarPlan>) => void) | undefined;
   onTimeRangeSelect?: ((date: Date, startTime: string, endTime: string) => void) | undefined;
+  /** 空き領域の右クリックハンドラー */
+  onEmptyAreaContextMenu?:
+    | ((date: Date, hour: number, minute: number, e: React.MouseEvent) => void)
+    | undefined;
   className?: string | undefined;
   dayIndex: number; // 3日間内での日付インデックス（0-2）
   displayDates?: Date[] | undefined; // 3日間の全日付配列（日付間移動用）
@@ -44,6 +48,7 @@ export const ThreeDayContent = ({
   onPlanContextMenu,
   onPlanUpdate,
   onTimeRangeSelect,
+  onEmptyAreaContextMenu,
   className,
   dayIndex,
   displayDates,
@@ -131,6 +136,7 @@ export const ThreeDayContent = ({
           const endTime = `${String(selection.endHour).padStart(2, '0')}:${String(selection.endMinute).padStart(2, '0')}`;
           onTimeRangeSelect?.(date, startTime, endTime);
         }}
+        onContextMenu={onEmptyAreaContextMenu}
         disabled={dragState.isPending || dragState.isDragging || dragState.isResizing}
         plans={allEventsForOverlapCheck ?? plans}
       >

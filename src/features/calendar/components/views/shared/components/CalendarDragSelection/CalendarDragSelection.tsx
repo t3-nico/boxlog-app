@@ -11,8 +11,10 @@
 
 import { useDroppable } from '@dnd-kit/core';
 
+import { usePlanClipboardStore } from '@/features/plans/stores/usePlanClipboardStore';
 import { cn } from '@/lib/utils';
 
+import { HOUR_HEIGHT } from '../../constants/grid.constants';
 import { DragSelectionPreview } from './DragSelectionPreview';
 import type { CalendarDragSelectionProps } from './types';
 import { useDragSelection } from './useDragSelection';
@@ -22,6 +24,7 @@ export const CalendarDragSelection = ({
   className,
   onTimeRangeSelect,
   onDoubleClick,
+  onContextMenu,
   children,
   disabled = false,
   plans = [],
@@ -45,6 +48,30 @@ export const CalendarDragSelection = ({
     plans,
   });
 
+  // 右クリックハンドラー
+  const handleContextMenu = (e: React.MouseEvent) => {
+    if (!onContextMenu) return;
+
+    // PlanCard上の右クリックは無視（PlanCard側で処理）
+    const target = e.target as HTMLElement;
+    if (target.closest('[data-plan-card]') || target.closest('[data-plan-block]')) return;
+
+    e.preventDefault();
+    const rect = (
+      containerRef as React.MutableRefObject<HTMLDivElement | null>
+    ).current?.getBoundingClientRect();
+    if (!rect) return;
+
+    const y = e.clientY - rect.top;
+
+    // 時間計算（15分単位で丸める）
+    const totalMinutes = (y * 60) / HOUR_HEIGHT;
+    const hour = Math.floor(totalMinutes / 60);
+    const minute = Math.floor((totalMinutes % 60) / 15) * 15;
+
+    onContextMenu(date, hour, minute, e);
+  };
+
   // ドロップ可能エリアとして設定
   const { setNodeRef, isOver: dndIsOver } = useDroppable({
     id: droppableId,
@@ -62,8 +89,16 @@ export const CalendarDragSelection = ({
       role="button"
       tabIndex={0}
       aria-label="Calendar drag selection area"
-      onMouseDown={handleMouseDown}
+      onMouseDown={(e) => {
+        // Googleカレンダー互換: クリックした日付を記憶（Cmd+Vでペーストする日付として使用）
+        const target = e.target as HTMLElement;
+        if (!target.closest('[data-plan-card]') && !target.closest('[data-plan-block]')) {
+          usePlanClipboardStore.getState().setLastClickedPosition({ date });
+        }
+        handleMouseDown(e);
+      }}
       onDoubleClick={handleDoubleClick}
+      onContextMenu={handleContextMenu}
       onTouchStart={handleTouchStart}
       onClick={(e) => {
         e.stopPropagation();

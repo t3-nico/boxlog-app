@@ -8,7 +8,7 @@ import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
 import { normalizeStatus } from '@/features/plans/utils/status';
-import { CheckCircle2, Circle } from 'lucide-react';
+import { CheckCircle2, Circle, Pencil } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { MEDIA_QUERIES } from '@/config/ui/breakpoints';
@@ -41,6 +41,12 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
   const [isHovered, setIsHovered] = useState(false);
   const [isCheckboxHovered, setIsCheckboxHovered] = useState(false);
   const isMobile = useMediaQuery(MEDIA_QUERIES.mobile);
+
+  // Record かどうか判定（Records は作業ログなので読み取り専用）
+  const isRecord = plan.type === 'record';
+
+  // ドラフト（未保存プレビュー）かどうか判定
+  const isDraft = plan.isDraft === true;
 
   // すべてのプランは時間指定プラン
 
@@ -88,6 +94,8 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
 
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
+      // Draft は未保存なのでドラッグ不可
+      if (isDraft) return;
       if (e.button === 0) {
         // 左クリックのみ
         onDragStart?.(plan, e, {
@@ -98,12 +106,14 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
         });
       }
     },
-    [onDragStart, plan, safePosition],
+    [isDraft, onDragStart, plan, safePosition],
   );
 
   // モバイル用タッチ開始
   const handleTouchStart = useCallback(
     (e: React.TouchEvent) => {
+      // Draft は未保存なのでドラッグ不可
+      if (isDraft) return;
       onTouchStart?.(plan, e, {
         top: safePosition.top,
         left: safePosition.left,
@@ -111,7 +121,7 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
         height: safePosition.height,
       });
     },
-    [onTouchStart, plan, safePosition],
+    [isDraft, onTouchStart, plan, safePosition],
   );
 
   const handleMouseUp = useCallback(() => {
@@ -185,19 +195,31 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
     'overflow-hidden',
     // フォーカスリング（キーボード操作時のみ表示、視認性向上）
     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2',
-    // 背景色（選択/アクティブ時はstate-hover、通常時はplan-box）
-    isSelected || isActive ? 'bg-state-hover' : 'bg-plan-box',
+    // 背景色（選択/アクティブ時はstate-hover、通常時はplan-box/record-box）
+    // Record は専用トークン record-box で区別
+    // Draft は半透明で未保存を表現
+    isDraft
+      ? 'bg-primary/20'
+      : isSelected || isActive
+        ? 'bg-state-hover'
+        : isRecord
+          ? 'bg-record-box'
+          : 'bg-plan-box',
     // 選択状態の視覚フィードバック（色覚異常対応）
     isSelected && 'ring-2 ring-primary',
+    // Draft は点線ボーダー、Record は左ボーダー（Google Calendar風）
+    isDraft ? 'border border-primary/40' : isRecord && 'border-l-[3px] border-record-border',
     // テキスト色
     'text-foreground',
-    // 状態別スタイル
-    isDragging ? 'cursor-grabbing' : 'cursor-pointer',
+    // 状態別スタイル（Draft は未保存なのでポインタースタイルのみ）
+    isDraft ? 'cursor-default' : isDragging ? 'cursor-grabbing' : 'cursor-pointer',
     // モバイル: Googleカレンダー風（左ボーダー、チェックボックス+タイトル横並び、上寄せ）
-    // デスクトップ: 通常のカード表示
+    // デスクトップ: Plan=全角丸、Record=右角丸のみ（左ボーダーと合わせるため）
     isMobile
       ? 'border-l-2 rounded-r-sm pl-1 pr-1 pt-0.5 text-xs flex items-start gap-1'
-      : 'rounded-md p-2 text-sm',
+      : isRecord
+        ? 'rounded-r-md p-2 text-sm'
+        : 'rounded-md p-2 text-sm',
     className,
   );
 
@@ -208,6 +230,7 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
 
   return (
     <div
+      data-plan-card
       className={planCardClasses}
       style={{
         ...dynamicStyle,
@@ -225,88 +248,118 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
       draggable={false} // HTML5 draggableは使わない
       role="button"
       tabIndex={0}
-      aria-label={`plan: ${plan.title}`}
+      aria-label={
+        isDraft
+          ? `draft: ${plan.title}`
+          : isRecord
+            ? `record: ${plan.title}`
+            : `plan: ${plan.title}`
+      }
       aria-pressed={isSelected}
     >
-      {/* チェックボックス（モバイル: 44x44pxタッチターゲット、Apple HIG準拠） */}
-      <button
-        type="button"
-        onClick={(e) => {
-          e.stopPropagation();
-          const currentStatus = normalizeStatus(plan.status);
-          const newStatus = currentStatus === 'closed' ? 'open' : 'closed';
-          updatePlan.mutate({
-            id: plan.id,
-            data: { status: newStatus },
-          });
-        }}
-        onMouseEnter={() => setIsCheckboxHovered(true)}
-        onMouseLeave={() => setIsCheckboxHovered(false)}
-        className={cn(
-          'z-10 flex-shrink-0 rounded',
-          // モバイル: 44x44pxタッチターゲット（Apple HIG準拠）、アイコンは中央配置
-          // デスクトップ: 絶対配置
-          isMobile
-            ? 'relative -m-3 flex min-h-[44px] min-w-[44px] items-center justify-center'
-            : 'absolute flex items-center justify-center',
-          !isMobile && (safePosition.height < 30 ? 'top-0.5 left-0.5' : 'top-2 left-2'),
-          // デスクトップ: ホバー領域を確保（小さい予定でもホバーしやすく）
-          !isMobile && 'min-h-4 min-w-4',
-        )}
-        aria-label={
-          normalizeStatus(plan.status) === 'closed'
-            ? t('calendar.event.markIncomplete')
-            : t('calendar.event.markComplete')
-        }
-      >
-        {(() => {
-          const status = normalizeStatus(plan.status);
-          const iconClass = isMobile
-            ? 'h-3.5 w-3.5'
-            : safePosition.height < 30
-              ? 'h-3 w-3'
-              : 'h-4 w-4';
-          if (status === 'closed') {
-            return <CheckCircle2 className={cn('text-success', iconClass)} />;
+      {/* Draft: 鉛筆アイコン / Record: アイコンなし / Plan: チェックボックス */}
+      {isDraft ? (
+        // Draft は鉛筆アイコンを表示（編集中を示す）
+        <div
+          className={cn(
+            'z-10 flex-shrink-0 rounded',
+            isMobile
+              ? 'relative -m-3 flex min-h-[44px] min-w-[44px] items-center justify-center'
+              : 'absolute flex items-center justify-center',
+            !isMobile && (safePosition.height < 30 ? 'top-0.5 left-0.5' : 'top-2 left-2'),
+            !isMobile && 'min-h-4 min-w-4',
+          )}
+        >
+          <Pencil
+            className={cn(
+              'text-primary',
+              isMobile ? 'h-3.5 w-3.5' : safePosition.height < 30 ? 'h-3 w-3' : 'h-4 w-4',
+            )}
+          />
+        </div>
+      ) : isRecord ? null : (
+        // Plan: チェックボックス（モバイル: 44x44pxタッチターゲット、Apple HIG準拠）
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            const currentStatus = normalizeStatus(plan.status);
+            const newStatus = currentStatus === 'closed' ? 'open' : 'closed';
+            updatePlan.mutate({
+              id: plan.id,
+              data: { status: newStatus },
+            });
+          }}
+          onMouseEnter={() => setIsCheckboxHovered(true)}
+          onMouseLeave={() => setIsCheckboxHovered(false)}
+          className={cn(
+            'z-10 flex-shrink-0 rounded',
+            // モバイル: 44x44pxタッチターゲット（Apple HIG準拠）、アイコンは中央配置
+            // デスクトップ: 絶対配置
+            isMobile
+              ? 'relative -m-3 flex min-h-[44px] min-w-[44px] items-center justify-center'
+              : 'absolute flex items-center justify-center',
+            !isMobile && (safePosition.height < 30 ? 'top-0.5 left-0.5' : 'top-2 left-2'),
+            // デスクトップ: ホバー領域を確保（小さい予定でもホバーしやすく）
+            !isMobile && 'min-h-4 min-w-4',
+          )}
+          aria-label={
+            normalizeStatus(plan.status) === 'closed'
+              ? t('calendar.event.markIncomplete')
+              : t('calendar.event.markComplete')
           }
-          // ホバー時はチェックマークを表示（完了予告）
-          if (isCheckboxHovered) {
-            return <CheckCircle2 className={cn('text-success', iconClass)} />;
-          }
-          // open（未完了）
-          return <Circle className={cn('text-muted-foreground', iconClass)} />;
-        })()}
-      </button>
+        >
+          {(() => {
+            const status = normalizeStatus(plan.status);
+            const iconClass = isMobile
+              ? 'h-3.5 w-3.5'
+              : safePosition.height < 30
+                ? 'h-3 w-3'
+                : 'h-4 w-4';
+            if (status === 'closed') {
+              return <CheckCircle2 className={cn('text-success', iconClass)} />;
+            }
+            // ホバー時はチェックマークを表示（完了予告）
+            if (isCheckboxHovered) {
+              return <CheckCircle2 className={cn('text-success', iconClass)} />;
+            }
+            // open（未完了）
+            return <Circle className={cn('text-muted-foreground', iconClass)} />;
+          })()}
+        </button>
+      )}
 
       <PlanCardContent
         plan={plan}
         isCompact={safePosition.height < 40}
         showTime={safePosition.height >= 30}
         previewTime={previewTime}
-        hasCheckbox={!isMobile} // デスクトップのみ左パディング必要
+        hasCheckbox={!isMobile && !isRecord} // デスクトップのPlanのみ左パディング必要（Recordはアイコンなし）
         isMobile={isMobile}
         isHovered={isHovered}
         isCheckboxHovered={isCheckboxHovered}
       />
 
-      {/* 下端リサイズハンドル */}
-      <div
-        className="focus:ring-ring absolute right-0 bottom-0 left-0 cursor-ns-resize focus:ring-2 focus:ring-offset-1 focus:outline-none"
-        role="slider"
-        tabIndex={0}
-        aria-label="Resize plan duration"
-        aria-orientation="vertical"
-        aria-valuenow={safePosition.height}
-        aria-valuemin={20}
-        aria-valuemax={480}
-        onMouseDown={handleBottomResizeMouseDown}
-        onKeyDown={handleResizeKeyDown}
-        style={{
-          height: '8px',
-          zIndex: 10,
-        }}
-        title={t('calendar.event.adjustEndTime')}
-      />
+      {/* 下端リサイズハンドル（Draft は未保存なので非表示） */}
+      {!isDraft && (
+        <div
+          className="focus:ring-ring absolute right-0 bottom-0 left-0 cursor-ns-resize focus:ring-2 focus:ring-offset-1 focus:outline-none"
+          role="slider"
+          tabIndex={0}
+          aria-label="Resize plan duration"
+          aria-orientation="vertical"
+          aria-valuenow={safePosition.height}
+          aria-valuemin={20}
+          aria-valuemax={480}
+          onMouseDown={handleBottomResizeMouseDown}
+          onKeyDown={handleResizeKeyDown}
+          style={{
+            height: '8px',
+            zIndex: 10,
+          }}
+          title={t('calendar.event.adjustEndTime')}
+        />
+      )}
     </div>
   );
 });

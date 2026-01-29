@@ -149,33 +149,10 @@ npm run lint         # コード品質（AI必須：コミット前）
 - **コマンド**: [`docs/development/COMMANDS.md`](docs/development/COMMANDS.md)
 - **Issue管理**: [`docs/development/ISSUE_MANAGEMENT.md`](docs/development/ISSUE_MANAGEMENT.md)
 
-### カスタムコマンド（/.claude/commands/）
+### カスタムコマンド・スキル
 
-- `/review` - コードレビュー（なぜそうすべきかも説明）
-- `/fix-types` - 型エラー修正
-- `/new-feature` - 新機能実装
-- `/test` - テスト作成
-- `/debug` - デバッグ
-- `/cleanup` - 不要コード削除
-- `/learn` - 概念・ツール・コードの解説
-- `/brainstorming` - 壁打ち・相談
-- `/health-check` - 技術的健全性チェック
-
-### カスタムスキル（/.claude/skills/）
-
-**プロジェクト固有**:
-
-- `/releasing` - リリース作業ガイド
-- `/feature-scaffolding` - 新Featureモジュール作成
-- `/store-creating` - Zustand store作成
-- `/trpc-router-creating` - tRPCルーター作成
-- `/weekend-remote` - 土日リモート用タスク発見
-- `/frontend-design` - UI設計ガイドライン（STYLE_GUIDE.md補完）
-
-**汎用スキル**:
-
-- `/react-best-practices` - Vercel公式React/Next.js最適化ルール（45ルール）
-- `/ask-questions-if-underspecified` - 曖昧な指示への確認プロセス
+- **コマンド**: `.claude/commands/` を参照
+- **スキル**: `.claude/skills/` を参照（各 `SKILL.md` に説明あり）
 
 ## 🎯 意思決定の優先順位（GAFA-First原則）
 

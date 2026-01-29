@@ -288,10 +288,11 @@ export function useDragHandler({
   );
 
   // プラン更新処理を実行する
+  // @returns true: 成功, false: エラー（スナップバック必要）
   const executeEventUpdate = useCallback(
-    async (newStartTime: Date) => {
+    async (newStartTime: Date): Promise<boolean> => {
       if (!eventUpdateHandler || !dragDataRef.current?.eventId || !dragDataRef.current?.hasMoved) {
-        return;
+        return true; // 更新不要なので成功扱い
       }
 
       const { event, durationMs } = calculateEventDuration(
@@ -302,7 +303,7 @@ export function useDragHandler({
 
       if (!event) {
         logger.warn('Plan not found for update');
-        return;
+        return true; // プランが見つからない場合も成功扱い
       }
 
       const newEndTime = new Date(newStartTime.getTime() + durationMs);
@@ -320,13 +321,19 @@ export function useDragHandler({
 
         // ダイアログが表示された場合はtoastをスキップ
         if (result && typeof result === 'object' && result.skipToast) {
-          return;
+          return true;
         }
 
         await handleEventUpdateToast(Promise.resolve(), event, newStartTime, durationMs);
+        return true;
       } catch (error) {
         logger.error('Failed to update event time:', error);
-        calendarToast.error(t('calendar.event.moveFailed'));
+        // TIME_OVERLAPエラー（重複防止）の場合はtoastなし（スナップバックで対応）
+        const errorMessage = error instanceof Error ? error.message : '';
+        if (!errorMessage.includes('TIME_OVERLAP') && !errorMessage.includes('既に')) {
+          calendarToast.error(t('calendar.event.moveFailed'));
+        }
+        return false; // エラー時はスナップバック必要
       }
     },
     [eventUpdateHandler, events, dragDataRef, handleEventUpdateToast, calendarToast, t],

@@ -1,18 +1,17 @@
 /**
  * Inspector Feature
  *
- * 詳細パネル（Inspector/Sheet）の共通基盤
+ * 詳細パネル（Inspector）の共通基盤
  * Plans/Tags 等で統一的なInspector UIを提供
  *
  * ## コンポーネント
  *
- * - `InspectorShell`: Sheet/Dialog切り替え、リサイズ、z-index管理
+ * - `InspectorShell`: PC: Popover, モバイル: Drawer
  * - `InspectorHeader`: ナビゲーション、閉じるボタン、メニュー
  * - `InspectorContent`: ローディング/空状態の統一処理
  *
  * ## Hooks
  *
- * - `useInspectorResize`: リサイズロジック
  * - `useInspectorKeyboard`: キーボードショートカット
  *
  * ## Store Factory
@@ -44,15 +43,10 @@
  */
 
 // Components
-export {
-  InspectorContent,
-  InspectorHeader,
-  InspectorShell,
-  type InspectorDisplayMode,
-} from './components';
+export { InspectorContent, InspectorHeader, InspectorShell, useDragHandle } from './components';
 
 // Hooks
-export { INSPECTOR_SIZE, useInspectorKeyboard, useInspectorResize } from './hooks';
+export { useInspectorKeyboard } from './hooks';
 
 // Store factories
 export { createExtendedInspectorStore, createInspectorStore } from './stores';
@@ -65,7 +59,6 @@ export type {
   ExtendedInspectorState,
   ExtendedInspectorStore,
   InspectorActions,
-  InspectorDisplayMode as InspectorDisplayModeStore,
   InspectorState,
   InspectorStore,
 } from './stores';

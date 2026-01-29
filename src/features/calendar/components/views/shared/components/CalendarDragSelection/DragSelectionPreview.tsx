@@ -6,7 +6,7 @@
 
 import { memo } from 'react';
 
-import { Ban } from 'lucide-react';
+import { Ban, Pencil } from 'lucide-react';
 
 import { MEDIA_QUERIES } from '@/config/ui/breakpoints';
 import { calendarStyles } from '@/features/calendar/theme/styles';
@@ -57,9 +57,9 @@ export const DragSelectionPreview = memo(function DragSelectionPreview({
     zIndex: 1000,
   };
 
-  // 重複時は赤、通常時はplan-boxカラー
+  // 重複時は赤、通常時は控えめなprimaryカラー
   const className = cn(
-    isOverlapping ? 'bg-destructive/60' : 'bg-plan-box',
+    isOverlapping ? 'bg-destructive/60' : 'bg-primary/20 border border-primary/40',
     calendarStyles.event.borderRadius,
     calendarStyles.event.shadow.default,
     'pointer-events-none',
@@ -87,22 +87,18 @@ export const DragSelectionPreview = memo(function DragSelectionPreview({
           isMobile ? 'p-3' : calendarStyles.event.padding,
         )}
       >
-        {/* タイトル行 */}
+        {/* アイコン + タイトル: PlanCardのドラフトと統一 */}
         <div className="mb-1 flex items-center gap-1">
-          {/* 重複時は⊘アイコンを表示 */}
-          {isOverlapping && (
+          {isOverlapping ? (
             <Ban className={cn('flex-shrink-0 text-white', isMobile ? 'size-4' : 'size-3')} />
+          ) : (
+            <Pencil className={cn('text-primary flex-shrink-0', isMobile ? 'size-4' : 'size-3')} />
           )}
-          <div
-            className={cn(
-              textColorClass,
-              // モバイルでは大きめのフォント
-              isMobile ? 'text-sm' : calendarStyles.event.fontSize.title,
-              'leading-tight font-normal',
-            )}
+          <span
+            className={cn(textColorClass, isMobile ? 'text-sm' : 'text-xs', 'truncate font-medium')}
           >
-            {isOverlapping ? '時間が重複しています' : '新しいイベント'}
-          </div>
+            {isOverlapping ? '時間が重複しています' : '新しい予定'}
+          </span>
         </div>
 
         {/* 時間表示（ドラッグ中にリアルタイム更新） */}
@@ -111,7 +107,7 @@ export const DragSelectionPreview = memo(function DragSelectionPreview({
             textColorClass,
             // モバイルでは大きめのフォント
             isMobile ? 'text-sm' : calendarStyles.event.fontSize.time,
-            'leading-tight opacity-75',
+            'leading-tight tabular-nums opacity-75',
           )}
         >
           {formatTime(selection.startHour, selection.startMinute)} -{' '}
@@ -124,7 +120,7 @@ export const DragSelectionPreview = memo(function DragSelectionPreview({
             textColorClass,
             // モバイルでは大きめのフォント
             isMobile ? 'text-xs' : calendarStyles.event.fontSize.duration,
-            'mt-auto opacity-60',
+            'mt-auto tabular-nums opacity-60',
           )}
         >
           {durationText}

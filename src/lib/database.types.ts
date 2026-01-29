@@ -548,6 +548,98 @@ export type Database = {
         };
         Relationships: [];
       };
+      record_tags: {
+        Row: {
+          created_at: string;
+          id: string;
+          record_id: string;
+          tag_id: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          record_id: string;
+          tag_id: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          record_id?: string;
+          tag_id?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'record_tags_record_id_fkey';
+            columns: ['record_id'];
+            isOneToOne: false;
+            referencedRelation: 'records';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'record_tags_tag_id_fkey';
+            columns: ['tag_id'];
+            isOneToOne: false;
+            referencedRelation: 'tags';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      records: {
+        Row: {
+          created_at: string;
+          duration_minutes: number;
+          end_time: string | null;
+          fulfillment_score: number | null;
+          id: string;
+          note: string | null;
+          plan_id: string;
+          start_time: string | null;
+          title: string | null;
+          updated_at: string;
+          user_id: string;
+          worked_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          duration_minutes: number;
+          end_time?: string | null;
+          fulfillment_score?: number | null;
+          id?: string;
+          note?: string | null;
+          plan_id: string;
+          start_time?: string | null;
+          title?: string | null;
+          updated_at?: string;
+          user_id: string;
+          worked_at: string;
+        };
+        Update: {
+          created_at?: string;
+          duration_minutes?: number;
+          end_time?: string | null;
+          fulfillment_score?: number | null;
+          id?: string;
+          note?: string | null;
+          plan_id?: string;
+          start_time?: string | null;
+          title?: string | null;
+          updated_at?: string;
+          user_id?: string;
+          worked_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'records_plan_id_fkey';
+            columns: ['plan_id'];
+            isOneToOne: false;
+            referencedRelation: 'plans';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       tags: {
         Row: {
           color: string | null;
@@ -558,7 +650,7 @@ export type Database = {
           is_active: boolean;
           name: string;
           parent_id: string | null;
-          sort_order: number | null;
+          sort_order: number;
           updated_at: string | null;
           user_id: string | null;
         };
@@ -571,7 +663,7 @@ export type Database = {
           is_active?: boolean;
           name: string;
           parent_id?: string | null;
-          sort_order?: number | null;
+          sort_order?: number;
           updated_at?: string | null;
           user_id?: string | null;
         };
@@ -584,7 +676,7 @@ export type Database = {
           is_active?: boolean;
           name?: string;
           parent_id?: string | null;
-          sort_order?: number | null;
+          sort_order?: number;
           updated_at?: string | null;
           user_id?: string | null;
         };

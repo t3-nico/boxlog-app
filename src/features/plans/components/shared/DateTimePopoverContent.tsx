@@ -1,10 +1,10 @@
 'use client';
 
+import { ClockTimePicker } from '@/components/common/ClockTimePicker';
 import { MiniCalendar } from '@/components/common/MiniCalendar';
 import { Button } from '@/components/ui/button';
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { ReminderSelect } from '@/features/plans/components/shared/ReminderSelect';
-import { TimeSelect } from '@/features/plans/components/shared/TimeSelect';
 import { useAutoAdjustEndTime } from '@/features/plans/hooks/useAutoAdjustEndTime';
 import { Bell, Check, Clock, Repeat } from 'lucide-react';
 import { useRef, useState } from 'react';
@@ -104,17 +104,15 @@ export function DateTimePopoverContent({
           <Clock className="text-muted-foreground size-4 flex-shrink-0" />
           <div className="flex flex-1 flex-col gap-1">
             <div className="flex h-8 items-center">
-              <TimeSelect
+              <ClockTimePicker
                 value={startTime}
                 onChange={handleStartTimeChange}
-                label=""
                 disabled={!selectedDate}
               />
               <span className="text-muted-foreground mx-1">→</span>
-              <TimeSelect
+              <ClockTimePicker
                 value={endTime}
                 onChange={handleEndTimeChange}
-                label=""
                 disabled={!selectedDate || !startTime}
                 minTime={startTime}
               />

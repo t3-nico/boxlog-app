@@ -52,6 +52,8 @@ export interface MiniCalendarProps {
   onOpenChange?: ((open: boolean) => void) | undefined;
   /** 「日付なし」ボタンを表示するか */
   allowClear?: boolean | undefined;
+  /** Popover の z-index（Inspector内では高い値を使用） */
+  popoverZIndex?: number | undefined;
 }
 
 // 週の開始日に応じた曜日配列を取得する関数
@@ -124,6 +126,7 @@ export const MiniCalendar = memo<MiniCalendarProps>(
     popoverSide = 'bottom',
     onOpenChange,
     allowClear = false,
+    popoverZIndex,
   }) => {
     const locale = useLocale();
     const weekStartsOn = useCalendarSettingsStore((state) => state.weekStartsOn);
@@ -404,7 +407,8 @@ export const MiniCalendar = memo<MiniCalendarProps>(
         <Popover open={open} onOpenChange={handleOpenChange} modal={false}>
           <PopoverTrigger asChild>{popoverTrigger}</PopoverTrigger>
           <PopoverContent
-            className={cn('bg-popover border-border z-[350] w-auto border p-0', popoverClassName)}
+            className={cn('bg-popover border-border w-auto border p-0', popoverClassName)}
+            style={popoverZIndex !== undefined ? { zIndex: popoverZIndex } : undefined}
             align={popoverAlign}
             side={popoverSide}
           >

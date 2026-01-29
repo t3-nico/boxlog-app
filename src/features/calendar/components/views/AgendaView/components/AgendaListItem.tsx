@@ -134,7 +134,9 @@ export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemP
         <span className="text-muted-foreground/50 md:hidden">•</span>
 
         {/* 時間 */}
-        <div className="text-muted-foreground shrink-0 text-sm md:w-24">{timeRange}</div>
+        <div className="text-muted-foreground shrink-0 text-sm tabular-nums md:w-24">
+          {timeRange}
+        </div>
       </div>
 
       {/* モバイル: 下段（タイトル・タグ）、PC: 右側 */}

@@ -1,6 +1,6 @@
 # Model Selection Guidelines
 
-BoxLogプロジェクトでのSubagentモデル選択ガイドライン。
+DayoptプロジェクトでのSubagentモデル選択ガイドライン。
 
 ## モデル選択の原則
 
@@ -83,7 +83,7 @@ Task(subagent_type=Explore, model=haiku)  # ファイル検索2
 Task(subagent_type=Explore, model=haiku)  # ファイル検索3
 ```
 
-### 3. BoxLog固有の推奨
+### 3. Dayopt固有の推奨
 
 | 機能エリア           | 推奨モデル | 理由             |
 | -------------------- | ---------- | ---------------- |

@@ -25,6 +25,7 @@ import { useResponsiveHourHeight } from '../hooks/useResponsiveHourHeight';
 import { useScrollableCalendar } from '../hooks/useScrollableCalendar';
 import { useSleepHoursLayout } from '../hooks/useSleepHoursLayout';
 
+import { TIME_COLUMN_WIDTH } from '../constants/grid.constants';
 import { COLLAPSED_SECTION_HEIGHT, CollapsedSleepSection } from './CollapsedSleepSection';
 import { TimezoneOffset } from './TimezoneOffset';
 
@@ -57,8 +58,6 @@ interface CalendarDateHeaderProps {
   /** 週番号（表示する場合） */
   weekNumber?: number | undefined;
 }
-
-const TIME_COLUMN_WIDTH = 64;
 
 /**
  * カレンダー日付ヘッダー（固定）
@@ -95,7 +94,7 @@ export const CalendarDateHeader = ({
             {showTimezone && timezone ? (
               <TimezoneOffset
                 timezone={timezone}
-                className={cn('text-xs', shouldShowWeekNumber && 'hidden md:flex')}
+                className={cn('w-full text-xs', shouldShowWeekNumber && 'hidden md:flex')}
               />
             ) : null}
           </div>
@@ -163,13 +162,20 @@ export const ScrollableCalendarLayout = ({
   });
 
   // 現在時刻線ロジック（フック利用）
-  const { currentTimePosition, collapsedCurrentTimePosition, currentTimeLineColor } =
+  const { currentTime, currentTimePosition, collapsedCurrentTimePosition, currentTimeLineColor } =
     useCurrentTimeLine({
       hourHeight: HOUR_HEIGHT,
       showCurrentTime,
       sleepHours,
       collapsedLayout,
     });
+
+  // 現在時刻のフォーマット（HH:mm）
+  const formattedCurrentTime = currentTime.toLocaleTimeString('ja-JP', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  });
 
   // コンテナ幅の動的取得
   useEffect(() => {
@@ -238,7 +244,7 @@ export const ScrollableCalendarLayout = ({
               <div className="relative h-full">
                 {/* 上部の折りたたみセクション（時間列部分）- 睡眠時間帯全体を1行で表示 */}
                 <div
-                  className="bg-accent-container relative z-10 flex w-full items-center gap-1 pl-2"
+                  className="bg-accent-container relative z-10 flex w-full items-center justify-end gap-1 pr-2"
                   style={{ height: COLLAPSED_SECTION_HEIGHT }}
                 >
                   <Moon className="text-muted-foreground size-3" />
@@ -271,6 +277,19 @@ export const ScrollableCalendarLayout = ({
                       className=""
                     />
                   </div>
+                  {/* 現在時刻ラベル（折りたたみ時・Apple Calendar風） */}
+                  {shouldShowCurrentTimeLine && hasToday && (
+                    <div
+                      className="pointer-events-none absolute right-0 z-20 rounded-sm px-2 py-0.5 text-xs font-medium text-white"
+                      style={{
+                        top: `${collapsedCurrentTimePosition - COLLAPSED_SECTION_HEIGHT}px`,
+                        transform: 'translateY(-50%)',
+                        backgroundColor: currentTimeLineColor || 'hsl(var(--primary))',
+                      }}
+                    >
+                      {formattedCurrentTime}
+                    </div>
+                  )}
                 </div>
               </div>
             ) : (
@@ -299,6 +318,19 @@ export const ScrollableCalendarLayout = ({
                         <ChevronDown className="text-muted-foreground size-4" />
                       </button>
                     </HoverTooltip>
+                  </div>
+                )}
+                {/* 現在時刻ラベル（Apple Calendar風） */}
+                {shouldShowCurrentTimeLine && hasToday && (
+                  <div
+                    className="pointer-events-none absolute right-0 z-20 rounded-sm px-2 py-0.5 text-xs font-medium text-white"
+                    style={{
+                      top: `${currentTimePosition}px`,
+                      transform: 'translateY(-50%)',
+                      backgroundColor: currentTimeLineColor || 'hsl(var(--primary))',
+                    }}
+                  >
+                    {formattedCurrentTime}
                   </div>
                 )}
               </div>
@@ -383,17 +415,21 @@ export const ScrollableCalendarLayout = ({
                           ...(currentTimeLineColor && { backgroundColor: currentTimeLineColor }),
                         }}
                       />
-                      <div
-                        className={cn(
-                          'border-background pointer-events-none absolute z-40 h-2 w-2 rounded-full border shadow-md',
-                          !currentTimeLineColor && 'bg-primary',
-                        )}
-                        style={{
-                          top: `${collapsedCurrentTimePosition - 4}px`,
-                          left: todayColumnPosition.left === 0 ? '-4px' : todayColumnPosition.left,
-                          ...(currentTimeLineColor && { backgroundColor: currentTimeLineColor }),
-                        }}
-                      />
+                      {/* ドット - dayビュー以外で表示 */}
+                      {viewMode !== 'day' && (
+                        <div
+                          className={cn(
+                            'border-background pointer-events-none absolute z-40 h-2 w-2 rounded-full border shadow-md',
+                            !currentTimeLineColor && 'bg-primary',
+                          )}
+                          style={{
+                            top: `${collapsedCurrentTimePosition - 4}px`,
+                            left:
+                              todayColumnPosition.left === 0 ? '-4px' : todayColumnPosition.left,
+                            ...(currentTimeLineColor && { backgroundColor: currentTimeLineColor }),
+                          }}
+                        />
+                      )}
                     </>
                   ) : null}
                 </>
@@ -470,18 +506,21 @@ export const ScrollableCalendarLayout = ({
                         }}
                       />
 
-                      {/* 点 - 今日の列の左端 */}
-                      <div
-                        className={cn(
-                          'border-background pointer-events-none absolute z-40 h-2 w-2 rounded-full border shadow-md',
-                          !currentTimeLineColor && 'bg-primary',
-                        )}
-                        style={{
-                          top: `${currentTimePosition - 4}px`,
-                          left: todayColumnPosition.left === 0 ? '-4px' : todayColumnPosition.left,
-                          ...(currentTimeLineColor && { backgroundColor: currentTimeLineColor }),
-                        }}
-                      />
+                      {/* ドット - dayビュー以外で表示 */}
+                      {viewMode !== 'day' && (
+                        <div
+                          className={cn(
+                            'border-background pointer-events-none absolute z-40 h-2 w-2 rounded-full border shadow-md',
+                            !currentTimeLineColor && 'bg-primary',
+                          )}
+                          style={{
+                            top: `${currentTimePosition - 4}px`,
+                            left:
+                              todayColumnPosition.left === 0 ? '-4px' : todayColumnPosition.left,
+                            ...(currentTimeLineColor && { backgroundColor: currentTimeLineColor }),
+                          }}
+                        />
+                      )}
                     </>
                   ) : null}
                 </>

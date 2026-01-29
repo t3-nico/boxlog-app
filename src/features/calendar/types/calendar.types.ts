@@ -45,7 +45,7 @@ export interface CalendarPlan {
   isMultiDay: boolean;
   isRecurring: boolean;
   // Optional properties used in various contexts
-  type?: 'event' | 'plan' | 'task' | undefined; // エントリの種類
+  type?: 'event' | 'plan' | 'task' | 'record' | undefined; // エントリの種類
   userId?: string | undefined; // 所有者ID
   location?: string | undefined; // 場所
   url?: string | undefined; // 関連URL
@@ -57,6 +57,13 @@ export interface CalendarPlan {
   exceptionType?: 'modified' | 'cancelled' | 'moved' | undefined; // 例外タイプ
   originalPlanId?: string | undefined; // 繰り返しインスタンスの親プランID
   instanceDate?: string | undefined; // インスタンス日付（YYYY-MM-DD）
+  // Record固有フィールド（type === 'record' の場合）
+  recordId?: string | undefined; // RecordのID
+  fulfillmentScore?: number | null | undefined; // 充実度（1-5）
+  linkedPlanId?: string | undefined; // 紐づくPlanのID
+  linkedPlanTitle?: string | undefined; // 紐づくPlanのタイトル
+  // ドラフト状態（未保存のプレビュー）
+  isDraft?: boolean | undefined;
 }
 
 // 後方互換性のためのエイリアス

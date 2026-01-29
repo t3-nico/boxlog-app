@@ -164,7 +164,9 @@ export function OverdueBadge({ overduePlans, className, style }: OverdueBadgePro
                 )}
               >
                 {/* 日付 */}
-                <span className="text-muted-foreground text-right text-sm">{dateLabel}</span>
+                <span className="text-muted-foreground text-right text-sm tabular-nums">
+                  {dateLabel}
+                </span>
 
                 {/* タイトル（カラードット + テキスト） */}
                 <span className="flex min-w-0 items-center gap-2">
@@ -179,7 +181,9 @@ export function OverdueBadge({ overduePlans, className, style }: OverdueBadgePro
                 </span>
 
                 {/* 時間 */}
-                <span className="text-muted-foreground text-sm">{timeLabel || t('timeUnset')}</span>
+                <span className="text-muted-foreground text-sm tabular-nums">
+                  {timeLabel || t('timeUnset')}
+                </span>
               </button>
             );
           })}

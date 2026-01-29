@@ -20,6 +20,7 @@ import { PlanTagsSection } from '../../shared/PlanTagsSection';
 import { ReminderSelect } from '../../shared/ReminderSelect';
 
 import { ActivitySection } from './ActivitySection';
+import { RecordsSection } from './RecordsSection';
 
 // Novel エディターは重いため遅延ロード
 const NovelDescriptionEditor = dynamic(
@@ -206,6 +207,9 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
           <ReminderSelect value={reminderType} onChange={onReminderChange} variant="inspector" />
         </div>
       </div>
+
+      {/* Records Section - 編集モードのみ */}
+      {!isDraftMode && planId && <RecordsSection planId={planId} />}
 
       {/* Activity Section - 編集モードのみ */}
       {!isDraftMode && planId && <ActivitySection planId={planId} />}

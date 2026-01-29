@@ -103,7 +103,7 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
       {/* 時間表示 + アイコン（第2優先） */}
       {showTime != null && (
         <div className="event-time text-muted-foreground pointer-events-none flex flex-shrink-0 items-center gap-1 text-xs leading-tight">
-          <span className="mr-1">
+          <span className="mr-1 tabular-nums">
             {previewTime
               ? formatTimeRange(previewTime.start, previewTime.end, timeFormat)
               : planStart && planEnd

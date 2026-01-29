@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 import { useAllOverduePlans } from '../../../../hooks/useOverduePlans';
 import type { CalendarPlan } from '../../../../types/calendar.types';
 
+import { TIME_COLUMN_WIDTH } from '../constants/grid.constants';
 import { OverdueBadge } from './OverdueBadge';
 import { TimezoneOffset } from './TimezoneOffset';
 
@@ -33,10 +34,13 @@ export function OverdueSection({ dates, plans, timezone, className }: OverdueSec
   const overduePlans = useAllOverduePlans(plans);
 
   return (
-    <div className={cn('bg-background flex h-6 gap-px px-4', className)}>
+    <div className={cn('bg-background flex h-6 gap-px', className)}>
       {/* タイムゾーン表示（左端） - デスクトップのみ */}
-      <div className="hidden w-12 flex-shrink-0 items-center justify-end pr-2 md:flex">
-        {timezone ? <TimezoneOffset timezone={timezone} className="text-xs" /> : null}
+      <div
+        className="hidden flex-shrink-0 items-center md:flex"
+        style={{ width: TIME_COLUMN_WIDTH }}
+      >
+        {timezone ? <TimezoneOffset timezone={timezone} className="w-full text-xs" /> : null}
       </div>
 
       {/* 各日付のエリア（今日の列のみバッジ表示） */}
@@ -90,16 +94,10 @@ export function OverdueSectionSingle({
   const hasOverdue = isTodayView && overduePlans.length > 0;
 
   return (
-    <div
-      className={cn(
-        'bg-background border-border flex h-6 items-center gap-2 border-b',
-        'px-2 md:px-4',
-        className,
-      )}
-    >
+    <div className={cn('bg-background border-border flex h-6 items-center border-b', className)}>
       {/* タイムゾーン表示（左端） */}
-      <div className="flex w-8 flex-shrink-0 items-center md:w-12">
-        {timezone ? <TimezoneOffset timezone={timezone} className="text-xs" /> : null}
+      <div className="flex flex-shrink-0 items-center" style={{ width: TIME_COLUMN_WIDTH }}>
+        {timezone ? <TimezoneOffset timezone={timezone} className="w-full text-xs" /> : null}
       </div>
 
       {/* バッジエリア（今日の場合のみ表示） */}

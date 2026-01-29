@@ -132,7 +132,6 @@ export const usePlanViewStore = create<PlanViewState>()(
         // デフォルトViewは削除不可
         const viewToDelete = views.find((v) => v.id === id);
         if (viewToDelete?.id.startsWith('default-')) {
-          console.warn('Cannot delete default view');
           return;
         }
 

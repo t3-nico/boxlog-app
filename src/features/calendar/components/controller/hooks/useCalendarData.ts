@@ -5,6 +5,7 @@ import { useEffect, useMemo } from 'react';
 import { addDays, format, subDays } from 'date-fns';
 
 import { usePlans } from '@/features/plans/hooks/usePlans';
+import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
 import type { Plan } from '@/features/plans/types/plan';
 import { isRecurringPlan } from '@/features/plans/utils/recurrence';
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
@@ -17,6 +18,7 @@ import { useCalendarFilterStore } from '../../../stores/useCalendarFilterStore';
 import { calculateViewDateRange } from '../../../lib/view-helpers';
 import {
   expandRecurringPlansToCalendarPlans,
+  recordsToCalendarPlans,
   type PlanInstanceException,
 } from '../../../utils/planDataAdapter';
 
@@ -67,6 +69,13 @@ export function useCalendarData({
   // plansを取得（日付範囲フィルタで高速化）
   const { data: plansData } = usePlans(dateFilter);
 
+  // recordsを取得（日付範囲フィルタ）
+  // service.list は常に plan 情報を含めて返す（RecordWithPlan型）
+  const { data: recordsData } = api.records.list.useQuery({
+    worked_at_from: format(viewDateRange.start, 'yyyy-MM-dd'),
+    worked_at_to: format(viewDateRange.end, 'yyyy-MM-dd'),
+  });
+
   // タグマスタをプリフェッチ（TagsContainerで使用するためキャッシュをwarm up）
   // これにより、カードがレンダリングされる時点でタグ情報がキャッシュに存在する
   useTags();
@@ -97,6 +106,10 @@ export function useCalendarData({
 
   // フィルター関数を取得（ストアに統一）
   const isPlanVisible = useCalendarFilterStore((state) => state.isPlanVisible);
+
+  // ドラフトプランを取得（コピー＆ペースト時のプレビュー表示用）
+  // タイトルがある場合のみ表示（ドラッグ選択時はタイトルが空なのでDragSelectionPreviewが担当）
+  const draftPlan = usePlanInspectorStore((state) => state.draftPlan);
 
   // 繰り返しプランのIDを抽出
   const recurringPlanIds = useMemo(() => {
@@ -140,26 +153,63 @@ export function useCalendarData({
 
   // 全プランをCalendarPlan型に変換（繰り返しプランを展開）
   const allCalendarPlans = useMemo(() => {
-    if (!plansData) {
-      return [];
+    const calendarPlans: CalendarPlan[] = [];
+
+    // Plans の変換
+    if (plansData) {
+      // サーバーからはformatPlanWithTagsで変換済みのtagIds配列が返る
+      const plansWithTagIds = plansData as PlanWithTagIds[];
+
+      // start_time/end_timeが設定されているplanのみを抽出
+      const plansWithTime = plansWithTagIds.filter((plan) => {
+        return plan.start_time && plan.end_time;
+      });
+
+      // 繰り返しプランを展開してCalendarPlanに変換
+      const expandedPlans = expandRecurringPlansToCalendarPlans(
+        plansWithTime,
+        viewDateRange.start,
+        viewDateRange.end,
+        exceptionsMap,
+      );
+      calendarPlans.push(...expandedPlans);
     }
 
-    // サーバーからはformatPlanWithTagsで変換済みのtagIds配列が返る
-    const plansWithTagIds = plansData as PlanWithTagIds[];
+    // Records の変換（start_time/end_time がある場合のみ表示）
+    if (recordsData) {
+      const calendarRecords = recordsToCalendarPlans(recordsData);
+      calendarPlans.push(...calendarRecords);
+    }
 
-    // start_time/end_timeが設定されているplanのみを抽出
-    const plansWithTime = plansWithTagIds.filter((plan) => {
-      return plan.start_time && plan.end_time;
-    });
+    // ドラフトプランをプレビューとして追加
+    // タイトルがある場合のみ表示（ペースト時など）
+    // ドラッグ選択時はタイトルが空なので、DragSelectionPreviewが担当
+    if (draftPlan?.start_time && draftPlan?.end_time && draftPlan?.title) {
+      const startDate = new Date(draftPlan.start_time);
+      const endDate = new Date(draftPlan.end_time);
+      const draftCalendarPlan: CalendarPlan = {
+        id: '__draft__',
+        title: draftPlan.title,
+        description: draftPlan.description ?? undefined,
+        startDate,
+        endDate,
+        status: 'open',
+        color: 'var(--primary)',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        displayStartDate: startDate,
+        displayEndDate: endDate,
+        duration: (endDate.getTime() - startDate.getTime()) / 60000,
+        isMultiDay: false,
+        isRecurring: false,
+        type: 'plan',
+        isDraft: true,
+      };
+      calendarPlans.push(draftCalendarPlan);
+    }
 
-    // 繰り返しプランを展開してCalendarPlanに変換
-    return expandRecurringPlansToCalendarPlans(
-      plansWithTime,
-      viewDateRange.start,
-      viewDateRange.end,
-      exceptionsMap,
-    );
-  }, [plansData, viewDateRange, exceptionsMap]);
+    return calendarPlans;
+  }, [plansData, recordsData, viewDateRange, exceptionsMap, draftPlan]);
 
   // 表示範囲のイベントをフィルタリング
   const filteredEvents = useMemo(() => {
@@ -203,7 +253,10 @@ export function useCalendarData({
     });
 
     // サイドバーのフィルター設定を適用（ストアのisPlanVisibleに統一）
-    const visibilityFiltered = filtered.filter((event) => isPlanVisible(event.tagIds ?? []));
+    // Records（type === 'record'）は常に表示
+    const visibilityFiltered = filtered.filter((event) =>
+      event.type === 'record' ? true : isPlanVisible(event.tagIds ?? []),
+    );
 
     logger.log(`[useCalendarData] plansフィルタリング:`, {
       totalPlans: allCalendarPlans.length,

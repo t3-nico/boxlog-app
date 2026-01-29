@@ -14,8 +14,8 @@ interface DeleteConfirmState {
 /**
  * 削除確認ダイアログの状態管理
  *
- * PlanInspector（Sheet内）からAlertDialogを分離するためのストア
- * Sheet内でAlertDialogを開くとPortalの問題が発生するため、
+ * PlanInspectorからAlertDialogを分離するためのストア
+ * Inspector内でAlertDialogを開くとPortalの問題が発生するため、
  * AppLayoutレベルでAlertDialogをレンダリングする
  */
 export const useDeleteConfirmStore = create<DeleteConfirmState>((set) => ({

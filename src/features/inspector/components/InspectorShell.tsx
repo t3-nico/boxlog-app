@@ -10,54 +10,32 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
 import { zIndex } from '@/config/ui/z-index';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 
-import type { PopoverPosition } from '@/features/plans/stores/usePlanInspectorStore';
-
-import { INSPECTOR_SIZE, useInspectorResize } from '../hooks';
 import { DraggableInspector } from './DraggableInspector';
 
 // モバイルDrawerのスナップポイント
 // Apple HIG準拠: medium(50%) → large(97% - セーフエリア考慮)
 const SNAP_POINTS = [0.5, 0.97] as const;
 
-/**
- * Inspector表示モード
- */
-export type InspectorDisplayMode = 'sheet' | 'popover';
-
 interface InspectorShellProps {
   /** Inspectorが開いているか */
   isOpen: boolean;
   /** 閉じるハンドラー */
   onClose: () => void;
-  /** 表示モード */
-  displayMode: InspectorDisplayMode;
   /** アクセシビリティ用タイトル（sr-only） */
   title: string;
   /** コンテンツ */
   children: ReactNode;
-  /** リサイズを有効にするか（Sheetモードのみ、デフォルト: true） */
-  resizable?: boolean;
-  /** 初期幅 */
-  initialWidth?: number;
-  /** モーダルモード（デフォルト: false） */
-  modal?: boolean;
   /** モバイル用メニューコンテンツ（ドラッグハンドル行に表示） */
   mobileMenuContent?: ReactNode;
-  /** Popoverの保存位置（popoverモードのみ） */
-  popoverPosition?: PopoverPosition | null;
-  /** Popover位置変更時のコールバック */
-  onPopoverPositionChange?: (position: PopoverPosition) => void;
 }
 
 /**
  * Inspector共通シェル
  *
- * Sheet（サイドパネル）またはDialog（ポップアップ）として表示
- * - リサイズ機能（Sheetモード）
+ * PC: Popover（フローティング）、モバイル: Drawer（ボトムシート）
  * - z-index管理（STYLE_GUIDE準拠）
  * - アクセシビリティ対応
  *
@@ -66,7 +44,6 @@ interface InspectorShellProps {
  * <InspectorShell
  *   isOpen={isOpen}
  *   onClose={closeInspector}
- *   displayMode={displayMode}
  *   title="プランの詳細"
  * >
  *   <InspectorContent>...</InspectorContent>
@@ -76,21 +53,11 @@ interface InspectorShellProps {
 export function InspectorShell({
   isOpen,
   onClose,
-  displayMode,
   title,
   children,
-  resizable = true,
-  initialWidth = INSPECTOR_SIZE.default,
-  modal = false,
   mobileMenuContent,
-  popoverPosition,
-  onPopoverPositionChange,
 }: InspectorShellProps) {
   const isMobile = useMediaQuery('(max-width: 767px)');
-  const { inspectorWidth, isResizing, handleMouseDown } = useInspectorResize({
-    initialWidth,
-    enabled: displayMode === 'sheet' && resizable && !isMobile,
-  });
 
   // モバイルDrawerのスナップポイント状態
   const [snap, setSnap] = useState<number | string | null>(SNAP_POINTS[0]);
@@ -157,48 +124,9 @@ export function InspectorShell({
     );
   }
 
-  // PC: Sheet mode
-  if (displayMode === 'sheet') {
-    return (
-      <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()} modal={modal}>
-        <SheetContent
-          className="gap-0 overflow-y-auto p-0"
-          style={{
-            width: `${inspectorWidth}px`,
-            zIndex: zIndex.sheet,
-          }}
-          showCloseButton={false}
-        >
-          <SheetTitle className="sr-only">{title}</SheetTitle>
-
-          {/* リサイズハンドル */}
-          {resizable && (
-            <div
-              onMouseDown={handleMouseDown}
-              className={`hover:bg-primary-state-hover absolute top-0 left-0 z-20 h-full w-1 cursor-ew-resize ${
-                isResizing ? 'bg-primary' : ''
-              }`}
-              style={{ touchAction: 'none' }}
-              role="separator"
-              aria-orientation="vertical"
-              aria-label="リサイズハンドル"
-            />
-          )}
-
-          {children}
-        </SheetContent>
-      </Sheet>
-    );
-  }
-
-  // PC: Draggable Popover mode
+  // PC: Draggable Popover
   return (
-    <DraggableInspector
-      position={popoverPosition ?? null}
-      onPositionChange={onPopoverPositionChange ?? (() => {})}
-      onClose={onClose}
-      title={title}
-    >
+    <DraggableInspector onClose={onClose} title={title}>
       {children}
     </DraggableInspector>
   );

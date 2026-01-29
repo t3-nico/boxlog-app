@@ -18,7 +18,7 @@
  * - tooltip: ツールチップ（最前面）
  */
 export const zIndex = {
-  /** ドロップダウンメニュー、セレクト、ツールチップ */
+  /** ドロップダウンメニュー、セレクト（通常コンテキスト） */
   dropdown: 50,
 
   /** ポップオーバー（日付選択、カラーピッカーなど） */
@@ -38,6 +38,18 @@ export const zIndex = {
 
   /** コンテキストメニュー（右クリックメニュー） */
   contextMenu: 350,
+
+  /** カレンダードラッグ選択プレビュー */
+  calendarDragPreview: 1000,
+
+  /** ドラッグ可能インスペクター背景 */
+  draggableInspectorBackdrop: 1099,
+
+  /** ドラッグ可能インスペクター */
+  draggableInspector: 1100,
+
+  /** オーバーレイ上のドロップダウン（Inspector内など） */
+  overlayDropdown: 1200,
 
   /** ツールチップ（最前面に表示） */
   tooltip: 9999,

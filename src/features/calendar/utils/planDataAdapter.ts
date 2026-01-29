@@ -65,6 +65,7 @@ export function planToCalendarPlan(plan: PlanWithTagIds): CalendarPlan {
     duration: Math.round((endDate.getTime() - startDate.getTime()) / MS_PER_MINUTE), // minutes
     isMultiDay,
     isRecurring,
+    type: 'plan', // 明示的にPlan型を設定（Record と区別するため）
   };
 }
 
@@ -250,6 +251,7 @@ function occurrenceToCalendarPlan(
     duration: Math.round((endDate.getTime() - startDate.getTime()) / MS_PER_MINUTE),
     isMultiDay: false,
     isRecurring: true,
+    type: 'plan', // 明示的にPlan型を設定（Record と区別するため）
     // 繰り返し用の追加プロパティ
     calendarId: basePlan.id, // 元プランIDを保持（後方互換性）
     originalPlanId: basePlan.id, // 親プランID
@@ -261,3 +263,87 @@ function occurrenceToCalendarPlan(
 
 // 型をエクスポート
 export type { ExpandedOccurrence, PlanInstanceException };
+
+// ========================================
+// Record → CalendarPlan 変換
+// ========================================
+
+/**
+ * Record + Plan情報の型
+ * records.list から返される形式に合わせる
+ */
+interface RecordWithPlanInfo {
+  id: string;
+  plan_id: string | null; // Planなしでも作成可能
+  title?: string | null; // マイグレーション適用前はoptional
+  worked_at: string; // YYYY-MM-DD
+  start_time: string | null; // HH:MM:SS or HH:MM
+  end_time: string | null; // HH:MM:SS or HH:MM
+  duration_minutes: number;
+  fulfillment_score: number | null;
+  note: string | null;
+  created_at: string;
+  updated_at: string;
+  tagIds?: string[]; // Recordに紐づくタグID
+  plan?: {
+    id: string;
+    title: string;
+    status: string;
+  } | null;
+}
+
+/**
+ * RecordをCalendarPlan型に変換
+ * Records はカレンダー上で視覚的に区別される（type: 'record'）
+ */
+export function recordToCalendarPlan(record: RecordWithPlanInfo): CalendarPlan | null {
+  // start_time/end_time がない場合はカレンダー表示をスキップ
+  if (!record.start_time || !record.end_time) {
+    return null;
+  }
+
+  // worked_at (YYYY-MM-DD) と start_time/end_time (HH:MM:SS) を組み合わせて Date を作成
+  const parseTime = (dateStr: string, timeStr: string): Date => {
+    // timeStrが HH:MM 形式の場合は :00 を追加
+    const normalizedTime =
+      timeStr.includes(':') && timeStr.split(':').length === 2 ? `${timeStr}:00` : timeStr;
+    return new Date(`${dateStr}T${normalizedTime}`);
+  };
+
+  const startDate = parseTime(record.worked_at, record.start_time);
+  const endDate = parseTime(record.worked_at, record.end_time);
+  const createdAt = new Date(record.created_at);
+  const updatedAt = new Date(record.updated_at);
+
+  return {
+    id: `record-${record.id}`, // PlanのIDと区別するためにプレフィックスを付ける
+    title: record.title ?? record.plan?.title ?? 'Record',
+    description: record.note ?? undefined,
+    startDate,
+    endDate,
+    status: 'closed', // Records は完了済みの作業ログなので常に closed
+    color: '', // デフォルト色（タグ色はTagsContainerで表示）
+    tagIds: record.tagIds ?? [], // タグIDを引き継ぐ（Planと同様に表示）
+    createdAt,
+    updatedAt,
+    displayStartDate: startDate,
+    displayEndDate: endDate,
+    duration: record.duration_minutes,
+    isMultiDay: false,
+    isRecurring: false,
+    // Record固有フィールド
+    type: 'record',
+    recordId: record.id,
+    fulfillmentScore: record.fulfillment_score,
+    linkedPlanId: record.plan_id ?? undefined,
+    linkedPlanTitle: record.plan?.title,
+  };
+}
+
+/**
+ * 複数のRecordをCalendarPlan型に変換
+ * start_time/end_time がないRecordはスキップされる
+ */
+export function recordsToCalendarPlans(records: RecordWithPlanInfo[]): CalendarPlan[] {
+  return records.map(recordToCalendarPlan).filter((plan): plan is CalendarPlan => plan !== null);
+}

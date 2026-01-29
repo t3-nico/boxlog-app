@@ -315,7 +315,7 @@ export function createMockTag(
     color: '#3B82F6',
     is_active: true,
     parent_id: null,
-    sort_order: null,
+    sort_order: 0,
     description: null,
     icon: null,
     created_at: now,

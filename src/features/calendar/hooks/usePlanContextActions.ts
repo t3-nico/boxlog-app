@@ -6,19 +6,19 @@ import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
 import type { RecurringEditScope } from '@/features/plans/components/RecurringEditConfirmDialog';
 import { usePlanInstanceMutations } from '@/features/plans/hooks/usePlanInstances';
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
-import { usePlanTags } from '@/features/plans/hooks/usePlanTags';
 import { useDeleteConfirmStore } from '@/features/plans/stores/useDeleteConfirmStore';
+import { usePlanClipboardStore } from '@/features/plans/stores/usePlanClipboardStore';
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
 import { useRecurringEditConfirmStore } from '@/features/plans/stores/useRecurringEditConfirmStore';
 import { format } from 'date-fns';
+import { toast } from 'sonner';
 
 export function usePlanContextActions() {
-  const { openInspector } = usePlanInspectorStore();
+  const { openInspector, openInspectorWithDraft } = usePlanInspectorStore();
   const openDeleteDialog = useDeleteConfirmStore((state) => state.openDialog);
   const openRecurringDialog = useRecurringEditConfirmStore((state) => state.openDialog);
-  const { createPlan, deletePlan, updatePlan } = usePlanMutations();
+  const { deletePlan, updatePlan } = usePlanMutations();
   const { createInstance } = usePlanInstanceMutations();
-  const { addPlanTag } = usePlanTags();
 
   // 繰り返しプラン削除用のターゲットをrefで保持（ダイアログのコールバックで参照）
   const recurringDeleteTargetRef = useRef<CalendarPlan | null>(null);
@@ -111,40 +111,75 @@ export function usePlanContextActions() {
   );
 
   const handleDuplicatePlan = useCallback(
-    async (plan: CalendarPlan) => {
-      try {
-        // 日付をフォーマット
-        const dueDate = plan.startDate ? format(plan.startDate, 'yyyy-MM-dd') : undefined;
-        const startTime = plan.startDate ? plan.startDate.toISOString() : undefined;
-        const endTime = plan.endDate ? plan.endDate.toISOString() : undefined;
+    (plan: CalendarPlan) => {
+      // 日付をフォーマット
+      const dueDate = plan.startDate ? format(plan.startDate, 'yyyy-MM-dd') : null;
+      const startTime = plan.startDate ? plan.startDate.toISOString() : null;
+      const endTime = plan.endDate ? plan.endDate.toISOString() : null;
 
-        // プランを複製（タイトルに「のコピー」を追加）
-        // 繰り返しプランの場合は、その日のインスタンスを単発プランとして複製
-        const newPlan = await createPlan.mutateAsync({
-          title: `${plan.title}のコピー`,
-          description: plan.description ?? undefined,
-          status: 'open', // 複製時はopenにリセット
-          due_date: dueDate,
-          start_time: startTime,
-          end_time: endTime,
-          reminder_minutes: plan.reminder_minutes ?? undefined,
-          // 繰り返し設定はコピーしない（単発プランとして複製）
-        });
-
-        // タグも複製
-        if (plan.tagIds && plan.tagIds.length > 0) {
-          for (const tagId of plan.tagIds) {
-            await addPlanTag(newPlan.id, tagId);
-          }
-        }
-
-        // 複製したプランをInspectorで開く
-        openInspector(newPlan.id);
-      } catch {
-        // Error handled silently
-      }
+      // ドラフトモードで開く（複製元の情報をプリフィル）
+      // ユーザーが時間を変更してから保存できる
+      openInspectorWithDraft({
+        title: `${plan.title} (copy)`,
+        description: plan.description ?? null,
+        due_date: dueDate,
+        start_time: startTime,
+        end_time: endTime,
+      });
     },
-    [createPlan, addPlanTag, openInspector],
+    [openInspectorWithDraft],
+  );
+
+  const handleCopyPlan = useCallback((plan: CalendarPlan) => {
+    const startHour = plan.startDate?.getHours() ?? 0;
+    const startMinute = plan.startDate?.getMinutes() ?? 0;
+    const duration =
+      plan.endDate && plan.startDate
+        ? (plan.endDate.getTime() - plan.startDate.getTime()) / 60000
+        : 60;
+
+    usePlanClipboardStore.getState().copyPlan({
+      title: plan.title,
+      description: plan.description ?? null,
+      duration,
+      startHour,
+      startMinute,
+      tagIds: plan.tagIds,
+    });
+
+    toast.success('コピーしました');
+  }, []);
+
+  /**
+   * コピーしたプランをペースト
+   * @param targetDate ペースト先の日付
+   * @param targetHour ペースト先の時（指定しない場合はコピー元の時刻を使用）
+   * @param targetMinute ペースト先の分（指定しない場合はコピー元の分を使用）
+   */
+  const handlePastePlan = useCallback(
+    (targetDate: Date, targetHour?: number, targetMinute?: number) => {
+      const clipboard = usePlanClipboardStore.getState();
+      const copiedPlan = clipboard.copiedPlan;
+      if (!copiedPlan) return;
+
+      // ペースト先の日付 + 指定時刻（なければコピー元の時刻）
+      const startTime = new Date(targetDate);
+      const hour = targetHour ?? copiedPlan.startHour;
+      const minute = targetMinute ?? copiedPlan.startMinute;
+      startTime.setHours(hour, minute, 0, 0);
+
+      const endTime = new Date(startTime);
+      endTime.setMinutes(endTime.getMinutes() + copiedPlan.duration);
+
+      openInspectorWithDraft({
+        title: copiedPlan.title,
+        description: copiedPlan.description,
+        due_date: format(targetDate, 'yyyy-MM-dd'),
+        start_time: startTime.toISOString(),
+        end_time: endTime.toISOString(),
+      });
+    },
+    [openInspectorWithDraft],
   );
 
   const handleViewDetails = useCallback(
@@ -168,6 +203,8 @@ export function usePlanContextActions() {
     handleDeletePlan,
     handleEditPlan,
     handleDuplicatePlan,
+    handleCopyPlan,
+    handlePastePlan,
     handleViewDetails,
   };
 }

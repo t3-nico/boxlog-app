@@ -96,6 +96,10 @@ function findOverlapGroups(plans: TimedPlan[]): OverlapGroup[] {
 
 /**
  * グループ内のレイアウトを計算（Googleカレンダー準拠）
+ *
+ * 列配置の優先順位:
+ * 1. Plan（type !== 'record'）を左側（column: 0）に配置
+ * 2. Record（type === 'record'）を右側に配置
  */
 function calculateGroupLayout(plans: TimedPlan[]): PlanLayout[] {
   const layouts: PlanLayout[] = [];
@@ -119,7 +123,17 @@ function calculateGroupLayout(plans: TimedPlan[]): PlanLayout[] {
   // 各プランにカラムを割り当て
   const assignments = new Map<string, number>();
 
-  plans.forEach((plan) => {
+  // Planを先に処理してcolumn: 0を優先的に割り当て、Recordを後に処理
+  const sortedForAssignment = [...plans].sort((a, b) => {
+    const aIsRecord = a.type === 'record';
+    const bIsRecord = b.type === 'record';
+    // Planを先（左側）、Recordを後（右側）
+    if (aIsRecord !== bIsRecord) return aIsRecord ? 1 : -1;
+    // 同じタイプなら開始時間順
+    return new Date(a.start).getTime() - new Date(b.start).getTime();
+  });
+
+  sortedForAssignment.forEach((plan) => {
     const usedColumns = new Set<number>();
 
     // このプランと競合するプランが使用しているカラムを収集

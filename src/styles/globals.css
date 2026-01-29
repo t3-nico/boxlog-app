@@ -35,6 +35,8 @@
 
   /* Calendar Boxes（カレンダー専用Surface） */
   --plan-box: oklch(0.88 0 0);                    /* vs background(0.99): より強調 */
+  --record-box: oklch(0.92 0.08 55);              /* Record用: 暖色オレンジ系 */
+  --record-border: oklch(0.65 0.15 55);           /* Record左ボーダー: オレンジ系 */
 
   /* 互換性エイリアス（shadcn/ui用） */
   --card-foreground: oklch(0.25 0 0);
@@ -104,6 +106,8 @@
 
   /* Calendar Boxes（カレンダー専用Surface） */
   --plan-box: oklch(0.16 0 0);                    /* vs background(0.24): より強調 */
+  --record-box: oklch(0.22 0.05 55);              /* Record用: 暖色オレンジ系 */
+  --record-border: oklch(0.55 0.12 55);           /* Record左ボーダー: オレンジ系 */
 
   /* 互換性エイリアス（shadcn/ui用） */
   --card-foreground: oklch(0.9219 0 0);
@@ -220,6 +224,8 @@
   --color-container: var(--container);
   --color-overlay: var(--overlay);
   --color-plan-box: var(--plan-box);
+  --color-record-box: var(--record-box);
+  --color-record-border: var(--record-border);
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
@@ -1578,5 +1584,36 @@ img {
 /* カード用 */
 .aspect-card {
   aspect-ratio: 3 / 2;
+}
+
+/* ============================================
+ * timepicker-ui カスタムスタイル
+ * セマンティックトークンを適用してデザインシステムに統合
+ * ============================================ */
+.timepicker-ui-wrapper-active {
+  --pm-bg-color: var(--popover);
+  --pm-s-line-color: var(--primary);
+  --pm-bg-time-number-select: var(--primary);
+  --pm-text-time-number-select: var(--primary-foreground);
+  --pm-text-color: var(--foreground);
+  --pm-clock-hand-color: var(--primary);
+  --pm-clock-hand-circle-color: var(--primary);
+  --pm-clock-face-bg: var(--card);
+  --pm-clock-face-bg-secondary: color-mix(in oklch, var(--card) 80%, var(--foreground) 20%);
+  --pm-button-text-color: var(--primary);
+  --pm-keyboard-icon-color: var(--muted-foreground);
+  --pm-backdrop-bg: oklch(0 0 0 / 0.5);
+}
+
+/* モーダルを最前面に表示 */
+.timepicker-ui-wrapper-active {
+  z-index: 9999 !important;
+}
+
+/* ダークモード対応 */
+.dark .timepicker-ui-wrapper-active {
+  --pm-bg-color: var(--popover);
+  --pm-clock-face-bg: var(--card);
+  --pm-clock-face-bg-secondary: color-mix(in oklch, var(--card) 70%, var(--foreground) 30%);
 }
 

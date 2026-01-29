@@ -241,6 +241,10 @@
       }
     },
     "toast": {
+      "created": "タグ「{name}」を作成しました",
+      "createFailed": "タグの作成に失敗しました",
+      "updated": "タグ「{name}」を更新しました",
+      "updateFailed": "タグの更新に失敗しました",
       "groupNameRequired": "グループ名を入力してください",
       "groupCreated": "グループ「{name}」を作成しました",
       "groupNameChanged": "グループ名を「{name}」に変更しました",

@@ -1,6 +1,15 @@
 'use client';
 
-import { Calendar, CheckCircle2, Circle, Copy, Pencil, Tag, Trash2 } from 'lucide-react';
+import {
+  Calendar,
+  CheckCircle2,
+  Circle,
+  ClipboardCopy,
+  Copy,
+  Pencil,
+  Tag,
+  Trash2,
+} from 'lucide-react';
 
 import type { PlanStatus } from '@/features/plans/types/plan';
 
@@ -24,6 +33,7 @@ interface PlanActionMenuItemsProps {
   /** アクションハンドラー */
   onEdit?: ((item: PlanItem) => void) | undefined;
   onDuplicate?: ((item: PlanItem) => void) | undefined;
+  onCopy?: ((item: PlanItem) => void) | undefined;
   onAddTags?: ((item: PlanItem) => void) | undefined;
   onChangeDueDate?: ((item: PlanItem) => void) | undefined;
   onStatusChange?: ((item: PlanItem, status: PlanStatus) => void) | undefined;
@@ -42,6 +52,7 @@ export function PlanActionMenuItems({
   renderSeparator,
   onEdit,
   onDuplicate,
+  onCopy,
   onAddTags,
   onChangeDueDate,
   onStatusChange,
@@ -49,7 +60,7 @@ export function PlanActionMenuItems({
 }: PlanActionMenuItemsProps) {
   const groups: ActionGroup<PlanItem>[] = [];
 
-  // 編集・複製・タグ・期限グループ
+  // 編集・複製・コピー・タグ・期限グループ
   const editActions = [];
   if (onEdit) {
     editActions.push({
@@ -65,6 +76,14 @@ export function PlanActionMenuItems({
       icon: <Copy className="mr-2 size-4" />,
       label: '複製',
       onClick: onDuplicate,
+    });
+  }
+  if (onCopy) {
+    editActions.push({
+      key: 'copy',
+      icon: <ClipboardCopy className="mr-2 size-4" />,
+      label: 'コピー',
+      onClick: onCopy,
     });
   }
   if (onAddTags) {

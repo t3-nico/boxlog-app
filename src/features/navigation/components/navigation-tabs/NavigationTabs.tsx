@@ -37,8 +37,8 @@ export function NavigationTabs() {
       {
         id: 'record',
         icon: Clock,
-        label: 'Record', // TODO: i18n対応
-        url: `/${locale}/record`, // 暫定: /record ページは未作成
+        label: t('sidebar.navigation.record'),
+        url: `/${locale}/record`,
       },
       {
         id: 'stats',

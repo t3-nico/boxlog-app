@@ -15,16 +15,16 @@ import { RecurringIndicator } from '@/features/plans/components/shared/Recurring
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
 import { useplanTags } from '@/features/plans/hooks/usePlanTags';
 import { useDeleteConfirmStore } from '@/features/plans/stores/useDeleteConfirmStore';
+import { usePlanClipboardStore } from '@/features/plans/stores/usePlanClipboardStore';
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
 import { useRecurringEditConfirmStore } from '@/features/plans/stores/useRecurringEditConfirmStore';
 import type { PlanStatus } from '@/features/plans/types/plan';
 import { useDateFormat } from '@/features/settings/hooks/useDateFormat';
+import { useTableColumnStore, useTableFocusStore, useTableSelectionStore } from '@/features/table';
 import { cn } from '@/lib/utils';
 import { useCallback, useEffect, useRef } from 'react';
+import { toast } from 'sonner';
 import type { PlanItem } from '../../hooks/usePlanData';
-import { usePlanColumnStore } from '../../stores/usePlanColumnStore';
-import { usePlanFocusStore } from '../../stores/usePlanFocusStore';
-import { usePlanSelectionStore } from '../../stores/usePlanSelectionStore';
 import { DateTimeUnifiedCell } from './DateTimeUnifiedCell';
 import { PlanActionMenuItems } from './PlanActionMenuItems';
 import { TagsCell } from './TagsCell';
@@ -50,9 +50,9 @@ interface PlanTableRowProps {
  */
 export function PlanTableRow({ item }: PlanTableRowProps) {
   const { openInspector } = usePlanInspectorStore();
-  const { isSelected, setSelectedIds } = usePlanSelectionStore();
-  const { getVisibleColumns } = usePlanColumnStore();
-  const { focusedId, setFocusedId } = usePlanFocusStore();
+  const { isSelected, setSelectedIds } = useTableSelectionStore();
+  const { getVisibleColumns } = useTableColumnStore();
+  const { focusedId, setFocusedId } = useTableFocusStore();
   const { updatePlan, deletePlan } = usePlanMutations();
   const { addplanTag, removeplanTag } = useplanTags();
   const openDeleteDialog = useDeleteConfirmStore((state) => state.openDialog);
@@ -188,8 +188,35 @@ export function PlanTableRow({ item }: PlanTableRowProps) {
     openInspector(item.id);
   };
 
-  const handleDuplicate = (_item: PlanItem) => {
-    // Stub: 複製機能は未実装
+  const handleDuplicate = (item: PlanItem) => {
+    // ドラフトモードで開く（複製元の情報をプリフィル）
+    usePlanInspectorStore.getState().openInspectorWithDraft({
+      title: `${item.title} (copy)`,
+      description: item.description ?? null,
+      due_date: item.due_date ?? null,
+      start_time: item.start_time ?? null,
+      end_time: item.end_time ?? null,
+    });
+  };
+
+  const handleCopy = (item: PlanItem) => {
+    // 開始・終了時刻をパース
+    const startDate = item.start_time ? new Date(item.start_time) : null;
+    const endDate = item.end_time ? new Date(item.end_time) : null;
+    const startHour = startDate?.getHours() ?? 0;
+    const startMinute = startDate?.getMinutes() ?? 0;
+    const duration = startDate && endDate ? (endDate.getTime() - startDate.getTime()) / 60000 : 60;
+
+    usePlanClipboardStore.getState().copyPlan({
+      title: item.title,
+      description: item.description ?? null,
+      duration,
+      startHour,
+      startMinute,
+      tagIds: item.tagIds ?? undefined,
+    });
+
+    toast.success('コピーしました');
   };
 
   const handleAddTags = (_item: PlanItem) => {
@@ -256,13 +283,13 @@ export function PlanTableRow({ item }: PlanTableRowProps) {
                 if (selected) {
                   // 選択解除: 選択済みIDから削除
                   const newSelection = Array.from(
-                    usePlanSelectionStore.getState().getSelectedIds(),
+                    useTableSelectionStore.getState().getSelectedIds(),
                   ).filter((id) => id !== item.id);
                   setSelectedIds(newSelection);
                 } else {
                   // 選択: 選択済みIDに追加
                   const newSelection = [
-                    ...Array.from(usePlanSelectionStore.getState().getSelectedIds()),
+                    ...Array.from(useTableSelectionStore.getState().getSelectedIds()),
                     item.id,
                   ];
                   setSelectedIds(newSelection);
@@ -377,6 +404,7 @@ export function PlanTableRow({ item }: PlanTableRowProps) {
           item={item}
           onEdit={handleEdit}
           onDuplicate={handleDuplicate}
+          onCopy={handleCopy}
           onAddTags={handleAddTags}
           onChangeDueDate={handleChangeDueDate}
           onStatusChange={handleStatusChange}

@@ -11,10 +11,8 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useTableColumnStore, useTableGroupStore, type GroupByField } from '@/features/table';
 import { Columns3, Group, RotateCcw } from 'lucide-react';
-import { usePlanColumnStore } from '../../stores/usePlanColumnStore';
-import { usePlanGroupStore } from '../../stores/usePlanGroupStore';
-import type { GroupByField } from '../../types/group';
 
 /**
  * グループ化オプション
@@ -36,10 +34,10 @@ const GROUP_BY_OPTIONS: Array<{ value: GroupByField; label: string }> = [
  */
 export function PlanSettingsContent() {
   // グループ化
-  const { groupBy, setGroupBy } = usePlanGroupStore();
+  const { groupBy, setGroupBy } = useTableGroupStore();
 
   // 列設定
-  const { columns, toggleColumnVisibility, resetColumns } = usePlanColumnStore();
+  const { columns, toggleColumnVisibility, resetColumns } = useTableColumnStore();
   const configurableColumns = columns.filter((col) => col.id !== 'selection');
 
   // 非表示の列数をカウント

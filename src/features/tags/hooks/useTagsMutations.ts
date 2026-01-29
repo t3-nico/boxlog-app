@@ -50,6 +50,7 @@ function isLegacyTagInput(input: UpdateTagInput): input is LegacyTagUpdateInput 
 // タグ作成フック（楽観的更新付き）
 export function useCreateTag() {
   const utils = trpc.useUtils();
+  const t = useTranslations('tags');
   const incrementMutation = useTagCacheStore((state) => state.incrementMutation);
   const decrementMutation = useTagCacheStore((state) => state.decrementMutation);
 
@@ -115,14 +116,14 @@ export function useCreateTag() {
       filterStore.removeTag(context.tempId);
       filterStore.initializeWithTags([result.id]);
 
-      toast.success(`タグ「${result.name}」を作成しました`);
+      toast.success(t('toast.created', { name: result.name }));
     },
     onError: (_err, _input, context) => {
       if (context?.previousData) utils.tags.list.setData(undefined, context.previousData);
       if (context?.previousParentTags)
         utils.tags.listParentTags.setData(undefined, context.previousParentTags);
       if (context?.tempId) useCalendarFilterStore.getState().removeTag(context.tempId);
-      toast.error('タグの作成に失敗しました');
+      toast.error(t('toast.createFailed'));
     },
     onSettled: () => {
       decrementMutation();

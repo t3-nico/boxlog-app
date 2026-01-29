@@ -7,12 +7,7 @@
 import { useTranslations } from 'next-intl';
 import React, { memo, useCallback, useEffect, useRef } from 'react';
 
-import {
-  GRID_BACKGROUND,
-  HOUR_HEIGHT,
-  SCROLL_TO_HOUR,
-  TIME_COLUMN_WIDTH,
-} from '../../constants/grid.constants';
+import { GRID_BACKGROUND, HOUR_HEIGHT, TIME_COLUMN_WIDTH } from '../../constants/grid.constants';
 import { useTimeSelection } from '../../hooks/useTimeSelection';
 import { useViewDimensions } from '../../hooks/useViewDimensions';
 import type { TimeGridProps } from '../../types/grid.types';
@@ -31,8 +26,10 @@ export const TimeGrid = memo<TimeGridProps>(function TimeGrid({
   children,
   onTimeClick,
   onTimeRangeSelect,
-  scrollToHour = SCROLL_TO_HOUR,
+  scrollToHour,
 }) {
+  // 現在時刻を初期スクロール位置のデフォルトとして使用
+  const effectiveScrollToHour = scrollToHour ?? new Date().getHours();
   const t = useTranslations('calendar');
   const { containerRef, dimensions } = useViewDimensions({
     hourHeight,
@@ -59,7 +56,7 @@ export const TimeGrid = memo<TimeGridProps>(function TimeGrid({
   useEffect(() => {
     if (!hasScrolledToInitial.current && containerRef.current) {
       const targetPosition = calculateScrollPosition(
-        scrollToHour,
+        effectiveScrollToHour,
         hourHeight,
         dimensions.containerHeight,
       );
@@ -69,7 +66,7 @@ export const TimeGrid = memo<TimeGridProps>(function TimeGrid({
       });
       hasScrolledToInitial.current = true;
     }
-  }, [scrollToHour, hourHeight, dimensions.containerHeight, containerRef]);
+  }, [effectiveScrollToHour, hourHeight, dimensions.containerHeight, containerRef]);
 
   // グリッドクリックハンドラー（ドラッグしていない場合のみ）
   const handleGridClick = useCallback(
