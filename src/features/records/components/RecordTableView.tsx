@@ -36,7 +36,9 @@ function formatDuration(minutes: number): string {
 }
 
 /**
- * 充実度をアイコンで表示
+ * 充実度スコアを色付き絵文字で表示
+ * @param score 1-5の整数（1=最低、5=最高）、nullの場合は「-」を表示
+ * @returns 色付きの絵文字（😢😕😐🙂😊）
  */
 function FulfillmentScore({ score }: { score: number | null }) {
   if (!score) return <span className="text-muted-foreground">-</span>;
@@ -204,9 +206,8 @@ export function RecordTableView() {
                     <TableCell>
                       <Checkbox
                         onClick={(e) => e.stopPropagation()}
-                        onCheckedChange={() => {
-                          // TODO: 選択機能
-                        }}
+                        // 選択機能は将来実装予定（複数レコード一括操作用）
+                        disabled
                       />
                     </TableCell>
                     <TableCell className="font-medium">{record.worked_at}</TableCell>
