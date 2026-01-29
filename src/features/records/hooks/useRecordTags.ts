@@ -236,8 +236,7 @@ export function useRecordTags() {
       try {
         await addTagMutation.mutateAsync({ recordId, tagId });
         return true;
-      } catch (error) {
-        console.error('Failed to add tag:', error);
+      } catch {
         return false;
       }
     },
@@ -252,8 +251,7 @@ export function useRecordTags() {
       try {
         await removeTagMutation.mutateAsync({ recordId, tagId });
         return true;
-      } catch (error) {
-        console.error('Failed to remove tag:', error);
+      } catch {
         return false;
       }
     },
