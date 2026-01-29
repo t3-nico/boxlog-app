@@ -1,6 +1,6 @@
 'use client';
 
-import { AlertCircle, Check, FileText, FolderOpen, Smile, Tag, X } from 'lucide-react';
+import { AlertCircle, FileText, FolderOpen, Smile, Tag, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useState } from 'react';
 
@@ -65,8 +65,8 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
     // 時間重複エラー状態（視覚的フィードバック用）
     const [timeConflictError, setTimeConflictError] = useState(false);
 
-    // Plan一覧取得
-    const { data: plans } = api.plans.list.useQuery({ status: 'open' });
+    // Plan一覧取得（全ステータス）
+    const { data: plans } = api.plans.list.useQuery({});
 
     // Mutations
     const { createRecord } = useRecordMutations();
@@ -127,11 +127,18 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
     const [isScorePopoverOpen, setIsScorePopoverOpen] = useState(false);
     const [isNotePopoverOpen, setIsNotePopoverOpen] = useState(false);
 
-    // Plan検索フィルタリング
+    // Plan: updated_at降順ソート + 検索フィルタリング
     const filteredPlans = useMemo(() => {
       if (!plans) return [];
-      if (!planSearchQuery) return plans;
-      return plans.filter((p) => p.title.toLowerCase().includes(planSearchQuery.toLowerCase()));
+
+      // updated_at降順でソート
+      const sorted = [...plans].sort(
+        (a, b) => new Date(b.updated_at || 0).getTime() - new Date(a.updated_at || 0).getTime(),
+      );
+
+      // 検索フィルタリング
+      if (!planSearchQuery) return sorted;
+      return sorted.filter((p) => p.title.toLowerCase().includes(planSearchQuery.toLowerCase()));
     }, [plans, planSearchQuery]);
 
     // 初期値が変わったら反映
@@ -463,7 +470,7 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
               </PopoverTrigger>
             </HoverTooltip>
             <PopoverContent
-              className="w-[240px] p-0"
+              className="w-[400px] p-0"
               side="bottom"
               align="start"
               sideOffset={8}
@@ -475,25 +482,48 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
                   value={planSearchQuery}
                   onValueChange={setPlanSearchQuery}
                 />
-                <CommandList className="max-h-[200px]">
+                <CommandList className="max-h-[280px]">
                   <CommandEmpty>Planがありません</CommandEmpty>
                   <CommandGroup>
-                    {filteredPlans.map((plan) => (
-                      <CommandItem
-                        key={plan.id}
-                        value={plan.id}
-                        onSelect={() => handlePlanChange(plan.id)}
-                        className="cursor-pointer"
-                      >
-                        <Check
+                    {filteredPlans.map((plan) => {
+                      const planTags = plan.tagIds
+                        ?.map((id) => allTags.find((t) => t.id === id))
+                        .filter(Boolean);
+                      return (
+                        <CommandItem
+                          key={plan.id}
+                          value={plan.id}
+                          onSelect={() => handlePlanChange(plan.id)}
                           className={cn(
-                            'mr-2 size-4',
-                            formData.plan_id === plan.id ? 'opacity-100' : 'opacity-0',
+                            'cursor-pointer',
+                            formData.plan_id === plan.id && 'bg-accent',
                           )}
-                        />
-                        <span className="truncate">{plan.title}</span>
-                      </CommandItem>
-                    ))}
+                        >
+                          <span className="truncate">{plan.title}</span>
+                          {planTags && planTags.length > 0 && (
+                            <div className="ml-auto flex shrink-0 gap-1 pl-2">
+                              {planTags.slice(0, 2).map((tag) => (
+                                <span
+                                  key={tag!.id}
+                                  className="rounded px-1 py-0.5 text-xs"
+                                  style={{
+                                    backgroundColor: tag!.color ? `${tag!.color}20` : undefined,
+                                    color: tag!.color || undefined,
+                                  }}
+                                >
+                                  {tag!.name}
+                                </span>
+                              ))}
+                              {planTags.length > 2 && (
+                                <span className="text-muted-foreground text-xs">
+                                  +{planTags.length - 2}
+                                </span>
+                              )}
+                            </div>
+                          )}
+                        </CommandItem>
+                      );
+                    })}
                   </CommandGroup>
                 </CommandList>
                 {formData.plan_id && (
