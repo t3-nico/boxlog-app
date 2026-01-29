@@ -1,7 +1,7 @@
 import type { PlanStatus } from '@/features/plans/types/plan';
+import type { GroupByField, GroupedData } from '@/features/table';
 import { isBefore, isToday, isTomorrow, isWithinInterval, startOfDay } from 'date-fns';
 import type { PlanItem } from '../hooks/usePlanData';
-import type { GroupByField, GroupedData } from '../types/group';
 
 /**
  * ステータスラベルマップ

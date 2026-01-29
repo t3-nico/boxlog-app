@@ -2,9 +2,9 @@
 
 import { TableCell, TableRow } from '@/components/ui/table';
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
+import { useTableColumnStore } from '@/features/table';
 import { Plus } from 'lucide-react';
 import { forwardRef, useImperativeHandle } from 'react';
-import { usePlanColumnStore } from '../../stores/usePlanColumnStore';
 
 /**
  * PlanTableRowCreate コンポーネントの外部から呼び出せるメソッド
@@ -30,7 +30,7 @@ export interface PlanTableRowCreateHandle {
  * ```
  */
 export const PlanTableRowCreate = forwardRef<PlanTableRowCreateHandle>((_props, ref) => {
-  const { getVisibleColumns } = usePlanColumnStore();
+  const { getVisibleColumns } = useTableColumnStore();
   const { openInspectorWithDraft } = usePlanInspectorStore();
   const visibleColumns = getVisibleColumns();
 

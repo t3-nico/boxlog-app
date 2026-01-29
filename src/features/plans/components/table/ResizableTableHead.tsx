@@ -1,12 +1,14 @@
 'use client';
 
 import { TableHead } from '@/components/ui/table';
+import {
+  useTableColumnStore,
+  useTableSortStore,
+  type ColumnId,
+  type SortField,
+} from '@/features/table';
 import { ArrowDown, ArrowUp, ArrowUpDown, type LucideIcon } from 'lucide-react';
 import { useState } from 'react';
-import type { ColumnId } from '../../stores/usePlanColumnStore';
-import { usePlanColumnStore } from '../../stores/usePlanColumnStore';
-import type { SortField } from '../../stores/usePlanSortStore';
-import { usePlanSortStore } from '../../stores/usePlanSortStore';
 
 interface ResizableTableHeadProps {
   /** 列ID */
@@ -44,8 +46,8 @@ export function ResizableTableHead({
   sortField,
   icon: ColumnIcon,
 }: ResizableTableHeadProps) {
-  const { columns, setColumnWidth } = usePlanColumnStore();
-  const { sortField: currentSortField, sortDirection, setSortField } = usePlanSortStore();
+  const { columns, setColumnWidth } = useTableColumnStore();
+  const { sortField: currentSortField, sortDirection, setSortField } = useTableSortStore();
   const [isResizing, setIsResizing] = useState(false);
 
   const column = columns.find((col) => col.id === columnId);

@@ -1,7 +1,7 @@
 import { Badge } from '@/components/ui/badge';
 import { TableCell, TableRow } from '@/components/ui/table';
+import { useTableGroupStore } from '@/features/table';
 import { ChevronDown, ChevronRight } from 'lucide-react';
-import { usePlanGroupStore } from '../../stores/usePlanGroupStore';
 
 interface GroupHeaderProps {
   /** グループキー */
@@ -32,7 +32,7 @@ interface GroupHeaderProps {
  * ```
  */
 export function GroupHeader({ groupKey, groupLabel, count, columnCount }: GroupHeaderProps) {
-  const { collapsedGroups, toggleGroupCollapse } = usePlanGroupStore();
+  const { collapsedGroups, toggleGroupCollapse } = useTableGroupStore();
   const isCollapsed = collapsedGroups.has(groupKey);
 
   return (

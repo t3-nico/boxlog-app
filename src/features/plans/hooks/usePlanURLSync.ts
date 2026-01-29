@@ -3,9 +3,9 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useRef } from 'react';
 
+import { useTablePaginationStore, useTableSortStore } from '@/features/table';
+
 import { usePlanFilterStore } from '../stores/usePlanFilterStore';
-import { usePlanPaginationStore } from '../stores/usePlanPaginationStore';
-import { usePlanSortStore } from '../stores/usePlanSortStore';
 
 /**
  * Plan URL同期フック
@@ -34,14 +34,14 @@ export function usePlanURLSync() {
   const searchParams = useSearchParams();
 
   // Pagination store
-  const currentPage = usePlanPaginationStore((state) => state.currentPage);
-  const setCurrentPage = usePlanPaginationStore((state) => state.setCurrentPage);
+  const currentPage = useTablePaginationStore((state) => state.currentPage);
+  const setCurrentPage = useTablePaginationStore((state) => state.setCurrentPage);
 
   // Sort store
-  const sortField = usePlanSortStore((state) => state.sortField);
-  const sortDirection = usePlanSortStore((state) => state.sortDirection);
-  const setSort = usePlanSortStore((state) => state.setSort);
-  const clearSort = usePlanSortStore((state) => state.clearSort);
+  const sortField = useTableSortStore((state) => state.sortField);
+  const sortDirection = useTableSortStore((state) => state.sortDirection);
+  const setSort = useTableSortStore((state) => state.setSort);
+  const clearSort = useTableSortStore((state) => state.clearSort);
 
   // Filter store (検索のみURL同期)
   const search = usePlanFilterStore((state) => state.search);

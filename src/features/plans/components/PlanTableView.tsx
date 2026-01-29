@@ -5,12 +5,21 @@ import { Calendar, ChevronDown, FileText, Plus } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { LoadingSpinner } from '@/components/common/Loading/LoadingStates';
+import { SelectionBar } from '@/components/common/SelectionBar';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MEDIA_QUERIES } from '@/config/ui/breakpoints';
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
-import { TableNavigation, TablePagination, type TableNavigationConfig } from '@/features/table';
+import {
+  TableNavigation,
+  TablePagination,
+  useTableGroupStore,
+  useTablePaginationStore,
+  useTableSelectionStore,
+  useTableSortStore,
+  type TableNavigationConfig,
+} from '@/features/table';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { api } from '@/lib/trpc';
 import { useTranslations } from 'next-intl';
@@ -19,16 +28,11 @@ import type { PlanItem } from '../hooks/usePlanData';
 import { usePlanData } from '../hooks/usePlanData';
 import { usePlanURLSync } from '../hooks/usePlanURLSync';
 import { usePlanFilterStore } from '../stores/usePlanFilterStore';
-import { usePlanGroupStore } from '../stores/usePlanGroupStore';
-import { usePlanPaginationStore } from '../stores/usePlanPaginationStore';
-import { usePlanSelectionStore } from '../stores/usePlanSelectionStore';
-import { usePlanSortStore } from '../stores/usePlanSortStore';
 import { usePlanViewStore } from '../stores/usePlanViewStore';
 import { BulkDatePickerDialog } from './table/BulkDatePickerDialog';
 import { BulkTagSelectDialog } from './table/BulkTagSelectDialog';
 import { PlanFilterContent } from './table/PlanFilterContent';
 import { PlanSelectionActions } from './table/PlanSelectionActions';
-import { PlanSelectionBar } from './table/PlanSelectionBar';
 import { PlanSettingsContent } from './table/PlanSettingsContent';
 import { PlanTableContent } from './table/PlanTableContent';
 import { type PlanTableRowCreateHandle } from './table/PlanTableRowCreate';
@@ -79,25 +83,25 @@ export function PlanTableView() {
   const setIsSearchOpen = usePlanFilterStore((state) => state.setIsSearchOpen);
 
   // ソート関連
-  const setSort = usePlanSortStore((state) => state.setSort);
+  const setSort = useTableSortStore((state) => state.setSort);
 
   // ページネーション関連
-  const currentPage = usePlanPaginationStore((state) => state.currentPage);
-  const setCurrentPage = usePlanPaginationStore((state) => state.setCurrentPage);
+  const currentPage = useTablePaginationStore((state) => state.currentPage);
+  const setCurrentPage = useTablePaginationStore((state) => state.setCurrentPage);
 
   // テーブルコンテナref（動的ページサイズ計算用）
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const pageSize = useDynamicPageSize(tableContainerRef);
 
   // 選択関連
-  const selectedIds = usePlanSelectionStore((state) => state.selectedIds);
-  const clearSelection = usePlanSelectionStore((state) => state.clearSelection);
+  const selectedIds = useTableSelectionStore((state) => state.selectedIds);
+  const clearSelection = useTableSelectionStore((state) => state.clearSelection);
 
   // ビュー関連
   const getActiveView = usePlanViewStore((state) => state.getActiveView);
 
   // グループ化関連（ページネーション表示判定用）
-  const groupBy = usePlanGroupStore((state) => state.groupBy);
+  const groupBy = useTableGroupStore((state) => state.groupBy);
 
   // モバイル判定
   const isMobile = useMediaQuery(MEDIA_QUERIES.mobile);
@@ -113,9 +117,9 @@ export function PlanTableView() {
   const [showTagDialog, setShowTagDialog] = useState(false);
 
   // ソート状態取得（usePlanDataより前に取得）
-  const sortField = usePlanSortStore((state) => state.sortField);
-  const sortDirection = usePlanSortStore((state) => state.sortDirection);
-  const clearSort = usePlanSortStore((state) => state.clearSort);
+  const sortField = useTableSortStore((state) => state.sortField);
+  const sortDirection = useTableSortStore((state) => state.sortDirection);
+  const clearSort = useTableSortStore((state) => state.clearSort);
 
   // データ取得（ソートオプション付き）
   // 認証エラーはグローバルハンドラーで自動リダイレクトされるため、errorは不要
@@ -205,7 +209,7 @@ export function PlanTableView() {
 
   // フィルターリセット
   const resetFilters = usePlanFilterStore((state) => state.reset);
-  const setGroupBy = usePlanGroupStore((state) => state.setGroupBy);
+  const setGroupBy = useTableGroupStore((state) => state.setGroupBy);
 
   // ソートフィールドオプション（テーブルヘッダーと同じアイコン）
   const sortFieldOptions = useMemo(
@@ -316,7 +320,7 @@ export function PlanTableView() {
     <div id="inbox-table-view-panel" role="tabpanel" className="flex h-full flex-col">
       {/* ツールバー または 選択バー（Googleドライブ風） */}
       {selectedCount > 0 ? (
-        <PlanSelectionBar
+        <SelectionBar
           selectedCount={selectedCount}
           onClearSelection={clearSelection}
           actions={
@@ -392,7 +396,7 @@ export function PlanTableView() {
         className="flex flex-1 flex-col overflow-hidden px-4"
         onClick={(e) => {
           if (e.target === e.currentTarget) {
-            usePlanSelectionStore.getState().clearSelection();
+            useTableSelectionStore.getState().clearSelection();
           }
         }}
       >

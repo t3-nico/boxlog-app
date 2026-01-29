@@ -388,10 +388,3 @@ export function usePlanData(filters: PlanFilters = {}, sort?: PlanSortOptions) {
 export function usePlanPlans(filters: PlanFilters = {}, sort?: PlanSortOptions) {
   return usePlanData(filters, sort);
 }
-
-/**
- * InboxItem型（PlanItemのエイリアス）
- * ボードコンポーネント等との後方互換性のため
- * @deprecated PlanItem を使用してください
- */
-export type InboxItem = PlanItem;
