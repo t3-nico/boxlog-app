@@ -11,7 +11,6 @@
 import { useQueryClient } from '@tanstack/react-query';
 
 import type { Tag } from '@/features/tags/types';
-import { logger } from '@/lib/logger';
 import { trpc } from '@/lib/trpc/client';
 
 // 後方互換性のための入力型
@@ -189,33 +188,4 @@ export function useDeleteTagGroup() {
       queryClient.invalidateQueries({ queryKey: ['tags'] });
     },
   });
-}
-
-/**
- * 親タグの並び替え（バルク更新）
- * @deprecated この機能は現在使用されていません
- */
-export function useReorderTagGroups() {
-  const queryClient = useQueryClient();
-  const utils = trpc.useUtils();
-
-  // TODO: tags router に reorder endpoint を追加する場合はここを更新
-  // 現在は未使用のため、空のミューテーションを返す
-  return {
-    mutate: (_input: { items: Array<{ id: string; sort_order: number }> }) => {
-      logger.warn('useReorderTagGroups is not implemented yet');
-    },
-    mutateAsync: async (_input: { items: Array<{ id: string; sort_order: number }> }) => {
-      logger.warn('useReorderTagGroups is not implemented yet');
-      utils.tags.listParentTags.invalidate();
-      queryClient.invalidateQueries({ queryKey: tagGroupKeys.all });
-    },
-    isLoading: false,
-    isPending: false,
-    isError: false,
-    error: null,
-    isSuccess: false,
-    data: undefined,
-    reset: () => {},
-  };
 }
