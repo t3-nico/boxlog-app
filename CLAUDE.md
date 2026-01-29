@@ -34,6 +34,23 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | **状態管理**       | Zustand（グローバル）, useState（ローカル）         |
 | **データ**         | Supabase, tRPC v11, Zod                             |
 | **UI**             | shadcn/ui                                           |
+| **CI/品質**        | Lighthouse CI, Vitest, Playwright                   |
+| **アナリティクス** | PostHog, Sentry                                     |
+
+## 🏗️ 主要機能（Features）
+
+| 機能           | ディレクトリ             | 説明                                       |
+| -------------- | ------------------------ | ------------------------------------------ |
+| **Plans**      | `src/features/plans`     | プラン（タスク）管理、タイムボクシング     |
+| **Records**    | `src/features/records`   | 時間記録、実績管理                         |
+| **Calendar**   | `src/features/calendar`  | カレンダービュー、ドラッグ&ドロップ        |
+| **Tags**       | `src/features/tags`      | タグ管理、親子階層モデル                   |
+| **Stats**      | `src/features/stats`     | 統計・分析、ヒートマップ                   |
+| **Inspector**  | `src/features/inspector` | 詳細パネル、プラン/レコード編集            |
+| **Auth**       | `src/features/auth`      | 認証、Supabase Auth連携                    |
+| **Settings**   | `src/features/settings`  | ユーザー設定、通知設定                     |
+| **Navigation** | `src/features/navigation`| サイドバー、ナビゲーションタブ             |
+| **Search**     | `src/features/search`    | グローバル検索                             |
 
 ## 📋 基本コマンド
 
@@ -65,6 +82,12 @@ npm run lint         # コード品質（AI必須：コミット前）
 - ✅ tRPC (アプリ内部API), Server Components, TanStack Query
 
 **重要**: アプリ内部のAPIは全てtRPC化完了。新規APIは必ずtRPCで実装すること。
+
+### ログ出力
+
+- ❌ `console.log`, `console.info`, `console.debug`（本番コード禁止）
+- ✅ `console.warn`, `console.error`（許可）
+- ✅ `@/lib/logger` モジュール使用（推奨）
 
 ### 状態管理
 
@@ -259,11 +282,17 @@ npm audit                                # セキュリティ
 | **アプリ内部API** | ✅ tRPC  | E2E型安全、自動補完、コード量削減      |
 | **外部公開API**   | ⚠️ REST  | 外部ツール連携（監視、認証フローなど） |
 
-### tRPC化完了エリア（15エンドポイント）
+### tRPC化完了エリア
 
+✅ **Plans** (12): crud (list/getById/create/update/delete), activities, bulk, instances, recurrence, statistics, tags, transaction
 ✅ **Tags** (7): list, getById, create, update, merge, delete, getStats
-✅ **Tag Groups** (6): list, getById, create, update, delete, reorder
+✅ **Records** (2): crud, tags
+✅ **Notifications** (4): list, markAsRead, markAllAsRead, delete
 ✅ **User** (2): deleteAccount (GDPR), exportData (GDPR)
+✅ **Profile** (2): get, update
+✅ **Auth** (3): signIn, signUp, signOut
+✅ **UserSettings** (2): get, update
+✅ **NotificationPreferences** (2): get, update
 
 ### REST API維持エリア（外部アクセス用）
 
@@ -351,6 +380,32 @@ const myMutation = api.myRouter.myEndpoint.useMutation({
 
 ---
 
+## 🧪 CI/CD パイプライン
+
+### Lighthouse CI（PR必須）
+
+- Performance: ≥ 80点（ブロッキング）
+- Accessibility: ≥ 90点（ブロッキング）
+- Best Practices: ≥ 85点（ブロッキング）
+- SEO: 警告のみ（認証必須アプリのため）
+
+**実行コマンド**: `npm run lighthouse:check`
+
+### テストカバレッジ
+
+- 単体テスト: `npm run test:run`
+- 統合テスト: `npm run test:integration`
+- E2Eテスト: `npm run test:e2e`
+- カバレッジ確認: `npm run test:coverage:summary`
+
+### アナリティクス（PostHog）
+
+- 環境変数 `NEXT_PUBLIC_POSTHOG_KEY` で有効化
+- 未設定時は自動的に無効化（エラーなし）
+- 認証ページでは初期化スキップ（パフォーマンス最適化）
+
+---
+
 ## 📈 パフォーマンス監視の原則
 
 **大前提: 平均は見ない。p95だけを見る。**
@@ -396,5 +451,5 @@ const myMutation = api.myRouter.myEndpoint.useMutation({
 
 ---
 
-**📖 最終更新**: 2026-01-21 | **バージョン**: v12.0
+**📖 最終更新**: 2026-01-29 | **バージョン**: v13.0
 **変更履歴**: [`docs/development/CLAUDE_MD_CHANGELOG.md`](docs/development/CLAUDE_MD_CHANGELOG.md)
