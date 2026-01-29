@@ -65,6 +65,7 @@ export function planToCalendarPlan(plan: PlanWithTagIds): CalendarPlan {
     duration: Math.round((endDate.getTime() - startDate.getTime()) / MS_PER_MINUTE), // minutes
     isMultiDay,
     isRecurring,
+    type: 'plan', // 明示的にPlan型を設定（Record と区別するため）
   };
 }
 
@@ -250,6 +251,7 @@ function occurrenceToCalendarPlan(
     duration: Math.round((endDate.getTime() - startDate.getTime()) / MS_PER_MINUTE),
     isMultiDay: false,
     isRecurring: true,
+    type: 'plan', // 明示的にPlan型を設定（Record と区別するため）
     // 繰り返し用の追加プロパティ
     calendarId: basePlan.id, // 元プランIDを保持（後方互換性）
     originalPlanId: basePlan.id, // 親プランID
