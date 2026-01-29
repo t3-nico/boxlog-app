@@ -13,6 +13,7 @@ import { AlertCircle, Check, FileText, FolderOpen, Smile, Tag, Trash2, X } from 
 import { useLocale, useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { toast } from 'sonner';
 
 import { ClockTimePicker } from '@/components/common/ClockTimePicker';
 import { Badge } from '@/components/ui/badge';
@@ -436,12 +437,16 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
           },
         });
         setIsDirty(false);
+        onClose();
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : '';
         if (errorMessage.includes('TIME_OVERLAP') || errorMessage.includes('既に')) {
           setTimeConflictError(true);
         }
       }
+    } else {
+      // 変更がない場合も閉じる
+      onClose();
     }
   };
 
@@ -478,11 +483,6 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
   }
 
   const typedRecord = record as RecordItem | undefined;
-
-  // 保存ボタンの無効化条件
-  const isSaveDisabled = isDraftMode
-    ? !(formData.title.trim() || formData.plan_id) || formData.duration_minutes <= 0
-    : !isDirty;
 
   // メニューコンテンツ（編集モードのみ）
   const menuContent = !isDraftMode ? (
@@ -841,17 +841,29 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
         </div>
       </div>
 
-      {/* フッター */}
-      {(isDirty || isDraftMode) && (
-        <div className="flex shrink-0 justify-end gap-2 px-4 py-4">
-          <Button variant="ghost" onClick={cancelAndClose}>
-            キャンセル
-          </Button>
-          <Button onClick={handleSave} disabled={isSaveDisabled}>
-            {isDraftMode ? 'Record 作成' : '保存'}
-          </Button>
-        </div>
-      )}
+      {/* フッター（常時表示） */}
+      <div className="flex shrink-0 justify-end gap-2 px-4 py-4">
+        <Button variant="ghost" onClick={cancelAndClose}>
+          キャンセル
+        </Button>
+        <Button
+          onClick={() => {
+            // タイトルまたはPlanは必須
+            if (!(formData.title.trim() || formData.plan_id)) {
+              toast.error('タイトルまたはPlanを入力してください');
+              return;
+            }
+            // 新規作成時は時間も必須
+            if (isDraftMode && formData.duration_minutes <= 0) {
+              toast.error('時間を入力してください');
+              return;
+            }
+            handleSave();
+          }}
+        >
+          {isDraftMode ? 'Record 作成' : '保存'}
+        </Button>
+      </div>
     </div>
   );
 }
