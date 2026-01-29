@@ -66,20 +66,28 @@ npm run lint         # コード品質（AI必須：コミット前）
 
 - ❌ `any`, `unknown` → ✅ 具体的な型定義
 
+**理由**: TypeScript strict modeの恩恵（コンパイル時エラー検出、IDE自動補完）を最大化するため。`any`は型安全性を完全に無効化し、バグの温床となる。
+
 ### スタイリング
 
 - ❌ `style`属性、`text-blue-500`（直接カラー）
 - ✅ セマンティックトークン: `bg-card`, `text-foreground`, `border-border`
+
+**理由**: セマンティックトークンはダークモード対応を自動化し、デザイン変更時の一括修正を可能にする。直接カラー指定はテーマ切り替え時に破綻する。
 
 ### コンポーネント
 
 - ❌ `React.FC`, `export default`（App Router例外除く）
 - ✅ `export function ComponentName() {}`
 
+**理由**: `React.FC`は暗黙のchildrenを含み型推論を阻害。named exportはtree-shakingを最適化し、IDE補完・リファクタリングを改善する。
+
 ### データフェッチング
 
 - ❌ `useEffect`でのfetch, `getServerSideProps`, REST API (`fetch('/api/...')`)
 - ✅ tRPC (アプリ内部API), Server Components, TanStack Query
+
+**理由**: tRPCはE2E型安全性を提供し、APIスキーマの不整合をコンパイル時に検出。`useEffect`でのfetchはrace condition、メモリリーク、ウォーターフォールの原因となる。
 
 **重要**: アプリ内部のAPIは全てtRPC化完了。新規APIは必ずtRPCで実装すること。
 
@@ -89,10 +97,14 @@ npm run lint         # コード品質（AI必須：コミット前）
 - ✅ `console.warn`, `console.error`（許可）
 - ✅ `@/lib/logger` モジュール使用（推奨）
 
+**理由**: loggerモジュールはログレベル制御、Sentry連携、構造化ログをサポート。本番環境でのデバッグ効率とセキュリティを両立するため。
+
 ### 状態管理
 
 - ❌ Redux, 新しい状態管理ライブラリ
 - ✅ Zustand（グローバル）, useState（ローカル）
+
+**理由**: Zustandは最小限のボイラープレートで型安全なグローバル状態を実現。Reduxは過剰な抽象化。新規ライブラリ追加はバンドルサイズと学習コストを増加させる。
 
 ## 🔄 ワークフロー: Explore → Plan → Code → Commit
 
@@ -451,5 +463,5 @@ const myMutation = api.myRouter.myEndpoint.useMutation({
 
 ---
 
-**📖 最終更新**: 2026-01-29 | **バージョン**: v13.0
+**📖 最終更新**: 2026-01-29 | **バージョン**: v13.1
 **変更履歴**: [`docs/development/CLAUDE_MD_CHANGELOG.md`](docs/development/CLAUDE_MD_CHANGELOG.md)
