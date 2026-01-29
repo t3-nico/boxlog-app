@@ -4,6 +4,38 @@
 
 ---
 
+## v13.0（2026-01-29）- tRPCエンドポイント・機能一覧の更新
+
+**変更内容**:
+
+- ✅ tRPCエンドポイント一覧を最新化
+  - Plans router追加（12エンドポイント: crud, activities, bulk, instances, recurrence, statistics, tags, transaction）
+  - Records router追加（2エンドポイント: crud, tags）
+  - Notifications, Profile, Auth, UserSettings, NotificationPreferences追加
+- ✅ 「🏗️ 主要機能（Features）」セクション追加
+  - Plans, Records, Calendar, Tags, Stats, Inspector, Auth, Settings, Navigation, Search
+- ✅ 「🧪 CI/CDパイプライン」セクション追加
+  - Lighthouse CI閾値（Performance 80, Accessibility 90, Best Practices 85）
+  - テストカバレッジコマンド
+  - PostHogアナリティクス設定
+- ✅ ログ出力ルール追加
+  - `console.log/info/debug` 禁止、`@/lib/logger`使用推奨
+- ✅ Tech Stackに CI/品質、アナリティクス項目追加
+
+**理由**:
+
+- v0.13.0リリースでの大幅な機能追加・リファクタリングを反映
+- inbox→plans リネーム、Records機能強化に対応
+- CI/CD品質ゲート（Lighthouse CI）の導入を明文化
+
+**関連PR**:
+
+- #926: Record機能とInspector UIの大幅改善
+- #922: inbox→plan リネーム & inspector改善
+- #916: タグ機能の改善とリファクタリング
+
+---
+
 ## v12.0（2026-01-21）- 楽観的更新ガイドライン追加
 
 **変更内容**:
@@ -180,4 +212,4 @@
 
 ---
 
-**📖 最終更新**: 2026-01-21
+**📖 最終更新**: 2026-01-29
