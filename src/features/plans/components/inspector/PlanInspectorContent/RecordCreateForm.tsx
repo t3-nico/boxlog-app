@@ -1,6 +1,6 @@
 'use client';
 
-import { AlertCircle, FileText, FolderOpen, Smile, Tag, X } from 'lucide-react';
+import { AlertCircle, Check, FileText, FolderOpen, Smile, Tag, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useState } from 'react';
 
@@ -426,14 +426,14 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
                 </Badge>
               </HoverTooltip>
             ))}
-            <TagSelectCombobox
-              selectedTagIds={formData.tagIds}
-              onTagsChange={handleTagsChange}
-              side="bottom"
-              sideOffset={8}
-              zIndex={zIndex.overlayDropdown}
-            >
-              <HoverTooltip content="タグを追加" side="top">
+            <HoverTooltip content="タグを追加" side="top">
+              <TagSelectCombobox
+                selectedTagIds={formData.tagIds}
+                onTagsChange={handleTagsChange}
+                side="bottom"
+                sideOffset={8}
+                zIndex={zIndex.overlayDropdown}
+              >
                 <button
                   type="button"
                   className={cn(
@@ -445,29 +445,45 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
                 >
                   <Tag className="size-4" />
                 </button>
-              </HoverTooltip>
-            </TagSelectCombobox>
+              </TagSelectCombobox>
+            </HoverTooltip>
           </div>
 
           {/* Plan紐付け */}
           <Popover open={isPlanPopoverOpen} onOpenChange={handlePlanPopoverOpenChange}>
             <HoverTooltip content={selectedPlanName ?? 'Planに紐付け'} side="top">
-              <PopoverTrigger asChild>
-                <button
-                  type="button"
-                  className={cn(
-                    'flex h-8 items-center gap-1 rounded-md px-2 text-sm transition-colors',
-                    'hover:bg-state-hover focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
-                    hasPlan ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',
-                  )}
-                  aria-label="Planに紐付け"
-                >
-                  <FolderOpen className="size-4" />
-                  {hasPlan && selectedPlanName && (
-                    <span className="max-w-20 truncate text-xs">{selectedPlanName}</span>
-                  )}
-                </button>
-              </PopoverTrigger>
+              <div
+                className={cn(
+                  'hover:bg-state-hover flex h-8 items-center rounded-md transition-colors',
+                  hasPlan ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',
+                )}
+              >
+                <PopoverTrigger asChild>
+                  <button
+                    type="button"
+                    className={cn(
+                      'focus-visible:ring-ring flex items-center gap-1 text-sm focus-visible:ring-2 focus-visible:outline-none',
+                      hasPlan ? 'pr-1 pl-2' : 'px-2',
+                    )}
+                    aria-label="Planに紐付け"
+                  >
+                    <FolderOpen className="size-4" />
+                    {hasPlan && selectedPlanName && (
+                      <span className="max-w-20 truncate text-xs">{selectedPlanName}</span>
+                    )}
+                  </button>
+                </PopoverTrigger>
+                {hasPlan && (
+                  <button
+                    type="button"
+                    onClick={() => handlePlanChange('')}
+                    className="hover:bg-state-hover mr-1 rounded p-0.5 transition-colors"
+                    aria-label="Plan紐付けを解除"
+                  >
+                    <X className="size-4" />
+                  </button>
+                )}
+              </div>
             </HoverTooltip>
             <PopoverContent
               className="w-[400px] p-0"
@@ -494,14 +510,11 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
                           key={plan.id}
                           value={plan.id}
                           onSelect={() => handlePlanChange(plan.id)}
-                          className={cn(
-                            'cursor-pointer',
-                            formData.plan_id === plan.id && 'bg-accent',
-                          )}
+                          className="cursor-pointer"
                         >
-                          <span className="truncate">{plan.title}</span>
+                          <span className="flex-1 truncate">{plan.title}</span>
                           {planTags && planTags.length > 0 && (
-                            <div className="ml-auto flex shrink-0 gap-1 pl-2">
+                            <div className="flex shrink-0 gap-1 pl-2">
                               {planTags.slice(0, 2).map((tag) => (
                                 <span
                                   key={tag!.id}
@@ -521,22 +534,17 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
                               )}
                             </div>
                           )}
+                          <Check
+                            className={cn(
+                              'text-primary ml-2 size-4 shrink-0',
+                              formData.plan_id === plan.id ? 'opacity-100' : 'opacity-0',
+                            )}
+                          />
                         </CommandItem>
                       );
                     })}
                   </CommandGroup>
                 </CommandList>
-                {formData.plan_id && (
-                  <div className="border-border border-t p-2">
-                    <button
-                      type="button"
-                      className="text-muted-foreground hover:text-foreground w-full text-left text-xs transition-colors"
-                      onClick={() => handlePlanChange('')}
-                    >
-                      解除
-                    </button>
-                  </div>
-                )}
               </Command>
             </PopoverContent>
           </Popover>
