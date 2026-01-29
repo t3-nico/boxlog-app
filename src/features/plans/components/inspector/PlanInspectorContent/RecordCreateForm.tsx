@@ -606,18 +606,21 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
                 <button
                   type="button"
                   className={cn(
-                    'flex size-8 items-center justify-center rounded-md transition-colors',
+                    'relative flex size-8 items-center justify-center rounded-md transition-colors',
                     'hover:bg-state-hover focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
                     hasNote ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',
                   )}
                   aria-label="メモ"
                 >
                   <FileText className="size-4" />
+                  {hasNote && (
+                    <span className="bg-primary absolute top-1 right-1 size-2 rounded-full" />
+                  )}
                 </button>
               </PopoverTrigger>
             </HoverTooltip>
             <PopoverContent
-              className="w-64 p-2"
+              className="w-80 p-2"
               side="bottom"
               align="start"
               sideOffset={8}
@@ -629,9 +632,14 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
                 </span>
                 <Textarea
                   value={formData.note}
-                  onChange={(e) => handleNoteChange(e.target.value)}
+                  onChange={(e) => {
+                    handleNoteChange(e.target.value);
+                    // Auto-grow: 高さを内容に合わせる
+                    e.target.style.height = 'auto';
+                    e.target.style.height = `${Math.min(e.target.scrollHeight, 200)}px`;
+                  }}
                   placeholder="メモを追加..."
-                  className="min-h-20 resize-none text-sm"
+                  className="max-h-[200px] min-h-20 resize-none text-sm"
                   rows={3}
                   aria-label="メモ"
                 />
