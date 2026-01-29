@@ -31,14 +31,19 @@ import { StarRating } from '@/components/ui/star-rating';
 import { Textarea } from '@/components/ui/textarea';
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { zIndex } from '@/config/ui/z-index';
-import { InspectorHeader } from '@/features/inspector';
+import { InspectorHeader, useDragHandle } from '@/features/inspector';
 import { DatePickerPopover } from '@/features/plans/components/shared/DatePickerPopover';
 import { TagSelectCombobox } from '@/features/plans/components/shared/TagSelectCombobox';
 import { useTags } from '@/features/tags/hooks';
 import { api } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
 
-import { useRecordMutations, useRecordTags, type RecordItem } from '../hooks';
+import {
+  useRecordInspectorNavigation,
+  useRecordMutations,
+  useRecordTags,
+  type RecordItem,
+} from '../hooks';
 import { useRecordInspectorStore, type DraftRecord } from '../stores';
 
 import type { FulfillmentScore } from '../types/record';
@@ -88,6 +93,10 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
   // Mutations
   const { createRecord, updateRecord, deleteRecord } = useRecordMutations();
   const { setRecordTags } = useRecordTags();
+
+  // ナビゲーション（前後のRecord移動）
+  const { hasPrevious, hasNext, goToPrevious, goToNext } =
+    useRecordInspectorNavigation(selectedRecordId);
 
   // 今日の日付
   const today = useMemo(() => new Date(), []);
@@ -490,13 +499,17 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
     <div className="flex h-full flex-col overflow-hidden">
       {/* ヘッダー */}
       {isDraftMode ? (
-        <div className="bg-popover flex shrink-0 items-center px-4 py-4">
-          <h2 className="text-base font-medium">Record 作成</h2>
-        </div>
+        <DraftModeHeader />
       ) : (
         <InspectorHeader
+          hasPrevious={hasPrevious}
+          hasNext={hasNext}
           onClose={cancelAndClose}
+          onPrevious={goToPrevious}
+          onNext={goToNext}
           closeLabel={t('actions.close')}
+          previousLabel={t('aria.previous')}
+          nextLabel={t('aria.next')}
           menuContent={menuContent}
         />
       )}
@@ -839,6 +852,32 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
           </Button>
         </div>
       )}
+    </div>
+  );
+}
+
+/**
+ * ドラフトモード用ヘッダー
+ *
+ * Planと同様にドラッグハンドルを適用
+ */
+function DraftModeHeader() {
+  const dragHandleProps = useDragHandle();
+  const isDraggable = !!dragHandleProps;
+
+  return (
+    <div className="bg-popover relative flex shrink-0 items-center px-4 py-4">
+      {/* ドラッグハンドル（背景レイヤー） */}
+      {isDraggable && (
+        <div
+          {...dragHandleProps}
+          className="hover:bg-state-hover absolute inset-0 cursor-move transition-colors"
+          aria-hidden="true"
+        />
+      )}
+
+      {/* タイトル（前面レイヤー） */}
+      <h2 className="relative z-10 text-base font-medium">Record 作成</h2>
     </div>
   );
 }

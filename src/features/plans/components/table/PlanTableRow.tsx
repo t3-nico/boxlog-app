@@ -20,13 +20,11 @@ import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorS
 import { useRecurringEditConfirmStore } from '@/features/plans/stores/useRecurringEditConfirmStore';
 import type { PlanStatus } from '@/features/plans/types/plan';
 import { useDateFormat } from '@/features/settings/hooks/useDateFormat';
+import { useTableColumnStore, useTableFocusStore, useTableSelectionStore } from '@/features/table';
 import { cn } from '@/lib/utils';
 import { useCallback, useEffect, useRef } from 'react';
 import { toast } from 'sonner';
 import type { PlanItem } from '../../hooks/usePlanData';
-import { usePlanColumnStore } from '../../stores/usePlanColumnStore';
-import { usePlanFocusStore } from '../../stores/usePlanFocusStore';
-import { usePlanSelectionStore } from '../../stores/usePlanSelectionStore';
 import { DateTimeUnifiedCell } from './DateTimeUnifiedCell';
 import { PlanActionMenuItems } from './PlanActionMenuItems';
 import { TagsCell } from './TagsCell';
@@ -52,9 +50,9 @@ interface PlanTableRowProps {
  */
 export function PlanTableRow({ item }: PlanTableRowProps) {
   const { openInspector } = usePlanInspectorStore();
-  const { isSelected, setSelectedIds } = usePlanSelectionStore();
-  const { getVisibleColumns } = usePlanColumnStore();
-  const { focusedId, setFocusedId } = usePlanFocusStore();
+  const { isSelected, setSelectedIds } = useTableSelectionStore();
+  const { getVisibleColumns } = useTableColumnStore();
+  const { focusedId, setFocusedId } = useTableFocusStore();
   const { updatePlan, deletePlan } = usePlanMutations();
   const { addplanTag, removeplanTag } = useplanTags();
   const openDeleteDialog = useDeleteConfirmStore((state) => state.openDialog);
@@ -285,13 +283,13 @@ export function PlanTableRow({ item }: PlanTableRowProps) {
                 if (selected) {
                   // 選択解除: 選択済みIDから削除
                   const newSelection = Array.from(
-                    usePlanSelectionStore.getState().getSelectedIds(),
+                    useTableSelectionStore.getState().getSelectedIds(),
                   ).filter((id) => id !== item.id);
                   setSelectedIds(newSelection);
                 } else {
                   // 選択: 選択済みIDに追加
                   const newSelection = [
-                    ...Array.from(usePlanSelectionStore.getState().getSelectedIds()),
+                    ...Array.from(useTableSelectionStore.getState().getSelectedIds()),
                     item.id,
                   ];
                   setSelectedIds(newSelection);
