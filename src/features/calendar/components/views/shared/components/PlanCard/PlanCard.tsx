@@ -8,7 +8,7 @@ import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
 import { normalizeStatus } from '@/features/plans/utils/status';
-import { CheckCircle2, Circle, Clock, Pencil } from 'lucide-react';
+import { CheckCircle2, Circle, Pencil } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { MEDIA_QUERIES } from '@/config/ui/breakpoints';
@@ -207,18 +207,19 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
           : 'bg-plan-box',
     // 選択状態の視覚フィードバック（色覚異常対応）
     isSelected && 'ring-2 ring-primary',
-    // Record は点線枠線で視覚的に区別
-    // Draft はDragSelectionPreviewと同じスタイルで統一
-    isDraft ? 'border border-primary/40' : isRecord && 'border border-dashed border-border',
+    // Draft は点線ボーダー、Record は左ボーダー（Google Calendar風）
+    isDraft ? 'border border-primary/40' : isRecord && 'border-l-[3px] border-record-border',
     // テキスト色
     'text-foreground',
     // 状態別スタイル（Draft は未保存なのでポインタースタイルのみ）
     isDraft ? 'cursor-default' : isDragging ? 'cursor-grabbing' : 'cursor-pointer',
     // モバイル: Googleカレンダー風（左ボーダー、チェックボックス+タイトル横並び、上寄せ）
-    // デスクトップ: 通常のカード表示
+    // デスクトップ: Plan=全角丸、Record=右角丸のみ（左ボーダーと合わせるため）
     isMobile
       ? 'border-l-2 rounded-r-sm pl-1 pr-1 pt-0.5 text-xs flex items-start gap-1'
-      : 'rounded-md p-2 text-sm',
+      : isRecord
+        ? 'rounded-r-md p-2 text-sm'
+        : 'rounded-md p-2 text-sm',
     className,
   );
 
@@ -256,7 +257,7 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
       }
       aria-pressed={isSelected}
     >
-      {/* Draft: 鉛筆アイコン / Record: 時計アイコン（読み取り専用） / Plan: チェックボックス */}
+      {/* Draft: 鉛筆アイコン / Record: アイコンなし / Plan: チェックボックス */}
       {isDraft ? (
         // Draft は鉛筆アイコンを表示（編集中を示す）
         <div
@@ -276,26 +277,7 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
             )}
           />
         </div>
-      ) : isRecord ? (
-        // Record は時計アイコンを表示（状態変更不可）
-        <div
-          className={cn(
-            'z-10 flex-shrink-0 rounded',
-            isMobile
-              ? 'relative -m-3 flex min-h-[44px] min-w-[44px] items-center justify-center'
-              : 'absolute flex items-center justify-center',
-            !isMobile && (safePosition.height < 30 ? 'top-0.5 left-0.5' : 'top-2 left-2'),
-            !isMobile && 'min-h-4 min-w-4',
-          )}
-        >
-          <Clock
-            className={cn(
-              'text-muted-foreground',
-              isMobile ? 'h-3.5 w-3.5' : safePosition.height < 30 ? 'h-3 w-3' : 'h-4 w-4',
-            )}
-          />
-        </div>
-      ) : (
+      ) : isRecord ? null : (
         // Plan: チェックボックス（モバイル: 44x44pxタッチターゲット、Apple HIG準拠）
         <button
           type="button"
@@ -352,7 +334,7 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
         isCompact={safePosition.height < 40}
         showTime={safePosition.height >= 30}
         previewTime={previewTime}
-        hasCheckbox={!isMobile} // デスクトップのみ左パディング必要
+        hasCheckbox={!isMobile && !isRecord} // デスクトップのPlanのみ左パディング必要（Recordはアイコンなし）
         isMobile={isMobile}
         isHovered={isHovered}
         isCheckboxHovered={isCheckboxHovered}

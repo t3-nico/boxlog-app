@@ -22,6 +22,7 @@ import {
   PlanInspector,
   RecurringEditConfirmDialog,
 } from '@/features/plans/components';
+import { RecordInspector } from '@/features/records/components';
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -36,6 +37,7 @@ const AppLayout = async ({ children, modal }: AppLayoutProps) => {
         <BaseLayout>
           {children}
           <PlanInspector />
+          <RecordInspector />
           <PlanDeleteConfirmDialog />
           <RecurringEditConfirmDialog />
           <AIInspector />
