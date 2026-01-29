@@ -36,7 +36,6 @@ export function PlanInspectorContent() {
     plan,
     saveAndClose,
     cancelAndClose,
-    hasPendingChanges,
     isDraftMode,
     hasPrevious,
     hasNext,
@@ -215,19 +214,17 @@ export function PlanInspectorContent() {
         )}
       </div>
 
-      {/* 保存/キャンセルボタン（未保存の変更がある場合またはドラフトモード時に表示） */}
-      {(hasPendingChanges || isDraftMode) && (
-        <div className="flex shrink-0 justify-end gap-2 px-4 py-4">
-          <Button variant="ghost" onClick={cancelAndClose}>
-            キャンセル
-          </Button>
-          {isDraftMode && createType === 'record' ? (
-            <Button onClick={() => recordFormRef.current?.save()}>Record 作成</Button>
-          ) : (
-            <Button onClick={saveAndClose}>{isDraftMode ? 'Plan 作成' : '保存'}</Button>
-          )}
-        </div>
-      )}
+      {/* 保存/キャンセルボタン（常時表示） */}
+      <div className="flex shrink-0 justify-end gap-2 px-4 py-4">
+        <Button variant="ghost" onClick={cancelAndClose}>
+          キャンセル
+        </Button>
+        {isDraftMode && createType === 'record' ? (
+          <Button onClick={() => recordFormRef.current?.save()}>Record 作成</Button>
+        ) : (
+          <Button onClick={saveAndClose}>{isDraftMode ? 'Plan 作成' : '保存'}</Button>
+        )}
+      </div>
     </div>
   );
 }
