@@ -16,7 +16,6 @@ import { cn } from '@/lib/utils';
 import { usePlanInspectorStore } from '../../../stores/usePlanInspectorStore';
 import { reminderTypeToMinutes } from '../../../utils/reminder';
 
-import { DisplayModeSwitcher } from './DisplayModeSwitcher';
 import { PlanInspectorDetailsTab } from './PlanInspectorDetailsTab';
 import { PlanInspectorMenu } from './PlanInspectorMenu';
 import { RecordCreateForm, type RecordCreateFormRef } from './RecordCreateForm';
@@ -35,8 +34,6 @@ export function PlanInspectorContent() {
   const {
     planId,
     plan,
-    displayMode,
-    setDisplayMode,
     saveAndClose,
     cancelAndClose,
     hasPendingChanges,
@@ -82,21 +79,13 @@ export function PlanInspectorContent() {
     />
   );
 
-  const displayModeSwitcher = (
-    <DisplayModeSwitcher displayMode={displayMode} onDisplayModeChange={setDisplayMode} />
-  );
-
   if (!plan) return null;
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
       {/* ヘッダー */}
       {isDraftMode ? (
-        <DraftModeHeader
-          createType={createType}
-          setCreateType={setCreateType}
-          displayModeSwitcher={displayModeSwitcher}
-        />
+        <DraftModeHeader createType={createType} setCreateType={setCreateType} />
       ) : (
         // 既存Plan編集用ヘッダー
         <InspectorHeader
@@ -105,11 +94,9 @@ export function PlanInspectorContent() {
           onClose={cancelAndClose}
           onPrevious={goToPrevious}
           onNext={goToNext}
-          displayMode={displayMode}
           closeLabel={t('actions.close')}
           previousLabel={t('aria.previous')}
           nextLabel={t('aria.next')}
-          rightContent={displayModeSwitcher}
           menuContent={menuContent}
         />
       )}
@@ -248,21 +235,20 @@ export function PlanInspectorContent() {
 /**
  * ドラフトモード用ヘッダー
  *
- * タブ切り替え（Plan/Record）と表示モード切り替えを配置
- * ドラッグハンドルを適用してポップアップモードでのドラッグを可能にする
+ * タブ切り替え（Plan/Record）を配置
+ * ドラッグハンドルを適用してドラッグを可能にする
  */
 interface DraftModeHeaderProps {
   createType: 'plan' | 'record';
   setCreateType: (type: 'plan' | 'record') => void;
-  displayModeSwitcher: React.ReactNode;
 }
 
-function DraftModeHeader({ createType, setCreateType, displayModeSwitcher }: DraftModeHeaderProps) {
+function DraftModeHeader({ createType, setCreateType }: DraftModeHeaderProps) {
   const dragHandleProps = useDragHandle();
   const isDraggable = !!dragHandleProps;
 
   return (
-    <div className="bg-popover relative flex shrink-0 items-center justify-between px-4 pt-4 pb-2">
+    <div className="bg-popover relative flex shrink-0 items-center px-4 pt-4 pb-2">
       {/* ドラッグハンドル（背景レイヤー） */}
       {isDraggable && (
         <div
@@ -301,7 +287,6 @@ function DraftModeHeader({ createType, setCreateType, displayModeSwitcher }: Dra
           Record
         </button>
       </div>
-      <div className="relative z-10">{displayModeSwitcher}</div>
     </div>
   );
 }

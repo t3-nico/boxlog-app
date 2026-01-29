@@ -31,8 +31,7 @@ import { StarRating } from '@/components/ui/star-rating';
 import { Textarea } from '@/components/ui/textarea';
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { zIndex } from '@/config/ui/z-index';
-import { InspectorHeader, type InspectorDisplayMode } from '@/features/inspector';
-import { DisplayModeSwitcher } from '@/features/plans/components/inspector/PlanInspectorContent/DisplayModeSwitcher';
+import { InspectorHeader } from '@/features/inspector';
 import { DatePickerPopover } from '@/features/plans/components/shared/DatePickerPopover';
 import { TagSelectCombobox } from '@/features/plans/components/shared/TagSelectCombobox';
 import { useTags } from '@/features/tags/hooks';
@@ -67,8 +66,6 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
   const selectedRecordId = useRecordInspectorStore((state) => state.selectedRecordId);
   const draftRecord = useRecordInspectorStore((state) => state.draftRecord);
   const updateDraft = useRecordInspectorStore((state) => state.updateDraft);
-  const displayMode = useRecordInspectorStore((state) => state.displayMode) as InspectorDisplayMode;
-  const setDisplayMode = useRecordInspectorStore((state) => state.setDisplayMode);
 
   // ドラフトモードかどうか
   const isDraftMode = draftRecord !== null && selectedRecordId === null;
@@ -489,25 +486,17 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
     </>
   ) : undefined;
 
-  // 表示モード切り替えコンポーネント
-  const displayModeSwitcher = (
-    <DisplayModeSwitcher displayMode={displayMode} onDisplayModeChange={setDisplayMode} />
-  );
-
   return (
     <div className="flex h-full flex-col overflow-hidden">
       {/* ヘッダー */}
       {isDraftMode ? (
-        <div className="bg-popover flex shrink-0 items-center justify-between px-4 py-4">
+        <div className="bg-popover flex shrink-0 items-center px-4 py-4">
           <h2 className="text-base font-medium">Record 作成</h2>
-          {displayModeSwitcher}
         </div>
       ) : (
         <InspectorHeader
           onClose={cancelAndClose}
-          displayMode={displayMode}
           closeLabel={t('actions.close')}
-          rightContent={displayModeSwitcher}
           menuContent={menuContent}
         />
       )}

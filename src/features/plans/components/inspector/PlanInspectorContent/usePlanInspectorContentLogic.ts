@@ -13,7 +13,6 @@ import {
   parseDatetimeString,
   parseISOToUserTimezone,
 } from '@/features/calendar/utils/dateUtils';
-import type { InspectorDisplayMode } from '@/features/inspector';
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
 import { api } from '@/lib/trpc';
 import type { RecurringEditScope } from '../../../components/RecurringEditConfirmDialog';
@@ -47,8 +46,6 @@ export function usePlanInspectorContentLogic() {
   const initialData = usePlanInspectorStore((state) => state.initialData);
   const closeInspector = usePlanInspectorStore((state) => state.closeInspector);
   const openInspectorWithDraft = usePlanInspectorStore((state) => state.openInspectorWithDraft);
-  const displayMode = usePlanInspectorStore((state) => state.displayMode) as InspectorDisplayMode;
-  const setDisplayMode = usePlanInspectorStore((state) => state.setDisplayMode);
   const draftPlan = usePlanInspectorStore((state) => state.draftPlan);
   const clearDraft = usePlanInspectorStore((state) => state.clearDraft);
   const updateDraft = usePlanInspectorStore((state) => state.updateDraft);
@@ -709,8 +706,6 @@ export function usePlanInspectorContentLogic() {
     // Store state
     planId,
     plan,
-    displayMode,
-    setDisplayMode,
     closeInspector, // 直接閉じる（変更を破棄）
     saveAndClose, // 変更を保存して閉じる
     cancelAndClose, // 変更を破棄して閉じる

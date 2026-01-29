@@ -4,12 +4,7 @@ import { Trash2 } from 'lucide-react';
 import { useCallback } from 'react';
 
 import { DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
-import {
-  InspectorContent,
-  InspectorShell,
-  useInspectorKeyboard,
-  type InspectorDisplayMode,
-} from '@/features/inspector';
+import { InspectorContent, InspectorShell, useInspectorKeyboard } from '@/features/inspector';
 import { api } from '@/lib/trpc';
 
 import { useRecordMutations } from '../hooks';
@@ -22,16 +17,13 @@ import { RecordInspectorContent } from './RecordInspectorContent';
  * Record詳細表示・編集用パネル
  * - 既存Record編集モード: selectedRecordId が設定されている場合
  * - 新規作成モード（ドラフト）: draftRecord が設定されている場合
- * - 表示モード: sheet（サイドパネル）/ popover（ポップアップ）
+ * - PC: Popover（フローティング）、モバイル: Drawer
  */
 export function RecordInspector() {
   const isOpen = useRecordInspectorStore((state) => state.isOpen);
   const selectedRecordId = useRecordInspectorStore((state) => state.selectedRecordId);
   const draftRecord = useRecordInspectorStore((state) => state.draftRecord);
-  const displayMode = useRecordInspectorStore((state) => state.displayMode) as InspectorDisplayMode;
   const closeInspector = useRecordInspectorStore((state) => state.closeInspector);
-  const popoverPosition = useRecordInspectorStore((state) => state.popoverPosition);
-  const setPopoverPosition = useRecordInspectorStore((state) => state.setPopoverPosition);
 
   // ドラフトモードかどうか
   const isDraftMode = draftRecord !== null && selectedRecordId === null;
@@ -83,13 +75,8 @@ export function RecordInspector() {
     <InspectorShell
       isOpen={isOpen}
       onClose={handleClose}
-      displayMode={displayMode}
       title={title}
-      resizable={displayMode === 'sheet'}
-      modal={false}
       mobileMenuContent={mobileMenuContent}
-      popoverPosition={popoverPosition}
-      onPopoverPositionChange={setPopoverPosition}
     >
       <InspectorContent
         isLoading={isDraftMode ? false : isLoading}
