@@ -8,24 +8,24 @@ import {
   useSensors,
   type DragEndEvent,
 } from '@dnd-kit/core';
-import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useState, type ReactNode } from 'react';
 
 import { zIndex } from '@/config/ui/z-index';
 import { cn } from '@/lib/utils';
-
-import type { PopoverPosition } from '@/features/plans/stores/usePlanInspectorStore';
 
 /** インスペクターのサイズ定数 */
 const INSPECTOR_MAX_WIDTH = 480; // max-w-[30rem] = 480px
 const INSPECTOR_HEIGHT = 640; // h-[40rem] = 640px
 
+/** Popover位置情報 */
+interface PopoverPosition {
+  x: number;
+  y: number;
+}
+
 interface DraggableInspectorProps {
   /** 子要素 */
   children: ReactNode;
-  /** 現在の位置（null = 初期位置を計算） */
-  position: PopoverPosition | null;
-  /** 位置変更時のコールバック */
-  onPositionChange: (position: PopoverPosition) => void;
   /** 閉じるコールバック */
   onClose: () => void;
   /** アクセシビリティ用タイトル */
@@ -35,21 +35,14 @@ interface DraggableInspectorProps {
 /**
  * ドラッグ可能なインスペクターコンテナ
  *
- * Popoverモードでdnd-kitを使用してドラッグ移動を実現
+ * dnd-kitを使用してドラッグ移動を実現
  * - ヘッダー部分をドラッグハンドルとして使用
  * - 画面端の制約を適用
- * - 位置をlocalStorageに保存（親経由）
+ * - 位置はセッション中のみ維持（閉じたらリセット）
  */
-export function DraggableInspector({
-  children,
-  position,
-  onPositionChange,
-  onClose,
-  title,
-}: DraggableInspectorProps) {
-  // 初期位置を計算（保存された位置がなければ画面中央）
+export function DraggableInspector({ children, onClose, title }: DraggableInspectorProps) {
+  // 初期位置を計算（画面中央寄り上）
   const [currentPosition, setCurrentPosition] = useState<PopoverPosition>(() => {
-    if (position) return position;
     // SSR対応: windowがない場合はデフォルト値
     if (typeof window === 'undefined') return { x: 100, y: 100 };
     return {
@@ -57,13 +50,6 @@ export function DraggableInspector({
       y: Math.max(0, Math.min(100, (window.innerHeight - INSPECTOR_HEIGHT) / 4)),
     };
   });
-
-  // 保存された位置が変更されたら反映
-  useEffect(() => {
-    if (position) {
-      setCurrentPosition(position);
-    }
-  }, [position]);
 
   // PointerSensorに距離制約を追加（クリックとドラッグを区別）
   const sensors = useSensors(
@@ -100,11 +86,9 @@ export function DraggableInspector({
         Math.min(currentPosition.y + delta.y, window.innerHeight - INSPECTOR_HEIGHT),
       );
 
-      const newPosition = { x: newX, y: newY };
-      setCurrentPosition(newPosition);
-      onPositionChange(newPosition);
+      setCurrentPosition({ x: newX, y: newY });
     },
-    [currentPosition, onPositionChange],
+    [currentPosition],
   );
 
   return (

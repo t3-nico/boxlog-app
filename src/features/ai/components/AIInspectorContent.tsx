@@ -18,7 +18,6 @@ import { useAIInspectorStore } from '../stores';
  */
 export const AIInspectorContent = memo(function AIInspectorContent() {
   const closeInspector = useAIInspectorStore((state) => state.closeInspector);
-  const displayMode = useAIInspectorStore((state) => state.displayMode);
   const context = useAIInspectorStore((state) => state.context);
 
   const [input, setInput] = useState('');
@@ -47,11 +46,7 @@ export const AIInspectorContent = memo(function AIInspectorContent() {
   return (
     <div className="flex h-full flex-col">
       {/* ヘッダー */}
-      <InspectorHeader
-        onClose={closeInspector}
-        displayMode={displayMode}
-        closeLabel="AIチャットを閉じる"
-      />
+      <InspectorHeader onClose={closeInspector} closeLabel="AIチャットを閉じる" />
 
       {/* メッセージエリア */}
       <div className="flex-1 overflow-y-auto p-4">

@@ -159,7 +159,7 @@ interface plan {
 
 ### planInspector
 
-全ページ共通のプラン詳細表示・編集パネル（Sheet）。
+全ページ共通のプラン詳細表示・編集パネル（PC: Popover、モバイル: Drawer）。
 
 ```tsx
 // レイアウトに配置（常にマウント）

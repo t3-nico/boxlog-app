@@ -397,7 +397,7 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
         </div>
 
         {/* 3行目: Tags + オプションアイコン（メタデータ） */}
-        <div className="flex items-center gap-1 px-4 pt-2 pb-4">
+        <div className="flex flex-wrap items-center gap-1 px-4 pt-2 pb-4">
           {/* Tags */}
           <div className="flex flex-wrap items-center gap-1">
             {selectedTags.map((tag) => (
@@ -410,7 +410,7 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
                 <Badge
                   variant="outline"
                   style={{ borderColor: tag.color || undefined }}
-                  className="group relative pr-4 text-xs font-normal"
+                  className="group relative h-8 pr-8 text-xs font-normal"
                 >
                   {tag.name}
                   <button
@@ -419,9 +419,9 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
                       e.stopPropagation();
                       handleRemoveTag(tag.id);
                     }}
-                    className="hover:bg-state-hover absolute top-1/2 right-1 -translate-y-1/2 rounded-sm opacity-70 transition-opacity hover:opacity-100"
+                    className="hover:bg-state-hover absolute top-1/2 right-2 -translate-y-1/2 rounded-sm opacity-70 transition-opacity hover:opacity-100"
                   >
-                    <X className="size-3" />
+                    <X className="size-4" />
                   </button>
                 </Badge>
               </HoverTooltip>
@@ -463,7 +463,7 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
                     type="button"
                     className={cn(
                       'focus-visible:ring-ring flex items-center gap-1 text-sm focus-visible:ring-2 focus-visible:outline-none',
-                      hasPlan ? 'pr-1 pl-2' : 'px-2',
+                      hasPlan ? 'pl-2' : 'px-2',
                     )}
                     aria-label="Planに紐付け"
                   >
@@ -477,7 +477,7 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
                   <button
                     type="button"
                     onClick={() => handlePlanChange('')}
-                    className="hover:bg-state-hover mr-1 rounded p-0.5 transition-colors"
+                    className="hover:bg-state-hover mr-1 rounded p-2 transition-colors"
                     aria-label="Plan紐付けを解除"
                   >
                     <X className="size-4" />
@@ -566,9 +566,7 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
                   aria-label="充実度"
                 >
                   <Smile className="size-4" />
-                  {hasScore && (
-                    <span className="text-xs">{'★'.repeat(formData.fulfillment_score!)}</span>
-                  )}
+                  {hasScore && <span className="text-xs">★ {formData.fulfillment_score}</span>}
                 </button>
               </PopoverTrigger>
             </HoverTooltip>
