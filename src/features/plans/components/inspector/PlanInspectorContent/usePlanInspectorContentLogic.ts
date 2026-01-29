@@ -15,9 +15,7 @@ import {
 } from '@/features/calendar/utils/dateUtils';
 import type { InspectorDisplayMode } from '@/features/inspector';
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
-import { useHapticFeedback } from '@/hooks/useHapticFeedback';
 import { api } from '@/lib/trpc';
-
 import type { RecurringEditScope } from '../../../components/RecurringEditConfirmDialog';
 import { usePlan } from '../../../hooks/usePlan';
 import { usePlanInstanceMutations } from '../../../hooks/usePlanInstances';
@@ -37,7 +35,6 @@ const SCOPE_DIALOG_FIELDS = ['due_date', 'start_time', 'end_time'] as const;
 
 export function usePlanInspectorContentLogic() {
   const utils = api.useUtils();
-  const { error: hapticError } = useHapticFeedback();
 
   // ユーザーのタイムゾーン設定
   const timezone = useCalendarSettingsStore((state) => state.timezone);
@@ -110,30 +107,6 @@ export function usePlanInspectorContentLogic() {
     planId,
     instanceDate,
   });
-
-  // 時間重複チェック関数（クライアント側で即時チェック）
-  const checkTimeOverlap = useCallback(
-    (newStartTime: Date, newEndTime: Date): boolean => {
-      // キャッシュからプラン一覧を取得
-      const plans = utils.plans.list.getData();
-      if (!plans || plans.length === 0) return false;
-
-      // 自分以外のプランとの重複をチェック
-      // ドラフトモード（planIdがnull）ではすべてのプランと比較
-      return plans.some((p) => {
-        // 既存プラン編集時は自分自身を除外
-        if (planId && p.id === planId) return false;
-        if (!p.start_time || !p.end_time) return false;
-
-        const pStart = new Date(p.start_time);
-        const pEnd = new Date(p.end_time);
-
-        // 時間重複条件: 既存の開始 < 新規の終了 AND 既存の終了 > 新規の開始
-        return pStart < newEndTime && pEnd > newStartTime;
-      });
-    },
-    [planId, utils.plans.list],
-  );
 
   // Custom hooks
   const { hasPrevious, hasNext, goToPrevious, goToNext } = useInspectorNavigation(planId);
@@ -509,26 +482,6 @@ export function usePlanInspectorContentLogic() {
       // 時刻をパース
       const [hours, minutes] = time ? time.split(':').map(Number) : [0, 0];
 
-      // 新しい開始時刻を計算（重複チェック用のローカル日付）
-      const newStartDateTime = time && scheduleDate ? new Date(scheduleDate) : null;
-      if (newStartDateTime && time) {
-        newStartDateTime.setHours(hours ?? 0, minutes ?? 0, 0, 0);
-      }
-
-      // 重複チェック（終了時刻がある場合のみ）
-      // Note: Plan↔Plan重複はサーバー側でブロック、視覚フィードバックのみ表示（toastなし）
-      if (newStartDateTime && endTime && scheduleDate) {
-        const [endHours, endMinutes] = endTime.split(':').map(Number);
-        const endDateTime = new Date(scheduleDate);
-        endDateTime.setHours(endHours ?? 0, endMinutes ?? 0, 0, 0);
-
-        if (checkTimeOverlap(newStartDateTime, endDateTime)) {
-          hapticError();
-          setTimeConflictError(true);
-          // エラーは時間変更するまで表示し続ける（自動消去なし）
-        }
-      }
-
       setStartTime(time);
 
       // タイムゾーン対応のISO文字列を生成
@@ -554,17 +507,7 @@ export function usePlanInspectorContentLogic() {
         addPendingChange({ start_time: isoValue });
       }
     },
-    [
-      scheduleDate,
-      endTime,
-      isDraftMode,
-      recurringEdit,
-      updateDraft,
-      addPendingChange,
-      checkTimeOverlap,
-      hapticError,
-      timezone,
-    ],
+    [scheduleDate, isDraftMode, recurringEdit, updateDraft, addPendingChange, timezone],
   );
 
   const handleEndTimeChange = useCallback(
@@ -574,27 +517,6 @@ export function usePlanInspectorContentLogic() {
 
       // 時刻をパース
       const [hours, minutes] = time ? time.split(':').map(Number) : [0, 0];
-
-      // 新しい終了時刻を計算（重複チェック用のローカル日付）
-      const newEndDateTime = time && scheduleDate ? new Date(scheduleDate) : null;
-      if (newEndDateTime && time) {
-        newEndDateTime.setHours(hours ?? 0, minutes ?? 0, 0, 0);
-      }
-
-      // 重複チェック（開始時刻がある場合のみ）
-      // Note: Plan↔Plan重複はサーバー側でブロック、視覚フィードバックのみ表示（toastなし）
-      if (newEndDateTime && startTime && scheduleDate) {
-        const [startHours, startMinutes] = startTime.split(':').map(Number);
-        const startDateTime = new Date(scheduleDate);
-        startDateTime.setHours(startHours ?? 0, startMinutes ?? 0, 0, 0);
-
-        if (checkTimeOverlap(startDateTime, newEndDateTime)) {
-          hapticError();
-          setTimeConflictError(true);
-          // エラーは時間変更するまで表示し続ける（自動消去なし）
-          // 変更は許可（サーバー側で最終チェック）
-        }
-      }
 
       setEndTime(time);
 
@@ -621,17 +543,7 @@ export function usePlanInspectorContentLogic() {
         addPendingChange({ end_time: isoValue });
       }
     },
-    [
-      scheduleDate,
-      startTime,
-      isDraftMode,
-      recurringEdit,
-      updateDraft,
-      addPendingChange,
-      checkTimeOverlap,
-      hapticError,
-      timezone,
-    ],
+    [scheduleDate, isDraftMode, recurringEdit, updateDraft, addPendingChange, timezone],
   );
 
   // Menu handlers
@@ -673,11 +585,44 @@ export function usePlanInspectorContentLogic() {
   }, []);
 
   /**
+   * クライアント側で即時重複チェック（サーバー呼び出し前）
+   */
+  const checkPlanOverlap = useCallback(
+    (startTimeISO: string, endTimeISO: string): boolean => {
+      const plans = utils.plans.list.getData();
+      if (!plans || plans.length === 0) return false;
+
+      const newStart = new Date(startTimeISO);
+      const newEnd = new Date(endTimeISO);
+
+      return plans.some((p) => {
+        // 編集時は自分自身を除外
+        if (planId && p.id === planId) return false;
+        if (!p.start_time || !p.end_time) return false;
+
+        const pStart = new Date(p.start_time);
+        const pEnd = new Date(p.end_time);
+
+        return pStart < newEnd && pEnd > newStart;
+      });
+    },
+    [planId, utils.plans.list],
+  );
+
+  /**
    * 未保存の変更を保存してからInspectorを閉じる（Google Calendar準拠）
    */
   const saveAndClose = useCallback(async () => {
     // ドラフトモードの場合: 新規作成
     if (isDraftMode && draftPlan) {
+      // クライアント側で即時重複チェック
+      if (draftPlan.start_time && draftPlan.end_time) {
+        if (checkPlanOverlap(draftPlan.start_time, draftPlan.end_time)) {
+          setTimeConflictError(true);
+          return; // サーバーを呼ばずに即座にエラー表示
+        }
+      }
+
       try {
         const newPlan = await createPlan.mutateAsync({
           title: draftPlan.title.trim() || '無題',
@@ -694,6 +639,12 @@ export function usePlanInspectorContentLogic() {
         }
       } catch (error) {
         console.error('Failed to create plan:', error);
+        // TIME_OVERLAPエラーの場合はフィールドにエラー表示
+        const errorMessage = error instanceof Error ? error.message : '';
+        if (errorMessage.includes('TIME_OVERLAP') || errorMessage.includes('既に')) {
+          setTimeConflictError(true);
+          return; // 閉じない
+        }
       }
       closeInspector();
       return;
@@ -704,6 +655,16 @@ export function usePlanInspectorContentLogic() {
 
     // 変更があればサーバーに保存
     if (changes && planId && Object.keys(changes).length > 0) {
+      // 時間変更がある場合はクライアント側チェック
+      const startTime = (changes as { start_time?: string }).start_time;
+      const endTime = (changes as { end_time?: string }).end_time;
+      if (startTime && endTime) {
+        if (checkPlanOverlap(startTime, endTime)) {
+          setTimeConflictError(true);
+          return; // サーバーを呼ばずに即座にエラー表示
+        }
+      }
+
       try {
         await updatePlan.mutateAsync({
           id: planId,
@@ -711,7 +672,12 @@ export function usePlanInspectorContentLogic() {
         });
       } catch (error) {
         console.error('Failed to save pending changes:', error);
-        // エラーでも閉じる（データはローカルで失われるが、UXを優先）
+        // TIME_OVERLAPエラーの場合はフィールドにエラー表示
+        const errorMessage = error instanceof Error ? error.message : '';
+        if (errorMessage.includes('TIME_OVERLAP') || errorMessage.includes('既に')) {
+          setTimeConflictError(true);
+          return; // 閉じない
+        }
       }
     }
 
@@ -725,6 +691,7 @@ export function usePlanInspectorContentLogic() {
     draftPlan,
     createPlan,
     clearDraft,
+    checkPlanOverlap,
   ]);
 
   /**

@@ -126,20 +126,47 @@ export function calculateColumnWidth(
 /**
  * クライアント側で時間重複をチェックする
  *
- * 注意: ドラッグ中のリアルタイム重複チェックは無効化
- * 重複チェックはサーバー側（保存時）で行う
+ * 同タイプ間のみ重複チェック:
+ * - Plan↔Plan: ❌ 重複禁止
+ * - Record↔Record: ❌ 重複禁止
+ * - Plan↔Record: ✅ 共存可能
  *
- * @deprecated ドラッグ中の重複チェックは無効化。サーバー側で保存時にチェック。
+ * @param events - 全イベント
+ * @param draggedEventId - ドラッグ中のイベントID
+ * @param previewStartTime - プレビュー開始時刻
+ * @param previewEndTime - プレビュー終了時刻
+ * @returns 同タイプのイベントと重複している場合true
  */
 export function checkClientSideOverlap(
-  _events: CalendarPlan[],
-  _draggedEventId: string,
-  _previewStartTime: Date,
-  _previewEndTime: Date,
+  events: CalendarPlan[],
+  draggedEventId: string,
+  previewStartTime: Date,
+  previewEndTime: Date,
 ): boolean {
-  // ドラッグ中のリアルタイム重複チェックを無効化
-  // 重複チェックはサーバー側（plan-service.ts, record-service.ts）で保存時に行う
-  return false;
+  // ドラッグ中のイベントを取得
+  const draggedEvent = events.find((e) => e.id === draggedEventId);
+  if (!draggedEvent) return false;
+
+  // ドラッグ中のイベントのタイプを取得
+  const draggedType = draggedEvent.type === 'record' || draggedEvent.recordId ? 'record' : 'plan';
+
+  // 同タイプのイベントとのみ重複チェック
+  return events.some((event) => {
+    // 自分自身は除外
+    if (event.id === draggedEventId) return false;
+
+    // イベントのタイプを取得
+    const eventType = event.type === 'record' || event.recordId ? 'record' : 'plan';
+
+    // 異なるタイプは重複OK（Plan↔Record共存可能）
+    if (eventType !== draggedType) return false;
+
+    // 時間範囲がなければスキップ
+    if (!event.startDate || !event.endDate) return false;
+
+    // 時間重複チェック（同タイプ間）
+    return event.startDate < previewEndTime && event.endDate > previewStartTime;
+  });
 }
 
 /**

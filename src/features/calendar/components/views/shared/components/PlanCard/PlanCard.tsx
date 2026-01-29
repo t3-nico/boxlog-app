@@ -94,8 +94,8 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
 
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
-      // Records/Draft は読み取り専用なのでドラッグ不可
-      if (isRecord || isDraft) return;
+      // Draft は未保存なのでドラッグ不可
+      if (isDraft) return;
       if (e.button === 0) {
         // 左クリックのみ
         onDragStart?.(plan, e, {
@@ -106,14 +106,14 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
         });
       }
     },
-    [isRecord, isDraft, onDragStart, plan, safePosition],
+    [isDraft, onDragStart, plan, safePosition],
   );
 
   // モバイル用タッチ開始
   const handleTouchStart = useCallback(
     (e: React.TouchEvent) => {
-      // Records/Draft は読み取り専用なのでドラッグ不可
-      if (isRecord || isDraft) return;
+      // Draft は未保存なのでドラッグ不可
+      if (isDraft) return;
       onTouchStart?.(plan, e, {
         top: safePosition.top,
         left: safePosition.left,
@@ -121,7 +121,7 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
         height: safePosition.height,
       });
     },
-    [isRecord, isDraft, onTouchStart, plan, safePosition],
+    [isDraft, onTouchStart, plan, safePosition],
   );
 
   const handleMouseUp = useCallback(() => {
@@ -212,8 +212,8 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
     isDraft ? 'border border-primary/40' : isRecord && 'border border-dashed border-border',
     // テキスト色
     'text-foreground',
-    // 状態別スタイル（Record/Draft は読み取り専用なのでポインタースタイルのみ）
-    isDraft || isRecord ? 'cursor-default' : isDragging ? 'cursor-grabbing' : 'cursor-pointer',
+    // 状態別スタイル（Draft は未保存なのでポインタースタイルのみ）
+    isDraft ? 'cursor-default' : isDragging ? 'cursor-grabbing' : 'cursor-pointer',
     // モバイル: Googleカレンダー風（左ボーダー、チェックボックス+タイトル横並び、上寄せ）
     // デスクトップ: 通常のカード表示
     isMobile
@@ -358,8 +358,8 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
         isCheckboxHovered={isCheckboxHovered}
       />
 
-      {/* 下端リサイズハンドル（Record/Draft は読み取り専用なので非表示） */}
-      {!isRecord && !isDraft && (
+      {/* 下端リサイズハンドル（Draft は未保存なので非表示） */}
+      {!isDraft && (
         <div
           className="focus:ring-ring absolute right-0 bottom-0 left-0 cursor-ns-resize focus:ring-2 focus:ring-offset-1 focus:outline-none"
           role="slider"

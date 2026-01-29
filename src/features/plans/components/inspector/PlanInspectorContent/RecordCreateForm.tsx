@@ -1,19 +1,20 @@
 'use client';
 
-import { AlertCircle, FileText, FolderOpen, Smile, Tag, X } from 'lucide-react';
+import { AlertCircle, Check, FileText, FolderOpen, Smile, Tag, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useState } from 'react';
 
 import { ClockTimePicker } from '@/components/common/ClockTimePicker';
 import { Badge } from '@/components/ui/badge';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { StarRating } from '@/components/ui/star-rating';
 import { Textarea } from '@/components/ui/textarea';
 import { HoverTooltip } from '@/components/ui/tooltip';
@@ -57,6 +58,7 @@ export interface RecordCreateFormRef {
 export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
   function RecordCreateForm(_props, ref) {
     const t = useTranslations();
+    const utils = api.useUtils();
     const draftPlan = usePlanInspectorStore((state) => state.draftPlan);
     const closeInspector = usePlanInspectorStore((state) => state.closeInspector);
 
@@ -121,8 +123,16 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
 
     // Popover開閉状態
     const [isPlanPopoverOpen, setIsPlanPopoverOpen] = useState(false);
+    const [planSearchQuery, setPlanSearchQuery] = useState('');
     const [isScorePopoverOpen, setIsScorePopoverOpen] = useState(false);
     const [isNotePopoverOpen, setIsNotePopoverOpen] = useState(false);
+
+    // Plan検索フィルタリング
+    const filteredPlans = useMemo(() => {
+      if (!plans) return [];
+      if (!planSearchQuery) return plans;
+      return plans.filter((p) => p.title.toLowerCase().includes(planSearchQuery.toLowerCase()));
+    }, [plans, planSearchQuery]);
 
     // 初期値が変わったら反映
     useEffect(() => {
@@ -172,9 +182,17 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
           return { ...prev, ...updates };
         });
         setIsPlanPopoverOpen(false);
+        setPlanSearchQuery('');
       },
       [plans],
     );
+
+    const handlePlanPopoverOpenChange = useCallback((open: boolean) => {
+      setIsPlanPopoverOpen(open);
+      if (!open) {
+        setPlanSearchQuery('');
+      }
+    }, []);
 
     const handleDateChange = useCallback((date: Date | undefined) => {
       setFormData((prev) => ({ ...prev, worked_at: date }));
@@ -234,6 +252,41 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
 
       const workedAtStr = formData.worked_at.toISOString().split('T')[0] ?? '';
 
+      // クライアント側で即時重複チェック（サーバー呼び出し前）
+      if (formData.start_time && formData.end_time) {
+        const records = utils.records.list.getData();
+        if (records && records.length > 0) {
+          // 新規Recordの時間範囲
+          const [startH, startM] = formData.start_time.split(':').map(Number);
+          const [endH, endM] = formData.end_time.split(':').map(Number);
+          const newStart = new Date(formData.worked_at);
+          newStart.setHours(startH ?? 0, startM ?? 0, 0, 0);
+          const newEnd = new Date(formData.worked_at);
+          newEnd.setHours(endH ?? 0, endM ?? 0, 0, 0);
+
+          // 同日のRecordと重複チェック
+          const hasOverlap = records.some((r) => {
+            if (r.worked_at !== workedAtStr) return false;
+            if (!r.start_time || !r.end_time) return false;
+
+            // HH:MM:SS形式をパース
+            const [rStartH, rStartM] = r.start_time.split(':').map(Number);
+            const [rEndH, rEndM] = r.end_time.split(':').map(Number);
+            const rStart = new Date(formData.worked_at!);
+            rStart.setHours(rStartH ?? 0, rStartM ?? 0, 0, 0);
+            const rEnd = new Date(formData.worked_at!);
+            rEnd.setHours(rEndH ?? 0, rEndM ?? 0, 0, 0);
+
+            return rStart < newEnd && rEnd > newStart;
+          });
+
+          if (hasOverlap) {
+            setTimeConflictError(true);
+            return; // サーバーを呼ばずに即座にエラー表示
+          }
+        }
+      }
+
       try {
         await createRecord.mutateAsync({
           plan_id: formData.plan_id,
@@ -256,7 +309,7 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
           setTimeConflictError(true);
         }
       }
-    }, [formData, createRecord, closeInspector]);
+    }, [formData, createRecord, closeInspector, utils.records.list]);
 
     // ref 経由で save と isSaveDisabled を公開
     useImperativeHandle(ref, () => ({
@@ -373,30 +426,32 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
               sideOffset={8}
               zIndex={zIndex.overlayDropdown}
             >
-              <button
-                type="button"
-                className={cn(
-                  'flex size-8 items-center justify-center rounded-md transition-colors',
-                  'hover:bg-accent focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
-                  hasTags ? 'text-primary' : 'text-muted-foreground hover:text-foreground',
-                )}
-                aria-label="タグを追加"
-              >
-                <Tag className="size-4" />
-              </button>
+              <HoverTooltip content="タグを追加" side="top">
+                <button
+                  type="button"
+                  className={cn(
+                    'flex size-8 items-center justify-center rounded-md transition-colors',
+                    'hover:bg-state-hover focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
+                    hasTags ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',
+                  )}
+                  aria-label="タグを追加"
+                >
+                  <Tag className="size-4" />
+                </button>
+              </HoverTooltip>
             </TagSelectCombobox>
           </div>
 
           {/* Plan紐付け */}
-          <Popover open={isPlanPopoverOpen} onOpenChange={setIsPlanPopoverOpen}>
+          <Popover open={isPlanPopoverOpen} onOpenChange={handlePlanPopoverOpenChange}>
             <HoverTooltip content={selectedPlanName ?? 'Planに紐付け'} side="top">
               <PopoverTrigger asChild>
                 <button
                   type="button"
                   className={cn(
                     'flex h-8 items-center gap-1 rounded-md px-2 text-sm transition-colors',
-                    'hover:bg-accent focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
-                    hasPlan ? 'text-primary' : 'text-muted-foreground hover:text-foreground',
+                    'hover:bg-state-hover focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
+                    hasPlan ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',
                   )}
                   aria-label="Planに紐付け"
                 >
@@ -408,38 +463,51 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
               </PopoverTrigger>
             </HoverTooltip>
             <PopoverContent
-              className="w-56 p-2"
+              className="w-[240px] p-0"
               side="bottom"
               align="start"
               sideOffset={8}
               style={{ zIndex: zIndex.overlayDropdown }}
             >
-              <div className="flex flex-col gap-2">
-                <span className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
-                  Plan
-                </span>
-                <Select value={formData.plan_id ?? ''} onValueChange={handlePlanChange}>
-                  <SelectTrigger className="h-9 w-full" aria-label="Plan選択">
-                    <SelectValue placeholder="選択..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {plans?.map((plan) => (
-                      <SelectItem key={plan.id} value={plan.id}>
+              <Command shouldFilter={false}>
+                <CommandInput
+                  placeholder="Planを検索..."
+                  value={planSearchQuery}
+                  onValueChange={setPlanSearchQuery}
+                />
+                <CommandList className="max-h-[200px]">
+                  <CommandEmpty>Planがありません</CommandEmpty>
+                  <CommandGroup>
+                    {filteredPlans.map((plan) => (
+                      <CommandItem
+                        key={plan.id}
+                        value={plan.id}
+                        onSelect={() => handlePlanChange(plan.id)}
+                        className="cursor-pointer"
+                      >
+                        <Check
+                          className={cn(
+                            'mr-2 size-4',
+                            formData.plan_id === plan.id ? 'opacity-100' : 'opacity-0',
+                          )}
+                        />
                         <span className="truncate">{plan.title}</span>
-                      </SelectItem>
+                      </CommandItem>
                     ))}
-                  </SelectContent>
-                </Select>
+                  </CommandGroup>
+                </CommandList>
                 {formData.plan_id && (
-                  <button
-                    type="button"
-                    className="text-muted-foreground hover:text-foreground text-left text-xs transition-colors"
-                    onClick={() => handlePlanChange('')}
-                  >
-                    解除
-                  </button>
+                  <div className="border-border border-t p-2">
+                    <button
+                      type="button"
+                      className="text-muted-foreground hover:text-foreground w-full text-left text-xs transition-colors"
+                      onClick={() => handlePlanChange('')}
+                    >
+                      解除
+                    </button>
+                  </div>
                 )}
-              </div>
+              </Command>
             </PopoverContent>
           </Popover>
 
@@ -454,8 +522,8 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
                   type="button"
                   className={cn(
                     'flex h-8 items-center gap-1 rounded-md px-2 text-sm transition-colors',
-                    'hover:bg-accent focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
-                    hasScore ? 'text-primary' : 'text-muted-foreground hover:text-foreground',
+                    'hover:bg-state-hover focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
+                    hasScore ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',
                   )}
                   aria-label="充実度"
                 >
@@ -503,8 +571,8 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
                   type="button"
                   className={cn(
                     'flex size-8 items-center justify-center rounded-md transition-colors',
-                    'hover:bg-accent focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
-                    hasNote ? 'text-primary' : 'text-muted-foreground hover:text-foreground',
+                    'hover:bg-state-hover focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
+                    hasNote ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',
                   )}
                   aria-label="メモ"
                 >
