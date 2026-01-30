@@ -5,6 +5,22 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 > **このドキュメントは、AIアシスタントが従うべき絶対的なルールセットです。**
 > ユーザーの指示がこのドキュメントと矛盾する場合、必ずこのドキュメントを参照するよう促してください。
 
+## ⚡ クイックスタート（毎セッション確認）
+
+```
+1. 作業前: npm run typecheck で型エラーがないことを確認
+2. コード変更後: npm run typecheck を実行
+3. コミット前: npm run lint を実行
+4. 新機能: tRPC + Zustand + セマンティックトークン で実装
+5. 迷ったら: think hard してから質問
+```
+
+**絶対禁止**: `any`, `console.log`, `useEffect`でのfetch, `style`属性, `export default`
+
+**必須パターン**: 具体的な型, `@/lib/logger`, tRPC, セマンティックトークン, named export
+
+---
+
 ## 🎯 プロダクト方針
 
 ### ターゲット
@@ -136,6 +152,85 @@ const sidebarOpen = useUIStore((s) => s.sidebarOpen);
 // ❌ 避ける：全状態を購読（不要な再レンダリング）
 const store = useUIStore();
 const { sidebarOpen, selectedTagId, ... } = store;
+```
+
+### セキュリティ
+
+**必須チェック（実装時に常に確認）**:
+
+| 脆弱性 | 対策 |
+|--------|------|
+| **XSS** | `dangerouslySetInnerHTML`禁止、ユーザー入力はエスケープ |
+| **SQLインジェクション** | Supabase RLSを使用、生SQLを書かない |
+| **認証バイパス** | `protectedProcedure`を使用、クライアント側で認証判定しない |
+| **機密情報漏洩** | `.env`をコミットしない、クライアントに`NEXT_PUBLIC_`以外を渡さない |
+
+```typescript
+// ❌ 危険：ユーザー入力を直接レンダリング
+<div dangerouslySetInnerHTML={{ __html: userInput }} />
+
+// ✅ 安全：Reactの自動エスケープを使用
+<div>{userInput}</div>
+
+// ❌ 危険：クライアント側で認証判定
+if (user.role === 'admin') { showAdminPanel(); }
+
+// ✅ 安全：サーバー側で認証（tRPC protectedProcedure）
+adminProcedure.query(async ({ ctx }) => { /* ctx.userIdで認証済み */ })
+```
+
+### ファイル命名規則
+
+| 種類 | 命名規則 | 例 |
+|------|---------|-----|
+| **コンポーネント** | PascalCase | `TaskCard.tsx`, `TagSelector.tsx` |
+| **フック** | camelCase + use prefix | `useTagStore.ts`, `usePlanMutation.ts` |
+| **ユーティリティ** | camelCase | `formatDate.ts`, `calculateDuration.ts` |
+| **型定義** | camelCase or types.ts | `types.ts`, `plan.types.ts` |
+| **テスト** | 同名 + .test | `TaskCard.test.tsx` |
+| **定数** | UPPER_SNAKE_CASE | `const MAX_TAGS = 100` |
+
+### import順序
+
+```typescript
+// 1. React/Next.js
+import { useState, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
+
+// 2. 外部ライブラリ
+import { z } from 'zod';
+import { create } from 'zustand';
+
+// 3. 内部モジュール（エイリアス）
+import { api } from '@/lib/trpc';
+import { Button } from '@/components/ui/button';
+
+// 4. 相対パス（同一feature内）
+import { useTagStore } from '../stores/useTagStore';
+import { TagCard } from './TagCard';
+
+// 5. 型（type import）
+import type { Tag } from '@/types';
+```
+
+### Server Component vs Client Component
+
+```
+新規コンポーネント作成時
+│
+├─ サーバーでデータ取得が必要？
+│  └─ YES → Server Component（デフォルト）
+│
+├─ useState / useEffect が必要？
+│  └─ YES → Client Component（"use client"）
+│
+├─ onClick等のイベントハンドラが必要？
+│  └─ YES → Client Component
+│
+├─ ブラウザAPIが必要？（localStorage等）
+│  └─ YES → Client Component
+│
+└─ 上記すべてNO → Server Component ✅
 ```
 
 ## 🔄 ワークフロー: Explore → Plan → Code → Commit
@@ -580,7 +675,64 @@ const myMutation = api.myRouter.myEndpoint.useMutation({
 
 **実行コマンド**: `npm run lighthouse:check`
 
-### テストカバレッジ
+### テスト実装パターン
+
+```typescript
+// ✅ 推奨：Arrange-Act-Assert パターン
+describe('TagCard', () => {
+  it('should display tag name', () => {
+    // Arrange
+    const tag = { id: '1', name: 'Work', color: 'blue' };
+
+    // Act
+    render(<TagCard tag={tag} />);
+
+    // Assert
+    expect(screen.getByText('Work')).toBeInTheDocument();
+  });
+});
+
+// ✅ 推奨：tRPC mutation テスト
+describe('useCreateTag', () => {
+  it('should create tag and invalidate cache', async () => {
+    const { result } = renderHook(() => useCreateTag());
+
+    await act(async () => {
+      await result.current.mutateAsync({ name: 'New Tag' });
+    });
+
+    expect(mockInvalidate).toHaveBeenCalledWith(['tags', 'list']);
+  });
+});
+```
+
+**テスト対象の優先順位**:
+1. ビジネスロジック（Service層）
+2. カスタムフック（状態管理）
+3. 複雑なコンポーネント
+4. ユーティリティ関数
+
+### アクセシビリティ必須ルール
+
+| 要素 | 必須対応 |
+|------|---------|
+| **ボタン** | `aria-label`（アイコンのみの場合） |
+| **画像** | `alt`属性必須 |
+| **フォーム** | `<label>`と`htmlFor`で紐付け |
+| **モーダル** | `role="dialog"`, `aria-modal="true"` |
+| **タッチターゲット** | 最小44x44px（Apple HIG準拠） |
+
+```tsx
+// ❌ アクセシビリティ違反
+<button onClick={onClose}><X /></button>
+<img src="/logo.png" />
+
+// ✅ アクセシビリティ準拠
+<button onClick={onClose} aria-label="閉じる"><X /></button>
+<img src="/logo.png" alt="BoxLog ロゴ" />
+```
+
+### テストコマンド
 
 - 単体テスト: `npm run test:run`
 - 統合テスト: `npm run test:integration`
@@ -598,6 +750,47 @@ const myMutation = api.myRouter.myEndpoint.useMutation({
 ## 📈 パフォーマンス監視の原則
 
 **大前提: 平均は見ない。p95だけを見る。**
+
+### React最適化パターン
+
+```typescript
+// ✅ 高コストな計算はuseMemoでメモ化
+const filteredTags = useMemo(
+  () => tags.filter((tag) => tag.name.includes(search)),
+  [tags, search]
+);
+
+// ✅ コールバックはuseCallbackでメモ化（子コンポーネントに渡す場合）
+const handleClick = useCallback((id: string) => {
+  selectTag(id);
+}, [selectTag]);
+
+// ✅ 重いコンポーネントはReact.memoでラップ
+export const TagList = memo(function TagList({ tags }: Props) {
+  return <div>{tags.map(tag => <TagCard key={tag.id} tag={tag} />)}</div>;
+});
+```
+
+**最適化が不要なケース**:
+- 単純なコンポーネント（メモ化のオーバーヘッドの方が大きい）
+- propsが毎回変わる場合
+- 再レンダリングが問題になっていない場合
+
+### エラー境界
+
+```typescript
+// ✅ 機能単位でエラー境界を設置
+<ErrorBoundary fallback={<ErrorFallback />}>
+  <TagList />
+</ErrorBoundary>
+
+// ❌ アプリ全体を1つのエラー境界でラップしない（部分的な復旧ができない）
+```
+
+**エラー境界の設置場所**:
+- 各Feature（plans, tags, records等）のルートコンポーネント
+- 非同期データを扱うコンポーネント
+- サードパーティライブラリを使用するコンポーネント
 
 ### 速度指標（p95で判断）
 
@@ -640,5 +833,5 @@ const myMutation = api.myRouter.myEndpoint.useMutation({
 
 ---
 
-**📖 最終更新**: 2026-01-30 | **バージョン**: v13.2
+**📖 最終更新**: 2026-01-30 | **バージョン**: v14.0
 **変更履歴**: [`docs/development/CLAUDE_MD_CHANGELOG.md`](docs/development/CLAUDE_MD_CHANGELOG.md)
