@@ -11,6 +11,7 @@ Dayoptプロジェクト固有のスキル集。各スキルは特定のタス�
 | [`store-creating`](store-creating/SKILL.md) | Zustandストア作成 | 新しいストアが必要な時 |
 | [`trpc-router-creating`](trpc-router-creating/SKILL.md) | tRPCルーター作成 | 新しいAPIエンドポイントが必要な時 |
 | [`optimistic-update`](optimistic-update/SKILL.md) | 楽観的更新実装 | mutation実装時 |
+| [`supabase`](supabase/SKILL.md) | Supabase運用 | RLS設計、マイグレーション、Realtime実装時 |
 | [`feature-scaffolding`](feature-scaffolding/SKILL.md) | Feature構造作成 | 新機能モジュール作成時 |
 | [`i18n`](i18n/SKILL.md) | 国際化対応 | UIテキスト追加時 |
 
@@ -20,6 +21,7 @@ Dayoptプロジェクト固有のスキル集。各スキルは特定のタス�
 |--------|------|-------------|
 | [`test`](test/SKILL.md) | テスト作成 | 新機能実装後、バグ修正後 |
 | [`security`](security/SKILL.md) | セキュリティ監査 | 認証/認可、入力処理実装時 |
+| [`error-handling`](error-handling/SKILL.md) | エラー処理 | エラー処理、Sentry連携、ErrorBoundary配置時 |
 | [`a11y`](a11y/SKILL.md) | アクセシビリティ | インタラクティブ要素実装時 |
 | [`react-best-practices`](react-best-practices/SKILL.md) | React最適化 | コンポーネント実装時 |
 
