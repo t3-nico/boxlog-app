@@ -1,6 +1,17 @@
+---
+name: model-selection
+description: Subagentモデル選択スキル。Taskツール使用時、コスト最適化が必要な時に自動発動。Haiku/Sonnet/Opusの使い分けを支援。
+---
+
 # Model Selection Guidelines
 
 DayoptプロジェクトでのSubagentモデル選択ガイドライン。
+
+## When to Use（自動発動条件）
+
+- Taskツールでsubagentを起動する時
+- コスト最適化を検討する時
+- 複数のsubagentを並列実行する時
 
 ## モデル選択の原則
 
@@ -129,3 +140,9 @@ Task({
 | Opus主体（高品質） | ~$500/月   |
 
 **推奨**: Sonnet をデフォルトに、必要時のみ Opus にアップグレード
+
+## 関連スキル
+
+- `/architecture` - Opus推奨のアーキテクチャ設計
+- `/debug` - 複雑なデバッグ時はOpus検討
+- `/investigate` - 調査タスクはHaikuで高速化
