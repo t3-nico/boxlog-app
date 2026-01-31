@@ -156,28 +156,14 @@ const { sidebarOpen, selectedTagId, ... } = store;
 
 ### セキュリティ
 
-**必須チェック（実装時に常に確認）**:
+**クイックチェック（実装時に確認）**:
 
-| 脆弱性 | 対策 |
-|--------|------|
-| **XSS** | `dangerouslySetInnerHTML`禁止、ユーザー入力はエスケープ |
-| **SQLインジェクション** | Supabase RLSを使用、生SQLを書かない |
-| **認証バイパス** | `protectedProcedure`を使用、クライアント側で認証判定しない |
-| **機密情報漏洩** | `.env`をコミットしない、クライアントに`NEXT_PUBLIC_`以外を渡さない |
+- [ ] `protectedProcedure` を使用（認証必須エンドポイント）
+- [ ] `ctx.userId` でデータアクセスを制限
+- [ ] `dangerouslySetInnerHTML` 禁止
+- [ ] `.env` をコミットしない、`NEXT_PUBLIC_` 以外はクライアントに渡さない
 
-```typescript
-// ❌ 危険：ユーザー入力を直接レンダリング
-<div dangerouslySetInnerHTML={{ __html: userInput }} />
-
-// ✅ 安全：Reactの自動エスケープを使用
-<div>{userInput}</div>
-
-// ❌ 危険：クライアント側で認証判定
-if (user.role === 'admin') { showAdminPanel(); }
-
-// ✅ 安全：サーバー側で認証（tRPC protectedProcedure）
-adminProcedure.query(async ({ ctx }) => { /* ctx.userIdで認証済み */ })
-```
+**詳細ガイド**: 認証/認可、tRPCエンドポイント、入力検証の実装時は [`.claude/skills/security/SKILL.md`](.claude/skills/security/SKILL.md) を参照
 
 ### ファイル命名規則
 
@@ -675,36 +661,7 @@ const myMutation = api.myRouter.myEndpoint.useMutation({
 
 **実行コマンド**: `npm run lighthouse:check`
 
-### テスト実装パターン
-
-```typescript
-// ✅ 推奨：Arrange-Act-Assert パターン
-describe('TagCard', () => {
-  it('should display tag name', () => {
-    // Arrange
-    const tag = { id: '1', name: 'Work', color: 'blue' };
-
-    // Act
-    render(<TagCard tag={tag} />);
-
-    // Assert
-    expect(screen.getByText('Work')).toBeInTheDocument();
-  });
-});
-
-// ✅ 推奨：tRPC mutation テスト
-describe('useCreateTag', () => {
-  it('should create tag and invalidate cache', async () => {
-    const { result } = renderHook(() => useCreateTag());
-
-    await act(async () => {
-      await result.current.mutateAsync({ name: 'New Tag' });
-    });
-
-    expect(mockInvalidate).toHaveBeenCalledWith(['tags', 'list']);
-  });
-});
-```
+### テスト実装
 
 **テスト対象の優先順位**:
 1. ビジネスロジック（Service層）
@@ -712,32 +669,24 @@ describe('useCreateTag', () => {
 3. 複雑なコンポーネント
 4. ユーティリティ関数
 
-### アクセシビリティ必須ルール
-
-| 要素 | 必須対応 |
-|------|---------|
-| **ボタン** | `aria-label`（アイコンのみの場合） |
-| **画像** | `alt`属性必須 |
-| **フォーム** | `<label>`と`htmlFor`で紐付け |
-| **モーダル** | `role="dialog"`, `aria-modal="true"` |
-| **タッチターゲット** | 最小44x44px（Apple HIG準拠） |
-
-```tsx
-// ❌ アクセシビリティ違反
-<button onClick={onClose}><X /></button>
-<img src="/logo.png" />
-
-// ✅ アクセシビリティ準拠
-<button onClick={onClose} aria-label="閉じる"><X /></button>
-<img src="/logo.png" alt="BoxLog ロゴ" />
+**テストコマンド**:
+```bash
+npm run test          # 全体実行
+npm run test -- path  # 特定ファイル
 ```
 
-### テストコマンド
+**詳細ガイド**: Vitest + Testing Libraryのパターン、コンポーネント/フック/Zustand storeテストの書き方は [`.claude/skills/test/SKILL.md`](.claude/skills/test/SKILL.md) を参照
 
-- 単体テスト: `npm run test:run`
-- 統合テスト: `npm run test:integration`
-- E2Eテスト: `npm run test:e2e`
-- カバレッジ確認: `npm run test:coverage:summary`
+### アクセシビリティ
+
+**クイックチェック**:
+
+- [ ] アイコンボタンに `aria-label` を設定
+- [ ] 画像に `alt` 属性を設定
+- [ ] フォームで `<label>` と `htmlFor` を紐付け
+- [ ] タッチターゲット最小44x44px（Apple HIG準拠）
+
+**詳細ガイド**: インタラクティブ要素、Dialog、キーボード操作の実装時は [`.claude/skills/a11y/SKILL.md`](.claude/skills/a11y/SKILL.md) を参照
 
 ### アナリティクス（PostHog）
 
@@ -753,28 +702,18 @@ describe('useCreateTag', () => {
 
 ### React最適化パターン
 
-```typescript
-// ✅ 高コストな計算はuseMemoでメモ化
-const filteredTags = useMemo(
-  () => tags.filter((tag) => tag.name.includes(search)),
-  [tags, search]
-);
+**クイックチェック**:
 
-// ✅ コールバックはuseCallbackでメモ化（子コンポーネントに渡す場合）
-const handleClick = useCallback((id: string) => {
-  selectTag(id);
-}, [selectTag]);
-
-// ✅ 重いコンポーネントはReact.memoでラップ
-export const TagList = memo(function TagList({ tags }: Props) {
-  return <div>{tags.map(tag => <TagCard key={tag.id} tag={tag} />)}</div>;
-});
-```
+- [ ] 高コストな計算 → `useMemo`
+- [ ] 子に渡すコールバック → `useCallback`
+- [ ] 重いコンポーネント → `React.memo`
 
 **最適化が不要なケース**:
 - 単純なコンポーネント（メモ化のオーバーヘッドの方が大きい）
 - propsが毎回変わる場合
 - 再レンダリングが問題になっていない場合
+
+**詳細ガイド**: Vercel Engineering推奨の45ルール（ウォーターフォール排除、バンドル最適化、サーバーサイド、再レンダリング等）は [`.claude/skills/react-best-practices/SKILL.md`](.claude/skills/react-best-practices/SKILL.md) を参照
 
 ### エラー境界
 
@@ -833,5 +772,5 @@ export const TagList = memo(function TagList({ tags }: Props) {
 
 ---
 
-**📖 最終更新**: 2026-01-30 | **バージョン**: v14.0
+**📖 最終更新**: 2026-01-31 | **バージョン**: v14.1
 **変更履歴**: [`docs/development/CLAUDE_MD_CHANGELOG.md`](docs/development/CLAUDE_MD_CHANGELOG.md)
