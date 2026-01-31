@@ -92,7 +92,9 @@ export function useUpdateEntity() {
       utils.entity.list.setData(undefined, (old) => {
         if (!old) return old;
         return old.map((item) =>
-          item.id === id ? { ...item, ...data, updated_at: new Date().toISOString() } : item,
+          item.id === id
+            ? { ...item, ...data, updated_at: new Date().toISOString() }
+            : item
         );
       });
 

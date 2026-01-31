@@ -122,37 +122,11 @@ npm run lint         # コード品質（AI必須：コミット前）
 
 **理由**: Zustandは最小限のボイラープレートで型安全なグローバル状態を実現。Reduxは過剰な抽象化。新規ライブラリ追加はバンドルサイズと学習コストを増加させる。
 
-**Zustand実装パターン**:
+**クイックチェック**:
+- [ ] セレクタで必要な状態のみ購読（`useStore((s) => s.field)`）
+- [ ] 全状態を購読しない（`const { a, b } = useStore()` は避ける）
 
-```typescript
-// ✅ 推奨：型安全なストア設計
-import { create } from 'zustand';
-
-interface UIStore {
-  // State
-  sidebarOpen: boolean;
-  selectedTagId: string | null;
-  // Actions
-  toggleSidebar: () => void;
-  selectTag: (tagId: string | null) => void;
-}
-
-export const useUIStore = create<UIStore>((set) => ({
-  sidebarOpen: true,
-  selectedTagId: null,
-  toggleSidebar: () => set((s) => ({ sidebarOpen: !s.sidebarOpen })),
-  selectTag: (tagId) => set({ selectedTagId: tagId }),
-}));
-```
-
-```typescript
-// ✅ 推奨：セレクタで必要な状態のみ購読（再レンダリング最適化）
-const sidebarOpen = useUIStore((s) => s.sidebarOpen);
-
-// ❌ 避ける：全状態を購読（不要な再レンダリング）
-const store = useUIStore();
-const { sidebarOpen, selectedTagId, ... } = store;
-```
+**詳細ガイド**: CRUD/UI/選択/フィルターストアのパターン、devtools/persist設定は [`.claude/skills/store-creating/SKILL.md`](.claude/skills/store-creating/SKILL.md) を参照
 
 ### セキュリティ
 
@@ -538,50 +512,9 @@ export const myRouter = createTRPCRouter({
 });
 ```
 
-### tRPCエラーハンドリングパターン
+### tRPCエラーハンドリング
 
-```typescript
-import { TRPCError } from '@trpc/server';
-
-// ❌ 避けるべき：汎用エラー
-throw new Error("処理に失敗しました");
-
-// ✅ 推奨：適切なエラーコードを使用
-export const tagsRouter = createTRPCRouter({
-  merge: protectedProcedure
-    .input(z.object({ sourceId: z.string().uuid(), targetId: z.string().uuid() }))
-    .mutation(async ({ ctx, input }) => {
-      // 入力値検証エラー
-      if (input.sourceId === input.targetId) {
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: 'タグを同じタグにマージできません',
-        });
-      }
-
-      // 存在しないリソース
-      const tag = await getTag(input.sourceId, ctx.userId);
-      if (!tag) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'タグが見つかりません',
-        });
-      }
-
-      // 権限エラー
-      if (tag.userId !== ctx.userId) {
-        throw new TRPCError({
-          code: 'FORBIDDEN',
-          message: 'このタグを操作する権限がありません',
-        });
-      }
-
-      return await mergeTagsService(input);
-    }),
-});
-```
-
-**エラーコード使い分け**:
+**エラーコード使い分け（クイックリファレンス）**:
 | コード | 用途 |
 |--------|------|
 | `BAD_REQUEST` | 入力値不正、ビジネスルール違反 |
@@ -590,63 +523,18 @@ export const tagsRouter = createTRPCRouter({
 | `UNAUTHORIZED` | 未認証 |
 | `INTERNAL_SERVER_ERROR` | 予期しないエラー |
 
+**詳細ガイド**: サービス層分離、`handleServiceError`、Zodスキーマ設計は [`.claude/skills/trpc-router-creating/SKILL.md`](.claude/skills/trpc-router-creating/SKILL.md) を参照
+
 ## 🔄 楽観的更新（Optimistic Updates）
 
-### 基本方針
+**基本方針**: ユーザー操作に対応する全mutationで楽観的更新を実装する（体感速度200-800ms改善）
 
-**ユーザー操作に対応する全mutationで楽観的更新を実装する**
-
-楽観的更新により、ユーザーはサーバーレスポンスを待たずに即座にUIフィードバックを得られる。
-これは体感速度を200-800ms改善し、アプリケーションの応答性を大幅に向上させる。
-
-### 実装パターン（テンプレート）
-
-```typescript
-const myMutation = api.myRouter.myEndpoint.useMutation({
-  // 1. 楽観的更新
-  onMutate: async (input) => {
-    // 進行中のクエリをキャンセル（競合防止）
-    await utils.myRouter.list.cancel();
-
-    // 現在のキャッシュをスナップショット（ロールバック用）
-    const previous = utils.myRouter.list.getData();
-
-    // キャッシュを楽観的に更新
-    utils.myRouter.list.setData(undefined, (old) => {
-      if (!old) return old;
-      return /* 更新後のデータ */;
-    });
-
-    return { previous };
-  },
-
-  // 2. エラー時ロールバック
-  onError: (_err, _input, context) => {
-    if (context?.previous) {
-      utils.myRouter.list.setData(undefined, context.previous);
-    }
-  },
-
-  // 3. 完了時に再検証
-  onSettled: () => {
-    void utils.myRouter.list.invalidate();
-  },
-});
-```
-
-### 楽観的更新が不要な場合
-
-以下のケースでは楽観的更新を適用しない：
-
-1. **不可逆操作**: アカウント削除、支払い処理など
-2. **サーバー計算が必要**: IDの発行、複雑な集計など（ただし一時IDで対応可能な場合は実装する）
-3. **低頻度操作**: 月1回程度の設定変更など（ただし一貫性のため実装を推奨）
-
-### 新規mutation作成時のチェックリスト
-
+**チェックリスト**:
 - [ ] ユーザー操作に対応するか？ → 楽観的更新を実装
 - [ ] 不可逆操作か？ → 楽観的更新なし、確認ダイアログを表示
 - [ ] 複数キャッシュに影響するか？ → 全キャッシュを更新
+
+**詳細ガイド**: 実装テンプレート、Realtime競合対策、CRUD別パターンは [`.claude/skills/optimistic-update/SKILL.md`](.claude/skills/optimistic-update/SKILL.md) を参照
 
 ---
 
@@ -772,5 +660,5 @@ npm run test -- path  # 特定ファイル
 
 ---
 
-**📖 最終更新**: 2026-01-31 | **バージョン**: v14.1
+**📖 最終更新**: 2026-01-31 | **バージョン**: v14.2
 **変更履歴**: [`docs/development/CLAUDE_MD_CHANGELOG.md`](docs/development/CLAUDE_MD_CHANGELOG.md)

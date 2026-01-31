@@ -4,6 +4,29 @@
 
 ---
 
+## v14.2（2026-01-31）- Skill参照型へのリファクタリング（最大化）
+
+**変更内容**:
+
+- ✅ 「Zustand実装パターン」をSkill参照型に変更
+  - クイックチェック（2項目）+ `.claude/skills/store-creating/SKILL.md`への参照
+- ✅ 「tRPCエラーハンドリング」をSkill参照型に変更
+  - エラーコード表（5項目）+ `.claude/skills/trpc-router-creating/SKILL.md`への参照
+- ✅ 新Skill `optimistic-update` を作成（210行）
+  - 基本テンプレート、CRUD別パターン、Realtime競合対策
+- ✅ 「楽観的更新」セクションをSkill参照型に変更
+  - チェックリスト（3項目）+ `.claude/skills/optimistic-update/SKILL.md`への参照
+
+**理由**:
+
+- CLAUDE.mdの肥大化を防ぎ、コンテキスト効率を維持
+- 詳細なコードテンプレートはSkillに集約
+- Skill自動発動で必要時に詳細ガイドを参照
+
+**効果**: CLAUDE.md 778行 → 693行（約11%削減）、新Skill作成でパターン再利用性向上
+
+---
+
 ## v14.1（2026-01-31）- Skill参照型へのリファクタリング
 
 **変更内容**:
