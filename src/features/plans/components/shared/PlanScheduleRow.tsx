@@ -10,9 +10,8 @@ import { useAutoAdjustEndTime } from '@/features/plans/hooks/useAutoAdjustEndTim
 import { configToReadable, ruleToConfig } from '@/features/plans/utils/rrule';
 import { cn } from '@/lib/utils';
 
-import { DatePickerPopover } from '@/components/common/DatePickerPopover';
+import { DatePickerPopover } from './DatePickerPopover';
 import { RecurrenceDialog } from './RecurrenceDialog';
-import { ReminderSelect } from './ReminderSelect';
 
 // 繰り返しオプション
 const RECURRENCE_OPTIONS = [
@@ -32,14 +31,11 @@ interface PlanScheduleRowProps {
   onDateChange: (date: Date | undefined) => void;
   onStartTimeChange: (time: string) => void;
   onEndTimeChange: (time: string) => void;
-  // 繰り返し（optional - 渡さなければ表示しない）
-  recurrenceRule?: string | null;
+  // 繰り返し
+  recurrenceRule: string | null;
   recurrenceType?: 'none' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'weekdays' | null;
-  onRepeatTypeChange?: (type: string) => void;
-  onRecurrenceRuleChange?: (rule: string | null) => void;
-  // 通知
-  reminderType?: string;
-  onReminderChange?: (type: string) => void;
+  onRepeatTypeChange: (type: string) => void;
+  onRecurrenceRuleChange: (rule: string | null) => void;
   // オプション
   disabled?: boolean;
   /** 時間重複エラー状態 */
@@ -60,8 +56,6 @@ export function PlanScheduleRow({
   recurrenceType,
   onRepeatTypeChange,
   onRecurrenceRuleChange,
-  reminderType,
-  onReminderChange,
   disabled = false,
   timeConflictError = false,
 }: PlanScheduleRowProps) {
@@ -179,108 +173,99 @@ export function PlanScheduleRow({
             </span>
           )}
 
-          {/* 繰り返しアイコンボタン（onRepeatTypeChangeが渡された場合のみ表示） */}
-          {onRepeatTypeChange && onRecurrenceRuleChange && (
-            <div className="relative ml-2" ref={recurrenceRef}>
-              <HoverTooltip
-                content={hasRecurrence ? recurrenceDisplayText : '繰り返しを設定'}
-                side="top"
+          {/* 繰り返しアイコンボタン */}
+          <div className="relative ml-2" ref={recurrenceRef}>
+            <HoverTooltip
+              content={hasRecurrence ? recurrenceDisplayText : '繰り返しを設定'}
+              side="top"
+            >
+              <button
+                type="button"
+                disabled={disabled}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (!disabled) {
+                    setShowRecurrencePopover(!showRecurrencePopover);
+                  }
+                }}
+                className={cn(
+                  'flex h-8 items-center gap-1 rounded-md px-2 transition-colors',
+                  'hover:bg-state-hover focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
+                  hasRecurrence ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',
+                )}
+                aria-label={`繰り返し設定: ${hasRecurrence ? recurrenceDisplayText : '設定なし'}`}
+                aria-expanded={showRecurrencePopover}
+                aria-haspopup="menu"
               >
-                <button
-                  type="button"
-                  disabled={disabled}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (!disabled) {
-                      setShowRecurrencePopover(!showRecurrencePopover);
-                    }
-                  }}
-                  className={cn(
-                    'flex h-8 items-center gap-1 rounded-md px-2 transition-colors',
-                    'hover:bg-state-hover focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
-                    hasRecurrence
-                      ? 'text-foreground'
-                      : 'text-muted-foreground hover:text-foreground',
-                  )}
-                  aria-label={`繰り返し設定: ${hasRecurrence ? recurrenceDisplayText : '設定なし'}`}
-                  aria-expanded={showRecurrencePopover}
-                  aria-haspopup="menu"
-                >
-                  <Repeat className="size-4" />
-                  {hasRecurrence && <span className="text-sm">{recurrenceDisplayText}</span>}
-                </button>
-              </HoverTooltip>
+                <Repeat className="size-4" />
+                {hasRecurrence && <span className="text-sm">{recurrenceDisplayText}</span>}
+              </button>
+            </HoverTooltip>
 
-              {/* 繰り返しポップオーバー */}
-              {showRecurrencePopover && !disabled && (
-                <div
-                  className="border-border bg-popover absolute top-10 left-0 z-50 w-48 rounded-md border shadow-md"
-                  role="menu"
-                  aria-label="繰り返しオプション"
-                >
-                  <div className="p-1">
+            {/* 繰り返しポップオーバー */}
+            {showRecurrencePopover && !disabled && (
+              <div
+                className="border-border bg-popover absolute top-10 left-0 z-50 w-48 rounded-md border shadow-md"
+                role="menu"
+                aria-label="繰り返しオプション"
+              >
+                <div className="p-1">
+                  <button
+                    className="hover:bg-state-hover focus-visible:bg-state-hover flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-left text-sm transition-colors focus-visible:outline-none"
+                    onClick={() => {
+                      onRepeatTypeChange('');
+                      onRecurrenceRuleChange(null);
+                      setShowRecurrencePopover(false);
+                    }}
+                    type="button"
+                    role="menuitem"
+                  >
+                    選択しない
+                    {!hasRecurrence && <Check className="text-primary h-4 w-4" />}
+                  </button>
+                  <div className="border-border my-1 border-t" />
+                  {RECURRENCE_OPTIONS.slice(1).map((option) => (
                     <button
+                      key={option.value}
                       className="hover:bg-state-hover focus-visible:bg-state-hover flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-left text-sm transition-colors focus-visible:outline-none"
                       onClick={() => {
-                        onRepeatTypeChange('');
+                        onRepeatTypeChange(option.value);
                         onRecurrenceRuleChange(null);
                         setShowRecurrencePopover(false);
                       }}
                       type="button"
                       role="menuitem"
                     >
-                      選択しない
-                      {!hasRecurrence && <Check className="text-primary h-4 w-4" />}
+                      {option.label}
+                      {recurrenceDisplayText === option.value && (
+                        <Check className="text-primary h-4 w-4" />
+                      )}
                     </button>
-                    <div className="border-border my-1 border-t" />
-                    {RECURRENCE_OPTIONS.slice(1).map((option) => (
-                      <button
-                        key={option.value}
-                        className="hover:bg-state-hover focus-visible:bg-state-hover flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-left text-sm transition-colors focus-visible:outline-none"
-                        onClick={() => {
-                          onRepeatTypeChange(option.value);
-                          onRecurrenceRuleChange(null);
-                          setShowRecurrencePopover(false);
-                        }}
-                        type="button"
-                        role="menuitem"
-                      >
-                        {option.label}
-                        {recurrenceDisplayText === option.value && (
-                          <Check className="text-primary h-4 w-4" />
-                        )}
-                      </button>
-                    ))}
-                    <div className="border-border my-1 border-t" />
-                    <button
-                      className="hover:bg-state-hover focus-visible:bg-state-hover flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-left text-sm transition-colors focus-visible:outline-none"
-                      onClick={() => {
-                        setShowRecurrencePopover(false);
-                        setShowCustomDialog(true);
-                      }}
-                      type="button"
-                      role="menuitem"
-                    >
-                      カスタム...
-                    </button>
-                  </div>
+                  ))}
+                  <div className="border-border my-1 border-t" />
+                  <button
+                    className="hover:bg-state-hover focus-visible:bg-state-hover flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-left text-sm transition-colors focus-visible:outline-none"
+                    onClick={() => {
+                      setShowRecurrencePopover(false);
+                      setShowCustomDialog(true);
+                    }}
+                    type="button"
+                    role="menuitem"
+                  >
+                    カスタム...
+                  </button>
                 </div>
-              )}
+              </div>
+            )}
 
-              {/* カスタム繰り返しDialog */}
-              <RecurrenceDialog
-                open={showCustomDialog}
-                onOpenChange={setShowCustomDialog}
-                value={recurrenceRule ?? null}
-                onChange={onRecurrenceRuleChange}
-              />
-            </div>
-          )}
-
-          {/* 通知アイコン */}
-          {onReminderChange && (
-            <ReminderSelect value={reminderType ?? ''} onChange={onReminderChange} variant="icon" />
-          )}
+            {/* カスタム繰り返しDialog */}
+            <RecurrenceDialog
+              open={showCustomDialog}
+              onOpenChange={setShowCustomDialog}
+              value={recurrenceRule}
+              onChange={onRecurrenceRuleChange}
+            />
+          </div>
         </div>
 
         {/* 時間重複エラーメッセージ */}

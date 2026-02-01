@@ -126,14 +126,17 @@ export function ReminderSelect({
               }
             }}
             className={cn(
-              'flex h-8 items-center gap-1 rounded-md px-2 transition-colors',
+              'relative flex h-8 items-center justify-center rounded-md px-2 transition-colors',
               'hover:bg-state-hover focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
               hasReminder ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',
             )}
             aria-label={hasReminder ? `通知: ${getDisplayLabel()}` : '通知を設定'}
           >
             <Bell className="size-4" />
-            {hasReminder && <span className="text-sm">{getDisplayLabel()}</span>}
+            {/* 通知が設定されている場合のインジケータードット */}
+            {hasReminder && (
+              <span className="bg-primary absolute -top-0.5 -right-0.5 size-2 rounded-full" />
+            )}
           </button>
         </HoverTooltip>
       ) : (

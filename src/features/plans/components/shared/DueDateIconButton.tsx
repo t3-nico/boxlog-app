@@ -8,7 +8,6 @@ import { CalendarDays, X } from 'lucide-react';
 
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { HoverTooltip } from '@/components/ui/tooltip';
-import { zIndex } from '@/config/ui/z-index';
 import { cn } from '@/lib/utils';
 
 import { MiniCalendar } from '@/components/common/MiniCalendar';
@@ -80,13 +79,7 @@ export function DueDateIconButton({
           </button>
         </PopoverTrigger>
       </HoverTooltip>
-      <PopoverContent
-        className="w-auto p-0"
-        align="start"
-        side="bottom"
-        sideOffset={8}
-        style={{ zIndex: zIndex.overlayDropdown }}
-      >
+      <PopoverContent className="w-auto p-0" align="start" sideOffset={8}>
         <MiniCalendar
           selectedDate={dueDate}
           onDateSelect={(date: Date | undefined) => {

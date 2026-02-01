@@ -135,6 +135,7 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
     // 充実度: 長押し検出用
     const pressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const isLongPressRef = useRef(false);
+    const isPressingRef = useRef(false); // 実際にpress中かどうか
 
     // Plan: updated_at降順ソート + 検索フィルタリング
     const filteredPlans = useMemo(() => {
@@ -235,6 +236,7 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
 
     // 充実度: 長押し開始
     const handlePressStart = useCallback(() => {
+      isPressingRef.current = true;
       isLongPressRef.current = false;
       pressTimerRef.current = setTimeout(() => {
         isLongPressRef.current = true;
@@ -249,6 +251,11 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
         clearTimeout(pressTimerRef.current);
         pressTimerRef.current = null;
       }
+      // 実際にpress中でなければ何もしない（mouseLeave対策）
+      if (!isPressingRef.current) {
+        return;
+      }
+      isPressingRef.current = false;
       // 長押しでなければ加算
       if (!isLongPressRef.current) {
         setFormData((prev) => ({
