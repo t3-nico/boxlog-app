@@ -16,7 +16,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 import { ClockTimePicker } from '@/components/common/ClockTimePicker';
-import { InlineTagList } from '@/components/common/InlineTagList';
+import { TagsIconButton } from '@/components/common/TagsIconButton';
 import { Button } from '@/components/ui/button';
 import {
   Command,
@@ -607,10 +607,10 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
           </div>
         </div>
 
-        {/* 3行目: Tags + オプションアイコン（メタデータ） */}
-        <div className="flex flex-wrap items-center gap-1 px-4 pt-2 pb-4">
+        {/* 3行目: オプションアイコン */}
+        <div className="flex flex-wrap items-center gap-0.5 px-4 pt-2 pb-4">
           {/* Tags */}
-          <InlineTagList
+          <TagsIconButton
             tagIds={formData.tagIds}
             onTagsChange={handleTagsChange}
             popoverSide="bottom"

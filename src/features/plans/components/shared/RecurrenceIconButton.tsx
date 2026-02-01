@@ -5,7 +5,6 @@ import { useEffect, useRef, useState } from 'react';
 import { Check, Repeat } from 'lucide-react';
 
 import { HoverTooltip } from '@/components/ui/tooltip';
-import { zIndex } from '@/config/ui/z-index';
 import { cn } from '@/lib/utils';
 
 import { RecurrenceDialog } from './RecurrenceDialog';
@@ -110,8 +109,7 @@ export function RecurrenceIconButton({
       {/* ポップオーバー */}
       {showPopover && !disabled && (
         <div
-          className="border-border bg-popover absolute top-10 left-0 w-48 rounded-md border shadow-md"
-          style={{ zIndex: zIndex.overlayDropdown }}
+          className="border-border bg-popover absolute top-10 left-0 z-50 w-48 rounded-md border shadow-md"
           role="menu"
           aria-label="繰り返しオプション"
         >

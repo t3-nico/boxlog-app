@@ -4,13 +4,13 @@
  * PlanInspector の詳細タブ（Toggl風3行レイアウト）
  *
  * Row 1: Title
- * Row 2: Date + Time + Duration + Recurrence
- * Row 3: Tags + [Records] [Due] [Reminder] [Description] [Status*]
+ * Row 2: Date + Time + Duration
+ * Row 3: Tags + [Records] [Due] [Description] [Status*] [Recurrence] [Reminder]
  */
 
 import { memo, useEffect, useState } from 'react';
 
-import { InlineTagList } from '@/components/common/InlineTagList';
+import { TagsIconButton } from '@/components/common/TagsIconButton';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle2, Circle } from 'lucide-react';
 
@@ -21,6 +21,7 @@ import { DescriptionIconButton } from '../../shared/DescriptionIconButton';
 import { DueDateIconButton } from '../../shared/DueDateIconButton';
 import { PlanScheduleRow } from '../../shared/PlanScheduleRow';
 import { RecordsIconButton } from '../../shared/RecordsIconButton';
+import { RecurrenceIconButton } from '../../shared/RecurrenceIconButton';
 import { ReminderSelect } from '../../shared/ReminderSelect';
 
 import { ActivitySection } from './ActivitySection';
@@ -109,7 +110,7 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
         />
       </div>
 
-      {/* Row 2: Date + Time + Duration + Recurrence */}
+      {/* Row 2: Date + Time + Duration */}
       <PlanScheduleRow
         selectedDate={scheduleDate}
         startTime={startTime}
@@ -117,57 +118,58 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
         onDateChange={onScheduleDateChange}
         onStartTimeChange={onStartTimeChange}
         onEndTimeChange={onEndTimeChange}
-        recurrenceRule={recurrenceRule}
-        recurrenceType={recurrenceType}
-        onRepeatTypeChange={onRepeatTypeChange}
-        onRecurrenceRuleChange={onRecurrenceRuleChange}
         timeConflictError={timeConflictError}
       />
 
-      {/* Row 3: Tags + Option Icons */}
-      <div className="flex flex-wrap items-center gap-1 px-4 pt-2 pb-4">
+      {/* Row 3: Option Icons */}
+      <div className="flex flex-wrap items-center gap-0.5 px-4 pt-2 pb-4">
         {/* Tags */}
-        <InlineTagList tagIds={selectedTagIds} onTagsChange={onTagsChange} popoverSide="bottom" />
+        <TagsIconButton tagIds={selectedTagIds} onTagsChange={onTagsChange} popoverSide="bottom" />
 
-        {/* Option Icons */}
-        <div className="flex items-center gap-0.5">
-          {/* Records - 編集モードのみ */}
-          {!isDraftMode && planId && <RecordsIconButton planId={planId} />}
+        {/* Records - 編集モードのみ */}
+        {!isDraftMode && planId && <RecordsIconButton planId={planId} />}
 
-          {/* Due Date */}
-          <DueDateIconButton dueDate={dueDate} onDueDateChange={onDueDateChange} />
+        {/* Due Date */}
+        <DueDateIconButton dueDate={dueDate} onDueDateChange={onDueDateChange} />
 
-          {/* Reminder */}
-          <ReminderSelect value={reminderType} onChange={onReminderChange} variant="icon" />
+        {/* Description */}
+        <DescriptionIconButton
+          planId={plan.id}
+          description={plan.description || ''}
+          onDescriptionChange={(html) => onAutoSave('description', html)}
+        />
 
-          {/* Description */}
-          <DescriptionIconButton
-            planId={plan.id}
-            description={plan.description || ''}
-            onDescriptionChange={(html) => onAutoSave('description', html)}
-          />
-
-          {/* Status - ドラフトモードでは非表示（新規作成時は常にopen） */}
-          {!isDraftMode && (
-            <button
-              type="button"
-              onClick={() => onStatusChange(status === 'closed' ? 'open' : 'closed')}
-              className="focus-visible:ring-ring ml-1 rounded-md focus-visible:ring-2 focus-visible:outline-none"
+        {/* Status - ドラフトモードでは非表示（新規作成時は常にopen） */}
+        {!isDraftMode && (
+          <button
+            type="button"
+            onClick={() => onStatusChange(status === 'closed' ? 'open' : 'closed')}
+            className="focus-visible:ring-ring ml-1 rounded-md focus-visible:ring-2 focus-visible:outline-none"
+          >
+            <Badge
+              variant={status === 'closed' ? 'success' : 'info'}
+              className="flex items-center gap-1"
             >
-              <Badge
-                variant={status === 'closed' ? 'success' : 'info'}
-                className="flex items-center gap-1"
-              >
-                {status === 'closed' ? (
-                  <CheckCircle2 className="size-3" />
-                ) : (
-                  <Circle className="size-3" />
-                )}
-                {status === 'closed' ? 'Closed' : 'Open'}
-              </Badge>
-            </button>
-          )}
-        </div>
+              {status === 'closed' ? (
+                <CheckCircle2 className="size-3" />
+              ) : (
+                <Circle className="size-3" />
+              )}
+              {status === 'closed' ? 'Closed' : 'Open'}
+            </Badge>
+          </button>
+        )}
+
+        {/* Recurrence */}
+        <RecurrenceIconButton
+          recurrenceRule={recurrenceRule}
+          recurrenceType={recurrenceType}
+          onRepeatTypeChange={onRepeatTypeChange}
+          onRecurrenceRuleChange={onRecurrenceRuleChange}
+        />
+
+        {/* Reminder */}
+        <ReminderSelect value={reminderType} onChange={onReminderChange} variant="icon" />
       </div>
 
       {/* Activity Section - 編集モードのみ */}

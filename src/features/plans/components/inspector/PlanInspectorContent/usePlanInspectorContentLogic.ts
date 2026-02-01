@@ -150,6 +150,16 @@ export function usePlanInspectorContentLogic() {
   const [endTime, setEndTime] = useState('');
   const [reminderType, setReminderType] = useState<string>('');
 
+  // planIdが変わったらタグ選択をリセット（別のPlanを開いた時）
+  useEffect(() => {
+    // ドラフトモードでは何もしない
+    if (isDraftMode) return;
+    // 新しいplanIdが設定された時点で空配列にリセット
+    // planDataがロードされたら正しいタグで上書きされる
+    setSelectedTagIds([]);
+    selectedTagIdsRef.current = [];
+  }, [planId, isDraftMode]);
+
   // Sync tags from plan data (skip when mutation is in progress to preserve optimistic updates)
   useEffect(() => {
     // Skip sync if user has pending tag changes - prevents race condition
