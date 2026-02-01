@@ -1,8 +1,12 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { Bell, Check } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+
+import { Bell, Check } from 'lucide-react';
+
+import { Button } from '@/components/ui/button';
+import { HoverTooltip } from '@/components/ui/tooltip';
+import { cn } from '@/lib/utils';
 
 // 通知オプションの定義（UI表示文字列）
 export const REMINDER_OPTIONS = [
@@ -18,7 +22,7 @@ export const REMINDER_OPTIONS = [
 interface ReminderSelectProps {
   value: string; // UI表示文字列（'', '開始時刻', '10分前', ...）
   onChange: (value: string) => void;
-  variant?: 'inspector' | 'compact' | 'button'; // inspectorスタイル、compactスタイル、または buttonスタイル
+  variant?: 'inspector' | 'compact' | 'button' | 'icon'; // inspectorスタイル、compactスタイル、buttonスタイル、またはiconスタイル
   disabled?: boolean; // 無効化フラグ
 }
 
@@ -108,6 +112,33 @@ export function ReminderSelect({
         >
           {value || '通知'}
         </Button>
+      ) : variant === 'icon' ? (
+        <HoverTooltip
+          content={hasReminder ? `通知: ${getDisplayLabel()}` : '通知を設定'}
+          side="top"
+        >
+          <button
+            type="button"
+            disabled={disabled}
+            onClick={() => {
+              if (!disabled) {
+                setShowPopover(!showPopover);
+              }
+            }}
+            className={cn(
+              'relative flex h-8 items-center justify-center rounded-md px-2 transition-colors',
+              'hover:bg-state-hover focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
+              hasReminder ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',
+            )}
+            aria-label={hasReminder ? `通知: ${getDisplayLabel()}` : '通知を設定'}
+          >
+            <Bell className="size-4" />
+            {/* 通知が設定されている場合のインジケータードット */}
+            {hasReminder && (
+              <span className="bg-primary absolute -top-0.5 -right-0.5 size-2 rounded-full" />
+            )}
+          </button>
+        </HoverTooltip>
       ) : (
         <Button
           variant="ghost"
