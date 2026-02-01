@@ -63,6 +63,15 @@ interface RecordInspectorContentProps {
   onClose: () => void;
 }
 
+/**
+ * 時刻文字列から秒を除去（HH:MM:SS → HH:MM）
+ */
+function formatTimeWithoutSeconds(time: string | null | undefined): string {
+  if (!time) return '';
+  // "09:00:00" -> "09:00"
+  return time.substring(0, 5);
+}
+
 export function RecordInspectorContent({ onClose }: RecordInspectorContentProps) {
   const t = useTranslations();
   const locale = useLocale();
@@ -143,8 +152,8 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
         title: draftRecord.title ?? '',
         plan_id: draftRecord.plan_id,
         worked_at: workedAtDate,
-        start_time: draftRecord.start_time ?? '',
-        end_time: draftRecord.end_time ?? '',
+        start_time: formatTimeWithoutSeconds(draftRecord.start_time),
+        end_time: formatTimeWithoutSeconds(draftRecord.end_time),
         duration_minutes: draftRecord.duration_minutes,
         fulfillment_score: draftRecord.fulfillment_score as FulfillmentScore | null,
         note: draftRecord.note ?? '',
@@ -157,8 +166,8 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
         title: record.title ?? '',
         plan_id: record.plan_id,
         worked_at: workedAtDate,
-        start_time: record.start_time ?? '',
-        end_time: record.end_time ?? '',
+        start_time: formatTimeWithoutSeconds(record.start_time),
+        end_time: formatTimeWithoutSeconds(record.end_time),
         duration_minutes: record.duration_minutes,
         fulfillment_score: record.fulfillment_score as FulfillmentScore | null,
         note: record.note ?? '',
