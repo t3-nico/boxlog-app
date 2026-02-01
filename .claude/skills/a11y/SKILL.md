@@ -211,3 +211,9 @@ const prefersReducedMotion = useReducedMotion();
 - `src/features/calendar/hooks/useCalendarPlanKeyboard.ts` - キーボードショートカット
 - `src/components/debug/AxeAccessibilityChecker.tsx` - a11yチェッカー
 - `docs/design-system/STYLE_GUIDE.md` - カラーコントラスト定義
+
+## 関連スキル
+
+- `/react-best-practices` - パフォーマンスとa11yの両立
+- `/frontend-design` - UI設計とa11y
+- `/security` - セキュリティとa11yの両立

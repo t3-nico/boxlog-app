@@ -1,0 +1,264 @@
+---
+name: optimistic-update
+description: tRPC mutationの楽観的更新スキル。キャッシュ操作、ロールバック、Realtime競合対策を支援。
+---
+
+# 楽観的更新スキル
+
+tRPC + TanStack Queryを使用した楽観的更新（Optimistic Updates）の実装を支援するスキル。
+
+## When to Use（自動発動条件）
+
+以下の状況で自動発動：
+
+- 新しいmutationを実装する時
+- 「楽観的更新」「optimistic」「キャッシュ更新」キーワード
+- UIの応答性改善を求められた時
+
+## 基本方針
+
+**ユーザー操作に対応する全mutationで楽観的更新を実装する**
+
+楽観的更新により、ユーザーはサーバーレスポンスを待たずに即座にUIフィードバックを得られる。
+これは体感速度を200-800ms改善し、アプリケーションの応答性を大幅に向上させる。
+
+## 実装パターン
+
+### 基本テンプレート
+
+```typescript
+import { api } from '@/lib/trpc';
+
+export function useCreateEntity() {
+  const utils = api.useUtils();
+
+  return api.entity.create.useMutation({
+    // 1. 楽観的更新
+    onMutate: async (input) => {
+      // 進行中のクエリをキャンセル（競合防止）
+      await utils.entity.list.cancel();
+
+      // 現在のキャッシュをスナップショット（ロールバック用）
+      const previous = utils.entity.list.getData();
+
+      // キャッシュを楽観的に更新
+      utils.entity.list.setData(undefined, (old) => {
+        if (!old) return old;
+        const tempId = `temp-${Date.now()}`;
+        return [
+          ...old,
+          {
+            id: tempId,
+            ...input,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          },
+        ];
+      });
+
+      return { previous };
+    },
+
+    // 2. エラー時ロールバック
+    onError: (_err, _input, context) => {
+      if (context?.previous) {
+        utils.entity.list.setData(undefined, context.previous);
+      }
+    },
+
+    // 3. 完了時に再検証
+    onSettled: () => {
+      void utils.entity.list.invalidate();
+    },
+  });
+}
+```
+
+### 更新操作のパターン
+
+```typescript
+export function useUpdateEntity() {
+  const utils = api.useUtils();
+
+  return api.entity.update.useMutation({
+    onMutate: async ({ id, data }) => {
+      await utils.entity.list.cancel();
+      await utils.entity.getById.cancel({ id });
+
+      const previousList = utils.entity.list.getData();
+      const previousItem = utils.entity.getById.getData({ id });
+
+      // リストキャッシュを更新
+      utils.entity.list.setData(undefined, (old) => {
+        if (!old) return old;
+        return old.map((item) =>
+          item.id === id ? { ...item, ...data, updated_at: new Date().toISOString() } : item,
+        );
+      });
+
+      // 個別キャッシュも更新
+      utils.entity.getById.setData({ id }, (old) => {
+        if (!old) return old;
+        return { ...old, ...data, updated_at: new Date().toISOString() };
+      });
+
+      return { previousList, previousItem };
+    },
+
+    onError: (_err, { id }, context) => {
+      if (context?.previousList) {
+        utils.entity.list.setData(undefined, context.previousList);
+      }
+      if (context?.previousItem) {
+        utils.entity.getById.setData({ id }, context.previousItem);
+      }
+    },
+
+    onSettled: (_data, _err, { id }) => {
+      void utils.entity.list.invalidate();
+      void utils.entity.getById.invalidate({ id });
+    },
+  });
+}
+```
+
+### 削除操作のパターン
+
+```typescript
+export function useDeleteEntity() {
+  const utils = api.useUtils();
+
+  return api.entity.delete.useMutation({
+    onMutate: async ({ id }) => {
+      await utils.entity.list.cancel();
+
+      const previous = utils.entity.list.getData();
+
+      // リストから即座に削除
+      utils.entity.list.setData(undefined, (old) => {
+        if (!old) return old;
+        return old.filter((item) => item.id !== id);
+      });
+
+      return { previous };
+    },
+
+    onError: (_err, _input, context) => {
+      if (context?.previous) {
+        utils.entity.list.setData(undefined, context.previous);
+      }
+    },
+
+    onSettled: () => {
+      void utils.entity.list.invalidate();
+    },
+  });
+}
+```
+
+## Realtime競合対策
+
+Supabase Realtimeと楽観的更新を併用する場合、競合を防ぐためにフラグを使用する。
+
+```typescript
+// stores/useEntityCacheStore.ts
+import { create } from 'zustand';
+
+interface EntityCacheStore {
+  isMutating: boolean;
+  setMutating: (value: boolean) => void;
+}
+
+export const useEntityCacheStore = create<EntityCacheStore>((set) => ({
+  isMutating: false,
+  setMutating: (value) => set({ isMutating: value }),
+}));
+```
+
+```typescript
+// hooks/useEntityRealtime.ts
+export function useEntityRealtime() {
+  const utils = api.useUtils();
+  const isMutating = useEntityCacheStore((s) => s.isMutating);
+
+  useEffect(() => {
+    const channel = supabase
+      .channel('entities')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'entities' }, () => {
+        // mutation中はRealtimeによるキャッシュ更新をスキップ
+        if (!isMutating) {
+          void utils.entity.list.invalidate();
+        }
+      })
+      .subscribe();
+
+    return () => {
+      void supabase.removeChannel(channel);
+    };
+  }, [isMutating, utils]);
+}
+```
+
+```typescript
+// mutationでフラグを管理
+export function useCreateEntity() {
+  const utils = api.useUtils();
+  const setMutating = useEntityCacheStore((s) => s.setMutating);
+
+  return api.entity.create.useMutation({
+    onMutate: async (input) => {
+      setMutating(true); // mutation開始
+      // ... 楽観的更新
+    },
+
+    onSettled: () => {
+      setMutating(false); // mutation完了
+      void utils.entity.list.invalidate();
+    },
+  });
+}
+```
+
+## 楽観的更新が不要な場合
+
+以下のケースでは楽観的更新を適用しない：
+
+1. **不可逆操作**: アカウント削除、支払い処理など
+   - 確認ダイアログを表示し、完了を待つ
+
+2. **サーバー計算が必要**: IDの発行、複雑な集計など
+   - ただし一時IDで対応可能な場合は実装する
+
+3. **低頻度操作**: 月1回程度の設定変更など
+   - ただし一貫性のため実装を推奨
+
+## チェックリスト
+
+新規mutation作成時：
+
+- [ ] ユーザー操作に対応するか？ → 楽観的更新を実装
+- [ ] 不可逆操作か？ → 楽観的更新なし、確認ダイアログを表示
+- [ ] 複数キャッシュに影響するか？ → 全キャッシュを更新
+- [ ] Realtimeと併用するか？ → isMutatingフラグで競合防止
+
+実装時：
+
+- [ ] `onMutate`でキャッシュをスナップショット
+- [ ] `onError`でロールバック
+- [ ] `onSettled`で再検証（invalidate）
+- [ ] 関連する全キャッシュを更新（list + getById）
+
+## 既存実装参考
+
+```
+src/features/tags/hooks/
+├── useCreateTag.ts      # 作成の楽観的更新
+├── useUpdateTag.ts      # 更新の楽観的更新
+├── useDeleteTag.ts      # 削除の楽観的更新
+└── useMergeTags.ts      # 複雑な操作の楽観的更新
+```
+
+## 関連スキル
+
+- `/store-creating` - Zustandストア作成
+- `/trpc-router-creating` - tRPCルーター作成

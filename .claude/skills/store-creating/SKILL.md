@@ -221,3 +221,9 @@ src/features/tags/stores/
 ├── useTagPaginationStore.ts # ページネーション
 └── index.ts                 # バレル
 ```
+
+## 関連スキル
+
+- `/optimistic-update` - ストアとキャッシュの連携
+- `/trpc-router-creating` - データソースとなるAPI作成
+- `/test` - ストアのテスト作成
