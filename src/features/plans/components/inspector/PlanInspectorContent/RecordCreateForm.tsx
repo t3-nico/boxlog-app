@@ -13,7 +13,7 @@ import {
 } from 'react';
 
 import { ClockTimePicker } from '@/components/common/ClockTimePicker';
-import { InlineTagList } from '@/components/common/InlineTagList';
+import { TagsIconButton } from '@/components/common/TagsIconButton';
 import {
   Command,
   CommandEmpty,
@@ -435,10 +435,10 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
           </div>
         </div>
 
-        {/* 3行目: Tags + オプションアイコン（メタデータ） */}
-        <div className="flex flex-wrap items-center gap-1 px-4 pt-2 pb-4">
+        {/* 3行目: オプションアイコン */}
+        <div className="flex flex-wrap items-center gap-0.5 px-4 pt-2 pb-4">
           {/* Tags */}
-          <InlineTagList
+          <TagsIconButton
             tagIds={formData.tagIds}
             onTagsChange={handleTagsChange}
             popoverSide="bottom"
