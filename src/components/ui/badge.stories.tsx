@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/nextjs';
-import { AlertCircle, CheckCircle, Info, Star } from 'lucide-react';
+import type { Meta, StoryObj } from '@storybook/react';
+import { AlertCircle, CheckCircle, Info as InfoIcon, Star } from 'lucide-react';
 
 import { Badge } from './badge';
 
@@ -108,7 +108,7 @@ export const InfoWithIcon: Story = {
     variant: 'info',
     children: (
       <>
-        <Info />
+        <InfoIcon />
         お知らせ
       </>
     ),
