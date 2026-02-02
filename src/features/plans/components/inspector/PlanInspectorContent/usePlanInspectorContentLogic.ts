@@ -46,6 +46,9 @@ export function usePlanInspectorContentLogic() {
   // 時間重複エラー状態（視覚的フィードバック用）
   const [timeConflictError, setTimeConflictError] = useState(false);
 
+  // 自動保存デバウンス用タイマー（Activityノイズ防止）
+  const autoSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const planId = usePlanInspectorStore((state) => state.planId);
   const instanceDate = usePlanInspectorStore((state) => state.instanceDate);
   const initialData = usePlanInspectorStore((state) => state.initialData);
@@ -92,6 +95,15 @@ export function usePlanInspectorContentLogic() {
     return () => clearTimeout(timer);
   }, [planId]);
 
+  // 自動保存タイマーのクリーンアップ
+  useEffect(() => {
+    return () => {
+      if (autoSaveTimerRef.current) {
+        clearTimeout(autoSaveTimerRef.current);
+      }
+    };
+  }, []);
+
   const { data: planData } = usePlan(planId!, {
     includeTags: true,
     enabled: !!planId && !isDraftMode,
@@ -129,12 +141,19 @@ export function usePlanInspectorContentLogic() {
         return;
       }
 
-      // 即座にDB保存するフィールド（編集モードのみ）
+      // 即座にDB保存するフィールド（編集モードのみ）→ デバウンス適用
       if (
         currentPlanId &&
         IMMEDIATE_SAVE_FIELDS.includes(field as (typeof IMMEDIATE_SAVE_FIELDS)[number])
       ) {
-        updatePlan.mutate({ id: currentPlanId, data: { [field]: value } });
+        // 前のタイマーをクリア（連続入力時の重複保存防止）
+        if (autoSaveTimerRef.current) {
+          clearTimeout(autoSaveTimerRef.current);
+        }
+        // 500ms後にmutation実行（入力完了を待つ）
+        autoSaveTimerRef.current = setTimeout(() => {
+          updatePlan.mutate({ id: currentPlanId, data: { [field]: value } });
+        }, 500);
         return;
       }
 
