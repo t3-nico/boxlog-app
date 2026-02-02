@@ -232,9 +232,12 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
       setIsDirty(true);
       if (isDraftMode) {
         updateDraft({ title: value } as Partial<DraftRecord>);
+      } else if (selectedRecordId) {
+        // 編集モード: 即座にDB保存
+        updateRecord.mutate({ id: selectedRecordId, data: { title: value || null } });
       }
     },
-    [isDraftMode, updateDraft],
+    [isDraftMode, updateDraft, selectedRecordId, updateRecord],
   );
 
   const handlePlanChange = useCallback(
@@ -277,6 +280,8 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
           }
         }
       }
+      // 編集モードでのplan_id変更はスキーマで許可されていないため、
+      // 変更はローカル状態のみ（実質的に編集モードでは紐付け変更不可）
     },
     [isDraftMode, plans, updateDraft, formData.title],
   );
@@ -333,9 +338,12 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
       setIsDirty(true);
       if (isDraftMode) {
         updateDraft({ fulfillment_score: value } as Partial<DraftRecord>);
+      } else if (selectedRecordId) {
+        // 編集モード: 即座にDB保存
+        updateRecord.mutate({ id: selectedRecordId, data: { fulfillment_score: value } });
       }
     },
-    [isDraftMode, updateDraft],
+    [isDraftMode, updateDraft, selectedRecordId, updateRecord],
   );
 
   // 充実度: 長押し開始
@@ -383,9 +391,12 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
       setIsDirty(true);
       if (isDraftMode) {
         updateDraft({ note: value || null } as Partial<DraftRecord>);
+      } else if (selectedRecordId) {
+        // 編集モード: 即座にDB保存
+        updateRecord.mutate({ id: selectedRecordId, data: { note: value || null } });
       }
     },
-    [isDraftMode, updateDraft],
+    [isDraftMode, updateDraft, selectedRecordId, updateRecord],
   );
 
   /**
@@ -556,7 +567,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
     onClose();
   };
 
-  // キャンセル
+  // キャンセル（ドラフトモード用）
   const cancelAndClose = useCallback(() => {
     // タグ変更があった場合はキャッシュを元に戻す
     if (hasTagChanges && selectedRecordId) {
@@ -564,6 +575,89 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
     }
     onClose();
   }, [onClose, hasTagChanges, selectedRecordId, updateTagsInCache]);
+
+  // 保存して閉じる（編集モード用: 時間フィールドとタグを保存）
+  const saveAndClose = useCallback(async () => {
+    if (!selectedRecordId || !formData.worked_at) {
+      onClose();
+      return;
+    }
+
+    const workedAtStr = formData.worked_at.toISOString().split('T')[0] ?? '';
+
+    // 時間重複チェック
+    if (formData.start_time && formData.end_time) {
+      const records = utils.records.list.getData();
+      if (records && records.length > 0) {
+        const [startH, startM] = formData.start_time.split(':').map(Number);
+        const [endH, endM] = formData.end_time.split(':').map(Number);
+        const newStart = new Date(formData.worked_at);
+        newStart.setHours(startH ?? 0, startM ?? 0, 0, 0);
+        const newEnd = new Date(formData.worked_at);
+        newEnd.setHours(endH ?? 0, endM ?? 0, 0, 0);
+
+        const hasOverlap = records.some((r) => {
+          if (r.id === selectedRecordId) return false;
+          if (r.worked_at !== workedAtStr) return false;
+          if (!r.start_time || !r.end_time) return false;
+
+          const [rStartH, rStartM] = r.start_time.split(':').map(Number);
+          const [rEndH, rEndM] = r.end_time.split(':').map(Number);
+          const rStart = new Date(formData.worked_at!);
+          rStart.setHours(rStartH ?? 0, rStartM ?? 0, 0, 0);
+          const rEnd = new Date(formData.worked_at!);
+          rEnd.setHours(rEndH ?? 0, rEndM ?? 0, 0, 0);
+
+          return rStart < newEnd && rEnd > newStart;
+        });
+
+        if (hasOverlap) {
+          setTimeConflictError(true);
+          return;
+        }
+      }
+    }
+
+    try {
+      // 時間フィールドを保存（変更があれば）
+      if (isDirty) {
+        await updateRecord.mutateAsync({
+          id: selectedRecordId,
+          data: {
+            worked_at: workedAtStr,
+            start_time: formData.start_time || null,
+            end_time: formData.end_time || null,
+            duration_minutes: formData.duration_minutes,
+          },
+        });
+      }
+
+      // タグを保存（変更があれば）
+      if (hasTagChanges) {
+        await setRecordTags(selectedRecordId, formData.tagIds);
+      }
+
+      onClose();
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : '';
+      if (errorMessage.includes('TIME_OVERLAP') || errorMessage.includes('既に')) {
+        setTimeConflictError(true);
+      }
+    }
+  }, [
+    selectedRecordId,
+    formData.worked_at,
+    formData.start_time,
+    formData.end_time,
+    formData.duration_minutes,
+    formData.tagIds,
+    isDirty,
+    hasTagChanges,
+    updateRecord,
+    setRecordTags,
+    utils.records.list,
+    onClose,
+  ]);
 
   // ローディング状態
   if (!isDraftMode && isLoading) {
@@ -600,10 +694,11 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
       {isDraftMode ? (
         <DraftModeHeader />
       ) : (
+        // 編集モード用ヘッダー（自動保存: ×で閉じる時に時間・タグを保存）
         <InspectorHeader
           hasPrevious={hasPrevious}
           hasNext={hasNext}
-          onClose={cancelAndClose}
+          onClose={saveAndClose}
           onPrevious={goToPrevious}
           onNext={goToNext}
           closeLabel={t('actions.close')}
@@ -811,24 +906,26 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
         </div>
       </div>
 
-      {/* フッター（常時表示） */}
-      <div className="flex shrink-0 justify-end gap-2 px-4 py-4">
-        <Button variant="ghost" onClick={cancelAndClose}>
-          キャンセル
-        </Button>
-        <Button
-          onClick={() => {
-            // 新規作成時は時間が必須
-            if (isDraftMode && formData.duration_minutes <= 0) {
-              toast.error('時間を入力してください');
-              return;
-            }
-            handleSave();
-          }}
-        >
-          {isDraftMode ? 'Record 作成' : '保存'}
-        </Button>
-      </div>
+      {/* フッター（ドラフトモードのみ） */}
+      {isDraftMode && (
+        <div className="flex shrink-0 justify-end gap-2 px-4 py-4">
+          <Button variant="ghost" onClick={cancelAndClose}>
+            キャンセル
+          </Button>
+          <Button
+            onClick={() => {
+              // 新規作成時は時間が必須
+              if (formData.duration_minutes <= 0) {
+                toast.error('時間を入力してください');
+                return;
+              }
+              handleSave();
+            }}
+          >
+            Record 作成
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

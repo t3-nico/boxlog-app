@@ -33,6 +33,9 @@ import { useInspectorAutoSave, useInspectorNavigation, useRecurringPlanEdit } fr
 // title/descriptionは即座に保存（Googleカレンダー準拠）
 const SCOPE_DIALOG_FIELDS = ['due_date', 'start_time', 'end_time'] as const;
 
+// 即座にDB保存するフィールド（編集モードのみ）
+const IMMEDIATE_SAVE_FIELDS = ['title', 'description'] as const;
+
 export function usePlanInspectorContentLogic() {
   const utils = api.useUtils();
   const queryClient = useQueryClient();
@@ -111,7 +114,8 @@ export function usePlanInspectorContentLogic() {
   const { updatePlan, deletePlan } = useInspectorAutoSave({ planId, plan });
 
   // 繰り返しインスタンス対応のautoSave
-  // 時間変更の場合のみスコープダイアログを表示
+  // 編集モード: title/descriptionは即座にDB保存（Googleカレンダー準拠）
+  // 時間フィールドはバッファリング（重複チェック・繰り返しスコープ対応）
   const autoSave = useCallback(
     async (field: string, value: string | undefined) => {
       // ストアから最新の状態を取得（クロージャの古い値を避ける）
@@ -125,6 +129,15 @@ export function usePlanInspectorContentLogic() {
         return;
       }
 
+      // 即座にDB保存するフィールド（編集モードのみ）
+      if (
+        currentPlanId &&
+        IMMEDIATE_SAVE_FIELDS.includes(field as (typeof IMMEDIATE_SAVE_FIELDS)[number])
+      ) {
+        updatePlan.mutate({ id: currentPlanId, data: { [field]: value } });
+        return;
+      }
+
       // 繰り返しインスタンスの場合、時間フィールドはスコープダイアログを表示
       if (
         recurringEdit.isRecurringInstance &&
@@ -133,10 +146,10 @@ export function usePlanInspectorContentLogic() {
         recurringEdit.openScopeDialog(field, value);
         return;
       }
-      // 通常の場合: pendingChanges にバッファリング（保存ボタンで一括保存）
+      // その他: pendingChanges にバッファリング（閉じる時に保存）
       addPendingChange({ [field]: value });
     },
-    [addPendingChange, recurringEdit, updateDraft],
+    [addPendingChange, recurringEdit, updateDraft, updatePlan],
   );
 
   // Tags state

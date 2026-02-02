@@ -112,7 +112,7 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
               onClick={() => onStatusChange(status === 'closed' ? 'open' : 'closed')}
               className={cn(
                 'focus-visible:ring-ring shrink-0 rounded-full p-1 focus-visible:ring-2 focus-visible:outline-none',
-                status === 'closed' ? 'text-success' : 'text-info',
+                status === 'closed' ? 'text-success' : 'text-foreground',
               )}
               aria-label={status === 'closed' ? 'ステータス: 完了' : 'ステータス: 未完了'}
             >
