@@ -125,3 +125,9 @@ Each rule file contains:
 ## Full Compiled Document
 
 For the complete guide with all rules expanded: `AGENTS.md`
+
+## 関連スキル
+
+- `/a11y` - アクセシビリティとパフォーマンスの両立
+- `/refactor` - パフォーマンス改善リファクタリング
+- `/debug` - パフォーマンス問題のデバッグ

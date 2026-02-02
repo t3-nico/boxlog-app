@@ -15,9 +15,6 @@
   ],
   "ignoreDependencies": [
     "@prisma/instrumentation",
-    "@sentry/nextjs",
-    "@vercel/analytics",
-    "@vercel/speed-insights",
     "husky",
     "lint-staged",
     "prettier-plugin-organize-imports",

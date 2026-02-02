@@ -78,6 +78,11 @@ export function verifyRecoveryCode(inputCode: string, hashedCode: string): boole
 
 /**
  * タイミングセーフな文字列比較
+ *
+ * タイミング攻撃（処理時間の差から秘密情報を推測する攻撃）を防ぐため、
+ * 文字列の一致・不一致に関わらず常に同じ時間で比較を完了する。
+ *
+ * @see https://owasp.org/www-community/vulnerabilities/Timing_Attack
  */
 function timingSafeEqual(a: string, b: string): boolean {
   if (a.length !== b.length) {

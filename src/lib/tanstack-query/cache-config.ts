@@ -66,6 +66,7 @@ export const cacheStrategies = {
   inbox: realtimeCache, // Inboxデータはリアルタイム性が重要
   plans: realtimeCache, // プランもリアルタイム性が重要
   planActivities: shortTermCache, // アクティビティ履歴は少し遅れてもOK
+  records: realtimeCache, // レコードもリアルタイム性が重要（カレンダー表示）
   sessions: realtimeCache, // セッションもリアルタイム性が重要
   notifications: shortTermCache, // 通知はリアルタイム性が重要だが、短期キャッシュで十分
   profile: staticCache, // プロフィールはめったに変更されない

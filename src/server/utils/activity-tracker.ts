@@ -100,6 +100,41 @@ function detectChanges(oldData: Record<string, any>, newData: Record<string, any
     });
   }
 
+  // 繰り返し設定変更
+  if (oldData.recurrence_type !== newData.recurrence_type) {
+    const recurrenceLabels: Record<string, string> = {
+      none: 'なし',
+      daily: '毎日',
+      weekly: '毎週',
+      monthly: '毎月',
+      yearly: '毎年',
+      weekdays: '平日',
+    };
+    changes.push({
+      field_name: 'recurrence',
+      old_value: recurrenceLabels[oldData.recurrence_type] || oldData.recurrence_type || '',
+      new_value: recurrenceLabels[newData.recurrence_type] || newData.recurrence_type || '',
+      action_type: 'recurrence_changed',
+    });
+  }
+
+  // 通知設定変更
+  if (oldData.reminder_minutes !== newData.reminder_minutes) {
+    const formatReminder = (minutes: number | null | undefined): string => {
+      if (minutes === null || minutes === undefined) return 'なし';
+      if (minutes === 0) return '開始時';
+      if (minutes < 60) return `${minutes}分前`;
+      if (minutes < 1440) return `${minutes / 60}時間前`;
+      return `${minutes / 1440}日前`;
+    };
+    changes.push({
+      field_name: 'reminder',
+      old_value: formatReminder(oldData.reminder_minutes),
+      new_value: formatReminder(newData.reminder_minutes),
+      action_type: 'reminder_changed',
+    });
+  }
+
   // 変更がない場合は汎用の「更新」アクティビティを記録
   if (changes.length === 0) {
     changes.push({

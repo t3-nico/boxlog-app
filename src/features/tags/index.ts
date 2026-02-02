@@ -42,7 +42,6 @@ export {
   useMoveTag,
   useOptimisticTagUpdate,
   useRenameTag,
-  useReorderTagGroups,
   useTag,
   useTagGroup,
   // Tag Groups

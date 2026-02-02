@@ -34,7 +34,6 @@ export {
   tagGroupKeys,
   useCreateTagGroup,
   useDeleteTagGroup,
-  useReorderTagGroups,
   useTagGroup,
   useTagGroups,
   useUpdateTagGroup,

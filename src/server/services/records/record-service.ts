@@ -17,6 +17,7 @@
  */
 
 import { removeUndefinedFields } from '@/server/api/routers/plans/utils';
+import { recordCreatedActivity, trackRecordChanges } from '@/server/utils/record-activity-tracker';
 
 import type {
   BulkDeleteRecordsOptions,
@@ -28,6 +29,7 @@ import type {
   ListRecordsOptions,
   RecordRow,
   RecordWithPlanAndTags,
+  RecordWithTags,
   ServiceSupabaseClient,
   UpdateRecordOptions,
 } from './types';
@@ -255,6 +257,9 @@ export class RecordService {
       await this.setRecordTags(data.id, userId, tagIds);
     }
 
+    // アクティビティを記録
+    await recordCreatedActivity(this.supabase, data.id, userId);
+
     return { ...data, tagIds: tagIds ?? [] };
   }
 
@@ -268,21 +273,21 @@ export class RecordService {
 
     const updateData = removeUndefinedFields(input);
 
+    // 現在のレコードを取得（アクティビティ記録 & 重複チェック用）
+    const { data: currentRecord, error: fetchError } = await this.supabase
+      .from('records')
+      .select('*')
+      .eq('id', recordId)
+      .eq('user_id', userId)
+      .single();
+
+    if (fetchError || !currentRecord) {
+      throw new RecordServiceError('NOT_FOUND', 'Record not found');
+    }
+
     // 時間が変更される場合は重複チェック
     // worked_at, start_time, end_time のいずれかが変更される場合
     if (input.worked_at || input.start_time || input.end_time) {
-      // 現在のレコードを取得して、変更後の値でチェック
-      const { data: currentRecord, error: fetchError } = await this.supabase
-        .from('records')
-        .select('worked_at, start_time, end_time')
-        .eq('id', recordId)
-        .eq('user_id', userId)
-        .single();
-
-      if (fetchError || !currentRecord) {
-        throw new RecordServiceError('NOT_FOUND', 'Record not found');
-      }
-
       const workedAt = input.worked_at ?? currentRecord.worked_at;
       const startTime = input.start_time ?? currentRecord.start_time;
       const endTime = input.end_time ?? currentRecord.end_time;
@@ -317,6 +322,9 @@ export class RecordService {
     if (error) {
       throw new RecordServiceError('UPDATE_FAILED', `Failed to update record: ${error.message}`);
     }
+
+    // アクティビティを記録（変更検出）
+    await trackRecordChanges(this.supabase, recordId, userId, currentRecord, data);
 
     return data;
   }
@@ -432,9 +440,9 @@ export class RecordService {
   }
 
   /**
-   * PlanのRecord一覧を取得
+   * PlanのRecord一覧を取得（タグID付き）
    */
-  async listByPlan(options: ListRecordsByPlanOptions): Promise<RecordRow[]> {
+  async listByPlan(options: ListRecordsByPlanOptions): Promise<RecordWithTags[]> {
     const { userId, planId, sortBy = 'worked_at', sortOrder = 'desc', limit } = options;
 
     let query = this.supabase
@@ -457,7 +465,19 @@ export class RecordService {
       );
     }
 
-    return data ?? [];
+    const records = data ?? [];
+    if (records.length === 0) {
+      return [];
+    }
+
+    // TagIDsを一括取得
+    const recordIds = records.map((r) => r.id);
+    const tagIdsMap = await this.getTagIdsForRecords(recordIds, userId);
+
+    return records.map((record) => ({
+      ...record,
+      tagIds: tagIdsMap.get(record.id) ?? [],
+    }));
   }
 
   /**

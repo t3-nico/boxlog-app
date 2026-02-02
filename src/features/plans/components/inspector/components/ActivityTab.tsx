@@ -1,6 +1,16 @@
 'use client';
 
-import { CheckCircle, Edit, Plus, Tag, Trash } from 'lucide-react';
+import {
+  Bell,
+  CalendarDays,
+  CheckCircle,
+  Clock,
+  Edit,
+  Plus,
+  Repeat,
+  Tag,
+  Trash,
+} from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 
 import { LoadingSpinner } from '@/components/common/Loading/LoadingStates';
@@ -42,21 +52,26 @@ export function ActivityTab({ planId, order }: ActivityTabProps) {
           const isLast = index === activities.length - 1;
 
           return (
-            <div key={activity.id} className="flex gap-3">
+            <div key={activity.id} className="flex gap-4">
               <div className="relative flex flex-col items-center">
-                <div className="bg-surface-container relative z-10 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full">
-                  <IconComponent className="h-4 w-4" />
+                <div className="bg-surface-container relative z-10 flex size-8 flex-shrink-0 items-center justify-center rounded-full">
+                  <IconComponent className="size-4" />
                 </div>
                 {!isLast && (
                   <div className="bg-border absolute top-8 left-1/2 h-full w-px -translate-x-1/2" />
                 )}
               </div>
 
-              <div className="flex-1 space-y-1 pb-6">
-                <p className="text-sm">{formatted.message}</p>
-                <p className="text-muted-foreground text-xs">
-                  {formatRelativeTime(activity.created_at, locale)}
-                </p>
+              <div className="flex-1 pb-6">
+                <div className="flex items-start justify-between gap-2">
+                  <span className="text-sm leading-8 font-medium">{formatted.actionLabel}</span>
+                  <span className="text-muted-foreground mt-2 flex-shrink-0 text-xs">
+                    {formatRelativeTime(activity.created_at, locale)}
+                  </span>
+                </div>
+                {formatted.detail && (
+                  <p className="text-muted-foreground -mt-1 text-xs">{formatted.detail}</p>
+                )}
               </div>
             </div>
           );
@@ -66,7 +81,18 @@ export function ActivityTab({ planId, order }: ActivityTabProps) {
   );
 }
 
-function getActivityIcon(icon: 'create' | 'update' | 'status' | 'tag' | 'delete') {
+function getActivityIcon(
+  icon:
+    | 'create'
+    | 'update'
+    | 'status'
+    | 'tag'
+    | 'delete'
+    | 'time'
+    | 'due_date'
+    | 'recurrence'
+    | 'reminder',
+) {
   switch (icon) {
     case 'create':
       return Plus;
@@ -78,6 +104,14 @@ function getActivityIcon(icon: 'create' | 'update' | 'status' | 'tag' | 'delete'
       return Tag;
     case 'delete':
       return Trash;
+    case 'time':
+      return Clock;
+    case 'due_date':
+      return CalendarDays;
+    case 'recurrence':
+      return Repeat;
+    case 'reminder':
+      return Bell;
     default:
       return Edit;
   }
