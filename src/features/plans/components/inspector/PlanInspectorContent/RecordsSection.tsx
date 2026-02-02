@@ -66,7 +66,7 @@ export function RecordsSection({ planId }: RecordsSectionProps) {
   return (
     <Collapsible defaultOpen={true}>
       <CollapsibleTrigger asChild>
-        <div className="flex h-10 w-full cursor-pointer items-center gap-3 px-4 transition-colors">
+        <div className="flex h-10 w-full cursor-pointer items-center gap-2 px-4 transition-colors">
           <div className="border-border/50 h-px flex-1 border-t" />
           <div className="hover:bg-state-hover flex items-center gap-1 rounded px-2 py-1 transition-colors">
             <Clock className="text-muted-foreground size-3" />
@@ -94,7 +94,7 @@ export function RecordsSection({ planId }: RecordsSectionProps) {
         ) : (
           <div className="px-4 pb-4">
             {/* 合計時間 */}
-            <div className="bg-surface-container mb-3 flex items-center justify-between rounded-lg p-2">
+            <div className="bg-surface-container mb-2 flex items-center justify-between rounded-lg p-2">
               <span className="text-muted-foreground text-xs">合計時間</span>
               <span className="text-sm font-medium">{formatDuration(totalMinutes)}</span>
             </div>
@@ -105,7 +105,7 @@ export function RecordsSection({ planId }: RecordsSectionProps) {
                 <Link
                   key={record.id}
                   href={`/${locale}/record?selected=${record.id}`}
-                  className="hover:bg-state-hover flex items-center gap-3 rounded-lg p-2 transition-colors"
+                  className="hover:bg-state-hover flex items-center gap-2 rounded-lg p-2 transition-colors"
                 >
                   {/* 日付 */}
                   <span className="text-muted-foreground w-20 flex-shrink-0 text-xs">
