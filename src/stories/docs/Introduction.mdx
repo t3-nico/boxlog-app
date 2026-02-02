@@ -66,3 +66,62 @@ src/components/ui/my-component.stories.tsx
 | UIコンポーネント | `Components/` |
 | デザイントークン | `Tokens/` |
 | ドキュメント | `Docs/` |
+
+## 運用ルール
+
+### コンポーネントとStoryの同期
+
+**Storyとコンポーネントは常に同期させる**ことが重要です。
+
+| タイミング | 対応 |
+|-----------|------|
+| **新規追加時** | コンポーネント作成と同時にStoryも作成 |
+| **変更時** | props/variant変更に応じてStoryも更新 |
+| **削除時** | コンポーネント削除と同時にStoryも削除 |
+
+### 変更時の対応表
+
+| 変更内容 | Story側の対応 |
+|---------|--------------|
+| props追加 | argTypesに追加、Storyで使用例を追加 |
+| props削除 | argTypesから削除、該当Storyを削除 |
+| variant追加 | AllVariantsに追加 |
+| 見た目変更 | Storyで確認（更新不要なことが多い） |
+
+## チェックリスト
+
+Story作成時の確認項目：
+
+- `tags: ['autodocs']` を設定した
+- `argTypes` で主要propsの説明を書いた
+- `AllVariants` Storyを作成した
+- アイコンボタンには `aria-label` を設定した
+- セマンティックトークン（`bg-background` 等）を使用している
+- 直接カラー（`text-blue-500` 等）を使っていない
+
+## 避けるべきパターン
+
+### render関数の乱用
+
+単純なprops渡しには `args` を使う。`render` は複合コンポーネントのみ。
+
+```tsx
+// ❌ Bad
+export const Bad: Story = {
+  render: () => <Button variant="primary">Click</Button>,
+};
+
+// ✅ Good
+export const Good: Story = {
+  args: { variant: 'primary', children: 'Click' },
+};
+```
+
+### Story爆発
+
+全組み合わせを個別Storyにしない。`AllVariants` + Controls で対応。
+
+### データ依存コンポーネント
+
+tRPC/Zustand依存のコンポーネントは無理にStorybookに入れない。
+モック設定のコストが高く、本番との乖離リスクがある。
