@@ -113,7 +113,7 @@ export function OverdueBadge({ overduePlans, className, style }: OverdueBadgePro
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
         {/* ヘッダー: タイトル + ヘルプ */}
-        <div className="border-border flex items-start justify-between border-b px-4 py-3">
+        <div className="flex items-start justify-between px-4 py-4">
           <div className="flex-1">
             <h4 className="text-foreground text-sm font-bold">{t('title')}</h4>
             <p className="text-muted-foreground text-xs">{t('period')}</p>

@@ -13,6 +13,8 @@ export const activityActionTypeSchema = z.enum([
   'time_changed',
   'tag_added',
   'tag_removed',
+  'recurrence_changed',
+  'reminder_changed',
   'deleted',
 ]);
 

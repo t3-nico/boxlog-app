@@ -17,9 +17,25 @@ export type PlanActivity = Omit<
 };
 
 /**
+ * アイコン色の種別
+ */
+export type ActivityIconColor = 'success' | 'info' | 'warning' | 'primary' | 'destructive';
+
+/**
  * アクティビティ表示用の情報
  */
 export interface PlanActivityDisplay extends PlanActivity {
-  message: string; // 表示用メッセージ（例: "ステータスを「作業中」に変更"）
-  icon: 'create' | 'update' | 'status' | 'tag' | 'delete'; // アイコン種別
+  actionLabel: string; // 簡潔なアクション名（例: "ステータスを変更"）
+  detail?: string | undefined; // 詳細情報（例: "未完了 → 完了"）※任意
+  icon:
+    | 'create'
+    | 'update'
+    | 'status'
+    | 'tag'
+    | 'delete'
+    | 'time'
+    | 'due_date'
+    | 'recurrence'
+    | 'reminder'; // アイコン種別
+  iconColor: ActivityIconColor; // アイコン色
 }
