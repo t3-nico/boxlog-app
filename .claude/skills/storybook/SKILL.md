@@ -409,6 +409,43 @@ export const AllVariants: Story = {
 // ✅ 純粋なUIコンポーネントに分離するか、Storybookに含めない
 ```
 
+## 運用ルール（Storyとコンポーネントの同期）
+
+### 新規コンポーネント追加時
+
+コンポーネントを作成したら、**同時にStoryも作成する**。
+
+```bash
+# コンポーネント作成
+src/components/ui/new-component.tsx
+
+# 同時にStoryも作成（必須）
+src/components/ui/new-component.stories.tsx
+```
+
+### コンポーネント変更時
+
+以下の変更をしたら、**Storyも更新する**：
+
+| 変更内容 | Story側の対応 |
+|---------|--------------|
+| props追加 | argTypesに追加、Storyで使用例を追加 |
+| props削除 | argTypesから削除、該当Storyを削除 |
+| variant追加 | AllVariantsに追加 |
+| 見た目変更 | Storyで確認（更新不要なことが多い） |
+
+### コンポーネント削除時
+
+コンポーネントを削除したら、**Storyも削除する**。
+
+```bash
+# 両方削除
+rm src/components/ui/old-component.tsx
+rm src/components/ui/old-component.stories.tsx
+```
+
+孤児Storyが残るとStorybookがビルドエラーになる。
+
 ## チェックリスト
 
 Story作成時の確認項目：
