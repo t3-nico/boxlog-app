@@ -317,7 +317,7 @@ export function recordToCalendarPlan(record: RecordWithPlanInfo): CalendarPlan |
 
   return {
     id: `record-${record.id}`, // PlanのIDと区別するためにプレフィックスを付ける
-    title: record.title ?? record.plan?.title ?? 'Record',
+    title: record.title ?? record.plan?.title ?? '', // 空の場合はUI側で「(タイトルなし)」を表示
     description: record.note ?? undefined,
     startDate,
     endDate,
