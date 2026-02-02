@@ -53,7 +53,6 @@ export function usePlanInspectorContentLogic() {
   const updateDraft = usePlanInspectorStore((state) => state.updateDraft);
   const addPendingChange = usePlanInspectorStore((state) => state.addPendingChange);
   const clearPendingChanges = usePlanInspectorStore((state) => state.clearPendingChanges);
-  const consumePendingChanges = usePlanInspectorStore((state) => state.consumePendingChanges);
   const pendingChanges = usePlanInspectorStore((state) => state.pendingChanges);
 
   // ドラフトモード判定: draftPlanがあり、planIdがない場合
@@ -115,9 +114,13 @@ export function usePlanInspectorContentLogic() {
   // 時間変更の場合のみスコープダイアログを表示
   const autoSave = useCallback(
     async (field: string, value: string | undefined) => {
+      // ストアから最新の状態を取得（クロージャの古い値を避ける）
+      const { draftPlan: currentDraft, planId: currentPlanId } = usePlanInspectorStore.getState();
+      const currentIsDraftMode = currentDraft !== null && currentPlanId === null;
+
       // ドラフトモードの場合: ローカル更新のみ（DBには保存しない）
       // 保存は saveAndClose() で行う
-      if (isDraftMode) {
+      if (currentIsDraftMode) {
         updateDraft({ [field]: value } as Partial<DraftPlan>);
         return;
       }
@@ -133,7 +136,7 @@ export function usePlanInspectorContentLogic() {
       // 通常の場合: pendingChanges にバッファリング（保存ボタンで一括保存）
       addPendingChange({ [field]: value });
     },
-    [addPendingChange, recurringEdit, isDraftMode, updateDraft],
+    [addPendingChange, recurringEdit, updateDraft],
   );
 
   // Tags state
@@ -641,11 +644,19 @@ export function usePlanInspectorContentLogic() {
    * 未保存の変更を保存してからInspectorを閉じる（Google Calendar準拠）
    */
   const saveAndClose = useCallback(async () => {
+    // ストアから最新の状態を取得（クロージャの古い値を避ける）
+    const {
+      draftPlan: currentDraft,
+      planId: currentPlanId,
+      consumePendingChanges: consume,
+    } = usePlanInspectorStore.getState();
+    const currentIsDraftMode = currentDraft !== null && currentPlanId === null;
+
     // ドラフトモードの場合: 新規作成
-    if (isDraftMode && draftPlan) {
+    if (currentIsDraftMode && currentDraft) {
       // クライアント側で即時重複チェック
-      if (draftPlan.start_time && draftPlan.end_time) {
-        if (checkPlanOverlap(draftPlan.start_time, draftPlan.end_time)) {
+      if (currentDraft.start_time && currentDraft.end_time) {
+        if (checkPlanOverlap(currentDraft.start_time, currentDraft.end_time)) {
           setTimeConflictError(true);
           return; // サーバーを呼ばずに即座にエラー表示
         }
@@ -653,12 +664,12 @@ export function usePlanInspectorContentLogic() {
 
       try {
         const newPlan = await createPlan.mutateAsync({
-          title: draftPlan.title.trim() || '無題',
-          description: draftPlan.description ?? undefined,
+          title: currentDraft.title.trim(), // 空の場合はUI側で「(タイトルなし)」を表示
+          description: currentDraft.description ?? undefined,
           status: 'open',
-          due_date: draftPlan.due_date,
-          start_time: draftPlan.start_time,
-          end_time: draftPlan.end_time,
+          due_date: currentDraft.due_date,
+          start_time: currentDraft.start_time,
+          end_time: currentDraft.end_time,
         });
         if (newPlan?.id) {
           clearDraft();
@@ -679,10 +690,10 @@ export function usePlanInspectorContentLogic() {
     }
 
     // 編集モードの場合: 既存の処理
-    const changes = consumePendingChanges();
+    const changes = consume();
 
     // 変更があればサーバーに保存
-    if (changes && planId && Object.keys(changes).length > 0) {
+    if (changes && currentPlanId && Object.keys(changes).length > 0) {
       // 時間変更がある場合はクライアント側チェック
       const startTime = (changes as { start_time?: string }).start_time;
       const endTime = (changes as { end_time?: string }).end_time;
@@ -695,7 +706,7 @@ export function usePlanInspectorContentLogic() {
 
       try {
         await updatePlan.mutateAsync({
-          id: planId,
+          id: currentPlanId,
           data: changes,
         });
       } catch (error) {
@@ -710,9 +721,9 @@ export function usePlanInspectorContentLogic() {
     }
 
     // タグ変更があればサーバーに保存
-    if (hasTagChanges && planId) {
+    if (hasTagChanges && currentPlanId) {
       try {
-        await setplanTags(planId, selectedTagIdsRef.current);
+        await setplanTags(currentPlanId, selectedTagIdsRef.current);
       } catch (error) {
         console.error('Failed to save tags:', error);
         // タグ保存エラーは閉じることを妨げない（キャッシュは既に更新済み）
@@ -721,12 +732,8 @@ export function usePlanInspectorContentLogic() {
 
     closeInspector();
   }, [
-    planId,
-    consumePendingChanges,
     updatePlan,
     closeInspector,
-    isDraftMode,
-    draftPlan,
     createPlan,
     clearDraft,
     checkPlanOverlap,
