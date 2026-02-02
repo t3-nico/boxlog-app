@@ -159,9 +159,15 @@ export function InspectorHeader({
             </DropdownMenuContent>
           </DropdownMenu>
         )}
-        {/* 閉じるボタン */}
+        {/* 閉じるボタン（他のアイコンと別グループとして余白を追加） */}
         <HoverTooltip content={closeLabel} side="top">
-          <Button variant="ghost" size="icon-sm" onClick={onClose} aria-label={closeLabel}>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={onClose}
+            aria-label={closeLabel}
+            className="ml-1"
+          >
             <X className="size-5" />
           </Button>
         </HoverTooltip>
