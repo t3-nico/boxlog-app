@@ -1,0 +1,68 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Docs/はじめに" />
+
+# Boxlog コンポーネントライブラリ
+
+このStorybookは、Boxlogで使用するUIコンポーネントとデザイントークンのカタログです。
+
+## 構成
+
+### Components
+
+UIコンポーネントの一覧です。各コンポーネントのバリエーション、props、使用例を確認できます。
+
+- **Button** - ボタン（Primary, Outline, Ghost等）
+- **Badge** - バッジ（ステータス表示、カウント等）
+- その他のコンポーネント...
+
+### Tokens
+
+デザイントークン（デザインシステムの基礎）です。
+
+| トークン | 内容 |
+|---------|------|
+| **Colors** | カラーパレット、セマンティックカラー |
+| **Typography** | フォントサイズ、ウェイト、見出しスタイル |
+| **Spacing** | 余白、ギャップ |
+| **BorderRadius** | 角丸 |
+| **Shadows** | 影 |
+| **Icons** | アイコンサイズ、よく使うアイコン |
+
+## 使い方
+
+### ダークモード
+
+ツールバーの **Theme** から Light / Dark を切り替えられます。
+
+### Controls
+
+各コンポーネントの **Controls** パネルで、propsをインタラクティブに変更できます。
+
+### Docs
+
+各コンポーネントの **Docs** タブで、propsの一覧と説明を確認できます。
+
+## 開発者向け
+
+### Storyの追加
+
+新しいコンポーネントを作成したら、同時にStoryも作成してください。
+
+```bash
+# コンポーネント
+src/components/ui/my-component.tsx
+
+# Story
+src/components/ui/my-component.stories.tsx
+```
+
+詳しくは `.claude/skills/storybook/SKILL.md` を参照してください。
+
+### 命名規則
+
+| 種類 | title prefix |
+|------|-------------|
+| UIコンポーネント | `Components/` |
+| デザイントークン | `Tokens/` |
+| ドキュメント | `Docs/` |
