@@ -34,11 +34,17 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { zIndex } from '@/config/ui/z-index';
 import { InspectorHeader, useDragHandle } from '@/features/inspector';
+import { usePlans } from '@/features/plans/hooks/usePlans';
 import { useTags } from '@/features/tags/hooks';
 import { api } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
 
-import { useRecordInspectorNavigation, useRecordMutations, useRecordTags } from '../hooks';
+import {
+  useRecord,
+  useRecordInspectorNavigation,
+  useRecordMutations,
+  useRecordTags,
+} from '../hooks';
 import { useRecordInspectorStore, type DraftRecord } from '../stores';
 
 import { RecordActivityPopover } from './ActivityPopover';
@@ -91,13 +97,14 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
   const [hasTagChanges, setHasTagChanges] = useState(false);
 
   // Record取得（既存編集時のみ）
-  const { data: record, isLoading } = api.records.getById.useQuery(
-    { id: selectedRecordId!, include: { plan: true } },
-    { enabled: !!selectedRecordId },
-  );
+  // placeholderDataでrecords.listキャッシュから即座に表示（UX向上）
+  const { data: record, isLoading } = useRecord(selectedRecordId!, {
+    includePlan: true,
+    enabled: !!selectedRecordId,
+  });
 
-  // Plan一覧取得
-  const { data: plans } = api.plans.list.useQuery({});
+  // Plan一覧取得（キャッシュ戦略適用済み）
+  const { data: plans } = usePlans({});
 
   // タグデータ取得
   const { data: allTags = [] } = useTags();
