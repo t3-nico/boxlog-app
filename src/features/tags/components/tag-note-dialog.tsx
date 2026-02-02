@@ -6,6 +6,7 @@ import { createPortal } from 'react-dom';
 import { Button } from '@/components/ui/button';
 import { Field, FieldError } from '@/components/ui/field';
 import { Textarea } from '@/components/ui/textarea';
+import { useDialogKeyboard } from '@/hooks/useDialogKeyboard';
 import { useTranslations } from 'next-intl';
 
 const MAX_LENGTH = 100;
@@ -40,18 +41,7 @@ export function TagNoteDialog({ isOpen, onClose, onSave, currentNote }: TagNoteD
   }, [isOpen, currentNote]);
 
   // ESCキーでダイアログを閉じる
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && !isLoading) {
-        onClose();
-      }
-    };
-
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, isLoading, onClose]);
+  useDialogKeyboard(isOpen, isLoading, onClose);
 
   const handleSubmit = useCallback(async () => {
     const trimmedNote = note.trim();
@@ -99,7 +89,7 @@ export function TagNoteDialog({ isOpen, onClose, onSave, currentNote }: TagNoteD
 
   const dialog = (
     <div
-      className="fixed inset-0 z-[250] flex items-center justify-center bg-black/50"
+      className="bg-overlay-heavy fixed inset-0 z-[250] flex items-center justify-center"
       onClick={handleBackdropClick}
       role="dialog"
       aria-modal="true"

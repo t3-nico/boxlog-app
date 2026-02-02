@@ -28,52 +28,25 @@
 
 'use client';
 
-import { api } from '@/lib/trpc';
+import { createRealtimeHook } from '@/lib/supabase/realtime/createRealtimeHook';
 
 import { usePlanCacheStore } from '@/features/plans/stores/usePlanCacheStore';
-import { useRealtimeSubscription } from '@/lib/supabase/realtime/useRealtimeSubscription';
 
-interface UseCalendarRealtimeOptions {
-  /** 購読を有効化するか（デフォルト: true） */
-  enabled?: boolean;
-}
+export const useCalendarRealtime = createRealtimeHook({
+  name: 'calendar',
+  table: 'tickets',
+  useMutationGuard: () => usePlanCacheStore((state) => state.isMutating),
+  onInvalidate: (utils, payload) => {
+    const recordId = payload.new?.id ?? payload.old?.id;
 
-export function useCalendarRealtime(
-  userId: string | undefined,
-  options: UseCalendarRealtimeOptions = {},
-) {
-  const { enabled = true } = options;
-  const utils = api.useUtils();
-  const isMutating = usePlanCacheStore((state) => state.isMutating);
+    // TanStack Queryキャッシュを無効化 → 自動で再フェッチ
+    void utils.plans.list.invalidate(undefined, { refetchType: 'all' });
 
-  useRealtimeSubscription<{ id: string }>({
-    channelName: `calendar-changes-${userId}`,
-    table: 'tickets',
-    event: '*', // INSERT, UPDATE, DELETE すべて
-    ...(userId && { filter: `user_id=eq.${userId}` }),
-    enabled, // enabledオプションを渡す
-    onEvent: (payload) => {
-      const newRecord = payload.new as { id: string } | undefined;
-      const oldRecord = payload.old as { id: string } | undefined;
-
-      // 自分のmutation中はRealtime経由の更新をスキップ（二重更新防止）
-      if (isMutating) {
-        return;
-      }
-
-      // TanStack Queryキャッシュを無効化 → 自動で再フェッチ
-      // undefined を渡すことで、usePlans({}) と usePlans(undefined) の両方を無効化
-      void utils.plans.list.invalidate(undefined, { refetchType: 'all' });
-
-      // 個別プランのキャッシュも無効化（Inspector等で使用）
-      if (newRecord?.id) {
-        void utils.plans.getById.invalidate({ id: newRecord.id });
-      } else if (oldRecord?.id) {
-        void utils.plans.getById.invalidate({ id: oldRecord.id });
-      }
-    },
-    onError: () => {
-      // Silently handle subscription errors
-    },
-  });
-}
+    // 個別プランのキャッシュも無効化（Inspector等で使用）
+    if (recordId) {
+      void utils.plans.getById.invalidate({ id: recordId });
+    }
+  },
+  // エラーはサイレントに処理
+  onError: () => {},
+});

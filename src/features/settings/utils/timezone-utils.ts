@@ -1,11 +1,47 @@
-import { format } from 'date-fns';
-import { formatInTimeZone as formatInTZ, fromZonedTime, toZonedTime } from 'date-fns-tz';
+/**
+ * 設定用タイムゾーンユーティリティ
+ *
+ * 共通のタイムゾーン関数は @/lib/date から再エクスポート。
+ * このファイルは設定固有の機能（日本語ラベル、DateFormatType依存）を提供。
+ */
+
+import { formatDateWithTimezone } from '@/lib/date';
 
 import type { DateFormatType } from '../stores/useCalendarSettingsStore';
 
-// タイムゾーンリストの取得
-export function getTimeZones() {
-  const timezones = [
+// ========================================
+// @/lib/date からの再エクスポート
+// ========================================
+export {
+  convertFromTimezone,
+  convertToTimezone,
+  formatDateWithTimezone,
+  formatInTimezone,
+  formatInTimezone as formatInTimeZone,
+  formatTimeWithTimezone,
+  getTimezoneAbbreviation,
+  getUserTimezone,
+} from '@/lib/date';
+
+// ========================================
+// 設定固有の機能
+// ========================================
+
+/** 日本語ラベル付きタイムゾーン情報 */
+export interface TimezoneInfoJa {
+  value: string;
+  label: string;
+  offset: number;
+}
+
+/**
+ * タイムゾーンリストの取得（日本語ラベル付き）
+ *
+ * 設定UIで使用するための日本語ラベル付きリスト。
+ * 英語版は `getCommonTimezones` from '@/lib/date' を使用。
+ */
+export function getTimeZones(): TimezoneInfoJa[] {
+  const timezones: TimezoneInfoJa[] = [
     { value: 'Pacific/Honolulu', label: 'ホノルル (GMT-10)', offset: -10 },
     { value: 'America/Anchorage', label: 'アンカレッジ (GMT-9)', offset: -9 },
     { value: 'America/Los_Angeles', label: 'ロサンゼルス (GMT-8)', offset: -8 },
@@ -27,24 +63,11 @@ export function getTimeZones() {
   return timezones.sort((a, b) => a.offset - b.offset);
 }
 
-// 時間表示のフォーマット（タイムゾーン対応）
-export function formatTimeWithSettings(
-  date: Date,
-  timeFormat: '12h' | '24h',
-  timezone?: string,
-): string {
-  const formatString = timeFormat === '24h' ? 'HH:mm' : 'h:mm a';
-
-  // タイムゾーンが指定されている場合は、そのタイムゾーンで表示
-  if (timezone) {
-    return formatInTZ(date, timezone, formatString);
-  }
-
-  // タイムゾーンが指定されていない場合は、ローカルタイムゾーンで表示
-  return format(date, formatString);
-}
-
-// 時間のみのフォーマット（時間軸用）
+/**
+ * 時間のみのフォーマット（時間軸用）
+ *
+ * カレンダーの時間軸ラベルなど、時間のみを表示する際に使用。
+ */
 export function formatHour(hour: number, timeFormat: '12h' | '24h'): string {
   if (timeFormat === '24h') {
     return `${hour}:00`;
@@ -56,25 +79,11 @@ export function formatHour(hour: number, timeFormat: '12h' | '24h'): string {
   return `${hour - 12}:00 PM`;
 }
 
-// 現在時刻をタイムゾーンでフォーマット
-export function formatInTimeZone(date: Date, timezone: string, formatString: string): string {
-  return formatInTZ(date, timezone, formatString);
-}
-
-// UTC時刻を指定タイムゾーンの時刻に変換
-export function convertToTimezone(utcDate: Date, timezone: string): Date {
-  return toZonedTime(utcDate, timezone);
-}
-
-// 指定タイムゾーンの時刻をUTCに変換
-export function convertFromTimezone(zonedDate: Date, timezone: string): Date {
-  // zonedDateは「そのタイムゾーンでの時刻」として解釈されるべきDateオブジェクト
-  // 例: 2025-11-20 16:00 (JST) → 2025-11-20 07:00 (UTC)
-  return fromZonedTime(zonedDate, timezone);
-}
-
 /**
  * 日付をユーザー設定のフォーマットで表示
+ *
+ * DateFormatType（設定固有の型）を使用するため、このファイルに残す。
+ *
  * @param date - フォーマットする日付
  * @param dateFormat - 日付フォーマット設定
  * @param timezone - オプションのタイムゾーン
@@ -84,14 +93,12 @@ export function formatDateWithSettings(
   dateFormat: DateFormatType,
   timezone?: string,
 ): string {
-  if (timezone) {
-    return formatInTZ(date, timezone, dateFormat);
-  }
-  return format(date, dateFormat);
+  return formatDateWithTimezone(date, dateFormat, timezone);
 }
 
 /**
  * 日付と時刻をユーザー設定のフォーマットで表示
+ *
  * @param date - フォーマットする日付
  * @param dateFormat - 日付フォーマット設定
  * @param timeFormat - 時間フォーマット設定
@@ -105,43 +112,5 @@ export function formatDateTimeWithSettings(
 ): string {
   const timeFormatString = timeFormat === '24h' ? 'HH:mm' : 'h:mm a';
   const fullFormat = `${dateFormat} ${timeFormatString}`;
-
-  if (timezone) {
-    return formatInTZ(date, timezone, fullFormat);
-  }
-  return format(date, fullFormat);
-}
-
-// タイムゾーンの略称を取得
-export function getTimezoneAbbreviation(timezone: string): string {
-  // よく使われるタイムゾーンの略称マッピング
-  const abbreviations: Record<string, string> = {
-    'Asia/Tokyo': 'JST',
-    'America/New_York': 'EST',
-    'America/Los_Angeles': 'PST',
-    'America/Chicago': 'CST',
-    'America/Denver': 'MST',
-    'Europe/London': 'GMT',
-    'Europe/Paris': 'CET',
-    'Australia/Sydney': 'AEDT',
-    'Pacific/Auckland': 'NZDT',
-  };
-
-  // マッピングにある場合はそれを返す
-  if (abbreviations[timezone]) {
-    return abbreviations[timezone];
-  }
-
-  // マッピングにない場合は、Intl.DateTimeFormatを使って略称を取得
-  try {
-    const formatter = new Intl.DateTimeFormat('en-US', {
-      timeZone: timezone,
-      timeZoneName: 'short',
-    });
-    const parts = formatter.formatToParts(new Date());
-    const timeZonePart = parts.find((part) => part.type === 'timeZoneName');
-    return timeZonePart?.value || 'UTC';
-  } catch {
-    return 'UTC';
-  }
+  return formatDateWithTimezone(date, fullFormat, timezone);
 }

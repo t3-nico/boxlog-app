@@ -33,53 +33,25 @@
 
 'use client';
 
-import { logger } from '@/lib/logger';
-import { useRealtimeSubscription } from '@/lib/supabase/realtime/useRealtimeSubscription';
-import { api } from '@/lib/trpc';
+import { createRealtimeHook } from '@/lib/supabase/realtime/createRealtimeHook';
 
 import { useTagCacheStore } from '../stores/useTagCacheStore';
 
-interface UseTagRealtimeOptions {
-  /** 購読を有効化するか（デフォルト: true） */
-  enabled?: boolean;
-}
-
-export function useTagRealtime(userId: string | undefined, options: UseTagRealtimeOptions = {}) {
-  const { enabled = true } = options;
-  const utils = api.useUtils();
+export const useTagRealtime = createRealtimeHook({
+  name: 'tag',
+  table: 'tags',
   // mutationCountは参照カウント方式：複数mutation同時実行に対応
-  const mutationCount = useTagCacheStore((state) => state.mutationCount);
+  useMutationGuard: () => useTagCacheStore((state) => state.mutationCount) > 0,
+  onInvalidate: (utils, payload) => {
+    const recordId = payload.new?.id ?? payload.old?.id;
 
-  useRealtimeSubscription<{ id: string }>({
-    channelName: `tag-changes-${userId}`,
-    table: 'tags',
-    event: '*', // INSERT, UPDATE, DELETE すべて
-    ...(userId && { filter: `user_id=eq.${userId}` }),
-    ...(enabled !== undefined && { enabled }),
-    onEvent: (payload) => {
-      const newRecord = payload.new as { id: string } | undefined;
-      const oldRecord = payload.old as { id: string } | undefined;
+    // TanStack Queryキャッシュを無効化 → 自動で再フェッチ
+    void utils.tags.list.invalidate();
+    void utils.tags.listParentTags.invalidate();
 
-      logger.debug('[Tag Realtime] Event detected:', payload.eventType, newRecord?.id);
-
-      // 自分のmutation中（カウント > 0）はRealtime経由の更新をスキップ（二重更新防止）
-      if (mutationCount > 0) {
-        logger.debug('[Tag Realtime] Skipping invalidation (mutation in progress)');
-        return;
-      }
-
-      // TanStack Queryキャッシュを無効化 → 自動で再フェッチ
-      void utils.tags.list.invalidate();
-      void utils.tags.listParentTags.invalidate();
-
-      // 個別タグのキャッシュも無効化
-      const tagId = newRecord?.id ?? oldRecord?.id;
-      if (tagId) {
-        void utils.tags.getById.invalidate({ id: tagId });
-      }
-    },
-    onError: (error) => {
-      logger.error('[Tag Realtime] Subscription error:', error);
-    },
-  });
-}
+    // 個別タグのキャッシュも無効化
+    if (recordId) {
+      void utils.tags.getById.invalidate({ id: recordId });
+    }
+  },
+});

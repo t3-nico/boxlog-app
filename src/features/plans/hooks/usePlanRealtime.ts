@@ -33,56 +33,26 @@
 
 'use client';
 
-import { logger } from '@/lib/logger';
-import { api } from '@/lib/trpc';
+import { createRealtimeHook } from '@/lib/supabase/realtime/createRealtimeHook';
 
-import { useRealtimeSubscription } from '@/lib/supabase/realtime/useRealtimeSubscription';
 import { usePlanCacheStore } from '../stores/usePlanCacheStore';
 
-interface UsePlanRealtimeOptions {
-  /** 購読を有効化するか（デフォルト: true） */
-  enabled?: boolean;
-}
+export const usePlanRealtime = createRealtimeHook({
+  name: 'plan',
+  table: 'plans',
+  useMutationGuard: () => usePlanCacheStore((state) => state.isMutating),
+  onInvalidate: (utils, payload) => {
+    const recordId = payload.new?.id ?? payload.old?.id;
 
-export function usePlanRealtime(userId: string | undefined, options: UsePlanRealtimeOptions = {}) {
-  const { enabled = true } = options;
-  const utils = api.useUtils();
-  const isMutating = usePlanCacheStore((state) => state.isMutating);
+    // TanStack Queryキャッシュを無効化 → 自動で再フェッチ
+    void utils.plans.list.invalidate(undefined, { refetchType: 'all' });
 
-  useRealtimeSubscription<{ id: string }>({
-    channelName: `plan-changes-${userId}`,
-    table: 'plans',
-    event: '*', // INSERT, UPDATE, DELETE すべて
-    ...(userId && { filter: `user_id=eq.${userId}` }),
-    ...(enabled !== undefined && { enabled }), // enabledオプションを条件付きで渡す
-    onEvent: (payload) => {
-      const newRecord = payload.new as { id: string } | undefined;
-      const oldRecord = payload.old as { id: string } | undefined;
+    // 個別プランのキャッシュも無効化
+    if (recordId) {
+      void utils.plans.getById.invalidate({ id: recordId });
+    }
 
-      logger.debug('[plan Realtime] Event detected:', payload.eventType, newRecord?.id);
-
-      // 自分のmutation中はRealtime経由の更新をスキップ（二重更新防止）
-      if (isMutating) {
-        logger.debug('[plan Realtime] Skipping invalidation (mutation in progress)');
-        return;
-      }
-
-      // TanStack Queryキャッシュを無効化 → 自動で再フェッチ
-      // undefined を渡すことで、useplans({}) と useplans(undefined) の両方を無効化
-      void utils.plans.list.invalidate(undefined, { refetchType: 'all' });
-
-      // 個別プランのキャッシュも無効化
-      if (newRecord?.id) {
-        void utils.plans.getById.invalidate({ id: newRecord.id });
-      } else if (oldRecord?.id) {
-        void utils.plans.getById.invalidate({ id: oldRecord.id });
-      }
-
-      // タグ関連のキャッシュも無効化（タグ変更時に必要）
-      void utils.plans.invalidate();
-    },
-    onError: (error) => {
-      console.error('[plan Realtime] Subscription error:', error);
-    },
-  });
-}
+    // タグ関連のキャッシュも無効化（タグ変更時に必要）
+    void utils.plans.invalidate();
+  },
+});
