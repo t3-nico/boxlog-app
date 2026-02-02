@@ -221,7 +221,7 @@ export const ScrollableCalendarLayout = ({
   return (
     <div
       ref={scrollContainerRef}
-      className={cn('relative min-h-0 flex-1 overflow-y-auto', className)}
+      className={cn('calendar-scrollbar relative min-h-0 flex-1 overflow-y-auto', className)}
       data-calendar-scroll
     >
       <div
