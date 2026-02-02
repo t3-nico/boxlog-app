@@ -1,12 +1,12 @@
 'use client';
 
 import { ClockTimePicker } from '@/components/common/ClockTimePicker';
+import { DatePickerPopover } from '@/components/common/DatePickerPopover';
 import { Button } from '@/components/ui/button';
 import { useAutoAdjustEndTime } from '@/features/plans/hooks/useAutoAdjustEndTime';
 import { configToReadable, ruleToConfig } from '@/features/plans/utils/rrule';
 import { AlertCircle, Check, Clock, Flag } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { DatePickerPopover } from './DatePickerPopover';
 import { RecurrenceDialog } from './RecurrenceDialog';
 
 // 繰り返しオプション

@@ -10,7 +10,7 @@ import { useAutoAdjustEndTime } from '@/features/plans/hooks/useAutoAdjustEndTim
 import { configToReadable, ruleToConfig } from '@/features/plans/utils/rrule';
 import { cn } from '@/lib/utils';
 
-import { DatePickerPopover } from './DatePickerPopover';
+import { DatePickerPopover } from '@/components/common/DatePickerPopover';
 import { RecurrenceDialog } from './RecurrenceDialog';
 import { ReminderSelect } from './ReminderSelect';
 

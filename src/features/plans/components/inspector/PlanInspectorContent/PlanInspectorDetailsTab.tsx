@@ -8,18 +8,20 @@
  * Row 3: Tags + [Records] [Due] [Description] [Status*] [Recurrence] [Reminder]
  */
 
-import { memo, useEffect, useState } from 'react';
+import { memo } from 'react';
 
+import { NoteIconButton } from '@/components/common/NoteIconButton';
+import { ScheduleRow } from '@/components/common/ScheduleRow';
 import { TagsIconButton } from '@/components/common/TagsIconButton';
+import { TitleInput } from '@/components/common/TitleInput';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle2, Circle } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import { normalizeStatus } from '../../../utils/status';
 
 import type { Plan } from '../../../types/plan';
-import { DescriptionIconButton } from '../../shared/DescriptionIconButton';
 import { DueDateIconButton } from '../../shared/DueDateIconButton';
-import { PlanScheduleRow } from '../../shared/PlanScheduleRow';
 import { RecordsIconButton } from '../../shared/RecordsIconButton';
 import { RecurrenceIconButton } from '../../shared/RecurrenceIconButton';
 import { ReminderSelect } from '../../shared/ReminderSelect';
@@ -81,35 +83,23 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
   onStatusChange,
   isDraftMode = false,
 }: PlanInspectorDetailsTabProps) {
+  const t = useTranslations();
   const status = normalizeStatus(plan.status);
-
-  // タイトルのローカル状態（controlled component用）
-  const [localTitle, setLocalTitle] = useState(plan.title);
-
-  // plan.titleが変わったらローカル状態を同期（別のプランを開いた時など）
-  useEffect(() => {
-    setLocalTitle(plan.title);
-  }, [plan.title, plan.id]);
 
   return (
     <>
       {/* Row 1: Title */}
       <div className="px-4 pt-4 pb-2">
-        <input
+        <TitleInput
           ref={titleRef}
-          type="text"
-          value={localTitle}
-          placeholder="タイトルを追加"
-          onChange={(e) => {
-            setLocalTitle(e.target.value);
-            onAutoSave('title', e.target.value);
-          }}
-          className="placeholder:text-muted-foreground block w-full border-0 bg-transparent text-xl font-bold outline-none"
+          value={plan.title}
+          onChange={(value) => onAutoSave('title', value)}
+          placeholder={isDraftMode ? 'タイトルを追加' : t('calendar.event.noTitle')}
         />
       </div>
 
       {/* Row 2: Date + Time + Duration */}
-      <PlanScheduleRow
+      <ScheduleRow
         selectedDate={scheduleDate}
         startTime={startTime}
         endTime={endTime}
@@ -131,10 +121,15 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
         <DueDateIconButton dueDate={dueDate} onDueDateChange={onDueDateChange} />
 
         {/* Description */}
-        <DescriptionIconButton
-          planId={plan.id}
-          description={plan.description || ''}
-          onDescriptionChange={(html) => onAutoSave('description', html)}
+        <NoteIconButton
+          id={plan.id}
+          note={plan.description || ''}
+          onNoteChange={(html) => onAutoSave('description', html)}
+          labels={{
+            editTooltip: '説明を編集',
+            addTooltip: '説明を追加',
+            placeholder: '説明を追加...',
+          }}
         />
 
         {/* Status - ドラフトモードでは非表示（新規作成時は常にopen） */}
