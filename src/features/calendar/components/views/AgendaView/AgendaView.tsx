@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react';
 
-import { addDays, isSameDay, startOfDay } from 'date-fns';
+import { addDays, isSameDay, startOfDay } from '@/lib/date';
 import { CalendarDays } from 'lucide-react';
 
 import { cn } from '@/lib/utils';

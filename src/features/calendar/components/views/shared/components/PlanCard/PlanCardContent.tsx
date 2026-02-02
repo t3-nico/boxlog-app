@@ -80,7 +80,7 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
         <span
           className={`text-foreground truncate text-sm leading-tight font-normal ${showTitleUnderline ? 'underline' : ''}`}
         >
-          {plan.title}
+          {plan.title || t('calendar.event.noTitle')}
         </span>
       </div>
     );
@@ -96,7 +96,7 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
         <span
           className={`${isCompact ? 'line-clamp-1' : 'line-clamp-2'} text-foreground ${showTitleUnderline ? 'underline' : ''}`}
         >
-          {plan.title}
+          {plan.title || t('calendar.event.noTitle')}
         </span>
       </div>
 

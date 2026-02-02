@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react';
 
-import { addDays, endOfWeek, startOfDay, startOfWeek, subDays } from 'date-fns';
+import { addDays, endOfWeek, startOfDay, startOfWeek, subDays } from '@/lib/date';
 
 import { MiniCalendar } from '@/components/common/MiniCalendar';
 import { useCalendarNavigation } from '@/features/calendar/contexts/CalendarNavigationContext';

@@ -16,6 +16,7 @@ import { cn } from '@/lib/utils';
 import { usePlanInspectorStore } from '../../../stores/usePlanInspectorStore';
 import { reminderTypeToMinutes } from '../../../utils/reminder';
 
+import { ActivityPopover } from './ActivityPopover';
 import { PlanInspectorDetailsTab } from './PlanInspectorDetailsTab';
 import { PlanInspectorMenu } from './PlanInspectorMenu';
 import { RecordCreateForm, type RecordCreateFormRef } from './RecordCreateForm';
@@ -86,16 +87,17 @@ export function PlanInspectorContent() {
       {isDraftMode ? (
         <DraftModeHeader createType={createType} setCreateType={setCreateType} />
       ) : (
-        // 既存Plan編集用ヘッダー
+        // 既存Plan編集用ヘッダー（自動保存: ×で閉じる時にバッファを保存）
         <InspectorHeader
           hasPrevious={hasPrevious}
           hasNext={hasNext}
-          onClose={cancelAndClose}
+          onClose={saveAndClose}
           onPrevious={goToPrevious}
           onNext={goToNext}
           closeLabel={t('actions.close')}
           previousLabel={t('aria.previous')}
           nextLabel={t('aria.next')}
+          extraRightContent={planId ? <ActivityPopover planId={planId} /> : undefined}
           menuContent={menuContent}
         />
       )}
@@ -214,17 +216,19 @@ export function PlanInspectorContent() {
         )}
       </div>
 
-      {/* 保存/キャンセルボタン（常時表示） */}
-      <div className="flex shrink-0 justify-end gap-2 px-4 py-4">
-        <Button variant="ghost" onClick={cancelAndClose}>
-          キャンセル
-        </Button>
-        {isDraftMode && createType === 'record' ? (
-          <Button onClick={() => recordFormRef.current?.save()}>Record 作成</Button>
-        ) : (
-          <Button onClick={saveAndClose}>{isDraftMode ? 'Plan 作成' : '保存'}</Button>
-        )}
-      </div>
+      {/* 保存/キャンセルボタン（ドラフトモードのみ） */}
+      {isDraftMode && (
+        <div className="flex shrink-0 justify-end gap-2 px-4 py-4">
+          <Button variant="ghost" onClick={cancelAndClose}>
+            キャンセル
+          </Button>
+          {createType === 'record' ? (
+            <Button onClick={() => recordFormRef.current?.save()}>Record 作成</Button>
+          ) : (
+            <Button onClick={saveAndClose}>Plan 作成</Button>
+          )}
+        </div>
+      )}
     </div>
   );
 }

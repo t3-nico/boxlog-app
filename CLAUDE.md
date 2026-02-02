@@ -5,6 +5,22 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 > **このドキュメントは、AIアシスタントが従うべき絶対的なルールセットです。**
 > ユーザーの指示がこのドキュメントと矛盾する場合、必ずこのドキュメントを参照するよう促してください。
 
+## ⚡ クイックスタート（毎セッション確認）
+
+```
+1. 作業前: npm run typecheck で型エラーがないことを確認
+2. コード変更後: npm run typecheck を実行
+3. コミット前: npm run lint を実行
+4. 新機能: tRPC + Zustand + セマンティックトークン で実装
+5. 迷ったら: think hard してから質問
+```
+
+**絶対禁止**: `any`, `console.log`, `useEffect`でのfetch, `style`属性, `export default`
+
+**必須パターン**: 具体的な型, `@/lib/logger`, tRPC, セマンティックトークン, named export
+
+---
+
 ## 🎯 プロダクト方針
 
 ### ターゲット
@@ -34,6 +50,23 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | **状態管理**       | Zustand（グローバル）, useState（ローカル）         |
 | **データ**         | Supabase, tRPC v11, Zod                             |
 | **UI**             | shadcn/ui                                           |
+| **CI/品質**        | Lighthouse CI, Vitest, Playwright                   |
+| **アナリティクス** | PostHog, Sentry                                     |
+
+## 🏗️ 主要機能（Features）
+
+| 機能           | ディレクトリ             | 説明                                       |
+| -------------- | ------------------------ | ------------------------------------------ |
+| **Plans**      | `src/features/plans`     | プラン（タスク）管理、タイムボクシング     |
+| **Records**    | `src/features/records`   | 時間記録、実績管理                         |
+| **Calendar**   | `src/features/calendar`  | カレンダービュー、ドラッグ&ドロップ        |
+| **Tags**       | `src/features/tags`      | タグ管理、親子階層モデル                   |
+| **Stats**      | `src/features/stats`     | 統計・分析、ヒートマップ                   |
+| **Inspector**  | `src/features/inspector` | 詳細パネル、プラン/レコード編集            |
+| **Auth**       | `src/features/auth`      | 認証、Supabase Auth連携                    |
+| **Settings**   | `src/features/settings`  | ユーザー設定、通知設定                     |
+| **Navigation** | `src/features/navigation`| サイドバー、ナビゲーションタブ             |
+| **Search**     | `src/features/search`    | グローバル検索                             |
 
 ## 📋 基本コマンド
 
@@ -49,32 +82,121 @@ npm run lint         # コード品質（AI必須：コミット前）
 
 - ❌ `any`, `unknown` → ✅ 具体的な型定義
 
+**理由**: TypeScript strict modeの恩恵（コンパイル時エラー検出、IDE自動補完）を最大化するため。`any`は型安全性を完全に無効化し、バグの温床となる。
+
 ### スタイリング
 
 - ❌ `style`属性、`text-blue-500`（直接カラー）
 - ✅ セマンティックトークン: `bg-card`, `text-foreground`, `border-border`
+
+**理由**: セマンティックトークンはダークモード対応を自動化し、デザイン変更時の一括修正を可能にする。直接カラー指定はテーマ切り替え時に破綻する。
 
 ### コンポーネント
 
 - ❌ `React.FC`, `export default`（App Router例外除く）
 - ✅ `export function ComponentName() {}`
 
+**理由**: `React.FC`は暗黙のchildrenを含み型推論を阻害。named exportはtree-shakingを最適化し、IDE補完・リファクタリングを改善する。
+
 ### データフェッチング
 
 - ❌ `useEffect`でのfetch, `getServerSideProps`, REST API (`fetch('/api/...')`)
 - ✅ tRPC (アプリ内部API), Server Components, TanStack Query
 
+**理由**: tRPCはE2E型安全性を提供し、APIスキーマの不整合をコンパイル時に検出。`useEffect`でのfetchはrace condition、メモリリーク、ウォーターフォールの原因となる。
+
 **重要**: アプリ内部のAPIは全てtRPC化完了。新規APIは必ずtRPCで実装すること。
+
+### ログ出力
+
+- ❌ `console.log`, `console.info`, `console.debug`（本番コード禁止）
+- ✅ `console.warn`, `console.error`（許可）
+- ✅ `@/lib/logger` モジュール使用（推奨）
+
+**理由**: loggerモジュールはログレベル制御、Sentry連携、構造化ログをサポート。本番環境でのデバッグ効率とセキュリティを両立するため。
 
 ### 状態管理
 
 - ❌ Redux, 新しい状態管理ライブラリ
 - ✅ Zustand（グローバル）, useState（ローカル）
 
+**理由**: Zustandは最小限のボイラープレートで型安全なグローバル状態を実現。Reduxは過剰な抽象化。新規ライブラリ追加はバンドルサイズと学習コストを増加させる。
+
+**クイックチェック**:
+- [ ] セレクタで必要な状態のみ購読（`useStore((s) => s.field)`）
+- [ ] 全状態を購読しない（`const { a, b } = useStore()` は避ける）
+
+**詳細ガイド**: CRUD/UI/選択/フィルターストアのパターン、devtools/persist設定は [`.claude/skills/store-creating/SKILL.md`](.claude/skills/store-creating/SKILL.md) を参照
+
+### セキュリティ
+
+**クイックチェック（実装時に確認）**:
+
+- [ ] `protectedProcedure` を使用（認証必須エンドポイント）
+- [ ] `ctx.userId` でデータアクセスを制限
+- [ ] `dangerouslySetInnerHTML` 禁止
+- [ ] `.env` をコミットしない、`NEXT_PUBLIC_` 以外はクライアントに渡さない
+
+**詳細ガイド**: 認証/認可、tRPCエンドポイント、入力検証の実装時は [`.claude/skills/security/SKILL.md`](.claude/skills/security/SKILL.md) を参照
+
+### ファイル命名規則
+
+| 種類 | 命名規則 | 例 |
+|------|---------|-----|
+| **コンポーネント** | PascalCase | `TaskCard.tsx`, `TagSelector.tsx` |
+| **フック** | camelCase + use prefix | `useTagStore.ts`, `usePlanMutation.ts` |
+| **ユーティリティ** | camelCase | `formatDate.ts`, `calculateDuration.ts` |
+| **型定義** | camelCase or types.ts | `types.ts`, `plan.types.ts` |
+| **テスト** | 同名 + .test | `TaskCard.test.tsx` |
+| **定数** | UPPER_SNAKE_CASE | `const MAX_TAGS = 100` |
+
+### import順序
+
+```typescript
+// 1. React/Next.js
+import { useState, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
+
+// 2. 外部ライブラリ
+import { z } from 'zod';
+import { create } from 'zustand';
+
+// 3. 内部モジュール（エイリアス）
+import { api } from '@/lib/trpc';
+import { Button } from '@/components/ui/button';
+
+// 4. 相対パス（同一feature内）
+import { useTagStore } from '../stores/useTagStore';
+import { TagCard } from './TagCard';
+
+// 5. 型（type import）
+import type { Tag } from '@/types';
+```
+
+### Server Component vs Client Component
+
+```
+新規コンポーネント作成時
+│
+├─ サーバーでデータ取得が必要？
+│  └─ YES → Server Component（デフォルト）
+│
+├─ useState / useEffect が必要？
+│  └─ YES → Client Component（"use client"）
+│
+├─ onClick等のイベントハンドラが必要？
+│  └─ YES → Client Component
+│
+├─ ブラウザAPIが必要？（localStorage等）
+│  └─ YES → Client Component
+│
+└─ 上記すべてNO → Server Component ✅
+```
+
 ## 🔄 ワークフロー: Explore → Plan → Code → Commit
 
-1. **Explore**: 既存コードを検索、影響範囲を把握
-2. **Plan**: 実装戦略を策定（複雑な場合は`think hard`）
+1. **Explore**: 既存コードを検索、影響範囲を把握（`think`で確認）
+2. **Plan**: 実装戦略を策定（`think hard`〜`ultrathink`で検討）
 3. **Code**: CLAUDE.md準拠で実装
 4. **Commit**: `npm run typecheck` → `npm run lint` → コミット
 
@@ -84,14 +206,88 @@ npm run lint         # コード品質（AI必須：コミット前）
 - Conventional Commits形式を使用: `feat(scope): 説明`, `fix(scope): 説明`
 - 例: `feat(tags): タグマージモーダルをIntercepting Routesに移行`
 
+## 🤔 拡張思考（Extended Thinking）
+
+### Think ツール使用基準
+
+| キーワード | 思考予算 | 使用ケース |
+|-----------|---------|-----------|
+| `think` | 低（5-10秒） | 既存パターンの確認、簡単なバグ原因特定 |
+| `think hard` | 中（30-60秒） | 複雑なロジック設計、複数選択肢の比較 |
+| `think harder` | 高（2-3分） | アーキテクチャ変更、複数機能の統合設計 |
+| `ultrathink` | 最大（5-10分） | CLAUDE.md変更、プロジェクト全体の技術方針 |
+
+### 判定フロー
+
+```
+実装の複雑さを評価
+│
+├─ 3秒以内に判断できる？
+│  └─ YES → think ✅
+│
+├─ 既存パターンが存在する？
+│  └─ YES → think（パターン確認）✅
+│
+├─ 複数の選択肢を比較する必要がある？
+│  └─ YES → think hard ⚙️
+│
+├─ 他の機能に影響を与える設計判断？
+│  └─ YES → think harder 🏗️
+│
+└─ CLAUDE.md本体に影響する決定？
+   └─ YES → ultrathink 🚀
+```
+
+### 使用例
+
+```markdown
+# Explore段階
+「このtRPCエンドポイント設計を think して確認してください」
+
+# Plan段階（複雑な場合）
+「この状態管理について think hard してから、
+ Zustand vs TanStack Query の比較を提案してください」
+
+# アーキテクチャ変更
+「カレンダー機能の再設計について think harder してから提案してください」
+```
+
 ## 🤖 AIの行動規範
 
 ### 曖昧な指示への対応
 
-推測で実装せず、確認を求める：
+推測で実装せず、確認を求める。
 
+**判断フロー**:
 ```
-「確認事項: [質問]  選択肢: A案 / B案 - どちらで進めますか？」
+ユーザー指示の確認
+│
+├─ 目的が明確か？
+│  └─ NO → 目的を質問 ⚠️
+│
+├─ スコープが明確か？
+│  └─ NO → スコープを質問 ⚠️
+│
+├─ 実装方法が明確か？
+│  ├─ CLAUDE.md準拠 → 実装開始 ✅
+│  └─ 推奨外 → ベストプラクティス確認 ⚠️
+│
+└─ 確信度99%未満 → 確認を求める ⚠️
+```
+
+**質問テンプレート**:
+```
+【確認事項】
+1. [具体的な質問]
+
+【現時点の理解】
+- [理解している内容]
+
+【選択肢】
+- A案: [説明]
+- B案: [説明]
+
+どちらで進めますか？
 ```
 
 ### ベストプラクティス違反の検出
@@ -101,6 +297,25 @@ npm run lint         # コード品質（AI必須：コミット前）
 ```
 「懸念: [公式]では[推奨方法]が推奨。理由: [説明] 提案: [代替案]」
 ```
+
+### CLAUDE.md vs ユーザー指示の競合
+
+**基本方針**: CLAUDE.mdを優先。ただし透過的に対応。
+
+**禁止技術の使用を依頼された場合**:
+```
+「ご依頼の確認ですが、[技術名]の使用をお考えですね。
+
+CLAUDE.mdでは、[理由]のため[推奨方法]を採用しています。
+
+【提案】
+- A案: 推奨方法で実装
+- B案: 理由を踏まえて相談
+
+どちらで進めますか？」
+```
+
+**ユーザーが同意した例外の場合**: 理由をGitコミットメッセージに記録する。
 
 ### #キーの活用
 
@@ -259,11 +474,17 @@ npm audit                                # セキュリティ
 | **アプリ内部API** | ✅ tRPC  | E2E型安全、自動補完、コード量削減      |
 | **外部公開API**   | ⚠️ REST  | 外部ツール連携（監視、認証フローなど） |
 
-### tRPC化完了エリア（15エンドポイント）
+### tRPC化完了エリア
 
+✅ **Plans** (12): crud (list/getById/create/update/delete), activities, bulk, instances, recurrence, statistics, tags, transaction
 ✅ **Tags** (7): list, getById, create, update, merge, delete, getStats
-✅ **Tag Groups** (6): list, getById, create, update, delete, reorder
+✅ **Records** (2): crud, tags
+✅ **Notifications** (4): list, markAsRead, markAllAsRead, delete
 ✅ **User** (2): deleteAccount (GDPR), exportData (GDPR)
+✅ **Profile** (2): get, update
+✅ **Auth** (3): signIn, signUp, signOut
+✅ **UserSettings** (2): get, update
+✅ **NotificationPreferences** (2): get, update
 
 ### REST API維持エリア（外部アクセス用）
 
@@ -291,69 +512,112 @@ export const myRouter = createTRPCRouter({
 });
 ```
 
+### tRPCエラーハンドリング
+
+**エラーコード使い分け（クイックリファレンス）**:
+| コード | 用途 |
+|--------|------|
+| `BAD_REQUEST` | 入力値不正、ビジネスルール違反 |
+| `NOT_FOUND` | リソースが存在しない |
+| `FORBIDDEN` | 権限なし |
+| `UNAUTHORIZED` | 未認証 |
+| `INTERNAL_SERVER_ERROR` | 予期しないエラー |
+
+**詳細ガイド**: サービス層分離、`handleServiceError`、Zodスキーマ設計は [`.claude/skills/trpc-router-creating/SKILL.md`](.claude/skills/trpc-router-creating/SKILL.md) を参照
+
 ## 🔄 楽観的更新（Optimistic Updates）
 
-### 基本方針
+**基本方針**: ユーザー操作に対応する全mutationで楽観的更新を実装する（体感速度200-800ms改善）
 
-**ユーザー操作に対応する全mutationで楽観的更新を実装する**
-
-楽観的更新により、ユーザーはサーバーレスポンスを待たずに即座にUIフィードバックを得られる。
-これは体感速度を200-800ms改善し、アプリケーションの応答性を大幅に向上させる。
-
-### 実装パターン（テンプレート）
-
-```typescript
-const myMutation = api.myRouter.myEndpoint.useMutation({
-  // 1. 楽観的更新
-  onMutate: async (input) => {
-    // 進行中のクエリをキャンセル（競合防止）
-    await utils.myRouter.list.cancel();
-
-    // 現在のキャッシュをスナップショット（ロールバック用）
-    const previous = utils.myRouter.list.getData();
-
-    // キャッシュを楽観的に更新
-    utils.myRouter.list.setData(undefined, (old) => {
-      if (!old) return old;
-      return /* 更新後のデータ */;
-    });
-
-    return { previous };
-  },
-
-  // 2. エラー時ロールバック
-  onError: (_err, _input, context) => {
-    if (context?.previous) {
-      utils.myRouter.list.setData(undefined, context.previous);
-    }
-  },
-
-  // 3. 完了時に再検証
-  onSettled: () => {
-    void utils.myRouter.list.invalidate();
-  },
-});
-```
-
-### 楽観的更新が不要な場合
-
-以下のケースでは楽観的更新を適用しない：
-
-1. **不可逆操作**: アカウント削除、支払い処理など
-2. **サーバー計算が必要**: IDの発行、複雑な集計など（ただし一時IDで対応可能な場合は実装する）
-3. **低頻度操作**: 月1回程度の設定変更など（ただし一貫性のため実装を推奨）
-
-### 新規mutation作成時のチェックリスト
-
+**チェックリスト**:
 - [ ] ユーザー操作に対応するか？ → 楽観的更新を実装
 - [ ] 不可逆操作か？ → 楽観的更新なし、確認ダイアログを表示
 - [ ] 複数キャッシュに影響するか？ → 全キャッシュを更新
+
+**詳細ガイド**: 実装テンプレート、Realtime競合対策、CRUD別パターンは [`.claude/skills/optimistic-update/SKILL.md`](.claude/skills/optimistic-update/SKILL.md) を参照
+
+---
+
+## 🧪 CI/CD パイプライン
+
+### Lighthouse CI（PR必須）
+
+- Performance: ≥ 80点（ブロッキング）
+- Accessibility: ≥ 90点（ブロッキング）
+- Best Practices: ≥ 85点（ブロッキング）
+- SEO: 警告のみ（認証必須アプリのため）
+
+**実行コマンド**: `npm run lighthouse:check`
+
+### テスト実装
+
+**テスト対象の優先順位**:
+1. ビジネスロジック（Service層）
+2. カスタムフック（状態管理）
+3. 複雑なコンポーネント
+4. ユーティリティ関数
+
+**テストコマンド**:
+```bash
+npm run test          # 全体実行
+npm run test -- path  # 特定ファイル
+```
+
+**詳細ガイド**: Vitest + Testing Libraryのパターン、コンポーネント/フック/Zustand storeテストの書き方は [`.claude/skills/test/SKILL.md`](.claude/skills/test/SKILL.md) を参照
+
+### アクセシビリティ
+
+**クイックチェック**:
+
+- [ ] アイコンボタンに `aria-label` を設定
+- [ ] 画像に `alt` 属性を設定
+- [ ] フォームで `<label>` と `htmlFor` を紐付け
+- [ ] タッチターゲット最小44x44px（Apple HIG準拠）
+
+**詳細ガイド**: インタラクティブ要素、Dialog、キーボード操作の実装時は [`.claude/skills/a11y/SKILL.md`](.claude/skills/a11y/SKILL.md) を参照
+
+### アナリティクス（PostHog）
+
+- 環境変数 `NEXT_PUBLIC_POSTHOG_KEY` で有効化
+- 未設定時は自動的に無効化（エラーなし）
+- 認証ページでは初期化スキップ（パフォーマンス最適化）
 
 ---
 
 ## 📈 パフォーマンス監視の原則
 
 **大前提: 平均は見ない。p95だけを見る。**
+
+### React最適化パターン
+
+**クイックチェック**:
+
+- [ ] 高コストな計算 → `useMemo`
+- [ ] 子に渡すコールバック → `useCallback`
+- [ ] 重いコンポーネント → `React.memo`
+
+**最適化が不要なケース**:
+- 単純なコンポーネント（メモ化のオーバーヘッドの方が大きい）
+- propsが毎回変わる場合
+- 再レンダリングが問題になっていない場合
+
+**詳細ガイド**: Vercel Engineering推奨の45ルール（ウォーターフォール排除、バンドル最適化、サーバーサイド、再レンダリング等）は [`.claude/skills/react-best-practices/SKILL.md`](.claude/skills/react-best-practices/SKILL.md) を参照
+
+### エラー境界
+
+```typescript
+// ✅ 機能単位でエラー境界を設置
+<ErrorBoundary fallback={<ErrorFallback />}>
+  <TagList />
+</ErrorBoundary>
+
+// ❌ アプリ全体を1つのエラー境界でラップしない（部分的な復旧ができない）
+```
+
+**エラー境界の設置場所**:
+- 各Feature（plans, tags, records等）のルートコンポーネント
+- 非同期データを扱うコンポーネント
+- サードパーティライブラリを使用するコンポーネント
 
 ### 速度指標（p95で判断）
 
@@ -396,5 +660,5 @@ const myMutation = api.myRouter.myEndpoint.useMutation({
 
 ---
 
-**📖 最終更新**: 2026-01-21 | **バージョン**: v12.0
+**📖 最終更新**: 2026-01-31 | **バージョン**: v14.2
 **変更履歴**: [`docs/development/CLAUDE_MD_CHANGELOG.md`](docs/development/CLAUDE_MD_CHANGELOG.md)

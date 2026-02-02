@@ -790,6 +790,7 @@ html.dark {
   .calendar-scrollbar {
     scrollbar-width: auto !important;
     scrollbar-color: color-mix(in oklch, var(--color-muted-foreground) 30%, transparent) transparent !important;
+    scrollbar-gutter: stable; /* スクロールバー非表示時も余白を確保 */
   }
 
   .calendar-scrollbar:hover {

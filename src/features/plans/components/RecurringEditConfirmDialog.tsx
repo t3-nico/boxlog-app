@@ -1,11 +1,11 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-
 import { createPortal } from 'react-dom';
 
 import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { useDialogKeyboard } from '@/hooks/useDialogKeyboard';
 import { useTranslations } from 'next-intl';
 
 import { useRecurringEditConfirmStore } from '../stores/useRecurringEditConfirmStore';
@@ -21,18 +21,10 @@ export type RecurringEditScope = 'this' | 'thisAndFuture' | 'all';
 /**
  * 繰り返しプラン編集確認ダイアログ
  *
- * ReactのcreatePortalを使用してdocument.bodyに直接レンダリング
- * PlanDeleteConfirmDialogと同じパターンで実装
- *
  * Googleカレンダー風のスコープ選択:
  * - このイベントのみ
  * - このイベント以降すべて
  * - すべてのイベント
- *
- * スタイルガイド準拠:
- * - 8pxグリッドシステム（p-6, gap-4, mb-6等）
- * - 角丸: rounded-xl（16px）for ダイアログ
- * - Card: bg-card（カード、ダイアログ用）
  */
 export function RecurringEditConfirmDialog() {
   const t = useTranslations();
@@ -57,22 +49,12 @@ export function RecurringEditConfirmDialog() {
     }
   }, [isOpen]);
 
-  // ESCキーでダイアログを閉じる（Inspectorには伝播させない）
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && !isProcessing) {
-        e.stopPropagation();
-        e.preventDefault();
-        closeDialog();
-      }
-    };
-
-    // captureフェーズで処理してInspectorより先にイベントを消費
-    document.addEventListener('keydown', handleKeyDown, true);
-    return () => document.removeEventListener('keydown', handleKeyDown, true);
-  }, [isOpen, isProcessing, closeDialog]);
+  // ESCキーでダイアログを閉じる（captureフェーズでInspectorより先に処理）
+  useDialogKeyboard(isOpen, isProcessing, closeDialog, {
+    capture: true,
+    stopPropagation: true,
+    preventDefault: true,
+  });
 
   const handleConfirm = useCallback(async () => {
     if (!onConfirm) return;

@@ -8,6 +8,7 @@ import { usePlans } from '@/features/plans/hooks/usePlans';
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
 import type { Plan } from '@/features/plans/types/plan';
 import { isRecurringPlan } from '@/features/plans/utils/recurrence';
+import { useRecords } from '@/features/records/hooks';
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
 import { useTags } from '@/features/tags/hooks';
 import { logger } from '@/lib/logger';
@@ -71,7 +72,8 @@ export function useCalendarData({
 
   // recordsを取得（日付範囲フィルタ）
   // service.list は常に plan 情報を含めて返す（RecordWithPlan型）
-  const { data: recordsData } = api.records.list.useQuery({
+  // Plans と同じキャッシュ戦略・retry設定を適用（リアルタイム性が重要）
+  const { data: recordsData } = useRecords({
     worked_at_from: format(viewDateRange.start, 'yyyy-MM-dd'),
     worked_at_to: format(viewDateRange.end, 'yyyy-MM-dd'),
   });
@@ -84,6 +86,7 @@ export function useCalendarData({
   const utils = api.useUtils();
 
   // 隣接期間のプリフェッチ（ナビゲーション高速化）
+  // Plans と Records 両方をプリフェッチして、週ナビゲーション時の体験を向上
   useEffect(() => {
     const prefetchAdjacentPeriods = () => {
       // 前の期間
@@ -92,6 +95,10 @@ export function useCalendarData({
         startDate: prevRange.start.toISOString(),
         endDate: prevRange.end.toISOString(),
       });
+      void utils.records.list.prefetch({
+        worked_at_from: format(prevRange.start, 'yyyy-MM-dd'),
+        worked_at_to: format(prevRange.end, 'yyyy-MM-dd'),
+      });
 
       // 次の期間
       const nextRange = calculateViewDateRange(viewType, addDays(currentDate, 7), weekStartsOn);
@@ -99,10 +106,14 @@ export function useCalendarData({
         startDate: nextRange.start.toISOString(),
         endDate: nextRange.end.toISOString(),
       });
+      void utils.records.list.prefetch({
+        worked_at_from: format(nextRange.start, 'yyyy-MM-dd'),
+        worked_at_to: format(nextRange.end, 'yyyy-MM-dd'),
+      });
     };
 
     prefetchAdjacentPeriods();
-  }, [currentDate, viewType, weekStartsOn, utils.plans.list]);
+  }, [currentDate, viewType, weekStartsOn, utils.plans.list, utils.records.list]);
 
   // フィルター関数を取得（ストアに統一）
   const isPlanVisible = useCalendarFilterStore((state) => state.isPlanVisible);

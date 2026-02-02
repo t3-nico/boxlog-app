@@ -2,6 +2,7 @@
  * Record データ取得フック
  */
 
+import { cacheStrategies } from '@/lib/tanstack-query/cache-config';
 import { api } from '@/lib/trpc';
 
 import type { RecordFilter } from '@/schemas/records';
@@ -37,17 +38,23 @@ interface UseRecordDataOptions {
 export function useRecordData(options: UseRecordDataOptions = {}) {
   const { filter } = options;
 
-  const { data, isPending, error, refetch } = api.records.list.useQuery({
-    plan_id: filter?.plan_id,
-    worked_at_from: filter?.worked_at_from,
-    worked_at_to: filter?.worked_at_to,
-    fulfillment_score_min: filter?.fulfillment_score_min,
-    fulfillment_score_max: filter?.fulfillment_score_max,
-    sortBy: filter?.sortBy ?? 'worked_at',
-    sortOrder: filter?.sortOrder ?? 'desc',
-    limit: filter?.limit,
-    offset: filter?.offset,
-  });
+  const { data, isPending, error, refetch } = api.records.list.useQuery(
+    {
+      plan_id: filter?.plan_id,
+      worked_at_from: filter?.worked_at_from,
+      worked_at_to: filter?.worked_at_to,
+      fulfillment_score_min: filter?.fulfillment_score_min,
+      fulfillment_score_max: filter?.fulfillment_score_max,
+      sortBy: filter?.sortBy ?? 'worked_at',
+      sortOrder: filter?.sortOrder ?? 'desc',
+      limit: filter?.limit,
+      offset: filter?.offset,
+    },
+    {
+      ...cacheStrategies.records,
+      retry: 1,
+    },
+  );
 
   return {
     items: (data ?? []) as RecordItem[],
@@ -61,7 +68,13 @@ export function useRecordData(options: UseRecordDataOptions = {}) {
  * 最近のRecordを取得するフック（複製用）
  */
 export function useRecentRecords(limit: number = 5) {
-  const { data, isPending } = api.records.getRecent.useQuery({ limit });
+  const { data, isPending } = api.records.getRecent.useQuery(
+    { limit },
+    {
+      ...cacheStrategies.records,
+      retry: 1,
+    },
+  );
 
   return {
     items: (data ?? []) as RecordItem[],

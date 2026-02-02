@@ -81,6 +81,20 @@ export function splitCrossWeekPlans(
 
 /**
  * 複数日プランを日毎のセグメントに分割
+ *
+ * ## アルゴリズム概要
+ * 1. プランの開始日から終了日まで1日ずつ走査
+ * 2. 週末表示OFFの場合、土日はスキップ
+ * 3. 各日に対してセグメントを生成:
+ *    - 初日: segmentType='start', 元のstart_timeを保持
+ *    - 中間日: segmentType='middle', 00:00-23:59
+ *    - 最終日: segmentType='end', 元のend_timeを保持
+ *    - 単日: segmentType='full'
+ *
+ * ## 翻訳キーの形式
+ * - 'calendar.segment.start' → 「開始」
+ * - 'calendar.segment.middle' → 「継続」
+ * - 'calendar.segment.end' → 「終了」
  */
 function createPlanSegments(
   plan: CalendarPlan,

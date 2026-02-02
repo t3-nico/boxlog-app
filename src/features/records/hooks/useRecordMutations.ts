@@ -82,6 +82,7 @@ export function useRecordMutations() {
                 : record.fulfillment_score,
             note: data.note !== undefined ? data.note : record.note,
             updated_at: new Date().toISOString(),
+            tagIds: record.tagIds, // 明示的に保持
           };
         });
       });
@@ -93,9 +94,11 @@ export function useRecordMutations() {
         utils.records.list.setData({}, context.previous);
       }
     },
-    onSettled: () => {
+    onSettled: (_data, _error, { id }) => {
       // すべてのrecords.listクエリを無効化（日付フィルター付きも含む）
       void utils.records.list.invalidate(undefined, { refetchType: 'all' });
+      // 個別Recordのキャッシュも無効化（編集画面用）
+      void utils.records.getById.invalidate({ id });
     },
   });
 

@@ -273,3 +273,10 @@ src/server/api/routers/
 ├── profile.ts       # シンプルな例
 └── notifications.ts
 ```
+
+## 関連スキル
+
+- `/optimistic-update` - クライアント側のキャッシュ更新
+- `/store-creating` - Zustandストアとの連携
+- `/security` - 認証/認可の詳細パターン
+- `/test` - tRPCエンドポイントのテスト
