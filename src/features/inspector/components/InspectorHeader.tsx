@@ -11,10 +11,13 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { cn } from '@/lib/utils';
 
 import { useDragHandle } from './DraggableInspector';
 
 interface InspectorHeaderProps {
+  /** Inspectorの種類（Plan/Record）で背景色を変える */
+  variant?: 'plan' | 'record';
   /** 前のアイテムが存在するか */
   hasPrevious?: boolean;
   /** 次のアイテムが存在するか */
@@ -61,6 +64,7 @@ interface InspectorHeaderProps {
  * ```
  */
 export function InspectorHeader({
+  variant = 'plan',
   hasPrevious = false,
   hasNext = false,
   onClose,
@@ -87,7 +91,12 @@ export function InspectorHeader({
 
   // PC: フルヘッダー
   return (
-    <div className="bg-popover relative sticky top-0 z-10 flex shrink-0 items-center justify-between px-4 pt-4 pb-2">
+    <div
+      className={cn(
+        'relative sticky top-0 z-10 flex shrink-0 items-center justify-between px-4 pt-4 pb-2',
+        variant === 'record' ? 'bg-record-box' : 'bg-popover',
+      )}
+    >
       {/* ドラッグハンドル（背景レイヤー） */}
       {isDraggable && (
         <div
