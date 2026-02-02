@@ -6,6 +6,7 @@
 
 import { createTRPCRouter } from '@/server/api/trpc';
 
+import { recordActivitiesRouter } from './activities';
 import { recordsCrudRouter } from './crud';
 import { recordTagsRouter } from './tags';
 
@@ -25,4 +26,7 @@ export const recordsRouter = createTRPCRouter({
   addTag: recordTagsRouter.addTag,
   removeTag: recordTagsRouter.removeTag,
   setTags: recordTagsRouter.setTags,
+
+  // アクティビティ
+  activities: recordActivitiesRouter.list,
 });
