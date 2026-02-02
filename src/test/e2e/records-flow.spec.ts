@@ -99,9 +99,10 @@ test.describe('BoxLog App - Records Flow', () => {
       await expect(recordList.first()).toBeVisible();
     } else {
       // 空の状態（新規ユーザー）の可能性
-      const emptyState = page.locator(
-        '[data-testid="empty-state"], text=まだ記録がありません, text=レコードがありません',
-      );
+      const emptyState = page
+        .locator('[data-testid="empty-state"]')
+        .or(page.getByText('まだ記録がありません'))
+        .or(page.getByText('レコードがありません'));
       const emptyExists = (await emptyState.count()) > 0;
       if (emptyExists) {
         console.log('✅ 空の状態が表示されている（新規ユーザー）');
@@ -356,10 +357,11 @@ test.describe('BoxLog App - Record Summary', () => {
       return;
     }
 
-    // 合計時間の表示を探す
-    const totalTime = page.locator(
-      '[data-testid="total-time"], text=合計, text=total, [class*="summary"], [class*="total"]',
-    );
+    // 合計時間の表示を探す（CSS + text selectorを組み合わせ）
+    const totalTime = page
+      .locator('[data-testid="total-time"], [class*="summary"], [class*="total"]')
+      .or(page.getByText('合計'))
+      .or(page.getByText('total'));
 
     const summaryExists = (await totalTime.count()) > 0;
     if (summaryExists) {
