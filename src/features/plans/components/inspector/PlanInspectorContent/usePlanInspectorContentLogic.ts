@@ -4,6 +4,7 @@
  * PlanInspectorContent のロジックを管理するカスタムフック
  */
 
+import { useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -34,6 +35,7 @@ const SCOPE_DIALOG_FIELDS = ['due_date', 'start_time', 'end_time'] as const;
 
 export function usePlanInspectorContentLogic() {
   const utils = api.useUtils();
+  const queryClient = useQueryClient();
 
   // ユーザーのタイムゾーン設定
   const timezone = useCalendarSettingsStore((state) => state.timezone);
@@ -302,6 +304,29 @@ export function usePlanInspectorContentLogic() {
    */
   const updateTagsInCache = useCallback(
     (targetPlanId: string, newTagIds: string[]) => {
+      // plans.list のすべてのキャッシュを更新（CalendarCard用）
+      // tRPC v11 のクエリキー形式: [procedurePath, { input, type }]
+      queryClient.setQueriesData(
+        {
+          predicate: (query) => {
+            const key = query.queryKey;
+            return (
+              Array.isArray(key) &&
+              key.length >= 1 &&
+              Array.isArray(key[0]) &&
+              key[0][0] === 'plans' &&
+              key[0][1] === 'list'
+            );
+          },
+        },
+        (oldData: unknown) => {
+          if (!oldData || !Array.isArray(oldData)) return oldData;
+          return oldData.map((plan: { id: string; tagIds?: string[] }) =>
+            plan.id === targetPlanId ? { ...plan, tagIds: newTagIds } : plan,
+          );
+        },
+      );
+
       // plans.getById のキャッシュを更新
       utils.plans.getById.setData({ id: targetPlanId }, (oldData) => {
         if (!oldData) return oldData;
@@ -312,7 +337,7 @@ export function usePlanInspectorContentLogic() {
         return { ...oldData, tagIds: newTagIds };
       });
     },
-    [utils.plans.getById],
+    [queryClient, utils.plans.getById],
   );
 
   // Handlers
