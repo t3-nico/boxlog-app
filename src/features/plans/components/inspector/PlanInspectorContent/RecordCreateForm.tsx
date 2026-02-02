@@ -32,8 +32,8 @@ import { api } from '@/lib/trpc';
 
 import { cn } from '@/lib/utils';
 
+import { DatePickerPopover } from '@/components/common/DatePickerPopover';
 import { usePlanInspectorStore } from '../../../stores/usePlanInspectorStore';
-import { DatePickerPopover } from '../../shared/DatePickerPopover';
 
 import type { FulfillmentScore } from '@/features/records/types/record';
 
@@ -506,7 +506,11 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
                           onSelect={() => handlePlanChange(plan.id)}
                           className="cursor-pointer"
                         >
-                          <span className="flex-1 truncate">{plan.title}</span>
+                          <span className="shrink truncate">
+                            {plan.title || (
+                              <span className="text-muted-foreground">(タイトルなし)</span>
+                            )}
+                          </span>
                           {planTags && planTags.length > 0 && (
                             <div className="flex shrink-0 gap-1 pl-2">
                               {planTags.slice(0, 2).map((tag) => (
@@ -530,7 +534,7 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
                           )}
                           <Check
                             className={cn(
-                              'text-primary ml-2 size-4 shrink-0',
+                              'text-primary ml-auto size-4 shrink-0',
                               formData.plan_id === plan.id ? 'opacity-100' : 'opacity-0',
                             )}
                           />

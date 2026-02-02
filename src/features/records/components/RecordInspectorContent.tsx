@@ -9,15 +9,17 @@
  * 3行目: Tags + オプションアイコン（Plan紐付け、充実度、メモ）
  */
 
-import { AlertCircle, Check, FolderOpen, Smile, Trash2, X } from 'lucide-react';
+import { useQueryClient } from '@tanstack/react-query';
+import { Check, ExternalLink, FolderOpen, Smile, Trash2, X } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
-import { ClockTimePicker } from '@/components/common/ClockTimePicker';
 import { NoteIconButton } from '@/components/common/NoteIconButton';
+import { ScheduleRow } from '@/components/common/ScheduleRow';
 import { TagsIconButton } from '@/components/common/TagsIconButton';
+import { TitleInput } from '@/components/common/TitleInput';
 import { Button } from '@/components/ui/button';
 import {
   Command,
@@ -32,17 +34,11 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { zIndex } from '@/config/ui/z-index';
 import { InspectorHeader, useDragHandle } from '@/features/inspector';
-import { DatePickerPopover } from '@/features/plans/components/shared/DatePickerPopover';
 import { useTags } from '@/features/tags/hooks';
 import { api } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
 
-import {
-  useRecordInspectorNavigation,
-  useRecordMutations,
-  useRecordTags,
-  type RecordItem,
-} from '../hooks';
+import { useRecordInspectorNavigation, useRecordMutations, useRecordTags } from '../hooks';
 import { useRecordInspectorStore, type DraftRecord } from '../stores';
 
 import { RecordActivityPopover } from './ActivityPopover';
@@ -77,6 +73,7 @@ function formatTimeWithoutSeconds(time: string | null | undefined): string {
 export function RecordInspectorContent({ onClose }: RecordInspectorContentProps) {
   const t = useTranslations();
   const locale = useLocale();
+  const queryClient = useQueryClient();
   const utils = api.useUtils();
   const selectedRecordId = useRecordInspectorStore((state) => state.selectedRecordId);
   const draftRecord = useRecordInspectorStore((state) => state.draftRecord);
@@ -87,6 +84,11 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
 
   // 時間重複エラー状態
   const [timeConflictError, setTimeConflictError] = useState(false);
+
+  // 元のタグID（キャンセル時のロールバック用）
+  const originalTagIdsRef = useRef<string[]>([]);
+  // タグが変更されたかどうか
+  const [hasTagChanges, setHasTagChanges] = useState(false);
 
   // Record取得（既存編集時のみ）
   const { data: record, isLoading } = api.records.getById.useQuery(
@@ -128,6 +130,9 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
   // Popover開閉状態
   const [isPlanPopoverOpen, setIsPlanPopoverOpen] = useState(false);
   const [planSearchQuery, setPlanSearchQuery] = useState('');
+
+  // タイトル入力のref
+  const titleRef = useRef<HTMLInputElement>(null);
 
   // 充実度: 長押し検出用
   const pressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -175,6 +180,9 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
         tagIds: record.tagIds ?? [],
       });
       setIsDirty(false);
+      // 元のタグを保存（キャンセル時のロールバック用）
+      originalTagIdsRef.current = record.tagIds ?? [];
+      setHasTagChanges(false);
     }
   }, [record, draftRecord, isDraftMode, today]);
 
@@ -186,15 +194,8 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
     }
   }, [formData.start_time, formData.end_time, calculateDuration, formData.duration_minutes]);
 
-  // 時間表示フォーマット
-  const durationDisplay = useMemo(() => {
-    if (formData.duration_minutes <= 0) return '';
-    const h = Math.floor(formData.duration_minutes / 60);
-    const m = formData.duration_minutes % 60;
-    if (h > 0 && m > 0) return `${h}h ${m}m`;
-    if (h > 0) return `${h}h`;
-    return `${m}m`;
-  }, [formData.duration_minutes]);
+  // TitleInputの自動フォーカストリガー用のキー
+  const autoFocusKey = selectedRecordId ?? (isDraftMode ? 'draft' : '');
 
   // Plan: updated_at降順ソート + 検索フィルタリング
   const filteredPlans = useMemo(() => {
@@ -380,6 +381,46 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
     [isDraftMode, updateDraft],
   );
 
+  /**
+   * キャッシュのtagIdsを楽観的に更新（CalendarCard等での即時表示用）
+   */
+  const updateTagsInCache = useCallback(
+    (recordId: string, newTagIds: string[]) => {
+      // 1. records.list のすべてのキャッシュを更新
+      queryClient.setQueriesData(
+        {
+          predicate: (query) => {
+            const key = query.queryKey;
+            return (
+              Array.isArray(key) &&
+              key.length >= 1 &&
+              Array.isArray(key[0]) &&
+              key[0][0] === 'records' &&
+              key[0][1] === 'list'
+            );
+          },
+        },
+        (oldData: unknown) => {
+          if (!oldData || !Array.isArray(oldData)) return oldData;
+          return oldData.map((r: { id: string; tagIds?: string[] }) =>
+            r.id === recordId ? { ...r, tagIds: newTagIds } : r,
+          );
+        },
+      );
+
+      // 2. records.getById のキャッシュを更新
+      utils.records.getById.setData({ id: recordId }, (oldData) => {
+        if (!oldData) return oldData;
+        return { ...oldData, tagIds: newTagIds };
+      });
+      utils.records.getById.setData({ id: recordId, include: { plan: true } }, (oldData) => {
+        if (!oldData) return oldData;
+        return { ...oldData, tagIds: newTagIds };
+      });
+    },
+    [queryClient, utils.records.getById],
+  );
+
   const handleTagsChange = useCallback(
     (newTagIds: string[]) => {
       setFormData((prev) => ({ ...prev, tagIds: newTagIds }));
@@ -387,10 +428,13 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
 
       if (isDraftMode) {
         updateDraft({ tagIds: newTagIds } as Partial<DraftRecord>);
+      } else if (selectedRecordId) {
+        // 楽観的更新: キャッシュを即座に更新（カレンダーカードに反映）
+        updateTagsInCache(selectedRecordId, newTagIds);
+        setHasTagChanges(true);
       }
-      // 既存Record編集時はローカル状態のみ更新し、保存ボタンで一括保存
     },
-    [isDraftMode, updateDraft],
+    [isDraftMode, updateDraft, selectedRecordId, updateTagsInCache],
   );
 
   // 保存
@@ -507,8 +551,12 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
 
   // キャンセル
   const cancelAndClose = useCallback(() => {
+    // タグ変更があった場合はキャッシュを元に戻す
+    if (hasTagChanges && selectedRecordId) {
+      updateTagsInCache(selectedRecordId, originalTagIdsRef.current);
+    }
     onClose();
-  }, [onClose]);
+  }, [onClose, hasTagChanges, selectedRecordId, updateTagsInCache]);
 
   // ローディング状態
   if (!isDraftMode && isLoading) {
@@ -527,8 +575,6 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
       </div>
     );
   }
-
-  const typedRecord = record as RecordItem | undefined;
 
   // メニューコンテンツ（編集モードのみ）
   const menuContent = !isDraftMode ? (
@@ -567,60 +613,29 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
       <div className="flex flex-1 flex-col overflow-y-auto">
         {/* 1行目: タイトル（プライマリ） */}
         <div className="px-4 pt-4 pb-2">
-          <input
-            type="text"
+          <TitleInput
+            key={autoFocusKey}
+            ref={titleRef}
             value={formData.title}
+            onChange={handleTitleChange}
             placeholder={isDraftMode ? '何をした？' : t('calendar.event.noTitle')}
-            onChange={(e) => handleTitleChange(e.target.value)}
-            className="placeholder:text-muted-foreground block w-full border-0 bg-transparent pl-2 text-xl font-bold outline-none"
+            className="pl-2"
             aria-label="記録タイトル"
+            autoFocus
+            selectOnFocus
           />
         </div>
 
         {/* 2行目: 日付 + 時間（メタデータ） */}
-        <div className="flex items-start gap-2 px-4 py-2">
-          {/* 日付 */}
-          <DatePickerPopover
-            selectedDate={formData.worked_at}
-            onDateChange={handleDateChange}
-            placeholder="日付..."
-            showIcon
-          />
-
-          {/* 時間範囲 + Duration */}
-          <div className="flex flex-col">
-            <div className="flex items-center">
-              <ClockTimePicker
-                value={formData.start_time}
-                onChange={handleStartTimeChange}
-                showIcon
-                hasError={timeConflictError}
-              />
-              <span className="text-muted-foreground px-2 text-sm">–</span>
-              <ClockTimePicker
-                value={formData.end_time}
-                onChange={handleEndTimeChange}
-                showIcon
-                iconType="flag"
-                minTime={formData.start_time}
-                showDurationInMenu
-                hasError={timeConflictError}
-              />
-              {durationDisplay && (
-                <span className="text-muted-foreground ml-4 text-sm tabular-nums">
-                  {durationDisplay}
-                </span>
-              )}
-            </div>
-            {/* 時間重複エラーメッセージ */}
-            {timeConflictError && (
-              <div className="text-destructive flex items-center gap-1 py-1 text-sm" role="alert">
-                <AlertCircle className="size-3 flex-shrink-0" />
-                <span>{t('calendar.toast.conflictDescription')}</span>
-              </div>
-            )}
-          </div>
-        </div>
+        <ScheduleRow
+          selectedDate={formData.worked_at}
+          startTime={formData.start_time}
+          endTime={formData.end_time}
+          onDateChange={handleDateChange}
+          onStartTimeChange={handleStartTimeChange}
+          onEndTimeChange={handleEndTimeChange}
+          timeConflictError={timeConflictError}
+        />
 
         {/* 3行目: オプションアイコン */}
         <div className="flex flex-wrap items-center gap-0.5 px-4 pt-2 pb-4">
@@ -632,126 +647,120 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
             popoverZIndex={zIndex.overlayDropdown}
           />
 
-          {/* Plan紐付け */}
-          {isDraftMode ? (
-            <Popover open={isPlanPopoverOpen} onOpenChange={handlePlanPopoverOpenChange}>
-              <HoverTooltip content={selectedPlanName ?? 'Planに紐付け'} side="top">
-                <div
-                  className={cn(
-                    'hover:bg-state-hover flex h-8 items-center rounded-md transition-colors',
-                    hasPlan ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',
-                  )}
-                >
-                  <PopoverTrigger asChild>
-                    <button
-                      type="button"
-                      className="focus-visible:ring-ring flex items-center gap-1 px-2 text-sm focus-visible:ring-2 focus-visible:outline-none"
-                      aria-label="Planに紐付け"
-                    >
-                      <FolderOpen className="size-4" />
-                      {hasPlan && selectedPlanName && (
-                        <span className="max-w-20 truncate text-xs">{selectedPlanName}</span>
-                      )}
-                    </button>
-                  </PopoverTrigger>
-                  {hasPlan && (
-                    <button
-                      type="button"
-                      onClick={() => handlePlanChange(null)}
-                      className="hover:bg-state-hover mr-1 rounded p-0.5 transition-colors"
-                      aria-label="Plan紐付けを解除"
-                    >
-                      <X className="size-4" />
-                    </button>
-                  )}
-                </div>
-              </HoverTooltip>
-              <PopoverContent
-                className="w-[400px] p-0"
-                side="bottom"
-                align="start"
-                sideOffset={8}
-                style={{ zIndex: zIndex.overlayDropdown }}
-              >
-                <Command shouldFilter={false}>
-                  <CommandInput
-                    placeholder="Planを検索..."
-                    value={planSearchQuery}
-                    onValueChange={setPlanSearchQuery}
-                  />
-                  <CommandList className="max-h-[280px]">
-                    <CommandEmpty>Planがありません</CommandEmpty>
-                    <CommandGroup>
-                      {filteredPlans.map((plan) => {
-                        const planTags = plan.tagIds
-                          ?.map((id) => allTags.find((t) => t.id === id))
-                          .filter(Boolean);
-                        return (
-                          <CommandItem
-                            key={plan.id}
-                            value={plan.id}
-                            onSelect={() =>
-                              handlePlanChange(formData.plan_id === plan.id ? null : plan.id)
-                            }
-                            className="cursor-pointer"
-                          >
-                            <span className="flex-1 truncate">{plan.title}</span>
-                            {planTags && planTags.length > 0 && (
-                              <div className="flex shrink-0 gap-1 pl-2">
-                                {planTags.slice(0, 2).map((tag) => (
-                                  <span
-                                    key={tag!.id}
-                                    className="rounded px-1 py-0.5 text-xs"
-                                    style={{
-                                      backgroundColor: tag!.color ? `${tag!.color}20` : undefined,
-                                      color: tag!.color || undefined,
-                                    }}
-                                  >
-                                    {tag!.name}
-                                  </span>
-                                ))}
-                                {planTags.length > 2 && (
-                                  <span className="text-muted-foreground text-xs">
-                                    +{planTags.length - 2}
-                                  </span>
-                                )}
-                              </div>
-                            )}
-                            <Check
-                              className={cn(
-                                'text-primary ml-2 size-4 shrink-0',
-                                formData.plan_id === plan.id ? 'opacity-100' : 'opacity-0',
-                              )}
-                            />
-                          </CommandItem>
-                        );
-                      })}
-                    </CommandGroup>
-                  </CommandList>
-                </Command>
-              </PopoverContent>
-            </Popover>
-          ) : typedRecord?.plan ? (
-            // 編集モード: Planリンク
-            <HoverTooltip content={typedRecord.plan.title} side="top">
-              <Link
-                href={`/${locale}/plan?selected=${typedRecord.plan.id}`}
+          {/* Plan紐付け（新規・編集共通） */}
+          <Popover open={isPlanPopoverOpen} onOpenChange={handlePlanPopoverOpenChange}>
+            <HoverTooltip content={selectedPlanName ?? 'Planに紐付け'} side="top">
+              <div
                 className={cn(
-                  'flex h-8 items-center gap-1 rounded-md px-2 text-sm transition-colors',
-                  'hover:bg-state-hover text-foreground',
+                  'hover:bg-state-hover flex h-8 items-center rounded-md transition-colors',
+                  hasPlan ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',
                 )}
               >
-                <FolderOpen className="size-4" />
-                <span className="max-w-20 truncate text-xs">{typedRecord.plan.title}</span>
-              </Link>
-            </HoverTooltip>
-          ) : (
-            <HoverTooltip content="Planに紐付けなし" side="top">
-              <div className="flex size-8 items-center justify-center">
-                <FolderOpen className="text-muted-foreground size-4" />
+                <PopoverTrigger asChild>
+                  <button
+                    type="button"
+                    className="focus-visible:ring-ring flex items-center gap-1 px-2 text-sm focus-visible:ring-2 focus-visible:outline-none"
+                    aria-label="Planに紐付け"
+                  >
+                    <FolderOpen className="size-4" />
+                    {hasPlan && selectedPlanName && (
+                      <span className="max-w-20 truncate text-xs">{selectedPlanName}</span>
+                    )}
+                  </button>
+                </PopoverTrigger>
+                {hasPlan && (
+                  <button
+                    type="button"
+                    onClick={() => handlePlanChange(null)}
+                    className="hover:bg-state-hover mr-1 rounded p-0.5 transition-colors"
+                    aria-label="Plan紐付けを解除"
+                  >
+                    <X className="size-4" />
+                  </button>
+                )}
               </div>
             </HoverTooltip>
-          )}
+            <PopoverContent
+              className="w-[400px] p-0"
+              side="bottom"
+              align="start"
+              sideOffset={8}
+              style={{ zIndex: zIndex.overlayDropdown }}
+            >
+              <Command shouldFilter={false}>
+                <CommandInput
+                  placeholder="Planを検索..."
+                  value={planSearchQuery}
+                  onValueChange={setPlanSearchQuery}
+                />
+                <CommandList className="max-h-[280px]">
+                  <CommandEmpty>Planがありません</CommandEmpty>
+                  <CommandGroup>
+                    {filteredPlans.map((plan) => {
+                      const planTags = plan.tagIds
+                        ?.map((id) => allTags.find((t) => t.id === id))
+                        .filter(Boolean);
+                      return (
+                        <CommandItem
+                          key={plan.id}
+                          value={plan.id}
+                          onSelect={() =>
+                            handlePlanChange(formData.plan_id === plan.id ? null : plan.id)
+                          }
+                          className="cursor-pointer"
+                        >
+                          <span className="shrink truncate">
+                            {plan.title || (
+                              <span className="text-muted-foreground">(タイトルなし)</span>
+                            )}
+                          </span>
+                          {planTags && planTags.length > 0 && (
+                            <div className="flex shrink-0 gap-1 pl-2">
+                              {planTags.slice(0, 2).map((tag) => (
+                                <span
+                                  key={tag!.id}
+                                  className="rounded px-1 py-0.5 text-xs"
+                                  style={{
+                                    backgroundColor: tag!.color ? `${tag!.color}20` : undefined,
+                                    color: tag!.color || undefined,
+                                  }}
+                                >
+                                  {tag!.name}
+                                </span>
+                              ))}
+                              {planTags.length > 2 && (
+                                <span className="text-muted-foreground text-xs">
+                                  +{planTags.length - 2}
+                                </span>
+                              )}
+                            </div>
+                          )}
+                          <Check
+                            className={cn(
+                              'text-primary ml-auto size-4 shrink-0',
+                              formData.plan_id === plan.id ? 'opacity-100' : 'opacity-0',
+                            )}
+                          />
+                        </CommandItem>
+                      );
+                    })}
+                  </CommandGroup>
+                </CommandList>
+              </Command>
+              {/* 選択中Planへのナビゲーション */}
+              {hasPlan && formData.plan_id && (
+                <div className="border-border border-t p-2">
+                  <Link
+                    href={`/${locale}/plan?selected=${formData.plan_id}`}
+                    className="text-muted-foreground hover:text-foreground hover:bg-state-hover flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors"
+                  >
+                    <ExternalLink className="size-4" />
+                    <span>Planを開く</span>
+                  </Link>
+                </div>
+              )}
+            </PopoverContent>
+          </Popover>
 
           {/* 充実度（連打形式） */}
           <HoverTooltip
@@ -802,12 +811,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
         </Button>
         <Button
           onClick={() => {
-            // タイトルまたはPlanは必須
-            if (!(formData.title.trim() || formData.plan_id)) {
-              toast.error('タイトルまたはPlanを入力してください');
-              return;
-            }
-            // 新規作成時は時間も必須
+            // 新規作成時は時間が必須
             if (isDraftMode && formData.duration_minutes <= 0) {
               toast.error('時間を入力してください');
               return;
