@@ -16,6 +16,7 @@ import { cn } from '@/lib/utils';
 import { usePlanInspectorStore } from '../../../stores/usePlanInspectorStore';
 import { reminderTypeToMinutes } from '../../../utils/reminder';
 
+import { ActivityPopover } from './ActivityPopover';
 import { PlanInspectorDetailsTab } from './PlanInspectorDetailsTab';
 import { PlanInspectorMenu } from './PlanInspectorMenu';
 import { RecordCreateForm, type RecordCreateFormRef } from './RecordCreateForm';
@@ -96,6 +97,7 @@ export function PlanInspectorContent() {
           closeLabel={t('actions.close')}
           previousLabel={t('aria.previous')}
           nextLabel={t('aria.next')}
+          extraRightContent={planId ? <ActivityPopover planId={planId} /> : undefined}
           menuContent={menuContent}
         />
       )}

@@ -24,8 +24,6 @@ import { RecordsIconButton } from '../../shared/RecordsIconButton';
 import { RecurrenceIconButton } from '../../shared/RecurrenceIconButton';
 import { ReminderSelect } from '../../shared/ReminderSelect';
 
-import { ActivitySection } from './ActivitySection';
-
 type RecurrenceType = 'none' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'weekdays' | null;
 
 interface PlanInspectorDetailsTabProps {
@@ -171,9 +169,6 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
         {/* Reminder */}
         <ReminderSelect value={reminderType} onChange={onReminderChange} variant="icon" />
       </div>
-
-      {/* Activity Section - 編集モードのみ */}
-      {!isDraftMode && planId && <ActivitySection planId={planId} />}
     </>
   );
 });

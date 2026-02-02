@@ -27,6 +27,8 @@ interface InspectorHeaderProps {
   onNext?: () => void;
   /** ドロップダウンメニューの内容 */
   menuContent?: ReactNode;
+  /** メニューの左に表示する追加コンテンツ（Activityアイコンなど） */
+  extraRightContent?: ReactNode;
   /** 閉じるボタンのツールチップ */
   closeLabel?: string;
   /** 前へボタンのツールチップ */
@@ -65,6 +67,7 @@ export function InspectorHeader({
   onPrevious,
   onNext,
   menuContent,
+  extraRightContent,
   closeLabel = '閉じる',
   previousLabel = '前へ',
   nextLabel = '次へ',
@@ -97,7 +100,7 @@ export function InspectorHeader({
       {/* 左側ボタン（前面レイヤー） */}
       <div className="relative z-10 flex items-center gap-1">
         {/* 閉じるボタン */}
-        <HoverTooltip content={closeLabel} side="bottom">
+        <HoverTooltip content={closeLabel} side="top">
           <Button variant="ghost" size="icon-sm" onClick={onClose} aria-label={closeLabel}>
             <X className="size-5" />
           </Button>
@@ -106,7 +109,7 @@ export function InspectorHeader({
         {/* ナビゲーションボタン */}
         {showNavigation && (
           <div className="flex items-center">
-            <HoverTooltip content={previousLabel} side="bottom">
+            <HoverTooltip content={previousLabel} side="top">
               <Button
                 variant="ghost"
                 size="icon-sm"
@@ -117,7 +120,7 @@ export function InspectorHeader({
                 <ChevronUp className="size-5" />
               </Button>
             </HoverTooltip>
-            <HoverTooltip content={nextLabel} side="bottom">
+            <HoverTooltip content={nextLabel} side="top">
               <Button
                 variant="ghost"
                 size="icon-sm"
@@ -134,6 +137,8 @@ export function InspectorHeader({
 
       {/* 右側ボタン（前面レイヤー） */}
       <div className="relative z-10 flex items-center gap-1">
+        {/* 追加コンテンツ（Activityアイコンなど） */}
+        {extraRightContent}
         {/* オプションメニュー */}
         {menuContent && (
           <DropdownMenu>
