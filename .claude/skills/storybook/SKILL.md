@@ -204,6 +204,170 @@ export const ClickTest: Story = {
 preview.ts でダークモード切り替えを設定済み。Story側での対応は不要。
 ツールバーの Theme 切り替えで確認可能。
 
+## レスポンシブ確認
+
+Storybookのツールバーでviewportを切り替えて確認可能。
+
+### 特定のviewportでStoryを表示
+
+```tsx
+export const Mobile: Story = {
+  args: { children: 'ボタン' },
+  parameters: {
+    viewport: {
+      defaultViewport: 'mobile1', // 320px
+    },
+  },
+};
+
+export const Tablet: Story = {
+  args: { children: 'ボタン' },
+  parameters: {
+    viewport: {
+      defaultViewport: 'tablet', // 768px
+    },
+  },
+};
+```
+
+### レスポンシブ一覧Story
+
+全サイズを一度に確認したい場合：
+
+```tsx
+export const Responsive: Story = {
+  parameters: {
+    layout: 'fullscreen',
+  },
+  render: () => (
+    <div className="flex flex-col gap-8 p-4">
+      <div>
+        <p className="text-sm text-muted-foreground mb-2">Mobile (320px)</p>
+        <div className="w-[320px] border border-border p-4">
+          <MyComponent />
+        </div>
+      </div>
+      <div>
+        <p className="text-sm text-muted-foreground mb-2">Tablet (768px)</p>
+        <div className="w-[768px] border border-border p-4">
+          <MyComponent />
+        </div>
+      </div>
+      <div>
+        <p className="text-sm text-muted-foreground mb-2">Desktop (1024px)</p>
+        <div className="w-[1024px] border border-border p-4">
+          <MyComponent />
+        </div>
+      </div>
+    </div>
+  ),
+};
+```
+
+### viewport設定が必要なコンポーネント
+
+| コンポーネント | 理由 |
+|---------------|------|
+| Header, Sidebar | レイアウト変化 |
+| Card, Table | 幅による折り返し |
+| Modal, Drawer | モバイルでの全画面化 |
+
+小さいコンポーネント（Button, Badge等）は不要。
+
+## 複合コンポーネント
+
+Tabs, Accordion, Dialog など親子関係があるコンポーネントの書き方。
+
+### 基本パターン
+
+```tsx
+import type { Meta, StoryObj } from '@storybook/nextjs';
+
+import { Tabs, TabsContent, TabsList, TabsTrigger } from './tabs';
+
+// 親コンポーネントをメインにする
+const meta = {
+  title: 'UI/Tabs',
+  component: Tabs,
+  parameters: {
+    layout: 'centered',
+  },
+  tags: ['autodocs'],
+} satisfies Meta<typeof Tabs>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+// 子コンポーネントを組み合わせて表示
+export const Default: Story = {
+  render: () => (
+    <Tabs defaultValue="tab1" className="w-[400px]">
+      <TabsList>
+        <TabsTrigger value="tab1">タブ1</TabsTrigger>
+        <TabsTrigger value="tab2">タブ2</TabsTrigger>
+        <TabsTrigger value="tab3">タブ3</TabsTrigger>
+      </TabsList>
+      <TabsContent value="tab1">タブ1の内容</TabsContent>
+      <TabsContent value="tab2">タブ2の内容</TabsContent>
+      <TabsContent value="tab3">タブ3の内容</TabsContent>
+    </Tabs>
+  ),
+};
+```
+
+### バリエーション例
+
+```tsx
+export const WithIcons: Story = {
+  render: () => (
+    <Tabs defaultValue="tab1">
+      <TabsList>
+        <TabsTrigger value="tab1">
+          <Settings className="size-4 mr-2" />
+          設定
+        </TabsTrigger>
+        <TabsTrigger value="tab2">
+          <User className="size-4 mr-2" />
+          プロフィール
+        </TabsTrigger>
+      </TabsList>
+      <TabsContent value="tab1">設定画面</TabsContent>
+      <TabsContent value="tab2">プロフィール画面</TabsContent>
+    </Tabs>
+  ),
+};
+
+export const Disabled: Story = {
+  render: () => (
+    <Tabs defaultValue="tab1">
+      <TabsList>
+        <TabsTrigger value="tab1">有効</TabsTrigger>
+        <TabsTrigger value="tab2" disabled>無効</TabsTrigger>
+      </TabsList>
+      <TabsContent value="tab1">内容</TabsContent>
+    </Tabs>
+  ),
+};
+```
+
+### 複合コンポーネントの注意点
+
+1. **親コンポーネントを `component` に指定** - Autodocsで親のpropsが表示される
+2. **render関数を使う** - 子コンポーネントを組み合わせる必要があるため
+3. **幅を固定する** - `className="w-[400px]"` 等で見やすいサイズに
+4. **状態を持つ場合は `defaultValue` を指定** - 初期状態を明示
+
+### 該当コンポーネント
+
+| コンポーネント | 構成 |
+|---------------|------|
+| Tabs | Tabs, TabsList, TabsTrigger, TabsContent |
+| Accordion | Accordion, AccordionItem, AccordionTrigger, AccordionContent |
+| Dialog | Dialog, DialogTrigger, DialogContent, DialogHeader, ... |
+| DropdownMenu | DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, ... |
+| Select | Select, SelectTrigger, SelectContent, SelectItem, ... |
+| ContextMenu | ContextMenu, ContextMenuTrigger, ContextMenuContent, ... |
+
 ## 避けるべきパターン
 
 ### ❌ render関数の乱用
@@ -255,6 +419,8 @@ Story作成時の確認項目：
 - [ ] アイコンボタンには `aria-label` を設定した
 - [ ] セマンティックトークン（`bg-background` 等）を使用している
 - [ ] 直接カラー（`text-blue-500` 等）を使っていない
+- [ ] レスポンシブ対応コンポーネントは `Responsive` Storyを作成した
+- [ ] 複合コンポーネントは親を `component` に指定した
 
 ## 参考リンク
 
