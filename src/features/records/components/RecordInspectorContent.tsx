@@ -9,13 +9,14 @@
  * 3行目: Tags + オプションアイコン（Plan紐付け、充実度、メモ）
  */
 
-import { AlertCircle, Check, FileText, FolderOpen, Smile, Trash2, X } from 'lucide-react';
+import { AlertCircle, Check, FolderOpen, Smile, Trash2, X } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 import { ClockTimePicker } from '@/components/common/ClockTimePicker';
+import { NoteIconButton } from '@/components/common/NoteIconButton';
 import { TagsIconButton } from '@/components/common/TagsIconButton';
 import { Button } from '@/components/ui/button';
 import {
@@ -28,7 +29,6 @@ import {
 } from '@/components/ui/command';
 import { DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Textarea } from '@/components/ui/textarea';
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { zIndex } from '@/config/ui/z-index';
 import { InspectorHeader, useDragHandle } from '@/features/inspector';
@@ -44,6 +44,8 @@ import {
   type RecordItem,
 } from '../hooks';
 import { useRecordInspectorStore, type DraftRecord } from '../stores';
+
+import { RecordActivityPopover } from './ActivityPopover';
 
 import type { FulfillmentScore } from '../types/record';
 
@@ -126,7 +128,6 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
   // Popover開閉状態
   const [isPlanPopoverOpen, setIsPlanPopoverOpen] = useState(false);
   const [planSearchQuery, setPlanSearchQuery] = useState('');
-  const [isNotePopoverOpen, setIsNotePopoverOpen] = useState(false);
 
   // 充実度: 長押し検出用
   const pressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -215,7 +216,6 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
   // 各オプションに値があるか
   const hasPlan = !!formData.plan_id;
   const hasScore = formData.fulfillment_score !== null;
-  const hasNote = formData.note.length > 0;
 
   // フォーム変更ハンドラ
   const handleTitleChange = useCallback(
@@ -381,17 +381,16 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
   );
 
   const handleTagsChange = useCallback(
-    async (newTagIds: string[]) => {
+    (newTagIds: string[]) => {
       setFormData((prev) => ({ ...prev, tagIds: newTagIds }));
       setIsDirty(true);
 
       if (isDraftMode) {
         updateDraft({ tagIds: newTagIds } as Partial<DraftRecord>);
-      } else if (selectedRecordId) {
-        await setRecordTags(selectedRecordId, newTagIds);
       }
+      // 既存Record編集時はローカル状態のみ更新し、保存ボタンで一括保存
     },
-    [isDraftMode, selectedRecordId, updateDraft, setRecordTags],
+    [isDraftMode, updateDraft],
   );
 
   // 保存
@@ -458,6 +457,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
     } else if (selectedRecordId && isDirty) {
       // 既存Record更新モード
       try {
+        // レコード情報を更新
         await updateRecord.mutateAsync({
           id: selectedRecordId,
           data: {
@@ -470,6 +470,18 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
             note: formData.note || null,
           },
         });
+
+        // タグを保存（変更があれば）
+        const originalTagIds = record?.tagIds ?? [];
+        const currentTagIds = formData.tagIds;
+        const tagsChanged =
+          originalTagIds.length !== currentTagIds.length ||
+          !originalTagIds.every((id) => currentTagIds.includes(id));
+
+        if (tagsChanged) {
+          await setRecordTags(selectedRecordId, currentTagIds);
+        }
+
         setIsDirty(false);
         onClose();
       } catch (error) {
@@ -544,6 +556,9 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
           closeLabel={t('actions.close')}
           previousLabel={t('aria.previous')}
           nextLabel={t('aria.next')}
+          extraRightContent={
+            selectedRecordId ? <RecordActivityPopover recordId={selectedRecordId} /> : undefined
+          }
           menuContent={menuContent}
         />
       )}
@@ -555,7 +570,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
           <input
             type="text"
             value={formData.title}
-            placeholder="何をした？"
+            placeholder={isDraftMode ? '何をした？' : t('calendar.event.noTitle')}
             onChange={(e) => handleTitleChange(e.target.value)}
             className="placeholder:text-muted-foreground block w-full border-0 bg-transparent pl-2 text-xl font-bold outline-none"
             aria-label="記録タイトル"
@@ -772,47 +787,11 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
           </HoverTooltip>
 
           {/* メモ */}
-          <Popover open={isNotePopoverOpen} onOpenChange={setIsNotePopoverOpen}>
-            <HoverTooltip content={hasNote ? 'メモあり' : 'メモ'} side="top">
-              <PopoverTrigger asChild>
-                <button
-                  type="button"
-                  className={cn(
-                    'relative flex size-8 items-center justify-center rounded-md transition-colors',
-                    'hover:bg-state-hover focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
-                    hasNote ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',
-                  )}
-                  aria-label="メモ"
-                >
-                  <FileText className="size-4" />
-                  {hasNote && (
-                    <span className="bg-primary absolute top-1 right-1 size-2 rounded-full" />
-                  )}
-                </button>
-              </PopoverTrigger>
-            </HoverTooltip>
-            <PopoverContent
-              className="w-64 p-2"
-              side="bottom"
-              align="start"
-              sideOffset={8}
-              style={{ zIndex: zIndex.overlayDropdown }}
-            >
-              <div className="flex flex-col gap-2">
-                <span className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
-                  メモ
-                </span>
-                <Textarea
-                  value={formData.note}
-                  onChange={(e) => handleNoteChange(e.target.value)}
-                  placeholder="メモを追加..."
-                  className="min-h-20 resize-none text-sm"
-                  rows={3}
-                  aria-label="メモ"
-                />
-              </div>
-            </PopoverContent>
-          </Popover>
+          <NoteIconButton
+            id={selectedRecordId ?? 'draft'}
+            note={formData.note}
+            onNoteChange={handleNoteChange}
+          />
         </div>
       </div>
 
