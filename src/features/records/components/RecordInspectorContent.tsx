@@ -91,6 +91,9 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
   // 時間重複エラー状態
   const [timeConflictError, setTimeConflictError] = useState(false);
 
+  // 自動保存デバウンス用タイマー（Activityノイズ防止）
+  const autoSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   // 元のタグID（キャンセル時のロールバック用）
   const originalTagIdsRef = useRef<string[]>([]);
   // タグが変更されたかどうか
@@ -201,6 +204,15 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
     }
   }, [formData.start_time, formData.end_time, calculateDuration, formData.duration_minutes]);
 
+  // 自動保存タイマーのクリーンアップ
+  useEffect(() => {
+    return () => {
+      if (autoSaveTimerRef.current) {
+        clearTimeout(autoSaveTimerRef.current);
+      }
+    };
+  }, []);
+
   // TitleInputの自動フォーカストリガー用のキー
   const autoFocusKey = selectedRecordId ?? (isDraftMode ? 'draft' : '');
 
@@ -233,8 +245,13 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
       if (isDraftMode) {
         updateDraft({ title: value } as Partial<DraftRecord>);
       } else if (selectedRecordId) {
-        // 編集モード: 即座にDB保存
-        updateRecord.mutate({ id: selectedRecordId, data: { title: value || null } });
+        // 編集モード: デバウンス適用してDB保存（Activityノイズ防止）
+        if (autoSaveTimerRef.current) {
+          clearTimeout(autoSaveTimerRef.current);
+        }
+        autoSaveTimerRef.current = setTimeout(() => {
+          updateRecord.mutate({ id: selectedRecordId, data: { title: value || null } });
+        }, 500);
       }
     },
     [isDraftMode, updateDraft, selectedRecordId, updateRecord],
@@ -392,8 +409,13 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
       if (isDraftMode) {
         updateDraft({ note: value || null } as Partial<DraftRecord>);
       } else if (selectedRecordId) {
-        // 編集モード: 即座にDB保存
-        updateRecord.mutate({ id: selectedRecordId, data: { note: value || null } });
+        // 編集モード: デバウンス適用してDB保存（Activityノイズ防止）
+        if (autoSaveTimerRef.current) {
+          clearTimeout(autoSaveTimerRef.current);
+        }
+        autoSaveTimerRef.current = setTimeout(() => {
+          updateRecord.mutate({ id: selectedRecordId, data: { note: value || null } });
+        }, 500);
       }
     },
     [isDraftMode, updateDraft, selectedRecordId, updateRecord],
