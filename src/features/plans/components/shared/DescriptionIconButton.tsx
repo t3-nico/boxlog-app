@@ -3,22 +3,13 @@
 import { useState } from 'react';
 
 import { FileText } from 'lucide-react';
-import dynamic from 'next/dynamic';
 
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { HoverTooltip } from '@/components/ui/tooltip';
+import { zIndex } from '@/config/ui/z-index';
 import { cn } from '@/lib/utils';
 
-// Novel エディターは重いため遅延ロード
-const NovelDescriptionEditor = dynamic(
-  () => import('./NovelDescriptionEditor').then((mod) => mod.NovelDescriptionEditor),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="text-muted-foreground min-h-8 px-2 py-1 text-sm">読み込み中...</div>
-    ),
-  },
-);
+import { SimpleDescriptionEditor } from './SimpleDescriptionEditor';
 
 interface DescriptionIconButtonProps {
   /** Plan ID（エディタのキー用） */
@@ -69,15 +60,20 @@ export function DescriptionIconButton({
           </button>
         </PopoverTrigger>
       </HoverTooltip>
-      <PopoverContent className="w-80 p-2" align="start" sideOffset={8}>
-        <div className="max-h-52 min-h-20 overflow-y-auto">
-          <NovelDescriptionEditor
-            key={planId}
-            content={description}
-            onChange={onDescriptionChange}
-            placeholder="説明を追加..."
-          />
-        </div>
+      <PopoverContent
+        className="w-96 p-0"
+        align="start"
+        side="bottom"
+        sideOffset={8}
+        style={{ zIndex: zIndex.overlayDropdown }}
+      >
+        <SimpleDescriptionEditor
+          key={planId}
+          content={description}
+          onChange={onDescriptionChange}
+          placeholder="説明を追加..."
+          autoFocus
+        />
       </PopoverContent>
     </Popover>
   );

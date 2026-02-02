@@ -1,6 +1,6 @@
 'use client';
 
-import { AlertCircle, Check, FileText, FolderOpen, Smile, X } from 'lucide-react';
+import { AlertCircle, Check, FolderOpen, Smile, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import {
   forwardRef,
@@ -13,6 +13,7 @@ import {
 } from 'react';
 
 import { ClockTimePicker } from '@/components/common/ClockTimePicker';
+import { NoteIconButton } from '@/components/common/NoteIconButton';
 import { TagsIconButton } from '@/components/common/TagsIconButton';
 import {
   Command,
@@ -23,7 +24,6 @@ import {
   CommandList,
 } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Textarea } from '@/components/ui/textarea';
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { zIndex } from '@/config/ui/z-index';
 import { useRecordMutations } from '@/features/records/hooks';
@@ -130,7 +130,6 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
     // Popover開閉状態
     const [isPlanPopoverOpen, setIsPlanPopoverOpen] = useState(false);
     const [planSearchQuery, setPlanSearchQuery] = useState('');
-    const [isNotePopoverOpen, setIsNotePopoverOpen] = useState(false);
 
     // 充実度: 長押し検出用
     const pressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -367,7 +366,6 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
     // 各オプションに値があるか
     const hasPlan = !!formData.plan_id;
     const hasScore = formData.fulfillment_score !== null;
-    const hasNote = formData.note.length > 0;
 
     // 選択中のPlan名
     const selectedPlanName = useMemo(() => {
@@ -579,52 +577,7 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
           </HoverTooltip>
 
           {/* メモ */}
-          <Popover open={isNotePopoverOpen} onOpenChange={setIsNotePopoverOpen}>
-            <HoverTooltip content={hasNote ? 'メモあり' : 'メモ'} side="top">
-              <PopoverTrigger asChild>
-                <button
-                  type="button"
-                  className={cn(
-                    'relative flex size-8 items-center justify-center rounded-md transition-colors',
-                    'hover:bg-state-hover focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
-                    hasNote ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',
-                  )}
-                  aria-label="メモ"
-                >
-                  <FileText className="size-4" />
-                  {hasNote && (
-                    <span className="bg-primary absolute top-1 right-1 size-2 rounded-full" />
-                  )}
-                </button>
-              </PopoverTrigger>
-            </HoverTooltip>
-            <PopoverContent
-              className="w-80 p-2"
-              side="bottom"
-              align="start"
-              sideOffset={8}
-              style={{ zIndex: zIndex.overlayDropdown }}
-            >
-              <div className="flex flex-col gap-2">
-                <span className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
-                  メモ
-                </span>
-                <Textarea
-                  value={formData.note}
-                  onChange={(e) => {
-                    handleNoteChange(e.target.value);
-                    // Auto-grow: 高さを内容に合わせる
-                    e.target.style.height = 'auto';
-                    e.target.style.height = `${Math.min(e.target.scrollHeight, 200)}px`;
-                  }}
-                  placeholder="メモを追加..."
-                  className="max-h-[200px] min-h-20 resize-none text-sm"
-                  rows={3}
-                  aria-label="メモ"
-                />
-              </div>
-            </PopoverContent>
-          </Popover>
+          <NoteIconButton id="draft-record" note={formData.note} onNoteChange={handleNoteChange} />
         </div>
       </div>
     );
