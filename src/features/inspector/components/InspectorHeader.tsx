@@ -108,13 +108,6 @@ export function InspectorHeader({
 
       {/* 左側ボタン（前面レイヤー） */}
       <div className="relative z-10 flex items-center gap-1">
-        {/* 閉じるボタン */}
-        <HoverTooltip content={closeLabel} side="top">
-          <Button variant="ghost" size="icon-sm" onClick={onClose} aria-label={closeLabel}>
-            <X className="size-5" />
-          </Button>
-        </HoverTooltip>
-
         {/* ナビゲーションボタン */}
         {showNavigation && (
           <div className="flex items-center">
@@ -166,6 +159,12 @@ export function InspectorHeader({
             </DropdownMenuContent>
           </DropdownMenu>
         )}
+        {/* 閉じるボタン */}
+        <HoverTooltip content={closeLabel} side="top">
+          <Button variant="ghost" size="icon-sm" onClick={onClose} aria-label={closeLabel}>
+            <X className="size-5" />
+          </Button>
+        </HoverTooltip>
       </div>
     </div>
   );
