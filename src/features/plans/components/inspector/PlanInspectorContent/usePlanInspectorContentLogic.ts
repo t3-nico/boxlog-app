@@ -137,9 +137,11 @@ export function usePlanInspectorContentLogic() {
   // Tags state
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
   const selectedTagIdsRef = useRef<string[]>(selectedTagIds);
-  // Flag to prevent server sync from overwriting optimistic updates during mutations
-  const isTagMutationInProgressRef = useRef(false);
-  const { setplanTags, removePlanTag } = usePlanTags();
+  // 元のタグID（キャンセル時のロールバック用）
+  const originalTagIdsRef = useRef<string[]>([]);
+  // タグが変更されたか（保存時のチェック用 + UI更新用）
+  const [hasTagChanges, setHasTagChanges] = useState(false);
+  const { setplanTags } = usePlanTags();
 
   // UI state
   const titleRef = useRef<HTMLInputElement>(null);
@@ -158,13 +160,14 @@ export function usePlanInspectorContentLogic() {
     // planDataがロードされたら正しいタグで上書きされる
     setSelectedTagIds([]);
     selectedTagIdsRef.current = [];
+    originalTagIdsRef.current = [];
+    setHasTagChanges(false);
   }, [planId, isDraftMode]);
 
-  // Sync tags from plan data (skip when mutation is in progress to preserve optimistic updates)
+  // Sync tags from plan data
   useEffect(() => {
-    // Skip sync if user has pending tag changes - prevents race condition
-    // where refetch returns stale data before server processes all mutations
-    if (isTagMutationInProgressRef.current) {
+    // タグ変更中はサーバーからの同期をスキップ（楽観的更新を保持）
+    if (hasTagChanges) {
       return;
     }
     // データ未ロード時は何もしない（空配列をセットしない）
@@ -175,12 +178,14 @@ export function usePlanInspectorContentLogic() {
     if (planData && 'tagIds' in planData && Array.isArray(planData.tagIds)) {
       setSelectedTagIds(planData.tagIds);
       selectedTagIdsRef.current = planData.tagIds;
+      originalTagIdsRef.current = planData.tagIds;
     } else if (planData) {
       // planDataがnullの場合（存在しないプラン）のみ空にする
       setSelectedTagIds([]);
       selectedTagIdsRef.current = [];
+      originalTagIdsRef.current = [];
     }
-  }, [planData]);
+  }, [planData, hasTagChanges]);
 
   // Keep ref in sync
   useEffect(() => {
@@ -292,9 +297,27 @@ export function usePlanInspectorContentLogic() {
     }
   }, [plan]);
 
+  /**
+   * キャッシュのtagIdsを楽観的に更新（CalendarCard等での即時表示用）
+   */
+  const updateTagsInCache = useCallback(
+    (targetPlanId: string, newTagIds: string[]) => {
+      // plans.getById のキャッシュを更新
+      utils.plans.getById.setData({ id: targetPlanId }, (oldData) => {
+        if (!oldData) return oldData;
+        return { ...oldData, tagIds: newTagIds };
+      });
+      utils.plans.getById.setData({ id: targetPlanId, include: { tags: true } }, (oldData) => {
+        if (!oldData) return oldData;
+        return { ...oldData, tagIds: newTagIds };
+      });
+    },
+    [utils.plans.getById],
+  );
+
   // Handlers
   const handleTagsChange = useCallback(
-    async (newTagIds: string[]) => {
+    (newTagIds: string[]) => {
       if (!planId) return;
 
       const oldTagIds = selectedTagIdsRef.current;
@@ -307,58 +330,31 @@ export function usePlanInspectorContentLogic() {
         return;
       }
 
-      // Set flag to prevent server sync from overwriting optimistic updates
-      isTagMutationInProgressRef.current = true;
-
       // ローカル状態を即座に更新（楽観的UI）
       setSelectedTagIds(newTagIds);
       selectedTagIdsRef.current = newTagIds;
+      setHasTagChanges(true);
 
-      try {
-        // 一括設定API（setTags）を使用して安定した更新を実現
-        await setplanTags(planId, newTagIds);
-      } catch (error) {
-        console.error('Failed to update tags:', error);
-        // エラー時はロールバック
-        setSelectedTagIds(oldTagIds);
-        selectedTagIdsRef.current = oldTagIds;
-      } finally {
-        // Clear flag after mutation settles (small delay to handle any pending refetch)
-        setTimeout(() => {
-          isTagMutationInProgressRef.current = false;
-        }, 100);
-      }
+      // キャッシュも更新（CalendarCard等での即時表示用）
+      updateTagsInCache(planId, newTagIds);
     },
-    [planId, setplanTags],
+    [planId, updateTagsInCache],
   );
 
   const handleRemoveTag = useCallback(
-    async (tagId: string) => {
+    (tagId: string) => {
       if (!planId) return;
 
-      const oldTagIds = selectedTagIdsRef.current;
-      const newTagIds = oldTagIds.filter((id) => id !== tagId);
-
-      // Set flag to prevent server sync from overwriting optimistic updates
-      isTagMutationInProgressRef.current = true;
+      const newTagIds = selectedTagIdsRef.current.filter((id) => id !== tagId);
 
       setSelectedTagIds(newTagIds);
       selectedTagIdsRef.current = newTagIds;
+      setHasTagChanges(true);
 
-      try {
-        await removePlanTag(planId, tagId);
-      } catch (error) {
-        console.error('Failed to remove tag:', error);
-        setSelectedTagIds(oldTagIds);
-        selectedTagIdsRef.current = oldTagIds;
-      } finally {
-        // Clear flag after mutation settles
-        setTimeout(() => {
-          isTagMutationInProgressRef.current = false;
-        }, 100);
-      }
+      // キャッシュも更新
+      updateTagsInCache(planId, newTagIds);
     },
-    [planId, removePlanTag],
+    [planId, updateTagsInCache],
   );
 
   // 繰り返しプラン削除確認ハンドラー（ダイアログのコールバック）
@@ -688,6 +684,16 @@ export function usePlanInspectorContentLogic() {
       }
     }
 
+    // タグ変更があればサーバーに保存
+    if (hasTagChanges && planId) {
+      try {
+        await setplanTags(planId, selectedTagIdsRef.current);
+      } catch (error) {
+        console.error('Failed to save tags:', error);
+        // タグ保存エラーは閉じることを妨げない（キャッシュは既に更新済み）
+      }
+    }
+
     closeInspector();
   }, [
     planId,
@@ -699,6 +705,8 @@ export function usePlanInspectorContentLogic() {
     createPlan,
     clearDraft,
     checkPlanOverlap,
+    setplanTags,
+    hasTagChanges,
   ]);
 
   /**
@@ -706,11 +714,18 @@ export function usePlanInspectorContentLogic() {
    */
   const cancelAndClose = useCallback(() => {
     clearPendingChanges();
-    closeInspector();
-  }, [clearPendingChanges, closeInspector]);
 
-  // 未保存の変更があるか判定
-  const hasPendingChanges = pendingChanges && Object.keys(pendingChanges).length > 0;
+    // タグ変更があった場合はキャッシュを元に戻す
+    if (hasTagChanges && planId) {
+      updateTagsInCache(planId, originalTagIdsRef.current);
+    }
+
+    closeInspector();
+  }, [clearPendingChanges, closeInspector, planId, updateTagsInCache, hasTagChanges]);
+
+  // 未保存の変更があるか判定（タグ変更も含む）
+  const hasPendingChanges =
+    (pendingChanges && Object.keys(pendingChanges).length > 0) || hasTagChanges;
 
   return {
     // Store state
