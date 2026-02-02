@@ -5,9 +5,8 @@ import { useCallback } from 'react';
 
 import { DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { InspectorContent, InspectorShell, useInspectorKeyboard } from '@/features/inspector';
-import { api } from '@/lib/trpc';
 
-import { useRecordMutations } from '../hooks';
+import { useRecord, useRecordMutations } from '../hooks';
 import { useRecordInspectorStore } from '../stores';
 import { RecordInspectorContent } from './RecordInspectorContent';
 
@@ -29,10 +28,11 @@ export function RecordInspector() {
   const isDraftMode = draftRecord !== null && selectedRecordId === null;
 
   // Record取得（既存編集時のみ）
-  const { data: record, isLoading } = api.records.getById.useQuery(
-    { id: selectedRecordId!, include: { plan: true } },
-    { enabled: !!selectedRecordId && !isDraftMode },
-  );
+  // placeholderDataでrecords.listキャッシュから即座に表示（UX向上）
+  const { data: record, isLoading } = useRecord(selectedRecordId!, {
+    includePlan: true,
+    enabled: !!selectedRecordId && !isDraftMode,
+  });
 
   // Mutations
   const { deleteRecord } = useRecordMutations();

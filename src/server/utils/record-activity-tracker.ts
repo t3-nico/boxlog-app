@@ -146,7 +146,11 @@ function detectRecordChanges(oldData: RecordData, newData: RecordData): RecordCh
     oldData.end_time !== newData.end_time ||
     oldData.worked_at !== newData.worked_at
   ) {
-    const formatTime = (date: string | null, start: string | null, end: string | null): string => {
+    const formatTime = (
+      date: string | null | undefined,
+      start: string | null | undefined,
+      end: string | null | undefined,
+    ): string => {
       const parts: string[] = [];
       if (date) parts.push(date);
       if (start && end) parts.push(`${start.substring(0, 5)} - ${end.substring(0, 5)}`);

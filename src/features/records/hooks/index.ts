@@ -1,3 +1,4 @@
+export { useRecord } from './useRecord';
 export { useRecentRecords, useRecordData } from './useRecordData';
 export type { RecordItem } from './useRecordData';
 export { useRecordInspectorNavigation } from './useRecordInspectorNavigation';
