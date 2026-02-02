@@ -548,6 +548,50 @@ export type Database = {
         };
         Relationships: [];
       };
+      record_activities: {
+        Row: {
+          action_type: string;
+          created_at: string;
+          field_name: string | null;
+          id: string;
+          metadata: Json | null;
+          new_value: string | null;
+          old_value: string | null;
+          record_id: string | null;
+          user_id: string;
+        };
+        Insert: {
+          action_type: string;
+          created_at?: string;
+          field_name?: string | null;
+          id?: string;
+          metadata?: Json | null;
+          new_value?: string | null;
+          old_value?: string | null;
+          record_id?: string | null;
+          user_id: string;
+        };
+        Update: {
+          action_type?: string;
+          created_at?: string;
+          field_name?: string | null;
+          id?: string;
+          metadata?: Json | null;
+          new_value?: string | null;
+          old_value?: string | null;
+          record_id?: string | null;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'record_activities_record_id_fkey';
+            columns: ['record_id'];
+            isOneToOne: false;
+            referencedRelation: 'records';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       record_tags: {
         Row: {
           created_at: string;
@@ -595,7 +639,7 @@ export type Database = {
           fulfillment_score: number | null;
           id: string;
           note: string | null;
-          plan_id: string;
+          plan_id: string | null;
           start_time: string | null;
           title: string | null;
           updated_at: string;
@@ -609,7 +653,7 @@ export type Database = {
           fulfillment_score?: number | null;
           id?: string;
           note?: string | null;
-          plan_id: string;
+          plan_id?: string | null;
           start_time?: string | null;
           title?: string | null;
           updated_at?: string;
@@ -623,7 +667,7 @@ export type Database = {
           fulfillment_score?: number | null;
           id?: string;
           note?: string | null;
-          plan_id?: string;
+          plan_id?: string | null;
           start_time?: string | null;
           title?: string | null;
           updated_at?: string;
