@@ -34,13 +34,7 @@ describe('Record Activity Tracker', () => {
       const oldData = { title: 'Old Title' };
       const newData = { title: 'New Title' };
 
-      await trackRecordChanges(
-        mockSupabase as never,
-        'record-123',
-        'user-123',
-        oldData,
-        newData,
-      );
+      await trackRecordChanges(mockSupabase as never, 'record-123', 'user-123', oldData, newData);
 
       expect(mockSupabase.from).toHaveBeenCalledWith('record_activities');
       expect(mockInsert).toHaveBeenCalledWith(
@@ -61,13 +55,7 @@ describe('Record Activity Tracker', () => {
       const oldData = { note: 'Old note' };
       const newData = { note: 'New note' };
 
-      await trackRecordChanges(
-        mockSupabase as never,
-        'record-123',
-        'user-123',
-        oldData,
-        newData,
-      );
+      await trackRecordChanges(mockSupabase as never, 'record-123', 'user-123', oldData, newData);
 
       expect(mockInsert).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -85,13 +73,7 @@ describe('Record Activity Tracker', () => {
       const oldData = { fulfillment_score: 3 };
       const newData = { fulfillment_score: 5 };
 
-      await trackRecordChanges(
-        mockSupabase as never,
-        'record-123',
-        'user-123',
-        oldData,
-        newData,
-      );
+      await trackRecordChanges(mockSupabase as never, 'record-123', 'user-123', oldData, newData);
 
       expect(mockInsert).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -117,13 +99,7 @@ describe('Record Activity Tracker', () => {
         end_time: '11:00:00',
       };
 
-      await trackRecordChanges(
-        mockSupabase as never,
-        'record-123',
-        'user-123',
-        oldData,
-        newData,
-      );
+      await trackRecordChanges(mockSupabase as never, 'record-123', 'user-123', oldData, newData);
 
       expect(mockInsert).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -147,13 +123,7 @@ describe('Record Activity Tracker', () => {
         end_time: '10:00:00',
       };
 
-      await trackRecordChanges(
-        mockSupabase as never,
-        'record-123',
-        'user-123',
-        oldData,
-        newData,
-      );
+      await trackRecordChanges(mockSupabase as never, 'record-123', 'user-123', oldData, newData);
 
       expect(mockInsert).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -169,13 +139,7 @@ describe('Record Activity Tracker', () => {
       const oldData = { title: 'Same' };
       const newData = { title: 'Same' };
 
-      await trackRecordChanges(
-        mockSupabase as never,
-        'record-123',
-        'user-123',
-        oldData,
-        newData,
-      );
+      await trackRecordChanges(mockSupabase as never, 'record-123', 'user-123', oldData, newData);
 
       expect(mockInsert).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -199,13 +163,7 @@ describe('Record Activity Tracker', () => {
         fulfillment_score: 5,
       };
 
-      await trackRecordChanges(
-        mockSupabase as never,
-        'record-123',
-        'user-123',
-        oldData,
-        newData,
-      );
+      await trackRecordChanges(mockSupabase as never, 'record-123', 'user-123', oldData, newData);
 
       // Should be called 3 times for each change
       expect(mockInsert).toHaveBeenCalledTimes(3);
@@ -234,12 +192,7 @@ describe('Record Activity Tracker', () => {
     it('should record tag added activity', async () => {
       const { recordTagAddedActivity } = await import('../record-activity-tracker');
 
-      await recordTagAddedActivity(
-        mockSupabase as never,
-        'record-123',
-        'user-123',
-        'Work',
-      );
+      await recordTagAddedActivity(mockSupabase as never, 'record-123', 'user-123', 'Work');
 
       expect(mockInsert).toHaveBeenCalledWith({
         record_id: 'record-123',
@@ -256,12 +209,7 @@ describe('Record Activity Tracker', () => {
     it('should record tag removed activity', async () => {
       const { recordTagRemovedActivity } = await import('../record-activity-tracker');
 
-      await recordTagRemovedActivity(
-        mockSupabase as never,
-        'record-123',
-        'user-123',
-        'Personal',
-      );
+      await recordTagRemovedActivity(mockSupabase as never, 'record-123', 'user-123', 'Personal');
 
       expect(mockInsert).toHaveBeenCalledWith({
         record_id: 'record-123',
@@ -281,13 +229,7 @@ describe('Record Activity Tracker', () => {
       const oldData = { title: null };
       const newData = { title: 'New Title' };
 
-      await trackRecordChanges(
-        mockSupabase as never,
-        'record-123',
-        'user-123',
-        oldData,
-        newData,
-      );
+      await trackRecordChanges(mockSupabase as never, 'record-123', 'user-123', oldData, newData);
 
       expect(mockInsert).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -304,13 +246,7 @@ describe('Record Activity Tracker', () => {
       const oldData = { note: 'Some note' };
       const newData = { note: null };
 
-      await trackRecordChanges(
-        mockSupabase as never,
-        'record-123',
-        'user-123',
-        oldData,
-        newData,
-      );
+      await trackRecordChanges(mockSupabase as never, 'record-123', 'user-123', oldData, newData);
 
       expect(mockInsert).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -327,13 +263,7 @@ describe('Record Activity Tracker', () => {
       const oldData = { fulfillment_score: null };
       const newData = { fulfillment_score: 4 };
 
-      await trackRecordChanges(
-        mockSupabase as never,
-        'record-123',
-        'user-123',
-        oldData,
-        newData,
-      );
+      await trackRecordChanges(mockSupabase as never, 'record-123', 'user-123', oldData, newData);
 
       expect(mockInsert).toHaveBeenCalledWith(
         expect.objectContaining({

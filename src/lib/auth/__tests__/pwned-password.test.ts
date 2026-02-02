@@ -84,7 +84,7 @@ describe('Pwned Password Check', () => {
       await checkPasswordPwned('anypassword');
 
       // APIには5文字のプレフィックスのみ送信されることを確認
-      const calledUrl = mockFetch.mock.calls[0][0];
+      const calledUrl = mockFetch.mock.calls[0]?.[0];
       expect(calledUrl).toMatch(/^https:\/\/api\.pwnedpasswords\.com\/range\/[A-F0-9]{5}$/);
     });
 
@@ -184,7 +184,7 @@ describe('Pwned Password Check', () => {
 
       // 同じパスワードは同じプレフィックスでAPIを呼ぶ
       const calls = mockFetch.mock.calls;
-      expect(calls[0][0]).toBe(calls[1][0]);
+      expect(calls[0]?.[0]).toBe(calls[1]?.[0]);
     });
 
     it('should produce different hash for different input', async () => {
@@ -198,7 +198,7 @@ describe('Pwned Password Check', () => {
 
       // 異なるパスワードは異なるプレフィックス（ほぼ確実に）
       const calls = mockFetch.mock.calls;
-      expect(calls[0][0]).not.toBe(calls[1][0]);
+      expect(calls[0]?.[0]).not.toBe(calls[1]?.[0]);
     });
   });
 
@@ -213,7 +213,7 @@ describe('Pwned Password Check', () => {
       await checkPasswordPwned(sensitivePassword);
 
       // APIに送信されたURLにパスワードが含まれていないことを確認
-      const calledUrl = mockFetch.mock.calls[0][0];
+      const calledUrl = mockFetch.mock.calls[0]?.[0];
       expect(calledUrl).not.toContain(sensitivePassword);
       expect(calledUrl).not.toContain(encodeURIComponent(sensitivePassword));
     });
@@ -227,7 +227,7 @@ describe('Pwned Password Check', () => {
       await checkPasswordPwned('password');
 
       // 送信されるのは5文字のプレフィックスのみ
-      const calledUrl = mockFetch.mock.calls[0][0];
+      const calledUrl = mockFetch.mock.calls[0]?.[0];
       const prefix = calledUrl.split('/range/')[1];
       expect(prefix.length).toBe(5);
     });
@@ -240,7 +240,7 @@ describe('Pwned Password Check', () => {
 
       await checkPasswordPwned('password');
 
-      const calledUrl = mockFetch.mock.calls[0][0];
+      const calledUrl = mockFetch.mock.calls[0]?.[0];
       expect(calledUrl).toMatch(/^https:\/\//);
     });
   });

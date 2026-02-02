@@ -469,8 +469,8 @@ describe('Date Core Utilities', () => {
         const result = generateDateRange(start, end);
 
         expect(result).toHaveLength(4);
-        expect(result[0].getDate()).toBe(15);
-        expect(result[3].getDate()).toBe(18);
+        expect(result[0]?.getDate()).toBe(15);
+        expect(result[3]?.getDate()).toBe(18);
       });
 
       it('should return single date for same start and end', () => {
@@ -496,7 +496,7 @@ describe('Date Core Utilities', () => {
 
         const result = getWeekDates(date);
 
-        expect(result[0].getDay()).toBe(1); // Monday
+        expect(result[0]?.getDay()).toBe(1); // Monday
       });
     });
 

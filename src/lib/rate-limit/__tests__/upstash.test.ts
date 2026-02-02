@@ -5,16 +5,16 @@
  * Upstash未設定時のフォールバック動作を検証
  */
 
-import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
-  isUpstashEnabled,
   apiRateLimit,
+  isUpstashEnabled,
   loginRateLimit,
   passwordResetRateLimit,
-  withUpstashRateLimit,
   RATE_LIMIT_PRESETS,
   UPSTASH_COST_ESTIMATE,
+  withUpstashRateLimit,
 } from '../upstash';
 
 describe('Upstash Rate Limit', () => {

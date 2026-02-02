@@ -112,8 +112,8 @@ describe('RecordService', () => {
 
       const result = await service.list({ userId });
 
-      expect(result[0].plan).toEqual({ id: 'plan-1', title: 'My Plan', status: 'open' });
-      expect(result[0].tagIds).toEqual(['tag-1', 'tag-2']);
+      expect(result[0]?.plan).toEqual({ id: 'plan-1', title: 'My Plan', status: 'open' });
+      expect(result[0]?.tagIds).toEqual(['tag-1', 'tag-2']);
       expect(result[0]).not.toHaveProperty('plans');
     });
   });
@@ -205,7 +205,7 @@ describe('RecordService', () => {
 
       const result = await service.create({
         userId,
-        input: { worked_at: '2024-01-01' },
+        input: { worked_at: '2024-01-01', duration_minutes: 60 },
       });
 
       expect(result).toMatchObject({ id: 'new-record-id', worked_at: '2024-01-01' });
@@ -223,7 +223,7 @@ describe('RecordService', () => {
 
       const result = await service.create({
         userId,
-        input: { worked_at: '2024-01-01', plan_id: 'plan-1' },
+        input: { worked_at: '2024-01-01', duration_minutes: 60, plan_id: 'plan-1' },
       });
 
       expect(result.plan_id).toBe('plan-1');
@@ -235,14 +235,14 @@ describe('RecordService', () => {
       await expect(
         service.create({
           userId,
-          input: { worked_at: '2024-01-01', plan_id: 'invalid-plan' },
+          input: { worked_at: '2024-01-01', duration_minutes: 60, plan_id: 'invalid-plan' },
         }),
       ).rejects.toThrow(RecordServiceError);
 
       try {
         await service.create({
           userId,
-          input: { worked_at: '2024-01-01', plan_id: 'invalid-plan' },
+          input: { worked_at: '2024-01-01', duration_minutes: 60, plan_id: 'invalid-plan' },
         });
       } catch (error) {
         expect((error as RecordServiceError).code).toBe('PLAN_NOT_FOUND');
@@ -257,6 +257,7 @@ describe('RecordService', () => {
           userId,
           input: {
             worked_at: '2024-01-01',
+            duration_minutes: 60,
             start_time: '09:00',
             end_time: '10:00',
           },
@@ -268,6 +269,7 @@ describe('RecordService', () => {
           userId,
           input: {
             worked_at: '2024-01-01',
+            duration_minutes: 60,
             start_time: '09:00',
             end_time: '10:00',
           },
@@ -288,7 +290,7 @@ describe('RecordService', () => {
 
       const result = await service.create({
         userId,
-        input: { worked_at: '2024-01-01', tagIds: ['tag-1', 'tag-2'] },
+        input: { worked_at: '2024-01-01', duration_minutes: 60, tagIds: ['tag-1', 'tag-2'] },
       });
 
       expect(result.tagIds).toEqual(['tag-1', 'tag-2']);
@@ -490,7 +492,7 @@ describe('RecordService', () => {
       const result = await service.getRecentRecords(userId, 3);
 
       expect(result).toHaveLength(3);
-      expect(result[0].id).toBe('record-3');
+      expect(result[0]?.id).toBe('record-3');
     });
   });
 });
@@ -620,7 +622,10 @@ function setupMockInsertQueryWithPlanVerification(
   });
 }
 
-function setupMockQueryWithOverlap(mockFrom: ReturnType<typeof vi.fn>, overlappingRecords: unknown[]) {
+function setupMockQueryWithOverlap(
+  mockFrom: ReturnType<typeof vi.fn>,
+  overlappingRecords: unknown[],
+) {
   mockFrom.mockReturnValue(createChainableMock(overlappingRecords));
 }
 
@@ -715,9 +720,9 @@ function setupMockDuplicateQuery(
 
 function setupMockBulkDeleteQuery(mockFrom: ReturnType<typeof vi.fn>, deletedCount: number) {
   const mock = createChainableMock(null, null, deletedCount);
-  mock.then = vi.fn().mockImplementation((resolve) =>
-    resolve({ data: null, error: null, count: deletedCount }),
-  );
+  mock.then = vi
+    .fn()
+    .mockImplementation((resolve) => resolve({ data: null, error: null, count: deletedCount }));
   mockFrom.mockReturnValue(mock);
 }
 

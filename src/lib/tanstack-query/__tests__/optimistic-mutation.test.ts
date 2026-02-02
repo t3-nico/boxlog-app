@@ -126,8 +126,8 @@ describe('Optimistic Mutation Utilities', () => {
           item.id === '1' ? { ...item, name: 'updated' } : item,
         );
 
-        expect(result?.[0].name).toBe('updated');
-        expect(result?.[1].name).toBe('b');
+        expect(result?.[0]?.name).toBe('updated');
+        expect(result?.[1]?.name).toBe('b');
       });
 
       it('should return undefined for undefined input', () => {
@@ -175,7 +175,7 @@ describe('Optimistic Mutation Utilities', () => {
       });
 
       it('should return undefined for undefined input', () => {
-        expect(removeFromList(undefined, 'id', '1')).toBeUndefined();
+        expect(removeFromList<{ id: string }, 'id'>(undefined, 'id', '1')).toBeUndefined();
       });
     });
   });
@@ -209,7 +209,7 @@ describe('Optimistic Mutation Utilities', () => {
           item.id === '1' ? { ...item, name: 'updated' } : item,
         );
 
-        expect(result?.data[0].name).toBe('updated');
+        expect(result?.data[0]?.name).toBe('updated');
         expect(result?.count).toBe(3);
       });
     });
@@ -248,7 +248,7 @@ describe('Optimistic Mutation Utilities', () => {
       });
 
       it('should return undefined for undefined input', () => {
-        expect(removeFromPaginatedList(undefined, 'id', '1')).toBeUndefined();
+        expect(removeFromPaginatedList<{ id: string }, 'id'>(undefined, 'id', '1')).toBeUndefined();
       });
     });
 
@@ -264,7 +264,9 @@ describe('Optimistic Mutation Utilities', () => {
       });
 
       it('should return undefined for undefined input', () => {
-        expect(replaceInPaginatedList(undefined, 'id', '1', { id: '1', name: 'a' })).toBeUndefined();
+        expect(
+          replaceInPaginatedList(undefined, 'id', '1', { id: '1', name: 'a' }),
+        ).toBeUndefined();
       });
     });
   });
@@ -284,11 +286,7 @@ describe('Optimistic Mutation Utilities', () => {
       });
 
       it('should generate unique ids', () => {
-        const ids = new Set([
-          generateTempId(),
-          generateTempId(),
-          generateTempId(),
-        ]);
+        const ids = new Set([generateTempId(), generateTempId(), generateTempId()]);
 
         // Due to potential same millisecond, just check format
         expect(ids.size).toBeGreaterThanOrEqual(1);

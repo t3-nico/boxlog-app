@@ -266,7 +266,11 @@ describe.skipIf(SKIP_INTEGRATION)('Plans Statistics Router Integration', () => {
 
       // 今日のプランを複数作成
       const now = new Date();
-      await createPlanWithTime('Morning Task', new Date(now.getTime() - 7200000), new Date(now.getTime() - 3600000));
+      await createPlanWithTime(
+        'Morning Task',
+        new Date(now.getTime() - 7200000),
+        new Date(now.getTime() - 3600000),
+      );
       await createPlanWithTime('Afternoon Task', new Date(now.getTime() - 3600000), now);
 
       const result = await caller.getDailyHours({ year: now.getFullYear() });
@@ -362,7 +366,11 @@ describe.skipIf(SKIP_INTEGRATION)('Plans Statistics Router Integration', () => {
 
       // 2つの1時間プランを作成
       const now = new Date();
-      await createPlanWithTime('Plan 1', new Date(now.getTime() - 7200000), new Date(now.getTime() - 3600000));
+      await createPlanWithTime(
+        'Plan 1',
+        new Date(now.getTime() - 7200000),
+        new Date(now.getTime() - 3600000),
+      );
       await createPlanWithTime('Plan 2', new Date(now.getTime() - 3600000), now);
 
       const result = await caller.getTotalTime();
@@ -390,7 +398,12 @@ describe.skipIf(SKIP_INTEGRATION)('Plans Statistics Router Integration', () => {
 
       const now = new Date();
       await createPlanWithTime('Open Plan', new Date(now.getTime() - 3600000), now, 'open');
-      await createPlanWithTime('Closed Plan', new Date(now.getTime() - 7200000), new Date(now.getTime() - 3600000), 'closed');
+      await createPlanWithTime(
+        'Closed Plan',
+        new Date(now.getTime() - 7200000),
+        new Date(now.getTime() - 3600000),
+        'closed',
+      );
 
       const result = await caller.getStats();
 

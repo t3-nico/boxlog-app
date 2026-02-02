@@ -10,7 +10,6 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   API_VERSIONS,
   ApiVersionManager,
-  compareVersions,
   globalVersionManager,
   withApiVersioning,
 } from '../versioning';
@@ -182,8 +181,9 @@ describe('API Versioning', () => {
 
     describe('registerEndpoint', () => {
       it('should register endpoint with supported versions', () => {
+        // URLから抽出されるバージョンは '1'（v1から）なので、'1' も含める
         manager.registerEndpoint('/api/users', {
-          supportedVersions: ['1.0', '2.0'],
+          supportedVersions: ['1', '1.0', '2', '2.0'],
         });
 
         const request = createMockRequest('http://localhost/api/v1/users');
@@ -195,9 +195,10 @@ describe('API Versioning', () => {
       });
 
       it('should warn about deprecated versions for endpoint', () => {
+        // URLから抽出されるバージョンは '1'（v1から）なので、'1' も含める
         manager.registerEndpoint('/api/old-endpoint', {
-          supportedVersions: ['1.0', '2.0'],
-          deprecatedVersions: ['1.0'],
+          supportedVersions: ['1', '1.0', '2', '2.0'],
+          deprecatedVersions: ['1'],
         });
 
         const request = createMockRequest('http://localhost/api/v1/old-endpoint');
@@ -305,10 +306,13 @@ describe('API Versioning', () => {
 
       await middleware(request);
 
-      expect(handler).toHaveBeenCalledWith(request, expect.objectContaining({
-        requestedVersion: '1',
-        versionSource: 'url',
-      }));
+      expect(handler).toHaveBeenCalledWith(
+        request,
+        expect.objectContaining({
+          requestedVersion: '1',
+          versionSource: 'url',
+        }),
+      );
     });
 
     it('should return error response for invalid version in strict mode', async () => {

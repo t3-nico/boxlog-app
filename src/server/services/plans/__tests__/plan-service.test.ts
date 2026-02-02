@@ -129,7 +129,7 @@ describe('PlanService', () => {
 
       const result = await service.list({ userId });
 
-      expect(result[0].tagIds).toEqual(['tag-1', 'tag-2']);
+      expect(result[0]?.tagIds).toEqual(['tag-1', 'tag-2']);
       expect(result[0]).not.toHaveProperty('plan_tags');
     });
   });
@@ -217,7 +217,7 @@ describe('PlanService', () => {
 
       const result = await service.create({
         userId,
-        input: { title: 'New Plan' },
+        input: { title: 'New Plan', status: 'open' },
       });
 
       expect(result).toMatchObject(mockPlan);
@@ -238,6 +238,7 @@ describe('PlanService', () => {
         userId,
         input: {
           title: 'New Plan',
+          status: 'open',
           start_time: '2024-01-01T09:00:00Z',
           end_time: '2024-01-01T10:00:00Z',
         },
@@ -264,6 +265,7 @@ describe('PlanService', () => {
           userId,
           input: {
             title: 'New Plan',
+            status: 'open',
             start_time: '2024-01-01T09:00:00Z',
             end_time: '2024-01-01T10:00:00Z',
           },
@@ -276,6 +278,7 @@ describe('PlanService', () => {
           userId,
           input: {
             title: 'New Plan',
+            status: 'open',
             start_time: '2024-01-01T09:00:00Z',
             end_time: '2024-01-01T10:00:00Z',
           },
@@ -292,7 +295,7 @@ describe('PlanService', () => {
       await expect(
         service.create({
           userId,
-          input: { title: 'New Plan' },
+          input: { title: 'New Plan', status: 'open' },
         }),
       ).rejects.toThrow(PlanServiceError);
     });
@@ -341,7 +344,11 @@ describe('PlanService', () => {
     });
 
     it('should clear completed_at when status changes back to open', async () => {
-      const closedPlan = { ...existingPlan, status: 'closed', completed_at: '2024-01-01T00:00:00Z' };
+      const closedPlan = {
+        ...existingPlan,
+        status: 'closed',
+        completed_at: '2024-01-01T00:00:00Z',
+      };
       const reopenedPlan = { ...closedPlan, status: 'open', completed_at: null };
 
       const mockQuery = setupMockUpdateQuery(mockSupabase.from, closedPlan, reopenedPlan);

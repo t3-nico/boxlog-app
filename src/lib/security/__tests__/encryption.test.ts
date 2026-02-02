@@ -5,15 +5,15 @@
  * Web Crypto APIを使用したクライアントサイド暗号化の検証
  */
 
-import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
-  encryptData,
-  decryptData,
-  saveEncryptedData,
-  loadEncryptedData,
-  deleteEncryptedData,
   ApiKeyStorage,
+  decryptData,
+  deleteEncryptedData,
+  encryptData,
+  loadEncryptedData,
+  saveEncryptedData,
 } from '../encryption';
 
 describe('Encryption Module', () => {
@@ -121,7 +121,7 @@ describe('Encryption Module', () => {
 
         // キーにプレフィックスが付いていることを確認
         const callArgs = localStorageMock.setItem.mock.calls[0];
-        expect(callArgs[0]).toBe(`boxlog_encrypted_${testKey}`);
+        expect(callArgs?.[0]).toBe(`boxlog_encrypted_${testKey}`);
       });
 
       it('should return false on error', async () => {
@@ -265,7 +265,11 @@ describe('Encryption Module', () => {
 
       // 暗号文を改ざん
       const bytes = Uint8Array.from(atob(encrypted), (c) => c.charCodeAt(0));
-      bytes[bytes.length - 1] ^= 0xff; // 最後のバイトを反転
+      const lastIndex = bytes.length - 1;
+      const lastByte = bytes[lastIndex];
+      if (lastIndex >= 0 && lastByte !== undefined) {
+        bytes[lastIndex] = lastByte ^ 0xff; // 最後のバイトを反転
+      }
       const tampered = btoa(String.fromCharCode(...bytes));
 
       // 改ざんされたデータの復号は失敗するはず

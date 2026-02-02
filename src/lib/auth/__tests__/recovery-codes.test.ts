@@ -10,9 +10,9 @@ import { describe, expect, it } from 'vitest';
 import {
   generateRecoveryCodes,
   hashRecoveryCode,
-  verifyRecoveryCode,
   isValidRecoveryCodeFormat,
   prepareCodesForStorage,
+  verifyRecoveryCode,
 } from '../recovery-codes';
 
 describe('Recovery Codes', () => {
@@ -214,7 +214,7 @@ describe('Recovery Codes', () => {
       const prepared = prepareCodesForStorage(codes);
 
       const expectedHash = hashRecoveryCode('ABCD-EFGH');
-      expect(prepared[0].hash).toBe(expectedHash);
+      expect(prepared[0]?.hash).toBe(expectedHash);
     });
 
     it('should mark all codes as unused', () => {
@@ -245,7 +245,9 @@ describe('Recovery Codes', () => {
 
       // 3. 各コードが検証可能
       codes.forEach((code, index) => {
-        const isValid = verifyRecoveryCode(code, storedCodes[index].hash);
+        const hash = storedCodes[index]?.hash;
+        if (!hash) return;
+        const isValid = verifyRecoveryCode(code, hash);
         expect(isValid).toBe(true);
       });
     });

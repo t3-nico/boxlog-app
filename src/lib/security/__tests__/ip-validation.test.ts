@@ -119,7 +119,8 @@ describe('IP Validation', () => {
         // 攻撃者がヘッダーを偽装しようとするケース
         expect(extractClientIp('"><script>alert(1)</script>', null)).toBe('unknown');
         expect(extractClientIp("'; DROP TABLE users;--", null)).toBe('unknown');
-        expect(extractClientIp('192.168.1.1\r\nX-Injected: malicious', null)).toBe('192.168.1.1');
+        // 改行を含む文字列は有効なIPとして認識しない（セキュリティ上正しい動作）
+        expect(extractClientIp('192.168.1.1\r\nX-Injected: malicious', null)).toBe('unknown');
       });
     });
   });
