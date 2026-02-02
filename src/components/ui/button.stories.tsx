@@ -4,7 +4,7 @@ import { Mail, Plus, Settings, Trash2 } from 'lucide-react';
 import { Button } from './button';
 
 const meta = {
-  title: 'UI/Button',
+  title: 'Components/Button',
   component: Button,
   parameters: {
     layout: 'centered',

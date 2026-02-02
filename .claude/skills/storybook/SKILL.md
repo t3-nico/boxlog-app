@@ -26,12 +26,12 @@ import type { Meta, StoryObj } from '@storybook/nextjs';
 import { MyComponent } from './my-component';
 
 const meta = {
-  title: 'UI/MyComponent',        // カテゴリ/コンポーネント名
+  title: 'Components/MyComponent',  // カテゴリ/コンポーネント名
   component: MyComponent,
   parameters: {
-    layout: 'centered',           // centered | fullscreen | padded
+    layout: 'centered',             // centered | fullscreen | padded
   },
-  tags: ['autodocs'],             // 自動ドキュメント生成
+  tags: ['autodocs'],               // 自動ドキュメント生成
   argTypes: {
     // propsの説明・コントロール設定
   },
@@ -50,11 +50,29 @@ export const Default: Story = {
 
 ## カテゴリ命名規則（title）
 
-| ディレクトリ | title prefix | 例 |
-|-------------|--------------|-----|
-| `components/ui/` | `UI/` | `UI/Button`, `UI/Badge` |
-| `components/common/` | `Common/` | `Common/EmptyState`, `Common/PageHeader` |
-| `features/*/` | `Features/{Feature}/` | `Features/Plans/PlanCard` |
+Storybookのサイドバー構成：
+
+```
+Docs/           ← Storybookの使い方・説明
+├── はじめに
+└── ...
+
+Components/     ← UIコンポーネント
+├── Button
+├── Badge
+└── ...
+
+Tokens/         ← デザイントークン
+├── Colors
+└── Typography
+```
+
+| ディレクトリ / 用途 | title prefix | 例 |
+|-------------------|--------------|-----|
+| `components/ui/` | `Components/` | `Components/Button`, `Components/Badge` |
+| `components/common/` | `Components/` | `Components/EmptyState`, `Components/PageHeader` |
+| デザイントークン | `Tokens/` | `Tokens/Colors`, `Tokens/Typography` |
+| ドキュメント | `Docs/` | `Docs/はじめに` |
 
 ## argTypes 設計
 

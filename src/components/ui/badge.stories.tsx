@@ -4,7 +4,7 @@ import { AlertCircle, CheckCircle, Info as InfoIcon, Star } from 'lucide-react';
 import { Badge } from './badge';
 
 const meta = {
-  title: 'UI/Badge',
+  title: 'Components/Badge',
   component: Badge,
   parameters: {
     layout: 'centered',
