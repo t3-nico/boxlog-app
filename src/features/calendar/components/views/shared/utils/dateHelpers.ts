@@ -1,45 +1,62 @@
 /**
  * 日付操作ヘルパー関数
+ *
+ * @deprecated 新しいコードでは `@/lib/date` を直接使用してください。
+ * このファイルは後方互換性のため維持されています。
+ *
+ * @example
+ * ```typescript
+ * // 推奨: 新しいライブラリを使用
+ * import { startOfDay, addDays, formatTime } from '@/lib/date';
+ *
+ * // 非推奨: このファイルからのインポート
+ * import { startOfDay, addDays } from './dateHelpers';
+ * ```
  */
 
-import { MS_PER_DAY } from '@/constants/time';
+// ========================================
+// @/lib/date から再エクスポート（共通関数）
+// ========================================
+export {
+  // 日付加算
+  addDays,
+  addMinutes,
+  endOfDay,
+  // 配列生成
+  generateDateRange,
+  // キー生成
+  getDateKey,
+  // 差分計算
+  getDaysDifference,
+  endOfMonth as getMonthEnd,
+  // 月の境界
+  startOfMonth as getMonthStart,
+  endOfWeek as getWeekEnd,
+  // 週の境界
+  startOfWeek as getWeekStart,
+  // 比較・判定
+  isSameDay,
+  isToday,
+  isWeekend,
+  // パース
+  normalizeDate as normalizeEventDate,
+  // 日の境界
+  startOfDay,
+} from '@/lib/date';
+
+// ========================================
+// カレンダー固有のフォーマット関数
+// ========================================
+import {
+  formatTime as formatTimeBase,
+  formatTimeRange as formatTimeRangeBase,
+  type TimeFormat,
+} from '@/lib/date';
 
 /**
- * 今日かどうか判定
- */
-export function isToday(date: Date): boolean {
-  const today = new Date();
-  return date.toDateString() === today.toDateString();
-}
-
-/**
- * 週末かどうか判定（土日）
- */
-export function isWeekend(date: Date): boolean {
-  const day = date.getDay();
-  return day === 0 || day === 6;
-}
-
-/**
- * 日付を日の開始時刻に設定
- */
-export function startOfDay(date: Date): Date {
-  const result = new Date(date);
-  result.setHours(0, 0, 0, 0);
-  return result;
-}
-
-/**
- * 日付を日の終了時刻に設定
- */
-export function endOfDay(date: Date): Date {
-  const result = new Date(date);
-  result.setHours(23, 59, 59, 999);
-  return result;
-}
-
-/**
- * 日付をフォーマット
+ * 日付をフォーマット（カレンダービュー用）
+ *
+ * 日本語固有のフォーマット（「1日(月)」など）
  */
 export function formatDate(date: Date, format: 'short' | 'long' | 'numeric' = 'short'): string {
   const weekdays = ['日', '月', '火', '水', '木', '金', '土'];
@@ -77,128 +94,20 @@ export function formatDate(date: Date, format: 'short' | 'long' | 'numeric' = 's
 /**
  * 時刻をフォーマット
  */
-export function formatTime(date: Date, format: '12h' | '24h' = '24h'): string {
-  const hours = date.getHours();
-  const minutes = date.getMinutes();
-
-  if (format === '24h') {
-    return `${hours}:${minutes.toString().padStart(2, '0')}`;
-  } else {
-    const period = hours >= 12 ? 'PM' : 'AM';
-    const displayHours = hours === 0 ? 12 : hours > 12 ? hours - 12 : hours;
-    return `${displayHours}:${minutes.toString().padStart(2, '0')} ${period}`;
-  }
+export function formatTime(date: Date, format: TimeFormat = '24h'): string {
+  return formatTimeBase(date, format);
 }
 
 /**
  * 時間範囲をフォーマット
  */
-export function formatTimeRange(start: Date, end: Date, format: '12h' | '24h' = '24h'): string {
-  return `${formatTime(start, format)} - ${formatTime(end, format)}`;
+export function formatTimeRange(start: Date, end: Date, format: TimeFormat = '24h'): string {
+  return formatTimeRangeBase(start, end, format);
 }
 
-/**
- * 同じ日かどうか判定
- */
-export function isSameDay(date1: Date, date2: Date): boolean {
-  return date1.toDateString() === date2.toDateString();
-}
-
-/**
- * 日付の差を日数で取得
- */
-export function getDaysDifference(date1: Date, date2: Date): number {
-  const d1 = startOfDay(date1);
-  const d2 = startOfDay(date2);
-  return Math.floor((d2.getTime() - d1.getTime()) / MS_PER_DAY);
-}
-
-/**
- * 日付配列を生成
- */
-export function generateDateRange(startDate: Date, endDate: Date): Date[] {
-  const dates: Date[] = [];
-  const current = new Date(startDate);
-
-  while (current <= endDate) {
-    dates.push(new Date(current));
-    current.setDate(current.getDate() + 1);
-  }
-
-  return dates;
-}
-
-/**
- * 週の開始日を取得（月曜日）
- */
-export function getWeekStart(date: Date): Date {
-  const result = new Date(date);
-  const day = result.getDay();
-  const diff = result.getDate() - day + (day === 0 ? -6 : 1);
-  result.setDate(diff);
-  result.setHours(0, 0, 0, 0);
-  return result;
-}
-
-/**
- * 週の終了日を取得（日曜日）
- */
-export function getWeekEnd(date: Date): Date {
-  const start = getWeekStart(date);
-  const end = new Date(start);
-  end.setDate(start.getDate() + 6);
-  end.setHours(23, 59, 59, 999);
-  return end;
-}
-
-/**
- * 月の開始日を取得
- */
-export function getMonthStart(date: Date): Date {
-  const result = new Date(date);
-  result.setDate(1);
-  result.setHours(0, 0, 0, 0);
-  return result;
-}
-
-/**
- * 月の終了日を取得
- */
-export function getMonthEnd(date: Date): Date {
-  const result = new Date(date);
-  result.setMonth(result.getMonth() + 1, 0); // 次の月の0日 = 今月の最終日
-  result.setHours(23, 59, 59, 999);
-  return result;
-}
-
-/**
- * 日付を指定日数分移動
- */
-export function addDays(date: Date, days: number): Date {
-  const result = new Date(date);
-  result.setDate(result.getDate() + days);
-  return result;
-}
-
-/**
- * 時刻を指定分数分移動
- */
-export function addMinutes(date: Date, minutes: number): Date {
-  const result = new Date(date);
-  result.setMinutes(result.getMinutes() + minutes);
-  return result;
-}
-
-/**
- * 日付キー生成（yyyy-MM-dd形式）
- * 全ビューで共通使用
- */
-export function getDateKey(date: Date): string {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-}
+// ========================================
+// カレンダー固有のユーティリティ
+// ========================================
 
 /**
  * イベントの妥当性をチェック
@@ -212,19 +121,9 @@ export function isValidEvent<T extends { startDate?: Date | string | null }>(eve
 }
 
 /**
- * イベントの日付を正規化（DateまたはstringをDateに変換）
- */
-export function normalizeEventDate(eventDate: Date | string | null | undefined): Date | null {
-  if (!eventDate) return null;
-
-  const date = eventDate instanceof Date ? eventDate : new Date(eventDate);
-  return isNaN(date.getTime()) ? null : date;
-}
-
-/**
  * 今日のインデックスを取得（日付配列内での位置）
  */
 export function getTodayIndex(dates: Date[]): number {
   const today = new Date();
-  return dates.findIndex((date) => isSameDay(date, today));
+  return dates.findIndex((date) => date.toDateString() === today.toDateString());
 }

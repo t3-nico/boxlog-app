@@ -8,6 +8,7 @@ import { Field, FieldError } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { TAG_NAME_MAX_LENGTH } from '@/features/tags/constants/colors';
 import { useTags } from '@/features/tags/hooks';
+import { useDialogKeyboard } from '@/hooks/useDialogKeyboard';
 import { useTranslations } from 'next-intl';
 
 interface TagRenameDialogProps {
@@ -62,18 +63,7 @@ export function TagRenameDialog({
   }, [isOpen, currentName]);
 
   // ESCキーでダイアログを閉じる
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && !isLoading) {
-        onClose();
-      }
-    };
-
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, isLoading, onClose]);
+  useDialogKeyboard(isOpen, isLoading, onClose);
 
   const handleSubmit = useCallback(async () => {
     const trimmedName = name.trim();
@@ -157,7 +147,7 @@ export function TagRenameDialog({
 
   const dialog = (
     <div
-      className="fixed inset-0 z-[250] flex items-center justify-center bg-black/50"
+      className="bg-overlay-heavy fixed inset-0 z-[250] flex items-center justify-center"
       onClick={handleBackdropClick}
       role="dialog"
       aria-modal="true"

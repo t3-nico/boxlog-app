@@ -5,7 +5,7 @@
 
 import { useMemo } from 'react';
 
-import { addDays, startOfWeek, subDays } from 'date-fns';
+import { addDays, startOfWeek, subDays } from '@/lib/date';
 
 export interface UseDateUtilitiesOptions {
   referenceDate: Date;

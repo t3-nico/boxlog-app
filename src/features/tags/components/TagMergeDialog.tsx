@@ -9,6 +9,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { DEFAULT_TAG_COLOR } from '@/config/ui/colors';
 import { useMergeTag, useTags } from '@/features/tags/hooks';
 import type { Tag } from '@/features/tags/types';
+import { useDialogKeyboard } from '@/hooks/useDialogKeyboard';
 import { logger } from '@/lib/logger';
 import { cn } from '@/lib/utils';
 import { AlertCircle, GitMerge } from 'lucide-react';
@@ -23,8 +24,8 @@ interface TagMergeDialogProps {
 /**
  * タグマージダイアログ
  *
- * ReactのcreatePortalを使用してdocument.bodyに直接レンダリング
- * TagDeleteDialogと同じ構造
+ * タグを別のタグに統合するダイアログ。
+ * ラジオボタンでターゲットタグを選択し、統合を実行する。
  */
 export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
   const t = useTranslations();
@@ -48,6 +49,9 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
       setError(null);
     }
   }, [tag]);
+
+  // ESCキーでダイアログを閉じる
+  useDialogKeyboard(!!tag, isMerging, () => onClose());
 
   // ソースタグを除外（フラット構造なので自分自身のみ除外）
   const availableTags = tags.filter((t) => {
@@ -97,20 +101,6 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
     },
     [isMerging, onClose],
   );
-
-  // ESCキーでダイアログを閉じる
-  useEffect(() => {
-    if (!tag) return;
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && !isMerging) {
-        onClose();
-      }
-    };
-
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [tag, isMerging, onClose]);
 
   if (!mounted || !tag) return null;
 
