@@ -14,9 +14,11 @@ import { NoteIconButton } from '@/components/common/NoteIconButton';
 import { ScheduleRow } from '@/components/common/ScheduleRow';
 import { TagsIconButton } from '@/components/common/TagsIconButton';
 import { TitleInput } from '@/components/common/TitleInput';
-import { Badge } from '@/components/ui/badge';
+import { HoverTooltip } from '@/components/ui/tooltip';
 import { CheckCircle2, Circle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+
+import { cn } from '@/lib/utils';
 
 import { normalizeStatus } from '../../../utils/status';
 
@@ -88,14 +90,40 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
 
   return (
     <>
-      {/* Row 1: Title */}
-      <div className="px-4 pt-4 pb-2">
+      {/* Row 1: Title + Status */}
+      <div className="flex items-center gap-2 px-4 pt-4 pb-2">
         <TitleInput
           ref={titleRef}
           value={plan.title}
           onChange={(value) => onAutoSave('title', value)}
           placeholder={isDraftMode ? 'タイトルを追加' : t('calendar.event.noTitle')}
+          className="flex-1"
         />
+
+        {/* Status - ドラフトモードでは非表示 */}
+        {!isDraftMode && (
+          <HoverTooltip
+            content={
+              status === 'closed' ? 'Done（クリックでOpenに戻す）' : 'Open（クリックでDoneに）'
+            }
+          >
+            <button
+              type="button"
+              onClick={() => onStatusChange(status === 'closed' ? 'open' : 'closed')}
+              className={cn(
+                'focus-visible:ring-ring shrink-0 rounded-full p-1 focus-visible:ring-2 focus-visible:outline-none',
+                status === 'closed' ? 'text-success' : 'text-info',
+              )}
+              aria-label={status === 'closed' ? 'ステータス: 完了' : 'ステータス: 未完了'}
+            >
+              {status === 'closed' ? (
+                <CheckCircle2 className="size-5" />
+              ) : (
+                <Circle className="size-5" />
+              )}
+            </button>
+          </HoverTooltip>
+        )}
       </div>
 
       {/* Row 2: Date + Time + Duration */}
@@ -131,27 +159,6 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
             placeholder: '説明を追加...',
           }}
         />
-
-        {/* Status - ドラフトモードでは非表示（新規作成時は常にopen） */}
-        {!isDraftMode && (
-          <button
-            type="button"
-            onClick={() => onStatusChange(status === 'closed' ? 'open' : 'closed')}
-            className="focus-visible:ring-ring ml-1 rounded-md focus-visible:ring-2 focus-visible:outline-none"
-          >
-            <Badge
-              variant={status === 'closed' ? 'success' : 'info'}
-              className="flex items-center gap-1"
-            >
-              {status === 'closed' ? (
-                <CheckCircle2 className="size-3" />
-              ) : (
-                <Circle className="size-3" />
-              )}
-              {status === 'closed' ? 'Closed' : 'Open'}
-            </Badge>
-          </button>
-        )}
 
         {/* Recurrence */}
         <RecurrenceIconButton
