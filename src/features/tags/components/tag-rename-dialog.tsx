@@ -159,7 +159,7 @@ export function TagRenameDialog({
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <h2 className="mb-4 text-base font-semibold">{t('calendar.filter.rename')}</h2>
+        <h2 className="mb-4 text-base font-bold">{t('calendar.filter.rename')}</h2>
 
         {/* Form */}
         <Field className="mb-6">

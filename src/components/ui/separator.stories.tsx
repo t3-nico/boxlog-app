@@ -29,10 +29,8 @@ export const Horizontal: Story = {
   render: () => (
     <div className="w-80">
       <div className="space-y-1">
-        <h4 className="text-sm font-medium leading-none">Radix Primitives</h4>
-        <p className="text-sm text-muted-foreground">
-          オープンソースのUIコンポーネントライブラリ
-        </p>
+        <h4 className="text-sm leading-none font-bold">Radix Primitives</h4>
+        <p className="text-muted-foreground text-sm">オープンソースのUIコンポーネントライブラリ</p>
       </div>
       <Separator className="my-4" />
       <div className="flex h-5 items-center space-x-4 text-sm">
@@ -72,15 +70,13 @@ export const InList: Story = {
 
 export const InCard: Story = {
   render: () => (
-    <div className="w-80 border border-border rounded-lg">
+    <div className="border-border w-80 rounded-lg border">
       <div className="p-4">
-        <h3 className="font-medium">ヘッダー</h3>
+        <h3 className="font-bold">ヘッダー</h3>
       </div>
       <Separator />
       <div className="p-4">
-        <p className="text-sm text-muted-foreground">
-          カードのコンテンツがここに入ります。
-        </p>
+        <p className="text-muted-foreground text-sm">カードのコンテンツがここに入ります。</p>
       </div>
       <Separator />
       <div className="p-4">
@@ -92,12 +88,12 @@ export const InCard: Story = {
 
 export const AllVariants: Story = {
   render: () => (
-    <div className="p-8 bg-background text-foreground">
-      <h1 className="text-2xl font-bold mb-8">Separator - 全バリエーション</h1>
+    <div className="bg-background text-foreground p-8">
+      <h1 className="mb-8 text-2xl font-bold">Separator - 全バリエーション</h1>
 
       <div className="space-y-8">
         <section>
-          <h2 className="text-lg font-semibold mb-4">水平線</h2>
+          <h2 className="mb-4 text-lg font-bold">水平線</h2>
           <div className="max-w-md">
             <p>上のコンテンツ</p>
             <Separator className="my-4" />
@@ -106,7 +102,7 @@ export const AllVariants: Story = {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold mb-4">垂直線</h2>
+          <h2 className="mb-4 text-lg font-bold">垂直線</h2>
           <div className="flex h-8 items-center space-x-4 text-sm">
             <span>項目1</span>
             <Separator orientation="vertical" />
@@ -117,19 +113,17 @@ export const AllVariants: Story = {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold mb-4">カード内</h2>
-          <div className="max-w-sm border border-border rounded-lg overflow-hidden">
-            <div className="p-4 font-medium">タイトル</div>
+          <h2 className="mb-4 text-lg font-bold">カード内</h2>
+          <div className="border-border max-w-sm overflow-hidden rounded-lg border">
+            <div className="p-4 font-bold">タイトル</div>
             <Separator />
-            <div className="p-4 text-sm text-muted-foreground">
-              コンテンツ
-            </div>
+            <div className="text-muted-foreground p-4 text-sm">コンテンツ</div>
           </div>
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold mb-4">使用場面</h2>
-          <ul className="text-sm text-muted-foreground list-disc list-inside">
+          <h2 className="mb-4 text-lg font-bold">使用場面</h2>
+          <ul className="text-muted-foreground list-inside list-disc text-sm">
             <li>セクション間の区切り</li>
             <li>メニュー項目のグループ化</li>
             <li>カードのヘッダー/フッター分離</li>

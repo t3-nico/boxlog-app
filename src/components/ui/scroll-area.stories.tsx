@@ -21,7 +21,7 @@ export const Default: Story = {
   render: () => (
     <ScrollArea className="border-border h-72 w-48 rounded-lg border">
       <div className="p-4">
-        <h4 className="mb-4 text-sm leading-none font-medium">タグ一覧</h4>
+        <h4 className="mb-4 text-sm leading-none font-bold">タグ一覧</h4>
         {tags.map((tag) => (
           <div key={tag}>
             <div className="text-sm">{tag}</div>
@@ -55,7 +55,7 @@ export const BothDirections: Story = {
   render: () => (
     <ScrollArea className="border-border h-72 w-72 rounded-lg border">
       <div className="p-4" style={{ width: '600px' }}>
-        <h4 className="mb-4 text-sm font-medium">縦横スクロール</h4>
+        <h4 className="mb-4 text-sm font-bold">縦横スクロール</h4>
         <div className="grid grid-cols-6 gap-4">
           {Array.from({ length: 60 }).map((_, i) => (
             <div
@@ -76,13 +76,13 @@ export const InCard: Story = {
   render: () => (
     <div className="border-border w-80 rounded-lg border">
       <div className="border-border border-b p-4">
-        <h3 className="font-medium">通知</h3>
+        <h3 className="font-bold">通知</h3>
       </div>
       <ScrollArea className="h-64">
         <div className="p-4">
           {Array.from({ length: 15 }).map((_, i) => (
             <div key={i} className="border-border border-b py-4 last:border-0">
-              <p className="text-sm font-medium">通知 {i + 1}</p>
+              <p className="text-sm font-bold">通知 {i + 1}</p>
               <p className="text-muted-foreground text-xs">1時間前</p>
             </div>
           ))}
@@ -99,7 +99,7 @@ export const AllVariants: Story = {
 
       <div className="space-y-8">
         <section>
-          <h2 className="mb-4 text-lg font-semibold">垂直スクロール</h2>
+          <h2 className="mb-4 text-lg font-bold">垂直スクロール</h2>
           <ScrollArea className="border-border h-48 w-64 rounded-lg border">
             <div className="p-4">
               {Array.from({ length: 20 }).map((_, i) => (
@@ -112,7 +112,7 @@ export const AllVariants: Story = {
         </section>
 
         <section>
-          <h2 className="mb-4 text-lg font-semibold">水平スクロール</h2>
+          <h2 className="mb-4 text-lg font-bold">水平スクロール</h2>
           <ScrollArea className="border-border w-80 rounded-lg border">
             <div className="flex gap-4 p-4">
               {Array.from({ length: 10 }).map((_, i) => (
@@ -129,7 +129,7 @@ export const AllVariants: Story = {
         </section>
 
         <section>
-          <h2 className="mb-4 text-lg font-semibold">特徴</h2>
+          <h2 className="mb-4 text-lg font-bold">特徴</h2>
           <ul className="text-muted-foreground list-inside list-disc text-sm">
             <li>ホバー時にスクロールバーを表示</li>
             <li>ネイティブスクロールのパフォーマンス</li>

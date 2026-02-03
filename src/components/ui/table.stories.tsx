@@ -25,10 +25,20 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 const invoices = [
-  { invoice: 'INV001', paymentStatus: '支払済', totalAmount: '¥250', paymentMethod: 'クレジットカード' },
+  {
+    invoice: 'INV001',
+    paymentStatus: '支払済',
+    totalAmount: '¥250',
+    paymentMethod: 'クレジットカード',
+  },
   { invoice: 'INV002', paymentStatus: '保留中', totalAmount: '¥150', paymentMethod: 'PayPal' },
   { invoice: 'INV003', paymentStatus: '未払い', totalAmount: '¥350', paymentMethod: '銀行振込' },
-  { invoice: 'INV004', paymentStatus: '支払済', totalAmount: '¥450', paymentMethod: 'クレジットカード' },
+  {
+    invoice: 'INV004',
+    paymentStatus: '支払済',
+    totalAmount: '¥450',
+    paymentMethod: 'クレジットカード',
+  },
   { invoice: 'INV005', paymentStatus: '支払済', totalAmount: '¥550', paymentMethod: 'PayPal' },
 ];
 
@@ -47,7 +57,7 @@ export const Default: Story = {
       <TableBody>
         {invoices.map((invoice) => (
           <TableRow key={invoice.invoice}>
-            <TableCell className="font-medium">{invoice.invoice}</TableCell>
+            <TableCell className="font-bold">{invoice.invoice}</TableCell>
             <TableCell>{invoice.paymentStatus}</TableCell>
             <TableCell>{invoice.paymentMethod}</TableCell>
             <TableCell className="text-right">{invoice.totalAmount}</TableCell>
@@ -87,7 +97,7 @@ export const WithSelection: Story = {
             <TableCell>
               <Checkbox aria-label={`${user.name}を選択`} />
             </TableCell>
-            <TableCell className="font-medium">{user.name}</TableCell>
+            <TableCell className="font-bold">{user.name}</TableCell>
             <TableCell>{user.email}</TableCell>
             <TableCell>{user.role}</TableCell>
           </TableRow>
@@ -130,12 +140,12 @@ export const Simple: Story = {
 
 export const AllVariants: Story = {
   render: () => (
-    <div className="p-8 bg-background text-foreground">
-      <h1 className="text-2xl font-bold mb-8">Table - 全バリエーション</h1>
+    <div className="bg-background text-foreground p-8">
+      <h1 className="mb-8 text-2xl font-bold">Table - 全バリエーション</h1>
 
       <div className="space-y-12">
         <section>
-          <h2 className="text-lg font-semibold mb-4">基本</h2>
+          <h2 className="mb-4 text-lg font-bold">基本</h2>
           <Table>
             <TableHeader>
               <TableRow>
@@ -160,7 +170,7 @@ export const AllVariants: Story = {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold mb-4">フッター付き</h2>
+          <h2 className="mb-4 text-lg font-bold">フッター付き</h2>
           <Table>
             <TableHeader>
               <TableRow>
@@ -188,16 +198,32 @@ export const AllVariants: Story = {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold mb-4">コンポーネント構成</h2>
-          <ul className="text-sm text-muted-foreground list-disc list-inside">
-            <li><code>Table</code> - ルートテーブル要素</li>
-            <li><code>TableHeader</code> - ヘッダーセクション</li>
-            <li><code>TableBody</code> - ボディセクション</li>
-            <li><code>TableFooter</code> - フッターセクション</li>
-            <li><code>TableRow</code> - テーブル行</li>
-            <li><code>TableHead</code> - ヘッダーセル</li>
-            <li><code>TableCell</code> - データセル</li>
-            <li><code>TableCaption</code> - テーブルキャプション</li>
+          <h2 className="mb-4 text-lg font-bold">コンポーネント構成</h2>
+          <ul className="text-muted-foreground list-inside list-disc text-sm">
+            <li>
+              <code>Table</code> - ルートテーブル要素
+            </li>
+            <li>
+              <code>TableHeader</code> - ヘッダーセクション
+            </li>
+            <li>
+              <code>TableBody</code> - ボディセクション
+            </li>
+            <li>
+              <code>TableFooter</code> - フッターセクション
+            </li>
+            <li>
+              <code>TableRow</code> - テーブル行
+            </li>
+            <li>
+              <code>TableHead</code> - ヘッダーセル
+            </li>
+            <li>
+              <code>TableCell</code> - データセル
+            </li>
+            <li>
+              <code>TableCaption</code> - テーブルキャプション
+            </li>
           </ul>
         </section>
       </div>

@@ -77,7 +77,7 @@ export const AllVariants: Story = {
 
         <div className="max-w-sm space-y-8">
           <section>
-            <h2 className="mb-4 text-lg font-semibold">設定リスト</h2>
+            <h2 className="mb-4 text-lg font-bold">設定リスト</h2>
             <div className="border-border divide-border divide-y rounded-lg border">
               <div className="flex items-center justify-between px-4 py-4">
                 <Label htmlFor="sleep">おやすみモード</Label>

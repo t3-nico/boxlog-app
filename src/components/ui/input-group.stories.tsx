@@ -2,12 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
 
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupButton,
-  InputGroupInput,
-} from './input-group';
+import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from './input-group';
 
 const meta = {
   title: 'Components/InputGroup',
@@ -26,10 +21,7 @@ export const Default: Story = {
     const [showPassword, setShowPassword] = useState(false);
     return (
       <InputGroup className="w-80">
-        <InputGroupInput
-          type={showPassword ? 'text' : 'password'}
-          placeholder="パスワード"
-        />
+        <InputGroupInput type={showPassword ? 'text' : 'password'} placeholder="パスワード" />
         <InputGroupAddon align="inline-end">
           <InputGroupButton
             variant="ghost"
@@ -50,13 +42,13 @@ export const AllVariants: Story = {
     const [showPassword, setShowPassword] = useState(false);
 
     return (
-      <div className="p-8 bg-background text-foreground">
-        <h1 className="text-2xl font-bold mb-8">InputGroup - 実際の使用パターン</h1>
+      <div className="bg-background text-foreground p-8">
+        <h1 className="mb-8 text-2xl font-bold">InputGroup - 実際の使用パターン</h1>
 
-        <div className="space-y-8 max-w-md">
+        <div className="max-w-md space-y-8">
           <section>
-            <h2 className="text-lg font-semibold mb-4">パスワード表示切り替え</h2>
-            <p className="text-sm text-muted-foreground mb-4">
+            <h2 className="mb-4 text-lg font-bold">パスワード表示切り替え</h2>
+            <p className="text-muted-foreground mb-4 text-sm">
               PasswordSection.tsxで使用されているパターン
             </p>
             <InputGroup>
@@ -78,18 +70,26 @@ export const AllVariants: Story = {
           </section>
 
           <section>
-            <h2 className="text-lg font-semibold mb-4">使用コンポーネント</h2>
-            <ul className="text-sm text-muted-foreground list-disc list-inside">
-              <li><code>InputGroup</code> - コンテナ</li>
-              <li><code>InputGroupInput</code> - 入力フィールド</li>
-              <li><code>InputGroupAddon align="inline-end"</code> - 右側アドオン</li>
-              <li><code>InputGroupButton variant="ghost" size="icon-sm"</code> - アイコンボタン</li>
+            <h2 className="mb-4 text-lg font-bold">使用コンポーネント</h2>
+            <ul className="text-muted-foreground list-inside list-disc text-sm">
+              <li>
+                <code>InputGroup</code> - コンテナ
+              </li>
+              <li>
+                <code>InputGroupInput</code> - 入力フィールド
+              </li>
+              <li>
+                <code>{'InputGroupAddon align="inline-end"'}</code> - 右側アドオン
+              </li>
+              <li>
+                <code>{'InputGroupButton variant="ghost" size="icon-sm"'}</code> - アイコンボタン
+              </li>
             </ul>
           </section>
 
-          <section className="p-4 bg-muted rounded-md">
-            <p className="text-sm text-muted-foreground">
-              <strong>Note:</strong> InputGroupText, align="inline-start"は現在未使用
+          <section className="bg-muted rounded-md p-4">
+            <p className="text-muted-foreground text-sm">
+              <strong>Note:</strong> {'InputGroupText, align="inline-start"は現在未使用'}
             </p>
           </section>
         </div>

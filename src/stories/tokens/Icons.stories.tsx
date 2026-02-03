@@ -52,7 +52,7 @@ export const Sizes: Story = {
             <Settings className="size-3" />
           </div>
           <code className="bg-container rounded px-2 py-1 text-xs">size-3</code>
-          <p className="mt-2 text-xs font-medium">12px</p>
+          <p className="mt-2 text-xs font-bold">12px</p>
           <p className="text-muted-foreground mt-1 text-xs">
             text-xsと併用、
             <br />
@@ -65,7 +65,7 @@ export const Sizes: Story = {
             <Settings className="size-4" />
           </div>
           <code className="bg-container rounded px-2 py-1 text-xs">size-4</code>
-          <p className="mt-2 text-xs font-medium">16px</p>
+          <p className="mt-2 text-xs font-bold">16px</p>
           <p className="text-muted-foreground mt-1 text-xs">
             <strong>標準</strong>: text-sm、
             <br />
@@ -78,7 +78,7 @@ export const Sizes: Story = {
             <Settings className="size-5" />
           </div>
           <code className="bg-container rounded px-2 py-1 text-xs">size-5</code>
-          <p className="mt-2 text-xs font-medium">20px</p>
+          <p className="mt-2 text-xs font-bold">20px</p>
           <p className="text-muted-foreground mt-1 text-xs">
             強調、ナビゲーション、
             <br />
@@ -91,7 +91,7 @@ export const Sizes: Story = {
             <Settings className="size-6" />
           </div>
           <code className="bg-container rounded px-2 py-1 text-xs">size-6</code>
-          <p className="mt-2 text-xs font-medium">24px</p>
+          <p className="mt-2 text-xs font-bold">24px</p>
           <p className="text-muted-foreground mt-1 text-xs">
             見出し横、
             <br />
@@ -104,7 +104,7 @@ export const Sizes: Story = {
             <Settings className="size-8" />
           </div>
           <code className="bg-container rounded px-2 py-1 text-xs">size-8</code>
-          <p className="mt-2 text-xs font-medium">32px</p>
+          <p className="mt-2 text-xs font-bold">32px</p>
           <p className="text-muted-foreground mt-1 text-xs">
             カード内主アイコン、
             <br />
@@ -117,7 +117,7 @@ export const Sizes: Story = {
             <Settings className="size-10" />
           </div>
           <code className="bg-container rounded px-2 py-1 text-xs">size-10</code>
-          <p className="mt-2 text-xs font-medium">40px</p>
+          <p className="mt-2 text-xs font-bold">40px</p>
           <p className="text-muted-foreground mt-1 text-xs">
             空状態、
             <br />
@@ -143,7 +143,7 @@ export const StrokeWidth: Story = {
             <Settings className="size-8" strokeWidth={2} />
           </div>
           <code className="bg-container rounded px-2 py-1 text-xs">strokeWidth=2</code>
-          <p className="mt-2 text-xs font-medium">
+          <p className="mt-2 text-xs font-bold">
             <strong>標準（デフォルト）</strong>
           </p>
           <p className="text-muted-foreground mt-1 text-xs">
@@ -158,7 +158,7 @@ export const StrokeWidth: Story = {
             <Home className="size-8" strokeWidth={2.5} />
           </div>
           <code className="bg-container rounded px-2 py-1 text-xs">strokeWidth=2.5</code>
-          <p className="mt-2 text-xs font-medium">強調</p>
+          <p className="mt-2 text-xs font-bold">強調</p>
           <p className="text-muted-foreground mt-1 text-xs">
             ナビゲーションタブ、
             <br />
@@ -171,7 +171,7 @@ export const StrokeWidth: Story = {
             <Check className="size-8" strokeWidth={3} />
           </div>
           <code className="bg-container rounded px-2 py-1 text-xs">strokeWidth=3</code>
-          <p className="mt-2 text-xs font-medium">高視認性</p>
+          <p className="mt-2 text-xs font-bold">高視認性</p>
           <p className="text-muted-foreground mt-1 text-xs">
             チェックマーク、
             <br />
@@ -248,7 +248,7 @@ export const SemanticIcons: Story = {
             <Check className="size-5" />
           </div>
           <div>
-            <p className="font-medium">成功・完了</p>
+            <p className="font-bold">成功・完了</p>
             <code className="text-muted-foreground text-xs">Check + text-success</code>
           </div>
         </div>
@@ -258,7 +258,7 @@ export const SemanticIcons: Story = {
             <AlertCircle className="size-5" />
           </div>
           <div>
-            <p className="font-medium">警告・注意</p>
+            <p className="font-bold">警告・注意</p>
             <code className="text-muted-foreground text-xs">AlertCircle + text-warning</code>
           </div>
         </div>
@@ -268,7 +268,7 @@ export const SemanticIcons: Story = {
             <X className="size-5" />
           </div>
           <div>
-            <p className="font-medium">エラー・削除</p>
+            <p className="font-bold">エラー・削除</p>
             <code className="text-muted-foreground text-xs">X + text-destructive</code>
           </div>
         </div>
@@ -278,7 +278,7 @@ export const SemanticIcons: Story = {
             <Info className="size-5" />
           </div>
           <div>
-            <p className="font-medium">情報</p>
+            <p className="font-bold">情報</p>
             <code className="text-muted-foreground text-xs">Info + text-info</code>
           </div>
         </div>

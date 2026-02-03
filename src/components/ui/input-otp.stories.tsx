@@ -67,7 +67,7 @@ export const AllVariants: Story = {
 
         <div className="space-y-8">
           <section>
-            <h2 className="mb-4 text-lg font-semibold">MFA認証コード入力</h2>
+            <h2 className="mb-4 text-lg font-bold">MFA認証コード入力</h2>
             <p className="text-muted-foreground mb-4 text-sm">
               MFASection.tsxで使用されているパターン
             </p>
@@ -84,7 +84,7 @@ export const AllVariants: Story = {
           </section>
 
           <section>
-            <h2 className="mb-4 text-lg font-semibold">使用Props</h2>
+            <h2 className="mb-4 text-lg font-bold">使用Props</h2>
             <ul className="text-muted-foreground list-inside list-disc text-sm">
               <li>
                 <code>maxLength={'{6}'}</code> - 6桁固定

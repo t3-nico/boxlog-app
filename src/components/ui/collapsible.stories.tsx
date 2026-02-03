@@ -20,7 +20,7 @@ export const Default: Story = {
     <Collapsible defaultOpen className="w-80">
       <CollapsibleTrigger asChild>
         <div className="hover:bg-muted flex cursor-pointer items-center justify-between rounded-lg px-4 py-2">
-          <span className="text-sm font-medium">セクション</span>
+          <span className="text-sm font-bold">セクション</span>
           <ChevronDown className="size-4" />
         </div>
       </CollapsibleTrigger>
@@ -37,7 +37,7 @@ export const SidebarSection: Story = {
       <Collapsible defaultOpen>
         <CollapsibleTrigger asChild>
           <div className="hover:bg-muted flex cursor-pointer items-center justify-between px-4 py-4">
-            <span className="text-sm font-medium">ナビゲーション</span>
+            <span className="text-sm font-bold">ナビゲーション</span>
             <ChevronDown className="size-4" />
           </div>
         </CollapsibleTrigger>
@@ -62,7 +62,7 @@ export const AllVariants: Story = {
 
       <div className="max-w-md space-y-8">
         <section>
-          <h2 className="mb-4 text-lg font-semibold">サイドバーセクション</h2>
+          <h2 className="mb-4 text-lg font-bold">サイドバーセクション</h2>
           <p className="text-muted-foreground mb-4 text-sm">
             SidebarSection.tsxで使用されているパターン
           </p>
@@ -70,7 +70,7 @@ export const AllVariants: Story = {
             <Collapsible defaultOpen>
               <CollapsibleTrigger asChild>
                 <div className="hover:bg-muted flex cursor-pointer items-center justify-between px-4 py-4">
-                  <span className="text-sm font-medium">セクション</span>
+                  <span className="text-sm font-bold">セクション</span>
                   <ChevronDown className="size-4" />
                 </div>
               </CollapsibleTrigger>
@@ -85,7 +85,7 @@ export const AllVariants: Story = {
         </section>
 
         <section>
-          <h2 className="mb-4 text-lg font-semibold">使用Props</h2>
+          <h2 className="mb-4 text-lg font-bold">使用Props</h2>
           <ul className="text-muted-foreground list-inside list-disc text-sm">
             <li>
               <code>defaultOpen</code> - 初期状態（true/false）

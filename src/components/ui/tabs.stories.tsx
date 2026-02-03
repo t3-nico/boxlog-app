@@ -54,37 +54,45 @@ export const ThreeTabs: Story = {
 
 export const AllVariants: Story = {
   render: () => (
-    <div className="p-8 bg-background text-foreground">
-      <h1 className="text-2xl font-bold mb-8">Tabs - 実際の使用パターン</h1>
+    <div className="bg-background text-foreground p-8">
+      <h1 className="mb-8 text-2xl font-bold">Tabs - 実際の使用パターン</h1>
 
       <div className="space-y-12">
         <section>
-          <h2 className="text-lg font-semibold mb-4">ピル型（デフォルト）</h2>
+          <h2 className="mb-4 text-lg font-bold">ピル型（デフォルト）</h2>
           <Tabs defaultValue="tab1" className="w-full max-w-md">
             <TabsList>
               <TabsTrigger value="tab1">タブ1</TabsTrigger>
               <TabsTrigger value="tab2">タブ2</TabsTrigger>
               <TabsTrigger value="tab3">タブ3</TabsTrigger>
             </TabsList>
-            <TabsContent value="tab1" className="p-4 border border-border rounded-lg mt-2">
+            <TabsContent value="tab1" className="border-border mt-2 rounded-lg border p-4">
               タブ1のコンテンツ
             </TabsContent>
-            <TabsContent value="tab2" className="p-4 border border-border rounded-lg mt-2">
+            <TabsContent value="tab2" className="border-border mt-2 rounded-lg border p-4">
               タブ2のコンテンツ
             </TabsContent>
-            <TabsContent value="tab3" className="p-4 border border-border rounded-lg mt-2">
+            <TabsContent value="tab3" className="border-border mt-2 rounded-lg border p-4">
               タブ3のコンテンツ
             </TabsContent>
           </Tabs>
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold mb-4">コンポーネント構成</h2>
-          <ul className="text-sm text-muted-foreground list-disc list-inside">
-            <li><code>Tabs</code> - ルート（defaultValue必須）</li>
-            <li><code>TabsList</code> - タブボタンのコンテナ</li>
-            <li><code>TabsTrigger</code> - タブボタン</li>
-            <li><code>TabsContent</code> - タブコンテンツ</li>
+          <h2 className="mb-4 text-lg font-bold">コンポーネント構成</h2>
+          <ul className="text-muted-foreground list-inside list-disc text-sm">
+            <li>
+              <code>Tabs</code> - ルート（defaultValue必須）
+            </li>
+            <li>
+              <code>TabsList</code> - タブボタンのコンテナ
+            </li>
+            <li>
+              <code>TabsTrigger</code> - タブボタン
+            </li>
+            <li>
+              <code>TabsContent</code> - タブコンテンツ
+            </li>
           </ul>
         </section>
       </div>

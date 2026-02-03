@@ -145,7 +145,7 @@ export function RecordsIconButton({ planId, disabled = false }: RecordsIconButto
               {hasRecords && (
                 <div className="bg-surface-container mx-2 my-2 flex items-center justify-between rounded-lg px-4 py-2">
                   <span className="text-muted-foreground text-xs">合計</span>
-                  <span className="text-sm font-medium tabular-nums">
+                  <span className="text-sm font-bold tabular-nums">
                     {formatDuration(totalMinutes)}
                   </span>
                 </div>

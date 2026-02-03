@@ -77,7 +77,7 @@ export const Dialog: Story = {
       <>
         <Button variant="outline" onClick={() => setOpen(true)}>
           コマンドパレットを開く
-          <kbd className="bg-muted text-muted-foreground pointer-events-none ml-2 inline-flex h-5 items-center gap-1 rounded border px-2 font-mono text-[10px] font-medium opacity-100 select-none">
+          <kbd className="bg-muted text-muted-foreground pointer-events-none ml-2 inline-flex h-5 items-center gap-1 rounded border px-2 font-mono text-[10px] font-bold opacity-100 select-none">
             <span className="text-xs">⌘</span>K
           </kbd>
         </Button>
@@ -144,7 +144,7 @@ export const AllVariants: Story = {
 
         <div className="space-y-8">
           <section>
-            <h2 className="mb-4 text-lg font-semibold">インライン</h2>
+            <h2 className="mb-4 text-lg font-bold">インライン</h2>
             <Command className="w-full max-w-md rounded-lg border shadow-md">
               <CommandInput placeholder="検索..." />
               <CommandList>
@@ -164,7 +164,7 @@ export const AllVariants: Story = {
           </section>
 
           <section>
-            <h2 className="mb-4 text-lg font-semibold">ダイアログ</h2>
+            <h2 className="mb-4 text-lg font-bold">ダイアログ</h2>
             <Button variant="outline" onClick={() => setDialogOpen(true)}>
               ⌘K でコマンドパレットを開く
             </Button>
@@ -197,7 +197,7 @@ export const AllVariants: Story = {
           </section>
 
           <section>
-            <h2 className="mb-4 text-lg font-semibold">使用場面</h2>
+            <h2 className="mb-4 text-lg font-bold">使用場面</h2>
             <ul className="text-muted-foreground list-inside list-disc text-sm">
               <li>コマンドパレット（⌘K）</li>
               <li>検索可能なセレクター</li>

@@ -82,12 +82,12 @@ export const AllVariants: Story = {
     const tagColor = '#10b981';
 
     return (
-      <div className="p-8 bg-background text-foreground">
-        <h1 className="text-2xl font-bold mb-8">Checkbox - 実際の使用パターン</h1>
+      <div className="bg-background text-foreground p-8">
+        <h1 className="mb-8 text-2xl font-bold">Checkbox - 実際の使用パターン</h1>
 
         <div className="space-y-8">
           <section>
-            <h2 className="text-lg font-semibold mb-4">基本</h2>
+            <h2 className="mb-4 text-lg font-bold">基本</h2>
             <div className="flex flex-col gap-4">
               <div className="flex items-center gap-2">
                 <Checkbox
@@ -107,14 +107,16 @@ export const AllVariants: Story = {
               </div>
               <div className="flex items-center gap-2">
                 <Checkbox id="cb3" disabled />
-                <Label htmlFor="cb3" className="text-muted-foreground">無効</Label>
+                <Label htmlFor="cb3" className="text-muted-foreground">
+                  無効
+                </Label>
               </div>
             </div>
           </section>
 
           <section>
-            <h2 className="text-lg font-semibold mb-4">タグフィルター（カスタムカラー）</h2>
-            <p className="text-sm text-muted-foreground mb-4">
+            <h2 className="mb-4 text-lg font-bold">タグフィルター（カスタムカラー）</h2>
+            <p className="text-muted-foreground mb-4 text-sm">
               タグの色に合わせてborderColor/backgroundColorをstyleで指定
             </p>
             <div className="flex items-center gap-2">

@@ -105,7 +105,7 @@ export const AllVariants: Story = {
 
         <div className="max-w-md space-y-8">
           <section>
-            <h2 className="mb-4 text-lg font-semibold">基本</h2>
+            <h2 className="mb-4 text-lg font-bold">基本</h2>
             <Textarea
               value={value}
               onChange={(e) => setValue(e.target.value)}
@@ -119,7 +119,7 @@ export const AllVariants: Story = {
           </section>
 
           <section>
-            <h2 className="mb-4 text-lg font-semibold">無効状態</h2>
+            <h2 className="mb-4 text-lg font-bold">無効状態</h2>
             <Textarea
               placeholder="無効"
               disabled

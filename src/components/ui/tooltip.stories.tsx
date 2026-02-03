@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { Settings, Info } from 'lucide-react';
+import { Info, Settings } from 'lucide-react';
 
 import { Button } from './button';
 import { HoverTooltip } from './tooltip';
@@ -80,13 +80,13 @@ export const Positions: Story = {
 
 export const AllVariants: Story = {
   render: () => (
-    <div className="p-8 bg-background text-foreground">
-      <h1 className="text-2xl font-bold mb-8">Tooltip - 実際の使用パターン</h1>
+    <div className="bg-background text-foreground p-8">
+      <h1 className="mb-8 text-2xl font-bold">Tooltip - 実際の使用パターン</h1>
 
       <div className="space-y-8">
         <section>
-          <h2 className="text-lg font-semibold mb-4">アイコンボタン</h2>
-          <p className="text-sm text-muted-foreground mb-4">
+          <h2 className="mb-4 text-lg font-bold">アイコンボタン</h2>
+          <p className="text-muted-foreground mb-4 text-sm">
             アイコンのみのボタンには必ずツールチップを付ける
           </p>
           <div className="flex gap-4">
@@ -104,7 +104,7 @@ export const AllVariants: Story = {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold mb-4">位置指定（side）</h2>
+          <h2 className="mb-4 text-lg font-bold">位置指定（side）</h2>
           <div className="flex gap-4">
             <HoverTooltip content="top" side="top">
               <Button variant="outline">上</Button>
@@ -122,7 +122,7 @@ export const AllVariants: Story = {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold mb-4">無効化（disabled）</h2>
+          <h2 className="mb-4 text-lg font-bold">無効化（disabled）</h2>
           <div className="flex gap-4">
             <HoverTooltip content="表示される">
               <Button variant="outline">有効</Button>
@@ -134,12 +134,20 @@ export const AllVariants: Story = {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold mb-4">使用Props</h2>
-          <ul className="text-sm text-muted-foreground list-disc list-inside">
-            <li><code>content</code> - 表示テキスト</li>
-            <li><code>side</code> - 表示位置（top/bottom/left/right）</li>
-            <li><code>disabled</code> - 無効化</li>
-            <li><code>delayMs</code> - 表示遅延</li>
+          <h2 className="mb-4 text-lg font-bold">使用Props</h2>
+          <ul className="text-muted-foreground list-inside list-disc text-sm">
+            <li>
+              <code>content</code> - 表示テキスト
+            </li>
+            <li>
+              <code>side</code> - 表示位置（top/bottom/left/right）
+            </li>
+            <li>
+              <code>disabled</code> - 無効化
+            </li>
+            <li>
+              <code>delayMs</code> - 表示遅延
+            </li>
           </ul>
         </section>
       </div>

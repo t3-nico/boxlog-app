@@ -573,9 +573,7 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
             >
               <Smile className="size-4" />
               {hasScore && (
-                <span className="text-xs font-medium tabular-nums">
-                  {formData.fulfillment_score}
-                </span>
+                <span className="text-xs font-bold tabular-nums">{formData.fulfillment_score}</span>
               )}
             </button>
           </HoverTooltip>

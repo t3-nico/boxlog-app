@@ -29,7 +29,7 @@ export default function CalendarError({ error, reset }: ErrorProps) {
       </div>
 
       <div className="max-w-md text-center">
-        <h2 className="mb-2 text-xl font-semibold">カレンダーの読み込みに失敗しました</h2>
+        <h2 className="mb-2 text-xl font-bold">カレンダーの読み込みに失敗しました</h2>
         <p className="text-muted-foreground text-sm">
           ネットワーク接続を確認して、もう一度お試しください。
         </p>

@@ -92,7 +92,7 @@ export const AllVariants: Story = {
 
         <div className="space-y-8">
           <section>
-            <h2 className="mb-4 text-lg font-semibold">期間セレクター</h2>
+            <h2 className="mb-4 text-lg font-bold">期間セレクター</h2>
             <p className="text-muted-foreground mb-4 text-sm">
               stats-toolbarで使用されているパターン
             </p>
@@ -110,7 +110,7 @@ export const AllVariants: Story = {
           </section>
 
           <section>
-            <h2 className="mb-4 text-lg font-semibold">コンポーネント構成</h2>
+            <h2 className="mb-4 text-lg font-bold">コンポーネント構成</h2>
             <ul className="text-muted-foreground list-inside list-disc text-sm">
               <li>
                 <code>Select</code> - ルート（value, onValueChange）

@@ -26,26 +26,17 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   render: () => (
-    <Button onClick={() => toast('これはトーストメッセージです')}>
-      トーストを表示
-    </Button>
+    <Button onClick={() => toast('これはトーストメッセージです')}>トーストを表示</Button>
   ),
 };
 
 export const Success: Story = {
-  render: () => (
-    <Button onClick={() => toast.success('保存しました')}>
-      成功トースト
-    </Button>
-  ),
+  render: () => <Button onClick={() => toast.success('保存しました')}>成功トースト</Button>,
 };
 
 export const Error: Story = {
   render: () => (
-    <Button
-      variant="destructive"
-      onClick={() => toast.error('エラーが発生しました')}
-    >
+    <Button variant="destructive" onClick={() => toast.error('エラーが発生しました')}>
       エラートースト
     </Button>
   ),
@@ -135,27 +126,23 @@ export const Promise: Story = {
 
 export const AllVariants: Story = {
   render: () => (
-    <div className="p-8 bg-background text-foreground">
-      <h1 className="text-2xl font-bold mb-8">Sonner (Toast) - 全バリエーション</h1>
+    <div className="bg-background text-foreground p-8">
+      <h1 className="mb-8 text-2xl font-bold">Sonner (Toast) - 全バリエーション</h1>
 
       <div className="space-y-8">
         <section>
-          <h2 className="text-lg font-semibold mb-4">タイプ</h2>
+          <h2 className="mb-4 text-lg font-bold">タイプ</h2>
           <div className="flex flex-wrap gap-4">
             <Button onClick={() => toast('通常メッセージ')}>通常</Button>
-            <Button onClick={() => toast.success('成功しました')}>
-              成功
-            </Button>
-            <Button onClick={() => toast.error('エラーが発生')}>
-              エラー
-            </Button>
+            <Button onClick={() => toast.success('成功しました')}>成功</Button>
+            <Button onClick={() => toast.error('エラーが発生')}>エラー</Button>
             <Button onClick={() => toast.info('お知らせ')}>情報</Button>
             <Button onClick={() => toast.warning('警告')}>警告</Button>
           </div>
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold mb-4">ローディング状態</h2>
+          <h2 className="mb-4 text-lg font-bold">ローディング状態</h2>
           <Button
             onClick={() => {
               const toastId = toast.loading('処理中...');
@@ -169,7 +156,7 @@ export const AllVariants: Story = {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold mb-4">アクション付き</h2>
+          <h2 className="mb-4 text-lg font-bold">アクション付き</h2>
           <Button
             onClick={() =>
               toast('アイテムを削除しました', {
@@ -185,9 +172,9 @@ export const AllVariants: Story = {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold mb-4">使用方法</h2>
-          <pre className="p-4 bg-container rounded-lg text-sm overflow-x-auto">
-{`import { toast } from 'sonner'
+          <h2 className="mb-4 text-lg font-bold">使用方法</h2>
+          <pre className="bg-container overflow-x-auto rounded-lg p-4 text-sm">
+            {`import { toast } from 'sonner'
 
 // 基本
 toast('メッセージ')

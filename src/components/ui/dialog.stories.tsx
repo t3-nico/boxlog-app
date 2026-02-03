@@ -34,9 +34,7 @@ export const Default: Story = {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>ダイアログタイトル</DialogTitle>
-          <DialogDescription>
-            ここにダイアログの説明が入ります。
-          </DialogDescription>
+          <DialogDescription>ここにダイアログの説明が入ります。</DialogDescription>
         </DialogHeader>
         <div className="py-4">
           <p>ダイアログのコンテンツがここに表示されます。</p>
@@ -58,9 +56,7 @@ export const WithForm: Story = {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>プロフィール編集</DialogTitle>
-          <DialogDescription>
-            プロフィール情報を更新します。
-          </DialogDescription>
+          <DialogDescription>プロフィール情報を更新します。</DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-4">
           <div className="space-y-2">
@@ -90,9 +86,7 @@ export const WithoutCloseButton: Story = {
       <DialogContent showCloseButton={false}>
         <DialogHeader>
           <DialogTitle>閉じるボタンなし</DialogTitle>
-          <DialogDescription>
-            閉じるボタンを非表示にしたダイアログです。
-          </DialogDescription>
+          <DialogDescription>閉じるボタンを非表示にしたダイアログです。</DialogDescription>
         </DialogHeader>
         <DialogFooter>
           <Button variant="outline">閉じる</Button>
@@ -111,9 +105,7 @@ export const CustomWidth: Story = {
       <DialogContent className="max-w-3xl">
         <DialogHeader>
           <DialogTitle>大きなダイアログ</DialogTitle>
-          <DialogDescription>
-            max-w-3xlを指定して幅を広げています。
-          </DialogDescription>
+          <DialogDescription>max-w-3xlを指定して幅を広げています。</DialogDescription>
         </DialogHeader>
         <div className="py-4">
           <p>より多くのコンテンツを表示できます。</p>
@@ -125,12 +117,12 @@ export const CustomWidth: Story = {
 
 export const AllVariants: Story = {
   render: () => (
-    <div className="p-8 bg-background text-foreground">
-      <h1 className="text-2xl font-bold mb-8">Dialog - 全バリエーション</h1>
+    <div className="bg-background text-foreground p-8">
+      <h1 className="mb-8 text-2xl font-bold">Dialog - 全バリエーション</h1>
 
       <div className="space-y-8">
         <section>
-          <h2 className="text-lg font-semibold mb-4">基本</h2>
+          <h2 className="mb-4 text-lg font-bold">基本</h2>
           <Dialog>
             <DialogTrigger asChild>
               <Button variant="outline">基本のダイアログ</Button>
@@ -149,7 +141,7 @@ export const AllVariants: Story = {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold mb-4">フォーム付き</h2>
+          <h2 className="mb-4 text-lg font-bold">フォーム付き</h2>
           <Dialog>
             <DialogTrigger asChild>
               <Button>新規作成</Button>
@@ -157,9 +149,7 @@ export const AllVariants: Story = {
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>新規タスク</DialogTitle>
-                <DialogDescription>
-                  新しいタスクを作成します。
-                </DialogDescription>
+                <DialogDescription>新しいタスクを作成します。</DialogDescription>
               </DialogHeader>
               <div className="space-y-4 py-4">
                 <div className="space-y-2">
@@ -176,9 +166,10 @@ export const AllVariants: Story = {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold mb-4">AlertDialogとの違い</h2>
-          <p className="text-sm text-muted-foreground">
-            Dialog: 一般的なモーダル。背景クリックで閉じる。<br />
+          <h2 className="mb-4 text-lg font-bold">AlertDialogとの違い</h2>
+          <p className="text-muted-foreground text-sm">
+            Dialog: 一般的なモーダル。背景クリックで閉じる。
+            <br />
             AlertDialog: 確認必須のモーダル。背景クリックで閉じない。
           </p>
         </section>

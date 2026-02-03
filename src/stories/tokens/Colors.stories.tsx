@@ -32,7 +32,7 @@ function ColorSwatch({
         style={{ backgroundColor: `var(--${token})` }}
       />
       <div className="min-w-0 flex-1">
-        <code className="text-sm font-medium">{tailwindClass}</code>
+        <code className="text-sm font-bold">{tailwindClass}</code>
         {description && <p className="text-muted-foreground mt-1 text-xs">{description}</p>}
       </div>
     </div>
@@ -43,7 +43,7 @@ function ColorSwatch({
 function ColorGroup({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="mb-8">
-      <h3 className="border-border mb-4 border-b pb-2 text-lg font-semibold">{title}</h3>
+      <h3 className="border-border mb-4 border-b pb-2 text-lg font-bold">{title}</h3>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">{children}</div>
     </div>
   );
@@ -138,26 +138,26 @@ export const Surface: Story = {
 
       <div className="space-y-4">
         <div className="bg-overlay border-border rounded-lg border p-6">
-          <div className="font-medium">Overlay</div>
+          <div className="font-bold">Overlay</div>
           <div className="text-muted-foreground text-sm">
             ポップオーバー、ドロップダウン（MD3: 高elevation = ダークモードで最も明るい）
           </div>
         </div>
 
         <div className="bg-background border-border rounded-lg border p-6">
-          <div className="font-medium">Background</div>
+          <div className="font-bold">Background</div>
           <div className="text-muted-foreground text-sm">ページ背景（基準レベル）</div>
         </div>
 
         <div className="bg-container border-border rounded-lg border p-6">
-          <div className="font-medium">Container</div>
+          <div className="font-bold">Container</div>
           <div className="text-muted-foreground text-sm">
             サイドバー、セクション（backgroundより6%暗い）
           </div>
         </div>
 
         <div className="bg-card border-border rounded-lg border p-6">
-          <div className="font-medium">Card</div>
+          <div className="font-bold">Card</div>
           <div className="text-muted-foreground text-sm">
             カード、ダイアログ（containerより6%暗い = 最も沈んだレベル）
           </div>
@@ -174,22 +174,22 @@ export const Semantic: Story = {
 
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
         <div className="bg-success text-success-foreground rounded-lg p-4 text-center">
-          <div className="font-medium">Success</div>
+          <div className="font-bold">Success</div>
           <div className="text-sm opacity-80">成功、完了</div>
         </div>
 
         <div className="bg-warning text-warning-foreground rounded-lg p-4 text-center">
-          <div className="font-medium">Warning</div>
+          <div className="font-bold">Warning</div>
           <div className="text-sm opacity-80">警告、注意</div>
         </div>
 
         <div className="bg-info text-info-foreground rounded-lg p-4 text-center">
-          <div className="font-medium">Info</div>
+          <div className="font-bold">Info</div>
           <div className="text-sm opacity-80">情報</div>
         </div>
 
         <div className="bg-destructive text-destructive-foreground rounded-lg p-4 text-center">
-          <div className="font-medium">Destructive</div>
+          <div className="font-bold">Destructive</div>
           <div className="text-sm opacity-80">削除、エラー</div>
         </div>
       </div>
@@ -207,7 +207,7 @@ export const Interaction: Story = {
 
       {/* 汎用ホバー（Ghost/Outline用） */}
       <div className="mb-8">
-        <h3 className="border-border mb-4 border-b pb-2 text-lg font-semibold">
+        <h3 className="border-border mb-4 border-b pb-2 text-lg font-bold">
           汎用ホバー（Ghost/Outline用）
         </h3>
         <div className="flex flex-wrap gap-4">
@@ -228,9 +228,7 @@ export const Interaction: Story = {
 
       {/* 塗りボタン用ホバー */}
       <div className="mb-8">
-        <h3 className="border-border mb-4 border-b pb-2 text-lg font-semibold">
-          塗りボタン用ホバー
-        </h3>
+        <h3 className="border-border mb-4 border-b pb-2 text-lg font-bold">塗りボタン用ホバー</h3>
         <div className="flex flex-wrap gap-4">
           <button
             type="button"
@@ -273,7 +271,7 @@ export const Interaction: Story = {
 
       {/* セマンティックGhostホバー */}
       <div className="mb-8">
-        <h3 className="border-border mb-4 border-b pb-2 text-lg font-semibold">
+        <h3 className="border-border mb-4 border-b pb-2 text-lg font-bold">
           セマンティックGhostホバー
         </h3>
         <p className="text-muted-foreground mb-4 text-sm">
@@ -297,7 +295,7 @@ export const Interaction: Story = {
 
       {/* フォーカスリング */}
       <div className="mb-8">
-        <h3 className="border-border mb-4 border-b pb-2 text-lg font-semibold">
+        <h3 className="border-border mb-4 border-b pb-2 text-lg font-bold">
           フォーカスリング（MD3スタイル）
         </h3>
         <p className="text-muted-foreground mb-4 text-sm">
@@ -320,9 +318,7 @@ export const Interaction: Story = {
 
       {/* アクティブ/選択状態 */}
       <div className="mb-8">
-        <h3 className="border-border mb-4 border-b pb-2 text-lg font-semibold">
-          アクティブ/選択状態
-        </h3>
+        <h3 className="border-border mb-4 border-b pb-2 text-lg font-bold">アクティブ/選択状態</h3>
         <div className="flex flex-wrap gap-4">
           <div className="bg-state-active text-state-active-foreground rounded-lg px-4 py-2">
             <code className="text-sm">bg-state-active（選択中）</code>
@@ -338,7 +334,7 @@ export const Interaction: Story = {
 
       {/* リンク/テキストホバー */}
       <div className="mb-8">
-        <h3 className="border-border mb-4 border-b pb-2 text-lg font-semibold">
+        <h3 className="border-border mb-4 border-b pb-2 text-lg font-bold">
           リンク/テキストホバー
         </h3>
         <p className="text-muted-foreground mb-4 text-sm">
@@ -371,7 +367,7 @@ export const Interaction: Story = {
 
       {/* 使用例 */}
       <div className="bg-card border-border rounded-lg border p-6">
-        <h3 className="mb-4 font-semibold">コピペ用クラス</h3>
+        <h3 className="mb-4 font-bold">コピペ用クラス</h3>
         <div className="space-y-4 font-mono text-sm">
           <div className="text-muted-foreground mb-2 text-xs">汎用</div>
           <div>
@@ -442,9 +438,7 @@ export const Interaction: Story = {
 
       {/* 不透明度ルール */}
       <div className="bg-warning/10 border-warning mt-8 rounded-lg border p-6">
-        <h3 className="text-warning-foreground mb-2 font-semibold">
-          不透明度の使用ルール（MD3準拠）
-        </h3>
+        <h3 className="text-warning-foreground mb-2 font-bold">不透明度の使用ルール（MD3準拠）</h3>
         <p className="text-muted-foreground mb-4 text-sm">
           不透明度（<code>/10</code>, <code>/20</code> 等）は
           <strong>インタラクション状態のみ</strong>に使用する。

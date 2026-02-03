@@ -142,22 +142,13 @@ export const WithCheckboxes: Story = {
         <DropdownMenuContent className="w-56">
           <DropdownMenuLabel>表示</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuCheckboxItem
-            checked={showStatusBar}
-            onCheckedChange={setShowStatusBar}
-          >
+          <DropdownMenuCheckboxItem checked={showStatusBar} onCheckedChange={setShowStatusBar}>
             ステータスバー
           </DropdownMenuCheckboxItem>
-          <DropdownMenuCheckboxItem
-            checked={showActivityBar}
-            onCheckedChange={setShowActivityBar}
-          >
+          <DropdownMenuCheckboxItem checked={showActivityBar} onCheckedChange={setShowActivityBar}>
             アクティビティバー
           </DropdownMenuCheckboxItem>
-          <DropdownMenuCheckboxItem
-            checked={showPanel}
-            onCheckedChange={setShowPanel}
-          >
+          <DropdownMenuCheckboxItem checked={showPanel} onCheckedChange={setShowPanel}>
             パネル
           </DropdownMenuCheckboxItem>
         </DropdownMenuContent>
@@ -207,12 +198,12 @@ export const Destructive: Story = {
 
 export const AllVariants: Story = {
   render: () => (
-    <div className="p-8 bg-background text-foreground">
-      <h1 className="text-2xl font-bold mb-8">DropdownMenu - 全バリエーション</h1>
+    <div className="bg-background text-foreground p-8">
+      <h1 className="mb-8 text-2xl font-bold">DropdownMenu - 全バリエーション</h1>
 
       <div className="space-y-8">
         <section>
-          <h2 className="text-lg font-semibold mb-4">アイコン付き</h2>
+          <h2 className="mb-4 text-lg font-bold">アイコン付き</h2>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline">
@@ -234,7 +225,7 @@ export const AllVariants: Story = {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold mb-4">フルメニュー</h2>
+          <h2 className="mb-4 text-lg font-bold">フルメニュー</h2>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button>マイアカウント</Button>
@@ -275,9 +266,10 @@ export const AllVariants: Story = {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold mb-4">ContextMenuとの違い</h2>
-          <p className="text-sm text-muted-foreground">
-            <strong>DropdownMenu</strong>: ボタンクリックで開く。<br />
+          <h2 className="mb-4 text-lg font-bold">ContextMenuとの違い</h2>
+          <p className="text-muted-foreground text-sm">
+            <strong>DropdownMenu</strong>: ボタンクリックで開く。
+            <br />
             <strong>ContextMenu</strong>: 右クリックで開く。
           </p>
         </section>

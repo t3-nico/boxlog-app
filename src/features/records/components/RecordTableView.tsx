@@ -145,7 +145,7 @@ export function RecordTableView() {
         {recentRecords && recentRecords.length > 0 && (
           <div className="mb-4 px-4">
             <div className="mb-2 flex items-center justify-between">
-              <span className="text-muted-foreground text-xs font-medium">クイック複製</span>
+              <span className="text-muted-foreground text-xs font-bold">クイック複製</span>
             </div>
             <div className="flex flex-wrap gap-2">
               {recentRecords.map((record) => (
@@ -210,7 +210,7 @@ export function RecordTableView() {
                         disabled
                       />
                     </TableCell>
-                    <TableCell className="font-medium">{record.worked_at}</TableCell>
+                    <TableCell className="font-bold">{record.worked_at}</TableCell>
                     <TableCell>
                       {record.plan ? (
                         <Link

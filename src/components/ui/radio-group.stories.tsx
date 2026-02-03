@@ -139,7 +139,7 @@ export const AllVariants: Story = {
 
         <div className="space-y-8">
           <section>
-            <h2 className="mb-4 text-lg font-semibold">チップスタイル（横並び）</h2>
+            <h2 className="mb-4 text-lg font-bold">チップスタイル（横並び）</h2>
             <p className="text-muted-foreground mb-4 text-sm">
               RadioGroupItemはsr-onlyで非表示、Labelがクリック対象
             </p>
@@ -168,7 +168,7 @@ export const AllVariants: Story = {
           </section>
 
           <section>
-            <h2 className="mb-4 text-lg font-semibold">リストスタイル（Apple Settings風）</h2>
+            <h2 className="mb-4 text-lg font-bold">リストスタイル（Apple Settings風）</h2>
             <p className="text-muted-foreground mb-4 text-sm">選択中はCheckアイコンを表示</p>
             <RadioGroup value={listValue} onValueChange={setListValue}>
               <div className="border-border bg-card w-64 rounded-lg border">

@@ -36,13 +36,13 @@ export const InButton: Story = {
 
 export const AllVariants: Story = {
   render: () => (
-    <div className="p-8 bg-background text-foreground">
-      <h1 className="text-2xl font-bold mb-8">Spinner - 実際の使用パターン</h1>
+    <div className="bg-background text-foreground p-8">
+      <h1 className="mb-8 text-2xl font-bold">Spinner - 実際の使用パターン</h1>
 
       <div className="space-y-8">
         <section>
-          <h2 className="text-lg font-semibold mb-4">ボタン内（主な使用パターン）</h2>
-          <p className="text-sm text-muted-foreground mb-4">
+          <h2 className="mb-4 text-lg font-bold">ボタン内（主な使用パターン）</h2>
+          <p className="text-muted-foreground mb-4 text-sm">
             LoginForm, PasswordResetForm, SignupFormで使用
           </p>
           <div className="flex gap-4">
@@ -58,18 +58,16 @@ export const AllVariants: Story = {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold mb-4">デフォルトサイズ</h2>
-          <p className="text-sm text-muted-foreground mb-4">
-            size-4（16px）がデフォルト
-          </p>
+          <h2 className="mb-4 text-lg font-bold">デフォルトサイズ</h2>
+          <p className="text-muted-foreground mb-4 text-sm">size-4（16px）がデフォルト</p>
           <Spinner />
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold mb-4">アクセシビリティ</h2>
-          <ul className="text-sm text-muted-foreground list-disc list-inside">
-            <li>role="status" 設定済み</li>
-            <li>aria-live="polite" 設定済み</li>
+          <h2 className="mb-4 text-lg font-bold">アクセシビリティ</h2>
+          <ul className="text-muted-foreground list-inside list-disc text-sm">
+            <li>{'role="status" 設定済み'}</li>
+            <li>{'aria-live="polite" 設定済み'}</li>
             <li>motion-reduce対応</li>
           </ul>
         </section>

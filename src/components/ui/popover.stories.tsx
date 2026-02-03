@@ -39,10 +39,8 @@ export const WithForm: Story = {
       <PopoverContent className="w-80">
         <div className="grid gap-4">
           <div className="space-y-2">
-            <h4 className="font-medium leading-none">寸法</h4>
-            <p className="text-sm text-muted-foreground">
-              レイヤーの寸法を設定します。
-            </p>
+            <h4 className="leading-none font-bold">寸法</h4>
+            <p className="text-muted-foreground text-sm">レイヤーの寸法を設定します。</p>
           </div>
           <div className="grid gap-2">
             <div className="grid grid-cols-3 items-center gap-4">
@@ -69,7 +67,9 @@ export const Positions: Story = {
     <div className="flex gap-4">
       <Popover>
         <PopoverTrigger asChild>
-          <Button variant="outline" size="sm">上</Button>
+          <Button variant="outline" size="sm">
+            上
+          </Button>
         </PopoverTrigger>
         <PopoverContent side="top" className="w-40">
           <p className="text-sm">上に表示</p>
@@ -77,7 +77,9 @@ export const Positions: Story = {
       </Popover>
       <Popover>
         <PopoverTrigger asChild>
-          <Button variant="outline" size="sm">下</Button>
+          <Button variant="outline" size="sm">
+            下
+          </Button>
         </PopoverTrigger>
         <PopoverContent side="bottom" className="w-40">
           <p className="text-sm">下に表示</p>
@@ -85,7 +87,9 @@ export const Positions: Story = {
       </Popover>
       <Popover>
         <PopoverTrigger asChild>
-          <Button variant="outline" size="sm">左</Button>
+          <Button variant="outline" size="sm">
+            左
+          </Button>
         </PopoverTrigger>
         <PopoverContent side="left" className="w-40">
           <p className="text-sm">左に表示</p>
@@ -93,7 +97,9 @@ export const Positions: Story = {
       </Popover>
       <Popover>
         <PopoverTrigger asChild>
-          <Button variant="outline" size="sm">右</Button>
+          <Button variant="outline" size="sm">
+            右
+          </Button>
         </PopoverTrigger>
         <PopoverContent side="right" className="w-40">
           <p className="text-sm">右に表示</p>
@@ -108,7 +114,9 @@ export const Alignment: Story = {
     <div className="flex gap-4">
       <Popover>
         <PopoverTrigger asChild>
-          <Button variant="outline" size="sm">開始</Button>
+          <Button variant="outline" size="sm">
+            開始
+          </Button>
         </PopoverTrigger>
         <PopoverContent align="start" className="w-40">
           <p className="text-sm">開始位置に揃える</p>
@@ -116,7 +124,9 @@ export const Alignment: Story = {
       </Popover>
       <Popover>
         <PopoverTrigger asChild>
-          <Button variant="outline" size="sm">中央</Button>
+          <Button variant="outline" size="sm">
+            中央
+          </Button>
         </PopoverTrigger>
         <PopoverContent align="center" className="w-40">
           <p className="text-sm">中央に揃える</p>
@@ -124,7 +134,9 @@ export const Alignment: Story = {
       </Popover>
       <Popover>
         <PopoverTrigger asChild>
-          <Button variant="outline" size="sm">終了</Button>
+          <Button variant="outline" size="sm">
+            終了
+          </Button>
         </PopoverTrigger>
         <PopoverContent align="end" className="w-40">
           <p className="text-sm">終了位置に揃える</p>
@@ -136,12 +148,12 @@ export const Alignment: Story = {
 
 export const AllVariants: Story = {
   render: () => (
-    <div className="p-8 bg-background text-foreground">
-      <h1 className="text-2xl font-bold mb-8">Popover - 全バリエーション</h1>
+    <div className="bg-background text-foreground p-8">
+      <h1 className="mb-8 text-2xl font-bold">Popover - 全バリエーション</h1>
 
       <div className="space-y-8">
         <section>
-          <h2 className="text-lg font-semibold mb-4">基本</h2>
+          <h2 className="mb-4 text-lg font-bold">基本</h2>
           <Popover>
             <PopoverTrigger asChild>
               <Button variant="outline">ポップオーバー</Button>
@@ -153,7 +165,7 @@ export const AllVariants: Story = {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold mb-4">フォーム付き</h2>
+          <h2 className="mb-4 text-lg font-bold">フォーム付き</h2>
           <Popover>
             <PopoverTrigger asChild>
               <Button>設定</Button>
@@ -171,11 +183,13 @@ export const AllVariants: Story = {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold mb-4">位置</h2>
+          <h2 className="mb-4 text-lg font-bold">位置</h2>
           <div className="flex flex-wrap gap-4">
             <Popover>
               <PopoverTrigger asChild>
-                <Button variant="outline" size="sm">上</Button>
+                <Button variant="outline" size="sm">
+                  上
+                </Button>
               </PopoverTrigger>
               <PopoverContent side="top" className="w-32">
                 上
@@ -183,7 +197,9 @@ export const AllVariants: Story = {
             </Popover>
             <Popover>
               <PopoverTrigger asChild>
-                <Button variant="outline" size="sm">下</Button>
+                <Button variant="outline" size="sm">
+                  下
+                </Button>
               </PopoverTrigger>
               <PopoverContent side="bottom" className="w-32">
                 下
@@ -191,7 +207,9 @@ export const AllVariants: Story = {
             </Popover>
             <Popover>
               <PopoverTrigger asChild>
-                <Button variant="outline" size="sm">左</Button>
+                <Button variant="outline" size="sm">
+                  左
+                </Button>
               </PopoverTrigger>
               <PopoverContent side="left" className="w-32">
                 左
@@ -199,7 +217,9 @@ export const AllVariants: Story = {
             </Popover>
             <Popover>
               <PopoverTrigger asChild>
-                <Button variant="outline" size="sm">右</Button>
+                <Button variant="outline" size="sm">
+                  右
+                </Button>
               </PopoverTrigger>
               <PopoverContent side="right" className="w-32">
                 右
@@ -209,8 +229,8 @@ export const AllVariants: Story = {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold mb-4">使用場面</h2>
-          <ul className="text-sm text-muted-foreground list-disc list-inside">
+          <h2 className="mb-4 text-lg font-bold">使用場面</h2>
+          <ul className="text-muted-foreground list-inside list-disc text-sm">
             <li>日付ピッカー</li>
             <li>カラーピッカー</li>
             <li>クイック設定フォーム</li>

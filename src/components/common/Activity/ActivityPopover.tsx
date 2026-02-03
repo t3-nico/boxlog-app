@@ -64,7 +64,7 @@ export function ActivityPopover({ activities, isPending }: ActivityPopoverProps)
         style={{ zIndex: zIndex.overlayDropdown }}
       >
         <div className="flex items-center justify-between px-4 py-4">
-          <h3 className="text-sm font-medium">{t('tabs.activity')}</h3>
+          <h3 className="text-sm font-bold">{t('tabs.activity')}</h3>
           <button
             type="button"
             onClick={() => setOpen(false)}
@@ -109,9 +109,7 @@ export function ActivityPopover({ activities, isPending }: ActivityPopoverProps)
                     {/* コンテンツ */}
                     <div className="flex-1 pb-6">
                       <div className="flex items-start justify-between gap-2">
-                        <span className="text-sm leading-8 font-medium">
-                          {activity.actionLabel}
-                        </span>
+                        <span className="text-sm leading-8 font-bold">{activity.actionLabel}</span>
                         <span className="text-muted-foreground mt-2 flex-shrink-0 text-xs">
                           {formatRelativeTime(activity.created_at, locale)}
                         </span>

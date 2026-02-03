@@ -101,7 +101,7 @@ export function TagNoteDialog({ isOpen, onClose, onSave, currentNote }: TagNoteD
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <h2 id="tag-note-dialog-title" className="mb-4 text-base font-semibold">
+        <h2 id="tag-note-dialog-title" className="mb-4 text-base font-bold">
           {t('calendar.filter.editNote')}
         </h2>
 

@@ -54,7 +54,7 @@ export const AllVariants: Story = {
 
       <div className="space-y-12">
         <section>
-          <h2 className="mb-4 text-lg font-semibold">基本（pulseアニメーション）</h2>
+          <h2 className="mb-4 text-lg font-bold">基本（pulseアニメーション）</h2>
           <div className="space-y-2">
             <Skeleton className="h-4 w-48" />
             <Skeleton className="h-4 w-32" />
@@ -63,7 +63,7 @@ export const AllVariants: Story = {
         </section>
 
         <section>
-          <h2 className="mb-4 text-lg font-semibold">カードスケルトン</h2>
+          <h2 className="mb-4 text-lg font-bold">カードスケルトン</h2>
           <div className="border-border flex max-w-xs flex-col gap-4 rounded-lg border p-4">
             <Skeleton className="h-32 w-full" />
             <div className="space-y-2">
@@ -75,7 +75,7 @@ export const AllVariants: Story = {
         </section>
 
         <section>
-          <h2 className="mb-4 text-lg font-semibold">リストスケルトン</h2>
+          <h2 className="mb-4 text-lg font-bold">リストスケルトン</h2>
           <div className="max-w-sm space-y-4">
             {[1, 2, 3].map((i) => (
               <div key={i} className="flex items-center gap-4">
@@ -90,7 +90,7 @@ export const AllVariants: Story = {
         </section>
 
         <section>
-          <h2 className="mb-4 text-lg font-semibold">使用方法</h2>
+          <h2 className="mb-4 text-lg font-bold">使用方法</h2>
           <ul className="text-muted-foreground list-inside list-disc text-sm">
             <li>classNameでh-*（高さ）とw-*（幅）を指定</li>
             <li>rounded-fullで円形に</li>

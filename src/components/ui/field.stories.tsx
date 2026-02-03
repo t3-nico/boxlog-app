@@ -62,7 +62,7 @@ export const AllVariants: Story = {
 
       <div className="max-w-md space-y-8">
         <section>
-          <h2 className="mb-4 text-lg font-semibold">基本（ラベル + 入力）</h2>
+          <h2 className="mb-4 text-lg font-bold">基本（ラベル + 入力）</h2>
           <div className="space-y-1">
             <FieldLabel htmlFor="basic">ラベル</FieldLabel>
             <Input id="basic" placeholder="入力してください" />
@@ -70,7 +70,7 @@ export const AllVariants: Story = {
         </section>
 
         <section>
-          <h2 className="mb-4 text-lg font-semibold">必須表示</h2>
+          <h2 className="mb-4 text-lg font-bold">必須表示</h2>
           <p className="text-muted-foreground mb-4 text-sm">
             LoginForm, SignupFormで使用されているパターン
           </p>
@@ -83,7 +83,7 @@ export const AllVariants: Story = {
         </section>
 
         <section>
-          <h2 className="mb-4 text-lg font-semibold">エラー状態</h2>
+          <h2 className="mb-4 text-lg font-bold">エラー状態</h2>
           <div className="space-y-1">
             <FieldLabel htmlFor="err">入力項目</FieldLabel>
             <Input id="err" aria-invalid="true" defaultValue="不正な値" />
@@ -92,7 +92,7 @@ export const AllVariants: Story = {
         </section>
 
         <section>
-          <h2 className="mb-4 text-lg font-semibold">説明テキスト</h2>
+          <h2 className="mb-4 text-lg font-bold">説明テキスト</h2>
           <div className="space-y-1">
             <FieldLabel htmlFor="desc">項目</FieldLabel>
             <Input id="desc" />
@@ -101,7 +101,7 @@ export const AllVariants: Story = {
         </section>
 
         <section>
-          <h2 className="mb-4 text-lg font-semibold">使用コンポーネント</h2>
+          <h2 className="mb-4 text-lg font-bold">使用コンポーネント</h2>
           <ul className="text-muted-foreground list-inside list-disc text-sm">
             <li>
               <code>FieldLabel</code> - htmlFor, required, requiredLabel

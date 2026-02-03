@@ -72,12 +72,12 @@ export const AllElevations: Story = {
         </div>
 
         <div className="text-center">
-          <p className="mb-2 text-xs font-medium">Level 4</p>
+          <p className="mb-2 text-xs font-bold">Level 4</p>
           <div className="flex h-28 items-center justify-center">
             <div className="bg-card size-24 rounded-lg shadow-lg" />
           </div>
           <code className="bg-container rounded px-2 py-1 text-xs">shadow-lg</code>
-          <p className="mt-2 text-xs font-medium">
+          <p className="mt-2 text-xs font-bold">
             ドロップダウン、
             <br />
             ポップオーバー
@@ -111,17 +111,17 @@ export const UseCases: Story = {
 
       <div className="space-y-8">
         <div>
-          <h3 className="mb-4 font-medium">
+          <h3 className="mb-4 font-bold">
             Level 2: カード <code className="text-muted-foreground text-xs">shadow-sm</code>
           </h3>
           <div className="bg-card border-border w-64 rounded-lg border p-4 shadow-sm">
-            <p className="font-medium">カードタイトル</p>
+            <p className="font-bold">カードタイトル</p>
             <p className="text-muted-foreground text-sm">コンテンツをグループ化</p>
           </div>
         </div>
 
         <div>
-          <h3 className="mb-4 font-medium">
+          <h3 className="mb-4 font-bold">
             Level 4: ドロップダウン <code className="text-muted-foreground text-xs">shadow-lg</code>
           </h3>
           <div className="bg-card border-border w-48 rounded-lg border p-2 shadow-lg">
@@ -132,11 +132,11 @@ export const UseCases: Story = {
         </div>
 
         <div>
-          <h3 className="mb-4 font-medium">
+          <h3 className="mb-4 font-bold">
             Level 5: モーダル <code className="text-muted-foreground text-xs">shadow-xl</code>
           </h3>
           <div className="bg-card border-border w-80 rounded-2xl border p-6 shadow-xl">
-            <h4 className="mb-2 text-lg font-semibold">モーダルタイトル</h4>
+            <h4 className="mb-2 text-lg font-bold">モーダルタイトル</h4>
             <p className="text-muted-foreground mb-4 text-sm">最前面でユーザーの操作を待つ</p>
             <div className="flex justify-end gap-2">
               <button className="hover:bg-state-hover rounded-lg px-4 py-2 text-sm">

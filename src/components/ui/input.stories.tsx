@@ -98,7 +98,7 @@ export const AllVariants: Story = {
 
         <div className="max-w-md space-y-8">
           <section>
-            <h2 className="mb-4 text-lg font-semibold">入力タイプ</h2>
+            <h2 className="mb-4 text-lg font-bold">入力タイプ</h2>
             <div className="flex flex-col gap-4">
               <Input type="text" placeholder="テキスト入力" />
               <Input type="email" placeholder="you@example.com" autoComplete="email" />
@@ -122,7 +122,7 @@ export const AllVariants: Story = {
           </section>
 
           <section>
-            <h2 className="mb-4 text-lg font-semibold">状態</h2>
+            <h2 className="mb-4 text-lg font-bold">状態</h2>
             <div className="flex flex-col gap-4">
               <Input placeholder="通常" />
               <Input placeholder="無効" disabled />

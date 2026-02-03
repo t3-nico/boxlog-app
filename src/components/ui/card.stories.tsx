@@ -67,9 +67,7 @@ export const WithForm: Story = {
     <Card className="w-96">
       <CardHeader>
         <CardTitle>アカウント作成</CardTitle>
-        <CardDescription>
-          新しいアカウントを作成します。
-        </CardDescription>
+        <CardDescription>新しいアカウントを作成します。</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">
@@ -117,12 +115,12 @@ export const WithBorder: Story = {
 
 export const AllVariants: Story = {
   render: () => (
-    <div className="p-8 bg-background text-foreground">
-      <h1 className="text-2xl font-bold mb-8">Card - 全バリエーション</h1>
+    <div className="bg-background text-foreground p-8">
+      <h1 className="mb-8 text-2xl font-bold">Card - 全バリエーション</h1>
 
       <div className="space-y-8">
         <section>
-          <h2 className="text-lg font-semibold mb-4">基本構造</h2>
+          <h2 className="mb-4 text-lg font-bold">基本構造</h2>
           <Card className="max-w-md">
             <CardHeader>
               <CardTitle>タイトル</CardTitle>
@@ -138,7 +136,7 @@ export const AllVariants: Story = {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold mb-4">アクション付き</h2>
+          <h2 className="mb-4 text-lg font-bold">アクション付き</h2>
           <Card className="max-w-md">
             <CardHeader>
               <CardTitle>タスク一覧</CardTitle>
@@ -152,11 +150,11 @@ export const AllVariants: Story = {
             <CardContent>
               <ul className="space-y-2">
                 <li className="flex items-center gap-2">
-                  <span className="size-2 bg-primary rounded-full" />
+                  <span className="bg-primary size-2 rounded-full" />
                   タスク1
                 </li>
                 <li className="flex items-center gap-2">
-                  <span className="size-2 bg-primary rounded-full" />
+                  <span className="bg-primary size-2 rounded-full" />
                   タスク2
                 </li>
               </ul>
@@ -165,17 +163,15 @@ export const AllVariants: Story = {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold mb-4">カードグリッド</h2>
-          <div className="grid grid-cols-2 gap-4 max-w-2xl">
+          <h2 className="mb-4 text-lg font-bold">カードグリッド</h2>
+          <div className="grid max-w-2xl grid-cols-2 gap-4">
             {[1, 2, 3, 4].map((i) => (
               <Card key={i}>
                 <CardHeader>
                   <CardTitle>カード {i}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-muted-foreground">
-                    グリッドレイアウトのカード
-                  </p>
+                  <p className="text-muted-foreground text-sm">グリッドレイアウトのカード</p>
                 </CardContent>
               </Card>
             ))}
@@ -183,15 +179,29 @@ export const AllVariants: Story = {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold mb-4">コンポーネント構成</h2>
-          <ul className="text-sm text-muted-foreground list-disc list-inside">
-            <li><code>Card</code> - ルートコンテナ</li>
-            <li><code>CardHeader</code> - タイトル・説明エリア</li>
-            <li><code>CardTitle</code> - タイトル</li>
-            <li><code>CardDescription</code> - 説明</li>
-            <li><code>CardAction</code> - ヘッダー右上のアクション</li>
-            <li><code>CardContent</code> - メインコンテンツ</li>
-            <li><code>CardFooter</code> - フッター（ボタン等）</li>
+          <h2 className="mb-4 text-lg font-bold">コンポーネント構成</h2>
+          <ul className="text-muted-foreground list-inside list-disc text-sm">
+            <li>
+              <code>Card</code> - ルートコンテナ
+            </li>
+            <li>
+              <code>CardHeader</code> - タイトル・説明エリア
+            </li>
+            <li>
+              <code>CardTitle</code> - タイトル
+            </li>
+            <li>
+              <code>CardDescription</code> - 説明
+            </li>
+            <li>
+              <code>CardAction</code> - ヘッダー右上のアクション
+            </li>
+            <li>
+              <code>CardContent</code> - メインコンテンツ
+            </li>
+            <li>
+              <code>CardFooter</code> - フッター（ボタン等）
+            </li>
           </ul>
         </section>
       </div>

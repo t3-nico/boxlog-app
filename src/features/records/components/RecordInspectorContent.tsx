@@ -912,9 +912,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
             >
               <Smile className="size-4" />
               {hasScore && (
-                <span className="text-xs font-medium tabular-nums">
-                  {formData.fulfillment_score}
-                </span>
+                <span className="text-xs font-bold tabular-nums">{formData.fulfillment_score}</span>
               )}
             </button>
           </HoverTooltip>
@@ -973,7 +971,7 @@ function DraftModeHeader() {
       )}
 
       {/* タイトル（前面レイヤー） */}
-      <h2 className="relative z-10 text-base font-medium">Record 作成</h2>
+      <h2 className="relative z-10 text-base font-bold">Record 作成</h2>
     </div>
   );
 }

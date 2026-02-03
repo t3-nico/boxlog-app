@@ -20,7 +20,7 @@ export const Principles: Story = {
 
       <div className="mb-12 space-y-6">
         <div className="bg-card border-border rounded-lg border p-6">
-          <h3 className="mb-4 font-medium">原則: 関係性 = 距離</h3>
+          <h3 className="mb-4 font-bold">原則: 関係性 = 距離</h3>
           <ul className="text-muted-foreground space-y-2 text-sm">
             <li>
               <strong className="text-foreground">近い</strong> → 強く関連（同じグループ）
@@ -36,22 +36,22 @@ export const Principles: Story = {
         </div>
       </div>
 
-      <h2 className="mb-6 text-xl font-semibold">関係性の視覚化</h2>
+      <h2 className="mb-6 text-xl font-bold">関係性の視覚化</h2>
       <div className="grid gap-8 md:grid-cols-2">
         <div>
           <p className="text-muted-foreground mb-4 text-sm">❌ 一様なSpacing（関係性が不明瞭）</p>
           <div className="bg-container rounded-lg p-4">
             <div className="space-y-4">
               <div className="bg-card rounded-lg p-4">
-                <p className="font-medium">タイトル</p>
+                <p className="font-bold">タイトル</p>
                 <p className="text-muted-foreground text-sm">説明文</p>
               </div>
               <div className="bg-card rounded-lg p-4">
-                <p className="font-medium">タイトル</p>
+                <p className="font-bold">タイトル</p>
                 <p className="text-muted-foreground text-sm">説明文</p>
               </div>
               <div className="bg-card rounded-lg p-4">
-                <p className="font-medium">別セクション</p>
+                <p className="font-bold">別セクション</p>
                 <p className="text-muted-foreground text-sm">説明文</p>
               </div>
             </div>
@@ -63,17 +63,17 @@ export const Principles: Story = {
           <div className="bg-container rounded-lg p-4">
             <div className="space-y-2">
               <div className="bg-card rounded-lg p-4">
-                <p className="font-medium">タイトル</p>
+                <p className="font-bold">タイトル</p>
                 <p className="text-muted-foreground text-sm">説明文</p>
               </div>
               <div className="bg-card rounded-lg p-4">
-                <p className="font-medium">タイトル</p>
+                <p className="font-bold">タイトル</p>
                 <p className="text-muted-foreground text-sm">説明文</p>
               </div>
             </div>
             <div className="mt-6">
               <div className="bg-card rounded-lg p-4">
-                <p className="font-medium">別セクション</p>
+                <p className="font-bold">別セクション</p>
                 <p className="text-muted-foreground text-sm">異なるグループは大きく離す</p>
               </div>
             </div>
@@ -108,7 +108,7 @@ export const Scale: Story = {
               <code className="bg-container rounded px-2 py-1 text-xs">{size}</code>
             </div>
             <div className="text-muted-foreground w-12 text-xs">{px}</div>
-            <div className={`w-16 text-sm ${highlight ? 'font-medium' : 'text-muted-foreground'}`}>
+            <div className={`w-16 text-sm ${highlight ? 'font-bold' : 'text-muted-foreground'}`}>
               {name}
             </div>
             <div className="bg-container flex-1 overflow-hidden rounded">
@@ -143,7 +143,7 @@ export const ComponentPatterns: Story = {
       <div className="space-y-12">
         {/* ボタン */}
         <div>
-          <h3 className="mb-4 font-medium">ボタン</h3>
+          <h3 className="mb-4 font-bold">ボタン</h3>
           <div className="flex flex-wrap items-start gap-8">
             <div className="text-center">
               <button className="bg-primary text-primary-foreground rounded-lg px-2 py-1 text-sm">
@@ -174,11 +174,11 @@ export const ComponentPatterns: Story = {
 
         {/* カード */}
         <div>
-          <h3 className="mb-4 font-medium">カード</h3>
+          <h3 className="mb-4 font-bold">カード</h3>
           <div className="flex flex-wrap items-start gap-8">
             <div>
               <div className="bg-card border-border w-64 rounded-lg border p-4">
-                <p className="font-medium">カードタイトル</p>
+                <p className="font-bold">カードタイトル</p>
                 <p className="text-muted-foreground mt-1 text-sm">説明テキスト</p>
               </div>
               <p className="text-muted-foreground mt-2 text-xs">
@@ -187,7 +187,7 @@ export const ComponentPatterns: Story = {
             </div>
             <div>
               <div className="bg-card border-border w-64 rounded-lg border p-6">
-                <p className="text-lg font-medium">大きなカード</p>
+                <p className="text-lg font-bold">大きなカード</p>
                 <p className="text-muted-foreground mt-2 text-sm">より広い余白</p>
               </div>
               <p className="text-muted-foreground mt-2 text-xs">
@@ -199,7 +199,7 @@ export const ComponentPatterns: Story = {
 
         {/* リスト */}
         <div>
-          <h3 className="mb-4 font-medium">リスト項目</h3>
+          <h3 className="mb-4 font-bold">リスト項目</h3>
           <div className="bg-card border-border w-64 rounded-lg border">
             <div className="border-border border-b px-4 py-2">項目1</div>
             <div className="border-border border-b px-4 py-2">項目2</div>
@@ -212,9 +212,9 @@ export const ComponentPatterns: Story = {
 
         {/* モーダル */}
         <div>
-          <h3 className="mb-4 font-medium">モーダル/ダイアログ</h3>
+          <h3 className="mb-4 font-bold">モーダル/ダイアログ</h3>
           <div className="bg-card border-border w-80 rounded-2xl border p-6 shadow-xl">
-            <h4 className="text-lg font-semibold">モーダルタイトル</h4>
+            <h4 className="text-lg font-bold">モーダルタイトル</h4>
             <p className="text-muted-foreground mt-2 text-sm">
               モーダルは広めの余白で重要性を強調。
             </p>
@@ -234,10 +234,10 @@ export const ComponentPatterns: Story = {
 
         {/* フォーム */}
         <div>
-          <h3 className="mb-4 font-medium">フォーム</h3>
+          <h3 className="mb-4 font-bold">フォーム</h3>
           <div className="w-64 space-y-4">
             <div className="space-y-1">
-              <label className="text-sm font-medium">ラベル</label>
+              <label className="text-sm font-bold">ラベル</label>
               <input
                 type="text"
                 className="bg-input border-border w-full rounded-lg border px-4 py-2"
@@ -245,7 +245,7 @@ export const ComponentPatterns: Story = {
               />
             </div>
             <div className="space-y-1">
-              <label className="text-sm font-medium">ラベル</label>
+              <label className="text-sm font-bold">ラベル</label>
               <input
                 type="text"
                 className="bg-input border-border w-full rounded-lg border px-4 py-2"
@@ -373,7 +373,7 @@ export const NestedSpacing: Story = {
           </div>
 
           <div className="bg-card rounded-lg p-6">
-            <p className="font-medium">別セクション</p>
+            <p className="font-bold">別セクション</p>
             <p className="text-muted-foreground mt-2 text-sm">セクション間は大きく離す (gap-6)</p>
           </div>
         </div>
@@ -397,7 +397,7 @@ export const QuickReference: Story = {
 
       <div className="grid gap-6 md:grid-cols-2">
         <div className="bg-card border-border rounded-lg border p-4">
-          <h3 className="mb-4 font-medium">Gap（要素間）</h3>
+          <h3 className="mb-4 font-bold">Gap（要素間）</h3>
           <table className="w-full text-sm">
             <tbody className="divide-border divide-y">
               <tr>
@@ -435,7 +435,7 @@ export const QuickReference: Story = {
         </div>
 
         <div className="bg-card border-border rounded-lg border p-4">
-          <h3 className="mb-4 font-medium">Padding（内側余白）</h3>
+          <h3 className="mb-4 font-bold">Padding（内側余白）</h3>
           <table className="w-full text-sm">
             <tbody className="divide-border divide-y">
               <tr>
@@ -473,7 +473,7 @@ export const QuickReference: Story = {
         </div>
 
         <div className="bg-card border-border rounded-lg border p-4">
-          <h3 className="mb-4 font-medium">ボタンのPadding</h3>
+          <h3 className="mb-4 font-bold">ボタンのPadding</h3>
           <table className="w-full text-sm">
             <tbody className="divide-border divide-y">
               <tr>
@@ -499,7 +499,7 @@ export const QuickReference: Story = {
         </div>
 
         <div className="bg-card border-border rounded-lg border p-4">
-          <h3 className="mb-4 font-medium">避けるべきパターン</h3>
+          <h3 className="mb-4 font-bold">避けるべきパターン</h3>
           <ul className="text-muted-foreground space-y-2 text-sm">
             <li className="flex items-start gap-2">
               <span className="text-destructive">✗</span>
