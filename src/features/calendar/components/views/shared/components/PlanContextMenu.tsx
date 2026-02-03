@@ -173,7 +173,7 @@ export const EventContextMenu = ({
               key={item.label}
               onClick={() => handleAction(item.action)}
               className={cn(
-                'flex w-full items-center gap-3 rounded px-3 py-2 text-left transition-colors',
+                'flex w-full items-center gap-4 rounded px-4 py-2 text-left transition-colors',
                 item.dangerous
                   ? 'text-destructive hover:bg-destructive-state-hover'
                   : 'text-foreground hover:bg-state-hover',

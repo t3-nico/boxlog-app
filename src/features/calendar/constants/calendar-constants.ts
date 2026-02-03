@@ -10,15 +10,15 @@ export const TIME_LABEL_WIDTH = 64; // 時間ラベルの幅（ピクセル）
 export const ALL_DAY_ROW_HEIGHT = 24; // 全日プラン1行の高さ（ピクセル）
 export const HEADER_HEIGHT = 56; // 日付ヘッダーの高さ（ピクセル）
 
-// カラー定義
+// カラー定義（セマンティックトークン使用）
 export const GRID_COLORS = {
   border: 'border-border',
   borderLight: 'border-border/50',
-  weekend: 'bg-gray-50/50 dark:bg-gray-800/20',
-  businessHours: 'bg-white dark:bg-gray-900',
-  nonBusinessHours: 'bg-gray-50/30 dark:bg-gray-800/30',
-  currentTime: 'bg-red-500 dark:bg-red-400',
-  allDaySection: 'bg-gray-50 dark:bg-gray-800/50',
+  weekend: 'bg-muted/50',
+  businessHours: 'bg-background',
+  nonBusinessHours: 'bg-muted/30',
+  currentTime: 'bg-primary',
+  allDaySection: 'bg-muted/50',
 };
 
 // スクロール設定
@@ -65,12 +65,12 @@ export const CALENDAR_CLASSES = {
   allDayRowHeight: 'h-6', // 24px = h-6
   headerHeight: 'h-14', // 56px = h-14
 
-  // 色・背景
-  currentTimeColor: 'bg-red-500',
+  // 色・背景（セマンティックトークン）
+  currentTimeColor: 'bg-primary',
   gridBorder: 'border-border',
-  weekendBg: 'bg-neutral-50 dark:bg-neutral-800/20',
-  businessHoursBg: 'bg-white dark:bg-neutral-950',
-  nonBusinessHoursBg: 'bg-neutral-50/50 dark:bg-neutral-800/30',
+  weekendBg: 'bg-muted/50',
+  businessHoursBg: 'bg-background',
+  nonBusinessHoursBg: 'bg-muted/30',
 
   // プランブロック（shadowなし：フラットデザイン）
   planShadow: '',

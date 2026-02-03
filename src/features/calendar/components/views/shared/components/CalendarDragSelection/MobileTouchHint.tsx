@@ -75,14 +75,14 @@ export const MobileTouchHint = memo(function MobileTouchHint({ className }: Mobi
       className={cn(
         'fixed right-4 bottom-20 left-4 z-50',
         'bg-primary text-primary-foreground',
-        'rounded-2xl px-4 py-3 shadow-lg',
+        'rounded-2xl px-4 py-4 shadow-lg',
         'animate-in slide-in-from-bottom-4 fade-in duration-300',
         className,
       )}
       role="alert"
       aria-live="polite"
     >
-      <div className="flex items-start gap-3">
+      <div className="flex items-start gap-4">
         <div className="flex-1">
           <p className="text-sm font-normal">{t('mobile.touchHint.title')}</p>
           <p className="mt-1 text-xs opacity-90">{t('mobile.touchHint.description')}</p>

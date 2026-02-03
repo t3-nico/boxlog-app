@@ -1,12 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import {
-  Calendar,
-  CreditCard,
-  Settings,
-  Smile,
-  User,
-  Calculator,
-} from 'lucide-react';
+import { Calculator, Calendar, CreditCard, Settings, Smile, User } from 'lucide-react';
 import { useState } from 'react';
 
 import { Button } from './button';
@@ -36,7 +29,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   render: () => (
-    <Command className="rounded-lg border shadow-md w-96">
+    <Command className="w-96 rounded-lg border shadow-md">
       <CommandInput placeholder="検索..." />
       <CommandList>
         <CommandEmpty>結果がありません。</CommandEmpty>
@@ -84,7 +77,7 @@ export const Dialog: Story = {
       <>
         <Button variant="outline" onClick={() => setOpen(true)}>
           コマンドパレットを開く
-          <kbd className="ml-2 pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
+          <kbd className="bg-muted text-muted-foreground pointer-events-none ml-2 inline-flex h-5 items-center gap-1 rounded border px-2 font-mono text-[10px] font-medium opacity-100 select-none">
             <span className="text-xs">⌘</span>K
           </kbd>
         </Button>
@@ -115,7 +108,7 @@ export const Dialog: Story = {
 
 export const WithShortcuts: Story = {
   render: () => (
-    <Command className="rounded-lg border shadow-md w-96">
+    <Command className="w-96 rounded-lg border shadow-md">
       <CommandInput placeholder="検索..." />
       <CommandList>
         <CommandEmpty>結果がありません。</CommandEmpty>
@@ -146,13 +139,13 @@ export const AllVariants: Story = {
   render: function AllVariantsStory() {
     const [dialogOpen, setDialogOpen] = useState(false);
     return (
-      <div className="p-8 bg-background text-foreground">
-        <h1 className="text-2xl font-bold mb-8">Command - 全バリエーション</h1>
+      <div className="bg-background text-foreground p-8">
+        <h1 className="mb-8 text-2xl font-bold">Command - 全バリエーション</h1>
 
         <div className="space-y-8">
           <section>
-            <h2 className="text-lg font-semibold mb-4">インライン</h2>
-            <Command className="rounded-lg border shadow-md w-full max-w-md">
+            <h2 className="mb-4 text-lg font-semibold">インライン</h2>
+            <Command className="w-full max-w-md rounded-lg border shadow-md">
               <CommandInput placeholder="検索..." />
               <CommandList>
                 <CommandEmpty>結果がありません。</CommandEmpty>
@@ -171,7 +164,7 @@ export const AllVariants: Story = {
           </section>
 
           <section>
-            <h2 className="text-lg font-semibold mb-4">ダイアログ</h2>
+            <h2 className="mb-4 text-lg font-semibold">ダイアログ</h2>
             <Button variant="outline" onClick={() => setDialogOpen(true)}>
               ⌘K でコマンドパレットを開く
             </Button>
@@ -204,8 +197,8 @@ export const AllVariants: Story = {
           </section>
 
           <section>
-            <h2 className="text-lg font-semibold mb-4">使用場面</h2>
-            <ul className="text-sm text-muted-foreground list-disc list-inside">
+            <h2 className="mb-4 text-lg font-semibold">使用場面</h2>
+            <ul className="text-muted-foreground list-inside list-disc text-sm">
               <li>コマンドパレット（⌘K）</li>
               <li>検索可能なセレクター</li>
               <li>アクションメニュー</li>

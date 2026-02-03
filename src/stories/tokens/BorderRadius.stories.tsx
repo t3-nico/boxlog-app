@@ -125,15 +125,15 @@ export const UseCases: Story = {
           <input
             type="text"
             placeholder="rounded-lg（標準）"
-            className="bg-input border-border w-64 rounded-lg border px-3 py-2"
+            className="bg-input border-border w-64 rounded-lg border px-4 py-2"
           />
         </div>
 
         <div>
           <h3 className="mb-4 font-medium">バッジ・タグ</h3>
           <div className="flex gap-2">
-            <span className="bg-primary/10 text-primary rounded px-2 py-0.5 text-xs">rounded</span>
-            <span className="bg-primary/10 text-primary rounded-full px-2 py-0.5 text-xs">
+            <span className="bg-primary/10 text-primary rounded px-2 py-1 text-xs">rounded</span>
+            <span className="bg-primary/10 text-primary rounded-full px-2 py-1 text-xs">
               rounded-full
             </span>
           </div>
@@ -160,7 +160,7 @@ export const PartialRadius: Story = {
             <input
               type="text"
               placeholder="入力..."
-              className="bg-input border-border w-48 rounded-l-lg border border-r-0 px-3 py-2"
+              className="bg-input border-border w-48 rounded-l-lg border border-r-0 px-4 py-2"
             />
             <button className="bg-primary text-primary-foreground rounded-r-lg px-4 py-2">
               検索

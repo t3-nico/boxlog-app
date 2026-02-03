@@ -47,7 +47,7 @@ export function PlanSidebarList() {
               href={item.href}
               prefetch={true}
               className={cn(
-                'flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors',
+                'flex items-center gap-2 rounded-lg px-4 py-2 text-sm transition-colors',
                 isActive(item.href)
                   ? 'bg-state-selected text-foreground'
                   : 'text-muted-foreground hover:bg-state-hover',

@@ -20,7 +20,7 @@ export const Default: Story = {
 
 export const CardSkeleton: Story = {
   render: () => (
-    <div className="flex flex-col gap-4 p-4 border border-border rounded-lg w-80">
+    <div className="border-border flex w-80 flex-col gap-4 rounded-lg border p-4">
       <Skeleton className="h-32 w-full" />
       <div className="space-y-2">
         <Skeleton className="h-4 w-3/4" />
@@ -33,11 +33,11 @@ export const CardSkeleton: Story = {
 
 export const ListSkeleton: Story = {
   render: () => (
-    <div className="space-y-4 w-80">
+    <div className="w-80 space-y-4">
       {[1, 2, 3].map((i) => (
         <div key={i} className="flex items-center gap-4">
           <Skeleton className="h-12 w-12 rounded-full" />
-          <div className="space-y-2 flex-1">
+          <div className="flex-1 space-y-2">
             <Skeleton className="h-4 w-24" />
             <Skeleton className="h-4 w-full" />
           </div>
@@ -49,12 +49,12 @@ export const ListSkeleton: Story = {
 
 export const AllVariants: Story = {
   render: () => (
-    <div className="p-8 bg-background text-foreground">
-      <h1 className="text-2xl font-bold mb-8">Skeleton - 実際の使用パターン</h1>
+    <div className="bg-background text-foreground p-8">
+      <h1 className="mb-8 text-2xl font-bold">Skeleton - 実際の使用パターン</h1>
 
       <div className="space-y-12">
         <section>
-          <h2 className="text-lg font-semibold mb-4">基本（pulseアニメーション）</h2>
+          <h2 className="mb-4 text-lg font-semibold">基本（pulseアニメーション）</h2>
           <div className="space-y-2">
             <Skeleton className="h-4 w-48" />
             <Skeleton className="h-4 w-32" />
@@ -63,8 +63,8 @@ export const AllVariants: Story = {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold mb-4">カードスケルトン</h2>
-          <div className="flex flex-col gap-4 p-4 border border-border rounded-lg max-w-xs">
+          <h2 className="mb-4 text-lg font-semibold">カードスケルトン</h2>
+          <div className="border-border flex max-w-xs flex-col gap-4 rounded-lg border p-4">
             <Skeleton className="h-32 w-full" />
             <div className="space-y-2">
               <Skeleton className="h-4 w-3/4" />
@@ -75,12 +75,12 @@ export const AllVariants: Story = {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold mb-4">リストスケルトン</h2>
-          <div className="space-y-3 max-w-sm">
+          <h2 className="mb-4 text-lg font-semibold">リストスケルトン</h2>
+          <div className="max-w-sm space-y-4">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="flex items-center gap-3">
+              <div key={i} className="flex items-center gap-4">
                 <Skeleton className="h-10 w-10 rounded-full" />
-                <div className="space-y-2 flex-1">
+                <div className="flex-1 space-y-2">
                   <Skeleton className="h-3 w-20" />
                   <Skeleton className="h-3 w-full" />
                 </div>
@@ -90,8 +90,8 @@ export const AllVariants: Story = {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold mb-4">使用方法</h2>
-          <ul className="text-sm text-muted-foreground list-disc list-inside">
+          <h2 className="mb-4 text-lg font-semibold">使用方法</h2>
+          <ul className="text-muted-foreground list-inside list-disc text-sm">
             <li>classNameでh-*（高さ）とw-*（幅）を指定</li>
             <li>rounded-fullで円形に</li>
             <li>実際のコンテンツと同じレイアウトにする</li>

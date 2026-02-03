@@ -242,7 +242,7 @@ export const TagCreateModal = ({
                   e.stopPropagation();
                   setIsParentDropdownOpen(!isParentDropdownOpen);
                 }}
-                className="border-input bg-background hover:bg-state-hover flex h-9 w-full items-center justify-between rounded-lg border px-3 text-sm"
+                className="border-input bg-background hover:bg-state-hover flex h-9 w-full items-center justify-between rounded-lg border px-4 text-sm"
               >
                 <span className={selectedParent ? 'text-foreground' : 'text-muted-foreground'}>
                   {selectedParent ? selectedParent.name : t('tags.sidebar.uncategorized')}
@@ -259,7 +259,7 @@ export const TagCreateModal = ({
                       setParentId(null);
                       setIsParentDropdownOpen(false);
                     }}
-                    className="hover:bg-state-hover w-full px-3 py-2 text-left text-sm"
+                    className="hover:bg-state-hover w-full px-4 py-2 text-left text-sm"
                   >
                     {t('tags.sidebar.uncategorized')}
                   </button>
@@ -271,7 +271,7 @@ export const TagCreateModal = ({
                         setParentId(parent.id);
                         setIsParentDropdownOpen(false);
                       }}
-                      className="hover:bg-state-hover flex w-full items-center gap-2 px-3 py-2 text-left text-sm"
+                      className="hover:bg-state-hover flex w-full items-center gap-2 px-4 py-2 text-left text-sm"
                     >
                       <span
                         className="size-3 rounded-full"

@@ -7,7 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 export default function AuthLoading() {
   return (
     <div
-      className="bg-surface-container flex min-h-svh flex-col items-center justify-center p-4 md:p-10"
+      className="bg-surface-container flex min-h-svh flex-col items-center justify-center p-4 md:p-8"
       role="status"
       aria-live="polite"
       aria-label="Loading authentication"

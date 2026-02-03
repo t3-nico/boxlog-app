@@ -114,7 +114,7 @@ export function StatsToolbar() {
       </div>
 
       {/* 日付範囲表示 */}
-      <div className="bg-surface-container text-foreground flex h-8 items-center gap-2 rounded-lg px-3 text-sm font-normal">
+      <div className="bg-surface-container text-foreground flex h-8 items-center gap-2 rounded-lg px-4 text-sm font-normal">
         <Calendar className="text-muted-foreground size-4" />
         <span>{formatDateRange()}</span>
       </div>
@@ -139,7 +139,7 @@ export function StatsToolbar() {
       <HoverTooltip content={t('stats.toolbar.compareTooltip')} side="bottom">
         <Button
           variant={compareEnabled ? 'outline' : 'ghost'}
-          className={cn('gap-1.5', compareEnabled && 'bg-surface-container')}
+          className={cn('gap-2', compareEnabled && 'bg-surface-container')}
           onClick={() => setCompareEnabled(!compareEnabled)}
         >
           <GitCompareArrows className="size-4" />
@@ -171,7 +171,7 @@ export function StatsToolbar() {
 
       {/* エクスポート */}
       <HoverTooltip content={t('stats.toolbar.exportTooltip')} side="bottom">
-        <Button variant="outline" className="gap-1.5">
+        <Button variant="outline" className="gap-2">
           <Download className="size-4" />
           <span className="hidden sm:inline">{t('stats.toolbar.export')}</span>
         </Button>

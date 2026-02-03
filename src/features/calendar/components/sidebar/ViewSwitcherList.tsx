@@ -86,7 +86,7 @@ export function ViewSwitcherList() {
   };
 
   return (
-    <div className="flex flex-col gap-0.5 px-2 py-2 md:hidden">
+    <div className="flex flex-col gap-1 px-2 py-2 md:hidden">
       {VIEW_OPTIONS.map((option) => {
         const isActive = currentView === option.value;
 
@@ -98,7 +98,7 @@ export function ViewSwitcherList() {
             type="button"
             onClick={() => handleSelect(option.value)}
             className={cn(
-              'flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition-colors',
+              'flex w-full items-center justify-between rounded-lg px-4 py-2 text-left text-sm transition-colors',
               'text-muted-foreground hover:bg-state-hover hover:text-foreground',
               isActive && 'text-foreground font-normal',
             )}
@@ -109,7 +109,7 @@ export function ViewSwitcherList() {
             </div>
             <div className="flex items-center gap-2">
               {isActive && <Check className="text-primary size-4" />}
-              <span className="bg-surface-container text-muted-foreground rounded px-1.5 py-0.5 font-mono text-xs">
+              <span className="bg-surface-container text-muted-foreground rounded px-2 py-1 font-mono text-xs">
                 {option.shortcut}
               </span>
             </div>

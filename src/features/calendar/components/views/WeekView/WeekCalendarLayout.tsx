@@ -330,7 +330,7 @@ export const WeekCalendarLayout = ({
                         <button
                           type="button"
                           onClick={createDeletePlanHandler(plan.id)}
-                          className={`bg-card/90 hover:bg-card absolute top-1 right-1 z-30 rounded p-1.5 shadow-lg transition-all duration-200 ${
+                          className={`bg-card/90 hover:bg-card absolute top-1 right-1 z-30 rounded p-2 shadow-lg transition-all duration-200 ${
                             selectedPlanId === plan.id
                               ? 'opacity-100'
                               : 'opacity-100 sm:opacity-0 sm:group-hover:opacity-100'
@@ -343,7 +343,7 @@ export const WeekCalendarLayout = ({
                         <div className="h-full overflow-hidden p-1 text-white sm:p-2">
                           <div className="flex h-full flex-col">
                             <div className="min-h-0 flex-1">
-                              <div className="mb-0.5 line-clamp-2 text-xs leading-tight font-normal">
+                              <div className="mb-1 line-clamp-2 text-xs leading-tight font-normal">
                                 {plan.title}
                               </div>
                               {height > 30 ? (

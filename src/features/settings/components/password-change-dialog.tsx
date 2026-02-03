@@ -171,7 +171,7 @@ export function PasswordChangeDialog({ open, onOpenChange }: PasswordChangeDialo
                     minLength={8}
                     maxLength={64}
                     autoComplete="current-password"
-                    className="pr-10"
+                    className="pr-8"
                   />
                   <Button
                     type="button"
@@ -201,7 +201,7 @@ export function PasswordChangeDialog({ open, onOpenChange }: PasswordChangeDialo
                     minLength={8}
                     maxLength={64}
                     autoComplete="new-password"
-                    className="pr-10"
+                    className="pr-8"
                   />
                   <Button
                     type="button"
@@ -230,7 +230,7 @@ export function PasswordChangeDialog({ open, onOpenChange }: PasswordChangeDialo
                     minLength={8}
                     maxLength={64}
                     autoComplete="new-password"
-                    className="pr-10"
+                    className="pr-8"
                   />
                   <Button
                     type="button"
@@ -249,7 +249,7 @@ export function PasswordChangeDialog({ open, onOpenChange }: PasswordChangeDialo
               </div>
 
               {error && (
-                <div className="bg-destructive-container text-destructive rounded-lg p-3 text-sm">
+                <div className="bg-destructive-container text-destructive rounded-lg p-4 text-sm">
                   {error}
                 </div>
               )}

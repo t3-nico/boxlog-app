@@ -100,7 +100,7 @@ export function DateTimePopoverContent({
 
       {/* 時刻行 */}
       <div className="border-border/50 border-t">
-        <div className="flex min-h-10 items-center gap-2 px-3 py-2">
+        <div className="flex min-h-10 items-center gap-2 px-4 py-2">
           <Clock className="text-muted-foreground size-4 flex-shrink-0" />
           <div className="flex flex-1 flex-col gap-1">
             <div className="flex h-8 items-center">
@@ -123,7 +123,7 @@ export function DateTimePopoverContent({
 
       {/* 繰り返し行 */}
       <div className="border-border/50 border-t">
-        <div className="flex min-h-10 items-center gap-2 px-3 py-2">
+        <div className="flex min-h-10 items-center gap-2 px-4 py-2">
           <Repeat className="text-muted-foreground size-4 flex-shrink-0" />
           <div className="flex flex-1 flex-col gap-1">
             <div className="relative flex h-8 items-center" ref={recurrenceRef}>
@@ -150,10 +150,10 @@ export function DateTimePopoverContent({
               </HoverTooltip>
 
               {showRecurrencePopover && !isRecurrenceDisabled && (
-                <div className="border-border bg-popover absolute top-10 left-0 z-50 w-48 rounded-lg border shadow-md">
+                <div className="border-border bg-popover absolute top-8 left-0 z-50 w-48 rounded-lg border shadow-md">
                   <div className="p-1">
                     <button
-                      className="hover:bg-state-hover flex w-full items-center justify-between rounded px-2 py-1.5 text-left text-sm"
+                      className="hover:bg-state-hover flex w-full items-center justify-between rounded px-2 py-2 text-left text-sm"
                       onClick={() => {
                         onRepeatTypeChange('');
                         onRecurrenceRuleChange(null);
@@ -168,7 +168,7 @@ export function DateTimePopoverContent({
                     {RECURRENCE_OPTIONS.slice(1).map((option) => (
                       <button
                         key={option.value}
-                        className="hover:bg-state-hover flex w-full items-center justify-between rounded px-2 py-1.5 text-left text-sm"
+                        className="hover:bg-state-hover flex w-full items-center justify-between rounded px-2 py-2 text-left text-sm"
                         onClick={() => {
                           onRepeatTypeChange(option.value);
                           onRecurrenceRuleChange(null);
@@ -192,7 +192,7 @@ export function DateTimePopoverContent({
 
       {/* 通知行 */}
       <div className="border-border/50 border-t">
-        <div className="flex min-h-10 items-center gap-2 px-3 py-2">
+        <div className="flex min-h-10 items-center gap-2 px-4 py-2">
           <Bell className="text-muted-foreground size-4 flex-shrink-0" />
           <div className="flex h-8 flex-1 items-center">
             <HoverTooltip

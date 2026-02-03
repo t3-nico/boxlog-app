@@ -81,7 +81,7 @@ export const InCard: Story = {
       <ScrollArea className="h-64">
         <div className="p-4">
           {Array.from({ length: 15 }).map((_, i) => (
-            <div key={i} className="border-border border-b py-3 last:border-0">
+            <div key={i} className="border-border border-b py-4 last:border-0">
               <p className="text-sm font-medium">通知 {i + 1}</p>
               <p className="text-muted-foreground text-xs">1時間前</p>
             </div>

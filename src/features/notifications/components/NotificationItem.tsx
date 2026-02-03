@@ -83,7 +83,7 @@ export function NotificationItem({
 
   return (
     <div
-      className={`rounded-2xl px-3 py-2.5 transition-colors ${
+      className={`rounded-2xl px-4 py-2 transition-colors ${
         !isRead ? 'bg-state-active' : 'hover:bg-state-hover'
       } ${actionUrl ? 'cursor-pointer' : ''}`}
       onClick={handleClick}
@@ -91,9 +91,9 @@ export function NotificationItem({
       role={actionUrl || !isRead ? 'button' : undefined}
       tabIndex={actionUrl || !isRead ? 0 : undefined}
     >
-      <div className="flex items-start gap-2.5">
+      <div className="flex items-start gap-2">
         {/* アイコン */}
-        <div className={`mt-0.5 shrink-0 ${typeColors[type]}`}>{typeIcons[type]}</div>
+        <div className={`mt-1 shrink-0 ${typeColors[type]}`}>{typeIcons[type]}</div>
 
         {/* コンテンツ */}
         <div className="min-w-0 flex-1">
@@ -103,9 +103,7 @@ export function NotificationItem({
               <span className="bg-primary h-1.5 w-1.5 shrink-0 rounded-full" aria-label="未読" />
             )}
           </div>
-          {message && (
-            <p className="text-muted-foreground mt-0.5 line-clamp-1 text-xs">{message}</p>
-          )}
+          {message && <p className="text-muted-foreground mt-1 line-clamp-1 text-xs">{message}</p>}
           <span className="text-muted-foreground mt-1 block text-xs">{formatTime(createdAt)}</span>
         </div>
 

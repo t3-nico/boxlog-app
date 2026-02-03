@@ -70,7 +70,7 @@ export function DueDateIconButton({
                 <button
                   type="button"
                   onClick={handleClear}
-                  className="hover:bg-state-hover -mr-1 rounded p-0.5 opacity-70 transition-opacity hover:opacity-100"
+                  className="hover:bg-state-hover -mr-1 rounded p-1 opacity-70 transition-opacity hover:opacity-100"
                   aria-label="期限をクリア"
                 >
                   <X className="size-3" />

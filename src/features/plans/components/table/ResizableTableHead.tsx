@@ -135,7 +135,7 @@ export function ResizableTableHead({
           <button
             type="button"
             onClick={handleSort}
-            className="hover:bg-state-hover -ml-1 flex min-w-0 items-center gap-1 rounded-lg px-1 py-0.5 transition-colors"
+            className="hover:bg-state-hover -ml-1 flex min-w-0 items-center gap-1 rounded-lg px-1 py-1 transition-colors"
           >
             {ColumnIcon && <ColumnIcon className="text-muted-foreground size-4 shrink-0" />}
             <span className="truncate">{children}</span>

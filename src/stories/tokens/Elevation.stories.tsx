@@ -125,9 +125,9 @@ export const UseCases: Story = {
             Level 4: ドロップダウン <code className="text-muted-foreground text-xs">shadow-lg</code>
           </h3>
           <div className="bg-card border-border w-48 rounded-lg border p-2 shadow-lg">
-            <div className="hover:bg-state-hover rounded px-3 py-2">メニュー1</div>
-            <div className="hover:bg-state-hover rounded px-3 py-2">メニュー2</div>
-            <div className="hover:bg-state-hover rounded px-3 py-2">メニュー3</div>
+            <div className="hover:bg-state-hover rounded px-4 py-2">メニュー1</div>
+            <div className="hover:bg-state-hover rounded px-4 py-2">メニュー2</div>
+            <div className="hover:bg-state-hover rounded px-4 py-2">メニュー3</div>
           </div>
         </div>
 

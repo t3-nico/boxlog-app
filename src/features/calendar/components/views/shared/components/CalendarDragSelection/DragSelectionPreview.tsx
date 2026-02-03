@@ -84,7 +84,7 @@ export const DragSelectionPreview = memo(function DragSelectionPreview({
         className={cn(
           'flex h-full flex-col',
           // モバイルでは大きめのパディング
-          isMobile ? 'p-3' : calendarStyles.event.padding,
+          isMobile ? 'p-4' : calendarStyles.event.padding,
         )}
       >
         {/* アイコン + タイトル: PlanCardのドラフトと統一 */}

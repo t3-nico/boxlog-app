@@ -15,7 +15,7 @@ export function AgendaViewSkeleton() {
     <div className="bg-background flex h-full w-full flex-1 flex-col overflow-hidden">
       <div className="divide-border divide-y">
         {Array.from({ length: 8 }).map((_, i) => (
-          <div key={i} className="px-3 py-2.5 md:px-4 md:py-3">
+          <div key={i} className="px-4 py-2 md:px-4 md:py-4">
             {/* 上段: 日付・時間 */}
             <div className="mb-1 flex items-center gap-2">
               <Skeleton className="h-4 w-10" />

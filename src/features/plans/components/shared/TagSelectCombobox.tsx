@@ -97,7 +97,7 @@ function ParentTagHeader({
 
   return (
     <CommandItem value={tag.id} className="cursor-pointer p-0" onSelect={() => {}}>
-      <div className="flex w-full items-center gap-2 py-1.5 pr-2 pl-2" onClick={onToggleExpand}>
+      <div className="flex w-full items-center gap-2 py-2 pr-2 pl-2" onClick={onToggleExpand}>
         {/* チェックボックス（選択トグル、展開には影響しない） */}
         <button
           type="button"

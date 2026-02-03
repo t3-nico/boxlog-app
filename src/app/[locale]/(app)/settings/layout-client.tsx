@@ -94,7 +94,7 @@ export function SettingsLayoutClient({ children }: { children: React.ReactNode }
                   <Link
                     key={category.id}
                     href={href}
-                    className="text-muted-foreground active:bg-state-hover flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm transition-colors"
+                    className="text-muted-foreground active:bg-state-hover flex w-full items-center gap-4 rounded-lg px-4 py-2 text-left text-sm transition-colors"
                   >
                     <Icon className="size-4 shrink-0" />
                     <span className="font-normal">{t(category.labelKey)}</span>
@@ -110,7 +110,7 @@ export function SettingsLayoutClient({ children }: { children: React.ReactNode }
                 type="button"
                 onClick={handleLogout}
                 disabled={isLoggingOut}
-                className="text-destructive active:bg-state-hover flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm transition-colors disabled:opacity-50"
+                className="text-destructive active:bg-state-hover flex w-full items-center gap-4 rounded-lg px-4 py-2 text-left text-sm transition-colors disabled:opacity-50"
               >
                 <LogOut className="size-4 shrink-0" />
                 <span className="font-normal">

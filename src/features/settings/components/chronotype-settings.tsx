@@ -100,7 +100,7 @@ function TimelineBar({ zones }: { zones: ProductivityZone[] }) {
       </div>
 
       {/* 凡例 */}
-      <div className="flex flex-wrap gap-3 text-xs">
+      <div className="flex flex-wrap gap-4 text-xs">
         {(['peak', 'good', 'moderate', 'low', 'sleep'] as const).map((level) => (
           <div key={level} className="flex items-center gap-1">
             <div className={cn(LEVEL_COLORS[level], 'h-3 w-3 rounded')} />
@@ -209,7 +209,7 @@ export function ChronotypeSettings() {
         <SettingsCard title={t('settings.chronotype.details')}>
           <div className="space-y-4">
             {/* タイプ名と説明 */}
-            <div className="flex items-start gap-3">
+            <div className="flex items-start gap-4">
               <span className="text-3xl">
                 {CHRONOTYPE_EMOJI[selectedType as Exclude<ChronotypeType, 'custom'>]}
               </span>
@@ -221,12 +221,12 @@ export function ChronotypeSettings() {
 
             {/* 24時間タイムライン */}
             <div className="pt-2">
-              <h5 className="mb-3 text-sm font-normal">{t('settings.chronotype.timeline')}</h5>
+              <h5 className="mb-4 text-sm font-normal">{t('settings.chronotype.timeline')}</h5>
               <TimelineBar zones={selectedProfile.productivityZones} />
             </div>
 
             {/* ピーク時間のハイライト */}
-            <div className="bg-success/12 flex items-center gap-2 rounded-2xl p-3">
+            <div className="bg-success/12 flex items-center gap-2 rounded-2xl p-4">
               <Star className="text-success h-4 w-4" />
               <div>
                 <span className="text-sm font-normal">{t('settings.chronotype.peakTime')}</span>

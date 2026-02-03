@@ -154,14 +154,14 @@ export function ReminderSelect({
       )}
 
       {showPopover && !disabled && (
-        <div className="border-border bg-popover absolute top-10 left-0 z-50 w-56 rounded-lg border shadow-md">
+        <div className="border-border bg-popover absolute top-8 left-0 z-50 w-56 rounded-lg border shadow-md">
           <div className="p-1">
             {REMINDER_OPTIONS.map((option, index) => (
               <>
                 {index === 1 && <div key="separator" className="border-border my-1 border-t" />}
                 <button
                   key={option.value}
-                  className="hover:bg-state-hover flex w-full items-center justify-between rounded px-2 py-1.5 text-left text-sm"
+                  className="hover:bg-state-hover flex w-full items-center justify-between rounded px-2 py-2 text-left text-sm"
                   onClick={() => {
                     onChange(option.value);
                     setShowPopover(false);

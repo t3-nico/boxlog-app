@@ -157,7 +157,7 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
                     key={tagItem.id}
                     htmlFor={`merge-target-${tagItem.id}`}
                     className={cn(
-                      'flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2 transition-colors',
+                      'flex cursor-pointer items-center gap-4 rounded-lg px-4 py-2 transition-colors',
                       'hover:bg-state-hover',
                       targetTagId === tagItem.id && 'bg-state-selected',
                     )}

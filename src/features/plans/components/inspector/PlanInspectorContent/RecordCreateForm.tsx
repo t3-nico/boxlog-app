@@ -434,7 +434,7 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
         </div>
 
         {/* 3行目: オプションアイコン */}
-        <div className="flex flex-wrap items-center gap-0.5 px-4 pt-2 pb-4">
+        <div className="flex flex-wrap items-center gap-1 px-4 pt-2 pb-4">
           {/* Tags */}
           <TagsIconButton
             tagIds={formData.tagIds}
@@ -516,7 +516,7 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
                               {planTags.slice(0, 2).map((tag) => (
                                 <span
                                   key={tag!.id}
-                                  className="rounded px-1 py-0.5 text-xs"
+                                  className="rounded px-1 py-1 text-xs"
                                   style={{
                                     backgroundColor: tag!.color ? `${tag!.color}20` : undefined,
                                     color: tag!.color || undefined,

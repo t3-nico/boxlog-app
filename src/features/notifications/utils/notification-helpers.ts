@@ -86,13 +86,13 @@ export function getNotificationTypeIcon(type: NotificationType): string {
 export const getNotificationTypeColor = (type: string) => {
   switch (type) {
     case 'system':
-      return 'text-blue-600 bg-blue-50 dark:text-blue-400 dark:bg-blue-900/30';
+      return 'text-info-foreground bg-info';
     case 'feature':
-      return 'text-green-600 bg-green-50 dark:text-green-400 dark:bg-green-900/30';
+      return 'text-success-foreground bg-success';
     case 'important':
-      return 'text-red-600 bg-red-50 dark:text-red-400 dark:bg-red-900/30';
+      return 'text-destructive-foreground bg-destructive';
     default:
-      return 'text-gray-600 bg-gray-50 dark:text-gray-400 dark:bg-gray-800';
+      return 'text-muted-foreground bg-muted';
   }
 };
 

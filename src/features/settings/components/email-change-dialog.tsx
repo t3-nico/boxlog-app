@@ -145,7 +145,7 @@ export function EmailChangeDialog({ open, onOpenChange, currentEmail }: EmailCha
               </div>
 
               {error && (
-                <div className="bg-destructive-container text-destructive rounded-lg p-3 text-sm">
+                <div className="bg-destructive-container text-destructive rounded-lg p-4 text-sm">
                   {error}
                 </div>
               )}

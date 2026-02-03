@@ -190,7 +190,7 @@ export const MobileDrawer = ({
         {/* ユーザー情報 */}
         {userInfo != null && (
           <div className="p-4">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               {userInfo.avatar ? (
                 <Image
                   src={userInfo.avatar}
@@ -230,7 +230,7 @@ export const MobileDrawer = ({
                   onClick={() => handleItemClick(item)}
                   disabled={item.disabled}
                   className={cn(
-                    'flex w-full items-center gap-3 px-4 py-3 text-left',
+                    'flex w-full items-center gap-4 px-4 py-4 text-left',
                     'hover:bg-state-hover transition-colors',
                     'disabled:cursor-not-allowed disabled:opacity-50',
                   )}
@@ -243,7 +243,7 @@ export const MobileDrawer = ({
 
                   {/* バッジ */}
                   {item.badge && item.badge > 0 ? (
-                    <div className="bg-primary text-primary-foreground flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-xs">
+                    <div className="bg-primary text-primary-foreground flex h-5 min-w-5 items-center justify-center rounded-full px-2 text-xs">
                       {item.badge > 99 ? '99+' : item.badge}
                     </div>
                   ) : null}

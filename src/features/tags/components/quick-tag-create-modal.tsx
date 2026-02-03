@@ -160,7 +160,7 @@ export const QuickTagCreateModal = ({ isOpen, onClose, onCreateTag }: QuickTagCr
           </div>
 
           {/* Preview */}
-          <div className="bg-surface-container rounded-2xl p-3">
+          <div className="bg-surface-container rounded-2xl p-4">
             <div className="text-muted-foreground mb-2 text-xs font-normal">
               {t('tags.form.preview')}:
             </div>

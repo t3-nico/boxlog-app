@@ -81,24 +81,18 @@ describe('time-grid-helpers', () => {
   });
 
   describe('getTimeSlotBgClass', () => {
-    it('深夜（0-6時）のクラスを返す', () => {
-      expect(getTimeSlotBgClass(0)).toBe('bg-gray-50 dark:bg-gray-900');
-      expect(getTimeSlotBgClass(5)).toBe('bg-gray-50 dark:bg-gray-900');
-    });
-
-    it('早朝（6-9時）のクラスを返す', () => {
-      expect(getTimeSlotBgClass(6)).toBe('bg-gray-50 dark:bg-gray-800');
-      expect(getTimeSlotBgClass(8)).toBe('bg-gray-50 dark:bg-gray-800');
+    it('非営業時間のクラスを返す', () => {
+      expect(getTimeSlotBgClass(0)).toBe('bg-muted');
+      expect(getTimeSlotBgClass(5)).toBe('bg-muted');
+      expect(getTimeSlotBgClass(6)).toBe('bg-muted');
+      expect(getTimeSlotBgClass(8)).toBe('bg-muted');
+      expect(getTimeSlotBgClass(18)).toBe('bg-muted');
+      expect(getTimeSlotBgClass(23)).toBe('bg-muted');
     });
 
     it('営業時間（9-18時）のクラスを返す', () => {
-      expect(getTimeSlotBgClass(9)).toBe('bg-white dark:bg-gray-700');
-      expect(getTimeSlotBgClass(17)).toBe('bg-white dark:bg-gray-700');
-    });
-
-    it('夜間（18-24時）のクラスを返す', () => {
-      expect(getTimeSlotBgClass(18)).toBe('bg-gray-50 dark:bg-gray-800');
-      expect(getTimeSlotBgClass(23)).toBe('bg-gray-50 dark:bg-gray-800');
+      expect(getTimeSlotBgClass(9)).toBe('bg-background');
+      expect(getTimeSlotBgClass(17)).toBe('bg-background');
     });
   });
 

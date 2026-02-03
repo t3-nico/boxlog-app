@@ -50,7 +50,7 @@ export const WithLabel: Story = {
   render: function SwitchWithLabel() {
     const [enabled, setEnabled] = useState(false);
     return (
-      <div className="flex items-center justify-between w-64">
+      <div className="flex w-64 items-center justify-between">
         <Label htmlFor="sleep-mode">おやすみモード</Label>
         <Switch id="sleep-mode" checked={enabled} onCheckedChange={setEnabled} />
       </div>
@@ -72,22 +72,18 @@ export const AllVariants: Story = {
     };
 
     return (
-      <div className="p-8 bg-background text-foreground">
-        <h1 className="text-2xl font-bold mb-8">Switch - 実際の使用パターン</h1>
+      <div className="bg-background text-foreground p-8">
+        <h1 className="mb-8 text-2xl font-bold">Switch - 実際の使用パターン</h1>
 
-        <div className="space-y-8 max-w-sm">
+        <div className="max-w-sm space-y-8">
           <section>
-            <h2 className="text-lg font-semibold mb-4">設定リスト</h2>
-            <div className="border border-border rounded-lg divide-y divide-border">
-              <div className="flex items-center justify-between px-4 py-3">
+            <h2 className="mb-4 text-lg font-semibold">設定リスト</h2>
+            <div className="border-border divide-border divide-y rounded-lg border">
+              <div className="flex items-center justify-between px-4 py-4">
                 <Label htmlFor="sleep">おやすみモード</Label>
-                <Switch
-                  id="sleep"
-                  checked={sleepEnabled}
-                  onCheckedChange={setSleepEnabled}
-                />
+                <Switch id="sleep" checked={sleepEnabled} onCheckedChange={setSleepEnabled} />
               </div>
-              <div className="flex items-center justify-between px-4 py-3">
+              <div className="flex items-center justify-between px-4 py-4">
                 <Label htmlFor="sync">カレンダー同期</Label>
                 <Switch
                   id="sync"
@@ -96,8 +92,10 @@ export const AllVariants: Story = {
                   disabled={isLoading}
                 />
               </div>
-              <div className="flex items-center justify-between px-4 py-3">
-                <Label htmlFor="disabled" className="text-muted-foreground">無効な設定</Label>
+              <div className="flex items-center justify-between px-4 py-4">
+                <Label htmlFor="disabled" className="text-muted-foreground">
+                  無効な設定
+                </Label>
                 <Switch id="disabled" disabled />
               </div>
             </div>

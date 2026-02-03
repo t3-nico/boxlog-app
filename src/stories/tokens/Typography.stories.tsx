@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/nextjs';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
   title: 'Tokens/Typography',
@@ -21,10 +21,10 @@ function TypeSample({
   tailwindClass: string;
 }) {
   return (
-    <div className="py-4 border-b border-border">
-      <div className="flex items-baseline gap-4 mb-2">
-        <code className="text-xs bg-container px-2 py-1 rounded">{tailwindClass}</code>
-        <span className="text-xs text-muted-foreground">{label}</span>
+    <div className="border-border border-b py-4">
+      <div className="mb-2 flex items-baseline gap-4">
+        <code className="bg-container rounded px-2 py-1 text-xs">{tailwindClass}</code>
+        <span className="text-muted-foreground text-xs">{label}</span>
       </div>
       <p className={className}>あいうえお ABCDEFG 0123456789</p>
     </div>
@@ -33,8 +33,8 @@ function TypeSample({
 
 export const FontSizes: Story = {
   render: () => (
-    <div className="p-8 bg-background text-foreground">
-      <h1 className="text-2xl font-bold mb-8">フォントサイズ</h1>
+    <div className="bg-background text-foreground p-8">
+      <h1 className="mb-8 text-2xl font-bold">フォントサイズ</h1>
 
       <div className="space-y-2">
         <TypeSample className="text-xs" label="12px" tailwindClass="text-xs" />
@@ -52,24 +52,24 @@ export const FontSizes: Story = {
 
 export const FontWeights: Story = {
   render: () => (
-    <div className="p-8 bg-background text-foreground">
-      <h1 className="text-2xl font-bold mb-8">フォントウェイト</h1>
+    <div className="bg-background text-foreground p-8">
+      <h1 className="mb-8 text-2xl font-bold">フォントウェイト</h1>
 
       <div className="space-y-4 text-xl">
-        <div className="py-2 border-b border-border">
-          <code className="text-xs bg-container px-2 py-1 rounded mr-4">font-normal</code>
+        <div className="border-border border-b py-2">
+          <code className="bg-container mr-4 rounded px-2 py-1 text-xs">font-normal</code>
           <span className="font-normal">通常のテキスト（400）</span>
         </div>
-        <div className="py-2 border-b border-border">
-          <code className="text-xs bg-container px-2 py-1 rounded mr-4">font-medium</code>
+        <div className="border-border border-b py-2">
+          <code className="bg-container mr-4 rounded px-2 py-1 text-xs">font-medium</code>
           <span className="font-medium">ミディアム（500）</span>
         </div>
-        <div className="py-2 border-b border-border">
-          <code className="text-xs bg-container px-2 py-1 rounded mr-4">font-semibold</code>
+        <div className="border-border border-b py-2">
+          <code className="bg-container mr-4 rounded px-2 py-1 text-xs">font-semibold</code>
           <span className="font-semibold">セミボールド（600）</span>
         </div>
-        <div className="py-2 border-b border-border">
-          <code className="text-xs bg-container px-2 py-1 rounded mr-4">font-bold</code>
+        <div className="border-border border-b py-2">
+          <code className="bg-container mr-4 rounded px-2 py-1 text-xs">font-bold</code>
           <span className="font-bold">ボールド（700）</span>
         </div>
       </div>
@@ -79,36 +79,36 @@ export const FontWeights: Story = {
 
 export const TextColors: Story = {
   render: () => (
-    <div className="p-8 bg-background">
-      <h1 className="text-2xl font-bold mb-8 text-foreground">テキストカラー</h1>
+    <div className="bg-background p-8">
+      <h1 className="text-foreground mb-8 text-2xl font-bold">テキストカラー</h1>
 
       <div className="space-y-4 text-lg">
-        <div className="py-2 border-b border-border">
-          <code className="text-xs bg-container px-2 py-1 rounded mr-4 text-foreground">
+        <div className="border-border border-b py-2">
+          <code className="bg-container text-foreground mr-4 rounded px-2 py-1 text-xs">
             text-foreground
           </code>
           <span className="text-foreground">通常のテキスト</span>
         </div>
-        <div className="py-2 border-b border-border">
-          <code className="text-xs bg-container px-2 py-1 rounded mr-4 text-foreground">
+        <div className="border-border border-b py-2">
+          <code className="bg-container text-foreground mr-4 rounded px-2 py-1 text-xs">
             text-muted-foreground
           </code>
           <span className="text-muted-foreground">控えめなテキスト（補足情報など）</span>
         </div>
-        <div className="py-2 border-b border-border">
-          <code className="text-xs bg-container px-2 py-1 rounded mr-4 text-foreground">
+        <div className="border-border border-b py-2">
+          <code className="bg-container text-foreground mr-4 rounded px-2 py-1 text-xs">
             text-primary
           </code>
           <span className="text-primary">強調テキスト（リンクなど）</span>
         </div>
-        <div className="py-2 border-b border-border">
-          <code className="text-xs bg-container px-2 py-1 rounded mr-4 text-foreground">
+        <div className="border-border border-b py-2">
+          <code className="bg-container text-foreground mr-4 rounded px-2 py-1 text-xs">
             text-destructive
           </code>
           <span className="text-destructive">エラー・警告テキスト</span>
         </div>
-        <div className="py-2 border-b border-border">
-          <code className="text-xs bg-container px-2 py-1 rounded mr-4 text-foreground">
+        <div className="border-border border-b py-2">
+          <code className="bg-container text-foreground mr-4 rounded px-2 py-1 text-xs">
             text-success
           </code>
           <span className="text-success">成功テキスト</span>
@@ -120,40 +120,40 @@ export const TextColors: Story = {
 
 export const Headings: Story = {
   render: () => (
-    <div className="p-8 bg-background text-foreground">
-      <h1 className="text-2xl font-bold mb-8">見出しスタイル</h1>
+    <div className="bg-background text-foreground p-8">
+      <h1 className="mb-8 text-2xl font-bold">見出しスタイル</h1>
 
       <div className="space-y-6">
-        <div className="pb-4 border-b border-border">
-          <code className="text-xs bg-container px-2 py-1 rounded mb-2 inline-block">
+        <div className="border-border border-b pb-4">
+          <code className="bg-container mb-2 inline-block rounded px-2 py-1 text-xs">
             text-4xl font-bold
           </code>
           <h1 className="text-4xl font-bold">ページタイトル（H1）</h1>
         </div>
 
-        <div className="pb-4 border-b border-border">
-          <code className="text-xs bg-container px-2 py-1 rounded mb-2 inline-block">
+        <div className="border-border border-b pb-4">
+          <code className="bg-container mb-2 inline-block rounded px-2 py-1 text-xs">
             text-2xl font-bold
           </code>
           <h2 className="text-2xl font-bold">セクション見出し（H2）</h2>
         </div>
 
-        <div className="pb-4 border-b border-border">
-          <code className="text-xs bg-container px-2 py-1 rounded mb-2 inline-block">
+        <div className="border-border border-b pb-4">
+          <code className="bg-container mb-2 inline-block rounded px-2 py-1 text-xs">
             text-xl font-semibold
           </code>
           <h3 className="text-xl font-semibold">サブセクション（H3）</h3>
         </div>
 
-        <div className="pb-4 border-b border-border">
-          <code className="text-xs bg-container px-2 py-1 rounded mb-2 inline-block">
+        <div className="border-border border-b pb-4">
+          <code className="bg-container mb-2 inline-block rounded px-2 py-1 text-xs">
             text-lg font-medium
           </code>
           <h4 className="text-lg font-medium">小見出し（H4）</h4>
         </div>
 
-        <div className="pb-4 border-b border-border">
-          <code className="text-xs bg-container px-2 py-1 rounded mb-2 inline-block">
+        <div className="border-border border-b pb-4">
+          <code className="bg-container mb-2 inline-block rounded px-2 py-1 text-xs">
             text-base font-medium
           </code>
           <h5 className="text-base font-medium">ラベル（H5）</h5>
@@ -165,12 +165,12 @@ export const Headings: Story = {
 
 export const BodyText: Story = {
   render: () => (
-    <div className="p-8 bg-background text-foreground max-w-2xl">
-      <h1 className="text-2xl font-bold mb-8">本文スタイル</h1>
+    <div className="bg-background text-foreground max-w-2xl p-8">
+      <h1 className="mb-8 text-2xl font-bold">本文スタイル</h1>
 
       <div className="space-y-8">
         <div>
-          <code className="text-xs bg-container px-2 py-1 rounded mb-2 inline-block">
+          <code className="bg-container mb-2 inline-block rounded px-2 py-1 text-xs">
             text-base leading-relaxed
           </code>
           <p className="text-base leading-relaxed">
@@ -181,20 +181,20 @@ export const BodyText: Story = {
         </div>
 
         <div>
-          <code className="text-xs bg-container px-2 py-1 rounded mb-2 inline-block">
+          <code className="bg-container mb-2 inline-block rounded px-2 py-1 text-xs">
             text-sm text-muted-foreground
           </code>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             これは補足情報やキャプション用の小さめのテキストです。
             muted-foregroundを使用することで、メインコンテンツとの視覚的な階層を作ります。
           </p>
         </div>
 
         <div>
-          <code className="text-xs bg-container px-2 py-1 rounded mb-2 inline-block">
+          <code className="bg-container mb-2 inline-block rounded px-2 py-1 text-xs">
             text-xs text-muted-foreground
           </code>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-muted-foreground text-xs">
             最小サイズのテキスト。タイムスタンプや細かい注釈に使用します。
           </p>
         </div>

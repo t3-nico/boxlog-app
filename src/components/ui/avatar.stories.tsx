@@ -83,16 +83,16 @@ export const WithImages: Story = {
 export const Group: Story = {
   render: () => (
     <div className="flex -space-x-2">
-      <Avatar className="border-2 border-background">
+      <Avatar className="border-background border-2">
         <AvatarFallback>A</AvatarFallback>
       </Avatar>
-      <Avatar className="border-2 border-background">
+      <Avatar className="border-background border-2">
         <AvatarFallback>B</AvatarFallback>
       </Avatar>
-      <Avatar className="border-2 border-background">
+      <Avatar className="border-background border-2">
         <AvatarFallback>C</AvatarFallback>
       </Avatar>
-      <Avatar className="border-2 border-background">
+      <Avatar className="border-background border-2">
         <AvatarFallback>+3</AvatarFallback>
       </Avatar>
     </div>
@@ -101,83 +101,83 @@ export const Group: Story = {
 
 export const AllVariants: Story = {
   render: () => (
-    <div className="p-8 bg-background text-foreground">
-      <h1 className="text-2xl font-bold mb-8">Avatar - 全バリエーション</h1>
+    <div className="bg-background text-foreground p-8">
+      <h1 className="mb-8 text-2xl font-bold">Avatar - 全バリエーション</h1>
 
       <div className="space-y-8">
         <section>
-          <h2 className="text-lg font-semibold mb-4">サイズ</h2>
+          <h2 className="mb-4 text-lg font-semibold">サイズ</h2>
           <div className="flex items-end gap-4">
             <div className="text-center">
               <Avatar size="xs">
                 <AvatarFallback>XS</AvatarFallback>
               </Avatar>
-              <p className="text-xs text-muted-foreground mt-2">xs (24px)</p>
+              <p className="text-muted-foreground mt-2 text-xs">xs (24px)</p>
             </div>
             <div className="text-center">
               <Avatar size="sm">
                 <AvatarFallback>SM</AvatarFallback>
               </Avatar>
-              <p className="text-xs text-muted-foreground mt-2">sm (32px)</p>
+              <p className="text-muted-foreground mt-2 text-xs">sm (32px)</p>
             </div>
             <div className="text-center">
               <Avatar size="default">
                 <AvatarFallback>MD</AvatarFallback>
               </Avatar>
-              <p className="text-xs text-muted-foreground mt-2">default (40px)</p>
+              <p className="text-muted-foreground mt-2 text-xs">default (40px)</p>
             </div>
             <div className="text-center">
               <Avatar size="lg">
                 <AvatarFallback>LG</AvatarFallback>
               </Avatar>
-              <p className="text-xs text-muted-foreground mt-2">lg (48px)</p>
+              <p className="text-muted-foreground mt-2 text-xs">lg (48px)</p>
             </div>
             <div className="text-center">
               <Avatar size="xl">
                 <AvatarFallback>XL</AvatarFallback>
               </Avatar>
-              <p className="text-xs text-muted-foreground mt-2">xl (64px)</p>
+              <p className="text-muted-foreground mt-2 text-xs">xl (64px)</p>
             </div>
           </div>
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold mb-4">画像 + フォールバック</h2>
+          <h2 className="mb-4 text-lg font-semibold">画像 + フォールバック</h2>
           <div className="flex gap-4">
             <div className="text-center">
               <Avatar>
                 <AvatarImage src="https://github.com/shadcn.png" alt="User" />
                 <AvatarFallback>CN</AvatarFallback>
               </Avatar>
-              <p className="text-xs text-muted-foreground mt-2">画像あり</p>
+              <p className="text-muted-foreground mt-2 text-xs">画像あり</p>
             </div>
             <div className="text-center">
               <Avatar>
                 <AvatarImage src="/invalid.png" alt="User" />
                 <AvatarFallback>山田</AvatarFallback>
               </Avatar>
-              <p className="text-xs text-muted-foreground mt-2">フォールバック</p>
+              <p className="text-muted-foreground mt-2 text-xs">フォールバック</p>
             </div>
           </div>
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold mb-4">グループ</h2>
-          <div className="flex -space-x-3">
+          <h2 className="mb-4 text-lg font-semibold">グループ</h2>
+          <div className="flex -space-x-4">
             {['A', 'B', 'C', 'D'].map((letter) => (
-              <Avatar key={letter} className="border-2 border-background">
+              <Avatar key={letter} className="border-background border-2">
                 <AvatarFallback>{letter}</AvatarFallback>
               </Avatar>
             ))}
-            <Avatar className="border-2 border-background">
+            <Avatar className="border-background border-2">
               <AvatarFallback className="text-xs">+5</AvatarFallback>
             </Avatar>
           </div>
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold mb-4">使用場面</h2>
-          <ul className="text-sm text-muted-foreground list-disc list-inside">
+          <h2 className="mb-4 text-lg font-semibold">使用場面</h2>
+          <ul className="text-muted-foreground list-inside list-disc text-sm">
             <li>ユーザープロフィール</li>
             <li>コメント投稿者</li>
             <li>チームメンバー一覧</li>

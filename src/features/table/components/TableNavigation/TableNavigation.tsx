@@ -213,7 +213,7 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
         onChange={handleSearchInputChange}
         onKeyDown={handleSearchKeyDown}
         autoFocus
-        className="pr-10"
+        className="pr-8"
       />
       {localSearch && (
         <HoverTooltip content="クリア" side="top">

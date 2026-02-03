@@ -97,7 +97,7 @@ function FeatureErrorFallback({ featureName }: { featureName: string }) {
       </p>
       <button
         onClick={() => window.location.reload()}
-        className="bg-primary text-primary-foreground hover:bg-primary-hover mx-auto mt-2 block rounded px-3 py-1 text-sm transition-colors"
+        className="bg-primary text-primary-foreground hover:bg-primary-hover mx-auto mt-2 block rounded px-4 py-1 text-sm transition-colors"
       >
         {t('error.boundary.reload')}
       </button>

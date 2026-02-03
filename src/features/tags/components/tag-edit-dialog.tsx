@@ -137,7 +137,7 @@ export const TagEditDialog = ({ tag, open, onClose, onSave }: TagEditDialogProps
 
               {/* 現在選択されているアイコンのプレビュー */}
               <div
-                className="border-border bg-surface-container mb-3 flex items-center gap-3 rounded-2xl border p-3"
+                className="border-border bg-surface-container mb-4 flex items-center gap-4 rounded-2xl border p-4"
                 style={{ '--tag-color': color } as React.CSSProperties}
               >
                 {(() => {
@@ -158,7 +158,7 @@ export const TagEditDialog = ({ tag, open, onClose, onSave }: TagEditDialogProps
                 aria-labelledby="icon-label"
               >
                 {Object.entries(tagIconCategories).map(([category, icons]) => (
-                  <div key={category} className="border-border border-b p-3 last:border-b-0">
+                  <div key={category} className="border-border border-b p-4 last:border-b-0">
                     <p className="text-muted-foreground mb-2 text-xs font-normal">{category}</p>
                     <div className="grid grid-cols-6 gap-2">
                       {icons.map((iconName) => {

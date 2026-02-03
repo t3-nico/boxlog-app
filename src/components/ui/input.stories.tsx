@@ -39,17 +39,17 @@ export const Default: Story = {
 
 export const Types: Story = {
   render: () => (
-    <div className="flex flex-col gap-4 w-80">
+    <div className="flex w-80 flex-col gap-4">
       <div>
-        <p className="text-sm text-muted-foreground mb-2">text</p>
+        <p className="text-muted-foreground mb-2 text-sm">text</p>
         <Input type="text" placeholder="テキスト" />
       </div>
       <div>
-        <p className="text-sm text-muted-foreground mb-2">email</p>
+        <p className="text-muted-foreground mb-2 text-sm">email</p>
         <Input type="email" placeholder="you@example.com" autoComplete="email" />
       </div>
       <div>
-        <p className="text-sm text-muted-foreground mb-2">password</p>
+        <p className="text-muted-foreground mb-2 text-sm">password</p>
         <Input type="password" placeholder="パスワード" autoComplete="current-password" />
       </div>
     </div>
@@ -64,14 +64,14 @@ export const PasswordWithToggle: Story = {
         <Input
           type={showPassword ? 'text' : 'password'}
           placeholder="パスワードを入力"
-          className="pr-10"
+          className="pr-8"
           autoComplete="new-password"
           minLength={8}
           maxLength={64}
         />
         <button
           type="button"
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+          className="text-muted-foreground hover:text-foreground absolute top-1/2 right-3 -translate-y-1/2"
           onClick={() => setShowPassword(!showPassword)}
           aria-label={showPassword ? 'パスワードを隠す' : 'パスワードを表示'}
         >
@@ -93,12 +93,12 @@ export const AllVariants: Story = {
   render: function AllVariantsStory() {
     const [showPassword, setShowPassword] = useState(false);
     return (
-      <div className="p-8 bg-background text-foreground">
-        <h1 className="text-2xl font-bold mb-8">Input - 実際の使用パターン</h1>
+      <div className="bg-background text-foreground p-8">
+        <h1 className="mb-8 text-2xl font-bold">Input - 実際の使用パターン</h1>
 
-        <div className="space-y-8 max-w-md">
+        <div className="max-w-md space-y-8">
           <section>
-            <h2 className="text-lg font-semibold mb-4">入力タイプ</h2>
+            <h2 className="mb-4 text-lg font-semibold">入力タイプ</h2>
             <div className="flex flex-col gap-4">
               <Input type="text" placeholder="テキスト入力" />
               <Input type="email" placeholder="you@example.com" autoComplete="email" />
@@ -106,12 +106,12 @@ export const AllVariants: Story = {
                 <Input
                   type={showPassword ? 'text' : 'password'}
                   placeholder="パスワード"
-                  className="pr-10"
+                  className="pr-8"
                   autoComplete="current-password"
                 />
                 <button
                   type="button"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  className="text-muted-foreground hover:text-foreground absolute top-1/2 right-3 -translate-y-1/2"
                   onClick={() => setShowPassword(!showPassword)}
                   aria-label={showPassword ? 'パスワードを隠す' : 'パスワードを表示'}
                 >
@@ -122,7 +122,7 @@ export const AllVariants: Story = {
           </section>
 
           <section>
-            <h2 className="text-lg font-semibold mb-4">状態</h2>
+            <h2 className="mb-4 text-lg font-semibold">状態</h2>
             <div className="flex flex-col gap-4">
               <Input placeholder="通常" />
               <Input placeholder="無効" disabled />

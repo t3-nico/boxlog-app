@@ -26,9 +26,9 @@ const STATUS_CONFIG: Record<
 };
 
 const SIZE_CLASSES = {
-  sm: 'text-xs px-2 py-0.5',
-  md: 'text-sm px-3 py-1',
-  lg: 'text-base px-4 py-1.5',
+  sm: 'text-xs px-2 py-1',
+  md: 'text-sm px-4 py-1',
+  lg: 'text-base px-4 py-2',
 };
 
 export function PlanStatusBadge({ status, size = 'sm' }: PlanStatusBadgeProps) {

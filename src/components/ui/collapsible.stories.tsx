@@ -36,18 +36,18 @@ export const SidebarSection: Story = {
     <div className="border-border w-64 rounded-lg border">
       <Collapsible defaultOpen>
         <CollapsibleTrigger asChild>
-          <div className="hover:bg-muted flex cursor-pointer items-center justify-between px-4 py-3">
+          <div className="hover:bg-muted flex cursor-pointer items-center justify-between px-4 py-4">
             <span className="text-sm font-medium">ナビゲーション</span>
             <ChevronDown className="size-4" />
           </div>
         </CollapsibleTrigger>
         <CollapsibleContent>
-          <div className="space-y-1 px-4 pb-3">
-            <div className="hover:bg-muted cursor-pointer rounded px-2 py-1.5 text-sm">
+          <div className="space-y-1 px-4 pb-4">
+            <div className="hover:bg-muted cursor-pointer rounded px-2 py-2 text-sm">
               ダッシュボード
             </div>
-            <div className="hover:bg-muted cursor-pointer rounded px-2 py-1.5 text-sm">プラン</div>
-            <div className="hover:bg-muted cursor-pointer rounded px-2 py-1.5 text-sm">統計</div>
+            <div className="hover:bg-muted cursor-pointer rounded px-2 py-2 text-sm">プラン</div>
+            <div className="hover:bg-muted cursor-pointer rounded px-2 py-2 text-sm">統計</div>
           </div>
         </CollapsibleContent>
       </Collapsible>
@@ -69,15 +69,15 @@ export const AllVariants: Story = {
           <div className="border-border rounded-lg border">
             <Collapsible defaultOpen>
               <CollapsibleTrigger asChild>
-                <div className="hover:bg-muted flex cursor-pointer items-center justify-between px-4 py-3">
+                <div className="hover:bg-muted flex cursor-pointer items-center justify-between px-4 py-4">
                   <span className="text-sm font-medium">セクション</span>
                   <ChevronDown className="size-4" />
                 </div>
               </CollapsibleTrigger>
               <CollapsibleContent>
-                <div className="space-y-1 px-4 pb-3">
-                  <div className="hover:bg-muted rounded px-2 py-1.5 text-sm">アイテム1</div>
-                  <div className="hover:bg-muted rounded px-2 py-1.5 text-sm">アイテム2</div>
+                <div className="space-y-1 px-4 pb-4">
+                  <div className="hover:bg-muted rounded px-2 py-2 text-sm">アイテム1</div>
+                  <div className="hover:bg-muted rounded px-2 py-2 text-sm">アイテム2</div>
                 </div>
               </CollapsibleContent>
             </Collapsible>

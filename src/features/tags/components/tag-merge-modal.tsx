@@ -227,7 +227,7 @@ export function TagMergeModal({
                     <Label
                       htmlFor={`merge-target-${parent.id}`}
                       className={cn(
-                        'flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2 transition-colors',
+                        'flex cursor-pointer items-center gap-4 rounded-lg px-4 py-2 transition-colors',
                         'hover:bg-state-hover',
                         selectedTargetId === parent.id && 'bg-state-selected',
                       )}
@@ -252,7 +252,7 @@ export function TagMergeModal({
                       key={child.id}
                       htmlFor={`merge-target-${child.id}`}
                       className={cn(
-                        'flex cursor-pointer items-center gap-3 rounded-lg py-2 pr-3 pl-8 transition-colors',
+                        'flex cursor-pointer items-center gap-4 rounded-lg py-2 pr-4 pl-8 transition-colors',
                         'hover:bg-state-hover',
                         selectedTargetId === child.id && 'bg-state-selected',
                       )}

@@ -23,7 +23,7 @@ export default function SettingsLoading() {
         {/* カテゴリリスト */}
         <div className="flex flex-col gap-1 p-2">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="flex items-center gap-3 px-3 py-2">
+            <div key={i} className="flex items-center gap-4 px-4 py-2">
               <Skeleton className="size-4 rounded" />
               <Skeleton className="h-4 w-32" />
             </div>

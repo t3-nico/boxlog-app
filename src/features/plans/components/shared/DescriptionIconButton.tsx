@@ -55,7 +55,7 @@ export function DescriptionIconButton({
             <FileText className="size-4" />
             {/* 説明がある場合のインジケータードット */}
             {hasDescription && (
-              <span className="bg-primary absolute -top-0.5 -right-0.5 size-2 rounded-full" />
+              <span className="bg-primary absolute -top-1 -right-0.5 size-2 rounded-full" />
             )}
           </button>
         </PopoverTrigger>

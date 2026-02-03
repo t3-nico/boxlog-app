@@ -141,7 +141,7 @@ const TagItem = ({
         role="button"
         tabIndex={0}
       >
-        <div className="flex min-w-0 flex-1 items-center gap-3">
+        <div className="flex min-w-0 flex-1 items-center gap-4">
           {/* 展開/折りたたみアイコンまたはスペーサー */}
           <div className="flex h-4 w-4 flex-shrink-0 items-center justify-center">
             {hasChildren === true && (

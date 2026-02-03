@@ -52,7 +52,7 @@ function FulfillmentScore({ score }: { score: number | null }) {
   ];
 
   return (
-    <div className="flex items-center gap-0.5">
+    <div className="flex items-center gap-1">
       {Array.from({ length: 5 }).map((_, i) => (
         <Smile
           key={i}
@@ -151,7 +151,7 @@ export function RecordTableView() {
               {recentRecords.map((record) => (
                 <div
                   key={record.id}
-                  className="border-border bg-surface-container hover:bg-state-hover flex items-center gap-2 rounded-lg border px-3 py-1.5"
+                  className="border-border bg-surface-container hover:bg-state-hover flex items-center gap-2 rounded-lg border px-4 py-2"
                 >
                   {record.plan && (
                     <span className="max-w-32 truncate text-sm">{record.plan.title}</span>

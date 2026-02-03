@@ -762,7 +762,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
         />
 
         {/* 3行目: オプションアイコン */}
-        <div className="flex flex-wrap items-center gap-0.5 px-4 pt-2 pb-4">
+        <div className="flex flex-wrap items-center gap-1 px-4 pt-2 pb-4">
           {/* Tags */}
           <TagsIconButton
             tagIds={formData.tagIds}
@@ -796,7 +796,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
                   <button
                     type="button"
                     onClick={() => handlePlanChange(null)}
-                    className="hover:bg-state-hover mr-1 rounded p-0.5 transition-colors"
+                    className="hover:bg-state-hover mr-1 rounded p-1 transition-colors"
                     aria-label="Plan紐付けを解除"
                   >
                     <X className="size-4" />
@@ -843,7 +843,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
                               {planTags.slice(0, 2).map((tag) => (
                                 <span
                                   key={tag!.id}
-                                  className="rounded px-1 py-0.5 text-xs"
+                                  className="rounded px-1 py-1 text-xs"
                                   style={{
                                     backgroundColor: tag!.color ? `${tag!.color}20` : undefined,
                                     color: tag!.color || undefined,
@@ -876,7 +876,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
                 <div className="border-border border-t p-2">
                   <Link
                     href={`/${locale}/plan?selected=${formData.plan_id}`}
-                    className="text-muted-foreground hover:text-foreground hover:bg-state-hover flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm transition-colors"
+                    className="text-muted-foreground hover:text-foreground hover:bg-state-hover flex items-center gap-2 rounded-lg px-2 py-2 text-sm transition-colors"
                   >
                     <ExternalLink className="size-4" />
                     <span>Planを開く</span>

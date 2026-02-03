@@ -138,7 +138,7 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
       />
 
       {/* Row 3: Option Icons */}
-      <div className="flex flex-wrap items-center gap-0.5 px-4 pt-2 pb-4">
+      <div className="flex flex-wrap items-center gap-1 px-4 pt-2 pb-4">
         {/* Tags */}
         <TagsIconButton tagIds={selectedTagIds} onTagsChange={onTagsChange} popoverSide="bottom" />
 

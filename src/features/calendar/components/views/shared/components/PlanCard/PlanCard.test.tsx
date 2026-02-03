@@ -200,9 +200,9 @@ describe('PlanCard', () => {
       const eventBlock = screen.getByRole('button', { name: /plan: テストイベント/i });
       // 高さ30px未満でもフォントは統一（text-sm）
       expect(eventBlock.className).toContain('text-sm');
-      // チェックボックスの位置がコンパクトに（top-0.5 left-0.5）
+      // チェックボックスの位置がコンパクトに（top-1 left-0.5）
       const checkbox = screen.getByRole('button', { name: /calendar\.event\.markComplete/i });
-      expect(checkbox.className).toContain('top-0.5');
+      expect(checkbox.className).toContain('top-1');
       expect(checkbox.className).toContain('left-0.5');
     });
 

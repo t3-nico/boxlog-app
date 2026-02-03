@@ -31,7 +31,7 @@ export function WarningBox({ children, icon: Icon = AlertTriangle, className }: 
   return (
     <div
       className={cn(
-        'border-destructive bg-destructive-container text-destructive flex items-center gap-2 rounded-2xl border p-3',
+        'border-destructive bg-destructive-container text-destructive flex items-center gap-2 rounded-2xl border p-4',
         className,
       )}
     >

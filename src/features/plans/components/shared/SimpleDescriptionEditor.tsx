@@ -108,7 +108,7 @@ export function SimpleDescriptionEditor({
     editorProps: {
       attributes: {
         class:
-          'text-sm text-foreground focus:outline-none px-3 py-2 [&_p]:my-0 [&_ul]:my-1 [&_ol]:my-1',
+          'text-sm text-foreground focus:outline-none px-4 py-2 [&_p]:my-0 [&_ul]:my-1 [&_ol]:my-1',
       },
     },
     immediatelyRender: false,
@@ -151,13 +151,13 @@ export function SimpleDescriptionEditor({
   }, [editor]);
 
   if (!editor) {
-    return <div className="text-muted-foreground h-[180px] px-3 py-2 text-sm">読み込み中...</div>;
+    return <div className="text-muted-foreground h-[180px] px-4 py-2 text-sm">読み込み中...</div>;
   }
 
   return (
     <div className="flex flex-col">
       {/* ミニツールバー */}
-      <div className="flex items-center gap-0.5 px-1 py-1" role="toolbar" aria-label="テキスト書式">
+      <div className="flex items-center gap-1 px-1 py-1" role="toolbar" aria-label="テキスト書式">
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleBold().run()}
           isActive={editor.isActive('bold')}

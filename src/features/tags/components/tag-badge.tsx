@@ -21,7 +21,7 @@ export const TagBadge = ({
 }: TagBadgeProps) => {
   const sizeClasses = {
     sm: 'text-xs px-2 py-1',
-    md: 'text-sm px-3 py-2',
+    md: 'text-sm px-4 py-2',
     lg: 'text-base px-4 py-2',
   };
 

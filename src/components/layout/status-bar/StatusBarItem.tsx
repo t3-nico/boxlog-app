@@ -75,11 +75,11 @@ export function StatusBarItem({
       onKeyDown={handleKeyDown}
       className={cn(
         // ベーススタイル
-        'flex items-center gap-1.5',
+        'flex items-center gap-2',
         // フォントサイズ（12px）・アイコンサイズ（12px）
         'text-xs [&_svg]:size-3',
         // パディング・角丸（ホバー背景用）
-        'rounded px-1.5 py-0.5',
+        'rounded px-2 py-1',
         // テキストカラー
         'text-muted-foreground',
         // トランジション

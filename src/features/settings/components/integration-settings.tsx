@@ -193,7 +193,7 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
                 <div className="bg-surface-container flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl">
                   <Bot className="text-primary h-5 w-5" />
                 </div>
-                <div className="min-w-0 flex-1 space-y-3">
+                <div className="min-w-0 flex-1 space-y-4">
                   <div className="flex items-center gap-2">
                     <h4 className="text-sm font-normal">{provider.name}</h4>
                     {savedKeys[provider.id] && (
@@ -213,7 +213,7 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
                         placeholder={`${provider.keyPrefix}...`}
                         value={aiKeys[provider.id]}
                         onChange={(e) => handleAiKeyChange(provider.id, e.target.value)}
-                        className="pr-10"
+                        className="pr-8"
                       />
                       <Button
                         type="button"

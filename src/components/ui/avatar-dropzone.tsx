@@ -142,7 +142,7 @@ function AvatarDropzone({
   );
 
   return (
-    <div className={cn('flex flex-col items-center gap-3', className)}>
+    <div className={cn('flex flex-col items-center gap-4', className)}>
       {/* アバター表示エリア */}
       <div
         {...getRootProps({
@@ -214,12 +214,12 @@ function AvatarDropzone({
         >
           {isUploading ? (
             <>
-              <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+              <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />
               {t('uploading')}
             </>
           ) : (
             <>
-              <Camera className="mr-1.5 h-3.5 w-3.5" />
+              <Camera className="mr-2 h-3.5 w-3.5" />
               {displayUrl ? t('change') : t('upload')}
             </>
           )}
@@ -233,7 +233,7 @@ function AvatarDropzone({
             onClick={handleRemove}
             className="text-destructive hover:text-destructive"
           >
-            <Trash2 className="mr-1.5 h-3.5 w-3.5" />
+            <Trash2 className="mr-2 h-3.5 w-3.5" />
             {t('remove')}
           </Button>
         )}

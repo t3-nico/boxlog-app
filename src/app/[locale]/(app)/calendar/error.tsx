@@ -35,13 +35,13 @@ export default function CalendarError({ error, reset }: ErrorProps) {
         </p>
 
         {process.env.NODE_ENV === 'development' && error.message && (
-          <div className="border-border bg-surface-container mt-4 rounded-lg border p-3 text-left">
+          <div className="border-border bg-surface-container mt-4 rounded-lg border p-4 text-left">
             <p className="text-destructive font-mono text-xs">{error.message}</p>
           </div>
         )}
       </div>
 
-      <div className="flex gap-3">
+      <div className="flex gap-4">
         <Button onClick={reset} variant="primary">
           再読み込み
         </Button>

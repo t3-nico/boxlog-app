@@ -189,7 +189,7 @@ export default function TagMergePage() {
                     key={tag.id}
                     htmlFor={`merge-target-${tag.id}`}
                     className={cn(
-                      'flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2 transition-colors',
+                      'flex cursor-pointer items-center gap-4 rounded-lg px-4 py-2 transition-colors',
                       'hover:bg-state-hover',
                       selectedTargetId === tag.id && 'bg-state-selected',
                     )}

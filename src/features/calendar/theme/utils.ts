@@ -5,12 +5,12 @@
 import { calendarAnimations } from './animations';
 import { calendarStyles } from './styles';
 
-// 共通Tailwindクラスを取得するヘルパー
-export const getTextMuted = (): string => 'text-neutral-600 dark:text-neutral-400';
+// 共通Tailwindクラスを取得するヘルパー（セマンティックトークン使用）
+export const getTextMuted = (): string => 'text-muted-foreground';
 export const getBorderDefault = (): string => 'border-border';
 export const getSelectionBg = (): string => 'bg-primary-container';
-export const getSurfaceBg = (): string => 'bg-neutral-50 dark:bg-neutral-900';
-export const getErrorBorder = (): string => 'border-red-500 dark:border-red-400';
+export const getSurfaceBg = (): string => 'bg-muted';
+export const getCurrentTimeBorder = (): string => 'border-primary';
 
 // アニメーションクラスを取得
 export const getCalendarAnimation = (type: keyof typeof calendarAnimations): string => {
@@ -53,7 +53,7 @@ export const getWeekendHighlightClassName = (): string => {
 export const getCurrentTimeLineClassName = (): string => {
   return [
     'border-t-2',
-    getErrorBorder(),
+    getCurrentTimeBorder(),
     'absolute left-0 right-0 z-20',
     'pointer-events-none',
   ].join(' ');

@@ -78,7 +78,7 @@ export function NoteIconButton({
             <FileText className="size-4" />
             {/* 内容がある場合のインジケータードット */}
             {hasContent && (
-              <span className="bg-primary absolute -top-0.5 -right-0.5 size-2 rounded-full" />
+              <span className="bg-primary absolute -top-1 -right-0.5 size-2 rounded-full" />
             )}
           </button>
         </PopoverTrigger>

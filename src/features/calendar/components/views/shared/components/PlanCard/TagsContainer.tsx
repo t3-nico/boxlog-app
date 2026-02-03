@@ -96,7 +96,7 @@ export const TagsContainer = memo<TagsContainerProps>(function TagsContainer({ t
         <span
           key={tag.id}
           data-tag
-          className="inline-flex items-center rounded border px-1.5 py-0.5 text-xs leading-tight"
+          className="inline-flex items-center rounded border px-2 py-1 text-xs leading-tight"
           style={{ borderColor: tag.color || undefined }}
           title={tag.name}
         >

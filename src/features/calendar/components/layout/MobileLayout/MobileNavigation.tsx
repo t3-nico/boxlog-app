@@ -114,7 +114,7 @@ export const MobileNavigation = ({
             </div>
 
             {/* ラベル */}
-            <span className="mt-0.5 text-xs leading-none">{item.label}</span>
+            <span className="mt-1 text-xs leading-none">{item.label}</span>
 
             {/* アクティブインジケーター */}
             {activeItem === item.id && (

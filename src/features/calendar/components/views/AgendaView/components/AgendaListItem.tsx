@@ -107,7 +107,7 @@ export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemP
     <button
       type="button"
       className={cn(
-        'group w-full px-3 py-2.5 md:px-4 md:py-3',
+        'group w-full px-4 py-2 md:px-4 md:py-4',
         // モバイル: 2列レイアウト、PC: 横並び
         'flex flex-col gap-1 md:flex-row md:items-center md:gap-4',
         'hover:bg-state-hover focus-visible:bg-state-hover',
@@ -142,7 +142,7 @@ export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemP
       {/* モバイル: 下段（タイトル・タグ）、PC: 右側 */}
       <div className="flex min-w-0 flex-1 items-center gap-2 md:gap-4">
         {/* タイトル + # */}
-        <div className="flex min-w-0 flex-1 items-baseline gap-1 md:gap-1.5">
+        <div className="flex min-w-0 flex-1 items-baseline gap-1 md:gap-2">
           <span className="text-foreground truncate font-normal group-hover:underline md:max-w-48">
             {plan.title}
           </span>
@@ -160,7 +160,7 @@ export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemP
               {displayTags.slice(0, 2).map((tag) => (
                 <span
                   key={tag.id}
-                  className="inline-flex max-w-16 items-center gap-0.5 truncate rounded border px-1 py-0.5 text-xs md:max-w-20 md:px-1.5"
+                  className="inline-flex max-w-16 items-center gap-1 truncate rounded border px-1 py-1 text-xs md:max-w-20 md:px-2"
                   style={{ borderColor: tag.color || undefined, color: tag.color || undefined }}
                   title={tag.name}
                 >
@@ -171,7 +171,7 @@ export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemP
               {displayTags[2] && (
                 <span
                   key={displayTags[2].id}
-                  className="hidden items-center gap-0.5 truncate rounded border px-1.5 py-0.5 text-xs md:inline-flex md:max-w-20"
+                  className="hidden items-center gap-1 truncate rounded border px-2 py-1 text-xs md:inline-flex md:max-w-20"
                   style={{
                     borderColor: displayTags[2].color || undefined,
                     color: displayTags[2].color || undefined,
@@ -197,7 +197,7 @@ export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemP
               align="end"
               side="bottom"
             >
-              <div className="hover:bg-state-hover flex w-fit cursor-pointer items-center gap-1 rounded py-0.5 text-sm transition-colors">
+              <div className="hover:bg-state-hover flex w-fit cursor-pointer items-center gap-1 rounded py-1 text-sm transition-colors">
                 <div className="text-muted-foreground flex items-center gap-1">
                   <Tag className="size-3" />
                   <span className="hidden md:inline">

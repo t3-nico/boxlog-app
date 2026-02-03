@@ -15,8 +15,8 @@ export const Stat = ({
     <div>
       <Separator />
       <div className="mt-6 text-base font-normal">{title}</div>
-      <div className="mt-3 text-3xl font-bold">{value}</div>
-      <div className="mt-3 text-sm">
+      <div className="mt-4 text-3xl font-bold">{value}</div>
+      <div className="mt-4 text-sm">
         <Badge
           className={cn(
             change.startsWith('+')

@@ -45,7 +45,7 @@ export function PlanTagsSection({
         <Tag className="text-muted-foreground size-4" />
       </div>
       <div className="flex min-h-8 flex-1 items-center">
-        <div className="flex max-h-[5.25rem] flex-wrap items-center gap-1.5 overflow-y-auto">
+        <div className="flex max-h-[5.25rem] flex-wrap items-center gap-2 overflow-y-auto">
           {/* 選択済みタグを表示 */}
           {selectedTags.map((tag) => {
             const badgeContent = (

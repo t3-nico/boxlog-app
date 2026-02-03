@@ -219,7 +219,7 @@ export function TimeSelect({
         }
 
         if (targetIndex !== -1) {
-          const itemHeight = 32; // py-1.5 = 6px*2 + text height ≈ 32px
+          const itemHeight = 32; // py-2 = 6px*2 + text height ≈ 32px
           const containerHeight = 200; // max-h-52
           // 選択された項目を中央に配置
           listRef.current.scrollTop =

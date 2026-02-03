@@ -386,7 +386,7 @@ export const MiniCalendar = memo<MiniCalendarProps>(
         {/* 日付なしボタン（全幅ボーダー用に外側） */}
         {allowClear && (
           <div className="border-border/50 border-t">
-            <div className="px-3 py-2">
+            <div className="px-4 py-2">
               <Button
                 variant="ghost"
                 size="sm"

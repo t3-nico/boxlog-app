@@ -143,7 +143,7 @@ export function RecordsIconButton({ planId, disabled = false }: RecordsIconButto
             <CommandList className="max-h-[280px]">
               {/* 合計時間サマリー */}
               {hasRecords && (
-                <div className="bg-surface-container mx-2 my-2 flex items-center justify-between rounded-lg px-3 py-2">
+                <div className="bg-surface-container mx-2 my-2 flex items-center justify-between rounded-lg px-4 py-2">
                   <span className="text-muted-foreground text-xs">合計</span>
                   <span className="text-sm font-medium tabular-nums">
                     {formatDuration(totalMinutes)}
@@ -180,7 +180,7 @@ export function RecordsIconButton({ planId, disabled = false }: RecordsIconButto
                           {recordTags.slice(0, 2).map((tag) => (
                             <span
                               key={tag!.id}
-                              className="rounded px-1 py-0.5 text-xs"
+                              className="rounded px-1 py-1 text-xs"
                               style={{
                                 backgroundColor: tag!.color ? `${tag!.color}20` : undefined,
                                 color: tag!.color || undefined,
@@ -220,7 +220,7 @@ export function RecordsIconButton({ planId, disabled = false }: RecordsIconButto
               <button
                 type="button"
                 onClick={handleCreateRecord}
-                className="text-muted-foreground hover:text-foreground hover:bg-state-hover flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-sm transition-colors"
+                className="text-muted-foreground hover:text-foreground hover:bg-state-hover flex w-full items-center gap-2 rounded-lg px-2 py-2 text-sm transition-colors"
               >
                 <Plus className="size-4" />
                 <span>作業ログを追加</span>
@@ -230,7 +230,7 @@ export function RecordsIconButton({ planId, disabled = false }: RecordsIconButto
               {hasRecords && (
                 <Link
                   href={`/${locale}/record`}
-                  className="text-muted-foreground hover:text-foreground hover:bg-state-hover mt-1 flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm transition-colors"
+                  className="text-muted-foreground hover:text-foreground hover:bg-state-hover mt-1 flex items-center gap-2 rounded-lg px-2 py-2 text-sm transition-colors"
                 >
                   <ExternalLink className="size-4" />
                   <span>Record一覧を開く</span>

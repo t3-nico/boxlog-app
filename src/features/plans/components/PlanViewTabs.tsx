@@ -66,12 +66,12 @@ export function PlanViewTabs() {
       <div className="flex h-10 items-center gap-4">
         {/* View タブ - pill形式 */}
         <Tabs value={activeViewId ?? 'default-all'} onValueChange={handleViewChange}>
-          <TabsList className="bg-secondary border-border h-9 rounded-full border p-0.5">
+          <TabsList className="bg-secondary border-border h-9 rounded-full border p-1">
             {views.map((view) => (
               <div key={view.id} className="group relative flex items-center">
                 <TabsTrigger
                   value={view.id}
-                  className="data-[state=inactive]:hover:bg-state-hover data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground h-7 rounded-full px-3 text-xs"
+                  className="data-[state=inactive]:hover:bg-state-hover data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground h-7 rounded-full px-4 text-xs"
                 >
                   {view.name}
                 </TabsTrigger>

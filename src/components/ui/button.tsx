@@ -83,7 +83,7 @@ const buttonVariants = cva(
       size: {
         // sm: 32px高さ、12pxパディング、16pxアイコン
         sm: [
-          'h-8 px-3 text-xs',
+          'h-8 px-4 text-xs',
           "[&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
         ].join(' '),
         // default: 36px高さ（M3 Small準拠）、16pxパディング、16pxアイコン
@@ -93,7 +93,7 @@ const buttonVariants = cva(
         ].join(' '),
         // lg: 44px高さ（Apple HIG準拠）、20pxパディング、20pxアイコン
         lg: [
-          'h-11 px-5 text-base',
+          'h-11 px-4 text-base',
           "[&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-5 [&_svg]:shrink-0",
         ].join(' '),
         // icon-sm: 32x32px、タップターゲット44px確保

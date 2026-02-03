@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/nextjs';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
   title: 'Tokens/Colors',
@@ -10,26 +10,30 @@ const meta = {
 export default meta;
 type Story = StoryObj;
 
+// Tailwindクラスからトークン名を抽出（bg-background → background）
+function extractToken(tailwindClass: string): string {
+  const match = tailwindClass.match(/^(?:bg|text|border|ring)-(.+)$/);
+  return match?.[1] ?? tailwindClass;
+}
+
 // カラースウォッチコンポーネント
 function ColorSwatch({
-  name,
-  variable,
+  tailwindClass,
   description,
 }: {
-  name: string;
-  variable: string;
+  tailwindClass: string;
   description?: string;
 }) {
+  const token = extractToken(tailwindClass);
   return (
     <div className="flex items-center gap-4 py-2">
       <div
-        className="size-12 rounded-md border border-border shrink-0"
-        style={{ backgroundColor: `var(${variable})` }}
+        className="border-border size-12 shrink-0 rounded-lg border"
+        style={{ backgroundColor: `var(--${token})` }}
       />
-      <div className="flex-1 min-w-0">
-        <div className="font-medium text-sm">{name}</div>
-        <code className="text-xs text-muted-foreground">{variable}</code>
-        {description && <p className="text-xs text-muted-foreground mt-1">{description}</p>}
+      <div className="min-w-0 flex-1">
+        <code className="text-sm font-medium">{tailwindClass}</code>
+        {description && <p className="text-muted-foreground mt-1 text-xs">{description}</p>}
       </div>
     </div>
   );
@@ -39,87 +43,84 @@ function ColorSwatch({
 function ColorGroup({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="mb-8">
-      <h3 className="text-lg font-semibold mb-4 pb-2 border-b border-border">{title}</h3>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">{children}</div>
+      <h3 className="border-border mb-4 border-b pb-2 text-lg font-semibold">{title}</h3>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">{children}</div>
     </div>
   );
 }
 
 export const AllColors: Story = {
   render: () => (
-    <div className="p-8 bg-background text-foreground">
-      <h1 className="text-2xl font-bold mb-8">カラートークン</h1>
+    <div className="bg-background text-foreground p-8">
+      <h1 className="mb-8 text-2xl font-bold">カラートークン</h1>
 
       <ColorGroup title="Surface（背景色）">
-        <ColorSwatch name="Background" variable="--background" description="ページ背景" />
-        <ColorSwatch name="Card" variable="--card" description="カード、ダイアログ" />
-        <ColorSwatch name="Container" variable="--container" description="サイドバー、セクション" />
-        <ColorSwatch name="Overlay" variable="--overlay" description="ポップオーバー" />
+        <ColorSwatch tailwindClass="bg-overlay" description="ポップオーバー" />
+        <ColorSwatch tailwindClass="bg-background" description="ページ背景" />
+        <ColorSwatch tailwindClass="bg-container" description="サイドバー、セクション" />
+        <ColorSwatch tailwindClass="bg-card" description="カード、ダイアログ" />
       </ColorGroup>
 
       <ColorGroup title="テキスト">
-        <ColorSwatch name="Foreground" variable="--foreground" description="通常テキスト" />
+        <ColorSwatch tailwindClass="text-foreground" description="通常テキスト" />
+        <ColorSwatch tailwindClass="text-muted-foreground" description="控えめなテキスト" />
         <ColorSwatch
-          name="Muted Foreground"
-          variable="--muted-foreground"
-          description="控えめなテキスト"
-        />
-        <ColorSwatch
-          name="Card Foreground"
-          variable="--card-foreground"
-          description="カード内テキスト"
+          tailwindClass="text-card-foreground"
+          description="shadcn/ui互換エイリアス（foregroundと同値）"
         />
       </ColorGroup>
 
       <ColorGroup title="Primary">
-        <ColorSwatch name="Primary" variable="--primary" description="主要アクション" />
-        <ColorSwatch
-          name="Primary Foreground"
-          variable="--primary-foreground"
-          description="Primary上のテキスト"
-        />
+        <ColorSwatch tailwindClass="bg-primary" description="主要アクションの背景" />
+        <ColorSwatch tailwindClass="text-primary-foreground" description="Primary上のテキスト" />
       </ColorGroup>
 
       <ColorGroup title="State（状態）">
+        <ColorSwatch tailwindClass="bg-state-active" description="選択中・アクティブ状態" />
         <ColorSwatch
-          name="State Active"
-          variable="--state-active"
-          description="選択中・アクティブ状態"
-        />
-        <ColorSwatch
-          name="State Active Foreground"
-          variable="--state-active-foreground"
+          tailwindClass="text-state-active-foreground"
           description="アクティブ状態のテキスト"
         />
       </ColorGroup>
 
       <ColorGroup title="Semantic（意味）">
-        <ColorSwatch name="Success" variable="--success" description="成功、完了" />
-        <ColorSwatch name="Warning" variable="--warning" description="警告、注意" />
-        <ColorSwatch name="Info" variable="--info" description="情報" />
-        <ColorSwatch name="Destructive" variable="--destructive" description="削除、エラー" />
+        <ColorSwatch tailwindClass="bg-success" description="成功、完了" />
+        <ColorSwatch tailwindClass="bg-warning" description="警告、注意" />
+        <ColorSwatch tailwindClass="bg-info" description="情報" />
+        <ColorSwatch tailwindClass="bg-destructive" description="削除、エラー" />
       </ColorGroup>
 
       <ColorGroup title="Chronotype（生産性ゾーン）">
-        <ColorSwatch name="Peak" variable="--chronotype-peak" description="ピーク（最集中）" />
-        <ColorSwatch name="Good" variable="--chronotype-good" description="集中" />
-        <ColorSwatch name="Moderate" variable="--chronotype-moderate" description="通常" />
-        <ColorSwatch name="Low" variable="--chronotype-low" description="低調" />
-        <ColorSwatch name="Sleep" variable="--chronotype-sleep" description="睡眠" />
+        <ColorSwatch tailwindClass="bg-chronotype-peak" description="ピーク（最集中）" />
+        <ColorSwatch tailwindClass="bg-chronotype-good" description="集中" />
+        <ColorSwatch tailwindClass="bg-chronotype-moderate" description="通常" />
+        <ColorSwatch tailwindClass="bg-chronotype-low" description="低調" />
+        <ColorSwatch tailwindClass="bg-chronotype-sleep" description="睡眠" />
       </ColorGroup>
 
       <ColorGroup title="Border & Input">
-        <ColorSwatch name="Border" variable="--border" description="ボーダー" />
-        <ColorSwatch name="Input" variable="--input" description="入力フィールド背景" />
-        <ColorSwatch name="Ring" variable="--ring" description="フォーカスリング" />
+        <ColorSwatch
+          tailwindClass="border-border"
+          description="ボーダー（card上でも視認できるコントラスト比）"
+        />
+        <ColorSwatch tailwindClass="bg-input" description="入力フィールド背景" />
+        <ColorSwatch tailwindClass="ring-ring" description="フォーカスリング" />
       </ColorGroup>
 
       <ColorGroup title="Chart（グラフ）">
-        <ColorSwatch name="Chart 1" variable="--chart-1" />
-        <ColorSwatch name="Chart 2" variable="--chart-2" />
-        <ColorSwatch name="Chart 3" variable="--chart-3" />
-        <ColorSwatch name="Chart 4" variable="--chart-4" />
-        <ColorSwatch name="Chart 5" variable="--chart-5" />
+        <ColorSwatch tailwindClass="bg-chart-1" />
+        <ColorSwatch tailwindClass="bg-chart-2" />
+        <ColorSwatch tailwindClass="bg-chart-3" />
+        <ColorSwatch tailwindClass="bg-chart-4" />
+        <ColorSwatch tailwindClass="bg-chart-5" />
+      </ColorGroup>
+
+      <ColorGroup title="Calendar（カレンダー専用）">
+        <ColorSwatch tailwindClass="bg-plan-box" description="Plan（予定）の背景：グレー系" />
+        <ColorSwatch
+          tailwindClass="bg-record-box"
+          description="Record（実績）の背景：暖色オレンジ系"
+        />
       </ColorGroup>
     </div>
   ),
@@ -127,31 +128,39 @@ export const AllColors: Story = {
 
 export const Surface: Story = {
   render: () => (
-    <div className="p-8 bg-background text-foreground">
-      <h2 className="text-xl font-bold mb-6">Surface体系（GAFA準拠・4段階）</h2>
+    <div className="bg-background text-foreground p-8">
+      <h2 className="mb-6 text-xl font-bold">Surface体系（GAFA準拠・4段階）</h2>
       <p className="text-muted-foreground mb-8">
-        Material Design 3 / Apple HIG の共通原則に基づく意味ベース設計
+        Material Design 3 / Apple HIG の共通原則に基づく意味ベース設計。
+        <br />
+        ダークモードでは高elevation = 明るい（MD3原則）。明度差は3-6%で視認性を確保。
       </p>
 
       <div className="space-y-4">
-        <div className="p-6 bg-background border border-border rounded-lg">
-          <div className="font-medium">Background</div>
-          <div className="text-sm text-muted-foreground">ページ背景（最明）</div>
-        </div>
-
-        <div className="p-6 bg-overlay border border-border rounded-lg">
+        <div className="bg-overlay border-border rounded-lg border p-6">
           <div className="font-medium">Overlay</div>
-          <div className="text-sm text-muted-foreground">ポップオーバー</div>
+          <div className="text-muted-foreground text-sm">
+            ポップオーバー、ドロップダウン（MD3: 高elevation = ダークモードで最も明るい）
+          </div>
         </div>
 
-        <div className="p-6 bg-card border border-border rounded-lg">
-          <div className="font-medium">Card</div>
-          <div className="text-sm text-muted-foreground">カード、ダイアログ</div>
+        <div className="bg-background border-border rounded-lg border p-6">
+          <div className="font-medium">Background</div>
+          <div className="text-muted-foreground text-sm">ページ背景（基準レベル）</div>
         </div>
 
-        <div className="p-6 bg-container border border-border rounded-lg">
+        <div className="bg-container border-border rounded-lg border p-6">
           <div className="font-medium">Container</div>
-          <div className="text-sm text-muted-foreground">サイドバー、セクション</div>
+          <div className="text-muted-foreground text-sm">
+            サイドバー、セクション（backgroundより6%暗い）
+          </div>
+        </div>
+
+        <div className="bg-card border-border rounded-lg border p-6">
+          <div className="font-medium">Card</div>
+          <div className="text-muted-foreground text-sm">
+            カード、ダイアログ（containerより6%暗い = 最も沈んだレベル）
+          </div>
         </div>
       </div>
     </div>
@@ -160,29 +169,297 @@ export const Surface: Story = {
 
 export const Semantic: Story = {
   render: () => (
-    <div className="p-8 bg-background text-foreground">
-      <h2 className="text-xl font-bold mb-6">Semantic Colors（意味を持つ色）</h2>
+    <div className="bg-background text-foreground p-8">
+      <h2 className="mb-6 text-xl font-bold">Semantic Colors（意味を持つ色）</h2>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="p-4 bg-success text-success-foreground rounded-lg text-center">
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+        <div className="bg-success text-success-foreground rounded-lg p-4 text-center">
           <div className="font-medium">Success</div>
           <div className="text-sm opacity-80">成功、完了</div>
         </div>
 
-        <div className="p-4 bg-warning text-warning-foreground rounded-lg text-center">
+        <div className="bg-warning text-warning-foreground rounded-lg p-4 text-center">
           <div className="font-medium">Warning</div>
           <div className="text-sm opacity-80">警告、注意</div>
         </div>
 
-        <div className="p-4 bg-info text-info-foreground rounded-lg text-center">
+        <div className="bg-info text-info-foreground rounded-lg p-4 text-center">
           <div className="font-medium">Info</div>
           <div className="text-sm opacity-80">情報</div>
         </div>
 
-        <div className="p-4 bg-destructive text-destructive-foreground rounded-lg text-center">
+        <div className="bg-destructive text-destructive-foreground rounded-lg p-4 text-center">
           <div className="font-medium">Destructive</div>
           <div className="text-sm opacity-80">削除、エラー</div>
         </div>
+      </div>
+    </div>
+  ),
+};
+
+export const Interaction: Story = {
+  render: () => (
+    <div className="bg-background text-foreground p-8">
+      <h2 className="mb-6 text-xl font-bold">インタラクション状態</h2>
+      <p className="text-muted-foreground mb-8">
+        ホバー、フォーカス、プレス時の色変化。実際に操作して確認できます。
+      </p>
+
+      {/* 汎用ホバー（Ghost/Outline用） */}
+      <div className="mb-8">
+        <h3 className="border-border mb-4 border-b pb-2 text-lg font-semibold">
+          汎用ホバー（Ghost/Outline用）
+        </h3>
+        <div className="flex flex-wrap gap-4">
+          <button
+            type="button"
+            className="hover:bg-state-hover rounded-lg border border-transparent px-4 py-2 transition-colors"
+          >
+            <code className="text-sm">hover:bg-state-hover</code>
+          </button>
+          <button
+            type="button"
+            className="border-border hover:bg-state-hover rounded-lg border px-4 py-2 transition-colors"
+          >
+            <code className="text-sm">Outline + hover</code>
+          </button>
+        </div>
+      </div>
+
+      {/* 塗りボタン用ホバー */}
+      <div className="mb-8">
+        <h3 className="border-border mb-4 border-b pb-2 text-lg font-semibold">
+          塗りボタン用ホバー
+        </h3>
+        <div className="flex flex-wrap gap-4">
+          <button
+            type="button"
+            className="bg-primary text-primary-foreground hover:bg-primary-hover rounded-lg px-4 py-2 transition-colors"
+          >
+            <code className="text-sm">hover:bg-primary-hover</code>
+          </button>
+          <button
+            type="button"
+            className="bg-destructive text-destructive-foreground hover:bg-destructive-hover rounded-lg px-4 py-2 transition-colors"
+          >
+            <code className="text-sm">hover:bg-destructive-hover</code>
+          </button>
+          <button
+            type="button"
+            className="bg-secondary text-secondary-foreground hover:bg-secondary-hover rounded-lg px-4 py-2 transition-colors"
+          >
+            <code className="text-sm">hover:bg-secondary-hover</code>
+          </button>
+          <button
+            type="button"
+            className="bg-warning text-warning-foreground hover:bg-warning-hover rounded-lg px-4 py-2 transition-colors"
+          >
+            <code className="text-sm">hover:bg-warning-hover</code>
+          </button>
+          <button
+            type="button"
+            className="bg-success text-success-foreground hover:bg-success-hover rounded-lg px-4 py-2 transition-colors"
+          >
+            <code className="text-sm">hover:bg-success-hover</code>
+          </button>
+          <button
+            type="button"
+            className="bg-info text-info-foreground hover:bg-info-hover rounded-lg px-4 py-2 transition-colors"
+          >
+            <code className="text-sm">hover:bg-info-hover</code>
+          </button>
+        </div>
+      </div>
+
+      {/* セマンティックGhostホバー */}
+      <div className="mb-8">
+        <h3 className="border-border mb-4 border-b pb-2 text-lg font-semibold">
+          セマンティックGhostホバー
+        </h3>
+        <p className="text-muted-foreground mb-4 text-sm">
+          色付きのGhost/Outlineボタン用（MD3 state layer方式）
+        </p>
+        <div className="flex flex-wrap gap-4">
+          <button
+            type="button"
+            className="text-primary hover:bg-primary-state-hover rounded-lg px-4 py-2 transition-colors"
+          >
+            <code className="text-sm">hover:bg-primary-state-hover</code>
+          </button>
+          <button
+            type="button"
+            className="text-destructive hover:bg-destructive-state-hover rounded-lg px-4 py-2 transition-colors"
+          >
+            <code className="text-sm">hover:bg-destructive-state-hover</code>
+          </button>
+        </div>
+      </div>
+
+      {/* フォーカスリング */}
+      <div className="mb-8">
+        <h3 className="border-border mb-4 border-b pb-2 text-lg font-semibold">フォーカスリング</h3>
+        <p className="text-muted-foreground mb-4 text-sm">Tabキーでフォーカスを移動して確認</p>
+        <div className="flex flex-wrap gap-4">
+          <button
+            type="button"
+            className="border-border focus-visible:ring-ring rounded-lg border px-4 py-2 outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+          >
+            <code className="text-sm">focus-visible:ring-ring</code>
+          </button>
+          <input
+            type="text"
+            placeholder="入力フィールド"
+            className="border-border bg-input focus-visible:ring-ring rounded-lg border px-4 py-2 outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+          />
+        </div>
+      </div>
+
+      {/* アクティブ/選択状態 */}
+      <div className="mb-8">
+        <h3 className="border-border mb-4 border-b pb-2 text-lg font-semibold">
+          アクティブ/選択状態
+        </h3>
+        <div className="flex flex-wrap gap-4">
+          <div className="bg-state-active text-state-active-foreground rounded-lg px-4 py-2">
+            <code className="text-sm">bg-state-active（選択中）</code>
+          </div>
+          <button
+            type="button"
+            className="active:bg-state-hover rounded-lg border border-transparent px-4 py-2 transition-colors"
+          >
+            <code className="text-sm">active:bg-state-hover（クリック）</code>
+          </button>
+        </div>
+      </div>
+
+      {/* リンク/テキストホバー */}
+      <div className="mb-8">
+        <h3 className="border-border mb-4 border-b pb-2 text-lg font-semibold">
+          リンク/テキストホバー
+        </h3>
+        <p className="text-muted-foreground mb-4 text-sm">
+          テキストリンクのホバースタイル。下線の濃さが変化。
+        </p>
+        <div className="flex flex-wrap items-center gap-6">
+          <a
+            href="#"
+            onClick={(e) => e.preventDefault()}
+            className="text-primary decoration-primary/30 hover:decoration-primary underline transition-colors"
+          >
+            下線リンク（hover:decoration-primary）
+          </a>
+          <a
+            href="#"
+            onClick={(e) => e.preventDefault()}
+            className="text-primary transition-colors hover:underline"
+          >
+            ホバーで下線（hover:underline）
+          </a>
+          <a
+            href="#"
+            onClick={(e) => e.preventDefault()}
+            className="text-muted-foreground hover:text-foreground transition-colors"
+          >
+            色変化（hover:text-foreground）
+          </a>
+        </div>
+      </div>
+
+      {/* 使用例 */}
+      <div className="bg-card border-border rounded-lg border p-6">
+        <h3 className="mb-4 font-semibold">コピペ用クラス</h3>
+        <div className="space-y-4 font-mono text-sm">
+          <div className="text-muted-foreground mb-2 text-xs">汎用</div>
+          <div>
+            <span className="text-muted-foreground">Ghost:</span> <code>hover:bg-state-hover</code>
+          </div>
+          <div>
+            <span className="text-muted-foreground">Focus:</span>{' '}
+            <code>focus-visible:ring-2 focus-visible:ring-ring</code>
+          </div>
+          <div>
+            <span className="text-muted-foreground">Selected:</span>{' '}
+            <code>bg-state-active text-state-active-foreground</code>
+          </div>
+
+          <div className="text-muted-foreground mt-4 mb-2 text-xs">塗りボタン</div>
+          <div>
+            <span className="text-muted-foreground">Primary:</span>{' '}
+            <code>bg-primary hover:bg-primary-hover</code>
+          </div>
+          <div>
+            <span className="text-muted-foreground">Destructive:</span>{' '}
+            <code>bg-destructive hover:bg-destructive-hover</code>
+          </div>
+          <div>
+            <span className="text-muted-foreground">Secondary:</span>{' '}
+            <code>bg-secondary hover:bg-secondary-hover</code>
+          </div>
+          <div>
+            <span className="text-muted-foreground">Warning:</span>{' '}
+            <code>bg-warning hover:bg-warning-hover</code>
+          </div>
+          <div>
+            <span className="text-muted-foreground">Success:</span>{' '}
+            <code>bg-success hover:bg-success-hover</code>
+          </div>
+          <div>
+            <span className="text-muted-foreground">Info:</span>{' '}
+            <code>bg-info hover:bg-info-hover</code>
+          </div>
+
+          <div className="text-muted-foreground mt-4 mb-2 text-xs">セマンティックGhost</div>
+          <div>
+            <span className="text-muted-foreground">Primary Ghost:</span>{' '}
+            <code>text-primary hover:bg-primary-state-hover</code>
+          </div>
+          <div>
+            <span className="text-muted-foreground">Destructive Ghost:</span>{' '}
+            <code>text-destructive hover:bg-destructive-state-hover</code>
+          </div>
+
+          <div className="text-muted-foreground mt-4 mb-2 text-xs">リンク</div>
+          <div>
+            <span className="text-muted-foreground">下線リンク:</span>{' '}
+            <code>text-primary underline decoration-primary/30 hover:decoration-primary</code>
+          </div>
+          <div>
+            <span className="text-muted-foreground">ホバー下線:</span>{' '}
+            <code>text-primary hover:underline</code>
+          </div>
+          <div>
+            <span className="text-muted-foreground">色変化:</span>{' '}
+            <code>text-muted-foreground hover:text-foreground</code>
+          </div>
+        </div>
+      </div>
+
+      {/* 不透明度ルール */}
+      <div className="bg-warning/10 border-warning mt-8 rounded-lg border p-6">
+        <h3 className="text-warning-foreground mb-2 font-semibold">
+          不透明度の使用ルール（MD3準拠）
+        </h3>
+        <p className="text-muted-foreground mb-4 text-sm">
+          不透明度（<code>/10</code>, <code>/20</code> 等）は
+          <strong>インタラクション状態のみ</strong>に使用する。
+        </p>
+        <div className="space-y-2 text-sm">
+          <div className="text-success">
+            ✅ OK: <code>hover:bg-primary/10</code>（ホバー状態）
+          </div>
+          <div className="text-success">
+            ✅ OK: <code>decoration-primary/30 hover:decoration-primary</code>（状態変化）
+          </div>
+          <div className="text-destructive">
+            ❌ NG: <code>bg-primary/20</code>（通常の背景色として使用）
+          </div>
+          <div className="text-destructive">
+            ❌ NG: <code>bg-muted/50</code>（微妙な差をつけるために使用）
+          </div>
+        </div>
+        <p className="text-muted-foreground mt-4 text-xs">
+          通常の背景色が必要な場合は、専用のセマンティックトークンを globals.css に追加する。
+        </p>
       </div>
     </div>
   ),

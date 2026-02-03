@@ -48,13 +48,13 @@ export function OverdueSection({ dates, plans, timezone, className }: OverdueSec
         const isCurrentDay = isToday(date);
         const hasOverdue = isCurrentDay && overduePlans.length > 0;
         return (
-          <div key={date.toISOString()} className="flex flex-1 items-center justify-center py-0.5">
+          <div key={date.toISOString()} className="flex flex-1 items-center justify-center py-1">
             {hasOverdue ? (
               <OverdueBadge
                 overduePlans={overduePlans}
                 className={cn(
                   'bg-warning/10 hover:bg-warning/15 h-full rounded-lg',
-                  'w-full px-0.5 md:w-[calc(100%-8px)] md:px-1',
+                  'w-full px-1 md:w-[calc(100%-8px)] md:px-1',
                 )}
               />
             ) : null}

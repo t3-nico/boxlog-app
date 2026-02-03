@@ -97,7 +97,7 @@ export const ListStyle: Story = {
             <Label
               key={option.value}
               htmlFor={`list-${option.value}`}
-              className={`hover:bg-muted flex cursor-pointer items-center justify-between px-4 py-3 text-sm transition-colors ${
+              className={`hover:bg-muted flex cursor-pointer items-center justify-between px-4 py-4 text-sm transition-colors ${
                 index !== options.length - 1 ? 'border-border border-b' : ''
               }`}
             >
@@ -176,7 +176,7 @@ export const AllVariants: Story = {
                   <Label
                     key={option.value}
                     htmlFor={`all-list-${option.value}`}
-                    className={`hover:bg-muted flex cursor-pointer items-center justify-between px-4 py-3 text-sm transition-colors ${
+                    className={`hover:bg-muted flex cursor-pointer items-center justify-between px-4 py-4 text-sm transition-colors ${
                       index !== themeOptions.length - 1 ? 'border-border border-b' : ''
                     }`}
                   >

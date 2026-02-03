@@ -110,6 +110,25 @@ src/components/ui/my-component.stories.tsx
 | デザイントークン | `Tokens/` |
 | ドキュメント | `Docs/` |
 
+### カラートークンの使い方
+
+Tailwindクラス名で統一。コードにそのままコピペ可能。
+
+| プレフィックス | 用途 | 例 |
+|---------------|------|-----|
+| `bg-*` | 背景色 | `bg-background`, `bg-card` |
+| `text-*` | テキスト色 | `text-foreground`, `text-muted-foreground` |
+| `border-*` | ボーダー色 | `border-border` |
+| `ring-*` | フォーカスリング色 | `ring-ring` |
+
+```tsx
+// ✅ OK: Tailwindクラス名を使用
+<div className="bg-card text-foreground border-border">
+
+// ❌ NG: CSS変数を直接使用
+<div style={{ color: 'var(--foreground)' }}>
+```
+
 ## 運用ルール
 
 ### コンポーネントとStoryの同期
