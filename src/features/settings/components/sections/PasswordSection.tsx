@@ -172,7 +172,7 @@ export function PasswordSection() {
                 size="icon-sm"
                 onClick={toggleCurrentPasswordVisibility}
               >
-                {showCurrentPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                {showCurrentPassword ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
               </InputGroupButton>
             </HoverTooltip>
             <HoverTooltip content="現在のパスワードを入力してください" side="top" delayMs={0}>
@@ -205,7 +205,7 @@ export function PasswordSection() {
                 size="icon-sm"
                 onClick={toggleNewPasswordVisibility}
               >
-                {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                {showNewPassword ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
               </InputGroupButton>
             </HoverTooltip>
             <HoverTooltip content={t('settings.account.passwordMinLength')} side="top" delayMs={0}>
@@ -238,7 +238,7 @@ export function PasswordSection() {
                 size="icon-sm"
                 onClick={toggleConfirmPasswordVisibility}
               >
-                {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                {showConfirmPassword ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
               </InputGroupButton>
             </HoverTooltip>
             <HoverTooltip content="新しいパスワードを再入力してください" side="top" delayMs={0}>

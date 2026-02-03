@@ -3,100 +3,75 @@ import { Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
 
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from './input-group';
+import { HoverTooltip } from './tooltip';
 
 const meta = {
   title: 'Components/InputGroup',
   component: InputGroup,
   tags: ['autodocs'],
   parameters: {
-    layout: 'centered',
+    layout: 'fullscreen',
   },
 } satisfies Meta<typeof InputGroup>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
-  render: function PasswordToggleStory() {
-    const [showPassword, setShowPassword] = useState(false);
-    return (
-      <InputGroup className="w-80">
-        <InputGroupInput type={showPassword ? 'text' : 'password'} placeholder="パスワード" />
-        <InputGroupAddon align="inline-end">
-          <InputGroupButton
-            variant="ghost"
-            size="icon-sm"
-            onClick={() => setShowPassword(!showPassword)}
-            aria-label={showPassword ? 'パスワードを隠す' : 'パスワードを表示'}
-          >
-            {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
-          </InputGroupButton>
-        </InputGroupAddon>
-      </InputGroup>
-    );
-  },
-};
-
-export const AllVariants: Story = {
-  render: function AllVariantsStory() {
+export const AllPatterns: Story = {
+  render: function AllPatternsStory() {
     const [showPassword, setShowPassword] = useState(false);
 
     return (
-      <div className="bg-background text-foreground p-8">
-        <h1 className="mb-8 text-2xl font-bold">InputGroup - 実際の使用パターン</h1>
+      <div className="bg-background text-foreground min-h-screen p-8">
+        <h1 className="mb-2 text-2xl font-bold">InputGroup</h1>
+        <p className="text-muted-foreground mb-8">入力フィールドにボタンやアイコンを追加</p>
 
-        <div className="max-w-md space-y-8">
-          <section>
-            <h2 className="mb-4 text-lg font-bold">パスワード表示切り替え</h2>
+        <div className="grid gap-8" style={{ maxWidth: '28rem' }}>
+          <div>
+            <h2 className="mb-2 text-lg font-bold">パスワード表示切り替え</h2>
             <p className="text-muted-foreground mb-4 text-sm">
-              PasswordSection.tsxで使用されているパターン
+              PasswordSection.tsx で使用。目のアイコンでパスワードの表示/非表示を切り替え。
             </p>
             <InputGroup>
               <InputGroupInput
                 type={showPassword ? 'text' : 'password'}
-                placeholder="現在のパスワード"
+                placeholder="パスワードを入力"
               />
               <InputGroupAddon align="inline-end">
-                <InputGroupButton
-                  variant="ghost"
-                  size="icon-sm"
-                  onClick={() => setShowPassword(!showPassword)}
-                  aria-label={showPassword ? 'パスワードを隠す' : 'パスワードを表示'}
-                >
-                  {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
-                </InputGroupButton>
+                <HoverTooltip content={showPassword ? 'パスワードを隠す' : 'パスワードを表示'}>
+                  <InputGroupButton
+                    variant="ghost"
+                    size="icon-sm"
+                    onClick={() => setShowPassword(!showPassword)}
+                    aria-label={showPassword ? 'パスワードを隠す' : 'パスワードを表示'}
+                  >
+                    {showPassword ? <Eye className="size-4" /> : <EyeOff className="size-4" />}
+                  </InputGroupButton>
+                </HoverTooltip>
               </InputGroupAddon>
             </InputGroup>
-          </section>
+          </div>
 
-          <section>
-            <h2 className="mb-4 text-lg font-bold">使用コンポーネント</h2>
-            <ul className="text-muted-foreground list-inside list-disc text-sm">
-              <li>
-                <code>InputGroup</code> - コンテナ
-              </li>
-              <li>
-                <code>InputGroupInput</code> - 入力フィールド
-              </li>
-              <li>
-                <code>{'InputGroupAddon align="inline-end"'}</code> - 右側アドオン
-              </li>
-              <li>
-                <code>{'InputGroupButton variant="ghost" size="icon-sm"'}</code> - アイコンボタン
-              </li>
+          <div>
+            <h2 className="mb-4 text-lg font-bold">使用箇所</h2>
+            <ul className="text-muted-foreground list-inside list-disc space-y-1 text-sm">
+              <li>PasswordSection.tsx - パスワード変更フォーム</li>
             </ul>
-          </section>
+          </div>
 
-          <section className="bg-muted rounded-md p-4">
-            <p className="text-muted-foreground text-sm">
-              <strong>Note:</strong> {'InputGroupText, align="inline-start"は現在未使用'}
-            </p>
-          </section>
+          <div>
+            <h2 className="mb-4 text-lg font-bold">コンポーネント</h2>
+            <div className="bg-surface-container rounded-lg p-4">
+              <ul className="text-muted-foreground list-inside list-disc space-y-1 text-sm">
+                <li>InputGroup - コンテナ</li>
+                <li>InputGroupInput - 入力フィールド（size: sm/default/lg）</li>
+                <li>InputGroupAddon - アドオンエリア（align: inline-start/inline-end）</li>
+                <li>InputGroupButton - ボタン（size: sm/default/lg/icon-sm/icon/icon-lg）</li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
     );
-  },
-  parameters: {
-    layout: 'fullscreen',
   },
 };
