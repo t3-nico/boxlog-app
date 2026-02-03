@@ -4,6 +4,33 @@ import { useState } from 'react';
 import { Label } from './label';
 import { RadioGroup, RadioGroupItem } from './radio-group';
 
+/**
+ * RadioGroup - ラジオボタングループ（単一選択）
+ *
+ * ## 使用コンポーネント
+ *
+ * | コンポーネント | 用途 |
+ * |----------------|------|
+ * | RadioGroup | コンテナ（value, onValueChange） |
+ * | RadioGroupItem | 各選択肢（value, id） |
+ * | Label/label | クリック領域（htmlFor で紐付け） |
+ *
+ * ## RadioGroup vs Select
+ *
+ * | 観点 | RadioGroup | Select |
+ * |------|------------|--------|
+ * | 選択肢数 | 2-4個に適切 | 5個以上に適切 |
+ * | 一覧性 | 全選択肢が常に見える | 開かないと見えない |
+ * | スペース | 場所を取る | コンパクト |
+ * | 推奨 | ダイアログ内、設定画面 | ツールバー、フォーム |
+ *
+ * ## 使い分けルール（Material Design準拠）
+ *
+ * - **2-4個**: RadioGroup（全部見せて比較させる）
+ * - **5個以上**: Select（省スペース優先）
+ * - **ツールバー**: Select（コンパクトさ優先）
+ * - **確認ダイアログ**: RadioGroup（明示的な選択）
+ */
 const meta = {
   title: 'Components/RadioGroup',
   component: RadioGroup,
