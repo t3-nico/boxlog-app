@@ -137,7 +137,7 @@ docs/
 ├── api/ # APIドキュメント
 ├── decisions/ # ADR
 ├── development/ # 開発ガイド（CLAUDE.md等）
-├── design-system/ # STYLE_GUIDE.md等
+├── design-system/ # Storybookに移行済み
 └── releases/ # リリースチェックリスト
 
 ```

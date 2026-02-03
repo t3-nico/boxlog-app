@@ -210,7 +210,7 @@ const prefersReducedMotion = useReducedMotion();
 - `src/hooks/useReducedMotion.ts` - モーション設定
 - `src/features/calendar/hooks/useCalendarPlanKeyboard.ts` - キーボードショートカット
 - `src/components/debug/AxeAccessibilityChecker.tsx` - a11yチェッカー
-- `docs/design-system/STYLE_GUIDE.md` - カラーコントラスト定義
+- Storybook Tokens/Colors - カラーコントラスト定義
 
 ## 関連スキル
 

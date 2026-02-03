@@ -55,18 +55,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 🏗️ 主要機能（Features）
 
-| 機能           | ディレクトリ             | 説明                                       |
-| -------------- | ------------------------ | ------------------------------------------ |
-| **Plans**      | `src/features/plans`     | プラン（タスク）管理、タイムボクシング     |
-| **Records**    | `src/features/records`   | 時間記録、実績管理                         |
-| **Calendar**   | `src/features/calendar`  | カレンダービュー、ドラッグ&ドロップ        |
-| **Tags**       | `src/features/tags`      | タグ管理、親子階層モデル                   |
-| **Stats**      | `src/features/stats`     | 統計・分析、ヒートマップ                   |
-| **Inspector**  | `src/features/inspector` | 詳細パネル、プラン/レコード編集            |
-| **Auth**       | `src/features/auth`      | 認証、Supabase Auth連携                    |
-| **Settings**   | `src/features/settings`  | ユーザー設定、通知設定                     |
-| **Navigation** | `src/features/navigation`| サイドバー、ナビゲーションタブ             |
-| **Search**     | `src/features/search`    | グローバル検索                             |
+| 機能           | ディレクトリ              | 説明                                   |
+| -------------- | ------------------------- | -------------------------------------- |
+| **Plans**      | `src/features/plans`      | プラン（タスク）管理、タイムボクシング |
+| **Records**    | `src/features/records`    | 時間記録、実績管理                     |
+| **Calendar**   | `src/features/calendar`   | カレンダービュー、ドラッグ&ドロップ    |
+| **Tags**       | `src/features/tags`       | タグ管理、親子階層モデル               |
+| **Stats**      | `src/features/stats`      | 統計・分析、ヒートマップ               |
+| **Inspector**  | `src/features/inspector`  | 詳細パネル、プラン/レコード編集        |
+| **Auth**       | `src/features/auth`       | 認証、Supabase Auth連携                |
+| **Settings**   | `src/features/settings`   | ユーザー設定、通知設定                 |
+| **Navigation** | `src/features/navigation` | サイドバー、ナビゲーションタブ         |
+| **Search**     | `src/features/search`     | グローバル検索                         |
 
 ## 📋 基本コマンド
 
@@ -106,6 +106,7 @@ npm run lint         # コード品質（AI必須：コミット前）
 **理由**: Storybookを「Single Source of Truth」として運用し、UIの一貫性を保つ。新しいパターンが必要な場合は、先にStoryを追加してから使用する。
 
 **クイックチェック**:
+
 - [ ] 使用するコンポーネントのStory（`*.stories.tsx`）を確認した
 - [ ] 使用するprops/variantがStoryに記載されている
 - [ ] 新パターンの場合、先にStoryを追加した
@@ -137,6 +138,7 @@ npm run lint         # コード品質（AI必須：コミット前）
 **理由**: Zustandは最小限のボイラープレートで型安全なグローバル状態を実現。Reduxは過剰な抽象化。新規ライブラリ追加はバンドルサイズと学習コストを増加させる。
 
 **クイックチェック**:
+
 - [ ] セレクタで必要な状態のみ購読（`useStore((s) => s.field)`）
 - [ ] 全状態を購読しない（`const { a, b } = useStore()` は避ける）
 
@@ -155,14 +157,14 @@ npm run lint         # コード品質（AI必須：コミット前）
 
 ### ファイル命名規則
 
-| 種類 | 命名規則 | 例 |
-|------|---------|-----|
-| **コンポーネント** | PascalCase | `TaskCard.tsx`, `TagSelector.tsx` |
-| **フック** | camelCase + use prefix | `useTagStore.ts`, `usePlanMutation.ts` |
-| **ユーティリティ** | camelCase | `formatDate.ts`, `calculateDuration.ts` |
-| **型定義** | camelCase or types.ts | `types.ts`, `plan.types.ts` |
-| **テスト** | 同名 + .test | `TaskCard.test.tsx` |
-| **定数** | UPPER_SNAKE_CASE | `const MAX_TAGS = 100` |
+| 種類               | 命名規則               | 例                                      |
+| ------------------ | ---------------------- | --------------------------------------- |
+| **コンポーネント** | PascalCase             | `TaskCard.tsx`, `TagSelector.tsx`       |
+| **フック**         | camelCase + use prefix | `useTagStore.ts`, `usePlanMutation.ts`  |
+| **ユーティリティ** | camelCase              | `formatDate.ts`, `calculateDuration.ts` |
+| **型定義**         | camelCase or types.ts  | `types.ts`, `plan.types.ts`             |
+| **テスト**         | 同名 + .test           | `TaskCard.test.tsx`                     |
+| **定数**           | UPPER_SNAKE_CASE       | `const MAX_TAGS = 100`                  |
 
 ### import順序
 
@@ -224,12 +226,12 @@ import type { Tag } from '@/types';
 
 ### Think ツール使用基準
 
-| キーワード | 思考予算 | 使用ケース |
-|-----------|---------|-----------|
-| `think` | 低（5-10秒） | 既存パターンの確認、簡単なバグ原因特定 |
-| `think hard` | 中（30-60秒） | 複雑なロジック設計、複数選択肢の比較 |
-| `think harder` | 高（2-3分） | アーキテクチャ変更、複数機能の統合設計 |
-| `ultrathink` | 最大（5-10分） | CLAUDE.md変更、プロジェクト全体の技術方針 |
+| キーワード     | 思考予算       | 使用ケース                                |
+| -------------- | -------------- | ----------------------------------------- |
+| `think`        | 低（5-10秒）   | 既存パターンの確認、簡単なバグ原因特定    |
+| `think hard`   | 中（30-60秒）  | 複雑なロジック設計、複数選択肢の比較      |
+| `think harder` | 高（2-3分）    | アーキテクチャ変更、複数機能の統合設計    |
+| `ultrathink`   | 最大（5-10分） | CLAUDE.md変更、プロジェクト全体の技術方針 |
 
 ### 判定フロー
 
@@ -256,13 +258,16 @@ import type { Tag } from '@/types';
 
 ```markdown
 # Explore段階
+
 「このtRPCエンドポイント設計を think して確認してください」
 
 # Plan段階（複雑な場合）
+
 「この状態管理について think hard してから、
- Zustand vs TanStack Query の比較を提案してください」
+Zustand vs TanStack Query の比較を提案してください」
 
 # アーキテクチャ変更
+
 「カレンダー機能の再設計について think harder してから提案してください」
 ```
 
@@ -273,6 +278,7 @@ import type { Tag } from '@/types';
 推測で実装せず、確認を求める。
 
 **判断フロー**:
+
 ```
 ユーザー指示の確認
 │
@@ -290,6 +296,7 @@ import type { Tag } from '@/types';
 ```
 
 **質問テンプレート**:
+
 ```
 【確認事項】
 1. [具体的な質問]
@@ -317,6 +324,7 @@ import type { Tag } from '@/types';
 **基本方針**: CLAUDE.mdを優先。ただし透過的に対応。
 
 **禁止技術の使用を依頼された場合**:
+
 ```
 「ご依頼の確認ですが、[技術名]の使用をお考えですね。
 
@@ -373,7 +381,7 @@ CLAUDE.mdでは、[理由]のため[推奨方法]を採用しています。
 
 ### 作業時（必要に応じて）
 
-- **スタイル**: [`docs/design-system/STYLE_GUIDE.md`](docs/design-system/STYLE_GUIDE.md)
+- **スタイル**: Storybook（`npm run storybook` → Docs/StyleGuide, Tokens/\*）
 - **リリース**: [`docs/releases/RELEASE_CHECKLIST.md`](docs/releases/RELEASE_CHECKLIST.md)（⚠️ リリース作業前に必須）
 - **コマンド**: [`docs/development/COMMANDS.md`](docs/development/COMMANDS.md)
 - **Issue管理**: [`docs/development/ISSUE_MANAGEMENT.md`](docs/development/ISSUE_MANAGEMENT.md)
@@ -544,6 +552,7 @@ export const myRouter = createTRPCRouter({
 **基本方針**: ユーザー操作に対応する全mutationで楽観的更新を実装する（体感速度200-800ms改善）
 
 **チェックリスト**:
+
 - [ ] ユーザー操作に対応するか？ → 楽観的更新を実装
 - [ ] 不可逆操作か？ → 楽観的更新なし、確認ダイアログを表示
 - [ ] 複数キャッシュに影響するか？ → 全キャッシュを更新
@@ -566,12 +575,14 @@ export const myRouter = createTRPCRouter({
 ### テスト実装
 
 **テスト対象の優先順位**:
+
 1. ビジネスロジック（Service層）
 2. カスタムフック（状態管理）
 3. 複雑なコンポーネント
 4. ユーティリティ関数
 
 **テストコマンド**:
+
 ```bash
 npm run test          # 全体実行
 npm run test -- path  # 特定ファイル
@@ -611,6 +622,7 @@ npm run test -- path  # 特定ファイル
 - [ ] 重いコンポーネント → `React.memo`
 
 **最適化が不要なケース**:
+
 - 単純なコンポーネント（メモ化のオーバーヘッドの方が大きい）
 - propsが毎回変わる場合
 - 再レンダリングが問題になっていない場合
@@ -629,6 +641,7 @@ npm run test -- path  # 特定ファイル
 ```
 
 **エラー境界の設置場所**:
+
 - 各Feature（plans, tags, records等）のルートコンポーネント
 - 非同期データを扱うコンポーネント
 - サードパーティライブラリを使用するコンポーネント
