@@ -6,6 +6,49 @@ import { Meta } from '@storybook/blocks';
 
 このStorybookは、Boxlogで使用するUIコンポーネントとデザイントークンのカタログです。
 
+---
+
+## ⚠️ 運用ルール：Storybookが正（Single Source of Truth）
+
+> **Storybookに記載されているパターンのみを使用する**
+
+### 原則
+
+| ルール | 説明 |
+|--------|------|
+| **Storybookにある = 使ってOK** | 各コンポーネントのStoryに記載されているprops/パターンのみ使用可能 |
+| **Storybookにない = 使わない** | 記載されていない機能は、たとえコンポーネントが対応していても使わない |
+| **新しいパターンが必要 = 先にStoryを追加** | 新しい使い方をする前に、まずStoryを追加してレビューする |
+
+### なぜこのルールがあるのか
+
+1. **一貫性**: 全員が同じパターンを使うことでUIの一貫性を保つ
+2. **ドキュメント**: Storybookを見れば「何が使えるか」が分かる
+3. **品質管理**: 使用パターンを限定することでテスト・レビューの負荷を下げる
+
+### 実践例
+
+```tsx
+// ✅ OK: Storybookに記載されているパターン
+<Button variant="ghost" size="icon">
+  <Settings className="size-4" />
+</Button>
+
+// ❌ NG: Storybookに記載されていないパターン
+<Button variant="link" size="xl">  // size="xl"はStoryにない
+  リンク
+</Button>
+```
+
+### 新しいパターンを追加する場合
+
+1. `*.stories.tsx` にStoryを追加
+2. `AllVariants` に追記
+3. PRでレビュー
+4. マージ後、実装で使用可能に
+
+---
+
 ## 構成
 
 ### Components

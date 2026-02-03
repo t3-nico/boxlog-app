@@ -2,6 +2,41 @@
 
 Storybookの公式ベストプラクティスに基づいたStory作成ガイド。
 
+---
+
+## ⚠️ 最重要ルール：Storybookが正（Single Source of Truth）
+
+> **Storybookに記載されているパターンのみを使用する**
+
+### 原則
+
+| ルール | 説明 |
+|--------|------|
+| **Storybookにある = 使ってOK** | 各コンポーネントのStoryに記載されているprops/パターンのみ使用可能 |
+| **Storybookにない = 使わない** | 記載されていない機能は、たとえコンポーネントが対応していても使わない |
+| **新しいパターンが必要 = 先にStoryを追加** | 新しい使い方をする前に、まずStoryを追加する |
+
+### AI向けガイドライン
+
+1. **UIコンポーネント使用前に確認**: `src/components/ui/[component].stories.tsx` を読んで使用可能なパターンを確認
+2. **Storyにないパターンは提案しない**: コンポーネントが技術的に対応していても、Storyにないものは使わない
+3. **新パターンが必要な場合**: 先にStoryを追加してからコードで使用する
+
+### 例
+
+```tsx
+// Storybookで確認
+// button.stories.tsx に variant="ghost", size="icon" がある → OK
+<Button variant="ghost" size="icon">
+  <Settings className="size-4" />
+</Button>
+
+// button.stories.tsx に size="xl" がない → NG（使わない）
+<Button size="xl">ボタン</Button>
+```
+
+---
+
 ## 対象範囲
 
 | ディレクトリ | 対象 | 優先度 |
