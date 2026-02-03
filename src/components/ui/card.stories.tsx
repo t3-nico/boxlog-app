@@ -85,7 +85,7 @@ export const AllPatterns: Story = {
           <p className="text-muted-foreground mb-4 text-sm">
             CardTitle/Descriptionは実テキスト、データ部分のみSkeleton（GAFA準拠）
           </p>
-          <Card className="max-w-md">
+          <Card>
             <CardHeader className="pb-2">
               <CardTitle className="flex items-center gap-2 text-base">
                 <Flame className="text-warning size-5" />
@@ -104,7 +104,7 @@ export const AllPatterns: Story = {
           <p className="text-muted-foreground mb-4 text-sm">
             CardHeader内にCardActionを配置。メニューボタン等。
           </p>
-          <Card className="max-w-md">
+          <Card>
             <CardHeader>
               <CardTitle>プロジェクト名</CardTitle>
               <CardDescription>2024年1月開始</CardDescription>
@@ -125,7 +125,7 @@ export const AllPatterns: Story = {
           <p className="text-muted-foreground mb-4 text-sm">
             認証フォーム等。CardContentのみ使用することも多い。
           </p>
-          <Card className="max-w-md">
+          <Card>
             <CardHeader>
               <CardTitle>ログイン</CardTitle>
               <CardDescription>アカウントにログインします。</CardDescription>
@@ -152,7 +152,7 @@ export const AllPatterns: Story = {
           <p className="text-muted-foreground mb-4 text-sm">
             CardContentのみ使用。pt-6でヘッダーなしの余白を確保。
           </p>
-          <Card className="max-w-md">
+          <Card>
             <CardContent className="pt-6">
               <p>シンプルなカード。ヘッダーとフッターなし。</p>
             </CardContent>
