@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { Mail, Plus, Settings, Trash2 } from 'lucide-react';
+import { Plus, Settings, X } from 'lucide-react';
 
 import { Button } from './button';
 
@@ -13,7 +13,7 @@ const meta = {
   argTypes: {
     variant: {
       control: 'select',
-      options: ['primary', 'outline', 'ghost', 'text', 'destructive'],
+      options: ['primary', 'outline', 'ghost', 'destructive'],
       description: 'ボタンのスタイルバリアント',
     },
     size: {
@@ -35,172 +35,109 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-// =============================================================================
-// 基本バリアント
-// =============================================================================
-
-export const Primary: Story = {
+export const Default: Story = {
   args: {
-    children: '保存',
+    children: 'ラベル',
     variant: 'primary',
   },
 };
 
-export const Outline: Story = {
-  args: {
-    children: 'キャンセル',
-    variant: 'outline',
-  },
-};
-
-export const Ghost: Story = {
-  args: {
-    children: '設定',
-    variant: 'ghost',
-  },
-};
-
-export const Text: Story = {
-  args: {
-    children: '詳細を見る',
-    variant: 'text',
-  },
-};
-
-export const Destructive: Story = {
-  args: {
-    children: '削除',
-    variant: 'destructive',
-  },
-};
-
-// =============================================================================
-// サイズ
-// =============================================================================
-
-export const SizeSmall: Story = {
-  args: {
-    children: 'Small',
-    size: 'sm',
-  },
-};
-
-export const SizeDefault: Story = {
-  args: {
-    children: 'Default',
-    size: 'default',
-  },
-};
-
-export const SizeLarge: Story = {
-  args: {
-    children: 'Large',
-    size: 'lg',
-  },
-};
-
-// =============================================================================
-// アイコンボタン
-// =============================================================================
-
-export const IconButton: Story = {
-  args: {
-    variant: 'ghost',
-    size: 'icon',
-    'aria-label': '設定を開く',
-    children: <Settings className="size-4" />,
-  },
-};
-
-export const IconButtonSmall: Story = {
-  args: {
-    variant: 'ghost',
-    size: 'icon-sm',
-    'aria-label': '追加',
-    children: <Plus className="size-4" />,
-  },
-};
-
-export const IconButtonLarge: Story = {
-  args: {
-    variant: 'outline',
-    size: 'icon-lg',
-    'aria-label': '削除',
-    children: <Trash2 className="size-5" />,
-  },
-};
-
-// =============================================================================
-// アイコン付きテキストボタン
-// =============================================================================
-
-export const WithIcon: Story = {
-  args: {
-    children: (
-      <>
-        <Mail className="size-4" />
-        メールを送信
-      </>
-    ),
-  },
-};
-
-// =============================================================================
-// 状態
-// =============================================================================
-
-export const Loading: Story = {
-  args: {
-    children: '保存',
-    isLoading: true,
-  },
-};
-
-export const LoadingWithText: Story = {
-  args: {
-    children: '保存',
-    isLoading: true,
-    loadingText: '保存中...',
-  },
-};
-
-export const Disabled: Story = {
-  args: {
-    children: '無効',
-    disabled: true,
-  },
-};
-
-// =============================================================================
-// 全バリアント一覧
-// =============================================================================
-
 export const AllVariants: Story = {
+  args: {
+    children: 'Button',
+  },
   render: () => (
-    <div className="flex flex-col gap-4">
-      <div className="flex items-center gap-2">
-        <Button variant="primary">Primary</Button>
-        <Button variant="outline">Outline</Button>
-        <Button variant="ghost">Ghost</Button>
-        <Button variant="text">Text</Button>
-        <Button variant="destructive">Destructive</Button>
-      </div>
-      <div className="flex items-center gap-2">
-        <Button size="sm">Small</Button>
-        <Button size="default">Default</Button>
-        <Button size="lg">Large</Button>
-      </div>
-      <div className="flex items-center gap-2">
-        <Button variant="ghost" size="icon-sm" aria-label="Small icon">
-          <Settings className="size-4" />
-        </Button>
-        <Button variant="ghost" size="icon" aria-label="Default icon">
-          <Settings className="size-4" />
-        </Button>
-        <Button variant="ghost" size="icon-lg" aria-label="Large icon">
-          <Settings className="size-5" />
-        </Button>
-      </div>
+    <div className="bg-background text-foreground space-y-8 p-8">
+      <h1 className="text-2xl font-bold">Button - スタイル一覧</h1>
+
+      {/* 塗りボタン（Solid Fill） */}
+      <section>
+        <h2 className="mb-4 text-lg font-semibold">塗りボタン（Solid Fill）</h2>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button variant="primary" size="sm">
+            ラベル
+          </Button>
+          <Button variant="primary" size="default">
+            ラベル
+          </Button>
+          <Button variant="primary" size="lg">
+            ラベル
+          </Button>
+          <Button variant="destructive">ラベル</Button>
+        </div>
+      </section>
+
+      {/* アウトラインボタン（Outline） */}
+      <section>
+        <h2 className="mb-4 text-lg font-semibold">アウトラインボタン（Outline）</h2>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button variant="outline" size="sm">
+            ラベル
+          </Button>
+          <Button variant="outline" size="default">
+            ラベル
+          </Button>
+          <Button variant="outline" size="lg">
+            ラベル
+          </Button>
+          <Button variant="outline" disabled>
+            ラベル
+          </Button>
+        </div>
+      </section>
+
+      {/* ゴーストボタン（Ghost） */}
+      <section>
+        <h2 className="mb-4 text-lg font-semibold">ゴーストボタン（Ghost）</h2>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button variant="ghost" size="sm">
+            ラベル
+          </Button>
+          <Button variant="ghost" size="default">
+            ラベル
+          </Button>
+          <Button variant="ghost" size="lg">
+            ラベル
+          </Button>
+          <Button variant="ghost" disabled>
+            ラベル
+          </Button>
+        </div>
+      </section>
+
+      {/* アイコンボタン */}
+      <section>
+        <h2 className="mb-4 text-lg font-semibold">アイコンボタン</h2>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button variant="ghost" size="icon-sm" aria-label="追加">
+            <Plus className="size-4" />
+          </Button>
+          <Button variant="ghost" size="icon" aria-label="設定">
+            <Settings className="size-4" />
+          </Button>
+          <Button variant="ghost" size="icon-lg" aria-label="閉じる">
+            <X className="size-5" />
+          </Button>
+          <Button variant="outline" size="icon" aria-label="設定">
+            <Settings className="size-4" />
+          </Button>
+        </div>
+      </section>
+
+      {/* 状態 */}
+      <section>
+        <h2 className="mb-4 text-lg font-semibold">状態</h2>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button isLoading>保存中</Button>
+          <Button isLoading loadingText="処理中...">
+            保存
+          </Button>
+          <Button disabled>無効</Button>
+        </div>
+      </section>
     </div>
   ),
+  parameters: {
+    layout: 'fullscreen',
+  },
 };

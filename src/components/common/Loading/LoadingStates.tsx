@@ -275,7 +275,7 @@ export const DataLoading = ({
         {errorComponent || (
           <div className="text-center">
             <p className="text-destructive mb-2">{t('error.loading.loadFailed')}</p>
-            <Button type="button" variant="text" onClick={handleReload}>
+            <Button type="button" variant="ghost" onClick={handleReload}>
               {t('error.loading.retry')}
             </Button>
           </div>

@@ -15,7 +15,6 @@ import { cn } from '@/lib/utils';
  * | primary     | 主要CTA、画面で最も重要なアクション          | 保存、送信、作成、購入       |
  * | outline     | 副次アクション、primaryとペアで使用          | キャンセル、戻る、詳細       |
  * | ghost       | アイコンボタン、ツールバー、軽量な操作       | 閉じる、メニュー、設定       |
- * | text        | テキストリンク風、インライン操作             | 詳細を見る、もっと見る       |
  * | destructive | 破壊的アクション、確認ダイアログ内           | 削除、解除、退会             |
  *
  * ## サイズ設計（GAFA準拠）
@@ -70,8 +69,6 @@ const buttonVariants = cva(
         ].join(' '),
         // アイコンボタン・ツールバー - 背景なし、ホバーで背景出現
         ghost: 'text-foreground hover:bg-state-hover active:bg-state-hover',
-        // テキストリンク風 - 下線スタイル
-        text: 'underline underline-offset-4 hover:text-foreground',
         // 破壊的アクション - 削除、解除など
         destructive: [
           'bg-destructive text-destructive-foreground shadow-sm',
@@ -150,10 +147,6 @@ export interface ButtonProps
  * <Button variant="ghost" size="icon" aria-label="設定を開く">
  *   <Settings className="size-4" />
  * </Button>
- *
- * @example
- * // テキストリンク風（text）
- * <Button variant="text">詳細を見る</Button>
  *
  * @example
  * // 破壊的アクション（destructive）
