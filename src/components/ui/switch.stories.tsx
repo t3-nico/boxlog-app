@@ -4,6 +4,25 @@ import { useState } from 'react';
 import { Label } from './label';
 import { Switch } from './switch';
 
+/**
+ * Switch - トグルスイッチ（ON/OFF切替）
+ *
+ * ## Switch vs Checkbox
+ *
+ * | 観点 | Switch | Checkbox |
+ * |------|--------|----------|
+ * | 効果 | 即座に反映 | 送信後に反映 |
+ * | 用途 | 設定のON/OFF | フォーム選択 |
+ * | 複数選択 | 不可（単独） | 可能 |
+ * | 推奨 | 設定画面、モード切替 | フォーム、同意確認 |
+ *
+ * ## 使い分けルール（Apple HIG準拠）
+ *
+ * - **即座に反映**: Switch（設定変更が即座に適用）
+ * - **送信後に反映**: Checkbox（フォーム送信時に適用）
+ * - **独立した設定**: Switch（他と関係なく切替）
+ * - **複数項目から選択**: Checkbox（グループとして選択）
+ */
 const meta = {
   title: 'Components/Switch',
   component: Switch,
@@ -75,7 +94,7 @@ export const AllPatterns: Story = {
       <div className="bg-background text-foreground p-8">
         <h1 className="mb-8 text-2xl font-bold">Switch - 実際の使用パターン</h1>
 
-        <div className="max-w-sm space-y-8">
+        <div className="space-y-8" style={{ maxWidth: '28rem' }}>
           <section>
             <h2 className="mb-4 text-lg font-bold">設定リスト</h2>
             <div className="border-border divide-border divide-y rounded-lg border">
