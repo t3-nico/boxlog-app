@@ -39,7 +39,6 @@ const Toaster = ({ ...props }: ToasterProps) => {
     <Sonner
       theme={validTheme}
       position={isMobile ? 'bottom-center' : 'bottom-right'}
-      richColors
       expand
       duration={6000}
       closeButton
@@ -53,6 +52,13 @@ const Toaster = ({ ...props }: ToasterProps) => {
           actionButton:
             'group-[.toast]:bg-primary group-[.toast]:text-primary-foreground hover:group-[.toast]:bg-primary-hover transition-colors',
           cancelButton: 'group-[.toast]:bg-container group-[.toast]:text-muted-foreground',
+          success:
+            'group-[.toaster]:bg-success group-[.toaster]:text-success-foreground group-[.toaster]:border-success',
+          error:
+            'group-[.toaster]:bg-destructive group-[.toaster]:text-destructive-foreground group-[.toaster]:border-destructive',
+          warning:
+            'group-[.toaster]:bg-warning group-[.toaster]:text-warning-foreground group-[.toaster]:border-warning',
+          info: 'group-[.toaster]:bg-info group-[.toaster]:text-info-foreground group-[.toaster]:border-info',
         },
       }}
       {...props}
