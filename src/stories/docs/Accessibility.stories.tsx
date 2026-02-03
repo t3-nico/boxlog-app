@@ -535,3 +535,486 @@ export const Checklist: Story = {
     </div>
   ),
 };
+
+export const Forms: Story = {
+  name: 'フォーム',
+  render: () => (
+    <div className="bg-background text-foreground p-8">
+      <h1 className="mb-4 text-2xl font-bold">フォームのアクセシビリティ</h1>
+      <p className="text-muted-foreground mb-8">
+        フォーム要素のラベル紐付け、エラー状態、ヒントテキストの実装パターン
+      </p>
+
+      <Section title="Label と Input の紐付け">
+        <p className="text-muted-foreground mb-4">
+          必ず <code>htmlFor</code> と <code>id</code> を使って紐付ける
+        </p>
+
+        <div className="bg-card border-border mb-4 rounded-lg border p-4">
+          <div className="mb-4 max-w-sm space-y-2">
+            <label htmlFor="demo-email" className="text-sm font-medium">
+              メールアドレス
+            </label>
+            <input
+              id="demo-email"
+              type="email"
+              placeholder="you@example.com"
+              aria-describedby="demo-email-hint"
+              className="border-border bg-input focus-visible:ring-ring w-full rounded-lg border px-3 py-2 outline-none focus-visible:ring-2"
+            />
+            <p id="demo-email-hint" className="text-muted-foreground text-sm">
+              確認メールを送信します
+            </p>
+          </div>
+          <CodeBlock>{`<Label htmlFor="email">メールアドレス</Label>
+<Input
+  id="email"
+  type="email"
+  aria-describedby="email-hint"
+/>
+<p id="email-hint" className="text-sm text-muted-foreground">
+  確認メールを送信します
+</p>`}</CodeBlock>
+        </div>
+      </Section>
+
+      <Section title="エラー状態">
+        <p className="text-muted-foreground mb-4">
+          <code>aria-invalid</code> と <code>aria-describedby</code> でエラーを関連付け
+        </p>
+
+        <div className="bg-card border-border mb-4 rounded-lg border p-4">
+          <div className="mb-4 max-w-sm space-y-2">
+            <label htmlFor="demo-email-error" className="text-sm font-medium">
+              メールアドレス
+            </label>
+            <input
+              id="demo-email-error"
+              type="email"
+              defaultValue="invalid-email"
+              aria-invalid="true"
+              aria-describedby="demo-email-error-msg"
+              className="border-destructive bg-input focus-visible:ring-destructive w-full rounded-lg border px-3 py-2 outline-none focus-visible:ring-2"
+            />
+            <p id="demo-email-error-msg" role="alert" className="text-destructive text-sm">
+              有効なメールアドレスを入力してください
+            </p>
+          </div>
+          <CodeBlock>{`<Input
+  id="email"
+  aria-invalid={!!error}
+  aria-describedby={error ? "email-error" : undefined}
+/>
+{error && (
+  <p id="email-error" role="alert" className="text-destructive">
+    {error}
+  </p>
+)}`}</CodeBlock>
+        </div>
+      </Section>
+
+      <Section title="ローディング状態">
+        <p className="text-muted-foreground mb-4">
+          <code>aria-busy</code> でローディング中であることを伝える
+        </p>
+
+        <div className="bg-card border-border rounded-lg border p-4">
+          <CodeBlock>{`<Button disabled aria-busy={isLoading}>
+  {isLoading ? <Spinner /> : '保存'}
+</Button>`}</CodeBlock>
+        </div>
+      </Section>
+    </div>
+  ),
+};
+
+export const DialogAccessibility: Story = {
+  name: 'Dialog / AlertDialog',
+  render: () => (
+    <div className="bg-background text-foreground p-8">
+      <h1 className="mb-4 text-2xl font-bold">Dialog / AlertDialog</h1>
+      <p className="text-muted-foreground mb-8">
+        shadcn/ui（Radix UI）のDialog/AlertDialogは基本的なa11y対応済み。
+        ただし、必須ルールがある。
+      </p>
+
+      <Section title="必須ルール">
+        <div className="bg-warning/10 border-warning mb-6 rounded-lg border p-4">
+          <p className="font-bold">DialogTitle / DialogDescription を省略しない</p>
+          <p className="text-muted-foreground mt-2 text-sm">
+            省略するとスクリーンリーダーで内容が伝わらない。
+            <code>aria-labelledby</code> と <code>aria-describedby</code> が自動設定される。
+          </p>
+        </div>
+
+        <Comparison
+          good={
+            <CodeBlock>{`<DialogContent>
+  <DialogHeader>
+    <DialogTitle>
+      設定
+    </DialogTitle>
+    <DialogDescription>
+      アプリの設定を変更します
+    </DialogDescription>
+  </DialogHeader>
+  {/* コンテンツ */}
+</DialogContent>`}</CodeBlock>
+          }
+          bad={
+            <CodeBlock>{`<DialogContent>
+  <h2>設定</h2>
+  <p>アプリの設定を変更します</p>
+  {/* コンテンツ */}
+</DialogContent>
+
+// ❌ DialogTitle/Description なし
+// スクリーンリーダーに伝わらない`}</CodeBlock>
+          }
+        />
+      </Section>
+
+      <Section title="視覚的に非表示にする場合">
+        <p className="text-muted-foreground mb-4">
+          デザイン上タイトルを表示したくない場合も、<code>sr-only</code> で残す
+        </p>
+
+        <div className="bg-card border-border rounded-lg border p-4">
+          <CodeBlock>{`<DialogHeader>
+  <DialogTitle className="sr-only">
+    画像プレビュー
+  </DialogTitle>
+</DialogHeader>`}</CodeBlock>
+        </div>
+      </Section>
+    </div>
+  ),
+};
+
+export const KeyboardNavigation: Story = {
+  name: 'キーボードナビゲーション',
+  render: () => (
+    <div className="bg-background text-foreground p-8">
+      <h1 className="mb-4 text-2xl font-bold">キーボードナビゲーション</h1>
+      <p className="text-muted-foreground mb-8">
+        キーボードのみで全機能が使えるようにする
+      </p>
+
+      <Section title="基本キー">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm">
+            <thead>
+              <tr className="border-border border-b">
+                <th className="pb-2 font-medium">キー</th>
+                <th className="pb-2 font-medium">用途</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr className="border-border border-b">
+                <td className="py-2"><kbd className="bg-container rounded px-2 py-1">Tab</kbd></td>
+                <td className="py-2">次の要素にフォーカス移動</td>
+              </tr>
+              <tr className="border-border border-b">
+                <td className="py-2"><kbd className="bg-container rounded px-2 py-1">Shift + Tab</kbd></td>
+                <td className="py-2">前の要素にフォーカス移動</td>
+              </tr>
+              <tr className="border-border border-b">
+                <td className="py-2"><kbd className="bg-container rounded px-2 py-1">Enter</kbd></td>
+                <td className="py-2">ボタン/リンクの実行</td>
+              </tr>
+              <tr className="border-border border-b">
+                <td className="py-2"><kbd className="bg-container rounded px-2 py-1">Space</kbd></td>
+                <td className="py-2">チェックボックス/ボタンの切り替え</td>
+              </tr>
+              <tr>
+                <td className="py-2"><kbd className="bg-container rounded px-2 py-1">Escape</kbd></td>
+                <td className="py-2">モーダル/ポップオーバーを閉じる</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </Section>
+
+      <Section title="入力中のショートカット無効化">
+        <p className="text-muted-foreground mb-4">
+          テキスト入力中はグローバルショートカットを無効にする
+        </p>
+
+        <div className="bg-card border-border rounded-lg border p-4">
+          <CodeBlock>{`// ショートカットハンドラ内で入力中かチェック
+const isTyping = ['INPUT', 'TEXTAREA'].includes(
+  document.activeElement?.tagName || ''
+);
+
+if (isTyping) return; // 入力中は何もしない
+
+// ショートカット処理を続行...`}</CodeBlock>
+        </div>
+      </Section>
+
+      <Section title="BoxLogのショートカット例">
+        <p className="text-muted-foreground mb-4">
+          カレンダー画面のキーボード操作（Google Calendar互換）
+        </p>
+
+        <div className="grid gap-2 text-sm md:grid-cols-2">
+          {[
+            { key: 'Escape', action: 'Inspectorを閉じる' },
+            { key: 'Delete / Backspace', action: '選択中プランを削除' },
+            { key: 'C', action: '新規プラン作成' },
+            { key: 'Cmd/Ctrl + C', action: 'コピー' },
+            { key: 'Cmd/Ctrl + V', action: 'ペースト' },
+          ].map(({ key, action }) => (
+            <div key={key} className="bg-card border-border flex items-center justify-between rounded-lg border p-3">
+              <kbd className="bg-container rounded px-2 py-1 text-xs">{key}</kbd>
+              <span className="text-muted-foreground">{action}</span>
+            </div>
+          ))}
+        </div>
+      </Section>
+    </div>
+  ),
+};
+
+export const ProhibitedPatterns: Story = {
+  name: '禁止事項',
+  render: () => (
+    <div className="bg-background text-foreground p-8">
+      <h1 className="mb-4 text-2xl font-bold">禁止事項</h1>
+      <p className="text-muted-foreground mb-8">
+        アクセシビリティを損なう実装パターン
+      </p>
+
+      <Section title="❌ クリックのみでキーボード操作不可">
+        <Comparison
+          good={
+            <div className="space-y-4">
+              <p className="text-sm">button要素を使用</p>
+              <CodeBlock>{`<button onClick={handleClick}>
+  クリック
+</button>`}</CodeBlock>
+              <p className="text-sm">または role + tabIndex + onKeyDown</p>
+              <CodeBlock>{`<div
+  role="button"
+  tabIndex={0}
+  onClick={handleClick}
+  onKeyDown={(e) => {
+    if (e.key === 'Enter') handleClick()
+  }}
+>
+  クリック
+</div>`}</CodeBlock>
+            </div>
+          }
+          bad={
+            <div className="space-y-4">
+              <p className="text-sm">div + onClick のみ</p>
+              <CodeBlock>{`<div onClick={handleClick}>
+  クリック
+</div>
+
+// キーボードで操作できない
+// フォーカスも当たらない`}</CodeBlock>
+            </div>
+          }
+        />
+      </Section>
+
+      <Section title="❌ aria-label の乱用">
+        <p className="text-muted-foreground mb-4">
+          可視テキストがある場合は aria-label 不要
+        </p>
+
+        <Comparison
+          good={
+            <CodeBlock>{`// テキストがない場合のみaria-label
+<Button aria-label="保存する">
+  <SaveIcon aria-hidden="true" />
+</Button>
+
+// テキストがあればそのまま
+<Button>保存</Button>`}</CodeBlock>
+          }
+          bad={
+            <CodeBlock>{`// テキストがあるのにaria-label
+<Button aria-label="保存する">
+  保存
+</Button>
+
+// 二重に読み上げられる可能性`}</CodeBlock>
+          }
+        />
+      </Section>
+
+      <Section title="❌ 色だけで情報を伝える">
+        <p className="text-muted-foreground mb-4">
+          色覚特性のあるユーザーに伝わらない
+        </p>
+
+        <Comparison
+          good={
+            <div className="space-y-4">
+              <div className="text-destructive flex items-center gap-2">
+                <span aria-hidden="true">⚠</span>
+                <span>必須項目です</span>
+              </div>
+              <CodeBlock>{`<span className="text-destructive">
+  <AlertIcon aria-hidden="true" />
+  必須項目です
+</span>`}</CodeBlock>
+            </div>
+          }
+          bad={
+            <div className="space-y-4">
+              <span className="text-destructive">必須</span>
+              <CodeBlock>{`// 赤色だけでエラーを示す
+<span className="text-red-500">
+  必須
+</span>`}</CodeBlock>
+            </div>
+          }
+        />
+      </Section>
+    </div>
+  ),
+};
+
+export const ComponentGuide: Story = {
+  name: 'shadcn/ui コンポーネント別ガイド',
+  render: () => (
+    <div className="bg-background text-foreground p-8">
+      <h1 className="mb-4 text-2xl font-bold">shadcn/ui コンポーネント別ガイド</h1>
+      <p className="text-muted-foreground mb-8">
+        shadcn/ui（Radix UI）コンポーネントのa11y対応状況
+      </p>
+
+      <Section title="基本対応済み（そのまま使用可）">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm">
+            <thead>
+              <tr className="border-border border-b">
+                <th className="pb-2 font-medium">コンポーネント</th>
+                <th className="pb-2 font-medium">a11y対応</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                { name: 'Button', feature: 'disabled, aria-busy対応' },
+                { name: 'Input', feature: 'aria-invalid対応' },
+                { name: 'Select', feature: 'キーボード操作完備（矢印キー）' },
+                { name: 'Dialog', feature: 'role, aria-modal, フォーカストラップ' },
+                { name: 'AlertDialog', feature: '同上 + role="alertdialog"' },
+                { name: 'Popover', feature: 'Escapeで閉じる' },
+                { name: 'Drawer', feature: 'role="dialog"' },
+                { name: 'Tooltip', feature: 'キーボードフォーカスで表示' },
+              ].map(({ name, feature }) => (
+                <tr key={name} className="border-border border-b">
+                  <td className="py-2 font-medium">{name}</td>
+                  <td className="text-muted-foreground py-2">{feature}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Section>
+
+      <Section title="追加対応が必要">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm">
+            <thead>
+              <tr className="border-border border-b">
+                <th className="pb-2 font-medium">コンポーネント</th>
+                <th className="pb-2 font-medium">必要な対応</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                { name: 'Toast (Sonner)', feature: 'aria-live="polite" の確認' },
+                { name: 'カスタムドロップダウン', feature: 'キーボード操作の実装' },
+                { name: 'Drag & Drop', feature: 'aria-grabbed, aria-dropeffect' },
+                { name: 'カスタムスライダー', feature: 'aria-valuemin/max/now' },
+              ].map(({ name, feature }) => (
+                <tr key={name} className="border-border border-b">
+                  <td className="py-2 font-medium">{name}</td>
+                  <td className="text-warning py-2">{feature}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Section>
+    </div>
+  ),
+};
+
+export const MotionPreference: Story = {
+  name: 'Motion Preference',
+  render: () => (
+    <div className="bg-background text-foreground p-8">
+      <h1 className="mb-4 text-2xl font-bold">Motion Preference</h1>
+      <p className="text-muted-foreground mb-8">
+        アニメーションを減らしたいユーザー設定を尊重する
+      </p>
+
+      <Section title="useReducedMotion フック">
+        <p className="text-muted-foreground mb-4">
+          OSの「視覚効果を減らす」設定を検出
+        </p>
+
+        <div className="bg-card border-border mb-4 rounded-lg border p-4">
+          <CodeBlock>{`import { useReducedMotion } from '@/hooks/useReducedMotion';
+
+function AnimatedComponent() {
+  const prefersReducedMotion = useReducedMotion();
+
+  return (
+    <div
+      className={
+        prefersReducedMotion
+          ? '' // アニメーションなし
+          : 'transition-transform duration-300'
+      }
+    >
+      コンテンツ
+    </div>
+  );
+}`}</CodeBlock>
+        </div>
+      </Section>
+
+      <Section title="CSS での対応">
+        <p className="text-muted-foreground mb-4">
+          Tailwind CSS の <code>motion-reduce:</code> プレフィックス
+        </p>
+
+        <div className="bg-card border-border rounded-lg border p-4">
+          <CodeBlock>{`// アニメーションを条件付きで適用
+<div className="
+  transition-transform duration-300
+  motion-reduce:transition-none
+">
+  コンテンツ
+</div>
+
+// または motion-safe: で明示的に有効化
+<div className="
+  motion-safe:transition-transform
+  motion-safe:duration-300
+">
+  コンテンツ
+</div>`}</CodeBlock>
+        </div>
+      </Section>
+
+      <Section title="対象となるアニメーション">
+        <ul className="text-muted-foreground space-y-2">
+          <li>• ページ遷移アニメーション</li>
+          <li>• ローディングスピナー（回転は維持、パルスは停止）</li>
+          <li>• ホバー時のスケール変化</li>
+          <li>• スクロールアニメーション</li>
+          <li>• 自動再生される装飾アニメーション</li>
+        </ul>
+      </Section>
+    </div>
+  ),
+};
