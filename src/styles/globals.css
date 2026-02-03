@@ -199,6 +199,10 @@
   --color-on-primary-container: var(--primary);
   --color-success-container: oklch(from var(--success) l c h / 12%);
   --color-on-success-container: var(--success);
+  --color-warning-container: oklch(from var(--warning) l c h / 12%);
+  --color-on-warning-container: var(--warning);
+  --color-info-container: oklch(from var(--info) l c h / 12%);
+  --color-on-info-container: var(--info);
 
   /* Destructive ステートレイヤー */
   --color-destructive-container: oklch(from var(--destructive) l c h / 12%);
