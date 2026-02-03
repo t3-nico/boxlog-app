@@ -768,7 +768,6 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
             tagIds={formData.tagIds}
             onTagsChange={handleTagsChange}
             popoverSide="bottom"
-            popoverZIndex={zIndex.overlayDropdown}
           />
 
           {/* Plan紐付け（新規・編集共通） */}

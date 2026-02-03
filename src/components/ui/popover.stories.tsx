@@ -1,10 +1,35 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import { useState } from 'react';
 
 import { Button } from './button';
 import { Input } from './input';
 import { Label } from './label';
-import { Popover, PopoverContent, PopoverTrigger } from './popover';
+import { Popover, PopoverAnchor, PopoverContent, PopoverTrigger } from './popover';
 
+/**
+ * Popover - ポップオーバー
+ *
+ * ## 使用コンポーネント
+ *
+ * | コンポーネント | 用途 |
+ * |----------------|------|
+ * | Popover | ルートコンテナ |
+ * | PopoverTrigger | トリガーボタン（asChild でラップ） |
+ * | PopoverAnchor | カスタムアンカー（Input等をトリガーにする場合） |
+ * | PopoverContent | コンテンツ本体 |
+ *
+ * ## Trigger vs Anchor
+ *
+ * | パターン | 使用コンポーネント | ユースケース |
+ * |----------|-------------------|--------------|
+ * | ボタンで開閉 | PopoverTrigger | 設定ボタン、アクションボタン |
+ * | Input で開閉 | PopoverAnchor | 時刻選択、コンボボックス |
+ *
+ * ## z-index
+ *
+ * - 通常: `z-popover` (100)
+ * - Inspector上: `z-overlay-popover` (1200) を className で上書き
+ */
 const meta = {
   title: 'Components/Popover',
   component: Popover,
@@ -144,6 +169,53 @@ export const Alignment: Story = {
       </Popover>
     </div>
   ),
+};
+
+/**
+ * PopoverAnchor を使った Combobox 風パターン
+ * - Input をアンカーにしてドロップダウンを表示
+ * - TimeSelect などで使用
+ */
+export const WithAnchor: Story = {
+  render: function WithAnchorStory() {
+    const [isOpen, setIsOpen] = useState(false);
+    const [value, setValue] = useState('10:00');
+
+    const options = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00'];
+
+    return (
+      <Popover open={isOpen} onOpenChange={setIsOpen}>
+        <PopoverAnchor asChild>
+          <Input
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            onFocus={() => setIsOpen(true)}
+            className="w-24"
+            placeholder="--:--"
+          />
+        </PopoverAnchor>
+        <PopoverContent className="w-24 p-1" align="start">
+          <div className="space-y-1">
+            {options.map((option) => (
+              <button
+                key={option}
+                type="button"
+                className={`hover:bg-state-hover w-full rounded px-2 py-1 text-left text-sm ${
+                  option === value ? 'bg-state-selected' : ''
+                }`}
+                onClick={() => {
+                  setValue(option);
+                  setIsOpen(false);
+                }}
+              >
+                {option}
+              </button>
+            ))}
+          </div>
+        </PopoverContent>
+      </Popover>
+    );
+  },
 };
 
 export const AllVariants: Story = {

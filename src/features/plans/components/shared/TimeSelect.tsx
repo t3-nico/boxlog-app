@@ -7,7 +7,6 @@ import { Clock, Flag } from 'lucide-react';
 import type { TimeIconType } from '@/components/common/ClockTimePicker';
 
 import { Popover, PopoverAnchor, PopoverContent } from '@/components/ui/popover';
-import { zIndex } from '@/config/ui/z-index';
 
 /**
  * 15分刻みの時刻オプションを生成（00:00 ~ 23:45）
@@ -418,11 +417,10 @@ export function TimeSelect({
 
         {!disabled && filteredOptions.length > 0 && (
           <PopoverContent
-            className="overflow-hidden p-0"
+            className="z-overlay-popover overflow-hidden p-0"
             align="start"
             sideOffset={4}
             style={{
-              zIndex: zIndex.overlayDropdown,
               width: showDurationInMenu && minTime ? '140px' : '80px',
             }}
             onOpenAutoFocus={(e) => e.preventDefault()}

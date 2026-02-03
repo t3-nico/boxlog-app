@@ -440,7 +440,6 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
             tagIds={formData.tagIds}
             onTagsChange={handleTagsChange}
             popoverSide="bottom"
-            popoverZIndex={zIndex.overlayDropdown}
           />
 
           {/* Plan紐付け */}

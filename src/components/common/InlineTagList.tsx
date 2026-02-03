@@ -6,7 +6,6 @@ import { Tag, X } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { HoverTooltip } from '@/components/ui/tooltip';
-import { zIndex } from '@/config/ui/z-index';
 import { TagSelectCombobox } from '@/features/plans/components/shared/TagSelectCombobox';
 import { useTags } from '@/features/tags/hooks';
 import { cn } from '@/lib/utils';
@@ -18,8 +17,8 @@ interface InlineTagListProps {
   onTagsChange: (tagIds: string[]) => void;
   /** Popoverの表示位置 */
   popoverSide?: 'top' | 'bottom';
-  /** PopoverのzIndex（Inspector内で使う場合に指定） */
-  popoverZIndex?: number;
+  /** Inspector内で使う場合にtrue（z-overlay-popoverを適用） */
+  isOverlay?: boolean;
   /** タグなし時のプレースホルダーテキスト */
   emptyPlaceholder?: string;
 }
@@ -34,7 +33,7 @@ export function InlineTagList({
   tagIds,
   onTagsChange,
   popoverSide = 'bottom',
-  popoverZIndex = zIndex.overlayDropdown,
+  isOverlay = true,
   emptyPlaceholder = 'タグを追加...',
 }: InlineTagListProps) {
   const { data: allTags = [] } = useTags();
@@ -84,7 +83,7 @@ export function InlineTagList({
           onTagsChange={onTagsChange}
           side={popoverSide}
           sideOffset={8}
-          zIndex={popoverZIndex}
+          isOverlay={isOverlay}
         >
           {hasTags ? (
             <button
