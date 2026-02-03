@@ -5,12 +5,11 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from './input-otp';
 
 const meta = {
   title: 'Components/InputOTP',
-  component: InputOTP,
   tags: ['autodocs'],
   parameters: {
     layout: 'fullscreen',
   },
-} satisfies Meta<typeof InputOTP>;
+} satisfies Meta;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
