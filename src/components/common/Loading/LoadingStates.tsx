@@ -119,7 +119,7 @@ export const LoadingCard = ({ title, message, className = '' }: LoadingCardProps
   return (
     <div
       className={cn(
-        'bg-card flex flex-col items-center justify-center rounded-md p-8 shadow-sm',
+        'bg-card flex flex-col items-center justify-center rounded-lg p-8 shadow-sm',
         className,
       )}
     >
@@ -212,7 +212,7 @@ export const SkeletonCard = ({
   animation = 'pulse',
 }: SkeletonCardProps) => {
   return (
-    <div className={cn('bg-card rounded-md p-4 shadow-sm', className)}>
+    <div className={cn('bg-card rounded-lg p-4 shadow-sm', className)}>
       {showImage ? <Skeleton animation={animation} className="mb-4 h-40 w-full" /> : null}
 
       <div className="flex items-start gap-2">

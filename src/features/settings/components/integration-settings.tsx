@@ -181,16 +181,16 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
       {/* AI設定 */}
       <SettingsCard title={t('settings.integrations.ai.title')}>
         <div className="space-y-4">
-          <div className="bg-surface-container rounded-xl p-4">
+          <div className="bg-surface-container rounded-2xl p-4">
             <p className="text-muted-foreground text-sm">
               {t('settings.integrations.ai.description')}
             </p>
           </div>
 
           {AI_PROVIDERS.map((provider) => (
-            <div key={provider.id} className="border-border rounded-xl border p-4">
+            <div key={provider.id} className="border-border rounded-2xl border p-4">
               <div className="flex items-start gap-4">
-                <div className="bg-surface-container flex h-10 w-10 shrink-0 items-center justify-center rounded-xl">
+                <div className="bg-surface-container flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl">
                   <Bot className="text-primary h-5 w-5" />
                 </div>
                 <div className="min-w-0 flex-1 space-y-3">
@@ -263,10 +263,10 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
           {integrations.map((integration) => (
             <div
               key={integration.id}
-              className="border-border flex items-center justify-between rounded-xl border p-4"
+              className="border-border flex items-center justify-between rounded-2xl border p-4"
             >
               <div className="flex items-center gap-4">
-                <div className="bg-surface-container flex h-10 w-10 items-center justify-center rounded-xl">
+                <div className="bg-surface-container flex h-10 w-10 items-center justify-center rounded-2xl">
                   {integration.icon}
                 </div>
                 <div>
@@ -311,7 +311,7 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
           />
         </div>
         {syncEnabled && (
-          <div className="bg-surface-container mt-4 rounded-xl p-4">
+          <div className="bg-surface-container mt-4 rounded-2xl p-4">
             <p className="text-muted-foreground text-sm">
               {t('settings.integrations.sync.description')}
             </p>
@@ -322,7 +322,7 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
       {/* API連携 */}
       <SettingsCard title={t('settings.integrations.api.title')}>
         <div className="space-y-4">
-          <div className="bg-surface-container rounded-xl p-4">
+          <div className="bg-surface-container rounded-2xl p-4">
             <p className="text-muted-foreground text-sm">
               {t('settings.integrations.api.description')}
             </p>

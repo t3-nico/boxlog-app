@@ -85,7 +85,7 @@ const SheetContent = ({
         {showCloseButton && (
           <SheetPrimitive.Close
             className={cn(
-              'absolute top-4 right-4 rounded-sm opacity-70 transition-opacity hover:opacity-100',
+              'absolute top-4 right-4 rounded opacity-70 transition-opacity hover:opacity-100',
               'focus:outline-hidden focus-visible:ring-0',
               'disabled:pointer-events-none',
               'data-[state=open]:bg-state-selected',

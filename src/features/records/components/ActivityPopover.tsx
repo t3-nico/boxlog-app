@@ -47,7 +47,7 @@ export function RecordActivityPopover({ recordId }: RecordActivityPopoverProps) 
           <button
             type="button"
             onClick={() => setOpen(false)}
-            className="text-muted-foreground hover:bg-state-hover hover:text-foreground rounded-md p-1 transition-colors"
+            className="text-muted-foreground hover:bg-state-hover hover:text-foreground rounded-lg p-1 transition-colors"
             aria-label={tCommon('actions.close')}
           >
             <X className="size-4" />

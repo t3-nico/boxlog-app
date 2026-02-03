@@ -75,7 +75,7 @@ export const CALENDAR_CLASSES = {
   // プランブロック（shadowなし：フラットデザイン）
   planShadow: '',
   planBorder: 'border-l-4',
-  planRounding: 'rounded-md',
+  planRounding: 'rounded-lg',
   planPadding: 'px-2 py-1',
 
   // アニメーション

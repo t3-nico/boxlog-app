@@ -92,7 +92,7 @@ export const ListStyle: Story = {
 
     return (
       <RadioGroup value={value} onValueChange={setValue}>
-        <div className="border-border bg-card rounded-md border w-64">
+        <div className="border-border bg-card w-64 rounded-lg border">
           {options.map((option, index) => (
             <Label
               key={option.value}
@@ -134,13 +134,13 @@ export const AllVariants: Story = {
     ];
 
     return (
-      <div className="p-8 bg-background text-foreground">
-        <h1 className="text-2xl font-bold mb-8">RadioGroup - 実際の使用パターン</h1>
+      <div className="bg-background text-foreground p-8">
+        <h1 className="mb-8 text-2xl font-bold">RadioGroup - 実際の使用パターン</h1>
 
         <div className="space-y-8">
           <section>
-            <h2 className="text-lg font-semibold mb-4">チップスタイル（横並び）</h2>
-            <p className="text-sm text-muted-foreground mb-4">
+            <h2 className="mb-4 text-lg font-semibold">チップスタイル（横並び）</h2>
+            <p className="text-muted-foreground mb-4 text-sm">
               RadioGroupItemはsr-onlyで非表示、Labelがクリック対象
             </p>
             <RadioGroup value={chipValue} onValueChange={setChipValue}>
@@ -168,12 +168,10 @@ export const AllVariants: Story = {
           </section>
 
           <section>
-            <h2 className="text-lg font-semibold mb-4">リストスタイル（Apple Settings風）</h2>
-            <p className="text-sm text-muted-foreground mb-4">
-              選択中はCheckアイコンを表示
-            </p>
+            <h2 className="mb-4 text-lg font-semibold">リストスタイル（Apple Settings風）</h2>
+            <p className="text-muted-foreground mb-4 text-sm">選択中はCheckアイコンを表示</p>
             <RadioGroup value={listValue} onValueChange={setListValue}>
-              <div className="border-border bg-card rounded-md border w-64">
+              <div className="border-border bg-card w-64 rounded-lg border">
                 {themeOptions.map((option, index) => (
                   <Label
                     key={option.value}

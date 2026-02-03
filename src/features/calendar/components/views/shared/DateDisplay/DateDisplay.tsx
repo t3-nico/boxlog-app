@@ -38,7 +38,7 @@ const generateDateClassName = (
   // ボタンの場合、デフォルトスタイルをリセット + フォーカス表示
   if (onClick) {
     classes.push(
-      'border-0 bg-transparent font-inherit text-inherit outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1 rounded-md',
+      'border-0 bg-transparent font-inherit text-inherit outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1 rounded-lg',
     );
   }
 

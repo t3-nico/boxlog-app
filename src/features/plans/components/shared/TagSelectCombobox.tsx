@@ -54,7 +54,7 @@ function TagItem({
     >
       <div
         className={cn(
-          'flex size-4 shrink-0 items-center justify-center rounded-sm border',
+          'flex size-4 shrink-0 items-center justify-center rounded border',
           isSelected ? 'border-transparent' : 'border-current opacity-50',
         )}
         style={{
@@ -109,7 +109,7 @@ function ParentTagHeader({
         >
           <div
             className={cn(
-              'flex size-4 shrink-0 items-center justify-center rounded-sm border',
+              'flex size-4 shrink-0 items-center justify-center rounded border',
               isSelected ? 'border-transparent' : 'border-current opacity-50',
             )}
             style={{

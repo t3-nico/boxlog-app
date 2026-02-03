@@ -371,7 +371,7 @@ export function TimeSelect({
       <Popover open={isOpen} onOpenChange={handleOpenChange} modal={false}>
         <PopoverAnchor asChild>
           <div
-            className={`relative flex cursor-text items-center rounded-md transition-colors ${
+            className={`relative flex cursor-text items-center rounded-lg transition-colors ${
               hasError
                 ? 'ring-destructive/50 bg-destructive-container ring-2'
                 : 'hover:bg-state-hover'
@@ -404,7 +404,7 @@ export function TimeSelect({
               onFocus={handleInputFocus}
               disabled={disabled}
               placeholder="--:--"
-              className={`flex h-8 rounded-md bg-transparent text-sm outline-none disabled:cursor-not-allowed disabled:opacity-50 ${
+              className={`flex h-8 rounded-lg bg-transparent text-sm outline-none disabled:cursor-not-allowed disabled:opacity-50 ${
                 showIcon ? 'w-auto' : 'w-14 px-2 text-center'
               } ${value ? 'text-foreground' : 'text-muted-foreground'} ${error || hasError ? 'text-destructive' : ''}`}
             />
@@ -445,7 +445,7 @@ export function TimeSelect({
                   role="option"
                   aria-selected={option === value}
                   type="button"
-                  className={`hover:bg-state-hover w-full rounded-sm px-2 py-1 text-left text-sm ${
+                  className={`hover:bg-state-hover w-full rounded px-2 py-1 text-left text-sm ${
                     index === highlightedIndex
                       ? 'bg-state-selected'
                       : option === value

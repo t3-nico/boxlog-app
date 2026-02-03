@@ -79,7 +79,7 @@ export function StatusBarItem({
         // フォントサイズ（12px）・アイコンサイズ（12px）
         'text-xs [&_svg]:size-3',
         // パディング・角丸（ホバー背景用）
-        'rounded-sm px-1.5 py-0.5',
+        'rounded px-1.5 py-0.5',
         // テキストカラー
         'text-muted-foreground',
         // トランジション

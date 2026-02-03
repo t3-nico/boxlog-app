@@ -216,10 +216,10 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
     // モバイル: Googleカレンダー風（左ボーダー、チェックボックス+タイトル横並び、上寄せ）
     // デスクトップ: Plan=全角丸、Record=右角丸のみ（左ボーダーと合わせるため）
     isMobile
-      ? 'border-l-2 rounded-r-sm pl-1 pr-1 pt-0.5 text-xs flex items-start gap-1'
+      ? 'border-l-2 rounded-r pl-1 pr-1 pt-0.5 text-xs flex items-start gap-1'
       : isRecord
-        ? 'rounded-r-md p-2 text-sm'
-        : 'rounded-md p-2 text-sm',
+        ? 'rounded-r-lg p-2 text-sm'
+        : 'rounded-lg p-2 text-sm',
     className,
   );
 

@@ -17,7 +17,7 @@ export default function ForbiddenPage() {
         width={960}
         height={540}
         priority
-        className="aspect-video w-240 rounded-xl object-cover dark:invert"
+        className="aspect-video w-240 rounded-2xl object-cover dark:invert"
       />
       <div className="text-center">
         <h1 className="mb-4 text-3xl font-bold">{t('error.403.title')}</h1>

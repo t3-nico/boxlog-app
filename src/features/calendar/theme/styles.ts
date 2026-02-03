@@ -49,7 +49,7 @@ export interface CalendarStyles {
 export const calendarStyles: CalendarStyles = {
   event: {
     // 角丸 - rounded.component.card準拠
-    borderRadius: 'rounded-md',
+    borderRadius: 'rounded-lg',
 
     // 余白 - 8pxグリッド準拠
     padding: 'p-2', // 8px

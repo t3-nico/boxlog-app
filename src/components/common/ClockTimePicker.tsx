@@ -203,7 +203,7 @@ function MobileClockPicker({
         onClick={handleButtonClick}
         className={cn(
           'text-muted-foreground data-[state=selected]:text-foreground',
-          'hover:bg-state-hover inline-flex h-8 items-center gap-1.5 rounded-md px-2 text-sm transition-colors',
+          'hover:bg-state-hover inline-flex h-8 items-center gap-1.5 rounded-lg px-2 text-sm transition-colors',
           'focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
           'disabled:pointer-events-none disabled:opacity-50',
           hasError && 'text-destructive',

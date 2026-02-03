@@ -83,7 +83,7 @@ export function NotificationItem({
 
   return (
     <div
-      className={`rounded-xl px-3 py-2.5 transition-colors ${
+      className={`rounded-2xl px-3 py-2.5 transition-colors ${
         !isRead ? 'bg-state-active' : 'hover:bg-state-hover'
       } ${actionUrl ? 'cursor-pointer' : ''}`}
       onClick={handleClick}

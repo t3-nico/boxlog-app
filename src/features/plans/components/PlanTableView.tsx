@@ -402,7 +402,7 @@ export function PlanTableView() {
       >
         <div
           ref={tableContainerRef}
-          className="border-border flex flex-1 flex-col overflow-auto rounded-xl border [&::-webkit-scrollbar-corner]:rounded-xl [&::-webkit-scrollbar-track]:rounded-xl"
+          className="border-border flex flex-1 flex-col overflow-auto rounded-2xl border [&::-webkit-scrollbar-corner]:rounded-2xl [&::-webkit-scrollbar-track]:rounded-2xl"
         >
           <PlanTableContent
             items={items}

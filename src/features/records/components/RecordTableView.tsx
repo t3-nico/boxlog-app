@@ -178,7 +178,7 @@ export function RecordTableView() {
 
         {/* テーブル本体 */}
         <div className="h-[calc(100%-48px)] overflow-auto px-4">
-          <div className="border-border rounded-xl border">
+          <div className="border-border rounded-2xl border">
             <Table>
               <TableHeader>
                 <TableRow className="bg-surface-container hover:bg-surface-container">

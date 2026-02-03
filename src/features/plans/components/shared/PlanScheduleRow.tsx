@@ -196,7 +196,7 @@ export function PlanScheduleRow({
                     }
                   }}
                   className={cn(
-                    'flex h-8 items-center gap-1 rounded-md px-2 transition-colors',
+                    'flex h-8 items-center gap-1 rounded-lg px-2 transition-colors',
                     'hover:bg-state-hover focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
                     hasRecurrence
                       ? 'text-foreground'
@@ -214,13 +214,13 @@ export function PlanScheduleRow({
               {/* 繰り返しポップオーバー */}
               {showRecurrencePopover && !disabled && (
                 <div
-                  className="border-border bg-popover absolute top-10 left-0 z-50 w-48 rounded-md border shadow-md"
+                  className="border-border bg-popover absolute top-10 left-0 z-50 w-48 rounded-lg border shadow-md"
                   role="menu"
                   aria-label="繰り返しオプション"
                 >
                   <div className="p-1">
                     <button
-                      className="hover:bg-state-hover focus-visible:bg-state-hover flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-left text-sm transition-colors focus-visible:outline-none"
+                      className="hover:bg-state-hover focus-visible:bg-state-hover flex w-full items-center justify-between rounded px-2 py-1.5 text-left text-sm transition-colors focus-visible:outline-none"
                       onClick={() => {
                         onRepeatTypeChange('');
                         onRecurrenceRuleChange(null);
@@ -236,7 +236,7 @@ export function PlanScheduleRow({
                     {RECURRENCE_OPTIONS.slice(1).map((option) => (
                       <button
                         key={option.value}
-                        className="hover:bg-state-hover focus-visible:bg-state-hover flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-left text-sm transition-colors focus-visible:outline-none"
+                        className="hover:bg-state-hover focus-visible:bg-state-hover flex w-full items-center justify-between rounded px-2 py-1.5 text-left text-sm transition-colors focus-visible:outline-none"
                         onClick={() => {
                           onRepeatTypeChange(option.value);
                           onRecurrenceRuleChange(null);
@@ -253,7 +253,7 @@ export function PlanScheduleRow({
                     ))}
                     <div className="border-border my-1 border-t" />
                     <button
-                      className="hover:bg-state-hover focus-visible:bg-state-hover flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-left text-sm transition-colors focus-visible:outline-none"
+                      className="hover:bg-state-hover focus-visible:bg-state-hover flex w-full items-center justify-between rounded px-2 py-1.5 text-left text-sm transition-colors focus-visible:outline-none"
                       onClick={() => {
                         setShowRecurrencePopover(false);
                         setShowCustomDialog(true);

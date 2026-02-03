@@ -227,7 +227,7 @@ export const TagTreeItem = forwardRef<HTMLDivElement, TagTreeItemProps>(
             style={style}
           >
             <div
-              className="ml-2 h-3 w-3 shrink-0 rounded-sm"
+              className="ml-2 h-3 w-3 shrink-0 rounded"
               style={{ backgroundColor: displayColor }}
             />
             <span className="ml-2 grow overflow-hidden text-sm text-ellipsis whitespace-nowrap">

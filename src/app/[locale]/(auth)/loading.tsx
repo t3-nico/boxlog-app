@@ -15,7 +15,7 @@ export default function AuthLoading() {
       <div className="w-full md:max-w-5xl">
         {/* ロゴ */}
         <div className="mb-8 flex justify-center">
-          <Skeleton className="size-12 rounded-xl" />
+          <Skeleton className="size-12 rounded-2xl" />
         </div>
 
         {/* タイトル */}

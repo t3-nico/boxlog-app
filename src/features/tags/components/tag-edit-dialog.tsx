@@ -117,7 +117,7 @@ export const TagEditDialog = ({ tag, open, onClose, onSave }: TagEditDialogProps
                     type="button"
                     variant="ghost"
                     onClick={() => setColor(presetColor)}
-                    className={`h-8 w-8 rounded-md border-2 p-0 transition-all ${
+                    className={`h-8 w-8 rounded-lg border-2 p-0 transition-all ${
                       color === presetColor
                         ? 'border-border scale-110'
                         : 'border-border hover:scale-105'
@@ -137,7 +137,7 @@ export const TagEditDialog = ({ tag, open, onClose, onSave }: TagEditDialogProps
 
               {/* 現在選択されているアイコンのプレビュー */}
               <div
-                className="border-border bg-surface-container mb-3 flex items-center gap-3 rounded-xl border p-3"
+                className="border-border bg-surface-container mb-3 flex items-center gap-3 rounded-2xl border p-3"
                 style={{ '--tag-color': color } as React.CSSProperties}
               >
                 {(() => {
@@ -154,7 +154,7 @@ export const TagEditDialog = ({ tag, open, onClose, onSave }: TagEditDialogProps
 
               {/* アイコン選択 */}
               <div
-                className="border-border max-h-64 overflow-y-auto rounded-xl border"
+                className="border-border max-h-64 overflow-y-auto rounded-2xl border"
                 aria-labelledby="icon-label"
               >
                 {Object.entries(tagIconCategories).map(([category, icons]) => (
@@ -169,7 +169,7 @@ export const TagEditDialog = ({ tag, open, onClose, onSave }: TagEditDialogProps
                             type="button"
                             variant="ghost"
                             onClick={() => setIcon(iconName as TagIconName)}
-                            className={`rounded-md p-2 ${
+                            className={`rounded-lg p-2 ${
                               icon === iconName
                                 ? 'border-primary bg-primary-state-selected border-2'
                                 : 'border-border bg-secondary text-secondary-foreground border'

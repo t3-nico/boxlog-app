@@ -154,7 +154,7 @@ export function TagRenameDialog({
       aria-label={t('calendar.filter.rename')}
     >
       <div
-        className="animate-in zoom-in-95 fade-in bg-card text-foreground border-border rounded-xl border p-6 shadow-lg duration-150"
+        className="animate-in zoom-in-95 fade-in bg-card text-foreground border-border rounded-2xl border p-6 shadow-lg duration-150"
         style={{ width: 'min(calc(100vw - 32px), 360px)' }}
         onClick={(e) => e.stopPropagation()}
       >

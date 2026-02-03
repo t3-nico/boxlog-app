@@ -53,7 +53,7 @@ export function OverdueSection({ dates, plans, timezone, className }: OverdueSec
               <OverdueBadge
                 overduePlans={overduePlans}
                 className={cn(
-                  'bg-warning/10 hover:bg-warning/15 h-full rounded-md',
+                  'bg-warning/10 hover:bg-warning/15 h-full rounded-lg',
                   'w-full px-0.5 md:w-[calc(100%-8px)] md:px-1',
                 )}
               />
@@ -105,7 +105,7 @@ export function OverdueSectionSingle({
         <OverdueBadge
           overduePlans={overduePlans}
           className={cn(
-            'bg-warning/10 hover:bg-warning/15 h-full flex-1 rounded-md',
+            'bg-warning/10 hover:bg-warning/15 h-full flex-1 rounded-lg',
             'md:w-[calc(100%-8px)]',
           )}
         />

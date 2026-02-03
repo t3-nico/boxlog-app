@@ -45,7 +45,7 @@ interface ConfirmDialogProps {
  *
  * スタイルガイド準拠:
  * - 8pxグリッドシステム（p-6, gap-4, mb-6等）
- * - 角丸: rounded-xl（16px）for ダイアログ
+ * - 角丸: rounded-2xl（16px）for ダイアログ
  * - Card: bg-card（カード、ダイアログ用）
  * - セマンティックカラー: destructive系トークン使用
  *
@@ -158,9 +158,9 @@ export function ConfirmDialog({
       aria-labelledby="confirm-dialog-title"
       aria-describedby="confirm-dialog-description"
     >
-      {/* ダイアログコンテンツ: bg-card, rounded-xl, p-6 */}
+      {/* ダイアログコンテンツ: bg-card, rounded-2xl, p-6 */}
       <div
-        className="animate-in zoom-in-95 fade-in bg-card text-foreground border-border rounded-xl border p-6 shadow-lg duration-150"
+        className="animate-in zoom-in-95 fade-in bg-card text-foreground border-border rounded-2xl border p-6 shadow-lg duration-150"
         style={{ width: `min(calc(100vw - 32px), ${maxWidth}px)` }}
         onClick={(e) => e.stopPropagation()}
       >

@@ -134,7 +134,7 @@ export function OverdueBadge({ overduePlans, className, style }: OverdueBadgePro
               side={hoverCardSide}
               align="start"
               alignOffset={16}
-              className="bg-overlay border-border z-[250] w-64 rounded-xl shadow-lg"
+              className="bg-overlay border-border z-[250] w-64 rounded-2xl shadow-lg"
               sideOffset={24}
               avoidCollisions={false}
             >

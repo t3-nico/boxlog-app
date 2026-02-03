@@ -69,7 +69,7 @@ export function InlineTagList({
                 e.stopPropagation();
                 handleRemoveTag(tag.id);
               }}
-              className="hover:bg-state-hover absolute top-1/2 right-1 -translate-y-1/2 rounded-sm opacity-70 transition-opacity hover:opacity-100"
+              className="hover:bg-state-hover absolute top-1/2 right-1 -translate-y-1/2 rounded opacity-70 transition-opacity hover:opacity-100"
             >
               <X className="size-3" />
             </button>
@@ -90,7 +90,7 @@ export function InlineTagList({
             <button
               type="button"
               className={cn(
-                'flex size-8 items-center justify-center rounded-md transition-colors',
+                'flex size-8 items-center justify-center rounded-lg transition-colors',
                 'hover:bg-state-hover focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
                 'text-muted-foreground hover:text-foreground',
               )}
@@ -101,7 +101,7 @@ export function InlineTagList({
           ) : (
             <button
               type="button"
-              className="text-muted-foreground hover:bg-state-hover h-8 rounded-md px-2 text-sm transition-colors"
+              className="text-muted-foreground hover:bg-state-hover h-8 rounded-lg px-2 text-sm transition-colors"
             >
               {emptyPlaceholder}
             </button>

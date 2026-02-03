@@ -19,15 +19,13 @@ export const Default: Story = {
   render: () => (
     <Collapsible defaultOpen className="w-80">
       <CollapsibleTrigger asChild>
-        <div className="flex items-center justify-between px-4 py-2 cursor-pointer hover:bg-muted rounded-lg">
+        <div className="hover:bg-muted flex cursor-pointer items-center justify-between rounded-lg px-4 py-2">
           <span className="text-sm font-medium">セクション</span>
           <ChevronDown className="size-4" />
         </div>
       </CollapsibleTrigger>
       <CollapsibleContent className="px-4 py-2">
-        <p className="text-sm text-muted-foreground">
-          これは折りたたまれたコンテンツです。
-        </p>
+        <p className="text-muted-foreground text-sm">これは折りたたまれたコンテンツです。</p>
       </CollapsibleContent>
     </Collapsible>
   ),
@@ -35,25 +33,21 @@ export const Default: Story = {
 
 export const SidebarSection: Story = {
   render: () => (
-    <div className="w-64 border border-border rounded-lg">
+    <div className="border-border w-64 rounded-lg border">
       <Collapsible defaultOpen>
         <CollapsibleTrigger asChild>
-          <div className="flex items-center justify-between px-4 py-3 cursor-pointer hover:bg-muted">
+          <div className="hover:bg-muted flex cursor-pointer items-center justify-between px-4 py-3">
             <span className="text-sm font-medium">ナビゲーション</span>
             <ChevronDown className="size-4" />
           </div>
         </CollapsibleTrigger>
         <CollapsibleContent>
-          <div className="px-4 pb-3 space-y-1">
-            <div className="px-2 py-1.5 text-sm hover:bg-muted rounded cursor-pointer">
+          <div className="space-y-1 px-4 pb-3">
+            <div className="hover:bg-muted cursor-pointer rounded px-2 py-1.5 text-sm">
               ダッシュボード
             </div>
-            <div className="px-2 py-1.5 text-sm hover:bg-muted rounded cursor-pointer">
-              プラン
-            </div>
-            <div className="px-2 py-1.5 text-sm hover:bg-muted rounded cursor-pointer">
-              統計
-            </div>
+            <div className="hover:bg-muted cursor-pointer rounded px-2 py-1.5 text-sm">プラン</div>
+            <div className="hover:bg-muted cursor-pointer rounded px-2 py-1.5 text-sm">統計</div>
           </div>
         </CollapsibleContent>
       </Collapsible>
@@ -63,27 +57,27 @@ export const SidebarSection: Story = {
 
 export const AllVariants: Story = {
   render: () => (
-    <div className="p-8 bg-background text-foreground">
-      <h1 className="text-2xl font-bold mb-8">Collapsible - 実際の使用パターン</h1>
+    <div className="bg-background text-foreground p-8">
+      <h1 className="mb-8 text-2xl font-bold">Collapsible - 実際の使用パターン</h1>
 
-      <div className="space-y-8 max-w-md">
+      <div className="max-w-md space-y-8">
         <section>
-          <h2 className="text-lg font-semibold mb-4">サイドバーセクション</h2>
-          <p className="text-sm text-muted-foreground mb-4">
+          <h2 className="mb-4 text-lg font-semibold">サイドバーセクション</h2>
+          <p className="text-muted-foreground mb-4 text-sm">
             SidebarSection.tsxで使用されているパターン
           </p>
-          <div className="border border-border rounded-lg">
+          <div className="border-border rounded-lg border">
             <Collapsible defaultOpen>
               <CollapsibleTrigger asChild>
-                <div className="flex items-center justify-between px-4 py-3 cursor-pointer hover:bg-muted">
+                <div className="hover:bg-muted flex cursor-pointer items-center justify-between px-4 py-3">
                   <span className="text-sm font-medium">セクション</span>
                   <ChevronDown className="size-4" />
                 </div>
               </CollapsibleTrigger>
               <CollapsibleContent>
-                <div className="px-4 pb-3 space-y-1">
-                  <div className="px-2 py-1.5 text-sm hover:bg-muted rounded">アイテム1</div>
-                  <div className="px-2 py-1.5 text-sm hover:bg-muted rounded">アイテム2</div>
+                <div className="space-y-1 px-4 pb-3">
+                  <div className="hover:bg-muted rounded px-2 py-1.5 text-sm">アイテム1</div>
+                  <div className="hover:bg-muted rounded px-2 py-1.5 text-sm">アイテム2</div>
                 </div>
               </CollapsibleContent>
             </Collapsible>
@@ -91,15 +85,19 @@ export const AllVariants: Story = {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold mb-4">使用Props</h2>
-          <ul className="text-sm text-muted-foreground list-disc list-inside">
-            <li><code>defaultOpen</code> - 初期状態（true/false）</li>
-            <li><code>asChild</code> - カスタムトリガー要素を使用</li>
+          <h2 className="mb-4 text-lg font-semibold">使用Props</h2>
+          <ul className="text-muted-foreground list-inside list-disc text-sm">
+            <li>
+              <code>defaultOpen</code> - 初期状態（true/false）
+            </li>
+            <li>
+              <code>asChild</code> - カスタムトリガー要素を使用
+            </li>
           </ul>
         </section>
 
-        <section className="p-4 bg-muted rounded-md">
-          <p className="text-sm text-muted-foreground">
+        <section className="bg-muted rounded-lg p-4">
+          <p className="text-muted-foreground text-sm">
             <strong>Note:</strong> open, onOpenChangeは現在未使用（内部状態管理）
           </p>
         </section>

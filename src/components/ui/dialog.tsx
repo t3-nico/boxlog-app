@@ -53,7 +53,7 @@ const DialogContent = ({
       <DialogPrimitive.Content
         data-slot="dialog-content"
         className={cn(
-          'border-border bg-popover text-popover-foreground fixed top-[50%] left-[50%] z-[200] grid w-full translate-x-[-50%] translate-y-[-50%] gap-4 rounded-xl border p-6 shadow-lg duration-200',
+          'border-border bg-popover text-popover-foreground fixed top-[50%] left-[50%] z-[200] grid w-full translate-x-[-50%] translate-y-[-50%] gap-4 rounded-2xl border p-6 shadow-lg duration-200',
           // max-wはclassNameで上書き可能にする（デフォルト: モバイルは余白付き、sm以上はlg）
           !className?.includes('max-w-') && 'max-w-[calc(100%-2rem)] sm:max-w-lg',
           'data-[state=open]:animate-in data-[state=closed]:animate-out motion-reduce:animate-none',
@@ -70,7 +70,7 @@ const DialogContent = ({
           <DialogPrimitive.Close
             data-slot="dialog-close"
             className={cn(
-              'absolute top-4 right-4 rounded-sm opacity-70 transition-opacity hover:opacity-100',
+              'absolute top-4 right-4 rounded opacity-70 transition-opacity hover:opacity-100',
               'focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-hidden',
               'disabled:pointer-events-none',
               'data-[state=open]:bg-state-selected',

@@ -75,11 +75,11 @@ export function NavUser({
       <DropdownMenuTrigger asChild>
         <button
           type="button"
-          className="hover:bg-state-hover data-[state=open]:bg-state-selected flex w-fit items-center gap-2 rounded-md px-2 py-2 text-left text-sm outline-hidden"
+          className="hover:bg-state-hover data-[state=open]:bg-state-selected flex w-fit items-center gap-2 rounded-lg px-2 py-2 text-left text-sm outline-hidden"
         >
-          <Avatar className="h-6 w-6 rounded-xl">
+          <Avatar className="h-6 w-6 rounded-2xl">
             {user.avatar ? <AvatarImage src={user.avatar} alt={user.name} /> : null}
-            <AvatarFallback className="rounded-xl">
+            <AvatarFallback className="rounded-2xl">
               {user.name.charAt(0).toUpperCase()}
             </AvatarFallback>
           </Avatar>
@@ -88,16 +88,16 @@ export function NavUser({
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        className="border-input w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-xl"
+        className="border-input w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-2xl"
         side="right"
         align="start"
         sideOffset={4}
       >
         <DropdownMenuLabel className="p-0 font-normal">
           <div className="flex items-center gap-2 px-2 py-2 text-left text-sm">
-            <Avatar className="h-6 w-6 rounded-xl">
+            <Avatar className="h-6 w-6 rounded-2xl">
               {user.avatar ? <AvatarImage src={user.avatar} alt={user.name} /> : null}
-              <AvatarFallback className="rounded-xl">
+              <AvatarFallback className="rounded-2xl">
                 {user.name.charAt(0).toUpperCase()}
               </AvatarFallback>
             </Avatar>

@@ -45,7 +45,7 @@ import { cn } from '@/lib/utils';
 const buttonVariants = cva(
   [
     // 基本レイアウト
-    'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md font-normal',
+    'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg font-normal',
     // トランジション
     'transition-colors',
     // フォーカス状態（アクセシビリティ）

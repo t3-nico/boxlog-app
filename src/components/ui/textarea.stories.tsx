@@ -50,7 +50,7 @@ export const WithMaxLength: Story = {
           maxLength={MAX_LENGTH}
           className="border-border min-h-[80px] w-full resize-none border text-sm"
         />
-        <p className="text-sm text-muted-foreground mt-1 text-right">
+        <p className="text-muted-foreground mt-1 text-right text-sm">
           {value.length}/{MAX_LENGTH}
         </p>
       </div>
@@ -78,7 +78,7 @@ export const SingleLineMode: Story = {
 
     return (
       <div className="w-80">
-        <p className="text-sm text-muted-foreground mb-2">
+        <p className="text-muted-foreground mb-2 text-sm">
           改行を無効化したTextarea（タグのメモなど）
         </p>
         <Textarea
@@ -100,12 +100,12 @@ export const AllVariants: Story = {
     const [value, setValue] = useState('');
 
     return (
-      <div className="p-8 bg-background text-foreground">
-        <h1 className="text-2xl font-bold mb-8">Textarea - 実際の使用パターン</h1>
+      <div className="bg-background text-foreground p-8">
+        <h1 className="mb-8 text-2xl font-bold">Textarea - 実際の使用パターン</h1>
 
-        <div className="space-y-8 max-w-md">
+        <div className="max-w-md space-y-8">
           <section>
-            <h2 className="text-lg font-semibold mb-4">基本</h2>
+            <h2 className="mb-4 text-lg font-semibold">基本</h2>
             <Textarea
               value={value}
               onChange={(e) => setValue(e.target.value)}
@@ -113,13 +113,13 @@ export const AllVariants: Story = {
               maxLength={MAX_LENGTH}
               className="border-border min-h-[80px] w-full resize-none border text-sm"
             />
-            <p className="text-sm text-muted-foreground mt-1 text-right">
+            <p className="text-muted-foreground mt-1 text-right text-sm">
               {value.length}/{MAX_LENGTH}
             </p>
           </section>
 
           <section>
-            <h2 className="text-lg font-semibold mb-4">無効状態</h2>
+            <h2 className="mb-4 text-lg font-semibold">無効状態</h2>
             <Textarea
               placeholder="無効"
               disabled
@@ -128,8 +128,8 @@ export const AllVariants: Story = {
           </section>
         </div>
 
-        <div className="mt-8 p-4 bg-muted rounded-md max-w-md">
-          <p className="text-sm text-muted-foreground">
+        <div className="bg-muted mt-8 max-w-md rounded-lg p-4">
+          <p className="text-muted-foreground text-sm">
             <strong>Note:</strong> rows属性は使用せず、min-h-[80px]とresize-noneをclassNameで指定
           </p>
         </div>

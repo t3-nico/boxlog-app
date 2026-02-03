@@ -57,7 +57,7 @@ export function MobileSettingsRadioGroup<T extends string>({
   if (variant === 'list') {
     return (
       <RadioGroup value={value} onValueChange={(v) => onValueChange(v as T)}>
-        <div className="border-border bg-card rounded-md border">
+        <div className="border-border bg-card rounded-lg border">
           {options.map((option, index) => (
             <Label
               key={option.value}

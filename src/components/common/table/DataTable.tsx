@@ -396,7 +396,7 @@ export function DataTable<T>({
         }
       }}
     >
-      <div className="border-border flex flex-1 flex-col overflow-auto rounded-xl border">
+      <div className="border-border flex flex-1 flex-col overflow-auto rounded-2xl border">
         <Table className="w-full">
           <TableHeader
             className={
@@ -436,7 +436,7 @@ export function DataTable<T>({
                       <button
                         type="button"
                         onClick={() => handleSort(col.sortKey!)}
-                        className="hover:bg-state-hover flex min-w-0 items-center gap-1 rounded-md px-1 py-0.5 transition-colors"
+                        className="hover:bg-state-hover flex min-w-0 items-center gap-1 rounded-lg px-1 py-0.5 transition-colors"
                       >
                         {Icon && <Icon className="text-muted-foreground size-4 shrink-0" />}
                         <span className="truncate">{col.label}</span>

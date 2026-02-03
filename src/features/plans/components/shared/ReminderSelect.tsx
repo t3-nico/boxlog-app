@@ -79,7 +79,7 @@ export function ReminderSelect({
               setShowPopover(!showPopover);
             }
           }}
-          className="border-border bg-secondary text-secondary-foreground hover:bg-state-hover focus-visible:border-ring focus-visible:ring-ring/50 flex h-9 w-fit items-center gap-1 rounded-md border px-2 py-0 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50"
+          className="border-border bg-secondary text-secondary-foreground hover:bg-state-hover focus-visible:border-ring focus-visible:ring-ring/50 flex h-9 w-fit items-center gap-1 rounded-lg border px-2 py-0 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50"
         >
           <span>{getDisplayLabel()}</span>
           <svg
@@ -126,7 +126,7 @@ export function ReminderSelect({
               }
             }}
             className={cn(
-              'flex h-8 items-center gap-1 rounded-md px-2 transition-colors',
+              'flex h-8 items-center gap-1 rounded-lg px-2 transition-colors',
               'hover:bg-state-hover focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
               hasReminder ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',
             )}
@@ -154,14 +154,14 @@ export function ReminderSelect({
       )}
 
       {showPopover && !disabled && (
-        <div className="border-border bg-popover absolute top-10 left-0 z-50 w-56 rounded-md border shadow-md">
+        <div className="border-border bg-popover absolute top-10 left-0 z-50 w-56 rounded-lg border shadow-md">
           <div className="p-1">
             {REMINDER_OPTIONS.map((option, index) => (
               <>
                 {index === 1 && <div key="separator" className="border-border my-1 border-t" />}
                 <button
                   key={option.value}
-                  className="hover:bg-state-hover flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-left text-sm"
+                  className="hover:bg-state-hover flex w-full items-center justify-between rounded px-2 py-1.5 text-left text-sm"
                   onClick={() => {
                     onChange(option.value);
                     setShowPopover(false);

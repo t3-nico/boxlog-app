@@ -89,7 +89,7 @@ function TimelineBar({ zones }: { zones: ProductivityZone[] }) {
       </div>
 
       {/* タイムラインバー */}
-      <div className="flex h-6 overflow-hidden rounded-md">
+      <div className="flex h-6 overflow-hidden rounded-lg">
         {segments.map((segment, index) => (
           <div
             key={index}
@@ -226,7 +226,7 @@ export function ChronotypeSettings() {
             </div>
 
             {/* ピーク時間のハイライト */}
-            <div className="bg-success/12 flex items-center gap-2 rounded-xl p-3">
+            <div className="bg-success/12 flex items-center gap-2 rounded-2xl p-3">
               <Star className="text-success h-4 w-4" />
               <div>
                 <span className="text-sm font-normal">{t('settings.chronotype.peakTime')}</span>

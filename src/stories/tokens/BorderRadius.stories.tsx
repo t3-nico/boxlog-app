@@ -12,56 +12,66 @@ type Story = StoryObj;
 
 export const AllRadius: Story = {
   render: () => (
-    <div className="p-8 bg-background text-foreground">
-      <h1 className="text-2xl font-bold mb-8">Border Radius（角丸）</h1>
+    <div className="bg-background text-foreground p-8">
+      <h1 className="mb-6 text-2xl font-bold">Border Radius（角丸）</h1>
+      <p className="text-muted-foreground mb-8">
+        8の倍数ベースで統一。選択肢を5種類に絞り、迷わないデザインシステム。
+      </p>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+      <div className="grid grid-cols-2 gap-8 md:grid-cols-5">
         <div className="text-center">
-          <div className="size-24 bg-primary rounded-none mx-auto mb-2" />
-          <code className="text-xs bg-container px-2 py-1 rounded">rounded-none</code>
-          <p className="text-xs text-muted-foreground mt-1">0px</p>
+          <div className="bg-primary mx-auto mb-2 size-24 rounded-none" />
+          <code className="bg-container rounded px-2 py-1 text-xs">rounded-none</code>
+          <p className="mt-2 text-xs font-medium">0px</p>
+          <p className="text-muted-foreground mt-1 text-xs">
+            タブのアクティブ状態、
+            <br />
+            隣接要素の結合部分
+          </p>
         </div>
 
         <div className="text-center">
-          <div className="size-24 bg-primary rounded-sm mx-auto mb-2" />
-          <code className="text-xs bg-container px-2 py-1 rounded">rounded-sm</code>
-          <p className="text-xs text-muted-foreground mt-1">2px</p>
+          <div className="bg-primary mx-auto mb-2 size-24 rounded" />
+          <code className="bg-container rounded px-2 py-1 text-xs">rounded</code>
+          <p className="mt-2 text-xs font-medium">4px</p>
+          <p className="text-muted-foreground mt-1 text-xs">
+            インラインタグ、
+            <br />
+            小さなバッジ、チップ
+          </p>
         </div>
 
         <div className="text-center">
-          <div className="size-24 bg-primary rounded mx-auto mb-2" />
-          <code className="text-xs bg-container px-2 py-1 rounded">rounded</code>
-          <p className="text-xs text-muted-foreground mt-1">4px</p>
+          <div className="bg-primary mx-auto mb-2 size-24 rounded-lg" />
+          <code className="bg-container rounded px-2 py-1 text-xs">rounded-lg</code>
+          <p className="mt-2 text-xs font-medium">8px</p>
+          <p className="text-muted-foreground mt-1 text-xs">
+            <strong>標準</strong>: ボタン、
+            <br />
+            入力、メニュー、カード
+          </p>
         </div>
 
         <div className="text-center">
-          <div className="size-24 bg-primary rounded-md mx-auto mb-2" />
-          <code className="text-xs bg-container px-2 py-1 rounded">rounded-md</code>
-          <p className="text-xs text-muted-foreground mt-1">6px</p>
+          <div className="bg-primary mx-auto mb-2 size-24 rounded-2xl" />
+          <code className="bg-container rounded px-2 py-1 text-xs">rounded-2xl</code>
+          <p className="mt-2 text-xs font-medium">16px</p>
+          <p className="text-muted-foreground mt-1 text-xs">
+            モーダル、ダイアログ、
+            <br />
+            大きなパネル
+          </p>
         </div>
 
         <div className="text-center">
-          <div className="size-24 bg-primary rounded-lg mx-auto mb-2" />
-          <code className="text-xs bg-container px-2 py-1 rounded">rounded-lg</code>
-          <p className="text-xs text-muted-foreground mt-1">8px</p>
-        </div>
-
-        <div className="text-center">
-          <div className="size-24 bg-primary rounded-xl mx-auto mb-2" />
-          <code className="text-xs bg-container px-2 py-1 rounded">rounded-xl</code>
-          <p className="text-xs text-muted-foreground mt-1">12px</p>
-        </div>
-
-        <div className="text-center">
-          <div className="size-24 bg-primary rounded-2xl mx-auto mb-2" />
-          <code className="text-xs bg-container px-2 py-1 rounded">rounded-2xl</code>
-          <p className="text-xs text-muted-foreground mt-1">16px</p>
-        </div>
-
-        <div className="text-center">
-          <div className="size-24 bg-primary rounded-full mx-auto mb-2" />
-          <code className="text-xs bg-container px-2 py-1 rounded">rounded-full</code>
-          <p className="text-xs text-muted-foreground mt-1">9999px</p>
+          <div className="bg-primary mx-auto mb-2 size-24 rounded-full" />
+          <code className="bg-container rounded px-2 py-1 text-xs">rounded-full</code>
+          <p className="mt-2 text-xs font-medium">9999px</p>
+          <p className="text-muted-foreground mt-1 text-xs">
+            アバター、ピル型ボタン、
+            <br />
+            トグル、丸アイコン
+          </p>
         </div>
       </div>
     </div>
@@ -70,52 +80,154 @@ export const AllRadius: Story = {
 
 export const UseCases: Story = {
   render: () => (
-    <div className="p-8 bg-background text-foreground">
-      <h1 className="text-2xl font-bold mb-8">使用例</h1>
+    <div className="bg-background text-foreground p-8">
+      <h1 className="mb-8 text-2xl font-bold">使用例</h1>
 
       <div className="space-y-8">
         <div>
-          <h3 className="font-medium mb-4">ボタン</h3>
+          <h3 className="mb-4 font-medium">ボタン</h3>
           <div className="flex gap-4">
-            <button className="px-4 py-2 bg-primary text-primary-foreground rounded-md">
-              rounded-md
+            <button className="bg-primary text-primary-foreground rounded-lg px-4 py-2">
+              rounded-lg（標準）
             </button>
-            <button className="px-4 py-2 bg-primary text-primary-foreground rounded-full">
-              rounded-full
+            <button className="bg-primary text-primary-foreground rounded-full px-4 py-2">
+              rounded-full（ピル型）
             </button>
           </div>
         </div>
 
         <div>
-          <h3 className="font-medium mb-4">カード</h3>
+          <h3 className="mb-4 font-medium">カード・モーダル</h3>
           <div className="flex gap-4">
-            <div className="p-4 bg-card border border-border rounded-lg w-48">
+            <div className="bg-card border-border w-48 rounded-lg border p-4">
               <p className="font-medium">rounded-lg</p>
-              <p className="text-sm text-muted-foreground">カードの標準</p>
+              <p className="text-muted-foreground text-sm">カードの標準</p>
             </div>
-            <div className="p-4 bg-card border border-border rounded-xl w-48">
-              <p className="font-medium">rounded-xl</p>
-              <p className="text-sm text-muted-foreground">モダンな印象</p>
+            <div className="bg-card border-border w-48 rounded-2xl border p-4">
+              <p className="font-medium">rounded-2xl</p>
+              <p className="text-muted-foreground text-sm">モーダル・ダイアログ</p>
             </div>
           </div>
         </div>
 
         <div>
-          <h3 className="font-medium mb-4">アバター</h3>
-          <div className="flex gap-4 items-center">
-            <div className="size-12 bg-primary rounded-md" />
-            <div className="size-12 bg-primary rounded-lg" />
-            <div className="size-12 bg-primary rounded-full" />
+          <h3 className="mb-4 font-medium">アバター</h3>
+          <div className="flex items-center gap-4">
+            <div className="bg-primary size-12 rounded-lg" />
+            <span className="text-muted-foreground text-sm">→</span>
+            <div className="bg-primary size-12 rounded-full" />
           </div>
+          <p className="text-muted-foreground mt-2 text-sm">アバターは rounded-full を推奨</p>
         </div>
 
         <div>
-          <h3 className="font-medium mb-4">入力フィールド</h3>
+          <h3 className="mb-4 font-medium">入力フィールド</h3>
           <input
             type="text"
-            placeholder="rounded-md（標準）"
-            className="px-3 py-2 bg-input border border-border rounded-md w-64"
+            placeholder="rounded-lg（標準）"
+            className="bg-input border-border w-64 rounded-lg border px-3 py-2"
           />
+        </div>
+
+        <div>
+          <h3 className="mb-4 font-medium">バッジ・タグ</h3>
+          <div className="flex gap-2">
+            <span className="bg-primary/10 text-primary rounded px-2 py-0.5 text-xs">rounded</span>
+            <span className="bg-primary/10 text-primary rounded-full px-2 py-0.5 text-xs">
+              rounded-full
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  ),
+};
+
+export const PartialRadius: Story = {
+  render: () => (
+    <div className="bg-background text-foreground p-8">
+      <h1 className="mb-6 text-2xl font-bold">部分的なRadius</h1>
+      <p className="text-muted-foreground mb-8">
+        隣接要素の結合など、特定のコーナーのみ角丸にする場合に使用。
+        <br />
+        基本トークンと同じサイズ（4px, 8px, 16px）のみ許可。
+      </p>
+
+      <div className="space-y-8">
+        <div>
+          <h3 className="mb-4 font-medium">隣接要素の結合（Input Group）</h3>
+          <div className="flex">
+            <input
+              type="text"
+              placeholder="入力..."
+              className="bg-input border-border w-48 rounded-l-lg border border-r-0 px-3 py-2"
+            />
+            <button className="bg-primary text-primary-foreground rounded-r-lg px-4 py-2">
+              検索
+            </button>
+          </div>
+          <p className="text-muted-foreground mt-2 text-xs">
+            <code className="bg-container rounded px-1">rounded-l-lg</code> +{' '}
+            <code className="bg-container rounded px-1">rounded-r-lg</code>
+          </p>
+        </div>
+
+        <div>
+          <h3 className="mb-4 font-medium">範囲選択（カレンダー）</h3>
+          <div className="flex">
+            <div className="bg-primary/20 flex size-10 items-center justify-center rounded-l-lg text-sm">
+              1
+            </div>
+            <div className="bg-primary/20 flex size-10 items-center justify-center text-sm">2</div>
+            <div className="bg-primary/20 flex size-10 items-center justify-center rounded-r-lg text-sm">
+              3
+            </div>
+          </div>
+          <p className="text-muted-foreground mt-2 text-xs">
+            範囲の開始: <code className="bg-container rounded px-1">rounded-l-lg</code>
+            、終了: <code className="bg-container rounded px-1">rounded-r-lg</code>
+          </p>
+        </div>
+
+        <div>
+          <h3 className="mb-4 font-medium">許可されている部分Radius</h3>
+          <p className="text-muted-foreground mb-4 text-xs">
+            基本トークンと同じサイズのみ: 4px, 8px, 16px
+          </p>
+          <div className="mb-6 grid grid-cols-2 gap-4 md:grid-cols-4">
+            <div className="text-center">
+              <div className="bg-primary mx-auto mb-2 size-16 rounded-l" />
+              <code className="bg-container rounded px-1 text-xs">rounded-l</code>
+              <p className="text-muted-foreground text-xs">4px</p>
+            </div>
+            <div className="text-center">
+              <div className="bg-primary mx-auto mb-2 size-16 rounded-r" />
+              <code className="bg-container rounded px-1 text-xs">rounded-r</code>
+              <p className="text-muted-foreground text-xs">4px</p>
+            </div>
+            <div className="text-center">
+              <div className="bg-primary mx-auto mb-2 size-16 rounded-l-lg" />
+              <code className="bg-container rounded px-1 text-xs">rounded-l-lg</code>
+              <p className="text-muted-foreground text-xs">8px</p>
+            </div>
+            <div className="text-center">
+              <div className="bg-primary mx-auto mb-2 size-16 rounded-r-lg" />
+              <code className="bg-container rounded px-1 text-xs">rounded-r-lg</code>
+              <p className="text-muted-foreground text-xs">8px</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+            <div className="text-center">
+              <div className="bg-primary mx-auto mb-2 size-16 rounded-t-2xl" />
+              <code className="bg-container rounded px-1 text-xs">rounded-t-2xl</code>
+              <p className="text-muted-foreground text-xs">16px</p>
+            </div>
+            <div className="text-center">
+              <div className="bg-primary mx-auto mb-2 size-16 rounded-b-2xl" />
+              <code className="bg-container rounded px-1 text-xs">rounded-b-2xl</code>
+              <p className="text-muted-foreground text-xs">16px</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>

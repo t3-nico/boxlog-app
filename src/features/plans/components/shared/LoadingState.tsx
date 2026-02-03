@@ -9,7 +9,7 @@ interface LoadingStateProps {
 
 function CardSkeleton() {
   return (
-    <div className="border-border bg-card space-y-3 rounded-xl border p-4">
+    <div className="border-border bg-card space-y-3 rounded-2xl border p-4">
       <div className="flex items-start justify-between">
         <div className="flex-1 space-y-2">
           <Skeleton className="h-4 w-24" />
@@ -28,7 +28,7 @@ function CardSkeleton() {
 
 function ListItemSkeleton() {
   return (
-    <div className="border-border bg-card flex items-center justify-between rounded-xl border p-3">
+    <div className="border-border bg-card flex items-center justify-between rounded-2xl border p-3">
       <div className="flex flex-1 items-center gap-3">
         <Skeleton className="h-4 w-20" />
         <Skeleton className="h-4 w-1/2" />

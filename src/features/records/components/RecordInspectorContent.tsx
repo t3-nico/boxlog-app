@@ -776,7 +776,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
             <HoverTooltip content={selectedPlanName ?? 'Planに紐付け'} side="top">
               <div
                 className={cn(
-                  'hover:bg-state-hover flex h-8 items-center rounded-md transition-colors',
+                  'hover:bg-state-hover flex h-8 items-center rounded-lg transition-colors',
                   hasPlan ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',
                 )}
               >
@@ -876,7 +876,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
                 <div className="border-border border-t p-2">
                   <Link
                     href={`/${locale}/plan?selected=${formData.plan_id}`}
-                    className="text-muted-foreground hover:text-foreground hover:bg-state-hover flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors"
+                    className="text-muted-foreground hover:text-foreground hover:bg-state-hover flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm transition-colors"
                   >
                     <ExternalLink className="size-4" />
                     <span>Planを開く</span>
@@ -903,7 +903,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
               onTouchStart={handlePressStart}
               onTouchEnd={handlePressEnd}
               className={cn(
-                'flex h-8 items-center gap-1 rounded-md px-2 transition-colors',
+                'flex h-8 items-center gap-1 rounded-lg px-2 transition-colors',
                 'hover:bg-state-hover focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
                 'select-none', // 長押し時のテキスト選択防止
                 hasScore ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',

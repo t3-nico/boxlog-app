@@ -113,7 +113,7 @@ export function PlanCard({ plan, onEdit, onDelete, onClick, tags = [] }: PlanCar
             {tags.map((tag) => (
               <span
                 key={tag.id}
-                className="inline-flex items-center rounded-md px-2 py-0.5 text-xs font-normal"
+                className="inline-flex items-center rounded-lg px-2 py-0.5 text-xs font-normal"
                 style={{
                   backgroundColor: `${tag.color}20`,
                   color: tag.color,

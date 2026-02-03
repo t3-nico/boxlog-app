@@ -1,13 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from './select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select';
 
 const meta = {
   title: 'Components/Select',
@@ -93,13 +87,13 @@ export const AllVariants: Story = {
     const [value, setValue] = useState('daily');
 
     return (
-      <div className="p-8 bg-background text-foreground">
-        <h1 className="text-2xl font-bold mb-8">Select - 実際の使用パターン</h1>
+      <div className="bg-background text-foreground p-8">
+        <h1 className="mb-8 text-2xl font-bold">Select - 実際の使用パターン</h1>
 
         <div className="space-y-8">
           <section>
-            <h2 className="text-lg font-semibold mb-4">期間セレクター</h2>
-            <p className="text-sm text-muted-foreground mb-4">
+            <h2 className="mb-4 text-lg font-semibold">期間セレクター</h2>
+            <p className="text-muted-foreground mb-4 text-sm">
               stats-toolbarで使用されているパターン
             </p>
             <Select value={value} onValueChange={setValue}>
@@ -112,24 +106,32 @@ export const AllVariants: Story = {
                 <SelectItem value="monthly">月</SelectItem>
               </SelectContent>
             </Select>
-            <p className="text-sm text-muted-foreground mt-2">
-              選択中: {value}
-            </p>
+            <p className="text-muted-foreground mt-2 text-sm">選択中: {value}</p>
           </section>
 
           <section>
-            <h2 className="text-lg font-semibold mb-4">コンポーネント構成</h2>
-            <ul className="text-sm text-muted-foreground list-disc list-inside">
-              <li><code>Select</code> - ルート（value, onValueChange）</li>
-              <li><code>SelectTrigger</code> - トリガーボタン（className for size）</li>
-              <li><code>SelectValue</code> - 選択値表示</li>
-              <li><code>SelectContent</code> - ドロップダウン</li>
-              <li><code>SelectItem</code> - 選択肢</li>
+            <h2 className="mb-4 text-lg font-semibold">コンポーネント構成</h2>
+            <ul className="text-muted-foreground list-inside list-disc text-sm">
+              <li>
+                <code>Select</code> - ルート（value, onValueChange）
+              </li>
+              <li>
+                <code>SelectTrigger</code> - トリガーボタン（className for size）
+              </li>
+              <li>
+                <code>SelectValue</code> - 選択値表示
+              </li>
+              <li>
+                <code>SelectContent</code> - ドロップダウン
+              </li>
+              <li>
+                <code>SelectItem</code> - 選択肢
+              </li>
             </ul>
           </section>
 
-          <section className="p-4 bg-muted rounded-md">
-            <p className="text-sm text-muted-foreground">
+          <section className="bg-muted rounded-lg p-4">
+            <p className="text-muted-foreground text-sm">
               <strong>Note:</strong> SelectGroup, SelectLabel, SelectSeparatorは現在未使用
             </p>
           </section>

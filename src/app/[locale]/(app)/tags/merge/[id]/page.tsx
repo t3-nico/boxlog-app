@@ -170,7 +170,7 @@ export default function TagMergePage() {
           />
 
           {/* タグ選択（ラジオボタンリスト） */}
-          <div className="border-border max-h-[200px] overflow-y-auto rounded-md border">
+          <div className="border-border max-h-[200px] overflow-y-auto rounded-lg border">
             {filteredTags.length === 0 ? (
               <p className="text-muted-foreground p-4 text-center text-sm">
                 {t('calendar.filter.mergeTag.noResults')}
@@ -189,7 +189,7 @@ export default function TagMergePage() {
                     key={tag.id}
                     htmlFor={`merge-target-${tag.id}`}
                     className={cn(
-                      'flex cursor-pointer items-center gap-3 rounded-md px-3 py-2 transition-colors',
+                      'flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2 transition-colors',
                       'hover:bg-state-hover',
                       selectedTargetId === tag.id && 'bg-state-selected',
                     )}

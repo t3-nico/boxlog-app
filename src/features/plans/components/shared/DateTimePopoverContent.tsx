@@ -150,10 +150,10 @@ export function DateTimePopoverContent({
               </HoverTooltip>
 
               {showRecurrencePopover && !isRecurrenceDisabled && (
-                <div className="border-border bg-popover absolute top-10 left-0 z-50 w-48 rounded-md border shadow-md">
+                <div className="border-border bg-popover absolute top-10 left-0 z-50 w-48 rounded-lg border shadow-md">
                   <div className="p-1">
                     <button
-                      className="hover:bg-state-hover flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-left text-sm"
+                      className="hover:bg-state-hover flex w-full items-center justify-between rounded px-2 py-1.5 text-left text-sm"
                       onClick={() => {
                         onRepeatTypeChange('');
                         onRecurrenceRuleChange(null);
@@ -168,7 +168,7 @@ export function DateTimePopoverContent({
                     {RECURRENCE_OPTIONS.slice(1).map((option) => (
                       <button
                         key={option.value}
-                        className="hover:bg-state-hover flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-left text-sm"
+                        className="hover:bg-state-hover flex w-full items-center justify-between rounded px-2 py-1.5 text-left text-sm"
                         onClick={() => {
                           onRepeatTypeChange(option.value);
                           onRecurrenceRuleChange(null);

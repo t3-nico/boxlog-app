@@ -314,7 +314,7 @@ export const WeekCalendarLayout = ({
                         data-event-block
                         role="button"
                         tabIndex={0}
-                        className={`group border-border/20 absolute z-20 cursor-pointer rounded-md border transition-all duration-200 hover:scale-[1.02] hover:shadow-lg ${selectedPlanId === plan.id ? 'ring-primary ring-2 ring-offset-2' : ''}`}
+                        className={`group border-border/20 absolute z-20 cursor-pointer rounded-lg border transition-all duration-200 hover:scale-[1.02] hover:shadow-lg ${selectedPlanId === plan.id ? 'ring-primary ring-2 ring-offset-2' : ''}`}
                         style={{
                           left: leftPosition,
                           width: widthValue,

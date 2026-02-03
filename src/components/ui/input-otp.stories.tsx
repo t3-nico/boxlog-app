@@ -37,8 +37,8 @@ export const MFAVerification: Story = {
   render: function MFAVerificationStory() {
     const [verificationCode, setVerificationCode] = useState('');
     return (
-      <div className="space-y-4 w-80">
-        <p className="text-sm text-muted-foreground">
+      <div className="w-80 space-y-4">
+        <p className="text-muted-foreground text-sm">
           認証アプリに表示されている6桁のコードを入力してください
         </p>
         <InputOTP maxLength={6} value={verificationCode} onChange={setVerificationCode}>
@@ -51,9 +51,7 @@ export const MFAVerification: Story = {
             <InputOTPSlot index={5} />
           </InputOTPGroup>
         </InputOTP>
-        <p className="text-sm text-muted-foreground">
-          入力値: {verificationCode || '（未入力）'}
-        </p>
+        <p className="text-muted-foreground text-sm">入力値: {verificationCode || '（未入力）'}</p>
       </div>
     );
   },
@@ -64,13 +62,13 @@ export const AllVariants: Story = {
     const [value, setValue] = useState('');
 
     return (
-      <div className="p-8 bg-background text-foreground">
-        <h1 className="text-2xl font-bold mb-8">InputOTP - 実際の使用パターン</h1>
+      <div className="bg-background text-foreground p-8">
+        <h1 className="mb-8 text-2xl font-bold">InputOTP - 実際の使用パターン</h1>
 
         <div className="space-y-8">
           <section>
-            <h2 className="text-lg font-semibold mb-4">MFA認証コード入力</h2>
-            <p className="text-sm text-muted-foreground mb-4">
+            <h2 className="mb-4 text-lg font-semibold">MFA認証コード入力</h2>
+            <p className="text-muted-foreground mb-4 text-sm">
               MFASection.tsxで使用されているパターン
             </p>
             <InputOTP maxLength={6} value={value} onChange={setValue}>
@@ -86,16 +84,22 @@ export const AllVariants: Story = {
           </section>
 
           <section>
-            <h2 className="text-lg font-semibold mb-4">使用Props</h2>
-            <ul className="text-sm text-muted-foreground list-disc list-inside">
-              <li><code>maxLength={'{6}'}</code> - 6桁固定</li>
-              <li><code>value</code> - 制御された値</li>
-              <li><code>onChange</code> - 値変更時のコールバック</li>
+            <h2 className="mb-4 text-lg font-semibold">使用Props</h2>
+            <ul className="text-muted-foreground list-inside list-disc text-sm">
+              <li>
+                <code>maxLength={'{6}'}</code> - 6桁固定
+              </li>
+              <li>
+                <code>value</code> - 制御された値
+              </li>
+              <li>
+                <code>onChange</code> - 値変更時のコールバック
+              </li>
             </ul>
           </section>
 
-          <section className="p-4 bg-muted rounded-md">
-            <p className="text-sm text-muted-foreground">
+          <section className="bg-muted rounded-lg p-4">
+            <p className="text-muted-foreground text-sm">
               <strong>Note:</strong> InputOTPSeparator, pattern, disabled は現在未使用
             </p>
           </section>

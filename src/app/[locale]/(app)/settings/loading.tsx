@@ -16,7 +16,7 @@ export default function SettingsLoading() {
       <aside className="border-border flex h-full w-full flex-shrink-0 flex-col border-r md:hidden">
         {/* ヘッダー */}
         <div className="border-border flex h-14 items-center gap-2 border-b px-4">
-          <Skeleton className="h-10 w-10 rounded-md" />
+          <Skeleton className="h-10 w-10 rounded-lg" />
           <Skeleton className="h-6 w-24" />
         </div>
 

@@ -57,7 +57,7 @@ export function DueDateIconButton({
             type="button"
             disabled={disabled}
             className={cn(
-              'flex h-8 items-center gap-1 rounded-md px-2 transition-colors',
+              'flex h-8 items-center gap-1 rounded-lg px-2 transition-colors',
               'hover:bg-state-hover focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
               hasDueDate ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',
             )}
@@ -70,7 +70,7 @@ export function DueDateIconButton({
                 <button
                   type="button"
                   onClick={handleClear}
-                  className="hover:bg-state-hover -mr-1 rounded-sm p-0.5 opacity-70 transition-opacity hover:opacity-100"
+                  className="hover:bg-state-hover -mr-1 rounded p-0.5 opacity-70 transition-opacity hover:opacity-100"
                   aria-label="期限をクリア"
                 >
                   <X className="size-3" />

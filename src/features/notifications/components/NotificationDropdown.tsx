@@ -198,7 +198,7 @@ export function NotificationDropdown({
       <DropdownMenuTrigger asChild>
         <button
           type="button"
-          className={`hover:bg-state-hover data-[state=open]:bg-state-selected relative flex items-center justify-center rounded-xl outline-hidden transition-colors ${
+          className={`hover:bg-state-hover data-[state=open]:bg-state-selected relative flex items-center justify-center rounded-2xl outline-hidden transition-colors ${
             size === 'sm' ? 'h-8 w-8' : 'h-10 w-10'
           }`}
           aria-label={t('notification.title')}
@@ -218,7 +218,7 @@ export function NotificationDropdown({
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        className="w-full max-w-sm overflow-visible rounded-xl p-0 sm:w-96 sm:max-w-96"
+        className="w-full max-w-sm overflow-visible rounded-2xl p-0 sm:w-96 sm:max-w-96"
         side="right"
         align="start"
         sideOffset={8}
@@ -237,7 +237,7 @@ export function NotificationDropdown({
             <button
               type="button"
               onClick={handleOpenSettings}
-              className="hover:bg-state-hover flex h-10 w-10 items-center justify-center rounded-md transition-colors"
+              className="hover:bg-state-hover flex h-10 w-10 items-center justify-center rounded-lg transition-colors"
             >
               <Settings className="h-4 w-4" />
               <span className="sr-only">{t('notification.settings.title')}</span>

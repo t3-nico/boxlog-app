@@ -1,10 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import {
-  FieldDescription,
-  FieldError,
-  FieldLabel,
-} from './field';
+import { FieldDescription, FieldError, FieldLabel } from './field';
 import { Input } from './input';
 
 const meta = {
@@ -61,12 +57,12 @@ export const WithError: Story = {
 
 export const AllVariants: Story = {
   render: () => (
-    <div className="p-8 bg-background text-foreground">
-      <h1 className="text-2xl font-bold mb-8">Field - 実際の使用パターン</h1>
+    <div className="bg-background text-foreground p-8">
+      <h1 className="mb-8 text-2xl font-bold">Field - 実際の使用パターン</h1>
 
-      <div className="space-y-8 max-w-md">
+      <div className="max-w-md space-y-8">
         <section>
-          <h2 className="text-lg font-semibold mb-4">基本（ラベル + 入力）</h2>
+          <h2 className="mb-4 text-lg font-semibold">基本（ラベル + 入力）</h2>
           <div className="space-y-1">
             <FieldLabel htmlFor="basic">ラベル</FieldLabel>
             <Input id="basic" placeholder="入力してください" />
@@ -74,8 +70,8 @@ export const AllVariants: Story = {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold mb-4">必須表示</h2>
-          <p className="text-sm text-muted-foreground mb-4">
+          <h2 className="mb-4 text-lg font-semibold">必須表示</h2>
+          <p className="text-muted-foreground mb-4 text-sm">
             LoginForm, SignupFormで使用されているパターン
           </p>
           <div className="space-y-1">
@@ -87,7 +83,7 @@ export const AllVariants: Story = {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold mb-4">エラー状態</h2>
+          <h2 className="mb-4 text-lg font-semibold">エラー状態</h2>
           <div className="space-y-1">
             <FieldLabel htmlFor="err">入力項目</FieldLabel>
             <Input id="err" aria-invalid="true" defaultValue="不正な値" />
@@ -96,7 +92,7 @@ export const AllVariants: Story = {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold mb-4">説明テキスト</h2>
+          <h2 className="mb-4 text-lg font-semibold">説明テキスト</h2>
           <div className="space-y-1">
             <FieldLabel htmlFor="desc">項目</FieldLabel>
             <Input id="desc" />
@@ -105,17 +101,24 @@ export const AllVariants: Story = {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold mb-4">使用コンポーネント</h2>
-          <ul className="text-sm text-muted-foreground list-disc list-inside">
-            <li><code>FieldLabel</code> - htmlFor, required, requiredLabel</li>
-            <li><code>FieldDescription</code> - 補足テキスト</li>
-            <li><code>FieldError</code> - エラーメッセージ（announceImmediately対応）</li>
+          <h2 className="mb-4 text-lg font-semibold">使用コンポーネント</h2>
+          <ul className="text-muted-foreground list-inside list-disc text-sm">
+            <li>
+              <code>FieldLabel</code> - htmlFor, required, requiredLabel
+            </li>
+            <li>
+              <code>FieldDescription</code> - 補足テキスト
+            </li>
+            <li>
+              <code>FieldError</code> - エラーメッセージ（announceImmediately対応）
+            </li>
           </ul>
         </section>
 
-        <section className="p-4 bg-muted rounded-md">
-          <p className="text-sm text-muted-foreground">
-            <strong>Note:</strong> Field, FieldSet, FieldGroup, FieldContent, FieldLegendは現在未使用
+        <section className="bg-muted rounded-lg p-4">
+          <p className="text-muted-foreground text-sm">
+            <strong>Note:</strong> Field, FieldSet, FieldGroup, FieldContent,
+            FieldLegendは現在未使用
           </p>
         </section>
       </div>
