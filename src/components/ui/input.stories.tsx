@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
 
+import { Field, FieldError, FieldLabel } from './field';
 import { Input } from './input';
 
 const meta = {
@@ -80,13 +81,60 @@ export const AllPatterns: Story = {
           </div>
 
           <div>
+            <h2 className="mb-4 text-lg font-bold">エラーテキスト付き</h2>
+            <p className="text-muted-foreground mb-4 text-sm">
+              Field + FieldLabel + FieldError と組み合わせて使用
+            </p>
+            <div className="flex flex-col gap-4">
+              <Field>
+                <FieldLabel htmlFor="email-error">メールアドレス</FieldLabel>
+                <Input
+                  id="email-error"
+                  type="email"
+                  placeholder="you@example.com"
+                  aria-invalid="true"
+                  aria-describedby="email-error-text"
+                />
+                <FieldError id="email-error-text">
+                  有効なメールアドレスを入力してください
+                </FieldError>
+              </Field>
+              <Field>
+                <FieldLabel htmlFor="password-error">パスワード</FieldLabel>
+                <Input
+                  id="password-error"
+                  type="password"
+                  aria-invalid="true"
+                  aria-describedby="password-error-text"
+                />
+                <FieldError id="password-error-text">
+                  パスワードは8文字以上で入力してください
+                </FieldError>
+              </Field>
+            </div>
+          </div>
+
+          <div>
             <h2 className="mb-4 text-lg font-bold">Props</h2>
             <div className="bg-surface-container rounded-lg p-4">
               <ul className="text-muted-foreground list-inside list-disc space-y-1 text-sm">
                 <li>size - sm / default / lg</li>
                 <li>type - text / email / password / number など</li>
                 <li>disabled - 無効状態</li>
-                <li>aria-invalid - エラー状態</li>
+                <li>aria-invalid - エラー状態（赤枠表示）</li>
+                <li>aria-describedby - エラーテキストのIDを指定</li>
+              </ul>
+            </div>
+          </div>
+
+          <div>
+            <h2 className="mb-4 text-lg font-bold">関連コンポーネント</h2>
+            <div className="bg-surface-container rounded-lg p-4">
+              <ul className="text-muted-foreground list-inside list-disc space-y-1 text-sm">
+                <li>Field - フォームフィールドのコンテナ</li>
+                <li>FieldLabel - ラベル</li>
+                <li>FieldError - エラーメッセージ</li>
+                <li>InputGroup - アドオン付き入力（パスワード表示切替等）</li>
               </ul>
             </div>
           </div>
