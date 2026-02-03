@@ -7,40 +7,6 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 
-function FieldSet({ className, ...props }: React.ComponentProps<'fieldset'>) {
-  return (
-    <fieldset
-      data-slot="field-set"
-      className={cn(
-        'flex flex-col gap-6',
-        'has-[>[data-slot=checkbox-group]]:gap-4 has-[>[data-slot=radio-group]]:gap-4',
-        className,
-      )}
-      {...props}
-    />
-  );
-}
-
-function FieldLegend({
-  className,
-  variant = 'legend',
-  ...props
-}: React.ComponentProps<'legend'> & { variant?: 'legend' | 'label' }) {
-  return (
-    <legend
-      data-slot="field-legend"
-      data-variant={variant}
-      className={cn(
-        'mb-4 font-normal',
-        'data-[variant=legend]:text-base',
-        'data-[variant=label]:text-sm',
-        className,
-      )}
-      {...props}
-    />
-  );
-}
-
 function FieldGroup({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
@@ -91,16 +57,6 @@ function Field({
   );
 }
 
-function FieldContent({ className, ...props }: React.ComponentProps<'div'>) {
-  return (
-    <div
-      data-slot="field-content"
-      className={cn('group/field-content flex flex-1 flex-col gap-2 leading-snug', className)}
-      {...props}
-    />
-  );
-}
-
 interface FieldLabelProps extends React.ComponentProps<typeof Label> {
   /** 必須表示（※必須 / Required） */
   required?: boolean;
@@ -138,19 +94,6 @@ function FieldLabel({
         <span className="text-muted-foreground text-sm font-normal">{optionalLabel}</span>
       )}
     </Label>
-  );
-}
-
-function FieldTitle({ className, ...props }: React.ComponentProps<'div'>) {
-  return (
-    <div
-      data-slot="field-label"
-      className={cn(
-        'flex w-fit items-center gap-2 text-sm leading-snug font-normal group-data-[disabled=true]/field:opacity-50',
-        className,
-      )}
-      {...props}
-    />
   );
 }
 
@@ -289,14 +232,10 @@ function FieldError({
 
 export {
   Field,
-  FieldContent,
   FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
-  FieldLegend,
   FieldSeparator,
-  FieldSet,
   FieldSupportText,
-  FieldTitle,
 };
