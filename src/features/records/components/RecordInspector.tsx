@@ -13,25 +13,19 @@ import { RecordInspectorContent } from './RecordInspectorContent';
 /**
  * Record Inspector コンポーネント
  *
- * Record詳細表示・編集用パネル
- * - 既存Record編集モード: selectedRecordId が設定されている場合
- * - 新規作成モード（ドラフト）: draftRecord が設定されている場合
+ * Record詳細表示・編集用パネル（既存Record編集専用）
+ * 新規作成は PlanInspector を使用
  * - PC: Popover（フローティング）、モバイル: Drawer
  */
 export function RecordInspector() {
   const isOpen = useRecordInspectorStore((state) => state.isOpen);
   const selectedRecordId = useRecordInspectorStore((state) => state.selectedRecordId);
-  const draftRecord = useRecordInspectorStore((state) => state.draftRecord);
   const closeInspector = useRecordInspectorStore((state) => state.closeInspector);
 
-  // ドラフトモードかどうか
-  const isDraftMode = draftRecord !== null && selectedRecordId === null;
-
-  // Record取得（既存編集時のみ）
-  // placeholderDataでrecords.listキャッシュから即座に表示（UX向上）
+  // Record取得
   const { data: record, isLoading } = useRecord(selectedRecordId!, {
     includePlan: true,
-    enabled: !!selectedRecordId && !isDraftMode,
+    enabled: !!selectedRecordId,
   });
 
   // Mutations
@@ -58,10 +52,10 @@ export function RecordInspector() {
   });
 
   // タイトル
-  const title = isDraftMode ? 'Record作成' : record?.title || 'Record詳細';
+  const title = record?.title || 'Record詳細';
 
-  // モバイル用メニューコンテンツ（編集モードのみ）
-  const mobileMenuContent = !isDraftMode ? (
+  // モバイル用メニューコンテンツ
+  const mobileMenuContent = (
     <>
       <DropdownMenuSeparator />
       <DropdownMenuItem onClick={handleDelete} variant="destructive">
@@ -69,7 +63,7 @@ export function RecordInspector() {
         削除
       </DropdownMenuItem>
     </>
-  ) : undefined;
+  );
 
   return (
     <InspectorShell
@@ -79,8 +73,8 @@ export function RecordInspector() {
       mobileMenuContent={mobileMenuContent}
     >
       <InspectorContent
-        isLoading={isDraftMode ? false : isLoading}
-        hasData={isDraftMode ? true : !!record}
+        isLoading={isLoading}
+        hasData={!!record}
         emptyMessage="Recordが見つかりません"
       >
         <RecordInspectorContent onClose={handleClose} />
