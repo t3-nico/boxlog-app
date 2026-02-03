@@ -142,7 +142,7 @@ function DraggableContent({ children, position, title }: DraggableContentProps) 
         // 高さは内容に応じて可変（最大40rem）
         'flex max-h-[40rem] w-[95vw] max-w-[30rem] flex-col gap-0 overflow-hidden p-0',
         // ドラッグ中のスタイル
-        isDragging && 'cursor-grabbing shadow-2xl',
+        isDragging && 'cursor-grabbing shadow-xl',
       )}
       role="dialog"
       aria-modal="false"
