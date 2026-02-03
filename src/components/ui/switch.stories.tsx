@@ -58,8 +58,8 @@ export const WithLabel: Story = {
   },
 };
 
-export const AllVariants: Story = {
-  render: function AllVariantsStory() {
+export const AllPatterns: Story = {
+  render: function AllPatternsStory() {
     const [sleepEnabled, setSleepEnabled] = useState(true);
     const [syncEnabled, setSyncEnabled] = useState(false);
     const [isLoading, setIsLoading] = useState(false);

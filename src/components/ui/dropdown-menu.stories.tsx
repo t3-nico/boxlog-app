@@ -316,7 +316,7 @@ export const Destructive: Story = {
 /**
  * 全バリエーション & ラベル使用ガイド
  */
-export const AllVariants: Story = {
+export const AllPatterns: Story = {
   render: () => (
     <div className="bg-background text-foreground p-8">
       <h1 className="mb-8 text-2xl font-bold">DropdownMenu - ラベル使用ガイド</h1>

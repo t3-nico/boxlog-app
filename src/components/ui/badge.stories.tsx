@@ -28,7 +28,7 @@ export const Default: Story = {
   },
 };
 
-export const AllVariants: Story = {
+export const AllPatterns: Story = {
   render: () => (
     <div className="bg-background text-foreground space-y-8 p-8">
       <h1 className="text-2xl font-bold">Badge - 用途別パターン</h1>

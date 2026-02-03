@@ -29,44 +29,46 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   render: () => (
-    <Command className="w-96 rounded-lg border shadow-md">
-      <CommandInput placeholder="検索..." />
-      <CommandList>
-        <CommandEmpty>結果がありません。</CommandEmpty>
-        <CommandGroup heading="候補">
-          <CommandItem>
-            <Calendar className="mr-2" />
-            <span>カレンダー</span>
-          </CommandItem>
-          <CommandItem>
-            <Smile className="mr-2" />
-            <span>絵文字を検索</span>
-          </CommandItem>
-          <CommandItem>
-            <Calculator className="mr-2" />
-            <span>計算機</span>
-          </CommandItem>
-        </CommandGroup>
-        <CommandSeparator />
-        <CommandGroup heading="設定">
-          <CommandItem>
-            <User className="mr-2" />
-            <span>プロフィール</span>
-            <CommandShortcut>⌘P</CommandShortcut>
-          </CommandItem>
-          <CommandItem>
-            <CreditCard className="mr-2" />
-            <span>請求</span>
-            <CommandShortcut>⌘B</CommandShortcut>
-          </CommandItem>
-          <CommandItem>
-            <Settings className="mr-2" />
-            <span>設定</span>
-            <CommandShortcut>⌘S</CommandShortcut>
-          </CommandItem>
-        </CommandGroup>
-      </CommandList>
-    </Command>
+    <div style={{ width: '384px', minWidth: '384px', flexShrink: 0 }}>
+      <Command className="rounded-lg border shadow-md">
+        <CommandInput placeholder="検索..." />
+        <CommandList>
+          <CommandEmpty>結果がありません。</CommandEmpty>
+          <CommandGroup heading="候補">
+            <CommandItem>
+              <Calendar className="mr-2" />
+              <span>カレンダー</span>
+            </CommandItem>
+            <CommandItem>
+              <Smile className="mr-2" />
+              <span>絵文字を検索</span>
+            </CommandItem>
+            <CommandItem>
+              <Calculator className="mr-2" />
+              <span>計算機</span>
+            </CommandItem>
+          </CommandGroup>
+          <CommandSeparator />
+          <CommandGroup heading="設定">
+            <CommandItem>
+              <User className="mr-2" />
+              <span>プロフィール</span>
+              <CommandShortcut>⌘P</CommandShortcut>
+            </CommandItem>
+            <CommandItem>
+              <CreditCard className="mr-2" />
+              <span>請求</span>
+              <CommandShortcut>⌘B</CommandShortcut>
+            </CommandItem>
+            <CommandItem>
+              <Settings className="mr-2" />
+              <span>設定</span>
+              <CommandShortcut>⌘S</CommandShortcut>
+            </CommandItem>
+          </CommandGroup>
+        </CommandList>
+      </Command>
+    </div>
   ),
 };
 
@@ -108,35 +110,37 @@ export const Dialog: Story = {
 
 export const WithShortcuts: Story = {
   render: () => (
-    <Command className="w-96 rounded-lg border shadow-md">
-      <CommandInput placeholder="検索..." />
-      <CommandList>
-        <CommandEmpty>結果がありません。</CommandEmpty>
-        <CommandGroup heading="アクション">
-          <CommandItem>
-            <span>新規作成</span>
-            <CommandShortcut>⌘N</CommandShortcut>
-          </CommandItem>
-          <CommandItem>
-            <span>保存</span>
-            <CommandShortcut>⌘S</CommandShortcut>
-          </CommandItem>
-          <CommandItem>
-            <span>コピー</span>
-            <CommandShortcut>⌘C</CommandShortcut>
-          </CommandItem>
-          <CommandItem>
-            <span>ペースト</span>
-            <CommandShortcut>⌘V</CommandShortcut>
-          </CommandItem>
-        </CommandGroup>
-      </CommandList>
-    </Command>
+    <div style={{ width: '384px', minWidth: '384px', flexShrink: 0 }}>
+      <Command className="rounded-lg border shadow-md">
+        <CommandInput placeholder="検索..." />
+        <CommandList>
+          <CommandEmpty>結果がありません。</CommandEmpty>
+          <CommandGroup heading="アクション">
+            <CommandItem>
+              <span>新規作成</span>
+              <CommandShortcut>⌘N</CommandShortcut>
+            </CommandItem>
+            <CommandItem>
+              <span>保存</span>
+              <CommandShortcut>⌘S</CommandShortcut>
+            </CommandItem>
+            <CommandItem>
+              <span>コピー</span>
+              <CommandShortcut>⌘C</CommandShortcut>
+            </CommandItem>
+            <CommandItem>
+              <span>ペースト</span>
+              <CommandShortcut>⌘V</CommandShortcut>
+            </CommandItem>
+          </CommandGroup>
+        </CommandList>
+      </Command>
+    </div>
   ),
 };
 
-export const AllVariants: Story = {
-  render: function AllVariantsStory() {
+export const AllPatterns: Story = {
+  render: function AllPatternsStory() {
     const [dialogOpen, setDialogOpen] = useState(false);
     return (
       <div className="bg-background text-foreground p-8">
@@ -145,22 +149,24 @@ export const AllVariants: Story = {
         <div className="space-y-8">
           <section>
             <h2 className="mb-4 text-lg font-bold">インライン</h2>
-            <Command className="w-full max-w-md rounded-lg border shadow-md">
-              <CommandInput placeholder="検索..." />
-              <CommandList>
-                <CommandEmpty>結果がありません。</CommandEmpty>
-                <CommandGroup heading="アプリ">
-                  <CommandItem>
-                    <Calendar className="mr-2" />
-                    <span>カレンダー</span>
-                  </CommandItem>
-                  <CommandItem>
-                    <Settings className="mr-2" />
-                    <span>設定</span>
-                  </CommandItem>
-                </CommandGroup>
-              </CommandList>
-            </Command>
+            <div style={{ width: '384px', minWidth: '384px', flexShrink: 0 }}>
+              <Command className="rounded-lg border shadow-md">
+                <CommandInput placeholder="検索..." />
+                <CommandList>
+                  <CommandEmpty>結果がありません。</CommandEmpty>
+                  <CommandGroup heading="アプリ">
+                    <CommandItem>
+                      <Calendar className="mr-2" />
+                      <span>カレンダー</span>
+                    </CommandItem>
+                    <CommandItem>
+                      <Settings className="mr-2" />
+                      <span>設定</span>
+                    </CommandItem>
+                  </CommandGroup>
+                </CommandList>
+              </Command>
+            </div>
           </section>
 
           <section>

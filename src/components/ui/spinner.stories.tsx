@@ -34,7 +34,7 @@ export const InButton: Story = {
   ),
 };
 
-export const AllVariants: Story = {
+export const AllPatterns: Story = {
   render: () => (
     <div className="bg-background text-foreground p-8">
       <h1 className="mb-8 text-2xl font-bold">Spinner - 実際の使用パターン</h1>

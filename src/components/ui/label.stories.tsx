@@ -11,12 +11,6 @@ const meta = {
   parameters: {
     layout: 'centered',
   },
-  argTypes: {
-    htmlFor: {
-      control: 'text',
-      description: '関連付けるinput要素のID',
-    },
-  },
 } satisfies Meta<typeof Label>;
 
 export default meta;
@@ -29,66 +23,54 @@ export const Default: Story = {
   },
 };
 
-export const WithInput: Story = {
-  render: () => (
-    <div className="w-80">
-      <Label htmlFor="email" className="text-muted-foreground mb-1 block text-sm font-normal">
-        Email address
-      </Label>
-      <Input id="email" type="email" placeholder="you@example.com" />
-    </div>
-  ),
-};
+export const AllPatterns: Story = {
+  render: function AllPatternsStory() {
+    return (
+      <div className="bg-background text-foreground min-h-screen p-8">
+        <h1 className="mb-2 text-2xl font-bold">Label</h1>
+        <p className="text-muted-foreground mb-8">フォーム要素のラベル</p>
 
-export const WithCheckbox: Story = {
-  render: () => (
-    <div className="flex items-center gap-2">
-      <Checkbox id="terms" />
-      <Label htmlFor="terms">利用規約に同意する</Label>
-    </div>
-  ),
-};
-
-export const AllVariants: Story = {
-  render: () => (
-    <div className="bg-background text-foreground p-8">
-      <h1 className="mb-8 text-2xl font-bold">Label - 実際の使用パターン</h1>
-
-      <div className="max-w-md space-y-8">
-        <section>
-          <h2 className="mb-4 text-lg font-bold">フォームラベル</h2>
-          <div className="space-y-4">
-            <div>
-              <Label
-                htmlFor="name"
-                className="text-muted-foreground mb-1 block text-sm font-normal"
-              >
-                名前
-              </Label>
-              <Input id="name" type="text" placeholder="田中太郎" />
-            </div>
-            <div>
-              <Label
-                htmlFor="email2"
-                className="text-muted-foreground mb-1 block text-sm font-normal"
-              >
-                メールアドレス
-              </Label>
-              <Input id="email2" type="email" placeholder="you@example.com" />
+        <div className="grid gap-8" style={{ maxWidth: '28rem' }}>
+          <div>
+            <h2 className="mb-4 text-lg font-bold">フォームラベル</h2>
+            <p className="text-muted-foreground mb-4 text-sm">
+              ※ 通常は FieldLabel（field.tsx）経由で使用
+            </p>
+            <div className="space-y-2">
+              <Label htmlFor="display-name">表示名</Label>
+              <Input id="display-name" type="text" placeholder="田中太郎" />
             </div>
           </div>
-        </section>
 
-        <section>
-          <h2 className="mb-4 text-lg font-bold">チェックボックスラベル</h2>
-          <div className="flex items-center gap-2">
-            <Checkbox id="agree" />
-            <Label htmlFor="agree">利用規約に同意する</Label>
+          <div>
+            <h2 className="mb-4 text-lg font-bold">チェックボックスラベル</h2>
+            <div className="flex items-center gap-2">
+              <Checkbox id="agree" />
+              <Label htmlFor="agree">利用規約に同意する</Label>
+            </div>
           </div>
-        </section>
+
+          <div>
+            <h2 className="mb-4 text-lg font-bold">無効状態</h2>
+            <div className="flex items-center gap-2">
+              <Checkbox id="disabled-check" disabled />
+              <Label htmlFor="disabled-check">無効なチェックボックス</Label>
+            </div>
+          </div>
+
+          <div>
+            <h2 className="mb-4 text-lg font-bold">関連コンポーネント</h2>
+            <div className="bg-surface-container rounded-lg p-4">
+              <ul className="text-muted-foreground list-inside list-disc space-y-1 text-sm">
+                <li>FieldLabel - 必須/任意インジケーター付きラベル</li>
+                <li>Field - フォームフィールドのコンテナ</li>
+              </ul>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-  ),
+    );
+  },
   parameters: {
     layout: 'fullscreen',
   },

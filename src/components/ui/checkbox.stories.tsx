@@ -87,8 +87,8 @@ export const WithCustomColor: Story = {
   },
 };
 
-export const AllVariants: Story = {
-  render: function AllVariantsStory() {
+export const AllPatterns: Story = {
+  render: function AllPatternsStory() {
     const [checked1, setChecked1] = useState(false);
     const [checked2, setChecked2] = useState(true);
     const tagColor = '#10b981';

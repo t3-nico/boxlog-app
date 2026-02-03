@@ -86,7 +86,7 @@ export const InCard: Story = {
   ),
 };
 
-export const AllVariants: Story = {
+export const AllPatterns: Story = {
   render: () => (
     <div className="bg-background text-foreground p-8">
       <h1 className="mb-8 text-2xl font-bold">Separator - 全バリエーション</h1>

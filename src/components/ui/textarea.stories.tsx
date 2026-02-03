@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 
 import { Textarea } from './textarea';
 
@@ -9,20 +9,6 @@ const meta = {
   tags: ['autodocs'],
   parameters: {
     layout: 'centered',
-  },
-  argTypes: {
-    placeholder: {
-      control: 'text',
-      description: 'プレースホルダーテキスト',
-    },
-    maxLength: {
-      control: 'number',
-      description: '最大文字数',
-    },
-    disabled: {
-      control: 'boolean',
-      description: '無効状態',
-    },
   },
 } satisfies Meta<typeof Textarea>;
 
@@ -36,102 +22,47 @@ export const Default: Story = {
   },
 };
 
-export const WithMaxLength: Story = {
-  render: function TextareaWithMaxLength() {
+export const AllPatterns: Story = {
+  render: function AllPatternsStory() {
     const MAX_LENGTH = 200;
     const [value, setValue] = useState('');
 
     return (
-      <div className="w-80">
-        <Textarea
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-          placeholder="メモを入力..."
-          maxLength={MAX_LENGTH}
-          className="border-border min-h-[80px] w-full resize-none border text-sm"
-        />
-        <p className="text-muted-foreground mt-1 text-right text-sm">
-          {value.length}/{MAX_LENGTH}
-        </p>
-      </div>
-    );
-  },
-};
+      <div className="bg-background text-foreground min-h-screen p-8">
+        <h1 className="mb-2 text-2xl font-bold">Textarea</h1>
+        <p className="text-muted-foreground mb-8">複数行テキスト入力</p>
 
-export const SingleLineMode: Story = {
-  render: function SingleLineTextarea() {
-    const MAX_LENGTH = 100;
-    const [value, setValue] = useState('');
-
-    const handleChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      const newValue = e.target.value.replace(/[\r\n]/g, '');
-      if (newValue.length <= MAX_LENGTH) {
-        setValue(newValue);
-      }
-    }, []);
-
-    const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-      }
-    }, []);
-
-    return (
-      <div className="w-80">
-        <p className="text-muted-foreground mb-2 text-sm">
-          改行を無効化したTextarea（タグのメモなど）
-        </p>
-        <Textarea
-          value={value}
-          onChange={handleChange}
-          onKeyDown={handleKeyDown}
-          placeholder="メモを入力（改行不可）..."
-          maxLength={MAX_LENGTH}
-          className="border-border min-h-[80px] w-full resize-none border text-sm"
-        />
-      </div>
-    );
-  },
-};
-
-export const AllVariants: Story = {
-  render: function AllVariantsStory() {
-    const MAX_LENGTH = 200;
-    const [value, setValue] = useState('');
-
-    return (
-      <div className="bg-background text-foreground p-8">
-        <h1 className="mb-8 text-2xl font-bold">Textarea - 実際の使用パターン</h1>
-
-        <div className="max-w-md space-y-8">
+        <div className="grid gap-8" style={{ maxWidth: '28rem' }}>
+          {/* 基本（文字数カウンター付き） */}
           <section>
             <h2 className="mb-4 text-lg font-bold">基本</h2>
-            <Textarea
-              value={value}
-              onChange={(e) => setValue(e.target.value)}
-              placeholder="メモを入力..."
-              maxLength={MAX_LENGTH}
-              className="border-border min-h-[80px] w-full resize-none border text-sm"
-            />
-            <p className="text-muted-foreground mt-1 text-right text-sm">
-              {value.length}/{MAX_LENGTH}
-            </p>
+            <div>
+              <Textarea
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
+                placeholder="メモを入力..."
+                maxLength={MAX_LENGTH}
+                className="min-h-[80px] resize-none"
+              />
+              <p className="text-muted-foreground mt-1 text-right text-sm">
+                {value.length}/{MAX_LENGTH}
+              </p>
+            </div>
           </section>
 
+          {/* 状態 */}
           <section>
-            <h2 className="mb-4 text-lg font-bold">無効状態</h2>
-            <Textarea
-              placeholder="無効"
-              disabled
-              className="border-border min-h-[80px] w-full resize-none border text-sm"
-            />
+            <h2 className="mb-4 text-lg font-bold">状態</h2>
+            <div className="space-y-4">
+              <Textarea placeholder="通常" className="min-h-[80px] resize-none" />
+              <Textarea placeholder="無効" disabled className="min-h-[80px] resize-none" />
+              <Textarea
+                placeholder="エラー状態"
+                aria-invalid="true"
+                className="min-h-[80px] resize-none"
+              />
+            </div>
           </section>
-        </div>
-
-        <div className="bg-muted mt-8 max-w-md rounded-lg p-4">
-          <p className="text-muted-foreground text-sm">
-            <strong>Note:</strong> rows属性は使用せず、min-h-[80px]とresize-noneをclassNameで指定
-          </p>
         </div>
       </div>
     );

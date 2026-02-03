@@ -82,8 +82,8 @@ export const PeriodSelector: Story = {
   },
 };
 
-export const AllVariants: Story = {
-  render: function AllVariantsStory() {
+export const AllPatterns: Story = {
+  render: function AllPatternsStory() {
     const [value, setValue] = useState('daily');
 
     return (

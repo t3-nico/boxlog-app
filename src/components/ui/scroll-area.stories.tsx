@@ -3,6 +3,32 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { ScrollArea, ScrollBar } from './scroll-area';
 import { Separator } from './separator';
 
+/**
+ * ScrollArea - カスタムスクロールエリア
+ *
+ * ## 使用コンポーネント
+ *
+ * | コンポーネント | 用途 |
+ * |----------------|------|
+ * | ScrollArea | スクロール可能な領域（垂直スクロールバー自動） |
+ * | ScrollBar | 追加のスクロールバー（水平方向が必要な場合） |
+ *
+ * ## 使い分け
+ *
+ * | パターン | 実装 | ユースケース |
+ * |----------|------|--------------|
+ * | 垂直のみ | ScrollArea のみ | リスト、ドロップダウン内容 |
+ * | 水平のみ | ScrollArea + ScrollBar horizontal | カルーセル、タブ |
+ * | 両方向 | ScrollArea + ScrollBar horizontal | テーブル、グリッド |
+ *
+ * ## ScrollArea vs overflow-auto
+ *
+ * | 観点 | ScrollArea | overflow-auto |
+ * |------|------------|---------------|
+ * | 見た目 | カスタムスクロールバー | OS標準 |
+ * | ホバー表示 | 対応（type="hover"） | 不可 |
+ * | 推奨 | ドロップダウン、モーダル内 | 全画面レイアウト |
+ */
 const meta = {
   title: 'Components/ScrollArea',
   component: ScrollArea,
@@ -92,7 +118,7 @@ export const InCard: Story = {
   ),
 };
 
-export const AllVariants: Story = {
+export const AllPatterns: Story = {
   render: () => (
     <div className="bg-background text-foreground p-8">
       <h1 className="mb-8 text-2xl font-bold">ScrollArea - 全バリエーション</h1>
