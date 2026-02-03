@@ -30,151 +30,108 @@ export const Default: Story = {
   ),
 };
 
-export const Success: Story = {
-  render: () => <Button onClick={() => toast.success('保存しました')}>成功トースト</Button>,
-};
-
-export const Error: Story = {
-  render: () => (
-    <Button variant="destructive" onClick={() => toast.error('エラーが発生しました')}>
-      エラートースト
-    </Button>
-  ),
-};
-
-export const Info: Story = {
-  render: () => (
-    <Button variant="outline" onClick={() => toast.info('お知らせ')}>
-      情報トースト
-    </Button>
-  ),
-};
-
-export const Warning: Story = {
-  render: () => (
-    <Button variant="outline" onClick={() => toast.warning('警告メッセージ')}>
-      警告トースト
-    </Button>
-  ),
-};
-
-export const Loading: Story = {
-  render: () => (
-    <Button
-      variant="outline"
-      onClick={() => {
-        const toastId = toast.loading('処理中...');
-        setTimeout(() => {
-          toast.success('完了しました', { id: toastId });
-        }, 2000);
-      }}
-    >
-      ローディングトースト
-    </Button>
-  ),
-};
-
-export const WithDescription: Story = {
-  render: () => (
-    <Button
-      variant="outline"
-      onClick={() =>
-        toast('タイトル', {
-          description: '詳細な説明がここに表示されます。',
-        })
-      }
-    >
-      説明付きトースト
-    </Button>
-  ),
-};
-
-export const WithAction: Story = {
-  render: () => (
-    <Button
-      variant="outline"
-      onClick={() =>
-        toast('ファイルを削除しました', {
-          action: {
-            label: '元に戻す',
-            onClick: () => toast.success('削除を取り消しました'),
-          },
-        })
-      }
-    >
-      アクション付きトースト
-    </Button>
-  ),
-};
-
-export const Promise: Story = {
-  render: () => (
-    <Button
-      onClick={() => {
-        const promise = new Promise((resolve) => setTimeout(resolve, 2000));
-        toast.promise(promise, {
-          loading: '保存中...',
-          success: '保存しました',
-          error: 'エラーが発生しました',
-        });
-      }}
-    >
-      Promiseトースト
-    </Button>
-  ),
-};
-
 export const AllPatterns: Story = {
-  render: () => (
-    <div className="bg-background text-foreground p-8">
-      <h1 className="mb-8 text-2xl font-bold">Sonner (Toast) - 全バリエーション</h1>
+  render: function AllPatternsStory() {
+    return (
+      <div className="bg-background text-foreground min-h-screen w-full p-8">
+        <h1 className="mb-2 text-2xl font-bold">Sonner (Toast)</h1>
+        <p className="text-muted-foreground mb-8">トースト通知</p>
 
-      <div className="space-y-8">
-        <section>
-          <h2 className="mb-4 text-lg font-bold">タイプ</h2>
-          <div className="flex flex-wrap gap-4">
-            <Button onClick={() => toast('通常メッセージ')}>通常</Button>
-            <Button onClick={() => toast.success('成功しました')}>成功</Button>
-            <Button onClick={() => toast.error('エラーが発生')}>エラー</Button>
-            <Button onClick={() => toast.info('お知らせ')}>情報</Button>
-            <Button onClick={() => toast.warning('警告')}>警告</Button>
-          </div>
-        </section>
+        <div className="space-y-8">
+          {/* タイプ */}
+          <section>
+            <h2 className="mb-4 text-lg font-bold">タイプ</h2>
+            <div className="flex flex-wrap gap-2">
+              <Button variant="outline" onClick={() => toast('通常メッセージ')}>
+                通常
+              </Button>
+              <Button variant="outline" onClick={() => toast.success('成功しました')}>
+                成功
+              </Button>
+              <Button variant="outline" onClick={() => toast.error('エラーが発生')}>
+                エラー
+              </Button>
+              <Button variant="outline" onClick={() => toast.info('お知らせ')}>
+                情報
+              </Button>
+              <Button variant="outline" onClick={() => toast.warning('警告')}>
+                警告
+              </Button>
+            </div>
+          </section>
 
-        <section>
-          <h2 className="mb-4 text-lg font-bold">ローディング状態</h2>
-          <Button
-            onClick={() => {
-              const toastId = toast.loading('処理中...');
-              setTimeout(() => {
-                toast.success('完了', { id: toastId });
-              }, 2000);
-            }}
-          >
-            ローディング → 成功
-          </Button>
-        </section>
+          {/* ローディング */}
+          <section>
+            <h2 className="mb-4 text-lg font-bold">ローディング → 完了</h2>
+            <Button
+              variant="outline"
+              onClick={() => {
+                const toastId = toast.loading('処理中...');
+                setTimeout(() => {
+                  toast.success('完了しました', { id: toastId });
+                }, 2000);
+              }}
+            >
+              ローディングトースト
+            </Button>
+          </section>
 
-        <section>
-          <h2 className="mb-4 text-lg font-bold">アクション付き</h2>
-          <Button
-            onClick={() =>
-              toast('アイテムを削除しました', {
-                action: {
-                  label: '元に戻す',
-                  onClick: () => toast.success('復元しました'),
-                },
-              })
-            }
-          >
-            アクション付き
-          </Button>
-        </section>
+          {/* 説明付き */}
+          <section>
+            <h2 className="mb-4 text-lg font-bold">説明付き</h2>
+            <Button
+              variant="outline"
+              onClick={() =>
+                toast('タイトル', {
+                  description: '詳細な説明がここに表示されます。',
+                })
+              }
+            >
+              説明付きトースト
+            </Button>
+          </section>
 
-        <section>
-          <h2 className="mb-4 text-lg font-bold">使用方法</h2>
-          <pre className="bg-container overflow-x-auto rounded-lg p-4 text-sm">
-            {`import { toast } from 'sonner'
+          {/* アクション付き */}
+          <section>
+            <h2 className="mb-4 text-lg font-bold">アクション付き</h2>
+            <Button
+              variant="outline"
+              onClick={() =>
+                toast('アイテムを削除しました', {
+                  action: {
+                    label: '元に戻す',
+                    onClick: () => toast.success('復元しました'),
+                  },
+                })
+              }
+            >
+              アクション付きトースト
+            </Button>
+          </section>
+
+          {/* Promise */}
+          <section>
+            <h2 className="mb-4 text-lg font-bold">Promise統合</h2>
+            <Button
+              variant="outline"
+              onClick={() => {
+                const promise = new Promise((resolve) => setTimeout(resolve, 2000));
+                toast.promise(promise, {
+                  loading: '保存中...',
+                  success: '保存しました',
+                  error: 'エラーが発生しました',
+                });
+              }}
+            >
+              Promiseトースト
+            </Button>
+          </section>
+
+          {/* 使用方法 */}
+          <section>
+            <h2 className="mb-4 text-lg font-bold">使用方法</h2>
+            <pre className="bg-surface-container overflow-x-auto rounded-lg p-4 text-sm">
+              {`import { toast } from 'sonner'
 
 // 基本
 toast('メッセージ')
@@ -191,11 +148,12 @@ toast.promise(asyncFn(), {
   success: '完了',
   error: 'エラー',
 })`}
-          </pre>
-        </section>
+            </pre>
+          </section>
+        </div>
       </div>
-    </div>
-  ),
+    );
+  },
   parameters: {
     layout: 'fullscreen',
   },
