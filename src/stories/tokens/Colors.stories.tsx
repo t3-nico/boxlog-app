@@ -297,19 +297,23 @@ export const Interaction: Story = {
 
       {/* フォーカスリング */}
       <div className="mb-8">
-        <h3 className="border-border mb-4 border-b pb-2 text-lg font-semibold">フォーカスリング</h3>
-        <p className="text-muted-foreground mb-4 text-sm">Tabキーでフォーカスを移動して確認</p>
+        <h3 className="border-border mb-4 border-b pb-2 text-lg font-semibold">
+          フォーカスリング（MD3スタイル）
+        </h3>
+        <p className="text-muted-foreground mb-4 text-sm">
+          Tabキーでフォーカスを移動して確認。ボーダーがリングに置き換わる。
+        </p>
         <div className="flex flex-wrap gap-4">
           <button
             type="button"
-            className="border-border focus-visible:ring-ring rounded-lg border px-4 py-2 outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+            className="border-border focus-visible:ring-ring rounded-lg border px-4 py-2 outline-none focus-visible:border-transparent focus-visible:ring-2"
           >
-            <code className="text-sm">focus-visible:ring-ring</code>
+            <code className="text-sm">focus-visible:border-transparent + ring</code>
           </button>
           <input
             type="text"
             placeholder="入力フィールド"
-            className="border-border bg-input focus-visible:ring-ring rounded-lg border px-4 py-2 outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+            className="border-border bg-input focus-visible:ring-ring rounded-lg border px-4 py-2 outline-none focus-visible:border-transparent focus-visible:ring-2"
           />
         </div>
       </div>
@@ -375,7 +379,9 @@ export const Interaction: Story = {
           </div>
           <div>
             <span className="text-muted-foreground">Focus:</span>{' '}
-            <code>focus-visible:ring-2 focus-visible:ring-ring</code>
+            <code>
+              focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring
+            </code>
           </div>
           <div>
             <span className="text-muted-foreground">Selected:</span>{' '}
