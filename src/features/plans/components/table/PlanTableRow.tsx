@@ -1,5 +1,9 @@
 'use client';
 
+import { Clock } from 'lucide-react';
+import { useLocale } from 'next-intl';
+import Link from 'next/link';
+
 import { Checkbox } from '@/components/ui/checkbox';
 import {
   ContextMenu,
@@ -21,6 +25,7 @@ import { useRecurringEditConfirmStore } from '@/features/plans/stores/useRecurri
 import type { PlanStatus } from '@/features/plans/types/plan';
 import { useDateFormat } from '@/features/settings/hooks/useDateFormat';
 import { useTableColumnStore, useTableFocusStore, useTableSelectionStore } from '@/features/table';
+import { api } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
 import { useCallback, useEffect, useRef } from 'react';
 import { toast } from 'sonner';
@@ -48,6 +53,56 @@ interface PlanTableRowProps {
  * <PlanTableRow item={item} />
  * ```
  */
+/**
+ * 時間をフォーマット（分 → 時間:分）
+ */
+function formatDuration(minutes: number): string {
+  const hours = Math.floor(minutes / 60);
+  const mins = minutes % 60;
+  if (hours === 0) {
+    return `${mins}m`;
+  }
+  return mins > 0 ? `${hours}h ${mins}m` : `${hours}h`;
+}
+
+/**
+ * RecordsCell - Plan行内のRecords列
+ * 紐づくRecordの件数と合計時間を表示
+ */
+function RecordsCell({ planId, style }: { planId: string; style?: React.CSSProperties }) {
+  const locale = useLocale();
+  const { data: records } = api.records.listByPlan.useQuery(
+    { planId, sortOrder: 'desc' },
+    { staleTime: 30000 }, // 30秒キャッシュ
+  );
+
+  const recordCount = records?.length ?? 0;
+  const totalMinutes = records?.reduce((sum, r) => sum + r.duration_minutes, 0) ?? 0;
+
+  if (recordCount === 0) {
+    return (
+      <TableCell className="text-muted-foreground text-sm" style={style}>
+        <span className="text-muted-foreground/50">—</span>
+      </TableCell>
+    );
+  }
+
+  return (
+    <TableCell className="text-sm" style={style}>
+      <Link
+        href={`/${locale}/record?planSearch=${planId}`}
+        onClick={(e) => e.stopPropagation()}
+        className="hover:bg-state-hover flex items-center gap-1.5 rounded px-1.5 py-0.5 transition-colors"
+      >
+        <Clock className="text-muted-foreground size-3.5" />
+        <span className="tabular-nums">
+          {recordCount}件 / {formatDuration(totalMinutes)}
+        </span>
+      </Link>
+    </TableCell>
+  );
+}
+
 export function PlanTableRow({ item }: PlanTableRowProps) {
   const { openInspector } = usePlanInspectorStore();
   const { isSelected, setSelectedIds } = useTableSelectionStore();
@@ -350,6 +405,9 @@ export function PlanTableRow({ item }: PlanTableRowProps) {
             onChange={handleDateTimeChange}
           />
         );
+
+      case 'records':
+        return <RecordsCell key={columnId} planId={item.id} {...(style && { style })} />;
 
       case 'created_at':
         return (

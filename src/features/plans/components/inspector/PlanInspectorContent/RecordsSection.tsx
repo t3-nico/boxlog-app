@@ -12,7 +12,7 @@ import Link from 'next/link';
 import { LoadingSpinner } from '@/components/common/Loading/LoadingStates';
 import { Button } from '@/components/ui/button';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { useRecordInspectorStore } from '@/features/records/stores';
+import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
 import { api } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
 
@@ -48,7 +48,7 @@ function getScoreColor(score: number): string {
 
 export function RecordsSection({ planId }: RecordsSectionProps) {
   const locale = useLocale();
-  const openInspectorWithDraft = useRecordInspectorStore((state) => state.openInspectorWithDraft);
+  const openInspectorWithDraft = usePlanInspectorStore((state) => state.openInspectorWithDraft);
 
   const { data: records, isPending } = api.records.listByPlan.useQuery({
     planId,
@@ -59,8 +59,9 @@ export function RecordsSection({ planId }: RecordsSectionProps) {
   const totalMinutes = records?.reduce((sum, r) => sum + r.duration_minutes, 0) ?? 0;
 
   // 新しいRecordを作成（このPlanに紐づけて）
+  // TODO: PlanInspectorのRecord作成モードでplanIdを事前選択できるようにする
   const handleCreateRecord = () => {
-    openInspectorWithDraft({ plan_id: planId });
+    openInspectorWithDraft(undefined, 'record');
   };
 
   return (
