@@ -4,7 +4,7 @@ import { memo, useMemo } from 'react';
 
 import { Checkbox } from '@/components/ui/checkbox';
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Calendar, CalendarRange, FileText, Tag } from 'lucide-react';
+import { Calendar, CalendarRange, Clock, FileText, Tag } from 'lucide-react';
 
 import {
   useTableColumnStore,
@@ -28,6 +28,7 @@ const columnIcons = {
   title: FileText,
   tags: Tag,
   duration: CalendarRange,
+  records: Clock,
   created_at: Calendar,
   updated_at: Calendar,
 } as const;
@@ -78,7 +79,8 @@ const TableHeaderSection = memo(function TableHeaderSection({
 
           const Icon = columnIcons[column.id as keyof typeof columnIcons];
 
-          if (column.id === 'tags') {
+          // タグ列とRecords列はソート非対応
+          if (column.id === 'tags' || column.id === 'records') {
             return (
               <ResizableTableHead key={column.id} columnId={column.id} icon={Icon}>
                 {column.label}
