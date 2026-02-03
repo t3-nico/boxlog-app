@@ -37,7 +37,7 @@ export function TagArchiveDialog({ tag, onClose, onConfirm }: TagArchiveDialogPr
     >
       <div className="space-y-4">
         {/* 警告 */}
-        <div className="bg-warning/10 text-warning border-warning/20 flex items-center gap-2 rounded-xl border p-4">
+        <div className="bg-warning/10 text-warning border-warning/20 flex items-center gap-2 rounded-2xl border p-4">
           <Archive className="size-4 shrink-0" />
           <p className="text-sm font-normal">{t('tags.archive.warning')}</p>
         </div>

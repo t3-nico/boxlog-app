@@ -434,13 +434,12 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
         </div>
 
         {/* 3行目: オプションアイコン */}
-        <div className="flex flex-wrap items-center gap-0.5 px-4 pt-2 pb-4">
+        <div className="flex flex-wrap items-center gap-1 px-4 pt-2 pb-4">
           {/* Tags */}
           <TagsIconButton
             tagIds={formData.tagIds}
             onTagsChange={handleTagsChange}
             popoverSide="bottom"
-            popoverZIndex={zIndex.overlayDropdown}
           />
 
           {/* Plan紐付け */}
@@ -448,7 +447,7 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
             <HoverTooltip content={selectedPlanName ?? 'Planに紐付け'} side="top">
               <div
                 className={cn(
-                  'hover:bg-state-hover flex h-8 items-center rounded-md transition-colors',
+                  'hover:bg-state-hover flex h-8 items-center rounded-lg transition-colors',
                   hasPlan ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',
                 )}
               >
@@ -516,7 +515,7 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
                               {planTags.slice(0, 2).map((tag) => (
                                 <span
                                   key={tag!.id}
-                                  className="rounded px-1 py-0.5 text-xs"
+                                  className="rounded px-1 py-1 text-xs"
                                   style={{
                                     backgroundColor: tag!.color ? `${tag!.color}20` : undefined,
                                     color: tag!.color || undefined,
@@ -564,7 +563,7 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
               onTouchStart={handlePressStart}
               onTouchEnd={handlePressEnd}
               className={cn(
-                'flex h-8 items-center gap-1 rounded-md px-2 transition-colors',
+                'flex h-8 items-center gap-1 rounded-lg px-2 transition-colors',
                 'hover:bg-state-hover focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
                 'select-none', // 長押し時のテキスト選択防止
                 hasScore ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',
@@ -573,9 +572,7 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
             >
               <Smile className="size-4" />
               {hasScore && (
-                <span className="text-xs font-medium tabular-nums">
-                  {formData.fulfillment_score}
-                </span>
+                <span className="text-xs font-bold tabular-nums">{formData.fulfillment_score}</span>
               )}
             </button>
           </HoverTooltip>

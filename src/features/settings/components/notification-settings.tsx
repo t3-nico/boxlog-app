@@ -210,9 +210,9 @@ export function NotificationSettings() {
       <div className="space-y-8">
         <SettingsCard>
           <div className="animate-pulse space-y-4">
-            <div className="bg-muted h-12 rounded-md" />
-            <div className="bg-muted h-12 rounded-md" />
-            <div className="bg-muted h-12 rounded-md" />
+            <div className="bg-muted h-12 rounded-lg" />
+            <div className="bg-muted h-12 rounded-lg" />
+            <div className="bg-muted h-12 rounded-lg" />
           </div>
         </SettingsCard>
       </div>
@@ -241,7 +241,7 @@ export function NotificationSettings() {
       </SettingsCard>
 
       {/* ヒント情報 */}
-      <div className="bg-surface-container border-border rounded-xl border p-4">
+      <div className="bg-surface-container border-border rounded-2xl border p-4">
         <p className="text-muted-foreground text-sm">{t('notification.settings.tip')}</p>
       </div>
     </div>

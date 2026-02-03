@@ -102,7 +102,7 @@ export function CookieConsentBanner() {
           </div>
 
           {/* アクションボタン */}
-          <div className="flex flex-col gap-2 sm:flex-row sm:gap-3">
+          <div className="flex flex-col gap-2 sm:flex-row sm:gap-4">
             <Button onClick={handleAcceptAll} className="w-full sm:w-auto">
               {t('legal.cookies.banner.acceptAll')}
             </Button>

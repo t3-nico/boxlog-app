@@ -55,7 +55,7 @@ export function OnboardingBanner() {
 
   return (
     <div
-      className={cn('bg-accent flex items-center justify-between px-4 py-1.5', 'text-xs')}
+      className={cn('bg-accent flex items-center justify-between px-4 py-2', 'text-xs')}
       role="banner"
       aria-label={t('banner.ariaLabel')}
     >

@@ -7,7 +7,6 @@ import { Clock, Flag } from 'lucide-react';
 import type { TimeIconType } from '@/components/common/ClockTimePicker';
 
 import { Popover, PopoverAnchor, PopoverContent } from '@/components/ui/popover';
-import { zIndex } from '@/config/ui/z-index';
 
 /**
  * 15分刻みの時刻オプションを生成（00:00 ~ 23:45）
@@ -219,7 +218,7 @@ export function TimeSelect({
         }
 
         if (targetIndex !== -1) {
-          const itemHeight = 32; // py-1.5 = 6px*2 + text height ≈ 32px
+          const itemHeight = 32; // py-2 = 6px*2 + text height ≈ 32px
           const containerHeight = 200; // max-h-52
           // 選択された項目を中央に配置
           listRef.current.scrollTop =
@@ -371,7 +370,7 @@ export function TimeSelect({
       <Popover open={isOpen} onOpenChange={handleOpenChange} modal={false}>
         <PopoverAnchor asChild>
           <div
-            className={`relative flex cursor-text items-center rounded-md transition-colors ${
+            className={`relative flex cursor-text items-center rounded-lg transition-colors ${
               hasError
                 ? 'ring-destructive/50 bg-destructive-container ring-2'
                 : 'hover:bg-state-hover'
@@ -404,7 +403,7 @@ export function TimeSelect({
               onFocus={handleInputFocus}
               disabled={disabled}
               placeholder="--:--"
-              className={`flex h-8 rounded-md bg-transparent text-sm outline-none disabled:cursor-not-allowed disabled:opacity-50 ${
+              className={`flex h-8 rounded-lg bg-transparent text-sm outline-none disabled:cursor-not-allowed disabled:opacity-50 ${
                 showIcon ? 'w-auto' : 'w-14 px-2 text-center'
               } ${value ? 'text-foreground' : 'text-muted-foreground'} ${error || hasError ? 'text-destructive' : ''}`}
             />
@@ -418,11 +417,10 @@ export function TimeSelect({
 
         {!disabled && filteredOptions.length > 0 && (
           <PopoverContent
-            className="overflow-hidden p-0"
+            className="z-overlay-popover overflow-hidden p-0"
             align="start"
             sideOffset={4}
             style={{
-              zIndex: zIndex.overlayDropdown,
               width: showDurationInMenu && minTime ? '140px' : '80px',
             }}
             onOpenAutoFocus={(e) => e.preventDefault()}
@@ -445,7 +443,7 @@ export function TimeSelect({
                   role="option"
                   aria-selected={option === value}
                   type="button"
-                  className={`hover:bg-state-hover w-full rounded-sm px-2 py-1 text-left text-sm ${
+                  className={`hover:bg-state-hover w-full rounded px-2 py-1 text-left text-sm ${
                     index === highlightedIndex
                       ? 'bg-state-selected'
                       : option === value

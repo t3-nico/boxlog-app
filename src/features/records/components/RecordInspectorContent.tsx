@@ -762,13 +762,12 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
         />
 
         {/* 3行目: オプションアイコン */}
-        <div className="flex flex-wrap items-center gap-0.5 px-4 pt-2 pb-4">
+        <div className="flex flex-wrap items-center gap-1 px-4 pt-2 pb-4">
           {/* Tags */}
           <TagsIconButton
             tagIds={formData.tagIds}
             onTagsChange={handleTagsChange}
             popoverSide="bottom"
-            popoverZIndex={zIndex.overlayDropdown}
           />
 
           {/* Plan紐付け（新規・編集共通） */}
@@ -776,7 +775,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
             <HoverTooltip content={selectedPlanName ?? 'Planに紐付け'} side="top">
               <div
                 className={cn(
-                  'hover:bg-state-hover flex h-8 items-center rounded-md transition-colors',
+                  'hover:bg-state-hover flex h-8 items-center rounded-lg transition-colors',
                   hasPlan ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',
                 )}
               >
@@ -796,7 +795,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
                   <button
                     type="button"
                     onClick={() => handlePlanChange(null)}
-                    className="hover:bg-state-hover mr-1 rounded p-0.5 transition-colors"
+                    className="hover:bg-state-hover mr-1 rounded p-1 transition-colors"
                     aria-label="Plan紐付けを解除"
                   >
                     <X className="size-4" />
@@ -843,7 +842,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
                               {planTags.slice(0, 2).map((tag) => (
                                 <span
                                   key={tag!.id}
-                                  className="rounded px-1 py-0.5 text-xs"
+                                  className="rounded px-1 py-1 text-xs"
                                   style={{
                                     backgroundColor: tag!.color ? `${tag!.color}20` : undefined,
                                     color: tag!.color || undefined,
@@ -876,7 +875,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
                 <div className="border-border border-t p-2">
                   <Link
                     href={`/${locale}/plan?selected=${formData.plan_id}`}
-                    className="text-muted-foreground hover:text-foreground hover:bg-state-hover flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors"
+                    className="text-muted-foreground hover:text-foreground hover:bg-state-hover flex items-center gap-2 rounded-lg px-2 py-2 text-sm transition-colors"
                   >
                     <ExternalLink className="size-4" />
                     <span>Planを開く</span>
@@ -903,7 +902,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
               onTouchStart={handlePressStart}
               onTouchEnd={handlePressEnd}
               className={cn(
-                'flex h-8 items-center gap-1 rounded-md px-2 transition-colors',
+                'flex h-8 items-center gap-1 rounded-lg px-2 transition-colors',
                 'hover:bg-state-hover focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
                 'select-none', // 長押し時のテキスト選択防止
                 hasScore ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',
@@ -912,9 +911,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
             >
               <Smile className="size-4" />
               {hasScore && (
-                <span className="text-xs font-medium tabular-nums">
-                  {formData.fulfillment_score}
-                </span>
+                <span className="text-xs font-bold tabular-nums">{formData.fulfillment_score}</span>
               )}
             </button>
           </HoverTooltip>
@@ -973,7 +970,7 @@ function DraftModeHeader() {
       )}
 
       {/* タイトル（前面レイヤー） */}
-      <h2 className="relative z-10 text-base font-medium">Record 作成</h2>
+      <h2 className="relative z-10 text-base font-bold">Record 作成</h2>
     </div>
   );
 }

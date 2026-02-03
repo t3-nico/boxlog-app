@@ -261,7 +261,7 @@ export const ScrollableCalendarLayout = ({
                       <button
                         type="button"
                         onClick={handleToggleSleepHours}
-                        className="hover:bg-state-hover flex size-6 cursor-pointer items-center justify-center rounded-md transition-colors"
+                        className="hover:bg-state-hover flex size-6 cursor-pointer items-center justify-center rounded-lg transition-colors"
                         aria-label="睡眠時間帯を展開"
                       >
                         <ChevronUp className="text-muted-foreground size-4" />
@@ -280,7 +280,7 @@ export const ScrollableCalendarLayout = ({
                   {/* 現在時刻ラベル（折りたたみ時・Apple Calendar風） */}
                   {shouldShowCurrentTimeLine && hasToday && (
                     <div
-                      className="pointer-events-none absolute right-0 z-20 rounded-sm px-2 py-0.5 text-xs font-medium text-white"
+                      className="pointer-events-none absolute right-0 z-20 rounded px-2 py-1 text-xs font-bold text-white"
                       style={{
                         top: `${collapsedCurrentTimePosition - COLLAPSED_SECTION_HEIGHT}px`,
                         transform: 'translateY(-50%)',
@@ -312,7 +312,7 @@ export const ScrollableCalendarLayout = ({
                       <button
                         type="button"
                         onClick={handleToggleSleepHours}
-                        className="hover:bg-state-hover flex size-6 cursor-pointer items-center justify-center rounded-md transition-colors"
+                        className="hover:bg-state-hover flex size-6 cursor-pointer items-center justify-center rounded-lg transition-colors"
                         aria-label="睡眠時間帯を折りたたむ"
                       >
                         <ChevronDown className="text-muted-foreground size-4" />
@@ -323,7 +323,7 @@ export const ScrollableCalendarLayout = ({
                 {/* 現在時刻ラベル（Apple Calendar風） */}
                 {shouldShowCurrentTimeLine && hasToday && (
                   <div
-                    className="pointer-events-none absolute right-0 z-20 rounded-sm px-2 py-0.5 text-xs font-medium text-white"
+                    className="pointer-events-none absolute right-0 z-20 rounded px-2 py-1 text-xs font-bold text-white"
                     style={{
                       top: `${currentTimePosition}px`,
                       transform: 'translateY(-50%)',

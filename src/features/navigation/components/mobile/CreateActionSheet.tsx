@@ -94,7 +94,7 @@ export function CreateActionSheet({ open, onOpenChange, onSelect }: CreateAction
                 type="button"
                 onClick={() => handleSelect(action.id)}
                 className={cn(
-                  'flex items-center gap-4 rounded-xl p-4',
+                  'flex items-center gap-4 rounded-2xl p-4',
                   'bg-card hover:bg-state-hover',
                   'border-border border',
                   'text-left transition-colors',

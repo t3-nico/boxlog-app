@@ -89,7 +89,7 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
   // 通常表示：タイトル #番号 + 時間 + アイコン + タグの順番（優先度順）
   return (
     <div
-      className={`relative flex h-full flex-col gap-0.5 overflow-hidden ${hasCheckbox ? 'pl-6' : ''}`}
+      className={`relative flex h-full flex-col gap-1 overflow-hidden ${hasCheckbox ? 'pl-6' : ''}`}
     >
       {/* タイトル（最優先） */}
       <div className="flex flex-shrink-0 items-baseline gap-1 text-sm leading-tight font-normal">

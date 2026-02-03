@@ -96,7 +96,7 @@ function SleepTimelineBar({
       </div>
 
       {/* タイムラインバー */}
-      <div className="flex h-6 overflow-hidden rounded-md">
+      <div className="flex h-6 overflow-hidden rounded-lg">
         {segments.map((segment, index) => (
           <div
             key={index}
@@ -244,7 +244,7 @@ export function SleepScheduleSettings() {
       {enabled && (
         <div className="mt-4 space-y-4">
           {/* 睡眠時間表示 */}
-          <div className="bg-accent-state-selected flex items-center gap-2 rounded-xl p-3">
+          <div className="bg-accent-state-selected flex items-center gap-2 rounded-2xl p-4">
             <Moon className="text-accent-foreground size-4" />
             <div>
               <span className="text-sm font-normal">{t('settings.sleepSchedule.duration')}</span>
@@ -256,7 +256,7 @@ export function SleepScheduleSettings() {
 
           {/* 24時間タイムライン */}
           <div>
-            <h5 className="mb-3 text-sm font-normal">{t('settings.sleepSchedule.preview')}</h5>
+            <h5 className="mb-4 text-sm font-normal">{t('settings.sleepSchedule.preview')}</h5>
             <SleepTimelineBar
               bedtime={bedtime}
               wakeTime={wakeTime}

@@ -110,7 +110,7 @@ export default function MFAVerifyPage() {
   };
 
   return (
-    <div className="bg-surface-container flex min-h-svh flex-col items-center justify-center p-4 md:p-10">
+    <div className="bg-surface-container flex min-h-svh flex-col items-center justify-center p-4 md:p-8">
       <div className="w-full md:max-w-5xl">
         <div className="flex flex-col gap-6">
           <Card className="overflow-hidden p-0">
@@ -146,7 +146,7 @@ export default function MFAVerifyPage() {
                     </div>
                   )}
 
-                  <div className="flex flex-col items-center gap-3">
+                  <div className="flex flex-col items-center gap-4">
                     <FieldLabel className="text-center">
                       {t('auth.mfaVerify.verificationCode')}
                     </FieldLabel>

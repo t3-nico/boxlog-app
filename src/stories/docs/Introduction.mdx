@@ -1,0 +1,108 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Docs/はじめに" />
+
+# Boxlog Storybook
+
+BoxlogのUIコンポーネントとデザイントークンのカタログです。
+
+## 🚨 大前提
+
+> **Storybookに記載されているパターンのみ使用する**
+
+- ✅ Storybookにある → 使ってOK
+- ❌ Storybookにない → 使わない（対応していても）
+- 🆕 新パターン → 先にStoryを追加してから使う
+
+```tsx
+// ✅ OK
+<Button variant="ghost" size="icon">
+  <Settings className="size-4" />
+</Button>
+
+// ❌ NG: size="xl" はStoryにない
+<Button variant="link" size="xl">リンク</Button>
+```
+
+## 📁 構成
+
+| カテゴリ | 内容 |
+|---------|------|
+| **Components** | UIコンポーネント（Button, Badge, Input 等） |
+| **Tokens** | デザイントークン（Colors, Typography, Spacing 等） |
+| **Docs** | このページ、ガイドライン |
+
+## 🎨 カラートークン
+
+Tailwindクラス名で統一。そのままコピペ可能。
+
+```tsx
+// ✅ OK
+<div className="bg-card text-foreground border-border" />
+
+// ❌ NG
+<div style={{ color: 'var(--foreground)' }} />
+```
+
+| プレフィックス | 例 |
+|---------------|-----|
+| `bg-*` | `bg-background`, `bg-card`, `bg-muted` |
+| `text-*` | `text-foreground`, `text-muted-foreground` |
+| `border-*` | `border-border` |
+| `ring-*` | `ring-ring` |
+
+## 🛠️ 開発者向け
+
+### Storyの追加手順
+
+1. `*.stories.tsx` にStoryを作成
+2. `AllVariants` Storyを追加（全パターン一覧）
+3. PRでレビュー → マージ後に使用可能
+
+```
+src/components/ui/my-component.tsx        # コンポーネント
+src/components/ui/my-component.stories.tsx # Story
+```
+
+### 命名規則
+
+- `Components/ButtonGroup` → UIコンポーネント
+- `Tokens/Colors` → デザイントークン
+- `Docs/はじめに` → ドキュメント
+
+### 同期ルール
+
+コンポーネントを変更したら、Storyも同時に更新する。
+
+- props追加 → argTypes + 使用例を追加
+- props削除 → argTypes + 該当Storyを削除
+- variant追加 → AllVariantsに追加
+
+## ✅ チェックリスト
+
+Story作成時に確認：
+
+- [ ] `tags: ['autodocs']` を設定
+- [ ] `argTypes` で主要propsの説明を記載
+- [ ] `AllVariants` Storyを作成
+- [ ] アイコンボタンに `aria-label` を設定
+- [ ] セマンティックトークンを使用（`bg-background` 等）
+- [ ] 直接カラーを使っていない（`text-blue-500` 等）
+
+## ⛔ 避けるべきパターン
+
+**render関数の乱用** — 単純なprops渡しは `args` を使う
+
+```tsx
+// ❌
+render: () => <Button variant="primary">Click</Button>
+
+// ✅
+args: { variant: 'primary', children: 'Click' }
+```
+
+**Story爆発** — 全組み合わせを個別Storyにしない。`AllVariants` + Controls で対応。
+
+**データ依存** — tRPC/Zustand依存コンポーネントは無理にStorybookに入れない。モックコストが高く乖離リスクあり。
+
+詳細: `.claude/skills/storybook/SKILL.md`

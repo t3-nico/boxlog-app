@@ -28,7 +28,7 @@ export const HeaderActions = ({
 }: HeaderActionsProps) => {
   const t = useTranslations();
   const buttonClass = cn(
-    'rounded-md p-2 transition-colors',
+    'rounded-lg p-2 transition-colors',
     'hover:bg-state-hover text-muted-foreground',
     compact ? 'p-2' : 'p-2',
   );

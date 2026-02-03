@@ -52,7 +52,7 @@ function FulfillmentScore({ score }: { score: number | null }) {
   ];
 
   return (
-    <div className="flex items-center gap-0.5">
+    <div className="flex items-center gap-1">
       {Array.from({ length: 5 }).map((_, i) => (
         <Smile
           key={i}
@@ -145,13 +145,13 @@ export function RecordTableView() {
         {recentRecords && recentRecords.length > 0 && (
           <div className="mb-4 px-4">
             <div className="mb-2 flex items-center justify-between">
-              <span className="text-muted-foreground text-xs font-medium">クイック複製</span>
+              <span className="text-muted-foreground text-xs font-bold">クイック複製</span>
             </div>
             <div className="flex flex-wrap gap-2">
               {recentRecords.map((record) => (
                 <div
                   key={record.id}
-                  className="border-border bg-surface-container hover:bg-state-hover flex items-center gap-2 rounded-lg border px-3 py-1.5"
+                  className="border-border bg-surface-container hover:bg-state-hover flex items-center gap-2 rounded-lg border px-4 py-2"
                 >
                   {record.plan && (
                     <span className="max-w-32 truncate text-sm">{record.plan.title}</span>
@@ -178,7 +178,7 @@ export function RecordTableView() {
 
         {/* テーブル本体 */}
         <div className="h-[calc(100%-48px)] overflow-auto px-4">
-          <div className="border-border rounded-xl border">
+          <div className="border-border rounded-2xl border">
             <Table>
               <TableHeader>
                 <TableRow className="bg-surface-container hover:bg-surface-container">
@@ -210,7 +210,7 @@ export function RecordTableView() {
                         disabled
                       />
                     </TableCell>
-                    <TableCell className="font-medium">{record.worked_at}</TableCell>
+                    <TableCell className="font-bold">{record.worked_at}</TableCell>
                     <TableCell>
                       {record.plan ? (
                         <Link

@@ -64,7 +64,7 @@ export function ActivityTab({ planId, order }: ActivityTabProps) {
 
               <div className="flex-1 pb-6">
                 <div className="flex items-start justify-between gap-2">
-                  <span className="text-sm leading-8 font-medium">{formatted.actionLabel}</span>
+                  <span className="text-sm leading-8 font-bold">{formatted.actionLabel}</span>
                   <span className="text-muted-foreground mt-2 flex-shrink-0 text-xs">
                     {formatRelativeTime(activity.created_at, locale)}
                   </span>

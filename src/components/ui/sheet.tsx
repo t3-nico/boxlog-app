@@ -59,7 +59,7 @@ const SheetContent = ({
       <SheetPrimitive.Content
         data-slot="sheet-content"
         className={cn(
-          'bg-popover text-popover-foreground fixed z-[150] flex flex-col gap-4 shadow-lg transition ease-in-out motion-reduce:transition-none',
+          'bg-popover text-popover-foreground fixed z-[150] flex flex-col gap-4 shadow-xl transition ease-in-out motion-reduce:transition-none',
           'data-[state=open]:animate-in data-[state=closed]:animate-out motion-reduce:animate-none',
           'data-[state=closed]:duration-300 data-[state=open]:duration-500',
           'focus:outline-hidden focus-visible:ring-0',
@@ -85,7 +85,7 @@ const SheetContent = ({
         {showCloseButton && (
           <SheetPrimitive.Close
             className={cn(
-              'absolute top-4 right-4 rounded-sm opacity-70 transition-opacity hover:opacity-100',
+              'absolute top-4 right-4 rounded opacity-70 transition-opacity hover:opacity-100',
               'focus:outline-hidden focus-visible:ring-0',
               'disabled:pointer-events-none',
               'data-[state=open]:bg-state-selected',

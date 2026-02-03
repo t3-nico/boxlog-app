@@ -156,7 +156,7 @@ export const EventContextMenu = ({
   return (
     <div
       ref={menuRef}
-      className="border-border bg-popover text-popover-foreground fixed z-50 min-w-44 rounded-md border p-2 text-sm shadow-md"
+      className="border-border bg-popover text-popover-foreground fixed z-50 min-w-44 rounded-lg border p-2 text-sm shadow-md"
       style={{
         left: adjustedPosition.x,
         top: adjustedPosition.y,
@@ -173,7 +173,7 @@ export const EventContextMenu = ({
               key={item.label}
               onClick={() => handleAction(item.action)}
               className={cn(
-                'flex w-full items-center gap-3 rounded-sm px-3 py-2 text-left transition-colors',
+                'flex w-full items-center gap-4 rounded px-4 py-2 text-left transition-colors',
                 item.dangerous
                   ? 'text-destructive hover:bg-destructive-state-hover'
                   : 'text-foreground hover:bg-state-hover',

@@ -213,7 +213,7 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
         onChange={handleSearchInputChange}
         onKeyDown={handleSearchKeyDown}
         autoFocus
-        className="pr-10"
+        className="pr-8"
       />
       {localSearch && (
         <HoverTooltip content="クリア" side="top">
@@ -532,7 +532,7 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
               </Button>
             </DropdownMenuTrigger>
           </HoverTooltip>
-          <DropdownMenuContent align="end" className="border-input min-w-56 rounded-xl">
+          <DropdownMenuContent align="end" className="border-input min-w-56 rounded-2xl">
             {config.filterContent}
           </DropdownMenuContent>
         </DropdownMenu>
@@ -572,7 +572,7 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
               </Button>
             </DropdownMenuTrigger>
           </HoverTooltip>
-          <DropdownMenuContent align="end" className="border-input min-w-56 rounded-xl">
+          <DropdownMenuContent align="end" className="border-input min-w-56 rounded-2xl">
             {config.settingsContent}
           </DropdownMenuContent>
         </DropdownMenu>

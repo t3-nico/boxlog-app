@@ -182,9 +182,9 @@ export function TagMergeModal({
       aria-modal="true"
       aria-labelledby="tag-merge-dialog-title"
     >
-      {/* ダイアログコンテンツ: bg-card, rounded-xl, p-6 */}
+      {/* ダイアログコンテンツ: bg-card, rounded-2xl, p-6 */}
       <div
-        className="animate-in zoom-in-95 fade-in bg-card text-foreground border-border rounded-xl border p-6 shadow-lg duration-150"
+        className="animate-in zoom-in-95 fade-in bg-card text-foreground border-border rounded-2xl border p-6 shadow-lg duration-150"
         style={{ width: 'min(calc(100vw - 32px), 400px)' }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -206,7 +206,7 @@ export function TagMergeModal({
         />
 
         {/* タグ選択（階層表示のラジオボタンリスト） */}
-        <div className="border-border max-h-[200px] overflow-y-auto rounded-md border">
+        <div className="border-border max-h-[200px] overflow-y-auto rounded-lg border">
           {filteredTags.length === 0 ? (
             <p className="text-muted-foreground p-4 text-center text-sm">
               {t('calendar.filter.mergeTag.noResults')}
@@ -227,7 +227,7 @@ export function TagMergeModal({
                     <Label
                       htmlFor={`merge-target-${parent.id}`}
                       className={cn(
-                        'flex cursor-pointer items-center gap-3 rounded-md px-3 py-2 transition-colors',
+                        'flex cursor-pointer items-center gap-4 rounded-lg px-4 py-2 transition-colors',
                         'hover:bg-state-hover',
                         selectedTargetId === parent.id && 'bg-state-selected',
                       )}
@@ -252,7 +252,7 @@ export function TagMergeModal({
                       key={child.id}
                       htmlFor={`merge-target-${child.id}`}
                       className={cn(
-                        'flex cursor-pointer items-center gap-3 rounded-md py-2 pr-3 pl-8 transition-colors',
+                        'flex cursor-pointer items-center gap-4 rounded-lg py-2 pr-4 pl-8 transition-colors',
                         'hover:bg-state-hover',
                         selectedTargetId === child.id && 'bg-state-selected',
                       )}

@@ -94,7 +94,7 @@ export const MobileNavigation = ({
             disabled={item.disabled}
             className={cn(
               'relative flex flex-col items-center justify-center',
-              'h-12 min-w-16 rounded-xl px-2 py-1',
+              'h-12 min-w-16 rounded-2xl px-2 py-1',
               'transition-colors duration-200',
               'disabled:cursor-not-allowed disabled:opacity-50',
               activeItem === item.id
@@ -114,7 +114,7 @@ export const MobileNavigation = ({
             </div>
 
             {/* ラベル */}
-            <span className="mt-0.5 text-xs leading-none">{item.label}</span>
+            <span className="mt-1 text-xs leading-none">{item.label}</span>
 
             {/* アクティブインジケーター */}
             {activeItem === item.id && (

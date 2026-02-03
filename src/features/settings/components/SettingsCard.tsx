@@ -35,7 +35,7 @@ export const SettingsCard = ({
         {(title || actions || isSaving) && (
           <div className="border-border mb-2 flex items-center justify-between border-b pb-2">
             {title ? <h2 className="text-foreground text-lg font-normal">{title}</h2> : <div />}
-            <div className="flex flex-shrink-0 items-center gap-3">
+            <div className="flex flex-shrink-0 items-center gap-4">
               {isSaving === true && (
                 <div className="text-primary flex items-center gap-2 text-sm">
                   <Loader2 className="h-3 w-3 animate-spin" />

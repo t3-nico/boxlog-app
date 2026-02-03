@@ -98,6 +98,20 @@ npm run lint         # コード品質（AI必須：コミット前）
 
 **理由**: `React.FC`は暗黙のchildrenを含み型推論を阻害。named exportはtree-shakingを最適化し、IDE補完・リファクタリングを改善する。
 
+### UIコンポーネント利用ルール
+
+- ❌ Storybookに記載されていないパターン（props/variant）
+- ✅ Storybookに記載されているパターンのみ使用
+
+**理由**: Storybookを「Single Source of Truth」として運用し、UIの一貫性を保つ。新しいパターンが必要な場合は、先にStoryを追加してから使用する。
+
+**クイックチェック**:
+- [ ] 使用するコンポーネントのStory（`*.stories.tsx`）を確認した
+- [ ] 使用するprops/variantがStoryに記載されている
+- [ ] 新パターンの場合、先にStoryを追加した
+
+**詳細ガイド**: [`.claude/skills/storybook/SKILL.md`](.claude/skills/storybook/SKILL.md) を参照
+
 ### データフェッチング
 
 - ❌ `useEffect`でのfetch, `getServerSideProps`, REST API (`fetch('/api/...')`)

@@ -21,7 +21,7 @@ export default function OfflinePage() {
         <button
           type="button"
           onClick={() => window.location.reload()}
-          className="bg-primary text-primary-foreground hover:bg-primary-hover inline-flex items-center justify-center rounded-xl px-6 py-3 font-normal transition-colors"
+          className="bg-primary text-primary-foreground hover:bg-primary-hover inline-flex items-center justify-center rounded-2xl px-6 py-4 font-normal transition-colors"
         >
           再読み込み
         </button>

@@ -40,7 +40,7 @@ export function GroupHeader({ groupKey, groupLabel, count, columnCount }: GroupH
       className="bg-surface-container hover:bg-state-hover cursor-pointer border-y"
       onClick={() => toggleGroupCollapse(groupKey)}
     >
-      <TableCell colSpan={columnCount} className="py-3">
+      <TableCell colSpan={columnCount} className="py-4">
         <div className="flex items-center gap-2">
           {isCollapsed ? <ChevronRight className="size-4" /> : <ChevronDown className="size-4" />}
           <span className="font-bold">{groupLabel}</span>

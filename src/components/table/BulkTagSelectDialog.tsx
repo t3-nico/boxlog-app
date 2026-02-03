@@ -149,7 +149,7 @@ export function BulkTagSelectDialog({
 
           {/* 選択されたタグのプレビュー */}
           {selectedTagIds.length > 0 && (
-            <div className="bg-surface-container rounded-md p-3">
+            <div className="bg-surface-container rounded-lg p-4">
               <div className="flex flex-wrap gap-2">
                 {selectedTagIds.map((tagId) => {
                   const tag = tags.find((t) => t.id === tagId);
@@ -157,7 +157,7 @@ export function BulkTagSelectDialog({
                   return (
                     <div
                       key={tagId}
-                      className="bg-background flex items-center gap-1 rounded-md border px-2 py-1 text-sm"
+                      className="bg-background flex items-center gap-1 rounded-lg border px-2 py-1 text-sm"
                     >
                       <Hash className="h-3 w-3" style={{ color: tag.color || '#3B82F6' }} />
                       <span>{tag.name}</span>
@@ -190,7 +190,7 @@ export function BulkTagSelectDialog({
                       key={tag.id}
                       type="button"
                       onClick={() => handleToggleTag(tag.id)}
-                      className={`flex w-full items-center gap-3 rounded-md px-3 py-2 text-left text-sm transition-colors ${
+                      className={`flex w-full items-center gap-4 rounded-lg px-4 py-2 text-left text-sm transition-colors ${
                         isSelected
                           ? 'bg-primary-state-selected text-foreground'
                           : 'hover:bg-state-hover text-muted-foreground'

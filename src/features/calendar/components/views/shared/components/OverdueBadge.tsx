@@ -96,7 +96,7 @@ export function OverdueBadge({ overduePlans, className, style }: OverdueBadgePro
           type="button"
           className={cn(
             'text-warning',
-            'flex items-center justify-center gap-1 text-xs font-normal md:gap-1.5',
+            'flex items-center justify-center gap-1 text-xs font-normal md:gap-2',
             'transition-colors focus:outline-none',
             className,
           )}
@@ -124,7 +124,7 @@ export function OverdueBadge({ overduePlans, className, style }: OverdueBadgePro
               <button
                 ref={helpButtonRef}
                 type="button"
-                className="text-muted-foreground hover:text-foreground hover:bg-state-hover rounded-full p-1.5 transition-colors"
+                className="text-muted-foreground hover:text-foreground hover:bg-state-hover rounded-full p-2 transition-colors"
                 aria-label="Help"
               >
                 <HelpCircle className="size-4" />
@@ -134,7 +134,7 @@ export function OverdueBadge({ overduePlans, className, style }: OverdueBadgePro
               side={hoverCardSide}
               align="start"
               alignOffset={16}
-              className="bg-overlay border-border z-[250] w-64 rounded-xl shadow-lg"
+              className="bg-overlay border-border z-[250] w-64 rounded-2xl shadow-lg"
               sideOffset={24}
               avoidCollisions={false}
             >

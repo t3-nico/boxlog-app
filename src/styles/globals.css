@@ -23,15 +23,16 @@
    * Container: サイドバー、セクション
    * Overlay: ポップオーバー（background直下の明度）
    *
-   * 明度順（ライト）: background > overlay > card > container
+   * 明度順（ライト）: background > overlay > container > card
+   * 各段階で約3%の明度差（GAFA準拠）
    * ============================================ */
   --background: oklch(0.99 0 0);                  /* ページ背景 */
   --foreground: oklch(0.25 0 0);
 
-  /* Surface（意味ベース4段階） */
-  --card: oklch(0.97 0 0);                        /* カード、ダイアログ */
-  --container: oklch(0.96 0 0);                   /* サイドバー、セクション */
-  --overlay: oklch(0.98 0 0);                     /* ポップオーバー */
+  /* Surface（意味ベース4段階・GAFA準拠の明度差） */
+  --overlay: oklch(0.96 0 0);                     /* ポップオーバー（差: 0.03） */
+  --container: oklch(0.93 0 0);                   /* サイドバー、セクション（差: 0.03） */
+  --card: oklch(0.90 0 0);                        /* カード、ダイアログ（差: 0.03） */
 
   /* Calendar Boxes（カレンダー専用Surface） */
   --plan-box: oklch(0.88 0 0);                    /* vs background(0.99): より強調 */
@@ -65,7 +66,7 @@
   --warning-foreground: oklch(1 0 0);
   --success: oklch(0.5859 0.1684 149.2);
   --success-foreground: oklch(1 0 0);
-  --info: oklch(0.6 0.18 230);
+  --info: oklch(0.42 0 0);
   --info-foreground: oklch(1 0 0);
 
   /* Chronotype Colors（生産性ゾーン） */
@@ -76,7 +77,7 @@
   --chronotype-sleep: oklch(0.65 0.20 310);       /* 睡眠 - 紫 */
 
   /* Borders & Inputs */
-  --border: oklch(0.80 0.01 264.54);
+  --border: oklch(0.75 0.01 264.54);
   --input: var(--overlay);
   --ring: oklch(0.6231 0.188 259.8145);
 
@@ -92,17 +93,18 @@
 .dark {
   /* ============================================
    * Surface体系（GAFA準拠・4段階）
-   * ダークモードでは明度順が反転
+   * MD3原則: 高いelevationほど明るい
+   * 各段階で約5〜6%の明度差（GAFA準拠）
    *
-   * 明度順（ダーク）: background > container > card > overlay
+   * 明度順（ダーク）: overlay > background > container > card
    * ============================================ */
-  --background: oklch(0.24 0 0);                  /* ページ背景（最明） */
+  --background: oklch(0.24 0 0);                  /* ページ背景 */
   --foreground: oklch(0.9219 0 0);
 
-  /* Surface（意味ベース4段階） */
-  --card: oklch(0.20 0 0);                        /* カード、ダイアログ */
-  --container: oklch(0.22 0 0);                   /* サイドバー、セクション */
-  --overlay: oklch(0.18 0 0);                     /* ポップオーバー（最暗） */
+  /* Surface（意味ベース4段階・GAFA準拠の明度差） */
+  --overlay: oklch(0.30 0 0);                     /* ポップオーバー（差: 0.06） */
+  --container: oklch(0.18 0 0);                   /* サイドバー、セクション（差: 0.06） */
+  --card: oklch(0.12 0 0);                        /* カード、ダイアログ（差: 0.06） */
 
   /* Calendar Boxes（カレンダー専用Surface） */
   --plan-box: oklch(0.16 0 0);                    /* vs background(0.24): より強調 */
@@ -136,7 +138,7 @@
   --warning-foreground: oklch(1 0 0);
   --success: oklch(0.5859 0.1684 149.2);
   --success-foreground: oklch(1 0 0);
-  --info: oklch(0.6 0.18 230);
+  --info: oklch(0.42 0 0);
   --info-foreground: oklch(1 0 0);
 
   /* Chronotype Colors（生産性ゾーン - ダークモード用） */
@@ -320,45 +322,36 @@
   --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
 
   /* ============================================
-   * Z-Index
+   * Z-Index（スタッキング順序）
+   *
+   * 用途別に階層化されたz-index値
+   * 値が大きいほど前面に表示される
+   *
+   * 使用例: z-modal, z-tooltip, z-dropdown
    * ============================================ */
-  --z-dropdown: 1000;
-  --z-sticky: 1020;
-  --z-fixed: 1030;
-  --z-modal-backdrop: 1040;
-  --z-modal: 1050;
-  --z-popover: 1060;
-  --z-tooltip: 1070;
+  --z-index-dropdown: 50;
+  --z-index-popover: 100;
+  --z-index-sheet: 150;
+  --z-index-modal: 200;
+  --z-index-confirm: 250;
+  --z-index-toast: 300;
+  --z-index-context-menu: 350;
+  --z-index-calendar-drag: 1000;
+  --z-index-inspector-backdrop: 1099;
+  --z-index-inspector: 1100;
+  /* Overlay系: Inspector上のUI */
+  --z-index-overlay-popover: 1200;
+  --z-index-overlay-modal: 1300;
+  --z-index-overlay-confirm: 1400;
+  --z-index-tooltip: 9999;
 
   /* ============================================
-   * タイポグラフィトークン
-   * ============================================ */
-
-  /* フォントサイズ（8pxグリッド準拠） */
-  --font-size-xs: 0.75rem; /* 12px - 例外: 最小サイズ */
-  --font-size-sm: 0.875rem; /* 14px - 例外: 視認性確保 */
-  --font-size-base: 1rem; /* 16px */
-  --font-size-lg: 1.5rem; /* 24px */
-  --font-size-xl: 2rem; /* 32px */
-  --font-size-2xl: 2.5rem; /* 40px */
-  --font-size-3xl: 3rem; /* 48px */
-  --font-size-4xl: 4rem; /* 64px */
-
-  /* 見出し用（8pxグリッド準拠） */
-  --font-size-heading-h1: 3rem; /* 48px */
-  --font-size-heading-h2: 2rem; /* 32px */
-  --font-size-heading-h3: 1.5rem; /* 24px */
-  --font-size-heading-h4: 1.25rem; /* 20px - 例外: 視覚的バランス用 */
-
-  /* 行間 */
-  --line-height-tight: 1.2;
-  --line-height-normal: 1.5;
-  --line-height-relaxed: 1.75;
-
-  /* フォントウェイト
+   * タイポグラフィ
+   * ============================================
    * Tailwindデフォルトを使用（CSS変数不要）
-   * - font-normal: 400（本文）
-   * - font-bold: 700（見出し、強調）
+   * - フォントサイズ: text-xs, text-sm, text-base, text-lg, text-xl, text-2xl...
+   * - フォントウェイト: font-normal (400), font-bold (700)
+   * - 行間: leading-tight, leading-normal, leading-relaxed
    * ダークモードで切り替える必要がないため、トークン化しない
    */
 }
@@ -417,64 +410,6 @@ html.dark {
 * {
   scrollbar-width: thin;
   scrollbar-color: color-mix(in oklch, var(--color-muted-foreground) 30%, transparent) transparent;
-}
-
-/* ============================================
- * カスタムユーティリティクラス
- * ============================================ */
-@layer utilities {
-  /* タイポグラフィ - 見出し
-   * letter-spacing: -0.025em は大きい文字の視覚的バランス改善用
-   * Interはtext typeフォントのため、大きいサイズでは文字間隔が広く見える
-   */
-  .text-heading-h1 {
-    font-size: var(--font-size-heading-h1);
-    font-weight: 700;
-    line-height: var(--line-height-tight);
-    letter-spacing: -0.025em;
-  }
-
-  .text-heading-h2 {
-    font-size: var(--font-size-heading-h2);
-    font-weight: 700;
-    line-height: var(--line-height-tight);
-    letter-spacing: -0.025em;
-  }
-
-  .text-heading-h3 {
-    font-size: var(--font-size-heading-h3);
-    font-weight: 700;
-    line-height: var(--line-height-tight);
-    letter-spacing: -0.025em;
-  }
-
-  .text-heading-h4 {
-    font-size: var(--font-size-heading-h4);
-    font-weight: 700;
-    line-height: var(--line-height-normal);
-    letter-spacing: -0.025em;
-  }
-
-  /* タイポグラフィ - 本文 */
-  .text-body-base {
-    font-size: var(--font-size-base);
-    line-height: var(--line-height-normal);
-  }
-
-  .text-body-lg {
-    font-size: var(--font-size-lg);
-    line-height: var(--line-height-normal);
-  }
-
-  .text-body-sm {
-    font-size: var(--font-size-sm);
-    line-height: var(--line-height-normal);
-  }
-
-  .text-body-xs {
-    font-size: var(--font-size-xs);
-    line-height: var(--line-height-normal);
-  }
 }
 
 /* ============================================
@@ -848,8 +783,8 @@ html.dark {
   & .w-md-editor-text-pre,
   & .w-md-editor-text-input {
     font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Monaco, Consolas, monospace !important;
-    font-size: var(--font-size-sm);
-    line-height: var(--line-height-relaxed);
+    font-size: 0.875rem; /* text-sm */
+    line-height: 1.625; /* leading-relaxed */
     color: var(--color-foreground);
   }
 
@@ -864,14 +799,14 @@ html.dark {
   }
 
   & .wmde-markdown {
-    font-size: var(--font-size-sm);
-    line-height: var(--line-height-relaxed);
+    font-size: 0.875rem; /* text-sm */
+    line-height: 1.625; /* leading-relaxed */
     color: var(--color-foreground);
   }
 
   /* マークダウン要素のスタイリング */
   & .wmde-markdown h1 {
-    font-size: var(--font-size-heading-h3);
+    font-size: 1.5rem; /* text-2xl */
     font-weight: 700;
     margin-top: var(--spacing-lg);
     margin-bottom: var(--spacing-sm);
@@ -881,7 +816,7 @@ html.dark {
   }
 
   & .wmde-markdown h2 {
-    font-size: var(--font-size-heading-h4);
+    font-size: 1.25rem; /* text-xl */
     font-weight: 700;
     margin-top: var(--spacing-md);
     margin-bottom: var(--spacing-xs);
@@ -889,7 +824,7 @@ html.dark {
   }
 
   & .wmde-markdown h3 {
-    font-size: var(--font-size-lg);
+    font-size: 1.125rem; /* text-lg */
     font-weight: 700;
     margin-top: var(--spacing-md);
     margin-bottom: var(--spacing-xs);
@@ -1076,25 +1011,25 @@ input[type='time']::-webkit-datetime-edit-minute-field {
 
 /* 見出し */
 .ProseMirror h1 {
-  font-size: var(--font-size-heading-h1);
+  font-size: 3rem; /* text-5xl */
   font-weight: 700;
-  line-height: var(--line-height-tight);
+  line-height: 1.25; /* leading-tight */
   margin-top: 1rem;
   margin-bottom: 0.5rem;
 }
 
 .ProseMirror h2 {
-  font-size: var(--font-size-heading-h2);
+  font-size: 1.875rem; /* text-3xl */
   font-weight: 700;
-  line-height: var(--line-height-tight);
+  line-height: 1.25; /* leading-tight */
   margin-top: 0.75rem;
   margin-bottom: 0.5rem;
 }
 
 .ProseMirror h3 {
-  font-size: var(--font-size-heading-h3);
+  font-size: 1.5rem; /* text-2xl */
   font-weight: 700;
-  line-height: var(--line-height-normal);
+  line-height: 1.5; /* leading-normal */
   margin-top: 0.75rem;
   margin-bottom: 0.5rem;
 }

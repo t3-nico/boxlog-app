@@ -96,12 +96,12 @@ export function TagNoteDialog({ isOpen, onClose, onSave, currentNote }: TagNoteD
       aria-labelledby="tag-note-dialog-title"
     >
       <div
-        className="animate-in zoom-in-95 fade-in bg-card text-foreground border-border rounded-xl border p-6 shadow-lg duration-150"
+        className="animate-in zoom-in-95 fade-in bg-card text-foreground border-border rounded-2xl border p-6 shadow-lg duration-150"
         style={{ width: 'min(calc(100vw - 32px), 360px)' }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <h2 id="tag-note-dialog-title" className="mb-4 text-base font-semibold">
+        <h2 id="tag-note-dialog-title" className="mb-4 text-base font-bold">
           {t('calendar.filter.editNote')}
         </h2>
 

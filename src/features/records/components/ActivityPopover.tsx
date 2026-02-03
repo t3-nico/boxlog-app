@@ -43,11 +43,11 @@ export function RecordActivityPopover({ recordId }: RecordActivityPopoverProps) 
         style={{ zIndex: zIndex.overlayDropdown }}
       >
         <div className="flex items-center justify-between px-4 py-4">
-          <h3 className="text-sm font-medium">{t('tabs.activity')}</h3>
+          <h3 className="text-sm font-bold">{t('tabs.activity')}</h3>
           <button
             type="button"
             onClick={() => setOpen(false)}
-            className="text-muted-foreground hover:bg-state-hover hover:text-foreground rounded-md p-1 transition-colors"
+            className="text-muted-foreground hover:bg-state-hover hover:text-foreground rounded-lg p-1 transition-colors"
             aria-label={tCommon('actions.close')}
           >
             <X className="size-4" />
@@ -97,7 +97,7 @@ export function RecordActivityPopover({ recordId }: RecordActivityPopoverProps) 
                         {/* コンテンツ */}
                         <div className="flex-1 pb-6">
                           <div className="flex items-start justify-between gap-2">
-                            <span className="text-sm leading-8 font-medium">
+                            <span className="text-sm leading-8 font-bold">
                               {formatted.actionLabel}
                             </span>
                             <span className="text-muted-foreground mt-2 flex-shrink-0 text-xs">

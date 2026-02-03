@@ -84,7 +84,7 @@ export default function ResetPasswordPage() {
 
   if (success) {
     return (
-      <div className="bg-surface-container flex min-h-svh flex-col items-center justify-center p-4 md:p-10">
+      <div className="bg-surface-container flex min-h-svh flex-col items-center justify-center p-4 md:p-8">
         <div className="w-full md:max-w-5xl">
           <div className="flex flex-col gap-6">
             <Card className="overflow-hidden p-0">
@@ -133,7 +133,7 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <div className="bg-surface-container flex min-h-svh flex-col items-center justify-center p-4 md:p-10">
+    <div className="bg-surface-container flex min-h-svh flex-col items-center justify-center p-4 md:p-8">
       <div className="w-full md:max-w-5xl">
         <div className="flex flex-col gap-6">
           <Card className="overflow-hidden p-0">
@@ -179,7 +179,7 @@ export default function ResetPasswordPage() {
                           type="button"
                           variant="ghost"
                           size="icon"
-                          className="absolute top-0 right-0 h-full px-3"
+                          className="absolute top-0 right-0 h-full px-4"
                           onClick={() => setShowPassword(!showPassword)}
                           disabled={loading}
                         >
@@ -219,7 +219,7 @@ export default function ResetPasswordPage() {
                           type="button"
                           variant="ghost"
                           size="icon"
-                          className="absolute top-0 right-0 h-full px-3"
+                          className="absolute top-0 right-0 h-full px-4"
                           onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                           disabled={loading}
                         >

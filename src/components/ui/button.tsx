@@ -15,7 +15,6 @@ import { cn } from '@/lib/utils';
  * | primary     | 主要CTA、画面で最も重要なアクション          | 保存、送信、作成、購入       |
  * | outline     | 副次アクション、primaryとペアで使用          | キャンセル、戻る、詳細       |
  * | ghost       | アイコンボタン、ツールバー、軽量な操作       | 閉じる、メニュー、設定       |
- * | text        | テキストリンク風、インライン操作             | 詳細を見る、もっと見る       |
  * | destructive | 破壊的アクション、確認ダイアログ内           | 削除、解除、退会             |
  *
  * ## サイズ設計（GAFA準拠）
@@ -45,7 +44,7 @@ import { cn } from '@/lib/utils';
 const buttonVariants = cva(
   [
     // 基本レイアウト
-    'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md font-normal',
+    'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg font-normal',
     // トランジション
     'transition-colors',
     // フォーカス状態（アクセシビリティ）
@@ -70,8 +69,6 @@ const buttonVariants = cva(
         ].join(' '),
         // アイコンボタン・ツールバー - 背景なし、ホバーで背景出現
         ghost: 'text-foreground hover:bg-state-hover active:bg-state-hover',
-        // テキストリンク風 - 下線スタイル
-        text: 'underline underline-offset-4 hover:text-foreground',
         // 破壊的アクション - 削除、解除など
         destructive: [
           'bg-destructive text-destructive-foreground shadow-sm',
@@ -83,7 +80,7 @@ const buttonVariants = cva(
       size: {
         // sm: 32px高さ、12pxパディング、16pxアイコン
         sm: [
-          'h-8 px-3 text-xs',
+          'h-8 px-4 text-xs',
           "[&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
         ].join(' '),
         // default: 36px高さ（M3 Small準拠）、16pxパディング、16pxアイコン
@@ -93,7 +90,7 @@ const buttonVariants = cva(
         ].join(' '),
         // lg: 44px高さ（Apple HIG準拠）、20pxパディング、20pxアイコン
         lg: [
-          'h-11 px-5 text-base',
+          'h-11 px-4 text-base',
           "[&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-5 [&_svg]:shrink-0",
         ].join(' '),
         // icon-sm: 32x32px、タップターゲット44px確保
@@ -150,10 +147,6 @@ export interface ButtonProps
  * <Button variant="ghost" size="icon" aria-label="設定を開く">
  *   <Settings className="size-4" />
  * </Button>
- *
- * @example
- * // テキストリンク風（text）
- * <Button variant="text">詳細を見る</Button>
  *
  * @example
  * // 破壊的アクション（destructive）

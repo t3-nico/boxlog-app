@@ -39,19 +39,19 @@ export function MFASection() {
       <div className="space-y-4">
         {/* エラー・成功メッセージ */}
         {error && (
-          <div className="bg-destructive-container text-destructive rounded-xl p-3 text-sm">
+          <div className="bg-destructive-container text-destructive rounded-2xl p-4 text-sm">
             {error}
           </div>
         )}
         {success && (
-          <div className="border-success/30 bg-success/5 text-success rounded-xl border p-3 text-sm">
+          <div className="border-success/30 bg-success/5 text-success rounded-2xl border p-4 text-sm">
             {success}
           </div>
         )}
 
         {/* リカバリーコード表示 */}
         {recoveryCodes && (
-          <div className="border-warning/30 bg-warning/5 space-y-4 rounded-xl border p-4">
+          <div className="border-warning/30 bg-warning/5 space-y-4 rounded-2xl border p-4">
             <div>
               <h3 className="text-warning mb-2 text-lg font-bold">
                 ⚠️ {t('settings.account.mfa.recoveryCodes.title')}
@@ -65,7 +65,7 @@ export function MFASection() {
               </p>
             </div>
 
-            <div className="bg-surface-container grid grid-cols-2 gap-2 rounded-xl p-4 font-mono text-sm">
+            <div className="bg-surface-container grid grid-cols-2 gap-2 rounded-2xl p-4 font-mono text-sm">
               {recoveryCodes.map((code, index) => (
                 <div key={index} className="text-foreground">
                   {code}
@@ -101,7 +101,7 @@ export function MFASection() {
 
         {/* MFA設定中の表示 */}
         {!hasMFA && showMFASetup && qrCode && (
-          <div className="bg-muted space-y-4 rounded-xl p-6">
+          <div className="bg-muted space-y-4 rounded-2xl p-6">
             <div>
               <h3 className="mb-2 text-lg font-bold">{t('settings.account.mfa.setup.title')}</h3>
               <p className="text-muted-foreground text-sm">
@@ -112,7 +112,7 @@ export function MFASection() {
             <div className="space-y-4">
               <div>
                 <p className="mb-2 text-sm font-normal">{t('settings.account.mfa.setup.step1')}</p>
-                <div className="flex justify-center rounded-xl bg-white p-4">
+                <div className="flex justify-center rounded-2xl bg-white p-4">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={qrCode} alt="QR Code" className="h-48 w-48" />
                 </div>
@@ -160,7 +160,7 @@ export function MFASection() {
         {/* MFA有効時の表示 */}
         {hasMFA && !recoveryCodes && (
           <div className="space-y-4">
-            <div className="border-success/30 bg-success/5 rounded-xl border p-4">
+            <div className="border-success/30 bg-success/5 rounded-2xl border p-4">
               <div className="mb-2 flex items-center gap-2">
                 <div className="bg-success h-2 w-2 rounded-full"></div>
                 <span className="text-success text-sm font-normal">
@@ -173,7 +173,7 @@ export function MFASection() {
             </div>
 
             {/* リカバリーコード状態 */}
-            <div className="bg-muted rounded-xl p-4">
+            <div className="bg-muted rounded-2xl p-4">
               <div className="flex items-center justify-between">
                 <div>
                   <div className="text-sm font-normal">

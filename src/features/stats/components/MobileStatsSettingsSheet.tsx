@@ -111,7 +111,7 @@ export function MobileStatsSettingsSheet() {
 
       {/* 比較設定 */}
       <MobileSettingsSection icon={<GitCompareArrows />} title={t('stats.toolbar.compare')}>
-        <div className="space-y-3">
+        <div className="space-y-4">
           <MobileSettingsButtonGroup
             options={[
               { value: 'off', label: t('stats.toolbar.noCompare') },

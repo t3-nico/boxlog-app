@@ -66,7 +66,7 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
         {/* アクセシビリティ: スキップリンク */}
         <a
           href="#main-content"
-          className="bg-primary text-primary-foreground sr-only z-50 rounded-md px-4 py-2 focus:not-sr-only focus:absolute focus:top-4 focus:left-4"
+          className="bg-primary text-primary-foreground sr-only z-50 rounded-lg px-4 py-2 focus:not-sr-only focus:absolute focus:top-4 focus:left-4"
         >
           {t('common.skipToMainContent')}
         </a>
