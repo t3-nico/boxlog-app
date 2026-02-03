@@ -16,7 +16,6 @@ import {
   FieldSupportText,
 } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import { Spinner } from '@/components/ui/spinner';
 import { useAuthStore } from '@/features/auth/stores/useAuthStore';
 import { cn } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
@@ -125,11 +124,12 @@ export function PasswordResetForm({ className, ...props }: React.ComponentProps<
                 />
               </Field>
               <Field>
-                <Button type="submit" disabled={loading}>
-                  {loading && <Spinner className="mr-2" />}
-                  {loading
-                    ? t('auth.passwordResetForm.sending')
-                    : t('auth.passwordResetForm.sendResetLink')}
+                <Button
+                  type="submit"
+                  isLoading={loading}
+                  loadingText={t('auth.passwordResetForm.sending')}
+                >
+                  {t('auth.passwordResetForm.sendResetLink')}
                 </Button>
               </Field>
               <FieldDescription className="text-center">

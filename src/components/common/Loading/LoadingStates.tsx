@@ -7,9 +7,10 @@
 
 import React, { useCallback } from 'react';
 
-import { Loader2, RefreshCw } from 'lucide-react';
+import { RefreshCw } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/spinner';
 import { cn } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
 
@@ -24,29 +25,22 @@ import {
 
 // === スピナーコンポーネント ===
 
+const sizeClasses = {
+  sm: 'size-4',
+  md: 'size-6',
+  lg: 'size-8',
+  xl: 'size-12',
+};
+
 export const LoadingSpinner = ({
   size = 'md',
   className = '',
   'aria-label': ariaLabel = 'Loading...',
 }: LoadingSpinnerProps) => {
-  const sizeClasses = {
-    sm: 'h-4 w-4',
-    md: 'h-6 w-6',
-    lg: 'h-8 w-8',
-    xl: 'h-12 w-12',
-  };
-
   return (
-    <Loader2
-      className={cn(
-        'text-muted-foreground animate-spin motion-reduce:animate-none',
-        Object.prototype.hasOwnProperty.call(sizeClasses, size)
-          ? sizeClasses[size as keyof typeof sizeClasses]
-          : '',
-        className,
-      )}
+    <Spinner
+      className={cn('text-muted-foreground', sizeClasses[size], className)}
       aria-label={ariaLabel}
-      role="status"
     />
   );
 };
@@ -58,20 +52,11 @@ export const RefreshSpinner = ({
   className = '',
   'aria-label': ariaLabel = 'Refreshing...',
 }: LoadingSpinnerProps) => {
-  const sizeClasses = {
-    sm: 'h-4 w-4',
-    md: 'h-6 w-6',
-    lg: 'h-8 w-8',
-    xl: 'h-12 w-12',
-  };
-
   return (
     <RefreshCw
       className={cn(
         'text-primary animate-spin motion-reduce:animate-none',
-        Object.prototype.hasOwnProperty.call(sizeClasses, size)
-          ? sizeClasses[size as keyof typeof sizeClasses]
-          : '',
+        sizeClasses[size],
         className,
       )}
       aria-label={ariaLabel}

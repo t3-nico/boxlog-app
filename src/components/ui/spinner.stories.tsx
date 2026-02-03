@@ -18,11 +18,11 @@ type Story = StoryObj<typeof meta>;
 
 export const AllPatterns: Story = {
   render: function SpinnerStory() {
-    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleClick = () => {
-      setIsSubmitting(true);
-      setTimeout(() => setIsSubmitting(false), 2000);
+      setIsLoading(true);
+      setTimeout(() => setIsLoading(false), 2000);
     };
 
     return (
@@ -34,22 +34,18 @@ export const AllPatterns: Story = {
 
         <div className="grid gap-8" style={{ maxWidth: '28rem' }}>
           <div>
-            <h2 className="mb-2 text-lg font-bold">ボタン内（条件付き表示）</h2>
+            <h2 className="mb-2 text-lg font-bold">Button isLoading（推奨）</h2>
             <p className="text-muted-foreground mb-4 text-sm">
-              LoginForm.tsx, SignupForm.tsx で使用。送信中のみ表示。
+              Buttonの組み込みローディング。認証フォーム等で使用。
             </p>
-            <Button onClick={handleClick} disabled={isSubmitting}>
-              {isSubmitting && <Spinner className="mr-2" />}
-              {isSubmitting ? 'ログイン中...' : 'ログイン'}
-            </Button>
-          </div>
-
-          <div>
-            <h2 className="mb-2 text-lg font-bold">Button isLoading prop</h2>
-            <p className="text-muted-foreground mb-4 text-sm">
-              Buttonの組み込みローディング。Loader2アイコンを自動表示。
-            </p>
-            <Button isLoading>保存中...</Button>
+            <div className="flex gap-4">
+              <Button onClick={handleClick} isLoading={isLoading}>
+                ログイン
+              </Button>
+              <Button onClick={handleClick} isLoading={isLoading} loadingText="送信中...">
+                送信
+              </Button>
+            </div>
           </div>
 
           <div>
@@ -64,12 +60,24 @@ export const AllPatterns: Story = {
           </div>
 
           <div>
+            <h2 className="mb-2 text-lg font-bold">サイズ</h2>
+            <p className="text-muted-foreground mb-4 text-sm">
+              classNameでサイズ調整。LoadingSpinnerはsm/md/lg/xlプリセット対応。
+            </p>
+            <div className="flex items-center gap-4">
+              <Spinner className="size-4" />
+              <Spinner className="size-6" />
+              <Spinner className="size-8" />
+              <Spinner className="size-12" />
+            </div>
+          </div>
+
+          <div>
             <h2 className="mb-4 text-lg font-bold">使用箇所</h2>
             <ul className="text-muted-foreground list-inside list-disc space-y-1 text-sm">
-              <li>LoginForm.tsx - ログインボタン</li>
-              <li>SignupForm.tsx - 登録ボタン</li>
-              <li>PasswordResetForm.tsx - パスワードリセット</li>
-              <li>LoadingStates.tsx - LoadingSpinner として export</li>
+              <li>Button isLoading - 認証フォーム全般</li>
+              <li>LoadingSpinner - ページローディング、オーバーレイ</li>
+              <li>インライン表示 - テキストと並べて使用</li>
             </ul>
           </div>
 

@@ -23,7 +23,6 @@ import {
   FieldSupportText,
 } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import { Spinner } from '@/components/ui/spinner';
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { useAuthStore } from '@/features/auth/stores/useAuthStore';
 import { cn } from '@/lib/utils';
@@ -314,8 +313,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
               </Field>
 
               <Field>
-                <Button type="submit" className="w-full">
-                  {isSubmitting && <Spinner className="mr-2" />}
+                <Button type="submit" isLoading={isSubmitting} className="w-full">
                   {t('auth.signupForm.createAccountButton')}
                 </Button>
               </Field>

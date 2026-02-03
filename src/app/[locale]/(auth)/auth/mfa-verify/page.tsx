@@ -9,7 +9,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
-import { Spinner } from '@/components/ui/spinner';
 import { createClient } from '@/lib/supabase/client';
 import { useTranslations } from 'next-intl';
 
@@ -170,13 +169,12 @@ export default function MFAVerifyPage() {
                   <Field>
                     <Button
                       onClick={handleVerify}
-                      disabled={isVerifying || verificationCode.length !== 6}
+                      disabled={verificationCode.length !== 6}
+                      isLoading={isVerifying}
+                      loadingText={t('auth.mfaVerify.verifying')}
                       className="w-full"
                     >
-                      {isVerifying && <Spinner className="mr-2" />}
-                      {isVerifying
-                        ? t('auth.mfaVerify.verifying')
-                        : t('auth.mfaVerify.verifyButton')}
+                      {t('auth.mfaVerify.verifyButton')}
                     </Button>
                   </Field>
 
