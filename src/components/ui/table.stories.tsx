@@ -12,6 +12,43 @@ import {
   TableRow,
 } from './table';
 
+/**
+ * Table - データテーブル（shadcn/ui プリミティブ）
+ *
+ * ## 使用コンポーネント
+ *
+ * | コンポーネント | 用途 |
+ * |----------------|------|
+ * | Table | ルートテーブル要素 |
+ * | TableHeader | ヘッダーセクション（thead） |
+ * | TableBody | ボディセクション（tbody） |
+ * | TableFooter | フッターセクション（tfoot） |
+ * | TableRow | テーブル行（tr） |
+ * | TableHead | ヘッダーセル（th） |
+ * | TableCell | データセル（td） |
+ * | TableCaption | テーブルキャプション |
+ *
+ * ## Table vs List
+ *
+ * | 観点 | Table | List |
+ * |------|-------|------|
+ * | 構造 | 複数列（属性比較） | 単一列（アイテム表示） |
+ * | 用途 | データ一覧、比較 | ナビゲーション、詳細へ |
+ * | 操作 | ソート、フィルター | タップで詳細表示 |
+ * | 推奨 | 管理画面、設定一覧 | コンテンツリスト |
+ *
+ * ## 使い分けルール（Material Design準拠）
+ *
+ * - **複数属性を比較**: Table（列で属性を並べる）
+ * - **単一情報のリスト**: List（1行1アイテム）
+ * - **ソート/フィルター必要**: Table
+ * - **詳細へのナビゲーション**: List
+ *
+ * ## 注意
+ *
+ * このコンポーネントはshadcn/uiのプリミティブです。
+ * Plan専用のテーブルは features/plans/components/table/ にあります。
+ */
 const meta = {
   title: 'Components/Table',
   component: Table,
