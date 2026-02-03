@@ -470,3 +470,39 @@ export const Interaction: Story = {
     </div>
   ),
 };
+
+export const Text: Story = {
+  render: () => (
+    <div className="bg-background text-foreground p-8">
+      <h1 className="mb-6 text-2xl font-bold">テキストカラー</h1>
+      <p className="text-muted-foreground mb-8">色で情報の重要度を表現。</p>
+
+      <div className="space-y-4">
+        <div className="border-border flex items-center gap-4 border-b pb-4">
+          <code className="bg-container w-48 rounded px-2 py-1 text-xs">text-foreground</code>
+          <span className="text-foreground">主要テキスト（見出し、本文）</span>
+        </div>
+
+        <div className="border-border flex items-center gap-4 border-b pb-4">
+          <code className="bg-container w-48 rounded px-2 py-1 text-xs">text-muted-foreground</code>
+          <span className="text-muted-foreground">補助テキスト（説明、キャプション）</span>
+        </div>
+
+        <div className="border-border flex items-center gap-4 border-b pb-4">
+          <code className="bg-container w-48 rounded px-2 py-1 text-xs">text-primary</code>
+          <span className="text-primary">リンク、アクション</span>
+        </div>
+
+        <div className="border-border flex items-center gap-4 border-b pb-4">
+          <code className="bg-container w-48 rounded px-2 py-1 text-xs">text-destructive</code>
+          <span className="text-destructive">エラー、警告</span>
+        </div>
+
+        <div className="flex items-center gap-4">
+          <code className="bg-container w-48 rounded px-2 py-1 text-xs">text-success</code>
+          <span className="text-success">成功、完了</span>
+        </div>
+      </div>
+    </div>
+  ),
+};
