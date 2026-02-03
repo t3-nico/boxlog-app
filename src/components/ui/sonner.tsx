@@ -2,32 +2,38 @@
 
 import { MEDIA_QUERIES } from '@/config/ui/breakpoints';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { cn } from '@/lib/utils';
 import { useTheme } from 'next-themes';
 import { Toaster as Sonner } from 'sonner';
 
 type ToasterProps = React.ComponentProps<typeof Sonner>;
 
 /**
- * Toast通知コンポーネント（shadcn/ui公式準拠）
+ * Toast通知コンポーネント
  *
- * @see https://ui.shadcn.com/docs/components/sonner
+ * デザイン仕様:
+ * - 背景: overlay（ライト/ダークモード対応）
+ * - 枠線: 左2px、タイプ別カラー（success/error/warning/info）
+ * - 角丸: 8px（radius-md）
+ * - 影: shadow-lg
+ * - パディング: 16px
+ * - ギャップ: 8px
+ * - タイトル: 14px、foreground
+ * - 説明: 14px、muted-foreground
+ * - 閉じるボタン: 常時表示
+ * - Undoボタン: 右配置
  *
- * 使用方法:
+ * @see {@link @/lib/toast} 推奨API
+ *
+ * @example
  * ```tsx
- * import { toast } from 'sonner'
+ * import { showToast } from '@/lib/toast';
  *
- * toast.success('保存しました')
- * toast.error('エラーが発生しました')
- * toast.info('情報メッセージ')
- * toast.warning('警告メッセージ')
- * toast.loading('処理中...')
- *
- * // Promise統合
- * toast.promise(asyncFn(), {
- *   loading: '処理中...',
- *   success: '完了しました',
- *   error: 'エラーが発生しました',
- * })
+ * showToast.error('エラーが発生しました');
+ * showToast.withUndo({
+ *   title: '削除しました',
+ *   onUndo: () => restoreItem(),
+ * });
  * ```
  */
 const Toaster = ({ ...props }: ToasterProps) => {
@@ -39,7 +45,6 @@ const Toaster = ({ ...props }: ToasterProps) => {
     <Sonner
       theme={validTheme}
       position={isMobile ? 'bottom-center' : 'bottom-right'}
-      richColors
       expand
       duration={6000}
       closeButton
@@ -47,12 +52,28 @@ const Toaster = ({ ...props }: ToasterProps) => {
       className="toaster group"
       toastOptions={{
         classNames: {
-          toast:
-            'group toast group-[.toaster]:bg-card group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg',
-          description: 'group-[.toast]:text-muted-foreground',
-          actionButton:
-            'group-[.toast]:bg-primary group-[.toast]:text-primary-foreground hover:group-[.toast]:bg-primary-hover transition-colors',
-          cancelButton: 'group-[.toast]:bg-container group-[.toast]:text-muted-foreground',
+          toast: cn(
+            // レイアウト
+            'group toast gap-2 p-4',
+            // 背景・角丸・影
+            'bg-overlay rounded-md shadow-lg',
+            // 左ボーダー（タイプ別カラー）
+            'border-l-2 border-transparent',
+            'data-[type=success]:border-l-success',
+            'data-[type=error]:border-l-destructive',
+            'data-[type=warning]:border-l-warning',
+            'data-[type=info]:border-l-info',
+          ),
+          title: 'text-sm font-medium text-foreground',
+          description: 'text-sm text-muted-foreground',
+          actionButton: cn(
+            'bg-primary text-primary-foreground',
+            'hover:bg-primary-hover',
+            'text-sm font-medium',
+            'transition-colors',
+          ),
+          cancelButton: 'bg-container text-muted-foreground text-sm',
+          closeButton: cn('text-muted-foreground hover:text-foreground', 'transition-colors'),
         },
       }}
       {...props}
