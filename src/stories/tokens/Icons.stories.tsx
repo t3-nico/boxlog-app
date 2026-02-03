@@ -40,47 +40,143 @@ type Story = StoryObj;
 
 export const Sizes: Story = {
   render: () => (
-    <div className="p-8 bg-background text-foreground">
-      <h1 className="text-2xl font-bold mb-8">アイコンサイズ</h1>
-      <p className="text-muted-foreground mb-8">lucide-react を使用。size-* でサイズ指定。</p>
+    <div className="bg-background text-foreground p-8">
+      <h1 className="mb-6 text-2xl font-bold">アイコンサイズ</h1>
+      <p className="text-muted-foreground mb-8">
+        lucide-react を使用。タイポグラフィとの調和を優先し、6種類に統一。
+      </p>
 
-      <div className="space-y-6">
-        <div className="flex items-center gap-8">
-          <div className="text-center">
-            <Settings className="size-3 mx-auto mb-2" />
-            <code className="text-xs bg-container px-2 py-1 rounded">size-3</code>
-            <p className="text-xs text-muted-foreground mt-1">12px</p>
+      <div className="grid grid-cols-2 gap-8 md:grid-cols-3 lg:grid-cols-6">
+        <div className="text-center">
+          <div className="flex h-16 items-center justify-center">
+            <Settings className="size-3" />
           </div>
+          <code className="bg-container rounded px-2 py-1 text-xs">size-3</code>
+          <p className="mt-2 text-xs font-medium">12px</p>
+          <p className="text-muted-foreground mt-1 text-xs">
+            text-xsと併用、
+            <br />
+            バッジ内アイコン
+          </p>
+        </div>
 
-          <div className="text-center">
-            <Settings className="size-4 mx-auto mb-2" />
-            <code className="text-xs bg-container px-2 py-1 rounded">size-4</code>
-            <p className="text-xs text-muted-foreground mt-1">16px（標準）</p>
+        <div className="text-center">
+          <div className="flex h-16 items-center justify-center">
+            <Settings className="size-4" />
           </div>
+          <code className="bg-container rounded px-2 py-1 text-xs">size-4</code>
+          <p className="mt-2 text-xs font-medium">16px</p>
+          <p className="text-muted-foreground mt-1 text-xs">
+            <strong>標準</strong>: text-sm、
+            <br />
+            ボタン内アイコン
+          </p>
+        </div>
 
-          <div className="text-center">
-            <Settings className="size-5 mx-auto mb-2" />
-            <code className="text-xs bg-container px-2 py-1 rounded">size-5</code>
-            <p className="text-xs text-muted-foreground mt-1">20px</p>
+        <div className="text-center">
+          <div className="flex h-16 items-center justify-center">
+            <Settings className="size-5" />
           </div>
+          <code className="bg-container rounded px-2 py-1 text-xs">size-5</code>
+          <p className="mt-2 text-xs font-medium">20px</p>
+          <p className="text-muted-foreground mt-1 text-xs">
+            強調、ナビゲーション、
+            <br />
+            lgボタン内
+          </p>
+        </div>
 
-          <div className="text-center">
-            <Settings className="size-6 mx-auto mb-2" />
-            <code className="text-xs bg-container px-2 py-1 rounded">size-6</code>
-            <p className="text-xs text-muted-foreground mt-1">24px</p>
+        <div className="text-center">
+          <div className="flex h-16 items-center justify-center">
+            <Settings className="size-6" />
           </div>
+          <code className="bg-container rounded px-2 py-1 text-xs">size-6</code>
+          <p className="mt-2 text-xs font-medium">24px</p>
+          <p className="text-muted-foreground mt-1 text-xs">
+            見出し横、
+            <br />
+            目立たせたい場所
+          </p>
+        </div>
 
-          <div className="text-center">
-            <Settings className="size-8 mx-auto mb-2" />
-            <code className="text-xs bg-container px-2 py-1 rounded">size-8</code>
-            <p className="text-xs text-muted-foreground mt-1">32px</p>
+        <div className="text-center">
+          <div className="flex h-16 items-center justify-center">
+            <Settings className="size-8" />
           </div>
+          <code className="bg-container rounded px-2 py-1 text-xs">size-8</code>
+          <p className="mt-2 text-xs font-medium">32px</p>
+          <p className="text-muted-foreground mt-1 text-xs">
+            カード内主アイコン、
+            <br />
+            フィーチャーアイコン
+          </p>
+        </div>
 
-          <div className="text-center">
-            <Settings className="size-10 mx-auto mb-2" />
-            <code className="text-xs bg-container px-2 py-1 rounded">size-10</code>
-            <p className="text-xs text-muted-foreground mt-1">40px</p>
+        <div className="text-center">
+          <div className="flex h-16 items-center justify-center">
+            <Settings className="size-10" />
           </div>
+          <code className="bg-container rounded px-2 py-1 text-xs">size-10</code>
+          <p className="mt-2 text-xs font-medium">40px</p>
+          <p className="text-muted-foreground mt-1 text-xs">
+            空状態、
+            <br />
+            オンボーディング
+          </p>
+        </div>
+      </div>
+    </div>
+  ),
+};
+
+export const StrokeWidth: Story = {
+  render: () => (
+    <div className="bg-background text-foreground p-8">
+      <h1 className="mb-6 text-2xl font-bold">線の太さ（strokeWidth）</h1>
+      <p className="text-muted-foreground mb-8">
+        lucide-react のデフォルトは2。用途に応じて3種類を使い分け。
+      </p>
+
+      <div className="grid grid-cols-2 gap-8 md:grid-cols-3">
+        <div className="text-center">
+          <div className="flex h-16 items-center justify-center">
+            <Settings className="size-8" strokeWidth={2} />
+          </div>
+          <code className="bg-container rounded px-2 py-1 text-xs">strokeWidth=2</code>
+          <p className="mt-2 text-xs font-medium">
+            <strong>標準（デフォルト）</strong>
+          </p>
+          <p className="text-muted-foreground mt-1 text-xs">
+            指定不要、
+            <br />
+            ほとんどの場面で使用
+          </p>
+        </div>
+
+        <div className="text-center">
+          <div className="flex h-16 items-center justify-center">
+            <Home className="size-8" strokeWidth={2.5} />
+          </div>
+          <code className="bg-container rounded px-2 py-1 text-xs">strokeWidth=2.5</code>
+          <p className="mt-2 text-xs font-medium">強調</p>
+          <p className="text-muted-foreground mt-1 text-xs">
+            ナビゲーションタブ、
+            <br />
+            アクティブ状態
+          </p>
+        </div>
+
+        <div className="text-center">
+          <div className="flex h-16 items-center justify-center">
+            <Check className="size-8" strokeWidth={3} />
+          </div>
+          <code className="bg-container rounded px-2 py-1 text-xs">strokeWidth=3</code>
+          <p className="mt-2 text-xs font-medium">高視認性</p>
+          <p className="text-muted-foreground mt-1 text-xs">
+            チェックマーク、
+            <br />
+            小さいサイズでの使用
+          </p>
         </div>
       </div>
     </div>
@@ -89,10 +185,22 @@ export const Sizes: Story = {
 
 export const CommonIcons: Story = {
   render: () => (
-    <div className="p-8 bg-background text-foreground">
-      <h1 className="text-2xl font-bold mb-8">よく使うアイコン</h1>
+    <div className="bg-background text-foreground p-8">
+      <h1 className="mb-6 text-2xl font-bold">よく使うアイコン</h1>
+      <p className="text-muted-foreground mb-8">
+        代表的なアイコンの一覧。全アイコンは{' '}
+        <a
+          href="https://lucide.dev/icons"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-primary underline"
+        >
+          lucide.dev
+        </a>{' '}
+        を参照。
+      </p>
 
-      <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-6">
+      <div className="grid grid-cols-4 gap-6 md:grid-cols-6 lg:grid-cols-8">
         {[
           { icon: Home, name: 'Home' },
           { icon: Search, name: 'Search' },
@@ -120,8 +228,8 @@ export const CommonIcons: Story = {
           { icon: Loader2, name: 'Loader2' },
         ].map(({ icon: Icon, name }) => (
           <div key={name} className="text-center">
-            <Icon className="size-5 mx-auto mb-2" />
-            <p className="text-xs text-muted-foreground">{name}</p>
+            <Icon className="mx-auto mb-2 size-5" />
+            <p className="text-muted-foreground text-xs">{name}</p>
           </div>
         ))}
       </div>
@@ -131,111 +239,48 @@ export const CommonIcons: Story = {
 
 export const SemanticIcons: Story = {
   render: () => (
-    <div className="p-8 bg-background text-foreground">
-      <h1 className="text-2xl font-bold mb-8">意味を持つアイコン</h1>
+    <div className="bg-background text-foreground p-8">
+      <h1 className="mb-8 text-2xl font-bold">意味を持つアイコン</h1>
 
       <div className="space-y-6">
         <div className="flex items-center gap-4">
-          <div className="p-2 bg-success/10 text-success rounded-full">
+          <div className="bg-success/10 text-success rounded-full p-2">
             <Check className="size-5" />
           </div>
           <div>
             <p className="font-medium">成功・完了</p>
-            <code className="text-xs text-muted-foreground">Check + text-success</code>
+            <code className="text-muted-foreground text-xs">Check + text-success</code>
           </div>
         </div>
 
         <div className="flex items-center gap-4">
-          <div className="p-2 bg-warning/10 text-warning rounded-full">
+          <div className="bg-warning/10 text-warning rounded-full p-2">
             <AlertCircle className="size-5" />
           </div>
           <div>
             <p className="font-medium">警告・注意</p>
-            <code className="text-xs text-muted-foreground">AlertCircle + text-warning</code>
+            <code className="text-muted-foreground text-xs">AlertCircle + text-warning</code>
           </div>
         </div>
 
         <div className="flex items-center gap-4">
-          <div className="p-2 bg-destructive/10 text-destructive rounded-full">
+          <div className="bg-destructive/10 text-destructive rounded-full p-2">
             <X className="size-5" />
           </div>
           <div>
             <p className="font-medium">エラー・削除</p>
-            <code className="text-xs text-muted-foreground">X + text-destructive</code>
+            <code className="text-muted-foreground text-xs">X + text-destructive</code>
           </div>
         </div>
 
         <div className="flex items-center gap-4">
-          <div className="p-2 bg-info/10 text-info rounded-full">
+          <div className="bg-info/10 text-info rounded-full p-2">
             <Info className="size-5" />
           </div>
           <div>
             <p className="font-medium">情報</p>
-            <code className="text-xs text-muted-foreground">Info + text-info</code>
+            <code className="text-muted-foreground text-xs">Info + text-info</code>
           </div>
-        </div>
-      </div>
-    </div>
-  ),
-};
-
-export const ButtonWithIcon: Story = {
-  render: () => (
-    <div className="p-8 bg-background text-foreground">
-      <h1 className="text-2xl font-bold mb-8">ボタンとアイコン</h1>
-
-      <div className="space-y-8">
-        <div>
-          <h3 className="font-medium mb-4">テキスト + アイコン</h3>
-          <div className="flex gap-4">
-            <button className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-md">
-              <Plus className="size-4" />
-              追加
-            </button>
-            <button className="flex items-center gap-2 px-4 py-2 border border-border rounded-md hover:bg-state-hover">
-              <Settings className="size-4" />
-              設定
-            </button>
-            <button className="flex items-center gap-2 px-4 py-2 text-destructive hover:bg-destructive/10 rounded-md">
-              <Trash2 className="size-4" />
-              削除
-            </button>
-          </div>
-        </div>
-
-        <div>
-          <h3 className="font-medium mb-4">アイコンのみボタン</h3>
-          <div className="flex gap-4">
-            <button
-              className="p-2 rounded-md hover:bg-state-hover"
-              aria-label="設定を開く"
-            >
-              <Settings className="size-4" />
-            </button>
-            <button
-              className="p-2 rounded-md hover:bg-state-hover"
-              aria-label="メニューを開く"
-            >
-              <MoreVertical className="size-4" />
-            </button>
-            <button
-              className="p-2 rounded-md hover:bg-state-hover"
-              aria-label="閉じる"
-            >
-              <X className="size-4" />
-            </button>
-          </div>
-          <p className="text-xs text-muted-foreground mt-2">
-            ※ アイコンのみボタンには必ず aria-label を設定
-          </p>
-        </div>
-
-        <div>
-          <h3 className="font-medium mb-4">ローディング</h3>
-          <button className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-md opacity-70">
-            <Loader2 className="size-4 animate-spin" />
-            保存中...
-          </button>
         </div>
       </div>
     </div>
