@@ -10,17 +10,18 @@ Storybookの公式ベストプラクティスに基づいたStory作成ガイド
 
 ### 原則
 
-| ルール | 説明 |
-|--------|------|
-| **Storybookにある = 使ってOK** | 各コンポーネントのStoryに記載されているprops/パターンのみ使用可能 |
-| **Storybookにない = 使わない** | 記載されていない機能は、たとえコンポーネントが対応していても使わない |
-| **新しいパターンが必要 = 先にStoryを追加** | 新しい使い方をする前に、まずStoryを追加する |
+| ルール                                     | 説明                                                                 |
+| ------------------------------------------ | -------------------------------------------------------------------- |
+| **Storybookにある = 使ってOK**             | 各コンポーネントのStoryに記載されているprops/パターンのみ使用可能    |
+| **Storybookにない = 使わない**             | 記載されていない機能は、たとえコンポーネントが対応していても使わない |
+| **新しいパターンが必要 = 先にStoryを追加** | 新しい使い方をする前に、まずStoryを追加する                          |
 
 ### AI向けガイドライン
 
 1. **UIコンポーネント使用前に確認**: `src/components/ui/[component].stories.tsx` を読んで使用可能なパターンを確認
 2. **Storyにないパターンは提案しない**: コンポーネントが技術的に対応していても、Storyにないものは使わない
 3. **新パターンが必要な場合**: 先にStoryを追加してからコードで使用する
+4. **デザイントークン確認**: `src/stories/tokens/` のStoryで色・タイポグラフィ・余白の使用パターンを確認
 
 ### 例
 
@@ -39,11 +40,11 @@ Storybookの公式ベストプラクティスに基づいたStory作成ガイド
 
 ## 対象範囲
 
-| ディレクトリ | 対象 | 優先度 |
-|-------------|------|--------|
-| `src/components/ui/` | shadcn/uiベースのUIコンポーネント | 高 |
-| `src/components/common/` | プロジェクト共通コンポーネント | 高 |
-| `src/features/*/components/` | 機能固有コンポーネント | 低（データ依存が多い） |
+| ディレクトリ                 | 対象                              | 優先度                 |
+| ---------------------------- | --------------------------------- | ---------------------- |
+| `src/components/ui/`         | shadcn/uiベースのUIコンポーネント | 高                     |
+| `src/components/common/`     | プロジェクト共通コンポーネント    | 高                     |
+| `src/features/*/components/` | 機能固有コンポーネント            | 低（データ依存が多い） |
 
 ## ファイル配置
 
@@ -61,12 +62,12 @@ import type { Meta, StoryObj } from '@storybook/nextjs';
 import { MyComponent } from './my-component';
 
 const meta = {
-  title: 'Components/MyComponent',  // カテゴリ/コンポーネント名
+  title: 'Components/MyComponent', // カテゴリ/コンポーネント名
   component: MyComponent,
   parameters: {
-    layout: 'centered',             // centered | fullscreen | padded
+    layout: 'centered', // centered | fullscreen | padded
   },
-  tags: ['autodocs'],               // 自動ドキュメント生成
+  tags: ['autodocs'], // 自動ドキュメント生成
   argTypes: {
     // propsの説明・コントロール設定
   },
@@ -102,12 +103,12 @@ Tokens/         ← デザイントークン
 └── Typography
 ```
 
-| ディレクトリ / 用途 | title prefix | 例 |
-|-------------------|--------------|-----|
-| `components/ui/` | `Components/` | `Components/Button`, `Components/Badge` |
+| ディレクトリ / 用途  | title prefix  | 例                                               |
+| -------------------- | ------------- | ------------------------------------------------ |
+| `components/ui/`     | `Components/` | `Components/Button`, `Components/Badge`          |
 | `components/common/` | `Components/` | `Components/EmptyState`, `Components/PageHeader` |
-| デザイントークン | `Tokens/` | `Tokens/Colors`, `Tokens/Typography` |
-| ドキュメント | `Docs/` | `Docs/はじめに` |
+| デザイントークン     | `Tokens/`     | `Tokens/Colors`, `Tokens/Typography`             |
+| ドキュメント         | `Docs/`       | `Docs/はじめに`                                  |
 
 ## argTypes 設計
 
@@ -246,10 +247,10 @@ export const ClickTest: Story = {
 
 ## layout パラメータ
 
-| 値 | 用途 |
-|----|------|
-| `centered` | 小さいコンポーネント（Button, Badge等） |
-| `padded` | 中サイズ（Card, Form等） |
+| 値           | 用途                                    |
+| ------------ | --------------------------------------- |
+| `centered`   | 小さいコンポーネント（Button, Badge等） |
+| `padded`     | 中サイズ（Card, Form等）                |
 | `fullscreen` | 全幅コンポーネント（Header, Sidebar等） |
 
 ## ダークモード対応
@@ -295,20 +296,20 @@ export const Responsive: Story = {
   render: () => (
     <div className="flex flex-col gap-8 p-4">
       <div>
-        <p className="text-sm text-muted-foreground mb-2">Mobile (320px)</p>
-        <div className="w-[320px] border border-border p-4">
+        <p className="text-muted-foreground mb-2 text-sm">Mobile (320px)</p>
+        <div className="border-border w-[320px] border p-4">
           <MyComponent />
         </div>
       </div>
       <div>
-        <p className="text-sm text-muted-foreground mb-2">Tablet (768px)</p>
-        <div className="w-[768px] border border-border p-4">
+        <p className="text-muted-foreground mb-2 text-sm">Tablet (768px)</p>
+        <div className="border-border w-[768px] border p-4">
           <MyComponent />
         </div>
       </div>
       <div>
-        <p className="text-sm text-muted-foreground mb-2">Desktop (1024px)</p>
-        <div className="w-[1024px] border border-border p-4">
+        <p className="text-muted-foreground mb-2 text-sm">Desktop (1024px)</p>
+        <div className="border-border w-[1024px] border p-4">
           <MyComponent />
         </div>
       </div>
@@ -319,11 +320,11 @@ export const Responsive: Story = {
 
 ### viewport設定が必要なコンポーネント
 
-| コンポーネント | 理由 |
-|---------------|------|
-| Header, Sidebar | レイアウト変化 |
-| Card, Table | 幅による折り返し |
-| Modal, Drawer | モバイルでの全画面化 |
+| コンポーネント  | 理由                 |
+| --------------- | -------------------- |
+| Header, Sidebar | レイアウト変化       |
+| Card, Table     | 幅による折り返し     |
+| Modal, Drawer   | モバイルでの全画面化 |
 
 小さいコンポーネント（Button, Badge等）は不要。
 
@@ -376,11 +377,11 @@ export const WithIcons: Story = {
     <Tabs defaultValue="tab1">
       <TabsList>
         <TabsTrigger value="tab1">
-          <Settings className="size-4 mr-2" />
+          <Settings className="mr-2 size-4" />
           設定
         </TabsTrigger>
         <TabsTrigger value="tab2">
-          <User className="size-4 mr-2" />
+          <User className="mr-2 size-4" />
           プロフィール
         </TabsTrigger>
       </TabsList>
@@ -395,7 +396,9 @@ export const Disabled: Story = {
     <Tabs defaultValue="tab1">
       <TabsList>
         <TabsTrigger value="tab1">有効</TabsTrigger>
-        <TabsTrigger value="tab2" disabled>無効</TabsTrigger>
+        <TabsTrigger value="tab2" disabled>
+          無効
+        </TabsTrigger>
       </TabsList>
       <TabsContent value="tab1">内容</TabsContent>
     </Tabs>
@@ -412,14 +415,14 @@ export const Disabled: Story = {
 
 ### 該当コンポーネント
 
-| コンポーネント | 構成 |
-|---------------|------|
-| Tabs | Tabs, TabsList, TabsTrigger, TabsContent |
-| Accordion | Accordion, AccordionItem, AccordionTrigger, AccordionContent |
-| Dialog | Dialog, DialogTrigger, DialogContent, DialogHeader, ... |
-| DropdownMenu | DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, ... |
-| Select | Select, SelectTrigger, SelectContent, SelectItem, ... |
-| ContextMenu | ContextMenu, ContextMenuTrigger, ContextMenuContent, ... |
+| コンポーネント | 構成                                                         |
+| -------------- | ------------------------------------------------------------ |
+| Tabs           | Tabs, TabsList, TabsTrigger, TabsContent                     |
+| Accordion      | Accordion, AccordionItem, AccordionTrigger, AccordionContent |
+| Dialog         | Dialog, DialogTrigger, DialogContent, DialogHeader, ...      |
+| DropdownMenu   | DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, ...  |
+| Select         | Select, SelectTrigger, SelectContent, SelectItem, ...        |
+| ContextMenu    | ContextMenu, ContextMenuTrigger, ContextMenuContent, ...     |
 
 ## 避けるべきパターン
 
@@ -480,12 +483,12 @@ src/components/ui/new-component.stories.tsx
 
 以下の変更をしたら、**Storyも更新する**：
 
-| 変更内容 | Story側の対応 |
-|---------|--------------|
-| props追加 | argTypesに追加、Storyで使用例を追加 |
-| props削除 | argTypesから削除、該当Storyを削除 |
-| variant追加 | AllVariantsに追加 |
-| 見た目変更 | Storyで確認（更新不要なことが多い） |
+| 変更内容    | Story側の対応                       |
+| ----------- | ----------------------------------- |
+| props追加   | argTypesに追加、Storyで使用例を追加 |
+| props削除   | argTypesから削除、該当Storyを削除   |
+| variant追加 | AllVariantsに追加                   |
+| 見た目変更  | Storyで確認（更新不要なことが多い） |
 
 ### コンポーネント削除時
 
@@ -509,8 +512,20 @@ Story作成時の確認項目：
 - [ ] アイコンボタンには `aria-label` を設定した
 - [ ] セマンティックトークン（`bg-background` 等）を使用している
 - [ ] 直接カラー（`text-blue-500` 等）を使っていない
+- [ ] フォントウェイトは `font-bold` / `font-normal` のみ使用（`font-medium`, `font-semibold` 禁止）
+- [ ] フォントサイズはTailwindデフォルト（`text-sm`, `text-base` 等）を使用
 - [ ] レスポンシブ対応コンポーネントは `Responsive` Storyを作成した
 - [ ] 複合コンポーネントは親を `component` に指定した
+
+## デザイントークンの確認
+
+Story作成時、以下のTokens Storiesを参照してデザイン一貫性を確保する：
+
+| Story               | 確認内容                     |
+| ------------------- | ---------------------------- |
+| `Tokens/Colors`     | セマンティックカラー、状態色 |
+| `Tokens/Typography` | フォントサイズ・ウェイト階層 |
+| `Tokens/Spacing`    | 余白パターン                 |
 
 ## 参考リンク
 
