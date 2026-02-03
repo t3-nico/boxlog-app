@@ -44,6 +44,18 @@ export const Disabled: Story = {
   },
 };
 
+export const Indeterminate: Story = {
+  args: {
+    checked: 'indeterminate',
+  },
+  render: (args) => (
+    <div className="flex items-center gap-2">
+      <Checkbox {...args} id="indeterminate" />
+      <Label htmlFor="indeterminate">一部選択（indeterminate）</Label>
+    </div>
+  ),
+};
+
 export const WithLabel: Story = {
   render: () => (
     <div className="flex items-center gap-2">
@@ -104,6 +116,10 @@ export const AllVariants: Story = {
                   onCheckedChange={(c) => setChecked2(c === true)}
                 />
                 <Label htmlFor="cb2">チェック済み</Label>
+              </div>
+              <div className="flex items-center gap-2">
+                <Checkbox id="cb-indeterminate" checked="indeterminate" />
+                <Label htmlFor="cb-indeterminate">一部選択（indeterminate）</Label>
               </div>
               <div className="flex items-center gap-2">
                 <Checkbox id="cb3" disabled />
