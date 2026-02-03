@@ -5,16 +5,27 @@
  * InspectorShellの中で使用される
  */
 
-import { CalendarPlus, Clock } from 'lucide-react';
+import { format } from 'date-fns';
+import { CalendarPlus, ChevronDown, Clock } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useRef } from 'react';
 
 import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { InspectorHeader, useDragHandle } from '@/features/inspector';
+import { useRecordMutations } from '@/features/records/hooks/useRecordMutations';
+import { api } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
 
 import { usePlanInspectorStore } from '../../../stores/usePlanInspectorStore';
 import { reminderTypeToMinutes } from '../../../utils/reminder';
+import { normalizeStatus } from '../../../utils/status';
 
 import { ActivityPopover } from './ActivityPopover';
 import { PlanInspectorDetailsTab } from './PlanInspectorDetailsTab';
@@ -31,6 +42,9 @@ export function PlanInspectorContent() {
 
   // Record フォームの ref
   const recordFormRef = useRef<RecordCreateFormRef>(null);
+
+  // Record作成用mutation（完了+Record作成機能用）
+  const { createRecord } = useRecordMutations();
 
   const {
     planId,
@@ -67,6 +81,32 @@ export function PlanInspectorContent() {
     handleSaveAsTemplate,
     getCache,
   } = usePlanInspectorContentLogic();
+
+  // 既存Recordの存在チェック（編集モードのみ）
+  const { data: existingRecords } = api.records.listByPlan.useQuery(
+    { planId: planId!, sortOrder: 'desc' },
+    { enabled: !!planId && !isDraftMode },
+  );
+  const hasExistingRecord = (existingRecords?.length ?? 0) > 0;
+
+  // 時間重複チェック（その日のRecordを取得）
+  const scheduleDateStr = scheduleDate ? format(scheduleDate, 'yyyy-MM-dd') : null;
+  const { data: recordsOnSameDate } = api.records.list.useQuery(
+    { worked_at_from: scheduleDateStr!, worked_at_to: scheduleDateStr! },
+    { enabled: !!scheduleDateStr && !isDraftMode && !!startTime && !!endTime },
+  );
+
+  // 時間重複判定（start_time < 新end_time AND end_time > 新start_time）
+  const hasTimeConflict = (() => {
+    if (!recordsOnSameDate || !startTime || !endTime) return false;
+    return recordsOnSameDate.some((record) => {
+      if (!record.start_time || !record.end_time) return false;
+      return record.start_time < endTime && record.end_time > startTime;
+    });
+  })();
+
+  // Record作成不可
+  const cannotCreateRecord = hasExistingRecord || hasTimeConflict;
 
   const menuContent = (
     <PlanInspectorMenu
@@ -136,7 +176,6 @@ export function PlanInspectorContent() {
               onRepeatTypeChange={() => {}}
               onRecurrenceRuleChange={() => {}}
               timeConflictError={timeConflictError}
-              onStatusChange={() => {}}
               isDraftMode={isDraftMode}
             />
           ) : (
@@ -207,17 +246,14 @@ export function PlanInspectorContent() {
               updatePlan.mutate({ id: planId, data: { recurrence_rule: rrule } });
             }}
             timeConflictError={timeConflictError}
-            onStatusChange={(status) => {
-              if (!planId) return;
-              updatePlan.mutate({ id: planId, data: { status } });
-            }}
             isDraftMode={isDraftMode}
           />
         )}
       </div>
 
-      {/* 保存/キャンセルボタン（ドラフトモードのみ） */}
-      {isDraftMode && (
+      {/* フッター */}
+      {isDraftMode ? (
+        // ドラフトモード: 作成ボタン
         <div className="flex shrink-0 justify-end gap-2 px-4 py-4">
           <Button variant="ghost" onClick={cancelAndClose}>
             キャンセル
@@ -227,6 +263,112 @@ export function PlanInspectorContent() {
           ) : (
             <Button onClick={saveAndClose}>Plan 作成</Button>
           )}
+        </div>
+      ) : (
+        // 編集モード: 完了にするボタン（Google Calendarスタイル）
+        <div className="flex shrink-0 justify-end px-4 py-4">
+          {(() => {
+            const status = normalizeStatus(plan.status);
+
+            // 完了にする
+            const handleComplete = () => {
+              if (!planId) return;
+              updatePlan.mutate({ id: planId, data: { status: 'closed' } });
+            };
+
+            // 完了 + Record作成
+            const handleCompleteWithRecord = async () => {
+              if (!planId || !plan || !scheduleDate) return;
+
+              // 1. Planを完了にする
+              await updatePlan.mutateAsync({ id: planId, data: { status: 'closed' } });
+
+              // 2. durationを計算（分単位）
+              const calcDuration = () => {
+                if (!startTime || !endTime) return 60; // デフォルト1時間
+                const startParts = startTime.split(':');
+                const endParts = endTime.split(':');
+                const sh = Number(startParts[0] ?? 0);
+                const sm = Number(startParts[1] ?? 0);
+                const eh = Number(endParts[0] ?? 0);
+                const em = Number(endParts[1] ?? 0);
+                const startMinutes = sh * 60 + sm;
+                const endMinutes = eh * 60 + em;
+                const duration = endMinutes - startMinutes;
+                return duration > 0 ? duration : 60;
+              };
+
+              // 3. 同じ内容でRecordを作成（全フィールドコピー）
+              await createRecord.mutateAsync({
+                title: plan.title || undefined,
+                worked_at: format(scheduleDate, 'yyyy-MM-dd'),
+                start_time: startTime || undefined,
+                end_time: endTime || undefined,
+                duration_minutes: calcDuration(),
+                note: plan.description || undefined,
+                plan_id: planId,
+                tagIds: selectedTagIds,
+              });
+            };
+
+            // 未完了に戻す
+            const handleReopen = () => {
+              if (!planId) return;
+              updatePlan.mutate({ id: planId, data: { status: 'open' } });
+            };
+
+            if (status === 'closed') {
+              // 完了状態: シンプルなボタン
+              return (
+                <Button variant="outline" onClick={handleReopen}>
+                  未完了に戻す
+                </Button>
+              );
+            }
+
+            // 未完了状態: スプリットボタン
+            return (
+              <div className="border-primary flex items-center overflow-hidden rounded-md border">
+                {/* メインボタン */}
+                <Button
+                  variant="primary"
+                  className="rounded-none border-0"
+                  onClick={handleComplete}
+                >
+                  完了にする
+                </Button>
+                {/* セパレーター */}
+                <div className="bg-primary-foreground/20 h-6 w-px" />
+                {/* ドロップダウントリガー */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="primary"
+                      size="icon"
+                      className="rounded-none border-0"
+                      aria-label="完了オプション"
+                    >
+                      <ChevronDown className="size-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={handleComplete}>完了にする</DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={handleCompleteWithRecord}
+                      disabled={cannotCreateRecord}
+                    >
+                      完了 + Record作成
+                    </DropdownMenuItem>
+                    {cannotCreateRecord && (
+                      <DropdownMenuLabel className="text-muted-foreground px-2 py-1 text-xs font-normal">
+                        時間が重複しています
+                      </DropdownMenuLabel>
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            );
+          })()}
         </div>
       )}
     </div>
