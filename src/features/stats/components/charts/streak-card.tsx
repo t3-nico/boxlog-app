@@ -13,8 +13,11 @@ export function StreakCard() {
     return (
       <Card>
         <CardHeader className="pb-2">
-          <Skeleton className="h-5 w-24" />
-          <Skeleton className="h-4 w-32" />
+          <CardTitle className="flex items-center gap-2 text-base">
+            <Flame className="text-warning size-5" />
+            連続日数
+          </CardTitle>
+          <CardDescription>継続は力なり</CardDescription>
         </CardHeader>
         <CardContent>
           <Skeleton className="h-16 w-full" />
