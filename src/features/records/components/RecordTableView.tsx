@@ -1,91 +1,227 @@
 'use client';
 
-import { Clock, Copy, Plus, Smile, Trash2 } from 'lucide-react';
-import { useLocale } from 'next-intl';
-import Link from 'next/link';
+import { Calendar, ChevronDown, Clock, FileText, Plus } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { LoadingSpinner } from '@/components/common/Loading/LoadingStates';
+import { SelectionBar } from '@/components/common/SelectionBar';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
+import { MEDIA_QUERIES } from '@/config/ui/breakpoints';
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import { HoverTooltip } from '@/components/ui/tooltip';
-import { api } from '@/lib/trpc';
+  TableNavigation,
+  TablePagination,
+  useTableColumnStore,
+  useTablePaginationStore,
+  useTableSelectionStore,
+  useTableSortStore,
+  type TableNavigationConfig,
+} from '@/features/table';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { cn } from '@/lib/utils';
 
-import { useRecordData, useRecordMutations, type RecordItem } from '../hooks';
-import { useRecordInspectorStore } from '../stores';
+import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
+
+import { useRecordData, useRecordMutations, useRecordURLSync } from '../hooks';
+import type { RecordItem, RecordSortField } from '../hooks/useRecordData';
+import { useRecordFilterStore } from '../stores/useRecordFilterStore';
+import { useRecordInspectorStore } from '../stores/useRecordInspectorStore';
 import { RecordInspector } from './RecordInspector';
+import { RecordFilterContent, RecordSelectionActions, RecordTableContent } from './table';
 
-/**
- * 時間をフォーマット（分 → 時間:分）
- */
-function formatDuration(minutes: number): string {
-  const hours = Math.floor(minutes / 60);
-  const mins = minutes % 60;
-  if (hours === 0) {
-    return `${mins}分`;
-  }
-  return mins > 0 ? `${hours}時間${mins}分` : `${hours}時間`;
-}
-
-/**
- * 充実度スコアを色付き絵文字で表示
- * @param score 1-5の整数（1=最低、5=最高）、nullの場合は「-」を表示
- * @returns 色付きの絵文字（😢😕😐🙂😊）
- */
-function FulfillmentScore({ score }: { score: number | null }) {
-  if (!score) return <span className="text-muted-foreground">-</span>;
-
-  const colors = [
-    'text-red-500',
-    'text-orange-500',
-    'text-yellow-500',
-    'text-lime-500',
-    'text-green-500',
-  ];
-
-  return (
-    <div className="flex items-center gap-0.5">
-      {Array.from({ length: 5 }).map((_, i) => (
-        <Smile
-          key={i}
-          className={cn('size-4', i < score ? colors[score - 1] : 'text-muted-foreground/30')}
-        />
-      ))}
-    </div>
-  );
-}
+const DEFAULT_PAGE_SIZE = 20;
 
 /**
  * Record Table View コンポーネント
  *
- * テーブル形式でRecordを表示
+ * テーブル形式で Record を表示
+ * フィルタ・ソート・ページネーション対応
  */
 export function RecordTableView() {
-  const locale = useLocale();
-  const { items, isPending } = useRecordData();
-  const { deleteRecord, duplicateRecord } = useRecordMutations();
-  const selectedRecordId = useRecordInspectorStore((state) => state.selectedRecordId);
-  const openInspector = useRecordInspectorStore((state) => state.openInspector);
-  const openInspectorWithDraft = useRecordInspectorStore((state) => state.openInspectorWithDraft);
-  const isInspectorOpen = useRecordInspectorStore((state) => state.isOpen);
+  // URL 同期
+  useRecordURLSync();
 
-  // 最近のRecordを取得（上位5件）
-  const { data: recentRecords } = api.records.getRecent.useQuery({ limit: 5 });
+  // テーブルタイプを Record に設定
+  const setTableType = useTableColumnStore((state) => state.setTableType);
+  useEffect(() => {
+    setTableType('record');
+  }, [setTableType]);
 
-  // 今日の日付で複製
-  const handleDuplicate = async (e: React.MouseEvent, recordId: string) => {
-    e.stopPropagation();
-    const today = new Date().toISOString().split('T')[0] ?? '';
-    await duplicateRecord.mutateAsync({ id: recordId, worked_at: today });
+  // フィルタ Store
+  const workedAt = useRecordFilterStore((state) => state.workedAt);
+  const planSearch = useRecordFilterStore((state) => state.planSearch);
+  const tags = useRecordFilterStore((state) => state.tags);
+  const fulfillment = useRecordFilterStore((state) => state.fulfillment);
+  const duration = useRecordFilterStore((state) => state.duration);
+  const search = useRecordFilterStore((state) => state.search);
+  const setSearch = useRecordFilterStore((state) => state.setSearch);
+  const isSearchOpen = useRecordFilterStore((state) => state.isSearchOpen);
+  const setIsSearchOpen = useRecordFilterStore((state) => state.setIsSearchOpen);
+  const createdAt = useRecordFilterStore((state) => state.createdAt);
+  const updatedAt = useRecordFilterStore((state) => state.updatedAt);
+  const resetFilters = useRecordFilterStore((state) => state.reset);
+
+  // ソート Store
+  const sortField = useTableSortStore((state) => state.sortField);
+  const sortDirection = useTableSortStore((state) => state.sortDirection);
+  const setSort = useTableSortStore((state) => state.setSort);
+  const clearSort = useTableSortStore((state) => state.clearSort);
+
+  // ページネーション Store
+  const currentPage = useTablePaginationStore((state) => state.currentPage);
+  const setCurrentPage = useTablePaginationStore((state) => state.setCurrentPage);
+
+  // 選択 Store
+  const selectedIds = useTableSelectionStore((state) => state.selectedIds);
+  const clearSelection = useTableSelectionStore((state) => state.clearSelection);
+
+  // Record Inspector Store（既存Record編集用）
+  const openRecordInspector = useRecordInspectorStore((state) => state.openInspector);
+  const isRecordInspectorOpen = useRecordInspectorStore((state) => state.isOpen);
+
+  // Plan Inspector Store（新規作成用 - カレンダーと同じモーダル）
+  const openPlanInspectorWithDraft = usePlanInspectorStore((state) => state.openInspectorWithDraft);
+
+  // モバイル判定
+  const isMobile = useMediaQuery(MEDIA_QUERIES.mobile);
+
+  // モバイル用「もっと見る」の表示件数（初期50件、クリックで50件追加）
+  const MOBILE_INITIAL_LIMIT = 50;
+  const MOBILE_LOAD_MORE_COUNT = 50;
+  const [mobileDisplayLimit, setMobileDisplayLimit] = useState(MOBILE_INITIAL_LIMIT);
+
+  // フィルター構築
+  const filters = useMemo(
+    () => ({
+      workedAt,
+      planSearch,
+      tags,
+      fulfillment,
+      duration,
+      search,
+      createdAt,
+      updatedAt,
+    }),
+    [workedAt, planSearch, tags, fulfillment, duration, search, createdAt, updatedAt],
+  );
+
+  // ソート構築
+  const sort = useMemo(() => {
+    if (!sortField || !sortDirection) return undefined;
+    return {
+      field: sortField as RecordSortField,
+      direction: sortDirection,
+    };
+  }, [sortField, sortDirection]);
+
+  // ソートフィールドオプション
+  const sortFieldOptions = useMemo(
+    () => [
+      { value: 'worked_at', label: '作業日', icon: Calendar },
+      { value: 'duration_minutes', label: '時間', icon: Clock },
+      { value: 'title', label: 'タイトル', icon: FileText },
+      { value: 'created_at', label: '作成日', icon: Calendar },
+      { value: 'updated_at', label: '更新日', icon: Calendar },
+    ],
+    [],
+  );
+
+  // フィルター数のカウント
+  const workedAtFilterCount = workedAt !== 'all' ? 1 : 0;
+  const tagFilterCount = tags.length;
+  const fulfillmentFilterCount = fulfillment !== 'all' ? 1 : 0;
+  const durationFilterCount = duration !== 'all' ? 1 : 0;
+  const createdAtFilterCount = createdAt !== 'all' ? 1 : 0;
+  const updatedAtFilterCount = updatedAt !== 'all' ? 1 : 0;
+  const filterCount =
+    workedAtFilterCount +
+    tagFilterCount +
+    fulfillmentFilterCount +
+    durationFilterCount +
+    createdAtFilterCount +
+    updatedAtFilterCount;
+
+  // TableNavigation 設定
+  const navigationConfig: TableNavigationConfig = useMemo(
+    () => ({
+      search,
+      onSearchChange: setSearch,
+      isSearchOpen,
+      onSearchOpenChange: setIsSearchOpen,
+      sortField,
+      sortDirection,
+      onSortChange: setSort,
+      onSortClear: clearSort,
+      sortFieldOptions,
+      filterContent: <RecordFilterContent />,
+      filterCount,
+      hasActiveFilters: filterCount > 0,
+      onFilterReset: resetFilters,
+    }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [search, isSearchOpen, sortField, sortDirection, sortFieldOptions, filterCount, tags],
+  );
+
+  // データ取得
+  const { items, isPending } = useRecordData(filters, sort);
+  const { duplicateRecord, deleteRecord } = useRecordMutations();
+
+  // 選択数
+  const selectedCount = selectedIds.size;
+
+  // アクションハンドラー: 編集（RecordInspectorを開く）
+  const handleEdit = (item: RecordItem) => {
+    openRecordInspector(item.id);
   };
+
+  // 新規作成（PlanInspectorを Record モードで開く - カレンダーと同じ）
+  const handleCreate = () => {
+    openPlanInspectorWithDraft(undefined, 'record');
+  };
+
+  // アクションハンドラー: 今日の日付で複製
+  const handleDuplicateItem = async (item: RecordItem) => {
+    const today = new Date().toISOString().split('T')[0] ?? '';
+    await duplicateRecord.mutateAsync({ id: item.id, worked_at: today });
+    clearSelection();
+  };
+
+  // アクションハンドラー: 削除（確認ダイアログ付き）
+  const handleDelete = async () => {
+    const ids = Array.from(selectedIds);
+    if (ids.length === 0) return;
+
+    // 確認ダイアログ
+    if (!window.confirm(`${ids.length}件のRecordを削除しますか？`)) {
+      return;
+    }
+
+    try {
+      // 順番に削除（バルク削除APIがない場合）
+      for (const id of ids) {
+        await deleteRecord.mutateAsync({ id });
+      }
+      clearSelection();
+    } catch (error) {
+      console.error('Delete error:', error);
+    }
+  };
+
+  // 総ページ数
+  const totalPages = Math.ceil(items.length / DEFAULT_PAGE_SIZE);
+
+  // ページ変更時に範囲外にならないようにする
+  useMemo(() => {
+    if (currentPage > totalPages && totalPages > 0) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages, setCurrentPage]);
+
+  // フィルター変更時にページ1に戻る＆モバイル表示件数リセット
+  useEffect(() => {
+    setCurrentPage(1);
+    setMobileDisplayLimit(MOBILE_INITIAL_LIMIT);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [workedAt, planSearch, tags, fulfillment, duration, search, createdAt, updatedAt]);
 
   // ローディング表示
   if (isPending && items.length === 0) {
@@ -99,8 +235,18 @@ export function RecordTableView() {
     );
   }
 
-  // 空状態
-  if (items.length === 0) {
+  // 空状態（フィルターなしでデータなし）
+  const hasActiveFilters =
+    workedAt !== 'all' ||
+    planSearch ||
+    tags.length > 0 ||
+    fulfillment !== 'all' ||
+    duration !== 'all' ||
+    search ||
+    createdAt !== 'all' ||
+    updatedAt !== 'all';
+
+  if (items.length === 0 && !hasActiveFilters) {
     return (
       <div className="flex h-full flex-col items-center justify-center gap-4">
         <Clock className="text-muted-foreground size-12" />
@@ -108,7 +254,7 @@ export function RecordTableView() {
           <p className="text-muted-foreground">まだRecordがありません</p>
           <p className="text-muted-foreground text-sm">作業ログを記録しましょう</p>
         </div>
-        <Button onClick={() => openInspectorWithDraft()}>
+        <Button onClick={handleCreate}>
           <Plus className="mr-2 size-4" />
           Record作成
         </Button>
@@ -116,143 +262,84 @@ export function RecordTableView() {
     );
   }
 
-  const handleRowClick = (record: RecordItem) => {
-    openInspector(record.id);
-  };
-
-  const handleDelete = async (e: React.MouseEvent, recordId: string) => {
-    e.stopPropagation();
-    if (!window.confirm('このRecordを削除しますか？')) return;
-    await deleteRecord.mutateAsync({ id: recordId });
-  };
-
   return (
     <div className="flex h-full">
       {/* テーブル */}
-      <div className={cn('flex-1 overflow-hidden', isInspectorOpen && 'pr-0')}>
-        {/* ツールバー */}
-        <div className="flex h-12 shrink-0 items-center justify-between gap-2 px-4 py-2">
-          <div className="flex items-center gap-2">
-            <span className="text-muted-foreground text-sm">{items.length}件のRecord</span>
-          </div>
-          <Button onClick={() => openInspectorWithDraft()}>
-            <Plus className="mr-2 size-4" />
-            Record作成
-          </Button>
-        </div>
-
-        {/* 最近のRecord（クイック複製用） */}
-        {recentRecords && recentRecords.length > 0 && (
-          <div className="mb-4 px-4">
-            <div className="mb-2 flex items-center justify-between">
-              <span className="text-muted-foreground text-xs font-medium">クイック複製</span>
+      <div className={cn('flex-1 overflow-hidden', isRecordInspectorOpen && 'pr-0')}>
+        {/* ツールバー または 選択バー（Googleドライブ風） */}
+        {selectedCount > 0 ? (
+          <SelectionBar
+            selectedCount={selectedCount}
+            onClearSelection={clearSelection}
+            actions={
+              <RecordSelectionActions
+                selectedCount={selectedCount}
+                selectedIds={Array.from(selectedIds)}
+                items={items}
+                onDelete={handleDelete}
+                onEdit={handleEdit}
+                onDuplicate={handleDuplicateItem}
+                onClearSelection={clearSelection}
+              />
+            }
+          />
+        ) : (
+          <div className="flex h-12 shrink-0 items-center justify-between gap-2 px-4 py-2">
+            <div className="flex items-center gap-2">
+              <span className="text-muted-foreground text-sm">{items.length}件のRecord</span>
             </div>
-            <div className="flex flex-wrap gap-2">
-              {recentRecords.map((record) => (
-                <div
-                  key={record.id}
-                  className="border-border bg-surface-container hover:bg-state-hover flex items-center gap-2 rounded-lg border px-3 py-1.5"
-                >
-                  {record.plan && (
-                    <span className="max-w-32 truncate text-sm">{record.plan.title}</span>
-                  )}
-                  <span className="text-muted-foreground text-xs tabular-nums">
-                    {formatDuration(record.duration_minutes)}
-                  </span>
-                  <HoverTooltip content="今日の日付で複製" side="top">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="size-6"
-                      onClick={(e) => handleDuplicate(e, record.id)}
-                      disabled={duplicateRecord.isPending}
-                    >
-                      <Copy className="size-3" />
-                    </Button>
-                  </HoverTooltip>
-                </div>
-              ))}
+            <div className="flex items-center gap-2">
+              {/* Notion風アイコンナビゲーション（検索・ソート・フィルタ） */}
+              <TableNavigation config={navigationConfig} />
+              <Button onClick={handleCreate}>
+                <Plus className="mr-2 size-4" />
+                Record作成
+              </Button>
             </div>
           </div>
         )}
 
         {/* テーブル本体 */}
-        <div className="h-[calc(100%-48px)] overflow-auto px-4">
-          <div className="border-border rounded-xl border">
-            <Table>
-              <TableHeader>
-                <TableRow className="bg-surface-container hover:bg-surface-container">
-                  <TableHead className="w-10">
-                    <Checkbox disabled />
-                  </TableHead>
-                  <TableHead className="w-28">作業日</TableHead>
-                  <TableHead>Plan</TableHead>
-                  <TableHead className="w-28">時間</TableHead>
-                  <TableHead className="w-32">充実度</TableHead>
-                  <TableHead>メモ</TableHead>
-                  <TableHead className="w-10" />
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {items.map((record) => (
-                  <TableRow
-                    key={record.id}
-                    className={cn(
-                      'cursor-pointer',
-                      selectedRecordId === record.id && 'bg-state-selected',
-                    )}
-                    onClick={() => handleRowClick(record)}
-                  >
-                    <TableCell>
-                      <Checkbox
-                        onClick={(e) => e.stopPropagation()}
-                        // 選択機能は将来実装予定（複数レコード一括操作用）
-                        disabled
-                      />
-                    </TableCell>
-                    <TableCell className="font-medium">{record.worked_at}</TableCell>
-                    <TableCell>
-                      {record.plan ? (
-                        <Link
-                          href={`/${locale}/plan?selected=${record.plan.id}`}
-                          className="text-link hover:underline"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          {record.plan.title}
-                        </Link>
-                      ) : (
-                        <span className="text-muted-foreground">-</span>
-                      )}
-                    </TableCell>
-                    <TableCell className="tabular-nums">
-                      {formatDuration(record.duration_minutes)}
-                    </TableCell>
-                    <TableCell>
-                      <FulfillmentScore score={record.fulfillment_score} />
-                    </TableCell>
-                    <TableCell className="max-w-xs truncate">
-                      {record.note || <span className="text-muted-foreground">-</span>}
-                    </TableCell>
-                    <TableCell>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="size-8"
-                        onClick={(e) => handleDelete(e, record.id)}
-                      >
-                        <Trash2 className="text-muted-foreground size-4" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+        <div className="flex flex-1 flex-col overflow-hidden px-4">
+          <div className="border-border flex flex-1 flex-col overflow-auto rounded-xl border">
+            <RecordTableContent
+              items={items}
+              mobileDisplayLimit={isMobile ? mobileDisplayLimit : undefined}
+              pageSize={DEFAULT_PAGE_SIZE}
+            />
           </div>
+
+          {/* フッター */}
+          <>
+            {/* モバイル: もっと見るボタン（件数が超えている場合のみ） */}
+            {isMobile && items.length > mobileDisplayLimit && (
+              <div className="flex shrink-0 justify-center py-4">
+                <Button
+                  variant="outline"
+                  onClick={() => setMobileDisplayLimit((prev) => prev + MOBILE_LOAD_MORE_COUNT)}
+                  className="gap-2"
+                >
+                  <ChevronDown className="size-4" />
+                  もっと見る（残り
+                  {Math.min(MOBILE_LOAD_MORE_COUNT, items.length - mobileDisplayLimit)}件）
+                </Button>
+              </div>
+            )}
+            {/* デスクトップ: ページネーション */}
+            <div className="hidden shrink-0 md:block">
+              <TablePagination
+                totalItems={items.length}
+                currentPage={currentPage}
+                pageSize={DEFAULT_PAGE_SIZE}
+                onPageChange={setCurrentPage}
+              />
+            </div>
+          </>
         </div>
       </div>
 
-      {/* Inspector */}
-      {isInspectorOpen && <RecordInspector />}
+      {/* Record Inspector（既存Record編集用） */}
+      {isRecordInspectorOpen && <RecordInspector />}
     </div>
   );
 }
