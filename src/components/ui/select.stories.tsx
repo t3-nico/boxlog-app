@@ -3,6 +3,34 @@ import { useState } from 'react';
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select';
 
+/**
+ * Select - ドロップダウン選択
+ *
+ * ## 使用コンポーネント
+ *
+ * | コンポーネント | 用途 |
+ * |----------------|------|
+ * | Select | ルート（value, onValueChange） |
+ * | SelectTrigger | トリガーボタン |
+ * | SelectValue | 選択値表示 |
+ * | SelectContent | ドロップダウンコンテンツ |
+ * | SelectItem | 選択肢アイテム |
+ *
+ * ## Select vs DropdownMenu vs RadioGroup
+ *
+ * | 観点 | Select | DropdownMenu | RadioGroup |
+ * |------|--------|--------------|------------|
+ * | 用途 | 値を選ぶ | アクション実行 | 値を選ぶ |
+ * | 選択肢数 | 5個以上 | 任意 | 2-4個 |
+ * | 一覧性 | 開くまで見えない | 開くまで見えない | 常に見える |
+ * | 推奨 | ツールバー、フォーム | メニュー | ダイアログ、設定 |
+ *
+ * ## 未使用コンポーネント
+ *
+ * 以下は現在アプリで未使用（必要時に追加）:
+ * - SelectGroup / SelectLabel - グループ化
+ * - SelectSeparator - 区切り線
+ */
 const meta = {
   title: 'Components/Select',
   component: Select,
