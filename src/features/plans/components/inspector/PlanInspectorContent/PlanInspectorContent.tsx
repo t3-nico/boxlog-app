@@ -328,7 +328,7 @@ export function PlanInspectorContent() {
 
             // 未完了状態: スプリットボタン
             return (
-              <div className="border-primary flex items-center overflow-hidden rounded-md border">
+              <div className="flex items-center overflow-hidden rounded-md">
                 {/* メインボタン */}
                 <Button
                   variant="primary"
@@ -337,8 +337,6 @@ export function PlanInspectorContent() {
                 >
                   完了にする
                 </Button>
-                {/* セパレーター */}
-                <div className="bg-primary-foreground/20 h-6 w-px" />
                 {/* ドロップダウントリガー */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
