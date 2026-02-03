@@ -184,7 +184,7 @@ export function RecurrenceDialog({
     <Portal.Root>
       <div
         ref={dialogRef}
-        className="bg-popover border-border fixed z-[200] w-[25rem] overflow-hidden rounded-2xl border shadow-lg"
+        className="bg-popover border-border z-modal fixed w-[25rem] overflow-hidden rounded-2xl border shadow-lg"
         style={{
           top: `${position.top}px`,
           left: `${position.left}px`,
@@ -227,7 +227,7 @@ export function RecurrenceDialog({
                   <SelectValue />
                 </SelectTrigger>
                 <Portal.Root>
-                  <SelectContent className="z-[250]">
+                  <SelectContent className="z-confirm">
                     <SelectItem value="daily">日ごと</SelectItem>
                     <SelectItem value="weekly">週間ごと</SelectItem>
                     <SelectItem value="monthly">ヶ月ごと</SelectItem>
@@ -296,7 +296,7 @@ export function RecurrenceDialog({
                   <SelectValue />
                 </SelectTrigger>
                 <Portal.Root>
-                  <SelectContent className="z-[250]">
+                  <SelectContent className="z-confirm">
                     {(() => {
                       // 現在の日付から候補を生成
                       const today = new Date();
