@@ -17,10 +17,6 @@ const meta = {
       options: ['default', 'destructive'],
       description: 'ボタンのバリアント',
     },
-    isLoading: {
-      control: 'boolean',
-      description: 'ローディング状態',
-    },
   },
 } satisfies Meta<typeof AlertDialogConfirm>;
 
@@ -68,59 +64,6 @@ export const Destructive: Story = {
   },
 };
 
-export const CustomTexts: Story = {
-  render: function CustomTextsDialog() {
-    const [open, setOpen] = useState(false);
-    return (
-      <>
-        <Button variant="outline" onClick={() => setOpen(true)}>
-          ログアウト
-        </Button>
-        <AlertDialogConfirm
-          open={open}
-          onOpenChange={setOpen}
-          onConfirm={() => setOpen(false)}
-          title="ログアウトしますか？"
-          description="保存されていない変更がある場合は失われます。"
-          confirmText="ログアウト"
-          cancelText="キャンセル"
-        />
-      </>
-    );
-  },
-};
-
-export const Loading: Story = {
-  render: function LoadingDialog() {
-    const [open, setOpen] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
-
-    const handleConfirm = async () => {
-      setIsLoading(true);
-      // 擬似的な処理
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      setIsLoading(false);
-      setOpen(false);
-    };
-
-    return (
-      <>
-        <Button onClick={() => setOpen(true)}>処理を実行</Button>
-        <AlertDialogConfirm
-          open={open}
-          onOpenChange={setOpen}
-          onConfirm={handleConfirm}
-          title="処理の確認"
-          description="この処理を実行しますか？"
-          confirmText="実行"
-          cancelText="キャンセル"
-          isLoading={isLoading}
-        />
-      </>
-    );
-  },
-};
-
 export const AllVariants: Story = {
   render: function AllVariantsDialog() {
     const [defaultOpen, setDefaultOpen] = useState(false);
@@ -128,7 +71,7 @@ export const AllVariants: Story = {
 
     return (
       <div className="p-8 bg-background text-foreground">
-        <h1 className="text-2xl font-bold mb-8">AlertDialogConfirm - 全バリエーション</h1>
+        <h1 className="text-2xl font-bold mb-8">AlertDialogConfirm - 実際の使用パターン</h1>
 
         <div className="space-y-8">
           <section>
@@ -144,42 +87,40 @@ export const AllVariants: Story = {
           </section>
 
           <section>
-            <h2 className="text-lg font-semibold mb-4">破壊的アクション</h2>
+            <h2 className="text-lg font-semibold mb-4">破壊的アクション（削除確認）</h2>
+            <p className="text-sm text-muted-foreground mb-4">
+              PlanViewTabs.tsxで使用されているパターン
+            </p>
             <Button variant="destructive" onClick={() => setDestructiveOpen(true)}>
-              削除
+              ビューを削除
             </Button>
             <AlertDialogConfirm
               open={destructiveOpen}
               onOpenChange={setDestructiveOpen}
               onConfirm={() => setDestructiveOpen(false)}
-              title="削除の確認"
-              description="完全に削除されます。この操作は取り消せません。"
-              confirmText="削除する"
-              cancelText="やめる"
+              title="ビューの削除"
+              description="このビューを削除しますか？この操作は取り消せません。"
+              confirmText="削除"
+              cancelText="キャンセル"
               variant="destructive"
             />
           </section>
 
           <section>
-            <h2 className="text-lg font-semibold mb-4">使用場面</h2>
-            <ul className="text-sm text-muted-foreground list-disc list-inside">
-              <li>データの削除確認</li>
-              <li>ログアウト確認</li>
-              <li>重要な設定変更</li>
-              <li>取り消せない操作の警告</li>
-            </ul>
-          </section>
-
-          <section>
-            <h2 className="text-lg font-semibold mb-4">Props</h2>
+            <h2 className="text-lg font-semibold mb-4">使用Props</h2>
             <ul className="text-sm text-muted-foreground list-disc list-inside">
               <li><code>open</code> / <code>onOpenChange</code> - 開閉制御</li>
               <li><code>onConfirm</code> - 確認時のコールバック</li>
               <li><code>title</code> / <code>description</code> - タイトルと説明</li>
               <li><code>confirmText</code> / <code>cancelText</code> - ボタンテキスト</li>
-              <li><code>variant</code> - default | destructive</li>
-              <li><code>isLoading</code> - ローディング状態</li>
+              <li><code>variant="destructive"</code> - 削除系の操作用</li>
             </ul>
+          </section>
+
+          <section className="p-4 bg-muted rounded-md">
+            <p className="text-sm text-muted-foreground">
+              <strong>Note:</strong> isLoadingは現在未使用
+            </p>
           </section>
         </div>
       </div>

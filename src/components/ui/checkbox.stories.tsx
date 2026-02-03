@@ -13,8 +13,7 @@ const meta = {
   },
   argTypes: {
     checked: {
-      control: 'select',
-      options: [true, false, 'indeterminate'],
+      control: 'boolean',
       description: 'チェック状態',
     },
     disabled: {
@@ -28,7 +27,9 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  args: {},
+  args: {
+    checked: false,
+  },
 };
 
 export const Checked: Story = {
@@ -37,22 +38,9 @@ export const Checked: Story = {
   },
 };
 
-export const Indeterminate: Story = {
-  args: {
-    checked: 'indeterminate',
-  },
-};
-
 export const Disabled: Story = {
   args: {
     disabled: true,
-  },
-};
-
-export const DisabledChecked: Story = {
-  args: {
-    disabled: true,
-    checked: true,
   },
 };
 
@@ -65,108 +53,87 @@ export const WithLabel: Story = {
   ),
 };
 
-export const Interactive: Story = {
-  render: function InteractiveCheckbox() {
-    const [checked, setChecked] = useState(false);
+export const WithCustomColor: Story = {
+  render: function CustomColorCheckbox() {
+    const [checked, setChecked] = useState(true);
+    const tagColor = '#10b981';
+
     return (
       <div className="flex items-center gap-2">
         <Checkbox
-          id="interactive"
+          id="tag-filter"
           checked={checked}
-          onCheckedChange={(value) => setChecked(value === true)}
+          onCheckedChange={(c) => setChecked(c === true)}
+          style={{
+            borderColor: tagColor,
+            backgroundColor: checked ? tagColor : 'transparent',
+          }}
         />
-        <Label htmlFor="interactive">
-          {checked ? 'チェック済み' : '未チェック'}
-        </Label>
-      </div>
-    );
-  },
-};
-
-export const CheckboxGroup: Story = {
-  render: function CheckboxGroupStory() {
-    const [selectedItems, setSelectedItems] = useState<string[]>(['email']);
-
-    const toggleItem = (item: string) => {
-      setSelectedItems((prev) =>
-        prev.includes(item) ? prev.filter((i) => i !== item) : [...prev, item]
-      );
-    };
-
-    return (
-      <div className="space-y-3">
-        <p className="text-sm font-medium">通知設定</p>
-        {[
-          { id: 'email', label: 'メール通知' },
-          { id: 'push', label: 'プッシュ通知' },
-          { id: 'sms', label: 'SMS通知' },
-        ].map((item) => (
-          <div key={item.id} className="flex items-center gap-2">
-            <Checkbox
-              id={item.id}
-              checked={selectedItems.includes(item.id)}
-              onCheckedChange={() => toggleItem(item.id)}
-            />
-            <Label htmlFor={item.id}>{item.label}</Label>
-          </div>
-        ))}
+        <Label htmlFor="tag-filter">タグフィルター（カスタムカラー）</Label>
       </div>
     );
   },
 };
 
 export const AllVariants: Story = {
-  render: () => (
-    <div className="p-8 bg-background text-foreground">
-      <h1 className="text-2xl font-bold mb-8">Checkbox - 全バリエーション</h1>
+  render: function AllVariantsStory() {
+    const [checked1, setChecked1] = useState(false);
+    const [checked2, setChecked2] = useState(true);
+    const tagColor = '#10b981';
 
-      <div className="space-y-8">
-        <section>
-          <h2 className="text-lg font-semibold mb-4">状態</h2>
-          <div className="flex gap-8">
-            <div className="flex items-center gap-2">
-              <Checkbox id="unchecked" />
-              <Label htmlFor="unchecked">未チェック</Label>
-            </div>
-            <div className="flex items-center gap-2">
-              <Checkbox id="checked" checked />
-              <Label htmlFor="checked">チェック済み</Label>
-            </div>
-            <div className="flex items-center gap-2">
-              <Checkbox id="indeterminate" checked="indeterminate" />
-              <Label htmlFor="indeterminate">不確定</Label>
-            </div>
-          </div>
-        </section>
+    return (
+      <div className="p-8 bg-background text-foreground">
+        <h1 className="text-2xl font-bold mb-8">Checkbox - 実際の使用パターン</h1>
 
-        <section>
-          <h2 className="text-lg font-semibold mb-4">無効状態</h2>
-          <div className="flex gap-8">
-            <div className="flex items-center gap-2">
-              <Checkbox id="disabled-unchecked" disabled />
-              <Label htmlFor="disabled-unchecked">無効（未チェック）</Label>
-            </div>
-            <div className="flex items-center gap-2">
-              <Checkbox id="disabled-checked" disabled checked />
-              <Label htmlFor="disabled-checked">無効（チェック済み）</Label>
-            </div>
-          </div>
-        </section>
-
-        <section>
-          <h2 className="text-lg font-semibold mb-4">グループ</h2>
-          <div className="space-y-2">
-            {['オプション1', 'オプション2', 'オプション3'].map((label, i) => (
-              <div key={label} className="flex items-center gap-2">
-                <Checkbox id={`option-${i}`} defaultChecked={i === 0} />
-                <Label htmlFor={`option-${i}`}>{label}</Label>
+        <div className="space-y-8">
+          <section>
+            <h2 className="text-lg font-semibold mb-4">基本</h2>
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center gap-2">
+                <Checkbox
+                  id="cb1"
+                  checked={checked1}
+                  onCheckedChange={(c) => setChecked1(c === true)}
+                />
+                <Label htmlFor="cb1">未チェック</Label>
               </div>
-            ))}
-          </div>
-        </section>
+              <div className="flex items-center gap-2">
+                <Checkbox
+                  id="cb2"
+                  checked={checked2}
+                  onCheckedChange={(c) => setChecked2(c === true)}
+                />
+                <Label htmlFor="cb2">チェック済み</Label>
+              </div>
+              <div className="flex items-center gap-2">
+                <Checkbox id="cb3" disabled />
+                <Label htmlFor="cb3" className="text-muted-foreground">無効</Label>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <h2 className="text-lg font-semibold mb-4">タグフィルター（カスタムカラー）</h2>
+            <p className="text-sm text-muted-foreground mb-4">
+              タグの色に合わせてborderColor/backgroundColorをstyleで指定
+            </p>
+            <div className="flex items-center gap-2">
+              <Checkbox
+                id="tag"
+                checked={checked2}
+                onCheckedChange={(c) => setChecked2(c === true)}
+                style={{
+                  borderColor: tagColor,
+                  backgroundColor: checked2 ? tagColor : 'transparent',
+                }}
+              />
+              <Label htmlFor="tag">仕事</Label>
+            </div>
+          </section>
+        </div>
       </div>
-    </div>
-  ),
+    );
+  },
   parameters: {
     layout: 'fullscreen',
   },

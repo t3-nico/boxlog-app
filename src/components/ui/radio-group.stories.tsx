@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import { Check } from 'lucide-react';
 import { useState } from 'react';
 
 import { Label } from './label';
@@ -12,9 +13,9 @@ const meta = {
     layout: 'centered',
   },
   argTypes: {
-    disabled: {
-      control: 'boolean',
-      description: '無効状態',
+    value: {
+      control: 'text',
+      description: '選択されている値',
     },
   },
 } satisfies Meta<typeof RadioGroup>;
@@ -23,205 +24,180 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  render: () => (
-    <RadioGroup defaultValue="option-1">
-      <div className="flex items-center gap-2">
-        <RadioGroupItem value="option-1" id="r1" />
-        <Label htmlFor="r1">オプション1</Label>
-      </div>
-      <div className="flex items-center gap-2">
-        <RadioGroupItem value="option-2" id="r2" />
-        <Label htmlFor="r2">オプション2</Label>
-      </div>
-      <div className="flex items-center gap-2">
-        <RadioGroupItem value="option-3" id="r3" />
-        <Label htmlFor="r3">オプション3</Label>
-      </div>
-    </RadioGroup>
-  ),
-};
-
-export const Horizontal: Story = {
-  render: () => (
-    <RadioGroup defaultValue="a" className="flex flex-row gap-6">
-      <div className="flex items-center gap-2">
-        <RadioGroupItem value="a" id="ha" />
-        <Label htmlFor="ha">A</Label>
-      </div>
-      <div className="flex items-center gap-2">
-        <RadioGroupItem value="b" id="hb" />
-        <Label htmlFor="hb">B</Label>
-      </div>
-      <div className="flex items-center gap-2">
-        <RadioGroupItem value="c" id="hc" />
-        <Label htmlFor="hc">C</Label>
-      </div>
-    </RadioGroup>
-  ),
-};
-
-export const Disabled: Story = {
-  render: () => (
-    <RadioGroup defaultValue="option-1" disabled>
-      <div className="flex items-center gap-2">
-        <RadioGroupItem value="option-1" id="d1" />
-        <Label htmlFor="d1">オプション1</Label>
-      </div>
-      <div className="flex items-center gap-2">
-        <RadioGroupItem value="option-2" id="d2" />
-        <Label htmlFor="d2">オプション2</Label>
-      </div>
-    </RadioGroup>
-  ),
-};
-
-export const Interactive: Story = {
-  render: function InteractiveRadioGroup() {
-    const [value, setValue] = useState('comfortable');
+  render: function DefaultRadioGroup() {
+    const [value, setValue] = useState('option1');
     return (
-      <div className="space-y-4">
-        <RadioGroup value={value} onValueChange={setValue}>
-          <div className="flex items-center gap-2">
-            <RadioGroupItem value="default" id="i1" />
-            <Label htmlFor="i1">デフォルト</Label>
-          </div>
-          <div className="flex items-center gap-2">
-            <RadioGroupItem value="comfortable" id="i2" />
-            <Label htmlFor="i2">快適</Label>
-          </div>
-          <div className="flex items-center gap-2">
-            <RadioGroupItem value="compact" id="i3" />
-            <Label htmlFor="i3">コンパクト</Label>
-          </div>
-        </RadioGroup>
-        <p className="text-sm text-muted-foreground">
-          選択中: {value}
-        </p>
-      </div>
+      <RadioGroup value={value} onValueChange={setValue}>
+        <div className="flex items-center gap-2">
+          <RadioGroupItem value="option1" id="r1" />
+          <Label htmlFor="r1">オプション1</Label>
+        </div>
+        <div className="flex items-center gap-2">
+          <RadioGroupItem value="option2" id="r2" />
+          <Label htmlFor="r2">オプション2</Label>
+        </div>
+        <div className="flex items-center gap-2">
+          <RadioGroupItem value="option3" id="r3" />
+          <Label htmlFor="r3">オプション3</Label>
+        </div>
+      </RadioGroup>
     );
   },
 };
 
-export const WithDescriptions: Story = {
-  render: () => (
-    <RadioGroup defaultValue="free">
-      <div className="flex items-start gap-3">
-        <RadioGroupItem value="free" id="plan-free" className="mt-1" />
-        <div>
-          <Label htmlFor="plan-free">無料プラン</Label>
-          <p className="text-sm text-muted-foreground">
-            基本機能が利用可能
-          </p>
+export const ChipStyle: Story = {
+  render: function ChipStyleRadioGroup() {
+    const [value, setValue] = useState('daily');
+    const options = [
+      { value: 'daily', label: '日' },
+      { value: 'weekly', label: '週' },
+      { value: 'monthly', label: '月' },
+    ];
+
+    return (
+      <RadioGroup value={value} onValueChange={setValue}>
+        <div className="flex flex-wrap gap-2">
+          {options.map((option) => (
+            <Label
+              key={option.value}
+              htmlFor={`chip-${option.value}`}
+              className={`flex cursor-pointer items-center gap-2 rounded-full border px-4 py-2 text-sm transition-colors ${
+                value === option.value
+                  ? 'border-primary bg-primary text-primary-foreground'
+                  : 'border-border hover:bg-muted'
+              }`}
+            >
+              <RadioGroupItem
+                value={option.value}
+                id={`chip-${option.value}`}
+                className="sr-only"
+              />
+              {option.label}
+            </Label>
+          ))}
         </div>
-      </div>
-      <div className="flex items-start gap-3">
-        <RadioGroupItem value="pro" id="plan-pro" className="mt-1" />
-        <div>
-          <Label htmlFor="plan-pro">Proプラン</Label>
-          <p className="text-sm text-muted-foreground">
-            ¥980/月 - 全機能が利用可能
-          </p>
+      </RadioGroup>
+    );
+  },
+};
+
+export const ListStyle: Story = {
+  render: function ListStyleRadioGroup() {
+    const [value, setValue] = useState('light');
+    const options = [
+      { value: 'light', label: 'ライト' },
+      { value: 'dark', label: 'ダーク' },
+      { value: 'system', label: 'システム' },
+    ];
+
+    return (
+      <RadioGroup value={value} onValueChange={setValue}>
+        <div className="border-border bg-card rounded-md border w-64">
+          {options.map((option, index) => (
+            <Label
+              key={option.value}
+              htmlFor={`list-${option.value}`}
+              className={`hover:bg-muted flex cursor-pointer items-center justify-between px-4 py-3 text-sm transition-colors ${
+                index !== options.length - 1 ? 'border-border border-b' : ''
+              }`}
+            >
+              <span>{option.label}</span>
+              <RadioGroupItem
+                value={option.value}
+                id={`list-${option.value}`}
+                className="sr-only"
+              />
+              {value === option.value && <Check className="text-primary size-4" />}
+            </Label>
+          ))}
         </div>
-      </div>
-      <div className="flex items-start gap-3">
-        <RadioGroupItem value="enterprise" id="plan-enterprise" className="mt-1" />
-        <div>
-          <Label htmlFor="plan-enterprise">Enterpriseプラン</Label>
-          <p className="text-sm text-muted-foreground">
-            カスタム料金 - チーム向け機能
-          </p>
-        </div>
-      </div>
-    </RadioGroup>
-  ),
+      </RadioGroup>
+    );
+  },
 };
 
 export const AllVariants: Story = {
-  render: () => (
-    <div className="p-8 bg-background text-foreground">
-      <h1 className="text-2xl font-bold mb-8">RadioGroup - 全バリエーション</h1>
+  render: function AllVariantsStory() {
+    const [chipValue, setChipValue] = useState('daily');
+    const [listValue, setListValue] = useState('light');
 
-      <div className="space-y-8">
-        <section>
-          <h2 className="text-lg font-semibold mb-4">縦配置（デフォルト）</h2>
-          <RadioGroup defaultValue="v1">
-            <div className="flex items-center gap-2">
-              <RadioGroupItem value="v1" id="v1" />
-              <Label htmlFor="v1">オプション1</Label>
-            </div>
-            <div className="flex items-center gap-2">
-              <RadioGroupItem value="v2" id="v2" />
-              <Label htmlFor="v2">オプション2</Label>
-            </div>
-            <div className="flex items-center gap-2">
-              <RadioGroupItem value="v3" id="v3" />
-              <Label htmlFor="v3">オプション3</Label>
-            </div>
-          </RadioGroup>
-        </section>
+    const periodOptions = [
+      { value: 'daily', label: '日' },
+      { value: 'weekly', label: '週' },
+      { value: 'monthly', label: '月' },
+    ];
 
-        <section>
-          <h2 className="text-lg font-semibold mb-4">横配置</h2>
-          <RadioGroup defaultValue="h1" className="flex flex-row gap-6">
-            <div className="flex items-center gap-2">
-              <RadioGroupItem value="h1" id="h1" />
-              <Label htmlFor="h1">小</Label>
-            </div>
-            <div className="flex items-center gap-2">
-              <RadioGroupItem value="h2" id="h2" />
-              <Label htmlFor="h2">中</Label>
-            </div>
-            <div className="flex items-center gap-2">
-              <RadioGroupItem value="h3" id="h3" />
-              <Label htmlFor="h3">大</Label>
-            </div>
-          </RadioGroup>
-        </section>
+    const themeOptions = [
+      { value: 'light', label: 'ライト' },
+      { value: 'dark', label: 'ダーク' },
+      { value: 'system', label: 'システム' },
+    ];
 
-        <section>
-          <h2 className="text-lg font-semibold mb-4">無効状態</h2>
-          <RadioGroup defaultValue="dis1" disabled>
-            <div className="flex items-center gap-2">
-              <RadioGroupItem value="dis1" id="dis1" />
-              <Label htmlFor="dis1">選択済み（無効）</Label>
-            </div>
-            <div className="flex items-center gap-2">
-              <RadioGroupItem value="dis2" id="dis2" />
-              <Label htmlFor="dis2">未選択（無効）</Label>
-            </div>
-          </RadioGroup>
-        </section>
+    return (
+      <div className="p-8 bg-background text-foreground">
+        <h1 className="text-2xl font-bold mb-8">RadioGroup - 実際の使用パターン</h1>
 
-        <section>
-          <h2 className="text-lg font-semibold mb-4">説明付き</h2>
-          <RadioGroup defaultValue="desc1" className="space-y-4">
-            <div className="flex items-start gap-3 p-3 border border-border rounded-lg">
-              <RadioGroupItem value="desc1" id="desc1" className="mt-0.5" />
-              <div>
-                <Label htmlFor="desc1" className="font-medium">
-                  標準配送
-                </Label>
-                <p className="text-sm text-muted-foreground">
-                  3〜5営業日でお届け（無料）
-                </p>
+        <div className="space-y-8">
+          <section>
+            <h2 className="text-lg font-semibold mb-4">チップスタイル（横並び）</h2>
+            <p className="text-sm text-muted-foreground mb-4">
+              RadioGroupItemはsr-onlyで非表示、Labelがクリック対象
+            </p>
+            <RadioGroup value={chipValue} onValueChange={setChipValue}>
+              <div className="flex flex-wrap gap-2">
+                {periodOptions.map((option) => (
+                  <Label
+                    key={option.value}
+                    htmlFor={`all-chip-${option.value}`}
+                    className={`flex cursor-pointer items-center gap-2 rounded-full border px-4 py-2 text-sm transition-colors ${
+                      chipValue === option.value
+                        ? 'border-primary bg-primary text-primary-foreground'
+                        : 'border-border hover:bg-muted'
+                    }`}
+                  >
+                    <RadioGroupItem
+                      value={option.value}
+                      id={`all-chip-${option.value}`}
+                      className="sr-only"
+                    />
+                    {option.label}
+                  </Label>
+                ))}
               </div>
-            </div>
-            <div className="flex items-start gap-3 p-3 border border-border rounded-lg">
-              <RadioGroupItem value="desc2" id="desc2" className="mt-0.5" />
-              <div>
-                <Label htmlFor="desc2" className="font-medium">
-                  速達配送
-                </Label>
-                <p className="text-sm text-muted-foreground">
-                  1〜2営業日でお届け（¥500）
-                </p>
+            </RadioGroup>
+          </section>
+
+          <section>
+            <h2 className="text-lg font-semibold mb-4">リストスタイル（Apple Settings風）</h2>
+            <p className="text-sm text-muted-foreground mb-4">
+              選択中はCheckアイコンを表示
+            </p>
+            <RadioGroup value={listValue} onValueChange={setListValue}>
+              <div className="border-border bg-card rounded-md border w-64">
+                {themeOptions.map((option, index) => (
+                  <Label
+                    key={option.value}
+                    htmlFor={`all-list-${option.value}`}
+                    className={`hover:bg-muted flex cursor-pointer items-center justify-between px-4 py-3 text-sm transition-colors ${
+                      index !== themeOptions.length - 1 ? 'border-border border-b' : ''
+                    }`}
+                  >
+                    <span>{option.label}</span>
+                    <RadioGroupItem
+                      value={option.value}
+                      id={`all-list-${option.value}`}
+                      className="sr-only"
+                    />
+                    {listValue === option.value && <Check className="text-primary size-4" />}
+                  </Label>
+                ))}
               </div>
-            </div>
-          </RadioGroup>
-        </section>
+            </RadioGroup>
+          </section>
+        </div>
       </div>
-    </div>
-  ),
+    );
+  },
   parameters: {
     layout: 'fullscreen',
   },

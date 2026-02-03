@@ -1,14 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
 
-import { Label } from './label';
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
-  SelectSeparator,
   SelectTrigger,
   SelectValue,
 } from './select';
@@ -26,218 +22,121 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  render: () => (
-    <Select>
-      <SelectTrigger className="w-48">
-        <SelectValue placeholder="選択してください" />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectItem value="option1">オプション1</SelectItem>
-        <SelectItem value="option2">オプション2</SelectItem>
-        <SelectItem value="option3">オプション3</SelectItem>
-      </SelectContent>
-    </Select>
-  ),
-};
-
-export const WithLabel: Story = {
-  render: () => (
-    <div className="space-y-2">
-      <Label htmlFor="fruit-select">フルーツ</Label>
-      <Select>
-        <SelectTrigger id="fruit-select" className="w-48">
-          <SelectValue placeholder="選択してください" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="apple">りんご</SelectItem>
-          <SelectItem value="banana">バナナ</SelectItem>
-          <SelectItem value="orange">オレンジ</SelectItem>
-          <SelectItem value="grape">ぶどう</SelectItem>
-        </SelectContent>
-      </Select>
-    </div>
-  ),
-};
-
-export const WithGroups: Story = {
-  render: () => (
-    <Select>
-      <SelectTrigger className="w-48">
-        <SelectValue placeholder="タイムゾーン" />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectGroup>
-          <SelectLabel>アジア</SelectLabel>
-          <SelectItem value="asia/tokyo">東京 (JST)</SelectItem>
-          <SelectItem value="asia/seoul">ソウル (KST)</SelectItem>
-          <SelectItem value="asia/shanghai">上海 (CST)</SelectItem>
-        </SelectGroup>
-        <SelectSeparator />
-        <SelectGroup>
-          <SelectLabel>北米</SelectLabel>
-          <SelectItem value="america/new_york">ニューヨーク (EST)</SelectItem>
-          <SelectItem value="america/los_angeles">ロサンゼルス (PST)</SelectItem>
-        </SelectGroup>
-        <SelectSeparator />
-        <SelectGroup>
-          <SelectLabel>ヨーロッパ</SelectLabel>
-          <SelectItem value="europe/london">ロンドン (GMT)</SelectItem>
-          <SelectItem value="europe/paris">パリ (CET)</SelectItem>
-        </SelectGroup>
-      </SelectContent>
-    </Select>
-  ),
-};
-
-export const Disabled: Story = {
-  render: () => (
-    <div className="space-y-4">
-      <Select disabled>
-        <SelectTrigger className="w-48">
-          <SelectValue placeholder="無効" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="option1">オプション1</SelectItem>
-        </SelectContent>
-      </Select>
-      <Select>
-        <SelectTrigger className="w-48">
-          <SelectValue placeholder="一部無効" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="option1">有効なオプション</SelectItem>
-          <SelectItem value="option2" disabled>無効なオプション</SelectItem>
-          <SelectItem value="option3">有効なオプション</SelectItem>
-        </SelectContent>
-      </Select>
-    </div>
-  ),
-};
-
-export const Controlled: Story = {
-  render: function ControlledSelect() {
-    const [value, setValue] = useState('');
+  render: function DefaultSelect() {
+    const [value, setValue] = useState('daily');
     return (
-      <div className="space-y-4">
-        <Select value={value} onValueChange={setValue}>
-          <SelectTrigger className="w-48">
-            <SelectValue placeholder="選択してください" />
+      <Select value={value} onValueChange={setValue}>
+        <SelectTrigger className="h-8 w-24">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="daily">日</SelectItem>
+          <SelectItem value="weekly">週</SelectItem>
+          <SelectItem value="monthly">月</SelectItem>
+        </SelectContent>
+      </Select>
+    );
+  },
+};
+
+export const PeriodSelector: Story = {
+  render: function PeriodSelect() {
+    const [periodType, setPeriodType] = useState('daily');
+    const [comparePeriod, setComparePeriod] = useState('previous');
+
+    const periodOptions = [
+      { value: 'daily', label: '日' },
+      { value: 'weekly', label: '週' },
+      { value: 'monthly', label: '月' },
+    ];
+
+    const compareOptions = [
+      { value: 'previous', label: '前の期間' },
+      { value: 'lastYear', label: '前年同期' },
+      { value: 'none', label: '比較なし' },
+    ];
+
+    return (
+      <div className="flex items-center gap-2">
+        <Select value={periodType} onValueChange={setPeriodType}>
+          <SelectTrigger className="h-8 w-24">
+            <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="small">小</SelectItem>
-            <SelectItem value="medium">中</SelectItem>
-            <SelectItem value="large">大</SelectItem>
+            {periodOptions.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
-        <p className="text-sm text-muted-foreground">
-          選択中: {value || '未選択'}
-        </p>
+
+        <Select value={comparePeriod} onValueChange={setComparePeriod}>
+          <SelectTrigger className="h-8 w-28">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {compareOptions.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
     );
   },
 };
 
-export const Sizes: Story = {
-  render: () => (
-    <div className="space-y-4">
-      <div>
-        <p className="text-sm text-muted-foreground mb-2">sm</p>
-        <Select>
-          <SelectTrigger size="sm" className="w-48">
-            <SelectValue placeholder="Small" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="1">オプション1</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-      <div>
-        <p className="text-sm text-muted-foreground mb-2">default</p>
-        <Select>
-          <SelectTrigger size="default" className="w-48">
-            <SelectValue placeholder="Default" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="1">オプション1</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-    </div>
-  ),
-};
-
 export const AllVariants: Story = {
-  render: () => (
-    <div className="p-8 bg-background text-foreground">
-      <h1 className="text-2xl font-bold mb-8">Select - 全バリエーション</h1>
+  render: function AllVariantsStory() {
+    const [value, setValue] = useState('daily');
 
-      <div className="space-y-8">
-        <section>
-          <h2 className="text-lg font-semibold mb-4">基本</h2>
-          <Select>
-            <SelectTrigger className="w-48">
-              <SelectValue placeholder="選択" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="1">オプション1</SelectItem>
-              <SelectItem value="2">オプション2</SelectItem>
-              <SelectItem value="3">オプション3</SelectItem>
-            </SelectContent>
-          </Select>
-        </section>
+    return (
+      <div className="p-8 bg-background text-foreground">
+        <h1 className="text-2xl font-bold mb-8">Select - 実際の使用パターン</h1>
 
-        <section>
-          <h2 className="text-lg font-semibold mb-4">グループ化</h2>
-          <Select>
-            <SelectTrigger className="w-48">
-              <SelectValue placeholder="カテゴリ" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>グループA</SelectLabel>
-                <SelectItem value="a1">アイテムA1</SelectItem>
-                <SelectItem value="a2">アイテムA2</SelectItem>
-              </SelectGroup>
-              <SelectSeparator />
-              <SelectGroup>
-                <SelectLabel>グループB</SelectLabel>
-                <SelectItem value="b1">アイテムB1</SelectItem>
-                <SelectItem value="b2">アイテムB2</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </section>
-
-        <section>
-          <h2 className="text-lg font-semibold mb-4">無効状態</h2>
-          <div className="flex gap-4">
-            <Select disabled>
-              <SelectTrigger className="w-32">
-                <SelectValue placeholder="無効" />
+        <div className="space-y-8">
+          <section>
+            <h2 className="text-lg font-semibold mb-4">期間セレクター</h2>
+            <p className="text-sm text-muted-foreground mb-4">
+              stats-toolbarで使用されているパターン
+            </p>
+            <Select value={value} onValueChange={setValue}>
+              <SelectTrigger className="h-8 w-24">
+                <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="1">オプション</SelectItem>
+                <SelectItem value="daily">日</SelectItem>
+                <SelectItem value="weekly">週</SelectItem>
+                <SelectItem value="monthly">月</SelectItem>
               </SelectContent>
             </Select>
-          </div>
-        </section>
+            <p className="text-sm text-muted-foreground mt-2">
+              選択中: {value}
+            </p>
+          </section>
 
-        <section>
-          <h2 className="text-lg font-semibold mb-4">コンポーネント構成</h2>
-          <ul className="text-sm text-muted-foreground list-disc list-inside">
-            <li><code>Select</code> - ルート</li>
-            <li><code>SelectTrigger</code> - トリガーボタン</li>
-            <li><code>SelectValue</code> - 選択値表示</li>
-            <li><code>SelectContent</code> - ドロップダウン</li>
-            <li><code>SelectItem</code> - 選択肢</li>
-            <li><code>SelectGroup</code> - グループ</li>
-            <li><code>SelectLabel</code> - グループラベル</li>
-            <li><code>SelectSeparator</code> - 区切り線</li>
-          </ul>
-        </section>
+          <section>
+            <h2 className="text-lg font-semibold mb-4">コンポーネント構成</h2>
+            <ul className="text-sm text-muted-foreground list-disc list-inside">
+              <li><code>Select</code> - ルート（value, onValueChange）</li>
+              <li><code>SelectTrigger</code> - トリガーボタン（className for size）</li>
+              <li><code>SelectValue</code> - 選択値表示</li>
+              <li><code>SelectContent</code> - ドロップダウン</li>
+              <li><code>SelectItem</code> - 選択肢</li>
+            </ul>
+          </section>
+
+          <section className="p-4 bg-muted rounded-md">
+            <p className="text-sm text-muted-foreground">
+              <strong>Note:</strong> SelectGroup, SelectLabel, SelectSeparatorは現在未使用
+            </p>
+          </section>
+        </div>
       </div>
-    </div>
-  ),
+    );
+  },
   parameters: {
     layout: 'fullscreen',
   },
