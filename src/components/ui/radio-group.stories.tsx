@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { Check } from 'lucide-react';
 import { useState } from 'react';
 
 import { Label } from './label';
@@ -19,19 +18,19 @@ type Story = StoryObj<typeof meta>;
 
 export const AllPatterns: Story = {
   render: function AllPatternsStory() {
-    const [chipValue, setChipValue] = useState('daily');
-    const [listValue, setListValue] = useState('light');
+    const [value1, setValue1] = useState('this');
+    const [value2, setValue2] = useState('');
 
-    const periodOptions = [
-      { value: 'daily', label: '日' },
-      { value: 'weekly', label: '週' },
-      { value: 'monthly', label: '月' },
+    const scopeOptions = [
+      { value: 'this', label: 'このイベントのみ' },
+      { value: 'thisAndFuture', label: 'このイベント以降すべて' },
+      { value: 'all', label: 'すべてのイベント' },
     ];
 
-    const themeOptions = [
-      { value: 'light', label: 'ライト' },
-      { value: 'dark', label: 'ダーク' },
-      { value: 'system', label: 'システム' },
+    const tagOptions = [
+      { value: 'tag-1', label: '仕事', color: '#3B82F6' },
+      { value: 'tag-2', label: 'プライベート', color: '#22C55E' },
+      { value: 'tag-3', label: '学習', color: '#F59E0B' },
     ];
 
     return (
@@ -41,81 +40,70 @@ export const AllPatterns: Story = {
 
         <div className="grid gap-8" style={{ maxWidth: '28rem' }}>
           <div>
-            <h2 className="mb-2 text-lg font-bold">チップスタイル（横並び）</h2>
+            <h2 className="mb-2 text-lg font-bold">基本リスト（縦並び）</h2>
             <p className="text-muted-foreground mb-4 text-sm">
-              TableNavigation.tsx で使用。RadioGroupItemはsr-onlyで非表示、Labelがクリック対象。
+              RecurringEditConfirmDialog.tsx で使用。繰り返し編集のスコープ選択。
             </p>
-            <RadioGroup value={chipValue} onValueChange={setChipValue}>
-              <div className="flex flex-wrap gap-2">
-                {periodOptions.map((option) => (
-                  <Label
-                    key={option.value}
-                    htmlFor={`chip-${option.value}`}
-                    className={`flex cursor-pointer items-center gap-2 rounded-full border px-4 py-2 text-sm transition-colors ${
-                      chipValue === option.value
-                        ? 'border-primary bg-primary text-primary-foreground'
-                        : 'border-border hover:bg-muted'
-                    }`}
-                  >
-                    <RadioGroupItem
-                      value={option.value}
-                      id={`chip-${option.value}`}
-                      className="sr-only"
-                    />
-                    {option.label}
-                  </Label>
-                ))}
-              </div>
+            <RadioGroup value={value1} onValueChange={setValue1} className="space-y-2">
+              {scopeOptions.map((option) => (
+                <label
+                  key={option.value}
+                  htmlFor={`scope-${option.value}`}
+                  className="flex cursor-pointer items-center gap-4"
+                >
+                  <RadioGroupItem value={option.value} id={`scope-${option.value}`} />
+                  <span className="text-sm">{option.label}</span>
+                </label>
+              ))}
             </RadioGroup>
           </div>
 
           <div>
-            <h2 className="mb-2 text-lg font-bold">リストスタイル（Apple Settings風）</h2>
+            <h2 className="mb-2 text-lg font-bold">カード内リスト</h2>
             <p className="text-muted-foreground mb-4 text-sm">
-              MobileSettingsRadioGroup.tsx で使用。選択中はCheckアイコンを表示。
+              TagMergeDialog.tsx で使用。マージ先タグの選択。
             </p>
-            <RadioGroup value={listValue} onValueChange={setListValue}>
-              <div className="border-border bg-card w-64 rounded-lg border">
-                {themeOptions.map((option, index) => (
+            <div className="border-border max-h-60 overflow-y-auto rounded-2xl border">
+              <RadioGroup value={value2} onValueChange={setValue2} className="p-2">
+                {tagOptions.map((option) => (
                   <Label
                     key={option.value}
-                    htmlFor={`list-${option.value}`}
-                    className={`hover:bg-muted flex cursor-pointer items-center justify-between px-4 py-4 text-sm transition-colors ${
-                      index !== themeOptions.length - 1 ? 'border-border border-b' : ''
+                    htmlFor={`tag-${option.value}`}
+                    className={`hover:bg-state-hover flex cursor-pointer items-center gap-4 rounded-lg px-4 py-2 transition-colors ${
+                      value2 === option.value ? 'bg-state-selected' : ''
                     }`}
                   >
-                    <span>{option.label}</span>
                     <RadioGroupItem
                       value={option.value}
-                      id={`list-${option.value}`}
-                      className="sr-only"
+                      id={`tag-${option.value}`}
+                      className="shrink-0"
                     />
-                    {listValue === option.value && <Check className="text-primary size-4" />}
+                    <span className="shrink-0 font-normal" style={{ color: option.color }}>
+                      #
+                    </span>
+                    <span className="flex-1 truncate text-sm">{option.label}</span>
                   </Label>
                 ))}
-              </div>
-            </RadioGroup>
+              </RadioGroup>
+            </div>
           </div>
 
           <div>
             <h2 className="mb-4 text-lg font-bold">使用箇所</h2>
             <ul className="text-muted-foreground list-inside list-disc space-y-1 text-sm">
-              <li>TableNavigation.tsx - 期間切り替え（日/週/月）</li>
-              <li>MobileSettingsRadioGroup.tsx - 設定選択</li>
-              <li>TagMergeDialog.tsx - マージ先選択</li>
-              <li>RecurringEditConfirmDialog.tsx - 繰り返し編集確認</li>
+              <li>RecurringEditConfirmDialog.tsx - 繰り返し編集スコープ</li>
+              <li>TagMergeDialog.tsx - マージ先タグ選択</li>
               <li>RecurrenceDialog.tsx - 繰り返し設定</li>
             </ul>
           </div>
 
           <div>
-            <h2 className="mb-4 text-lg font-bold">実装パターン</h2>
+            <h2 className="mb-4 text-lg font-bold">コンポーネント</h2>
             <div className="bg-surface-container rounded-lg p-4">
               <ul className="text-muted-foreground list-inside list-disc space-y-1 text-sm">
-                <li>RadioGroupItem は sr-only で非表示</li>
-                <li>Label がクリック対象（視覚的なUI）</li>
-                <li>選択状態は value で管理（条件分岐でスタイル変更）</li>
-                <li>リストスタイルでは Check アイコンを表示</li>
+                <li>RadioGroup - コンテナ（value, onValueChange）</li>
+                <li>RadioGroupItem - 各選択肢（value, id）</li>
+                <li>Label / label - クリック対象（htmlFor で紐付け）</li>
               </ul>
             </div>
           </div>
