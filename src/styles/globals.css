@@ -322,15 +322,28 @@
   --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
 
   /* ============================================
-   * Z-Index
+   * Z-Index（スタッキング順序）
+   *
+   * 用途別に階層化されたz-index値
+   * 値が大きいほど前面に表示される
+   *
+   * 使用例: z-modal, z-tooltip, z-dropdown
    * ============================================ */
-  --z-dropdown: 1000;
-  --z-sticky: 1020;
-  --z-fixed: 1030;
-  --z-modal-backdrop: 1040;
-  --z-modal: 1050;
-  --z-popover: 1060;
-  --z-tooltip: 1070;
+  --z-index-dropdown: 50;
+  --z-index-popover: 100;
+  --z-index-sheet: 150;
+  --z-index-modal: 200;
+  --z-index-confirm: 250;
+  --z-index-toast: 300;
+  --z-index-context-menu: 350;
+  --z-index-calendar-drag: 1000;
+  --z-index-inspector-backdrop: 1099;
+  --z-index-inspector: 1100;
+  /* Overlay系: Inspector上のUI */
+  --z-index-overlay-popover: 1200;
+  --z-index-overlay-modal: 1300;
+  --z-index-overlay-confirm: 1400;
+  --z-index-tooltip: 9999;
 
   /* ============================================
    * タイポグラフィ
