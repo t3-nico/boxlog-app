@@ -127,7 +127,7 @@ export const TagSelector = ({
                     onClick={() => handleTagAdd(tag)}
                     className="flex items-center space-x-2 p-2"
                   >
-                    <TagBadge tag={tag} showIcon={true} />
+                    <TagBadge tag={tag} />
                     {tag.description != null && (
                       <span className="text-muted-foreground truncate text-xs">
                         {tag.description}

@@ -1,56 +1,64 @@
 'use client';
 
+import { X } from 'lucide-react';
+
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { HoverTooltip } from '@/components/ui/tooltip';
 import { Tag } from '@/features/tags/types';
+import { cn } from '@/lib/utils';
 
 interface TagBadgeProps {
   tag: Tag;
-  size?: 'sm' | 'md' | 'lg';
-  showIcon?: boolean;
   onClick?: () => void;
   onRemove?: () => void;
+  /** tooltipを無効にする（デフォルト: descriptionがあれば表示） */
+  disableTooltip?: boolean;
 }
 
-export const TagBadge = ({
-  tag,
-  size = 'sm',
-  showIcon = true,
-  onClick,
-  onRemove,
-}: TagBadgeProps) => {
-  const sizeClasses = {
-    sm: 'text-xs px-2 py-1',
-    md: 'text-sm px-4 py-2',
-    lg: 'text-base px-4 py-2',
-  };
-
+/**
+ * タグバッジ
+ *
+ * タグをアウトラインバッジとして表示。
+ * ボーダー色にタグのカラーを使用。
+ * descriptionがあればホバーでtooltip表示。
+ *
+ * @example
+ * ```tsx
+ * <TagBadge tag={tag} />
+ * <TagBadge tag={tag} onRemove={() => handleRemove(tag.id)} />
+ * ```
+ */
+export function TagBadge({ tag, onClick, onRemove, disableTooltip }: TagBadgeProps) {
   return (
-    <Badge
-      className={`inline-flex cursor-pointer items-center gap-1 transition-all ${sizeClasses[size]} ${onClick ? 'hover:opacity-80' : ''} `}
-      style={{
-        backgroundColor: `${tag.color}20`,
-        color: tag.color || undefined,
-        border: `1px solid ${tag.color}40`,
-      }}
-      onClick={onClick}
+    <HoverTooltip
+      content={tag.description}
+      side="top"
+      disabled={disableTooltip || !tag.description}
     >
-      {showIcon && tag.icon ? <span className="text-xs">{tag.icon}</span> : null}
-      <span>{tag.name}</span>
-      {onRemove != null && (
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon-sm"
-          onClick={(e) => {
-            e.stopPropagation();
-            onRemove();
-          }}
-          className="hover:bg-destructive-state-hover hover:text-destructive ml-1 h-4 w-4 text-xs"
-        >
-          ×
-        </Button>
-      )}
-    </Badge>
+      <Badge
+        variant="outline"
+        className={cn(
+          'relative h-7 text-xs font-normal transition-colors',
+          onClick && 'hover:bg-state-hover cursor-pointer',
+          onRemove && 'pr-6',
+        )}
+        style={{ borderColor: tag.color || undefined }}
+        onClick={onClick}
+      >
+        {tag.name}
+        {onRemove && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onRemove();
+            }}
+            className="hover:bg-state-hover absolute top-1/2 right-1 -translate-y-1/2 rounded opacity-70 transition-opacity hover:opacity-100"
+          >
+            <X className="size-3" />
+          </button>
+        )}
+      </Badge>
+    </HoverTooltip>
   );
-};
+}
