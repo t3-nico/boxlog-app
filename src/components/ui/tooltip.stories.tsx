@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { Info, Settings } from 'lucide-react';
+import { Filter, Info, Search, Settings, SortAsc } from 'lucide-react';
 
 import { Button } from './button';
 import { HoverTooltip } from './tooltip';
@@ -9,151 +9,143 @@ const meta = {
   component: HoverTooltip,
   tags: ['autodocs'],
   parameters: {
-    layout: 'centered',
-  },
-  argTypes: {
-    content: {
-      control: 'text',
-      description: 'ツールチップに表示するテキスト',
-    },
-    side: {
-      control: 'select',
-      options: ['top', 'bottom', 'left', 'right'],
-      description: '表示位置',
-    },
-    delayMs: {
-      control: 'number',
-      description: '表示までの遅延（ミリ秒）',
-    },
-    disabled: {
-      control: 'boolean',
-      description: '無効化',
-    },
+    layout: 'fullscreen',
   },
 } satisfies Meta<typeof HoverTooltip>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
-  args: {
-    content: 'ツールチップテキスト',
-    children: <Button variant="outline">ホバーしてください</Button>,
-  },
-};
-
-export const IconButton: Story = {
-  render: () => (
-    <div className="flex gap-4">
-      <HoverTooltip content="設定">
-        <Button variant="ghost" size="icon" aria-label="設定">
-          <Settings className="size-4" />
-        </Button>
-      </HoverTooltip>
-      <HoverTooltip content="情報">
-        <Button variant="ghost" size="icon" aria-label="情報">
-          <Info className="size-4" />
-        </Button>
-      </HoverTooltip>
-    </div>
-  ),
-};
-
-export const Positions: Story = {
-  render: () => (
-    <div className="flex gap-4">
-      <HoverTooltip content="上に表示" side="top">
-        <Button variant="outline">上</Button>
-      </HoverTooltip>
-      <HoverTooltip content="下に表示" side="bottom">
-        <Button variant="outline">下</Button>
-      </HoverTooltip>
-      <HoverTooltip content="左に表示" side="left">
-        <Button variant="outline">左</Button>
-      </HoverTooltip>
-      <HoverTooltip content="右に表示" side="right">
-        <Button variant="outline">右</Button>
-      </HoverTooltip>
-    </div>
-  ),
-};
-
 export const AllPatterns: Story = {
+  args: {
+    content: 'Tooltip',
+    children: <span>Trigger</span>,
+  },
   render: () => (
-    <div className="bg-background text-foreground p-8">
-      <h1 className="mb-8 text-2xl font-bold">Tooltip - 実際の使用パターン</h1>
+    <div className="bg-background text-foreground min-h-screen p-8">
+      <h1 className="mb-2 text-2xl font-bold">Tooltip</h1>
+      <p className="text-muted-foreground mb-8">
+        ホバー時に補足情報を表示。アイコンボタンには必須。
+      </p>
 
-      <div className="space-y-8">
-        <section>
-          <h2 className="mb-4 text-lg font-bold">アイコンボタン</h2>
+      <div className="grid gap-8" style={{ maxWidth: '32rem' }}>
+        <div>
+          <h2 className="mb-2 text-lg font-bold">アイコンボタン（主要用途）</h2>
           <p className="text-muted-foreground mb-4 text-sm">
-            アイコンのみのボタンには必ずツールチップを付ける
+            アイコンのみのボタンには必ずツールチップを付ける。aria-labelも必須。
           </p>
-          <div className="flex gap-4">
-            <HoverTooltip content="設定を開く">
-              <Button variant="ghost" size="icon" aria-label="設定を開く">
-                <Settings className="size-4" />
+          <div className="flex gap-2">
+            <HoverTooltip content="検索" side="top">
+              <Button variant="ghost" size="icon" aria-label="検索">
+                <Search className="size-5" />
               </Button>
             </HoverTooltip>
-            <HoverTooltip content="詳細情報">
-              <Button variant="ghost" size="icon" aria-label="詳細情報">
-                <Info className="size-4" />
+            <HoverTooltip content="フィルター" side="top">
+              <Button variant="ghost" size="icon" aria-label="フィルター">
+                <Filter className="size-5" />
+              </Button>
+            </HoverTooltip>
+            <HoverTooltip content="ソート" side="top">
+              <Button variant="ghost" size="icon" aria-label="ソート">
+                <SortAsc className="size-5" />
+              </Button>
+            </HoverTooltip>
+            <HoverTooltip content="設定" side="top">
+              <Button variant="ghost" size="icon" aria-label="設定">
+                <Settings className="size-5" />
               </Button>
             </HoverTooltip>
           </div>
-        </section>
+        </div>
 
-        <section>
-          <h2 className="mb-4 text-lg font-bold">位置指定（side）</h2>
-          <div className="flex gap-4">
-            <HoverTooltip content="top" side="top">
-              <Button variant="outline">上</Button>
+        <div>
+          <h2 className="mb-2 text-lg font-bold">ナビゲーションタブ</h2>
+          <p className="text-muted-foreground mb-4 text-sm">
+            ナビゲーションタブでは side=&quot;bottom&quot; を使用。
+          </p>
+          <div className="flex gap-2">
+            <HoverTooltip content="ホーム" side="bottom">
+              <Button variant="ghost" size="icon" aria-label="ホーム">
+                <Info className="size-5" />
+              </Button>
+            </HoverTooltip>
+            <HoverTooltip content="設定" side="bottom">
+              <Button variant="ghost" size="icon" aria-label="設定">
+                <Settings className="size-5" />
+              </Button>
+            </HoverTooltip>
+          </div>
+        </div>
+
+        <div>
+          <h2 className="mb-2 text-lg font-bold">省略テキスト</h2>
+          <p className="text-muted-foreground mb-4 text-sm">
+            テキストが省略された場合のみ表示。disabled=&#123;!isTruncated&#125;
+          </p>
+          <div className="flex flex-col gap-2">
+            <HoverTooltip content="短いテキストは省略されない" disabled>
+              <span className="text-foreground truncate text-sm">短いテキスト</span>
+            </HoverTooltip>
+            <HoverTooltip content="長いテキストは省略されるのでツールチップで全文を表示">
+              <span className="text-foreground block w-32 truncate text-sm">
+                長いテキストは省略されるのでツールチップで全文を表示
+              </span>
+            </HoverTooltip>
+          </div>
+        </div>
+
+        <div>
+          <h2 className="mb-2 text-lg font-bold">位置指定（side）</h2>
+          <p className="text-muted-foreground mb-4 text-sm">デフォルトは top。</p>
+          <div className="flex flex-wrap gap-2">
+            <HoverTooltip content="top（デフォルト）" side="top">
+              <Button variant="outline" size="sm">
+                上
+              </Button>
             </HoverTooltip>
             <HoverTooltip content="bottom" side="bottom">
-              <Button variant="outline">下</Button>
+              <Button variant="outline" size="sm">
+                下
+              </Button>
             </HoverTooltip>
             <HoverTooltip content="left" side="left">
-              <Button variant="outline">左</Button>
+              <Button variant="outline" size="sm">
+                左
+              </Button>
             </HoverTooltip>
             <HoverTooltip content="right" side="right">
-              <Button variant="outline">右</Button>
+              <Button variant="outline" size="sm">
+                右
+              </Button>
             </HoverTooltip>
           </div>
-        </section>
+        </div>
 
-        <section>
-          <h2 className="mb-4 text-lg font-bold">無効化（disabled）</h2>
-          <div className="flex gap-4">
-            <HoverTooltip content="表示される">
-              <Button variant="outline">有効</Button>
-            </HoverTooltip>
-            <HoverTooltip content="表示されない" disabled>
-              <Button variant="outline">無効</Button>
-            </HoverTooltip>
+        <div>
+          <h2 className="mb-4 text-lg font-bold">Props / 使い方</h2>
+          <div className="bg-surface-container rounded-lg p-4">
+            <ul className="text-muted-foreground list-inside list-disc space-y-1 text-sm">
+              <li>content - 表示テキスト（ReactNode対応）</li>
+              <li>side - 表示位置（top/bottom/left/right、デフォルト: top）</li>
+              <li>disabled - 条件付き非表示（省略テキスト判定等）</li>
+              <li>delayMs - 表示遅延（デフォルト: 300ms）</li>
+              <li>maxWidth - 最大幅（デフォルト: 200px）</li>
+              <li>wrapperClassName - ラッパーのクラス（w-full等）</li>
+            </ul>
           </div>
-        </section>
+        </div>
 
-        <section>
-          <h2 className="mb-4 text-lg font-bold">使用Props</h2>
-          <ul className="text-muted-foreground list-inside list-disc text-sm">
-            <li>
-              <code>content</code> - 表示テキスト
-            </li>
-            <li>
-              <code>side</code> - 表示位置（top/bottom/left/right）
-            </li>
-            <li>
-              <code>disabled</code> - 無効化
-            </li>
-            <li>
-              <code>delayMs</code> - 表示遅延
-            </li>
+        <div>
+          <h2 className="mb-4 text-lg font-bold">使用箇所</h2>
+          <ul className="text-muted-foreground list-inside list-disc space-y-1 text-sm">
+            <li>TableNavigation - 検索/フィルター/ソート/設定ボタン</li>
+            <li>NavigationTabItem - ナビゲーションタブ</li>
+            <li>SelectionActions - 一括操作ボタン</li>
+            <li>NotificationDropdown - 設定アイコン</li>
+            <li>GroupNameWithTooltip - 省略テキスト表示</li>
           </ul>
-        </section>
+        </div>
       </div>
     </div>
   ),
-  parameters: {
-    layout: 'fullscreen',
-  },
 };
