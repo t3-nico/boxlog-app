@@ -135,6 +135,6 @@ export {
 // ============================================
 // Legacy Types (後方互換性のため維持)
 // ============================================
-export type { ColumnId } from './types/column';
+export type { ColumnId, PlanColumnId, RecordColumnId, TableType } from './types/column';
 export type { GroupByField, GroupConfig, GroupedData } from './types/group';
 export type { SortField } from './types/sort';
