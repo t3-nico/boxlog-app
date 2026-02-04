@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { useCallback, useState } from 'react';
 
 const meta = {
-  title: 'Tokens/Animation',
+  title: 'Tokens/Motion',
   parameters: {
     layout: 'fullscreen',
   },
@@ -14,8 +14,10 @@ type Story = StoryObj;
 export const Overview: Story = {
   render: () => (
     <div className="bg-background text-foreground p-8">
-      <h1 className="mb-2 text-2xl font-bold">アニメーション</h1>
-      <p className="text-muted-foreground mb-8">globals.cssで定義されたアニメーション</p>
+      <h1 className="mb-2 text-2xl font-bold">Motion</h1>
+      <p className="text-muted-foreground mb-8">
+        アニメーションとトランジションのトークン（Material Design 3準拠）
+      </p>
 
       <div className="grid gap-8" style={{ maxWidth: '64rem' }}>
         {/* shadcn/ui標準 */}
@@ -111,7 +113,7 @@ data-[state=closed]:animate-out`}
 
         {/* duration */}
         <section className="bg-card border-border rounded-xl border p-6">
-          <h2 className="mb-4 text-lg font-bold">duration（継続時間）</h2>
+          <h2 className="mb-4 text-lg font-bold">Duration（継続時間）</h2>
           <p className="text-muted-foreground mb-4 text-sm">Tailwind標準のdurationクラスを併用</p>
           <div className="grid gap-4 sm:grid-cols-4">
             <DurationDemo duration="75" />
@@ -133,6 +135,49 @@ data-[state=closed]:animate-out`}
               </li>
               <li>
                 <code>duration-300</code> - 長め（ページ遷移）
+              </li>
+            </ul>
+          </div>
+        </section>
+
+        {/* Easing */}
+        <section className="bg-card border-border rounded-xl border p-6">
+          <h2 className="mb-4 text-lg font-bold">Easing（イージング）</h2>
+          <p className="text-muted-foreground mb-4 text-sm">
+            Material Design 3準拠。要素の動きに自然さを与える。
+          </p>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <EasingDemo
+              easing="ease-out"
+              label="ease-out（推奨）"
+              description="減速。画面に入る要素に使用"
+            />
+            <EasingDemo
+              easing="ease-in"
+              label="ease-in"
+              description="加速。画面から出る要素に使用"
+            />
+            <EasingDemo
+              easing="ease-in-out"
+              label="ease-in-out"
+              description="対称。トグル切り替え等"
+            />
+            <EasingDemo easing="ease-linear" label="linear" description="等速。プログレスバー等" />
+          </div>
+          <div className="bg-container mt-4 rounded-lg p-4">
+            <h4 className="mb-2 text-sm font-bold">使い分け（Material Design 3）</h4>
+            <ul className="text-muted-foreground space-y-1 text-xs">
+              <li>
+                <code>ease-out</code> - デフォルト。ほとんどの場合これを使う
+              </li>
+              <li>
+                <code>ease-in</code> - 要素が画面外に出るとき
+              </li>
+              <li>
+                <code>ease-in-out</code> - 画面内で位置が変わるとき
+              </li>
+              <li>
+                <code>linear</code> - 継続的な動き（スピナー、プログレス）
               </li>
             </ul>
           </div>
@@ -237,6 +282,38 @@ function DurationDemo({ duration }: { duration: string }) {
       </div>
       <button type="button" onClick={replay} className="text-primary text-xs hover:underline">
         再生
+      </button>
+    </div>
+  );
+}
+
+function EasingDemo({
+  easing,
+  label,
+  description,
+}: {
+  easing: string;
+  label: string;
+  description: string;
+}) {
+  const [active, setActive] = useState(false);
+
+  const toggle = useCallback(() => {
+    setActive((a) => !a);
+  }, []);
+
+  return (
+    <div className="space-y-2">
+      <div className="text-sm font-bold">{label}</div>
+      <div className="bg-muted relative h-12 overflow-hidden rounded-lg">
+        <div
+          className={`bg-primary absolute top-1 bottom-1 left-1 rounded transition-transform duration-500 ${easing} ${active ? 'translate-x-[calc(100%-3rem)]' : ''}`}
+          style={{ width: '2.5rem' }}
+        />
+      </div>
+      <p className="text-muted-foreground text-xs">{description}</p>
+      <button type="button" onClick={toggle} className="text-primary text-xs hover:underline">
+        {active ? 'リセット' : '再生'}
       </button>
     </div>
   );
