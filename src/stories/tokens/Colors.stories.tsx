@@ -94,7 +94,7 @@ export const AllColors: Story = {
         <ColorSwatch tailwindClass="bg-chronotype-peak" description="ピーク（最集中）" />
         <ColorSwatch tailwindClass="bg-chronotype-good" description="集中" />
         <ColorSwatch tailwindClass="bg-chronotype-moderate" description="通常" />
-        <ColorSwatch tailwindClass="bg-chronotype-low" description="低調" />
+        <ColorSwatch tailwindClass="bg-chronotype-low" description="低調（軽作業向き）" />
         <ColorSwatch tailwindClass="bg-chronotype-sleep" description="睡眠" />
       </ColorGroup>
 
