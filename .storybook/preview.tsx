@@ -26,6 +26,9 @@ const messages = {
     edit: '編集',
     loading: '読み込み中...',
   },
+  aria: {
+    selectColor: '{color}を選択',
+  },
 };
 
 const preview: Preview = {

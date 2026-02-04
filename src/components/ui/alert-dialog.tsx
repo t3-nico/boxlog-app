@@ -37,8 +37,8 @@ const AlertDialogContent = React.forwardRef<
       ref={ref}
       className={cn(
         'border-border bg-popover text-popover-foreground fixed top-[50%] left-[50%] z-[250] grid translate-x-[-50%] translate-y-[-50%] gap-4 rounded-2xl border p-6 shadow-xl duration-200',
-        // 横幅: 明示的にviewport幅を指定（position:fixedでw-fullが効かないため）
-        'w-[calc(100vw-2rem)] sm:max-w-lg',
+        // 横幅: min-wで最小幅を保証、max-wでビューポートを超えないように制限（Storybook対応）
+        'w-full max-w-[calc(100vw-2rem)] min-w-80 sm:max-w-lg',
         'data-[state=open]:animate-in data-[state=closed]:animate-out motion-reduce:animate-none',
         'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
         'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
