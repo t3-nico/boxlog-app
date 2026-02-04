@@ -61,9 +61,7 @@
         "willBeRemovedFromCalendar": "カレンダーから削除されます",
         "confirm": "削除",
         "deleting": "削除中..."
-      }
-    },
-    "plan": {
+      },
       "createNew": "新規作成",
       "selected": "{count}件選択中",
       "clear": "クリア",
@@ -77,7 +75,7 @@
       "statusCancel": "中止",
       "dueDate": "期限",
       "archive": "アーカイブ",
-      "delete": "削除",
+      "deleteLabel": "削除",
       "statusChangedCount": "{count}件のプランのステータスを変更しました",
       "statusChangeFailed": "ステータスの変更に失敗しました",
       "archivedCount": "{count}件のプランをアーカイブしました",
@@ -86,7 +84,6 @@
       "deleteConfirmTitle": "{count}件のプランを削除しますか？",
       "deleteConfirmDescription": "選択した{count}件のプランを完全に削除します。この操作は取り消せません。",
       "deletedCount": "{count}件のプランを削除しました",
-      "deleteFailed": "削除に失敗しました",
       "selectDate": "日付を選択してください",
       "dueDateSetCount": "{count}件のプランの期限を設定しました",
       "dueDateSetFailed": "期限の設定に失敗しました",
