@@ -93,7 +93,7 @@ export const AllElevations: Story = {
           <p className="text-muted-foreground mt-2 text-xs">
             モーダル、
             <br />
-            ダイアログ
+            最前面要素
           </p>
         </div>
       </div>
