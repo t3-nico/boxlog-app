@@ -47,7 +47,7 @@ export const Overview: Story = {
                   <td className="py-3">
                     <code>bg-state-hover</code>
                   </td>
-                  <td className="py-3">マウスオーバー時</td>
+                  <td className="py-3">マウスオーバー時（10%）</td>
                 </tr>
                 <tr className="border-border border-b">
                   <td className="py-3">Focus</td>
@@ -57,11 +57,32 @@ export const Overview: Story = {
                   <td className="py-3">キーボードフォーカス時</td>
                 </tr>
                 <tr className="border-border border-b">
+                  <td className="py-3">Pressed</td>
+                  <td className="py-3">
+                    <code>bg-state-pressed</code>
+                  </td>
+                  <td className="py-3">クリック中（12%）</td>
+                </tr>
+                <tr className="border-border border-b">
+                  <td className="py-3">Selected</td>
+                  <td className="py-3">
+                    <code>bg-state-selected</code>
+                  </td>
+                  <td className="py-3">選択状態（12%）</td>
+                </tr>
+                <tr className="border-border border-b">
+                  <td className="py-3">Dragged</td>
+                  <td className="py-3">
+                    <code>bg-state-dragged</code>
+                  </td>
+                  <td className="py-3">ドラッグ中（16%）</td>
+                </tr>
+                <tr className="border-border border-b">
                   <td className="py-3">Active</td>
                   <td className="py-3">
                     <code>bg-state-active</code>
                   </td>
-                  <td className="py-3">クリック中・選択中</td>
+                  <td className="py-3">選択中（塗りつぶし）</td>
                 </tr>
                 <tr className="border-border border-b">
                   <td className="py-3">Disabled</td>
@@ -251,14 +272,23 @@ export const Overview: Story = {
         <section className="bg-card border-border rounded-xl border p-6">
           <h2 className="mb-4 text-lg font-bold">実装ガイド</h2>
           <pre className="bg-container overflow-x-auto rounded-lg p-4 text-xs">
-            {`// ホバー状態
+            {`// ホバー状態（10%オーバーレイ）
 className="hover:bg-state-hover"
 
 // フォーカス状態（キーボード操作時のみ）
 className="focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
 
-// アクティブ状態（選択中）
-className="bg-state-active"
+// プレス状態（12%オーバーレイ）
+className="active:bg-state-pressed"
+
+// 選択状態（12%オーバーレイ）
+className="bg-state-selected"  // または data-[state=selected]:bg-state-selected
+
+// ドラッグ中状態（16%オーバーレイ）
+className="bg-state-dragged"
+
+// アクティブ状態（塗りつぶし）
+className="bg-state-active text-state-active-foreground"
 
 // 無効状態
 disabled={true}  // または className="opacity-50 pointer-events-none"

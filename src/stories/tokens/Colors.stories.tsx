@@ -122,6 +122,25 @@ export const AllColors: Story = {
           description="Record（実績）の背景：暖色オレンジ系"
         />
       </ColorGroup>
+
+      <ColorGroup title="shadcn/ui互換エイリアス">
+        <ColorSwatch
+          tailwindClass="bg-popover"
+          description="= bg-overlay のエイリアス（shadcn/ui互換）"
+        />
+        <ColorSwatch
+          tailwindClass="bg-secondary"
+          description="= bg-container のエイリアス（shadcn/ui互換）"
+        />
+        <ColorSwatch
+          tailwindClass="bg-muted"
+          description="= bg-container のエイリアス（shadcn/ui互換）"
+        />
+        <ColorSwatch
+          tailwindClass="bg-accent"
+          description="= bg-state-active のエイリアス（shadcn/ui互換）"
+        />
+      </ColorGroup>
     </div>
   ),
 };
@@ -204,6 +223,76 @@ export const Interaction: Story = {
       <p className="text-muted-foreground mb-8">
         ホバー、フォーカス、プレス時の色変化。実際に操作して確認できます。
       </p>
+
+      {/* State Layer一覧（MD3準拠） */}
+      <div className="bg-card border-border mb-8 rounded-xl border p-6">
+        <h3 className="mb-4 text-lg font-bold">State Layer一覧（MD3準拠）</h3>
+        <p className="text-muted-foreground mb-4 text-sm">
+          foregroundベースの半透明オーバーレイ。ライト/ダークモードで自動調整される。
+        </p>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-border border-b">
+                <th className="py-3 text-left font-bold">状態</th>
+                <th className="py-3 text-left font-bold">トークン</th>
+                <th className="py-3 text-left font-bold">不透明度</th>
+                <th className="py-3 text-left font-bold">用途</th>
+              </tr>
+            </thead>
+            <tbody className="text-muted-foreground">
+              <tr className="border-border border-b">
+                <td className="py-3">Hover</td>
+                <td className="py-3">
+                  <code>bg-state-hover</code>
+                </td>
+                <td className="py-3">10%</td>
+                <td className="py-3">マウスオーバー時</td>
+              </tr>
+              <tr className="border-border border-b">
+                <td className="py-3">Focus</td>
+                <td className="py-3">
+                  <code>bg-state-focus</code>
+                </td>
+                <td className="py-3">12%</td>
+                <td className="py-3">キーボードフォーカス時</td>
+              </tr>
+              <tr className="border-border border-b">
+                <td className="py-3">Pressed</td>
+                <td className="py-3">
+                  <code>bg-state-pressed</code>
+                </td>
+                <td className="py-3">12%</td>
+                <td className="py-3">クリック中</td>
+              </tr>
+              <tr className="border-border border-b">
+                <td className="py-3">Selected</td>
+                <td className="py-3">
+                  <code>bg-state-selected</code>
+                </td>
+                <td className="py-3">12%</td>
+                <td className="py-3">選択状態</td>
+              </tr>
+              <tr className="border-border border-b">
+                <td className="py-3">Dragged</td>
+                <td className="py-3">
+                  <code>bg-state-dragged</code>
+                </td>
+                <td className="py-3">16%</td>
+                <td className="py-3">ドラッグ中</td>
+              </tr>
+              <tr>
+                <td className="py-3">Active</td>
+                <td className="py-3">
+                  <code>bg-state-active</code>
+                </td>
+                <td className="py-3">塗り</td>
+                <td className="py-3">選択中（塗りつぶし）</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
 
       {/* 汎用ホバー（Ghost/Outline用） */}
       <div className="mb-8">
