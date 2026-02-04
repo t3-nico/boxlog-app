@@ -43,7 +43,7 @@ export function CreateActionSheet({ open, onOpenChange, onSelect }: CreateAction
       description: t('createSheet.planDescription'),
       icon: Calendar,
       color: 'text-primary',
-      bgColor: 'bg-primary-container',
+      bgColor: 'bg-muted',
     },
     {
       id: 'record' as const,
@@ -51,7 +51,7 @@ export function CreateActionSheet({ open, onOpenChange, onSelect }: CreateAction
       description: t('createSheet.recordDescription'),
       icon: CheckSquare,
       color: 'text-success',
-      bgColor: 'bg-success-container',
+      bgColor: 'bg-muted',
     },
     {
       id: 'template' as const,
@@ -67,7 +67,7 @@ export function CreateActionSheet({ open, onOpenChange, onSelect }: CreateAction
       description: t('createSheet.historyDescription'),
       icon: History,
       color: 'text-warning',
-      bgColor: 'bg-warning/10',
+      bgColor: 'bg-muted',
     },
   ];
 
@@ -94,7 +94,7 @@ export function CreateActionSheet({ open, onOpenChange, onSelect }: CreateAction
                 type="button"
                 onClick={() => handleSelect(action.id)}
                 className={cn(
-                  'flex items-center gap-4 rounded-xl p-4',
+                  'flex items-center gap-4 rounded-2xl p-4',
                   'bg-card hover:bg-state-hover',
                   'border-border border',
                   'text-left transition-colors',

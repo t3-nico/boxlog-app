@@ -147,19 +147,19 @@ export function TagRenameDialog({
 
   const dialog = (
     <div
-      className="bg-overlay-heavy fixed inset-0 z-[250] flex items-center justify-center"
+      className="bg-card fixed inset-0 z-[250] flex items-center justify-center"
       onClick={handleBackdropClick}
       role="dialog"
       aria-modal="true"
       aria-label={t('calendar.filter.rename')}
     >
       <div
-        className="animate-in zoom-in-95 fade-in bg-card text-foreground border-border rounded-xl border p-6 shadow-lg duration-150"
+        className="animate-in zoom-in-95 fade-in bg-card text-foreground border-border rounded-2xl border p-6 shadow-lg duration-150"
         style={{ width: 'min(calc(100vw - 32px), 360px)' }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <h2 className="mb-4 text-base font-semibold">{t('calendar.filter.rename')}</h2>
+        <h2 className="mb-4 text-base font-bold">{t('calendar.filter.rename')}</h2>
 
         {/* Form */}
         <Field className="mb-6">

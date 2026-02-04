@@ -131,7 +131,7 @@ const TagItem = ({
     <div className="space-y-2">
       {/* タグアイテム */}
       <div
-        className="hover:bg-state-hover flex cursor-pointer items-center justify-between rounded-xl px-2 py-2 transition-colors duration-150"
+        className="hover:bg-state-hover flex cursor-pointer items-center justify-between rounded-2xl px-2 py-2 transition-colors duration-150"
         style={{ paddingLeft: `${paddingLeft}px` }}
         onClick={handleSelectTag}
         onKeyDown={handleKeyDown}
@@ -141,7 +141,7 @@ const TagItem = ({
         role="button"
         tabIndex={0}
       >
-        <div className="flex min-w-0 flex-1 items-center gap-3">
+        <div className="flex min-w-0 flex-1 items-center gap-4">
           {/* 展開/折りたたみアイコンまたはスペーサー */}
           <div className="flex h-4 w-4 flex-shrink-0 items-center justify-center">
             {hasChildren === true && (
@@ -220,7 +220,7 @@ const TagItem = ({
 
             {/* コンテキストメニュー */}
             {showMenu != null && (
-              <div className="border-border bg-popover text-popover-foreground absolute top-full right-0 z-50 mt-1 min-w-36 rounded-xl border py-1 shadow-lg">
+              <div className="border-border bg-popover text-popover-foreground absolute top-full right-0 z-50 mt-1 min-w-36 rounded-2xl border py-1 shadow-lg">
                 <Button
                   type="button"
                   variant="ghost"

@@ -100,7 +100,7 @@ export const ViewSwitcher = ({ options, currentView, onChange, className }: View
             <div className="flex items-center gap-2">
               {currentView === option.value && <Check className="text-primary h-4 w-4" />}
               {option.shortcut && (
-                <span className="bg-surface-container text-muted-foreground rounded px-1.5 py-0.5 font-mono text-xs">
+                <span className="bg-surface-container text-muted-foreground rounded px-2 py-1 font-mono text-xs">
                   {option.shortcut}
                 </span>
               )}

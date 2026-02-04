@@ -64,11 +64,11 @@ export function ActivityPopover({ activities, isPending }: ActivityPopoverProps)
         style={{ zIndex: zIndex.overlayDropdown }}
       >
         <div className="flex items-center justify-between px-4 py-4">
-          <h3 className="text-sm font-medium">{t('tabs.activity')}</h3>
+          <h3 className="text-sm font-bold">{t('tabs.activity')}</h3>
           <button
             type="button"
             onClick={() => setOpen(false)}
-            className="text-muted-foreground hover:bg-state-hover hover:text-foreground rounded-md p-1 transition-colors"
+            className="text-muted-foreground hover:bg-state-hover hover:text-foreground rounded-lg p-1 transition-colors"
             aria-label={tCommon('actions.close')}
           >
             <X className="size-4" />
@@ -109,9 +109,7 @@ export function ActivityPopover({ activities, isPending }: ActivityPopoverProps)
                     {/* コンテンツ */}
                     <div className="flex-1 pb-6">
                       <div className="flex items-start justify-between gap-2">
-                        <span className="text-sm leading-8 font-medium">
-                          {activity.actionLabel}
-                        </span>
+                        <span className="text-sm leading-8 font-bold">{activity.actionLabel}</span>
                         <span className="text-muted-foreground mt-2 flex-shrink-0 text-xs">
                           {formatRelativeTime(activity.created_at, locale)}
                         </span>
@@ -177,19 +175,7 @@ function getIconColor(color: ActivityIconColor): string {
   }
 }
 
-function getIconBgColor(color: ActivityIconColor): string {
-  switch (color) {
-    case 'success':
-      return 'bg-success/10';
-    case 'info':
-      return 'bg-info/10';
-    case 'warning':
-      return 'bg-warning/10';
-    case 'primary':
-      return 'bg-primary/10';
-    case 'destructive':
-      return 'bg-destructive/10';
-    default:
-      return 'bg-surface-container';
-  }
+function getIconBgColor(_color: ActivityIconColor): string {
+  // GAFAパターン: アイコン背景は統一、アイコン色で差別化
+  return 'bg-muted';
 }

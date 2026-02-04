@@ -18,15 +18,15 @@ BoxLog は Next.js 14 + TypeScript で構築されたタスク管理アプリケ
 
 **特定の課題を解決するためのステップバイステップ手順**
 
-| カテゴリ     | ドキュメント                                                     | 解決する課題             |
-| ------------ | ---------------------------------------------------------------- | ------------------------ |
-| **開発環境** | [Cursor AI統合](./setup/CURSOR_SETUP.md)                         | AI支援開発の設定         |
+| カテゴリ     | ドキュメント                                                           | 解決する課題              |
+| ------------ | ---------------------------------------------------------------------- | ------------------------- |
+| **開発環境** | [Cursor AI統合](./setup/CURSOR_SETUP.md)                               | AI支援開発の設定          |
 | **AI活用**   | [Claude 4ベストプラクティス](./development/CLAUDE_4_BEST_PRACTICES.md) | Claude Codeの効果的な活用 |
-| **デプロイ** | [Vercel設定](./setup/VERCEL_SETUP.md)                            | 本番環境構築             |
-| **CI/CD**    | [パイプライン設定](./setup/CI_CD_SETUP.md)                       | 自動化ワークフロー       |
-| **品質管理** | [ESLint設定](./development/ESLINT_HYBRID_APPROACH.md)            | コード品質確保           |
-| **監視**     | [Sentry統合](./integrations/SENTRY.md)                           | エラー監視導入           |
-| **テーマ**   | [テーマ移行](./design-system/THEME_MIGRATION.md)                 | UI統一化                 |
+| **デプロイ** | [Vercel設定](./setup/VERCEL_SETUP.md)                                  | 本番環境構築              |
+| **CI/CD**    | [パイプライン設定](./setup/CI_CD_SETUP.md)                             | 自動化ワークフロー        |
+| **品質管理** | [ESLint設定](./development/ESLINT_HYBRID_APPROACH.md)                  | コード品質確保            |
+| **監視**     | [Sentry統合](./integrations/SENTRY.md)                                 | エラー監視導入            |
+| **テーマ**   | [テーマ移行](./design-system/THEME_MIGRATION.md)                       | UI統一化                  |
 
 ### 📙 リファレンス (Reference) - 参照向け
 
@@ -35,7 +35,7 @@ BoxLog は Next.js 14 + TypeScript で構築されたタスク管理アプリケ
 | カテゴリ     | ドキュメント                                                | 内容                    |
 | ------------ | ----------------------------------------------------------- | ----------------------- |
 | **コマンド** | [コマンド一覧](./development/COMMANDS.md)                   | npm scripts全量         |
-| **デザイン** | [スタイルガイド](./design-system/STYLE_GUIDE.md)            | 8pxグリッド・色・タイポ |
+| **デザイン** | Storybook（`npm run storybook`）                            | 8pxグリッド・色・タイポ |
 | **エラー**   | [エラーパターン](./architecture/ERROR_PATTERNS_GUIDE.md)    | エラーコード体系        |
 | **API**      | [APIバリデーション](./architecture/API_VALIDATION_GUIDE.md) | API仕様・検証ルール     |
 | **Issue**    | [Issue管理ルール](./development/ISSUE_MANAGEMENT.md)        | ラベル・テンプレート    |
@@ -59,13 +59,13 @@ BoxLog は Next.js 14 + TypeScript で構築されたタスク管理アプリケ
 
 ### 役割別ナビゲーション
 
-| 役割               | 最初に読むべきドキュメント                                                                                                       |
-| ------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
-| **新規開発者**     | [セットアップ](./setup/README.md) → [コマンド一覧](./development/COMMANDS.md) → [スタイルガイド](./design-system/STYLE_GUIDE.md) |
-| **フロントエンド** | [デザインシステム](./design-system/README.md) → [エラーハンドリング](./architecture/ERROR_HANDLING.md)                           |
-| **バックエンド**   | [APIバリデーション](./architecture/API_VALIDATION_GUIDE.md) → [Supabase設定](./setup/SUPABASE_AUTH_SETUP.md)                     |
-| **QA/テスト**      | [認証テスト](./setup/AUTH_TESTING_GUIDE.md) → [テスティング](./testing/README.md)                                                |
-| **リリース担当**   | [リリースチェックリスト](./releases/RELEASE_CHECKLIST.md) → [バージョニング](./releases/VERSIONING.md)                           |
+| 役割               | 最初に読むべきドキュメント                                                                                   |
+| ------------------ | ------------------------------------------------------------------------------------------------------------ |
+| **新規開発者**     | [セットアップ](./setup/README.md) → [コマンド一覧](./development/COMMANDS.md) → Storybook                    |
+| **フロントエンド** | [デザインシステム](./design-system/README.md) → [エラーハンドリング](./architecture/ERROR_HANDLING.md)       |
+| **バックエンド**   | [APIバリデーション](./architecture/API_VALIDATION_GUIDE.md) → [Supabase設定](./setup/SUPABASE_AUTH_SETUP.md) |
+| **QA/テスト**      | [認証テスト](./setup/AUTH_TESTING_GUIDE.md) → [テスティング](./testing/README.md)                            |
+| **リリース担当**   | [リリースチェックリスト](./releases/RELEASE_CHECKLIST.md) → [バージョニング](./releases/VERSIONING.md)       |
 
 ---
 

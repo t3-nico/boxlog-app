@@ -56,14 +56,14 @@ export function StatusBar({ children, className }: StatusBarProps) {
  * ステータスバー左側セクション
  */
 function StatusBarLeft({ children, className }: StatusBarSectionProps) {
-  return <div className={cn('flex items-center gap-3', className)}>{children}</div>;
+  return <div className={cn('flex items-center gap-4', className)}>{children}</div>;
 }
 
 /**
  * ステータスバー右側セクション
  */
 function StatusBarRight({ children, className }: StatusBarSectionProps) {
-  return <div className={cn('flex items-center gap-3', className)}>{children}</div>;
+  return <div className={cn('flex items-center gap-4', className)}>{children}</div>;
 }
 
 /**

@@ -35,7 +35,7 @@ function DefaultErrorFallback({
   const t = useTranslations();
 
   return (
-    <div className="border-destructive bg-surface-container rounded-xl border p-6">
+    <div className="border-destructive bg-surface-container rounded-2xl border p-6">
       <div className="text-center">
         <div className="text-destructive mb-4 text-6xl">⚠️</div>
         <h2 className="text-destructive mb-2 text-3xl font-bold tracking-tight">
@@ -72,7 +72,7 @@ function DevErrorFallback({ componentName }: { componentName?: string | undefine
   const t = useTranslations();
 
   return (
-    <div className="border-border bg-surface-container rounded-xl border p-6">
+    <div className="border-border bg-surface-container rounded-2xl border p-6">
       <h3 className="text-foreground mb-2 text-2xl font-bold tracking-tight">
         {t('error.boundary.devTitle')}
       </h3>
@@ -97,7 +97,7 @@ function FeatureErrorFallback({ featureName }: { featureName: string }) {
       </p>
       <button
         onClick={() => window.location.reload()}
-        className="bg-primary text-primary-foreground hover:bg-primary-hover mx-auto mt-2 block rounded px-3 py-1 text-sm transition-colors"
+        className="bg-primary text-primary-foreground hover:bg-primary-hover mx-auto mt-2 block rounded px-4 py-1 text-sm transition-colors"
       >
         {t('error.boundary.reload')}
       </button>

@@ -348,19 +348,19 @@ export function PlanTableView() {
             <TabsList className="bg-secondary border-border h-10 rounded-full border p-1">
               <TabsTrigger
                 value="open"
-                className="data-[state=inactive]:hover:bg-state-hover data-[state=active]:bg-background data-[state=active]:text-foreground h-8 gap-2 rounded-full px-4 text-sm"
+                className="data-[state=inactive]:hover:bg-state-hover data-[state=active]:bg-state-active data-[state=active]:text-state-active-foreground h-8 gap-2 rounded-full px-4 text-sm"
               >
                 Open
-                <span className="bg-background flex size-5 items-center justify-center rounded-full text-xs tabular-nums">
+                <span className="bg-container flex size-5 items-center justify-center rounded-full text-xs tabular-nums">
                   {openCount}
                 </span>
               </TabsTrigger>
               <TabsTrigger
                 value="closed"
-                className="data-[state=inactive]:hover:bg-state-hover data-[state=active]:bg-background data-[state=active]:text-foreground h-8 gap-2 rounded-full px-4 text-sm"
+                className="data-[state=inactive]:hover:bg-state-hover data-[state=active]:bg-state-active data-[state=active]:text-state-active-foreground h-8 gap-2 rounded-full px-4 text-sm"
               >
                 Closed
-                <span className="bg-background flex size-5 items-center justify-center rounded-full text-xs tabular-nums">
+                <span className="bg-container flex size-5 items-center justify-center rounded-full text-xs tabular-nums">
                   {closedCount}
                 </span>
               </TabsTrigger>
@@ -402,7 +402,7 @@ export function PlanTableView() {
       >
         <div
           ref={tableContainerRef}
-          className="border-border flex flex-1 flex-col overflow-auto rounded-xl border [&::-webkit-scrollbar-corner]:rounded-xl [&::-webkit-scrollbar-track]:rounded-xl"
+          className="border-border flex flex-1 flex-col overflow-auto rounded-2xl border [&::-webkit-scrollbar-corner]:rounded-2xl [&::-webkit-scrollbar-track]:rounded-2xl"
         >
           <PlanTableContent
             items={items}

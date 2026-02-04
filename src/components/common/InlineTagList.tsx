@@ -6,7 +6,6 @@ import { Tag, X } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { HoverTooltip } from '@/components/ui/tooltip';
-import { zIndex } from '@/config/ui/z-index';
 import { TagSelectCombobox } from '@/features/plans/components/shared/TagSelectCombobox';
 import { useTags } from '@/features/tags/hooks';
 import { cn } from '@/lib/utils';
@@ -18,8 +17,8 @@ interface InlineTagListProps {
   onTagsChange: (tagIds: string[]) => void;
   /** Popoverの表示位置 */
   popoverSide?: 'top' | 'bottom';
-  /** PopoverのzIndex（Inspector内で使う場合に指定） */
-  popoverZIndex?: number;
+  /** Inspector内で使う場合にtrue（z-overlay-popoverを適用） */
+  isOverlay?: boolean;
   /** タグなし時のプレースホルダーテキスト */
   emptyPlaceholder?: string;
 }
@@ -34,7 +33,7 @@ export function InlineTagList({
   tagIds,
   onTagsChange,
   popoverSide = 'bottom',
-  popoverZIndex = zIndex.overlayDropdown,
+  isOverlay = true,
   emptyPlaceholder = 'タグを追加...',
 }: InlineTagListProps) {
   const { data: allTags = [] } = useTags();
@@ -69,7 +68,7 @@ export function InlineTagList({
                 e.stopPropagation();
                 handleRemoveTag(tag.id);
               }}
-              className="hover:bg-state-hover absolute top-1/2 right-1 -translate-y-1/2 rounded-sm opacity-70 transition-opacity hover:opacity-100"
+              className="hover:bg-state-hover absolute top-1/2 right-1 -translate-y-1/2 rounded opacity-70 transition-opacity hover:opacity-100"
             >
               <X className="size-3" />
             </button>
@@ -84,13 +83,13 @@ export function InlineTagList({
           onTagsChange={onTagsChange}
           side={popoverSide}
           sideOffset={8}
-          zIndex={popoverZIndex}
+          isOverlay={isOverlay}
         >
           {hasTags ? (
             <button
               type="button"
               className={cn(
-                'flex size-8 items-center justify-center rounded-md transition-colors',
+                'flex size-8 items-center justify-center rounded-lg transition-colors',
                 'hover:bg-state-hover focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
                 'text-muted-foreground hover:text-foreground',
               )}
@@ -101,7 +100,7 @@ export function InlineTagList({
           ) : (
             <button
               type="button"
-              className="text-muted-foreground hover:bg-state-hover h-8 rounded-md px-2 text-sm transition-colors"
+              className="text-muted-foreground hover:bg-state-hover h-8 rounded-lg px-2 text-sm transition-colors"
             >
               {emptyPlaceholder}
             </button>

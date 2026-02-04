@@ -74,7 +74,7 @@ export function EmptyState({
   const content = (
     <div role="status" className={cn('text-center', s.gap, !centered && className)}>
       {Icon && (
-        <div className="mb-3">
+        <div className="mb-4">
           <Icon className={cn(s.icon, 'text-muted-foreground mx-auto')} />
         </div>
       )}

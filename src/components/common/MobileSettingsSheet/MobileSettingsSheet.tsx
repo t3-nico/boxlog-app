@@ -78,7 +78,7 @@ export function MobileSettingsSheet({
           <Button variant="ghost" size="icon-sm" className="relative shrink-0">
             {triggerIcon ?? <SlidersHorizontal className="size-4" />}
             {hasActiveSettings && (
-              <span className="bg-primary absolute -top-0.5 -right-0.5 size-2 rounded-full" />
+              <span className="bg-primary absolute -top-1 -right-0.5 size-2 rounded-full" />
             )}
           </Button>
         </DrawerTrigger>

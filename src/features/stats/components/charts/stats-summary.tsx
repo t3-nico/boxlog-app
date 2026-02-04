@@ -22,8 +22,8 @@ export function StatsSummary() {
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <Skeleton className="h-4 w-24" />
-            <Skeleton className="size-4" />
+            <CardTitle className="text-sm font-normal">完了タスク</CardTitle>
+            <CheckCircle2 className="text-muted-foreground size-4" />
           </CardHeader>
           <CardContent>
             <Skeleton className="h-8 w-16" />
@@ -32,8 +32,8 @@ export function StatsSummary() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <Skeleton className="h-4 w-24" />
-            <Skeleton className="size-4" />
+            <CardTitle className="text-sm font-normal">今月の作業時間</CardTitle>
+            <Clock className="text-muted-foreground size-4" />
           </CardHeader>
           <CardContent>
             <Skeleton className="h-8 w-16" />
@@ -42,8 +42,8 @@ export function StatsSummary() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <Skeleton className="h-4 w-24" />
-            <Skeleton className="size-4" />
+            <CardTitle className="text-sm font-normal">累計時間</CardTitle>
+            <TrendingUp className="text-muted-foreground size-4" />
           </CardHeader>
           <CardContent>
             <Skeleton className="h-8 w-16" />

@@ -21,7 +21,7 @@ const generateHeaderClasses = (
   className?: string,
 ): string => {
   const baseClasses =
-    'flex items-center justify-center py-2 px-1 text-center transition-colors rounded-xl';
+    'flex items-center justify-center py-2 px-1 text-center transition-colors rounded-2xl';
 
   const hoverClasses =
     onClick && !isToday

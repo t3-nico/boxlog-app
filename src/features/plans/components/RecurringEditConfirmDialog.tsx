@@ -87,14 +87,14 @@ export function RecurringEditConfirmDialog() {
 
   const dialog = (
     <div
-      className="animate-in fade-in bg-overlay-heavy fixed inset-0 z-[250] flex items-center justify-center duration-150"
+      className="animate-in fade-in bg-card fixed inset-0 z-[250] flex items-center justify-center duration-150"
       onClick={handleBackdropClick}
       role="dialog"
       aria-modal="true"
       aria-labelledby="recurring-edit-dialog-title"
     >
       <div
-        className="animate-in zoom-in-95 fade-in bg-card text-foreground border-border rounded-xl border p-6 shadow-lg duration-150"
+        className="animate-in zoom-in-95 fade-in bg-card text-foreground border-border rounded-2xl border p-6 shadow-lg duration-150"
         style={{ width: 'min(calc(100vw - 32px), 360px)' }}
         onClick={(e) => e.stopPropagation()}
       >

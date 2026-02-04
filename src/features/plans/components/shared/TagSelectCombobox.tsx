@@ -26,8 +26,8 @@ interface TagSelectComboboxProps {
   side?: 'top' | 'right' | 'bottom' | 'left' | undefined;
   alignOffset?: number | undefined;
   sideOffset?: number | undefined;
-  /** PopoverContentのz-index（Inspector内で使う場合に指定） */
-  zIndex?: number | undefined;
+  /** Inspector内で使う場合にtrueを指定（z-overlay-popoverを適用） */
+  isOverlay?: boolean | undefined;
 }
 
 /**
@@ -54,7 +54,7 @@ function TagItem({
     >
       <div
         className={cn(
-          'flex size-4 shrink-0 items-center justify-center rounded-sm border',
+          'flex size-4 shrink-0 items-center justify-center rounded border',
           isSelected ? 'border-transparent' : 'border-current opacity-50',
         )}
         style={{
@@ -97,7 +97,7 @@ function ParentTagHeader({
 
   return (
     <CommandItem value={tag.id} className="cursor-pointer p-0" onSelect={() => {}}>
-      <div className="flex w-full items-center gap-2 py-1.5 pr-2 pl-2" onClick={onToggleExpand}>
+      <div className="flex w-full items-center gap-2 py-2 pr-2 pl-2" onClick={onToggleExpand}>
         {/* チェックボックス（選択トグル、展開には影響しない） */}
         <button
           type="button"
@@ -109,7 +109,7 @@ function ParentTagHeader({
         >
           <div
             className={cn(
-              'flex size-4 shrink-0 items-center justify-center rounded-sm border',
+              'flex size-4 shrink-0 items-center justify-center rounded border',
               isSelected ? 'border-transparent' : 'border-current opacity-50',
             )}
             style={{
@@ -155,7 +155,7 @@ export function TagSelectCombobox({
   side = 'bottom',
   alignOffset = 0,
   sideOffset = 4,
-  zIndex,
+  isOverlay = false,
 }: TagSelectComboboxProps) {
   const t = useTranslations();
   const [isOpen, setIsOpen] = useState(false);
@@ -255,12 +255,11 @@ export function TagSelectCombobox({
     <Popover open={isOpen} onOpenChange={handleOpenChange}>
       <PopoverTrigger asChild>{children}</PopoverTrigger>
       <PopoverContent
-        className="w-[280px] p-0"
+        className={cn('w-[280px] p-0', isOverlay && 'z-overlay-popover')}
         align={align}
         side={side}
         alignOffset={alignOffset}
         sideOffset={sideOffset}
-        style={zIndex ? { zIndex } : undefined}
       >
         <Command shouldFilter={false}>
           <CommandInput

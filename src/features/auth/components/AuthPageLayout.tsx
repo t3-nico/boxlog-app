@@ -48,7 +48,7 @@ export function AuthPageLayout({
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       {/* 左側: フォームエリア */}
-      <div className="flex flex-col gap-4 p-6 md:p-10">
+      <div className="flex flex-col gap-4 p-6 md:p-8">
         {/* ロゴ */}
         <div className="flex justify-center gap-2 md:justify-start">
           <Link href="/" className="flex items-center gap-2 font-normal">

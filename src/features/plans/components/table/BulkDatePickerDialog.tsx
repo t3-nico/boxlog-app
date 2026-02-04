@@ -127,7 +127,7 @@ export function BulkDatePickerDialog({
         <div className="space-y-4">
           {/* 選択された日付のプレビュー */}
           {selectedDate && (
-            <div className="bg-surface-container rounded-md p-3">
+            <div className="bg-surface-container rounded-lg p-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <CalendarIcon className="text-muted-foreground size-4" />
@@ -152,7 +152,7 @@ export function BulkDatePickerDialog({
             <MiniCalendar
               selectedDate={selectedDate}
               onDateSelect={setSelectedDate}
-              className="rounded-md border"
+              className="rounded-lg border"
             />
           </div>
 

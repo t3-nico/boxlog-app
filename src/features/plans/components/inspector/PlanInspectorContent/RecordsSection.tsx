@@ -97,7 +97,7 @@ export function RecordsSection({ planId }: RecordsSectionProps) {
             {/* 合計時間 */}
             <div className="bg-surface-container mb-2 flex items-center justify-between rounded-lg p-2">
               <span className="text-muted-foreground text-xs">合計時間</span>
-              <span className="text-sm font-medium">{formatDuration(totalMinutes)}</span>
+              <span className="text-sm font-bold">{formatDuration(totalMinutes)}</span>
             </div>
 
             {/* Records リスト */}

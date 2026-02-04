@@ -54,7 +54,7 @@ export function MobileSettingsButtonGroup<T extends string | null>({
           onClick={() => onValueChange(option.value)}
           className={fullWidth ? 'flex-1' : ''}
         >
-          {option.icon && <span className="mr-1.5 [&>svg]:size-3.5">{option.icon}</span>}
+          {option.icon && <span className="mr-2 [&>svg]:size-3.5">{option.icon}</span>}
           {option.label}
           {value === option.value && !option.icon && <Check className="ml-1 size-3" />}
         </Button>

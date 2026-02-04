@@ -55,7 +55,7 @@ export function PlanCard({ plan, onEdit, onDelete, onClick, tags = [] }: PlanCar
       className="group hover:border-primary/50 relative cursor-pointer transition-all hover:shadow-md"
       onClick={handleCardClick}
     >
-      <CardHeader className="pb-3">
+      <CardHeader className="pb-4">
         <div className="flex items-start justify-between gap-2">
           <div className="flex-1 space-y-1">
             <h3 className="text-foreground line-clamp-2 font-bold">{plan.title}</h3>
@@ -93,7 +93,7 @@ export function PlanCard({ plan, onEdit, onDelete, onClick, tags = [] }: PlanCar
         </div>
       </CardHeader>
 
-      <CardContent className="space-y-3">
+      <CardContent className="space-y-4">
         {/* ステータス */}
         <div className="flex flex-wrap gap-2">
           <PlanStatusBadge status={plan.status} />
@@ -113,7 +113,7 @@ export function PlanCard({ plan, onEdit, onDelete, onClick, tags = [] }: PlanCar
             {tags.map((tag) => (
               <span
                 key={tag.id}
-                className="inline-flex items-center rounded-md px-2 py-0.5 text-xs font-normal"
+                className="inline-flex items-center rounded-lg px-2 py-1 text-xs font-normal"
                 style={{
                   backgroundColor: `${tag.color}20`,
                   color: tag.color,

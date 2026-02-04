@@ -23,7 +23,7 @@ import React, {
 } from 'react';
 
 import { Checkbox } from '@/components/ui/checkbox';
-import { ColorPalettePicker } from '@/components/ui/color-palette-picker';
+import { ColorPaletteMenuItems } from '@/components/ui/color-palette-picker';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -218,23 +218,23 @@ export const TagTreeItem = forwardRef<HTMLDivElement, TagTreeItemProps>(
     if (clone) {
       return (
         <li
-          className="pointer-events-none box-border inline-block list-none p-0 pt-1.5 pl-2.5"
+          className="pointer-events-none box-border inline-block list-none p-0 pt-2 pl-2"
           {...props}
         >
           <div
-            className="bg-card border-border relative flex items-center rounded border py-1.5 pr-6 shadow-lg"
+            className="bg-card border-border relative flex items-center rounded border py-2 pr-6 shadow-lg"
             ref={ref}
             style={style}
           >
             <div
-              className="ml-2 h-3 w-3 shrink-0 rounded-sm"
+              className="ml-2 h-3 w-3 shrink-0 rounded"
               style={{ backgroundColor: displayColor }}
             />
             <span className="ml-2 grow overflow-hidden text-sm text-ellipsis whitespace-nowrap">
               {tag.name}
             </span>
             {childCount && childCount > 1 && (
-              <span className="bg-primary text-primary-foreground absolute -top-2.5 -right-2.5 flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold">
+              <span className="bg-primary text-primary-foreground absolute -top-2 -right-2.5 flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold">
                 {childCount}
               </span>
             )}
@@ -327,8 +327,8 @@ export const TagTreeItem = forwardRef<HTMLDivElement, TagTreeItemProps>(
                   <Palette className="mr-2 size-4" />
                   {t('calendar.filter.changeColor')}
                 </DropdownMenuSubTrigger>
-                <DropdownMenuSubContent className="p-2" onClick={(e) => e.stopPropagation()}>
-                  <ColorPalettePicker
+                <DropdownMenuSubContent onClick={(e) => e.stopPropagation()}>
+                  <ColorPaletteMenuItems
                     selectedColor={displayColor}
                     onColorSelect={handleColorChange}
                   />

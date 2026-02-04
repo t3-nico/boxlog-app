@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 
 import { cn } from '@/lib/utils';
 
-import { ColorPalettePicker } from '@/components/ui/color-palette-picker';
+import { ColorPaletteMenuItems } from '@/components/ui/color-palette-picker';
 import {
   DropdownMenuContent,
   DropdownMenuItem,
@@ -59,8 +59,8 @@ export function FilterItemMenu({
           <Palette className="mr-2 size-4" />
           {t('calendar.filter.changeColor')}
         </DropdownMenuSubTrigger>
-        <DropdownMenuSubContent className="p-2" onClick={(e) => e.stopPropagation()}>
-          <ColorPalettePicker selectedColor={displayColor} onColorSelect={onColorChange} />
+        <DropdownMenuSubContent onClick={(e) => e.stopPropagation()}>
+          <ColorPaletteMenuItems selectedColor={displayColor} onColorSelect={onColorChange} />
         </DropdownMenuSubContent>
       </DropdownMenuSub>
 

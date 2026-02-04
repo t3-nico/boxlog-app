@@ -228,7 +228,6 @@ const nextConfig = {
       '@radix-ui/react-context-menu',
       '@radix-ui/react-dialog',
       '@radix-ui/react-dropdown-menu',
-      '@radix-ui/react-hover-card',
       '@radix-ui/react-label',
       '@radix-ui/react-popover',
       '@radix-ui/react-progress',

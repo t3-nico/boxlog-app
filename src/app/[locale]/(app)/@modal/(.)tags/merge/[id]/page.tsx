@@ -132,7 +132,7 @@ export default function TagMergeInterceptedModal() {
         aria-modal="true"
       >
         <div
-          className="bg-card text-foreground border-border rounded-xl border p-6 shadow-lg"
+          className="bg-card text-foreground border-border rounded-2xl border p-6 shadow-lg"
           style={{ width: 'min(calc(100vw - 32px), 400px)' }}
         >
           <Skeleton className="mb-2 h-6 w-32" />
@@ -153,7 +153,7 @@ export default function TagMergeInterceptedModal() {
         aria-modal="true"
       >
         <div
-          className="bg-card text-foreground border-border rounded-xl border p-6 shadow-lg"
+          className="bg-card text-foreground border-border rounded-2xl border p-6 shadow-lg"
           style={{ width: 'min(calc(100vw - 32px), 400px)' }}
         >
           <h2 className="mb-2 text-lg font-bold">{t('common.error')}</h2>
@@ -176,7 +176,7 @@ export default function TagMergeInterceptedModal() {
     >
       {/* ダイアログコンテンツ */}
       <div
-        className="animate-in zoom-in-95 fade-in bg-card text-foreground border-border rounded-xl border p-6 shadow-lg duration-150"
+        className="animate-in zoom-in-95 fade-in bg-card text-foreground border-border rounded-2xl border p-6 shadow-lg duration-150"
         style={{ width: 'min(calc(100vw - 32px), 400px)' }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -198,7 +198,7 @@ export default function TagMergeInterceptedModal() {
         />
 
         {/* タグ選択（ラジオボタンリスト） */}
-        <div className="border-border max-h-[200px] overflow-y-auto rounded-md border">
+        <div className="border-border max-h-[200px] overflow-y-auto rounded-lg border">
           {filteredTags.length === 0 ? (
             <p className="text-muted-foreground p-4 text-center text-sm">
               {t('calendar.filter.mergeTag.noResults')}
@@ -217,7 +217,7 @@ export default function TagMergeInterceptedModal() {
                   key={tag.id}
                   htmlFor={`merge-target-${tag.id}`}
                   className={cn(
-                    'flex cursor-pointer items-center gap-3 rounded-md px-3 py-2 transition-colors',
+                    'flex cursor-pointer items-center gap-4 rounded-lg px-4 py-2 transition-colors',
                     'hover:bg-state-hover',
                     selectedTargetId === tag.id && 'bg-state-selected',
                   )}

@@ -14,16 +14,6 @@ export {
   staticCache,
 } from './cache-config';
 
-// エラーハンドリング
-export {
-  getRetryDelay,
-  handleQueryError,
-  logMutationSuccess,
-  logQueryError,
-  shouldRetry,
-  type ErrorContext,
-} from './error-handler';
-
 // 楽観的更新ヘルパー
 export {
   addToList,

@@ -15,7 +15,7 @@ export function createDragElement(originalElement: HTMLElement): {
   const dragElement = originalElement.cloneNode(true) as HTMLElement;
 
   dragElement.className = '';
-  dragElement.classList.add('rounded-md', 'px-2', 'py-1', 'overflow-hidden');
+  dragElement.classList.add('rounded-lg', 'px-2', 'py-1', 'overflow-hidden');
 
   // セマンティックトークンを直接使用
   dragElement.classList.add('bg-container');

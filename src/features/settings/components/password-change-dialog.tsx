@@ -150,7 +150,7 @@ export function PasswordChangeDialog({ open, onOpenChange }: PasswordChangeDialo
 
         {success ? (
           <div className="space-y-4 py-4">
-            <div className="border-success/30 bg-success/5 rounded-xl p-4">
+            <div className="border-success/30 bg-success/5 rounded-2xl p-4">
               <p className="text-success text-sm font-normal">
                 {t('settings.account.passwordUpdated')}
               </p>
@@ -171,7 +171,7 @@ export function PasswordChangeDialog({ open, onOpenChange }: PasswordChangeDialo
                     minLength={8}
                     maxLength={64}
                     autoComplete="current-password"
-                    className="pr-10"
+                    className="pr-8"
                   />
                   <Button
                     type="button"
@@ -201,7 +201,7 @@ export function PasswordChangeDialog({ open, onOpenChange }: PasswordChangeDialo
                     minLength={8}
                     maxLength={64}
                     autoComplete="new-password"
-                    className="pr-10"
+                    className="pr-8"
                   />
                   <Button
                     type="button"
@@ -230,7 +230,7 @@ export function PasswordChangeDialog({ open, onOpenChange }: PasswordChangeDialo
                     minLength={8}
                     maxLength={64}
                     autoComplete="new-password"
-                    className="pr-10"
+                    className="pr-8"
                   />
                   <Button
                     type="button"
@@ -249,7 +249,7 @@ export function PasswordChangeDialog({ open, onOpenChange }: PasswordChangeDialo
               </div>
 
               {error && (
-                <div className="bg-destructive-container text-destructive rounded-md p-3 text-sm">
+                <div className="border-destructive text-destructive rounded-lg border p-4 text-sm">
                   {error}
                 </div>
               )}

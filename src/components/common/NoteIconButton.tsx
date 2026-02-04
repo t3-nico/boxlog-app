@@ -69,7 +69,7 @@ export function NoteIconButton({
             type="button"
             disabled={disabled}
             className={cn(
-              'relative flex h-8 items-center justify-center rounded-md px-2 transition-colors',
+              'relative flex h-8 items-center justify-center rounded-lg px-2 transition-colors',
               'hover:bg-state-hover focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
               hasContent ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',
             )}
@@ -78,7 +78,7 @@ export function NoteIconButton({
             <FileText className="size-4" />
             {/* 内容がある場合のインジケータードット */}
             {hasContent && (
-              <span className="bg-primary absolute -top-0.5 -right-0.5 size-2 rounded-full" />
+              <span className="bg-primary absolute -top-1 -right-0.5 size-2 rounded-full" />
             )}
           </button>
         </PopoverTrigger>

@@ -43,7 +43,7 @@ export function TablePagination({
   const goToNextPage = () => onPageChange(Math.min(totalPages, currentPage + 1));
 
   return (
-    <div className="flex items-center justify-between px-4 py-3">
+    <div className="flex items-center justify-between px-4 py-4">
       {/* 左側: アイテム範囲 */}
       <div className="text-muted-foreground text-sm">
         {totalItems > 0

@@ -10,7 +10,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import { Spinner } from '@/components/ui/spinner';
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { useAuthStore } from '@/features/auth/stores/useAuthStore';
 import { useTranslations } from 'next-intl';
@@ -84,7 +83,7 @@ export default function ResetPasswordPage() {
 
   if (success) {
     return (
-      <div className="bg-surface-container flex min-h-svh flex-col items-center justify-center p-4 md:p-10">
+      <div className="bg-surface-container flex min-h-svh flex-col items-center justify-center p-4 md:p-8">
         <div className="w-full md:max-w-5xl">
           <div className="flex flex-col gap-6">
             <Card className="overflow-hidden p-0">
@@ -92,7 +91,7 @@ export default function ResetPasswordPage() {
                 <div className="p-6 md:p-8">
                   <FieldGroup>
                     <div className="flex flex-col items-center gap-2 text-center">
-                      <div className="bg-primary-container text-on-primary-container mb-2 flex h-12 w-12 items-center justify-center rounded-full">
+                      <div className="bg-state-active text-state-active-foreground mb-2 flex h-12 w-12 items-center justify-center rounded-full">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           width="24"
@@ -133,7 +132,7 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <div className="bg-surface-container flex min-h-svh flex-col items-center justify-center p-4 md:p-10">
+    <div className="bg-surface-container flex min-h-svh flex-col items-center justify-center p-4 md:p-8">
       <div className="w-full md:max-w-5xl">
         <div className="flex flex-col gap-6">
           <Card className="overflow-hidden p-0">
@@ -179,7 +178,7 @@ export default function ResetPasswordPage() {
                           type="button"
                           variant="ghost"
                           size="icon"
-                          className="absolute top-0 right-0 h-full px-3"
+                          className="absolute top-0 right-0 h-full px-4"
                           onClick={() => setShowPassword(!showPassword)}
                           disabled={loading}
                         >
@@ -219,7 +218,7 @@ export default function ResetPasswordPage() {
                           type="button"
                           variant="ghost"
                           size="icon"
-                          className="absolute top-0 right-0 h-full px-3"
+                          className="absolute top-0 right-0 h-full px-4"
                           onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                           disabled={loading}
                         >
@@ -234,11 +233,13 @@ export default function ResetPasswordPage() {
                   </Field>
 
                   <Field>
-                    <Button type="submit" disabled={loading} className="w-full">
-                      {loading && <Spinner className="mr-2" />}
-                      {loading
-                        ? t('auth.resetPasswordForm.updating')
-                        : t('auth.resetPasswordForm.updateButton')}
+                    <Button
+                      type="submit"
+                      isLoading={loading}
+                      loadingText={t('auth.resetPasswordForm.updating')}
+                      className="w-full"
+                    >
+                      {t('auth.resetPasswordForm.updateButton')}
                     </Button>
                   </Field>
 

@@ -132,7 +132,7 @@ export function NotificationDropdown({
     return (
       <>
         {/* アクションバー */}
-        <div className="mb-3 flex items-center justify-between px-1">
+        <div className="mb-4 flex items-center justify-between px-1">
           <span className="text-muted-foreground text-xs">
             {t('notification.count.all', { count: totalCount })}
           </span>
@@ -159,13 +159,11 @@ export function NotificationDropdown({
         </div>
 
         {/* グループ化された通知リスト */}
-        <div className="max-h-[28rem] min-h-[20rem] space-y-3 overflow-y-auto">
+        <div className="max-h-[28rem] min-h-[20rem] space-y-4 overflow-y-auto">
           {groupedNotifications.map((group) => (
             <div key={group.key}>
               {/* グループヘッダー */}
-              <h3 className="text-muted-foreground mb-1.5 px-1 text-xs font-normal">
-                {group.label}
-              </h3>
+              <h3 className="text-muted-foreground mb-2 px-1 text-xs font-normal">{group.label}</h3>
               {/* 通知アイテム */}
               <div className="space-y-1">
                 {group.notifications.map((notification) => (
@@ -198,7 +196,7 @@ export function NotificationDropdown({
       <DropdownMenuTrigger asChild>
         <button
           type="button"
-          className={`hover:bg-state-hover data-[state=open]:bg-state-selected relative flex items-center justify-center rounded-xl outline-hidden transition-colors ${
+          className={`hover:bg-state-hover data-[state=open]:bg-state-selected relative flex items-center justify-center rounded-2xl outline-hidden transition-colors ${
             size === 'sm' ? 'h-8 w-8' : 'h-10 w-10'
           }`}
           aria-label={t('notification.title')}
@@ -209,7 +207,7 @@ export function NotificationDropdown({
               className={`bg-destructive text-destructive-foreground absolute flex items-center justify-center rounded-full font-bold ${
                 size === 'sm'
                   ? 'top-0 right-0 h-3.5 w-3.5 text-xs'
-                  : 'top-0.5 right-0 h-4 w-4 text-xs'
+                  : 'top-1 right-0 h-4 w-4 text-xs'
               }`}
             >
               {unreadCount > 9 ? '9+' : unreadCount}
@@ -218,17 +216,17 @@ export function NotificationDropdown({
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        className="w-full max-w-sm overflow-visible rounded-xl p-0 sm:w-96 sm:max-w-96"
+        className="w-full max-w-sm overflow-visible rounded-2xl p-0 sm:w-96 sm:max-w-96"
         side="right"
         align="start"
         sideOffset={8}
       >
         {/* ヘッダー */}
-        <DropdownMenuLabel className="flex items-center justify-between px-4 py-3">
+        <DropdownMenuLabel className="flex items-center justify-between px-4 py-4">
           <div className="flex items-center gap-2">
             <span className="text-sm font-bold">{t('notification.title')}</span>
             {unreadCount > 0 && (
-              <span className="bg-primary text-primary-foreground rounded-full px-2 py-0.5 text-xs">
+              <span className="bg-primary text-primary-foreground rounded-full px-2 py-1 text-xs">
                 {unreadCount}
               </span>
             )}
@@ -237,7 +235,7 @@ export function NotificationDropdown({
             <button
               type="button"
               onClick={handleOpenSettings}
-              className="hover:bg-state-hover flex h-10 w-10 items-center justify-center rounded-md transition-colors"
+              className="hover:bg-state-hover flex h-10 w-10 items-center justify-center rounded-lg transition-colors"
             >
               <Settings className="h-4 w-4" />
               <span className="sr-only">{t('notification.settings.title')}</span>
@@ -248,7 +246,7 @@ export function NotificationDropdown({
         <DropdownMenuSeparator className="my-0" />
 
         {/* 通知リスト */}
-        <div className="overflow-visible p-3">{renderNotificationList()}</div>
+        <div className="overflow-visible p-4">{renderNotificationList()}</div>
       </DropdownMenuContent>
     </DropdownMenu>
   );

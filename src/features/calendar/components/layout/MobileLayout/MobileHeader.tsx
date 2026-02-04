@@ -149,7 +149,7 @@ export const MobileHeader = ({
             <button
               type="button"
               onClick={handleViewMenuOpen}
-              className="text-muted-foreground hover:bg-state-hover rounded px-2 py-0.5 text-xs transition-colors"
+              className="text-muted-foreground hover:bg-state-hover rounded px-2 py-1 text-xs transition-colors"
             >
               {viewLabels[viewType] || viewType}
               {t('calendar.mobile.header.viewSuffix')}
@@ -192,7 +192,7 @@ export const MobileHeader = ({
           />
 
           {/* メニュー */}
-          <div className="bg-background border-border absolute top-full left-1/2 z-50 mt-2 w-48 -translate-x-1/2 rounded-xl border shadow-lg">
+          <div className="bg-background border-border absolute top-full left-1/2 z-50 mt-2 w-48 -translate-x-1/2 rounded-2xl border shadow-lg">
             <div className="py-2">
               {Object.entries(viewLabels).map(([value, label]) => (
                 <button
@@ -200,7 +200,7 @@ export const MobileHeader = ({
                   key={value}
                   onClick={createViewChangeHandler(value as CalendarViewType)}
                   className={cn(
-                    'hover:bg-state-hover w-full px-4 py-3 text-left text-sm transition-colors',
+                    'hover:bg-state-hover w-full px-4 py-4 text-left text-sm transition-colors',
                     viewType === value && 'bg-state-selected text-foreground font-normal',
                   )}
                 >

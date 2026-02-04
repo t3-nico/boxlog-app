@@ -45,7 +45,7 @@ export function PlanTagsSection({
         <Tag className="text-muted-foreground size-4" />
       </div>
       <div className="flex min-h-8 flex-1 items-center">
-        <div className="flex max-h-[5.25rem] flex-wrap items-center gap-1.5 overflow-y-auto">
+        <div className="flex max-h-[5.25rem] flex-wrap items-center gap-2 overflow-y-auto">
           {/* 選択済みタグを表示 */}
           {selectedTags.map((tag) => {
             const badgeContent = (
@@ -64,7 +64,7 @@ export function PlanTagsSection({
                       e.stopPropagation();
                       onRemoveTag(tag.id);
                     }}
-                    className="hover:bg-state-hover absolute top-1/2 right-1 -translate-y-1/2 rounded-sm opacity-70 transition-opacity hover:opacity-100"
+                    className="hover:bg-state-hover absolute top-1/2 right-1 -translate-y-1/2 rounded opacity-70 transition-opacity hover:opacity-100"
                   >
                     <X className="h-3 w-3" />
                   </button>
@@ -96,14 +96,14 @@ export function PlanTagsSection({
             {selectedTagIds.length === 0 ? (
               <button
                 type="button"
-                className="text-muted-foreground hover:bg-state-hover h-8 rounded-md px-2 text-sm transition-colors"
+                className="text-muted-foreground hover:bg-state-hover h-8 rounded-lg px-2 text-sm transition-colors"
               >
                 タグを追加...
               </button>
             ) : (
               <button
                 type="button"
-                className="text-muted-foreground hover:bg-state-hover flex h-8 w-8 items-center justify-center rounded-md transition-colors"
+                className="text-muted-foreground hover:bg-state-hover flex h-8 w-8 items-center justify-center rounded-lg transition-colors"
               >
                 <Plus className="size-4" />
               </button>

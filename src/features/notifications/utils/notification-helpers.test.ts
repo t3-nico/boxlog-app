@@ -88,24 +88,24 @@ describe('notification-helpers', () => {
   });
 
   describe('getNotificationTypeColor', () => {
-    it('systemはblue系のクラスを返す', () => {
+    it('systemはinfo系のセマンティックトークンを返す', () => {
       const result = getNotificationTypeColor('system');
-      expect(result).toContain('blue');
+      expect(result).toBe('text-info-foreground bg-info');
     });
 
-    it('featureはgreen系のクラスを返す', () => {
+    it('featureはsuccess系のセマンティックトークンを返す', () => {
       const result = getNotificationTypeColor('feature');
-      expect(result).toContain('green');
+      expect(result).toBe('text-success-foreground bg-success');
     });
 
-    it('importantはred系のクラスを返す', () => {
+    it('importantはdestructive系のセマンティックトークンを返す', () => {
       const result = getNotificationTypeColor('important');
-      expect(result).toContain('red');
+      expect(result).toBe('text-destructive-foreground bg-destructive');
     });
 
-    it('未知のタイプはgray系のクラスを返す', () => {
+    it('未知のタイプはmuted系のセマンティックトークンを返す', () => {
       const result = getNotificationTypeColor('unknown');
-      expect(result).toContain('gray');
+      expect(result).toBe('text-muted-foreground bg-muted');
     });
   });
 

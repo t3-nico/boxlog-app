@@ -62,7 +62,7 @@ export const PlanBillingSettings = memo(function PlanBillingSettings() {
       <SettingsCard title="現在のプラン">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="bg-primary-container flex h-12 w-12 items-center justify-center rounded-xl">
+            <div className="bg-state-active flex h-12 w-12 items-center justify-center rounded-2xl">
               <Zap className="text-primary h-6 w-6" />
             </div>
             <div>
@@ -80,7 +80,7 @@ export const PlanBillingSettings = memo(function PlanBillingSettings() {
       <SettingsCard
         title="プランを選択"
         actions={
-          <div className="bg-surface-container flex gap-1 rounded-xl p-1">
+          <div className="bg-surface-container flex gap-1 rounded-2xl p-1">
             <Button
               variant={billingPeriod === 'month' ? 'primary' : 'ghost'}
               onClick={() => handlePeriodChange('month')}
@@ -104,7 +104,7 @@ export const PlanBillingSettings = memo(function PlanBillingSettings() {
             <div
               key={plan.id}
               className={cn(
-                'border-border relative rounded-xl border p-4',
+                'border-border relative rounded-2xl border p-4',
                 plan.recommended && 'border-primary ring-primary/20 ring-2',
                 currentPlan === plan.id && 'bg-surface-container',
               )}
@@ -156,9 +156,9 @@ export const PlanBillingSettings = memo(function PlanBillingSettings() {
       {/* 支払い方法 */}
       <SettingsCard title="支払い方法">
         <div className="space-y-4">
-          <div className="border-border flex items-center justify-between rounded-xl border p-4">
+          <div className="border-border flex items-center justify-between rounded-2xl border p-4">
             <div className="flex items-center gap-4">
-              <div className="bg-surface-container flex h-10 w-10 items-center justify-center rounded-xl">
+              <div className="bg-surface-container flex h-10 w-10 items-center justify-center rounded-2xl">
                 <CreditCard className="text-muted-foreground h-5 w-5" />
               </div>
               <div>

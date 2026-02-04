@@ -3,10 +3,14 @@
 import { MEDIA_QUERIES } from '@/config/ui/breakpoints';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { cn } from '@/lib/utils';
-import { useTheme } from 'next-themes';
+import { Loader2 } from 'lucide-react';
 import { Toaster as Sonner } from 'sonner';
 
+import { buttonVariants } from './button';
+
 type ToasterProps = React.ComponentProps<typeof Sonner>;
+
+const LoadingIcon = () => <Loader2 className="size-5 animate-spin" />;
 
 /**
  * Toast通知コンポーネント
@@ -37,43 +41,41 @@ type ToasterProps = React.ComponentProps<typeof Sonner>;
  * ```
  */
 const Toaster = ({ ...props }: ToasterProps) => {
-  const { theme = 'system' } = useTheme();
-  const validTheme = theme === 'light' || theme === 'dark' || theme === 'system' ? theme : 'system';
   const isMobile = useMediaQuery(MEDIA_QUERIES.mobile);
 
   return (
     <Sonner
-      theme={validTheme}
       position={isMobile ? 'bottom-center' : 'bottom-right'}
       expand
       duration={6000}
       closeButton
       containerAriaLabel="通知"
-      className="toaster group"
+      icons={{ loading: <LoadingIcon /> }}
       toastOptions={{
+        unstyled: true,
         classNames: {
-          toast: cn(
-            // レイアウト
-            'group toast gap-2 p-4',
-            // 背景・角丸・影
-            'bg-overlay rounded-md shadow-lg',
-            // 左ボーダー（タイプ別カラー）
-            'border-l-2 border-transparent',
-            'data-[type=success]:border-l-success',
-            'data-[type=error]:border-l-destructive',
-            'data-[type=warning]:border-l-warning',
-            'data-[type=info]:border-l-info',
-          ),
-          title: 'text-sm font-medium text-foreground',
+          toast:
+            'grid grid-cols-[auto_1fr_auto] gap-4 items-center w-full p-4 rounded-lg border shadow-lg bg-overlay text-foreground border-border',
+          icon: 'row-start-1 col-start-1',
+          loader: '!static !inset-auto !transform-none',
+          content:
+            'row-start-1 col-start-2 min-w-0 [[data-sonner-toast]:not(:has([data-icon]))_&]:col-start-1',
+          title: 'text-sm font-medium',
           description: 'text-sm text-muted-foreground',
           actionButton: cn(
-            'bg-primary text-primary-foreground',
-            'hover:bg-primary-hover',
-            'text-sm font-medium',
-            'transition-colors',
+            'row-start-2 col-start-3 justify-self-end',
+            buttonVariants({ variant: 'primary', size: 'sm' }),
           ),
-          cancelButton: 'bg-container text-muted-foreground text-sm',
-          closeButton: cn('text-muted-foreground hover:text-foreground', 'transition-colors'),
+          cancelButton: buttonVariants({ variant: 'outline', size: 'sm' }),
+          closeButton:
+            'row-start-1 col-start-3 justify-self-end p-1 rounded-md text-muted-foreground bg-transparent border-0 hover:bg-state-hover transition-colors [&_svg]:size-5',
+          success:
+            '!bg-success !text-success-foreground !border-success [&_[data-close-button]]:text-success-foreground',
+          error:
+            '!bg-destructive !text-destructive-foreground !border-destructive [&_[data-close-button]]:text-destructive-foreground',
+          warning:
+            '!bg-warning !text-warning-foreground !border-warning [&_[data-close-button]]:text-warning-foreground',
+          info: '!bg-info !text-info-foreground !border-info [&_[data-close-button]]:text-info-foreground',
         },
       }}
       {...props}

@@ -1,18 +1,9 @@
 'use client';
 
 import { Check, Circle } from 'lucide-react';
-import { useTranslations } from 'next-intl';
 
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu';
-import { HoverTooltip } from '@/components/ui/tooltip';
 import { TAG_COLOR_PALETTE } from '@/config/ui/colors';
-import { cn } from '@/lib/utils';
-
-interface ColorPalettePickerProps {
-  selectedColor: string;
-  onColorSelect: (color: string) => void;
-  className?: string;
-}
 
 // カラー名マッピング
 export const COLOR_NAMES: Record<string, string> = {
@@ -27,53 +18,6 @@ export const COLOR_NAMES: Record<string, string> = {
   '#6B7280': 'Gray',
   '#6366F1': 'Indigo',
 };
-
-/**
- * カラーパレットピッカー（グリッド表示）
- * Popover内で使用するグリッド型のカラー選択UI
- */
-export function ColorPalettePicker({
-  selectedColor,
-  onColorSelect,
-  className,
-}: ColorPalettePickerProps) {
-  const t = useTranslations('aria');
-  return (
-    <div className={cn('flex gap-2', className)}>
-      {TAG_COLOR_PALETTE.map((color) => {
-        const isSelected = selectedColor === color;
-        const colorName = COLOR_NAMES[color] || color;
-
-        return (
-          <HoverTooltip key={color} content={colorName} side="top">
-            <button
-              type="button"
-              onClick={() => onColorSelect(color)}
-              tabIndex={-1}
-              className={cn(
-                'relative size-6 shrink-0 transition-all',
-                'hover:scale-110',
-                isSelected && 'scale-105',
-              )}
-              aria-label={t('selectColor', { color: colorName })}
-            >
-              <Circle
-                className="stroke-border size-6 transition-all"
-                fill={color}
-                strokeWidth={2}
-              />
-              {isSelected && (
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <Check className="text-background size-3" strokeWidth={3} />
-                </div>
-              )}
-            </button>
-          </HoverTooltip>
-        );
-      })}
-    </div>
-  );
-}
 
 /**
  * カラーパレットメニューアイテム（DropdownMenu用）

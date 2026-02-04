@@ -89,32 +89,9 @@ class DocsConsistencyChecker {
 
   // Theme系ドキュメントの整合性チェック
   async checkThemeSystemDocumentation() {
-    log.title('Theme SystemとDesign Systemドキュメントの整合性')
+    log.title('Theme Systemの整合性（デザインシステムはStorybookに移行済み）')
 
     const themeConfigDir = path.join(this.srcDir, 'config/theme')
-    const designSystemDir = path.join(this.docsDir, 'design-system')
-
-    // デザインシステムドキュメントディレクトリの確認
-    if (!fs.existsSync(designSystemDir)) {
-      this.addResult('error', 'Design System', 'docs/design-system ディレクトリが存在しません')
-      return
-    }
-
-    // 主要ドキュメントの存在確認
-    const designDocs = [
-      { file: 'README.md', name: 'デザインシステム概要' },
-      { file: 'STYLE_GUIDE.md', name: 'スタイルガイド' },
-      { file: 'THEME_MIGRATION.md', name: 'テーマ移行ガイド' },
-    ]
-
-    designDocs.forEach(({ file, name }) => {
-      const docPath = path.join(designSystemDir, file)
-      if (fs.existsSync(docPath)) {
-        this.addResult('success', 'Design System', `${name} (${file}) が存在`)
-      } else {
-        this.addResult('warning', 'Design System', `${name} (${file}) が見つかりません`)
-      }
-    })
 
     // Theme設定ディレクトリの確認
     if (fs.existsSync(themeConfigDir)) {
@@ -123,6 +100,15 @@ class DocsConsistencyChecker {
       this.addResult('success', 'Theme System', `src/config/theme に ${themeFiles.length} 個の設定ファイル`)
     } else {
       this.addResult('warning', 'Theme System', 'src/config/theme ディレクトリが存在しません')
+    }
+
+    // Storybookのトークンドキュメント確認
+    const storybookTokensDir = path.join(this.srcDir, 'stories/tokens')
+    if (fs.existsSync(storybookTokensDir)) {
+      const tokenStories = fs.readdirSync(storybookTokensDir).filter((file) => file.endsWith('.stories.tsx'))
+      this.addResult('success', 'Design System', `Storybook Tokens に ${tokenStories.length} 個のStory`)
+    } else {
+      this.addResult('warning', 'Design System', 'src/stories/tokens ディレクトリが存在しません')
     }
   }
 

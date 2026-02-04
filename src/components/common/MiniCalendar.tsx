@@ -275,7 +275,7 @@ export const MiniCalendar = memo<MiniCalendarProps>(
           <Button
             variant="ghost"
             size="icon-sm"
-            className="text-muted-foreground hover:bg-state-hover hover:text-foreground rounded-sm"
+            className="text-muted-foreground hover:bg-state-hover hover:text-foreground rounded"
             onClick={handlePrevMonth}
             aria-label="前の月"
           >
@@ -321,7 +321,7 @@ export const MiniCalendar = memo<MiniCalendarProps>(
           <Button
             variant="ghost"
             size="icon-sm"
-            className="text-muted-foreground hover:bg-state-hover hover:text-foreground rounded-sm"
+            className="text-muted-foreground hover:bg-state-hover hover:text-foreground rounded"
             onClick={handleNextMonth}
             aria-label="次の月"
           >
@@ -360,19 +360,19 @@ export const MiniCalendar = memo<MiniCalendarProps>(
                       // 現在の月以外は薄く
                       !isCurrentMonth && 'text-muted-foreground',
                       // ホバー（今日以外）
-                      !isToday && 'hover:bg-state-hover hover:rounded-md',
+                      !isToday && 'hover:bg-state-hover hover:rounded-lg',
                       // 今日: primary（ホバーの影響を受けない）
-                      isToday && 'bg-primary text-primary-foreground rounded-md font-bold',
+                      isToday && 'bg-primary text-primary-foreground rounded-lg font-bold',
                       // 範囲内（今日以外）
                       isInRange && !isToday && 'bg-state-hover text-foreground',
                       // 範囲の開始・終了のrounded
-                      isRangeStart && !isToday && 'rounded-l-md',
-                      isRangeEnd && !isToday && 'rounded-r-md',
+                      isRangeStart && !isToday && 'rounded-l-lg',
+                      isRangeEnd && !isToday && 'rounded-r-lg',
                       // 選択中（単一選択、範囲外、今日以外）
                       isSelected &&
                         !isInRange &&
                         !isToday &&
-                        'bg-state-hover text-foreground rounded-md',
+                        'bg-state-hover text-foreground rounded-lg',
                     )}
                   >
                     {format(date, 'd')}
@@ -386,7 +386,7 @@ export const MiniCalendar = memo<MiniCalendarProps>(
         {/* 日付なしボタン（全幅ボーダー用に外側） */}
         {allowClear && (
           <div className="border-border/50 border-t">
-            <div className="px-3 py-2">
+            <div className="px-4 py-2">
               <Button
                 variant="ghost"
                 size="sm"
