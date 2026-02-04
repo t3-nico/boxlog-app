@@ -118,11 +118,11 @@ export function YearlyHeatmap() {
         <div className="text-muted-foreground mt-4 flex items-center justify-end gap-2 text-xs">
           <span>Less</span>
           <div className="flex gap-1">
-            <div className={cn('bg-muted size-3 rounded-sm')} />
-            <div className={cn('bg-primary/20 size-3 rounded-sm')} />
-            <div className={cn('bg-primary/40 size-3 rounded-sm')} />
-            <div className={cn('bg-primary/60 size-3 rounded-sm')} />
-            <div className={cn('bg-primary/80 size-3 rounded-sm')} />
+            <div className={cn('bg-muted size-3 rounded')} />
+            <div className={cn('bg-primary/20 size-3 rounded')} />
+            <div className={cn('bg-primary/40 size-3 rounded')} />
+            <div className={cn('bg-primary/60 size-3 rounded')} />
+            <div className={cn('bg-primary/80 size-3 rounded')} />
           </div>
           <span>More</span>
         </div>

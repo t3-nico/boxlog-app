@@ -72,7 +72,7 @@ function showToggleFeedback(newState: boolean) {
     'fixed top-4 right-4 z-[300]',
     'bg-card',
     'border border-border',
-    'rounded-xl shadow-lg',
+    'rounded-2xl shadow-lg',
     'px-4 py-3',
     'flex items-center gap-3',
     'transform transition-all duration-300 ease-out',

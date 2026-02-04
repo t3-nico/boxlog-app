@@ -7,7 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 export default function AuthLoading() {
   return (
     <div
-      className="bg-surface-container flex min-h-svh flex-col items-center justify-center p-4 md:p-10"
+      className="bg-surface-container flex min-h-svh flex-col items-center justify-center p-4 md:p-8"
       role="status"
       aria-live="polite"
       aria-label="Loading authentication"
@@ -15,7 +15,7 @@ export default function AuthLoading() {
       <div className="w-full md:max-w-5xl">
         {/* ロゴ */}
         <div className="mb-8 flex justify-center">
-          <Skeleton className="size-12 rounded-xl" />
+          <Skeleton className="size-12 rounded-2xl" />
         </div>
 
         {/* タイトル */}

@@ -9,7 +9,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
-import { Spinner } from '@/components/ui/spinner';
 import { createClient } from '@/lib/supabase/client';
 import { useTranslations } from 'next-intl';
 
@@ -110,7 +109,7 @@ export default function MFAVerifyPage() {
   };
 
   return (
-    <div className="bg-surface-container flex min-h-svh flex-col items-center justify-center p-4 md:p-10">
+    <div className="bg-surface-container flex min-h-svh flex-col items-center justify-center p-4 md:p-8">
       <div className="w-full md:max-w-5xl">
         <div className="flex flex-col gap-6">
           <Card className="overflow-hidden p-0">
@@ -118,7 +117,7 @@ export default function MFAVerifyPage() {
               <div className="p-6 md:p-8">
                 <FieldGroup>
                   <div className="flex flex-col items-center gap-2 text-center">
-                    <div className="bg-primary-container text-on-primary-container mb-2 flex h-12 w-12 items-center justify-center rounded-full">
+                    <div className="bg-state-active text-state-active-foreground mb-2 flex h-12 w-12 items-center justify-center rounded-full">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="24"
@@ -146,7 +145,7 @@ export default function MFAVerifyPage() {
                     </div>
                   )}
 
-                  <div className="flex flex-col items-center gap-3">
+                  <div className="flex flex-col items-center gap-4">
                     <FieldLabel className="text-center">
                       {t('auth.mfaVerify.verificationCode')}
                     </FieldLabel>
@@ -170,13 +169,12 @@ export default function MFAVerifyPage() {
                   <Field>
                     <Button
                       onClick={handleVerify}
-                      disabled={isVerifying || verificationCode.length !== 6}
+                      disabled={verificationCode.length !== 6}
+                      isLoading={isVerifying}
+                      loadingText={t('auth.mfaVerify.verifying')}
                       className="w-full"
                     >
-                      {isVerifying && <Spinner className="mr-2" />}
-                      {isVerifying
-                        ? t('auth.mfaVerify.verifying')
-                        : t('auth.mfaVerify.verifyButton')}
+                      {t('auth.mfaVerify.verifyButton')}
                     </Button>
                   </Field>
 

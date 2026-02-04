@@ -21,7 +21,7 @@ export function CalendarViewClient({ view, initialDate, translations }: Calendar
         featureName="calendar"
         fallback={
           <div className="flex h-full items-center justify-center p-4">
-            <div className="border-destructive bg-destructive-container max-w-md rounded-xl border p-6">
+            <div className="border-destructive max-w-md rounded-2xl border p-6">
               <div className="text-center">
                 <div className="mb-4 text-6xl">📅</div>
                 <h2 className="text-destructive mb-2 text-2xl font-bold tracking-tight">

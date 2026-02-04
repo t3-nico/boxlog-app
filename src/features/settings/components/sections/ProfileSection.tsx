@@ -4,7 +4,7 @@ import { useCallback, useState } from 'react';
 
 import { useTranslations } from 'next-intl';
 
-import { AvatarDropzone } from '@/components/ui/avatar-dropzone';
+import { AvatarUpload } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { useAuthStore } from '@/features/auth/stores/useAuthStore';
 import { createClient } from '@/lib/supabase/client';
@@ -86,7 +86,7 @@ export function ProfileSection() {
         profile.updateValue('uploadedAvatar', publicUrl);
       } catch (error) {
         console.error('Avatar upload error:', error);
-        throw error; // AvatarDropzone側でエラー表示
+        throw error; // AvatarUpload側でエラー表示
       } finally {
         setIsUploading(false);
       }
@@ -104,7 +104,7 @@ export function ProfileSection() {
       profile.updateValue('uploadedAvatar', null);
     } catch (error) {
       console.error('Avatar delete error:', error);
-      throw error; // AvatarDropzone側でエラー表示
+      throw error; // AvatarUpload側でエラー表示
     } finally {
       setIsUploading(false);
     }
@@ -122,12 +122,12 @@ export function ProfileSection() {
       <div className="space-y-6">
         {/* Profile Picture Section */}
         <SettingField label={t('settings.account.profilePicture')}>
-          <AvatarDropzone
+          <AvatarUpload
             currentAvatarUrl={uploadedAvatar}
             onUpload={handleAvatarUpload}
             onRemove={handleAvatarRemove}
             isUploading={isUploading}
-            size={96}
+            size="2xl"
           />
         </SettingField>
 

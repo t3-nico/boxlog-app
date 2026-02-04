@@ -265,7 +265,7 @@ function DraftModeHeader({ createType, setCreateType }: DraftModeHeaderProps) {
           type="button"
           onClick={() => setCreateType('plan')}
           className={cn(
-            'flex h-8 items-center gap-1 rounded-md px-2 text-sm font-medium transition-colors',
+            'flex h-8 items-center gap-1 rounded-lg px-2 text-sm font-bold transition-colors',
             createType === 'plan'
               ? 'bg-state-active text-state-active-foreground'
               : 'text-muted-foreground hover:bg-state-hover hover:text-foreground',
@@ -278,7 +278,7 @@ function DraftModeHeader({ createType, setCreateType }: DraftModeHeaderProps) {
           type="button"
           onClick={() => setCreateType('record')}
           className={cn(
-            'flex h-8 items-center gap-1 rounded-md px-2 text-sm font-medium transition-colors',
+            'flex h-8 items-center gap-1 rounded-lg px-2 text-sm font-bold transition-colors',
             createType === 'record'
               ? 'bg-state-active text-state-active-foreground'
               : 'text-muted-foreground hover:bg-state-hover hover:text-foreground',

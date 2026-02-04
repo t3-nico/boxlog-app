@@ -210,13 +210,13 @@ export function PlanScheduleSection({
 
             {showRecurrencePopover && !disabled && (
               <div
-                className="border-border bg-popover absolute top-10 left-0 z-50 w-48 rounded-md border shadow-md"
+                className="border-border bg-popover absolute top-8 left-0 z-50 w-48 rounded-lg border shadow-md"
                 role="menu"
                 aria-label="繰り返しオプション"
               >
                 <div className="p-1">
                   <button
-                    className="hover:bg-state-hover focus-visible:bg-state-hover flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-left text-sm transition-colors focus-visible:outline-none"
+                    className="hover:bg-state-hover focus-visible:bg-state-hover flex w-full items-center justify-between rounded px-2 py-2 text-left text-sm transition-colors focus-visible:outline-none"
                     onClick={() => {
                       onRepeatTypeChange('');
                       onRecurrenceRuleChange(null);
@@ -232,7 +232,7 @@ export function PlanScheduleSection({
                   {RECURRENCE_OPTIONS.slice(1).map((option) => (
                     <button
                       key={option.value}
-                      className="hover:bg-state-hover focus-visible:bg-state-hover flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-left text-sm transition-colors focus-visible:outline-none"
+                      className="hover:bg-state-hover focus-visible:bg-state-hover flex w-full items-center justify-between rounded px-2 py-2 text-left text-sm transition-colors focus-visible:outline-none"
                       onClick={() => {
                         onRepeatTypeChange(option.value);
                         onRecurrenceRuleChange(null);
@@ -249,7 +249,7 @@ export function PlanScheduleSection({
                   ))}
                   <div className="border-border my-1 border-t" />
                   <button
-                    className="hover:bg-state-hover focus-visible:bg-state-hover flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-left text-sm transition-colors focus-visible:outline-none"
+                    className="hover:bg-state-hover focus-visible:bg-state-hover flex w-full items-center justify-between rounded px-2 py-2 text-left text-sm transition-colors focus-visible:outline-none"
                     onClick={() => {
                       setShowRecurrencePopover(false);
                       setShowCustomDialog(true);

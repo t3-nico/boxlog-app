@@ -1,6 +1,6 @@
 ---
 name: dayopt-frontend-design
-description: Dayopt専用のフロントエンドデザインスキル。「装飾のない基本体験」を実現するためのUI設計ガイドライン。STYLE_GUIDE.mdを補完し、フォント・アニメーション・デザイン判断基準を提供。
+description: Dayopt専用のフロントエンドデザインスキル。「装飾のない基本体験」を実現するためのUI設計ガイドライン。Storybookを補完し、フォント・アニメーション・デザイン判断基準を提供。
 license: MIT
 metadata:
   author: dayopt
@@ -11,7 +11,7 @@ metadata:
 
 「GoogleカレンダーやTogglと同等の装飾のない基本体験」を実現するためのデザインスキル。
 
-> **参照**: 詳細なトークン定義は `docs/design-system/STYLE_GUIDE.md` を確認すること。
+> **参照**: 詳細なトークン定義は Storybook（`npm run storybook` → Tokens/\*）を確認すること。
 
 ## 設計原則: 装飾のない基本体験
 
@@ -65,7 +65,7 @@ font-family:
 
 ### サイズ・ウェイト
 
-STYLE_GUIDE.mdの8pxグリッドに従う:
+Storybook Tokens/Spacingの8pxグリッドに従う:
 
 | 用途     | サイズ | ウェイト | Tailwind                 |
 | -------- | ------ | -------- | ------------------------ |
@@ -126,7 +126,7 @@ className = 'animate-bounce animate-pulse';
 
 ### セマンティックトークン厳守
 
-STYLE_GUIDE.mdで定義されたトークンのみ使用。直接色指定禁止。
+Storybook Tokens/Colorsで定義されたトークンのみ使用。直接色指定禁止。
 
 ```tsx
 // ✅ セマンティックトークン
@@ -160,7 +160,7 @@ Primary = 「ユーザーアクションを促す要素」にのみ:
 
 ### 余白
 
-8pxグリッド厳守（STYLE_GUIDE.md参照）:
+8pxグリッド厳守（Storybook Tokens/Spacing参照）:
 
 ```tsx
 // ✅ 8の倍数
@@ -193,7 +193,7 @@ className = 'p-3 gap-5'; // 12px, 20px
 
 ## 参照リンク
 
-- [STYLE_GUIDE.md](docs/design-system/STYLE_GUIDE.md) - 詳細なトークン定義
+- Storybook（`npm run storybook`）- 詳細なトークン定義
 - [src/CLAUDE.md](src/CLAUDE.md) - コーディング規約
 - [globals.css](src/styles/globals.css) - CSS変数定義
 

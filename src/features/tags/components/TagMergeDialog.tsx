@@ -106,20 +106,20 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
 
   const dialog = (
     <div
-      className="animate-in fade-in bg-overlay-heavy fixed inset-0 z-[250] flex items-center justify-center duration-150"
+      className="animate-in fade-in bg-card fixed inset-0 z-[250] flex items-center justify-center duration-150"
       onMouseDown={handleBackdropMouseDown}
       role="dialog"
       aria-modal="true"
       aria-labelledby="tag-merge-dialog-title"
     >
       <div
-        className="animate-in zoom-in-95 fade-in bg-card text-foreground border-border rounded-xl border p-6 shadow-lg duration-150"
+        className="animate-in zoom-in-95 fade-in bg-card text-foreground border-border rounded-2xl border p-6 shadow-lg duration-150"
         style={{ width: 'min(calc(100vw - 32px), 448px)' }}
         onMouseDown={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="mb-6 flex items-start gap-4">
-          <div className="bg-primary-container flex size-10 shrink-0 items-center justify-center rounded-full">
+          <div className="bg-state-active flex size-10 shrink-0 items-center justify-center rounded-full">
             <GitMerge className="text-primary size-5" />
           </div>
           <div className="flex-1">
@@ -138,7 +138,7 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
           <p className="text-muted-foreground text-sm">{t('tags.merge.autoMergeDescription')}</p>
 
           {/* ターゲットタグ選択（ラジオボタンリスト） */}
-          <div className="border-border max-h-60 overflow-y-auto rounded-xl border">
+          <div className="border-border max-h-60 overflow-y-auto rounded-2xl border">
             {availableTags.length === 0 ? (
               <p className="text-muted-foreground p-4 text-center text-sm">
                 {t('tags.search.noTags')}
@@ -157,7 +157,7 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
                     key={tagItem.id}
                     htmlFor={`merge-target-${tagItem.id}`}
                     className={cn(
-                      'flex cursor-pointer items-center gap-3 rounded-md px-3 py-2 transition-colors',
+                      'flex cursor-pointer items-center gap-4 rounded-lg px-4 py-2 transition-colors',
                       'hover:bg-state-hover',
                       targetTagId === tagItem.id && 'bg-state-selected',
                     )}

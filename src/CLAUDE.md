@@ -85,7 +85,7 @@ p - 1; // 4px  - アイコンボタンの最小パディング
 **角丸（Border Radius）も8pxグリッド準拠：**
 
 ```tsx
-// globals.css で定義済み（STYLE_GUIDE.md準拠）
+// globals.css で定義済み（Storybook Tokens/BorderRadius参照）
 --radius-sm: 4px   - 内部の小要素（Checkbox, Menu item）
 --radius-md: 8px   - インタラクティブ要素（Button, Input, Badge）
 --radius-xl: 16px  - パネル・コンテナ（Card, Dialog, Alert）

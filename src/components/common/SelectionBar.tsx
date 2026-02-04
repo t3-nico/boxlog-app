@@ -20,7 +20,7 @@ interface SelectionBarProps {
  * **デザイン仕様**:
  * - 全体の高さ: 48px固定（h-12）
  * - パディング: 上下8px（py-2）、左右16px（px-4）- 背景なし
- * - 背景コンテナ: 32px（h-8）- bg-surface-container + rounded-md、横幅いっぱい
+ * - 背景コンテナ: 32px（h-8）- bg-surface-container + rounded-lg、横幅いっぱい
  * - 8pxグリッドシステム準拠（他のnavと統一）
  *
  * 構成:
@@ -45,7 +45,7 @@ export function SelectionBar({ selectedCount, onClearSelection, actions }: Selec
   return (
     <div className="flex h-12 shrink-0 items-center px-4 py-2">
       {/* 背景コンテナ（32px、角丸） */}
-      <div className="bg-surface-container flex h-8 flex-1 items-center gap-2 rounded-md pl-1">
+      <div className="bg-surface-container flex h-8 flex-1 items-center gap-2 rounded-lg pl-1">
         {/* 選択解除ボタン（左端） */}
         <Button
           variant="ghost"

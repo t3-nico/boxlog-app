@@ -1,12 +1,16 @@
 /**
  * z-index階層定義
  *
+ * @deprecated Tailwindクラスを使用してください: z-modal, z-tooltip, z-dropdown など
+ * 定義は globals.css の @theme セクションにあります。
+ * ドキュメント: Storybook > Tokens > ZIndex
+ *
  * UIコンポーネントのスタッキング順序を一元管理
  * 値が大きいほど前面に表示される
  *
- * 使用例:
- * - Tailwind: `z-[${zIndex.modal}]` または カスタムクラス
- * - インラインスタイル: `style={{ zIndex: zIndex.modal }}`
+ * 移行ガイド:
+ * - `z-[${zIndex.modal}]` → `z-modal`
+ * - `style={{ zIndex: zIndex.modal }}` → `className="z-modal"`
  *
  * 階層設計:
  * - dropdown/popover: 基本的なドロップダウン・ポップオーバー

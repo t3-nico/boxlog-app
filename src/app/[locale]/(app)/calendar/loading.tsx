@@ -14,7 +14,7 @@ export default function CalendarLoading() {
     >
       {/* ヘッダー部分 */}
       <div className="border-border flex items-center justify-between border-b p-4">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
           <Skeleton className="h-9 w-9" />
           <Skeleton className="h-6 w-32" />
         </div>

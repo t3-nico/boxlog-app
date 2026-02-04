@@ -19,44 +19,6 @@ import type { CalendarViewType, ViewDateRange } from '../types/calendar.types';
 import type { CalendarTask } from './time-grid-helpers';
 
 /**
- * タスクの色クラスを取得
- */
-export function getTaskColorClass(status: string): string {
-  const colors = {
-    scheduled:
-      'bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/50 dark:text-blue-200 dark:border-blue-700',
-    completed:
-      'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/50 dark:text-green-200 dark:border-green-700',
-    in_progress:
-      'bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/50 dark:text-yellow-200 dark:border-yellow-700',
-    rescheduled:
-      'bg-orange-100 text-orange-800 border-orange-200 dark:bg-orange-900/50 dark:text-orange-200 dark:border-orange-700',
-    stopped:
-      'bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-900/50 dark:text-gray-200 dark:border-gray-700',
-    pending:
-      'bg-purple-100 text-purple-800 border-purple-200 dark:bg-purple-900/50 dark:text-purple-200 dark:border-purple-700',
-  };
-  return Object.prototype.hasOwnProperty.call(colors, status)
-    ? colors[status as keyof typeof colors]
-    : colors.scheduled;
-}
-
-/**
- * 優先度に基づく色クラスを取得
- */
-export function getPriorityColorClass(priority: string): string {
-  const colors = {
-    high: 'bg-red-100 text-red-800 border-red-200 dark:bg-red-900/50 dark:text-red-200 dark:border-red-700',
-    medium:
-      'bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/50 dark:text-yellow-200 dark:border-yellow-700',
-    low: 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/50 dark:text-green-200 dark:border-green-700',
-  };
-  return Object.prototype.hasOwnProperty.call(colors, priority)
-    ? colors[priority as keyof typeof colors]
-    : colors.medium;
-}
-
-/**
  * 特定の日のタスクをフィルタリング
  */
 export function filterTasksForDate(tasks: CalendarTask[], date: Date): CalendarTask[] {
@@ -70,11 +32,11 @@ export function getDateStyleClass(date: Date): string {
   const classes = ['transition-colors duration-150'];
 
   if (isToday(date)) {
-    classes.push('bg-primary-container ring-2 ring-primary');
+    classes.push('bg-state-active ring-2 ring-primary');
   }
 
   if (isWeekend(date)) {
-    classes.push('bg-gray-50 dark:bg-gray-800');
+    classes.push('bg-muted');
   }
 
   return classes.join(' ');

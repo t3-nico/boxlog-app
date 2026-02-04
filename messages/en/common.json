@@ -61,9 +61,7 @@
         "willBeRemovedFromCalendar": "It will be removed from calendar",
         "confirm": "Delete",
         "deleting": "Deleting..."
-      }
-    },
-    "plan": {
+      },
       "createNew": "Create New",
       "selected": "{count} selected",
       "clear": "Clear",
@@ -77,7 +75,7 @@
       "statusCancel": "Cancel",
       "dueDate": "Due Date",
       "archive": "Archive",
-      "delete": "Delete",
+      "deleteLabel": "Delete",
       "statusChangedCount": "Status changed for {count} plans",
       "statusChangeFailed": "Failed to change status",
       "archivedCount": "{count} plans archived",
@@ -86,7 +84,6 @@
       "deleteConfirmTitle": "Delete {count} plans?",
       "deleteConfirmDescription": "This will permanently delete the selected {count} plans. This action cannot be undone.",
       "deletedCount": "{count} plans deleted",
-      "deleteFailed": "Failed to delete",
       "selectDate": "Please select a date",
       "dueDateSetCount": "Due date set for {count} plans",
       "dueDateSetFailed": "Failed to set due date",

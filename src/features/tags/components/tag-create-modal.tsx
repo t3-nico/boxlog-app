@@ -4,7 +4,12 @@ import { useCallback, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import { Button } from '@/components/ui/button';
-import { ColorPalettePicker } from '@/components/ui/color-palette-picker';
+import { COLOR_NAMES, ColorPaletteMenuItems } from '@/components/ui/color-palette-picker';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Field, FieldError, FieldGroup, FieldLabel, FieldSupportText } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { TagNoteField } from '@/features/tags/components/tag-note-field';
@@ -16,7 +21,7 @@ import {
 import { useTagGroups } from '@/features/tags/hooks/useTagGroups';
 import type { CreateTagInput, TagGroup } from '@/features/tags/types';
 import { logger } from '@/lib/logger';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Circle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 interface TagCreateModalProps {
@@ -34,7 +39,7 @@ interface TagCreateModalProps {
  *
  * スタイルガイド準拠:
  * - 8pxグリッドシステム（p-6, gap-4, mb-6等）
- * - 角丸: rounded-xl（16px）for ダイアログ
+ * - 角丸: rounded-2xl（16px）for ダイアログ
  * - Card: bg-card（カード、ダイアログ用）
  */
 export const TagCreateModal = ({
@@ -172,9 +177,9 @@ export const TagCreateModal = ({
       aria-modal="true"
       aria-labelledby="tag-create-dialog-title"
     >
-      {/* ダイアログコンテンツ: bg-card, rounded-xl, p-6 */}
+      {/* ダイアログコンテンツ: bg-card, rounded-2xl, p-6 */}
       <div
-        className="animate-in zoom-in-95 fade-in bg-card text-foreground border-border rounded-xl border p-6 shadow-lg duration-150"
+        className="animate-in zoom-in-95 fade-in bg-card text-foreground border-border rounded-2xl border p-6 shadow-lg duration-150"
         style={{ width: 'min(calc(100vw - 32px), 400px)' }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -225,7 +230,20 @@ export const TagCreateModal = ({
           {/* カラー */}
           <Field>
             <FieldLabel>{t('tags.form.color')}</FieldLabel>
-            <ColorPalettePicker selectedColor={color} onColorSelect={setColor} />
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  className="border-input bg-background hover:bg-state-hover flex h-9 w-full items-center gap-2 rounded-lg border px-4 text-sm"
+                >
+                  <Circle className="size-4" fill={color} strokeWidth={0} />
+                  <span>{COLOR_NAMES[color] || color}</span>
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start">
+                <ColorPaletteMenuItems selectedColor={color} onColorSelect={setColor} />
+              </DropdownMenuContent>
+            </DropdownMenu>
           </Field>
 
           {/* ノート（説明） */}
@@ -242,7 +260,7 @@ export const TagCreateModal = ({
                   e.stopPropagation();
                   setIsParentDropdownOpen(!isParentDropdownOpen);
                 }}
-                className="border-input bg-background hover:bg-state-hover flex h-9 w-full items-center justify-between rounded-md border px-3 text-sm"
+                className="border-input bg-background hover:bg-state-hover flex h-9 w-full items-center justify-between rounded-lg border px-4 text-sm"
               >
                 <span className={selectedParent ? 'text-foreground' : 'text-muted-foreground'}>
                   {selectedParent ? selectedParent.name : t('tags.sidebar.uncategorized')}
@@ -252,14 +270,14 @@ export const TagCreateModal = ({
 
               {/* Dropdown menu */}
               {isParentDropdownOpen && (
-                <div className="bg-card border-border absolute top-full z-10 mt-1 w-full rounded-md border py-1 shadow-lg">
+                <div className="bg-card border-border absolute top-full z-10 mt-1 w-full rounded-lg border py-1 shadow-lg">
                   <button
                     type="button"
                     onClick={() => {
                       setParentId(null);
                       setIsParentDropdownOpen(false);
                     }}
-                    className="hover:bg-state-hover w-full px-3 py-2 text-left text-sm"
+                    className="hover:bg-state-hover w-full px-4 py-2 text-left text-sm"
                   >
                     {t('tags.sidebar.uncategorized')}
                   </button>
@@ -271,7 +289,7 @@ export const TagCreateModal = ({
                         setParentId(parent.id);
                         setIsParentDropdownOpen(false);
                       }}
-                      className="hover:bg-state-hover flex w-full items-center gap-2 px-3 py-2 text-left text-sm"
+                      className="hover:bg-state-hover flex w-full items-center gap-2 px-4 py-2 text-left text-sm"
                     >
                       <span
                         className="size-3 rounded-full"

@@ -53,9 +53,12 @@ const DialogContent = ({
       <DialogPrimitive.Content
         data-slot="dialog-content"
         className={cn(
-          'border-border bg-popover text-popover-foreground fixed top-[50%] left-[50%] z-[200] grid w-full translate-x-[-50%] translate-y-[-50%] gap-4 rounded-xl border p-6 shadow-lg duration-200',
-          // max-wはclassNameで上書き可能にする（デフォルト: モバイルは余白付き、sm以上はlg）
-          !className?.includes('max-w-') && 'max-w-[calc(100%-2rem)] sm:max-w-lg',
+          'border-border bg-popover text-popover-foreground fixed top-[50%] left-[50%] z-[200] grid translate-x-[-50%] translate-y-[-50%] gap-4 rounded-2xl border p-6 shadow-xl duration-200',
+          // 横幅: min-wで最小幅を保証、max-wでビューポートを超えないように制限
+          // max-wはclassNameで上書き可能（Storybook対応のためmin-w追加）
+          !className?.includes('max-w-')
+            ? 'w-full max-w-[calc(100vw-2rem)] min-w-80 sm:max-w-lg'
+            : 'w-full max-w-[calc(100vw-2rem)] min-w-80',
           'data-[state=open]:animate-in data-[state=closed]:animate-out motion-reduce:animate-none',
           'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
           'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
@@ -70,7 +73,7 @@ const DialogContent = ({
           <DialogPrimitive.Close
             data-slot="dialog-close"
             className={cn(
-              'absolute top-4 right-4 rounded-sm opacity-70 transition-opacity hover:opacity-100',
+              'absolute top-4 right-4 rounded opacity-70 transition-opacity hover:opacity-100',
               'focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-hidden',
               'disabled:pointer-events-none',
               'data-[state=open]:bg-state-selected',

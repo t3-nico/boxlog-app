@@ -145,18 +145,12 @@ export function getCurrentTimePosition(): number {
  * 時間帯に応じた背景色クラスを取得
  */
 export function getTimeSlotBgClass(hour: number): string {
-  if (hour >= 0 && hour < 6) {
-    // 深夜（0-6時）
-    return 'bg-gray-50 dark:bg-gray-900';
-  } else if (hour >= 6 && hour < 9) {
-    // 早朝（6-9時）
-    return 'bg-gray-50 dark:bg-gray-800';
-  } else if (hour >= 9 && hour < 18) {
+  if (hour >= 9 && hour < 18) {
     // 営業時間（9-18時）
-    return 'bg-white dark:bg-gray-700';
+    return 'bg-background';
   } else {
-    // 夜間（18-24時）
-    return 'bg-gray-50 dark:bg-gray-800';
+    // 非営業時間（セマンティックトークン: 自動ダークモード対応）
+    return 'bg-muted';
   }
 }
 

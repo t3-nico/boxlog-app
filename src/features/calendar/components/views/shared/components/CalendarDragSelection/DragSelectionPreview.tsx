@@ -84,7 +84,7 @@ export const DragSelectionPreview = memo(function DragSelectionPreview({
         className={cn(
           'flex h-full flex-col',
           // モバイルでは大きめのパディング
-          isMobile ? 'p-3' : calendarStyles.event.padding,
+          isMobile ? 'p-4' : calendarStyles.event.padding,
         )}
       >
         {/* アイコン + タイトル: PlanCardのドラフトと統一 */}
@@ -95,7 +95,7 @@ export const DragSelectionPreview = memo(function DragSelectionPreview({
             <Pencil className={cn('text-primary flex-shrink-0', isMobile ? 'size-4' : 'size-3')} />
           )}
           <span
-            className={cn(textColorClass, isMobile ? 'text-sm' : 'text-xs', 'truncate font-medium')}
+            className={cn(textColorClass, isMobile ? 'text-sm' : 'text-xs', 'truncate font-bold')}
           >
             {isOverlapping ? '時間が重複しています' : '新しい予定'}
           </span>

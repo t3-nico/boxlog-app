@@ -46,7 +46,7 @@ export function DescriptionIconButton({
             type="button"
             disabled={disabled}
             className={cn(
-              'relative flex h-8 items-center justify-center rounded-md px-2 transition-colors',
+              'relative flex h-8 items-center justify-center rounded-lg px-2 transition-colors',
               'hover:bg-state-hover focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
               hasDescription ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',
             )}
@@ -55,7 +55,7 @@ export function DescriptionIconButton({
             <FileText className="size-4" />
             {/* 説明がある場合のインジケータードット */}
             {hasDescription && (
-              <span className="bg-primary absolute -top-0.5 -right-0.5 size-2 rounded-full" />
+              <span className="bg-primary absolute -top-1 -right-0.5 size-2 rounded-full" />
             )}
           </button>
         </PopoverTrigger>

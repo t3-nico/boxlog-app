@@ -74,12 +74,11 @@ export const MyComponent: FC<Props> = ...  // React.FC非推奨
 
 ### 設計・アーキテクチャ
 
-| ドキュメント                                                                                                     | 内容                                  |
-| ---------------------------------------------------------------------------------------------------------------- | ------------------------------------- |
-| [`docs/design-system/STYLE_GUIDE.md`](./docs/design-system/STYLE_GUIDE.md)                                       | スタイルガイド（8pxグリッド、カラー） |
-| [`docs/design-system/README.md`](./docs/design-system/README.md)                                                 | デザインシステム概要                  |
-| [`docs/architecture/STATE_MANAGEMENT_DECISION_GUIDE.md`](./docs/architecture/STATE_MANAGEMENT_DECISION_GUIDE.md) | 状態管理の判断基準                    |
-| [`docs/architecture/ERROR_HANDLING.md`](./docs/architecture/ERROR_HANDLING.md)                                   | エラーハンドリング                    |
+| ドキュメント                                                                                                     | 内容                                 |
+| ---------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
+| Storybook（`npm run storybook`）                                                                                 | デザインシステム（Tokens/_, Docs/_） |
+| [`docs/architecture/STATE_MANAGEMENT_DECISION_GUIDE.md`](./docs/architecture/STATE_MANAGEMENT_DECISION_GUIDE.md) | 状態管理の判断基準                   |
+| [`docs/architecture/ERROR_HANDLING.md`](./docs/architecture/ERROR_HANDLING.md)                                   | エラーハンドリング                   |
 
 ### 品質・テスト
 

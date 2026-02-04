@@ -73,7 +73,7 @@ export const TagsContainer = memo<TagsContainerProps>(function TagsContainer({ t
         {tagIds.slice(0, 3).map((id) => (
           <span
             key={id}
-            className="bg-muted inline-flex h-5 w-12 animate-pulse items-center rounded-sm"
+            className="bg-muted inline-flex h-5 w-12 animate-pulse items-center rounded"
           />
         ))}
         {tagIds.length > 3 && (
@@ -96,7 +96,7 @@ export const TagsContainer = memo<TagsContainerProps>(function TagsContainer({ t
         <span
           key={tag.id}
           data-tag
-          className="inline-flex items-center rounded-sm border px-1.5 py-0.5 text-xs leading-tight"
+          className="inline-flex items-center rounded border px-2 py-1 text-xs leading-tight"
           style={{ borderColor: tag.color || undefined }}
           title={tag.name}
         >

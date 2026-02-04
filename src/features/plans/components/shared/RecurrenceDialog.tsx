@@ -184,7 +184,7 @@ export function RecurrenceDialog({
     <Portal.Root>
       <div
         ref={dialogRef}
-        className="bg-popover border-border fixed z-[200] w-[25rem] overflow-hidden rounded-xl border shadow-lg"
+        className="bg-popover border-border z-modal fixed w-[25rem] overflow-hidden rounded-2xl border shadow-lg"
         style={{
           top: `${position.top}px`,
           left: `${position.left}px`,
@@ -209,7 +209,7 @@ export function RecurrenceDialog({
                 max="365"
                 value={config.interval}
                 onChange={(e) => setConfig({ ...config, interval: Number(e.target.value) || 1 })}
-                className="border-border bg-secondary h-8 w-16 rounded-md border text-center"
+                className="border-border bg-secondary h-8 w-16 rounded-lg border text-center"
               />
               <Select
                 value={config.frequency}
@@ -227,7 +227,7 @@ export function RecurrenceDialog({
                   <SelectValue />
                 </SelectTrigger>
                 <Portal.Root>
-                  <SelectContent className="z-[250]">
+                  <SelectContent className="z-confirm">
                     <SelectItem value="daily">日ごと</SelectItem>
                     <SelectItem value="weekly">週間ごと</SelectItem>
                     <SelectItem value="monthly">ヶ月ごと</SelectItem>
@@ -296,7 +296,7 @@ export function RecurrenceDialog({
                   <SelectValue />
                 </SelectTrigger>
                 <Portal.Root>
-                  <SelectContent className="z-[250]">
+                  <SelectContent className="z-confirm">
                     {(() => {
                       // 現在の日付から候補を生成
                       const today = new Date();
@@ -406,7 +406,7 @@ export function RecurrenceDialog({
                         setShowCalendar(false);
                       }
                     }}
-                    className="border-border rounded-md border"
+                    className="border-border rounded-lg border"
                   />
                 </div>
               )}
@@ -425,7 +425,7 @@ export function RecurrenceDialog({
                     setConfig({ ...config, count: Number(e.target.value) || 4, endType: 'count' })
                   }
                   disabled={config.endType !== 'count'}
-                  className="border-border bg-secondary h-8 w-20 rounded-md border text-center disabled:opacity-50"
+                  className="border-border bg-secondary h-8 w-20 rounded-lg border text-center disabled:opacity-50"
                 />
                 <span className="text-foreground text-sm">回 実施</span>
               </div>

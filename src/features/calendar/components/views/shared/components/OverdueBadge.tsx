@@ -3,10 +3,9 @@
 import { format, isToday, isYesterday } from 'date-fns';
 import { AlertCircle, HelpCircle } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
-import { useCallback, useRef, useState } from 'react';
 
-import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { HoverTooltip } from '@/components/ui/tooltip';
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
 import { useDateFormat } from '@/features/settings/hooks/useDateFormat';
 import { cn } from '@/lib/utils';
@@ -34,21 +33,6 @@ export function OverdueBadge({ overduePlans, className, style }: OverdueBadgePro
   const locale = useLocale();
   const openInspector = usePlanInspectorStore((state) => state.openInspector);
   const { formatTime: formatTimeWithSettings } = useDateFormat();
-
-  // HoverCardの表示位置を動的に決定
-  const helpButtonRef = useRef<HTMLButtonElement>(null);
-  const [hoverCardSide, setHoverCardSide] = useState<'left' | 'right'>('right');
-
-  // HoverCard幅(w-64=256px) + sideOffset(8px) + 余裕(16px)
-  const HOVER_CARD_WIDTH = 280;
-
-  const updateHoverCardSide = useCallback(() => {
-    if (!helpButtonRef.current) return;
-    const rect = helpButtonRef.current.getBoundingClientRect();
-    const spaceOnRight = window.innerWidth - rect.right;
-    // 右側に十分なスペースがあれば右に、なければ左に表示
-    setHoverCardSide(spaceOnRight >= HOVER_CARD_WIDTH ? 'right' : 'left');
-  }, []);
 
   // 未完了プランがない場合は非表示
   if (overduePlans.length === 0) {
@@ -96,7 +80,7 @@ export function OverdueBadge({ overduePlans, className, style }: OverdueBadgePro
           type="button"
           className={cn(
             'text-warning',
-            'flex items-center justify-center gap-1 text-xs font-normal md:gap-1.5',
+            'flex items-center justify-center gap-1 text-xs font-normal md:gap-2',
             'transition-colors focus:outline-none',
             className,
           )}
@@ -118,29 +102,16 @@ export function OverdueBadge({ overduePlans, className, style }: OverdueBadgePro
             <h4 className="text-foreground text-sm font-bold">{t('title')}</h4>
             <p className="text-muted-foreground text-xs">{t('period')}</p>
           </div>
-          {/* ヘルプアイコン with HoverCard */}
-          <HoverCard openDelay={200} onOpenChange={(open) => open && updateHoverCardSide()}>
-            <HoverCardTrigger asChild>
-              <button
-                ref={helpButtonRef}
-                type="button"
-                className="text-muted-foreground hover:text-foreground hover:bg-state-hover rounded-full p-1.5 transition-colors"
-                aria-label="Help"
-              >
-                <HelpCircle className="size-4" />
-              </button>
-            </HoverCardTrigger>
-            <HoverCardContent
-              side={hoverCardSide}
-              align="start"
-              alignOffset={16}
-              className="bg-overlay border-border z-[250] w-64 rounded-xl shadow-lg"
-              sideOffset={24}
-              avoidCollisions={false}
+          {/* ヘルプアイコン with Tooltip */}
+          <HoverTooltip content={t('helpText')} side="bottom" delayMs={200} maxWidth={256}>
+            <button
+              type="button"
+              className="text-muted-foreground hover:text-foreground hover:bg-state-hover rounded-full p-2 transition-colors"
+              aria-label="Help"
             >
-              <p className="text-muted-foreground text-sm leading-relaxed">{t('helpText')}</p>
-            </HoverCardContent>
-          </HoverCard>
+              <HelpCircle className="size-4" />
+            </button>
+          </HoverTooltip>
         </div>
 
         {/* プランリスト（アジェンダ風） */}

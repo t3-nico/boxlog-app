@@ -92,7 +92,7 @@ export function EmailChangeDialog({ open, onOpenChange, currentEmail }: EmailCha
 
         {success ? (
           <div className="space-y-4 py-4">
-            <div className="bg-surface-container rounded-xl p-4">
+            <div className="bg-surface-container rounded-2xl p-4">
               <p className="text-sm">
                 <strong>{newEmail}</strong> に確認メールを送信しました。
               </p>
@@ -145,7 +145,7 @@ export function EmailChangeDialog({ open, onOpenChange, currentEmail }: EmailCha
               </div>
 
               {error && (
-                <div className="bg-destructive-container text-destructive rounded-md p-3 text-sm">
+                <div className="border-destructive text-destructive rounded-lg border p-4 text-sm">
                   {error}
                 </div>
               )}

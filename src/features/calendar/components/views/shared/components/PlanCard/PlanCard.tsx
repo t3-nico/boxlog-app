@@ -216,10 +216,10 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
     // モバイル: Googleカレンダー風（左ボーダー、チェックボックス+タイトル横並び、上寄せ）
     // デスクトップ: Plan=全角丸、Record=右角丸のみ（左ボーダーと合わせるため）
     isMobile
-      ? 'border-l-2 rounded-r-sm pl-1 pr-1 pt-0.5 text-xs flex items-start gap-1'
+      ? 'border-l-2 rounded-r pl-1 pr-1 pt-1 text-xs flex items-start gap-1'
       : isRecord
-        ? 'rounded-r-md p-2 text-sm'
-        : 'rounded-md p-2 text-sm',
+        ? 'rounded-r-lg p-2 text-sm'
+        : 'rounded-lg p-2 text-sm',
     className,
   );
 
@@ -264,9 +264,9 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
           className={cn(
             'z-10 flex-shrink-0 rounded',
             isMobile
-              ? 'relative -m-3 flex min-h-[44px] min-w-[44px] items-center justify-center'
+              ? 'relative -m-4 flex min-h-[44px] min-w-[44px] items-center justify-center'
               : 'absolute flex items-center justify-center',
-            !isMobile && (safePosition.height < 30 ? 'top-0.5 left-0.5' : 'top-2 left-2'),
+            !isMobile && (safePosition.height < 30 ? 'top-1 left-0.5' : 'top-2 left-2'),
             !isMobile && 'min-h-4 min-w-4',
           )}
         >
@@ -297,9 +297,9 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
             // モバイル: 44x44pxタッチターゲット（Apple HIG準拠）、アイコンは中央配置
             // デスクトップ: 絶対配置
             isMobile
-              ? 'relative -m-3 flex min-h-[44px] min-w-[44px] items-center justify-center'
+              ? 'relative -m-4 flex min-h-[44px] min-w-[44px] items-center justify-center'
               : 'absolute flex items-center justify-center',
-            !isMobile && (safePosition.height < 30 ? 'top-0.5 left-0.5' : 'top-2 left-2'),
+            !isMobile && (safePosition.height < 30 ? 'top-1 left-0.5' : 'top-2 left-2'),
             // デスクトップ: ホバー領域を確保（小さい予定でもホバーしやすく）
             !isMobile && 'min-h-4 min-w-4',
           )}

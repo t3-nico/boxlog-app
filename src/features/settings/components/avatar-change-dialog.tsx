@@ -4,7 +4,7 @@ import { useCallback, useState } from 'react';
 
 import { useTranslations } from 'next-intl';
 
-import { AvatarDropzone } from '@/components/ui/avatar-dropzone';
+import { AvatarUpload } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -108,12 +108,12 @@ export function AvatarChangeDialog({ open, onOpenChange }: AvatarChangeDialogPro
         </DialogHeader>
 
         <div className="flex justify-center py-6">
-          <AvatarDropzone
+          <AvatarUpload
             currentAvatarUrl={avatarUrl}
             onUpload={handleUpload}
             onRemove={handleRemove}
             isUploading={isUploading}
-            size={120}
+            size="3xl"
           />
         </div>
 

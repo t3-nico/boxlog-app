@@ -48,7 +48,7 @@ export function SessionTimeoutDialog({
     <AlertDialog open={open}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <div className="bg-warning/10 mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full">
+          <div className="bg-muted mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full">
             <Clock className="text-warning h-6 w-6" />
           </div>
           <AlertDialogTitle className="text-center">

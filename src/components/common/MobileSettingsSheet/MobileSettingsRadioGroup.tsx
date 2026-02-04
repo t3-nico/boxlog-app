@@ -57,7 +57,7 @@ export function MobileSettingsRadioGroup<T extends string>({
   if (variant === 'list') {
     return (
       <RadioGroup value={value} onValueChange={(v) => onValueChange(v as T)}>
-        <div className="border-border bg-card rounded-md border">
+        <div className="border-border bg-card rounded-lg border">
           {options.map((option, index) => (
             <Label
               key={option.value}
@@ -89,7 +89,7 @@ export function MobileSettingsRadioGroup<T extends string>({
             htmlFor={`${idPrefix}-${option.value}`}
             className={`flex cursor-pointer items-center gap-2 rounded-full border px-4 py-2 text-sm transition-colors ${
               value === option.value
-                ? 'border-primary bg-primary-container text-on-primary-container'
+                ? 'border-primary bg-state-active text-state-active-foreground'
                 : 'border-border hover:bg-state-hover'
             }`}
           >

@@ -177,7 +177,7 @@ export function ScheduleStatusItem() {
       />
       {/* 進行中の予定がある場合のみプログレスバーを表示 */}
       {progressPercent !== null && (
-        <div className="flex items-center gap-1.5" title={`${progressPercent}% 経過`}>
+        <div className="flex items-center gap-2" title={`${progressPercent}% 経過`}>
           <div className="bg-surface-container h-1 w-16 overflow-hidden rounded-full">
             <div
               className={cn(
@@ -219,7 +219,7 @@ export function ScheduleStatusItem() {
         initialDate={initialDate}
       />
       {progressPercent !== null && (
-        <div className="flex items-center gap-1.5" title={`${progressPercent}% 経過`}>
+        <div className="flex items-center gap-2" title={`${progressPercent}% 経過`}>
           <div className="bg-surface-container h-1 w-16 overflow-hidden rounded-full">
             <div
               className={cn(

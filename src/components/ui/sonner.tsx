@@ -2,10 +2,15 @@
 
 import { MEDIA_QUERIES } from '@/config/ui/breakpoints';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { useTheme } from 'next-themes';
+import { cn } from '@/lib/utils';
+import { Loader2 } from 'lucide-react';
 import { Toaster as Sonner } from 'sonner';
 
+import { buttonVariants } from './button';
+
 type ToasterProps = React.ComponentProps<typeof Sonner>;
+
+const LoadingIcon = () => <Loader2 className="size-5 animate-spin" />;
 
 /**
  * Toast通知コンポーネント（shadcn/ui公式準拠）
@@ -31,28 +36,41 @@ type ToasterProps = React.ComponentProps<typeof Sonner>;
  * ```
  */
 const Toaster = ({ ...props }: ToasterProps) => {
-  const { theme = 'system' } = useTheme();
-  const validTheme = theme === 'light' || theme === 'dark' || theme === 'system' ? theme : 'system';
   const isMobile = useMediaQuery(MEDIA_QUERIES.mobile);
 
   return (
     <Sonner
-      theme={validTheme}
       position={isMobile ? 'bottom-center' : 'bottom-right'}
-      richColors
       expand
       duration={6000}
       closeButton
       containerAriaLabel="通知"
-      className="toaster group"
+      icons={{ loading: <LoadingIcon /> }}
       toastOptions={{
+        unstyled: true,
         classNames: {
           toast:
-            'group toast group-[.toaster]:bg-card group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg',
-          description: 'group-[.toast]:text-muted-foreground',
-          actionButton:
-            'group-[.toast]:bg-primary group-[.toast]:text-primary-foreground hover:group-[.toast]:bg-primary-hover transition-colors',
-          cancelButton: 'group-[.toast]:bg-container group-[.toast]:text-muted-foreground',
+            'grid grid-cols-[auto_1fr_auto] gap-4 items-center w-full p-4 rounded-lg border shadow-lg bg-overlay text-foreground border-border',
+          icon: 'row-start-1 col-start-1',
+          loader: '!static !inset-auto !transform-none',
+          content:
+            'row-start-1 col-start-2 min-w-0 [[data-sonner-toast]:not(:has([data-icon]))_&]:col-start-1',
+          title: 'text-sm font-medium',
+          description: 'text-sm text-muted-foreground',
+          actionButton: cn(
+            'row-start-2 col-start-3 justify-self-end',
+            buttonVariants({ variant: 'primary', size: 'sm' }),
+          ),
+          cancelButton: buttonVariants({ variant: 'outline', size: 'sm' }),
+          closeButton:
+            'row-start-1 col-start-3 justify-self-end p-1 rounded-md text-muted-foreground bg-transparent border-0 hover:bg-state-hover transition-colors [&_svg]:size-5',
+          success:
+            '!bg-success !text-success-foreground !border-success [&_[data-close-button]]:text-success-foreground',
+          error:
+            '!bg-destructive !text-destructive-foreground !border-destructive [&_[data-close-button]]:text-destructive-foreground',
+          warning:
+            '!bg-warning !text-warning-foreground !border-warning [&_[data-close-button]]:text-warning-foreground',
+          info: '!bg-info !text-info-foreground !border-info [&_[data-close-button]]:text-info-foreground',
         },
       }}
       {...props}

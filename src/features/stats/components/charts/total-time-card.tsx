@@ -23,8 +23,8 @@ export function TotalTimeCard() {
     return (
       <Card>
         <CardHeader className="pb-2">
-          <Skeleton className="h-5 w-24" />
-          <Skeleton className="h-4 w-32" />
+          <CardTitle className="text-base">予定の合計時間</CardTitle>
+          <CardDescription>すべての予定の時間</CardDescription>
         </CardHeader>
         <CardContent>
           <Skeleton className="h-16 w-full" />
