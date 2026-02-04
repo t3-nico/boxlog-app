@@ -435,32 +435,6 @@ export const Interaction: Story = {
           </div>
         </div>
       </div>
-
-      {/* デザインルール：アウトライン or 塗り */}
-      <div className="border-warning text-warning mt-8 rounded-lg border p-6">
-        <h3 className="mb-2 font-bold">GAFA準拠デザインルール</h3>
-        <p className="text-muted-foreground mb-4 text-sm">
-          装飾的背景は<strong>2パターンのみ</strong>: アウトライン（border + text-color）または
-          塗り（bg-primary等）
-        </p>
-        <div className="space-y-2 text-sm">
-          <div className="text-success">
-            ✅ OK: <code>border-warning text-warning</code>（アウトライン）
-          </div>
-          <div className="text-success">
-            ✅ OK: <code>bg-primary text-primary-foreground</code>（塗り）
-          </div>
-          <div className="text-success">
-            ✅ OK: <code>hover:bg-state-hover</code>（インタラクション状態）
-          </div>
-          <div className="text-destructive">
-            ❌ NG: <code>bg-primary/10</code>（薄い背景は不要）
-          </div>
-          <div className="text-destructive">
-            ❌ NG: <code>bg-warning-container</code>（Container系トークン廃止）
-          </div>
-        </div>
-      </div>
     </div>
   ),
 };

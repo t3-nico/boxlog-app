@@ -200,6 +200,306 @@ function DontItem({ children }: { children: React.ReactNode }) {
   );
 }
 
+export const ColorGuide: Story = {
+  render: () => (
+    <div className="bg-background text-foreground min-h-screen p-8">
+      <h1 className="mb-2 text-2xl font-bold">カラーガイド</h1>
+      <p className="text-muted-foreground mb-8">GAFA準拠のカラーデザイン方針</p>
+
+      <div className="grid gap-8" style={{ maxWidth: '64rem' }}>
+        {/* デザイン方針 */}
+        <section className="bg-card border-border rounded-xl border p-6">
+          <h2 className="mb-4 text-lg font-bold">デザイン方針（GAFA準拠）</h2>
+          <div className="space-y-4">
+            <div>
+              <h3 className="mb-2 font-bold">Container系トークン廃止</h3>
+              <p className="text-muted-foreground text-sm">
+                MD3の <code className="bg-container rounded px-1">*-container</code> トークン（
+                <code className="bg-container rounded px-1">bg-primary-container</code>,{' '}
+                <code className="bg-container rounded px-1">bg-success-container</code> 等）は廃止。
+                「薄い色付き背景」パターンはGAFA製品では使用されていないため。
+              </p>
+            </div>
+            <div>
+              <h3 className="mb-2 font-bold">不透明度パターンの制限</h3>
+              <p className="text-muted-foreground text-sm">
+                <code className="bg-container rounded px-1">bg-primary/10</code>{' '}
+                のような不透明度指定は、
+                <strong>ホバー状態（bg-state-hover）のみ許可</strong>。
+                静的な背景色としては使用禁止。
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* 2パターンに統一 */}
+        <section className="bg-card border-border rounded-xl border p-6">
+          <h2 className="mb-4 text-lg font-bold">2パターンに統一</h2>
+          <p className="text-muted-foreground mb-4 text-sm">
+            セマンティックな色表現は以下の2パターンのみ使用
+          </p>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            {/* アウトラインパターン */}
+            <div className="space-y-3">
+              <h3 className="text-sm font-bold">アウトライン（推奨）</h3>
+              <div className="space-y-2">
+                <div className="border-primary text-primary rounded-lg border px-3 py-2 text-sm">
+                  Primary
+                </div>
+                <div className="border-success text-success rounded-lg border px-3 py-2 text-sm">
+                  Success
+                </div>
+                <div className="border-warning text-warning rounded-lg border px-3 py-2 text-sm">
+                  Warning
+                </div>
+                <div className="border-destructive text-destructive rounded-lg border px-3 py-2 text-sm">
+                  Destructive
+                </div>
+                <div className="border-info text-info rounded-lg border px-3 py-2 text-sm">
+                  Info
+                </div>
+              </div>
+              <pre className="bg-container overflow-x-auto rounded-lg p-3 text-xs">
+                {`border-{color} text-{color}`}
+              </pre>
+            </div>
+
+            {/* 塗りパターン */}
+            <div className="space-y-3">
+              <h3 className="text-sm font-bold">塗り（アクション用）</h3>
+              <div className="space-y-2">
+                <div className="bg-primary text-primary-foreground rounded-lg px-3 py-2 text-sm">
+                  Primary
+                </div>
+                <div className="bg-success text-success-foreground rounded-lg px-3 py-2 text-sm">
+                  Success
+                </div>
+                <div className="bg-warning text-warning-foreground rounded-lg px-3 py-2 text-sm">
+                  Warning
+                </div>
+                <div className="bg-destructive text-destructive-foreground rounded-lg px-3 py-2 text-sm">
+                  Destructive
+                </div>
+                <div className="bg-info text-info-foreground rounded-lg px-3 py-2 text-sm">
+                  Info
+                </div>
+              </div>
+              <pre className="bg-container overflow-x-auto rounded-lg p-3 text-xs">
+                {`bg-{color} text-{color}-foreground`}
+              </pre>
+            </div>
+          </div>
+        </section>
+
+        {/* 置き換えルール */}
+        <section className="bg-card border-border rounded-xl border p-6">
+          <h2 className="mb-4 text-lg font-bold">置き換えルール</h2>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-border border-b">
+                  <th className="px-3 py-2 text-left font-bold">用途</th>
+                  <th className="text-destructive px-3 py-2 text-left font-bold">❌ 旧（廃止）</th>
+                  <th className="text-success px-3 py-2 text-left font-bold">✅ 新（推奨）</th>
+                </tr>
+              </thead>
+              <tbody className="text-muted-foreground">
+                <tr className="border-border border-b">
+                  <td className="text-foreground px-3 py-2">バッジ</td>
+                  <td className="px-3 py-2">
+                    <code className="bg-container rounded px-1 text-xs">bg-*-container</code>
+                  </td>
+                  <td className="px-3 py-2">
+                    <code className="bg-container rounded px-1 text-xs">border-* text-*</code>
+                  </td>
+                </tr>
+                <tr className="border-border border-b">
+                  <td className="text-foreground px-3 py-2">警告ボックス</td>
+                  <td className="px-3 py-2">
+                    <code className="bg-container rounded px-1 text-xs">
+                      bg-destructive-container
+                    </code>
+                  </td>
+                  <td className="px-3 py-2">
+                    <code className="bg-container rounded px-1 text-xs">
+                      border-destructive text-destructive
+                    </code>
+                  </td>
+                </tr>
+                <tr className="border-border border-b">
+                  <td className="text-foreground px-3 py-2">選択状態</td>
+                  <td className="px-3 py-2">
+                    <code className="bg-container rounded px-1 text-xs">bg-primary-container</code>
+                  </td>
+                  <td className="px-3 py-2">
+                    <code className="bg-container rounded px-1 text-xs">bg-state-active</code>
+                  </td>
+                </tr>
+                <tr className="border-border border-b">
+                  <td className="text-foreground px-3 py-2">アイコン背景</td>
+                  <td className="px-3 py-2">
+                    <code className="bg-container rounded px-1 text-xs">bg-primary-container</code>
+                  </td>
+                  <td className="px-3 py-2">
+                    <code className="bg-container rounded px-1 text-xs">bg-state-active</code> or{' '}
+                    <code className="bg-container rounded px-1 text-xs">bg-muted</code>
+                  </td>
+                </tr>
+                <tr className="border-border border-b">
+                  <td className="text-foreground px-3 py-2">検索ハイライト</td>
+                  <td className="px-3 py-2">
+                    <code className="bg-container rounded px-1 text-xs">bg-primary-container</code>
+                  </td>
+                  <td className="px-3 py-2">
+                    <code className="bg-container rounded px-1 text-xs">bg-state-active</code>
+                  </td>
+                </tr>
+                <tr>
+                  <td className="text-foreground px-3 py-2">不透明度背景</td>
+                  <td className="px-3 py-2">
+                    <code className="bg-container rounded px-1 text-xs">bg-warning/10</code>
+                  </td>
+                  <td className="px-3 py-2">
+                    <code className="bg-container rounded px-1 text-xs">
+                      border-warning text-warning
+                    </code>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        {/* 状態トークン */}
+        <section className="bg-card border-border rounded-xl border p-6">
+          <h2 className="mb-4 text-lg font-bold">状態トークン</h2>
+          <p className="text-muted-foreground mb-4 text-sm">
+            インタラクション状態には専用のstateトークンを使用
+          </p>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-2">
+              <div className="bg-state-hover rounded-lg p-3">
+                <code className="text-sm">bg-state-hover</code>
+                <p className="text-muted-foreground mt-1 text-xs">ホバー状態</p>
+              </div>
+              <div className="bg-state-active rounded-lg p-3">
+                <code className="text-sm">bg-state-active</code>
+                <p className="text-muted-foreground mt-1 text-xs">アクティブ/選択状態</p>
+              </div>
+              <div className="bg-state-selected rounded-lg p-3">
+                <code className="text-sm">bg-state-selected</code>
+                <p className="text-muted-foreground mt-1 text-xs">選択状態（代替）</p>
+              </div>
+            </div>
+            <div className="bg-container rounded-lg p-4">
+              <h4 className="mb-2 text-sm font-bold">使用例</h4>
+              <pre className="overflow-x-auto text-xs">
+                {`// ホバー
+hover:bg-state-hover
+
+// アクティブ/選択
+bg-state-active text-state-active-foreground
+
+// ナビゲーション選択
+'data-[state=active]:bg-state-active'`}
+              </pre>
+            </div>
+          </div>
+        </section>
+
+        {/* サーフェストークン */}
+        <section className="bg-card border-border rounded-xl border p-6">
+          <h2 className="mb-4 text-lg font-bold">サーフェストークン</h2>
+          <p className="text-muted-foreground mb-4 text-sm">背景のレイヤー階層</p>
+          <div className="space-y-3">
+            <div className="bg-background border-border rounded-lg border p-3">
+              <code className="text-sm">bg-background</code>
+              <p className="text-muted-foreground mt-1 text-xs">最下層（ページ全体）</p>
+            </div>
+            <div className="bg-card border-border rounded-lg border p-3">
+              <code className="text-sm">bg-card</code>
+              <p className="text-muted-foreground mt-1 text-xs">カード、ダイアログ</p>
+            </div>
+            <div className="bg-container rounded-lg p-3">
+              <code className="text-sm">bg-container</code>
+              <p className="text-muted-foreground mt-1 text-xs">コード、インフォボックス</p>
+            </div>
+            <div className="bg-muted rounded-lg p-3">
+              <code className="text-sm">bg-muted</code>
+              <p className="text-muted-foreground mt-1 text-xs">ミュート背景、アイコン背景</p>
+            </div>
+          </div>
+        </section>
+
+        {/* セマンティックカラー */}
+        <section className="bg-card border-border rounded-xl border p-6">
+          <h2 className="mb-4 text-lg font-bold">セマンティックカラー</h2>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <ColorSwatch
+              name="Primary"
+              bgClass="bg-primary"
+              textClass="text-primary-foreground"
+              description="主要アクション、リンク"
+            />
+            <ColorSwatch
+              name="Success"
+              bgClass="bg-success"
+              textClass="text-success-foreground"
+              description="完了、成功"
+            />
+            <ColorSwatch
+              name="Warning"
+              bgClass="bg-warning"
+              textClass="text-warning-foreground"
+              description="注意、警告"
+            />
+            <ColorSwatch
+              name="Destructive"
+              bgClass="bg-destructive"
+              textClass="text-destructive-foreground"
+              description="削除、危険な操作"
+            />
+            <ColorSwatch
+              name="Info"
+              bgClass="bg-info"
+              textClass="text-info-foreground"
+              description="情報、ヘルプ"
+            />
+            <ColorSwatch
+              name="Accent"
+              bgClass="bg-accent"
+              textClass="text-accent-foreground"
+              description="アクセント（限定使用）"
+            />
+          </div>
+        </section>
+      </div>
+    </div>
+  ),
+};
+
+function ColorSwatch({
+  name,
+  bgClass,
+  textClass,
+  description,
+}: {
+  name: string;
+  bgClass: string;
+  textClass: string;
+  description: string;
+}) {
+  return (
+    <div className="space-y-2">
+      <div className={`${bgClass} ${textClass} rounded-lg p-3 text-center text-sm font-bold`}>
+        {name}
+      </div>
+      <p className="text-muted-foreground text-xs">{description}</p>
+    </div>
+  );
+}
+
 export const CommonPatterns: Story = {
   render: () => (
     <div className="bg-background text-foreground min-h-screen p-8">
