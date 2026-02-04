@@ -18,7 +18,7 @@ const meta = {
   component: Dialog,
   tags: ['autodocs'],
   parameters: {
-    layout: 'centered',
+    layout: 'fullscreen', // モーダル系はfullscreenでないとオーバーレイが正しく表示されない
   },
 } satisfies Meta<typeof Dialog>;
 
@@ -176,7 +176,4 @@ export const AllPatterns: Story = {
       </div>
     </div>
   ),
-  parameters: {
-    layout: 'fullscreen',
-  },
 };

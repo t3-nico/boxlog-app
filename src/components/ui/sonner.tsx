@@ -44,14 +44,19 @@ const Toaster = ({ ...props }: ToasterProps) => {
       closeButton
       containerAriaLabel="通知"
       toastOptions={{
+        unstyled: true,
         classNames: {
-          toast: 'bg-card text-foreground border-border shadow-lg',
-          description: 'text-muted-foreground',
+          toast:
+            'group flex items-center gap-3 w-full p-4 rounded-lg border shadow-lg bg-card text-foreground border-border',
+          title: 'text-sm font-medium',
+          description:
+            'text-sm text-muted-foreground group-data-[type=success]:text-success-foreground/80 group-data-[type=error]:text-destructive-foreground/80 group-data-[type=warning]:text-warning-foreground/80 group-data-[type=info]:text-info-foreground/80',
           actionButton:
-            'bg-primary text-primary-foreground hover:bg-primary-hover transition-colors',
-          cancelButton: 'bg-container text-muted-foreground',
+            'ml-auto shrink-0 rounded-md px-3 py-1.5 text-sm font-medium bg-primary text-primary-foreground hover:bg-primary-hover transition-colors',
+          cancelButton:
+            'shrink-0 rounded-md px-3 py-1.5 text-sm font-medium bg-container text-muted-foreground',
           closeButton:
-            '!left-auto !right-2 !top-1/2 !-translate-y-1/2 !translate-x-0 !text-inherit !bg-transparent !border-0',
+            'order-last ml-auto shrink-0 p-1 rounded-md text-inherit bg-transparent border-0 hover:bg-black/10 transition-colors [&_svg]:size-5',
           success: '!bg-success !text-success-foreground !border-success',
           error: '!bg-destructive !text-destructive-foreground !border-destructive',
           warning: '!bg-warning !text-warning-foreground !border-warning',

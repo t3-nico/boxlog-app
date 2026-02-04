@@ -26,6 +26,8 @@ const config: StorybookConfig = {
     config.resolve.alias = {
       ...config.resolve.alias,
       '@': path.resolve(__dirname, '../src'),
+      // next/image をStorybook用モックに置換
+      'next/image': path.resolve(__dirname, './mocks/next-image.tsx'),
     };
     // React自動JSXランタイム設定
     config.esbuild = {

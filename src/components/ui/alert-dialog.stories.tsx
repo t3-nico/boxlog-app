@@ -21,7 +21,7 @@ const meta = {
   component: AlertDialog,
   tags: ['autodocs'],
   parameters: {
-    layout: 'centered',
+    layout: 'fullscreen', // モーダル系はfullscreenでないとオーバーレイが正しく表示されない
   },
 } satisfies Meta<typeof AlertDialog>;
 
@@ -191,9 +191,6 @@ function AccountDeletionExample() {
 }
 
 export const AllPatterns: Story = {
-  parameters: {
-    layout: 'fullscreen',
-  },
   render: function AlertDialogStory() {
     return (
       <div className="bg-background text-foreground min-h-screen p-8">

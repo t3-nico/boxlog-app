@@ -31,17 +31,19 @@ const AlertDialogContent = React.forwardRef<
   React.ElementRef<typeof AlertDialogPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Content>
 >(({ className, ...props }, ref) => (
-  <AlertDialogPortal container={typeof document !== 'undefined' ? document.body : undefined}>
+  <AlertDialogPortal>
     <AlertDialogOverlay />
     <AlertDialogPrimitive.Content
       ref={ref}
       className={cn(
-        'border-border bg-popover text-popover-foreground fixed top-[50%] left-[50%] z-[250] grid w-full translate-x-[-50%] translate-y-[-50%] gap-4 rounded-2xl border p-6 shadow-xl duration-200',
+        'border-border bg-popover text-popover-foreground fixed top-[50%] left-[50%] z-[250] grid translate-x-[-50%] translate-y-[-50%] gap-4 rounded-2xl border p-6 shadow-xl duration-200',
+        // 横幅: 明示的にviewport幅を指定（position:fixedでw-fullが効かないため）
+        'w-[calc(100vw-2rem)] sm:max-w-lg',
         'data-[state=open]:animate-in data-[state=closed]:animate-out motion-reduce:animate-none',
         'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
         'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
-        // 横幅: Dialogと同じ方式（w-full + max-w制約）
-        'max-w-[calc(100%-2rem)] sm:max-w-lg',
+        // モバイルUX: スクロールチェーン防止
+        'overscroll-contain',
         className,
       )}
       {...props}
