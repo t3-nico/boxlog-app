@@ -13,6 +13,12 @@ const preview: Preview = {
     backgrounds: {
       disable: true, // セマンティックトークンを使うため無効化
     },
+    options: {
+      storySort: {
+        method: 'alphabetical',
+        order: ['Docs', 'Tokens', 'Components'],
+      },
+    },
   },
   globalTypes: {
     theme: {
