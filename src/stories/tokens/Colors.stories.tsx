@@ -123,7 +123,7 @@ export const AllColors: Story = {
         />
       </ColorGroup>
 
-      <ColorGroup title="Tag Colors（ユーザー選択用）">
+      <ColorGroup title="Tag Colors（ダークモードで明度調整）">
         <ColorSwatch tailwindClass="bg-tag-blue" description="Blue（デフォルト）" />
         <ColorSwatch tailwindClass="bg-tag-green" description="Green" />
         <ColorSwatch tailwindClass="bg-tag-red" description="Red" />
@@ -582,7 +582,9 @@ export const Tags: Story = {
     <div className="bg-background text-foreground p-8">
       <h1 className="mb-2 text-2xl font-bold">タグカラー</h1>
       <p className="text-muted-foreground mb-8">
-        ユーザーがタグに設定できる10色のパレット。ライト/ダークモード共通。
+        ユーザーがタグに設定できる10色のパレット。
+        <br />
+        ダークモードでは明度を上げ、彩度を下げてアクセシビリティを確保。
       </p>
 
       <div className="space-y-4">

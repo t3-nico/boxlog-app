@@ -6,7 +6,7 @@
  *
  * ## アーキテクチャ
  *
- * - **コンポーネント**: components/common/table + 独自コンポーネント
+ * - **コンポーネント**: features/table独自コンポーネント
  * - **状態管理**: Zustand store factories + 具象 stores
  *
  * ## Factory パターン（推奨）
@@ -45,23 +45,6 @@
  */
 
 // ============================================
-// 共通テーブルコンポーネント (components/common/table より)
-// ============================================
-export {
-  // DataTable - 汎用テーブル
-  DataTable,
-  // ResizableTableHead - リサイズ・ソート対応ヘッダー
-  ResizableTableHead,
-  // TablePagination - ページネーション（i18n対応）
-  TablePagination,
-  type ColumnDef,
-  type GroupedData as DataTableGroupedData,
-  type DataTableProps,
-  type PaginationState,
-  type SortState,
-} from '@/components/common/table';
-
-// ============================================
 // features/table 独自コンポーネント
 // ============================================
 export {
@@ -74,6 +57,8 @@ export {
   TableEmptyState,
   // Navigation - Notion風アイコンナビゲーション
   TableNavigation,
+  // Pagination - ページネーション
+  TablePagination,
 } from './components';
 
 export type {

@@ -18,3 +18,6 @@ export {
   type TableNavigationConfig,
   type TableNavigationProps,
 } from './TableNavigation';
+
+// Pagination
+export { TablePagination } from './TablePagination';
