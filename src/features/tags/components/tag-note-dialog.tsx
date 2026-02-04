@@ -89,7 +89,7 @@ export function TagNoteDialog({ isOpen, onClose, onSave, currentNote }: TagNoteD
 
   const dialog = (
     <div
-      className="bg-overlay-heavy fixed inset-0 z-[250] flex items-center justify-center"
+      className="bg-card fixed inset-0 z-[250] flex items-center justify-center"
       onClick={handleBackdropClick}
       role="dialog"
       aria-modal="true"
