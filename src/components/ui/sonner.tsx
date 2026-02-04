@@ -43,22 +43,17 @@ const Toaster = ({ ...props }: ToasterProps) => {
       duration={6000}
       closeButton
       containerAriaLabel="通知"
-      className="toaster group"
       toastOptions={{
         classNames: {
-          toast:
-            'group toast group-[.toaster]:bg-card group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg',
-          description: 'group-[.toast]:text-muted-foreground',
+          toast: 'bg-card text-foreground border-border shadow-lg',
+          description: 'text-muted-foreground',
           actionButton:
-            'group-[.toast]:bg-primary group-[.toast]:text-primary-foreground hover:group-[.toast]:bg-primary-hover transition-colors',
-          cancelButton: 'group-[.toast]:bg-container group-[.toast]:text-muted-foreground',
-          success:
-            'group-[.toaster]:!bg-success group-[.toaster]:!text-success-foreground group-[.toaster]:!border-success',
-          error:
-            'group-[.toaster]:!bg-destructive group-[.toaster]:!text-destructive-foreground group-[.toaster]:!border-destructive',
-          warning:
-            'group-[.toaster]:!bg-warning group-[.toaster]:!text-warning-foreground group-[.toaster]:!border-warning',
-          info: 'group-[.toaster]:!bg-info group-[.toaster]:!text-info-foreground group-[.toaster]:!border-info',
+            'bg-primary text-primary-foreground hover:bg-primary-hover transition-colors',
+          cancelButton: 'bg-container text-muted-foreground',
+          success: '!bg-success !text-success-foreground !border-success',
+          error: '!bg-destructive !text-destructive-foreground !border-destructive',
+          warning: '!bg-warning !text-warning-foreground !border-warning',
+          info: '!bg-info !text-info-foreground !border-info',
         },
       }}
       {...props}
