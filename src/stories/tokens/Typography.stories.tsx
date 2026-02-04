@@ -285,3 +285,129 @@ export const QuickReference: Story = {
     </div>
   ),
 };
+
+export const DosDonts: Story = {
+  render: () => (
+    <div className="bg-background text-foreground p-8">
+      <h1 className="mb-2 text-2xl font-bold">Do&apos;s & Don&apos;ts</h1>
+      <p className="text-muted-foreground mb-8">タイポグラフィのベストプラクティス。</p>
+
+      <div className="grid gap-8" style={{ maxWidth: '64rem' }}>
+        {/* Tailwindスケール */}
+        <section className="bg-card border-border rounded-xl border p-6">
+          <h2 className="mb-4 text-lg font-bold">Tailwindデフォルトスケールを使用</h2>
+          <div className="grid gap-6 md:grid-cols-2">
+            <div className="border-success space-y-3 border-l-4 pl-4">
+              <h3 className="font-bold text-green-600">Do</h3>
+              <div className="space-y-2">
+                <p className="text-2xl font-bold">text-2xl（見出し）</p>
+                <p className="text-base">text-base（本文）</p>
+                <p className="text-muted-foreground text-sm">text-sm（補助）</p>
+              </div>
+              <code className="text-muted-foreground block text-xs">
+                text-2xl, text-base, text-sm
+              </code>
+            </div>
+            <div className="border-destructive space-y-3 border-l-4 pl-4">
+              <h3 className="font-bold text-red-600">Don&apos;t</h3>
+              <div className="space-y-2">
+                <p className="font-bold" style={{ fontSize: '23px' }}>
+                  text-[23px]（任意値）
+                </p>
+                <p style={{ fontSize: '15px' }}>text-[15px]（任意値）</p>
+                <p className="text-muted-foreground" style={{ fontSize: '11px' }}>
+                  text-[11px]（任意値）
+                </p>
+              </div>
+              <code className="text-muted-foreground block text-xs">
+                text-[23px]（任意値は禁止）
+              </code>
+            </div>
+          </div>
+          <p className="text-muted-foreground mt-4 text-sm">
+            理由: 業界標準のスケールで一貫性を保ち、デザインの統一感を維持。
+          </p>
+        </section>
+
+        {/* 階層的なサイズ */}
+        <section className="bg-card border-border rounded-xl border p-6">
+          <h2 className="mb-4 text-lg font-bold">階層的なサイズ変化</h2>
+          <div className="grid gap-6 md:grid-cols-2">
+            <div className="border-success space-y-3 border-l-4 pl-4">
+              <h3 className="font-bold text-green-600">Do</h3>
+              <div className="space-y-1">
+                <p className="text-xl font-bold">見出し1 (text-xl)</p>
+                <p className="text-lg font-bold">見出し2 (text-lg)</p>
+                <p className="text-base">本文 (text-base)</p>
+              </div>
+              <code className="text-muted-foreground block text-xs">1段階ずつ下げる</code>
+            </div>
+            <div className="border-destructive space-y-3 border-l-4 pl-4">
+              <h3 className="font-bold text-red-600">Don&apos;t</h3>
+              <div className="space-y-1">
+                <p className="text-3xl font-bold">見出し1 (text-3xl)</p>
+                <p className="text-sm font-bold">見出し2 (text-sm)</p>
+                <p className="text-xs">本文 (text-xs)</p>
+              </div>
+              <code className="text-muted-foreground block text-xs">サイズが飛びすぎ</code>
+            </div>
+          </div>
+          <p className="text-muted-foreground mt-4 text-sm">
+            理由: 視覚的階層が崩れ、情報の重要度が伝わりにくくなる。
+          </p>
+        </section>
+
+        {/* ウェイト */}
+        <section className="bg-card border-border rounded-xl border p-6">
+          <h2 className="mb-4 text-lg font-bold">ウェイトは2種類まで</h2>
+          <div className="grid gap-6 md:grid-cols-2">
+            <div className="border-success space-y-3 border-l-4 pl-4">
+              <h3 className="font-bold text-green-600">Do</h3>
+              <div className="space-y-2">
+                <p className="font-bold">font-bold（見出し、強調）</p>
+                <p className="font-normal">font-normal（本文）</p>
+              </div>
+            </div>
+            <div className="border-destructive space-y-3 border-l-4 pl-4">
+              <h3 className="font-bold text-red-600">Don&apos;t</h3>
+              <div className="space-y-2">
+                <p className="font-black">font-black</p>
+                <p className="font-extrabold">font-extrabold</p>
+                <p className="font-semibold">font-semibold</p>
+                <p className="font-medium">font-medium</p>
+                <p className="font-light">font-light</p>
+              </div>
+            </div>
+          </div>
+          <p className="text-muted-foreground mt-4 text-sm">
+            理由: ウェイトの多用は視覚的ノイズになり、本当に強調したい部分が埋もれる。
+          </p>
+        </section>
+
+        {/* テキスト色 */}
+        <section className="bg-card border-border rounded-xl border p-6">
+          <h2 className="mb-4 text-lg font-bold">テキスト色で階層を表現</h2>
+          <div className="grid gap-6 md:grid-cols-2">
+            <div className="border-success space-y-3 border-l-4 pl-4">
+              <h3 className="font-bold text-green-600">Do</h3>
+              <div className="space-y-2">
+                <p className="text-foreground">主要テキスト（text-foreground）</p>
+                <p className="text-muted-foreground">補助テキスト（text-muted-foreground）</p>
+              </div>
+            </div>
+            <div className="border-destructive space-y-3 border-l-4 pl-4">
+              <h3 className="font-bold text-red-600">Don&apos;t</h3>
+              <div className="space-y-2">
+                <p className="text-gray-600">text-gray-600（直接色指定）</p>
+                <p className="text-foreground/50">text-foreground/50（透明度）</p>
+              </div>
+            </div>
+          </div>
+          <p className="text-muted-foreground mt-4 text-sm">
+            理由: セマンティックトークンでダークモード対応を自動化。
+          </p>
+        </section>
+      </div>
+    </div>
+  ),
+};

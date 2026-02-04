@@ -474,3 +474,138 @@ export const Text: Story = {
     </div>
   ),
 };
+
+export const DosDonts: Story = {
+  render: () => (
+    <div className="bg-background text-foreground p-8">
+      <h1 className="mb-2 text-2xl font-bold">Do&apos;s & Don&apos;ts</h1>
+      <p className="text-muted-foreground mb-8">カラー使用のベストプラクティス。</p>
+
+      <div className="grid gap-8" style={{ maxWidth: '64rem' }}>
+        {/* セマンティックトークン */}
+        <section className="bg-card border-border rounded-xl border p-6">
+          <h2 className="mb-4 text-lg font-bold">セマンティックトークンを使用</h2>
+          <div className="grid gap-6 md:grid-cols-2">
+            <div className="border-success space-y-3 border-l-4 pl-4">
+              <h3 className="font-bold text-green-600">Do</h3>
+              <div className="bg-destructive text-destructive-foreground rounded-lg p-3 text-sm">
+                エラー: bg-destructive
+              </div>
+              <div className="bg-success text-success-foreground rounded-lg p-3 text-sm">
+                成功: bg-success
+              </div>
+              <code className="text-muted-foreground block text-xs">
+                className=&quot;bg-destructive text-destructive-foreground&quot;
+              </code>
+            </div>
+            <div className="border-destructive space-y-3 border-l-4 pl-4">
+              <h3 className="font-bold text-red-600">Don&apos;t</h3>
+              <div className="rounded-lg bg-red-500 p-3 text-sm text-white">エラー: bg-red-500</div>
+              <div className="rounded-lg bg-green-500 p-3 text-sm text-white">
+                成功: bg-green-500
+              </div>
+              <code className="text-muted-foreground block text-xs">
+                className=&quot;bg-red-500 text-white&quot;
+              </code>
+            </div>
+          </div>
+          <p className="text-muted-foreground mt-4 text-sm">
+            理由:
+            セマンティックトークンはダークモード対応を自動化し、デザイン変更時の一括修正を可能にする。
+          </p>
+        </section>
+
+        {/* テキストコントラスト */}
+        <section className="bg-card border-border rounded-xl border p-6">
+          <h2 className="mb-4 text-lg font-bold">適切なテキストコントラスト</h2>
+          <div className="grid gap-6 md:grid-cols-2">
+            <div className="border-success space-y-3 border-l-4 pl-4">
+              <h3 className="font-bold text-green-600">Do</h3>
+              <div className="bg-primary text-primary-foreground rounded-lg p-3 text-sm">
+                text-primary-foreground on bg-primary
+              </div>
+              <div className="bg-container text-foreground rounded-lg p-3 text-sm">
+                text-foreground on bg-container
+              </div>
+            </div>
+            <div className="border-destructive space-y-3 border-l-4 pl-4">
+              <h3 className="font-bold text-red-600">Don&apos;t</h3>
+              <div className="bg-primary text-muted-foreground rounded-lg p-3 text-sm">
+                text-muted-foreground on bg-primary（低コントラスト）
+              </div>
+              <div className="bg-container text-muted-foreground/50 rounded-lg p-3 text-sm">
+                opacity-50 text（読みにくい）
+              </div>
+            </div>
+          </div>
+          <p className="text-muted-foreground mt-4 text-sm">
+            理由: WCAG 2.1 AA基準（コントラスト比4.5:1以上）を満たすため。
+          </p>
+        </section>
+
+        {/* Surface階層 */}
+        <section className="bg-card border-border rounded-xl border p-6">
+          <h2 className="mb-4 text-lg font-bold">Surface階層を守る</h2>
+          <div className="grid gap-6 md:grid-cols-2">
+            <div className="border-success space-y-3 border-l-4 pl-4">
+              <h3 className="font-bold text-green-600">Do</h3>
+              <div className="bg-background rounded-lg p-3">
+                <div className="bg-container rounded p-2">
+                  <div className="bg-card rounded p-2 text-sm">background → container → card</div>
+                </div>
+              </div>
+            </div>
+            <div className="border-destructive space-y-3 border-l-4 pl-4">
+              <h3 className="font-bold text-red-600">Don&apos;t</h3>
+              <div className="bg-card rounded-lg p-3">
+                <div className="bg-background rounded p-2">
+                  <div className="bg-container rounded p-2 text-sm">
+                    card → background → container
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p className="text-muted-foreground mt-4 text-sm">
+            理由: MD3原則に基づく視覚的階層。親→子で暗くなる一貫した構造。
+          </p>
+        </section>
+
+        {/* 状態色 */}
+        <section className="bg-card border-border rounded-xl border p-6">
+          <h2 className="mb-4 text-lg font-bold">状態を色で表現</h2>
+          <div className="grid gap-6 md:grid-cols-2">
+            <div className="border-success space-y-3 border-l-4 pl-4">
+              <h3 className="font-bold text-green-600">Do</h3>
+              <ul className="text-muted-foreground space-y-1 text-sm">
+                <li>
+                  成功 → <span className="text-success">text-success</span>
+                </li>
+                <li>
+                  エラー → <span className="text-destructive">text-destructive</span>
+                </li>
+                <li>
+                  警告 → <span className="text-warning">text-warning</span>
+                </li>
+                <li>
+                  情報 → <span className="text-info">text-info</span>
+                </li>
+              </ul>
+            </div>
+            <div className="border-destructive space-y-3 border-l-4 pl-4">
+              <h3 className="font-bold text-red-600">Don&apos;t</h3>
+              <ul className="text-muted-foreground space-y-1 text-sm">
+                <li>成功を青で表示</li>
+                <li>エラーを黄色で表示</li>
+                <li>色だけで状態を伝える（アイコンなし）</li>
+              </ul>
+            </div>
+          </div>
+          <p className="text-muted-foreground mt-4 text-sm">
+            理由: 色の意味を統一することでユーザーの認知負荷を軽減。
+          </p>
+        </section>
+      </div>
+    </div>
+  ),
+};

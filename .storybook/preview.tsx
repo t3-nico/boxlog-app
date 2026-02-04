@@ -18,6 +18,14 @@ const messages = {
     deleteFailed: '削除に失敗しました',
     deleteConfirm: 'プロフィール画像を削除しますか？',
   },
+  sidebar: {
+    navigation: {
+      calendar: 'カレンダー',
+      plan: 'プラン',
+      record: '記録',
+      stats: '統計',
+    },
+  },
   common: {
     close: '閉じる',
     cancel: 'キャンセル',
@@ -45,7 +53,7 @@ const preview: Preview = {
     options: {
       storySort: {
         method: 'alphabetical',
-        order: ['Docs', 'Tokens', 'Components'],
+        order: ['Docs', 'Tokens', 'Components', 'Patterns'],
       },
     },
   },
