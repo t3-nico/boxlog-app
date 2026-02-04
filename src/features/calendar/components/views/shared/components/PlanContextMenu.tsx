@@ -156,35 +156,33 @@ export const EventContextMenu = ({
   return (
     <div
       ref={menuRef}
-      className="border-border bg-popover text-popover-foreground fixed z-50 min-w-44 rounded-lg border p-2 text-sm shadow-md"
+      className="bg-popover text-popover-foreground border-border animate-in fade-in-0 zoom-in-95 fixed z-[350] min-w-[12rem] rounded-lg border p-1 shadow-lg motion-reduce:animate-none"
       style={{
         left: adjustedPosition.x,
         top: adjustedPosition.y,
       }}
     >
-      {/* メニューアイテム */}
-      <div className="space-y-1">
-        {menuItems.map((item, _index) => {
-          const IconComponent = item.icon;
+      {menuItems.map((item) => {
+        const IconComponent = item.icon;
 
-          return (
-            <button
-              type="button"
-              key={item.label}
-              onClick={() => handleAction(item.action)}
-              className={cn(
-                'flex w-full items-center gap-4 rounded px-4 py-2 text-left transition-colors',
-                item.dangerous
-                  ? 'text-destructive hover:bg-destructive-state-hover'
-                  : 'text-foreground hover:bg-state-hover',
-              )}
-            >
-              <IconComponent className="h-4 w-4 flex-shrink-0" />
-              <span>{item.label}</span>
-            </button>
-          );
-        })}
-      </div>
+        return (
+          <button
+            type="button"
+            key={item.label}
+            onClick={() => handleAction(item.action)}
+            className={cn(
+              'flex w-full cursor-default items-center gap-2 rounded px-2 py-2 text-left text-sm outline-hidden transition-colors select-none',
+              "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+              item.dangerous
+                ? 'text-destructive hover:bg-destructive-state-hover focus:bg-destructive-state-hover'
+                : "text-foreground hover:bg-state-hover focus:bg-state-focus [&_svg:not([class*='text-'])]:text-muted-foreground",
+            )}
+          >
+            <IconComponent />
+            <span>{item.label}</span>
+          </button>
+        );
+      })}
     </div>
   );
 };
