@@ -123,6 +123,19 @@ export const AllColors: Story = {
         />
       </ColorGroup>
 
+      <ColorGroup title="Tag Colors（ユーザー選択用）">
+        <ColorSwatch tailwindClass="bg-tag-blue" description="Blue（デフォルト）" />
+        <ColorSwatch tailwindClass="bg-tag-green" description="Green" />
+        <ColorSwatch tailwindClass="bg-tag-red" description="Red" />
+        <ColorSwatch tailwindClass="bg-tag-amber" description="Amber" />
+        <ColorSwatch tailwindClass="bg-tag-violet" description="Violet" />
+        <ColorSwatch tailwindClass="bg-tag-pink" description="Pink" />
+        <ColorSwatch tailwindClass="bg-tag-cyan" description="Cyan" />
+        <ColorSwatch tailwindClass="bg-tag-orange" description="Orange" />
+        <ColorSwatch tailwindClass="bg-tag-gray" description="Gray" />
+        <ColorSwatch tailwindClass="bg-tag-indigo" description="Indigo" />
+      </ColorGroup>
+
       <ColorGroup title="shadcn/ui互換エイリアス">
         <ColorSwatch
           tailwindClass="bg-popover"
@@ -559,6 +572,60 @@ export const Text: Story = {
           <code className="bg-container w-48 rounded px-2 py-1 text-xs">text-success</code>
           <span className="text-success">成功、完了</span>
         </div>
+      </div>
+    </div>
+  ),
+};
+
+export const Tags: Story = {
+  render: () => (
+    <div className="bg-background text-foreground p-8">
+      <h1 className="mb-2 text-2xl font-bold">タグカラー</h1>
+      <p className="text-muted-foreground mb-8">
+        ユーザーがタグに設定できる10色のパレット。ライト/ダークモード共通。
+      </p>
+
+      <div className="space-y-4">
+        {[
+          { token: 'tag-blue', name: 'Blue', description: 'デフォルト' },
+          { token: 'tag-green', name: 'Green', description: '' },
+          { token: 'tag-red', name: 'Red', description: '' },
+          { token: 'tag-amber', name: 'Amber', description: '' },
+          { token: 'tag-violet', name: 'Violet', description: '' },
+          { token: 'tag-pink', name: 'Pink', description: '' },
+          { token: 'tag-cyan', name: 'Cyan', description: '' },
+          { token: 'tag-orange', name: 'Orange', description: '' },
+          { token: 'tag-gray', name: 'Gray', description: 'グループのデフォルト' },
+          { token: 'tag-indigo', name: 'Indigo', description: '' },
+        ].map(({ token, name, description }) => (
+          <div key={token} className="border-border flex items-center gap-4 border-b pb-4">
+            <div
+              className="size-10 shrink-0 rounded-lg"
+              style={{ backgroundColor: `var(--${token})` }}
+            />
+            <div className="flex-1">
+              <div className="flex items-center gap-2">
+                <code className="bg-container rounded px-2 py-1 text-xs">bg-{token}</code>
+                <span className="font-medium">{name}</span>
+              </div>
+              {description && <p className="text-muted-foreground mt-1 text-xs">{description}</p>}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="bg-card border-border mt-8 rounded-lg border p-6">
+        <h2 className="mb-4 font-bold">使用例</h2>
+        <div className="flex flex-wrap gap-2">
+          <span className="border-tag-blue rounded-full border px-3 py-1 text-sm">タグ例</span>
+          <span className="border-tag-green rounded-full border px-3 py-1 text-sm">タグ例</span>
+          <span className="border-tag-red rounded-full border px-3 py-1 text-sm">タグ例</span>
+          <span className="border-tag-amber rounded-full border px-3 py-1 text-sm">タグ例</span>
+          <span className="border-tag-violet rounded-full border px-3 py-1 text-sm">タグ例</span>
+        </div>
+        <p className="text-muted-foreground mt-4 text-sm">
+          タグバッジでは <code>border-tag-*</code> でボーダー色を設定
+        </p>
       </div>
     </div>
   ),

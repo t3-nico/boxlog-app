@@ -87,6 +87,21 @@
   --chart-3: oklch(0.4882 0.2172 264.3763);
   --chart-4: oklch(0.4244 0.1809 265.6377);
   --chart-5: oklch(0.3791 0.1378 265.5222);
+
+  /* ============================================
+   * Tag Colors（ユーザー選択用カラーパレット）
+   * ライト/ダークモード共通（タグは常に同じ色で表示）
+   * ============================================ */
+  --tag-blue: oklch(0.62 0.21 257);
+  --tag-green: oklch(0.67 0.17 162);
+  --tag-red: oklch(0.63 0.23 25);
+  --tag-amber: oklch(0.78 0.18 75);
+  --tag-violet: oklch(0.55 0.24 293);
+  --tag-pink: oklch(0.64 0.22 350);
+  --tag-cyan: oklch(0.68 0.14 203);
+  --tag-orange: oklch(0.70 0.20 45);
+  --tag-gray: oklch(0.52 0.02 256);
+  --tag-indigo: oklch(0.54 0.24 275);
 }
 
 /* ダークモード（CSS変数上書き） */
@@ -259,6 +274,21 @@
    * ============================================ */
   --shadow-color: oklch(0 0 0 / 15%);
   --shadow-color-heavy: oklch(0 0 0 / 20%);
+
+  /* ============================================
+   * Tag Colors（ユーザー選択用カラーパレット）
+   * 使用例: bg-tag-blue, text-tag-red
+   * ============================================ */
+  --color-tag-blue: var(--tag-blue);
+  --color-tag-green: var(--tag-green);
+  --color-tag-red: var(--tag-red);
+  --color-tag-amber: var(--tag-amber);
+  --color-tag-violet: var(--tag-violet);
+  --color-tag-pink: var(--tag-pink);
+  --color-tag-cyan: var(--tag-cyan);
+  --color-tag-orange: var(--tag-orange);
+  --color-tag-gray: var(--tag-gray);
+  --color-tag-indigo: var(--tag-indigo);
 }
 
 @theme {
