@@ -175,19 +175,7 @@ function getIconColor(color: ActivityIconColor): string {
   }
 }
 
-function getIconBgColor(color: ActivityIconColor): string {
-  switch (color) {
-    case 'success':
-      return 'bg-success/10';
-    case 'info':
-      return 'bg-info/10';
-    case 'warning':
-      return 'bg-warning/10';
-    case 'primary':
-      return 'bg-primary/10';
-    case 'destructive':
-      return 'bg-destructive/10';
-    default:
-      return 'bg-surface-container';
-  }
+function getIconBgColor(_color: ActivityIconColor): string {
+  // GAFAパターン: アイコン背景は統一、アイコン色で差別化
+  return 'bg-muted';
 }

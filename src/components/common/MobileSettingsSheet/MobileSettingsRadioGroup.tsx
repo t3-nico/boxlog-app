@@ -89,7 +89,7 @@ export function MobileSettingsRadioGroup<T extends string>({
             htmlFor={`${idPrefix}-${option.value}`}
             className={`flex cursor-pointer items-center gap-2 rounded-full border px-4 py-2 text-sm transition-colors ${
               value === option.value
-                ? 'border-primary bg-primary-container text-on-primary-container'
+                ? 'border-primary bg-state-active text-state-active-foreground'
                 : 'border-border hover:bg-state-hover'
             }`}
           >

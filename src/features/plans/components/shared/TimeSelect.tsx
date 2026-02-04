@@ -371,9 +371,7 @@ export function TimeSelect({
         <PopoverAnchor asChild>
           <div
             className={`relative flex cursor-text items-center rounded-lg transition-colors ${
-              hasError
-                ? 'ring-destructive/50 bg-destructive-container ring-2'
-                : 'hover:bg-state-hover'
+              hasError ? 'ring-destructive ring-2' : 'hover:bg-state-hover'
             } ${showIcon ? 'w-[72px] gap-2 px-2' : ''}`}
             onClick={() => {
               if (!isOpen) setIsOpen(true);

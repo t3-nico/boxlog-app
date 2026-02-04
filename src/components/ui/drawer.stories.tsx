@@ -92,14 +92,14 @@ export const AllPatterns: Story = {
                       label: '予定を追加',
                       description: 'カレンダーに予定を追加',
                       color: 'text-primary',
-                      bg: 'bg-primary-container',
+                      bg: 'bg-muted',
                     },
                     {
                       icon: CheckSquare,
                       label: '実績を記録',
                       description: '完了したタスクを記録',
                       color: 'text-success',
-                      bg: 'bg-success-container',
+                      bg: 'bg-muted',
                     },
                     {
                       icon: FileText,
@@ -113,7 +113,7 @@ export const AllPatterns: Story = {
                       label: '履歴から',
                       description: '最近の項目から再作成',
                       color: 'text-warning',
-                      bg: 'bg-warning/10',
+                      bg: 'bg-muted',
                     },
                   ].map((action) => (
                     <button

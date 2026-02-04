@@ -119,8 +119,8 @@ export const Scale: Story = {
         ))}
       </div>
 
-      <div className="bg-info/10 mt-8 rounded-lg p-4">
-        <p className="text-info text-sm">
+      <div className="border-info text-info mt-8 rounded-lg border p-4">
+        <p className="text-sm">
           <strong>使用する値:</strong> <code className="bg-container rounded px-1">1</code>(4px),{' '}
           <code className="bg-container rounded px-1">2</code>(8px),{' '}
           <code className="bg-container rounded px-1">4</code>(16px),{' '}
@@ -379,8 +379,8 @@ export const NestedSpacing: Story = {
         </div>
       </div>
 
-      <div className="bg-info/10 mt-8 rounded-lg p-4">
-        <p className="text-info text-sm">
+      <div className="border-info text-info mt-8 rounded-lg border p-4">
+        <p className="text-sm">
           <strong>ルール:</strong> 内側のSpacingは外側より小さく。
           <br />
           最内側 (8px) → 内側 (16px) → 中間 (24px) → 外側 (32px)

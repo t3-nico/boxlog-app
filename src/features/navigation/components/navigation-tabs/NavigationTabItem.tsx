@@ -31,7 +31,7 @@ export function NavigationTabItem({ icon: Icon, label, url, isActive }: Navigati
         className={cn(
           'flex h-8 w-10 items-center justify-center rounded-full transition-colors',
           isActive
-            ? 'bg-primary-container text-on-primary-container hover:bg-primary-container/90'
+            ? 'bg-state-active text-state-active-foreground'
             : 'text-muted-foreground hover:bg-foreground/8 hover:text-foreground',
         )}
       >

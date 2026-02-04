@@ -244,7 +244,7 @@ export const ScrollableCalendarLayout = ({
               <div className="relative h-full">
                 {/* 上部の折りたたみセクション（時間列部分）- 睡眠時間帯全体を1行で表示 */}
                 <div
-                  className="bg-accent-container relative z-10 flex w-full items-center justify-end gap-1 pr-2"
+                  className="bg-state-active relative z-10 flex w-full items-center justify-end gap-1 pr-2"
                   style={{ height: COLLAPSED_SECTION_HEIGHT }}
                 >
                   <Moon className="text-muted-foreground size-3" />

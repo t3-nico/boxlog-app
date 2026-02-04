@@ -8,7 +8,7 @@ import { calendarStyles } from './styles';
 // 共通Tailwindクラスを取得するヘルパー（セマンティックトークン使用）
 export const getTextMuted = (): string => 'text-muted-foreground';
 export const getBorderDefault = (): string => 'border-border';
-export const getSelectionBg = (): string => 'bg-primary-container';
+export const getSelectionBg = (): string => 'bg-state-active';
 export const getSurfaceBg = (): string => 'bg-muted';
 export const getCurrentTimeBorder = (): string => 'border-primary';
 

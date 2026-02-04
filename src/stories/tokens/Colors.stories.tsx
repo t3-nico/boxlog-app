@@ -436,30 +436,30 @@ export const Interaction: Story = {
         </div>
       </div>
 
-      {/* 不透明度ルール */}
-      <div className="bg-warning/10 border-warning mt-8 rounded-lg border p-6">
-        <h3 className="text-warning-foreground mb-2 font-bold">不透明度の使用ルール（MD3準拠）</h3>
+      {/* デザインルール：アウトライン or 塗り */}
+      <div className="border-warning text-warning mt-8 rounded-lg border p-6">
+        <h3 className="mb-2 font-bold">GAFA準拠デザインルール</h3>
         <p className="text-muted-foreground mb-4 text-sm">
-          不透明度（<code>/10</code>, <code>/20</code> 等）は
-          <strong>インタラクション状態のみ</strong>に使用する。
+          装飾的背景は<strong>2パターンのみ</strong>: アウトライン（border + text-color）または
+          塗り（bg-primary等）
         </p>
         <div className="space-y-2 text-sm">
           <div className="text-success">
-            ✅ OK: <code>hover:bg-primary/10</code>（ホバー状態）
+            ✅ OK: <code>border-warning text-warning</code>（アウトライン）
           </div>
           <div className="text-success">
-            ✅ OK: <code>decoration-primary/30 hover:decoration-primary</code>（状態変化）
+            ✅ OK: <code>bg-primary text-primary-foreground</code>（塗り）
+          </div>
+          <div className="text-success">
+            ✅ OK: <code>hover:bg-state-hover</code>（インタラクション状態）
           </div>
           <div className="text-destructive">
-            ❌ NG: <code>bg-primary/20</code>（通常の背景色として使用）
+            ❌ NG: <code>bg-primary/10</code>（薄い背景は不要）
           </div>
           <div className="text-destructive">
-            ❌ NG: <code>bg-muted/50</code>（微妙な差をつけるために使用）
+            ❌ NG: <code>bg-warning-container</code>（Container系トークン廃止）
           </div>
         </div>
-        <p className="text-muted-foreground mt-4 text-xs">
-          通常の背景色が必要な場合は、専用のセマンティックトークンを globals.css に追加する。
-        </p>
       </div>
     </div>
   ),

@@ -87,7 +87,7 @@ export const AllPatterns: Story = {
               <ContextMenuTrigger asChild>
                 <div className="bg-card hover:bg-state-hover border-border flex cursor-context-menu items-center justify-between rounded-lg border p-4">
                   <p>タグを右クリック</p>
-                  <span className="bg-primary-container text-primary rounded-full px-2 py-1 text-xs">
+                  <span className="border-primary text-primary rounded-full border px-2 py-1 text-xs">
                     仕事
                   </span>
                 </div>

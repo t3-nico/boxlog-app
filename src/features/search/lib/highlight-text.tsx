@@ -76,7 +76,7 @@ export function HighlightedText({
   text,
   query,
   className,
-  highlightClassName = 'bg-primary-container text-foreground rounded',
+  highlightClassName = 'bg-state-active text-state-active-foreground rounded',
 }: HighlightedTextProps) {
   if (!text) {
     return <span className={className}>{text}</span>;

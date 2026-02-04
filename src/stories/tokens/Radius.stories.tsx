@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
-  title: 'Tokens/BorderRadius',
+  title: 'Tokens/Radius',
   parameters: {
     layout: 'fullscreen',
   },
@@ -132,8 +132,10 @@ export const UseCases: Story = {
         <div>
           <h3 className="mb-4 font-bold">バッジ・タグ</h3>
           <div className="flex gap-2">
-            <span className="bg-primary/10 text-primary rounded px-2 py-1 text-xs">rounded</span>
-            <span className="bg-primary/10 text-primary rounded-full px-2 py-1 text-xs">
+            <span className="border-primary text-primary rounded border px-2 py-1 text-xs">
+              rounded
+            </span>
+            <span className="border-primary text-primary rounded-full border px-2 py-1 text-xs">
               rounded-full
             </span>
           </div>

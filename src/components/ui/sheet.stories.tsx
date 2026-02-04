@@ -127,13 +127,13 @@ export const AllPatterns: Story = {
                       icon: Calendar,
                       label: '予定を追加',
                       color: 'text-primary',
-                      bg: 'bg-primary-container',
+                      bg: 'bg-muted',
                     },
                     {
                       icon: CheckSquare,
                       label: '実績を記録',
                       color: 'text-success',
-                      bg: 'bg-success-container',
+                      bg: 'bg-muted',
                     },
                     {
                       icon: FileText,
@@ -145,7 +145,7 @@ export const AllPatterns: Story = {
                       icon: History,
                       label: '履歴から',
                       color: 'text-warning',
-                      bg: 'bg-warning/10',
+                      bg: 'bg-muted',
                     },
                   ].map((action) => (
                     <button

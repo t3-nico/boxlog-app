@@ -210,14 +210,16 @@ export const CommonPatterns: Story = {
         {/* WarningBox */}
         <section>
           <h2 className="mb-4 text-lg font-bold">WarningBox</h2>
-          <p className="text-muted-foreground mb-4 text-sm">破壊的操作の警告に使用</p>
-          <div className="bg-warning/10 border-warning flex items-start gap-3 rounded-lg border p-4">
-            <AlertTriangle className="text-warning mt-0.5 size-5 shrink-0" />
+          <p className="text-muted-foreground mb-4 text-sm">
+            破壊的操作の警告に使用（アウトラインパターン）
+          </p>
+          <div className="border-warning text-warning flex items-start gap-3 rounded-lg border p-4">
+            <AlertTriangle className="mt-0.5 size-5 shrink-0" />
             <div className="text-sm">この操作は取り消せません</div>
           </div>
           <pre className="bg-container mt-4 overflow-x-auto rounded-lg p-4 text-xs">
-            {`<div className="bg-warning/10 border-warning flex items-start gap-3 rounded-lg border p-4">
-  <AlertTriangle className="text-warning size-5" />
+            {`<div className="border-warning text-warning flex items-start gap-3 rounded-lg border p-4">
+  <AlertTriangle className="size-5" />
   <div>この操作は取り消せません</div>
 </div>`}
           </pre>
@@ -280,8 +282,8 @@ export const CommonPatterns: Story = {
               <h3 className="font-bold">タイトル</h3>
             </div>
             <div className="space-y-3">
-              <div className="bg-warning/10 border-warning flex items-start gap-3 rounded-lg border p-3">
-                <AlertTriangle className="text-warning mt-0.5 size-4 shrink-0" />
+              <div className="border-warning text-warning flex items-start gap-3 rounded-lg border p-3">
+                <AlertTriangle className="mt-0.5 size-4 shrink-0" />
                 <div className="text-sm">警告メッセージ</div>
               </div>
               <div className="bg-container rounded-lg p-3">

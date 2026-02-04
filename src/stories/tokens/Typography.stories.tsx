@@ -63,7 +63,7 @@ export const Scale: Story = {
         ].map(({ class: cls, px, usage, highlight }) => (
           <div
             key={cls}
-            className={`flex items-center gap-4 rounded-lg p-2 ${highlight ? 'bg-primary/10' : ''}`}
+            className={`flex items-center gap-4 rounded-lg p-2 ${highlight ? 'bg-state-active' : ''}`}
           >
             <code className="bg-container w-24 rounded px-2 py-1 text-center text-xs">{cls}</code>
             <div className="text-muted-foreground w-16 text-xs">{px}</div>
@@ -73,8 +73,8 @@ export const Scale: Story = {
         ))}
       </div>
 
-      <div className="bg-info/10 mt-8 rounded-lg p-4">
-        <p className="text-info text-sm">
+      <div className="border-info text-info mt-8 rounded-lg border p-4">
+        <p className="text-sm">
           <strong>よく使う:</strong> <code className="bg-container rounded px-1">text-xs</code>,{' '}
           <code className="bg-container rounded px-1">text-sm</code>,{' '}
           <code className="bg-container rounded px-1">text-base</code>,{' '}

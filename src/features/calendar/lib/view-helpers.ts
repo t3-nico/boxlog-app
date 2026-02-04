@@ -32,7 +32,7 @@ export function getDateStyleClass(date: Date): string {
   const classes = ['transition-colors duration-150'];
 
   if (isToday(date)) {
-    classes.push('bg-primary-container ring-2 ring-primary');
+    classes.push('bg-state-active ring-2 ring-primary');
   }
 
   if (isWeekend(date)) {

@@ -1,6 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { Settings, X, Bell, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import type { Meta, StoryObj } from '@storybook/react';
+import { Bell, Check, Settings, X } from 'lucide-react';
 
 const meta = {
   title: 'Docs/Accessibility',
@@ -51,13 +51,13 @@ function Comparison({
 }) {
   return (
     <div className="grid gap-4 md:grid-cols-2">
-      <div className="bg-success/10 border-success rounded-lg border p-4">
-        <div className="text-success mb-2 font-bold">{goodLabel}</div>
-        {good}
+      <div className="border-success text-success rounded-lg border p-4">
+        <div className="mb-2 font-bold">{goodLabel}</div>
+        <div className="text-foreground">{good}</div>
       </div>
-      <div className="bg-destructive/10 border-destructive rounded-lg border p-4">
-        <div className="text-destructive mb-2 font-bold">{badLabel}</div>
-        {bad}
+      <div className="border-destructive text-destructive rounded-lg border p-4">
+        <div className="mb-2 font-bold">{badLabel}</div>
+        <div className="text-foreground">{bad}</div>
       </div>
     </div>
   );
@@ -172,10 +172,7 @@ export const ScreenReaderText: Story = {
 
         <div className="bg-card border-border mb-4 rounded-lg border p-4">
           <div className="mb-4 flex items-center gap-4">
-            <button
-              type="button"
-              className="hover:bg-state-hover rounded-lg p-2 transition-colors"
-            >
+            <button type="button" className="hover:bg-state-hover rounded-lg p-2 transition-colors">
               <X className="size-4" />
               <span className="sr-only">閉じる</span>
             </button>
@@ -189,7 +186,7 @@ export const ScreenReaderText: Story = {
 </button>`}</CodeBlock>
         </div>
 
-        <div className="bg-info/10 border-info rounded-lg border p-4">
+        <div className="border-info text-info rounded-lg border p-4">
           <p className="text-sm">
             <strong>sr-only の CSS:</strong>
           </p>
@@ -215,14 +212,10 @@ export const FocusManagement: Story = {
   render: () => (
     <div className="bg-background text-foreground p-8">
       <h1 className="mb-4 text-2xl font-bold">フォーカス管理</h1>
-      <p className="text-muted-foreground mb-8">
-        キーボード操作時のフォーカス状態を明確に表示する
-      </p>
+      <p className="text-muted-foreground mb-8">キーボード操作時のフォーカス状態を明確に表示する</p>
 
       <Section title="フォーカスリング（MD3スタイル）">
-        <p className="text-muted-foreground mb-4">
-          Tabキーでフォーカスを移動して確認してください
-        </p>
+        <p className="text-muted-foreground mb-4">Tabキーでフォーカスを移動して確認してください</p>
 
         <div className="mb-6 flex flex-wrap gap-4">
           <button
@@ -303,9 +296,7 @@ export const LiveRegions: Story = {
 </div>`}</CodeBlock>
           </div>
 
-          <p className="text-muted-foreground text-sm">
-            用途: 保存完了、データ更新、非緊急の通知
-          </p>
+          <p className="text-muted-foreground text-sm">用途: 保存完了、データ更新、非緊急の通知</p>
         </Section>
 
         <Section title="緊急通知（assertive）">
@@ -314,7 +305,7 @@ export const LiveRegions: Story = {
           </p>
 
           <div className="bg-card border-border mb-4 rounded-lg border p-4">
-            <div className="bg-destructive/10 text-destructive mb-4 flex items-center gap-2 rounded-lg p-3">
+            <div className="border-destructive text-destructive mb-4 flex items-center gap-2 rounded-lg border p-3">
               <Bell className="size-5" />
               <span>エラーが発生しました</span>
               {/* 実際のライブリージョン（視覚的に隠す） */}
@@ -391,7 +382,7 @@ export const SkipLink: Story = {
           {/* スキップリンク */}
           <a
             href="#demo-main-content"
-            className="bg-primary text-primary-foreground absolute left-4 top-4 z-50 -translate-y-16 rounded-lg px-4 py-2 transition-transform focus:translate-y-0"
+            className="bg-primary text-primary-foreground absolute top-4 left-4 z-50 -translate-y-16 rounded-lg px-4 py-2 transition-transform focus:translate-y-0"
           >
             メインコンテンツへスキップ
           </a>
@@ -448,9 +439,7 @@ export const Checklist: Story = {
   render: () => (
     <div className="bg-background text-foreground p-8">
       <h1 className="mb-4 text-2xl font-bold">アクセシビリティチェックリスト</h1>
-      <p className="text-muted-foreground mb-8">
-        新規コンポーネント作成時・PR作成前に確認すること
-      </p>
+      <p className="text-muted-foreground mb-8">新規コンポーネント作成時・PR作成前に確認すること</p>
 
       <Section title="新規コンポーネント作成時">
         <div className="space-y-3">
@@ -461,7 +450,10 @@ export const Checklist: Story = {
             'カラーコントラストがWCAG AA準拠（4.5:1以上）',
             'npm run a11y:check がパス',
           ].map((item, i) => (
-            <label key={i} className="bg-card border-border flex items-center gap-3 rounded-lg border p-3">
+            <label
+              key={i}
+              className="bg-card border-border flex items-center gap-3 rounded-lg border p-3"
+            >
               <input type="checkbox" className="size-4" />
               <span>{item}</span>
             </label>
@@ -477,7 +469,10 @@ export const Checklist: Story = {
             'Tabキーで全要素にアクセス可能',
             'スクリーンリーダーでテスト（VoiceOver / NVDA）',
           ].map((item, i) => (
-            <label key={i} className="bg-card border-border flex items-center gap-3 rounded-lg border p-3">
+            <label
+              key={i}
+              className="bg-card border-border flex items-center gap-3 rounded-lg border p-3"
+            >
               <input type="checkbox" className="size-4" />
               <span>{item}</span>
             </label>
@@ -634,12 +629,11 @@ export const DialogAccessibility: Story = {
     <div className="bg-background text-foreground p-8">
       <h1 className="mb-4 text-2xl font-bold">Dialog / AlertDialog</h1>
       <p className="text-muted-foreground mb-8">
-        shadcn/ui（Radix UI）のDialog/AlertDialogは基本的なa11y対応済み。
-        ただし、必須ルールがある。
+        shadcn/ui（Radix UI）のDialog/AlertDialogは基本的なa11y対応済み。 ただし、必須ルールがある。
       </p>
 
       <Section title="必須ルール">
-        <div className="bg-warning/10 border-warning mb-6 rounded-lg border p-4">
+        <div className="border-warning text-warning mb-6 rounded-lg border p-4">
           <p className="font-bold">DialogTitle / DialogDescription を省略しない</p>
           <p className="text-muted-foreground mt-2 text-sm">
             省略するとスクリーンリーダーで内容が伝わらない。
@@ -696,9 +690,7 @@ export const KeyboardNavigation: Story = {
   render: () => (
     <div className="bg-background text-foreground p-8">
       <h1 className="mb-4 text-2xl font-bold">キーボードナビゲーション</h1>
-      <p className="text-muted-foreground mb-8">
-        キーボードのみで全機能が使えるようにする
-      </p>
+      <p className="text-muted-foreground mb-8">キーボードのみで全機能が使えるようにする</p>
 
       <Section title="基本キー">
         <div className="overflow-x-auto">
@@ -711,23 +703,33 @@ export const KeyboardNavigation: Story = {
             </thead>
             <tbody>
               <tr className="border-border border-b">
-                <td className="py-2"><kbd className="bg-container rounded px-2 py-1">Tab</kbd></td>
+                <td className="py-2">
+                  <kbd className="bg-container rounded px-2 py-1">Tab</kbd>
+                </td>
                 <td className="py-2">次の要素にフォーカス移動</td>
               </tr>
               <tr className="border-border border-b">
-                <td className="py-2"><kbd className="bg-container rounded px-2 py-1">Shift + Tab</kbd></td>
+                <td className="py-2">
+                  <kbd className="bg-container rounded px-2 py-1">Shift + Tab</kbd>
+                </td>
                 <td className="py-2">前の要素にフォーカス移動</td>
               </tr>
               <tr className="border-border border-b">
-                <td className="py-2"><kbd className="bg-container rounded px-2 py-1">Enter</kbd></td>
+                <td className="py-2">
+                  <kbd className="bg-container rounded px-2 py-1">Enter</kbd>
+                </td>
                 <td className="py-2">ボタン/リンクの実行</td>
               </tr>
               <tr className="border-border border-b">
-                <td className="py-2"><kbd className="bg-container rounded px-2 py-1">Space</kbd></td>
+                <td className="py-2">
+                  <kbd className="bg-container rounded px-2 py-1">Space</kbd>
+                </td>
                 <td className="py-2">チェックボックス/ボタンの切り替え</td>
               </tr>
               <tr>
-                <td className="py-2"><kbd className="bg-container rounded px-2 py-1">Escape</kbd></td>
+                <td className="py-2">
+                  <kbd className="bg-container rounded px-2 py-1">Escape</kbd>
+                </td>
                 <td className="py-2">モーダル/ポップオーバーを閉じる</td>
               </tr>
             </tbody>
@@ -765,7 +767,10 @@ if (isTyping) return; // 入力中は何もしない
             { key: 'Cmd/Ctrl + C', action: 'コピー' },
             { key: 'Cmd/Ctrl + V', action: 'ペースト' },
           ].map(({ key, action }) => (
-            <div key={key} className="bg-card border-border flex items-center justify-between rounded-lg border p-3">
+            <div
+              key={key}
+              className="bg-card border-border flex items-center justify-between rounded-lg border p-3"
+            >
               <kbd className="bg-container rounded px-2 py-1 text-xs">{key}</kbd>
               <span className="text-muted-foreground">{action}</span>
             </div>
@@ -781,9 +786,7 @@ export const ProhibitedPatterns: Story = {
   render: () => (
     <div className="bg-background text-foreground p-8">
       <h1 className="mb-4 text-2xl font-bold">禁止事項</h1>
-      <p className="text-muted-foreground mb-8">
-        アクセシビリティを損なう実装パターン
-      </p>
+      <p className="text-muted-foreground mb-8">アクセシビリティを損なう実装パターン</p>
 
       <Section title="❌ クリックのみでキーボード操作不可">
         <Comparison
@@ -821,9 +824,7 @@ export const ProhibitedPatterns: Story = {
       </Section>
 
       <Section title="❌ aria-label の乱用">
-        <p className="text-muted-foreground mb-4">
-          可視テキストがある場合は aria-label 不要
-        </p>
+        <p className="text-muted-foreground mb-4">可視テキストがある場合は aria-label 不要</p>
 
         <Comparison
           good={
@@ -847,9 +848,7 @@ export const ProhibitedPatterns: Story = {
       </Section>
 
       <Section title="❌ 色だけで情報を伝える">
-        <p className="text-muted-foreground mb-4">
-          色覚特性のあるユーザーに伝わらない
-        </p>
+        <p className="text-muted-foreground mb-4">色覚特性のあるユーザーに伝わらない</p>
 
         <Comparison
           good={
@@ -952,14 +951,10 @@ export const MotionPreference: Story = {
   render: () => (
     <div className="bg-background text-foreground p-8">
       <h1 className="mb-4 text-2xl font-bold">Motion Preference</h1>
-      <p className="text-muted-foreground mb-8">
-        アニメーションを減らしたいユーザー設定を尊重する
-      </p>
+      <p className="text-muted-foreground mb-8">アニメーションを減らしたいユーザー設定を尊重する</p>
 
       <Section title="useReducedMotion フック">
-        <p className="text-muted-foreground mb-4">
-          OSの「視覚効果を減らす」設定を検出
-        </p>
+        <p className="text-muted-foreground mb-4">OSの「視覚効果を減らす」設定を検出</p>
 
         <div className="bg-card border-border mb-4 rounded-lg border p-4">
           <CodeBlock>{`import { useReducedMotion } from '@/hooks/useReducedMotion';

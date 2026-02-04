@@ -119,12 +119,12 @@ export function ConfirmDialog({
 
   if (!mounted || !open) return null;
 
-  // バリアントに応じたスタイル
+  // バリアントに応じたスタイル（アウトラインパターン）
   const iconContainerClass =
     variant === 'destructive'
-      ? 'bg-destructive-container'
+      ? 'border border-destructive'
       : variant === 'warning'
-        ? 'bg-warning-container'
+        ? 'border border-warning'
         : 'bg-muted';
 
   const iconClass =

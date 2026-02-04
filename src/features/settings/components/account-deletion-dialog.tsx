@@ -87,7 +87,7 @@ export function AccountDeletionDialog() {
 
   return (
     <>
-      <div className="bg-destructive-container rounded-2xl p-4">
+      <div className="border-destructive rounded-2xl border p-4">
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1 space-y-2">
             <div className="flex items-center gap-2">

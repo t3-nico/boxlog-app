@@ -244,42 +244,44 @@ export const SemanticIcons: Story = {
 
       <div className="space-y-6">
         <div className="flex items-center gap-4">
-          <div className="bg-success/10 text-success rounded-full p-2">
+          <div className="bg-muted text-success rounded-full p-2">
             <Check className="size-5" />
           </div>
           <div>
             <p className="font-bold">成功・完了</p>
-            <code className="text-muted-foreground text-xs">Check + text-success</code>
+            <code className="text-muted-foreground text-xs">Check + text-success + bg-muted</code>
           </div>
         </div>
 
         <div className="flex items-center gap-4">
-          <div className="bg-warning/10 text-warning rounded-full p-2">
+          <div className="bg-muted text-warning rounded-full p-2">
             <AlertCircle className="size-5" />
           </div>
           <div>
             <p className="font-bold">警告・注意</p>
-            <code className="text-muted-foreground text-xs">AlertCircle + text-warning</code>
+            <code className="text-muted-foreground text-xs">
+              AlertCircle + text-warning + bg-muted
+            </code>
           </div>
         </div>
 
         <div className="flex items-center gap-4">
-          <div className="bg-destructive/10 text-destructive rounded-full p-2">
+          <div className="bg-muted text-destructive rounded-full p-2">
             <X className="size-5" />
           </div>
           <div>
             <p className="font-bold">エラー・削除</p>
-            <code className="text-muted-foreground text-xs">X + text-destructive</code>
+            <code className="text-muted-foreground text-xs">X + text-destructive + bg-muted</code>
           </div>
         </div>
 
         <div className="flex items-center gap-4">
-          <div className="bg-info/10 text-info rounded-full p-2">
+          <div className="bg-muted text-info rounded-full p-2">
             <Info className="size-5" />
           </div>
           <div>
             <p className="font-bold">情報</p>
-            <code className="text-muted-foreground text-xs">Info + text-info</code>
+            <code className="text-muted-foreground text-xs">Info + text-info + bg-muted</code>
           </div>
         </div>
       </div>

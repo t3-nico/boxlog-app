@@ -39,7 +39,7 @@ export function MFASection() {
       <div className="space-y-4">
         {/* エラー・成功メッセージ */}
         {error && (
-          <div className="bg-destructive-container text-destructive rounded-2xl p-4 text-sm">
+          <div className="border-destructive text-destructive rounded-2xl border p-4 text-sm">
             {error}
           </div>
         )}

@@ -127,10 +127,37 @@ export const AllPatterns: Story = {
             </Button>
           </section>
 
+          {/* カラー */}
+          <section>
+            <h2 className="mb-4 text-lg font-bold">カラー</h2>
+            <div className="grid gap-2">
+              <div className="flex items-center gap-4">
+                <div className="bg-card border-border h-8 w-8 rounded border" />
+                <span className="text-sm">通常: bg-card</span>
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="bg-success h-8 w-8 rounded" />
+                <span className="text-sm">成功: bg-success（緑）</span>
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="bg-destructive h-8 w-8 rounded" />
+                <span className="text-sm">エラー: bg-destructive（赤）</span>
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="bg-warning h-8 w-8 rounded" />
+                <span className="text-sm">警告: bg-warning（オレンジ）</span>
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="bg-info h-8 w-8 rounded" />
+                <span className="text-sm">情報: bg-info（グレー）</span>
+              </div>
+            </div>
+          </section>
+
           {/* 使用方法 */}
           <section>
             <h2 className="mb-4 text-lg font-bold">使用方法</h2>
-            <pre className="bg-surface-container overflow-x-auto rounded-lg p-4 text-sm">
+            <pre className="bg-container overflow-x-auto rounded-lg p-4 text-sm">
               {`import { toast } from 'sonner'
 
 // 基本
