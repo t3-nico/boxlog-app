@@ -21,20 +21,180 @@ const meta = {
   component: AlertDialog,
   tags: ['autodocs'],
   parameters: {
-    layout: 'fullscreen',
+    layout: 'centered',
   },
 } satisfies Meta<typeof AlertDialog>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const AllPatterns: Story = {
-  render: function AlertDialogStory() {
-    const [deleteOpen, setDeleteOpen] = useState(false);
-    const [sessionOpen, setSessionOpen] = useState(false);
-    const [accountOpen, setAccountOpen] = useState(false);
-    const [confirmText, setConfirmText] = useState('');
+export const Default: Story = {
+  render: () => (
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button variant="destructive">削除</Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>本当に削除しますか？</AlertDialogTitle>
+          <AlertDialogDescription>この操作は取り消せません。</AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>キャンセル</AlertDialogCancel>
+          <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive-hover">
+            削除する
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  ),
+};
 
+/**
+ * 削除確認ダイアログ
+ * 実装: TagDeleteConfirmなど
+ */
+function DeleteConfirmExample() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <AlertDialog open={open} onOpenChange={setOpen}>
+      <AlertDialogTrigger asChild>
+        <Button variant="destructive">
+          <Trash2 className="mr-2 size-4" />
+          タグを削除
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>タグを削除しますか？</AlertDialogTitle>
+          <AlertDialogDescription>
+            このタグを削除すると、関連する全てのプランと記録からタグが解除されます。この操作は取り消せません。
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>キャンセル</AlertDialogCancel>
+          <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive-hover">
+            削除する
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+}
+
+/**
+ * セッションタイムアウトダイアログ
+ * 実装: src/features/auth/components/SessionTimeoutDialog.tsx
+ */
+function SessionTimeoutExample() {
+  const [open, setOpen] = useState(false);
+
+  const formatTime = (seconds: number): string => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  return (
+    <>
+      <Button variant="outline" onClick={() => setOpen(true)}>
+        セッション警告を表示
+      </Button>
+      <AlertDialog open={open} onOpenChange={setOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <div className="bg-muted mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full">
+              <Clock className="text-warning h-6 w-6" />
+            </div>
+            <AlertDialogTitle className="text-center">
+              セッションがまもなく期限切れになります
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-center">
+              セキュリティのため、まもなくログアウトされます。
+              <span className="text-foreground mt-2 block text-2xl font-bold">
+                {formatTime(299)}
+              </span>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="sm:justify-center">
+            <AlertDialogCancel className="gap-2">
+              <LogOut className="h-4 w-4" />
+              ログアウト
+            </AlertDialogCancel>
+            <AlertDialogAction>セッションを延長</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
+  );
+}
+
+/**
+ * アカウント削除ダイアログ（GDPR対応）
+ * 実装: src/features/settings/components/account-deletion-dialog.tsx
+ */
+function AccountDeletionExample() {
+  const [open, setOpen] = useState(false);
+  const [confirmText, setConfirmText] = useState('');
+
+  return (
+    <>
+      <Button variant="destructive" onClick={() => setOpen(true)}>
+        アカウント削除
+      </Button>
+      <AlertDialog open={open} onOpenChange={setOpen}>
+        <AlertDialogContent className="max-w-lg">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <AlertTriangle className="text-destructive h-5 w-5" />
+              アカウントを削除しますか？
+            </AlertDialogTitle>
+            <AlertDialogDescription asChild>
+              <div className="space-y-4">
+                <p>
+                  この操作は30日後に完了します。その間にログインすると削除をキャンセルできます。
+                </p>
+                <div className="bg-muted rounded-2xl p-4">
+                  <h4 className="text-foreground mb-2 text-sm font-bold">猶予期間について</h4>
+                  <p className="text-xs">
+                    30日間の猶予期間中はデータが保持されます。期間終了後、全てのデータが完全に削除されます。
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-foreground text-sm font-normal">
+                    確認のため「DELETE」と入力してください
+                  </label>
+                  <Input
+                    type="text"
+                    value={confirmText}
+                    onChange={(e) => setConfirmText(e.target.value)}
+                    placeholder="DELETE"
+                  />
+                </div>
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setConfirmText('')}>キャンセル</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={confirmText !== 'DELETE'}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive-hover"
+            >
+              アカウントを削除
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
+  );
+}
+
+export const AllPatterns: Story = {
+  parameters: {
+    layout: 'fullscreen',
+  },
+  render: function AlertDialogStory() {
     return (
       <div className="bg-background text-foreground min-h-screen p-8">
         <h1 className="mb-2 text-2xl font-bold">AlertDialog</h1>
@@ -48,28 +208,7 @@ export const AllPatterns: Story = {
             <p className="text-muted-foreground mb-4 text-sm">
               不可逆な削除アクション。AlertDialogActionにdestructiveスタイルを適用。
             </p>
-            <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
-              <AlertDialogTrigger asChild>
-                <Button variant="destructive">
-                  <Trash2 className="mr-2 size-4" />
-                  タグを削除
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>タグを削除しますか？</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    このタグを削除すると、関連する全てのプランと記録からタグが解除されます。この操作は取り消せません。
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>キャンセル</AlertDialogCancel>
-                  <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive-hover">
-                    削除する
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+            <DeleteConfirmExample />
           </div>
 
           <div>
@@ -77,32 +216,7 @@ export const AllPatterns: Story = {
             <p className="text-muted-foreground mb-4 text-sm">
               セッション期限切れ警告。中央配置のアイコン、カウントダウン表示。
             </p>
-            <AlertDialog open={sessionOpen} onOpenChange={setSessionOpen}>
-              <AlertDialogTrigger asChild>
-                <Button variant="outline">セッション警告を表示</Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <div className="bg-muted mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full">
-                    <Clock className="text-warning h-6 w-6" />
-                  </div>
-                  <AlertDialogTitle className="text-center">
-                    セッションがまもなく期限切れになります
-                  </AlertDialogTitle>
-                  <AlertDialogDescription className="text-center">
-                    セキュリティのため、まもなくログアウトされます。
-                    <span className="text-foreground mt-2 block text-2xl font-bold">4:59</span>
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter className="sm:justify-center">
-                  <AlertDialogCancel className="gap-2">
-                    <LogOut className="h-4 w-4" />
-                    ログアウト
-                  </AlertDialogCancel>
-                  <AlertDialogAction>セッションを延長</AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+            <SessionTimeoutExample />
           </div>
 
           <div>
@@ -110,54 +224,7 @@ export const AllPatterns: Story = {
             <p className="text-muted-foreground mb-4 text-sm">
               確認テキスト入力を含む高リスク操作。AlertDialogDescription内にフォーム。
             </p>
-            <AlertDialog open={accountOpen} onOpenChange={setAccountOpen}>
-              <AlertDialogTrigger asChild>
-                <Button variant="destructive">アカウント削除</Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent className="max-w-lg">
-                <AlertDialogHeader>
-                  <AlertDialogTitle className="flex items-center gap-2">
-                    <AlertTriangle className="text-destructive h-5 w-5" />
-                    アカウントを削除しますか？
-                  </AlertDialogTitle>
-                  <AlertDialogDescription asChild>
-                    <div className="space-y-4">
-                      <p>
-                        この操作は30日後に完了します。その間にログインすると削除をキャンセルできます。
-                      </p>
-                      <div className="bg-muted rounded-2xl p-4">
-                        <h4 className="text-foreground mb-2 text-sm font-bold">猶予期間について</h4>
-                        <p className="text-xs">
-                          30日間の猶予期間中はデータが保持されます。期間終了後、全てのデータが完全に削除されます。
-                        </p>
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-foreground text-sm font-normal">
-                          確認のため「DELETE」と入力してください
-                        </label>
-                        <Input
-                          type="text"
-                          value={confirmText}
-                          onChange={(e) => setConfirmText(e.target.value)}
-                          placeholder="DELETE"
-                        />
-                      </div>
-                    </div>
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel onClick={() => setConfirmText('')}>
-                    キャンセル
-                  </AlertDialogCancel>
-                  <AlertDialogAction
-                    disabled={confirmText !== 'DELETE'}
-                    className="bg-destructive text-destructive-foreground hover:bg-destructive-hover"
-                  >
-                    アカウントを削除
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+            <AccountDeletionExample />
           </div>
 
           <div>

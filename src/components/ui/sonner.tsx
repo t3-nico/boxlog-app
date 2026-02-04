@@ -50,6 +50,8 @@ const Toaster = ({ ...props }: ToasterProps) => {
           actionButton:
             'bg-primary text-primary-foreground hover:bg-primary-hover transition-colors',
           cancelButton: 'bg-container text-muted-foreground',
+          closeButton:
+            '!left-auto !right-2 !top-1/2 !-translate-y-1/2 !translate-x-0 !text-inherit !bg-transparent !border-0',
           success: '!bg-success !text-success-foreground !border-success',
           error: '!bg-destructive !text-destructive-foreground !border-destructive',
           warning: '!bg-warning !text-warning-foreground !border-warning',

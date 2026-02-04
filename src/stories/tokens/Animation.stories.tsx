@@ -1,0 +1,306 @@
+import type { Meta, StoryObj } from '@storybook/react';
+import { useCallback, useState } from 'react';
+
+const meta = {
+  title: 'Tokens/Animation',
+  parameters: {
+    layout: 'fullscreen',
+  },
+} satisfies Meta;
+
+export default meta;
+type Story = StoryObj;
+
+export const Overview: Story = {
+  render: () => (
+    <div className="bg-background text-foreground p-8">
+      <h1 className="mb-2 text-2xl font-bold">アニメーション</h1>
+      <p className="text-muted-foreground mb-8">globals.cssで定義されたアニメーション</p>
+
+      <div className="grid gap-8" style={{ maxWidth: '64rem' }}>
+        {/* shadcn/ui標準 */}
+        <section className="bg-card border-border rounded-xl border p-6">
+          <h2 className="mb-4 text-lg font-bold">shadcn/ui標準（animate-in/out）</h2>
+          <p className="text-muted-foreground mb-4 text-sm">
+            ダイアログ、ポップオーバー等のマウント/アンマウント時に使用
+          </p>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <AnimationCard
+              name="fade-in"
+              className="animate-in fade-in"
+              description="フェードイン"
+            />
+            <AnimationCard
+              name="zoom-in-95"
+              className="animate-in zoom-in-95"
+              description="95%からズームイン"
+            />
+            <AnimationCard
+              name="slide-in-from-bottom"
+              className="animate-in slide-in-from-bottom-2"
+              description="下からスライド"
+            />
+            <AnimationCard
+              name="slide-in-from-top"
+              className="animate-in slide-in-from-top-2"
+              description="上からスライド"
+            />
+            <AnimationCard
+              name="slide-in-from-left"
+              className="animate-in slide-in-from-left-2"
+              description="左からスライド"
+            />
+            <AnimationCard
+              name="slide-in-from-right"
+              className="animate-in slide-in-from-right-2"
+              description="右からスライド"
+            />
+          </div>
+          <pre className="bg-container mt-4 overflow-x-auto rounded-lg p-4 text-xs">
+            {`// ダイアログ例
+className="animate-in fade-in zoom-in-95 duration-150"
+
+// シートの例（下から）
+className="animate-in slide-in-from-bottom duration-200"
+
+// data-stateと組み合わせ
+data-[state=open]:animate-in
+data-[state=closed]:animate-out`}
+          </pre>
+        </section>
+
+        {/* ローディング */}
+        <section className="bg-card border-border rounded-xl border p-6">
+          <h2 className="mb-4 text-lg font-bold">ローディング（GAFA準拠）</h2>
+          <p className="text-muted-foreground mb-4 text-sm">
+            スケルトンローダー用。shimmerはFacebook/LinkedIn方式。
+          </p>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-2">
+              <div className="text-sm font-bold">animate-shimmer</div>
+              <div className="animate-shimmer h-16 rounded-lg" />
+              <p className="text-muted-foreground text-xs">左→右の波（推奨）</p>
+            </div>
+            <div className="space-y-2">
+              <div className="text-sm font-bold">animate-pulse</div>
+              <div className="bg-muted h-16 animate-pulse rounded-lg" />
+              <p className="text-muted-foreground text-xs">フェードイン/アウト（フォールバック）</p>
+            </div>
+          </div>
+          <pre className="bg-container mt-4 overflow-x-auto rounded-lg p-4 text-xs">
+            {`// スケルトンローダー
+<div className="animate-shimmer h-4 rounded" />
+
+// 汎用ローディング（画像等）
+<div className="bg-muted animate-pulse h-32 rounded-lg" />`}
+          </pre>
+        </section>
+
+        {/* エラーフィードバック */}
+        <section className="bg-card border-border rounded-xl border p-6">
+          <h2 className="mb-4 text-lg font-bold">エラーフィードバック</h2>
+          <p className="text-muted-foreground mb-4 text-sm">
+            入力エラー時のシェイクアニメーション（Apple HIG準拠）
+          </p>
+          <ShakeDemo />
+          <pre className="bg-container mt-4 overflow-x-auto rounded-lg p-4 text-xs">
+            {`// エラー時に適用
+<input className={error ? 'animate-shake' : ''} />`}
+          </pre>
+        </section>
+
+        {/* duration */}
+        <section className="bg-card border-border rounded-xl border p-6">
+          <h2 className="mb-4 text-lg font-bold">duration（継続時間）</h2>
+          <p className="text-muted-foreground mb-4 text-sm">Tailwind標準のdurationクラスを併用</p>
+          <div className="grid gap-4 sm:grid-cols-4">
+            <DurationDemo duration="75" />
+            <DurationDemo duration="150" />
+            <DurationDemo duration="200" />
+            <DurationDemo duration="300" />
+          </div>
+          <div className="bg-container mt-4 rounded-lg p-4">
+            <h4 className="mb-2 text-sm font-bold">推奨値</h4>
+            <ul className="text-muted-foreground space-y-1 text-xs">
+              <li>
+                <code>duration-75</code> - 即座の反応（ホバー等）
+              </li>
+              <li>
+                <code>duration-150</code> - 標準（ダイアログ、ポップオーバー）
+              </li>
+              <li>
+                <code>duration-200</code> - やや長め（シート、ドロワー）
+              </li>
+              <li>
+                <code>duration-300</code> - 長め（ページ遷移）
+              </li>
+            </ul>
+          </div>
+        </section>
+
+        {/* motion-reduce */}
+        <section className="bg-card border-border rounded-xl border p-6">
+          <h2 className="mb-4 text-lg font-bold">アクセシビリティ</h2>
+          <p className="text-muted-foreground mb-4 text-sm">
+            motion-reduce対応で、ユーザー設定に応じてアニメーションを無効化
+          </p>
+          <pre className="bg-container overflow-x-auto rounded-lg p-4 text-xs">
+            {`// motion-reduceでアニメーション無効化
+className="animate-in fade-in motion-reduce:animate-none"
+
+// globals.cssで自動適用済み
+.animate-in,
+.animate-out,
+.animate-shimmer {
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}`}
+          </pre>
+        </section>
+      </div>
+    </div>
+  ),
+};
+
+function AnimationCard({
+  name,
+  className,
+  description,
+}: {
+  name: string;
+  className: string;
+  description: string;
+}) {
+  const [key, setKey] = useState(0);
+
+  const replay = useCallback(() => {
+    setKey((k) => k + 1);
+  }, []);
+
+  return (
+    <div className="space-y-2">
+      <div
+        key={key}
+        className={`bg-primary text-primary-foreground flex h-16 items-center justify-center rounded-lg text-sm font-bold ${className} duration-300`}
+      >
+        {name}
+      </div>
+      <p className="text-muted-foreground text-xs">{description}</p>
+      <button type="button" onClick={replay} className="text-primary text-xs hover:underline">
+        再生
+      </button>
+    </div>
+  );
+}
+
+function ShakeDemo() {
+  const [shake, setShake] = useState(false);
+
+  const triggerShake = useCallback(() => {
+    setShake(true);
+    setTimeout(() => setShake(false), 500);
+  }, []);
+
+  return (
+    <div className="flex items-center gap-4">
+      <input
+        type="text"
+        placeholder="エラー入力"
+        className={`border-border bg-input rounded-lg border px-4 py-2 ${shake ? 'animate-shake border-destructive' : ''}`}
+      />
+      <button
+        type="button"
+        onClick={triggerShake}
+        className="bg-destructive text-destructive-foreground rounded-lg px-4 py-2 text-sm"
+      >
+        シェイク
+      </button>
+    </div>
+  );
+}
+
+function DurationDemo({ duration }: { duration: string }) {
+  const [key, setKey] = useState(0);
+
+  const replay = useCallback(() => {
+    setKey((k) => k + 1);
+  }, []);
+
+  return (
+    <div className="space-y-2">
+      <div
+        key={key}
+        className={`bg-primary text-primary-foreground animate-in fade-in zoom-in-95 flex h-12 items-center justify-center rounded-lg text-xs font-bold duration-${duration}`}
+      >
+        {duration}ms
+      </div>
+      <button type="button" onClick={replay} className="text-primary text-xs hover:underline">
+        再生
+      </button>
+    </div>
+  );
+}
+
+export const Loading: Story = {
+  render: () => (
+    <div className="bg-background text-foreground p-8">
+      <h1 className="mb-2 text-2xl font-bold">ローディングパターン</h1>
+      <p className="text-muted-foreground mb-8">スケルトンローダーの実装例</p>
+
+      <div className="grid gap-8" style={{ maxWidth: '64rem' }}>
+        {/* カード */}
+        <section className="bg-card border-border rounded-xl border p-6">
+          <h2 className="mb-4 text-lg font-bold">カードスケルトン</h2>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="border-border space-y-3 rounded-lg border p-4">
+              <div className="animate-shimmer h-4 w-3/4 rounded" />
+              <div className="animate-shimmer h-3 w-full rounded" />
+              <div className="animate-shimmer h-3 w-5/6 rounded" />
+            </div>
+            <div className="border-border space-y-3 rounded-lg border p-4">
+              <div className="animate-shimmer h-32 rounded-lg" />
+              <div className="animate-shimmer h-4 w-2/3 rounded" />
+              <div className="animate-shimmer h-3 w-full rounded" />
+            </div>
+          </div>
+        </section>
+
+        {/* リスト */}
+        <section className="bg-card border-border rounded-xl border p-6">
+          <h2 className="mb-4 text-lg font-bold">リストスケルトン</h2>
+          <div className="space-y-3">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="flex items-center gap-3">
+                <div className="animate-shimmer size-10 shrink-0 rounded-full" />
+                <div className="flex-1 space-y-2">
+                  <div className="animate-shimmer h-4 w-1/3 rounded" />
+                  <div className="animate-shimmer h-3 w-2/3 rounded" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* テーブル */}
+        <section className="bg-card border-border rounded-xl border p-6">
+          <h2 className="mb-4 text-lg font-bold">テーブルスケルトン</h2>
+          <div className="space-y-2">
+            <div className="border-border flex gap-4 border-b pb-2">
+              <div className="animate-shimmer h-4 w-1/4 rounded" />
+              <div className="animate-shimmer h-4 w-1/3 rounded" />
+              <div className="animate-shimmer h-4 w-1/4 rounded" />
+            </div>
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="flex gap-4 py-2">
+                <div className="animate-shimmer h-3 w-1/4 rounded" />
+                <div className="animate-shimmer h-3 w-1/3 rounded" />
+                <div className="animate-shimmer h-3 w-1/4 rounded" />
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
+    </div>
+  ),
+};
