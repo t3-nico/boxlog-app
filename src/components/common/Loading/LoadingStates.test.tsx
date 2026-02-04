@@ -19,7 +19,7 @@ describe('LoadingSpinner', () => {
   it('カスタムサイズでレンダリング', () => {
     const { container } = render(<LoadingSpinner size="xl" />);
     const spinner = container.querySelector('[role="status"]');
-    expect(spinner).toHaveClass('h-12', 'w-12');
+    expect(spinner).toHaveClass('size-12');
   });
 });
 
