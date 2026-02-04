@@ -12,7 +12,7 @@ const meta = {
   argTypes: {
     variant: {
       control: 'select',
-      options: ['primary', 'secondary', 'outline', 'destructive'],
+      options: ['primary', 'secondary', 'outline', 'success', 'warning', 'info', 'destructive'],
       description: 'バッジのスタイルバリアント',
     },
   },
@@ -66,12 +66,30 @@ export const AllPatterns: Story = {
         </div>
       </section>
 
+      {/* Semantic Variants（意味ベース） */}
+      <section>
+        <h2 className="mb-3 text-lg font-semibold">Semantic Variants</h2>
+        <p className="text-muted-foreground mb-4 text-sm">
+          状態を意味で表現。アウトラインスタイルで軽量に表示。
+        </p>
+        <div className="flex flex-wrap items-center gap-2">
+          <Badge variant="success">完了</Badge>
+          <Badge variant="success">+10%</Badge>
+          <Badge variant="warning">要確認</Badge>
+          <Badge variant="warning">期限切れ間近</Badge>
+          <Badge variant="info">ベータ</Badge>
+          <Badge variant="info">更新あり</Badge>
+          <Badge variant="destructive">エラー</Badge>
+          <Badge variant="destructive">-5%</Badge>
+        </div>
+      </section>
+
       {/* 増減表示 */}
       <section>
         <h2 className="mb-3 text-lg font-semibold">増減表示</h2>
         <p className="text-muted-foreground mb-4 text-sm">統計の増減、成功/失敗の表示に使用</p>
         <div className="flex flex-wrap items-center gap-2">
-          <Badge className="bg-success hover:bg-success">+10%</Badge>
+          <Badge variant="success">+10%</Badge>
           <Badge variant="destructive">-5%</Badge>
         </div>
       </section>
@@ -81,9 +99,7 @@ export const AllPatterns: Story = {
         <h2 className="mb-3 text-lg font-semibold">連携ステータス</h2>
         <p className="text-muted-foreground mb-4 text-sm">外部サービスとの連携状態表示に使用</p>
         <div className="flex flex-wrap items-center gap-2">
-          <Badge variant="outline" className="text-success">
-            接続済み
-          </Badge>
+          <Badge variant="success">接続済み</Badge>
           <Badge variant="outline">未接続</Badge>
         </div>
       </section>

@@ -1,6 +1,9 @@
 'use client';
 
 import { Badge } from '@/components/ui/badge';
+import type { VariantProps } from 'class-variance-authority';
+
+import type { badgeVariants } from '@/components/ui/badge';
 import type { PlanStatus } from '../../types/plan';
 
 interface PlanStatusBadgeProps {
@@ -12,16 +15,16 @@ const STATUS_CONFIG: Record<
   PlanStatus,
   {
     label: string;
-    className: string;
+    variant: VariantProps<typeof badgeVariants>['variant'];
   }
 > = {
   open: {
     label: 'Open',
-    className: 'bg-surface-container text-muted-foreground border-border',
+    variant: 'outline',
   },
   closed: {
     label: 'Closed',
-    className: 'bg-success/10 text-success border-success/30',
+    variant: 'success',
   },
 };
 
@@ -36,7 +39,7 @@ export function PlanStatusBadge({ status, size = 'sm' }: PlanStatusBadgeProps) {
   const config = STATUS_CONFIG[status] ?? STATUS_CONFIG.open;
 
   return (
-    <Badge variant="outline" className={`${config.className} ${SIZE_CLASSES[size]} font-normal`}>
+    <Badge variant={config.variant} className={`${SIZE_CLASSES[size]} font-normal`}>
       {config.label}
     </Badge>
   );
