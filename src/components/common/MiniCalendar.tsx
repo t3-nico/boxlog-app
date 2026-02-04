@@ -334,7 +334,7 @@ export const MiniCalendar = memo<MiniCalendarProps>(
           {weekdays.map((day) => (
             <div
               key={day}
-              className="text-muted-foreground flex size-8 items-center justify-center text-xs font-normal"
+              className="text-muted-foreground flex h-8 items-center justify-center text-xs font-normal"
             >
               {day}
             </div>
@@ -355,8 +355,8 @@ export const MiniCalendar = memo<MiniCalendarProps>(
                     type="button"
                     onClick={() => handleDateClick(date)}
                     className={cn(
-                      // ベーススタイル - 32px正方形
-                      'flex size-8 items-center justify-center text-sm transition-colors',
+                      // ベーススタイル - 高さ32px、幅はグリッドに委ねる
+                      'flex h-8 items-center justify-center text-sm transition-colors',
                       // 現在の月以外は薄く
                       !isCurrentMonth && 'text-muted-foreground',
                       // ホバー（今日以外）
