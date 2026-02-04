@@ -66,7 +66,7 @@
   --warning-foreground: oklch(1 0 0);
   --success: oklch(0.5859 0.1684 149.2);
   --success-foreground: oklch(1 0 0);
-  --info: oklch(0.42 0 0);
+  --info: oklch(0.55 0.15 230);
   --info-foreground: oklch(1 0 0);
 
   /* Chronotype Colors（生産性ゾーン） */
@@ -138,7 +138,7 @@
   --warning-foreground: oklch(1 0 0);
   --success: oklch(0.5859 0.1684 149.2);
   --success-foreground: oklch(1 0 0);
-  --info: oklch(0.42 0 0);
+  --info: oklch(0.55 0.15 230);
   --info-foreground: oklch(1 0 0);
 
   /* Chronotype Colors（生産性ゾーン - ダークモード用） */
