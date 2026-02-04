@@ -23,7 +23,7 @@ import React, {
 } from 'react';
 
 import { Checkbox } from '@/components/ui/checkbox';
-import { ColorPalettePicker } from '@/components/ui/color-palette-picker';
+import { ColorPaletteMenuItems } from '@/components/ui/color-palette-picker';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -327,8 +327,8 @@ export const TagTreeItem = forwardRef<HTMLDivElement, TagTreeItemProps>(
                   <Palette className="mr-2 size-4" />
                   {t('calendar.filter.changeColor')}
                 </DropdownMenuSubTrigger>
-                <DropdownMenuSubContent className="p-2" onClick={(e) => e.stopPropagation()}>
-                  <ColorPalettePicker
+                <DropdownMenuSubContent onClick={(e) => e.stopPropagation()}>
+                  <ColorPaletteMenuItems
                     selectedColor={displayColor}
                     onColorSelect={handleColorChange}
                   />

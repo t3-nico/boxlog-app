@@ -4,7 +4,12 @@ import { useCallback, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import { Button } from '@/components/ui/button';
-import { ColorPalettePicker } from '@/components/ui/color-palette-picker';
+import { COLOR_NAMES, ColorPaletteMenuItems } from '@/components/ui/color-palette-picker';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Field, FieldError, FieldGroup, FieldLabel, FieldSupportText } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { TagNoteField } from '@/features/tags/components/tag-note-field';
@@ -16,7 +21,7 @@ import {
 import { useTagGroups } from '@/features/tags/hooks/useTagGroups';
 import type { CreateTagInput, TagGroup } from '@/features/tags/types';
 import { logger } from '@/lib/logger';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Circle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 interface TagCreateModalProps {
@@ -225,7 +230,20 @@ export const TagCreateModal = ({
           {/* カラー */}
           <Field>
             <FieldLabel>{t('tags.form.color')}</FieldLabel>
-            <ColorPalettePicker selectedColor={color} onColorSelect={setColor} />
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  className="border-input bg-background hover:bg-state-hover flex h-9 w-full items-center gap-2 rounded-lg border px-4 text-sm"
+                >
+                  <Circle className="size-4" fill={color} strokeWidth={0} />
+                  <span>{COLOR_NAMES[color] || color}</span>
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start">
+                <ColorPaletteMenuItems selectedColor={color} onColorSelect={setColor} />
+              </DropdownMenuContent>
+            </DropdownMenu>
           </Field>
 
           {/* ノート（説明） */}
