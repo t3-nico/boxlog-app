@@ -132,8 +132,8 @@ export const AllPatterns: Story = {
             <h2 className="mb-4 text-lg font-bold">カラー</h2>
             <div className="grid gap-2">
               <div className="flex items-center gap-4">
-                <div className="bg-overlay border-border h-8 w-8 rounded border" />
-                <span className="text-sm">通常: bg-overlay</span>
+                <div className="bg-popover border-border h-8 w-8 rounded border" />
+                <span className="text-sm">通常: bg-popover</span>
               </div>
               <div className="flex items-center gap-4">
                 <div className="bg-success h-8 w-8 rounded" />

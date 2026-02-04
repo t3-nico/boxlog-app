@@ -19,20 +19,21 @@
    * Material Design 3 / Apple HIG の共通原則に基づく意味ベース設計
    *
    * Background: ページ背景（最明）
-   * Card: カード、ダイアログ
    * Container: サイドバー、セクション
-   * Overlay: ポップオーバー（background直下の明度）
+   * Card: カード、ダイアログ、ポップオーバー
    *
-   * 明度順（ライト）: background > overlay > container > card
+   * 明度順（ライト）: background > container > card
    * 各段階で約3%の明度差（GAFA準拠）
    * ============================================ */
   --background: oklch(0.99 0 0);                  /* ページ背景 */
   --foreground: oklch(0.25 0 0);
 
-  /* Surface（意味ベース4段階・GAFA準拠の明度差） */
-  --overlay: oklch(0.96 0 0);                     /* ポップオーバー（差: 0.03） */
-  --container: oklch(0.93 0 0);                   /* サイドバー、セクション（差: 0.03） */
-  --card: oklch(0.90 0 0);                        /* カード、ダイアログ（差: 0.03） */
+  /* Surface（意味ベース3段階・GAFA準拠の明度差） */
+  --container: oklch(0.93 0 0);                   /* サイドバー、セクション（差: 0.06） */
+  --card: oklch(0.90 0 0);                        /* カード、ダイアログ、ポップオーバー（差: 0.03） */
+
+  /* Overlay（MD3 scrim準拠・モーダル背景用） */
+  --overlay: oklch(0 0 0 / 0.32);                /* Dialog/Sheetの半透明背景 */
 
   /* Calendar Boxes（カレンダー専用Surface） */
   --plan-box: oklch(0.88 0 0);                    /* vs background(0.99): より強調 */
@@ -41,7 +42,7 @@
 
   /* 互換性エイリアス（shadcn/ui用） */
   --card-foreground: oklch(0.25 0 0);
-  --popover: var(--overlay);
+  --popover: var(--card);
   --popover-foreground: oklch(0.25 0 0);
   --secondary: var(--container);
   --secondary-foreground: oklch(0.25 0 0);
@@ -107,19 +108,21 @@
 /* ダークモード（CSS変数上書き） */
 .dark {
   /* ============================================
-   * Surface体系（GAFA準拠・4段階）
+   * Surface体系（GAFA準拠・3段階）
    * MD3原則: 高いelevationほど明るい
    * 各段階で約5〜6%の明度差（GAFA準拠）
    *
-   * 明度順（ダーク）: overlay > background > container > card
+   * 明度順（ダーク）: background > container > card
    * ============================================ */
   --background: oklch(0.24 0 0);                  /* ページ背景 */
   --foreground: oklch(0.9219 0 0);
 
-  /* Surface（意味ベース4段階・GAFA準拠の明度差） */
-  --overlay: oklch(0.30 0 0);                     /* ポップオーバー（差: 0.06） */
+  /* Surface（意味ベース3段階・GAFA準拠の明度差） */
   --container: oklch(0.18 0 0);                   /* サイドバー、セクション（差: 0.06） */
-  --card: oklch(0.12 0 0);                        /* カード、ダイアログ（差: 0.06） */
+  --card: oklch(0.12 0 0);                        /* カード、ダイアログ、ポップオーバー（差: 0.06） */
+
+  /* Overlay（MD3 scrim準拠・モーダル背景用） */
+  --overlay: oklch(0 0 0 / 0.50);                /* Dialog/Sheetの半透明背景 */
 
   /* Calendar Boxes（カレンダー専用Surface） */
   --plan-box: oklch(0.16 0 0);                    /* vs background(0.24): より強調 */
@@ -128,7 +131,7 @@
 
   /* 互換性エイリアス（shadcn/ui用） */
   --card-foreground: oklch(0.9219 0 0);
-  --popover: var(--overlay);
+  --popover: var(--card);
   --popover-foreground: oklch(0.9219 0 0);
   --secondary: var(--container);
   --secondary-foreground: oklch(0.95 0 0);
@@ -230,11 +233,11 @@
   --color-secondary-hover: oklch(from var(--secondary) l c h / 80%);
 
   /* ============================================
-   * Surface トークン（GAFA準拠・4段階）
+   * Surface トークン（GAFA準拠・3段階）
    * background: ページ背景
-   * card: カード、ダイアログ
    * container: サイドバー、セクション
-   * overlay: ポップオーバー
+   * card: カード、ダイアログ、ポップオーバー
+   * overlay: モーダル背景（半透明・MD3 scrim）
    * ============================================ */
   --color-background: var(--background);
   --color-foreground: var(--foreground);

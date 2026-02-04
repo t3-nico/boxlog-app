@@ -16,7 +16,7 @@ const LoadingIcon = () => <Loader2 className="size-5 animate-spin" />;
  * Toast通知コンポーネント
  *
  * デザイン仕様:
- * - 背景: overlay（ライト/ダークモード対応）
+ * - 背景: popover（ライト/ダークモード対応）
  * - 枠線: 左2px、タイプ別カラー（success/error/warning/info）
  * - 角丸: 8px（radius-md）
  * - 影: shadow-lg
@@ -55,7 +55,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
         unstyled: true,
         classNames: {
           toast:
-            'grid grid-cols-[auto_1fr_auto] gap-4 items-center w-full p-4 rounded-lg border shadow-lg bg-overlay text-foreground border-border',
+            'grid grid-cols-[auto_1fr_auto] gap-4 items-center w-full p-4 rounded-lg border shadow-lg bg-popover text-foreground border-border',
           icon: 'row-start-1 col-start-1',
           loader: '!static !inset-auto !transform-none',
           content:

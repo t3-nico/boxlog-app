@@ -55,10 +55,10 @@ export const AllColors: Story = {
       <h1 className="mb-8 text-2xl font-bold">カラートークン</h1>
 
       <ColorGroup title="Surface（背景色）">
-        <ColorSwatch tailwindClass="bg-overlay" description="ポップオーバー" />
         <ColorSwatch tailwindClass="bg-background" description="ページ背景" />
         <ColorSwatch tailwindClass="bg-container" description="サイドバー、セクション" />
-        <ColorSwatch tailwindClass="bg-card" description="カード、ダイアログ" />
+        <ColorSwatch tailwindClass="bg-card" description="カード、ダイアログ、ポップオーバー" />
+        <ColorSwatch tailwindClass="bg-overlay" description="モーダル背景（半透明・MD3 scrim）" />
       </ColorGroup>
 
       <ColorGroup title="テキスト">
@@ -139,7 +139,7 @@ export const AllColors: Story = {
       <ColorGroup title="shadcn/ui互換エイリアス">
         <ColorSwatch
           tailwindClass="bg-popover"
-          description="= bg-overlay のエイリアス（shadcn/ui互換）"
+          description="= bg-card のエイリアス（shadcn/ui互換）"
         />
         <ColorSwatch
           tailwindClass="bg-secondary"
@@ -161,7 +161,7 @@ export const AllColors: Story = {
 export const Surface: Story = {
   render: () => (
     <div className="bg-background text-foreground p-8">
-      <h2 className="mb-6 text-xl font-bold">Surface体系（GAFA準拠・4段階）</h2>
+      <h2 className="mb-6 text-xl font-bold">Surface体系（GAFA準拠・3段階）</h2>
       <p className="text-muted-foreground mb-8">
         Material Design 3 / Apple HIG の共通原則に基づく意味ベース設計。
         <br />
@@ -169,13 +169,6 @@ export const Surface: Story = {
       </p>
 
       <div className="space-y-4">
-        <div className="bg-overlay border-border rounded-lg border p-6">
-          <div className="font-bold">Overlay</div>
-          <div className="text-muted-foreground text-sm">
-            ポップオーバー、ドロップダウン（MD3: 高elevation = ダークモードで最も明るい）
-          </div>
-        </div>
-
         <div className="bg-background border-border rounded-lg border p-6">
           <div className="font-bold">Background</div>
           <div className="text-muted-foreground text-sm">ページ背景（基準レベル）</div>
@@ -191,7 +184,14 @@ export const Surface: Story = {
         <div className="bg-card border-border rounded-lg border p-6">
           <div className="font-bold">Card</div>
           <div className="text-muted-foreground text-sm">
-            カード、ダイアログ（containerより6%暗い = 最も沈んだレベル）
+            カード、ダイアログ、ポップオーバー（containerより3%暗い = 最も沈んだレベル）
+          </div>
+        </div>
+
+        <div className="bg-overlay border-border rounded-lg border p-6">
+          <div className="font-bold text-white">Overlay</div>
+          <div className="text-sm text-white/70">
+            モーダル背景（半透明・MD3 scrim）。Dialog/Sheetの後ろに敷く背景幕。
           </div>
         </div>
       </div>

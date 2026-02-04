@@ -127,7 +127,7 @@ export default function TagMergeInterceptedModal() {
   if (isLoadingSource) {
     return (
       <div
-        className="fixed inset-0 z-[250] flex items-center justify-center"
+        className="bg-overlay fixed inset-0 z-[250] flex items-center justify-center"
         role="dialog"
         aria-modal="true"
       >
@@ -147,7 +147,7 @@ export default function TagMergeInterceptedModal() {
   if (!sourceTag) {
     return (
       <div
-        className="fixed inset-0 z-[250] flex items-center justify-center"
+        className="bg-overlay fixed inset-0 z-[250] flex items-center justify-center"
         onClick={handleBackdropClick}
         role="dialog"
         aria-modal="true"
