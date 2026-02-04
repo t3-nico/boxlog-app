@@ -2,10 +2,15 @@
 
 import { MEDIA_QUERIES } from '@/config/ui/breakpoints';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { useTheme } from 'next-themes';
+import { cn } from '@/lib/utils';
+import { Loader2 } from 'lucide-react';
 import { Toaster as Sonner } from 'sonner';
 
+import { buttonVariants } from './button';
+
 type ToasterProps = React.ComponentProps<typeof Sonner>;
+
+const LoadingIcon = () => <Loader2 className="size-5 animate-spin" />;
 
 /**
  * Toast通知コンポーネント（shadcn/ui公式準拠）
@@ -31,36 +36,41 @@ type ToasterProps = React.ComponentProps<typeof Sonner>;
  * ```
  */
 const Toaster = ({ ...props }: ToasterProps) => {
-  const { theme = 'system' } = useTheme();
-  const validTheme = theme === 'light' || theme === 'dark' || theme === 'system' ? theme : 'system';
   const isMobile = useMediaQuery(MEDIA_QUERIES.mobile);
 
   return (
     <Sonner
-      theme={validTheme}
       position={isMobile ? 'bottom-center' : 'bottom-right'}
       expand
       duration={6000}
       closeButton
       containerAriaLabel="通知"
+      icons={{ loading: <LoadingIcon /> }}
       toastOptions={{
         unstyled: true,
         classNames: {
           toast:
-            'group flex items-center gap-3 w-full p-4 rounded-lg border shadow-lg bg-card text-foreground border-border',
+            'grid grid-cols-[auto_1fr_auto] gap-4 items-center w-full p-4 rounded-lg border shadow-lg bg-overlay text-foreground border-border',
+          icon: 'row-start-1 col-start-1',
+          loader: '!static !inset-auto !transform-none',
+          content:
+            'row-start-1 col-start-2 min-w-0 [[data-sonner-toast]:not(:has([data-icon]))_&]:col-start-1',
           title: 'text-sm font-medium',
-          description:
-            'text-sm text-muted-foreground group-data-[type=success]:text-success-foreground/80 group-data-[type=error]:text-destructive-foreground/80 group-data-[type=warning]:text-warning-foreground/80 group-data-[type=info]:text-info-foreground/80',
-          actionButton:
-            'ml-auto shrink-0 rounded-md px-3 py-1.5 text-sm font-medium bg-primary text-primary-foreground hover:bg-primary-hover transition-colors',
-          cancelButton:
-            'shrink-0 rounded-md px-3 py-1.5 text-sm font-medium bg-container text-muted-foreground',
+          description: 'text-sm text-muted-foreground',
+          actionButton: cn(
+            'row-start-2 col-start-3 justify-self-end',
+            buttonVariants({ variant: 'primary', size: 'sm' }),
+          ),
+          cancelButton: buttonVariants({ variant: 'outline', size: 'sm' }),
           closeButton:
-            'order-last ml-auto shrink-0 p-1 rounded-md text-inherit bg-transparent border-0 hover:bg-black/10 transition-colors [&_svg]:size-5',
-          success: '!bg-success !text-success-foreground !border-success',
-          error: '!bg-destructive !text-destructive-foreground !border-destructive',
-          warning: '!bg-warning !text-warning-foreground !border-warning',
-          info: '!bg-info !text-info-foreground !border-info',
+            'row-start-1 col-start-3 justify-self-end p-1 rounded-md text-muted-foreground bg-transparent border-0 hover:bg-state-hover transition-colors [&_svg]:size-5',
+          success:
+            '!bg-success !text-success-foreground !border-success [&_[data-close-button]]:text-success-foreground',
+          error:
+            '!bg-destructive !text-destructive-foreground !border-destructive [&_[data-close-button]]:text-destructive-foreground',
+          warning:
+            '!bg-warning !text-warning-foreground !border-warning [&_[data-close-button]]:text-warning-foreground',
+          info: '!bg-info !text-info-foreground !border-info [&_[data-close-button]]:text-info-foreground',
         },
       }}
       {...props}

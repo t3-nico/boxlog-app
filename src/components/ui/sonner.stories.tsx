@@ -132,24 +132,24 @@ export const AllPatterns: Story = {
             <h2 className="mb-4 text-lg font-bold">カラー</h2>
             <div className="grid gap-2">
               <div className="flex items-center gap-4">
-                <div className="bg-card border-border h-8 w-8 rounded border" />
-                <span className="text-sm">通常: bg-card</span>
+                <div className="bg-overlay border-border h-8 w-8 rounded border" />
+                <span className="text-sm">通常: bg-overlay</span>
               </div>
               <div className="flex items-center gap-4">
                 <div className="bg-success h-8 w-8 rounded" />
-                <span className="text-sm">成功: bg-success（緑）</span>
+                <span className="text-sm">成功: bg-success</span>
               </div>
               <div className="flex items-center gap-4">
                 <div className="bg-destructive h-8 w-8 rounded" />
-                <span className="text-sm">エラー: bg-destructive（赤）</span>
+                <span className="text-sm">エラー: bg-destructive</span>
               </div>
               <div className="flex items-center gap-4">
                 <div className="bg-warning h-8 w-8 rounded" />
-                <span className="text-sm">警告: bg-warning（オレンジ）</span>
+                <span className="text-sm">警告: bg-warning</span>
               </div>
               <div className="flex items-center gap-4">
                 <div className="bg-info h-8 w-8 rounded" />
-                <span className="text-sm">情報: bg-info（グレー）</span>
+                <span className="text-sm">情報: bg-info</span>
               </div>
             </div>
           </section>
