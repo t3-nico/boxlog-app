@@ -71,7 +71,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## 📋 基本コマンド
 
 ```bash
-npm run dev          # 開発サーバー（ユーザー責務）
+npm run dev          # 開発サーバー（ユーザー責務：AIは実行しない）
+npm run storybook    # Storybook（ユーザー責務：AIは実行しない）
 npm run typecheck    # 型チェック（AI必須：コード変更後）
 npm run lint         # コード品質（AI必須：コミット前）
 ```
