@@ -132,6 +132,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
     tagIds: [],
   });
   const [isDirty, setIsDirty] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   // Popover開閉状態
   const [isPlanPopoverOpen, setIsPlanPopoverOpen] = useState(false);
@@ -431,7 +432,10 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
 
   // 保存して閉じる（時間フィールドとタグを保存）
   const saveAndClose = useCallback(async () => {
+    setIsSaving(true);
+
     if (!selectedRecordId || !formData.worked_at) {
+      setIsSaving(false);
       onClose();
       return;
     }
@@ -466,6 +470,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
 
         if (hasOverlap) {
           setTimeConflictError(true);
+          setIsSaving(false);
           return;
         }
       }
@@ -488,10 +493,12 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
       const errorMessage = error instanceof Error ? error.message : '';
       if (errorMessage.includes('TIME_OVERLAP') || errorMessage.includes('既に')) {
         setTimeConflictError(true);
+        setIsSaving(false);
         return; // 閉じない
       }
       // その他のエラーはtoastで通知
       toast.error('保存に失敗しました');
+      setIsSaving(false);
       return;
     }
 
@@ -502,10 +509,14 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
       } catch (error) {
         console.error('Failed to save tags:', error);
         toast.error('タグの保存に失敗しました');
-        // タグ保存エラーは閉じることを妨げない（キャッシュは既に更新済み）
+        // 楽観的更新をロールバック
+        updateTagsInCache(selectedRecordId, originalTagIdsRef.current);
+        setFormData((prev) => ({ ...prev, tagIds: originalTagIdsRef.current }));
+        // タグ保存エラーは閉じることを妨げない
       }
     }
 
+    setIsSaving(false);
     onClose();
   }, [
     selectedRecordId,
@@ -518,6 +529,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
     hasTagChanges,
     updateRecord,
     setRecordTags,
+    updateTagsInCache,
     utils.records.list,
     onClose,
   ]);
@@ -557,7 +569,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
       <InspectorHeader
         hasPrevious={hasPrevious}
         hasNext={hasNext}
-        onClose={saveAndClose}
+        onClose={isSaving ? () => {} : saveAndClose}
         onPrevious={goToPrevious}
         onNext={goToNext}
         closeLabel={t('actions.close')}

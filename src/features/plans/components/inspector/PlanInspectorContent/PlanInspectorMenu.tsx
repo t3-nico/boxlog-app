@@ -37,9 +37,10 @@ export const PlanInspectorMenu = memo(function PlanInspectorMenu({
         <Link className="size-4" />
         リンクをコピー
       </DropdownMenuItem>
-      <DropdownMenuItem onClick={onSaveAsTemplate}>
+      <DropdownMenuItem onClick={onSaveAsTemplate} disabled>
         <Save className="size-4" />
         テンプレートとして保存
+        <span className="text-muted-foreground ml-auto text-xs">Coming soon</span>
       </DropdownMenuItem>
       <DropdownMenuSeparator />
       <DropdownMenuItem onClick={onCopyId}>
