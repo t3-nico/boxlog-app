@@ -165,8 +165,6 @@ export function CalendarFilterList() {
             checkboxColor={RECORD_COLOR}
             checked={visibleTypes.record}
             onCheckedChange={() => toggleType('record' as ItemType)}
-            disabled
-            disabledReason={t('calendar.filter.comingSoon')}
           />
         </SidebarSection>
 
