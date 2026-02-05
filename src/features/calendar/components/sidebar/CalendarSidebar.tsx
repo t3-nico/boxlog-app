@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 
 import { addDays, endOfWeek, startOfDay, startOfWeek, subDays } from '@/lib/date';
 
-import { MiniCalendar } from '@/components/common/MiniCalendar';
+import { MiniCalendar } from '@/components/ui/mini-calendar';
 import { useCalendarNavigation } from '@/features/calendar/contexts/CalendarNavigationContext';
 import { SidebarShell } from '@/features/navigation/components/sidebar/SidebarShell';
 

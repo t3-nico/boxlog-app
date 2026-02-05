@@ -21,3 +21,6 @@ export {
 
 // Pagination
 export { TablePagination } from './TablePagination';
+
+// Selection bar
+export { SelectionBar } from './SelectionBar';

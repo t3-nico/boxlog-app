@@ -16,8 +16,8 @@ import {
 import { useLocale, useTranslations } from 'next-intl';
 import { useState } from 'react';
 
-import { LoadingSpinner } from '@/components/common/Loading/LoadingStates';
 import { Button } from '@/components/ui/button';
+import { LoadingSpinner } from '@/components/ui/loading-states';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { zIndex } from '@/config/ui/z-index';

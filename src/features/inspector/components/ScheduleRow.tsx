@@ -15,10 +15,10 @@ import { useMemo } from 'react';
 import { AlertCircle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
+import { DatePickerPopover } from '@/components/ui/date-picker-popover';
 import { useAutoAdjustEndTime } from '@/features/plans/hooks/useAutoAdjustEndTime';
-import { DatePickerPopover } from './DatePickerPopover';
 
-import { ClockTimePicker } from './ClockTimePicker';
+import { ClockTimePicker } from '@/components/ui/clock-time-picker';
 
 interface ScheduleRowProps {
   // 日付・時刻（必須）

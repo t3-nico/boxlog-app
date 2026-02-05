@@ -3,8 +3,8 @@
 import type { LucideIcon } from 'lucide-react';
 import { Inbox } from 'lucide-react';
 
-import { EmptyState } from '@/components/common';
 import { Button } from '@/components/ui/button';
+import { EmptyState } from '@/components/ui/empty-state';
 import { TableCell, TableRow } from '@/components/ui/table';
 
 export interface TableEmptyStateProps {

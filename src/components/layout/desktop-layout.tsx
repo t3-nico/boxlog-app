@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic';
 import { usePathname } from 'next/navigation';
 import { Suspense, useMemo } from 'react';
 
-import { PageHeader } from '@/components/common/PageHeader';
+import { PageHeader } from '@/components/layout/PageHeader';
 import { useAuthStore } from '@/features/auth/stores/useAuthStore';
 import { CalendarSidebar } from '@/features/calendar/components/sidebar/CalendarSidebar';
 import { OnboardingBanner } from '@/features/onboarding';

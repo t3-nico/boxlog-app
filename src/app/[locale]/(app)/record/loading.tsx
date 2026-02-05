@@ -1,4 +1,4 @@
-import { LoadingSpinner } from '@/components/common/Loading/LoadingStates';
+import { LoadingSpinner } from '@/components/ui/loading-states';
 
 /**
  * Record ページのローディング状態

@@ -4,17 +4,20 @@ import { Clock, Edit, History, MessageSquare, Plus, Star, Tag, Trash, X } from '
 import { useLocale, useTranslations } from 'next-intl';
 import { useState } from 'react';
 
-import { LoadingSpinner } from '@/components/common/Loading/LoadingStates';
 import { Button } from '@/components/ui/button';
+import { LoadingSpinner } from '@/components/ui/loading-states';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { zIndex } from '@/config/ui/z-index';
 import { cn } from '@/lib/utils';
 
-import { formatRelativeTime } from '@/components/common/Activity/utils';
 import { useRecordActivities } from '../hooks/useRecordActivities';
 import type { ActivityIconColor, RecordActivityDisplay } from '../types/activity';
-import { filterVisibleActivities, formatActivity } from '../utils/activityFormatter';
+import {
+  filterVisibleActivities,
+  formatActivity,
+  formatRelativeTime,
+} from '../utils/activityFormatter';
 
 interface RecordActivityPopoverProps {
   recordId: string;

@@ -22,7 +22,7 @@ import { useActiveState } from '@/hooks/useActiveState';
 import { useTranslations } from 'next-intl';
 import { tagIconMapping, TagIconName } from '../constants/icons';
 
-import { DeleteConfirmDialog } from '@/components/common/DeleteConfirmDialog';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { useTagModalNavigation } from '../hooks/useTagModalNavigation';
 
 interface TagsListProps {
@@ -403,12 +403,13 @@ export const TagsList = ({
       {/* タグ編集ダイアログは Intercepting Routes に移行 (@modal/(.)tags/edit/[id]) */}
 
       {/* タグ削除ダイアログ */}
-      <DeleteConfirmDialog
+      <ConfirmDialog
         open={!!deletingTag}
         onClose={handleCloseDeleteDialog}
         onConfirm={handleConfirmDelete}
         title={t('tags.delete.confirmTitleWithName', { name: deletingTag?.name ?? '' })}
         description={t('tags.delete.description')}
+        variant="destructive"
       />
     </div>
   );

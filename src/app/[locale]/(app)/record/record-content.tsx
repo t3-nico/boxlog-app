@@ -2,7 +2,7 @@
 
 import { Suspense } from 'react';
 
-import { LoadingSpinner } from '@/components/common/Loading/LoadingStates';
+import { LoadingSpinner } from '@/components/ui/loading-states';
 import { RecordTableView } from '@/features/records/components/RecordTableView';
 
 /**

@@ -17,10 +17,6 @@ import { useLocale, useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { NoteIconButton } from '@/components/common/NoteIconButton';
-import { ScheduleRow } from '@/components/common/ScheduleRow';
-import { TagsIconButton } from '@/components/common/TagsIconButton';
-import { TitleInput } from '@/components/common/TitleInput';
 import {
   Command,
   CommandEmpty,
@@ -34,6 +30,10 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { zIndex } from '@/config/ui/z-index';
 import { InspectorHeader } from '@/features/inspector';
+import { NoteIconButton } from '@/features/inspector/components/NoteIconButton';
+import { ScheduleRow } from '@/features/inspector/components/ScheduleRow';
+import { TagsIconButton } from '@/features/inspector/components/TagsIconButton';
+import { TitleInput } from '@/features/inspector/components/TitleInput';
 import { usePlans } from '@/features/plans/hooks/usePlans';
 import { useTags } from '@/features/tags/hooks';
 import { api } from '@/lib/trpc';

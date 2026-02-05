@@ -1,6 +1,6 @@
 'use client';
 
-import { LoadingSpinner } from '@/components/common/Loading/LoadingStates';
+import { LoadingSpinner } from '@/components/ui/loading-states';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { SidebarShell } from '@/features/navigation/components/sidebar/SidebarShell';
 

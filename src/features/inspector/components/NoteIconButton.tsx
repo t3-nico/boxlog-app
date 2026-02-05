@@ -13,10 +13,10 @@ import { useState } from 'react';
 import { FileText } from 'lucide-react';
 
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { SimpleDescriptionEditor } from '@/components/ui/simple-description-editor';
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { zIndex } from '@/config/ui/z-index';
 import { cn } from '@/lib/utils';
-import { SimpleDescriptionEditor } from './SimpleDescriptionEditor';
 
 interface NoteIconButtonProps {
   /** エディタのキー用ID */

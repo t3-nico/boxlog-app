@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
 
-import { SimpleDescriptionEditor } from '@/components/common/SimpleDescriptionEditor';
+import { SimpleDescriptionEditor } from '@/components/ui/simple-description-editor';
 
 const meta = {
   title: 'Components/Editor',

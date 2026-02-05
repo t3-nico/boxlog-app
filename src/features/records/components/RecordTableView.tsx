@@ -3,9 +3,8 @@
 import { Calendar, ChevronDown, Clock, FileText, Plus } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 
-import { LoadingSpinner } from '@/components/common/Loading/LoadingStates';
-import { SelectionBar } from '@/components/common/SelectionBar';
 import { Button } from '@/components/ui/button';
+import { LoadingSpinner } from '@/components/ui/loading-states';
 import { MEDIA_QUERIES } from '@/config/ui/breakpoints';
 import {
   TableNavigation,
@@ -16,6 +15,7 @@ import {
   useTableSortStore,
   type TableNavigationConfig,
 } from '@/features/table';
+import { SelectionBar } from '@/features/table/components/SelectionBar';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { cn } from '@/lib/utils';
 

@@ -3,8 +3,8 @@ import { addDays } from 'date-fns';
 import { CalendarDays } from 'lucide-react';
 import { useState } from 'react';
 
-import { MiniCalendar } from '@/components/common/MiniCalendar';
 import { Button } from '@/components/ui/button';
+import { MiniCalendar } from '@/components/ui/mini-calendar';
 
 const meta = {
   title: 'Components/MiniCalendar',

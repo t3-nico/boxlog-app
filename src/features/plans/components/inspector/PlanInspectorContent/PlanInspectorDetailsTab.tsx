@@ -10,10 +10,10 @@
 
 import { memo } from 'react';
 
-import { NoteIconButton } from '@/components/common/NoteIconButton';
-import { ScheduleRow } from '@/components/common/ScheduleRow';
-import { TagsIconButton } from '@/components/common/TagsIconButton';
-import { TitleInput } from '@/components/common/TitleInput';
+import { NoteIconButton } from '@/features/inspector/components/NoteIconButton';
+import { ScheduleRow } from '@/features/inspector/components/ScheduleRow';
+import { TagsIconButton } from '@/features/inspector/components/TagsIconButton';
+import { TitleInput } from '@/features/inspector/components/TitleInput';
 import { useTranslations } from 'next-intl';
 
 import type { Plan } from '../../../types/plan';

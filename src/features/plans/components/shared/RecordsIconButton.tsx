@@ -13,7 +13,6 @@ import { Clock, ExternalLink, Plus, Smile } from 'lucide-react';
 import { useLocale } from 'next-intl';
 import Link from 'next/link';
 
-import { LoadingSpinner } from '@/components/common/Loading/LoadingStates';
 import {
   Command,
   CommandEmpty,
@@ -22,6 +21,7 @@ import {
   CommandItem,
   CommandList,
 } from '@/components/ui/command';
+import { LoadingSpinner } from '@/components/ui/loading-states';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { zIndex } from '@/config/ui/z-index';

@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { Clock, Flag } from 'lucide-react';
 
-import type { TimeIconType } from '@/components/common/ClockTimePicker';
+import type { TimeIconType } from '@/components/ui/clock-time-picker';
 
 import { Popover, PopoverAnchor, PopoverContent } from '@/components/ui/popover';
 import { zIndex } from '@/config/ui/z-index';

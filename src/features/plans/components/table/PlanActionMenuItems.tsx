@@ -13,7 +13,7 @@ import {
 
 import type { PlanStatus } from '@/features/plans/types/plan';
 
-import { ActionMenuItems, type ActionGroup } from '@/components/common/ActionMenuItems';
+import { ActionMenuItems, type ActionGroup } from './ActionMenuItems';
 
 import type { PlanItem } from '../../hooks/usePlanData';
 

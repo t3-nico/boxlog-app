@@ -3,7 +3,7 @@
 import { usePathname } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 
-import { PageHeader } from '@/components/common/PageHeader';
+import { PageHeader } from '@/components/layout/PageHeader';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { CalendarSidebar } from '@/features/calendar/components/sidebar/CalendarSidebar';
 import { AppSidebar } from '@/features/navigation/components/sidebar/app-sidebar';

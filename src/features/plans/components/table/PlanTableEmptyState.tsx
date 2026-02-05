@@ -3,8 +3,8 @@
 import { FileSearch, Filter, Inbox, Plus, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-import { EmptyState } from '@/components/common';
 import { Button } from '@/components/ui/button';
+import { EmptyState } from '@/components/ui/empty-state';
 import { TableCell, TableRow } from '@/components/ui/table';
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
 

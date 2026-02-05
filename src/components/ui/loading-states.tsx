@@ -21,7 +21,7 @@ import {
   LoadingCardProps,
   LoadingOverlayProps,
   LoadingSpinnerProps,
-} from './types';
+} from './loading-types';
 
 // === スピナーコンポーネント ===
 

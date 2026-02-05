@@ -8,7 +8,7 @@
 
 import { Calendar } from 'lucide-react';
 
-import { MiniCalendar } from '@/components/common/MiniCalendar';
+import { MiniCalendar } from '@/components/ui/mini-calendar';
 import { zIndex } from '@/config/ui/z-index';
 import { useDateFormat } from '@/features/settings/hooks/useDateFormat';
 

@@ -5,10 +5,10 @@ import { format } from 'date-fns';
 import { useTranslations } from 'next-intl';
 import { useEffect, useRef, useState } from 'react';
 
-import { MiniCalendar } from '@/components/common/MiniCalendar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { MiniCalendar } from '@/components/ui/mini-calendar';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import {
   Select,

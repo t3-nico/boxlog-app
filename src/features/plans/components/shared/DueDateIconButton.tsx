@@ -11,7 +11,7 @@ import { HoverTooltip } from '@/components/ui/tooltip';
 import { zIndex } from '@/config/ui/z-index';
 import { cn } from '@/lib/utils';
 
-import { MiniCalendar } from '@/components/common/MiniCalendar';
+import { MiniCalendar } from '@/components/ui/mini-calendar';
 
 interface DueDateIconButtonProps {
   /** 選択された期限日 */
