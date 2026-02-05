@@ -18,10 +18,10 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { SegmentedControl } from '@/components/ui/segmented-control';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { InspectorHeader, useDragHandle } from '@/features/inspector';
 import { api } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
-import { InspectorHeader, useDragHandle } from '../shared';
 
 import { usePlanInspectorStore, type DraftPlan } from '../../../stores/usePlanInspectorStore';
 import { reminderTypeToMinutes } from '../../../utils/reminder';
@@ -353,7 +353,7 @@ export function PlanInspectorContent() {
                   <DropdownMenuTrigger asChild>
                     <Button
                       variant="primary"
-                      icon
+                      size="icon"
                       className="rounded-none border-0"
                       aria-label="完了オプション"
                     >
@@ -384,15 +384,10 @@ export function PlanInspectorContent() {
   );
 }
 
-const draftTypeOptions = [
-  { value: 'plan' as const, label: 'Plan' },
-  { value: 'record' as const, label: 'Record' },
-];
-
 /**
  * ドラフトモード用ヘッダー
  *
- * セグメントコントロール（Plan/Record）を配置
+ * タブ切り替え（Plan/Record）を配置
  * ドラッグハンドルを適用してドラッグを可能にする
  */
 interface DraftModeHeaderProps {
@@ -415,13 +410,27 @@ function DraftModeHeader({ createType, setCreateType }: DraftModeHeaderProps) {
         />
       )}
 
-      {/* Plan/Record 切り替え */}
-      <SegmentedControl
-        options={draftTypeOptions}
+      {/* Plan/Record タブ */}
+      <Tabs
         value={createType}
-        onChange={setCreateType}
+        onValueChange={(value) => setCreateType(value as 'plan' | 'record')}
         className="relative z-10"
-      />
+      >
+        <TabsList className="h-8 rounded-lg border-0 bg-transparent p-0">
+          <TabsTrigger
+            value="plan"
+            className="data-[state=active]:bg-state-selected data-[state=active]:text-foreground rounded-lg font-bold data-[state=active]:shadow-none"
+          >
+            Plan
+          </TabsTrigger>
+          <TabsTrigger
+            value="record"
+            className="data-[state=active]:bg-state-selected data-[state=active]:text-foreground rounded-lg font-bold data-[state=active]:shadow-none"
+          >
+            Record
+          </TabsTrigger>
+        </TabsList>
+      </Tabs>
     </div>
   );
 }
