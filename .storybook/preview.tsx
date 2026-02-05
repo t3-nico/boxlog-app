@@ -29,10 +29,41 @@ const messages = {
   common: {
     close: '閉じる',
     cancel: 'キャンセル',
+    confirm: '確認',
     save: '保存',
     delete: '削除',
     edit: '編集',
     loading: '読み込み中...',
+    deleting: '削除中...',
+  },
+  actions: {
+    delete: '削除',
+    cancel: 'キャンセル',
+    deleting: '削除中...',
+  },
+  error: {
+    loading: {
+      default: '読み込み中...',
+      title: '読み込み中',
+      loadingData: 'データを読み込んでいます...',
+      loadFailed: 'データの読み込みに失敗しました',
+      retry: '再試行',
+      noData: 'データがありません',
+      loadingPage: 'ページを読み込み中',
+      pleaseWait: 'しばらくお待ちください...',
+    },
+  },
+  legal: {
+    cookies: {
+      banner: {
+        title: 'Cookieの使用について',
+        description: '当サイトは、サービスの向上と利用状況の分析のためにCookieを使用します。',
+        learnMore: '詳しく見る',
+        acceptAll: 'すべて同意',
+        rejectAll: '必須のみ',
+        customize: 'カスタマイズ',
+      },
+    },
   },
   aria: {
     selectColor: '{color}を選択',
@@ -48,12 +79,36 @@ const preview: Preview = {
       },
     },
     backgrounds: {
-      disable: true, // セマンティックトークンを使うため無効化
+      values: [], // 背景色選択は無効化（セマンティックトークンを使用）
+      grid: {
+        cellSize: 16, // 16pxグリッド
+        cellAmount: 5, // 80px（5マス）ごとに強調線
+        opacity: 0.6,
+        offsetX: 16, // 左端1マス分オフセット
+        offsetY: 16, // 上端1マス分オフセット
+      },
     },
     options: {
       storySort: {
         method: 'alphabetical',
         order: ['Docs', 'Tokens', 'Components', 'Patterns'],
+      },
+    },
+    a11y: {
+      config: {
+        rules: [
+          { id: 'color-contrast', enabled: true },
+          { id: 'html-has-lang', enabled: false },
+          { id: 'landmark-one-main', enabled: false },
+          { id: 'page-has-heading-one', enabled: false },
+          { id: 'region', enabled: false },
+        ],
+      },
+      options: {
+        runOnly: {
+          type: 'tag',
+          values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice'],
+        },
       },
     },
   },
@@ -67,7 +122,7 @@ const preview: Preview = {
           { value: 'light', icon: 'sun', title: 'Light' },
           { value: 'dark', icon: 'moon', title: 'Dark' },
         ],
-        dynamicTitle: true,
+        dynamicTitle: false,
       },
     },
   },
@@ -89,7 +144,7 @@ const preview: Preview = {
 
       return (
         <NextIntlClientProvider locale="ja" messages={messages}>
-          <div className="bg-background text-foreground p-4">
+          <div className="p-4">
             <Story />
           </div>
         </NextIntlClientProvider>
