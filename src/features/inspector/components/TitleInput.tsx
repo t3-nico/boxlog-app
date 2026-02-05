@@ -10,6 +10,9 @@ import { forwardRef, useCallback, useEffect, useState } from 'react';
 
 import { cn } from '@/lib/utils';
 
+/** タイトルの最大文字数（スキーマ定義と同期） */
+const TITLE_MAX_LENGTH = 200;
+
 interface TitleInputProps {
   /** 現在の値 */
   value: string;
@@ -25,6 +28,8 @@ interface TitleInputProps {
   autoFocus?: boolean;
   /** 自動フォーカス時に全選択するか */
   selectOnFocus?: boolean;
+  /** 最大文字数（デフォルト: 200） */
+  maxLength?: number;
 }
 
 /**
@@ -43,6 +48,7 @@ export const TitleInput = forwardRef<HTMLInputElement, TitleInputProps>(function
     'aria-label': ariaLabel,
     autoFocus = false,
     selectOnFocus = false,
+    maxLength = TITLE_MAX_LENGTH,
   },
   ref,
 ) {
@@ -84,6 +90,7 @@ export const TitleInput = forwardRef<HTMLInputElement, TitleInputProps>(function
       value={localValue}
       placeholder={placeholder}
       onChange={handleChange}
+      maxLength={maxLength}
       className={cn(
         'placeholder:text-muted-foreground block w-full border-0 bg-transparent text-xl font-bold outline-none',
         className,
