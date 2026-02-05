@@ -22,8 +22,8 @@ const LoadingIcon = () => <Loader2 className="size-5 animate-spin" />;
  * - 影: shadow-lg
  * - パディング: 16px
  * - ギャップ: 8px
- * - タイトル: 14px、foreground
- * - 説明: 14px、muted-foreground
+ * - タイトル: 14px、bold、foreground
+ * - 説明: 14px、normal、muted-foreground
  * - 閉じるボタン: 常時表示
  * - Undoボタン: 右配置
  *
@@ -58,11 +58,11 @@ const Toaster = ({ ...props }: ToasterProps) => {
         classNames: {
           toast:
             'grid grid-cols-[auto_1fr_auto] gap-4 items-start w-full p-4 rounded-lg border shadow-lg bg-card text-foreground border-border',
-          icon: 'row-start-1 col-start-1',
+          icon: 'row-start-1 col-start-1 [&_svg]:size-5',
           loader: '!static !inset-auto !transform-none',
           content:
-            'row-start-1 col-start-2 min-w-0 [[data-sonner-toast]:not(:has([data-icon]))_&]:col-start-1',
-          title: 'text-sm font-medium',
+            'row-start-1 col-start-2 min-w-0 flex flex-col gap-1 [[data-sonner-toast]:not(:has([data-icon]))_&]:col-start-1',
+          title: 'text-sm font-bold',
           description: 'text-sm text-muted-foreground',
           actionButton: cn(
             'row-start-2 col-start-2 col-span-2 justify-self-end',
@@ -70,7 +70,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
           ),
           cancelButton: buttonVariants({ variant: 'outline', size: 'sm' }),
           closeButton:
-            'row-start-1 col-start-3 justify-self-end p-1 rounded-md text-muted-foreground bg-transparent border-0 hover:bg-state-hover transition-colors [&_svg]:size-5',
+            'row-start-1 col-start-3 justify-self-end -mt-1 -mr-1 p-1 rounded-md text-muted-foreground bg-transparent border-0 hover:bg-state-hover transition-colors [&_svg]:size-5',
           success:
             '!border-success [&_[data-icon]]:text-success [&_[data-action]]:!bg-success [&_[data-action]]:!text-success-foreground [&_[data-action]]:!border-0',
           error:
