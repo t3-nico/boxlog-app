@@ -1,7 +1,7 @@
 'use client';
 
-import { LoadingSpinner } from '@/components/ui/loading-states';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Spinner } from '@/components/ui/spinner';
 import { SidebarShell } from '@/features/navigation/components/sidebar/SidebarShell';
 
 import { PlanSidebarList } from './sidebar/PlanSidebarList';
@@ -20,7 +20,7 @@ export function PlanSidebar({ isLoading = false }: PlanSidebarProps) {
     return (
       <SidebarShell>
         <div className="flex flex-1 items-center justify-center">
-          <LoadingSpinner size="lg" />
+          <Spinner size="lg" />
         </div>
       </SidebarShell>
     );

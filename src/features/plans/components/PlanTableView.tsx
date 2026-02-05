@@ -5,7 +5,7 @@ import { Calendar, ChevronDown, FileText, Plus } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { LoadingSpinner } from '@/components/ui/loading-states';
+import { Spinner } from '@/components/ui/spinner';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MEDIA_QUERIES } from '@/config/ui/breakpoints';
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
@@ -309,7 +309,7 @@ export function PlanTableView() {
     return (
       <div className="flex h-full items-center justify-center">
         <div className="flex flex-col items-center gap-2">
-          <LoadingSpinner size="lg" />
+          <Spinner size="lg" />
           <p className="text-muted-foreground text-sm">読み込み中...</p>
         </div>
       </div>

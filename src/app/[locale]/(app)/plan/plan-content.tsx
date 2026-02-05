@@ -2,7 +2,7 @@
 
 import { Suspense } from 'react';
 
-import { LoadingSpinner } from '@/components/ui/loading-states';
+import { Spinner } from '@/components/ui/spinner';
 import { PlanTableView } from '@/features/plans/components/PlanTableView';
 
 /**
@@ -15,7 +15,7 @@ export function PlanContent() {
         fallback={
           <div className="flex h-full items-center justify-center">
             <div className="flex flex-col items-center gap-2">
-              <LoadingSpinner size="lg" />
+              <Spinner size="lg" />
               <p className="text-muted-foreground text-sm">読み込み中...</p>
             </div>
           </div>

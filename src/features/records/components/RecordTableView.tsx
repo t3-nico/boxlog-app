@@ -4,7 +4,7 @@ import { Calendar, ChevronDown, Clock, FileText, Plus } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { LoadingSpinner } from '@/components/ui/loading-states';
+import { Spinner } from '@/components/ui/spinner';
 import { MEDIA_QUERIES } from '@/config/ui/breakpoints';
 import {
   TableNavigation,
@@ -228,7 +228,7 @@ export function RecordTableView() {
     return (
       <div className="flex h-full items-center justify-center">
         <div className="flex flex-col items-center gap-2">
-          <LoadingSpinner size="lg" />
+          <Spinner size="lg" />
           <p className="text-muted-foreground text-sm">読み込み中...</p>
         </div>
       </div>

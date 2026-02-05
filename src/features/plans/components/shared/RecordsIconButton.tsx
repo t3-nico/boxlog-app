@@ -21,7 +21,7 @@ import {
   CommandItem,
   CommandList,
 } from '@/components/ui/command';
-import { LoadingSpinner } from '@/components/ui/loading-states';
+import { Spinner } from '@/components/ui/spinner';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { zIndex } from '@/config/ui/z-index';
@@ -132,7 +132,7 @@ export function RecordsIconButton({ planId, disabled = false }: RecordsIconButto
       >
         {isPending ? (
           <div className="flex items-center justify-center py-8">
-            <LoadingSpinner size="sm" />
+            <Spinner size="sm" />
           </div>
         ) : (
           <Command shouldFilter={false}>

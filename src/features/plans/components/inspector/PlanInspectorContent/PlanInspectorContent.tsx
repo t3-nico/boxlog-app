@@ -6,7 +6,7 @@
  */
 
 import { format } from 'date-fns';
-import { CalendarPlus, ChevronDown, Clock } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useEffect, useRef } from 'react';
 
@@ -420,12 +420,16 @@ function DraftModeHeader({ createType, setCreateType }: DraftModeHeaderProps) {
         className="relative z-10"
       >
         <TabsList className="h-8 rounded-lg border-0 bg-transparent p-0">
-          <TabsTrigger value="plan" className="gap-1 rounded-lg font-bold">
-            <CalendarPlus className="size-4" />
+          <TabsTrigger
+            value="plan"
+            className="rounded-lg font-bold data-[state=active]:bg-state-selected data-[state=active]:text-foreground data-[state=active]:shadow-none"
+          >
             Plan
           </TabsTrigger>
-          <TabsTrigger value="record" className="gap-1 rounded-lg font-bold">
-            <Clock className="size-4" />
+          <TabsTrigger
+            value="record"
+            className="rounded-lg font-bold data-[state=active]:bg-state-selected data-[state=active]:text-foreground data-[state=active]:shadow-none"
+          >
             Record
           </TabsTrigger>
         </TabsList>

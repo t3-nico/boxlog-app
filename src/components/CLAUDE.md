@@ -37,11 +37,6 @@ src/components/
 │   ├── kanban/              # Kanbanボード
 │   └── code-block/          # コードブロック
 │
-├── common/                  # 共通UIユーティリティ
-│   ├── EmptyState.tsx       # 空状態表示
-│   ├── LoadingSpinner.tsx   # ローディング
-│   └── ...
-│
 ├── layout/                  # レイアウトコンポーネント（新規追加 2025-10-16）
 │   ├── base-layout.tsx              # アプリ全体の基盤レイアウト
 │   ├── base-layout-content.tsx      # レイアウトオーケストレーター
@@ -197,7 +192,7 @@ AI・高度なUIコンポーネント。
 
 - ✅ エディター機能: `app/editor/`, `app/rich-text-editor/`
 - ✅ プロジェクト全体の一貫性: `app/heading.tsx`（タイポグラフィ統一）
-- ✅ 共通UIユーティリティ: `common/EmptyState.tsx`, `common/LoadingSpinner.tsx`
+- ✅ 共通UIユーティリティ: `ui/empty-state.tsx`, `ui/spinner.tsx`
 
 **カスタム実装前のチェックリスト**:
 
