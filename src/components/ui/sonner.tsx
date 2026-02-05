@@ -51,6 +51,8 @@ const Toaster = ({ ...props }: ToasterProps) => {
       closeButton
       containerAriaLabel="通知"
       icons={{ loading: <LoadingIcon /> }}
+      // Sonner内部の--width CSS変数を上書き（デフォルト356px → 420px）
+      className="[--width:420px]"
       toastOptions={{
         unstyled: true,
         classNames: {
@@ -63,7 +65,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
           title: 'text-sm font-medium',
           description: 'text-sm text-muted-foreground',
           actionButton: cn(
-            'row-start-2 col-start-3 justify-self-end',
+            'row-start-2 col-start-2 col-span-2 justify-self-end',
             buttonVariants({ variant: 'outline', size: 'sm' }),
           ),
           cancelButton: buttonVariants({ variant: 'outline', size: 'sm' }),
