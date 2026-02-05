@@ -199,7 +199,7 @@ export const AllPatterns: Story = {
           重要なアクションの確認。削除、ログアウト、不可逆操作で使用。Dialogと異なりESCで閉じない。
         </p>
 
-        <div className="grid gap-8" style={{ maxWidth: '48rem' }}>
+        <div className="grid max-w-3xl gap-8">
           <div>
             <h2 className="mb-2 text-lg font-bold">削除確認（主要用途）</h2>
             <p className="text-muted-foreground mb-4 text-sm">

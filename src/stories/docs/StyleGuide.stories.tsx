@@ -17,7 +17,7 @@ export const Overview: Story = {
       <h1 className="mb-2 text-2xl font-bold">スタイルガイド</h1>
       <p className="text-muted-foreground mb-8">BoxLog App のスタイリングルール統一リファレンス</p>
 
-      <div className="grid gap-8" style={{ maxWidth: '64rem' }}>
+      <div className="grid max-w-5xl gap-8">
         {/* GAFA-First原則 */}
         <section className="bg-card border-border rounded-xl border p-6">
           <h2 className="mb-4 text-lg font-bold">GAFA-First原則</h2>
@@ -120,7 +120,7 @@ export const Rules: Story = {
       <h1 className="mb-2 text-2xl font-bold">ルール一覧</h1>
       <p className="text-muted-foreground mb-8">必須ルールと禁止事項</p>
 
-      <div className="grid gap-8" style={{ maxWidth: '64rem' }}>
+      <div className="grid max-w-5xl gap-8">
         {/* 8pxグリッド */}
         <RuleSection title="8pxグリッドシステム">
           <DoItem>gap-2 (8px), gap-4 (16px), gap-6 (24px), gap-8 (32px)</DoItem>
@@ -206,7 +206,7 @@ export const ColorGuide: Story = {
       <h1 className="mb-2 text-2xl font-bold">カラーガイド</h1>
       <p className="text-muted-foreground mb-8">GAFA準拠のカラーデザイン方針</p>
 
-      <div className="grid gap-8" style={{ maxWidth: '64rem' }}>
+      <div className="grid max-w-5xl gap-8">
         {/* デザイン方針 */}
         <section className="bg-card border-border rounded-xl border p-6">
           <h2 className="mb-4 text-lg font-bold">デザイン方針（GAFA準拠）</h2>
@@ -506,7 +506,7 @@ export const CommonPatterns: Story = {
       <h1 className="mb-2 text-2xl font-bold">共通パターン</h1>
       <p className="text-muted-foreground mb-8">再利用可能なUIパターン</p>
 
-      <div className="grid gap-8" style={{ maxWidth: '64rem' }}>
+      <div className="grid max-w-5xl gap-8">
         {/* WarningBox */}
         <section>
           <h2 className="mb-4 text-lg font-bold">WarningBox</h2>

@@ -19,7 +19,7 @@ export const Overview: Story = {
         アニメーションとトランジションのトークン（Material Design 3準拠）
       </p>
 
-      <div className="grid gap-8" style={{ maxWidth: '64rem' }}>
+      <div className="grid max-w-5xl gap-8">
         {/* shadcn/ui標準 */}
         <section className="bg-card border-border rounded-xl border p-6">
           <h2 className="mb-4 text-lg font-bold">shadcn/ui標準（animate-in/out）</h2>
@@ -325,7 +325,7 @@ export const Loading: Story = {
       <h1 className="mb-2 text-2xl font-bold">ローディングパターン</h1>
       <p className="text-muted-foreground mb-8">スケルトンローダーの実装例</p>
 
-      <div className="grid gap-8" style={{ maxWidth: '64rem' }}>
+      <div className="grid max-w-5xl gap-8">
         {/* カード */}
         <section className="bg-card border-border rounded-xl border p-6">
           <h2 className="mb-4 text-lg font-bold">カードスケルトン</h2>

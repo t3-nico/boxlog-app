@@ -92,7 +92,7 @@ export const AllPatterns: Story = {
       <div>
         <h1 className="mb-8 text-2xl font-bold">Switch - 実際の使用パターン</h1>
 
-        <div className="space-y-8" style={{ maxWidth: '28rem' }}>
+        <div className="max-w-md space-y-8">
           <section>
             <h2 className="mb-4 text-lg font-bold">設定リスト</h2>
             <div className="border-border divide-border divide-y rounded-lg border">

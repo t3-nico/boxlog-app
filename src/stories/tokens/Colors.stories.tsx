@@ -635,7 +635,7 @@ export const DosDonts: Story = {
       <h1 className="mb-2 text-2xl font-bold">Do&apos;s & Don&apos;ts</h1>
       <p className="text-muted-foreground mb-8">カラー使用のベストプラクティス。</p>
 
-      <div className="grid gap-8" style={{ maxWidth: '64rem' }}>
+      <div className="grid max-w-5xl gap-8">
         {/* セマンティックトークン */}
         <section className="bg-card border-border rounded-xl border p-6">
           <h2 className="mb-4 text-lg font-bold">セマンティックトークンを使用</h2>

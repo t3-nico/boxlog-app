@@ -39,7 +39,7 @@ export const AllPatterns: Story = {
           ローディングインジケーター（回転アニメーション）
         </p>
 
-        <div className="grid gap-8" style={{ maxWidth: '28rem' }}>
+        <div className="grid max-w-md gap-8">
           <div>
             <h2 className="mb-2 text-lg font-bold">Button isLoading（推奨）</h2>
             <p className="text-muted-foreground mb-4 text-sm">

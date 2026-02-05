@@ -27,7 +27,7 @@ export const AllPatterns: Story = {
         <h1 className="mb-2 text-2xl font-bold">Sheet</h1>
         <p className="text-muted-foreground mb-8">画面端からスライドするパネル。モバイル専用。</p>
 
-        <div className="grid gap-8" style={{ maxWidth: '48rem' }}>
+        <div className="grid max-w-3xl gap-8">
           <div>
             <h2 className="mb-2 text-lg font-bold">side: left（ナビゲーション）</h2>
             <p className="text-muted-foreground mb-4 text-sm">

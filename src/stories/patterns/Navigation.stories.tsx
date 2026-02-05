@@ -32,7 +32,7 @@ export const Overview: Story = {
         ナビゲーションUIのパターン。タブ、ブレッドクラム、ページネーションの使い分け。
       </p>
 
-      <div className="grid gap-8" style={{ maxWidth: '64rem' }}>
+      <div className="grid max-w-5xl gap-8">
         {/* 使い分けガイド */}
         <section className="bg-card border-border rounded-xl border p-6">
           <h2 className="mb-4 text-lg font-bold">使い分けガイド</h2>

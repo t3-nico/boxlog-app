@@ -34,7 +34,7 @@ export const AllPatterns: Story = {
           タグのカラー選択。DropdownMenu内で使用するリスト形式。
         </p>
 
-        <div className="grid gap-8" style={{ maxWidth: '48rem' }}>
+        <div className="grid max-w-3xl gap-8">
           <div>
             <h2 className="mb-2 text-lg font-bold">ドロップダウンメニュー形式</h2>
             <p className="text-muted-foreground mb-4 text-sm">

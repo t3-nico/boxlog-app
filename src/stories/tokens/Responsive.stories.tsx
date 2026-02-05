@@ -17,7 +17,7 @@ export const Breakpoints: Story = {
       <h1 className="mb-2 text-2xl font-bold">ブレークポイント</h1>
       <p className="text-muted-foreground mb-8">Material Design 3 Window Size Classes に基づく</p>
 
-      <div className="grid gap-8" style={{ maxWidth: '64rem' }}>
+      <div className="grid max-w-5xl gap-8">
         {/* ブレークポイント一覧 */}
         <section>
           <h2 className="mb-4 text-lg font-bold">Tailwind v4 デフォルト</h2>
@@ -128,7 +128,7 @@ export const TouchTargets: Story = {
         Material Design 3 / Apple HIG アクセシビリティ準拠
       </p>
 
-      <div className="grid gap-8" style={{ maxWidth: '64rem' }}>
+      <div className="grid max-w-5xl gap-8">
         {/* サイズ一覧 */}
         <section>
           <h2 className="mb-4 text-lg font-bold">サイズ早見表</h2>
@@ -246,7 +246,7 @@ export const HoverMobile: Story = {
       <h1 className="mb-2 text-2xl font-bold">ホバー依存UIのモバイル対応</h1>
       <p className="text-muted-foreground mb-8">ホバーで表示されるUIはモバイルで常時表示に</p>
 
-      <div className="grid gap-8" style={{ maxWidth: '64rem' }}>
+      <div className="grid max-w-5xl gap-8">
         {/* パターン */}
         <section>
           <h2 className="mb-4 text-lg font-bold">実装パターン</h2>

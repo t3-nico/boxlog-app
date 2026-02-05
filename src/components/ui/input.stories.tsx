@@ -25,7 +25,7 @@ export const AllPatterns: Story = {
         <h1 className="mb-2 text-2xl font-bold">Input</h1>
         <p className="text-muted-foreground mb-8">テキスト入力フィールド</p>
 
-        <div className="grid gap-8" style={{ maxWidth: '28rem' }}>
+        <div className="grid max-w-md gap-8">
           <div>
             <h2 className="mb-4 text-lg font-bold">サイズ</h2>
             <div className="flex flex-col gap-4">

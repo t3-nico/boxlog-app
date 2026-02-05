@@ -104,7 +104,7 @@ export const AllPatterns: Story = {
           Recharts + shadcn/uiラッパー。統計画面で使用。ChartConfigでカラー管理。
         </p>
 
-        <div className="grid gap-8" style={{ maxWidth: '64rem' }}>
+        <div className="grid max-w-5xl gap-8">
           <div>
             <h2 className="mb-2 text-lg font-bold">BarChart（横棒グラフ）</h2>
             <p className="text-muted-foreground mb-4 text-sm">

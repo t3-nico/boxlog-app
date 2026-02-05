@@ -31,7 +31,7 @@ export const AllPatterns: Story = {
           右クリックで表示。テーブル行、カードのアクションメニュー。デスクトップ専用。
         </p>
 
-        <div className="grid gap-8" style={{ maxWidth: '48rem' }}>
+        <div className="grid max-w-3xl gap-8">
           <div>
             <h2 className="mb-2 text-lg font-bold">テーブル行アクション（主要用途）</h2>
             <p className="text-muted-foreground mb-4 text-sm">

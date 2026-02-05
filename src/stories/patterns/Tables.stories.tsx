@@ -53,7 +53,7 @@ export const Overview: Story = {
         データテーブルのパターン。ソート、選択、ページネーションの実装例。
       </p>
 
-      <div className="grid gap-8" style={{ maxWidth: '64rem' }}>
+      <div className="grid max-w-5xl gap-8">
         {/* 使い分けガイド */}
         <section className="bg-card border-border rounded-xl border p-6">
           <h2 className="mb-4 text-lg font-bold">テーブル構成要素</h2>

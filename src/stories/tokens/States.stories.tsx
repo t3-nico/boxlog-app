@@ -21,7 +21,7 @@ export const Overview: Story = {
         Material Design 3準拠。全コンポーネントで統一された状態表現。
       </p>
 
-      <div className="grid gap-8" style={{ maxWidth: '64rem' }}>
+      <div className="grid max-w-5xl gap-8">
         {/* 状態トークン一覧 */}
         <section className="bg-card border-border rounded-xl border p-6">
           <h2 className="mb-4 text-lg font-bold">状態トークン</h2>

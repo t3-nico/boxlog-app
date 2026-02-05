@@ -26,7 +26,7 @@ export const AllPatterns: Story = {
         <h1 className="mb-2 text-2xl font-bold">InputGroup</h1>
         <p className="text-muted-foreground mb-8">入力フィールドにボタンやアイコンを追加</p>
 
-        <div className="grid gap-8" style={{ maxWidth: '28rem' }}>
+        <div className="grid max-w-md gap-8">
           <div>
             <h2 className="mb-2 text-lg font-bold">パスワード表示切り替え</h2>
             <p className="text-muted-foreground mb-4 text-sm">

@@ -21,7 +21,7 @@ export const Overview: Story = {
         ユーザーへのフィードバック。Toast、Alert、InlineMessageの使い分け。
       </p>
 
-      <div className="grid gap-8" style={{ maxWidth: '48rem' }}>
+      <div className="grid max-w-3xl gap-8">
         {/* 使い分けガイド */}
         <section className="bg-card border-border rounded-xl border p-6">
           <h2 className="mb-4 text-lg font-bold">使い分けガイド</h2>

@@ -23,7 +23,7 @@ export const AllPatterns: Story = {
         <h1 className="mb-2 text-2xl font-bold">InputOTP</h1>
         <p className="text-muted-foreground mb-8">ワンタイムパスワード入力（6桁）</p>
 
-        <div className="grid gap-8" style={{ maxWidth: '28rem' }}>
+        <div className="grid max-w-md gap-8">
           <div>
             <h2 className="mb-2 text-lg font-bold">MFA認証コード入力</h2>
             <p className="text-muted-foreground mb-4 text-sm">
