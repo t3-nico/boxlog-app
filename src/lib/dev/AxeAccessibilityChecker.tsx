@@ -45,7 +45,7 @@ export function AxeAccessibilityChecker() {
         }, 500);
       } catch (error) {
         // axe-coreが読み込めない場合は静かに失敗
-        console.debug('[a11y] axe-core not available:', error);
+        console.warn('[a11y] axe-core not available:', error);
       }
     };
 
