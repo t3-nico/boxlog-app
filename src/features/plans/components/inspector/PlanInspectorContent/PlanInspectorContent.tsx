@@ -422,13 +422,13 @@ function DraftModeHeader({ createType, setCreateType }: DraftModeHeaderProps) {
         <TabsList className="h-8 rounded-lg border-0 bg-transparent p-0">
           <TabsTrigger
             value="plan"
-            className="rounded-lg font-bold data-[state=active]:bg-state-selected data-[state=active]:text-foreground data-[state=active]:shadow-none"
+            className="data-[state=active]:bg-state-selected data-[state=active]:text-foreground rounded-lg font-bold data-[state=active]:shadow-none"
           >
             Plan
           </TabsTrigger>
           <TabsTrigger
             value="record"
-            className="rounded-lg font-bold data-[state=active]:bg-state-selected data-[state=active]:text-foreground data-[state=active]:shadow-none"
+            className="data-[state=active]:bg-state-selected data-[state=active]:text-foreground rounded-lg font-bold data-[state=active]:shadow-none"
           >
             Record
           </TabsTrigger>

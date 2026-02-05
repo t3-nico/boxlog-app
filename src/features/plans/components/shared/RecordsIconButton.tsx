@@ -21,8 +21,8 @@ import {
   CommandItem,
   CommandList,
 } from '@/components/ui/command';
-import { Spinner } from '@/components/ui/spinner';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Spinner } from '@/components/ui/spinner';
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { zIndex } from '@/config/ui/z-index';
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
