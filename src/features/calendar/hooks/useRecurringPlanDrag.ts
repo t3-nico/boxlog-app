@@ -18,6 +18,7 @@ import { logger } from '@/lib/logger';
 import { api } from '@/lib/trpc';
 
 import type { CalendarPlan } from '../types/calendar.types';
+import { isRecordEvent } from '../utils/planDataAdapter';
 
 interface PendingDragUpdate {
   plan: CalendarPlan;
@@ -213,8 +214,8 @@ export function useRecurringPlanDrag({ plans }: UseRecurringPlanDragOptions) {
         return;
       }
 
-      // Recordかどうか判定（type === 'record' または recordId が存在）
-      const isRecord = plan.type === 'record' || !!plan.recordId;
+      // Recordかどうか判定
+      const isRecord = isRecordEvent(plan);
 
       if (isRecord) {
         // Recordの場合: Record更新mutationを使用
