@@ -17,9 +17,7 @@ import { NavigationTabItem } from './NavigationTabItem';
 const meta = {
   title: 'Features/Navigation/NavigationTabs',
   component: NavigationTabItem,
-  parameters: {
-    layout: 'centered',
-  },
+  parameters: {},
   tags: ['autodocs'],
   argTypes: {
     isActive: {

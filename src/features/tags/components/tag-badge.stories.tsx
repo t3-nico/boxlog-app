@@ -86,9 +86,7 @@ const mockTags = [workTag, privateTag, studyTag, exerciseTag];
 const meta = {
   title: 'Features/Tags/TagBadge',
   component: TagBadge,
-  parameters: {
-    layout: 'centered',
-  },
+  parameters: {},
   tags: ['autodocs'],
 } satisfies Meta<typeof TagBadge>;
 

@@ -8,9 +8,7 @@ const meta = {
   title: 'Components/Toast',
   component: Toaster,
   tags: ['autodocs'],
-  parameters: {
-    layout: 'centered',
-  },
+  parameters: {},
   decorators: [
     (Story) => (
       <>

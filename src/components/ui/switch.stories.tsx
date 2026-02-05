@@ -27,9 +27,7 @@ const meta = {
   title: 'Components/Switch',
   component: Switch,
   tags: ['autodocs'],
-  parameters: {
-    layout: 'centered',
-  },
+  parameters: {},
   argTypes: {
     checked: {
       control: 'boolean',

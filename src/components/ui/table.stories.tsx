@@ -53,9 +53,7 @@ const meta = {
   title: 'Components/Table',
   component: Table,
   tags: ['autodocs'],
-  parameters: {
-    layout: 'centered',
-  },
+  parameters: {},
 } satisfies Meta<typeof Table>;
 
 export default meta;

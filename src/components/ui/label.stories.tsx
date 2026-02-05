@@ -8,9 +8,7 @@ const meta = {
   title: 'Components/Label',
   component: Label,
   tags: ['autodocs'],
-  parameters: {
-    layout: 'centered',
-  },
+  parameters: {},
 } satisfies Meta<typeof Label>;
 
 export default meta;

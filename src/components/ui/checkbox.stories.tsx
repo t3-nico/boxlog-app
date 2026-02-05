@@ -8,9 +8,7 @@ const meta = {
   title: 'Components/Checkbox',
   component: Checkbox,
   tags: ['autodocs'],
-  parameters: {
-    layout: 'centered',
-  },
+  parameters: {},
   argTypes: {
     checked: {
       control: 'boolean',

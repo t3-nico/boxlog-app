@@ -144,9 +144,7 @@ const preview: Preview = {
 
       return (
         <NextIntlClientProvider locale="ja" messages={messages}>
-          <div className="p-4">
-            <Story />
-          </div>
+          <Story />
         </NextIntlClientProvider>
       );
     },
