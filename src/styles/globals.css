@@ -302,6 +302,16 @@
   --color-tag-orange: var(--tag-orange);
   --color-tag-gray: var(--tag-gray);
   --color-tag-indigo: var(--tag-indigo);
+
+  /* ============================================
+   * Chronotype Colors（生産性ゾーン）
+   * 使用例: bg-chronotype-peak, bg-chronotype-sleep
+   * ============================================ */
+  --color-chronotype-peak: var(--chronotype-peak);
+  --color-chronotype-good: var(--chronotype-good);
+  --color-chronotype-moderate: var(--chronotype-moderate);
+  --color-chronotype-low: var(--chronotype-low);
+  --color-chronotype-sleep: var(--chronotype-sleep);
 }
 
 @theme {
