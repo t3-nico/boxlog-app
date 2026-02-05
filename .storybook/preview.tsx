@@ -2,6 +2,9 @@ import type { Preview } from '@storybook/react';
 import { NextIntlClientProvider } from 'next-intl';
 
 import '../src/styles/globals.css';
+import { DocsTemplate } from './DocsTemplate';
+import { dayoptLightTheme } from './dayoptTheme';
+import './prose.css';
 
 // Storybook用のメッセージ（必要なものだけ）
 const messages = {
@@ -78,21 +81,16 @@ const preview: Preview = {
         date: /Date$/i,
       },
     },
-    backgrounds: {
-      values: [], // 背景色選択は無効化（セマンティックトークンを使用）
-      grid: {
-        cellSize: 16, // 16pxグリッド
-        cellAmount: 5, // 80px（5マス）ごとに強調線
-        opacity: 0.6,
-        offsetX: 16, // 左端1マス分オフセット
-        offsetY: 16, // 上端1マス分オフセット
-      },
-    },
+    backgrounds: { disable: true },
     options: {
       storySort: {
         method: 'alphabetical',
         order: ['Docs', 'Tokens', 'Components', 'Patterns'],
       },
+    },
+    docs: {
+      theme: dayoptLightTheme,
+      page: DocsTemplate,
     },
     a11y: {
       config: {
@@ -133,13 +131,12 @@ const preview: Preview = {
     (Story, context) => {
       const theme = context.globals.theme || 'light';
 
-      // ダークモード切り替え + Radix Portal用のbodyスタイル
+      // ダークモード切り替え
       if (typeof document !== 'undefined') {
         document.documentElement.classList.remove('light', 'dark');
         document.documentElement.classList.add(theme);
-        // Radix UIのPortalはdocument.bodyにレンダリングされるため、
-        // bodyにもテーマクラスを適用してモーダル等が正しく表示されるようにする
-        document.body.classList.add('bg-background', 'text-foreground');
+        // color-scheme を切り替え（スクロールバー・フォーム要素のネイティブ配色）
+        document.documentElement.style.colorScheme = theme;
       }
 
       return (
