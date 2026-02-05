@@ -8,8 +8,19 @@ import { MiniCalendar } from '@/components/ui/mini-calendar';
 
 const meta = {
   title: 'Components/MiniCalendar',
+  component: MiniCalendar,
+  tags: ['autodocs'],
   parameters: {
-    layout: 'centered',
+  },
+  argTypes: {
+    asPopover: {
+      control: 'boolean',
+      description: 'Popoverモードで表示',
+    },
+    allowClear: {
+      control: 'boolean',
+      description: '「日付なし」ボタンを表示するか',
+    },
   },
   decorators: [
     (Story) => (
@@ -18,10 +29,10 @@ const meta = {
       </div>
     ),
   ],
-} satisfies Meta;
+} satisfies Meta<typeof MiniCalendar>;
 
 export default meta;
-type Story = StoryObj;
+type Story = StoryObj<typeof meta>;
 
 function CalendarWithState({ initialDate }: { initialDate?: Date }) {
   const [selected, setSelected] = useState<Date | undefined>(initialDate);

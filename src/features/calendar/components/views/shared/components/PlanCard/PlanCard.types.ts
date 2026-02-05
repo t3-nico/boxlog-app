@@ -3,7 +3,6 @@
  */
 
 export interface PlanInteractionState {
-  isHovered: boolean;
   isSelected: boolean;
   isDragging: boolean;
   isResizing: boolean;

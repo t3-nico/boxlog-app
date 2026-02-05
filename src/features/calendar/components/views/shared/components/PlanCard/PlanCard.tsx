@@ -4,7 +4,7 @@
 
 'use client';
 
-import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo } from 'react';
 
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
 import { normalizeStatus } from '@/features/plans/utils/status';
@@ -38,8 +38,6 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
 }) {
   const t = useTranslations();
   const { updatePlan } = usePlanMutations();
-  const [isHovered, setIsHovered] = useState(false);
-  const [isCheckboxHovered, setIsCheckboxHovered] = useState(false);
   const isMobile = useMediaQuery(MEDIA_QUERIES.mobile);
 
   // Record かどうか判定（Records は作業ログなので読み取り専用）
@@ -69,7 +67,7 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
     left: `${safePosition.left}%`,
     width: `calc(${safePosition.width}% - 8px)`, // 右側に8pxの余白
     height: `${Math.max(safePosition.height, MIN_EVENT_HEIGHT)}px`,
-    zIndex: isHovered || isSelected || isDragging ? Z_INDEX.DRAGGING : Z_INDEX.EVENTS,
+    zIndex: isSelected || isDragging ? Z_INDEX.DRAGGING : Z_INDEX.EVENTS,
     cursor: isDragging ? 'grabbing' : 'pointer',
     ...style,
   };
@@ -130,15 +128,6 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
     }
   }, [isDragging, onDragEnd, plan]);
 
-  // ホバー状態制御
-  const handleMouseEnter = useCallback(() => {
-    setIsHovered(true);
-  }, []);
-
-  const handleMouseLeave = useCallback(() => {
-    setIsHovered(false);
-  }, []);
-
   // キーボードイベントハンドラー
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -192,12 +181,10 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
   // CSSクラスを組み立て
   const planCardClasses = cn(
     // 基本スタイル
-    'overflow-hidden',
+    'relative overflow-hidden',
     // フォーカスリング（キーボード操作時のみ表示、視認性向上）
     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2',
-    // 背景色（選択/アクティブ時はstate-hover、通常時はplan-box/record-box）
-    // Record は専用トークン record-box で区別
-    // Draft は半透明で未保存を表現
+    // 背景色
     isDraft
       ? 'bg-primary/20'
       : isSelected || isActive
@@ -205,16 +192,18 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
         : isRecord
           ? 'bg-record-box'
           : 'bg-plan-box',
+    // ホバー: state-hover オーバーレイ（after疑似要素で背景色の上に重ねる）
+    !isDraft &&
+      'after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:transition-colors hover:after:bg-state-hover',
     // 選択状態の視覚フィードバック（色覚異常対応）
     isSelected && 'ring-2 ring-primary',
     // Draft は点線ボーダー、Record は左ボーダー（Google Calendar風）
     isDraft ? 'border border-primary/40' : isRecord && 'border-l-[3px] border-record-border',
     // テキスト色
     'text-foreground',
-    // 状態別スタイル（Draft は未保存なのでポインタースタイルのみ）
+    // 状態別スタイル
     isDraft ? 'cursor-default' : isDragging ? 'cursor-grabbing' : 'cursor-pointer',
-    // モバイル: Googleカレンダー風（左ボーダー、チェックボックス+タイトル横並び、上寄せ）
-    // デスクトップ: Plan=全角丸、Record=右角丸のみ（左ボーダーと合わせるため）
+    // モバイル: Googleカレンダー風 / デスクトップ: 角丸
     isMobile
       ? 'border-l-2 rounded-r pl-1 pr-1 pt-1 text-xs flex items-start gap-1'
       : isRecord
@@ -241,8 +230,6 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
       onContextMenu={handleContextMenu}
       onMouseDown={handleMouseDown}
       onMouseUp={handleMouseUp}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
       onTouchStart={handleTouchStart}
       onKeyDown={handleKeyDown}
       draggable={false} // HTML5 draggableは使わない
@@ -290,9 +277,8 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
               data: { status: newStatus },
             });
           }}
-          onMouseEnter={() => setIsCheckboxHovered(true)}
-          onMouseLeave={() => setIsCheckboxHovered(false)}
           className={cn(
+            'group/checkbox',
             'z-10 flex-shrink-0 rounded',
             // モバイル: 44x44pxタッチターゲット（Apple HIG準拠）、アイコンは中央配置
             // デスクトップ: 絶対配置
@@ -319,12 +305,17 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
             if (status === 'closed') {
               return <CheckCircle2 className={cn('text-success', iconClass)} />;
             }
-            // ホバー時はチェックマークを表示（完了予告）
-            if (isCheckboxHovered) {
-              return <CheckCircle2 className={cn('text-success', iconClass)} />;
-            }
-            // open（未完了）
-            return <Circle className={cn('text-muted-foreground', iconClass)} />;
+            // open: ホバー時はチェックマークを表示（完了予告）
+            return (
+              <>
+                <Circle
+                  className={cn('text-muted-foreground group-hover/checkbox:hidden', iconClass)}
+                />
+                <CheckCircle2
+                  className={cn('text-success hidden group-hover/checkbox:block', iconClass)}
+                />
+              </>
+            );
           })()}
         </button>
       )}
@@ -334,10 +325,8 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
         isCompact={safePosition.height < 40}
         showTime={safePosition.height >= 30}
         previewTime={previewTime}
-        hasCheckbox={!isMobile && !isRecord} // デスクトップのPlanのみ左パディング必要（Recordはアイコンなし）
+        hasCheckbox={!isMobile && !isRecord}
         isMobile={isMobile}
-        isHovered={isHovered}
-        isCheckboxHovered={isCheckboxHovered}
       />
 
       {/* 下端リサイズハンドル（Draft は未保存なので非表示） */}

@@ -5,8 +5,19 @@ import { SimpleDescriptionEditor } from '@/components/ui/simple-description-edit
 
 const meta = {
   title: 'Components/Editor',
+  component: SimpleDescriptionEditor,
+  tags: ['autodocs'],
   parameters: {
-    layout: 'centered',
+  },
+  argTypes: {
+    placeholder: {
+      control: 'text',
+      description: 'プレースホルダー',
+    },
+    autoFocus: {
+      control: 'boolean',
+      description: '自動フォーカス',
+    },
   },
   decorators: [
     (Story) => (
@@ -15,7 +26,7 @@ const meta = {
       </div>
     ),
   ],
-} satisfies Meta;
+} satisfies Meta<typeof SimpleDescriptionEditor>;
 
 export default meta;
 type Story = StoryObj;
@@ -49,35 +60,26 @@ function EditorWithState({
   );
 }
 
+/**
+ * 基本形。空の状態からリッチテキスト入力。
+ * 実使用: NoteIconButton（content, onChange, placeholder, autoFocus 全て使用）
+ */
 export const Default: Story = {
   render: () => <EditorWithState />,
 };
 
+/**
+ * 初期コンテンツあり（太字・斜体・リスト）。
+ */
 export const WithContent: Story = {
   render: () => (
     <EditorWithState initialContent="<p>これは<strong>太字</strong>と<em>斜体</em>のテスト</p><ul><li>リスト項目1</li><li>リスト項目2</li></ul>" />
   ),
 };
 
-export const WithTaskList: Story = {
-  render: () => (
-    <EditorWithState initialContent='<ul data-type="taskList"><li data-type="taskItem" data-checked="true">完了したタスク</li><li data-type="taskItem" data-checked="false">未完了のタスク</li></ul>' />
-  ),
-};
-
+/**
+ * autoFocus=true。ポップオーバー展開時に自動フォーカス。
+ */
 export const AutoFocus: Story = {
   render: () => <EditorWithState placeholder="自動フォーカス" autoFocus />,
-};
-
-export const InPopover: Story = {
-  render: () => (
-    <div className="space-y-2">
-      <p className="text-muted-foreground text-sm">
-        ポップオーバー内での使用を想定した高さ180pxのエディター
-      </p>
-      <div className="bg-card border-border rounded-lg border">
-        <EditorWithState placeholder="メモを入力..." />
-      </div>
-    </div>
-  ),
 };
