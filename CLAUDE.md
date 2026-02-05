@@ -689,4 +689,3 @@ npm run test -- path  # 特定ファイル
 ---
 
 **📖 最終更新**: 2026-01-31 | **バージョン**: v14.2
-**変更履歴**: [`docs/development/CLAUDE_MD_CHANGELOG.md`](docs/development/CLAUDE_MD_CHANGELOG.md)
