@@ -19,7 +19,7 @@ const Command = ({ className, ...props }: React.ComponentProps<typeof CommandPri
     <CommandPrimitive
       data-slot="command"
       className={cn(
-        'bg-popover text-popover-foreground flex h-full w-full flex-col overflow-hidden rounded-lg',
+        'bg-card text-card-foreground flex h-full w-full flex-col overflow-hidden rounded-lg',
         className,
       )}
       {...props}

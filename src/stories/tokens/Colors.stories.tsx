@@ -138,10 +138,6 @@ export const AllColors: Story = {
 
       <ColorGroup title="shadcn/ui互換エイリアス">
         <ColorSwatch
-          tailwindClass="bg-popover"
-          description="= bg-card のエイリアス（shadcn/ui互換）"
-        />
-        <ColorSwatch
           tailwindClass="bg-secondary"
           description="= bg-container のエイリアス（shadcn/ui互換）"
         />

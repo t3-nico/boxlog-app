@@ -42,8 +42,6 @@
 
   /* 互換性エイリアス（shadcn/ui用） */
   --card-foreground: oklch(0.25 0 0);
-  --popover: var(--card);
-  --popover-foreground: oklch(0.25 0 0);
   --secondary: var(--container);
   --secondary-foreground: oklch(0.25 0 0);
   --muted-foreground: oklch(0.35 0.02 264.54);
@@ -131,8 +129,6 @@
 
   /* 互換性エイリアス（shadcn/ui用） */
   --card-foreground: oklch(0.9219 0 0);
-  --popover: var(--card);
-  --popover-foreground: oklch(0.9219 0 0);
   --secondary: var(--container);
   --secondary-foreground: oklch(0.95 0 0);
   --muted-foreground: oklch(0.78 0 0);
@@ -248,8 +244,6 @@
   --color-plan-box: var(--plan-box);
   --color-record-box: var(--record-box);
   --color-record-border: var(--record-border);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
@@ -1552,7 +1546,7 @@ img {
  * セマンティックトークンを適用してデザインシステムに統合
  * ============================================ */
 .timepicker-ui-wrapper-active {
-  --pm-bg-color: var(--popover);
+  --pm-bg-color: var(--card);
   --pm-s-line-color: var(--primary);
   --pm-bg-time-number-select: var(--primary);
   --pm-text-time-number-select: var(--primary-foreground);
@@ -1573,7 +1567,7 @@ img {
 
 /* ダークモード対応 */
 .dark .timepicker-ui-wrapper-active {
-  --pm-bg-color: var(--popover);
+  --pm-bg-color: var(--card);
   --pm-clock-face-bg: var(--card);
   --pm-clock-face-bg-secondary: color-mix(in oklch, var(--card) 70%, var(--foreground) 30%);
 }

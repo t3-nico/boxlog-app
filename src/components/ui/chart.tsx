@@ -226,7 +226,7 @@ function ChartTooltipContent({
   return (
     <div
       className={cn(
-        'border-border/50 bg-popover grid min-w-[8rem] items-start gap-2 rounded-2xl border px-2 py-2 text-xs shadow-xl',
+        'border-border/50 bg-card grid min-w-[8rem] items-start gap-2 rounded-2xl border px-2 py-2 text-xs shadow-xl',
         className,
       )}
     >

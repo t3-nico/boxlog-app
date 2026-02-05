@@ -8,7 +8,7 @@
 import { format } from 'date-fns';
 import { CalendarPlus, ChevronDown, Clock } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -18,6 +18,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { InspectorHeader, useDragHandle } from '@/features/inspector';
 import { useRecordMutations } from '@/features/records/hooks/useRecordMutations';
 import { api } from '@/lib/trpc';
@@ -81,6 +82,19 @@ export function PlanInspectorContent() {
     handleSaveAsTemplate,
     getCache,
   } = usePlanInspectorContentLogic();
+
+  // タブ切り替え時にタイトルをフォーカス
+  useEffect(() => {
+    if (!isDraftMode) return;
+    // レンダリング後にフォーカス
+    requestAnimationFrame(() => {
+      if (createType === 'plan') {
+        titleRef.current?.focus();
+      } else {
+        recordFormRef.current?.focusTitle();
+      }
+    });
+  }, [createType, isDraftMode, titleRef]);
 
   // 既存Recordの存在チェック（編集モードのみ）
   const { data: existingRecords } = api.records.listByPlan.useQuery(
@@ -389,7 +403,7 @@ function DraftModeHeader({ createType, setCreateType }: DraftModeHeaderProps) {
   const isDraggable = !!dragHandleProps;
 
   return (
-    <div className="bg-popover relative flex shrink-0 items-center px-4 pt-4 pb-2">
+    <div className="bg-card relative flex shrink-0 items-center px-4 pt-4 pb-2">
       {/* ドラッグハンドル（背景レイヤー） */}
       {isDraggable && (
         <div
@@ -400,34 +414,22 @@ function DraftModeHeader({ createType, setCreateType }: DraftModeHeaderProps) {
       )}
 
       {/* Plan/Record タブ */}
-      <div className="relative z-10 flex gap-1">
-        <button
-          type="button"
-          onClick={() => setCreateType('plan')}
-          className={cn(
-            'flex h-8 items-center gap-1 rounded-lg px-2 text-sm font-bold transition-colors',
-            createType === 'plan'
-              ? 'bg-state-active text-state-active-foreground'
-              : 'text-muted-foreground hover:bg-state-hover hover:text-foreground',
-          )}
-        >
-          <CalendarPlus className="size-4" />
-          Plan
-        </button>
-        <button
-          type="button"
-          onClick={() => setCreateType('record')}
-          className={cn(
-            'flex h-8 items-center gap-1 rounded-lg px-2 text-sm font-bold transition-colors',
-            createType === 'record'
-              ? 'bg-state-active text-state-active-foreground'
-              : 'text-muted-foreground hover:bg-state-hover hover:text-foreground',
-          )}
-        >
-          <Clock className="size-4" />
-          Record
-        </button>
-      </div>
+      <Tabs
+        value={createType}
+        onValueChange={(value) => setCreateType(value as 'plan' | 'record')}
+        className="relative z-10"
+      >
+        <TabsList className="h-8 rounded-lg border-0 bg-transparent p-0">
+          <TabsTrigger value="plan" className="gap-1 rounded-lg font-bold">
+            <CalendarPlus className="size-4" />
+            Plan
+          </TabsTrigger>
+          <TabsTrigger value="record" className="gap-1 rounded-lg font-bold">
+            <Clock className="size-4" />
+            Record
+          </TabsTrigger>
+        </TabsList>
+      </Tabs>
     </div>
   );
 }

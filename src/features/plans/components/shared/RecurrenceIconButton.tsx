@@ -1,9 +1,10 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 
 import { Check, Repeat } from 'lucide-react';
 
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { zIndex } from '@/config/ui/z-index';
 import { cn } from '@/lib/utils';
@@ -39,23 +40,8 @@ export function RecurrenceIconButton({
   onRecurrenceRuleChange,
   disabled = false,
 }: RecurrenceIconButtonProps) {
-  const recurrenceRef = useRef<HTMLDivElement>(null);
   const [showPopover, setShowPopover] = useState(false);
   const [showCustomDialog, setShowCustomDialog] = useState(false);
-
-  // 外側クリックでポップアップを閉じる
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (recurrenceRef.current && !recurrenceRef.current.contains(event.target as Node)) {
-        setShowPopover(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
 
   // 繰り返しが設定されているかどうか
   const hasRecurrence = recurrenceRule || (recurrenceType && recurrenceType !== 'none');
@@ -80,42 +66,36 @@ export function RecurrenceIconButton({
   })();
 
   return (
-    <div className="relative" ref={recurrenceRef}>
-      <HoverTooltip
-        content={hasRecurrence ? `繰り返し: ${displayText}` : '繰り返しを設定'}
-        side="top"
-      >
-        <button
-          type="button"
-          disabled={disabled}
-          onClick={() => {
-            if (!disabled) {
-              setShowPopover(!showPopover);
-            }
-          }}
-          className={cn(
-            'flex h-8 items-center gap-1 rounded-lg px-2 transition-colors',
-            'hover:bg-state-hover focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
-            hasRecurrence ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',
-          )}
-          aria-label={hasRecurrence ? `繰り返し: ${displayText}` : '繰り返しを設定'}
-          aria-expanded={showPopover}
-          aria-haspopup="menu"
+    <>
+      <Popover open={showPopover} onOpenChange={setShowPopover}>
+        <HoverTooltip
+          content={hasRecurrence ? `繰り返し: ${displayText}` : '繰り返しを設定'}
+          side="top"
         >
-          <Repeat className="size-4" />
-          {hasRecurrence && <span className="text-sm">{displayText}</span>}
-        </button>
-      </HoverTooltip>
+          <PopoverTrigger asChild>
+            <button
+              type="button"
+              disabled={disabled}
+              className={cn(
+                'flex h-8 items-center gap-1 rounded-lg px-2 transition-colors',
+                'hover:bg-state-hover focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
+                hasRecurrence ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',
+              )}
+              aria-label={hasRecurrence ? `繰り返し: ${displayText}` : '繰り返しを設定'}
+            >
+              <Repeat className="size-4" />
+              {hasRecurrence && <span className="text-sm">{displayText}</span>}
+            </button>
+          </PopoverTrigger>
+        </HoverTooltip>
 
-      {/* ポップオーバー */}
-      {showPopover && !disabled && (
-        <div
-          className="border-border bg-popover absolute top-8 left-0 w-48 rounded-lg border shadow-md"
+        <PopoverContent
+          className="w-48 p-1"
+          align="start"
+          sideOffset={4}
           style={{ zIndex: zIndex.overlayDropdown }}
-          role="menu"
-          aria-label="繰り返しオプション"
         >
-          <div className="p-1">
+          <div role="menu" aria-label="繰り返しオプション">
             <button
               className="hover:bg-state-hover focus-visible:bg-state-hover flex w-full items-center justify-between rounded px-2 py-2 text-left text-sm transition-colors focus-visible:outline-none"
               onClick={() => {
@@ -159,8 +139,8 @@ export function RecurrenceIconButton({
               カスタム...
             </button>
           </div>
-        </div>
-      )}
+        </PopoverContent>
+      </Popover>
 
       {/* カスタム繰り返しDialog */}
       <RecurrenceDialog
@@ -169,6 +149,6 @@ export function RecurrenceIconButton({
         value={recurrenceRule}
         onChange={onRecurrenceRuleChange}
       />
-    </div>
+    </>
   );
 }

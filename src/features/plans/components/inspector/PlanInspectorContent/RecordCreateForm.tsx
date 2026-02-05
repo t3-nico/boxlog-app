@@ -52,6 +52,7 @@ interface RecordFormData {
 export interface RecordCreateFormRef {
   save: () => Promise<void>;
   isSaveDisabled: () => boolean;
+  focusTitle: () => void;
 }
 
 /**
@@ -126,6 +127,8 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
 
     // タグデータ取得
     const { data: allTags = [] } = useTags();
+
+    const titleInputRef = useRef<HTMLInputElement>(null);
 
     // Popover開閉状態
     const [isPlanPopoverOpen, setIsPlanPopoverOpen] = useState(false);
@@ -359,6 +362,7 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
       () => ({
         save,
         isSaveDisabled,
+        focusTitle: () => titleInputRef.current?.focus(),
       }),
       [save, isSaveDisabled],
     );
@@ -379,6 +383,7 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
         {/* 1行目: タイトル（プライマリ） */}
         <div className="px-4 pt-4 pb-2">
           <input
+            ref={titleInputRef}
             type="text"
             value={formData.title}
             placeholder="何をした？"

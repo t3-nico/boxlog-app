@@ -407,7 +407,7 @@ export const MiniCalendar = memo<MiniCalendarProps>(
         <Popover open={open} onOpenChange={handleOpenChange} modal={false}>
           <PopoverTrigger asChild>{popoverTrigger}</PopoverTrigger>
           <PopoverContent
-            className={cn('bg-popover border-border w-auto border p-0', popoverClassName)}
+            className={cn('bg-card border-border w-auto border p-0', popoverClassName)}
             style={popoverZIndex !== undefined ? { zIndex: popoverZIndex } : undefined}
             align={popoverAlign}
             side={popoverSide}

@@ -16,8 +16,8 @@ const LoadingIcon = () => <Loader2 className="size-5 animate-spin" />;
  * Toast通知コンポーネント
  *
  * デザイン仕様:
- * - 背景: popover（ライト/ダークモード対応）
- * - 枠線: 左2px、タイプ別カラー（success/error/warning/info）
+ * - 背景: card（共通）
+ * - 枠線: タイプ別カラー（success/error/warning/info）
  * - 角丸: 8px（radius-md）
  * - 影: shadow-lg
  * - パディング: 16px
@@ -55,7 +55,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
         unstyled: true,
         classNames: {
           toast:
-            'grid grid-cols-[auto_1fr_auto] gap-4 items-center w-full p-4 rounded-lg border shadow-lg bg-popover text-foreground border-border',
+            'grid grid-cols-[auto_1fr_auto] gap-4 items-start w-full p-4 rounded-lg border shadow-lg bg-card text-foreground border-border',
           icon: 'row-start-1 col-start-1',
           loader: '!static !inset-auto !transform-none',
           content:
@@ -64,18 +64,18 @@ const Toaster = ({ ...props }: ToasterProps) => {
           description: 'text-sm text-muted-foreground',
           actionButton: cn(
             'row-start-2 col-start-3 justify-self-end',
-            buttonVariants({ variant: 'primary', size: 'sm' }),
+            buttonVariants({ variant: 'outline', size: 'sm' }),
           ),
           cancelButton: buttonVariants({ variant: 'outline', size: 'sm' }),
           closeButton:
             'row-start-1 col-start-3 justify-self-end p-1 rounded-md text-muted-foreground bg-transparent border-0 hover:bg-state-hover transition-colors [&_svg]:size-5',
           success:
-            '!bg-success !text-success-foreground !border-success [&_[data-close-button]]:text-success-foreground',
+            '!border-success [&_[data-icon]]:text-success [&_[data-action]]:!bg-success [&_[data-action]]:!text-success-foreground [&_[data-action]]:!border-0',
           error:
-            '!bg-destructive !text-destructive-foreground !border-destructive [&_[data-close-button]]:text-destructive-foreground',
+            '!border-destructive [&_[data-icon]]:text-destructive [&_[data-action]]:!bg-destructive [&_[data-action]]:!text-destructive-foreground [&_[data-action]]:!border-0',
           warning:
-            '!bg-warning !text-warning-foreground !border-warning [&_[data-close-button]]:text-warning-foreground',
-          info: '!bg-info !text-info-foreground !border-info [&_[data-close-button]]:text-info-foreground',
+            '!border-warning [&_[data-icon]]:text-warning [&_[data-action]]:!bg-warning [&_[data-action]]:!text-warning-foreground [&_[data-action]]:!border-0',
+          info: '!border-info [&_[data-icon]]:text-info [&_[data-action]]:!bg-info [&_[data-action]]:!text-info-foreground [&_[data-action]]:!border-0',
         },
       }}
       {...props}

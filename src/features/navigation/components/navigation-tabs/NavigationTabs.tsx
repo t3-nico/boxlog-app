@@ -52,7 +52,7 @@ export function NavigationTabs() {
 
   return (
     <nav
-      className="bg-surface-container border-border flex h-10 items-center rounded-full border p-1"
+      className="bg-surface-container ring-border flex h-10 items-center rounded-full p-1 ring-1 ring-inset"
       role="navigation"
       aria-label="Main navigation"
     >
