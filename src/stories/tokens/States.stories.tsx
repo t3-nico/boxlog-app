@@ -125,7 +125,7 @@ export const Overview: Story = {
                   <p className="text-muted-foreground text-xs">ホバー</p>
                 </div>
                 <div className="space-y-1 text-center">
-                  <Button className="ring-ring ring-2 ring-offset-2">Focus</Button>
+                  <Button className="ring-ring ring-2 ring-inset">Focus</Button>
                   <p className="text-muted-foreground text-xs">フォーカス</p>
                 </div>
                 <div className="space-y-1 text-center">
@@ -152,7 +152,7 @@ export const Overview: Story = {
                   <p className="text-muted-foreground text-xs">ホバー</p>
                 </div>
                 <div className="space-y-1 text-center">
-                  <Button variant="outline" className="ring-ring ring-2 ring-offset-2">
+                  <Button variant="outline" className="ring-ring ring-2 ring-inset">
                     Focus
                   </Button>
                   <p className="text-muted-foreground text-xs">フォーカス</p>
@@ -183,7 +183,7 @@ export const Overview: Story = {
                   <p className="text-muted-foreground text-xs">ホバー</p>
                 </div>
                 <div className="space-y-1 text-center">
-                  <Button variant="ghost" className="ring-ring ring-2 ring-offset-2">
+                  <Button variant="ghost" className="ring-ring ring-2 ring-inset">
                     Focus
                   </Button>
                   <p className="text-muted-foreground text-xs">フォーカス</p>
@@ -214,7 +214,7 @@ export const Overview: Story = {
                   <p className="text-muted-foreground text-xs">ホバー</p>
                 </div>
                 <div className="space-y-1 text-center">
-                  <Button variant="destructive" className="ring-ring ring-2 ring-offset-2">
+                  <Button variant="destructive" className="ring-ring ring-2 ring-inset">
                     Focus
                   </Button>
                   <p className="text-muted-foreground text-xs">フォーカス</p>
@@ -241,7 +241,7 @@ export const Overview: Story = {
             </div>
             <div className="space-y-2">
               <p className="text-muted-foreground text-xs font-bold">Focus</p>
-              <Input placeholder="フォーカス中" className="ring-ring ring-2 ring-offset-2" />
+              <Input placeholder="フォーカス中" className="ring-ring ring-2 ring-inset" />
             </div>
             <div className="space-y-2">
               <p className="text-muted-foreground text-xs font-bold">Error</p>
@@ -276,7 +276,7 @@ export const Overview: Story = {
 className="hover:bg-state-hover"
 
 // フォーカス状態（キーボード操作時のみ）
-className="focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+className="focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
 
 // プレス状態（12%オーバーレイ）
 className="active:bg-state-pressed"
