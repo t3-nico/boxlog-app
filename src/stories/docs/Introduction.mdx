@@ -1,10 +1,10 @@
-import { Meta } from '@storybook/addon-docs/blocks';
+import { Meta } from '@storybook/blocks';
 
-<Meta title="Docs/Introduction" />
+<Meta title="Docs/はじめに" />
 
-# Dayopt Storybook
+# Boxlog Storybook
 
-DayoptのUIコンポーネントとデザイントークンのカタログです。
+BoxlogのUIコンポーネントとデザイントークンのカタログです。
 
 ## 🚨 大前提
 
@@ -16,7 +16,7 @@ DayoptのUIコンポーネントとデザイントークンのカタログです
 
 ```tsx
 // ✅ OK
-<Button variant="ghost" icon>
+<Button variant="ghost" size="icon">
   <Settings className="size-4" />
 </Button>
 
@@ -30,7 +30,7 @@ DayoptのUIコンポーネントとデザイントークンのカタログです
 |---------|------|
 | **Components** | UIコンポーネント（Button, Badge, Input 等） |
 | **Tokens** | デザイントークン（Colors, Typography, Spacing 等） |
-| **Patterns** | 実装パターン（Forms, Cards, Actions 等） |
+| **Patterns** | 実装パターン（Forms, Cards, Tables 等） |
 | **Docs** | このページ、ガイドライン |
 
 ## 🎨 カラートークン
@@ -52,40 +52,24 @@ Tailwindクラス名で統一。そのままコピペ可能。
 | `border-*` | `border-border` |
 | `ring-*` | `ring-ring` |
 
-## 🖥️ Canvas と Docs の役割分離
-
-| タブ | 役割 | 内容 |
-|------|------|------|
-| **Canvas** | コンポーネント描画 | render のみ。テキスト禁止 |
-| **Docs** | ドキュメント | テキスト + テーブル + Controls |
-
-**Canvas** — 純粋なコンポーネント描画だけを置く。`<h1>`, `<h2>`, `<p>` 等の説明文は禁止。
-AllPatterns も同様に、コンポーネントを `flex-col gap-6` で並べるだけ。
-
-**Docs** — テーブルが必要なら MDX（`.docs.mdx`）で作成。不要なら `tags: ['autodocs']` + JSDoc で十分。
-
-公式テンプレート: `Components/AlertDialog`
-
 ## 🛠️ 開発者向け
 
 ### Storyの追加手順
 
-1. `*.stories.tsx` を作成（Canvas用）
-2. テーブルが必要なら `*.docs.mdx` を作成（Docs用）
-3. `AllPatterns` Story を追加（全パターン一覧）
-4. PRでレビュー → マージ後に使用可能
+1. `*.stories.tsx` にStoryを作成
+2. `AllVariants` Storyを追加（全パターン一覧）
+3. PRでレビュー → マージ後に使用可能
 
 ```
-src/components/ui/my-component.tsx            # コンポーネント
-src/components/ui/my-component.stories.tsx     # Story（Canvas）
-src/components/ui/my-component.docs.mdx        # Docs（テーブルが必要な場合のみ）
+src/components/ui/my-component.tsx        # コンポーネント
+src/components/ui/my-component.stories.tsx # Story
 ```
 
 ### 命名規則
 
 - `Components/ButtonGroup` → UIコンポーネント
 - `Tokens/Colors` → デザイントークン
-- `Docs/Introduction` → ドキュメント
+- `Docs/はじめに` → ドキュメント
 
 ### 同期ルール
 
@@ -93,27 +77,34 @@ src/components/ui/my-component.docs.mdx        # Docs（テーブルが必要な
 
 - props追加 → argTypes + 使用例を追加
 - props削除 → argTypes + 該当Storyを削除
-- variant追加 → AllPatternsに追加
+- variant追加 → AllVariantsに追加
 
 ## ✅ チェックリスト
 
 Story作成時に確認：
 
-- [ ] AlertDialog テンプレートの構成に従っている
-- [ ] Canvas にテキストを入れていない
-- [ ] JSDoc は1行で簡潔に記述
-- [ ] `AllPatterns` Storyを作成
+- [ ] `tags: ['autodocs']` を設定
+- [ ] `argTypes` で主要propsの説明を記載
+- [ ] `AllVariants` Storyを作成
 - [ ] アイコンボタンに `aria-label` を設定
 - [ ] セマンティックトークンを使用（`bg-background` 等）
 - [ ] 直接カラーを使っていない（`text-blue-500` 等）
 
 ## ⛔ 避けるべきパターン
 
-**Canvas にテキスト** — 見出し・説明文は Docs へ。Canvas はコンポーネントのみ。
+**render関数の乱用** — 単純なprops渡しは `args` を使う
 
-**Story爆発** — 全組み合わせを個別Storyにしない。`AllPatterns` + Controls で対応。
+```tsx
+// ❌
+render: () => <Button variant="primary">Click</Button>
 
-**データ依存** — tRPC/Zustand依存コンポーネントは無理にStorybookに入れない。
+// ✅
+args: { variant: 'primary', children: 'Click' }
+```
+
+**Story爆発** — 全組み合わせを個別Storyにしない。`AllVariants` + Controls で対応。
+
+**データ依存** — tRPC/Zustand依存コンポーネントは無理にStorybookに入れない。モックコストが高く乖離リスクあり。
 
 詳細: `.claude/skills/storybook/SKILL.md`
 
@@ -122,7 +113,7 @@ Story作成時に確認：
 | ドキュメント | 内容 |
 |-------------|------|
 | [Colors](?path=/story/tokens-colors--all-colors) | カラートークン一覧、Surface体系、セマンティックカラー |
-| [Typography](?path=/docs/tokens-typography--docs) | フォントサイズ、行間、ウェイト |
-| [Spacing](?path=/docs/tokens-spacing--docs) | 8pxグリッド、余白ルール |
-| [StyleGuide](?path=/docs/docs-styleguide-overview--docs) | GAFA-First原則、デザインルール |
-| [Accessibility](?path=/docs/docs-accessibility-overview--docs) | a11yチェックリスト、WCAG準拠 |
+| [Typography](?path=/story/tokens-typography--overview) | フォントサイズ、行間、ウェイト |
+| [Spacing](?path=/story/tokens-spacing--overview) | 8pxグリッド、余白ルール |
+| [StyleGuide](?path=/story/docs-styleguide--overview) | GAFA-First原則、デザインルール |
+| [Accessibility](?path=/story/docs-accessibility--overview) | a11yチェックリスト、WCAG準拠 |
