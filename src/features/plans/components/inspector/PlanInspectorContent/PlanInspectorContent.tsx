@@ -53,6 +53,7 @@ export function PlanInspectorContent() {
     saveAndClose,
     cancelAndClose,
     isDraftMode,
+    isSaving,
     hasPrevious,
     hasNext,
     goToPrevious,
@@ -145,7 +146,7 @@ export function PlanInspectorContent() {
         <InspectorHeader
           hasPrevious={hasPrevious}
           hasNext={hasNext}
-          onClose={saveAndClose}
+          onClose={isSaving ? () => {} : saveAndClose}
           onPrevious={goToPrevious}
           onNext={goToNext}
           closeLabel={t('actions.close')}
@@ -269,13 +270,17 @@ export function PlanInspectorContent() {
       {isDraftMode ? (
         // ドラフトモード: 作成ボタン
         <div className="flex shrink-0 justify-end gap-2 px-4 py-4">
-          <Button variant="ghost" onClick={cancelAndClose}>
+          <Button variant="ghost" onClick={cancelAndClose} disabled={isSaving}>
             キャンセル
           </Button>
           {createType === 'record' ? (
-            <Button onClick={() => recordFormRef.current?.save()}>Record 作成</Button>
+            <Button onClick={() => recordFormRef.current?.save()} disabled={isSaving}>
+              Record 作成
+            </Button>
           ) : (
-            <Button onClick={saveAndClose}>Plan 作成</Button>
+            <Button onClick={saveAndClose} disabled={isSaving}>
+              Plan 作成
+            </Button>
           )}
         </div>
       ) : (
