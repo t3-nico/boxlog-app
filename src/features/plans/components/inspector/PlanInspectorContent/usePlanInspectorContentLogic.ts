@@ -7,6 +7,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { toast } from 'sonner';
 
 import {
   localTimeToUTCISO,
@@ -490,6 +491,8 @@ export function usePlanInspectorContentLogic() {
   // スケジュール日変更ハンドラー（start_time/end_timeの日付部分）
   const handleScheduleDateChange = useCallback(
     (date: Date | undefined) => {
+      // 日付変更時に既存のエラーをクリア
+      setTimeConflictError(false);
       setScheduleDate(date);
 
       // ドラフトモードの場合はローカル更新のみ
@@ -713,6 +716,7 @@ export function usePlanInspectorContentLogic() {
               await setplanTags(newPlan.id, currentTagIds);
             } catch (error) {
               console.error('Failed to save tags for new plan:', error);
+              toast.error('タグの保存に失敗しました');
             }
           }
           clearDraft();
@@ -769,6 +773,7 @@ export function usePlanInspectorContentLogic() {
         await setplanTags(currentPlanId, selectedTagIdsRef.current);
       } catch (error) {
         console.error('Failed to save tags:', error);
+        toast.error('タグの保存に失敗しました');
         // タグ保存エラーは閉じることを妨げない（キャッシュは既に更新済み）
       }
     }

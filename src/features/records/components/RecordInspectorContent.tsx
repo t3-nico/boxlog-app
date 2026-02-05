@@ -16,6 +16,7 @@ import { Check, ExternalLink, FolderOpen, Smile, Trash2, X } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { toast } from 'sonner';
 
 import {
   Command,
@@ -483,19 +484,29 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
           },
         });
       }
-
-      // タグを保存（変更があれば）
-      if (hasTagChanges) {
-        await setRecordTags(selectedRecordId, formData.tagIds);
-      }
-
-      onClose();
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : '';
       if (errorMessage.includes('TIME_OVERLAP') || errorMessage.includes('既に')) {
         setTimeConflictError(true);
+        return; // 閉じない
+      }
+      // その他のエラーはtoastで通知
+      toast.error('保存に失敗しました');
+      return;
+    }
+
+    // タグを保存（変更があれば）
+    if (hasTagChanges) {
+      try {
+        await setRecordTags(selectedRecordId, formData.tagIds);
+      } catch (error) {
+        console.error('Failed to save tags:', error);
+        toast.error('タグの保存に失敗しました');
+        // タグ保存エラーは閉じることを妨げない（キャッシュは既に更新済み）
       }
     }
+
+    onClose();
   }, [
     selectedRecordId,
     formData.worked_at,

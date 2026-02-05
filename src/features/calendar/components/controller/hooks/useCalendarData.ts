@@ -117,6 +117,7 @@ export function useCalendarData({
 
   // フィルター関数を取得（ストアに統一）
   const isPlanVisible = useCalendarFilterStore((state) => state.isPlanVisible);
+  const isTypeVisible = useCalendarFilterStore((state) => state.isTypeVisible);
 
   // ドラフトプランを取得（コピー＆ペースト時のプレビュー表示用）
   // タイトルがある場合のみ表示（ドラッグ選択時はタイトルが空なのでDragSelectionPreviewが担当）
@@ -263,10 +264,10 @@ export function useCalendarData({
       );
     });
 
-    // サイドバーのフィルター設定を適用（ストアのisPlanVisibleに統一）
-    // Records（type === 'record'）は常に表示
+    // サイドバーのフィルター設定を適用
+    // Recordsもフィルター設定に従う（isTypeVisibleでチェック）
     const visibilityFiltered = filtered.filter((event) =>
-      event.type === 'record' ? true : isPlanVisible(event.tagIds ?? []),
+      event.type === 'record' ? isTypeVisible('record') : isPlanVisible(event.tagIds ?? []),
     );
 
     logger.log(`[useCalendarData] plansフィルタリング:`, {
@@ -286,7 +287,7 @@ export function useCalendarData({
     });
 
     return visibilityFiltered;
-  }, [viewDateRange, allCalendarPlans, isPlanVisible]);
+  }, [viewDateRange, allCalendarPlans, isPlanVisible, isTypeVisible]);
 
   return {
     viewDateRange,
