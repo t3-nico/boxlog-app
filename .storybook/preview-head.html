@@ -17,6 +17,20 @@
   }
 
   /* ============================================
+   * Docs Wrapper リセット
+   *
+   * Storybook内部の DocsWrapper / DocsContent が
+   * padding: 4rem 20px / max-width: 1000px を適用する。
+   * .sb-docs-prose に集約するため外側をリセット。
+   * ============================================ */
+  .sbdocs.sbdocs-wrapper {
+    padding: 0 !important;
+  }
+  .sbdocs.sbdocs-content {
+    max-width: none !important;
+  }
+
+  /* ============================================
    * Story Canvas: コンポーネントプレビュー領域
    *
    * background ショートハンドで backgrounds addon の
