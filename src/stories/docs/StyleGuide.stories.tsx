@@ -13,7 +13,7 @@ type Story = StoryObj;
 
 export const Overview: Story = {
   render: () => (
-    <div className="bg-background text-foreground min-h-screen p-8">
+    <div>
       <h1 className="mb-2 text-2xl font-bold">スタイルガイド</h1>
       <p className="text-muted-foreground mb-8">BoxLog App のスタイリングルール統一リファレンス</p>
 
@@ -116,7 +116,7 @@ function LinkCard({
 
 export const Rules: Story = {
   render: () => (
-    <div className="bg-background text-foreground min-h-screen p-8">
+    <div>
       <h1 className="mb-2 text-2xl font-bold">ルール一覧</h1>
       <p className="text-muted-foreground mb-8">必須ルールと禁止事項</p>
 
@@ -202,7 +202,7 @@ function DontItem({ children }: { children: React.ReactNode }) {
 
 export const ColorGuide: Story = {
   render: () => (
-    <div className="bg-background text-foreground min-h-screen p-8">
+    <div>
       <h1 className="mb-2 text-2xl font-bold">カラーガイド</h1>
       <p className="text-muted-foreground mb-8">GAFA準拠のカラーデザイン方針</p>
 
@@ -502,7 +502,7 @@ function ColorSwatch({
 
 export const CommonPatterns: Story = {
   render: () => (
-    <div className="bg-background text-foreground min-h-screen p-8">
+    <div>
       <h1 className="mb-2 text-2xl font-bold">共通パターン</h1>
       <p className="text-muted-foreground mb-8">再利用可能なUIパターン</p>
 

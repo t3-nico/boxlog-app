@@ -25,7 +25,7 @@ type Story = StoryObj;
 
 export const Overview: Story = {
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h1 className="mb-2 text-2xl font-bold">Confirmation Patterns</h1>
       <p className="text-muted-foreground mb-8">
         破壊的操作や重要な決定の前に確認を求めるパターン。

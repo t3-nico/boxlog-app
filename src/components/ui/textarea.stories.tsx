@@ -61,7 +61,7 @@ export const AllPatterns: Story = {
     const [value, setValue] = useState('');
 
     return (
-      <div className="bg-background text-foreground min-h-screen p-8">
+      <div>
         <h1 className="mb-2 text-2xl font-bold">Textarea</h1>
         <p className="text-muted-foreground mb-8">複数行テキスト入力</p>
 

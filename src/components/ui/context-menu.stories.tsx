@@ -25,7 +25,7 @@ type Story = StoryObj<typeof meta>;
 export const AllPatterns: Story = {
   render: () => {
     return (
-      <div className="bg-background text-foreground min-h-screen p-8">
+      <div>
         <h1 className="mb-2 text-2xl font-bold">ContextMenu</h1>
         <p className="text-muted-foreground mb-8">
           右クリックで表示。テーブル行、カードのアクションメニュー。デスクトップ専用。

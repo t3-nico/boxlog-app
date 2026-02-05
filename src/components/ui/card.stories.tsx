@@ -29,7 +29,7 @@ type Story = StoryObj<typeof meta>;
 
 export const AllPatterns: Story = {
   render: () => (
-    <div className="bg-background text-foreground min-h-screen p-8">
+    <div>
       <h1 className="mb-2 text-2xl font-bold">Card</h1>
       <p className="text-muted-foreground mb-8">
         コンテンツをグループ化するコンテナ。Stats、フォーム、チャート等で使用。

@@ -98,7 +98,7 @@ export const AllPatterns: Story = {
     } satisfies ChartConfig;
 
     return (
-      <div className="bg-background text-foreground min-h-screen p-8">
+      <div>
         <h1 className="mb-2 text-2xl font-bold">Chart</h1>
         <p className="text-muted-foreground mb-8">
           Recharts + shadcn/uiラッパー。統計画面で使用。ChartConfigでカラー管理。

@@ -31,7 +31,7 @@ type Story = StoryObj;
 
 export const Overview: Story = {
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h1 className="mb-2 text-2xl font-bold">Card Patterns</h1>
       <p className="text-muted-foreground mb-8">
         カードUIのパターン。情報表示、アクション、レイアウトの使い分け。

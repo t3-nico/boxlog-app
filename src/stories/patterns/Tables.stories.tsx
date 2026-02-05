@@ -47,7 +47,7 @@ const sampleData = [
 
 export const Overview: Story = {
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h1 className="mb-2 text-2xl font-bold">Table Patterns</h1>
       <p className="text-muted-foreground mb-8">
         データテーブルのパターン。ソート、選択、ページネーションの実装例。

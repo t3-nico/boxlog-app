@@ -20,7 +20,7 @@ type Story = StoryObj;
 
 export const Overview: Story = {
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h1 className="mb-2 text-2xl font-bold">Selection Patterns</h1>
       <p className="text-muted-foreground mb-8">
         選択UIのパターン。単一選択、複数選択、チップ選択の使い分け。

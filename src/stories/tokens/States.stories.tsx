@@ -15,7 +15,7 @@ type Story = StoryObj;
 
 export const Overview: Story = {
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h1 className="mb-2 text-2xl font-bold">Interaction States</h1>
       <p className="text-muted-foreground mb-8">
         Material Design 3準拠。全コンポーネントで統一された状態表現。

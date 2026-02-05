@@ -12,7 +12,7 @@ type Story = StoryObj;
 
 export const AllElevations: Story = {
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h1 className="mb-6 text-2xl font-bold">Elevation（高さ）</h1>
       <p className="text-muted-foreground mb-8">
         UI要素のz軸上の位置を表現。高いほど前面に浮き出る。
@@ -103,7 +103,7 @@ export const AllElevations: Story = {
 
 export const UseCases: Story = {
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h1 className="mb-6 text-2xl font-bold">Elevationの使い分け</h1>
       <p className="text-muted-foreground mb-8">
         UIの階層構造に応じてElevationを選択。高いほどユーザーの注目を集める。

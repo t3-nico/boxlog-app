@@ -147,7 +147,7 @@ function VisualStack() {
 
 export const AllLayers: Story = {
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h1 className="mb-2 text-2xl font-bold">Z-Index レイヤー</h1>
       <p className="text-muted-foreground mb-8">
         UIコンポーネントのスタッキング順序を一元管理。値が大きいほど前面に表示される。
@@ -198,7 +198,7 @@ export const AllLayers: Story = {
 
 export const UsageGuide: Story = {
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h1 className="mb-8 text-2xl font-bold">Z-Index 使用ガイド</h1>
 
       <div className="space-y-8">

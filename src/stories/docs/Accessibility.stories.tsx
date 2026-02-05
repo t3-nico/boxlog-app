@@ -65,7 +65,7 @@ function Comparison({
 
 export const Overview: Story = {
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h1 className="mb-4 text-2xl font-bold">アクセシビリティガイド</h1>
       <p className="text-muted-foreground mb-8">
         BoxLogのアクセシビリティ対応に関する基準と実装パターン
@@ -124,7 +124,7 @@ export const Overview: Story = {
 export const ScreenReaderText: Story = {
   name: 'スクリーンリーダー用テキスト',
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h1 className="mb-4 text-2xl font-bold">スクリーンリーダー用テキスト</h1>
       <p className="text-muted-foreground mb-8">
         視覚的には見えないが、スクリーンリーダーには読み上げられるテキストの実装パターン
@@ -210,7 +210,7 @@ export const ScreenReaderText: Story = {
 export const FocusManagement: Story = {
   name: 'フォーカス管理',
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h1 className="mb-4 text-2xl font-bold">フォーカス管理</h1>
       <p className="text-muted-foreground mb-8">キーボード操作時のフォーカス状態を明確に表示する</p>
 
@@ -271,7 +271,7 @@ export const LiveRegions: Story = {
   name: 'ライブリージョン',
   render: () => {
     return (
-      <div className="bg-background text-foreground p-8">
+      <div>
         <h1 className="mb-4 text-2xl font-bold">ライブリージョン</h1>
         <p className="text-muted-foreground mb-8">
           動的に変化するコンテンツをスクリーンリーダーに通知する
@@ -367,7 +367,7 @@ export const LiveRegions: Story = {
 export const SkipLink: Story = {
   name: 'スキップリンク',
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h1 className="mb-4 text-2xl font-bold">スキップリンク</h1>
       <p className="text-muted-foreground mb-8">
         キーボードユーザーがナビゲーションをスキップしてメインコンテンツに移動できるようにする
@@ -437,7 +437,7 @@ export const SkipLink: Story = {
 export const Checklist: Story = {
   name: 'チェックリスト',
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h1 className="mb-4 text-2xl font-bold">アクセシビリティチェックリスト</h1>
       <p className="text-muted-foreground mb-8">新規コンポーネント作成時・PR作成前に確認すること</p>
 
@@ -534,7 +534,7 @@ export const Checklist: Story = {
 export const Forms: Story = {
   name: 'フォーム',
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h1 className="mb-4 text-2xl font-bold">フォームのアクセシビリティ</h1>
       <p className="text-muted-foreground mb-8">
         フォーム要素のラベル紐付け、エラー状態、ヒントテキストの実装パターン
@@ -626,7 +626,7 @@ export const Forms: Story = {
 export const DialogAccessibility: Story = {
   name: 'Dialog / AlertDialog',
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h1 className="mb-4 text-2xl font-bold">Dialog / AlertDialog</h1>
       <p className="text-muted-foreground mb-8">
         shadcn/ui（Radix UI）のDialog/AlertDialogは基本的なa11y対応済み。 ただし、必須ルールがある。
@@ -688,7 +688,7 @@ export const DialogAccessibility: Story = {
 export const KeyboardNavigation: Story = {
   name: 'キーボードナビゲーション',
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h1 className="mb-4 text-2xl font-bold">キーボードナビゲーション</h1>
       <p className="text-muted-foreground mb-8">キーボードのみで全機能が使えるようにする</p>
 
@@ -784,7 +784,7 @@ if (isTyping) return; // 入力中は何もしない
 export const ProhibitedPatterns: Story = {
   name: '禁止事項',
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h1 className="mb-4 text-2xl font-bold">禁止事項</h1>
       <p className="text-muted-foreground mb-8">アクセシビリティを損なう実装パターン</p>
 
@@ -881,7 +881,7 @@ export const ProhibitedPatterns: Story = {
 export const ComponentGuide: Story = {
   name: 'shadcn/ui コンポーネント別ガイド',
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h1 className="mb-4 text-2xl font-bold">shadcn/ui コンポーネント別ガイド</h1>
       <p className="text-muted-foreground mb-8">
         shadcn/ui（Radix UI）コンポーネントのa11y対応状況
@@ -949,7 +949,7 @@ export const ComponentGuide: Story = {
 export const MotionPreference: Story = {
   name: 'Motion Preference',
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h1 className="mb-4 text-2xl font-bold">Motion Preference</h1>
       <p className="text-muted-foreground mb-8">アニメーションを減らしたいユーザー設定を尊重する</p>
 

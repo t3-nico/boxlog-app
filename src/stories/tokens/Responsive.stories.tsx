@@ -13,7 +13,7 @@ type Story = StoryObj;
 
 export const Breakpoints: Story = {
   render: () => (
-    <div className="bg-background text-foreground min-h-screen p-8">
+    <div>
       <h1 className="mb-2 text-2xl font-bold">ブレークポイント</h1>
       <p className="text-muted-foreground mb-8">Material Design 3 Window Size Classes に基づく</p>
 
@@ -122,7 +122,7 @@ export const Breakpoints: Story = {
 
 export const TouchTargets: Story = {
   render: () => (
-    <div className="bg-background text-foreground min-h-screen p-8">
+    <div>
       <h1 className="mb-2 text-2xl font-bold">タッチターゲット</h1>
       <p className="text-muted-foreground mb-8">
         Material Design 3 / Apple HIG アクセシビリティ準拠
@@ -242,7 +242,7 @@ export const TouchTargets: Story = {
 
 export const HoverMobile: Story = {
   render: () => (
-    <div className="bg-background text-foreground min-h-screen p-8">
+    <div>
       <h1 className="mb-2 text-2xl font-bold">ホバー依存UIのモバイル対応</h1>
       <p className="text-muted-foreground mb-8">ホバーで表示されるUIはモバイルで常時表示に</p>
 

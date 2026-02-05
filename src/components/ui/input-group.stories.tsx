@@ -22,7 +22,7 @@ export const AllPatterns: Story = {
     const [showPassword, setShowPassword] = useState(false);
 
     return (
-      <div className="bg-background text-foreground min-h-screen p-8">
+      <div>
         <h1 className="mb-2 text-2xl font-bold">InputGroup</h1>
         <p className="text-muted-foreground mb-8">入力フィールドにボタンやアイコンを追加</p>
 

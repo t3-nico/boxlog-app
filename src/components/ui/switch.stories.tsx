@@ -91,7 +91,7 @@ export const AllPatterns: Story = {
     };
 
     return (
-      <div className="bg-background text-foreground p-8">
+      <div>
         <h1 className="mb-8 text-2xl font-bold">Switch - 実際の使用パターン</h1>
 
         <div className="space-y-8" style={{ maxWidth: '28rem' }}>

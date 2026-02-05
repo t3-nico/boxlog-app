@@ -13,7 +13,7 @@ type Story = StoryObj;
 
 export const Overview: Story = {
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h1 className="mb-2 text-2xl font-bold">Motion</h1>
       <p className="text-muted-foreground mb-8">
         アニメーションとトランジションのトークン（Material Design 3準拠）
@@ -321,7 +321,7 @@ function EasingDemo({
 
 export const Loading: Story = {
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h1 className="mb-2 text-2xl font-bold">ローディングパターン</h1>
       <p className="text-muted-foreground mb-8">スケルトンローダーの実装例</p>
 

@@ -193,7 +193,7 @@ function AccountDeletionExample() {
 export const AllPatterns: Story = {
   render: function AlertDialogStory() {
     return (
-      <div className="bg-background text-foreground min-h-screen p-8">
+      <div>
         <h1 className="mb-2 text-2xl font-bold">AlertDialog</h1>
         <p className="text-muted-foreground mb-8">
           重要なアクションの確認。削除、ログアウト、不可逆操作で使用。Dialogと異なりESCで閉じない。

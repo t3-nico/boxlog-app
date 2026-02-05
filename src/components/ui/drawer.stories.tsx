@@ -33,7 +33,7 @@ export const AllPatterns: Story = {
     const [snapOpen, setSnapOpen] = useState(false);
 
     return (
-      <div className="bg-background text-foreground min-h-screen p-8">
+      <div>
         <h1 className="mb-2 text-2xl font-bold">Drawer</h1>
         <p className="text-muted-foreground mb-8">
           モバイル用ボトムシート。vaul使用。スワイプで閉じる、スナップポイント対応。

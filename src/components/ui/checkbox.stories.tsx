@@ -94,7 +94,7 @@ export const AllPatterns: Story = {
     const tagColor = '#10b981';
 
     return (
-      <div className="bg-background text-foreground p-8">
+      <div>
         <h1 className="mb-8 text-2xl font-bold">Checkbox - 実際の使用パターン</h1>
 
         <div className="space-y-8">

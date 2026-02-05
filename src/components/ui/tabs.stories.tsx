@@ -55,7 +55,7 @@ export const ThreeTabs: Story = {
 
 export const AllPatterns: Story = {
   render: () => (
-    <div className="bg-background text-foreground p-8" style={{ maxWidth: '48rem' }}>
+    <div style={{ maxWidth: '48rem' }}>
       <h1 className="mb-2 text-2xl font-bold">Tabs</h1>
       <p className="text-muted-foreground mb-8">
         Radix UI Tabs をベースにした切り替えコンポーネント。

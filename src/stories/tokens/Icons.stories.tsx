@@ -40,7 +40,7 @@ type Story = StoryObj;
 
 export const Sizes: Story = {
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h1 className="mb-6 text-2xl font-bold">アイコンサイズ</h1>
       <p className="text-muted-foreground mb-8">
         lucide-react を使用。タイポグラフィとの調和を優先し、6種類に統一。
@@ -131,7 +131,7 @@ export const Sizes: Story = {
 
 export const StrokeWidth: Story = {
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h1 className="mb-6 text-2xl font-bold">線の太さ（strokeWidth）</h1>
       <p className="text-muted-foreground mb-8">
         lucide-react のデフォルトは2。用途に応じて3種類を使い分け。
@@ -185,7 +185,7 @@ export const StrokeWidth: Story = {
 
 export const CommonIcons: Story = {
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h1 className="mb-6 text-2xl font-bold">よく使うアイコン</h1>
       <p className="text-muted-foreground mb-8">
         代表的なアイコンの一覧。全アイコンは{' '}
@@ -239,7 +239,7 @@ export const CommonIcons: Story = {
 
 export const SemanticIcons: Story = {
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h1 className="mb-8 text-2xl font-bold">意味を持つアイコン</h1>
 
       <div className="space-y-6">

@@ -61,7 +61,7 @@ export const AllPatterns: Story = {
     ];
 
     return (
-      <div className="bg-background text-foreground min-h-screen p-8">
+      <div>
         <h1 className="mb-2 text-2xl font-bold">RadioGroup</h1>
         <p className="text-muted-foreground mb-8">ラジオボタングループ（単一選択）</p>
 

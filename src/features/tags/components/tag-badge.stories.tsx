@@ -106,7 +106,7 @@ export const AllPatterns: Story = {
     tag: workTag,
   },
   render: () => (
-    <div className="bg-background text-foreground space-y-8 p-8">
+    <div className="space-y-8">
       <h1 className="text-2xl font-bold">TagBadge - 実使用パターン</h1>
 
       {/* 基本表示 */}

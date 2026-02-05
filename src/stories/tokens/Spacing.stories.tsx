@@ -12,7 +12,7 @@ type Story = StoryObj;
 
 export const Principles: Story = {
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h1 className="mb-6 text-2xl font-bold">Spacing（余白）の原則</h1>
       <p className="text-muted-foreground mb-8">
         要素間の関係性に基づいてSpacingを決定。近いほど関連が強い。
@@ -86,7 +86,7 @@ export const Principles: Story = {
 
 export const Scale: Story = {
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h1 className="mb-6 text-2xl font-bold">Spacingスケール（8ptグリッド）</h1>
       <p className="text-muted-foreground mb-8">8pxを基本単位とし、8の倍数のみを使用。</p>
 
@@ -136,7 +136,7 @@ export const Scale: Story = {
 
 export const ComponentPatterns: Story = {
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h1 className="mb-6 text-2xl font-bold">コンポーネント別パターン</h1>
       <p className="text-muted-foreground mb-8">各UIコンポーネントの推奨Spacing。</p>
 
@@ -264,7 +264,7 @@ export const ComponentPatterns: Story = {
 
 export const GapUsage: Story = {
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h1 className="mb-6 text-2xl font-bold">Gap（要素間の余白）</h1>
       <p className="text-muted-foreground mb-8">Flexbox/Gridでの要素間余白。関係性に応じて選択。</p>
 
@@ -334,7 +334,7 @@ export const GapUsage: Story = {
 
 export const NestedSpacing: Story = {
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h1 className="mb-6 text-2xl font-bold">入れ子のSpacing</h1>
       <p className="text-muted-foreground mb-8">
         内側→外側に向かってSpacingを大きくする。入れ子の四角形として考える。
@@ -392,7 +392,7 @@ export const NestedSpacing: Story = {
 
 export const QuickReference: Story = {
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h1 className="mb-6 text-2xl font-bold">クイックリファレンス</h1>
 
       <div className="grid gap-6 md:grid-cols-2">

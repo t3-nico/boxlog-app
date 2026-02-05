@@ -12,7 +12,7 @@ type Story = StoryObj;
 
 export const AllRadius: Story = {
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h1 className="mb-6 text-2xl font-bold">Border Radius（角丸）</h1>
       <p className="text-muted-foreground mb-8">
         8の倍数ベースで統一。選択肢を5種類に絞り、迷わないデザインシステム。
@@ -80,7 +80,7 @@ export const AllRadius: Story = {
 
 export const UseCases: Story = {
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h1 className="mb-8 text-2xl font-bold">使用例</h1>
 
       <div className="space-y-8">
@@ -147,7 +147,7 @@ export const UseCases: Story = {
 
 export const PartialRadius: Story = {
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h1 className="mb-6 text-2xl font-bold">部分的なRadius</h1>
       <p className="text-muted-foreground mb-8">
         隣接要素の結合など、特定のコーナーのみ角丸にする場合に使用。

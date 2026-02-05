@@ -51,7 +51,7 @@ function ColorGroup({ title, children }: { title: string; children: React.ReactN
 
 export const AllColors: Story = {
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h1 className="mb-8 text-2xl font-bold">カラートークン</h1>
 
       <ColorGroup title="Surface（背景色）">
@@ -156,7 +156,7 @@ export const AllColors: Story = {
 
 export const Surface: Story = {
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h2 className="mb-6 text-xl font-bold">Surface体系（GAFA準拠・3段階）</h2>
       <p className="text-muted-foreground mb-8">
         Material Design 3 / Apple HIG の共通原則に基づく意味ベース設計。
@@ -197,7 +197,7 @@ export const Surface: Story = {
 
 export const Semantic: Story = {
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h2 className="mb-6 text-xl font-bold">Semantic Colors（意味を持つ色）</h2>
 
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
@@ -227,7 +227,7 @@ export const Semantic: Story = {
 
 export const Interaction: Story = {
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h2 className="mb-6 text-xl font-bold">インタラクション状態</h2>
       <p className="text-muted-foreground mb-8">
         ホバー、フォーカス、プレス時の色変化。実際に操作して確認できます。
@@ -539,7 +539,7 @@ export const Interaction: Story = {
 
 export const Text: Story = {
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h1 className="mb-6 text-2xl font-bold">テキストカラー</h1>
       <p className="text-muted-foreground mb-8">色で情報の重要度を表現。</p>
 
@@ -575,7 +575,7 @@ export const Text: Story = {
 
 export const Tags: Story = {
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h1 className="mb-2 text-2xl font-bold">タグカラー</h1>
       <p className="text-muted-foreground mb-8">
         ユーザーがタグに設定できる10色のパレット。
@@ -631,7 +631,7 @@ export const Tags: Story = {
 
 export const DosDonts: Story = {
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h1 className="mb-2 text-2xl font-bold">Do&apos;s & Don&apos;ts</h1>
       <p className="text-muted-foreground mb-8">カラー使用のベストプラクティス。</p>
 

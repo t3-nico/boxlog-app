@@ -26,7 +26,7 @@ export const Default: Story = {
 export const AllPatterns: Story = {
   render: function AllPatternsStory() {
     return (
-      <div className="bg-background text-foreground min-h-screen p-8">
+      <div>
         <h1 className="mb-2 text-2xl font-bold">Label</h1>
         <p className="text-muted-foreground mb-8">フォーム要素のラベル</p>
 

@@ -21,7 +21,7 @@ export const AllPatterns: Story = {
   render: function AllPatternsStory() {
     const [showPassword, setShowPassword] = useState(false);
     return (
-      <div className="bg-background text-foreground min-h-screen p-8">
+      <div>
         <h1 className="mb-2 text-2xl font-bold">Input</h1>
         <p className="text-muted-foreground mb-8">テキスト入力フィールド</p>
 
