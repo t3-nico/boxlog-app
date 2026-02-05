@@ -112,17 +112,17 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
       return duration > 0 ? duration : 60;
     }, []);
 
-    // フォーム状態
+    // フォーム状態（draftPlanから初期値を取得）
     const [formData, setFormData] = useState<RecordFormData>({
-      title: '',
-      plan_id: null,
+      title: draftPlan?.title ?? '',
+      plan_id: draftPlan?.plan_id ?? null,
       worked_at: initialWorkedAt,
       start_time: initialStartTime,
       end_time: initialEndTime,
       duration_minutes: calculateDuration(initialStartTime, initialEndTime),
       fulfillment_score: null,
-      note: '',
-      tagIds: [],
+      note: draftPlan?.note ?? draftPlan?.description ?? '',
+      tagIds: draftPlan?.tagIds ?? [],
     });
 
     // タグデータ取得
