@@ -41,13 +41,13 @@ export const Default: Story = {
               </p>
             </div>
             <div className="flex flex-col gap-2 sm:flex-row sm:gap-4">
-              <Button className="w-full sm:w-auto">すべて同意</Button>
-              <Button variant="outline" className="w-full sm:w-auto">
-                必須のみ
-              </Button>
               <Button variant="ghost" className="w-full sm:w-auto">
                 カスタマイズ
               </Button>
+              <Button variant="outline" className="w-full sm:w-auto">
+                必須のみ
+              </Button>
+              <Button className="w-full sm:w-auto">すべて同意</Button>
             </div>
           </div>
         </div>

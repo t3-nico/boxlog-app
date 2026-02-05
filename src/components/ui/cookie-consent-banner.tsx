@@ -101,10 +101,10 @@ export function CookieConsentBanner() {
             </p>
           </div>
 
-          {/* アクションボタン */}
+          {/* アクションボタン（右が最重要 = GAFA慣習） */}
           <div className="flex flex-col gap-2 sm:flex-row sm:gap-4">
-            <Button onClick={handleAcceptAll} className="w-full sm:w-auto">
-              {t('legal.cookies.banner.acceptAll')}
+            <Button asChild variant="ghost" className="w-full sm:w-auto">
+              <Link href={`/${locale}/legal/cookies`}>{t('legal.cookies.banner.customize')}</Link>
             </Button>
             <Button
               onClick={handleAcceptNecessaryOnly}
@@ -113,8 +113,8 @@ export function CookieConsentBanner() {
             >
               {t('legal.cookies.banner.rejectAll')}
             </Button>
-            <Button asChild variant="ghost" className="w-full sm:w-auto">
-              <Link href={`/${locale}/legal/cookies`}>{t('legal.cookies.banner.customize')}</Link>
+            <Button onClick={handleAcceptAll} className="w-full sm:w-auto">
+              {t('legal.cookies.banner.acceptAll')}
             </Button>
           </div>
         </div>
