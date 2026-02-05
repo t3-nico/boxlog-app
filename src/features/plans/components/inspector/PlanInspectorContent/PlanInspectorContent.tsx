@@ -20,11 +20,10 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { InspectorHeader, useDragHandle } from '@/features/inspector';
-import { useRecordMutations } from '@/features/records/hooks/useRecordMutations';
 import { api } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
 
-import { usePlanInspectorStore } from '../../../stores/usePlanInspectorStore';
+import { usePlanInspectorStore, type DraftPlan } from '../../../stores/usePlanInspectorStore';
 import { reminderTypeToMinutes } from '../../../utils/reminder';
 import { normalizeStatus } from '../../../utils/status';
 
@@ -40,12 +39,10 @@ export function PlanInspectorContent() {
   // 新規作成時のエントリタイプ
   const createType = usePlanInspectorStore((state) => state.createType);
   const setCreateType = usePlanInspectorStore((state) => state.setCreateType);
+  const openInspectorWithDraft = usePlanInspectorStore((state) => state.openInspectorWithDraft);
 
   // Record フォームの ref
   const recordFormRef = useRef<RecordCreateFormRef>(null);
-
-  // Record作成用mutation（完了+Record作成機能用）
-  const { createRecord } = useRecordMutations();
 
   const {
     planId,
@@ -295,39 +292,34 @@ export function PlanInspectorContent() {
               updatePlan.mutate({ id: planId, data: { status: 'closed' } });
             };
 
-            // 完了 + Record作成
+            // 完了 + Record作成（フォームを開いて確認）
             const handleCompleteWithRecord = async () => {
               if (!planId || !plan || !scheduleDate) return;
 
               // 1. Planを完了にする
               await updatePlan.mutateAsync({ id: planId, data: { status: 'closed' } });
 
-              // 2. durationを計算（分単位）
-              const calcDuration = () => {
-                if (!startTime || !endTime) return 60; // デフォルト1時間
-                const startParts = startTime.split(':');
-                const endParts = endTime.split(':');
-                const sh = Number(startParts[0] ?? 0);
-                const sm = Number(startParts[1] ?? 0);
-                const eh = Number(endParts[0] ?? 0);
-                const em = Number(endParts[1] ?? 0);
-                const startMinutes = sh * 60 + sm;
-                const endMinutes = eh * 60 + em;
-                const duration = endMinutes - startMinutes;
-                return duration > 0 ? duration : 60;
+              // 2. start_time/end_timeをISO形式に変換
+              const buildIsoTime = (time: string | null) => {
+                if (!time) return null;
+                const [h, m] = time.split(':').map(Number);
+                const date = new Date(scheduleDate);
+                date.setHours(h ?? 0, m ?? 0, 0, 0);
+                return date.toISOString();
               };
 
-              // 3. 同じ内容でRecordを作成（全フィールドコピー）
-              await createRecord.mutateAsync({
-                title: plan.title || undefined,
-                worked_at: format(scheduleDate, 'yyyy-MM-dd'),
-                start_time: startTime || undefined,
-                end_time: endTime || undefined,
-                duration_minutes: calcDuration(),
-                note: plan.description || undefined,
-                plan_id: planId,
+              // 3. Record作成フォームをPlan情報でプリフィルして開く
+              const draftData: Partial<DraftPlan> = {
+                title: plan.title || '',
+                description: plan.description,
+                due_date: format(scheduleDate, 'yyyy-MM-dd'),
+                start_time: buildIsoTime(startTime),
+                end_time: buildIsoTime(endTime),
                 tagIds: selectedTagIds,
-              });
+                plan_id: planId,
+                note: plan.description,
+              };
+              openInspectorWithDraft(draftData, 'record');
             };
 
             // 未完了に戻す
