@@ -88,6 +88,7 @@
       "enterEventTitle": "Enter event title",
       "reminderSet": "Reminder set",
       "noTitle": "(No title)",
+      "allDay": "All day",
       "markComplete": "Mark as complete",
       "markIncomplete": "Mark as incomplete"
     },
@@ -228,8 +229,9 @@
       "overdueBy": "Overdue by {time}"
     },
     "agenda": {
-      "emptyTitle": "No upcoming events in the next 14 days",
-      "emptyDescription": "Create a new event in the calendar"
+      "emptyTitle": "No upcoming events",
+      "emptyDescription": "Create a new event in the calendar",
+      "noItems": "No items"
     },
     "collapsedSection": {
       "expandLabel": "Expand {timeRange}"
