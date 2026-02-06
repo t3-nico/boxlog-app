@@ -130,16 +130,29 @@ export function FilterItem({
     backgroundColor: checked ? displayColor : 'transparent',
   } as React.CSSProperties;
 
+  // 行クリックでチェック切り替え
+  const handleRowClick = useCallback(
+    (e: React.MouseEvent) => {
+      // チェックボックス自体のクリックは除外（二重トリガー防止）
+      if ((e.target as HTMLElement).closest('[role="checkbox"]')) return;
+      if (disabled) return;
+      onCheckedChange();
+    },
+    [disabled, onCheckedChange],
+  );
+
   const content = (
     <div
       className={cn(
         'group/item hover:bg-state-hover flex h-8 w-full min-w-0 items-center rounded text-sm',
         disabled && 'cursor-not-allowed opacity-50',
         dragHandleProps && 'cursor-grab active:cursor-grabbing',
+        !dragHandleProps && !disabled && 'cursor-pointer',
         menuOpen && 'bg-state-selected',
       )}
       title={disabled ? disabledReason : undefined}
       onContextMenu={handleContextMenu}
+      onClick={handleRowClick}
       {...(dragHandleProps || {})}
     >
       <Checkbox
