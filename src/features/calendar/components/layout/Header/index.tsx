@@ -1,9 +1,12 @@
 'use client';
 
-import { Search } from 'lucide-react';
+import { PanelLeft, Search } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import { Button } from '@/components/ui/button';
+import { HoverTooltip } from '@/components/ui/tooltip';
 import { MobileMenuButton } from '@/features/navigation/components/mobile/MobileMenuButton';
+import { useSidebarStore } from '@/features/navigation/stores/useSidebarStore';
 import { useGlobalSearch } from '@/features/search/hooks/use-global-search';
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
 
@@ -84,14 +87,32 @@ export const CalendarHeader = ({
   currentPanel = 'none',
   onPanelChange,
 }: CalendarHeaderProps) => {
+  const t = useTranslations();
   const { open: openSearch } = useGlobalSearch();
   const showWeekNumbers = useCalendarSettingsStore((state) => state.showWeekNumbers);
+  const isSidebarOpen = useSidebarStore.use.isOpen();
+  const openSidebar = useSidebarStore.use.open();
 
   return (
     <header className="bg-background relative h-12 px-4 py-2">
       <div className="flex h-8 items-center justify-between">
         {/* 左側: メニュー + 日付表示 + コントロール群 */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
+          {/* サイドバー開くボタン（PCのみ、サイドバーが閉じている時のみ表示） */}
+          {!isSidebarOpen && (
+            <HoverTooltip content={t('sidebar.openSidebar')} side="bottom">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="hidden size-8 md:flex"
+                onClick={openSidebar}
+                aria-label={t('sidebar.openSidebar')}
+              >
+                <PanelLeft className="size-4" />
+              </Button>
+            </HoverTooltip>
+          )}
+
           {/* モバイルメニューボタン */}
           <MobileMenuButton className="md:hidden" />
 

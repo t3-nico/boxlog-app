@@ -7,8 +7,10 @@ import { Suspense, useMemo } from 'react';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { useAuthStore } from '@/features/auth/stores/useAuthStore';
 import { CalendarSidebar } from '@/features/calendar/components/sidebar/CalendarSidebar';
+import { useSidebarStore } from '@/features/navigation/stores/useSidebarStore';
 import { OnboardingBanner } from '@/features/onboarding';
 import { SettingsSidebar } from '@/features/settings/components/sidebar';
+import { cn } from '@/lib/utils';
 
 import { MainContentWrapper } from './main-content-wrapper';
 import { StatusBar } from './status-bar';
@@ -50,6 +52,7 @@ export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
   const pathname = usePathname();
   const user = useAuthStore((state) => state.user);
   const isAuthenticated = !!user;
+  const isSidebarOpen = useSidebarStore.use.isOpen();
 
   // パフォーマンス最適化: ページ判定をメモ化（pathnameとlocale変更時のみ再計算）
   const currentPage = useMemo(() => {
@@ -84,10 +87,17 @@ export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
       {/* 上部エリア（サイドバー + コンテンツ） */}
       {/* 上部エリア（サイドバー + コンテンツ） */}
       <div className="flex min-h-0 flex-1">
-        {/* Sidebar（固定幅256px）← Calendar/Settingsのみ表示 */}
+        {/* Sidebar（固定幅256px）← Calendar/Settingsのみ表示、開閉可能 */}
         {showSidebar && SidebarComponent && (
-          <div className="h-full w-64 shrink-0">
-            <SidebarComponent />
+          <div
+            className={cn(
+              'h-full shrink-0 overflow-hidden transition-all duration-200',
+              isSidebarOpen ? 'w-64' : 'w-0',
+            )}
+          >
+            <div className="h-full w-64">
+              <SidebarComponent />
+            </div>
           </div>
         )}
 
