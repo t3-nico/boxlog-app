@@ -15,7 +15,6 @@ import {
 import { MS_PER_MINUTE } from '@/constants/time';
 
 import type { CalendarViewType, ViewDateRange } from '../types/calendar.types';
-import { getMultiDayCount, isMultiDayView } from '../types/calendar.types';
 
 import type { CalendarTask } from './time-grid-helpers';
 
@@ -191,47 +190,57 @@ export function calculateViewDateRange(
 ): ViewDateRange {
   let start: Date, end: Date, days: Date[];
 
-  if (isMultiDayView(viewType)) {
-    const dayCount = getMultiDayCount(viewType);
-    const offset = Math.floor(dayCount / 2);
-    start = subDays(currentDate, offset);
-    start.setHours(0, 0, 0, 0);
-    end = addDays(currentDate, dayCount - offset - 1);
-    end.setHours(23, 59, 59, 999);
-    days = eachDayOfInterval({ start, end });
-  } else {
-    switch (viewType) {
-      case 'day':
-        start = new Date(currentDate);
-        start.setHours(0, 0, 0, 0);
-        end = new Date(currentDate);
-        end.setHours(23, 59, 59, 999);
-        days = [new Date(start)];
-        break;
+  switch (viewType) {
+    case 'day':
+      start = new Date(currentDate);
+      start.setHours(0, 0, 0, 0);
+      end = new Date(currentDate);
+      end.setHours(23, 59, 59, 999);
+      days = [new Date(start)];
+      break;
 
-      case 'week':
-        start = startOfWeek(currentDate, { weekStartsOn });
-        end = endOfWeek(currentDate, { weekStartsOn });
-        days = eachDayOfInterval({ start, end });
-        break;
+    case '3day':
+      const threeDayStart = subDays(currentDate, 1);
+      threeDayStart.setHours(0, 0, 0, 0);
+      const threeDayEnd = addDays(currentDate, 1);
+      threeDayEnd.setHours(23, 59, 59, 999);
+      start = threeDayStart;
+      end = threeDayEnd;
+      days = eachDayOfInterval({ start, end });
+      break;
 
-      case 'agenda':
-        // アジェンダビュー: 今日から60日間（無限スクロールの初期ロード範囲）
-        start = new Date(currentDate);
-        start.setHours(0, 0, 0, 0);
-        end = addDays(currentDate, 60);
-        end.setHours(23, 59, 59, 999);
-        days = eachDayOfInterval({ start, end });
-        break;
+    case '5day':
+      const fiveDayStart = subDays(currentDate, 2);
+      fiveDayStart.setHours(0, 0, 0, 0);
+      const fiveDayEnd = addDays(currentDate, 2);
+      fiveDayEnd.setHours(23, 59, 59, 999);
+      start = fiveDayStart;
+      end = fiveDayEnd;
+      days = eachDayOfInterval({ start, end });
+      break;
 
-      default:
-        // デフォルトは日表示
-        start = new Date(currentDate);
-        start.setHours(0, 0, 0, 0);
-        end = new Date(currentDate);
-        end.setHours(23, 59, 59, 999);
-        days = [new Date(start)];
-    }
+    case 'week':
+      start = startOfWeek(currentDate, { weekStartsOn });
+      end = endOfWeek(currentDate, { weekStartsOn });
+      days = eachDayOfInterval({ start, end });
+      break;
+
+    case 'agenda':
+      // アジェンダビュー: 今日から60日間（無限スクロールの初期ロード範囲）
+      start = new Date(currentDate);
+      start.setHours(0, 0, 0, 0);
+      end = addDays(currentDate, 60);
+      end.setHours(23, 59, 59, 999);
+      days = eachDayOfInterval({ start, end });
+      break;
+
+    default:
+      // デフォルトは日表示
+      start = new Date(currentDate);
+      start.setHours(0, 0, 0, 0);
+      end = new Date(currentDate);
+      end.setHours(23, 59, 59, 999);
+      days = [new Date(start)];
   }
 
   return { start, end, days };
@@ -241,12 +250,13 @@ export function calculateViewDateRange(
  * 次の期間を取得
  */
 export function getNextPeriod(viewType: CalendarViewType, currentDate: Date): Date {
-  if (isMultiDayView(viewType)) {
-    return addDays(currentDate, getMultiDayCount(viewType));
-  }
   switch (viewType) {
     case 'day':
       return addDays(currentDate, 1);
+    case '3day':
+      return addDays(currentDate, 3);
+    case '5day':
+      return addDays(currentDate, 5);
     case 'week':
       return addWeeks(currentDate, 1);
     case 'agenda':
@@ -261,12 +271,13 @@ export function getNextPeriod(viewType: CalendarViewType, currentDate: Date): Da
  * 前の期間を取得
  */
 export function getPreviousPeriod(viewType: CalendarViewType, currentDate: Date): Date {
-  if (isMultiDayView(viewType)) {
-    return subDays(currentDate, getMultiDayCount(viewType));
-  }
   switch (viewType) {
     case 'day':
       return subDays(currentDate, 1);
+    case '3day':
+      return subDays(currentDate, 3);
+    case '5day':
+      return subDays(currentDate, 5);
     case 'week':
       return subWeeks(currentDate, 1);
     case 'agenda':

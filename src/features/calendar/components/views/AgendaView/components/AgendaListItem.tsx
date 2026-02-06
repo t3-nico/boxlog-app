@@ -6,9 +6,9 @@ import { Tag } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
+import { TagSelectCombobox } from '@/features/plans/components/shared/TagSelectCombobox';
 import { usePlanTags } from '@/features/plans/hooks/usePlanTags';
 import { useDateFormat } from '@/features/settings/hooks/useDateFormat';
-import { TagSelectCombobox } from '@/features/tags/components/TagSelectCombobox';
 import { useTagsMap } from '@/features/tags/hooks/useTagsMap';
 import { cn } from '@/lib/utils';
 
@@ -21,9 +21,8 @@ interface AgendaListItemProps {
 /**
  * AgendaListItem - 日別グループ内のアイテム表示
  *
- * レイアウト: 縦線 | 時間 | タイトル | タグ
- * - Plan: 左端の縦線（bg-plan-box）
- * - Record: 左端の縦線（bg-record-box）
+ * レイアウト: 時間 | タイトル | タグ
+ * - Recordの場合: bg-record-boxで視覚的に区別
  */
 export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemProps) {
   const t = useTranslations('calendar');
@@ -85,16 +84,9 @@ export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemP
         'group flex w-full items-center gap-2 px-4 py-2',
         'hover:bg-state-hover',
         'transition-colors duration-150',
+        isRecord && 'bg-record-box',
       )}
     >
-      {/* 左端の縦線（Record: bg-record-box, Plan: bg-plan-box） */}
-      <div
-        className={cn(
-          'h-6 w-0.5 shrink-0 rounded-full',
-          isRecord ? 'bg-record-box' : 'bg-plan-box',
-        )}
-      />
-
       {/* クリック可能エリア */}
       <button
         type="button"
