@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from 'react';
 
-import { CalendarPlus, ChevronDown, Clock, FileText, History, SquarePen, Tag } from 'lucide-react';
+import { CalendarPlus, ChevronDown, Clock, FileText, History, SquarePlus, Tag } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -66,11 +66,11 @@ export function CreateNewDropdown({
     <DropdownMenuTrigger asChild>
       <Button
         variant="ghost"
-        icon
+        size="icon"
         className={size === 'sm' ? 'h-8 w-auto gap-0.5 px-1.5' : 'h-10 w-auto gap-1 px-2'}
         aria-label={t('sidebar.quickCreate')}
       >
-        <SquarePen className={size === 'sm' ? 'size-4' : 'size-5'} />
+        <SquarePlus className={size === 'sm' ? 'size-4' : 'size-5'} />
         <ChevronDown className="text-muted-foreground size-3" />
       </Button>
     </DropdownMenuTrigger>
