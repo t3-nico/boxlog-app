@@ -1,0 +1,143 @@
+'use client';
+
+import { memo, useCallback } from 'react';
+
+import { CheckCircle2, Circle } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+
+import { Card } from '@/components/ui/card';
+import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
+import type { PlanStatus } from '@/features/plans/types/plan';
+import { normalizeStatus } from '@/features/plans/utils/status';
+import { useDateFormat } from '@/features/settings/hooks/useDateFormat';
+import { useTagsMap } from '@/features/tags/hooks/useTagsMap';
+import { cn } from '@/lib/utils';
+import type { PlanWithTags } from '@/server/services/plans/types';
+
+interface PlanListCardProps {
+  plan: PlanWithTags;
+  onClick?: (plan: PlanWithTags) => void;
+}
+
+/**
+ * サイドパネル用のPlanカード
+ *
+ * カレンダーTimeGridのPlanCardと同じビジュアル（チェックボックス+タイトル+時間）
+ * position/drag/resizeは不要なシンプル版
+ */
+export const PlanListCard = memo<PlanListCardProps>(function PlanListCard({ plan, onClick }) {
+  const t = useTranslations('calendar');
+  const { formatTime } = useDateFormat();
+  const { getTagsByIds } = useTagsMap();
+  const { updatePlan } = usePlanMutations();
+
+  const status = normalizeStatus(plan.status as PlanStatus);
+  const isCompleted = status === 'closed';
+
+  // 時間表示
+  const startTime = plan.start_time ? formatTime(new Date(plan.start_time)) : '';
+  const endTime = plan.end_time ? formatTime(new Date(plan.end_time)) : '';
+  const displayTime =
+    startTime && endTime ? `${startTime} - ${endTime}` : startTime || t('event.allDay');
+
+  // タグ
+  const tags = getTagsByIds(plan.tagIds ?? []);
+  const displayTags = tags.slice(0, 2);
+
+  const handleCardClick = useCallback(() => {
+    onClick?.(plan);
+  }, [onClick, plan]);
+
+  const handleCheckboxClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      const newStatus = isCompleted ? 'open' : 'closed';
+      updatePlan.mutate({
+        id: plan.id,
+        data: { status: newStatus },
+      });
+    },
+    [isCompleted, plan.id, updatePlan],
+  );
+
+  return (
+    <Card
+      className={cn(
+        'group flex cursor-pointer items-start gap-2 p-3',
+        'bg-plan-box',
+        'hover:bg-state-hover',
+        'transition-colors duration-150',
+        'focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
+      )}
+      onClick={handleCardClick}
+      tabIndex={0}
+      role="button"
+    >
+      {/* チェックボックス */}
+      <button
+        type="button"
+        onClick={handleCheckboxClick}
+        className={cn(
+          'group/checkbox flex-shrink-0',
+          'flex h-5 w-5 items-center justify-center',
+          'focus-visible:ring-primary rounded focus-visible:ring-2 focus-visible:outline-none',
+        )}
+        aria-label={isCompleted ? t('event.markIncomplete') : t('event.markComplete')}
+      >
+        {isCompleted ? (
+          <CheckCircle2 className="text-success h-4 w-4" />
+        ) : (
+          <>
+            <Circle className="text-muted-foreground h-4 w-4 group-hover/checkbox:hidden" />
+            <CheckCircle2 className="text-success hidden h-4 w-4 group-hover/checkbox:block" />
+          </>
+        )}
+      </button>
+
+      {/* コンテンツ */}
+      <div className="min-w-0 flex-1">
+        {/* タイトル */}
+        <p
+          className={cn(
+            'line-clamp-2 text-sm leading-tight font-normal',
+            isCompleted ? 'text-muted-foreground line-through' : 'text-foreground',
+          )}
+        >
+          {plan.title || t('event.noTitle')}
+        </p>
+
+        {/* 時間 */}
+        <p
+          className={cn(
+            'mt-1 text-xs tabular-nums',
+            isCompleted ? 'text-muted-foreground/60 line-through' : 'text-muted-foreground',
+          )}
+        >
+          {displayTime}
+        </p>
+
+        {/* タグ */}
+        {displayTags.length > 0 && (
+          <div className="mt-2 flex flex-wrap gap-1">
+            {displayTags.map((tag) => (
+              <span
+                key={tag.id}
+                className="inline-flex max-w-16 items-center truncate rounded px-1.5 py-0.5 text-[10px]"
+                style={{
+                  backgroundColor: tag.color ? `${tag.color}20` : undefined,
+                  color: tag.color || undefined,
+                }}
+                title={tag.name}
+              >
+                {tag.name}
+              </span>
+            ))}
+            {tags.length > 2 && (
+              <span className="text-muted-foreground text-[10px]">+{tags.length - 2}</span>
+            )}
+          </div>
+        )}
+      </div>
+    </Card>
+  );
+});
