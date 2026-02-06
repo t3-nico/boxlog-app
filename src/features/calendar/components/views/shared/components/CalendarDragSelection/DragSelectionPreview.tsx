@@ -57,13 +57,14 @@ export const DragSelectionPreview = memo(function DragSelectionPreview({
     zIndex: 1000,
   };
 
-  // 重複時は赤、通常時は控えめなセマンティックカラー
+  // 重複時は赤、通常時はPlanCard Draftと同じスタイル（視覚的一貫性）
   const className = cn(
-    isOverlapping ? 'bg-destructive/60' : 'bg-state-hover border border-border',
+    isOverlapping
+      ? 'bg-destructive/60'
+      : 'bg-primary-state-selected border border-dashed border-primary',
     calendarStyles.event.borderRadius,
     calendarStyles.event.shadow.default,
     'pointer-events-none',
-    isOverlapping ? 'opacity-90' : 'opacity-80',
   );
 
   // 時間幅を計算
