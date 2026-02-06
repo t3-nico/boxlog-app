@@ -23,7 +23,7 @@
   max-width: 64rem; /* 1024px — Storybook標準に近い幅 */
   margin-left: auto;
   margin-right: auto;
-  padding: var(--spacing-lg) var(--spacing-md); /* 32px 24px */
+  padding: 0;
   color: var(--foreground);
   font-weight: 400; /* font-normal */
   font-size: 1rem; /* text-base (16px) */
@@ -335,7 +335,7 @@
  * ============================================ */
 @media (min-width: 48rem) {
   .sb-docs-prose {
-    padding: var(--spacing-xl) var(--spacing-lg); /* 48px 32px */
+    padding: 0;
   }
 
   .sb-docs-prose > h1 {
