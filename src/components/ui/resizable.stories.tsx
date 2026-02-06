@@ -1,117 +1,182 @@
-import { useCallback, useState } from 'react';
+import type { Meta, StoryObj } from '@storybook/react';
 
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from './resizable';
 
-import { useResizeHandle } from '@/features/calendar/hooks/useResizeHandle';
-import { cn } from '@/lib/utils';
-
-/**
- * Resizable - カスタムリサイズパネル（useResizeHandle）
- *
- * マウスドラッグで%ベースのリサイズを行うカスタム実装。
- *
- * ## 仕様
- *
- * - デフォルト: 28%, min: 25%, max: 40%, min-width: 288px
- * - ハンドル: 1px境界線（bg-border）、ホバー/ドラッグ中に bg-primary
- * - ドラッグ中はカーソルが col-resize に変化
- * - サイズは localStorage に永続化（useCalendarPanelStore）
- *
- * ## 使用箇所
- *
- * - CalendarLayout のサイドパネル
- *
- * ## 注意
- *
- * shadcn/ui Resizable（react-resizable-panels）は
- * Next.js 15 RSC環境で動作しないため、カスタム実装を使用。
- */
 const meta = {
   title: 'Components/Resizable',
+  component: ResizablePanelGroup,
   tags: ['autodocs'],
   parameters: {
-    layout: 'fullscreen',
+    layout: 'padded',
   },
-} satisfies Meta;
+} satisfies Meta<typeof ResizablePanelGroup>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-// ─────────────────────────────────────────────────────────
-// Helper
-// ─────────────────────────────────────────────────────────
-
-function CustomResizeDemo() {
-  const [savedPercent, setSavedPercent] = useState(28);
-  const { percent, isResizing, handleMouseDown, containerRef } = useResizeHandle({
-    initialPercent: savedPercent,
-    onResizeEnd: setSavedPercent,
-  });
-
-  const handleReset = useCallback(() => {
-    setSavedPercent(28);
-  }, []);
-
-  return (
-    <div className="space-y-4 p-4">
-      <div className="flex items-center gap-4">
-        <p className="text-sm">
-          <span className="text-muted-foreground">現在: </span>
-          <span className="font-mono font-medium">{percent}%</span>
-          {isResizing && <span className="text-primary ml-2 text-xs">リサイズ中...</span>}
-        </p>
-        <button
-          type="button"
-          className="text-muted-foreground hover:text-foreground text-xs underline"
-          onClick={handleReset}
-        >
-          リセット（28%）
-        </button>
-      </div>
-
-      {/* containerRef はflex containerに直接配置（%計算の基準を合わせるため） */}
-      <div ref={containerRef} className="border-border flex h-[400px] rounded-lg border">
-        {/* メインコンテンツ */}
-        <div className="bg-background flex min-w-0 flex-1 items-center justify-center">
-          <span className="text-muted-foreground text-sm">Main Content</span>
-        </div>
-
-        {/* リサイズハンドル */}
-        <div
-          role="separator"
-          aria-orientation="vertical"
-          className={cn(
-            'bg-border w-px shrink-0 cursor-col-resize',
-            'hover:bg-primary active:bg-primary',
-            'after:absolute after:inset-y-0 after:left-1/2 after:w-2 after:-translate-x-1/2',
-            'relative',
-            isResizing && 'bg-primary',
-          )}
-          onMouseDown={handleMouseDown}
-        />
-
-        {/* サイドパネル */}
-        <aside
-          className={cn(
-            'shrink-0 overflow-hidden',
-            !isResizing && 'transition-[width] duration-200 ease-in-out',
-          )}
-          style={{ width: `${percent}%` }}
-        >
-          <div className="bg-container flex h-full items-center justify-center">
-            <span className="text-muted-foreground text-sm">Side Panel</span>
-          </div>
-        </aside>
-      </div>
-    </div>
-  );
-}
-
-// ─────────────────────────────────────────────────────────
-// Stories
-// ─────────────────────────────────────────────────────────
-
-/** 全パターン一覧 */
 export const AllPatterns: Story = {
-  render: () => <CustomResizeDemo />,
+  render: function ResizableStory() {
+    return (
+      <div>
+        <h1 className="mb-2 text-2xl font-bold">Resizable</h1>
+        <p className="text-muted-foreground mb-8">ドラッグでパネルサイズを調整可能なレイアウト。</p>
+
+        <div className="grid max-w-4xl gap-8">
+          <div>
+            <h2 className="mb-2 text-lg font-bold">水平分割（サイドバー + コンテンツ）</h2>
+            <p className="text-muted-foreground mb-4 text-sm">
+              デスクトップレイアウトでサイドバーのリサイズに使用。
+            </p>
+            <div className="border-border h-64 rounded-lg border">
+              <ResizablePanelGroup orientation="horizontal">
+                <ResizablePanel defaultSize={25} minSize={15} maxSize={40}>
+                  <div className="bg-surface-container flex h-full items-center justify-center p-4">
+                    <span className="text-muted-foreground text-sm">Sidebar (25%)</span>
+                  </div>
+                </ResizablePanel>
+                <ResizableHandle />
+                <ResizablePanel defaultSize={75}>
+                  <div className="bg-background flex h-full items-center justify-center p-4">
+                    <span className="text-muted-foreground text-sm">Main Content (75%)</span>
+                  </div>
+                </ResizablePanel>
+              </ResizablePanelGroup>
+            </div>
+          </div>
+
+          <div>
+            <h2 className="mb-2 text-lg font-bold">ハンドル付き</h2>
+            <p className="text-muted-foreground mb-4 text-sm">
+              withHandle propでグリップアイコンを表示。視覚的にリサイズ可能であることを示す。
+            </p>
+            <div className="border-border h-64 rounded-lg border">
+              <ResizablePanelGroup orientation="horizontal">
+                <ResizablePanel defaultSize={30} minSize={20} maxSize={50}>
+                  <div className="bg-surface-container flex h-full items-center justify-center p-4">
+                    <span className="text-muted-foreground text-sm">Left Panel</span>
+                  </div>
+                </ResizablePanel>
+                <ResizableHandle withHandle />
+                <ResizablePanel defaultSize={70}>
+                  <div className="bg-background flex h-full items-center justify-center p-4">
+                    <span className="text-muted-foreground text-sm">Right Panel</span>
+                  </div>
+                </ResizablePanel>
+              </ResizablePanelGroup>
+            </div>
+          </div>
+
+          <div>
+            <h2 className="mb-2 text-lg font-bold">垂直分割</h2>
+            <p className="text-muted-foreground mb-4 text-sm">
+              orientation=&quot;vertical&quot; で上下分割。
+            </p>
+            <div className="border-border h-64 rounded-lg border">
+              <ResizablePanelGroup orientation="vertical">
+                <ResizablePanel defaultSize={40} minSize={20}>
+                  <div className="bg-surface-container flex h-full items-center justify-center p-4">
+                    <span className="text-muted-foreground text-sm">Top Panel</span>
+                  </div>
+                </ResizablePanel>
+                <ResizableHandle />
+                <ResizablePanel defaultSize={60}>
+                  <div className="bg-background flex h-full items-center justify-center p-4">
+                    <span className="text-muted-foreground text-sm">Bottom Panel</span>
+                  </div>
+                </ResizablePanel>
+              </ResizablePanelGroup>
+            </div>
+          </div>
+
+          <div>
+            <h2 className="mb-2 text-lg font-bold">3パネル構成</h2>
+            <p className="text-muted-foreground mb-4 text-sm">
+              複数パネルを組み合わせ。サイドバー + コンテンツ + インスペクター。
+            </p>
+            <div className="border-border h-64 rounded-lg border">
+              <ResizablePanelGroup orientation="horizontal">
+                <ResizablePanel defaultSize={20} minSize={15} maxSize={30}>
+                  <div className="bg-surface-container flex h-full items-center justify-center p-4">
+                    <span className="text-muted-foreground text-sm">Sidebar</span>
+                  </div>
+                </ResizablePanel>
+                <ResizableHandle />
+                <ResizablePanel defaultSize={55}>
+                  <div className="bg-background flex h-full items-center justify-center p-4">
+                    <span className="text-muted-foreground text-sm">Content</span>
+                  </div>
+                </ResizablePanel>
+                <ResizableHandle />
+                <ResizablePanel defaultSize={25} minSize={15} maxSize={40}>
+                  <div className="bg-surface-container flex h-full items-center justify-center p-4">
+                    <span className="text-muted-foreground text-sm">Inspector</span>
+                  </div>
+                </ResizablePanel>
+              </ResizablePanelGroup>
+            </div>
+          </div>
+
+          <div>
+            <h2 className="mb-4 text-lg font-bold">コンポーネント構成</h2>
+            <div className="bg-container rounded-lg p-4">
+              <ul className="text-muted-foreground list-inside list-disc space-y-1 text-sm">
+                <li>ResizablePanelGroup - ルート（orientation: horizontal/vertical）</li>
+                <li>ResizablePanel - パネル（defaultSize, minSize, maxSize）</li>
+                <li>ResizableHandle - リサイズハンドル（withHandle: グリップ表示）</li>
+              </ul>
+            </div>
+          </div>
+
+          <div>
+            <h2 className="mb-4 text-lg font-bold">Props</h2>
+            <div className="bg-container overflow-x-auto rounded-lg p-4">
+              <table className="text-sm">
+                <thead>
+                  <tr className="text-muted-foreground">
+                    <th className="pr-4 text-left">Prop</th>
+                    <th className="pr-4 text-left">Type</th>
+                    <th className="text-left">説明</th>
+                  </tr>
+                </thead>
+                <tbody className="text-muted-foreground">
+                  <tr>
+                    <td className="pr-4 font-mono">orientation</td>
+                    <td className="pr-4">horizontal | vertical</td>
+                    <td>分割方向</td>
+                  </tr>
+                  <tr>
+                    <td className="pr-4 font-mono">defaultSize</td>
+                    <td className="pr-4">number</td>
+                    <td>初期サイズ（%）</td>
+                  </tr>
+                  <tr>
+                    <td className="pr-4 font-mono">minSize</td>
+                    <td className="pr-4">number</td>
+                    <td>最小サイズ（%）</td>
+                  </tr>
+                  <tr>
+                    <td className="pr-4 font-mono">maxSize</td>
+                    <td className="pr-4">number</td>
+                    <td>最大サイズ（%）</td>
+                  </tr>
+                  <tr>
+                    <td className="pr-4 font-mono">withHandle</td>
+                    <td className="pr-4">boolean</td>
+                    <td>グリップアイコン表示</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div>
+            <h2 className="mb-4 text-lg font-bold">使用箇所</h2>
+            <ul className="text-muted-foreground list-inside list-disc space-y-1 text-sm">
+              <li>desktop-layout - サイドバーリサイズ</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    );
+  },
 };

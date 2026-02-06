@@ -2,7 +2,7 @@
 
 import { format, isSameDay } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import { Calendar, ChevronDown } from 'lucide-react';
+import { Bot, Calendar, ChevronDown } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { usePathname } from 'next/navigation';
 
@@ -14,6 +14,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { HoverTooltip } from '@/components/ui/tooltip';
+import { useAIInspectorStore } from '@/features/ai';
 import { MobileMenuButton } from '@/features/navigation/components/mobile/MobileMenuButton';
 import type { PeriodType } from '@/features/stats/stores';
 import { useStatsPeriodStore } from '@/features/stats/stores';
@@ -33,6 +35,8 @@ export default function StatsLayout({ children }: StatsLayoutProps) {
   const pathname = usePathname();
   const localeFromPath = (pathname?.split('/')[1] || 'ja') as 'ja' | 'en';
   const dateLocale = localeFromPath === 'ja' ? ja : undefined;
+  const openAIInspector = useAIInspectorStore((state) => state.openInspector);
+
   const { periodType, startDate, endDate, setPeriodType } = useStatsPeriodStore();
 
   // 日付範囲のフォーマット
@@ -88,6 +92,19 @@ export default function StatsLayout({ children }: StatsLayoutProps) {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
+
+        {/* 右: AIボタン（PC版のみ） */}
+        <HoverTooltip content={t('aria.openAIAssistant')} side="bottom">
+          <Button
+            onClick={() => openAIInspector()}
+            size="icon"
+            variant="ghost"
+            aria-label={t('aria.openAIAssistant')}
+            className="text-muted-foreground hover:text-foreground hidden shrink-0 md:flex"
+          >
+            <Bot className="size-5" />
+          </Button>
+        </HoverTooltip>
       </header>
 
       {/* メインコンテンツ */}
