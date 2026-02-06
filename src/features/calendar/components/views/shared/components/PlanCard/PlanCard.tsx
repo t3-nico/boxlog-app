@@ -199,7 +199,7 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
     isSelected && 'ring-2 ring-primary',
     // Draft は点線ボーダー（未保存を示す）、Record は左ボーダー（Google Calendar風）
     isDraft
-      ? 'border border-dashed border-primary'
+      ? cn('border border-dashed', isRecord ? 'border-record-border' : 'border-plan-box')
       : isRecord && 'border-l-[3px] border-record-border',
     // テキスト色
     'text-foreground',
