@@ -8,7 +8,7 @@ import React, { memo, useCallback, useEffect, useMemo } from 'react';
 
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
 import { normalizeStatus } from '@/features/plans/utils/status';
-import { CheckCircle2, Circle, Pencil } from 'lucide-react';
+import { CheckCircle2, Circle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { MEDIA_QUERIES } from '@/config/ui/breakpoints';
@@ -184,23 +184,23 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
     'relative overflow-hidden',
     // フォーカスリング（キーボード操作時のみ表示、視認性向上）
     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2',
-    // 背景色
-    isDraft
-      ? 'bg-state-selected'
-      : isSelected || isActive
-        ? 'bg-state-hover'
-        : isRecord
-          ? 'bg-record-box'
-          : 'bg-plan-box',
+    // 背景色（DraftはPlan/Recordと同じ背景色を使用）
+    isRecord ? 'bg-record-box' : 'bg-plan-box',
+    // Draft: state-selected オーバーレイ（ドラフトであることを視覚的に示す）
+    // before: でホバー、after: でselectedを重ねる
+    isDraft &&
+      'before:pointer-events-none before:absolute before:inset-0 before:rounded-[inherit] before:transition-colors hover:before:bg-state-hover',
+    isDraft &&
+      'after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:bg-state-selected',
+    // 選択/アクティブ状態の背景オーバーレイ
+    !isDraft && (isSelected || isActive) && 'bg-state-hover',
     // ホバー: state-hover オーバーレイ（after疑似要素で背景色の上に重ねる）
     !isDraft &&
       'after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:transition-colors hover:after:bg-state-hover',
     // 選択状態の視覚フィードバック（色覚異常対応）
     isSelected && 'ring-2 ring-primary',
-    // Draft は点線ボーダー（未保存を示す）、Record は左ボーダー（Google Calendar風）
-    isDraft
-      ? cn('border border-dashed', isRecord ? 'border-record-border' : 'border-plan-box')
-      : isRecord && 'border-l-[3px] border-record-border',
+    // Record は左ボーダー（Google Calendar風）- Draftでも適用
+    isRecord && 'border-l-[3px] border-record-border',
     // テキスト色
     'text-foreground',
     // 状態別スタイル
@@ -246,32 +246,16 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
       }
       aria-pressed={isSelected}
     >
-      {/* Draft: 鉛筆アイコン / Record: アイコンなし / Plan: チェックボックス */}
-      {isDraft ? (
-        // Draft は鉛筆アイコンを表示（編集中を示す）
-        <div
-          className={cn(
-            'z-10 flex-shrink-0 rounded',
-            isMobile
-              ? 'relative -m-4 flex min-h-[44px] min-w-[44px] items-center justify-center'
-              : 'absolute flex items-center justify-center',
-            !isMobile && (safePosition.height < 30 ? 'top-1 left-0.5' : 'top-2 left-2'),
-            !isMobile && 'min-h-4 min-w-4',
-          )}
-        >
-          <Pencil
-            className={cn(
-              'text-primary',
-              isMobile ? 'h-3.5 w-3.5' : safePosition.height < 30 ? 'h-3 w-3' : 'h-4 w-4',
-            )}
-          />
-        </div>
-      ) : isRecord ? null : (
+      {/* Record: アイコンなし / Plan（Draft含む）: チェックボックス */}
+      {!isRecord && (
         // Plan: チェックボックス（モバイル: 44x44pxタッチターゲット、Apple HIG準拠）
+        // Draft は未保存なのでクリック無効
         <button
           type="button"
+          disabled={isDraft}
           onClick={(e) => {
             e.stopPropagation();
+            if (isDraft) return;
             const currentStatus = normalizeStatus(plan.status);
             const newStatus = currentStatus === 'closed' ? 'open' : 'closed';
             updatePlan.mutate({
@@ -290,6 +274,8 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
             !isMobile && (safePosition.height < 30 ? 'top-1 left-0.5' : 'top-2 left-2'),
             // デスクトップ: ホバー領域を確保（小さい予定でもホバーしやすく）
             !isMobile && 'min-h-4 min-w-4',
+            // Draft は未保存なのでカーソルをデフォルトに
+            isDraft && 'cursor-default',
           )}
           aria-label={
             normalizeStatus(plan.status) === 'closed'
