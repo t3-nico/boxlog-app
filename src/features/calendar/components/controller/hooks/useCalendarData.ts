@@ -115,9 +115,9 @@ export function useCalendarData({
     prefetchAdjacentPeriods();
   }, [currentDate, viewType, weekStartsOn, utils.plans.list, utils.records.list]);
 
-  // フィルター関数を取得（ストアに統一）
+  // フィルター関数と状態を取得（ストアに統一）
   const isPlanVisible = useCalendarFilterStore((state) => state.isPlanVisible);
-  const isTypeVisible = useCalendarFilterStore((state) => state.isTypeVisible);
+  const visibleTypes = useCalendarFilterStore((state) => state.visibleTypes);
 
   // ドラフトプランを取得（新規作成・コピー＆ペースト時のプレビュー表示用）
   const draftPlan = usePlanInspectorStore((state) => state.draftPlan);
@@ -266,10 +266,14 @@ export function useCalendarData({
     });
 
     // サイドバーのフィルター設定を適用
-    // Recordsもフィルター設定に従う（isTypeVisibleでチェック）
-    const visibilityFiltered = filtered.filter((event) =>
-      event.type === 'record' ? isTypeVisible('record') : isPlanVisible(event.tagIds ?? []),
-    );
+    // 種別フィルター（Plan/Record）とタグフィルターの両方をチェック
+    const visibilityFiltered = filtered.filter((event) => {
+      if (event.type === 'record') {
+        return visibleTypes.record;
+      }
+      // Planの場合: 種別表示 AND タグ表示の両方をチェック
+      return visibleTypes.plan && isPlanVisible(event.tagIds ?? []);
+    });
 
     logger.log(`[useCalendarData] plansフィルタリング:`, {
       totalPlans: allCalendarPlans.length,
@@ -288,7 +292,7 @@ export function useCalendarData({
     });
 
     return visibilityFiltered;
-  }, [viewDateRange, allCalendarPlans, isPlanVisible, isTypeVisible]);
+  }, [viewDateRange, allCalendarPlans, isPlanVisible, visibleTypes]);
 
   return {
     viewDateRange,
