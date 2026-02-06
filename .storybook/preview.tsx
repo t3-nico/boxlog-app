@@ -1,5 +1,4 @@
-import type { Preview } from '@storybook/react-vite';
-import { useDarkMode } from '@vueless/storybook-dark-mode';
+import type { Preview } from '@storybook/react';
 import { NextIntlClientProvider } from 'next-intl';
 
 import '../src/styles/globals.css';
@@ -45,27 +44,11 @@ const messages = {
     edit: '編集',
     loading: '読み込み中...',
     deleting: '削除中...',
-    aria: {
-      selectDate: '{date}を選択',
-    },
-    form: {
-      required: '※必須',
-      optional: '※任意',
-      processing: '処理中...',
-    },
-    validation: {
-      limitReached: '上限に達しました',
-    },
   },
   actions: {
     delete: '削除',
     cancel: 'キャンセル',
     deleting: '削除中...',
-    close: '閉じる',
-    create: '作成',
-    creating: '作成中...',
-    save: '保存',
-    saving: '保存中...',
   },
   error: {
     loading: {
@@ -78,18 +61,6 @@ const messages = {
       loadingPage: 'ページを読み込み中',
       pleaseWait: 'しばらくお待ちください...',
     },
-    boundary: {
-      title: '予期しないエラーが発生しました',
-      description: '申し訳ございません。アプリケーションでエラーが発生しました。',
-      autoReport: '自動的にエラー報告を送信いたします。',
-      retry: '再試行',
-      reload: 'ページをリロード',
-      devTitle: '開発環境 - コンポーネントエラー',
-      component: 'コンポーネント',
-      unknown: '不明',
-      checkConsole: '詳細はブラウザのコンソールを確認してください。',
-      featureError: '{feature}機能でエラーが発生しました',
-    },
   },
   legal: {
     cookies: {
@@ -100,29 +71,6 @@ const messages = {
         acceptAll: 'すべて同意',
         rejectAll: '必須のみ',
         customize: 'カスタマイズ',
-      },
-    },
-  },
-  settings: {
-    dialog: {
-      title: '設定',
-      categories: {
-        general: '一般',
-        generalDesc: '言語、テーマ、起動画面の設定',
-        calendar: 'カレンダー',
-        calendarDesc: 'タイムゾーン、表示設定、デフォルトビュー',
-        personalization: 'パーソナライズ',
-        personalizationDesc: 'クロノタイプとタグのカスタマイズ',
-        notifications: '通知',
-        notificationsDesc: '通知とリマインダーの設定',
-        dataControls: 'データ管理',
-        dataControlsDesc: 'エクスポート、インポート、バックアップ設定',
-        integrations: '連携',
-        integrationsDesc: 'AIプロバイダーと外部サービス連携',
-        account: 'アカウント',
-        accountDesc: 'プロフィールとセキュリティ',
-        subscription: 'サブスクリプション',
-        subscriptionDesc: 'プランと課金管理',
       },
     },
   },
@@ -331,14 +279,12 @@ const messages = {
 const preview: Preview = {
   parameters: {
     controls: {
-      expanded: true,
       matchers: {
         color: /(background|color)$/i,
         date: /Date$/i,
       },
     },
     backgrounds: {
-      options: {},
       grid: {
         cellSize: 16,
         cellAmount: 5,
@@ -350,11 +296,10 @@ const preview: Preview = {
     options: {
       storySort: {
         method: 'alphabetical',
-        order: ['Docs', 'Tokens', 'Components', 'Features', 'Patterns'],
+        order: ['Docs', 'Tokens', 'Components', 'Patterns'],
       },
     },
     docs: {
-      codePanel: true,
       theme: dayoptLightTheme,
       page: DocsTemplate,
     },
@@ -368,36 +313,47 @@ const preview: Preview = {
           { id: 'region', enabled: false },
         ],
       },
-
       options: {
         runOnly: {
           type: 'tag',
           values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice'],
         },
       },
-
-      // 'todo' - show a11y violations in the test UI only
-      // 'error' - fail CI on a11y violations
-      // 'off' - skip a11y checks entirely
-      test: 'todo',
     },
   },
+  globalTypes: {
+    theme: {
+      description: 'Global theme for components',
+      toolbar: {
+        title: 'Theme',
+        icon: 'circlehollow',
+        items: [
+          { value: 'light', icon: 'sun', title: 'Light' },
+          { value: 'dark', icon: 'moon', title: 'Dark' },
+        ],
+        dynamicTitle: false,
+      },
+    },
+  },
+  initialGlobals: {
+    theme: 'light',
+  },
   decorators: [
-    (Story) => {
-      const isDark = useDarkMode();
+    (Story, context) => {
+      const theme = context.globals.theme || 'light';
 
+      // ダークモード切り替え
       if (typeof document !== 'undefined') {
         document.documentElement.classList.remove('light', 'dark');
-        document.documentElement.classList.add(isDark ? 'dark' : 'light');
-        document.documentElement.style.colorScheme = isDark ? 'dark' : 'light';
+        document.documentElement.classList.add(theme);
+        // color-scheme を切り替え（スクロールバー・フォーム要素のネイティブ配色）
+        document.documentElement.style.colorScheme = theme;
       }
 
       return (
         <TRPCMockProvider>
           <NextIntlClientProvider locale="ja" messages={messages}>
-            <main>
-              <Story />
-            </main>
+            <Story />
           </NextIntlClientProvider>
         </TRPCMockProvider>
       );
