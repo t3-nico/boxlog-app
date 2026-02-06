@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/react';
 import { Bell, Moon, Search, Sun } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -24,17 +24,17 @@ function UtilitiesLight() {
   return (
     <div className="bg-surface-container flex w-fit items-center gap-1 rounded-lg p-2">
       <HoverTooltip content="通知" side="right">
-        <Button variant="ghost" size="sm" icon>
+        <Button variant="ghost" size="icon" className="size-8">
           <Bell className="size-4" />
         </Button>
       </HoverTooltip>
       <HoverTooltip content="検索" side="right">
-        <Button variant="ghost" size="sm" icon>
+        <Button variant="ghost" size="icon" className="size-8">
           <Search className="size-4" />
         </Button>
       </HoverTooltip>
       <HoverTooltip content="ダークモード" side="right">
-        <Button variant="ghost" size="sm" icon>
+        <Button variant="ghost" size="icon" className="size-8">
           <Moon className="size-4" />
         </Button>
       </HoverTooltip>
@@ -46,17 +46,17 @@ function UtilitiesDark() {
   return (
     <div className="bg-surface-container flex w-fit items-center gap-1 rounded-lg p-2">
       <HoverTooltip content="通知" side="right">
-        <Button variant="ghost" size="sm" icon>
+        <Button variant="ghost" size="icon" className="size-8">
           <Bell className="size-4" />
         </Button>
       </HoverTooltip>
       <HoverTooltip content="検索" side="right">
-        <Button variant="ghost" size="sm" icon>
+        <Button variant="ghost" size="icon" className="size-8">
           <Search className="size-4" />
         </Button>
       </HoverTooltip>
       <HoverTooltip content="ライトモード" side="right">
-        <Button variant="ghost" size="sm" icon>
+        <Button variant="ghost" size="icon" className="size-8">
           <Sun className="size-4" />
         </Button>
       </HoverTooltip>
@@ -84,13 +84,13 @@ function SidebarStructure() {
         </div>
         <div className="border-border border-t p-2">
           <div className="flex items-center gap-1">
-            <Button variant="ghost" size="sm" icon>
+            <Button variant="ghost" size="icon" className="size-8">
               <Bell className="size-4" />
             </Button>
-            <Button variant="ghost" size="sm" icon>
+            <Button variant="ghost" size="icon" className="size-8">
               <Search className="size-4" />
             </Button>
-            <Button variant="ghost" size="sm" icon>
+            <Button variant="ghost" size="icon" className="size-8">
               <Moon className="size-4" />
             </Button>
           </div>
