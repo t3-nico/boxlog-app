@@ -1,7 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
-import { PanelLeft, PanelLeftClose, SquarePen } from 'lucide-react';
-import { useState } from 'react';
-import { expect, userEvent, within } from 'storybook/test';
+import type { Meta, StoryObj } from '@storybook/react';
+import { PanelLeft, PanelLeftClose } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { HoverTooltip } from '@/components/ui/tooltip';
@@ -31,90 +29,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 // ---------------------------------------------------------------------------
-// インタラクティブデモ
-// ---------------------------------------------------------------------------
-
-function InteractiveDemo() {
-  const [isOpen, setIsOpen] = useState(true);
-
-  return (
-    <div className="border-border flex h-80 w-[640px] overflow-hidden rounded-xl border">
-      {/* サイドバー */}
-      <div
-        className="bg-surface-container border-border shrink-0 overflow-hidden border-r transition-[width] duration-200 ease-in-out"
-        style={{ width: isOpen ? 240 : 0 }}
-      >
-        <div className="flex h-full w-60 flex-col">
-          {/* Header */}
-          <div className="flex h-12 shrink-0 items-center justify-between px-2">
-            <div className="flex items-center gap-2 px-2">
-              <div className="bg-muted size-6 rounded-full" />
-              <span className="text-foreground text-sm font-normal">User</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <HoverTooltip content="サイドバーを閉じる" side="bottom">
-                <Button
-                  variant="ghost"
-                  icon
-                  className="size-8"
-                  onClick={() => setIsOpen(false)}
-                  aria-label="サイドバーを閉じる"
-                >
-                  <PanelLeftClose className="size-4" />
-                </Button>
-              </HoverTooltip>
-              <Button variant="ghost" size="sm" icon aria-label="作成">
-                <SquarePen className="size-4" />
-              </Button>
-            </div>
-          </div>
-
-          {/* Content */}
-          <div className="flex-1 overflow-auto p-4">
-            <div className="space-y-2">
-              {['カレンダー', 'プラン', '記録', '統計'].map((label) => (
-                <div
-                  key={label}
-                  className="text-muted-foreground hover:bg-state-hover rounded-md px-3 py-1.5 text-sm"
-                >
-                  {label}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* メインコンテンツ */}
-      <div className="bg-background flex flex-1 flex-col">
-        <div className="border-border flex h-12 shrink-0 items-center gap-2 border-b px-4">
-          {!isOpen && (
-            <HoverTooltip content="サイドバーを開く" side="bottom">
-              <Button
-                variant="ghost"
-                icon
-                className="size-8"
-                onClick={() => setIsOpen(true)}
-                aria-label="サイドバーを開く"
-              >
-                <PanelLeft className="size-4" />
-              </Button>
-            </HoverTooltip>
-          )}
-          <span className="text-muted-foreground text-sm">ヘッダー</span>
-        </div>
-        <div className="flex flex-1 items-center justify-center p-4">
-          <div className="bg-container text-muted-foreground rounded-lg p-6 text-center text-sm">
-            メインコンテンツ
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// 静的ヘルパー
+// ヘルパーコンポーネント
 // ---------------------------------------------------------------------------
 
 function ToggleButtonComparison() {
@@ -122,14 +37,14 @@ function ToggleButtonComparison() {
     <div className="flex items-start gap-8 p-6">
       <div className="bg-surface-container border-border flex h-12 w-48 items-center justify-end rounded-lg border px-2">
         <HoverTooltip content="サイドバーを閉じる" side="bottom">
-          <Button variant="ghost" size="sm" icon aria-label="サイドバーを閉じる">
+          <Button variant="ghost" size="icon" className="size-8">
             <PanelLeftClose className="size-4" />
           </Button>
         </HoverTooltip>
       </div>
       <div className="bg-background border-border flex h-12 w-48 items-center rounded-lg border px-4">
         <HoverTooltip content="サイドバーを開く" side="bottom">
-          <Button variant="ghost" size="sm" icon aria-label="サイドバーを開く">
+          <Button variant="ghost" size="icon" className="size-8">
             <PanelLeft className="size-4" />
           </Button>
         </HoverTooltip>
@@ -144,7 +59,7 @@ function LayoutOpen() {
       <div className="bg-surface-container border-border w-64 shrink-0 border-r">
         <div className="border-border flex h-12 items-center justify-between border-b px-2">
           <span className="text-muted-foreground text-sm">NavUser</span>
-          <Button variant="ghost" size="sm" icon aria-label="サイドバーを閉じる">
+          <Button variant="ghost" size="icon" className="size-8">
             <PanelLeftClose className="size-4" />
           </Button>
         </div>
@@ -173,7 +88,7 @@ function LayoutClosed() {
     <div className="border-border flex h-64 w-[600px] overflow-hidden rounded-lg border">
       <div className="bg-background flex-1">
         <div className="border-border flex h-12 items-center gap-2 border-b px-4">
-          <Button variant="ghost" size="sm" icon aria-label="サイドバーを開く">
+          <Button variant="ghost" size="icon" className="size-8">
             <PanelLeft className="size-4" />
           </Button>
           <span className="text-muted-foreground text-sm">ヘッダー</span>
@@ -217,38 +132,6 @@ export const HideNavUser: Story = {
   ],
 };
 
-/**
- * インタラクティブデモ。パネルアイコンをクリックでサイドバーが開閉する。
- *
- * 実装のポイント:
- * - 本番では `useSidebarStore.use.toggle()` で状態管理
- * - `transition-[width]` で幅アニメーション
- * - 閉じた時はヘッダーに開くボタンが出現
- */
-export const Interactive: Story = {
-  render: () => <InteractiveDemo />,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    // サイドバーが開いている状態を確認
-    await expect(canvas.getByText('カレンダー')).toBeInTheDocument();
-
-    // サイドバーを閉じる
-    const closeButton = canvas.getByRole('button', { name: /サイドバーを閉じる/i });
-    await userEvent.click(closeButton);
-
-    // サイドバーを開くボタンが出現する
-    const openButton = canvas.getByRole('button', { name: /サイドバーを開く/i });
-    await expect(openButton).toBeInTheDocument();
-
-    // サイドバーを再び開く
-    await userEvent.click(openButton);
-
-    // サイドバーのコンテンツが再度表示される
-    await expect(canvas.getByText('カレンダー')).toBeInTheDocument();
-  },
-};
-
 /** 折りたたみボタン。PanelLeftClose（閉じる）とPanelLeft（開く）の比較。 */
 export const ToggleButtons: Story = {
   render: () => <ToggleButtonComparison />,
@@ -268,13 +151,8 @@ export const LayoutWithSidebarClosed: Story = {
 export const AllPatterns: Story = {
   render: () => (
     <div className="flex flex-col items-start gap-6 p-6">
-      <h3 className="text-foreground text-sm font-bold">Interactive</h3>
-      <InteractiveDemo />
-      <h3 className="text-foreground text-sm font-bold">Toggle Buttons</h3>
       <ToggleButtonComparison />
-      <h3 className="text-foreground text-sm font-bold">Layout Open</h3>
       <LayoutOpen />
-      <h3 className="text-foreground text-sm font-bold">Layout Closed</h3>
       <LayoutClosed />
     </div>
   ),
