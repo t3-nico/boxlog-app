@@ -5,23 +5,17 @@
     },
     "title": "Calendar",
     "views": {
-      "day": "Day",
-      "splitDay": "Split Day",
-      "3day": "3-Day",
-      "5day": "5-Day",
-      "week": "Week",
+      "day": "Day View",
+      "splitDay": "Split Day View",
+      "3day": "3-Day View",
+      "5day": "5-Day View",
+      "week": "Week View",
       "weekday": "Weekday",
-      "weekNoWeekend": "Week (Weekdays)",
-      "2week": "2-Week",
-      "month": "Month",
+      "weekNoWeekend": "Week View (Weekdays)",
+      "2week": "2-Week View",
+      "month": "Month View",
       "list": "List",
-      "agenda": "Agenda",
-      "multiday": "{count} Days",
-      "daysSubmenu": "Days",
-      "viewSettings": "View settings",
-      "showWeekends": "Show weekends",
-      "showWeekNumbers": "Show week numbers",
-      "generalSettings": "General settings"
+      "agenda": "Agenda"
     },
     "mobile": {
       "drawer": {
@@ -99,13 +93,12 @@
       "markIncomplete": "Mark as incomplete"
     },
     "contextMenu": {
+      "open": "Open",
       "edit": "Edit",
-      "markComplete": "Mark as Complete",
-      "markIncomplete": "Mark as Incomplete",
-      "completeWithRecord": "Complete & Copy Record",
       "duplicate": "Duplicate",
       "copy": "Copy",
       "copyLink": "Copy Link",
+      "changeStatus": "Change Status",
       "addTag": "Add Tag",
       "moveToDate": "Change Date",
       "delete": "Delete"
@@ -238,8 +231,7 @@
     "agenda": {
       "emptyTitle": "No upcoming events",
       "emptyDescription": "Create a new event in the calendar",
-      "noItems": "No items",
-      "noDate": "No Date"
+      "noItems": "No items"
     },
     "collapsedSection": {
       "expandLabel": "Expand {timeRange}"
@@ -257,88 +249,6 @@
     },
     "timeGrid": {
       "ariaLabel": "Calendar time grid - click or press Enter to create event"
-    },
-    "panel": {
-      "open": "Open side panel",
-      "plan": "Plans",
-      "record": "Records",
-      "stats": "Statistics",
-      "unscheduled": "Unscheduled",
-      "searchPlaceholder": "Search plans...",
-      "loading": "Loading...",
-      "error": "Failed to load",
-      "noPlans": "No unscheduled plans",
-      "sortBy": "Sort by",
-      "groupBy": "Group by",
-      "reset": "Reset",
-      "sort": {
-        "createdAt": "Date created",
-        "updatedAt": "Date updated",
-        "dueDate": "Due date",
-        "title": "Title",
-        "asc": "Ascending",
-        "desc": "Descending"
-      },
-      "group": {
-        "none": "None",
-        "dueDate": "Due date",
-        "tags": "Tags"
-      },
-      "status": {
-        "label": "Status",
-        "all": "All",
-        "open": "Open",
-        "closed": "Closed",
-        "overdue": "Overdue"
-      },
-      "schedule": {
-        "label": "Date",
-        "all": "All",
-        "scheduled": "Scheduled",
-        "unscheduled": "Unscheduled"
-      },
-      "filter": {
-        "all": "All",
-        "unscheduled": "Unsched",
-        "scheduled": "Sched",
-        "open": "Open",
-        "closed": "Done"
-      },
-      "recordSearchPlaceholder": "Search records...",
-      "noRecords": "No records",
-      "createRecord": "Create record",
-      "recordThis": "Record this",
-      "noTitle": "(No title)",
-      "duration": "{minutes} min",
-      "fulfillment": "Fulfillment",
-      "recordSort": {
-        "workedAt": "Work date",
-        "durationMinutes": "Duration",
-        "fulfillmentScore": "Fulfillment",
-        "createdAt": "Date created",
-        "updatedAt": "Date updated",
-        "asc": "Ascending",
-        "desc": "Descending"
-      },
-      "recordGroup": {
-        "none": "None",
-        "workedAt": "Date",
-        "tags": "Tags",
-        "fulfillmentScore": "Fulfillment"
-      },
-      "recordDateFilter": {
-        "label": "Period",
-        "all": "All",
-        "today": "Today",
-        "thisWeek": "This week",
-        "thisMonth": "This month"
-      }
-    },
-    "error": {
-      "title": "Failed to load calendar",
-      "description": "Please check your network connection and try again.",
-      "retry": "Retry",
-      "reload": "Reload page"
     }
   }
 }

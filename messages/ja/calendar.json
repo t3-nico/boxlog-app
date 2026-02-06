@@ -5,23 +5,17 @@
     },
     "title": "カレンダー",
     "views": {
-      "day": "日",
-      "splitDay": "分割日",
-      "3day": "3日",
-      "5day": "5日",
-      "week": "週",
+      "day": "日表示",
+      "splitDay": "分割日表示",
+      "3day": "3日表示",
+      "5day": "5日表示",
+      "week": "週表示",
       "weekday": "平日",
-      "weekNoWeekend": "週（平日のみ）",
-      "2week": "2週",
-      "month": "月",
+      "weekNoWeekend": "週表示（平日のみ）",
+      "2week": "2週表示",
+      "month": "月表示",
       "list": "リスト",
-      "agenda": "アジェンダ",
-      "multiday": "{count}日間",
-      "daysSubmenu": "日数",
-      "viewSettings": "ビューの設定",
-      "showWeekends": "週末を表示",
-      "showWeekNumbers": "週数を表示",
-      "generalSettings": "一般設定"
+      "agenda": "アジェンダ"
     },
     "mobile": {
       "drawer": {
@@ -99,13 +93,12 @@
       "markIncomplete": "未完了に戻す"
     },
     "contextMenu": {
+      "open": "開く",
       "edit": "編集",
-      "markComplete": "完了にする",
-      "markIncomplete": "未完了に戻す",
-      "completeWithRecord": "完了&Recordコピー",
       "duplicate": "複製",
       "copy": "コピー",
       "copyLink": "リンクをコピー",
+      "changeStatus": "ステータスを変更",
       "addTag": "タグを追加",
       "moveToDate": "日付を変更",
       "delete": "削除"
@@ -238,8 +231,7 @@
     "agenda": {
       "emptyTitle": "今後の予定はありません",
       "emptyDescription": "カレンダーで新しい予定を作成してください",
-      "noItems": "予定なし",
-      "noDate": "日付なし"
+      "noItems": "予定なし"
     },
     "collapsedSection": {
       "expandLabel": "{timeRange} を展開"
@@ -257,88 +249,6 @@
     },
     "timeGrid": {
       "ariaLabel": "カレンダータイムグリッド - クリックまたはEnterキーでイベントを作成"
-    },
-    "panel": {
-      "open": "サイドパネルを開く",
-      "plan": "プラン",
-      "record": "記録",
-      "stats": "統計",
-      "unscheduled": "未予定",
-      "searchPlaceholder": "プランを検索...",
-      "loading": "読み込み中...",
-      "error": "読み込みに失敗しました",
-      "noPlans": "未予定のプランはありません",
-      "sortBy": "並び替え",
-      "groupBy": "グループ",
-      "reset": "リセット",
-      "sort": {
-        "createdAt": "作成日",
-        "updatedAt": "更新日",
-        "dueDate": "期限",
-        "title": "タイトル",
-        "asc": "昇順",
-        "desc": "降順"
-      },
-      "group": {
-        "none": "なし",
-        "dueDate": "期限",
-        "tags": "タグ"
-      },
-      "status": {
-        "label": "ステータス",
-        "all": "すべて",
-        "open": "未完了",
-        "closed": "完了",
-        "overdue": "期限切れ"
-      },
-      "schedule": {
-        "label": "日付",
-        "all": "すべて",
-        "scheduled": "予定済み",
-        "unscheduled": "スケジュールなし"
-      },
-      "filter": {
-        "all": "全て",
-        "unscheduled": "未配置",
-        "scheduled": "配置済",
-        "open": "未完了",
-        "closed": "完了"
-      },
-      "recordSearchPlaceholder": "記録を検索...",
-      "noRecords": "記録はありません",
-      "createRecord": "記録を作成",
-      "recordThis": "記録する",
-      "noTitle": "(タイトルなし)",
-      "duration": "{minutes}分",
-      "fulfillment": "充実度",
-      "recordSort": {
-        "workedAt": "作業日",
-        "durationMinutes": "所要時間",
-        "fulfillmentScore": "充実度",
-        "createdAt": "作成日",
-        "updatedAt": "更新日",
-        "asc": "昇順",
-        "desc": "降順"
-      },
-      "recordGroup": {
-        "none": "なし",
-        "workedAt": "日付",
-        "tags": "タグ",
-        "fulfillmentScore": "充実度"
-      },
-      "recordDateFilter": {
-        "label": "期間",
-        "all": "すべて",
-        "today": "今日",
-        "thisWeek": "今週",
-        "thisMonth": "今月"
-      }
-    },
-    "error": {
-      "title": "カレンダーの読み込みに失敗しました",
-      "description": "ネットワーク接続を確認して、もう一度お試しください。",
-      "retry": "再読み込み",
-      "reload": "ページをリロード"
     }
   }
 }
