@@ -345,9 +345,10 @@ export function useDragSelection({
           };
 
           onTimeRangeSelect(dateTimeSelection);
-          // 選択を維持（Inspectorが閉じるときにcalendar-drag-cancelイベントでクリア）
-          // ドラッグ状態のみリセットし、selection自体は残す
+          // Inspectorが開いた後はPlanCardのドラフトがプレビューを担当
+          // DragSelectionPreviewは非表示にする
           setIsSelecting(false);
+          setShowSelectionPreview(false);
           isDragging.current = false;
           return;
         }
@@ -480,8 +481,9 @@ export function useDragSelection({
             endMinute: selection.endMinute,
           };
           onTimeRangeSelect(dateTimeSelection);
-          // 選択を維持（Inspectorが閉じるときにcalendar-drag-cancelイベントでクリア）
+          // Inspectorが開いた後はPlanCardのドラフトがプレビューを担当
           setIsSelecting(false);
+          setShowSelectionPreview(false);
           isDragging.current = false;
           clearLongPressTimer();
           return;
@@ -499,8 +501,9 @@ export function useDragSelection({
             endMinute,
           };
           handler(dateTimeSelection);
-          // タップでも選択を維持
+          // Inspectorが開いた後はPlanCardのドラフトがプレビューを担当
           setIsSelecting(false);
+          setShowSelectionPreview(false);
           isDragging.current = false;
           clearLongPressTimer();
           return;
