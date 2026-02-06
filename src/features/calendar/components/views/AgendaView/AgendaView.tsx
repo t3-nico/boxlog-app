@@ -34,7 +34,7 @@ export function AgendaView({
   const t = useTranslations('calendar.agenda');
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  // プランを日付ごとにグループ化
+  // プランを日付ごとにグループ化（日付なしはスキップ）
   const plansByDate = useMemo(() => {
     const grouped = new Map<string, typeof plans>();
 
