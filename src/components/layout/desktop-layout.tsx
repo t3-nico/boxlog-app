@@ -82,8 +82,9 @@ export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
       {isAuthenticated && <OnboardingBanner />}
 
       {/* 上部エリア（サイドバー + コンテンツ） */}
+      {/* 上部エリア（サイドバー + コンテンツ） */}
       <div className="flex min-h-0 flex-1">
-        {/* Sidebar（固定幅240px）← Calendar/Settingsのみ表示 */}
+        {/* Sidebar（固定幅256px）← Calendar/Settingsのみ表示 */}
         {showSidebar && SidebarComponent && (
           <div className="h-full w-64 shrink-0">
             <SidebarComponent />
