@@ -59,9 +59,7 @@ export const DragSelectionPreview = memo(function DragSelectionPreview({
 
   // 重複時は赤、通常時はPlanCard Draftと同じスタイル（視覚的一貫性）
   const className = cn(
-    isOverlapping
-      ? 'bg-destructive/60'
-      : 'bg-primary-state-selected border border-dashed border-primary',
+    isOverlapping ? 'bg-destructive/60' : 'bg-state-selected border border-dashed border-primary',
     calendarStyles.event.borderRadius,
     calendarStyles.event.shadow.default,
     'pointer-events-none',
