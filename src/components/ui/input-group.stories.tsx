@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/react';
 import { Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
 
@@ -32,8 +32,7 @@ export const AllPatterns: Story = {
             <HoverTooltip content={showPassword ? 'パスワードを隠す' : 'パスワードを表示'}>
               <InputGroupButton
                 variant="ghost"
-                size="sm"
-                icon
+                size="icon-sm"
                 onClick={() => setShowPassword(!showPassword)}
                 aria-label={showPassword ? 'パスワードを隠す' : 'パスワードを表示'}
               >
