@@ -83,7 +83,7 @@ export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
 
       {/* 上部エリア（サイドバー + コンテンツ） */}
       <div className="flex min-h-0 flex-1">
-        {/* Sidebar（256px固定）← Calendar/Settingsのみ表示 */}
+        {/* Sidebar（固定幅240px）← Calendar/Settingsのみ表示 */}
         {showSidebar && SidebarComponent && (
           <div className="h-full w-64 shrink-0">
             <SidebarComponent />
@@ -91,7 +91,7 @@ export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
         )}
 
         {/* PageHeader + Main Content + Inspector */}
-        <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+        <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
           {/* PageHeader（Calendar/Statsは独自ヘッダーを持つため非表示） */}
           {currentPage !== 'calendar' && currentPage !== 'stats' && <PageHeader />}
 

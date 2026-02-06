@@ -17,7 +17,6 @@ import {
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { useAIInspectorStore } from '@/features/ai';
 import { MobileMenuButton } from '@/features/navigation/components/mobile/MobileMenuButton';
-import { NavigationTabs } from '@/features/navigation/components/navigation-tabs';
 import type { PeriodType } from '@/features/stats/stores';
 import { useStatsPeriodStore } from '@/features/stats/stores';
 
@@ -94,23 +93,18 @@ export default function StatsLayout({ children }: StatsLayoutProps) {
           </DropdownMenu>
         </div>
 
-        {/* 右: AIボタン + ナビゲーションタブ */}
-        <div className="flex items-center gap-2">
-          {/* AIアシスタントボタン（PC版のみ） */}
-          <HoverTooltip content={t('aria.openAIAssistant')} side="bottom">
-            <Button
-              onClick={() => openAIInspector()}
-              size="icon"
-              variant="ghost"
-              aria-label={t('aria.openAIAssistant')}
-              className="text-muted-foreground hover:text-foreground hidden shrink-0 md:flex"
-            >
-              <Bot className="size-5" />
-            </Button>
-          </HoverTooltip>
-
-          <NavigationTabs />
-        </div>
+        {/* 右: AIボタン（PC版のみ） */}
+        <HoverTooltip content={t('aria.openAIAssistant')} side="bottom">
+          <Button
+            onClick={() => openAIInspector()}
+            size="icon"
+            variant="ghost"
+            aria-label={t('aria.openAIAssistant')}
+            className="text-muted-foreground hover:text-foreground hidden shrink-0 md:flex"
+          >
+            <Bot className="size-5" />
+          </Button>
+        </HoverTooltip>
       </header>
 
       {/* メインコンテンツ */}
