@@ -4,6 +4,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import '../src/styles/globals.css';
 import { DocsTemplate } from './DocsTemplate';
 import { dayoptLightTheme } from './dayoptTheme';
+import { TRPCMockProvider } from './mocks/trpc';
 import './prose.css';
 
 // Storybook用のメッセージ（必要なものだけ）
@@ -27,7 +28,12 @@ const messages = {
       plan: 'プラン',
       record: '記録',
       stats: '統計',
+      search: '検索',
     },
+    quickCreate: '作成',
+    theme: 'テーマ',
+    closeSidebar: 'サイドバーを閉じる',
+    openSidebar: 'サイドバーを開く',
   },
   common: {
     close: '閉じる',
@@ -71,6 +77,14 @@ const messages = {
   aria: {
     selectColor: '{color}を選択',
   },
+  calendar: {
+    event: {
+      noTitle: '新しい予定',
+      noTimeSet: '時間未設定',
+      reminderSet: 'リマインダー設定あり',
+      adjustEndTime: '終了時間を調整',
+    },
+  },
 };
 
 const preview: Preview = {
@@ -81,7 +95,15 @@ const preview: Preview = {
         date: /Date$/i,
       },
     },
-    backgrounds: { disable: true },
+    backgrounds: {
+      grid: {
+        cellSize: 16,
+        cellAmount: 5,
+        opacity: 0.6,
+        offsetX: 16,
+        offsetY: 16,
+      },
+    },
     options: {
       storySort: {
         method: 'alphabetical',
@@ -140,9 +162,11 @@ const preview: Preview = {
       }
 
       return (
-        <NextIntlClientProvider locale="ja" messages={messages}>
-          <Story />
-        </NextIntlClientProvider>
+        <TRPCMockProvider>
+          <NextIntlClientProvider locale="ja" messages={messages}>
+            <Story />
+          </NextIntlClientProvider>
+        </TRPCMockProvider>
       );
     },
   ],

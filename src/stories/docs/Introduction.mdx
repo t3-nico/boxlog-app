@@ -52,17 +52,33 @@ Tailwindクラス名で統一。そのままコピペ可能。
 | `border-*` | `border-border` |
 | `ring-*` | `ring-ring` |
 
+## 🖥️ Canvas と Docs の役割分離
+
+| タブ | 役割 | 内容 |
+|------|------|------|
+| **Canvas** | コンポーネント描画 | render のみ。テキスト禁止 |
+| **Docs** | ドキュメント | テキスト + テーブル + Controls |
+
+**Canvas** — 純粋なコンポーネント描画だけを置く。`<h1>`, `<h2>`, `<p>` 等の説明文は禁止。
+AllPatterns も同様に、コンポーネントを `flex-col gap-6` で並べるだけ。
+
+**Docs** — テーブルが必要なら MDX（`.docs.mdx`）で作成。不要なら `tags: ['autodocs']` + JSDoc で十分。
+
+公式テンプレート: `Components/AlertDialog`
+
 ## 🛠️ 開発者向け
 
 ### Storyの追加手順
 
-1. `*.stories.tsx` にStoryを作成
-2. `AllVariants` Storyを追加（全パターン一覧）
-3. PRでレビュー → マージ後に使用可能
+1. `*.stories.tsx` を作成（Canvas用）
+2. テーブルが必要なら `*.docs.mdx` を作成（Docs用）
+3. `AllPatterns` Story を追加（全パターン一覧）
+4. PRでレビュー → マージ後に使用可能
 
 ```
-src/components/ui/my-component.tsx        # コンポーネント
-src/components/ui/my-component.stories.tsx # Story
+src/components/ui/my-component.tsx            # コンポーネント
+src/components/ui/my-component.stories.tsx     # Story（Canvas）
+src/components/ui/my-component.docs.mdx        # Docs（テーブルが必要な場合のみ）
 ```
 
 ### 命名規則
@@ -77,34 +93,27 @@ src/components/ui/my-component.stories.tsx # Story
 
 - props追加 → argTypes + 使用例を追加
 - props削除 → argTypes + 該当Storyを削除
-- variant追加 → AllVariantsに追加
+- variant追加 → AllPatternsに追加
 
 ## ✅ チェックリスト
 
 Story作成時に確認：
 
-- [ ] `tags: ['autodocs']` を設定
-- [ ] `argTypes` で主要propsの説明を記載
-- [ ] `AllVariants` Storyを作成
+- [ ] AlertDialog テンプレートの構成に従っている
+- [ ] Canvas にテキストを入れていない
+- [ ] JSDoc は1行で簡潔に記述
+- [ ] `AllPatterns` Storyを作成
 - [ ] アイコンボタンに `aria-label` を設定
 - [ ] セマンティックトークンを使用（`bg-background` 等）
 - [ ] 直接カラーを使っていない（`text-blue-500` 等）
 
 ## ⛔ 避けるべきパターン
 
-**render関数の乱用** — 単純なprops渡しは `args` を使う
+**Canvas にテキスト** — 見出し・説明文は Docs へ。Canvas はコンポーネントのみ。
 
-```tsx
-// ❌
-render: () => <Button variant="primary">Click</Button>
+**Story爆発** — 全組み合わせを個別Storyにしない。`AllPatterns` + Controls で対応。
 
-// ✅
-args: { variant: 'primary', children: 'Click' }
-```
-
-**Story爆発** — 全組み合わせを個別Storyにしない。`AllVariants` + Controls で対応。
-
-**データ依存** — tRPC/Zustand依存コンポーネントは無理にStorybookに入れない。モックコストが高く乖離リスクあり。
+**データ依存** — tRPC/Zustand依存コンポーネントは無理にStorybookに入れない。
 
 詳細: `.claude/skills/storybook/SKILL.md`
 
