@@ -7,7 +7,9 @@ const meta = {
   title: 'Components/ClockTimePicker',
   component: ClockTimePicker,
   tags: ['autodocs'],
-  parameters: {},
+  parameters: {
+    layout: 'fullscreen',
+  },
   argTypes: {
     value: {
       control: 'text',
@@ -51,55 +53,38 @@ const meta = {
 export default meta;
 type Story = StoryObj;
 
-/**
- * 開始時刻（showIcon + clock）。
- * 実使用: ScheduleRow, RecordCreateForm の開始時刻
- */
+/** 開始時刻（showIcon + clock）。実使用: ScheduleRow, RecordCreateForm の開始時刻 */
 export const StartTime: Story = {
   render: () => {
     function Demo() {
       const [value, setValue] = useState('');
-      return (
-        <div className="space-y-2">
-          <ClockTimePicker value={value} onChange={setValue} showIcon />
-          <p className="text-muted-foreground text-xs">値: {value || '(未選択)'}</p>
-        </div>
-      );
+      return <ClockTimePicker value={value} onChange={setValue} showIcon />;
     }
     return <Demo />;
   },
 };
 
-/**
- * 終了時刻（flag + minTime + duration表示）。
- * 実使用: ScheduleRow, RecordCreateForm の終了時刻
- */
+/** 終了時刻（flag + minTime + duration表示）。実使用: ScheduleRow, RecordCreateForm の終了時刻 */
 export const EndTime: Story = {
   render: () => {
     function Demo() {
       const [value, setValue] = useState('');
       return (
-        <div className="space-y-2">
-          <ClockTimePicker
-            value={value}
-            onChange={setValue}
-            showIcon
-            iconType="flag"
-            minTime="09:00"
-            showDurationInMenu
-          />
-          <p className="text-muted-foreground text-xs">値: {value || '(未選択)'}</p>
-        </div>
+        <ClockTimePicker
+          value={value}
+          onChange={setValue}
+          showIcon
+          iconType="flag"
+          minTime="09:00"
+          showDurationInMenu
+        />
       );
     }
     return <Demo />;
   },
 };
 
-/**
- * エラー状態。時刻コンフリクト時のバリデーション表示。
- * 実使用: hasError={timeConflictError}
- */
+/** エラー状態。時刻コンフリクト時のバリデーション表示。実使用: hasError={timeConflictError} */
 export const ErrorState: Story = {
   render: () => {
     function Demo() {
@@ -110,10 +95,7 @@ export const ErrorState: Story = {
   },
 };
 
-/**
- * 無効状態。
- * 実使用: ScheduleRow の disabled
- */
+/** 無効状態。実使用: ScheduleRow の disabled */
 export const Disabled: Story = {
   render: () => {
     function Demo() {
@@ -121,5 +103,34 @@ export const Disabled: Story = {
       return <ClockTimePicker value={value} onChange={setValue} showIcon disabled />;
     }
     return <Demo />;
+  },
+};
+
+/** 全パターン一覧。 */
+export const AllPatterns: Story = {
+  render: () => {
+    function AllPatternsDemo() {
+      const [startValue, setStartValue] = useState('');
+      const [endValue, setEndValue] = useState('');
+      const [errorValue, setErrorValue] = useState('10:00');
+      const [disabledValue, setDisabledValue] = useState('12:00');
+
+      return (
+        <div className="flex flex-col items-start gap-6">
+          <ClockTimePicker value={startValue} onChange={setStartValue} showIcon />
+          <ClockTimePicker
+            value={endValue}
+            onChange={setEndValue}
+            showIcon
+            iconType="flag"
+            minTime="09:00"
+            showDurationInMenu
+          />
+          <ClockTimePicker value={errorValue} onChange={setErrorValue} showIcon hasError />
+          <ClockTimePicker value={disabledValue} onChange={setDisabledValue} showIcon disabled />
+        </div>
+      );
+    }
+    return <AllPatternsDemo />;
   },
 };

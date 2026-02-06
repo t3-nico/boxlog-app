@@ -39,10 +39,7 @@ const meta = {
 export default meta;
 type Story = StoryObj;
 
-/**
- * 削除確認（variant="destructive"）。
- * 実使用: tags-list, PlanDeleteConfirmDialog, CalendarFilterList
- */
+/** 削除確認（variant="destructive"）。実使用: tags-list, PlanDeleteConfirmDialog, CalendarFilterList */
 export const Destructive: Story = {
   render: () => {
     function Demo() {
@@ -68,10 +65,7 @@ export const Destructive: Story = {
   },
 };
 
-/**
- * confirmLabel / loadingLabel 指定 + 非同期処理。
- * 実使用: PlanDeleteConfirmDialog
- */
+/** confirmLabel / loadingLabel 指定 + 非同期処理。実使用: PlanDeleteConfirmDialog */
 export const WithCustomLabels: Story = {
   render: () => {
     function Demo() {
@@ -101,5 +95,51 @@ export const WithCustomLabels: Story = {
       );
     }
     return <Demo />;
+  },
+};
+
+/** 全パターン一覧。 */
+export const AllPatterns: Story = {
+  render: () => {
+    function AllPatternsDemo() {
+      const [open1, setOpen1] = useState(false);
+      const [open2, setOpen2] = useState(false);
+
+      const handleConfirm2 = async () => {
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+        setOpen2(false);
+      };
+
+      return (
+        <div className="flex flex-col items-start gap-6">
+          <Button variant="outline" onClick={() => setOpen1(true)}>
+            削除確認を開く
+          </Button>
+          <ConfirmDialog
+            open={open1}
+            onClose={() => setOpen1(false)}
+            onConfirm={() => setOpen1(false)}
+            title="このアイテムを削除しますか？"
+            description="この操作は取り消せません。アイテムは完全に削除されます。"
+            variant="destructive"
+          />
+
+          <Button variant="outline" onClick={() => setOpen2(true)}>
+            プラン削除
+          </Button>
+          <ConfirmDialog
+            open={open2}
+            onClose={() => setOpen2(false)}
+            onConfirm={handleConfirm2}
+            title="プランを削除しますか？"
+            description="この操作は取り消せません。プランは完全に削除され、カレンダーからも削除されます。"
+            variant="destructive"
+            confirmLabel="削除"
+            loadingLabel="削除中..."
+          />
+        </div>
+      );
+    }
+    return <AllPatternsDemo />;
   },
 };
