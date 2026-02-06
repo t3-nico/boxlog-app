@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/react';
 import { Filter, Info, Search, Settings, SortAsc } from 'lucide-react';
 
 import { Button } from './button';
@@ -25,22 +25,22 @@ export const AllPatterns: Story = {
     <div className="flex flex-col items-start gap-6">
       <div className="flex gap-2">
         <HoverTooltip content="検索" side="top">
-          <Button variant="ghost" icon aria-label="検索">
+          <Button variant="ghost" size="icon" aria-label="検索">
             <Search className="size-5" />
           </Button>
         </HoverTooltip>
         <HoverTooltip content="フィルター" side="top">
-          <Button variant="ghost" icon aria-label="フィルター">
+          <Button variant="ghost" size="icon" aria-label="フィルター">
             <Filter className="size-5" />
           </Button>
         </HoverTooltip>
         <HoverTooltip content="ソート" side="top">
-          <Button variant="ghost" icon aria-label="ソート">
+          <Button variant="ghost" size="icon" aria-label="ソート">
             <SortAsc className="size-5" />
           </Button>
         </HoverTooltip>
         <HoverTooltip content="設定" side="top">
-          <Button variant="ghost" icon aria-label="設定">
+          <Button variant="ghost" size="icon" aria-label="設定">
             <Settings className="size-5" />
           </Button>
         </HoverTooltip>
@@ -48,12 +48,12 @@ export const AllPatterns: Story = {
 
       <div className="flex gap-2">
         <HoverTooltip content="ホーム" side="bottom">
-          <Button variant="ghost" icon aria-label="ホーム">
+          <Button variant="ghost" size="icon" aria-label="ホーム">
             <Info className="size-5" />
           </Button>
         </HoverTooltip>
         <HoverTooltip content="設定" side="bottom">
-          <Button variant="ghost" icon aria-label="設定">
+          <Button variant="ghost" size="icon" aria-label="設定">
             <Settings className="size-5" />
           </Button>
         </HoverTooltip>

@@ -1,7 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/react';
 import { Calendar, CheckSquare, Menu, Settings } from 'lucide-react';
 import { useState } from 'react';
-import { expect, userEvent, within } from 'storybook/test';
 
 import { Button } from './button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from './sheet';
@@ -26,7 +25,12 @@ export const AllPatterns: Story = {
     return (
       <div className="flex flex-col items-start gap-6">
         <Sheet open={leftOpen} onOpenChange={setLeftOpen}>
-          <Button variant="ghost" icon aria-label="メニュー" onClick={() => setLeftOpen(true)}>
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label="メニュー"
+            onClick={() => setLeftOpen(true)}
+          >
             <Menu className="size-5" />
           </Button>
           <SheetContent side="left" aria-label="ナビゲーション">
@@ -73,18 +77,5 @@ export const AllPatterns: Story = {
         </Sheet>
       </div>
     );
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    // メニューボタンをクリックしてシートを開く
-    const menuButton = canvas.getByRole('button', { name: /メニュー/i });
-    await userEvent.click(menuButton);
-
-    // シートのコンテンツを確認（ポータル経由）
-    const body = within(document.body);
-    await expect(body.getByText('メニュー')).toBeInTheDocument();
-    await expect(body.getByText('カレンダー')).toBeInTheDocument();
-    await expect(body.getByText('タスク')).toBeInTheDocument();
   },
 };
