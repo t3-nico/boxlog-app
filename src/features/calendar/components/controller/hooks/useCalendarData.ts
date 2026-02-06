@@ -267,7 +267,12 @@ export function useCalendarData({
 
     // サイドバーのフィルター設定を適用
     // 種別フィルター（Plan/Record）とタグフィルターの両方をチェック
+    // ドラフトは常に表示（フィルター設定に関係なく）
     const visibilityFiltered = filtered.filter((event) => {
+      // ドラフトは常に表示
+      if (event.isDraft) {
+        return true;
+      }
       if (event.type === 'record') {
         return visibleTypes.record;
       }

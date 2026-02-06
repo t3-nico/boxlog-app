@@ -36,8 +36,9 @@ export const ThreeDayView = ({
   disabledPlanId,
   onPlanClick,
   onPlanContextMenu,
-  onCreatePlan,
+  onCreatePlan: _onCreatePlan,
   onUpdatePlan,
+  onTimeRangeSelect,
   onDeletePlan: _onDeletePlan,
   onRestorePlan: _onRestorePlan,
   onEmptyClick,
@@ -170,14 +171,19 @@ export const ThreeDayView = ({
                         }
                       : undefined
                   }
-                  onTimeRangeSelect={(selectedDate, startTime, _endTime) => {
-                    // 時間範囲選択時の処理（必要に応じて実装）
-                    const startDate = new Date(selectedDate);
+                  onTimeRangeSelect={(selectedDate, startTime, endTime) => {
+                    // 時間範囲選択時の処理
                     const [startHour = 0, startMinute = 0] = startTime.split(':').map(Number);
-                    startDate.setHours(startHour, startMinute, 0, 0);
+                    const [endHour = 0, endMinute = 0] = endTime.split(':').map(Number);
 
-                    // onCreatePlanは(date: Date, time?: string)の形式なので、startTimeのみ渡す
-                    onCreatePlan?.(startDate, startTime);
+                    // DateTimeSelection形式で親に伝播
+                    onTimeRangeSelect?.({
+                      date: selectedDate,
+                      startHour,
+                      startMinute,
+                      endHour,
+                      endMinute,
+                    });
                   }}
                   onEmptyAreaContextMenu={onEmptyAreaContextMenu}
                   disabledPlanId={disabledPlanId}

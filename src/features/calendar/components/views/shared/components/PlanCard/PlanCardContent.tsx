@@ -14,6 +14,12 @@ import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
 import { formatTimeRange } from '../../utils/dateHelpers';
 import { TagsContainer } from './TagsContainer';
 
+/** プレビューモード設定（ドラッグ選択時の簡略表示） */
+interface PreviewMode {
+  /** 時間幅テキスト（例: "1時間30分"） */
+  durationText: string;
+}
+
 interface PlanCardContentProps {
   plan: CalendarPlan;
   isCompact?: boolean;
@@ -22,6 +28,8 @@ interface PlanCardContentProps {
   previewTime?: { start: Date; end: Date } | null; // ドラッグ中のプレビュー時間
   hasCheckbox?: boolean; // チェックボックスがある場合は左パディングを追加
   isMobile?: boolean; // モバイル表示（Googleカレンダー風シンプル表示）
+  /** プレビューモード（ドラッグ選択時の簡略表示、タグ・アイコン非表示） */
+  previewMode?: PreviewMode;
 }
 
 // Helper function: Parse plan start date
@@ -48,6 +56,7 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
   previewTime = null,
   hasCheckbox = false,
   isMobile = false,
+  previewMode,
 }) {
   const t = useTranslations();
 
@@ -98,17 +107,34 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
                 ? formatTimeRange(planStart, planEnd, timeFormat)
                 : t('calendar.event.noTimeSet')}
           </span>
-          {/* 繰り返しアイコン */}
-          <RecurringIndicatorFromFlag isRecurring={plan.isRecurring} size="xs" />
-          {/* 通知アイコン（reminder_minutesが設定されている場合） */}
-          {plan.reminder_minutes != null && (
-            <Bell className="h-3 w-3 flex-shrink-0" aria-label={t('calendar.event.reminderSet')} />
+          {/* プレビューモード時はアイコン非表示 */}
+          {!previewMode && (
+            <>
+              {/* 繰り返しアイコン */}
+              <RecurringIndicatorFromFlag isRecurring={plan.isRecurring} size="xs" />
+              {/* 通知アイコン（reminder_minutesが設定されている場合） */}
+              {plan.reminder_minutes != null && (
+                <Bell
+                  className="h-3 w-3 flex-shrink-0"
+                  aria-label={t('calendar.event.reminderSet')}
+                />
+              )}
+            </>
           )}
         </div>
       )}
 
-      {/* タグ表示（横幅いっぱいに表示、入りきらないものは+Nで表示） */}
-      {plan.tagIds && plan.tagIds.length > 0 && <TagsContainer tagIds={plan.tagIds} />}
+      {/* 時間幅表示（プレビューモード時のみ） */}
+      {previewMode && (
+        <div className="text-muted-foreground mt-auto text-xs tabular-nums opacity-60">
+          {previewMode.durationText}
+        </div>
+      )}
+
+      {/* タグ表示（横幅いっぱいに表示、入りきらないものは+Nで表示、プレビューモード時は非表示） */}
+      {!previewMode && plan.tagIds && plan.tagIds.length > 0 && (
+        <TagsContainer tagIds={plan.tagIds} />
+      )}
     </div>
   );
 });
