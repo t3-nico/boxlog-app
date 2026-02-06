@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/react';
 import { Flame, MoreHorizontal, Trophy } from 'lucide-react';
 
 import { Button } from './button';
@@ -85,7 +85,7 @@ export const AllPatterns: Story = {
           <CardTitle>プロジェクト名</CardTitle>
           <CardDescription>2024年1月開始</CardDescription>
           <CardAction>
-            <Button variant="ghost" icon aria-label="メニュー">
+            <Button variant="ghost" size="icon" aria-label="メニュー">
               <MoreHorizontal className="size-4" />
             </Button>
           </CardAction>

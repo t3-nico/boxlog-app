@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/react';
 import { Circle } from 'lucide-react';
 import { useState } from 'react';
 
@@ -44,7 +44,7 @@ export const AllPatterns: Story = {
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" icon>
+              <Button variant="outline" size="icon">
                 <Circle className="size-4" fill={color2} strokeWidth={0} />
               </Button>
             </DropdownMenuTrigger>
