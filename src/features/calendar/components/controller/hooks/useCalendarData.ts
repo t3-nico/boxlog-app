@@ -119,8 +119,7 @@ export function useCalendarData({
   const isPlanVisible = useCalendarFilterStore((state) => state.isPlanVisible);
   const isTypeVisible = useCalendarFilterStore((state) => state.isTypeVisible);
 
-  // ドラフトプランを取得（コピー＆ペースト時のプレビュー表示用）
-  // タイトルがある場合のみ表示（ドラッグ選択時はタイトルが空なのでDragSelectionPreviewが担当）
+  // ドラフトプランを取得（新規作成・コピー＆ペースト時のプレビュー表示用）
   const draftPlan = usePlanInspectorStore((state) => state.draftPlan);
 
   // 繰り返しプランのIDを抽出
@@ -194,14 +193,14 @@ export function useCalendarData({
     }
 
     // ドラフトプランをプレビューとして追加
-    // タイトルがある場合のみ表示（ペースト時など）
-    // ドラッグ選択時はタイトルが空なので、DragSelectionPreviewが担当
-    if (draftPlan?.start_time && draftPlan?.end_time && draftPlan?.title) {
+    // 時間がある場合は表示（新規作成時やペースト時）
+    // タイトルがない場合は「新しい予定」と表示
+    if (draftPlan?.start_time && draftPlan?.end_time) {
       const startDate = new Date(draftPlan.start_time);
       const endDate = new Date(draftPlan.end_time);
       const draftCalendarPlan: CalendarPlan = {
         id: '__draft__',
-        title: draftPlan.title,
+        title: draftPlan.title || '新しい予定',
         description: draftPlan.description ?? undefined,
         startDate,
         endDate,
