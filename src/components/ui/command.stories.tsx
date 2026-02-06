@@ -19,7 +19,9 @@ const meta = {
   title: 'Components/Command',
   component: Command,
   tags: ['autodocs'],
-  parameters: {},
+  parameters: {
+    layout: 'fullscreen',
+  },
 } satisfies Meta<typeof Command>;
 
 export default meta;
@@ -27,7 +29,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   render: () => (
-    <div style={{ width: '384px', minWidth: '384px', flexShrink: 0 }}>
+    <div className="w-96">
       <Command className="rounded-lg border shadow-md">
         <CommandInput placeholder="検索..." />
         <CommandList>
@@ -108,7 +110,7 @@ export const Dialog: Story = {
 
 export const WithShortcuts: Story = {
   render: () => (
-    <div style={{ width: '384px', minWidth: '384px', flexShrink: 0 }}>
+    <div className="w-96">
       <Command className="rounded-lg border shadow-md">
         <CommandInput placeholder="検索..." />
         <CommandList>
@@ -141,78 +143,56 @@ export const AllPatterns: Story = {
   render: function AllPatternsStory() {
     const [dialogOpen, setDialogOpen] = useState(false);
     return (
-      <div>
-        <h1 className="mb-8 text-2xl font-bold">Command - 全バリエーション</h1>
-
-        <div className="space-y-8">
-          <section>
-            <h2 className="mb-4 text-lg font-bold">インライン</h2>
-            <div style={{ width: '384px', minWidth: '384px', flexShrink: 0 }}>
-              <Command className="rounded-lg border shadow-md">
-                <CommandInput placeholder="検索..." />
-                <CommandList>
-                  <CommandEmpty>結果がありません。</CommandEmpty>
-                  <CommandGroup heading="アプリ">
-                    <CommandItem>
-                      <Calendar className="mr-2" />
-                      <span>カレンダー</span>
-                    </CommandItem>
-                    <CommandItem>
-                      <Settings className="mr-2" />
-                      <span>設定</span>
-                    </CommandItem>
-                  </CommandGroup>
-                </CommandList>
-              </Command>
-            </div>
-          </section>
-
-          <section>
-            <h2 className="mb-4 text-lg font-bold">ダイアログ</h2>
-            <Button variant="outline" onClick={() => setDialogOpen(true)}>
-              ⌘K でコマンドパレットを開く
-            </Button>
-            <CommandDialog open={dialogOpen} onOpenChange={setDialogOpen}>
-              <CommandInput placeholder="コマンドを検索..." />
-              <CommandList>
-                <CommandEmpty>結果がありません。</CommandEmpty>
-                <CommandGroup heading="アクション">
-                  <CommandItem onSelect={() => setDialogOpen(false)}>
-                    <Calendar className="mr-2" />
-                    <span>新しいイベント</span>
-                    <CommandShortcut>⌘E</CommandShortcut>
-                  </CommandItem>
-                  <CommandItem onSelect={() => setDialogOpen(false)}>
-                    <User className="mr-2" />
-                    <span>プロフィール</span>
-                    <CommandShortcut>⌘P</CommandShortcut>
-                  </CommandItem>
-                </CommandGroup>
-                <CommandSeparator />
-                <CommandGroup heading="設定">
-                  <CommandItem onSelect={() => setDialogOpen(false)}>
-                    <Settings className="mr-2" />
-                    <span>設定を開く</span>
-                    <CommandShortcut>⌘,</CommandShortcut>
-                  </CommandItem>
-                </CommandGroup>
-              </CommandList>
-            </CommandDialog>
-          </section>
-
-          <section>
-            <h2 className="mb-4 text-lg font-bold">使用場面</h2>
-            <ul className="text-muted-foreground list-inside list-disc text-sm">
-              <li>コマンドパレット（⌘K）</li>
-              <li>検索可能なセレクター</li>
-              <li>アクションメニュー</li>
-            </ul>
-          </section>
+      <div className="flex flex-col items-start gap-6">
+        <div className="w-96">
+          <Command className="rounded-lg border shadow-md">
+            <CommandInput placeholder="検索..." />
+            <CommandList>
+              <CommandEmpty>結果がありません。</CommandEmpty>
+              <CommandGroup heading="アプリ">
+                <CommandItem>
+                  <Calendar className="mr-2" />
+                  <span>カレンダー</span>
+                </CommandItem>
+                <CommandItem>
+                  <Settings className="mr-2" />
+                  <span>設定</span>
+                </CommandItem>
+              </CommandGroup>
+            </CommandList>
+          </Command>
         </div>
+
+        <Button variant="outline" onClick={() => setDialogOpen(true)}>
+          ⌘K でコマンドパレットを開く
+        </Button>
+        <CommandDialog open={dialogOpen} onOpenChange={setDialogOpen}>
+          <CommandInput placeholder="コマンドを検索..." />
+          <CommandList>
+            <CommandEmpty>結果がありません。</CommandEmpty>
+            <CommandGroup heading="アクション">
+              <CommandItem onSelect={() => setDialogOpen(false)}>
+                <Calendar className="mr-2" />
+                <span>新しいイベント</span>
+                <CommandShortcut>⌘E</CommandShortcut>
+              </CommandItem>
+              <CommandItem onSelect={() => setDialogOpen(false)}>
+                <User className="mr-2" />
+                <span>プロフィール</span>
+                <CommandShortcut>⌘P</CommandShortcut>
+              </CommandItem>
+            </CommandGroup>
+            <CommandSeparator />
+            <CommandGroup heading="設定">
+              <CommandItem onSelect={() => setDialogOpen(false)}>
+                <Settings className="mr-2" />
+                <span>設定を開く</span>
+                <CommandShortcut>⌘,</CommandShortcut>
+              </CommandItem>
+            </CommandGroup>
+          </CommandList>
+        </CommandDialog>
       </div>
     );
-  },
-  parameters: {
-    layout: 'fullscreen',
   },
 };

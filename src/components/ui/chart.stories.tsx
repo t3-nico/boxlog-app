@@ -98,140 +98,55 @@ export const AllPatterns: Story = {
     } satisfies ChartConfig;
 
     return (
-      <div>
-        <h1 className="mb-2 text-2xl font-bold">Chart</h1>
-        <p className="text-muted-foreground mb-8">
-          Recharts + shadcn/uiラッパー。統計画面で使用。ChartConfigでカラー管理。
-        </p>
-
-        <div className="grid max-w-5xl gap-8">
-          <div>
-            <h2 className="mb-2 text-lg font-bold">BarChart（横棒グラフ）</h2>
-            <p className="text-muted-foreground mb-4 text-sm">
-              カテゴリ比較。TagTimeChartで使用。Comparison系カラー。
-            </p>
-            <ChartContainer config={barChartConfig} className="h-64 w-full">
-              <BarChart data={barData} layout="vertical">
-                <CartesianGrid horizontal={false} />
-                <XAxis type="number" />
-                <YAxis dataKey="month" type="category" tickLine={false} axisLine={false} />
-                <ChartTooltip content={<ChartTooltipContent />} />
-                <ChartLegend content={<ChartLegendContent />} />
-                <Bar dataKey="desktop" fill="var(--color-desktop)" radius={4} />
-                <Bar dataKey="mobile" fill="var(--color-mobile)" radius={4} />
-              </BarChart>
-            </ChartContainer>
-          </div>
-
-          <div>
-            <h2 className="mb-2 text-lg font-bold">AreaChart（エリアチャート）</h2>
-            <p className="text-muted-foreground mb-4 text-sm">
-              時系列推移。MonthlyTrendChartで使用。Semantic系カラー。
-            </p>
-            <ChartContainer config={areaChartConfig} className="h-64 w-full">
-              <AreaChart data={areaData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" tickLine={false} axisLine={false} />
-                <YAxis tickLine={false} axisLine={false} />
-                <ChartTooltip content={<ChartTooltipContent />} />
-                <ChartLegend content={<ChartLegendContent />} />
-                <Area
-                  type="monotone"
-                  dataKey="plan"
-                  stroke="var(--color-plan)"
-                  fill="var(--color-plan)"
-                  fillOpacity={0.3}
-                />
-                <Area
-                  type="monotone"
-                  dataKey="record"
-                  stroke="var(--color-record)"
-                  fill="var(--color-record)"
-                  fillOpacity={0.3}
-                />
-              </AreaChart>
-            </ChartContainer>
-          </div>
-
-          <div>
-            <h2 className="mb-2 text-lg font-bold">PieChart（ドーナツ）</h2>
-            <p className="text-muted-foreground mb-4 text-sm">
-              割合表示。TagDistributionで使用。innerRadiusでドーナツ化。
-            </p>
-            <ChartContainer config={pieChartConfig} className="mx-auto h-64 w-64">
-              <PieChart>
-                <ChartTooltip content={<ChartTooltipContent hideLabel />} />
-                <Pie
-                  data={pieData}
-                  dataKey="value"
-                  nameKey="name"
-                  innerRadius={60}
-                  outerRadius={80}
-                  paddingAngle={2}
-                />
-                <ChartLegend content={<ChartLegendContent nameKey="name" />} />
-              </PieChart>
-            </ChartContainer>
-          </div>
-
-          <div>
-            <h2 className="mb-4 text-lg font-bold">カラーシステム</h2>
-            <div className="bg-surface-container rounded-lg p-4">
-              <h3 className="text-foreground mb-2 font-bold">Comparison（比較用、shadcn準拠）</h3>
-              <div className="mb-4 flex gap-4">
-                {['chart-1', 'chart-2', 'chart-3', 'chart-4', 'chart-5'].map((name) => (
-                  <div key={name} className="flex flex-col items-center gap-1">
-                    <div className="size-8 rounded" style={{ backgroundColor: `var(--${name})` }} />
-                    <span className="text-muted-foreground text-xs">{name}</span>
-                  </div>
-                ))}
-              </div>
-
-              <h3 className="text-foreground mb-2 font-bold">Semantic（意味ベース）</h3>
-              <div className="flex gap-4">
-                {[
-                  { name: 'primary', var: '--color-chart-primary' },
-                  { name: 'success', var: '--color-chart-success' },
-                  { name: 'warning', var: '--color-chart-warning' },
-                  { name: 'destructive', var: '--color-chart-destructive' },
-                ].map((item) => (
-                  <div key={item.name} className="flex flex-col items-center gap-1">
-                    <div
-                      className="size-8 rounded"
-                      style={{ backgroundColor: `var(${item.var})` }}
-                    />
-                    <span className="text-muted-foreground text-xs">{item.name}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <h2 className="mb-4 text-lg font-bold">コンポーネント構成</h2>
-            <div className="bg-surface-container rounded-lg p-4">
-              <ul className="text-muted-foreground list-inside list-disc space-y-1 text-sm">
-                <li>ChartContainer - ルートコンテナ（ChartConfig提供、CSS変数注入）</li>
-                <li>ChartTooltip - ツールチップ（Recharts Tooltip）</li>
-                <li>ChartTooltipContent - ツールチップコンテンツ（カスタムスタイル）</li>
-                <li>ChartLegend - 凡例（Recharts Legend）</li>
-                <li>ChartLegendContent - 凡例コンテンツ（カスタムスタイル）</li>
-                <li>ChartConfig - カラー・ラベル定義（satisfiesで型安全）</li>
-              </ul>
-            </div>
-          </div>
-
-          <div>
-            <h2 className="mb-4 text-lg font-bold">使用箇所</h2>
-            <ul className="text-muted-foreground list-inside list-disc space-y-1 text-sm">
-              <li>TagTimeChart - タグ別時間の横棒グラフ</li>
-              <li>MonthlyTrendChart - 月別推移のエリアチャート</li>
-              <li>DayOfWeekChart - 曜日別のバーチャート</li>
-              <li>HourlyDistributionChart - 時間帯別の分布</li>
-              <li>PieChartDonut - カテゴリ割合のドーナツ</li>
-            </ul>
-          </div>
-        </div>
+      <div className="flex flex-col gap-6">
+        <ChartContainer config={barChartConfig} className="h-64 w-full">
+          <BarChart data={barData} layout="vertical">
+            <CartesianGrid horizontal={false} />
+            <XAxis type="number" />
+            <YAxis dataKey="month" type="category" tickLine={false} axisLine={false} />
+            <ChartTooltip content={<ChartTooltipContent />} />
+            <ChartLegend content={<ChartLegendContent />} />
+            <Bar dataKey="desktop" fill="var(--color-desktop)" radius={4} />
+            <Bar dataKey="mobile" fill="var(--color-mobile)" radius={4} />
+          </BarChart>
+        </ChartContainer>
+        <ChartContainer config={areaChartConfig} className="h-64 w-full">
+          <AreaChart data={areaData}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="date" tickLine={false} axisLine={false} />
+            <YAxis tickLine={false} axisLine={false} />
+            <ChartTooltip content={<ChartTooltipContent />} />
+            <ChartLegend content={<ChartLegendContent />} />
+            <Area
+              type="monotone"
+              dataKey="plan"
+              stroke="var(--color-plan)"
+              fill="var(--color-plan)"
+              fillOpacity={0.3}
+            />
+            <Area
+              type="monotone"
+              dataKey="record"
+              stroke="var(--color-record)"
+              fill="var(--color-record)"
+              fillOpacity={0.3}
+            />
+          </AreaChart>
+        </ChartContainer>
+        <ChartContainer config={pieChartConfig} className="mx-auto h-64 w-64">
+          <PieChart>
+            <ChartTooltip content={<ChartTooltipContent hideLabel />} />
+            <Pie
+              data={pieData}
+              dataKey="value"
+              nameKey="name"
+              innerRadius={60}
+              outerRadius={80}
+              paddingAngle={2}
+            />
+            <ChartLegend content={<ChartLegendContent nameKey="name" />} />
+          </PieChart>
+        </ChartContainer>
       </div>
     );
   },
