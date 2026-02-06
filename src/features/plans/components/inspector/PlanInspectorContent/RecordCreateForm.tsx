@@ -68,6 +68,7 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
     const utils = api.useUtils();
     const draftPlan = usePlanInspectorStore((state) => state.draftPlan);
     const closeInspector = usePlanInspectorStore((state) => state.closeInspector);
+    const updateDraft = usePlanInspectorStore((state) => state.updateDraft);
 
     // 時間重複エラー状態（視覚的フィードバック用）
     const [timeConflictError, setTimeConflictError] = useState(false);
@@ -213,21 +214,64 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
       }
     }, []);
 
-    const handleDateChange = useCallback((date: Date | undefined) => {
-      setFormData((prev) => ({ ...prev, worked_at: date }));
+    // 時間をISO文字列に変換するヘルパー
+    const buildIsoTime = useCallback((date: Date, time: string): string | null => {
+      if (!time) return null;
+      const [h, m] = time.split(':').map(Number);
+      const result = new Date(date);
+      result.setHours(h ?? 0, m ?? 0, 0, 0);
+      return result.toISOString();
     }, []);
 
-    const handleStartTimeChange = useCallback((time: string) => {
-      // 時間変更時にエラーをクリア
-      setTimeConflictError(false);
-      setFormData((prev) => ({ ...prev, start_time: time }));
-    }, []);
+    const handleDateChange = useCallback(
+      (date: Date | undefined) => {
+        setFormData((prev) => {
+          const newData = { ...prev, worked_at: date };
+          // draftPlanも更新（カレンダープレビュー用）
+          if (date) {
+            updateDraft({
+              due_date: date.toISOString().split('T')[0] ?? null,
+              start_time: buildIsoTime(date, prev.start_time),
+              end_time: buildIsoTime(date, prev.end_time),
+            });
+          }
+          return newData;
+        });
+      },
+      [updateDraft, buildIsoTime],
+    );
 
-    const handleEndTimeChange = useCallback((time: string) => {
-      // 時間変更時にエラーをクリア
-      setTimeConflictError(false);
-      setFormData((prev) => ({ ...prev, end_time: time }));
-    }, []);
+    const handleStartTimeChange = useCallback(
+      (time: string) => {
+        // 時間変更時にエラーをクリア
+        setTimeConflictError(false);
+        setFormData((prev) => {
+          const newData = { ...prev, start_time: time };
+          // draftPlanも更新（カレンダープレビュー用）
+          if (prev.worked_at) {
+            updateDraft({ start_time: buildIsoTime(prev.worked_at, time) });
+          }
+          return newData;
+        });
+      },
+      [updateDraft, buildIsoTime],
+    );
+
+    const handleEndTimeChange = useCallback(
+      (time: string) => {
+        // 時間変更時にエラーをクリア
+        setTimeConflictError(false);
+        setFormData((prev) => {
+          const newData = { ...prev, end_time: time };
+          // draftPlanも更新（カレンダープレビュー用）
+          if (prev.worked_at) {
+            updateDraft({ end_time: buildIsoTime(prev.worked_at, time) });
+          }
+          return newData;
+        });
+      },
+      [updateDraft, buildIsoTime],
+    );
 
     const handleScoreChange = useCallback((value: number | null) => {
       setFormData((prev) => ({
