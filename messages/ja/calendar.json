@@ -88,6 +88,7 @@
       "enterEventTitle": "イベントタイトルを入力",
       "reminderSet": "リマインダー設定済み",
       "noTitle": "(タイトルなし)",
+      "allDay": "終日",
       "markComplete": "完了にする",
       "markIncomplete": "未完了に戻す"
     },
@@ -228,8 +229,9 @@
       "overdueBy": "{time}超過"
     },
     "agenda": {
-      "emptyTitle": "今後14日間に予定はありません",
-      "emptyDescription": "カレンダーで新しい予定を作成してください"
+      "emptyTitle": "今後の予定はありません",
+      "emptyDescription": "カレンダーで新しい予定を作成してください",
+      "noItems": "予定なし"
     },
     "collapsedSection": {
       "expandLabel": "{timeRange} を展開"

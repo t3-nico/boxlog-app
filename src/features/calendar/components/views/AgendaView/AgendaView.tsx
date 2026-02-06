@@ -1,27 +1,28 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 
-import { addDays, isSameDay, startOfDay } from '@/lib/date';
 import { CalendarDays } from 'lucide-react';
-
-import { cn } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
 
 import { EmptyState } from '@/components/ui/empty-state';
+import { startOfDay } from '@/lib/date';
+import { cn } from '@/lib/utils';
 
 import { CalendarViewAnimation } from '../../animations/ViewTransition';
 
 import type { AgendaViewProps } from './AgendaView.types';
-import { AgendaListItem } from './components/AgendaListItem';
-
-/** アジェンダビューで表示する日数 */
-const AGENDA_DAYS = 14;
+import { AgendaDayGroup } from './components/AgendaDayGroup';
 
 /**
- * AgendaView - スケジュール済みプランをフラットなリストで表示
+ * AgendaView - スケジュール済みプランを日別グループで表示
  *
- * **レイアウト**: 日付 | 時間 | タイトル# | タグ
+ * **レイアウト**: 日付ヘッダー → その日のアイテムリスト
+ *
+ * Google Calendar方式の無限スクロールを実現:
+ * - データは親コンポーネントから渡される（useCalendarDataで取得）
+ * - 日付範囲は親で制御（calculateViewDateRangeでagenda用に60日）
+ * - 空の日は非表示（予定がある日のみ表示）
  */
 export function AgendaView({
   plans,
@@ -31,50 +32,78 @@ export function AgendaView({
   onPlanContextMenu,
 }: AgendaViewProps) {
   const t = useTranslations('calendar.agenda');
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  // 表示範囲の計算（currentDateから14日間）
-  const dateRange = useMemo(() => {
-    const start = startOfDay(currentDate);
-    const dates: Date[] = [];
-    for (let i = 0; i < AGENDA_DAYS; i++) {
-      dates.push(addDays(start, i));
-    }
-    return dates;
-  }, [currentDate]);
+  // プランを日付ごとにグループ化
+  const plansByDate = useMemo(() => {
+    const grouped = new Map<string, typeof plans>();
 
-  // プランをフラットなリストに変換し、時系列でソート
-  const sortedPlans = useMemo(() => {
-    const plansInRange = (plans ?? []).filter((plan) => {
-      if (!plan.startDate) return false;
+    // プランを日付で振り分け
+    for (const plan of plans ?? []) {
+      if (!plan.startDate) continue;
       const planDate = startOfDay(plan.startDate);
-      return dateRange.some((d) => isSameDay(d, planDate));
-    });
+      const key = planDate.toISOString();
 
-    // 日時順でソート
-    return plansInRange.sort((a, b) => {
-      const aTime = a.startDate?.getTime() ?? 0;
-      const bTime = b.startDate?.getTime() ?? 0;
-      return aTime - bTime;
-    });
-  }, [plans, dateRange]);
+      if (!grouped.has(key)) {
+        grouped.set(key, []);
+      }
+      grouped.get(key)!.push(plan);
+    }
 
-  const hasAnyPlans = sortedPlans.length > 0;
+    // 各日付のプランを時間順でソート
+    for (const [key, dayPlans] of grouped) {
+      grouped.set(
+        key,
+        dayPlans.sort((a, b) => {
+          const aTime = a.startDate?.getTime() ?? 0;
+          const bTime = b.startDate?.getTime() ?? 0;
+          return aTime - bTime;
+        }),
+      );
+    }
+
+    return grouped;
+  }, [plans]);
+
+  // 表示する日付リスト（プランがある日のみ、日付順）
+  const visibleDates = useMemo(() => {
+    const dates = Array.from(plansByDate.keys())
+      .map((key) => new Date(key))
+      .sort((a, b) => a.getTime() - b.getTime());
+
+    // currentDate以降の日付のみ表示
+    const today = startOfDay(currentDate);
+    return dates.filter((date) => date >= today);
+  }, [plansByDate, currentDate]);
+
+  const hasAnyPlans = visibleDates.length > 0;
+
+  // スクロールコンテナへの参照を設定するコールバック
+  const setScrollRef = useCallback((node: HTMLDivElement | null) => {
+    if (node) {
+      (scrollContainerRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
+    }
+  }, []);
 
   return (
     <CalendarViewAnimation viewType="agenda">
       <div className={cn('bg-background flex min-h-0 flex-1 flex-col', className)}>
         {/* スクロール可能なコンテンツ */}
-        <div className="flex-1 overflow-y-auto">
+        <div ref={setScrollRef} className="flex-1 overflow-y-auto">
           {hasAnyPlans ? (
-            <div className="divide-border divide-y">
-              {sortedPlans.map((plan) => (
-                <AgendaListItem
-                  key={plan.id}
-                  plan={plan}
-                  onClick={onPlanClick}
-                  onContextMenu={onPlanContextMenu}
-                />
-              ))}
+            <div>
+              {visibleDates.map((date) => {
+                const dayPlans = plansByDate.get(date.toISOString()) ?? [];
+                return (
+                  <AgendaDayGroup
+                    key={date.toISOString()}
+                    date={date}
+                    plans={dayPlans}
+                    onPlanClick={onPlanClick}
+                    onPlanContextMenu={onPlanContextMenu}
+                  />
+                );
+              })}
             </div>
           ) : (
             <EmptyState
