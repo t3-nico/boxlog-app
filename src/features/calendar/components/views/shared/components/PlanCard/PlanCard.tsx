@@ -186,7 +186,7 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2',
     // 背景色
     isDraft
-      ? 'bg-primary/20'
+      ? 'bg-primary-state-selected'
       : isSelected || isActive
         ? 'bg-state-hover'
         : isRecord
@@ -199,7 +199,7 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
     isSelected && 'ring-2 ring-primary',
     // Draft は点線ボーダー（未保存を示す）、Record は左ボーダー（Google Calendar風）
     isDraft
-      ? 'border border-dashed border-primary/60'
+      ? 'border border-dashed border-primary'
       : isRecord && 'border-l-[3px] border-record-border',
     // テキスト色
     'text-foreground',
