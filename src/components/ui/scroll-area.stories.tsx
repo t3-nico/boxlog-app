@@ -3,37 +3,14 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { ScrollArea, ScrollBar } from './scroll-area';
 import { Separator } from './separator';
 
-/**
- * ScrollArea - カスタムスクロールエリア
- *
- * ## 使用コンポーネント
- *
- * | コンポーネント | 用途 |
- * |----------------|------|
- * | ScrollArea | スクロール可能な領域（垂直スクロールバー自動） |
- * | ScrollBar | 追加のスクロールバー（水平方向が必要な場合） |
- *
- * ## 使い分け
- *
- * | パターン | 実装 | ユースケース |
- * |----------|------|--------------|
- * | 垂直のみ | ScrollArea のみ | リスト、ドロップダウン内容 |
- * | 水平のみ | ScrollArea + ScrollBar horizontal | カルーセル、タブ |
- * | 両方向 | ScrollArea + ScrollBar horizontal | テーブル、グリッド |
- *
- * ## ScrollArea vs overflow-auto
- *
- * | 観点 | ScrollArea | overflow-auto |
- * |------|------------|---------------|
- * | 見た目 | カスタムスクロールバー | OS標準 |
- * | ホバー表示 | 対応（type="hover"） | 不可 |
- * | 推奨 | ドロップダウン、モーダル内 | 全画面レイアウト |
- */
+/** ScrollArea - カスタムスクロールエリア */
 const meta = {
   title: 'Components/ScrollArea',
   component: ScrollArea,
   tags: ['autodocs'],
-  parameters: {},
+  parameters: {
+    layout: 'fullscreen',
+  },
 } satisfies Meta<typeof ScrollArea>;
 
 export default meta;
@@ -118,53 +95,30 @@ export const InCard: Story = {
 
 export const AllPatterns: Story = {
   render: () => (
-    <div>
-      <h1 className="mb-8 text-2xl font-bold">ScrollArea - 全バリエーション</h1>
-
-      <div className="space-y-8">
-        <section>
-          <h2 className="mb-4 text-lg font-bold">垂直スクロール</h2>
-          <ScrollArea className="border-border h-48 w-64 rounded-lg border">
-            <div className="p-4">
-              {Array.from({ length: 20 }).map((_, i) => (
-                <div key={i} className="py-2 text-sm">
-                  アイテム {i + 1}
-                </div>
-              ))}
+    <div className="flex flex-col items-start gap-6">
+      <ScrollArea className="border-border h-48 w-64 rounded-lg border">
+        <div className="p-4">
+          {Array.from({ length: 20 }).map((_, i) => (
+            <div key={i} className="py-2 text-sm">
+              アイテム {i + 1}
             </div>
-          </ScrollArea>
-        </section>
+          ))}
+        </div>
+      </ScrollArea>
 
-        <section>
-          <h2 className="mb-4 text-lg font-bold">水平スクロール</h2>
-          <ScrollArea className="border-border w-80 rounded-lg border">
-            <div className="flex gap-4 p-4">
-              {Array.from({ length: 10 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="bg-container flex h-24 w-24 shrink-0 items-center justify-center rounded-lg"
-                >
-                  {i + 1}
-                </div>
-              ))}
+      <ScrollArea className="border-border w-80 rounded-lg border">
+        <div className="flex gap-4 p-4">
+          {Array.from({ length: 10 }).map((_, i) => (
+            <div
+              key={i}
+              className="bg-container flex h-24 w-24 shrink-0 items-center justify-center rounded-lg"
+            >
+              {i + 1}
             </div>
-            <ScrollBar orientation="horizontal" />
-          </ScrollArea>
-        </section>
-
-        <section>
-          <h2 className="mb-4 text-lg font-bold">特徴</h2>
-          <ul className="text-muted-foreground list-inside list-disc text-sm">
-            <li>ホバー時にスクロールバーを表示</li>
-            <li>ネイティブスクロールのパフォーマンス</li>
-            <li>カスタマイズ可能なスクロールバー</li>
-            <li>水平・垂直・両方向に対応</li>
-          </ul>
-        </section>
-      </div>
+          ))}
+        </div>
+        <ScrollBar orientation="horizontal" />
+      </ScrollArea>
     </div>
   ),
-  parameters: {
-    layout: 'fullscreen',
-  },
 };

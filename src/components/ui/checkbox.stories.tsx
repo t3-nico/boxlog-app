@@ -8,7 +8,7 @@ const meta = {
   title: 'Components/Checkbox',
   component: Checkbox,
   tags: ['autodocs'],
-  parameters: {},
+  parameters: { layout: 'fullscreen' },
   argTypes: {
     checked: {
       control: 'boolean',
@@ -92,65 +92,49 @@ export const AllPatterns: Story = {
     const tagColor = '#10b981';
 
     return (
-      <div>
-        <h1 className="mb-8 text-2xl font-bold">Checkbox - 実際の使用パターン</h1>
+      <div className="flex flex-col items-start gap-6">
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center gap-2">
+            <Checkbox
+              id="cb1"
+              checked={checked1}
+              onCheckedChange={(c) => setChecked1(c === true)}
+            />
+            <Label htmlFor="cb1">未チェック</Label>
+          </div>
+          <div className="flex items-center gap-2">
+            <Checkbox
+              id="cb2"
+              checked={checked2}
+              onCheckedChange={(c) => setChecked2(c === true)}
+            />
+            <Label htmlFor="cb2">チェック済み</Label>
+          </div>
+          <div className="flex items-center gap-2">
+            <Checkbox id="cb-indeterminate" checked="indeterminate" />
+            <Label htmlFor="cb-indeterminate">一部選択（indeterminate）</Label>
+          </div>
+          <div className="flex items-center gap-2">
+            <Checkbox id="cb3" disabled />
+            <Label htmlFor="cb3" className="text-muted-foreground">
+              無効
+            </Label>
+          </div>
+        </div>
 
-        <div className="space-y-8">
-          <section>
-            <h2 className="mb-4 text-lg font-bold">基本</h2>
-            <div className="flex flex-col gap-4">
-              <div className="flex items-center gap-2">
-                <Checkbox
-                  id="cb1"
-                  checked={checked1}
-                  onCheckedChange={(c) => setChecked1(c === true)}
-                />
-                <Label htmlFor="cb1">未チェック</Label>
-              </div>
-              <div className="flex items-center gap-2">
-                <Checkbox
-                  id="cb2"
-                  checked={checked2}
-                  onCheckedChange={(c) => setChecked2(c === true)}
-                />
-                <Label htmlFor="cb2">チェック済み</Label>
-              </div>
-              <div className="flex items-center gap-2">
-                <Checkbox id="cb-indeterminate" checked="indeterminate" />
-                <Label htmlFor="cb-indeterminate">一部選択（indeterminate）</Label>
-              </div>
-              <div className="flex items-center gap-2">
-                <Checkbox id="cb3" disabled />
-                <Label htmlFor="cb3" className="text-muted-foreground">
-                  無効
-                </Label>
-              </div>
-            </div>
-          </section>
-
-          <section>
-            <h2 className="mb-4 text-lg font-bold">タグフィルター（カスタムカラー）</h2>
-            <p className="text-muted-foreground mb-4 text-sm">
-              タグの色に合わせてborderColor/backgroundColorをstyleで指定
-            </p>
-            <div className="flex items-center gap-2">
-              <Checkbox
-                id="tag"
-                checked={checked2}
-                onCheckedChange={(c) => setChecked2(c === true)}
-                style={{
-                  borderColor: tagColor,
-                  backgroundColor: checked2 ? tagColor : 'transparent',
-                }}
-              />
-              <Label htmlFor="tag">仕事</Label>
-            </div>
-          </section>
+        <div className="flex items-center gap-2">
+          <Checkbox
+            id="tag"
+            checked={checked2}
+            onCheckedChange={(c) => setChecked2(c === true)}
+            style={{
+              borderColor: tagColor,
+              backgroundColor: checked2 ? tagColor : 'transparent',
+            }}
+          />
+          <Label htmlFor="tag">仕事</Label>
         </div>
       </div>
     );
-  },
-  parameters: {
-    layout: 'fullscreen',
   },
 };
