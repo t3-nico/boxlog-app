@@ -18,7 +18,7 @@ const meta = {
   component: Dialog,
   tags: ['autodocs'],
   parameters: {
-    layout: 'fullscreen', // モーダル系はfullscreenでないとオーバーレイが正しく表示されない
+    layout: 'fullscreen',
   },
 } satisfies Meta<typeof Dialog>;
 
@@ -117,63 +117,44 @@ export const CustomWidth: Story = {
 
 export const AllPatterns: Story = {
   render: () => (
-    <div>
-      <h1 className="mb-8 text-2xl font-bold">Dialog - 全バリエーション</h1>
+    <div className="flex flex-col items-start gap-6">
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button variant="outline">基本のダイアログ</Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>タイトル</DialogTitle>
+            <DialogDescription>説明テキスト</DialogDescription>
+          </DialogHeader>
+          <div className="py-4">コンテンツ</div>
+          <DialogFooter>
+            <Button>確認</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
-      <div className="space-y-8">
-        <section>
-          <h2 className="mb-4 text-lg font-bold">基本</h2>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button variant="outline">基本のダイアログ</Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>タイトル</DialogTitle>
-                <DialogDescription>説明テキスト</DialogDescription>
-              </DialogHeader>
-              <div className="py-4">コンテンツ</div>
-              <DialogFooter>
-                <Button>確認</Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        </section>
-
-        <section>
-          <h2 className="mb-4 text-lg font-bold">フォーム付き</h2>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button>新規作成</Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>新規タスク</DialogTitle>
-                <DialogDescription>新しいタスクを作成します。</DialogDescription>
-              </DialogHeader>
-              <div className="space-y-4 py-4">
-                <div className="space-y-2">
-                  <Label htmlFor="task-name">タスク名</Label>
-                  <Input id="task-name" placeholder="タスク名を入力" />
-                </div>
-              </div>
-              <DialogFooter>
-                <Button variant="outline">キャンセル</Button>
-                <Button>作成</Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        </section>
-
-        <section>
-          <h2 className="mb-4 text-lg font-bold">AlertDialogとの違い</h2>
-          <p className="text-muted-foreground text-sm">
-            Dialog: 一般的なモーダル。背景クリックで閉じる。
-            <br />
-            AlertDialog: 確認必須のモーダル。背景クリックで閉じない。
-          </p>
-        </section>
-      </div>
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button>新規作成</Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>新規タスク</DialogTitle>
+            <DialogDescription>新しいタスクを作成します。</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="task-name">タスク名</Label>
+              <Input id="task-name" placeholder="タスク名を入力" />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline">キャンセル</Button>
+            <Button>作成</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   ),
 };

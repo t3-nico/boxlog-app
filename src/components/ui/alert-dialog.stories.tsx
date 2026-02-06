@@ -19,41 +19,19 @@ import { Input } from './input';
 const meta = {
   title: 'Components/AlertDialog',
   component: AlertDialog,
-  tags: ['autodocs'],
+  tags: [],
   parameters: {
-    layout: 'fullscreen', // モーダル系はfullscreenでないとオーバーレイが正しく表示されない
+    layout: 'fullscreen',
   },
 } satisfies Meta<typeof AlertDialog>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
-  render: () => (
-    <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <Button variant="destructive">削除</Button>
-      </AlertDialogTrigger>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>本当に削除しますか？</AlertDialogTitle>
-          <AlertDialogDescription>この操作は取り消せません。</AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>キャンセル</AlertDialogCancel>
-          <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive-hover">
-            削除する
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
-  ),
-};
+// ---------------------------------------------------------------------------
+// ヘルパーコンポーネント
+// ---------------------------------------------------------------------------
 
-/**
- * 削除確認ダイアログ
- * 実装: TagDeleteConfirmなど
- */
 function DeleteConfirmExample() {
   const [open, setOpen] = useState(false);
 
@@ -83,10 +61,6 @@ function DeleteConfirmExample() {
   );
 }
 
-/**
- * セッションタイムアウトダイアログ
- * 実装: src/features/auth/components/SessionTimeoutDialog.tsx
- */
 function SessionTimeoutExample() {
   const [open, setOpen] = useState(false);
 
@@ -130,10 +104,6 @@ function SessionTimeoutExample() {
   );
 }
 
-/**
- * アカウント削除ダイアログ（GDPR対応）
- * 実装: src/features/settings/components/account-deletion-dialog.tsx
- */
 function AccountDeletionExample() {
   const [open, setOpen] = useState(false);
   const [confirmText, setConfirmText] = useState('');
@@ -190,84 +160,76 @@ function AccountDeletionExample() {
   );
 }
 
+// ---------------------------------------------------------------------------
+// Stories — Canvas は純粋なコンポーネント描画のみ
+// ---------------------------------------------------------------------------
+
+/** 基本的な削除確認ダイアログ。最小構成の例。 */
+export const Default: Story = {
+  render: () => (
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button variant="destructive">削除</Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>本当に削除しますか？</AlertDialogTitle>
+          <AlertDialogDescription>この操作は取り消せません。</AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>キャンセル</AlertDialogCancel>
+          <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive-hover">
+            削除する
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  ),
+};
+
+/** 削除確認ダイアログ。不可逆な削除アクションで使用。AlertDialogActionに `bg-destructive` スタイルを適用。実装例: TagDeleteConfirm */
+export const DeleteConfirm: Story = {
+  render: () => <DeleteConfirmExample />,
+};
+
+/** セッション期限切れ警告ダイアログ。中央配置のアイコン、カウントダウン表示。ユーザーに延長 or ログアウトを選択させる。実装: SessionTimeoutDialog */
+export const SessionTimeout: Story = {
+  render: () => <SessionTimeoutExample />,
+};
+
+/** アカウント削除ダイアログ（GDPR対応）。確認テキスト入力（"DELETE"）を含む高リスク操作。AlertDialogDescription内に `asChild` でフォームを配置。実装: AccountDeletionDialog */
+export const AccountDeletion: Story = {
+  render: () => <AccountDeletionExample />,
+};
+
+// ---------------------------------------------------------------------------
+// AllPatterns — Canvas用の全パターンカタログ
+// ---------------------------------------------------------------------------
+
+/** 全パターン一覧。 */
 export const AllPatterns: Story = {
-  render: function AlertDialogStory() {
-    return (
-      <div>
-        <h1 className="mb-2 text-2xl font-bold">AlertDialog</h1>
-        <p className="text-muted-foreground mb-8">
-          重要なアクションの確認。削除、ログアウト、不可逆操作で使用。Dialogと異なりESCで閉じない。
-        </p>
-
-        <div className="grid max-w-3xl gap-8">
-          <div>
-            <h2 className="mb-2 text-lg font-bold">削除確認（主要用途）</h2>
-            <p className="text-muted-foreground mb-4 text-sm">
-              不可逆な削除アクション。AlertDialogActionにdestructiveスタイルを適用。
-            </p>
-            <DeleteConfirmExample />
-          </div>
-
-          <div>
-            <h2 className="mb-2 text-lg font-bold">セッションタイムアウト</h2>
-            <p className="text-muted-foreground mb-4 text-sm">
-              セッション期限切れ警告。中央配置のアイコン、カウントダウン表示。
-            </p>
-            <SessionTimeoutExample />
-          </div>
-
-          <div>
-            <h2 className="mb-2 text-lg font-bold">アカウント削除（GDPR対応）</h2>
-            <p className="text-muted-foreground mb-4 text-sm">
-              確認テキスト入力を含む高リスク操作。AlertDialogDescription内にフォーム。
-            </p>
-            <AccountDeletionExample />
-          </div>
-
-          <div>
-            <h2 className="mb-4 text-lg font-bold">Dialog vs AlertDialog</h2>
-            <div className="bg-surface-container rounded-lg p-4">
-              <ul className="text-muted-foreground list-inside list-disc space-y-1 text-sm">
-                <li>
-                  <strong>Dialog</strong>:
-                  一般的なモーダル。ESCで閉じる、オーバーレイクリックで閉じる
-                </li>
-                <li>
-                  <strong>AlertDialog</strong>:
-                  重要な確認。ESCで閉じない、オーバーレイクリックで閉じない、明示的なアクション必須
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <div>
-            <h2 className="mb-4 text-lg font-bold">コンポーネント構成</h2>
-            <div className="bg-surface-container rounded-lg p-4">
-              <ul className="text-muted-foreground list-inside list-disc space-y-1 text-sm">
-                <li>AlertDialog - ルートコンテナ（状態管理）</li>
-                <li>AlertDialogTrigger - 開くトリガー（asChild対応）</li>
-                <li>AlertDialogContent - コンテンツ（中央配置、rounded-2xl）</li>
-                <li>AlertDialogHeader - ヘッダー（Title + Description）</li>
-                <li>AlertDialogTitle - タイトル（text-lg font-bold）</li>
-                <li>AlertDialogDescription - 説明（asChildでカスタムコンテンツ可）</li>
-                <li>AlertDialogFooter - フッター（Cancel + Action）</li>
-                <li>AlertDialogCancel - キャンセルボタン（variant: outline）</li>
-                <li>AlertDialogAction - 実行ボタン（variant: default）</li>
-              </ul>
-            </div>
-          </div>
-
-          <div>
-            <h2 className="mb-4 text-lg font-bold">使用箇所</h2>
-            <ul className="text-muted-foreground list-inside list-disc space-y-1 text-sm">
-              <li>AccountDeletionDialog - アカウント削除（GDPR対応）</li>
-              <li>SessionTimeoutDialog - セッションタイムアウト警告</li>
-              <li>TagMerge確認 - タグマージの確認</li>
-              <li>BulkDelete確認 - 一括削除の確認</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    );
-  },
+  render: () => (
+    <div className="flex flex-col items-start gap-6">
+      <AlertDialog>
+        <AlertDialogTrigger asChild>
+          <Button variant="destructive">削除</Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>本当に削除しますか？</AlertDialogTitle>
+            <AlertDialogDescription>この操作は取り消せません。</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>キャンセル</AlertDialogCancel>
+            <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive-hover">
+              削除する
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+      <DeleteConfirmExample />
+      <SessionTimeoutExample />
+      <AccountDeletionExample />
+    </div>
+  ),
 };
