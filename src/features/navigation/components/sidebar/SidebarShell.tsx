@@ -59,7 +59,7 @@ export function SidebarShell({ children, className, hideNavUser = false }: Sideb
   return (
     <aside
       className={cn(
-        'border-border bg-surface-container text-foreground flex h-full w-full flex-col border-r',
+        'group border-border bg-surface-container text-foreground flex h-full w-full flex-col border-r',
         className,
       )}
     >
@@ -68,22 +68,22 @@ export function SidebarShell({ children, className, hideNavUser = false }: Sideb
         <div className="flex h-12 shrink-0 items-center justify-between px-2">
           <NavUser user={userData} />
           <div className="flex items-center gap-1">
-            <CreateNewDropdown
-              size="sm"
-              tooltipContent={t('sidebar.quickCreate')}
-              tooltipSide="bottom"
-            />
             <HoverTooltip content={t('sidebar.closeSidebar')} side="bottom">
               <Button
                 variant="ghost"
                 size="icon"
-                className="size-8"
+                className="size-8 opacity-0 transition-opacity group-hover:opacity-100"
                 onClick={toggle}
                 aria-label={t('sidebar.closeSidebar')}
               >
                 <PanelLeftClose className="size-4" />
               </Button>
             </HoverTooltip>
+            <CreateNewDropdown
+              size="sm"
+              tooltipContent={t('sidebar.quickCreate')}
+              tooltipSide="bottom"
+            />
           </div>
         </div>
       )}
