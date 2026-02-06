@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { CircleSlash, Moon, Sun } from 'lucide-react';
+import { CircleSlash, Moon, Search, Sun } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { useCalendarFilterStore, type ItemType } from '../../../stores/useCalendarFilterStore';
@@ -19,6 +19,7 @@ import { useTagCacheStore } from '@/features/tags/stores/useTagCacheStore';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { Skeleton } from '@/components/ui/skeleton';
 import { NotificationDropdown } from '@/features/notifications';
+import { useGlobalSearch } from '@/features/search';
 import { api } from '@/lib/trpc';
 
 import { SidebarNavigation } from '@/features/navigation/components/navigation-tabs/SidebarNavigation';
@@ -244,10 +245,11 @@ export function CalendarFilterList() {
   );
 }
 
-/** 通知 + テーマ切替ユーティリティ */
+/** 通知 + 検索 + テーマ切替ユーティリティ */
 function SidebarUtilities() {
   const t = useTranslations();
   const { resolvedTheme, setTheme } = useTheme();
+  const { open: openGlobalSearch } = useGlobalSearch();
 
   const handleThemeToggle = useCallback(() => {
     setTheme(resolvedTheme === 'light' ? 'dark' : 'light');
@@ -256,6 +258,17 @@ function SidebarUtilities() {
   return (
     <div className="flex items-center gap-1 px-2 py-2">
       <NotificationDropdown size="sm" />
+      <HoverTooltip content={t('sidebar.navigation.search')} side="right">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="size-8"
+          onClick={() => openGlobalSearch()}
+          aria-label={t('sidebar.navigation.search')}
+        >
+          <Search className="size-4" aria-hidden="true" />
+        </Button>
+      </HoverTooltip>
       <HoverTooltip content={resolvedTheme === 'light' ? 'Dark mode' : 'Light mode'} side="right">
         <Button
           variant="ghost"

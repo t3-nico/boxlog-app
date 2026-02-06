@@ -1,14 +1,15 @@
 'use client';
 
-import { Search } from 'lucide-react';
+import { PanelLeftClose } from 'lucide-react';
 import type { ReactNode } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { useAuthStore } from '@/features/auth/stores/useAuthStore';
-import { useGlobalSearch } from '@/features/search';
 import { cn } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
+
+import { useSidebarStore } from '../../stores/useSidebarStore';
 
 import { CreateNewDropdown } from './CreateNewDropdown';
 import { NavUser } from './nav-user';
@@ -46,7 +47,7 @@ interface SidebarShellProps {
  */
 export function SidebarShell({ children, className, hideNavUser = false }: SidebarShellProps) {
   const user = useAuthStore((state) => state.user);
-  const { open: openGlobalSearch } = useGlobalSearch();
+  const toggle = useSidebarStore.use.toggle();
   const t = useTranslations();
 
   const userData = {
@@ -67,21 +68,22 @@ export function SidebarShell({ children, className, hideNavUser = false }: Sideb
         <div className="flex h-12 shrink-0 items-center justify-between px-2">
           <NavUser user={userData} />
           <div className="flex items-center gap-1">
-            <HoverTooltip content={t('sidebar.navigation.search')} side="bottom">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="size-8"
-                onClick={() => openGlobalSearch()}
-              >
-                <Search className="size-4" />
-              </Button>
-            </HoverTooltip>
             <CreateNewDropdown
               size="sm"
               tooltipContent={t('sidebar.quickCreate')}
               tooltipSide="bottom"
             />
+            <HoverTooltip content={t('sidebar.closeSidebar')} side="bottom">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="size-8"
+                onClick={toggle}
+                aria-label={t('sidebar.closeSidebar')}
+              >
+                <PanelLeftClose className="size-4" />
+              </Button>
+            </HoverTooltip>
           </div>
         </div>
       )}
