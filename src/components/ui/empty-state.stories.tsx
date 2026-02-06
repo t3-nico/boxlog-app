@@ -9,6 +9,7 @@ const meta = {
   component: EmptyState,
   tags: ['autodocs'],
   parameters: {
+    layout: 'fullscreen',
   },
   argTypes: {
     title: {
@@ -41,10 +42,7 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/**
- * 標準（size="md"）。icon + title + description。
- * 実使用: AgendaView
- */
+/** 標準（size="md"）。icon + title + description。実使用: AgendaView */
 export const Default: Story = {
   args: {
     icon: CalendarDays,
@@ -53,10 +51,7 @@ export const Default: Story = {
   },
 };
 
-/**
- * テーブル内（size="sm" + centered + actions）。
- * 実使用: TableEmptyState, PlanTableEmptyState
- */
+/** テーブル内（size="sm" + centered + actions）。実使用: TableEmptyState, PlanTableEmptyState */
 export const TableEmpty: Story = {
   decorators: [
     (Story) => (
@@ -71,8 +66,32 @@ export const TableEmpty: Story = {
     description: '新しいアイテムを作成して始めましょう。',
     size: 'sm',
     centered: true,
-    actions: (
-      <Button size="sm">新規作成</Button>
-    ),
+    actions: <Button size="sm">新規作成</Button>,
   },
+};
+
+/** 全パターン一覧。 */
+export const AllPatterns: Story = {
+  args: {
+    title: '',
+  },
+  render: () => (
+    <div className="flex flex-col items-start gap-6">
+      <EmptyState
+        icon={CalendarDays}
+        title="予定がありません"
+        description="今日の予定はまだ登録されていません。"
+      />
+      <div className="border-border h-[300px] w-[400px] rounded-xl border">
+        <EmptyState
+          icon={Inbox}
+          title="アイテムがありません"
+          description="新しいアイテムを作成して始めましょう。"
+          size="sm"
+          centered
+          actions={<Button size="sm">新規作成</Button>}
+        />
+      </div>
+    </div>
+  ),
 };
