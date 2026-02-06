@@ -121,6 +121,7 @@ export function useCalendarData({
 
   // ドラフトプランを取得（新規作成・コピー＆ペースト時のプレビュー表示用）
   const draftPlan = usePlanInspectorStore((state) => state.draftPlan);
+  const createType = usePlanInspectorStore((state) => state.createType);
 
   // 繰り返しプランのIDを抽出
   const recurringPlanIds = useMemo(() => {
@@ -194,13 +195,14 @@ export function useCalendarData({
 
     // ドラフトプランをプレビューとして追加
     // 時間がある場合は表示（新規作成時やペースト時）
-    // タイトルがない場合は「新しい予定」と表示
+    // タイトルがない場合はcreateTypeに応じたデフォルト表示
     if (draftPlan?.start_time && draftPlan?.end_time) {
       const startDate = new Date(draftPlan.start_time);
       const endDate = new Date(draftPlan.end_time);
+      const isRecord = createType === 'record';
       const draftCalendarPlan: CalendarPlan = {
         id: '__draft__',
-        title: draftPlan.title || '新しい予定',
+        title: draftPlan.title || (isRecord ? '新しい記録' : '新しい予定'),
         description: draftPlan.description ?? undefined,
         startDate,
         endDate,
@@ -213,14 +215,14 @@ export function useCalendarData({
         duration: (endDate.getTime() - startDate.getTime()) / 60000,
         isMultiDay: false,
         isRecurring: false,
-        type: 'plan',
+        type: isRecord ? 'record' : 'plan',
         isDraft: true,
       };
       calendarPlans.push(draftCalendarPlan);
     }
 
     return calendarPlans;
-  }, [plansData, recordsData, viewDateRange, exceptionsMap, draftPlan]);
+  }, [plansData, recordsData, viewDateRange, exceptionsMap, draftPlan, createType]);
 
   // 表示範囲のイベントをフィルタリング
   const filteredEvents = useMemo(() => {
