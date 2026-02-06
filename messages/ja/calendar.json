@@ -231,7 +231,8 @@
     "agenda": {
       "emptyTitle": "今後の予定はありません",
       "emptyDescription": "カレンダーで新しい予定を作成してください",
-      "noItems": "予定なし"
+      "noItems": "予定なし",
+      "noDate": "日付なし"
     },
     "collapsedSection": {
       "expandLabel": "{timeRange} を展開"
@@ -249,6 +250,18 @@
     },
     "timeGrid": {
       "ariaLabel": "カレンダータイムグリッド - クリックまたはEnterキーでイベントを作成"
+    },
+    "panel": {
+      "plan": "プラン",
+      "record": "記録",
+      "stats": "統計",
+      "open": "未完了",
+      "closed": "完了",
+      "all": "すべて",
+      "searchPlaceholder": "プランを検索...",
+      "loading": "読み込み中...",
+      "error": "読み込みに失敗しました",
+      "noPlans": "プランがありません"
     }
   }
 }

@@ -231,7 +231,8 @@
     "agenda": {
       "emptyTitle": "No upcoming events",
       "emptyDescription": "Create a new event in the calendar",
-      "noItems": "No items"
+      "noItems": "No items",
+      "noDate": "No Date"
     },
     "collapsedSection": {
       "expandLabel": "Expand {timeRange}"
@@ -249,6 +250,18 @@
     },
     "timeGrid": {
       "ariaLabel": "Calendar time grid - click or press Enter to create event"
+    },
+    "panel": {
+      "plan": "Plans",
+      "record": "Records",
+      "stats": "Statistics",
+      "open": "Open",
+      "closed": "Closed",
+      "all": "All",
+      "searchPlaceholder": "Search plans...",
+      "loading": "Loading...",
+      "error": "Failed to load",
+      "noPlans": "No plans"
     }
   }
 }
