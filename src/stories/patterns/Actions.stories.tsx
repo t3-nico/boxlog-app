@@ -89,6 +89,90 @@ export const Overview: Story = {
           </div>
         </section>
 
+        {/* ボタンサイズ */}
+        <section className="bg-card border-border rounded-xl border p-6">
+          <h2 className="mb-4 text-lg font-bold">ボタンサイズ</h2>
+          <p className="text-muted-foreground mb-4 text-sm">
+            3種類のサイズ。用途に応じて使い分け。
+          </p>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-border border-b">
+                  <th className="py-3 text-left font-bold">サイズ</th>
+                  <th className="py-3 text-left font-bold">高さ</th>
+                  <th className="py-3 text-left font-bold">テキスト</th>
+                  <th className="py-3 text-left font-bold">アイコン</th>
+                  <th className="py-3 text-left font-bold">用途</th>
+                </tr>
+              </thead>
+              <tbody className="text-muted-foreground">
+                <tr className="border-border border-b">
+                  <td className="py-3 font-bold">sm</td>
+                  <td className="py-3">32px (h-8)</td>
+                  <td className="py-3">14px (text-sm)</td>
+                  <td className="py-3">16px (size-4)</td>
+                  <td className="py-3">コンパクトUI、ツールバー</td>
+                </tr>
+                <tr className="border-border border-b">
+                  <td className="py-3 font-bold">default</td>
+                  <td className="py-3">36px (h-9)</td>
+                  <td className="py-3">14px (text-sm)</td>
+                  <td className="py-3">16px (size-4)</td>
+                  <td className="py-3">標準的なアクション</td>
+                </tr>
+                <tr>
+                  <td className="py-3 font-bold">lg</td>
+                  <td className="py-3">44px (h-11)</td>
+                  <td className="py-3">16px (text-base)</td>
+                  <td className="py-3">20px (size-5)</td>
+                  <td className="py-3">CTA、モバイル主要</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div className="mt-6 flex flex-wrap items-end gap-4">
+            <div className="space-y-2">
+              <p className="text-muted-foreground text-xs font-bold">sm (32px)</p>
+              <Button size="sm">
+                <Plus className="mr-2 size-4" />
+                作成
+              </Button>
+            </div>
+            <div className="space-y-2">
+              <p className="text-muted-foreground text-xs font-bold">default (36px)</p>
+              <Button>
+                <Plus className="mr-2 size-4" />
+                作成
+              </Button>
+            </div>
+            <div className="space-y-2">
+              <p className="text-muted-foreground text-xs font-bold">lg (44px)</p>
+              <Button size="lg">
+                <Plus className="mr-2 size-5" />
+                作成
+              </Button>
+            </div>
+          </div>
+
+          <div className="bg-container mt-4 rounded-lg p-4">
+            <h4 className="mb-2 text-sm font-bold">選択基準</h4>
+            <ul className="text-muted-foreground space-y-1 text-xs">
+              <li>
+                <strong>sm:</strong> ヘッダー、ツールバー、テーブル行内
+              </li>
+              <li>
+                <strong>default:</strong> フォーム、ダイアログ、一般的なUI
+              </li>
+              <li>
+                <strong>lg:</strong> ランディングページ、重要なCTA、モバイルタップ
+              </li>
+            </ul>
+          </div>
+        </section>
+
         {/* プライマリアクション */}
         <section className="bg-card border-border rounded-xl border p-6">
           <h2 className="mb-4 text-lg font-bold">プライマリアクション</h2>

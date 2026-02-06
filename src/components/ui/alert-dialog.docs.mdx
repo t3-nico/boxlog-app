@@ -1,0 +1,57 @@
+import { Canvas, Controls, Meta, Primary, Stories, Unstyled } from '@storybook/blocks';
+
+import * as AlertDialogStories from './alert-dialog.stories';
+
+<Meta of={AlertDialogStories} />
+
+<Unstyled>
+<div className="sb-docs-prose">
+
+# AlertDialog
+
+重要なアクションの確認ダイアログ。削除、ログアウト、不可逆操作で使用。
+
+Dialogと異なり **ESCで閉じない・オーバーレイクリックで閉じない**。
+ユーザーは必ずCancel / Actionのどちらかを選択する必要がある。
+
+## Dialog vs AlertDialog
+
+| | Dialog | AlertDialog |
+|---|---|---|
+| ESCで閉じる | ○ | ✕ |
+| オーバーレイクリック | ○ | ✕ |
+| 用途 | 一般的なモーダル | 重要な確認 |
+
+## コンポーネント構成
+
+| コンポーネント | 役割 |
+|---|---|
+| `AlertDialog` | ルートコンテナ（状態管理） |
+| `AlertDialogTrigger` | 開くトリガー（asChild対応） |
+| `AlertDialogContent` | コンテンツ（中央配置、rounded-2xl） |
+| `AlertDialogHeader` | ヘッダー（Title + Description） |
+| `AlertDialogTitle` | タイトル（text-lg font-bold） |
+| `AlertDialogDescription` | 説明（asChildでカスタムコンテンツ可） |
+| `AlertDialogFooter` | フッター（Cancel + Action） |
+| `AlertDialogCancel` | キャンセルボタン（variant: outline） |
+| `AlertDialogAction` | 実行ボタン（variant: default） |
+
+## 使用箇所
+
+| 実装 | 用途 |
+|---|---|
+| AccountDeletionDialog | アカウント削除（GDPR対応） |
+| SessionTimeoutDialog | セッションタイムアウト警告 |
+| TagMerge確認 | タグマージの確認 |
+| BulkDelete確認 | 一括削除の確認 |
+
+## Default
+
+<Primary />
+
+<Controls />
+
+<Stories includePrimary={false} />
+
+</div>
+</Unstyled>
