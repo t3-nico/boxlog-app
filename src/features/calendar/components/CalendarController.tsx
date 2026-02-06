@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { usePathname, useRouter } from 'next/navigation';
 
@@ -34,6 +34,7 @@ import {
 } from './controller/hooks';
 import { initializePreload } from './controller/utils';
 import { CalendarLayout } from './layout/CalendarLayout';
+import type { PanelType } from './layout/Header/PanelSwitcher';
 import { EmptyAreaContextMenu, EventContextMenu, MobileTouchHint } from './views/shared/components';
 
 // 初回ロード時にビューをプリロード
@@ -52,6 +53,9 @@ export const CalendarController = ({
   const router = useRouter();
   const pathname = usePathname();
   const calendarNavigation = useCalendarNavigation();
+
+  // サイドパネル状態（仮実装）
+  const [currentPanel, setCurrentPanel] = useState<PanelType>('none');
 
   // 現在のlocaleを取得（例: /ja/calendar/day -> ja）
   const locale = pathname?.split('/')[1] || 'ja';
@@ -354,6 +358,8 @@ export const CalendarController = ({
           start: viewDateRange.start,
           end: viewDateRange.end,
         }}
+        currentPanel={currentPanel}
+        onPanelChange={setCurrentPanel}
       >
         <CalendarViewRenderer viewType={viewType} commonProps={commonProps} />
       </CalendarLayout>
