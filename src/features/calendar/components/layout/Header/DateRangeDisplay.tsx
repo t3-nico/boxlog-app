@@ -96,7 +96,7 @@ export const DateRangeDisplay = ({
       : format(date, localizedFormatPattern, { locale: dateFnsLocale });
 
   // 日付コンテンツ
-  const dateContent = <h2 className="text-lg font-bold">{displayText}</h2>;
+  const dateContent = <h2 className="text-2xl">{displayText}</h2>;
 
   // モバイル用: MiniCalendarポップアップ付き（週番号はカレンダーグリッドに表示するため非表示）
   const mobileContent = clickable && onDateSelect && (
@@ -129,7 +129,7 @@ export const DateRangeDisplay = ({
     <div className={cn('hidden items-center gap-2 md:flex', className)}>
       {dateContent}
       {showWeekNumber ? (
-        <span className="text-muted-foreground text-sm font-normal">
+        <span className="text-muted-foreground text-lg">
           {t('weekLabel', { weekNumber: getWeek(date, { weekStartsOn: 1 }) })}
         </span>
       ) : null}
