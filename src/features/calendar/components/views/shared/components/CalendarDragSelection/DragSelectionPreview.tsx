@@ -57,9 +57,9 @@ export const DragSelectionPreview = memo(function DragSelectionPreview({
     zIndex: 1000,
   };
 
-  // 重複時は赤、通常時は控えめなprimaryカラー
+  // 重複時は赤、通常時は控えめなセマンティックカラー
   const className = cn(
-    isOverlapping ? 'bg-destructive/60' : 'bg-primary/20 border border-primary/40',
+    isOverlapping ? 'bg-destructive/60' : 'bg-state-hover border border-border',
     calendarStyles.event.borderRadius,
     calendarStyles.event.shadow.default,
     'pointer-events-none',
