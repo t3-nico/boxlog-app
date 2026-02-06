@@ -197,8 +197,10 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
       'after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:transition-colors hover:after:bg-state-hover',
     // 選択状態の視覚フィードバック（色覚異常対応）
     isSelected && 'ring-2 ring-primary',
-    // Draft は点線ボーダー、Record は左ボーダー（Google Calendar風）
-    isDraft ? 'border border-primary/40' : isRecord && 'border-l-[3px] border-record-border',
+    // Draft は点線ボーダー（未保存を示す）、Record は左ボーダー（Google Calendar風）
+    isDraft
+      ? 'border border-dashed border-primary/60'
+      : isRecord && 'border-l-[3px] border-record-border',
     // テキスト色
     'text-foreground',
     // 状態別スタイル
