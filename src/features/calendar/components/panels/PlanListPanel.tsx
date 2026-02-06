@@ -1,35 +1,22 @@
 'use client';
 
-import { useCallback, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 
-import { isBefore, startOfDay } from 'date-fns';
 import { useTranslations } from 'next-intl';
 
 import { usePlans } from '@/features/plans/hooks/usePlans';
+import { usePlanFilterStore } from '@/features/plans/stores/usePlanFilterStore';
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
-import { groupItems } from '@/features/plans/utils/grouping';
-import { useTagsMap } from '@/features/tags/hooks/useTagsMap';
-import type { PlanWithTags } from '@/server/services/plans/types';
-import { usePanelDrag } from '../../hooks/usePanelDrag';
+import type { PlanStatus } from '@/features/plans/types/plan';
 import { useCalendarFilterStore } from '../../stores/useCalendarFilterStore';
 
 import { PlanListCard } from './PlanListCard';
-import { PlanListGroup } from './PlanListGroup';
-import type {
-  PanelGroupByField,
-  PanelScheduleFilter,
-  PanelSortField,
-  PanelSortOrder,
-  PanelStatusFilter,
-} from './PlanListSortMenu';
 import { PlanListToolbar } from './PlanListToolbar';
 
 /**
  * サイドパネル用のPlanリストパネル
  *
- * 「まだ時間を決めていない、やるべきこと」のリスト
- * - start_time === null && status === 'open' のPlanのみ表示
- * - ソート/グルーピング
+ * - Open/Closedフィルター
  * - 検索
  * - タグフィルター（CalendarSidebarと連動）
  * - クリックでInspector表示
@@ -37,75 +24,34 @@ import { PlanListToolbar } from './PlanListToolbar';
 export function PlanListPanel() {
   const t = useTranslations('calendar');
 
-  // 検索状態
-  const [search, setSearch] = useState('');
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
-
-  // ソート/グルーピング/フィルター状態
-  const [sortBy, setSortBy] = useState<PanelSortField>('created_at');
-  const [sortOrder, setSortOrder] = useState<PanelSortOrder>('desc');
-  const [groupBy, setGroupBy] = useState<PanelGroupByField>(null);
-  const [scheduleFilter, setScheduleFilter] = useState<PanelScheduleFilter>('unscheduled');
-  const [statusFilter, setStatusFilter] = useState<PanelStatusFilter>('open');
-
-  // グループ折りたたみ状態
-  const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set());
+  // フィルター状態
+  const status = usePlanFilterStore((s) => s.status);
+  const setStatus = usePlanFilterStore((s) => s.setStatus);
+  const search = usePlanFilterStore((s) => s.search);
+  const setSearch = usePlanFilterStore((s) => s.setSearch);
+  const isSearchOpen = usePlanFilterStore((s) => s.isSearchOpen);
+  const setIsSearchOpen = usePlanFilterStore((s) => s.setIsSearchOpen);
 
   // カレンダーフィルター（タグ）
   const isPlanVisible = useCalendarFilterStore((s) => s.isPlanVisible);
 
   // Inspector
   const openInspector = usePlanInspectorStore((s) => s.openInspector);
-  const openInspectorWithDraft = usePlanInspectorStore((s) => s.openInspectorWithDraft);
 
-  // D&D
-  const { handleDragStart } = usePanelDrag();
+  // プラン一覧取得（searchが空文字の場合はundefinedを渡す）
+  const { data: plans, isLoading, error } = usePlans(search ? { search } : undefined);
 
-  // タグ名解決（グルーピング用）
-  const { getTagById } = useTagsMap();
-
-  // プラン一覧取得（サーバー側ソート + ステータスフィルター）
-  // overdue: サーバーには 'open' で問い合わせ、期限切れはクライアントでフィルター
-  const apiStatus = scheduleFilter === 'overdue' ? 'open' : statusFilter;
-  const baseFilters =
-    apiStatus === 'all' ? { sortBy, sortOrder } : { status: apiStatus, sortBy, sortOrder };
-  const {
-    data: plans,
-    isLoading,
-    error,
-  } = usePlans(search ? { ...baseFilters, search } : baseFilters);
-
-  // 期限切れ判定用の今日の日付
-  const today = useMemo(() => startOfDay(new Date()), []);
-
-  // 期限切れ判定
-  const isPlanOverdue = useCallback(
-    (plan: PlanWithTags) => {
-      if (!plan.due_date || plan.status === 'closed') return false;
-      return isBefore(new Date(plan.due_date), today);
-    },
-    [today],
-  );
-
-  // フィルタリング: スケジュールフィルター + タグフィルター
+  // フィルタリング
   const filteredPlans = useMemo(() => {
     if (!plans) return [];
 
     return plans.filter((plan) => {
-      // スケジュール/日付フィルター
-      if (scheduleFilter === 'unscheduled' && plan.start_time) {
+      // ステータスフィルター（plan.statusはstringなのでasでキャスト）
+      if (!status.includes(plan.status as PlanStatus)) {
         return false;
-      }
-      if (scheduleFilter === 'scheduled' && !plan.start_time) {
-        return false;
-      }
-      if (scheduleFilter === 'overdue') {
-        if (!plan.due_date || !isBefore(new Date(plan.due_date), today)) {
-          return false;
-        }
       }
 
-      // タグフィルター
+      // タグフィルター（CalendarSidebarと連動）
       const tagIds = plan.tagIds ?? [];
       if (!isPlanVisible(tagIds)) {
         return false;
@@ -113,94 +59,20 @@ export function PlanListPanel() {
 
       return true;
     });
-  }, [plans, isPlanVisible, scheduleFilter, today]);
-
-  // グルーピング
-  const groupedPlans = useMemo(() => {
-    if (!groupBy) return null;
-
-    const groups = groupItems(filteredPlans, groupBy);
-
-    // タググルーピング時はタグ名でラベルを解決
-    if (groupBy === 'tags') {
-      return groups.map((group) => {
-        if (group.groupKey === 'タグなし') return group;
-        const tag = getTagById(group.groupKey);
-        return {
-          ...group,
-          groupLabel: tag?.name ?? group.groupKey,
-        };
-      });
-    }
-
-    return groups;
-  }, [filteredPlans, groupBy, getTagById]);
-
-  // ソート変更ハンドラ
-  const handleSortChange = useCallback((field: PanelSortField, order: PanelSortOrder) => {
-    setSortBy(field);
-    setSortOrder(order);
-  }, []);
-
-  // グルーピング変更ハンドラ
-  const handleGroupByChange = useCallback((field: PanelGroupByField) => {
-    setGroupBy(field);
-    setCollapsedGroups(new Set());
-  }, []);
-
-  // グループ折りたたみ切り替え
-  const toggleGroup = useCallback((groupKey: string) => {
-    setCollapsedGroups((prev) => {
-      const next = new Set(prev);
-      if (next.has(groupKey)) {
-        next.delete(groupKey);
-      } else {
-        next.add(groupKey);
-      }
-      return next;
-    });
-  }, []);
-
-  // Plan → Record 変換ハンドラ
-  const handleCreateRecordFromPlan = useCallback(
-    (plan: PlanWithTags) => {
-      openInspectorWithDraft(
-        {
-          title: plan.title || '',
-          description: plan.description ?? null,
-          start_time: plan.start_time ?? null,
-          end_time: plan.end_time ?? null,
-          tagIds: plan.tagIds ?? [],
-          plan_id: plan.id,
-        },
-        'record',
-      );
-    },
-    [openInspectorWithDraft],
-  );
-
-  // ツールバーの共通 props
-  const toolbarProps = {
-    search,
-    onSearchChange: setSearch,
-    isSearchOpen,
-    onSearchOpenChange: setIsSearchOpen,
-    sortBy,
-    sortOrder,
-    groupBy,
-    scheduleFilter,
-    statusFilter,
-    onSortChange: handleSortChange,
-    onGroupByChange: handleGroupByChange,
-    onScheduleFilterChange: setScheduleFilter,
-    onStatusFilterChange: setStatusFilter,
-  };
+  }, [plans, status, isPlanVisible]);
 
   // ローディング状態
   if (isLoading) {
     return (
       <div className="flex h-full flex-col">
-        <PlanListToolbar {...toolbarProps} />
+        <PlanListToolbar
+          status={status}
+          onStatusChange={setStatus}
+          search={search}
+          onSearchChange={setSearch}
+          isSearchOpen={isSearchOpen}
+          onSearchOpenChange={setIsSearchOpen}
+        />
         <div className="flex flex-1 items-center justify-center">
           <div className="text-muted-foreground text-sm">{t('panel.loading')}</div>
         </div>
@@ -212,7 +84,14 @@ export function PlanListPanel() {
   if (error) {
     return (
       <div className="flex h-full flex-col">
-        <PlanListToolbar {...toolbarProps} />
+        <PlanListToolbar
+          status={status}
+          onStatusChange={setStatus}
+          search={search}
+          onSearchChange={setSearch}
+          isSearchOpen={isSearchOpen}
+          onSearchOpenChange={setIsSearchOpen}
+        />
         <div className="flex flex-1 items-center justify-center">
           <div className="text-destructive text-sm">{t('panel.error')}</div>
         </div>
@@ -223,49 +102,25 @@ export function PlanListPanel() {
   return (
     <div className="flex h-full flex-col">
       {/* ツールバー */}
-      <PlanListToolbar {...toolbarProps} />
+      <PlanListToolbar
+        status={status}
+        onStatusChange={setStatus}
+        search={search}
+        onSearchChange={setSearch}
+        isSearchOpen={isSearchOpen}
+        onSearchOpenChange={setIsSearchOpen}
+      />
 
       {/* リスト */}
-      <div className="flex-1 overflow-y-auto p-2">
+      <div className="flex-1 overflow-y-auto p-3">
         {filteredPlans.length === 0 ? (
           <div className="text-muted-foreground flex h-full items-center justify-center">
             <p className="text-sm">{t('panel.noPlans')}</p>
           </div>
-        ) : groupedPlans ? (
-          // グルーピング表示
-          <div className="flex flex-col gap-1">
-            {groupedPlans.map((group) => (
-              <PlanListGroup
-                key={group.groupKey}
-                label={group.groupLabel}
-                count={group.count}
-                isCollapsed={collapsedGroups.has(group.groupKey)}
-                onToggle={() => toggleGroup(group.groupKey)}
-              >
-                {group.items.map((plan) => (
-                  <PlanListCard
-                    key={plan.id}
-                    plan={plan}
-                    isOverdue={isPlanOverdue(plan)}
-                    onClick={() => openInspector(plan.id)}
-                    onDragStart={handleDragStart}
-                    onCreateRecord={handleCreateRecordFromPlan}
-                  />
-                ))}
-              </PlanListGroup>
-            ))}
-          </div>
         ) : (
-          // フラット表示
           <div className="flex flex-col gap-2">
             {filteredPlans.map((plan) => (
-              <PlanListCard
-                key={plan.id}
-                plan={plan}
-                isOverdue={isPlanOverdue(plan)}
-                onClick={() => openInspector(plan.id)}
-                onDragStart={handleDragStart}
-              />
+              <PlanListCard key={plan.id} plan={plan} onClick={() => openInspector(plan.id)} />
             ))}
           </div>
         )}

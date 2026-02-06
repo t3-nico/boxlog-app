@@ -2,29 +2,21 @@
 
 import { memo, useCallback } from 'react';
 
-import { CheckCircle2, Circle, ClipboardList, Clock } from 'lucide-react';
+import { CheckCircle2, Circle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { HoverTooltip } from '@/components/ui/tooltip';
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
 import type { PlanStatus } from '@/features/plans/types/plan';
 import { normalizeStatus } from '@/features/plans/utils/status';
 import { useDateFormat } from '@/features/settings/hooks/useDateFormat';
+import { useTagsMap } from '@/features/tags/hooks/useTagsMap';
 import { cn } from '@/lib/utils';
 import type { PlanWithTags } from '@/server/services/plans/types';
 
-import { TagsContainer } from '../views/shared/components/PlanCard/TagsContainer';
-
 interface PlanListCardProps {
   plan: PlanWithTags;
-  /** 期限切れ状態（時間・日時を赤文字で表示） */
-  isOverdue?: boolean;
   onClick?: (plan: PlanWithTags) => void;
-  onDragStart?: (plan: PlanWithTags, e: React.MouseEvent, sourceElement: HTMLElement) => void;
-  /** Plan→Record 変換ハンドラ（hover時にボタン表示） */
-  onCreateRecord?: (plan: PlanWithTags) => void;
 }
 
 /**
@@ -33,49 +25,28 @@ interface PlanListCardProps {
  * カレンダーTimeGridのPlanCardと同じビジュアル（チェックボックス+タイトル+時間）
  * position/drag/resizeは不要なシンプル版
  */
-export const PlanListCard = memo<PlanListCardProps>(function PlanListCard({
-  plan,
-  isOverdue = false,
-  onClick,
-  onDragStart,
-  onCreateRecord,
-}) {
+export const PlanListCard = memo<PlanListCardProps>(function PlanListCard({ plan, onClick }) {
   const t = useTranslations('calendar');
-  const { formatTime, formatDate } = useDateFormat();
+  const { formatTime } = useDateFormat();
+  const { getTagsByIds } = useTagsMap();
   const { updatePlan } = usePlanMutations();
 
   const status = normalizeStatus(plan.status as PlanStatus);
   const isCompleted = status === 'closed';
 
-  // 時間表示（未スケジュールの場合は非表示）
+  // 時間表示
   const startTime = plan.start_time ? formatTime(new Date(plan.start_time)) : '';
   const endTime = plan.end_time ? formatTime(new Date(plan.end_time)) : '';
-  const displayTime = startTime && endTime ? `${startTime} - ${endTime}` : startTime || null;
+  const displayTime =
+    startTime && endTime ? `${startTime} - ${endTime}` : startTime || t('event.allDay');
 
-  // 期限日表示
-  const displayDueDate = plan.due_date ? formatDate(new Date(plan.due_date)) : null;
-
-  // 作業時間（分）を start_time/end_time から算出
-  const durationMinutes =
-    plan.start_time && plan.end_time
-      ? Math.round(
-          (new Date(plan.end_time).getTime() - new Date(plan.start_time).getTime()) / 60000,
-        )
-      : 0;
+  // タグ
+  const tags = getTagsByIds(plan.tagIds ?? []);
+  const displayTags = tags.slice(0, 2);
 
   const handleCardClick = useCallback(() => {
     onClick?.(plan);
   }, [onClick, plan]);
-
-  const handleMouseDown = useCallback(
-    (e: React.MouseEvent) => {
-      // 左クリックのみ
-      if (e.button !== 0) return;
-      const sourceElement = e.currentTarget as HTMLElement;
-      onDragStart?.(plan, e, sourceElement);
-    },
-    [onDragStart, plan],
-  );
 
   const handleCheckboxClick = useCallback(
     (e: React.MouseEvent) => {
@@ -89,35 +60,16 @@ export const PlanListCard = memo<PlanListCardProps>(function PlanListCard({
     [isCompleted, plan.id, updatePlan],
   );
 
-  const handleCreateRecord = useCallback(
-    (e: React.MouseEvent) => {
-      e.stopPropagation();
-      onCreateRecord?.(plan);
-    },
-    [onCreateRecord, plan],
-  );
-
   return (
     <Card
       className={cn(
-        // レイアウト
-        'group relative flex flex-row items-start gap-2 px-3 py-2',
-        // 背景（カレンダー PlanCard と統一）
+        'group flex cursor-pointer items-start gap-2 p-3',
         'bg-plan-box',
-        // Card デフォルト打ち消し
-        'rounded-xl border-0 shadow-none',
-        // ホバー（オーバーレイ方式: bg-plan-box を保ちつつ暗くする）
-        'after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:transition-colors',
-        'hover:after:bg-state-hover',
-        // トランジション
+        'hover:bg-state-hover',
         'transition-colors duration-150',
-        // フォーカス
         'focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
-        // カーソル
-        onDragStart ? 'cursor-grab active:cursor-grabbing' : 'cursor-pointer',
       )}
       onClick={handleCardClick}
-      onMouseDown={onDragStart ? handleMouseDown : undefined}
       tabIndex={0}
       role="button"
     >
@@ -154,71 +106,38 @@ export const PlanListCard = memo<PlanListCardProps>(function PlanListCard({
           {plan.title || t('event.noTitle')}
         </p>
 
-        {/* メタ情報行: 期限日 + 時間 + 作業時間 */}
-        {(displayDueDate || displayTime || durationMinutes > 0) && (
-          <div className={cn('mt-1 flex items-center gap-2', isCompleted && 'line-through')}>
-            {displayDueDate && (
+        {/* 時間 */}
+        <p
+          className={cn(
+            'mt-1 text-xs tabular-nums',
+            isCompleted ? 'text-muted-foreground/60 line-through' : 'text-muted-foreground',
+          )}
+        >
+          {displayTime}
+        </p>
+
+        {/* タグ */}
+        {displayTags.length > 0 && (
+          <div className="mt-2 flex flex-wrap gap-1">
+            {displayTags.map((tag) => (
               <span
-                className={cn(
-                  'text-xs tabular-nums',
-                  isOverdue
-                    ? 'text-destructive'
-                    : isCompleted
-                      ? 'text-muted-foreground/60'
-                      : 'text-muted-foreground',
-                )}
+                key={tag.id}
+                className="inline-flex max-w-16 items-center truncate rounded px-1.5 py-0.5 text-[10px]"
+                style={{
+                  backgroundColor: tag.color ? `${tag.color}20` : undefined,
+                  color: tag.color || undefined,
+                }}
+                title={tag.name}
               >
-                {displayDueDate}
+                {tag.name}
               </span>
-            )}
-            {displayTime && (
-              <span
-                className={cn(
-                  'text-xs tabular-nums',
-                  isOverdue
-                    ? 'text-destructive'
-                    : isCompleted
-                      ? 'text-muted-foreground/60'
-                      : 'text-muted-foreground',
-                )}
-              >
-                {displayTime}
-              </span>
-            )}
-            {durationMinutes > 0 && (
-              <span
-                className={cn(
-                  'flex items-center gap-0.5 text-xs',
-                  isCompleted ? 'text-muted-foreground/60' : 'text-muted-foreground',
-                )}
-              >
-                <Clock className="size-3" />
-                {t('panel.duration', { minutes: durationMinutes })}
-              </span>
+            ))}
+            {tags.length > 2 && (
+              <span className="text-muted-foreground text-[10px]">+{tags.length - 2}</span>
             )}
           </div>
         )}
-
-        {/* タグ（カレンダーPlanCardと同じTagsContainer） */}
-        {plan.tagIds && plan.tagIds.length > 0 && <TagsContainer tagIds={plan.tagIds} />}
       </div>
-
-      {/* Record 変換ボタン（hover時のみ表示） */}
-      {onCreateRecord && (
-        <div className="z-10 shrink-0 opacity-0 transition-opacity group-hover:opacity-100">
-          <HoverTooltip content={t('panel.recordThis')} side="top">
-            <Button
-              variant="ghost"
-              size="sm"
-              icon
-              onClick={handleCreateRecord}
-              aria-label={t('panel.recordThis')}
-            >
-              <ClipboardList className="size-3.5" />
-            </Button>
-          </HoverTooltip>
-        </div>
-      )}
     </Card>
   );
 });

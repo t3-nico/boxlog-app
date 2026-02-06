@@ -1,71 +1,51 @@
 'use client';
 
-import { PanelRight } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-import { Button } from '@/components/ui/button';
-import { AIInspectorContent } from '@/features/ai/components/AIInspectorContent';
-
-import { PanelSwitcher, type PanelType } from '../layout/Header/PanelSwitcher';
+import type { PanelType } from '../layout/Header/PanelSwitcher';
 
 import { PlanListPanel } from './PlanListPanel';
-import { RecordListPanel } from './RecordListPanel';
 
 interface CalendarSidePanelProps {
   panelType: PanelType;
-  onPanelChange: (panel: PanelType) => void;
 }
 
 /**
  * カレンダーサイドパネル
  *
- * 共通ヘッダー（PanelSwitcher + 閉じるボタン）を持ち、
  * panelTypeに応じてPlan/Record/Statsパネルを切り替え表示
  */
-export function CalendarSidePanel({ panelType, onPanelChange }: CalendarSidePanelProps) {
+export function CalendarSidePanel({ panelType }: CalendarSidePanelProps) {
   const t = useTranslations('calendar');
 
-  if (panelType === 'none') return null;
-
-  const renderContent = () => {
-    switch (panelType) {
-      case 'plan':
-        return <PlanListPanel />;
-      case 'record':
-        return <RecordListPanel />;
-      case 'stats':
-        return (
+  switch (panelType) {
+    case 'plan':
+      return <PlanListPanel />;
+    case 'record':
+      // Phase 2: RecordListPanel
+      return (
+        <div className="flex h-full flex-col">
+          <div className="border-border flex h-12 items-center border-b px-4">
+            <h2 className="font-medium">{t('panel.record')}</h2>
+          </div>
           <div className="text-muted-foreground flex flex-1 items-center justify-center">
             <p className="text-sm">Coming soon...</p>
           </div>
-        );
-      case 'chat':
-        return <AIInspectorContent />;
-      default:
-        return null;
-    }
-  };
-
-  return (
-    <div className="flex h-full flex-col">
-      {/* パネルヘッダー（CalendarHeader h-12 px-4 py-2 + h-8 と同じ構造） */}
-      <div className="h-12 shrink-0 px-4 py-2">
-        <div className="flex h-8 items-center justify-between">
-          <PanelSwitcher currentPanel={panelType} onChange={onPanelChange} />
-          <Button
-            variant="ghost"
-            icon
-            className="-mr-2 size-8"
-            onClick={() => onPanelChange('none')}
-            aria-label={t('actions.close')}
-          >
-            <PanelRight className="size-4" />
-          </Button>
         </div>
-      </div>
-
-      {/* パネルコンテンツ */}
-      <div className="min-h-0 flex-1">{renderContent()}</div>
-    </div>
-  );
+      );
+    case 'stats':
+      // 後日実装
+      return (
+        <div className="flex h-full flex-col">
+          <div className="border-border flex h-12 items-center border-b px-4">
+            <h2 className="font-medium">{t('panel.stats')}</h2>
+          </div>
+          <div className="text-muted-foreground flex flex-1 items-center justify-center">
+            <p className="text-sm">Coming soon...</p>
+          </div>
+        </div>
+      );
+    default:
+      return null;
+  }
 }
