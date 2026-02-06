@@ -9,37 +9,9 @@ import { cn } from '@/lib/utils';
 import { useSwipeGesture } from '../../hooks/useSwipeGesture';
 import type { CalendarViewType } from '../../types/calendar.types';
 
+import { CalendarSidePanel } from '../panels/CalendarSidePanel';
 import { CalendarHeader } from './Header';
 import type { PanelType } from './Header/PanelSwitcher';
-
-/**
- * サイドパネルのプレースホルダー（開発用）
- * 実装後は PlanCardList / RecordCardList / StatsPanel に置き換え
- */
-const SidePanelPlaceholder = ({ panelType }: { panelType: PanelType }) => {
-  const labels: Record<PanelType, string> = {
-    none: '',
-    plan: 'Plan List',
-    record: 'Record List',
-    stats: 'Statistics',
-  };
-
-  return (
-    <div className="flex h-full flex-col">
-      {/* パネルヘッダー */}
-      <div className="border-border flex h-12 items-center border-b px-4">
-        <h2 className="font-medium">{labels[panelType]}</h2>
-      </div>
-      {/* プレースホルダーコンテンツ */}
-      <div className="flex flex-1 items-center justify-center">
-        <div className="text-muted-foreground text-center">
-          <p className="text-sm">{labels[panelType]}</p>
-          <p className="mt-1 text-xs">Coming soon...</p>
-        </div>
-      </div>
-    </div>
-  );
-};
 
 export interface CalendarLayoutProps {
   children: React.ReactNode;
@@ -158,7 +130,7 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
           {/* サイドパネル（デスクトップのみ、固定幅） */}
           {showSidePanel && (
             <aside className="border-border hidden h-full w-80 shrink-0 border-l md:block">
-              <SidePanelPlaceholder panelType={currentPanel} />
+              <CalendarSidePanel panelType={currentPanel} />
             </aside>
           )}
         </div>
