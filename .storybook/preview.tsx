@@ -87,6 +87,8 @@ const messages = {
       noTimeSet: '時間未設定',
       reminderSet: 'リマインダー設定あり',
       adjustEndTime: '終了時間を調整',
+      markComplete: '完了にする',
+      markIncomplete: '未完了に戻す',
     },
     actions: {
       goToToday: '今日に戻る',
@@ -114,6 +116,16 @@ const preview: Preview = {
       matchers: {
         color: /(background|color)$/i,
         date: /Date$/i,
+      },
+    },
+    backgrounds: {
+      disable: true,
+      grid: {
+        cellSize: 16,
+        cellAmount: 5,
+        opacity: 0.6,
+        offsetX: 16,
+        offsetY: 16,
       },
     },
     options: {

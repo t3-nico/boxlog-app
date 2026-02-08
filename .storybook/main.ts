@@ -16,12 +16,7 @@ const config: StorybookConfig = {
         },
       },
     },
-    {
-      name: '@storybook/addon-essentials',
-      options: {
-        backgrounds: false,
-      },
-    },
+    '@storybook/addon-essentials',
     '@storybook/addon-a11y',
     '@storybook/addon-onboarding',
     '@storybook/addon-interactions',
