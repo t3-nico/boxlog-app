@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
-import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, fn, userEvent, within } from 'storybook/test';
+import type { Meta, StoryObj } from '@storybook/react';
+import { fn } from '@storybook/test';
 
 import { CompactDateNavigator, DateNavigator } from './DateNavigator';
 import { HeaderActions } from './HeaderActions';
@@ -9,12 +9,13 @@ import { PanelSwitcher } from './PanelSwitcher';
 import { ViewSwitcher } from './ViewSwitcher';
 
 import type { PanelType } from './PanelSwitcher';
+import type { ViewOption } from './ViewSwitcher';
 
 /** カレンダーヘッダーのサブコンポーネント（ViewSwitcher, DateNavigator, HeaderActions, PanelSwitcher）。 */
 const meta = {
   title: 'Features/Calendar/Header',
   parameters: {
-    layout: 'padded',
+    layout: 'centered',
   },
   tags: ['autodocs'],
 } satisfies Meta;
@@ -26,12 +27,16 @@ type Story = StoryObj<typeof meta>;
 // ヘルパー
 // ---------------------------------------------------------------------------
 
-function ViewSwitcherExample({
-  initial = 'week',
-}: { initial?: import('@/features/calendar/types/calendar.types').CalendarViewType } = {}) {
-  const [current, setCurrent] =
-    useState<import('@/features/calendar/types/calendar.types').CalendarViewType>(initial);
-  return <ViewSwitcher currentView={current} onChange={setCurrent} />;
+const viewOptions: ViewOption[] = [
+  { value: 'day', label: 'Day', shortcut: 'D' },
+  { value: '3day', label: '3 Days', shortcut: '3' },
+  { value: 'week', label: 'Week', shortcut: 'W' },
+  { value: '5day', label: '5 Days', shortcut: '5' },
+];
+
+function ViewSwitcherExample() {
+  const [current, setCurrent] = useState('day');
+  return <ViewSwitcher options={viewOptions} currentView={current} onChange={setCurrent} />;
 }
 
 function PanelSwitcherExample() {
@@ -43,31 +48,14 @@ function PanelSwitcherExample() {
 // Stories
 // ---------------------------------------------------------------------------
 
-/** ビュー切替ドロップダウン。日/週/アジェンダ + 日数サブメニュー（2-9日）+ ビューの設定（週末・週数表示、一般設定リンク）。キーボードショートカット対応（D, W, A, 1-9, 0）。 */
+/** ビュー切替ドロップダウン。キーボードショートカット対応（D, 3, W, 5）。 */
 export const ViewSwitcherDefault: Story = {
   render: () => <ViewSwitcherExample />,
-};
-
-/** 複数日ビュー選択時。ラベルが「3日間」のように表示される。 */
-export const ViewSwitcherMultiDay: Story = {
-  render: () => <ViewSwitcherExample initial="3day" />,
 };
 
 /** 日付ナビゲーション。Todayボタン + 前後矢印。 */
 export const DateNavigatorDefault: Story = {
   render: () => <DateNavigator onNavigate={fn()} />,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    // 前後ナビゲーションボタンをクリック
-    const buttons = canvas.getAllByRole('button');
-    await expect(buttons.length).toBeGreaterThan(0);
-    // 最初のボタン（Today or 前矢印）をクリック
-    const firstButton = buttons[0];
-    if (firstButton) {
-      await userEvent.click(firstButton);
-    }
-  },
 };
 
 /** コンパクトナビゲーション。矢印のみ。 */

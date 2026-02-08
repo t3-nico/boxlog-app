@@ -5,20 +5,7 @@ import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
 import { DragSelectionPreview } from './CalendarDragSelection/DragSelectionPreview';
 import { PlanCard } from './PlanCard/PlanCard';
 
-/**
- * カレンダー上に表示されるカードのすべてのバリエーション。
- *
- * ## カード種別
- * - **Plan**: 通常の予定（チェックボックス付き）
- * - **Record**: 実績記録（左ボーダー付き、読み取り専用）
- * - **Draft**: 新規作成中のプレビュー
- *
- * ## ドラフト表示の流れ
- * 1. **DragSelectionPreview**: ドラッグ選択中に表示
- * 2. **PlanCard (isDraft)**: Inspector表示後に表示
- *
- * 両者は同じPlanCardContentを使用し、一貫した見た目を実現。
- */
+/** カレンダー上のカード（Plan/Record/Draft）の全バリエーション。 */
 const meta = {
   title: 'Features/Calendar/Cards',
   parameters: {
@@ -34,11 +21,6 @@ type Story = StoryObj<typeof meta>;
 // ヘルパー
 // ---------------------------------------------------------------------------
 
-function SectionLabel({ children }: { children: React.ReactNode }) {
-  return <p className="text-muted-foreground mb-2 text-xs font-medium uppercase">{children}</p>;
-}
-
-// カレンダーグリッド風のコンテナ（HOUR_HEIGHT=72pxに合わせる）
 function GridContainer({ children, height = 72 }: { children: React.ReactNode; height?: number }) {
   return (
     <div
@@ -55,7 +37,6 @@ function GridContainer({ children, height = 72 }: { children: React.ReactNode; h
   );
 }
 
-// 基本のプランデータ
 const basePlan: CalendarPlan = {
   id: 'plan-1',
   title: 'チームミーティング',
@@ -89,57 +70,36 @@ const formatTime = (hour: number, minute: number) => {
 // Plan系
 // ---------------------------------------------------------------------------
 
-/** Plan: 通常の予定 */
+/** 通常のPlan。完了済み・選択中・繰り返しのバリエーション含む。 */
 export const Plan: Story = {
   render: () => (
-    <div className="space-y-4 p-4">
-      <div>
-        <SectionLabel>基本</SectionLabel>
-        <GridContainer>
-          <PlanCard plan={basePlan} position={basePosition} />
-        </GridContainer>
-      </div>
-
-      <div>
-        <SectionLabel>バリエーション</SectionLabel>
-        <div className="flex flex-wrap gap-4">
-          <div className="flex flex-col gap-1">
-            <span className="text-muted-foreground text-xs">完了済み</span>
-            <GridContainer>
-              <PlanCard plan={{ ...basePlan, status: 'closed' }} position={basePosition} />
-            </GridContainer>
-          </div>
-          <div className="flex flex-col gap-1">
-            <span className="text-muted-foreground text-xs">選択中</span>
-            <GridContainer>
-              <PlanCard plan={basePlan} position={basePosition} isSelected />
-            </GridContainer>
-          </div>
-          <div className="flex flex-col gap-1">
-            <span className="text-muted-foreground text-xs">繰り返し</span>
-            <GridContainer>
-              <PlanCard plan={{ ...basePlan, isRecurring: true }} position={basePosition} />
-            </GridContainer>
-          </div>
-        </div>
-      </div>
+    <div className="flex flex-wrap gap-4 p-4">
+      <GridContainer>
+        <PlanCard plan={basePlan} position={basePosition} />
+      </GridContainer>
+      <GridContainer>
+        <PlanCard plan={{ ...basePlan, status: 'closed' }} position={basePosition} />
+      </GridContainer>
+      <GridContainer>
+        <PlanCard plan={basePlan} position={basePosition} isSelected />
+      </GridContainer>
+      <GridContainer>
+        <PlanCard plan={{ ...basePlan, isRecurring: true }} position={basePosition} />
+      </GridContainer>
     </div>
   ),
 };
 
-/** Record: 実績記録 */
+/** Record（実績記録）。左ボーダーで区別。 */
 export const Record: Story = {
   render: () => (
-    <div className="space-y-4 p-4">
-      <div>
-        <SectionLabel>基本</SectionLabel>
-        <GridContainer>
-          <PlanCard
-            plan={{ ...basePlan, id: 'record-1', type: 'record', title: '開発作業' }}
-            position={basePosition}
-          />
-        </GridContainer>
-      </div>
+    <div className="p-4">
+      <GridContainer>
+        <PlanCard
+          plan={{ ...basePlan, id: 'record-1', type: 'record', title: '開発作業' }}
+          position={basePosition}
+        />
+      </GridContainer>
     </div>
   ),
 };
@@ -148,63 +108,74 @@ export const Record: Story = {
 // Draft系
 // ---------------------------------------------------------------------------
 
-/** DraftDragging: ドラッグ選択中のプレビュー */
+/** ドラッグ選択中のプレビュー。PlanCardContentを使用。 */
 export const DraftDragging: Story = {
   render: () => (
-    <div className="space-y-4 p-4">
-      <div>
-        <SectionLabel>基本</SectionLabel>
-        <GridContainer>
-          <DragSelectionPreview
-            selection={{ startHour: 0, startMinute: 0, endHour: 1, endMinute: 0 }}
-            formatTime={formatTime}
-          />
-        </GridContainer>
-      </div>
-      <p className="text-muted-foreground text-xs">
-        PlanCardContentを使用してPlanCard Draftと同じ見た目を実現
-      </p>
+    <div className="p-4">
+      <GridContainer>
+        <DragSelectionPreview
+          selection={{ startHour: 0, startMinute: 0, endHour: 1, endMinute: 0 }}
+          formatTime={formatTime}
+        />
+      </GridContainer>
     </div>
   ),
 };
 
-/** DraftOverlapping: 時間重複時のエラー表示 */
+/** 時間重複時のエラー表示。赤背景 + Banアイコン。 */
 export const DraftOverlapping: Story = {
   render: () => (
-    <div className="space-y-4 p-4">
-      <div>
-        <SectionLabel>基本</SectionLabel>
-        <GridContainer>
-          <DragSelectionPreview
-            selection={{ startHour: 0, startMinute: 0, endHour: 1, endMinute: 0 }}
-            formatTime={formatTime}
-            isOverlapping
-          />
-        </GridContainer>
-      </div>
-      <p className="text-muted-foreground text-xs">
-        赤背景 + Banアイコンで警告。この状態では予定を作成できない
-      </p>
+    <div className="p-4">
+      <GridContainer>
+        <DragSelectionPreview
+          selection={{ startHour: 0, startMinute: 0, endHour: 1, endMinute: 0 }}
+          formatTime={formatTime}
+          isOverlapping
+        />
+      </GridContainer>
     </div>
   ),
 };
 
-/** DraftCreating: Inspector表示後のドラフト */
+/** Inspector表示後のドラフト。isDraft=trueでチェックボックス無効・ドラッグ不可。 */
 export const DraftCreating: Story = {
   render: () => (
-    <div className="space-y-4 p-4">
-      <div>
-        <SectionLabel>基本</SectionLabel>
-        <GridContainer>
-          <PlanCard
-            plan={{ ...basePlan, id: '__draft__', title: '新しい予定', isDraft: true }}
-            position={basePosition}
-          />
-        </GridContainer>
-      </div>
-      <p className="text-muted-foreground text-xs">
-        PlanCardにisDraft=trueを渡した状態。チェックボックス無効、ドラッグ・リサイズ不可
-      </p>
+    <div className="p-4">
+      <GridContainer>
+        <PlanCard
+          plan={{ ...basePlan, id: '__draft__', title: '新しい予定', isDraft: true }}
+          position={basePosition}
+        />
+      </GridContainer>
+    </div>
+  ),
+};
+
+// ---------------------------------------------------------------------------
+// 状態バリエーション
+// ---------------------------------------------------------------------------
+
+/** リマインダー設定あり。ベルアイコンが表示される。 */
+export const WithReminder: Story = {
+  render: () => (
+    <div className="p-4">
+      <GridContainer>
+        <PlanCard plan={{ ...basePlan, reminder_minutes: 15 }} position={basePosition} />
+      </GridContainer>
+    </div>
+  ),
+};
+
+/** タグ付きのPlan。 */
+export const WithTags: Story = {
+  render: () => (
+    <div className="p-4">
+      <GridContainer height={100}>
+        <PlanCard
+          plan={{ ...basePlan, tagIds: ['tag-1', 'tag-2'] }}
+          position={{ ...basePosition, height: 100 }}
+        />
+      </GridContainer>
     </div>
   ),
 };
@@ -213,162 +184,103 @@ export const DraftCreating: Story = {
 // サイズバリエーション
 // ---------------------------------------------------------------------------
 
-/** SizeVariations: 時間帯による高さの違い */
+/** 時間帯による高さの違い（HOUR_HEIGHT=72pxベース）。 */
 export const SizeVariations: Story = {
   render: () => (
-    <div className="space-y-4 p-4">
-      <div>
-        <SectionLabel>HOUR_HEIGHT=72px ベース</SectionLabel>
-        <div className="flex flex-wrap items-end gap-4">
-          <div className="flex flex-col gap-1">
-            <span className="text-muted-foreground text-xs">15分</span>
-            <GridContainer height={18}>
-              <PlanCard plan={basePlan} position={{ ...basePosition, height: 18 }} />
-            </GridContainer>
-          </div>
-          <div className="flex flex-col gap-1">
-            <span className="text-muted-foreground text-xs">30分</span>
-            <GridContainer height={36}>
-              <PlanCard plan={basePlan} position={{ ...basePosition, height: 36 }} />
-            </GridContainer>
-          </div>
-          <div className="flex flex-col gap-1">
-            <span className="text-muted-foreground text-xs">1時間</span>
-            <GridContainer>
-              <PlanCard plan={basePlan} position={basePosition} />
-            </GridContainer>
-          </div>
-          <div className="flex flex-col gap-1">
-            <span className="text-muted-foreground text-xs">2時間</span>
-            <GridContainer height={144}>
-              <PlanCard plan={basePlan} position={{ ...basePosition, height: 144 }} />
-            </GridContainer>
-          </div>
-        </div>
-      </div>
+    <div className="flex flex-wrap items-end gap-4 p-4">
+      <GridContainer height={18}>
+        <PlanCard plan={basePlan} position={{ ...basePosition, height: 18 }} />
+      </GridContainer>
+      <GridContainer height={36}>
+        <PlanCard plan={basePlan} position={{ ...basePosition, height: 36 }} />
+      </GridContainer>
+      <GridContainer>
+        <PlanCard plan={basePlan} position={basePosition} />
+      </GridContainer>
+      <GridContainer height={144}>
+        <PlanCard plan={basePlan} position={{ ...basePosition, height: 144 }} />
+      </GridContainer>
     </div>
   ),
 };
 
 // ---------------------------------------------------------------------------
-// 全状態一覧
+// 全パターン一覧
 // ---------------------------------------------------------------------------
 
-/** AllStates: すべてのカード状態を一覧表示 */
-export const AllStates: Story = {
+/** 全パターン一覧。 */
+export const AllPatterns: Story = {
   render: () => (
-    <div className="space-y-8 p-4">
-      {/* Plan系 */}
-      <div>
-        <SectionLabel>Plan（予定）</SectionLabel>
-        <div className="flex flex-wrap gap-4">
-          <div className="flex flex-col gap-1">
-            <span className="text-muted-foreground text-xs">通常</span>
-            <GridContainer>
-              <PlanCard plan={basePlan} position={basePosition} />
-            </GridContainer>
-          </div>
-          <div className="flex flex-col gap-1">
-            <span className="text-muted-foreground text-xs">完了済み</span>
-            <GridContainer>
-              <PlanCard plan={{ ...basePlan, status: 'closed' }} position={basePosition} />
-            </GridContainer>
-          </div>
-          <div className="flex flex-col gap-1">
-            <span className="text-muted-foreground text-xs">選択中</span>
-            <GridContainer>
-              <PlanCard plan={basePlan} position={basePosition} isSelected />
-            </GridContainer>
-          </div>
-          <div className="flex flex-col gap-1">
-            <span className="text-muted-foreground text-xs">繰り返し</span>
-            <GridContainer>
-              <PlanCard plan={{ ...basePlan, isRecurring: true }} position={basePosition} />
-            </GridContainer>
-          </div>
-        </div>
+    <div className="flex flex-col items-start gap-6 p-4">
+      <div className="flex flex-wrap gap-4">
+        <GridContainer>
+          <PlanCard plan={basePlan} position={basePosition} />
+        </GridContainer>
+        <GridContainer>
+          <PlanCard plan={{ ...basePlan, status: 'closed' }} position={basePosition} />
+        </GridContainer>
+        <GridContainer>
+          <PlanCard plan={basePlan} position={basePosition} isSelected />
+        </GridContainer>
+        <GridContainer>
+          <PlanCard plan={{ ...basePlan, isRecurring: true }} position={basePosition} />
+        </GridContainer>
       </div>
 
-      {/* Record系 */}
-      <div>
-        <SectionLabel>Record（実績記録）</SectionLabel>
-        <div className="flex flex-wrap gap-4">
-          <div className="flex flex-col gap-1">
-            <span className="text-muted-foreground text-xs">通常</span>
-            <GridContainer>
-              <PlanCard
-                plan={{ ...basePlan, id: 'record-1', type: 'record', title: '開発作業' }}
-                position={basePosition}
-              />
-            </GridContainer>
-          </div>
-        </div>
+      <GridContainer>
+        <PlanCard
+          plan={{ ...basePlan, id: 'record-1', type: 'record', title: '開発作業' }}
+          position={basePosition}
+        />
+      </GridContainer>
+
+      <div className="flex flex-wrap gap-4">
+        <GridContainer>
+          <DragSelectionPreview
+            selection={{ startHour: 0, startMinute: 0, endHour: 1, endMinute: 0 }}
+            formatTime={formatTime}
+          />
+        </GridContainer>
+        <GridContainer>
+          <PlanCard
+            plan={{ ...basePlan, id: '__draft__', title: '新しい予定', isDraft: true }}
+            position={basePosition}
+          />
+        </GridContainer>
+        <GridContainer>
+          <DragSelectionPreview
+            selection={{ startHour: 0, startMinute: 0, endHour: 1, endMinute: 0 }}
+            formatTime={formatTime}
+            isOverlapping
+          />
+        </GridContainer>
       </div>
 
-      {/* Draft系 */}
-      <div>
-        <SectionLabel>Draft（新規作成中）</SectionLabel>
-        <div className="flex flex-wrap gap-4">
-          <div className="flex flex-col gap-1">
-            <span className="text-muted-foreground text-xs">ドラッグ選択中</span>
-            <GridContainer>
-              <DragSelectionPreview
-                selection={{ startHour: 0, startMinute: 0, endHour: 1, endMinute: 0 }}
-                formatTime={formatTime}
-              />
-            </GridContainer>
-          </div>
-          <div className="flex flex-col gap-1">
-            <span className="text-muted-foreground text-xs">Inspector表示後</span>
-            <GridContainer>
-              <PlanCard
-                plan={{ ...basePlan, id: '__draft__', title: '新しい予定', isDraft: true }}
-                position={basePosition}
-              />
-            </GridContainer>
-          </div>
-          <div className="flex flex-col gap-1">
-            <span className="text-muted-foreground text-xs">時間重複エラー</span>
-            <GridContainer>
-              <DragSelectionPreview
-                selection={{ startHour: 0, startMinute: 0, endHour: 1, endMinute: 0 }}
-                formatTime={formatTime}
-                isOverlapping
-              />
-            </GridContainer>
-          </div>
-        </div>
+      <div className="flex flex-wrap gap-4">
+        <GridContainer>
+          <PlanCard plan={{ ...basePlan, reminder_minutes: 15 }} position={basePosition} />
+        </GridContainer>
+        <GridContainer height={100}>
+          <PlanCard
+            plan={{ ...basePlan, tagIds: ['tag-1', 'tag-2'] }}
+            position={{ ...basePosition, height: 100 }}
+          />
+        </GridContainer>
       </div>
 
-      {/* サイズ */}
-      <div>
-        <SectionLabel>サイズバリエーション</SectionLabel>
-        <div className="flex flex-wrap items-end gap-4">
-          <div className="flex flex-col gap-1">
-            <span className="text-muted-foreground text-xs">15分</span>
-            <GridContainer height={18}>
-              <PlanCard plan={basePlan} position={{ ...basePosition, height: 18 }} />
-            </GridContainer>
-          </div>
-          <div className="flex flex-col gap-1">
-            <span className="text-muted-foreground text-xs">30分</span>
-            <GridContainer height={36}>
-              <PlanCard plan={basePlan} position={{ ...basePosition, height: 36 }} />
-            </GridContainer>
-          </div>
-          <div className="flex flex-col gap-1">
-            <span className="text-muted-foreground text-xs">1時間</span>
-            <GridContainer>
-              <PlanCard plan={basePlan} position={basePosition} />
-            </GridContainer>
-          </div>
-          <div className="flex flex-col gap-1">
-            <span className="text-muted-foreground text-xs">2時間</span>
-            <GridContainer height={144}>
-              <PlanCard plan={basePlan} position={{ ...basePosition, height: 144 }} />
-            </GridContainer>
-          </div>
-        </div>
+      <div className="flex flex-wrap items-end gap-4">
+        <GridContainer height={18}>
+          <PlanCard plan={basePlan} position={{ ...basePosition, height: 18 }} />
+        </GridContainer>
+        <GridContainer height={36}>
+          <PlanCard plan={basePlan} position={{ ...basePosition, height: 36 }} />
+        </GridContainer>
+        <GridContainer>
+          <PlanCard plan={basePlan} position={basePosition} />
+        </GridContainer>
+        <GridContainer height={144}>
+          <PlanCard plan={basePlan} position={{ ...basePosition, height: 144 }} />
+        </GridContainer>
       </div>
     </div>
   ),
