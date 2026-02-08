@@ -235,7 +235,7 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
       onTouchStart={handleTouchStart}
       onKeyDown={handleKeyDown}
       draggable={false} // HTML5 draggableは使わない
-      role="button"
+      role="group"
       tabIndex={0}
       aria-label={
         isDraft
@@ -244,7 +244,6 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
             ? `record: ${plan.title}`
             : `plan: ${plan.title}`
       }
-      aria-pressed={isSelected}
     >
       {/* Record: アイコンなし / Plan（Draft含む）: チェックボックス */}
       {!isRecord && (
