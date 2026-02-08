@@ -9,7 +9,7 @@ import { PlanCard } from './PlanCard/PlanCard';
 const meta = {
   title: 'Features/Calendar/Cards',
   parameters: {
-    layout: 'fullscreen',
+    layout: 'padded',
   },
   tags: ['autodocs'],
 } satisfies Meta;
@@ -21,17 +21,10 @@ type Story = StoryObj<typeof meta>;
 // ヘルパー
 // ---------------------------------------------------------------------------
 
-function GridContainer({ children, height = 72 }: { children: React.ReactNode; height?: number }) {
+/** PlanCard/DragSelectionPreviewはposition:absoluteのため、relativeな親が必要。 */
+function Slot({ children, height = 72 }: { children: React.ReactNode; height?: number }) {
   return (
-    <div
-      className="bg-card border-border relative border-l"
-      style={{
-        width: 200,
-        height,
-        backgroundImage:
-          'repeating-linear-gradient(to bottom, transparent, transparent 17px, var(--border) 17px, var(--border) 18px)',
-      }}
-    >
+    <div className="relative w-full" style={{ height }}>
       {children}
     </div>
   );
@@ -73,19 +66,19 @@ const formatTime = (hour: number, minute: number) => {
 /** 通常のPlan。完了済み・選択中・繰り返しのバリエーション含む。 */
 export const Plan: Story = {
   render: () => (
-    <div className="flex flex-wrap gap-4 p-4">
-      <GridContainer>
+    <div className="flex flex-col gap-4">
+      <Slot>
         <PlanCard plan={basePlan} position={basePosition} />
-      </GridContainer>
-      <GridContainer>
+      </Slot>
+      <Slot>
         <PlanCard plan={{ ...basePlan, status: 'closed' }} position={basePosition} />
-      </GridContainer>
-      <GridContainer>
+      </Slot>
+      <Slot>
         <PlanCard plan={basePlan} position={basePosition} isSelected />
-      </GridContainer>
-      <GridContainer>
+      </Slot>
+      <Slot>
         <PlanCard plan={{ ...basePlan, isRecurring: true }} position={basePosition} />
-      </GridContainer>
+      </Slot>
     </div>
   ),
 };
@@ -93,14 +86,12 @@ export const Plan: Story = {
 /** Record（実績記録）。左ボーダーで区別。 */
 export const Record: Story = {
   render: () => (
-    <div className="p-4">
-      <GridContainer>
-        <PlanCard
-          plan={{ ...basePlan, id: 'record-1', type: 'record', title: '開発作業' }}
-          position={basePosition}
-        />
-      </GridContainer>
-    </div>
+    <Slot>
+      <PlanCard
+        plan={{ ...basePlan, id: 'record-1', type: 'record', title: '開発作業' }}
+        position={basePosition}
+      />
+    </Slot>
   ),
 };
 
@@ -108,46 +99,40 @@ export const Record: Story = {
 // Draft系
 // ---------------------------------------------------------------------------
 
-/** ドラッグ選択中のプレビュー。PlanCardContentを使用。 */
+/** ドラッグ選択中のプレビュー。 */
 export const DraftDragging: Story = {
   render: () => (
-    <div className="p-4">
-      <GridContainer>
-        <DragSelectionPreview
-          selection={{ startHour: 0, startMinute: 0, endHour: 1, endMinute: 0 }}
-          formatTime={formatTime}
-        />
-      </GridContainer>
-    </div>
+    <Slot>
+      <DragSelectionPreview
+        selection={{ startHour: 0, startMinute: 0, endHour: 1, endMinute: 0 }}
+        formatTime={formatTime}
+      />
+    </Slot>
   ),
 };
 
 /** 時間重複時のエラー表示。赤背景 + Banアイコン。 */
 export const DraftOverlapping: Story = {
   render: () => (
-    <div className="p-4">
-      <GridContainer>
-        <DragSelectionPreview
-          selection={{ startHour: 0, startMinute: 0, endHour: 1, endMinute: 0 }}
-          formatTime={formatTime}
-          isOverlapping
-        />
-      </GridContainer>
-    </div>
+    <Slot>
+      <DragSelectionPreview
+        selection={{ startHour: 0, startMinute: 0, endHour: 1, endMinute: 0 }}
+        formatTime={formatTime}
+        isOverlapping
+      />
+    </Slot>
   ),
 };
 
 /** Inspector表示後のドラフト。isDraft=trueでチェックボックス無効・ドラッグ不可。 */
 export const DraftCreating: Story = {
   render: () => (
-    <div className="p-4">
-      <GridContainer>
-        <PlanCard
-          plan={{ ...basePlan, id: '__draft__', title: '新しい予定', isDraft: true }}
-          position={basePosition}
-        />
-      </GridContainer>
-    </div>
+    <Slot>
+      <PlanCard
+        plan={{ ...basePlan, id: '__draft__', title: '新しい予定', isDraft: true }}
+        position={basePosition}
+      />
+    </Slot>
   ),
 };
 
@@ -158,25 +143,21 @@ export const DraftCreating: Story = {
 /** リマインダー設定あり。ベルアイコンが表示される。 */
 export const WithReminder: Story = {
   render: () => (
-    <div className="p-4">
-      <GridContainer>
-        <PlanCard plan={{ ...basePlan, reminder_minutes: 15 }} position={basePosition} />
-      </GridContainer>
-    </div>
+    <Slot>
+      <PlanCard plan={{ ...basePlan, reminder_minutes: 15 }} position={basePosition} />
+    </Slot>
   ),
 };
 
 /** タグ付きのPlan。 */
 export const WithTags: Story = {
   render: () => (
-    <div className="p-4">
-      <GridContainer height={100}>
-        <PlanCard
-          plan={{ ...basePlan, tagIds: ['tag-1', 'tag-2'] }}
-          position={{ ...basePosition, height: 100 }}
-        />
-      </GridContainer>
-    </div>
+    <Slot height={100}>
+      <PlanCard
+        plan={{ ...basePlan, tagIds: ['tag-1', 'tag-2'] }}
+        position={{ ...basePosition, height: 100 }}
+      />
+    </Slot>
   ),
 };
 
@@ -187,19 +168,19 @@ export const WithTags: Story = {
 /** 時間帯による高さの違い（HOUR_HEIGHT=72pxベース）。 */
 export const SizeVariations: Story = {
   render: () => (
-    <div className="flex flex-wrap items-end gap-4 p-4">
-      <GridContainer height={18}>
+    <div className="flex flex-col gap-4">
+      <Slot height={18}>
         <PlanCard plan={basePlan} position={{ ...basePosition, height: 18 }} />
-      </GridContainer>
-      <GridContainer height={36}>
+      </Slot>
+      <Slot height={36}>
         <PlanCard plan={basePlan} position={{ ...basePosition, height: 36 }} />
-      </GridContainer>
-      <GridContainer>
+      </Slot>
+      <Slot>
         <PlanCard plan={basePlan} position={basePosition} />
-      </GridContainer>
-      <GridContainer height={144}>
+      </Slot>
+      <Slot height={144}>
         <PlanCard plan={basePlan} position={{ ...basePosition, height: 144 }} />
-      </GridContainer>
+      </Slot>
     </div>
   ),
 };
@@ -211,77 +192,62 @@ export const SizeVariations: Story = {
 /** 全パターン一覧。 */
 export const AllPatterns: Story = {
   render: () => (
-    <div className="flex flex-col items-start gap-6 p-4">
-      <div className="flex flex-wrap gap-4">
-        <GridContainer>
-          <PlanCard plan={basePlan} position={basePosition} />
-        </GridContainer>
-        <GridContainer>
-          <PlanCard plan={{ ...basePlan, status: 'closed' }} position={basePosition} />
-        </GridContainer>
-        <GridContainer>
-          <PlanCard plan={basePlan} position={basePosition} isSelected />
-        </GridContainer>
-        <GridContainer>
-          <PlanCard plan={{ ...basePlan, isRecurring: true }} position={basePosition} />
-        </GridContainer>
-      </div>
-
-      <GridContainer>
+    <div className="flex flex-col items-start gap-6">
+      <Slot>
+        <PlanCard plan={basePlan} position={basePosition} />
+      </Slot>
+      <Slot>
+        <PlanCard plan={{ ...basePlan, status: 'closed' }} position={basePosition} />
+      </Slot>
+      <Slot>
+        <PlanCard plan={basePlan} position={basePosition} isSelected />
+      </Slot>
+      <Slot>
+        <PlanCard plan={{ ...basePlan, isRecurring: true }} position={basePosition} />
+      </Slot>
+      <Slot>
         <PlanCard
           plan={{ ...basePlan, id: 'record-1', type: 'record', title: '開発作業' }}
           position={basePosition}
         />
-      </GridContainer>
-
-      <div className="flex flex-wrap gap-4">
-        <GridContainer>
-          <DragSelectionPreview
-            selection={{ startHour: 0, startMinute: 0, endHour: 1, endMinute: 0 }}
-            formatTime={formatTime}
-          />
-        </GridContainer>
-        <GridContainer>
-          <PlanCard
-            plan={{ ...basePlan, id: '__draft__', title: '新しい予定', isDraft: true }}
-            position={basePosition}
-          />
-        </GridContainer>
-        <GridContainer>
-          <DragSelectionPreview
-            selection={{ startHour: 0, startMinute: 0, endHour: 1, endMinute: 0 }}
-            formatTime={formatTime}
-            isOverlapping
-          />
-        </GridContainer>
-      </div>
-
-      <div className="flex flex-wrap gap-4">
-        <GridContainer>
-          <PlanCard plan={{ ...basePlan, reminder_minutes: 15 }} position={basePosition} />
-        </GridContainer>
-        <GridContainer height={100}>
-          <PlanCard
-            plan={{ ...basePlan, tagIds: ['tag-1', 'tag-2'] }}
-            position={{ ...basePosition, height: 100 }}
-          />
-        </GridContainer>
-      </div>
-
-      <div className="flex flex-wrap items-end gap-4">
-        <GridContainer height={18}>
-          <PlanCard plan={basePlan} position={{ ...basePosition, height: 18 }} />
-        </GridContainer>
-        <GridContainer height={36}>
-          <PlanCard plan={basePlan} position={{ ...basePosition, height: 36 }} />
-        </GridContainer>
-        <GridContainer>
-          <PlanCard plan={basePlan} position={basePosition} />
-        </GridContainer>
-        <GridContainer height={144}>
-          <PlanCard plan={basePlan} position={{ ...basePosition, height: 144 }} />
-        </GridContainer>
-      </div>
+      </Slot>
+      <Slot>
+        <DragSelectionPreview
+          selection={{ startHour: 0, startMinute: 0, endHour: 1, endMinute: 0 }}
+          formatTime={formatTime}
+        />
+      </Slot>
+      <Slot>
+        <PlanCard
+          plan={{ ...basePlan, id: '__draft__', title: '新しい予定', isDraft: true }}
+          position={basePosition}
+        />
+      </Slot>
+      <Slot>
+        <DragSelectionPreview
+          selection={{ startHour: 0, startMinute: 0, endHour: 1, endMinute: 0 }}
+          formatTime={formatTime}
+          isOverlapping
+        />
+      </Slot>
+      <Slot>
+        <PlanCard plan={{ ...basePlan, reminder_minutes: 15 }} position={basePosition} />
+      </Slot>
+      <Slot height={100}>
+        <PlanCard
+          plan={{ ...basePlan, tagIds: ['tag-1', 'tag-2'] }}
+          position={{ ...basePosition, height: 100 }}
+        />
+      </Slot>
+      <Slot height={18}>
+        <PlanCard plan={basePlan} position={{ ...basePosition, height: 18 }} />
+      </Slot>
+      <Slot height={36}>
+        <PlanCard plan={basePlan} position={{ ...basePosition, height: 36 }} />
+      </Slot>
+      <Slot height={144}>
+        <PlanCard plan={basePlan} position={{ ...basePosition, height: 144 }} />
+      </Slot>
     </div>
   ),
 };

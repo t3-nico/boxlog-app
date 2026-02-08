@@ -15,6 +15,7 @@ import {
   useGlobalDragCursor,
   usePlanStyles,
 } from '../../shared';
+import { PanelDragPreview } from '../../shared/components/PanelDragPreview';
 import { HOUR_HEIGHT } from '../../shared/constants/grid.constants';
 import { useDragAndDrop } from '../../shared/hooks/useDragAndDrop';
 import type { WeekPlanPosition } from '../WeekView.types';
@@ -152,6 +153,7 @@ export const WeekContent = ({
         className,
       )}
       data-calendar-grid
+      data-calendar-day-index={dayIndex}
     >
       {/* CalendarDragSelectionを使用（ドラッグ操作のみでプラン作成） */}
       <CalendarDragSelection
@@ -173,6 +175,9 @@ export const WeekContent = ({
 
       {/* プラン表示エリア - CalendarDragSelectionより上にz-indexを設定 */}
       <div className="pointer-events-none absolute inset-0 z-20" style={{ height: gridHeight }}>
+        {/* パネルドラッグのプレビュー */}
+        <PanelDragPreview dayIndex={dayIndex} />
+
         {/* 通常のプラン表示 */}
         {plans.map((plan) => {
           const style = planStyles[plan.id];

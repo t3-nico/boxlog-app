@@ -1,22 +1,27 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { useTranslations } from 'next-intl';
 
 import { usePlans } from '@/features/plans/hooks/usePlans';
-import { usePlanFilterStore } from '@/features/plans/stores/usePlanFilterStore';
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
-import type { PlanStatus } from '@/features/plans/types/plan';
+import { groupItems } from '@/features/plans/utils/grouping';
+import { useTagsMap } from '@/features/tags/hooks/useTagsMap';
+import { usePanelDrag } from '../../hooks/usePanelDrag';
 import { useCalendarFilterStore } from '../../stores/useCalendarFilterStore';
 
 import { PlanListCard } from './PlanListCard';
+import { PlanListGroup } from './PlanListGroup';
+import type { PanelGroupByField, PanelSortField, PanelSortOrder } from './PlanListSortMenu';
 import { PlanListToolbar } from './PlanListToolbar';
 
 /**
  * サイドパネル用のPlanリストパネル
  *
- * - Open/Closedフィルター
+ * 「まだ時間を決めていない、やるべきこと」のリスト
+ * - start_time === null && status === 'open' のPlanのみ表示
+ * - ソート/グルーピング
  * - 検索
  * - タグフィルター（CalendarSidebarと連動）
  * - クリックでInspector表示
@@ -24,13 +29,17 @@ import { PlanListToolbar } from './PlanListToolbar';
 export function PlanListPanel() {
   const t = useTranslations('calendar');
 
-  // フィルター状態
-  const status = usePlanFilterStore((s) => s.status);
-  const setStatus = usePlanFilterStore((s) => s.setStatus);
-  const search = usePlanFilterStore((s) => s.search);
-  const setSearch = usePlanFilterStore((s) => s.setSearch);
-  const isSearchOpen = usePlanFilterStore((s) => s.isSearchOpen);
-  const setIsSearchOpen = usePlanFilterStore((s) => s.setIsSearchOpen);
+  // 検索状態
+  const [search, setSearch] = useState('');
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+
+  // ソート/グルーピング状態
+  const [sortBy, setSortBy] = useState<PanelSortField>('created_at');
+  const [sortOrder, setSortOrder] = useState<PanelSortOrder>('desc');
+  const [groupBy, setGroupBy] = useState<PanelGroupByField>(null);
+
+  // グループ折りたたみ状態
+  const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set());
 
   // カレンダーフィルター（タグ）
   const isPlanVisible = useCalendarFilterStore((s) => s.isPlanVisible);
@@ -38,20 +47,32 @@ export function PlanListPanel() {
   // Inspector
   const openInspector = usePlanInspectorStore((s) => s.openInspector);
 
-  // プラン一覧取得（searchが空文字の場合はundefinedを渡す）
-  const { data: plans, isLoading, error } = usePlans(search ? { search } : undefined);
+  // D&D
+  const { handleDragStart } = usePanelDrag();
 
-  // フィルタリング
+  // タグ名解決（グルーピング用）
+  const { getTagById } = useTagsMap();
+
+  // プラン一覧取得（Openのみ + サーバー側ソート）
+  const {
+    data: plans,
+    isLoading,
+    error,
+  } = usePlans(
+    search ? { status: 'open', search, sortBy, sortOrder } : { status: 'open', sortBy, sortOrder },
+  );
+
+  // フィルタリング: 未スケジュール + タグフィルター
   const filteredPlans = useMemo(() => {
     if (!plans) return [];
 
     return plans.filter((plan) => {
-      // ステータスフィルター（plan.statusはstringなのでasでキャスト）
-      if (!status.includes(plan.status as PlanStatus)) {
+      // 未スケジュールのみ
+      if (plan.start_time) {
         return false;
       }
 
-      // タグフィルター（CalendarSidebarと連動）
+      // タグフィルター
       const tagIds = plan.tagIds ?? [];
       if (!isPlanVisible(tagIds)) {
         return false;
@@ -59,20 +80,72 @@ export function PlanListPanel() {
 
       return true;
     });
-  }, [plans, status, isPlanVisible]);
+  }, [plans, isPlanVisible]);
+
+  // グルーピング
+  const groupedPlans = useMemo(() => {
+    if (!groupBy) return null;
+
+    const groups = groupItems(filteredPlans, groupBy);
+
+    // タググルーピング時はタグ名でラベルを解決
+    if (groupBy === 'tags') {
+      return groups.map((group) => {
+        if (group.groupKey === 'タグなし') return group;
+        const tag = getTagById(group.groupKey);
+        return {
+          ...group,
+          groupLabel: tag?.name ?? group.groupKey,
+        };
+      });
+    }
+
+    return groups;
+  }, [filteredPlans, groupBy, getTagById]);
+
+  // ソート変更ハンドラ
+  const handleSortChange = useCallback((field: PanelSortField, order: PanelSortOrder) => {
+    setSortBy(field);
+    setSortOrder(order);
+  }, []);
+
+  // グルーピング変更ハンドラ
+  const handleGroupByChange = useCallback((field: PanelGroupByField) => {
+    setGroupBy(field);
+    setCollapsedGroups(new Set());
+  }, []);
+
+  // グループ折りたたみ切り替え
+  const toggleGroup = useCallback((groupKey: string) => {
+    setCollapsedGroups((prev) => {
+      const next = new Set(prev);
+      if (next.has(groupKey)) {
+        next.delete(groupKey);
+      } else {
+        next.add(groupKey);
+      }
+      return next;
+    });
+  }, []);
+
+  // ツールバーの共通 props
+  const toolbarProps = {
+    search,
+    onSearchChange: setSearch,
+    isSearchOpen,
+    onSearchOpenChange: setIsSearchOpen,
+    sortBy,
+    sortOrder,
+    groupBy,
+    onSortChange: handleSortChange,
+    onGroupByChange: handleGroupByChange,
+  };
 
   // ローディング状態
   if (isLoading) {
     return (
       <div className="flex h-full flex-col">
-        <PlanListToolbar
-          status={status}
-          onStatusChange={setStatus}
-          search={search}
-          onSearchChange={setSearch}
-          isSearchOpen={isSearchOpen}
-          onSearchOpenChange={setIsSearchOpen}
-        />
+        <PlanListToolbar {...toolbarProps} />
         <div className="flex flex-1 items-center justify-center">
           <div className="text-muted-foreground text-sm">{t('panel.loading')}</div>
         </div>
@@ -84,14 +157,7 @@ export function PlanListPanel() {
   if (error) {
     return (
       <div className="flex h-full flex-col">
-        <PlanListToolbar
-          status={status}
-          onStatusChange={setStatus}
-          search={search}
-          onSearchChange={setSearch}
-          isSearchOpen={isSearchOpen}
-          onSearchOpenChange={setIsSearchOpen}
-        />
+        <PlanListToolbar {...toolbarProps} />
         <div className="flex flex-1 items-center justify-center">
           <div className="text-destructive text-sm">{t('panel.error')}</div>
         </div>
@@ -102,14 +168,7 @@ export function PlanListPanel() {
   return (
     <div className="flex h-full flex-col">
       {/* ツールバー */}
-      <PlanListToolbar
-        status={status}
-        onStatusChange={setStatus}
-        search={search}
-        onSearchChange={setSearch}
-        isSearchOpen={isSearchOpen}
-        onSearchOpenChange={setIsSearchOpen}
-      />
+      <PlanListToolbar {...toolbarProps} />
 
       {/* リスト */}
       <div className="flex-1 overflow-y-auto p-3">
@@ -117,10 +176,38 @@ export function PlanListPanel() {
           <div className="text-muted-foreground flex h-full items-center justify-center">
             <p className="text-sm">{t('panel.noPlans')}</p>
           </div>
+        ) : groupedPlans ? (
+          // グルーピング表示
+          <div className="flex flex-col gap-1">
+            {groupedPlans.map((group) => (
+              <PlanListGroup
+                key={group.groupKey}
+                label={group.groupLabel}
+                count={group.count}
+                isCollapsed={collapsedGroups.has(group.groupKey)}
+                onToggle={() => toggleGroup(group.groupKey)}
+              >
+                {group.items.map((plan) => (
+                  <PlanListCard
+                    key={plan.id}
+                    plan={plan}
+                    onClick={() => openInspector(plan.id)}
+                    onDragStart={handleDragStart}
+                  />
+                ))}
+              </PlanListGroup>
+            ))}
+          </div>
         ) : (
+          // フラット表示
           <div className="flex flex-col gap-2">
             {filteredPlans.map((plan) => (
-              <PlanListCard key={plan.id} plan={plan} onClick={() => openInspector(plan.id)} />
+              <PlanListCard
+                key={plan.id}
+                plan={plan}
+                onClick={() => openInspector(plan.id)}
+                onDragStart={handleDragStart}
+              />
             ))}
           </div>
         )}

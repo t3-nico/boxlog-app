@@ -199,11 +199,35 @@ export function usePlanMutations() {
       // 全ての plans.list キャッシュを更新（日付フィルター付きのキャッシュも含む）
       // tRPCのquery keyは [['plans', 'list'], { input: filters, type: 'query' }] の形式
       // predicate を使用して確実に全キャッシュをマッチさせる
+
+      // キャッシュ間移動対応: プランが存在するキャッシュからフルデータを取得
+      // （パネル→カレンダーD&Dなど、あるキャッシュにしか存在しない場合に必要）
+      let fullPlanForCrossCache: PlanListData[0] | undefined;
+      if (data.start_time !== undefined) {
+        for (const [, cacheData] of previousPlansList) {
+          if (cacheData) {
+            fullPlanForCrossCache = cacheData.find((p) => p.id === id);
+            if (fullPlanForCrossCache) break;
+          }
+        }
+      }
+
       queryClient.setQueriesData<PlanListData>({ predicate: isPlansListQuery }, (oldData) => {
         if (!oldData) return oldData;
-        return oldData.map((plan) =>
-          plan.id === id ? (Object.assign({}, plan, updateData) as typeof plan) : plan,
-        );
+        const exists = oldData.some((plan) => plan.id === id);
+        if (exists) {
+          return oldData.map((plan) =>
+            plan.id === id ? (Object.assign({}, plan, updateData) as typeof plan) : plan,
+          );
+        }
+        // プランがこのキャッシュに無い場合、start_time設定時は追加（キャッシュ間移動）
+        if (fullPlanForCrossCache && data.start_time !== undefined) {
+          return [
+            ...oldData,
+            Object.assign({}, fullPlanForCrossCache, updateData) as typeof fullPlanForCrossCache,
+          ];
+        }
+        return oldData;
       });
 
       // 個別プランキャッシュを更新（tagsなし/あり両方）
@@ -224,13 +248,21 @@ export function usePlanMutations() {
       type PlanListData = Awaited<ReturnType<typeof utils.plans.list.fetch>>;
       queryClient.setQueriesData<PlanListData>({ predicate: isPlansListQuery }, (oldData) => {
         if (!oldData) return oldData;
-        return oldData.map((plan) => {
-          if (plan.id === variables.id) {
-            // 既存のtagIdsを保持しつつ、サーバーデータで更新
-            return { ...updatedPlan, tagIds: plan.tagIds ?? [] };
-          }
-          return plan;
-        });
+        const exists = oldData.some((plan) => plan.id === variables.id);
+        if (exists) {
+          return oldData.map((plan) => {
+            if (plan.id === variables.id) {
+              // 既存のtagIdsを保持しつつ、サーバーデータで更新
+              return { ...updatedPlan, tagIds: plan.tagIds ?? [] };
+            }
+            return plan;
+          });
+        }
+        // キャッシュ間移動: サーバーデータでプランを追加
+        if (updatedPlan.start_time) {
+          return [...oldData, { ...updatedPlan, tagIds: [] as string[] }];
+        }
+        return oldData;
       });
 
       // 重要な更新のみtoast表示（status変更、タグ変更など）
@@ -264,9 +296,14 @@ export function usePlanMutations() {
         utils.plans.getById.setData({ id: context.id }, context.previousPlan);
       }
     },
-    onSettled: async () => {
+    onSettled: async (_data, _error, variables) => {
       // mutation完了後にフラグをリセット
       setIsMutating(false);
+
+      // start_time 変更時はキャッシュを無効化して正確な日付フィルタ結果を保証
+      if (variables?.data.start_time !== undefined) {
+        void utils.plans.list.invalidate();
+      }
     },
   });
 

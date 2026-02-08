@@ -1,7 +1,15 @@
 import type { PlanStatus } from '@/features/plans/types/plan';
 import type { GroupByField, GroupedData } from '@/features/table';
 import { isBefore, isToday, isTomorrow, isWithinInterval, startOfDay } from 'date-fns';
-import type { PlanItem } from '../hooks/usePlanData';
+
+/**
+ * グループ化可能なアイテムの最小インターフェース
+ */
+interface Groupable {
+  status: string;
+  due_date?: string | null | undefined;
+  tagIds?: string[] | undefined;
+}
 
 /**
  * ステータスラベルマップ
@@ -29,7 +37,10 @@ const STATUS_LABELS: Record<PlanStatus, string> = {
  * // ]
  * ```
  */
-export function groupItems(items: PlanItem[], groupBy: GroupByField): GroupedData<PlanItem>[] {
+export function groupItems<T extends Groupable>(
+  items: T[],
+  groupBy: GroupByField,
+): GroupedData<T>[] {
   if (!groupBy) {
     return [
       {
@@ -41,7 +52,7 @@ export function groupItems(items: PlanItem[], groupBy: GroupByField): GroupedDat
     ];
   }
 
-  const groups = new Map<string, PlanItem[]>();
+  const groups = new Map<string, T[]>();
 
   items.forEach((item) => {
     const groupKey = getGroupKey(item, groupBy);
@@ -82,7 +93,7 @@ export function groupItems(items: PlanItem[], groupBy: GroupByField): GroupedDat
 /**
  * アイテムのグループキーを取得
  */
-function getGroupKey(item: PlanItem, groupBy: GroupByField): string {
+function getGroupKey(item: Groupable, groupBy: GroupByField): string {
   switch (groupBy) {
     case 'status':
       return item.status;
