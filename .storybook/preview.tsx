@@ -277,23 +277,6 @@ const messages = {
         thisMonth: '今月',
       },
     },
-    actions: {
-      goToToday: '今日に戻る',
-    },
-    navigation: {
-      previous: '前へ',
-      next: '次へ',
-    },
-    headerActions: {
-      settings: '設定',
-      export: 'エクスポート',
-      import: 'インポート',
-      moreOptions: 'その他',
-    },
-    sleepHours: {
-      collapsed: '{start} - {end} 睡眠時間帯',
-      planCount: '{count}件の予定',
-    },
   },
 };
 
@@ -303,6 +286,16 @@ const preview: Preview = {
       matchers: {
         color: /(background|color)$/i,
         date: /Date$/i,
+      },
+    },
+    backgrounds: {
+      disable: true,
+      grid: {
+        cellSize: 16,
+        cellAmount: 5,
+        opacity: 0.6,
+        offsetX: 16,
+        offsetY: 16,
       },
     },
     options: {
