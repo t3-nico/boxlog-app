@@ -347,7 +347,9 @@ const preview: Preview = {
       return (
         <TRPCMockProvider>
           <NextIntlClientProvider locale="ja" messages={messages}>
-            <Story />
+            <main>
+              <Story />
+            </main>
           </NextIntlClientProvider>
         </TRPCMockProvider>
       );

@@ -17,6 +17,7 @@ import type { PlanWithTags } from '@/server/services/plans/types';
 interface PlanListCardProps {
   plan: PlanWithTags;
   onClick?: (plan: PlanWithTags) => void;
+  onDragStart?: (plan: PlanWithTags, e: React.MouseEvent, sourceElement: HTMLElement) => void;
 }
 
 /**
@@ -25,7 +26,11 @@ interface PlanListCardProps {
  * カレンダーTimeGridのPlanCardと同じビジュアル（チェックボックス+タイトル+時間）
  * position/drag/resizeは不要なシンプル版
  */
-export const PlanListCard = memo<PlanListCardProps>(function PlanListCard({ plan, onClick }) {
+export const PlanListCard = memo<PlanListCardProps>(function PlanListCard({
+  plan,
+  onClick,
+  onDragStart,
+}) {
   const t = useTranslations('calendar');
   const { formatTime } = useDateFormat();
   const { getTagsByIds } = useTagsMap();
@@ -34,11 +39,10 @@ export const PlanListCard = memo<PlanListCardProps>(function PlanListCard({ plan
   const status = normalizeStatus(plan.status as PlanStatus);
   const isCompleted = status === 'closed';
 
-  // 時間表示
+  // 時間表示（未スケジュールの場合は非表示）
   const startTime = plan.start_time ? formatTime(new Date(plan.start_time)) : '';
   const endTime = plan.end_time ? formatTime(new Date(plan.end_time)) : '';
-  const displayTime =
-    startTime && endTime ? `${startTime} - ${endTime}` : startTime || t('event.allDay');
+  const displayTime = startTime && endTime ? `${startTime} - ${endTime}` : startTime || null;
 
   // タグ
   const tags = getTagsByIds(plan.tagIds ?? []);
@@ -47,6 +51,16 @@ export const PlanListCard = memo<PlanListCardProps>(function PlanListCard({ plan
   const handleCardClick = useCallback(() => {
     onClick?.(plan);
   }, [onClick, plan]);
+
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      // 左クリックのみ
+      if (e.button !== 0) return;
+      const sourceElement = e.currentTarget as HTMLElement;
+      onDragStart?.(plan, e, sourceElement);
+    },
+    [onDragStart, plan],
+  );
 
   const handleCheckboxClick = useCallback(
     (e: React.MouseEvent) => {
@@ -63,13 +77,15 @@ export const PlanListCard = memo<PlanListCardProps>(function PlanListCard({ plan
   return (
     <Card
       className={cn(
-        'group flex cursor-pointer items-start gap-2 p-3',
+        'group flex items-start gap-2 p-3',
         'bg-plan-box',
         'hover:bg-state-hover',
         'transition-colors duration-150',
         'focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
+        onDragStart ? 'cursor-grab active:cursor-grabbing' : 'cursor-pointer',
       )}
       onClick={handleCardClick}
+      onMouseDown={onDragStart ? handleMouseDown : undefined}
       tabIndex={0}
       role="button"
     >
@@ -106,15 +122,17 @@ export const PlanListCard = memo<PlanListCardProps>(function PlanListCard({ plan
           {plan.title || t('event.noTitle')}
         </p>
 
-        {/* 時間 */}
-        <p
-          className={cn(
-            'mt-1 text-xs tabular-nums',
-            isCompleted ? 'text-muted-foreground/60 line-through' : 'text-muted-foreground',
-          )}
-        >
-          {displayTime}
-        </p>
+        {/* 時間（スケジュール済みの場合のみ） */}
+        {displayTime && (
+          <p
+            className={cn(
+              'mt-1 text-xs tabular-nums',
+              isCompleted ? 'text-muted-foreground/60 line-through' : 'text-muted-foreground',
+            )}
+          >
+            {displayTime}
+          </p>
+        )}
 
         {/* タグ */}
         {displayTags.length > 0 && (

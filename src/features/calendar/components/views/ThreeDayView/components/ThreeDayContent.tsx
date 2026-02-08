@@ -11,7 +11,6 @@ import {
   calculatePlanGhostStyle,
   calculatePreviewTime,
   CalendarDragSelection,
-  type DateTimeSelection,
   PlanCard,
   useGlobalDragCursor,
 } from '../../shared';
@@ -19,29 +18,29 @@ import { PanelDragPreview } from '../../shared/components/PanelDragPreview';
 import { HOUR_HEIGHT } from '../../shared/constants/grid.constants';
 import { useDragAndDrop } from '../../shared/hooks/useDragAndDrop';
 
-interface FiveDayContentProps {
+interface ThreeDayContentProps {
   date: Date;
   plans: CalendarPlan[];
-  /** 重複チェック用の全イベント（5日間全体のイベント） */
+  /** 重複チェック用の全イベント（3日間全体のイベント） */
   allEventsForOverlapCheck?: CalendarPlan[] | undefined;
   planStyles: Record<string, React.CSSProperties>;
   onPlanClick?: ((plan: CalendarPlan) => void) | undefined;
   onPlanContextMenu?: ((plan: CalendarPlan, e: React.MouseEvent) => void) | undefined;
   onEmptyClick?: ((date: Date, timeString: string) => void) | undefined;
   onPlanUpdate?: ((planId: string, updates: Partial<CalendarPlan>) => void) | undefined;
-  onTimeRangeSelect?: ((selection: DateTimeSelection) => void) | undefined;
+  onTimeRangeSelect?: ((date: Date, startTime: string, endTime: string) => void) | undefined;
   /** 空き領域の右クリックハンドラー */
   onEmptyAreaContextMenu?:
     | ((date: Date, hour: number, minute: number, e: React.MouseEvent) => void)
     | undefined;
   className?: string | undefined;
-  dayIndex: number; // 5日間内での日付インデックス（0-4）
-  displayDates?: Date[] | undefined; // 5日間の全日付配列（日付間移動用）
+  dayIndex: number; // 3日間内での日付インデックス（0-2）
+  displayDates?: Date[] | undefined; // 3日間の全日付配列（日付間移動用）
   /** DnDを無効化するプランID（Inspector表示中のプランなど） */
   disabledPlanId?: string | null | undefined;
 }
 
-export const FiveDayContent = ({
+export const ThreeDayContent = ({
   date,
   plans,
   allEventsForOverlapCheck,
@@ -55,7 +54,7 @@ export const FiveDayContent = ({
   dayIndex,
   displayDates,
   disabledPlanId,
-}: FiveDayContentProps) => {
+}: ThreeDayContentProps) => {
   // Inspectorで開いているプランのIDを取得
   const inspectorPlanId = usePlanInspectorStore((state) => state.planId);
   const isInspectorOpen = usePlanInspectorStore((state) => state.isOpen);
@@ -92,7 +91,7 @@ export const FiveDayContent = ({
     events: plans,
     allEventsForOverlapCheck,
     displayDates,
-    viewMode: '5day',
+    viewMode: '3day',
     disabledPlanId,
   });
 
@@ -134,7 +133,11 @@ export const FiveDayContent = ({
       <CalendarDragSelection
         date={date}
         className="absolute inset-0"
-        onTimeRangeSelect={onTimeRangeSelect}
+        onTimeRangeSelect={(selection) => {
+          const startTime = `${String(selection.startHour).padStart(2, '0')}:${String(selection.startMinute).padStart(2, '0')}`;
+          const endTime = `${String(selection.endHour).padStart(2, '0')}:${String(selection.endMinute).padStart(2, '0')}`;
+          onTimeRangeSelect?.(date, startTime, endTime);
+        }}
         onContextMenu={onEmptyAreaContextMenu}
         disabled={dragState.isPending || dragState.isDragging || dragState.isResizing}
         plans={allEventsForOverlapCheck ?? plans}

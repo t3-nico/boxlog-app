@@ -5,14 +5,11 @@ import { useTranslations } from 'next-intl';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import type { PlanStatus } from '@/features/plans/types/plan';
-import { cn } from '@/lib/utils';
+
+import type { PanelGroupByField, PanelSortField, PanelSortOrder } from './PlanListSortMenu';
+import { PlanListSortMenu } from './PlanListSortMenu';
 
 interface PlanListToolbarProps {
-  /** 現在のステータスフィルター */
-  status: PlanStatus[];
-  /** ステータスフィルター変更 */
-  onStatusChange: (status: PlanStatus[]) => void;
   /** 検索クエリ */
   search: string;
   /** 検索クエリ変更 */
@@ -21,28 +18,37 @@ interface PlanListToolbarProps {
   isSearchOpen: boolean;
   /** 検索UI展開状態変更 */
   onSearchOpenChange: (isOpen: boolean) => void;
+  /** ソートフィールド */
+  sortBy: PanelSortField;
+  /** ソート方向 */
+  sortOrder: PanelSortOrder;
+  /** グルーピングフィールド */
+  groupBy: PanelGroupByField;
+  /** ソート変更 */
+  onSortChange: (field: PanelSortField, order: PanelSortOrder) => void;
+  /** グルーピング変更 */
+  onGroupByChange: (field: PanelGroupByField) => void;
 }
 
 /**
  * サイドパネル用のPlanリストツールバー
  *
- * - Open/Closed切替
+ * - 「Unscheduled」ラベル
+ * - ソート/グルーピングメニュー
  * - 検索バー（アイコンクリックで展開）
  */
 export function PlanListToolbar({
-  status,
-  onStatusChange,
   search,
   onSearchChange,
   isSearchOpen,
   onSearchOpenChange,
+  sortBy,
+  sortOrder,
+  groupBy,
+  onSortChange,
+  onGroupByChange,
 }: PlanListToolbarProps) {
   const t = useTranslations('calendar');
-
-  // 現在のフィルター状態を判定
-  const isOpenActive = status.length === 1 && status[0] === 'open';
-  const isClosedActive = status.length === 1 && status[0] === 'closed';
-  const isAllActive = status.length === 2;
 
   return (
     <div className="border-border flex h-10 items-center gap-1 border-b px-2">
@@ -73,36 +79,22 @@ export function PlanListToolbar({
       ) : (
         // 通常モード
         <>
-          {/* ステータス切替 */}
-          <div className="flex gap-0.5">
-            <Button
-              variant="ghost"
-              size="sm"
-              className={cn('h-6 px-2 text-xs', isOpenActive && 'bg-state-active')}
-              onClick={() => onStatusChange(['open'])}
-            >
-              {t('panel.open')}
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              className={cn('h-6 px-2 text-xs', isClosedActive && 'bg-state-active')}
-              onClick={() => onStatusChange(['closed'])}
-            >
-              {t('panel.closed')}
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              className={cn('h-6 px-2 text-xs', isAllActive && 'bg-state-active')}
-              onClick={() => onStatusChange(['open', 'closed'])}
-            >
-              {t('panel.all')}
-            </Button>
-          </div>
+          {/* ラベル */}
+          <span className="text-muted-foreground text-xs font-medium">
+            {t('panel.unscheduled')}
+          </span>
 
           {/* スペーサー */}
           <div className="flex-1" />
+
+          {/* ソート/グルーピングメニュー */}
+          <PlanListSortMenu
+            sortBy={sortBy}
+            sortOrder={sortOrder}
+            groupBy={groupBy}
+            onSortChange={onSortChange}
+            onGroupByChange={onGroupByChange}
+          />
 
           {/* 検索ボタン */}
           <Button
