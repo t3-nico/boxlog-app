@@ -255,13 +255,26 @@
       "plan": "Plans",
       "record": "Records",
       "stats": "Statistics",
-      "open": "Open",
-      "closed": "Closed",
-      "all": "All",
+      "unscheduled": "Unscheduled",
       "searchPlaceholder": "Search plans...",
       "loading": "Loading...",
       "error": "Failed to load",
-      "noPlans": "No plans"
+      "noPlans": "No unscheduled plans",
+      "sortBy": "Sort by",
+      "groupBy": "Group by",
+      "sort": {
+        "createdAt": "Date created",
+        "updatedAt": "Date updated",
+        "dueDate": "Due date",
+        "title": "Title",
+        "asc": "Ascending",
+        "desc": "Descending"
+      },
+      "group": {
+        "none": "None",
+        "dueDate": "Due date",
+        "tags": "Tags"
+      }
     }
   }
 }

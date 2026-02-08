@@ -65,7 +65,7 @@ export const DragSelectionPreview = memo(function DragSelectionPreview({
   // 重複時は赤、通常時はPlanCard Draftと同じスタイル（視覚的一貫性）
   const className = cn(
     'relative',
-    isOverlapping ? 'bg-destructive/60' : 'bg-plan-box',
+    isOverlapping ? 'bg-destructive' : 'bg-plan-box',
     // state-selected オーバーレイ（ドラフトであることを視覚的に示す）
     !isOverlapping &&
       'after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:bg-state-selected',
