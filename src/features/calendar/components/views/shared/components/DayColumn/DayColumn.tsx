@@ -107,17 +107,9 @@ export const DayColumn = memo<DayColumnProps>(function DayColumn({
     >
       {/* イベント表示エリア */}
       <div
-        role="button"
-        tabIndex={0}
         className="relative flex-1 cursor-pointer"
         onClick={handleTimeClick}
         onContextMenu={handleContextMenu}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            handleTimeClick(e as unknown as React.MouseEvent<Element, MouseEvent>);
-          }
-        }}
         style={{
           minHeight: `${columnHeight}px`,
         }}
