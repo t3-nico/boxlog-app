@@ -1,9 +1,10 @@
 import type { Preview } from '@storybook/react';
 import { NextIntlClientProvider } from 'next-intl';
+import { useDarkMode } from 'storybook-dark-mode';
 
 import '../src/styles/globals.css';
 import { DocsTemplate } from './DocsTemplate';
-import { dayoptLightTheme } from './dayoptTheme';
+import { dayoptDarkTheme, dayoptLightTheme } from './dayoptTheme';
 import { TRPCMockProvider } from './mocks/trpc';
 import './prose.css';
 
@@ -44,6 +45,9 @@ const messages = {
     edit: '編集',
     loading: '読み込み中...',
     deleting: '削除中...',
+    aria: {
+      selectDate: '{date}を選択',
+    },
   },
   actions: {
     delete: '削除',
@@ -273,6 +277,23 @@ const messages = {
         thisMonth: '今月',
       },
     },
+    actions: {
+      goToToday: '今日に戻る',
+    },
+    navigation: {
+      previous: '前へ',
+      next: '次へ',
+    },
+    headerActions: {
+      settings: '設定',
+      export: 'エクスポート',
+      import: 'インポート',
+      moreOptions: 'その他',
+    },
+    sleepHours: {
+      collapsed: '{start} - {end} 睡眠時間帯',
+      planCount: '{count}件の予定',
+    },
   },
 };
 
@@ -299,6 +320,14 @@ const preview: Preview = {
         order: ['Docs', 'Tokens', 'Components', 'Patterns'],
       },
     },
+    darkMode: {
+      dark: dayoptDarkTheme,
+      light: dayoptLightTheme,
+      darkClass: 'dark',
+      lightClass: 'light',
+      stylePreview: true,
+      current: 'light',
+    },
     docs: {
       theme: dayoptLightTheme,
       page: DocsTemplate,
@@ -321,33 +350,14 @@ const preview: Preview = {
       },
     },
   },
-  globalTypes: {
-    theme: {
-      description: 'Global theme for components',
-      toolbar: {
-        title: 'Theme',
-        icon: 'circlehollow',
-        items: [
-          { value: 'light', icon: 'sun', title: 'Light' },
-          { value: 'dark', icon: 'moon', title: 'Dark' },
-        ],
-        dynamicTitle: false,
-      },
-    },
-  },
-  initialGlobals: {
-    theme: 'light',
-  },
   decorators: [
-    (Story, context) => {
-      const theme = context.globals.theme || 'light';
+    (Story) => {
+      const isDark = useDarkMode();
 
-      // ダークモード切り替え
       if (typeof document !== 'undefined') {
         document.documentElement.classList.remove('light', 'dark');
-        document.documentElement.classList.add(theme);
-        // color-scheme を切り替え（スクロールバー・フォーム要素のネイティブ配色）
-        document.documentElement.style.colorScheme = theme;
+        document.documentElement.classList.add(isDark ? 'dark' : 'light');
+        document.documentElement.style.colorScheme = isDark ? 'dark' : 'light';
       }
 
       return (
