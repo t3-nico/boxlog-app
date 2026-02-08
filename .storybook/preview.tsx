@@ -116,19 +116,10 @@ const preview: Preview = {
         date: /Date$/i,
       },
     },
-    backgrounds: {
-      grid: {
-        cellSize: 16,
-        cellAmount: 5,
-        opacity: 0.6,
-        offsetX: 16,
-        offsetY: 16,
-      },
-    },
     options: {
       storySort: {
         method: 'alphabetical',
-        order: ['Docs', 'Tokens', 'Components', 'Patterns'],
+        order: ['Docs', 'Tokens', 'Components', 'Features', 'Patterns'],
       },
     },
     darkMode: {

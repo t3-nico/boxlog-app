@@ -16,10 +16,16 @@ const config: StorybookConfig = {
         },
       },
     },
-    '@storybook/addon-essentials',
+    {
+      name: '@storybook/addon-essentials',
+      options: {
+        backgrounds: false,
+      },
+    },
     '@storybook/addon-a11y',
     '@storybook/addon-onboarding',
     '@storybook/addon-interactions',
+    'storybook-dark-mode',
   ],
   framework: {
     name: '@storybook/react-vite',

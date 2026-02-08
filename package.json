@@ -301,6 +301,7 @@
     "remark-gfm": "^4.0.1",
     "size-limit": "^11.2.0",
     "storybook": "8.6.15",
+    "storybook-dark-mode": "^4.0.2",
     "supabase": "^2.30.4",
     "tailwindcss": "^4.1.7",
     "tsx": "^4.20.6",

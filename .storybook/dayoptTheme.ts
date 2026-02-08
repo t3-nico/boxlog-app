@@ -52,3 +52,43 @@ export const dayoptLightTheme = create({
   inputTextColor: '#1a1a1a',
   inputBorderRadius: 8,
 });
+
+export const dayoptDarkTheme = create({
+  base: 'dark',
+  brandTitle: 'Dayopt Design System',
+  brandTarget: '_self',
+
+  // globals.css body font-family と同一スタック
+  fontBase:
+    "Inter, 'Noto Sans JP', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+  fontCode: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Monaco, Consolas, monospace",
+
+  // --primary dark: oklch(0.5 0.188 259.8145)
+  colorPrimary: '#4a6ef5',
+  colorSecondary: '#6b8af7',
+
+  // --background dark: oklch(0.24 0 0)
+  appBg: '#313131',
+  // --container dark: oklch(0.18 0 0)
+  appContentBg: '#252525',
+  appPreviewBg: '#1a1a1a',
+
+  // --border dark: oklch(0.3715 0 0)
+  appBorderColor: '#4f4f4f',
+  appBorderRadius: 8,
+
+  // --foreground dark: oklch(0.9219 0 0)
+  textColor: '#e8e8e8',
+  // --muted-foreground dark: oklch(0.78 0 0)
+  textMutedColor: '#bebebe',
+
+  barTextColor: '#bebebe',
+  barHoverColor: '#6b8af7',
+  barSelectedColor: '#4a6ef5',
+  barBg: '#252525',
+
+  inputBg: '#313131',
+  inputBorder: '#4f4f4f',
+  inputTextColor: '#e8e8e8',
+  inputBorderRadius: 8,
+});
