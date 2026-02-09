@@ -93,12 +93,13 @@
       "markIncomplete": "未完了に戻す"
     },
     "contextMenu": {
-      "open": "開く",
       "edit": "編集",
+      "markComplete": "完了にする",
+      "markIncomplete": "未完了に戻す",
+      "completeWithRecord": "完了&Recordコピー",
       "duplicate": "複製",
       "copy": "コピー",
       "copyLink": "リンクをコピー",
-      "changeStatus": "ステータスを変更",
       "addTag": "タグを追加",
       "moveToDate": "日付を変更",
       "delete": "削除"

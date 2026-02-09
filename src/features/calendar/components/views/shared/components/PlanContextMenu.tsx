@@ -4,11 +4,12 @@ import { useEffect, useRef, useState } from 'react';
 
 import {
   Calendar,
+  CheckCircle2,
   ClipboardCopy,
   Copy,
   Edit2,
-  ExternalLink,
   Link,
+  ListChecks,
   Tag,
   Trash2,
 } from 'lucide-react';
@@ -25,7 +26,8 @@ interface PlanContextMenuProps {
   onDelete?: (plan: CalendarPlan) => void;
   onDuplicate?: (plan: CalendarPlan) => void;
   onCopy?: (plan: CalendarPlan) => void;
-  onOpen?: (plan: CalendarPlan) => void;
+  onComplete?: (plan: CalendarPlan) => void;
+  onCompleteWithRecord?: (plan: CalendarPlan) => void;
   onCopyLink?: (plan: CalendarPlan) => void;
   onAddTag?: (plan: CalendarPlan) => void;
   onMoveToDate?: (plan: CalendarPlan) => void;
@@ -39,7 +41,8 @@ export const EventContextMenu = ({
   onDelete,
   onDuplicate,
   onCopy,
-  onOpen,
+  onComplete,
+  onCompleteWithRecord,
   onCopyLink,
   onAddTag,
   onMoveToDate,
@@ -101,18 +104,29 @@ export const EventContextMenu = ({
     onClose();
   };
 
+  const isRecord = plan.type === 'record';
+  const isCompleted = plan.status === 'closed';
+
   const menuItems = [
-    {
-      icon: ExternalLink,
-      label: t('calendar.contextMenu.open'),
-      action: () => onOpen?.(plan),
-      available: !!onOpen,
-    },
     {
       icon: Edit2,
       label: t('calendar.contextMenu.edit'),
       action: () => onEdit?.(plan),
       available: !!onEdit,
+    },
+    {
+      icon: CheckCircle2,
+      label: isCompleted
+        ? t('calendar.contextMenu.markIncomplete')
+        : t('calendar.contextMenu.markComplete'),
+      action: () => onComplete?.(plan),
+      available: !!onComplete && !isRecord,
+    },
+    {
+      icon: ListChecks,
+      label: t('calendar.contextMenu.completeWithRecord'),
+      action: () => onCompleteWithRecord?.(plan),
+      available: !!onCompleteWithRecord && !isRecord && !isCompleted,
     },
     {
       icon: Copy,
