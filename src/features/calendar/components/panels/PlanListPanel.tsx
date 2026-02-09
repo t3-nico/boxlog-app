@@ -13,7 +13,12 @@ import { useCalendarFilterStore } from '../../stores/useCalendarFilterStore';
 
 import { PlanListCard } from './PlanListCard';
 import { PlanListGroup } from './PlanListGroup';
-import type { PanelGroupByField, PanelSortField, PanelSortOrder } from './PlanListSortMenu';
+import type {
+  PanelGroupByField,
+  PanelScheduleFilter,
+  PanelSortField,
+  PanelSortOrder,
+} from './PlanListSortMenu';
 import { PlanListToolbar } from './PlanListToolbar';
 
 /**
@@ -33,10 +38,11 @@ export function PlanListPanel() {
   const [search, setSearch] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
-  // ソート/グルーピング状態
+  // ソート/グルーピング/フィルター状態
   const [sortBy, setSortBy] = useState<PanelSortField>('created_at');
   const [sortOrder, setSortOrder] = useState<PanelSortOrder>('desc');
   const [groupBy, setGroupBy] = useState<PanelGroupByField>(null);
+  const [scheduleFilter, setScheduleFilter] = useState<PanelScheduleFilter>('unscheduled');
 
   // グループ折りたたみ状態
   const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set());
@@ -62,13 +68,16 @@ export function PlanListPanel() {
     search ? { status: 'open', search, sortBy, sortOrder } : { status: 'open', sortBy, sortOrder },
   );
 
-  // フィルタリング: 未スケジュール + タグフィルター
+  // フィルタリング: スケジュールフィルター + タグフィルター
   const filteredPlans = useMemo(() => {
     if (!plans) return [];
 
     return plans.filter((plan) => {
-      // 未スケジュールのみ
-      if (plan.start_time) {
+      // スケジュールフィルター
+      if (scheduleFilter === 'unscheduled' && plan.start_time) {
+        return false;
+      }
+      if (scheduleFilter === 'scheduled' && !plan.start_time) {
         return false;
       }
 
@@ -80,7 +89,7 @@ export function PlanListPanel() {
 
       return true;
     });
-  }, [plans, isPlanVisible]);
+  }, [plans, isPlanVisible, scheduleFilter]);
 
   // グルーピング
   const groupedPlans = useMemo(() => {
@@ -137,8 +146,10 @@ export function PlanListPanel() {
     sortBy,
     sortOrder,
     groupBy,
+    scheduleFilter,
     onSortChange: handleSortChange,
     onGroupByChange: handleGroupByChange,
+    onScheduleFilterChange: setScheduleFilter,
   };
 
   // ローディング状態

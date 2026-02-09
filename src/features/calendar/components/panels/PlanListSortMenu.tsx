@@ -1,19 +1,22 @@
 'use client';
 
-import { ArrowDownAZ, ArrowUpAZ, ArrowUpDown } from 'lucide-react';
+import { ArrowUpDown, Calendar, Group, RotateCcw } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuLabel,
+  DropdownMenuGroup,
+  DropdownMenuItem,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { cn } from '@/lib/utils';
 
 /** ソート可能なフィールド */
 export type PanelSortField = 'created_at' | 'updated_at' | 'due_date' | 'title';
@@ -24,23 +27,34 @@ export type PanelSortOrder = 'asc' | 'desc';
 /** サイドパネル用グルーピングフィールド */
 export type PanelGroupByField = 'due_date' | 'tags' | null;
 
+/** スケジュールフィルター */
+export type PanelScheduleFilter = 'all' | 'scheduled' | 'unscheduled';
+
 interface PlanListSortMenuProps {
   sortBy: PanelSortField;
   sortOrder: PanelSortOrder;
   groupBy: PanelGroupByField;
+  scheduleFilter: PanelScheduleFilter;
   onSortChange: (field: PanelSortField, order: PanelSortOrder) => void;
   onGroupByChange: (field: PanelGroupByField) => void;
+  onScheduleFilterChange: (filter: PanelScheduleFilter) => void;
 }
 
 /**
  * サイドパネル用のソート/グルーピングメニュー
+ *
+ * Notion風サブメニューパターン:
+ * - 各カテゴリ行に現在の値を表示
+ * - クリックでサブメニュー展開
  */
 export function PlanListSortMenu({
   sortBy,
   sortOrder,
   groupBy,
+  scheduleFilter,
   onSortChange,
   onGroupByChange,
+  onScheduleFilterChange,
 }: PlanListSortMenuProps) {
   const t = useTranslations('calendar');
 
@@ -57,7 +71,27 @@ export function PlanListSortMenu({
     { value: 'tags', label: t('panel.group.tags') },
   ];
 
-  const isActive = sortBy !== 'created_at' || sortOrder !== 'desc' || groupBy !== null;
+  const scheduleOptions: Array<{ value: PanelScheduleFilter; label: string }> = [
+    { value: 'all', label: t('panel.schedule.all') },
+    { value: 'scheduled', label: t('panel.schedule.scheduled') },
+    { value: 'unscheduled', label: t('panel.schedule.unscheduled') },
+  ];
+
+  const currentSortLabel = sortOptions.find((o) => o.value === sortBy)?.label ?? '';
+  const currentGroupLabel = groupOptions.find((o) => o.value === groupBy)?.label ?? '';
+  const currentScheduleLabel = scheduleOptions.find((o) => o.value === scheduleFilter)?.label ?? '';
+
+  const isActive =
+    sortBy !== 'created_at' ||
+    sortOrder !== 'desc' ||
+    groupBy !== null ||
+    scheduleFilter !== 'unscheduled';
+
+  const handleReset = () => {
+    onSortChange('created_at', 'desc');
+    onGroupByChange(null);
+    onScheduleFilterChange('unscheduled');
+  };
 
   return (
     <DropdownMenu>
@@ -66,68 +100,95 @@ export function PlanListSortMenu({
           <ArrowUpDown className={isActive ? 'text-foreground size-4' : 'size-4'} />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-48">
-        {/* ソート */}
-        <DropdownMenuLabel className="text-xs">{t('panel.sortBy')}</DropdownMenuLabel>
-        <DropdownMenuRadioGroup
-          value={sortBy}
-          onValueChange={(value) => onSortChange(value as PanelSortField, sortOrder)}
-        >
-          {sortOptions.map((option) => (
-            <DropdownMenuRadioItem key={option.value} value={option.value} className="text-xs">
-              {option.label}
-            </DropdownMenuRadioItem>
-          ))}
-        </DropdownMenuRadioGroup>
+      <DropdownMenuContent align="end" className="w-56">
+        <DropdownMenuGroup>
+          {/* 並べ替え */}
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>
+              <ArrowUpDown />
+              <span className="flex-1">{t('panel.sortBy')}</span>
+              <span className="text-muted-foreground text-xs">{currentSortLabel}</span>
+            </DropdownMenuSubTrigger>
+            <DropdownMenuSubContent className="border-input">
+              <DropdownMenuRadioGroup
+                value={sortBy}
+                onValueChange={(value) => onSortChange(value as PanelSortField, sortOrder)}
+              >
+                {sortOptions.map((option) => (
+                  <DropdownMenuRadioItem key={option.value} value={option.value}>
+                    {option.label}
+                  </DropdownMenuRadioItem>
+                ))}
+              </DropdownMenuRadioGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuRadioGroup
+                value={sortOrder}
+                onValueChange={(value) => onSortChange(sortBy, value as PanelSortOrder)}
+              >
+                <DropdownMenuRadioItem value="asc">{t('panel.sort.asc')}</DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="desc">{t('panel.sort.desc')}</DropdownMenuRadioItem>
+              </DropdownMenuRadioGroup>
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
 
-        {/* ソート方向 */}
-        <div className="flex gap-1 px-2 py-1.5">
-          <Button
-            variant="ghost"
-            size="sm"
-            className={cn(
-              'h-6 flex-1 gap-1 px-2 text-xs',
-              sortOrder === 'asc' && 'bg-state-active',
-            )}
-            onClick={() => onSortChange(sortBy, 'asc')}
-          >
-            <ArrowUpAZ className="size-3" />
-            {t('panel.sort.asc')}
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className={cn(
-              'h-6 flex-1 gap-1 px-2 text-xs',
-              sortOrder === 'desc' && 'bg-state-active',
-            )}
-            onClick={() => onSortChange(sortBy, 'desc')}
-          >
-            <ArrowDownAZ className="size-3" />
-            {t('panel.sort.desc')}
-          </Button>
-        </div>
+          {/* グループ */}
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>
+              <Group />
+              <span className="flex-1">{t('panel.groupBy')}</span>
+              <span className="text-muted-foreground text-xs">{currentGroupLabel}</span>
+            </DropdownMenuSubTrigger>
+            <DropdownMenuSubContent className="border-input">
+              <DropdownMenuRadioGroup
+                value={groupBy ?? 'none'}
+                onValueChange={(value) =>
+                  onGroupByChange(value === 'none' ? null : (value as PanelGroupByField))
+                }
+              >
+                {groupOptions.map((option) => (
+                  <DropdownMenuRadioItem
+                    key={option.value ?? 'none'}
+                    value={option.value ?? 'none'}
+                  >
+                    {option.label}
+                  </DropdownMenuRadioItem>
+                ))}
+              </DropdownMenuRadioGroup>
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
 
-        <DropdownMenuSeparator />
+          {/* 日付 */}
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>
+              <Calendar />
+              <span className="flex-1">{t('panel.schedule.label')}</span>
+              <span className="text-muted-foreground text-xs">{currentScheduleLabel}</span>
+            </DropdownMenuSubTrigger>
+            <DropdownMenuSubContent className="border-input">
+              <DropdownMenuRadioGroup
+                value={scheduleFilter}
+                onValueChange={(value) => onScheduleFilterChange(value as PanelScheduleFilter)}
+              >
+                {scheduleOptions.map((option) => (
+                  <DropdownMenuRadioItem key={option.value} value={option.value}>
+                    {option.label}
+                  </DropdownMenuRadioItem>
+                ))}
+              </DropdownMenuRadioGroup>
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
+        </DropdownMenuGroup>
 
-        {/* グルーピング */}
-        <DropdownMenuLabel className="text-xs">{t('panel.groupBy')}</DropdownMenuLabel>
-        <DropdownMenuRadioGroup
-          value={groupBy ?? 'none'}
-          onValueChange={(value) =>
-            onGroupByChange(value === 'none' ? null : (value as PanelGroupByField))
-          }
-        >
-          {groupOptions.map((option) => (
-            <DropdownMenuRadioItem
-              key={option.value ?? 'none'}
-              value={option.value ?? 'none'}
-              className="text-xs"
-            >
-              {option.label}
-            </DropdownMenuRadioItem>
-          ))}
-        </DropdownMenuRadioGroup>
+        {/* リセット */}
+        {isActive && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={handleReset}>
+              <RotateCcw />
+              {t('panel.reset')}
+            </DropdownMenuItem>
+          </>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );
