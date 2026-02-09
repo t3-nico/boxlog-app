@@ -15,7 +15,7 @@ import type { ViewOption } from './ViewSwitcher';
 const meta = {
   title: 'Features/Calendar/Header',
   parameters: {
-    layout: 'centered',
+    layout: 'padded',
   },
   tags: ['autodocs'],
 } satisfies Meta;

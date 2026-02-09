@@ -122,6 +122,16 @@ const messages = {
       collapsed: '{start} - {end} 睡眠時間帯',
       planCount: '{count}件の予定',
     },
+    overdue: {
+      badge: '{count}件の保留中',
+      title: '保留中のタスク',
+      period: '過去365日間',
+      helpText: '期限を迎えた未完了タスクが表示されます。',
+      noTitle: '(タイトルなし)',
+      timeUnset: '時間は未指定',
+      popoverTitle: '期限切れのプラン',
+      overdueBy: '{time}超過',
+    },
     panel: {
       sortBy: '並び替え',
       groupBy: 'グループ',

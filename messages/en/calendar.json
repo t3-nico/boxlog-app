@@ -252,6 +252,7 @@
       "ariaLabel": "Calendar time grid - click or press Enter to create event"
     },
     "panel": {
+      "open": "Open side panel",
       "plan": "Plans",
       "record": "Records",
       "stats": "Statistics",
@@ -278,6 +279,7 @@
       },
       "status": {
         "label": "Status",
+        "all": "All",
         "open": "Open",
         "closed": "Closed"
       },

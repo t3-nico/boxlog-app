@@ -48,7 +48,7 @@ export function OverdueSection({ dates, plans, timezone, className }: OverdueSec
         const isCurrentDay = isToday(date);
         const hasOverdue = isCurrentDay && overduePlans.length > 0;
         return (
-          <div key={date.toISOString()} className="flex flex-1 items-center justify-center py-1">
+          <div key={date.toISOString()} className="flex flex-1 items-center py-1">
             {hasOverdue ? (
               <OverdueBadge
                 overduePlans={overduePlans}
@@ -101,17 +101,17 @@ export function OverdueSectionSingle({
       </div>
 
       {/* バッジエリア（今日の場合のみ表示） */}
-      {hasOverdue ? (
-        <OverdueBadge
-          overduePlans={overduePlans}
-          className={cn(
-            'border-warning hover:bg-state-hover h-full flex-1 rounded-lg border',
-            'md:w-[calc(100%-8px)]',
-          )}
-        />
-      ) : (
-        <div className="flex-1" />
-      )}
+      <div className="flex flex-1 items-center py-1">
+        {hasOverdue ? (
+          <OverdueBadge
+            overduePlans={overduePlans}
+            className={cn(
+              'border-warning hover:bg-state-hover h-full rounded-lg border',
+              'w-full px-1 md:w-[calc(100%-8px)] md:px-1',
+            )}
+          />
+        ) : null}
+      </div>
     </div>
   );
 }
