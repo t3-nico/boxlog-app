@@ -199,8 +199,6 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
       'after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:transition-colors hover:after:bg-state-hover',
     // 選択状態の視覚フィードバック（色覚異常対応）
     isSelected && 'ring-2 ring-primary',
-    // Record は左ボーダー（Google Calendar風）- Draftでも適用
-    isRecord && 'border-l-[3px] border-record-border',
     // テキスト色
     'text-foreground',
     // 状態別スタイル
@@ -208,9 +206,7 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
     // モバイル: Googleカレンダー風 / デスクトップ: 角丸
     isMobile
       ? 'border-l-2 rounded-r pl-1 pr-1 pt-1 text-xs flex items-start gap-1'
-      : isRecord
-        ? 'rounded-r-lg p-2 text-sm'
-        : 'rounded-lg p-2 text-sm',
+      : 'rounded-lg p-2 text-sm',
     className,
   );
 
