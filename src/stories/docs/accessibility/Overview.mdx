@@ -1,4 +1,4 @@
-import { Meta } from '@storybook/addon-docs/blocks';
+import { Meta } from '@storybook/blocks';
 
 <Meta title="Docs/Accessibility/Overview" />
 
@@ -15,59 +15,6 @@ Dayoptのアクセシビリティ対応に関する基準と実装パターン
 | Lighthouse CI | 95点以上 | mainマージ時にチェック |
 | eslint-plugin-jsx-a11y | エラー0件 | コミット時にチェック |
 | axe-core | 警告確認 | 開発時にコンソール表示 |
-| Storybook a11y アドオン | 違反0件 | Story作成時にパネル確認 |
-
----
-
-## Storybook a11y アドオン（axe-core）
-
-Storybook に組み込まれた axe-core が **WCAG 2.0/2.1 A+AA + best-practice** を自動検出します（違反の最大57%）。
-
-### 検出できるルール
-
-| ルール | 検出内容 |
-|--------|---------|
-| `color-contrast` | テキストと背景のコントラスト比（4.5:1未満） |
-| `heading-order` | 見出しレベルのスキップ（h1→h3等） |
-| `button-name` | ボタンのアクセシブルな名前の欠如 |
-| `image-alt` | 画像のalt属性の欠如 |
-| `region` | ランドマーク外のコンテンツ（デフォルト無効） |
-
-### 検出できないもの（手動テストが必要）
-
-- キーボード操作フローの妥当性（Tab順序）
-- スクリーンリーダーでの実際の読み上げ体験
-- alt属性の「内容が適切か」の判定
-- レイアウト・可読性（文字サイズ、行間、ズーム）
-
-### `a11y.test` パラメータ
-
-| 値 | UI表示 | CI |
-|----|--------|-----|
-| `'error'` | 違反を赤で表示 | **失敗** |
-| `'todo'` | 警告として表示 | 通過（一時的な猶予） |
-| `'off'` | 自動チェックなし | スキップ |
-
-```tsx
-// プロジェクト全体: .storybook/preview.ts
-parameters: {
-  a11y: { test: 'error' }
-}
-
-// 個別Story: まだ直せないものを一時的に警告のみにする
-parameters: {
-  a11y: { test: 'todo' }
-}
-```
-
-**禁止**: `a11y: { disable: true }` は違反を隠すだけなので使用禁止。
-
-### 段階的改善ワークフロー
-
-1. プロジェクト全体で `a11y.test: 'error'` を設定
-2. 現時点で直せない Story は `a11y.test: 'todo'` にマーク
-3. 簡単なものから修正（Button → Card → Complex）
-4. 修正完了後 `'todo'` を削除
 
 ---
 
@@ -101,44 +48,12 @@ parameters: {
 
 ---
 
-## テストコマンド
+## コマンド
 
 | コマンド | 説明 |
 |---------|------|
-| `npm run a11y:check` | ESLint jsx-a11y + 単体テスト |
-| `npm run a11y:full` | 完全チェック（自動修正込み） |
-| `npm run test:a11y` | axe-core単体テスト |
-| `npm run lint:a11y` | ESLintアクセシビリティルール |
-| `npm run test:a11y:e2e` | E2Eテスト（Playwright） |
-
-### CI/CD統合
-
-GitHub Actionsで以下が自動実行される:
-
-- **WCAG AA準拠チェック** — axe-core自動テスト
-- **ESLint jsx-a11y** — コードレベルのアクセシビリティ
-- **Lighthouse監査** — パフォーマンス + アクセシビリティ
-- **回帰テスト** — PRでの品質劣化防止
-
-### 単体テスト例
-
-```typescript
-import { testComponentA11y } from '@/tests/setup/accessibility.setup'
-
-it('should have no accessibility violations', async () => {
-  const component = render(<Button>Click me</Button>)
-  await testComponentA11y(component)
-})
-```
-
-### 品質指標
-
-| 指標 | 目標 | 測定方法 |
-|------|------|---------|
-| WCAG AA準拠 | 100% | axe-core自動テスト |
-| ESLint違反 | 0件 | jsx-a11y rules |
-| Lighthouse | 90+ | CI/CD自動監査 |
-| キーボード操作 | 100% | E2Eテスト |
+| `npm run a11y:check` | ESLint jsx-a11yルールでチェック |
+| `npm run a11y:full` | 自動修正付きチェック |
 
 ---
 
