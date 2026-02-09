@@ -10,9 +10,10 @@ import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
 import type { PlanStatus } from '@/features/plans/types/plan';
 import { normalizeStatus } from '@/features/plans/utils/status';
 import { useDateFormat } from '@/features/settings/hooks/useDateFormat';
-import { useTagsMap } from '@/features/tags/hooks/useTagsMap';
 import { cn } from '@/lib/utils';
 import type { PlanWithTags } from '@/server/services/plans/types';
+
+import { TagsContainer } from '../views/shared/components/PlanCard/TagsContainer';
 
 interface PlanListCardProps {
   plan: PlanWithTags;
@@ -33,7 +34,6 @@ export const PlanListCard = memo<PlanListCardProps>(function PlanListCard({
 }) {
   const t = useTranslations('calendar');
   const { formatTime } = useDateFormat();
-  const { getTagsByIds } = useTagsMap();
   const { updatePlan } = usePlanMutations();
 
   const status = normalizeStatus(plan.status as PlanStatus);
@@ -43,10 +43,6 @@ export const PlanListCard = memo<PlanListCardProps>(function PlanListCard({
   const startTime = plan.start_time ? formatTime(new Date(plan.start_time)) : '';
   const endTime = plan.end_time ? formatTime(new Date(plan.end_time)) : '';
   const displayTime = startTime && endTime ? `${startTime} - ${endTime}` : startTime || null;
-
-  // タグ
-  const tags = getTagsByIds(plan.tagIds ?? []);
-  const displayTags = tags.slice(0, 2);
 
   const handleCardClick = useCallback(() => {
     onClick?.(plan);
@@ -77,11 +73,20 @@ export const PlanListCard = memo<PlanListCardProps>(function PlanListCard({
   return (
     <Card
       className={cn(
-        'group flex items-start gap-2 p-3',
+        // レイアウト
+        'group relative flex flex-row items-start gap-2 px-3 py-2',
+        // 背景（カレンダー PlanCard と統一）
         'bg-plan-box',
-        'hover:bg-state-hover',
+        // Card デフォルト打ち消し
+        'rounded-xl border-0 shadow-none',
+        // ホバー（オーバーレイ方式: bg-plan-box を保ちつつ暗くする）
+        'after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:transition-colors',
+        'hover:after:bg-state-hover',
+        // トランジション
         'transition-colors duration-150',
+        // フォーカス
         'focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
+        // カーソル
         onDragStart ? 'cursor-grab active:cursor-grabbing' : 'cursor-pointer',
       )}
       onClick={handleCardClick}
@@ -134,27 +139,8 @@ export const PlanListCard = memo<PlanListCardProps>(function PlanListCard({
           </p>
         )}
 
-        {/* タグ */}
-        {displayTags.length > 0 && (
-          <div className="mt-2 flex flex-wrap gap-1">
-            {displayTags.map((tag) => (
-              <span
-                key={tag.id}
-                className="inline-flex max-w-16 items-center truncate rounded px-1.5 py-0.5 text-[10px]"
-                style={{
-                  backgroundColor: tag.color ? `${tag.color}20` : undefined,
-                  color: tag.color || undefined,
-                }}
-                title={tag.name}
-              >
-                {tag.name}
-              </span>
-            ))}
-            {tags.length > 2 && (
-              <span className="text-muted-foreground text-[10px]">+{tags.length - 2}</span>
-            )}
-          </div>
-        )}
+        {/* タグ（カレンダーPlanCardと同じTagsContainer） */}
+        {plan.tagIds && plan.tagIds.length > 0 && <TagsContainer tagIds={plan.tagIds} />}
       </div>
     </Card>
   );

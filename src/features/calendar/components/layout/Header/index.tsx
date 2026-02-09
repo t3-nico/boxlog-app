@@ -127,7 +127,7 @@ export const CalendarHeader = ({
           />
 
           {/* コントロール群 - PC（同グループなのでgap-2） */}
-          <div className="hidden items-center gap-2 md:flex">
+          <div className="ml-2 hidden items-center gap-2 md:flex">
             {/* 日付ナビゲーション（Today + 矢印） */}
             <DateNavigator onNavigate={onNavigate} arrowSize="md" />
 
