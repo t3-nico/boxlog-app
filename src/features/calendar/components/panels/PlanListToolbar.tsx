@@ -69,7 +69,7 @@ export function PlanListToolbar({
   const t = useTranslations('calendar');
 
   return (
-    <div className="border-border flex h-10 items-center gap-1 border-b px-2">
+    <div className="flex h-10 items-center gap-1 px-2">
       {isSearchOpen ? (
         // 検索モード
         <div className="flex flex-1 items-center gap-2">

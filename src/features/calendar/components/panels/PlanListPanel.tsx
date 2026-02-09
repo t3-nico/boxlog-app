@@ -61,16 +61,14 @@ export function PlanListPanel() {
   // タグ名解決（グルーピング用）
   const { getTagById } = useTagsMap();
 
-  // プラン一覧取得（Openのみ + サーバー側ソート）
+  // プラン一覧取得（サーバー側ソート + ステータスフィルター）
+  const baseFilters =
+    statusFilter === 'all' ? { sortBy, sortOrder } : { status: statusFilter, sortBy, sortOrder };
   const {
     data: plans,
     isLoading,
     error,
-  } = usePlans(
-    search
-      ? { status: statusFilter, search, sortBy, sortOrder }
-      : { status: statusFilter, sortBy, sortOrder },
-  );
+  } = usePlans(search ? { ...baseFilters, search } : baseFilters);
 
   // フィルタリング: スケジュールフィルター + タグフィルター
   const filteredPlans = useMemo(() => {

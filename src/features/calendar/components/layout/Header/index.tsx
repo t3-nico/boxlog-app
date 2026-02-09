@@ -1,6 +1,6 @@
 'use client';
 
-import { PanelLeft, Search } from 'lucide-react';
+import { PanelLeft, PanelRight, Search } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { Button } from '@/components/ui/button';
@@ -15,7 +15,7 @@ import type { CalendarViewType } from '../../../types/calendar.types';
 import { DateNavigator } from './DateNavigator';
 import { DateRangeDisplay } from './DateRangeDisplay';
 import { HeaderActions } from './HeaderActions';
-import { PanelSwitcher, type PanelType } from './PanelSwitcher';
+import type { PanelType } from './PanelSwitcher';
 import { ViewSwitcher } from './ViewSwitcher';
 
 interface CalendarHeaderProps {
@@ -137,11 +137,6 @@ export const CalendarHeader = ({
               currentView={viewType}
               onChange={(view) => onViewChange(view as CalendarViewType)}
             />
-
-            {/* パネル切り替え */}
-            {onPanelChange && (
-              <PanelSwitcher currentPanel={currentPanel} onChange={onPanelChange} />
-            )}
           </div>
 
           {/* カスタムスロット（必要に応じて） */}
@@ -177,12 +172,25 @@ export const CalendarHeader = ({
             </Button>
           </div>
 
-          {/* PC: アクション */}
-          {showActions != null && (
-            <div className="hidden items-center gap-2 md:flex">
+          {/* PC: パネルトグル + アクション */}
+          <div className="hidden items-center gap-2 md:flex">
+            {onPanelChange && currentPanel === 'none' && (
+              <HoverTooltip content={t('calendar.panel.open')} side="bottom">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="-mr-4 size-8"
+                  onClick={() => onPanelChange('plan')}
+                  aria-label="Open side panel"
+                >
+                  <PanelRight className="size-4" />
+                </Button>
+              </HoverTooltip>
+            )}
+            {showActions != null && (
               <HeaderActions onSettings={onSettings} onExport={onExport} onImport={onImport} />
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </header>
