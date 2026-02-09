@@ -1,0 +1,105 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Tokens/Responsive" />
+
+# Responsive
+
+Material Design 3 Window Size Classes に基づくレスポンシブデザインガイド。
+
+---
+
+## ブレークポイント（Tailwind v4 デフォルト）
+
+| Prefix | Min Width | M3 対応 | 用途 |
+|--------|-----------|---------|------|
+| `sm:` | 640px | Compact/Medium 境界 | タブレット縦 |
+| `md:` | 768px | Medium | タブレット縦 |
+| `lg:` | 1024px | Expanded | デスクトップ |
+| `xl:` | 1280px | Large | ワイドスクリーン |
+| `2xl:` | 1536px | Extra-large | 超ワイド |
+
+---
+
+## useMediaQuery 用クエリ
+
+`src/config/ui/breakpoints.ts` で定義。
+
+| クエリ | 値 |
+|--------|----|
+| `MEDIA_QUERIES.mobile` | `(max-width: 639px)` |
+| `MEDIA_QUERIES.tablet` | `(min-width: 640px) and (max-width: 1023px)` |
+| `MEDIA_QUERIES.desktop` | `(min-width: 1024px)` |
+| `MEDIA_QUERIES.touch` | `(hover: none) and (pointer: coarse)` |
+
+---
+
+## モバイルファースト
+
+```tsx
+// ✅ モバイルファースト（推奨）
+<div className="p-4 md:p-6 lg:p-8">
+  <h1 className="text-2xl md:text-3xl lg:text-4xl">タイトル</h1>
+</div>
+
+// ❌ デスクトップファースト（非推奨）
+<div className="lg:p-8 md:p-6 p-4">
+```
+
+---
+
+## タッチターゲット
+
+Material Design 3 / Apple HIG アクセシビリティ準拠。
+
+| サイズ | Tailwind | ピクセル | 用途 |
+|--------|----------|---------|------|
+| minimum | `h-11 w-11` | 44px | WCAG 2.5.5 最小 |
+| standard | `h-12 w-12` | 48px | M3 推奨（標準） |
+| large | `h-14 w-14` | 56px | FAB、重要アクション |
+
+### レスポンシブタッチターゲット
+
+```tsx
+// ✅ モバイルで大きく、デスクトップで通常サイズ
+<Button className="h-12 w-12 sm:h-10 sm:w-10">
+  <Icon className="size-6 sm:size-5" />
+</Button>
+```
+
+### ルール
+
+- ✅ 最小タッチターゲット 44x44px
+- ✅ 推奨サイズ 48x48px
+- ✅ モバイルで常時表示、デスクトップでホバー表示
+- ✗ 24px 以下のタッチターゲット
+- ✗ ホバーのみでアクセスできる UI（モバイル不可）
+
+---
+
+## ホバー依存 UI のモバイル対応
+
+ホバーで表示される UI はモバイルで常時表示にする。
+
+```tsx
+// ✅ モバイルで常時表示、デスクトップでホバー時のみ
+<button className="opacity-100 sm:opacity-0 sm:group-hover:opacity-100">
+  <TrashIcon />
+</button>
+
+// ❌ ホバーのみ（モバイルでアクセス不可）
+<button className="opacity-0 group-hover:opacity-100">
+```
+
+---
+
+## 固定幅のレスポンシブ化
+
+```tsx
+// ✅ Tailwind 標準クラス使用
+<div className="w-72 sm:w-80">         // 288px → 320px
+<div className="w-full max-w-sm sm:w-96">  // 全幅 → 384px
+
+// ❌ 任意値の多用は避ける
+<div className="w-[25rem]">            // → w-96
+<div className="max-w-[85vw]">         // → max-w-72
+```

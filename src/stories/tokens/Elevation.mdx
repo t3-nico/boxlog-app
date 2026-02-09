@@ -1,0 +1,63 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Tokens/Elevation" />
+
+# Elevation（高さ）
+
+UI 要素の z 軸上の位置を表現。高いほど前面に浮き出る。
+
+---
+
+## Elevation レベル
+
+| レベル | クラス | 用途 |
+|--------|--------|------|
+| Level 0 | `shadow-none` | ベース面、背景要素 |
+| Level 1 | `shadow-xs` | 入力フィールド、微細な境界 |
+| Level 2 | `shadow-sm` | カード、軽い浮き上がり |
+| Level 3 | `shadow-md` | ホバー状態、アクティブカード |
+| **Level 4** | **`shadow-lg`** | **ドロップダウン、ポップオーバー** |
+| Level 5 | `shadow-xl` | モーダル、最前面要素 |
+
+---
+
+## 使い分け
+
+UI の階層構造に応じて Elevation を選択。高いほどユーザーの注目を集める。
+
+### Level 2: カード (`shadow-sm`)
+
+コンテンツをグループ化するカード。軽い浮き上がりで視覚的に分離。
+
+```tsx
+<div className="bg-card border-border rounded-lg border p-4 shadow-sm">
+  <p className="font-bold">カードタイトル</p>
+  <p className="text-muted-foreground text-sm">コンテンツ</p>
+</div>
+```
+
+### Level 4: ドロップダウン (`shadow-lg`)
+
+メニューやポップオーバー。ページの上に浮く要素。
+
+```tsx
+<div className="bg-card border-border rounded-lg border p-2 shadow-lg">
+  <div className="hover:bg-state-hover rounded px-4 py-2">メニュー1</div>
+  <div className="hover:bg-state-hover rounded px-4 py-2">メニュー2</div>
+</div>
+```
+
+### Level 5: モーダル (`shadow-xl`)
+
+最前面でユーザーの操作を待つ要素。
+
+```tsx
+<div className="bg-card border-border rounded-2xl border p-6 shadow-xl">
+  <h4 className="text-lg font-bold">モーダルタイトル</h4>
+  <p className="text-muted-foreground mt-2 text-sm">説明テキスト</p>
+  <div className="mt-6 flex justify-end gap-2">
+    <button className="hover:bg-state-hover rounded-lg px-4 py-2 text-sm">キャンセル</button>
+    <button className="bg-primary text-primary-foreground rounded-lg px-4 py-2 text-sm">確認</button>
+  </div>
+</div>
+```

@@ -21,35 +21,37 @@ export const dayoptLightTheme = create({
   fontCode: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Monaco, Consolas, monospace",
 
   // --primary: oklch(0.45 0.188 259.8145)
-  colorPrimary: '#2b4acb',
-  colorSecondary: '#4a6ef5',
+  colorPrimary: '#004bbb',
+  // --ring: oklch(0.6231 0.188 259.8145)
+  colorSecondary: '#3b82f6',
 
   // --background: oklch(0.99 0 0)
-  appBg: '#fafafa',
+  appBg: '#fcfcfc',
   appContentBg: '#ffffff',
-  appPreviewBg: '#fdfdfd',
+  appPreviewBg: '#fcfcfc',
 
   // --border: oklch(0.75 0.01 264.54)
-  appBorderColor: '#b3b3b8',
+  appBorderColor: '#abaeb4',
   // --radius-md: 0.5rem (8px)
   appBorderRadius: 8,
 
   // --foreground: oklch(0.25 0 0)
-  textColor: '#1a1a1a',
+  textColor: '#222222',
   // --muted-foreground: oklch(0.35 0.02 264.54)
-  textMutedColor: '#52525b',
+  textMutedColor: '#353b45',
 
-  barTextColor: '#52525b',
-  barHoverColor: '#4a6ef5',
-  // --primary hex近似
-  barSelectedColor: '#2b4acb',
+  barTextColor: '#353b45',
+  // --ring: oklch(0.6231 0.188 259.8145)
+  barHoverColor: '#3b82f6',
+  // --primary: oklch(0.45 0.188 259.8145)
+  barSelectedColor: '#004bbb',
   barBg: '#ffffff',
 
   inputBg: '#ffffff',
-  // --border hex近似
-  inputBorder: '#b3b3b8',
-  // --foreground hex近似
-  inputTextColor: '#1a1a1a',
+  // --border: oklch(0.75 0.01 264.54)
+  inputBorder: '#abaeb4',
+  // --foreground: oklch(0.25 0 0)
+  inputTextColor: '#222222',
   inputBorderRadius: 8,
 });
 
@@ -64,31 +66,39 @@ export const dayoptDarkTheme = create({
   fontCode: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Monaco, Consolas, monospace",
 
   // --primary dark: oklch(0.5 0.188 259.8145)
-  colorPrimary: '#4a6ef5',
-  colorSecondary: '#6b8af7',
+  colorPrimary: '#115bcc',
+  // --ring: oklch(0.6231 0.188 259.8145)
+  colorSecondary: '#3b82f6',
 
   // --background dark: oklch(0.24 0 0)
-  appBg: '#313131',
+  appBg: '#1f1f1f',
   // --container dark: oklch(0.18 0 0)
-  appContentBg: '#252525',
-  appPreviewBg: '#1a1a1a',
+  appContentBg: '#121212',
+  // --background dark
+  appPreviewBg: '#1f1f1f',
 
   // --border dark: oklch(0.3715 0 0)
-  appBorderColor: '#4f4f4f',
+  appBorderColor: '#404040',
   appBorderRadius: 8,
 
   // --foreground dark: oklch(0.9219 0 0)
-  textColor: '#e8e8e8',
+  textColor: '#e5e5e5',
   // --muted-foreground dark: oklch(0.78 0 0)
-  textMutedColor: '#bebebe',
+  textMutedColor: '#b7b7b7',
 
-  barTextColor: '#bebebe',
-  barHoverColor: '#6b8af7',
-  barSelectedColor: '#4a6ef5',
-  barBg: '#252525',
+  barTextColor: '#b7b7b7',
+  // --ring: oklch(0.6231 0.188 259.8145)
+  barHoverColor: '#3b82f6',
+  // --primary dark: oklch(0.5 0.188 259.8145)
+  barSelectedColor: '#115bcc',
+  // --container dark: oklch(0.18 0 0)
+  barBg: '#121212',
 
-  inputBg: '#313131',
-  inputBorder: '#4f4f4f',
-  inputTextColor: '#e8e8e8',
+  // --background dark: oklch(0.24 0 0)
+  inputBg: '#1f1f1f',
+  // --border dark: oklch(0.3715 0 0)
+  inputBorder: '#404040',
+  // --foreground dark: oklch(0.9219 0 0)
+  inputTextColor: '#e5e5e5',
   inputBorderRadius: 8,
 });

@@ -1,0 +1,65 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Tokens/Radius" />
+
+# Border Radius（角丸）
+
+8の倍数ベースで統一。選択肢を5種類に絞り、迷わないデザインシステム。
+
+---
+
+## 基本トークン
+
+| クラス | サイズ | 用途 |
+|--------|--------|------|
+| `rounded-none` | 0px | タブのアクティブ状態、隣接要素の結合部分 |
+| `rounded` | 4px | インラインタグ、小さなバッジ、チップ |
+| `rounded-lg` | 8px | **標準**: ボタン、入力、メニュー、カード |
+| `rounded-2xl` | 16px | モーダル、ダイアログ、大きなパネル |
+| `rounded-full` | 9999px | アバター、ピル型ボタン、トグル、丸アイコン |
+
+---
+
+## 使用例
+
+| コンポーネント | クラス |
+|---------------|--------|
+| ボタン（標準） | `rounded-lg` |
+| ボタン（ピル型） | `rounded-full` |
+| カード | `rounded-lg` |
+| モーダル・ダイアログ | `rounded-2xl` |
+| アバター | `rounded-full` |
+| 入力フィールド | `rounded-lg` |
+| バッジ・タグ | `rounded` または `rounded-full` |
+
+---
+
+## 部分的な Radius
+
+隣接要素の結合など、特定のコーナーのみ角丸にする場合。基本トークンと同じサイズ（4px, 8px, 16px）のみ許可。
+
+### Input Group
+
+```tsx
+<input className="rounded-l-lg border border-r-0 ..." />
+<button className="rounded-r-lg ...">検索</button>
+```
+
+### カレンダーの範囲選択
+
+```tsx
+// 範囲の開始
+<div className="rounded-l-lg ...">1</div>
+// 中間
+<div>2</div>
+// 範囲の終了
+<div className="rounded-r-lg ...">3</div>
+```
+
+### 許可されている部分 Radius
+
+| クラス | サイズ |
+|--------|--------|
+| `rounded-l` / `rounded-r` | 4px |
+| `rounded-l-lg` / `rounded-r-lg` | 8px |
+| `rounded-t-2xl` / `rounded-b-2xl` | 16px |

@@ -1,0 +1,238 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Tokens/Colors" />
+
+# カラートークン
+
+globals.css のセマンティックトークン一覧。Tailwind クラス名でそのままコピペ可能。
+
+---
+
+## Surface（背景色）
+
+Material Design 3 / Apple HIG の共通原則に基づく意味ベース設計。
+ダークモードでは高 elevation = 明るい（MD3 原則）。明度差は 3-6% で視認性を確保。
+
+| トークン | 用途 |
+|----------|------|
+| `bg-background` | ページ背景（基準レベル） |
+| `bg-container` | サイドバー、セクション（background より 6% 暗い） |
+| `bg-card` | カード、ダイアログ、ポップオーバー（container より 3% 暗い） |
+| `bg-overlay` | モーダル背景（半透明・MD3 scrim） |
+
+---
+
+## テキスト
+
+| トークン | 用途 |
+|----------|------|
+| `text-foreground` | 主要テキスト（見出し、本文） |
+| `text-muted-foreground` | 補助テキスト（説明、キャプション） |
+| `text-primary` | リンク、アクション |
+| `text-destructive` | エラー、警告 |
+| `text-success` | 成功、完了 |
+| `text-card-foreground` | shadcn/ui 互換エイリアス（foreground と同値） |
+
+---
+
+## Primary
+
+| トークン | 用途 |
+|----------|------|
+| `bg-primary` | 主要アクションの背景 |
+| `text-primary-foreground` | Primary 上のテキスト |
+
+---
+
+## Semantic（意味を持つ色）
+
+| トークン | 用途 |
+|----------|------|
+| `bg-success` / `text-success-foreground` | 成功、完了 |
+| `bg-warning` / `text-warning-foreground` | 警告、注意 |
+| `bg-info` / `text-info-foreground` | 情報 |
+| `bg-destructive` / `text-destructive-foreground` | 削除、エラー |
+
+---
+
+## State（状態）
+
+| トークン | 用途 |
+|----------|------|
+| `bg-state-active` | 選択中・アクティブ状態（塗りつぶし） |
+| `text-state-active-foreground` | アクティブ状態のテキスト |
+
+---
+
+## Chronotype（生産性ゾーン）
+
+| トークン | 用途 |
+|----------|------|
+| `bg-chronotype-peak` | ピーク（最集中） |
+| `bg-chronotype-good` | 集中 |
+| `bg-chronotype-moderate` | 通常 |
+| `bg-chronotype-low` | 低調（軽作業向き） |
+| `bg-chronotype-sleep` | 睡眠 |
+
+---
+
+## Border & Input
+
+| トークン | 用途 |
+|----------|------|
+| `border-border` | ボーダー（card 上でも視認できるコントラスト比） |
+| `bg-input` | 入力フィールド背景 |
+| `ring-ring` | フォーカスリング |
+
+---
+
+## Chart（グラフ）
+
+`bg-chart-1` ~ `bg-chart-5`（shadcn 準拠の比較用パレット）
+
+---
+
+## Calendar（カレンダー専用）
+
+| トークン | 用途 |
+|----------|------|
+| `bg-plan-box` | Plan（予定）の背景：グレー系 |
+| `bg-record-box` | Record（実績）の背景：暖色オレンジ系 |
+
+---
+
+## Tag Colors
+
+ユーザーがタグに設定できる 10 色のパレット。ダークモードでは明度を上げ、彩度を下げてアクセシビリティを確保。
+
+| トークン | 名前 | 備考 |
+|----------|------|------|
+| `bg-tag-blue` | Blue | デフォルト |
+| `bg-tag-green` | Green | |
+| `bg-tag-red` | Red | |
+| `bg-tag-amber` | Amber | |
+| `bg-tag-violet` | Violet | |
+| `bg-tag-pink` | Pink | |
+| `bg-tag-cyan` | Cyan | |
+| `bg-tag-orange` | Orange | |
+| `bg-tag-gray` | Gray | グループのデフォルト |
+| `bg-tag-indigo` | Indigo | |
+
+タグバッジでは `border-tag-*` でボーダー色を設定。
+
+---
+
+## shadcn/ui 互換エイリアス
+
+| トークン | 実体 |
+|----------|------|
+| `bg-secondary` | `bg-container` のエイリアス |
+| `bg-muted` | `bg-container` のエイリアス |
+| `bg-accent` | `bg-state-active` のエイリアス |
+
+---
+
+## Interaction State Layer（MD3 準拠）
+
+foreground ベースの半透明オーバーレイ。ライト/ダークモードで自動調整される。
+
+| 状態 | トークン | 不透明度 | 用途 |
+|------|----------|---------|------|
+| Hover | `bg-state-hover` | 10% | マウスオーバー時 |
+| Focus | `bg-state-focus` | 12% | キーボードフォーカス時 |
+| Pressed | `bg-state-pressed` | 12% | クリック中 |
+| Selected | `bg-state-selected` | 12% | 選択状態 |
+| Dragged | `bg-state-dragged` | 16% | ドラッグ中 |
+| Active | `bg-state-active` | 塗り | 選択中（塗りつぶし） |
+
+---
+
+## ホバークラス リファレンス
+
+### 汎用（Ghost / Outline 用）
+
+```
+hover:bg-state-hover
+```
+
+### 塗りボタン用
+
+| ボタン種別 | クラス |
+|-----------|--------|
+| Primary | `bg-primary hover:bg-primary-hover` |
+| Destructive | `bg-destructive hover:bg-destructive-hover` |
+| Secondary | `bg-secondary hover:bg-secondary-hover` |
+| Warning | `bg-warning hover:bg-warning-hover` |
+| Success | `bg-success hover:bg-success-hover` |
+| Info | `bg-info hover:bg-info-hover` |
+
+### セマンティック Ghost
+
+| ボタン種別 | クラス |
+|-----------|--------|
+| Primary Ghost | `text-primary hover:bg-primary-state-hover` |
+| Destructive Ghost | `text-destructive hover:bg-destructive-state-hover` |
+
+### フォーカスリング（MD3 スタイル）
+
+```
+focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-ring
+```
+
+### アクティブ / 選択状態
+
+```
+bg-state-active text-state-active-foreground
+```
+
+### リンク / テキストホバー
+
+| パターン | クラス |
+|---------|--------|
+| 下線リンク | `text-primary underline decoration-primary/30 hover:decoration-primary` |
+| ホバー下線 | `text-primary hover:underline` |
+| 色変化 | `text-muted-foreground hover:text-foreground` |
+
+---
+
+## Do's & Don'ts
+
+### セマンティックトークンを使用
+
+```tsx
+// ✅ Do
+<div className="bg-destructive text-destructive-foreground">エラー</div>
+<div className="bg-success text-success-foreground">成功</div>
+
+// ❌ Don't — 直接色指定
+<div className="bg-red-500 text-white">エラー</div>
+<div className="bg-green-500 text-white">成功</div>
+```
+
+理由: セマンティックトークンはダークモード対応を自動化し、デザイン変更時の一括修正を可能にする。
+
+### 適切なテキストコントラスト
+
+```tsx
+// ✅ Do
+<div className="bg-primary text-primary-foreground">正しい組み合わせ</div>
+
+// ❌ Don't — 低コントラスト
+<div className="bg-primary text-muted-foreground">読みにくい</div>
+```
+
+理由: WCAG 2.1 AA 基準（コントラスト比 4.5:1 以上）を満たすため。
+
+### Surface 階層を守る
+
+```
+✅ background → container → card（親→子で暗くなる）
+❌ card → background → container（逆転）
+```
+
+理由: MD3 原則に基づく視覚的階層。
+
+### 状態を色で表現
+
+- ✅ 成功 → `text-success`、エラー → `text-destructive`、警告 → `text-warning`、情報 → `text-info`
+- ❌ 成功を青で表示、エラーを黄色で表示、色だけで状態を伝える（アイコンなし）
