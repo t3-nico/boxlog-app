@@ -36,9 +36,9 @@
   --overlay: oklch(0 0 0 / 0.32);                /* Dialog/Sheetの半透明背景 */
 
   /* Calendar Boxes（カレンダー専用Surface） */
-  --plan-box: oklch(0.92 0.04 250);               /* subtle blue: record-box(hue55)と対のcool色 */
-  --record-box: oklch(0.92 0.08 55);              /* Record用: 暖色オレンジ系 */
-  --record-border: oklch(0.65 0.15 55);           /* Record左ボーダー: オレンジ系 */
+  --plan-box: oklch(0.90 0.04 220);               /* sky blue: 世界標準のPlan=Blue、hue220はcyan寄りで低chromaでも知覚可 */
+  --record-box: oklch(0.90 0.04 155);             /* green: 「実績・完了した時間」、success(149)と近いがchromaが低く区別可 */
+  --record-border: oklch(0.55 0.15 155);          /* Record左ボーダー: green系 */
 
   /* 互換性エイリアス（shadcn/ui用） */
   --card-foreground: oklch(0.25 0 0);
@@ -123,9 +123,9 @@
   --overlay: oklch(0 0 0 / 0.50);                /* Dialog/Sheetの半透明背景 */
 
   /* Calendar Boxes（カレンダー専用Surface） */
-  --plan-box: oklch(0.22 0.015 250);              /* subtle blue: dark modeは彩度控えめ */
-  --record-box: oklch(0.22 0.05 55);              /* Record用: 暖色オレンジ系 */
-  --record-border: oklch(0.55 0.12 55);           /* Record左ボーダー: オレンジ系 */
+  --plan-box: oklch(0.22 0.02 220);               /* sky blue: dark modeは彩度控えめ */
+  --record-box: oklch(0.22 0.035 155);            /* green: blueとの区別のためchromaやや高め */
+  --record-border: oklch(0.45 0.12 155);          /* Record左ボーダー: green系 */
 
   /* 互換性エイリアス（shadcn/ui用） */
   --card-foreground: oklch(0.9219 0 0);
