@@ -4,6 +4,7 @@ import { PanelRight } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { Button } from '@/components/ui/button';
+import { AIInspectorContent } from '@/features/ai/components/AIInspectorContent';
 
 import { PanelSwitcher, type PanelType } from '../layout/Header/PanelSwitcher';
 
@@ -41,6 +42,8 @@ export function CalendarSidePanel({ panelType, onPanelChange }: CalendarSidePane
             <p className="text-sm">Coming soon...</p>
           </div>
         );
+      case 'chat':
+        return <AIInspectorContent />;
       default:
         return null;
     }
