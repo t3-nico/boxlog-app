@@ -53,6 +53,7 @@ const messages = {
     delete: '削除',
     cancel: 'キャンセル',
     deleting: '削除中...',
+    close: '閉じる',
   },
   error: {
     loading: {
@@ -80,8 +81,22 @@ const messages = {
   },
   aria: {
     selectColor: '{color}を選択',
+    previous: '前へ',
+    next: '次へ',
+  },
+  tags: {
+    page: {
+      searchPlaceholder: 'タグを検索...',
+      noTags: 'タグがありません',
+    },
   },
   calendar: {
+    filter: {
+      ungrouped: '未分類',
+    },
+    toast: {
+      conflictDescription: 'この時間帯には既に予定があります',
+    },
     event: {
       noTitle: '新しい予定',
       noTimeSet: '時間未設定',
@@ -126,6 +141,7 @@ const messages = {
       },
       status: {
         label: 'ステータス',
+        all: 'すべて',
         open: '未完了',
         closed: '完了',
       },

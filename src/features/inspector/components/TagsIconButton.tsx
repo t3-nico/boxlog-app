@@ -10,6 +10,8 @@ import { TagSelectCombobox } from '@/features/plans/components/shared/TagSelectC
 import { useTags } from '@/features/tags/hooks';
 import { cn } from '@/lib/utils';
 
+import type { Tag as TagType } from '@/features/tags/types';
+
 interface TagsIconButtonProps {
   /** 選択されているタグIDの配列 */
   tagIds: string[];
@@ -19,6 +21,8 @@ interface TagsIconButtonProps {
   popoverSide?: 'top' | 'bottom';
   /** Inspector内で使う場合にtrue（z-overlay-popoverを適用） */
   isOverlay?: boolean;
+  /** 外部からタグデータを注入（Storybook等で使用） */
+  availableTags?: TagType[] | undefined;
 }
 
 /**
@@ -33,8 +37,10 @@ export function TagsIconButton({
   onTagsChange,
   popoverSide = 'bottom',
   isOverlay = true,
+  availableTags,
 }: TagsIconButtonProps) {
-  const { data: allTags = [] } = useTags();
+  const { data: fetchedTags = [] } = useTags();
+  const allTags = availableTags ?? fetchedTags;
 
   // 選択済みタグ
   const selectedTags = useMemo(() => {
@@ -80,6 +86,7 @@ export function TagsIconButton({
           side={popoverSide}
           sideOffset={8}
           isOverlay={isOverlay}
+          {...(availableTags ? { availableTags } : {})}
         >
           <button
             type="button"
