@@ -1,6 +1,6 @@
 'use client';
 
-import { BarChart3, Calendar, CircleCheckBig, Clock } from 'lucide-react';
+import { BarChart3 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useMemo } from 'react';
@@ -9,13 +9,18 @@ import { useLocale, useTranslations } from 'next-intl';
 
 import { cn } from '@/lib/utils';
 
-import type { NavTabItem } from './types';
+interface NavTabItem {
+  id: string;
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
+  url: string;
+}
 
 /**
  * サイドバー用ナビゲーション
  *
- * サイドバー下部に配置する縦型ナビゲーション
- * - Calendar / Plan / Record / Stats の切り替え
+ * PC: Calendar/Plan/Record はカレンダー+サイドパネルに統合済み。
+ * ここには Stats など独立ページへのリンクのみ配置。
  */
 export function SidebarNavigation() {
   const pathname = usePathname();
@@ -24,24 +29,6 @@ export function SidebarNavigation() {
 
   const navItems: NavTabItem[] = useMemo(
     () => [
-      {
-        id: 'calendar',
-        icon: Calendar,
-        label: t('sidebar.navigation.calendar'),
-        url: `/${locale}/calendar`,
-      },
-      {
-        id: 'plan',
-        icon: CircleCheckBig,
-        label: t('sidebar.navigation.plan'),
-        url: `/${locale}/plan`,
-      },
-      {
-        id: 'record',
-        icon: Clock,
-        label: t('sidebar.navigation.record'),
-        url: `/${locale}/record`,
-      },
       {
         id: 'stats',
         icon: BarChart3,
