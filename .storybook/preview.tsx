@@ -53,6 +53,7 @@ const messages = {
     delete: '削除',
     cancel: 'キャンセル',
     deleting: '削除中...',
+    close: '閉じる',
   },
   error: {
     loading: {
