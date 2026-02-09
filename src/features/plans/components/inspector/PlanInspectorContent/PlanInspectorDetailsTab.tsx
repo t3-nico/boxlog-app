@@ -15,6 +15,8 @@ import { NoteIconButton, ScheduleRow, TagsIconButton, TitleInput } from '../shar
 
 import type { Tag } from '@/features/tags/types';
 
+import type { Tag } from '@/features/tags/types';
+
 import type { Plan } from '../../../types/plan';
 import { DueDateIconButton } from '../../shared/DueDateIconButton';
 import { RecordsIconButton } from '../../shared/RecordsIconButton';
