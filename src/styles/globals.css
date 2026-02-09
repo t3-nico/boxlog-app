@@ -36,9 +36,9 @@
   --overlay: oklch(0 0 0 / 0.32);                /* Dialog/Sheetの半透明背景 */
 
   /* Calendar Boxes（カレンダー専用Surface） */
-  --plan-box: oklch(0.90 0.04 220);               /* sky blue: 世界標準のPlan=Blue、hue220はcyan寄りで低chromaでも知覚可 */
-  --record-box: oklch(0.90 0.04 155);             /* green: 「実績・完了した時間」、success(149)と近いがchromaが低く区別可 */
-  --record-border: oklch(0.55 0.15 155);          /* Record左ボーダー: green系 */
+  --plan-box: oklch(0.92 0.04 250);               /* subtle blue: record-box(hue55)と対のcool色 */
+  --record-box: oklch(0.92 0.08 55);              /* Record用: 暖色オレンジ系 */
+  --record-border: oklch(0.65 0.15 55);           /* Record左ボーダー: オレンジ系 */
 
   /* 互換性エイリアス（shadcn/ui用） */
   --card-foreground: oklch(0.25 0 0);
@@ -47,7 +47,7 @@
   --muted-foreground: oklch(0.35 0.02 264.54);
 
   /* Primary */
-  --primary: oklch(0.45 0.14 259.8145);
+  --primary: oklch(0.45 0.188 259.8145);
   --primary-foreground: oklch(1 0 0);
 
   /* State: Active（選択中・アクティブ状態） */
@@ -77,11 +77,11 @@
 
   /* Borders & Inputs */
   --border: oklch(0.75 0.01 264.54);
-  --input: oklch(0 0 0 / 0.06);                     /* インプット背景（どのsurfaceでも軽く沈む） */
-  --ring: oklch(0.6231 0.14 259.8145);
+  --input: var(--overlay);
+  --ring: oklch(0.6231 0.188 259.8145);
 
   /* Charts - Comparison（比較用、shadcn準拠） */
-  --chart-1: oklch(0.6231 0.14 259.8145);
+  --chart-1: oklch(0.6231 0.188 259.8145);
   --chart-2: oklch(0.5461 0.2152 262.8809);
   --chart-3: oklch(0.4882 0.2172 264.3763);
   --chart-4: oklch(0.4244 0.1809 265.6377);
@@ -123,9 +123,9 @@
   --overlay: oklch(0 0 0 / 0.50);                /* Dialog/Sheetの半透明背景 */
 
   /* Calendar Boxes（カレンダー専用Surface） */
-  --plan-box: oklch(0.22 0.02 220);               /* sky blue: dark modeは彩度控えめ */
-  --record-box: oklch(0.22 0.035 155);            /* green: blueとの区別のためchromaやや高め */
-  --record-border: oklch(0.45 0.12 155);          /* Record左ボーダー: green系 */
+  --plan-box: oklch(0.22 0.015 250);              /* subtle blue: dark modeは彩度控えめ */
+  --record-box: oklch(0.22 0.05 55);              /* Record用: 暖色オレンジ系 */
+  --record-border: oklch(0.55 0.12 55);           /* Record左ボーダー: オレンジ系 */
 
   /* 互換性エイリアス（shadcn/ui用） */
   --card-foreground: oklch(0.9219 0 0);
@@ -180,7 +180,7 @@
 
   /* Borders & Inputs */
   --border: oklch(0.3715 0 0);
-  --input: oklch(1 0 0 / 0.08);                    /* インプット背景（どのsurfaceでも軽く浮く） */
+  --input: var(--overlay);
   --ring: oklch(0.6231 0.188 259.8145);
 
   /* Charts - Comparison（比較用、shadcn準拠） */
