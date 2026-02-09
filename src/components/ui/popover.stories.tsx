@@ -189,6 +189,68 @@ export const WithAnchor: Story = {
   },
 };
 
+/** リスト表示Popover。ヘッダー + スクロールリスト（OverdueBadge等で使用）。 */
+export const WithList: Story = {
+  render: () => {
+    const items = [
+      {
+        id: '1',
+        date: '今日',
+        title: 'チームミーティング',
+        time: '10:00',
+        color: 'var(--primary)',
+      },
+      { id: '2', date: '今日', title: 'デザインレビュー', time: '14:00', color: '#3B82F6' },
+      { id: '3', date: '昨日', title: 'コードレビュー', time: '16:00', color: '#EF4444' },
+      { id: '4', date: '2/7', title: '週次レポート作成', time: '時間は未指定', color: '#10B981' },
+    ];
+
+    return (
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button variant="outline" size="sm">
+            4件の項目
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-80 p-0" align="start">
+          {/* ヘッダー */}
+          <div className="flex items-start justify-between px-4 py-4">
+            <div className="flex-1">
+              <h4 className="text-foreground text-sm font-bold">保留中のタスク</h4>
+              <p className="text-muted-foreground text-xs">過去365日間</p>
+            </div>
+          </div>
+
+          {/* スクロールリスト */}
+          <div className="divide-border max-h-64 divide-y overflow-y-auto">
+            {items.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                className="group hover:bg-state-hover focus-visible:bg-state-focus grid w-full cursor-pointer grid-cols-[2.5rem_1fr_auto] items-center gap-2 px-4 py-2 text-left transition-colors duration-150 focus-visible:outline-none"
+              >
+                <span className="text-muted-foreground text-right text-sm tabular-nums">
+                  {item.date}
+                </span>
+                <span className="flex min-w-0 items-center gap-2">
+                  <span
+                    className="size-2 shrink-0 rounded-full"
+                    style={{ backgroundColor: item.color }}
+                  />
+                  <span className="text-foreground truncate text-sm group-hover:underline">
+                    {item.title}
+                  </span>
+                </span>
+                <span className="text-muted-foreground text-sm tabular-nums">{item.time}</span>
+              </button>
+            ))}
+          </div>
+        </PopoverContent>
+      </Popover>
+    );
+  },
+};
+
 /** 全パターン一覧。 */
 export const AllPatterns: Story = {
   render: () => (
