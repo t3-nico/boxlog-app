@@ -32,7 +32,7 @@ export type PanelGroupByField = 'due_date' | 'tags' | null;
 export type PanelScheduleFilter = 'all' | 'scheduled' | 'unscheduled';
 
 /** ステータスフィルター */
-export type PanelStatusFilter = 'open' | 'closed';
+export type PanelStatusFilter = 'all' | 'open' | 'closed';
 
 interface PlanListSortMenuProps {
   sortBy: PanelSortField;
@@ -86,6 +86,7 @@ export function PlanListSortMenu({
   ];
 
   const statusOptions: Array<{ value: PanelStatusFilter; label: string }> = [
+    { value: 'all', label: t('panel.status.all') },
     { value: 'open', label: t('panel.status.open') },
     { value: 'closed', label: t('panel.status.closed') },
   ];

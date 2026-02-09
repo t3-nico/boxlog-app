@@ -95,44 +95,54 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
       <div className={cn('calendar-layout bg-background flex h-full flex-col', className)}>
         {/* スクリーンリーダー用のページタイトル */}
         <h1 className="sr-only">{t('title')}</h1>
-        {/* ヘッダー */}
-        <CalendarHeader
-          viewType={viewType}
-          currentDate={currentDate}
-          onNavigate={onNavigate}
-          onViewChange={onViewChange}
-          onSettings={onSettings}
-          onExport={onExport}
-          onImport={onImport}
-          showActions={showHeaderActions}
-          leftSlot={<MobileMenuButton className="md:hidden" />}
-          onDateSelect={onDateSelect}
-          showMiniCalendar={true}
-          displayRange={displayRange}
-          currentPanel={currentPanel}
-          onPanelChange={onPanelChange}
-        />
 
-        {/* メインコンテンツ */}
+        {/* 左右カラム分割（ヘッダー行からサイドパネルが独立） */}
         <div className="flex min-h-0 flex-1">
-          {/* カレンダーコンテンツ（スワイプ対応） */}
-          <main
-            ref={ref as React.RefObject<HTMLElement>}
-            data-calendar-main
-            className="flex min-h-0 flex-1 flex-col"
-            onTouchStart={handlers.onTouchStart}
-            onTouchMove={handlers.onTouchMove}
-            onTouchEnd={handlers.onTouchEnd}
-          >
-            <div className="flex min-h-0 flex-1 flex-col">{children}</div>
-          </main>
+          {/* 左カラム: ヘッダー + カレンダー */}
+          <div className="flex min-h-0 flex-1 flex-col">
+            <CalendarHeader
+              viewType={viewType}
+              currentDate={currentDate}
+              onNavigate={onNavigate}
+              onViewChange={onViewChange}
+              onSettings={onSettings}
+              onExport={onExport}
+              onImport={onImport}
+              showActions={showHeaderActions}
+              leftSlot={<MobileMenuButton className="md:hidden" />}
+              onDateSelect={onDateSelect}
+              showMiniCalendar={true}
+              displayRange={displayRange}
+              currentPanel={currentPanel}
+              onPanelChange={onPanelChange}
+            />
 
-          {/* サイドパネル（デスクトップのみ、固定幅） */}
-          {showSidePanel && (
-            <aside className="border-border hidden h-full w-80 shrink-0 border-l md:block">
-              <CalendarSidePanel panelType={currentPanel} />
-            </aside>
-          )}
+            {/* カレンダーコンテンツ（スワイプ対応） */}
+            <main
+              ref={ref as React.RefObject<HTMLElement>}
+              data-calendar-main
+              className="flex min-h-0 flex-1 flex-col"
+              onTouchStart={handlers.onTouchStart}
+              onTouchMove={handlers.onTouchMove}
+              onTouchEnd={handlers.onTouchEnd}
+            >
+              <div className="flex min-h-0 flex-1 flex-col">{children}</div>
+            </main>
+          </div>
+
+          {/* 右カラム: サイドパネル（デスクトップのみ、ヘッダー行から bg-card で独立） */}
+          <aside
+            className={cn(
+              'hidden shrink-0 overflow-hidden transition-[width] duration-200 ease-in-out md:block',
+              showSidePanel ? 'border-border w-80 border-l' : 'w-0',
+            )}
+          >
+            {showSidePanel && onPanelChange && (
+              <div className="bg-container h-full w-80">
+                <CalendarSidePanel panelType={currentPanel} onPanelChange={onPanelChange} />
+              </div>
+            )}
+          </aside>
         </div>
       </div>
     );

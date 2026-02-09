@@ -11,7 +11,7 @@ import { DayDisplay } from './DayDisplay';
 const meta = {
   title: 'Features/Calendar/DateDisplay',
   parameters: {
-    layout: 'centered',
+    layout: 'padded',
   },
   tags: ['autodocs'],
 } satisfies Meta;
