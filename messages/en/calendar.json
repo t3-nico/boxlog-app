@@ -262,6 +262,7 @@
       "noPlans": "No unscheduled plans",
       "sortBy": "Sort by",
       "groupBy": "Group by",
+      "reset": "Reset",
       "sort": {
         "createdAt": "Date created",
         "updatedAt": "Date updated",
@@ -274,6 +275,12 @@
         "none": "None",
         "dueDate": "Due date",
         "tags": "Tags"
+      },
+      "schedule": {
+        "label": "Date",
+        "all": "All",
+        "scheduled": "Scheduled",
+        "unscheduled": "Unscheduled"
       }
     }
   }

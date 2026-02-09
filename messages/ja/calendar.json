@@ -262,6 +262,7 @@
       "noPlans": "未予定のプランはありません",
       "sortBy": "並び替え",
       "groupBy": "グループ",
+      "reset": "リセット",
       "sort": {
         "createdAt": "作成日",
         "updatedAt": "更新日",
@@ -274,6 +275,12 @@
         "none": "なし",
         "dueDate": "期限",
         "tags": "タグ"
+      },
+      "schedule": {
+        "label": "日付",
+        "all": "すべて",
+        "scheduled": "予定済み",
+        "unscheduled": "スケジュールなし"
       }
     }
   }
