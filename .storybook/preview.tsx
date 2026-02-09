@@ -124,6 +124,11 @@ const messages = {
         dueDate: '期限',
         tags: 'タグ',
       },
+      status: {
+        label: 'ステータス',
+        open: '未完了',
+        closed: '完了',
+      },
       schedule: {
         label: '日付',
         all: 'すべて',

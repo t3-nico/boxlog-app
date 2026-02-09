@@ -276,6 +276,11 @@
         "dueDate": "Due date",
         "tags": "Tags"
       },
+      "status": {
+        "label": "Status",
+        "open": "Open",
+        "closed": "Closed"
+      },
       "schedule": {
         "label": "Date",
         "all": "All",

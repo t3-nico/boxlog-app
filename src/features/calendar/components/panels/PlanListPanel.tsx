@@ -18,6 +18,7 @@ import type {
   PanelScheduleFilter,
   PanelSortField,
   PanelSortOrder,
+  PanelStatusFilter,
 } from './PlanListSortMenu';
 import { PlanListToolbar } from './PlanListToolbar';
 
@@ -43,6 +44,7 @@ export function PlanListPanel() {
   const [sortOrder, setSortOrder] = useState<PanelSortOrder>('desc');
   const [groupBy, setGroupBy] = useState<PanelGroupByField>(null);
   const [scheduleFilter, setScheduleFilter] = useState<PanelScheduleFilter>('unscheduled');
+  const [statusFilter, setStatusFilter] = useState<PanelStatusFilter>('open');
 
   // グループ折りたたみ状態
   const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set());
@@ -65,7 +67,9 @@ export function PlanListPanel() {
     isLoading,
     error,
   } = usePlans(
-    search ? { status: 'open', search, sortBy, sortOrder } : { status: 'open', sortBy, sortOrder },
+    search
+      ? { status: statusFilter, search, sortBy, sortOrder }
+      : { status: statusFilter, sortBy, sortOrder },
   );
 
   // フィルタリング: スケジュールフィルター + タグフィルター
@@ -147,9 +151,11 @@ export function PlanListPanel() {
     sortOrder,
     groupBy,
     scheduleFilter,
+    statusFilter,
     onSortChange: handleSortChange,
     onGroupByChange: handleGroupByChange,
     onScheduleFilterChange: setScheduleFilter,
+    onStatusFilterChange: setStatusFilter,
   };
 
   // ローディング状態
