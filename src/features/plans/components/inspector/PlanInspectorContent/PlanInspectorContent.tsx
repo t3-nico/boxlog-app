@@ -18,7 +18,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { SegmentedControl } from '@/components/ui/segmented-control';
 import { InspectorHeader, useDragHandle } from '@/features/inspector';
 import { api } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
@@ -384,10 +384,15 @@ export function PlanInspectorContent() {
   );
 }
 
+const draftTypeOptions = [
+  { value: 'plan' as const, label: 'Plan' },
+  { value: 'record' as const, label: 'Record' },
+];
+
 /**
  * ドラフトモード用ヘッダー
  *
- * タブ切り替え（Plan/Record）を配置
+ * セグメントコントロール（Plan/Record）を配置
  * ドラッグハンドルを適用してドラッグを可能にする
  */
 interface DraftModeHeaderProps {
@@ -410,27 +415,13 @@ function DraftModeHeader({ createType, setCreateType }: DraftModeHeaderProps) {
         />
       )}
 
-      {/* Plan/Record タブ */}
-      <Tabs
+      {/* Plan/Record 切り替え */}
+      <SegmentedControl
+        options={draftTypeOptions}
         value={createType}
-        onValueChange={(value) => setCreateType(value as 'plan' | 'record')}
+        onChange={setCreateType}
         className="relative z-10"
-      >
-        <TabsList className="h-8 rounded-lg border-0 bg-transparent p-0">
-          <TabsTrigger
-            value="plan"
-            className="data-[state=active]:bg-state-selected data-[state=active]:text-foreground rounded-lg font-bold data-[state=active]:shadow-none"
-          >
-            Plan
-          </TabsTrigger>
-          <TabsTrigger
-            value="record"
-            className="data-[state=active]:bg-state-selected data-[state=active]:text-foreground rounded-lg font-bold data-[state=active]:shadow-none"
-          >
-            Record
-          </TabsTrigger>
-        </TabsList>
-      </Tabs>
+      />
     </div>
   );
 }
