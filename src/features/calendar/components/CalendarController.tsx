@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 
 import { usePathname, useRouter } from 'next/navigation';
 
@@ -26,6 +26,7 @@ import { DnDProvider } from '../providers/DnDProvider';
 
 import type { CalendarViewProps, CalendarViewType } from '../types/calendar.types';
 
+import { useCalendarPanelStore } from '../stores/useCalendarPanelStore';
 import { CalendarViewRenderer } from './controller/components';
 import {
   useCalendarData,
@@ -33,8 +34,8 @@ import {
   useCalendarNavigationHandlers,
 } from './controller/hooks';
 import { initializePreload } from './controller/utils';
+
 import { CalendarLayout } from './layout/CalendarLayout';
-import type { PanelType } from './layout/Header/PanelSwitcher';
 import { EmptyAreaContextMenu, EventContextMenu, MobileTouchHint } from './views/shared/components';
 
 // 初回ロード時にビューをプリロード
@@ -54,8 +55,9 @@ export const CalendarController = ({
   const pathname = usePathname();
   const calendarNavigation = useCalendarNavigation();
 
-  // サイドパネル状態（仮実装）
-  const [currentPanel, setCurrentPanel] = useState<PanelType>('none');
+  // サイドパネル状態（Zustand永続化）
+  const currentPanel = useCalendarPanelStore.use.panelType();
+  const setCurrentPanel = useCalendarPanelStore.use.setPanel();
 
   // 現在のlocaleを取得（例: /ja/calendar/day -> ja）
   const locale = pathname?.split('/')[1] || 'ja';
