@@ -5,15 +5,22 @@ import { createSelectors } from '@/lib/zustand/createSelectors';
 
 import type { PanelType } from '../components/layout/Header/PanelSwitcher';
 
+/** サイドパネルのデフォルト幅（%） */
+const DEFAULT_PANEL_SIZE = 28;
+
 interface CalendarPanelState {
   /** 現在開いているパネルの種類 */
   panelType: PanelType;
+  /** サイドパネルの幅（%） */
+  panelSize: number;
   /** パネルを指定の種類に設定 */
   setPanel: (panel: PanelType) => void;
   /** パネルを開く（none以外を指定） */
   openPanel: (panel: Exclude<PanelType, 'none'>) => void;
   /** パネルを閉じる */
   closePanel: () => void;
+  /** パネル幅を更新（リサイズ時） */
+  setPanelSize: (size: number) => void;
 }
 
 /**
@@ -37,9 +44,11 @@ const useCalendarPanelStoreBase = create<CalendarPanelState>()(
     persist(
       (set) => ({
         panelType: 'none',
+        panelSize: DEFAULT_PANEL_SIZE,
         setPanel: (panel) => set({ panelType: panel }),
         openPanel: (panel) => set({ panelType: panel }),
         closePanel: () => set({ panelType: 'none' }),
+        setPanelSize: (size) => set({ panelSize: size }),
       }),
       {
         name: 'calendar-panel-storage',

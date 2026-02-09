@@ -6,6 +6,9 @@ import { memo, useCallback } from 'react';
 import { MobileMenuButton } from '@/features/navigation/components/mobile/MobileMenuButton';
 import { cn } from '@/lib/utils';
 
+import { useResizeHandle } from '../../hooks/useResizeHandle';
+import { useCalendarPanelStore } from '../../stores/useCalendarPanelStore';
+
 import { useSwipeGesture } from '../../hooks/useSwipeGesture';
 import type { CalendarViewType } from '../../types/calendar.types';
 
@@ -91,8 +94,19 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
     // サイドパネルを表示するか
     const showSidePanel = currentPanel && currentPanel !== 'none';
 
+    // パネルリサイズ
+    const panelSize = useCalendarPanelStore.use.panelSize();
+    const setPanelSize = useCalendarPanelStore.use.setPanelSize();
+    const { percent, isResizing, handleMouseDown, containerRef } = useResizeHandle({
+      initialPercent: panelSize,
+      onResizeEnd: setPanelSize,
+    });
+
     return (
-      <div className={cn('calendar-layout bg-background flex h-full flex-col', className)}>
+      <div
+        ref={containerRef}
+        className={cn('calendar-layout bg-background flex h-full flex-col', className)}
+      >
         {/* スクリーンリーダー用のページタイトル */}
         <h1 className="sr-only">{t('title')}</h1>
 
@@ -130,15 +144,35 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
             </main>
           </div>
 
-          {/* 右カラム: サイドパネル（デスクトップのみ、ヘッダー行から bg-card で独立） */}
+          {/* リサイズハンドル（デスクトップ、パネルオープン時のみ） */}
+          {showSidePanel && (
+            <div
+              role="separator"
+              aria-orientation="vertical"
+              className={cn(
+                'bg-border hidden w-px shrink-0 cursor-col-resize md:block',
+                'hover:bg-primary active:bg-primary',
+                'after:absolute after:inset-y-0 after:left-1/2 after:w-2 after:-translate-x-1/2',
+                'relative',
+                isResizing && 'bg-primary',
+              )}
+              onMouseDown={handleMouseDown}
+            />
+          )}
+
+          {/* 右カラム: サイドパネル（デスクトップのみ） */}
           <aside
             className={cn(
-              'hidden shrink-0 overflow-hidden transition-[width] duration-200 ease-in-out md:block',
-              showSidePanel ? 'border-border w-80 border-l' : 'w-0',
+              'hidden shrink-0 overflow-hidden md:block',
+              !isResizing && 'transition-[width] duration-200 ease-in-out',
             )}
+            style={{
+              width: showSidePanel ? `${percent}%` : 0,
+              minWidth: showSidePanel ? 288 : 0,
+            }}
           >
             {showSidePanel && onPanelChange && (
-              <div className="bg-container h-full w-80">
+              <div className="bg-container h-full">
                 <CalendarSidePanel panelType={currentPanel} onPanelChange={onPanelChange} />
               </div>
             )}
