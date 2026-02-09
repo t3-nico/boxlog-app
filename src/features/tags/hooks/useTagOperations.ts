@@ -189,8 +189,6 @@ export function useTagOperations(tags: Tag[]) {
     selectedTag,
     mergeSourceTag,
     createGroupId,
-    // @deprecated - 後方互換性のため残すが、フラット構造では使用しない
-    createParentTag: null,
 
     // Handlers
     handleCreateTag,
@@ -199,8 +197,6 @@ export function useTagOperations(tags: Tag[]) {
     handleSaveTag,
     handleDeleteTag,
     handleMoveTagToGroup,
-    // @deprecated - handleMoveTagToGroup を使用してください
-    handleMoveTag: handleMoveTagToGroup,
     handleRenameTag,
     handleMergeTag,
     handleCloseMergeModal,
