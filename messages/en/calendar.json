@@ -93,12 +93,13 @@
       "markIncomplete": "Mark as incomplete"
     },
     "contextMenu": {
-      "open": "Open",
       "edit": "Edit",
+      "markComplete": "Mark as Complete",
+      "markIncomplete": "Mark as Incomplete",
+      "completeWithRecord": "Complete & Copy Record",
       "duplicate": "Duplicate",
       "copy": "Copy",
       "copyLink": "Copy Link",
-      "changeStatus": "Change Status",
       "addTag": "Add Tag",
       "moveToDate": "Change Date",
       "delete": "Delete"

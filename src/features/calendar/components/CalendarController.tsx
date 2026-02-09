@@ -130,7 +130,8 @@ export const CalendarController = ({
     handleEditPlan,
     handleDuplicatePlan,
     handleCopyPlan,
-    handleViewDetails,
+    handleCompletePlan,
+    handleCompleteWithRecord,
   } = usePlanContextActions();
 
   // プラン操作（CRUD）をフック化
@@ -375,7 +376,8 @@ export const CalendarController = ({
           onDelete={handleDeletePlan}
           onDuplicate={handleDuplicatePlan}
           onCopy={handleCopyPlan}
-          onOpen={handleViewDetails}
+          onComplete={handleCompletePlan}
+          onCompleteWithRecord={handleCompleteWithRecord}
         />
       ) : null}
 
