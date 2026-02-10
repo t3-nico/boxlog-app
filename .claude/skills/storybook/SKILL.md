@@ -2,6 +2,17 @@
 
 Storybookの公式ベストプラクティスに基づいたStory作成ガイド。
 
+## このスキルを使用するタイミング
+
+以下のキーワードが含まれる場合に自動的に起動：
+
+- 「Storybook」「Story作成」「Story追加」
+- 「stories.tsx」「.stories.」
+- 「UIコンポーネントを追加」「コンポーネント作成」
+- 「バリアント追加」「新しいパターン」
+
+また、UIコンポーネント（`src/components/ui/`、`src/features/*/components/`）の作成・変更時にも参照すること。
+
 ---
 
 ## ⚠️ 最重要ルール：Storybookが正（Single Source of Truth）
@@ -685,6 +696,18 @@ Story作成時、以下のTokens Storiesを参照してデザイン一貫性を�
 | `Tokens/Colors`     | セマンティックカラー、状態色 |
 | `Tokens/Typography` | フォントサイズ・ウェイト階層 |
 | `Tokens/Spacing`    | 余白パターン                 |
+
+## 関連スキル（Story作成時に参照）
+
+Story対象のコンポーネントが以下に依存する場合、対応するスキルも参照すること：
+
+| コンポーネントの依存 | 参照スキル              | 理由                                   |
+| -------------------- | ----------------------- | -------------------------------------- |
+| Zustand store        | `/store-creating`       | ストアのパターン・命名規則・モック方法 |
+| tRPC API             | `/trpc-router-creating` | API入出力の型、モックデータの構造      |
+| i18n（翻訳キー）     | `/i18n`                 | キー命名規則、namespace構造            |
+| エラーハンドリング   | `/error-handling`       | ErrorBoundary配置、エラー状態のStory   |
+| a11y要件             | `/a11y`                 | aria属性、キーボード操作のテスト       |
 
 ## 参考リンク
 
