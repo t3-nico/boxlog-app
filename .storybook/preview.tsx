@@ -145,6 +145,7 @@ const messages = {
     },
   },
   calendar: {
+    title: 'カレンダー',
     filter: {
       ungrouped: '未分類',
       noteLabel: 'ノート',
@@ -190,6 +191,7 @@ const messages = {
       overdueBy: '{time}超過',
     },
     panel: {
+      open: 'パネルを開く',
       sortBy: '並び替え',
       groupBy: 'グループ',
       reset: 'リセット',
