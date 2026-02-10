@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { HoverTooltip } from '@/components/ui/tooltip';
+import { useSettingsModalStore } from '@/features/settings/stores/useSettingsModalStore';
 import type { NotificationType } from '@/schemas/notifications';
 import { useLocale, useTranslations } from 'next-intl';
 
@@ -56,6 +57,7 @@ export function NotificationDropdown({
   const router = useRouter();
   const locale = useLocale();
   const t = useTranslations();
+  const openSettingsModal = useSettingsModalStore((state) => state.openModal);
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -106,8 +108,8 @@ export function NotificationDropdown({
 
   const handleOpenSettings = useCallback(() => {
     setIsOpen(false);
-    router.push(`/${locale}/settings/notifications`);
-  }, [locale, router]);
+    openSettingsModal('notifications');
+  }, [openSettingsModal]);
 
   // 通知リストのレンダリング
   const renderNotificationList = () => {
