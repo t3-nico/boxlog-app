@@ -78,7 +78,6 @@ export const ClockTimePicker = memo<ClockTimePickerProps>(
       <TimeSelect
         value={value}
         onChange={onChange}
-        label=""
         disabled={disabled}
         hasError={hasError}
         showIcon={showIcon}

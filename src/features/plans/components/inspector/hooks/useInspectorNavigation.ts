@@ -2,14 +2,11 @@
 
 import { useCallback, useMemo } from 'react';
 
-import { useTableFocusStore } from '@/features/table';
-
 import { usePlans } from '../../../hooks/usePlans';
 import { usePlanInspectorStore } from '../../../stores/usePlanInspectorStore';
 
 export function useInspectorNavigation(planId: string | null) {
   const openInspector = usePlanInspectorStore((state) => state.openInspector);
-  const setFocusedId = useTableFocusStore((state) => state.setFocusedId);
 
   const { data: allPlans = [] } = usePlans();
 
@@ -24,17 +21,15 @@ export function useInspectorNavigation(planId: string | null) {
     if (hasPrevious) {
       const prevPlanId = allPlans[currentIndex - 1]!.id;
       openInspector(prevPlanId);
-      setFocusedId(prevPlanId);
     }
-  }, [hasPrevious, allPlans, currentIndex, openInspector, setFocusedId]);
+  }, [hasPrevious, allPlans, currentIndex, openInspector]);
 
   const goToNext = useCallback(() => {
     if (hasNext) {
       const nextPlanId = allPlans[currentIndex + 1]!.id;
       openInspector(nextPlanId);
-      setFocusedId(nextPlanId);
     }
-  }, [hasNext, allPlans, currentIndex, openInspector, setFocusedId]);
+  }, [hasNext, allPlans, currentIndex, openInspector]);
 
   return {
     hasPrevious,

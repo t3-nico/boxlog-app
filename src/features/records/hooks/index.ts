@@ -10,4 +10,3 @@ export { useRecordInspectorNavigation } from './useRecordInspectorNavigation';
 export { useRecordMutations } from './useRecordMutations';
 export { useRecords } from './useRecords';
 export { useRecordTags } from './useRecordTags';
-export { useRecordURLSync } from './useRecordURLSync';

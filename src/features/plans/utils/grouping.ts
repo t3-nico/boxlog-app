@@ -1,6 +1,14 @@
 import type { PlanStatus } from '@/features/plans/types/plan';
-import type { GroupByField, GroupedData } from '@/features/table';
 import { isBefore, isToday, isTomorrow, isWithinInterval, startOfDay } from 'date-fns';
+
+export type GroupByField = 'status' | 'due_date' | 'tags' | null;
+
+export interface GroupedData<T> {
+  groupKey: string;
+  groupLabel: string;
+  items: T[];
+  count: number;
+}
 
 /**
  * グループ化可能なアイテムの最小インターフェース

@@ -7,7 +7,6 @@
 import { useplans } from '@/features/plans/hooks/usePlans';
 import type { Plan, PlanStatus } from '@/features/plans/types/plan';
 import { normalizeStatus } from '@/features/plans/utils/status';
-import type { SortDirection, SortField } from '@/features/table/types/sort';
 import type {
   DateRangeFilter,
   DueDateFilter,
@@ -19,6 +18,9 @@ import type {
 /**
  * ソートオプション
  */
+export type SortField = 'title' | 'status' | 'created_at' | 'updated_at' | 'due_date';
+export type SortDirection = 'asc' | 'desc';
+
 export interface PlanSortOptions {
   field: SortField | null;
   direction: SortDirection;
