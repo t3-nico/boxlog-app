@@ -234,7 +234,7 @@ export const TagCreateModal = ({
               <DropdownMenuTrigger asChild>
                 <button
                   type="button"
-                  className="border-input bg-background hover:bg-state-hover flex h-9 w-full items-center gap-2 rounded-lg border px-4 text-sm"
+                  className="border-border bg-container hover:bg-state-hover flex h-9 w-full items-center gap-2 rounded-lg border px-4 text-sm"
                 >
                   <Circle className="size-4" fill={color} strokeWidth={0} />
                   <span>{COLOR_NAMES[color] || color}</span>
@@ -260,7 +260,7 @@ export const TagCreateModal = ({
                   e.stopPropagation();
                   setIsParentDropdownOpen(!isParentDropdownOpen);
                 }}
-                className="border-input bg-background hover:bg-state-hover flex h-9 w-full items-center justify-between rounded-lg border px-4 text-sm"
+                className="border-border bg-container hover:bg-state-hover flex h-9 w-full items-center justify-between rounded-lg border px-4 text-sm"
               >
                 <span className={selectedParent ? 'text-foreground' : 'text-muted-foreground'}>
                   {selectedParent ? selectedParent.name : t('tags.sidebar.uncategorized')}

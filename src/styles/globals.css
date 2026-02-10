@@ -47,7 +47,7 @@
   --muted-foreground: oklch(0.35 0.02 264.54);
 
   /* Primary */
-  --primary: oklch(0.45 0.188 259.8145);
+  --primary: oklch(0.45 0.14 259.8145);
   --primary-foreground: oklch(1 0 0);
 
   /* State: Active（選択中・アクティブ状態） */
@@ -77,11 +77,11 @@
 
   /* Borders & Inputs */
   --border: oklch(0.75 0.01 264.54);
-  --input: var(--overlay);
-  --ring: oklch(0.6231 0.188 259.8145);
+  --input: oklch(0 0 0 / 0.06);                     /* インプット背景（どのsurfaceでも軽く沈む） */
+  --ring: oklch(0.6231 0.14 259.8145);
 
   /* Charts - Comparison（比較用、shadcn準拠） */
-  --chart-1: oklch(0.6231 0.188 259.8145);
+  --chart-1: oklch(0.6231 0.14 259.8145);
   --chart-2: oklch(0.5461 0.2152 262.8809);
   --chart-3: oklch(0.4882 0.2172 264.3763);
   --chart-4: oklch(0.4244 0.1809 265.6377);
@@ -180,7 +180,7 @@
 
   /* Borders & Inputs */
   --border: oklch(0.3715 0 0);
-  --input: var(--overlay);
+  --input: oklch(1 0 0 / 0.08);                    /* インプット背景（どのsurfaceでも軽く浮く） */
   --ring: oklch(0.6231 0.188 259.8145);
 
   /* Charts - Comparison（比較用、shadcn準拠） */

@@ -48,12 +48,24 @@ const messages = {
     aria: {
       selectDate: '{date}を選択',
     },
+    form: {
+      required: '※必須',
+      optional: '※任意',
+      processing: '処理中...',
+    },
+    validation: {
+      limitReached: '上限に達しました',
+    },
   },
   actions: {
     delete: '削除',
     cancel: 'キャンセル',
     deleting: '削除中...',
     close: '閉じる',
+    create: '作成',
+    creating: '作成中...',
+    save: '保存',
+    saving: '保存中...',
   },
   error: {
     loading: {
@@ -101,10 +113,43 @@ const messages = {
       searchPlaceholder: 'タグを検索...',
       noTags: 'タグがありません',
     },
+    modal: {
+      createTitle: '新規タグ作成',
+      createDescription: '新しいタグを作成します',
+      editTitle: 'タグを編集',
+      updating: '更新中...',
+      update: '更新',
+    },
+    form: {
+      tagName: 'タグ名',
+      examplePlaceholder: '時間記録を分類するためのラベル',
+      color: 'カラー',
+      group: 'グループ',
+      groupSupportText: '同じ種類のタグをまとめて管理できます',
+      duplicateName: '同名のTagsがすでに存在します',
+      namePlaceholder: 'タグ名を入力',
+      description: '説明（任意）',
+      descriptionPlaceholder: 'このタグの用途や説明を入力...',
+    },
+    validation: {
+      nameEmpty: 'タグ名を入力してください',
+      nameRequired: 'タグ名は必須です',
+      nameLimitReached: 'タグ名は{max}文字までです',
+    },
+    errors: {
+      createFailed: 'タグの作成に失敗しました',
+      updateFailed: 'タグの更新に失敗しました',
+    },
+    sidebar: {
+      uncategorized: '未分類',
+    },
   },
   calendar: {
     filter: {
       ungrouped: '未分類',
+      noteLabel: 'ノート',
+      noteHint: 'ツールチップに表示されます',
+      notePlaceholder: 'ノートを追加...',
     },
     toast: {
       conflictDescription: 'この時間帯には既に予定があります',
