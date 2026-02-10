@@ -9,6 +9,8 @@ import type { AuthError, AuthResponse, OAuthResponse, Session, User } from '@sup
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
+import { getAuthErrorKey } from '../lib/sanitize-auth-error';
+
 interface UserMetadata {
   [key: string]: string | number | boolean | null;
 }
@@ -122,7 +124,8 @@ export const useAuthStore = create<AuthState>()(
           });
 
           if (result.error) {
-            set({ error: result.error.message, loading: false });
+            const safeError = getAuthErrorKey(result.error.message, 'signup');
+            set({ error: safeError, loading: false });
           } else {
             set({
               session: result.data.session,
@@ -134,11 +137,11 @@ export const useAuthStore = create<AuthState>()(
 
           return result;
         } catch (err) {
-          const errorMessage = err instanceof Error ? err.message : 'Sign up failed';
-          set({ error: errorMessage, loading: false });
+          const safeError = getAuthErrorKey(err instanceof Error ? err.message : '', 'signup');
+          set({ error: safeError, loading: false });
           return {
             data: { user: null, session: null },
-            error: { message: errorMessage } as AuthError,
+            error: { message: safeError } as AuthError,
           };
         }
       },
@@ -155,7 +158,8 @@ export const useAuthStore = create<AuthState>()(
           });
 
           if (result.error) {
-            set({ error: result.error.message, loading: false });
+            const safeError = getAuthErrorKey(result.error.message, 'login');
+            set({ error: safeError, loading: false });
           } else {
             set({
               session: result.data.session,
@@ -167,11 +171,11 @@ export const useAuthStore = create<AuthState>()(
 
           return result;
         } catch (err) {
-          const errorMessage = err instanceof Error ? err.message : 'Sign in failed';
-          set({ error: errorMessage, loading: false });
+          const safeError = getAuthErrorKey(err instanceof Error ? err.message : '', 'login');
+          set({ error: safeError, loading: false });
           return {
             data: { user: null, session: null },
-            error: { message: errorMessage } as AuthError,
+            error: { message: safeError } as AuthError,
           };
         }
       },
@@ -190,16 +194,17 @@ export const useAuthStore = create<AuthState>()(
           });
 
           if (result.error) {
-            set({ error: result.error.message, loading: false });
+            const safeError = getAuthErrorKey(result.error.message, 'oauth');
+            set({ error: safeError, loading: false });
           }
 
           return result;
         } catch (err) {
-          const errorMessage = err instanceof Error ? err.message : 'OAuth sign in failed';
-          set({ error: errorMessage, loading: false });
+          const safeError = getAuthErrorKey(err instanceof Error ? err.message : '', 'oauth');
+          set({ error: safeError, loading: false });
           return {
             data: { provider, url: null },
-            error: { message: errorMessage } as AuthError,
+            error: { message: safeError } as AuthError,
           };
         }
       },
@@ -213,7 +218,7 @@ export const useAuthStore = create<AuthState>()(
           const result = await supabase.auth.signOut();
 
           if (result.error) {
-            set({ error: result.error.message, loading: false });
+            set({ error: 'auth.errors.unexpectedError', loading: false });
           } else {
             set({
               user: null,
@@ -224,14 +229,14 @@ export const useAuthStore = create<AuthState>()(
           }
 
           return { error: result.error };
-        } catch (err) {
-          const errorMessage = err instanceof Error ? err.message : 'Sign out failed';
-          set({ error: errorMessage, loading: false });
-          return { error: { message: errorMessage } as AuthError };
+        } catch {
+          set({ error: 'auth.errors.unexpectedError', loading: false });
+          return { error: { message: 'auth.errors.unexpectedError' } as AuthError };
         }
       },
 
       // Reset password
+      // OWASP: パスワードリセットはエラーでも成功メッセージを表示（メール存在の漏洩防止）
       resetPassword: async (email) => {
         set({ loading: true, error: null });
 
@@ -242,16 +247,16 @@ export const useAuthStore = create<AuthState>()(
           });
 
           if (result.error) {
-            set({ error: result.error.message, loading: false });
+            const safeError = getAuthErrorKey(result.error.message, 'resetPassword');
+            set({ error: safeError, loading: false });
           } else {
             set({ loading: false });
           }
 
           return { error: result.error };
-        } catch (err) {
-          const errorMessage = err instanceof Error ? err.message : 'Password reset failed';
-          set({ error: errorMessage, loading: false });
-          return { error: { message: errorMessage } as AuthError };
+        } catch {
+          set({ error: 'auth.errors.unexpectedError', loading: false });
+          return { error: { message: 'auth.errors.unexpectedError' } as AuthError };
         }
       },
 
@@ -264,18 +269,18 @@ export const useAuthStore = create<AuthState>()(
           const result = await supabase.auth.updateUser({ password });
 
           if (result.error) {
-            set({ error: result.error.message, loading: false });
+            const safeError = getAuthErrorKey(result.error.message, 'updatePassword');
+            set({ error: safeError, loading: false });
           } else {
             set({ loading: false });
           }
 
           return result;
-        } catch (err) {
-          const errorMessage = err instanceof Error ? err.message : 'Password update failed';
-          set({ error: errorMessage, loading: false });
+        } catch {
+          set({ error: 'auth.errors.unexpectedError', loading: false });
           return {
             data: { user: null },
-            error: { message: errorMessage } as AuthError,
+            error: { message: 'auth.errors.unexpectedError' } as AuthError,
           };
         }
       },

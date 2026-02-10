@@ -27,6 +27,7 @@ import { HoverTooltip } from '@/components/ui/tooltip';
 import { useAuthStore } from '@/features/auth/stores/useAuthStore';
 import { cn } from '@/lib/utils';
 
+import { getAuthErrorKey } from '../lib/sanitize-auth-error';
 import { signupSchema, type SignupFormData } from '../schemas/auth.schema';
 
 /**
@@ -92,7 +93,9 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
     try {
       const { error } = await signUp(data.email, data.password);
       if (error) {
-        setServerError(error.message);
+        // OWASP準拠: Supabase の生エラーを漏洩しない
+        const errorKey = getAuthErrorKey(error.message, 'signup');
+        setServerError(t(errorKey));
       } else {
         router.push(`/${locale}/calendar`);
       }

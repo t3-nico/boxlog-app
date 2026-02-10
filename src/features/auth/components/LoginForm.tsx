@@ -27,6 +27,7 @@ import { useAuthStore } from '@/features/auth/stores/useAuthStore';
 import { createClient } from '@/lib/supabase/client';
 import { cn } from '@/lib/utils';
 
+import { getAuthErrorKey } from '../lib/sanitize-auth-error';
 import { loginSchema, type LoginFormData } from '../schemas/auth.schema';
 
 /**
@@ -67,8 +68,9 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
       const { error: signInError, data: signInData } = await signIn(data.email, data.password);
 
       if (signInError) {
-        // ログイン失敗時のエラー表示
-        setServerError(signInError.message);
+        // ログイン失敗時: OWASP準拠でサニタイズ済みメッセージを表示
+        const errorKey = getAuthErrorKey(signInError.message, 'login');
+        setServerError(t(errorKey));
       } else if (signInData) {
         // ログイン成功
 
