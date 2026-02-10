@@ -290,6 +290,12 @@
         "scheduled": "Scheduled",
         "unscheduled": "Unscheduled"
       }
+    },
+    "error": {
+      "title": "Failed to load calendar",
+      "description": "Please check your network connection and try again.",
+      "retry": "Retry",
+      "reload": "Reload page"
     }
   }
 }
