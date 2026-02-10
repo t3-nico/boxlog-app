@@ -48,12 +48,24 @@ const messages = {
     aria: {
       selectDate: '{date}を選択',
     },
+    form: {
+      required: '※必須',
+      optional: '※任意',
+      processing: '処理中...',
+    },
+    validation: {
+      limitReached: '上限に達しました',
+    },
   },
   actions: {
     delete: '削除',
     cancel: 'キャンセル',
     deleting: '削除中...',
     close: '閉じる',
+    create: '作成',
+    creating: '作成中...',
+    save: '保存',
+    saving: '保存中...',
   },
   error: {
     loading: {
