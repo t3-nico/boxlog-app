@@ -1,64 +1,90 @@
 /**
  * ルートレベル Error ページ
  *
- * @description
  * Route Group外でエラーが発生した場合に表示。
- * NextIntlClientProviderが利用できないため、静的テキストを使用。
- *
- * 注意: このページはProvidersの外で動作するため、
- * i18n、Theme、その他のコンテキストは利用不可。
+ * NextIntlClientProviderが利用できないため、静的英語テキストを使用。
+ * global-error.tsx と統一されたカード型デザイン + Sentry連携。
  */
 'use client';
 
-import { Button } from '@/components/ui/button';
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+
+import { Button } from '@/components/ui/button';
+import * as Sentry from '@sentry/nextjs';
 
 interface ErrorProps {
   error: Error & { digest?: string };
   reset: () => void;
 }
 
-export default function RootError({ error, reset }: ErrorProps) {
-  const router = useRouter();
+const ERROR_TEXT = {
+  title: 'Something went wrong',
+  description: 'We apologize for the inconvenience. An unexpected error occurred.',
+  errorId: 'Error ID',
+  showDetails: 'Show details',
+  retry: 'Try again',
+  goHome: 'Go to Home',
+  sentryReport: 'This error has been automatically reported.',
+};
 
+export default function RootError({ error, reset }: ErrorProps) {
   useEffect(() => {
-    // エラーをログに記録（Sentryなど）
-    console.error('Application error:', error);
+    Sentry.captureException(error, {
+      tags: {
+        error_boundary: 'root_error',
+        error_type: 'react_render_error',
+      },
+      contexts: {
+        react_error: {
+          componentStack: error.stack,
+          digest: error.digest,
+          message: error.message,
+        },
+      },
+    });
   }, [error]);
 
   return (
-    <div className="mx-auto flex min-h-dvh flex-col items-center justify-center gap-8 p-8 md:gap-12 md:p-16">
-      <Image
-        src="https://ui.shadcn.com/placeholder.svg"
-        alt="placeholder image"
-        width={960}
-        height={540}
-        priority
-        className="aspect-video w-240 rounded-2xl object-cover dark:invert"
-      />
-      <div className="text-center">
-        <h1 className="mb-4 text-3xl font-bold">Error</h1>
-        <h2 className="mb-4 text-2xl font-bold">Something went wrong</h2>
-        <p className="text-muted-foreground">An unexpected error occurred. Please try again.</p>
-        {process.env.NODE_ENV === 'development' && (
-          <div className="border-border bg-surface-container mt-4 rounded-2xl border p-4 text-left">
-            <p className="text-destructive font-mono text-sm">{error.message}</p>
+    <div className="bg-background flex min-h-screen items-center justify-center p-4">
+      <div className="bg-card border-border w-full max-w-md rounded-2xl border p-8 shadow-lg">
+        <div className="mb-6">
+          <h1 className="text-destructive mb-2 text-2xl font-bold">{ERROR_TEXT.title}</h1>
+          <p className="text-muted-foreground">{ERROR_TEXT.description}</p>
+        </div>
+
+        {error.digest && (
+          <div className="bg-surface-container mb-4 rounded p-4 text-xs">
+            <p className="text-muted-foreground">
+              {ERROR_TEXT.errorId}: <code className="font-mono">{error.digest}</code>
+            </p>
           </div>
         )}
-        <div className="mt-6 flex items-center justify-center gap-4 md:mt-8">
-          <Button className="cursor-pointer" onClick={() => reset()}>
-            Try Again
+
+        {process.env.NODE_ENV === 'development' && (
+          <details className="mb-6">
+            <summary className="text-muted-foreground hover:bg-state-hover -mx-1 cursor-pointer rounded px-1 text-sm transition-colors">
+              {ERROR_TEXT.showDetails}
+            </summary>
+            <div className="bg-surface-container mt-4 rounded p-4">
+              <p className="mb-2 text-xs font-bold">{error.name}</p>
+              <pre className="text-muted-foreground max-h-40 overflow-auto text-xs">
+                {error.message}
+              </pre>
+            </div>
+          </details>
+        )}
+
+        <div className="space-y-4">
+          <Button onClick={reset} className="w-full">
+            {ERROR_TEXT.retry}
           </Button>
-          <Button
-            variant="outline"
-            className="flex cursor-pointer items-center gap-1"
-            onClick={() => router.push('/')}
-          >
-            Go Home
+
+          <Button variant="outline" onClick={() => (window.location.href = '/')} className="w-full">
+            {ERROR_TEXT.goHome}
           </Button>
         </div>
+
+        <p className="text-muted-foreground mt-6 text-center text-xs">{ERROR_TEXT.sentryReport}</p>
       </div>
     </div>
   );

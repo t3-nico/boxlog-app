@@ -3,8 +3,10 @@
 import { useEffect } from 'react';
 
 import { AlertCircle } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import { Button } from '@/components/ui/button';
+import { logger } from '@/lib/logger';
 
 interface ErrorProps {
   error: Error & { digest?: string };
@@ -18,8 +20,10 @@ interface ErrorProps {
  * FeatureErrorBoundary（クライアント側）より上位で捕捉。
  */
 export default function CalendarError({ error, reset }: ErrorProps) {
+  const t = useTranslations('calendar.error');
+
   useEffect(() => {
-    console.error('[Calendar Error]', error);
+    logger.error('[Calendar Error]', error);
   }, [error]);
 
   return (
@@ -29,10 +33,8 @@ export default function CalendarError({ error, reset }: ErrorProps) {
       </div>
 
       <div className="max-w-md text-center">
-        <h2 className="mb-2 text-xl font-bold">カレンダーの読み込みに失敗しました</h2>
-        <p className="text-muted-foreground text-sm">
-          ネットワーク接続を確認して、もう一度お試しください。
-        </p>
+        <h2 className="mb-2 text-xl font-bold">{t('title')}</h2>
+        <p className="text-muted-foreground text-sm">{t('description')}</p>
 
         {process.env.NODE_ENV === 'development' && error.message && (
           <div className="border-border bg-surface-container mt-4 rounded-lg border p-4 text-left">
@@ -43,10 +45,10 @@ export default function CalendarError({ error, reset }: ErrorProps) {
 
       <div className="flex gap-4">
         <Button onClick={reset} variant="primary">
-          再読み込み
+          {t('retry')}
         </Button>
         <Button onClick={() => window.location.reload()} variant="outline">
-          ページをリロード
+          {t('reload')}
         </Button>
       </div>
     </div>
