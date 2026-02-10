@@ -43,6 +43,8 @@ const config: StorybookConfig = {
       'next/image': path.resolve(__dirname, './mocks/next-image.tsx'),
       'next/link': path.resolve(__dirname, './mocks/next-link.tsx'),
       'next/navigation': path.resolve(__dirname, './mocks/next-navigation.tsx'),
+      // Sentry（@sentry/nextjs が Next.js 内部の process 依存のため Storybook ではモック化）
+      '@sentry/nextjs': path.resolve(__dirname, './mocks/sentry-nextjs.ts'),
     };
     // React自動JSXランタイム設定
     config.esbuild = {

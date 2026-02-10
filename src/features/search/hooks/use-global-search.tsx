@@ -18,14 +18,14 @@ interface GlobalSearchContextType {
   isOpen: boolean;
 }
 
+const noop = () => {};
+const fallback: GlobalSearchContextType = { open: noop, close: noop, isOpen: false };
+
 const GlobalSearchContext = createContext<GlobalSearchContextType | null>(null);
 
-export function useGlobalSearch() {
-  const context = useContext(GlobalSearchContext);
-  if (!context) {
-    throw new Error('useGlobalSearch must be used within GlobalSearchProvider');
-  }
-  return context;
+/** Provider外ではnoop fallbackを返す（Storybook等で安全に動作） */
+export function useGlobalSearch(): GlobalSearchContextType {
+  return useContext(GlobalSearchContext) ?? fallback;
 }
 
 export const GlobalSearchProvider = ({ children }: { children: ReactNode }) => {
