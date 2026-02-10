@@ -1,11 +1,9 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
 import { Suspense, lazy } from 'react';
 
 import { Skeleton } from '@/components/ui/skeleton';
 
-import { SETTINGS_CATEGORIES } from '../../constants';
 import { useSettingsModalStore } from '../../stores/useSettingsModalStore';
 import type { SettingsCategory } from '../../types';
 
@@ -47,22 +45,12 @@ const categoryComponents: Record<
  * 選択されたカテゴリに応じてコンポーネントを遅延読み込み
  */
 export function SettingsModalContent() {
-  const t = useTranslations();
   const selectedCategory = useSettingsModalStore((state) => state.selectedCategory);
   const CategoryComponent = categoryComponents[selectedCategory];
 
-  // 現在のカテゴリのラベルを取得
-  const currentCategory = SETTINGS_CATEGORIES.find((cat) => cat.id === selectedCategory);
-  const categoryLabel = currentCategory ? t(currentCategory.labelKey) : '';
-
   return (
-    <div className="flex h-full min-w-0 flex-1 flex-col">
-      {/* ヘッダー - サイドバーと同じ高さ */}
-      <div className="flex h-12 shrink-0 items-center px-6">
-        <h2 className="text-lg font-bold">{categoryLabel}</h2>
-      </div>
-      {/* コンテンツ */}
-      <div className="min-h-0 flex-1 overflow-auto p-6 pt-0">
+    <div className="bg-background flex h-full min-w-0 flex-1 flex-col">
+      <div className="min-h-0 flex-1 overflow-auto p-6">
         <Suspense fallback={<SettingsLoadingSkeleton />}>
           <CategoryComponent />
         </Suspense>

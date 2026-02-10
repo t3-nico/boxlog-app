@@ -81,7 +81,7 @@ export function PreferencesSettings() {
             label={t('settings.preferences.language')}
             value={
               <Select value={locale} onValueChange={handleLanguageChange}>
-                <SelectTrigger className="w-[160px]">
+                <SelectTrigger variant="ghost">
                   <SelectValue placeholder={t('settings.preferences.selectLanguage')} />
                 </SelectTrigger>
                 <SelectContent>
@@ -98,7 +98,7 @@ export function PreferencesSettings() {
             label={t('settings.preferences.themeLabel')}
             value={
               <Select value={theme} onValueChange={handleThemeChange}>
-                <SelectTrigger className="w-[160px]">
+                <SelectTrigger variant="ghost">
                   <SelectValue placeholder={t('settings.preferences.selectTheme')} />
                 </SelectTrigger>
                 <SelectContent>
@@ -122,7 +122,7 @@ export function PreferencesSettings() {
                 value={preferences.values.startupScreen}
                 onValueChange={handleStartupScreenChange}
               >
-                <SelectTrigger className="w-[200px]">
+                <SelectTrigger variant="ghost">
                   <SelectValue placeholder={t('settings.preferences.selectStartupScreen')} />
                 </SelectTrigger>
                 <SelectContent>

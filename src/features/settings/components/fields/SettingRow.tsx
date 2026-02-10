@@ -13,9 +13,9 @@ interface SettingRowProps {
 export function SettingRow({ label, value, action }: SettingRowProps) {
   return (
     <div className="flex items-center justify-between gap-4 py-2">
-      <div className="text-muted-foreground text-sm">{label}</div>
+      <div className="text-foreground text-base">{label}</div>
       <div className="flex items-center gap-4">
-        <div className="text-foreground text-sm">{value}</div>
+        <div className="text-foreground text-base">{value}</div>
         {action}
       </div>
     </div>

@@ -94,7 +94,7 @@ export const DataExportSettings = memo(function DataExportSettings() {
             <p className="text-muted-foreground text-sm">
               {t('settings.dataControls.import.dropzone')}
             </p>
-            <Button variant="outline" className="mt-4" disabled>
+            <Button variant="ghost" className="mt-4" disabled>
               {t('settings.dataControls.import.selectFile')}
             </Button>
           </div>

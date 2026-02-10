@@ -175,7 +175,7 @@ export function ChronotypeSettings() {
             label={t('settings.chronotype.title')}
             value={
               <Select value={selectedType} onValueChange={handleTypeSelect}>
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger variant="ghost">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>

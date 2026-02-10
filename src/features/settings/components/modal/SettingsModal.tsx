@@ -70,7 +70,7 @@ export function SettingsModal() {
 
       <Dialog open={isOpen} onOpenChange={(open) => !open && closeModal()}>
         <DialogContent
-          className="flex h-[85vh] max-h-[800px] max-w-6xl gap-0 overflow-hidden p-0"
+          className="flex h-[85vh] max-h-[800px] max-w-4xl gap-0 overflow-hidden p-0"
           showCloseButton={true}
         >
           {/* アクセシビリティ: DialogTitleが必須 */}

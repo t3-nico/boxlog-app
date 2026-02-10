@@ -230,7 +230,7 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
                       </Button>
                     </div>
                     <Button
-                      variant="outline"
+                      variant="ghost"
                       onClick={() => handleSaveApiKey(provider.id)}
                       disabled={!aiKeys[provider.id] || savingKeys[provider.id]}
                     >
@@ -286,12 +286,12 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
               </div>
               <div>
                 {integration.connected ? (
-                  <Button variant="outline" onClick={() => handleDisconnect(integration.id)}>
+                  <Button variant="ghost" onClick={() => handleDisconnect(integration.id)}>
                     <Unplug className="mr-2 h-4 w-4" />
                     {t('settings.integrations.services.disconnect')}
                   </Button>
                 ) : (
-                  <Button variant="outline" onClick={() => handleConnect(integration.id)}>
+                  <Button variant="ghost" onClick={() => handleConnect(integration.id)}>
                     <ExternalLink className="mr-2 h-4 w-4" />
                     {t('settings.integrations.services.connect')}
                   </Button>
@@ -327,7 +327,7 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
               {t('settings.integrations.api.description')}
             </p>
           </div>
-          <Button variant="outline" disabled>
+          <Button variant="ghost" disabled>
             <ExternalLink className="mr-2 h-4 w-4" />
             {t('settings.integrations.api.openPortal')}
           </Button>

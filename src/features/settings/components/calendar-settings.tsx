@@ -143,7 +143,7 @@ export function CalendarSettings() {
             label={t('settings.calendar.timezone')}
             value={
               <Select value={settings.timezone} onValueChange={handleTimezoneChange}>
-                <SelectTrigger className="w-[200px]">
+                <SelectTrigger variant="ghost">
                   <SelectValue placeholder={t('settings.calendar.selectTimezone')} />
                 </SelectTrigger>
                 <SelectContent>
@@ -159,7 +159,7 @@ export function CalendarSettings() {
             label={t('settings.calendar.timeFormat')}
             value={
               <Select value={settings.timeFormat} onValueChange={handleTimeFormatChange}>
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger variant="ghost">
                   <SelectValue placeholder={t('settings.calendar.selectTimeFormat')} />
                 </SelectTrigger>
                 <SelectContent>
@@ -173,7 +173,7 @@ export function CalendarSettings() {
             label={t('settings.calendar.dateFormat')}
             value={
               <Select value={settings.dateFormat} onValueChange={handleDateFormatChange}>
-                <SelectTrigger className="w-[200px]">
+                <SelectTrigger variant="ghost">
                   <SelectValue placeholder={t('settings.calendar.selectDateFormat')} />
                 </SelectTrigger>
                 <SelectContent>
@@ -197,7 +197,7 @@ export function CalendarSettings() {
             label={t('settings.calendar.defaultView')}
             value={
               <Select value={settings.defaultView} onValueChange={handleDefaultViewChange}>
-                <SelectTrigger className="w-[140px]">
+                <SelectTrigger variant="ghost">
                   <SelectValue placeholder={t('settings.calendar.selectDefaultView')} />
                 </SelectTrigger>
                 <SelectContent>
@@ -222,7 +222,7 @@ export function CalendarSettings() {
                 value={String(settings.weekStartsOn)}
                 onValueChange={handleWeekStartsOnChange}
               >
-                <SelectTrigger className="w-[140px]">
+                <SelectTrigger variant="ghost">
                   <SelectValue placeholder={t('settings.calendar.selectStartDay')} />
                 </SelectTrigger>
                 <SelectContent>
@@ -264,7 +264,7 @@ export function CalendarSettings() {
                 value={String(settings.defaultDuration)}
                 onValueChange={handleDefaultDurationChange}
               >
-                <SelectTrigger className="w-[160px]">
+                <SelectTrigger variant="ghost">
                   <SelectValue placeholder={t('settings.calendar.selectDuration')} />
                 </SelectTrigger>
                 <SelectContent>
@@ -284,7 +284,7 @@ export function CalendarSettings() {
                 value={String(settings.snapInterval)}
                 onValueChange={handleSnapIntervalChange}
               >
-                <SelectTrigger className="w-[140px]">
+                <SelectTrigger variant="ghost">
                   <SelectValue placeholder={t('settings.calendar.selectInterval')} />
                 </SelectTrigger>
                 <SelectContent>
@@ -309,7 +309,7 @@ export function CalendarSettings() {
                 value={String(settings.businessHours.start)}
                 onValueChange={handleBusinessHoursStartChange}
               >
-                <SelectTrigger className="w-[120px]">
+                <SelectTrigger variant="ghost">
                   <SelectValue placeholder={t('settings.calendar.selectStartTime')} />
                 </SelectTrigger>
                 <SelectContent>
@@ -329,7 +329,7 @@ export function CalendarSettings() {
                 value={String(settings.businessHours.end)}
                 onValueChange={handleBusinessHoursEndChange}
               >
-                <SelectTrigger className="w-[120px]">
+                <SelectTrigger variant="ghost">
                   <SelectValue placeholder={t('settings.calendar.selectEndTime')} />
                 </SelectTrigger>
                 <SelectContent>

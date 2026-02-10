@@ -140,9 +140,7 @@ export const PlanBillingSettings = memo(function PlanBillingSettings() {
 
               <Button
                 className="w-full"
-                variant={
-                  currentPlan === plan.id ? 'outline' : plan.recommended ? 'primary' : 'outline'
-                }
+                variant={currentPlan === plan.id ? 'ghost' : plan.recommended ? 'primary' : 'ghost'}
                 disabled={currentPlan === plan.id}
                 onClick={() => handleUpgrade(plan.id)}
               >
@@ -165,7 +163,7 @@ export const PlanBillingSettings = memo(function PlanBillingSettings() {
                 <p className="text-muted-foreground text-sm">カードが登録されていません</p>
               </div>
             </div>
-            <Button variant="outline" disabled>
+            <Button variant="ghost" disabled>
               カードを追加
             </Button>
           </div>

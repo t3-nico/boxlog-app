@@ -113,7 +113,7 @@ function DeliveryMethodDropdown({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className="flex items-center gap-2" disabled={isPending}>
+        <Button variant="ghost" className="flex items-center gap-2" disabled={isPending}>
           <span className="text-sm">{getSelectedLabel()}</span>
           <ChevronDown className="size-4 opacity-50" />
         </Button>
