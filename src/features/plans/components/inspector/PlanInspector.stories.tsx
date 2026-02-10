@@ -26,7 +26,7 @@ import { PlanInspectorDetailsTab } from './PlanInspectorContent/PlanInspectorDet
 
 /** Plan Inspector のフォーム画面。新規作成・編集の全パターン。 */
 const meta = {
-  title: 'Features/Inspector/PlanForm',
+  title: 'Features/Plans/PlanForm',
   parameters: {
     layout: 'padded',
   },

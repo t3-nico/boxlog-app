@@ -13,10 +13,12 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { HoverTooltip } from '@/components/ui/tooltip';
-import { NoteIconButton } from '@/features/inspector/components/NoteIconButton';
-import { ScheduleRow } from '@/features/inspector/components/ScheduleRow';
-import { TagsIconButton } from '@/features/inspector/components/TagsIconButton';
-import { TitleInput } from '@/features/inspector/components/TitleInput';
+import {
+  NoteIconButton,
+  ScheduleRow,
+  TagsIconButton,
+  TitleInput,
+} from '@/features/plans/components/inspector/shared';
 import { cn } from '@/lib/utils';
 
 import type { Tag } from '@/features/tags/types';
@@ -27,7 +29,7 @@ import type { Tag } from '@/features/tags/types';
 
 /** Record Inspector のフォーム画面。新規作成・編集の全パターン。 */
 const meta = {
-  title: 'Features/Inspector/RecordForm',
+  title: 'Features/Records/RecordForm',
   parameters: {
     layout: 'padded',
   },
