@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Bell,
   CalendarDays,
@@ -10,7 +12,7 @@ import {
   Trash,
 } from 'lucide-react';
 
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/react';
 
 import { cn } from '@/lib/utils';
 
