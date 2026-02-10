@@ -66,6 +66,18 @@ const messages = {
       loadingPage: 'ページを読み込み中',
       pleaseWait: 'しばらくお待ちください...',
     },
+    boundary: {
+      title: '予期しないエラーが発生しました',
+      description: '申し訳ございません。アプリケーションでエラーが発生しました。',
+      autoReport: '自動的にエラー報告を送信いたします。',
+      retry: '再試行',
+      reload: 'ページをリロード',
+      devTitle: '開発環境 - コンポーネントエラー',
+      component: 'コンポーネント',
+      unknown: '不明',
+      checkConsole: '詳細はブラウザのコンソールを確認してください。',
+      featureError: '{feature}機能でエラーが発生しました',
+    },
   },
   legal: {
     cookies: {
