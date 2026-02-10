@@ -4,7 +4,8 @@ import { Copy, ExternalLink, Link, Trash2 } from 'lucide-react';
 import { useCallback } from 'react';
 
 import { DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
-import { InspectorContent, InspectorShell, useInspectorKeyboard } from '@/features/inspector';
+import { useInspectorKeyboard } from './hooks';
+import { InspectorContent, InspectorShell } from './shared';
 
 import { usePlan } from '../../hooks/usePlan';
 import { useDeleteConfirmStore } from '../../stores/useDeleteConfirmStore';

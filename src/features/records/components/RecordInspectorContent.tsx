@@ -30,11 +30,13 @@ import { DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdow
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { zIndex } from '@/config/ui/z-index';
-import { InspectorHeader } from '@/features/inspector';
-import { NoteIconButton } from '@/features/inspector/components/NoteIconButton';
-import { ScheduleRow } from '@/features/inspector/components/ScheduleRow';
-import { TagsIconButton } from '@/features/inspector/components/TagsIconButton';
-import { TitleInput } from '@/features/inspector/components/TitleInput';
+import {
+  InspectorHeader,
+  NoteIconButton,
+  ScheduleRow,
+  TagsIconButton,
+  TitleInput,
+} from '@/features/plans/components/inspector/shared';
 import { usePlans } from '@/features/plans/hooks/usePlans';
 import { useTags } from '@/features/tags/hooks';
 import { api } from '@/lib/trpc';

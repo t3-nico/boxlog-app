@@ -19,9 +19,9 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { SegmentedControl } from '@/components/ui/segmented-control';
-import { InspectorHeader, useDragHandle } from '@/features/inspector';
 import { api } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
+import { InspectorHeader, useDragHandle } from '../shared';
 
 import { usePlanInspectorStore, type DraftPlan } from '../../../stores/usePlanInspectorStore';
 import { reminderTypeToMinutes } from '../../../utils/reminder';

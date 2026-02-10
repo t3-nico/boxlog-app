@@ -10,11 +10,8 @@
 
 import { memo } from 'react';
 
-import { NoteIconButton } from '@/features/inspector/components/NoteIconButton';
-import { ScheduleRow } from '@/features/inspector/components/ScheduleRow';
-import { TagsIconButton } from '@/features/inspector/components/TagsIconButton';
-import { TitleInput } from '@/features/inspector/components/TitleInput';
 import { useTranslations } from 'next-intl';
+import { NoteIconButton, ScheduleRow, TagsIconButton, TitleInput } from '../shared';
 
 import type { Tag } from '@/features/tags/types';
 
