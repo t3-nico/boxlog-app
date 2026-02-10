@@ -1,0 +1,340 @@
+'use client';
+
+import { Clock, Edit, MessageSquare, Plus, Star, Tag, Trash } from 'lucide-react';
+
+import type { Meta, StoryObj } from '@storybook/react';
+
+import { cn } from '@/lib/utils';
+
+import type { ActivityIconColor, RecordActivity, RecordActivityDisplay } from '../types/activity';
+import { formatActivity } from '../utils/activityFormatter';
+
+/** RecordActivityPopover - Record変更履歴タイムライン */
+const meta = {
+  title: 'Features/Records/ActivityPopover',
+  tags: ['autodocs'],
+  parameters: {
+    layout: 'padded',
+    docs: {
+      description: {
+        component: [
+          'Inspectorヘッダーの History アイコンから開く Popover。',
+          'アクティビティを時系列で表示（新しい順）。',
+          '「意思決定」を伴う変更のみ表示。',
+          '',
+          'アイコン色の詳細は **IconColorReference** Story を参照。',
+          '',
+          '**使用箇所:** RecordInspector ヘッダー',
+        ].join('\n'),
+      },
+    },
+  },
+} satisfies Meta;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+// ─────────────────────────────────────────────────────────
+// Mock data
+// ─────────────────────────────────────────────────────────
+
+const now = new Date();
+
+function minutesAgo(minutes: number): string {
+  return new Date(now.getTime() - minutes * 60 * 1000).toISOString();
+}
+
+function hoursAgo(hours: number): string {
+  return new Date(now.getTime() - hours * 60 * 60 * 1000).toISOString();
+}
+
+function daysAgo(days: number): string {
+  return new Date(now.getTime() - days * 24 * 60 * 60 * 1000).toISOString();
+}
+
+const baseMock = {
+  record_id: 'mock-record-id',
+  user_id: 'mock-user-id',
+  field_name: null,
+  old_value: null,
+  new_value: null,
+  metadata: null,
+} as const;
+
+const mockActivities: RecordActivity[] = [
+  {
+    ...baseMock,
+    id: '1',
+    action_type: 'fulfillment_changed',
+    old_value: '3',
+    new_value: '5',
+    created_at: minutesAgo(10),
+  },
+  {
+    ...baseMock,
+    id: '2',
+    action_type: 'tag_added',
+    new_value: 'Deep Work',
+    created_at: minutesAgo(45),
+  },
+  {
+    ...baseMock,
+    id: '3',
+    action_type: 'time_changed',
+    old_value: '14:00 - 15:00',
+    new_value: '14:00 - 16:30',
+    created_at: hoursAgo(1),
+  },
+  {
+    ...baseMock,
+    id: '4',
+    action_type: 'title_changed',
+    old_value: 'コーディング',
+    new_value: 'フロントエンド実装',
+    created_at: hoursAgo(3),
+  },
+  {
+    ...baseMock,
+    id: '5',
+    action_type: 'memo_changed',
+    created_at: daysAgo(1),
+  },
+  {
+    ...baseMock,
+    id: '6',
+    action_type: 'tag_removed',
+    old_value: 'Meeting',
+    created_at: daysAgo(2),
+  },
+  {
+    ...baseMock,
+    id: '7',
+    action_type: 'created',
+    created_at: daysAgo(3),
+  },
+];
+
+// ─────────────────────────────────────────────────────────
+// Helpers
+// ─────────────────────────────────────────────────────────
+
+function getActivityIcon(icon: RecordActivityDisplay['icon']) {
+  switch (icon) {
+    case 'create':
+      return Plus;
+    case 'update':
+      return Edit;
+    case 'tag':
+      return Tag;
+    case 'delete':
+      return Trash;
+    case 'time':
+      return Clock;
+    case 'fulfillment':
+      return Star;
+    case 'memo':
+      return MessageSquare;
+    default:
+      return Edit;
+  }
+}
+
+function getIconColor(color: ActivityIconColor): string {
+  switch (color) {
+    case 'success':
+      return 'text-success';
+    case 'info':
+      return 'text-info';
+    case 'warning':
+      return 'text-warning';
+    case 'primary':
+      return 'text-primary';
+    case 'destructive':
+      return 'text-destructive';
+    default:
+      return 'text-muted-foreground';
+  }
+}
+
+function formatMockTime(dateString: string): string {
+  const date = new Date(dateString);
+  const diffMs = now.getTime() - date.getTime();
+  const diffMinutes = Math.floor(diffMs / (1000 * 60));
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+  if (diffMinutes < 1) return 'たった今';
+  if (diffMinutes < 60) return `${diffMinutes}分前`;
+  if (diffHours < 24) return `${diffHours}時間前`;
+  return `${diffDays}日前`;
+}
+
+/** アイコン色リファレンス用データ */
+const iconReferenceItems: {
+  icon: RecordActivityDisplay['icon'];
+  color: ActivityIconColor;
+  token: string;
+  label: string;
+  actions: string;
+}[] = [
+  { icon: 'create', color: 'success', token: 'text-success', label: 'Success', actions: '作成' },
+  {
+    icon: 'fulfillment',
+    color: 'warning',
+    token: 'text-warning',
+    label: 'Warning',
+    actions: '充実度変更',
+  },
+  {
+    icon: 'time',
+    color: 'info',
+    token: 'text-info',
+    label: 'Info',
+    actions: 'タイトル / 時間 / メモ',
+  },
+  {
+    icon: 'tag',
+    color: 'primary',
+    token: 'text-primary',
+    label: 'Primary',
+    actions: 'タグ追加 / 削除',
+  },
+  {
+    icon: 'delete',
+    color: 'destructive',
+    token: 'text-destructive',
+    label: 'Destructive',
+    actions: '削除',
+  },
+];
+
+function IconReference() {
+  return (
+    <div className="w-[480px] rounded-lg border">
+      <div className="border-b px-4 py-3">
+        <h3 className="text-sm font-bold">アイコン色リファレンス</h3>
+        <p className="text-muted-foreground mt-1 text-xs">
+          背景は全て bg-muted（統一）。色の差別化はアイコン色のみ。
+        </p>
+      </div>
+      <table className="w-full text-sm">
+        <thead>
+          <tr className="border-b text-left">
+            <th className="text-muted-foreground px-4 py-2 text-xs font-medium">Icon</th>
+            <th className="text-muted-foreground px-4 py-2 text-xs font-medium">Token</th>
+            <th className="text-muted-foreground px-4 py-2 text-xs font-medium">用途</th>
+          </tr>
+        </thead>
+        <tbody>
+          {iconReferenceItems.map((item) => {
+            const IconComponent = getActivityIcon(item.icon);
+            return (
+              <tr key={item.token} className="border-b last:border-b-0">
+                <td className="px-4 py-3">
+                  <div className="flex items-center gap-3">
+                    <div className="bg-muted flex size-8 items-center justify-center rounded-full">
+                      <IconComponent className={cn('size-4', getIconColor(item.color))} />
+                    </div>
+                    <span className="text-muted-foreground text-xs">{item.label}</span>
+                  </div>
+                </td>
+                <td className="px-4 py-3">
+                  <code className="bg-muted rounded px-1.5 py-0.5 text-xs">{item.token}</code>
+                </td>
+                <td className="text-muted-foreground px-4 py-3 text-xs">{item.actions}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function ActivityTimeline({ activities }: { activities: RecordActivity[] }) {
+  return (
+    <div className="w-80 rounded-lg border">
+      <div className="px-4 py-4">
+        <h3 className="text-sm font-bold">アクティビティ</h3>
+      </div>
+      <div className="max-h-96 overflow-y-auto px-4 py-4">
+        {activities.map((activity, index) => {
+          const formatted = formatActivity(activity);
+          const IconComponent = getActivityIcon(formatted.icon);
+          const isLast = index === activities.length - 1;
+
+          return (
+            <div key={activity.id} className="flex gap-4">
+              <div className="relative flex flex-col items-center">
+                <div
+                  className={cn(
+                    'bg-muted relative z-10 flex size-8 flex-shrink-0 items-center justify-center rounded-full',
+                  )}
+                >
+                  <IconComponent className={cn('size-4', getIconColor(formatted.iconColor))} />
+                </div>
+                {!isLast && (
+                  <div className="bg-border absolute top-8 left-1/2 h-full w-px -translate-x-1/2" />
+                )}
+              </div>
+              <div className="flex-1 pb-6">
+                <div className="flex items-start justify-between gap-2">
+                  <span className="text-sm leading-8 font-bold">{formatted.actionLabel}</span>
+                  <span className="text-muted-foreground mt-2 flex-shrink-0 text-xs">
+                    {formatMockTime(activity.created_at)}
+                  </span>
+                </div>
+                {formatted.detail && (
+                  <p className="text-muted-foreground -mt-1 text-xs">{formatted.detail}</p>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function EmptyTimeline() {
+  return (
+    <div className="w-80 rounded-lg border">
+      <div className="px-4 py-4">
+        <h3 className="text-sm font-bold">アクティビティ</h3>
+      </div>
+      <div className="text-muted-foreground px-4 py-8 text-center text-sm">
+        アクティビティはありません
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────
+// Stories
+// ─────────────────────────────────────────────────────────
+
+/** タイムライン（全アクション種別） */
+export const Timeline: Story = {
+  render: () => <ActivityTimeline activities={mockActivities} />,
+};
+
+/** 空状態 */
+export const Empty: Story = {
+  render: () => <EmptyTimeline />,
+};
+
+/** アイコン色リファレンス */
+export const IconColorReference: Story = {
+  render: () => <IconReference />,
+};
+
+/** 全パターン一覧 */
+export const AllPatterns: Story = {
+  render: () => (
+    <div className="flex flex-col items-start gap-6">
+      <IconReference />
+      <ActivityTimeline activities={mockActivities} />
+      <EmptyTimeline />
+    </div>
+  ),
+};
