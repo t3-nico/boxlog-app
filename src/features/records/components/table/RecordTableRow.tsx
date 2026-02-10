@@ -15,9 +15,9 @@ import {
   ContextMenuTrigger,
 } from '@/components/ui/context-menu';
 import { TableCell, TableRow } from '@/components/ui/table';
-import { TagSelectCombobox } from '@/features/plans/components/shared/TagSelectCombobox';
 import { useDateFormat } from '@/features/settings/hooks/useDateFormat';
 import { useTableColumnStore, useTableSelectionStore } from '@/features/table';
+import { TagSelectCombobox } from '@/features/tags/components/TagSelectCombobox';
 import { useTagsMap } from '@/features/tags/hooks/useTagsMap';
 import { cn } from '@/lib/utils';
 

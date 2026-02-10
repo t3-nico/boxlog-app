@@ -24,7 +24,7 @@ import { api } from '@/lib/trpc';
 
 import { SidebarNavigation } from '@/features/navigation/components/navigation-tabs/SidebarNavigation';
 
-import { TagSortableTree } from '../sortable-tree/TagSortableTree';
+import { TagSortableTree } from '@/features/tags/components/sortable-tree/TagSortableTree';
 import { CreateTagButton } from './components/CreateTagButton';
 import { FilterItem } from './components/FilterItem';
 

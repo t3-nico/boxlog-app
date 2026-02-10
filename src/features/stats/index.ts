@@ -1,2 +1,2 @@
-export { StatsSidebar, StatsSidebarSections } from './components/sidebar';
+export { StatsSidebar } from './components/sidebar';
 export { Stat } from './components/stat';

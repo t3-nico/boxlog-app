@@ -2,7 +2,7 @@
 
 import { Badge } from '@/components/ui/badge';
 import { TableCell } from '@/components/ui/table';
-import { TagSelectCombobox } from '@/features/plans/components/shared/TagSelectCombobox';
+import { TagSelectCombobox } from '@/features/tags/components/TagSelectCombobox';
 import { useTagsMap } from '@/features/tags/hooks/useTagsMap';
 import { useEffect, useRef, useState } from 'react';
 

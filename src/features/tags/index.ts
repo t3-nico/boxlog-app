@@ -21,8 +21,6 @@ export {
   TagBadge,
   // Modals & Dialogs
   TagCreateModal,
-  // Selection & Display
-  TagsList,
 } from './components';
 
 // Hooks
