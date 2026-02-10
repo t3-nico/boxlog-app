@@ -1,13 +1,14 @@
 'use client';
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { FolderOpen, Smile, X } from 'lucide-react';
+import { FolderOpen, Smile, Trash2, X } from 'lucide-react';
 import { useCallback, useRef, useState } from 'react';
 
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
+import { Spinner } from '@/components/ui/spinner';
 import { HoverTooltip } from '@/components/ui/tooltip';
 import {
+  InspectorHeader,
   NoteIconButton,
   ScheduleRow,
   TagsIconButton,
@@ -21,9 +22,9 @@ import type { Tag } from '@/features/tags/types';
 // Meta
 // ---------------------------------------------------------------------------
 
-/** Record新規作成画面。ドラフトモードの全パターン。 */
+/** Record編集画面。InspectorHeader・メニュー・Record固有ウィジェットを含む完全な編集体験。 */
 const meta = {
-  title: 'Features/Records/RecordCreate',
+  title: 'Features/Records/RecordEdit',
   parameters: {
     layout: 'padded',
   },
@@ -83,6 +84,8 @@ const mockTags: Tag[] = [
 // ヘルパーコンポーネント
 // ---------------------------------------------------------------------------
 
+const noop = () => {};
+
 /** Inspector風コンテナ */
 function InspectorFrame({ children }: { children: React.ReactNode }) {
   return (
@@ -92,29 +95,16 @@ function InspectorFrame({ children }: { children: React.ReactNode }) {
   );
 }
 
-/** ドラフトモードヘッダー（Record タブがアクティブ） */
-function DraftHeader() {
-  return (
-    <div className="bg-card relative flex shrink-0 items-center px-4 pt-4 pb-2">
-      <Tabs value="record" className="relative z-10">
-        <TabsList className="h-8 rounded-lg border-0 bg-transparent p-0">
-          <TabsTrigger
-            value="plan"
-            className="data-[state=active]:bg-state-selected data-[state=active]:text-foreground rounded-lg font-bold data-[state=active]:shadow-none"
-          >
-            Plan
-          </TabsTrigger>
-          <TabsTrigger
-            value="record"
-            className="data-[state=active]:bg-state-selected data-[state=active]:text-foreground rounded-lg font-bold data-[state=active]:shadow-none"
-          >
-            Record
-          </TabsTrigger>
-        </TabsList>
-      </Tabs>
-    </div>
-  );
-}
+/** Recordメニューコンテンツ（削除のみ） */
+const recordMenuContent = (
+  <>
+    <DropdownMenuSeparator />
+    <DropdownMenuItem onClick={noop} className="text-destructive focus:text-destructive">
+      <Trash2 className="mr-2 size-4" />
+      削除
+    </DropdownMenuItem>
+  </>
+);
 
 /** Plan紐付けボタン（静的表示） */
 function PlanLinkButton({ planName }: { planName?: string | undefined }) {
@@ -208,7 +198,7 @@ function FulfillmentButton({ initialScore = null }: { initialScore?: number | nu
 // インタラクティブラッパー
 // ---------------------------------------------------------------------------
 
-function RecordCreateStory({
+function RecordEditStory({
   initialTitle = '',
   initialTagIds = [],
   initialScheduleDate,
@@ -217,6 +207,7 @@ function RecordCreateStory({
   initialNote = '',
   initialPlanName,
   initialScore = null,
+  timeConflictError = false,
 }: {
   initialTitle?: string;
   initialTagIds?: string[];
@@ -226,6 +217,7 @@ function RecordCreateStory({
   initialNote?: string;
   initialPlanName?: string;
   initialScore?: number | null;
+  timeConflictError?: boolean;
 }) {
   const titleRef = useRef<HTMLInputElement | null>(null);
   const [title, setTitle] = useState(initialTitle);
@@ -237,7 +229,14 @@ function RecordCreateStory({
 
   return (
     <InspectorFrame>
-      <DraftHeader />
+      <InspectorHeader
+        hasPrevious
+        hasNext
+        onClose={noop}
+        onPrevious={noop}
+        onNext={noop}
+        menuContent={recordMenuContent}
+      />
       <div>
         {/* Row 1: タイトル */}
         <div className="px-4 pt-4 pb-2">
@@ -259,7 +258,7 @@ function RecordCreateStory({
           onDateChange={setScheduleDate}
           onStartTimeChange={setStartTime}
           onEndTimeChange={setEndTime}
-          timeConflictError={false}
+          timeConflictError={timeConflictError}
         />
 
         {/* Row 3: Tags + Plan紐付け + 充実度 + メモ */}
@@ -272,14 +271,8 @@ function RecordCreateStory({
           />
           <PlanLinkButton {...(initialPlanName ? { planName: initialPlanName } : {})} />
           <FulfillmentButton initialScore={initialScore} />
-          <NoteIconButton id="record-create-story" note={note} onNoteChange={setNote} />
+          <NoteIconButton id="record-edit-story" note={note} onNoteChange={setNote} />
         </div>
-      </div>
-
-      {/* フッター */}
-      <div className="flex shrink-0 justify-end gap-2 px-4 py-4">
-        <Button variant="ghost">キャンセル</Button>
-        <Button>Record 作成</Button>
       </div>
     </InspectorFrame>
   );
@@ -289,30 +282,71 @@ function RecordCreateStory({
 // Stories
 // ---------------------------------------------------------------------------
 
-/** Record新規作成（空フォーム）。ドラフトモードヘッダー + 空入力フィールド。 */
-export const RecordCreate: Story = {
+/** 既存Record編集。InspectorHeader（ナビゲーション + メニュー）付き。 */
+export const Edit: Story = {
   render: () => (
-    <RecordCreateStory
-      initialScheduleDate={new Date('2024-01-15')}
-      initialStartTime="10:00"
-      initialEndTime="11:00"
-    />
-  ),
-};
-
-/** Record新規作成（入力済み）。タイトル・時間・タグ・Plan紐付け・スコア入力済み。 */
-export const RecordCreateFilled: Story = {
-  render: () => (
-    <RecordCreateStory
+    <RecordEditStory
       initialTitle="開発作業"
-      initialTagIds={['tag-1', 'tag-2']}
+      initialTagIds={['tag-1']}
       initialScheduleDate={new Date('2024-01-15')}
       initialStartTime="09:00"
       initialEndTime="12:00"
       initialNote="<p>React コンポーネントのリファクタリング</p>"
-      initialPlanName="チームミーティング"
-      initialScore={3}
     />
+  ),
+};
+
+/** フル入力済みRecord。Plan紐付け + 全タグ + 充実度 + メモ。 */
+export const EditWithPlan: Story = {
+  render: () => (
+    <RecordEditStory
+      initialTitle="開発作業"
+      initialTagIds={['tag-1', 'tag-2', 'tag-3']}
+      initialScheduleDate={new Date('2024-01-15')}
+      initialStartTime="09:00"
+      initialEndTime="12:00"
+      initialNote="<p>React コンポーネントのリファクタリング完了。テスト追加。</p>"
+      initialPlanName="Sprint 3 開発"
+      initialScore={4}
+    />
+  ),
+};
+
+/** 時間重複エラー。ScheduleRowの時間フィールドが赤くハイライト。 */
+export const TimeConflict: Story = {
+  render: () => (
+    <RecordEditStory
+      initialTitle="開発作業"
+      initialTagIds={['tag-1']}
+      initialScheduleDate={new Date('2024-01-15')}
+      initialStartTime="10:00"
+      initialEndTime="11:00"
+      timeConflictError
+    />
+  ),
+};
+
+/** ローディング状態。データ取得中のスピナー表示。 */
+export const Loading: Story = {
+  render: () => (
+    <InspectorFrame>
+      <InspectorHeader onClose={noop} />
+      <div className="flex h-48 items-center justify-center">
+        <Spinner size="lg" />
+      </div>
+    </InspectorFrame>
+  ),
+};
+
+/** 空状態。Recordが見つからない場合の表示。 */
+export const Empty: Story = {
+  render: () => (
+    <InspectorFrame>
+      <InspectorHeader onClose={noop} />
+      <div className="flex h-48 items-center justify-center">
+        <p className="text-muted-foreground">Recordが見つかりません</p>
+      </div>
+    </InspectorFrame>
   ),
 };
 
@@ -320,20 +354,31 @@ export const RecordCreateFilled: Story = {
 export const AllPatterns: Story = {
   render: () => (
     <div className="flex flex-col items-start gap-6">
-      <RecordCreateStory
-        initialScheduleDate={new Date('2024-01-15')}
-        initialStartTime="10:00"
-        initialEndTime="11:00"
-      />
-      <RecordCreateStory
+      <RecordEditStory
         initialTitle="開発作業"
-        initialTagIds={['tag-1', 'tag-2']}
+        initialTagIds={['tag-1']}
         initialScheduleDate={new Date('2024-01-15')}
         initialStartTime="09:00"
         initialEndTime="12:00"
         initialNote="<p>React コンポーネントのリファクタリング</p>"
-        initialPlanName="チームミーティング"
-        initialScore={3}
+      />
+      <RecordEditStory
+        initialTitle="開発作業"
+        initialTagIds={['tag-1', 'tag-2', 'tag-3']}
+        initialScheduleDate={new Date('2024-01-15')}
+        initialStartTime="09:00"
+        initialEndTime="12:00"
+        initialNote="<p>React コンポーネントのリファクタリング完了。テスト追加。</p>"
+        initialPlanName="Sprint 3 開発"
+        initialScore={4}
+      />
+      <RecordEditStory
+        initialTitle="開発作業"
+        initialTagIds={['tag-1']}
+        initialScheduleDate={new Date('2024-01-15')}
+        initialStartTime="10:00"
+        initialEndTime="11:00"
+        timeConflictError
       />
     </div>
   ),

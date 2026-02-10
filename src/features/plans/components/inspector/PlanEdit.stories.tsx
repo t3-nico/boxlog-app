@@ -1,23 +1,32 @@
 'use client';
 
 import type { Meta, StoryObj } from '@storybook/react';
+import { ChevronDown } from 'lucide-react';
 import { useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Spinner } from '@/components/ui/spinner';
 
 import type { Tag } from '@/features/tags/types';
 
 import type { Plan } from '../../types/plan';
 import { PlanInspectorDetailsTab } from './PlanInspectorContent/PlanInspectorDetailsTab';
+import { PlanInspectorMenu } from './PlanInspectorContent/PlanInspectorMenu';
+import { InspectorHeader } from './shared';
 
 // ---------------------------------------------------------------------------
 // Meta
 // ---------------------------------------------------------------------------
 
-/** Plan新規作成画面。ドラフトモードの全パターン。 */
+/** Plan編集画面。InspectorHeader・メニュー・フッターを含む完全な編集体験。 */
 const meta = {
-  title: 'Features/Plans/PlanCreate',
+  title: 'Features/Plans/PlanEdit',
   parameters: {
     layout: 'padded',
   },
@@ -91,9 +100,27 @@ const basePlan: Plan = {
   updated_at: '2024-01-15T00:00:00Z',
 };
 
+const filledPlan: Plan = {
+  ...basePlan,
+  title: 'チームミーティング',
+  description: '<p>週次の進捗確認。アジェンダを事前に共有すること。</p>',
+  start_time: '2024-01-15T10:00:00+09:00',
+  end_time: '2024-01-15T11:00:00+09:00',
+  due_date: '2024-01-15',
+  reminder_minutes: 15,
+};
+
+const completedPlan: Plan = {
+  ...filledPlan,
+  status: 'closed',
+  completed_at: '2024-01-15T11:05:00+09:00',
+};
+
 // ---------------------------------------------------------------------------
 // ヘルパーコンポーネント
 // ---------------------------------------------------------------------------
+
+const noop = () => {};
 
 /** Inspector風コンテナ */
 function InspectorFrame({ children }: { children: React.ReactNode }) {
@@ -104,26 +131,51 @@ function InspectorFrame({ children }: { children: React.ReactNode }) {
   );
 }
 
-/** ドラフトモードヘッダー（Plan/Record タブ） */
-function DraftHeader() {
+/** Plan用メニューコンテンツ */
+const planMenuContent = (
+  <PlanInspectorMenu
+    onDuplicate={noop}
+    onCopyLink={noop}
+    onSaveAsTemplate={noop}
+    onCopyId={noop}
+    onOpenInNewTab={noop}
+    onDelete={noop}
+  />
+);
+
+/** 編集モードフッター（完了にするスプリットボタン） */
+function EditFooter({ status }: { status: 'open' | 'closed' }) {
+  if (status === 'closed') {
+    return (
+      <div className="flex shrink-0 justify-end px-4 py-4">
+        <Button variant="outline">未完了に戻す</Button>
+      </div>
+    );
+  }
+
   return (
-    <div className="bg-card relative flex shrink-0 items-center px-4 pt-4 pb-2">
-      <Tabs value="plan" className="relative z-10">
-        <TabsList className="h-8 rounded-lg border-0 bg-transparent p-0">
-          <TabsTrigger
-            value="plan"
-            className="data-[state=active]:bg-state-selected data-[state=active]:text-foreground rounded-lg font-bold data-[state=active]:shadow-none"
-          >
-            Plan
-          </TabsTrigger>
-          <TabsTrigger
-            value="record"
-            className="data-[state=active]:bg-state-selected data-[state=active]:text-foreground rounded-lg font-bold data-[state=active]:shadow-none"
-          >
-            Record
-          </TabsTrigger>
-        </TabsList>
-      </Tabs>
+    <div className="flex shrink-0 justify-end px-4 py-4">
+      <div className="flex items-center overflow-hidden rounded-md">
+        <Button variant="primary" className="rounded-none border-0">
+          完了にする
+        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="primary"
+              size="icon"
+              className="rounded-none border-0"
+              aria-label="完了オプション"
+            >
+              <ChevronDown className="size-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem>完了にする</DropdownMenuItem>
+            <DropdownMenuItem>完了 + Record作成</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
     </div>
   );
 }
@@ -132,7 +184,7 @@ function DraftHeader() {
 // インタラクティブラッパー
 // ---------------------------------------------------------------------------
 
-function PlanCreateStory({
+function PlanEditStory({
   plan,
   initialTagIds = [],
   initialScheduleDate,
@@ -140,6 +192,7 @@ function PlanCreateStory({
   initialEndTime = '',
   initialDueDate,
   initialReminderType = 'none',
+  timeConflictError = false,
 }: {
   plan: Plan;
   initialTagIds?: string[];
@@ -148,6 +201,7 @@ function PlanCreateStory({
   initialEndTime?: string;
   initialDueDate?: Date;
   initialReminderType?: string;
+  timeConflictError?: boolean;
 }) {
   const titleRef = useRef<HTMLInputElement | null>(null);
   const [tagIds, setTagIds] = useState(initialTagIds);
@@ -159,7 +213,14 @@ function PlanCreateStory({
 
   return (
     <InspectorFrame>
-      <DraftHeader />
+      <InspectorHeader
+        hasPrevious
+        hasNext
+        onClose={noop}
+        onPrevious={noop}
+        onNext={noop}
+        menuContent={planMenuContent}
+      />
       <div>
         <PlanInspectorDetailsTab
           plan={plan}
@@ -173,8 +234,8 @@ function PlanCreateStory({
           selectedTagIds={tagIds}
           recurrenceRule={null}
           recurrenceType={null}
-          timeConflictError={false}
-          onAutoSave={() => {}}
+          timeConflictError={timeConflictError}
+          onAutoSave={noop}
           onScheduleDateChange={setScheduleDate}
           onDueDateChange={setDueDate}
           onStartTimeChange={setStartTime}
@@ -182,16 +243,13 @@ function PlanCreateStory({
           onReminderChange={setReminderType}
           onTagsChange={setTagIds}
           onRemoveTag={(id) => setTagIds((prev) => prev.filter((t) => t !== id))}
-          onRepeatTypeChange={() => {}}
-          onRecurrenceRuleChange={() => {}}
-          isDraftMode
+          onRepeatTypeChange={noop}
+          onRecurrenceRuleChange={noop}
+          isDraftMode={false}
           availableTags={mockTags}
         />
       </div>
-      <div className="flex shrink-0 justify-end gap-2 px-4 py-4">
-        <Button variant="ghost">キャンセル</Button>
-        <Button>Plan 作成</Button>
-      </div>
+      <EditFooter status={plan.status} />
     </InspectorFrame>
   );
 }
@@ -200,28 +258,26 @@ function PlanCreateStory({
 // Stories
 // ---------------------------------------------------------------------------
 
-/** Plan新規作成（空フォーム）。ドラフトモードヘッダー + 空入力フィールド。 */
-export const PlanCreate: Story = {
+/** 既存Plan編集。InspectorHeader（ナビゲーション + メニュー）+ 完了スプリットボタン。 */
+export const Edit: Story = {
   render: () => (
-    <PlanCreateStory
-      plan={{ ...basePlan, id: '__draft__' }}
+    <PlanEditStory
+      plan={filledPlan}
+      initialTagIds={['tag-1']}
       initialScheduleDate={new Date('2024-01-15')}
       initialStartTime="10:00"
       initialEndTime="11:00"
+      initialDueDate={new Date('2024-01-15')}
+      initialReminderType="15min"
     />
   ),
 };
 
-/** Plan新規作成（入力済み）。タイトル・時間・タグが入力された状態。 */
-export const PlanCreateFilled: Story = {
+/** 完了済みPlan。「未完了に戻す」ボタン表示。 */
+export const Completed: Story = {
   render: () => (
-    <PlanCreateStory
-      plan={{
-        ...basePlan,
-        id: '__draft__',
-        title: 'チームミーティング',
-        description: '<p>週次の進捗確認</p>',
-      }}
+    <PlanEditStory
+      plan={completedPlan}
       initialTagIds={['tag-1', 'tag-2']}
       initialScheduleDate={new Date('2024-01-15')}
       initialStartTime="10:00"
@@ -232,29 +288,73 @@ export const PlanCreateFilled: Story = {
   ),
 };
 
+/** 時間重複エラー。ScheduleRowの時間フィールドが赤くハイライト。 */
+export const TimeConflict: Story = {
+  render: () => (
+    <PlanEditStory
+      plan={filledPlan}
+      initialTagIds={['tag-1']}
+      initialScheduleDate={new Date('2024-01-15')}
+      initialStartTime="10:00"
+      initialEndTime="11:00"
+      timeConflictError
+    />
+  ),
+};
+
+/** ローディング状態。データ取得中のスピナー表示。 */
+export const Loading: Story = {
+  render: () => (
+    <InspectorFrame>
+      <InspectorHeader onClose={noop} />
+      <div className="flex h-48 items-center justify-center">
+        <Spinner size="lg" />
+      </div>
+    </InspectorFrame>
+  ),
+};
+
+/** 空状態。Planが見つからない場合の表示。 */
+export const Empty: Story = {
+  render: () => (
+    <InspectorFrame>
+      <InspectorHeader onClose={noop} />
+      <div className="flex h-48 items-center justify-center">
+        <p className="text-muted-foreground">プランが見つかりません</p>
+      </div>
+    </InspectorFrame>
+  ),
+};
+
 /** 全パターン一覧。 */
 export const AllPatterns: Story = {
   render: () => (
     <div className="flex flex-col items-start gap-6">
-      <PlanCreateStory
-        plan={{ ...basePlan, id: '__draft__' }}
+      <PlanEditStory
+        plan={filledPlan}
+        initialTagIds={['tag-1']}
         initialScheduleDate={new Date('2024-01-15')}
         initialStartTime="10:00"
         initialEndTime="11:00"
+        initialDueDate={new Date('2024-01-15')}
+        initialReminderType="15min"
       />
-      <PlanCreateStory
-        plan={{
-          ...basePlan,
-          id: '__draft__',
-          title: 'チームミーティング',
-          description: '<p>週次の進捗確認</p>',
-        }}
+      <PlanEditStory
+        plan={completedPlan}
         initialTagIds={['tag-1', 'tag-2']}
         initialScheduleDate={new Date('2024-01-15')}
         initialStartTime="10:00"
         initialEndTime="11:00"
         initialDueDate={new Date('2024-01-15')}
         initialReminderType="15min"
+      />
+      <PlanEditStory
+        plan={filledPlan}
+        initialTagIds={['tag-1']}
+        initialScheduleDate={new Date('2024-01-15')}
+        initialStartTime="10:00"
+        initialEndTime="11:00"
+        timeConflictError
       />
     </div>
   ),
