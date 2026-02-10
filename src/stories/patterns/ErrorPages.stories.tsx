@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/react';
 import { AlertCircle } from 'lucide-react';
 import type { ReactNode } from 'react';
 
