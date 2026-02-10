@@ -7,7 +7,7 @@ import { PlanCard } from './PlanCard/PlanCard';
 
 /** カレンダー上のカード（Plan/Record/Draft）の全バリエーション。 */
 const meta = {
-  title: 'Features/Calendar/Cards',
+  title: 'Features/Calendar/Views/Cards',
   parameters: {
     layout: 'padded',
   },

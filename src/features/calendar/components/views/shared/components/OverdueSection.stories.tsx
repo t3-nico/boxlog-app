@@ -15,7 +15,7 @@ import { OverdueSection, OverdueSectionSingle } from './OverdueSection';
 
 /** カレンダーの保留中（期限切れ）プランバッジ。WeekView等の上部に表示。 */
 const meta = {
-  title: 'Features/Calendar/OverdueSection',
+  title: 'Features/Calendar/Views/OverdueSection',
   parameters: {
     layout: 'padded',
   },
