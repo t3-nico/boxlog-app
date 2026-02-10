@@ -91,7 +91,7 @@ export const WeekGrid = ({
         <div
           key={date.toISOString()}
           className="flex items-center justify-center px-1"
-          style={{ width: `${100 / 7}%` }}
+          style={{ width: `${100 / weekDates.length}%` }}
         >
           <DateDisplay
             date={date}
@@ -137,7 +137,7 @@ export const WeekGrid = ({
                 'relative flex-1 overflow-visible',
                 dayIndex < weekDates.length - 1 ? 'border-border border-r' : '',
               )}
-              style={{ width: `${100 / 7}%` }}
+              style={{ width: `${100 / weekDates.length}%` }}
             >
               <WeekContent
                 date={date}

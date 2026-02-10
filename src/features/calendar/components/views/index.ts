@@ -1,8 +1,7 @@
 // ビューコンポーネント
 export { AgendaView } from './AgendaView';
 export { DayView } from './DayView';
-export { FiveDayView } from './FiveDayView';
-export { ThreeDayView } from './ThreeDayView';
+export { MultiDayView } from './MultiDayView';
 export { WeekView } from './WeekView';
 
 // 共有コンポーネント

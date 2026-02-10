@@ -18,7 +18,7 @@ interface SleepHoursForScroll {
 }
 
 interface UseScrollableCalendarOptions {
-  viewMode: 'day' | '3day' | '5day' | 'week' | 'agenda';
+  viewMode: string;
   hourHeight: number;
   sleepHoursCollapsed: boolean;
   sleepHours: SleepHoursForScroll | null;

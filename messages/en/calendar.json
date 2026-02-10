@@ -5,17 +5,23 @@
     },
     "title": "Calendar",
     "views": {
-      "day": "Day View",
-      "splitDay": "Split Day View",
-      "3day": "3-Day View",
-      "5day": "5-Day View",
-      "week": "Week View",
+      "day": "Day",
+      "splitDay": "Split Day",
+      "3day": "3-Day",
+      "5day": "5-Day",
+      "week": "Week",
       "weekday": "Weekday",
-      "weekNoWeekend": "Week View (Weekdays)",
-      "2week": "2-Week View",
-      "month": "Month View",
+      "weekNoWeekend": "Week (Weekdays)",
+      "2week": "2-Week",
+      "month": "Month",
       "list": "List",
-      "agenda": "Agenda"
+      "agenda": "Agenda",
+      "multiday": "{count} Days",
+      "daysSubmenu": "Days",
+      "viewSettings": "View settings",
+      "showWeekends": "Show weekends",
+      "showWeekNumbers": "Show week numbers",
+      "generalSettings": "General settings"
     },
     "mobile": {
       "drawer": {

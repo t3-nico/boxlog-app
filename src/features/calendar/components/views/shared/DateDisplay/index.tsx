@@ -12,4 +12,3 @@ export { CompactDateNavigator, DateNavigator } from '../../../layout/Header/Date
 export type { NavigationDirection } from '../../../layout/Header/DateNavigator';
 export { CompactDateDisplay, DateRangeDisplay } from '../../../layout/Header/DateRangeDisplay';
 export { ViewSwitcher } from '../../../layout/Header/ViewSwitcher';
-export type { ViewOption } from '../../../layout/Header/ViewSwitcher';

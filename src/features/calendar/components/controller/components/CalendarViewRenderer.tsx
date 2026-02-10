@@ -3,6 +3,7 @@
 import React, { Suspense, useMemo } from 'react';
 
 import type { CalendarViewType } from '../../../types/calendar.types';
+import { getMultiDayCount, isMultiDayView } from '../../../types/calendar.types';
 import type { GridViewProps } from '../../views/shared/types/base.types';
 
 import { AgendaViewSkeleton } from './AgendaViewSkeleton';
@@ -20,14 +21,9 @@ const WeekView = React.lazy(() =>
     default: module.WeekView,
   })),
 );
-const ThreeDayView = React.lazy(() =>
-  import('@/features/calendar/components/views/ThreeDayView').then((module) => ({
-    default: module.ThreeDayView,
-  })),
-);
-const FiveDayView = React.lazy(() =>
-  import('@/features/calendar/components/views/FiveDayView').then((module) => ({
-    default: module.FiveDayView,
+const MultiDayView = React.lazy(() =>
+  import('@/features/calendar/components/views/MultiDayView').then((module) => ({
+    default: module.MultiDayView,
   })),
 );
 const AgendaView = React.lazy(() =>
@@ -64,23 +60,19 @@ export const CalendarViewRenderer = React.memo(function CalendarViewRenderer({
       onPlanContextMenu: commonProps.onPlanContextMenu,
     };
 
+    if (isMultiDayView(viewType)) {
+      return (
+        <Suspense fallback={<CalendarViewSkeleton />}>
+          <MultiDayView dayCount={getMultiDayCount(viewType)} {...commonProps} />
+        </Suspense>
+      );
+    }
+
     switch (viewType) {
       case 'day':
         return (
           <Suspense fallback={<CalendarViewSkeleton />}>
             <DayView {...commonProps} />
-          </Suspense>
-        );
-      case '3day':
-        return (
-          <Suspense fallback={<CalendarViewSkeleton />}>
-            <ThreeDayView {...commonProps} />
-          </Suspense>
-        );
-      case '5day':
-        return (
-          <Suspense fallback={<CalendarViewSkeleton />}>
-            <FiveDayView {...commonProps} />
           </Suspense>
         );
       case 'week':

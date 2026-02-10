@@ -12,7 +12,6 @@ import {
   getYear,
   isSameDay,
   isSameMonth,
-  isWithinInterval,
   startOfMonth,
   startOfWeek,
   subMonths,
@@ -38,12 +37,6 @@ export interface MiniCalendarProps {
   onMonthChange?: ((date: Date) => void) | undefined;
   className?: string | undefined;
   month?: Date | undefined;
-  displayRange?:
-    | {
-        start: Date;
-        end: Date;
-      }
-    | undefined;
   asPopover?: boolean | undefined;
   popoverTrigger?: React.ReactNode | undefined;
   popoverClassName?: string | undefined;
@@ -118,7 +111,6 @@ export const MiniCalendar = memo<MiniCalendarProps>(
     onMonthChange,
     className,
     month,
-    displayRange,
     asPopover = false,
     popoverTrigger,
     popoverClassName,
@@ -246,20 +238,9 @@ export const MiniCalendar = memo<MiniCalendarProps>(
         const isSelected = selectedDate && isSameDay(date, selectedDate);
         const isCurrentMonth = isSameMonth(date, viewMonth);
 
-        // 範囲内かどうか
-        let isInRange = false;
-        let isRangeStart = false;
-        let isRangeEnd = false;
-
-        if (displayRange) {
-          isInRange = isWithinInterval(date, { start: displayRange.start, end: displayRange.end });
-          isRangeStart = isSameDay(date, displayRange.start);
-          isRangeEnd = isSameDay(date, displayRange.end);
-        }
-
-        return { isToday, isSelected, isCurrentMonth, isInRange, isRangeStart, isRangeEnd };
+        return { isToday, isSelected, isCurrentMonth };
       },
-      [selectedDate, viewMonth, displayRange],
+      [selectedDate, viewMonth],
     );
 
     // ハイドレーション対策
@@ -346,8 +327,7 @@ export const MiniCalendar = memo<MiniCalendarProps>(
           {weeks.map((week, weekIndex) => (
             <div key={weekIndex} className="grid grid-cols-7">
               {week.map((date) => {
-                const { isToday, isSelected, isCurrentMonth, isInRange, isRangeStart, isRangeEnd } =
-                  getDayState(date);
+                const { isToday, isSelected, isCurrentMonth } = getDayState(date);
 
                 return (
                   <button
@@ -363,16 +343,8 @@ export const MiniCalendar = memo<MiniCalendarProps>(
                       !isToday && 'hover:bg-state-hover hover:rounded-lg',
                       // 今日: primary（ホバーの影響を受けない）
                       isToday && 'bg-primary text-primary-foreground rounded-lg font-bold',
-                      // 範囲内（今日以外）
-                      isInRange && !isToday && 'bg-state-hover text-foreground',
-                      // 範囲の開始・終了のrounded
-                      isRangeStart && !isToday && 'rounded-l-lg',
-                      isRangeEnd && !isToday && 'rounded-r-lg',
-                      // 選択中（単一選択、範囲外、今日以外）
-                      isSelected &&
-                        !isInRange &&
-                        !isToday &&
-                        'bg-state-hover text-foreground rounded-lg',
+                      // 選択中（今日以外）
+                      isSelected && !isToday && 'bg-state-hover text-foreground rounded-lg',
                     )}
                   >
                     {format(date, 'd')}

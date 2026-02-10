@@ -1,4 +1,16 @@
-export type CalendarViewType = 'day' | '3day' | '5day' | 'week' | 'agenda';
+export type MultiDayCount = 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+export type MultiDayViewType = `${MultiDayCount}day`;
+export type CalendarViewType = 'day' | 'week' | 'agenda' | MultiDayViewType;
+
+/** MultiDayView（2day〜9day）かどうかを判定 */
+export function isMultiDayView(view: CalendarViewType): view is MultiDayViewType {
+  return /^\d+day$/.test(view) && view !== 'day';
+}
+
+/** MultiDayViewType から日数を取得 */
+export function getMultiDayCount(view: MultiDayViewType): MultiDayCount {
+  return parseInt(view) as MultiDayCount;
+}
 
 export interface CalendarViewProps {
   className?: string;

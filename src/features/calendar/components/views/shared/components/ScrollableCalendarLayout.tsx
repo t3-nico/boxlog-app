@@ -40,7 +40,7 @@ interface ScrollableCalendarLayoutProps {
   timeColumnWidth?: number | undefined;
   onTimeClick?: ((hour: number, minute: number) => void) | undefined;
   displayDates?: Date[] | undefined;
-  viewMode?: 'day' | '3day' | '5day' | 'week' | 'agenda' | undefined;
+  viewMode?: string | undefined;
   /** 睡眠時間帯内のプラン数計算用 */
   plans?: CalendarPlan[] | undefined;
 

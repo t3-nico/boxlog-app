@@ -72,7 +72,7 @@ export function PlanListToolbar({
     <div className="flex h-10 items-center gap-1 px-2">
       {isSearchOpen ? (
         // 検索モード
-        <div className="flex flex-1 items-center gap-2">
+        <div className="bg-input flex flex-1 items-center gap-2 rounded-md px-2">
           <Search className="text-muted-foreground size-4 shrink-0" />
           <Input
             type="text"

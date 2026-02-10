@@ -61,7 +61,7 @@ export interface UseDragAndDropProps {
   /** 重複チェック用の全イベント（週/複数日表示で別日への移動時に使用） */
   allEventsForOverlapCheck?: CalendarPlan[] | undefined;
   displayDates?: Date[] | undefined;
-  viewMode?: 'day' | '3day' | '5day' | 'week' | 'agenda' | undefined;
+  viewMode?: string | undefined;
   /** DnDを無効化するプランID（Inspector表示中のプランなど） */
   disabledPlanId?: string | null | undefined;
 }

@@ -3,8 +3,7 @@ export const preloadCalendarViews = () => {
   // 最もよく使うビューを先読み（絶対パスで指定）
   import('@/features/calendar/components/views/DayView');
   import('@/features/calendar/components/views/WeekView');
-  import('@/features/calendar/components/views/ThreeDayView');
-  import('@/features/calendar/components/views/FiveDayView');
+  import('@/features/calendar/components/views/MultiDayView');
   import('@/features/calendar/components/views/AgendaView');
 };
 

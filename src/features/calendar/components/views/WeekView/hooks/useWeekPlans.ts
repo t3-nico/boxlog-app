@@ -7,7 +7,6 @@ import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
 import { getDateKey, isValidEvent, sortEventsByDateKeys } from '../../shared';
 import { HOUR_HEIGHT } from '../../shared/constants/grid.constants';
 import type { UseWeekPlansOptions, UseWeekPlansReturn, WeekPlanPosition } from '../WeekView.types';
-const DAY_COLUMN_WIDTH = 100 / 7; // 各日の列幅（%）
 
 /**
  * 週ビューでのプラン位置計算専用フック
@@ -64,6 +63,8 @@ export function useWeekPlans({
   const planPositions = useMemo(() => {
     const positions: WeekPlanPosition[] = [];
 
+    const dayColumnWidth = weekDates.length > 0 ? 100 / weekDates.length : 100;
+
     weekDates.forEach((date, dayIndex) => {
       const dateKey = getDateKey(date);
       const dayPlans =
@@ -93,8 +94,8 @@ export function useWeekPlans({
 
         // 重なりがある場合の列計算
         const columnInfo = planColumns[planIndex] ?? { column: 0, totalColumns: 1 };
-        const columnWidth = DAY_COLUMN_WIDTH / columnInfo.totalColumns;
-        const left = dayIndex * DAY_COLUMN_WIDTH + columnInfo.column * columnWidth;
+        const columnWidth = dayColumnWidth / columnInfo.totalColumns;
+        const left = dayIndex * dayColumnWidth + columnInfo.column * columnWidth;
         const width = columnWidth * 0.95; // 少し余白を作る
 
         positions.push({

@@ -7,6 +7,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { format } from 'date-fns';
 
 import type { CalendarViewType } from '../types/calendar.types';
+import { getMultiDayCount, isMultiDayView } from '../types/calendar.types';
 
 interface CalendarNavigationContextValue {
   currentDate: Date;
@@ -90,21 +91,19 @@ export const CalendarNavigationProvider = ({
         const multiplier = direction === 'next' ? 1 : -1;
         newDate = new Date(currentDate);
 
-        switch (viewType) {
-          case 'day':
-            newDate.setDate(currentDate.getDate() + 1 * multiplier);
-            break;
-          case '3day':
-            newDate.setDate(currentDate.getDate() + 3 * multiplier);
-            break;
-          case '5day':
-            newDate.setDate(currentDate.getDate() + 5 * multiplier);
-            break;
-          case 'week':
-            newDate.setDate(currentDate.getDate() + 7 * multiplier);
-            break;
-          default:
-            newDate.setDate(currentDate.getDate() + 7 * multiplier);
+        if (isMultiDayView(viewType)) {
+          newDate.setDate(currentDate.getDate() + getMultiDayCount(viewType) * multiplier);
+        } else {
+          switch (viewType) {
+            case 'day':
+              newDate.setDate(currentDate.getDate() + 1 * multiplier);
+              break;
+            case 'week':
+              newDate.setDate(currentDate.getDate() + 7 * multiplier);
+              break;
+            default:
+              newDate.setDate(currentDate.getDate() + 7 * multiplier);
+          }
         }
       }
 

@@ -32,6 +32,18 @@ export const useCalendarKeyboard = ({
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
       if (e.metaKey || e.ctrlKey) {
+        // input/textarea 内ではショートカットを無効化
+        // (Cmd+A = 全選択, Cmd+←/→ = 行頭/行末 などブラウザ標準操作を妨げない)
+        const { activeElement } = document;
+        if (
+          activeElement &&
+          (activeElement.tagName === 'INPUT' ||
+            activeElement.tagName === 'TEXTAREA' ||
+            activeElement.getAttribute('contenteditable') === 'true')
+        ) {
+          return;
+        }
+
         switch (e.key) {
           case 'ArrowLeft':
             e.preventDefault();

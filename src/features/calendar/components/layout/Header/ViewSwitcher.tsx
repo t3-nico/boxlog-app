@@ -3,56 +3,89 @@
 import { useCallback, useEffect } from 'react';
 
 import { Check, ChevronDown } from 'lucide-react';
+import { useLocale, useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
 
 import { buttonVariants } from '@/components/ui/button';
 import {
   DropdownMenu,
+  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import type { CalendarViewType } from '@/features/calendar/types/calendar.types';
+import { isMultiDayView } from '@/features/calendar/types/calendar.types';
+import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
 import { cn } from '@/lib/utils';
 
-export type ViewOption = {
-  value: string;
-  label: string;
-  icon?: React.ReactNode;
-  shortcut?: string;
-};
-
 interface ViewSwitcherProps {
-  options: ViewOption[];
-  currentView: string;
-  onChange: (view: string) => void;
+  currentView: CalendarViewType;
+  onChange: (view: CalendarViewType) => void;
   className?: string;
 }
 
+interface MainViewOption {
+  value: CalendarViewType;
+  labelKey: string;
+  shortcut: string;
+}
+
+const MAIN_VIEW_OPTIONS: MainViewOption[] = [
+  { value: 'day', labelKey: 'calendar.views.day', shortcut: 'D' },
+  { value: 'week', labelKey: 'calendar.views.week', shortcut: 'W' },
+  { value: 'agenda', labelKey: 'calendar.views.agenda', shortcut: 'A' },
+];
+
+const DAY_COUNTS = [2, 3, 4, 5, 6, 7, 8, 9] as const;
+
 /**
- * ビュー切り替えドロップダウン
- * shadcn/ui公式DropdownMenuを使用
+ * ビュー切り替えドロップダウン（Google Calendar風サブメニュー構造）
  *
- * **デザイン仕様**:
- * - ボタン: 32px（size: 'sm'、8pxグリッド準拠）
+ * メニュー構造:
+ * - 日 (D) / 週 (W) / アジェンダ (A)
+ * - 日数 > 2日間〜9日間
+ * - ビューの設定 > 週末を表示
  */
-export const ViewSwitcher = ({ options, currentView, onChange, className }: ViewSwitcherProps) => {
-  const currentOption = options.find((opt) => opt.value === currentView);
+export function ViewSwitcher({ currentView, onChange, className }: ViewSwitcherProps) {
+  const t = useTranslations();
+  const router = useRouter();
+  const locale = useLocale();
+  const showWeekends = useCalendarSettingsStore((s) => s.showWeekends);
+  const showWeekNumbers = useCalendarSettingsStore((s) => s.showWeekNumbers);
+  const updateSettings = useCalendarSettingsStore((s) => s.updateSettings);
+
+  const currentLabel = isMultiDayView(currentView)
+    ? t('calendar.views.multiday', { count: parseInt(currentView) })
+    : t(
+        MAIN_VIEW_OPTIONS.find((opt) => opt.value === currentView)?.labelKey ??
+          'calendar.views.week',
+      );
 
   const handleSelect = useCallback(
-    (value: string) => {
+    (value: CalendarViewType) => {
       onChange(value);
     },
     [onChange],
   );
 
-  // ショートカットキー機能
+  const handleToggleWeekends = useCallback(() => {
+    updateSettings({ showWeekends: !showWeekends });
+  }, [showWeekends, updateSettings]);
+
+  const handleToggleWeekNumbers = useCallback(() => {
+    updateSettings({ showWeekNumbers: !showWeekNumbers });
+  }, [showWeekNumbers, updateSettings]);
+
+  // キーボードショートカット: D, W, A, 0-9
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      // Ctrl、Alt、Metaキーが押されている場合は無視
-      if (event.ctrlKey || event.altKey || event.metaKey) {
-        return;
-      }
+      if (event.ctrlKey || event.altKey || event.metaKey) return;
 
-      // 入力フィールドにフォーカスがある場合は無視
       const { activeElement } = document;
       if (
         activeElement &&
@@ -63,18 +96,44 @@ export const ViewSwitcher = ({ options, currentView, onChange, className }: View
         return;
       }
 
-      const key = event.key.toUpperCase();
-      const option = options.find((opt) => opt.shortcut?.toUpperCase() === key);
+      const key = event.key;
 
-      if (option && option.value !== currentView) {
+      // D, W, A ショートカット
+      const upperKey = key.toUpperCase();
+      const mainOption = MAIN_VIEW_OPTIONS.find((opt) => opt.shortcut === upperKey);
+      if (mainOption && mainOption.value !== currentView) {
         event.preventDefault();
-        onChange(option.value);
+        onChange(mainOption.value);
+        return;
+      }
+
+      // 数字キー 1 = day, 0 = week, 2-9 = Nday
+      if (key === '1') {
+        if (currentView !== 'day') {
+          event.preventDefault();
+          onChange('day');
+        }
+        return;
+      }
+      if (key === '0') {
+        if (currentView !== 'week') {
+          event.preventDefault();
+          onChange('week');
+        }
+        return;
+      }
+      if (key >= '2' && key <= '9') {
+        const view = `${key}day` as CalendarViewType;
+        if (view !== currentView) {
+          event.preventDefault();
+          onChange(view);
+        }
       }
     };
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [options, currentView, onChange]);
+  }, [currentView, onChange]);
 
   return (
     <DropdownMenu>
@@ -85,33 +144,88 @@ export const ViewSwitcher = ({ options, currentView, onChange, className }: View
           className,
         )}
       >
-        {currentOption?.icon}
-        <span>{currentOption?.label || 'Day'}</span>
+        <span>{currentLabel}</span>
         <ChevronDown className="ml-2 h-4 w-4" />
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" side="bottom" sideOffset={8} className="min-w-40">
-        {/* ビューオプション */}
-        {options.map((option) => (
+      <DropdownMenuContent align="end" side="bottom" sideOffset={8} className="min-w-48">
+        {/* メインビュー */}
+        {MAIN_VIEW_OPTIONS.map((option) => (
           <DropdownMenuItem
             key={option.value}
             onClick={() => handleSelect(option.value)}
             className="flex items-center justify-between gap-2"
           >
             <div className="flex items-center gap-2">
-              {option.icon}
-              <span>{option.label}</span>
-            </div>
-            <div className="flex items-center gap-2">
               {currentView === option.value && <Check className="text-primary h-4 w-4" />}
-              {option.shortcut && (
-                <span className="bg-surface-container text-muted-foreground rounded px-2 py-1 font-mono text-xs">
-                  {option.shortcut}
-                </span>
-              )}
+              {currentView !== option.value && <span className="w-4" />}
+              <span>{t(option.labelKey)}</span>
             </div>
+            <span className="bg-surface-container text-muted-foreground rounded px-2 py-0.5 font-mono text-xs">
+              {option.shortcut}
+            </span>
           </DropdownMenuItem>
         ))}
+
+        <DropdownMenuSeparator />
+
+        {/* 日数サブメニュー */}
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger>
+            <div className="flex items-center gap-2">
+              {isMultiDayView(currentView) && <Check className="text-primary h-4 w-4" />}
+              {!isMultiDayView(currentView) && <span className="w-4" />}
+              <span>{t('calendar.views.daysSubmenu')}</span>
+            </div>
+          </DropdownMenuSubTrigger>
+          <DropdownMenuSubContent>
+            {DAY_COUNTS.map((count) => {
+              const view = `${count}day` as CalendarViewType;
+              const isActive = currentView === view;
+              return (
+                <DropdownMenuItem
+                  key={count}
+                  onClick={() => handleSelect(view)}
+                  className="flex items-center justify-between gap-4"
+                >
+                  <div className="flex items-center gap-2">
+                    {isActive && <Check className="text-primary h-4 w-4" />}
+                    {!isActive && <span className="w-4" />}
+                    <span>{t('calendar.views.multiday', { count })}</span>
+                  </div>
+                  <span className="bg-surface-container text-muted-foreground rounded px-2 py-0.5 font-mono text-xs">
+                    {count}
+                  </span>
+                </DropdownMenuItem>
+              );
+            })}
+          </DropdownMenuSubContent>
+        </DropdownMenuSub>
+
+        {/* ビューの設定サブメニュー */}
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger>
+            <div className="flex items-center gap-2">
+              <span className="w-4" />
+              <span>{t('calendar.views.viewSettings')}</span>
+            </div>
+          </DropdownMenuSubTrigger>
+          <DropdownMenuSubContent>
+            <DropdownMenuCheckboxItem checked={showWeekends} onCheckedChange={handleToggleWeekends}>
+              {t('calendar.views.showWeekends')}
+            </DropdownMenuCheckboxItem>
+            <DropdownMenuCheckboxItem
+              checked={showWeekNumbers}
+              onCheckedChange={handleToggleWeekNumbers}
+            >
+              {t('calendar.views.showWeekNumbers')}
+            </DropdownMenuCheckboxItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => router.push(`/${locale}/settings`)}>
+              {t('calendar.views.generalSettings')}
+            </DropdownMenuItem>
+          </DropdownMenuSubContent>
+        </DropdownMenuSub>
       </DropdownMenuContent>
     </DropdownMenu>
   );
-};
+}
