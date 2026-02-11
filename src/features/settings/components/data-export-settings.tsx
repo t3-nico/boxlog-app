@@ -107,10 +107,9 @@ export const DataExportSettings = memo(function DataExportSettings() {
       {/* 自動バックアップ */}
       <SettingsCard title={t('settings.dataControls.backup.title')}>
         <div className="space-y-0">
-          <SettingRow
-            label={t('settings.dataControls.backup.enableLabel')}
-            value={<Switch checked={autoBackup} onCheckedChange={handleAutoBackupChange} />}
-          />
+          <SettingRow label={t('settings.dataControls.backup.enableLabel')}>
+            <Switch checked={autoBackup} onCheckedChange={handleAutoBackupChange} />
+          </SettingRow>
         </div>
         {autoBackup && (
           <div className="bg-surface-container mt-4 rounded-2xl p-4">

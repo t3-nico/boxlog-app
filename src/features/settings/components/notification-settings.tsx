@@ -224,18 +224,14 @@ export function NotificationSettings() {
       <SettingsCard isSaving={updateMutation.isPending}>
         <div className="space-y-0">
           {NOTIFICATION_TYPES.map(({ type, labelKey }) => (
-            <SettingRow
-              key={type}
-              label={t(labelKey)}
-              value={
-                <DeliveryMethodDropdown
-                  selectedMethods={localSettings[type] ?? []}
-                  onMethodsChange={(methods) => handleMethodsChange(type, methods)}
-                  isPending={updateMutation.isPending}
-                  browserPermission={browserPermission}
-                />
-              }
-            />
+            <SettingRow key={type} label={t(labelKey)}>
+              <DeliveryMethodDropdown
+                selectedMethods={localSettings[type] ?? []}
+                onMethodsChange={(methods) => handleMethodsChange(type, methods)}
+                isPending={updateMutation.isPending}
+                browserPermission={browserPermission}
+              />
+            </SettingRow>
           ))}
         </div>
       </SettingsCard>

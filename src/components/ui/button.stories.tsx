@@ -122,15 +122,48 @@ export const AllPatterns: Story = {
         </div>
 
         <div className="bg-container space-y-4 rounded-lg p-4">
-          <Button variant="primary" size="sm" className="w-24">
-            sm
-          </Button>
-          <Button variant="primary" size="default" className="w-24">
-            default
-          </Button>
-          <Button variant="primary" size="lg" className="w-24">
-            lg
-          </Button>
+          <div className="flex items-center gap-4">
+            <Button variant="primary" size="sm" className="w-24">
+              sm
+            </Button>
+            <Button variant="outline" size="sm" className="w-24">
+              sm
+            </Button>
+            <Button variant="ghost" size="sm" className="w-24">
+              sm
+            </Button>
+            <Button variant="destructive" size="sm" className="w-24">
+              sm
+            </Button>
+          </div>
+          <div className="flex items-center gap-4">
+            <Button variant="primary" size="default" className="w-24">
+              default
+            </Button>
+            <Button variant="outline" size="default" className="w-24">
+              default
+            </Button>
+            <Button variant="ghost" size="default" className="w-24">
+              default
+            </Button>
+            <Button variant="destructive" size="default" className="w-24">
+              default
+            </Button>
+          </div>
+          <div className="flex items-center gap-4">
+            <Button variant="primary" size="lg" className="w-24">
+              lg
+            </Button>
+            <Button variant="outline" size="lg" className="w-24">
+              lg
+            </Button>
+            <Button variant="ghost" size="lg" className="w-24">
+              lg
+            </Button>
+            <Button variant="destructive" size="lg" className="w-24">
+              lg
+            </Button>
+          </div>
         </div>
 
         <div className="bg-container space-y-4 rounded-lg p-4">

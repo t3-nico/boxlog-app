@@ -1,23 +1,19 @@
 'use client';
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { ChevronDown } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 
 import { SettingRow } from './fields/SettingRow';
 import { SettingsCard } from './SettingsCard';
-
-// ChatGPT設定画面スタイル: 値 + ChevronDown のドロップダウン風表示
-function DropdownValue({ children }: { children: React.ReactNode }) {
-  return (
-    <span className="flex items-center gap-1">
-      {children}
-      <ChevronDown className="text-muted-foreground size-3.5" />
-    </span>
-  );
-}
 
 /** SettingsCard - 設定セクションコンポーネント */
 const meta = {
@@ -34,10 +30,31 @@ type Story = StoryObj<typeof meta>;
 /** タイトル付きの基本表示 */
 export const Default: Story = {
   render: () => (
-    <div className="max-w-lg">
+    <div className="max-w-2xl">
       <SettingsCard title="言語とテーマ">
-        <SettingRow label="言語" value={<DropdownValue>日本語</DropdownValue>} />
-        <SettingRow label="テーマ" value={<DropdownValue>システム</DropdownValue>} />
+        <SettingRow label="言語">
+          <Select defaultValue="ja">
+            <SelectTrigger variant="ghost">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="ja">日本語</SelectItem>
+              <SelectItem value="en">English</SelectItem>
+            </SelectContent>
+          </Select>
+        </SettingRow>
+        <SettingRow label="テーマ">
+          <Select defaultValue="system">
+            <SelectTrigger variant="ghost">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="system">システム</SelectItem>
+              <SelectItem value="light">ライト</SelectItem>
+              <SelectItem value="dark">ダーク</SelectItem>
+            </SelectContent>
+          </Select>
+        </SettingRow>
       </SettingsCard>
     </div>
   ),
@@ -46,10 +63,14 @@ export const Default: Story = {
 /** タイトルなし */
 export const WithoutTitle: Story = {
   render: () => (
-    <div className="max-w-lg">
+    <div className="max-w-2xl">
       <SettingsCard>
-        <SettingRow label="プッシュ通知" value="" action={<Switch defaultChecked />} />
-        <SettingRow label="サウンド" value="" action={<Switch />} />
+        <SettingRow label="プッシュ通知">
+          <Switch defaultChecked />
+        </SettingRow>
+        <SettingRow label="サウンド">
+          <Switch />
+        </SettingRow>
       </SettingsCard>
     </div>
   ),
@@ -58,7 +79,7 @@ export const WithoutTitle: Story = {
 /** アクションボタン付き */
 export const WithActions: Story = {
   render: () => (
-    <div className="max-w-lg">
+    <div className="max-w-2xl">
       <SettingsCard
         title="アカウント"
         actions={
@@ -67,16 +88,12 @@ export const WithActions: Story = {
           </Button>
         }
       >
-        <SettingRow label="メールアドレス" value="john@example.com" />
-        <SettingRow
-          label="パスワード"
-          value="••••••••"
-          action={
-            <Button variant="ghost" size="sm">
-              変更
-            </Button>
-          }
-        />
+        <SettingRow label="メールアドレス" description="john@example.com">
+          <Button variant="outline">変更</Button>
+        </SettingRow>
+        <SettingRow label="パスワード" description="••••••••">
+          <Button variant="outline">変更</Button>
+        </SettingRow>
       </SettingsCard>
     </div>
   ),
@@ -85,10 +102,22 @@ export const WithActions: Story = {
 /** 保存中状態 */
 export const SavingState: Story = {
   render: () => (
-    <div className="max-w-lg">
+    <div className="max-w-2xl">
       <SettingsCard title="カレンダー設定" isSaving>
-        <SettingRow label="週の開始日" value={<DropdownValue>月曜日</DropdownValue>} />
-        <SettingRow label="タイムゾーン" value={<DropdownValue>Asia/Tokyo</DropdownValue>} />
+        <SettingRow label="週の開始日">
+          <Select defaultValue="monday">
+            <SelectTrigger variant="ghost">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="monday">月曜日</SelectItem>
+              <SelectItem value="sunday">日曜日</SelectItem>
+            </SelectContent>
+          </Select>
+        </SettingRow>
+        <SettingRow label="タイムゾーン">
+          <span className="text-muted-foreground text-base">Asia/Tokyo</span>
+        </SettingRow>
       </SettingsCard>
     </div>
   ),
@@ -97,15 +126,39 @@ export const SavingState: Story = {
 /** 全パターン一覧 */
 export const AllPatterns: Story = {
   render: () => (
-    <div className="flex max-w-lg flex-col items-start gap-6">
+    <div className="w-full max-w-2xl space-y-6">
       <SettingsCard title="言語とテーマ">
-        <SettingRow label="言語" value={<DropdownValue>日本語</DropdownValue>} />
-        <SettingRow label="テーマ" value={<DropdownValue>ダーク</DropdownValue>} />
+        <SettingRow label="言語">
+          <Select defaultValue="ja">
+            <SelectTrigger variant="ghost">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="ja">日本語</SelectItem>
+              <SelectItem value="en">English</SelectItem>
+            </SelectContent>
+          </Select>
+        </SettingRow>
+        <SettingRow label="テーマ">
+          <Select defaultValue="dark">
+            <SelectTrigger variant="ghost">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="system">システム</SelectItem>
+              <SelectItem value="dark">ダーク</SelectItem>
+            </SelectContent>
+          </Select>
+        </SettingRow>
       </SettingsCard>
 
       <SettingsCard title="通知">
-        <SettingRow label="プッシュ通知" value="" action={<Switch defaultChecked />} />
-        <SettingRow label="サウンド" value="" action={<Switch defaultChecked />} />
+        <SettingRow label="プッシュ通知">
+          <Switch defaultChecked />
+        </SettingRow>
+        <SettingRow label="サウンド">
+          <Switch defaultChecked />
+        </SettingRow>
       </SettingsCard>
 
       <SettingsCard
@@ -116,23 +169,30 @@ export const AllPatterns: Story = {
           </Button>
         }
       >
-        <SettingRow label="メールアドレス" value="john@example.com" />
+        <SettingRow label="メールアドレス" description="john@example.com">
+          <Button variant="outline">変更</Button>
+        </SettingRow>
       </SettingsCard>
 
       <SettingsCard title="カレンダー設定" isSaving>
-        <SettingRow label="週の開始日" value={<DropdownValue>月曜日</DropdownValue>} />
+        <SettingRow label="週の開始日">
+          <Select defaultValue="monday">
+            <SelectTrigger variant="ghost">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="monday">月曜日</SelectItem>
+            </SelectContent>
+          </Select>
+        </SettingRow>
       </SettingsCard>
 
       <SettingsCard title="危険な操作">
-        <SettingRow
-          label="アカウント削除"
-          value=""
-          action={
-            <Button variant="destructive" size="sm">
-              削除
-            </Button>
-          }
-        />
+        <SettingRow label="アカウント削除">
+          <Button variant="destructive" size="sm">
+            削除
+          </Button>
+        </SettingRow>
       </SettingsCard>
     </div>
   ),
