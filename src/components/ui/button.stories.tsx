@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Plus, Search, Settings, Smile, Trash2, X } from 'lucide-react';
-import { expect, fn } from 'storybook/test';
+import { expect, fireEvent, fn } from 'storybook/test';
 
 import { Button } from './button';
 
@@ -238,9 +238,9 @@ export const DisabledClick: Story = {
     children: '無効ボタン',
     disabled: true,
   },
-  play: async ({ args, canvas, userEvent }) => {
+  play: async ({ args, canvas }) => {
     const button = canvas.getByRole('button', { name: /無効ボタン/i });
-    await userEvent.click(button);
+    await fireEvent.click(button);
     await expect(button).toBeDisabled();
     await expect(args.onClick).not.toHaveBeenCalled();
   },
@@ -252,9 +252,9 @@ export const LoadingClick: Story = {
     children: '保存中',
     isLoading: true,
   },
-  play: async ({ args, canvas, userEvent }) => {
+  play: async ({ args, canvas }) => {
     const button = canvas.getByRole('button', { name: /保存中/i });
-    await userEvent.click(button);
+    await fireEvent.click(button);
     await expect(button).toBeDisabled();
     await expect(button).toHaveAttribute('aria-busy', 'true');
     await expect(args.onClick).not.toHaveBeenCalled();
