@@ -113,25 +113,25 @@ graph TD
 
 ```typescript
 // 基本スコア: 100点
-let score = 100
+let score = 100;
 
 // ESLintエラー（-1点/エラー、最大-20点）
-score -= Math.min(20, eslintErrors)
+score -= Math.min(20, eslintErrors);
 
 // TypeScriptエラー（-2点/エラー、最大-20点）
-score -= Math.min(20, typescriptErrors * 2)
+score -= Math.min(20, typescriptErrors * 2);
 
 // テストカバレッジ（80%未満で減点）
 if (coverage < 80) {
-  score -= Math.min(20, (80 - coverage) / 2)
+  score -= Math.min(20, (80 - coverage) / 2);
 }
 
 // 技術的負債（TODO数、最大-10点）
-score -= Math.min(10, todoCount / 5)
+score -= Math.min(10, todoCount / 5);
 
 // バンドルサイズ（5MB超で減点）
 if (bundleMB > 5) {
-  score -= Math.min(10, (bundleMB - 5) * 2)
+  score -= Math.min(10, (bundleMB - 5) * 2);
 }
 ```
 
@@ -247,7 +247,7 @@ const THRESHOLDS = {
   typescriptErrorsCritical: 5, // TS エラー緊急しきい値
   coverageTarget: 80, // カバレッジ目標
   bundleSizeWarning: 5, // バンドルサイズ警告(MB)
-}
+};
 ```
 
 ## 📋 トラブルシューティング
@@ -300,8 +300,6 @@ npm run build
 - **改善Issue一覧**: `https://github.com/t3-nico/boxlog-app/issues?q=label%3Aquality-improvement`
 
 ## 📚 詳細ドキュメント
-
-- [ESLint設定ガイド](./ESLINT_HYBRID_APPROACH.md)
 
 ## 🤝 貢献・改善
 

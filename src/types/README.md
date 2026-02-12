@@ -9,11 +9,10 @@ Feature-specific types should be colocated with their features.
 
 ## File Structure
 
-| File            | Lines | Purpose                | Key Types                               |
-| --------------- | ----- | ---------------------- | --------------------------------------- |
-| **index.ts**    | ~100  | Core entities          | Task, TaskStatus, Profile               |
-| **api.ts**      | ~100  | API types              | ApiResponse, ApiError, PaginationParams |
-| **global.d.ts** | ~20   | Global type extensions | BatteryManager                          |
+| File         | Lines | Purpose       | Key Types                               |
+| ------------ | ----- | ------------- | --------------------------------------- |
+| **index.ts** | ~100  | Core entities | Task, TaskStatus, Profile               |
+| **api.ts**   | ~100  | API types     | ApiResponse, ApiError, PaginationParams |
 
 **Total**: ~220 lines (3 files)
 

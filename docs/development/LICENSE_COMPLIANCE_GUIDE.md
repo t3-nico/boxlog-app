@@ -324,10 +324,6 @@ BSD-2-Clause: 12 packages (1.3%)
 
 ### 内部ドキュメント
 
-- [LICENSE_COMPLIANCE_PLAN.md](../legal/LICENSE_COMPLIANCE_PLAN.md) - 全体計画
-- [COMMANDS.md](./COMMANDS.md) - 全コマンド一覧
-- [ISSUE_MANAGEMENT.md](./ISSUE_MANAGEMENT.md) - Issue管理
-
 ### 外部リソース
 
 - [SPDX License List](https://spdx.org/licenses/) - 公式ライセンス一覧

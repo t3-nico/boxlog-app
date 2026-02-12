@@ -33,4 +33,4 @@ ESLintは設定ファイルを以下の順序で自動検出します：
 ## 🔗 関連
 
 - **メイン設定**: [`/eslint.config.js`](../eslint.config.js)
-- **完全ガイド**: [`/docs/ESLINT_HYBRID_APPROACH.md`](../docs/ESLINT_HYBRID_APPROACH.md)
+- **メイン設定**: [`/eslint.config.js`](../eslint.config.js)

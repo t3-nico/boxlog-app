@@ -383,8 +383,7 @@ CLAUDE.mdでは、[理由]のため[推奨方法]を採用しています。
 
 - **スタイル**: Storybook（`npm run storybook` → Docs/StyleGuide, Tokens/\*）
 - **リリース**: [`docs/releases/RELEASE_CHECKLIST.md`](docs/releases/RELEASE_CHECKLIST.md)（⚠️ リリース作業前に必須）
-- **コマンド**: Storybook → Docs/実装ガイド/コマンド一覧
-- **Issue管理**: [`docs/development/ISSUE_MANAGEMENT.md`](docs/development/ISSUE_MANAGEMENT.md)
+- **コマンド**: Storybook → Docs/Guides/Commands
 
 ### カスタムコマンド・スキル
 

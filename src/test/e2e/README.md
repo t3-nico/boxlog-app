@@ -219,7 +219,6 @@ playwright-report/         # レポート（git ignore済み）
 
 - [Playwright公式ドキュメント](https://playwright.dev/)
 - [Playwright Authentication Guide](https://playwright.dev/docs/auth)
-- [BoxLog開発ドキュメント](/docs/README.md)
 
 ---
 
