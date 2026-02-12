@@ -73,3 +73,102 @@ import { Meta } from '@storybook/addon-docs/blocks';
   必須
 </span>
 ```
+
+---
+
+## color-contrast 違反（テキスト × 背景）
+
+axe-core の `color-contrast` ルール。WCAG AA: テキストと背景のコントラスト比 4.5:1 以上。
+
+### コンポーネント実装
+
+```tsx
+// ❌ *-foreground トークンを背景色に載せる（白文字 on 中明度背景でコントラスト不足）
+<div className="bg-destructive text-destructive-foreground">エラー</div>
+<div className="bg-warning text-warning-foreground">警告</div>
+<div className="bg-success text-success-foreground">成功</div>
+
+// ❌ opacity でコントラストを下げる
+<p className="text-foreground opacity-80">薄いテキスト</p>
+
+// ❌ 半透明背景に白テキスト
+<div className="bg-overlay text-white">オーバーレイ</div>
+```
+
+```tsx
+// ✅ テキストは text-foreground / text-muted-foreground を使う
+<p className="text-foreground">通常テキスト</p>
+<p className="text-muted-foreground">補助テキスト</p>
+
+// ✅ 薄くしたい場合は opacity ではなく muted-foreground
+<p className="text-muted-foreground">薄くしたいテキスト</p>
+```
+
+### Story での色デモ（スウォッチ＋ラベル分離）
+
+色を見せたい場合、テキストを色の上に載せず、色ブロックとラベルを分離する。
+
+```tsx
+// ✅ 色ブロック + 別テキスト（コントラスト問題なし）
+<div className="border-border rounded-lg border p-4 text-center">
+  <div className="bg-destructive mb-2 h-12 rounded" />
+  <div className="text-foreground font-bold">Destructive</div>
+  <div className="text-muted-foreground text-sm">エラー、削除</div>
+</div>
+
+// ✅ 丸スウォッチ + ラベル横並び
+<div className="flex items-center gap-2">
+  <div className="bg-success h-6 w-6 shrink-0 rounded-full" />
+  <code className="text-foreground text-xs">success</code>
+</div>
+```
+
+### 注意: *-foreground トークンの現状
+
+| トークン | 値 | 問題 |
+|---------|-----|------|
+| `--destructive-foreground` | `oklch(1 0 0)` (白) | `bg-destructive` 上でコントラスト不足 |
+| `--warning-foreground` | `oklch(1 0 0)` (白) | `bg-warning` 上でコントラスト不足 |
+| `--success-foreground` | `oklch(1 0 0)` (白) | `bg-success` 上でコントラスト不足 |
+
+これらの組み合わせはaxe-coreで `color-contrast` 違反になるため、テキストを載せる用途では使わないこと。
+
+---
+
+## heading-order 違反（見出しレベルのスキップ）
+
+axe-core の `heading-order` ルール。見出しレベルを飛ばさない。
+
+```tsx
+// ✅ 正しい見出し階層
+<h1>タイトル</h1>
+<h2>セクション</h2>
+<h3>サブセクション</h3>
+
+// ✅ 小さいコンテナ内では p + font-bold で代用
+<PopoverContent>
+  <p className="font-bold">見出し</p>
+</PopoverContent>
+
+// ❌ h1 → h3（h2をスキップ）
+<h1>タイトル</h1>
+<h3>サブセクション</h3>
+```
+
+---
+
+## `a11y: { disable: true }` の使用
+
+```tsx
+// ❌ 違反を隠すだけ（デザインシステムの信頼性を損なう）
+parameters: {
+  a11y: { disable: true },
+}
+
+// ✅ 一時的な猶予（修正予定がある場合のみ）
+parameters: {
+  a11y: { test: 'todo' },
+}
+
+// ✅ 実際の違反を修正する（スウォッチ＋ラベル等のパターンを適用）
+```
