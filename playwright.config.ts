@@ -1,4 +1,4 @@
-import { defineConfig, devices } from '@playwright/test'
+import { defineConfig, devices } from '@playwright/test';
 
 /**
  * @see https://playwright.dev/docs/test-configuration
@@ -50,9 +50,12 @@ export default defineConfig({
   },
 
   // テスト対象プロジェクト（ブラウザ別）
+  // E2Eはスモーク＋クリティカルパスに縮小済み（2ファイル）
+  // クロスブラウザのUI差異はStorybook側でカバー
+  // @see docs/development/TEST_STRATEGY.md
   projects: [
     // ==========================================
-    // デスクトップブラウザ
+    // デスクトップ（Chromiumのみ）
     // ==========================================
     {
       name: 'chromium',
@@ -61,44 +64,14 @@ export default defineConfig({
         viewport: { width: 1920, height: 1080 },
       },
     },
-    {
-      name: 'firefox',
-      use: {
-        ...devices['Desktop Firefox'],
-        viewport: { width: 1920, height: 1080 },
-      },
-    },
-    {
-      name: 'webkit',
-      use: {
-        ...devices['Desktop Safari'],
-        viewport: { width: 1920, height: 1080 },
-      },
-    },
 
     // ==========================================
-    // モバイルブラウザ
+    // モバイル（Chromeのみ）
     // ==========================================
     {
       name: 'Mobile Chrome',
       use: {
         ...devices['Pixel 5'],
-      },
-    },
-    {
-      name: 'Mobile Safari',
-      use: {
-        ...devices['iPhone 12'],
-      },
-    },
-
-    // ==========================================
-    // タブレット
-    // ==========================================
-    {
-      name: 'iPad',
-      use: {
-        ...devices['iPad Pro'],
       },
     },
   ],
@@ -110,4 +83,4 @@ export default defineConfig({
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,
   },
-})
+});
