@@ -32,26 +32,26 @@ BoxLog は Next.js 14 + TypeScript で構築されたタスク管理アプリケ
 
 **技術仕様・API・設定値の詳細情報**
 
-| カテゴリ     | ドキュメント                                                | 内容                    |
-| ------------ | ----------------------------------------------------------- | ----------------------- |
-| **コマンド** | [コマンド一覧](./development/COMMANDS.md)                   | npm scripts全量         |
-| **デザイン** | Storybook（`npm run storybook`）                            | 8pxグリッド・色・タイポ |
-| **エラー**   | [エラーパターン](./architecture/ERROR_PATTERNS_GUIDE.md)    | エラーコード体系        |
-| **API**      | [APIバリデーション](./architecture/API_VALIDATION_GUIDE.md) | API仕様・検証ルール     |
-| **Issue**    | [Issue管理ルール](./development/ISSUE_MANAGEMENT.md)        | ラベル・テンプレート    |
-| **PR**       | [PRテンプレート](./development/PR_TEMPLATE.md)              | プルリクエスト規約      |
-| **リリース** | [リリースプロセス](./releases/RELEASE_PROCESS.md)           | バージョニング規約      |
+| カテゴリ     | ドキュメント                                         | 内容                    |
+| ------------ | ---------------------------------------------------- | ----------------------- |
+| **コマンド** | Storybook → Docs/実装ガイド/コマンド一覧             | npm scripts全量         |
+| **デザイン** | Storybook（`npm run storybook`）                     | 8pxグリッド・色・タイポ |
+| **エラー**   | Storybook → Docs/アーキテクチャ/エラーパターン       | エラーコード体系        |
+| **API**      | Storybook → Docs/アーキテクチャ/APIバリデーション    | API仕様・検証ルール     |
+| **Issue**    | [Issue管理ルール](./development/ISSUE_MANAGEMENT.md) | ラベル・テンプレート    |
+| **PR**       | [PRテンプレート](./development/PR_TEMPLATE.md)       | プルリクエスト規約      |
+| **リリース** | [リリースプロセス](./releases/RELEASE_PROCESS.md)    | バージョニング規約      |
 
 ### 📕 解説 (Explanation) - 理解向け
 
 **アーキテクチャ・設計思想の背景説明**
 
-| カテゴリ       | ドキュメント                                                        | 解説内容                 |
-| -------------- | ------------------------------------------------------------------- | ------------------------ |
-| **エラー設計** | [エラーハンドリング](./architecture/ERROR_HANDLING.md)              | 統一エラーシステムの設計 |
-| **UI設計**     | [デザインシステム概要](./design-system/README.md)                   | デザイントークン体系     |
-| **状態管理**   | [状態管理ガイド](./architecture/STATE_MANAGEMENT_DECISION_GUIDE.md) | Zustand選定理由          |
-| **品質戦略**   | [品質システム](./development/QUALITY_SYSTEM_README.md)              | 品質保証の全体像         |
+| カテゴリ       | ドキュメント                                           | 解説内容                 |
+| -------------- | ------------------------------------------------------ | ------------------------ |
+| **エラー設計** | Storybook → Docs/アーキテクチャ/エラーパターン         | 統一エラーシステムの設計 |
+| **UI設計**     | [デザインシステム概要](./design-system/README.md)      | デザイントークン体系     |
+| **状態管理**   | Storybook → Docs/アーキテクチャ/状態管理               | Zustand選定理由          |
+| **品質戦略**   | [品質システム](./development/QUALITY_SYSTEM_README.md) | 品質保証の全体像         |
 
 ---
 
@@ -59,13 +59,13 @@ BoxLog は Next.js 14 + TypeScript で構築されたタスク管理アプリケ
 
 ### 役割別ナビゲーション
 
-| 役割               | 最初に読むべきドキュメント                                                                                   |
-| ------------------ | ------------------------------------------------------------------------------------------------------------ |
-| **新規開発者**     | [セットアップ](./setup/README.md) → [コマンド一覧](./development/COMMANDS.md) → Storybook                    |
-| **フロントエンド** | [デザインシステム](./design-system/README.md) → [エラーハンドリング](./architecture/ERROR_HANDLING.md)       |
-| **バックエンド**   | [APIバリデーション](./architecture/API_VALIDATION_GUIDE.md) → [Supabase設定](./setup/SUPABASE_AUTH_SETUP.md) |
-| **QA/テスト**      | [認証テスト](./setup/AUTH_TESTING_GUIDE.md) → [テスティング](./testing/README.md)                            |
-| **リリース担当**   | [リリースチェックリスト](./releases/RELEASE_CHECKLIST.md) → [バージョニング](./releases/VERSIONING.md)       |
+| 役割               | 最初に読むべきドキュメント                                                                             |
+| ------------------ | ------------------------------------------------------------------------------------------------------ |
+| **新規開発者**     | [セットアップ](./setup/README.md) → Storybook → Docs/実装ガイド/コマンド一覧                           |
+| **フロントエンド** | [デザインシステム](./design-system/README.md) → Storybook → Docs/アーキテクチャ/エラーパターン         |
+| **バックエンド**   | Storybook → Docs/アーキテクチャ/APIバリデーション → [Supabase設定](./setup/SUPABASE_AUTH_SETUP.md)     |
+| **QA/テスト**      | [認証テスト](./setup/AUTH_TESTING_GUIDE.md) → Storybook → Docs/テスト戦略                              |
+| **リリース担当**   | [リリースチェックリスト](./releases/RELEASE_CHECKLIST.md) → [バージョニング](./releases/VERSIONING.md) |
 
 ---
 
@@ -108,12 +108,11 @@ docs/
 
 ### コード内ドキュメント (コロケーション)
 
-| 機能                   | 場所                           |
-| ---------------------- | ------------------------------ |
-| **CLAUDE.md (AI指針)** | `/CLAUDE.md`, `/src/CLAUDE.md` |
-| **コンポーネント**     | `/src/components/CLAUDE.md`    |
-| **機能モジュール**     | `/src/features/CLAUDE.md`      |
-| **ESLint設定**         | `/.eslint/README.md`           |
+| 機能                   | 場所                         |
+| ---------------------- | ---------------------------- |
+| **CLAUDE.md (AI指針)** | `/CLAUDE.md`                 |
+| **スキル定義**         | `/.claude/skills/*/SKILL.md` |
+| **ESLint設定**         | `/.eslint/README.md`         |
 
 ### 外部リンク
 

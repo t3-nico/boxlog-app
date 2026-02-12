@@ -65,29 +65,28 @@ export const MyComponent: FC<Props> = ...  // React.FC非推奨
 
 ### 開発者向け
 
-| ドキュメント                                                     | 内容                                   |
-| ---------------------------------------------------------------- | -------------------------------------- |
-| [`CLAUDE.md`](./CLAUDE.md)                                       | AI意思決定プロトコル・コーディング規約 |
-| [`src/CLAUDE.md`](./src/CLAUDE.md)                               | 実装リファレンス・コード例             |
-| [`docs/README.md`](./docs/README.md)                             | プロジェクト全体概要                   |
-| [`docs/development/COMMANDS.md`](./docs/development/COMMANDS.md) | 全コマンド一覧                         |
+| ドキュメント                             | 内容                                   |
+| ---------------------------------------- | -------------------------------------- |
+| [`CLAUDE.md`](./CLAUDE.md)               | AI意思決定プロトコル・コーディング規約 |
+| [`docs/README.md`](./docs/README.md)     | プロジェクト全体概要                   |
+| Storybook → Docs/実装ガイド/コマンド一覧 | 全コマンド一覧                         |
 
 ### 設計・アーキテクチャ
 
-| ドキュメント                                                                                                     | 内容                                 |
-| ---------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
-| Storybook（`npm run storybook`）                                                                                 | デザインシステム（Tokens/_, Docs/_） |
-| [`docs/architecture/STATE_MANAGEMENT_DECISION_GUIDE.md`](./docs/architecture/STATE_MANAGEMENT_DECISION_GUIDE.md) | 状態管理の判断基準                   |
-| [`docs/architecture/ERROR_HANDLING.md`](./docs/architecture/ERROR_HANDLING.md)                                   | エラーハンドリング                   |
+| ドキュメント                                   | 内容                                 |
+| ---------------------------------------------- | ------------------------------------ |
+| Storybook（`npm run storybook`）               | デザインシステム（Tokens/_, Docs/_） |
+| Storybook → Docs/アーキテクチャ/状態管理       | 状態管理の判断基準                   |
+| Storybook → Docs/アーキテクチャ/エラーパターン | エラーハンドリング                   |
 
 ### 品質・テスト
 
-| ドキュメント                                                                                           | 内容                   |
-| ------------------------------------------------------------------------------------------------------ | ---------------------- |
-| [`docs/testing/README.md`](./docs/testing/README.md)                                                   | テスト戦略             |
-| [`docs/performance/BUNDLE_MONITORING.md`](./docs/performance/BUNDLE_MONITORING.md)                     | Bundle監視システム     |
-| [`docs/performance/ACCESSIBILITY_TESTING_GUIDE.md`](./docs/performance/ACCESSIBILITY_TESTING_GUIDE.md) | アクセシビリティテスト |
-| [`docs/development/ESLINT_HYBRID_APPROACH.md`](./docs/development/ESLINT_HYBRID_APPROACH.md)           | ESLint設定             |
+| ドキュメント                                                                                 | 内容                   |
+| -------------------------------------------------------------------------------------------- | ---------------------- |
+| Storybook → Docs/テスト戦略                                                                  | テスト戦略             |
+| Storybook → Docs/実装ガイド/バンドル監視                                                     | Bundle監視システム     |
+| Storybook → Docs/Accessibility                                                               | アクセシビリティテスト |
+| [`docs/development/ESLINT_HYBRID_APPROACH.md`](./docs/development/ESLINT_HYBRID_APPROACH.md) | ESLint設定             |
 
 ## 🛡️ コード品質管理
 

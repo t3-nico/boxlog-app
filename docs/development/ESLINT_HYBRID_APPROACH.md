@@ -34,7 +34,7 @@ Issue #338「技術がわからない自分でも、技術的な失敗をしな�
 ### 1. `eslint.config.js` - Next.js公式設定のみ
 
 ```javascript
-import { FlatCompat } from '@eslint/eslintrc'
+import { FlatCompat } from '@eslint/eslintrc';
 
 export default [
   // Next.js公式推奨設定（React, TypeScript, アクセシビリティ含む）
@@ -44,7 +44,7 @@ export default [
       '@typescript-eslint/no-explicit-any': 'off', // インラインdisable対応
     },
   }),
-]
+];
 ```
 
 **特徴**:
@@ -55,7 +55,7 @@ export default [
 
 ### 2. `CLAUDE.md` - AI用品質基準（公式準拠版）
 
-AI（Claude、GitHub Copilot等）がコード生成時に参照するガイドライン（`/CLAUDE.md` および `/src/CLAUDE.md` を参照）：
+AI（Claude、GitHub Copilot等）がコード生成時に参照するガイドライン（`/CLAUDE.md` を参照）：
 
 **Next.js公式**:
 

@@ -377,14 +377,13 @@ CLAUDE.mdでは、[理由]のため[推奨方法]を採用しています。
 
 | ドキュメント                                                                                 | 内容                                 |
 | -------------------------------------------------------------------------------------------- | ------------------------------------ |
-| [`src/CLAUDE.md`](src/CLAUDE.md)                                                             | コーディング規約、頻出パターン       |
 | [`docs/development/CLAUDE_4_BEST_PRACTICES.md`](docs/development/CLAUDE_4_BEST_PRACTICES.md) | プロンプト・エージェントコーディング |
 
 ### 作業時（必要に応じて）
 
 - **スタイル**: Storybook（`npm run storybook` → Docs/StyleGuide, Tokens/\*）
 - **リリース**: [`docs/releases/RELEASE_CHECKLIST.md`](docs/releases/RELEASE_CHECKLIST.md)（⚠️ リリース作業前に必須）
-- **コマンド**: [`docs/development/COMMANDS.md`](docs/development/COMMANDS.md)
+- **コマンド**: Storybook → Docs/実装ガイド/コマンド一覧
 - **Issue管理**: [`docs/development/ISSUE_MANAGEMENT.md`](docs/development/ISSUE_MANAGEMENT.md)
 
 ### カスタムコマンド・スキル
@@ -421,7 +420,7 @@ GAFAが作ったOSS、推奨パターンを使う。
 ### ドキュメント参照順
 
 1. **公式ドキュメント**: Next.js, React, TypeScript, Tailwind CSS
-2. **プロジェクトルール**: CLAUDE.md, src/CLAUDE.md, globals.css
+2. **プロジェクトルール**: CLAUDE.md, .claude/skills/, globals.css
 3. **既存実装パターン**: 同一ディレクトリ内のコードを参考
 
 **確信度99%未満 → 必ず確認を求める**

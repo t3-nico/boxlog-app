@@ -114,9 +114,7 @@ if (!result.success) {
 
 ## 🔗 関連ドキュメント
 
-- [CLAUDE.md](../CLAUDE.md) - プロジェクト全体の開発指針
-- [src/CLAUDE.md](../CLAUDE.md) - コーディング基本ルール
-- [THEME_ENFORCEMENT.md](../../docs/THEME_ENFORCEMENT.md) - デザインシステム詳細
+- [CLAUDE.md](../../CLAUDE.md) - プロジェクト全体の開発指針
 
 ---
 

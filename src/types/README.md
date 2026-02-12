@@ -193,7 +193,6 @@ This directory was refactored to follow the colocation principle:
 ## Related Documentation
 
 - [CLAUDE.md](../../CLAUDE.md) - TypeScript strict typing rules
-- [src/CLAUDE.md](../CLAUDE.md) - Coding standards
 
 ---
 
