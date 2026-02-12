@@ -1,6 +1,6 @@
-import type { Preview } from '@storybook/react';
+import type { Preview } from '@storybook/react-vite';
+import { useDarkMode } from '@vueless/storybook-dark-mode';
 import { NextIntlClientProvider } from 'next-intl';
-import { useDarkMode } from 'storybook-dark-mode';
 
 import '../src/styles/globals.css';
 import { DocsTemplate } from './DocsTemplate';
@@ -243,6 +243,34 @@ const messages = {
         scheduled: '予定済み',
         unscheduled: 'スケジュールなし',
       },
+      recordSearchPlaceholder: '記録を検索...',
+      noRecords: '記録はありません',
+      createRecord: '記録を作成',
+      recordThis: '記録する',
+      noTitle: '(タイトルなし)',
+      duration: '{minutes}分',
+      fulfillment: '充実度',
+      recordSort: {
+        workedAt: '作業日',
+        durationMinutes: '所要時間',
+        fulfillmentScore: '充実度',
+        createdAt: '作成日',
+        updatedAt: '更新日',
+        asc: '昇順',
+        desc: '降順',
+      },
+      recordGroup: {
+        none: 'なし',
+        workedAt: '日付',
+        tags: 'タグ',
+      },
+      recordDateFilter: {
+        label: '期間',
+        all: 'すべて',
+        today: '今日',
+        thisWeek: '今週',
+        thisMonth: '今月',
+      },
     },
   },
 };
@@ -250,13 +278,13 @@ const messages = {
 const preview: Preview = {
   parameters: {
     controls: {
+      expanded: true,
       matchers: {
         color: /(background|color)$/i,
         date: /Date$/i,
       },
     },
     backgrounds: {
-      disable: true,
       grid: {
         cellSize: 16,
         cellAmount: 5,
@@ -264,6 +292,7 @@ const preview: Preview = {
         offsetX: 16,
         offsetY: 16,
       },
+      disabled: true,
     },
     options: {
       storySort: {
@@ -293,12 +322,18 @@ const preview: Preview = {
           { id: 'region', enabled: false },
         ],
       },
+
       options: {
         runOnly: {
           type: 'tag',
           values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice'],
         },
       },
+
+      // 'todo' - show a11y violations in the test UI only
+      // 'error' - fail CI on a11y violations
+      // 'off' - skip a11y checks entirely
+      test: 'todo',
     },
   },
   decorators: [

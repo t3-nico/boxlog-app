@@ -8,7 +8,7 @@
  * トークン変更時はこのファイルも更新すること。
  * @see src/styles/globals.css
  */
-import { create } from '@storybook/theming/create';
+import { create } from 'storybook/theming/create';
 
 export const dayoptLightTheme = create({
   base: 'light',

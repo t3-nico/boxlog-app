@@ -1,7 +1,12 @@
-import path from 'path';
+// This file has been automatically migrated to valid ESM format by Storybook.
+import { fileURLToPath } from 'node:url';
+import path, { dirname } from 'path';
 
 import type { StorybookConfig } from '@storybook/react-vite';
 import remarkGfm from 'remark-gfm';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const config: StorybookConfig = {
   stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
@@ -16,11 +21,9 @@ const config: StorybookConfig = {
         },
       },
     },
-    '@storybook/addon-essentials',
     '@storybook/addon-a11y',
-    '@storybook/addon-onboarding',
-    '@storybook/addon-interactions',
-    'storybook-dark-mode',
+    '@vueless/storybook-dark-mode',
+    '@storybook/addon-vitest',
   ],
   framework: {
     name: '@storybook/react-vite',
