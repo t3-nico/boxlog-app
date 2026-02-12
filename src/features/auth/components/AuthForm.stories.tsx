@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
 
@@ -149,7 +149,7 @@ function MockLoginForm({ serverError }: { serverError?: string }) {
                     <Button
                       type="button"
                       variant="ghost"
-                      size="icon"
+                      icon
                       className="absolute top-0 right-0 h-full px-4"
                       onClick={() => setShowPassword(!showPassword)}
                       aria-label={showPassword ? 'パスワードを隠す' : 'パスワードを表示'}
@@ -252,7 +252,7 @@ function MockSignupForm({ serverError }: { serverError?: string }) {
                         <Button
                           type="button"
                           variant="ghost"
-                          size="icon"
+                          icon
                           className="absolute top-0 right-0 h-full px-4"
                           onClick={() => setShowPassword(!showPassword)}
                           aria-label={showPassword ? 'パスワードを隠す' : 'パスワードを表示'}
@@ -287,7 +287,7 @@ function MockSignupForm({ serverError }: { serverError?: string }) {
                         <Button
                           type="button"
                           variant="ghost"
-                          size="icon"
+                          icon
                           className="absolute top-0 right-0 h-full px-4"
                           onClick={() => setShowConfirm(!showConfirm)}
                           aria-label={showConfirm ? 'パスワードを隠す' : 'パスワードを表示'}

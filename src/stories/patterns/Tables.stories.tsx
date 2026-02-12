@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import {
   ArrowDown,
   ArrowUp,
@@ -207,7 +207,7 @@ export const Overview: Story = {
                     <TableCell>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="size-8">
+                          <Button variant="ghost" size="sm" icon>
                             <MoreHorizontal className="size-4" />
                           </Button>
                         </DropdownMenuTrigger>
@@ -240,10 +240,10 @@ export const Overview: Story = {
     {total}件中 {start}-{end}件を表示
   </span>
   <div className="flex gap-1">
-    <Button variant="outline" size="icon" disabled={page === 1}>
+    <Button variant="outline" icon disabled={page === 1}>
       <ChevronLeft className="size-4" />
     </Button>
-    <Button variant="outline" size="icon" disabled={page === maxPage}>
+    <Button variant="outline" icon disabled={page === maxPage}>
       <ChevronRight className="size-4" />
     </Button>
   </div>
@@ -487,7 +487,7 @@ function Pagination() {
         <div className="flex items-center gap-1">
           <Button
             variant="outline"
-            size="icon"
+            icon
             className="size-8"
             disabled={page === 1}
             onClick={() => setPage((p) => p - 1)}
@@ -499,7 +499,7 @@ function Pagination() {
           </span>
           <Button
             variant="outline"
-            size="icon"
+            icon
             className="size-8"
             disabled={page === maxPage}
             onClick={() => setPage((p) => p + 1)}

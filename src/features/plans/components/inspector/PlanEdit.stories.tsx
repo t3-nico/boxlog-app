@@ -1,6 +1,4 @@
-'use client';
-
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ChevronDown } from 'lucide-react';
 import { useRef, useState } from 'react';
 
@@ -163,7 +161,7 @@ function EditFooter({ status }: { status: 'open' | 'closed' }) {
           <DropdownMenuTrigger asChild>
             <Button
               variant="primary"
-              size="icon"
+              icon
               className="rounded-none border-0"
               aria-label="完了オプション"
             >

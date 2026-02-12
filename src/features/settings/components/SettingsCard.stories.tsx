@@ -1,6 +1,4 @@
-'use client';
-
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -18,20 +16,50 @@ import { SettingsCard } from './SettingsCard';
 /** SettingsCard - 設定セクションコンポーネント */
 const meta = {
   title: 'Features/Settings/SettingsCard',
+  component: SettingsCard,
   parameters: {
     layout: 'padded',
   },
   tags: ['autodocs'],
-} satisfies Meta;
+  args: {
+    children: null as unknown as React.ReactNode,
+  },
+  argTypes: {
+    title: {
+      control: 'text',
+      description: 'セクションタイトル',
+    },
+    isSaving: {
+      control: 'boolean',
+      description: '保存中状態',
+    },
+    noPadding: {
+      control: 'boolean',
+      description: 'パディングなし',
+    },
+    actions: {
+      table: { disable: true },
+    },
+    children: {
+      table: { disable: true },
+    },
+    className: {
+      table: { disable: true },
+    },
+  },
+} satisfies Meta<typeof SettingsCard>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 /** タイトル付きの基本表示 */
 export const Default: Story = {
-  render: () => (
+  args: {
+    title: '言語とテーマ',
+  },
+  render: (args) => (
     <div className="max-w-2xl">
-      <SettingsCard title="言語とテーマ">
+      <SettingsCard {...args}>
         <SettingRow label="言語">
           <Select defaultValue="ja">
             <SelectTrigger variant="ghost">
@@ -62,9 +90,10 @@ export const Default: Story = {
 
 /** タイトルなし */
 export const WithoutTitle: Story = {
-  render: () => (
+  args: {},
+  render: (args) => (
     <div className="max-w-2xl">
-      <SettingsCard>
+      <SettingsCard {...args}>
         <SettingRow label="プッシュ通知">
           <Switch defaultChecked />
         </SettingRow>
@@ -78,16 +107,17 @@ export const WithoutTitle: Story = {
 
 /** アクションボタン付き */
 export const WithActions: Story = {
-  render: () => (
+  args: {
+    title: 'アカウント',
+    actions: (
+      <Button variant="ghost" size="sm">
+        編集
+      </Button>
+    ),
+  },
+  render: (args) => (
     <div className="max-w-2xl">
-      <SettingsCard
-        title="アカウント"
-        actions={
-          <Button variant="ghost" size="sm">
-            編集
-          </Button>
-        }
-      >
+      <SettingsCard {...args}>
         <SettingRow label="メールアドレス" description="john@example.com">
           <Button variant="outline">変更</Button>
         </SettingRow>
@@ -101,9 +131,13 @@ export const WithActions: Story = {
 
 /** 保存中状態 */
 export const SavingState: Story = {
-  render: () => (
+  args: {
+    title: 'カレンダー設定',
+    isSaving: true,
+  },
+  render: (args) => (
     <div className="max-w-2xl">
-      <SettingsCard title="カレンダー設定" isSaving>
+      <SettingsCard {...args}>
         <SettingRow label="週の開始日">
           <Select defaultValue="monday">
             <SelectTrigger variant="ghost">
@@ -125,6 +159,7 @@ export const SavingState: Story = {
 
 /** 全パターン一覧 */
 export const AllPatterns: Story = {
+  args: {},
   render: () => (
     <div className="w-full max-w-2xl space-y-6">
       <SettingsCard title="言語とテーマ">

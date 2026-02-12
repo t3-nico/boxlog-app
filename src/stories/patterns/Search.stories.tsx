@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Calendar, Clock, FileText, Search, Settings, Tag, User, X } from 'lucide-react';
 import { useState } from 'react';
 

@@ -593,6 +593,23 @@ export const Disabled: Story = {
 | Select         | Select, SelectTrigger, SelectContent, SelectItem, ...        |
 | ContextMenu    | ContextMenu, ContextMenuTrigger, ContextMenuContent, ...     |
 
+## `.stories.tsx` に書いてはいけないもの
+
+### ❌ `'use client'` ディレクティブ
+
+Storybook はブラウザ環境で実行されるため、Next.js RSC の `'use client'` は不要。
+
+```tsx
+// ❌ 不要
+'use client';
+import type { Meta, StoryObj } from '@storybook/react-vite';
+
+// ✅ そのまま import から始める
+import type { Meta, StoryObj } from '@storybook/react-vite';
+```
+
+---
+
 ## 避けるべきパターン
 
 ### ❌ render関数の乱用
@@ -671,11 +688,66 @@ rm src/components/ui/old-component.stories.tsx
 
 孤児Storyが残るとStorybookがビルドエラーになる。
 
+## `component` フィールドのルール
+
+### 必須：単一コンポーネントの Story
+
+`meta` に `component` を指定し、`args` でpropsを渡す。Controls が自動生成される。
+
+```tsx
+const meta = {
+  title: 'Components/Button',
+  component: Button, // ← 必須
+  tags: ['autodocs'],
+} satisfies Meta<typeof Button>;
+
+export const Default: Story = {
+  args: { variant: 'primary', children: 'ボタン' }, // ← args で渡す
+};
+
+// children が複雑な場合は render + args スプレッド
+export const WithSelect: Story = {
+  args: { label: '言語' },
+  render: (
+    args, // ← args を受け取って展開
+  ) => (
+    <SettingRow {...args}>
+      <Select>...</Select>
+    </SettingRow>
+  ),
+};
+```
+
+### 不要：以下のケースは `component` なしでOK
+
+| ケース                               | 理由                                         |
+| ------------------------------------ | -------------------------------------------- |
+| Patterns/Tokens (ドキュメント)       | 複数コンポーネントの組み合わせ               |
+| Store/tRPC依存の複合コンポーネント   | args で制御不可（Inspector, View, Modal 等） |
+| 内部state で動くインタラクティブデモ | render + ヘルパーコンポーネントが適切        |
+
+### 判定フロー
+
+```
+新規 Story 作成時
+│
+├─ 単一コンポーネントの Story？
+│  ├─ YES → component 必須 + args で props 渡し
+│  └─ NO（複数コンポーネント組み合わせ）→ component 不要
+│
+├─ props が args で制御可能？
+│  ├─ YES → args + render((args) => <Comp {...args}>...)
+│  └─ NO（Store/tRPC依存）→ render のみ
+```
+
 ## チェックリスト
 
 Story作成時の確認項目：
 
+- [ ] **`'use client'` を書いていない**（Storybook はブラウザ環境）
 - [ ] 公式テンプレート（AlertDialog）の構成に従っている
+- [ ] **単一コンポーネントの Story には `component` を指定した**
+- [ ] **制御可能な props は `args` で渡し、Controls が機能する**
 - [ ] Canvas にテキスト（`<h1>`, `<p>` 等）を入れていない
 - [ ] JSDoc は1行で簡潔に記述した
 - [ ] `AllPatterns` Story を作成した（`flex-col items-start gap-6`）

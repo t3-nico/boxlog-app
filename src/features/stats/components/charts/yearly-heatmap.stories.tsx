@@ -1,11 +1,9 @@
-'use client';
-
 import { useState } from 'react';
 
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import CalendarHeatmap from 'react-calendar-heatmap';
 
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -93,7 +91,7 @@ function YearlyHeatmapDisplay({
         <div className="flex items-center gap-1">
           <Button
             variant="ghost"
-            size="icon"
+            icon
             onClick={() => setYear(year - 1)}
             disabled={year <= 2020}
             aria-label="前年"
@@ -103,7 +101,7 @@ function YearlyHeatmapDisplay({
           <span className="min-w-16 text-center text-sm font-normal">{year}</span>
           <Button
             variant="ghost"
-            size="icon"
+            icon
             onClick={() => setYear(year + 1)}
             disabled={year >= currentYear}
             aria-label="翌年"

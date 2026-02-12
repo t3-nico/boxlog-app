@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import {
   Calendar,
   ChevronLeft,
@@ -295,10 +295,10 @@ export const Overview: Story = {
     25件中 1-10件を表示
   </span>
   <div className="flex gap-1">
-    <Button variant="outline" size="icon" disabled={page === 1}>
+    <Button variant="outline" icon disabled={page === 1}>
       <ChevronLeft className="size-4" />
     </Button>
-    <Button variant="outline" size="icon" disabled={page === maxPage}>
+    <Button variant="outline" icon disabled={page === maxPage}>
       <ChevronRight className="size-4" />
     </Button>
   </div>
@@ -429,7 +429,7 @@ function SimplePagination() {
       <div className="flex items-center gap-1">
         <Button
           variant="outline"
-          size="icon"
+          icon
           className="size-8"
           disabled={page === 1}
           onClick={() => setPage((p) => p - 1)}
@@ -441,7 +441,7 @@ function SimplePagination() {
         </span>
         <Button
           variant="outline"
-          size="icon"
+          icon
           className="size-8"
           disabled={page === maxPage}
           onClick={() => setPage((p) => p + 1)}
@@ -477,7 +477,7 @@ function NumberedPagination() {
     <div className="flex items-center gap-1">
       <Button
         variant="outline"
-        size="icon"
+        icon
         className="size-8"
         disabled={page === 1}
         onClick={() => setPage((p) => p - 1)}
@@ -489,7 +489,7 @@ function NumberedPagination() {
           <Button
             key={i}
             variant={page === p ? 'primary' : 'outline'}
-            size="icon"
+            icon
             className="size-8"
             onClick={() => setPage(p)}
           >
@@ -503,7 +503,7 @@ function NumberedPagination() {
       )}
       <Button
         variant="outline"
-        size="icon"
+        icon
         className="size-8"
         disabled={page === maxPage}
         onClick={() => setPage((p) => p + 1)}

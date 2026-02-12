@@ -1,6 +1,4 @@
-'use client';
-
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -17,19 +15,39 @@ import { SettingRow } from './SettingRow';
 /** SettingRow - 設定画面の行コンポーネント（2カラム: ラベル | コントロール） */
 const meta = {
   title: 'Features/Settings/SettingRow',
+  component: SettingRow,
   parameters: {
     layout: 'padded',
   },
   tags: ['autodocs'],
-} satisfies Meta;
+  args: {
+    children: null as unknown as React.ReactNode,
+  },
+  argTypes: {
+    label: {
+      control: 'text',
+      description: '行ラベル',
+    },
+    description: {
+      control: 'text',
+      description: '補足説明テキスト',
+    },
+    children: {
+      table: { disable: true },
+    },
+  },
+} satisfies Meta<typeof SettingRow>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 /** ドロップダウン選択 */
 export const WithSelect: Story = {
-  render: () => (
-    <SettingRow label="言語">
+  args: {
+    label: '言語',
+  },
+  render: (args) => (
+    <SettingRow {...args}>
       <Select defaultValue="ja">
         <SelectTrigger variant="ghost">
           <SelectValue />
@@ -45,8 +63,11 @@ export const WithSelect: Story = {
 
 /** Switchトグル */
 export const WithSwitch: Story = {
-  render: () => (
-    <SettingRow label="プッシュ通知">
+  args: {
+    label: 'プッシュ通知',
+  },
+  render: (args) => (
+    <SettingRow {...args}>
       <Switch defaultChecked />
     </SettingRow>
   ),
@@ -54,8 +75,12 @@ export const WithSwitch: Story = {
 
 /** ボタンアクション（description付き） */
 export const WithDescription: Story = {
-  render: () => (
-    <SettingRow label="パスワード" description="••••••••">
+  args: {
+    label: 'パスワード',
+    description: '••••••••',
+  },
+  render: (args) => (
+    <SettingRow {...args}>
       <Button variant="outline">変更</Button>
     </SettingRow>
   ),
@@ -63,8 +88,11 @@ export const WithDescription: Story = {
 
 /** ボタンのみ */
 export const WithButton: Story = {
-  render: () => (
-    <SettingRow label="アカウント削除">
+  args: {
+    label: 'アカウント削除',
+  },
+  render: (args) => (
+    <SettingRow {...args}>
       <Button variant="destructive" size="sm">
         削除
       </Button>
@@ -74,8 +102,11 @@ export const WithButton: Story = {
 
 /** テキスト値のみ */
 export const TextOnly: Story = {
-  render: () => (
-    <SettingRow label="タイムゾーン">
+  args: {
+    label: 'タイムゾーン',
+  },
+  render: (args) => (
+    <SettingRow {...args}>
       <span className="text-muted-foreground text-base">Asia/Tokyo (UTC+9)</span>
     </SettingRow>
   ),
@@ -83,6 +114,9 @@ export const TextOnly: Story = {
 
 /** 全パターン一覧 */
 export const AllPatterns: Story = {
+  args: {
+    label: '言語',
+  },
   render: () => (
     <div className="w-full max-w-2xl space-y-0 divide-y">
       <SettingRow label="言語">

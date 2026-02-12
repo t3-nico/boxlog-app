@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import {
   ChevronDown,
   Copy,
@@ -212,7 +212,7 @@ export const Overview: Story = {
               <p className="text-muted-foreground text-xs font-bold">アイコンボタン</p>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon">
+                  <Button variant="ghost" icon>
                     <MoreHorizontal className="size-4" />
                   </Button>
                 </DropdownMenuTrigger>
@@ -243,7 +243,7 @@ export const Overview: Story = {
               <p className="text-muted-foreground text-xs font-bold">縦三点</p>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon">
+                  <Button variant="ghost" icon>
                     <MoreVertical className="size-4" />
                   </Button>
                 </DropdownMenuTrigger>
@@ -278,7 +278,7 @@ export const Overview: Story = {
           <pre className="bg-container mt-4 overflow-x-auto rounded-lg p-4 text-xs">
             {`<DropdownMenu>
   <DropdownMenuTrigger asChild>
-    <Button variant="ghost" size="icon">
+    <Button variant="ghost" icon>
       <MoreHorizontal className="size-4" />
     </Button>
   </DropdownMenuTrigger>

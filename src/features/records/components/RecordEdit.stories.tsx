@@ -1,6 +1,4 @@
-'use client';
-
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { FolderOpen, Smile, Trash2, X } from 'lucide-react';
 import { useCallback, useRef, useState } from 'react';
 

@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { PanelLeft, PanelLeftClose, SquarePen } from 'lucide-react';
 import { useState } from 'react';
 
@@ -54,7 +54,7 @@ function InteractiveDemo() {
               <HoverTooltip content="サイドバーを閉じる" side="bottom">
                 <Button
                   variant="ghost"
-                  size="icon"
+                  icon
                   className="size-8"
                   onClick={() => setIsOpen(false)}
                   aria-label="サイドバーを閉じる"
@@ -62,7 +62,7 @@ function InteractiveDemo() {
                   <PanelLeftClose className="size-4" />
                 </Button>
               </HoverTooltip>
-              <Button variant="ghost" size="icon" className="size-8" aria-label="作成">
+              <Button variant="ghost" size="sm" icon aria-label="作成">
                 <SquarePen className="size-4" />
               </Button>
             </div>
@@ -91,7 +91,7 @@ function InteractiveDemo() {
             <HoverTooltip content="サイドバーを開く" side="bottom">
               <Button
                 variant="ghost"
-                size="icon"
+                icon
                 className="size-8"
                 onClick={() => setIsOpen(true)}
                 aria-label="サイドバーを開く"
@@ -121,14 +121,14 @@ function ToggleButtonComparison() {
     <div className="flex items-start gap-8 p-6">
       <div className="bg-surface-container border-border flex h-12 w-48 items-center justify-end rounded-lg border px-2">
         <HoverTooltip content="サイドバーを閉じる" side="bottom">
-          <Button variant="ghost" size="icon" className="size-8" aria-label="サイドバーを閉じる">
+          <Button variant="ghost" size="sm" icon aria-label="サイドバーを閉じる">
             <PanelLeftClose className="size-4" />
           </Button>
         </HoverTooltip>
       </div>
       <div className="bg-background border-border flex h-12 w-48 items-center rounded-lg border px-4">
         <HoverTooltip content="サイドバーを開く" side="bottom">
-          <Button variant="ghost" size="icon" className="size-8" aria-label="サイドバーを開く">
+          <Button variant="ghost" size="sm" icon aria-label="サイドバーを開く">
             <PanelLeft className="size-4" />
           </Button>
         </HoverTooltip>
@@ -143,7 +143,7 @@ function LayoutOpen() {
       <div className="bg-surface-container border-border w-64 shrink-0 border-r">
         <div className="border-border flex h-12 items-center justify-between border-b px-2">
           <span className="text-muted-foreground text-sm">NavUser</span>
-          <Button variant="ghost" size="icon" className="size-8" aria-label="サイドバーを閉じる">
+          <Button variant="ghost" size="sm" icon aria-label="サイドバーを閉じる">
             <PanelLeftClose className="size-4" />
           </Button>
         </div>
@@ -172,7 +172,7 @@ function LayoutClosed() {
     <div className="border-border flex h-64 w-[600px] overflow-hidden rounded-lg border">
       <div className="bg-background flex-1">
         <div className="border-border flex h-12 items-center gap-2 border-b px-4">
-          <Button variant="ghost" size="icon" className="size-8" aria-label="サイドバーを開く">
+          <Button variant="ghost" size="sm" icon aria-label="サイドバーを開く">
             <PanelLeft className="size-4" />
           </Button>
           <span className="text-muted-foreground text-sm">ヘッダー</span>

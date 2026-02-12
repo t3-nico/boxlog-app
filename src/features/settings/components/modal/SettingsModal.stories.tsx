@@ -1,5 +1,3 @@
-'use client';
-
 import { useEffect } from 'react';
 
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -14,7 +12,7 @@ import {
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Camera } from 'lucide-react';
 
 import { useSettingsModalStore } from '../../stores/useSettingsModalStore';

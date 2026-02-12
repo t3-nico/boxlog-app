@@ -1,6 +1,4 @@
-'use client';
-
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { addDays, subHours } from 'date-fns';
 
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
