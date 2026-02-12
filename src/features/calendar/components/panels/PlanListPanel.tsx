@@ -8,6 +8,7 @@ import { usePlans } from '@/features/plans/hooks/usePlans';
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
 import { groupItems } from '@/features/plans/utils/grouping';
 import { useTagsMap } from '@/features/tags/hooks/useTagsMap';
+import type { PlanWithTags } from '@/server/services/plans/types';
 import { usePanelDrag } from '../../hooks/usePanelDrag';
 import { useCalendarFilterStore } from '../../stores/useCalendarFilterStore';
 
@@ -54,6 +55,7 @@ export function PlanListPanel() {
 
   // Inspector
   const openInspector = usePlanInspectorStore((s) => s.openInspector);
+  const openInspectorWithDraft = usePlanInspectorStore((s) => s.openInspectorWithDraft);
 
   // D&D
   const { handleDragStart } = usePanelDrag();
@@ -139,6 +141,24 @@ export function PlanListPanel() {
     });
   }, []);
 
+  // Plan → Record 変換ハンドラ
+  const handleCreateRecordFromPlan = useCallback(
+    (plan: PlanWithTags) => {
+      openInspectorWithDraft(
+        {
+          title: plan.title || '',
+          description: plan.description ?? null,
+          start_time: plan.start_time ?? null,
+          end_time: plan.end_time ?? null,
+          tagIds: plan.tagIds ?? [],
+          plan_id: plan.id,
+        },
+        'record',
+      );
+    },
+    [openInspectorWithDraft],
+  );
+
   // ツールバーの共通 props
   const toolbarProps = {
     search,
@@ -186,7 +206,7 @@ export function PlanListPanel() {
       <PlanListToolbar {...toolbarProps} />
 
       {/* リスト */}
-      <div className="flex-1 overflow-y-auto p-3">
+      <div className="flex-1 overflow-y-auto p-2">
         {filteredPlans.length === 0 ? (
           <div className="text-muted-foreground flex h-full items-center justify-center">
             <p className="text-sm">{t('panel.noPlans')}</p>
@@ -208,6 +228,7 @@ export function PlanListPanel() {
                     plan={plan}
                     onClick={() => openInspector(plan.id)}
                     onDragStart={handleDragStart}
+                    onCreateRecord={handleCreateRecordFromPlan}
                   />
                 ))}
               </PlanListGroup>

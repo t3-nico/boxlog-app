@@ -2,10 +2,12 @@
 
 import { memo, useCallback } from 'react';
 
-import { CheckCircle2, Circle } from 'lucide-react';
+import { CheckCircle2, Circle, ClipboardList, Clock } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
+import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { HoverTooltip } from '@/components/ui/tooltip';
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
 import type { PlanStatus } from '@/features/plans/types/plan';
 import { normalizeStatus } from '@/features/plans/utils/status';
@@ -19,6 +21,8 @@ interface PlanListCardProps {
   plan: PlanWithTags;
   onClick?: (plan: PlanWithTags) => void;
   onDragStart?: (plan: PlanWithTags, e: React.MouseEvent, sourceElement: HTMLElement) => void;
+  /** Plan→Record 変換ハンドラ（hover時にボタン表示） */
+  onCreateRecord?: (plan: PlanWithTags) => void;
 }
 
 /**
@@ -31,6 +35,7 @@ export const PlanListCard = memo<PlanListCardProps>(function PlanListCard({
   plan,
   onClick,
   onDragStart,
+  onCreateRecord,
 }) {
   const t = useTranslations('calendar');
   const { formatTime } = useDateFormat();
@@ -43,6 +48,14 @@ export const PlanListCard = memo<PlanListCardProps>(function PlanListCard({
   const startTime = plan.start_time ? formatTime(new Date(plan.start_time)) : '';
   const endTime = plan.end_time ? formatTime(new Date(plan.end_time)) : '';
   const displayTime = startTime && endTime ? `${startTime} - ${endTime}` : startTime || null;
+
+  // 作業時間（分）を start_time/end_time から算出
+  const durationMinutes =
+    plan.start_time && plan.end_time
+      ? Math.round(
+          (new Date(plan.end_time).getTime() - new Date(plan.start_time).getTime()) / 60000,
+        )
+      : 0;
 
   const handleCardClick = useCallback(() => {
     onClick?.(plan);
@@ -68,6 +81,14 @@ export const PlanListCard = memo<PlanListCardProps>(function PlanListCard({
       });
     },
     [isCompleted, plan.id, updatePlan],
+  );
+
+  const handleCreateRecord = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      onCreateRecord?.(plan);
+    },
+    [onCreateRecord, plan],
   );
 
   return (
@@ -127,21 +148,53 @@ export const PlanListCard = memo<PlanListCardProps>(function PlanListCard({
           {plan.title || t('event.noTitle')}
         </p>
 
-        {/* 時間（スケジュール済みの場合のみ） */}
-        {displayTime && (
-          <p
-            className={cn(
-              'mt-1 text-xs tabular-nums',
-              isCompleted ? 'text-muted-foreground/60 line-through' : 'text-muted-foreground',
+        {/* メタ情報行: 時間 + 作業時間 */}
+        {(displayTime || durationMinutes > 0) && (
+          <div className={cn('mt-1 flex items-center gap-2', isCompleted && 'line-through')}>
+            {displayTime && (
+              <span
+                className={cn(
+                  'text-xs tabular-nums',
+                  isCompleted ? 'text-muted-foreground/60' : 'text-muted-foreground',
+                )}
+              >
+                {displayTime}
+              </span>
             )}
-          >
-            {displayTime}
-          </p>
+            {durationMinutes > 0 && (
+              <span
+                className={cn(
+                  'flex items-center gap-0.5 text-xs',
+                  isCompleted ? 'text-muted-foreground/60' : 'text-muted-foreground',
+                )}
+              >
+                <Clock className="size-3" />
+                {t('panel.duration', { minutes: durationMinutes })}
+              </span>
+            )}
+          </div>
         )}
 
         {/* タグ（カレンダーPlanCardと同じTagsContainer） */}
         {plan.tagIds && plan.tagIds.length > 0 && <TagsContainer tagIds={plan.tagIds} />}
       </div>
+
+      {/* Record 変換ボタン（hover時のみ表示） */}
+      {onCreateRecord && (
+        <div className="z-10 shrink-0 opacity-0 transition-opacity group-hover:opacity-100">
+          <HoverTooltip content={t('panel.recordThis')} side="top">
+            <Button
+              variant="ghost"
+              size="sm"
+              icon
+              onClick={handleCreateRecord}
+              aria-label={t('panel.recordThis')}
+            >
+              <ClipboardList className="size-3.5" />
+            </Button>
+          </HoverTooltip>
+        </div>
+      )}
     </Card>
   );
 });
