@@ -112,7 +112,6 @@ docs/
 | ---------------------- | ---------------------------- |
 | **CLAUDE.md (AI指針)** | `/CLAUDE.md`                 |
 | **スキル定義**         | `/.claude/skills/*/SKILL.md` |
-| **ESLint設定**         | `/.eslint/README.md`         |
 
 ### 外部リンク
 

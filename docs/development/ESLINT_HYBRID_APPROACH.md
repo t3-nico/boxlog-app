@@ -215,7 +215,6 @@ config/eslint/          # カスタムルール19個
 - **AI品質基準**: [`CLAUDE.md`](../../CLAUDE.md)
 - **スニペット集**: [`.vscode/boxlog.code-snippets`](../../.vscode/boxlog.code-snippets)
 - **ESLint設定**: [`eslint.config.mjs`](../../eslint.config.mjs)
-- **ESLint README**: [`.eslint/README.md`](../../.eslint/README.md)
 - **ディレクトリ構造**: [`.eslint/STRUCTURE.md`](../../.eslint/STRUCTURE.md)
 - **親Issue**: [#338 技術的失敗をしない開発環境](https://github.com/t3-nico/boxlog-app/issues/338)
 - **実装Issue**: [#368 ESLintハイブリッドアプローチへの完全移行](https://github.com/t3-nico/boxlog-app/issues/368)
