@@ -639,6 +639,122 @@ WCAG 2.1 AA の `heading-order` ルールにより、見出しレベルを飛ば
 - 子セクションは親の +1 レベル（h1 → h2 → h3）
 - ダイアログ・ポップオーバー等の小さいコンテナ内では `<p className="font-bold">` を使用
 
+### ❌ color-contrast 違反（テキスト × 背景のコントラスト不足）
+
+axe-core の `color-contrast` ルール（WCAG 2.1 AA: 4.5:1 以上）に違反するパターン。
+
+```tsx
+// ❌ foreground トークンを背景色に載せる（白文字 on 中明度背景）
+<div className="bg-destructive text-destructive-foreground">エラー</div>
+<div className="bg-warning text-warning-foreground">警告</div>
+<div className="bg-success text-success-foreground">成功</div>
+
+// ❌ opacity でコントラストを下げる
+<p className="text-foreground opacity-80">薄いテキスト</p>
+
+// ❌ 半透明背景に白テキスト
+<div className="bg-overlay text-white">オーバーレイ</div>
+```
+
+**✅ 解決パターン: スウォッチ＋ラベル**
+
+色を見せたい場合、テキストを色の上に載せず、色ブロックとラベルを分離する。
+
+```tsx
+// ✅ 色ブロック + 別テキスト（コントラスト問題なし）
+<div className="border-border rounded-lg border p-4 text-center">
+  <div className="bg-destructive mb-2 h-12 rounded" />
+  <div className="text-foreground font-bold">Destructive</div>
+  <div className="text-muted-foreground text-sm">エラー、削除</div>
+</div>
+
+// ✅ 丸スウォッチ + ラベル横並び
+<div className="flex items-center gap-2">
+  <div className="bg-success h-6 w-6 shrink-0 rounded-full" />
+  <code className="text-foreground text-xs">success</code>
+</div>
+
+// ✅ bg-current で色をスウォッチ化
+<div className="flex items-center gap-2">
+  <div className="text-warning h-6 w-6 shrink-0 rounded-full bg-current" />
+  <code className="text-foreground text-xs">warning</code>
+</div>
+```
+
+**✅ ホバー/インタラクションデモ**
+
+```tsx
+// ✅ 塗りボタン: aria-label でアクセシブルに
+<button
+  type="button"
+  className="bg-primary hover:bg-primary-hover h-12 w-24 rounded-lg transition-colors"
+  aria-label="primary hover demo"
+/>
+<code className="text-muted-foreground text-xs">primary</code>
+
+// ✅ ゴーストボタン: border で視認性確保
+<button
+  type="button"
+  className="text-destructive hover:bg-destructive-state-hover border-border h-12 w-24 rounded-lg border transition-colors"
+  aria-label="destructive ghost hover demo"
+/>
+```
+
+**✅ Do/Don't パターン**
+
+```tsx
+// ✅ Don't例はコードブロックで表示（レンダリングしない）
+<div>
+  <p className="text-destructive font-bold">Don't</p>
+  <code className="text-muted-foreground text-xs">text-success on white bg</code>
+</div>
+
+// ✅ Do例はスウォッチで表示
+<div>
+  <p className="text-success font-bold">Do</p>
+  <div className="flex items-center gap-2">
+    <div className="bg-success h-4 w-4 rounded-full" />
+    <span className="text-foreground text-sm">成功</span>
+  </div>
+</div>
+```
+
+**判定フロー:**
+
+```
+色を Story で見せたい
+│
+├─ テキストを色付き背景に載せる？
+│  └─ ❌ → スウォッチ + ラベル分離パターンを使う
+│
+├─ opacity でテキストを薄くする？
+│  └─ ❌ → text-muted-foreground を使う
+│
+├─ ホバー状態を見せる？
+│  └─ ✅ → 空ボタン（aria-label付き）+ コードラベル
+│
+├─ 悪い例（Don't）を見せる？
+│  └─ ✅ → レンダリングせず code ブロックで表示
+│
+└─ テキストの色は text-foreground / text-muted-foreground のみ
+```
+
+### ❌ `a11y: { disable: true }` の使用禁止
+
+```tsx
+// ❌ 根本解決ではない
+parameters: {
+  a11y: { disable: true },
+}
+
+// ✅ 実際の違反を修正する（上記パターンを適用）
+```
+
+`a11y: { disable: true }` は違反を隠すだけで、デザインシステムの信頼性を損なう。
+色デモであっても、アクセシブルに見せる方法が必ず存在する。
+
+唯一の例外: `a11y: { test: 'todo' }` で一時的にCIを通す（修正予定がある場合のみ）。
+
 ---
 
 ## 避けるべきパターン
@@ -789,6 +905,11 @@ Story作成時の確認項目：
 - [ ] 直接カラー（`text-blue-500` 等）を使っていない
 - [ ] フォントウェイトは `font-bold` / `font-normal` のみ使用
 - [ ] 複合コンポーネントは親を `component` に指定した
+- [ ] テキストを色付き背景に載せていない（スウォッチ＋ラベル分離）
+- [ ] `opacity-*` でテキストを薄くしていない（`text-muted-foreground` を使用）
+- [ ] `a11y: { disable: true }` を使っていない
+- [ ] `<h>` タグの開始・終了が一致している（`<h2>...</h2>`）
+- [ ] Don't 例はコードブロック表示（悪いコントラストをレンダリングしない）
 
 ## デザイントークンの確認
 

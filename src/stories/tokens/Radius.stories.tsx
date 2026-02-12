@@ -85,7 +85,7 @@ export const UseCases: Story = {
 
       <div className="space-y-8">
         <div>
-          <h3 className="mb-4 font-bold">ボタン</h3>
+          <h2 className="mb-4 font-bold">ボタン</h2>
           <div className="flex gap-4">
             <button className="bg-primary text-primary-foreground rounded-lg px-4 py-2">
               rounded-lg（標準）
@@ -97,13 +97,13 @@ export const UseCases: Story = {
         </div>
 
         <div>
-          <h3 className="mb-4 font-bold">カード・モーダル</h3>
+          <h2 className="mb-4 font-bold">カード・モーダル</h2>
           <div className="flex gap-4">
-            <div className="bg-card border-border w-48 rounded-lg border p-4">
+            <div className="bg-card text-card-foreground border-border w-48 rounded-lg border p-4">
               <p className="font-bold">rounded-lg</p>
               <p className="text-muted-foreground text-sm">カードの標準</p>
             </div>
-            <div className="bg-card border-border w-48 rounded-2xl border p-4">
+            <div className="bg-card text-card-foreground border-border w-48 rounded-2xl border p-4">
               <p className="font-bold">rounded-2xl</p>
               <p className="text-muted-foreground text-sm">モーダル・ダイアログ</p>
             </div>
@@ -111,7 +111,7 @@ export const UseCases: Story = {
         </div>
 
         <div>
-          <h3 className="mb-4 font-bold">アバター</h3>
+          <h2 className="mb-4 font-bold">アバター</h2>
           <div className="flex items-center gap-4">
             <div className="bg-primary size-12 rounded-lg" />
             <span className="text-muted-foreground text-sm">→</span>
@@ -121,16 +121,16 @@ export const UseCases: Story = {
         </div>
 
         <div>
-          <h3 className="mb-4 font-bold">入力フィールド</h3>
+          <h2 className="mb-4 font-bold">入力フィールド</h2>
           <input
             type="text"
             placeholder="rounded-lg（標準）"
-            className="bg-input border-border w-64 rounded-lg border px-4 py-2"
+            className="bg-input text-foreground placeholder:text-muted-foreground border-border w-64 rounded-lg border px-4 py-2"
           />
         </div>
 
         <div>
-          <h3 className="mb-4 font-bold">バッジ・タグ</h3>
+          <h2 className="mb-4 font-bold">バッジ・タグ</h2>
           <div className="flex gap-2">
             <span className="border-primary text-primary rounded border px-2 py-1 text-xs">
               rounded
@@ -157,7 +157,7 @@ export const PartialRadius: Story = {
 
       <div className="space-y-8">
         <div>
-          <h3 className="mb-4 font-bold">隣接要素の結合（Input Group）</h3>
+          <h2 className="mb-4 font-bold">隣接要素の結合（Input Group）</h2>
           <div className="flex">
             <input
               type="text"
@@ -175,7 +175,7 @@ export const PartialRadius: Story = {
         </div>
 
         <div>
-          <h3 className="mb-4 font-bold">範囲選択（カレンダー）</h3>
+          <h2 className="mb-4 font-bold">範囲選択（カレンダー）</h2>
           <div className="flex">
             <div className="bg-primary/20 flex size-10 items-center justify-center rounded-l-lg text-sm">
               1
@@ -192,7 +192,7 @@ export const PartialRadius: Story = {
         </div>
 
         <div>
-          <h3 className="mb-4 font-bold">許可されている部分Radius</h3>
+          <h2 className="mb-4 font-bold">許可されている部分Radius</h2>
           <p className="text-muted-foreground mb-4 text-xs">
             基本トークンと同じサイズのみ: 4px, 8px, 16px
           </p>
