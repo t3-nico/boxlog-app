@@ -12,7 +12,6 @@ export default meta;
 type Story = StoryObj;
 
 export const Overview: Story = {
-  parameters: { a11y: { disable: true } },
   render: () => (
     <div>
       <h1 className="mb-2 text-2xl font-bold">Motion</h1>
@@ -258,7 +257,7 @@ function ShakeDemo() {
       <button
         type="button"
         onClick={triggerShake}
-        className="bg-destructive text-destructive-foreground rounded-lg px-4 py-2 text-sm"
+        className="text-destructive hover:bg-destructive-state-hover rounded-lg px-4 py-2 text-sm font-bold"
       >
         シェイク
       </button>
