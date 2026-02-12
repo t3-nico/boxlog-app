@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
+import { expect, userEvent, within } from 'storybook/test';
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select';
 
@@ -29,6 +30,20 @@ export const Default: Story = {
         </SelectContent>
       </Select>
     );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // セレクトトリガーをクリックしてドロップダウンを開く
+    const trigger = canvas.getByRole('combobox');
+    await userEvent.click(trigger);
+
+    // ドロップダウンの選択肢を確認（ポータル経由）
+    const body = within(document.body);
+    await expect(body.getByText('週')).toBeInTheDocument();
+
+    // 「週」を選択
+    await userEvent.click(body.getByText('週'));
   },
 };
 

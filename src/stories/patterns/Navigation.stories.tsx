@@ -10,6 +10,7 @@ import {
   Settings,
 } from 'lucide-react';
 import { useState } from 'react';
+import { expect, userEvent, within } from 'storybook/test';
 
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -25,6 +26,19 @@ export default meta;
 type Story = StoryObj;
 
 export const Overview: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // タブナビゲーションをテスト: 「分析」タブをクリック
+    const analyticsTab = canvas.getByRole('tab', { name: /分析/i });
+    await userEvent.click(analyticsTab);
+    await expect(canvas.getByText('分析コンテンツ')).toBeInTheDocument();
+
+    // 「概要」タブに戻る
+    const overviewTab = canvas.getByRole('tab', { name: /概要/i });
+    await userEvent.click(overviewTab);
+    await expect(canvas.getByText('概要コンテンツ')).toBeInTheDocument();
+  },
   render: () => (
     <div>
       <h1 className="mb-2 text-2xl font-bold">Navigation Patterns</h1>

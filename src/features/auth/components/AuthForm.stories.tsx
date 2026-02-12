@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
+import { expect, userEvent, within } from 'storybook/test';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -605,6 +606,29 @@ export const SecurityOverview: Story = {
 /** ログインフォーム。2カラムカード型レイアウト。実装: LoginForm.tsx */
 export const Login: Story = {
   render: () => <MockLoginForm />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // メールアドレス入力
+    const emailInput = canvas.getByLabelText(/メールアドレス/i);
+    await userEvent.type(emailInput, 'test@example.com');
+    await expect(emailInput).toHaveValue('test@example.com');
+
+    // パスワード入力
+    const passwordInput = canvas.getByLabelText(/パスワード/i);
+    await userEvent.type(passwordInput, 'password123');
+    await expect(passwordInput).toHaveValue('password123');
+
+    // パスワード表示トグル
+    const toggleButton = canvas.getByRole('button', { name: /パスワードを表示/i });
+    await userEvent.click(toggleButton);
+    await expect(passwordInput).toHaveAttribute('type', 'text');
+
+    // パスワード非表示に戻す
+    const hideButton = canvas.getByRole('button', { name: /パスワードを隠す/i });
+    await userEvent.click(hideButton);
+    await expect(passwordInput).toHaveAttribute('type', 'password');
+  },
 };
 
 /** ログインフォーム（サーバーエラー表示）。実装: LoginForm.tsx */
@@ -615,6 +639,31 @@ export const LoginWithError: Story = {
 /** サインアップフォーム。パスワード確認 + 利用規約同意。実装: SignupForm.tsx */
 export const Signup: Story = {
   render: () => <MockSignupForm />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // メールアドレス入力
+    const emailInput = canvas.getByLabelText(/メールアドレス/i);
+    await userEvent.type(emailInput, 'signup@example.com');
+    await expect(emailInput).toHaveValue('signup@example.com');
+
+    // パスワード入力
+    const passwordInput = canvas.getByLabelText(/^パスワード$/i);
+    await userEvent.type(passwordInput, 'securePass1');
+    await expect(passwordInput).toHaveValue('securePass1');
+
+    // パスワード確認入力
+    const confirmInput = canvas.getByLabelText(/パスワード確認/i);
+    await userEvent.type(confirmInput, 'securePass1');
+    await expect(confirmInput).toHaveValue('securePass1');
+
+    // 利用規約チェックボックスをクリック
+    const termsCheckbox = canvas.getByRole('checkbox', {
+      name: /利用規約とプライバシーポリシーに同意する/i,
+    });
+    await userEvent.click(termsCheckbox);
+    await expect(termsCheckbox).toBeChecked();
+  },
 };
 
 /** サインアップフォーム（漏洩パスワードエラー）。実装: SignupForm.tsx */

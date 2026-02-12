@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Calculator, Calendar, CreditCard, Settings, Smile, User } from 'lucide-react';
 import { useState } from 'react';
+import { expect, userEvent, within } from 'storybook/test';
 
 import { Button } from './button';
 import {
@@ -70,6 +71,18 @@ export const Default: Story = {
       </Command>
     </div>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // 初期状態で候補が表示されている
+    await expect(canvas.getByText('カレンダー')).toBeInTheDocument();
+    await expect(canvas.getByText('プロフィール')).toBeInTheDocument();
+
+    // 検索入力にテキストを入力
+    const searchInput = canvas.getByPlaceholderText('検索...');
+    await userEvent.type(searchInput, 'カレンダー');
+    await expect(searchInput).toHaveValue('カレンダー');
+  },
 };
 
 export const Dialog: Story = {
@@ -105,6 +118,21 @@ export const Dialog: Story = {
         </CommandDialog>
       </>
     );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // ボタンをクリックしてダイアログを開く
+    const openButton = canvas.getByRole('button', { name: /コマンドパレットを開く/i });
+    await userEvent.click(openButton);
+
+    // ダイアログ内のコンテンツを確認（ポータル経由なので document.body を使用）
+    const body = within(document.body);
+    await expect(body.getByPlaceholderText('コマンドを検索...')).toBeInTheDocument();
+    await expect(body.getByText('新しいイベント')).toBeInTheDocument();
+
+    // Escapeキーでダイアログを閉じる
+    await userEvent.keyboard('{Escape}');
   },
 };
 

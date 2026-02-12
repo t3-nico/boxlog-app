@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
+import { expect, userEvent, within } from 'storybook/test';
 
 import { Checkbox } from './checkbox';
 import { Label } from './label';
@@ -61,6 +62,19 @@ export const WithLabel: Story = {
       <Label htmlFor="terms">利用規約に同意する</Label>
     </div>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // チェックボックスをクリックしてチェック状態にする
+    const checkbox = canvas.getByRole('checkbox');
+    await expect(checkbox).not.toBeChecked();
+    await userEvent.click(checkbox);
+    await expect(checkbox).toBeChecked();
+
+    // もう一度クリックしてチェック解除
+    await userEvent.click(checkbox);
+    await expect(checkbox).not.toBeChecked();
+  },
 };
 
 export const WithCustomColor: Story = {

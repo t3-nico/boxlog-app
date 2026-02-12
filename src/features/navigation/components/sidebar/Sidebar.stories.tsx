@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { PanelLeft, PanelLeftClose, SquarePen } from 'lucide-react';
 import { useState } from 'react';
+import { expect, userEvent, within } from 'storybook/test';
 
 import { Button } from '@/components/ui/button';
 import { HoverTooltip } from '@/components/ui/tooltip';
@@ -226,6 +227,26 @@ export const HideNavUser: Story = {
  */
 export const Interactive: Story = {
   render: () => <InteractiveDemo />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // サイドバーが開いている状態を確認
+    await expect(canvas.getByText('カレンダー')).toBeInTheDocument();
+
+    // サイドバーを閉じる
+    const closeButton = canvas.getByRole('button', { name: /サイドバーを閉じる/i });
+    await userEvent.click(closeButton);
+
+    // サイドバーを開くボタンが出現する
+    const openButton = canvas.getByRole('button', { name: /サイドバーを開く/i });
+    await expect(openButton).toBeInTheDocument();
+
+    // サイドバーを再び開く
+    await userEvent.click(openButton);
+
+    // サイドバーのコンテンツが再度表示される
+    await expect(canvas.getByText('カレンダー')).toBeInTheDocument();
+  },
 };
 
 /** 折りたたみボタン。PanelLeftClose（閉じる）とPanelLeft（開く）の比較。 */

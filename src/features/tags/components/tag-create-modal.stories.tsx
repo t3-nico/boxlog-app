@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { fn } from 'storybook/test';
+import { expect, fn, userEvent, within } from 'storybook/test';
 
 import { Button } from '@/components/ui/button';
 
@@ -49,6 +49,17 @@ function TagCreateModalStory() {
 /** ボタンクリックでモーダルを開く */
 export const Default: Story = {
   render: () => <TagCreateModalStory />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // ボタンをクリックしてモーダルを開く
+    const openButton = canvas.getByRole('button', { name: /タグを作成/i });
+    await userEvent.click(openButton);
+
+    // モーダルが開いたことを確認（ポータル経由）
+    const body = within(document.body);
+    await expect(body.getByText(/タグ名/i)).toBeInTheDocument();
+  },
 };
 
 /** 初期表示（モーダルが開いた状態） */
@@ -62,4 +73,11 @@ export const OpenState: Story = {
       }}
     />
   ),
+  play: async () => {
+    // モーダルはポータル経由でレンダリング
+    const body = within(document.body);
+
+    // モーダルが表示されていてフィールドが確認できる
+    await expect(body.getByText(/タグ名/i)).toBeInTheDocument();
+  },
 };

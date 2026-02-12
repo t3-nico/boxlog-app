@@ -14,6 +14,7 @@ import { Switch } from '@/components/ui/switch';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Camera } from 'lucide-react';
+import { expect, userEvent, within } from 'storybook/test';
 
 import { useSettingsModalStore } from '../../stores/useSettingsModalStore';
 import type { SettingsCategory } from '../../types';
@@ -307,6 +308,20 @@ type Story = StoryObj<typeof meta>;
 /** デフォルト（General カテゴリ） */
 export const Default: Story = {
   render: () => <SettingsModalShell />,
+  play: async () => {
+    // 設定モーダルはポータル経由でレンダリング
+    const body = within(document.body);
+
+    // General カテゴリが表示されていることを確認
+    await expect(body.getByText('基本設定')).toBeInTheDocument();
+
+    // サイドバーで別カテゴリに切り替え
+    const calendarLink = body.getByText('カレンダー');
+    await userEvent.click(calendarLink);
+
+    // カレンダーカテゴリのコンテンツが表示される
+    await expect(body.getByText('週の開始日')).toBeInTheDocument();
+  },
 };
 
 /** Calendar カテゴリ */

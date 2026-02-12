@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { BarChart3, Calendar, CircleCheckBig, Clock, Settings, User } from 'lucide-react';
+import { expect, userEvent, within } from 'storybook/test';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger, UnderlineTabsTrigger } from './tabs';
 
@@ -30,6 +31,24 @@ export const Default: Story = {
       </TabsContent>
     </Tabs>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // 初期状態でアカウントタブのコンテンツが表示されている
+    await expect(canvas.getByText('アカウント設定がここに表示されます。')).toBeInTheDocument();
+
+    // パスワードタブをクリック
+    const passwordTab = canvas.getByRole('tab', { name: /パスワード/i });
+    await userEvent.click(passwordTab);
+
+    // パスワードタブのコンテンツが表示される
+    await expect(canvas.getByText('パスワード設定がここに表示されます。')).toBeInTheDocument();
+
+    // アカウントタブに戻る
+    const accountTab = canvas.getByRole('tab', { name: /アカウント/i });
+    await userEvent.click(accountTab);
+    await expect(canvas.getByText('アカウント設定がここに表示されます。')).toBeInTheDocument();
+  },
 };
 
 export const ThreeTabs: Story = {

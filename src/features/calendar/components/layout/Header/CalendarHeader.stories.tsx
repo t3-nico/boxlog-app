@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { fn } from 'storybook/test';
+import { expect, fn, userEvent, within } from 'storybook/test';
 
 import { CompactDateNavigator, DateNavigator } from './DateNavigator';
 import { HeaderActions } from './HeaderActions';
@@ -56,6 +56,18 @@ export const ViewSwitcherMultiDay: Story = {
 /** 日付ナビゲーション。Todayボタン + 前後矢印。 */
 export const DateNavigatorDefault: Story = {
   render: () => <DateNavigator onNavigate={fn()} />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // 前後ナビゲーションボタンをクリック
+    const buttons = canvas.getAllByRole('button');
+    await expect(buttons.length).toBeGreaterThan(0);
+    // 最初のボタン（Today or 前矢印）をクリック
+    const firstButton = buttons[0];
+    if (firstButton) {
+      await userEvent.click(firstButton);
+    }
+  },
 };
 
 /** コンパクトナビゲーション。矢印のみ。 */
