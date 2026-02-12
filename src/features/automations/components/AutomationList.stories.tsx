@@ -111,7 +111,15 @@ const mockAutomations: Automation[] = [
 const meta = {
   title: 'Features/Automations/AutomationList',
   component: AutomationList,
-  parameters: { layout: 'padded' },
+  parameters: {
+    layout: 'padded',
+    docs: {
+      description: {
+        component:
+          '> **Note:** このコンポーネントは開発中です。本番環境ではまだ使用されていません。\n\n自動化ルールの一覧表示。空状態の案内と新規ルール作成ボタンを含む。',
+      },
+    },
+  },
   tags: ['autodocs'],
   args: {
     onToggle: fn(),

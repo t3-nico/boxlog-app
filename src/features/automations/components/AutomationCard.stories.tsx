@@ -20,7 +20,15 @@ const baseAutomation: Automation = {
 const meta = {
   title: 'Features/Automations/AutomationCard',
   component: AutomationCard,
-  parameters: { layout: 'padded' },
+  parameters: {
+    layout: 'padded',
+    docs: {
+      description: {
+        component:
+          '> **Note:** このコンポーネントは開発中です。本番環境ではまだ使用されていません。\n\n自動化ルール1件を表示するカード。トリガー・アクション・条件の要約と、有効/無効の切り替え・編集・削除操作を提供する。',
+      },
+    },
+  },
   tags: ['autodocs'],
   args: {
     onToggle: fn(),

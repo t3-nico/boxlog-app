@@ -212,7 +212,15 @@ function EditWrapper({ automation }: { automation: Automation }) {
 
 const meta = {
   title: 'Features/Automations/AutomationEditorModal',
-  parameters: { layout: 'centered' },
+  parameters: {
+    layout: 'centered',
+    docs: {
+      description: {
+        component:
+          '> **Note:** このコンポーネントは開発中です。本番環境ではまだ使用されていません。\n\n自動化ルールの作成・編集モーダル。条件フィールド（7種）とアクション（レコード作成・通知送信・タグ付与）を設定できる。',
+      },
+    },
+  },
   tags: ['autodocs'],
 } satisfies Meta;
 
