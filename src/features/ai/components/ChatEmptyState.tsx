@@ -14,8 +14,8 @@ export const ChatEmptyState = memo(function ChatEmptyState({
   onSuggestionClick,
 }: ChatEmptyStateProps) {
   return (
-    <div className="flex h-full flex-col items-center justify-center">
-      <div className="flex flex-wrap justify-center gap-2">
+    <div className="flex h-full flex-col justify-end px-3 pb-2">
+      <div className="flex flex-wrap gap-2">
         {suggestions.map((suggestion) => (
           <PromptSuggestion
             key={suggestion}
