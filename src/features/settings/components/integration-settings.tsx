@@ -218,7 +218,8 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
                       <Button
                         type="button"
                         variant="ghost"
-                        size="icon-sm"
+                        size="sm"
+                        icon
                         className="absolute top-1/2 right-1 -translate-y-1/2"
                         onClick={() => toggleKeyVisibility(provider.id)}
                       >

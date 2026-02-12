@@ -66,7 +66,7 @@ export function YearlyHeatmap() {
         <div className="flex items-center gap-1">
           <Button
             variant="ghost"
-            size="icon"
+            icon
             onClick={() => setYear(year - 1)}
             disabled={year <= 2020}
             aria-label="前年"
@@ -76,7 +76,7 @@ export function YearlyHeatmap() {
           <span className="min-w-16 text-center text-sm font-normal">{year}</span>
           <Button
             variant="ghost"
-            size="icon"
+            icon
             onClick={() => setYear(year + 1)}
             disabled={year >= currentYear}
             aria-label="翌年"

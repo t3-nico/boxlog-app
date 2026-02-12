@@ -261,7 +261,7 @@ function SidebarUtilities() {
       <HoverTooltip content={t('sidebar.navigation.search')} side="right">
         <Button
           variant="ghost"
-          size="icon"
+          icon
           className="size-8"
           onClick={() => openGlobalSearch()}
           aria-label={t('sidebar.navigation.search')}
@@ -272,7 +272,7 @@ function SidebarUtilities() {
       <HoverTooltip content={resolvedTheme === 'light' ? 'Dark mode' : 'Light mode'} side="right">
         <Button
           variant="ghost"
-          size="icon"
+          icon
           className="size-8"
           onClick={handleThemeToggle}
           aria-label={t('sidebar.theme')}

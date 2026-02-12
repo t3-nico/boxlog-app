@@ -353,7 +353,7 @@ export function PlanInspectorContent() {
                   <DropdownMenuTrigger asChild>
                     <Button
                       variant="primary"
-                      size="icon"
+                      icon
                       className="rounded-none border-0"
                       aria-label="完了オプション"
                     >

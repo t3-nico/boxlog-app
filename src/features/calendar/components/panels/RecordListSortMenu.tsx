@@ -31,7 +31,7 @@ export type RecordPanelSortField =
 export type RecordPanelSortOrder = 'asc' | 'desc';
 
 /** Record グルーピングフィールド */
-export type RecordPanelGroupByField = 'worked_at' | 'tags' | null;
+export type RecordPanelGroupByField = 'worked_at' | 'tags' | 'fulfillment_score' | null;
 
 /** Record 日付フィルター */
 export type RecordPanelDateFilter = 'all' | 'today' | 'this_week' | 'this_month';
@@ -75,6 +75,7 @@ export function RecordListSortMenu({
     { value: null, label: t('panel.recordGroup.none') },
     { value: 'worked_at', label: t('panel.recordGroup.workedAt') },
     { value: 'tags', label: t('panel.recordGroup.tags') },
+    { value: 'fulfillment_score', label: t('panel.recordGroup.fulfillmentScore') },
   ];
 
   const dateFilterOptions: Array<{ value: RecordPanelDateFilter; label: string }> = [

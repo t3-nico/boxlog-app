@@ -114,7 +114,8 @@ export function InspectorHeader({
             <HoverTooltip content={previousLabel} side="top">
               <Button
                 variant="ghost"
-                size="icon-sm"
+                size="sm"
+                icon
                 onClick={onPrevious}
                 disabled={!hasPrevious}
                 aria-label={previousLabel}
@@ -125,7 +126,8 @@ export function InspectorHeader({
             <HoverTooltip content={nextLabel} side="top">
               <Button
                 variant="ghost"
-                size="icon-sm"
+                size="sm"
+                icon
                 onClick={onNext}
                 disabled={!hasNext}
                 aria-label={nextLabel}
@@ -147,7 +149,8 @@ export function InspectorHeader({
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
-                size="icon-sm"
+                size="sm"
+                icon
                 className="focus-visible:ring-0"
                 aria-label="オプション"
               >
@@ -163,7 +166,8 @@ export function InspectorHeader({
         <HoverTooltip content={closeLabel} side="top">
           <Button
             variant="ghost"
-            size="icon-sm"
+            size="sm"
+            icon
             onClick={onClose}
             aria-label={closeLabel}
             className="ml-1"

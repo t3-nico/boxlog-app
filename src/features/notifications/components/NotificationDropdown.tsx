@@ -151,7 +151,8 @@ export function NotificationDropdown({
             </Button>
             <Button
               variant="ghost"
-              size="icon-sm"
+              size="sm"
+              icon
               onClick={handleDeleteAllRead}
               disabled={deleteAllRead.isPending}
             >

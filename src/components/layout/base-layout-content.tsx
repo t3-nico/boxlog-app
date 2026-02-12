@@ -83,7 +83,7 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
         {/* Mobile FAB（iOS Safe Area対応） */}
         {isMobile ? (
           <Button
-            size="icon"
+            icon
             aria-label={t('common.createNewEvent')}
             className="fixed right-4 z-50 size-14 rounded-2xl shadow-lg"
             style={{

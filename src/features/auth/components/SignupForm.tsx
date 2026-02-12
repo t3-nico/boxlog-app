@@ -187,7 +187,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                         <Button
                           type="button"
                           variant="ghost"
-                          size="icon"
+                          icon
                           className="absolute top-0 right-0 h-full px-4"
                           onClick={() => setShowPassword(!showPassword)}
                           aria-disabled={isSubmitting || undefined}
@@ -249,7 +249,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                         <Button
                           type="button"
                           variant="ghost"
-                          size="icon"
+                          icon
                           className="absolute top-0 right-0 h-full px-4"
                           onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                           aria-disabled={isSubmitting || undefined}

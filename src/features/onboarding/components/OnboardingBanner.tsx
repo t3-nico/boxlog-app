@@ -68,7 +68,7 @@ export function OnboardingBanner() {
         </Button>
         <Button
           variant="ghost"
-          size="icon"
+          icon
           onClick={handleDismiss}
           className="text-accent-foreground/70 hover:text-accent-foreground hover:bg-accent-foreground/10 h-6 w-6"
           aria-label={t('banner.dismiss')}

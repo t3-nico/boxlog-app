@@ -110,7 +110,8 @@ export function NotificationItem({
         {/* 削除ボタン */}
         <Button
           variant="ghost"
-          size="icon-sm"
+          size="sm"
+          icon
           className="shrink-0"
           onClick={(e) => {
             e.stopPropagation();

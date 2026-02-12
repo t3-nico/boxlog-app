@@ -27,7 +27,7 @@ export function MobileMenuButton({ className }: { className?: string }) {
   return (
     <Button
       variant="ghost"
-      size="icon"
+      icon
       onClick={toggle}
       aria-label={t('aria.openMenu')}
       className={className}

@@ -66,7 +66,7 @@ export function CreateNewDropdown({
     <DropdownMenuTrigger asChild>
       <Button
         variant="ghost"
-        size="icon"
+        icon
         className={size === 'sm' ? 'h-8 w-auto gap-0.5 px-1.5' : 'h-10 w-auto gap-1 px-2'}
         aria-label={t('sidebar.quickCreate')}
       >

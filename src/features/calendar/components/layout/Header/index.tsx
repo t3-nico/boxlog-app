@@ -87,7 +87,7 @@ export const CalendarHeader = ({
             <HoverTooltip content={t('sidebar.openSidebar')} side="bottom">
               <Button
                 variant="ghost"
-                size="icon"
+                icon
                 className="hidden size-8 md:flex"
                 onClick={openSidebar}
                 aria-label={t('sidebar.openSidebar')}
@@ -128,7 +128,8 @@ export const CalendarHeader = ({
           <div className="flex items-center gap-1 md:hidden">
             <Button
               variant="ghost"
-              size="icon-sm"
+              size="sm"
+              icon
               className="text-muted-foreground hover:text-foreground"
               onClick={openSearch}
               aria-label="検索"
@@ -137,7 +138,8 @@ export const CalendarHeader = ({
             </Button>
             <Button
               variant="ghost"
-              size="icon-sm"
+              size="sm"
+              icon
               className="text-muted-foreground hover:text-foreground"
               onClick={() => onNavigate('today')}
               aria-label="今日に戻る"
@@ -157,7 +159,7 @@ export const CalendarHeader = ({
               <HoverTooltip content={t('calendar.panel.open')} side="bottom">
                 <Button
                   variant="ghost"
-                  size="icon"
+                  icon
                   className="-mr-4 size-8"
                   onClick={() => onPanelChange('plan')}
                   aria-label="Open side panel"
