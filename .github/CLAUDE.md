@@ -124,7 +124,7 @@ Vercel Dashboard → Environment Variables
 
 - [ワークフロー詳細](./workflows/README.md)
 - [コミット規約](../docs/development/COMMIT_RULES.md)
-- [コマンド一覧](../docs/development/COMMANDS.md)
+- Storybook → Docs/実装ガイド/コマンド一覧
 
 ---
 

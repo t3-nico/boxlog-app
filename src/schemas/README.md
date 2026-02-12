@@ -374,7 +374,7 @@ describe('createTaskInputSchema', () => {
 
 **ドキュメント**:
 
-- `docs/API_VALIDATION_GUIDE.md` - バリデーション詳細ガイド
+- Storybook → Docs/アーキテクチャ/APIバリデーション
 
 ---
 
@@ -422,7 +422,7 @@ export function validateTask(task: unknown): Task {
 
 ## 🔗 関連ドキュメント
 
-- [API Validation Guide](../../docs/API_VALIDATION_GUIDE.md) - 詳細なバリデーションガイド
+- Storybook → Docs/アーキテクチャ/APIバリデーション - 詳細なバリデーションガイド
 - [tRPC Documentation](https://trpc.io/docs) - tRPC公式ドキュメント
 - [Zod Documentation](https://zod.dev) - Zod公式ドキュメント
 - [CLAUDE.md](../../CLAUDE.md) - プロジェクト開発指針（Zodバリデーション必須）

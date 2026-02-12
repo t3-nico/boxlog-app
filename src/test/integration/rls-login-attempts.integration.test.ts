@@ -13,7 +13,7 @@
  *
  * @see Issue #615 - E2Eテスト追加（RLS検証）
  * @see Issue #611 - RLS完全実装
- * @see docs/development/TEST_STRATEGY.md - E2E→Integration移行
+ * @see Storybook → Docs/テスト戦略 - E2E→Integration移行
  */
 
 import { createClient } from '@supabase/supabase-js';

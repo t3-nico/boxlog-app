@@ -173,9 +173,9 @@ node scripts/performance-regression-test.js
 
 ```javascript
 // 軽量TypeScript チェック
-const typecheckStart = Date.now()
-execSync('tsc --noEmit --incremental', { stdio: 'pipe' })
-metrics.typecheckTime = Date.now() - typecheckStart
+const typecheckStart = Date.now();
+execSync('tsc --noEmit --incremental', { stdio: 'pipe' });
+metrics.typecheckTime = Date.now() - typecheckStart;
 
 // バンドルサイズ計算
 function calculateDirSize(dir, extension) {
@@ -296,7 +296,7 @@ npm run perf:check:force
 **📚 関連ドキュメント:**
 
 - [License Compliance Guide](./LICENSE_COMPLIANCE_GUIDE.md)
-- [Bundle Size Monitoring](../performance/BUNDLE_MONITORING.md)
+- Storybook → Docs/実装ガイド/バンドル監視
 - [ESLint Setup](./ESLINT_HYBRID_APPROACH.md)
 
 **🔗 関連Issue:** #242 - Phase 2c: パフォーマンス回帰テスト実装

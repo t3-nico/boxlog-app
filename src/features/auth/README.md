@@ -266,8 +266,8 @@ SKIP_AUTH_IN_DEV=true
 ### プロジェクト内
 
 - [セキュリティヘッダー設定](/docs/setup/SECURITY_HEADERS.md)
-- [API検証ガイド](/docs/API_VALIDATION_GUIDE.md)
-- [エラーパターンガイド](/docs/ERROR_PATTERNS_GUIDE.md)
+- APIバリデーション: Storybook → Docs/アーキテクチャ/APIバリデーション
+- エラーパターン: Storybook → Docs/アーキテクチャ/エラーパターン
 
 ### 外部
 

@@ -6,7 +6,7 @@ import { expect, test } from '@playwright/test';
  * ルーティング、認証リダイレクト、主要ページの表示を最小限のテストで確認。
  * UI詳細のテストはStorybook play関数に移行済み。
  *
- * @see docs/development/TEST_STRATEGY.md
+ * @see Storybook → Docs/テスト戦略
  */
 test.describe('Smoke: ルーティング', () => {
   test('未認証ユーザーは認証ページにリダイレクトされる', async ({ page }) => {

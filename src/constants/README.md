@@ -17,7 +17,7 @@ import { ERROR_CODES } from '@/constants/errorCodes';
 throw new AppError('認証失敗', ERROR_CODES.AUTH_INVALID_TOKEN);
 ```
 
-詳細: [`docs/architecture/ERROR_HANDLING.md`](../../docs/architecture/ERROR_HANDLING.md)
+詳細: Storybook → Docs/アーキテクチャ/エラーパターン
 
 ### `naming.ts`
 
@@ -68,7 +68,7 @@ const CALENDAR_GRID_SIZE = 7;
 ## 📖 関連ドキュメント
 
 - [コロケーション原則](../CLAUDE.md#8-ファイル配置コロケーション原則)
-- [エラーハンドリング](../../docs/architecture/ERROR_HANDLING.md)
+- Storybook → Docs/アーキテクチャ/エラーパターン
 - [コーディング規約](../CLAUDE.md)
 
 ---

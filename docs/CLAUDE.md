@@ -137,7 +137,7 @@ temp_doc.md                  # 一時ファイルはコミット禁止
 
 **太字** - 重要な用語
 `コード` - コマンド・変数名
-[リンク](./development/COMMANDS.md) - 相対パス使用
+[リンク](./development/ISSUE_MANAGEMENT.md) - 相対パス使用
 
 \```bash
 

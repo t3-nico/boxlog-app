@@ -65,7 +65,7 @@
 
 **ドキュメント**
 
-- `docs/development/TESTING_STRATEGY.md` - テスト戦略ガイド
+- Storybook → Docs/テスト戦略
 
 #### 品質改善パッケージ ([#870](https://github.com/t3-nico/boxlog-app/pull/870))
 

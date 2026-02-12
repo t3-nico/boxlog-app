@@ -7,7 +7,7 @@ import { expect, test } from '@playwright/test';
  * 各機能のUI操作詳細はStorybook play関数でカバー。
  * サーバーサイドのCRUDロジックはintegration testでカバー。
  *
- * @see docs/development/TEST_STRATEGY.md
+ * @see Storybook → Docs/テスト戦略
  */
 
 // 認証が必要なテストはスキップ条件を設定

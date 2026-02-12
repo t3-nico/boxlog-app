@@ -671,7 +671,7 @@ export const goodRouter = createTRPCRouter({
 
 - `src/pages/README.md` - tRPC API説明
 - `src/schemas/README.md` - バリデーション説明
-- `docs/API_VALIDATION_GUIDE.md` - 詳細ガイド
+- Storybook → Docs/アーキテクチャ/APIバリデーション
 
 ---
 

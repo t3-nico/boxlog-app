@@ -31,14 +31,14 @@ Sentryはリアルタイムエラー追跡・パフォーマンス監視プラ�
 
 ```typescript
 // エラーパターン辞書との統合
-import { reportToSentry } from '@/lib/sentry'
-import { AppError } from '@/config/error-patterns'
+import { reportToSentry } from '@/lib/sentry';
+import { AppError } from '@/config/error-patterns';
 
 try {
-  await riskyOperation()
+  await riskyOperation();
 } catch (error) {
-  const appError = new AppError('操作に失敗', 'SYSTEM_ERROR_500', { error })
-  reportToSentry(appError) // 自動分類・構造化レポート
+  const appError = new AppError('操作に失敗', 'SYSTEM_ERROR_500', { error });
+  reportToSentry(appError); // 自動分類・構造化レポート
 }
 ```
 
@@ -216,29 +216,29 @@ curl https://your-app.vercel.app/api/health
 #### 基本的な使い方
 
 ```typescript
-import { reportToSentry } from '@/lib/sentry'
-import { AppError } from '@/config/error-patterns'
+import { reportToSentry } from '@/lib/sentry';
+import { AppError } from '@/config/error-patterns';
 
 try {
-  await fetchUserData(userId)
+  await fetchUserData(userId);
 } catch (error) {
   const appError = new AppError('ユーザーデータの取得に失敗', 'DATA_NOT_FOUND_404', {
     userId,
     originalError: error,
-  })
-  reportToSentry(appError)
-  throw appError
+  });
+  reportToSentry(appError);
+  throw appError;
 }
 ```
 
 #### Reactコンポーネントでのエラー
 
 ```typescript
-import { handleReactError } from '@/lib/sentry'
+import { handleReactError } from '@/lib/sentry';
 
 class ErrorBoundary extends React.Component {
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    handleReactError(error, errorInfo)
+    handleReactError(error, errorInfo);
   }
 }
 ```
@@ -246,18 +246,18 @@ class ErrorBoundary extends React.Component {
 #### APIルートでのエラー
 
 ```typescript
-import { handleApiError } from '@/lib/sentry'
+import { handleApiError } from '@/lib/sentry';
 
 export async function GET(request: Request) {
   try {
-    const data = await fetchData()
-    return Response.json(data)
+    const data = await fetchData();
+    return Response.json(data);
   } catch (error) {
     handleApiError(error as Error, {
       endpoint: '/api/data',
       method: 'GET',
-    })
-    return Response.json({ error: 'Internal Server Error' }, { status: 500 })
+    });
+    return Response.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
 ```
@@ -279,29 +279,29 @@ Web Vitalsは `instrumentation-client.ts` で自動計測されます。
 #### カスタムパフォーマンストレース
 
 ```typescript
-import { withTrace, traceApiCall, traceDbQuery } from '@/lib/sentry'
+import { withTrace, traceApiCall, traceDbQuery } from '@/lib/sentry';
 
 // API呼び出し計測
 const tasks = await traceApiCall('GET /tasks', async () => {
-  return await api.get('/tasks')
-})
+  return await api.get('/tasks');
+});
 
 // データベースクエリ計測
 const user = await traceDbQuery('users.findUnique', async () => {
-  return await prisma.user.findUnique({ where: { id } })
-})
+  return await prisma.user.findUnique({ where: { id } });
+});
 
 // 汎用トレース
 const { result, duration } = await withTrace(
   'complex-calculation',
   async () => {
-    return await heavyComputation()
+    return await heavyComputation();
   },
   {
     op: 'function',
     tags: { complexity: 'high' },
-  }
-)
+  },
+);
 ```
 
 ---
@@ -368,7 +368,7 @@ const CATEGORY_TAGS = {
     alerting: 'immediate',
   },
   // ... 他のカテゴリ
-}
+};
 ```
 
 ---
@@ -406,7 +406,7 @@ const connectSrc = [
   // ...
   'https://*.sentry.io',
   'https://*.ingest.sentry.io',
-]
+];
 ```
 
 ### Auth Token エラー
@@ -494,13 +494,13 @@ Core Web Vitals目標（2025基準）：
 
 ```typescript
 // ❌ 旧（非推奨）
-import { initializeSentry, sentryIntegration } from '@/lib/sentry'
-initializeSentry()
-sentryIntegration.reportError(error)
+import { initializeSentry, sentryIntegration } from '@/lib/sentry';
+initializeSentry();
+sentryIntegration.reportError(error);
 
 // ✅ 新（推奨）
-import { reportToSentry } from '@/lib/sentry'
-reportToSentry(error)
+import { reportToSentry } from '@/lib/sentry';
+reportToSentry(error);
 ```
 
 Sentryの初期化は `instrumentation.ts` / `instrumentation-client.ts` で自動的に行われます。
@@ -518,8 +518,7 @@ Sentryの初期化は `instrumentation.ts` / `instrumentation-client.ts` で自�
 
 ### BoxLog関連
 
-- **エラーパターンガイド**: [`../architecture/ERROR_PATTERNS_GUIDE.md`](../architecture/ERROR_PATTERNS_GUIDE.md)
-- **エラーハンドリング**: [`../architecture/ERROR_HANDLING.md`](../architecture/ERROR_HANDLING.md)
+- **エラーパターン**: Storybook → Docs/アーキテクチャ/エラーパターン
 
 ### ヘルパースクリプト
 

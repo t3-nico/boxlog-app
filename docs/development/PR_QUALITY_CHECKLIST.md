@@ -251,7 +251,7 @@ npm run quality:gate
 ## 🎓 関連ドキュメント
 
 - [包括的品質ゲートシステム](./session-templates/QUALITY_CHECKLIST.md)
-- [Bundle監視システム](../performance/BUNDLE_MONITORING.md)
+- Storybook → Docs/実装ガイド/バンドル監視
 
 ---
 
