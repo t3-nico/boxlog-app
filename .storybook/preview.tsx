@@ -4,7 +4,7 @@ import { NextIntlClientProvider } from 'next-intl';
 
 import '../src/styles/globals.css';
 import { DocsTemplate } from './DocsTemplate';
-import { dayoptDarkTheme, dayoptLightTheme } from './dayoptTheme';
+import { dayoptLightTheme } from './dayoptTheme';
 import { TRPCMockProvider } from './mocks/trpc';
 import './prose.css';
 
@@ -285,6 +285,7 @@ const preview: Preview = {
       },
     },
     backgrounds: {
+      options: {},
       grid: {
         cellSize: 16,
         cellAmount: 5,
@@ -292,7 +293,6 @@ const preview: Preview = {
         offsetX: 16,
         offsetY: 16,
       },
-      disabled: true,
     },
     options: {
       storySort: {
@@ -300,15 +300,8 @@ const preview: Preview = {
         order: ['Docs', 'Tokens', 'Components', 'Features', 'Patterns'],
       },
     },
-    darkMode: {
-      dark: dayoptDarkTheme,
-      light: dayoptLightTheme,
-      darkClass: 'dark',
-      lightClass: 'light',
-      stylePreview: true,
-      current: 'light',
-    },
     docs: {
+      codePanel: true,
       theme: dayoptLightTheme,
       page: DocsTemplate,
     },

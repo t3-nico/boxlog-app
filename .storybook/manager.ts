@@ -1,15 +1,16 @@
 import { addons } from 'storybook/manager-api';
 
-import { dayoptLightTheme } from './dayoptTheme';
+import { dayoptDarkTheme, dayoptLightTheme } from './dayoptTheme';
+
+const isDark =
+  typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
 
 addons.setConfig({
-  theme: dayoptLightTheme,
-  // Controlsパネルをデフォルトで表示
+  theme: isDark ? dayoptDarkTheme : dayoptLightTheme,
   selectedPanel: 'storybook/controls',
-  // position: fixed要素がtransform: scaleで壊れる問題を回避するため
-  // zoomツールバーを非表示にする
-  // https://github.com/storybookjs/storybook/issues/23586
   toolbar: {
+    // position: fixed要素がtransform: scaleで壊れる問題を回避
+    // https://github.com/storybookjs/storybook/issues/23586
     zoom: { hidden: true },
   },
 });
