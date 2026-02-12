@@ -43,7 +43,7 @@ export function CollapsedSleepSection({
   return (
     <div
       className={cn(
-        'bg-chronotype-sleep border-border relative z-10 flex h-12 items-center',
+        'bg-chronotype-sleep border-border relative z-10 flex h-9 items-center',
         position === 'top' && 'border-b',
         position === 'bottom' && 'border-t',
         className,
@@ -85,4 +85,4 @@ export function CollapsedSleepSection({
 }
 
 /** 折りたたみセクションの高さ（px） */
-export const COLLAPSED_SECTION_HEIGHT = 48;
+export const COLLAPSED_SECTION_HEIGHT = 36;
