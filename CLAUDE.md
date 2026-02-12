@@ -669,8 +669,6 @@ npm run test -- path  # 特定ファイル
 - p95が良化 → 正解パターンとして記録
 - 平均値は参考程度（判断には使わない）
 
-**詳細**: [`docs/performance/PERFORMANCE_MONITORING_PRINCIPLES.md`](docs/performance/PERFORMANCE_MONITORING_PRINCIPLES.md)
-
 ---
 
 ## 📊 開発の優先順位
