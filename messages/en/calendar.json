@@ -322,7 +322,8 @@
       "recordGroup": {
         "none": "None",
         "workedAt": "Date",
-        "tags": "Tags"
+        "tags": "Tags",
+        "fulfillmentScore": "Fulfillment"
       },
       "recordDateFilter": {
         "label": "Period",

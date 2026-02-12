@@ -11,7 +11,7 @@ import { ja } from 'date-fns/locale';
  * Plan の GroupByField ('status' | 'due_date' | 'tags') と異なり、
  * Record には status がないため worked_at と tags のみ
  */
-export type RecordGroupByField = 'worked_at' | 'tags' | null;
+export type RecordGroupByField = 'worked_at' | 'tags' | 'fulfillment_score' | null;
 
 /**
  * Record グルーピング可能なアイテムの最小インターフェース
@@ -19,6 +19,7 @@ export type RecordGroupByField = 'worked_at' | 'tags' | null;
 interface RecordGroupable {
   worked_at: string;
   tagIds?: string[];
+  fulfillment_score?: number | null;
 }
 
 /**
@@ -65,6 +66,12 @@ export function groupRecordItems<T extends RecordGroupable>(
         return dateOrder.indexOf(a.groupKey) - dateOrder.indexOf(b.groupKey);
       }
 
+      if (groupBy === 'fulfillment_score') {
+        // 充実度: 高い順（5→1→未設定）
+        const scoreOrder = ['5', '4', '3', '2', '1', 'none'];
+        return scoreOrder.indexOf(a.groupKey) - scoreOrder.indexOf(b.groupKey);
+      }
+
       // タグ: アルファベット順（「タグなし」は末尾）
       if (a.groupKey === 'タグなし') return 1;
       if (b.groupKey === 'タグなし') return -1;
@@ -84,6 +91,11 @@ function getRecordGroupKey(item: RecordGroupable, groupBy: RecordGroupByField): 
 
     case 'tags':
       return item.tagIds && item.tagIds.length > 0 ? item.tagIds[0]! : 'タグなし';
+
+    case 'fulfillment_score':
+      return item.fulfillment_score != null && item.fulfillment_score > 0
+        ? String(item.fulfillment_score)
+        : 'none';
 
     default:
       return 'unknown';
@@ -122,6 +134,9 @@ function getRecordGroupLabel(groupKey: string, groupBy: RecordGroupByField): str
     case 'tags':
       return groupKey;
 
+    case 'fulfillment_score':
+      return getFulfillmentLabel(groupKey);
+
     default:
       return groupKey;
   }
@@ -141,4 +156,13 @@ function getWorkedAtLabel(groupKey: string): string {
   };
 
   return labels[groupKey] ?? groupKey;
+}
+
+/**
+ * 充実度グループのラベルを取得
+ */
+function getFulfillmentLabel(groupKey: string): string {
+  if (groupKey === 'none') return '未設定';
+  const score = Number(groupKey);
+  return '★'.repeat(score) + '☆'.repeat(5 - score);
 }
