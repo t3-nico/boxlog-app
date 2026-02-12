@@ -181,11 +181,151 @@ try {
 
 ---
 
-## 関連Story
+## エラーハンドリングフロー
 
+### フロントエンドエラー
+
+```
+エラー発生
+  ↓
+ErrorBoundary/FeatureErrorBoundary がキャッチ
+  ↓
+error-analysis.ts で分析
+  ↓
+error-patterns.ts からパターン取得
+  ↓
+ユーザーフレンドリーなメッセージ表示
+  ↓
+自動復旧可能？ → Yes: リトライ実行
+                → No: フォールバック表示
+```
+
+### API/サーバーエラー
+
+```
+エラー発生
+  ↓
+api/error-handler.ts でキャッチ
+  ↓
+エラーコード判定 (errorCodes.ts)
+  ↓
+適切なHTTPステータスコード返却
+  ↓
+クライアントでエラーパターン辞書から処理
+```
+
+### グローバルエラー
+
+```
+未処理のエラー発生
+  ↓
+GlobalErrorBoundary がキャッチ
+  ↓
+Sentry統合 (sentry/integration.ts)
+  ↓
+自動復旧システム起動
+  ↓
+リトライ → 成功: アプリ続行
+        → 失敗: エラー画面表示
+```
+
+---
+
+## ディレクトリ構造
+
+### エラーパターン辞書
+
+```
+src/config/
+├── error-patterns.ts          # メイン辞書（ErrorPattern, ERROR_PATTERNS, AppError）
+└── error-patterns/            # 高機能版（将来の拡張用）
+    ├── index.ts               # ErrorPatternDictionary
+    ├── categories.ts          # 7カテゴリ定義
+    ├── messages.ts            # ユーザー向けメッセージ
+    └── recovery-strategies.ts # リトライ・サーキットブレーカー
+```
+
+### エラーバウンダリー
+
+```
+src/components/
+├── error-boundary.tsx              # ErrorBoundary, FeatureErrorBoundary
+└── common/
+    ├── GlobalErrorBoundary.tsx     # 全画面保護 + 自動復旧
+    └── ErrorFallbacks.tsx          # Network/DB/API/UI/Auth別フォールバック
+```
+
+### エラーページ
+
+```
+src/app/
+├── not-found.tsx              # 404エラー
+├── error.tsx                  # 500エラー
+└── error/
+    ├── 401/page.tsx           # 認証エラー
+    ├── 403/page.tsx           # 権限エラー
+    ├── 500/page.tsx           # サーバーエラー
+    └── maintenance/page.tsx   # メンテナンス
+```
+
+---
+
+## 新しいエラーパターンの追加
+
+### 1. エラーコード追加
+
+```typescript
+// src/constants/errorCodes.ts
+export const ERROR_CODES = {
+  // 既存のコード...
+  NEW_ERROR: 4100, // 4000番台 = BIZカテゴリ
+}
+```
+
+### 2. パターン追加
+
+```typescript
+// src/config/error-patterns.ts
+export const ERROR_PATTERNS: Record<number, ErrorPattern> = {
+  [ERROR_CODES.NEW_ERROR]: {
+    technical: '技術者向けメッセージ',
+    userFriendly: 'ユーザー向けメッセージ',
+    short: '短縮メッセージ',
+    description: '詳細説明',
+    recommendedActions: ['アクション1', 'アクション2'],
+    autoRecoverable: false,
+    urgency: 'medium',
+    emoji: '⚠️',
+  },
+}
+```
+
+---
+
+## DO / DON'T
+
+### DO
+
+- エラーは必ずエラーパターン辞書に登録する
+- カテゴリに応じた適切なエラーコードを使用する
+- ユーザーフレンドリーなメッセージを提供する
+- 自動復旧可能なエラーは積極的にリトライする
+
+### DON'T
+
+- 汎用的な `try-catch` を乱用しない
+- エラーメッセージに技術的な詳細を含めない
+- エラーを握りつぶさない（必ずログ出力またはSentry送信）
+- 同じエラーパターンを複数の場所で重複定義しない
+
+---
+
+## 関連ページ
+
+- [ErrorBoundary](?path=/docs/docs-実装ガイド-errorboundary--docs) — 4段階自動復旧システム
 - [Patterns/ErrorPages](?path=/docs/patterns-errorpages--docs) — エラーページのUIパターン
 - [Patterns/Feedback](?path=/docs/patterns-feedback--docs) — toast通知パターン
 
 ---
 
-**最終更新**: 2026-02-12 | **バージョン**: v1.0
+**最終更新**: 2026-02-12 | **バージョン**: v2.0
