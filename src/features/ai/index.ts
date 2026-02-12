@@ -11,4 +11,7 @@
  */
 
 // Components
-export { AIInspectorContent } from './components';
+export { AIInspectorContent, ChatEmptyState, ChatInput, ChatMessageList } from './components';
+
+// Types
+export type { ChatMessage } from './types';
