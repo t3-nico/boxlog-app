@@ -1,6 +1,6 @@
 {
-  "name": "BoxLog",
-  "short_name": "BoxLog",
+  "name": "Dayopt",
+  "short_name": "Dayopt",
   "description": "タスク管理アプリケーション",
   "start_url": "/",
   "scope": "/",
@@ -35,7 +35,7 @@
       "sizes": "1200x630",
       "type": "image/png",
       "form_factor": "wide",
-      "label": "BoxLog Calendar View"
+      "label": "Dayopt Calendar View"
     }
   ]
 }

@@ -208,7 +208,7 @@ function occurrenceToCalendarPlan(
     startDate = new Date(occurrence.date);
     startDate.setHours(startHour ?? 0, startMin ?? 0, 0, 0);
   } else {
-    // 終日イベント
+    // 時間指定なし（日の先頭に配置）
     startDate = new Date(occurrence.date);
     startDate.setHours(0, 0, 0, 0);
   }
@@ -221,7 +221,7 @@ function occurrenceToCalendarPlan(
     endDate = new Date(occurrence.date);
     endDate.setHours(endHour ?? 0, endMin ?? 0, 0, 0);
   } else {
-    // 終日イベント
+    // 時間指定なし（日の終わりに設定）
     endDate = new Date(occurrence.date);
     endDate.setHours(23, 59, 59, 999);
   }

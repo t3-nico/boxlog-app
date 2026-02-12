@@ -17,7 +17,7 @@ import { TagSortableTree } from '@/features/tags/components/sortable-tree/TagSor
  *
  * ## アーキテクチャ概要
  *
- * BoxLogのDnDは **3つの独立した層** で構成されている。
+ * DayoptのDnDは **3つの独立した層** で構成されている。
  *
  * | 層 | 方式 | 用途 |
  * |---|---|---|

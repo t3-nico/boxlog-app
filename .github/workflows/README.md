@@ -1,6 +1,6 @@
 # 🤖 GitHub Actions ワークフロー
 
-BoxLog Appの自動化されたCI/CDシステム（一人開発最適化版）
+Dayopt Appの自動化されたCI/CDシステム（一人開発最適化版）
 
 ## 📋 ワークフロー構成
 

@@ -2,6 +2,7 @@
 
 import { useCallback, useMemo, useState } from 'react';
 
+import { isBefore, startOfDay } from 'date-fns';
 import { useTranslations } from 'next-intl';
 
 import { usePlans } from '@/features/plans/hooks/usePlans';
@@ -64,25 +65,44 @@ export function PlanListPanel() {
   const { getTagById } = useTagsMap();
 
   // プラン一覧取得（サーバー側ソート + ステータスフィルター）
+  // overdue: サーバーには 'open' で問い合わせ、期限切れはクライアントでフィルター
+  const apiStatus = scheduleFilter === 'overdue' ? 'open' : statusFilter;
   const baseFilters =
-    statusFilter === 'all' ? { sortBy, sortOrder } : { status: statusFilter, sortBy, sortOrder };
+    apiStatus === 'all' ? { sortBy, sortOrder } : { status: apiStatus, sortBy, sortOrder };
   const {
     data: plans,
     isLoading,
     error,
   } = usePlans(search ? { ...baseFilters, search } : baseFilters);
 
+  // 期限切れ判定用の今日の日付
+  const today = useMemo(() => startOfDay(new Date()), []);
+
+  // 期限切れ判定
+  const isPlanOverdue = useCallback(
+    (plan: PlanWithTags) => {
+      if (!plan.due_date || plan.status === 'closed') return false;
+      return isBefore(new Date(plan.due_date), today);
+    },
+    [today],
+  );
+
   // フィルタリング: スケジュールフィルター + タグフィルター
   const filteredPlans = useMemo(() => {
     if (!plans) return [];
 
     return plans.filter((plan) => {
-      // スケジュールフィルター
+      // スケジュール/日付フィルター
       if (scheduleFilter === 'unscheduled' && plan.start_time) {
         return false;
       }
       if (scheduleFilter === 'scheduled' && !plan.start_time) {
         return false;
+      }
+      if (scheduleFilter === 'overdue') {
+        if (!plan.due_date || !isBefore(new Date(plan.due_date), today)) {
+          return false;
+        }
       }
 
       // タグフィルター
@@ -93,7 +113,7 @@ export function PlanListPanel() {
 
       return true;
     });
-  }, [plans, isPlanVisible, scheduleFilter]);
+  }, [plans, isPlanVisible, scheduleFilter, today]);
 
   // グルーピング
   const groupedPlans = useMemo(() => {
@@ -226,6 +246,7 @@ export function PlanListPanel() {
                   <PlanListCard
                     key={plan.id}
                     plan={plan}
+                    isOverdue={isPlanOverdue(plan)}
                     onClick={() => openInspector(plan.id)}
                     onDragStart={handleDragStart}
                     onCreateRecord={handleCreateRecordFromPlan}
@@ -241,6 +262,7 @@ export function PlanListPanel() {
               <PlanListCard
                 key={plan.id}
                 plan={plan}
+                isOverdue={isPlanOverdue(plan)}
                 onClick={() => openInspector(plan.id)}
                 onDragStart={handleDragStart}
               />

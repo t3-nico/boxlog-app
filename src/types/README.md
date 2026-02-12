@@ -1,6 +1,6 @@
 # types/ - Shared Type Definitions
 
-BoxLog application shared type definitions.
+Dayopt application shared type definitions.
 
 ## Directory Purpose
 

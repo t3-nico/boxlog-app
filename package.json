@@ -1,5 +1,5 @@
 {
-  "name": "boxlog-app",
+  "name": "dayopt",
   "version": "0.13.0",
   "private": true,
   "sideEffects": [
@@ -67,8 +67,8 @@
     "lint:a11y:fix": "eslint . -c .eslint/index.js --ext .tsx,.ts --fix | grep -E '(jsx-a11y|accessibility)'",
     "a11y:check": "npm run lint:a11y",
     "a11y:full": "npm run lint:a11y:fix",
-    "license:check": "npx license-checker --production --excludePackages \"boxlog-app@$(node -p 'require(\"./package.json\").version')\" --onlyAllow \"$(cat .licensrc.json | jq -r .onlyAllow)\"",
-    "license:check:force": "npx license-checker --production --excludePackages \"boxlog-app@$(node -p 'require(\"./package.json\").version')\" --onlyAllow \"$(cat .licensrc.json | jq -r .onlyAllow)\" --failOn \"$(cat .licensrc.json | jq -r .onlyAllow)\"",
+    "license:check": "npx license-checker --production --excludePackages \"dayopt@$(node -p 'require(\"./package.json\").version')\" --onlyAllow \"$(cat .licensrc.json | jq -r .onlyAllow)\"",
+    "license:check:force": "npx license-checker --production --excludePackages \"dayopt@$(node -p 'require(\"./package.json\").version')\" --onlyAllow \"$(cat .licensrc.json | jq -r .onlyAllow)\" --failOn \"$(cat .licensrc.json | jq -r .onlyAllow)\"",
     "license:check-risks": "tsx scripts/check-license-risks.ts",
     "license:audit": "npx license-checker --production --summary",
     "license:report": "npx license-checker --production --csv > license-report.csv",

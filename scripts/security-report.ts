@@ -20,29 +20,29 @@
  * @see Issue #487 - OWASP準拠のセキュリティ強化 Phase 3
  */
 
-import { execSync } from 'node:child_process'
-import { writeFileSync } from 'node:fs'
-import { join } from 'node:path'
+import { execSync } from 'node:child_process';
+import { writeFileSync } from 'node:fs';
+import { join } from 'node:path';
 
 /**
  * レポート生成日時
  */
-const reportDate = new Date().toISOString().split('T')[0]
-const reportTimestamp = new Date().toISOString()
+const reportDate = new Date().toISOString().split('T')[0];
+const reportTimestamp = new Date().toISOString();
 
 /**
  * レポート出力先
  */
-const reportDir = join(process.cwd(), 'reports', 'security')
-const reportPath = join(reportDir, `security-report-${reportDate}.md`)
+const reportDir = join(process.cwd(), 'reports', 'security');
+const reportPath = join(reportDir, `security-report-${reportDate}.md`);
 
 /**
  * メイン処理
  */
 async function generateSecurityReport(): Promise<void> {
-  console.log('🛡️ Security Report Generator')
-  console.log(`📅 Report Date: ${reportDate}`)
-  console.log(`📁 Output: ${reportPath}\n`)
+  console.log('🛡️ Security Report Generator');
+  console.log(`📅 Report Date: ${reportDate}`);
+  console.log(`📁 Output: ${reportPath}\n`);
 
   const sections: string[] = [
     generateHeader(),
@@ -54,18 +54,18 @@ async function generateSecurityReport(): Promise<void> {
     await generateAuditLogSummary(),
     generateRecommendations(),
     generateFooter(),
-  ]
+  ];
 
-  const report = sections.join('\n\n')
+  const report = sections.join('\n\n');
 
   // レポート保存
   try {
-    execSync(`mkdir -p ${reportDir}`)
-    writeFileSync(reportPath, report)
-    console.log(`\n✅ Security report generated: ${reportPath}`)
+    execSync(`mkdir -p ${reportDir}`);
+    writeFileSync(reportPath, report);
+    console.log(`\n✅ Security report generated: ${reportPath}`);
   } catch (error) {
-    console.error('❌ Failed to save report:', error)
-    process.exit(1)
+    console.error('❌ Failed to save report:', error);
+    process.exit(1);
   }
 }
 
@@ -73,34 +73,34 @@ async function generateSecurityReport(): Promise<void> {
  * レポートヘッダー
  */
 function generateHeader(): string {
-  return `# 🛡️ BoxLog Security Report
+  return `# 🛡️ Dayopt Security Report
 
 **Generated**: ${reportTimestamp}
-**Project**: BoxLog App
+**Project**: Dayopt App
 **Environment**: Production
 
 ---
-`
+`;
 }
 
 /**
  * 1. 依存関係の脆弱性スキャン
  */
 async function generateNpmAudit(): Promise<string> {
-  console.log('📦 Running npm audit...')
+  console.log('📦 Running npm audit...');
 
-  let auditOutput = ''
+  let auditOutput = '';
   let vulnerabilityCount = {
     critical: 0,
     high: 0,
     moderate: 0,
     low: 0,
     info: 0,
-  }
+  };
 
   try {
-    auditOutput = execSync('npm audit --json', { encoding: 'utf-8' })
-    const auditResult = JSON.parse(auditOutput)
+    auditOutput = execSync('npm audit --json', { encoding: 'utf-8' });
+    const auditResult = JSON.parse(auditOutput);
 
     vulnerabilityCount = {
       critical: auditResult.metadata?.vulnerabilities?.critical || 0,
@@ -108,20 +108,20 @@ async function generateNpmAudit(): Promise<string> {
       moderate: auditResult.metadata?.vulnerabilities?.moderate || 0,
       low: auditResult.metadata?.vulnerabilities?.low || 0,
       info: auditResult.metadata?.vulnerabilities?.info || 0,
-    }
+    };
   } catch (error) {
     // npm auditは脆弱性があるとexit code 1を返すため、エラーでもoutputを取得
     if (error instanceof Error && 'stdout' in error) {
-      auditOutput = (error as { stdout: string }).stdout
+      auditOutput = (error as { stdout: string }).stdout;
       try {
-        const auditResult = JSON.parse(auditOutput)
+        const auditResult = JSON.parse(auditOutput);
         vulnerabilityCount = {
           critical: auditResult.metadata?.vulnerabilities?.critical || 0,
           high: auditResult.metadata?.vulnerabilities?.high || 0,
           moderate: auditResult.metadata?.vulnerabilities?.moderate || 0,
           low: auditResult.metadata?.vulnerabilities?.low || 0,
           info: auditResult.metadata?.vulnerabilities?.info || 0,
-        }
+        };
       } catch {
         // JSON parse失敗時はデフォルト値を使用
       }
@@ -129,14 +129,17 @@ async function generateNpmAudit(): Promise<string> {
   }
 
   const totalVulnerabilities =
-    vulnerabilityCount.critical + vulnerabilityCount.high + vulnerabilityCount.moderate + vulnerabilityCount.low
+    vulnerabilityCount.critical +
+    vulnerabilityCount.high +
+    vulnerabilityCount.moderate +
+    vulnerabilityCount.low;
 
   const status =
     vulnerabilityCount.critical > 0 || vulnerabilityCount.high > 0
       ? '🔴 Critical'
       : vulnerabilityCount.moderate > 0
         ? '🟡 Warning'
-        : '🟢 Pass'
+        : '🟢 Pass';
 
   return `## 1. 依存関係の脆弱性スキャン ${status}
 
@@ -164,14 +167,14 @@ ${auditOutput.slice(0, 1000)}${auditOutput.length > 1000 ? '...\n(truncated)' : 
 \`\`\`
 
 </details>
-`
+`;
 }
 
 /**
  * 2. セキュリティヘッダー検証
  */
 async function generateSecurityHeaders(): Promise<string> {
-  console.log('🔒 Checking security headers...')
+  console.log('🔒 Checking security headers...');
 
   const requiredHeaders = [
     {
@@ -199,14 +202,14 @@ async function generateSecurityHeaders(): Promise<string> {
       expected: 'strict-origin-when-cross-origin',
       description: 'リファラー情報制御',
     },
-  ]
+  ];
 
   // 実際のヘッダーチェックは本番環境でcurlを使用
   // ここでは設定ファイルからの確認を行う
   const headerStatus = requiredHeaders.map((header) => ({
     ...header,
     status: '✅ Configured', // 実際は next.config.mjs から確認
-  }))
+  }));
 
   return `## 2. セキュリティヘッダー検証 🟢 Pass
 
@@ -217,14 +220,14 @@ ${headerStatus.map((h) => `| ${h.name} | ${h.status} | ${h.description} |`).join
 ✅ All required security headers are configured in \`next.config.mjs\`.
 
 **Reference**: [OWASP Secure Headers Project](https://owasp.org/www-project-secure-headers/)
-`
+`;
 }
 
 /**
  * 3. OWASP Top 10 チェックリスト
  */
 async function generateOwaspChecklist(): Promise<string> {
-  console.log('📋 Generating OWASP Top 10 checklist...')
+  console.log('📋 Generating OWASP Top 10 checklist...');
 
   const owaspChecks = [
     {
@@ -287,10 +290,10 @@ async function generateOwaspChecklist(): Promise<string> {
       status: '✅',
       notes: 'URLバリデーション、allowlist実装',
     },
-  ]
+  ];
 
-  const passedCount = owaspChecks.filter((c) => c.status === '✅').length
-  const warningCount = owaspChecks.filter((c) => c.status === '🟡').length
+  const passedCount = owaspChecks.filter((c) => c.status === '✅').length;
+  const warningCount = owaspChecks.filter((c) => c.status === '🟡').length;
 
   return `## 3. OWASP Top 10:2021 Compliance ${warningCount > 0 ? '🟡 Warning' : '🟢 Pass'}
 
@@ -307,14 +310,14 @@ ${
 }
 
 **Reference**: [OWASP Top 10:2021](https://owasp.org/Top10/)
-`
+`;
 }
 
 /**
  * 4. CSP違反レポート
  */
 async function generateCspViolations(): Promise<string> {
-  console.log('🚫 Analyzing CSP violations...')
+  console.log('🚫 Analyzing CSP violations...');
 
   // 実際はSupabaseからCSP違反ログを取得
   // ここではダミーデータを使用
@@ -322,7 +325,7 @@ async function generateCspViolations(): Promise<string> {
     total: 0,
     byDirective: {},
     topViolators: [],
-  }
+  };
 
   return `## 4. CSP違反レポート ${violations.total > 0 ? '🟡 Warning' : '🟢 Pass'}
 
@@ -344,21 +347,21 @@ ${
 1. Monitor CSP reports for 2 weeks
 2. Adjust policy based on legitimate violations
 3. Enable enforcement mode
-`
+`;
 }
 
 /**
  * 5. レート制限統計
  */
 async function generateRateLimitStats(): Promise<string> {
-  console.log('⏱️ Generating rate limit statistics...')
+  console.log('⏱️ Generating rate limit statistics...');
 
   // 実際はRedis/Supabaseから統計を取得
   const stats = {
     totalRequests: 0,
     blockedRequests: 0,
     topEndpoints: [],
-  }
+  };
 
   return `## 5. レート制限統計 🟢 Pass
 
@@ -377,14 +380,14 @@ ${
 }
 
 **Note**: Rate limiting statistics will be available after Upstash Redis deployment.
-`
+`;
 }
 
 /**
  * 6. 監査ログサマリー
  */
 async function generateAuditLogSummary(): Promise<string> {
-  console.log('📊 Summarizing audit logs...')
+  console.log('📊 Summarizing audit logs...');
 
   // 実際はSupabaseから監査ログを集計
   const summary = {
@@ -396,7 +399,7 @@ async function generateAuditLogSummary(): Promise<string> {
       info: 0,
     },
     topEvents: [],
-  }
+  };
 
   return `## 6. 監査ログサマリー 🟢 Pass
 
@@ -416,7 +419,7 @@ ${
 }
 
 **Note**: Audit logging is operational. Full statistics will be available after data accumulation.
-`
+`;
 }
 
 /**
@@ -447,7 +450,7 @@ function generateRecommendations(): string {
 2. **依存関係の更新**
    - Dependabotの推奨を定期的に適用
    - 四半期ごとのメジャーバージョンアップデート検討
-`
+`;
 }
 
 /**
@@ -465,19 +468,19 @@ function generateFooter(): string {
 
 ## 🔗 関連ドキュメント
 
-- [Issue #487: OWASP準拠のセキュリティ強化](https://github.com/t3-nico/boxlog-app/issues/487)
+- [Issue #487: OWASP準拠のセキュリティ強化](https://github.com/t3-nico/dayopt/issues/487)
 - [docs/security/CSRF_PROTECTION.md](../docs/security/CSRF_PROTECTION.md)
 - [src/lib/auth/session-config.ts](../src/lib/auth/session-config.ts)
 
 ---
 
-**Generated by BoxLog Security Report Generator**
+**Generated by Dayopt Security Report Generator**
 **Next Report**: ${new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}
-`
+`;
 }
 
 // 実行
 generateSecurityReport().catch((error) => {
-  console.error('❌ Error generating security report:', error)
-  process.exit(1)
-})
+  console.error('❌ Error generating security report:', error);
+  process.exit(1);
+});

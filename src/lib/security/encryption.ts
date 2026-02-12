@@ -10,7 +10,7 @@
 const ALGORITHM = 'AES-GCM';
 const KEY_LENGTH = 256;
 const IV_LENGTH = 12; // 96 bits, recommended for AES-GCM
-const STORAGE_PREFIX = 'boxlog_encrypted_';
+const STORAGE_PREFIX = 'dayopt_encrypted_';
 
 /**
  * 暗号化キーを導出
@@ -30,7 +30,7 @@ async function deriveKey(secret: string): Promise<CryptoKey> {
   return crypto.subtle.deriveKey(
     {
       name: 'PBKDF2',
-      salt: encoder.encode('boxlog-salt-v1'), // アプリ固有のソルト
+      salt: encoder.encode('dayopt-salt-v1'), // アプリ固有のソルト
       iterations: 100000, // OWASP推奨値
       hash: 'SHA-256',
     },

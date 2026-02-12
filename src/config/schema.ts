@@ -1,5 +1,5 @@
 /**
- * 🔧 BoxLog Configuration Schema System
+ * 🔧 Dayopt Configuration Schema System
  *
  * 設定ファイルの統一スキーマ定義・バリデーション・型安全性管理システム
  * - TypeScript型安全性保証
@@ -97,7 +97,7 @@ export const EmailConfigSchema = z.object({
   /** 送信者アドレス */
   from: z.string().email('Invalid from email address'),
   /** 送信者名 */
-  fromName: z.string().default('BoxLog'),
+  fromName: z.string().default('Dayopt'),
   /** 1時間あたりの送信制限 */
   rateLimit: z.number().int().min(1).default(100),
 });
@@ -163,7 +163,7 @@ export const LoggingConfigSchema = z.object({
   /** ファイル出力 */
   file: z.boolean().default(false),
   /** ファイルパス */
-  filePath: z.string().default('./logs/boxlog.log'),
+  filePath: z.string().default('./logs/dayopt.log'),
   /** ファイルローテーション */
   rotation: z.object({
     maxSize: z.string().default('10m'),
@@ -180,7 +180,7 @@ export const LoggingConfigSchema = z.object({
  */
 export const AppConfigSchema = z.object({
   /** アプリケーション名 */
-  name: z.string().default('BoxLog'),
+  name: z.string().default('Dayopt'),
   /** バージョン */
   version: z.string().default('1.0.0'),
   /** 環境 */
@@ -263,7 +263,7 @@ export const DEFAULT_CONFIGS = {
   staging: {
     app: {
       debug: false,
-      baseUrl: 'https://staging.boxlog.app',
+      baseUrl: 'https://staging.dayopt.app',
     },
     database: {
       ssl: true,
@@ -280,7 +280,7 @@ export const DEFAULT_CONFIGS = {
     },
     server: {
       https: true,
-      corsOrigins: ['https://staging.boxlog.app'],
+      corsOrigins: ['https://staging.dayopt.app'],
       session: {
         secure: true,
       },
@@ -289,7 +289,7 @@ export const DEFAULT_CONFIGS = {
   production: {
     app: {
       debug: false,
-      baseUrl: 'https://boxlog.app',
+      baseUrl: 'https://dayopt.app',
     },
     database: {
       ssl: true,
@@ -306,7 +306,7 @@ export const DEFAULT_CONFIGS = {
     },
     server: {
       https: true,
-      corsOrigins: ['https://boxlog.app'],
+      corsOrigins: ['https://dayopt.app'],
       session: {
         secure: true,
       },

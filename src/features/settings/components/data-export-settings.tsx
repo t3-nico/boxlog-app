@@ -35,7 +35,7 @@ export const DataExportSettings = memo(function DataExportSettings() {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `boxlog-data-export-${result.data.userId}-${Date.now()}.json`;
+      a.download = `dayopt-data-export-${result.data.userId}-${Date.now()}.json`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);

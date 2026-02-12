@@ -33,9 +33,8 @@ export type { DateTimeSelection, TimeRange } from './components/CalendarDragSele
 export { DragSelectionLayer } from './components/DragSelectionLayer';
 export type { TimeSelection } from './components/DragSelectionLayer';
 
-// OverdueSection - 未完了プランバッジ
-export { OverdueBadge } from './components/OverdueBadge';
-export { OverdueSection, OverdueSectionSingle } from './components/OverdueSection';
+// DailyUsageStrip - 日別使用時間表示
+export { DailyUsageStrip, DailyUsageStripSingle } from './components/DailyUsageStrip';
 
 // TimezoneOffset - タイムゾーン表示
 export { TimezoneOffset } from './components/TimezoneOffset';

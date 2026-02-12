@@ -10,7 +10,7 @@ const locales = ['ja', 'en'] as const;
  * @see https://nextjs.org/docs/app/api-reference/file-conventions/metadata/sitemap
  */
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://boxlog.app';
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://dayopt.app';
   const now = new Date();
 
   // 多言語URLを生成するヘルパー関数

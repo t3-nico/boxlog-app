@@ -141,7 +141,7 @@ export function NavUser({
             <DropdownMenuSubContent className="border-input">
               <DropdownMenuItem asChild>
                 <Link
-                  href="https://github.com/t3-nico/boxlog-app/releases"
+                  href="https://github.com/t3-nico/dayopt/releases"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -150,7 +150,7 @@ export function NavUser({
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link href="https://docs.boxlog.app" target="_blank" rel="noopener noreferrer">
+                <Link href="https://docs.dayopt.app" target="_blank" rel="noopener noreferrer">
                   <Book />
                   <span className="flex-1">{t('navUser.helpSubmenu.documentation')}</span>
                   <ExternalLink className="text-muted-foreground size-3" />
@@ -187,7 +187,7 @@ export function NavUser({
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
-                <Link href="mailto:support@boxlog.app">
+                <Link href="mailto:support@dayopt.app">
                   <Mail />
                   {t('navUser.helpSubmenu.contact')}
                 </Link>

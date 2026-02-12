@@ -1,4 +1,4 @@
-name: 🚀 BoxLog CI/CD Pipeline
+name: 🚀 Dayopt CI/CD Pipeline
 
 on:
   push:
@@ -339,7 +339,7 @@ jobs:
                 : '🔧 **Please fix the issues above.**';
             })()}
 
-            <sub>🤖 BoxLog CI/CD Pipeline</sub>`;
+            <sub>🤖 Dayopt CI/CD Pipeline</sub>`;
 
             const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,

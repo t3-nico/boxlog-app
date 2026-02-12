@@ -29,7 +29,7 @@ export type PanelSortOrder = 'asc' | 'desc';
 export type PanelGroupByField = 'due_date' | 'tags' | null;
 
 /** スケジュールフィルター */
-export type PanelScheduleFilter = 'all' | 'scheduled' | 'unscheduled';
+export type PanelScheduleFilter = 'all' | 'scheduled' | 'unscheduled' | 'overdue';
 
 /** ステータスフィルター */
 export type PanelStatusFilter = 'all' | 'open' | 'closed';
@@ -83,6 +83,7 @@ export function PlanListSortMenu({
     { value: 'all', label: t('panel.schedule.all') },
     { value: 'scheduled', label: t('panel.schedule.scheduled') },
     { value: 'unscheduled', label: t('panel.schedule.unscheduled') },
+    { value: 'overdue', label: t('panel.status.overdue') },
   ];
 
   const statusOptions: Array<{ value: PanelStatusFilter; label: string }> = [

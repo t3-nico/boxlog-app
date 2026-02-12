@@ -17,7 +17,7 @@ Sentryダッシュボードでアラート・通知を設定する手順書
 ### 必要なもの
 
 - ✅ Sentryアカウント（Owner または Admin権限）
-- ✅ BoxLogプロジェクトが作成済み
+- ✅ Dayoptプロジェクトが作成済み
 - ✅ `.env.local` に `NEXT_PUBLIC_SENTRY_DSN` 設定済み
 - ⚠️ Slack連携の場合: Slackワークスペースの管理者権限
 
@@ -41,7 +41,7 @@ Sentryダッシュボード（https://sentry.io）でイベントが表示され
 ### 1. Sentryダッシュボードにアクセス
 
 1. https://sentry.io にログイン
-2. プロジェクト **boxlog-app** を選択
+2. プロジェクト **dayopt** を選択
 3. 左サイドバー → **Alerts** をクリック
 
 ### 2. 新規アラートルール作成
@@ -221,7 +221,7 @@ THEN [アクション]
 
 6. **Save Rule**
 
-#### カテゴリ（BoxLog実装）
+#### カテゴリ（Dayopt実装）
 
 `src/config/error-patterns.ts` で定義:
 
@@ -410,4 +410,4 @@ curl http://localhost:3000/api/test/sentry?type=error
 
 **種類**: 📗 ハウツーガイド
 **最終更新**: 2025-12-11
-**所有者**: BoxLog 開発チーム
+**所有者**: Dayopt 開発チーム

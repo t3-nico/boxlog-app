@@ -76,18 +76,18 @@ export const viewport: Viewport = {
  */
 export const metadata: Metadata = {
   title: {
-    template: '%s - BoxLog',
-    default: 'BoxLog',
+    template: '%s - Dayopt',
+    default: 'Dayopt',
   },
-  description: 'BoxLog - Task management and productivity application',
+  description: 'Dayopt - Task management and productivity application',
   // iOS PWA設定（Apple Human Interface Guidelines準拠）
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
-    title: 'BoxLog',
+    title: 'Dayopt',
   },
   // Android PWA向け追加設定
-  applicationName: 'BoxLog',
+  applicationName: 'Dayopt',
   formatDetection: {
     telephone: false,
   },

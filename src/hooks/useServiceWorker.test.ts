@@ -120,10 +120,10 @@ describe('useServiceWorker', () => {
   });
 
   describe('キャッシュクリア', () => {
-    it('clearCache が boxlog- プレフィックスのキャッシュを削除', async () => {
+    it('clearCache が dayopt- プレフィックスのキャッシュを削除', async () => {
       vi.mocked(window.caches.keys).mockResolvedValue([
-        'boxlog-v1',
-        'boxlog-static-v1',
+        'dayopt-v1',
+        'dayopt-static-v1',
         'other-cache',
       ]);
 
@@ -137,8 +137,8 @@ describe('useServiceWorker', () => {
         await result.current.clearCache();
       });
 
-      expect(window.caches.delete).toHaveBeenCalledWith('boxlog-v1');
-      expect(window.caches.delete).toHaveBeenCalledWith('boxlog-static-v1');
+      expect(window.caches.delete).toHaveBeenCalledWith('dayopt-v1');
+      expect(window.caches.delete).toHaveBeenCalledWith('dayopt-static-v1');
       expect(window.caches.delete).not.toHaveBeenCalledWith('other-cache');
     });
   });

@@ -19,7 +19,7 @@ test.describe('Smoke: ルーティング', () => {
     });
 
     // ページタイトルが存在する
-    await expect(page).toHaveTitle(/BoxLog/);
+    await expect(page).toHaveTitle(/Dayopt/);
   });
 
   test('ページが正常にレンダリングされる', async ({ page }) => {
@@ -99,7 +99,7 @@ test.describe('Smoke: 認証フロー', () => {
 
       // カレンダーページに遷移
       await page.waitForURL(/\/calendar/i, { timeout: 15000 });
-      await expect(page).toHaveTitle(/BoxLog/);
+      await expect(page).toHaveTitle(/Dayopt/);
     });
   });
 });

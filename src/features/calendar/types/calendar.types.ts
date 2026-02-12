@@ -61,7 +61,6 @@ export interface CalendarPlan {
   userId?: string | undefined; // 所有者ID
   location?: string | undefined; // 場所
   url?: string | undefined; // 関連URL
-  allDay?: boolean | undefined; // 終日予定
   priority?: 'urgent' | 'important' | 'necessary' | 'delegate' | 'optional' | undefined; // 優先度
   calendarId?: string | undefined; // カレンダーID（繰り返しの場合は親プランID）
   // 繰り返し例外情報
@@ -211,7 +210,6 @@ export interface CreatePlanInput {
   calendarId?: string;
   plannedStart?: Date;
   plannedEnd?: Date;
-  allDay?: boolean;
   status?: 'todo' | 'doing' | 'closed';
   priority?: 'urgent' | 'important' | 'necessary' | 'delegate' | 'optional';
   color?: string;

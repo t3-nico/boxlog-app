@@ -17,11 +17,11 @@ Dayoptでの Supabase 運用パターンを支援するスキル。
 
 ## 3環境構成
 
-| 環境 | Supabase | 用途 |
-|------|----------|------|
-| **Local** | 127.0.0.1:54321 | 開発・デバッグ |
-| **Staging** | boxlog-staging（Tokyo） | PRレビュー |
-| **Production** | t3-nico's Project（Tokyo） | 実ユーザー |
+| 環境           | Supabase                   | 用途           |
+| -------------- | -------------------------- | -------------- |
+| **Local**      | 127.0.0.1:54321            | 開発・デバッグ |
+| **Staging**    | dayopt-staging（Tokyo）    | PRレビュー     |
+| **Production** | t3-nico's Project（Tokyo） | 実ユーザー     |
 
 **重要**: 各環境のDBとAuthは完全に独立。アカウント共有不可。
 
@@ -172,7 +172,7 @@ export function useEntityRealtime(onUpdate: () => void) {
         (payload) => {
           console.log('Change received:', payload);
           onUpdate();
-        }
+        },
       )
       .subscribe();
 
@@ -223,7 +223,7 @@ import { createBrowserClient } from '@supabase/ssr';
 export function createClient() {
   return createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
   );
 }
 ```
@@ -243,7 +243,7 @@ export async function createClient() {
         getAll: () => cookieStore.getAll(),
         setAll: (cookies) => cookies.forEach((c) => cookieStore.set(c)),
       },
-    }
+    },
   );
 }
 ```
@@ -251,6 +251,7 @@ export async function createClient() {
 ## チェックリスト
 
 マイグレーション作成時：
+
 - [ ] RLSを有効化したか
 - [ ] 適切なRLSポリシーを設定したか
 - [ ] `user_id` カラムがあるか（ユーザーデータの場合）
@@ -259,6 +260,7 @@ export async function createClient() {
 - [ ] ローカルでテストしたか
 
 Realtime実装時：
+
 - [ ] `filter` でユーザーIDを指定したか
 - [ ] クリーンアップ（removeChannel）を実装したか
 - [ ] 楽観的更新との競合を考慮したか

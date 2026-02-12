@@ -1,4 +1,4 @@
-// Notification types for BoxLog notification system
+// Notification types for Dayopt notification system
 
 // 通知タイプ
 export type NotificationType =

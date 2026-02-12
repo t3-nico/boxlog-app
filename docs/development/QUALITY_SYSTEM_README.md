@@ -1,6 +1,6 @@
-# 📊 BoxLog自動品質レポートシステム
+# 📊 Dayopt自動品質レポートシステム
 
-BoxLogプロジェクトの自動品質監視・改善提案システムの完全ガイドです。
+Dayoptプロジェクトの自動品質監視・改善提案システムの完全ガイドです。
 
 ## 🎯 システム概要
 
@@ -77,7 +77,7 @@ npm run improvement:track
 ### ファイル構成
 
 ```
-boxlog-app/
+dayopt/
 ├── scripts/
 │   ├── quality-report.js           # 品質レポート生成
 │   ├── metrics-collector.js        # メトリクス収集
@@ -167,7 +167,7 @@ if (bundleMB > 5) {
 
 ```json
 {
-  "text": "📊 BoxLog品質レポート",
+  "text": "📊 Dayopt品質レポート",
   "blocks": [
     {
       "type": "section",
@@ -295,9 +295,9 @@ npm run build
 
 ## 🔗 関連リンク
 
-- **GitHub Issue**: [#356 自動品質レポートシステム](https://github.com/t3-nico/boxlog-app/issues/356)
+- **GitHub Issue**: [#356 自動品質レポートシステム](https://github.com/t3-nico/dayopt/issues/356)
 - **品質ダッシュボード**: `/quality-dashboard`
-- **改善Issue一覧**: `https://github.com/t3-nico/boxlog-app/issues?q=label%3Aquality-improvement`
+- **改善Issue一覧**: `https://github.com/t3-nico/dayopt/issues?q=label%3Aquality-improvement`
 
 ## 📚 詳細ドキュメント
 
@@ -327,4 +327,4 @@ npm run build
 
 **種類**: 📙 リファレンス
 **最終更新**: 2025-12-11
-**所有者**: BoxLog 開発チーム
+**所有者**: Dayopt 開発チーム

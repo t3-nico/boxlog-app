@@ -54,13 +54,12 @@ Storybookの公式ベストプラクティスに基づいたStory作成ガイド
 新規 Story を作成するときは、この構成に従うこと。
 実物: `src/components/ui/alert-dialog.stories.tsx` + `alert-dialog.docs.mdx`
 
-### 全体構成（3ファイル）
+### 全体構成（2ファイル）
 
 ```
 src/components/ui/
 ├── my-component.tsx              # コンポーネント本体
-├── my-component.stories.tsx      # Story（Canvas用）
-└── my-component.docs.mdx         # Docs（テキスト・テーブル・Controls）← テーブルが必要な場合のみ
+└── my-component.stories.tsx      # Story（Canvas + autodocs）
 ```
 
 ### 1. stories.tsx テンプレート
@@ -72,7 +71,7 @@ import { MyComponent } from './my-component';
 const meta = {
   title: 'Components/MyComponent',
   component: MyComponent,
-  tags: [],                        // autodocs は使わない（MDX Docs を使用）
+  tags: ['autodocs'],              // autodocs で Docs 自動生成
   parameters: {
     layout: 'fullscreen',          // centered | fullscreen | padded
   },
@@ -125,78 +124,17 @@ export const AllPatterns: Story = {
 
 **ポイント:**
 
-- `tags: []` — MDX Docs を使う場合は autodocs を無効化（競合エラー回避）
+- `tags: ['autodocs']` — 常に autodocs を使用
 - JSDoc は **1行** — 改行すると Docs で段落間が空く
 - Canvas に `<h1>`, `<p>` 等の説明テキストは **絶対に入れない**
 - AllPatterns は `flex-col items-start gap-6` で縦並び
-
-### 2. docs.mdx テンプレート（テーブルが必要な場合）
-
-```mdx
-import { Canvas, Controls, Meta, Primary, Stories, Unstyled } from '@storybook/blocks';
-import * as MyComponentStories from './my-component.stories';
-
-<Meta of={MyComponentStories} />
-
-<Unstyled>
-<div className="sb-docs-prose">
-
-# MyComponent
-
-コンポーネントの概要説明。1〜2行。
-
-## 比較や分類（テーブル）
-
-| 項目 | 説明 |
-| ---- | ---- |
-| ...  | ...  |
-
-## コンポーネント構成
-
-| コンポーネント    | 役割   |
-| ----------------- | ------ |
-| `MyComponent`     | ルート |
-| `MyComponentItem` | 子要素 |
-
-## Default
-
-<Primary />
-
-<Controls />
-
-<Stories includePrimary={false} />
-
-</div>
-</Unstyled>
-```
-
-**ポイント:**
-
-- `<Unstyled>` + `.sb-docs-prose` で Storybook のデフォルトスタイルを回避
-- Markdown テーブルは MDX でのみ正常に描画される（JSDoc の `description.component` では不可）
-- `<Stories includePrimary={false} />` で Default の重複を防ぐ
-
-### 3. テーブル不要な場合（autodocs で十分）
-
-MDX を作らず `tags: ['autodocs']` + JSDoc だけで完結できる:
-
-```tsx
-const meta = {
-  title: 'Components/SimpleComponent',
-  component: SimpleComponent,
-  tags: ['autodocs'],              // autodocs 有効
-} satisfies Meta<typeof SimpleComponent>;
-
-/** コンポーネントの説明。Docs に自動表示される。 */
-export const Default: Story = { args: { ... } };
-```
 
 ### Canvas と Docs の役割分離
 
 | タブ       | 役割               | 内容                                        |
 | ---------- | ------------------ | ------------------------------------------- |
 | **Canvas** | コンポーネント描画 | render のみ。見出し・説明テキストは入れない |
-| **Docs**   | ドキュメント       | テキスト説明 + テーブル + Controls          |
+| **Docs**   | ドキュメント       | autodocs 自動生成（JSDoc + Controls）       |
 
 **Canvas:**
 
@@ -206,9 +144,8 @@ export const Default: Story = { args: { ... } };
 
 **Docs:**
 
-- テキスト・テーブル・比較は MDX または JSDoc で記述
+- `tags: ['autodocs']` + JSDoc で自動生成
 - margin: 32px（`.sbdocs-wrapper` で設定済み）
-- prose スタイルは `.sb-docs-prose`（`prose.css`）で管理
 
 ---
 
@@ -239,7 +176,7 @@ import { MyComponent } from './my-component';
 const meta = {
   title: 'Components/MyComponent',
   component: MyComponent,
-  tags: [], // MDX Docs を使う場合。不要なら ['autodocs']
+  tags: ['autodocs'],
   parameters: { layout: 'fullscreen' },
 } satisfies Meta<typeof MyComponent>;
 
@@ -277,7 +214,7 @@ Tokens/         ← デザイントークン
 | `components/ui/`     | `Components/` | `Components/Button`, `Components/Badge`          |
 | `components/common/` | `Components/` | `Components/EmptyState`, `Components/PageHeader` |
 | デザイントークン     | `Tokens/`     | `Tokens/Colors`, `Tokens/Typography`             |
-| ドキュメント         | `Docs/`       | `Docs/はじめに`                                  |
+| ドキュメント         | `Docs/`       | `Docs/Introduction`                              |
 
 ## argTypes 設計
 
@@ -898,8 +835,7 @@ Story作成時の確認項目：
 - [ ] Canvas にテキスト（`<h1>`, `<p>` 等）を入れていない
 - [ ] JSDoc は1行で簡潔に記述した
 - [ ] `AllPatterns` Story を作成した（`flex-col items-start gap-6`）
-- [ ] テーブルが必要な場合は MDX Docs を作成した（`tags: []` に変更）
-- [ ] テーブル不要なら `tags: ['autodocs']` で JSDoc のみ
+- [ ] `tags: ['autodocs']` を設定した
 - [ ] アイコンボタンには `aria-label` を設定した
 - [ ] セマンティックトークン（`bg-background` 等）を使用している
 - [ ] 直接カラー（`text-blue-500` 等）を使っていない

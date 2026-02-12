@@ -429,7 +429,7 @@ GAFAが作ったOSS、推奨パターンを使う。
 | 環境           | Supabase                    | Vercel      | 用途                   |
 | -------------- | --------------------------- | ----------- | ---------------------- |
 | **Local**      | ローカル（127.0.0.1:54321） | npm run dev | 開発・デバッグ         |
-| **Staging**    | boxlog-staging（Tokyo）     | Preview URL | 実機テスト・PRレビュー |
+| **Staging**    | dayopt-staging（Tokyo）     | Preview URL | 実機テスト・PRレビュー |
 | **Production** | t3-nico's Project（Tokyo）  | 本番URL     | 実ユーザー             |
 
 **重要ポイント**:

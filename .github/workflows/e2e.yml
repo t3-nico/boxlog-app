@@ -131,7 +131,7 @@ jobs:
                 : '🔧 **Please fix browser compatibility issues.**';
             })()}
 
-            <sub>🤖 BoxLog E2E Pipeline</sub>`;
+            <sub>🤖 Dayopt E2E Pipeline</sub>`;
 
             const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,

@@ -19,6 +19,8 @@ import { TagsContainer } from '../views/shared/components/PlanCard/TagsContainer
 
 interface PlanListCardProps {
   plan: PlanWithTags;
+  /** 期限切れ状態（時間・日時を赤文字で表示） */
+  isOverdue?: boolean;
   onClick?: (plan: PlanWithTags) => void;
   onDragStart?: (plan: PlanWithTags, e: React.MouseEvent, sourceElement: HTMLElement) => void;
   /** Plan→Record 変換ハンドラ（hover時にボタン表示） */
@@ -33,12 +35,13 @@ interface PlanListCardProps {
  */
 export const PlanListCard = memo<PlanListCardProps>(function PlanListCard({
   plan,
+  isOverdue = false,
   onClick,
   onDragStart,
   onCreateRecord,
 }) {
   const t = useTranslations('calendar');
-  const { formatTime } = useDateFormat();
+  const { formatTime, formatDate } = useDateFormat();
   const { updatePlan } = usePlanMutations();
 
   const status = normalizeStatus(plan.status as PlanStatus);
@@ -48,6 +51,9 @@ export const PlanListCard = memo<PlanListCardProps>(function PlanListCard({
   const startTime = plan.start_time ? formatTime(new Date(plan.start_time)) : '';
   const endTime = plan.end_time ? formatTime(new Date(plan.end_time)) : '';
   const displayTime = startTime && endTime ? `${startTime} - ${endTime}` : startTime || null;
+
+  // 期限日表示
+  const displayDueDate = plan.due_date ? formatDate(new Date(plan.due_date)) : null;
 
   // 作業時間（分）を start_time/end_time から算出
   const durationMinutes =
@@ -148,14 +154,32 @@ export const PlanListCard = memo<PlanListCardProps>(function PlanListCard({
           {plan.title || t('event.noTitle')}
         </p>
 
-        {/* メタ情報行: 時間 + 作業時間 */}
-        {(displayTime || durationMinutes > 0) && (
+        {/* メタ情報行: 期限日 + 時間 + 作業時間 */}
+        {(displayDueDate || displayTime || durationMinutes > 0) && (
           <div className={cn('mt-1 flex items-center gap-2', isCompleted && 'line-through')}>
+            {displayDueDate && (
+              <span
+                className={cn(
+                  'text-xs tabular-nums',
+                  isOverdue
+                    ? 'text-destructive'
+                    : isCompleted
+                      ? 'text-muted-foreground/60'
+                      : 'text-muted-foreground',
+                )}
+              >
+                {displayDueDate}
+              </span>
+            )}
             {displayTime && (
               <span
                 className={cn(
                   'text-xs tabular-nums',
-                  isCompleted ? 'text-muted-foreground/60' : 'text-muted-foreground',
+                  isOverdue
+                    ? 'text-destructive'
+                    : isCompleted
+                      ? 'text-muted-foreground/60'
+                      : 'text-muted-foreground',
                 )}
               >
                 {displayTime}

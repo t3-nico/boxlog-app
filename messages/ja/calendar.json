@@ -288,7 +288,8 @@
         "label": "ステータス",
         "all": "すべて",
         "open": "未完了",
-        "closed": "完了"
+        "closed": "完了",
+        "overdue": "期限切れ"
       },
       "schedule": {
         "label": "日付",

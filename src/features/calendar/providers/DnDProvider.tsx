@@ -38,7 +38,7 @@ interface DnDProviderProps {
  * - ドロップ位置から日付・時刻を計算してplan更新
  *
  * **エッジケース対応**:
- * - 終日プラン（時間なし）→ due_date のみ更新
+ * - 時間なしプラン → due_date のみ更新
  * - 時間指定プラン → due_date + start_time + end_time を更新
  * - 無効なドロップ先 → エラーメッセージ表示
  * - 重複プラン → 既存の時間幅を保持
@@ -187,7 +187,7 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
           start_time = startDate.toISOString();
           end_time = endDate.toISOString();
         } else {
-          // 時間指定なし（終日プラン）
+          // 時間指定なし
           start_time = null;
           end_time = null;
         }

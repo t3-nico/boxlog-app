@@ -105,7 +105,7 @@ jobs:
 
             Please check the [workflow logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) for details.
 
-            <sub>🤖 BoxLog Integration Bot</sub>`;
+            <sub>🤖 Dayopt Integration Bot</sub>`;
 
             const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,

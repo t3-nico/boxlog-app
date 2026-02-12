@@ -7,11 +7,11 @@
     "cookieSettings": "Cookie設定",
     "privacy": {
       "title": "プライバシーポリシー",
-      "description": "BoxLogにおける個人情報の取り扱いについて",
+      "description": "Dayoptにおける個人情報の取り扱いについて",
       "sections": {
         "introduction": {
           "title": "はじめに",
-          "content": "BoxLog（以下「当サービス」）は、ユーザーのプライバシーを尊重し、個人情報を適切に保護することをお約束します。本プライバシーポリシーは、当サービスがどのように個人情報を収集、使用、保護するかを説明します。"
+          "content": "Dayopt（以下「当サービス」）は、ユーザーのプライバシーを尊重し、個人情報を適切に保護することをお約束します。本プライバシーポリシーは、当サービスがどのように個人情報を収集、使用、保護するかを説明します。"
         },
         "dataCollection": {
           "title": "収集する情報",
@@ -82,11 +82,11 @@
     },
     "terms": {
       "title": "利用規約",
-      "description": "BoxLogサービスの利用に関する規約",
+      "description": "Dayoptサービスの利用に関する規約",
       "sections": {
         "introduction": {
           "title": "はじめに",
-          "content": "本利用規約（以下「本規約」）は、BoxLog（以下「当サービス」）の利用条件を定めるものです。当サービスをご利用になる場合には、本規約に同意したものとみなされます。"
+          "content": "本利用規約（以下「本規約」）は、Dayopt（以下「当サービス」）の利用条件を定めるものです。当サービスをご利用になる場合には、本規約に同意したものとみなされます。"
         },
         "serviceDescription": {
           "title": "サービス内容",
@@ -149,11 +149,11 @@
       }
     },
     "contact": {
-      "email": "support@boxlog.app",
-      "website": "https://boxlog.app"
+      "email": "support@dayopt.app",
+      "website": "https://dayopt.app"
     },
     "navigation": {
-      "backToApp": "← BoxLogに戻る",
+      "backToApp": "← Dayoptに戻る",
       "privacy": "プライバシーポリシー",
       "terms": "利用規約",
       "tokushoho": "特定商取引法に基づく表記",
@@ -230,7 +230,7 @@
       }
     },
     "footer": {
-      "copyright": "© 2025 BoxLog. All rights reserved.",
+      "copyright": "© 2025 Dayopt. All rights reserved.",
       "contact": "お問い合わせ: {{email}}"
     },
     "cookies": {
@@ -312,10 +312,10 @@
     },
     "security": {
       "title": "セキュリティ",
-      "description": "BoxLog Security Policy, Vulnerability Disclosure Guidelines, and Security Measures",
+      "description": "Dayopt Security Policy, Vulnerability Disclosure Guidelines, and Security Measures",
       "header": {
         "title": "セキュリティ",
-        "description": "BoxLogは、ユーザーの皆様の情報を保護するために、最高水準のセキュリティ対策を実施しています。"
+        "description": "Dayoptは、ユーザーの皆様の情報を保護するために、最高水準のセキュリティ対策を実施しています。"
       },
       "policy": {
         "title": "セキュリティポリシー",
@@ -349,7 +349,7 @@
         "contacts": {
           "title": "報告窓口",
           "email": "Email",
-          "emailAddress": "security@boxlog.app",
+          "emailAddress": "security@dayopt.app",
           "github": "GitHub Security Advisory",
           "githubLink": "Create Advisory"
         },
@@ -422,9 +422,9 @@
       "contact": {
         "title": "お問い合わせ",
         "securityTeam": "セキュリティチーム",
-        "securityEmail": "security@boxlog.app",
+        "securityEmail": "security@dayopt.app",
         "general": "一般的なお問い合わせ",
-        "generalEmail": "support@boxlog.app",
+        "generalEmail": "support@dayopt.app",
         "thankYou": "セキュリティ向上にご協力いただき、ありがとうございます。皆様の報告により、すべてのユーザーの安全性が向上します。"
       },
       "lastUpdated": "最終更新日: 2025-10-15"
@@ -433,7 +433,7 @@
   "ossCredits": {
     "title": "オープンソースライセンス",
     "description": "このプロジェクトで使用しているオープンソースソフトウェアのライセンス情報",
-    "intro": "BoxLogは以下のオープンソースソフトウェアを使用しています。各プロジェクトのメンテナーと貢献者の皆様に深く感謝いたします。",
+    "intro": "Dayoptは以下のオープンソースソフトウェアを使用しています。各プロジェクトのメンテナーと貢献者の皆様に深く感謝いたします。",
     "totalPackages": "総パッケージ数",
     "searchPlaceholder": "パッケージ名で検索...",
     "license": "ライセンス",

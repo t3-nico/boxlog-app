@@ -1,6 +1,6 @@
 # src/config - 設定管理システム
 
-BoxLogアプリケーションの設定を一元管理するディレクトリです。
+Dayoptアプリケーションの設定を一元管理するディレクトリです。
 
 ## 📁 ディレクトリ構成
 
@@ -48,7 +48,7 @@ import { APP_CONFIG } from '@/config/app/constants';
 ```typescript
 import { APP_CONFIG, LIMITS, TIMEOUTS } from '@/config';
 
-console.log(APP_CONFIG.name); // 'BoxLog'
+console.log(APP_CONFIG.name); // 'Dayopt'
 console.log(LIMITS.maxTasksPerPage); // 50
 console.log(TIMEOUTS.autoSave); // 3000ms
 ```

@@ -138,7 +138,7 @@ export function useServiceWorker(): UseServiceWorkerResult {
     if ('caches' in window) {
       const cacheNames = await caches.keys();
       await Promise.all(
-        cacheNames.filter((name) => name.startsWith('boxlog-')).map((name) => caches.delete(name)),
+        cacheNames.filter((name) => name.startsWith('dayopt-')).map((name) => caches.delete(name)),
       );
     }
   }, [registration]);

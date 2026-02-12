@@ -87,7 +87,7 @@ const meta = {
 
 | プレフィックス | 対象                      | 例                       |
 | -------------- | ------------------------- | ------------------------ |
-| `Docs/`        | ドキュメント              | `Docs/はじめに`          |
+| `Docs/`        | ドキュメント              | `Docs/Introduction`      |
 | `Tokens/`      | デザイントークン          | `Tokens/Colors`          |
 | `Patterns/`    | UIパターン                | `Patterns/Forms`         |
 | `Components/`  | UIコンポーネント          | `Components/Button`      |

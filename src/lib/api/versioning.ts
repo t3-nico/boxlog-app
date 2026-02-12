@@ -1,5 +1,5 @@
 /**
- * 🔄 BoxLog API Versioning System
+ * 🔄 Dayopt API Versioning System
  *
  * APIバージョニングの統一管理システム
  * - URLベースバージョニング (/api/v1/users)

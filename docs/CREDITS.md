@@ -1,6 +1,6 @@
 # Third-Party Licenses and Credits
 
-BoxLogプロジェクトは、以下のオープンソースソフトウェア、ライブラリ、リソースを利用しています。各プロジェクトのメンテナーと貢献者の皆様に深く感謝いたします。
+Dayoptプロジェクトは、以下のオープンソースソフトウェア、ライブラリ、リソースを利用しています。各プロジェクトのメンテナーと貢献者の皆様に深く感謝いたします。
 
 ---
 
@@ -389,4 +389,4 @@ npm run generate-licenses
 ---
 
 **最終更新**: 2025-10-14
-**管理**: BoxLog Development Team
+**管理**: Dayopt Development Team

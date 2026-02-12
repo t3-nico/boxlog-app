@@ -1,4 +1,4 @@
-# BoxLog App
+# Dayopt App
 
 Next.js 14 + TypeScript で構築されたタスク管理アプリケーション
 
@@ -88,7 +88,7 @@ export const MyComponent: FC<Props> = ...  // React.FC非推奨
 
 ## 🛡️ コード品質管理
 
-BoxLogでは企業レベルの品質管理システムを採用：
+Dayoptでは企業レベルの品質管理システムを採用：
 
 ### ESLint 8分野強化
 
@@ -122,7 +122,7 @@ npm run test:e2e    # E2Eテスト
 
 ## 🙏 Acknowledgments
 
-BoxLogは以下のオープンソースプロジェクトを利用しています：
+Dayoptは以下のオープンソースプロジェクトを利用しています：
 
 ### UI Components & Design
 

@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
     switch (type) {
       case 'message':
         // メッセージ送信テスト
-        Sentry.captureMessage('Test message from BoxLog', {
+        Sentry.captureMessage('Test message from Dayopt', {
           level: 'info',
           tags: {
             test: true,
@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
       case 'error':
         // エラー送信テスト
         try {
-          throw new Error('Test error from BoxLog API');
+          throw new Error('Test error from Dayopt API');
         } catch (error) {
           const eventId = Sentry.captureException(error, {
             tags: {

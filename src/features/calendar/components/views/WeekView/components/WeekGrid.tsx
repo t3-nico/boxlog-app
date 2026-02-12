@@ -8,8 +8,8 @@ import { cn } from '@/lib/utils';
 
 import {
   CalendarDateHeader,
+  DailyUsageStrip,
   DateDisplay,
-  OverdueSection,
   ScrollableCalendarLayout,
   getDateKey,
 } from '../../shared';
@@ -113,8 +113,8 @@ export const WeekGrid = ({
       {/* 固定日付ヘッダー */}
       <CalendarDateHeader header={headerComponent} showTimezone={false} weekNumber={weekNumber} />
 
-      {/* タイムゾーン＋未完了プランバッジエリア */}
-      <OverdueSection dates={weekDates} plans={allPlans || events} timezone={timezone} />
+      {/* タイムゾーン＋日別使用時間 */}
+      <DailyUsageStrip dates={weekDates} plans={allPlans || events} timezone={timezone} />
 
       {/* スクロール可能コンテンツ */}
       <ScrollableCalendarLayout

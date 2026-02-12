@@ -1,7 +1,7 @@
 // For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
 import storybook from "eslint-plugin-storybook";
 
-// BoxLog ESLint - 公式準拠設定
+// Dayopt ESLint - 公式準拠設定
 // Next.js公式推奨設定を使用（学習コスト0、メンテ0）
 
 import { FlatCompat } from '@eslint/eslintrc'

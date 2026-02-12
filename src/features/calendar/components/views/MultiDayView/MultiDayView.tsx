@@ -10,8 +10,8 @@ import { cn } from '@/lib/utils';
 import { CalendarViewAnimation } from '../../animations/ViewTransition';
 import {
   CalendarDateHeader,
+  DailyUsageStrip,
   DateDisplay,
-  OverdueSection,
   ScrollableCalendarLayout,
   useMultiDayPlanPositions,
   usePlanStyles,
@@ -108,7 +108,7 @@ export function MultiDayView({
       <div className={cn('bg-background flex min-h-0 flex-1 flex-col', className)}>
         <CalendarDateHeader header={headerComponent} showTimezone={false} weekNumber={weekNumber} />
 
-        <OverdueSection dates={displayDates} plans={allPlans || plans} timezone={timezone} />
+        <DailyUsageStrip dates={displayDates} plans={allPlans || plans} timezone={timezone} />
 
         <ScrollableCalendarLayout
           timezone={timezone}

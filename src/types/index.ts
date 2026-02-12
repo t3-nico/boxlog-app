@@ -1,5 +1,5 @@
 /**
- * BoxLog 統一型定義
+ * Dayopt 統一型定義
  *
  * TypeScript公式ベストプラクティス準拠:
  * - any型禁止

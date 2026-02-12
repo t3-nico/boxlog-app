@@ -1,5 +1,5 @@
 /**
- * 🔄 BoxLog API Middleware
+ * 🔄 Dayopt API Middleware
  *
  * APIミドルウェアの統合システム
  * - バージョニング・認証・レート制限・CORS等の統合管理

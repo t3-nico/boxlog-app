@@ -22,7 +22,7 @@ console.log(`
    【新規プロジェクト作成の場合】
    1. 右上の「+ Create Project」ボタンをクリック
    2. Platform選択で「Next.js」を選択
-   3. Project name: 「boxlog-app」など任意の名前
+   3. Project name: 「dayopt」など任意の名前
    4. 「Create Project」をクリック
 
 📍 ステップ3: DSNの場所を確認
