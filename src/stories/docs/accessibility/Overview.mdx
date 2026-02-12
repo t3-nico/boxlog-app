@@ -101,12 +101,44 @@ parameters: {
 
 ---
 
-## コマンド
+## テストコマンド
 
 | コマンド | 説明 |
 |---------|------|
-| `npm run a11y:check` | ESLint jsx-a11yルールでチェック |
-| `npm run a11y:full` | 自動修正付きチェック |
+| `npm run a11y:check` | ESLint jsx-a11y + 単体テスト |
+| `npm run a11y:full` | 完全チェック（自動修正込み） |
+| `npm run test:a11y` | axe-core単体テスト |
+| `npm run lint:a11y` | ESLintアクセシビリティルール |
+| `npm run test:a11y:e2e` | E2Eテスト（Playwright） |
+
+### CI/CD統合
+
+GitHub Actionsで以下が自動実行される:
+
+- **WCAG AA準拠チェック** — axe-core自動テスト
+- **ESLint jsx-a11y** — コードレベルのアクセシビリティ
+- **Lighthouse監査** — パフォーマンス + アクセシビリティ
+- **回帰テスト** — PRでの品質劣化防止
+
+### 単体テスト例
+
+```typescript
+import { testComponentA11y } from '@/tests/setup/accessibility.setup'
+
+it('should have no accessibility violations', async () => {
+  const component = render(<Button>Click me</Button>)
+  await testComponentA11y(component)
+})
+```
+
+### 品質指標
+
+| 指標 | 目標 | 測定方法 |
+|------|------|---------|
+| WCAG AA準拠 | 100% | axe-core自動テスト |
+| ESLint違反 | 0件 | jsx-a11y rules |
+| Lighthouse | 90+ | CI/CD自動監査 |
+| キーボード操作 | 100% | E2Eテスト |
 
 ---
 
