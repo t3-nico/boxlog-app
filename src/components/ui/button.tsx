@@ -25,13 +25,17 @@ import { cn } from '@/lib/utils';
  * | default | 36px  | text-sm  | 標準的なアクション             |
  * | lg      | 44px  | text-base| CTA、モバイル主要アクション    |
  *
- * ## アイコンボタンサイズ
+ * ## icon prop（アイコンボタン）
  *
- * | size    | サイズ | 用途                                         |
- * |---------|--------|----------------------------------------------|
- * | icon-sm | 32px   | コンパクトなアイコン操作                     |
- * | icon    | 36px   | 標準的なアイコンボタン                       |
- * | icon-lg | 44px   | ナビゲーション、モバイル主要                 |
+ * `icon` を指定するとアイコン専用の正方形ボタンになる。
+ * サイズは通常ボタンと同じ sm/default/lg スケールを共有。
+ * SVGアイコンサイズはTokens/Iconsに準拠（size-4: 16px, size-5: 20px）。
+ *
+ * | size  + icon | ボタン | アイコン | タップターゲット |
+ * |--------------|--------|---------|-----------------|
+ * | sm    + icon | 32px   | 16px    | 44px（after）    |
+ * | default+icon | 36px   | 16px    | 44px（after）    |
+ * | lg    + icon | 44px   | 20px    | 44px（native）   |
  *
  * ## スペック詳細
  *
@@ -93,20 +97,21 @@ const buttonVariants = cva(
           'h-11 px-4 text-base',
           "[&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-5 [&_svg]:shrink-0",
         ].join(' '),
+        // --- 以下は内部用（icon prop 経由で使用） ---
         // icon-sm: 32x32px、タップターゲット44px確保
-        'icon-sm': [
+        '_square-sm': [
           'size-8',
           'relative after:absolute after:inset-0 after:m-auto after:size-11 after:content-[""]',
           "[&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
         ].join(' '),
-        // icon: 36x36px（M3準拠）、タップターゲット44px確保
-        icon: [
+        // icon-default: 36x36px（M3準拠）、タップターゲット44px確保
+        '_square-default': [
           'size-9',
           'relative after:absolute after:inset-0 after:m-auto after:size-11 after:content-[""]',
           "[&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
         ].join(' '),
         // icon-lg: 44x44px（Apple HIG準拠）
-        'icon-lg': [
+        '_square-lg': [
           'size-11',
           "[&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-5 [&_svg]:shrink-0",
         ].join(' '),
@@ -119,9 +124,16 @@ const buttonVariants = cva(
   },
 );
 
+/** 公開用のサイズ型（内部の _square-* は除外） */
+type ButtonSize = 'sm' | 'default' | 'lg';
+
 export interface ButtonProps
   extends React.ComponentProps<'button'>,
-    VariantProps<typeof buttonVariants> {
+    Omit<VariantProps<typeof buttonVariants>, 'size'> {
+  /** ボタンのサイズ */
+  size?: ButtonSize | null;
+  /** アイコン専用ボタンにする（サイズは size prop と共有） */
+  icon?: boolean;
   /** 子要素にスタイルを委譲する（Linkなどで使用） */
   asChild?: boolean;
   /** ローディング状態 */
@@ -143,9 +155,15 @@ export interface ButtonProps
  * <Button variant="outline">キャンセル</Button>
  *
  * @example
- * // アイコンボタン（ghost）
- * <Button variant="ghost" size="icon" aria-label="設定を開く">
+ * // アイコンボタン（ghost + icon）
+ * <Button variant="ghost" icon aria-label="設定を開く">
  *   <Settings className="size-4" />
+ * </Button>
+ *
+ * @example
+ * // コンパクトなアイコンボタン
+ * <Button variant="ghost" size="sm" icon aria-label="閉じる">
+ *   <X className="size-4" />
  * </Button>
  *
  * @example
@@ -162,6 +180,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       className,
       variant,
       size,
+      icon = false,
       asChild = false,
       isLoading = false,
       loadingText,
@@ -172,6 +191,9 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     },
     ref,
   ) => {
+    // icon + size → 内部cvaバリアント名に変換
+    const resolvedSize = icon ? (`_square-${size ?? 'default'}` as const) : (size ?? undefined);
+
     const Comp = asChild ? Slot : 'button';
 
     // aria-disabled または isLoading 時はクリックを無効化
@@ -196,7 +218,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <Comp
         data-slot="button"
-        className={cn(buttonVariants({ variant, size, className }))}
+        className={cn(buttonVariants({ variant, size: resolvedSize, className }))}
         onClick={asChild ? onClick : handleClick}
         disabled={isLoading || disabled}
         aria-busy={isLoading || undefined}
