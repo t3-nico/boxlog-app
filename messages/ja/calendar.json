@@ -295,6 +295,41 @@
         "all": "すべて",
         "scheduled": "予定済み",
         "unscheduled": "スケジュールなし"
+      },
+      "filter": {
+        "all": "全て",
+        "unscheduled": "未配置",
+        "scheduled": "配置済",
+        "open": "未完了",
+        "closed": "完了"
+      },
+      "recordSearchPlaceholder": "記録を検索...",
+      "noRecords": "記録はありません",
+      "createRecord": "記録を作成",
+      "recordThis": "記録する",
+      "noTitle": "(タイトルなし)",
+      "duration": "{minutes}分",
+      "fulfillment": "充実度",
+      "recordSort": {
+        "workedAt": "作業日",
+        "durationMinutes": "所要時間",
+        "fulfillmentScore": "充実度",
+        "createdAt": "作成日",
+        "updatedAt": "更新日",
+        "asc": "昇順",
+        "desc": "降順"
+      },
+      "recordGroup": {
+        "none": "なし",
+        "workedAt": "日付",
+        "tags": "タグ"
+      },
+      "recordDateFilter": {
+        "label": "期間",
+        "all": "すべて",
+        "today": "今日",
+        "thisWeek": "今週",
+        "thisMonth": "今月"
       }
     },
     "error": {

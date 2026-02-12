@@ -50,7 +50,7 @@ export const PlanPanel: Story = {
   ),
 };
 
-/** Recordパネル（Coming soon） */
+/** Recordパネル（RecordListPanel） */
 export const RecordPanel: Story = {
   render: () => (
     <PanelFrame>

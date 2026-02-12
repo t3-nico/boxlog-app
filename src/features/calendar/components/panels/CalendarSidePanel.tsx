@@ -9,6 +9,7 @@ import { AIInspectorContent } from '@/features/ai/components/AIInspectorContent'
 import { PanelSwitcher, type PanelType } from '../layout/Header/PanelSwitcher';
 
 import { PlanListPanel } from './PlanListPanel';
+import { RecordListPanel } from './RecordListPanel';
 
 interface CalendarSidePanelProps {
   panelType: PanelType;
@@ -31,11 +32,7 @@ export function CalendarSidePanel({ panelType, onPanelChange }: CalendarSidePane
       case 'plan':
         return <PlanListPanel />;
       case 'record':
-        return (
-          <div className="text-muted-foreground flex flex-1 items-center justify-center">
-            <p className="text-sm">Coming soon...</p>
-          </div>
-        );
+        return <RecordListPanel />;
       case 'stats':
         return (
           <div className="text-muted-foreground flex flex-1 items-center justify-center">
@@ -57,7 +54,7 @@ export function CalendarSidePanel({ panelType, onPanelChange }: CalendarSidePane
           <PanelSwitcher currentPanel={panelType} onChange={onPanelChange} />
           <Button
             variant="ghost"
-            size="icon"
+            icon
             className="-mr-2 size-8"
             onClick={() => onPanelChange('none')}
             aria-label={t('actions.close')}

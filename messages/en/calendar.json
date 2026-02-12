@@ -295,6 +295,41 @@
         "all": "All",
         "scheduled": "Scheduled",
         "unscheduled": "Unscheduled"
+      },
+      "filter": {
+        "all": "All",
+        "unscheduled": "Unsched",
+        "scheduled": "Sched",
+        "open": "Open",
+        "closed": "Done"
+      },
+      "recordSearchPlaceholder": "Search records...",
+      "noRecords": "No records",
+      "createRecord": "Create record",
+      "recordThis": "Record this",
+      "noTitle": "(No title)",
+      "duration": "{minutes} min",
+      "fulfillment": "Fulfillment",
+      "recordSort": {
+        "workedAt": "Work date",
+        "durationMinutes": "Duration",
+        "fulfillmentScore": "Fulfillment",
+        "createdAt": "Date created",
+        "updatedAt": "Date updated",
+        "asc": "Ascending",
+        "desc": "Descending"
+      },
+      "recordGroup": {
+        "none": "None",
+        "workedAt": "Date",
+        "tags": "Tags"
+      },
+      "recordDateFilter": {
+        "label": "Period",
+        "all": "All",
+        "today": "Today",
+        "thisWeek": "This week",
+        "thisMonth": "This month"
       }
     },
     "error": {
