@@ -469,6 +469,21 @@ export const ScrollableCalendarLayout = ({
               {/* メインコンテンツ（flex で横並びを維持） */}
               <div className="relative flex h-full">{children}</div>
 
+              {/* 縦の区切り線（睡眠オーバーレイより上に表示） */}
+              {displayDates && displayDates.length > 1 && (
+                <div className="pointer-events-none absolute inset-0 z-[6] flex">
+                  {displayDates.map((_, index) => (
+                    <div
+                      key={index}
+                      className={cn(
+                        'flex-1',
+                        index < displayDates.length - 1 && 'border-border border-r',
+                      )}
+                    />
+                  ))}
+                </div>
+              )}
+
               {/* 現在時刻線 - 全ての列に表示 */}
               {shouldShowCurrentTimeLine && displayDates && displayDates.length > 0 ? (
                 <>
