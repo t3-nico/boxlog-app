@@ -24,12 +24,14 @@ export default defineConfig({
     timeout: 5000, // アサーション: 5秒
   },
 
-  // レポーター設定
-  reporter: [
-    ['html'],
-    ['json', { outputFile: 'test-results/e2e-results.json' }],
-    ['junit', { outputFile: 'test-results/e2e-results.xml' }],
-  ],
+  // レポーター設定（JSON/JUnitはCI専用）
+  reporter: process.env.CI
+    ? [
+        ['html'],
+        ['json', { outputFile: 'test-results/e2e-results.json' }],
+        ['junit', { outputFile: 'test-results/e2e-results.xml' }],
+      ]
+    : [['html']],
 
   // テスト実行設定
   use: {
@@ -52,7 +54,7 @@ export default defineConfig({
   // テスト対象プロジェクト（ブラウザ別）
   // E2Eはスモーク＋クリティカルパスに縮小済み（2ファイル）
   // クロスブラウザのUI差異はStorybook側でカバー
-  // @see docs/development/TEST_STRATEGY.md
+  // @see Storybook → Docs/テスト戦略
   projects: [
     // ==========================================
     // デスクトップ（Chromiumのみ）
