@@ -26,6 +26,10 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+// ---------------------------------------------------------------------------
+// Stories
+// ---------------------------------------------------------------------------
+
 /** 短い会話 */
 export const Default: Story = {};
 
@@ -34,4 +38,22 @@ export const LongConversation: Story = {
   args: {
     messages: MOCK_LONG_CONVERSATION,
   },
+};
+
+// ---------------------------------------------------------------------------
+// AllPatterns
+// ---------------------------------------------------------------------------
+
+/** 全パターン一覧 */
+export const AllPatterns: Story = {
+  render: () => (
+    <div className="flex flex-col items-start gap-6">
+      <div className="border-border h-[500px] w-[320px] border">
+        <ChatMessageList messages={MOCK_MESSAGES} />
+      </div>
+      <div className="border-border h-[500px] w-[320px] border">
+        <ChatMessageList messages={MOCK_LONG_CONVERSATION} />
+      </div>
+    </div>
+  ),
 };

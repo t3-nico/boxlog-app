@@ -3,13 +3,13 @@
 import { ArrowUp, Square } from 'lucide-react';
 import { memo } from 'react';
 
+import { Button } from '@/components/ui/button';
 import {
   PromptInput,
   PromptInputAction,
   PromptInputActions,
   PromptInputTextarea,
-} from '@/components/prompt-kit/prompt-input';
-import { Button } from '@/components/ui/button';
+} from './prompt-kit/prompt-input';
 
 interface ChatInputProps {
   value: string;
@@ -32,7 +32,7 @@ export const ChatInput = memo(function ChatInput({
   };
 
   return (
-    <div className="p-3">
+    <div className="p-4">
       <PromptInput
         value={value}
         onValueChange={onValueChange}

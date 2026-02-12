@@ -39,8 +39,8 @@ function InteractiveChatInput({ isLoading = false }: { isLoading?: boolean }) {
 // Stories
 // ---------------------------------------------------------------------------
 
-/** 空の入力フォーム */
-export const Empty: Story = {
+/** デフォルト（空の入力フォーム） */
+export const Default: Story = {
   render: () => <InteractiveChatInput />,
 };
 
@@ -48,6 +48,10 @@ export const Empty: Story = {
 export const Loading: Story = {
   render: () => <InteractiveChatInput isLoading />,
 };
+
+// ---------------------------------------------------------------------------
+// AllPatterns
+// ---------------------------------------------------------------------------
 
 /** 全パターン一覧 */
 export const AllPatterns: Story = {

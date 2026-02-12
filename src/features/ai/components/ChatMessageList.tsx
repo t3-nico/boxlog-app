@@ -6,8 +6,8 @@ import {
   ChatContainerContent,
   ChatContainerRoot,
   ChatContainerScrollAnchor,
-} from '@/components/prompt-kit/chat-container';
-import { Message, MessageContent } from '@/components/prompt-kit/message';
+} from './prompt-kit/chat-container';
+import { Message, MessageContent } from './prompt-kit/message';
 
 import type { ChatMessage } from '../types';
 

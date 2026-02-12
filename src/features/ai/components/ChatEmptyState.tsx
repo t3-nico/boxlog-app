@@ -2,7 +2,7 @@
 
 import { memo } from 'react';
 
-import { PromptSuggestion } from '@/components/prompt-kit/prompt-suggestion';
+import { PromptSuggestion } from './prompt-kit/prompt-suggestion';
 
 interface ChatEmptyStateProps {
   suggestions: string[];
@@ -14,7 +14,7 @@ export const ChatEmptyState = memo(function ChatEmptyState({
   onSuggestionClick,
 }: ChatEmptyStateProps) {
   return (
-    <div className="flex h-full flex-col justify-end px-3 pb-2">
+    <div className="flex h-full flex-col justify-end px-4 pb-2">
       <div className="flex flex-wrap gap-2">
         {suggestions.map((suggestion) => (
           <PromptSuggestion
