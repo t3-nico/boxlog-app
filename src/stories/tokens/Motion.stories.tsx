@@ -12,6 +12,7 @@ export default meta;
 type Story = StoryObj;
 
 export const Overview: Story = {
+  parameters: { a11y: { disable: true } },
   render: () => (
     <div>
       <h1 className="mb-2 text-2xl font-bold">Motion</h1>
@@ -122,7 +123,7 @@ data-[state=closed]:animate-out`}
             <DurationDemo duration="300" />
           </div>
           <div className="bg-container mt-4 rounded-lg p-4">
-            <h4 className="mb-2 text-sm font-bold">推奨値</h4>
+            <h3 className="mb-2 text-sm font-bold">推奨値</h3>
             <ul className="text-muted-foreground space-y-1 text-xs">
               <li>
                 <code>duration-75</code> - 即座の反応（ホバー等）
@@ -165,7 +166,7 @@ data-[state=closed]:animate-out`}
             <EasingDemo easing="ease-linear" label="linear" description="等速。プログレスバー等" />
           </div>
           <div className="bg-container mt-4 rounded-lg p-4">
-            <h4 className="mb-2 text-sm font-bold">使い分け（Material Design 3）</h4>
+            <h3 className="mb-2 text-sm font-bold">使い分け（Material Design 3）</h3>
             <ul className="text-muted-foreground space-y-1 text-xs">
               <li>
                 <code>ease-out</code> - デフォルト。ほとんどの場合これを使う

@@ -608,6 +608,37 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 ```
 
+### ❌ heading-order 違反（見出しレベルのスキップ）
+
+WCAG 2.1 AA の `heading-order` ルールにより、見出しレベルを飛ばしてはいけない。
+
+```tsx
+// ❌ h1 → h3（h2をスキップ）
+<h1>タイトル</h1>
+<h3>サブセクション</h3>
+
+// ❌ ダイアログ・ポップオーバー内で孤立した h4
+<PopoverContent>
+  <h4>見出し</h4>
+</PopoverContent>
+
+// ✅ 正しい見出し階層
+<h1>タイトル</h1>
+<h2>セクション</h2>
+<h3>サブセクション</h3>
+
+// ✅ コンテナ内のラベルは <p> + font-bold で代用
+<PopoverContent>
+  <p className="font-bold">見出し</p>
+</PopoverContent>
+```
+
+**判定フロー:**
+
+- Story のルート見出しは `h1` または `h2`
+- 子セクションは親の +1 レベル（h1 → h2 → h3）
+- ダイアログ・ポップオーバー等の小さいコンテナ内では `<p className="font-bold">` を使用
+
 ---
 
 ## 避けるべきパターン

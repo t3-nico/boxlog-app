@@ -17,7 +17,7 @@ export const Principles: Story = {
 
       <div className="space-y-6">
         <div className="bg-card border-border rounded-lg border p-6">
-          <h3 className="mb-4 font-bold">Tailwindデフォルトを使用</h3>
+          <h2 className="mb-4 font-bold">Tailwindデフォルトを使用</h2>
           <p className="text-muted-foreground text-sm">
             フォントサイズはTailwindのデフォルトスケールをそのまま使用。
             業界標準で学習コストゼロ、ドキュメントも豊富。
@@ -25,7 +25,7 @@ export const Principles: Story = {
         </div>
 
         <div className="bg-card border-border rounded-lg border p-6">
-          <h3 className="mb-4 font-bold">視覚的階層を作る</h3>
+          <h2 className="mb-4 font-bold">視覚的階層を作る</h2>
           <ul className="text-muted-foreground space-y-2 text-sm">
             <li>• サイズの差で重要度を表現（大きい = 重要）</li>
             <li>• ウェイトで強調（bold = 見出し、normal = 本文）</li>
@@ -34,7 +34,7 @@ export const Principles: Story = {
         </div>
 
         <div className="bg-card border-border rounded-lg border p-6">
-          <h3 className="mb-4 font-bold">フォント</h3>
+          <h2 className="mb-4 font-bold">フォント</h2>
           <p className="text-muted-foreground text-sm">
             Inter（英語）+ Noto Sans JP（日本語）。 next/fontで最適化済み。
           </p>
@@ -179,7 +179,7 @@ export const QuickReference: Story = {
 
       <div className="grid gap-6 md:grid-cols-2">
         <div className="bg-card border-border rounded-lg border p-4">
-          <h3 className="mb-4 font-bold">見出し</h3>
+          <h2 className="mb-4 font-bold">見出し</h2>
           <table className="w-full text-sm">
             <tbody className="divide-border divide-y">
               <tr>
@@ -211,7 +211,7 @@ export const QuickReference: Story = {
         </div>
 
         <div className="bg-card border-border rounded-lg border p-4">
-          <h3 className="mb-4 font-bold">本文</h3>
+          <h2 className="mb-4 font-bold">本文</h2>
           <table className="w-full text-sm">
             <tbody className="divide-border divide-y">
               <tr>
@@ -237,7 +237,7 @@ export const QuickReference: Story = {
         </div>
 
         <div className="bg-card border-border rounded-lg border p-4">
-          <h3 className="mb-4 font-bold">行間</h3>
+          <h2 className="mb-4 font-bold">行間</h2>
           <table className="w-full text-sm">
             <tbody className="divide-border divide-y">
               <tr>
@@ -263,7 +263,7 @@ export const QuickReference: Story = {
         </div>
 
         <div className="bg-card border-border rounded-lg border p-4">
-          <h3 className="mb-4 font-bold">避けるべきパターン</h3>
+          <h2 className="mb-4 font-bold">避けるべきパターン</h2>
           <ul className="text-muted-foreground space-y-2 text-sm">
             <li className="flex items-start gap-2">
               <span className="text-destructive">✗</span>
