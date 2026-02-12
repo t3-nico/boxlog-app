@@ -11,6 +11,8 @@ const __dirname = dirname(__filename);
 const config: StorybookConfig = {
   stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
   addons: [
+    '@storybook/addon-a11y',
+    '@storybook/addon-vitest',
     {
       name: '@storybook/addon-docs',
       options: {
@@ -21,9 +23,6 @@ const config: StorybookConfig = {
         },
       },
     },
-    '@storybook/addon-a11y',
-    '@vueless/storybook-dark-mode',
-    '@storybook/addon-vitest',
   ],
   framework: {
     name: '@storybook/react-vite',
