@@ -17,6 +17,8 @@ import { TagsContainer } from '../views/shared/components/PlanCard/TagsContainer
 
 interface PlanListCardProps {
   plan: PlanWithTags;
+  /** 期限切れ状態（時間・日時を赤文字で表示） */
+  isOverdue?: boolean;
   onClick?: (plan: PlanWithTags) => void;
   onDragStart?: (plan: PlanWithTags, e: React.MouseEvent, sourceElement: HTMLElement) => void;
 }
@@ -29,11 +31,12 @@ interface PlanListCardProps {
  */
 export const PlanListCard = memo<PlanListCardProps>(function PlanListCard({
   plan,
+  isOverdue = false,
   onClick,
   onDragStart,
 }) {
   const t = useTranslations('calendar');
-  const { formatTime } = useDateFormat();
+  const { formatTime, formatDate } = useDateFormat();
   const { updatePlan } = usePlanMutations();
 
   const status = normalizeStatus(plan.status as PlanStatus);
@@ -43,6 +46,23 @@ export const PlanListCard = memo<PlanListCardProps>(function PlanListCard({
   const startTime = plan.start_time ? formatTime(new Date(plan.start_time)) : '';
   const endTime = plan.end_time ? formatTime(new Date(plan.end_time)) : '';
   const displayTime = startTime && endTime ? `${startTime} - ${endTime}` : startTime || null;
+
+  // 作業時間（分）
+  const durationMinutes =
+    plan.start_time && plan.end_time
+      ? Math.round(
+          (new Date(plan.end_time).getTime() - new Date(plan.start_time).getTime()) / 60000,
+        )
+      : null;
+  const displayDuration =
+    durationMinutes && durationMinutes > 0
+      ? durationMinutes >= 60
+        ? `${Math.floor(durationMinutes / 60)}h${durationMinutes % 60 > 0 ? `${durationMinutes % 60}m` : ''}`
+        : `${durationMinutes}m`
+      : null;
+
+  // 期限日表示
+  const displayDueDate = plan.due_date ? formatDate(new Date(plan.due_date)) : null;
 
   const handleCardClick = useCallback(() => {
     onClick?.(plan);
@@ -121,22 +141,54 @@ export const PlanListCard = memo<PlanListCardProps>(function PlanListCard({
         <p
           className={cn(
             'line-clamp-2 text-sm leading-tight font-normal',
-            isCompleted ? 'text-muted-foreground line-through' : 'text-foreground',
+            isCompleted ? 'text-muted-foreground' : 'text-foreground',
           )}
         >
           {plan.title || t('event.noTitle')}
         </p>
 
-        {/* 時間（スケジュール済みの場合のみ） */}
-        {displayTime && (
-          <p
-            className={cn(
-              'mt-1 text-xs tabular-nums',
-              isCompleted ? 'text-muted-foreground/60 line-through' : 'text-muted-foreground',
+        {/* メタ情報行: 期限日 + 時間 + 作業時間 */}
+        {(displayDueDate || displayTime) && (
+          <div className="mt-1 flex items-center gap-2">
+            {displayDueDate && (
+              <span
+                className={cn(
+                  'text-xs tabular-nums',
+                  isOverdue
+                    ? 'text-destructive'
+                    : isCompleted
+                      ? 'text-muted-foreground/60'
+                      : 'text-muted-foreground',
+                )}
+              >
+                {displayDueDate}
+              </span>
             )}
-          >
-            {displayTime}
-          </p>
+            {displayTime && (
+              <span
+                className={cn(
+                  'text-xs tabular-nums',
+                  isOverdue
+                    ? 'text-destructive'
+                    : isCompleted
+                      ? 'text-muted-foreground/60'
+                      : 'text-muted-foreground',
+                )}
+              >
+                {displayTime}
+              </span>
+            )}
+            {displayDuration && (
+              <span
+                className={cn(
+                  'text-xs tabular-nums',
+                  isCompleted ? 'text-muted-foreground/60' : 'text-muted-foreground',
+                )}
+              >
+                {displayDuration}
+              </span>
+            )}
+          </div>
         )}
 
         {/* タグ（カレンダーPlanCardと同じTagsContainer） */}
