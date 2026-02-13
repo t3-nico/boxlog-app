@@ -37,6 +37,7 @@
 
   /* Calendar Boxes（カレンダー専用Surface） */
   --plan-box: oklch(0.90 0.04 220);               /* sky blue: 世界標準のPlan=Blue、hue220はcyan寄りで低chromaでも知覚可 */
+  --plan-border: oklch(0.55 0.15 220);            /* Plan左ボーダー: blue系 */
   --record-box: oklch(0.90 0.04 155);             /* green: 「実績・完了した時間」、success(149)と近いがchromaが低く区別可 */
   --record-border: oklch(0.55 0.15 155);          /* Record左ボーダー: green系 */
 
@@ -124,6 +125,7 @@
 
   /* Calendar Boxes（カレンダー専用Surface） */
   --plan-box: oklch(0.22 0.02 220);               /* sky blue: dark modeは彩度控えめ */
+  --plan-border: oklch(0.45 0.12 220);            /* Plan左ボーダー: blue系 */
   --record-box: oklch(0.22 0.035 155);            /* green: blueとの区別のためchromaやや高め */
   --record-border: oklch(0.45 0.12 155);          /* Record左ボーダー: green系 */
 
@@ -242,6 +244,7 @@
   --color-container: var(--container);
   --color-overlay: var(--overlay);
   --color-plan-box: var(--plan-box);
+  --color-plan-border: var(--plan-border);
   --color-record-box: var(--record-box);
   --color-record-border: var(--record-border);
   --color-primary: var(--primary);
