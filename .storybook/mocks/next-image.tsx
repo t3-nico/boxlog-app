@@ -1,47 +1,26 @@
-/**
- * next/image のStorybook用モック
- * Vite環境でNext.js Imageが動作しないため、通常のimg要素で代替
- */
-import * as React from 'react';
+import type { ImgHTMLAttributes } from 'react';
 
-interface ImageProps {
-  src: string;
-  alt: string;
+type NextImageProps = ImgHTMLAttributes<HTMLImageElement> & {
   fill?: boolean;
-  width?: number;
-  height?: number;
-  className?: string;
+  priority?: boolean;
+  quality?: number;
   sizes?: string;
   unoptimized?: boolean;
-  priority?: boolean;
-  placeholder?: 'blur' | 'empty';
-  blurDataURL?: string;
-  style?: React.CSSProperties;
-}
+};
 
-function Image({ src, alt, fill, width, height, className, style, ...props }: ImageProps) {
-  const imgStyle: React.CSSProperties = fill
+function NextImage({ fill, priority, quality, sizes, unoptimized, ...props }: NextImageProps) {
+  const style = fill
     ? {
-        position: 'absolute',
+        position: 'absolute' as const,
         inset: 0,
         width: '100%',
         height: '100%',
-        objectFit: 'cover',
-        ...style,
+        objectFit: props.style?.objectFit ?? ('cover' as const),
       }
-    : style || {};
+    : undefined;
 
-  return (
-    <img
-      src={src}
-      alt={alt}
-      width={fill ? undefined : width}
-      height={fill ? undefined : height}
-      className={className}
-      style={imgStyle}
-      {...props}
-    />
-  );
+  // eslint-disable-next-line @next/next/no-img-element
+  return <img {...props} style={{ ...style, ...props.style }} />;
 }
 
-export default Image;
+export { NextImage as default };

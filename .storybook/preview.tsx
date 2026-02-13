@@ -2,6 +2,9 @@ import type { Preview } from '@storybook/react';
 import { NextIntlClientProvider } from 'next-intl';
 
 import '../src/styles/globals.css';
+import { DocsTemplate } from './DocsTemplate';
+import { dayoptLightTheme } from './dayoptTheme';
+import './prose.css';
 
 // Storybook用のメッセージ（必要なものだけ）
 const messages = {
@@ -29,10 +32,41 @@ const messages = {
   common: {
     close: '閉じる',
     cancel: 'キャンセル',
+    confirm: '確認',
     save: '保存',
     delete: '削除',
     edit: '編集',
     loading: '読み込み中...',
+    deleting: '削除中...',
+  },
+  actions: {
+    delete: '削除',
+    cancel: 'キャンセル',
+    deleting: '削除中...',
+  },
+  error: {
+    loading: {
+      default: '読み込み中...',
+      title: '読み込み中',
+      loadingData: 'データを読み込んでいます...',
+      loadFailed: 'データの読み込みに失敗しました',
+      retry: '再試行',
+      noData: 'データがありません',
+      loadingPage: 'ページを読み込み中',
+      pleaseWait: 'しばらくお待ちください...',
+    },
+  },
+  legal: {
+    cookies: {
+      banner: {
+        title: 'Cookieの使用について',
+        description: '当サイトは、サービスの向上と利用状況の分析のためにCookieを使用します。',
+        learnMore: '詳しく見る',
+        acceptAll: 'すべて同意',
+        rejectAll: '必須のみ',
+        customize: 'カスタマイズ',
+      },
+    },
   },
   aria: {
     selectColor: '{color}を選択',
@@ -47,13 +81,32 @@ const preview: Preview = {
         date: /Date$/i,
       },
     },
-    backgrounds: {
-      disable: true, // セマンティックトークンを使うため無効化
-    },
+    backgrounds: { disable: true },
     options: {
       storySort: {
         method: 'alphabetical',
         order: ['Docs', 'Tokens', 'Components', 'Patterns'],
+      },
+    },
+    docs: {
+      theme: dayoptLightTheme,
+      page: DocsTemplate,
+    },
+    a11y: {
+      config: {
+        rules: [
+          { id: 'color-contrast', enabled: true },
+          { id: 'html-has-lang', enabled: false },
+          { id: 'landmark-one-main', enabled: false },
+          { id: 'page-has-heading-one', enabled: false },
+          { id: 'region', enabled: false },
+        ],
+      },
+      options: {
+        runOnly: {
+          type: 'tag',
+          values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice'],
+        },
       },
     },
   },
@@ -67,7 +120,7 @@ const preview: Preview = {
           { value: 'light', icon: 'sun', title: 'Light' },
           { value: 'dark', icon: 'moon', title: 'Dark' },
         ],
-        dynamicTitle: true,
+        dynamicTitle: false,
       },
     },
   },
@@ -78,20 +131,17 @@ const preview: Preview = {
     (Story, context) => {
       const theme = context.globals.theme || 'light';
 
-      // ダークモード切り替え + Radix Portal用のbodyスタイル
+      // ダークモード切り替え
       if (typeof document !== 'undefined') {
         document.documentElement.classList.remove('light', 'dark');
         document.documentElement.classList.add(theme);
-        // Radix UIのPortalはdocument.bodyにレンダリングされるため、
-        // bodyにもテーマクラスを適用してモーダル等が正しく表示されるようにする
-        document.body.classList.add('bg-background', 'text-foreground');
+        // color-scheme を切り替え（スクロールバー・フォーム要素のネイティブ配色）
+        document.documentElement.style.colorScheme = theme;
       }
 
       return (
         <NextIntlClientProvider locale="ja" messages={messages}>
-          <div className="bg-background text-foreground p-4">
-            <Story />
-          </div>
+          <Story />
         </NextIntlClientProvider>
       );
     },

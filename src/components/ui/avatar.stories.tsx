@@ -7,9 +7,7 @@ const meta = {
   title: 'Components/Avatar',
   component: Avatar,
   tags: ['autodocs'],
-  parameters: {
-    layout: 'centered',
-  },
+  parameters: {},
 } satisfies Meta<typeof Avatar>;
 
 export default meta;
@@ -84,7 +82,7 @@ export const Sizes: Story = {
 
 export const AllPatterns: Story = {
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h1 className="mb-8 text-2xl font-bold">Avatar - 実使用パターン</h1>
 
       <div className="space-y-8">

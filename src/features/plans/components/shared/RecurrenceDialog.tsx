@@ -5,10 +5,10 @@ import { format } from 'date-fns';
 import { useTranslations } from 'next-intl';
 import { useEffect, useRef, useState } from 'react';
 
-import { MiniCalendar } from '@/components/common/MiniCalendar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { MiniCalendar } from '@/components/ui/mini-calendar';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import {
   Select,
@@ -17,6 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { zIndex } from '@/config/ui/z-index';
 import { useDateFormat } from '@/features/settings/hooks/useDateFormat';
 
 import type { RecurrenceConfig } from '../../types/plan';
@@ -184,10 +185,11 @@ export function RecurrenceDialog({
     <Portal.Root>
       <div
         ref={dialogRef}
-        className="bg-popover border-border z-modal fixed w-[25rem] overflow-hidden rounded-2xl border shadow-lg"
+        className="bg-card border-border fixed w-[25rem] overflow-hidden rounded-2xl border shadow-lg"
         style={{
           top: `${position.top}px`,
           left: `${position.left}px`,
+          zIndex: zIndex.overlayDropdown,
         }}
       >
         {/* ヘッダー */}
@@ -226,14 +228,12 @@ export function RecurrenceDialog({
                 <SelectTrigger className="w-24">
                   <SelectValue />
                 </SelectTrigger>
-                <Portal.Root>
-                  <SelectContent className="z-confirm">
-                    <SelectItem value="daily">日ごと</SelectItem>
-                    <SelectItem value="weekly">週間ごと</SelectItem>
-                    <SelectItem value="monthly">ヶ月ごと</SelectItem>
-                    <SelectItem value="yearly">年ごと</SelectItem>
-                  </SelectContent>
-                </Portal.Root>
+                <SelectContent style={{ zIndex: zIndex.overlayDropdown }}>
+                  <SelectItem value="daily">日ごと</SelectItem>
+                  <SelectItem value="weekly">週間ごと</SelectItem>
+                  <SelectItem value="monthly">ヶ月ごと</SelectItem>
+                  <SelectItem value="yearly">年ごと</SelectItem>
+                </SelectContent>
               </Select>
             </div>
           </div>
@@ -295,56 +295,54 @@ export function RecurrenceDialog({
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
-                <Portal.Root>
-                  <SelectContent className="z-confirm">
-                    {(() => {
-                      // 現在の日付から候補を生成
-                      const today = new Date();
-                      const day = today.getDate();
-                      const weekday = today.getDay();
-                      const weekdayNames = ['日', '月', '火', '水', '木', '金', '土'];
-                      const weekdayName = weekdayNames[weekday];
+                <SelectContent style={{ zIndex: zIndex.overlayDropdown }}>
+                  {(() => {
+                    // 現在の日付から候補を生成
+                    const today = new Date();
+                    const day = today.getDate();
+                    const weekday = today.getDay();
+                    const weekdayNames = ['日', '月', '火', '水', '木', '金', '土'];
+                    const weekdayName = weekdayNames[weekday];
 
-                      // その日が第何週か計算
-                      const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-                      const weekOfMonth = Math.ceil((day + firstDayOfMonth.getDay()) / 7);
+                    // その日が第何週か計算
+                    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+                    const weekOfMonth = Math.ceil((day + firstDayOfMonth.getDay()) / 7);
 
-                      // 最終週かどうか判定
-                      const lastDayOfMonth = new Date(
-                        today.getFullYear(),
-                        today.getMonth() + 1,
-                        0,
-                      ).getDate();
-                      const isLastWeek = day + 7 > lastDayOfMonth;
+                    // 最終週かどうか判定
+                    const lastDayOfMonth = new Date(
+                      today.getFullYear(),
+                      today.getMonth() + 1,
+                      0,
+                    ).getDate();
+                    const isLastWeek = day + 7 > lastDayOfMonth;
 
-                      const options = [
-                        // 選択肢1: 毎月 X 日
-                        <SelectItem key={`monthday-${day}`} value={`monthday-${day}`}>
-                          毎月 {day} 日
+                    const options = [
+                      // 選択肢1: 毎月 X 日
+                      <SelectItem key={`monthday-${day}`} value={`monthday-${day}`}>
+                        毎月 {day} 日
+                      </SelectItem>,
+                      // 選択肢2: 毎月 第 N X曜日
+                      <SelectItem
+                        key={`setpos-${weekOfMonth}-${weekday}`}
+                        value={`setpos-${weekOfMonth}-${weekday}`}
+                      >
+                        毎月 第{weekOfMonth}
+                        {weekdayName}曜日
+                      </SelectItem>,
+                    ];
+
+                    // 最終週の場合は「最終X曜日」も追加
+                    if (isLastWeek) {
+                      options.push(
+                        <SelectItem key={`setpos--1-${weekday}`} value={`setpos--1-${weekday}`}>
+                          毎月 最終{weekdayName}曜日
                         </SelectItem>,
-                        // 選択肢2: 毎月 第 N X曜日
-                        <SelectItem
-                          key={`setpos-${weekOfMonth}-${weekday}`}
-                          value={`setpos-${weekOfMonth}-${weekday}`}
-                        >
-                          毎月 第{weekOfMonth}
-                          {weekdayName}曜日
-                        </SelectItem>,
-                      ];
+                      );
+                    }
 
-                      // 最終週の場合は「最終X曜日」も追加
-                      if (isLastWeek) {
-                        options.push(
-                          <SelectItem key={`setpos--1-${weekday}`} value={`setpos--1-${weekday}`}>
-                            毎月 最終{weekdayName}曜日
-                          </SelectItem>,
-                        );
-                      }
-
-                      return options;
-                    })()}
-                  </SelectContent>
-                </Portal.Root>
+                    return options;
+                  })()}
+                </SelectContent>
               </Select>
             </div>
           )}

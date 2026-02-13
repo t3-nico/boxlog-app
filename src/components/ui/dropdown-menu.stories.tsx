@@ -48,9 +48,7 @@ const meta = {
   title: 'Components/DropdownMenu',
   component: DropdownMenu,
   tags: ['autodocs'],
-  parameters: {
-    layout: 'centered',
-  },
+  parameters: {},
 } satisfies Meta<typeof DropdownMenu>;
 
 export default meta;
@@ -318,7 +316,7 @@ export const Destructive: Story = {
  */
 export const AllPatterns: Story = {
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h1 className="mb-8 text-2xl font-bold">DropdownMenu - ラベル使用ガイド</h1>
 
       <div className="space-y-8">

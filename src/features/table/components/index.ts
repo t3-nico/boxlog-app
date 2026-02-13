@@ -18,3 +18,9 @@ export {
   type TableNavigationConfig,
   type TableNavigationProps,
 } from './TableNavigation';
+
+// Pagination
+export { TablePagination } from './TablePagination';
+
+// Selection bar
+export { SelectionBar } from './SelectionBar';

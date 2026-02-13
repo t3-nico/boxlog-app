@@ -35,9 +35,7 @@ const meta = {
   title: 'Components/Select',
   component: Select,
   tags: ['autodocs'],
-  parameters: {
-    layout: 'centered',
-  },
+  parameters: {},
 } satisfies Meta<typeof Select>;
 
 export default meta;
@@ -115,7 +113,7 @@ export const AllPatterns: Story = {
     const [value, setValue] = useState('daily');
 
     return (
-      <div className="bg-background text-foreground p-8">
+      <div>
         <h1 className="mb-8 text-2xl font-bold">Select - 実際の使用パターン</h1>
 
         <div className="space-y-8">

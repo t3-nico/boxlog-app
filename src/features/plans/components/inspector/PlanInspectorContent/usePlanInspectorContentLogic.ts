@@ -378,8 +378,6 @@ export function usePlanInspectorContentLogic() {
   // Handlers
   const handleTagsChange = useCallback(
     (newTagIds: string[]) => {
-      if (!planId) return;
-
       const oldTagIds = selectedTagIdsRef.current;
 
       // 変更がない場合は何もしない
@@ -396,15 +394,16 @@ export function usePlanInspectorContentLogic() {
       setHasTagChanges(true);
 
       // キャッシュも更新（CalendarCard等での即時表示用）
-      updateTagsInCache(planId, newTagIds);
+      // ドラフトモード（planId未確定）ではスキップ
+      if (planId) {
+        updateTagsInCache(planId, newTagIds);
+      }
     },
     [planId, updateTagsInCache],
   );
 
   const handleRemoveTag = useCallback(
     (tagId: string) => {
-      if (!planId) return;
-
       const newTagIds = selectedTagIdsRef.current.filter((id) => id !== tagId);
 
       setSelectedTagIds(newTagIds);
@@ -412,7 +411,10 @@ export function usePlanInspectorContentLogic() {
       setHasTagChanges(true);
 
       // キャッシュも更新
-      updateTagsInCache(planId, newTagIds);
+      // ドラフトモード（planId未確定）ではスキップ
+      if (planId) {
+        updateTagsInCache(planId, newTagIds);
+      }
     },
     [planId, updateTagsInCache],
   );
@@ -704,6 +706,15 @@ export function usePlanInspectorContentLogic() {
           end_time: currentDraft.end_time,
         });
         if (newPlan?.id) {
+          // タグが選択されていれば保存
+          const currentTagIds = selectedTagIdsRef.current;
+          if (currentTagIds.length > 0) {
+            try {
+              await setplanTags(newPlan.id, currentTagIds);
+            } catch (error) {
+              console.error('Failed to save tags for new plan:', error);
+            }
+          }
           clearDraft();
           // カレンダーのドラッグ選択をクリア（保存成功後）
           window.dispatchEvent(new CustomEvent('calendar-drag-cancel'));

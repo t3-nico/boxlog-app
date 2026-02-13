@@ -33,13 +33,13 @@ export const AllPatterns: Story = {
     const [snapOpen, setSnapOpen] = useState(false);
 
     return (
-      <div className="bg-background text-foreground min-h-screen p-8">
+      <div>
         <h1 className="mb-2 text-2xl font-bold">Drawer</h1>
         <p className="text-muted-foreground mb-8">
           モバイル用ボトムシート。vaul使用。スワイプで閉じる、スナップポイント対応。
         </p>
 
-        <div className="grid gap-8" style={{ maxWidth: '48rem' }}>
+        <div className="grid max-w-3xl gap-8">
           <div>
             <h2 className="mb-2 text-lg font-bold">基本形（bottom）</h2>
             <p className="text-muted-foreground mb-4 text-sm">

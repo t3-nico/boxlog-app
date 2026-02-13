@@ -10,17 +10,11 @@
 
 import { memo } from 'react';
 
-import { NoteIconButton } from '@/components/common/NoteIconButton';
-import { ScheduleRow } from '@/components/common/ScheduleRow';
-import { TagsIconButton } from '@/components/common/TagsIconButton';
-import { TitleInput } from '@/components/common/TitleInput';
-import { HoverTooltip } from '@/components/ui/tooltip';
-import { CheckCircle2, Circle } from 'lucide-react';
+import { NoteIconButton } from '@/features/inspector/components/NoteIconButton';
+import { ScheduleRow } from '@/features/inspector/components/ScheduleRow';
+import { TagsIconButton } from '@/features/inspector/components/TagsIconButton';
+import { TitleInput } from '@/features/inspector/components/TitleInput';
 import { useTranslations } from 'next-intl';
-
-import { cn } from '@/lib/utils';
-
-import { normalizeStatus } from '../../../utils/status';
 
 import type { Plan } from '../../../types/plan';
 import { DueDateIconButton } from '../../shared/DueDateIconButton';
@@ -54,8 +48,6 @@ interface PlanInspectorDetailsTabProps {
   onRemoveTag: (tagId: string) => void;
   onRepeatTypeChange: (type: string) => void;
   onRecurrenceRuleChange: (rrule: string | null) => void;
-  /** ステータス変更ハンドラー */
-  onStatusChange: (status: 'open' | 'closed') => void;
   /** ドラフトモード（新規作成時） */
   isDraftMode?: boolean;
 }
@@ -82,15 +74,13 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
   onTagsChange,
   onRepeatTypeChange,
   onRecurrenceRuleChange,
-  onStatusChange,
   isDraftMode = false,
 }: PlanInspectorDetailsTabProps) {
   const t = useTranslations();
-  const status = normalizeStatus(plan.status);
 
   return (
     <>
-      {/* Row 1: Title + Status */}
+      {/* Row 1: Title */}
       <div className="flex items-center gap-2 px-4 pt-4 pb-2">
         <TitleInput
           ref={titleRef}
@@ -99,31 +89,6 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
           placeholder={isDraftMode ? 'タイトルを追加' : t('calendar.event.noTitle')}
           className="flex-1"
         />
-
-        {/* Status - ドラフトモードでは非表示 */}
-        {!isDraftMode && (
-          <HoverTooltip
-            content={
-              status === 'closed' ? 'Done（クリックでOpenに戻す）' : 'Open（クリックでDoneに）'
-            }
-          >
-            <button
-              type="button"
-              onClick={() => onStatusChange(status === 'closed' ? 'open' : 'closed')}
-              className={cn(
-                'focus-visible:ring-ring shrink-0 rounded-full p-1 focus-visible:ring-2 focus-visible:outline-none',
-                status === 'closed' ? 'text-success' : 'text-foreground',
-              )}
-              aria-label={status === 'closed' ? 'ステータス: 完了' : 'ステータス: 未完了'}
-            >
-              {status === 'closed' ? (
-                <CheckCircle2 className="size-5" />
-              ) : (
-                <Circle className="size-5" />
-              )}
-            </button>
-          </HoverTooltip>
-        )}
       </div>
 
       {/* Row 2: Date + Time + Duration */}

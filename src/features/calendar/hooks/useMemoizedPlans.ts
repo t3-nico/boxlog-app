@@ -208,13 +208,6 @@ function applyFilters(events: CalendarPlan[], filters: Record<string, unknown>):
       }
     }
 
-    // カテゴリーフィルター（categoryプロパティは存在しないためコメントアウト）
-    // Note: CalendarPlan型にcategoryプロパティは存在しません
-    // 必要であればtypeやtagsでフィルタリングしてください
-    // if (filters.category && event.category !== filters.category) {
-    //   return false
-    // }
-
     // 時間範囲フィルター
     if (filters.timeRange) {
       if (!event.startDate) return false;

@@ -7,6 +7,8 @@
  * 1行目: タイトル（大きく）
  * 2行目: 日付 + 時間
  * 3行目: Tags + オプションアイコン（Plan紐付け、充実度、メモ）
+ *
+ * 既存Record編集専用（新規作成はPlanInspectorで行う）
  */
 
 import { useQueryClient } from '@tanstack/react-query';
@@ -14,13 +16,7 @@ import { Check, ExternalLink, FolderOpen, Smile, Trash2, X } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { toast } from 'sonner';
 
-import { NoteIconButton } from '@/components/common/NoteIconButton';
-import { ScheduleRow } from '@/components/common/ScheduleRow';
-import { TagsIconButton } from '@/components/common/TagsIconButton';
-import { TitleInput } from '@/components/common/TitleInput';
-import { Button } from '@/components/ui/button';
 import {
   Command,
   CommandEmpty,
@@ -33,7 +29,11 @@ import { DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdow
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { zIndex } from '@/config/ui/z-index';
-import { InspectorHeader, useDragHandle } from '@/features/inspector';
+import { InspectorHeader } from '@/features/inspector';
+import { NoteIconButton } from '@/features/inspector/components/NoteIconButton';
+import { ScheduleRow } from '@/features/inspector/components/ScheduleRow';
+import { TagsIconButton } from '@/features/inspector/components/TagsIconButton';
+import { TitleInput } from '@/features/inspector/components/TitleInput';
 import { usePlans } from '@/features/plans/hooks/usePlans';
 import { useTags } from '@/features/tags/hooks';
 import { api } from '@/lib/trpc';
@@ -45,7 +45,7 @@ import {
   useRecordMutations,
   useRecordTags,
 } from '../hooks';
-import { useRecordInspectorStore, type DraftRecord } from '../stores';
+import { useRecordInspectorStore } from '../stores';
 
 import { RecordActivityPopover } from './ActivityPopover';
 
@@ -82,11 +82,6 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
   const queryClient = useQueryClient();
   const utils = api.useUtils();
   const selectedRecordId = useRecordInspectorStore((state) => state.selectedRecordId);
-  const draftRecord = useRecordInspectorStore((state) => state.draftRecord);
-  const updateDraft = useRecordInspectorStore((state) => state.updateDraft);
-
-  // ドラフトモードかどうか
-  const isDraftMode = draftRecord !== null && selectedRecordId === null;
 
   // 時間重複エラー状態
   const [timeConflictError, setTimeConflictError] = useState(false);
@@ -99,7 +94,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
   // タグが変更されたかどうか
   const [hasTagChanges, setHasTagChanges] = useState(false);
 
-  // Record取得（既存編集時のみ）
+  // Record取得
   // placeholderDataでrecords.listキャッシュから即座に表示（UX向上）
   const { data: record, isLoading } = useRecord(selectedRecordId!, {
     includePlan: true,
@@ -113,7 +108,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
   const { data: allTags = [] } = useTags();
 
   // Mutations
-  const { createRecord, updateRecord, deleteRecord } = useRecordMutations();
+  const { updateRecord, deleteRecord } = useRecordMutations();
   const { setRecordTags } = useRecordTags();
 
   // ナビゲーション（前後のRecord移動）
@@ -160,23 +155,9 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
     return duration > 0 ? duration : 0;
   }, []);
 
-  // ドラフトまたは既存Recordデータを編集フォームに反映
+  // Recordデータを編集フォームに反映
   useEffect(() => {
-    if (isDraftMode && draftRecord) {
-      const workedAtDate = draftRecord.worked_at ? new Date(draftRecord.worked_at) : today;
-      setFormData({
-        title: draftRecord.title ?? '',
-        plan_id: draftRecord.plan_id,
-        worked_at: workedAtDate,
-        start_time: formatTimeWithoutSeconds(draftRecord.start_time),
-        end_time: formatTimeWithoutSeconds(draftRecord.end_time),
-        duration_minutes: draftRecord.duration_minutes,
-        fulfillment_score: draftRecord.fulfillment_score as FulfillmentScore | null,
-        note: draftRecord.note ?? '',
-        tagIds: draftRecord.tagIds ?? [],
-      });
-      setIsDirty(false);
-    } else if (record) {
+    if (record) {
       const workedAtDate = record.worked_at ? new Date(record.worked_at) : today;
       setFormData({
         title: record.title ?? '',
@@ -194,7 +175,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
       originalTagIdsRef.current = record.tagIds ?? [];
       setHasTagChanges(false);
     }
-  }, [record, draftRecord, isDraftMode, today]);
+  }, [record, today]);
 
   // 時間変更時にdurationを自動計算
   useEffect(() => {
@@ -214,7 +195,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
   }, []);
 
   // TitleInputの自動フォーカストリガー用のキー
-  const autoFocusKey = selectedRecordId ?? (isDraftMode ? 'draft' : '');
+  const autoFocusKey = selectedRecordId ?? '';
 
   // Plan: updated_at降順ソート + 検索フィルタリング
   const filteredPlans = useMemo(() => {
@@ -242,10 +223,8 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
     (value: string) => {
       setFormData((prev) => ({ ...prev, title: value }));
       setIsDirty(true);
-      if (isDraftMode) {
-        updateDraft({ title: value } as Partial<DraftRecord>);
-      } else if (selectedRecordId) {
-        // 編集モード: デバウンス適用してDB保存（Activityノイズ防止）
+      if (selectedRecordId) {
+        // デバウンス適用してDB保存（Activityノイズ防止）
         if (autoSaveTimerRef.current) {
           clearTimeout(autoSaveTimerRef.current);
         }
@@ -254,7 +233,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
         }, 500);
       }
     },
-    [isDraftMode, updateDraft, selectedRecordId, updateRecord],
+    [selectedRecordId, updateRecord],
   );
 
   const handlePlanChange = useCallback(
@@ -283,24 +262,12 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
       setIsPlanPopoverOpen(false);
       setPlanSearchQuery('');
 
-      if (isDraftMode) {
-        updateDraft({ plan_id: planId } as Partial<DraftRecord>);
-        if (planId && plans) {
-          const selectedPlan = plans.find((p) => p.id === planId);
-          if (selectedPlan) {
-            if (!formData.title) {
-              updateDraft({ title: selectedPlan.title } as Partial<DraftRecord>);
-            }
-            if (selectedPlan.tagIds && selectedPlan.tagIds.length > 0) {
-              updateDraft({ tagIds: selectedPlan.tagIds } as Partial<DraftRecord>);
-            }
-          }
-        }
+      if (selectedRecordId) {
+        // plan_id変更を即座にDB保存
+        updateRecord.mutate({ id: selectedRecordId, data: { plan_id: planId } });
       }
-      // 編集モードでのplan_id変更はスキーマで許可されていないため、
-      // 変更はローカル状態のみ（実質的に編集モードでは紐付け変更不可）
     },
-    [isDraftMode, plans, updateDraft, formData.title],
+    [plans, selectedRecordId, updateRecord],
   );
 
   const handlePlanPopoverOpenChange = useCallback((open: boolean) => {
@@ -310,41 +277,22 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
     }
   }, []);
 
-  const handleDateChange = useCallback(
-    (date: Date | undefined) => {
-      setFormData((prev) => ({ ...prev, worked_at: date }));
-      setIsDirty(true);
-      if (isDraftMode && date) {
-        const dateStr = date.toISOString().split('T')[0] ?? '';
-        updateDraft({ worked_at: dateStr } as Partial<DraftRecord>);
-      }
-    },
-    [isDraftMode, updateDraft],
-  );
+  const handleDateChange = useCallback((date: Date | undefined) => {
+    setFormData((prev) => ({ ...prev, worked_at: date }));
+    setIsDirty(true);
+  }, []);
 
-  const handleStartTimeChange = useCallback(
-    (time: string) => {
-      setTimeConflictError(false);
-      setFormData((prev) => ({ ...prev, start_time: time }));
-      setIsDirty(true);
-      if (isDraftMode) {
-        updateDraft({ start_time: time || null } as Partial<DraftRecord>);
-      }
-    },
-    [isDraftMode, updateDraft],
-  );
+  const handleStartTimeChange = useCallback((time: string) => {
+    setTimeConflictError(false);
+    setFormData((prev) => ({ ...prev, start_time: time }));
+    setIsDirty(true);
+  }, []);
 
-  const handleEndTimeChange = useCallback(
-    (time: string) => {
-      setTimeConflictError(false);
-      setFormData((prev) => ({ ...prev, end_time: time }));
-      setIsDirty(true);
-      if (isDraftMode) {
-        updateDraft({ end_time: time || null } as Partial<DraftRecord>);
-      }
-    },
-    [isDraftMode, updateDraft],
-  );
+  const handleEndTimeChange = useCallback((time: string) => {
+    setTimeConflictError(false);
+    setFormData((prev) => ({ ...prev, end_time: time }));
+    setIsDirty(true);
+  }, []);
 
   const handleScoreChange = useCallback(
     (value: number | null) => {
@@ -353,14 +301,12 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
         fulfillment_score: value as FulfillmentScore | null,
       }));
       setIsDirty(true);
-      if (isDraftMode) {
-        updateDraft({ fulfillment_score: value } as Partial<DraftRecord>);
-      } else if (selectedRecordId) {
-        // 編集モード: 即座にDB保存
+      if (selectedRecordId) {
+        // 即座にDB保存
         updateRecord.mutate({ id: selectedRecordId, data: { fulfillment_score: value } });
       }
     },
-    [isDraftMode, updateDraft, selectedRecordId, updateRecord],
+    [selectedRecordId, updateRecord],
   );
 
   // 充実度: 長押し開始
@@ -406,10 +352,8 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
     (value: string) => {
       setFormData((prev) => ({ ...prev, note: value }));
       setIsDirty(true);
-      if (isDraftMode) {
-        updateDraft({ note: value || null } as Partial<DraftRecord>);
-      } else if (selectedRecordId) {
-        // 編集モード: デバウンス適用してDB保存（Activityノイズ防止）
+      if (selectedRecordId) {
+        // デバウンス適用してDB保存（Activityノイズ防止）
         if (autoSaveTimerRef.current) {
           clearTimeout(autoSaveTimerRef.current);
         }
@@ -418,7 +362,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
         }, 500);
       }
     },
-    [isDraftMode, updateDraft, selectedRecordId, updateRecord],
+    [selectedRecordId, updateRecord],
   );
 
   /**
@@ -466,119 +410,14 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
       setFormData((prev) => ({ ...prev, tagIds: newTagIds }));
       setIsDirty(true);
 
-      if (isDraftMode) {
-        updateDraft({ tagIds: newTagIds } as Partial<DraftRecord>);
-      } else if (selectedRecordId) {
+      if (selectedRecordId) {
         // 楽観的更新: キャッシュを即座に更新（カレンダーカードに反映）
         updateTagsInCache(selectedRecordId, newTagIds);
         setHasTagChanges(true);
       }
     },
-    [isDraftMode, updateDraft, selectedRecordId, updateTagsInCache],
+    [selectedRecordId, updateTagsInCache],
   );
-
-  // 保存
-  const handleSave = async () => {
-    if (!formData.worked_at) return;
-
-    const workedAtStr = formData.worked_at.toISOString().split('T')[0] ?? '';
-
-    // クライアント側で即時重複チェック
-    if (formData.start_time && formData.end_time) {
-      const records = utils.records.list.getData();
-      if (records && records.length > 0) {
-        const [startH, startM] = formData.start_time.split(':').map(Number);
-        const [endH, endM] = formData.end_time.split(':').map(Number);
-        const newStart = new Date(formData.worked_at);
-        newStart.setHours(startH ?? 0, startM ?? 0, 0, 0);
-        const newEnd = new Date(formData.worked_at);
-        newEnd.setHours(endH ?? 0, endM ?? 0, 0, 0);
-
-        const hasOverlap = records.some((r) => {
-          // 編集時は自分自身を除外
-          if (selectedRecordId && r.id === selectedRecordId) return false;
-          if (r.worked_at !== workedAtStr) return false;
-          if (!r.start_time || !r.end_time) return false;
-
-          const [rStartH, rStartM] = r.start_time.split(':').map(Number);
-          const [rEndH, rEndM] = r.end_time.split(':').map(Number);
-          const rStart = new Date(formData.worked_at!);
-          rStart.setHours(rStartH ?? 0, rStartM ?? 0, 0, 0);
-          const rEnd = new Date(formData.worked_at!);
-          rEnd.setHours(rEndH ?? 0, rEndM ?? 0, 0, 0);
-
-          return rStart < newEnd && rEnd > newStart;
-        });
-
-        if (hasOverlap) {
-          setTimeConflictError(true);
-          return;
-        }
-      }
-    }
-
-    if (isDraftMode) {
-      // 新規作成モード
-      try {
-        await createRecord.mutateAsync({
-          plan_id: formData.plan_id,
-          title: formData.title || null,
-          worked_at: workedAtStr,
-          start_time: formData.start_time || null,
-          end_time: formData.end_time || null,
-          duration_minutes: formData.duration_minutes,
-          fulfillment_score: formData.fulfillment_score,
-          note: formData.note || null,
-          tagIds: formData.tagIds.length > 0 ? formData.tagIds : undefined,
-        });
-        onClose();
-      } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : '';
-        if (errorMessage.includes('TIME_OVERLAP') || errorMessage.includes('既に')) {
-          setTimeConflictError(true);
-        }
-      }
-    } else if (selectedRecordId && isDirty) {
-      // 既存Record更新モード
-      try {
-        // レコード情報を更新
-        await updateRecord.mutateAsync({
-          id: selectedRecordId,
-          data: {
-            title: formData.title || null,
-            worked_at: workedAtStr,
-            start_time: formData.start_time || null,
-            end_time: formData.end_time || null,
-            duration_minutes: formData.duration_minutes,
-            fulfillment_score: formData.fulfillment_score,
-            note: formData.note || null,
-          },
-        });
-
-        // タグを保存（変更があれば）
-        const originalTagIds = record?.tagIds ?? [];
-        const currentTagIds = formData.tagIds;
-        const tagsChanged =
-          originalTagIds.length !== currentTagIds.length ||
-          !originalTagIds.every((id) => currentTagIds.includes(id));
-
-        if (tagsChanged) {
-          await setRecordTags(selectedRecordId, currentTagIds);
-        }
-
-        setIsDirty(false);
-        onClose();
-      } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : '';
-        if (errorMessage.includes('TIME_OVERLAP') || errorMessage.includes('既に')) {
-          setTimeConflictError(true);
-        }
-      }
-    } else {
-      // 変更がない場合も閉じる
-      onClose();
-    }
-  };
 
   // 削除
   const handleDelete = async () => {
@@ -589,16 +428,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
     onClose();
   };
 
-  // キャンセル（ドラフトモード用）
-  const cancelAndClose = useCallback(() => {
-    // タグ変更があった場合はキャッシュを元に戻す
-    if (hasTagChanges && selectedRecordId) {
-      updateTagsInCache(selectedRecordId, originalTagIdsRef.current);
-    }
-    onClose();
-  }, [onClose, hasTagChanges, selectedRecordId, updateTagsInCache]);
-
-  // 保存して閉じる（編集モード用: 時間フィールドとタグを保存）
+  // 保存して閉じる（時間フィールドとタグを保存）
   const saveAndClose = useCallback(async () => {
     if (!selectedRecordId || !formData.worked_at) {
       onClose();
@@ -682,7 +512,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
   ]);
 
   // ローディング状態
-  if (!isDraftMode && isLoading) {
+  if (isLoading) {
     return (
       <div className="flex h-full items-center justify-center">
         <p className="text-muted-foreground text-sm">読み込み中...</p>
@@ -691,7 +521,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
   }
 
   // Record未取得
-  if (!isDraftMode && !record) {
+  if (!record) {
     return (
       <div className="flex h-full items-center justify-center">
         <p className="text-muted-foreground text-sm">Recordが見つかりません</p>
@@ -699,8 +529,8 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
     );
   }
 
-  // メニューコンテンツ（編集モードのみ）
-  const menuContent = !isDraftMode ? (
+  // メニューコンテンツ
+  const menuContent = (
     <>
       <DropdownMenuSeparator />
       <DropdownMenuItem onClick={handleDelete} className="text-destructive focus:text-destructive">
@@ -708,30 +538,25 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
         削除
       </DropdownMenuItem>
     </>
-  ) : undefined;
+  );
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-      {/* ヘッダー */}
-      {isDraftMode ? (
-        <DraftModeHeader />
-      ) : (
-        // 編集モード用ヘッダー（自動保存: ×で閉じる時に時間・タグを保存）
-        <InspectorHeader
-          hasPrevious={hasPrevious}
-          hasNext={hasNext}
-          onClose={saveAndClose}
-          onPrevious={goToPrevious}
-          onNext={goToNext}
-          closeLabel={t('actions.close')}
-          previousLabel={t('aria.previous')}
-          nextLabel={t('aria.next')}
-          extraRightContent={
-            selectedRecordId ? <RecordActivityPopover recordId={selectedRecordId} /> : undefined
-          }
-          menuContent={menuContent}
-        />
-      )}
+      {/* ヘッダー（自動保存: ×で閉じる時に時間・タグを保存） */}
+      <InspectorHeader
+        hasPrevious={hasPrevious}
+        hasNext={hasNext}
+        onClose={saveAndClose}
+        onPrevious={goToPrevious}
+        onNext={goToNext}
+        closeLabel={t('actions.close')}
+        previousLabel={t('aria.previous')}
+        nextLabel={t('aria.next')}
+        extraRightContent={
+          selectedRecordId ? <RecordActivityPopover recordId={selectedRecordId} /> : undefined
+        }
+        menuContent={menuContent}
+      />
 
       {/* コンテンツ部分（Toggl風3行構造） */}
       <div className="flex flex-1 flex-col overflow-y-auto">
@@ -742,7 +567,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
             ref={titleRef}
             value={formData.title}
             onChange={handleTitleChange}
-            placeholder={isDraftMode ? '何をした？' : t('calendar.event.noTitle')}
+            placeholder={t('calendar.event.noTitle')}
             className="pl-2"
             aria-label="記録タイトル"
             autoFocus
@@ -770,7 +595,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
             popoverSide="bottom"
           />
 
-          {/* Plan紐付け（新規・編集共通） */}
+          {/* Plan紐付け */}
           <Popover open={isPlanPopoverOpen} onOpenChange={handlePlanPopoverOpenChange}>
             <HoverTooltip content={selectedPlanName ?? 'Planに紐付け'} side="top">
               <div
@@ -918,59 +743,12 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
 
           {/* メモ */}
           <NoteIconButton
-            id={selectedRecordId ?? 'draft'}
+            id={selectedRecordId ?? 'record'}
             note={formData.note}
             onNoteChange={handleNoteChange}
           />
         </div>
       </div>
-
-      {/* フッター（ドラフトモードのみ） */}
-      {isDraftMode && (
-        <div className="flex shrink-0 justify-end gap-2 px-4 py-4">
-          <Button variant="ghost" onClick={cancelAndClose}>
-            キャンセル
-          </Button>
-          <Button
-            onClick={() => {
-              // 新規作成時は時間が必須
-              if (formData.duration_minutes <= 0) {
-                toast.error('時間を入力してください');
-                return;
-              }
-              handleSave();
-            }}
-          >
-            Record 作成
-          </Button>
-        </div>
-      )}
-    </div>
-  );
-}
-
-/**
- * ドラフトモード用ヘッダー
- *
- * Planと同様にドラッグハンドルを適用
- */
-function DraftModeHeader() {
-  const dragHandleProps = useDragHandle();
-  const isDraggable = !!dragHandleProps;
-
-  return (
-    <div className="bg-popover relative flex shrink-0 items-center px-4 pt-4 pb-2">
-      {/* ドラッグハンドル（背景レイヤー） */}
-      {isDraggable && (
-        <div
-          {...dragHandleProps}
-          className="hover:bg-state-hover absolute inset-0 cursor-move transition-colors"
-          aria-hidden="true"
-        />
-      )}
-
-      {/* タイトル（前面レイヤー） */}
-      <h2 className="relative z-10 text-base font-bold">Record 作成</h2>
     </div>
   );
 }

@@ -4,9 +4,8 @@ import type { PlanStatus } from '@/features/plans/types/plan';
 import { Calendar, ChevronDown, FileText, Plus } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { LoadingSpinner } from '@/components/common/Loading/LoadingStates';
-import { SelectionBar } from '@/components/common/SelectionBar';
 import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/spinner';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MEDIA_QUERIES } from '@/config/ui/breakpoints';
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
@@ -20,6 +19,7 @@ import {
   useTableSortStore,
   type TableNavigationConfig,
 } from '@/features/table';
+import { SelectionBar } from '@/features/table/components/SelectionBar';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { api } from '@/lib/trpc';
 import { useTranslations } from 'next-intl';
@@ -309,7 +309,7 @@ export function PlanTableView() {
     return (
       <div className="flex h-full items-center justify-center">
         <div className="flex flex-col items-center gap-2">
-          <LoadingSpinner size="lg" />
+          <Spinner size="lg" />
           <p className="text-muted-foreground text-sm">読み込み中...</p>
         </div>
       </div>

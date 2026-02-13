@@ -1,6 +1,5 @@
 'use client';
 
-import { MiniCalendar } from '@/components/common/MiniCalendar';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -10,6 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { MiniCalendar } from '@/components/ui/mini-calendar';
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
 import { format } from 'date-fns';
 import { enUS, ja } from 'date-fns/locale';

@@ -11,6 +11,13 @@ const meta = {
   parameters: {
     layout: 'fullscreen',
   },
+  argTypes: {
+    size: {
+      control: 'select',
+      options: ['sm', 'md', 'lg', 'xl'],
+      description: 'サイズプリセット（sm=16px, md=24px, lg=32px, xl=48px）',
+    },
+  },
 } satisfies Meta<typeof Spinner>;
 
 export default meta;
@@ -26,13 +33,13 @@ export const AllPatterns: Story = {
     };
 
     return (
-      <div className="bg-background text-foreground min-h-screen p-8">
+      <div>
         <h1 className="mb-2 text-2xl font-bold">Spinner</h1>
         <p className="text-muted-foreground mb-8">
           ローディングインジケーター（回転アニメーション）
         </p>
 
-        <div className="grid gap-8" style={{ maxWidth: '28rem' }}>
+        <div className="grid max-w-md gap-8">
           <div>
             <h2 className="mb-2 text-lg font-bold">Button isLoading（推奨）</h2>
             <p className="text-muted-foreground mb-4 text-sm">
@@ -60,32 +67,26 @@ export const AllPatterns: Story = {
           </div>
 
           <div>
-            <h2 className="mb-2 text-lg font-bold">サイズ</h2>
+            <h2 className="mb-2 text-lg font-bold">サイズプリセット</h2>
             <p className="text-muted-foreground mb-4 text-sm">
-              classNameでサイズ調整。LoadingSpinnerはsm/md/lg/xlプリセット対応。
+              size propでサイズ指定。ページローディング等はsize=&quot;lg&quot;を使用。
             </p>
-            <div className="flex items-center gap-4">
-              <Spinner className="size-4" />
-              <Spinner className="size-6" />
-              <Spinner className="size-8" />
-              <Spinner className="size-12" />
+            <div className="flex items-end gap-6">
+              {(['sm', 'md', 'lg', 'xl'] as const).map((size) => (
+                <div key={size} className="flex flex-col items-center gap-2">
+                  <Spinner size={size} />
+                  <span className="text-muted-foreground text-xs">{size}</span>
+                </div>
+              ))}
             </div>
           </div>
 
           <div>
-            <h2 className="mb-4 text-lg font-bold">使用箇所</h2>
-            <ul className="text-muted-foreground list-inside list-disc space-y-1 text-sm">
-              <li>Button isLoading - 認証フォーム全般</li>
-              <li>LoadingSpinner - ページローディング、オーバーレイ</li>
-              <li>インライン表示 - テキストと並べて使用</li>
-            </ul>
-          </div>
-
-          <div>
             <h2 className="mb-4 text-lg font-bold">Props / アクセシビリティ</h2>
-            <div className="bg-surface-container rounded-lg p-4">
+            <div className="bg-container rounded-lg p-4">
               <ul className="text-muted-foreground list-inside list-disc space-y-1 text-sm">
-                <li>className - サイズ調整（size-5, size-6 等）</li>
+                <li>size - プリセット（sm/md/lg/xl）。省略時 size-4</li>
+                <li>className - 色やサイズの追加カスタマイズ</li>
                 <li>aria-label - デフォルト「Loading」</li>
                 <li>{'role="status", aria-live="polite" 設定済み'}</li>
                 <li>motion-reduce: アニメーション停止</li>

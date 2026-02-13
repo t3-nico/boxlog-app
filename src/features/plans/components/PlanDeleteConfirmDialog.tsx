@@ -2,7 +2,7 @@
 
 import { useCallback } from 'react';
 
-import { ConfirmDialog } from '@/components/common/ConfirmDialog';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { useTranslations } from 'next-intl';
 
 import { useDeleteConfirmStore } from '../stores/useDeleteConfirmStore';

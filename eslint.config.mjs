@@ -17,7 +17,7 @@ const compat = new FlatCompat({
 const config = [
   // Ignore patterns
   {
-    ignores: ['**/node_modules/**', '**/.next/**', '**/dist/**', '**/build/**', '**/coverage/**'],
+    ignores: ['**/node_modules/**', '**/.next/**', '**/dist/**', '**/build/**', '**/coverage/**', 'storybook-static/**'],
   },
 
   // Next.js公式推奨設定（React, TypeScript, アクセシビリティ含む）

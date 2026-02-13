@@ -19,20 +19,21 @@
    * Material Design 3 / Apple HIG の共通原則に基づく意味ベース設計
    *
    * Background: ページ背景（最明）
-   * Card: カード、ダイアログ
    * Container: サイドバー、セクション
-   * Overlay: ポップオーバー（background直下の明度）
+   * Card: カード、ダイアログ、ポップオーバー
    *
-   * 明度順（ライト）: background > overlay > container > card
+   * 明度順（ライト）: background > container > card
    * 各段階で約3%の明度差（GAFA準拠）
    * ============================================ */
   --background: oklch(0.99 0 0);                  /* ページ背景 */
   --foreground: oklch(0.25 0 0);
 
-  /* Surface（意味ベース4段階・GAFA準拠の明度差） */
-  --overlay: oklch(0.96 0 0);                     /* ポップオーバー（差: 0.03） */
-  --container: oklch(0.93 0 0);                   /* サイドバー、セクション（差: 0.03） */
-  --card: oklch(0.90 0 0);                        /* カード、ダイアログ（差: 0.03） */
+  /* Surface（意味ベース3段階・GAFA準拠の明度差） */
+  --container: oklch(0.93 0 0);                   /* サイドバー、セクション（差: 0.06） */
+  --card: oklch(0.90 0 0);                        /* カード、ダイアログ、ポップオーバー（差: 0.03） */
+
+  /* Overlay（MD3 scrim準拠・モーダル背景用） */
+  --overlay: oklch(0 0 0 / 0.32);                /* Dialog/Sheetの半透明背景 */
 
   /* Calendar Boxes（カレンダー専用Surface） */
   --plan-box: oklch(0.88 0 0);                    /* vs background(0.99): より強調 */
@@ -41,8 +42,6 @@
 
   /* 互換性エイリアス（shadcn/ui用） */
   --card-foreground: oklch(0.25 0 0);
-  --popover: var(--overlay);
-  --popover-foreground: oklch(0.25 0 0);
   --secondary: var(--container);
   --secondary-foreground: oklch(0.25 0 0);
   --muted-foreground: oklch(0.35 0.02 264.54);
@@ -87,24 +86,41 @@
   --chart-3: oklch(0.4882 0.2172 264.3763);
   --chart-4: oklch(0.4244 0.1809 265.6377);
   --chart-5: oklch(0.3791 0.1378 265.5222);
+
+  /* ============================================
+   * Tag Colors（ライトモード）
+   * ダークモードでは明度を上げてアクセシビリティ確保
+   * ============================================ */
+  --tag-blue: oklch(0.62 0.21 257);
+  --tag-green: oklch(0.67 0.17 162);
+  --tag-red: oklch(0.63 0.23 25);
+  --tag-amber: oklch(0.78 0.18 75);
+  --tag-violet: oklch(0.55 0.24 293);
+  --tag-pink: oklch(0.64 0.22 350);
+  --tag-cyan: oklch(0.68 0.14 203);
+  --tag-orange: oklch(0.70 0.20 45);
+  --tag-gray: oklch(0.52 0.02 256);
+  --tag-indigo: oklch(0.54 0.24 275);
 }
 
 /* ダークモード（CSS変数上書き） */
 .dark {
   /* ============================================
-   * Surface体系（GAFA準拠・4段階）
+   * Surface体系（GAFA準拠・3段階）
    * MD3原則: 高いelevationほど明るい
    * 各段階で約5〜6%の明度差（GAFA準拠）
    *
-   * 明度順（ダーク）: overlay > background > container > card
+   * 明度順（ダーク）: background > container > card
    * ============================================ */
   --background: oklch(0.24 0 0);                  /* ページ背景 */
   --foreground: oklch(0.9219 0 0);
 
-  /* Surface（意味ベース4段階・GAFA準拠の明度差） */
-  --overlay: oklch(0.30 0 0);                     /* ポップオーバー（差: 0.06） */
+  /* Surface（意味ベース3段階・GAFA準拠の明度差） */
   --container: oklch(0.18 0 0);                   /* サイドバー、セクション（差: 0.06） */
-  --card: oklch(0.12 0 0);                        /* カード、ダイアログ（差: 0.06） */
+  --card: oklch(0.12 0 0);                        /* カード、ダイアログ、ポップオーバー（差: 0.06） */
+
+  /* Overlay（MD3 scrim準拠・モーダル背景用） */
+  --overlay: oklch(0 0 0 / 0.50);                /* Dialog/Sheetの半透明背景 */
 
   /* Calendar Boxes（カレンダー専用Surface） */
   --plan-box: oklch(0.16 0 0);                    /* vs background(0.24): より強調 */
@@ -113,8 +129,6 @@
 
   /* 互換性エイリアス（shadcn/ui用） */
   --card-foreground: oklch(0.9219 0 0);
-  --popover: var(--overlay);
-  --popover-foreground: oklch(0.9219 0 0);
   --secondary: var(--container);
   --secondary-foreground: oklch(0.95 0 0);
   --muted-foreground: oklch(0.78 0 0);
@@ -147,6 +161,22 @@
   --chronotype-moderate: oklch(0.50 0.10 250);    /* 通常 - 青（暗め） */
   --chronotype-low: oklch(0.40 0.06 70);          /* 低調 - ウォームベージュ（暗め） */
   --chronotype-sleep: oklch(0.50 0.18 310);       /* 睡眠 - 紫（暗め） */
+
+  /* ============================================
+   * Tag Colors（ダークモード用）
+   * 明度を上げ、彩度を下げてアクセシビリティ確保
+   * WCAG 2.1 非テキスト要素コントラスト比 3:1 以上を目標
+   * ============================================ */
+  --tag-blue: oklch(0.75 0.18 257);
+  --tag-green: oklch(0.78 0.15 162);
+  --tag-red: oklch(0.75 0.20 25);
+  --tag-amber: oklch(0.85 0.16 75);
+  --tag-violet: oklch(0.72 0.20 293);
+  --tag-pink: oklch(0.76 0.18 350);
+  --tag-cyan: oklch(0.78 0.12 203);
+  --tag-orange: oklch(0.80 0.17 45);
+  --tag-gray: oklch(0.70 0.02 256);
+  --tag-indigo: oklch(0.72 0.20 275);
 
   /* Borders & Inputs */
   --border: oklch(0.3715 0 0);
@@ -199,11 +229,11 @@
   --color-secondary-hover: oklch(from var(--secondary) l c h / 80%);
 
   /* ============================================
-   * Surface トークン（GAFA準拠・4段階）
+   * Surface トークン（GAFA準拠・3段階）
    * background: ページ背景
-   * card: カード、ダイアログ
    * container: サイドバー、セクション
-   * overlay: ポップオーバー
+   * card: カード、ダイアログ、ポップオーバー
+   * overlay: モーダル背景（半透明・MD3 scrim）
    * ============================================ */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -214,8 +244,6 @@
   --color-plan-box: var(--plan-box);
   --color-record-box: var(--record-box);
   --color-record-border: var(--record-border);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
@@ -259,6 +287,31 @@
    * ============================================ */
   --shadow-color: oklch(0 0 0 / 15%);
   --shadow-color-heavy: oklch(0 0 0 / 20%);
+
+  /* ============================================
+   * Tag Colors（ユーザー選択用カラーパレット）
+   * 使用例: bg-tag-blue, text-tag-red
+   * ============================================ */
+  --color-tag-blue: var(--tag-blue);
+  --color-tag-green: var(--tag-green);
+  --color-tag-red: var(--tag-red);
+  --color-tag-amber: var(--tag-amber);
+  --color-tag-violet: var(--tag-violet);
+  --color-tag-pink: var(--tag-pink);
+  --color-tag-cyan: var(--tag-cyan);
+  --color-tag-orange: var(--tag-orange);
+  --color-tag-gray: var(--tag-gray);
+  --color-tag-indigo: var(--tag-indigo);
+
+  /* ============================================
+   * Chronotype Colors（生産性ゾーン）
+   * 使用例: bg-chronotype-peak, bg-chronotype-sleep
+   * ============================================ */
+  --color-chronotype-peak: var(--chronotype-peak);
+  --color-chronotype-good: var(--chronotype-good);
+  --color-chronotype-moderate: var(--chronotype-moderate);
+  --color-chronotype-low: var(--chronotype-low);
+  --color-chronotype-sleep: var(--chronotype-sleep);
 }
 
 @theme {
@@ -296,7 +349,6 @@
   --shadow-md: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 2px 4px -1px hsl(0 0% 0% / 0.1);
   --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 4px 6px -1px hsl(0 0% 0% / 0.1);
   --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);
-  --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
 
   /* ============================================
    * Z-Index（スタッキング順序）
@@ -1504,7 +1556,7 @@ img {
  * セマンティックトークンを適用してデザインシステムに統合
  * ============================================ */
 .timepicker-ui-wrapper-active {
-  --pm-bg-color: var(--popover);
+  --pm-bg-color: var(--card);
   --pm-s-line-color: var(--primary);
   --pm-bg-time-number-select: var(--primary);
   --pm-text-time-number-select: var(--primary-foreground);
@@ -1525,7 +1577,7 @@ img {
 
 /* ダークモード対応 */
 .dark .timepicker-ui-wrapper-active {
-  --pm-bg-color: var(--popover);
+  --pm-bg-color: var(--card);
   --pm-clock-face-bg: var(--card);
   --pm-clock-face-bg-secondary: color-mix(in oklch, var(--card) 70%, var(--foreground) 30%);
 }

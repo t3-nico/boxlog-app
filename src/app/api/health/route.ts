@@ -29,11 +29,7 @@ interface HealthStatus {
  */
 async function checkDatabase(): Promise<'ok' | 'error' | 'warning'> {
   try {
-    // 実際の実装ではSupabaseクライアントの接続確認を行う
-    // const { data, error } = await supabase.from('health_check').select('*').limit(1)
-    // return error ? 'error' : 'ok'
-
-    // 開発段階では環境変数の存在確認のみ
+    // 環境変数の存在確認
     const hasDbUrl = !!process.env.NEXT_PUBLIC_SUPABASE_URL;
     const hasDbKey = !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
@@ -52,13 +48,6 @@ async function checkDatabase(): Promise<'ok' | 'error' | 'warning'> {
  */
 async function checkExternalAPIs(): Promise<'ok' | 'error' | 'warning'> {
   try {
-    // OpenAI API接続確認（設定されている場合）
-    if (process.env.OPENAI_API_KEY) {
-      // 実際の実装では簡単なAPI呼び出しを行う
-      // const response = await fetch('https://api.openai.com/v1/models', {...})
-      // return response.ok ? 'ok' : 'warning'
-    }
-
     return 'ok';
   } catch {
     return 'warning';

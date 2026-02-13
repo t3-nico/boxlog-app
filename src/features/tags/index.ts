@@ -7,27 +7,21 @@
  * @example
  * ```tsx
  * // ✅ 推奨: バレルファイル経由
- * import { TagSelector, useTags, useTagStore } from '@/features/tags'
+ * import { TagBadge, useTags, useTagStore } from '@/features/tags'
  *
  * // ❌ 非推奨: 深いパス指定
- * import { TagSelector } from '@/features/tags/components/tag-selector'
+ * import { TagBadge } from '@/features/tags/components/tag-badge'
  * import { useTags } from '@/features/tags/hooks'
  * ```
  */
 
 // Components
 export {
-  GroupNameWithTooltip,
-  QuickTagCreateModal,
-  // Actions
-  TagActionMenuItems,
-  TagArchiveDialog,
+  GlobalTagCreateModal,
   TagBadge,
   // Modals & Dialogs
   TagCreateModal,
-  TagEditDialog,
   // Selection & Display
-  TagSelector,
   TagsList,
 } from './components';
 

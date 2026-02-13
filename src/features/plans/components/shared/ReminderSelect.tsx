@@ -1,11 +1,13 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 
 import { Bell, Check } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { HoverTooltip } from '@/components/ui/tooltip';
+import { zIndex } from '@/config/ui/z-index';
 import { cn } from '@/lib/utils';
 
 // 通知オプションの定義（UI表示文字列）
@@ -27,12 +29,15 @@ interface ReminderSelectProps {
 }
 
 /**
- * 通知選択コンポーネント（ボタン + カスタムポップオーバー）
+ * 通知選択コンポーネント（ボタン + Popover）
  *
  * Inspector、Card、Tableの全てで共通して使用
  * - inspector: Inspectorで使用する横長スタイル（Bell + テキスト）
  * - compact: Card/Tableで使用するコンパクトスタイル（Bell のみ）
  * - button: Card/Tableポップオーバー内で使用する標準ボタンスタイル（繰り返しと同じ）
+ * - icon: アイコンのみのスタイル
+ *
+ * Radix Popover（Portal経由）を使用し、Inspector内でも正しく表示
  */
 export function ReminderSelect({
   value,
@@ -40,22 +45,7 @@ export function ReminderSelect({
   variant = 'inspector',
   disabled = false,
 }: ReminderSelectProps) {
-  const reminderRef = useRef<HTMLDivElement>(null);
   const [showPopover, setShowPopover] = useState(false);
-
-  // 外側クリックでポップアップを閉じる
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (reminderRef.current && !reminderRef.current.contains(event.target as Node)) {
-        setShowPopover(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
 
   // 通知が設定されているかどうか
   const hasReminder = value && value !== '';
@@ -67,18 +57,12 @@ export function ReminderSelect({
     return option?.label || value;
   };
 
-  return (
-    <div className="relative" ref={reminderRef}>
-      {variant === 'button' ? (
+  const triggerButton = (() => {
+    if (variant === 'button') {
+      return (
         <button
           type="button"
           disabled={disabled}
-          onClick={(e) => {
-            e.stopPropagation();
-            if (!disabled) {
-              setShowPopover(!showPopover);
-            }
-          }}
           className="border-border bg-secondary text-secondary-foreground hover:bg-state-hover focus-visible:border-ring focus-visible:ring-ring/50 flex h-9 w-fit items-center gap-1 rounded-lg border px-2 py-0 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50"
         >
           <span>{getDisplayLabel()}</span>
@@ -97,85 +81,92 @@ export function ReminderSelect({
             <path d="m6 9 6 6 6-6" />
           </svg>
         </button>
-      ) : variant === 'inspector' ? (
+      );
+    }
+
+    if (variant === 'inspector') {
+      return (
         <Button
           variant="ghost"
           size="sm"
           className={`h-8 px-2 text-sm ${hasReminder ? 'text-foreground' : 'text-muted-foreground'}`}
           type="button"
           disabled={disabled}
-          onClick={() => {
-            if (!disabled) {
-              setShowPopover(!showPopover);
-            }
-          }}
         >
           {value || '通知'}
         </Button>
-      ) : variant === 'icon' ? (
+      );
+    }
+
+    if (variant === 'icon') {
+      return (
+        <button
+          type="button"
+          disabled={disabled}
+          className={cn(
+            'flex h-8 items-center gap-1 rounded-lg px-2 transition-colors',
+            'hover:bg-state-hover focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
+            hasReminder ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',
+          )}
+          aria-label={hasReminder ? `通知: ${getDisplayLabel()}` : '通知を設定'}
+        >
+          <Bell className="size-4" />
+          {hasReminder && <span className="text-sm">{getDisplayLabel()}</span>}
+        </button>
+      );
+    }
+
+    // compact variant
+    return (
+      <Button
+        variant="ghost"
+        size="sm"
+        className={`h-8 gap-1 px-2 ${hasReminder ? 'text-foreground' : 'text-muted-foreground'}`}
+        type="button"
+        disabled={disabled}
+      >
+        <Bell className="h-4 w-4" />
+      </Button>
+    );
+  })();
+
+  const popoverTrigger = <PopoverTrigger asChild>{triggerButton}</PopoverTrigger>;
+
+  return (
+    <Popover open={showPopover} onOpenChange={setShowPopover}>
+      {variant === 'icon' ? (
         <HoverTooltip
           content={hasReminder ? `通知: ${getDisplayLabel()}` : '通知を設定'}
           side="top"
         >
-          <button
-            type="button"
-            disabled={disabled}
-            onClick={() => {
-              if (!disabled) {
-                setShowPopover(!showPopover);
-              }
-            }}
-            className={cn(
-              'flex h-8 items-center gap-1 rounded-lg px-2 transition-colors',
-              'hover:bg-state-hover focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
-              hasReminder ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',
-            )}
-            aria-label={hasReminder ? `通知: ${getDisplayLabel()}` : '通知を設定'}
-          >
-            <Bell className="size-4" />
-            {hasReminder && <span className="text-sm">{getDisplayLabel()}</span>}
-          </button>
+          {popoverTrigger}
         </HoverTooltip>
       ) : (
-        <Button
-          variant="ghost"
-          size="sm"
-          className={`h-8 gap-1 px-2 ${hasReminder ? 'text-foreground' : 'text-muted-foreground'}`}
-          type="button"
-          disabled={disabled}
-          onClick={() => {
-            if (!disabled) {
-              setShowPopover(!showPopover);
-            }
-          }}
-        >
-          <Bell className="h-4 w-4" />
-        </Button>
+        popoverTrigger
       )}
-
-      {showPopover && !disabled && (
-        <div className="border-border bg-popover absolute top-8 left-0 z-50 w-56 rounded-lg border shadow-md">
-          <div className="p-1">
-            {REMINDER_OPTIONS.map((option, index) => (
-              <>
-                {index === 1 && <div key="separator" className="border-border my-1 border-t" />}
-                <button
-                  key={option.value}
-                  className="hover:bg-state-hover flex w-full items-center justify-between rounded px-2 py-2 text-left text-sm"
-                  onClick={() => {
-                    onChange(option.value);
-                    setShowPopover(false);
-                  }}
-                  type="button"
-                >
-                  {option.label}
-                  {value === option.value && <Check className="text-primary h-4 w-4" />}
-                </button>
-              </>
-            ))}
+      <PopoverContent
+        className="w-56 p-1"
+        align="start"
+        sideOffset={4}
+        style={{ zIndex: zIndex.overlayDropdown }}
+      >
+        {REMINDER_OPTIONS.map((option, index) => (
+          <div key={option.value}>
+            {index === 1 && <div className="border-border my-1 border-t" />}
+            <button
+              className="hover:bg-state-hover flex w-full items-center justify-between rounded px-2 py-2 text-left text-sm"
+              onClick={() => {
+                onChange(option.value);
+                setShowPopover(false);
+              }}
+              type="button"
+            >
+              {option.label}
+              {value === option.value && <Check className="text-primary h-4 w-4" />}
+            </button>
           </div>
-        </div>
-      )}
-    </div>
+        ))}
+      </PopoverContent>
+    </Popover>
   );
 }

@@ -51,14 +51,14 @@ function ColorGroup({ title, children }: { title: string; children: React.ReactN
 
 export const AllColors: Story = {
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h1 className="mb-8 text-2xl font-bold">カラートークン</h1>
 
       <ColorGroup title="Surface（背景色）">
-        <ColorSwatch tailwindClass="bg-overlay" description="ポップオーバー" />
         <ColorSwatch tailwindClass="bg-background" description="ページ背景" />
         <ColorSwatch tailwindClass="bg-container" description="サイドバー、セクション" />
-        <ColorSwatch tailwindClass="bg-card" description="カード、ダイアログ" />
+        <ColorSwatch tailwindClass="bg-card" description="カード、ダイアログ、ポップオーバー" />
+        <ColorSwatch tailwindClass="bg-overlay" description="モーダル背景（半透明・MD3 scrim）" />
       </ColorGroup>
 
       <ColorGroup title="テキスト">
@@ -123,11 +123,20 @@ export const AllColors: Story = {
         />
       </ColorGroup>
 
+      <ColorGroup title="Tag Colors（ダークモードで明度調整）">
+        <ColorSwatch tailwindClass="bg-tag-blue" description="Blue（デフォルト）" />
+        <ColorSwatch tailwindClass="bg-tag-green" description="Green" />
+        <ColorSwatch tailwindClass="bg-tag-red" description="Red" />
+        <ColorSwatch tailwindClass="bg-tag-amber" description="Amber" />
+        <ColorSwatch tailwindClass="bg-tag-violet" description="Violet" />
+        <ColorSwatch tailwindClass="bg-tag-pink" description="Pink" />
+        <ColorSwatch tailwindClass="bg-tag-cyan" description="Cyan" />
+        <ColorSwatch tailwindClass="bg-tag-orange" description="Orange" />
+        <ColorSwatch tailwindClass="bg-tag-gray" description="Gray" />
+        <ColorSwatch tailwindClass="bg-tag-indigo" description="Indigo" />
+      </ColorGroup>
+
       <ColorGroup title="shadcn/ui互換エイリアス">
-        <ColorSwatch
-          tailwindClass="bg-popover"
-          description="= bg-overlay のエイリアス（shadcn/ui互換）"
-        />
         <ColorSwatch
           tailwindClass="bg-secondary"
           description="= bg-container のエイリアス（shadcn/ui互換）"
@@ -147,8 +156,8 @@ export const AllColors: Story = {
 
 export const Surface: Story = {
   render: () => (
-    <div className="bg-background text-foreground p-8">
-      <h2 className="mb-6 text-xl font-bold">Surface体系（GAFA準拠・4段階）</h2>
+    <div>
+      <h2 className="mb-6 text-xl font-bold">Surface体系（GAFA準拠・3段階）</h2>
       <p className="text-muted-foreground mb-8">
         Material Design 3 / Apple HIG の共通原則に基づく意味ベース設計。
         <br />
@@ -156,13 +165,6 @@ export const Surface: Story = {
       </p>
 
       <div className="space-y-4">
-        <div className="bg-overlay border-border rounded-lg border p-6">
-          <div className="font-bold">Overlay</div>
-          <div className="text-muted-foreground text-sm">
-            ポップオーバー、ドロップダウン（MD3: 高elevation = ダークモードで最も明るい）
-          </div>
-        </div>
-
         <div className="bg-background border-border rounded-lg border p-6">
           <div className="font-bold">Background</div>
           <div className="text-muted-foreground text-sm">ページ背景（基準レベル）</div>
@@ -178,7 +180,14 @@ export const Surface: Story = {
         <div className="bg-card border-border rounded-lg border p-6">
           <div className="font-bold">Card</div>
           <div className="text-muted-foreground text-sm">
-            カード、ダイアログ（containerより6%暗い = 最も沈んだレベル）
+            カード、ダイアログ、ポップオーバー（containerより3%暗い = 最も沈んだレベル）
+          </div>
+        </div>
+
+        <div className="bg-overlay border-border rounded-lg border p-6">
+          <div className="font-bold text-white">Overlay</div>
+          <div className="text-sm text-white/70">
+            モーダル背景（半透明・MD3 scrim）。Dialog/Sheetの後ろに敷く背景幕。
           </div>
         </div>
       </div>
@@ -188,7 +197,7 @@ export const Surface: Story = {
 
 export const Semantic: Story = {
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h2 className="mb-6 text-xl font-bold">Semantic Colors（意味を持つ色）</h2>
 
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
@@ -218,7 +227,7 @@ export const Semantic: Story = {
 
 export const Interaction: Story = {
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h2 className="mb-6 text-xl font-bold">インタラクション状態</h2>
       <p className="text-muted-foreground mb-8">
         ホバー、フォーカス、プレス時の色変化。実際に操作して確認できます。
@@ -530,7 +539,7 @@ export const Interaction: Story = {
 
 export const Text: Story = {
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h1 className="mb-6 text-2xl font-bold">テキストカラー</h1>
       <p className="text-muted-foreground mb-8">色で情報の重要度を表現。</p>
 
@@ -564,13 +573,69 @@ export const Text: Story = {
   ),
 };
 
+export const Tags: Story = {
+  render: () => (
+    <div>
+      <h1 className="mb-2 text-2xl font-bold">タグカラー</h1>
+      <p className="text-muted-foreground mb-8">
+        ユーザーがタグに設定できる10色のパレット。
+        <br />
+        ダークモードでは明度を上げ、彩度を下げてアクセシビリティを確保。
+      </p>
+
+      <div className="space-y-4">
+        {[
+          { token: 'tag-blue', name: 'Blue', description: 'デフォルト' },
+          { token: 'tag-green', name: 'Green', description: '' },
+          { token: 'tag-red', name: 'Red', description: '' },
+          { token: 'tag-amber', name: 'Amber', description: '' },
+          { token: 'tag-violet', name: 'Violet', description: '' },
+          { token: 'tag-pink', name: 'Pink', description: '' },
+          { token: 'tag-cyan', name: 'Cyan', description: '' },
+          { token: 'tag-orange', name: 'Orange', description: '' },
+          { token: 'tag-gray', name: 'Gray', description: 'グループのデフォルト' },
+          { token: 'tag-indigo', name: 'Indigo', description: '' },
+        ].map(({ token, name, description }) => (
+          <div key={token} className="border-border flex items-center gap-4 border-b pb-4">
+            <div
+              className="size-10 shrink-0 rounded-lg"
+              style={{ backgroundColor: `var(--${token})` }}
+            />
+            <div className="flex-1">
+              <div className="flex items-center gap-2">
+                <code className="bg-container rounded px-2 py-1 text-xs">bg-{token}</code>
+                <span className="font-medium">{name}</span>
+              </div>
+              {description && <p className="text-muted-foreground mt-1 text-xs">{description}</p>}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="bg-card border-border mt-8 rounded-lg border p-6">
+        <h2 className="mb-4 font-bold">使用例</h2>
+        <div className="flex flex-wrap gap-2">
+          <span className="border-tag-blue rounded-full border px-3 py-1 text-sm">タグ例</span>
+          <span className="border-tag-green rounded-full border px-3 py-1 text-sm">タグ例</span>
+          <span className="border-tag-red rounded-full border px-3 py-1 text-sm">タグ例</span>
+          <span className="border-tag-amber rounded-full border px-3 py-1 text-sm">タグ例</span>
+          <span className="border-tag-violet rounded-full border px-3 py-1 text-sm">タグ例</span>
+        </div>
+        <p className="text-muted-foreground mt-4 text-sm">
+          タグバッジでは <code>border-tag-*</code> でボーダー色を設定
+        </p>
+      </div>
+    </div>
+  ),
+};
+
 export const DosDonts: Story = {
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h1 className="mb-2 text-2xl font-bold">Do&apos;s & Don&apos;ts</h1>
       <p className="text-muted-foreground mb-8">カラー使用のベストプラクティス。</p>
 
-      <div className="grid gap-8" style={{ maxWidth: '64rem' }}>
+      <div className="grid max-w-5xl gap-8">
         {/* セマンティックトークン */}
         <section className="bg-card border-border rounded-xl border p-6">
           <h2 className="mb-4 text-lg font-bold">セマンティックトークンを使用</h2>

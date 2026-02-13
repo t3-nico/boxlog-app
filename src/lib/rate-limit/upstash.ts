@@ -143,11 +143,7 @@ export async function withUpstashRateLimit(
  * - 未認証: IPアドレス
  */
 function getClientIdentifier(request: Request): string {
-  // 認証トークンからユーザーIDを取得（実装に応じて調整）
-  // const userId = await getUserIdFromRequest(request)
-  // if (userId) return `user:${userId}`
-
-  // IPアドレスをフォールバック（検証済み）
+  // IPアドレスをフォールバック
   const ip = extractClientIp(
     request.headers.get('x-forwarded-for'),
     request.headers.get('x-real-ip'),

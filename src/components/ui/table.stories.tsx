@@ -53,9 +53,7 @@ const meta = {
   title: 'Components/Table',
   component: Table,
   tags: ['autodocs'],
-  parameters: {
-    layout: 'centered',
-  },
+  parameters: {},
 } satisfies Meta<typeof Table>;
 
 export default meta;
@@ -177,7 +175,7 @@ export const Simple: Story = {
 
 export const AllPatterns: Story = {
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h1 className="mb-8 text-2xl font-bold">Table - 全バリエーション</h1>
 
       <div className="space-y-12">

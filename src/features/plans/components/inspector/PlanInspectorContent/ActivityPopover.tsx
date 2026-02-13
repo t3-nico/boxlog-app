@@ -16,9 +16,9 @@ import {
 import { useLocale, useTranslations } from 'next-intl';
 import { useState } from 'react';
 
-import { LoadingSpinner } from '@/components/common/Loading/LoadingStates';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Spinner } from '@/components/ui/spinner';
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { zIndex } from '@/config/ui/z-index';
 import { cn } from '@/lib/utils';
@@ -71,7 +71,7 @@ export function ActivityPopover({ planId }: ActivityPopoverProps) {
         <div className="max-h-96 overflow-y-auto">
           {isPending ? (
             <div className="flex items-center justify-center py-8">
-              <LoadingSpinner size="sm" />
+              <Spinner size="sm" />
             </div>
           ) : (
             (() => {

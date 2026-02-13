@@ -1,31 +1,14 @@
-/**
- * next/link のStorybook用モック
- * Vite環境でNext.js Linkが動作しないため、通常のa要素で代替
- */
-import * as React from 'react';
+import type { AnchorHTMLAttributes, ReactNode } from 'react';
 
-interface LinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
+interface NextLinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
   href: string;
   prefetch?: boolean;
   replace?: boolean;
   scroll?: boolean;
-  shallow?: boolean;
-  passHref?: boolean;
-  legacyBehavior?: boolean;
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
-function Link({
-  href,
-  children,
-  prefetch,
-  replace,
-  scroll,
-  shallow,
-  passHref,
-  legacyBehavior,
-  ...props
-}: LinkProps) {
+function NextLink({ href, prefetch, replace, scroll, children, ...props }: NextLinkProps) {
   return (
     <a href={href} {...props}>
       {children}
@@ -33,4 +16,4 @@ function Link({
   );
 }
 
-export default Link;
+export { NextLink as default };

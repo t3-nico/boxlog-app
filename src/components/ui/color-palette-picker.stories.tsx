@@ -28,13 +28,13 @@ export const AllPatterns: Story = {
     const [color2, setColor2] = useState('#10B981');
 
     return (
-      <div className="bg-background text-foreground min-h-screen p-8">
+      <div>
         <h1 className="mb-2 text-2xl font-bold">ColorPaletteMenuItems</h1>
         <p className="text-muted-foreground mb-8">
           タグのカラー選択。DropdownMenu内で使用するリスト形式。
         </p>
 
-        <div className="grid gap-8" style={{ maxWidth: '48rem' }}>
+        <div className="grid max-w-3xl gap-8">
           <div>
             <h2 className="mb-2 text-lg font-bold">ドロップダウンメニュー形式</h2>
             <p className="text-muted-foreground mb-4 text-sm">

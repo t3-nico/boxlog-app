@@ -326,7 +326,7 @@
       "usage": {
         "type": "Loading",
         "interface": "LoadingState",
-        "component": "LoadingSpinner",
+        "component": "Spinner",
         "hook": "useLoading",
         "service": "loadingService",
         "constant": "LOADING_STATES"

@@ -244,7 +244,7 @@ export const ScrollableCalendarLayout = ({
               <div className="relative h-full">
                 {/* 上部の折りたたみセクション（時間列部分）- 睡眠時間帯全体を1行で表示 */}
                 <div
-                  className="bg-state-active relative z-10 flex w-full items-center justify-end gap-1 pr-2"
+                  className="bg-chronotype-sleep relative z-10 flex w-full items-center justify-end gap-1 pr-2"
                   style={{ height: COLLAPSED_SECTION_HEIGHT }}
                 >
                   <Moon className="text-muted-foreground size-3" />
@@ -444,7 +444,7 @@ export const ScrollableCalendarLayout = ({
                   {/* 上部の睡眠時間帯（0:00〜起床時間） */}
                   {sleepHours.morningRange ? (
                     <div
-                      className="bg-accent-state-selected pointer-events-none absolute inset-x-0 z-[5]"
+                      className="bg-chronotype-sleep pointer-events-none absolute inset-x-0 z-[5]"
                       style={{
                         top: 0,
                         height: `${sleepHours.morningRange.endHour * HOUR_HEIGHT}px`,
@@ -455,7 +455,7 @@ export const ScrollableCalendarLayout = ({
                   {/* 下部の睡眠時間帯（就寝時間〜24:00） */}
                   {sleepHours.eveningRange ? (
                     <div
-                      className="bg-accent-state-selected pointer-events-none absolute inset-x-0 z-[5]"
+                      className="bg-chronotype-sleep pointer-events-none absolute inset-x-0 z-[5]"
                       style={{
                         top: `${sleepHours.eveningRange.startHour * HOUR_HEIGHT}px`,
                         height: `${(24 - sleepHours.eveningRange.startHour) * HOUR_HEIGHT}px`,

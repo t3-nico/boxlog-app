@@ -13,7 +13,6 @@ import { Clock, ExternalLink, Plus, Smile } from 'lucide-react';
 import { useLocale } from 'next-intl';
 import Link from 'next/link';
 
-import { LoadingSpinner } from '@/components/common/Loading/LoadingStates';
 import {
   Command,
   CommandEmpty,
@@ -23,9 +22,10 @@ import {
   CommandList,
 } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Spinner } from '@/components/ui/spinner';
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { zIndex } from '@/config/ui/z-index';
-import { useRecordInspectorStore } from '@/features/records/stores';
+import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
 import { useTags } from '@/features/tags/hooks';
 import { api } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
@@ -65,7 +65,7 @@ export function RecordsIconButton({ planId, disabled = false }: RecordsIconButto
   const locale = useLocale();
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const openInspectorWithDraft = useRecordInspectorStore((state) => state.openInspectorWithDraft);
+  const openInspectorWithDraft = usePlanInspectorStore((state) => state.openInspectorWithDraft);
 
   const { data: records, isPending } = api.records.listByPlan.useQuery(
     { planId, sortOrder: 'desc' },
@@ -96,9 +96,10 @@ export function RecordsIconButton({ planId, disabled = false }: RecordsIconButto
   }, [records, searchQuery]);
 
   // 新しいRecordを作成（このPlanに紐づけて）
+  // TODO: PlanInspectorのRecord作成モードでplanIdを事前選択できるようにする
   const handleCreateRecord = () => {
     setIsOpen(false);
-    openInspectorWithDraft({ plan_id: planId });
+    openInspectorWithDraft(undefined, 'record');
   };
 
   return (
@@ -131,7 +132,7 @@ export function RecordsIconButton({ planId, disabled = false }: RecordsIconButto
       >
         {isPending ? (
           <div className="flex items-center justify-center py-8">
-            <LoadingSpinner size="sm" />
+            <Spinner size="sm" />
           </div>
         ) : (
           <Command shouldFilter={false}>

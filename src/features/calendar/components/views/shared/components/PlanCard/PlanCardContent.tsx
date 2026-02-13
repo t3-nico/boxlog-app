@@ -22,8 +22,6 @@ interface PlanCardContentProps {
   previewTime?: { start: Date; end: Date } | null; // ドラッグ中のプレビュー時間
   hasCheckbox?: boolean; // チェックボックスがある場合は左パディングを追加
   isMobile?: boolean; // モバイル表示（Googleカレンダー風シンプル表示）
-  isHovered?: boolean; // カードがホバーされているか
-  isCheckboxHovered?: boolean; // チェックボックスがホバーされているか
 }
 
 // Helper function: Parse plan start date
@@ -50,11 +48,7 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
   previewTime = null,
   hasCheckbox = false,
   isMobile = false,
-  isHovered = false,
-  isCheckboxHovered = false,
 }) {
-  // タイトルに下線を表示する条件: カードがホバーされている & チェックボックスがホバーされていない
-  const showTitleUnderline = isHovered && !isCheckboxHovered;
   const t = useTranslations();
 
   // プランの開始・終了時刻をDateオブジェクトに変換
@@ -65,9 +59,7 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
   // チェックボックスの横にタイトルを1行で省略表示
   if (isMobile) {
     return (
-      <span
-        className={`text-foreground min-w-0 flex-1 truncate text-xs leading-tight font-normal ${showTitleUnderline ? 'underline' : ''}`}
-      >
+      <span className={`text-foreground min-w-0 flex-1 truncate text-xs leading-tight font-normal`}>
         {plan.title || t('calendar.event.noTitle')}
       </span>
     );
@@ -77,9 +69,7 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
     // コンパクト表示：タイトルのみ
     return (
       <div className={`flex h-full items-center gap-1 ${hasCheckbox ? 'pl-4' : ''}`}>
-        <span
-          className={`text-foreground truncate text-sm leading-tight font-normal ${showTitleUnderline ? 'underline' : ''}`}
-        >
+        <span className={`text-foreground truncate text-sm leading-tight font-normal`}>
           {plan.title || t('calendar.event.noTitle')}
         </span>
       </div>
@@ -93,9 +83,7 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
     >
       {/* タイトル（最優先） */}
       <div className="flex flex-shrink-0 items-baseline gap-1 text-sm leading-tight font-normal">
-        <span
-          className={`${isCompact ? 'line-clamp-1' : 'line-clamp-2'} text-foreground ${showTitleUnderline ? 'underline' : ''}`}
-        >
+        <span className={`${isCompact ? 'line-clamp-1' : 'line-clamp-2'} text-foreground`}>
           {plan.title || t('calendar.event.noTitle')}
         </span>
       </div>

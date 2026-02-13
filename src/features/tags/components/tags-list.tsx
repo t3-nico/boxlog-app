@@ -22,7 +22,7 @@ import { useActiveState } from '@/hooks/useActiveState';
 import { useTranslations } from 'next-intl';
 import { tagIconMapping, TagIconName } from '../constants/icons';
 
-import { DeleteConfirmDialog } from '@/components/common/DeleteConfirmDialog';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { useTagModalNavigation } from '../hooks/useTagModalNavigation';
 
 interface TagsListProps {
@@ -220,7 +220,7 @@ const TagItem = ({
 
             {/* コンテキストメニュー */}
             {showMenu != null && (
-              <div className="border-border bg-popover text-popover-foreground absolute top-full right-0 z-50 mt-1 min-w-36 rounded-2xl border py-1 shadow-lg">
+              <div className="border-border bg-card text-card-foreground absolute top-full right-0 z-50 mt-1 min-w-36 rounded-2xl border py-1 shadow-lg">
                 <Button
                   type="button"
                   variant="ghost"
@@ -403,12 +403,13 @@ export const TagsList = ({
       {/* タグ編集ダイアログは Intercepting Routes に移行 (@modal/(.)tags/edit/[id]) */}
 
       {/* タグ削除ダイアログ */}
-      <DeleteConfirmDialog
+      <ConfirmDialog
         open={!!deletingTag}
         onClose={handleCloseDeleteDialog}
         onConfirm={handleConfirmDelete}
         title={t('tags.delete.confirmTitleWithName', { name: deletingTag?.name ?? '' })}
         description={t('tags.delete.description')}
+        variant="destructive"
       />
     </div>
   );

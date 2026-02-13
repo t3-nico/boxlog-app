@@ -5,7 +5,7 @@ import { enUS, ja } from 'date-fns/locale';
 import { ChevronDown } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 
-import { MiniCalendar } from '@/components/common/MiniCalendar';
+import { MiniCalendar } from '@/components/ui/mini-calendar';
 import { cn } from '@/lib/utils';
 
 import type { Locale } from 'date-fns';

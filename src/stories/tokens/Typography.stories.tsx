@@ -12,7 +12,7 @@ type Story = StoryObj;
 
 export const Principles: Story = {
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h1 className="mb-6 text-2xl font-bold">Typography原則</h1>
 
       <div className="space-y-6">
@@ -46,7 +46,7 @@ export const Principles: Story = {
 
 export const Scale: Story = {
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h1 className="mb-6 text-2xl font-bold">フォントサイズスケール</h1>
       <p className="text-muted-foreground mb-8">Tailwindデフォルト。よく使うサイズをハイライト。</p>
 
@@ -87,7 +87,7 @@ export const Scale: Story = {
 
 export const Hierarchy: Story = {
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h1 className="mb-6 text-2xl font-bold">タイポグラフィ階層</h1>
       <p className="text-muted-foreground mb-8">UIで使う典型的なパターン。</p>
 
@@ -145,7 +145,7 @@ export const Hierarchy: Story = {
 
 export const Weight: Story = {
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h1 className="mb-6 text-2xl font-bold">フォントウェイト</h1>
       <p className="text-muted-foreground mb-8">2つだけ。シンプルに保つ。</p>
 
@@ -174,7 +174,7 @@ export const Weight: Story = {
 
 export const QuickReference: Story = {
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h1 className="mb-6 text-2xl font-bold">クイックリファレンス</h1>
 
       <div className="grid gap-6 md:grid-cols-2">
@@ -288,11 +288,11 @@ export const QuickReference: Story = {
 
 export const DosDonts: Story = {
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h1 className="mb-2 text-2xl font-bold">Do&apos;s & Don&apos;ts</h1>
       <p className="text-muted-foreground mb-8">タイポグラフィのベストプラクティス。</p>
 
-      <div className="grid gap-8" style={{ maxWidth: '64rem' }}>
+      <div className="grid max-w-5xl gap-8">
         {/* Tailwindスケール */}
         <section className="bg-card border-border rounded-xl border p-6">
           <h2 className="mb-4 text-lg font-bold">Tailwindデフォルトスケールを使用</h2>

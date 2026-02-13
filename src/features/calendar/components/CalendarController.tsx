@@ -17,6 +17,7 @@ import { useCalendarLayout } from '../hooks/ui/useCalendarLayout';
 import { useCalendarContextMenu } from '../hooks/useCalendarContextMenu';
 import { useCalendarKeyboard } from '../hooks/useCalendarKeyboard';
 import { useCalendarPlanKeyboard } from '../hooks/useCalendarPlanKeyboard';
+import { useEmptyAreaContextMenu } from '../hooks/useEmptyAreaContextMenu';
 import { usePlanContextActions } from '../hooks/usePlanContextActions';
 import { usePlanOperations } from '../hooks/usePlanOperations';
 import { useRecurringPlanDrag } from '../hooks/useRecurringPlanDrag';
@@ -33,7 +34,7 @@ import {
 } from './controller/hooks';
 import { initializePreload } from './controller/utils';
 import { CalendarLayout } from './layout/CalendarLayout';
-import { EventContextMenu, MobileTouchHint } from './views/shared/components';
+import { EmptyAreaContextMenu, EventContextMenu, MobileTouchHint } from './views/shared/components';
 
 // 初回ロード時にビューをプリロード
 initializePreload();
@@ -108,6 +109,14 @@ export const CalendarController = ({
   // コンテキストメニュー管理（フック化）
   const { contextMenuEvent, contextMenuPosition, handleEventContextMenu, handleCloseContextMenu } =
     useCalendarContextMenu();
+
+  // 空きエリアコンテキストメニュー管理
+  const {
+    emptyAreaMenuPosition,
+    clickedDateTime,
+    handleEmptyAreaContextMenu,
+    handleCloseEmptyAreaContextMenu,
+  } = useEmptyAreaContextMenu();
 
   // プランコンテキストアクション
   const {
@@ -301,6 +310,7 @@ export const CalendarController = ({
       onDeletePlan: deletePlan,
       onRestorePlan: handlePlanRestore,
       onEmptyClick: handleEmptyClick,
+      onEmptyAreaContextMenu: handleEmptyAreaContextMenu,
       onTimeRangeSelect: handleDateTimeRangeSelect,
       onViewChange: handleViewChange,
       onNavigatePrev: handleNavigatePrev,
@@ -321,6 +331,7 @@ export const CalendarController = ({
       deletePlan,
       handlePlanRestore,
       handleEmptyClick,
+      handleEmptyAreaContextMenu,
       handleDateTimeRangeSelect,
       handleViewChange,
       handleNavigatePrev,
@@ -357,6 +368,14 @@ export const CalendarController = ({
           onDuplicate={handleDuplicatePlan}
           onCopy={handleCopyPlan}
           onOpen={handleViewDetails}
+        />
+      ) : null}
+
+      {emptyAreaMenuPosition && clickedDateTime ? (
+        <EmptyAreaContextMenu
+          position={emptyAreaMenuPosition}
+          clickedDateTime={clickedDateTime}
+          onClose={handleCloseEmptyAreaContextMenu}
         />
       ) : null}
 

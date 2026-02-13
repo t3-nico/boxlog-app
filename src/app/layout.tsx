@@ -21,9 +21,9 @@ import type { Metadata, Viewport } from 'next';
 import { Inter, Noto_Sans_JP } from 'next/font/google';
 import { Suspense } from 'react';
 
-import { DeferredAnalytics } from '@/components/analytics/DeferredAnalytics';
 import { PostHogProvider } from '@/components/providers/PostHogProvider';
 import { WebVitalsReporter } from '@/components/WebVitalsReporter';
+import { DeferredAnalytics } from '@/lib/analytics/DeferredAnalytics';
 import { cn } from '@/lib/utils';
 
 // next/font による最適化されたフォント読み込み（Variable Font: optical size軸有効）

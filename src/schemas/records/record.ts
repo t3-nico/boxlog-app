@@ -26,8 +26,8 @@ export const createRecordSchema = z.object({
   tagIds: z.array(z.string().uuid()).optional(), // 紐付けるタグID（任意）
 });
 
-// Record 更新スキーマ
-export const updateRecordSchema = createRecordSchema.partial().omit({ plan_id: true });
+// Record 更新スキーマ（plan_id変更も許可）
+export const updateRecordSchema = createRecordSchema.partial();
 
 // Record ID スキーマ
 export const recordIdSchema = z.object({

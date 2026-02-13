@@ -399,8 +399,6 @@ export class ErrorHandler {
    */
   private async reportToSentry(_error: AppError): Promise<void> {
     // Sentry連携は別途実装
-    // const sentryContext = error.getSentryContext()
-    // Sentry.captureException(error, sentryContext)
   }
 
   /**

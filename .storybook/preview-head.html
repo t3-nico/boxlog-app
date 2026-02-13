@@ -1,0 +1,144 @@
+<!--
+  Storybook Preview Head
+  next/font が使えない環境のため、Google Fonts から直接読み込み。
+  globals.css の body { font-family: var(--font-inter), var(--font-noto-jp), ... } が
+  Storybook環境でも正しく動作するようCSS変数を定義。
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&family=Noto+Sans+JP:wght@100..900&display=swap"
+  rel="stylesheet"
+/>
+<style>
+  :root {
+    --font-inter: 'Inter', sans-serif;
+    --font-noto-jp: 'Noto Sans JP', sans-serif;
+  }
+
+  /* ============================================
+   * Docs Wrapper リセット
+   *
+   * Storybook内部の DocsWrapper / DocsContent が
+   * padding: 4rem 20px / max-width: 1000px を適用する。
+   * .sb-docs-prose に集約するため外側をリセット。
+   * ============================================ */
+  .sbdocs.sbdocs-wrapper {
+    padding: 0 !important;
+  }
+  .sbdocs.sbdocs-content {
+    max-width: none !important;
+  }
+
+  /* ============================================
+   * Story Canvas: コンポーネントプレビュー領域
+   *
+   * background ショートハンドで backgrounds addon の
+   * background-image（グリッド）もリセット。
+   * ============================================ */
+  .docs-story {
+    background: var(--background) !important;
+    color: var(--foreground) !important;
+  }
+
+  /* Canvas tab（個別Story表示時） */
+  .sb-show-main {
+    background: var(--background) !important;
+    color: var(--foreground) !important;
+    padding: var(--spacing-lg) !important; /* 32px */
+  }
+
+  /* ストーリーキャンバスのボーダー */
+  .sbdocs-preview {
+    border: 1px solid var(--border) !important;
+    border-radius: var(--radius-md) !important;
+  }
+
+  /* ArgsテーブルのフォーカスCSS */
+  .docblock-argstable :focus:focus {
+    outline: 2px solid var(--primary) !important;
+    outline-offset: 2px !important;
+  }
+
+  /* ============================================
+   * Dark Mode: Docs Chrome 全体反転
+   *
+   * Storybook docs chrome (Title, Controls 等) は
+   * emotion CSS-in-JS で dayoptLightTheme の hex値を
+   * インライン適用する。
+   * .dark 時に CSS変数で上書きし全体をダークモードにする。
+   * ============================================ */
+
+  /* Docs ページ全体の背景 */
+  .dark .sbdocs {
+    background: var(--background) !important;
+    color: var(--foreground) !important;
+  }
+
+  /* emotion CSS が適用される Title, Subtitle, Description, Stories heading 等 */
+  .dark .sb-docs-prose > [class*="css-"] {
+    color: var(--foreground) !important;
+  }
+  .dark .sb-docs-prose > [class*="css-"] p,
+  .dark .sb-docs-prose > [class*="css-"] span {
+    color: inherit !important;
+  }
+
+  /* Controls (ArgsTable) */
+  .dark .docblock-argstable-head {
+    background: var(--container) !important;
+  }
+  .dark .docblock-argstable-body {
+    background: var(--background) !important;
+  }
+  .dark .docblock-argstable-head th {
+    color: var(--foreground) !important;
+    border-color: var(--border) !important;
+  }
+  .dark .docblock-argstable-body td {
+    color: var(--foreground) !important;
+    border-color: var(--border) !important;
+  }
+  .dark .docblock-argstable-body td span,
+  .dark .docblock-argstable-body td p,
+  .dark .docblock-argstable-body td code {
+    color: inherit !important;
+  }
+  .dark .docblock-argstable-body input,
+  .dark .docblock-argstable-body textarea,
+  .dark .docblock-argstable-body select {
+    color: var(--foreground) !important;
+    background: var(--container) !important;
+    border-color: var(--border) !important;
+  }
+  .dark .docblock-argstable-body button {
+    color: var(--muted-foreground) !important;
+  }
+
+  /* Story 見出し（.sb-anchor > h3）とセクション見出し */
+  .dark .sb-anchor {
+    color: var(--foreground) !important;
+  }
+  .dark .sb-anchor * {
+    color: inherit !important;
+  }
+  .dark .sb-heading {
+    color: var(--foreground) !important;
+  }
+
+  /* ソースコード表示 */
+  .dark .docblock-source {
+    background: var(--container) !important;
+    border-color: var(--border) !important;
+    color: var(--foreground) !important;
+  }
+
+  /* "Show code" トグルボタン */
+  .dark .docblock-code-toggle {
+    color: var(--muted-foreground) !important;
+    border-color: var(--border) !important;
+  }
+</style>
+<script>
+  document.documentElement.setAttribute('lang', 'ja');
+</script>

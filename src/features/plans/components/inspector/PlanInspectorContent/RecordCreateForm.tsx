@@ -12,9 +12,7 @@ import {
   useState,
 } from 'react';
 
-import { ClockTimePicker } from '@/components/common/ClockTimePicker';
-import { NoteIconButton } from '@/components/common/NoteIconButton';
-import { TagsIconButton } from '@/components/common/TagsIconButton';
+import { ClockTimePicker } from '@/components/ui/clock-time-picker';
 import {
   Command,
   CommandEmpty,
@@ -26,13 +24,15 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { zIndex } from '@/config/ui/z-index';
+import { NoteIconButton } from '@/features/inspector/components/NoteIconButton';
+import { TagsIconButton } from '@/features/inspector/components/TagsIconButton';
 import { useRecordMutations } from '@/features/records/hooks';
 import { useTags } from '@/features/tags/hooks';
 import { api } from '@/lib/trpc';
 
 import { cn } from '@/lib/utils';
 
-import { DatePickerPopover } from '@/components/common/DatePickerPopover';
+import { DatePickerPopover } from '@/components/ui/date-picker-popover';
 import { usePlanInspectorStore } from '../../../stores/usePlanInspectorStore';
 
 import type { FulfillmentScore } from '@/features/records/types/record';
@@ -52,6 +52,7 @@ interface RecordFormData {
 export interface RecordCreateFormRef {
   save: () => Promise<void>;
   isSaveDisabled: () => boolean;
+  focusTitle: () => void;
 }
 
 /**
@@ -126,6 +127,8 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
 
     // タグデータ取得
     const { data: allTags = [] } = useTags();
+
+    const titleInputRef = useRef<HTMLInputElement>(null);
 
     // Popover開閉状態
     const [isPlanPopoverOpen, setIsPlanPopoverOpen] = useState(false);
@@ -359,6 +362,7 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
       () => ({
         save,
         isSaveDisabled,
+        focusTitle: () => titleInputRef.current?.focus(),
       }),
       [save, isSaveDisabled],
     );
@@ -379,6 +383,7 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
         {/* 1行目: タイトル（プライマリ） */}
         <div className="px-4 pt-4 pb-2">
           <input
+            ref={titleInputRef}
             type="text"
             value={formData.title}
             placeholder="何をした？"

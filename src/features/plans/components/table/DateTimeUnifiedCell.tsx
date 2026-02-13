@@ -1,7 +1,7 @@
 'use client';
 
-import { MiniCalendar } from '@/components/common/MiniCalendar';
 import { Button } from '@/components/ui/button';
+import { MiniCalendar } from '@/components/ui/mini-calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import {
   Select,

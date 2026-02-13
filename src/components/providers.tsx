@@ -44,9 +44,7 @@ const AxeAccessibilityChecker =
   process.env.NODE_ENV === 'development'
     ? dynamic(
         () =>
-          import('@/components/dev/AxeAccessibilityChecker').then(
-            (mod) => mod.AxeAccessibilityChecker,
-          ),
+          import('@/lib/dev/AxeAccessibilityChecker').then((mod) => mod.AxeAccessibilityChecker),
         {
           ssr: false,
         },

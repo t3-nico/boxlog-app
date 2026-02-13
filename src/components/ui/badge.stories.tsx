@@ -5,9 +5,7 @@ import { Badge } from './badge';
 const meta = {
   title: 'Components/Badge',
   component: Badge,
-  parameters: {
-    layout: 'centered',
-  },
+  parameters: {},
   tags: ['autodocs'],
   argTypes: {
     variant: {
@@ -30,7 +28,7 @@ export const Default: Story = {
 
 export const AllPatterns: Story = {
   render: () => (
-    <div className="bg-background text-foreground space-y-8 p-8">
+    <div className="space-y-8">
       <h1 className="text-2xl font-bold">Badge - 用途別パターン</h1>
 
       {/* カウント・数量表示 */}

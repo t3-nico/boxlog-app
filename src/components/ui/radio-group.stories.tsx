@@ -61,11 +61,11 @@ export const AllPatterns: Story = {
     ];
 
     return (
-      <div className="bg-background text-foreground min-h-screen p-8">
+      <div>
         <h1 className="mb-2 text-2xl font-bold">RadioGroup</h1>
         <p className="text-muted-foreground mb-8">ラジオボタングループ（単一選択）</p>
 
-        <div className="grid gap-8" style={{ maxWidth: '28rem' }}>
+        <div className="grid max-w-md gap-8">
           <div>
             <h2 className="mb-2 text-lg font-bold">基本リスト（縦並び）</h2>
             <p className="text-muted-foreground mb-4 text-sm">

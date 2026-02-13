@@ -25,11 +25,11 @@ type Story = StoryObj<typeof meta>;
 
 export const AllPatterns: Story = {
   render: () => (
-    <div className="bg-background text-foreground min-h-screen p-8">
+    <div>
       <h1 className="mb-2 text-2xl font-bold">Field</h1>
       <p className="text-muted-foreground mb-8">フォームフィールド関連コンポーネント</p>
 
-      <div className="grid gap-8" style={{ maxWidth: '28rem' }}>
+      <div className="grid max-w-md gap-8">
         <div>
           <h2 className="mb-2 text-lg font-bold">基本（ラベル + 入力）</h2>
           <p className="text-muted-foreground mb-4 text-sm">FieldLabel + Input の組み合わせ</p>

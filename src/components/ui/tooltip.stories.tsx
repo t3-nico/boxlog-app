@@ -22,13 +22,13 @@ export const AllPatterns: Story = {
     children: <span>Trigger</span>,
   },
   render: () => (
-    <div className="bg-background text-foreground min-h-screen p-8">
+    <div>
       <h1 className="mb-2 text-2xl font-bold">Tooltip</h1>
       <p className="text-muted-foreground mb-8">
         ホバー時に補足情報を表示。アイコンボタンには必須。
       </p>
 
-      <div className="grid gap-8" style={{ maxWidth: '32rem' }}>
+      <div className="grid max-w-lg gap-8">
         <div>
           <h2 className="mb-2 text-lg font-bold">アイコンボタン（主要用途）</h2>
           <p className="text-muted-foreground mb-4 text-sm">

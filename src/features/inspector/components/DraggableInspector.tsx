@@ -136,7 +136,7 @@ function DraggableContent({ children, position, title }: DraggableContentProps) 
       style={style}
       className={cn(
         // 元のDialogContentと同じベーススタイル
-        'border-border bg-popover text-popover-foreground',
+        'border-border bg-card text-card-foreground',
         'rounded-2xl border shadow-lg',
         // 元のInspectorShell popoverモードと同じスタイル
         // 高さは内容に応じて可変（最大40rem）

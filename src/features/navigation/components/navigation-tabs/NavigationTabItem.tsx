@@ -29,7 +29,7 @@ export function NavigationTabItem({ icon: Icon, label, url, isActive }: Navigati
         prefetch={true}
         aria-label={label}
         className={cn(
-          'flex h-8 w-10 items-center justify-center rounded-full transition-colors',
+          'focus-visible:ring-ring flex h-8 w-10 items-center justify-center rounded-full transition-colors focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset',
           isActive
             ? 'bg-state-active text-state-active-foreground'
             : 'text-muted-foreground hover:bg-foreground/8 hover:text-foreground',

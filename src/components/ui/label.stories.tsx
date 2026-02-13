@@ -8,9 +8,7 @@ const meta = {
   title: 'Components/Label',
   component: Label,
   tags: ['autodocs'],
-  parameters: {
-    layout: 'centered',
-  },
+  parameters: {},
 } satisfies Meta<typeof Label>;
 
 export default meta;
@@ -26,11 +24,11 @@ export const Default: Story = {
 export const AllPatterns: Story = {
   render: function AllPatternsStory() {
     return (
-      <div className="bg-background text-foreground min-h-screen p-8">
+      <div>
         <h1 className="mb-2 text-2xl font-bold">Label</h1>
         <p className="text-muted-foreground mb-8">フォーム要素のラベル</p>
 
-        <div className="grid gap-8" style={{ maxWidth: '28rem' }}>
+        <div className="grid max-w-md gap-8">
           <div>
             <h2 className="mb-4 text-lg font-bold">フォームラベル</h2>
             <p className="text-muted-foreground mb-4 text-sm">

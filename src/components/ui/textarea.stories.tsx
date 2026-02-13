@@ -40,9 +40,7 @@ const meta = {
   title: 'Components/Textarea',
   component: Textarea,
   tags: ['autodocs'],
-  parameters: {
-    layout: 'centered',
-  },
+  parameters: {},
 } satisfies Meta<typeof Textarea>;
 
 export default meta;
@@ -61,11 +59,11 @@ export const AllPatterns: Story = {
     const [value, setValue] = useState('');
 
     return (
-      <div className="bg-background text-foreground min-h-screen p-8">
+      <div>
         <h1 className="mb-2 text-2xl font-bold">Textarea</h1>
         <p className="text-muted-foreground mb-8">複数行テキスト入力</p>
 
-        <div className="grid gap-8" style={{ maxWidth: '28rem' }}>
+        <div className="grid max-w-md gap-8">
           {/* 基本（文字数カウンター付き） */}
           <section>
             <h2 className="mb-2 text-lg font-bold">基本</h2>

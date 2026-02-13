@@ -3,7 +3,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations } from 'next-intl/server';
 import Script from 'next/script';
 
-import { CookieConsentBanner } from '@/components/common';
+import { CookieConsentBanner } from '@/components/ui/cookie-consent-banner';
 import type { Locale } from '@/i18n/routing';
 import { routing } from '@/i18n/routing';
 

@@ -78,7 +78,7 @@ export function InspectorShell({
         fadeFromIndex={1}
       >
         <DrawerContent
-          className="bg-popover flex flex-col gap-0 overflow-hidden p-0 [&>div:first-child]:hidden"
+          className="bg-card flex flex-col gap-0 overflow-hidden p-0 [&>div:first-child]:hidden"
           style={{
             zIndex: zIndex.modal,
             // 全画面時は角丸をなくす

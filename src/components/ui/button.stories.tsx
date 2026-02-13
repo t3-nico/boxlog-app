@@ -6,9 +6,7 @@ import { Button } from './button';
 const meta = {
   title: 'Components/Button',
   component: Button,
-  parameters: {
-    layout: 'centered',
-  },
+  parameters: {},
   tags: ['autodocs'],
   argTypes: {
     variant: {
@@ -45,7 +43,7 @@ export const Default: Story = {
 export const AllPatterns: Story = {
   render: function AllPatternsStory() {
     return (
-      <div className="bg-background text-foreground min-h-screen p-8" style={{ maxWidth: '48rem' }}>
+      <div className="max-w-3xl">
         <h1 className="mb-2 text-2xl font-bold">Button</h1>
         <p className="text-muted-foreground mb-8">
           Material Design 3 の階層に基づいたボタンバリアント。

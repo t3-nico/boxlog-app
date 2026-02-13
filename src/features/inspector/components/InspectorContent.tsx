@@ -2,7 +2,7 @@
 
 import type { ReactNode } from 'react';
 
-import { LoadingSpinner } from '@/components/common/Loading/LoadingStates';
+import { Spinner } from '@/components/ui/spinner';
 
 interface InspectorContentProps {
   /** ローディング中かどうか */
@@ -50,7 +50,7 @@ export function InspectorContent({
     }
     return (
       <div className="flex h-full flex-1 items-center justify-center">
-        <LoadingSpinner size="lg" />
+        <Spinner size="lg" />
       </div>
     );
   }

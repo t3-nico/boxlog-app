@@ -1,8 +1,6 @@
 // features/calendar/theme/styles.ts
 // カレンダー専用のスタイル定義（Tailwindクラスベース）
 
-// import { spacing } from '@/config/theme' // 削除：直接Tailwindクラスを使用
-
 export interface CalendarStyles {
   event: {
     borderRadius: string;

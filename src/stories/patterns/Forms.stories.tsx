@@ -17,13 +17,13 @@ type Story = StoryObj;
 
 export const Overview: Story = {
   render: () => (
-    <div className="bg-background text-foreground p-8">
+    <div>
       <h1 className="mb-2 text-2xl font-bold">Form Patterns</h1>
       <p className="text-muted-foreground mb-8">
         フォームのバリデーション、エラー表示、成功状態のパターン集。
       </p>
 
-      <div className="grid gap-8" style={{ maxWidth: '48rem' }}>
+      <div className="grid max-w-3xl gap-8">
         {/* バリデーションエラー */}
         <section className="bg-card border-border rounded-xl border p-6">
           <h2 className="mb-4 text-lg font-bold">バリデーションエラー</h2>

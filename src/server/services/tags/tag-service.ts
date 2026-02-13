@@ -27,9 +27,6 @@ import type { Tag, TagWithChildren } from '@/features/tags/types';
 import type { Database } from '@/lib/database.types';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
-// Note: サーバーサイドキャッシュは一時的に無効化（revalidateTagがtRPCコンテキストで動作しない問題）
-// import { createCachedParentTagsFetcher, createCachedTagsFetcher } from '@/lib/cache';
-
 /** DB タグ行の型（マイグレーション前は group_id、後は parent_id） */
 type DbTagRow = Database['public']['Tables']['tags']['Row'];
 

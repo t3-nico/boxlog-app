@@ -43,7 +43,7 @@ export function CollapsedSleepSection({
   return (
     <div
       className={cn(
-        'bg-state-active border-border relative z-10 flex h-12 items-center',
+        'bg-chronotype-sleep border-border relative z-10 flex h-12 items-center',
         position === 'top' && 'border-b',
         position === 'bottom' && 'border-t',
         className,

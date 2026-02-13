@@ -17,13 +17,13 @@ type Story = StoryObj<typeof meta>;
 
 export const AllPatterns: Story = {
   render: () => (
-    <div className="bg-background text-foreground min-h-screen p-8">
+    <div>
       <h1 className="mb-2 text-2xl font-bold">Skeleton</h1>
       <p className="text-muted-foreground mb-8">
         ローディング中のプレースホルダー（pulseアニメーション）
       </p>
 
-      <div className="grid gap-8" style={{ maxWidth: '40rem' }}>
+      <div className="grid max-w-2xl gap-8">
         <div>
           <h2 className="mb-2 text-lg font-bold">ページレイアウト</h2>
           <p className="text-muted-foreground mb-4 text-sm">

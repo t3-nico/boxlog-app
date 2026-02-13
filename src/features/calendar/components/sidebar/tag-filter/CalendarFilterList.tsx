@@ -13,7 +13,7 @@ import { useTagGroups } from '@/features/tags/hooks/useTagGroups';
 import { useTagModalNavigation } from '@/features/tags/hooks/useTagModalNavigation';
 import { useTagCacheStore } from '@/features/tags/stores/useTagCacheStore';
 
-import { DeleteConfirmDialog } from '@/components/common/DeleteConfirmDialog';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { Skeleton } from '@/components/ui/skeleton';
 import { api } from '@/lib/trpc';
 
@@ -165,8 +165,6 @@ export function CalendarFilterList() {
             checkboxColor={RECORD_COLOR}
             checked={visibleTypes.record}
             onCheckedChange={() => toggleType('record' as ItemType)}
-            disabled
-            disabledReason={t('calendar.filter.comingSoon')}
           />
         </SidebarSection>
 
@@ -222,12 +220,13 @@ export function CalendarFilterList() {
       </div>
 
       {/* 親タグ削除確認ダイアログ */}
-      <DeleteConfirmDialog
+      <ConfirmDialog
         open={deleteTarget !== null}
         onClose={() => setDeleteTarget(null)}
         onConfirm={handleConfirmDelete}
         title={t('calendar.filter.deleteParentTag.title', { name: deleteTarget?.name ?? '' })}
         description={t('calendar.filter.deleteParentTag.description')}
+        variant="destructive"
       />
     </>
   );

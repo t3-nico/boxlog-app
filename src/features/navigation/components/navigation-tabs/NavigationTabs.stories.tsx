@@ -17,9 +17,7 @@ import { NavigationTabItem } from './NavigationTabItem';
 const meta = {
   title: 'Features/Navigation/NavigationTabs',
   component: NavigationTabItem,
-  parameters: {
-    layout: 'centered',
-  },
+  parameters: {},
   tags: ['autodocs'],
   argTypes: {
     isActive: {
@@ -87,7 +85,7 @@ export const AllTabs: Story = {
             PageHeader中央に配置するセグメンテッドコントロール。アイコンのみ表示し、ホバーでTooltipを表示。
           </p>
           <nav
-            className="bg-surface-container border-border flex h-10 items-center rounded-full border p-1"
+            className="bg-surface-container ring-border flex h-10 items-center rounded-full p-1 ring-1 ring-inset"
             role="navigation"
             aria-label="Main navigation"
           >
@@ -156,7 +154,7 @@ export const AllTabs: Story = {
           <div className="flex items-center gap-8">
             <div className="text-center">
               <nav
-                className="bg-surface-container border-border mb-2 flex h-10 items-center rounded-full border p-1"
+                className="bg-surface-container ring-border mb-2 flex h-10 items-center rounded-full p-1 ring-1 ring-inset"
                 role="navigation"
               >
                 <NavigationTabItem
@@ -170,7 +168,7 @@ export const AllTabs: Story = {
             </div>
             <div className="text-center">
               <nav
-                className="bg-surface-container border-border mb-2 flex h-10 items-center rounded-full border p-1"
+                className="bg-surface-container ring-border mb-2 flex h-10 items-center rounded-full p-1 ring-1 ring-inset"
                 role="navigation"
               >
                 <NavigationTabItem

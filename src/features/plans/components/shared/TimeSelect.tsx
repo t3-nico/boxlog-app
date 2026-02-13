@@ -4,9 +4,10 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { Clock, Flag } from 'lucide-react';
 
-import type { TimeIconType } from '@/components/common/ClockTimePicker';
+import type { TimeIconType } from '@/components/ui/clock-time-picker';
 
 import { Popover, PopoverAnchor, PopoverContent } from '@/components/ui/popover';
+import { zIndex } from '@/config/ui/z-index';
 
 /**
  * 15分刻みの時刻オプションを生成（00:00 ~ 23:45）
@@ -415,11 +416,12 @@ export function TimeSelect({
 
         {!disabled && filteredOptions.length > 0 && (
           <PopoverContent
-            className="z-overlay-popover overflow-hidden p-0"
+            className="overflow-hidden p-0"
             align="start"
             sideOffset={4}
             style={{
               width: showDurationInMenu && minTime ? '140px' : '80px',
+              zIndex: zIndex.overlayDropdown,
             }}
             onOpenAutoFocus={(e) => e.preventDefault()}
           >

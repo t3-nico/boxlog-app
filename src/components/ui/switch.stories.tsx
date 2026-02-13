@@ -27,9 +27,7 @@ const meta = {
   title: 'Components/Switch',
   component: Switch,
   tags: ['autodocs'],
-  parameters: {
-    layout: 'centered',
-  },
+  parameters: {},
   argTypes: {
     checked: {
       control: 'boolean',
@@ -91,10 +89,10 @@ export const AllPatterns: Story = {
     };
 
     return (
-      <div className="bg-background text-foreground p-8">
+      <div>
         <h1 className="mb-8 text-2xl font-bold">Switch - 実際の使用パターン</h1>
 
-        <div className="space-y-8" style={{ maxWidth: '28rem' }}>
+        <div className="max-w-md space-y-8">
           <section>
             <h2 className="mb-4 text-lg font-bold">設定リスト</h2>
             <div className="border-border divide-border divide-y rounded-lg border">

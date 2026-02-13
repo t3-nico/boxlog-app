@@ -19,9 +19,7 @@ const meta = {
   title: 'Components/Command',
   component: Command,
   tags: ['autodocs'],
-  parameters: {
-    layout: 'centered',
-  },
+  parameters: {},
 } satisfies Meta<typeof Command>;
 
 export default meta;
@@ -143,7 +141,7 @@ export const AllPatterns: Story = {
   render: function AllPatternsStory() {
     const [dialogOpen, setDialogOpen] = useState(false);
     return (
-      <div className="bg-background text-foreground p-8">
+      <div>
         <h1 className="mb-8 text-2xl font-bold">Command - 全バリエーション</h1>
 
         <div className="space-y-8">
