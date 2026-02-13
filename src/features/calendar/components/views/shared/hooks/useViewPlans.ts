@@ -14,6 +14,7 @@ const MIN_PLAN_HEIGHT = 20; // 最小プラン高さ
 interface UseViewPlansOptions {
   date: Date;
   plans: CalendarPlan[];
+  hourHeight?: number;
 }
 
 export interface PlanPosition {
@@ -39,7 +40,11 @@ interface UseViewPlansReturn {
  * 汎用的なビュープラン処理フック
  * DayView, WeekView等で共通利用可能
  */
-export function useViewPlans({ date, plans = [] }: UseViewPlansOptions): UseViewPlansReturn {
+export function useViewPlans({
+  date,
+  plans = [],
+  hourHeight = HOUR_HEIGHT,
+}: UseViewPlansOptions): UseViewPlansReturn {
   // 指定日のプランのみフィルター
   const dayPlans = useMemo(() => {
     if (!plans || !Array.isArray(plans)) {
@@ -78,8 +83,8 @@ export function useViewPlans({ date, plans = [] }: UseViewPlansOptions): UseView
       const duration = Math.max(endHour - startHour, 0.25); // 最小15分
 
       // 位置計算
-      const top = startHour * HOUR_HEIGHT;
-      const height = Math.max(duration * HOUR_HEIGHT - PLAN_PADDING, MIN_PLAN_HEIGHT);
+      const top = startHour * hourHeight;
+      const height = Math.max(duration * hourHeight - PLAN_PADDING, MIN_PLAN_HEIGHT);
 
       return {
         plan: layout.plan as CalendarPlan,
@@ -93,7 +98,7 @@ export function useViewPlans({ date, plans = [] }: UseViewPlansOptions): UseView
         opacity: layout.totalColumns > 1 ? 0.95 : 1.0,
       };
     });
-  }, [planLayouts]);
+  }, [planLayouts, hourHeight]);
 
   const maxConcurrentPlans = useMemo(() => {
     return Math.max(1, ...planLayouts.map((layout: PlanLayout) => layout.totalColumns));

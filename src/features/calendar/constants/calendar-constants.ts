@@ -3,8 +3,7 @@
  */
 
 // レイアウト定数
-export const HOUR_HEIGHT = 48; // 1時間の高さ（ピクセル）
-export const MINUTE_HEIGHT = HOUR_HEIGHT / 60;
+// HOUR_HEIGHT は grid.constants.ts + useResponsiveHourHeight() に移行済み
 export const GRID_GAP = 1; // グリッド間のギャップ
 export const TIME_LABEL_WIDTH = 64; // 時間ラベルの幅（ピクセル）
 export const HEADER_HEIGHT = 56; // 日付ヘッダーの高さ（ピクセル）
@@ -58,7 +57,7 @@ export const BREAKPOINTS = {
 // Tailwind CSS クラス（スタイルシステム簡素化対応）
 export const CALENDAR_CLASSES = {
   // レイアウト
-  hourHeight: 'h-12', // 48px = h-12
+  hourHeight: 'h-[var(--calendar-hour-height)]',
   timeColumnWidth: 'w-16', // 64px = w-16
   headerHeight: 'h-14', // 56px = h-14
 

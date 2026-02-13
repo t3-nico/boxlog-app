@@ -5,17 +5,27 @@
     },
     "title": "Calendar",
     "views": {
-      "day": "Day View",
-      "splitDay": "Split Day View",
-      "3day": "3-Day View",
-      "5day": "5-Day View",
-      "week": "Week View",
+      "day": "Day",
+      "splitDay": "Split Day",
+      "3day": "3-Day",
+      "5day": "5-Day",
+      "week": "Week",
       "weekday": "Weekday",
-      "weekNoWeekend": "Week View (Weekdays)",
-      "2week": "2-Week View",
-      "month": "Month View",
+      "weekNoWeekend": "Week (Weekdays)",
+      "2week": "2-Week",
+      "month": "Month",
       "list": "List",
-      "agenda": "Agenda"
+      "agenda": "Agenda",
+      "multiday": "{count} Days",
+      "daysSubmenu": "Days",
+      "viewSettings": "View settings",
+      "showWeekends": "Show weekends",
+      "showWeekNumbers": "Show week numbers",
+      "density": "Density",
+      "density_compact": "Compact",
+      "density_default": "Default",
+      "density_spacious": "Spacious",
+      "generalSettings": "General settings"
     },
     "mobile": {
       "drawer": {
@@ -282,13 +292,50 @@
         "label": "Status",
         "all": "All",
         "open": "Open",
-        "closed": "Closed"
+        "closed": "Closed",
+        "overdue": "Overdue"
       },
       "schedule": {
         "label": "Date",
         "all": "All",
         "scheduled": "Scheduled",
         "unscheduled": "Unscheduled"
+      },
+      "filter": {
+        "all": "All",
+        "unscheduled": "Unsched",
+        "scheduled": "Sched",
+        "open": "Open",
+        "closed": "Done"
+      },
+      "recordSearchPlaceholder": "Search records...",
+      "noRecords": "No records",
+      "createRecord": "Create record",
+      "recordThis": "Record this",
+      "noTitle": "(No title)",
+      "duration": "{minutes} min",
+      "fulfillment": "Fulfillment",
+      "recordSort": {
+        "workedAt": "Work date",
+        "durationMinutes": "Duration",
+        "fulfillmentScore": "Fulfillment",
+        "createdAt": "Date created",
+        "updatedAt": "Date updated",
+        "asc": "Ascending",
+        "desc": "Descending"
+      },
+      "recordGroup": {
+        "none": "None",
+        "workedAt": "Date",
+        "tags": "Tags",
+        "fulfillmentScore": "Fulfillment"
+      },
+      "recordDateFilter": {
+        "label": "Period",
+        "all": "All",
+        "today": "Today",
+        "thisWeek": "This week",
+        "thisMonth": "This month"
       }
     },
     "error": {

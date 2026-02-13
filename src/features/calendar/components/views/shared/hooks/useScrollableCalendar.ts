@@ -109,6 +109,19 @@ export const useScrollableCalendar = ({
     }, 0);
   }, [onToggleSleepHours, sleepHoursCollapsed, sleepHours, hourHeight]);
 
+  // 密度変更時のスクロール位置保持
+  const prevHourHeight = useRef(hourHeight);
+  useEffect(() => {
+    if (prevHourHeight.current !== hourHeight && scrollContainerRef.current) {
+      const timeAtTop = scrollContainerRef.current.scrollTop / prevHourHeight.current;
+      scrollContainerRef.current.scrollTo({
+        top: timeAtTop * hourHeight,
+        behavior: 'instant',
+      });
+    }
+    prevHourHeight.current = hourHeight;
+  }, [hourHeight]);
+
   // アクティブビューの更新
   useEffect(() => {
     if (viewMode !== 'agenda') {

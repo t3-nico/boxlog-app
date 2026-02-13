@@ -31,11 +31,7 @@ export type {
 } from './types/calendar.types';
 
 // Calendar Constants
-export {
-  BUSINESS_HOURS as CALENDAR_BUSINESS_HOURS,
-  MINUTE_HEIGHT as CALENDAR_MINUTE_HEIGHT,
-  HOUR_HEIGHT,
-} from './constants/calendar-constants';
+export { BUSINESS_HOURS as CALENDAR_BUSINESS_HOURS } from './constants/calendar-constants';
 
 // Calendar Utils/Lib (excluding conflicting exports)
 export { calculateViewDateRange, getNextPeriod, getPreviousPeriod } from './lib/view-helpers';

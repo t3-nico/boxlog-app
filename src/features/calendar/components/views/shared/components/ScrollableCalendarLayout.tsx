@@ -134,11 +134,7 @@ export const ScrollableCalendarLayout = ({
   const sleepScheduleEnabled = useCalendarSettingsStore((state) => state.sleepSchedule.enabled);
   const updateSettings = useCalendarSettingsStore((state) => state.updateSettings);
 
-  const HOUR_HEIGHT = useResponsiveHourHeight({
-    mobile: 48,
-    tablet: 60,
-    desktop: 72,
-  });
+  const HOUR_HEIGHT = useResponsiveHourHeight();
 
   // 睡眠時間帯のレイアウト計算（フック利用）
   const { collapsedLayout, gridHeight, sleepHoursPlanCountByDate, todayColumnPosition, hasToday } =

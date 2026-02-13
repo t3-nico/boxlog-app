@@ -3,12 +3,15 @@ import { HOUR_HEIGHT } from '../../../constants/grid.constants';
 /**
  * 15分単位でスナップする
  */
-export function snapToQuarterHour(yPosition: number): {
+export function snapToQuarterHour(
+  yPosition: number,
+  hourHeight: number = HOUR_HEIGHT,
+): {
   snappedTop: number;
   hour: number;
   minute: number;
 } {
-  const hourDecimal = yPosition / HOUR_HEIGHT;
+  const hourDecimal = yPosition / hourHeight;
   let hour = Math.floor(Math.max(0, Math.min(23, hourDecimal)));
   const minuteDecimal = (hourDecimal - hour) * 60;
   let minute = Math.round(minuteDecimal / 15) * 15;
@@ -19,7 +22,7 @@ export function snapToQuarterHour(yPosition: number): {
     hour = Math.min(23, hour + 1);
   }
 
-  const snappedTop = (hour + minute / 60) * HOUR_HEIGHT;
+  const snappedTop = (hour + minute / 60) * hourHeight;
 
   return { snappedTop, hour, minute };
 }
@@ -55,9 +58,10 @@ export function calculateSnappedPosition(
   targetDateIndex: number,
   viewMode: string,
   displayDates: Date[] | undefined,
+  hourHeight: number = HOUR_HEIGHT,
 ): { snappedTop: number; snappedLeft: number | undefined; hour: number; minute: number } {
   const newTop = originalTop + deltaY;
-  const { snappedTop, hour, minute } = snapToQuarterHour(newTop);
+  const { snappedTop, hour, minute } = snapToQuarterHour(newTop, hourHeight);
 
   let snappedLeft = undefined;
   if (viewMode !== 'day' && displayDates) {
