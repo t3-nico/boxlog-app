@@ -1,6 +1,6 @@
 export type MultiDayCount = 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 export type MultiDayViewType = `${MultiDayCount}day`;
-export type CalendarViewType = 'day' | 'week' | 'agenda' | MultiDayViewType;
+export type CalendarViewType = 'day' | 'week' | 'agenda' | 'timesheet' | MultiDayViewType;
 
 /** MultiDayView（2day〜9day）かどうかを判定 */
 export function isMultiDayView(view: CalendarViewType): view is MultiDayViewType {

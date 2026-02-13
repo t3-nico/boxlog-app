@@ -25,7 +25,8 @@
       "density_compact": "Compact",
       "density_default": "Default",
       "density_spacious": "Spacious",
-      "generalSettings": "General settings"
+      "generalSettings": "General settings",
+      "timesheet": "Timesheet"
     },
     "mobile": {
       "drawer": {
@@ -244,6 +245,13 @@
       "emptyDescription": "Create a new event in the calendar",
       "noItems": "No items",
       "noDate": "No Date"
+    },
+    "timesheet": {
+      "emptyTitle": "No entries this week",
+      "emptyDescription": "Plans and records will appear here",
+      "tag": "Tag",
+      "total": "Total",
+      "untagged": "Untagged"
     },
     "collapsedSection": {
       "expandLabel": "Expand {timeRange}"

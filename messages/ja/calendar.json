@@ -25,7 +25,8 @@
       "density_compact": "コンパクト",
       "density_default": "標準",
       "density_spacious": "ゆったり",
-      "generalSettings": "一般設定"
+      "generalSettings": "一般設定",
+      "timesheet": "タイムシート"
     },
     "mobile": {
       "drawer": {
@@ -244,6 +245,13 @@
       "emptyDescription": "カレンダーで新しい予定を作成してください",
       "noItems": "予定なし",
       "noDate": "日付なし"
+    },
+    "timesheet": {
+      "emptyTitle": "今週のエントリはありません",
+      "emptyDescription": "プランとレコードがここに表示されます",
+      "tag": "タグ",
+      "total": "合計",
+      "untagged": "タグなし"
     },
     "collapsedSection": {
       "expandLabel": "{timeRange} を展開"
