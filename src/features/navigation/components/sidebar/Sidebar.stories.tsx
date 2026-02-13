@@ -40,7 +40,7 @@ function InteractiveDemo() {
     <div className="border-border flex h-80 w-[640px] overflow-hidden rounded-xl border">
       {/* サイドバー */}
       <div
-        className="bg-surface-container border-border shrink-0 overflow-hidden border-r transition-[width] duration-200 ease-in-out"
+        className="bg-surface-container border-border shrink-0 overflow-hidden border-r transition-all duration-200"
         style={{ width: isOpen ? 240 : 0 }}
       >
         <div className="flex h-full w-60 flex-col">
@@ -221,7 +221,7 @@ export const HideNavUser: Story = {
  *
  * 実装のポイント:
  * - 本番では `useSidebarStore.use.toggle()` で状態管理
- * - `transition-[width]` で幅アニメーション
+ * - `transition-all duration-200` で幅アニメーション
  * - 閉じた時はヘッダーに開くボタンが出現
  */
 export const Interactive: Story = {
