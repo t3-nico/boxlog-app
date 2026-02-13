@@ -52,7 +52,7 @@ export function TimesheetTagRow({ group, weekDates, onPlanClick }: TimesheetTagR
     <>
       {/* タグ行 */}
       <tr
-        className="border-border hover:bg-state-hover cursor-pointer border-b transition-colors"
+        className="bg-card hover:bg-state-hover cursor-pointer transition-colors"
         onClick={toggleExpanded}
         onKeyDown={handleKeyDown}
         tabIndex={0}
