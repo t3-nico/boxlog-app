@@ -47,22 +47,22 @@ export const Overview: Story = {
               <tbody className="text-muted-foreground">
                 <tr className="border-border border-b">
                   <td className="py-3">削除</td>
-                  <td className="py-3 font-bold text-red-500">必須</td>
+                  <td className="text-destructive py-3 font-bold">必須</td>
                   <td className="py-3">不可逆操作</td>
                 </tr>
                 <tr className="border-border border-b">
                   <td className="py-3">アカウント削除</td>
-                  <td className="py-3 font-bold text-red-500">必須 + 再入力</td>
+                  <td className="text-destructive py-3 font-bold">必須 + 再入力</td>
                   <td className="py-3">致命的な不可逆操作</td>
                 </tr>
                 <tr className="border-border border-b">
                   <td className="py-3">ログアウト</td>
-                  <td className="py-3 font-bold text-yellow-500">推奨</td>
+                  <td className="text-warning py-3 font-bold">推奨</td>
                   <td className="py-3">未保存データの損失</td>
                 </tr>
                 <tr className="border-border border-b">
                   <td className="py-3">大量更新</td>
-                  <td className="py-3 font-bold text-yellow-500">推奨</td>
+                  <td className="text-warning py-3 font-bold">推奨</td>
                   <td className="py-3">影響範囲が大きい</td>
                 </tr>
                 <tr>
@@ -219,12 +219,12 @@ export const Overview: Story = {
                 <tr className="border-border border-b">
                   <td className="py-3">削除</td>
                   <td className="py-3">キャンセル</td>
-                  <td className="py-3 text-red-500">削除</td>
+                  <td className="text-destructive py-3">削除</td>
                 </tr>
                 <tr className="border-border border-b">
                   <td className="py-3">変更破棄</td>
                   <td className="py-3">編集を続ける</td>
-                  <td className="py-3 text-red-500">破棄して閉じる</td>
+                  <td className="text-destructive py-3">破棄して閉じる</td>
                 </tr>
                 <tr className="border-border border-b">
                   <td className="py-3">ログアウト</td>

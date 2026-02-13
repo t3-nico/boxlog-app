@@ -298,7 +298,7 @@ export const DosDonts: Story = {
           <h2 className="mb-4 text-lg font-bold">Tailwindデフォルトスケールを使用</h2>
           <div className="grid gap-6 md:grid-cols-2">
             <div className="border-success space-y-3 border-l-4 pl-4">
-              <h3 className="font-bold text-green-600">Do</h3>
+              <h3 className="text-success font-bold">Do</h3>
               <div className="space-y-2">
                 <p className="text-2xl font-bold">text-2xl（見出し）</p>
                 <p className="text-base">text-base（本文）</p>
@@ -309,7 +309,7 @@ export const DosDonts: Story = {
               </code>
             </div>
             <div className="border-destructive space-y-3 border-l-4 pl-4">
-              <h3 className="font-bold text-red-600">Don&apos;t</h3>
+              <h3 className="text-destructive font-bold">Don&apos;t</h3>
               <div className="space-y-2">
                 <p className="font-bold" style={{ fontSize: '23px' }}>
                   text-[23px]（任意値）
@@ -334,7 +334,7 @@ export const DosDonts: Story = {
           <h2 className="mb-4 text-lg font-bold">階層的なサイズ変化</h2>
           <div className="grid gap-6 md:grid-cols-2">
             <div className="border-success space-y-3 border-l-4 pl-4">
-              <h3 className="font-bold text-green-600">Do</h3>
+              <h3 className="text-success font-bold">Do</h3>
               <div className="space-y-1">
                 <p className="text-xl font-bold">見出し1 (text-xl)</p>
                 <p className="text-lg font-bold">見出し2 (text-lg)</p>
@@ -343,7 +343,7 @@ export const DosDonts: Story = {
               <code className="text-muted-foreground block text-xs">1段階ずつ下げる</code>
             </div>
             <div className="border-destructive space-y-3 border-l-4 pl-4">
-              <h3 className="font-bold text-red-600">Don&apos;t</h3>
+              <h3 className="text-destructive font-bold">Don&apos;t</h3>
               <div className="space-y-1">
                 <p className="text-3xl font-bold">見出し1 (text-3xl)</p>
                 <p className="text-sm font-bold">見出し2 (text-sm)</p>
@@ -362,14 +362,14 @@ export const DosDonts: Story = {
           <h2 className="mb-4 text-lg font-bold">ウェイトは2種類まで</h2>
           <div className="grid gap-6 md:grid-cols-2">
             <div className="border-success space-y-3 border-l-4 pl-4">
-              <h3 className="font-bold text-green-600">Do</h3>
+              <h3 className="text-success font-bold">Do</h3>
               <div className="space-y-2">
                 <p className="font-bold">font-bold（見出し、強調）</p>
                 <p className="font-normal">font-normal（本文）</p>
               </div>
             </div>
             <div className="border-destructive space-y-3 border-l-4 pl-4">
-              <h3 className="font-bold text-red-600">Don&apos;t</h3>
+              <h3 className="text-destructive font-bold">Don&apos;t</h3>
               <div className="space-y-2">
                 <p className="font-black">font-black</p>
                 <p className="font-extrabold">font-extrabold</p>
@@ -389,14 +389,14 @@ export const DosDonts: Story = {
           <h2 className="mb-4 text-lg font-bold">テキスト色で階層を表現</h2>
           <div className="grid gap-6 md:grid-cols-2">
             <div className="border-success space-y-3 border-l-4 pl-4">
-              <h3 className="font-bold text-green-600">Do</h3>
+              <h3 className="text-success font-bold">Do</h3>
               <div className="space-y-2">
                 <p className="text-foreground">主要テキスト（text-foreground）</p>
                 <p className="text-muted-foreground">補助テキスト（text-muted-foreground）</p>
               </div>
             </div>
             <div className="border-destructive space-y-3 border-l-4 pl-4">
-              <h3 className="font-bold text-red-600">Don&apos;t</h3>
+              <h3 className="text-destructive font-bold">Don&apos;t</h3>
               <div className="space-y-2">
                 <p className="text-gray-600">text-gray-600（直接色指定）</p>
                 <p className="text-foreground/50">text-foreground/50（透明度）</p>
