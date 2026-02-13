@@ -20,16 +20,22 @@ export interface DailyUsage {
  *
  * @param plans - 全CalendarPlan配列（plan + record 両方含む）
  * @param dates - 計算対象の日付配列
+ * @param sleepTotalHours - 睡眠時間（設定ベース、毎日一律で加算）
  * @returns Map<dateKey, DailyUsage>
  */
-export function useDailyUsage(plans: CalendarPlan[], dates: Date[]): Map<string, DailyUsage> {
+export function useDailyUsage(
+  plans: CalendarPlan[],
+  dates: Date[],
+  sleepTotalHours = 0,
+): Map<string, DailyUsage> {
   return useMemo(() => {
     const usage = new Map<string, DailyUsage>();
 
-    // 各日付のエントリを初期化
+    // 各日付のエントリを初期化（睡眠時間をPlanに加算）
+    const basePlanHours = Math.round(sleepTotalHours * 10) / 10;
     for (const date of dates) {
       const key = format(date, 'yyyy-MM-dd');
-      usage.set(key, { planHours: 0, recordHours: 0 });
+      usage.set(key, { planHours: basePlanHours, recordHours: 0 });
     }
 
     // 各プラン/レコードの時間を集計
@@ -60,5 +66,5 @@ export function useDailyUsage(plans: CalendarPlan[], dates: Date[]): Map<string,
     }
 
     return usage;
-  }, [plans, dates]);
+  }, [plans, dates, sleepTotalHours]);
 }

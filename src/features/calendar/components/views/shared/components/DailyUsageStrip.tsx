@@ -3,52 +3,98 @@
 import { cn } from '@/lib/utils';
 
 import { useDailyUsage } from '../../../../hooks/useDailyUsage';
+import { useSleepHours } from '../../../../hooks/useSleepHours';
 import type { CalendarPlan } from '../../../../types/calendar.types';
 
 import { TIME_COLUMN_WIDTH } from '../constants/grid.constants';
 import { TimezoneOffset } from './TimezoneOffset';
 
+/** セグメント数（2h刻み x 12ブロック = 24h） */
+const SEGMENTS = 12;
+const HOURS_PER_SEGMENT = 2;
+
 /** 時間を表示用文字列に変換 */
 function formatHours(hours: number): string {
-  if (hours === 0) return '-';
-  // 整数なら小数なし、そうでなければ1桁
+  if (hours === 0) return '0';
   return hours % 1 === 0 ? `${hours}h` : `${hours.toFixed(1)}h`;
+}
+
+/** セグメントバー（2h刻み x 12ブロック） */
+function SegmentBar({
+  hours,
+  variant,
+  size = 'sm',
+}: {
+  hours: number;
+  variant: 'plan' | 'record';
+  size?: 'sm' | 'md';
+}) {
+  const barColor = variant === 'plan' ? 'bg-primary' : 'bg-success';
+  const textColor = variant === 'plan' && hours > 0 ? 'text-foreground' : 'text-muted-foreground';
+  const barHeight = size === 'sm' ? 'h-1.5' : 'h-2';
+  const filledSegments = Math.ceil(hours / HOURS_PER_SEGMENT);
+
+  return (
+    <div className="flex items-center gap-1">
+      <div className="flex flex-1 gap-px">
+        {Array.from({ length: SEGMENTS }, (_, i) => (
+          <div
+            key={i}
+            className={cn(
+              'flex-1 rounded-[1px]',
+              barHeight,
+              i < filledSegments ? barColor : 'bg-muted',
+            )}
+          />
+        ))}
+      </div>
+      {size === 'md' && (
+        <span className={cn('text-xs tabular-nums', textColor)}>{formatHours(hours)}</span>
+      )}
+    </div>
+  );
 }
 
 interface DailyUsageCellProps {
   planHours: number;
   recordHours: number;
-  compact?: boolean;
 }
 
-/** 1日分の使用時間セル */
-function DailyUsageCell({ planHours, recordHours, compact = false }: DailyUsageCellProps) {
+/**
+ * 1日分の使用時間セル（レスポンシブ）
+ *
+ * コンテナクエリで幅に応じて自動切替:
+ * - 狭い（< 240px）: 2段ミニバー（WeekView列幅）
+ * - 広い（>= 240px）: 横並びラベル付きバー（DayView幅）
+ */
+function DailyUsageCell({ planHours, recordHours }: DailyUsageCellProps) {
   const hasPlan = planHours > 0;
-  const hasRecord = recordHours > 0;
 
-  if (!hasPlan && !hasRecord) {
-    return <div className="flex flex-1 items-center py-1" />;
-  }
-
-  if (compact) {
-    // WeekView: 2行でコンパクト表示
-    return (
-      <div className="flex flex-1 flex-col items-center justify-center leading-tight">
-        <span className={cn('text-xs', hasPlan ? 'text-foreground' : 'text-muted-foreground')}>
-          P {formatHours(planHours)}
-        </span>
-        <span className="text-muted-foreground text-xs">R {formatHours(recordHours)}</span>
-      </div>
-    );
-  }
-
-  // DayView: 1行で表示
   return (
-    <div className="flex flex-1 items-center gap-3 px-2">
-      <span className={cn('text-sm', hasPlan ? 'text-foreground' : 'text-muted-foreground')}>
-        Plan {formatHours(planHours)}
-      </span>
-      <span className="text-muted-foreground text-sm">Record {formatHours(recordHours)}</span>
+    <div className="@container h-full flex-1">
+      {/* Narrow: 2段ミニバー */}
+      <div className="flex h-full flex-col justify-center gap-0.5 px-2 @[240px]:hidden">
+        <SegmentBar hours={planHours} variant="plan" size="sm" />
+        <SegmentBar hours={recordHours} variant="record" size="sm" />
+      </div>
+
+      {/* Wide: 横並びラベル付きバー */}
+      <div className="hidden h-full items-center gap-4 @[240px]:flex">
+        <div className="flex items-center gap-1.5">
+          <span className={cn('text-xs', hasPlan ? 'text-foreground' : 'text-muted-foreground')}>
+            Plan
+          </span>
+          <div className="w-32">
+            <SegmentBar hours={planHours} variant="plan" size="md" />
+          </div>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <span className="text-muted-foreground text-xs">Record</span>
+          <div className="w-32">
+            <SegmentBar hours={recordHours} variant="record" size="md" />
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -71,10 +117,11 @@ interface DailyUsageStripProps {
  * 各日付列にPlan/Recordの合計時間を表示。
  */
 export function DailyUsageStrip({ dates, plans, timezone, className }: DailyUsageStripProps) {
-  const usage = useDailyUsage(plans, dates);
+  const sleepHours = useSleepHours();
+  const usage = useDailyUsage(plans, dates, sleepHours?.totalHours ?? 0);
 
   return (
-    <div className={cn('bg-background flex h-8 gap-px', className)}>
+    <div className={cn('bg-background flex h-8', className)}>
       {/* タイムゾーン表示（左端） - デスクトップのみ */}
       <div
         className="hidden flex-shrink-0 items-center md:flex"
@@ -83,19 +130,25 @@ export function DailyUsageStrip({ dates, plans, timezone, className }: DailyUsag
         {timezone ? <TimezoneOffset timezone={timezone} className="w-full text-xs" /> : null}
       </div>
 
-      {/* 各日付の使用時間 */}
-      {dates.map((date) => {
-        const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-        const dayUsage = usage.get(key);
-        return (
-          <DailyUsageCell
-            key={date.toISOString()}
-            planHours={dayUsage?.planHours ?? 0}
-            recordHours={dayUsage?.recordHours ?? 0}
-            compact
-          />
-        );
-      })}
+      {/* 各日付の使用時間（CalendarDateHeaderと同じflex-1ラッパーで幅を揃える） */}
+      <div className="flex flex-1">
+        {dates.map((date) => {
+          const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+          const dayUsage = usage.get(key);
+          return (
+            <div
+              key={date.toISOString()}
+              className="flex-1"
+              style={{ width: `${100 / dates.length}%` }}
+            >
+              <DailyUsageCell
+                planHours={dayUsage?.planHours ?? 0}
+                recordHours={dayUsage?.recordHours ?? 0}
+              />
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -123,7 +176,8 @@ export function DailyUsageStripSingle({
   className,
 }: DailyUsageStripSingleProps) {
   const dates = [date];
-  const usage = useDailyUsage(plans, dates);
+  const sleepHours = useSleepHours();
+  const usage = useDailyUsage(plans, dates, sleepHours?.totalHours ?? 0);
 
   const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
   const dayUsage = usage.get(key);

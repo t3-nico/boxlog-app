@@ -5,12 +5,14 @@ import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
 import { DailyUsageStrip, DailyUsageStripSingle } from './DailyUsageStrip';
 
 /**
- * DailyUsageStrip - 日別のPlan/Record使用時間を表示するバー。
+ * DailyUsageStrip - 日別のPlan/Record使用時間をセグメントバーで表示。
  *
- * - WeekView/MultiDayView: 各日列にコンパクト表示（P/R + 時間）
- * - DayView: 1行で表示（Plan/Record + 時間）
+ * - セグメントバー: 2h刻み x 12ブロック、bg-primary(Plan) / bg-success(Record)
+ * - コンテナクエリでレスポンシブ切替:
+ *   - 狭い（< 240px）: 2段ミニバー（WeekView列幅）
+ *   - 広い（>= 240px）: 横並びラベル付きバー + 時間テキスト（DayView幅）
  * - 左端にタイムゾーン表示
- * - 0h の場合は `-` で省略
+ * - 睡眠時間をPlan合計に自動加算（useSleepHours）
  */
 
 const meta = {
@@ -170,7 +172,7 @@ export const NoTimezone: Story = {
 };
 
 // ---------------------------------------------------------------------------
-// 全パターン
+// 全パターン一覧
 // ---------------------------------------------------------------------------
 
 /** 全パターン一覧 */
