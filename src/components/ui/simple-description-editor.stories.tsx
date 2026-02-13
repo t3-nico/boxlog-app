@@ -7,8 +7,7 @@ const meta = {
   title: 'Components/Editor',
   component: SimpleDescriptionEditor,
   tags: ['autodocs'],
-  parameters: {
-  },
+  parameters: {},
   argTypes: {
     placeholder: {
       control: 'text',

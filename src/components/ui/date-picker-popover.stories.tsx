@@ -7,8 +7,7 @@ const meta = {
   title: 'Components/DatePickerPopover',
   component: DatePickerPopover,
   tags: ['autodocs'],
-  parameters: {
-  },
+  parameters: {},
   argTypes: {
     showIcon: {
       control: 'boolean',

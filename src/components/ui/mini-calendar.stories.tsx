@@ -10,8 +10,7 @@ const meta = {
   title: 'Components/MiniCalendar',
   component: MiniCalendar,
   tags: ['autodocs'],
-  parameters: {
-  },
+  parameters: {},
   argTypes: {
     asPopover: {
       control: 'boolean',

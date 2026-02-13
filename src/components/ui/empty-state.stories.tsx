@@ -8,8 +8,7 @@ const meta = {
   title: 'Components/EmptyState',
   component: EmptyState,
   tags: ['autodocs'],
-  parameters: {
-  },
+  parameters: {},
   argTypes: {
     title: {
       control: 'text',
@@ -71,8 +70,6 @@ export const TableEmpty: Story = {
     description: '新しいアイテムを作成して始めましょう。',
     size: 'sm',
     centered: true,
-    actions: (
-      <Button size="sm">新規作成</Button>
-    ),
+    actions: <Button size="sm">新規作成</Button>,
   },
 };

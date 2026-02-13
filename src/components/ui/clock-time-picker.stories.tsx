@@ -7,8 +7,7 @@ const meta = {
   title: 'Components/ClockTimePicker',
   component: ClockTimePicker,
   tags: ['autodocs'],
-  parameters: {
-  },
+  parameters: {},
   argTypes: {
     value: {
       control: 'text',
