@@ -127,7 +127,7 @@ describe('LoginForm', () => {
       await user.click(screen.getByRole('button', { name: 'auth.loginForm.loginButton' }));
 
       await waitFor(() => {
-        expect(screen.getByRole('alert')).toHaveTextContent('Invalid credentials');
+        expect(screen.getByRole('alert')).toHaveTextContent('auth.errors.invalidCredentials');
       });
     });
 

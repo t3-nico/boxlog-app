@@ -44,22 +44,21 @@ describe('PlanCard', () => {
     it('イベントが正しく表示される', () => {
       render(<PlanCard plan={mockEvent} position={mockPosition} />);
 
-      expect(screen.getByRole('button', { name: /plan: テストイベント/i })).toBeInTheDocument();
+      expect(screen.getByRole('group', { name: /plan: テストイベント/i })).toBeInTheDocument();
     });
 
     it('デフォルトポジションが適用される', () => {
       render(<PlanCard plan={mockEvent} position={undefined} />);
 
-      const eventBlock = screen.getByRole('button', { name: /plan: テストイベント/i });
+      const eventBlock = screen.getByRole('group', { name: /plan: テストイベント/i });
       expect(eventBlock).toBeInTheDocument();
     });
 
     it('aria属性が正しく設定される', () => {
       render(<PlanCard plan={mockEvent} position={mockPosition} />);
 
-      const eventBlock = screen.getByRole('button', { name: /plan: テストイベント/i });
+      const eventBlock = screen.getByRole('group', { name: /plan: テストイベント/i });
       expect(eventBlock).toHaveAttribute('aria-label', 'plan: テストイベント');
-      expect(eventBlock).toHaveAttribute('aria-pressed', 'false');
       expect(eventBlock).toHaveAttribute('tabIndex', '0');
     });
   });
@@ -69,7 +68,7 @@ describe('PlanCard', () => {
       const onClick = vi.fn();
       render(<PlanCard plan={mockEvent} position={mockPosition} onClick={onClick} />);
 
-      const eventBlock = screen.getByRole('button', { name: /plan: テストイベント/i });
+      const eventBlock = screen.getByRole('group', { name: /plan: テストイベント/i });
       fireEvent.click(eventBlock);
 
       expect(onClick).toHaveBeenCalledWith(mockEvent);
@@ -79,7 +78,7 @@ describe('PlanCard', () => {
       const onContextMenu = vi.fn();
       render(<PlanCard plan={mockEvent} position={mockPosition} onContextMenu={onContextMenu} />);
 
-      const eventBlock = screen.getByRole('button', { name: /plan: テストイベント/i });
+      const eventBlock = screen.getByRole('group', { name: /plan: テストイベント/i });
       fireEvent.contextMenu(eventBlock);
 
       expect(onContextMenu).toHaveBeenCalledWith(mockEvent, expect.any(Object));
@@ -89,7 +88,7 @@ describe('PlanCard', () => {
       const onClick = vi.fn();
       render(<PlanCard plan={mockEvent} position={mockPosition} onClick={onClick} />);
 
-      const eventBlock = screen.getByRole('button', { name: /plan: テストイベント/i });
+      const eventBlock = screen.getByRole('group', { name: /plan: テストイベント/i });
       fireEvent.keyDown(eventBlock, { key: 'Enter' });
 
       expect(onClick).toHaveBeenCalledWith(mockEvent);
@@ -99,7 +98,7 @@ describe('PlanCard', () => {
       const onClick = vi.fn();
       render(<PlanCard plan={mockEvent} position={mockPosition} onClick={onClick} />);
 
-      const eventBlock = screen.getByRole('button', { name: /plan: テストイベント/i });
+      const eventBlock = screen.getByRole('group', { name: /plan: テストイベント/i });
       fireEvent.keyDown(eventBlock, { key: ' ' });
 
       expect(onClick).toHaveBeenCalledWith(mockEvent);
@@ -111,7 +110,7 @@ describe('PlanCard', () => {
       const onDragStart = vi.fn();
       render(<PlanCard plan={mockEvent} position={mockPosition} onDragStart={onDragStart} />);
 
-      const eventBlock = screen.getByRole('button', { name: /plan: テストイベント/i });
+      const eventBlock = screen.getByRole('group', { name: /plan: テストイベント/i });
       fireEvent.mouseDown(eventBlock, { button: 0 });
 
       // onDragStartは (plan, event, position) の3引数で呼ばれる
@@ -130,15 +129,14 @@ describe('PlanCard', () => {
     it('ドラッグ中の状態が正しく反映される', () => {
       render(<PlanCard plan={mockEvent} position={mockPosition} isDragging={true} />);
 
-      const eventBlock = screen.getByRole('button', { name: /plan: テストイベント/i });
+      const eventBlock = screen.getByRole('group', { name: /plan: テストイベント/i });
       expect(eventBlock.className).toContain('cursor-grabbing');
     });
 
     it('選択状態が正しく反映される', () => {
       render(<PlanCard plan={mockEvent} position={mockPosition} isSelected={true} />);
 
-      const eventBlock = screen.getByRole('button', { name: /plan: テストイベント/i });
-      expect(eventBlock).toHaveAttribute('aria-pressed', 'true');
+      const eventBlock = screen.getByRole('group', { name: /plan: テストイベント/i });
       expect(eventBlock.className).toContain('ring-2');
     });
   });
@@ -181,7 +179,7 @@ describe('PlanCard', () => {
     it('カスタムclassNameが適用される', () => {
       render(<PlanCard plan={mockEvent} position={mockPosition} className="custom-class" />);
 
-      const eventBlock = screen.getByRole('button', { name: /plan: テストイベント/i });
+      const eventBlock = screen.getByRole('group', { name: /plan: テストイベント/i });
       expect(eventBlock.className).toContain('custom-class');
     });
 
@@ -189,7 +187,7 @@ describe('PlanCard', () => {
       const customStyle = { backgroundColor: 'red' };
       render(<PlanCard plan={mockEvent} position={mockPosition} style={customStyle} />);
 
-      const eventBlock = screen.getByRole('button', { name: /plan: テストイベント/i });
+      const eventBlock = screen.getByRole('group', { name: /plan: テストイベント/i });
       expect(eventBlock).toHaveStyle({ backgroundColor: 'red' });
     });
 
@@ -197,7 +195,7 @@ describe('PlanCard', () => {
       const smallPosition = { ...mockPosition, height: 25 };
       render(<PlanCard plan={mockEvent} position={smallPosition} />);
 
-      const eventBlock = screen.getByRole('button', { name: /plan: テストイベント/i });
+      const eventBlock = screen.getByRole('group', { name: /plan: テストイベント/i });
       // 高さ30px未満でもフォントは統一（text-sm）
       expect(eventBlock.className).toContain('text-sm');
       // チェックボックスの位置がコンパクトに（top-1 left-0.5）
@@ -210,7 +208,7 @@ describe('PlanCard', () => {
       const tinyPosition = { ...mockPosition, height: 5 };
       render(<PlanCard plan={mockEvent} position={tinyPosition} />);
 
-      const eventBlock = screen.getByRole('button', { name: /plan: テストイベント/i });
+      const eventBlock = screen.getByRole('group', { name: /plan: テストイベント/i });
       // MIN_EVENT_HEIGHTが適用されるため、少なくとも20px以上
       const heightMatch = eventBlock.style.height.match(/(\d+)px/);
       const height = heightMatch ? parseInt(heightMatch[1]!, 10) : 0;
@@ -222,7 +220,7 @@ describe('PlanCard', () => {
     it('マウスホバーで状態が変わる', () => {
       render(<PlanCard plan={mockEvent} position={mockPosition} />);
 
-      const eventBlock = screen.getByRole('button', { name: /plan: テストイベント/i });
+      const eventBlock = screen.getByRole('group', { name: /plan: テストイベント/i });
 
       fireEvent.mouseEnter(eventBlock);
       // ホバー状態は内部状態なので、視覚的変化を直接テストするのは難しい
@@ -244,7 +242,7 @@ describe('PlanCard', () => {
         </div>,
       );
 
-      const eventBlock = container.querySelector('[role="button"]');
+      const eventBlock = container.querySelector('[role="group"]');
       if (eventBlock) {
         fireEvent.click(eventBlock);
       }
