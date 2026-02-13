@@ -1,9 +1,10 @@
-import type { Preview } from '@storybook/react';
+import type { Preview } from '@storybook/react-vite';
+import { useDarkMode } from '@vueless/storybook-dark-mode';
 import { NextIntlClientProvider } from 'next-intl';
-import { useDarkMode } from 'storybook-dark-mode';
 
 import '../src/styles/globals.css';
 import { DocsTemplate } from './DocsTemplate';
+import { ThemedDocsContainer } from './ThemedDocsContainer';
 import { dayoptDarkTheme, dayoptLightTheme } from './dayoptTheme';
 import { TRPCMockProvider } from './mocks/trpc';
 import './prose.css';
@@ -100,6 +101,29 @@ const messages = {
         acceptAll: 'すべて同意',
         rejectAll: '必須のみ',
         customize: 'カスタマイズ',
+      },
+    },
+  },
+  settings: {
+    dialog: {
+      title: '設定',
+      categories: {
+        general: '一般',
+        generalDesc: '言語、テーマ、起動画面の設定',
+        calendar: 'カレンダー',
+        calendarDesc: 'タイムゾーン、表示設定、デフォルトビュー',
+        personalization: 'パーソナライズ',
+        personalizationDesc: 'クロノタイプとタグのカスタマイズ',
+        notifications: '通知',
+        notificationsDesc: '通知とリマインダーの設定',
+        dataControls: 'データ管理',
+        dataControlsDesc: 'エクスポート、インポート、バックアップ設定',
+        integrations: '連携',
+        integrationsDesc: 'AIプロバイダーと外部サービス連携',
+        account: 'アカウント',
+        accountDesc: 'プロフィールとセキュリティ',
+        subscription: 'サブスクリプション',
+        subscriptionDesc: 'プランと課金管理',
       },
     },
   },
@@ -308,13 +332,14 @@ const messages = {
 const preview: Preview = {
   parameters: {
     controls: {
+      expanded: true,
       matchers: {
         color: /(background|color)$/i,
         date: /Date$/i,
       },
     },
     backgrounds: {
-      disable: true,
+      options: {},
       grid: {
         cellSize: 16,
         cellAmount: 5,
@@ -332,13 +357,12 @@ const preview: Preview = {
     darkMode: {
       dark: dayoptDarkTheme,
       light: dayoptLightTheme,
-      darkClass: 'dark',
-      lightClass: 'light',
       stylePreview: true,
-      current: 'light',
+      classTarget: 'html',
     },
     docs: {
-      theme: dayoptLightTheme,
+      codePanel: true,
+      container: ThemedDocsContainer,
       page: DocsTemplate,
     },
     a11y: {
@@ -351,12 +375,18 @@ const preview: Preview = {
           { id: 'region', enabled: false },
         ],
       },
+
       options: {
         runOnly: {
           type: 'tag',
           values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice'],
         },
       },
+
+      // 'todo' - show a11y violations in the test UI only
+      // 'error' - fail CI on a11y violations
+      // 'off' - skip a11y checks entirely
+      test: 'todo',
     },
   },
   decorators: [
