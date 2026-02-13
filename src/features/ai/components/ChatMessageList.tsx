@@ -27,7 +27,7 @@ export const ChatMessageList = memo(function ChatMessageList({ messages }: ChatM
             <MessageContent
               className={
                 message.role === 'user'
-                  ? 'bg-muted max-w-[85%] rounded-2xl text-sm'
+                  ? 'bg-primary text-primary-foreground max-w-[85%] rounded-lg px-4 py-2.5 text-sm'
                   : 'max-w-full bg-transparent p-0 text-sm'
               }
             >
