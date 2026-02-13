@@ -27,6 +27,8 @@ interface DragSelectionPreviewProps {
   formatTime: (hour: number, minute: number) => string;
   /** 既存プランと重複しているか */
   isOverlapping?: boolean;
+  /** 1時間あたりの高さ（px） */
+  hourHeight?: number | undefined;
 }
 
 /**
@@ -39,14 +41,15 @@ export const DragSelectionPreview = memo(function DragSelectionPreview({
   selection,
   formatTime,
   isOverlapping = false,
+  hourHeight = HOUR_HEIGHT,
 }: DragSelectionPreviewProps) {
   const isMobile = useMediaQuery(MEDIA_QUERIES.mobile);
 
   // 選択範囲のスタイルを計算
   const startMinutes = selection.startHour * 60 + selection.startMinute;
   const endMinutes = selection.endHour * 60 + selection.endMinute;
-  const top = startMinutes * (HOUR_HEIGHT / 60);
-  const height = (endMinutes - startMinutes) * (HOUR_HEIGHT / 60);
+  const top = startMinutes * (hourHeight / 60);
+  const height = (endMinutes - startMinutes) * (hourHeight / 60);
 
   // モバイルでは最小高さを確保して視認性を向上
   const minHeight = isMobile ? 80 : 40;

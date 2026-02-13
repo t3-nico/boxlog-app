@@ -19,6 +19,7 @@ export function calculatePreviewTime(
   date: Date,
   viewMode: string,
   displayDates: Date[] | undefined,
+  hourHeight: number = HOUR_HEIGHT,
 ): { previewStartTime: Date; previewEndTime: Date } {
   const event = events.find((e) => e.id === draggedEventId);
   let durationMs = 60 * 60 * 1000;
@@ -26,7 +27,7 @@ export function calculatePreviewTime(
   if (event?.startDate && event?.endDate) {
     durationMs = event.endDate.getTime() - event.startDate.getTime();
   } else if (eventDuration) {
-    durationMs = (eventDuration / HOUR_HEIGHT) * 60 * 60 * 1000;
+    durationMs = (eventDuration / hourHeight) * 60 * 60 * 1000;
   }
 
   let targetDate = date;
@@ -83,8 +84,9 @@ export function calculateNewTime(
   viewMode: string,
   displayDates: Date[] | undefined,
   dragDataRef: DragDataRef | null,
+  hourHeight: number = HOUR_HEIGHT,
 ): Date {
-  const hourDecimal = newTop / HOUR_HEIGHT;
+  const hourDecimal = newTop / hourHeight;
   let hour = Math.floor(Math.max(0, Math.min(23, hourDecimal)));
   let minute = Math.round(Math.max(0, ((hourDecimal - hour) * 60) / 15)) * 15;
 
@@ -115,6 +117,7 @@ export function calculateEventDuration(
   events: CalendarPlan[],
   eventId: string,
   dragDataRef: DragDataRef | null,
+  hourHeight: number = HOUR_HEIGHT,
 ): { event: CalendarPlan | undefined; durationMs: number } {
   const event = events.find((e) => e.id === eventId);
   let durationMs = 60 * 60 * 1000;
@@ -122,7 +125,7 @@ export function calculateEventDuration(
   if (event?.startDate && event?.endDate) {
     durationMs = event.endDate.getTime() - event.startDate.getTime();
   } else if (dragDataRef?.eventDuration) {
-    durationMs = (dragDataRef.eventDuration / HOUR_HEIGHT) * 60 * 60 * 1000;
+    durationMs = (dragDataRef.eventDuration / hourHeight) * 60 * 60 * 1000;
   }
 
   return { event, durationMs };

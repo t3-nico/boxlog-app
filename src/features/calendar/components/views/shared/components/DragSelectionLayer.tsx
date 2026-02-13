@@ -17,6 +17,8 @@ interface DragSelectionLayerProps {
   className?: string;
   onTimeRangeSelect?: (selection: TimeSelection) => void;
   children?: React.ReactNode;
+  /** 1時間あたりの高さ（px） */
+  hourHeight?: number | undefined;
 }
 
 /**
@@ -27,6 +29,7 @@ export const DragSelectionLayer = ({
   className,
   onTimeRangeSelect,
   children,
+  hourHeight = HOUR_HEIGHT,
 }: DragSelectionLayerProps) => {
   // ドラッグ選択の状態
   const [isSelecting, setIsSelecting] = useState(false);
@@ -38,12 +41,15 @@ export const DragSelectionLayer = ({
   const isDragging = useRef(false);
 
   // 座標から時間を計算
-  const pixelsToTime = useCallback((y: number) => {
-    const totalMinutes = (y / HOUR_HEIGHT) * 60;
-    const hour = Math.floor(totalMinutes / 60);
-    const minute = Math.floor((totalMinutes % 60) / 15) * 15; // 15分単位に丸める
-    return { hour: Math.max(0, Math.min(23, hour)), minute: Math.max(0, Math.min(45, minute)) };
-  }, []);
+  const pixelsToTime = useCallback(
+    (y: number) => {
+      const totalMinutes = (y / hourHeight) * 60;
+      const hour = Math.floor(totalMinutes / 60);
+      const minute = Math.floor((totalMinutes % 60) / 15) * 15; // 15分単位に丸める
+      return { hour: Math.max(0, Math.min(23, hour)), minute: Math.max(0, Math.min(45, minute)) };
+    },
+    [hourHeight],
+  );
 
   // マウスダウン開始
   const handleMouseDown = useCallback(
@@ -163,8 +169,8 @@ export const DragSelectionLayer = ({
     ? (() => {
         const startMinutes = selection.startHour * 60 + selection.startMinute;
         const endMinutes = selection.endHour * 60 + selection.endMinute;
-        const top = startMinutes * (HOUR_HEIGHT / 60);
-        const height = (endMinutes - startMinutes) * (HOUR_HEIGHT / 60);
+        const top = startMinutes * (hourHeight / 60);
+        const height = (endMinutes - startMinutes) * (hourHeight / 60);
 
         return {
           position: 'absolute',

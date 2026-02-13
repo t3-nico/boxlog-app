@@ -12,8 +12,8 @@ import {
   calculatePreviewTime,
 } from '../../shared';
 import { PanelDragPreview } from '../../shared/components/PanelDragPreview';
-import { HOUR_HEIGHT } from '../../shared/constants/grid.constants';
 import { useGlobalDragCursor } from '../../shared/hooks/useGlobalDragCursor';
+import { useResponsiveHourHeight } from '../../shared/hooks/useResponsiveHourHeight';
 import type { CalendarPlan } from '../../shared/types/base.types';
 import type { DayContentProps } from '../DayView.types';
 import { useDragAndDrop } from '../hooks/useDragAndDrop';
@@ -33,6 +33,9 @@ export const DayContent = ({
   // Inspectorで開いているプランのIDを取得
   const inspectorPlanId = usePlanInspectorStore((state) => state.planId);
   const isInspectorOpen = usePlanInspectorStore((state) => state.isOpen);
+
+  // レスポンシブな高さ
+  const HOUR_HEIGHT = useResponsiveHourHeight();
 
   // グリッド高さ（24時間）
   const gridHeight = 24 * HOUR_HEIGHT;
@@ -85,7 +88,7 @@ export const DayContent = ({
           style={{ height: HOUR_HEIGHT }}
         />
       )),
-    [],
+    [HOUR_HEIGHT],
   );
 
   return (

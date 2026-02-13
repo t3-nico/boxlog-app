@@ -1,3 +1,4 @@
+import { useResponsiveHourHeight } from '../../shared/hooks/useResponsiveHourHeight';
 import { useViewPlans } from '../../shared/hooks/useViewPlans';
 import type { UseDayPlansOptions, UseDayPlansReturn } from '../DayView.types';
 
@@ -6,5 +7,6 @@ import type { UseDayPlansOptions, UseDayPlansReturn } from '../DayView.types';
  * 共通のuseViewPlansを使用
  */
 export function useDayPlans({ date, plans }: UseDayPlansOptions): UseDayPlansReturn {
-  return useViewPlans({ date, plans });
+  const hourHeight = useResponsiveHourHeight();
+  return useViewPlans({ date, plans, hourHeight });
 }

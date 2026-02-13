@@ -46,12 +46,8 @@ export const WeekGrid = ({
   className,
   onEmptyAreaContextMenu,
 }: WeekGridProps) => {
-  // レスポンシブな時間高さ（ThreeDayViewと同じパターン）
-  useResponsiveHourHeight({
-    mobile: 48,
-    tablet: 60,
-    desktop: 72,
-  });
+  // レスポンシブな時間高さ
+  const hourHeight = useResponsiveHourHeight();
 
   // onEventUpdate を WeekContent が期待する型に変換
   const handlePlanUpdate = React.useCallback(
@@ -72,6 +68,7 @@ export const WeekGrid = ({
   const { planPositions } = useWeekPlans({
     weekDates,
     events,
+    hourHeight,
   });
 
   // CurrentTimeLine表示のための日付配列（weekDatesをそのまま使用）

@@ -28,6 +28,8 @@ interface UseResizeHandlerProps {
     | undefined;
   dragDataRef: React.MutableRefObject<DragDataRef | null>;
   setDragState: React.Dispatch<React.SetStateAction<DragState>>;
+  /** 1時間あたりの高さ（px） */
+  hourHeight?: number | undefined;
 }
 
 export function useResizeHandler({
@@ -36,6 +38,7 @@ export function useResizeHandler({
   eventUpdateHandler,
   dragDataRef,
   setDragState,
+  hourHeight = HOUR_HEIGHT,
 }: UseResizeHandlerProps) {
   const t = useTranslations();
   const calendarToast = useCalendarToast();
@@ -57,10 +60,10 @@ export function useResizeHandler({
       // 下端リサイズ: 終了時刻を変更（開始時刻は固定）
       const newHeight = Math.max(15, dragData.eventDuration + deltaY);
       const { snappedTop: snappedHeight } = snapToQuarterHour(newHeight);
-      const finalHeight = Math.max(HOUR_HEIGHT / 4, snappedHeight);
+      const finalHeight = Math.max(hourHeight / 4, snappedHeight);
 
       if (event?.startDate) {
-        const newDurationMs = (finalHeight / HOUR_HEIGHT) * 60 * 60 * 1000;
+        const newDurationMs = (finalHeight / hourHeight) * 60 * 60 * 1000;
         const previewEndTime = new Date(event.startDate.getTime() + newDurationMs);
         previewTime = { start: event.startDate, end: previewEndTime };
 
@@ -95,7 +98,7 @@ export function useResizeHandler({
         isOverlapping,
       }));
     },
-    [events, allEvents, dragDataRef, setDragState],
+    [events, allEvents, dragDataRef, setDragState, hourHeight],
   );
 
   // リサイズ完了処理（下端リサイズのみ）
@@ -114,7 +117,7 @@ export function useResizeHandler({
         return;
       }
 
-      const newDurationMs = (snappedHeight / HOUR_HEIGHT) * 60 * 60 * 1000;
+      const newDurationMs = (snappedHeight / hourHeight) * 60 * 60 * 1000;
       const newEndTime = new Date(event.startDate.getTime() + newDurationMs);
 
       // 重複チェック
@@ -192,7 +195,7 @@ export function useResizeHandler({
         }
       }
     },
-    [events, allEvents, eventUpdateHandler, dragDataRef, calendarToast, hapticError, t],
+    [events, allEvents, eventUpdateHandler, dragDataRef, calendarToast, hapticError, t, hourHeight],
   );
 
   // リサイズ開始（下端リサイズのみ）

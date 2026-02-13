@@ -1,25 +1,17 @@
 /**
  * レスポンシブなHOUR_HEIGHTを管理するフック
+ * Store の hourHeightDensity 設定とデバイスサイズに基づいて高さを返す
  */
 
 import { useEffect, useState } from 'react';
 
-import { HOUR_HEIGHT } from '../constants/grid.constants';
+import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
 
-interface ResponsiveHourHeightConfig {
-  mobile: number; // モバイル（< 768px）
-  tablet: number; // タブレット（768px - 1024px）
-  desktop: number; // デスクトップ（>= 1024px）
-}
+import { HOUR_HEIGHT, HOUR_HEIGHT_DENSITIES } from '../constants/grid.constants';
 
-const DEFAULT_CONFIG: ResponsiveHourHeightConfig = {
-  mobile: 60, // モバイルでは少し小さく
-  tablet: 72, // タブレットは標準
-  desktop: 72, // デスクトップは標準
-};
-
-export function useResponsiveHourHeight(config: Partial<ResponsiveHourHeightConfig> = {}): number {
-  const finalConfig = { ...DEFAULT_CONFIG, ...config };
+export function useResponsiveHourHeight(): number {
+  const density = useCalendarSettingsStore((s) => s.hourHeightDensity);
+  const config = HOUR_HEIGHT_DENSITIES[density];
 
   const [hourHeight, setHourHeight] = useState<number>(HOUR_HEIGHT);
 
@@ -28,27 +20,19 @@ export function useResponsiveHourHeight(config: Partial<ResponsiveHourHeightConf
       const width = window.innerWidth;
 
       if (width < 768) {
-        // モバイル
-        setHourHeight(finalConfig.mobile);
+        setHourHeight(config.mobile);
       } else if (width < 1024) {
-        // タブレット
-        setHourHeight(finalConfig.tablet);
+        setHourHeight(config.tablet);
       } else {
-        // デスクトップ
-        setHourHeight(finalConfig.desktop);
+        setHourHeight(config.desktop);
       }
     };
 
-    // 初期設定
     updateHourHeight();
 
-    // リサイズイベントリスナー
     window.addEventListener('resize', updateHourHeight);
-
-    return () => {
-      window.removeEventListener('resize', updateHourHeight);
-    };
-  }, [finalConfig.mobile, finalConfig.tablet, finalConfig.desktop]);
+    return () => window.removeEventListener('resize', updateHourHeight);
+  }, [config.mobile, config.tablet, config.desktop]);
 
   return hourHeight;
 }

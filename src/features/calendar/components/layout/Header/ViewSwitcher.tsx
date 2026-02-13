@@ -57,6 +57,7 @@ export function ViewSwitcher({ currentView, onChange, className }: ViewSwitcherP
   const locale = useLocale();
   const showWeekends = useCalendarSettingsStore((s) => s.showWeekends);
   const showWeekNumbers = useCalendarSettingsStore((s) => s.showWeekNumbers);
+  const hourHeightDensity = useCalendarSettingsStore((s) => s.hourHeightDensity);
   const updateSettings = useCalendarSettingsStore((s) => s.updateSettings);
 
   const currentLabel = isMultiDayView(currentView)
@@ -80,6 +81,8 @@ export function ViewSwitcher({ currentView, onChange, className }: ViewSwitcherP
   const handleToggleWeekNumbers = useCallback(() => {
     updateSettings({ showWeekNumbers: !showWeekNumbers });
   }, [showWeekNumbers, updateSettings]);
+
+  const DENSITY_OPTIONS = ['compact', 'default', 'spacious'] as const;
 
   // キーボードショートカット: D, W, A, 0-9
   useEffect(() => {
@@ -219,6 +222,21 @@ export function ViewSwitcher({ currentView, onChange, className }: ViewSwitcherP
             >
               {t('calendar.views.showWeekNumbers')}
             </DropdownMenuCheckboxItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger>{t('calendar.views.density')}</DropdownMenuSubTrigger>
+              <DropdownMenuSubContent>
+                {DENSITY_OPTIONS.map((d) => (
+                  <DropdownMenuCheckboxItem
+                    key={d}
+                    checked={hourHeightDensity === d}
+                    onCheckedChange={() => updateSettings({ hourHeightDensity: d })}
+                  >
+                    {t(`calendar.views.density_${d}`)}
+                  </DropdownMenuCheckboxItem>
+                ))}
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => router.push(`/${locale}/settings`)}>
               {t('calendar.views.generalSettings')}
