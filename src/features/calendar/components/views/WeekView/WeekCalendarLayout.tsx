@@ -93,7 +93,7 @@ export const WeekCalendarLayout = ({
         duration: 5000,
         action: onRestorePlan
           ? {
-              label: t('calendar.actions.undo'),
+              label: t('common.undo'),
               onClick: async () => {
                 await onRestorePlan(planToDelete);
               },

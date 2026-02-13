@@ -66,7 +66,7 @@ export const DateNavigator = ({
       {/* 前後ナビゲーション - 32px（8pxグリッド準拠） */}
       {showArrows != null ? (
         <div className="flex items-center gap-1">
-          <HoverTooltip content={t('calendar.navigation.previous')} side="bottom">
+          <HoverTooltip content={t('common.previous')} side="bottom">
             <button
               type="button"
               onClick={() => onNavigate('prev')}
@@ -75,12 +75,12 @@ export const DateNavigator = ({
                 'hover:bg-state-hover',
                 'text-muted-foreground',
               )}
-              aria-label={t('calendar.navigation.previous')}
+              aria-label={t('common.previous')}
             >
               <ChevronLeft className={arrowSizes[arrowSize]} />
             </button>
           </HoverTooltip>
-          <HoverTooltip content={t('calendar.navigation.next')} side="bottom">
+          <HoverTooltip content={t('common.next')} side="bottom">
             <button
               type="button"
               onClick={() => onNavigate('next')}
@@ -89,7 +89,7 @@ export const DateNavigator = ({
                 'hover:bg-state-hover',
                 'text-muted-foreground',
               )}
-              aria-label={t('calendar.navigation.next')}
+              aria-label={t('common.next')}
             >
               <ChevronRight className={arrowSizes[arrowSize]} />
             </button>
