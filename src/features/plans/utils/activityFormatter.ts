@@ -3,6 +3,27 @@ import type { ActivityActionType } from '@/schemas/plans/activity';
 import type { ActivityIconColor, PlanActivity, PlanActivityDisplay } from '../types/activity';
 
 /**
+ * "TIMESTAMPTZ - TIMESTAMPTZ" 形式の時間範囲を "HH:MM - HH:MM" に整形
+ * 例: "2026-02-10T09:00:00+09:00 - 2026-02-10T10:00:00+09:00" → "09:00 - 10:00"
+ * パース失敗時はそのまま返す
+ */
+function formatTimeRange(value: string): string {
+  const parts = value.split(' - ');
+  if (parts.length !== 2) return value;
+
+  const formatTime = (raw: string): string => {
+    const date = new Date(raw);
+    if (Number.isNaN(date.getTime())) return raw;
+    return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+  };
+
+  const start = parts[0];
+  const end = parts[1];
+  if (!start || !end) return value;
+  return `${formatTime(start)} - ${formatTime(end)}`;
+}
+
+/**
  * UI表示対象のアクションタイプ
  * GAFA基準: 「意思決定」を伴う変更のみ表示
  *
@@ -57,7 +78,7 @@ export function filterVisibleActivities(activities: PlanActivity[]): PlanActivit
 export function formatActivity(activity: PlanActivity): PlanActivityDisplay {
   let actionLabel = '';
   let detail: string | undefined;
-  let icon: PlanActivityDisplay['icon'] = 'update';
+  let icon: PlanActivityDisplay['icon'] = 'time';
   let iconColor: ActivityIconColor = 'info';
 
   switch (activity.action_type) {
@@ -69,7 +90,7 @@ export function formatActivity(activity: PlanActivity): PlanActivityDisplay {
 
     case 'updated':
       actionLabel = 'プランを更新';
-      icon = 'update';
+      icon = 'time';
       iconColor = 'info';
       break;
 
@@ -98,7 +119,7 @@ export function formatActivity(activity: PlanActivity): PlanActivityDisplay {
         detail = `${oldLabel} → ${newLabel}`;
       }
       icon = 'status';
-      iconColor = 'warning';
+      iconColor = activity.new_value === 'closed' ? 'success' : 'warning';
       break;
     }
 
@@ -107,13 +128,13 @@ export function formatActivity(activity: PlanActivity): PlanActivityDisplay {
       if (activity.old_value && activity.new_value) {
         detail = `${activity.old_value} → ${activity.new_value}`;
       }
-      icon = 'update';
+      icon = 'time';
       iconColor = 'info';
       break;
 
     case 'description_changed':
       actionLabel = '説明を更新';
-      icon = 'update';
+      icon = 'time';
       iconColor = 'info';
       break;
 
@@ -122,14 +143,14 @@ export function formatActivity(activity: PlanActivity): PlanActivityDisplay {
       if (activity.old_value && activity.new_value) {
         detail = `${activity.old_value} → ${activity.new_value}`;
       }
-      icon = 'due_date';
+      icon = 'time';
       iconColor = 'info';
       break;
 
     case 'time_changed':
       actionLabel = '時間を変更';
       if (activity.old_value && activity.new_value) {
-        detail = `${activity.old_value} → ${activity.new_value}`;
+        detail = `${formatTimeRange(activity.old_value)} → ${formatTimeRange(activity.new_value)}`;
       }
       icon = 'time';
       iconColor = 'info';
@@ -150,7 +171,7 @@ export function formatActivity(activity: PlanActivity): PlanActivityDisplay {
         detail = activity.old_value;
       }
       icon = 'tag';
-      iconColor = 'primary';
+      iconColor = 'destructive';
       break;
 
     case 'recurrence_changed':
@@ -160,7 +181,7 @@ export function formatActivity(activity: PlanActivity): PlanActivityDisplay {
       } else if (activity.old_value) {
         detail = `${activity.old_value} → なし`;
       }
-      icon = 'recurrence';
+      icon = 'time';
       iconColor = 'info';
       break;
 
@@ -171,7 +192,7 @@ export function formatActivity(activity: PlanActivity): PlanActivityDisplay {
       } else if (activity.old_value) {
         detail = `${activity.old_value} → なし`;
       }
-      icon = 'reminder';
+      icon = 'time';
       iconColor = 'info';
       break;
 
@@ -183,7 +204,7 @@ export function formatActivity(activity: PlanActivity): PlanActivityDisplay {
 
     default:
       actionLabel = '変更';
-      icon = 'update';
+      icon = 'time';
       iconColor = 'info';
   }
 

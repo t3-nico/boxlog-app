@@ -27,15 +27,6 @@ export type ActivityIconColor = 'success' | 'info' | 'warning' | 'primary' | 'de
 export interface PlanActivityDisplay extends PlanActivity {
   actionLabel: string; // 簡潔なアクション名（例: "ステータスを変更"）
   detail?: string | undefined; // 詳細情報（例: "未完了 → 完了"）※任意
-  icon:
-    | 'create'
-    | 'update'
-    | 'status'
-    | 'tag'
-    | 'delete'
-    | 'time'
-    | 'due_date'
-    | 'recurrence'
-    | 'reminder'; // アイコン種別
+  icon: 'create' | 'status' | 'tag' | 'delete' | 'time'; // アイコン種別（5種類に統一）
   iconColor: ActivityIconColor; // アイコン色
 }
