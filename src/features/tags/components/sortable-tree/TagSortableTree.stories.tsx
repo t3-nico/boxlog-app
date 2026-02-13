@@ -120,6 +120,7 @@ const mockParentTagCounts: Record<string, number> = {
 
 const defaultCallbacks = {
   onToggleTag: fn(),
+  onToggleGroupTags: fn(),
   onUpdateTag: fn(),
   onDeleteTag: fn(),
   onAddChildTag: fn(),
