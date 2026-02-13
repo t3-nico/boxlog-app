@@ -86,13 +86,6 @@ jspm_packages/
 # Performance logs
 performance-*.log
 
-# Auto-generated reports
-/reports/
-*.csv
-license-report.csv
-
-# API change detection cache
-.api-changes-cache.json
 
 # Validation artifacts
 .violations.json
