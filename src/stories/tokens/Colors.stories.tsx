@@ -597,7 +597,7 @@ export const Tags: Story = {
             <div className="flex-1">
               <div className="flex items-center gap-2">
                 <code className="bg-container rounded px-2 py-1 text-xs">bg-{token}</code>
-                <span className="font-medium">{name}</span>
+                <span className="font-bold">{name}</span>
               </div>
               {description && <p className="text-muted-foreground mt-1 text-xs">{description}</p>}
             </div>

@@ -127,7 +127,7 @@ function VisualStack() {
       {visualLayers.map((layer, index) => (
         <div
           key={layer.name}
-          className={`${layer.color} absolute flex items-center justify-center rounded-lg border border-white/20 text-sm font-bold text-white`}
+          className={`${layer.color} border-border text-primary-foreground absolute flex items-center justify-center rounded-lg border text-sm font-bold`}
           style={{
             left: `${index * 20}px`,
             top: `${index * 30}px`,
@@ -136,7 +136,7 @@ function VisualStack() {
             zIndex: layer.value,
           }}
         >
-          <span className="rounded bg-black/50 px-2 py-1">
+          <span className="bg-container rounded px-2 py-1">
             {layer.name} ({layer.value})
           </span>
         </div>

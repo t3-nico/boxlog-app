@@ -109,6 +109,7 @@ export function CalendarFilterList() {
     showUntagged,
     toggleType,
     toggleTag,
+    toggleGroupTags,
     toggleUntagged,
     initializeWithTags,
     showOnlyTag,
@@ -196,6 +197,7 @@ export function CalendarFilterList() {
                 tagCounts={tagPlanCounts}
                 parentTagCounts={parentTagCounts}
                 onToggleTag={toggleTag}
+                onToggleGroupTags={toggleGroupTags}
                 onUpdateTag={handleUpdateTag}
                 onDeleteTag={(tagId, tagName) => handleDeleteParentTag(tagId, tagName)}
                 onAddChildTag={handleAddChildTag}

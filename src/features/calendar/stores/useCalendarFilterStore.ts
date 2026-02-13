@@ -74,6 +74,9 @@ export interface CalendarFilterActions {
   /** グループ内のタグの表示状態を取得（all: 全ON, none: 全OFF, some: 一部） */
   getGroupVisibility: (tagIds: string[]) => 'all' | 'none' | 'some';
 
+  /** タグフィルタに一致するかチェック（種類は無視） */
+  matchesTagFilter: (tagIds: string[]) => boolean;
+
   /** プランが表示対象かチェック（種類とタグの両方） */
   isPlanVisible: (planTagIds: string[]) => boolean;
 }
@@ -235,21 +238,27 @@ export const useCalendarFilterStore = create<CalendarFilterStore>()(
         return 'some';
       },
 
-      isPlanVisible: (planTagIds) => {
+      matchesTagFilter: (tagIds) => {
         const state = get();
 
-        // 種類チェック（現時点ではPlanのみ）
-        if (!state.visibleTypes.plan) {
-          return false;
-        }
-
         // タグなしの場合
-        if (planTagIds.length === 0) {
+        if (tagIds.length === 0) {
           return state.showUntagged;
         }
 
         // いずれかのタグが表示中なら表示
-        return planTagIds.some((tagId) => state.visibleTagIds.has(tagId));
+        return tagIds.some((tagId) => state.visibleTagIds.has(tagId));
+      },
+
+      isPlanVisible: (planTagIds) => {
+        const state = get();
+
+        // 種類チェック
+        if (!state.visibleTypes.plan) {
+          return false;
+        }
+
+        return get().matchesTagFilter(planTagIds);
       },
     }),
     {
