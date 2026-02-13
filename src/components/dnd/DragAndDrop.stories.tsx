@@ -592,6 +592,7 @@ function TagReorderDemo({ initialTags, tagCounts, parentTagCounts }: TagReorderD
         tagCounts={tagCounts}
         parentTagCounts={parentTagCounts}
         onToggleTag={fn()}
+        onToggleGroupTags={fn()}
         onUpdateTag={fn()}
         onDeleteTag={fn()}
         onAddChildTag={fn()}
