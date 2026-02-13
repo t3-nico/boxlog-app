@@ -182,21 +182,36 @@ export function usePlanContextActions() {
     [openInspectorWithDraft],
   );
 
-  const handleViewDetails = useCallback(
+  const handleCompletePlan = useCallback(
     (plan: CalendarPlan) => {
-      // planInspectorを開いて詳細を表示
-      // 繰り返しプランの場合はインスタンス日付を渡す
-      const instanceDateRaw =
-        plan.isRecurring && plan.id.includes('_')
-          ? plan.id.split('_').pop()
-          : plan.startDate?.toISOString().slice(0, 10);
-      // instanceDateがundefinedの場合は渡さない
-      openInspector(
-        plan.calendarId || plan.id,
-        instanceDateRaw ? { instanceDate: instanceDateRaw } : undefined,
+      const planId = plan.calendarId || plan.id;
+      const newStatus = plan.status === 'closed' ? 'open' : 'closed';
+      updatePlan.mutate({ id: planId, data: { status: newStatus } });
+    },
+    [updatePlan],
+  );
+
+  const handleCompleteWithRecord = useCallback(
+    (plan: CalendarPlan) => {
+      const planId = plan.calendarId || plan.id;
+      // Plan を完了にする
+      updatePlan.mutate({ id: planId, data: { status: 'closed' } });
+      // Record 作成フォームを開く（Plan のデータをプリフィル）
+      openInspectorWithDraft(
+        {
+          title: plan.title,
+          plan_id: planId,
+          due_date: plan.startDate
+            ? format(plan.startDate, 'yyyy-MM-dd')
+            : format(new Date(), 'yyyy-MM-dd'),
+          start_time: plan.startDate?.toISOString() ?? null,
+          end_time: plan.endDate?.toISOString() ?? null,
+          tagIds: plan.tagIds ?? [],
+        },
+        'record',
       );
     },
-    [openInspector],
+    [updatePlan, openInspectorWithDraft],
   );
 
   return {
@@ -205,6 +220,7 @@ export function usePlanContextActions() {
     handleDuplicatePlan,
     handleCopyPlan,
     handlePastePlan,
-    handleViewDetails,
+    handleCompletePlan,
+    handleCompleteWithRecord,
   };
 }

@@ -6,4 +6,5 @@ export type {
   CalendarFilterState,
   ItemType,
 } from './useCalendarFilterStore';
+export { useCalendarPanelStore } from './useCalendarPanelStore';
 export { useCalendarScrollStore } from './useCalendarScrollStore';

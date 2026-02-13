@@ -10,11 +10,10 @@
 
 import { memo } from 'react';
 
-import { NoteIconButton } from '@/features/inspector/components/NoteIconButton';
-import { ScheduleRow } from '@/features/inspector/components/ScheduleRow';
-import { TagsIconButton } from '@/features/inspector/components/TagsIconButton';
-import { TitleInput } from '@/features/inspector/components/TitleInput';
 import { useTranslations } from 'next-intl';
+import { NoteIconButton, ScheduleRow, TagsIconButton, TitleInput } from '../shared';
+
+import type { Tag } from '@/features/tags/types';
 
 import type { Plan } from '../../../types/plan';
 import { DueDateIconButton } from '../../shared/DueDateIconButton';
@@ -50,6 +49,8 @@ interface PlanInspectorDetailsTabProps {
   onRecurrenceRuleChange: (rrule: string | null) => void;
   /** ドラフトモード（新規作成時） */
   isDraftMode?: boolean;
+  /** 外部からタグデータを注入（Storybook等で使用） */
+  availableTags?: Tag[] | undefined;
 }
 
 export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
@@ -75,6 +76,7 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
   onRepeatTypeChange,
   onRecurrenceRuleChange,
   isDraftMode = false,
+  availableTags,
 }: PlanInspectorDetailsTabProps) {
   const t = useTranslations();
 
@@ -105,7 +107,12 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
       {/* Row 3: Option Icons */}
       <div className="flex flex-wrap items-center gap-1 px-4 pt-2 pb-4">
         {/* Tags */}
-        <TagsIconButton tagIds={selectedTagIds} onTagsChange={onTagsChange} popoverSide="bottom" />
+        <TagsIconButton
+          tagIds={selectedTagIds}
+          onTagsChange={onTagsChange}
+          popoverSide="bottom"
+          {...(availableTags ? { availableTags } : {})}
+        />
 
         {/* Records - 編集モードのみ */}
         {!isDraftMode && planId && <RecordsIconButton planId={planId} />}

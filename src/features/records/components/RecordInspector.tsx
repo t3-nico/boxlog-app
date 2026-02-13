@@ -4,7 +4,8 @@ import { Trash2 } from 'lucide-react';
 import { useCallback } from 'react';
 
 import { DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
-import { InspectorContent, InspectorShell, useInspectorKeyboard } from '@/features/inspector';
+import { useInspectorKeyboard } from '@/features/plans/components/inspector/hooks';
+import { InspectorContent, InspectorShell } from '@/features/plans/components/inspector/shared';
 
 import { useRecord, useRecordMutations } from '../hooks';
 import { useRecordInspectorStore } from '../stores';

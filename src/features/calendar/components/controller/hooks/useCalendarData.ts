@@ -115,12 +115,13 @@ export function useCalendarData({
     prefetchAdjacentPeriods();
   }, [currentDate, viewType, weekStartsOn, utils.plans.list, utils.records.list]);
 
-  // フィルター関数を取得（ストアに統一）
+  // フィルター関数と状態を取得（ストアに統一）
   const isPlanVisible = useCalendarFilterStore((state) => state.isPlanVisible);
+  const visibleTypes = useCalendarFilterStore((state) => state.visibleTypes);
 
-  // ドラフトプランを取得（コピー＆ペースト時のプレビュー表示用）
-  // タイトルがある場合のみ表示（ドラッグ選択時はタイトルが空なのでDragSelectionPreviewが担当）
+  // ドラフトプランを取得（新規作成・コピー＆ペースト時のプレビュー表示用）
   const draftPlan = usePlanInspectorStore((state) => state.draftPlan);
+  const createType = usePlanInspectorStore((state) => state.createType);
 
   // 繰り返しプランのIDを抽出
   const recurringPlanIds = useMemo(() => {
@@ -193,14 +194,15 @@ export function useCalendarData({
     }
 
     // ドラフトプランをプレビューとして追加
-    // タイトルがある場合のみ表示（ペースト時など）
-    // ドラッグ選択時はタイトルが空なので、DragSelectionPreviewが担当
-    if (draftPlan?.start_time && draftPlan?.end_time && draftPlan?.title) {
+    // 時間がある場合は表示（新規作成時やペースト時）
+    // タイトルがない場合はcreateTypeに応じたデフォルト表示
+    if (draftPlan?.start_time && draftPlan?.end_time) {
       const startDate = new Date(draftPlan.start_time);
       const endDate = new Date(draftPlan.end_time);
+      const isRecord = createType === 'record';
       const draftCalendarPlan: CalendarPlan = {
         id: '__draft__',
-        title: draftPlan.title,
+        title: draftPlan.title || (isRecord ? '新しい記録' : '新しい予定'),
         description: draftPlan.description ?? undefined,
         startDate,
         endDate,
@@ -213,14 +215,14 @@ export function useCalendarData({
         duration: (endDate.getTime() - startDate.getTime()) / 60000,
         isMultiDay: false,
         isRecurring: false,
-        type: 'plan',
+        type: isRecord ? 'record' : 'plan',
         isDraft: true,
       };
       calendarPlans.push(draftCalendarPlan);
     }
 
     return calendarPlans;
-  }, [plansData, recordsData, viewDateRange, exceptionsMap, draftPlan]);
+  }, [plansData, recordsData, viewDateRange, exceptionsMap, draftPlan, createType]);
 
   // 表示範囲のイベントをフィルタリング
   const filteredEvents = useMemo(() => {
@@ -263,11 +265,20 @@ export function useCalendarData({
       );
     });
 
-    // サイドバーのフィルター設定を適用（ストアのisPlanVisibleに統一）
-    // Records（type === 'record'）は常に表示
-    const visibilityFiltered = filtered.filter((event) =>
-      event.type === 'record' ? true : isPlanVisible(event.tagIds ?? []),
-    );
+    // サイドバーのフィルター設定を適用
+    // 種別フィルター（Plan/Record）とタグフィルターの両方をチェック
+    // ドラフトは常に表示（フィルター設定に関係なく）
+    const visibilityFiltered = filtered.filter((event) => {
+      // ドラフトは常に表示
+      if (event.isDraft) {
+        return true;
+      }
+      if (event.type === 'record') {
+        return visibleTypes.record;
+      }
+      // Planの場合: 種別表示 AND タグ表示の両方をチェック
+      return visibleTypes.plan && isPlanVisible(event.tagIds ?? []);
+    });
 
     logger.log(`[useCalendarData] plansフィルタリング:`, {
       totalPlans: allCalendarPlans.length,
@@ -286,7 +297,7 @@ export function useCalendarData({
     });
 
     return visibilityFiltered;
-  }, [viewDateRange, allCalendarPlans, isPlanVisible]);
+  }, [viewDateRange, allCalendarPlans, isPlanVisible, visibleTypes]);
 
   return {
     viewDateRange,

@@ -10,7 +10,7 @@ const meta = {
   title: 'Components/MiniCalendar',
   component: MiniCalendar,
   tags: ['autodocs'],
-  parameters: {},
+  parameters: { layout: 'fullscreen' },
   argTypes: {
     asPopover: {
       control: 'boolean',
@@ -48,24 +48,17 @@ function CalendarWithState({ initialDate }: { initialDate?: Date }) {
   );
 }
 
-/**
- * 基本形。日付を選択するとハイライトされる。
- */
+/** 基本形。日付を選択するとハイライトされる。 */
 export const Default: Story = {
   render: () => <CalendarWithState />,
 };
 
-/**
- * 初期値として今日が選択された状態。
- */
+/** 初期値として今日が選択された状態。 */
 export const WithSelectedDate: Story = {
   render: () => <CalendarWithState initialDate={new Date()} />,
 };
 
-/**
- * displayRange で週の範囲をハイライト。
- * サイドバーのミニカレンダーで使用。
- */
+/** displayRange で週の範囲をハイライト。サイドバーのミニカレンダーで使用。 */
 export const WithRange: Story = {
   render: () => {
     const today = new Date();
@@ -103,10 +96,44 @@ function PopoverExample() {
   );
 }
 
-/**
- * Popoverモード。トリガーをクリックするとカレンダーが表示される。
- * フォーム内での日付選択に使用。
- */
+/** Popoverモード。トリガーをクリックするとカレンダーが表示される。フォーム内での日付選択に使用。 */
 export const AsPopover: Story = {
   render: () => <PopoverExample />,
+};
+
+/** 全パターン一覧。 */
+export const AllPatterns: Story = {
+  render: function AllPatternsStory() {
+    const today = new Date();
+    const rangeStart = today;
+    const rangeEnd = addDays(today, 6);
+    const [selected1, setSelected1] = useState<Date | undefined>();
+    const [selected2, setSelected2] = useState<Date | undefined>(new Date());
+    const [popoverDate, setPopoverDate] = useState<Date | undefined>();
+
+    return (
+      <div className="flex flex-col items-start gap-6">
+        <div className="bg-card border-border rounded-xl border">
+          <MiniCalendar selectedDate={selected1} onDateSelect={setSelected1} />
+        </div>
+        <div className="bg-card border-border rounded-xl border">
+          <MiniCalendar selectedDate={selected2} onDateSelect={setSelected2} />
+        </div>
+        <div className="bg-card border-border rounded-xl border">
+          <MiniCalendar displayRange={{ start: rangeStart, end: rangeEnd }} />
+        </div>
+        <MiniCalendar
+          asPopover
+          selectedDate={popoverDate}
+          onDateSelect={setPopoverDate}
+          popoverTrigger={
+            <Button variant="outline" className="gap-2">
+              <CalendarDays className="size-4" />
+              {popoverDate ? popoverDate.toLocaleDateString('ja-JP') : '日付を選択'}
+            </Button>
+          }
+        />
+      </div>
+    );
+  },
 };

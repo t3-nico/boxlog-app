@@ -1,0 +1,85 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Docs/StyleGuide/カラーシステム" />
+
+# カラーシステム
+
+セマンティックトークンの体系。全トークン一覧は [Tokens/Colors](?path=/story/tokens-colors--all-colors) を参照。
+
+---
+
+## Surface 階層（MD3準拠・3段階）
+
+ダークモードでは高elevation = 明るい（MD3原則）。明度差は3-6%で視認性を確保。
+
+| レベル | トークン | 用途 |
+|--------|---------|------|
+| 基準 | `bg-background` | ページ背景 |
+| Lv.1 | `bg-container` | サイドバー、セクション、コードブロック |
+| Lv.2 | `bg-card` | カード、ダイアログ、ポップオーバー |
+| Lv.3 | `bg-muted` | ミュート背景、アイコン背景 |
+
+> 視覚的なデモは [Tokens/Colors → Surface](?path=/story/tokens-colors--surface) を参照
+
+---
+
+## 2パターンに統一
+
+セマンティックな色表現は以下の2パターンのみ。Container系トークン（`bg-*-container`）は廃止済み。
+
+| パターン | クラス構成 | 用途 |
+|---------|-----------|------|
+| **アウトライン（推奨）** | `border-{color} text-{color}` | バッジ、タグ、警告ボックス |
+| **塗り（アクション用）** | `bg-{color} text-{color}-foreground` | ボタン、アクション |
+
+対応カラー: `primary`, `success`, `warning`, `destructive`, `info`
+
+---
+
+## 状態トークン（MD3 State Layer）
+
+インタラクション状態には専用の state トークンを使用。
+
+```tsx
+// Ghost ホバー
+hover:bg-state-hover
+
+// 塗りボタン ホバー
+hover:bg-primary-hover
+hover:bg-destructive-hover
+
+// フォーカスリング
+focus-visible:ring-2 focus-visible:ring-ring
+
+// 選択状態
+bg-state-active text-state-active-foreground
+```
+
+> 詳細は [Tokens/States](?path=/story/tokens-states--overview) を参照
+
+---
+
+## 置き換えルール
+
+Container系・不透明度ハードコードからの移行ルール。
+
+| 用途 | ❌ 旧（廃止） | ✅ 新（推奨） |
+|------|-------------|-------------|
+| バッジ | `bg-*-container` | `border-* text-*` |
+| 警告ボックス | `bg-destructive-container` | `border-destructive text-destructive` |
+| 選択状態 | `bg-primary-container` | `bg-state-active` |
+| アイコン背景 | `bg-primary-container` | `bg-state-active` / `bg-muted` |
+| 不透明度背景 | `bg-warning/10` | `border-warning text-warning` |
+
+---
+
+## セマンティックカラーの使い分け
+
+色と意味を統一して認知負荷を軽減。
+
+| 意味 | テキスト色 | アウトライン | 塗り |
+|------|-----------|-------------|------|
+| 成功・完了 | `text-success` | `border-success` | `bg-success` |
+| 警告・注意 | `text-warning` | `border-warning` | `bg-warning` |
+| 削除・エラー | `text-destructive` | `border-destructive` | `bg-destructive` |
+| 情報・ヘルプ | `text-info` | `border-info` | `bg-info` |

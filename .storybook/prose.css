@@ -23,11 +23,11 @@
   max-width: 64rem; /* 1024px — Storybook標準に近い幅 */
   margin-left: auto;
   margin-right: auto;
-  padding: var(--spacing-lg) var(--spacing-md); /* 32px 24px */
+  padding: 0;
   color: var(--foreground);
   font-weight: 400; /* font-normal */
   font-size: 1rem; /* text-base (16px) */
-  line-height: 1.5; /* leading-normal */
+  line-height: 1.375; /* leading-snug — 本文の行間を詰める */
   letter-spacing: 0.01em;
   overflow-wrap: anywhere;
   line-break: strict;
@@ -42,24 +42,22 @@
  * ============================================ */
 .sb-docs-prose > h1 {
   margin-top: 0;
-  margin-bottom: var(--spacing-lg); /* 32px */
+  margin-bottom: var(--spacing-md); /* 24px — mb-6 */
   font-weight: 700; /* font-bold */
   font-size: 1.5rem; /* text-2xl (24px) */
   line-height: 1.25; /* leading-tight */
 }
 
 .sb-docs-prose > h2 {
-  margin-top: var(--spacing-xl); /* 48px */
-  margin-bottom: var(--spacing-sm); /* 16px */
-  padding-bottom: var(--spacing-xs); /* 8px */
-  border-bottom: 1px solid var(--border);
+  margin-top: var(--spacing-lg); /* 32px — gap-8 セクション間 */
+  margin-bottom: var(--spacing-xs); /* 8px — mb-2 */
   font-weight: 700;
   font-size: 1.125rem; /* text-lg (18px) */
   line-height: 1.5;
 }
 
 .sb-docs-prose > h3 {
-  margin-top: var(--spacing-lg); /* 32px */
+  margin-top: var(--spacing-md); /* 24px — gap-6 */
   margin-bottom: var(--spacing-xs); /* 8px */
   font-weight: 700;
   font-size: 1rem; /* text-base (16px) */
@@ -67,7 +65,7 @@
 }
 
 .sb-docs-prose > h4 {
-  margin-top: var(--spacing-md); /* 24px */
+  margin-top: var(--spacing-sm); /* 16px — gap-4 */
   margin-bottom: var(--spacing-xs); /* 8px */
   font-weight: 700;
   font-size: 0.875rem; /* text-sm (14px) */
@@ -79,8 +77,8 @@
  * ============================================ */
 .sb-docs-prose > p,
 .sb-docs-prose > :is(blockquote, ol, ul, dl, table, details) p {
-  margin-top: var(--spacing-xs); /* 8px */
-  margin-bottom: var(--spacing-sm); /* 16px */
+  margin-top: 0;
+  margin-bottom: var(--spacing-xs); /* 8px */
 }
 
 /* ============================================
@@ -319,6 +317,16 @@
   margin-bottom: var(--spacing-sm);
 }
 
+/* Controls（ArgsTable）を全幅に */
+.sb-docs-prose .docblock-argstable {
+  max-width: none !important;
+}
+
+/* Docs内のStoryプレビューにCanvas風の余白 */
+.sb-docs-prose .docs-story {
+  padding: var(--spacing-sm) !important; /* 16px — Canvas と同じ */
+}
+
 /* Storybook inline code リセット（emotion CSSとの衝突回避） */
 .sb-docs-prose code[class^='css-'] {
   border: 0;
@@ -335,22 +343,22 @@
  * ============================================ */
 @media (min-width: 48rem) {
   .sb-docs-prose {
-    padding: var(--spacing-xl) var(--spacing-lg); /* 48px 32px */
+    padding: 0;
   }
 
   .sb-docs-prose > h1 {
-    margin-bottom: var(--spacing-xl); /* 48px */
+    margin-bottom: var(--spacing-xl); /* 48px — デスクトップではゆったり */
     font-size: 1.875rem; /* text-3xl (30px) */
     line-height: 1.25;
   }
 
   .sb-docs-prose > h2 {
-    margin-top: 4rem; /* spacing-2xl (64px) */
+    margin-top: var(--spacing-xl); /* 48px — デスクトップではゆったり */
     font-size: 1.25rem; /* text-xl (20px) */
   }
 
   .sb-docs-prose > h3 {
-    margin-top: var(--spacing-xl); /* 48px */
+    margin-top: var(--spacing-lg); /* 32px — デスクトップではゆったり */
     margin-bottom: var(--spacing-sm);
     font-size: 1.125rem; /* text-lg (18px) */
   }

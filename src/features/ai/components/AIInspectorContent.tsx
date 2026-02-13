@@ -5,21 +5,15 @@ import { memo, useCallback, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { InspectorHeader } from '@/features/inspector';
-
-import { useAIInspectorStore } from '../stores';
 
 /**
- * AIInspector コンテンツ
+ * AI チャットコンテンツ
  *
- * チャットインターフェースの骨組み
+ * サイドパネル内に表示されるチャットインターフェース
  * - メッセージ表示エリア
  * - 入力フォーム
  */
 export const AIInspectorContent = memo(function AIInspectorContent() {
-  const closeInspector = useAIInspectorStore((state) => state.closeInspector);
-  const context = useAIInspectorStore((state) => state.context);
-
   const [input, setInput] = useState('');
 
   const handleSubmit = useCallback(
@@ -45,9 +39,6 @@ export const AIInspectorContent = memo(function AIInspectorContent() {
 
   return (
     <div className="flex h-full flex-col">
-      {/* ヘッダー */}
-      <InspectorHeader onClose={closeInspector} closeLabel="AIチャットを閉じる" />
-
       {/* メッセージエリア */}
       <div className="flex-1 overflow-y-auto p-4">
         {/* 空状態 */}
@@ -60,12 +51,6 @@ export const AIInspectorContent = memo(function AIInspectorContent() {
             <p className="text-muted-foreground max-w-[280px] text-sm">
               質問や操作の依頼をどうぞ。現在のページの情報を元に回答します。
             </p>
-            {context && (
-              <p className="text-muted-foreground text-xs">
-                コンテキスト: {context.pageType}
-                {context.itemId && ` / ${context.itemType}: ${context.itemId}`}
-              </p>
-            )}
           </div>
 
           {/* サンプルプロンプト */}

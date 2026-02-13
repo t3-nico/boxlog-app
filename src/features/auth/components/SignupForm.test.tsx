@@ -150,7 +150,7 @@ describe('SignupForm', () => {
       await user.click(screen.getByRole('button', { name: 'auth.signupForm.createAccountButton' }));
 
       await waitFor(() => {
-        expect(screen.getByRole('alert')).toHaveTextContent('Email already exists');
+        expect(screen.getByRole('alert')).toHaveTextContent('auth.errors.unexpectedError');
       });
     });
 

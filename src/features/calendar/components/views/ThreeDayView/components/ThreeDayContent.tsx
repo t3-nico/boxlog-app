@@ -14,6 +14,7 @@ import {
   PlanCard,
   useGlobalDragCursor,
 } from '../../shared';
+import { PanelDragPreview } from '../../shared/components/PanelDragPreview';
 import { HOUR_HEIGHT } from '../../shared/constants/grid.constants';
 import { useDragAndDrop } from '../../shared/hooks/useDragAndDrop';
 
@@ -126,6 +127,7 @@ export const ThreeDayContent = ({
     <div
       className={cn('bg-background relative h-full flex-1 overflow-hidden', className)}
       data-calendar-grid
+      data-calendar-day-index={dayIndex}
     >
       {/* CalendarDragSelectionを使用（ドラッグ操作のみでプラン作成） */}
       <CalendarDragSelection
@@ -148,6 +150,9 @@ export const ThreeDayContent = ({
 
       {/* プラン表示エリア - CalendarDragSelectionより上にz-indexを設定 */}
       <div className="pointer-events-none absolute inset-0 z-20" style={{ height: gridHeight }}>
+        {/* パネルドラッグのプレビュー */}
+        <PanelDragPreview dayIndex={dayIndex} />
+
         {plans.map((plan) => {
           const style = planStyles[plan.id];
           if (!style) return null;

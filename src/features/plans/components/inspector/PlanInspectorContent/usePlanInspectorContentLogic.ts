@@ -7,6 +7,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { toast } from 'sonner';
 
 import {
   localTimeToUTCISO,
@@ -45,6 +46,9 @@ export function usePlanInspectorContentLogic() {
 
   // 時間重複エラー状態（視覚的フィードバック用）
   const [timeConflictError, setTimeConflictError] = useState(false);
+
+  // 保存中フラグ（重複保存防止）
+  const [isSaving, setIsSaving] = useState(false);
 
   // 自動保存デバウンス用タイマー（Activityノイズ防止）
   const autoSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -103,6 +107,19 @@ export function usePlanInspectorContentLogic() {
       }
     };
   }, []);
+
+  // ドラフトモードまたは未保存の変更がある場合、beforeunload警告を表示
+  useEffect(() => {
+    if (!isDraftMode && !pendingChanges) return;
+
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      // 標準的なブラウザメッセージを表示（カスタムメッセージは無視される）
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [isDraftMode, pendingChanges]);
 
   const { data: planData } = usePlan(planId!, {
     includeTags: true,
@@ -490,6 +507,8 @@ export function usePlanInspectorContentLogic() {
   // スケジュール日変更ハンドラー（start_time/end_timeの日付部分）
   const handleScheduleDateChange = useCallback(
     (date: Date | undefined) => {
+      // 日付変更時に既存のエラーをクリア
+      setTimeConflictError(false);
       setScheduleDate(date);
 
       // ドラフトモードの場合はローカル更新のみ
@@ -650,34 +669,13 @@ export function usePlanInspectorContentLogic() {
   }, []);
 
   /**
-   * クライアント側で即時重複チェック（サーバー呼び出し前）
-   */
-  const checkPlanOverlap = useCallback(
-    (startTimeISO: string, endTimeISO: string): boolean => {
-      const plans = utils.plans.list.getData();
-      if (!plans || plans.length === 0) return false;
-
-      const newStart = new Date(startTimeISO);
-      const newEnd = new Date(endTimeISO);
-
-      return plans.some((p) => {
-        // 編集時は自分自身を除外
-        if (planId && p.id === planId) return false;
-        if (!p.start_time || !p.end_time) return false;
-
-        const pStart = new Date(p.start_time);
-        const pEnd = new Date(p.end_time);
-
-        return pStart < newEnd && pEnd > newStart;
-      });
-    },
-    [planId, utils.plans.list],
-  );
-
-  /**
    * 未保存の変更を保存してからInspectorを閉じる（Google Calendar準拠）
+   * 時間重複チェックはサーバー側（TIME_OVERLAP）のみに依存
    */
   const saveAndClose = useCallback(async () => {
+    // 保存中は重複実行を防止
+    setIsSaving(true);
+
     // ストアから最新の状態を取得（クロージャの古い値を避ける）
     const {
       draftPlan: currentDraft,
@@ -688,14 +686,6 @@ export function usePlanInspectorContentLogic() {
 
     // ドラフトモードの場合: 新規作成
     if (currentIsDraftMode && currentDraft) {
-      // クライアント側で即時重複チェック
-      if (currentDraft.start_time && currentDraft.end_time) {
-        if (checkPlanOverlap(currentDraft.start_time, currentDraft.end_time)) {
-          setTimeConflictError(true);
-          return; // サーバーを呼ばずに即座にエラー表示
-        }
-      }
-
       try {
         const newPlan = await createPlan.mutateAsync({
           title: currentDraft.title.trim(), // 空の場合はUI側で「(タイトルなし)」を表示
@@ -713,6 +703,7 @@ export function usePlanInspectorContentLogic() {
               await setplanTags(newPlan.id, currentTagIds);
             } catch (error) {
               console.error('Failed to save tags for new plan:', error);
+              toast.error('タグの保存に失敗しました');
             }
           }
           clearDraft();
@@ -725,9 +716,11 @@ export function usePlanInspectorContentLogic() {
         const errorMessage = error instanceof Error ? error.message : '';
         if (errorMessage.includes('TIME_OVERLAP') || errorMessage.includes('既に')) {
           setTimeConflictError(true);
+          setIsSaving(false);
           return; // 閉じない
         }
       }
+      setIsSaving(false);
       closeInspector();
       return;
     }
@@ -737,16 +730,6 @@ export function usePlanInspectorContentLogic() {
 
     // 変更があればサーバーに保存
     if (changes && currentPlanId && Object.keys(changes).length > 0) {
-      // 時間変更がある場合はクライアント側チェック
-      const startTime = (changes as { start_time?: string }).start_time;
-      const endTime = (changes as { end_time?: string }).end_time;
-      if (startTime && endTime) {
-        if (checkPlanOverlap(startTime, endTime)) {
-          setTimeConflictError(true);
-          return; // サーバーを呼ばずに即座にエラー表示
-        }
-      }
-
       try {
         await updatePlan.mutateAsync({
           id: currentPlanId,
@@ -758,6 +741,7 @@ export function usePlanInspectorContentLogic() {
         const errorMessage = error instanceof Error ? error.message : '';
         if (errorMessage.includes('TIME_OVERLAP') || errorMessage.includes('既に')) {
           setTimeConflictError(true);
+          setIsSaving(false);
           return; // 閉じない
         }
       }
@@ -769,20 +753,14 @@ export function usePlanInspectorContentLogic() {
         await setplanTags(currentPlanId, selectedTagIdsRef.current);
       } catch (error) {
         console.error('Failed to save tags:', error);
+        toast.error('タグの保存に失敗しました');
         // タグ保存エラーは閉じることを妨げない（キャッシュは既に更新済み）
       }
     }
 
+    setIsSaving(false);
     closeInspector();
-  }, [
-    updatePlan,
-    closeInspector,
-    createPlan,
-    clearDraft,
-    checkPlanOverlap,
-    setplanTags,
-    hasTagChanges,
-  ]);
+  }, [updatePlan, closeInspector, createPlan, clearDraft, setplanTags, hasTagChanges]);
 
   /**
    * 変更を破棄してInspectorを閉じる（キャンセル）
@@ -811,6 +789,7 @@ export function usePlanInspectorContentLogic() {
     cancelAndClose, // 変更を破棄して閉じる
     hasPendingChanges, // 未保存の変更があるか
     isDraftMode,
+    isSaving, // 保存中フラグ（ボタン無効化用）
 
     // Navigation
     hasPrevious,

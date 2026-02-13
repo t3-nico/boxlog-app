@@ -1,0 +1,147 @@
+'use client';
+
+import { memo, useCallback } from 'react';
+
+import { CheckCircle2, Circle } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+
+import { Card } from '@/components/ui/card';
+import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
+import type { PlanStatus } from '@/features/plans/types/plan';
+import { normalizeStatus } from '@/features/plans/utils/status';
+import { useDateFormat } from '@/features/settings/hooks/useDateFormat';
+import { cn } from '@/lib/utils';
+import type { PlanWithTags } from '@/server/services/plans/types';
+
+import { TagsContainer } from '../views/shared/components/PlanCard/TagsContainer';
+
+interface PlanListCardProps {
+  plan: PlanWithTags;
+  onClick?: (plan: PlanWithTags) => void;
+  onDragStart?: (plan: PlanWithTags, e: React.MouseEvent, sourceElement: HTMLElement) => void;
+}
+
+/**
+ * サイドパネル用のPlanカード
+ *
+ * カレンダーTimeGridのPlanCardと同じビジュアル（チェックボックス+タイトル+時間）
+ * position/drag/resizeは不要なシンプル版
+ */
+export const PlanListCard = memo<PlanListCardProps>(function PlanListCard({
+  plan,
+  onClick,
+  onDragStart,
+}) {
+  const t = useTranslations('calendar');
+  const { formatTime } = useDateFormat();
+  const { updatePlan } = usePlanMutations();
+
+  const status = normalizeStatus(plan.status as PlanStatus);
+  const isCompleted = status === 'closed';
+
+  // 時間表示（未スケジュールの場合は非表示）
+  const startTime = plan.start_time ? formatTime(new Date(plan.start_time)) : '';
+  const endTime = plan.end_time ? formatTime(new Date(plan.end_time)) : '';
+  const displayTime = startTime && endTime ? `${startTime} - ${endTime}` : startTime || null;
+
+  const handleCardClick = useCallback(() => {
+    onClick?.(plan);
+  }, [onClick, plan]);
+
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      // 左クリックのみ
+      if (e.button !== 0) return;
+      const sourceElement = e.currentTarget as HTMLElement;
+      onDragStart?.(plan, e, sourceElement);
+    },
+    [onDragStart, plan],
+  );
+
+  const handleCheckboxClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      const newStatus = isCompleted ? 'open' : 'closed';
+      updatePlan.mutate({
+        id: plan.id,
+        data: { status: newStatus },
+      });
+    },
+    [isCompleted, plan.id, updatePlan],
+  );
+
+  return (
+    <Card
+      className={cn(
+        // レイアウト
+        'group relative flex flex-row items-start gap-2 px-3 py-2',
+        // 背景（カレンダー PlanCard と統一）
+        'bg-plan-box',
+        // Card デフォルト打ち消し
+        'rounded-xl border-0 shadow-none',
+        // ホバー（オーバーレイ方式: bg-plan-box を保ちつつ暗くする）
+        'after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:transition-colors',
+        'hover:after:bg-state-hover',
+        // トランジション
+        'transition-colors duration-150',
+        // フォーカス
+        'focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
+        // カーソル
+        onDragStart ? 'cursor-grab active:cursor-grabbing' : 'cursor-pointer',
+      )}
+      onClick={handleCardClick}
+      onMouseDown={onDragStart ? handleMouseDown : undefined}
+      tabIndex={0}
+      role="button"
+    >
+      {/* チェックボックス */}
+      <button
+        type="button"
+        onClick={handleCheckboxClick}
+        className={cn(
+          'group/checkbox flex-shrink-0',
+          'flex h-5 w-5 items-center justify-center',
+          'focus-visible:ring-primary rounded focus-visible:ring-2 focus-visible:outline-none',
+        )}
+        aria-label={isCompleted ? t('event.markIncomplete') : t('event.markComplete')}
+      >
+        {isCompleted ? (
+          <CheckCircle2 className="text-success h-4 w-4" />
+        ) : (
+          <>
+            <Circle className="text-muted-foreground h-4 w-4 group-hover/checkbox:hidden" />
+            <CheckCircle2 className="text-success hidden h-4 w-4 group-hover/checkbox:block" />
+          </>
+        )}
+      </button>
+
+      {/* コンテンツ */}
+      <div className="min-w-0 flex-1">
+        {/* タイトル */}
+        <p
+          className={cn(
+            'line-clamp-2 text-sm leading-tight font-normal',
+            isCompleted ? 'text-muted-foreground line-through' : 'text-foreground',
+          )}
+        >
+          {plan.title || t('event.noTitle')}
+        </p>
+
+        {/* 時間（スケジュール済みの場合のみ） */}
+        {displayTime && (
+          <p
+            className={cn(
+              'mt-1 text-xs tabular-nums',
+              isCompleted ? 'text-muted-foreground/60 line-through' : 'text-muted-foreground',
+            )}
+          >
+            {displayTime}
+          </p>
+        )}
+
+        {/* タグ（カレンダーPlanCardと同じTagsContainer） */}
+        {plan.tagIds && plan.tagIds.length > 0 && <TagsContainer tagIds={plan.tagIds} />}
+      </div>
+    </Card>
+  );
+});

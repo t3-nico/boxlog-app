@@ -13,11 +13,11 @@ import { NextResponse } from 'next/server';
 
 export async function GET() {
   const html = `<!DOCTYPE html>
-<html lang="ja">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Under Maintenance | BoxLog</title>
+  <title>Under Maintenance | Dayopt</title>
   <meta name="description" content="System is currently under maintenance">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
@@ -158,21 +158,21 @@ export async function GET() {
 
       <!-- タイトル -->
       <div class="title-section">
-        <h1 class="title">メンテナンス中</h1>
-        <p class="subtitle">Under Maintenance</p>
+        <h1 class="title">Under Maintenance</h1>
+        <p class="subtitle">メンテナンス中</p>
       </div>
 
       <!-- 説明 -->
       <div class="description">
-        <p class="description-text">現在、システムメンテナンスを実施しています。</p>
-        <p class="description-sub">We're currently performing system maintenance.</p>
+        <p class="description-text">We're currently performing system maintenance.</p>
+        <p class="description-sub">現在、システムメンテナンスを実施しています。</p>
       </div>
 
       <!-- お詫びメッセージ -->
       <p class="footer">
-        ご不便をおかけして申し訳ございません。
+        We apologize for the inconvenience.
         <br>
-        <span class="footer-light">We apologize for the inconvenience.</span>
+        <span class="footer-light">ご不便をおかけして申し訳ございません。</span>
       </p>
     </div>
   </div>

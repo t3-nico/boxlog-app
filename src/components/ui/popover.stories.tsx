@@ -6,35 +6,12 @@ import { Input } from './input';
 import { Label } from './label';
 import { Popover, PopoverAnchor, PopoverContent, PopoverTrigger } from './popover';
 
-/**
- * Popover - ポップオーバー
- *
- * ## 使用コンポーネント
- *
- * | コンポーネント | 用途 |
- * |----------------|------|
- * | Popover | ルートコンテナ |
- * | PopoverTrigger | トリガーボタン（asChild でラップ） |
- * | PopoverAnchor | カスタムアンカー（Input等をトリガーにする場合） |
- * | PopoverContent | コンテンツ本体 |
- *
- * ## Trigger vs Anchor
- *
- * | パターン | 使用コンポーネント | ユースケース |
- * |----------|-------------------|--------------|
- * | ボタンで開閉 | PopoverTrigger | 設定ボタン、アクションボタン |
- * | Input で開閉 | PopoverAnchor | 時刻選択、コンボボックス |
- *
- * ## z-index
- *
- * - 通常: `z-popover` (100)
- * - Inspector上: `z-overlay-popover` (1200) を className で上書き
- */
+/** Popover - ポップオーバー。PopoverTrigger（ボタン開閉）とPopoverAnchor（Input開閉）の2パターンを提供。 */
 const meta = {
   title: 'Components/Popover',
   component: Popover,
   tags: ['autodocs'],
-  parameters: {},
+  parameters: { layout: 'fullscreen' },
 } satisfies Meta<typeof Popover>;
 
 export default meta;
@@ -169,11 +146,7 @@ export const Alignment: Story = {
   ),
 };
 
-/**
- * PopoverAnchor を使った Combobox 風パターン
- * - Input をアンカーにしてドロップダウンを表示
- * - TimeSelect などで使用
- */
+/** PopoverAnchor を使った Combobox 風パターン。Input をアンカーにしてドロップダウンを表示、TimeSelect などで使用。 */
 export const WithAnchor: Story = {
   render: function WithAnchorStory() {
     const [isOpen, setIsOpen] = useState(false);
@@ -216,101 +189,136 @@ export const WithAnchor: Story = {
   },
 };
 
+/** リスト表示Popover。ヘッダー + スクロールリスト（OverdueBadge等で使用）。 */
+export const WithList: Story = {
+  render: () => {
+    const items = [
+      {
+        id: '1',
+        date: '今日',
+        title: 'チームミーティング',
+        time: '10:00',
+        color: 'var(--primary)',
+      },
+      { id: '2', date: '今日', title: 'デザインレビュー', time: '14:00', color: '#3B82F6' },
+      { id: '3', date: '昨日', title: 'コードレビュー', time: '16:00', color: '#EF4444' },
+      { id: '4', date: '2/7', title: '週次レポート作成', time: '時間は未指定', color: '#10B981' },
+    ];
+
+    return (
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button variant="outline" size="sm">
+            4件の項目
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-80 p-0" align="start">
+          {/* ヘッダー */}
+          <div className="flex items-start justify-between px-4 py-4">
+            <div className="flex-1">
+              <h4 className="text-foreground text-sm font-bold">保留中のタスク</h4>
+              <p className="text-muted-foreground text-xs">過去365日間</p>
+            </div>
+          </div>
+
+          {/* スクロールリスト */}
+          <div className="divide-border max-h-64 divide-y overflow-y-auto">
+            {items.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                className="group hover:bg-state-hover focus-visible:bg-state-focus grid w-full cursor-pointer grid-cols-[2.5rem_1fr_auto] items-center gap-2 px-4 py-2 text-left transition-colors duration-150 focus-visible:outline-none"
+              >
+                <span className="text-muted-foreground text-right text-sm tabular-nums">
+                  {item.date}
+                </span>
+                <span className="flex min-w-0 items-center gap-2">
+                  <span
+                    className="size-2 shrink-0 rounded-full"
+                    style={{ backgroundColor: item.color }}
+                  />
+                  <span className="text-foreground truncate text-sm group-hover:underline">
+                    {item.title}
+                  </span>
+                </span>
+                <span className="text-muted-foreground text-sm tabular-nums">{item.time}</span>
+              </button>
+            ))}
+          </div>
+        </PopoverContent>
+      </Popover>
+    );
+  },
+};
+
+/** 全パターン一覧。 */
 export const AllPatterns: Story = {
   render: () => (
-    <div>
-      <h1 className="mb-8 text-2xl font-bold">Popover - 全バリエーション</h1>
-
-      <div className="space-y-8">
-        <section>
-          <h2 className="mb-4 text-lg font-bold">基本</h2>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="outline">ポップオーバー</Button>
-            </PopoverTrigger>
-            <PopoverContent>
-              <p>シンプルなポップオーバー</p>
-            </PopoverContent>
-          </Popover>
-        </section>
-
-        <section>
-          <h2 className="mb-4 text-lg font-bold">フォーム付き</h2>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button>設定</Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-72">
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="name-popover">名前</Label>
-                  <Input id="name-popover" placeholder="名前を入力" />
-                </div>
-                <Button className="w-full">保存</Button>
-              </div>
-            </PopoverContent>
-          </Popover>
-        </section>
-
-        <section>
-          <h2 className="mb-4 text-lg font-bold">位置</h2>
-          <div className="flex flex-wrap gap-4">
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="outline" size="sm">
-                  上
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent side="top" className="w-32">
-                上
-              </PopoverContent>
-            </Popover>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="outline" size="sm">
-                  下
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent side="bottom" className="w-32">
-                下
-              </PopoverContent>
-            </Popover>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="outline" size="sm">
-                  左
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent side="left" className="w-32">
-                左
-              </PopoverContent>
-            </Popover>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="outline" size="sm">
-                  右
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent side="right" className="w-32">
-                右
-              </PopoverContent>
-            </Popover>
+    <div className="flex flex-col items-start gap-6">
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button variant="outline">ポップオーバー</Button>
+        </PopoverTrigger>
+        <PopoverContent>
+          <p>シンプルなポップオーバー</p>
+        </PopoverContent>
+      </Popover>
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button>設定</Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-72">
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="name-popover">名前</Label>
+              <Input id="name-popover" placeholder="名前を入力" />
+            </div>
+            <Button className="w-full">保存</Button>
           </div>
-        </section>
-
-        <section>
-          <h2 className="mb-4 text-lg font-bold">使用場面</h2>
-          <ul className="text-muted-foreground list-inside list-disc text-sm">
-            <li>日付ピッカー</li>
-            <li>カラーピッカー</li>
-            <li>クイック設定フォーム</li>
-            <li>追加情報の表示</li>
-          </ul>
-        </section>
+        </PopoverContent>
+      </Popover>
+      <div className="flex flex-wrap gap-4">
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="outline" size="sm">
+              上
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent side="top" className="w-32">
+            上
+          </PopoverContent>
+        </Popover>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="outline" size="sm">
+              下
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent side="bottom" className="w-32">
+            下
+          </PopoverContent>
+        </Popover>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="outline" size="sm">
+              左
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent side="left" className="w-32">
+            左
+          </PopoverContent>
+        </Popover>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="outline" size="sm">
+              右
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent side="right" className="w-32">
+            右
+          </PopoverContent>
+        </Popover>
       </div>
     </div>
   ),
-  parameters: {
-    layout: 'fullscreen',
-  },
 };

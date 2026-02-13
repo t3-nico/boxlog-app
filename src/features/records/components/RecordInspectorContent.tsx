@@ -16,6 +16,7 @@ import { Check, ExternalLink, FolderOpen, Smile, Trash2, X } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { toast } from 'sonner';
 
 import {
   Command,
@@ -29,11 +30,13 @@ import { DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdow
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { zIndex } from '@/config/ui/z-index';
-import { InspectorHeader } from '@/features/inspector';
-import { NoteIconButton } from '@/features/inspector/components/NoteIconButton';
-import { ScheduleRow } from '@/features/inspector/components/ScheduleRow';
-import { TagsIconButton } from '@/features/inspector/components/TagsIconButton';
-import { TitleInput } from '@/features/inspector/components/TitleInput';
+import {
+  InspectorHeader,
+  NoteIconButton,
+  ScheduleRow,
+  TagsIconButton,
+  TitleInput,
+} from '@/features/plans/components/inspector/shared';
 import { usePlans } from '@/features/plans/hooks/usePlans';
 import { useTags } from '@/features/tags/hooks';
 import { api } from '@/lib/trpc';
@@ -131,6 +134,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
     tagIds: [],
   });
   const [isDirty, setIsDirty] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   // Popover開閉状態
   const [isPlanPopoverOpen, setIsPlanPopoverOpen] = useState(false);
@@ -430,7 +434,10 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
 
   // 保存して閉じる（時間フィールドとタグを保存）
   const saveAndClose = useCallback(async () => {
+    setIsSaving(true);
+
     if (!selectedRecordId || !formData.worked_at) {
+      setIsSaving(false);
       onClose();
       return;
     }
@@ -465,6 +472,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
 
         if (hasOverlap) {
           setTimeConflictError(true);
+          setIsSaving(false);
           return;
         }
       }
@@ -483,19 +491,35 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
           },
         });
       }
-
-      // タグを保存（変更があれば）
-      if (hasTagChanges) {
-        await setRecordTags(selectedRecordId, formData.tagIds);
-      }
-
-      onClose();
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : '';
       if (errorMessage.includes('TIME_OVERLAP') || errorMessage.includes('既に')) {
         setTimeConflictError(true);
+        setIsSaving(false);
+        return; // 閉じない
+      }
+      // その他のエラーはtoastで通知
+      toast.error('保存に失敗しました');
+      setIsSaving(false);
+      return;
+    }
+
+    // タグを保存（変更があれば）
+    if (hasTagChanges) {
+      try {
+        await setRecordTags(selectedRecordId, formData.tagIds);
+      } catch (error) {
+        console.error('Failed to save tags:', error);
+        toast.error('タグの保存に失敗しました');
+        // 楽観的更新をロールバック
+        updateTagsInCache(selectedRecordId, originalTagIdsRef.current);
+        setFormData((prev) => ({ ...prev, tagIds: originalTagIdsRef.current }));
+        // タグ保存エラーは閉じることを妨げない
       }
     }
+
+    setIsSaving(false);
+    onClose();
   }, [
     selectedRecordId,
     formData.worked_at,
@@ -507,6 +531,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
     hasTagChanges,
     updateRecord,
     setRecordTags,
+    updateTagsInCache,
     utils.records.list,
     onClose,
   ]);
@@ -546,7 +571,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
       <InspectorHeader
         hasPrevious={hasPrevious}
         hasNext={hasNext}
-        onClose={saveAndClose}
+        onClose={isSaving ? () => {} : saveAndClose}
         onPrevious={goToPrevious}
         onNext={goToNext}
         closeLabel={t('actions.close')}

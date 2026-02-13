@@ -3,39 +3,12 @@ import { useState } from 'react';
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select';
 
-/**
- * Select - ドロップダウン選択
- *
- * ## 使用コンポーネント
- *
- * | コンポーネント | 用途 |
- * |----------------|------|
- * | Select | ルート（value, onValueChange） |
- * | SelectTrigger | トリガーボタン |
- * | SelectValue | 選択値表示 |
- * | SelectContent | ドロップダウンコンテンツ |
- * | SelectItem | 選択肢アイテム |
- *
- * ## Select vs DropdownMenu vs RadioGroup
- *
- * | 観点 | Select | DropdownMenu | RadioGroup |
- * |------|--------|--------------|------------|
- * | 用途 | 値を選ぶ | アクション実行 | 値を選ぶ |
- * | 選択肢数 | 5個以上 | 任意 | 2-4個 |
- * | 一覧性 | 開くまで見えない | 開くまで見えない | 常に見える |
- * | 推奨 | ツールバー、フォーム | メニュー | ダイアログ、設定 |
- *
- * ## 未使用コンポーネント
- *
- * 以下は現在アプリで未使用（必要時に追加）:
- * - SelectGroup / SelectLabel - グループ化
- * - SelectSeparator - 区切り線
- */
+/** Select - ドロップダウン選択。5個以上の選択肢に適切、2-4個はRadioGroupを使用。 */
 const meta = {
   title: 'Components/Select',
   component: Select,
   tags: ['autodocs'],
-  parameters: {},
+  parameters: { layout: 'fullscreen' },
 } satisfies Meta<typeof Select>;
 
 export default meta;
@@ -113,59 +86,18 @@ export const AllPatterns: Story = {
     const [value, setValue] = useState('daily');
 
     return (
-      <div>
-        <h1 className="mb-8 text-2xl font-bold">Select - 実際の使用パターン</h1>
-
-        <div className="space-y-8">
-          <section>
-            <h2 className="mb-4 text-lg font-bold">期間セレクター</h2>
-            <p className="text-muted-foreground mb-4 text-sm">
-              stats-toolbarで使用されているパターン
-            </p>
-            <Select value={value} onValueChange={setValue}>
-              <SelectTrigger className="h-8 w-24">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="daily">日</SelectItem>
-                <SelectItem value="weekly">週</SelectItem>
-                <SelectItem value="monthly">月</SelectItem>
-              </SelectContent>
-            </Select>
-            <p className="text-muted-foreground mt-2 text-sm">選択中: {value}</p>
-          </section>
-
-          <section>
-            <h2 className="mb-4 text-lg font-bold">コンポーネント構成</h2>
-            <ul className="text-muted-foreground list-inside list-disc text-sm">
-              <li>
-                <code>Select</code> - ルート（value, onValueChange）
-              </li>
-              <li>
-                <code>SelectTrigger</code> - トリガーボタン（className for size）
-              </li>
-              <li>
-                <code>SelectValue</code> - 選択値表示
-              </li>
-              <li>
-                <code>SelectContent</code> - ドロップダウン
-              </li>
-              <li>
-                <code>SelectItem</code> - 選択肢
-              </li>
-            </ul>
-          </section>
-
-          <section className="bg-muted rounded-lg p-4">
-            <p className="text-muted-foreground text-sm">
-              <strong>Note:</strong> SelectGroup, SelectLabel, SelectSeparatorは現在未使用
-            </p>
-          </section>
-        </div>
+      <div className="flex flex-col items-start gap-6">
+        <Select value={value} onValueChange={setValue}>
+          <SelectTrigger className="h-8 w-24">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="daily">日</SelectItem>
+            <SelectItem value="weekly">週</SelectItem>
+            <SelectItem value="monthly">月</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
     );
-  },
-  parameters: {
-    layout: 'fullscreen',
   },
 };

@@ -9,6 +9,8 @@ import { zIndex } from '@/config/ui/z-index';
 import { useTags } from '@/features/tags/hooks';
 import { cn } from '@/lib/utils';
 
+import type { Tag } from '@/features/tags/types';
+
 import {
   Command,
   CommandEmpty,
@@ -29,6 +31,8 @@ interface TagSelectComboboxProps {
   sideOffset?: number | undefined;
   /** Inspector内で使う場合にtrueを指定（z-overlay-popoverを適用） */
   isOverlay?: boolean | undefined;
+  /** 外部からタグデータを注入（Storybook等で使用） */
+  availableTags?: Tag[] | undefined;
 }
 
 /**
@@ -157,13 +161,15 @@ export function TagSelectCombobox({
   alignOffset = 0,
   sideOffset = 4,
   isOverlay = false,
+  availableTags,
 }: TagSelectComboboxProps) {
   const t = useTranslations();
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
 
-  const { data: allTags = [] } = useTags();
+  const { data: fetchedTags = [] } = useTags();
+  const allTags = availableTags ?? fetchedTags;
 
   const toggleExpand = useCallback((parentId: string) => {
     setExpandedGroups((prev) => {

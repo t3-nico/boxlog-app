@@ -24,11 +24,10 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { zIndex } from '@/config/ui/z-index';
-import { NoteIconButton } from '@/features/inspector/components/NoteIconButton';
-import { TagsIconButton } from '@/features/inspector/components/TagsIconButton';
 import { useRecordMutations } from '@/features/records/hooks';
 import { useTags } from '@/features/tags/hooks';
 import { api } from '@/lib/trpc';
+import { NoteIconButton, TagsIconButton } from '../shared';
 
 import { cn } from '@/lib/utils';
 
@@ -68,6 +67,7 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
     const utils = api.useUtils();
     const draftPlan = usePlanInspectorStore((state) => state.draftPlan);
     const closeInspector = usePlanInspectorStore((state) => state.closeInspector);
+    const updateDraft = usePlanInspectorStore((state) => state.updateDraft);
 
     // 時間重複エラー状態（視覚的フィードバック用）
     const [timeConflictError, setTimeConflictError] = useState(false);
@@ -112,17 +112,17 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
       return duration > 0 ? duration : 60;
     }, []);
 
-    // フォーム状態
+    // フォーム状態（draftPlanから初期値を取得）
     const [formData, setFormData] = useState<RecordFormData>({
-      title: '',
-      plan_id: null,
+      title: draftPlan?.title ?? '',
+      plan_id: draftPlan?.plan_id ?? null,
       worked_at: initialWorkedAt,
       start_time: initialStartTime,
       end_time: initialEndTime,
       duration_minutes: calculateDuration(initialStartTime, initialEndTime),
       fulfillment_score: null,
-      note: '',
-      tagIds: [],
+      note: draftPlan?.note ?? draftPlan?.description ?? '',
+      tagIds: draftPlan?.tagIds ?? [],
     });
 
     // タグデータ取得
@@ -213,21 +213,64 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
       }
     }, []);
 
-    const handleDateChange = useCallback((date: Date | undefined) => {
-      setFormData((prev) => ({ ...prev, worked_at: date }));
+    // 時間をISO文字列に変換するヘルパー
+    const buildIsoTime = useCallback((date: Date, time: string): string | null => {
+      if (!time) return null;
+      const [h, m] = time.split(':').map(Number);
+      const result = new Date(date);
+      result.setHours(h ?? 0, m ?? 0, 0, 0);
+      return result.toISOString();
     }, []);
 
-    const handleStartTimeChange = useCallback((time: string) => {
-      // 時間変更時にエラーをクリア
-      setTimeConflictError(false);
-      setFormData((prev) => ({ ...prev, start_time: time }));
-    }, []);
+    const handleDateChange = useCallback(
+      (date: Date | undefined) => {
+        setFormData((prev) => {
+          const newData = { ...prev, worked_at: date };
+          // draftPlanも更新（カレンダープレビュー用）
+          if (date) {
+            updateDraft({
+              due_date: date.toISOString().split('T')[0] ?? null,
+              start_time: buildIsoTime(date, prev.start_time),
+              end_time: buildIsoTime(date, prev.end_time),
+            });
+          }
+          return newData;
+        });
+      },
+      [updateDraft, buildIsoTime],
+    );
 
-    const handleEndTimeChange = useCallback((time: string) => {
-      // 時間変更時にエラーをクリア
-      setTimeConflictError(false);
-      setFormData((prev) => ({ ...prev, end_time: time }));
-    }, []);
+    const handleStartTimeChange = useCallback(
+      (time: string) => {
+        // 時間変更時にエラーをクリア
+        setTimeConflictError(false);
+        setFormData((prev) => {
+          const newData = { ...prev, start_time: time };
+          // draftPlanも更新（カレンダープレビュー用）
+          if (prev.worked_at) {
+            updateDraft({ start_time: buildIsoTime(prev.worked_at, time) });
+          }
+          return newData;
+        });
+      },
+      [updateDraft, buildIsoTime],
+    );
+
+    const handleEndTimeChange = useCallback(
+      (time: string) => {
+        // 時間変更時にエラーをクリア
+        setTimeConflictError(false);
+        setFormData((prev) => {
+          const newData = { ...prev, end_time: time };
+          // draftPlanも更新（カレンダープレビュー用）
+          if (prev.worked_at) {
+            updateDraft({ end_time: buildIsoTime(prev.worked_at, time) });
+          }
+          return newData;
+        });
+      },
+      [updateDraft, buildIsoTime],
+    );
 
     const handleScoreChange = useCallback((value: number | null) => {
       setFormData((prev) => ({

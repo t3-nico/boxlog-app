@@ -2,6 +2,17 @@
 
 Storybookの公式ベストプラクティスに基づいたStory作成ガイド。
 
+## このスキルを使用するタイミング
+
+以下のキーワードが含まれる場合に自動的に起動：
+
+- 「Storybook」「Story作成」「Story追加」
+- 「stories.tsx」「.stories.」
+- 「UIコンポーネントを追加」「コンポーネント作成」
+- 「バリアント追加」「新しいパターン」
+
+また、UIコンポーネント（`src/components/ui/`、`src/features/*/components/`）の作成・変更時にも参照すること。
+
 ---
 
 ## ⚠️ 最重要ルール：Storybookが正（Single Source of Truth）
@@ -38,6 +49,169 @@ Storybookの公式ベストプラクティスに基づいたStory作成ガイド
 
 ---
 
+## 公式テンプレート（AlertDialog を基盤とする）
+
+新規 Story を作成するときは、この構成に従うこと。
+実物: `src/components/ui/alert-dialog.stories.tsx` + `alert-dialog.docs.mdx`
+
+### 全体構成（3ファイル）
+
+```
+src/components/ui/
+├── my-component.tsx              # コンポーネント本体
+├── my-component.stories.tsx      # Story（Canvas用）
+└── my-component.docs.mdx         # Docs（テキスト・テーブル・Controls）← テーブルが必要な場合のみ
+```
+
+### 1. stories.tsx テンプレート
+
+```tsx
+import type { Meta, StoryObj } from '@storybook/react';
+import { MyComponent } from './my-component';
+
+const meta = {
+  title: 'Components/MyComponent',
+  component: MyComponent,
+  tags: [],                        // autodocs は使わない（MDX Docs を使用）
+  parameters: {
+    layout: 'fullscreen',          // centered | fullscreen | padded
+  },
+} satisfies Meta<typeof MyComponent>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+// ---------------------------------------------------------------------------
+// ヘルパーコンポーネント（状態を持つ例はここに定義）
+// ---------------------------------------------------------------------------
+
+function VariantAExample() { ... }
+function VariantBExample() { ... }
+
+// ---------------------------------------------------------------------------
+// Stories — Canvas は純粋なコンポーネント描画のみ
+// ---------------------------------------------------------------------------
+
+/** 基本的な使用例。最小構成。 */
+export const Default: Story = {
+  args: { /* デフォルトのprops */ },
+};
+
+/** バリアントAの説明。1行で簡潔に。実装例: XxxComponent */
+export const VariantA: Story = {
+  render: () => <VariantAExample />,
+};
+
+/** バリアントBの説明。1行で簡潔に。実装例: YyyComponent */
+export const VariantB: Story = {
+  render: () => <VariantBExample />,
+};
+
+// ---------------------------------------------------------------------------
+// AllPatterns — Canvas用の全パターンカタログ
+// ---------------------------------------------------------------------------
+
+/** 全パターン一覧。 */
+export const AllPatterns: Story = {
+  render: () => (
+    <div className="flex flex-col items-start gap-6">
+      <MyComponent />
+      <VariantAExample />
+      <VariantBExample />
+    </div>
+  ),
+};
+```
+
+**ポイント:**
+
+- `tags: []` — MDX Docs を使う場合は autodocs を無効化（競合エラー回避）
+- JSDoc は **1行** — 改行すると Docs で段落間が空く
+- Canvas に `<h1>`, `<p>` 等の説明テキストは **絶対に入れない**
+- AllPatterns は `flex-col items-start gap-6` で縦並び
+
+### 2. docs.mdx テンプレート（テーブルが必要な場合）
+
+```mdx
+import { Canvas, Controls, Meta, Primary, Stories, Unstyled } from '@storybook/blocks';
+import * as MyComponentStories from './my-component.stories';
+
+<Meta of={MyComponentStories} />
+
+<Unstyled>
+<div className="sb-docs-prose">
+
+# MyComponent
+
+コンポーネントの概要説明。1〜2行。
+
+## 比較や分類（テーブル）
+
+| 項目 | 説明 |
+| ---- | ---- |
+| ...  | ...  |
+
+## コンポーネント構成
+
+| コンポーネント    | 役割   |
+| ----------------- | ------ |
+| `MyComponent`     | ルート |
+| `MyComponentItem` | 子要素 |
+
+## Default
+
+<Primary />
+
+<Controls />
+
+<Stories includePrimary={false} />
+
+</div>
+</Unstyled>
+```
+
+**ポイント:**
+
+- `<Unstyled>` + `.sb-docs-prose` で Storybook のデフォルトスタイルを回避
+- Markdown テーブルは MDX でのみ正常に描画される（JSDoc の `description.component` では不可）
+- `<Stories includePrimary={false} />` で Default の重複を防ぐ
+
+### 3. テーブル不要な場合（autodocs で十分）
+
+MDX を作らず `tags: ['autodocs']` + JSDoc だけで完結できる:
+
+```tsx
+const meta = {
+  title: 'Components/SimpleComponent',
+  component: SimpleComponent,
+  tags: ['autodocs'],              // autodocs 有効
+} satisfies Meta<typeof SimpleComponent>;
+
+/** コンポーネントの説明。Docs に自動表示される。 */
+export const Default: Story = { args: { ... } };
+```
+
+### Canvas と Docs の役割分離
+
+| タブ       | 役割               | 内容                                        |
+| ---------- | ------------------ | ------------------------------------------- |
+| **Canvas** | コンポーネント描画 | render のみ。見出し・説明テキストは入れない |
+| **Docs**   | ドキュメント       | テキスト説明 + テーブル + Controls          |
+
+**Canvas:**
+
+- 純粋なコンポーネント描画のみ — テキスト禁止
+- padding: 16px（`.sb-show-main` で設定済み）
+- グリッド: 16px セル、5マスごと（80px）に強調線、offset 16px
+
+**Docs:**
+
+- テキスト・テーブル・比較は MDX または JSDoc で記述
+- margin: 32px（`.sbdocs-wrapper` で設定済み）
+- prose スタイルは `.sb-docs-prose`（`prose.css`）で管理
+
+---
+
 ## 対象範囲
 
 | ディレクトリ                 | 対象                              | 優先度                 |
@@ -56,30 +230,25 @@ src/components/ui/
 
 ## CSF3 基本テンプレート
 
-```tsx
-import type { Meta, StoryObj } from '@storybook/nextjs';
+上記「公式テンプレート」を参照。以下は最小構成:
 
+```tsx
+import type { Meta, StoryObj } from '@storybook/react';
 import { MyComponent } from './my-component';
 
 const meta = {
-  title: 'Components/MyComponent', // カテゴリ/コンポーネント名
+  title: 'Components/MyComponent',
   component: MyComponent,
-  parameters: {
-    layout: 'centered', // centered | fullscreen | padded
-  },
-  tags: ['autodocs'], // 自動ドキュメント生成
-  argTypes: {
-    // propsの説明・コントロール設定
-  },
+  tags: [], // MDX Docs を使う場合。不要なら ['autodocs']
+  parameters: { layout: 'fullscreen' },
 } satisfies Meta<typeof MyComponent>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-// 各Story定義
 export const Default: Story = {
   args: {
-    // デフォルトのprops
+    /* デフォルトのprops */
   },
 };
 ```
@@ -506,15 +675,16 @@ rm src/components/ui/old-component.stories.tsx
 
 Story作成時の確認項目：
 
-- [ ] `tags: ['autodocs']` を設定した
-- [ ] `argTypes` で主要propsの説明を書いた
-- [ ] `AllVariants` Storyを作成した
+- [ ] 公式テンプレート（AlertDialog）の構成に従っている
+- [ ] Canvas にテキスト（`<h1>`, `<p>` 等）を入れていない
+- [ ] JSDoc は1行で簡潔に記述した
+- [ ] `AllPatterns` Story を作成した（`flex-col items-start gap-6`）
+- [ ] テーブルが必要な場合は MDX Docs を作成した（`tags: []` に変更）
+- [ ] テーブル不要なら `tags: ['autodocs']` で JSDoc のみ
 - [ ] アイコンボタンには `aria-label` を設定した
 - [ ] セマンティックトークン（`bg-background` 等）を使用している
 - [ ] 直接カラー（`text-blue-500` 等）を使っていない
-- [ ] フォントウェイトは `font-bold` / `font-normal` のみ使用（`font-medium`, `font-semibold` 禁止）
-- [ ] フォントサイズはTailwindデフォルト（`text-sm`, `text-base` 等）を使用
-- [ ] レスポンシブ対応コンポーネントは `Responsive` Storyを作成した
+- [ ] フォントウェイトは `font-bold` / `font-normal` のみ使用
 - [ ] 複合コンポーネントは親を `component` に指定した
 
 ## デザイントークンの確認
@@ -526,6 +696,18 @@ Story作成時、以下のTokens Storiesを参照してデザイン一貫性を�
 | `Tokens/Colors`     | セマンティックカラー、状態色 |
 | `Tokens/Typography` | フォントサイズ・ウェイト階層 |
 | `Tokens/Spacing`    | 余白パターン                 |
+
+## 関連スキル（Story作成時に参照）
+
+Story対象のコンポーネントが以下に依存する場合、対応するスキルも参照すること：
+
+| コンポーネントの依存 | 参照スキル              | 理由                                   |
+| -------------------- | ----------------------- | -------------------------------------- |
+| Zustand store        | `/store-creating`       | ストアのパターン・命名規則・モック方法 |
+| tRPC API             | `/trpc-router-creating` | API入出力の型、モックデータの構造      |
+| i18n（翻訳キー）     | `/i18n`                 | キー命名規則、namespace構造            |
+| エラーハンドリング   | `/error-handling`       | ErrorBoundary配置、エラー状態のStory   |
+| a11y要件             | `/a11y`                 | aria属性、キーボード操作のテスト       |
 
 ## 参考リンク
 

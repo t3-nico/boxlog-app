@@ -2,11 +2,14 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { CircleSlash } from 'lucide-react';
+import { CircleSlash, Moon, Search, Sun } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { useCalendarFilterStore, type ItemType } from '../../../stores/useCalendarFilterStore';
 
+import { Button } from '@/components/ui/button';
+import { HoverTooltip } from '@/components/ui/tooltip';
+import { useTheme } from '@/contexts/theme-context';
 import { SidebarSection } from '@/features/navigation/components/sidebar/SidebarSection';
 import { useDeleteTag, useReorderTags, useTags, useUpdateTag } from '@/features/tags/hooks';
 import { useTagGroups } from '@/features/tags/hooks/useTagGroups';
@@ -15,7 +18,11 @@ import { useTagCacheStore } from '@/features/tags/stores/useTagCacheStore';
 
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { Skeleton } from '@/components/ui/skeleton';
+import { NotificationDropdown } from '@/features/notifications';
+import { useGlobalSearch } from '@/features/search';
 import { api } from '@/lib/trpc';
+
+import { SidebarNavigation } from '@/features/navigation/components/navigation-tabs/SidebarNavigation';
 
 import { TagSortableTree } from '../sortable-tree/TagSortableTree';
 import { CreateTagButton } from './components/CreateTagButton';
@@ -217,6 +224,12 @@ export function CalendarFilterList() {
             </div>
           )}
         </SidebarSection>
+
+        {/* ナビゲーション（Calendar/Plan/Record/Stats） */}
+        <SidebarNavigation />
+
+        {/* 通知 + テーマ切替 */}
+        <SidebarUtilities />
       </div>
 
       {/* 親タグ削除確認ダイアログ */}
@@ -229,5 +242,48 @@ export function CalendarFilterList() {
         variant="destructive"
       />
     </>
+  );
+}
+
+/** 通知 + 検索 + テーマ切替ユーティリティ */
+function SidebarUtilities() {
+  const t = useTranslations();
+  const { resolvedTheme, setTheme } = useTheme();
+  const { open: openGlobalSearch } = useGlobalSearch();
+
+  const handleThemeToggle = useCallback(() => {
+    setTheme(resolvedTheme === 'light' ? 'dark' : 'light');
+  }, [resolvedTheme, setTheme]);
+
+  return (
+    <div className="flex items-center gap-1 px-2 py-2">
+      <NotificationDropdown size="sm" />
+      <HoverTooltip content={t('sidebar.navigation.search')} side="right">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="size-8"
+          onClick={() => openGlobalSearch()}
+          aria-label={t('sidebar.navigation.search')}
+        >
+          <Search className="size-4" aria-hidden="true" />
+        </Button>
+      </HoverTooltip>
+      <HoverTooltip content={resolvedTheme === 'light' ? 'Dark mode' : 'Light mode'} side="right">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="size-8"
+          onClick={handleThemeToggle}
+          aria-label={t('sidebar.theme')}
+        >
+          {resolvedTheme === 'light' ? (
+            <Moon className="size-4" aria-hidden="true" />
+          ) : (
+            <Sun className="size-4" aria-hidden="true" />
+          )}
+        </Button>
+      </HoverTooltip>
+    </div>
   );
 }

@@ -11,6 +11,7 @@ import {
   calculatePlanGhostStyle,
   calculatePreviewTime,
 } from '../../shared';
+import { PanelDragPreview } from '../../shared/components/PanelDragPreview';
 import { HOUR_HEIGHT } from '../../shared/constants/grid.constants';
 import { useGlobalDragCursor } from '../../shared/hooks/useGlobalDragCursor';
 import type { CalendarPlan } from '../../shared/types/base.types';
@@ -91,6 +92,7 @@ export const DayContent = ({
     <div
       className={cn('bg-background relative flex-1 overflow-hidden', className)}
       data-calendar-grid
+      data-calendar-day-index="0"
     >
       {/* CalendarDragSelectionを使用（ドラッグ操作のみでプラン作成） */}
       <CalendarDragSelection
@@ -109,6 +111,9 @@ export const DayContent = ({
 
       {/* プラン表示エリア - CalendarDragSelectionより上にz-indexを設定 */}
       <div className="pointer-events-none absolute inset-0 z-20" style={{ height: gridHeight }}>
+        {/* パネルドラッグのプレビュー */}
+        <PanelDragPreview dayIndex={0} />
+
         {events &&
           Array.isArray(events) &&
           events.map((plan) => {

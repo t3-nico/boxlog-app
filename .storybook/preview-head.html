@@ -25,6 +25,7 @@
    * ============================================ */
   .sbdocs.sbdocs-wrapper {
     padding: 0 !important;
+    margin: var(--spacing-lg) !important; /* 32px */
   }
   .sbdocs.sbdocs-content {
     max-width: none !important;
@@ -45,7 +46,12 @@
   .sb-show-main {
     background: var(--background) !important;
     color: var(--foreground) !important;
-    padding: var(--spacing-lg) !important; /* 32px */
+    padding: var(--spacing-sm) !important; /* 16px */
+  }
+
+  /* Docs tab では外側余白を除去 */
+  .sb-show-main:has(.sbdocs-wrapper) {
+    padding: 0 !important;
   }
 
   /* ストーリーキャンバスのボーダー */

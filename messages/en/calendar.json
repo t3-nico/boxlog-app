@@ -88,16 +88,18 @@
       "enterEventTitle": "Enter event title",
       "reminderSet": "Reminder set",
       "noTitle": "(No title)",
+      "allDay": "All day",
       "markComplete": "Mark as complete",
       "markIncomplete": "Mark as incomplete"
     },
     "contextMenu": {
-      "open": "Open",
       "edit": "Edit",
+      "markComplete": "Mark as Complete",
+      "markIncomplete": "Mark as Incomplete",
+      "completeWithRecord": "Complete & Copy Record",
       "duplicate": "Duplicate",
       "copy": "Copy",
       "copyLink": "Copy Link",
-      "changeStatus": "Change Status",
       "addTag": "Add Tag",
       "moveToDate": "Change Date",
       "delete": "Delete"
@@ -228,8 +230,10 @@
       "overdueBy": "Overdue by {time}"
     },
     "agenda": {
-      "emptyTitle": "No upcoming events in the next 14 days",
-      "emptyDescription": "Create a new event in the calendar"
+      "emptyTitle": "No upcoming events",
+      "emptyDescription": "Create a new event in the calendar",
+      "noItems": "No items",
+      "noDate": "No Date"
     },
     "collapsedSection": {
       "expandLabel": "Expand {timeRange}"
@@ -247,6 +251,51 @@
     },
     "timeGrid": {
       "ariaLabel": "Calendar time grid - click or press Enter to create event"
+    },
+    "panel": {
+      "open": "Open side panel",
+      "plan": "Plans",
+      "record": "Records",
+      "stats": "Statistics",
+      "unscheduled": "Unscheduled",
+      "searchPlaceholder": "Search plans...",
+      "loading": "Loading...",
+      "error": "Failed to load",
+      "noPlans": "No unscheduled plans",
+      "sortBy": "Sort by",
+      "groupBy": "Group by",
+      "reset": "Reset",
+      "sort": {
+        "createdAt": "Date created",
+        "updatedAt": "Date updated",
+        "dueDate": "Due date",
+        "title": "Title",
+        "asc": "Ascending",
+        "desc": "Descending"
+      },
+      "group": {
+        "none": "None",
+        "dueDate": "Due date",
+        "tags": "Tags"
+      },
+      "status": {
+        "label": "Status",
+        "all": "All",
+        "open": "Open",
+        "closed": "Closed"
+      },
+      "schedule": {
+        "label": "Date",
+        "all": "All",
+        "scheduled": "Scheduled",
+        "unscheduled": "Unscheduled"
+      }
+    },
+    "error": {
+      "title": "Failed to load calendar",
+      "description": "Please check your network connection and try again.",
+      "retry": "Retry",
+      "reload": "Reload page"
     }
   }
 }

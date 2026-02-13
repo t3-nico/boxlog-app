@@ -2,16 +2,13 @@
  * AI Feature - Public API
  *
  * AI機能の統一的なエントリーポイント。
- * 外部からのインポートはこのファイル経由で行う。
+ * サイドパネル内のAIチャットコンテンツを提供。
  *
  * @example
  * ```tsx
- * import { AIInspector, useAIInspectorStore } from '@/features/ai'
+ * import { AIInspectorContent } from '@/features/ai'
  * ```
  */
 
 // Components
-export { AIInspector, AIInspectorContent } from './components';
-
-// Stores
-export { useAIInspectorStore } from './stores';
+export { AIInspectorContent } from './components';

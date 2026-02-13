@@ -29,36 +29,18 @@ import {
 } from './dropdown-menu';
 import { Input } from './input';
 
-/**
- * DropdownMenu - ドロップダウンメニュー
- *
- * ## DropdownMenuLabel の使用ルール（GAFA準拠）
- *
- * | ケース | ラベル | 理由 |
- * |--------|--------|------|
- * | アクションメニュー（編集/削除/複製） | ❌ 不要 | アクションは自明 |
- * | 設定メニュー（チェックボックス/ラジオ） | ✅ 必要 | 何を設定するか明示 |
- * | ユーザーメニュー | ✅ コンテキスト表示 | 誰のメニューか明示 |
- * | 選択メニュー（検索付き等） | ❌ 不要 | 検索で自明 |
- * | 複数グループがある | ✅ 各グループに | グループ区別 |
- *
- * 参考: Google Material Design 3, Apple HIG
- */
+/** DropdownMenu - ドロップダウンメニュー。ラベル使用ルールはGAFA準拠（Material Design 3, Apple HIG）。 */
 const meta = {
   title: 'Components/DropdownMenu',
   component: DropdownMenu,
   tags: ['autodocs'],
-  parameters: {},
+  parameters: { layout: 'fullscreen' },
 } satisfies Meta<typeof DropdownMenu>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/**
- * アクションメニュー（ラベルなし）
- * - 編集/複製/削除などのアクションリスト
- * - アクションは自明なのでラベル不要
- */
+/** アクションメニュー（ラベルなし）。編集/複製/削除などのアクションリスト、アクションは自明なのでラベル不要。 */
 export const Default: Story = {
   render: () => (
     <DropdownMenu>
@@ -84,11 +66,7 @@ export const Default: Story = {
   ),
 };
 
-/**
- * ユーザーメニュー（ラベルあり）
- * - ユーザー情報をラベルとして表示
- * - 誰のメニューかコンテキストを明示
- */
+/** ユーザーメニュー（ラベルあり）。ユーザー情報をラベルとして表示、誰のメニューかコンテキストを明示。 */
 export const WithUserContext: Story = {
   render: () => (
     <DropdownMenu>
@@ -118,10 +96,7 @@ export const WithUserContext: Story = {
   ),
 };
 
-/**
- * サブメニュー（ラベルなし）
- * - アクションの階層化
- */
+/** サブメニュー（ラベルなし）。アクションの階層化。 */
 export const WithSubMenu: Story = {
   render: () => (
     <DropdownMenu>
@@ -161,10 +136,7 @@ export const WithSubMenu: Story = {
   ),
 };
 
-/**
- * 設定メニュー - チェックボックス（ラベルあり）
- * - 何を設定するか明示するためラベル必須
- */
+/** 設定メニュー - チェックボックス（ラベルあり）。何を設定するか明示するためラベル必須。 */
 export const WithCheckboxes: Story = {
   render: function CheckboxesStory() {
     const [showStatusBar, setShowStatusBar] = useState(true);
@@ -194,10 +166,7 @@ export const WithCheckboxes: Story = {
   },
 };
 
-/**
- * 設定メニュー - ラジオボタン（ラベルあり）
- * - 何を選択するか明示するためラベル必須
- */
+/** 設定メニュー - ラジオボタン（ラベルあり）。何を選択するか明示するためラベル必須。 */
 export const WithRadioGroup: Story = {
   render: function RadioGroupStory() {
     const [position, setPosition] = useState('bottom');
@@ -229,10 +198,7 @@ const sampleItems = [
   { id: '5', name: '学習', color: '#f59e0b' },
 ];
 
-/**
- * 検索付きメニュー（ラベルなし）
- * - 検索フィールドがコンテキストを示すためラベル不要
- */
+/** 検索付きメニュー（ラベルなし）。検索フィールドがコンテキストを示すためラベル不要。 */
 export const WithSearch: Story = {
   render: function SearchableDropdownStory() {
     const [searchQuery, setSearchQuery] = useState('');
@@ -290,11 +256,7 @@ export const WithSearch: Story = {
   },
 };
 
-/**
- * 破壊的アクション（ラベルなし）
- * - アクションメニューなのでラベル不要
- * - variant="destructive" で削除アクションを強調
- */
+/** 破壊的アクション（ラベルなし）。variant="destructive" で削除アクションを強調。 */
 export const Destructive: Story = {
   render: () => (
     <DropdownMenu>
@@ -311,138 +273,68 @@ export const Destructive: Story = {
   ),
 };
 
-/**
- * 全バリエーション & ラベル使用ガイド
- */
+/** 全パターン一覧。 */
 export const AllPatterns: Story = {
   render: () => (
-    <div>
-      <h1 className="mb-8 text-2xl font-bold">DropdownMenu - ラベル使用ガイド</h1>
-
-      <div className="space-y-8">
-        <section>
-          <h2 className="mb-2 text-lg font-bold">❌ ラベル不要: アクションメニュー</h2>
-          <p className="text-muted-foreground mb-4 text-sm">
-            編集/複製/削除などのアクションは自明なのでラベル不要
-          </p>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline">アクション</Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-48">
-              <DropdownMenuItem>編集</DropdownMenuItem>
-              <DropdownMenuItem>複製</DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem variant="destructive">削除</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </section>
-
-        <section>
-          <h2 className="mb-2 text-lg font-bold">✅ ラベル必要: ユーザーメニュー</h2>
-          <p className="text-muted-foreground mb-4 text-sm">
-            誰のメニューかコンテキストを示すためラベル使用
-          </p>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline">マイアカウント</Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56">
-              <DropdownMenuLabel>user@example.com</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuGroup>
-                <DropdownMenuItem>
-                  <User className="mr-2 size-4" />
-                  プロフィール
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Settings className="mr-2 size-4" />
-                  設定
-                </DropdownMenuItem>
-              </DropdownMenuGroup>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem variant="destructive">
-                <LogOut className="mr-2 size-4" />
-                ログアウト
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </section>
-
-        <section>
-          <h2 className="mb-2 text-lg font-bold">✅ ラベル必要: 設定メニュー</h2>
-          <p className="text-muted-foreground mb-4 text-sm">何を設定するか明示するためラベル使用</p>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline">表示設定</Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56">
-              <DropdownMenuLabel>表示項目</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuCheckboxItem checked>ステータスバー</DropdownMenuCheckboxItem>
-              <DropdownMenuCheckboxItem>パネル</DropdownMenuCheckboxItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </section>
-
-        <section>
-          <h2 className="mb-2 text-lg font-bold">❌ ラベル不要: 検索付きメニュー</h2>
-          <p className="text-muted-foreground mb-4 text-sm">
-            検索フィールドがコンテキストを示すためラベル不要
-          </p>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline">タグを選択</Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56 p-0">
-              <div className="p-2">
-                <Input placeholder="検索..." className="h-8" />
-              </div>
-              <DropdownMenuItem className="p-2">仕事</DropdownMenuItem>
-              <DropdownMenuItem className="p-2">プライベート</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </section>
-
-        <section>
-          <h2 className="mb-4 text-lg font-bold">ルールまとめ</h2>
-          <div className="bg-container rounded-lg p-4">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-border border-b">
-                  <th className="py-2 text-left">ケース</th>
-                  <th className="py-2 text-left">ラベル</th>
-                </tr>
-              </thead>
-              <tbody className="text-muted-foreground">
-                <tr className="border-border border-b">
-                  <td className="py-2">アクションメニュー（編集/削除/複製）</td>
-                  <td className="py-2">❌ 不要</td>
-                </tr>
-                <tr className="border-border border-b">
-                  <td className="py-2">設定メニュー（チェックボックス/ラジオ）</td>
-                  <td className="py-2">✅ 必要</td>
-                </tr>
-                <tr className="border-border border-b">
-                  <td className="py-2">ユーザーメニュー</td>
-                  <td className="py-2">✅ 必要（コンテキスト表示）</td>
-                </tr>
-                <tr className="border-border border-b">
-                  <td className="py-2">検索付きメニュー</td>
-                  <td className="py-2">❌ 不要（検索で自明）</td>
-                </tr>
-                <tr>
-                  <td className="py-2">複数グループ</td>
-                  <td className="py-2">✅ 各グループにラベル</td>
-                </tr>
-              </tbody>
-            </table>
+    <div className="flex flex-col items-start gap-6">
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="outline">アクション</Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="w-48">
+          <DropdownMenuItem>編集</DropdownMenuItem>
+          <DropdownMenuItem>複製</DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem variant="destructive">削除</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="outline">マイアカウント</Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="w-56">
+          <DropdownMenuLabel>user@example.com</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup>
+            <DropdownMenuItem>
+              <User className="mr-2 size-4" />
+              プロフィール
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Settings className="mr-2 size-4" />
+              設定
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem variant="destructive">
+            <LogOut className="mr-2 size-4" />
+            ログアウト
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="outline">表示設定</Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="w-56">
+          <DropdownMenuLabel>表示項目</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuCheckboxItem checked>ステータスバー</DropdownMenuCheckboxItem>
+          <DropdownMenuCheckboxItem>パネル</DropdownMenuCheckboxItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="outline">タグを選択</Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="w-56 p-0">
+          <div className="p-2">
+            <Input placeholder="検索..." className="h-8" />
           </div>
-        </section>
-      </div>
+          <DropdownMenuItem className="p-2">仕事</DropdownMenuItem>
+          <DropdownMenuItem className="p-2">プライベート</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   ),
-  parameters: {
-    layout: 'fullscreen',
-  },
 };

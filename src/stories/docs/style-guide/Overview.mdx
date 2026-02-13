@@ -1,0 +1,73 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Docs/StyleGuide/Overview" />
+
+# Dayopt スタイルガイド
+
+「装飾のない基本体験」を実現するためのUI設計リファレンス
+
+---
+
+## 設計原則
+
+### 判断フローチャート
+
+```
+この要素は機能を伝えるために必要か？
+├─ Yes → 実装する
+│   └─ 最小限のスタイルで表現できるか？
+│       ├─ Yes → そのまま実装
+│       └─ No → 機能を分割して再検討
+└─ No → 実装しない（装飾的要素は避ける）
+```
+
+### 採用するパターン
+
+- ✅ 控えめなホバー状態（機能的フィードバック）
+- ✅ セマンティックカラー（意味を伝える色使い）
+- ✅ 一貫したスペーシング（8pxグリッド）
+- ✅ シンプルなアイコン（機能を瞬時に伝える）
+
+### 避けるパターン
+
+- ❌ 派手なグラデーション背景（装飾的）
+- ❌ 過剰なアニメーション（ノイズ）
+- ❌ 影の多用（フラットで十分）
+- ❌ イラスト・装飾画像（機能に寄与しない）
+
+---
+
+## GAFA-First 原則
+
+UI/UXで迷ったら文脈に合うGoogle製品を開いて観察する。
+
+- **UIパターン**: Material Design 3、Apple HIG準拠
+- **コンポーネント**: shadcn/ui（Radix UI）を基本とする
+- **カラー**: セマンティックトークンのみ使用
+- **機能参考**: カレンダー → Google Calendar、時間記録 → Toggl
+
+---
+
+## トークンカタログ
+
+| カテゴリ | パス | 内容 |
+|---------|------|------|
+| Colors | [Tokens/Colors](?path=/story/tokens-colors--all-colors) | カラートークン、背景色、テキスト色 |
+| Typography | [Tokens/Typography](?path=/docs/tokens-typography--docs) | フォントサイズ、行間、ウェイト |
+| Spacing | [Tokens/Spacing](?path=/docs/tokens-spacing--docs) | 8pxグリッド、余白 |
+| BorderRadius | [Tokens/Radius](?path=/docs/tokens-radius--docs) | 角丸（8pxグリッド準拠） |
+| Elevation | [Tokens/Elevation](?path=/docs/tokens-elevation--docs) | シャドウ階層 |
+| Motion | [Tokens/Motion](?path=/story/tokens-motion--overview) | アニメーション、トランジション |
+| States | [Tokens/States](?path=/story/tokens-states--overview) | ホバー、フォーカス、選択状態 |
+| Icons | Tokens/Icons | アイコンサイズ |
+| Responsive | Tokens/Responsive | ブレークポイント、タッチターゲット |
+| ZIndex | Tokens/ZIndex | スタッキング順序 |
+| Accessibility | [Docs/Accessibility](?path=/story/docs-accessibility--overview) | a11yガイドライン |
+
+---
+
+## 参照ドキュメント
+
+- `src/styles/globals.css` — セマンティックトークン定義（CSS変数）
+- `CLAUDE.md` — プロジェクトルール（絶対遵守事項）
+- `.claude/skills/frontend-design/SKILL.md` — デザインスキル（Typography / Motion / Layout詳細）

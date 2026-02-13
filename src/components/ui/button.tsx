@@ -19,11 +19,11 @@ import { cn } from '@/lib/utils';
  *
  * ## サイズ設計（GAFA準拠）
  *
- * | size    | 高さ  | 根拠                              | 用途                           |
- * |---------|-------|-----------------------------------|--------------------------------|
- * | sm      | 32px  | M3 XS、shadcn/ui icon-sm          | コンパクトUI、ツールバー       |
- * | default | 36px  | M3 Small（デフォルト）            | 標準的なアクション             |
- * | lg      | 44px  | Apple HIG最小タップターゲット     | CTA、モバイル主要アクション    |
+ * | size    | 高さ  | テキスト | 用途                           |
+ * |---------|-------|----------|--------------------------------|
+ * | sm      | 32px  | text-sm  | コンパクトUI、ツールバー       |
+ * | default | 36px  | text-sm  | 標準的なアクション             |
+ * | lg      | 44px  | text-base| CTA、モバイル主要アクション    |
  *
  * ## アイコンボタンサイズ
  *
@@ -37,7 +37,7 @@ import { cn } from '@/lib/utils';
  *
  * | size    | 高さ  | パディング | アイコン | フォント  | Tailwind |
  * |---------|-------|------------|----------|-----------|----------|
- * | sm      | 32px  | 12px       | 16px     | text-xs   | h-8      |
+ * | sm      | 32px  | 12px       | 16px     | text-sm   | h-8      |
  * | default | 36px  | 16px       | 16px     | text-sm   | h-9      |
  * | lg      | 44px  | 20px       | 20px     | text-base | h-11     |
  */
@@ -78,9 +78,9 @@ const buttonVariants = cva(
         ].join(' '),
       },
       size: {
-        // sm: 32px高さ、12pxパディング、16pxアイコン
+        // sm: 32px高さ、16pxパディング、16pxアイコン
         sm: [
-          'h-8 px-4 text-xs',
+          'h-8 px-4 text-sm',
           "[&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
         ].join(' '),
         // default: 36px高さ（M3 Small準拠）、16pxパディング、16pxアイコン

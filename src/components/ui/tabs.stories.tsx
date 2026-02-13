@@ -7,7 +7,9 @@ const meta = {
   title: 'Components/Tabs',
   component: Tabs,
   tags: ['autodocs'],
-  parameters: {},
+  parameters: {
+    layout: 'fullscreen',
+  },
 } satisfies Meta<typeof Tabs>;
 
 export default meta;
@@ -53,161 +55,70 @@ export const ThreeTabs: Story = {
 
 export const AllPatterns: Story = {
   render: () => (
-    <div className="max-w-3xl">
-      <h1 className="mb-2 text-2xl font-bold">Tabs</h1>
-      <p className="text-muted-foreground mb-8">
-        Radix UI Tabs をベースにした切り替えコンポーネント。
-      </p>
+    <div className="flex flex-col items-start gap-6">
+      <Tabs defaultValue="tab1" className="w-full max-w-md">
+        <TabsList>
+          <TabsTrigger value="tab1">アカウント</TabsTrigger>
+          <TabsTrigger value="tab2">通知</TabsTrigger>
+          <TabsTrigger value="tab3">表示</TabsTrigger>
+        </TabsList>
+        <TabsContent value="tab1" className="border-border mt-2 rounded-lg border p-4">
+          アカウント設定
+        </TabsContent>
+        <TabsContent value="tab2" className="border-border mt-2 rounded-lg border p-4">
+          通知設定
+        </TabsContent>
+        <TabsContent value="tab3" className="border-border mt-2 rounded-lg border p-4">
+          表示設定
+        </TabsContent>
+      </Tabs>
 
-      <div className="space-y-12">
-        {/* ピル型（デフォルト） */}
-        <section>
-          <h2 className="mb-4 text-lg font-bold">ピル型（デフォルト）</h2>
-          <p className="text-muted-foreground mb-4 text-sm">
-            セグメンテッドコントロールスタイル。設定画面のセクション切り替えに最適。
-          </p>
-          <Tabs defaultValue="tab1" className="w-full max-w-md">
-            <TabsList>
-              <TabsTrigger value="tab1">アカウント</TabsTrigger>
-              <TabsTrigger value="tab2">通知</TabsTrigger>
-              <TabsTrigger value="tab3">表示</TabsTrigger>
-            </TabsList>
-            <TabsContent value="tab1" className="border-border mt-2 rounded-lg border p-4">
-              アカウント設定
-            </TabsContent>
-            <TabsContent value="tab2" className="border-border mt-2 rounded-lg border p-4">
-              通知設定
-            </TabsContent>
-            <TabsContent value="tab3" className="border-border mt-2 rounded-lg border p-4">
-              表示設定
-            </TabsContent>
-          </Tabs>
-        </section>
+      <Tabs defaultValue="calendar" className="w-full max-w-xs">
+        <TabsList>
+          <TabsTrigger value="calendar" className="px-3" aria-label="カレンダー" title="カレンダー">
+            <Calendar className="size-4" />
+          </TabsTrigger>
+          <TabsTrigger value="plan" className="px-3" aria-label="プラン" title="プラン">
+            <CircleCheckBig className="size-4" />
+          </TabsTrigger>
+          <TabsTrigger value="record" className="px-3" aria-label="記録" title="記録">
+            <Clock className="size-4" />
+          </TabsTrigger>
+          <TabsTrigger value="stats" className="px-3" aria-label="統計" title="統計">
+            <BarChart3 className="size-4" />
+          </TabsTrigger>
+        </TabsList>
+      </Tabs>
 
-        {/* アイコンのみ */}
-        <section>
-          <h2 className="mb-4 text-lg font-bold">アイコンのみ</h2>
-          <p className="text-muted-foreground mb-4 text-sm">
-            コンパクトなナビゲーション。title属性でツールチップを表示。
-          </p>
-          <Tabs defaultValue="calendar" className="w-full max-w-xs">
-            <TabsList>
-              <TabsTrigger
-                value="calendar"
-                className="px-3"
-                aria-label="カレンダー"
-                title="カレンダー"
-              >
-                <Calendar className="size-4" />
-              </TabsTrigger>
-              <TabsTrigger value="plan" className="px-3" aria-label="プラン" title="プラン">
-                <CircleCheckBig className="size-4" />
-              </TabsTrigger>
-              <TabsTrigger value="record" className="px-3" aria-label="記録" title="記録">
-                <Clock className="size-4" />
-              </TabsTrigger>
-              <TabsTrigger value="stats" className="px-3" aria-label="統計" title="統計">
-                <BarChart3 className="size-4" />
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
-          <p className="text-muted-foreground mt-2 text-xs">
-            ※ アイコンのみの場合は必ず <code>aria-label</code> と <code>title</code> を設定
-          </p>
-        </section>
+      <Tabs defaultValue="profile" className="w-full max-w-md">
+        <TabsList>
+          <TabsTrigger value="profile" className="gap-2">
+            <User className="size-4" />
+            プロフィール
+          </TabsTrigger>
+          <TabsTrigger value="settings" className="gap-2">
+            <Settings className="size-4" />
+            設定
+          </TabsTrigger>
+        </TabsList>
+      </Tabs>
 
-        {/* アイコン + テキスト */}
-        <section>
-          <h2 className="mb-4 text-lg font-bold">アイコン + テキスト</h2>
-          <p className="text-muted-foreground mb-4 text-sm">明確なラベルが必要な場合。</p>
-          <Tabs defaultValue="profile" className="w-full max-w-md">
-            <TabsList>
-              <TabsTrigger value="profile" className="gap-2">
-                <User className="size-4" />
-                プロフィール
-              </TabsTrigger>
-              <TabsTrigger value="settings" className="gap-2">
-                <Settings className="size-4" />
-                設定
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
-        </section>
-
-        {/* アンダーラインスタイル */}
-        <section>
-          <h2 className="mb-4 text-lg font-bold">アンダーラインスタイル</h2>
-          <p className="text-muted-foreground mb-4 text-sm">
-            Slack/Linear風。コンテンツ重視のレイアウトに。
-          </p>
-          <Tabs defaultValue="overview" className="w-full max-w-md">
-            <TabsList className="h-auto gap-4 rounded-none border-b border-transparent bg-transparent p-0">
-              <UnderlineTabsTrigger value="overview">概要</UnderlineTabsTrigger>
-              <UnderlineTabsTrigger value="activity">アクティビティ</UnderlineTabsTrigger>
-              <UnderlineTabsTrigger value="settings">設定</UnderlineTabsTrigger>
-            </TabsList>
-            <TabsContent value="overview" className="pt-4">
-              概要コンテンツ
-            </TabsContent>
-            <TabsContent value="activity" className="pt-4">
-              アクティビティコンテンツ
-            </TabsContent>
-            <TabsContent value="settings" className="pt-4">
-              設定コンテンツ
-            </TabsContent>
-          </Tabs>
-        </section>
-
-        {/* 使い分けガイド */}
-        <section>
-          <h2 className="mb-4 text-lg font-bold">使い分けガイド</h2>
-          <div className="bg-container space-y-3 rounded-lg p-4">
-            <div className="flex items-start gap-3">
-              <span className="font-medium">ピル型</span>
-              <span className="text-muted-foreground text-sm">
-                設定画面、フォーム内のセクション切り替え
-              </span>
-            </div>
-            <div className="flex items-start gap-3">
-              <span className="font-medium">アイコンのみ</span>
-              <span className="text-muted-foreground text-sm">
-                ヘッダーナビゲーション、ツールバー（スペースが限られる場合）
-              </span>
-            </div>
-            <div className="flex items-start gap-3">
-              <span className="font-medium">アンダーライン</span>
-              <span className="text-muted-foreground text-sm">
-                詳細ページ、プロフィールページ（コンテンツ重視）
-              </span>
-            </div>
-          </div>
-        </section>
-
-        {/* コンポーネント構成 */}
-        <section>
-          <h2 className="mb-4 text-lg font-bold">コンポーネント構成</h2>
-          <ul className="text-muted-foreground list-inside list-disc text-sm">
-            <li>
-              <code>Tabs</code> - ルート（defaultValue必須）
-            </li>
-            <li>
-              <code>TabsList</code> - タブボタンのコンテナ（ピル型背景）
-            </li>
-            <li>
-              <code>TabsTrigger</code> - タブボタン（ピル型）
-            </li>
-            <li>
-              <code>UnderlineTabsTrigger</code> - タブボタン（アンダーライン型）
-            </li>
-            <li>
-              <code>TabsContent</code> - タブコンテンツ
-            </li>
-          </ul>
-        </section>
-      </div>
+      <Tabs defaultValue="overview" className="w-full max-w-md">
+        <TabsList className="h-auto gap-4 rounded-none border-b border-transparent bg-transparent p-0">
+          <UnderlineTabsTrigger value="overview">概要</UnderlineTabsTrigger>
+          <UnderlineTabsTrigger value="activity">アクティビティ</UnderlineTabsTrigger>
+          <UnderlineTabsTrigger value="settings">設定</UnderlineTabsTrigger>
+        </TabsList>
+        <TabsContent value="overview" className="pt-4">
+          概要コンテンツ
+        </TabsContent>
+        <TabsContent value="activity" className="pt-4">
+          アクティビティコンテンツ
+        </TabsContent>
+        <TabsContent value="settings" className="pt-4">
+          設定コンテンツ
+        </TabsContent>
+      </Tabs>
     </div>
   ),
-  parameters: {
-    layout: 'fullscreen',
-  },
 };

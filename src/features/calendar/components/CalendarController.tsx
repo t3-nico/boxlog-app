@@ -26,6 +26,7 @@ import { DnDProvider } from '../providers/DnDProvider';
 
 import type { CalendarViewProps, CalendarViewType } from '../types/calendar.types';
 
+import { useCalendarPanelStore } from '../stores/useCalendarPanelStore';
 import { CalendarViewRenderer } from './controller/components';
 import {
   useCalendarData,
@@ -33,6 +34,7 @@ import {
   useCalendarNavigationHandlers,
 } from './controller/hooks';
 import { initializePreload } from './controller/utils';
+
 import { CalendarLayout } from './layout/CalendarLayout';
 import { EmptyAreaContextMenu, EventContextMenu, MobileTouchHint } from './views/shared/components';
 
@@ -52,6 +54,10 @@ export const CalendarController = ({
   const router = useRouter();
   const pathname = usePathname();
   const calendarNavigation = useCalendarNavigation();
+
+  // サイドパネル状態（Zustand永続化）
+  const currentPanel = useCalendarPanelStore.use.panelType();
+  const setCurrentPanel = useCalendarPanelStore.use.setPanel();
 
   // 現在のlocaleを取得（例: /ja/calendar/day -> ja）
   const locale = pathname?.split('/')[1] || 'ja';
@@ -124,7 +130,8 @@ export const CalendarController = ({
     handleEditPlan,
     handleDuplicatePlan,
     handleCopyPlan,
-    handleViewDetails,
+    handleCompletePlan,
+    handleCompleteWithRecord,
   } = usePlanContextActions();
 
   // プラン操作（CRUD）をフック化
@@ -354,6 +361,8 @@ export const CalendarController = ({
           start: viewDateRange.start,
           end: viewDateRange.end,
         }}
+        currentPanel={currentPanel}
+        onPanelChange={setCurrentPanel}
       >
         <CalendarViewRenderer viewType={viewType} commonProps={commonProps} />
       </CalendarLayout>
@@ -367,7 +376,8 @@ export const CalendarController = ({
           onDelete={handleDeletePlan}
           onDuplicate={handleDuplicatePlan}
           onCopy={handleCopyPlan}
-          onOpen={handleViewDetails}
+          onComplete={handleCompletePlan}
+          onCompleteWithRecord={handleCompleteWithRecord}
         />
       ) : null}
 

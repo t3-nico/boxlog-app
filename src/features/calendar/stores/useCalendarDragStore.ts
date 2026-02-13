@@ -1,4 +1,5 @@
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
+import type { PlanWithTags } from '@/server/services/plans/types';
 import { create } from 'zustand';
 
 /**
@@ -7,13 +8,22 @@ import { create } from 'zustand';
  * 日付間ドラッグ移動をサポートするため、
  * 複数のコンテンツコンポーネント（WeekContent等）で
  * ドラッグ状態を共有する
+ *
+ * dragSource で「カレンダー内ドラッグ」と「パネルからのドラッグ」を区別
  */
 
+/** ドラッグ元の種類 */
+export type DragSource = 'calendar' | 'panel' | null;
+
 export interface CalendarDragState {
+  /** ドラッグ元 */
+  dragSource: DragSource;
   /** ドラッグ中のプランID */
   draggedPlanId: string | null;
-  /** ドラッグ中のプランデータ（表示用） */
+  /** ドラッグ中のプランデータ（カレンダー内ドラッグ用） */
   draggedPlan: CalendarPlan | null;
+  /** ドラッグ中のプランデータ（パネルドラッグ用） */
+  draggedPlanData: PlanWithTags | null;
   /** 元の日付インデックス */
   originalDateIndex: number;
   /** 現在のターゲット日付インデックス */
@@ -27,10 +37,16 @@ export interface CalendarDragState {
 }
 
 interface CalendarDragActions {
-  /** ドラッグ開始 */
+  /** カレンダー内ドラッグ開始 */
   startDrag: (planId: string, plan: CalendarPlan, dateIndex: number) => void;
+  /** パネルからのドラッグ開始 */
+  startPanelDrag: (plan: PlanWithTags) => void;
   /** ドラッグ中の状態更新 */
-  updateDrag: (updates: Partial<Omit<CalendarDragState, 'draggedPlanId' | 'draggedPlan'>>) => void;
+  updateDrag: (
+    updates: Partial<
+      Omit<CalendarDragState, 'draggedPlanId' | 'draggedPlan' | 'draggedPlanData' | 'dragSource'>
+    >,
+  ) => void;
   /** ドラッグ終了 */
   endDrag: () => void;
   /** ターゲット日付インデックスを更新 */
@@ -40,8 +56,10 @@ interface CalendarDragActions {
 }
 
 const initialState: CalendarDragState = {
+  dragSource: null,
   draggedPlanId: null,
   draggedPlan: null,
+  draggedPlanData: null,
   originalDateIndex: 0,
   targetDateIndex: 0,
   isDragging: false,
@@ -54,10 +72,25 @@ export const useCalendarDragStore = create<CalendarDragState & CalendarDragActio
 
   startDrag: (planId, plan, dateIndex) =>
     set({
+      dragSource: 'calendar',
       draggedPlanId: planId,
       draggedPlan: plan,
+      draggedPlanData: null,
       originalDateIndex: dateIndex,
       targetDateIndex: dateIndex,
+      isDragging: true,
+      previewTime: null,
+      snappedPosition: null,
+    }),
+
+  startPanelDrag: (plan) =>
+    set({
+      dragSource: 'panel',
+      draggedPlanId: plan.id,
+      draggedPlan: null,
+      draggedPlanData: plan,
+      originalDateIndex: -1,
+      targetDateIndex: -1,
       isDragging: true,
       previewTime: null,
       snappedPosition: null,

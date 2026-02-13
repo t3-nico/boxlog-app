@@ -1,9 +1,11 @@
 import type { Preview } from '@storybook/react';
 import { NextIntlClientProvider } from 'next-intl';
+import { useDarkMode } from 'storybook-dark-mode';
 
 import '../src/styles/globals.css';
 import { DocsTemplate } from './DocsTemplate';
-import { dayoptLightTheme } from './dayoptTheme';
+import { dayoptDarkTheme, dayoptLightTheme } from './dayoptTheme';
+import { TRPCMockProvider } from './mocks/trpc';
 import './prose.css';
 
 // Storybook用のメッセージ（必要なものだけ）
@@ -27,7 +29,12 @@ const messages = {
       plan: 'プラン',
       record: '記録',
       stats: '統計',
+      search: '検索',
     },
+    quickCreate: '作成',
+    theme: 'テーマ',
+    closeSidebar: 'サイドバーを閉じる',
+    openSidebar: 'サイドバーを開く',
   },
   common: {
     close: '閉じる',
@@ -38,11 +45,27 @@ const messages = {
     edit: '編集',
     loading: '読み込み中...',
     deleting: '削除中...',
+    aria: {
+      selectDate: '{date}を選択',
+    },
+    form: {
+      required: '※必須',
+      optional: '※任意',
+      processing: '処理中...',
+    },
+    validation: {
+      limitReached: '上限に達しました',
+    },
   },
   actions: {
     delete: '削除',
     cancel: 'キャンセル',
     deleting: '削除中...',
+    close: '閉じる',
+    create: '作成',
+    creating: '作成中...',
+    save: '保存',
+    saving: '保存中...',
   },
   error: {
     loading: {
@@ -54,6 +77,18 @@ const messages = {
       noData: 'データがありません',
       loadingPage: 'ページを読み込み中',
       pleaseWait: 'しばらくお待ちください...',
+    },
+    boundary: {
+      title: '予期しないエラーが発生しました',
+      description: '申し訳ございません。アプリケーションでエラーが発生しました。',
+      autoReport: '自動的にエラー報告を送信いたします。',
+      retry: '再試行',
+      reload: 'ページをリロード',
+      devTitle: '開発環境 - コンポーネントエラー',
+      component: 'コンポーネント',
+      unknown: '不明',
+      checkConsole: '詳細はブラウザのコンソールを確認してください。',
+      featureError: '{feature}機能でエラーが発生しました',
     },
   },
   legal: {
@@ -70,6 +105,120 @@ const messages = {
   },
   aria: {
     selectColor: '{color}を選択',
+    previous: '前へ',
+    next: '次へ',
+  },
+  tags: {
+    page: {
+      searchPlaceholder: 'タグを検索...',
+      noTags: 'タグがありません',
+    },
+    modal: {
+      createTitle: '新規タグ作成',
+      createDescription: '新しいタグを作成します',
+      editTitle: 'タグを編集',
+      updating: '更新中...',
+      update: '更新',
+    },
+    form: {
+      tagName: 'タグ名',
+      examplePlaceholder: '時間記録を分類するためのラベル',
+      color: 'カラー',
+      group: 'グループ',
+      groupSupportText: '同じ種類のタグをまとめて管理できます',
+      duplicateName: '同名のTagsがすでに存在します',
+      namePlaceholder: 'タグ名を入力',
+      description: '説明（任意）',
+      descriptionPlaceholder: 'このタグの用途や説明を入力...',
+    },
+    validation: {
+      nameEmpty: 'タグ名を入力してください',
+      nameRequired: 'タグ名は必須です',
+      nameLimitReached: 'タグ名は{max}文字までです',
+    },
+    errors: {
+      createFailed: 'タグの作成に失敗しました',
+      updateFailed: 'タグの更新に失敗しました',
+    },
+    sidebar: {
+      uncategorized: '未分類',
+    },
+  },
+  calendar: {
+    filter: {
+      ungrouped: '未分類',
+      noteLabel: 'ノート',
+      noteHint: 'ツールチップに表示されます',
+      notePlaceholder: 'ノートを追加...',
+    },
+    toast: {
+      conflictDescription: 'この時間帯には既に予定があります',
+    },
+    event: {
+      noTitle: '新しい予定',
+      noTimeSet: '時間未設定',
+      reminderSet: 'リマインダー設定あり',
+      adjustEndTime: '終了時間を調整',
+      markComplete: '完了にする',
+      markIncomplete: '未完了に戻す',
+    },
+    actions: {
+      goToToday: '今日に戻る',
+    },
+    navigation: {
+      previous: '前へ',
+      next: '次へ',
+    },
+    headerActions: {
+      settings: '設定',
+      export: 'エクスポート',
+      import: 'インポート',
+      moreOptions: 'その他',
+    },
+    sleepHours: {
+      collapsed: '{start} - {end} 睡眠時間帯',
+      planCount: '{count}件の予定',
+    },
+    overdue: {
+      badge: '{count}件の保留中',
+      title: '保留中のタスク',
+      period: '過去365日間',
+      helpText: '期限を迎えた未完了タスクが表示されます。',
+      noTitle: '(タイトルなし)',
+      timeUnset: '時間は未指定',
+      popoverTitle: '期限切れのプラン',
+      overdueBy: '{time}超過',
+    },
+    panel: {
+      sortBy: '並び替え',
+      groupBy: 'グループ',
+      reset: 'リセット',
+      sort: {
+        createdAt: '作成日',
+        updatedAt: '更新日',
+        dueDate: '期限',
+        title: 'タイトル',
+        asc: '昇順',
+        desc: '降順',
+      },
+      group: {
+        none: 'なし',
+        dueDate: '期限',
+        tags: 'タグ',
+      },
+      status: {
+        label: 'ステータス',
+        all: 'すべて',
+        open: '未完了',
+        closed: '完了',
+      },
+      schedule: {
+        label: '日付',
+        all: 'すべて',
+        scheduled: '予定済み',
+        unscheduled: 'スケジュールなし',
+      },
+    },
   },
 };
 
@@ -81,12 +230,29 @@ const preview: Preview = {
         date: /Date$/i,
       },
     },
-    backgrounds: { disable: true },
+    backgrounds: {
+      disable: true,
+      grid: {
+        cellSize: 16,
+        cellAmount: 5,
+        opacity: 0.6,
+        offsetX: 16,
+        offsetY: 16,
+      },
+    },
     options: {
       storySort: {
         method: 'alphabetical',
-        order: ['Docs', 'Tokens', 'Components', 'Patterns'],
+        order: ['Docs', 'Tokens', 'Components', 'Features', 'Patterns'],
       },
+    },
+    darkMode: {
+      dark: dayoptDarkTheme,
+      light: dayoptLightTheme,
+      darkClass: 'dark',
+      lightClass: 'light',
+      stylePreview: true,
+      current: 'light',
     },
     docs: {
       theme: dayoptLightTheme,
@@ -110,39 +276,24 @@ const preview: Preview = {
       },
     },
   },
-  globalTypes: {
-    theme: {
-      description: 'Global theme for components',
-      toolbar: {
-        title: 'Theme',
-        icon: 'circlehollow',
-        items: [
-          { value: 'light', icon: 'sun', title: 'Light' },
-          { value: 'dark', icon: 'moon', title: 'Dark' },
-        ],
-        dynamicTitle: false,
-      },
-    },
-  },
-  initialGlobals: {
-    theme: 'light',
-  },
   decorators: [
-    (Story, context) => {
-      const theme = context.globals.theme || 'light';
+    (Story) => {
+      const isDark = useDarkMode();
 
-      // ダークモード切り替え
       if (typeof document !== 'undefined') {
         document.documentElement.classList.remove('light', 'dark');
-        document.documentElement.classList.add(theme);
-        // color-scheme を切り替え（スクロールバー・フォーム要素のネイティブ配色）
-        document.documentElement.style.colorScheme = theme;
+        document.documentElement.classList.add(isDark ? 'dark' : 'light');
+        document.documentElement.style.colorScheme = isDark ? 'dark' : 'light';
       }
 
       return (
-        <NextIntlClientProvider locale="ja" messages={messages}>
-          <Story />
-        </NextIntlClientProvider>
+        <TRPCMockProvider>
+          <NextIntlClientProvider locale="ja" messages={messages}>
+            <main>
+              <Story />
+            </main>
+          </NextIntlClientProvider>
+        </TRPCMockProvider>
       );
     },
   ],

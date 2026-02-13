@@ -88,16 +88,18 @@
       "enterEventTitle": "イベントタイトルを入力",
       "reminderSet": "リマインダー設定済み",
       "noTitle": "(タイトルなし)",
+      "allDay": "終日",
       "markComplete": "完了にする",
       "markIncomplete": "未完了に戻す"
     },
     "contextMenu": {
-      "open": "開く",
       "edit": "編集",
+      "markComplete": "完了にする",
+      "markIncomplete": "未完了に戻す",
+      "completeWithRecord": "完了&Recordコピー",
       "duplicate": "複製",
       "copy": "コピー",
       "copyLink": "リンクをコピー",
-      "changeStatus": "ステータスを変更",
       "addTag": "タグを追加",
       "moveToDate": "日付を変更",
       "delete": "削除"
@@ -228,8 +230,10 @@
       "overdueBy": "{time}超過"
     },
     "agenda": {
-      "emptyTitle": "今後14日間に予定はありません",
-      "emptyDescription": "カレンダーで新しい予定を作成してください"
+      "emptyTitle": "今後の予定はありません",
+      "emptyDescription": "カレンダーで新しい予定を作成してください",
+      "noItems": "予定なし",
+      "noDate": "日付なし"
     },
     "collapsedSection": {
       "expandLabel": "{timeRange} を展開"
@@ -247,6 +251,51 @@
     },
     "timeGrid": {
       "ariaLabel": "カレンダータイムグリッド - クリックまたはEnterキーでイベントを作成"
+    },
+    "panel": {
+      "open": "サイドパネルを開く",
+      "plan": "プラン",
+      "record": "記録",
+      "stats": "統計",
+      "unscheduled": "未予定",
+      "searchPlaceholder": "プランを検索...",
+      "loading": "読み込み中...",
+      "error": "読み込みに失敗しました",
+      "noPlans": "未予定のプランはありません",
+      "sortBy": "並び替え",
+      "groupBy": "グループ",
+      "reset": "リセット",
+      "sort": {
+        "createdAt": "作成日",
+        "updatedAt": "更新日",
+        "dueDate": "期限",
+        "title": "タイトル",
+        "asc": "昇順",
+        "desc": "降順"
+      },
+      "group": {
+        "none": "なし",
+        "dueDate": "期限",
+        "tags": "タグ"
+      },
+      "status": {
+        "label": "ステータス",
+        "all": "すべて",
+        "open": "未完了",
+        "closed": "完了"
+      },
+      "schedule": {
+        "label": "日付",
+        "all": "すべて",
+        "scheduled": "予定済み",
+        "unscheduled": "スケジュールなし"
+      }
+    },
+    "error": {
+      "title": "カレンダーの読み込みに失敗しました",
+      "description": "ネットワーク接続を確認して、もう一度お試しください。",
+      "retry": "再読み込み",
+      "reload": "ページをリロード"
     }
   }
 }

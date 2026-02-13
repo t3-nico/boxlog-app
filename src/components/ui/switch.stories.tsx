@@ -4,30 +4,12 @@ import { useState } from 'react';
 import { Label } from './label';
 import { Switch } from './switch';
 
-/**
- * Switch - トグルスイッチ（ON/OFF切替）
- *
- * ## Switch vs Checkbox
- *
- * | 観点 | Switch | Checkbox |
- * |------|--------|----------|
- * | 効果 | 即座に反映 | 送信後に反映 |
- * | 用途 | 設定のON/OFF | フォーム選択 |
- * | 複数選択 | 不可（単独） | 可能 |
- * | 推奨 | 設定画面、モード切替 | フォーム、同意確認 |
- *
- * ## 使い分けルール（Apple HIG準拠）
- *
- * - **即座に反映**: Switch（設定変更が即座に適用）
- * - **送信後に反映**: Checkbox（フォーム送信時に適用）
- * - **独立した設定**: Switch（他と関係なく切替）
- * - **複数項目から選択**: Checkbox（グループとして選択）
- */
+/** Switch - トグルスイッチ（ON/OFF切替）。即座に反映される設定に使用、フォーム送信後に反映する場合はCheckboxを使用。 */
 const meta = {
   title: 'Components/Switch',
   component: Switch,
   tags: ['autodocs'],
-  parameters: {},
+  parameters: { layout: 'fullscreen' },
   argTypes: {
     checked: {
       control: 'boolean',
@@ -89,39 +71,29 @@ export const AllPatterns: Story = {
     };
 
     return (
-      <div>
-        <h1 className="mb-8 text-2xl font-bold">Switch - 実際の使用パターン</h1>
-
-        <div className="max-w-md space-y-8">
-          <section>
-            <h2 className="mb-4 text-lg font-bold">設定リスト</h2>
-            <div className="border-border divide-border divide-y rounded-lg border">
-              <div className="flex items-center justify-between px-4 py-4">
-                <Label htmlFor="sleep">おやすみモード</Label>
-                <Switch id="sleep" checked={sleepEnabled} onCheckedChange={setSleepEnabled} />
-              </div>
-              <div className="flex items-center justify-between px-4 py-4">
-                <Label htmlFor="sync">カレンダー同期</Label>
-                <Switch
-                  id="sync"
-                  checked={syncEnabled}
-                  onCheckedChange={handleSyncChange}
-                  disabled={isLoading}
-                />
-              </div>
-              <div className="flex items-center justify-between px-4 py-4">
-                <Label htmlFor="disabled" className="text-muted-foreground">
-                  無効な設定
-                </Label>
-                <Switch id="disabled" disabled />
-              </div>
-            </div>
-          </section>
+      <div className="flex flex-col items-start gap-6">
+        <div className="border-border divide-border divide-y rounded-lg border">
+          <div className="flex items-center justify-between px-4 py-4">
+            <Label htmlFor="sleep">おやすみモード</Label>
+            <Switch id="sleep" checked={sleepEnabled} onCheckedChange={setSleepEnabled} />
+          </div>
+          <div className="flex items-center justify-between px-4 py-4">
+            <Label htmlFor="sync">カレンダー同期</Label>
+            <Switch
+              id="sync"
+              checked={syncEnabled}
+              onCheckedChange={handleSyncChange}
+              disabled={isLoading}
+            />
+          </div>
+          <div className="flex items-center justify-between px-4 py-4">
+            <Label htmlFor="disabled" className="text-muted-foreground">
+              無効な設定
+            </Label>
+            <Switch id="disabled" disabled />
+          </div>
         </div>
       </div>
     );
-  },
-  parameters: {
-    layout: 'fullscreen',
   },
 };

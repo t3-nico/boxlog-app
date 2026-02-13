@@ -347,3 +347,24 @@ export function recordToCalendarPlan(record: RecordWithPlanInfo): CalendarPlan |
 export function recordsToCalendarPlans(records: RecordWithPlanInfo[]): CalendarPlan[] {
   return records.map(recordToCalendarPlan).filter((plan): plan is CalendarPlan => plan !== null);
 }
+
+/**
+ * CalendarPlanがRecordかどうかを判定
+ * type === 'record' または recordId が存在する場合はRecord
+ */
+export function isRecordEvent(
+  event: Pick<CalendarPlan, 'type' | 'recordId'> | null | undefined,
+): boolean {
+  if (!event) return false;
+  return event.type === 'record' || !!event.recordId;
+}
+
+/**
+ * CalendarPlanのイベントタイプを取得
+ * Record の場合は 'record'、それ以外は 'plan'
+ */
+export function getEventType(
+  event: Pick<CalendarPlan, 'type' | 'recordId'> | null | undefined,
+): 'record' | 'plan' {
+  return isRecordEvent(event) ? 'record' : 'plan';
+}

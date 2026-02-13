@@ -15,7 +15,6 @@
 import { BaseLayout } from '@/components/layout/base-layout';
 import { Providers } from '@/components/providers';
 import { Toaster } from '@/components/ui/toast';
-import { AIInspector } from '@/features/ai';
 import { SessionMonitorProvider } from '@/features/auth/components/SessionMonitorProvider';
 import {
   PlanDeleteConfirmDialog,
@@ -40,7 +39,6 @@ const AppLayout = async ({ children, modal }: AppLayoutProps) => {
           <RecordInspector />
           <PlanDeleteConfirmDialog />
           <RecurringEditConfirmDialog />
-          <AIInspector />
           <Toaster />
           {/* Intercepting Routes: モーダル */}
           {modal}

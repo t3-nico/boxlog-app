@@ -21,6 +21,9 @@ export interface PlanInitialData {
 
 /**
  * Draft Plan（ローカルのみ、未保存のプラン）
+ *
+ * PlanとRecord両方の作成に使用される共通インターフェース
+ * Record作成時には追加フィールド（tagIds, plan_id, note）も使用
  */
 export interface DraftPlan {
   title: string;
@@ -29,6 +32,10 @@ export interface DraftPlan {
   due_date: string | null;
   start_time: string | null;
   end_time: string | null;
+  // Record作成時に使用する追加フィールド
+  tagIds?: string[];
+  plan_id?: string | null;
+  note?: string | null;
 }
 
 /**
@@ -165,6 +172,10 @@ export const usePlanInspectorStore = create<PlanInspectorStore>()(
               due_date: initialData?.due_date ?? null,
               start_time: initialData?.start_time ?? null,
               end_time: initialData?.end_time ?? null,
+              // Record作成時に使用する追加フィールド
+              tagIds: initialData?.tagIds ?? [],
+              plan_id: initialData?.plan_id ?? null,
+              note: initialData?.note ?? null,
             },
             createType,
           },
