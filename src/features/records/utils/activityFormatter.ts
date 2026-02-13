@@ -72,7 +72,7 @@ export function filterVisibleActivities(activities: RecordActivity[]): RecordAct
 export function formatActivity(activity: RecordActivity): RecordActivityDisplay {
   let actionLabel = '';
   let detail: string | undefined;
-  let icon: RecordActivityDisplay['icon'] = 'update';
+  let icon: RecordActivityDisplay['icon'] = 'time';
   let iconColor: ActivityIconColor = 'info';
 
   switch (activity.action_type) {
@@ -84,7 +84,7 @@ export function formatActivity(activity: RecordActivity): RecordActivityDisplay 
 
     case 'updated':
       actionLabel = 'レコードを更新';
-      icon = 'update';
+      icon = 'time';
       iconColor = 'info';
       break;
 
@@ -102,13 +102,13 @@ export function formatActivity(activity: RecordActivity): RecordActivityDisplay 
       if (activity.old_value && activity.new_value) {
         detail = `${activity.old_value} → ${activity.new_value}`;
       }
-      icon = 'update';
+      icon = 'time';
       iconColor = 'info';
       break;
 
     case 'memo_changed':
       actionLabel = 'メモを更新';
-      icon = 'memo';
+      icon = 'time';
       iconColor = 'info';
       break;
 
@@ -136,7 +136,7 @@ export function formatActivity(activity: RecordActivity): RecordActivityDisplay 
         detail = activity.old_value;
       }
       icon = 'tag';
-      iconColor = 'primary';
+      iconColor = 'destructive';
       break;
 
     case 'deleted':
@@ -147,7 +147,7 @@ export function formatActivity(activity: RecordActivity): RecordActivityDisplay 
 
     default:
       actionLabel = '変更';
-      icon = 'update';
+      icon = 'time';
       iconColor = 'info';
   }
 
