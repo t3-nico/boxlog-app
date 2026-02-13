@@ -30,7 +30,7 @@ import { cn } from '@/lib/utils';
 const avatarVariants = cva('relative flex shrink-0 overflow-hidden rounded-full', {
   variants: {
     size: {
-      xs: 'size-6',
+      xs: 'size-5',
       sm: 'size-8',
       default: 'size-10',
       lg: 'size-12',

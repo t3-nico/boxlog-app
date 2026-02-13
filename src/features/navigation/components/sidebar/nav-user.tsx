@@ -77,9 +77,9 @@ export function NavUser({
           type="button"
           className="hover:bg-state-hover data-[state=open]:bg-state-selected flex w-fit items-center gap-2 rounded-lg px-2 py-2 text-left text-sm outline-hidden"
         >
-          <Avatar className="h-6 w-6 rounded-2xl">
+          <Avatar size="xs" className="rounded-2xl">
             {user.avatar ? <AvatarImage src={user.avatar} alt={user.name} /> : null}
-            <AvatarFallback className="rounded-2xl">
+            <AvatarFallback className="bg-foreground text-background rounded-2xl text-xs">
               {user.name.charAt(0).toUpperCase()}
             </AvatarFallback>
           </Avatar>
@@ -95,9 +95,9 @@ export function NavUser({
       >
         <DropdownMenuLabel className="p-0 font-normal">
           <div className="flex items-center gap-2 px-2 py-2 text-left text-sm">
-            <Avatar className="h-6 w-6 rounded-2xl">
+            <Avatar size="xs" className="rounded-2xl">
               {user.avatar ? <AvatarImage src={user.avatar} alt={user.name} /> : null}
-              <AvatarFallback className="rounded-2xl">
+              <AvatarFallback className="bg-foreground text-background rounded-2xl text-xs">
                 {user.name.charAt(0).toUpperCase()}
               </AvatarFallback>
             </Avatar>
