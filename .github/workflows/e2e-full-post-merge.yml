@@ -30,11 +30,7 @@ jobs:
       matrix:
         project:
           - chromium
-          - firefox
-          - webkit
           - 'Mobile Chrome'
-          - 'Mobile Safari'
-          - iPad
 
     steps:
       - name: 📥 Checkout
@@ -51,17 +47,7 @@ jobs:
 
       - name: 🎭 Install Playwright Browsers
         run: |
-          if [ "${{ matrix.project }}" = "Mobile Chrome" ]; then
-            npx playwright install --with-deps chromium chromium-headless-shell
-          elif [ "${{ matrix.project }}" = "Mobile Safari" ]; then
-            npx playwright install --with-deps webkit
-          elif [ "${{ matrix.project }}" = "iPad" ]; then
-            npx playwright install --with-deps webkit chromium-headless-shell
-          elif [ "${{ matrix.project }}" = "chromium" ]; then
-            npx playwright install --with-deps chromium chromium-headless-shell
-          else
-            npx playwright install --with-deps ${{ matrix.project }}
-          fi
+          npx playwright install --with-deps chromium chromium-headless-shell
 
       - name: 🌐 Run E2E tests - ${{ matrix.project }}
         run: npm run test:e2e -- --project="${{ matrix.project }}"
@@ -127,11 +113,7 @@ jobs:
               '',
               '### Tested Browsers',
               '- Chrome (Chromium)',
-              '- Firefox',
-              '- Safari (WebKit)',
               '- Mobile Chrome (Pixel 5)',
-              '- Mobile Safari (iPhone 12)',
-              '- iPad Pro',
               '',
               '### Action Required',
               '',

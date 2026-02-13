@@ -171,9 +171,16 @@ const messages = {
     title: 'カレンダー',
     filter: {
       ungrouped: '未分類',
+      tagMenu: 'タグメニュー',
+      rename: '名前を変更',
+      changeColor: 'カラーを変更',
+      editNote: 'ノートを編集',
       noteLabel: 'ノート',
       noteHint: 'ツールチップに表示されます',
       notePlaceholder: 'ノートを追加...',
+      merge: '他のタグに統合',
+      showOnlyThis: 'このタグだけ表示',
+      addChildTag: '子タグを追加',
     },
     toast: {
       conflictDescription: 'この時間帯には既に予定があります',
