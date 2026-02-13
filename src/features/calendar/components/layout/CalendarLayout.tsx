@@ -164,7 +164,7 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
           <aside
             className={cn(
               'hidden shrink-0 overflow-hidden md:block',
-              !isResizing && 'transition-[width] duration-200 ease-in-out',
+              !isResizing && 'transition-all duration-200',
             )}
             style={{
               width: showSidePanel ? `${percent}%` : 0,
