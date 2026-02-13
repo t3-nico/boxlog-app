@@ -112,9 +112,9 @@ export function usePlanMutations() {
       });
 
       // Toast通知
-      toast.success(t('common.plan.created', { title: newPlan.title }), {
+      toast.success(t('plan.toast.created', { title: newPlan.title }), {
         action: {
-          label: t('common.plan.open'),
+          label: t('plan.open'),
           onClick: () => {
             openInspector(newPlan.id);
           },
@@ -144,7 +144,7 @@ export function usePlanMutations() {
       const errorMessage = error.message.includes('validation.')
         ? t(error.message as Parameters<typeof t>[0])
         : error.message;
-      toast.error(t('common.plan.createFailed', { error: errorMessage }));
+      toast.error(t('plan.toast.createFailed', { error: errorMessage }));
     },
     onSettled: () => {
       // サーバーと同期（念のため）
@@ -272,7 +272,7 @@ export function usePlanMutations() {
           closed: 'Closed',
         };
         const statusLabel = statusMap[variables.data.status] || variables.data.status;
-        toast.success(t('common.plan.statusChanged', { status: statusLabel }));
+        toast.success(t('plan.toast.statusChanged', { status: statusLabel }));
 
         // ステータス変更時は全リストキャッシュを無効化（Open/Closedタブ切り替え反映）
         void utils.plans.list.invalidate(undefined, { refetchType: 'all' });
@@ -283,7 +283,7 @@ export function usePlanMutations() {
       // TIME_OVERLAPエラー（重複防止）の場合はモーダル内でエラー表示（toastなし）
       // それ以外のエラーはtoast表示
       if (!err.message.includes('既に予定があります') && !err.message.includes('TIME_OVERLAP')) {
-        toast.error(t('common.plan.updateFailed'));
+        toast.error(t('plan.toast.updateFailed'));
       }
 
       // エラー時: 全ての plans.list キャッシュをロールバック
@@ -368,7 +368,7 @@ export function usePlanMutations() {
           recurrence_rule: previousPlan.recurrence_rule ?? undefined,
         };
 
-        toast.success(t('common.plan.deleted'), {
+        toast.success(t('plan.toast.deleted'), {
           duration: 10000,
           action: {
             label: t('common.undo'),
@@ -378,7 +378,7 @@ export function usePlanMutations() {
           },
         });
       } else {
-        toast.success(t('common.plan.deleted'));
+        toast.success(t('plan.toast.deleted'));
       }
 
       closeInspector();
@@ -391,7 +391,7 @@ export function usePlanMutations() {
       void utils.plans.getById.invalidate({ id }, { refetchType: 'all' });
     },
     onError: (error, { id }, context) => {
-      toast.error(t('common.plan.deleteFailed', { error: error.message }));
+      toast.error(t('plan.toast.deleteFailed', { error: error.message }));
 
       // エラー時: 楽観的更新をロールバック
       if (context?.previousPlans) {
@@ -451,11 +451,11 @@ export function usePlanMutations() {
       return { previousPlans };
     },
     onSuccess: (result) => {
-      toast.success(t('common.plan.bulkUpdated', { count: result.count }));
+      toast.success(t('plan.toast.bulkUpdated', { count: result.count }));
       void utils.plans.list.invalidate(undefined, { refetchType: 'active' });
     },
     onError: (error, _variables, context) => {
-      toast.error(t('common.plan.bulkUpdateFailed', { error: error.message }));
+      toast.error(t('plan.toast.bulkUpdateFailed', { error: error.message }));
 
       // エラー時: 楽観的更新をロールバック
       if (context?.previousPlans) {
@@ -497,12 +497,12 @@ export function usePlanMutations() {
       return { previousPlans };
     },
     onSuccess: (result) => {
-      toast.success(t('common.plan.bulkDeleted', { count: result.count }));
+      toast.success(t('plan.toast.bulkDeleted', { count: result.count }));
       closeInspector();
       void utils.plans.list.invalidate(undefined, { refetchType: 'all' });
     },
     onError: (error, _variables, context) => {
-      toast.error(t('common.plan.bulkDeleteFailed', { error: error.message }));
+      toast.error(t('plan.toast.bulkDeleteFailed', { error: error.message }));
 
       // エラー時: 楽観的更新をロールバック
       if (context?.previousPlans) {
@@ -545,7 +545,7 @@ export function usePlanMutations() {
       return { previousPlans };
     },
     onSuccess: () => {
-      toast.success(t('common.plan.tagsAdded'));
+      toast.success(t('plan.toast.tagsAdded'));
       // 全てのplans.listクエリを無効化（tagIdフィルター付きも含む）
       void utils.plans.list.invalidate(undefined, { refetchType: 'all' });
       void utils.plans.getTagStats.invalidate(); // タグページの統計を更新
@@ -555,7 +555,7 @@ export function usePlanMutations() {
       if (context?.previousPlans) {
         utils.plans.list.setData(undefined, context.previousPlans);
       }
-      toast.error(t('common.plan.tagsAddFailed', { error: error.message }));
+      toast.error(t('plan.toast.tagsAddFailed', { error: error.message }));
     },
   });
 

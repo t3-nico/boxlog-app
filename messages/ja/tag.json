@@ -119,9 +119,7 @@
       "deleteTitle": "グループを削除",
       "deleteDescription": "グループ「{name}」を削除しますか？グループ内のタグは未分類になります。",
       "changeColor": "カラーを変更",
-      "doubleClickToEdit": "ダブルクリックで名前を編集",
-      "save": "保存",
-      "cancel": "キャンセル"
+      "doubleClickToEdit": "ダブルクリックで名前を編集"
     },
     "selector": {
       "placeholder": "タグを選択...",

@@ -22,8 +22,8 @@ export function PlanDeleteConfirmDialog() {
   const closeDialog = useDeleteConfirmStore((state) => state.closeDialog);
 
   const title = planTitle
-    ? t('common.plan.delete.confirmTitleWithName', { name: planTitle })
-    : t('common.plan.delete.confirmTitle');
+    ? t('plan.delete.confirmTitleWithName', { name: planTitle })
+    : t('plan.delete.confirmTitle');
 
   const handleConfirm = useCallback(async () => {
     if (!onConfirm) return;
@@ -37,10 +37,10 @@ export function PlanDeleteConfirmDialog() {
       onClose={closeDialog}
       onConfirm={handleConfirm}
       title={title}
-      description={t('common.plan.delete.description')}
+      description={t('plan.delete.description')}
       variant="destructive"
-      confirmLabel={t('common.plan.delete.confirm')}
-      loadingLabel={t('common.plan.delete.deleting')}
+      confirmLabel={t('plan.delete.confirm')}
+      loadingLabel={t('plan.delete.deleting')}
     />
   );
 }

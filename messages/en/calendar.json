@@ -151,15 +151,7 @@
       "dropFailed": "Drop failed"
     },
     "actions": {
-      "undo": "Undo",
-      "undone": "Operation undone",
-      "view": "View",
-      "goToToday": "Go to today",
-      "close": "Close"
-    },
-    "navigation": {
-      "previous": "Previous",
-      "next": "Next"
+      "goToToday": "Go to today"
     },
     "performance": {
       "notCalculated": "Not Calculated",
@@ -277,7 +269,6 @@
       "stats": "Statistics",
       "unscheduled": "Unscheduled",
       "searchPlaceholder": "Search plans...",
-      "loading": "Loading...",
       "error": "Failed to load",
       "noPlans": "No unscheduled plans",
       "sortBy": "Sort by",
