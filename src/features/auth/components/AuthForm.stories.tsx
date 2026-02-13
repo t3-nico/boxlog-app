@@ -648,7 +648,7 @@ export const Signup: Story = {
     await expect(emailInput).toHaveValue('signup@example.com');
 
     // パスワード入力
-    const passwordInput = canvas.getByLabelText(/^パスワード$/i);
+    const passwordInput = canvas.getByLabelText(/^パスワード(?!確認)/i);
     await userEvent.type(passwordInput, 'securePass1');
     await expect(passwordInput).toHaveValue('securePass1');
 
