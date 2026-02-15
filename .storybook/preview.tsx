@@ -130,6 +130,34 @@ const messages = {
     selectColor: '{color}を選択',
     previous: '前へ',
     next: '次へ',
+    openMenu: 'メニューを開く',
+  },
+  comingSoon: '近日公開',
+  createNew: {
+    tag: 'タグを作成',
+  },
+  createSheet: {
+    history: '履歴から作成',
+    plan: '予定',
+    record: '記録',
+    template: 'テンプレート',
+  },
+  navUser: {
+    account: 'アカウント',
+    help: 'ヘルプ',
+    helpSubmenu: {
+      contact: 'お問い合わせ',
+      documentation: 'ドキュメント',
+      privacyPolicy: 'プライバシーポリシー',
+      releaseNotes: 'リリースノート',
+      security: 'セキュリティ',
+      termsOfService: '利用規約',
+      tokushoho: '特定商取引法に基づく表記',
+    },
+    logout: 'ログアウト',
+    personalize: 'パーソナライズ',
+    settings: '設定',
+    upgradePlan: 'プランをアップグレードする',
   },
   tags: {
     page: {
@@ -181,6 +209,8 @@ const messages = {
       merge: '他のタグに統合',
       showOnlyThis: 'このタグだけ表示',
       addChildTag: '子タグを追加',
+      changeParent: '親タグを変更',
+      noParent: '親タグなし',
     },
     toast: {
       conflictDescription: 'この時間帯には既に予定があります',
@@ -193,8 +223,21 @@ const messages = {
       markComplete: '完了にする',
       markIncomplete: '未完了に戻す',
     },
+    agenda: 'アジェンダ',
     actions: {
       goToToday: '今日に戻る',
+      close: '閉じる',
+    },
+    views: {
+      agenda: 'アジェンダ',
+      day: '日',
+      daysSubmenu: '日数',
+      generalSettings: '一般設定',
+      multiday: '{count}日間',
+      showWeekNumbers: '週数を表示',
+      showWeekends: '週末を表示',
+      viewSettings: 'ビューの設定',
+      week: '週',
     },
     navigation: {
       previous: '前へ',
@@ -221,6 +264,7 @@ const messages = {
       overdueBy: '{time}超過',
     },
     panel: {
+      loading: '読み込み中...',
       open: 'パネルを開く',
       sortBy: '並び替え',
       groupBy: 'グループ',
@@ -243,6 +287,7 @@ const messages = {
         all: 'すべて',
         open: '未完了',
         closed: '完了',
+        overdue: '期限切れ',
       },
       schedule: {
         label: '日付',
@@ -270,6 +315,7 @@ const messages = {
         none: 'なし',
         workedAt: '日付',
         tags: 'タグ',
+        fulfillmentScore: '充実度',
       },
       recordDateFilter: {
         label: '期間',

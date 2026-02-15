@@ -614,8 +614,8 @@ export const Login: Story = {
     await userEvent.type(emailInput, 'test@example.com');
     await expect(emailInput).toHaveValue('test@example.com');
 
-    // パスワード入力
-    const passwordInput = canvas.getByLabelText(/パスワード/i);
+    // パスワード入力（selector: 'input' でトグルボタンのaria-labelを除外）
+    const passwordInput = canvas.getByLabelText(/パスワード/i, { selector: 'input' });
     await userEvent.type(passwordInput, 'password123');
     await expect(passwordInput).toHaveValue('password123');
 
@@ -647,13 +647,13 @@ export const Signup: Story = {
     await userEvent.type(emailInput, 'signup@example.com');
     await expect(emailInput).toHaveValue('signup@example.com');
 
-    // パスワード入力
-    const passwordInput = canvas.getByLabelText(/^パスワード(?!確認)/i);
+    // パスワード入力（selector: 'input' でトグルボタンのaria-labelを除外）
+    const passwordInput = canvas.getByLabelText(/^パスワード(?!確認)/i, { selector: 'input' });
     await userEvent.type(passwordInput, 'securePass1');
     await expect(passwordInput).toHaveValue('securePass1');
 
     // パスワード確認入力
-    const confirmInput = canvas.getByLabelText(/パスワード確認/i);
+    const confirmInput = canvas.getByLabelText(/パスワード確認/i, { selector: 'input' });
     await userEvent.type(confirmInput, 'securePass1');
     await expect(confirmInput).toHaveValue('securePass1');
 
