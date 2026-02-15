@@ -253,7 +253,6 @@ export function useDragHandler({
         userId: plan.userId,
         location: plan.location,
         url: plan.url,
-        allDay: plan.allDay,
         priority: plan.priority,
         calendarId: plan.calendarId,
       };

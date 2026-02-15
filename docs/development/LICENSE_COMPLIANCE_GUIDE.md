@@ -1,6 +1,6 @@
 # License Compliance Guide - 開発者向け
 
-BoxLog OSS License Compliance System の使い方ガイド
+Dayopt OSS License Compliance System の使い方ガイド
 
 ## 📋 目次
 
@@ -324,10 +324,6 @@ BSD-2-Clause: 12 packages (1.3%)
 
 ### 内部ドキュメント
 
-- [LICENSE_COMPLIANCE_PLAN.md](../legal/LICENSE_COMPLIANCE_PLAN.md) - 全体計画
-- [COMMANDS.md](./COMMANDS.md) - 全コマンド一覧
-- [ISSUE_MANAGEMENT.md](./ISSUE_MANAGEMENT.md) - Issue管理
-
 ### 外部リソース
 
 - [SPDX License List](https://spdx.org/licenses/) - 公式ライセンス一覧
@@ -345,4 +341,4 @@ BSD-2-Clause: 12 packages (1.3%)
 
 ---
 
-**📖 最終更新**: 2025-10-15 | **担当**: BoxLog Development Team
+**📖 最終更新**: 2025-10-15 | **担当**: Dayopt Development Team

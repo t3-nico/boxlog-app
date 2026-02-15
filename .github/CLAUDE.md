@@ -1,6 +1,6 @@
 # .github/ - CI/CD・GitHub設定
 
-BoxLogプロジェクトのGitHub関連設定（一人開発最適化版）
+DayoptプロジェクトのGitHub関連設定（一人開発最適化版）
 
 ## 🎯 自動化の範囲
 
@@ -124,7 +124,7 @@ Vercel Dashboard → Environment Variables
 
 - [ワークフロー詳細](./workflows/README.md)
 - [コミット規約](../docs/development/COMMIT_RULES.md)
-- [コマンド一覧](../docs/development/COMMANDS.md)
+- Storybook → Docs/Guides/Commands
 
 ---
 

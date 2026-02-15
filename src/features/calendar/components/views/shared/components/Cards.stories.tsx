@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
 
@@ -7,7 +7,7 @@ import { PlanCard } from './PlanCard/PlanCard';
 
 /** カレンダー上のカード（Plan/Record/Draft）の全バリエーション。 */
 const meta = {
-  title: 'Features/Calendar/Cards',
+  title: 'Features/Calendar/Views/Cards',
   parameters: {
     layout: 'padded',
   },

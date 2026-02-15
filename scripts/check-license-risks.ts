@@ -236,8 +236,8 @@ function findUnknownLicenses(
 ): Array<{ name: string; license: string }> {
   return Object.entries(packages)
     .filter(([name, info]) => {
-      // 自プロジェクト（boxlog-app）を除外
-      if (name.startsWith('boxlog-app@')) {
+      // 自プロジェクト（dayopt）を除外
+      if (name.startsWith('dayopt@')) {
         return false;
       }
 

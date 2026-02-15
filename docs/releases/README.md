@@ -1,6 +1,6 @@
 # リリース管理
 
-このディレクトリには、BoxLogの各バージョンのリリースノートとバージョニング管理に関するドキュメントが含まれています。
+このディレクトリには、Dayoptの各バージョンのリリースノートとバージョニング管理に関するドキュメントが含まれています。
 
 ## ⚠️ リリース作業を行う前に必読
 
@@ -27,7 +27,7 @@ docs/releases/
 
 ## 📋 最新リリース
 
-最新のリリース情報は [GitHub Releases](https://github.com/t3-nico/boxlog-app/releases) で確認できます。
+最新のリリース情報は [GitHub Releases](https://github.com/t3-nico/dayopt/releases) で確認できます。
 
 リリースノート本体は、プロジェクトルートの `RELEASE_NOTES_v*.md` ファイルに記載されています。
 
@@ -57,11 +57,11 @@ docs/releases/
 
 - [Semantic Versioning](https://semver.org/)
 - [Keep a Changelog](https://keepachangelog.com/)
-- [GitHub Releases](https://github.com/t3-nico/boxlog-app/releases)
+- [GitHub Releases](https://github.com/t3-nico/dayopt/releases)
 
 ## 📝 バージョニングルール
 
-BoxLogは **Semantic Versioning 2.0.0** に準拠しています。
+Dayoptは **Semantic Versioning 2.0.0** に準拠しています。
 
 ### バージョン形式: `X.Y.Z`
 
@@ -75,4 +75,4 @@ BoxLogは **Semantic Versioning 2.0.0** に準拠しています。
 
 **種類**: 📙 リファレンス
 **最終更新**: 2025-12-11
-**所有者**: BoxLog 開発チーム
+**所有者**: Dayopt 開発チーム

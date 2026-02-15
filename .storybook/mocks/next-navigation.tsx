@@ -25,6 +25,10 @@ export function redirect() {
   return undefined;
 }
 
+export function permanentRedirect() {
+  return undefined;
+}
+
 export function notFound() {
   return undefined;
 }

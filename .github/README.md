@@ -1,6 +1,6 @@
 # .github/ - GitHub設定説明
 
-BoxLogプロジェクトのGitHub関連ファイル・設定。
+DayoptプロジェクトのGitHub関連ファイル・設定。
 
 ## 📁 ディレクトリ構造
 
@@ -151,8 +151,6 @@ main/devへマージ
 ## 🔗 関連ドキュメント
 
 - **CI/CDルール**: [`CLAUDE.md`](./CLAUDE.md)
-- **Issue管理**: [`../docs/development/ISSUE_MANAGEMENT.md`](../docs/development/ISSUE_MANAGEMENT.md)
-- **コミット規約**: [`../docs/development/COMMIT_RULES.md`](../docs/development/COMMIT_RULES.md)
 
 ---
 

@@ -1,6 +1,6 @@
 # リリースプロセス
 
-BoxLogの正式なリリース作業手順を定義します。
+Dayoptの正式なリリース作業手順を定義します。
 
 ## ⚠️ 必ず最初に確認
 
@@ -171,7 +171,7 @@ EOF
 )"
 
 # または GitHub UI から手動作成
-# https://github.com/t3-nico/boxlog-app/compare/main...dev
+# https://github.com/t3-nico/dayopt/compare/main...dev
 ```
 
 #### 0.4 CI/CD パイプライン確認
@@ -239,7 +239,7 @@ gh pr diff -- src/middleware.ts
 gh pr merge --squash --delete-branch=false
 
 # または GitHub UI から手動マージ（推奨）
-# https://github.com/t3-nico/boxlog-app/pulls
+# https://github.com/t3-nico/dayopt/pulls
 ```
 
 **確認すべき項目**:
@@ -284,7 +284,7 @@ git tag --sort=-creatordate | head -5
 
 # 前回リリース以降のPR一覧を取得
 gh pr list --state merged --base main --limit 100 --json number,title,mergedAt \
-  | jq -r '.[] | select(.mergedAt > "YYYY-MM-DDT00:00:00Z") | "- [#\(.number)](https://github.com/t3-nico/boxlog-app/pull/\(.number)) - \(.title)"'
+  | jq -r '.[] | select(.mergedAt > "YYYY-MM-DDT00:00:00Z") | "- [#\(.number)](https://github.com/t3-nico/dayopt/pull/\(.number)) - \(.title)"'
 ```
 
 #### 2.2 リリースノートファイル作成
@@ -343,7 +343,7 @@ vim CHANGELOG.md
 
 - 新機能の説明
 
-[0.1.0]: https://github.com/t3-nico/boxlog-app/releases/tag/v0.1.0
+[0.1.0]: https://github.com/t3-nico/dayopt/releases/tag/v0.1.0
 ```
 
 ### Phase 3: バージョンアップ
@@ -442,7 +442,7 @@ gh release create v${VERSION} \
   --notes-file docs/releases/RELEASE_NOTES_v${VERSION}.md
 
 # または GitHub UI から作成
-# https://github.com/t3-nico/boxlog-app/releases/new
+# https://github.com/t3-nico/dayopt/releases/new
 ```
 
 #### 5.3 Release確認
@@ -458,7 +458,7 @@ gh release view v${VERSION} --web
 
 ```bash
 # Vercelのデプロイ状況を確認
-# https://vercel.com/t3-nico/boxlog-app
+# https://vercel.com/t3-nico/dayopt
 
 # デプロイログを確認
 npm run deploy:stats
@@ -471,7 +471,7 @@ npm run deploy:stats
 npm run deploy:health
 
 # 本番環境にアクセスして動作確認
-# https://boxlog-app.vercel.app
+# https://dayopt.vercel.app
 ```
 
 **確認項目:**
@@ -488,7 +488,7 @@ npm run deploy:health
 
 ```bash
 # GitHub UI でマイルストーンをクローズ
-# https://github.com/t3-nico/boxlog-app/milestones
+# https://github.com/t3-nico/dayopt/milestones
 ```
 
 ### 2. 関連Issueの更新
@@ -496,7 +496,7 @@ npm run deploy:health
 ```bash
 # リリースされたことをIssueにコメント
 gh issue comment <issue_number> \
-  --body "Released in v${VERSION}: https://github.com/t3-nico/boxlog-app/releases/tag/v${VERSION}"
+  --body "Released in v${VERSION}: https://github.com/t3-nico/dayopt/releases/tag/v${VERSION}"
 ```
 
 ### 3. ドキュメントの更新
@@ -513,7 +513,7 @@ gh issue comment <issue_number> \
 
 ```bash
 # Sentryでエラー監視
-# https://sentry.io/organizations/boxlog/issues/
+# https://sentry.io/organizations/dayopt/issues/
 
 # アナリティクス確認
 npm run analytics:stats
@@ -536,7 +536,7 @@ npm run analytics:stats
 npm run deploy:rollback
 
 # または Vercel UI から前のデプロイをPromote
-# https://vercel.com/t3-nico/boxlog-app/deployments
+# https://vercel.com/t3-nico/dayopt/deployments
 ```
 
 #### 3. GitHub Releaseの対応
@@ -604,14 +604,14 @@ gh auth status
 gh auth login
 
 # 手動で作成
-# https://github.com/t3-nico/boxlog-app/releases/new
+# https://github.com/t3-nico/dayopt/releases/new
 ```
 
 ### Q: デプロイが失敗する
 
 ```bash
 # Vercelのログを確認
-# https://vercel.com/t3-nico/boxlog-app/deployments
+# https://vercel.com/t3-nico/dayopt/deployments
 
 # ローカルでビルド確認
 npm run build
@@ -735,4 +735,4 @@ npm run vercel:check
 
 **種類**: 📙 リファレンス
 **最終更新**: 2025-12-11
-**所有者**: BoxLog 開発チーム
+**所有者**: Dayopt 開発チーム

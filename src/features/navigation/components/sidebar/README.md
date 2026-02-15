@@ -1,6 +1,6 @@
 # Sidebar コンポーネント
 
-BoxLog App の**L2: Contextual Navigation** - ページ固有のコンテキストとアクション
+Dayopt App の**L2: Contextual Navigation** - ページ固有のコンテキストとアクション
 
 ## 📊 役割定義（AppBar との明確な違い）
 

@@ -6,7 +6,7 @@ import { Tag, X } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { HoverTooltip } from '@/components/ui/tooltip';
-import { TagSelectCombobox } from '@/features/plans/components/shared/TagSelectCombobox';
+import { TagSelectCombobox } from '@/features/tags/components/TagSelectCombobox';
 import { useTags } from '@/features/tags/hooks';
 import { cn } from '@/lib/utils';
 

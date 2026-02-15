@@ -10,7 +10,7 @@
 
 ## 概要
 
-BoxLogは [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html) に準拠したバージョン管理を行います。
+Dayoptは [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html) に準拠したバージョン管理を行います。
 
 ## Semantic Versioning
 
@@ -102,7 +102,7 @@ gh release create vX.Y.Z \
   --notes-file .github/RELEASE_TEMPLATE.md
 
 # または GitHub UI から手動作成
-# https://github.com/t3-nico/boxlog-app/releases/new
+# https://github.com/t3-nico/dayopt/releases/new
 ```
 
 ## リリースフロー
@@ -194,4 +194,4 @@ npm version prerelease --preid=rc
 
 **種類**: 📙 リファレンス
 **最終更新**: 2025-12-11
-**所有者**: BoxLog 開発チーム
+**所有者**: Dayopt 開発チーム

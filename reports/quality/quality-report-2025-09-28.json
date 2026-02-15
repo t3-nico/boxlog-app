@@ -22,7 +22,7 @@
           "line": 40,
           "column": 38,
           "code": 2339,
-          "message": "Property 'nextjsRouterInstrumentation' does not exist on type 'typeof import(\"/Users/takayasutomoya/Desktop/boxlog-app/node_modules/@sentry/nextjs/build/types/index.types\")'."
+          "message": "Property 'nextjsRouterInstrumentation' does not exist on type 'typeof import(\"/Users/takayasutomoya/Desktop/dayopt/node_modules/@sentry/nextjs/build/types/index.types\")'."
         },
         {
           "file": "src/app/(app)/settings/chronotype/page.tsx",
@@ -2192,14 +2192,14 @@
           "line": 67,
           "column": 15,
           "code": 2322,
-          "message": "Type '(event: import(\"/Users/takayasutomoya/Desktop/boxlog-app/src/features/events/types/events\").CalendarEvent) => void' is not assignable to type '(event: import(\"/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/types/calendar.types\").CalendarEvent) => void'."
+          "message": "Type '(event: import(\"/Users/takayasutomoya/Desktop/dayopt/src/features/events/types/events\").CalendarEvent) => void' is not assignable to type '(event: import(\"/Users/takayasutomoya/Desktop/dayopt/src/features/calendar/types/calendar.types\").CalendarEvent) => void'."
         },
         {
           "file": "src/components/layout/inspector/inspector-content.tsx",
           "line": 68,
           "column": 15,
           "code": 2322,
-          "message": "Type '(event: import(\"/Users/takayasutomoya/Desktop/boxlog-app/src/features/events/types/events\").CalendarEvent) => void' is not assignable to type '(event: import(\"/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/types/calendar.types\").CalendarEvent) => void'."
+          "message": "Type '(event: import(\"/Users/takayasutomoya/Desktop/dayopt/src/features/events/types/events\").CalendarEvent) => void' is not assignable to type '(event: import(\"/Users/takayasutomoya/Desktop/dayopt/src/features/calendar/types/calendar.types\").CalendarEvent) => void'."
         },
         {
           "file": "src/components/layout/inspector/inspector-header.tsx",
@@ -4558,7 +4558,7 @@
           "line": 960,
           "column": 11,
           "code": 2741,
-          "message": "Property 'type' is missing in type 'import(\"/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/types/calendar.types\").CalendarEvent' but required in type 'import(\"/Users/takayasutomoya/Desktop/boxlog-app/src/features/events/types/events\").CalendarEvent'."
+          "message": "Property 'type' is missing in type 'import(\"/Users/takayasutomoya/Desktop/dayopt/src/features/calendar/types/calendar.types\").CalendarEvent' but required in type 'import(\"/Users/takayasutomoya/Desktop/dayopt/src/features/events/types/events\").CalendarEvent'."
         },
         {
           "file": "src/features/calendar/components/CalendarSkeleton.tsx",
@@ -5965,14 +5965,14 @@
           "line": 69,
           "column": 5,
           "code": 2322,
-          "message": "Type '((event: import(\"/Users/takayasutomoya/Desktop/boxlog-app/src/features/events/types/events\").CalendarEvent) => void) | undefined' is not assignable to type '((event: CalendarEvent) => void) | undefined'."
+          "message": "Type '((event: import(\"/Users/takayasutomoya/Desktop/dayopt/src/features/events/types/events\").CalendarEvent) => void) | undefined' is not assignable to type '((event: CalendarEvent) => void) | undefined'."
         },
         {
           "file": "src/features/calendar/components/views/ThreeDayView/components/ThreeDayContent.tsx",
           "line": 71,
           "column": 5,
           "code": 2322,
-          "message": "Type 'import(\"/Users/takayasutomoya/Desktop/boxlog-app/src/features/events/types/events\").CalendarEvent[]' is not assignable to type 'CalendarEvent[]'."
+          "message": "Type 'import(\"/Users/takayasutomoya/Desktop/dayopt/src/features/events/types/events\").CalendarEvent[]' is not assignable to type 'CalendarEvent[]'."
         },
         {
           "file": "src/features/calendar/components/views/ThreeDayView/components/ThreeDayContent.tsx",
@@ -6203,14 +6203,14 @@
           "line": 70,
           "column": 5,
           "code": 2322,
-          "message": "Type '((event: import(\"/Users/takayasutomoya/Desktop/boxlog-app/src/features/events/types/events\").CalendarEvent) => void) | undefined' is not assignable to type '((event: CalendarEvent) => void) | undefined'."
+          "message": "Type '((event: import(\"/Users/takayasutomoya/Desktop/dayopt/src/features/events/types/events\").CalendarEvent) => void) | undefined' is not assignable to type '((event: CalendarEvent) => void) | undefined'."
         },
         {
           "file": "src/features/calendar/components/views/TwoWeekView/components/TwoWeekContent.tsx",
           "line": 72,
           "column": 5,
           "code": 2322,
-          "message": "Type 'import(\"/Users/takayasutomoya/Desktop/boxlog-app/src/features/events/types/events\").CalendarEvent[]' is not assignable to type 'CalendarEvent[]'."
+          "message": "Type 'import(\"/Users/takayasutomoya/Desktop/dayopt/src/features/events/types/events\").CalendarEvent[]' is not assignable to type 'CalendarEvent[]'."
         },
         {
           "file": "src/features/calendar/components/views/TwoWeekView/components/TwoWeekContent.tsx",
@@ -6329,14 +6329,14 @@
           "line": 70,
           "column": 5,
           "code": 2322,
-          "message": "Type '((event: import(\"/Users/takayasutomoya/Desktop/boxlog-app/src/features/events/types/events\").CalendarEvent) => void) | undefined' is not assignable to type '((event: CalendarEvent) => void) | undefined'."
+          "message": "Type '((event: import(\"/Users/takayasutomoya/Desktop/dayopt/src/features/events/types/events\").CalendarEvent) => void) | undefined' is not assignable to type '((event: CalendarEvent) => void) | undefined'."
         },
         {
           "file": "src/features/calendar/components/views/WeekView/components/WeekContent.tsx",
           "line": 72,
           "column": 5,
           "code": 2322,
-          "message": "Type 'import(\"/Users/takayasutomoya/Desktop/boxlog-app/src/features/events/types/events\").CalendarEvent[]' is not assignable to type 'CalendarEvent[]'."
+          "message": "Type 'import(\"/Users/takayasutomoya/Desktop/dayopt/src/features/events/types/events\").CalendarEvent[]' is not assignable to type 'CalendarEvent[]'."
         },
         {
           "file": "src/features/calendar/components/views/WeekView/components/WeekContent.tsx",
@@ -8387,21 +8387,21 @@
           "line": 321,
           "column": 5,
           "code": 2322,
-          "message": "Type 'import(\"/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/types/calendar.types\").CalendarEvent | null | undefined' is not assignable to type 'import(\"/Users/takayasutomoya/Desktop/boxlog-app/src/features/events/types/events\").CalendarEvent | null | undefined'."
+          "message": "Type 'import(\"/Users/takayasutomoya/Desktop/dayopt/src/features/calendar/types/calendar.types\").CalendarEvent | null | undefined' is not assignable to type 'import(\"/Users/takayasutomoya/Desktop/dayopt/src/features/events/types/events\").CalendarEvent | null | undefined'."
         },
         {
           "file": "src/features/events/components/inspector/EventDetailInspectorContent.tsx",
           "line": 325,
           "column": 5,
           "code": 2322,
-          "message": "Type '((event: import(\"/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/types/calendar.types\").CalendarEvent) => void) | undefined' is not assignable to type '((event: import(\"/Users/takayasutomoya/Desktop/boxlog-app/src/features/events/types/events\").CalendarEvent) => void) | undefined'."
+          "message": "Type '((event: import(\"/Users/takayasutomoya/Desktop/dayopt/src/features/calendar/types/calendar.types\").CalendarEvent) => void) | undefined' is not assignable to type '((event: import(\"/Users/takayasutomoya/Desktop/dayopt/src/features/events/types/events\").CalendarEvent) => void) | undefined'."
         },
         {
           "file": "src/features/events/components/inspector/EventDetailInspectorContent.tsx",
           "line": 326,
           "column": 5,
           "code": 2322,
-          "message": "Type '((event: import(\"/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/types/calendar.types\").CalendarEvent) => void) | undefined' is not assignable to type '((event: import(\"/Users/takayasutomoya/Desktop/boxlog-app/src/features/events/types/events\").CalendarEvent) => void) | undefined'."
+          "message": "Type '((event: import(\"/Users/takayasutomoya/Desktop/dayopt/src/features/calendar/types/calendar.types\").CalendarEvent) => void) | undefined' is not assignable to type '((event: import(\"/Users/takayasutomoya/Desktop/dayopt/src/features/events/types/events\").CalendarEvent) => void) | undefined'."
         },
         {
           "file": "src/features/events/components/inspector/EventDetailInspectorContent.tsx",
@@ -8492,7 +8492,7 @@
           "line": 62,
           "column": 5,
           "code": 2322,
-          "message": "Type 'import(\"/Users/takayasutomoya/Desktop/boxlog-app/src/features/events/types/events\").Reminder[]' is not assignable to type 'Reminder[]'."
+          "message": "Type 'import(\"/Users/takayasutomoya/Desktop/dayopt/src/features/events/types/events\").Reminder[]' is not assignable to type 'Reminder[]'."
         },
         {
           "file": "src/features/events/components/inspector/hooks/useEventDetailInspector.ts",
@@ -9514,7 +9514,7 @@
           "line": 58,
           "column": 9,
           "code": 2322,
-          "message": "Type 'Task[]' is not assignable to type 'import(\"/Users/takayasutomoya/Desktop/boxlog-app/src/types/unified\").Task[]'."
+          "message": "Type 'Task[]' is not assignable to type 'import(\"/Users/takayasutomoya/Desktop/dayopt/src/types/unified\").Task[]'."
         },
         {
           "file": "src/features/settings/components/account-settings.tsx",
@@ -10095,7 +10095,7 @@
           "line": 407,
           "column": 22,
           "code": 2322,
-          "message": "Type 'import(\"/Users/takayasutomoya/Desktop/boxlog-app/src/types/tags\").Tag | null' is not assignable to type 'Tag | null'."
+          "message": "Type 'import(\"/Users/takayasutomoya/Desktop/dayopt/src/types/tags\").Tag | null' is not assignable to type 'Tag | null'."
         },
         {
           "file": "src/features/trash/components/TrashActionButtons.tsx",
@@ -10802,14 +10802,14 @@
           "line": 31,
           "column": 54,
           "code": 2345,
-          "message": "Argument of type 'import(\"/Users/takayasutomoya/Desktop/boxlog-app/node_modules/@supabase/auth-js/dist/module/lib/types\").User | null' is not assignable to parameter of type 'User | null'."
+          "message": "Argument of type 'import(\"/Users/takayasutomoya/Desktop/dayopt/node_modules/@supabase/auth-js/dist/module/lib/types\").User | null' is not assignable to parameter of type 'User | null'."
         },
         {
           "file": "src/hooks/useSidebarMenu.ts",
           "line": 35,
           "column": 41,
           "code": 2345,
-          "message": "Argument of type 'import(\"/Users/takayasutomoya/Desktop/boxlog-app/node_modules/@supabase/auth-js/dist/module/lib/types\").User | null' is not assignable to parameter of type 'User | null'."
+          "message": "Argument of type 'import(\"/Users/takayasutomoya/Desktop/dayopt/node_modules/@supabase/auth-js/dist/module/lib/types\").User | null' is not assignable to parameter of type 'User | null'."
         },
         {
           "file": "src/hooks/useSidebarMenu.ts",
@@ -14855,7 +14855,7 @@
           "line": 203,
           "column": 41,
           "code": 2339,
-          "message": "Property 'getCurrentHub' does not exist on type 'typeof import(\"/Users/takayasutomoya/Desktop/boxlog-app/node_modules/@sentry/nextjs/build/types/index.types\")'."
+          "message": "Property 'getCurrentHub' does not exist on type 'typeof import(\"/Users/takayasutomoya/Desktop/dayopt/node_modules/@sentry/nextjs/build/types/index.types\")'."
         },
         {
           "file": "src/lib/sentry-performance.ts",
@@ -14876,7 +14876,7 @@
           "line": 137,
           "column": 21,
           "code": 2339,
-          "message": "Property 'onFID' does not exist on type 'typeof import(\"/Users/takayasutomoya/Desktop/boxlog-app/node_modules/web-vitals/dist/modules/index\")'."
+          "message": "Property 'onFID' does not exist on type 'typeof import(\"/Users/takayasutomoya/Desktop/dayopt/node_modules/web-vitals/dist/modules/index\")'."
         },
         {
           "file": "src/lib/sentry-performance.ts",

@@ -3,7 +3,7 @@
 /**
  * ドキュメント・コード整合性監査システム
  *
- * BoxLogの26個のドキュメントと実際のコードの整合性をチェック
+ * Dayoptの26個のドキュメントと実際のコードの整合性をチェック
  * Issue #79の実装
  */
 
@@ -48,7 +48,7 @@ class DocsConsistencyChecker {
 
   // メイン実行
   async run() {
-    log.title('BoxLog ドキュメント・コード整合性監査システム')
+    log.title('Dayopt ドキュメント・コード整合性監査システム')
 
     console.log(`📊 監査対象:`)
     console.log(`  - ドキュメント: ${this.countMarkdownFiles()} MDファイル`)

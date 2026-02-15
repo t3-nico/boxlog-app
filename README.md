@@ -1,4 +1,4 @@
-# BoxLog App
+# Dayopt App
 
 Next.js 14 + TypeScript で構築されたタスク管理アプリケーション
 
@@ -65,33 +65,30 @@ export const MyComponent: FC<Props> = ...  // React.FC非推奨
 
 ### 開発者向け
 
-| ドキュメント                                                     | 内容                                   |
-| ---------------------------------------------------------------- | -------------------------------------- |
-| [`CLAUDE.md`](./CLAUDE.md)                                       | AI意思決定プロトコル・コーディング規約 |
-| [`src/CLAUDE.md`](./src/CLAUDE.md)                               | 実装リファレンス・コード例             |
-| [`docs/README.md`](./docs/README.md)                             | プロジェクト全体概要                   |
-| [`docs/development/COMMANDS.md`](./docs/development/COMMANDS.md) | 全コマンド一覧                         |
+| ドキュメント                     | 内容                                   |
+| -------------------------------- | -------------------------------------- |
+| [`CLAUDE.md`](./CLAUDE.md)       | AI意思決定プロトコル・コーディング規約 |
+| Storybook → Docs/Guides/Commands | 全コマンド一覧                         |
 
 ### 設計・アーキテクチャ
 
-| ドキュメント                                                                                                     | 内容                                 |
-| ---------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
-| Storybook（`npm run storybook`）                                                                                 | デザインシステム（Tokens/_, Docs/_） |
-| [`docs/architecture/STATE_MANAGEMENT_DECISION_GUIDE.md`](./docs/architecture/STATE_MANAGEMENT_DECISION_GUIDE.md) | 状態管理の判断基準                   |
-| [`docs/architecture/ERROR_HANDLING.md`](./docs/architecture/ERROR_HANDLING.md)                                   | エラーハンドリング                   |
+| ドキュメント                                   | 内容                                 |
+| ---------------------------------------------- | ------------------------------------ |
+| Storybook（`npm run storybook`）               | デザインシステム（Tokens/_, Docs/_） |
+| Storybook → Docs/Architecture/State Management | 状態管理の判断基準                   |
+| Storybook → Docs/Architecture/Error Patterns   | エラーハンドリング                   |
 
 ### 品質・テスト
 
-| ドキュメント                                                                                           | 内容                   |
-| ------------------------------------------------------------------------------------------------------ | ---------------------- |
-| [`docs/testing/README.md`](./docs/testing/README.md)                                                   | テスト戦略             |
-| [`docs/performance/BUNDLE_MONITORING.md`](./docs/performance/BUNDLE_MONITORING.md)                     | Bundle監視システム     |
-| [`docs/performance/ACCESSIBILITY_TESTING_GUIDE.md`](./docs/performance/ACCESSIBILITY_TESTING_GUIDE.md) | アクセシビリティテスト |
-| [`docs/development/ESLINT_HYBRID_APPROACH.md`](./docs/development/ESLINT_HYBRID_APPROACH.md)           | ESLint設定             |
+| ドキュメント                              | 内容                   |
+| ----------------------------------------- | ---------------------- |
+| Storybook → Docs/Test Strategy            | テスト戦略             |
+| Storybook → Docs/Guides/Bundle Monitoring | Bundle監視システム     |
+| Storybook → Docs/Accessibility            | アクセシビリティテスト |
 
 ## 🛡️ コード品質管理
 
-BoxLogでは企業レベルの品質管理システムを採用：
+Dayoptでは企業レベルの品質管理システムを採用：
 
 ### ESLint 8分野強化
 
@@ -125,7 +122,7 @@ npm run test:e2e    # E2Eテスト
 
 ## 🙏 Acknowledgments
 
-BoxLogは以下のオープンソースプロジェクトを利用しています：
+Dayoptは以下のオープンソースプロジェクトを利用しています：
 
 ### UI Components & Design
 

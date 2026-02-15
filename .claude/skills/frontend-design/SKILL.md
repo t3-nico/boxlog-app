@@ -194,7 +194,7 @@ className = 'p-3 gap-5'; // 12px, 20px
 ## 参照リンク
 
 - Storybook（`npm run storybook`）- 詳細なトークン定義
-- [src/CLAUDE.md](src/CLAUDE.md) - コーディング規約
+- [CLAUDE.md](../../../CLAUDE.md) - コーディング規約
 - [globals.css](src/styles/globals.css) - CSS変数定義
 
 ---

@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import {
   LogOut,
   Mail,
@@ -10,6 +10,7 @@ import {
   UserPlus,
 } from 'lucide-react';
 import { useState } from 'react';
+import { expect, userEvent, within } from 'storybook/test';
 
 import { Button } from './button';
 import {
@@ -64,6 +65,19 @@ export const Default: Story = {
       </DropdownMenuContent>
     </DropdownMenu>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // トリガーボタンをクリックしてメニューを開く
+    const triggerButton = canvas.getByRole('button', { name: /アクション/i });
+    await userEvent.click(triggerButton);
+
+    // メニューアイテムが表示される（ポータル経由）
+    const body = within(document.body);
+    await expect(body.getByText('プロフィール')).toBeInTheDocument();
+    await expect(body.getByText('設定')).toBeInTheDocument();
+    await expect(body.getByText('ログアウト')).toBeInTheDocument();
+  },
 };
 
 /** ユーザーメニュー（ラベルあり）。ユーザー情報をラベルとして表示、誰のメニューかコンテキストを明示。 */

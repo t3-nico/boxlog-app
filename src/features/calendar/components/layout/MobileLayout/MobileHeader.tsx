@@ -47,12 +47,17 @@ export const MobileHeader = ({
   const [isViewMenuOpen, setIsViewMenuOpen] = useState(false);
   const weekNumber = getWeek(currentDate, { weekStartsOn: 1 });
 
-  const viewLabels: Record<CalendarViewType, string> = {
-    day: t('calendar.mobile.header.viewLabels.day'),
-    '3day': t('calendar.mobile.header.viewLabels.3day'),
-    '5day': t('calendar.mobile.header.viewLabels.5day'),
-    week: t('calendar.mobile.header.viewLabels.week'),
-    agenda: t('calendar.mobile.header.viewLabels.agenda'),
+  const getViewLabel = (view: CalendarViewType): string => {
+    const labels: Record<string, string> = {
+      day: t('calendar.mobile.header.viewLabels.day'),
+      week: t('calendar.mobile.header.viewLabels.week'),
+      agenda: t('calendar.mobile.header.viewLabels.agenda'),
+    };
+    if (labels[view]) return labels[view];
+    // MultiDayView（2day〜9day）
+    const match = view.match(/^(\d+)day$/);
+    if (match) return t('calendar.views.multiday', { count: parseInt(match[1]!) });
+    return view;
   };
 
   // jsx-no-bind optimization: Navigation handlers
@@ -151,7 +156,7 @@ export const MobileHeader = ({
               onClick={handleViewMenuOpen}
               className="text-muted-foreground hover:bg-state-hover rounded px-2 py-1 text-xs transition-colors"
             >
-              {viewLabels[viewType] || viewType}
+              {getViewLabel(viewType)}
               {t('calendar.mobile.header.viewSuffix')}
             </button>
           </>
@@ -194,17 +199,17 @@ export const MobileHeader = ({
           {/* メニュー */}
           <div className="bg-background border-border absolute top-full left-1/2 z-50 mt-2 w-48 -translate-x-1/2 rounded-2xl border shadow-lg">
             <div className="py-2">
-              {Object.entries(viewLabels).map(([value, label]) => (
+              {(['day', 'week', '3day', '5day', 'agenda'] as const).map((value) => (
                 <button
                   type="button"
                   key={value}
-                  onClick={createViewChangeHandler(value as CalendarViewType)}
+                  onClick={createViewChangeHandler(value)}
                   className={cn(
                     'hover:bg-state-hover w-full px-4 py-4 text-left text-sm transition-colors',
                     viewType === value && 'bg-state-selected text-foreground font-normal',
                   )}
                 >
-                  {label}
+                  {getViewLabel(value)}
                   {t('calendar.mobile.header.viewSuffix')}
                 </button>
               ))}

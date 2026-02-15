@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta = {
   title: 'Tokens/Colors',
@@ -43,7 +43,7 @@ function ColorSwatch({
 function ColorGroup({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="mb-8">
-      <h3 className="border-border mb-4 border-b pb-2 text-lg font-bold">{title}</h3>
+      <h2 className="border-border mb-4 border-b pb-2 text-lg font-bold">{title}</h2>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">{children}</div>
     </div>
   );
@@ -182,8 +182,8 @@ export const Surface: Story = {
         </div>
 
         <div className="bg-overlay border-border rounded-lg border p-6">
-          <div className="font-bold text-white">Overlay</div>
-          <div className="text-sm text-white/70">
+          <div className="text-foreground font-bold">Overlay</div>
+          <div className="text-muted-foreground text-sm">
             モーダル背景（半透明・MD3 scrim）。Dialog/Sheetの後ろに敷く背景幕。
           </div>
         </div>
@@ -198,24 +198,28 @@ export const Semantic: Story = {
       <h2 className="mb-6 text-xl font-bold">Semantic Colors（意味を持つ色）</h2>
 
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-        <div className="bg-success text-success-foreground rounded-lg p-4 text-center">
-          <div className="font-bold">Success</div>
-          <div className="text-sm opacity-80">成功、完了</div>
+        <div className="border-border rounded-lg border p-4 text-center">
+          <div className="bg-success mb-2 h-12 rounded" />
+          <div className="text-foreground font-bold">Success</div>
+          <div className="text-muted-foreground text-sm">成功、完了</div>
         </div>
 
-        <div className="bg-warning text-warning-foreground rounded-lg p-4 text-center">
-          <div className="font-bold">Warning</div>
-          <div className="text-sm opacity-80">警告、注意</div>
+        <div className="border-border rounded-lg border p-4 text-center">
+          <div className="bg-warning mb-2 h-12 rounded" />
+          <div className="text-foreground font-bold">Warning</div>
+          <div className="text-muted-foreground text-sm">警告、注意</div>
         </div>
 
-        <div className="bg-info text-info-foreground rounded-lg p-4 text-center">
-          <div className="font-bold">Info</div>
-          <div className="text-sm opacity-80">情報</div>
+        <div className="border-border rounded-lg border p-4 text-center">
+          <div className="bg-info mb-2 h-12 rounded" />
+          <div className="text-foreground font-bold">Info</div>
+          <div className="text-muted-foreground text-sm">情報</div>
         </div>
 
-        <div className="bg-destructive text-destructive-foreground rounded-lg p-4 text-center">
-          <div className="font-bold">Destructive</div>
-          <div className="text-sm opacity-80">削除、エラー</div>
+        <div className="border-border rounded-lg border p-4 text-center">
+          <div className="bg-destructive mb-2 h-12 rounded" />
+          <div className="text-foreground font-bold">Destructive</div>
+          <div className="text-muted-foreground text-sm">削除、エラー</div>
         </div>
       </div>
     </div>
@@ -325,42 +329,23 @@ export const Interaction: Story = {
       <div className="mb-8">
         <h3 className="border-border mb-4 border-b pb-2 text-lg font-bold">塗りボタン用ホバー</h3>
         <div className="flex flex-wrap gap-4">
-          <button
-            type="button"
-            className="bg-primary text-primary-foreground hover:bg-primary-hover rounded-lg px-4 py-2 transition-colors"
-          >
-            <code className="text-sm">hover:bg-primary-hover</code>
-          </button>
-          <button
-            type="button"
-            className="bg-destructive text-destructive-foreground hover:bg-destructive-hover rounded-lg px-4 py-2 transition-colors"
-          >
-            <code className="text-sm">hover:bg-destructive-hover</code>
-          </button>
-          <button
-            type="button"
-            className="bg-secondary text-secondary-foreground hover:bg-secondary-hover rounded-lg px-4 py-2 transition-colors"
-          >
-            <code className="text-sm">hover:bg-secondary-hover</code>
-          </button>
-          <button
-            type="button"
-            className="bg-warning text-warning-foreground hover:bg-warning-hover rounded-lg px-4 py-2 transition-colors"
-          >
-            <code className="text-sm">hover:bg-warning-hover</code>
-          </button>
-          <button
-            type="button"
-            className="bg-success text-success-foreground hover:bg-success-hover rounded-lg px-4 py-2 transition-colors"
-          >
-            <code className="text-sm">hover:bg-success-hover</code>
-          </button>
-          <button
-            type="button"
-            className="bg-info text-info-foreground hover:bg-info-hover rounded-lg px-4 py-2 transition-colors"
-          >
-            <code className="text-sm">hover:bg-info-hover</code>
-          </button>
+          {[
+            { bg: 'bg-primary', hover: 'hover:bg-primary-hover', label: 'primary' },
+            { bg: 'bg-destructive', hover: 'hover:bg-destructive-hover', label: 'destructive' },
+            { bg: 'bg-secondary', hover: 'hover:bg-secondary-hover', label: 'secondary' },
+            { bg: 'bg-warning', hover: 'hover:bg-warning-hover', label: 'warning' },
+            { bg: 'bg-success', hover: 'hover:bg-success-hover', label: 'success' },
+            { bg: 'bg-info', hover: 'hover:bg-info-hover', label: 'info' },
+          ].map(({ bg, hover, label }) => (
+            <div key={label} className="flex flex-col items-center gap-2">
+              <button
+                type="button"
+                className={`${bg} ${hover} h-12 w-24 rounded-lg transition-colors`}
+                aria-label={`${label} hover demo`}
+              />
+              <code className="text-muted-foreground text-xs">{label}</code>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -373,18 +358,27 @@ export const Interaction: Story = {
           色付きのGhost/Outlineボタン用（MD3 state layer方式）
         </p>
         <div className="flex flex-wrap gap-4">
-          <button
-            type="button"
-            className="text-primary hover:bg-primary-state-hover rounded-lg px-4 py-2 transition-colors"
-          >
-            <code className="text-sm">hover:bg-primary-state-hover</code>
-          </button>
-          <button
-            type="button"
-            className="text-destructive hover:bg-destructive-state-hover rounded-lg px-4 py-2 transition-colors"
-          >
-            <code className="text-sm">hover:bg-destructive-state-hover</code>
-          </button>
+          {[
+            {
+              text: 'text-primary',
+              hover: 'hover:bg-primary-state-hover',
+              label: 'primary',
+            },
+            {
+              text: 'text-destructive',
+              hover: 'hover:bg-destructive-state-hover',
+              label: 'destructive',
+            },
+          ].map(({ text, hover, label }) => (
+            <div key={label} className="flex flex-col items-center gap-2">
+              <button
+                type="button"
+                className={`${text} ${hover} border-border h-12 w-24 rounded-lg border transition-colors`}
+                aria-label={`${label} ghost hover demo`}
+              />
+              <code className="text-muted-foreground text-xs">{label}</code>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -415,15 +409,18 @@ export const Interaction: Story = {
       <div className="mb-8">
         <h3 className="border-border mb-4 border-b pb-2 text-lg font-bold">アクティブ/選択状態</h3>
         <div className="flex flex-wrap gap-4">
-          <div className="bg-state-active text-state-active-foreground rounded-lg px-4 py-2">
-            <code className="text-sm">bg-state-active（選択中）</code>
+          <div className="flex flex-col items-center gap-2">
+            <div className="bg-state-active h-12 w-24 rounded-lg" />
+            <code className="text-muted-foreground text-xs">bg-state-active</code>
           </div>
-          <button
-            type="button"
-            className="active:bg-state-hover rounded-lg border border-transparent px-4 py-2 transition-colors"
-          >
-            <code className="text-sm">active:bg-state-hover（クリック）</code>
-          </button>
+          <div className="flex flex-col items-center gap-2">
+            <button
+              type="button"
+              className="active:bg-state-hover border-border h-12 w-24 rounded-lg border transition-colors"
+              aria-label="active state demo"
+            />
+            <code className="text-muted-foreground text-xs">active:bg-state-hover</code>
+          </div>
         </div>
       </div>
 
@@ -541,30 +538,29 @@ export const Text: Story = {
       <p className="text-muted-foreground mb-8">色で情報の重要度を表現。</p>
 
       <div className="space-y-4">
-        <div className="border-border flex items-center gap-4 border-b pb-4">
-          <code className="bg-container w-48 rounded px-2 py-1 text-xs">text-foreground</code>
-          <span className="text-foreground">主要テキスト（見出し、本文）</span>
-        </div>
-
-        <div className="border-border flex items-center gap-4 border-b pb-4">
-          <code className="bg-container w-48 rounded px-2 py-1 text-xs">text-muted-foreground</code>
-          <span className="text-muted-foreground">補助テキスト（説明、キャプション）</span>
-        </div>
-
-        <div className="border-border flex items-center gap-4 border-b pb-4">
-          <code className="bg-container w-48 rounded px-2 py-1 text-xs">text-primary</code>
-          <span className="text-primary">リンク、アクション</span>
-        </div>
-
-        <div className="border-border flex items-center gap-4 border-b pb-4">
-          <code className="bg-container w-48 rounded px-2 py-1 text-xs">text-destructive</code>
-          <span className="text-destructive">エラー、警告</span>
-        </div>
-
-        <div className="flex items-center gap-4">
-          <code className="bg-container w-48 rounded px-2 py-1 text-xs">text-success</code>
-          <span className="text-success">成功、完了</span>
-        </div>
+        {[
+          {
+            token: 'text-foreground',
+            cls: 'text-foreground',
+            label: '主要テキスト（見出し、本文）',
+          },
+          {
+            token: 'text-muted-foreground',
+            cls: 'text-muted-foreground',
+            label: '補助テキスト（説明、キャプション）',
+          },
+          { token: 'text-primary', cls: 'text-primary', label: 'リンク、アクション' },
+          { token: 'text-destructive', cls: 'text-destructive', label: 'エラー、警告' },
+          { token: 'text-success', cls: 'text-success', label: '成功、完了' },
+        ].map(({ token, cls, label }) => (
+          <div key={token} className="border-border flex items-center gap-4 border-b pb-4">
+            <div className={`${cls} h-6 w-6 shrink-0 rounded-full bg-current`} />
+            <div>
+              <code className="text-foreground text-xs">{token}</code>
+              <p className="text-muted-foreground text-sm">{label}</p>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   ),
@@ -638,26 +634,25 @@ export const DosDonts: Story = {
           <h2 className="mb-4 text-lg font-bold">セマンティックトークンを使用</h2>
           <div className="grid gap-6 md:grid-cols-2">
             <div className="border-success space-y-3 border-l-4 pl-4">
-              <h3 className="font-bold text-green-600">Do</h3>
-              <div className="bg-destructive text-destructive-foreground rounded-lg p-3 text-sm">
-                エラー: bg-destructive
-              </div>
-              <div className="bg-success text-success-foreground rounded-lg p-3 text-sm">
-                成功: bg-success
+              <p className="text-success font-bold">Do</p>
+              <div className="flex gap-2">
+                <div className="bg-destructive h-8 w-16 rounded" />
+                <div className="bg-success h-8 w-16 rounded" />
               </div>
               <code className="text-muted-foreground block text-xs">
                 className=&quot;bg-destructive text-destructive-foreground&quot;
               </code>
             </div>
             <div className="border-destructive space-y-3 border-l-4 pl-4">
-              <h3 className="font-bold text-red-600">Don&apos;t</h3>
-              <div className="rounded-lg bg-red-500 p-3 text-sm text-white">エラー: bg-red-500</div>
-              <div className="rounded-lg bg-green-500 p-3 text-sm text-white">
-                成功: bg-green-500
-              </div>
+              <p className="text-destructive font-bold">Don&apos;t</p>
               <code className="text-muted-foreground block text-xs">
                 className=&quot;bg-red-500 text-white&quot;
+                <br />
+                className=&quot;bg-green-500 text-white&quot;
               </code>
+              <p className="text-muted-foreground text-xs">
+                直接カラー指定はダークモードで破綻する
+              </p>
             </div>
           </div>
           <p className="text-muted-foreground mt-4 text-sm">
@@ -671,22 +666,25 @@ export const DosDonts: Story = {
           <h2 className="mb-4 text-lg font-bold">適切なテキストコントラスト</h2>
           <div className="grid gap-6 md:grid-cols-2">
             <div className="border-success space-y-3 border-l-4 pl-4">
-              <h3 className="font-bold text-green-600">Do</h3>
-              <div className="bg-primary text-primary-foreground rounded-lg p-3 text-sm">
+              <p className="text-success font-bold">Do</p>
+              <div className="bg-primary h-8 rounded" />
+              <code className="text-muted-foreground block text-xs">
                 text-primary-foreground on bg-primary
-              </div>
-              <div className="bg-container text-foreground rounded-lg p-3 text-sm">
+              </code>
+              <div className="bg-container text-foreground rounded p-2 text-sm">
                 text-foreground on bg-container
               </div>
             </div>
             <div className="border-destructive space-y-3 border-l-4 pl-4">
-              <h3 className="font-bold text-red-600">Don&apos;t</h3>
-              <div className="bg-primary text-muted-foreground rounded-lg p-3 text-sm">
-                text-muted-foreground on bg-primary（低コントラスト）
-              </div>
-              <div className="bg-container text-muted-foreground/50 rounded-lg p-3 text-sm">
-                opacity-50 text（読みにくい）
-              </div>
+              <p className="text-destructive font-bold">Don&apos;t</p>
+              <code className="text-muted-foreground block text-xs">
+                text-muted-foreground on bg-primary
+                <br />
+                opacity-50 text
+              </code>
+              <p className="text-muted-foreground text-xs">
+                コントラスト比4.5:1未満になる組み合わせは避ける
+              </p>
             </div>
           </div>
           <p className="text-muted-foreground mt-4 text-sm">
@@ -699,22 +697,19 @@ export const DosDonts: Story = {
           <h2 className="mb-4 text-lg font-bold">Surface階層を守る</h2>
           <div className="grid gap-6 md:grid-cols-2">
             <div className="border-success space-y-3 border-l-4 pl-4">
-              <h3 className="font-bold text-green-600">Do</h3>
-              <div className="bg-background rounded-lg p-3">
+              <p className="text-success font-bold">Do</p>
+              <div className="bg-background rounded-lg p-2">
                 <div className="bg-container rounded p-2">
                   <div className="bg-card rounded p-2 text-sm">background → container → card</div>
                 </div>
               </div>
             </div>
             <div className="border-destructive space-y-3 border-l-4 pl-4">
-              <h3 className="font-bold text-red-600">Don&apos;t</h3>
-              <div className="bg-card rounded-lg p-3">
-                <div className="bg-background rounded p-2">
-                  <div className="bg-container rounded p-2 text-sm">
-                    card → background → container
-                  </div>
-                </div>
-              </div>
+              <p className="text-destructive font-bold">Don&apos;t</p>
+              <code className="text-muted-foreground block text-xs">
+                card → background → container
+              </code>
+              <p className="text-muted-foreground text-xs">親→子で暗くなる階層を逆転させない</p>
             </div>
           </div>
           <p className="text-muted-foreground mt-4 text-sm">
@@ -727,24 +722,23 @@ export const DosDonts: Story = {
           <h2 className="mb-4 text-lg font-bold">状態を色で表現</h2>
           <div className="grid gap-6 md:grid-cols-2">
             <div className="border-success space-y-3 border-l-4 pl-4">
-              <h3 className="font-bold text-green-600">Do</h3>
-              <ul className="text-muted-foreground space-y-1 text-sm">
-                <li>
-                  成功 → <span className="text-success">text-success</span>
-                </li>
-                <li>
-                  エラー → <span className="text-destructive">text-destructive</span>
-                </li>
-                <li>
-                  警告 → <span className="text-warning">text-warning</span>
-                </li>
-                <li>
-                  情報 → <span className="text-info">text-info</span>
-                </li>
+              <p className="text-success font-bold">Do</p>
+              <ul className="text-muted-foreground space-y-2 text-sm">
+                {[
+                  { label: '成功', cls: 'bg-success' },
+                  { label: 'エラー', cls: 'bg-destructive' },
+                  { label: '警告', cls: 'bg-warning' },
+                  { label: '情報', cls: 'bg-info' },
+                ].map(({ label, cls }) => (
+                  <li key={label} className="flex items-center gap-2">
+                    <span className={`${cls} inline-block h-4 w-4 shrink-0 rounded-full`} />
+                    {label}
+                  </li>
+                ))}
               </ul>
             </div>
             <div className="border-destructive space-y-3 border-l-4 pl-4">
-              <h3 className="font-bold text-red-600">Don&apos;t</h3>
+              <p className="text-destructive font-bold">Don&apos;t</p>
               <ul className="text-muted-foreground space-y-1 text-sm">
                 <li>成功を青で表示</li>
                 <li>エラーを黄色で表示</li>

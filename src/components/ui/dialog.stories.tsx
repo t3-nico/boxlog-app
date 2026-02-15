@@ -1,4 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect, userEvent, within } from 'storybook/test';
 
 import { Button } from './button';
 import {
@@ -45,6 +46,22 @@ export const Default: Story = {
       </DialogContent>
     </Dialog>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // トリガーボタンをクリックしてダイアログを開く
+    const triggerButton = canvas.getByRole('button', { name: /ダイアログを開く/i });
+    await userEvent.click(triggerButton);
+
+    // ダイアログのコンテンツを確認（ポータル経由）
+    const body = within(document.body);
+    await expect(body.getByText('ダイアログタイトル')).toBeInTheDocument();
+    await expect(body.getByText('ここにダイアログの説明が入ります。')).toBeInTheDocument();
+
+    // 閉じるボタン（X）でダイアログを閉じる
+    const closeButton = body.getByRole('button', { name: /close/i });
+    await userEvent.click(closeButton);
+  },
 };
 
 export const WithForm: Story = {

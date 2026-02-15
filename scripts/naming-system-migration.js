@@ -1,24 +1,24 @@
 #!/usr/bin/env node
 /**
- * BoxLog App - 命名規則辞書システム 一括マイグレーションスクリプト
+ * Dayopt App - 命名規則辞書システム 一括マイグレーションスクリプト
  *
  * 既存コードを命名規則辞書に従って自動リネーム
  * 段階的マイグレーション・ロールバック機能付き
  */
 
-const fs = require('fs')
-const path = require('path')
-const glob = require('glob')
+const fs = require('fs');
+const path = require('path');
+const glob = require('glob');
 
 // 命名規則辞書の読み込み
-const dictionaryPath = path.resolve(__dirname, '../src/config/naming-conventions/dictionary.json')
-let dictionary = {}
+const dictionaryPath = path.resolve(__dirname, '../src/config/naming-conventions/dictionary.json');
+let dictionary = {};
 
 try {
-  dictionary = JSON.parse(fs.readFileSync(dictionaryPath, 'utf8'))
+  dictionary = JSON.parse(fs.readFileSync(dictionaryPath, 'utf8'));
 } catch (error) {
-  console.error('❌ 命名規則辞書の読み込みに失敗:', error.message)
-  process.exit(1)
+  console.error('❌ 命名規則辞書の読み込みに失敗:', error.message);
+  process.exit(1);
 }
 
 // ==============================
@@ -32,11 +32,11 @@ function toCamelCase(str) {
     .filter((word) => word.length > 0)
     .map((word, index) => {
       if (index === 0) {
-        return word.toLowerCase()
+        return word.toLowerCase();
       }
-      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
     })
-    .join('')
+    .join('');
 }
 
 function _toPascalCase(str) {
@@ -45,7 +45,7 @@ function _toPascalCase(str) {
     .split(' ')
     .filter((word) => word.length > 0)
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join('')
+    .join('');
 }
 
 function _toKebabCase(str) {
@@ -54,7 +54,7 @@ function _toKebabCase(str) {
     .replace(/[^a-zA-Z0-9]/g, '-')
     .toLowerCase()
     .replace(/-+/g, '-')
-    .replace(/^-|-$/g, '')
+    .replace(/^-|-$/g, '');
 }
 
 function _toScreamingSnakeCase(str) {
@@ -63,7 +63,7 @@ function _toScreamingSnakeCase(str) {
     .replace(/[^a-zA-Z0-9]/g, '_')
     .toUpperCase()
     .replace(/_+/g, '_')
-    .replace(/^_|_$/g, '')
+    .replace(/^_|_$/g, '');
 }
 
 // ==============================
@@ -72,23 +72,23 @@ function _toScreamingSnakeCase(str) {
 
 class NamingMigrationAnalyzer {
   constructor() {
-    this.suggestions = []
-    this.backupFiles = new Map()
+    this.suggestions = [];
+    this.backupFiles = new Map();
   }
 
   /**
    * ファイル内の改善候補を分析
    */
   analyzeFile(filePath) {
-    const content = fs.readFileSync(filePath, 'utf8')
-    const suggestions = []
+    const content = fs.readFileSync(filePath, 'utf8');
+    const suggestions = [];
 
     // React コンポーネント検出
-    const componentRegex = /(?:function|const)\s+([A-Z][a-zA-Z0-9]*)\s*[=:]/g
-    let match
+    const componentRegex = /(?:function|const)\s+([A-Z][a-zA-Z0-9]*)\s*[=:]/g;
+    let match;
     while ((match = componentRegex.exec(content)) !== null) {
-      const componentName = match[1]
-      const suggestion = this.getSuggestionForComponent(componentName)
+      const componentName = match[1];
+      const suggestion = this.getSuggestionForComponent(componentName);
       if (suggestion && suggestion !== componentName) {
         suggestions.push({
           type: 'component',
@@ -96,15 +96,15 @@ class NamingMigrationAnalyzer {
           suggested: suggestion,
           line: this.getLineNumber(content, match.index),
           reason: 'ドメイン用語による推奨命名',
-        })
+        });
       }
     }
 
     // カスタムフック検出
-    const hookRegex = /(?:function|const)\s+(use[A-Z][a-zA-Z0-9]*)\s*[=:]/g
+    const hookRegex = /(?:function|const)\s+(use[A-Z][a-zA-Z0-9]*)\s*[=:]/g;
     while ((match = hookRegex.exec(content)) !== null) {
-      const hookName = match[1]
-      const suggestion = this.getSuggestionForHook(hookName)
+      const hookName = match[1];
+      const suggestion = this.getSuggestionForHook(hookName);
       if (suggestion && suggestion !== hookName) {
         suggestions.push({
           type: 'hook',
@@ -112,15 +112,15 @@ class NamingMigrationAnalyzer {
           suggested: suggestion,
           line: this.getLineNumber(content, match.index),
           reason: 'ドメイン用語による推奨命名',
-        })
+        });
       }
     }
 
     // 変数・関数検出
-    const variableRegex = /(?:const|let|var|function)\s+([a-z][a-zA-Z0-9]*)\s*[=:]/g
+    const variableRegex = /(?:const|let|var|function)\s+([a-z][a-zA-Z0-9]*)\s*[=:]/g;
     while ((match = variableRegex.exec(content)) !== null) {
-      const varName = match[1]
-      const suggestion = this.getSuggestionForVariable(varName)
+      const varName = match[1];
+      const suggestion = this.getSuggestionForVariable(varName);
       if (suggestion && suggestion !== varName) {
         suggestions.push({
           type: 'variable',
@@ -128,86 +128,86 @@ class NamingMigrationAnalyzer {
           suggested: suggestion,
           line: this.getLineNumber(content, match.index),
           reason: 'ドメイン用語による推奨命名',
-        })
+        });
       }
     }
 
     // 禁止用語検出
-    const forbiddenSuggestions = this.detectForbiddenTerms(content)
-    suggestions.push(...forbiddenSuggestions)
+    const forbiddenSuggestions = this.detectForbiddenTerms(content);
+    suggestions.push(...forbiddenSuggestions);
 
-    return suggestions
+    return suggestions;
   }
 
   /**
    * コンポーネント名の改善提案
    */
   getSuggestionForComponent(componentName) {
-    const words = this.extractWords(componentName)
+    const words = this.extractWords(componentName);
 
     for (const word of words) {
-      const domainTerm = this.findDomainTerm(word.toLowerCase())
+      const domainTerm = this.findDomainTerm(word.toLowerCase());
       if (domainTerm && domainTerm.usage.component) {
-        return domainTerm.usage.component
+        return domainTerm.usage.component;
       }
     }
 
     // 一般的な改善提案
     for (const word of words) {
-      const translation = this.translateCommonTerm(word)
+      const translation = this.translateCommonTerm(word);
       if (translation && translation !== word) {
-        return componentName.replace(new RegExp(word, 'i'), translation)
+        return componentName.replace(new RegExp(word, 'i'), translation);
       }
     }
 
-    return null
+    return null;
   }
 
   /**
    * カスタムフック名の改善提案
    */
   getSuggestionForHook(hookName) {
-    const words = this.extractWords(hookName.replace(/^use/, ''))
+    const words = this.extractWords(hookName.replace(/^use/, ''));
 
     for (const word of words) {
-      const domainTerm = this.findDomainTerm(word.toLowerCase())
+      const domainTerm = this.findDomainTerm(word.toLowerCase());
       if (domainTerm && domainTerm.usage.hook) {
-        return domainTerm.usage.hook
+        return domainTerm.usage.hook;
       }
     }
 
-    return null
+    return null;
   }
 
   /**
    * 変数名の改善提案
    */
   getSuggestionForVariable(varName) {
-    const words = this.extractWords(varName)
+    const words = this.extractWords(varName);
 
     for (const word of words) {
-      const domainTerm = this.findDomainTerm(word.toLowerCase())
+      const domainTerm = this.findDomainTerm(word.toLowerCase());
       if (domainTerm) {
-        const englishName = toCamelCase(domainTerm.english)
+        const englishName = toCamelCase(domainTerm.english);
         if (englishName !== varName) {
-          return englishName
+          return englishName;
         }
       }
     }
 
-    return null
+    return null;
   }
 
   /**
    * 禁止用語の検出
    */
   detectForbiddenTerms(content) {
-    const suggestions = []
-    const forbiddenTerms = dictionary.forbiddenTerms || []
+    const suggestions = [];
+    const forbiddenTerms = dictionary.forbiddenTerms || [];
 
     forbiddenTerms.forEach((forbidden) => {
-      const regex = new RegExp(`\\b${forbidden.term}\\b`, 'gi')
-      let match
+      const regex = new RegExp(`\\b${forbidden.term}\\b`, 'gi');
+      let match;
       while ((match = regex.exec(content)) !== null) {
         suggestions.push({
           type: 'forbidden',
@@ -215,11 +215,11 @@ class NamingMigrationAnalyzer {
           suggested: forbidden.alternatives[0] || '適切な用語に変更',
           line: this.getLineNumber(content, match.index),
           reason: forbidden.reason,
-        })
+        });
       }
-    })
+    });
 
-    return suggestions
+    return suggestions;
   }
 
   /**
@@ -228,17 +228,17 @@ class NamingMigrationAnalyzer {
   findDomainTerm(term) {
     // 直接マッチ
     if (dictionary.domainTerms && dictionary.domainTerms[term]) {
-      return dictionary.domainTerms[term]
+      return dictionary.domainTerms[term];
     }
 
     // エイリアス検索
     for (const [_key, domainTerm] of Object.entries(dictionary.domainTerms || {})) {
       if (domainTerm.aliases && domainTerm.aliases.includes(term)) {
-        return domainTerm
+        return domainTerm;
       }
     }
 
-    return null
+    return null;
   }
 
   /**
@@ -250,7 +250,7 @@ class NamingMigrationAnalyzer {
       .replace(/[^a-zA-Z]/g, ' ')
       .split(' ')
       .filter((word) => word.length > 0)
-      .map((word) => word.toLowerCase())
+      .map((word) => word.toLowerCase());
   }
 
   /**
@@ -274,40 +274,40 @@ class NamingMigrationAnalyzer {
       mgr: 'manager',
       temp: 'temporary',
       calc: 'calculate',
-    }
+    };
 
-    return commonTranslations[term.toLowerCase()] || null
+    return commonTranslations[term.toLowerCase()] || null;
   }
 
   /**
    * 行番号の取得
    */
   getLineNumber(content, index) {
-    return content.substring(0, index).split('\n').length
+    return content.substring(0, index).split('\n').length;
   }
 
   /**
    * ファイルのバックアップ
    */
   createBackup(filePath) {
-    const backupPath = `${filePath}.naming-backup-${Date.now()}`
-    fs.copyFileSync(filePath, backupPath)
-    this.backupFiles.set(filePath, backupPath)
-    return backupPath
+    const backupPath = `${filePath}.naming-backup-${Date.now()}`;
+    fs.copyFileSync(filePath, backupPath);
+    this.backupFiles.set(filePath, backupPath);
+    return backupPath;
   }
 
   /**
    * バックアップの復元
    */
   restoreBackup(filePath) {
-    const backupPath = this.backupFiles.get(filePath)
+    const backupPath = this.backupFiles.get(filePath);
     if (backupPath && fs.existsSync(backupPath)) {
-      fs.copyFileSync(backupPath, filePath)
-      fs.unlinkSync(backupPath)
-      this.backupFiles.delete(filePath)
-      return true
+      fs.copyFileSync(backupPath, filePath);
+      fs.unlinkSync(backupPath);
+      this.backupFiles.delete(filePath);
+      return true;
     }
-    return false
+    return false;
   }
 
   /**
@@ -316,10 +316,10 @@ class NamingMigrationAnalyzer {
   cleanupBackups() {
     for (const [_filePath, backupPath] of this.backupFiles) {
       if (fs.existsSync(backupPath)) {
-        fs.unlinkSync(backupPath)
+        fs.unlinkSync(backupPath);
       }
     }
-    this.backupFiles.clear()
+    this.backupFiles.clear();
   }
 }
 
@@ -329,54 +329,54 @@ class NamingMigrationAnalyzer {
 
 class NamingMigration {
   constructor() {
-    this.analyzer = new NamingMigrationAnalyzer()
-    this.dryRun = false
-    this.verbose = false
+    this.analyzer = new NamingMigrationAnalyzer();
+    this.dryRun = false;
+    this.verbose = false;
   }
 
   /**
    * プロジェクト全体の分析実行
    */
   async analyzeProject(options = {}) {
-    this.dryRun = options.dryRun || false
-    this.verbose = options.verbose || false
+    this.dryRun = options.dryRun || false;
+    this.verbose = options.verbose || false;
 
-    console.log('🔍 BoxLog App 命名規則辞書 マイグレーション分析開始...\n')
+    console.log('🔍 Dayopt App 命名規則辞書 マイグレーション分析開始...\n');
 
     // 対象ファイルの取得
-    const files = this.getTargetFiles()
-    console.log(`📁 対象ファイル数: ${files.length}`)
+    const files = this.getTargetFiles();
+    console.log(`📁 対象ファイル数: ${files.length}`);
 
-    let totalSuggestions = 0
-    const results = []
+    let totalSuggestions = 0;
+    const results = [];
 
     // ファイル毎の分析
     for (const file of files) {
       if (this.verbose) {
-        console.log(`📄 分析中: ${file}`)
+        console.log(`📄 分析中: ${file}`);
       }
 
       try {
-        const suggestions = this.analyzer.analyzeFile(file)
+        const suggestions = this.analyzer.analyzeFile(file);
         if (suggestions.length > 0) {
           results.push({
             file,
             suggestions,
-          })
-          totalSuggestions += suggestions.length
+          });
+          totalSuggestions += suggestions.length;
         }
       } catch (error) {
-        console.error(`❌ ${file} の分析でエラー:`, error.message)
+        console.error(`❌ ${file} の分析でエラー:`, error.message);
       }
     }
 
     // 結果表示
-    this.displayResults(results, totalSuggestions)
+    this.displayResults(results, totalSuggestions);
 
     // レポート保存
-    this.saveReport(results)
+    this.saveReport(results);
 
-    return results
+    return results;
   }
 
   /**
@@ -392,16 +392,16 @@ class NamingMigration {
       '!.next/**',
       '!dist/**',
       '!build/**',
-    ]
+    ];
 
-    let files = []
+    let files = [];
     patterns.forEach((pattern) => {
       if (pattern.startsWith('!')) {
         // 除外パターン（現在のglobライブラリでは複雑な除外処理）
-        return
+        return;
       }
-      files = files.concat(glob.sync(pattern))
-    })
+      files = files.concat(glob.sync(pattern));
+    });
 
     // 手動で除外パターンを適用
     return files.filter((file) => {
@@ -413,55 +413,57 @@ class NamingMigration {
         !file.includes('.test.') &&
         !file.includes('.spec.') &&
         !file.endsWith('.d.ts')
-      )
-    })
+      );
+    });
   }
 
   /**
    * 結果の表示
    */
   displayResults(results, totalSuggestions) {
-    console.log('\n' + '='.repeat(80))
-    console.log('📊 命名規則辞書 マイグレーション分析結果')
-    console.log('='.repeat(80))
+    console.log('\n' + '='.repeat(80));
+    console.log('📊 命名規則辞書 マイグレーション分析結果');
+    console.log('='.repeat(80));
 
     if (totalSuggestions === 0) {
-      console.log('✅ 改善提案はありません。コードは命名規則に準拠しています。')
-      return
+      console.log('✅ 改善提案はありません。コードは命名規則に準拠しています。');
+      return;
     }
 
-    console.log(`🎯 改善提案数: ${totalSuggestions}件`)
-    console.log(`📁 対象ファイル数: ${results.length}件\n`)
+    console.log(`🎯 改善提案数: ${totalSuggestions}件`);
+    console.log(`📁 対象ファイル数: ${results.length}件\n`);
 
     // カテゴリ別統計
-    const categoryStats = {}
+    const categoryStats = {};
     results.forEach((result) => {
       result.suggestions.forEach((suggestion) => {
-        categoryStats[suggestion.type] = (categoryStats[suggestion.type] || 0) + 1
-      })
-    })
+        categoryStats[suggestion.type] = (categoryStats[suggestion.type] || 0) + 1;
+      });
+    });
 
-    console.log('📋 カテゴリ別統計:')
+    console.log('📋 カテゴリ別統計:');
     Object.entries(categoryStats).forEach(([category, count]) => {
-      const icon = this.getCategoryIcon(category)
-      console.log(`   ${icon} ${category}: ${count}件`)
-    })
+      const icon = this.getCategoryIcon(category);
+      console.log(`   ${icon} ${category}: ${count}件`);
+    });
 
-    console.log('\n' + '-'.repeat(80))
+    console.log('\n' + '-'.repeat(80));
 
     // 詳細結果表示
     results.forEach((result) => {
-      console.log(`\n📄 ${result.file}`)
+      console.log(`\n📄 ${result.file}`);
       result.suggestions.forEach((suggestion) => {
-        const icon = this.getSeverityIcon(suggestion.type)
-        console.log(`   ${icon} L${suggestion.line}: ${suggestion.original} → ${suggestion.suggested}`)
-        console.log(`      理由: ${suggestion.reason}`)
-      })
-    })
+        const icon = this.getSeverityIcon(suggestion.type);
+        console.log(
+          `   ${icon} L${suggestion.line}: ${suggestion.original} → ${suggestion.suggested}`,
+        );
+        console.log(`      理由: ${suggestion.reason}`);
+      });
+    });
 
     if (this.dryRun) {
-      console.log('\n💡 これはドライランです。実際の変更は行われていません。')
-      console.log('   実際に適用するには --apply オプションを使用してください。')
+      console.log('\n💡 これはドライランです。実際の変更は行われていません。');
+      console.log('   実際に適用するには --apply オプションを使用してください。');
     }
   }
 
@@ -473,12 +475,12 @@ class NamingMigration {
       function: '⚡',
       forbidden: '🚫',
       type: '📝',
-    }
-    return icons[category] || '📌'
+    };
+    return icons[category] || '📌';
   }
 
   getSeverityIcon(type) {
-    return type === 'forbidden' ? '🚫' : '💡'
+    return type === 'forbidden' ? '🚫' : '💡';
   }
 
   /**
@@ -492,17 +494,17 @@ class NamingMigration {
         totalSuggestions: results.reduce((sum, r) => sum + r.suggestions.length, 0),
       },
       results,
-    }
+    };
 
-    const reportPath = path.resolve(__dirname, '../reports/naming-migration-analysis.json')
-    const reportsDir = path.dirname(reportPath)
+    const reportPath = path.resolve(__dirname, '../reports/naming-migration-analysis.json');
+    const reportsDir = path.dirname(reportPath);
 
     if (!fs.existsSync(reportsDir)) {
-      fs.mkdirSync(reportsDir, { recursive: true })
+      fs.mkdirSync(reportsDir, { recursive: true });
     }
 
-    fs.writeFileSync(reportPath, JSON.stringify(report, null, 2))
-    console.log(`\n📄 詳細レポートを保存: ${reportPath}`)
+    fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
+    console.log(`\n📄 詳細レポートを保存: ${reportPath}`);
   }
 }
 
@@ -511,17 +513,17 @@ class NamingMigration {
 // ==============================
 
 async function main() {
-  const args = process.argv.slice(2)
-  const migration = new NamingMigration()
+  const args = process.argv.slice(2);
+  const migration = new NamingMigration();
 
   const options = {
     dryRun: !args.includes('--apply'),
     verbose: args.includes('--verbose') || args.includes('-v'),
-  }
+  };
 
   if (args.includes('--help') || args.includes('-h')) {
     console.log(`
-BoxLog App - 命名規則辞書マイグレーションツール
+Dayopt App - 命名規則辞書マイグレーションツール
 
 使用方法:
   npm run naming:migrate              # ドライラン（分析のみ）
@@ -536,21 +538,21 @@ BoxLog App - 命名規則辞書マイグレーションツール
 例:
   npm run naming:migrate              # 安全な分析のみ
   npm run naming:migrate --apply -v   # 詳細表示で実際に適用
-`)
-    return
+`);
+    return;
   }
 
   try {
-    await migration.analyzeProject(options)
+    await migration.analyzeProject(options);
   } catch (error) {
-    console.error('❌ マイグレーション分析中にエラーが発生:', error.message)
-    process.exit(1)
+    console.error('❌ マイグレーション分析中にエラーが発生:', error.message);
+    process.exit(1);
   }
 }
 
 // スクリプトとして実行された場合
 if (require.main === module) {
-  main()
+  main();
 }
 
-module.exports = { NamingMigration, NamingMigrationAnalyzer }
+module.exports = { NamingMigration, NamingMigrationAnalyzer };

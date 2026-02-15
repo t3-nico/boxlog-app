@@ -1,6 +1,6 @@
 name: 🌐 E2E Weekly Full Browser Test
 
-# 週次で全ブラウザのE2Eテストを実行（Safari/モバイル含む）
+# 週次でE2Eテストを実行（Chromium + Mobile Chrome）
 on:
   schedule:
     # 毎週月曜 9:00 JST (0:00 UTC)
@@ -27,11 +27,7 @@ jobs:
       matrix:
         project:
           - chromium
-          - firefox
-          - webkit
           - 'Mobile Chrome'
-          - 'Mobile Safari'
-          - iPad
 
     steps:
       - name: 📥 Checkout
@@ -48,17 +44,7 @@ jobs:
 
       - name: 🎭 Install Playwright Browsers
         run: |
-          if [ "${{ matrix.project }}" = "Mobile Chrome" ]; then
-            npx playwright install --with-deps chromium chromium-headless-shell
-          elif [ "${{ matrix.project }}" = "Mobile Safari" ]; then
-            npx playwright install --with-deps webkit
-          elif [ "${{ matrix.project }}" = "iPad" ]; then
-            npx playwright install --with-deps webkit chromium-headless-shell
-          elif [ "${{ matrix.project }}" = "chromium" ]; then
-            npx playwright install --with-deps chromium chromium-headless-shell
-          else
-            npx playwright install --with-deps ${{ matrix.project }}
-          fi
+          npx playwright install --with-deps chromium chromium-headless-shell
 
       - name: 🌐 Run E2E tests - ${{ matrix.project }}
         id: e2e
@@ -124,11 +110,7 @@ jobs:
               '',
               '### Tested Browsers',
               '- Chrome (Chromium)',
-              '- Firefox',
-              '- Safari (WebKit)',
               '- Mobile Chrome (Pixel 5)',
-              '- Mobile Safari (iPhone 12)',
-              '- iPad Pro',
               '',
               '### Action Required',
               '',

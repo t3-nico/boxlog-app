@@ -5,7 +5,7 @@
  */
 
 // Components
-export { RecordInspector, RecordTableView } from './components';
+export { RecordInspector } from './components';
 
 // Hooks
 export { useRecentRecords, useRecordData, useRecordMutations } from './hooks';

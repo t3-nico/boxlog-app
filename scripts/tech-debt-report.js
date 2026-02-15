@@ -1,17 +1,17 @@
 #!/usr/bin/env node
 
 /**
- * BoxLog Technical Debt Visualization System
+ * Dayopt Technical Debt Visualization System
  *
  * 技術的負債を包括的に分析し、視覚的なレポートを生成
  */
 
-const { execSync: _execSync } = require('child_process')
-const fs = require('fs')
+const { execSync: _execSync } = require('child_process');
+const fs = require('fs');
 
-const path = require('path')
+const path = require('path');
 
-const { ESLint } = require('eslint')
+const { ESLint } = require('eslint');
 
 // レポート設定
 const REPORT_CONFIG = {
@@ -20,7 +20,7 @@ const REPORT_CONFIG = {
   jsonFile: 'tech-debt.json',
   trendsFile: 'tech-debt-trends.json',
   maxHistoryEntries: 30,
-}
+};
 
 // カラー出力
 const colors = {
@@ -33,23 +33,23 @@ const colors = {
   gray: '\x1b[90m',
   reset: '\x1b[0m',
   bold: '\x1b[1m',
-}
+};
 
 /**
  * ESLint結果の分析
  */
 async function analyzeESLintResults() {
-  console.log(`${colors.cyan}🔍 ESLintで技術的負債を分析中...${colors.reset}`)
+  console.log(`${colors.cyan}🔍 ESLintで技術的負債を分析中...${colors.reset}`);
 
   const eslint = new ESLint({
     useEslintrc: true,
     baseConfig: {
       extends: ['./config/eslint/.eslintrc.json'],
     },
-  })
+  });
 
   try {
-    const results = await eslint.lintFiles(['src/**/*.{ts,tsx}'])
+    const results = await eslint.lintFiles(['src/**/*.{ts,tsx}']);
 
     const report = {
       timestamp: new Date().toISOString(),
@@ -73,11 +73,11 @@ async function analyzeESLintResults() {
       },
       byFile: {},
       hotspots: [],
-    }
+    };
 
     // 結果を分析
     results.forEach((result) => {
-      const relativePath = path.relative(process.cwd(), result.filePath)
+      const relativePath = path.relative(process.cwd(), result.filePath);
 
       if (result.messages.length > 0) {
         report.byFile[relativePath] = {
@@ -86,15 +86,15 @@ async function analyzeESLintResults() {
           warningCount: result.warningCount,
           messages: result.messages,
           debtScore: calculateFileDebtScore(result.messages),
-        }
+        };
       }
 
       result.messages.forEach((msg) => {
-        report.summary.totalErrors += msg.severity === 2 ? 1 : 0
-        report.summary.totalWarnings += msg.severity === 1 ? 1 : 0
+        report.summary.totalErrors += msg.severity === 2 ? 1 : 0;
+        report.summary.totalWarnings += msg.severity === 1 ? 1 : 0;
 
         // カテゴリ分類
-        const category = categorizeRule(msg.ruleId)
+        const category = categorizeRule(msg.ruleId);
         if (category && report.byCategory[category]) {
           report.byCategory[category].push({
             file: relativePath,
@@ -103,23 +103,26 @@ async function analyzeESLintResults() {
             message: msg.message,
             ruleId: msg.ruleId,
             severity: msg.severity,
-          })
+          });
 
           // サマリー更新
-          updateSummaryCount(report.summary, category)
+          updateSummaryCount(report.summary, category);
         }
-      })
-    })
+      });
+    });
 
     // ホットスポット（問題の多いファイル）を特定
     report.hotspots = Object.values(report.byFile)
       .sort((a, b) => b.debtScore - a.debtScore)
-      .slice(0, 10)
+      .slice(0, 10);
 
-    return report
+    return report;
   } catch (error) {
-    console.error(`${colors.red}❌ ESLint分析でエラーが発生しました:${colors.reset}`, error.message)
-    return null
+    console.error(
+      `${colors.red}❌ ESLint分析でエラーが発生しました:${colors.reset}`,
+      error.message,
+    );
+    return null;
   }
 }
 
@@ -127,28 +130,28 @@ async function analyzeESLintResults() {
  * ルールカテゴリマップ
  */
 const RULE_CATEGORY_MAP = {
-  theme: ['boxlog-theme', 'theme'],
-  compliance: ['boxlog-compliance', 'jsx-a11y', 'security'],
+  theme: ['dayopt-theme', 'theme'],
+  compliance: ['dayopt-compliance', 'jsx-a11y', 'security'],
   performance: ['performance', 'memo', 'callback'],
   complexity: ['complexity', 'max-', 'cyclomatic'],
   imports: ['import', 'unused-imports'],
   react: ['react', 'jsx'],
   typescript: ['@typescript-eslint'],
-}
+};
 
 /**
  * ルールのカテゴリ分類
  */
 function categorizeRule(ruleId) {
-  if (!ruleId) return 'other'
+  if (!ruleId) return 'other';
 
   for (const [category, patterns] of Object.entries(RULE_CATEGORY_MAP)) {
     if (patterns.some((pattern) => ruleId.includes(pattern))) {
-      return category
+      return category;
     }
   }
 
-  return 'other'
+  return 'other';
 }
 
 /**
@@ -157,17 +160,17 @@ function categorizeRule(ruleId) {
 function updateSummaryCount(summary, category) {
   switch (category) {
     case 'theme':
-      summary.themeViolations++
-      break
+      summary.themeViolations++;
+      break;
     case 'compliance':
-      summary.complianceIssues++
-      break
+      summary.complianceIssues++;
+      break;
     case 'performance':
-      summary.performanceIssues++
-      break
+      summary.performanceIssues++;
+      break;
     case 'complexity':
-      summary.complexityIssues++
-      break
+      summary.complexityIssues++;
+      break;
   }
 }
 
@@ -175,15 +178,15 @@ function updateSummaryCount(summary, category) {
  * ファイルの技術的負債スコア計算
  */
 function calculateFileDebtScore(messages) {
-  let score = 0
+  let score = 0;
 
   messages.forEach((msg) => {
-    const weight = msg.severity === 2 ? 3 : 1 // エラーは警告の3倍重み
-    const categoryWeight = getCategoryWeight(categorizeRule(msg.ruleId))
-    score += weight * categoryWeight
-  })
+    const weight = msg.severity === 2 ? 3 : 1; // エラーは警告の3倍重み
+    const categoryWeight = getCategoryWeight(categorizeRule(msg.ruleId));
+    score += weight * categoryWeight;
+  });
 
-  return score
+  return score;
 }
 
 /**
@@ -199,9 +202,9 @@ function getCategoryWeight(category) {
     typescript: 1, // TypeScript問題は軽度
     imports: 1, // インポート問題は軽度
     other: 1,
-  }
+  };
 
-  return weights[category] || 1
+  return weights[category] || 1;
 }
 
 /**
@@ -209,47 +212,47 @@ function getCategoryWeight(category) {
  */
 async function analyzeTodos() {
   // TODO分析は削除 - Issueで管理
-  return { stats: { total: 0, structured: 0, overdue: 0 }, todos: [] }
+  return { stats: { total: 0, structured: 0, overdue: 0 }, todos: [] };
 }
 
 /**
  * バンドルサイズ分析の統合
  */
 async function analyzeBundleSize() {
-  console.log(`${colors.cyan}📦 バンドルサイズ分析を統合中...${colors.reset}`)
+  console.log(`${colors.cyan}📦 バンドルサイズ分析を統合中...${colors.reset}`);
 
   try {
     // 簡易バンドルサイズ分析
-    const buildDir = '.next'
+    const buildDir = '.next';
     if (!fs.existsSync(buildDir)) {
-      return { available: false, message: 'ビルドファイルが見つかりません' }
+      return { available: false, message: 'ビルドファイルが見つかりません' };
     }
 
-    const staticDir = path.join(buildDir, 'static')
-    let totalSize = 0
-    let jsSize = 0
-    let cssSize = 0
+    const staticDir = path.join(buildDir, 'static');
+    let totalSize = 0;
+    let jsSize = 0;
+    let cssSize = 0;
 
     if (fs.existsSync(staticDir)) {
       const calculateDirSize = (dir, extension = null) => {
-        let size = 0
-        const files = fs.readdirSync(dir, { withFileTypes: true })
+        let size = 0;
+        const files = fs.readdirSync(dir, { withFileTypes: true });
 
         files.forEach((file) => {
-          const fullPath = path.join(dir, file.name)
+          const fullPath = path.join(dir, file.name);
           if (file.isDirectory()) {
-            size += calculateDirSize(fullPath, extension)
+            size += calculateDirSize(fullPath, extension);
           } else if (!extension || file.name.endsWith(extension)) {
-            size += fs.statSync(fullPath).size
+            size += fs.statSync(fullPath).size;
           }
-        })
+        });
 
-        return size
-      }
+        return size;
+      };
 
-      totalSize = calculateDirSize(staticDir)
-      jsSize = calculateDirSize(staticDir, '.js')
-      cssSize = calculateDirSize(staticDir, '.css')
+      totalSize = calculateDirSize(staticDir);
+      jsSize = calculateDirSize(staticDir, '.js');
+      cssSize = calculateDirSize(staticDir, '.css');
     }
 
     return {
@@ -262,9 +265,9 @@ async function analyzeBundleSize() {
         jsSizeRatio: totalSize > 0 ? jsSize / totalSize : 0,
         cssSizeRatio: totalSize > 0 ? cssSize / totalSize : 0,
       },
-    }
+    };
   } catch (error) {
-    return { available: false, message: error.message }
+    return { available: false, message: error.message };
   }
 }
 
@@ -272,21 +275,23 @@ async function analyzeBundleSize() {
  * 統合レポート生成
  */
 async function generateIntegratedReport() {
-  console.log(`${colors.bold}${colors.blue}📊 BoxLog Technical Debt Report Generator${colors.reset}\n`)
+  console.log(
+    `${colors.bold}${colors.blue}📊 Dayopt Technical Debt Report Generator${colors.reset}\n`,
+  );
 
   // レポートディレクトリ作成
   if (!fs.existsSync(REPORT_CONFIG.outputDir)) {
-    fs.mkdirSync(REPORT_CONFIG.outputDir, { recursive: true })
+    fs.mkdirSync(REPORT_CONFIG.outputDir, { recursive: true });
   }
 
   // 各種分析実行
-  const eslintReport = await analyzeESLintResults()
-  const todoAnalysis = await analyzeTodos()
-  const bundleAnalysis = await analyzeBundleSize()
+  const eslintReport = await analyzeESLintResults();
+  const todoAnalysis = await analyzeTodos();
+  const bundleAnalysis = await analyzeBundleSize();
 
   if (!eslintReport) {
-    console.error(`${colors.red}❌ ESLint分析に失敗しました${colors.reset}`)
-    process.exit(1)
+    console.error(`${colors.red}❌ ESLint分析に失敗しました${colors.reset}`);
+    process.exit(1);
   }
 
   // 統合レポート作成
@@ -294,7 +299,7 @@ async function generateIntegratedReport() {
     metadata: {
       generatedAt: new Date().toISOString(),
       version: '1.0.0',
-      generator: 'BoxLog Technical Debt Analyzer',
+      generator: 'Dayopt Technical Debt Analyzer',
     },
     summary: {
       ...eslintReport.summary,
@@ -309,68 +314,69 @@ async function generateIntegratedReport() {
       bundle: bundleAnalysis,
     },
     recommendations: generateRecommendations(eslintReport, todoAnalysis, bundleAnalysis),
-  }
+  };
 
   // トレンド分析
-  const trendsData = updateTrendsData(integratedReport.summary)
+  const trendsData = updateTrendsData(integratedReport.summary);
 
   // レポート出力
-  const jsonPath = path.join(REPORT_CONFIG.outputDir, REPORT_CONFIG.jsonFile)
-  fs.writeFileSync(jsonPath, JSON.stringify(integratedReport, null, 2))
+  const jsonPath = path.join(REPORT_CONFIG.outputDir, REPORT_CONFIG.jsonFile);
+  fs.writeFileSync(jsonPath, JSON.stringify(integratedReport, null, 2));
 
-  const htmlPath = path.join(REPORT_CONFIG.outputDir, REPORT_CONFIG.htmlFile)
-  const htmlReport = generateHTMLReport(integratedReport, trendsData)
-  fs.writeFileSync(htmlPath, htmlReport)
+  const htmlPath = path.join(REPORT_CONFIG.outputDir, REPORT_CONFIG.htmlFile);
+  const htmlReport = generateHTMLReport(integratedReport, trendsData);
+  fs.writeFileSync(htmlPath, htmlReport);
 
   // コンソール出力
-  displaySummary(integratedReport.summary)
+  displaySummary(integratedReport.summary);
 
-  console.log(`\n${colors.green}✅ 技術的負債レポートを生成しました:${colors.reset}`)
-  console.log(`   📄 JSON: ${jsonPath}`)
-  console.log(`   🌐 HTML: ${htmlPath}`)
+  console.log(`\n${colors.green}✅ 技術的負債レポートを生成しました:${colors.reset}`);
+  console.log(`   📄 JSON: ${jsonPath}`);
+  console.log(`   🌐 HTML: ${htmlPath}`);
 
-  return integratedReport
+  return integratedReport;
 }
 
 /**
  * TODO健康スコア計算
  */
 function _calculateTodoHealthScore(todoStats) {
-  if (!todoStats.total) return 100
+  if (!todoStats.total) return 100;
 
-  let score = 100
-  const structuredRate = todoStats.structured / todoStats.total
-  score = structuredRate * 80 + (todoStats.overdue ? 0 : 20)
+  let score = 100;
+  const structuredRate = todoStats.structured / todoStats.total;
+  score = structuredRate * 80 + (todoStats.overdue ? 0 : 20);
 
-  return Math.max(Math.round(score), 0)
+  return Math.max(Math.round(score), 0);
 }
 
 /**
  * 総合技術的負債スコア計算
  */
 function calculateOverallDebtScore(eslintReport, todoAnalysis, bundleAnalysis) {
-  let score = 100
+  let score = 100;
 
   // ESLintスコア（50点満点）
-  const eslintPenalty = (eslintReport.summary.totalErrors * 2 + eslintReport.summary.totalWarnings) / 2
-  score -= Math.min(eslintPenalty, 50)
+  const eslintPenalty =
+    (eslintReport.summary.totalErrors * 2 + eslintReport.summary.totalWarnings) / 2;
+  score -= Math.min(eslintPenalty, 50);
 
   // TODOスコア（25点満点）- Issue管理に移行済み
   // score -= 0;
 
   // バンドルサイズスコア（25点満点）
   if (bundleAnalysis.available && bundleAnalysis.analysis.isOversize) {
-    score -= 25
+    score -= 25;
   }
 
-  return Math.max(Math.round(score), 0)
+  return Math.max(Math.round(score), 0);
 }
 
 /**
  * 改善提案生成
  */
 function generateRecommendations(eslintReport, todoAnalysis, bundleAnalysis) {
-  const recommendations = []
+  const recommendations = [];
 
   // ESLint関連
   if (eslintReport.summary.totalErrors > 0) {
@@ -379,7 +385,7 @@ function generateRecommendations(eslintReport, todoAnalysis, bundleAnalysis) {
       title: 'ESLintエラーの修正',
       description: `${eslintReport.summary.totalErrors}個のESLintエラーがあります。`,
       actions: ['エラーレベルの問題を優先的に修正', 'CI/CDでエラー時のビルド停止を検討'],
-    })
+    });
   }
 
   if (eslintReport.summary.themeViolations > 10) {
@@ -387,8 +393,11 @@ function generateRecommendations(eslintReport, todoAnalysis, bundleAnalysis) {
       category: 'high',
       title: 'テーマシステム違反の修正',
       description: `${eslintReport.summary.themeViolations}個のテーマ違反があります。`,
-      actions: ['直接的なTailwindクラス使用をtheme経由に変更', 'チーム向けテーマガイドラインの共有'],
-    })
+      actions: [
+        '直接的なTailwindクラス使用をtheme経由に変更',
+        'チーム向けテーマガイドラインの共有',
+      ],
+    });
   }
 
   if (eslintReport.summary.complianceIssues > 0) {
@@ -397,7 +406,7 @@ function generateRecommendations(eslintReport, todoAnalysis, bundleAnalysis) {
       title: 'コンプライアンス問題の対応',
       description: `${eslintReport.summary.complianceIssues}個のコンプライアンス問題があります。`,
       actions: ['アクセシビリティ違反の修正', 'セキュリティ問題の即座な対応', 'GDPR遵守の確認'],
-    })
+    });
   }
 
   // TODO関連
@@ -407,7 +416,7 @@ function generateRecommendations(eslintReport, todoAnalysis, bundleAnalysis) {
       title: '期限切れTODOの対応',
       description: `${todoAnalysis.stats.overdue}個の期限切れTODOがあります。`,
       actions: ['期限切れTODOの優先度再評価', '実現可能な新期限の設定'],
-    })
+    });
   }
 
   // バンドルサイズ関連
@@ -417,24 +426,24 @@ function generateRecommendations(eslintReport, todoAnalysis, bundleAnalysis) {
       title: 'バンドルサイズの最適化',
       description: 'バンドルサイズが推奨サイズを超過しています。',
       actions: ['動的インポートの導入', '未使用コードの削除', 'Tree-shakingの最適化'],
-    })
+    });
   }
 
-  return recommendations
+  return recommendations;
 }
 
 /**
  * トレンドデータ更新
  */
 function updateTrendsData(currentSummary) {
-  const trendsPath = path.join(REPORT_CONFIG.outputDir, REPORT_CONFIG.trendsFile)
+  const trendsPath = path.join(REPORT_CONFIG.outputDir, REPORT_CONFIG.trendsFile);
 
-  let trendsData = { entries: [] }
+  let trendsData = { entries: [] };
   if (fs.existsSync(trendsPath)) {
     try {
-      trendsData = JSON.parse(fs.readFileSync(trendsPath, 'utf8'))
+      trendsData = JSON.parse(fs.readFileSync(trendsPath, 'utf8'));
     } catch (error) {
-      console.warn(`${colors.yellow}⚠️ トレンドデータの読み込みに失敗しました${colors.reset}`)
+      console.warn(`${colors.yellow}⚠️ トレンドデータの読み込みに失敗しました${colors.reset}`);
     }
   }
 
@@ -442,45 +451,45 @@ function updateTrendsData(currentSummary) {
   trendsData.entries.push({
     timestamp: new Date().toISOString(),
     ...currentSummary,
-  })
+  });
 
   // 古いエントリを削除（最大30件保持）
   if (trendsData.entries.length > REPORT_CONFIG.maxHistoryEntries) {
-    trendsData.entries = trendsData.entries.slice(-REPORT_CONFIG.maxHistoryEntries)
+    trendsData.entries = trendsData.entries.slice(-REPORT_CONFIG.maxHistoryEntries);
   }
 
-  fs.writeFileSync(trendsPath, JSON.stringify(trendsData, null, 2))
+  fs.writeFileSync(trendsPath, JSON.stringify(trendsData, null, 2));
 
-  return trendsData
+  return trendsData;
 }
 
 /**
  * サマリー表示
  */
 function displaySummary(summary) {
-  console.log(`\n${colors.bold}📊 技術的負債レポート${colors.reset}`)
-  console.log('━'.repeat(40))
-  console.log(`${colors.red}🔴 エラー: ${summary.totalErrors}${colors.reset}`)
-  console.log(`${colors.yellow}🟡 警告: ${summary.totalWarnings}${colors.reset}`)
-  console.log(`${colors.blue}🎨 Theme違反: ${summary.themeViolations}${colors.reset}`)
-  console.log(`${colors.magenta}🔒 コンプライアンス: ${summary.complianceIssues}${colors.reset}`)
-  console.log(`${colors.cyan}⚡ パフォーマンス: ${summary.performanceIssues}${colors.reset}`)
-  console.log(`${colors.gray}📋 TODO問題: ${summary.todoIssues}${colors.reset}`)
-  console.log(`${colors.green}🏥 総合スコア: ${summary.overallScore}/100${colors.reset}`)
+  console.log(`\n${colors.bold}📊 技術的負債レポート${colors.reset}`);
+  console.log('━'.repeat(40));
+  console.log(`${colors.red}🔴 エラー: ${summary.totalErrors}${colors.reset}`);
+  console.log(`${colors.yellow}🟡 警告: ${summary.totalWarnings}${colors.reset}`);
+  console.log(`${colors.blue}🎨 Theme違反: ${summary.themeViolations}${colors.reset}`);
+  console.log(`${colors.magenta}🔒 コンプライアンス: ${summary.complianceIssues}${colors.reset}`);
+  console.log(`${colors.cyan}⚡ パフォーマンス: ${summary.performanceIssues}${colors.reset}`);
+  console.log(`${colors.gray}📋 TODO問題: ${summary.todoIssues}${colors.reset}`);
+  console.log(`${colors.green}🏥 総合スコア: ${summary.overallScore}/100${colors.reset}`);
 }
 
 /**
  * HTMLレポート生成
  */
 function generateHTMLReport(report, trendsData) {
-  const { summary, details } = report
+  const { summary, details } = report;
 
   return `<!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BoxLog 技術的負債レポート</title>
+    <title>Dayopt 技術的負債レポート</title>
     <style>
         :root {
             --primary-color: #3b82f6;
@@ -677,7 +686,7 @@ function generateHTMLReport(report, trendsData) {
 </head>
 <body>
     <div class="header">
-        <h1>📊 BoxLog 技術的負債レポート</h1>
+        <h1>📊 Dayopt 技術的負債レポート</h1>
         <div class="subtitle">生成日時: ${new Date(report.metadata.generatedAt).toLocaleString('ja-JP')}</div>
     </div>
 
@@ -741,7 +750,7 @@ function generateHTMLReport(report, trendsData) {
                             <td>${file.warningCount}</td>
                             <td><span class="debt-score ${file.debtScore > 20 ? 'high' : file.debtScore > 10 ? 'medium' : 'low'}">${file.debtScore}</span></td>
                         </tr>
-                    `
+                    `,
                       )
                       .join('')}
                 </tbody>
@@ -761,7 +770,7 @@ function generateHTMLReport(report, trendsData) {
                             ${rec.actions.map((action) => `<li>${action}</li>`).join('')}
                         </ul>
                     </div>
-                `
+                `,
                   )
                   .join('')}
             </div>
@@ -801,22 +810,22 @@ function generateHTMLReport(report, trendsData) {
     </div>
 
     <div class="footer">
-        <p>📊 BoxLog Technical Debt Visualization System v${report.metadata.version}</p>
+        <p>📊 Dayopt Technical Debt Visualization System v${report.metadata.version}</p>
         <p>継続的な品質改善のためのレポートです</p>
     </div>
 </body>
-</html>`
+</html>`;
 }
 
 /**
  * メイン実行関数
  */
 async function main() {
-  const args = process.argv.slice(2)
+  const args = process.argv.slice(2);
 
   if (args.includes('--help') || args.includes('-h')) {
     console.log(`
-${colors.bold}BoxLog Technical Debt Analyzer${colors.reset}
+${colors.bold}Dayopt Technical Debt Analyzer${colors.reset}
 
 使用方法:
   node scripts/tech-debt-report.js [オプション]
@@ -829,25 +838,28 @@ ${colors.bold}BoxLog Technical Debt Analyzer${colors.reset}
 例:
   npm run debt:report
   npm run debt:report -- --json-only
-    `)
-    process.exit(0)
+    `);
+    process.exit(0);
   }
 
   try {
-    await generateIntegratedReport()
+    await generateIntegratedReport();
   } catch (error) {
-    console.error(`${colors.red}❌ 技術的負債レポート生成でエラーが発生しました:${colors.reset}`, error.message)
-    process.exit(1)
+    console.error(
+      `${colors.red}❌ 技術的負債レポート生成でエラーが発生しました:${colors.reset}`,
+      error.message,
+    );
+    process.exit(1);
   }
 }
 
 // CLI実行
 if (require.main === module) {
-  main()
+  main();
 }
 
 module.exports = {
   analyzeESLintResults,
   generateIntegratedReport,
   calculateOverallDebtScore,
-}
+};

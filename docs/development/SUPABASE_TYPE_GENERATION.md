@@ -71,11 +71,11 @@ git commit -m "chore(types): update Supabase types after schema change"
 
 ```typescript
 // src/types/custom.ts
-import type { Database } from './supabase'
+import type { Database } from './supabase';
 
 export type TaskWithUser = Database['public']['Tables']['tasks']['Row'] & {
-  user: Database['public']['Tables']['profiles']['Row']
-}
+  user: Database['public']['Tables']['profiles']['Row'];
+};
 ```
 
 ## トラブルシューティング
@@ -105,4 +105,4 @@ export type TaskWithUser = Database['public']['Tables']['tasks']['Row'] & {
 
 **種類**: 📗 ハウツーガイド
 **最終更新**: 2025-12-11
-**所有者**: BoxLog 開発チーム
+**所有者**: Dayopt 開発チーム

@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import {
   ChevronDown,
   Copy,
@@ -158,7 +158,7 @@ export const Overview: Story = {
           </div>
 
           <div className="bg-container mt-4 rounded-lg p-4">
-            <h4 className="mb-2 text-sm font-bold">選択基準</h4>
+            <h3 className="mb-2 text-sm font-bold">選択基準</h3>
             <ul className="text-muted-foreground space-y-1 text-xs">
               <li>
                 <strong>sm:</strong> ヘッダー、ツールバー、テーブル行内
@@ -190,7 +190,7 @@ export const Overview: Story = {
           </div>
 
           <div className="bg-container mt-4 rounded-lg p-4">
-            <h4 className="mb-2 text-sm font-bold">配置ルール</h4>
+            <h3 className="mb-2 text-sm font-bold">配置ルール</h3>
             <ul className="text-muted-foreground space-y-1 text-xs">
               <li>画面上部右寄せ、またはフォーム下部</li>
               <li>1画面に1つのプライマリアクション</li>
@@ -212,7 +212,7 @@ export const Overview: Story = {
               <p className="text-muted-foreground text-xs font-bold">アイコンボタン</p>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon">
+                  <Button variant="ghost" icon>
                     <MoreHorizontal className="size-4" />
                   </Button>
                 </DropdownMenuTrigger>
@@ -243,7 +243,7 @@ export const Overview: Story = {
               <p className="text-muted-foreground text-xs font-bold">縦三点</p>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon">
+                  <Button variant="ghost" icon>
                     <MoreVertical className="size-4" />
                   </Button>
                 </DropdownMenuTrigger>
@@ -278,7 +278,7 @@ export const Overview: Story = {
           <pre className="bg-container mt-4 overflow-x-auto rounded-lg p-4 text-xs">
             {`<DropdownMenu>
   <DropdownMenuTrigger asChild>
-    <Button variant="ghost" size="icon">
+    <Button variant="ghost" icon>
       <MoreHorizontal className="size-4" />
     </Button>
   </DropdownMenuTrigger>
@@ -432,7 +432,7 @@ export const Overview: Story = {
           </div>
 
           <div className="bg-container mt-4 rounded-lg p-4">
-            <h4 className="mb-2 text-sm font-bold">表示ルール</h4>
+            <h3 className="mb-2 text-sm font-bold">表示ルール</h3>
             <ul className="text-muted-foreground space-y-1 text-xs">
               <li>1件以上選択時にのみ表示</li>
               <li>選択件数を明示</li>

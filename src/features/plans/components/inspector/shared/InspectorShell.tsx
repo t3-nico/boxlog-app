@@ -103,7 +103,7 @@ export function InspectorShell({
                   <DropdownMenuTrigger asChild>
                     <Button
                       variant="ghost"
-                      size="icon"
+                      icon
                       className="size-10 focus-visible:ring-0"
                       aria-label="オプション"
                     >

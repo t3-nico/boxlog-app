@@ -121,7 +121,7 @@ describe('Encryption Module', () => {
 
         // キーにプレフィックスが付いていることを確認
         const callArgs = localStorageMock.setItem.mock.calls[0];
-        expect(callArgs?.[0]).toBe(`boxlog_encrypted_${testKey}`);
+        expect(callArgs?.[0]).toBe(`dayopt_encrypted_${testKey}`);
       });
 
       it('should return false on error', async () => {
@@ -150,7 +150,7 @@ describe('Encryption Module', () => {
       });
 
       it('should return null for corrupted data', async () => {
-        localStorageMock.setItem(`boxlog_encrypted_${testKey}`, 'corrupted-data');
+        localStorageMock.setItem(`dayopt_encrypted_${testKey}`, 'corrupted-data');
         const loaded = await loadEncryptedData(testKey, testSecret);
 
         expect(loaded).toBeNull();
@@ -162,7 +162,7 @@ describe('Encryption Module', () => {
         await saveEncryptedData(testKey, testData, testSecret);
         deleteEncryptedData(testKey);
 
-        expect(localStorageMock.removeItem).toHaveBeenCalledWith(`boxlog_encrypted_${testKey}`);
+        expect(localStorageMock.removeItem).toHaveBeenCalledWith(`dayopt_encrypted_${testKey}`);
       });
     });
   });
@@ -235,7 +235,7 @@ describe('Encryption Module', () => {
         ApiKeyStorage.delete(providerId);
 
         expect(localStorageMock.removeItem).toHaveBeenCalledWith(
-          `boxlog_encrypted_api_key_${providerId}`,
+          `dayopt_encrypted_api_key_${providerId}`,
         );
       });
     });

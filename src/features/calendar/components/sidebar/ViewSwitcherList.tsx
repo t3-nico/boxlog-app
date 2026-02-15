@@ -1,37 +1,38 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useState } from 'react';
 
 import {
   CalendarDays,
   CalendarRange,
   Check,
-  Columns3,
-  LayoutGrid,
+  ChevronDown,
+  ChevronRight,
   List,
   type LucideIcon,
 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import { useCalendarNavigation } from '@/features/calendar/contexts/CalendarNavigationContext';
 import type { CalendarViewType } from '@/features/calendar/types/calendar.types';
+import { isMultiDayView } from '@/features/calendar/types/calendar.types';
 import { useSidebarStore } from '@/features/navigation/stores/useSidebarStore';
 import { cn } from '@/lib/utils';
-import { useTranslations } from 'next-intl';
 
-interface ViewOption {
+interface MainViewOption {
   value: CalendarViewType;
   labelKey: string;
   shortcut: string;
   icon: LucideIcon;
 }
 
-const VIEW_OPTIONS: ViewOption[] = [
+const MAIN_VIEW_OPTIONS: MainViewOption[] = [
   { value: 'day', labelKey: 'calendar.views.day', shortcut: 'D', icon: CalendarDays },
-  { value: '3day', labelKey: 'calendar.views.3day', shortcut: '3', icon: Columns3 },
-  { value: '5day', labelKey: 'calendar.views.5day', shortcut: '5', icon: LayoutGrid },
   { value: 'week', labelKey: 'calendar.views.week', shortcut: 'W', icon: CalendarRange },
   { value: 'agenda', labelKey: 'calendar.views.agenda', shortcut: 'A', icon: List },
 ];
+
+const DAY_COUNTS = [2, 3, 4, 5, 6, 7, 8, 9] as const;
 
 /**
  * サイドバー用ビュー切り替えリスト（モバイル専用）
@@ -42,54 +43,21 @@ export function ViewSwitcherList() {
   const navigation = useCalendarNavigation();
   const t = useTranslations();
   const closeSidebar = useSidebarStore((state) => state.close);
-  // デフォルトは'week'（CalendarNavigationContextのinitialViewと一致させる）
   const currentView = navigation?.viewType ?? 'week';
-
-  // ショートカットキー機能
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      // Ctrl、Alt、Metaキーが押されている場合は無視
-      if (event.ctrlKey || event.altKey || event.metaKey) {
-        return;
-      }
-
-      // 入力フィールドにフォーカスがある場合は無視
-      const { activeElement } = document;
-      if (
-        activeElement &&
-        (activeElement.tagName === 'INPUT' ||
-          activeElement.tagName === 'TEXTAREA' ||
-          activeElement.getAttribute('contenteditable') === 'true')
-      ) {
-        return;
-      }
-
-      const key = event.key.toUpperCase();
-      const option = VIEW_OPTIONS.find((opt) => opt.shortcut === key);
-
-      if (option && option.value !== currentView && navigation) {
-        event.preventDefault();
-        navigation.changeView(option.value);
-      }
-    };
-
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [currentView, navigation]);
+  const [daysExpanded, setDaysExpanded] = useState(false);
 
   const handleSelect = (view: CalendarViewType) => {
     if (navigation) {
       navigation.changeView(view);
-      // モバイルでサイドバーを閉じる（このコンポーネント自体がmd:hiddenなのでモバイルのみ実行される）
       closeSidebar();
     }
   };
 
   return (
     <div className="flex flex-col gap-1 px-2 py-2 md:hidden">
-      {VIEW_OPTIONS.map((option) => {
+      {/* メインビュー */}
+      {MAIN_VIEW_OPTIONS.map((option) => {
         const isActive = currentView === option.value;
-
         const Icon = option.icon;
 
         return (
@@ -116,6 +84,60 @@ export function ViewSwitcherList() {
           </button>
         );
       })}
+
+      {/* 日数サブメニュー（展開式） */}
+      <button
+        type="button"
+        onClick={() => setDaysExpanded(!daysExpanded)}
+        className={cn(
+          'flex w-full items-center justify-between rounded-lg px-4 py-2 text-left text-sm transition-colors',
+          'text-muted-foreground hover:bg-state-hover hover:text-foreground',
+          isMultiDayView(currentView) && 'text-foreground font-normal',
+        )}
+      >
+        <div className="flex items-center gap-2">
+          <CalendarRange className="size-4" />
+          <span>{t('calendar.views.daysSubmenu')}</span>
+        </div>
+        <div className="flex items-center gap-2">
+          {isMultiDayView(currentView) && <Check className="text-primary size-4" />}
+          {daysExpanded ? (
+            <ChevronDown className="text-muted-foreground size-4" />
+          ) : (
+            <ChevronRight className="text-muted-foreground size-4" />
+          )}
+        </div>
+      </button>
+
+      {daysExpanded && (
+        <div className="flex flex-col gap-0.5 pl-4">
+          {DAY_COUNTS.map((count) => {
+            const view = `${count}day` as CalendarViewType;
+            const isActive = currentView === view;
+
+            return (
+              <button
+                key={count}
+                type="button"
+                onClick={() => handleSelect(view)}
+                className={cn(
+                  'flex w-full items-center justify-between rounded-lg px-4 py-1.5 text-left text-sm transition-colors',
+                  'text-muted-foreground hover:bg-state-hover hover:text-foreground',
+                  isActive && 'text-foreground font-normal',
+                )}
+              >
+                <span>{t('calendar.views.multiday', { count })}</span>
+                <div className="flex items-center gap-2">
+                  {isActive && <Check className="text-primary size-4" />}
+                  <span className="bg-surface-container text-muted-foreground rounded px-2 py-0.5 font-mono text-xs">
+                    {count}
+                  </span>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

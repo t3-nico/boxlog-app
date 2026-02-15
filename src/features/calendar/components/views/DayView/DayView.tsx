@@ -10,8 +10,8 @@ import { cn } from '@/lib/utils';
 import { CalendarViewAnimation } from '../../animations/ViewTransition';
 import {
   CalendarDateHeader,
+  DailyUsageStripSingle,
   DateDisplay,
-  OverdueSectionSingle,
   ScrollableCalendarLayout,
 } from '../shared';
 
@@ -115,8 +115,8 @@ export const DayView = ({
         {/* 固定日付ヘッダー */}
         <CalendarDateHeader header={headerComponent} showTimezone={false} weekNumber={weekNumber} />
 
-        {/* タイムゾーン＋未完了プランバッジエリア */}
-        <OverdueSectionSingle date={date} plans={allPlans || plans || []} timezone={timezone} />
+        {/* タイムゾーン＋日別使用時間 */}
+        <DailyUsageStripSingle date={date} plans={allPlans || plans || []} timezone={timezone} />
 
         {/* スクロール可能コンテンツ */}
         <ScrollableCalendarLayout

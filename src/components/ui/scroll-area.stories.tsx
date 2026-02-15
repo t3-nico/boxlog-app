@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { ScrollArea, ScrollBar } from './scroll-area';
 import { Separator } from './separator';
@@ -22,7 +22,7 @@ export const Default: Story = {
   render: () => (
     <ScrollArea className="border-border h-72 w-48 rounded-lg border">
       <div className="p-4">
-        <h4 className="mb-4 text-sm leading-none font-bold">タグ一覧</h4>
+        <h2 className="mb-4 text-sm leading-none font-bold">タグ一覧</h2>
         {tags.map((tag) => (
           <div key={tag}>
             <div className="text-sm">{tag}</div>
@@ -56,7 +56,7 @@ export const BothDirections: Story = {
   render: () => (
     <ScrollArea className="border-border h-72 w-72 rounded-lg border">
       <div className="p-4" style={{ width: '600px' }}>
-        <h4 className="mb-4 text-sm font-bold">縦横スクロール</h4>
+        <h2 className="mb-4 text-sm font-bold">縦横スクロール</h2>
         <div className="grid grid-cols-6 gap-4">
           {Array.from({ length: 60 }).map((_, i) => (
             <div
@@ -77,7 +77,7 @@ export const InCard: Story = {
   render: () => (
     <div className="border-border w-80 rounded-lg border">
       <div className="border-border border-b p-4">
-        <h3 className="font-bold">通知</h3>
+        <h2 className="font-bold">通知</h2>
       </div>
       <ScrollArea className="h-64">
         <div className="p-4">

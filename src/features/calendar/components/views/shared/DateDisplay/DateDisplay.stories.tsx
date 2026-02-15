@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { addDays } from 'date-fns';
 
 import { DateDisplay } from './DateDisplay';
@@ -9,7 +9,7 @@ import { DayDisplay } from './DayDisplay';
 
 /** カレンダーの日付表示コンポーネント（DateDisplay, DateDisplayRow, DayDisplay）。 */
 const meta = {
-  title: 'Features/Calendar/DateDisplay',
+  title: 'Features/Calendar/Views/DateDisplay',
   parameters: {
     layout: 'padded',
   },

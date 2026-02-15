@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta = {
   title: 'Tokens/Spacing',
@@ -20,7 +20,7 @@ export const Principles: Story = {
 
       <div className="mb-12 space-y-6">
         <div className="bg-card border-border rounded-lg border p-6">
-          <h3 className="mb-4 font-bold">原則: 関係性 = 距離</h3>
+          <h2 className="mb-4 font-bold">原則: 関係性 = 距離</h2>
           <ul className="text-muted-foreground space-y-2 text-sm">
             <li>
               <strong className="text-foreground">近い</strong> → 強く関連（同じグループ）
@@ -143,7 +143,7 @@ export const ComponentPatterns: Story = {
       <div className="space-y-12">
         {/* ボタン */}
         <div>
-          <h3 className="mb-4 font-bold">ボタン</h3>
+          <h2 className="mb-4 font-bold">ボタン</h2>
           <div className="flex flex-wrap items-start gap-8">
             <div className="text-center">
               <button className="bg-primary text-primary-foreground rounded-lg px-2 py-1 text-sm">
@@ -174,7 +174,7 @@ export const ComponentPatterns: Story = {
 
         {/* カード */}
         <div>
-          <h3 className="mb-4 font-bold">カード</h3>
+          <h2 className="mb-4 font-bold">カード</h2>
           <div className="flex flex-wrap items-start gap-8">
             <div>
               <div className="bg-card border-border w-64 rounded-lg border p-4">
@@ -199,7 +199,7 @@ export const ComponentPatterns: Story = {
 
         {/* リスト */}
         <div>
-          <h3 className="mb-4 font-bold">リスト項目</h3>
+          <h2 className="mb-4 font-bold">リスト項目</h2>
           <div className="bg-card border-border w-64 rounded-lg border">
             <div className="border-border border-b px-4 py-2">項目1</div>
             <div className="border-border border-b px-4 py-2">項目2</div>
@@ -212,9 +212,9 @@ export const ComponentPatterns: Story = {
 
         {/* モーダル */}
         <div>
-          <h3 className="mb-4 font-bold">モーダル/ダイアログ</h3>
+          <h2 className="mb-4 font-bold">モーダル/ダイアログ</h2>
           <div className="bg-card border-border w-80 rounded-2xl border p-6 shadow-xl">
-            <h4 className="text-lg font-bold">モーダルタイトル</h4>
+            <h3 className="text-lg font-bold">モーダルタイトル</h3>
             <p className="text-muted-foreground mt-2 text-sm">
               モーダルは広めの余白で重要性を強調。
             </p>
@@ -234,7 +234,7 @@ export const ComponentPatterns: Story = {
 
         {/* フォーム */}
         <div>
-          <h3 className="mb-4 font-bold">フォーム</h3>
+          <h2 className="mb-4 font-bold">フォーム</h2>
           <div className="w-64 space-y-4">
             <div className="space-y-1">
               <label className="text-sm font-bold">ラベル</label>
@@ -397,7 +397,7 @@ export const QuickReference: Story = {
 
       <div className="grid gap-6 md:grid-cols-2">
         <div className="bg-card border-border rounded-lg border p-4">
-          <h3 className="mb-4 font-bold">Gap（要素間）</h3>
+          <h2 className="mb-4 font-bold">Gap（要素間）</h2>
           <table className="w-full text-sm">
             <tbody className="divide-border divide-y">
               <tr>
@@ -435,7 +435,7 @@ export const QuickReference: Story = {
         </div>
 
         <div className="bg-card border-border rounded-lg border p-4">
-          <h3 className="mb-4 font-bold">Padding（内側余白）</h3>
+          <h2 className="mb-4 font-bold">Padding（内側余白）</h2>
           <table className="w-full text-sm">
             <tbody className="divide-border divide-y">
               <tr>
@@ -473,7 +473,7 @@ export const QuickReference: Story = {
         </div>
 
         <div className="bg-card border-border rounded-lg border p-4">
-          <h3 className="mb-4 font-bold">ボタンのPadding</h3>
+          <h2 className="mb-4 font-bold">ボタンのPadding</h2>
           <table className="w-full text-sm">
             <tbody className="divide-border divide-y">
               <tr>
@@ -499,7 +499,7 @@ export const QuickReference: Story = {
         </div>
 
         <div className="bg-card border-border rounded-lg border p-4">
-          <h3 className="mb-4 font-bold">避けるべきパターン</h3>
+          <h2 className="mb-4 font-bold">避けるべきパターン</h2>
           <ul className="text-muted-foreground space-y-2 text-sm">
             <li className="flex items-start gap-2">
               <span className="text-destructive">✗</span>

@@ -1,11 +1,19 @@
-import path from 'path';
+// This file has been automatically migrated to valid ESM format by Storybook.
+import { fileURLToPath } from 'node:url';
+import path, { dirname } from 'path';
 
 import type { StorybookConfig } from '@storybook/react-vite';
 import remarkGfm from 'remark-gfm';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 const config: StorybookConfig = {
   stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
   addons: [
+    '@storybook/addon-a11y',
+    '@vueless/storybook-dark-mode',
+    '@storybook/addon-vitest',
     {
       name: '@storybook/addon-docs',
       options: {
@@ -16,11 +24,6 @@ const config: StorybookConfig = {
         },
       },
     },
-    '@storybook/addon-essentials',
-    '@storybook/addon-a11y',
-    '@storybook/addon-onboarding',
-    '@storybook/addon-interactions',
-    'storybook-dark-mode',
   ],
   framework: {
     name: '@storybook/react-vite',
@@ -43,6 +46,8 @@ const config: StorybookConfig = {
       'next/image': path.resolve(__dirname, './mocks/next-image.tsx'),
       'next/link': path.resolve(__dirname, './mocks/next-link.tsx'),
       'next/navigation': path.resolve(__dirname, './mocks/next-navigation.tsx'),
+      // Sentry（@sentry/nextjs が Next.js 内部の process 依存のため Storybook ではモック化）
+      '@sentry/nextjs': path.resolve(__dirname, './mocks/sentry-nextjs.ts'),
     };
     // React自動JSXランタイム設定
     config.esbuild = {

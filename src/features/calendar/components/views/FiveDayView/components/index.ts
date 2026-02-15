@@ -1,1 +1,0 @@
-export { FiveDayContent } from './FiveDayContent';

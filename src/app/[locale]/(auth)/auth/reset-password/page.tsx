@@ -177,7 +177,7 @@ export default function ResetPasswordPage() {
                         <Button
                           type="button"
                           variant="ghost"
-                          size="icon"
+                          icon
                           className="absolute top-0 right-0 h-full px-4"
                           onClick={() => setShowPassword(!showPassword)}
                           disabled={loading}
@@ -217,7 +217,7 @@ export default function ResetPasswordPage() {
                         <Button
                           type="button"
                           variant="ghost"
-                          size="icon"
+                          icon
                           className="absolute top-0 right-0 h-full px-4"
                           onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                           disabled={loading}

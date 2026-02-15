@@ -1,4 +1,16 @@
-export type CalendarViewType = 'day' | '3day' | '5day' | 'week' | 'agenda';
+export type MultiDayCount = 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+export type MultiDayViewType = `${MultiDayCount}day`;
+export type CalendarViewType = 'day' | 'week' | 'agenda' | MultiDayViewType;
+
+/** MultiDayView（2day〜9day）かどうかを判定 */
+export function isMultiDayView(view: CalendarViewType): view is MultiDayViewType {
+  return /^\d+day$/.test(view) && view !== 'day';
+}
+
+/** MultiDayViewType から日数を取得 */
+export function getMultiDayCount(view: MultiDayViewType): MultiDayCount {
+  return parseInt(view) as MultiDayCount;
+}
 
 export interface CalendarViewProps {
   className?: string;
@@ -49,7 +61,6 @@ export interface CalendarPlan {
   userId?: string | undefined; // 所有者ID
   location?: string | undefined; // 場所
   url?: string | undefined; // 関連URL
-  allDay?: boolean | undefined; // 終日予定
   priority?: 'urgent' | 'important' | 'necessary' | 'delegate' | 'optional' | undefined; // 優先度
   calendarId?: string | undefined; // カレンダーID（繰り返しの場合は親プランID）
   // 繰り返し例外情報
@@ -199,7 +210,6 @@ export interface CreatePlanInput {
   calendarId?: string;
   plannedStart?: Date;
   plannedEnd?: Date;
-  allDay?: boolean;
   status?: 'todo' | 'doing' | 'closed';
   priority?: 'urgent' | 'important' | 'necessary' | 'delegate' | 'optional';
   color?: string;

@@ -1,6 +1,6 @@
 # E2E Testing with Playwright
 
-BoxLogアプリケーションのE2Eテスト（End-to-End Testing）ドキュメント。
+DayoptアプリケーションのE2Eテスト（End-to-End Testing）ドキュメント。
 
 ## 📋 目次
 
@@ -12,7 +12,7 @@ BoxLogアプリケーションのE2Eテスト（End-to-End Testing）ドキュ�
 
 ## 🎯 概要
 
-PlaywrightによるE2Eテストを使用して、BoxLogの主要機能をブラウザ上で自動テストします。
+PlaywrightによるE2Eテストを使用して、Dayoptの主要機能をブラウザ上で自動テストします。
 
 ### テスト対象
 
@@ -219,7 +219,6 @@ playwright-report/         # レポート（git ignore済み）
 
 - [Playwright公式ドキュメント](https://playwright.dev/)
 - [Playwright Authentication Guide](https://playwright.dev/docs/auth)
-- [BoxLog開発ドキュメント](/docs/README.md)
 
 ---
 

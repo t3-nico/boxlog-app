@@ -9,12 +9,11 @@ import { CalendarSidebar } from '@/features/calendar/components/sidebar/Calendar
 import { AppSidebar } from '@/features/navigation/components/sidebar/app-sidebar';
 import { useSidebarStore } from '@/features/navigation/stores/useSidebarStore';
 import { PlanSidebar } from '@/features/plans/components/PlanSidebar';
-import { SettingsSidebar } from '@/features/settings/components/sidebar';
 import { StatsSidebar } from '@/features/stats';
 
 import { MainContentWrapper } from './main-content-wrapper';
 
-type PageType = 'calendar' | 'plan' | 'stats' | 'settings' | 'default';
+type PageType = 'calendar' | 'plan' | 'stats' | 'default';
 
 interface MobileLayoutProps {
   children: React.ReactNode;
@@ -61,7 +60,6 @@ export function MobileLayout({ children, locale }: MobileLayoutProps) {
     if (pathname?.startsWith(`/${locale}/calendar`)) return 'calendar';
     if (pathname?.startsWith(`/${locale}/plan`)) return 'plan';
     if (pathname?.startsWith(`/${locale}/stats`)) return 'stats';
-    if (pathname?.startsWith(`/${locale}/settings`)) return 'settings';
     return 'default';
   }, [pathname, locale]);
 
@@ -74,8 +72,6 @@ export function MobileLayout({ children, locale }: MobileLayoutProps) {
         return PlanSidebar;
       case 'stats':
         return StatsSidebar;
-      case 'settings':
-        return SettingsSidebar;
       default:
         return AppSidebar;
     }

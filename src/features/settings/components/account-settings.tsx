@@ -4,6 +4,8 @@ import { useCallback, useState } from 'react';
 
 import { useTranslations } from 'next-intl';
 
+import { Camera } from 'lucide-react';
+
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { useAuthStore } from '@/features/auth/stores/useAuthStore';
@@ -46,42 +48,47 @@ export function AccountSettings() {
     <div className="space-y-8">
       {/* Profile Section */}
       <SettingsCard title={t('settings.account.profile')}>
+        <div className="mb-4">
+          <div className="text-foreground mb-2 text-base">
+            {t('settings.account.profilePicture')}
+          </div>
+          <button
+            type="button"
+            className="group relative cursor-pointer"
+            onClick={() => setShowAvatarDialog(true)}
+            aria-label={t('settings.account.profilePicture')}
+          >
+            <Avatar size="xl">
+              <AvatarImage src={avatarUrl || undefined} alt={displayName} />
+              <AvatarFallback>{getInitials(displayName)}</AvatarFallback>
+            </Avatar>
+            <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/0 transition-colors group-hover:bg-black/40">
+              <Camera className="h-5 w-5 text-white opacity-0 transition-opacity group-hover:opacity-100" />
+            </div>
+          </button>
+        </div>
         <div className="space-y-0">
-          <SettingRow
-            label={t('settings.account.profilePicture')}
-            value={
-              <Avatar className="h-8 w-8">
-                <AvatarImage src={avatarUrl || undefined} alt={displayName} />
-                <AvatarFallback className="text-xs">{getInitials(displayName)}</AvatarFallback>
-              </Avatar>
-            }
-            action={<Button onClick={() => setShowAvatarDialog(true)}>{t('common.change')}</Button>}
-          />
-          <SettingRow
-            label={t('settings.account.displayName')}
-            value={displayName}
-            action={
-              <Button onClick={() => setShowDisplayNameDialog(true)}>{t('common.change')}</Button>
-            }
-          />
+          <SettingRow label={t('settings.account.displayName')} description={displayName}>
+            <Button variant="outline" onClick={() => setShowDisplayNameDialog(true)}>
+              {t('common.change')}
+            </Button>
+          </SettingRow>
         </div>
       </SettingsCard>
 
       {/* Security Section */}
       <SettingsCard title={t('settings.account.email')}>
         <div className="space-y-0">
-          <SettingRow
-            label={t('settings.account.email')}
-            value={email}
-            action={<Button onClick={() => setShowEmailDialog(true)}>{t('common.change')}</Button>}
-          />
-          <SettingRow
-            label={t('settings.account.password')}
-            value="••••••••"
-            action={
-              <Button onClick={() => setShowPasswordDialog(true)}>{t('common.change')}</Button>
-            }
-          />
+          <SettingRow label={t('settings.account.email')} description={email}>
+            <Button variant="outline" onClick={() => setShowEmailDialog(true)}>
+              {t('common.change')}
+            </Button>
+          </SettingRow>
+          <SettingRow label={t('settings.account.password')} description="••••••••">
+            <Button variant="outline" onClick={() => setShowPasswordDialog(true)}>
+              {t('common.change')}
+            </Button>
+          </SettingRow>
         </div>
       </SettingsCard>
 

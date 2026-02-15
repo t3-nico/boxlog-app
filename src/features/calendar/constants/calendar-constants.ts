@@ -7,7 +7,6 @@ export const HOUR_HEIGHT = 48; // 1時間の高さ（ピクセル）
 export const MINUTE_HEIGHT = HOUR_HEIGHT / 60;
 export const GRID_GAP = 1; // グリッド間のギャップ
 export const TIME_LABEL_WIDTH = 64; // 時間ラベルの幅（ピクセル）
-export const ALL_DAY_ROW_HEIGHT = 24; // 全日プラン1行の高さ（ピクセル）
 export const HEADER_HEIGHT = 56; // 日付ヘッダーの高さ（ピクセル）
 
 // カラー定義（セマンティックトークン使用）
@@ -18,7 +17,6 @@ export const GRID_COLORS = {
   businessHours: 'bg-background',
   nonBusinessHours: 'bg-muted/30',
   currentTime: 'bg-primary',
-  allDaySection: 'bg-muted/50',
 };
 
 // スクロール設定
@@ -62,7 +60,6 @@ export const CALENDAR_CLASSES = {
   // レイアウト
   hourHeight: 'h-12', // 48px = h-12
   timeColumnWidth: 'w-16', // 64px = w-16
-  allDayRowHeight: 'h-6', // 24px = h-6
   headerHeight: 'h-14', // 56px = h-14
 
   // 色・背景（セマンティックトークン）

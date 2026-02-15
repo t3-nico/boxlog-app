@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Calendar, CheckSquare, FileText, History } from 'lucide-react';
 import { useState } from 'react';
 

@@ -47,7 +47,7 @@ export async function generateMetadata({
     },
     description: t('description'),
     keywords: [
-      'BoxLog',
+      'Dayopt',
       'task management',
       'productivity',
       'calendar',
@@ -56,9 +56,9 @@ export async function generateMetadata({
       validLocale === 'ja' ? '生産性向上' : '',
       validLocale === 'ja' ? 'プロジェクト管理' : '',
     ].filter(Boolean),
-    authors: [{ name: 'BoxLog Team' }],
-    creator: 'BoxLog',
-    publisher: 'BoxLog',
+    authors: [{ name: 'Dayopt Team' }],
+    creator: 'Dayopt',
+    publisher: 'Dayopt',
     robots: {
       index: true,
       follow: true,
@@ -89,8 +89,8 @@ export async function generateMetadata({
     },
     twitter: {
       card: 'summary_large_image',
-      site: '@boxlog',
-      creator: '@boxlog',
+      site: '@dayopt',
+      creator: '@dayopt',
       title: t('name'),
       description: t('description'),
       images: ['/og-image.png'],
@@ -131,7 +131,7 @@ function generateJsonLd(locale: string, appName: string, appDescription: string)
     },
     author: {
       '@type': 'Organization',
-      name: 'BoxLog',
+      name: 'Dayopt',
     },
   };
 }

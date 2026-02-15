@@ -1,4 +1,4 @@
-name: 🚀 BoxLog CI/CD Pipeline
+name: 🚀 Dayopt CI/CD Pipeline
 
 on:
   push:
@@ -99,6 +99,28 @@ jobs:
 
       - name: 🧪 Run tests
         run: npm run test:run
+
+  storybook-tests:
+    name: 📖 Storybook Tests
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.58.0-noble
+    timeout-minutes: 15
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+      - name: 🏗️ Setup Node.js
+        uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 📖 Run Storybook tests
+        run: npx vitest --project storybook --run
 
   # =====================================
   # 🔍 Phase 2: Quality Checks (並列実行 / 5分以内)
@@ -250,6 +272,7 @@ jobs:
         lint,
         typecheck,
         unit-tests,
+        storybook-tests,
         build,
         accessibility,
         heavy-checks,
@@ -269,7 +292,11 @@ jobs:
             exit 1
           fi
           if [[ "${{ needs.unit-tests.result }}" != "success" ]]; then
-            echo "❌ Tests failed"
+            echo "❌ Unit Tests failed"
+            exit 1
+          fi
+          if [[ "${{ needs.storybook-tests.result }}" != "success" ]]; then
+            echo "❌ Storybook Tests failed"
             exit 1
           fi
           if [[ "${{ needs.build.result }}" != "success" ]]; then
@@ -296,7 +323,8 @@ jobs:
             |-------|--------|
             | ${getEmoji('${{ needs.lint.result }}')} **Lint** | ${{ needs.lint.result }} |
             | ${getEmoji('${{ needs.typecheck.result }}')} **TypeScript** | ${{ needs.typecheck.result }} |
-            | ${getEmoji('${{ needs.unit-tests.result }}')} **Tests** | ${{ needs.unit-tests.result }} |
+            | ${getEmoji('${{ needs.unit-tests.result }}')} **Unit Tests** | ${{ needs.unit-tests.result }} |
+            | ${getEmoji('${{ needs.storybook-tests.result }}')} **Storybook Tests** | ${{ needs.storybook-tests.result }} |
             | ${getEmoji('${{ needs.build.result }}')} **Build** | ${{ needs.build.result }} |
             | ${getEmoji('${{ needs.accessibility.result }}')} **Accessibility** | ${{ needs.accessibility.result }} |
             | ${getEmoji('${{ needs.heavy-checks.result }}')} **Heavy Checks** | ${{ needs.heavy-checks.result }} |
@@ -311,7 +339,7 @@ jobs:
                 : '🔧 **Please fix the issues above.**';
             })()}
 
-            <sub>🤖 BoxLog CI/CD Pipeline</sub>`;
+            <sub>🤖 Dayopt CI/CD Pipeline</sub>`;
 
             const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,

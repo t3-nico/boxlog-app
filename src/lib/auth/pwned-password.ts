@@ -61,7 +61,7 @@ export async function checkPasswordPwned(password: string): Promise<boolean> {
     const response = await fetch(apiUrl, {
       method: 'GET',
       headers: {
-        'User-Agent': 'BoxLog-App', // API推奨のUser-Agent
+        'User-Agent': 'Dayopt-App', // API推奨のUser-Agent
       },
     });
 
@@ -111,7 +111,7 @@ export async function getPasswordPwnedCount(password: string): Promise<number> {
     const response = await fetch(apiUrl, {
       method: 'GET',
       headers: {
-        'User-Agent': 'BoxLog-App',
+        'User-Agent': 'Dayopt-App',
       },
     });
 

@@ -33,25 +33,10 @@ interface CalendarHeaderProps {
   // 日付選択機能
   onDateSelect?: ((date: Date) => void) | undefined;
   showMiniCalendar?: boolean | undefined;
-  // 現在表示している期間（MiniCalendarでのハイライト用）
-  displayRange?:
-    | {
-        start: Date;
-        end: Date;
-      }
-    | undefined;
   // サイドパネル
   currentPanel?: PanelType | undefined;
   onPanelChange?: ((panel: PanelType) => void) | undefined;
 }
-
-const viewOptions = [
-  { value: 'day' as CalendarViewType, label: 'Day', shortcut: 'D' },
-  { value: '3day' as CalendarViewType, label: '3 Days', shortcut: '3' },
-  { value: '5day' as CalendarViewType, label: '5 Days', shortcut: '5' },
-  { value: 'week' as CalendarViewType, label: 'Week', shortcut: 'W' },
-  { value: 'agenda' as CalendarViewType, label: 'Agenda', shortcut: 'A' },
-];
 
 /**
  * カレンダーヘッダー（ナビゲーション部分）
@@ -83,7 +68,6 @@ export const CalendarHeader = ({
   leftSlot,
   onDateSelect,
   showMiniCalendar = false,
-  displayRange,
   currentPanel = 'none',
   onPanelChange,
 }: CalendarHeaderProps) => {
@@ -103,7 +87,7 @@ export const CalendarHeader = ({
             <HoverTooltip content={t('sidebar.openSidebar')} side="bottom">
               <Button
                 variant="ghost"
-                size="icon"
+                icon
                 className="hidden size-8 md:flex"
                 onClick={openSidebar}
                 aria-label={t('sidebar.openSidebar')}
@@ -123,7 +107,6 @@ export const CalendarHeader = ({
             showWeekNumber={showWeekNumbers}
             clickable={showMiniCalendar}
             onDateSelect={onDateSelect ? (date) => date && onDateSelect(date) : undefined}
-            displayRange={displayRange}
           />
 
           {/* コントロール群 - PC（同グループなのでgap-2） */}
@@ -132,11 +115,7 @@ export const CalendarHeader = ({
             <DateNavigator onNavigate={onNavigate} arrowSize="md" />
 
             {/* ビュー切り替え */}
-            <ViewSwitcher
-              options={viewOptions}
-              currentView={viewType}
-              onChange={(view) => onViewChange(view as CalendarViewType)}
-            />
+            <ViewSwitcher currentView={viewType} onChange={onViewChange} />
           </div>
 
           {/* カスタムスロット（必要に応じて） */}
@@ -149,7 +128,8 @@ export const CalendarHeader = ({
           <div className="flex items-center gap-1 md:hidden">
             <Button
               variant="ghost"
-              size="icon-sm"
+              size="sm"
+              icon
               className="text-muted-foreground hover:text-foreground"
               onClick={openSearch}
               aria-label="検索"
@@ -158,7 +138,8 @@ export const CalendarHeader = ({
             </Button>
             <Button
               variant="ghost"
-              size="icon-sm"
+              size="sm"
+              icon
               className="text-muted-foreground hover:text-foreground"
               onClick={() => onNavigate('today')}
               aria-label="今日に戻る"
@@ -178,7 +159,7 @@ export const CalendarHeader = ({
               <HoverTooltip content={t('calendar.panel.open')} side="bottom">
                 <Button
                   variant="ghost"
-                  size="icon"
+                  icon
                   className="-mr-4 size-8"
                   onClick={() => onPanelChange('plan')}
                   aria-label="Open side panel"

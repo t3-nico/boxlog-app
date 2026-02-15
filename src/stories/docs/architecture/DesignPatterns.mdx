@@ -1,0 +1,179 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Docs/Architecture/Design Patterns" />
+
+# 設計パターン
+
+Dayoptで採用している設計パターンの解説。
+
+---
+
+## ディレクトリ構造: Feature-based
+
+```
+src/
+├── app/           # Next.js App Router（ルーティング）
+├── features/      # 機能ごとのモジュール
+├── components/    # 共通コンポーネント
+├── hooks/         # 共通フック
+├── lib/           # ユーティリティ
+├── server/        # バックエンド（tRPC）
+└── types/         # 型定義
+```
+
+### features/ の構造
+
+```
+features/
+├── calendar/      # カレンダー機能
+│   ├── components/
+│   ├── hooks/
+│   ├── stores/
+│   └── types/
+├── plans/         # プラン管理
+├── tags/          # タグ管理
+└── ...
+```
+
+**なぜFeature-basedか**: 機能の追加・削除が容易、関連コードが近くにある、大規模アプリでもスケール。
+
+---
+
+## API層: Router → Service → Supabase
+
+```
+┌─────────────┐
+│   Router    │ ← 入出力の定義、認証チェック
+├─────────────┤
+│   Service   │ ← ビジネスロジック
+├─────────────┤
+│  Supabase   │ ← データアクセス
+└─────────────┘
+```
+
+### Router（薄い層）
+
+```typescript
+// src/server/api/routers/plans/crud.ts
+create: protectedProcedure
+  .input(createPlanSchema) // Zodでバリデーション
+  .mutation(({ ctx, input }) => {
+    const service = createPlanService(ctx.supabase);
+    return service.create({ userId: ctx.userId, ...input });
+  });
+```
+
+**役割**: 入力バリデーション（Zod）、認証・認可チェック、Serviceの呼び出し。
+
+### Service（ビジネスロジック）
+
+```typescript
+// src/server/services/plans/plan-service.ts
+class PlanService {
+  async create(params: CreatePlanParams) {
+    this.validatePlan(params);
+    const planData = this.buildPlanData(params);
+    return this.supabase.from('plans').insert(planData);
+  }
+}
+```
+
+**なぜService層を分けるか**: テストしやすい（DBをモックできる）、ロジックの再利用、Routerを薄く保てる。
+
+---
+
+## 状態管理: UI状態 vs サーバー状態
+
+### UI状態（Zustand）
+
+```typescript
+export const useCalendarStore = create(
+  devtools(
+    persist(
+      (set) => ({
+        view: 'week',
+        setView: (view) => set({ view }),
+      }),
+      { name: 'calendar-store' },
+    ),
+  ),
+);
+```
+
+**使うべき場面**: サイドバーの開閉、選択中のアイテム、フィルター条件、表示設定。
+
+### サーバー状態（TanStack Query via tRPC）
+
+```typescript
+const { data: plans, isLoading } = api.plans.list.useQuery({
+  startDate,
+  endDate,
+});
+```
+
+**使うべき場面**: サーバーから取得したデータ、一覧表示、詳細データ。
+
+---
+
+## コンポーネント: Presentational + Container
+
+### Presentational（見た目）
+
+```tsx
+function PlanCard({ plan, onEdit, onDelete }) {
+  return (
+    <Card>
+      <h3>{plan.title}</h3>
+      <Button onClick={onEdit}>編集</Button>
+    </Card>
+  );
+}
+```
+
+### Container（ロジック）
+
+```tsx
+function PlanCardContainer({ planId }) {
+  const { data: plan } = api.plans.getById.useQuery({ id: planId });
+  const deletePlan = api.plans.delete.useMutation();
+
+  return <PlanCard plan={plan} onDelete={() => deletePlan.mutate({ id: planId })} />;
+}
+```
+
+**なぜ分けるか**: テストしやすい（Presentationalは純粋関数）、再利用しやすい、責務が明確。
+
+---
+
+## エラーハンドリング: TRPCError
+
+```typescript
+// Service内でエラーをスロー
+if (!plan) {
+  throw new TRPCError({
+    code: 'NOT_FOUND',
+    message: 'プランが見つかりません',
+  });
+}
+
+// Client側でキャッチ
+const mutation = api.plans.update.useMutation({
+  onError: (error) => {
+    if (error.data?.code === 'NOT_FOUND') {
+      toast.error('プランが見つかりません');
+    }
+  },
+});
+```
+
+---
+
+## 関連ページ
+
+- [データフロー](?path=/docs/docs-architecture-data-flow--docs)
+- [ツール連携](?path=/docs/docs-architecture-tool-integration--docs)
+- [エラーパターン](?path=/docs/docs-architecture-error-patterns--docs)
+
+---
+
+**最終更新**: 2026-02-12 | **バージョン**: v1.0

@@ -72,7 +72,7 @@ export function PlanListToolbar({
     <div className="flex h-10 items-center gap-1 px-2">
       {isSearchOpen ? (
         // 検索モード
-        <div className="flex flex-1 items-center gap-2">
+        <div className="bg-input flex flex-1 items-center gap-2 rounded-md px-2">
           <Search className="text-muted-foreground size-4 shrink-0" />
           <Input
             type="text"
@@ -84,8 +84,8 @@ export function PlanListToolbar({
           />
           <Button
             variant="ghost"
-            size="icon"
-            className="size-6"
+            size="sm"
+            icon
             onClick={() => {
               onSearchChange('');
               onSearchOpenChange(false);
@@ -114,12 +114,7 @@ export function PlanListToolbar({
           />
 
           {/* 検索ボタン */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="size-6"
-            onClick={() => onSearchOpenChange(true)}
-          >
+          <Button variant="ghost" size="sm" icon onClick={() => onSearchOpenChange(true)}>
             <Search className="size-4" />
           </Button>
         </>

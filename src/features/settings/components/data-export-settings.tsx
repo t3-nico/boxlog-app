@@ -35,7 +35,7 @@ export const DataExportSettings = memo(function DataExportSettings() {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `boxlog-data-export-${result.data.userId}-${Date.now()}.json`;
+      a.download = `dayopt-data-export-${result.data.userId}-${Date.now()}.json`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -94,7 +94,7 @@ export const DataExportSettings = memo(function DataExportSettings() {
             <p className="text-muted-foreground text-sm">
               {t('settings.dataControls.import.dropzone')}
             </p>
-            <Button variant="outline" className="mt-4" disabled>
+            <Button variant="ghost" className="mt-4" disabled>
               {t('settings.dataControls.import.selectFile')}
             </Button>
           </div>
@@ -107,10 +107,9 @@ export const DataExportSettings = memo(function DataExportSettings() {
       {/* 自動バックアップ */}
       <SettingsCard title={t('settings.dataControls.backup.title')}>
         <div className="space-y-0">
-          <SettingRow
-            label={t('settings.dataControls.backup.enableLabel')}
-            value={<Switch checked={autoBackup} onCheckedChange={handleAutoBackupChange} />}
-          />
+          <SettingRow label={t('settings.dataControls.backup.enableLabel')}>
+            <Switch checked={autoBackup} onCheckedChange={handleAutoBackupChange} />
+          </SettingRow>
         </div>
         {autoBackup && (
           <div className="bg-surface-container mt-4 rounded-2xl p-4">

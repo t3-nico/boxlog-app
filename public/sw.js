@@ -1,5 +1,5 @@
 /**
- * BoxLog Service Worker
+ * Dayopt Service Worker
  *
  * オフライン対応とキャッシング戦略を提供
  *
@@ -11,9 +11,9 @@
 
 // キャッシュバージョン: 破壊的変更時のみインクリメント
 const CACHE_VERSION = '2';
-const CACHE_NAME = `boxlog-v${CACHE_VERSION}`;
-const STATIC_CACHE_NAME = `boxlog-static-v${CACHE_VERSION}`;
-const DYNAMIC_CACHE_NAME = `boxlog-dynamic-v${CACHE_VERSION}`;
+const CACHE_NAME = `dayopt-v${CACHE_VERSION}`;
+const STATIC_CACHE_NAME = `dayopt-static-v${CACHE_VERSION}`;
+const DYNAMIC_CACHE_NAME = `dayopt-dynamic-v${CACHE_VERSION}`;
 
 // 静的アセット（ビルド時に確定するファイル）
 const STATIC_ASSETS = [
@@ -70,7 +70,7 @@ self.addEventListener('activate', (event) => {
             .filter((name) => {
               // 古いキャッシュを削除
               return (
-                name.startsWith('boxlog-') &&
+                name.startsWith('dayopt-') &&
                 name !== STATIC_CACHE_NAME &&
                 name !== DYNAMIC_CACHE_NAME
               );
@@ -205,7 +205,7 @@ self.addEventListener('message', (event) => {
       caches.keys().then((cacheNames) => {
         return Promise.all(
           cacheNames
-            .filter((name) => name.startsWith('boxlog-'))
+            .filter((name) => name.startsWith('dayopt-'))
             .map((name) => caches.delete(name)),
         );
       }),

@@ -9,9 +9,10 @@ import { addDays, startOfWeek, subDays } from '@/lib/date';
 
 export interface UseDateUtilitiesOptions {
   referenceDate: Date;
-  viewType: 'week' | 'threeday' | 'fiveday' | 'agenda';
+  viewType: 'week' | 'threeday' | 'fiveday' | 'multiday' | 'agenda';
   weekStartsOn?: 0 | 1 | 6;
   showWeekends?: boolean;
+  dayCount?: number; // multiday用の表示日数（2-9）
   agendaDays?: number; // AgendaView用の表示日数
 }
 
@@ -31,122 +32,108 @@ export interface UseDateUtilitiesReturn {
  * - WeekView: 週の7日間
  * - ThreeDayView: 中央日±1日の3日間
  * - FiveDayView: 中央日±2日の5日間
+ * - MultiDayView: 中央日±floor(dayCount/2)日のN日間（2-9日）
  * - AgendaView: 指定日数分の連続日付
  */
+/**
+ * N日間の日付配列を生成（中央日基準、週末非表示対応）
+ */
+function generateMultiDayDates(referenceDate: Date, count: number, showWeekends: boolean): Date[] {
+  const offset = Math.floor(count / 2);
+
+  if (!showWeekends) {
+    // 中央日が週末の場合、次の平日を探す
+    let checkDate = referenceDate;
+    while (checkDate.getDay() === 0 || checkDate.getDay() === 6) {
+      checkDate = addDays(checkDate, 1);
+    }
+
+    // 前方の平日を探す
+    const prevDates: Date[] = [];
+    let tempDate = subDays(checkDate, 1);
+    while (prevDates.length < offset) {
+      if (tempDate.getDay() !== 0 && tempDate.getDay() !== 6) {
+        prevDates.unshift(tempDate);
+      }
+      tempDate = subDays(tempDate, 1);
+    }
+
+    // 後方の平日を探す
+    const nextDates: Date[] = [];
+    const remaining = count - 1 - offset; // 中央日を除いた後方の日数
+    tempDate = addDays(checkDate, 1);
+    while (nextDates.length < remaining) {
+      if (tempDate.getDay() !== 0 && tempDate.getDay() !== 6) {
+        nextDates.push(tempDate);
+      }
+      tempDate = addDays(tempDate, 1);
+    }
+
+    return [...prevDates, checkDate, ...nextDates];
+  }
+
+  // 週末表示時は単純に前後N日
+  const dates: Date[] = [];
+  for (let i = -offset; i < count - offset; i++) {
+    dates.push(i === 0 ? referenceDate : addDays(referenceDate, i));
+  }
+  return dates;
+}
+
 export function useDateUtilities({
   referenceDate,
   viewType,
   weekStartsOn = 0,
   showWeekends = true,
+  dayCount,
   agendaDays = 30,
 }: UseDateUtilitiesOptions): UseDateUtilitiesReturn {
   const dates = useMemo(() => {
     // Step 1: 各ビューに応じた完全な日付配列を生成
     let fullDates: Date[] = [];
 
-    switch (viewType) {
-      case 'week': {
-        // 週の開始日を計算して7日間すべて生成
-        const weekStart = startOfWeek(referenceDate, { weekStartsOn });
-        fullDates = Array.from({ length: 7 }, (_, index) => addDays(weekStart, index));
-        break;
-      }
+    // multiday / threeday / fiveday を統一処理
+    const effectiveDayCount =
+      viewType === 'multiday'
+        ? (dayCount ?? 3)
+        : viewType === 'threeday'
+          ? 3
+          : viewType === 'fiveday'
+            ? 5
+            : null;
 
-      case 'threeday': {
-        // 3日間を生成（週末非表示の場合は平日のみで3日間確保）
-        if (!showWeekends) {
-          // 週末を除外して3日間の平日を取得
-          let checkDate = referenceDate;
-
-          // 中央日が週末の場合、次の平日を探す
-          while (checkDate.getDay() === 0 || checkDate.getDay() === 6) {
-            checkDate = addDays(checkDate, 1);
-          }
-
-          // 中央日を基準に前後の平日を探す
-          // 前の平日を探す
-          let prevDate = subDays(checkDate, 1);
-          while (prevDate.getDay() === 0 || prevDate.getDay() === 6) {
-            prevDate = subDays(prevDate, 1);
-          }
-
-          // 次の平日を探す
-          let nextDate = addDays(checkDate, 1);
-          while (nextDate.getDay() === 0 || nextDate.getDay() === 6) {
-            nextDate = addDays(nextDate, 1);
-          }
-
-          fullDates = [prevDate, checkDate, nextDate];
-        } else {
-          // 週末表示時は単純に前後1日
-          fullDates = [
-            subDays(referenceDate, 1), // 前日
-            referenceDate, // 当日
-            addDays(referenceDate, 1), // 翌日
-          ];
+    if (effectiveDayCount !== null) {
+      fullDates = generateMultiDayDates(referenceDate, effectiveDayCount, showWeekends);
+    } else {
+      switch (viewType) {
+        case 'week': {
+          // 週の開始日を計算して7日間すべて生成
+          const weekStart = startOfWeek(referenceDate, { weekStartsOn });
+          fullDates = Array.from({ length: 7 }, (_, index) => addDays(weekStart, index));
+          break;
         }
-        break;
-      }
 
-      case 'fiveday': {
-        // 5日間を生成（週末非表示の場合は平日のみで5日間確保）
-        if (!showWeekends) {
-          // 週末を除外して5日間の平日を取得
-          let checkDate = referenceDate;
-
-          // 中央日が週末の場合、次の平日を探す
-          while (checkDate.getDay() === 0 || checkDate.getDay() === 6) {
-            checkDate = addDays(checkDate, 1);
-          }
-
-          // 中央日を基準に前後2日ずつの平日を探す
-          // 前の2つの平日を探す
-          const prevDates: Date[] = [];
-          let tempDate = subDays(checkDate, 1);
-          while (prevDates.length < 2) {
-            if (tempDate.getDay() !== 0 && tempDate.getDay() !== 6) {
-              prevDates.unshift(tempDate);
-            }
-            tempDate = subDays(tempDate, 1);
-          }
-
-          // 次の2つの平日を探す
-          const nextDates: Date[] = [];
-          tempDate = addDays(checkDate, 1);
-          while (nextDates.length < 2) {
-            if (tempDate.getDay() !== 0 && tempDate.getDay() !== 6) {
-              nextDates.push(tempDate);
-            }
-            tempDate = addDays(tempDate, 1);
-          }
-
-          fullDates = [...prevDates, checkDate, ...nextDates];
-        } else {
-          // 週末表示時は単純に前後2日
-          fullDates = [
-            subDays(referenceDate, 2), // 2日前
-            subDays(referenceDate, 1), // 前日
-            referenceDate, // 当日
-            addDays(referenceDate, 1), // 翌日
-            addDays(referenceDate, 2), // 2日後
-          ];
+        case 'agenda': {
+          // referenceDate から指定日数分の連続日付
+          fullDates = Array.from({ length: agendaDays }, (_, index) =>
+            addDays(referenceDate, index),
+          );
+          break;
         }
-        break;
-      }
 
-      case 'agenda': {
-        // referenceDate から指定日数分の連続日付
-        fullDates = Array.from({ length: agendaDays }, (_, index) => addDays(referenceDate, index));
-        break;
+        default:
+          fullDates = [referenceDate];
       }
-
-      default:
-        fullDates = [referenceDate];
     }
 
     // Step 2: 週末フィルタリングを統一的に適用
-    // threeday, fivedayビューは既に処理済みなので、他のビューのみフィルタリング
-    if (!showWeekends && viewType !== 'threeday' && viewType !== 'fiveday') {
+    // multiday/threeday/fivedayビューは既に処理済みなので、他のビューのみフィルタリング
+    if (
+      !showWeekends &&
+      viewType !== 'threeday' &&
+      viewType !== 'fiveday' &&
+      viewType !== 'multiday'
+    ) {
       return fullDates.filter((date) => {
         const day = date.getDay();
         return day !== 0 && day !== 6; // 日曜(0)、土曜(6)を除外
@@ -154,7 +141,7 @@ export function useDateUtilities({
     }
 
     return fullDates;
-  }, [referenceDate, viewType, weekStartsOn, showWeekends, agendaDays]);
+  }, [referenceDate, viewType, weekStartsOn, showWeekends, dayCount, agendaDays]);
 
   const startDate = useMemo(() => dates[0]!, [dates]);
   const endDate = useMemo(() => dates[dates.length - 1]!, [dates]);

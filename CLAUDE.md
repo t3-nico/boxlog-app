@@ -377,15 +377,13 @@ CLAUDE.mdでは、[理由]のため[推奨方法]を採用しています。
 
 | ドキュメント                                                                                 | 内容                                 |
 | -------------------------------------------------------------------------------------------- | ------------------------------------ |
-| [`src/CLAUDE.md`](src/CLAUDE.md)                                                             | コーディング規約、頻出パターン       |
 | [`docs/development/CLAUDE_4_BEST_PRACTICES.md`](docs/development/CLAUDE_4_BEST_PRACTICES.md) | プロンプト・エージェントコーディング |
 
 ### 作業時（必要に応じて）
 
 - **スタイル**: Storybook（`npm run storybook` → Docs/StyleGuide, Tokens/\*）
 - **リリース**: [`docs/releases/RELEASE_CHECKLIST.md`](docs/releases/RELEASE_CHECKLIST.md)（⚠️ リリース作業前に必須）
-- **コマンド**: [`docs/development/COMMANDS.md`](docs/development/COMMANDS.md)
-- **Issue管理**: [`docs/development/ISSUE_MANAGEMENT.md`](docs/development/ISSUE_MANAGEMENT.md)
+- **コマンド**: Storybook → Docs/Guides/Commands
 
 ### カスタムコマンド・スキル
 
@@ -421,7 +419,7 @@ GAFAが作ったOSS、推奨パターンを使う。
 ### ドキュメント参照順
 
 1. **公式ドキュメント**: Next.js, React, TypeScript, Tailwind CSS
-2. **プロジェクトルール**: CLAUDE.md, src/CLAUDE.md, globals.css
+2. **プロジェクトルール**: CLAUDE.md, .claude/skills/, globals.css
 3. **既存実装パターン**: 同一ディレクトリ内のコードを参考
 
 **確信度99%未満 → 必ず確認を求める**
@@ -431,7 +429,7 @@ GAFAが作ったOSS、推奨パターンを使う。
 | 環境           | Supabase                    | Vercel      | 用途                   |
 | -------------- | --------------------------- | ----------- | ---------------------- |
 | **Local**      | ローカル（127.0.0.1:54321） | npm run dev | 開発・デバッグ         |
-| **Staging**    | boxlog-staging（Tokyo）     | Preview URL | 実機テスト・PRレビュー |
+| **Staging**    | dayopt-staging（Tokyo）     | Preview URL | 実機テスト・PRレビュー |
 | **Production** | t3-nico's Project（Tokyo）  | 本番URL     | 実ユーザー             |
 
 **重要ポイント**:
@@ -668,8 +666,6 @@ npm run test -- path  # 特定ファイル
 - p95が悪化 → 必ずIssueを作成
 - p95が良化 → 正解パターンとして記録
 - 平均値は参考程度（判断には使わない）
-
-**詳細**: [`docs/performance/PERFORMANCE_MONITORING_PRINCIPLES.md`](docs/performance/PERFORMANCE_MONITORING_PRINCIPLES.md)
 
 ---
 

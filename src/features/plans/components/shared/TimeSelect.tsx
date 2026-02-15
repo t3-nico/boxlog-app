@@ -78,7 +78,6 @@ function parseTimeInput(input: string): string {
 interface TimeSelectProps {
   value: string; // HH:MM形式
   onChange: (time: string) => void;
-  label: string; // "開始" または "終了"
   disabled?: boolean;
   minTime?: string; // 最小時刻（この時刻以降のみ選択可能、HH:MM形式）
   /** 外部からのエラー状態（重複エラーなど） */
@@ -116,7 +115,6 @@ function formatDuration(startTime: string, endTime: string): string {
 export function TimeSelect({
   value,
   onChange,
-  label,
   disabled = false,
   minTime,
   hasError = false,
@@ -366,8 +364,7 @@ export function TimeSelect({
   };
 
   return (
-    <div className={label ? 'space-y-1' : ''}>
-      {label && <label className="text-muted-foreground text-xs">{label}</label>}
+    <div>
       <Popover open={isOpen} onOpenChange={handleOpenChange} modal={false}>
         <PopoverAnchor asChild>
           <div

@@ -100,7 +100,7 @@ export function extractBearerToken(authHeader: string | null): string {
  * @example
  * ```ts
  * const result = await verifyOAuthToken(token, {
- *   resourceIndicator: 'https://api.boxlog.app'
+ *   resourceIndicator: 'https://api.dayopt.app'
  * })
  * console.log(result.userId) // "uuid-..."
  * ```

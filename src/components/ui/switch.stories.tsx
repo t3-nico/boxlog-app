@@ -1,5 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
+import { expect, userEvent, within } from 'storybook/test';
 
 import { Label } from './label';
 import { Switch } from './switch';
@@ -29,6 +30,19 @@ export const Default: Story = {
   render: function DefaultSwitch() {
     const [checked, setChecked] = useState(false);
     return <Switch checked={checked} onCheckedChange={setChecked} />;
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // スイッチをクリックしてONにする
+    const switchElement = canvas.getByRole('switch');
+    await expect(switchElement).not.toBeChecked();
+    await userEvent.click(switchElement);
+    await expect(switchElement).toBeChecked();
+
+    // もう一度クリックしてOFFにする
+    await userEvent.click(switchElement);
+    await expect(switchElement).not.toBeChecked();
   },
 };
 

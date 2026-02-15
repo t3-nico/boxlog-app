@@ -1,23 +1,23 @@
 import { useEffect, useState } from 'react';
 
-import type { Meta, StoryObj } from '@storybook/react';
-import { fn } from '@storybook/test';
+import type { Meta, StoryObj } from '@storybook/react-vite';
+import { fn } from 'storybook/test';
 
 import { useCalendarDragStore } from '@/features/calendar/stores/useCalendarDragStore';
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
 import type { Tag } from '@/features/tags/types';
 
-import { TagSortableTree } from '@/features/calendar/components/sidebar/sortable-tree/TagSortableTree';
 import { DragSelectionPreview } from '@/features/calendar/components/views/shared/components/CalendarDragSelection/DragSelectionPreview';
 import { PanelDragPreview } from '@/features/calendar/components/views/shared/components/PanelDragPreview';
 import { PlanCard } from '@/features/calendar/components/views/shared/components/PlanCard/PlanCard';
+import { TagSortableTree } from '@/features/tags/components/sortable-tree/TagSortableTree';
 
 /**
  * DnD（Drag & Drop）に関わる全ビジュアル状態のカタログ。
  *
  * ## アーキテクチャ概要
  *
- * BoxLogのDnDは **3つの独立した層** で構成されている。
+ * DayoptのDnDは **3つの独立した層** で構成されている。
  *
  * | 層 | 方式 | 用途 |
  * |---|---|---|

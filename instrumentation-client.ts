@@ -7,11 +7,11 @@
  * @see https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
  */
 
-import * as Sentry from '@sentry/nextjs'
+import * as Sentry from '@sentry/nextjs';
 
-const SENTRY_DSN = process.env.NEXT_PUBLIC_SENTRY_DSN
-const VERCEL_ENV = process.env.NEXT_PUBLIC_VERCEL_ENV || process.env.NODE_ENV || 'development'
-const IS_PRODUCTION = process.env.NODE_ENV === 'production'
+const SENTRY_DSN = process.env.NEXT_PUBLIC_SENTRY_DSN;
+const VERCEL_ENV = process.env.NEXT_PUBLIC_VERCEL_ENV || process.env.NODE_ENV || 'development';
+const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
 /**
  * GDPR対応: Cookie同意確認
@@ -20,23 +20,23 @@ const IS_PRODUCTION = process.env.NODE_ENV === 'production'
 function isAnalyticsConsented(): boolean {
   // サーバーサイドでは常に許可（このファイルはクライアント専用だが念のため）
   if (typeof window === 'undefined') {
-    return true
+    return true;
   }
 
   // 開発環境では同意チェックをスキップ
   if (!IS_PRODUCTION) {
-    return true
+    return true;
   }
 
   // ブラウザでCookie同意を確認
   try {
-    const consent = localStorage.getItem('boxlog_cookie_consent')
-    if (!consent) return false
+    const consent = localStorage.getItem('dayopt_cookie_consent');
+    if (!consent) return false;
 
-    const parsed = JSON.parse(consent)
-    return parsed.analytics === true
+    const parsed = JSON.parse(consent);
+    return parsed.analytics === true;
   } catch {
-    return false
+    return false;
   }
 }
 
@@ -66,22 +66,28 @@ if (SENTRY_DSN && isAnalyticsConsented()) {
     beforeSend(event) {
       // 開発環境のノイズ除去
       if (!IS_PRODUCTION) {
-        const errorMessage = event.exception?.values?.[0]?.value || ''
+        const errorMessage = event.exception?.values?.[0]?.value || '';
 
         // HMR・Webpack関連エラーをフィルタ
-        const ignoredPatterns = ['HMR', 'Unexpected token', 'ChunkLoadError', 'Loading chunk', 'Network Error']
+        const ignoredPatterns = [
+          'HMR',
+          'Unexpected token',
+          'ChunkLoadError',
+          'Loading chunk',
+          'Network Error',
+        ];
 
         if (ignoredPatterns.some((pattern) => errorMessage.includes(pattern))) {
-          return null
+          return null;
         }
       }
 
       // テストエラーは通す
       if (event.tags?.test === true) {
-        return event
+        return event;
       }
 
-      return event
+      return event;
     },
 
     // クライアントサイド用インテグレーション
@@ -97,5 +103,5 @@ if (SENTRY_DSN && isAnalyticsConsented()) {
         blockAllMedia: true, // メディアをブロック
       }),
     ],
-  })
+  });
 }

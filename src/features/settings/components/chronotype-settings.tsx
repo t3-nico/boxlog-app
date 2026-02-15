@@ -171,23 +171,20 @@ export function ChronotypeSettings() {
       {/* タイプ選択セクション */}
       <SettingsCard title={t('settings.chronotype.title')} isSaving={autoSave.isSaving}>
         <div className="space-y-0">
-          <SettingRow
-            label={t('settings.chronotype.title')}
-            value={
-              <Select value={selectedType} onValueChange={handleTypeSelect}>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {selectableTypes.map((type) => (
-                    <SelectItem key={type} value={type}>
-                      {CHRONOTYPE_EMOJI[type]} {CHRONOTYPE_PRESETS[type].name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            }
-          />
+          <SettingRow label={t('settings.chronotype.title')}>
+            <Select value={selectedType} onValueChange={handleTypeSelect}>
+              <SelectTrigger variant="ghost">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {selectableTypes.map((type) => (
+                  <SelectItem key={type} value={type}>
+                    {CHRONOTYPE_EMOJI[type]} {CHRONOTYPE_PRESETS[type].name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </SettingRow>
         </div>
 
         {/* 参考リンク */}

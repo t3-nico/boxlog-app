@@ -39,7 +39,7 @@ describe('Pwned Password Check', () => {
         'https://api.pwnedpasswords.com/range/5BAA6',
         expect.objectContaining({
           method: 'GET',
-          headers: { 'User-Agent': 'BoxLog-App' },
+          headers: { 'User-Agent': 'Dayopt-App' },
         }),
       );
     });

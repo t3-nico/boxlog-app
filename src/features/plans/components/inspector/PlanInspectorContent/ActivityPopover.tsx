@@ -46,7 +46,7 @@ export function ActivityPopover({ planId }: ActivityPopoverProps) {
     <Popover open={open} onOpenChange={setOpen}>
       <HoverTooltip content={t('tabs.activity')} side="top">
         <PopoverTrigger asChild>
-          <Button variant="ghost" size="icon-sm" aria-label={t('tabs.activity')}>
+          <Button variant="ghost" size="sm" icon aria-label={t('tabs.activity')}>
             <History className="size-5" />
           </Button>
         </PopoverTrigger>

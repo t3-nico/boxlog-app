@@ -23,7 +23,7 @@
 **現在の設定確認**:
 
 ```bash
-gh api repos/t3-nico/boxlog-app/actions/permissions
+gh api repos/t3-nico/dayopt/actions/permissions
 ```
 
 **効果**:
@@ -119,7 +119,7 @@ updates:
 **追加内容**:
 
 ```yaml
-name: 🚀 BoxLog CI/CD Pipeline
+name: 🚀 Dayopt CI/CD Pipeline
 
 on:
   push:
@@ -342,7 +342,7 @@ steps:
 gh secret list
 
 # 未使用Secretsの検出
-gh api repos/t3-nico/boxlog-app/actions/secrets | jq '.secrets[].name'
+gh api repos/t3-nico/dayopt/actions/secrets | jq '.secrets[].name'
 ```
 
 ---
@@ -392,7 +392,7 @@ echo "================================"
 
 # 1. Workflow permissions確認
 echo "1. Checking workflow permissions..."
-gh api repos/t3-nico/boxlog-app/actions/permissions | jq
+gh api repos/t3-nico/dayopt/actions/permissions | jq
 
 # 2. 実行履歴の異常検知
 echo "2. Checking recent runs..."
@@ -414,7 +414,7 @@ echo "✅ Audit complete"
 
 ## 📊 セキュリティスコア
 
-### 現在のBoxLogスコア
+### 現在のDayoptスコア
 
 | カテゴリ                   | スコア | 評価            |
 | -------------------------- | ------ | --------------- |

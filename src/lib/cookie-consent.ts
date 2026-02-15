@@ -16,7 +16,7 @@ export interface CookieConsent {
   timestamp: number; // 同意取得日時（UNIX timestamp）
 }
 
-const STORAGE_KEY = 'boxlog_cookie_consent';
+const STORAGE_KEY = 'dayopt_cookie_consent';
 
 /**
  * Cookie同意状態を取得

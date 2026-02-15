@@ -1,6 +1,6 @@
 # types/ - Shared Type Definitions
 
-BoxLog application shared type definitions.
+Dayopt application shared type definitions.
 
 ## Directory Purpose
 
@@ -9,11 +9,10 @@ Feature-specific types should be colocated with their features.
 
 ## File Structure
 
-| File            | Lines | Purpose                | Key Types                               |
-| --------------- | ----- | ---------------------- | --------------------------------------- |
-| **index.ts**    | ~100  | Core entities          | Task, TaskStatus, Profile               |
-| **api.ts**      | ~100  | API types              | ApiResponse, ApiError, PaginationParams |
-| **global.d.ts** | ~20   | Global type extensions | BatteryManager                          |
+| File         | Lines | Purpose       | Key Types                               |
+| ------------ | ----- | ------------- | --------------------------------------- |
+| **index.ts** | ~100  | Core entities | Task, TaskStatus, Profile               |
+| **api.ts**   | ~100  | API types     | ApiResponse, ApiError, PaginationParams |
 
 **Total**: ~220 lines (3 files)
 
@@ -193,7 +192,6 @@ This directory was refactored to follow the colocation principle:
 ## Related Documentation
 
 - [CLAUDE.md](../../CLAUDE.md) - TypeScript strict typing rules
-- [src/CLAUDE.md](../CLAUDE.md) - Coding standards
 
 ---
 

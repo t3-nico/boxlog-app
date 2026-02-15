@@ -157,7 +157,6 @@ export function useResizeHandler({
         userId: event.userId,
         location: event.location,
         url: event.url,
-        allDay: event.allDay,
         priority: event.priority,
         calendarId: event.calendarId,
       };

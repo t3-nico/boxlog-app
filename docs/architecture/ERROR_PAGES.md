@@ -71,5 +71,5 @@ Root系3ページが英語固定な理由: これらが表示される = `NextIn
 
 ## 関連ドキュメント
 
-- [エラーバウンダリシステム](./ERROR_BOUNDARY_SYSTEM.md)
-- [エラーハンドリング](./ERROR_HANDLING.md)
+- Storybook → Docs/Guides/ErrorBoundary
+- Storybook → Docs/Architecture/Error Patterns

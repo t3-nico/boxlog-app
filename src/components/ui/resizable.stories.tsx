@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { useResizeHandle } from '@/features/calendar/hooks/useResizeHandle';
 import { cn } from '@/lib/utils';

@@ -24,7 +24,7 @@
       "  )",
       "}"
     ],
-    "description": "BoxLog App ドメイン用語を使用したReactコンポーネント"
+    "description": "Dayopt App ドメイン用語を使用したReactコンポーネント"
   },
 
   "Custom Hook with Domain Term": {
@@ -89,7 +89,7 @@
       "  }",
       "}"
     ],
-    "description": "BoxLog App ドメイン用語を使用したカスタムフック"
+    "description": "Dayopt App ドメイン用語を使用したカスタムフック"
   },
 
   "TypeScript Type with Domain Term": {
@@ -130,7 +130,7 @@
       "",
       "export type Update${1} = z.infer<typeof Update${1}Schema>"
     ],
-    "description": "BoxLog App ドメイン用語を使用したTypeScript型定義"
+    "description": "Dayopt App ドメイン用語を使用したTypeScript型定義"
   },
 
   "API Route with Domain Term": {
@@ -259,7 +259,7 @@
       "  )",
       "}"
     ],
-    "description": "BoxLog App ドメイン用語を使用したAPI Route"
+    "description": "Dayopt App ドメイン用語を使用したAPI Route"
   },
 
   "Form Component with Domain Term": {
@@ -417,7 +417,7 @@
       "  )",
       "}"
     ],
-    "description": "BoxLog App ドメイン用語を使用したフォームコンポーネント"
+    "description": "Dayopt App ドメイン用語を使用したフォームコンポーネント"
   },
 
   "Domain Term Variables": {
@@ -438,7 +438,7 @@
       "const handle${1/認証/Authentication/g}${1/ユーザー/User/g}${1/タスク/Task/g}${1/プロジェクト/Project/g}${1/通知/Notification/g}${1/ダッシュボード/Dashboard/g}${1/分析/Analytics/g}${1/コメント/Comment/g}${1/添付ファイル/Attachment/g}Update = ${14:() => {}}",
       "const handle${1/認証/Authentication/g}${1/ユーザー/User/g}${1/タスク/Task/g}${1/プロジェクト/Project/g}${1/通知/Notification/g}${1/ダッシュボード/Dashboard/g}${1/分析/Analytics/g}${1/コメント/Comment/g}${1/添付ファイル/Attachment/g}Delete = ${15:() => {}}"
     ],
-    "description": "BoxLog App ドメイン用語を使用した変数定義"
+    "description": "Dayopt App ドメイン用語を使用した変数定義"
   },
 
   "Constants with Domain Terms": {
@@ -469,6 +469,6 @@
       "export type ${1/認証/Authentication/g}${1/ユーザー/User/g}${1/タスク/Task/g}${1/プロジェクト/Project/g}${1/通知/Notification/g}${1/ダッシュボード/Dashboard/g}${1/分析/Analytics/g}${1/コメント/Comment/g}${1/添付ファイル/Attachment/g}Role = typeof ${2}_ROLES[keyof typeof ${2}_ROLES]",
       "export type ${1/認証/Authentication/g}${1/ユーザー/User/g}${1/タスク/Task/g}${1/プロジェクト/Project/g}${1/通知/Notification/g}${1/ダッシュボード/Dashboard/g}${1/分析/Analytics/g}${1/コメント/Comment/g}${1/添付ファイル/Attachment/g}Permission = typeof ${2}_PERMISSIONS[keyof typeof ${2}_PERMISSIONS]"
     ],
-    "description": "BoxLog App ドメイン用語を使用した定数定義"
+    "description": "Dayopt App ドメイン用語を使用した定数定義"
   }
 }

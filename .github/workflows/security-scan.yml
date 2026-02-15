@@ -16,7 +16,7 @@ on:
           - full
 
 env:
-  TARGET_URL: 'https://boxlog-app.vercel.app'
+  TARGET_URL: 'https://dayopt.vercel.app'
 
 # 同じブランチで複数実行された場合、古い実行をキャンセル
 concurrency:

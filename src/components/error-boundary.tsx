@@ -25,7 +25,7 @@ interface State {
 /**
  * デフォルトのエラーフォールバックUI
  */
-function DefaultErrorFallback({
+export function DefaultErrorFallback({
   onRetry,
   onReload,
 }: {
@@ -68,7 +68,7 @@ function DefaultErrorFallback({
 /**
  * 開発環境用フォールバックUI
  */
-function DevErrorFallback({ componentName }: { componentName?: string | undefined }) {
+export function DevErrorFallback({ componentName }: { componentName?: string | undefined }) {
   const t = useTranslations();
 
   return (
@@ -87,7 +87,7 @@ function DevErrorFallback({ componentName }: { componentName?: string | undefine
 /**
  * 機能エラー用フォールバックUI
  */
-function FeatureErrorFallback({ featureName }: { featureName: string }) {
+export function FeatureErrorFallback({ featureName }: { featureName: string }) {
   const t = useTranslations();
 
   return (

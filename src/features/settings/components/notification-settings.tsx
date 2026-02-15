@@ -113,7 +113,7 @@ function DeliveryMethodDropdown({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className="flex items-center gap-2" disabled={isPending}>
+        <Button variant="ghost" className="flex items-center gap-2" disabled={isPending}>
           <span className="text-sm">{getSelectedLabel()}</span>
           <ChevronDown className="size-4 opacity-50" />
         </Button>
@@ -224,18 +224,14 @@ export function NotificationSettings() {
       <SettingsCard isSaving={updateMutation.isPending}>
         <div className="space-y-0">
           {NOTIFICATION_TYPES.map(({ type, labelKey }) => (
-            <SettingRow
-              key={type}
-              label={t(labelKey)}
-              value={
-                <DeliveryMethodDropdown
-                  selectedMethods={localSettings[type] ?? []}
-                  onMethodsChange={(methods) => handleMethodsChange(type, methods)}
-                  isPending={updateMutation.isPending}
-                  browserPermission={browserPermission}
-                />
-              }
-            />
+            <SettingRow key={type} label={t(labelKey)}>
+              <DeliveryMethodDropdown
+                selectedMethods={localSettings[type] ?? []}
+                onMethodsChange={(methods) => handleMethodsChange(type, methods)}
+                isPending={updateMutation.isPending}
+                browserPermission={browserPermission}
+              />
+            </SettingRow>
           ))}
         </div>
       </SettingsCard>

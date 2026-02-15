@@ -112,7 +112,7 @@
 
   # 前回リリース以降のPR一覧を取得（例: v0.5.0以降）
   gh pr list --state merged --base main --limit 100 --json number,title,mergedAt \
-    | jq -r '.[] | select(.mergedAt > "YYYY-MM-DDT00:00:00Z") | "- [#\(.number)](https://github.com/t3-nico/boxlog-app/pull/\(.number)) - \(.title)"'
+    | jq -r '.[] | select(.mergedAt > "YYYY-MM-DDT00:00:00Z") | "- [#\(.number)](https://github.com/t3-nico/dayopt/pull/\(.number)) - \(.title)"'
   ```
 
 - [ ] **リリースノートファイルの作成**
@@ -133,7 +133,7 @@
   - [ ] カテゴリ別に整理されている（Added, Changed, Fixed, Removed, Performance, Security）
   - [ ] **Full Changelogリンクが含まれている**
     ```markdown
-    **Full Changelog**: https://github.com/t3-nico/boxlog-app/compare/v{前バージョン}...v{今回バージョン}
+    **Full Changelog**: https://github.com/t3-nico/dayopt/compare/v{前バージョン}...v{今回バージョン}
     ```
   - [ ] Breaking Changesがあれば明記されている
   - [ ] Migration Guideが必要なら含まれている
@@ -274,7 +274,7 @@ gh release create v${VERSION} \
 ### 3.1 Vercelデプロイの確認
 
 - [ ] **Vercelで自動デプロイが成功**
-  - Vercel Dashboard: https://vercel.com/t3-nicos-projects/boxlog-app
+  - Vercel Dashboard: https://vercel.com/t3-nicos-projects/dayopt
 
 - [ ] **本番環境で動作確認**
   - [ ] サイトが正常に表示される
@@ -302,7 +302,7 @@ gh release create v${VERSION} \
 - [ ] **関連Issueにコメント**
   ```bash
   gh issue comment {issue番号} \
-    --body "Released in v${VERSION}: https://github.com/t3-nico/boxlog-app/releases/tag/v${VERSION}"
+    --body "Released in v${VERSION}: https://github.com/t3-nico/dayopt/releases/tag/v${VERSION}"
   ```
 
 ---
@@ -373,7 +373,7 @@ gh release create v${VERSION} \
 **リリース実施者**: @{username}
 **リリース日時**: YYYY-MM-DD HH:MM
 **バージョン**: v{VERSION}
-**リリースURL**: https://github.com/t3-nico/boxlog-app/releases/tag/v{VERSION}
+**リリースURL**: https://github.com/t3-nico/dayopt/releases/tag/v{VERSION}
 
 お疲れ様でした！ 🎉
 
@@ -381,4 +381,4 @@ gh release create v${VERSION} \
 
 **種類**: 📗 ハウツーガイド
 **最終更新**: 2025-12-11
-**所有者**: BoxLog 開発チーム
+**所有者**: Dayopt 開発チーム

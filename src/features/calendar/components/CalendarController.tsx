@@ -357,10 +357,6 @@ export const CalendarController = ({
         onViewChange={handleViewChange}
         showHeaderActions={false}
         onDateSelect={handleDateSelect}
-        displayRange={{
-          start: viewDateRange.start,
-          end: viewDateRange.end,
-        }}
         currentPanel={currentPanel}
         onPanelChange={setCurrentPanel}
       >

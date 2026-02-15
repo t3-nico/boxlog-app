@@ -152,7 +152,7 @@ jobs:
               }
             })()}
 
-            <sub>🤖 BoxLog Security Audit Pipeline</sub>`;
+            <sub>🤖 Dayopt Security Audit Pipeline</sub>`;
 
             const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,

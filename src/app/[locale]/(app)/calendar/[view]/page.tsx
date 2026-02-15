@@ -28,8 +28,10 @@ export async function generateMetadata({
   const t = await getTranslations({ locale, namespace: 'calendar' });
 
   // ビュータイプに応じたタイトルを取得
-  const viewKey = view === '3day' ? '3day' : view === '5day' ? '5day' : view;
-  const viewTitle = t(`views.${viewKey}` as Parameters<typeof t>[0]) || t('title');
+  const multiDayMatch = view.match(/^(\d+)day$/);
+  const viewTitle = multiDayMatch
+    ? t('views.multiday', { count: parseInt(multiDayMatch[1]!) })
+    : t(`views.${view}` as Parameters<typeof t>[0]) || t('title');
 
   return {
     title: viewTitle,
@@ -49,9 +51,13 @@ interface CalendarViewPageProps {
 
 // 有効なビュータイプかチェック
 function isValidViewType(view: string): view is CalendarViewType {
-  const validTypes: CalendarViewType[] = ['day', '3day', '5day', 'week', 'agenda'];
-
-  return validTypes.includes(view as CalendarViewType);
+  if (['day', 'week', 'agenda'].includes(view)) return true;
+  const match = view.match(/^(\d+)day$/);
+  if (match) {
+    const n = parseInt(match[1]!);
+    return n >= 2 && n <= 9;
+  }
+  return false;
 }
 
 const CalendarViewPage = async ({ params, searchParams }: CalendarViewPageProps) => {

@@ -1,6 +1,6 @@
 # Sentry 統合ガイド
 
-BoxLogアプリケーションにおけるSentryの統合・設定・運用の完全ガイド。
+DayoptアプリケーションにおけるSentryの統合・設定・運用の完全ガイド。
 
 **📘 アラート設定の詳細手順**: [`SENTRY_ALERT_SETUP.md`](./SENTRY_ALERT_SETUP.md)
 
@@ -20,25 +20,25 @@ BoxLogアプリケーションにおけるSentryの統合・設定・運用の�
 
 ### Sentryとは
 
-Sentryはリアルタイムエラー追跡・パフォーマンス監視プラットフォームです。BoxLogでは以下の目的で使用しています：
+Sentryはリアルタイムエラー追跡・パフォーマンス監視プラットフォームです。Dayoptでは以下の目的で使用しています：
 
 - **エラー監視**: 本番環境でのリアルタイムエラー捕捉・通知
 - **パフォーマンス監視**: Core Web Vitals・API応答時間の測定
 - **デバッグ支援**: ソースマップによる元コードの表示
 - **ユーザーコンテキスト**: エラー発生時のユーザー情報・環境情報の記録
 
-### BoxLogでの活用
+### Dayoptでの活用
 
 ```typescript
 // エラーパターン辞書との統合
-import { reportToSentry } from '@/lib/sentry'
-import { AppError } from '@/config/error-patterns'
+import { reportToSentry } from '@/lib/sentry';
+import { AppError } from '@/config/error-patterns';
 
 try {
-  await riskyOperation()
+  await riskyOperation();
 } catch (error) {
-  const appError = new AppError('操作に失敗', 'SYSTEM_ERROR_500', { error })
-  reportToSentry(appError) // 自動分類・構造化レポート
+  const appError = new AppError('操作に失敗', 'SYSTEM_ERROR_500', { error });
+  reportToSentry(appError); // 自動分類・構造化レポート
 }
 ```
 
@@ -48,12 +48,12 @@ try {
 
 ### Sentry SDK v10 + Next.js 15 ベストプラクティス
 
-BoxLogは **Sentry SDK v10** と **Next.js 15** の公式推奨構成に従っています。
+Dayoptは **Sentry SDK v10** と **Next.js 15** の公式推奨構成に従っています。
 
 ### ファイル構成
 
 ```
-boxlog-app/
+dayopt/
 ├── instrumentation.ts           # サーバー・エッジ初期化ルーター（Next.js 15標準）
 ├── instrumentation-client.ts    # クライアント初期化
 ├── sentry.server.config.ts      # Node.jsランタイム設定
@@ -113,7 +113,7 @@ Sentryダッシュボード表示
 2. アカウント作成・ログイン
 3. 新規プロジェクト作成
    - Platform: **Next.js**
-   - Project Name: **boxlog-app**
+   - Project Name: **dayopt**
 
 #### 2. 必要な情報の取得
 
@@ -126,7 +126,7 @@ Sentryダッシュボード表示
 **Organization と Project の確認**
 
 - **Organization Slug**: URLに表示される組織名（例: `my-org`）
-- **Project Slug**: プロジェクト名（例: `boxlog-app`）
+- **Project Slug**: プロジェクト名（例: `dayopt`）
 
 **Auth Token の生成**
 
@@ -146,7 +146,7 @@ Sentryダッシュボード表示
 # Sentry Configuration
 NEXT_PUBLIC_SENTRY_DSN=https://abc123def456@sentry.io/1234567
 SENTRY_ORG=my-organization
-SENTRY_PROJECT=boxlog-app
+SENTRY_PROJECT=dayopt
 SENTRY_AUTH_TOKEN=abc123def456ghi789jkl012mno345pqr678stu901vwx234
 NEXT_PUBLIC_APP_VERSION=1.0.0
 ```
@@ -182,7 +182,7 @@ curl http://localhost:3000/api/test/sentry?type=error
 #### 1. Vercelダッシュボードで環境変数設定
 
 1. https://vercel.com/dashboard にログイン
-2. `boxlog-app` プロジェクトを選択
+2. `dayopt` プロジェクトを選択
 3. **Settings** → **Environment Variables**
 
 #### 2. Sentry環境変数を追加
@@ -193,7 +193,7 @@ curl http://localhost:3000/api/test/sentry?type=error
 | ------------------------- | --------------------------------------- | ----------------- |
 | `NEXT_PUBLIC_SENTRY_DSN`  | `https://your-dsn@sentry.io/project-id` | クライアント用DSN |
 | `SENTRY_ORG`              | `your-organization-slug`                | Organization Slug |
-| `SENTRY_PROJECT`          | `boxlog-app`                            | プロジェクト名    |
+| `SENTRY_PROJECT`          | `dayopt`                                | プロジェクト名    |
 | `SENTRY_AUTH_TOKEN`       | `your-auth-token`                       | 認証トークン      |
 | `NEXT_PUBLIC_APP_VERSION` | `1.0.0`                                 | アプリバージョン  |
 
@@ -216,29 +216,29 @@ curl https://your-app.vercel.app/api/health
 #### 基本的な使い方
 
 ```typescript
-import { reportToSentry } from '@/lib/sentry'
-import { AppError } from '@/config/error-patterns'
+import { reportToSentry } from '@/lib/sentry';
+import { AppError } from '@/config/error-patterns';
 
 try {
-  await fetchUserData(userId)
+  await fetchUserData(userId);
 } catch (error) {
   const appError = new AppError('ユーザーデータの取得に失敗', 'DATA_NOT_FOUND_404', {
     userId,
     originalError: error,
-  })
-  reportToSentry(appError)
-  throw appError
+  });
+  reportToSentry(appError);
+  throw appError;
 }
 ```
 
 #### Reactコンポーネントでのエラー
 
 ```typescript
-import { handleReactError } from '@/lib/sentry'
+import { handleReactError } from '@/lib/sentry';
 
 class ErrorBoundary extends React.Component {
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    handleReactError(error, errorInfo)
+    handleReactError(error, errorInfo);
   }
 }
 ```
@@ -246,18 +246,18 @@ class ErrorBoundary extends React.Component {
 #### APIルートでのエラー
 
 ```typescript
-import { handleApiError } from '@/lib/sentry'
+import { handleApiError } from '@/lib/sentry';
 
 export async function GET(request: Request) {
   try {
-    const data = await fetchData()
-    return Response.json(data)
+    const data = await fetchData();
+    return Response.json(data);
   } catch (error) {
     handleApiError(error as Error, {
       endpoint: '/api/data',
       method: 'GET',
-    })
-    return Response.json({ error: 'Internal Server Error' }, { status: 500 })
+    });
+    return Response.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
 ```
@@ -279,29 +279,29 @@ Web Vitalsは `instrumentation-client.ts` で自動計測されます。
 #### カスタムパフォーマンストレース
 
 ```typescript
-import { withTrace, traceApiCall, traceDbQuery } from '@/lib/sentry'
+import { withTrace, traceApiCall, traceDbQuery } from '@/lib/sentry';
 
 // API呼び出し計測
 const tasks = await traceApiCall('GET /tasks', async () => {
-  return await api.get('/tasks')
-})
+  return await api.get('/tasks');
+});
 
 // データベースクエリ計測
 const user = await traceDbQuery('users.findUnique', async () => {
-  return await prisma.user.findUnique({ where: { id } })
-})
+  return await prisma.user.findUnique({ where: { id } });
+});
 
 // 汎用トレース
 const { result, duration } = await withTrace(
   'complex-calculation',
   async () => {
-    return await heavyComputation()
+    return await heavyComputation();
   },
   {
     op: 'function',
     tags: { complexity: 'high' },
-  }
-)
+  },
+);
 ```
 
 ---
@@ -368,7 +368,7 @@ const CATEGORY_TAGS = {
     alerting: 'immediate',
   },
   // ... 他のカテゴリ
-}
+};
 ```
 
 ---
@@ -406,7 +406,7 @@ const connectSrc = [
   // ...
   'https://*.sentry.io',
   'https://*.ingest.sentry.io',
-]
+];
 ```
 
 ### Auth Token エラー
@@ -456,7 +456,7 @@ NEXT_PUBLIC_SENTRY_DEBUG=true
 
 ### Q1. Sentryの料金は？
 
-BoxLogは無料プランで十分です：
+Dayoptは無料プランで十分です：
 
 - 月5,000エラー
 - 月10,000トランザクション
@@ -494,13 +494,13 @@ Core Web Vitals目標（2025基準）：
 
 ```typescript
 // ❌ 旧（非推奨）
-import { initializeSentry, sentryIntegration } from '@/lib/sentry'
-initializeSentry()
-sentryIntegration.reportError(error)
+import { initializeSentry, sentryIntegration } from '@/lib/sentry';
+initializeSentry();
+sentryIntegration.reportError(error);
 
 // ✅ 新（推奨）
-import { reportToSentry } from '@/lib/sentry'
-reportToSentry(error)
+import { reportToSentry } from '@/lib/sentry';
+reportToSentry(error);
 ```
 
 Sentryの初期化は `instrumentation.ts` / `instrumentation-client.ts` で自動的に行われます。
@@ -516,10 +516,9 @@ Sentryの初期化は `instrumentation.ts` / `instrumentation-client.ts` で自�
 - [Sentry Performance Monitoring](https://docs.sentry.io/product/performance/)
 - [Sentry Error Monitoring](https://docs.sentry.io/product/issues/)
 
-### BoxLog関連
+### Dayopt関連
 
-- **エラーパターンガイド**: [`../architecture/ERROR_PATTERNS_GUIDE.md`](../architecture/ERROR_PATTERNS_GUIDE.md)
-- **エラーハンドリング**: [`../architecture/ERROR_HANDLING.md`](../architecture/ERROR_HANDLING.md)
+- **エラーパターン**: Storybook → Docs/Architecture/Error Patterns
 
 ### ヘルパースクリプト
 
@@ -530,10 +529,10 @@ Sentryの初期化は `instrumentation.ts` / `instrumentation-client.ts` で自�
 
 **📖 最終更新**: 2025-12-01
 **バージョン**: 2.0
-**メンテナー**: BoxLog Development Team
+**メンテナー**: Dayopt Development Team
 
 ---
 
 **種類**: 📗 ハウツーガイド
 **最終更新**: 2025-12-11
-**所有者**: BoxLog 開発チーム
+**所有者**: Dayopt 開発チーム

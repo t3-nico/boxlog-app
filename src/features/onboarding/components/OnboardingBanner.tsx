@@ -1,14 +1,14 @@
 'use client';
 
 import { X, Zap } from 'lucide-react';
-import { useLocale, useTranslations } from 'next-intl';
-import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
+import { useSettingsModalStore } from '@/features/settings/stores/useSettingsModalStore';
 
 const STORAGE_KEY = 'onboarding-banner-dismissed';
 
@@ -21,9 +21,8 @@ const STORAGE_KEY = 'onboarding-banner-dismissed';
  */
 export function OnboardingBanner() {
   const t = useTranslations('onboarding');
-  const router = useRouter();
-  const locale = useLocale();
   const chronotype = useCalendarSettingsStore((state) => state.chronotype);
+  const openModal = useSettingsModalStore((state) => state.openModal);
 
   const [isDismissed, setIsDismissed] = useState(true); // 初期値はtrue（SSR対策）
   const [isVisible, setIsVisible] = useState(false);
@@ -41,8 +40,8 @@ export function OnboardingBanner() {
   }, [chronotype, isDismissed]);
 
   const handleSetup = useCallback(() => {
-    router.push(`/${locale}/settings/personalization`);
-  }, [router, locale]);
+    openModal('personalization');
+  }, [openModal]);
 
   const handleDismiss = useCallback(() => {
     localStorage.setItem(STORAGE_KEY, 'true');
@@ -69,7 +68,7 @@ export function OnboardingBanner() {
         </Button>
         <Button
           variant="ghost"
-          size="icon"
+          icon
           onClick={handleDismiss}
           className="text-accent-foreground/70 hover:text-accent-foreground hover:bg-accent-foreground/10 h-6 w-6"
           aria-label={t('banner.dismiss')}

@@ -24,38 +24,44 @@ afterEach(() => {
   cleanup();
 });
 
-// グローバルモック設定
-global.ResizeObserver = class ResizeObserver {
-  observe() {}
-  unobserve() {}
-  disconnect() {}
-};
+// グローバルモック設定（ブラウザ環境では既にネイティブで存在するためスキップ）
+if (typeof globalThis.ResizeObserver === 'undefined') {
+  globalThis.ResizeObserver = class ResizeObserver {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  } as unknown as typeof ResizeObserver;
+}
 
-// matchMedia のモック
-Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  value: (query: string) => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addListener: () => {},
-    removeListener: () => {},
-    addEventListener: () => {},
-    removeEventListener: () => {},
-    dispatchEvent: () => {},
-  }),
-});
+// matchMedia のモック（ブラウザ環境では既にネイティブで存在するためスキップ）
+if (typeof window !== 'undefined' && !window.matchMedia) {
+  Object.defineProperty(window, 'matchMedia', {
+    writable: true,
+    value: (query: string) => ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addListener: () => {},
+      removeListener: () => {},
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      dispatchEvent: () => {},
+    }),
+  });
+}
 
-// IntersectionObserver のモック
-global.IntersectionObserver = class IntersectionObserver {
-  readonly root: Element | null = null;
-  readonly rootMargin: string = '';
-  readonly thresholds: ReadonlyArray<number> = [];
-  constructor(_callback: IntersectionObserverCallback, _options?: IntersectionObserverInit) {}
-  observe() {}
-  unobserve() {}
-  disconnect() {}
-  takeRecords(): IntersectionObserverEntry[] {
-    return [];
-  }
-};
+// IntersectionObserver のモック（ブラウザ環境では既にネイティブで存在するためスキップ）
+if (typeof globalThis.IntersectionObserver === 'undefined') {
+  globalThis.IntersectionObserver = class IntersectionObserver {
+    readonly root: Element | null = null;
+    readonly rootMargin: string = '';
+    readonly thresholds: ReadonlyArray<number> = [];
+    constructor(_callback: IntersectionObserverCallback, _options?: IntersectionObserverInit) {}
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+    takeRecords(): IntersectionObserverEntry[] {
+      return [];
+    }
+  } as unknown as typeof IntersectionObserver;
+}

@@ -1,6 +1,7 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Calendar, Clock, FileText, Search, Settings, Tag, User, X } from 'lucide-react';
 import { useState } from 'react';
+import { expect, userEvent, within } from 'storybook/test';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -27,6 +28,15 @@ export default meta;
 type Story = StoryObj;
 
 export const Overview: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // クリアボタン付き検索の入力フィールドに入力
+    const clearableInput = canvas.getByDisplayValue('検索テキスト');
+    await userEvent.clear(clearableInput);
+    await userEvent.type(clearableInput, 'タスク');
+    await expect(clearableInput).toHaveValue('タスク');
+  },
   render: () => (
     <div>
       <h1 className="mb-2 text-2xl font-bold">Search Patterns</h1>
@@ -196,7 +206,7 @@ export const Overview: Story = {
           </div>
 
           <div className="bg-container mt-4 rounded-lg p-4">
-            <h4 className="mb-2 text-sm font-bold">構成ルール</h4>
+            <h3 className="mb-2 text-sm font-bold">構成ルール</h3>
             <ul className="text-muted-foreground space-y-1 text-xs">
               <li>最近のアイテムを最上部に</li>
               <li>アクションはアイコン付きで</li>

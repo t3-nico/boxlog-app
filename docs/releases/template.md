@@ -15,17 +15,17 @@
 
 ### ✨ 新機能 (Added)
 
-- **機能名** ([#PR番号](https://github.com/t3-nico/boxlog-app/pull/{PR番号}))
+- **機能名** ([#PR番号](https://github.com/t3-nico/dayopt/pull/{PR番号}))
   - 詳細説明
 
 ### 🔄 変更 (Changed)
 
-- **変更内容** ([#PR番号](https://github.com/t3-nico/boxlog-app/pull/{PR番号}))
+- **変更内容** ([#PR番号](https://github.com/t3-nico/dayopt/pull/{PR番号}))
   - 詳細説明
 
 ### 🐛 バグ修正 (Fixed)
 
-- **修正内容** ([#PR番号](https://github.com/t3-nico/boxlog-app/pull/{PR番号}))
+- **修正内容** ([#PR番号](https://github.com/t3-nico/dayopt/pull/{PR番号}))
   - 詳細説明
 
 ### ⚠️ 破壊的変更 (Breaking Changes)
@@ -35,17 +35,17 @@
 
 ### 🗑️ 削除 (Removed)
 
-- **削除内容** ([#PR番号](https://github.com/t3-nico/boxlog-app/pull/{PR番号}))
+- **削除内容** ([#PR番号](https://github.com/t3-nico/dayopt/pull/{PR番号}))
   - 削除された機能や非推奨になった機能
 
 ### ⚡ パフォーマンス (Performance)
 
-- **改善内容** ([#PR番号](https://github.com/t3-nico/boxlog-app/pull/{PR番号}))
+- **改善内容** ([#PR番号](https://github.com/t3-nico/dayopt/pull/{PR番号}))
   - 詳細説明
 
 ### 🔒 セキュリティ (Security)
 
-- **対応内容** ([#PR番号](https://github.com/t3-nico/boxlog-app/pull/{PR番号}))
+- **対応内容** ([#PR番号](https://github.com/t3-nico/dayopt/pull/{PR番号}))
   - セキュリティ関連の修正
 
 ---
@@ -58,16 +58,16 @@
 
 ```bash
 # 前回リリース以降のPR一覧を取得
-gh pr list --state merged --base main --search "merged:>=YYYY-MM-DD" --json number,title --jq '.[] | "- [#\(.number)](https://github.com/t3-nico/boxlog-app/pull/\(.number)) - \(.title)"'
+gh pr list --state merged --base main --search "merged:>=YYYY-MM-DD" --json number,title --jq '.[] | "- [#\(.number)](https://github.com/t3-nico/dayopt/pull/\(.number)) - \(.title)"'
 ```
 
-- [#PR番号](https://github.com/t3-nico/boxlog-app/pull/{PR番号}) - {PR説明}
-- [#PR番号](https://github.com/t3-nico/boxlog-app/pull/{PR番号}) - {PR説明}
+- [#PR番号](https://github.com/t3-nico/dayopt/pull/{PR番号}) - {PR説明}
+- [#PR番号](https://github.com/t3-nico/dayopt/pull/{PR番号}) - {PR説明}
 - ...（前回リリース以降の全PRを記載）
 
 ---
 
-**Full Changelog**: https://github.com/t3-nico/boxlog-app/compare/v{前バージョン}...v{今回バージョン}
+**Full Changelog**: https://github.com/t3-nico/dayopt/compare/v{前バージョン}...v{今回バージョン}
 
 **🤖 Generated with [Claude Code](https://claude.com/claude-code)**
 
@@ -94,7 +94,7 @@ gh pr list --state merged --base main --search "merged:>=YYYY-MM-DD" --json numb
 
    # 前回リリース以降のPR一覧を取得
    gh pr list --state merged --base main --limit 100 --json number,title,mergedAt \
-     | jq -r '.[] | select(.mergedAt > "YYYY-MM-DDT00:00:00Z") | "- [#\(.number)](https://github.com/t3-nico/boxlog-app/pull/\(.number)) - \(.title)"'
+     | jq -r '.[] | select(.mergedAt > "YYYY-MM-DDT00:00:00Z") | "- [#\(.number)](https://github.com/t3-nico/dayopt/pull/\(.number)) - \(.title)"'
    ```
 
 3. バージョン番号とPR番号を置換
@@ -141,4 +141,4 @@ gh pr list --state merged --base main --search "merged:>=YYYY-MM-DD" --json numb
 
 **種類**: 📙 リファレンス
 **最終更新**: 2025-12-11
-**所有者**: BoxLog 開発チーム
+**所有者**: Dayopt 開発チーム

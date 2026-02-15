@@ -218,7 +218,8 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
                       <Button
                         type="button"
                         variant="ghost"
-                        size="icon-sm"
+                        size="sm"
+                        icon
                         className="absolute top-1/2 right-1 -translate-y-1/2"
                         onClick={() => toggleKeyVisibility(provider.id)}
                       >
@@ -230,7 +231,7 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
                       </Button>
                     </div>
                     <Button
-                      variant="outline"
+                      variant="ghost"
                       onClick={() => handleSaveApiKey(provider.id)}
                       disabled={!aiKeys[provider.id] || savingKeys[provider.id]}
                     >
@@ -286,12 +287,12 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
               </div>
               <div>
                 {integration.connected ? (
-                  <Button variant="outline" onClick={() => handleDisconnect(integration.id)}>
+                  <Button variant="ghost" onClick={() => handleDisconnect(integration.id)}>
                     <Unplug className="mr-2 h-4 w-4" />
                     {t('settings.integrations.services.disconnect')}
                   </Button>
                 ) : (
-                  <Button variant="outline" onClick={() => handleConnect(integration.id)}>
+                  <Button variant="ghost" onClick={() => handleConnect(integration.id)}>
                     <ExternalLink className="mr-2 h-4 w-4" />
                     {t('settings.integrations.services.connect')}
                   </Button>
@@ -305,10 +306,9 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
       {/* 同期設定 */}
       <SettingsCard title={t('settings.integrations.sync.title')}>
         <div className="space-y-0">
-          <SettingRow
-            label={t('settings.integrations.sync.enableLabel')}
-            value={<Switch checked={syncEnabled} onCheckedChange={handleSyncChange} />}
-          />
+          <SettingRow label={t('settings.integrations.sync.enableLabel')}>
+            <Switch checked={syncEnabled} onCheckedChange={handleSyncChange} />
+          </SettingRow>
         </div>
         {syncEnabled && (
           <div className="bg-surface-container mt-4 rounded-2xl p-4">
@@ -327,7 +327,7 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
               {t('settings.integrations.api.description')}
             </p>
           </div>
-          <Button variant="outline" disabled>
+          <Button variant="ghost" disabled>
             <ExternalLink className="mr-2 h-4 w-4" />
             {t('settings.integrations.api.openPortal')}
           </Button>

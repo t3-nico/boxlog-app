@@ -294,7 +294,7 @@ const USER_MESSAGES: Record<ErrorCode, UserMessage> = {
 
 ## 🔗 関連ドキュメント
 
-- [ERROR_HANDLING.md](../../../docs/architecture/ERROR_HANDLING.md) - エラーハンドリング全体像
+- Storybook → Docs/Architecture/Error Patterns - エラーハンドリング全体像
 - [SENTRY.md](../../../docs/integrations/SENTRY.md) - Sentry統合
 - [index.ts](index.ts) - ErrorPatternDictionaryの実装
 

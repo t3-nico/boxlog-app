@@ -80,7 +80,7 @@ function mapSeverityToSentryLevel(severity: SeverityLevel): Sentry.SeverityLevel
  * エラーのフィンガープリントを生成
  */
 function generateFingerprint(error: AppError): string[] {
-  return ['boxlog-app', error.category, error.code.toString()];
+  return ['dayopt', error.category, error.code.toString()];
 }
 
 /**

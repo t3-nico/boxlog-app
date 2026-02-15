@@ -2,7 +2,7 @@
 
 GitHub ActionsのEnvironment機能を使用したSecrets管理
 
-**関連**: [Issue #500 - Phase 3](https://github.com/t3-nico/boxlog-app/issues/500)
+**関連**: [Issue #500 - Phase 3](https://github.com/t3-nico/dayopt/issues/500)
 
 ---
 
@@ -44,7 +44,7 @@ GitHub ActionsのEnvironment機能を使用して、環境ごとにSecretsを分
 
 ## 🔧 現在の実装状況
 
-### BoxLogのデプロイ方式
+### Dayoptのデプロイ方式
 
 **現在**: Vercel GitHubインテグレーション（自動デプロイ）
 
@@ -67,7 +67,7 @@ GitHub ActionsのEnvironment機能を使用して、環境ごとにSecretsを分
 
 ## 📝 Phase 3の実装方針
 
-BoxLogは**Vercel自動デプロイ**を使用しているため、
+Dayoptは**Vercel自動デプロイ**を使用しているため、
 GitHub ActionsのEnvironment Secretsは**CI/CDビルド検証用**として活用します。
 
 ### 実装内容
@@ -255,4 +255,4 @@ Files audited: 6
 
 **種類**: 📙 リファレンス
 **最終更新**: 2025-12-11
-**所有者**: BoxLog 開発チーム
+**所有者**: Dayopt 開発チーム

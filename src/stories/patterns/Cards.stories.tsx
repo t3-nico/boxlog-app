@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Calendar, Clock, MoreHorizontal, Tag } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
@@ -144,7 +144,7 @@ export const Overview: Story = {
                 <CardAction>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon" className="size-8">
+                      <Button variant="ghost" size="sm" icon>
                         <MoreHorizontal className="size-4" />
                       </Button>
                     </DropdownMenuTrigger>
@@ -186,7 +186,7 @@ export const Overview: Story = {
     <CardTitle>タイトル</CardTitle>
     <CardDescription>説明</CardDescription>
     <CardAction>
-      <Button variant="ghost" size="icon">
+      <Button variant="ghost" icon>
         <MoreHorizontal className="size-4" />
       </Button>
     </CardAction>

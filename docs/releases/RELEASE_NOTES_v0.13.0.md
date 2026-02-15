@@ -13,7 +13,7 @@
 
 ### ✨ 新機能 (Added)
 
-#### タグ機能の大幅強化 ([#910](https://github.com/t3-nico/boxlog-app/pull/910))
+#### タグ機能の大幅強化 ([#910](https://github.com/t3-nico/dayopt/pull/910))
 
 **データモデル変更**
 
@@ -33,7 +33,7 @@
 - タグ作成・編集・削除・マージ・並び替えに楽観的更新を実装
 - 階層変更時の即時UI反映
 
-#### ナビゲーション刷新 ([#865](https://github.com/t3-nico/boxlog-app/pull/865))
+#### ナビゲーション刷新 ([#865](https://github.com/t3-nico/dayopt/pull/865))
 
 - `NavigationTabs` コンポーネント追加（Calendar/Inbox/Stats間のタブ切り替え）
 - `CreateNewDropdown` でPlan/Task作成を統一
@@ -42,14 +42,14 @@
 - Statsページに専用ヘッダー追加（期間セレクター、AIボタン）
 - `usePageTitle` hook + Zustand Store でタイトル動的管理
 
-#### アナリティクス基盤 ([#863](https://github.com/t3-nico/boxlog-app/pull/863))
+#### アナリティクス基盤 ([#863](https://github.com/t3-nico/dayopt/pull/863))
 
 - PostHog SDKを導入
 - `PostHogProvider` コンポーネントでApp Router対応
 - 環境変数未設定時は自動的に無効化（エラーなし）
 - ページビュートラッキング実装
 
-#### CI/テスト強化 ([#860](https://github.com/t3-nico/boxlog-app/pull/860))
+#### CI/テスト強化 ([#860](https://github.com/t3-nico/dayopt/pull/860))
 
 **新規CIワークフロー**
 
@@ -65,9 +65,9 @@
 
 **ドキュメント**
 
-- `docs/development/TESTING_STRATEGY.md` - テスト戦略ガイド
+- Storybook → Docs/Test Strategy
 
-#### 品質改善パッケージ ([#870](https://github.com/t3-nico/boxlog-app/pull/870))
+#### 品質改善パッケージ ([#870](https://github.com/t3-nico/dayopt/pull/870))
 
 **ステータス名変更**
 
@@ -91,7 +91,7 @@
 
 ### 🔄 変更 (Changed)
 
-#### Lighthouse CI厳格化 ([#872](https://github.com/t3-nico/boxlog-app/pull/872))
+#### Lighthouse CI厳格化 ([#872](https://github.com/t3-nico/dayopt/pull/872))
 
 - PR時もスコア低下でCIブロック（`continue-on-error` 削除）
 - Phase 1閾値: Performance 80点、Accessibility 90点、Best Practices 85点
@@ -99,7 +99,7 @@
 - 認証フォーム画像に `priority` と `sizes` 属性追加
 - 公開プロフィールページ機能を削除（不要機能の整理）
 
-#### ESLint no-consoleルール ([#859](https://github.com/t3-nico/boxlog-app/pull/859))
+#### ESLint no-consoleルール ([#859](https://github.com/t3-nico/dayopt/pull/859))
 
 - `console.log/info/debug` → エラー（本番コード禁止）
 - `console.warn/error` → 許可
@@ -110,7 +110,7 @@
   - Hooks: useAddPopup
   - Server: recovery-strategies, plans/utils
 
-#### スタイルシステム統一 ([#853](https://github.com/t3-nico/boxlog-app/pull/853))
+#### スタイルシステム統一 ([#853](https://github.com/t3-nico/dayopt/pull/853))
 
 **カラー**
 
@@ -124,7 +124,7 @@
   - `default`: 36px（Material Design Small相当）
   - `lg`: 44px（Apple HIG準拠、タッチターゲット最小サイズ）
 
-#### その他の変更 ([#910](https://github.com/t3-nico/boxlog-app/pull/910))
+#### その他の変更 ([#910](https://github.com/t3-nico/dayopt/pull/910))
 
 **デザインシステム**
 
@@ -151,13 +151,13 @@
 
 ### 🐛 バグ修正 (Fixed)
 
-#### Sentryイベント送信 ([#868](https://github.com/t3-nico/boxlog-app/pull/868))
+#### Sentryイベント送信 ([#868](https://github.com/t3-nico/dayopt/pull/868))
 
 - **問題**: `tunnelRoute: '/monitoring-tunnel'` が設定されていたが、ルートハンドラーが自動生成されず、Sentryイベントが失われていた
 - **修正**: tunnelRoute設定を削除（CSPヘッダーで既にSentryドメイン許可済み）
 - サーバーサイドでランタイム環境変数（SENTRY_DSN, VERCEL_ENV）を優先使用
 
-#### その他の修正 ([#910](https://github.com/t3-nico/boxlog-app/pull/910))
+#### その他の修正 ([#910](https://github.com/t3-nico/dayopt/pull/910))
 
 - タグ名変更後にタグが消える問題を修正
 - タグ階層変更時の楽観的更新の不整合を修正
@@ -169,7 +169,7 @@
 
 ### ⚡ パフォーマンス (Performance)
 
-#### 認証フロー最適化 Phase 2 ([#874](https://github.com/t3-nico/boxlog-app/pull/874))
+#### 認証フロー最適化 Phase 2 ([#874](https://github.com/t3-nico/dayopt/pull/874))
 
 - Analytics/SpeedInsightsを `requestIdleCallback` で遅延読み込み
 - 認証ページでPostHog初期化をスキップ
@@ -181,7 +181,7 @@
 | Analytics遅延        | -300ms  | -150ms  |
 | Cookieバナースキップ | -500ms+ | -       |
 
-#### その他の最適化 ([#910](https://github.com/t3-nico/boxlog-app/pull/910), [#870](https://github.com/t3-nico/boxlog-app/pull/870))
+#### その他の最適化 ([#910](https://github.com/t3-nico/dayopt/pull/910), [#870](https://github.com/t3-nico/dayopt/pull/870))
 
 - TagListのグループ検索をMapで最適化（O(n) → O(1)）
 - SSRプリフェッチとRoute Segment Configで初期ページロード最適化
@@ -196,18 +196,18 @@
 
 ### Pull Requests
 
-| PR                                                     | タイトル                                                         | コミット数 |
-| ------------------------------------------------------ | ---------------------------------------------------------------- | ---------- |
-| [#910](https://github.com/t3-nico/boxlog-app/pull/910) | refactor(tags): タグ機能の改善とリファクタリング                 | 89         |
-| [#874](https://github.com/t3-nico/boxlog-app/pull/874) | perf(auth): Phase 2 - Lighthouse CI optimization                 | 7          |
-| [#872](https://github.com/t3-nico/boxlog-app/pull/872) | ci(lighthouse): enable PR blocking on score regression           | 9          |
-| [#870](https://github.com/t3-nico/boxlog-app/pull/870) | feat: quality improvements - performance, auth, tests, CI/CD     | 13         |
-| [#868](https://github.com/t3-nico/boxlog-app/pull/868) | fix(sentry): tunnelRoute削除によりイベント送信を修正             | 1          |
-| [#865](https://github.com/t3-nico/boxlog-app/pull/865) | refactor(layout): Linear/VS Code風サイドバーとナビゲーション統一 | 9          |
-| [#863](https://github.com/t3-nico/boxlog-app/pull/863) | feat(analytics): PostHog SDK導入                                 | 3          |
-| [#860](https://github.com/t3-nico/boxlog-app/pull/860) | feat(test): テスト戦略強化 - CI/カバレッジ・E2E・Integration     | 7          |
-| [#859](https://github.com/t3-nico/boxlog-app/pull/859) | fix(lint): ESLint no-console ルール追加 & logger統一             | 8          |
-| [#853](https://github.com/t3-nico/boxlog-app/pull/853) | refactor(style): スタイルシステム統一 (カラー・ボタンサイズ)     | 5          |
+| PR                                                 | タイトル                                                         | コミット数 |
+| -------------------------------------------------- | ---------------------------------------------------------------- | ---------- |
+| [#910](https://github.com/t3-nico/dayopt/pull/910) | refactor(tags): タグ機能の改善とリファクタリング                 | 89         |
+| [#874](https://github.com/t3-nico/dayopt/pull/874) | perf(auth): Phase 2 - Lighthouse CI optimization                 | 7          |
+| [#872](https://github.com/t3-nico/dayopt/pull/872) | ci(lighthouse): enable PR blocking on score regression           | 9          |
+| [#870](https://github.com/t3-nico/dayopt/pull/870) | feat: quality improvements - performance, auth, tests, CI/CD     | 13         |
+| [#868](https://github.com/t3-nico/dayopt/pull/868) | fix(sentry): tunnelRoute削除によりイベント送信を修正             | 1          |
+| [#865](https://github.com/t3-nico/dayopt/pull/865) | refactor(layout): Linear/VS Code風サイドバーとナビゲーション統一 | 9          |
+| [#863](https://github.com/t3-nico/dayopt/pull/863) | feat(analytics): PostHog SDK導入                                 | 3          |
+| [#860](https://github.com/t3-nico/dayopt/pull/860) | feat(test): テスト戦略強化 - CI/カバレッジ・E2E・Integration     | 7          |
+| [#859](https://github.com/t3-nico/dayopt/pull/859) | fix(lint): ESLint no-console ルール追加 & logger統一             | 8          |
+| [#853](https://github.com/t3-nico/dayopt/pull/853) | refactor(style): スタイルシステム統一 (カラー・ボタンサイズ)     | 5          |
 
 ---
 
@@ -228,4 +228,4 @@
 
 ---
 
-**Full Changelog**: https://github.com/t3-nico/boxlog-app/compare/v0.12.0...v0.13.0
+**Full Changelog**: https://github.com/t3-nico/dayopt/compare/v0.12.0...v0.13.0

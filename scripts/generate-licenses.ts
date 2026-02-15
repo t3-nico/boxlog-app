@@ -173,7 +173,7 @@ function generateCredits(packages: Record<string, LicenseInfo>): CreditInfo[] {
  * THIRD_PARTY_NOTICES.txt ファイルの内容を生成
  */
 function generateNoticesFile(notices: string[]): string {
-  const header = `BoxLog - Third Party Notices
+  const header = `Dayopt - Third Party Notices
 
 This file contains notices for third-party software components included in this project.
 

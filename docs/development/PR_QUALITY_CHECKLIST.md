@@ -1,6 +1,6 @@
 # PR品質チェックリスト
 
-BoxLogアプリケーションのプルリクエスト時の品質確保のためのチェックリストです。
+Dayoptアプリケーションのプルリクエスト時の品質確保のためのチェックリストです。
 
 ## 🚀 クイックスタート
 
@@ -223,7 +223,7 @@ npm run perf:check          # パフォーマンス回帰テスト
 
 ### CI/CD連携
 
-BoxLogの品質ゲートはCI/CD実行時にも同様のチェックが実行されます：
+Dayoptの品質ゲートはCI/CD実行時にも同様のチェックが実行されます：
 
 ```bash
 # .husky/pre-commit で自動実行
@@ -251,17 +251,17 @@ npm run quality:gate
 ## 🎓 関連ドキュメント
 
 - [包括的品質ゲートシステム](./session-templates/QUALITY_CHECKLIST.md)
-- [Bundle監視システム](../performance/BUNDLE_MONITORING.md)
+- Storybook → Docs/Guides/Bundle Monitoring
 
 ---
 
 **📖 このドキュメントについて**
-BoxLog PR品質メトリクス v1.0
+Dayopt PR品質メトリクス v1.0
 最終更新: 2025-09-25
-関連Issue: [品質メトリクスの作成 #56](https://github.com/t3-nico/boxlog-app/issues/56)
+関連Issue: [品質メトリクスの作成 #56](https://github.com/t3-nico/dayopt/issues/56)
 
 ---
 
 **種類**: 📙 リファレンス
 **最終更新**: 2026-01-19
-**所有者**: BoxLog 開発チーム
+**所有者**: Dayopt 開発チーム

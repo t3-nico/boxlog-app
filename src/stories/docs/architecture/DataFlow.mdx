@@ -1,0 +1,139 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Docs/Architecture/Data Flow" />
+
+# データフロー
+
+Dayoptにおけるデータの流れ。ユーザー操作からDBまでの全レイヤーを図解する。
+
+---
+
+## 全体像
+
+```
+[ユーザー操作]
+     ↓
+[React Component] ← Zustand (UI状態)
+     ↓
+[tRPC Client] ← TanStack Query (キャッシュ)
+     ↓
+[tRPC Router]
+     ↓
+[Service Layer] ← ビジネスロジック
+     ↓
+[Supabase Client]
+     ↓
+[PostgreSQL] ← RLS (行レベルセキュリティ)
+```
+
+---
+
+## 各レイヤーの役割
+
+### 1. React Component
+
+ユーザー操作を受け取り、tRPC mutationを呼び出す。
+
+```typescript
+const handleCreatePlan = async (data) => {
+  await createPlan.mutateAsync(data);
+};
+```
+
+### 2. tRPC Client + TanStack Query
+
+型安全なAPI呼び出しとキャッシュ管理。
+
+```typescript
+const createPlan = api.plans.create.useMutation({
+  onSuccess: () => {
+    utils.plans.list.invalidate(); // キャッシュ無効化→再取得
+  },
+});
+```
+
+**なぜtRPCか**: クライアント↔サーバー間の型安全性、自動補完、REST APIより少ないコード量。
+
+**なぜTanStack Queryか**: サーバーデータのキャッシング、自動リフェッチ、楽観的更新のサポート。
+
+### 3. tRPC Router
+
+入力バリデーションと認証チェック。ルーターは薄く保つ。
+
+```typescript
+create: protectedProcedure
+  .input(createPlanSchema)
+  .mutation(async ({ ctx, input }) => {
+    const service = createPlanService(ctx.supabase);
+    return service.create({ userId: ctx.userId, ...input });
+  });
+```
+
+### 4. Service Layer
+
+ビジネスロジックを集約。テストしやすく、再利用可能。
+
+```typescript
+class PlanService {
+  async create(params) {
+    // バリデーション
+    // ビジネスロジック
+    // DB操作
+  }
+}
+```
+
+**なぜService層を分けるか**: ビジネスロジックの再利用、テストしやすさ、ルーターを薄く保つ。
+
+### 5. Supabase Client
+
+```typescript
+const { data, error } = await this.supabase
+  .from('plans')
+  .insert(planData)
+  .select()
+  .single();
+```
+
+### 6. PostgreSQL + RLS
+
+データベースレベルでのセキュリティ。
+
+```sql
+CREATE POLICY "Users can manage own plans"
+ON plans FOR ALL
+USING (auth.uid() = user_id);
+```
+
+**なぜRLSか**: アプリケーションコードでの漏れを防ぐ、ゼロトラスト原則。
+
+---
+
+## 状態管理の使い分け
+
+| 状態の種類 | 管理方法 | 例 |
+|-----------|---------|-----|
+| **サーバーデータ** | TanStack Query | プラン一覧、タグ |
+| **UI状態（グローバル）** | Zustand | サイドバー開閉、選択中のアイテム |
+| **UI状態（ローカル）** | useState | フォームの入力値、モーダルの開閉 |
+| **URL状態** | Next.js Router | 現在のページ、クエリパラメータ |
+
+詳細は [状態管理](?path=/docs/docs-architecture-state-management--docs) を参照。
+
+---
+
+## 楽観的更新のフロー
+
+```
+[ユーザー操作]
+     ↓
+[キャッシュを即座に更新] ← 体感0ms
+     ↓
+[tRPC mutation送信]
+     ├─ 成功 → キャッシュ確定
+     └─ 失敗 → キャッシュをロールバック + toast.error()
+```
+
+---
+
+**最終更新**: 2026-02-12 | **バージョン**: v1.0

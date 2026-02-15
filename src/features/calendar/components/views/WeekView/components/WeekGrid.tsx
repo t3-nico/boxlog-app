@@ -8,8 +8,8 @@ import { cn } from '@/lib/utils';
 
 import {
   CalendarDateHeader,
+  DailyUsageStrip,
   DateDisplay,
-  OverdueSection,
   ScrollableCalendarLayout,
   getDateKey,
 } from '../../shared';
@@ -91,7 +91,7 @@ export const WeekGrid = ({
         <div
           key={date.toISOString()}
           className="flex items-center justify-center px-1"
-          style={{ width: `${100 / 7}%` }}
+          style={{ width: `${100 / weekDates.length}%` }}
         >
           <DateDisplay
             date={date}
@@ -113,8 +113,8 @@ export const WeekGrid = ({
       {/* 固定日付ヘッダー */}
       <CalendarDateHeader header={headerComponent} showTimezone={false} weekNumber={weekNumber} />
 
-      {/* タイムゾーン＋未完了プランバッジエリア */}
-      <OverdueSection dates={weekDates} plans={allPlans || events} timezone={timezone} />
+      {/* タイムゾーン＋日別使用時間 */}
+      <DailyUsageStrip dates={weekDates} plans={allPlans || events} timezone={timezone} />
 
       {/* スクロール可能コンテンツ */}
       <ScrollableCalendarLayout
@@ -137,7 +137,7 @@ export const WeekGrid = ({
                 'relative flex-1 overflow-visible',
                 dayIndex < weekDates.length - 1 ? 'border-border border-r' : '',
               )}
-              style={{ width: `${100 / 7}%` }}
+              style={{ width: `${100 / weekDates.length}%` }}
             >
               <WeekContent
                 date={date}

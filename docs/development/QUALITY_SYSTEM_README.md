@@ -1,6 +1,6 @@
-# 📊 BoxLog自動品質レポートシステム
+# 📊 Dayopt自動品質レポートシステム
 
-BoxLogプロジェクトの自動品質監視・改善提案システムの完全ガイドです。
+Dayoptプロジェクトの自動品質監視・改善提案システムの完全ガイドです。
 
 ## 🎯 システム概要
 
@@ -77,7 +77,7 @@ npm run improvement:track
 ### ファイル構成
 
 ```
-boxlog-app/
+dayopt/
 ├── scripts/
 │   ├── quality-report.js           # 品質レポート生成
 │   ├── metrics-collector.js        # メトリクス収集
@@ -113,25 +113,25 @@ graph TD
 
 ```typescript
 // 基本スコア: 100点
-let score = 100
+let score = 100;
 
 // ESLintエラー（-1点/エラー、最大-20点）
-score -= Math.min(20, eslintErrors)
+score -= Math.min(20, eslintErrors);
 
 // TypeScriptエラー（-2点/エラー、最大-20点）
-score -= Math.min(20, typescriptErrors * 2)
+score -= Math.min(20, typescriptErrors * 2);
 
 // テストカバレッジ（80%未満で減点）
 if (coverage < 80) {
-  score -= Math.min(20, (80 - coverage) / 2)
+  score -= Math.min(20, (80 - coverage) / 2);
 }
 
 // 技術的負債（TODO数、最大-10点）
-score -= Math.min(10, todoCount / 5)
+score -= Math.min(10, todoCount / 5);
 
 // バンドルサイズ（5MB超で減点）
 if (bundleMB > 5) {
-  score -= Math.min(10, (bundleMB - 5) * 2)
+  score -= Math.min(10, (bundleMB - 5) * 2);
 }
 ```
 
@@ -167,7 +167,7 @@ if (bundleMB > 5) {
 
 ```json
 {
-  "text": "📊 BoxLog品質レポート",
+  "text": "📊 Dayopt品質レポート",
   "blocks": [
     {
       "type": "section",
@@ -247,7 +247,7 @@ const THRESHOLDS = {
   typescriptErrorsCritical: 5, // TS エラー緊急しきい値
   coverageTarget: 80, // カバレッジ目標
   bundleSizeWarning: 5, // バンドルサイズ警告(MB)
-}
+};
 ```
 
 ## 📋 トラブルシューティング
@@ -295,13 +295,11 @@ npm run build
 
 ## 🔗 関連リンク
 
-- **GitHub Issue**: [#356 自動品質レポートシステム](https://github.com/t3-nico/boxlog-app/issues/356)
+- **GitHub Issue**: [#356 自動品質レポートシステム](https://github.com/t3-nico/dayopt/issues/356)
 - **品質ダッシュボード**: `/quality-dashboard`
-- **改善Issue一覧**: `https://github.com/t3-nico/boxlog-app/issues?q=label%3Aquality-improvement`
+- **改善Issue一覧**: `https://github.com/t3-nico/dayopt/issues?q=label%3Aquality-improvement`
 
 ## 📚 詳細ドキュメント
-
-- [ESLint設定ガイド](./ESLINT_HYBRID_APPROACH.md)
 
 ## 🤝 貢献・改善
 
@@ -329,4 +327,4 @@ npm run build
 
 **種類**: 📙 リファレンス
 **最終更新**: 2025-12-11
-**所有者**: BoxLog 開発チーム
+**所有者**: Dayopt 開発チーム

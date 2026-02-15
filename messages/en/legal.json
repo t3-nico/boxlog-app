@@ -7,11 +7,11 @@
     "cookieSettings": "Cookie Settings",
     "privacy": {
       "title": "Privacy Policy",
-      "description": "How BoxLog handles your personal information",
+      "description": "How Dayopt handles your personal information",
       "sections": {
         "introduction": {
           "title": "Introduction",
-          "content": "BoxLog (the \"Service\") respects your privacy and is committed to protecting your personal information. This Privacy Policy explains how we collect, use, and protect your personal information."
+          "content": "Dayopt (the \"Service\") respects your privacy and is committed to protecting your personal information. This Privacy Policy explains how we collect, use, and protect your personal information."
         },
         "dataCollection": {
           "title": "Information We Collect",
@@ -82,11 +82,11 @@
     },
     "terms": {
       "title": "Terms of Service",
-      "description": "Terms and conditions for using BoxLog",
+      "description": "Terms and conditions for using Dayopt",
       "sections": {
         "introduction": {
           "title": "Introduction",
-          "content": "These Terms of Service (the \"Terms\") govern your use of BoxLog (the \"Service\"). By using the Service, you agree to these Terms."
+          "content": "These Terms of Service (the \"Terms\") govern your use of Dayopt (the \"Service\"). By using the Service, you agree to these Terms."
         },
         "serviceDescription": {
           "title": "Service Description",
@@ -226,11 +226,11 @@
       }
     },
     "contact": {
-      "email": "support@boxlog.app",
-      "website": "https://boxlog.app"
+      "email": "support@dayopt.app",
+      "website": "https://dayopt.app"
     },
     "navigation": {
-      "backToApp": "← Back to BoxLog",
+      "backToApp": "← Back to Dayopt",
       "privacy": "Privacy Policy",
       "terms": "Terms of Service",
       "tokushoho": "Commercial Transactions Act",
@@ -307,15 +307,15 @@
       }
     },
     "footer": {
-      "copyright": "© 2025 BoxLog. All rights reserved.",
+      "copyright": "© 2025 Dayopt. All rights reserved.",
       "contact": "Contact: {{email}}"
     },
     "security": {
       "title": "Security",
-      "description": "BoxLog Security Policy, Vulnerability Disclosure Guidelines, and Security Measures",
+      "description": "Dayopt Security Policy, Vulnerability Disclosure Guidelines, and Security Measures",
       "header": {
         "title": "Security",
-        "description": "BoxLog implements the highest standards of security to protect your information."
+        "description": "Dayopt implements the highest standards of security to protect your information."
       },
       "policy": {
         "title": "Security Policy",
@@ -349,7 +349,7 @@
         "contacts": {
           "title": "How to Report",
           "email": "Email",
-          "emailAddress": "security@boxlog.app",
+          "emailAddress": "security@dayopt.app",
           "github": "GitHub Security Advisory",
           "githubLink": "Create Advisory"
         },
@@ -422,9 +422,9 @@
       "contact": {
         "title": "Contact Us",
         "securityTeam": "Security Team",
-        "securityEmail": "security@boxlog.app",
+        "securityEmail": "security@dayopt.app",
         "general": "General Inquiries",
-        "generalEmail": "support@boxlog.app",
+        "generalEmail": "support@dayopt.app",
         "thankYou": "Thank you for helping us improve security. Your reports help keep all users safe."
       },
       "lastUpdated": "Last Updated: October 15, 2025"
@@ -433,7 +433,7 @@
   "ossCredits": {
     "title": "Open Source Licenses",
     "description": "License information for open source software used in this project",
-    "intro": "BoxLog uses the following open source software. We would like to express our gratitude to the maintainers and contributors of each project.",
+    "intro": "Dayopt uses the following open source software. We would like to express our gratitude to the maintainers and contributors of each project.",
     "totalPackages": "Total Packages",
     "searchPlaceholder": "Search by package name...",
     "license": "License",

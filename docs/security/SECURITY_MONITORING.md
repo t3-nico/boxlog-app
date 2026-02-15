@@ -2,7 +2,7 @@
 
 OWASP準拠のセキュリティ監視とレポート生成システム
 
-**関連Issue**: [#487 - OWASP準拠のセキュリティ強化](https://github.com/t3-nico/boxlog-app/issues/487)
+**関連Issue**: [#487 - OWASP準拠のセキュリティ強化](https://github.com/t3-nico/dayopt/issues/487)
 
 ---
 
@@ -91,16 +91,16 @@ import {
   logUnauthorizedAccess,
   AuditEventType,
   AuditSeverity,
-} from '@/lib/audit/logger'
+} from '@/lib/audit/logger';
 
 // ログイン成功
-await logLoginSuccess(user.id, request.headers.get('x-forwarded-for'))
+await logLoginSuccess(user.id, request.headers.get('x-forwarded-for'));
 
 // ログイン失敗
-await logLoginFailure(email, 'Invalid password', request.headers.get('x-forwarded-for'))
+await logLoginFailure(email, 'Invalid password', request.headers.get('x-forwarded-for'));
 
 // 不正アクセス試行
-await logUnauthorizedAccess('/api/admin', userId, request.headers.get('x-forwarded-for'))
+await logUnauthorizedAccess('/api/admin', userId, request.headers.get('x-forwarded-for'));
 
 // カスタムイベント
 await logAuditEvent(AuditEventType.SENSITIVE_DATA_ACCESS, AuditSeverity.INFO, {
@@ -109,7 +109,7 @@ await logAuditEvent(AuditEventType.SENSITIVE_DATA_ACCESS, AuditSeverity.INFO, {
   action: 'EXPORT',
   metadata: { recordCount: 1000 },
   success: true,
-})
+});
 ```
 
 ### データベース構造
@@ -180,7 +180,7 @@ CREATE TABLE audit_logs (
 **コスト見積もり**:
 
 - 無料枠: 10,000リクエスト/日
-- BoxLog想定: 3,000,000リクエスト/月
+- Dayopt想定: 3,000,000リクエスト/月
 - 月額コスト: **約$6**
 
 ---
@@ -287,7 +287,7 @@ LIMIT 20;
 - [Session Management](../../src/lib/auth/session-config.ts)
 - [Rate Limiting](../../src/lib/rate-limit/upstash.ts)
 - [Error Handling](../../src/lib/errors/secure-error-handler.ts)
-- [Issue #487](https://github.com/t3-nico/boxlog-app/issues/487)
+- [Issue #487](https://github.com/t3-nico/dayopt/issues/487)
 
 ---
 
@@ -307,4 +307,4 @@ LIMIT 20;
 
 **種類**: 📙 リファレンス
 **最終更新**: 2025-12-11
-**所有者**: BoxLog 開発チーム
+**所有者**: Dayopt 開発チーム

@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta = {
   title: 'Tokens/Elevation',
@@ -111,9 +111,9 @@ export const UseCases: Story = {
 
       <div className="space-y-8">
         <div>
-          <h3 className="mb-4 font-bold">
+          <h2 className="mb-4 font-bold">
             Level 2: カード <code className="text-muted-foreground text-xs">shadow-sm</code>
-          </h3>
+          </h2>
           <div className="bg-card border-border w-64 rounded-lg border p-4 shadow-sm">
             <p className="font-bold">カードタイトル</p>
             <p className="text-muted-foreground text-sm">コンテンツをグループ化</p>
@@ -121,9 +121,9 @@ export const UseCases: Story = {
         </div>
 
         <div>
-          <h3 className="mb-4 font-bold">
+          <h2 className="mb-4 font-bold">
             Level 4: ドロップダウン <code className="text-muted-foreground text-xs">shadow-lg</code>
-          </h3>
+          </h2>
           <div className="bg-card border-border w-48 rounded-lg border p-2 shadow-lg">
             <div className="hover:bg-state-hover rounded px-4 py-2">メニュー1</div>
             <div className="hover:bg-state-hover rounded px-4 py-2">メニュー2</div>
@@ -132,11 +132,11 @@ export const UseCases: Story = {
         </div>
 
         <div>
-          <h3 className="mb-4 font-bold">
+          <h2 className="mb-4 font-bold">
             Level 5: モーダル <code className="text-muted-foreground text-xs">shadow-xl</code>
-          </h3>
+          </h2>
           <div className="bg-card border-border w-80 rounded-2xl border p-6 shadow-xl">
-            <h4 className="mb-2 text-lg font-bold">モーダルタイトル</h4>
+            <h3 className="mb-2 text-lg font-bold">モーダルタイトル</h3>
             <p className="text-muted-foreground mb-4 text-sm">最前面でユーザーの操作を待つ</p>
             <div className="flex justify-end gap-2">
               <button className="hover:bg-state-hover rounded-lg px-4 py-2 text-sm">

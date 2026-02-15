@@ -1,10 +1,10 @@
-import type { Preview } from '@storybook/react';
+import type { Preview } from '@storybook/react-vite';
+import { useDarkMode } from '@vueless/storybook-dark-mode';
 import { NextIntlClientProvider } from 'next-intl';
-import { useDarkMode } from 'storybook-dark-mode';
 
 import '../src/styles/globals.css';
 import { DocsTemplate } from './DocsTemplate';
-import { dayoptDarkTheme, dayoptLightTheme } from './dayoptTheme';
+import { dayoptLightTheme } from './dayoptTheme';
 import { TRPCMockProvider } from './mocks/trpc';
 import './prose.css';
 
@@ -103,10 +103,61 @@ const messages = {
       },
     },
   },
+  settings: {
+    dialog: {
+      title: '設定',
+      categories: {
+        general: '一般',
+        generalDesc: '言語、テーマ、起動画面の設定',
+        calendar: 'カレンダー',
+        calendarDesc: 'タイムゾーン、表示設定、デフォルトビュー',
+        personalization: 'パーソナライズ',
+        personalizationDesc: 'クロノタイプとタグのカスタマイズ',
+        notifications: '通知',
+        notificationsDesc: '通知とリマインダーの設定',
+        dataControls: 'データ管理',
+        dataControlsDesc: 'エクスポート、インポート、バックアップ設定',
+        integrations: '連携',
+        integrationsDesc: 'AIプロバイダーと外部サービス連携',
+        account: 'アカウント',
+        accountDesc: 'プロフィールとセキュリティ',
+        subscription: 'サブスクリプション',
+        subscriptionDesc: 'プランと課金管理',
+      },
+    },
+  },
   aria: {
     selectColor: '{color}を選択',
     previous: '前へ',
     next: '次へ',
+    openMenu: 'メニューを開く',
+  },
+  comingSoon: '近日公開',
+  createNew: {
+    tag: 'タグを作成',
+  },
+  createSheet: {
+    history: '履歴から作成',
+    plan: '予定',
+    record: '記録',
+    template: 'テンプレート',
+  },
+  navUser: {
+    account: 'アカウント',
+    help: 'ヘルプ',
+    helpSubmenu: {
+      contact: 'お問い合わせ',
+      documentation: 'ドキュメント',
+      privacyPolicy: 'プライバシーポリシー',
+      releaseNotes: 'リリースノート',
+      security: 'セキュリティ',
+      termsOfService: '利用規約',
+      tokushoho: '特定商取引法に基づく表記',
+    },
+    logout: 'ログアウト',
+    personalize: 'パーソナライズ',
+    settings: '設定',
+    upgradePlan: 'プランをアップグレードする',
   },
   tags: {
     page: {
@@ -145,11 +196,21 @@ const messages = {
     },
   },
   calendar: {
+    title: 'カレンダー',
     filter: {
       ungrouped: '未分類',
+      tagMenu: 'タグメニュー',
+      rename: '名前を変更',
+      changeColor: 'カラーを変更',
+      editNote: 'ノートを編集',
       noteLabel: 'ノート',
       noteHint: 'ツールチップに表示されます',
       notePlaceholder: 'ノートを追加...',
+      merge: '他のタグに統合',
+      showOnlyThis: 'このタグだけ表示',
+      addChildTag: '子タグを追加',
+      changeParent: '親タグを変更',
+      noParent: '親タグなし',
     },
     toast: {
       conflictDescription: 'この時間帯には既に予定があります',
@@ -162,8 +223,21 @@ const messages = {
       markComplete: '完了にする',
       markIncomplete: '未完了に戻す',
     },
+    agenda: 'アジェンダ',
     actions: {
       goToToday: '今日に戻る',
+      close: '閉じる',
+    },
+    views: {
+      agenda: 'アジェンダ',
+      day: '日',
+      daysSubmenu: '日数',
+      generalSettings: '一般設定',
+      multiday: '{count}日間',
+      showWeekNumbers: '週数を表示',
+      showWeekends: '週末を表示',
+      viewSettings: 'ビューの設定',
+      week: '週',
     },
     navigation: {
       previous: '前へ',
@@ -190,6 +264,8 @@ const messages = {
       overdueBy: '{time}超過',
     },
     panel: {
+      loading: '読み込み中...',
+      open: 'パネルを開く',
       sortBy: '並び替え',
       groupBy: 'グループ',
       reset: 'リセット',
@@ -211,12 +287,42 @@ const messages = {
         all: 'すべて',
         open: '未完了',
         closed: '完了',
+        overdue: '期限切れ',
       },
       schedule: {
         label: '日付',
         all: 'すべて',
         scheduled: '予定済み',
         unscheduled: 'スケジュールなし',
+      },
+      recordSearchPlaceholder: '記録を検索...',
+      noRecords: '記録はありません',
+      createRecord: '記録を作成',
+      recordThis: '記録する',
+      noTitle: '(タイトルなし)',
+      duration: '{minutes}分',
+      fulfillment: '充実度',
+      recordSort: {
+        workedAt: '作業日',
+        durationMinutes: '所要時間',
+        fulfillmentScore: '充実度',
+        createdAt: '作成日',
+        updatedAt: '更新日',
+        asc: '昇順',
+        desc: '降順',
+      },
+      recordGroup: {
+        none: 'なし',
+        workedAt: '日付',
+        tags: 'タグ',
+        fulfillmentScore: '充実度',
+      },
+      recordDateFilter: {
+        label: '期間',
+        all: 'すべて',
+        today: '今日',
+        thisWeek: '今週',
+        thisMonth: '今月',
       },
     },
   },
@@ -225,13 +331,14 @@ const messages = {
 const preview: Preview = {
   parameters: {
     controls: {
+      expanded: true,
       matchers: {
         color: /(background|color)$/i,
         date: /Date$/i,
       },
     },
     backgrounds: {
-      disable: true,
+      options: {},
       grid: {
         cellSize: 16,
         cellAmount: 5,
@@ -246,15 +353,8 @@ const preview: Preview = {
         order: ['Docs', 'Tokens', 'Components', 'Features', 'Patterns'],
       },
     },
-    darkMode: {
-      dark: dayoptDarkTheme,
-      light: dayoptLightTheme,
-      darkClass: 'dark',
-      lightClass: 'light',
-      stylePreview: true,
-      current: 'light',
-    },
     docs: {
+      codePanel: true,
       theme: dayoptLightTheme,
       page: DocsTemplate,
     },
@@ -268,12 +368,18 @@ const preview: Preview = {
           { id: 'region', enabled: false },
         ],
       },
+
       options: {
         runOnly: {
           type: 'tag',
           values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice'],
         },
       },
+
+      // 'todo' - show a11y violations in the test UI only
+      // 'error' - fail CI on a11y violations
+      // 'off' - skip a11y checks entirely
+      test: 'todo',
     },
   },
   decorators: [

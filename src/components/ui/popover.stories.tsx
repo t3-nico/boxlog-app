@@ -1,5 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
+import { expect, userEvent, within } from 'storybook/test';
 
 import { Button } from './button';
 import { Input } from './input';
@@ -28,6 +29,17 @@ export const Default: Story = {
       </PopoverContent>
     </Popover>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // トリガーボタンをクリックしてポップオーバーを開く
+    const triggerButton = canvas.getByRole('button', { name: /ポップオーバーを開く/i });
+    await userEvent.click(triggerButton);
+
+    // ポップオーバーのコンテンツを確認（ポータル経由）
+    const body = within(document.body);
+    await expect(body.getByText('これはポップオーバーのコンテンツです。')).toBeInTheDocument();
+  },
 };
 
 export const WithForm: Story = {
@@ -39,7 +51,7 @@ export const WithForm: Story = {
       <PopoverContent className="w-80">
         <div className="grid gap-4">
           <div className="space-y-2">
-            <h4 className="leading-none font-bold">寸法</h4>
+            <p className="leading-none font-bold">寸法</p>
             <p className="text-muted-foreground text-sm">レイヤーの寸法を設定します。</p>
           </div>
           <div className="grid gap-2">
@@ -216,7 +228,7 @@ export const WithList: Story = {
           {/* ヘッダー */}
           <div className="flex items-start justify-between px-4 py-4">
             <div className="flex-1">
-              <h4 className="text-foreground text-sm font-bold">保留中のタスク</h4>
+              <p className="text-foreground text-sm font-bold">保留中のタスク</p>
               <p className="text-muted-foreground text-xs">過去365日間</p>
             </div>
           </div>

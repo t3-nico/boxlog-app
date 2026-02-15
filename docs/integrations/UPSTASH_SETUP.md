@@ -1,6 +1,6 @@
 # Upstash Redis セットアップガイド
 
-BoxLogのレート制限機能をインメモリ実装からUpstash Redisに移行するためのガイドです。
+Dayoptのレート制限機能をインメモリ実装からUpstash Redisに移行するためのガイドです。
 
 ## 🎯 目的
 
@@ -29,7 +29,7 @@ BoxLogのレート制限機能をインメモリ実装からUpstash Redisに移�
 2. **設定**:
 
    ```
-   Name: boxlog-ratelimit
+   Name: dayopt-ratelimit
    Region: Asia Pacific (Tokyo) - 東京リージョン推奨
    Type: Regional（Globalは不要）
    Eviction: No Eviction（レート制限データは自動期限切れ）
@@ -103,12 +103,12 @@ BoxLogのレート制限機能をインメモリ実装からUpstash Redisに移�
 
 - **10,000リクエスト/日**
 - **1ヶ月で300,000リクエスト**
-- BoxLog初期段階では十分
+- Dayopt初期段階では十分
 
 ### 有料プラン（Pay-as-you-go）
 
 - **$0.2 / 100,000リクエスト**
-- BoxLog想定（DAU: 1,000ユーザー、1ユーザー100リクエスト/日）:
+- Dayopt想定（DAU: 1,000ユーザー、1ユーザー100リクエスト/日）:
   ```
   100,000リクエスト/日 × 30日 = 3,000,000リクエスト/月
   コスト: 3,000,000 / 100,000 × $0.2 = $6/月
@@ -131,11 +131,13 @@ BoxLogのレート制限機能をインメモリ実装からUpstash Redisに移�
 
 ```typescript
 // src/app/api/your-endpoint/route.ts
-import { apiRateLimit } from '@/lib/rate-limit/upstash'
+import { apiRateLimit } from '@/lib/rate-limit/upstash';
 
 export async function POST(request: Request) {
   // レート制限チェック
-  const { success, limit, remaining } = await apiRateLimit.limit(request.headers.get('x-forwarded-for') || 'unknown')
+  const { success, limit, remaining } = await apiRateLimit.limit(
+    request.headers.get('x-forwarded-for') || 'unknown',
+  );
 
   if (!success) {
     return new Response('Too Many Requests', {
@@ -144,11 +146,11 @@ export async function POST(request: Request) {
         'X-RateLimit-Limit': limit.toString(),
         'X-RateLimit-Remaining': remaining.toString(),
       },
-    })
+    });
   }
 
   // 処理続行
-  return Response.json({ message: 'Success' })
+  return Response.json({ message: 'Success' });
 }
 ```
 
@@ -213,7 +215,7 @@ if (!success) {
   captureMessage('Rate limit exceeded', {
     level: 'warning',
     tags: { clientId },
-  })
+  });
 }
 ```
 
@@ -221,7 +223,7 @@ if (!success) {
 
 - **Upstash公式ドキュメント**: https://upstash.com/docs/redis/features/ratelimiting
 - **Upstash Console**: https://console.upstash.com/
-- **BoxLog実装**: `src/lib/rate-limit/upstash.ts`
+- **Dayopt実装**: `src/lib/rate-limit/upstash.ts`
 
 ## ✅ チェックリスト
 
@@ -244,4 +246,4 @@ if (!success) {
 
 **種類**: 📗 ハウツーガイド
 **最終更新**: 2025-12-11
-**所有者**: BoxLog 開発チーム
+**所有者**: Dayopt 開発チーム

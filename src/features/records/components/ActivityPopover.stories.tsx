@@ -1,8 +1,6 @@
-'use client';
-
 import { Clock, Edit, MessageSquare, Plus, Star, Tag, Trash } from 'lucide-react';
 
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { cn } from '@/lib/utils';
 

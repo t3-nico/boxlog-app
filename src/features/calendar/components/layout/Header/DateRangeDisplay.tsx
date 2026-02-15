@@ -19,13 +19,6 @@ interface DateRangeDisplayProps {
   className?: string | undefined;
   onDateSelect?: ((date: Date | undefined) => void) | undefined;
   clickable?: boolean | undefined;
-  // 現在表示している期間（MiniCalendarでのハイライト用）
-  displayRange?:
-    | {
-        start: Date;
-        end: Date;
-      }
-    | undefined;
 }
 
 /**
@@ -78,7 +71,6 @@ export const DateRangeDisplay = ({
   className,
   onDateSelect,
   clickable = false,
-  displayRange,
 }: DateRangeDisplayProps) => {
   const t = useTranslations('calendar.dateRange');
   const tCommon = useTranslations('common');
@@ -113,7 +105,6 @@ export const DateRangeDisplay = ({
         </button>
       }
       selectedDate={date}
-      displayRange={displayRange}
       onDateSelect={(selectedDate) => {
         if (selectedDate) {
           onDateSelect(selectedDate);
@@ -129,7 +120,7 @@ export const DateRangeDisplay = ({
     <div className={cn('hidden items-center gap-2 md:flex', className)}>
       {dateContent}
       {showWeekNumber ? (
-        <span className="text-muted-foreground text-lg">
+        <span className="text-muted-foreground text-base">
           {t('weekLabel', { weekNumber: getWeek(date, { weekStartsOn: 1 }) })}
         </span>
       ) : null}

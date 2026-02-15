@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { AlertTriangle, Trash2 } from 'lucide-react';
 
 import {
@@ -254,7 +254,7 @@ export const Overview: Story = {
               削除
             </Button>
             <Button variant="outline">ログアウト</Button>
-            <Button variant="ghost" size="icon" className="text-destructive">
+            <Button variant="ghost" icon className="text-destructive">
               <Trash2 className="size-4" />
             </Button>
           </div>

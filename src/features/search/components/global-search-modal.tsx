@@ -32,6 +32,7 @@ import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { useTheme } from '@/contexts/theme-context';
 import { usePlans } from '@/features/plans/hooks';
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
+import { useSettingsModalStore } from '@/features/settings/stores/useSettingsModalStore';
 import { useTagModalNavigation } from '@/features/tags/hooks/useTagModalNavigation';
 import { useTagStore } from '@/features/tags/stores/useTagStore';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
@@ -108,14 +109,15 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
   const openPlanInspector = usePlanInspectorStore((state) => state.openInspector);
   const { openTagCreateModal } = useTagModalNavigation();
   const { resolvedTheme, setTheme } = useTheme();
+  const openSettingsModal = useSettingsModalStore((state) => state.openModal);
 
   const toggleTheme = useCallback(() => {
     setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');
   }, [resolvedTheme, setTheme]);
 
   const navigateToSettings = useCallback(() => {
-    router.push('/settings');
-  }, [router]);
+    openSettingsModal('general');
+  }, [openSettingsModal]);
 
   // Register default commands on mount
   useEffect(() => {

@@ -3,19 +3,18 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Dna } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 
 import { cn } from '@/lib/utils';
 
 import { StatusBarItem } from '../StatusBarItem';
 
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
+import { useSettingsModalStore } from '@/features/settings/stores/useSettingsModalStore';
 import {
   CHRONOTYPE_PRESETS,
   getChronotypeColor,
   getProductivityZoneForHour,
 } from '@/types/chronotype';
-import { useLocale } from 'next-intl';
 
 /**
  * クロノタイプ（現在の生産性ゾーン）をステータスバーに表示
@@ -27,8 +26,7 @@ import { useLocale } from 'next-intl';
 export function ChronotypeStatusItem() {
   const [currentTime, setCurrentTime] = useState(() => new Date());
   const chronotype = useCalendarSettingsStore((state) => state.chronotype);
-  const router = useRouter();
-  const locale = useLocale();
+  const openModal = useSettingsModalStore((state) => state.openModal);
 
   // 1分ごとに現在時刻を更新
   useEffect(() => {
@@ -89,10 +87,10 @@ export function ChronotypeStatusItem() {
     return `残り${mins}m`;
   }, []);
 
-  // クリック時: 設定ページに遷移
+  // クリック時: 設定モーダルを開く
   const handleClick = useCallback(() => {
-    router.push(`/${locale}/settings/personalization`);
-  }, [router, locale]);
+    openModal('personalization');
+  }, [openModal]);
 
   // ラベル生成
   const label = useMemo(() => {

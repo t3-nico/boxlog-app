@@ -1,28 +1,22 @@
-import path from 'path';
-
+import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
 import react from '@vitejs/plugin-react';
+import { playwright } from '@vitest/browser-playwright';
+import { fileURLToPath } from 'node:url';
+import path from 'path';
 import { defineConfig } from 'vitest/config';
+const dirname =
+  typeof __dirname !== 'undefined' ? __dirname : path.dirname(fileURLToPath(import.meta.url));
 
+// More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 export default defineConfig({
   plugins: [react()],
   test: {
-    globals: true,
-    environment: 'happy-dom',
-    setupFiles: ['./src/test/setup.ts'],
-    include: ['**/*.{test,spec}.{ts,tsx}'],
-    exclude: [
-      'node_modules',
-      'dist',
-      '.next',
-      'cypress',
-      'compass',
-      '**/e2e/**', // Playwright E2Eテストを除外
-      '**/integration/**', // 統合テストを除外（npm run test:integrationで実行）
-    ],
-    css: true,
+    // istanbul: Node.js（unit）とブラウザ（storybook）の両方で動作
     coverage: {
-      provider: 'v8',
+      provider: 'istanbul',
+      reportOnFailure: true,
       reporter: ['text', 'json', 'html', 'lcov'],
+      reportsDirectory: './coverage',
       exclude: [
         'node_modules/',
         'src/test/',
@@ -31,14 +25,63 @@ export default defineConfig({
         '**/mockData/',
         '**/*.test.{ts,tsx}',
         '**/*.spec.{ts,tsx}',
+        '**/*.stories.{ts,tsx}',
         'dist/',
         '.next/',
         'cypress/',
         'compass/',
+        '.storybook/',
       ],
       // 固定閾値は使用しない（CIで「低下のみFail」方式を採用）
       // baseline比較は .github/workflows/coverage.yml で実施
     },
+    projects: [
+      // ユニットテスト（happy-dom）
+      {
+        extends: true,
+        test: {
+          name: 'unit',
+          globals: true,
+          environment: 'happy-dom',
+          setupFiles: ['./src/test/setup.ts'],
+          include: ['**/*.{test,spec}.{ts,tsx}'],
+          exclude: [
+            'node_modules',
+            'dist',
+            '.next',
+            'cypress',
+            'compass',
+            '**/e2e/**',
+            '**/integration/**',
+          ],
+          css: true,
+        },
+      },
+      // Storybook テスト（ブラウザ: Playwright chromium）
+      {
+        extends: true,
+        plugins: [
+          storybookTest({
+            configDir: path.join(dirname, '.storybook'),
+            storybookScript: 'npm run storybook -- --no-open',
+          }),
+        ],
+        test: {
+          name: 'storybook',
+          browser: {
+            enabled: true,
+            headless: true,
+            provider: playwright({}),
+            instances: [
+              {
+                browser: 'chromium',
+              },
+            ],
+          },
+          setupFiles: ['.storybook/vitest.setup.ts'],
+        },
+      },
+    ],
   },
   resolve: {
     alias: {

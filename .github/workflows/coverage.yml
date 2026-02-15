@@ -184,7 +184,7 @@ jobs:
               ? '❌ **Coverage decreased!** Please add tests for the new/changed code.'
               : '✅ **Coverage maintained or improved!**'}
 
-            <sub>🤖 BoxLog Coverage Bot</sub>`;
+            <sub>🤖 Dayopt Coverage Bot</sub>`;
             } else {
               body = `## 📊 Coverage Report
 
@@ -199,7 +199,7 @@ jobs:
 
             ⚠️ **No baseline found.** Once merged, this will become the baseline.
 
-            <sub>🤖 BoxLog Coverage Bot</sub>`;
+            <sub>🤖 Dayopt Coverage Bot</sub>`;
             }
 
             const { data: comments } = await github.rest.issues.listComments({

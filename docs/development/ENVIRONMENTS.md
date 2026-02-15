@@ -1,13 +1,13 @@
 # 環境構成ガイド
 
-BoxLogは3環境構成（Local / Staging / Production）で運用されています。
+Dayoptは3環境構成（Local / Staging / Production）で運用されています。
 
 ## 環境一覧
 
 | 環境           | Supabase Project  | Vercel環境  | URL                       |
 | -------------- | ----------------- | ----------- | ------------------------- |
 | **Local**      | ローカル          | npm run dev | localhost:3000            |
-| **Staging**    | boxlog-staging    | Preview     | \*.vercel.app（main以外） |
+| **Staging**    | dayopt-staging    | Preview     | \*.vercel.app（main以外） |
 | **Production** | t3-nico's Project | Production  | 本番ドメイン              |
 
 ## Supabaseプロジェクト詳細
@@ -15,7 +15,7 @@ BoxLogは3環境構成（Local / Staging / Production）で運用されていま
 | プロジェクト      | Reference ID           | リージョン      | 用途         |
 | ----------------- | ---------------------- | --------------- | ------------ |
 | ローカル          | -                      | localhost:54321 | 開発         |
-| boxlog-staging    | `yvglwblxrnrenfifsnje` | Tokyo           | ステージング |
+| dayopt-staging    | `yvglwblxrnrenfifsnje` | Tokyo           | ステージング |
 | t3-nico's Project | `qloztwfbrbqtjijxicnd` | Tokyo           | 本番         |
 
 ## 重要な仕様
@@ -84,7 +84,7 @@ supabase projects list
 2. Vercelが自動でPreviewデプロイ
 
 3. Preview URLにモバイルでアクセス
-   - 固定URL: `boxlog-app-git-{branch}-t3-nicos-projects.vercel.app`
+   - 固定URL: `dayopt-git-{branch}-t3-nicos-projects.vercel.app`
 
 4. ステージングでサインアップしてテスト
 
