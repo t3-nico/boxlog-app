@@ -24,7 +24,7 @@ import { api } from '@/lib/trpc';
 
 import { SidebarNavigation } from '@/features/navigation/components/navigation-tabs/SidebarNavigation';
 
-import { TagSortableTree } from '../sortable-tree/TagSortableTree';
+import { TagSortableTree } from '@/features/tags/components/sortable-tree/TagSortableTree';
 import { CreateTagButton } from './components/CreateTagButton';
 import { FilterItem } from './components/FilterItem';
 
@@ -199,7 +199,9 @@ export function CalendarFilterList() {
                 onToggleTag={toggleTag}
                 onToggleGroupTags={toggleGroupTags}
                 onUpdateTag={handleUpdateTag}
-                onDeleteTag={(tagId, tagName) => handleDeleteParentTag(tagId, tagName)}
+                onDeleteTag={(tagId: string, tagName: string) =>
+                  handleDeleteParentTag(tagId, tagName)
+                }
                 onAddChildTag={handleAddChildTag}
                 onShowOnlyTag={showOnlyTag}
                 onShowOnlyGroupTags={showOnlyGroupTags}
@@ -263,7 +265,7 @@ function SidebarUtilities() {
       <HoverTooltip content={t('sidebar.navigation.search')} side="right">
         <Button
           variant="ghost"
-          size="icon"
+          icon
           className="size-8"
           onClick={() => openGlobalSearch()}
           aria-label={t('sidebar.navigation.search')}
@@ -274,7 +276,7 @@ function SidebarUtilities() {
       <HoverTooltip content={resolvedTheme === 'light' ? 'Dark mode' : 'Light mode'} side="right">
         <Button
           variant="ghost"
-          size="icon"
+          icon
           className="size-8"
           onClick={handleThemeToggle}
           aria-label={t('sidebar.theme')}

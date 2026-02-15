@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Plus, Settings, Trash2, X } from 'lucide-react';
 
 import { Button } from './button';
@@ -84,10 +84,10 @@ export const AllPatterns: Story = {
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <Button variant="ghost" size="icon" aria-label="閉じる">
+            <Button variant="ghost" icon aria-label="閉じる">
               <X className="size-4" />
             </Button>
-            <Button variant="ghost" size="icon" aria-label="設定">
+            <Button variant="ghost" icon aria-label="設定">
               <Settings className="size-4" />
             </Button>
             <Button variant="ghost">もっと見る</Button>
@@ -134,13 +134,13 @@ export const AllPatterns: Story = {
         </div>
 
         <div className="bg-container space-y-4 rounded-lg p-4">
-          <Button variant="ghost" size="icon-sm" aria-label="追加">
+          <Button variant="ghost" icon size="sm" aria-label="追加">
             <Plus className="size-4" />
           </Button>
-          <Button variant="ghost" size="icon" aria-label="設定">
+          <Button variant="ghost" icon aria-label="設定">
             <Settings className="size-4" />
           </Button>
-          <Button variant="ghost" size="icon-lg" aria-label="閉じる">
+          <Button variant="ghost" icon size="lg" aria-label="閉じる">
             <X className="size-5" />
           </Button>
         </div>

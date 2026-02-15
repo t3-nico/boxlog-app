@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Calendar, CheckSquare, Menu, Settings } from 'lucide-react';
 import { useState } from 'react';
 
@@ -25,12 +25,7 @@ export const AllPatterns: Story = {
     return (
       <div className="flex flex-col items-start gap-6">
         <Sheet open={leftOpen} onOpenChange={setLeftOpen}>
-          <Button
-            variant="ghost"
-            size="icon"
-            aria-label="メニュー"
-            onClick={() => setLeftOpen(true)}
-          >
+          <Button variant="ghost" icon aria-label="メニュー" onClick={() => setLeftOpen(true)}>
             <Menu className="size-5" />
           </Button>
           <SheetContent side="left" aria-label="ナビゲーション">

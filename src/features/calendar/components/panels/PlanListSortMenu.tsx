@@ -114,7 +114,7 @@ export function PlanListSortMenu({
     <DropdownMenu>
       <HoverTooltip content={t('panel.sortBy')} side="top">
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="icon" className="size-6" aria-label={t('panel.sortBy')}>
+          <Button variant="ghost" icon className="size-6" aria-label={t('panel.sortBy')}>
             <Settings2 className={isActive ? 'text-foreground size-4' : 'size-4'} />
           </Button>
         </DropdownMenuTrigger>

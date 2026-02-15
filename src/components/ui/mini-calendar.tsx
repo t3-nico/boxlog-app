@@ -47,6 +47,8 @@ export interface MiniCalendarProps {
   allowClear?: boolean | undefined;
   /** Popover の z-index（Inspector内では高い値を使用） */
   popoverZIndex?: number | undefined;
+  /** 表示期間のハイライト範囲（WeekViewなどで現在表示中の期間をハイライト） */
+  displayRange?: { start: Date; end: Date } | undefined;
 }
 
 // 週の開始日に応じた曜日配列を取得する関数
@@ -119,6 +121,7 @@ export const MiniCalendar = memo<MiniCalendarProps>(
     onOpenChange,
     allowClear = false,
     popoverZIndex,
+    displayRange: _displayRange,
   }) => {
     const locale = useLocale();
     const weekStartsOn = useCalendarSettingsStore((state) => state.weekStartsOn);

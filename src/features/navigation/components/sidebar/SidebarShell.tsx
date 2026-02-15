@@ -71,7 +71,7 @@ export function SidebarShell({ children, className, hideNavUser = false }: Sideb
             <HoverTooltip content={t('sidebar.closeSidebar')} side="bottom">
               <Button
                 variant="ghost"
-                size="icon"
+                icon
                 className="size-8 opacity-0 transition-opacity group-hover:opacity-100"
                 onClick={toggle}
                 aria-label={t('sidebar.closeSidebar')}

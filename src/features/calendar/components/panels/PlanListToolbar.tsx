@@ -84,7 +84,7 @@ export function PlanListToolbar({
           />
           <Button
             variant="ghost"
-            size="icon"
+            icon
             className="size-6"
             onClick={() => {
               onSearchChange('');
@@ -114,12 +114,7 @@ export function PlanListToolbar({
           />
 
           {/* 検索ボタン */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="size-6"
-            onClick={() => onSearchOpenChange(true)}
-          >
+          <Button variant="ghost" icon className="size-6" onClick={() => onSearchOpenChange(true)}>
             <Search className="size-4" />
           </Button>
         </>

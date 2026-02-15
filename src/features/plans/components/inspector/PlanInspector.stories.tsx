@@ -1,6 +1,6 @@
 'use client';
 
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ChevronDown, ChevronUp, MoreHorizontal, X } from 'lucide-react';
 import { useRef, useState } from 'react';
 
@@ -171,12 +171,12 @@ function EditHeader({
       <div className="relative z-10 flex items-center gap-1">
         <div className="flex items-center">
           <HoverTooltip content="前へ" side="top">
-            <Button variant="ghost" size="icon-sm" disabled={!hasPrevious} aria-label="前へ">
+            <Button variant="ghost" icon size="sm" disabled={!hasPrevious} aria-label="前へ">
               <ChevronUp className="size-5" />
             </Button>
           </HoverTooltip>
           <HoverTooltip content="次へ" side="top">
-            <Button variant="ghost" size="icon-sm" disabled={!hasNext} aria-label="次へ">
+            <Button variant="ghost" icon size="sm" disabled={!hasNext} aria-label="次へ">
               <ChevronDown className="size-5" />
             </Button>
           </HoverTooltip>
@@ -185,7 +185,7 @@ function EditHeader({
       <div className="relative z-10 flex items-center gap-1">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon-sm" aria-label="オプション">
+            <Button variant="ghost" icon size="sm" aria-label="オプション">
               <MoreHorizontal className="size-5" />
             </Button>
           </DropdownMenuTrigger>
@@ -196,7 +196,7 @@ function EditHeader({
           </DropdownMenuContent>
         </DropdownMenu>
         <HoverTooltip content="閉じる" side="top">
-          <Button variant="ghost" size="icon-sm" aria-label="閉じる" className="ml-1">
+          <Button variant="ghost" icon size="sm" aria-label="閉じる" className="ml-1">
             <X className="size-5" />
           </Button>
         </HoverTooltip>
@@ -235,7 +235,7 @@ function EditFooter({ status }: { status: 'open' | 'closed' }) {
           <DropdownMenuTrigger asChild>
             <Button
               variant="primary"
-              size="icon"
+              icon
               className="rounded-none border-0"
               aria-label="完了オプション"
             >

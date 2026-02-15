@@ -57,7 +57,7 @@ export function CalendarSidePanel({ panelType, onPanelChange }: CalendarSidePane
           <PanelSwitcher currentPanel={panelType} onChange={onPanelChange} />
           <Button
             variant="ghost"
-            size="icon"
+            icon
             className="-mr-2 size-8"
             onClick={() => onPanelChange('none')}
             aria-label={t('actions.close')}

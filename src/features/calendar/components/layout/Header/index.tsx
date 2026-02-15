@@ -45,14 +45,6 @@ interface CalendarHeaderProps {
   onPanelChange?: ((panel: PanelType) => void) | undefined;
 }
 
-const viewOptions = [
-  { value: 'day' as CalendarViewType, label: 'Day', shortcut: 'D' },
-  { value: '3day' as CalendarViewType, label: '3 Days', shortcut: '3' },
-  { value: '5day' as CalendarViewType, label: '5 Days', shortcut: '5' },
-  { value: 'week' as CalendarViewType, label: 'Week', shortcut: 'W' },
-  { value: 'agenda' as CalendarViewType, label: 'Agenda', shortcut: 'A' },
-];
-
 /**
  * カレンダーヘッダー（ナビゲーション部分）
  * 共通コンポーネントを組み合わせたカレンダーヘッダー
@@ -103,7 +95,7 @@ export const CalendarHeader = ({
             <HoverTooltip content={t('sidebar.openSidebar')} side="bottom">
               <Button
                 variant="ghost"
-                size="icon"
+                icon
                 className="hidden size-8 md:flex"
                 onClick={openSidebar}
                 aria-label={t('sidebar.openSidebar')}
@@ -133,7 +125,6 @@ export const CalendarHeader = ({
 
             {/* ビュー切り替え */}
             <ViewSwitcher
-              options={viewOptions}
               currentView={viewType}
               onChange={(view) => onViewChange(view as CalendarViewType)}
             />
@@ -149,7 +140,8 @@ export const CalendarHeader = ({
           <div className="flex items-center gap-1 md:hidden">
             <Button
               variant="ghost"
-              size="icon-sm"
+              icon
+              size="sm"
               className="text-muted-foreground hover:text-foreground"
               onClick={openSearch}
               aria-label="検索"
@@ -158,7 +150,8 @@ export const CalendarHeader = ({
             </Button>
             <Button
               variant="ghost"
-              size="icon-sm"
+              icon
+              size="sm"
               className="text-muted-foreground hover:text-foreground"
               onClick={() => onNavigate('today')}
               aria-label="今日に戻る"
@@ -178,7 +171,7 @@ export const CalendarHeader = ({
               <HoverTooltip content={t('calendar.panel.open')} side="bottom">
                 <Button
                   variant="ghost"
-                  size="icon"
+                  icon
                   className="-mr-4 size-8"
                   onClick={() => onPanelChange('plan')}
                   aria-label="Open side panel"
