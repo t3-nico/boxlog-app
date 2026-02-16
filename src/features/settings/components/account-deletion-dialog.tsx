@@ -23,10 +23,9 @@ import { toast } from 'sonner';
 /**
  * 🗑️ Account Deletion Dialog Component
  *
- * GDPR "Right to be Forgotten" 準拠のアカウント削除確認ダイアログ
+ * アカウント即時削除の確認ダイアログ
  * - パスワード確認
  * - 確認テキスト入力（"DELETE"）
- * - 30日間の猶予期間通知
  *
  * @see Issue #548 - データ削除リクエスト機能（忘れられる権利）
  */
@@ -37,19 +36,16 @@ export function AccountDeletionDialog() {
   const [confirmText, setConfirmText] = useState('');
 
   const deleteAccountMutation = trpc.user.deleteAccount.useMutation({
-    onSuccess: (data) => {
-      logger.info('Account deletion scheduled', {
+    onSuccess: () => {
+      logger.info('Account deleted', {
         component: 'account-deletion-dialog',
-        scheduledDate: data.scheduledDeletionDate,
       });
 
       toast.success(t('settings.account.deletion.success'));
       setIsOpen(false);
 
-      // 5秒後にログアウトページへリダイレクト
-      setTimeout(() => {
-        window.location.href = '/auth/signout';
-      }, 5000);
+      // 即座にサインアウトページへリダイレクト
+      window.location.href = '/auth/signout';
     },
     onError: (error) => {
       logger.error('Account deletion failed', error, {
@@ -130,13 +126,6 @@ export function AccountDeletionDialog() {
             </AlertDialogTitle>
             <AlertDialogDescription className="space-y-4">
               <p>{t('settings.account.deletion.dialogDescription')}</p>
-
-              <div className="bg-muted rounded-2xl p-4">
-                <h4 className="text-foreground mb-2 text-sm font-bold">
-                  {t('settings.account.deletion.gracePeriodTitle')}
-                </h4>
-                <p className="text-xs">{t('settings.account.deletion.gracePeriodMessage')}</p>
-              </div>
 
               <div className="space-y-2">
                 <label className="text-foreground text-sm font-normal">
