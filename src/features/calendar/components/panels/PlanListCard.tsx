@@ -36,7 +36,7 @@ export const PlanListCard = memo<PlanListCardProps>(function PlanListCard({
   onDragStart,
 }) {
   const t = useTranslations('calendar');
-  const { formatTime, formatDate } = useDateFormat();
+  const { formatTime } = useDateFormat();
   const { updatePlan } = usePlanMutations();
 
   const status = normalizeStatus(plan.status as PlanStatus);
@@ -60,9 +60,6 @@ export const PlanListCard = memo<PlanListCardProps>(function PlanListCard({
         ? `${Math.floor(durationMinutes / 60)}h${durationMinutes % 60 > 0 ? `${durationMinutes % 60}m` : ''}`
         : `${durationMinutes}m`
       : null;
-
-  // 期限日表示
-  const displayDueDate = plan.due_date ? formatDate(new Date(plan.due_date)) : null;
 
   const handleCardClick = useCallback(() => {
     onClick?.(plan);
@@ -147,23 +144,9 @@ export const PlanListCard = memo<PlanListCardProps>(function PlanListCard({
           {plan.title || t('event.noTitle')}
         </p>
 
-        {/* メタ情報行: 期限日 + 時間 + 作業時間 */}
-        {(displayDueDate || displayTime) && (
+        {/* メタ情報行: 時間 + 作業時間 */}
+        {displayTime && (
           <div className="mt-1 flex items-center gap-2">
-            {displayDueDate && (
-              <span
-                className={cn(
-                  'text-xs tabular-nums',
-                  isOverdue
-                    ? 'text-destructive'
-                    : isCompleted
-                      ? 'text-muted-foreground/60'
-                      : 'text-muted-foreground',
-                )}
-              >
-                {displayDueDate}
-              </span>
-            )}
             {displayTime && (
               <span
                 className={cn(

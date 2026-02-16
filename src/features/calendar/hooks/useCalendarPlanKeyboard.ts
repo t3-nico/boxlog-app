@@ -6,7 +6,6 @@ import { useDeleteConfirmStore } from '@/features/plans/stores/useDeleteConfirmS
 import { usePlanClipboardStore } from '@/features/plans/stores/usePlanClipboardStore';
 import type { PlanInitialData } from '@/features/plans/stores/usePlanInspectorStore';
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
-import { format } from 'date-fns';
 import { toast } from 'sonner';
 
 interface UseCalendarPlanKeyboardOptions {
@@ -163,7 +162,6 @@ export function useCalendarPlanKeyboard({
           openInspectorWithDraft({
             title: copiedPlan.title,
             description: copiedPlan.description,
-            due_date: format(targetDate, 'yyyy-MM-dd'),
             start_time: startTime.toISOString(),
             end_time: endTime.toISOString(),
           });

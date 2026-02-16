@@ -27,7 +27,7 @@ import { zIndex } from '@/config/ui/z-index';
 import { useRecordMutations } from '@/features/records/hooks';
 import { useTags } from '@/features/tags/hooks';
 import { api } from '@/lib/trpc';
-import { NoteIconButton, TagsIconButton } from '../shared';
+import { NoteIconButton, TagsIconButton, TitleSuggestInput } from '../shared';
 
 import { cn } from '@/lib/utils';
 
@@ -95,11 +95,11 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
     }, [draftPlan?.end_time]);
 
     const initialWorkedAt = useMemo(() => {
-      if (draftPlan?.due_date) {
-        return new Date(draftPlan.due_date);
+      if (draftPlan?.start_time) {
+        return new Date(draftPlan.start_time);
       }
       return today;
-    }, [draftPlan?.due_date, today]);
+    }, [draftPlan?.start_time, today]);
 
     // 初期duration計算
     const calculateDuration = useCallback((start: string, end: string): number => {
@@ -229,7 +229,6 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
           // draftPlanも更新（カレンダープレビュー用）
           if (date) {
             updateDraft({
-              due_date: date.toISOString().split('T')[0] ?? null,
               start_time: buildIsoTime(date, prev.start_time),
               end_time: buildIsoTime(date, prev.end_time),
             });
@@ -325,6 +324,10 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
 
     const handleTagsChange = useCallback((tagIds: string[]) => {
       setFormData((prev) => ({ ...prev, tagIds }));
+    }, []);
+
+    const handleSuggestionSelect = useCallback((entry: { title: string; tagIds: string[] }) => {
+      setFormData((prev) => ({ ...prev, title: entry.title, tagIds: entry.tagIds }));
     }, []);
 
     // 保存ボタンの無効化条件（時間が必須）
@@ -425,14 +428,15 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
       <div className="flex flex-col">
         {/* 1行目: タイトル（プライマリ） */}
         <div className="px-4 pt-4 pb-2">
-          <input
+          <TitleSuggestInput
             ref={titleInputRef}
-            type="text"
             value={formData.title}
+            onChange={handleTitleChange}
+            onSuggestionSelect={handleSuggestionSelect}
             placeholder="何をした？"
-            onChange={(e) => handleTitleChange(e.target.value)}
-            className="placeholder:text-muted-foreground block w-full border-0 bg-transparent pl-2 text-xl font-bold outline-none"
+            className="pl-2"
             aria-label="記録タイトル"
+            autoFocus
           />
         </div>
 

@@ -9,7 +9,6 @@ import type { Plan, PlanStatus } from '@/features/plans/types/plan';
 import { normalizeStatus } from '@/features/plans/utils/status';
 import type {
   DateRangeFilter,
-  DueDateFilter,
   RecurrenceFilter,
   ReminderFilter,
   ScheduleFilter,
@@ -18,7 +17,7 @@ import type {
 /**
  * ソートオプション
  */
-export type SortField = 'title' | 'status' | 'created_at' | 'updated_at' | 'due_date';
+export type SortField = 'title' | 'status' | 'created_at' | 'updated_at';
 export type SortDirection = 'asc' | 'desc';
 
 export interface PlanSortOptions {
@@ -48,7 +47,6 @@ export interface PlanItem {
   plan_number?: string | undefined;
   planned_hours?: number | undefined;
   description?: string | undefined;
-  due_date?: string | null | undefined; // 期限日（YYYY-MM-DD）
   start_time?: string | null | undefined; // 開始時刻（ISO 8601）
   end_time?: string | null | undefined; // 終了時刻（ISO 8601）
   reminder_minutes?: number | null | undefined; // 通知タイミング（開始時刻の何分前か）
@@ -73,69 +71,12 @@ export interface PlanFilters {
   status?: PlanStatus | undefined;
   search?: string | undefined;
   tags?: string[] | undefined; // タグIDの配列
-  dueDate?: DueDateFilter | undefined; // 期限フィルター
   recurrence?: RecurrenceFilter | undefined; // 繰り返しフィルター
   reminder?: ReminderFilter | undefined; // リマインダーフィルター
   schedule?: ScheduleFilter | undefined; // スケジュールフィルター
   createdAt?: DateRangeFilter | undefined; // 作成日フィルター
   updatedAt?: DateRangeFilter | undefined; // 更新日フィルター
   hideCompleted?: boolean | undefined; // 完了を非表示
-}
-
-/**
- * 期限フィルターの判定
- * @internal テスト用にエクスポート
- */
-export function matchesDueDateFilter(
-  dueDate: string | null | undefined,
-  filter: DueDateFilter,
-): boolean {
-  if (filter === 'all') return true;
-
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  // 期限なしフィルター
-  if (filter === 'no_due_date') {
-    return !dueDate;
-  }
-
-  // 期限ありフィルターは期限がない場合false
-  if (!dueDate) return false;
-
-  const itemDate = new Date(dueDate);
-  itemDate.setHours(0, 0, 0, 0);
-
-  switch (filter) {
-    case 'today':
-      return itemDate.getTime() === today.getTime();
-
-    case 'tomorrow': {
-      const tomorrow = new Date(today);
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      return itemDate.getTime() === tomorrow.getTime();
-    }
-
-    case 'this_week': {
-      const endOfWeek = new Date(today);
-      endOfWeek.setDate(endOfWeek.getDate() + (6 - today.getDay()));
-      return itemDate >= today && itemDate <= endOfWeek;
-    }
-
-    case 'next_week': {
-      const startOfNextWeek = new Date(today);
-      startOfNextWeek.setDate(startOfNextWeek.getDate() + (7 - today.getDay()));
-      const endOfNextWeek = new Date(startOfNextWeek);
-      endOfNextWeek.setDate(endOfNextWeek.getDate() + 6);
-      return itemDate >= startOfNextWeek && itemDate <= endOfNextWeek;
-    }
-
-    case 'overdue':
-      return itemDate < today;
-
-    default:
-      return true;
-  }
 }
 
 /**
@@ -241,7 +182,6 @@ export function planToPlanItem(plan: PlanWithTagIds): PlanItem {
     created_at: plan.created_at ?? new Date().toISOString(),
     updated_at: plan.updated_at ?? new Date().toISOString(),
     description: plan.description ?? undefined,
-    due_date: plan.due_date,
     start_time: plan.start_time,
     end_time: plan.end_time,
     recurrence_type: plan.recurrence_type,
@@ -305,11 +245,6 @@ export function usePlanData(filters: PlanFilters = {}, sort?: PlanSortOptions) {
       // フィルタータグのいずれかに一致するかチェック（OR条件）
       return filters.tags!.some((filterTagId) => itemTagIds.includes(filterTagId));
     });
-  }
-
-  // 期限フィルタリング（クライアント側）
-  if (filters.dueDate && filters.dueDate !== 'all') {
-    items = items.filter((item) => matchesDueDateFilter(item.due_date, filters.dueDate!));
   }
 
   // 繰り返しフィルタリング（クライアント側）

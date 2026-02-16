@@ -44,7 +44,6 @@ export interface Plan {
   description: string | null;
   status: PlanStatus;
   completed_at: string | null; // TIMESTAMPTZ型（完了時刻、status='closed'時に自動設定）
-  due_date: string | null; // DATE型（YYYY-MM-DD）
   start_time: string | null; // TIMESTAMPTZ型（ISO 8601）
   end_time: string | null; // TIMESTAMPTZ型（ISO 8601）
   recurrence_type: RecurrenceType | null;
@@ -62,7 +61,6 @@ export interface CreatePlanInput {
   title: string;
   description?: string;
   status: PlanStatus;
-  due_date?: string; // YYYY-MM-DD形式
   start_time?: string; // ISO 8601形式
   end_time?: string; // ISO 8601形式
   recurrence_type?: RecurrenceType;
@@ -77,7 +75,6 @@ export interface UpdatePlanInput {
   title?: string;
   description?: string;
   status?: PlanStatus;
-  due_date?: string; // YYYY-MM-DD形式
   start_time?: string; // ISO 8601形式
   end_time?: string; // ISO 8601形式
   recurrence_type?: RecurrenceType;
@@ -105,7 +102,7 @@ export interface PlanFilters {
   // 日付範囲フィルタ（カレンダー表示高速化用）
   startDate?: string; // 開始日時（ISO 8601形式）
   endDate?: string; // 終了日時（ISO 8601形式）
-  sortBy?: 'created_at' | 'updated_at' | 'due_date' | 'title';
+  sortBy?: 'created_at' | 'updated_at' | 'title';
   sortOrder?: 'asc' | 'desc';
   limit?: number;
   offset?: number;

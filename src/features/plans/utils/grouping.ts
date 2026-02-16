@@ -1,8 +1,7 @@
 import type { PlanStatus } from '@/features/plans/types/plan';
-import { isBefore, isToday, isTomorrow, isWithinInterval, startOfDay } from 'date-fns';
 
 /** グループ化フィールド */
-export type GroupByField = 'status' | 'due_date' | 'tags' | null;
+export type GroupByField = 'status' | 'tags' | null;
 
 /** グループ化されたデータ */
 export interface GroupedData<T> {
@@ -17,7 +16,6 @@ export interface GroupedData<T> {
  */
 interface Groupable {
   status: string;
-  due_date?: string | null | undefined;
   tagIds?: string[] | undefined;
 }
 
@@ -88,11 +86,6 @@ export function groupItems<T extends Groupable>(
         );
       }
 
-      if (groupBy === 'due_date') {
-        const dueDateOrder = ['overdue', 'today', 'tomorrow', 'this-week', 'later', 'no-due-date'];
-        return dueDateOrder.indexOf(a.groupKey) - dueDateOrder.indexOf(b.groupKey);
-      }
-
       // その他はアルファベット順
       return a.groupLabel.localeCompare(b.groupLabel);
     });
@@ -107,9 +100,6 @@ function getGroupKey(item: Groupable, groupBy: GroupByField): string {
   switch (groupBy) {
     case 'status':
       return item.status;
-
-    case 'due_date':
-      return getDueDateGroup(item.due_date || null);
 
     case 'tags':
       // tagIdsの最初のIDをグループキーとして使用（タグ名の解決はUI側で行う）
@@ -128,52 +118,10 @@ function getGroupLabel(groupKey: string, groupBy: GroupByField): string {
     case 'status':
       return STATUS_LABELS[groupKey as PlanStatus] || groupKey;
 
-    case 'due_date':
-      return getDueDateLabel(groupKey);
-
     case 'tags':
       return groupKey;
 
     default:
       return groupKey;
   }
-}
-
-/**
- * 期限からグループを判定
- */
-function getDueDateGroup(dueDate: string | null): string {
-  if (!dueDate) return 'no-due-date';
-
-  const date = new Date(dueDate);
-  const today = startOfDay(new Date());
-
-  if (isBefore(date, today)) return 'overdue';
-  if (isToday(date)) return 'today';
-  if (isTomorrow(date)) return 'tomorrow';
-
-  const nextWeek = new Date(today);
-  nextWeek.setDate(nextWeek.getDate() + 7);
-
-  if (isWithinInterval(date, { start: today, end: nextWeek })) {
-    return 'this-week';
-  }
-
-  return 'later';
-}
-
-/**
- * 期限グループのラベルを取得
- */
-function getDueDateLabel(groupKey: string): string {
-  const labels: Record<string, string> = {
-    overdue: '期限超過',
-    today: '今日',
-    tomorrow: '明日',
-    'this-week': '今週',
-    later: '今週以降',
-    'no-due-date': '期限なし',
-  };
-
-  return labels[groupKey] || groupKey;
 }

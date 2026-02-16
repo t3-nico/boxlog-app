@@ -219,18 +219,10 @@
     "statusBar": {
       "noSchedule": "No schedule",
       "openSchedule": "Open schedule",
-      "createNewPlan": "Create new plan"
-    },
-    "overdue": {
-      "badge": "{count} pending",
-      "title": "Pending tasks",
-      "period": "Past 365 days",
-      "helpText": "Tasks that became overdue within the past 365 days are shown here. You can toggle whether to show the To Do list in the My calendars section in the left side panel. See the help article on how to use the To Do list.",
-      "openTodoList": "Open To Do list",
-      "noTitle": "(No title)",
-      "timeUnset": "Time not specified",
-      "popoverTitle": "Overdue Plans",
-      "overdueBy": "Overdue by {time}"
+      "createNewPlan": "Create new plan",
+      "plan": "Plan",
+      "record": "Record",
+      "totalTimeTooltip": "Cumulative time up to today"
     },
     "agenda": {
       "emptyTitle": "No upcoming events",
@@ -277,22 +269,19 @@
       "sort": {
         "createdAt": "Date created",
         "updatedAt": "Date updated",
-        "dueDate": "Due date",
         "title": "Title",
         "asc": "Ascending",
         "desc": "Descending"
       },
       "group": {
         "none": "None",
-        "dueDate": "Due date",
         "tags": "Tags"
       },
       "status": {
         "label": "Status",
         "all": "All",
         "open": "Open",
-        "closed": "Closed",
-        "overdue": "Overdue"
+        "closed": "Closed"
       },
       "schedule": {
         "label": "Date",

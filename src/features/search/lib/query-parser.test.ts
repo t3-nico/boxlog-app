@@ -122,75 +122,22 @@ describe('query-parser', () => {
       });
     });
 
-    describe('期限フィルター (due:xxx)', () => {
-      it('due:todayを抽出できる', () => {
-        const result = parseSearchQuery('due:today');
-
-        expect(result.filters.dueDate).toBe('today');
-        expect(result.hasFilters).toBe(true);
-      });
-
-      it('due:tomorrowを抽出できる', () => {
-        const result = parseSearchQuery('due:tomorrow');
-
-        expect(result.filters.dueDate).toBe('tomorrow');
-      });
-
-      it('due:weekをthis_weekにマッピングする', () => {
-        const result = parseSearchQuery('due:week');
-
-        expect(result.filters.dueDate).toBe('this_week');
-      });
-
-      it('due:this_weekを抽出できる', () => {
-        const result = parseSearchQuery('due:this_week');
-
-        expect(result.filters.dueDate).toBe('this_week');
-      });
-
-      it('due:overdueを抽出できる', () => {
-        const result = parseSearchQuery('due:overdue');
-
-        expect(result.filters.dueDate).toBe('overdue');
-      });
-
-      it('due:noneをno_due_dateにマッピングする', () => {
-        const result = parseSearchQuery('due:none');
-
-        expect(result.filters.dueDate).toBe('no_due_date');
-      });
-
-      it('大文字小文字を区別しない', () => {
-        const result = parseSearchQuery('DUE:TODAY');
-
-        expect(result.filters.dueDate).toBe('today');
-      });
-
-      it('不明な期限は無視される', () => {
-        const result = parseSearchQuery('due:unknown');
-
-        expect(result.filters.dueDate).toBeUndefined();
-      });
-    });
-
     describe('複合フィルター', () => {
       it('すべてのフィルタータイプを組み合わせられる', () => {
-        const result = parseSearchQuery('ミーティング #仕事 status:open due:today');
+        const result = parseSearchQuery('ミーティング #仕事 status:open');
 
         expect(result.text).toBe('ミーティング');
         expect(result.filters.tags).toEqual(['仕事']);
         expect(result.filters.status).toEqual(['open']);
-        expect(result.filters.dueDate).toBe('today');
         expect(result.hasFilters).toBe(true);
       });
 
       it('テキストなしでフィルターのみ', () => {
-        const result = parseSearchQuery('#仕事 status:done due:overdue');
+        const result = parseSearchQuery('#仕事 status:done');
 
         expect(result.text).toBe('');
         expect(result.filters.tags).toEqual(['仕事']);
         expect(result.filters.status).toEqual(['closed']);
-        expect(result.filters.dueDate).toBe('overdue');
       });
     });
   });
@@ -226,13 +173,6 @@ describe('query-parser', () => {
       const statusHint = hints.find((h) => h.syntax.includes('status:'));
 
       expect(statusHint).toBeDefined();
-    });
-
-    it('期限フィルターのヒントが含まれる', () => {
-      const hints = getFilterHints();
-      const dueHint = hints.find((h) => h.syntax.includes('due:'));
-
-      expect(dueHint).toBeDefined();
     });
   });
 });

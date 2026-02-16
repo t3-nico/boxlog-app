@@ -8,7 +8,6 @@ interface PopupContext {
   initialData?: Record<string, unknown>;
   source?: string;
   date?: Date;
-  dueDate?: Date;
   editingEvent?: Record<string, unknown>;
 }
 

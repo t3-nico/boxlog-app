@@ -10,7 +10,6 @@ import { useDeleteConfirmStore } from '@/features/plans/stores/useDeleteConfirmS
 import { usePlanClipboardStore } from '@/features/plans/stores/usePlanClipboardStore';
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
 import { useRecurringEditConfirmStore } from '@/features/plans/stores/useRecurringEditConfirmStore';
-import { format } from 'date-fns';
 import { toast } from 'sonner';
 
 export function usePlanContextActions() {
@@ -112,8 +111,6 @@ export function usePlanContextActions() {
 
   const handleDuplicatePlan = useCallback(
     (plan: CalendarPlan) => {
-      // 日付をフォーマット
-      const dueDate = plan.startDate ? format(plan.startDate, 'yyyy-MM-dd') : null;
       const startTime = plan.startDate ? plan.startDate.toISOString() : null;
       const endTime = plan.endDate ? plan.endDate.toISOString() : null;
 
@@ -122,7 +119,6 @@ export function usePlanContextActions() {
       openInspectorWithDraft({
         title: `${plan.title} (copy)`,
         description: plan.description ?? null,
-        due_date: dueDate,
         start_time: startTime,
         end_time: endTime,
       });
@@ -174,7 +170,6 @@ export function usePlanContextActions() {
       openInspectorWithDraft({
         title: copiedPlan.title,
         description: copiedPlan.description,
-        due_date: format(targetDate, 'yyyy-MM-dd'),
         start_time: startTime.toISOString(),
         end_time: endTime.toISOString(),
       });
@@ -201,9 +196,6 @@ export function usePlanContextActions() {
         {
           title: plan.title,
           plan_id: planId,
-          due_date: plan.startDate
-            ? format(plan.startDate, 'yyyy-MM-dd')
-            : format(new Date(), 'yyyy-MM-dd'),
           start_time: plan.startDate?.toISOString() ?? null,
           end_time: plan.endDate?.toISOString() ?? null,
           tagIds: plan.tagIds ?? [],

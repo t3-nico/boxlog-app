@@ -9,9 +9,9 @@ import { StatusBarItem } from '../StatusBarItem';
 
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
+import { CACHE_5_MINUTES } from '@/constants/time';
 import { PlanCreateTrigger } from '@/features/plans/components/shared/PlanCreateTrigger';
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
-import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
 import { api } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
 import {
@@ -30,8 +30,14 @@ import {
 export function ScheduleStatusItem() {
   const t = useTranslations('calendar');
   const openInspector = usePlanInspectorStore((state) => state.openInspector);
-  const chronotype = useCalendarSettingsStore((state) => state.chronotype);
   const [currentTime, setCurrentTime] = useState(() => new Date());
+
+  // DBから直接クロノタイプ設定を取得（Zustandストアに依存しない）
+  const { data: dbSettings } = api.userSettings.get.useQuery(undefined, {
+    staleTime: CACHE_5_MINUTES,
+    refetchOnWindowFocus: false,
+  });
+  const chronotype = dbSettings?.chronotype ?? { enabled: false, type: 'bear' as const };
 
   // 1分ごとに現在時刻を更新
   useEffect(() => {
@@ -44,18 +50,22 @@ export function ScheduleStatusItem() {
 
   // 現在時刻のクロノタイプゾーン色を取得
   const chronotypeColor = useMemo(() => {
-    if (!chronotype.enabled) return null;
+    if (!chronotype?.enabled || !chronotype?.type) return null;
 
     const profile =
-      chronotype.type === 'custom' && chronotype.customZones
-        ? { ...CHRONOTYPE_PRESETS.custom, productivityZones: chronotype.customZones }
+      chronotype.type === 'custom' && 'customZones' in chronotype && chronotype.customZones
+        ? {
+            ...CHRONOTYPE_PRESETS.custom,
+            productivityZones:
+              chronotype.customZones as unknown as import('@/types/chronotype').ProductivityZone[],
+          }
         : CHRONOTYPE_PRESETS[chronotype.type];
 
     const currentHour = currentTime.getHours();
     const zone = getProductivityZoneForHour(profile, currentHour);
 
     return zone ? getChronotypeColor(zone.level) : null;
-  }, [chronotype.enabled, chronotype.type, chronotype.customZones, currentTime]);
+  }, [chronotype, currentTime]);
 
   // 今日の予定を取得
   const { data: plans, isPending } = api.plans.list.useQuery(undefined, {
@@ -72,8 +82,7 @@ export function ScheduleStatusItem() {
 
     return plans
       .filter((plan) => {
-        // due_date または start_time が今日のもの
-        if (plan.due_date === todayStr) return true;
+        // start_time が今日のもの
         if (plan.start_time) {
           const startDate = new Date(plan.start_time).toISOString().split('T')[0];
           return startDate === todayStr;

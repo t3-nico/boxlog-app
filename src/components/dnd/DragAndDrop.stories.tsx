@@ -293,7 +293,6 @@ function PanelDragPreviewStory() {
         description: null,
         start_time: start.toISOString(),
         end_time: end.toISOString(),
-        due_date: null,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
         completed_at: null,
@@ -303,6 +302,7 @@ function PanelDragPreviewStory() {
         recurrence_rule: null,
         recurrence_type: null,
         recurrence_end_date: null,
+        due_date: null,
         tagIds: [],
       },
     });

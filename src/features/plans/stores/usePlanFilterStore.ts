@@ -3,18 +3,6 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 /**
- * 期限フィルタータイプ
- */
-export type DueDateFilter =
-  | 'today'
-  | 'tomorrow'
-  | 'this_week'
-  | 'next_week'
-  | 'overdue'
-  | 'no_due_date'
-  | 'all';
-
-/**
  * 繰り返しフィルタータイプ
  */
 export type RecurrenceFilter = 'all' | 'yes' | 'no';
@@ -49,7 +37,6 @@ interface PlanFilterState {
   tags: string[];
   search: string;
   assignee: string;
-  dueDate: DueDateFilter;
   recurrence: RecurrenceFilter;
   reminder: ReminderFilter;
   schedule: ScheduleFilter;
@@ -67,7 +54,6 @@ interface PlanFilterStore extends PlanFilterState {
   setTags: (tags: string[]) => void;
   setSearch: (search: string) => void;
   setAssignee: (assignee: string) => void;
-  setDueDate: (dueDate: DueDateFilter) => void;
   setRecurrence: (recurrence: RecurrenceFilter) => void;
   setReminder: (reminder: ReminderFilter) => void;
   setSchedule: (schedule: ScheduleFilter) => void;
@@ -85,7 +71,6 @@ const initialState: PlanFilterState = {
   tags: [],
   search: '',
   assignee: '',
-  dueDate: 'all',
   recurrence: 'all',
   reminder: 'all',
   schedule: 'all',
@@ -108,7 +93,6 @@ export const usePlanFilterStore = create<PlanFilterStore>()(
       setTags: (tags) => set({ tags }),
       setSearch: (search) => set({ search }),
       setAssignee: (assignee) => set({ assignee }),
-      setDueDate: (dueDate) => set({ dueDate }),
       setRecurrence: (recurrence) => set({ recurrence }),
       setReminder: (reminder) => set({ reminder }),
       setSchedule: (schedule) => set({ schedule }),
@@ -125,7 +109,6 @@ export const usePlanFilterStore = create<PlanFilterStore>()(
         tags: state.tags,
         search: state.search,
         assignee: state.assignee,
-        dueDate: state.dueDate,
         recurrence: state.recurrence,
         reminder: state.reminder,
         schedule: state.schedule,

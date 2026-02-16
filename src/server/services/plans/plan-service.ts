@@ -375,17 +375,14 @@ export class PlanService {
    */
   private normalizeDateTimeFields<T extends Record<string, unknown>>(input: T): T {
     const dateTimeData: {
-      due_date?: string | null;
       start_time?: string | null;
       end_time?: string | null;
     } = {};
 
     const typedInput = input as {
-      due_date?: string | null;
       start_time?: string | null;
       end_time?: string | null;
     };
-    if (typedInput.due_date !== undefined) dateTimeData.due_date = typedInput.due_date;
     if (typedInput.start_time !== undefined) dateTimeData.start_time = typedInput.start_time;
     if (typedInput.end_time !== undefined) dateTimeData.end_time = typedInput.end_time;
 
@@ -405,28 +402,19 @@ export class PlanService {
     existingData: PlanRow | null,
   ): T {
     const typedInput = input as {
-      due_date?: string | null;
       start_time?: string | null;
       end_time?: string | null;
     };
-    const hasDateTimeUpdate = !!(
-      typedInput.due_date ||
-      typedInput.start_time ||
-      typedInput.end_time
-    );
+    const hasDateTimeUpdate = !!(typedInput.start_time || typedInput.end_time);
 
     if (!hasDateTimeUpdate || !existingData) {
       return input;
     }
 
     const mergedData: {
-      due_date?: string | null;
       start_time?: string | null;
       end_time?: string | null;
     } = {};
-
-    const dueDateValue = typedInput.due_date ?? existingData.due_date;
-    if (dueDateValue) mergedData.due_date = dueDateValue;
 
     const startTimeValue = typedInput.start_time ?? existingData.start_time;
     if (startTimeValue !== undefined) mergedData.start_time = startTimeValue;
@@ -438,13 +426,8 @@ export class PlanService {
 
     const result = { ...input } as Record<string, unknown>;
 
-    if (typedInput.start_time !== undefined || typedInput.end_time !== undefined) {
-      if (mergedData.due_date !== undefined) result.due_date = mergedData.due_date;
-      if (mergedData.start_time !== undefined) result.start_time = mergedData.start_time;
-      if (mergedData.end_time !== undefined) result.end_time = mergedData.end_time;
-    } else if (typedInput.due_date !== undefined) {
-      if (mergedData.due_date !== undefined) result.due_date = mergedData.due_date;
-    }
+    if (mergedData.start_time !== undefined) result.start_time = mergedData.start_time;
+    if (mergedData.end_time !== undefined) result.end_time = mergedData.end_time;
 
     return result as T;
   }

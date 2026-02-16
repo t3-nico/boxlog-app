@@ -12,7 +12,6 @@ const createMockPlan = (overrides: Partial<Plan>): Plan => ({
   description: null,
   status: 'open',
   completed_at: null,
-  due_date: null,
   start_time: null,
   end_time: null,
   recurrence_type: null,

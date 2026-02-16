@@ -80,16 +80,6 @@ function detectChanges(oldData: Record<string, any>, newData: Record<string, any
     });
   }
 
-  // 期限変更
-  if (oldData.due_date !== newData.due_date) {
-    changes.push({
-      field_name: 'due_date',
-      old_value: oldData.due_date || '',
-      new_value: newData.due_date || '',
-      action_type: 'due_date_changed',
-    });
-  }
-
   // 開始・終了時刻変更
   if (oldData.start_time !== newData.start_time || oldData.end_time !== newData.end_time) {
     changes.push({

@@ -46,7 +46,6 @@ export interface SearchOptions {
 export interface SearchFilters {
   status?: PlanStatus[];
   tags?: string[];
-  dueDate?: 'today' | 'tomorrow' | 'this_week' | 'overdue' | 'no_due_date' | 'all';
 }
 
 // Search context for advanced features

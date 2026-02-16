@@ -144,9 +144,7 @@ export const WeekCalendarLayout = ({
       const timeString = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
 
       // AddPopupを開く
-      openEventPopup({
-        dueDate: date,
-      });
+      openEventPopup({});
 
       // デフォルト値を設定（AddPopupが使用）
       if (onCreatePlan) {

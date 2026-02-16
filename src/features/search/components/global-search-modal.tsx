@@ -50,7 +50,6 @@ type PlanFromAPI = {
   title: string;
   description: string | null;
   status: PlanStatus;
-  due_date: string | null;
   start_time: string | null;
   end_time: string | null;
   plan_number: string;
@@ -166,7 +165,6 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
         title: plan.title,
         description: plan.description,
         status: plan.status,
-        due_date: plan.due_date,
         plan_number: plan.plan_number,
         tags: resolvedTags,
       };
@@ -187,38 +185,6 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
           ),
         ),
       );
-    }
-
-    if (parsedQuery.filters.dueDate) {
-      const now = new Date();
-      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-      const tomorrow = new Date(today);
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      const weekEnd = new Date(today);
-      weekEnd.setDate(weekEnd.getDate() + 7);
-
-      filtered = filtered.filter((plan) => {
-        if (!plan.due_date) {
-          return parsedQuery.filters.dueDate === 'no_due_date';
-        }
-
-        const dueDate = new Date(plan.due_date);
-
-        switch (parsedQuery.filters.dueDate) {
-          case 'today':
-            return dueDate >= today && dueDate < tomorrow;
-          case 'tomorrow':
-            return dueDate >= tomorrow && dueDate < new Date(tomorrow.getTime() + 86400000);
-          case 'this_week':
-            return dueDate >= today && dueDate < weekEnd;
-          case 'overdue':
-            return dueDate < today && plan.status !== 'closed';
-          case 'no_due_date':
-            return false;
-          default:
-            return true;
-        }
-      });
     }
 
     return filtered;
@@ -311,11 +277,6 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
                 {parsedQuery.filters.tags && (
                   <span className="bg-state-active text-state-active-foreground rounded px-2 py-1 text-xs">
                     #{parsedQuery.filters.tags.join(', #')}
-                  </span>
-                )}
-                {parsedQuery.filters.dueDate && (
-                  <span className="bg-state-active text-state-active-foreground rounded px-2 py-1 text-xs">
-                    due: {parsedQuery.filters.dueDate}
                   </span>
                 )}
               </div>
