@@ -55,6 +55,7 @@ export function useRecordMutations() {
       // すべてのrecords.listクエリを無効化（日付フィルター付きも含む）
       void utils.records.list.invalidate(undefined, { refetchType: 'all' });
       void utils.records.getRecent.invalidate();
+      void utils.plans.getCumulativeTime.invalidate();
     },
   });
 
@@ -99,6 +100,7 @@ export function useRecordMutations() {
       void utils.records.list.invalidate(undefined, { refetchType: 'all' });
       // 個別Recordのキャッシュも無効化（編集画面用）
       void utils.records.getById.invalidate({ id });
+      void utils.plans.getCumulativeTime.invalidate();
     },
   });
 
@@ -124,6 +126,7 @@ export function useRecordMutations() {
       // すべてのrecords.listクエリを無効化（日付フィルター付きも含む）
       void utils.records.list.invalidate(undefined, { refetchType: 'all' });
       void utils.records.getRecent.invalidate();
+      void utils.plans.getCumulativeTime.invalidate();
     },
   });
 
@@ -134,6 +137,7 @@ export function useRecordMutations() {
       // すべてのrecords.listクエリを無効化（日付フィルター付きも含む）
       void utils.records.list.invalidate(undefined, { refetchType: 'all' });
       void utils.records.getRecent.invalidate();
+      void utils.plans.getCumulativeTime.invalidate();
     },
   });
 
@@ -160,6 +164,7 @@ export function useRecordMutations() {
       // すべてのrecords.listクエリを無効化（日付フィルター付きも含む）
       void utils.records.list.invalidate(undefined, { refetchType: 'all' });
       void utils.records.getRecent.invalidate();
+      void utils.plans.getCumulativeTime.invalidate();
     },
   });
 

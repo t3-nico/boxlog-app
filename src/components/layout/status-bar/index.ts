@@ -23,3 +23,4 @@ export { StatusBarItem } from './StatusBarItem';
 // アイテムコンポーネント
 export { ChronotypeStatusItem } from './items/ChronotypeStatusItem';
 export { ScheduleStatusItem } from './items/ScheduleStatusItem';
+export { TotalTimeStatusItem } from './items/TotalTimeStatusItem';

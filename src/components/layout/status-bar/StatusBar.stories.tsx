@@ -5,6 +5,8 @@ import { Calendar, Dna } from 'lucide-react';
 import { StatusBar } from './StatusBar';
 import { StatusBarItem } from './StatusBarItem';
 
+import { cn } from '@/lib/utils';
+
 const meta = {
   title: 'Components/Layout/StatusBar',
   component: StatusBar,
@@ -23,6 +25,49 @@ const meta = {
 
 export default meta;
 type Story = StoryObj<typeof meta>;
+
+/** プログレスリング（Story用モック） */
+function ProgressRing({ percent }: { percent: number }) {
+  const size = 16;
+  const trackStroke = 4;
+  const progressStroke = 2.5;
+  const radius = (size - trackStroke) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference - (percent / 100) * circumference;
+  const isNearEnd = percent >= 80;
+
+  return (
+    <div title={`${percent}% 経過`}>
+      <svg
+        width={size}
+        height={size}
+        viewBox={`0 0 ${size} ${size}`}
+        className="-rotate-90"
+        aria-hidden="true"
+      >
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          fill="none"
+          className="stroke-border"
+          strokeWidth={trackStroke}
+        />
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          fill="none"
+          className={cn(isNearEnd ? 'stroke-destructive' : 'stroke-primary')}
+          strokeWidth={progressStroke}
+          strokeDasharray={circumference}
+          strokeDashoffset={offset}
+          strokeLinecap="round"
+        />
+      </svg>
+    </div>
+  );
+}
 
 /** TotalTimeStatusItem の比率バー（Story内で再利用） */
 function TotalTimeBar({
@@ -122,7 +167,7 @@ export const Active: Story = {
   ),
 };
 
-/** 予定進行中 + プログレスバー付き。 */
+/** 予定進行中 + プログレスリング付き。 */
 export const WithProgress: Story = {
   render: () => (
     <StatusBar>
@@ -133,15 +178,7 @@ export const WithProgress: Story = {
             label="ミーティング (14:00-15:00)"
             tooltip="予定を開く"
           />
-          <div className="flex items-center gap-2" title="65% 経過">
-            <div className="bg-surface-container h-1 w-16 overflow-hidden rounded-full">
-              <div
-                className="bg-primary h-full rounded-full transition-all duration-300"
-                style={{ width: '65%' }}
-              />
-            </div>
-            <span className="text-muted-foreground text-xs tabular-nums">65%</span>
-          </div>
+          <ProgressRing percent={65} />
         </div>
         <TotalTimeBar
           planLabel="45h 20m"
@@ -223,12 +260,7 @@ export const AllPatterns: Story = {
               icon={<Calendar className="h-3 w-3" />}
               label="ミーティング (14:00-15:00)"
             />
-            <div className="flex items-center gap-2">
-              <div className="bg-surface-container h-1 w-16 overflow-hidden rounded-full">
-                <div className="bg-primary h-full rounded-full" style={{ width: '65%' }} />
-              </div>
-              <span className="text-muted-foreground text-xs tabular-nums">65%</span>
-            </div>
+            <ProgressRing percent={65} />
           </div>
           <TotalTimeBar
             planLabel="45h 20m"

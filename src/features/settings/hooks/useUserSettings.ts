@@ -117,7 +117,10 @@ export function useUserSettings() {
       }
       if (settings.planRecordMode !== undefined) dbInput.planRecordMode = settings.planRecordMode;
 
-      updateMutation.mutate(dbInput);
+      // DB保存対象のフィールドがある場合のみmutationを実行
+      if (Object.keys(dbInput).length > 0) {
+        updateMutation.mutate(dbInput);
+      }
     },
     [store, updateMutation],
   );

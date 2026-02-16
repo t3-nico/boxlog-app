@@ -30,6 +30,13 @@ const ChronotypeStatusItem = dynamic(
     })),
   { ssr: false },
 );
+const TotalTimeStatusItem = dynamic(
+  () =>
+    import('./status-bar/items/TotalTimeStatusItem').then((mod) => ({
+      default: mod.TotalTimeStatusItem,
+    })),
+  { ssr: false },
+);
 
 interface DesktopLayoutProps {
   children: React.ReactNode;
@@ -121,6 +128,9 @@ export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
           <StatusBar.Left>
             <Suspense fallback={<StatusBarItemSkeleton />}>
               <ScheduleStatusItem />
+            </Suspense>
+            <Suspense fallback={<StatusBarItemSkeleton />}>
+              <TotalTimeStatusItem />
             </Suspense>
           </StatusBar.Left>
           <StatusBar.Right>

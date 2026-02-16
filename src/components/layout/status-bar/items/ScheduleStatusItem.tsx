@@ -152,7 +152,7 @@ export function ScheduleStatusItem() {
     if (currentPlan) {
       const startTime = currentPlan.start_time ? formatTime(currentPlan.start_time) : '';
       const endTime = currentPlan.end_time ? formatTime(currentPlan.end_time) : '';
-      const timeRange = startTime && endTime ? ` (${startTime}-${endTime})` : '';
+      const timeRange = startTime && endTime ? `\u2002${startTime} - ${endTime}` : '';
       return `${currentPlan.title}${timeRange}`;
     }
 
@@ -176,6 +176,55 @@ export function ScheduleStatusItem() {
   // 現在の予定がある場合は通常のStatusBarItem、ない場合はPlanCreateTriggerでラップ
   const hasActivePlan = !!currentPlan;
 
+  // プログレスリング（ダブルリング・テキストなし）
+  const progressRing = useMemo(() => {
+    if (progressPercent === null) return null;
+
+    const size = 16;
+    const trackStroke = 4;
+    const progressStroke = 2.5;
+    const radius = (size - trackStroke) / 2;
+    const circumference = 2 * Math.PI * radius;
+    const offset = circumference - (progressPercent / 100) * circumference;
+    const isNearEnd = progressPercent >= 80;
+
+    return (
+      <div title={`${progressPercent}% 経過`}>
+        <svg
+          width={size}
+          height={size}
+          viewBox={`0 0 ${size} ${size}`}
+          className="-rotate-90"
+          aria-hidden="true"
+        >
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            fill="none"
+            className="stroke-border"
+            strokeWidth={trackStroke}
+          />
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            fill="none"
+            className={cn(
+              !chronotypeColor && (isNearEnd ? 'stroke-destructive' : 'stroke-primary'),
+              isNearEnd && 'stroke-destructive',
+            )}
+            style={chronotypeColor && !isNearEnd ? { stroke: chronotypeColor } : undefined}
+            strokeWidth={progressStroke}
+            strokeDasharray={circumference}
+            strokeDashoffset={offset}
+            strokeLinecap="round"
+          />
+        </svg>
+      </div>
+    );
+  }, [progressPercent, chronotypeColor]);
+
   const statusBarContent = (
     <>
       <StatusBarItem
@@ -184,36 +233,17 @@ export function ScheduleStatusItem() {
         onClick={handleClick}
         tooltip={tooltip}
       />
-      {/* 進行中の予定がある場合のみプログレスバーを表示 */}
-      {progressPercent !== null && (
-        <div className="flex items-center gap-2" title={`${progressPercent}% 経過`}>
-          <div className="bg-surface-container h-1 w-16 overflow-hidden rounded-full">
-            <div
-              className={cn(
-                'h-full rounded-full transition-all duration-300',
-                !chronotypeColor && (progressPercent < 80 ? 'bg-primary' : 'bg-destructive'),
-                progressPercent >= 80 && 'bg-destructive',
-              )}
-              style={{
-                width: `${progressPercent}%`,
-                ...(chronotypeColor &&
-                  progressPercent < 80 && { backgroundColor: chronotypeColor }),
-              }}
-            />
-          </div>
-          <span className="text-muted-foreground text-xs tabular-nums">{progressPercent}%</span>
-        </div>
-      )}
+      {progressRing}
     </>
   );
 
   if (hasActivePlan) {
-    return <div className="flex items-center gap-2">{statusBarContent}</div>;
+    return <div className="flex items-center">{statusBarContent}</div>;
   }
 
   // 予定がない場合はPlanCreateTriggerでラップ
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center">
       <PlanCreateTrigger
         triggerElement={
           <Button type="button" variant="ghost" className="h-auto p-0">
@@ -227,25 +257,7 @@ export function ScheduleStatusItem() {
         }
         initialDate={initialDate}
       />
-      {progressPercent !== null && (
-        <div className="flex items-center gap-2" title={`${progressPercent}% 経過`}>
-          <div className="bg-surface-container h-1 w-16 overflow-hidden rounded-full">
-            <div
-              className={cn(
-                'h-full rounded-full transition-all duration-300',
-                !chronotypeColor && (progressPercent < 80 ? 'bg-primary' : 'bg-destructive'),
-                progressPercent >= 80 && 'bg-destructive',
-              )}
-              style={{
-                width: `${progressPercent}%`,
-                ...(chronotypeColor &&
-                  progressPercent < 80 && { backgroundColor: chronotypeColor }),
-              }}
-            />
-          </div>
-          <span className="text-muted-foreground text-xs tabular-nums">{progressPercent}%</span>
-        </div>
-      )}
+      {progressRing}
     </div>
   );
 }

@@ -6,6 +6,8 @@
 import { TRPCError } from '@trpc/server';
 
 import { MS_PER_DAY, MS_PER_HOUR, MS_PER_MINUTE } from '@/constants/time';
+import { endOfDay } from '@/lib/date/core';
+import { formatDateISO } from '@/lib/date/format';
 import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc';
 
 import { z } from 'zod';
@@ -518,6 +520,69 @@ export const statisticsRouter = createTRPCRouter({
       totalHours,
       planCount,
       avgHoursPerPlan,
+    };
+  }),
+
+  /**
+   * Get cumulative time for Plans and Records up to today
+   * Excludes future plans (start_time > end of today)
+   */
+  getCumulativeTime: protectedProcedure.query(async ({ ctx }) => {
+    const { supabase, userId } = ctx;
+    const now = new Date();
+    const todayEnd = endOfDay(now).toISOString();
+    const todayStr = formatDateISO(now);
+
+    // Plans: start_time が今日以前のもの（未来の予定を除外）
+    const { data: plans, error: plansError } = await supabase
+      .from('plans')
+      .select('start_time, end_time')
+      .eq('user_id', userId)
+      .not('start_time', 'is', null)
+      .not('end_time', 'is', null)
+      .lte('start_time', todayEnd);
+
+    if (plansError) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: `Failed to fetch plans: ${plansError.message}`,
+      });
+    }
+
+    // Records: worked_at が今日以前のもの
+    const { data: records, error: recordsError } = await supabase
+      .from('records')
+      .select('duration_minutes')
+      .eq('user_id', userId)
+      .lte('worked_at', todayStr);
+
+    if (recordsError) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: `Failed to fetch records: ${recordsError.message}`,
+      });
+    }
+
+    // Plan集計: (end_time - start_time) の合計
+    let planTotalMinutes = 0;
+    for (const plan of plans) {
+      if (plan.start_time && plan.end_time) {
+        const diffMs = new Date(plan.end_time).getTime() - new Date(plan.start_time).getTime();
+        if (diffMs > 0) {
+          planTotalMinutes += diffMs / MS_PER_MINUTE;
+        }
+      }
+    }
+
+    // Record集計: duration_minutes の合計
+    const recordTotalMinutes = (records ?? []).reduce(
+      (sum, r) => sum + (r.duration_minutes ?? 0),
+      0,
+    );
+
+    return {
+      planTotalMinutes: Math.round(planTotalMinutes),
+      recordTotalMinutes,
     };
   }),
 
