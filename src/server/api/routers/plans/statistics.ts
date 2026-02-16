@@ -6,7 +6,7 @@
 import { TRPCError } from '@trpc/server';
 
 import { MS_PER_DAY, MS_PER_HOUR, MS_PER_MINUTE } from '@/constants/time';
-import { endOfDay } from '@/lib/date/core';
+import { endOfWeek, startOfWeek } from '@/lib/date/core';
 import { formatDateISO } from '@/lib/date/format';
 import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc';
 
@@ -524,23 +524,26 @@ export const statisticsRouter = createTRPCRouter({
   }),
 
   /**
-   * Get cumulative time for Plans and Records up to today
-   * Excludes future plans (start_time > end of today)
+   * Get this week's time for Plans and Records
+   * Only includes plans and records for the current week (Mon-Sun)
    */
   getCumulativeTime: protectedProcedure.query(async ({ ctx }) => {
     const { supabase, userId } = ctx;
     const now = new Date();
-    const todayEnd = endOfDay(now).toISOString();
-    const todayStr = formatDateISO(now);
+    const weekStart = startOfWeek(now).toISOString();
+    const weekEnd = endOfWeek(now).toISOString();
+    const weekStartStr = formatDateISO(startOfWeek(now));
+    const weekEndStr = formatDateISO(endOfWeek(now));
 
-    // Plans: start_time が今日以前のもの（未来の予定を除外）
+    // Plans: 今週のPlanのみ（start_time が今週の範囲内）
     const { data: plans, error: plansError } = await supabase
       .from('plans')
       .select('start_time, end_time')
       .eq('user_id', userId)
       .not('start_time', 'is', null)
       .not('end_time', 'is', null)
-      .lte('start_time', todayEnd);
+      .gte('start_time', weekStart)
+      .lte('start_time', weekEnd);
 
     if (plansError) {
       throw new TRPCError({
@@ -549,12 +552,13 @@ export const statisticsRouter = createTRPCRouter({
       });
     }
 
-    // Records: worked_at が今日以前のもの
+    // Records: 今週のRecordのみ
     const { data: records, error: recordsError } = await supabase
       .from('records')
       .select('duration_minutes')
       .eq('user_id', userId)
-      .lte('worked_at', todayStr);
+      .gte('worked_at', weekStartStr)
+      .lte('worked_at', weekEndStr);
 
     if (recordsError) {
       throw new TRPCError({

@@ -1,3 +1,5 @@
+import { HoverTooltip } from '@/components/ui/tooltip';
+
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta = {
@@ -8,9 +10,9 @@ const meta = {
     docs: {
       description: {
         component:
-          '累計時間をステータスバーに表示（Plan vs Record 比率バー）。\n\n' +
+          '今週の時間をステータスバーに表示（Plan vs Record 比率バー）。\n\n' +
           '- データ: `api.plans.getCumulativeTime` (stale 5min, refetch 5min)\n' +
-          '- Plan/Record作成・更新時にキャッシュ自動更新\n' +
+          '- 今週（月〜日）のPlan/Recordを集計\n' +
           '- エラー時は非表示（ステータスバーを壊さない）\n' +
           '- クリック動作なし',
       },
@@ -24,72 +26,68 @@ type Story = StoryObj<typeof meta>;
 /** データなし（初期状態）。 */
 export const Default: Story = {
   render: () => (
-    <div
-      className="text-muted-foreground flex items-center gap-1.5 rounded px-2 py-1 text-xs"
-      title="Plan: 0m (50%) / Record: 0m (50%)"
-    >
-      <span className="text-primary font-medium tabular-nums">0m</span>
-      <div className="flex h-2 w-20 overflow-hidden rounded-sm">
-        <div className="bg-primary h-full" style={{ width: '50%' }} />
-        <div className="bg-success h-full" style={{ width: '50%' }} />
+    <HoverTooltip content="Plan: 0m (50%) / Record: 0m (50%)" side="top">
+      <div className="text-muted-foreground flex items-center gap-1.5 rounded px-2 py-1 text-xs">
+        <span className="text-primary font-medium tabular-nums">0m</span>
+        <div className="flex h-2 w-20 overflow-hidden rounded-sm">
+          <div className="bg-primary h-full" style={{ width: '50%' }} />
+          <div className="bg-success h-full" style={{ width: '50%' }} />
+        </div>
+        <span className="text-success font-medium tabular-nums">0m</span>
+        <span className="text-muted-foreground/50 text-xs tabular-nums">EVEN</span>
       </div>
-      <span className="text-success font-medium tabular-nums">0m</span>
-      <span className="text-muted-foreground/50 text-xs tabular-nums">EVEN</span>
-    </div>
+    </HoverTooltip>
   ),
 };
 
 /** Plan優勢（Record が少ない）。 */
 export const PlanHeavy: Story = {
   render: () => (
-    <div
-      className="text-muted-foreground flex items-center gap-1.5 rounded px-2 py-1 text-xs"
-      title="Plan: 120h 30m (59%) / Record: 85h 15m (41%)"
-    >
-      <span className="text-primary font-medium tabular-nums">120h 30m</span>
-      <div className="flex h-2 w-20 overflow-hidden rounded-sm">
-        <div className="bg-primary h-full" style={{ width: '59%' }} />
-        <div className="bg-success h-full" style={{ width: '41%' }} />
+    <HoverTooltip content="Plan: 12h 30m (63%) / Record: 7h 15m (37%)" side="top">
+      <div className="text-muted-foreground flex items-center gap-1.5 rounded px-2 py-1 text-xs">
+        <span className="text-primary font-medium tabular-nums">12h 30m</span>
+        <div className="flex h-2 w-20 overflow-hidden rounded-sm">
+          <div className="bg-primary h-full" style={{ width: '63%' }} />
+          <div className="bg-success h-full" style={{ width: '37%' }} />
+        </div>
+        <span className="text-success font-medium tabular-nums">7h 15m</span>
+        <span className="text-muted-foreground/50 text-xs tabular-nums">-26%</span>
       </div>
-      <span className="text-success font-medium tabular-nums">85h 15m</span>
-      <span className="text-muted-foreground/50 text-xs tabular-nums">-18%</span>
-    </div>
+    </HoverTooltip>
   ),
 };
 
 /** Record優勢（Plan が少ない）。 */
 export const RecordHeavy: Story = {
   render: () => (
-    <div
-      className="text-muted-foreground flex items-center gap-1.5 rounded px-2 py-1 text-xs"
-      title="Plan: 40h 10m (35%) / Record: 75h 20m (65%)"
-    >
-      <span className="text-primary font-medium tabular-nums">40h 10m</span>
-      <div className="flex h-2 w-20 overflow-hidden rounded-sm">
-        <div className="bg-primary h-full" style={{ width: '35%' }} />
-        <div className="bg-success h-full" style={{ width: '65%' }} />
+    <HoverTooltip content="Plan: 5h 0m (33%) / Record: 10h 15m (67%)" side="top">
+      <div className="text-muted-foreground flex items-center gap-1.5 rounded px-2 py-1 text-xs">
+        <span className="text-primary font-medium tabular-nums">5h 0m</span>
+        <div className="flex h-2 w-20 overflow-hidden rounded-sm">
+          <div className="bg-primary h-full" style={{ width: '33%' }} />
+          <div className="bg-success h-full" style={{ width: '67%' }} />
+        </div>
+        <span className="text-success font-medium tabular-nums">10h 15m</span>
+        <span className="text-muted-foreground/50 text-xs tabular-nums">+34%</span>
       </div>
-      <span className="text-success font-medium tabular-nums">75h 20m</span>
-      <span className="text-muted-foreground/50 text-xs tabular-nums">+30%</span>
-    </div>
+    </HoverTooltip>
   ),
 };
 
 /** ほぼ均等。 */
 export const Balanced: Story = {
   render: () => (
-    <div
-      className="text-muted-foreground flex items-center gap-1.5 rounded px-2 py-1 text-xs"
-      title="Plan: 50h 0m (50%) / Record: 50h 0m (50%)"
-    >
-      <span className="text-primary font-medium tabular-nums">50h 0m</span>
-      <div className="flex h-2 w-20 overflow-hidden rounded-sm">
-        <div className="bg-primary h-full" style={{ width: '50%' }} />
-        <div className="bg-success h-full" style={{ width: '50%' }} />
+    <HoverTooltip content="Plan: 8h 0m (50%) / Record: 8h 0m (50%)" side="top">
+      <div className="text-muted-foreground flex items-center gap-1.5 rounded px-2 py-1 text-xs">
+        <span className="text-primary font-medium tabular-nums">8h 0m</span>
+        <div className="flex h-2 w-20 overflow-hidden rounded-sm">
+          <div className="bg-primary h-full" style={{ width: '50%' }} />
+          <div className="bg-success h-full" style={{ width: '50%' }} />
+        </div>
+        <span className="text-success font-medium tabular-nums">8h 0m</span>
+        <span className="text-muted-foreground/50 text-xs tabular-nums">EVEN</span>
       </div>
-      <span className="text-success font-medium tabular-nums">50h 0m</span>
-      <span className="text-muted-foreground/50 text-xs tabular-nums">EVEN</span>
-    </div>
+    </HoverTooltip>
   ),
 };
 
@@ -107,57 +105,53 @@ export const AllPatterns: Story = {
   render: () => (
     <div className="bg-surface-container flex flex-col items-start gap-4 rounded p-4">
       {/* 初期状態 */}
-      <div
-        className="text-muted-foreground flex items-center gap-1.5 rounded px-2 py-1 text-xs"
-        title="Plan: 0m (50%) / Record: 0m (50%)"
-      >
-        <span className="text-primary font-medium tabular-nums">0m</span>
-        <div className="flex h-2 w-20 overflow-hidden rounded-sm">
-          <div className="bg-primary h-full" style={{ width: '50%' }} />
-          <div className="bg-success h-full" style={{ width: '50%' }} />
+      <HoverTooltip content="Plan: 0m (50%) / Record: 0m (50%)" side="top">
+        <div className="text-muted-foreground flex items-center gap-1.5 rounded px-2 py-1 text-xs">
+          <span className="text-primary font-medium tabular-nums">0m</span>
+          <div className="flex h-2 w-20 overflow-hidden rounded-sm">
+            <div className="bg-primary h-full" style={{ width: '50%' }} />
+            <div className="bg-success h-full" style={{ width: '50%' }} />
+          </div>
+          <span className="text-success font-medium tabular-nums">0m</span>
+          <span className="text-muted-foreground/50 text-xs tabular-nums">EVEN</span>
         </div>
-        <span className="text-success font-medium tabular-nums">0m</span>
-        <span className="text-muted-foreground/50 text-xs tabular-nums">EVEN</span>
-      </div>
+      </HoverTooltip>
       {/* Plan優勢 */}
-      <div
-        className="text-muted-foreground flex items-center gap-1.5 rounded px-2 py-1 text-xs"
-        title="Plan: 120h 30m (59%) / Record: 85h 15m (41%)"
-      >
-        <span className="text-primary font-medium tabular-nums">120h 30m</span>
-        <div className="flex h-2 w-20 overflow-hidden rounded-sm">
-          <div className="bg-primary h-full" style={{ width: '59%' }} />
-          <div className="bg-success h-full" style={{ width: '41%' }} />
+      <HoverTooltip content="Plan: 12h 30m (63%) / Record: 7h 15m (37%)" side="top">
+        <div className="text-muted-foreground flex items-center gap-1.5 rounded px-2 py-1 text-xs">
+          <span className="text-primary font-medium tabular-nums">12h 30m</span>
+          <div className="flex h-2 w-20 overflow-hidden rounded-sm">
+            <div className="bg-primary h-full" style={{ width: '63%' }} />
+            <div className="bg-success h-full" style={{ width: '37%' }} />
+          </div>
+          <span className="text-success font-medium tabular-nums">7h 15m</span>
+          <span className="text-muted-foreground/50 text-xs tabular-nums">-26%</span>
         </div>
-        <span className="text-success font-medium tabular-nums">85h 15m</span>
-        <span className="text-muted-foreground/50 text-xs tabular-nums">-18%</span>
-      </div>
+      </HoverTooltip>
       {/* Record優勢 */}
-      <div
-        className="text-muted-foreground flex items-center gap-1.5 rounded px-2 py-1 text-xs"
-        title="Plan: 40h 10m (35%) / Record: 75h 20m (65%)"
-      >
-        <span className="text-primary font-medium tabular-nums">40h 10m</span>
-        <div className="flex h-2 w-20 overflow-hidden rounded-sm">
-          <div className="bg-primary h-full" style={{ width: '35%' }} />
-          <div className="bg-success h-full" style={{ width: '65%' }} />
+      <HoverTooltip content="Plan: 5h 0m (33%) / Record: 10h 15m (67%)" side="top">
+        <div className="text-muted-foreground flex items-center gap-1.5 rounded px-2 py-1 text-xs">
+          <span className="text-primary font-medium tabular-nums">5h 0m</span>
+          <div className="flex h-2 w-20 overflow-hidden rounded-sm">
+            <div className="bg-primary h-full" style={{ width: '33%' }} />
+            <div className="bg-success h-full" style={{ width: '67%' }} />
+          </div>
+          <span className="text-success font-medium tabular-nums">10h 15m</span>
+          <span className="text-muted-foreground/50 text-xs tabular-nums">+34%</span>
         </div>
-        <span className="text-success font-medium tabular-nums">75h 20m</span>
-        <span className="text-muted-foreground/50 text-xs tabular-nums">+30%</span>
-      </div>
+      </HoverTooltip>
       {/* 均等 */}
-      <div
-        className="text-muted-foreground flex items-center gap-1.5 rounded px-2 py-1 text-xs"
-        title="Plan: 50h 0m (50%) / Record: 50h 0m (50%)"
-      >
-        <span className="text-primary font-medium tabular-nums">50h 0m</span>
-        <div className="flex h-2 w-20 overflow-hidden rounded-sm">
-          <div className="bg-primary h-full" style={{ width: '50%' }} />
-          <div className="bg-success h-full" style={{ width: '50%' }} />
+      <HoverTooltip content="Plan: 8h 0m (50%) / Record: 8h 0m (50%)" side="top">
+        <div className="text-muted-foreground flex items-center gap-1.5 rounded px-2 py-1 text-xs">
+          <span className="text-primary font-medium tabular-nums">8h 0m</span>
+          <div className="flex h-2 w-20 overflow-hidden rounded-sm">
+            <div className="bg-primary h-full" style={{ width: '50%' }} />
+            <div className="bg-success h-full" style={{ width: '50%' }} />
+          </div>
+          <span className="text-success font-medium tabular-nums">8h 0m</span>
+          <span className="text-muted-foreground/50 text-xs tabular-nums">EVEN</span>
         </div>
-        <span className="text-success font-medium tabular-nums">50h 0m</span>
-        <span className="text-muted-foreground/50 text-xs tabular-nums">EVEN</span>
-      </div>
+      </HoverTooltip>
       {/* ローディング */}
       <div className="text-muted-foreground flex items-center gap-1.5 rounded px-2 py-1 text-xs">
         <span>...</span>
