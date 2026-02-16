@@ -117,9 +117,13 @@ export function createUserService(supabase: SupabaseClient<Database>) {
         );
       }
 
-      // Service Role クライアントで auth.users を削除
-      // CASCADE DELETE により全テーブルのユーザーデータが自動削除される
+      // Service Role クライアントで残存データを削除
       const adminClient = createServiceRoleClient();
+
+      // login_attempts はemail基準でCASCADE対象外のため手動削除
+      await adminClient.from('login_attempts').delete().eq('email', userEmail);
+
+      // auth.users を削除 → CASCADE DELETE により全テーブルのユーザーデータが自動削除される
       const { error: deleteError } = await adminClient.auth.admin.deleteUser(userId);
 
       if (deleteError) {
