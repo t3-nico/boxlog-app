@@ -48,6 +48,8 @@ const config: StorybookConfig = {
       'next/navigation': path.resolve(__dirname, './mocks/next-navigation.tsx'),
       // Sentry（@sentry/nextjs が Next.js 内部の process 依存のため Storybook ではモック化）
       '@sentry/nextjs': path.resolve(__dirname, './mocks/sentry-nextjs.ts'),
+      // Storybook 10: @storybook/blocks は @storybook/addon-docs/blocks に統合
+      '@storybook/blocks': '@storybook/addon-docs/blocks',
     };
     // React自動JSXランタイム設定
     config.esbuild = {
