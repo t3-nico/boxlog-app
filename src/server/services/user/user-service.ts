@@ -63,6 +63,10 @@ export interface ExportDataResult {
     profile: unknown;
     plans: unknown[];
     tags: unknown[];
+    records: unknown[];
+    planTags: unknown[];
+    recordTags: unknown[];
+    notificationPreferences: unknown;
     userSettings: unknown;
   };
 }
@@ -137,10 +141,23 @@ export function createUserService(supabase: SupabaseClient<Database>) {
     async exportData(options: ExportDataOptions): Promise<ExportDataResult> {
       const { userId } = options;
 
-      const [profileResult, plansResult, tagsResult, userSettingsResult] = await Promise.all([
+      const [
+        profileResult,
+        plansResult,
+        tagsResult,
+        recordsResult,
+        planTagsResult,
+        recordTagsResult,
+        notificationPreferencesResult,
+        userSettingsResult,
+      ] = await Promise.all([
         supabase.from('profiles').select('*').eq('id', userId).single(),
         supabase.from('plans').select('*').eq('user_id', userId),
         supabase.from('tags').select('*').eq('user_id', userId),
+        supabase.from('records').select('*').eq('user_id', userId),
+        supabase.from('plan_tags').select('*').eq('user_id', userId),
+        supabase.from('record_tags').select('*').eq('user_id', userId),
+        supabase.from('notification_preferences').select('*').eq('user_id', userId).single(),
         supabase.from('user_settings').select('*').eq('user_id', userId).single(),
       ]);
 
@@ -162,6 +179,24 @@ export function createUserService(supabase: SupabaseClient<Database>) {
           `Tags fetch error: ${tagsResult.error.message}`,
         );
       }
+      if (recordsResult.error) {
+        throw new UserServiceError(
+          'EXPORT_FAILED',
+          `Records fetch error: ${recordsResult.error.message}`,
+        );
+      }
+      if (planTagsResult.error) {
+        throw new UserServiceError(
+          'EXPORT_FAILED',
+          `Plan tags fetch error: ${planTagsResult.error.message}`,
+        );
+      }
+      if (recordTagsResult.error) {
+        throw new UserServiceError(
+          'EXPORT_FAILED',
+          `Record tags fetch error: ${recordTagsResult.error.message}`,
+        );
+      }
 
       return {
         exportedAt: new Date().toISOString(),
@@ -170,6 +205,10 @@ export function createUserService(supabase: SupabaseClient<Database>) {
           profile: profileResult.data || null,
           plans: plansResult.data || [],
           tags: tagsResult.data || [],
+          records: recordsResult.data || [],
+          planTags: planTagsResult.data || [],
+          recordTags: recordTagsResult.data || [],
+          notificationPreferences: notificationPreferencesResult.data || null,
           userSettings: userSettingsResult.data || null,
         },
       };
