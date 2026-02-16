@@ -184,6 +184,12 @@
     "light": "Light Mode",
     "dark": "Dark Mode"
   },
+  "suggest": {
+    "recentHistory": "Last 30 entries",
+    "loading": "Loading...",
+    "loadError": "Failed to load",
+    "noResults": "No results"
+  },
   "createSheet": {
     "title": "What would you like to add?",
     "description": "Choose the type of item to add",

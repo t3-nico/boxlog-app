@@ -9,6 +9,7 @@ import { notificationsRouter } from './routers/notifications';
 import { plansRouter } from './routers/plans';
 import { profileRouter } from './routers/profile';
 import { recordsRouter } from './routers/records';
+import { suggestionsRouter } from './routers/suggestions';
 import { tagsRouter } from './routers/tags';
 import { userRouter } from './routers/user';
 import { userSettingsRouter } from './routers/userSettings';
@@ -22,6 +23,7 @@ export const appRouter = createTRPCRouter({
   profile: profileRouter,
   plans: plansRouter,
   records: recordsRouter,
+  suggestions: suggestionsRouter,
   tags: tagsRouter,
   user: userRouter,
   notifications: notificationsRouter,

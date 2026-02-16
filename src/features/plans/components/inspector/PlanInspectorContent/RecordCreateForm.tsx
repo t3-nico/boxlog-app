@@ -12,6 +12,7 @@ import {
   useState,
 } from 'react';
 
+import { SuggestInput } from '@/components/common/SuggestInput';
 import { ClockTimePicker } from '@/components/ui/clock-time-picker';
 import {
   Command,
@@ -27,7 +28,7 @@ import { zIndex } from '@/config/ui/z-index';
 import { useRecordMutations } from '@/features/records/hooks';
 import { useTags } from '@/features/tags/hooks';
 import { api } from '@/lib/trpc';
-import { NoteIconButton, TagsIconButton, TitleSuggestInput } from '../shared';
+import { NoteIconButton, TagsIconButton } from '../shared';
 
 import { cn } from '@/lib/utils';
 
@@ -428,7 +429,7 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
       <div className="flex flex-col">
         {/* 1行目: タイトル（プライマリ） */}
         <div className="px-4 pt-4 pb-2">
-          <TitleSuggestInput
+          <SuggestInput
             ref={titleInputRef}
             value={formData.title}
             onChange={handleTitleChange}

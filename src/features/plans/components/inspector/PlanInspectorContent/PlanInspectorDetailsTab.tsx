@@ -11,14 +11,9 @@
 import { memo, useCallback } from 'react';
 
 import { useTranslations } from 'next-intl';
-import {
-  NoteIconButton,
-  ScheduleRow,
-  TagsIconButton,
-  TitleInput,
-  TitleSuggestInput,
-} from '../shared';
+import { NoteIconButton, ScheduleRow, TagsIconButton, TitleInput } from '../shared';
 
+import { SuggestInput } from '@/components/common/SuggestInput';
 import type { Tag } from '@/features/tags/types';
 
 import type { Plan } from '../../../types/plan';
@@ -94,7 +89,7 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
       {/* Row 1: Title */}
       <div className="flex items-center gap-2 px-4 pt-4 pb-2">
         {isDraftMode ? (
-          <TitleSuggestInput
+          <SuggestInput
             value={plan.title}
             onChange={(value) => onAutoSave('title', value)}
             onSuggestionSelect={handleSuggestionSelect}
