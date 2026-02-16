@@ -119,9 +119,7 @@
       "deleteTitle": "Delete Group",
       "deleteDescription": "Are you sure you want to delete \"{name}\"? Tags in this group will become uncategorized.",
       "changeColor": "Change color",
-      "doubleClickToEdit": "Double-click to edit name",
-      "save": "Save",
-      "cancel": "Cancel"
+      "doubleClickToEdit": "Double-click to edit name"
     },
     "selector": {
       "placeholder": "Select tags...",

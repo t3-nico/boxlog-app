@@ -4,7 +4,8 @@ import { NextIntlClientProvider } from 'next-intl';
 
 import '../src/styles/globals.css';
 import { DocsTemplate } from './DocsTemplate';
-import { dayoptLightTheme } from './dayoptTheme';
+import { ThemedDocsContainer } from './ThemedDocsContainer';
+import { dayoptDarkTheme, dayoptLightTheme } from './dayoptTheme';
 import { TRPCMockProvider } from './mocks/trpc';
 import './prose.css';
 
@@ -353,9 +354,15 @@ const preview: Preview = {
         order: ['Docs', 'Tokens', 'Components', 'Features', 'Patterns'],
       },
     },
+    darkMode: {
+      dark: dayoptDarkTheme,
+      light: dayoptLightTheme,
+      stylePreview: true,
+      classTarget: 'html',
+    },
     docs: {
       codePanel: true,
-      theme: dayoptLightTheme,
+      container: ThemedDocsContainer,
       page: DocsTemplate,
     },
     a11y: {

@@ -118,7 +118,7 @@ export function AvatarChangeDialog({ open, onOpenChange }: AvatarChangeDialogPro
         </div>
 
         <DialogFooter>
-          <Button onClick={handleClose}>{t('common.close')}</Button>
+          <Button onClick={handleClose}>{t('actions.close')}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

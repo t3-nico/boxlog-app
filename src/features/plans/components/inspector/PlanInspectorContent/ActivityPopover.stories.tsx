@@ -1,18 +1,6 @@
-import {
-  Bell,
-  CalendarDays,
-  CheckCircle,
-  Clock,
-  Edit,
-  Plus,
-  Repeat,
-  Tag,
-  Trash,
-} from 'lucide-react';
+import { CheckCircle, Clock, Plus, Tag, Trash } from 'lucide-react';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
-
-import { cn } from '@/lib/utils';
 
 import type { ActivityIconColor, PlanActivity, PlanActivityDisplay } from '../../../types/activity';
 import { formatActivity } from '../../../utils/activityFormatter';
@@ -146,8 +134,6 @@ function getActivityIcon(icon: PlanActivityDisplay['icon']) {
   switch (icon) {
     case 'create':
       return Plus;
-    case 'update':
-      return Edit;
     case 'status':
       return CheckCircle;
     case 'tag':
@@ -156,14 +142,8 @@ function getActivityIcon(icon: PlanActivityDisplay['icon']) {
       return Trash;
     case 'time':
       return Clock;
-    case 'due_date':
-      return CalendarDays;
-    case 'recurrence':
-      return Repeat;
-    case 'reminder':
-      return Bell;
     default:
-      return Edit;
+      return Clock;
   }
 }
 
@@ -171,12 +151,6 @@ function getIconColor(color: ActivityIconColor): string {
   switch (color) {
     case 'success':
       return 'text-success';
-    case 'info':
-      return 'text-info';
-    case 'warning':
-      return 'text-warning';
-    case 'primary':
-      return 'text-primary';
     case 'destructive':
       return 'text-destructive';
     default:
@@ -212,12 +186,8 @@ function ActivityTimeline({ activities }: { activities: PlanActivity[] }) {
           return (
             <div key={activity.id} className="flex gap-4">
               <div className="relative flex flex-col items-center">
-                <div
-                  className={cn(
-                    'bg-muted relative z-10 flex size-8 flex-shrink-0 items-center justify-center rounded-full',
-                  )}
-                >
-                  <IconComponent className={cn('size-4', getIconColor(formatted.iconColor))} />
+                <div className="bg-container relative z-10 flex size-8 flex-shrink-0 items-center justify-center rounded-full">
+                  <IconComponent className={`size-4 ${getIconColor(formatted.iconColor)}`} />
                 </div>
                 {!isLast && (
                   <div className="bg-border absolute top-8 left-1/2 h-full w-px -translate-x-1/2" />
@@ -242,77 +212,55 @@ function ActivityTimeline({ activities }: { activities: PlanActivity[] }) {
   );
 }
 
-/** アイコン色リファレンス用データ */
+/** アイコンリファレンス用データ */
 const iconReferenceItems: {
   icon: PlanActivityDisplay['icon'];
-  color: ActivityIconColor;
-  token: string;
+  iconColor: ActivityIconColor;
   label: string;
   actions: string;
 }[] = [
-  { icon: 'create', color: 'success', token: 'text-success', label: 'Success', actions: '作成' },
-  {
-    icon: 'status',
-    color: 'warning',
-    token: 'text-warning',
-    label: 'Warning',
-    actions: 'ステータス変更',
-  },
+  { icon: 'create', iconColor: 'success', label: 'Plus', actions: '作成' },
+  { icon: 'status', iconColor: 'success', label: 'CheckCircle', actions: 'ステータス → Closed' },
+  { icon: 'status', iconColor: 'warning', label: 'CheckCircle', actions: 'ステータス → Open' },
   {
     icon: 'time',
-    color: 'info',
-    token: 'text-info',
-    label: 'Info',
+    iconColor: 'info',
+    label: 'Clock',
     actions: 'タイトル / 時間 / 期限 / 繰り返し / 通知',
   },
-  {
-    icon: 'tag',
-    color: 'primary',
-    token: 'text-primary',
-    label: 'Primary',
-    actions: 'タグ追加 / 削除',
-  },
-  {
-    icon: 'delete',
-    color: 'destructive',
-    token: 'text-destructive',
-    label: 'Destructive',
-    actions: '削除',
-  },
+  { icon: 'tag', iconColor: 'primary', label: 'Tag', actions: 'タグ追加' },
+  { icon: 'tag', iconColor: 'destructive', label: 'Tag', actions: 'タグ削除' },
+  { icon: 'delete', iconColor: 'destructive', label: 'Trash', actions: '削除' },
 ];
 
 function IconReference() {
   return (
     <div className="w-[480px] rounded-lg border">
       <div className="border-b px-4 py-3">
-        <h3 className="text-sm font-bold">アイコン色リファレンス</h3>
+        <h3 className="text-sm font-bold">アイコンリファレンス</h3>
         <p className="text-muted-foreground mt-1 text-xs">
-          背景は全て bg-muted（統一）。色の差別化はアイコン色のみ。
+          背景 bg-container。作成は緑、削除系は赤、その他は text-muted-foreground。
         </p>
       </div>
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b text-left">
             <th className="text-muted-foreground px-4 py-2 text-xs font-medium">Icon</th>
-            <th className="text-muted-foreground px-4 py-2 text-xs font-medium">Token</th>
             <th className="text-muted-foreground px-4 py-2 text-xs font-medium">用途</th>
           </tr>
         </thead>
         <tbody>
-          {iconReferenceItems.map((item) => {
+          {iconReferenceItems.map((item, index) => {
             const IconComponent = getActivityIcon(item.icon);
             return (
-              <tr key={item.token} className="border-b last:border-b-0">
+              <tr key={`${item.icon}-${index}`} className="border-b last:border-b-0">
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-3">
-                    <div className="bg-muted flex size-8 items-center justify-center rounded-full">
-                      <IconComponent className={cn('size-4', getIconColor(item.color))} />
+                    <div className="bg-container flex size-8 items-center justify-center rounded-full">
+                      <IconComponent className={`size-4 ${getIconColor(item.iconColor)}`} />
                     </div>
                     <span className="text-muted-foreground text-xs">{item.label}</span>
                   </div>
-                </td>
-                <td className="px-4 py-3">
-                  <code className="bg-muted rounded px-1.5 py-0.5 text-xs">{item.token}</code>
                 </td>
                 <td className="text-muted-foreground px-4 py-3 text-xs">{item.actions}</td>
               </tr>

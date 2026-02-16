@@ -117,7 +117,11 @@ export function useCalendarData({
 
   // フィルター関数と状態を取得（ストアに統一）
   const isPlanVisible = useCalendarFilterStore((state) => state.isPlanVisible);
+  const matchesTagFilter = useCalendarFilterStore((state) => state.matchesTagFilter);
   const visibleTypes = useCalendarFilterStore((state) => state.visibleTypes);
+  // タグフィルタ変更時に useMemo を再実行させるためのリアクティブ依存
+  const visibleTagIds = useCalendarFilterStore((state) => state.visibleTagIds);
+  const showUntagged = useCalendarFilterStore((state) => state.showUntagged);
 
   // ドラフトプランを取得（新規作成・コピー＆ペースト時のプレビュー表示用）
   const draftPlan = usePlanInspectorStore((state) => state.draftPlan);
@@ -274,7 +278,7 @@ export function useCalendarData({
         return true;
       }
       if (event.type === 'record') {
-        return visibleTypes.record;
+        return visibleTypes.record && matchesTagFilter(event.tagIds ?? []);
       }
       // Planの場合: 種別表示 AND タグ表示の両方をチェック
       return visibleTypes.plan && isPlanVisible(event.tagIds ?? []);
@@ -297,7 +301,16 @@ export function useCalendarData({
     });
 
     return visibilityFiltered;
-  }, [viewDateRange, allCalendarPlans, isPlanVisible, visibleTypes]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- visibleTagIds/showUntagged はリアクティブ依存（関数参照は安定のため直接依存不可）
+  }, [
+    viewDateRange,
+    allCalendarPlans,
+    isPlanVisible,
+    matchesTagFilter,
+    visibleTypes,
+    visibleTagIds,
+    showUntagged,
+  ]);
 
   return {
     viewDateRange,

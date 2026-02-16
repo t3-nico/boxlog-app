@@ -32,7 +32,7 @@ export const RecordListCard = memo<RecordListCardProps>(function RecordListCard(
   onClick,
 }) {
   const t = useTranslations('calendar');
-  const { formatTime } = useDateFormat();
+  const { formatTime, formatDate } = useDateFormat();
 
   // 時間表示
   // Record の start_time/end_time は time-only 文字列（"09:00:00"）の場合がある
@@ -53,6 +53,9 @@ export const RecordListCard = memo<RecordListCardProps>(function RecordListCard(
   const startTime = startDate ? formatTime(startDate) : '';
   const endTime = endDate ? formatTime(endDate) : '';
   const displayTime = startTime && endTime ? `${startTime} - ${endTime}` : null;
+
+  // 日付表示
+  const displayDate = record.worked_at ? formatDate(new Date(record.worked_at)) : null;
 
   const handleCardClick = useCallback(() => {
     onClick?.(record);
@@ -88,8 +91,13 @@ export const RecordListCard = memo<RecordListCardProps>(function RecordListCard(
           {record.title || t('panel.noTitle')}
         </p>
 
-        {/* メタ情報行: 時間 + 所要時間 */}
+        {/* メタ情報行: 日付 + 時間 + 所要時間 */}
         <div className="mt-1 flex items-center gap-2">
+          {/* 日付 */}
+          {displayDate && (
+            <span className="text-muted-foreground text-xs tabular-nums">{displayDate}</span>
+          )}
+
           {/* 時間 */}
           {displayTime && (
             <span className="text-muted-foreground text-xs tabular-nums">{displayTime}</span>

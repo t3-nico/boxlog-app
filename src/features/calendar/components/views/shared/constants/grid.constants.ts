@@ -3,9 +3,18 @@
  */
 
 // グリッドレイアウト
-export const HOUR_HEIGHT = 72; // 1時間の高さ(px)
+export const HOUR_HEIGHT = 72; // 1時間の高さ(px) — SSRフォールバック用
 export const HALF_HOUR_HEIGHT = HOUR_HEIGHT / 2; // 30分の高さ(px)
 export const MINUTE_HEIGHT = HOUR_HEIGHT / 60; // 1分の高さ(px)
+
+// 密度プリセット（デバイス × 密度）
+export const HOUR_HEIGHT_DENSITIES = {
+  compact: { mobile: 36, tablet: 40, desktop: 48 },
+  default: { mobile: 48, tablet: 60, desktop: 72 },
+  spacious: { mobile: 64, tablet: 80, desktop: 96 },
+} as const;
+
+export type HourHeightDensity = keyof typeof HOUR_HEIGHT_DENSITIES;
 
 // イベント表示
 export const MIN_EVENT_HEIGHT = 20; // イベントの最小高さ(px)

@@ -2,14 +2,12 @@
 
 import { useCallback, useMemo, useState } from 'react';
 
-import { isBefore, startOfDay } from 'date-fns';
 import { useTranslations } from 'next-intl';
 
 import { usePlans } from '@/features/plans/hooks/usePlans';
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
 import { groupItems } from '@/features/plans/utils/grouping';
 import { useTagsMap } from '@/features/tags/hooks/useTagsMap';
-import type { PlanWithTags } from '@/server/services/plans/types';
 import { usePanelDrag } from '../../hooks/usePanelDrag';
 import { useCalendarFilterStore } from '../../stores/useCalendarFilterStore';
 
@@ -56,7 +54,6 @@ export function PlanListPanel() {
 
   // Inspector
   const openInspector = usePlanInspectorStore((s) => s.openInspector);
-  const openInspectorWithDraft = usePlanInspectorStore((s) => s.openInspectorWithDraft);
 
   // D&D
   const { handleDragStart } = usePanelDrag();
@@ -65,44 +62,25 @@ export function PlanListPanel() {
   const { getTagById } = useTagsMap();
 
   // プラン一覧取得（サーバー側ソート + ステータスフィルター）
-  // overdue: サーバーには 'open' で問い合わせ、期限切れはクライアントでフィルター
-  const apiStatus = scheduleFilter === 'overdue' ? 'open' : statusFilter;
   const baseFilters =
-    apiStatus === 'all' ? { sortBy, sortOrder } : { status: apiStatus, sortBy, sortOrder };
+    statusFilter === 'all' ? { sortBy, sortOrder } : { status: statusFilter, sortBy, sortOrder };
   const {
     data: plans,
     isLoading,
     error,
   } = usePlans(search ? { ...baseFilters, search } : baseFilters);
 
-  // 期限切れ判定用の今日の日付
-  const today = useMemo(() => startOfDay(new Date()), []);
-
-  // 期限切れ判定
-  const isPlanOverdue = useCallback(
-    (plan: PlanWithTags) => {
-      if (!plan.due_date || plan.status === 'closed') return false;
-      return isBefore(new Date(plan.due_date), today);
-    },
-    [today],
-  );
-
   // フィルタリング: スケジュールフィルター + タグフィルター
   const filteredPlans = useMemo(() => {
     if (!plans) return [];
 
     return plans.filter((plan) => {
-      // スケジュール/日付フィルター
+      // スケジュールフィルター
       if (scheduleFilter === 'unscheduled' && plan.start_time) {
         return false;
       }
       if (scheduleFilter === 'scheduled' && !plan.start_time) {
         return false;
-      }
-      if (scheduleFilter === 'overdue') {
-        if (!plan.due_date || !isBefore(new Date(plan.due_date), today)) {
-          return false;
-        }
       }
 
       // タグフィルター
@@ -113,7 +91,7 @@ export function PlanListPanel() {
 
       return true;
     });
-  }, [plans, isPlanVisible, scheduleFilter, today]);
+  }, [plans, isPlanVisible, scheduleFilter]);
 
   // グルーピング
   const groupedPlans = useMemo(() => {
@@ -160,24 +138,6 @@ export function PlanListPanel() {
       return next;
     });
   }, []);
-
-  // Plan → Record 変換ハンドラ
-  const handleCreateRecordFromPlan = useCallback(
-    (plan: PlanWithTags) => {
-      openInspectorWithDraft(
-        {
-          title: plan.title || '',
-          description: plan.description ?? null,
-          start_time: plan.start_time ?? null,
-          end_time: plan.end_time ?? null,
-          tagIds: plan.tagIds ?? [],
-          plan_id: plan.id,
-        },
-        'record',
-      );
-    },
-    [openInspectorWithDraft],
-  );
 
   // ツールバーの共通 props
   const toolbarProps = {
@@ -226,7 +186,7 @@ export function PlanListPanel() {
       <PlanListToolbar {...toolbarProps} />
 
       {/* リスト */}
-      <div className="flex-1 overflow-y-auto p-2">
+      <div className="flex-1 overflow-y-auto p-3">
         {filteredPlans.length === 0 ? (
           <div className="text-muted-foreground flex h-full items-center justify-center">
             <p className="text-sm">{t('panel.noPlans')}</p>
@@ -246,10 +206,8 @@ export function PlanListPanel() {
                   <PlanListCard
                     key={plan.id}
                     plan={plan}
-                    isOverdue={isPlanOverdue(plan)}
                     onClick={() => openInspector(plan.id)}
                     onDragStart={handleDragStart}
-                    onCreateRecord={handleCreateRecordFromPlan}
                   />
                 ))}
               </PlanListGroup>
@@ -262,7 +220,6 @@ export function PlanListPanel() {
               <PlanListCard
                 key={plan.id}
                 plan={plan}
-                isOverdue={isPlanOverdue(plan)}
                 onClick={() => openInspector(plan.id)}
                 onDragStart={handleDragStart}
               />

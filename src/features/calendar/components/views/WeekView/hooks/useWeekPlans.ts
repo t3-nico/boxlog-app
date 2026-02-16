@@ -19,6 +19,7 @@ import type { UseWeekPlansOptions, UseWeekPlansReturn, WeekPlanPosition } from '
 export function useWeekPlans({
   weekDates,
   events: plans = [],
+  hourHeight = HOUR_HEIGHT,
 }: UseWeekPlansOptions): UseWeekPlansReturn {
   // プランを日付ごとにグループ化
   const plansByDate = useMemo(() => {
@@ -81,15 +82,15 @@ export function useWeekPlans({
         // 時刻からピクセル位置を計算
         const startHour = plan.startDate.getHours();
         const startMinute = plan.startDate.getMinutes();
-        const top = (startHour + startMinute / 60) * HOUR_HEIGHT;
+        const top = (startHour + startMinute / 60) * hourHeight;
 
         // 終了時刻から高さを計算
-        let height = HOUR_HEIGHT; // デフォルト1時間
+        let height = hourHeight; // デフォルト1時間
         if (plan.endDate) {
           const endHour = plan.endDate.getHours();
           const endMinute = plan.endDate.getMinutes();
           const duration = endHour + endMinute / 60 - (startHour + startMinute / 60);
-          height = Math.max(20, duration * HOUR_HEIGHT); // 最小20px
+          height = Math.max(20, duration * hourHeight); // 最小20px
         }
 
         // 重なりがある場合の列計算
@@ -113,7 +114,7 @@ export function useWeekPlans({
     });
 
     return positions;
-  }, [weekDates, plansByDate]);
+  }, [weekDates, plansByDate, hourHeight]);
 
   // 最大同時プラン数を計算
   const maxConcurrentPlans = useMemo(() => {

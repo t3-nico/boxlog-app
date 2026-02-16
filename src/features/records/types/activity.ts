@@ -27,6 +27,6 @@ export type ActivityIconColor = 'success' | 'info' | 'warning' | 'primary' | 'de
 export interface RecordActivityDisplay extends RecordActivity {
   actionLabel: string;
   detail?: string | undefined;
-  icon: 'create' | 'update' | 'tag' | 'delete' | 'time' | 'fulfillment' | 'memo';
+  icon: 'create' | 'tag' | 'delete' | 'time' | 'fulfillment';
   iconColor: ActivityIconColor;
 }

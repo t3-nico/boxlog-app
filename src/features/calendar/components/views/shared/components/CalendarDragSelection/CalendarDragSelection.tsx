@@ -14,7 +14,7 @@ import { useDroppable } from '@dnd-kit/core';
 import { usePlanClipboardStore } from '@/features/plans/stores/usePlanClipboardStore';
 import { cn } from '@/lib/utils';
 
-import { HOUR_HEIGHT } from '../../constants/grid.constants';
+import { useResponsiveHourHeight } from '../../hooks/useResponsiveHourHeight';
 import { DragSelectionPreview } from './DragSelectionPreview';
 import type { CalendarDragSelectionProps } from './types';
 import { useDragSelection } from './useDragSelection';
@@ -29,6 +29,8 @@ export const CalendarDragSelection = ({
   disabled = false,
   plans = [],
 }: CalendarDragSelectionProps) => {
+  const hourHeight = useResponsiveHourHeight();
+
   const {
     selection,
     showSelectionPreview,
@@ -46,6 +48,7 @@ export const CalendarDragSelection = ({
     onTimeRangeSelect,
     onDoubleClick,
     plans,
+    hourHeight,
   });
 
   // 右クリックハンドラー
@@ -65,7 +68,7 @@ export const CalendarDragSelection = ({
     const y = e.clientY - rect.top;
 
     // 時間計算（15分単位で丸める）
-    const totalMinutes = (y * 60) / HOUR_HEIGHT;
+    const totalMinutes = (y * 60) / hourHeight;
     const hour = Math.floor(totalMinutes / 60);
     const minute = Math.floor((totalMinutes % 60) / 15) * 15;
 
@@ -117,6 +120,7 @@ export const CalendarDragSelection = ({
           selection={selection}
           formatTime={formatTime}
           isOverlapping={isOverlapping}
+          hourHeight={hourHeight}
         />
       )}
     </div>

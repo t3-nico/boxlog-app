@@ -7,7 +7,7 @@
 export type { CalendarPlan, ViewDateRange } from '@/features/calendar/types/calendar.types';
 import type { CalendarPlan, ViewDateRange } from '@/features/calendar/types/calendar.types';
 
-export type CalendarViewType = 'day' | '3day' | '5day' | 'week' | 'agenda';
+export type CalendarViewType = 'day' | '3day' | '5day' | 'week' | 'agenda' | 'timesheet';
 
 /**
  * 全ビューで共通する最小限のプロパティ

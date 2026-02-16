@@ -1,8 +1,16 @@
+'use client';
+
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { FolderOpen, Smile, X } from 'lucide-react';
+import { ChevronDown, ChevronUp, FolderOpen, MoreHorizontal, Smile, X } from 'lucide-react';
 import { useCallback, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { HoverTooltip } from '@/components/ui/tooltip';
 import {
@@ -19,9 +27,9 @@ import type { Tag } from '@/features/tags/types';
 // Meta
 // ---------------------------------------------------------------------------
 
-/** Record新規作成画面。ドラフトモードの全パターン。 */
+/** Record Inspector のフォーム画面。新規作成・編集の全パターン。 */
 const meta = {
-  title: 'Features/Records/RecordCreate',
+  title: 'Features/Records/RecordForm',
   parameters: {
     layout: 'padded',
   },
@@ -110,6 +118,50 @@ function DraftHeader() {
           </TabsTrigger>
         </TabsList>
       </Tabs>
+    </div>
+  );
+}
+
+/** 編集モードヘッダー */
+function EditHeader() {
+  return (
+    <div
+      className={cn(
+        'relative flex shrink-0 items-center justify-between px-4 pt-4 pb-2',
+        'bg-card',
+      )}
+    >
+      <div className="relative z-10 flex items-center gap-1">
+        <div className="flex items-center">
+          <HoverTooltip content="前へ" side="top">
+            <Button variant="ghost" icon size="sm" disabled aria-label="前へ">
+              <ChevronUp className="size-5" />
+            </Button>
+          </HoverTooltip>
+          <HoverTooltip content="次へ" side="top">
+            <Button variant="ghost" icon size="sm" disabled aria-label="次へ">
+              <ChevronDown className="size-5" />
+            </Button>
+          </HoverTooltip>
+        </div>
+      </div>
+      <div className="relative z-10 flex items-center gap-1">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" icon size="sm" aria-label="オプション">
+              <MoreHorizontal className="size-5" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuItem variant="destructive">削除</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <HoverTooltip content="閉じる" side="top">
+          <Button variant="ghost" icon size="sm" aria-label="閉じる" className="ml-1">
+            <X className="size-5" />
+          </Button>
+        </HoverTooltip>
+      </div>
     </div>
   );
 }
@@ -206,7 +258,8 @@ function FulfillmentButton({ initialScore = null }: { initialScore?: number | nu
 // インタラクティブラッパー
 // ---------------------------------------------------------------------------
 
-function RecordCreateStory({
+function RecordFormStory({
+  isDraftMode = false,
   initialTitle = '',
   initialTagIds = [],
   initialScheduleDate,
@@ -215,7 +268,9 @@ function RecordCreateStory({
   initialNote = '',
   initialPlanName,
   initialScore = null,
+  timeConflictError = false,
 }: {
+  isDraftMode?: boolean;
   initialTitle?: string;
   initialTagIds?: string[];
   initialScheduleDate?: Date;
@@ -224,6 +279,7 @@ function RecordCreateStory({
   initialNote?: string;
   initialPlanName?: string;
   initialScore?: number | null;
+  timeConflictError?: boolean;
 }) {
   const titleRef = useRef<HTMLInputElement | null>(null);
   const [title, setTitle] = useState(initialTitle);
@@ -235,7 +291,7 @@ function RecordCreateStory({
 
   return (
     <InspectorFrame>
-      <DraftHeader />
+      {isDraftMode ? <DraftHeader /> : <EditHeader />}
       <div>
         {/* Row 1: タイトル */}
         <div className="px-4 pt-4 pb-2">
@@ -257,7 +313,7 @@ function RecordCreateStory({
           onDateChange={setScheduleDate}
           onStartTimeChange={setStartTime}
           onEndTimeChange={setEndTime}
-          timeConflictError={false}
+          timeConflictError={timeConflictError}
         />
 
         {/* Row 3: Tags + Plan紐付け + 充実度 + メモ */}
@@ -270,15 +326,17 @@ function RecordCreateStory({
           />
           <PlanLinkButton {...(initialPlanName ? { planName: initialPlanName } : {})} />
           <FulfillmentButton initialScore={initialScore} />
-          <NoteIconButton id="record-create-story" note={note} onNoteChange={setNote} />
+          <NoteIconButton id="record-story" note={note} onNoteChange={setNote} />
         </div>
       </div>
 
       {/* フッター */}
-      <div className="flex shrink-0 justify-end gap-2 px-4 py-4">
-        <Button variant="ghost">キャンセル</Button>
-        <Button>Record 作成</Button>
-      </div>
+      {isDraftMode && (
+        <div className="flex shrink-0 justify-end gap-2 px-4 py-4">
+          <Button variant="ghost">キャンセル</Button>
+          <Button>Record 作成</Button>
+        </div>
+      )}
     </InspectorFrame>
   );
 }
@@ -290,7 +348,8 @@ function RecordCreateStory({
 /** Record新規作成（空フォーム）。ドラフトモードヘッダー + 空入力フィールド。 */
 export const RecordCreate: Story = {
   render: () => (
-    <RecordCreateStory
+    <RecordFormStory
+      isDraftMode
       initialScheduleDate={new Date('2024-01-15')}
       initialStartTime="10:00"
       initialEndTime="11:00"
@@ -301,7 +360,8 @@ export const RecordCreate: Story = {
 /** Record新規作成（入力済み）。タイトル・時間・タグ・Plan紐付け・スコア入力済み。 */
 export const RecordCreateFilled: Story = {
   render: () => (
-    <RecordCreateStory
+    <RecordFormStory
+      isDraftMode
       initialTitle="開発作業"
       initialTagIds={['tag-1', 'tag-2']}
       initialScheduleDate={new Date('2024-01-15')}
@@ -314,16 +374,48 @@ export const RecordCreateFilled: Story = {
   ),
 };
 
+/** 既存Record編集。ナビゲーション付きヘッダー + メニュー。 */
+export const RecordEdit: Story = {
+  render: () => (
+    <RecordFormStory
+      initialTitle="開発作業"
+      initialTagIds={['tag-1']}
+      initialScheduleDate={new Date('2024-01-15')}
+      initialStartTime="09:00"
+      initialEndTime="12:00"
+      initialNote="<p>React コンポーネントのリファクタリング</p>"
+    />
+  ),
+};
+
+/** フル入力済みRecord。Plan紐付け + タグ + 充実度 + メモ。 */
+export const RecordEditWithPlan: Story = {
+  render: () => (
+    <RecordFormStory
+      initialTitle="開発作業"
+      initialTagIds={['tag-1', 'tag-2', 'tag-3']}
+      initialScheduleDate={new Date('2024-01-15')}
+      initialStartTime="09:00"
+      initialEndTime="12:00"
+      initialNote="<p>React コンポーネントのリファクタリング完了。テスト追加。</p>"
+      initialPlanName="Sprint 3 開発"
+      initialScore={4}
+    />
+  ),
+};
+
 /** 全パターン一覧。 */
 export const AllPatterns: Story = {
   render: () => (
-    <div className="flex flex-col items-start gap-6">
-      <RecordCreateStory
+    <div className="flex flex-col items-start gap-8">
+      <RecordFormStory
+        isDraftMode
         initialScheduleDate={new Date('2024-01-15')}
         initialStartTime="10:00"
         initialEndTime="11:00"
       />
-      <RecordCreateStory
+      <RecordFormStory
+        isDraftMode
         initialTitle="開発作業"
         initialTagIds={['tag-1', 'tag-2']}
         initialScheduleDate={new Date('2024-01-15')}
@@ -332,6 +424,24 @@ export const AllPatterns: Story = {
         initialNote="<p>React コンポーネントのリファクタリング</p>"
         initialPlanName="チームミーティング"
         initialScore={3}
+      />
+      <RecordFormStory
+        initialTitle="開発作業"
+        initialTagIds={['tag-1']}
+        initialScheduleDate={new Date('2024-01-15')}
+        initialStartTime="09:00"
+        initialEndTime="12:00"
+        initialNote="<p>React コンポーネントのリファクタリング</p>"
+      />
+      <RecordFormStory
+        initialTitle="開発作業"
+        initialTagIds={['tag-1', 'tag-2', 'tag-3']}
+        initialScheduleDate={new Date('2024-01-15')}
+        initialStartTime="09:00"
+        initialEndTime="12:00"
+        initialNote="<p>React コンポーネントのリファクタリング完了。テスト追加。</p>"
+        initialPlanName="Sprint 3 開発"
+        initialScore={4}
       />
     </div>
   ),

@@ -260,7 +260,7 @@ export function PasswordChangeDialog({ open, onOpenChange }: PasswordChangeDialo
 
             <DialogFooter>
               <Button type="button" variant="outline" onClick={handleClose} disabled={isLoading}>
-                {t('common.cancel')}
+                {t('actions.cancel')}
               </Button>
               <Button type="submit" disabled={isLoading}>
                 {isLoading
@@ -273,7 +273,7 @@ export function PasswordChangeDialog({ open, onOpenChange }: PasswordChangeDialo
 
         {success && (
           <DialogFooter>
-            <Button onClick={handleClose}>{t('common.close')}</Button>
+            <Button onClick={handleClose}>{t('actions.close')}</Button>
           </DialogFooter>
         )}
       </DialogContent>

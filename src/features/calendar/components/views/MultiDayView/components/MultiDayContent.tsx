@@ -16,8 +16,8 @@ import {
   useGlobalDragCursor,
 } from '../../shared';
 import { PanelDragPreview } from '../../shared/components/PanelDragPreview';
-import { HOUR_HEIGHT } from '../../shared/constants/grid.constants';
 import { useDragAndDrop } from '../../shared/hooks/useDragAndDrop';
+import { useResponsiveHourHeight } from '../../shared/hooks/useResponsiveHourHeight';
 
 interface MultiDayContentProps {
   date: Date;
@@ -57,6 +57,9 @@ export function MultiDayContent({
 }: MultiDayContentProps) {
   const inspectorPlanId = usePlanInspectorStore((state) => state.planId);
   const isInspectorOpen = usePlanInspectorStore((state) => state.isOpen);
+
+  // レスポンシブな高さ
+  const HOUR_HEIGHT = useResponsiveHourHeight();
 
   const gridHeight = 24 * HOUR_HEIGHT;
 
@@ -108,7 +111,7 @@ export function MultiDayContent({
           style={{ height: HOUR_HEIGHT }}
         />
       )),
-    [],
+    [HOUR_HEIGHT],
   );
 
   return (

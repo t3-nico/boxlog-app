@@ -9,7 +9,6 @@ import { AIInspectorContent } from '@/features/ai/components/AIInspectorContent'
 import { PanelSwitcher, type PanelType } from '../layout/Header/PanelSwitcher';
 
 import { PlanListPanel } from './PlanListPanel';
-import { RecordListPanel } from './RecordListPanel';
 
 interface CalendarSidePanelProps {
   panelType: PanelType;
@@ -32,7 +31,11 @@ export function CalendarSidePanel({ panelType, onPanelChange }: CalendarSidePane
       case 'plan':
         return <PlanListPanel />;
       case 'record':
-        return <RecordListPanel />;
+        return (
+          <div className="text-muted-foreground flex flex-1 items-center justify-center">
+            <p className="text-sm">Coming soon...</p>
+          </div>
+        );
       case 'stats':
         return (
           <div className="text-muted-foreground flex flex-1 items-center justify-center">

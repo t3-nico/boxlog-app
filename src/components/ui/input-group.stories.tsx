@@ -32,8 +32,7 @@ export const AllPatterns: Story = {
             <HoverTooltip content={showPassword ? 'パスワードを隠す' : 'パスワードを表示'}>
               <InputGroupButton
                 variant="ghost"
-                size="sm"
-                icon
+                size="icon-sm"
                 onClick={() => setShowPassword(!showPassword)}
                 aria-label={showPassword ? 'パスワードを隠す' : 'パスワードを表示'}
               >

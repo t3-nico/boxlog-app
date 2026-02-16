@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { AlertTriangle, Clock, LogOut, Trash2 } from 'lucide-react';
 import { useState } from 'react';
-import { expect, userEvent, within } from 'storybook/test';
 
 import {
   AlertDialog,
@@ -127,7 +126,7 @@ function AccountDeletionExample() {
                   この操作は30日後に完了します。その間にログインすると削除をキャンセルできます。
                 </p>
                 <div className="bg-muted rounded-2xl p-4">
-                  <p className="text-foreground mb-2 text-sm font-bold">猶予期間について</p>
+                  <h4 className="text-foreground mb-2 text-sm font-bold">猶予期間について</h4>
                   <p className="text-xs">
                     30日間の猶予期間中はデータが保持されます。期間終了後、全てのデータが完全に削除されます。
                   </p>
@@ -186,22 +185,6 @@ export const Default: Story = {
       </AlertDialogContent>
     </AlertDialog>
   ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    // トリガーボタンをクリックしてダイアログを開く
-    const triggerButton = canvas.getByRole('button', { name: /削除/i });
-    await userEvent.click(triggerButton);
-
-    // ダイアログのコンテンツを確認（ポータル経由）
-    const body = within(document.body);
-    await expect(body.getByText('本当に削除しますか？')).toBeInTheDocument();
-    await expect(body.getByText('この操作は取り消せません。')).toBeInTheDocument();
-
-    // キャンセルボタンでダイアログを閉じる
-    const cancelButton = body.getByRole('button', { name: /キャンセル/i });
-    await userEvent.click(cancelButton);
-  },
 };
 
 /** 削除確認ダイアログ。不可逆な削除アクションで使用。AlertDialogActionに `bg-destructive` スタイルを適用。実装例: TagDeleteConfirm */

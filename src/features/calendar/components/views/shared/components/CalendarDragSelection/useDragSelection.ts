@@ -24,6 +24,8 @@ interface UseDragSelectionOptions {
   onDoubleClick?: ((selection: DateTimeSelection) => void) | undefined;
   /** 重複チェック用のプラン一覧 */
   plans?: CalendarPlan[] | undefined;
+  /** 1時間あたりの高さ（px） */
+  hourHeight?: number | undefined;
 }
 
 interface UseDragSelectionReturn {
@@ -59,6 +61,7 @@ export function useDragSelection({
   onTimeRangeSelect,
   onDoubleClick: onDoubleClickProp,
   plans: _plans = [],
+  hourHeight = HOUR_HEIGHT,
 }: UseDragSelectionOptions): UseDragSelectionReturn {
   // 設定からデフォルト時間を取得
   const defaultDuration = useCalendarSettingsStore((state) => state.defaultDuration);
@@ -106,17 +109,20 @@ export function useDragSelection({
   }, []);
 
   // Helper: 座標から時間を計算
-  const pixelsToTime = useCallback((y: number) => {
-    const totalMinutes = (y / HOUR_HEIGHT) * 60;
-    const hour = Math.floor(totalMinutes / 60);
-    const minute = Math.floor((totalMinutes % 60) / 15) * 15;
+  const pixelsToTime = useCallback(
+    (y: number) => {
+      const totalMinutes = (y / hourHeight) * 60;
+      const hour = Math.floor(totalMinutes / 60);
+      const minute = Math.floor((totalMinutes % 60) / 15) * 15;
 
-    if (hour >= 24) {
-      return { hour: 23, minute: 45 };
-    }
+      if (hour >= 24) {
+        return { hour: 23, minute: 45 };
+      }
 
-    return { hour: Math.max(0, hour), minute: Math.max(0, minute) };
-  }, []);
+      return { hour: Math.max(0, hour), minute: Math.max(0, minute) };
+    },
+    [hourHeight],
+  );
 
   // Helper: 長押しタイマーをクリア
   const clearLongPressTimer = useCallback(() => {
@@ -297,7 +303,7 @@ export function useDragSelection({
       const y = e.clientY - rect.top;
       const currentTime = pixelsToTime(y);
 
-      const startY = (selectionStart.hour * 60 + selectionStart.minute) * (HOUR_HEIGHT / 60);
+      const startY = (selectionStart.hour * 60 + selectionStart.minute) * (hourHeight / 60);
       const deltaY = Math.abs(y - startY);
       if (deltaY > DRAG_CONSTANTS.MIN_DRAG_DISTANCE) {
         isDragging.current = true;
@@ -386,7 +392,7 @@ export function useDragSelection({
       const y = touch.clientY - rect.top;
       const currentTime = pixelsToTime(y);
 
-      const startY = (selectionStart.hour * 60 + selectionStart.minute) * (HOUR_HEIGHT / 60);
+      const startY = (selectionStart.hour * 60 + selectionStart.minute) * (hourHeight / 60);
       const deltaY = Math.abs(y - startY);
       if (deltaY > DRAG_CONSTANTS.MIN_DRAG_DISTANCE) {
         isDragging.current = true;
@@ -542,6 +548,7 @@ export function useDragSelection({
     tap,
     checkOverlap,
     isOverlapping,
+    hourHeight,
   ]);
 
   // Effect: モーダルキャンセル時のカスタムイベント

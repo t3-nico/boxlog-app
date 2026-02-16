@@ -21,7 +21,12 @@
       "viewSettings": "View settings",
       "showWeekends": "Show weekends",
       "showWeekNumbers": "Show week numbers",
-      "generalSettings": "General settings"
+      "density": "Density",
+      "density_compact": "Compact",
+      "density_default": "Default",
+      "density_spacious": "Spacious",
+      "generalSettings": "General settings",
+      "timesheet": "Timesheet"
     },
     "mobile": {
       "drawer": {
@@ -146,15 +151,7 @@
       "dropFailed": "Drop failed"
     },
     "actions": {
-      "undo": "Undo",
-      "undone": "Operation undone",
-      "view": "View",
-      "goToToday": "Go to today",
-      "close": "Close"
-    },
-    "navigation": {
-      "previous": "Previous",
-      "next": "Next"
+      "goToToday": "Go to today"
     },
     "performance": {
       "notCalculated": "Not Calculated",
@@ -241,6 +238,13 @@
       "noItems": "No items",
       "noDate": "No Date"
     },
+    "timesheet": {
+      "emptyTitle": "No entries this week",
+      "emptyDescription": "Plans and records will appear here",
+      "tag": "Tag",
+      "total": "Total",
+      "untagged": "Untagged"
+    },
     "collapsedSection": {
       "expandLabel": "Expand {timeRange}"
     },
@@ -265,7 +269,6 @@
       "stats": "Statistics",
       "unscheduled": "Unscheduled",
       "searchPlaceholder": "Search plans...",
-      "loading": "Loading...",
       "error": "Failed to load",
       "noPlans": "No unscheduled plans",
       "sortBy": "Sort by",

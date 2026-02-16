@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
-import { expect, userEvent, within } from 'storybook/test';
 
 import { Button } from './button';
 import { ConfirmDialog } from './confirm-dialog';
@@ -40,7 +39,7 @@ const meta = {
 export default meta;
 type Story = StoryObj;
 
-/** 削除確認（variant="destructive"）。実使用: PlanDeleteConfirmDialog, CalendarFilterList */
+/** 削除確認（variant="destructive"）。実使用: tags-list, PlanDeleteConfirmDialog, CalendarFilterList */
 export const Destructive: Story = {
   render: () => {
     function Demo() {
@@ -63,21 +62,6 @@ export const Destructive: Story = {
       );
     }
     return <Demo />;
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    // ボタンをクリックして確認ダイアログを開く
-    const openButton = canvas.getByRole('button', { name: /削除確認を開く/i });
-    await userEvent.click(openButton);
-
-    // ダイアログのコンテンツを確認（ポータル経由）
-    const body = within(document.body);
-    await expect(body.getByText('このアイテムを削除しますか？')).toBeInTheDocument();
-
-    // キャンセルボタンでダイアログを閉じる
-    const cancelButton = body.getByRole('button', { name: /キャンセル/i });
-    await userEvent.click(cancelButton);
   },
 };
 

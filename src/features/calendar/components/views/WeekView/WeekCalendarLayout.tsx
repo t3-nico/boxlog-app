@@ -12,10 +12,10 @@ import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendar
 import { useAddPopup } from '@/hooks/useAddPopup';
 import { useTranslations } from 'next-intl';
 
-import { HOUR_HEIGHT } from '../../../constants/calendar-constants';
 import type { ViewDateRange } from '../../../types/calendar.types';
 
 import { TimeColumn } from '../shared/grid/TimeColumn';
+import { useResponsiveHourHeight } from '../shared/hooks/useResponsiveHourHeight';
 
 interface WeekCalendarLayoutProps {
   dates: Date[];
@@ -29,7 +29,7 @@ interface WeekCalendarLayoutProps {
 }
 
 // 現在時刻線コンポーネント（シンプル版）
-const CurrentTimeLine = ({ day }: { day: Date }) => {
+const CurrentTimeLine = ({ day, hourHeight }: { day: Date; hourHeight: number }) => {
   const now = new Date();
   const currentHours = now.getHours() + now.getMinutes() / 60;
   const isTodayColumn = isToday(day);
@@ -38,7 +38,7 @@ const CurrentTimeLine = ({ day }: { day: Date }) => {
     <div
       className="pointer-events-none absolute right-0 left-0 z-30"
       style={{
-        top: `${currentHours * HOUR_HEIGHT}px`,
+        top: `${currentHours * hourHeight}px`,
       }}
     >
       {/* 今日の場合：濃い線と点 */}
@@ -68,6 +68,7 @@ export const WeekCalendarLayout = ({
   const { openEventPopup } = useAddPopup();
   const { planRecordMode } = useCalendarSettingsStore();
   const { formatTime: formatTimeWithSettings } = useDateFormat();
+  const HOUR_HEIGHT = useResponsiveHourHeight();
   const containerRef = useRef<HTMLDivElement>(null);
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
 
@@ -92,7 +93,7 @@ export const WeekCalendarLayout = ({
         duration: 5000,
         action: onRestorePlan
           ? {
-              label: t('calendar.actions.undo'),
+              label: t('common.undo'),
               onClick: async () => {
                 await onRestorePlan(planToDelete);
               },
@@ -152,28 +153,31 @@ export const WeekCalendarLayout = ({
         onCreatePlan(date, timeString);
       }
     },
-    [openEventPopup, onCreatePlan],
+    [openEventPopup, onCreatePlan, HOUR_HEIGHT],
   );
 
   // プランの位置計算
-  const calculatePlanPosition = useCallback((plan: CalendarPlan) => {
-    if (!plan.startDate) {
-      return { top: 0, height: HOUR_HEIGHT };
-    }
+  const calculatePlanPosition = useCallback(
+    (plan: CalendarPlan) => {
+      if (!plan.startDate) {
+        return { top: 0, height: HOUR_HEIGHT };
+      }
 
-    const hours = plan.startDate.getHours();
-    const minutes = plan.startDate.getMinutes();
-    const top = (hours + minutes / 60) * HOUR_HEIGHT;
+      const hours = plan.startDate.getHours();
+      const minutes = plan.startDate.getMinutes();
+      const top = (hours + minutes / 60) * HOUR_HEIGHT;
 
-    const endHours = plan.endDate ? plan.endDate.getHours() : hours + 1;
-    const endMinutes = plan.endDate ? plan.endDate.getMinutes() : 0;
-    const height = Math.max(
-      20, // 最小高さ
-      (endHours + endMinutes / 60 - (hours + minutes / 60)) * HOUR_HEIGHT,
-    );
+      const endHours = plan.endDate ? plan.endDate.getHours() : hours + 1;
+      const endMinutes = plan.endDate ? plan.endDate.getMinutes() : 0;
+      const height = Math.max(
+        20, // 最小高さ
+        (endHours + endMinutes / 60 - (hours + minutes / 60)) * HOUR_HEIGHT,
+      );
 
-    return { top, height };
-  }, []);
+      return { top, height };
+    },
+    [HOUR_HEIGHT],
+  );
 
   // jsx-no-bind optimization: Empty slot click handler creator
   const createEmptySlotClickHandler = useCallback(
@@ -293,7 +297,7 @@ export const WeekCalendarLayout = ({
                 </div>
 
                 {/* 現在時刻線 */}
-                <CurrentTimeLine day={day} />
+                <CurrentTimeLine day={day} hourHeight={HOUR_HEIGHT} />
 
                 {/* プラン表示 */}
                 {(planRecordMode === 'plan' || planRecordMode === 'both') &&

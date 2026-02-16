@@ -210,6 +210,7 @@ export function calculateViewDateRange(
         break;
 
       case 'week':
+      case 'timesheet':
         start = startOfWeek(currentDate, { weekStartsOn });
         end = endOfWeek(currentDate, { weekStartsOn });
         days = eachDayOfInterval({ start, end });
@@ -248,6 +249,7 @@ export function getNextPeriod(viewType: CalendarViewType, currentDate: Date): Da
     case 'day':
       return addDays(currentDate, 1);
     case 'week':
+    case 'timesheet':
       return addWeeks(currentDate, 1);
     case 'agenda':
       // アジェンダでは30日ずつ進む
@@ -268,6 +270,7 @@ export function getPreviousPeriod(viewType: CalendarViewType, currentDate: Date)
     case 'day':
       return subDays(currentDate, 1);
     case 'week':
+    case 'timesheet':
       return subWeeks(currentDate, 1);
     case 'agenda':
       // アジェンダでは30日ずつ戻る

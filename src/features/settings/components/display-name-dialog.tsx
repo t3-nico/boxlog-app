@@ -117,10 +117,10 @@ export function DisplayNameDialog({ open, onOpenChange, currentName }: DisplayNa
               onClick={() => handleOpenChange(false)}
               disabled={isLoading}
             >
-              {t('common.cancel')}
+              {t('actions.cancel')}
             </Button>
             <Button type="submit" isLoading={isLoading} disabled={!displayName.trim()}>
-              {t('common.confirm')}
+              {t('actions.confirm')}
             </Button>
           </DialogFooter>
         </form>

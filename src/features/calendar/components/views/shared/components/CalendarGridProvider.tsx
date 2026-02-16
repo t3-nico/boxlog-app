@@ -10,18 +10,10 @@ import { useResponsiveHourHeight } from '../hooks/useResponsiveHourHeight';
 
 interface CalendarGridProviderProps {
   children: React.ReactNode;
-  hourHeightConfig?: {
-    mobile?: number;
-    tablet?: number;
-    desktop?: number;
-  };
 }
 
-export const CalendarGridProvider = ({
-  children,
-  hourHeightConfig = {},
-}: CalendarGridProviderProps) => {
-  const hourHeight = useResponsiveHourHeight(hourHeightConfig);
+export const CalendarGridProvider = ({ children }: CalendarGridProviderProps) => {
+  const hourHeight = useResponsiveHourHeight();
 
   useEffect(() => {
     // CSS変数をルート要素に設定

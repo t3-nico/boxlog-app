@@ -93,8 +93,10 @@ interface TagSortableTreeProps {
   tagCounts: Record<string, number>;
   /** 親タグカウント（親自体 + 子の合計） */
   parentTagCounts: Record<string, number>;
-  /** チェック切り替えハンドラー */
+  /** チェック切り替えハンドラー（単一タグ） */
   onToggleTag: (tagId: string) => void;
+  /** グループ切り替えハンドラー（親+子タグ一括） */
+  onToggleGroupTags: (tagIds: string[]) => void;
   /** タグ更新ハンドラー */
   onUpdateTag: (
     tagId: string,
@@ -172,6 +174,7 @@ export function TagSortableTree({
   tagCounts,
   parentTagCounts,
   onToggleTag,
+  onToggleGroupTags,
   onUpdateTag,
   onDeleteTag,
   onAddChildTag,
@@ -428,7 +431,14 @@ export function TagSortableTree({
                 collapsed={collapsed ?? false}
                 hasChildren={hasChildren}
                 indicator
-                onToggle={() => onToggleTag(id as string)}
+                onToggle={() => {
+                  if (depth === 0 && hasChildren) {
+                    const childIds = tags.filter((t) => t.parent_id === id).map((t) => t.id);
+                    onToggleGroupTags([id as string, ...childIds]);
+                  } else {
+                    onToggleTag(id as string);
+                  }
+                }}
                 onCollapse={hasChildren ? () => handleCollapse(id) : undefined}
                 onUpdateTag={(data) => onUpdateTag(id as string, data)}
                 onDeleteTag={() => onDeleteTag(tag.id, tag.name)}

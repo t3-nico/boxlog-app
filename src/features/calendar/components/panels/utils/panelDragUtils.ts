@@ -55,6 +55,7 @@ export function findCalendarGridUnderMouse(
 export function calculateTimeFromGridPosition(
   gridInfo: CalendarGridInfo,
   clientY: number,
+  hourHeight: number = HOUR_HEIGHT,
 ): { hour: number; minute: number; snappedTop: number } {
   const rect = gridInfo.element.getBoundingClientRect();
   const scrollTop = gridInfo.scrollContainer.scrollTop;
@@ -62,7 +63,7 @@ export function calculateTimeFromGridPosition(
   // グリッド相対位置（スクロール考慮）
   const relativeY = clientY - rect.top + scrollTop;
 
-  return snapToQuarterHour(Math.max(0, relativeY));
+  return snapToQuarterHour(Math.max(0, relativeY), hourHeight);
 }
 
 /**
@@ -113,6 +114,6 @@ export const DEFAULT_DURATION_MS = 60 * 60 * 1000; // 1時間
 /**
  * スナップ位置からプレビュー高さを計算
  */
-export function calculatePreviewHeight(): number {
-  return HOUR_HEIGHT; // 1時間 = HOUR_HEIGHT px
+export function calculatePreviewHeight(hourHeight: number = HOUR_HEIGHT): number {
+  return hourHeight; // 1時間 = hourHeight px
 }

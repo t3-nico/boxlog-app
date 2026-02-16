@@ -1,8 +1,10 @@
 import type { PlanStatus } from '@/features/plans/types/plan';
 import { isBefore, isToday, isTomorrow, isWithinInterval, startOfDay } from 'date-fns';
 
+/** グループ化フィールド */
 export type GroupByField = 'status' | 'due_date' | 'tags' | null;
 
+/** グループ化されたデータ */
 export interface GroupedData<T> {
   groupKey: string;
   groupLabel: string;

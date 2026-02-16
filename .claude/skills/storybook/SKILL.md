@@ -54,12 +54,13 @@ Storybookの公式ベストプラクティスに基づいたStory作成ガイド
 新規 Story を作成するときは、この構成に従うこと。
 実物: `src/components/ui/alert-dialog.stories.tsx` + `alert-dialog.docs.mdx`
 
-### 全体構成（2ファイル）
+### 全体構成（3ファイル）
 
 ```
 src/components/ui/
 ├── my-component.tsx              # コンポーネント本体
-└── my-component.stories.tsx      # Story（Canvas + autodocs）
+├── my-component.stories.tsx      # Story（Canvas用）
+└── my-component.docs.mdx         # Docs（テキスト・テーブル・Controls）← テーブルが必要な場合のみ
 ```
 
 ### 1. stories.tsx テンプレート
@@ -71,7 +72,7 @@ import { MyComponent } from './my-component';
 const meta = {
   title: 'Components/MyComponent',
   component: MyComponent,
-  tags: ['autodocs'],              // autodocs で Docs 自動生成
+  tags: [],                        // autodocs は使わない（MDX Docs を使用）
   parameters: {
     layout: 'fullscreen',          // centered | fullscreen | padded
   },
@@ -124,17 +125,78 @@ export const AllPatterns: Story = {
 
 **ポイント:**
 
-- `tags: ['autodocs']` — 常に autodocs を使用
+- `tags: []` — MDX Docs を使う場合は autodocs を無効化（競合エラー回避）
 - JSDoc は **1行** — 改行すると Docs で段落間が空く
 - Canvas に `<h1>`, `<p>` 等の説明テキストは **絶対に入れない**
 - AllPatterns は `flex-col items-start gap-6` で縦並び
+
+### 2. docs.mdx テンプレート（テーブルが必要な場合）
+
+```mdx
+import { Canvas, Controls, Meta, Primary, Stories, Unstyled } from '@storybook/blocks';
+import * as MyComponentStories from './my-component.stories';
+
+<Meta of={MyComponentStories} />
+
+<Unstyled>
+<div className="sb-docs-prose">
+
+# MyComponent
+
+コンポーネントの概要説明。1〜2行。
+
+## 比較や分類（テーブル）
+
+| 項目 | 説明 |
+| ---- | ---- |
+| ...  | ...  |
+
+## コンポーネント構成
+
+| コンポーネント    | 役割   |
+| ----------------- | ------ |
+| `MyComponent`     | ルート |
+| `MyComponentItem` | 子要素 |
+
+## Default
+
+<Primary />
+
+<Controls />
+
+<Stories includePrimary={false} />
+
+</div>
+</Unstyled>
+```
+
+**ポイント:**
+
+- `<Unstyled>` + `.sb-docs-prose` で Storybook のデフォルトスタイルを回避
+- Markdown テーブルは MDX でのみ正常に描画される（JSDoc の `description.component` では不可）
+- `<Stories includePrimary={false} />` で Default の重複を防ぐ
+
+### 3. テーブル不要な場合（autodocs で十分）
+
+MDX を作らず `tags: ['autodocs']` + JSDoc だけで完結できる:
+
+```tsx
+const meta = {
+  title: 'Components/SimpleComponent',
+  component: SimpleComponent,
+  tags: ['autodocs'],              // autodocs 有効
+} satisfies Meta<typeof SimpleComponent>;
+
+/** コンポーネントの説明。Docs に自動表示される。 */
+export const Default: Story = { args: { ... } };
+```
 
 ### Canvas と Docs の役割分離
 
 | タブ       | 役割               | 内容                                        |
 | ---------- | ------------------ | ------------------------------------------- |
 | **Canvas** | コンポーネント描画 | render のみ。見出し・説明テキストは入れない |
-| **Docs**   | ドキュメント       | autodocs 自動生成（JSDoc + Controls）       |
+| **Docs**   | ドキュメント       | テキスト説明 + テーブル + Controls          |
 
 **Canvas:**
 
@@ -144,8 +206,9 @@ export const AllPatterns: Story = {
 
 **Docs:**
 
-- `tags: ['autodocs']` + JSDoc で自動生成
+- テキスト・テーブル・比較は MDX または JSDoc で記述
 - margin: 32px（`.sbdocs-wrapper` で設定済み）
+- prose スタイルは `.sb-docs-prose`（`prose.css`）で管理
 
 ---
 
@@ -176,7 +239,7 @@ import { MyComponent } from './my-component';
 const meta = {
   title: 'Components/MyComponent',
   component: MyComponent,
-  tags: ['autodocs'],
+  tags: [], // MDX Docs を使う場合。不要なら ['autodocs']
   parameters: { layout: 'fullscreen' },
 } satisfies Meta<typeof MyComponent>;
 
@@ -214,7 +277,7 @@ Tokens/         ← デザイントークン
 | `components/ui/`     | `Components/` | `Components/Button`, `Components/Badge`          |
 | `components/common/` | `Components/` | `Components/EmptyState`, `Components/PageHeader` |
 | デザイントークン     | `Tokens/`     | `Tokens/Colors`, `Tokens/Typography`             |
-| ドキュメント         | `Docs/`       | `Docs/Introduction`                              |
+| ドキュメント         | `Docs/`       | `Docs/はじめに`                                  |
 
 ## argTypes 設計
 
@@ -361,8 +424,95 @@ export const ClickTest: Story = {
 
 ## ダークモード対応
 
-preview.ts でダークモード切り替えを設定済み。Story側での対応は不要。
-ツールバーの Theme 切り替えで確認可能。
+ツールバーの Theme 切り替えで確認可能。**Story側でのダークモード対応は不要**（セマンティックトークンを使っていれば自動対応）。
+
+### アーキテクチャ（3層構造）
+
+ダークモードは以下の3層で実現している。変更時は影響範囲を理解すること。
+
+| 層          | 対象                   | 仕組み                                                            | ファイル                             |
+| ----------- | ---------------------- | ----------------------------------------------------------------- | ------------------------------------ |
+| **Manager** | サイドバー・ツールバー | `darkMode` パラメータの `dark`/`light` テーマ                     | `.storybook/preview.tsx`             |
+| **Canvas**  | Story描画エリア        | `stylePreview: true, classTarget: 'html'` で `.dark` クラストグル | `.storybook/preview.tsx`             |
+| **Docs**    | Docsページ全体         | `ThemedDocsContainer` で動的テーマ切替                            | `.storybook/ThemedDocsContainer.tsx` |
+
+### ThemedDocsContainer（最重要）
+
+Storybook の DocsContainer は emotion CSS-in-JS でスタイルを生成する。テーマオブジェクトの hex 値がインラインスタイルとして埋め込まれるため、**静的な `docs.theme` では常に同じテーマが適用されダークモードに追従しない**。
+
+`ThemedDocsContainer` は `useDarkMode()` フックでダークモード状態を検出し、DocsContainer に渡すテーマを動的に切り替える。
+
+```tsx
+// .storybook/ThemedDocsContainer.tsx
+import { DocsContainer } from '@storybook/addon-docs/blocks';
+import { useDarkMode } from '@vueless/storybook-dark-mode';
+import { dayoptDarkTheme, dayoptLightTheme } from './dayoptTheme';
+
+export function ThemedDocsContainer({ children, ...props }) {
+  const isDark = useDarkMode();
+  return (
+    <DocsContainer {...props} theme={isDark ? dayoptDarkTheme : dayoptLightTheme}>
+      {children}
+    </DocsContainer>
+  );
+}
+```
+
+### preview.tsx の設定
+
+```tsx
+// .storybook/preview.tsx（抜粋）
+import { ThemedDocsContainer } from './ThemedDocsContainer';
+import { dayoptDarkTheme, dayoptLightTheme } from './dayoptTheme';
+
+parameters: {
+  darkMode: {
+    dark: dayoptDarkTheme,      // Manager + Canvas のダークテーマ
+    light: dayoptLightTheme,    // Manager + Canvas のライトテーマ
+    stylePreview: true,         // Canvas に .dark クラスを適用
+    classTarget: 'html',        // <html> 要素にクラスを付与
+  },
+  docs: {
+    container: ThemedDocsContainer,  // ⚠️ theme ではなく container を使う
+    page: DocsTemplate,
+  },
+}
+```
+
+**禁止**: `docs.theme: dayoptLightTheme` — ダークモードに追従しなくなる
+
+### CSS オーバーライド（preview-head.html）
+
+emotion CSS で生成される一部の要素は DocsContainer テーマだけではカバーできない。`preview-head.html` に `html.dark` プレフィックス付きの CSS オーバーライドを配置している。
+
+```css
+/* 高詳細度で emotion CSS を上書き */
+html.dark .sbdocs {
+  background: var(--background) !important;
+}
+html.dark .docblock-argstable input {
+  color: var(--foreground) !important;
+}
+html.dark .docblock-code-toggle {
+  color: var(--muted-foreground) !important;
+}
+```
+
+**ルール**:
+
+- セレクタは `html.dark` プレフィックスで emotion CSS より詳細度を高くする
+- 値は CSS 変数 (`var(--token)`) を使い、hex 直書きしない
+- `!important` は emotion CSS 上書きのために必要
+
+### dayoptTheme.ts
+
+Storybook の `create()` API は CSS 変数を受け付けないため、`globals.css` のデザイントークンから変換した hex 値を使用。トークン変更時はこのファイルも更新すること。
+
+### Story作成者が守ること
+
+1. **セマンティックトークンのみ使用** — `text-foreground`, `bg-card` 等。`text-red-500` 等の直接カラーは禁止
+2. **特別な対応は不要** — セマンティックトークンを使っていれば `.dark` クラストグルで自動対応
+3. **inline style の `var()` は動作する** — `style={{ backgroundColor: 'var(--token)' }}` は問題なし
 
 ## レスポンシブ確認
 
@@ -530,170 +680,6 @@ export const Disabled: Story = {
 | Select         | Select, SelectTrigger, SelectContent, SelectItem, ...        |
 | ContextMenu    | ContextMenu, ContextMenuTrigger, ContextMenuContent, ...     |
 
-## `.stories.tsx` に書いてはいけないもの
-
-### ❌ `'use client'` ディレクティブ
-
-Storybook はブラウザ環境で実行されるため、Next.js RSC の `'use client'` は不要。
-
-```tsx
-// ❌ 不要
-'use client';
-import type { Meta, StoryObj } from '@storybook/react-vite';
-
-// ✅ そのまま import から始める
-import type { Meta, StoryObj } from '@storybook/react-vite';
-```
-
-### ❌ heading-order 違反（見出しレベルのスキップ）
-
-WCAG 2.1 AA の `heading-order` ルールにより、見出しレベルを飛ばしてはいけない。
-
-```tsx
-// ❌ h1 → h3（h2をスキップ）
-<h1>タイトル</h1>
-<h3>サブセクション</h3>
-
-// ❌ ダイアログ・ポップオーバー内で孤立した h4
-<PopoverContent>
-  <h4>見出し</h4>
-</PopoverContent>
-
-// ✅ 正しい見出し階層
-<h1>タイトル</h1>
-<h2>セクション</h2>
-<h3>サブセクション</h3>
-
-// ✅ コンテナ内のラベルは <p> + font-bold で代用
-<PopoverContent>
-  <p className="font-bold">見出し</p>
-</PopoverContent>
-```
-
-**判定フロー:**
-
-- Story のルート見出しは `h1` または `h2`
-- 子セクションは親の +1 レベル（h1 → h2 → h3）
-- ダイアログ・ポップオーバー等の小さいコンテナ内では `<p className="font-bold">` を使用
-
-### ❌ color-contrast 違反（テキスト × 背景のコントラスト不足）
-
-axe-core の `color-contrast` ルール（WCAG 2.1 AA: 4.5:1 以上）に違反するパターン。
-
-```tsx
-// ❌ foreground トークンを背景色に載せる（白文字 on 中明度背景）
-<div className="bg-destructive text-destructive-foreground">エラー</div>
-<div className="bg-warning text-warning-foreground">警告</div>
-<div className="bg-success text-success-foreground">成功</div>
-
-// ❌ opacity でコントラストを下げる
-<p className="text-foreground opacity-80">薄いテキスト</p>
-
-// ❌ 半透明背景に白テキスト
-<div className="bg-overlay text-white">オーバーレイ</div>
-```
-
-**✅ 解決パターン: スウォッチ＋ラベル**
-
-色を見せたい場合、テキストを色の上に載せず、色ブロックとラベルを分離する。
-
-```tsx
-// ✅ 色ブロック + 別テキスト（コントラスト問題なし）
-<div className="border-border rounded-lg border p-4 text-center">
-  <div className="bg-destructive mb-2 h-12 rounded" />
-  <div className="text-foreground font-bold">Destructive</div>
-  <div className="text-muted-foreground text-sm">エラー、削除</div>
-</div>
-
-// ✅ 丸スウォッチ + ラベル横並び
-<div className="flex items-center gap-2">
-  <div className="bg-success h-6 w-6 shrink-0 rounded-full" />
-  <code className="text-foreground text-xs">success</code>
-</div>
-
-// ✅ bg-current で色をスウォッチ化
-<div className="flex items-center gap-2">
-  <div className="text-warning h-6 w-6 shrink-0 rounded-full bg-current" />
-  <code className="text-foreground text-xs">warning</code>
-</div>
-```
-
-**✅ ホバー/インタラクションデモ**
-
-```tsx
-// ✅ 塗りボタン: aria-label でアクセシブルに
-<button
-  type="button"
-  className="bg-primary hover:bg-primary-hover h-12 w-24 rounded-lg transition-colors"
-  aria-label="primary hover demo"
-/>
-<code className="text-muted-foreground text-xs">primary</code>
-
-// ✅ ゴーストボタン: border で視認性確保
-<button
-  type="button"
-  className="text-destructive hover:bg-destructive-state-hover border-border h-12 w-24 rounded-lg border transition-colors"
-  aria-label="destructive ghost hover demo"
-/>
-```
-
-**✅ Do/Don't パターン**
-
-```tsx
-// ✅ Don't例はコードブロックで表示（レンダリングしない）
-<div>
-  <p className="text-destructive font-bold">Don't</p>
-  <code className="text-muted-foreground text-xs">text-success on white bg</code>
-</div>
-
-// ✅ Do例はスウォッチで表示
-<div>
-  <p className="text-success font-bold">Do</p>
-  <div className="flex items-center gap-2">
-    <div className="bg-success h-4 w-4 rounded-full" />
-    <span className="text-foreground text-sm">成功</span>
-  </div>
-</div>
-```
-
-**判定フロー:**
-
-```
-色を Story で見せたい
-│
-├─ テキストを色付き背景に載せる？
-│  └─ ❌ → スウォッチ + ラベル分離パターンを使う
-│
-├─ opacity でテキストを薄くする？
-│  └─ ❌ → text-muted-foreground を使う
-│
-├─ ホバー状態を見せる？
-│  └─ ✅ → 空ボタン（aria-label付き）+ コードラベル
-│
-├─ 悪い例（Don't）を見せる？
-│  └─ ✅ → レンダリングせず code ブロックで表示
-│
-└─ テキストの色は text-foreground / text-muted-foreground のみ
-```
-
-### ❌ `a11y: { disable: true }` の使用禁止
-
-```tsx
-// ❌ 根本解決ではない
-parameters: {
-  a11y: { disable: true },
-}
-
-// ✅ 実際の違反を修正する（上記パターンを適用）
-```
-
-`a11y: { disable: true }` は違反を隠すだけで、デザインシステムの信頼性を損なう。
-色デモであっても、アクセシブルに見せる方法が必ず存在する。
-
-唯一の例外: `a11y: { test: 'todo' }` で一時的にCIを通す（修正予定がある場合のみ）。
-
----
-
 ## 避けるべきパターン
 
 ### ❌ render関数の乱用
@@ -772,80 +758,21 @@ rm src/components/ui/old-component.stories.tsx
 
 孤児Storyが残るとStorybookがビルドエラーになる。
 
-## `component` フィールドのルール
-
-### 必須：単一コンポーネントの Story
-
-`meta` に `component` を指定し、`args` でpropsを渡す。Controls が自動生成される。
-
-```tsx
-const meta = {
-  title: 'Components/Button',
-  component: Button, // ← 必須
-  tags: ['autodocs'],
-} satisfies Meta<typeof Button>;
-
-export const Default: Story = {
-  args: { variant: 'primary', children: 'ボタン' }, // ← args で渡す
-};
-
-// children が複雑な場合は render + args スプレッド
-export const WithSelect: Story = {
-  args: { label: '言語' },
-  render: (
-    args, // ← args を受け取って展開
-  ) => (
-    <SettingRow {...args}>
-      <Select>...</Select>
-    </SettingRow>
-  ),
-};
-```
-
-### 不要：以下のケースは `component` なしでOK
-
-| ケース                               | 理由                                         |
-| ------------------------------------ | -------------------------------------------- |
-| Patterns/Tokens (ドキュメント)       | 複数コンポーネントの組み合わせ               |
-| Store/tRPC依存の複合コンポーネント   | args で制御不可（Inspector, View, Modal 等） |
-| 内部state で動くインタラクティブデモ | render + ヘルパーコンポーネントが適切        |
-
-### 判定フロー
-
-```
-新規 Story 作成時
-│
-├─ 単一コンポーネントの Story？
-│  ├─ YES → component 必須 + args で props 渡し
-│  └─ NO（複数コンポーネント組み合わせ）→ component 不要
-│
-├─ props が args で制御可能？
-│  ├─ YES → args + render((args) => <Comp {...args}>...)
-│  └─ NO（Store/tRPC依存）→ render のみ
-```
-
 ## チェックリスト
 
 Story作成時の確認項目：
 
-- [ ] **`'use client'` を書いていない**（Storybook はブラウザ環境）
 - [ ] 公式テンプレート（AlertDialog）の構成に従っている
-- [ ] **単一コンポーネントの Story には `component` を指定した**
-- [ ] **制御可能な props は `args` で渡し、Controls が機能する**
 - [ ] Canvas にテキスト（`<h1>`, `<p>` 等）を入れていない
 - [ ] JSDoc は1行で簡潔に記述した
 - [ ] `AllPatterns` Story を作成した（`flex-col items-start gap-6`）
-- [ ] `tags: ['autodocs']` を設定した
+- [ ] テーブルが必要な場合は MDX Docs を作成した（`tags: []` に変更）
+- [ ] テーブル不要なら `tags: ['autodocs']` で JSDoc のみ
 - [ ] アイコンボタンには `aria-label` を設定した
 - [ ] セマンティックトークン（`bg-background` 等）を使用している
 - [ ] 直接カラー（`text-blue-500` 等）を使っていない
 - [ ] フォントウェイトは `font-bold` / `font-normal` のみ使用
 - [ ] 複合コンポーネントは親を `component` に指定した
-- [ ] テキストを色付き背景に載せていない（スウォッチ＋ラベル分離）
-- [ ] `opacity-*` でテキストを薄くしていない（`text-muted-foreground` を使用）
-- [ ] `a11y: { disable: true }` を使っていない
-- [ ] `<h>` タグの開始・終了が一致している（`<h2>...</h2>`）
-- [ ] Don't 例はコードブロック表示（悪いコントラストをレンダリングしない）
 
 ## デザイントークンの確認
 

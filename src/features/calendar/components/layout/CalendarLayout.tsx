@@ -36,6 +36,14 @@ export interface CalendarLayoutProps {
   selectedDate?: Date | undefined;
   onDateSelect?: ((date: Date) => void) | undefined;
 
+  // Display range for mini calendar highlight
+  displayRange?:
+    | {
+        start: Date;
+        end: Date;
+      }
+    | undefined;
+
   // Side panel
   currentPanel?: PanelType | undefined;
   onPanelChange?: ((panel: PanelType) => void) | undefined;
@@ -63,6 +71,7 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
 
     // Date selection for mini calendar
     onDateSelect,
+    displayRange,
 
     // Side panel
     currentPanel,
@@ -117,6 +126,7 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
               leftSlot={<MobileMenuButton className="md:hidden" />}
               onDateSelect={onDateSelect}
               showMiniCalendar={true}
+              displayRange={displayRange}
               currentPanel={currentPanel}
               onPanelChange={onPanelChange}
             />
@@ -154,7 +164,7 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
           <aside
             className={cn(
               'hidden shrink-0 overflow-hidden md:block',
-              !isResizing && 'transition-[width] duration-200 ease-in-out',
+              !isResizing && 'transition-all duration-200',
             )}
             style={{
               width: showSidePanel ? `${percent}%` : 0,

@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { addDays } from 'date-fns';
 import { CalendarDays } from 'lucide-react';
 import { useState } from 'react';
 
@@ -57,6 +58,21 @@ export const WithSelectedDate: Story = {
   render: () => <CalendarWithState initialDate={new Date()} />,
 };
 
+/** displayRange で週の範囲をハイライト。サイドバーのミニカレンダーで使用。 */
+export const WithRange: Story = {
+  render: () => {
+    const today = new Date();
+    const rangeStart = today;
+    const rangeEnd = addDays(today, 6);
+
+    return (
+      <div className="bg-card border-border rounded-xl border">
+        <MiniCalendar displayRange={{ start: rangeStart, end: rangeEnd }} />
+      </div>
+    );
+  },
+};
+
 function PopoverExample() {
   const [selected, setSelected] = useState<Date | undefined>();
 
@@ -88,6 +104,9 @@ export const AsPopover: Story = {
 /** 全パターン一覧。 */
 export const AllPatterns: Story = {
   render: function AllPatternsStory() {
+    const today = new Date();
+    const rangeStart = today;
+    const rangeEnd = addDays(today, 6);
     const [selected1, setSelected1] = useState<Date | undefined>();
     const [selected2, setSelected2] = useState<Date | undefined>(new Date());
     const [popoverDate, setPopoverDate] = useState<Date | undefined>();
@@ -99,6 +118,9 @@ export const AllPatterns: Story = {
         </div>
         <div className="bg-card border-border rounded-xl border">
           <MiniCalendar selectedDate={selected2} onDateSelect={setSelected2} />
+        </div>
+        <div className="bg-card border-border rounded-xl border">
+          <MiniCalendar displayRange={{ start: rangeStart, end: rangeEnd }} />
         </div>
         <MiniCalendar
           asPopover

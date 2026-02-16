@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 
+import type { HourHeightDensity } from '@/features/calendar/components/views/shared/constants/grid.constants';
 import type { ChronotypeType, ProductivityZone } from '@/features/settings/types/chronotype';
 
 import { listenToTimezoneChange } from '../utils/timezone';
@@ -59,6 +60,9 @@ interface CalendarSettings {
 
   // 睡眠時間帯折りたたみ
   sleepHoursCollapsed: boolean;
+
+  // グリッド密度
+  hourHeightDensity: HourHeightDensity;
 }
 
 interface CalendarSettingsStore extends CalendarSettings {
@@ -95,6 +99,7 @@ const defaultSettings: CalendarSettings = {
     wakeTime: 7,
   },
   sleepHoursCollapsed: false,
+  hourHeightDensity: 'default',
 };
 
 export const useCalendarSettingsStore = create<CalendarSettingsStore>()(

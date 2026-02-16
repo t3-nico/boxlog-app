@@ -4,7 +4,7 @@ import { CollapsedSleepSection } from './CollapsedSleepSection';
 
 /** 折りたたまれた睡眠時間帯セクション。睡眠時間帯を1行に圧縮して表示。 */
 const meta = {
-  title: 'Features/Calendar/Views/CollapsedSleepSection',
+  title: 'Features/Calendar/CollapsedSleepSection',
   component: CollapsedSleepSection,
   args: {
     position: 'top',

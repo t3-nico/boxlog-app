@@ -31,6 +31,11 @@ const AgendaView = React.lazy(() =>
     default: module.AgendaView,
   })),
 );
+const TimesheetView = React.lazy(() =>
+  import('@/features/calendar/components/views/TimesheetView').then((module) => ({
+    default: module.TimesheetView,
+  })),
+);
 
 interface CalendarViewRendererProps {
   viewType: CalendarViewType;
@@ -85,6 +90,12 @@ export const CalendarViewRenderer = React.memo(function CalendarViewRenderer({
         return (
           <Suspense fallback={<AgendaViewSkeleton />}>
             <AgendaView {...baseProps} />
+          </Suspense>
+        );
+      case 'timesheet':
+        return (
+          <Suspense fallback={<AgendaViewSkeleton />}>
+            <TimesheetView {...baseProps} />
           </Suspense>
         );
       default:

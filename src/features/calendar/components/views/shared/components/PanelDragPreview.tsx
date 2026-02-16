@@ -16,7 +16,7 @@ import { useDateFormat } from '@/features/settings/hooks/useDateFormat';
 import { cn } from '@/lib/utils';
 
 import { calendarStyles } from '../../../../theme/styles';
-import { HOUR_HEIGHT } from '../constants/grid.constants';
+import { useResponsiveHourHeight } from '../hooks/useResponsiveHourHeight';
 
 interface PanelDragPreviewProps {
   /** このコンテンツの日付インデックス */
@@ -26,6 +26,7 @@ interface PanelDragPreviewProps {
 export const PanelDragPreview = memo(function PanelDragPreview({
   dayIndex,
 }: PanelDragPreviewProps) {
+  const hourHeight = useResponsiveHourHeight();
   const dragSource = useCalendarDragStore((s) => s.dragSource);
   const targetDateIndex = useCalendarDragStore((s) => s.targetDateIndex);
   const snappedPosition = useCalendarDragStore((s) => s.snappedPosition);
@@ -39,7 +40,7 @@ export const PanelDragPreview = memo(function PanelDragPreview({
     return null;
   }
 
-  const height = snappedPosition.height ?? HOUR_HEIGHT;
+  const height = snappedPosition.height ?? hourHeight;
   const title = planData?.title || '';
 
   const startTimeStr = formatTime(previewTime.start);

@@ -51,11 +51,7 @@ export function MultiDayView({
 }: MultiDayViewProps) {
   const timezone = useCalendarSettingsStore((state) => state.timezone);
 
-  const HOUR_HEIGHT = useResponsiveHourHeight({
-    mobile: 48,
-    tablet: 60,
-    desktop: 72,
-  });
+  const HOUR_HEIGHT = useResponsiveHourHeight();
 
   const displayCenterDate = useMemo(() => {
     const date = new Date(currentDate);

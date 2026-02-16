@@ -12,6 +12,7 @@ export interface UseTimeCalculationOptions {
   snapToMinutes?: number; // スナップする分単位（デフォルト: 15分）
   maxHour?: number; // 最大時間（デフォルト: 23）
   minHour?: number; // 最小時間（デフォルト: 0）
+  hourHeight?: number; // 1時間の高さ（px）
 }
 
 /**
@@ -25,6 +26,7 @@ export function useTimeCalculation({
   snapToMinutes = 15,
   maxHour = 23,
   minHour = 0,
+  hourHeight = HOUR_HEIGHT,
 }: UseTimeCalculationOptions = {}) {
   /**
    * Y座標（ピクセル）から時刻を計算
@@ -34,7 +36,7 @@ export function useTimeCalculation({
   const calculateTimeFromY = useCallback(
     (clickY: number): TimeCalculationResult => {
       // Y座標から時間の小数値を計算
-      const hourDecimal = Math.max(0, clickY / HOUR_HEIGHT);
+      const hourDecimal = Math.max(0, clickY / hourHeight);
 
       // 時間と分に分離
       let hour = Math.floor(hourDecimal);
@@ -62,7 +64,7 @@ export function useTimeCalculation({
         timeString,
       };
     },
-    [snapToMinutes, maxHour, minHour],
+    [snapToMinutes, maxHour, minHour, hourHeight],
   );
 
   /**

@@ -9,7 +9,7 @@ import { DayDisplay } from './DayDisplay';
 
 /** カレンダーの日付表示コンポーネント（DateDisplay, DateDisplayRow, DayDisplay）。 */
 const meta = {
-  title: 'Features/Calendar/Views/DateDisplay',
+  title: 'Features/Calendar/DateDisplay',
   parameters: {
     layout: 'padded',
   },
