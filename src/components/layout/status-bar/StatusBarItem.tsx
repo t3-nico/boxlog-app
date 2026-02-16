@@ -3,6 +3,8 @@
 import { cn } from '@/lib/utils';
 import { useCallback } from 'react';
 
+import { HoverTooltip } from '@/components/ui/tooltip';
+
 interface StatusBarItemProps {
   /** 表示するアイコン（lucide-react等） */
   icon?: React.ReactNode;
@@ -65,12 +67,11 @@ export function StatusBarItem({
 
   const isClickable = (!!onClick || forceClickable) && !disabled;
 
-  return (
+  const element = (
     <div
       role={isClickable ? 'button' : undefined}
       tabIndex={isClickable ? 0 : undefined}
       aria-label={tooltip}
-      title={tooltip}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
       className={cn(
@@ -100,4 +101,14 @@ export function StatusBarItem({
       <span className="truncate">{label}</span>
     </div>
   );
+
+  if (tooltip) {
+    return (
+      <HoverTooltip content={tooltip} side="top">
+        {element}
+      </HoverTooltip>
+    );
+  }
+
+  return element;
 }
