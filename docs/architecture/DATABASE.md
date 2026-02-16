@@ -1,0 +1,221 @@
+# Database Architecture
+
+> **最終更新**: 2026-02-16 | **テーブル数**: 15 | **PostgreSQL**: v17
+
+## 概要
+
+DayoptはSupabase（PostgreSQL）を使用し、3環境（Local / Staging / Production）で運用。
+全テーブルにRow Level Security (RLS) を適用し、マルチテナントのデータ分離を実現。
+
+---
+
+## テーブル一覧
+
+### コアビジネス（6テーブル）
+
+| テーブル           | 役割                              | 主要カラム                                                                |
+| ------------------ | --------------------------------- | ------------------------------------------------------------------------- |
+| **plans**          | タスク/プラン（タイムボクシング） | title, status(open/closed), start*time, end_time, due_date, recurrence*\* |
+| **records**        | 実績時間記録                      | worked_at, start_time, end_time, duration_minutes, fulfillment_score(1-5) |
+| **tags**           | 階層タグ（親子1階層）             | name, color, parent_id, level, sort_order, is_active                      |
+| **plan_tags**      | Plans↔Tags中間テーブル           | plan_id, tag_id                                                           |
+| **record_tags**    | Records↔Tags中間テーブル         | record_id, tag_id                                                         |
+| **plan_instances** | 繰り返しプランの個別インスタンス  | plan_id, instance_date, is_exception, overrides(JSONB)                    |
+
+### ユーザー設定（3テーブル）
+
+| テーブル                     | 役割                                    | 主要カラム                                                                  |
+| ---------------------------- | --------------------------------------- | --------------------------------------------------------------------------- |
+| **profiles**                 | ユーザープロフィール（auth.usersと1:1） | email, username, full_name, avatar_url                                      |
+| **user_settings**            | 表示設定                                | timezone, theme, time*format, chronotype*_, snap*interval, business_hours*_ |
+| **notification_preferences** | 通知設定                                | enable_browser/email/push_notifications, default_reminder_minutes           |
+
+### 通知（1テーブル）
+
+| テーブル          | 役割         | 主要カラム                                               |
+| ----------------- | ------------ | -------------------------------------------------------- |
+| **notifications** | ユーザー通知 | type, priority, title, message, is_read, related_plan_id |
+
+### アクティビティログ（2テーブル）
+
+| テーブル              | 役割             | 主要カラム                                               |
+| --------------------- | ---------------- | -------------------------------------------------------- |
+| **plan_activities**   | プラン変更履歴   | plan_id, action_type, field_name, old_value, new_value   |
+| **record_activities** | レコード変更履歴 | record_id, action_type, field_name, old_value, new_value |
+
+### セキュリティ/監査（3テーブル）
+
+| テーブル               | 役割                                 | 主要カラム                                                |
+| ---------------------- | ------------------------------------ | --------------------------------------------------------- |
+| **login_attempts**     | ログイン試行記録（IP rate limiting） | email, ip_address, is_successful, attempt_time            |
+| **auth_audit_logs**    | 認証操作の監査ログ                   | event_type, ip_address, user_agent, geo_country, geo_city |
+| **mfa_recovery_codes** | MFAリカバリーコード                  | code_hash(SHA-256), used_at                               |
+
+---
+
+## ER図
+
+```
+                          ┌──────────────────┐
+                          │    auth.users     │
+                          │  (Supabase管理)   │
+                          │──────────────────│
+                          │ id (PK, UUID)     │
+                          │ email             │
+                          └────────┬─────────┘
+                                   │
+         ┌─────────────────────────┼─────────────────────────┐
+         │                         │                         │
+         ▼                         ▼                         ▼
+┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐
+│    profiles       │  │  user_settings    │  │  notification_   │
+│    (1:1)          │  │    (1:1)          │  │  preferences     │
+│──────────────────│  │──────────────────│  │    (1:1)          │
+│ id (PK=FK)        │  │ user_id (FK,UQ)   │  │──────────────────│
+│ email, username   │  │ timezone, theme   │  │ user_id (FK,UQ)  │
+└──────────────────┘  └──────────────────┘  └──────────────────┘
+
+
+         ┌─────────────────────────┼─────────────────────────┐
+         │                         │                         │
+         ▼                         ▼                         ▼
+┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐
+│      plans        │  │       tags        │  │  notifications   │
+│──────────────────│  │──────────────────│  │──────────────────│
+│ id (PK)           │  │ id (PK)           │  │ id (PK)          │
+│ user_id (FK)      │  │ user_id (FK)      │  │ user_id (FK)     │
+│ title, status     │  │ name, color       │  │ type, title      │
+│ start/end_time    │  │ parent_id (FK→    │  │ related_plan_id  │
+│ recurrence_*      │  │   self, max 1階層) │  │ is_read          │
+└───────┬──────────┘  └───────┬──────────┘  └──────────────────┘
+        │                     │
+   ┌────┼────┐           ┌────┘
+   │    │    │           │
+   ▼    │    ▼           ▼
+┌──────┐│ ┌──────────────────┐
+│plan_ ││ │    plan_tags      │
+│insta-││ │──────────────────│
+│nces  ││ │ plan_id (FK)      │
+│──────││ │ tag_id  (FK)      │
+│plan_ ││ │ UNIQUE(plan,tag)  │
+│id FK ││ └──────────────────┘
+└──────┘│
+        ▼
+┌──────────────────┐  ┌──────────────────┐
+│     records       │  │   record_tags     │
+│──────────────────│  │──────────────────│
+│ id (PK)           │  │ record_id (FK)    │
+│ plan_id (FK,NULL) ├──│ tag_id  (FK)      │
+│ user_id (FK)      │  │ UNIQUE(record,tag)│
+│ worked_at, time   │  └──────────────────┘
+│ duration_minutes  │
+│ fulfillment_score │
+└───────┬──────────┘
+        │
+   ┌────┼────┐
+   ▼         ▼
+┌──────┐  ┌──────────────┐
+│plan_ │  │   record_    │
+│activ-│  │   activities  │
+│ities│  └──────────────┘
+└──────┘
+
+
+=== セキュリティ/監査 ===
+
+┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐
+│ login_attempts    │  │ auth_audit_logs   │  │ mfa_recovery_    │
+│──────────────────│  │──────────────────│  │ codes            │
+│ email, ip         │  │ user_id (FK)      │  │──────────────────│
+│ is_successful     │  │ event_type        │  │ user_id (FK)     │
+│ attempt_time      │  │ ip, geo_*         │  │ code_hash        │
+└──────────────────┘  └──────────────────┘  │ used_at           │
+                                             └──────────────────┘
+```
+
+---
+
+## 設計判断
+
+### UUID主キー
+
+全テーブルで `gen_random_uuid()` を使用。分散環境でのマージ安全性、URL推測困難性を確保。
+
+### RLSパターン
+
+```sql
+-- 基本パターン: ユーザーは自分のデータのみアクセス可能
+(select auth.uid()) = user_id
+
+-- 関連テーブル: 親テーブルの所有権で判定
+EXISTS (SELECT 1 FROM plans WHERE plans.id = plan_tags.plan_id
+        AND plans.user_id = (select auth.uid()))
+```
+
+### Plans のステータス
+
+`open` / `closed` の2値。当初6段階（backlog/ready/active/wait/done/cancel）→ 3段階（todo/doing/done）→ 2段階に簡素化。タイムボクシングツールとしての本質に集中。
+
+### Tags の階層制限
+
+`level < 2` で親子1階層に制限。トリガーで `level`, `path`, `depth` を自動計算。深い階層は複雑性を増すだけと判断。
+
+### Records の plan_id NULLABLE
+
+プランに紐づかない「自由記録」も可能にする設計。時間記録の柔軟性を確保。
+
+### トランザクション関数
+
+複数テーブルを跨ぐ操作はDB関数で原子性を保証:
+
+- `create_plan_with_tags()` — プラン作成 + タグ紐付け + アクティビティログ
+- `update_plan_with_tags()` — プラン更新 + タグ差分反映
+- `delete_plan_with_cleanup()` — プラン削除 + 関連データクリーンアップ
+- `merge_tags()` — タグマージ + 子タグの昇格
+
+---
+
+## 定期クリーンアップ（pg_cron）
+
+| ジョブ                    | スケジュール   | 保持期間         | 対象テーブル    |
+| ------------------------- | -------------- | ---------------- | --------------- |
+| `cleanup-login-attempts`  | 毎日 03:00 UTC | 90日             | login_attempts  |
+| `cleanup-auth-audit-logs` | 毎日 03:10 UTC | 365日            | auth_audit_logs |
+| `cleanup-notifications`   | 毎日 03:20 UTC | 30日（既読のみ） | notifications   |
+
+---
+
+## インデックス監査ランブック
+
+本番DBで定期的に実行し、未使用インデックスを特定する。
+
+### 未使用インデックスの検出
+
+```sql
+SELECT
+  schemaname,
+  relname AS table_name,
+  indexrelname AS index_name,
+  idx_scan AS times_used,
+  pg_size_pretty(pg_relation_size(indexrelid)) AS index_size
+FROM pg_stat_user_indexes
+WHERE schemaname = 'public'
+  AND idx_scan = 0
+ORDER BY pg_relation_size(indexrelid) DESC;
+```
+
+### 重複インデックスの検出
+
+```sql
+SELECT
+  a.indexrelid::regclass AS index_a,
+  b.indexrelid::regclass AS index_b,
+  a.indrelid::regclass AS table_name
+FROM pg_index a
+JOIN pg_index b ON a.indrelid = b.indrelid
+  AND a.indexrelid < b.indexrelid
+WHERE a.indkey[0] = b.indkey[0]
+  AND a.indrelid::regclass::text NOT LIKE 'pg_%';
+```
+
+> **注意**: インデックスの削除は、本番で2-4週間のデータ蓄積後に実施すること。
