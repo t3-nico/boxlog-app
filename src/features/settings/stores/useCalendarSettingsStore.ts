@@ -133,6 +133,7 @@ export const useCalendarSettingsStore = create<CalendarSettingsStore>()(
       },
       {
         name: 'calendar-settings',
+        version: 1,
       },
     ),
     {

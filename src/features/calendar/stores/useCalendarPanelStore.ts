@@ -52,6 +52,7 @@ const useCalendarPanelStoreBase = create<CalendarPanelState>()(
       }),
       {
         name: 'calendar-panel-storage',
+        version: 1,
       },
     ),
     {

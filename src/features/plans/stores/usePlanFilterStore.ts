@@ -118,7 +118,8 @@ export const usePlanFilterStore = create<PlanFilterStore>()(
       reset: () => set(initialState),
     }),
     {
-      name: 'inbox-filter',
+      name: 'plan-filter',
+      version: 1,
       // isSearchOpenは永続化しない（ページリロード時は閉じているべき）
       partialize: (state) => ({
         status: state.status,
