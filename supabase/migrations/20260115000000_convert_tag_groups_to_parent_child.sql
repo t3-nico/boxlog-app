@@ -31,6 +31,7 @@ CREATE INDEX IF NOT EXISTS idx_tags_sort_order ON tags(sort_order);
 -- ========================================
 -- tag_groups のレコードを tags テーブルに挿入
 -- IDをそのまま維持して、後で子タグの parent_id として参照できるようにする
+-- (user_id, name) の重複がある場合は既存タグを維持しスキップ
 INSERT INTO tags (id, user_id, name, color, description, sort_order, is_active, created_at, updated_at)
 SELECT
   id,
@@ -43,14 +44,28 @@ SELECT
   created_at,
   updated_at
 FROM tag_groups
-ON CONFLICT (id) DO NOTHING;  -- 既に同じIDのタグが存在する場合はスキップ
+ON CONFLICT DO NOTHING;  -- ID重複・名前重複の両方をスキップ
 
 -- ========================================
 -- Step 3: 既存タグの group_id を parent_id に移行
 -- ========================================
+-- 通常ケース: tag_groupがtagsに挿入された場合
 UPDATE tags
 SET parent_id = group_id
-WHERE group_id IS NOT NULL;
+WHERE group_id IS NOT NULL
+  AND EXISTS (SELECT 1 FROM tags p WHERE p.id = group_id);
+
+-- 競合ケース: tag_groupと同名タグが既に存在し挿入がスキップされた場合
+-- group_idが指すtag_groupのIDではなく、同名の既存タグのIDをparent_idに設定
+UPDATE tags child
+SET parent_id = (
+  SELECT t.id FROM tags t
+  JOIN tag_groups tg ON tg.user_id = t.user_id AND tg.name = t.name
+  WHERE tg.id = child.group_id AND t.id != child.id
+)
+WHERE child.group_id IS NOT NULL
+  AND child.parent_id IS NULL
+  AND NOT EXISTS (SELECT 1 FROM tags p WHERE p.id = child.group_id);
 
 -- ========================================
 -- Step 4: group_id カラムとインデックスを削除
