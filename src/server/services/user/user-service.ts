@@ -53,6 +53,9 @@ export interface DeleteAccountResult {
   success: true;
 }
 
+/** テーブル行型のエイリアス */
+type Row<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Row'];
+
 /**
  * データエクスポートレスポンス
  */
@@ -60,14 +63,14 @@ export interface ExportDataResult {
   exportedAt: string;
   userId: string;
   data: {
-    profile: unknown;
-    plans: unknown[];
-    tags: unknown[];
-    records: unknown[];
-    planTags: unknown[];
-    recordTags: unknown[];
-    notificationPreferences: unknown;
-    userSettings: unknown;
+    profile: Row<'profiles'> | null;
+    plans: Row<'plans'>[];
+    tags: Row<'tags'>[];
+    records: Row<'records'>[];
+    planTags: Row<'plan_tags'>[];
+    recordTags: Row<'record_tags'>[];
+    notificationPreferences: Row<'notification_preferences'> | null;
+    userSettings: Row<'user_settings'> | null;
   };
 }
 
@@ -117,11 +120,20 @@ export function createUserService(supabase: SupabaseClient<Database>) {
         );
       }
 
-      // Service Role クライアントで残存データを削除
+      // Service Role クライアントで CASCADE 対象外のPIIデータを削除
       const adminClient = createServiceRoleClient();
 
-      // login_attempts はemail基準でCASCADE対象外のため手動削除
-      await adminClient.from('login_attempts').delete().eq('email', userEmail);
+      try {
+        // login_attempts: email基準でCASCADE対象外
+        await adminClient.from('login_attempts').delete().eq('email', userEmail);
+        // auth_audit_logs: ON DELETE SET NULL でIP/UA等のPIIが残存するため手動削除
+        await adminClient.from('auth_audit_logs').delete().eq('user_id', userId);
+      } catch (cleanupError) {
+        logger.warn(
+          'Failed to delete PII from non-cascaded tables, continuing with account deletion',
+          cleanupError,
+        );
+      }
 
       // auth.users を削除 → CASCADE DELETE により全テーブルのユーザーデータが自動削除される
       const { error: deleteError } = await adminClient.auth.admin.deleteUser(userId);
