@@ -5,18 +5,18 @@
  *
  * Row 1: Title
  * Row 2: Date + Time + Duration
- * Row 3: Tags + [Records] [Due] [Description] [Status*] [Recurrence] [Reminder]
+ * Row 3: Tags + [Records] [Description] [Status*] [Recurrence] [Reminder]
  */
 
-import { memo } from 'react';
+import { memo, useCallback } from 'react';
 
 import { useTranslations } from 'next-intl';
 import { NoteIconButton, ScheduleRow, TagsIconButton, TitleInput } from '../shared';
 
+import { SuggestInput } from '@/components/common/SuggestInput';
 import type { Tag } from '@/features/tags/types';
 
 import type { Plan } from '../../../types/plan';
-import { DueDateIconButton } from '../../shared/DueDateIconButton';
 import { RecordsIconButton } from '../../shared/RecordsIconButton';
 import { RecurrenceIconButton } from '../../shared/RecurrenceIconButton';
 import { ReminderSelect } from '../../shared/ReminderSelect';
@@ -28,7 +28,6 @@ interface PlanInspectorDetailsTabProps {
   planId: string;
   titleRef: React.RefObject<HTMLInputElement | null>;
   scheduleDate: Date | undefined; // スケジュール日（カレンダー配置用）
-  dueDate: Date | undefined; // 期限日
   startTime: string;
   endTime: string;
   reminderType: string;
@@ -39,7 +38,6 @@ interface PlanInspectorDetailsTabProps {
   timeConflictError?: boolean;
   onAutoSave: (field: string, value: string | undefined) => void;
   onScheduleDateChange: (date: Date | undefined) => void;
-  onDueDateChange: (date: Date | undefined) => void;
   onStartTimeChange: (time: string) => void;
   onEndTimeChange: (time: string) => void;
   onReminderChange: (type: string) => void;
@@ -58,7 +56,6 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
   planId,
   titleRef,
   scheduleDate,
-  dueDate,
   startTime,
   endTime,
   reminderType,
@@ -68,7 +65,6 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
   timeConflictError = false,
   onAutoSave,
   onScheduleDateChange,
-  onDueDateChange,
   onStartTimeChange,
   onEndTimeChange,
   onReminderChange,
@@ -80,17 +76,36 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
 }: PlanInspectorDetailsTabProps) {
   const t = useTranslations();
 
+  const handleSuggestionSelect = useCallback(
+    (entry: { title: string; tagIds: string[] }) => {
+      onAutoSave('title', entry.title);
+      onTagsChange(entry.tagIds);
+    },
+    [onAutoSave, onTagsChange],
+  );
+
   return (
     <>
       {/* Row 1: Title */}
       <div className="flex items-center gap-2 px-4 pt-4 pb-2">
-        <TitleInput
-          ref={titleRef}
-          value={plan.title}
-          onChange={(value) => onAutoSave('title', value)}
-          placeholder={isDraftMode ? 'タイトルを追加' : t('calendar.event.noTitle')}
-          className="flex-1"
-        />
+        {isDraftMode ? (
+          <SuggestInput
+            value={plan.title}
+            onChange={(value) => onAutoSave('title', value)}
+            onSuggestionSelect={handleSuggestionSelect}
+            placeholder="タイトルを追加"
+            className="flex-1"
+            autoFocus
+          />
+        ) : (
+          <TitleInput
+            ref={titleRef}
+            value={plan.title}
+            onChange={(value) => onAutoSave('title', value)}
+            placeholder={t('calendar.event.noTitle')}
+            className="flex-1"
+          />
+        )}
       </div>
 
       {/* Row 2: Date + Time + Duration */}
@@ -116,9 +131,6 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
 
         {/* Records - 編集モードのみ */}
         {!isDraftMode && planId && <RecordsIconButton planId={planId} />}
-
-        {/* Due Date */}
-        <DueDateIconButton dueDate={dueDate} onDueDateChange={onDueDateChange} />
 
         {/* Description */}
         <NoteIconButton

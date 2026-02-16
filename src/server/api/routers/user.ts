@@ -5,7 +5,7 @@
  * REST API（src/app/api/user/*）をtRPC化
  *
  * エンドポイント:
- * - user.deleteAccount: アカウント削除リクエスト（論理削除）
+ * - user.deleteAccount: アカウント即時削除
  * - user.exportData: ユーザーデータエクスポート
  */
 
@@ -20,8 +20,8 @@ import { createTRPCRouter, protectedProcedure } from '../trpc';
  */
 export const userRouter = createTRPCRouter({
   /**
-   * アカウント削除リクエスト（論理削除）
-   * GDPR "Right to be Forgotten" 準拠
+   * アカウント即時削除
+   * auth.users 削除 → CASCADE DELETE で全データ削除
    */
   deleteAccount: protectedProcedure
     .input(

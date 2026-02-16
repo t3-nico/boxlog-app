@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import type { PlanItem } from '../hooks/usePlanData';
 
@@ -127,99 +127,6 @@ describe('grouping', () => {
 
         expect(result).toHaveLength(1);
         expect(result[0]?.groupKey).toBe('タグなし');
-      });
-    });
-
-    describe('期限でグループ化', () => {
-      beforeEach(() => {
-        vi.useFakeTimers();
-        // 2025年1月15日（水曜日）に固定
-        vi.setSystemTime(new Date('2025-01-15T12:00:00'));
-      });
-
-      afterEach(() => {
-        vi.useRealTimers();
-      });
-
-      it('期限なしは「no-due-date」グループになる', () => {
-        const items = [
-          createMockItem({ id: '1', due_date: null }),
-          createMockItem({ id: '2', due_date: undefined }),
-        ];
-
-        const result = groupItems(items, 'due_date');
-
-        expect(result).toHaveLength(1);
-        expect(result[0]?.groupKey).toBe('no-due-date');
-        expect(result[0]?.groupLabel).toBe('期限なし');
-      });
-
-      it('今日の期限は「today」グループになる', () => {
-        const items = [createMockItem({ id: '1', due_date: '2025-01-15' })];
-
-        const result = groupItems(items, 'due_date');
-
-        expect(result[0]?.groupKey).toBe('today');
-        expect(result[0]?.groupLabel).toBe('今日');
-      });
-
-      it('明日の期限は「tomorrow」グループになる', () => {
-        const items = [createMockItem({ id: '1', due_date: '2025-01-16' })];
-
-        const result = groupItems(items, 'due_date');
-
-        expect(result[0]?.groupKey).toBe('tomorrow');
-        expect(result[0]?.groupLabel).toBe('明日');
-      });
-
-      it('過去の期限は「overdue」グループになる', () => {
-        const items = [createMockItem({ id: '1', due_date: '2025-01-14' })];
-
-        const result = groupItems(items, 'due_date');
-
-        expect(result[0]?.groupKey).toBe('overdue');
-        expect(result[0]?.groupLabel).toBe('期限超過');
-      });
-
-      it('今週の期限は「this-week」グループになる', () => {
-        const items = [createMockItem({ id: '1', due_date: '2025-01-18' })]; // 3日後
-
-        const result = groupItems(items, 'due_date');
-
-        expect(result[0]?.groupKey).toBe('this-week');
-        expect(result[0]?.groupLabel).toBe('今週');
-      });
-
-      it('来週以降の期限は「later」グループになる', () => {
-        const items = [createMockItem({ id: '1', due_date: '2025-02-01' })];
-
-        const result = groupItems(items, 'due_date');
-
-        expect(result[0]?.groupKey).toBe('later');
-        expect(result[0]?.groupLabel).toBe('今週以降');
-      });
-
-      it('期限グループは正しい順序でソートされる', () => {
-        const items = [
-          createMockItem({ id: '1', due_date: '2025-02-01' }), // later
-          createMockItem({ id: '2', due_date: '2025-01-15' }), // today
-          createMockItem({ id: '3', due_date: '2025-01-14' }), // overdue
-          createMockItem({ id: '4', due_date: null }), // no-due-date
-          createMockItem({ id: '5', due_date: '2025-01-16' }), // tomorrow
-          createMockItem({ id: '6', due_date: '2025-01-18' }), // this-week
-        ];
-
-        const result = groupItems(items, 'due_date');
-
-        const order = result.map((g) => g.groupKey);
-        expect(order).toEqual([
-          'overdue',
-          'today',
-          'tomorrow',
-          'this-week',
-          'later',
-          'no-due-date',
-        ]);
       });
     });
 

@@ -154,7 +154,10 @@ describe.skipIf(SKIP_INTEGRATION)('GDPR Router Integration', () => {
       expect(result.data).toHaveProperty('profile');
       expect(result.data).toHaveProperty('plans');
       expect(result.data).toHaveProperty('tags');
-      expect(result.data).toHaveProperty('tagGroups');
+      expect(result.data).toHaveProperty('records');
+      expect(result.data).toHaveProperty('planTags');
+      expect(result.data).toHaveProperty('recordTags');
+      expect(result.data).toHaveProperty('notificationPreferences');
       expect(result.data).toHaveProperty('userSettings');
     });
 
@@ -302,7 +305,7 @@ describe.skipIf(SKIP_INTEGRATION)('GDPR Router Integration', () => {
     });
 
     // 注意: 実際の削除テストはデータを破壊するため、CI環境でのみ実行することを推奨
-    it.skip('should schedule account deletion with correct credentials', async () => {
+    it.skip('should delete account immediately with correct credentials', async () => {
       const caller = createTestCaller(userRouter, deleteTestCtx);
 
       const result = await caller.deleteAccount({
@@ -311,17 +314,6 @@ describe.skipIf(SKIP_INTEGRATION)('GDPR Router Integration', () => {
       });
 
       expect(result.success).toBe(true);
-      expect(result.scheduledDeletionDate).toBeDefined();
-      expect(result.cancelUrl).toBeDefined();
-
-      // 削除予定日が30日後であることを確認
-      const scheduledDate = new Date(result.scheduledDeletionDate);
-      const now = new Date();
-      const daysDiff = Math.round(
-        (scheduledDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24),
-      );
-      expect(daysDiff).toBeGreaterThanOrEqual(29); // 30日前後
-      expect(daysDiff).toBeLessThanOrEqual(31);
     });
   });
 

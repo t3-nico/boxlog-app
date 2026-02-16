@@ -11,7 +11,6 @@ const createMockPlan = (overrides: Partial<Plan> = {}): Plan => ({
   title: 'テストプラン',
   description: null,
   status: 'open',
-  due_date: null,
   start_time: '2025-01-01T09:00:00Z',
   end_time: '2025-01-01T10:00:00Z',
   recurrence_type: null,
@@ -246,7 +245,6 @@ describe('recurrence', () => {
       const plan = createMockPlan({
         recurrence_type: 'daily',
         start_time: null,
-        due_date: null,
       });
       const rangeStart = new Date('2025-01-01');
       const rangeEnd = new Date('2025-01-31');
@@ -254,20 +252,6 @@ describe('recurrence', () => {
       const occurrences = expandRecurrence(plan, rangeStart, rangeEnd);
 
       expect(occurrences).toEqual([]);
-    });
-
-    it('due_dateがある場合はそれを開始日として使用する', () => {
-      const plan = createMockPlan({
-        recurrence_type: 'daily',
-        start_time: null,
-        due_date: '2025-01-01',
-      });
-      const rangeStart = new Date('2025-01-01');
-      const rangeEnd = new Date('2025-01-05');
-
-      const occurrences = expandRecurrence(plan, rangeStart, rangeEnd);
-
-      expect(occurrences.length).toBeGreaterThan(0);
     });
   });
 });

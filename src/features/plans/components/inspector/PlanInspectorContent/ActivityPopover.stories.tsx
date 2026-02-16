@@ -91,14 +91,6 @@ const mockActivities: PlanActivity[] = [
   },
   {
     ...baseMock,
-    id: '5',
-    action_type: 'due_date_changed',
-    old_value: '2026-02-10',
-    new_value: '2026-02-15',
-    created_at: daysAgo(1),
-  },
-  {
-    ...baseMock,
     id: '6',
     action_type: 'recurrence_changed',
     new_value: '毎週月曜日',
@@ -226,7 +218,7 @@ const iconReferenceItems: {
     icon: 'time',
     iconColor: 'info',
     label: 'Clock',
-    actions: 'タイトル / 時間 / 期限 / 繰り返し / 通知',
+    actions: 'タイトル / 時間 / 繰り返し / 通知',
   },
   { icon: 'tag', iconColor: 'primary', label: 'Tag', actions: 'タグ追加' },
   { icon: 'tag', iconColor: 'destructive', label: 'Tag', actions: 'タグ削除' },

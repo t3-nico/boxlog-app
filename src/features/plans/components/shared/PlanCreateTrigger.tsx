@@ -1,6 +1,5 @@
 'use client';
 
-import { format } from 'date-fns';
 import { cloneElement, isValidElement, useCallback, type ReactNode } from 'react';
 
 import { api } from '@/lib/trpc';
@@ -99,7 +98,6 @@ export function PlanCreateTrigger({
     // ドラフトモードでInspectorを開く（DB未保存）
     openInspectorWithDraft({
       title: '',
-      due_date: format(start, 'yyyy-MM-dd'),
       start_time: start.toISOString(),
       end_time: end.toISOString(),
     });

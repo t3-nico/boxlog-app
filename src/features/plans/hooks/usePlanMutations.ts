@@ -70,11 +70,11 @@ export function usePlanMutations() {
         status: (input.status ?? 'open') as 'open' | 'closed',
         start_time: input.start_time ?? null,
         end_time: input.end_time ?? null,
-        due_date: input.due_date ?? null,
         reminder_minutes: input.reminder_minutes ?? null,
         recurrence_type: input.recurrence_type ?? null,
         recurrence_rule: input.recurrence_rule ?? null,
         recurrence_end_date: null,
+        due_date: null, // DB column still exists but feature is removed
         completed_at: null,
         reminder_at: null,
         reminder_sent: false,
@@ -149,6 +149,7 @@ export function usePlanMutations() {
     onSettled: () => {
       // サーバーと同期（念のため）
       void utils.plans.list.invalidate();
+      void utils.plans.getCumulativeTime.invalidate();
     },
   });
 
@@ -182,8 +183,6 @@ export function usePlanMutations() {
       // 日時変更（ドラッグ&ドロップ）
       if (data.start_time !== undefined) updateData.start_time = data.start_time;
       if (data.end_time !== undefined) updateData.end_time = data.end_time;
-      if (data.due_date !== undefined) updateData.due_date = data.due_date;
-
       // その他のフィールド
       if (data.title !== undefined) updateData.title = data.title;
       if (data.status !== undefined) updateData.status = data.status;
@@ -304,6 +303,7 @@ export function usePlanMutations() {
       if (variables?.data.start_time !== undefined) {
         void utils.plans.list.invalidate();
       }
+      void utils.plans.getCumulativeTime.invalidate();
     },
   });
 
@@ -355,7 +355,6 @@ export function usePlanMutations() {
           status: previousPlan.status as 'open' | 'closed',
           start_time: normalizeDateTime(previousPlan.start_time),
           end_time: normalizeDateTime(previousPlan.end_time),
-          due_date: previousPlan.due_date ?? undefined,
           reminder_minutes: previousPlan.reminder_minutes ?? undefined,
           recurrence_type:
             (previousPlan.recurrence_type as
@@ -407,6 +406,7 @@ export function usePlanMutations() {
       setTimeout(() => {
         setIsMutating(false);
       }, 500);
+      void utils.plans.getCumulativeTime.invalidate();
     },
   });
 
@@ -430,7 +430,6 @@ export function usePlanMutations() {
           ...(data.status !== undefined && { status: data.status }),
           ...(data.title !== undefined && { title: data.title }),
           ...(data.description !== undefined && { description: data.description }),
-          ...(data.due_date !== undefined && { due_date: data.due_date }),
           ...(data.start_time !== undefined && { start_time: data.start_time }),
           ...(data.end_time !== undefined && { end_time: data.end_time }),
           updated_at: new Date().toISOString(),
@@ -465,6 +464,7 @@ export function usePlanMutations() {
     onSettled: () => {
       // mutation完了後にフラグをリセット
       setIsMutating(false);
+      void utils.plans.getCumulativeTime.invalidate();
     },
   });
 
@@ -512,6 +512,7 @@ export function usePlanMutations() {
     onSettled: () => {
       // mutation完了後にフラグをリセット
       setIsMutating(false);
+      void utils.plans.getCumulativeTime.invalidate();
     },
   });
 

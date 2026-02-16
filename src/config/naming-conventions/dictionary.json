@@ -183,21 +183,6 @@
       },
       "description": "進捗状況や現在の状態"
     },
-    "deadline": {
-      "english": "deadline",
-      "japanese": "期限",
-      "aliases": ["dueDate", "expiry", "timeLimit"],
-      "category": "domain",
-      "usage": {
-        "type": "Deadline",
-        "interface": "DeadlineData",
-        "component": "DeadlineTimer",
-        "hook": "useDeadline",
-        "service": "deadlineService",
-        "constant": "DEADLINE_WARNINGS"
-      },
-      "description": "タスク完了の期日"
-    },
     "assignee": {
       "english": "assignee",
       "japanese": "担当者",

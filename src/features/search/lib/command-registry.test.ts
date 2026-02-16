@@ -209,11 +209,11 @@ describe('commandRegistry', () => {
           action: vi.fn(),
         },
         {
-          id: 'nav:inbox',
-          title: 'Inboxを開く',
+          id: 'nav:plan',
+          title: 'プランを開く',
           description: 'タスク一覧を表示',
           category: 'navigation',
-          keywords: ['inbox', 'tasks'],
+          keywords: ['plan', 'tasks'],
           action: vi.fn(),
         },
         {
@@ -245,7 +245,7 @@ describe('commandRegistry', () => {
       const results = commandRegistry.search('タスク一覧');
 
       expect(results).toHaveLength(1);
-      expect(results[0]?.id).toBe('nav:inbox');
+      expect(results[0]?.id).toBe('nav:plan');
     });
 
     it('キーワードで検索できる', () => {

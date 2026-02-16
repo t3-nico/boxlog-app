@@ -20,7 +20,7 @@ const meta = {
   argTypes: {
     sortBy: {
       control: 'select',
-      options: ['created_at', 'updated_at', 'due_date', 'title'],
+      options: ['created_at', 'updated_at', 'title'],
       description: 'ソートフィールド',
     },
     sortOrder: {
@@ -30,7 +30,7 @@ const meta = {
     },
     groupBy: {
       control: 'select',
-      options: [null, 'due_date', 'tags'],
+      options: [null, 'tags'],
       description: 'グルーピングフィールド',
     },
     scheduleFilter: {
@@ -102,9 +102,9 @@ export const ActiveScheduleAll: Story = {
 /** ソート・グループ・ステータス・日付すべて変更済み。リセット行が表示される。 */
 export const ActiveAll: Story = {
   args: {
-    sortBy: 'due_date',
+    sortBy: 'title',
     sortOrder: 'asc',
-    groupBy: 'due_date',
+    groupBy: 'tags',
     scheduleFilter: 'all',
     statusFilter: 'closed',
   },

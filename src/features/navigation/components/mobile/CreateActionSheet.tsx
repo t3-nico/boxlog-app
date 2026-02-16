@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-import { Calendar, CheckSquare, FileText, History } from 'lucide-react';
+import { Calendar, CheckSquare } from 'lucide-react';
 
 import {
   Drawer,
@@ -14,7 +14,7 @@ import {
 import { cn } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
 
-export type CreateActionType = 'plan' | 'record' | 'template' | 'history';
+export type CreateActionType = 'plan' | 'record';
 
 interface CreateActionSheetProps {
   open: boolean;
@@ -28,8 +28,6 @@ interface CreateActionSheetProps {
  * 選択肢:
  * - Plan: 予定を追加
  * - Record: 実績を記録
- * - Template: テンプレートから追加
- * - History: 履歴から作成（最近使った項目から再作成）
  *
  * Material Design 3のBottom Sheet / Action Sheetパターンに準拠
  */
@@ -51,22 +49,6 @@ export function CreateActionSheet({ open, onOpenChange, onSelect }: CreateAction
       description: t('createSheet.recordDescription'),
       icon: CheckSquare,
       color: 'text-success',
-      bgColor: 'bg-muted',
-    },
-    {
-      id: 'template' as const,
-      label: t('createSheet.template'),
-      description: t('createSheet.templateDescription'),
-      icon: FileText,
-      color: 'text-muted-foreground',
-      bgColor: 'bg-muted',
-    },
-    {
-      id: 'history' as const,
-      label: t('createSheet.history'),
-      description: t('createSheet.historyDescription'),
-      icon: History,
-      color: 'text-warning',
       bgColor: 'bg-muted',
     },
   ];

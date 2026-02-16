@@ -149,19 +149,29 @@ const MOCK_CONTENT: Record<SettingsCategory, React.ReactNode> = {
     </>
   ),
   'data-controls': (
-    <SettingsCard title="データ管理">
-      <SettingRow label="データエクスポート">
-        <span className="text-muted-foreground">CSV / JSON</span>
-      </SettingRow>
-      <SettingRow label="データインポート">
-        <span className="text-muted-foreground">ファイルを選択</span>
-      </SettingRow>
-      <SettingRow label="全データ削除">
-        <Button variant="destructive" size="sm">
-          削除
-        </Button>
-      </SettingRow>
-    </SettingsCard>
+    <>
+      <SettingsCard title="データエクスポート">
+        <div className="bg-surface-container rounded-2xl p-4">
+          <h4 className="mb-2 text-sm font-normal">エクスポート対象</h4>
+          <ul className="text-muted-foreground grid grid-cols-2 gap-1 text-sm">
+            <li>• プロフィール</li>
+            <li>• プラン・タスク</li>
+            <li>• 時間記録</li>
+            <li>• タグ設定</li>
+            <li>• 通知設定</li>
+            <li>• カレンダー設定</li>
+          </ul>
+        </div>
+        <div className="mt-4">
+          <Button className="w-full">JSONでエクスポート</Button>
+        </div>
+      </SettingsCard>
+      <SettingsCard title="データインポート">
+        <div className="border-border flex flex-col items-center justify-center rounded-2xl border-2 border-dashed p-8">
+          <p className="text-muted-foreground text-sm">Coming soon</p>
+        </div>
+      </SettingsCard>
+    </>
   ),
   integrations: (
     <SettingsCard title="連携サービス">
@@ -332,6 +342,11 @@ export const Calendar: Story = {
 /** Notifications カテゴリ */
 export const Notifications: Story = {
   render: () => <SettingsModalShell initialCategory="notifications" />,
+};
+
+/** Data Controls カテゴリ */
+export const DataControls: Story = {
+  render: () => <SettingsModalShell initialCategory="data-controls" />,
 };
 
 /** Account カテゴリ */

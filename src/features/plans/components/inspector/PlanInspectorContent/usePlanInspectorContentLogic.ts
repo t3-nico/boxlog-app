@@ -5,13 +5,11 @@
  */
 
 import { useQueryClient } from '@tanstack/react-query';
-import { format } from 'date-fns';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 import {
   localTimeToUTCISO,
-  parseDateString,
   parseDatetimeString,
   parseISOToUserTimezone,
 } from '@/features/calendar/utils/dateUtils';
@@ -32,7 +30,7 @@ import { useInspectorAutoSave, useInspectorNavigation, useRecurringPlanEdit } fr
 
 // スコープダイアログを表示するフィールド（日付・時間）
 // title/descriptionは即座に保存（Googleカレンダー準拠）
-const SCOPE_DIALOG_FIELDS = ['due_date', 'start_time', 'end_time'] as const;
+const SCOPE_DIALOG_FIELDS = ['start_time', 'end_time'] as const;
 
 // 即座にDB保存するフィールド（編集モードのみ）
 const IMMEDIATE_SAVE_FIELDS = ['title', 'description'] as const;
@@ -201,7 +199,6 @@ export function usePlanInspectorContentLogic() {
   const titleRef = useRef<HTMLInputElement>(null);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
   const [scheduleDate, setScheduleDate] = useState<Date | undefined>(); // スケジュール日（start_time/end_time用）
-  const [dueDate, setDueDate] = useState<Date | undefined>(); // 期限日（due_date用）
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
   const [reminderType, setReminderType] = useState<string>('');
@@ -250,8 +247,6 @@ export function usePlanInspectorContentLogic() {
   useEffect(() => {
     // ドラフトモードの場合はdraftPlanから初期化
     if (isDraftMode && draftPlan) {
-      setDueDate(draftPlan.due_date ? parseDateString(draftPlan.due_date) : undefined);
-
       if (draftPlan.start_time) {
         const date = parseDatetimeString(draftPlan.start_time);
         setScheduleDate(date);
@@ -277,9 +272,6 @@ export function usePlanInspectorContentLogic() {
     }
 
     if (plan && 'id' in plan) {
-      // 期限日（due_date）を設定
-      setDueDate(plan.due_date ? parseDateString(plan.due_date) : undefined);
-
       // スケジュール日と時間を設定（タイムゾーン対応）
       if (plan.start_time) {
         const date = parseISOToUserTimezone(plan.start_time, timezone);
@@ -322,7 +314,6 @@ export function usePlanInspectorContentLogic() {
       }
     } else if (!plan && !initialData) {
       setScheduleDate(undefined);
-      setDueDate(undefined);
       setStartTime('');
       setEndTime('');
       setReminderType('');
@@ -549,15 +540,6 @@ export function usePlanInspectorContentLogic() {
     [isDraftMode, startTime, endTime, addPendingChange, updateDraft, timezone],
   );
 
-  // 期限日変更ハンドラー（due_date）
-  const handleDueDateChange = useCallback(
-    (date: Date | undefined) => {
-      setDueDate(date);
-      autoSave('due_date', date ? format(date, 'yyyy-MM-dd') : undefined);
-    },
-    [autoSave],
-  );
-
   const handleStartTimeChange = useCallback(
     (time: string) => {
       // 時間変更時に既存のエラーをクリア
@@ -650,7 +632,6 @@ export function usePlanInspectorContentLogic() {
       openInspectorWithDraft({
         title: `${plan.title} (copy)`,
         description: plan.description ?? null,
-        due_date: plan.due_date ?? null,
         start_time: plan.start_time ?? null,
         end_time: plan.end_time ?? null,
       });
@@ -691,7 +672,6 @@ export function usePlanInspectorContentLogic() {
           title: currentDraft.title.trim(), // 空の場合はUI側で「(タイトルなし)」を表示
           description: currentDraft.description ?? undefined,
           status: 'open',
-          due_date: currentDraft.due_date,
           start_time: currentDraft.start_time,
           end_time: currentDraft.end_time,
         });
@@ -805,7 +785,6 @@ export function usePlanInspectorContentLogic() {
     // Form state
     titleRef,
     scheduleDate, // スケジュール日（カレンダー配置用）
-    dueDate, // 期限日
     startTime,
     endTime,
     reminderType,
@@ -814,7 +793,6 @@ export function usePlanInspectorContentLogic() {
 
     // Form handlers
     handleScheduleDateChange, // スケジュール日変更
-    handleDueDateChange, // 期限日変更
     handleStartTimeChange,
     handleEndTimeChange,
     autoSave,

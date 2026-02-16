@@ -4,7 +4,6 @@
     "description": "Terms of Service, Privacy Policy, and other legal documents",
     "lastUpdated": "Last Updated",
     "effectiveDate": "Effective Date",
-    "cookieSettings": "Cookie Settings",
     "privacy": {
       "title": "Privacy Policy",
       "description": "How Dayopt handles your personal information",
@@ -148,83 +147,6 @@
         }
       }
     },
-    "cookies": {
-      "title": "Cookie Settings",
-      "description": "Cookie Usage and Management",
-      "banner": {
-        "title": "About Cookies",
-        "description": "We use cookies to improve our service and analyze usage.",
-        "learnMore": "Learn more",
-        "acceptAll": "Accept All",
-        "rejectAll": "Necessary Only",
-        "customize": "Customize"
-      },
-      "categories": {
-        "necessary": {
-          "title": "Essential Cookies",
-          "description": "These cookies are necessary for the basic functionality of the site. They cannot be disabled.",
-          "cookies": {
-            "session": "Session Cookie (maintain authentication state)",
-            "csrf": "CSRF Token (security protection)",
-            "consent": "Cookie consent state"
-          },
-          "ariaLabel": "Necessary cookies (cannot be disabled)"
-        },
-        "analytics": {
-          "title": "Analytics Cookies",
-          "description": "These cookies help us analyze site usage and improve user experience.",
-          "cookies": {
-            "sentry": "Sentry (Error tracking, performance monitoring, IP address transmission)",
-            "vercelNote": "Note: Vercel Analytics does not use cookies and requires no consent"
-          },
-          "ariaLabel": "Analytics cookies"
-        },
-        "marketing": {
-          "title": "Marketing Cookies",
-          "description": "Used for personalized content and advertising. Currently not in use.",
-          "cookies": {
-            "none": "Not currently in use"
-          },
-          "ariaLabel": "Marketing cookies"
-        }
-      },
-      "settings": {
-        "title": "Manage Cookie Preferences",
-        "description": "You can enable or disable each cookie category. Please note that essential cookies cannot be disabled.",
-        "save": "Save Settings",
-        "acceptAll": "Accept All",
-        "rejectAll": "Necessary Only",
-        "acceptedAll": "All cookies accepted",
-        "acceptedNecessaryOnly": "Necessary cookies only accepted",
-        "enabled": "Enabled",
-        "disabled": "Disabled",
-        "alwaysActive": "Always Active",
-        "saved": "Cookie settings saved"
-      },
-      "page": {
-        "title": "Cookie Settings",
-        "description": "Cookie Usage and Management",
-        "whatAreCookies": {
-          "title": "What are Cookies?",
-          "content": "Cookies are small text files that websites store in your browser. Using cookies enables maintaining login status, remembering settings, and analyzing site usage patterns."
-        },
-        "howWeUse": {
-          "title": "How We Use Cookies",
-          "content": "We use cookies for the following purposes:",
-          "purposes": {
-            "authentication": "Authentication and security",
-            "preferences": "Saving user preferences",
-            "analytics": "Analyzing site usage",
-            "security": "Preventing unauthorized use"
-          }
-        },
-        "manageCookies": {
-          "title": "Cookie Management",
-          "content": "You can manage cookies in your browser settings. Please check your browser help for details."
-        },
-        "browserWarning": "If you disable cookies in your browser settings, some features may not function properly."
-      }
-    },
     "contact": {
       "email": "support@dayopt.app",
       "website": "https://dayopt.app"
@@ -235,7 +157,6 @@
       "terms": "Terms of Service",
       "tokushoho": "Commercial Transactions Act",
       "security": "Security",
-      "cookies": "Cookie Settings",
       "ossCredits": "OSS Licenses"
     },
     "reviewWarning": {

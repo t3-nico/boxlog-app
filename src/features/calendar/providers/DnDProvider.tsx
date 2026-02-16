@@ -38,8 +38,8 @@ interface DnDProviderProps {
  * - ドロップ位置から日付・時刻を計算してplan更新
  *
  * **エッジケース対応**:
- * - 時間なしプラン → due_date のみ更新
- * - 時間指定プラン → due_date + start_time + end_time を更新
+ * - 時間なしプラン → start_time/end_time を null に更新
+ * - 時間指定プラン → start_time + end_time を更新
  * - 無効なドロップ先 → エラーメッセージ表示
  * - 重複プラン → 既存の時間幅を保持
  */
@@ -139,21 +139,21 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
 
       try {
         // 1. 日付を取得（Date型 または YYYY-MM-DD文字列）
-        let due_date: string;
+        let dateStr: string;
         if (dropData.date instanceof Date) {
           // Date型の場合、ローカルタイムゾーンで年月日を取得
           const year = dropData.date.getFullYear();
           const month = String(dropData.date.getMonth() + 1).padStart(2, '0');
           const day = String(dropData.date.getDate()).padStart(2, '0');
-          due_date = `${year}-${month}-${day}`;
+          dateStr = `${year}-${month}-${day}`;
         } else if (typeof dropData.date === 'string') {
           // 文字列の場合、そのまま使用
-          due_date = dropData.date;
+          dateStr = dropData.date;
         } else {
           throw new Error(t('errors.calendar.invalidDateFormat'));
         }
 
-        // 3. 時刻を取得
+        // 2. 時刻を取得
         let start_time: string | null = null;
         let end_time: string | null = null;
 
@@ -174,7 +174,7 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
           }
 
           // ユーザーのタイムゾーンでDateオブジェクトを作成
-          const [year, month, day] = due_date.split('-').map(Number);
+          const [year, month, day] = dateStr.split('-').map(Number);
           // ユーザーのタイムゾーンの時刻として作成
           const zonedStart = new Date(year!, month! - 1, day!, hour, minute, 0);
           const zonedEnd = new Date(year!, month! - 1, day!, hour + 1, minute, 0);
@@ -192,14 +192,12 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
           end_time = null;
         }
 
-        // 4. plan更新
+        // 3. plan更新
         // 注意: optional()フィールドでは undefined = 更新しない、null = NULL値に更新
         const updateData: {
-          due_date: string;
           start_time: string | null;
           end_time: string | null;
         } = {
-          due_date,
           start_time,
           end_time,
         };
@@ -306,14 +304,7 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
                     </div>
                   )}
                 </>
-              ) : (
-                // ドロップ先がない場合は元の日付を表示
-                activeplan.due_date && (
-                  <div>
-                    📅 {formatDateWithSettings(new Date(activeplan.due_date + 'T00:00:00'))}
-                  </div>
-                )
-              )}
+              ) : null}
             </div>
           </div>
         ) : null}

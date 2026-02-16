@@ -29,7 +29,6 @@ export interface DraftPlan {
   title: string;
   description: string | null;
   status: 'open';
-  due_date: string | null;
   start_time: string | null;
   end_time: string | null;
   // Record作成時に使用する追加フィールド
@@ -46,7 +45,6 @@ export interface PendingChanges {
   title?: string;
   description?: string;
   status?: 'open' | 'closed';
-  due_date?: string | null;
   start_time?: string | null;
   end_time?: string | null;
   reminder_minutes?: number | null;
@@ -169,7 +167,6 @@ export const usePlanInspectorStore = create<PlanInspectorStore>()(
               title: initialData?.title ?? '',
               description: initialData?.description ?? null,
               status: 'open',
-              due_date: initialData?.due_date ?? null,
               start_time: initialData?.start_time ?? null,
               end_time: initialData?.end_time ?? null,
               // Record作成時に使用する追加フィールド

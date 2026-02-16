@@ -2,8 +2,6 @@
 
 import { useCallback } from 'react';
 
-import { format } from 'date-fns';
-
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
 import { useRecurringEditConfirmStore } from '@/features/plans/stores/useRecurringEditConfirmStore';
 import { useRecordInspectorStore } from '@/features/records/stores';
@@ -120,13 +118,11 @@ export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandle
       if (startTime && endTime && date) {
         openInspectorWithDraft({
           title: '',
-          due_date: format(date, 'yyyy-MM-dd'),
           start_time: startTime.toISOString(),
           end_time: endTime.toISOString(),
         });
 
         logger.log('📝 Opened draft plan:', {
-          dueDate: format(date, 'yyyy-MM-dd'),
           startTime: startTime.toISOString(),
           endTime: endTime.toISOString(),
         });
@@ -179,13 +175,11 @@ export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandle
       // ドラフトモードでInspectorを開く（DB保存は入力時に遅延実行）
       openInspectorWithDraft({
         title: '',
-        due_date: format(selection.date, 'yyyy-MM-dd'),
         start_time: startTime.toISOString(),
         end_time: endTime.toISOString(),
       });
 
       logger.log('📝 Opened draft plan from drag selection:', {
-        dueDate: format(selection.date, 'yyyy-MM-dd'),
         startTime: startTime.toISOString(),
         endTime: endTime.toISOString(),
       });

@@ -280,7 +280,7 @@ export const ScrollableCalendarLayout = ({
                       style={{
                         top: `${collapsedCurrentTimePosition - COLLAPSED_SECTION_HEIGHT}px`,
                         transform: 'translateY(-50%)',
-                        backgroundColor: currentTimeLineColor || 'hsl(var(--primary))',
+                        backgroundColor: currentTimeLineColor || 'var(--primary)',
                       }}
                     >
                       {formattedCurrentTime}
@@ -323,7 +323,7 @@ export const ScrollableCalendarLayout = ({
                     style={{
                       top: `${currentTimePosition}px`,
                       transform: 'translateY(-50%)',
-                      backgroundColor: currentTimeLineColor || 'hsl(var(--primary))',
+                      backgroundColor: currentTimeLineColor || 'var(--primary)',
                     }}
                   >
                     {formattedCurrentTime}

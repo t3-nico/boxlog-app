@@ -1,8 +1,8 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 
-import { CalendarPlus, ChevronDown, Clock, FileText, History, SquarePen, Tag } from 'lucide-react';
+import { ChevronDown, SquarePen } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -13,9 +13,9 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { HoverTooltip } from '@/components/ui/tooltip';
-import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
-import { useTagModalNavigation } from '@/features/tags/hooks/useTagModalNavigation';
 import { useTranslations } from 'next-intl';
+
+import { useCreateMenuItems } from '../../hooks/useCreateMenuItems';
 
 interface CreateNewDropdownProps {
   /** ボタンサイズ: 'default' = 40px, 'sm' = 32px */
@@ -29,7 +29,7 @@ interface CreateNewDropdownProps {
 /**
  * 新規作成ドロップダウン
  *
- * Plan/Record/History/Templates/Tagsを選択して新規作成できるドロップダウンメニュー
+ * Plan/Record/Tagsを選択して新規作成できるドロップダウンメニュー
  * - サイズはsize propsで制御（'default' = 40px, 'sm' = 32px）
  */
 export function CreateNewDropdown({
@@ -38,29 +38,8 @@ export function CreateNewDropdown({
   tooltipSide = 'bottom',
 }: CreateNewDropdownProps) {
   const t = useTranslations();
-  const openInspectorWithDraft = usePlanInspectorStore((state) => state.openInspectorWithDraft);
-  const { openTagCreateModal } = useTagModalNavigation();
   const [isOpen, setIsOpen] = useState(false);
-
-  // Plan作成: PlanInspector をドラフトモードで開く（Planタブ）
-  const handleCreatePlan = useCallback(() => {
-    openInspectorWithDraft(undefined, 'plan');
-  }, [openInspectorWithDraft]);
-
-  // Record作成: PlanInspector をドラフトモードで開く（Recordタブ）
-  const handleCreateRecord = useCallback(() => {
-    openInspectorWithDraft(undefined, 'record');
-  }, [openInspectorWithDraft]);
-
-  // History機能: 将来実装予定（過去30件の履歴からクイック作成）
-  const handleOpenHistory = () => {};
-
-  // Templates機能: 将来実装予定（保存済みテンプレートから作成）
-  const handleOpenTemplates = () => {};
-
-  const handleCreateTag = () => {
-    openTagCreateModal();
-  };
+  const menuItems = useCreateMenuItems();
 
   const trigger = (
     <DropdownMenuTrigger asChild>
@@ -86,41 +65,20 @@ export function CreateNewDropdown({
         trigger
       )}
       <DropdownMenuContent side="right" align="start" sideOffset={4}>
-        {/* Plan - 予定を作成 */}
-        <DropdownMenuItem onClick={handleCreatePlan}>
-          <CalendarPlus className="size-4" />
-          {t('createSheet.plan')}
-        </DropdownMenuItem>
+        {menuItems.map((entry, index) => {
+          if (entry.type === 'separator') {
+            return <DropdownMenuSeparator key={`separator-${index}`} />;
+          }
 
-        {/* Record - 記録 */}
-        <DropdownMenuItem onClick={handleCreateRecord}>
-          <Clock className="size-4" />
-          {t('createSheet.record')}
-        </DropdownMenuItem>
+          const IconComponent = entry.icon;
 
-        <DropdownMenuSeparator />
-
-        {/* History - 履歴から作成 */}
-        <DropdownMenuItem onClick={handleOpenHistory} disabled>
-          <History className="size-4" />
-          {t('createSheet.history')}
-          <span className="text-muted-foreground ml-auto text-xs">{t('comingSoon')}</span>
-        </DropdownMenuItem>
-
-        {/* Templates - テンプレートから作成 */}
-        <DropdownMenuItem onClick={handleOpenTemplates} disabled>
-          <FileText className="size-4" />
-          {t('createSheet.template')}
-          <span className="text-muted-foreground ml-auto text-xs">{t('comingSoon')}</span>
-        </DropdownMenuItem>
-
-        <DropdownMenuSeparator />
-
-        {/* Tags - タグ作成 */}
-        <DropdownMenuItem onClick={handleCreateTag}>
-          <Tag className="size-4" />
-          {t('createNew.tag')}
-        </DropdownMenuItem>
+          return (
+            <DropdownMenuItem key={entry.id} onClick={entry.action}>
+              <IconComponent className="size-4" />
+              {entry.label}
+            </DropdownMenuItem>
+          );
+        })}
       </DropdownMenuContent>
     </DropdownMenu>
   );

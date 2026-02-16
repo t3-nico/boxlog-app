@@ -1,0 +1,39 @@
+name: 🗃️ Supabase Migration (Staging)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'supabase/migrations/**'
+  workflow_dispatch:
+
+env:
+  SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+  SUPABASE_DB_PASSWORD: ${{ secrets.STAGING_DB_PASSWORD }}
+  STAGING_PROJECT_ID: yvglwblxrnrenfifsnje
+
+permissions:
+  contents: read
+
+jobs:
+  migrate-staging:
+    name: 🗃️ Push Migrations to Staging
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+      - name: 🏗️ Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: 🔗 Link to Staging
+        run: supabase link --project-ref ${{ env.STAGING_PROJECT_ID }}
+
+      - name: 🧪 Dry Run
+        run: supabase db push --dry-run
+
+      - name: 🚀 Push Migrations
+        run: supabase db push

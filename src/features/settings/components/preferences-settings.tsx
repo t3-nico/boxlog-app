@@ -20,7 +20,7 @@ import { SettingRow } from './fields/SettingRow';
 import { SettingsCard } from './SettingsCard';
 
 interface PreferencesSettingsData {
-  startupScreen: 'last' | 'inbox' | 'calendar';
+  startupScreen: 'last' | 'plan' | 'calendar';
 }
 
 export function PreferencesSettings() {
@@ -64,7 +64,7 @@ export function PreferencesSettings() {
 
   const handleStartupScreenChange = useCallback(
     (value: string) => {
-      preferences.updateValue('startupScreen', value as 'last' | 'inbox' | 'calendar');
+      preferences.updateValue('startupScreen', value as 'last' | 'plan' | 'calendar');
     },
     [preferences],
   );

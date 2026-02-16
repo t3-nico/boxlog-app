@@ -35,7 +35,6 @@ interface PlansCrudCaller {
   create: (input: {
     title: string;
     status: string;
-    due_date?: string;
     start_time?: string;
     end_time?: string;
   }) => Promise<RouterOutputs['create']>;
@@ -217,34 +216,6 @@ describe('plansCrudRouter', () => {
       });
 
       expect(result).toEqual(mockPlan);
-    });
-
-    it('should normalize date/time consistency on create', async () => {
-      const mockPlan = createMockPlan({
-        id: 'new-plan-id',
-        title: 'New Plan',
-        due_date: '2024-01-15',
-        start_time: '2024-01-15T10:00:00.000Z',
-        end_time: '2024-01-15T11:00:00.000Z',
-      });
-
-      const mockSupabase = createMockSupabase();
-      setupMockInsertQuery(mockSupabase.from, 'plans', mockPlan);
-
-      const ctx = createAuthenticatedContext('test-user-id', {
-        supabaseOverrides: mockSupabase,
-      });
-      const caller = createTypedCaller(plansCrudRouter, ctx);
-
-      const result = await caller.create({
-        title: 'New Plan',
-        status: 'open',
-        due_date: '2024-01-15',
-        start_time: '2024-01-15T10:00:00.000Z',
-        end_time: '2024-01-15T11:00:00.000Z',
-      });
-
-      expect((result as { due_date: string }).due_date).toBe('2024-01-15');
     });
   });
 

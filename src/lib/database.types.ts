@@ -28,79 +28,12 @@ export type Database = {
   };
   public: {
     Tables: {
-      audit_logs: {
-        Row: {
-          action: string | null;
-          created_at: string;
-          error_message: string | null;
-          event_type: string;
-          geo_city: string | null;
-          geo_country: string | null;
-          geo_country_name: string | null;
-          geo_region: string | null;
-          geo_source: string | null;
-          geo_timezone: string | null;
-          id: string;
-          ip_address: unknown;
-          metadata: Json | null;
-          resource: string | null;
-          session_id: string | null;
-          severity: string;
-          success: boolean;
-          timestamp: string;
-          user_agent: string | null;
-          user_id: string | null;
-        };
-        Insert: {
-          action?: string | null;
-          created_at?: string;
-          error_message?: string | null;
-          event_type: string;
-          geo_city?: string | null;
-          geo_country?: string | null;
-          geo_country_name?: string | null;
-          geo_region?: string | null;
-          geo_source?: string | null;
-          geo_timezone?: string | null;
-          id?: string;
-          ip_address?: unknown;
-          metadata?: Json | null;
-          resource?: string | null;
-          session_id?: string | null;
-          severity: string;
-          success?: boolean;
-          timestamp?: string;
-          user_agent?: string | null;
-          user_id?: string | null;
-        };
-        Update: {
-          action?: string | null;
-          created_at?: string;
-          error_message?: string | null;
-          event_type?: string;
-          geo_city?: string | null;
-          geo_country?: string | null;
-          geo_country_name?: string | null;
-          geo_region?: string | null;
-          geo_source?: string | null;
-          geo_timezone?: string | null;
-          id?: string;
-          ip_address?: unknown;
-          metadata?: Json | null;
-          resource?: string | null;
-          session_id?: string | null;
-          severity?: string;
-          success?: boolean;
-          timestamp?: string;
-          user_agent?: string | null;
-          user_id?: string | null;
-        };
-        Relationships: [];
-      };
       auth_audit_logs: {
         Row: {
           created_at: string;
           event_type: string;
+          geo_city: string | null;
+          geo_country: string | null;
           id: string;
           ip_address: string | null;
           metadata: Json | null;
@@ -110,6 +43,8 @@ export type Database = {
         Insert: {
           created_at?: string;
           event_type: string;
+          geo_city?: string | null;
+          geo_country?: string | null;
           id?: string;
           ip_address?: string | null;
           metadata?: Json | null;
@@ -119,6 +54,8 @@ export type Database = {
         Update: {
           created_at?: string;
           event_type?: string;
+          geo_city?: string | null;
+          geo_country?: string | null;
           id?: string;
           ip_address?: string | null;
           metadata?: Json | null;
@@ -300,27 +237,6 @@ export type Database = {
             referencedColumns: ['id'];
           },
         ];
-      };
-      password_history: {
-        Row: {
-          created_at: string;
-          id: string;
-          password_hash: string;
-          user_id: string;
-        };
-        Insert: {
-          created_at?: string;
-          id?: string;
-          password_hash: string;
-          user_id: string;
-        };
-        Update: {
-          created_at?: string;
-          id?: string;
-          password_hash?: string;
-          user_id?: string;
-        };
-        Relationships: [];
       };
       plan_activities: {
         Row: {
@@ -843,15 +759,6 @@ export type Database = {
       };
     };
     Functions: {
-      add_password_to_history: {
-        Args: { p_new_password: string; p_user_id: string };
-        Returns: undefined;
-      };
-      check_password_reuse: {
-        Args: { p_new_password: string; p_user_id: string };
-        Returns: boolean;
-      };
-      cleanup_old_audit_logs: { Args: never; Returns: undefined };
       cleanup_old_auth_audit_logs: { Args: never; Returns: undefined };
       cleanup_old_login_attempts: { Args: never; Returns: undefined };
       count_unused_recovery_codes: {
@@ -872,10 +779,6 @@ export type Database = {
       delete_plan_with_cleanup: {
         Args: { p_plan_id: string; p_user_id: string };
         Returns: Json;
-      };
-      get_password_history_count: {
-        Args: { p_user_id: string };
-        Returns: number;
       };
       get_tag_stats: {
         Args: { p_user_id: string };

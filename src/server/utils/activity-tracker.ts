@@ -40,9 +40,6 @@ export async function trackPlanChanges(
   }
 }
 
-// 互換性のためのエイリアス
-export const trackplanChanges = trackPlanChanges;
-
 /**
  * 変更を検出してアクティビティ種別を決定
  */
@@ -77,16 +74,6 @@ function detectChanges(oldData: Record<string, any>, newData: Record<string, any
       old_value: oldData.description || '',
       new_value: newData.description || '',
       action_type: 'description_changed',
-    });
-  }
-
-  // 期限変更
-  if (oldData.due_date !== newData.due_date) {
-    changes.push({
-      field_name: 'due_date',
-      old_value: oldData.due_date || '',
-      new_value: newData.due_date || '',
-      action_type: 'due_date_changed',
     });
   }
 

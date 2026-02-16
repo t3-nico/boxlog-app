@@ -2,12 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { CalendarPlus, Clock, FileText, History, Tag } from 'lucide-react';
-
-import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
-import { useTagModalNavigation } from '@/features/tags/hooks/useTagModalNavigation';
+import { useCreateMenuItems } from '@/features/navigation/hooks/useCreateMenuItems';
 import { cn } from '@/lib/utils';
-import { useTranslations } from 'next-intl';
 
 interface EmptyAreaContextMenuProps {
   position: { x: number; y: number };
@@ -24,15 +20,11 @@ export function EmptyAreaContextMenu({
   clickedDateTime,
   onClose,
 }: EmptyAreaContextMenuProps) {
-  const t = useTranslations();
   const menuRef = useRef<HTMLDivElement>(null);
   const [adjustedPosition, setAdjustedPosition] = useState(position);
 
-  const openInspectorWithDraft = usePlanInspectorStore((state) => state.openInspectorWithDraft);
-  const { openTagCreateModal } = useTagModalNavigation();
-
   // クリック時刻から start_time / end_time（1時間枠）を生成
-  const buildInitialData = useCallback(() => {
+  const initialData = (() => {
     const start = new Date(clickedDateTime.date);
     start.setHours(clickedDateTime.hour, clickedDateTime.minute, 0, 0);
 
@@ -43,7 +35,9 @@ export function EmptyAreaContextMenu({
       start_time: start.toISOString(),
       end_time: end.toISOString(),
     };
-  }, [clickedDateTime]);
+  })();
+
+  const menuItems = useCreateMenuItems({ initialData });
 
   // 画面外に出ないよう位置調整
   useEffect(() => {
@@ -91,50 +85,13 @@ export function EmptyAreaContextMenu({
     };
   }, [onClose]);
 
-  const handleAction = (action: () => void) => {
-    action();
-    onClose();
-  };
-
-  const menuItems = [
-    {
-      icon: CalendarPlus,
-      label: t('createSheet.plan'),
-      action: () => openInspectorWithDraft(buildInitialData(), 'plan'),
-      disabled: false,
-      suffix: null,
+  const handleAction = useCallback(
+    (action: () => void) => {
+      action();
+      onClose();
     },
-    {
-      icon: Clock,
-      label: t('createSheet.record'),
-      action: () => openInspectorWithDraft(buildInitialData(), 'record'),
-      disabled: false,
-      suffix: null,
-    },
-    { separator: true as const },
-    {
-      icon: History,
-      label: t('createSheet.history'),
-      action: () => {},
-      disabled: true,
-      suffix: t('comingSoon'),
-    },
-    {
-      icon: FileText,
-      label: t('createSheet.template'),
-      action: () => {},
-      disabled: true,
-      suffix: t('comingSoon'),
-    },
-    { separator: true as const },
-    {
-      icon: Tag,
-      label: t('createNew.tag'),
-      action: () => openTagCreateModal(),
-      disabled: false,
-      suffix: null,
-    },
-  ];
+    [onClose],
+  );
 
   return (
     <div
@@ -145,32 +102,26 @@ export function EmptyAreaContextMenu({
         top: adjustedPosition.y,
       }}
     >
-      {menuItems.map((item, index) => {
-        if ('separator' in item) {
+      {menuItems.map((entry, index) => {
+        if (entry.type === 'separator') {
           return <div key={`separator-${index}`} className="bg-border my-1 h-px" />;
         }
 
-        const IconComponent = item.icon;
+        const IconComponent = entry.icon;
 
         return (
           <button
             type="button"
-            key={item.label}
-            onClick={() => !item.disabled && handleAction(item.action)}
-            disabled={item.disabled}
+            key={entry.id}
+            onClick={() => handleAction(entry.action)}
             className={cn(
               'flex w-full cursor-default items-center gap-2 rounded px-2 py-2 text-left text-sm outline-hidden transition-colors select-none',
               "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
-              item.disabled
-                ? 'text-muted-foreground cursor-not-allowed opacity-50'
-                : "text-foreground hover:bg-state-hover focus:bg-state-focus [&_svg:not([class*='text-'])]:text-muted-foreground",
+              "text-foreground hover:bg-state-hover focus:bg-state-focus [&_svg:not([class*='text-'])]:text-muted-foreground",
             )}
           >
             <IconComponent />
-            <span>{item.label}</span>
-            {item.suffix ? (
-              <span className="text-muted-foreground ml-auto text-xs">{item.suffix}</span>
-            ) : null}
+            <span>{entry.label}</span>
           </button>
         );
       })}

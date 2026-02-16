@@ -51,7 +51,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | **データ**         | Supabase, tRPC v11, Zod                             |
 | **UI**             | shadcn/ui                                           |
 | **CI/品質**        | Lighthouse CI, Vitest, Playwright                   |
-| **アナリティクス** | PostHog, Sentry                                     |
+| **アナリティクス** | Sentry                                              |
 
 ## 🏗️ 主要機能（Features）
 
@@ -438,7 +438,7 @@ GAFAが作ったOSS、推奨パターンを使う。
 - Vercel Preview = すべてのmain以外のブランチ → Staging DB
 - マイグレーションは各環境に個別適用が必要
 
-**詳細**: [`docs/development/ENVIRONMENTS.md`](docs/development/ENVIRONMENTS.md)
+**詳細**: Storybook → Docs/Architecture/Environments
 
 ## 📦 依存関係の運用
 
@@ -599,12 +599,6 @@ npm run test -- path  # 特定ファイル
 - [ ] タッチターゲット最小44x44px（Apple HIG準拠）
 
 **詳細ガイド**: インタラクティブ要素、Dialog、キーボード操作の実装時は [`.claude/skills/a11y/SKILL.md`](.claude/skills/a11y/SKILL.md) を参照
-
-### アナリティクス（PostHog）
-
-- 環境変数 `NEXT_PUBLIC_POSTHOG_KEY` で有効化
-- 未設定時は自動的に無効化（エラーなし）
-- 認証ページでは初期化スキップ（パフォーマンス最適化）
 
 ---
 

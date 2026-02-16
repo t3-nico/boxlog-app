@@ -8,6 +8,8 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 
 import type { Database } from '@/lib/database.types';
+import { logger } from '@/lib/logger';
+import { createServiceRoleClient } from '@/lib/supabase/oauth';
 
 /**
  * User Service エラー
@@ -49,9 +51,10 @@ export interface ExportDataOptions {
  */
 export interface DeleteAccountResult {
   success: true;
-  scheduledDeletionDate: string;
-  cancelUrl: string;
 }
+
+/** テーブル行型のエイリアス */
+type Row<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Row'];
 
 /**
  * データエクスポートレスポンス
@@ -60,10 +63,14 @@ export interface ExportDataResult {
   exportedAt: string;
   userId: string;
   data: {
-    profile: unknown;
-    plans: unknown[];
-    tags: unknown[];
-    userSettings: unknown;
+    profile: Row<'profiles'> | null;
+    plans: Row<'plans'>[];
+    tags: Row<'tags'>[];
+    records: Row<'records'>[];
+    planTags: Row<'plan_tags'>[];
+    recordTags: Row<'record_tags'>[];
+    notificationPreferences: Row<'notification_preferences'> | null;
+    userSettings: Row<'user_settings'> | null;
   };
 }
 
@@ -73,13 +80,14 @@ export interface ExportDataResult {
 export function createUserService(supabase: SupabaseClient<Database>) {
   return {
     /**
-     * アカウント削除リクエスト（論理削除）
-     * GDPR "Right to be Forgotten" 準拠
+     * アカウント即時削除
+     *
+     * auth.users を削除すると CASCADE DELETE により
+     * plans, records, tags, notifications 等すべてのユーザーデータが自動削除される
      */
     async deleteAccount(options: DeleteAccountOptions): Promise<DeleteAccountResult> {
       const { userId, userEmail, password, confirmText } = options;
 
-      // バリデーション
       if (!password || !confirmText) {
         throw new UserServiceError('INVALID_INPUT', 'Password and confirmation text are required');
       }
@@ -98,32 +106,48 @@ export function createUserService(supabase: SupabaseClient<Database>) {
         throw new UserServiceError('INVALID_PASSWORD', 'Invalid password');
       }
 
-      // 削除予定日（30日後）
-      const scheduledDeletionDate = new Date();
-      scheduledDeletionDate.setDate(scheduledDeletionDate.getDate() + 30);
-
-      // プロフィールに削除予定日を記録（論理削除）
-      const { error: updateError } = await supabase
-        .from('profiles')
-        // @ts-ignore - deleted_atカラム追加予定
-        .update({
-          deleted_at: scheduledDeletionDate.toISOString(),
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', userId);
-
-      if (updateError) {
-        throw new UserServiceError(
-          'DELETE_FAILED',
-          `Failed to schedule account deletion: ${updateError.message}`,
+      // Storage のアバター画像を削除
+      try {
+        const { data: files } = await supabase.storage.from('avatars').list(userId);
+        if (files && files.length > 0) {
+          const filePaths = files.map((f) => `${userId}/${f.name}`);
+          await supabase.storage.from('avatars').remove(filePaths);
+        }
+      } catch (storageError) {
+        logger.warn(
+          'Failed to delete avatar files, continuing with account deletion',
+          storageError,
         );
       }
 
-      return {
-        success: true,
-        scheduledDeletionDate: scheduledDeletionDate.toISOString(),
-        cancelUrl: '/settings/account/cancel-deletion',
-      };
+      // Service Role クライアントで CASCADE 対象外のPIIデータを削除
+      const adminClient = createServiceRoleClient();
+
+      try {
+        // login_attempts: email基準でCASCADE対象外
+        await adminClient.from('login_attempts').delete().eq('email', userEmail);
+        // auth_audit_logs: ON DELETE SET NULL でIP/UA等のPIIが残存するため手動削除
+        await adminClient.from('auth_audit_logs').delete().eq('user_id', userId);
+      } catch (cleanupError) {
+        logger.warn(
+          'Failed to delete PII from non-cascaded tables, continuing with account deletion',
+          cleanupError,
+        );
+      }
+
+      // auth.users を削除 → CASCADE DELETE により全テーブルのユーザーデータが自動削除される
+      const { error: deleteError } = await adminClient.auth.admin.deleteUser(userId);
+
+      if (deleteError) {
+        throw new UserServiceError(
+          'DELETE_FAILED',
+          `Failed to delete account: ${deleteError.message}`,
+        );
+      }
+
+      logger.info('Account deleted successfully', { userId });
+
+      return { success: true };
     },
 
     /**
@@ -133,15 +157,26 @@ export function createUserService(supabase: SupabaseClient<Database>) {
     async exportData(options: ExportDataOptions): Promise<ExportDataResult> {
       const { userId } = options;
 
-      // データ取得（tag_groups は廃止され、tags の parent_id で管理）
-      const [profileResult, plansResult, tagsResult, userSettingsResult] = await Promise.all([
+      const [
+        profileResult,
+        plansResult,
+        tagsResult,
+        recordsResult,
+        planTagsResult,
+        recordTagsResult,
+        notificationPreferencesResult,
+        userSettingsResult,
+      ] = await Promise.all([
         supabase.from('profiles').select('*').eq('id', userId).single(),
         supabase.from('plans').select('*').eq('user_id', userId),
         supabase.from('tags').select('*').eq('user_id', userId),
+        supabase.from('records').select('*').eq('user_id', userId),
+        supabase.from('plan_tags').select('*').eq('user_id', userId),
+        supabase.from('record_tags').select('*').eq('user_id', userId),
+        supabase.from('notification_preferences').select('*').eq('user_id', userId).single(),
         supabase.from('user_settings').select('*').eq('user_id', userId).single(),
       ]);
 
-      // エラーチェック（PGRST116 = no rows returned はOK）
       if (profileResult.error && profileResult.error.code !== 'PGRST116') {
         throw new UserServiceError(
           'EXPORT_FAILED',
@@ -160,6 +195,24 @@ export function createUserService(supabase: SupabaseClient<Database>) {
           `Tags fetch error: ${tagsResult.error.message}`,
         );
       }
+      if (recordsResult.error) {
+        throw new UserServiceError(
+          'EXPORT_FAILED',
+          `Records fetch error: ${recordsResult.error.message}`,
+        );
+      }
+      if (planTagsResult.error) {
+        throw new UserServiceError(
+          'EXPORT_FAILED',
+          `Plan tags fetch error: ${planTagsResult.error.message}`,
+        );
+      }
+      if (recordTagsResult.error) {
+        throw new UserServiceError(
+          'EXPORT_FAILED',
+          `Record tags fetch error: ${recordTagsResult.error.message}`,
+        );
+      }
 
       return {
         exportedAt: new Date().toISOString(),
@@ -168,6 +221,10 @@ export function createUserService(supabase: SupabaseClient<Database>) {
           profile: profileResult.data || null,
           plans: plansResult.data || [],
           tags: tagsResult.data || [],
+          records: recordsResult.data || [],
+          planTags: planTagsResult.data || [],
+          recordTags: recordTagsResult.data || [],
+          notificationPreferences: notificationPreferencesResult.data || null,
           userSettings: userSettingsResult.data || null,
         },
       };

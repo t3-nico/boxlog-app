@@ -20,13 +20,13 @@ import {
 import { HoverTooltip } from '@/components/ui/tooltip';
 
 /** ソート可能なフィールド */
-export type PanelSortField = 'created_at' | 'updated_at' | 'due_date' | 'title';
+export type PanelSortField = 'created_at' | 'updated_at' | 'title';
 
 /** ソート方向 */
 export type PanelSortOrder = 'asc' | 'desc';
 
 /** サイドパネル用グルーピングフィールド */
-export type PanelGroupByField = 'due_date' | 'tags' | null;
+export type PanelGroupByField = 'tags' | null;
 
 /** スケジュールフィルター */
 export type PanelScheduleFilter = 'all' | 'scheduled' | 'unscheduled';
@@ -69,13 +69,11 @@ export function PlanListSortMenu({
   const sortOptions: Array<{ value: PanelSortField; label: string }> = [
     { value: 'created_at', label: t('panel.sort.createdAt') },
     { value: 'updated_at', label: t('panel.sort.updatedAt') },
-    { value: 'due_date', label: t('panel.sort.dueDate') },
     { value: 'title', label: t('panel.sort.title') },
   ];
 
   const groupOptions: Array<{ value: PanelGroupByField; label: string }> = [
     { value: null, label: t('panel.group.none') },
-    { value: 'due_date', label: t('panel.group.dueDate') },
     { value: 'tags', label: t('panel.group.tags') },
   ];
 

@@ -60,14 +60,12 @@ export function PlanInspectorContent() {
     handleRemoveTag,
     titleRef,
     scheduleDate,
-    dueDate,
     startTime,
     endTime,
     reminderType,
     setReminderType,
     timeConflictError,
     handleScheduleDateChange,
-    handleDueDateChange,
     handleStartTimeChange,
     handleEndTimeChange,
     autoSave,
@@ -170,7 +168,6 @@ export function PlanInspectorContent() {
               planId={planId!}
               titleRef={titleRef}
               scheduleDate={scheduleDate}
-              dueDate={dueDate}
               startTime={startTime}
               endTime={endTime}
               reminderType={reminderType}
@@ -179,7 +176,6 @@ export function PlanInspectorContent() {
               recurrenceType={null}
               onAutoSave={autoSave}
               onScheduleDateChange={handleScheduleDateChange}
-              onDueDateChange={handleDueDateChange}
               onStartTimeChange={handleStartTimeChange}
               onEndTimeChange={handleEndTimeChange}
               onReminderChange={(type) => setReminderType(type)}
@@ -200,7 +196,6 @@ export function PlanInspectorContent() {
             planId={planId!}
             titleRef={titleRef}
             scheduleDate={scheduleDate}
-            dueDate={dueDate}
             startTime={startTime}
             endTime={endTime}
             reminderType={reminderType}
@@ -221,7 +216,6 @@ export function PlanInspectorContent() {
             })()}
             onAutoSave={autoSave}
             onScheduleDateChange={handleScheduleDateChange}
-            onDueDateChange={handleDueDateChange}
             onStartTimeChange={handleStartTimeChange}
             onEndTimeChange={handleEndTimeChange}
             onReminderChange={(type) => {
@@ -312,7 +306,6 @@ export function PlanInspectorContent() {
               const draftData: Partial<DraftPlan> = {
                 title: plan.title || '',
                 description: plan.description,
-                due_date: format(scheduleDate, 'yyyy-MM-dd'),
                 start_time: buildIsoTime(startTime),
                 end_time: buildIsoTime(endTime),
                 tagIds: selectedTagIds,

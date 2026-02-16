@@ -219,18 +219,15 @@
     "statusBar": {
       "noSchedule": "予定なし",
       "openSchedule": "予定を開く",
-      "createNewPlan": "新規プラン作成"
-    },
-    "overdue": {
-      "badge": "{count}件の保留中",
-      "title": "保留中のタスク",
-      "period": "過去365日間",
-      "helpText": "ここには、過去365日以内に期限を迎えた未完了タスクが表示されます。ToDoリストを表示するかどうかは、左サイドパネルの「マイカレンダー」セクションで切り替えられます。ToDoリストの使い方についてのヘルプ記事をご覧ください。",
-      "openTodoList": "ToDoリストを開く",
-      "noTitle": "(タイトルなし)",
-      "timeUnset": "時間は未指定",
-      "popoverTitle": "期限切れのプラン",
-      "overdueBy": "{time}超過"
+      "createNewPlan": "新規プラン作成",
+      "plan": "Plan",
+      "record": "Record",
+      "totalTimeTooltip": "今日までの累計時間",
+      "chronotypeNotSet": "クロノタイプ未設定",
+      "setupChronotype": "クロノタイプを設定",
+      "openProductivityZone": "生産性ゾーン設定を開く",
+      "remaining": "残り{hours}h {minutes}m",
+      "remainingMinutes": "残り{minutes}m"
     },
     "agenda": {
       "emptyTitle": "今後の予定はありません",
@@ -277,22 +274,19 @@
       "sort": {
         "createdAt": "作成日",
         "updatedAt": "更新日",
-        "dueDate": "期限",
         "title": "タイトル",
         "asc": "昇順",
         "desc": "降順"
       },
       "group": {
         "none": "なし",
-        "dueDate": "期限",
         "tags": "タグ"
       },
       "status": {
         "label": "ステータス",
         "all": "すべて",
         "open": "未完了",
-        "closed": "完了",
-        "overdue": "期限切れ"
+        "closed": "完了"
       },
       "schedule": {
         "label": "日付",

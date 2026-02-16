@@ -89,7 +89,6 @@ const basePlan: Plan = {
   description: null,
   status: 'open',
   completed_at: null,
-  due_date: null,
   start_time: null,
   end_time: null,
   recurrence_type: null,
@@ -106,7 +105,6 @@ const filledPlan: Plan = {
   description: '<p>週次の進捗確認。アジェンダを事前に共有すること。</p>',
   start_time: '2024-01-15T10:00:00+09:00',
   end_time: '2024-01-15T11:00:00+09:00',
-  due_date: '2024-01-15',
   reminder_minutes: 15,
 };
 
@@ -263,7 +261,6 @@ function PlanFormStory({
   initialScheduleDate,
   initialStartTime = '',
   initialEndTime = '',
-  initialDueDate,
   initialReminderType = 'none',
   timeConflictError = false,
 }: {
@@ -273,14 +270,12 @@ function PlanFormStory({
   initialScheduleDate?: Date;
   initialStartTime?: string;
   initialEndTime?: string;
-  initialDueDate?: Date;
   initialReminderType?: string;
   timeConflictError?: boolean;
 }) {
   const titleRef = useRef<HTMLInputElement | null>(null);
   const [tagIds, setTagIds] = useState(initialTagIds);
   const [scheduleDate, setScheduleDate] = useState<Date | undefined>(initialScheduleDate);
-  const [dueDate, setDueDate] = useState<Date | undefined>(initialDueDate);
   const [startTime, setStartTime] = useState(initialStartTime);
   const [endTime, setEndTime] = useState(initialEndTime);
   const [reminderType, setReminderType] = useState(initialReminderType);
@@ -294,7 +289,6 @@ function PlanFormStory({
           planId={plan.id}
           titleRef={titleRef}
           scheduleDate={scheduleDate}
-          dueDate={dueDate}
           startTime={startTime}
           endTime={endTime}
           reminderType={reminderType}
@@ -304,7 +298,6 @@ function PlanFormStory({
           timeConflictError={timeConflictError}
           onAutoSave={() => {}}
           onScheduleDateChange={setScheduleDate}
-          onDueDateChange={setDueDate}
           onStartTimeChange={setStartTime}
           onEndTimeChange={setEndTime}
           onReminderChange={setReminderType}
@@ -353,7 +346,6 @@ export const PlanCreateFilled: Story = {
       initialScheduleDate={new Date('2024-01-15')}
       initialStartTime="10:00"
       initialEndTime="11:00"
-      initialDueDate={new Date('2024-01-15')}
       initialReminderType="15min"
     />
   ),
@@ -368,7 +360,6 @@ export const PlanEdit: Story = {
       initialScheduleDate={new Date('2024-01-15')}
       initialStartTime="10:00"
       initialEndTime="11:00"
-      initialDueDate={new Date('2024-01-15')}
       initialReminderType="15min"
     />
   ),
@@ -383,7 +374,6 @@ export const PlanEditCompleted: Story = {
       initialScheduleDate={new Date('2024-01-15')}
       initialStartTime="10:00"
       initialEndTime="11:00"
-      initialDueDate={new Date('2024-01-15')}
       initialReminderType="15min"
     />
   ),
@@ -426,7 +416,6 @@ export const AllPatterns: Story = {
         initialScheduleDate={new Date('2024-01-15')}
         initialStartTime="10:00"
         initialEndTime="11:00"
-        initialDueDate={new Date('2024-01-15')}
         initialReminderType="15min"
       />
       <PlanFormStory
@@ -435,7 +424,6 @@ export const AllPatterns: Story = {
         initialScheduleDate={new Date('2024-01-15')}
         initialStartTime="10:00"
         initialEndTime="11:00"
-        initialDueDate={new Date('2024-01-15')}
         initialReminderType="15min"
       />
       <PlanFormStory
@@ -444,7 +432,6 @@ export const AllPatterns: Story = {
         initialScheduleDate={new Date('2024-01-15')}
         initialStartTime="10:00"
         initialEndTime="11:00"
-        initialDueDate={new Date('2024-01-15')}
         initialReminderType="15min"
       />
       <PlanFormStory

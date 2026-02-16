@@ -4,7 +4,6 @@
     "description": "利用規約、プライバシーポリシー、その他の法的文書",
     "lastUpdated": "最終更新日",
     "effectiveDate": "施行日",
-    "cookieSettings": "Cookie設定",
     "privacy": {
       "title": "プライバシーポリシー",
       "description": "Dayoptにおける個人情報の取り扱いについて",
@@ -158,7 +157,6 @@
       "terms": "利用規約",
       "tokushoho": "特定商取引法に基づく表記",
       "security": "セキュリティ",
-      "cookies": "Cookie設定",
       "ossCredits": "OSSライセンス"
     },
     "reviewWarning": {
@@ -232,83 +230,6 @@
     "footer": {
       "copyright": "© 2025 Dayopt. All rights reserved.",
       "contact": "お問い合わせ: {{email}}"
-    },
-    "cookies": {
-      "title": "Cookie設定",
-      "description": "Cookieの使用と管理について",
-      "banner": {
-        "title": "Cookieの使用について",
-        "description": "当サイトは、サービスの向上と利用状況の分析のためにCookieを使用します。",
-        "learnMore": "詳しく見る",
-        "acceptAll": "すべて同意",
-        "rejectAll": "必須のみ",
-        "customize": "カスタマイズ"
-      },
-      "categories": {
-        "necessary": {
-          "title": "必須Cookie",
-          "description": "サイトの基本機能に必要なCookieです。無効にすることはできません。",
-          "cookies": {
-            "session": "セッションCookie（認証状態の維持）",
-            "csrf": "CSRFトークン（セキュリティ保護）",
-            "consent": "Cookie同意状態"
-          },
-          "ariaLabel": "必須Cookie（無効化不可）"
-        },
-        "analytics": {
-          "title": "分析Cookie",
-          "description": "サイトの利用状況を分析し、サービス改善に役立てるためのCookieです。",
-          "cookies": {
-            "sentry": "Sentry（エラー追跡・パフォーマンス監視・IPアドレス送信）",
-            "vercelNote": "注: Vercel AnalyticsはCookieを使用せず、同意不要です"
-          },
-          "ariaLabel": "分析Cookie"
-        },
-        "marketing": {
-          "title": "マーケティングCookie",
-          "description": "広告配信やマーケティング活動に使用されるCookieです。現在は使用していません。",
-          "ariaLabel": "マーケティングCookie",
-          "cookies": {
-            "none": "現在使用していません"
-          }
-        }
-      },
-      "settings": {
-        "title": "Cookie設定",
-        "description": "カテゴリ別にCookieの使用を管理できます。",
-        "enabled": "有効",
-        "disabled": "無効",
-        "alwaysActive": "常に有効",
-        "save": "設定を保存",
-        "saved": "Cookie設定を保存しました",
-        "acceptAll": "すべて受け入れ",
-        "rejectAll": "必須のみ",
-        "acceptedAll": "すべてのCookieを受け入れました",
-        "acceptedNecessaryOnly": "必須Cookieのみ受け入れました"
-      },
-      "page": {
-        "title": "Cookie設定",
-        "description": "Cookieの使用と管理について",
-        "whatAreCookies": {
-          "title": "Cookieとは？",
-          "content": "Cookieは、Webサイトがブラウザに保存する小さなテキストファイルです。Cookieを使用することで、ログイン状態の維持、設定の記憶、サイト利用状況の分析が可能になります。"
-        },
-        "howWeUse": {
-          "title": "Cookieの使用目的",
-          "content": "当サイトでは、以下の目的でCookieを使用しています：",
-          "purposes": {
-            "authentication": "認証とセキュリティ",
-            "preferences": "ユーザー設定の保存",
-            "analytics": "サイト利用状況の分析",
-            "security": "不正利用の防止"
-          }
-        },
-        "manageCookies": {
-          "title": "Cookie管理方法",
-          "content": "ブラウザ設定でCookieを管理できます。詳細は各ブラウザのヘルプをご確認ください。"
-        },
-        "browserWarning": "ブラウザ設定でCookieを無効にした場合、一部機能が正常に動作しない可能性があります。"
-      }
     },
     "security": {
       "title": "セキュリティ",

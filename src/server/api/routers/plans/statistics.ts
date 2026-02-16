@@ -6,6 +6,8 @@
 import { TRPCError } from '@trpc/server';
 
 import { MS_PER_DAY, MS_PER_HOUR, MS_PER_MINUTE } from '@/constants/time';
+import { endOfWeek, startOfWeek } from '@/lib/date/core';
+import { formatDateISO } from '@/lib/date/format';
 import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc';
 
 import { z } from 'zod';
@@ -518,6 +520,73 @@ export const statisticsRouter = createTRPCRouter({
       totalHours,
       planCount,
       avgHoursPerPlan,
+    };
+  }),
+
+  /**
+   * Get this week's time for Plans and Records
+   * Only includes plans and records for the current week (Mon-Sun)
+   */
+  getCumulativeTime: protectedProcedure.query(async ({ ctx }) => {
+    const { supabase, userId } = ctx;
+    const now = new Date();
+    const weekStart = startOfWeek(now).toISOString();
+    const weekEnd = endOfWeek(now).toISOString();
+    const weekStartStr = formatDateISO(startOfWeek(now));
+    const weekEndStr = formatDateISO(endOfWeek(now));
+
+    // Plans: 今週のPlanのみ（start_time が今週の範囲内）
+    const { data: plans, error: plansError } = await supabase
+      .from('plans')
+      .select('start_time, end_time')
+      .eq('user_id', userId)
+      .not('start_time', 'is', null)
+      .not('end_time', 'is', null)
+      .gte('start_time', weekStart)
+      .lte('start_time', weekEnd);
+
+    if (plansError) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: `Failed to fetch plans: ${plansError.message}`,
+      });
+    }
+
+    // Records: 今週のRecordのみ
+    const { data: records, error: recordsError } = await supabase
+      .from('records')
+      .select('duration_minutes')
+      .eq('user_id', userId)
+      .gte('worked_at', weekStartStr)
+      .lte('worked_at', weekEndStr);
+
+    if (recordsError) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: `Failed to fetch records: ${recordsError.message}`,
+      });
+    }
+
+    // Plan集計: (end_time - start_time) の合計
+    let planTotalMinutes = 0;
+    for (const plan of plans) {
+      if (plan.start_time && plan.end_time) {
+        const diffMs = new Date(plan.end_time).getTime() - new Date(plan.start_time).getTime();
+        if (diffMs > 0) {
+          planTotalMinutes += diffMs / MS_PER_MINUTE;
+        }
+      }
+    }
+
+    // Record集計: duration_minutes の合計
+    const recordTotalMinutes = (records ?? []).reduce(
+      (sum, r) => sum + (r.duration_minutes ?? 0),
+      0,
+    );
+
+    return {
+      planTotalMinutes: Math.round(planTotalMinutes),
+      recordTotalMinutes,
     };
   }),
 

@@ -184,6 +184,12 @@
     "light": "ライトモード",
     "dark": "ダークモード"
   },
+  "suggest": {
+    "recentHistory": "直近30件の履歴",
+    "loading": "読み込み中...",
+    "loadError": "読み込みに失敗しました",
+    "noResults": "候補なし"
+  },
   "createSheet": {
     "title": "何を追加しますか？",
     "description": "追加するアイテムの種類を選択してください",

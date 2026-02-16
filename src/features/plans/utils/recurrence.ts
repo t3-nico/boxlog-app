@@ -103,11 +103,7 @@ export function getPlanRecurrenceConfig(plan: Plan): RecurrenceConfig | null {
 
   // recurrence_type（シンプル版）
   if (plan.recurrence_type && plan.recurrence_type !== 'none') {
-    const startDate = plan.start_time
-      ? new Date(plan.start_time)
-      : plan.due_date
-        ? new Date(plan.due_date)
-        : new Date();
+    const startDate = plan.start_time ? new Date(plan.start_time) : new Date();
     return simpleTypeToConfig(plan.recurrence_type, startDate);
   }
 
@@ -187,11 +183,7 @@ export function expandRecurrence(
   const occurrences: ExpandedOccurrence[] = [];
 
   // 開始日を決定
-  const planStartDate = plan.start_time
-    ? startOfDay(new Date(plan.start_time))
-    : plan.due_date
-      ? startOfDay(new Date(plan.due_date))
-      : null;
+  const planStartDate = plan.start_time ? startOfDay(new Date(plan.start_time)) : null;
 
   if (!planStartDate) {
     return [];

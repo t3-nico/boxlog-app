@@ -80,8 +80,8 @@ function Section({
 /** src/app/error.tsx 相当 — カード型 + Sentry連携 */
 function MockRootError({ errorMessage }: { errorMessage: string }) {
   return (
-    <div className="p-8">
-      <div className="bg-card border-border rounded-2xl border p-8 shadow-lg">
+    <div className="flex min-h-[50vh] items-center justify-center p-8">
+      <div className="bg-card border-border w-full max-w-md rounded-2xl border p-8 shadow-lg">
         <div className="mb-6">
           <h1 className="text-destructive mb-2 text-2xl font-bold">Something went wrong</h1>
           <p className="text-muted-foreground">
@@ -108,6 +108,33 @@ function MockRootError({ errorMessage }: { errorMessage: string }) {
         <p className="text-muted-foreground mt-6 text-center text-xs">
           This error has been automatically reported.
         </p>
+      </div>
+    </div>
+  );
+}
+
+/** src/app/[locale]/(app)/error.tsx 相当 — App内ページエラー（i18n対応、BaseLayout内に表示） */
+function MockAppError({ errorMessage }: { errorMessage: string }) {
+  return (
+    <div className="grid min-h-[60vh] w-full place-items-center p-8">
+      <div className="flex max-w-md flex-col items-center gap-6 text-center">
+        <div className="border-destructive flex size-16 items-center justify-center rounded-full border-2">
+          <AlertCircle className="text-destructive size-8" />
+        </div>
+        <div>
+          <h2 className="mb-2 text-xl font-bold">Application Error</h2>
+          <p className="text-muted-foreground text-sm">
+            We&apos;re sorry. An unexpected problem has occurred.
+          </p>
+          <div className="border-border bg-surface-container mt-4 rounded-lg border p-4 text-left">
+            <p className="text-destructive font-mono text-xs">{errorMessage}</p>
+          </div>
+        </div>
+        <div className="flex gap-4">
+          <MockButton>Retry</MockButton>
+          <MockButton variant="outline">Go Home</MockButton>
+        </div>
+        <p className="text-muted-foreground text-xs">The error has been automatically reported</p>
       </div>
     </div>
   );
@@ -140,8 +167,8 @@ function MockCalendarError({ errorMessage }: { errorMessage: string }) {
 /** src/app/not-found.tsx 相当 — カード型、シンプル */
 function MockNotFound() {
   return (
-    <div className="p-8">
-      <div className="bg-card border-border rounded-2xl border p-8 shadow-lg">
+    <div className="flex min-h-[50vh] items-center justify-center p-8">
+      <div className="bg-card border-border w-full max-w-md rounded-2xl border p-8 shadow-lg">
         <div className="mb-6">
           <h1 className="text-foreground mb-2 text-2xl font-bold">Page not found</h1>
           <p className="text-muted-foreground">
@@ -221,7 +248,7 @@ export const Overview: Story = {
       <h1 className="text-foreground mb-2 text-2xl font-bold">エラーページ & エラーバウンダリ</h1>
       <p className="text-muted-foreground mb-8">
         アプリケーション内のエラー表示パターン一覧。Next.js App Router の error.tsx / not-found.tsx
-        と、React ErrorBoundary のフォールバックUI。6コンポーネント構成。
+        と、React ErrorBoundary のフォールバックUI。7コンポーネント構成。
       </p>
 
       <div className="bg-card border-border mb-8 rounded-xl border p-6">
@@ -258,6 +285,12 @@ export const Overview: Story = {
                 <td className="py-3 pr-4 font-mono text-xs">src/app/not-found.tsx</td>
                 <td className="py-3 pr-4">存在しないルートへのアクセス</td>
                 <td className="py-3">なし（英語固定）</td>
+              </tr>
+              <tr className="border-border border-b">
+                <td className="py-3 pr-4 font-medium">AppError</td>
+                <td className="py-3 pr-4 font-mono text-xs">src/app/.../(app)/error.tsx</td>
+                <td className="py-3 pr-4">App内ページエラー（BaseLayout内に表示）</td>
+                <td className="py-3">あり（next-intl）</td>
               </tr>
               <tr className="border-border border-b">
                 <td className="py-3 pr-4 font-medium">CalendarError</td>
@@ -315,6 +348,11 @@ export const Overview: Story = {
 /** ルートレベルエラーページ。カード型 + Sentry連携。Providersの外で動作。 */
 export const RootError: Story = {
   render: () => <MockRootError errorMessage="Failed to fetch data from server" />,
+};
+
+/** App内ページエラー。BaseLayout内に表示。i18n対応。 */
+export const AppError: Story = {
+  render: () => <MockAppError errorMessage="Failed to load page data" />,
 };
 
 /** カレンダーページ専用エラー。i18n対応。dev環境ではエラーメッセージも表示。 */
@@ -396,6 +434,9 @@ export const AllPages: Story = {
     <div className="flex flex-col">
       <Section title="Root Error" description="カード型 + Sentry連携（src/app/error.tsx）">
         <MockRootError errorMessage="Failed to fetch" />
+      </Section>
+      <Section title="App Error" description="BaseLayout内に表示（src/app/.../(app)/error.tsx）">
+        <MockAppError errorMessage="Failed to load page data" />
       </Section>
       <Section
         title="Calendar Error"

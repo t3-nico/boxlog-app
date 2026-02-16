@@ -31,7 +31,6 @@ function formatTimeRange(value: string): string {
  * - status_changed: 最重要（完了/未完了）
  * - title_changed: プラン名の変更（識別情報の変更）
  * - time_changed: カレンダーアプリの本質
- * - due_date_changed: 期限管理の重要イベント
  * - tag_added: タグ追加（分類の意思決定）
  * - tag_removed: タグ削除（分類の意思決定）
  * - recurrence_changed: 繰り返し設定（習慣化の意思決定）
@@ -46,7 +45,6 @@ const VISIBLE_ACTION_TYPES: Set<ActivityActionType> = new Set([
   'status_changed',
   'title_changed',
   'time_changed',
-  'due_date_changed',
   'tag_added',
   'tag_removed',
   'recurrence_changed',
@@ -134,15 +132,6 @@ export function formatActivity(activity: PlanActivity): PlanActivityDisplay {
 
     case 'description_changed':
       actionLabel = '説明を更新';
-      icon = 'time';
-      iconColor = 'info';
-      break;
-
-    case 'due_date_changed':
-      actionLabel = '期限を変更';
-      if (activity.old_value && activity.new_value) {
-        detail = `${activity.old_value} → ${activity.new_value}`;
-      }
       icon = 'time';
       iconColor = 'info';
       break;

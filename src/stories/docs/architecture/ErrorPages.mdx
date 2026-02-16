@@ -1,10 +1,12 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Docs/Architecture/Error Pages" />
+
 # エラーページシステム
 
-**最終更新**: 2026-02-10
+B2C個人向けアプリに必要なエラーハンドリングだけに整理した6コンポーネント構成。
 
-## 概要
-
-Dayoptのエラーページシステム。B2C個人向けアプリに必要なエラーハンドリングだけに整理した6コンポーネント構成。
+---
 
 ## アーキテクチャ
 
@@ -68,8 +70,3 @@ Root系3ページが英語固定な理由: これらが表示される = `NextIn
 | `[locale]/error/403/page.tsx`         | デッドコード + B2Cアプリにロールベース権限なし                   |
 | `[locale]/error/500/page.tsx`         | デッドコード。Next.jsが`error.tsx`を自動表示                     |
 | `[locale]/error/maintenance/page.tsx` | デッドコード。Middlewareは`/maintenance`(route.ts)へリダイレクト |
-
-## 関連ドキュメント
-
-- [エラーバウンダリシステム](./ERROR_BOUNDARY_SYSTEM.md)
-- [エラーハンドリング](./ERROR_HANDLING.md)

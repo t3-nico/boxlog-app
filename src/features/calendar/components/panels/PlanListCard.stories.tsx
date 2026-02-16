@@ -9,8 +9,7 @@ import { PlanListCard } from './PlanListCard';
  * サイドパネル用の Plan カード。
  *
  * - チェックボックスで open/closed 切り替え
- * - 期限日 + 時間範囲 + 作業時間をメタ情報行に表示
- * - isOverdue=true で期限日・時間が赤文字（text-destructive）
+ * - 時間範囲 + 作業時間をメタ情報行に表示
  * - タグ表示（TagsContainer）
  */
 
@@ -23,7 +22,7 @@ const BASE_PLAN: PlanWithTags = {
   status: 'open',
   start_time: '2025-01-15T10:00:00.000Z',
   end_time: '2025-01-15T11:00:00.000Z',
-  due_date: '2025-01-20',
+  due_date: null,
   created_at: now.toISOString(),
   updated_at: now.toISOString(),
   completed_at: null,
@@ -58,7 +57,7 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/** 基本的な Plan カード（時間あり + 期限日あり） */
+/** 基本的な Plan カード（時間あり） */
 export const Default: Story = {
   args: {
     plan: BASE_PLAN,
@@ -78,20 +77,7 @@ export const Completed: Story = {
   },
 };
 
-/** 期限切れ（赤文字表示） */
-export const Overdue: Story = {
-  args: {
-    plan: {
-      ...BASE_PLAN,
-      id: 'plan-overdue',
-      title: '期限切れのレポート提出',
-      due_date: '2024-12-31',
-    },
-    isOverdue: true,
-  },
-};
-
-/** 未スケジュール（時間なし・期限日のみ） */
+/** 未スケジュール（時間なし） */
 export const Unscheduled: Story = {
   args: {
     plan: {
@@ -104,20 +90,8 @@ export const Unscheduled: Story = {
   },
 };
 
-/** 期限日なし・時間あり */
-export const NoDueDate: Story = {
-  args: {
-    plan: {
-      ...BASE_PLAN,
-      id: 'plan-no-due',
-      title: 'コードレビュー',
-      due_date: null,
-    },
-  },
-};
-
-/** 時間も期限日もなし（メタ行非表示） */
-export const NoTimeNoDueDate: Story = {
+/** 時間なし（メタ行非表示） */
+export const NoTimePlan: Story = {
   args: {
     plan: {
       ...BASE_PLAN,
@@ -125,7 +99,6 @@ export const NoTimeNoDueDate: Story = {
       title: 'アイデアメモ',
       start_time: null,
       end_time: null,
-      due_date: null,
     },
   },
 };
@@ -162,7 +135,6 @@ export const NoTitle: Story = {
       title: '',
       start_time: null,
       end_time: null,
-      due_date: null,
     },
   },
 };
@@ -206,11 +178,6 @@ export const AllPatterns: Story = {
         onClick={fn()}
       />
       <PlanListCard
-        plan={{ ...BASE_PLAN, id: 'p3', title: '期限切れ', due_date: '2024-12-31' }}
-        isOverdue
-        onClick={fn()}
-      />
-      <PlanListCard
         plan={{
           ...BASE_PLAN,
           id: 'p4',
@@ -233,10 +200,9 @@ export const AllPatterns: Story = {
         plan={{
           ...BASE_PLAN,
           id: 'p6',
-          title: '時間も期限もなし',
+          title: '時間なし',
           start_time: null,
           end_time: null,
-          due_date: null,
         }}
         onClick={fn()}
       />

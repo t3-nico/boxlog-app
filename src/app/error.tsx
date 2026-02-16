@@ -45,7 +45,7 @@ export default function RootError({ error, reset }: ErrorProps) {
   }, [error]);
 
   return (
-    <div className="bg-background flex min-h-screen items-center justify-center p-4">
+    <div className="bg-background fixed inset-0 flex items-center justify-center overflow-auto p-4">
       <div className="bg-card border-border w-full max-w-md rounded-2xl border p-8 shadow-lg">
         <div className="mb-6">
           <h1 className="text-destructive mb-2 text-2xl font-bold">{ERROR_TEXT.title}</h1>

@@ -35,11 +35,6 @@ describe('usePlanFilterStore', () => {
       const { assignee } = usePlanFilterStore.getState();
       expect(assignee).toBe('');
     });
-
-    it('dueDateはall', () => {
-      const { dueDate } = usePlanFilterStore.getState();
-      expect(dueDate).toBe('all');
-    });
   });
 
   describe('setStatus', () => {
@@ -125,72 +120,6 @@ describe('usePlanFilterStore', () => {
     });
   });
 
-  describe('setDueDate', () => {
-    it('今日に設定できる', () => {
-      act(() => {
-        usePlanFilterStore.getState().setDueDate('today');
-      });
-
-      const { dueDate } = usePlanFilterStore.getState();
-      expect(dueDate).toBe('today');
-    });
-
-    it('明日に設定できる', () => {
-      act(() => {
-        usePlanFilterStore.getState().setDueDate('tomorrow');
-      });
-
-      const { dueDate } = usePlanFilterStore.getState();
-      expect(dueDate).toBe('tomorrow');
-    });
-
-    it('今週に設定できる', () => {
-      act(() => {
-        usePlanFilterStore.getState().setDueDate('this_week');
-      });
-
-      const { dueDate } = usePlanFilterStore.getState();
-      expect(dueDate).toBe('this_week');
-    });
-
-    it('来週に設定できる', () => {
-      act(() => {
-        usePlanFilterStore.getState().setDueDate('next_week');
-      });
-
-      const { dueDate } = usePlanFilterStore.getState();
-      expect(dueDate).toBe('next_week');
-    });
-
-    it('期限超過に設定できる', () => {
-      act(() => {
-        usePlanFilterStore.getState().setDueDate('overdue');
-      });
-
-      const { dueDate } = usePlanFilterStore.getState();
-      expect(dueDate).toBe('overdue');
-    });
-
-    it('期限なしに設定できる', () => {
-      act(() => {
-        usePlanFilterStore.getState().setDueDate('no_due_date');
-      });
-
-      const { dueDate } = usePlanFilterStore.getState();
-      expect(dueDate).toBe('no_due_date');
-    });
-
-    it('全てに戻せる', () => {
-      act(() => {
-        usePlanFilterStore.getState().setDueDate('today');
-        usePlanFilterStore.getState().setDueDate('all');
-      });
-
-      const { dueDate } = usePlanFilterStore.getState();
-      expect(dueDate).toBe('all');
-    });
-  });
-
   describe('reset', () => {
     it('全てのフィルターを初期状態に戻す', () => {
       // 各種フィルターを設定
@@ -199,7 +128,6 @@ describe('usePlanFilterStore', () => {
         usePlanFilterStore.getState().setTags(['tag-1']);
         usePlanFilterStore.getState().setSearch('検索');
         usePlanFilterStore.getState().setAssignee('user-1');
-        usePlanFilterStore.getState().setDueDate('today');
       });
 
       // リセット
@@ -212,7 +140,6 @@ describe('usePlanFilterStore', () => {
       expect(state.tags).toEqual([]);
       expect(state.search).toBe('');
       expect(state.assignee).toBe('');
-      expect(state.dueDate).toBe('all');
     });
   });
 
@@ -221,14 +148,12 @@ describe('usePlanFilterStore', () => {
       act(() => {
         usePlanFilterStore.getState().setStatus(['open']);
         usePlanFilterStore.getState().setTags(['tag-1']);
-        usePlanFilterStore.getState().setDueDate('this_week');
         usePlanFilterStore.getState().setSearch('重要');
       });
 
       const state = usePlanFilterStore.getState();
       expect(state.status).toEqual(['open']);
       expect(state.tags).toEqual(['tag-1']);
-      expect(state.dueDate).toBe('this_week');
       expect(state.search).toBe('重要');
     });
   });

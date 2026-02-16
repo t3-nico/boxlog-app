@@ -1,0 +1,121 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Docs/Architecture/Supabase/Environments" />
+
+# 環境構成
+
+Dayoptは3環境構成（Local / Staging / Production）で運用。
+
+---
+
+## 環境一覧
+
+| 環境           | Supabase          | Vercel      | URL                       |
+| -------------- | ----------------- | ----------- | ------------------------- |
+| **Local**      | ローカル          | npm run dev | localhost:3000             |
+| **Staging**    | dayopt-staging    | Preview     | *.vercel.app（main以外）  |
+| **Production** | t3-nico's Project | Production  | 本番ドメイン               |
+
+## Supabase プロジェクト
+
+| プロジェクト      | Reference ID           | リージョン      | 用途         |
+| ----------------- | ---------------------- | --------------- | ------------ |
+| ローカル          | -                      | localhost:54321 | 開発         |
+| dayopt-staging    | `yvglwblxrnrenfifsnje` | Tokyo           | ステージング |
+| t3-nico's Project | `qloztwfbrbqtjijxicnd` | Tokyo           | 本番         |
+
+---
+
+## 分離仕様
+
+### DB の分離
+
+- 各環境のデータベースは**完全に独立**
+- 本番データはステージングに存在しない
+- テストデータは自由に作成・削除可能
+
+### Auth の分離
+
+- 各環境のユーザーアカウントは**共有されない**
+- ステージングでサインアップ → ステージングのみログイン可能
+- 本番アカウントでステージングにはログインできない
+
+### Vercel 環境変数
+
+```
+Production  → 本番 Supabase
+Preview     → ステージング Supabase（全 Preview ブランチ共通）
+Development → ローカル Supabase
+```
+
+---
+
+## マイグレーション
+
+マイグレーションは各環境に**個別に適用**が必要。
+
+### ローカル
+
+```bash
+supabase db reset        # 全マイグレーションを再適用
+supabase migration up    # 未適用分のみ適用
+```
+
+### ステージング
+
+```bash
+supabase link --project-ref yvglwblxrnrenfifsnje
+supabase db push
+```
+
+### 本番
+
+```bash
+supabase link --project-ref qloztwfbrbqtjijxicnd
+supabase db push
+```
+
+### リンク状態の確認
+
+```bash
+supabase projects list
+# LINKED列に●があるプロジェクトが現在リンク中
+```
+
+### CI 自動マイグレーション
+
+`main` ブランチに `supabase/migrations/**` の変更がpushされると、
+GitHub Actions（`.github/workflows/supabase-migration.yml`）が自動で **Staging** に適用。
+
+**本番への適用は手動**（`supabase link` → `supabase db push`）。
+
+必要な GitHub Secrets:
+- `SUPABASE_ACCESS_TOKEN`
+- `STAGING_DB_PASSWORD`
+
+---
+
+## 実機テスト手順
+
+1. ブランチをプッシュ
+   ```bash
+   git push origin feature/xxx
+   ```
+
+2. Vercel が自動で Preview デプロイ
+
+3. Preview URL にモバイルでアクセス
+   - 固定URL: `dayopt-git-{branch}-t3-nicos-projects.vercel.app`
+
+4. ステージングでサインアップしてテスト
+
+---
+
+## トラブルシューティング
+
+| 症状 | 対処 |
+|------|------|
+| ステージングにログインできない | ステージング環境で新規サインアップが必要（本番アカウントは使えない） |
+| マイグレーションが反映されない | 対象環境にリンクしてから `supabase db push` を実行 |
+| Preview デプロイがエラー | Vercel ダッシュボードでビルドログを確認 |
+| Production が paused | Supabase ダッシュボード → Settings → General → Resume |

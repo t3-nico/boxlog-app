@@ -1,20 +1,20 @@
 import { Skeleton } from '@/components/ui/skeleton';
 
 /**
- * InboxページのローディングUI
+ * PlanページのローディングUI
  * ページ遷移時に即座に表示され、体感速度を向上
  *
  * CLS対策:
  * - 行数を5に制限（実データより少なければCLSは起きにくい）
  * - min-heightでコンテナサイズを安定化
  */
-export default function InboxLoading() {
+export default function PlanLoading() {
   return (
     <div
       className="flex h-full min-h-[400px] flex-1 flex-col"
       role="status"
       aria-live="polite"
-      aria-label="Loading inbox"
+      aria-label="Loading plans"
     >
       {/* ヘッダー部分 */}
       <div className="border-border flex items-center justify-between border-b p-4">

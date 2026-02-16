@@ -129,16 +129,3 @@ export function handleServiceError(error: unknown): never {
     cause: error,
   });
 }
-
-/**
- * カスタムエラーコードを追加する場合のヘルパー
- *
- * @param code - 新しいエラーコード
- * @param trpcCode - 対応するTRPCエラーコード
- */
-export function registerErrorCode(
-  code: string,
-  trpcCode: 'INTERNAL_SERVER_ERROR' | 'NOT_FOUND' | 'BAD_REQUEST' | 'FORBIDDEN' | 'UNAUTHORIZED',
-): void {
-  ERROR_CODE_MAP[code] = trpcCode;
-}

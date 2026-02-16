@@ -233,6 +233,7 @@
       "title": "Chronotype Settings",
       "description": "Select a type that matches your biological rhythm. Based on your selection, optimal work hours will be displayed in the status bar.",
       "settingsSaved": "Chronotype settings saved",
+      "notSelected": "Not selected",
       "details": "Type Details",
       "timeline": "24-Hour Timeline",
       "peakTime": "Peak Time",
