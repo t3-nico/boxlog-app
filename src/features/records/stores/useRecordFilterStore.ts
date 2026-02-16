@@ -126,7 +126,6 @@ export const useRecordFilterStore = create<RecordFilterStore>()(
     }),
     {
       name: 'record-filter',
-      version: 1,
       // isSearchOpen は永続化しない
       partialize: (state) => ({
         workedAt: state.workedAt,

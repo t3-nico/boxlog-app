@@ -216,7 +216,6 @@ export const useStatsPeriodStore = create<StatsPeriodState>()(
       }),
       {
         name: 'stats-period-storage',
-        version: 1,
         partialize: (state) => ({
           periodType: state.periodType,
           compareEnabled: state.compareEnabled,

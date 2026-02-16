@@ -119,7 +119,6 @@ export const usePlanFilterStore = create<PlanFilterStore>()(
     }),
     {
       name: 'plan-filter',
-      version: 1,
       // isSearchOpenは永続化しない（ページリロード時は閉じているべき）
       partialize: (state) => ({
         status: state.status,

@@ -71,7 +71,6 @@ export const useCalendarScrollStore = create<CalendarScrollState & CalendarScrol
     }),
     {
       name: 'calendar-scroll-positions',
-      version: 1,
     },
   ),
 );

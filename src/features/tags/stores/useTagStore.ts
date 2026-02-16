@@ -237,7 +237,6 @@ export const useTagStore = create<TagStore>()(
       }),
       {
         name: 'tag-storage',
-        version: 1,
         partialize: (state) => ({ tags: state.tags }),
       },
     ),

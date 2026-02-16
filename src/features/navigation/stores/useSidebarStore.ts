@@ -41,7 +41,6 @@ const useSidebarStoreBase = create<SidebarState>()(
       }),
       {
         name: 'sidebar-storage', // localStorage key
-        version: 1,
       },
     ),
     {

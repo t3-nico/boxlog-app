@@ -15,7 +15,7 @@ import { api } from '@/lib/trpc';
 const chartConfig = {
   hours: {
     label: '作業時間',
-    color: 'hsl(var(--primary))',
+    color: 'var(--primary)',
   },
 } satisfies ChartConfig;
 
