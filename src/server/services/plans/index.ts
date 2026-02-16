@@ -12,7 +12,6 @@ export type {
   ListPlansOptions,
   PlanRow,
   PlanWithTags,
-  ServiceResponse,
   ServiceSupabaseClient,
   UpdatePlanOptions,
 } from './types';

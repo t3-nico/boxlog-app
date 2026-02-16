@@ -3,11 +3,9 @@
  * 全APIルーターの統合とエクスポート
  */
 
-import { authRouter } from './routers/auth';
 import { notificationPreferencesRouter } from './routers/notificationPreferences';
 import { notificationsRouter } from './routers/notifications';
 import { plansRouter } from './routers/plans';
-import { profileRouter } from './routers/profile';
 import { recordsRouter } from './routers/records';
 import { suggestionsRouter } from './routers/suggestions';
 import { tagsRouter } from './routers/tags';
@@ -19,8 +17,6 @@ import { createTRPCRouter } from './trpc';
  * メインAPIルーター
  */
 export const appRouter = createTRPCRouter({
-  auth: authRouter,
-  profile: profileRouter,
   plans: plansRouter,
   records: recordsRouter,
   suggestions: suggestionsRouter,

@@ -16,6 +16,7 @@
  * ```
  */
 
+import { logger } from '@/lib/logger';
 import {
   normalizeDateTimeConsistency,
   removeUndefinedFields,
@@ -181,7 +182,7 @@ export class PlanService {
     const { data, error } = await query;
 
     if (error) {
-      console.error('Time overlap check failed:', error);
+      logger.error('Time overlap check failed:', error);
       return [];
     }
 

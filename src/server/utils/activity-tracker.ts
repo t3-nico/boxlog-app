@@ -40,9 +40,6 @@ export async function trackPlanChanges(
   }
 }
 
-// 互換性のためのエイリアス
-export const trackplanChanges = trackPlanChanges;
-
 /**
  * 変更を検出してアクティビティ種別を決定
  */

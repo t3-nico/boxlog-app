@@ -16,6 +16,7 @@
  * ```
  */
 
+import { logger } from '@/lib/logger';
 import { removeUndefinedFields } from '@/server/api/routers/plans/utils';
 import { recordCreatedActivity, trackRecordChanges } from '@/server/utils/record-activity-tracker';
 
@@ -201,7 +202,7 @@ export class RecordService {
     const { data, error } = await query;
 
     if (error) {
-      console.error('Record time overlap check failed:', error);
+      logger.error('Record time overlap check failed:', error);
       return [];
     }
 

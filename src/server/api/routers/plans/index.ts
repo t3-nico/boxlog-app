@@ -15,8 +15,6 @@ import { instancesRouter } from './instances';
 import { recurrenceRouter } from './recurrence';
 import { statisticsRouter } from './statistics';
 import { tagsRouter } from './tags';
-import { plansTransactionRouter } from './transaction';
-
 const bulkAliasRouter = createTRPCRouter({
   bulkUpdate: bulkRouter.update,
   bulkDelete: bulkRouter.delete,
@@ -27,6 +25,7 @@ const statisticsAliasRouter = createTRPCRouter({
   getStats: statisticsRouter.getStats,
   getTagStats: statisticsRouter.getTagStats, // Optimized: replaces getTagPlanCounts + getTagLastUsed
   getTotalTime: statisticsRouter.getTotalTime,
+  getCumulativeTime: statisticsRouter.getCumulativeTime,
   getSummary: statisticsRouter.getSummary,
   getStreak: statisticsRouter.getStreak,
   getTimeByTag: statisticsRouter.getTimeByTag,
@@ -67,5 +66,4 @@ export const plansRouter = mergeRouters(
   instancesAliasRouter,
   tagsAliasRouter,
   recurrenceAliasRouter,
-  plansTransactionRouter,
 );

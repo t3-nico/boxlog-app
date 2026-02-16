@@ -17,7 +17,6 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuthStore } from '@/features/auth/stores/useAuthStore';
-import { addPasswordToHistory, isPasswordReused } from '@/lib/auth/password-history';
 import { checkPasswordPwned } from '@/lib/auth/pwned-password';
 import { createClient } from '@/lib/supabase/client';
 
@@ -94,23 +93,13 @@ export function PasswordChangeDialog({ open, onOpenChange }: PasswordChangeDialo
           throw new Error(t('settings.account.passwordIncorrect'));
         }
 
-        // Step 2: Password history check (OWASP)
-        if (!user?.id) {
-          throw new Error(t('errors.auth.userIdNotFound'));
-        }
-
-        const isReused = await isPasswordReused(user.id, newPassword);
-        if (isReused) {
-          throw new Error(t('settings.account.passwordReused'));
-        }
-
-        // Step 3: Pwned password check (NIST)
+        // Step 2: Pwned password check (NIST)
         const isPwned = await checkPasswordPwned(newPassword);
         if (isPwned) {
           throw new Error(t('settings.account.passwordPwned'));
         }
 
-        // Step 4: Update password
+        // Step 3: Update password
         const { error: updateError } = await supabase.auth.updateUser({
           password: newPassword,
         });
@@ -119,10 +108,7 @@ export function PasswordChangeDialog({ open, onOpenChange }: PasswordChangeDialo
           throw new Error(updateError.message);
         }
 
-        // Step 5: Add to password history
-        await addPasswordToHistory(user.id, newPassword);
-
-        // Step 6: Sign out other sessions
+        // Step 4: Sign out other sessions
         await supabase.auth.signOut({ scope: 'others' });
 
         setSuccess(true);
@@ -135,7 +121,7 @@ export function PasswordChangeDialog({ open, onOpenChange }: PasswordChangeDialo
         setIsLoading(false);
       }
     },
-    [currentPassword, newPassword, confirmPassword, user?.email, user?.id, t, supabase],
+    [currentPassword, newPassword, confirmPassword, user?.email, t, supabase],
   );
 
   return (
