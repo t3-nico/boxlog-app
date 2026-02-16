@@ -78,8 +78,6 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
           <DesktopLayout locale={localeFromPath}>{children}</DesktopLayout>
         )}
 
-        {/* 注: CookieConsentBannerはsrc/app/[locale]/layout.tsxで一元管理 */}
-
         {/* Mobile FAB（iOS Safe Area対応） */}
         {isMobile ? (
           <Button

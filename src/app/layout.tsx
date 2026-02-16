@@ -21,7 +21,6 @@ import type { Metadata, Viewport } from 'next';
 import { Inter, Noto_Sans_JP } from 'next/font/google';
 import { Suspense } from 'react';
 
-import { PostHogProvider } from '@/components/providers/PostHogProvider';
 import { WebVitalsReporter } from '@/components/WebVitalsReporter';
 import { DeferredAnalytics } from '@/lib/analytics/DeferredAnalytics';
 import { cn } from '@/lib/utils';
@@ -120,14 +119,12 @@ const RootLayout = async ({ children, params }: RootLayoutProps) => {
       className={`${inter.variable} ${notoSansJP.variable}`}
     >
       <body className={cn('bg-background')} suppressHydrationWarning>
-        <PostHogProvider>
-          <Suspense fallback={null}>
-            {children}
-            <WebVitalsReporter />
-            {/* LCP/TBT改善: Analyticsを遅延読み込み（-300ms/-150ms） */}
-            <DeferredAnalytics />
-          </Suspense>
-        </PostHogProvider>
+        <Suspense fallback={null}>
+          {children}
+          <WebVitalsReporter />
+          {/* LCP/TBT改善: Analyticsを遅延読み込み（-300ms/-150ms） */}
+          <DeferredAnalytics />
+        </Suspense>
       </body>
     </html>
   );
