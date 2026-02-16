@@ -63,8 +63,7 @@ export const cacheStrategies = {
   tagStats: standardCache,
   tagUsage: shortTermCache, // タグ使用数は頻繁に更新される
   userSettings: staticCache,
-  inbox: realtimeCache, // Inboxデータはリアルタイム性が重要
-  plans: realtimeCache, // プランもリアルタイム性が重要
+  plans: realtimeCache, // プランはリアルタイム性が重要
   planActivities: shortTermCache, // アクティビティ履歴は少し遅れてもOK
   records: realtimeCache, // レコードもリアルタイム性が重要（カレンダー表示）
   sessions: realtimeCache, // セッションもリアルタイム性が重要

@@ -9,7 +9,6 @@ import {
   CheckSquare,
   Clock,
   Filter,
-  Inbox,
   Moon,
   Navigation,
   Plus,
@@ -81,7 +80,6 @@ const categoryIcons: Record<string, React.ElementType> = {
 // Icon name to component mapping
 const iconNameMap: Record<string, React.ElementType> = {
   calendar: Calendar,
-  inbox: Inbox,
   'bar-chart': BarChart3,
   tag: Tag,
   plus: Plus,

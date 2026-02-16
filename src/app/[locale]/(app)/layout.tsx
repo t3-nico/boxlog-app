@@ -2,7 +2,7 @@
  * 認証必須ページ用レイアウト
  *
  * @description
- * 認証が必要なページ（/inbox, /calendar, /tags, /stats等）で使用。
+ * 認証が必要なページ（/plan, /calendar, /tags, /stats等）で使用。
  * フルProvidersを適用し、tRPC、Realtime購読、GlobalSearch等の
  * 全機能を利用可能にする。
  *

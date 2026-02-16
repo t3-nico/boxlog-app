@@ -36,7 +36,7 @@ export type PlanWithTagIds = Plan & {
 };
 
 /**
- * Inboxアイテム（Plan型のエイリアス）
+ * Planアイテム
  */
 export interface PlanItem {
   id: string;
@@ -67,7 +67,7 @@ export interface PlanItem {
 }
 
 /**
- * Inboxフィルター型
+ * Planフィルター型
  */
 export interface PlanFilters {
   status?: PlanStatus | undefined;

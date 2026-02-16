@@ -79,7 +79,7 @@ export function RealtimeProvider({ children }: RealtimeProviderProps) {
     if (!pathname) {
       return {
         calendar: false,
-        inbox: false,
+        plan: false,
         tags: false,
         notifications: false,
       };
@@ -91,8 +91,8 @@ export function RealtimeProvider({ children }: RealtimeProviderProps) {
     return {
       // カレンダーページ: カレンダーとプランの購読が必要
       calendar: normalizedPath.startsWith('/calendar'),
-      // Inboxページ: プランの購読が必要
-      inbox: normalizedPath.startsWith('/inbox'),
+      // Planページ: プランの購読が必要
+      plan: normalizedPath.startsWith('/plan'),
       // タグページ / カレンダー: タグの購読が必要
       tags: normalizedPath.startsWith('/tags') || normalizedPath.startsWith('/calendar'),
       // 通知は全ページで必要
@@ -106,7 +106,7 @@ export function RealtimeProvider({ children }: RealtimeProviderProps) {
     enabled: shouldSubscribe && subscriptionConfig.calendar,
   });
   usePlanRealtime(userId, {
-    enabled: shouldSubscribe && (subscriptionConfig.calendar || subscriptionConfig.inbox),
+    enabled: shouldSubscribe && (subscriptionConfig.calendar || subscriptionConfig.plan),
   });
   useTagRealtime(userId, {
     enabled: shouldSubscribe && subscriptionConfig.tags,
