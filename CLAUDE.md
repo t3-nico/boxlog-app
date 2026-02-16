@@ -438,7 +438,7 @@ GAFAが作ったOSS、推奨パターンを使う。
 - Vercel Preview = すべてのmain以外のブランチ → Staging DB
 - マイグレーションは各環境に個別適用が必要
 
-**詳細**: [`docs/development/ENVIRONMENTS.md`](docs/development/ENVIRONMENTS.md)
+**詳細**: Storybook → Docs/Architecture/Environments
 
 ## 📦 依存関係の運用
 
