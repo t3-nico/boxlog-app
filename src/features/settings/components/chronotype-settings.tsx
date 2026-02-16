@@ -13,8 +13,9 @@ import {
 } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 
+import { CACHE_5_MINUTES } from '@/constants/time';
 import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings';
-import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
+import { api } from '@/lib/trpc';
 import { useTranslations } from 'next-intl';
 
 import { SettingRow } from './fields/SettingRow';
@@ -127,25 +128,48 @@ function getPeakHours(zones: ProductivityZone[]): string {
  * クロノタイプ設定コンポーネント
  */
 export function ChronotypeSettings() {
-  const settings = useCalendarSettingsStore();
   const t = useTranslations();
+  const utils = api.useUtils();
+
+  // DBから直接クロノタイプ設定を取得（Zustandストアに依存しない）
+  const { data: dbSettings, isPending } = api.userSettings.get.useQuery(undefined, {
+    staleTime: CACHE_5_MINUTES,
+  });
+
+  // tRPC mutation（DB保存 → キャッシュ無効化でステータスバーも自動更新）
+  const updateMutation = api.userSettings.update.useMutation({
+    onSuccess: () => {
+      utils.userSettings.get.invalidate();
+    },
+  });
 
   // 選択可能なタイプ（customは除外）
   const selectableTypes: Exclude<ChronotypeType, 'custom'>[] = ['bear', 'lion', 'wolf', 'dolphin'];
 
-  // 自動保存システム
+  // 未選択を表す特別な値
+  const NONE_VALUE = 'none';
+
+  // DB値から初期値を構築（DBにデータがない場合はデフォルト）
+  const dbChronotype = dbSettings?.chronotype;
+  const initialChronotype: ChronotypeAutoSaveSettings['chronotype'] = {
+    enabled: dbChronotype?.enabled ?? false,
+    type: (dbChronotype?.type as ChronotypeType) ?? 'bear',
+    displayMode: (dbChronotype?.displayMode as 'border' | 'background' | 'both') ?? 'border',
+    opacity: dbChronotype?.opacity ?? 90,
+  };
+
+  // 自動保存システム（DB に直接保存）
   const autoSave = useAutoSaveSettings<ChronotypeAutoSaveSettings>({
     initialValues: {
-      chronotype: {
-        enabled: settings.chronotype.enabled,
-        type: settings.chronotype.type,
-        displayMode: settings.chronotype.displayMode,
-        opacity: settings.chronotype.opacity,
-      },
+      chronotype: initialChronotype,
     },
     onSave: async (values) => {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      settings.updateSettings({ chronotype: values.chronotype });
+      await updateMutation.mutateAsync({
+        chronotypeEnabled: values.chronotype.enabled,
+        chronotypeType: values.chronotype.type,
+        chronotypeDisplayMode: values.chronotype.displayMode,
+        chronotypeOpacity: values.chronotype.opacity,
+      });
     },
     successMessage: t('settings.chronotype.settingsSaved'),
     debounceMs: 800,
@@ -153,18 +177,37 @@ export function ChronotypeSettings() {
 
   // タイプ選択ハンドラー
   const handleTypeSelect = useCallback(
-    (type: string) => {
-      autoSave.updateValue('chronotype', {
-        ...autoSave.values.chronotype,
-        type: type as ChronotypeType,
-      });
+    (value: string) => {
+      if (value === NONE_VALUE) {
+        autoSave.updateValue('chronotype', {
+          ...autoSave.values.chronotype,
+          enabled: false,
+        });
+      } else {
+        autoSave.updateValue('chronotype', {
+          ...autoSave.values.chronotype,
+          enabled: true,
+          type: value as ChronotypeType,
+        });
+      }
     },
     [autoSave],
   );
 
-  // 現在選択中のタイプ
+  // 現在選択中のタイプ（未選択の場合は NONE_VALUE）
+  const isEnabled = autoSave.values.chronotype.enabled;
   const selectedType = autoSave.values.chronotype.type;
-  const selectedProfile = selectedType !== 'custom' ? CHRONOTYPE_PRESETS[selectedType] : null;
+  const selectValue = isEnabled ? selectedType : NONE_VALUE;
+  const selectedProfile =
+    isEnabled && selectedType !== 'custom' ? CHRONOTYPE_PRESETS[selectedType] : null;
+
+  if (isPending) {
+    return (
+      <div className="animate-pulse space-y-6">
+        <div className="bg-surface-container h-24 rounded-2xl" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">
@@ -172,11 +215,12 @@ export function ChronotypeSettings() {
       <SettingsCard title={t('settings.chronotype.title')} isSaving={autoSave.isSaving}>
         <div className="space-y-0">
           <SettingRow label={t('settings.chronotype.title')}>
-            <Select value={selectedType} onValueChange={handleTypeSelect}>
+            <Select value={selectValue} onValueChange={handleTypeSelect}>
               <SelectTrigger variant="ghost">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value={NONE_VALUE}>{t('settings.chronotype.notSelected')}</SelectItem>
                 {selectableTypes.map((type) => (
                   <SelectItem key={type} value={type}>
                     {CHRONOTYPE_EMOJI[type]} {CHRONOTYPE_PRESETS[type].name}

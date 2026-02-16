@@ -111,12 +111,15 @@ export async function createTRPCContext(opts: CreateNextContextOptions): Promise
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
       {
         cookies: {
-          get: (name) => {
-            const cookie = req.cookies[name];
-            return cookie;
+          getAll() {
+            return Object.entries(req.cookies).map(([name, value]) => ({
+              name,
+              value: value ?? '',
+            }));
           },
-          set: () => {},
-          remove: () => {},
+          setAll() {
+            // tRPC API routes cannot set cookies (read-only context)
+          },
         },
       },
     );

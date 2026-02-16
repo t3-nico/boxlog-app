@@ -3,13 +3,15 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Dna } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
+import { CACHE_5_MINUTES } from '@/constants/time';
 import { cn } from '@/lib/utils';
 
 import { StatusBarItem } from '../StatusBarItem';
 
-import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
 import { useSettingsModalStore } from '@/features/settings/stores/useSettingsModalStore';
+import { api } from '@/lib/trpc';
 import {
   CHRONOTYPE_PRESETS,
   getChronotypeColor,
@@ -19,14 +21,23 @@ import {
 /**
  * クロノタイプ（現在の生産性ゾーン）をステータスバーに表示
  *
+ * DB（userSettings）から直接取得し、Zustandストアに依存しない。
+ *
  * 表示パターン:
  * - 設定済み: "ピーク時間帯 (残り1h 30m)"
  * - 未設定: "クロノタイプ未設定"
  */
 export function ChronotypeStatusItem() {
   const [currentTime, setCurrentTime] = useState(() => new Date());
-  const chronotype = useCalendarSettingsStore((state) => state.chronotype);
   const openModal = useSettingsModalStore((state) => state.openModal);
+  const t = useTranslations('calendar');
+
+  // DBから直接クロノタイプ設定を取得
+  const { data: dbSettings } = api.userSettings.get.useQuery(undefined, {
+    staleTime: CACHE_5_MINUTES,
+  });
+
+  const chronotype = dbSettings?.chronotype ?? null;
 
   // 1分ごとに現在時刻を更新
   useEffect(() => {
@@ -77,15 +88,18 @@ export function ChronotypeStatusItem() {
   }, [chronotype, currentTime]);
 
   // 残り時間のフォーマット
-  const formatRemaining = useCallback((minutes: number) => {
-    const hours = Math.floor(minutes / 60);
-    const mins = minutes % 60;
+  const formatRemaining = useCallback(
+    (minutes: number) => {
+      const hours = Math.floor(minutes / 60);
+      const mins = minutes % 60;
 
-    if (hours > 0) {
-      return `残り${hours}h ${mins}m`;
-    }
-    return `残り${mins}m`;
-  }, []);
+      if (hours > 0) {
+        return t('statusBar.remaining', { hours, minutes: mins });
+      }
+      return t('statusBar.remainingMinutes', { minutes: mins });
+    },
+    [t],
+  );
 
   // クリック時: 設定モーダルを開く
   const handleClick = useCallback(() => {
@@ -95,11 +109,11 @@ export function ChronotypeStatusItem() {
   // ラベル生成
   const label = useMemo(() => {
     if (!zoneInfo) {
-      return 'クロノタイプ未設定';
+      return t('statusBar.chronotypeNotSet');
     }
 
     return `${zoneInfo.label} (${formatRemaining(zoneInfo.remainingMinutes)})`;
-  }, [zoneInfo, formatRemaining]);
+  }, [zoneInfo, formatRemaining, t]);
 
   // アイコンの色を決定（クロノタイプ専用セマンティックトークン）
   const iconColorStyle = zoneInfo ? { color: getChronotypeColor(zoneInfo.level) } : undefined;
@@ -114,7 +128,7 @@ export function ChronotypeStatusItem() {
       }
       label={label}
       onClick={handleClick}
-      tooltip={zoneInfo ? '生産性ゾーン設定を開く' : 'クロノタイプを設定'}
+      tooltip={zoneInfo ? t('statusBar.openProductivityZone') : t('statusBar.setupChronotype')}
     />
   );
 }

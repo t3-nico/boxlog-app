@@ -222,7 +222,12 @@
       "createNewPlan": "新規プラン作成",
       "plan": "Plan",
       "record": "Record",
-      "totalTimeTooltip": "今日までの累計時間"
+      "totalTimeTooltip": "今日までの累計時間",
+      "chronotypeNotSet": "クロノタイプ未設定",
+      "setupChronotype": "クロノタイプを設定",
+      "openProductivityZone": "生産性ゾーン設定を開く",
+      "remaining": "残り{hours}h {minutes}m",
+      "remainingMinutes": "残り{minutes}m"
     },
     "agenda": {
       "emptyTitle": "今後の予定はありません",

@@ -8,7 +8,6 @@ import { z } from 'zod';
 
 import type { Database } from '@/lib/database.types';
 import { logger } from '@/lib/logger';
-import { createClient } from '@/lib/supabase/server';
 import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc';
 
 type UserSettingsInsert = Database['public']['Tables']['user_settings']['Insert'];
@@ -70,9 +69,7 @@ export const userSettingsRouter = createTRPCRouter({
       });
     }
 
-    const supabase = await createClient();
-
-    const { data, error } = await supabase
+    const { data, error } = await ctx.supabase
       .from('user_settings')
       .select('*')
       .eq('user_id', userId)
@@ -134,8 +131,6 @@ export const userSettingsRouter = createTRPCRouter({
       });
     }
 
-    const supabase = await createClient();
-
     // camelCase → snake_case に変換
     const updateData: UserSettingsInsert = {
       user_id: userId,
@@ -169,7 +164,7 @@ export const userSettingsRouter = createTRPCRouter({
     if (input.theme !== undefined) updateData.theme = input.theme;
     if (input.colorScheme !== undefined) updateData.color_scheme = input.colorScheme;
 
-    const { data, error } = await supabase
+    const { data, error } = await ctx.supabase
       .from('user_settings')
       .upsert(updateData, {
         onConflict: 'user_id',
