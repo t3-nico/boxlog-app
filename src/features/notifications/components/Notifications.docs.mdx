@@ -1,0 +1,143 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Features/Notifications/Docs" />
+
+# Notifications
+
+イベント、タスク、システムメッセージをユーザーに通知するシステム。
+
+---
+
+## 要件
+
+### 通知タイプ
+
+| タイプ | 説明 | アイコン |
+|-------|------|---------|
+| `reminder` | イベント開始前リマインダー | bell |
+| `event_created` | イベント作成 | calendar |
+| `event_updated` | イベント更新 | calendar |
+| `event_deleted` | イベント削除 | calendar |
+| `task_completed` | タスク完了 | check |
+| `trash_warning` | ゴミ箱自動削除警告 | trash |
+| `system` | システム通知 | info |
+
+### 優先度
+
+| 優先度 | 表示 |
+|-------|------|
+| `urgent` | 緊急（赤） |
+| `high` | 高（オレンジ） |
+| `medium` | 中（青） |
+| `low` | 低（グレー） |
+
+---
+
+## DB スキーマ
+
+### notifications テーブル
+
+| カラム | 型 | 説明 |
+|-------|-----|------|
+| `id` | UUID | PK |
+| `user_id` | UUID | FK → auth.users |
+| `type` | TEXT | 通知タイプ（CHECK制約） |
+| `priority` | TEXT | 優先度（default: medium） |
+| `title` | TEXT | 通知タイトル |
+| `message` | TEXT | 通知本文（nullable） |
+| `related_event_id` | UUID | 関連イベント（nullable） |
+| `action_url` | TEXT | クリック時遷移先 |
+| `icon` | TEXT | 表示アイコン |
+| `data` | JSONB | 拡張用データ |
+| `is_read` | BOOLEAN | 既読状態 |
+| `read_at` | TIMESTAMPTZ | 既読日時 |
+| `expires_at` | TIMESTAMPTZ | 有効期限 |
+
+- **RLS**: `auth.uid() = user_id` で自分の通知のみアクセス
+- **インデックス**: `user_id`, `(user_id, is_read)`, `created_at DESC`
+- **自動削除**: 既読30日後にCron Jobで削除
+
+### notification_preferences テーブル
+
+ユーザーごとの通知設定（ブラウザ通知、メール通知、リマインダーデフォルト分数等）。
+
+---
+
+## データフロー
+
+```
+[ユーザー操作（イベント作成/更新/削除）]
+       ↓
+[通知生成関数 → Supabase INSERT]
+       ↓
+[Realtime Subscription]
+       ↓
+[Zustand Store 更新]
+       ↓
+[UI更新: NotificationBadge + NotificationDialog]
+```
+
+---
+
+## コンポーネント構成
+
+```
+src/features/notifications/
+├── components/
+│   ├── NotificationDialog.tsx        メインダイアログ
+│   ├── NotificationItem.tsx          通知アイテム
+│   ├── NotificationList.tsx          通知リスト
+│   └── NotificationBadge.tsx         未読バッジ
+├── hooks/
+│   ├── useNotifications.ts           データ取得
+│   ├── useNotificationActions.ts     操作（既読化、削除）
+│   └── useRealtimeNotifications.ts   リアルタイム更新
+├── stores/
+│   ├── useNotificationStore.ts       Zustand store
+│   └── useNotificationDialogStore.ts ダイアログ開閉
+├── lib/
+│   ├── transformers.ts               Entity → Notification変換
+│   └── constants.ts                  定数
+└── types.ts
+```
+
+---
+
+## tRPC ルーター
+
+| プロシージャ | タイプ | 説明 |
+|-------------|-------|------|
+| `notifications.list` | query | 通知一覧取得 |
+| `notifications.markAsRead` | mutation | 個別既読化 |
+| `notifications.markAllAsRead` | mutation | 一括既読化 |
+| `notifications.delete` | mutation | 通知削除 |
+
+---
+
+## 通知生成トリガー
+
+| トリガー | 実行タイミング | 優先度 |
+|---------|--------------|--------|
+| リマインダー | Cron Job（1分ごと） | high |
+| イベント変更 | クライアント操作時 | medium |
+| ゴミ箱警告 | Cron Job（1日1回） | urgent |
+
+---
+
+## パフォーマンス
+
+- ページネーション: 50件ずつ取得
+- キャッシュ: TanStack Query
+- 自動削除: 既読30日後
+
+---
+
+## セキュリティ
+
+- RLS有効化: 自分の通知のみアクセス
+- XSS対策: messageフィールドのサニタイズ
+- レート制限: 通知作成は1分間に10件まで
+
+---
+
+**最終更新**: 2026-02-17
