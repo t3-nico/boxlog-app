@@ -196,14 +196,14 @@ export const WithError: Story = {
     <div className="border-border h-[500px] w-[320px] border">
       <div className="flex h-full flex-col">
         {/* ヘッダーバー */}
-        <div className="border-border flex shrink-0 items-center justify-end gap-1 border-b px-3 py-1.5">
+        <div className="flex shrink-0 items-center justify-end gap-1 px-4 pt-4 pb-2">
           <ChatHistoryPopover
             conversations={MOCK_CONVERSATIONS}
             activeConversationId="conv-1"
             onSelect={() => {}}
           />
-          <Button variant="ghost" size="sm" icon className="size-7" aria-label="New conversation">
-            <Plus className="size-4" />
+          <Button variant="ghost" size="sm" icon aria-label="New conversation">
+            <Plus className="size-5" />
           </Button>
         </div>
         {/* エラーバナー */}
