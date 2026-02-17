@@ -25,7 +25,7 @@ interface UseMultiDayPlanPositionsReturn {
 
 /**
  * 複数日表示用のプラン位置計算フック
- * ThreeDayView, FiveDayViewで共通利用
+ * MultiDayView(3day/5day等)で共通利用
  *
  * usePlanLayoutCalculatorを使用して重複プランの
  * カラム配置を正しく計算

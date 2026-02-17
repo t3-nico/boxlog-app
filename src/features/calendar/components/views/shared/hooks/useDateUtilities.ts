@@ -30,8 +30,8 @@ export interface UseDateUtilitiesReturn {
  * 全てのビューで「完全な日付配列を生成→週末フィルタリング」の統一アプローチを採用
  * これにより週末表示設定に関係なく一貫した動作を保証
  * - WeekView: 週の7日間
- * - ThreeDayView: 中央日±1日の3日間
- * - FiveDayView: 中央日±2日の5日間
+ * - MultiDayView(3day): 中央日±1日の3日間
+ * - MultiDayView(5day): 中央日±2日の5日間
  * - MultiDayView: 中央日±floor(dayCount/2)日のN日間（2-9日）
  * - AgendaView: 指定日数分の連続日付
  */

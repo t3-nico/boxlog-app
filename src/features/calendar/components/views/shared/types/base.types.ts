@@ -28,7 +28,7 @@ export interface BaseViewProps {
 
 /**
  * 時間グリッドビュー用の拡張プロパティ
- * DayView, ThreeDayView, FiveDayView, WeekView向け
+ * DayView, MultiDayView(3day/5day), WeekView向け
  */
 export interface GridViewProps extends BaseViewProps {
   // Core data
