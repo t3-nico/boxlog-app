@@ -1,51 +1,46 @@
 'use client';
 
-import { useMemo } from 'react';
+import { MiniCalendar } from '@/components/ui/mini-calendar';
+import { CalendarFilterList } from '@/features/calendar/components/sidebar/tag-filter/CalendarFilterList';
+import { ViewSwitcherList } from '@/features/calendar/components/sidebar/ViewSwitcherList';
+import { useCalendarNavigation } from '@/features/calendar/contexts/CalendarNavigationContext';
 
-import { useAuthStore } from '@/features/auth/stores/useAuthStore';
-
-import { NavSecondary } from './nav-secondary';
-import { NavUser } from './nav-user';
+import { SidebarShell } from './SidebarShell';
 
 /**
- * アプリケーション共通Sidebar
+ * AppSidebar - アプリケーションのメインサイドバー
  *
- * - コンテンツエリア（上部）
- * - ユーザーメニュー（下部固定）
- *
- * **デザイン仕様**:
- * - 幅: 240px（ResizablePanel制御）
- * - 8pxグリッドシステム準拠
- * - セマンティックトークン使用
- * - SidebarHeaderは削除（タイトルはPageHeaderで管理）
+ * 全ページで常に表示される:
+ * - ミニカレンダー（日付選択・月移動、PCのみ）
+ * - ビュー切り替え（モバイルのみ）
+ * - カレンダーフィルター
  */
 export function AppSidebar() {
-  const user = useAuthStore((state) => state.user);
-
-  const data = useMemo(
-    () => ({
-      navSecondary: [],
-    }),
-    [],
-  );
-
-  const userData = {
-    name: user?.user_metadata?.username || user?.email?.split('@')[0] || 'User',
-    email: user?.email || '',
-    avatar: user?.user_metadata?.avatar_url || null,
-  };
+  const navigation = useCalendarNavigation();
 
   return (
-    <aside className="bg-surface-container text-foreground flex h-full w-full flex-col">
-      {/* Content - スクロールコンテナ */}
-      <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-2 overflow-y-auto bg-transparent px-2 py-2">
-        <NavSecondary items={data.navSecondary} />
+    <SidebarShell>
+      {/* ミニカレンダー（PCのみ）- サイドバー上部 */}
+      <div className="hidden shrink-0 md:block">
+        <MiniCalendar
+          selectedDate={navigation?.currentDate}
+          onDateSelect={(date) => {
+            if (date && navigation) {
+              navigation.navigateToDate(date, true);
+            }
+          }}
+          className="w-full bg-transparent"
+        />
       </div>
 
-      {/* User Menu - 下部固定 */}
-      <div className="border-border mt-auto border-t px-2 py-2">
-        <NavUser user={userData} />
+      {/* ビュー切り替え・フィルター */}
+      <div className="flex min-w-0 flex-col overflow-hidden">
+        {/* ビュー切り替え（モバイルのみ） */}
+        <ViewSwitcherList />
+
+        {/* カレンダーフィルター */}
+        <CalendarFilterList />
       </div>
-    </aside>
+    </SidebarShell>
   );
 }

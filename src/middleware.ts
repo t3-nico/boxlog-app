@@ -16,7 +16,7 @@ const protectedPaths = [
   '/agenda',
   '/timesheet',
   '/stats',
-  '/calendar', // 後方互換リダイレクト用
+
   '/box',
   '/table',
   '/board',
@@ -154,9 +154,7 @@ export async function middleware(request: NextRequest) {
     const isMFAVerifyPath = pathWithoutLocale === '/auth/mfa-verify';
 
     if (user && isAuthPath && !isMFAVerifyPath) {
-      return NextResponse.redirect(
-        new URL(getLocalizedPath('/day', currentLocale), request.url),
-      );
+      return NextResponse.redirect(new URL(getLocalizedPath('/day', currentLocale), request.url));
     }
 
     // next-intlのヘッダーをコピー

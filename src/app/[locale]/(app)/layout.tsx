@@ -2,7 +2,7 @@
  * 認証必須ページ用レイアウト
  *
  * @description
- * 認証が必要なページ（/plan, /calendar, /tags, /stats等）で使用。
+ * 認証が必要なページ（/plan, /calendar, /stats等）で使用。
  * フルProvidersを適用し、tRPC、Realtime購読、GlobalSearch等の
  * 全機能を利用可能にする。
  *
@@ -25,11 +25,9 @@ import { RecordInspector } from '@/features/records/components';
 
 interface AppLayoutProps {
   children: React.ReactNode;
-  /** Parallel Route: モーダルスロット (@modal) */
-  modal: React.ReactNode;
 }
 
-const AppLayout = async ({ children, modal }: AppLayoutProps) => {
+const AppLayout = async ({ children }: AppLayoutProps) => {
   return (
     <Providers>
       <SessionMonitorProvider>
@@ -40,8 +38,6 @@ const AppLayout = async ({ children, modal }: AppLayoutProps) => {
           <PlanDeleteConfirmDialog />
           <RecurringEditConfirmDialog />
           <Toaster />
-          {/* Intercepting Routes: モーダル */}
-          {modal}
         </BaseLayout>
       </SessionMonitorProvider>
     </Providers>

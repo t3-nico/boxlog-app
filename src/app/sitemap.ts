@@ -41,7 +41,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // メインアプリケーションページ（認証後・多言語対応）
   const appPages: MetadataRoute.Sitemap = [
     ...createLocalizedUrls('/day', 'daily', 0.9),
-    ...createLocalizedUrls('/plan', 'daily', 0.8),
     ...createLocalizedUrls('/stats', 'weekly', 0.7),
     ...createLocalizedUrls('/trash', 'weekly', 0.5),
   ];

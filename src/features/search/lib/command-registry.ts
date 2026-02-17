@@ -127,12 +127,19 @@ interface CommandActions {
   openTagCreateModal: () => void;
   navigateToSettings: () => void;
   toggleTheme: () => void;
+  openPanel: (panel: 'plan' | 'record' | 'stats' | 'chat') => void;
 }
 
 // Default commands that are always available
 export const registerDefaultCommands = (actions: CommandActions) => {
-  const { router, openPlanInspector, openTagCreateModal, navigateToSettings, toggleTheme } =
-    actions;
+  const {
+    router,
+    openPlanInspector,
+    openTagCreateModal,
+    navigateToSettings,
+    toggleTheme,
+    openPanel,
+  } = actions;
 
   const defaultCommands: Command[] = [
     // Navigation commands
@@ -149,12 +156,15 @@ export const registerDefaultCommands = (actions: CommandActions) => {
     {
       id: 'nav:plan',
       title: 'プランを開く',
-      description: 'タスク一覧を表示',
+      description: 'プランパネルを表示',
       category: 'navigation',
       icon: 'check-square',
       shortcut: ['G', 'P'],
       keywords: ['plan', 'board', 'kanban', 'タスク', '一覧', 'プラン'],
-      action: () => router.push('/plan'),
+      action: () => {
+        router.push('/day');
+        openPanel('plan');
+      },
     },
     {
       id: 'nav:stats',

@@ -109,24 +109,4 @@ test.describe('Critical Path: タグ管理', () => {
 
     await page.waitForURL(/\/(day|week|agenda|timesheet|stats)/i, { timeout: 15000 });
   });
-
-  test('タグページにアクセスできる', async ({ page }) => {
-    // タグページへのナビゲーション
-    const tagLink = page
-      .locator('a[href*="/tags"], [role="link"]:has-text("タグ"), [role="link"]:has-text("Tags")')
-      .first();
-
-    if (await tagLink.isVisible()) {
-      await tagLink.click();
-      await page.waitForLoadState('networkidle');
-    } else {
-      // 直接URLで遷移
-      await page.goto('/en/tags');
-      await page.waitForLoadState('networkidle');
-    }
-
-    // ページが表示される
-    const body = page.locator('body');
-    await expect(body).toBeVisible();
-  });
 });

@@ -197,7 +197,6 @@ export const ROUTES = {
   dashboard: () => '/',
   calendar: () => '/day',
   calendarView: (view: string) => `/${view}`,
-  plan: () => '/plan',
   stats: () => '/stats',
   statsDetail: (id: string) => `/stats/${id}`,
 

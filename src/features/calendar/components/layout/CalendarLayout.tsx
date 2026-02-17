@@ -3,7 +3,8 @@
 import { useTranslations } from 'next-intl';
 import { memo, useCallback } from 'react';
 
-import { MobileMenuButton } from '@/features/navigation/components/mobile/MobileMenuButton';
+import { Sheet, SheetContent } from '@/components/ui/sheet';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { cn } from '@/lib/utils';
 
 import { useResizeHandle } from '../../hooks/useResizeHandle';
@@ -91,6 +92,9 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
     // タッチイベントのみで動作（タッチイベントが発生 = タッチデバイス）
     const { handlers, ref } = useSwipeGesture(handleSwipeLeft, handleSwipeRight);
 
+    // モバイル判定（md ブレークポイント = 768px 未満）
+    const isMobile = useMediaQuery('(max-width: 767px)');
+
     // サイドパネルを表示するか
     const showSidePanel = currentPanel && currentPanel !== 'none';
 
@@ -123,7 +127,6 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
               onExport={onExport}
               onImport={onImport}
               showActions={showHeaderActions}
-              leftSlot={<MobileMenuButton className="md:hidden" />}
               onDateSelect={onDateSelect}
               showMiniCalendar={true}
               displayRange={displayRange}
@@ -178,6 +181,20 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
             )}
           </aside>
         </div>
+
+        {/* モバイル: パネルを全画面 Sheet で表示 */}
+        {isMobile && onPanelChange && currentPanel && (
+          <Sheet open={!!showSidePanel} onOpenChange={(open) => !open && onPanelChange('none')}>
+            <SheetContent
+              side="right"
+              className="w-full p-0 sm:max-w-full"
+              showCloseButton={false}
+              aria-label={t('panel.open')}
+            >
+              <CalendarSidePanel panelType={currentPanel} onPanelChange={onPanelChange} />
+            </SheetContent>
+          </Sheet>
+        )}
       </div>
     );
   },
