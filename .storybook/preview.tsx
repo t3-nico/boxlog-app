@@ -264,12 +264,31 @@ const messages = {
       popoverTitle: '期限切れのプラン',
       overdueBy: '{time}超過',
     },
-    panel: {
+    reflection: {
+      empty: {
+        title: 'まだ振り返りがありません',
+        description: '今日のアクティビティからAIが振り返りを生成します',
+        generate: '振り返りを生成',
+      },
+      sections: {
+        activities: 'アクティビティ',
+        insights: '所感',
+        question: '問いかけ',
+        note: 'あなたのメモ',
+      },
+      userNote: {
+        placeholder: '感じたことを書いてみましょう...',
+      },
+    },
+    aside: {
       loading: '読み込み中...',
-      open: 'パネルを開く',
+      error: '読み込みに失敗しました',
+      open: 'アサイドを開く',
       sortBy: '並び替え',
       groupBy: 'グループ',
       reset: 'リセット',
+      noPlans: 'プランはありません',
+      searchPlaceholder: 'プランを検索...',
       sort: {
         createdAt: '作成日',
         updatedAt: '更新日',

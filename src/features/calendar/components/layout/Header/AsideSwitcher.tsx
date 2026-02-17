@@ -2,13 +2,14 @@
 
 import { SegmentedControl } from '@/components/ui/segmented-control';
 
-export type AsideType = 'none' | 'plan' | 'record' | 'stats' | 'chat';
+export type AsideType = 'none' | 'plan' | 'record' | 'stats' | 'chat' | 'reflection';
 
 const asideOptions = [
   { value: 'plan' as const, label: 'Plan' },
   { value: 'record' as const, label: 'Record' },
   { value: 'stats' as const, label: 'Stats' },
   { value: 'chat' as const, label: 'Chat' },
+  { value: 'reflection' as const, label: 'Reflect' },
 ];
 
 interface AsideSwitcherProps {
@@ -25,7 +26,7 @@ export function AsideSwitcher({ currentAside, onChange, className }: AsideSwitch
   return (
     <SegmentedControl
       options={asideOptions}
-      value={currentAside as 'plan' | 'record' | 'stats' | 'chat'}
+      value={currentAside as 'plan' | 'record' | 'stats' | 'chat' | 'reflection'}
       onChange={onChange}
       className={className}
     />

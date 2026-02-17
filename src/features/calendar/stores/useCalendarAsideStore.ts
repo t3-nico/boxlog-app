@@ -63,7 +63,7 @@ const useCalendarAsideStoreBase = create<CalendarAsideState>()(
           const asideSize =
             state?.asideSize ??
             ((state as Record<string, unknown>)?.panelSize as number | undefined);
-          const validAsideTypes = ['none', 'plan', 'record', 'stats', 'chat'];
+          const validAsideTypes = ['none', 'plan', 'record', 'stats', 'chat', 'reflection'];
           return {
             ...currentState,
             ...state,

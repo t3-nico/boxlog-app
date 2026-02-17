@@ -354,6 +354,22 @@
         "thisMonth": "This month"
       }
     },
+    "reflection": {
+      "empty": {
+        "title": "No reflection yet",
+        "description": "Generate an AI reflection from today's activities",
+        "generate": "Generate Reflection"
+      },
+      "sections": {
+        "activities": "Activities",
+        "insights": "Insights",
+        "question": "Question",
+        "note": "Your Note"
+      },
+      "userNote": {
+        "placeholder": "Add your thoughts..."
+      }
+    },
     "error": {
       "title": "Failed to load calendar",
       "description": "Please check your network connection and try again.",

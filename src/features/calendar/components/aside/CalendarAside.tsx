@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 
 import { Button } from '@/components/ui/button';
 import { AIInspectorContent } from '@/features/ai/components/AIInspectorContent';
+import { ReflectionPanel } from '@/features/reflection/components/ReflectionPanel';
 
 import { AsideSwitcher, type AsideType } from '../layout/Header/AsideSwitcher';
 
@@ -38,6 +39,8 @@ export function CalendarAside({ asideType, onAsideChange }: CalendarAsideProps) 
         return <StatsPanel />;
       case 'chat':
         return <AIInspectorContent />;
+      case 'reflection':
+        return <ReflectionPanel reflection={null} />;
       default:
         return null;
     }
