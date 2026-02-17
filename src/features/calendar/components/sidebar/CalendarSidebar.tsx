@@ -20,17 +20,8 @@ export function CalendarSidebar() {
 
   return (
     <SidebarShell>
-      {/* ビュー切り替え・フィルター */}
-      <div className="flex min-w-0 flex-col overflow-hidden">
-        {/* ビュー切り替え（モバイルのみ） */}
-        <ViewSwitcherList />
-
-        {/* カレンダーフィルター */}
-        <CalendarFilterList />
-      </div>
-
-      {/* ミニカレンダー（PCのみ）- 最下部に固定 */}
-      <div className="mt-auto hidden shrink-0 md:block">
+      {/* ミニカレンダー（PCのみ）- サイドバー上部 */}
+      <div className="hidden shrink-0 md:block">
         <MiniCalendar
           selectedDate={navigation?.currentDate}
           onDateSelect={(date) => {
@@ -40,6 +31,15 @@ export function CalendarSidebar() {
           }}
           className="w-full bg-transparent"
         />
+      </div>
+
+      {/* ビュー切り替え・フィルター */}
+      <div className="flex min-w-0 flex-col overflow-hidden">
+        {/* ビュー切り替え（モバイルのみ） */}
+        <ViewSwitcherList />
+
+        {/* カレンダーフィルター */}
+        <CalendarFilterList />
       </div>
     </SidebarShell>
   );
