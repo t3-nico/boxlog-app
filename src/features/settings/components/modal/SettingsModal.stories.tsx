@@ -113,17 +113,57 @@ const MOCK_CONTENT: Record<SettingsCategory, React.ReactNode> = {
     </>
   ),
   personalization: (
-    <SettingsCard title="クロノタイプ">
-      <SettingRow label="睡眠時間">
-        <span className="text-muted-foreground">23:00 - 07:00</span>
-      </SettingRow>
-      <SettingRow label="ピーク時間帯">
-        <span className="text-muted-foreground">10:00 - 12:00</span>
-      </SettingRow>
-      <SettingRow label="低エネルギー時間帯">
-        <span className="text-muted-foreground">14:00 - 15:00</span>
-      </SettingRow>
-    </SettingsCard>
+    <>
+      <SettingsCard title="価値評定スケール">
+        <div className="space-y-4">
+          {[
+            { label: '健康', desc: '食事・睡眠・運動', importance: 10 },
+            { label: 'キャリア・仕事', desc: '集中時間の確保', importance: 9 },
+            { label: '家族', desc: '家族の絆は安心感の土台', importance: 8 },
+          ].map((cat) => (
+            <div key={cat.label} className="border-border rounded-2xl border p-4">
+              <div className="mb-2 flex items-center justify-between">
+                <div>
+                  <h4 className="text-foreground text-sm font-normal">{cat.label}</h4>
+                  <p className="text-muted-foreground text-xs">{cat.desc}</p>
+                </div>
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: 10 }, (_, i) => (
+                    <div
+                      key={i}
+                      className={`size-3 rounded-full ${i < cat.importance ? 'bg-primary' : 'bg-muted'}`}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+          ))}
+          <p className="text-muted-foreground text-center text-xs">+ 9 more categories</p>
+        </div>
+      </SettingsCard>
+      <SettingsCard title="価値観キーワードランキング">
+        <div className="text-muted-foreground mb-2 text-xs">5 / 10 選択中</div>
+        <div className="space-y-1">
+          {['誠実さ', '好奇心', '規律', '成長', 'バランス'].map((label, i) => (
+            <div
+              key={label}
+              className="border-border flex items-center gap-3 rounded-lg border px-3 py-2"
+            >
+              <span className="text-muted-foreground w-5 text-right text-sm">{i + 1}</span>
+              <span className="text-foreground flex-1 text-sm">{label}</span>
+            </div>
+          ))}
+        </div>
+      </SettingsCard>
+      <SettingsCard title="クロノタイプ">
+        <SettingRow label="睡眠時間">
+          <span className="text-muted-foreground">23:00 - 07:00</span>
+        </SettingRow>
+        <SettingRow label="ピーク時間帯">
+          <span className="text-muted-foreground">10:00 - 12:00</span>
+        </SettingRow>
+      </SettingsCard>
+    </>
   ),
   notifications: (
     <>
