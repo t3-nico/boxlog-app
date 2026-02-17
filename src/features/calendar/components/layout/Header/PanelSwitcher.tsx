@@ -2,11 +2,12 @@
 
 import { SegmentedControl } from '@/components/ui/segmented-control';
 
-export type PanelType = 'none' | 'plan' | 'record' | 'chat';
+export type PanelType = 'none' | 'plan' | 'record' | 'stats' | 'chat';
 
 const panelOptions = [
   { value: 'plan' as const, label: 'Plan' },
   { value: 'record' as const, label: 'Record' },
+  { value: 'stats' as const, label: 'Stats' },
   { value: 'chat' as const, label: 'Chat' },
 ];
 
@@ -24,7 +25,7 @@ export function PanelSwitcher({ currentPanel, onChange, className }: PanelSwitch
   return (
     <SegmentedControl
       options={panelOptions}
-      value={currentPanel as 'plan' | 'record' | 'chat'}
+      value={currentPanel as 'plan' | 'record' | 'stats' | 'chat'}
       onChange={onChange}
       className={className}
     />

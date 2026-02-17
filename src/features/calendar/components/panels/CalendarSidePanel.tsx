@@ -1,6 +1,6 @@
 'use client';
 
-import { PanelRight } from 'lucide-react';
+import { ArrowLeft, PanelRight } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { Button } from '@/components/ui/button';
@@ -10,6 +10,7 @@ import { PanelSwitcher, type PanelType } from '../layout/Header/PanelSwitcher';
 
 import { PlanListPanel } from './PlanListPanel';
 import { RecordListPanel } from './RecordListPanel';
+import { StatsPanel } from './StatsPanel';
 
 interface CalendarSidePanelProps {
   panelType: PanelType;
@@ -33,6 +34,8 @@ export function CalendarSidePanel({ panelType, onPanelChange }: CalendarSidePane
         return <PlanListPanel />;
       case 'record':
         return <RecordListPanel />;
+      case 'stats':
+        return <StatsPanel />;
       case 'chat':
         return <AIInspectorContent />;
       default:
@@ -53,7 +56,9 @@ export function CalendarSidePanel({ panelType, onPanelChange }: CalendarSidePane
             onClick={() => onPanelChange('none')}
             aria-label={t('actions.close')}
           >
-            <PanelRight className="size-4" />
+            {/* モバイル: 戻る矢印、デスクトップ: パネル閉じアイコン */}
+            <ArrowLeft className="size-4 md:hidden" />
+            <PanelRight className="hidden size-4 md:block" />
           </Button>
         </div>
       </div>

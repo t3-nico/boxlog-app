@@ -11,6 +11,8 @@ import type { StatsHeroData } from '../StatsView.types';
 interface StatsHeroCardsProps {
   hero: StatsHeroData;
   streak: { currentStreak: number; longestStreak: number; hasActivityToday: boolean } | null;
+  /** 縦並び固定（サイドパネル用） */
+  vertical?: boolean;
 }
 
 function formatMinutesToHours(minutes: number): string {
@@ -23,12 +25,12 @@ function formatMinutesToHours(minutes: number): string {
  * Stats Hero カード（3カードグリッド）
  * Progress%, vs先週, Streak
  */
-export function StatsHeroCards({ hero, streak }: StatsHeroCardsProps) {
+export function StatsHeroCards({ hero, streak, vertical }: StatsHeroCardsProps) {
   const t = useTranslations('calendar.stats');
   const { progressPercent, actualMinutes, plannedMinutes, hoursDelta } = hero;
 
   return (
-    <div className="grid grid-cols-1 gap-3 p-4 md:grid-cols-3">
+    <div className={cn('grid grid-cols-1 gap-3 p-4', !vertical && 'md:grid-cols-3')}>
       {/* Progress Card */}
       <Card className="bg-card">
         <CardContent className="flex flex-col gap-2 p-4">
@@ -36,9 +38,7 @@ export function StatsHeroCards({ hero, streak }: StatsHeroCardsProps) {
             <Target className="h-3.5 w-3.5" />
             {t('progress')}
           </div>
-          <div className="text-2xl font-bold tracking-tight">
-            {progressPercent}%
-          </div>
+          <div className="text-2xl font-bold tracking-tight">{progressPercent}%</div>
           <div className="text-muted-foreground text-xs">
             {formatMinutesToHours(actualMinutes)} / {formatMinutesToHours(plannedMinutes)}
           </div>
@@ -89,9 +89,7 @@ export function StatsHeroCards({ hero, streak }: StatsHeroCardsProps) {
             {t('streak')}
           </div>
           <div className="flex items-baseline gap-1">
-            <span className="text-2xl font-bold tracking-tight">
-              {streak?.currentStreak ?? 0}
-            </span>
+            <span className="text-2xl font-bold tracking-tight">{streak?.currentStreak ?? 0}</span>
             <span className="text-muted-foreground text-sm">{t('days')}</span>
           </div>
           <div className="text-muted-foreground text-xs">
