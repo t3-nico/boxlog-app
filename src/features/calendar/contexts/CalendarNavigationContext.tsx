@@ -2,7 +2,7 @@
 
 import React, { createContext, useCallback, useContext, useState } from 'react';
 
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 
 import { format } from 'date-fns';
 
@@ -28,7 +28,6 @@ export const CalendarNavigationProvider = ({
   initialDate?: Date;
   initialView?: CalendarViewType;
 }) => {
-  const router = useRouter();
   const pathname = usePathname();
   const [currentDate, setCurrentDate] = useState(initialDate);
   const [viewType, setViewType] = useState<CalendarViewType>(initialView);
@@ -36,49 +35,38 @@ export const CalendarNavigationProvider = ({
   // 現在のlocaleを取得（例: /ja/day -> ja）
   const locale = pathname?.split('/')[1] || 'ja';
 
-  // 初期値の変更を検知して状態を更新（初回マウント時のみ）
-  const initializedRef = React.useRef(false);
-
+  // URL由来の initialView が変更されたら viewType を同期
+  // （ブラウザ戻る/進む、直接URL入力時）
   React.useEffect(() => {
-    if (!initializedRef.current) {
-      initializedRef.current = true;
-      // 初期値が現在値と異なる場合のみ更新
-      if (initialDate.getTime() !== currentDate.getTime()) {
-        setCurrentDate(initialDate);
-      }
-      if (initialView !== viewType) {
-        setViewType(initialView);
-      }
+    if (initialView !== viewType) {
+      setViewType(initialView);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- 初回マウント時のみ実行
-  }, []);
-
-  // 現在のビュータイプをパスから取得（URLと同期）
-  const currentViewFromPath = pathname?.split('/').pop() as CalendarViewType | undefined;
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- initialView変更時のみ同期
+  }, [initialView]);
 
   const navigateToDate = useCallback(
     (date: Date, updateUrl = false) => {
       setCurrentDate(date);
 
-      // URLの更新が明示的に要求された場合のみ実行
       if (updateUrl) {
         const dateString = format(date, 'yyyy-MM-dd');
-        // URLからの現在のビュータイプを使用（stateよりも信頼性が高い）
-        const activeView = currentViewFromPath || viewType;
-        const newUrl = `/${locale}/${activeView}?date=${dateString}`;
-        router.push(newUrl, { scroll: false });
+        const newUrl = `/${locale}/${viewType}?date=${dateString}`;
+        // 日付変更は履歴に追加しない（replaceState）
+        window.history.replaceState(null, '', newUrl);
       }
     },
-    [router, viewType, locale, currentViewFromPath],
+    [viewType, locale],
   );
 
   const changeView = useCallback(
     (view: CalendarViewType) => {
       setViewType(view);
       const dateString = format(currentDate, 'yyyy-MM-dd');
-      router.push(`/${locale}/${view}?date=${dateString}`);
+      // pushState: 即座にURL更新、サーバーナビゲーションなし
+      // Next.js App Router は pushState と統合済み（usePathname等が同期する）
+      window.history.pushState(null, '', `/${locale}/${view}?date=${dateString}`);
     },
-    [router, currentDate, locale],
+    [currentDate, locale],
   );
 
   const navigateRelative = useCallback(
@@ -108,7 +96,7 @@ export const CalendarNavigationProvider = ({
         }
       }
 
-      navigateToDate(newDate, true); // URLも更新する
+      navigateToDate(newDate, true);
     },
     [currentDate, viewType, navigateToDate],
   );

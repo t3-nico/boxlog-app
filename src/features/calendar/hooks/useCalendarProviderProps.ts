@@ -1,13 +1,17 @@
 import { useMemo } from 'react';
 
-import type { CalendarViewType } from '../types/calendar.types';
 import { isCalendarViewPath } from '../lib/route-utils';
+import type { CalendarViewType } from '../types/calendar.types';
 
-// 有効なビュータイプのリスト
-const VALID_VIEW_TYPES: CalendarViewType[] = ['day', '3day', '5day', 'week', 'agenda'];
-
+// 有効なビュータイプかチェック
 function isValidViewType(view: string): view is CalendarViewType {
-  return VALID_VIEW_TYPES.includes(view as CalendarViewType);
+  if (['day', 'week', 'agenda', 'timesheet', 'stats'].includes(view)) return true;
+  const match = view.match(/^(\d+)day$/);
+  if (match) {
+    const n = parseInt(match[1]!);
+    return n >= 2 && n <= 9;
+  }
+  return false;
 }
 
 interface CalendarProviderProps {

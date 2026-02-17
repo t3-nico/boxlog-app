@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useMemo } from 'react';
 
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 
 import { addHours, format, startOfHour } from 'date-fns';
 
@@ -51,7 +51,6 @@ export const CalendarController = ({
   initialViewType = 'day',
   initialDate,
 }: CalendarViewExtendedProps) => {
-  const router = useRouter();
   const pathname = usePathname();
   const calendarNavigation = useCalendarNavigation();
 
@@ -72,9 +71,10 @@ export const CalendarController = ({
       const dateString = format(dateToUse, 'yyyy-MM-dd');
       const newURL = `/${locale}/${newViewType}?date=${dateString}`;
       logger.log('🔗 updateURL called:', { newViewType, dateToUse, newURL });
-      router.push(newURL);
+      // pushState: 即座にURL更新、サーバーナビゲーションなし
+      window.history.pushState(null, '', newURL);
     },
-    [router, locale],
+    [locale],
   );
 
   // 初期日付をメモ化して参照の安定性を保つ
