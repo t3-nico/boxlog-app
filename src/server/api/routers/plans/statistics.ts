@@ -12,6 +12,12 @@ import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc';
 
 import { z } from 'zod';
 
+/** 期間フィルター用の共通入力スキーマ */
+const dateRangeInput = z.object({
+  startDate: z.string().optional(),
+  endDate: z.string().optional(),
+});
+
 export const statisticsRouter = createTRPCRouter({
   /**
    * Get summary statistics (completed tasks, monthly hours, total hours)
@@ -188,90 +194,101 @@ export const statisticsRouter = createTRPCRouter({
   /**
    * Get time spent per tag
    */
-  getTimeByTag: protectedProcedure.query(async ({ ctx }) => {
-    const { supabase, userId } = ctx;
+  getTimeByTag: protectedProcedure
+    .input(dateRangeInput.optional())
+    .query(async ({ ctx, input }) => {
+      const { supabase, userId } = ctx;
 
-    // Get all plans with time and their tags
-    const { data: plans, error: plansError } = await supabase
-      .from('plans')
-      .select('id, start_time, end_time')
-      .eq('user_id', userId)
-      .not('start_time', 'is', null)
-      .not('end_time', 'is', null);
+      // Get all plans with time and their tags
+      let query = supabase
+        .from('plans')
+        .select('id, start_time, end_time')
+        .eq('user_id', userId)
+        .not('start_time', 'is', null)
+        .not('end_time', 'is', null);
 
-    if (plansError) {
-      throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: `Failed to fetch plans: ${plansError.message}`,
-      });
-    }
+      if (input?.startDate) {
+        query = query.gte('start_time', input.startDate);
+      }
+      if (input?.endDate) {
+        query = query.lte('start_time', input.endDate);
+      }
 
-    if (plans.length === 0) {
-      return [];
-    }
+      const { data: plans, error: plansError } = await query;
 
-    // Get plan-tag relationships
-    const planIds = plans.map((p) => p.id);
-    const { data: planTags, error: tagsError } = await supabase
-      .from('plan_tags')
-      .select('plan_id, tag_id')
-      .in('plan_id', planIds);
+      if (plansError) {
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: `Failed to fetch plans: ${plansError.message}`,
+        });
+      }
 
-    if (tagsError) {
-      throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: `Failed to fetch plan tags: ${tagsError.message}`,
-      });
-    }
+      if (plans.length === 0) {
+        return [];
+      }
 
-    // Get tag details
-    const tagIds = [...new Set(planTags.map((pt) => pt.tag_id))];
-    if (tagIds.length === 0) {
-      return [];
-    }
+      // Get plan-tag relationships
+      const planIds = plans.map((p) => p.id);
+      const { data: planTags, error: tagsError } = await supabase
+        .from('plan_tags')
+        .select('plan_id, tag_id')
+        .in('plan_id', planIds);
 
-    const { data: tags, error: tagDetailsError } = await supabase
-      .from('tags')
-      .select('id, name, color')
-      .in('id', tagIds);
+      if (tagsError) {
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: `Failed to fetch plan tags: ${tagsError.message}`,
+        });
+      }
 
-    if (tagDetailsError) {
-      throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: `Failed to fetch tags: ${tagDetailsError.message}`,
-      });
-    }
+      // Get tag details
+      const tagIds = [...new Set(planTags.map((pt) => pt.tag_id))];
+      if (tagIds.length === 0) {
+        return [];
+      }
 
-    // Calculate hours per tag
-    const tagHours: Record<string, number> = {};
-    for (const plan of plans) {
-      if (plan.start_time && plan.end_time) {
-        const hours =
-          (new Date(plan.end_time).getTime() - new Date(plan.start_time).getTime()) / MS_PER_HOUR;
-        if (hours > 0) {
-          const tagIdsForPlan = planTags
-            .filter((pt) => pt.plan_id === plan.id)
-            .map((pt) => pt.tag_id);
-          for (const tagId of tagIdsForPlan) {
-            tagHours[tagId] = (tagHours[tagId] || 0) + hours;
+      const { data: tags, error: tagDetailsError } = await supabase
+        .from('tags')
+        .select('id, name, color')
+        .in('id', tagIds);
+
+      if (tagDetailsError) {
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: `Failed to fetch tags: ${tagDetailsError.message}`,
+        });
+      }
+
+      // Calculate hours per tag
+      const tagHours: Record<string, number> = {};
+      for (const plan of plans) {
+        if (plan.start_time && plan.end_time) {
+          const hours =
+            (new Date(plan.end_time).getTime() - new Date(plan.start_time).getTime()) / MS_PER_HOUR;
+          if (hours > 0) {
+            const tagIdsForPlan = planTags
+              .filter((pt) => pt.plan_id === plan.id)
+              .map((pt) => pt.tag_id);
+            for (const tagId of tagIdsForPlan) {
+              tagHours[tagId] = (tagHours[tagId] || 0) + hours;
+            }
           }
         }
       }
-    }
 
-    // Build result
-    const result = tags
-      .map((tag) => ({
-        tagId: tag.id,
-        name: tag.name,
-        color: tag.color || '#6366f1',
-        hours: tagHours[tag.id] || 0,
-      }))
-      .filter((t) => t.hours > 0)
-      .sort((a, b) => b.hours - a.hours);
+      // Build result
+      const result = tags
+        .map((tag) => ({
+          tagId: tag.id,
+          name: tag.name,
+          color: tag.color || '#6366f1',
+          hours: tagHours[tag.id] || 0,
+        }))
+        .filter((t) => t.hours > 0)
+        .sort((a, b) => b.hours - a.hours);
 
-    return result;
-  }),
+      return result;
+    }),
 
   /**
    * Get daily hours for heatmap (yearly view)
@@ -323,158 +340,182 @@ export const statisticsRouter = createTRPCRouter({
   /**
    * Get hourly distribution (which hours of the day have most activity)
    */
-  getHourlyDistribution: protectedProcedure.query(async ({ ctx }) => {
-    const { supabase, userId } = ctx;
+  getHourlyDistribution: protectedProcedure
+    .input(dateRangeInput.optional())
+    .query(async ({ ctx, input }) => {
+      const { supabase, userId } = ctx;
 
-    const { data: plans, error } = await supabase
-      .from('plans')
-      .select('start_time, end_time')
-      .eq('user_id', userId)
-      .not('start_time', 'is', null)
-      .not('end_time', 'is', null);
+      let query = supabase
+        .from('plans')
+        .select('start_time, end_time')
+        .eq('user_id', userId)
+        .not('start_time', 'is', null)
+        .not('end_time', 'is', null);
 
-    if (error) {
-      throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: `Failed to fetch plans: ${error.message}`,
-      });
-    }
+      if (input?.startDate) {
+        query = query.gte('start_time', input.startDate);
+      }
+      if (input?.endDate) {
+        query = query.lte('start_time', input.endDate);
+      }
 
-    // Initialize hourly buckets
-    const hourlyHours: number[] = new Array(24).fill(0);
+      const { data: plans, error } = await query;
 
-    for (const plan of plans) {
-      if (plan.start_time && plan.end_time) {
-        const start = new Date(plan.start_time);
-        const end = new Date(plan.end_time);
+      if (error) {
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: `Failed to fetch plans: ${error.message}`,
+        });
+      }
 
-        // Simple approach: assign to start hour
-        const hour = start.getHours();
-        const hours = (end.getTime() - start.getTime()) / MS_PER_HOUR;
-        if (hours > 0) {
-          const currentHours = hourlyHours[hour];
-          if (currentHours !== undefined) {
-            hourlyHours[hour] = currentHours + hours;
+      // Initialize hourly buckets
+      const hourlyHours: number[] = new Array(24).fill(0);
+
+      for (const plan of plans) {
+        if (plan.start_time && plan.end_time) {
+          const start = new Date(plan.start_time);
+          const end = new Date(plan.end_time);
+
+          // Simple approach: assign to start hour
+          const hour = start.getHours();
+          const hours = (end.getTime() - start.getTime()) / MS_PER_HOUR;
+          if (hours > 0) {
+            const currentHours = hourlyHours[hour];
+            if (currentHours !== undefined) {
+              hourlyHours[hour] = currentHours + hours;
+            }
           }
         }
       }
-    }
 
-    // Convert to time slots (grouped by 2 hours)
-    const timeSlots = [];
-    for (let i = 0; i < 24; i += 2) {
-      const hourA = hourlyHours[i] ?? 0;
-      const hourB = hourlyHours[i + 1] ?? 0;
-      timeSlots.push({
-        timeSlot: `${i.toString().padStart(2, '0')}:00`,
-        hours: hourA + hourB,
-      });
-    }
+      // Convert to time slots (grouped by 2 hours)
+      const timeSlots = [];
+      for (let i = 0; i < 24; i += 2) {
+        const hourA = hourlyHours[i] ?? 0;
+        const hourB = hourlyHours[i + 1] ?? 0;
+        timeSlots.push({
+          timeSlot: `${i.toString().padStart(2, '0')}:00`,
+          hours: hourA + hourB,
+        });
+      }
 
-    return timeSlots;
-  }),
+      return timeSlots;
+    }),
 
   /**
    * Get day of week distribution
    */
-  getDayOfWeekDistribution: protectedProcedure.query(async ({ ctx }) => {
-    const { supabase, userId } = ctx;
+  getDayOfWeekDistribution: protectedProcedure
+    .input(dateRangeInput.optional())
+    .query(async ({ ctx, input }) => {
+      const { supabase, userId } = ctx;
 
-    const { data: plans, error } = await supabase
-      .from('plans')
-      .select('start_time, end_time')
-      .eq('user_id', userId)
-      .not('start_time', 'is', null)
-      .not('end_time', 'is', null);
+      let query = supabase
+        .from('plans')
+        .select('start_time, end_time')
+        .eq('user_id', userId)
+        .not('start_time', 'is', null)
+        .not('end_time', 'is', null);
 
-    if (error) {
-      throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: `Failed to fetch plans: ${error.message}`,
-      });
-    }
+      if (input?.startDate) {
+        query = query.gte('start_time', input.startDate);
+      }
+      if (input?.endDate) {
+        query = query.lte('start_time', input.endDate);
+      }
 
-    const dayNames = ['日', '月', '火', '水', '木', '金', '土'];
-    const dayHours: number[] = new Array(7).fill(0);
+      const { data: plans, error } = await query;
 
-    for (const plan of plans) {
-      if (plan.start_time && plan.end_time) {
-        const start = new Date(plan.start_time);
-        const end = new Date(plan.end_time);
-        const dayOfWeek = start.getDay();
-        const hours = (end.getTime() - start.getTime()) / MS_PER_HOUR;
-        if (hours > 0) {
-          const currentHours = dayHours[dayOfWeek];
-          if (currentHours !== undefined) {
-            dayHours[dayOfWeek] = currentHours + hours;
+      if (error) {
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: `Failed to fetch plans: ${error.message}`,
+        });
+      }
+
+      const dayNames = ['日', '月', '火', '水', '木', '金', '土'];
+      const dayHours: number[] = new Array(7).fill(0);
+
+      for (const plan of plans) {
+        if (plan.start_time && plan.end_time) {
+          const start = new Date(plan.start_time);
+          const end = new Date(plan.end_time);
+          const dayOfWeek = start.getDay();
+          const hours = (end.getTime() - start.getTime()) / MS_PER_HOUR;
+          if (hours > 0) {
+            const currentHours = dayHours[dayOfWeek];
+            if (currentHours !== undefined) {
+              dayHours[dayOfWeek] = currentHours + hours;
+            }
           }
         }
       }
-    }
 
-    // Return in Monday-first order (月火水木金土日)
-    const mondayFirst = [1, 2, 3, 4, 5, 6, 0];
-    return mondayFirst.map((dayIndex) => ({
-      day: dayNames[dayIndex] ?? '',
-      hours: dayHours[dayIndex] ?? 0,
-    }));
-  }),
+      // Return in Monday-first order (月火水木金土日)
+      const mondayFirst = [1, 2, 3, 4, 5, 6, 0];
+      return mondayFirst.map((dayIndex) => ({
+        day: dayNames[dayIndex] ?? '',
+        hours: dayHours[dayIndex] ?? 0,
+      }));
+    }),
 
   /**
    * Get monthly trend (last 12 months)
    */
-  getMonthlyTrend: protectedProcedure.query(async ({ ctx }) => {
-    const { supabase, userId } = ctx;
+  getMonthlyTrend: protectedProcedure
+    .input(z.object({ months: z.number().min(1).max(120).optional() }).optional())
+    .query(async ({ ctx, input }) => {
+      const { supabase, userId } = ctx;
 
-    // Get last 12 months
-    const now = new Date();
-    const startDate = new Date(now.getFullYear(), now.getMonth() - 11, 1);
+      const monthCount = input?.months ?? 12;
+      const now = new Date();
+      const startDate = new Date(now.getFullYear(), now.getMonth() - (monthCount - 1), 1);
 
-    const { data: plans, error } = await supabase
-      .from('plans')
-      .select('start_time, end_time')
-      .eq('user_id', userId)
-      .not('start_time', 'is', null)
-      .not('end_time', 'is', null)
-      .gte('start_time', startDate.toISOString());
+      const { data: plans, error } = await supabase
+        .from('plans')
+        .select('start_time, end_time')
+        .eq('user_id', userId)
+        .not('start_time', 'is', null)
+        .not('end_time', 'is', null)
+        .gte('start_time', startDate.toISOString());
 
-    if (error) {
-      throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: `Failed to fetch plans: ${error.message}`,
-      });
-    }
+      if (error) {
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: `Failed to fetch plans: ${error.message}`,
+        });
+      }
 
-    // Initialize monthly buckets
-    const monthlyHours: Record<string, number> = {};
-    for (let i = 0; i < 12; i++) {
-      const date = new Date(now.getFullYear(), now.getMonth() - 11 + i, 1);
-      const key = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}`;
-      monthlyHours[key] = 0;
-    }
+      // Initialize monthly buckets
+      const monthlyHours: Record<string, number> = {};
+      for (let i = 0; i < monthCount; i++) {
+        const date = new Date(now.getFullYear(), now.getMonth() - (monthCount - 1) + i, 1);
+        const key = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}`;
+        monthlyHours[key] = 0;
+      }
 
-    for (const plan of plans) {
-      if (plan.start_time && plan.end_time) {
-        const start = new Date(plan.start_time);
-        const key = `${start.getFullYear()}-${(start.getMonth() + 1).toString().padStart(2, '0')}`;
-        const hours = (new Date(plan.end_time).getTime() - start.getTime()) / MS_PER_HOUR;
-        if (hours > 0 && monthlyHours[key] !== undefined) {
-          monthlyHours[key] += hours;
+      for (const plan of plans) {
+        if (plan.start_time && plan.end_time) {
+          const start = new Date(plan.start_time);
+          const key = `${start.getFullYear()}-${(start.getMonth() + 1).toString().padStart(2, '0')}`;
+          const hours = (new Date(plan.end_time).getTime() - start.getTime()) / MS_PER_HOUR;
+          if (hours > 0 && monthlyHours[key] !== undefined) {
+            monthlyHours[key] += hours;
+          }
         }
       }
-    }
 
-    return Object.entries(monthlyHours)
-      .sort(([a], [b]) => a.localeCompare(b))
-      .map(([month, hours]) => {
-        const monthPart = month.split('-')[1];
-        return {
-          month,
-          label: `${monthPart ? parseInt(monthPart) : 0}月`,
-          hours,
-        };
-      });
-  }),
+      return Object.entries(monthlyHours)
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([month, hours]) => {
+          const monthPart = month.split('-')[1];
+          return {
+            month,
+            label: `${monthPart ? parseInt(monthPart) : 0}月`,
+            hours,
+          };
+        });
+    }),
 
   /**
    * Get total time from all plans

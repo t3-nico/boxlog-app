@@ -1,5 +1,7 @@
 'use client';
 
+import { useMemo } from 'react';
+
 import { Bar, BarChart, XAxis, YAxis } from 'recharts';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,6 +13,9 @@ import {
 } from '@/components/ui/chart';
 import { Skeleton } from '@/components/ui/skeleton';
 import { api } from '@/lib/trpc';
+
+import { useStatsFilterStore } from '../../stores/useStatsFilterStore';
+import { computeDateRange } from '../../utils/computeDateRange';
 
 const chartConfig = {
   hours: {
@@ -25,7 +30,10 @@ function formatHours(hours: number): string {
 }
 
 export function DayOfWeekChart() {
-  const { data, isPending } = api.plans.getDayOfWeekDistribution.useQuery();
+  const period = useStatsFilterStore((s) => s.period);
+  const dateRange = useMemo(() => computeDateRange(period), [period]);
+  const queryInput = dateRange.startDate ? dateRange : undefined;
+  const { data, isPending } = api.plans.getDayOfWeekDistribution.useQuery(queryInput);
 
   if (isPending) {
     return (
