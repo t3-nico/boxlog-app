@@ -4,7 +4,7 @@
  * useAIChat Hook
  *
  * Vercel AI SDK v6 の useChat をラップし、BYOK（Bring Your Own Key）パターンを統合。
- * APIキーの読み込み、プロバイダー選択、ストリーミング状態管理を提供。
+ * APIキーの読み込み、プロバイダー選択、ストリーミング状態管理、会話永続化を提供。
  */
 
 import { useChat } from '@ai-sdk/react';
@@ -14,9 +14,13 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { UIMessage } from 'ai';
 
 import { useAuthStore } from '@/features/auth/stores/useAuthStore';
+import { logger } from '@/lib/logger';
 import { ApiKeyStorage } from '@/lib/security/encryption';
+import { api } from '@/lib/trpc';
 
 import type { AIProviderId } from '@/server/services/ai/types';
+
+import { useChatStore } from '../stores/useChatStore';
 
 /** 優先順位でAPIキーの存在をチェックするプロバイダー順 */
 const PROVIDER_PRIORITY: AIProviderId[] = ['anthropic', 'openai'];
@@ -27,6 +31,24 @@ export function useAIChat() {
   const [providerId, setProviderId] = useState<AIProviderId>('anthropic');
   const [keyLoaded, setKeyLoaded] = useState(false);
   const [input, setInput] = useState('');
+
+  // Zustand store
+  const activeConversationId = useChatStore((s) => s.activeConversationId);
+  const initialized = useChatStore((s) => s.initialized);
+  const isSaving = useChatStore((s) => s.isSaving);
+  const setActiveConversationId = useChatStore((s) => s.setActiveConversationId);
+  const setInitialized = useChatStore((s) => s.setInitialized);
+  const setIsSaving = useChatStore((s) => s.setIsSaving);
+  const resetConversation = useChatStore((s) => s.resetConversation);
+
+  // --- tRPC mutations ---
+  const createConversation = api.chat.create.useMutation();
+  const saveConversation = api.chat.save.useMutation();
+
+  // 保存中の競合を防ぐためのガード
+  const savingRef = useRef(false);
+  const conversationIdRef = useRef<string | null>(null);
+  conversationIdRef.current = activeConversationId;
 
   // APIキーの遅延読み込み
   useEffect(() => {
@@ -87,6 +109,50 @@ export function useAIChat() {
         });
   }
 
+  // --- DB永続化: 保存関数 ---
+  const saveMessages = useCallback(
+    async (messages: UIMessage[]) => {
+      if (savingRef.current || messages.length === 0) return;
+
+      savingRef.current = true;
+      setIsSaving(true);
+
+      try {
+        const currentId = conversationIdRef.current;
+
+        if (currentId) {
+          // 既存会話を更新
+          await saveConversation.mutateAsync({
+            conversationId: currentId,
+            messages: messages.map((m) => ({
+              id: m.id,
+              role: m.role as 'user' | 'assistant' | 'system',
+              parts: m.parts as Array<{ type: string; [key: string]: unknown }>,
+            })),
+          });
+        } else {
+          // 新規会話を作成
+          const result = await createConversation.mutateAsync({
+            messages: messages.map((m) => ({
+              id: m.id,
+              role: m.role as 'user' | 'assistant' | 'system',
+              parts: m.parts as Array<{ type: string; [key: string]: unknown }>,
+            })),
+          });
+          if (result) {
+            setActiveConversationId(result.id);
+          }
+        }
+      } catch (err) {
+        logger.error('Failed to save conversation', { error: err });
+      } finally {
+        savingRef.current = false;
+        setIsSaving(false);
+      }
+    },
+    [saveConversation, createConversation, setActiveConversationId, setIsSaving],
+  );
+
   // useChat hook（AI SDK v6）
   const {
     messages,
@@ -97,9 +163,38 @@ export function useAIChat() {
     setMessages,
   } = useChat({
     transport: transportRef.current!,
+    onFinish: ({ messages: finishedMessages, isError, isAbort }) => {
+      // エラーやキャンセル時は保存しない
+      if (isError || isAbort) return;
+      saveMessages(finishedMessages);
+    },
   });
 
   const isLoading = status === 'streaming' || status === 'submitted';
+
+  // --- DB永続化: マウント時に最新会話を復元 ---
+  const { data: mostRecentConversation } = api.chat.getMostRecent.useQuery(undefined, {
+    enabled: keyLoaded && !!user?.id && !initialized,
+    staleTime: Infinity,
+  });
+
+  useEffect(() => {
+    if (initialized || !keyLoaded || !user?.id) return;
+
+    if (mostRecentConversation) {
+      setMessages(mostRecentConversation.messages as UIMessage[]);
+      setActiveConversationId(mostRecentConversation.id);
+    }
+    setInitialized(true);
+  }, [
+    mostRecentConversation,
+    initialized,
+    keyLoaded,
+    user?.id,
+    setMessages,
+    setActiveConversationId,
+    setInitialized,
+  ]);
 
   // テキストでメッセージ送信
   const sendMessage = useCallback(
@@ -126,10 +221,33 @@ export function useAIChat() {
     [hasApiKey, isLoading, chatSendMessage],
   );
 
-  // 会話リセット
+  // リトライ（最後のassistantメッセージを除去して再送信）
+  const retry = useCallback(() => {
+    if (isLoading || messages.length === 0) return;
+
+    // 末尾からassistantメッセージを除去し、最後のuserメッセージを特定
+    const trimmed = [...messages];
+    while (trimmed.length > 0 && trimmed.at(-1)?.role === 'assistant') {
+      trimmed.pop();
+    }
+
+    const lastUserMessage = trimmed[trimmed.length - 1];
+    if (!lastUserMessage || lastUserMessage.role !== 'user') return;
+
+    // テキストパートを抽出
+    const textPart = lastUserMessage.parts.find((p) => p.type === 'text');
+    if (!textPart || textPart.type !== 'text') return;
+
+    // メッセージを巻き戻して再送信
+    setMessages(trimmed.slice(0, -1));
+    chatSendMessage({ text: textPart.text });
+  }, [messages, isLoading, setMessages, chatSendMessage]);
+
+  // 会話リセット（新規会話開始）
   const reset = useCallback(() => {
     setMessages([]);
-  }, [setMessages]);
+    resetConversation();
+  }, [setMessages, resetConversation]);
 
   return useMemo(
     () => ({
@@ -157,8 +275,14 @@ export function useAIChat() {
       keyLoaded,
       /** 現在のプロバイダー */
       providerId,
-      /** 会話リセット */
+      /** 会話リセット（新規会話開始） */
       reset,
+      /** リトライ（最後のメッセージを再送信） */
+      retry,
+      /** DB保存中 */
+      isSaving,
+      /** 現在の会話ID */
+      activeConversationId,
     }),
     [
       messages,
@@ -174,6 +298,9 @@ export function useAIChat() {
       keyLoaded,
       providerId,
       reset,
+      retry,
+      isSaving,
+      activeConversationId,
     ],
   );
 }

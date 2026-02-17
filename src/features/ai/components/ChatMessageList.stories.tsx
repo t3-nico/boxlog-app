@@ -1,6 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { MOCK_LONG_CONVERSATION, MOCK_MESSAGES } from './__mocks__/chatMockData';
+import {
+  MOCK_LONG_CONVERSATION,
+  MOCK_MARKDOWN_MESSAGES,
+  MOCK_MESSAGES,
+  MOCK_TOOL_MESSAGES,
+} from './__mocks__/chatMockData';
 import { ChatMessageList } from './ChatMessageList';
 
 /** ChatMessageList - AIチャットメッセージ一覧 */
@@ -40,6 +45,34 @@ export const LongConversation: Story = {
   },
 };
 
+/** Markdown描画 */
+export const WithMarkdown: Story = {
+  args: {
+    messages: MOCK_MARKDOWN_MESSAGES,
+  },
+};
+
+/** ツール呼び出し付き */
+export const WithToolInvocations: Story = {
+  args: {
+    messages: MOCK_TOOL_MESSAGES,
+  },
+};
+
+/** コピーボタン確認（assistantメッセージにホバーで表示） */
+export const WithCopyButton: Story = {
+  args: {
+    messages: MOCK_MARKDOWN_MESSAGES,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Assistantメッセージにホバーするとコピーボタンが表示されます。',
+      },
+    },
+  },
+};
+
 // ---------------------------------------------------------------------------
 // AllPatterns
 // ---------------------------------------------------------------------------
@@ -52,7 +85,10 @@ export const AllPatterns: Story = {
         <ChatMessageList messages={MOCK_MESSAGES} />
       </div>
       <div className="border-border h-[500px] w-[320px] border">
-        <ChatMessageList messages={MOCK_LONG_CONVERSATION} />
+        <ChatMessageList messages={MOCK_MARKDOWN_MESSAGES} />
+      </div>
+      <div className="border-border h-[500px] w-[320px] border">
+        <ChatMessageList messages={MOCK_TOOL_MESSAGES} />
       </div>
     </div>
   ),
