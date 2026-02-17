@@ -1,6 +1,10 @@
+import { Plus } from 'lucide-react';
 import { useState } from 'react';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
+
+import { Button } from '@/components/ui/button';
+import type { ConversationSummary } from '@/server/services/chat/types';
 
 import type { ChatMessage } from '../types';
 
@@ -11,6 +15,7 @@ import {
 } from './__mocks__/chatMockData';
 import { AIInspectorContent } from './AIInspectorContent';
 import { ChatEmptyState } from './ChatEmptyState';
+import { ChatHistoryPopover } from './ChatHistoryPopover';
 import { ChatInput } from './ChatInput';
 import { ChatMessageList } from './ChatMessageList';
 
@@ -25,6 +30,27 @@ const meta = {
 
 export default meta;
 type Story = StoryObj<typeof meta>;
+
+// ---------------------------------------------------------------------------
+// モックデータ
+// ---------------------------------------------------------------------------
+
+const MOCK_CONVERSATIONS: ConversationSummary[] = [
+  {
+    id: 'conv-1',
+    title: '今日の予定を確認',
+    messageCount: 4,
+    createdAt: new Date(Date.now() - 600_000).toISOString(),
+    updatedAt: new Date(Date.now() - 600_000).toISOString(),
+  },
+  {
+    id: 'conv-2',
+    title: 'タグを整理したい',
+    messageCount: 8,
+    createdAt: new Date(Date.now() - 3_600_000).toISOString(),
+    updatedAt: new Date(Date.now() - 3_600_000).toISOString(),
+  },
+];
 
 // ---------------------------------------------------------------------------
 // ヘルパー
@@ -61,28 +87,27 @@ function ChatPanelStory({
   };
 
   const hasMessages = messages.length > 0;
+  const showHeaderBar = showHeader && (hasMessages || MOCK_CONVERSATIONS.length > 0);
 
   return (
     <div className="border-border border" style={{ height: 500, width }}>
       <div className="flex h-full flex-col">
-        {showHeader && hasMessages && (
-          <div className="border-border flex shrink-0 items-center justify-end border-b px-3 py-1.5">
-            <button
-              className="text-muted-foreground hover:text-foreground inline-flex size-7 items-center justify-center rounded-md"
+        {showHeaderBar && (
+          <div className="flex shrink-0 items-center justify-end gap-1 px-4 pt-4 pb-2">
+            <ChatHistoryPopover
+              conversations={MOCK_CONVERSATIONS}
+              activeConversationId="conv-1"
+              onSelect={() => {}}
+            />
+            <Button
+              variant="ghost"
+              size="sm"
+              icon
               onClick={() => setMessages([])}
               aria-label="New conversation"
             >
-              <svg
-                className="size-4"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <line x1="12" y1="5" x2="12" y2="19" />
-                <line x1="5" y1="12" x2="19" y2="12" />
-              </svg>
-            </button>
+              <Plus className="size-5" />
+            </Button>
           </div>
         )}
         <div className="min-h-0 flex-1">
@@ -160,7 +185,7 @@ export const FullScenario: Story = {
   ),
 };
 
-/** ヘッダーバー付き（New ボタン + コピーボタン確認） */
+/** ヘッダーバー付き（履歴 + New ボタン） */
 export const WithHeader: Story = {
   render: () => <ChatPanelStory initialMessages={MOCK_MESSAGES} showHeader />,
 };
@@ -171,39 +196,26 @@ export const WithError: Story = {
     <div className="border-border h-[500px] w-[320px] border">
       <div className="flex h-full flex-col">
         {/* ヘッダーバー */}
-        <div className="border-border flex shrink-0 items-center justify-end border-b px-3 py-1.5">
-          <button
-            className="text-muted-foreground hover:text-foreground inline-flex size-7 items-center justify-center rounded-md"
-            aria-label="New conversation"
-          >
-            <svg
-              className="size-4"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <line x1="12" y1="5" x2="12" y2="19" />
-              <line x1="5" y1="12" x2="19" y2="12" />
-            </svg>
-          </button>
+        <div className="border-border flex shrink-0 items-center justify-end gap-1 border-b px-3 py-1.5">
+          <ChatHistoryPopover
+            conversations={MOCK_CONVERSATIONS}
+            activeConversationId="conv-1"
+            onSelect={() => {}}
+          />
+          <Button variant="ghost" size="sm" icon className="size-7" aria-label="New conversation">
+            <Plus className="size-4" />
+          </Button>
         </div>
         {/* エラーバナー */}
         <div className="bg-destructive/10 text-destructive flex shrink-0 items-center gap-2 px-4 py-2 text-xs">
           <span className="flex-1">API request failed: 429 Too Many Requests</span>
-          <button className="text-destructive hover:text-destructive inline-flex h-6 items-center gap-1 rounded-md px-2 text-xs font-medium">
-            <svg
-              className="size-3"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <polyline points="23 4 23 10 17 10" />
-              <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
-            </svg>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-destructive hover:text-destructive h-6 gap-1 px-2 text-xs"
+          >
             Retry
-          </button>
+          </Button>
         </div>
         {/* メッセージ */}
         <div className="min-h-0 flex-1">

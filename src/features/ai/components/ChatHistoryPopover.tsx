@@ -11,6 +11,7 @@ import { memo, useCallback, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { HoverTooltip } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 
 import type { ConversationSummary } from '@/server/services/chat/types';
@@ -55,19 +56,20 @@ export const ChatHistoryPopover = memo(function ChatHistoryPopover({
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button
-          variant="ghost"
-          size="sm"
-          icon
-          className="size-7"
-          disabled={disabled}
-          aria-label="Conversation history"
-        >
-          <History className="size-4" />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent align="start" side="bottom" className="w-64 p-1">
+      <HoverTooltip content="Conversation history" disabled={open}>
+        <PopoverTrigger asChild>
+          <Button
+            variant="ghost"
+            size="sm"
+            icon
+            disabled={disabled}
+            aria-label="Conversation history"
+          >
+            <History className="size-5" />
+          </Button>
+        </PopoverTrigger>
+      </HoverTooltip>
+      <PopoverContent align="end" side="bottom" className="w-64 p-1">
         {conversations.length === 0 ? (
           <div className="text-muted-foreground px-3 py-4 text-center text-xs">
             No conversations yet
@@ -80,8 +82,8 @@ export const ChatHistoryPopover = memo(function ChatHistoryPopover({
                 onClick={() => handleSelect(conv.id)}
                 className={cn(
                   'flex w-full items-start gap-2 rounded-md px-2.5 py-2 text-left text-sm transition-colors',
-                  'hover:bg-accent',
-                  conv.id === activeConversationId && 'bg-accent',
+                  'hover:bg-state-hover',
+                  conv.id === activeConversationId && 'bg-state-selected',
                 )}
               >
                 <MessageSquare className="text-muted-foreground mt-0.5 size-3.5 shrink-0" />

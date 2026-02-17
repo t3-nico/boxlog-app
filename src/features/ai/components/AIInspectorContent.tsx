@@ -4,6 +4,7 @@ import { KeyRound, Plus, RefreshCw } from 'lucide-react';
 import { memo, useCallback } from 'react';
 
 import { Button } from '@/components/ui/button';
+import { HoverTooltip } from '@/components/ui/tooltip';
 import { useSettingsModalStore } from '@/features/settings/stores/useSettingsModalStore';
 
 import { useAIChat } from '../hooks/useAIChat';
@@ -91,24 +92,25 @@ export const AIInspectorContent = memo(function AIInspectorContent() {
     <div className="flex h-full flex-col">
       {/* ヘッダーバー: メッセージまたは履歴が存在する時に表示 */}
       {showHeader && (
-        <div className="border-border flex shrink-0 items-center justify-between border-b px-3 py-1.5">
+        <div className="flex shrink-0 items-center justify-end gap-1 px-4 pt-4 pb-2">
           <ChatHistoryPopover
             conversations={conversations}
             activeConversationId={activeConversationId}
             onSelect={loadConversation}
             disabled={isLoading}
           />
-          <Button
-            variant="ghost"
-            size="sm"
-            icon
-            className="size-7"
-            onClick={reset}
-            disabled={isLoading}
-            aria-label="New conversation"
-          >
-            <Plus className="size-4" />
-          </Button>
+          <HoverTooltip content="New conversation">
+            <Button
+              variant="ghost"
+              size="sm"
+              icon
+              onClick={reset}
+              disabled={isLoading}
+              aria-label="New conversation"
+            >
+              <Plus className="size-5" />
+            </Button>
+          </HoverTooltip>
         </div>
       )}
 
