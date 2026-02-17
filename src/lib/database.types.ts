@@ -652,6 +652,8 @@ export type Database = {
       };
       user_settings: {
         Row: {
+          ai_communication_style: string | null;
+          ai_custom_style_prompt: string | null;
           business_hours_end: number;
           business_hours_start: number;
           chronotype_custom_zones: Json | null;
@@ -664,6 +666,8 @@ export type Database = {
           date_format: string;
           default_duration: number;
           id: string;
+          personalization_ranked_values: Json | null;
+          personalization_values: Json | null;
           plan_record_mode: string;
           show_declined_events: boolean;
           show_utc_offset: boolean;
@@ -678,6 +682,8 @@ export type Database = {
           week_starts_on: number;
         };
         Insert: {
+          ai_communication_style?: string | null;
+          ai_custom_style_prompt?: string | null;
           business_hours_end?: number;
           business_hours_start?: number;
           chronotype_custom_zones?: Json | null;
@@ -690,6 +696,8 @@ export type Database = {
           date_format?: string;
           default_duration?: number;
           id?: string;
+          personalization_ranked_values?: Json | null;
+          personalization_values?: Json | null;
           plan_record_mode?: string;
           show_declined_events?: boolean;
           show_utc_offset?: boolean;
@@ -704,6 +712,8 @@ export type Database = {
           week_starts_on?: number;
         };
         Update: {
+          ai_communication_style?: string | null;
+          ai_custom_style_prompt?: string | null;
           business_hours_end?: number;
           business_hours_start?: number;
           chronotype_custom_zones?: Json | null;
@@ -716,6 +726,8 @@ export type Database = {
           date_format?: string;
           default_duration?: number;
           id?: string;
+          personalization_ranked_values?: Json | null;
+          personalization_values?: Json | null;
           plan_record_mode?: string;
           show_declined_events?: boolean;
           show_utc_offset?: boolean;
