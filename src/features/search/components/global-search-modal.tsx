@@ -29,8 +29,8 @@ import {
 } from '@/components/ui/command';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { useTheme } from '@/contexts/theme-context';
+import { useCalendarAsideStore } from '@/features/calendar/stores/useCalendarAsideStore';
 import { useCalendarFilterStore } from '@/features/calendar/stores/useCalendarFilterStore';
-import { useCalendarPanelStore } from '@/features/calendar/stores/useCalendarPanelStore';
 import { usePlans } from '@/features/plans/hooks';
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
 import { useSettingsModalStore } from '@/features/settings/stores/useSettingsModalStore';
@@ -109,7 +109,7 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
   const { openTagCreateModal } = useTagModalNavigation();
   const { resolvedTheme, setTheme } = useTheme();
   const openSettingsModal = useSettingsModalStore((state) => state.openModal);
-  const openPanel = useCalendarPanelStore((state) => state.openPanel);
+  const openAside = useCalendarAsideStore((state) => state.openAside);
 
   const toggleTheme = useCallback(() => {
     setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');
@@ -127,9 +127,9 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
       openTagCreateModal,
       navigateToSettings,
       toggleTheme,
-      openPanel,
+      openAside,
     });
-  }, [router, openPlanInspector, openTagCreateModal, navigateToSettings, toggleTheme, openPanel]);
+  }, [router, openPlanInspector, openTagCreateModal, navigateToSettings, toggleTheme, openAside]);
 
   // Reset query when modal closes
   useEffect(() => {

@@ -18,7 +18,7 @@ interface RecordListCardProps {
 }
 
 /**
- * サイドパネル用の Record カード
+ * アサイド用の Record カード
  *
  * PlanListCard と同構造だが：
  * - チェックボックスなし（Record にはステータスがない）
@@ -88,7 +88,7 @@ export const RecordListCard = memo<RecordListCardProps>(function RecordListCard(
       <div className="min-w-0 flex-1">
         {/* タイトル */}
         <p className="text-foreground line-clamp-2 text-sm leading-tight font-normal">
-          {record.title || t('panel.noTitle')}
+          {record.title || t('aside.noTitle')}
         </p>
 
         {/* メタ情報行: 日付 + 時間 + 所要時間 */}
@@ -107,7 +107,7 @@ export const RecordListCard = memo<RecordListCardProps>(function RecordListCard(
           {record.duration_minutes > 0 && (
             <span className="text-muted-foreground flex items-center gap-0.5 text-xs">
               <Clock className="size-3" />
-              {t('panel.duration', { minutes: record.duration_minutes })}
+              {t('aside.duration', { minutes: record.duration_minutes })}
             </span>
           )}
         </div>

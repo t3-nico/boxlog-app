@@ -282,7 +282,7 @@
     "timeGrid": {
       "ariaLabel": "カレンダータイムグリッド - クリックまたはEnterキーでイベントを作成"
     },
-    "panel": {
+    "aside": {
       "open": "サイドパネルを開く",
       "plan": "プラン",
       "record": "記録",

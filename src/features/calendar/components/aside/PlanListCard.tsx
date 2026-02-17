@@ -24,7 +24,7 @@ interface PlanListCardProps {
 }
 
 /**
- * サイドパネル用のPlanカード
+ * アサイド用のPlanカード
  *
  * カレンダーTimeGridのPlanCardと同じビジュアル（チェックボックス+タイトル+時間）
  * position/drag/resizeは不要なシンプル版

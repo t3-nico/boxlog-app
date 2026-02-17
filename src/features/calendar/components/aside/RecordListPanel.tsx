@@ -41,7 +41,7 @@ function toWorkedAtFilter(dateFilter: RecordPanelDateFilter): WorkedAtFilter {
 }
 
 /**
- * サイドパネル用の Record リストパネル
+ * アサイド用の Record リストパネル
  *
  * PlanListPanel と同構造:
  * - 検索・ソート・グルーピング・日付フィルター
@@ -166,7 +166,7 @@ export function RecordListPanel() {
       <div className="flex h-full flex-col">
         <RecordListToolbar {...toolbarProps} />
         <div className="flex flex-1 items-center justify-center">
-          <div className="text-muted-foreground text-sm">{t('panel.loading')}</div>
+          <div className="text-muted-foreground text-sm">{t('aside.loading')}</div>
         </div>
       </div>
     );
@@ -178,7 +178,7 @@ export function RecordListPanel() {
       <div className="flex h-full flex-col">
         <RecordListToolbar {...toolbarProps} />
         <div className="flex flex-1 items-center justify-center">
-          <div className="text-destructive text-sm">{t('panel.error')}</div>
+          <div className="text-destructive text-sm">{t('aside.error')}</div>
         </div>
       </div>
     );
@@ -193,7 +193,7 @@ export function RecordListPanel() {
       <div className="flex-1 overflow-y-auto p-2">
         {filteredRecords.length === 0 ? (
           <div className="text-muted-foreground flex h-full items-center justify-center">
-            <p className="text-sm">{t('panel.noRecords')}</p>
+            <p className="text-sm">{t('aside.noRecords')}</p>
           </div>
         ) : groupedRecords ? (
           // グルーピング表示

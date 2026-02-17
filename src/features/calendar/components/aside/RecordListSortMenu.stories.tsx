@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { RecordListSortMenu } from './RecordListSortMenu';
 
 /**
- * Record サイドパネル用のソート/グルーピング/日付フィルターメニュー。
+ * Record アサイド用のソート/グルーピング/日付フィルターメニュー。
  *
  * PlanListSortMenu と同構造:
  * - 並べ替え（worked_at, duration, fulfillment, created_at, updated_at）
@@ -12,7 +12,7 @@ import { RecordListSortMenu } from './RecordListSortMenu';
  * - デフォルトから変更がある場合はリセット行が表示される
  */
 const meta = {
-  title: 'Features/Calendar/RecordListSortMenu',
+  title: 'Features/Aside/RecordListSortMenu',
   component: RecordListSortMenu,
   tags: ['autodocs'],
   parameters: {

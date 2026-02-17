@@ -6,7 +6,7 @@ import type { PlanWithTags } from '@/server/services/plans/types';
 import { PlanListCard } from './PlanListCard';
 
 /**
- * サイドパネル用の Plan カード。
+ * アサイド用の Plan カード。
  *
  * - チェックボックスで open/closed 切り替え
  * - 時間範囲 + 作業時間をメタ情報行に表示
@@ -36,7 +36,7 @@ const BASE_PLAN: PlanWithTags = {
 };
 
 const meta = {
-  title: 'Features/Calendar/PlanListCard',
+  title: 'Features/Aside/PlanListCard',
   component: PlanListCard,
   tags: ['autodocs'],
   parameters: {

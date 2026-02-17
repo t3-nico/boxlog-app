@@ -12,10 +12,10 @@ import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendar
 
 import type { CalendarViewType } from '../../../types/calendar.types';
 
+import type { AsideType } from './AsideSwitcher';
 import { DateNavigator } from './DateNavigator';
 import { DateRangeDisplay } from './DateRangeDisplay';
 import { HeaderActions } from './HeaderActions';
-import type { PanelType } from './PanelSwitcher';
 import { ViewSwitcher } from './ViewSwitcher';
 
 interface CalendarHeaderProps {
@@ -40,9 +40,9 @@ interface CalendarHeaderProps {
         end: Date;
       }
     | undefined;
-  // サイドパネル
-  currentPanel?: PanelType | undefined;
-  onPanelChange?: ((panel: PanelType) => void) | undefined;
+  // アサイド
+  currentAside?: AsideType | undefined;
+  onAsideChange?: ((aside: AsideType) => void) | undefined;
 }
 
 /**
@@ -76,8 +76,8 @@ export const CalendarHeader = ({
   onDateSelect,
   showMiniCalendar = false,
   displayRange,
-  currentPanel = 'none',
-  onPanelChange,
+  currentAside = 'none',
+  onAsideChange,
 }: CalendarHeaderProps) => {
   const t = useTranslations();
   const { open: openSearch } = useGlobalSearch();
@@ -168,14 +168,14 @@ export const CalendarHeader = ({
 
           {/* PC: パネルトグル + アクション */}
           <div className="hidden items-center gap-2 md:flex">
-            {onPanelChange && currentPanel === 'none' && (
-              <HoverTooltip content={t('calendar.panel.open')} side="bottom">
+            {onAsideChange && currentAside === 'none' && (
+              <HoverTooltip content={t('calendar.aside.open')} side="bottom">
                 <Button
                   variant="ghost"
                   icon
                   className="-mr-4 size-8"
-                  onClick={() => onPanelChange('plan')}
-                  aria-label="Open side panel"
+                  onClick={() => onAsideChange('plan')}
+                  aria-label="Open aside"
                 >
                   <PanelRight className="size-4" />
                 </Button>

@@ -26,7 +26,7 @@ import { DnDProvider } from '../providers/DnDProvider';
 
 import type { CalendarViewProps, CalendarViewType } from '../types/calendar.types';
 
-import { useCalendarPanelStore } from '../stores/useCalendarPanelStore';
+import { useCalendarAsideStore } from '../stores/useCalendarAsideStore';
 import { CalendarViewRenderer } from './controller/components';
 import {
   useCalendarData,
@@ -54,9 +54,9 @@ export const CalendarController = ({
   const pathname = usePathname();
   const calendarNavigation = useCalendarNavigation();
 
-  // サイドパネル状態（Zustand永続化）
-  const currentPanel = useCalendarPanelStore.use.panelType();
-  const setCurrentPanel = useCalendarPanelStore.use.setPanel();
+  // アサイド状態（Zustand永続化）
+  const currentAside = useCalendarAsideStore.use.asideType();
+  const setCurrentAside = useCalendarAsideStore.use.setAside();
 
   // 現在のlocaleを取得（例: /ja/day -> ja）
   const locale = pathname?.split('/')[1] || 'ja';
@@ -361,8 +361,8 @@ export const CalendarController = ({
           start: viewDateRange.start,
           end: viewDateRange.end,
         }}
-        currentPanel={currentPanel}
-        onPanelChange={setCurrentPanel}
+        currentAside={currentAside}
+        onAsideChange={setCurrentAside}
       >
         <CalendarViewRenderer viewType={viewType} commonProps={commonProps} />
       </CalendarLayout>

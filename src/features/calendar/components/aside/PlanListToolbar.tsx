@@ -1,21 +1,21 @@
 'use client';
 
-import { Plus, Search, X } from 'lucide-react';
+import { Search, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { HoverTooltip } from '@/components/ui/tooltip';
 
 import type {
-  RecordPanelDateFilter,
-  RecordPanelGroupByField,
-  RecordPanelSortField,
-  RecordPanelSortOrder,
-} from './RecordListSortMenu';
-import { RecordListSortMenu } from './RecordListSortMenu';
+  PanelGroupByField,
+  PanelScheduleFilter,
+  PanelSortField,
+  PanelSortOrder,
+  PanelStatusFilter,
+} from './PlanListSortMenu';
+import { PlanListSortMenu } from './PlanListSortMenu';
 
-interface RecordListToolbarProps {
+interface PlanListToolbarProps {
   /** 検索クエリ */
   search: string;
   /** 検索クエリ変更 */
@@ -25,30 +25,33 @@ interface RecordListToolbarProps {
   /** 検索UI展開状態変更 */
   onSearchOpenChange: (isOpen: boolean) => void;
   /** ソートフィールド */
-  sortBy: RecordPanelSortField;
+  sortBy: PanelSortField;
   /** ソート方向 */
-  sortOrder: RecordPanelSortOrder;
+  sortOrder: PanelSortOrder;
   /** グルーピングフィールド */
-  groupBy: RecordPanelGroupByField;
-  /** 日付フィルター */
-  dateFilter: RecordPanelDateFilter;
+  groupBy: PanelGroupByField;
+  /** スケジュールフィルター */
+  scheduleFilter: PanelScheduleFilter;
+  /** ステータスフィルター */
+  statusFilter: PanelStatusFilter;
   /** ソート変更 */
-  onSortChange: (field: RecordPanelSortField, order: RecordPanelSortOrder) => void;
+  onSortChange: (field: PanelSortField, order: PanelSortOrder) => void;
   /** グルーピング変更 */
-  onGroupByChange: (field: RecordPanelGroupByField) => void;
-  /** 日付フィルター変更 */
-  onDateFilterChange: (filter: RecordPanelDateFilter) => void;
-  /** 新規Record作成 */
-  onCreateRecord?: () => void;
+  onGroupByChange: (field: PanelGroupByField) => void;
+  /** スケジュールフィルター変更 */
+  onScheduleFilterChange: (filter: PanelScheduleFilter) => void;
+  /** ステータスフィルター変更 */
+  onStatusFilterChange: (filter: PanelStatusFilter) => void;
 }
 
 /**
- * サイドパネル用の Record リストツールバー
+ * アサイド用のPlanリストツールバー
  *
- * PlanListToolbar と同構造 + 「+」ボタン追加
- * レイアウト: [spacer] [SortMenu] [Search] [+]
+ * - 「Unscheduled」ラベル
+ * - ソート/グルーピングメニュー
+ * - 検索バー（アイコンクリックで展開）
  */
-export function RecordListToolbar({
+export function PlanListToolbar({
   search,
   onSearchChange,
   isSearchOpen,
@@ -56,23 +59,24 @@ export function RecordListToolbar({
   sortBy,
   sortOrder,
   groupBy,
-  dateFilter,
+  scheduleFilter,
+  statusFilter,
   onSortChange,
   onGroupByChange,
-  onDateFilterChange,
-  onCreateRecord,
-}: RecordListToolbarProps) {
+  onScheduleFilterChange,
+  onStatusFilterChange,
+}: PlanListToolbarProps) {
   const t = useTranslations('calendar');
 
   return (
     <div className="flex h-10 items-center gap-1 px-2">
       {isSearchOpen ? (
         // 検索モード
-        <div className="bg-input flex flex-1 items-center gap-2 rounded-md px-2">
+        <div className="flex flex-1 items-center gap-2">
           <Search className="text-muted-foreground size-4 shrink-0" />
           <Input
             type="text"
-            placeholder={t('panel.recordSearchPlaceholder')}
+            placeholder={t('aside.searchPlaceholder')}
             value={search}
             onChange={(e) => onSearchChange(e.target.value)}
             className="h-7 flex-1 border-none bg-transparent px-0 text-sm focus-visible:ring-0"
@@ -80,8 +84,8 @@ export function RecordListToolbar({
           />
           <Button
             variant="ghost"
-            size="sm"
             icon
+            className="size-6"
             onClick={() => {
               onSearchChange('');
               onSearchOpenChange(false);
@@ -97,35 +101,22 @@ export function RecordListToolbar({
           <div className="flex-1" />
 
           {/* ソート/グルーピングメニュー */}
-          <RecordListSortMenu
+          <PlanListSortMenu
             sortBy={sortBy}
             sortOrder={sortOrder}
             groupBy={groupBy}
-            dateFilter={dateFilter}
+            scheduleFilter={scheduleFilter}
+            statusFilter={statusFilter}
             onSortChange={onSortChange}
             onGroupByChange={onGroupByChange}
-            onDateFilterChange={onDateFilterChange}
+            onScheduleFilterChange={onScheduleFilterChange}
+            onStatusFilterChange={onStatusFilterChange}
           />
 
           {/* 検索ボタン */}
-          <Button variant="ghost" size="sm" icon onClick={() => onSearchOpenChange(true)}>
+          <Button variant="ghost" icon className="size-6" onClick={() => onSearchOpenChange(true)}>
             <Search className="size-4" />
           </Button>
-
-          {/* 新規作成ボタン */}
-          {onCreateRecord && (
-            <HoverTooltip content={t('panel.createRecord')} side="top">
-              <Button
-                variant="ghost"
-                size="sm"
-                icon
-                onClick={onCreateRecord}
-                aria-label={t('panel.createRecord')}
-              >
-                <Plus className="size-4" />
-              </Button>
-            </HoverTooltip>
-          )}
         </>
       )}
     </div>

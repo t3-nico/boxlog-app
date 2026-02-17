@@ -127,7 +127,7 @@ interface CommandActions {
   openTagCreateModal: () => void;
   navigateToSettings: () => void;
   toggleTheme: () => void;
-  openPanel: (panel: 'plan' | 'record' | 'stats' | 'chat') => void;
+  openAside: (aside: 'plan' | 'record' | 'stats' | 'chat') => void;
 }
 
 // Default commands that are always available
@@ -138,7 +138,7 @@ export const registerDefaultCommands = (actions: CommandActions) => {
     openTagCreateModal,
     navigateToSettings,
     toggleTheme,
-    openPanel,
+    openAside,
   } = actions;
 
   const defaultCommands: Command[] = [
@@ -163,7 +163,7 @@ export const registerDefaultCommands = (actions: CommandActions) => {
       keywords: ['plan', 'board', 'kanban', 'タスク', '一覧', 'プラン'],
       action: () => {
         router.push('/day');
-        openPanel('plan');
+        openAside('plan');
       },
     },
     {

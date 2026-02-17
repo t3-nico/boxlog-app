@@ -94,7 +94,7 @@ export function RealtimeProvider({ children }: RealtimeProviderProps) {
     return {
       // カレンダーページ: カレンダーとプランの購読が必要
       calendar: isCalendarPage,
-      // プランはカレンダーのサイドパネルで表示されるため、カレンダーページで購読
+      // プランはカレンダーのアサイドで表示されるため、カレンダーページで購読
       plan: isCalendarPage,
       // タグはサイドバーに常時表示されるため、カレンダーページで購読
       tags: isCalendarPage,

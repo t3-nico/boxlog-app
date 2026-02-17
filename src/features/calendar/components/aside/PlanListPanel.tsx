@@ -23,7 +23,7 @@ import type {
 import { PlanListToolbar } from './PlanListToolbar';
 
 /**
- * サイドパネル用のPlanリストパネル
+ * アサイド用のPlanリストパネル
  *
  * 「まだ時間を決めていない、やるべきこと」のリスト
  * - start_time === null && status === 'open' のPlanのみ表示
@@ -162,7 +162,7 @@ export function PlanListPanel() {
       <div className="flex h-full flex-col">
         <PlanListToolbar {...toolbarProps} />
         <div className="flex flex-1 items-center justify-center">
-          <div className="text-muted-foreground text-sm">{t('panel.loading')}</div>
+          <div className="text-muted-foreground text-sm">{t('aside.loading')}</div>
         </div>
       </div>
     );
@@ -174,7 +174,7 @@ export function PlanListPanel() {
       <div className="flex h-full flex-col">
         <PlanListToolbar {...toolbarProps} />
         <div className="flex flex-1 items-center justify-center">
-          <div className="text-destructive text-sm">{t('panel.error')}</div>
+          <div className="text-destructive text-sm">{t('aside.error')}</div>
         </div>
       </div>
     );
@@ -189,7 +189,7 @@ export function PlanListPanel() {
       <div className="flex-1 overflow-y-auto p-3">
         {filteredPlans.length === 0 ? (
           <div className="text-muted-foreground flex h-full items-center justify-center">
-            <p className="text-sm">{t('panel.noPlans')}</p>
+            <p className="text-sm">{t('aside.noPlans')}</p>
           </div>
         ) : groupedPlans ? (
           // グルーピング表示

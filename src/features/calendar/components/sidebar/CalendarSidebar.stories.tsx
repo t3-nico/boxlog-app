@@ -6,7 +6,7 @@ import { HoverTooltip } from '@/components/ui/tooltip';
 
 /** カレンダーサイドバー。タグフィルター、ナビゲーション、ユーティリティを含む。 */
 const meta = {
-  title: 'Features/Calendar/Sidebar',
+  title: 'Features/Sidebar/CalendarSidebar',
   parameters: {
     layout: 'padded',
   },

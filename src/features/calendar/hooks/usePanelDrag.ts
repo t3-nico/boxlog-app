@@ -15,7 +15,7 @@ import {
   DEFAULT_DURATION_MS,
   findCalendarGridUnderMouse,
   updateGhostPosition,
-} from '../components/panels/utils/panelDragUtils';
+} from '../components/aside/utils/panelDragUtils';
 import { useCalendarNavigation } from '../contexts/CalendarNavigationContext';
 import { useCalendarDragStore } from '../stores/useCalendarDragStore';
 import type { CalendarViewType } from '../types/calendar.types';
@@ -54,7 +54,7 @@ function getDisplayDates(viewType: CalendarViewType, currentDate: Date): Date[] 
 }
 
 /**
- * サイドパネルからカレンダーへのドラッグ＆ドロップフック
+ * アサイドからカレンダーへのドラッグ＆ドロップフック
  *
  * PlanListCard をドラッグしてカレンダー TimeGrid にドロップし、
  * start_time / end_time を設定する

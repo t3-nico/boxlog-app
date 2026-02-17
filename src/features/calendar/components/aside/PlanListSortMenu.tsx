@@ -25,7 +25,7 @@ export type PanelSortField = 'created_at' | 'updated_at' | 'title';
 /** ソート方向 */
 export type PanelSortOrder = 'asc' | 'desc';
 
-/** サイドパネル用グルーピングフィールド */
+/** アサイド用グルーピングフィールド */
 export type PanelGroupByField = 'tags' | null;
 
 /** スケジュールフィルター */
@@ -47,7 +47,7 @@ interface PlanListSortMenuProps {
 }
 
 /**
- * サイドパネル用のソート/グルーピングメニュー
+ * アサイド用のソート/グルーピングメニュー
  *
  * Notion風サブメニューパターン:
  * - 各カテゴリ行に現在の値を表示
@@ -67,26 +67,26 @@ export function PlanListSortMenu({
   const t = useTranslations('calendar');
 
   const sortOptions: Array<{ value: PanelSortField; label: string }> = [
-    { value: 'created_at', label: t('panel.sort.createdAt') },
-    { value: 'updated_at', label: t('panel.sort.updatedAt') },
-    { value: 'title', label: t('panel.sort.title') },
+    { value: 'created_at', label: t('aside.sort.createdAt') },
+    { value: 'updated_at', label: t('aside.sort.updatedAt') },
+    { value: 'title', label: t('aside.sort.title') },
   ];
 
   const groupOptions: Array<{ value: PanelGroupByField; label: string }> = [
-    { value: null, label: t('panel.group.none') },
-    { value: 'tags', label: t('panel.group.tags') },
+    { value: null, label: t('aside.group.none') },
+    { value: 'tags', label: t('aside.group.tags') },
   ];
 
   const scheduleOptions: Array<{ value: PanelScheduleFilter; label: string }> = [
-    { value: 'all', label: t('panel.schedule.all') },
-    { value: 'scheduled', label: t('panel.schedule.scheduled') },
-    { value: 'unscheduled', label: t('panel.schedule.unscheduled') },
+    { value: 'all', label: t('aside.schedule.all') },
+    { value: 'scheduled', label: t('aside.schedule.scheduled') },
+    { value: 'unscheduled', label: t('aside.schedule.unscheduled') },
   ];
 
   const statusOptions: Array<{ value: PanelStatusFilter; label: string }> = [
-    { value: 'all', label: t('panel.status.all') },
-    { value: 'open', label: t('panel.status.open') },
-    { value: 'closed', label: t('panel.status.closed') },
+    { value: 'all', label: t('aside.status.all') },
+    { value: 'open', label: t('aside.status.open') },
+    { value: 'closed', label: t('aside.status.closed') },
   ];
 
   const currentSortLabel = sortOptions.find((o) => o.value === sortBy)?.label ?? '';
@@ -110,9 +110,9 @@ export function PlanListSortMenu({
 
   return (
     <DropdownMenu>
-      <HoverTooltip content={t('panel.sortBy')} side="top">
+      <HoverTooltip content={t('aside.sortBy')} side="top">
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" icon className="size-6" aria-label={t('panel.sortBy')}>
+          <Button variant="ghost" icon className="size-6" aria-label={t('aside.sortBy')}>
             <Settings2 className={isActive ? 'text-foreground size-4' : 'size-4'} />
           </Button>
         </DropdownMenuTrigger>
@@ -123,7 +123,7 @@ export function PlanListSortMenu({
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>
               <ArrowUpDown />
-              <span className="flex-1">{t('panel.sortBy')}</span>
+              <span className="flex-1">{t('aside.sortBy')}</span>
               <span className="text-muted-foreground text-xs">{currentSortLabel}</span>
             </DropdownMenuSubTrigger>
             <DropdownMenuSubContent className="border-input">
@@ -142,8 +142,8 @@ export function PlanListSortMenu({
                 value={sortOrder}
                 onValueChange={(value) => onSortChange(sortBy, value as PanelSortOrder)}
               >
-                <DropdownMenuRadioItem value="asc">{t('panel.sort.asc')}</DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="desc">{t('panel.sort.desc')}</DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="asc">{t('aside.sort.asc')}</DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="desc">{t('aside.sort.desc')}</DropdownMenuRadioItem>
               </DropdownMenuRadioGroup>
             </DropdownMenuSubContent>
           </DropdownMenuSub>
@@ -152,7 +152,7 @@ export function PlanListSortMenu({
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>
               <Group />
-              <span className="flex-1">{t('panel.groupBy')}</span>
+              <span className="flex-1">{t('aside.groupBy')}</span>
               <span className="text-muted-foreground text-xs">{currentGroupLabel}</span>
             </DropdownMenuSubTrigger>
             <DropdownMenuSubContent className="border-input">
@@ -178,7 +178,7 @@ export function PlanListSortMenu({
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>
               <CircleDot />
-              <span className="flex-1">{t('panel.status.label')}</span>
+              <span className="flex-1">{t('aside.status.label')}</span>
               <span className="text-muted-foreground text-xs">{currentStatusLabel}</span>
             </DropdownMenuSubTrigger>
             <DropdownMenuSubContent className="border-input">
@@ -199,7 +199,7 @@ export function PlanListSortMenu({
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>
               <Calendar />
-              <span className="flex-1">{t('panel.schedule.label')}</span>
+              <span className="flex-1">{t('aside.schedule.label')}</span>
               <span className="text-muted-foreground text-xs">{currentScheduleLabel}</span>
             </DropdownMenuSubTrigger>
             <DropdownMenuSubContent className="border-input">
@@ -223,7 +223,7 @@ export function PlanListSortMenu({
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleReset}>
               <RotateCcw />
-              {t('panel.reset')}
+              {t('aside.reset')}
             </DropdownMenuItem>
           </>
         )}

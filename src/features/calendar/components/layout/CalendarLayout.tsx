@@ -8,14 +8,14 @@ import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { cn } from '@/lib/utils';
 
 import { useResizeHandle } from '../../hooks/useResizeHandle';
-import { useCalendarPanelStore } from '../../stores/useCalendarPanelStore';
+import { useCalendarAsideStore } from '../../stores/useCalendarAsideStore';
 
 import { useSwipeGesture } from '../../hooks/useSwipeGesture';
 import type { CalendarViewType } from '../../types/calendar.types';
 
-import { CalendarSidePanel } from '../panels/CalendarSidePanel';
+import { CalendarAside } from '../aside/CalendarAside';
 import { CalendarHeader } from './Header';
-import type { PanelType } from './Header/PanelSwitcher';
+import type { AsideType } from './Header/AsideSwitcher';
 
 export interface CalendarLayoutProps {
   children: React.ReactNode;
@@ -45,9 +45,9 @@ export interface CalendarLayoutProps {
       }
     | undefined;
 
-  // Side panel
-  currentPanel?: PanelType | undefined;
-  onPanelChange?: ((panel: PanelType) => void) | undefined;
+  // Aside
+  currentAside?: AsideType | undefined;
+  onAsideChange?: ((aside: AsideType) => void) | undefined;
 }
 
 /**
@@ -74,9 +74,9 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
     onDateSelect,
     displayRange,
 
-    // Side panel
-    currentPanel,
-    onPanelChange,
+    // Aside
+    currentAside,
+    onAsideChange,
   }) => {
     const t = useTranslations('calendar');
 
@@ -95,15 +95,15 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
     // モバイル判定（md ブレークポイント = 768px 未満）
     const isMobile = useMediaQuery('(max-width: 767px)');
 
-    // サイドパネルを表示するか
-    const showSidePanel = currentPanel && currentPanel !== 'none';
+    // アサイドを表示するか
+    const showAside = currentAside && currentAside !== 'none';
 
-    // パネルリサイズ
-    const panelSize = useCalendarPanelStore.use.panelSize();
-    const setPanelSize = useCalendarPanelStore.use.setPanelSize();
+    // アサイドリサイズ
+    const asideSize = useCalendarAsideStore.use.asideSize();
+    const setAsideSize = useCalendarAsideStore.use.setAsideSize();
     const { percent, isResizing, handleMouseDown, containerRef } = useResizeHandle({
-      initialPercent: panelSize,
-      onResizeEnd: setPanelSize,
+      initialPercent: asideSize,
+      onResizeEnd: setAsideSize,
     });
 
     return (
@@ -114,7 +114,7 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
         {/* スクリーンリーダー用のページタイトル */}
         <h1 className="sr-only">{t('title')}</h1>
 
-        {/* 左右カラム分割（ヘッダー行からサイドパネルが独立） */}
+        {/* 左右カラム分割（ヘッダー行からアサイドが独立） */}
         <div className="flex min-h-0 flex-1">
           {/* 左カラム: ヘッダー + カレンダー */}
           <div className="flex min-h-0 flex-1 flex-col">
@@ -130,8 +130,8 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
               onDateSelect={onDateSelect}
               showMiniCalendar={true}
               displayRange={displayRange}
-              currentPanel={currentPanel}
-              onPanelChange={onPanelChange}
+              currentAside={currentAside}
+              onAsideChange={onAsideChange}
             />
 
             {/* カレンダーコンテンツ（スワイプ対応） */}
@@ -148,7 +148,7 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
           </div>
 
           {/* リサイズハンドル（デスクトップ、パネルオープン時のみ） */}
-          {showSidePanel && (
+          {showAside && (
             <div
               role="separator"
               aria-orientation="vertical"
@@ -163,35 +163,35 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
             />
           )}
 
-          {/* 右カラム: サイドパネル（デスクトップのみ） */}
+          {/* 右カラム: アサイド（デスクトップのみ） */}
           <aside
             className={cn(
               'hidden shrink-0 overflow-hidden md:block',
               !isResizing && 'transition-all duration-200',
             )}
             style={{
-              width: showSidePanel ? `${percent}%` : 0,
-              minWidth: showSidePanel ? 288 : 0,
+              width: showAside ? `${percent}%` : 0,
+              minWidth: showAside ? 288 : 0,
             }}
           >
-            {showSidePanel && onPanelChange && (
+            {showAside && onAsideChange && (
               <div className="bg-container h-full">
-                <CalendarSidePanel panelType={currentPanel} onPanelChange={onPanelChange} />
+                <CalendarAside asideType={currentAside} onAsideChange={onAsideChange} />
               </div>
             )}
           </aside>
         </div>
 
-        {/* モバイル: パネルを全画面 Sheet で表示 */}
-        {isMobile && onPanelChange && currentPanel && (
-          <Sheet open={!!showSidePanel} onOpenChange={(open) => !open && onPanelChange('none')}>
+        {/* モバイル: アサイドを全画面 Sheet で表示 */}
+        {isMobile && onAsideChange && currentAside && (
+          <Sheet open={!!showAside} onOpenChange={(open) => !open && onAsideChange('none')}>
             <SheetContent
               side="right"
               className="w-full p-0 sm:max-w-full"
               showCloseButton={false}
-              aria-label={t('panel.open')}
+              aria-label={t('aside.open')}
             >
-              <CalendarSidePanel panelType={currentPanel} onPanelChange={onPanelChange} />
+              <CalendarAside asideType={currentAside} onAsideChange={onAsideChange} />
             </SheetContent>
           </Sheet>
         )}

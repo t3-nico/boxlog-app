@@ -3,14 +3,14 @@ import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
 
+import { AsideSwitcher } from './AsideSwitcher';
 import { CompactDateNavigator, DateNavigator } from './DateNavigator';
 import { HeaderActions } from './HeaderActions';
-import { PanelSwitcher } from './PanelSwitcher';
 import { ViewSwitcher } from './ViewSwitcher';
 
-import type { PanelType } from './PanelSwitcher';
+import type { AsideType } from './AsideSwitcher';
 
-/** カレンダーヘッダーのサブコンポーネント（ViewSwitcher, DateNavigator, HeaderActions, PanelSwitcher）。 */
+/** カレンダーヘッダーのサブコンポーネント（ViewSwitcher, DateNavigator, HeaderActions, AsideSwitcher）。 */
 const meta = {
   title: 'Features/Calendar/Header',
   parameters: {
@@ -34,9 +34,9 @@ function ViewSwitcherExample({
   return <ViewSwitcher currentView={current} onChange={setCurrent} />;
 }
 
-function PanelSwitcherExample() {
-  const [panel, setPanel] = useState<PanelType>('none');
-  return <PanelSwitcher currentPanel={panel} onChange={setPanel} />;
+function AsideSwitcherExample() {
+  const [aside, setAside] = useState<AsideType>('none');
+  return <AsideSwitcher currentAside={aside} onChange={setAside} />;
 }
 
 // ---------------------------------------------------------------------------
@@ -63,15 +63,15 @@ export const DateNavigatorPatterns: Story = {
   render: () => (
     <div className="flex flex-col items-start gap-6">
       <div className="space-y-2">
-        <p className="text-xs text-muted-foreground">Full: [&lt;] [Today] [&gt;]</p>
+        <p className="text-muted-foreground text-xs">Full: [&lt;] [Today] [&gt;]</p>
         <DateNavigator onNavigate={fn()} />
       </div>
       <div className="space-y-2">
-        <p className="text-xs text-muted-foreground">Compact: [&lt;] [&gt;]（矢印のみ）</p>
+        <p className="text-muted-foreground text-xs">Compact: [&lt;] [&gt;]（矢印のみ）</p>
         <CompactDateNavigator onNavigate={fn()} />
       </div>
       <div className="space-y-2">
-        <p className="text-xs text-muted-foreground">Today only: [Today]</p>
+        <p className="text-muted-foreground text-xs">Today only: [Today]</p>
         <DateNavigator onNavigate={fn()} showArrows={false} />
       </div>
     </div>
@@ -99,9 +99,9 @@ export const HeaderActionsCompact: Story = {
   ),
 };
 
-/** サイドパネル切替ドロップダウン。None/Plan/Record/Stats。 */
-export const PanelSwitcherDefault: Story = {
-  render: () => <PanelSwitcherExample />,
+/** アサイド切替セグメントコントロール。None/Plan/Record/Stats。 */
+export const AsideSwitcherDefault: Story = {
+  render: () => <AsideSwitcherExample />,
 };
 
 /** 全パターン一覧。 */
@@ -116,7 +116,7 @@ export const AllPatterns: Story = {
       </div>
       <HeaderActions onSettings={fn()} onExport={fn()} onImport={fn()} onMore={fn()} />
       <HeaderActions onSettings={fn()} onExport={fn()} onImport={fn()} onMore={fn()} compact />
-      <PanelSwitcherExample />
+      <AsideSwitcherExample />
     </div>
   ),
 };

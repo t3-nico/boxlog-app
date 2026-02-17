@@ -47,7 +47,7 @@ interface RecordListSortMenuProps {
 }
 
 /**
- * サイドパネル用の Record ソート/フィルターメニュー
+ * アサイド用の Record ソート/フィルターメニュー
  *
  * PlanListSortMenu と同構造。
  * Record 固有: ステータスなし / スケジュールフィルターなし → 代わりに日付フィルターあり
@@ -64,25 +64,25 @@ export function RecordListSortMenu({
   const t = useTranslations('calendar');
 
   const sortOptions: Array<{ value: RecordPanelSortField; label: string }> = [
-    { value: 'worked_at', label: t('panel.recordSort.workedAt') },
-    { value: 'duration_minutes', label: t('panel.recordSort.durationMinutes') },
-    { value: 'fulfillment_score', label: t('panel.recordSort.fulfillmentScore') },
-    { value: 'created_at', label: t('panel.recordSort.createdAt') },
-    { value: 'updated_at', label: t('panel.recordSort.updatedAt') },
+    { value: 'worked_at', label: t('aside.recordSort.workedAt') },
+    { value: 'duration_minutes', label: t('aside.recordSort.durationMinutes') },
+    { value: 'fulfillment_score', label: t('aside.recordSort.fulfillmentScore') },
+    { value: 'created_at', label: t('aside.recordSort.createdAt') },
+    { value: 'updated_at', label: t('aside.recordSort.updatedAt') },
   ];
 
   const groupOptions: Array<{ value: RecordPanelGroupByField; label: string }> = [
-    { value: null, label: t('panel.recordGroup.none') },
-    { value: 'worked_at', label: t('panel.recordGroup.workedAt') },
-    { value: 'tags', label: t('panel.recordGroup.tags') },
-    { value: 'fulfillment_score', label: t('panel.recordGroup.fulfillmentScore') },
+    { value: null, label: t('aside.recordGroup.none') },
+    { value: 'worked_at', label: t('aside.recordGroup.workedAt') },
+    { value: 'tags', label: t('aside.recordGroup.tags') },
+    { value: 'fulfillment_score', label: t('aside.recordGroup.fulfillmentScore') },
   ];
 
   const dateFilterOptions: Array<{ value: RecordPanelDateFilter; label: string }> = [
-    { value: 'all', label: t('panel.recordDateFilter.all') },
-    { value: 'today', label: t('panel.recordDateFilter.today') },
-    { value: 'this_week', label: t('panel.recordDateFilter.thisWeek') },
-    { value: 'this_month', label: t('panel.recordDateFilter.thisMonth') },
+    { value: 'all', label: t('aside.recordDateFilter.all') },
+    { value: 'today', label: t('aside.recordDateFilter.today') },
+    { value: 'this_week', label: t('aside.recordDateFilter.thisWeek') },
+    { value: 'this_month', label: t('aside.recordDateFilter.thisMonth') },
   ];
 
   const currentSortLabel = sortOptions.find((o) => o.value === sortBy)?.label ?? '';
@@ -100,9 +100,9 @@ export function RecordListSortMenu({
 
   return (
     <DropdownMenu>
-      <HoverTooltip content={t('panel.sortBy')} side="top">
+      <HoverTooltip content={t('aside.sortBy')} side="top">
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="sm" icon aria-label={t('panel.sortBy')}>
+          <Button variant="ghost" size="sm" icon aria-label={t('aside.sortBy')}>
             <Settings2 className={isActive ? 'text-foreground size-4' : 'size-4'} />
           </Button>
         </DropdownMenuTrigger>
@@ -113,7 +113,7 @@ export function RecordListSortMenu({
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>
               <ArrowUpDown />
-              <span className="flex-1">{t('panel.sortBy')}</span>
+              <span className="flex-1">{t('aside.sortBy')}</span>
               <span className="text-muted-foreground text-xs">{currentSortLabel}</span>
             </DropdownMenuSubTrigger>
             <DropdownMenuSubContent className="border-input">
@@ -133,10 +133,10 @@ export function RecordListSortMenu({
                 onValueChange={(value) => onSortChange(sortBy, value as RecordPanelSortOrder)}
               >
                 <DropdownMenuRadioItem value="asc">
-                  {t('panel.recordSort.asc')}
+                  {t('aside.recordSort.asc')}
                 </DropdownMenuRadioItem>
                 <DropdownMenuRadioItem value="desc">
-                  {t('panel.recordSort.desc')}
+                  {t('aside.recordSort.desc')}
                 </DropdownMenuRadioItem>
               </DropdownMenuRadioGroup>
             </DropdownMenuSubContent>
@@ -146,7 +146,7 @@ export function RecordListSortMenu({
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>
               <Group />
-              <span className="flex-1">{t('panel.groupBy')}</span>
+              <span className="flex-1">{t('aside.groupBy')}</span>
               <span className="text-muted-foreground text-xs">{currentGroupLabel}</span>
             </DropdownMenuSubTrigger>
             <DropdownMenuSubContent className="border-input">
@@ -172,7 +172,7 @@ export function RecordListSortMenu({
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>
               <Calendar />
-              <span className="flex-1">{t('panel.recordDateFilter.label')}</span>
+              <span className="flex-1">{t('aside.recordDateFilter.label')}</span>
               <span className="text-muted-foreground text-xs">{currentDateFilterLabel}</span>
             </DropdownMenuSubTrigger>
             <DropdownMenuSubContent className="border-input">
@@ -196,7 +196,7 @@ export function RecordListSortMenu({
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleReset}>
               <RotateCcw />
-              {t('panel.reset')}
+              {t('aside.reset')}
             </DropdownMenuItem>
           </>
         )}

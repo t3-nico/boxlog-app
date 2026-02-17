@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { PlanListSortMenu } from './PlanListSortMenu';
 
 /**
- * サイドパネル用のソート/グルーピングメニュー。
+ * アサイド用のソート/グルーピングメニュー。
  *
  * Notion風サブメニューパターン:
  * - 各行に現在の設定値を表示（例: 並べ替え → 作成日）
@@ -11,7 +11,7 @@ import { PlanListSortMenu } from './PlanListSortMenu';
  * - デフォルトから変更がある場合はリセット行が表示される
  */
 const meta = {
-  title: 'Features/Calendar/PlanListSortMenu',
+  title: 'Features/Aside/PlanListSortMenu',
   component: PlanListSortMenu,
   tags: ['autodocs'],
   parameters: {

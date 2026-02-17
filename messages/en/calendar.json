@@ -282,8 +282,8 @@
     "timeGrid": {
       "ariaLabel": "Calendar time grid - click or press Enter to create event"
     },
-    "panel": {
-      "open": "Open side panel",
+    "aside": {
+      "open": "Open aside",
       "plan": "Plans",
       "record": "Records",
       "stats": "Statistics",

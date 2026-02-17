@@ -19,7 +19,7 @@ interface NavTabItem {
 /**
  * サイドバー用ナビゲーション
  *
- * PC: Calendar/Plan/Record はカレンダー+サイドパネルに統合済み。
+ * PC: Calendar/Plan/Record はカレンダー+アサイドに統合済み。
  * ここには Stats など独立ページへのリンクのみ配置。
  */
 export function SidebarNavigation() {

@@ -3,12 +3,12 @@ import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 
-import type { PanelType } from '../layout/Header/PanelSwitcher';
-import { CalendarSidePanel } from './CalendarSidePanel';
+import type { AsideType } from '../layout/Header/AsideSwitcher';
+import { CalendarAside } from './CalendarAside';
 
-/** CalendarSidePanel - カレンダーサイドパネル */
+/** CalendarAside - カレンダーアサイド */
 const meta = {
-  title: 'Features/Calendar/CalendarSidePanel',
+  title: 'Features/Aside',
   parameters: {
     layout: 'padded',
   },
@@ -22,16 +22,16 @@ type Story = StoryObj<typeof meta>;
 // Helper
 // ─────────────────────────────────────────────────────────
 
-function PanelFrame({ children }: { children: React.ReactNode }) {
+function AsideFrame({ children }: { children: React.ReactNode }) {
   return <div className="border-border h-[500px] w-[320px] border">{children}</div>;
 }
 
-function InteractivePanelStory() {
-  const [panelType, setPanelType] = useState<PanelType>('plan');
+function InteractiveAsideStory() {
+  const [asideType, setAsideType] = useState<AsideType>('plan');
   return (
-    <PanelFrame>
-      <CalendarSidePanel panelType={panelType} onPanelChange={setPanelType} />
-    </PanelFrame>
+    <AsideFrame>
+      <CalendarAside asideType={asideType} onAsideChange={setAsideType} />
+    </AsideFrame>
   );
 }
 
@@ -42,41 +42,41 @@ function InteractivePanelStory() {
 /** Planパネル（デフォルト） */
 export const PlanPanel: Story = {
   render: () => (
-    <PanelFrame>
-      <CalendarSidePanel panelType="plan" onPanelChange={fn()} />
-    </PanelFrame>
+    <AsideFrame>
+      <CalendarAside asideType="plan" onAsideChange={fn()} />
+    </AsideFrame>
   ),
 };
 
 /** Recordパネル（RecordListPanel） */
 export const RecordPanel: Story = {
   render: () => (
-    <PanelFrame>
-      <CalendarSidePanel panelType="record" onPanelChange={fn()} />
-    </PanelFrame>
+    <AsideFrame>
+      <CalendarAside asideType="record" onAsideChange={fn()} />
+    </AsideFrame>
   ),
 };
 
-/** インタラクティブ（パネル切替可能） */
+/** インタラクティブ（アサイド切替可能） */
 export const Interactive: Story = {
-  render: () => <InteractivePanelStory />,
+  render: () => <InteractiveAsideStory />,
 };
 
 /** 全パターン一覧 */
 export const AllPatterns: Story = {
   render: () => (
     <div className="flex flex-col items-start gap-6">
-      <PanelFrame>
-        <CalendarSidePanel panelType="plan" onPanelChange={fn()} />
-      </PanelFrame>
+      <AsideFrame>
+        <CalendarAside asideType="plan" onAsideChange={fn()} />
+      </AsideFrame>
 
-      <PanelFrame>
-        <CalendarSidePanel panelType="record" onPanelChange={fn()} />
-      </PanelFrame>
+      <AsideFrame>
+        <CalendarAside asideType="record" onAsideChange={fn()} />
+      </AsideFrame>
 
-      <PanelFrame>
-        <CalendarSidePanel panelType="chat" onPanelChange={fn()} />
-      </PanelFrame>
+      <AsideFrame>
+        <CalendarAside asideType="chat" onAsideChange={fn()} />
+      </AsideFrame>
     </div>
   ),
 };

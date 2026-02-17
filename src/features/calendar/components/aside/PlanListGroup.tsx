@@ -20,7 +20,7 @@ interface PlanListGroupProps {
 }
 
 /**
- * サイドパネル用のグループヘッダー + 折りたたみコンテンツ
+ * アサイド用のグループヘッダー + 折りたたみコンテンツ
  */
 export function PlanListGroup({
   label,

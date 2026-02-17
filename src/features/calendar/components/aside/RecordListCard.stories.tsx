@@ -6,7 +6,7 @@ import type { RecordItem } from '@/features/records/hooks/useRecordData';
 import { RecordListCard } from './RecordListCard';
 
 /**
- * Record サイドパネル用のカード。
+ * Record アサイド用のカード。
  *
  * PlanListCard との違い:
  * - チェックボックスなし（Record にはステータスがない）
@@ -33,7 +33,7 @@ const BASE_RECORD: RecordItem = {
 };
 
 const meta = {
-  title: 'Features/Calendar/RecordListCard',
+  title: 'Features/Aside/RecordListCard',
   component: RecordListCard,
   tags: ['autodocs'],
   parameters: {

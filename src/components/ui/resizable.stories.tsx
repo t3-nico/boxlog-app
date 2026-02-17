@@ -15,11 +15,11 @@ import { cn } from '@/lib/utils';
  * - デフォルト: 28%, min: 25%, max: 40%, min-width: 288px
  * - ハンドル: 1px境界線（bg-border）、ホバー/ドラッグ中に bg-primary
  * - ドラッグ中はカーソルが col-resize に変化
- * - サイズは localStorage に永続化（useCalendarPanelStore）
+ * - サイズは localStorage に永続化（useCalendarAsideStore）
  *
  * ## 使用箇所
  *
- * - CalendarLayout のサイドパネル
+ * - CalendarLayout のアサイド
  *
  * ## 注意
  *
@@ -90,7 +90,7 @@ function CustomResizeDemo() {
           onMouseDown={handleMouseDown}
         />
 
-        {/* サイドパネル */}
+        {/* アサイド */}
         <aside
           className={cn(
             'shrink-0 overflow-hidden',
