@@ -119,12 +119,13 @@ export const CalendarHeader = ({
           />
 
           {/* コントロール群 - PC（同グループなのでgap-2） */}
-          <div className="ml-2 hidden items-center gap-2 md:flex">
+          <div className="ml-2 hidden items-center md:flex">
             {/* 日付ナビゲーション（Today + 矢印） */}
             <DateNavigator onNavigate={onNavigate} arrowSize="md" />
 
-            {/* ビュー切り替え */}
+            {/* ビュー切り替え（Todayグループとの間に余白） */}
             <ViewSwitcher
+              className="ml-4"
               currentView={viewType}
               onChange={(view) => onViewChange(view as CalendarViewType)}
             />
