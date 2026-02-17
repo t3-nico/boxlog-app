@@ -178,6 +178,16 @@ Respond in the same language the user writes in. If they write in Japanese, resp
   // 追加コンテキスト
   sections.push(`## Context\n- Timezone: ${context.timezone}`);
 
+  // ツール説明
+  sections.push(`## Available Tools
+You have access to tools that can search the user's full historical data:
+- **searchPlans**: Query plans by date range, status, tags, or text
+- **searchRecords**: Query time records by date range and fulfillment score
+- **getStatistics**: Get summary statistics for a period (week/month/year/all)
+- **getTagStats**: Get tag usage breakdown (plan count, record count per tag)
+
+When the user asks about historical data beyond the context provided above, use these tools to look up the information. You may call multiple tools in sequence if needed.`);
+
   // ルール
   sections.push(`## Rules
 - Prioritize advice that aligns with the user's core values
@@ -185,7 +195,8 @@ Respond in the same language the user writes in. If they write in Japanese, resp
 - Be aware of the user's timezone (${context.timezone})
 - Keep responses concise but helpful
 - When discussing schedule, reference actual plans and records
-- Do not make up data — only reference information provided above`);
+- Use tools to look up data when the user asks about history beyond the context above
+- Do not make up data — only reference information provided above or retrieved via tools`);
 
   return sections.join('\n\n');
 }

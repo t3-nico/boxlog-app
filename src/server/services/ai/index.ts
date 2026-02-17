@@ -7,5 +7,6 @@
 
 export { buildAIContext } from './context-service';
 export { buildSystemPrompt } from './prompt-builder';
+export { createAITools } from './tools';
 export { DEFAULT_MODELS, SUPPORTED_MODELS } from './types';
 export type { AIContext, AIProviderId } from './types';

@@ -11,12 +11,12 @@
 
 import { createAnthropic } from '@ai-sdk/anthropic';
 import { createOpenAI } from '@ai-sdk/openai';
-import { convertToModelMessages, streamText } from 'ai';
+import { convertToModelMessages, stepCountIs, streamText } from 'ai';
 import { NextResponse } from 'next/server';
 
 import { logger } from '@/lib/logger';
 import { createClient } from '@/lib/supabase/server';
-import { buildAIContext, buildSystemPrompt } from '@/server/services/ai';
+import { buildAIContext, buildSystemPrompt, createAITools } from '@/server/services/ai';
 import { DEFAULT_MODELS, SUPPORTED_MODELS } from '@/server/services/ai/types';
 
 import type { AIProviderId } from '@/server/services/ai/types';
@@ -111,12 +111,17 @@ export async function POST(req: Request) {
     // 7. システムプロンプト生成
     const system = buildSystemPrompt(aiContext);
 
-    // 8. ストリーミング生成
+    // 8. ツール作成
+    const tools = createAITools(supabase, user.id);
+
+    // 9. ストリーミング生成
     const model = createModel(providerId, apiKey, body.model);
     const result = streamText({
       model,
       system,
       messages: await convertToModelMessages(messages),
+      tools,
+      stopWhen: stepCountIs(5),
     });
 
     return result.toUIMessageStreamResponse();
