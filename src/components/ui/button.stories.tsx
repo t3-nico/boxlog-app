@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Plus, Settings, Trash2, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, Settings, Trash2, X } from 'lucide-react';
 
 import { Button } from './button';
 
@@ -44,23 +44,33 @@ export const AllPatterns: Story = {
   render: function AllPatternsStory() {
     return (
       <div className="flex flex-col items-start gap-6">
-        <div className="bg-container space-y-4 rounded-lg p-4">
-          <div className="flex items-center gap-4">
+        <div className="space-y-4">
+          <p className="text-muted-foreground text-xs">on surface (default)</p>
+          <div className="bg-surface flex items-center gap-4 rounded-lg p-4">
             <Button variant="primary" className="w-28">
               primary
             </Button>
-          </div>
-          <div className="flex items-center gap-4">
             <Button variant="outline" className="w-28">
               outline
             </Button>
-          </div>
-          <div className="flex items-center gap-4">
             <Button variant="ghost" className="w-28">
               ghost
             </Button>
+            <Button variant="destructive" className="w-28">
+              destructive
+            </Button>
           </div>
-          <div className="flex items-center gap-4">
+          <p className="text-muted-foreground text-xs">on container</p>
+          <div className="bg-container flex items-center gap-4 rounded-lg p-4">
+            <Button variant="primary" className="w-28">
+              primary
+            </Button>
+            <Button variant="outline" className="w-28">
+              outline
+            </Button>
+            <Button variant="ghost" className="w-28">
+              ghost
+            </Button>
             <Button variant="destructive" className="w-28">
               destructive
             </Button>
@@ -151,6 +161,49 @@ export const AllPatterns: Story = {
             保存
           </Button>
           <Button disabled>無効</Button>
+        </div>
+
+        <div className="space-y-4">
+          <p className="text-muted-foreground text-xs">Grouped（Google Calendar風ボタンバー）</p>
+          <p className="text-muted-foreground text-xs">
+            共通ボーダーで囲み、内部はdivide-xで区切る。h-8（sm）、ボタンはh-fullで伸ばす。
+          </p>
+          <div className="flex items-center gap-4">
+            <div className="divide-border border-border inline-flex h-8 items-center divide-x overflow-hidden rounded-md border">
+              <button
+                type="button"
+                className="text-muted-foreground hover:bg-state-hover flex h-full w-8 items-center justify-center transition-colors"
+              >
+                <ChevronLeft className="size-4" />
+              </button>
+              <button
+                type="button"
+                className="hover:bg-state-hover flex h-full items-center px-3 text-sm font-medium transition-colors"
+              >
+                Today
+              </button>
+              <button
+                type="button"
+                className="text-muted-foreground hover:bg-state-hover flex h-full w-8 items-center justify-center transition-colors"
+              >
+                <ChevronRight className="size-4" />
+              </button>
+            </div>
+            <div className="divide-border border-border inline-flex h-8 items-center divide-x overflow-hidden rounded-md border">
+              <button
+                type="button"
+                className="text-muted-foreground hover:bg-state-hover flex h-full w-8 items-center justify-center transition-colors"
+              >
+                <ChevronLeft className="size-4" />
+              </button>
+              <button
+                type="button"
+                className="text-muted-foreground hover:bg-state-hover flex h-full w-8 items-center justify-center transition-colors"
+              >
+                <ChevronRight className="size-4" />
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     );
