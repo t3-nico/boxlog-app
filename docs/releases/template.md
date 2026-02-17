@@ -75,61 +75,17 @@ gh pr list --state merged --base main --search "merged:>=YYYY-MM-DD" --json numb
 
 ---
 
-## 📝 使い方
+## 📝 このテンプレートについて
 
-### リリースノート作成時
+このファイルは **AIがリリースノートを記載する際の構造テンプレート** です。
 
-1. このテンプレートを `docs/releases/` にコピー
+### 使い方
 
-   ```bash
-   VERSION="X.Y.Z"
-   cp docs/releases/template.md docs/releases/RELEASE_NOTES_v${VERSION}.md
-   ```
+1. `gh release edit` で GitHub Release に直接反映する際、このファイルの構造を参考にする
+2. リポジトリにリリースノートファイルをコミットする必要はない
+3. 反映先は GitHub Release ページ
 
-2. 前回リリース以降の全PRを取得
-
-   ```bash
-   # 前回リリースのタグを確認
-   git tag --sort=-creatordate | head -5
-
-   # 前回リリース以降のPR一覧を取得
-   gh pr list --state merged --base main --limit 100 --json number,title,mergedAt \
-     | jq -r '.[] | select(.mergedAt > "YYYY-MM-DDT00:00:00Z") | "- [#\(.number)](https://github.com/t3-nico/dayopt/pull/\(.number)) - \(.title)"'
-   ```
-
-3. バージョン番号とPR番号を置換
-   - `vX.Y.Z` → 実際のバージョン（例: `v0.6.0`）
-   - `X.Y.Z` → バージョン番号（vなし、例: `0.6.0`）
-   - `YYYY-MM-DD` → リリース日（例: `2025-12-01`）
-   - `v{前バージョン}` → 前回のバージョン（例: `v0.5.0`）
-   - `v{今回バージョン}` → 今回のバージョン（例: `v0.6.0`）
-
-4. 変更内容を記載
-   - **全てのPR**をカテゴリ別に分類（Added, Changed, Fixed, Removed, Performance, Security）
-   - 各項目にPR番号のリンクを追加
-
-5. **必須**: Full Changelog リンクが正しいことを確認
-
-   ```bash
-   grep "Full Changelog" docs/releases/RELEASE_NOTES_v${VERSION}.md
-   ```
-
-6. GitHub Release作成時にこのファイルを使用
-
-   ```bash
-   gh release create v${VERSION} \
-     --title "v${VERSION}: {簡潔な説明}" \
-     --notes-file docs/releases/RELEASE_NOTES_v${VERSION}.md
-   ```
-
-### ⚠️ 注意事項
-
-- リリースノートファイルは **`docs/releases/`** に配置（`docs/releases/RELEASE_NOTES_vX.Y.Z.md`）
-- **前回リリースからの全PR**を網羅すること（リリースPR単体ではない）
-- **Full Changelog リンクは必須**
-- バージョン番号は package.json と一致させること
-
-### 📋 リリースノートの品質基準
+### リリースノートの品質基準
 
 - [ ] 前回リリース以降の**全てのPR**が含まれている
 - [ ] 各PRにリンクが付いている
@@ -140,5 +96,5 @@ gh pr list --state merged --base main --search "merged:>=YYYY-MM-DD" --json numb
 ---
 
 **種類**: 📙 リファレンス
-**最終更新**: 2025-12-11
+**最終更新**: 2026-02-17
 **所有者**: Dayopt 開発チーム
