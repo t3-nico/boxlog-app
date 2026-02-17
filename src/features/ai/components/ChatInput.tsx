@@ -17,6 +17,8 @@ interface ChatInputProps {
   onSubmit: () => void;
   isLoading?: boolean;
   onStop?: () => void;
+  /** 左下に表示するスロット（ModelSelector等） */
+  startActions?: React.ReactNode;
 }
 
 export const ChatInput = memo(function ChatInput({
@@ -25,6 +27,7 @@ export const ChatInput = memo(function ChatInput({
   onSubmit,
   isLoading = false,
   onStop,
+  startActions,
 }: ChatInputProps) {
   const handleSubmit = () => {
     if (!value.trim() || isLoading) return;
@@ -41,7 +44,8 @@ export const ChatInput = memo(function ChatInput({
         maxHeight={120}
       >
         <PromptInputTextarea placeholder="Send a message..." />
-        <PromptInputActions className="justify-end pt-1">
+        <PromptInputActions className="justify-between pt-1">
+          <div className="flex items-center">{startActions}</div>
           <PromptInputAction tooltip={isLoading ? 'Stop generation' : 'Send message'}>
             <Button
               variant="primary"

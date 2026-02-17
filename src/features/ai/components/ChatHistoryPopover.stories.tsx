@@ -63,6 +63,13 @@ export const NoActive: Story = {
   },
 };
 
+/** 削除ボタン付き（ホバーで表示） */
+export const WithDelete: Story = {
+  args: {
+    onDelete: () => {},
+  },
+};
+
 /** 履歴なし */
 export const Empty: Story = {
   args: {

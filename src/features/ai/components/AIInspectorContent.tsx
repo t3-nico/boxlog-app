@@ -7,12 +7,15 @@ import { Button } from '@/components/ui/button';
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { useSettingsModalStore } from '@/features/settings/stores/useSettingsModalStore';
 
+import { DEFAULT_MODELS } from '@/server/services/ai/types';
+
 import { useAIChat } from '../hooks/useAIChat';
 
 import { ChatEmptyState } from './ChatEmptyState';
 import { ChatHistoryPopover } from './ChatHistoryPopover';
 import { ChatInput } from './ChatInput';
 import { ChatMessageList } from './ChatMessageList';
+import { ModelSelector } from './ModelSelector';
 
 const SUGGESTIONS = ['今日の予定は？', 'タグを整理したい', '統計を教えて'];
 
@@ -35,12 +38,17 @@ export const AIInspectorContent = memo(function AIInspectorContent() {
     stop,
     hasApiKey,
     keyLoaded,
+    providerId,
     error,
     retry,
     reset,
     conversations,
     activeConversationId,
     loadConversation,
+    deleteConversation,
+    selectedModelId,
+    setSelectedModelId,
+    availableModels,
   } = useAIChat();
 
   const openSettings = useSettingsModalStore((s) => s.openModal);
@@ -97,6 +105,7 @@ export const AIInspectorContent = memo(function AIInspectorContent() {
             conversations={conversations}
             activeConversationId={activeConversationId}
             onSelect={loadConversation}
+            onDelete={deleteConversation}
             disabled={isLoading}
           />
           <HoverTooltip content="New conversation">
@@ -147,6 +156,15 @@ export const AIInspectorContent = memo(function AIInspectorContent() {
         onSubmit={handleSubmit}
         isLoading={isLoading}
         onStop={stop}
+        startActions={
+          <ModelSelector
+            models={availableModels}
+            selectedModelId={selectedModelId}
+            defaultModelId={DEFAULT_MODELS[providerId]}
+            onSelect={setSelectedModelId}
+            disabled={isLoading}
+          />
+        }
       />
     </div>
   );

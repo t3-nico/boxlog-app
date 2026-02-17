@@ -98,6 +98,7 @@ function ChatPanelStory({
               conversations={MOCK_CONVERSATIONS}
               activeConversationId="conv-1"
               onSelect={() => {}}
+              onDelete={() => {}}
             />
             <Button
               variant="ghost"

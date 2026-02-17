@@ -6,7 +6,7 @@
  * ヘッダーの履歴ボタンから開くPopover。過去の会話一覧を表示し、クリックで切替。
  */
 
-import { History, MessageSquare } from 'lucide-react';
+import { History, MessageSquare, Trash2 } from 'lucide-react';
 import { memo, useCallback, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -20,6 +20,7 @@ interface ChatHistoryPopoverProps {
   conversations: ConversationSummary[];
   activeConversationId: string | null;
   onSelect: (conversationId: string) => void;
+  onDelete?: (conversationId: string) => void;
   disabled?: boolean;
 }
 
@@ -42,6 +43,7 @@ export const ChatHistoryPopover = memo(function ChatHistoryPopover({
   conversations,
   activeConversationId,
   onSelect,
+  onDelete,
   disabled = false,
 }: ChatHistoryPopoverProps) {
   const [open, setOpen] = useState(false);
@@ -52,6 +54,14 @@ export const ChatHistoryPopover = memo(function ChatHistoryPopover({
       setOpen(false);
     },
     [onSelect],
+  );
+
+  const handleDelete = useCallback(
+    (e: React.MouseEvent, id: string) => {
+      e.stopPropagation();
+      onDelete?.(id);
+    },
+    [onDelete],
   );
 
   return (
@@ -77,25 +87,38 @@ export const ChatHistoryPopover = memo(function ChatHistoryPopover({
         ) : (
           <div className="max-h-64 overflow-y-auto">
             {conversations.map((conv) => (
-              <button
+              <div
                 key={conv.id}
-                onClick={() => handleSelect(conv.id)}
                 className={cn(
-                  'flex w-full items-start gap-2 rounded-md px-2.5 py-2 text-left text-sm transition-colors',
+                  'group/item flex w-full items-start gap-2 rounded-md px-2.5 py-2 text-left text-sm transition-colors',
                   'hover:bg-state-hover',
                   conv.id === activeConversationId && 'bg-state-selected',
                 )}
               >
-                <MessageSquare className="text-muted-foreground mt-0.5 size-3.5 shrink-0" />
-                <div className="min-w-0 flex-1">
-                  <p className="text-foreground truncate text-xs font-medium">
-                    {conv.title || 'Untitled'}
-                  </p>
-                  <p className="text-muted-foreground text-[10px]">
-                    {conv.messageCount} messages · {formatRelativeDate(conv.updatedAt)}
-                  </p>
-                </div>
-              </button>
+                <button
+                  className="flex min-w-0 flex-1 items-start gap-2"
+                  onClick={() => handleSelect(conv.id)}
+                >
+                  <MessageSquare className="text-muted-foreground mt-0.5 size-3.5 shrink-0" />
+                  <div className="min-w-0 flex-1">
+                    <p className="text-foreground truncate text-xs font-medium">
+                      {conv.title || 'Untitled'}
+                    </p>
+                    <p className="text-muted-foreground text-[10px]">
+                      {conv.messageCount} messages · {formatRelativeDate(conv.updatedAt)}
+                    </p>
+                  </div>
+                </button>
+                {onDelete && (
+                  <button
+                    className="text-muted-foreground hover:text-destructive mt-0.5 shrink-0 opacity-0 transition-opacity group-hover/item:opacity-100"
+                    onClick={(e) => handleDelete(e, conv.id)}
+                    aria-label="Delete conversation"
+                  >
+                    <Trash2 className="size-3.5" />
+                  </button>
+                )}
+              </div>
             ))}
           </div>
         )}

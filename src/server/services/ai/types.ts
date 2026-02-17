@@ -25,6 +25,37 @@ export const DEFAULT_MODELS: Record<AIProviderId, string> = {
   openai: 'gpt-4o-mini',
 };
 
+/** モデル情報（UI表示用） */
+export interface ModelInfo {
+  id: string;
+  name: string;
+  providerId: AIProviderId;
+  description: string;
+}
+
+/** 選択可能なモデル一覧 */
+export const MODEL_OPTIONS: ModelInfo[] = [
+  {
+    id: 'claude-sonnet-4-5-20250929',
+    name: 'Sonnet 4.5',
+    providerId: 'anthropic',
+    description: 'Balanced performance',
+  },
+  {
+    id: 'claude-haiku-4-5-20251001',
+    name: 'Haiku 4.5',
+    providerId: 'anthropic',
+    description: 'Fast & affordable',
+  },
+  { id: 'gpt-4o', name: 'GPT-4o', providerId: 'openai', description: 'Most capable' },
+  {
+    id: 'gpt-4o-mini',
+    name: 'GPT-4o mini',
+    providerId: 'openai',
+    description: 'Fast & affordable',
+  },
+];
+
 /** 今日のプラン情報（AI向け簡略化） */
 export interface AIContextPlan {
   title: string;

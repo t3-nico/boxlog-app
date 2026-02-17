@@ -19,6 +19,7 @@ import { ApiKeyStorage } from '@/lib/security/encryption';
 import { api } from '@/lib/trpc';
 
 import type { AIProviderId } from '@/server/services/ai/types';
+import { MODEL_OPTIONS } from '@/server/services/ai/types';
 
 import { useChatStore } from '../stores/useChatStore';
 
@@ -36,9 +37,11 @@ export function useAIChat() {
   const activeConversationId = useChatStore((s) => s.activeConversationId);
   const initialized = useChatStore((s) => s.initialized);
   const isSaving = useChatStore((s) => s.isSaving);
+  const selectedModelId = useChatStore((s) => s.selectedModelId);
   const setActiveConversationId = useChatStore((s) => s.setActiveConversationId);
   const setInitialized = useChatStore((s) => s.setInitialized);
   const setIsSaving = useChatStore((s) => s.setIsSaving);
+  const setSelectedModelId = useChatStore((s) => s.setSelectedModelId);
   const resetConversation = useChatStore((s) => s.resetConversation);
 
   // --- tRPC queries & mutations ---
@@ -51,6 +54,9 @@ export function useAIChat() {
     onSuccess: () => utils.chat.list.invalidate(),
   });
   const saveConversation = api.chat.save.useMutation();
+  const deleteConversationMutation = api.chat.delete.useMutation({
+    onSuccess: () => utils.chat.list.invalidate(),
+  });
 
   // 保存中の競合を防ぐためのガード
   const savingRef = useRef(false);
@@ -91,10 +97,16 @@ export function useAIChat() {
 
   const hasApiKey = apiKey !== null;
 
-  // transport をメモ化（apiKey/providerId が変わった時だけ再作成）
+  // 現在のプロバイダーで利用可能なモデル一覧
+  const availableModels = useMemo(
+    () => MODEL_OPTIONS.filter((m) => m.providerId === providerId),
+    [providerId],
+  );
+
+  // transport をメモ化（apiKey/providerId/model が変わった時だけ再作成）
   const transportRef = useRef<DefaultChatTransport<UIMessage> | null>(null);
   const transportKeyRef = useRef<string>('');
-  const currentTransportKey = `${apiKey ?? ''}_${providerId}`;
+  const currentTransportKey = `${apiKey ?? ''}_${providerId}_${selectedModelId ?? ''}`;
 
   if (currentTransportKey !== transportKeyRef.current) {
     transportKeyRef.current = currentTransportKey;
@@ -106,12 +118,14 @@ export function useAIChat() {
           },
           body: {
             providerId,
+            ...(selectedModelId ? { model: selectedModelId } : {}),
           },
         })
       : new DefaultChatTransport<UIMessage>({
           api: '/api/chat',
           body: {
             providerId,
+            ...(selectedModelId ? { model: selectedModelId } : {}),
           },
         });
   }
@@ -267,6 +281,23 @@ export function useAIChat() {
     [isLoading, utils.chat.getById, setMessages, setActiveConversationId],
   );
 
+  // 会話削除
+  const deleteConversation = useCallback(
+    async (conversationId: string) => {
+      try {
+        await deleteConversationMutation.mutateAsync({ conversationId });
+        // アクティブ会話を削除した場合はリセット
+        if (conversationIdRef.current === conversationId) {
+          setMessages([]);
+          resetConversation();
+        }
+      } catch (err) {
+        logger.error('Failed to delete conversation', { error: err });
+      }
+    },
+    [deleteConversationMutation, setMessages, resetConversation],
+  );
+
   // 会話リセット（新規会話開始）
   const reset = useCallback(() => {
     setMessages([]);
@@ -311,6 +342,14 @@ export function useAIChat() {
       conversations: conversationsQuery.data ?? [],
       /** 会話切替 */
       loadConversation,
+      /** 会話削除 */
+      deleteConversation,
+      /** 選択中のモデルID */
+      selectedModelId,
+      /** モデル選択を変更 */
+      setSelectedModelId,
+      /** 利用可能なモデル一覧（現在のプロバイダー） */
+      availableModels,
     }),
     [
       messages,
@@ -331,6 +370,10 @@ export function useAIChat() {
       activeConversationId,
       conversationsQuery.data,
       loadConversation,
+      deleteConversation,
+      selectedModelId,
+      setSelectedModelId,
+      availableModels,
     ],
   );
 }
