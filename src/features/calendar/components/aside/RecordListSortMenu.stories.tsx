@@ -12,7 +12,7 @@ import { RecordListSortMenu } from './RecordListSortMenu';
  * - デフォルトから変更がある場合はリセット行が表示される
  */
 const meta = {
-  title: 'Features/Aside/RecordListSortMenu',
+  title: 'Features/Aside/Record/SortMenu',
   component: RecordListSortMenu,
   tags: ['autodocs'],
   parameters: {

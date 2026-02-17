@@ -36,7 +36,7 @@ const BASE_PLAN: PlanWithTags = {
 };
 
 const meta = {
-  title: 'Features/Aside/PlanListCard',
+  title: 'Features/Aside/Plan/ListCard',
   component: PlanListCard,
   tags: ['autodocs'],
   parameters: {

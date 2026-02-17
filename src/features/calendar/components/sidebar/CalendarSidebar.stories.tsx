@@ -4,9 +4,9 @@ import { Bell, Moon, Search, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { HoverTooltip } from '@/components/ui/tooltip';
 
-/** カレンダーサイドバー。タグフィルター、ナビゲーション、ユーティリティを含む。 */
+/** サイドバー概要。ナビゲーション、タグフィルター、ユーティリティを含む。 */
 const meta = {
-  title: 'Features/Sidebar/CalendarSidebar',
+  title: 'Features/Sidebar/Overview',
   parameters: {
     layout: 'padded',
   },

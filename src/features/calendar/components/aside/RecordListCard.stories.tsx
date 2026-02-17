@@ -33,7 +33,7 @@ const BASE_RECORD: RecordItem = {
 };
 
 const meta = {
-  title: 'Features/Aside/RecordListCard',
+  title: 'Features/Aside/Record/ListCard',
   component: RecordListCard,
   tags: ['autodocs'],
   parameters: {

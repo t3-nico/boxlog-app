@@ -8,7 +8,7 @@ import { CalendarAside } from './CalendarAside';
 
 /** CalendarAside - カレンダーアサイド */
 const meta = {
-  title: 'Features/Aside',
+  title: 'Features/Aside/Overview',
   parameters: {
     layout: 'padded',
   },
