@@ -4,7 +4,7 @@ import { Bar, BarChart, XAxis, YAxis } from 'recharts';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
-  ChartConfig,
+  type ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
@@ -14,15 +14,13 @@ import { api } from '@/lib/trpc';
 
 const chartConfig = {
   hours: {
-    label: '作業時間',
+    label: 'Hours',
     color: 'var(--primary)',
   },
 } satisfies ChartConfig;
 
 function formatHours(hours: number): string {
-  if (hours < 1) {
-    return `${Math.round(hours * 60)}m`;
-  }
+  if (hours < 1) return `${Math.round(hours * 60)}m`;
   return `${hours.toFixed(1)}h`;
 }
 
@@ -33,8 +31,8 @@ export function DayOfWeekChart() {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>曜日別作業時間</CardTitle>
-          <CardDescription>どの曜日に多く作業しているか</CardDescription>
+          <CardTitle>Day of Week</CardTitle>
+          <CardDescription>Activity by day</CardDescription>
         </CardHeader>
         <CardContent>
           <Skeleton className="h-48 w-full" />
@@ -47,34 +45,32 @@ export function DayOfWeekChart() {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>曜日別作業時間</CardTitle>
-          <CardDescription>どの曜日に多く作業しているか</CardDescription>
+          <CardTitle>Day of Week</CardTitle>
+          <CardDescription>Activity by day</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="text-muted-foreground flex h-32 items-center justify-center">
-            データがありません
+          <div className="text-muted-foreground flex h-32 items-center justify-center text-sm">
+            No data
           </div>
         </CardContent>
       </Card>
     );
   }
 
-  // 最も作業時間が多い曜日を見つける
   const firstItem = data[0];
   const maxDay = firstItem
     ? data.reduce((max, item) => (item.hours > max.hours ? item : max), firstItem)
     : undefined;
 
-  // 平日と週末の合計
   const weekdayHours = data.slice(0, 5).reduce((sum, item) => sum + item.hours, 0);
   const weekendHours = data.slice(5).reduce((sum, item) => sum + item.hours, 0);
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>曜日別作業時間</CardTitle>
+        <CardTitle>Day of Week</CardTitle>
         <CardDescription>
-          最も多い: {maxDay?.day}曜 ({formatHours(maxDay?.hours ?? 0)})
+          Busiest: {maxDay?.day} ({formatHours(maxDay?.hours ?? 0)})
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -92,10 +88,9 @@ export function DayOfWeekChart() {
           </BarChart>
         </ChartContainer>
 
-        {/* 平日 vs 週末 */}
         <div className="text-muted-foreground mt-2 flex justify-center gap-4 text-xs">
-          <span>平日: {formatHours(weekdayHours)}</span>
-          <span>週末: {formatHours(weekendHours)}</span>
+          <span>Weekdays: {formatHours(weekdayHours)}</span>
+          <span>Weekends: {formatHours(weekendHours)}</span>
         </div>
       </CardContent>
     </Card>

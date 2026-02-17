@@ -4,7 +4,7 @@ import { Bar, BarChart, XAxis, YAxis } from 'recharts';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
-  ChartConfig,
+  type ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
@@ -26,9 +26,7 @@ type ChartDataItem = {
 };
 
 function formatHours(hours: number): string {
-  if (hours < 1) {
-    return `${Math.round(hours * 60)}m`;
-  }
+  if (hours < 1) return `${Math.round(hours * 60)}m`;
   return `${hours.toFixed(1)}h`;
 }
 
@@ -39,8 +37,8 @@ export function TagTimeChart() {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>タグ別時間</CardTitle>
-          <CardDescription>タグごとの作業時間</CardDescription>
+          <CardTitle>Tag Time</CardTitle>
+          <CardDescription>Hours by tag</CardDescription>
         </CardHeader>
         <CardContent>
           <Skeleton className="h-64 w-full" />
@@ -53,43 +51,37 @@ export function TagTimeChart() {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>タグ別時間</CardTitle>
-          <CardDescription>タグごとの作業時間</CardDescription>
+          <CardTitle>Tag Time</CardTitle>
+          <CardDescription>Hours by tag</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="text-muted-foreground flex h-32 items-center justify-center">
-            データがありません
+          <div className="text-muted-foreground flex h-32 items-center justify-center text-sm">
+            No data
           </div>
         </CardContent>
       </Card>
     );
   }
 
-  // 上位10件に絞る
   const chartData: ChartDataItem[] = data.slice(0, 10).map((item: TagTimeData) => ({
     name: item.name,
     hours: item.hours,
     fill: item.color,
   }));
 
-  // 合計時間
   const totalHours = data.reduce((sum: number, item: TagTimeData) => sum + item.hours, 0);
 
-  // ChartConfigを動的に生成
   const chartConfig = chartData.reduce((config: ChartConfig, item: ChartDataItem) => {
-    config[item.name] = {
-      label: item.name,
-      color: item.fill,
-    };
+    config[item.name] = { label: item.name, color: item.fill };
     return config;
   }, {} as ChartConfig);
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>タグ別時間</CardTitle>
+        <CardTitle>Tag Time</CardTitle>
         <CardDescription>
-          合計 {formatHours(totalHours)} - 上位{Math.min(data.length, 10)}タグ
+          Total {formatHours(totalHours)} - Top {Math.min(data.length, 10)}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -107,7 +99,9 @@ export function TagTimeChart() {
               tickMargin={10}
               axisLine={false}
               width={80}
-              tickFormatter={(value) => (value.length > 10 ? `${value.slice(0, 10)}...` : value)}
+              tickFormatter={(value: string) =>
+                value.length > 10 ? `${value.slice(0, 10)}...` : value
+              }
             />
             <XAxis dataKey="hours" type="number" hide />
             <ChartTooltip

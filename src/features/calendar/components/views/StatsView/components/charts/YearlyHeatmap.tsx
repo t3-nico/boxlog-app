@@ -1,12 +1,13 @@
 'use client';
 
+import { useState } from 'react';
+
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import CalendarHeatmap from 'react-calendar-heatmap';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useStatsPeriodStore } from '@/features/stats/stores';
 import { api } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
 
@@ -26,26 +27,22 @@ function formatHours(hours: number): string {
 
 export function YearlyHeatmap() {
   const currentYear = new Date().getFullYear();
-  const year = useStatsPeriodStore((state) => state.heatmapYear);
-  const setYear = useStatsPeriodStore((state) => state.setHeatmapYear);
+  const [year, setYear] = useState(currentYear);
 
   const { data, isPending } = api.plans.getDailyHours.useQuery({ year });
 
   const startDate = new Date(year, 0, 1);
   const endDate = new Date(year, 11, 31);
 
-  // データをHeatmap用に変換
   const values: HeatmapValue[] = data ?? [];
-
-  // 合計時間を計算
   const totalHours = values.reduce((sum, v) => sum + v.hours, 0);
 
   if (isPending) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>年次グリッド</CardTitle>
-          <CardDescription>年間の活動量</CardDescription>
+          <Skeleton className="h-5 w-24" />
+          <Skeleton className="h-4 w-40" />
         </CardHeader>
         <CardContent>
           <Skeleton className="h-32 w-full" />
@@ -58,9 +55,9 @@ export function YearlyHeatmap() {
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <div>
-          <CardTitle>年次グリッド</CardTitle>
+          <CardTitle>Yearly Grid</CardTitle>
           <CardDescription>
-            {year}年の活動量 - 合計 {formatHours(totalHours)}
+            {year} - Total {formatHours(totalHours)}
           </CardDescription>
         </div>
         <div className="flex items-center gap-1">
@@ -69,7 +66,7 @@ export function YearlyHeatmap() {
             icon
             onClick={() => setYear(year - 1)}
             disabled={year <= 2020}
-            aria-label="前年"
+            aria-label="Previous year"
           >
             <ChevronLeft className="size-4" />
           </Button>
@@ -79,14 +76,13 @@ export function YearlyHeatmap() {
             icon
             onClick={() => setYear(year + 1)}
             disabled={year >= currentYear}
-            aria-label="翌年"
+            aria-label="Next year"
           >
             <ChevronRight className="size-4" />
           </Button>
         </div>
       </CardHeader>
       <CardContent>
-        {/* モバイルで横スクロール対応 */}
         <div className="yearly-heatmap -mx-2 overflow-x-auto px-2 sm:mx-0 sm:overflow-visible sm:px-0">
           <div className="min-w-[650px]">
             <CalendarHeatmap
@@ -114,7 +110,7 @@ export function YearlyHeatmap() {
           </div>
         </div>
 
-        {/* 凡例 */}
+        {/* Legend */}
         <div className="text-muted-foreground mt-4 flex items-center justify-end gap-2 text-xs">
           <span>Less</span>
           <div className="flex gap-1">
@@ -151,7 +147,7 @@ export function YearlyHeatmap() {
           fill: oklch(from var(--primary) l c h / 80%);
         }
         .yearly-heatmap .react-calendar-heatmap rect:hover {
-          stroke: var(--color-foreground);
+          stroke: var(--foreground);
           stroke-width: 1px;
         }
       `}</style>

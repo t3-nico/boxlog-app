@@ -75,7 +75,7 @@ export const AllPatterns: Story = {
       </PanelFrame>
 
       <PanelFrame>
-        <CalendarSidePanel panelType="stats" onPanelChange={fn()} />
+        <CalendarSidePanel panelType="chat" onPanelChange={fn()} />
       </PanelFrame>
     </div>
   ),

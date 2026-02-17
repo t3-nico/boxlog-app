@@ -52,6 +52,17 @@ const useCalendarPanelStoreBase = create<CalendarPanelState>()(
       }),
       {
         name: 'calendar-panel-storage',
+        // 'stats' パネルタイプが削除されたため、localStorage に残っている場合は 'none' にリセット
+        merge: (persistedState, currentState) => {
+          const state = persistedState as Partial<CalendarPanelState> | undefined;
+          const panelType = state?.panelType;
+          const validPanelTypes = ['none', 'plan', 'record', 'chat'];
+          return {
+            ...currentState,
+            ...state,
+            panelType: panelType && validPanelTypes.includes(panelType) ? panelType : 'none',
+          };
+        },
       },
     ),
     {

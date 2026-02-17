@@ -4,7 +4,7 @@ import { Bar, BarChart, XAxis, YAxis } from 'recharts';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
-  ChartConfig,
+  type ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
@@ -14,15 +14,13 @@ import { api } from '@/lib/trpc';
 
 const chartConfig = {
   hours: {
-    label: '作業時間',
+    label: 'Hours',
     color: 'var(--primary)',
   },
 } satisfies ChartConfig;
 
 function formatHours(hours: number): string {
-  if (hours < 1) {
-    return `${Math.round(hours * 60)}m`;
-  }
+  if (hours < 1) return `${Math.round(hours * 60)}m`;
   return `${hours.toFixed(1)}h`;
 }
 
@@ -33,8 +31,8 @@ export function HourlyDistributionChart() {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>時間帯別分布</CardTitle>
-          <CardDescription>いつ作業しているか</CardDescription>
+          <CardTitle>Hourly Distribution</CardTitle>
+          <CardDescription>When you work</CardDescription>
         </CardHeader>
         <CardContent>
           <Skeleton className="h-48 w-full" />
@@ -47,19 +45,18 @@ export function HourlyDistributionChart() {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>時間帯別分布</CardTitle>
-          <CardDescription>いつ作業しているか</CardDescription>
+          <CardTitle>Hourly Distribution</CardTitle>
+          <CardDescription>When you work</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="text-muted-foreground flex h-32 items-center justify-center">
-            データがありません
+          <div className="text-muted-foreground flex h-32 items-center justify-center text-sm">
+            No data
           </div>
         </CardContent>
       </Card>
     );
   }
 
-  // 最も作業時間が多い時間帯を見つける
   const firstItem = data[0];
   const maxSlot = firstItem
     ? data.reduce((max, item) => (item.hours > max.hours ? item : max), firstItem)
@@ -69,9 +66,9 @@ export function HourlyDistributionChart() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>時間帯別分布</CardTitle>
+        <CardTitle>Hourly Distribution</CardTitle>
         <CardDescription>
-          ピーク: {maxSlot?.timeSlot} ({formatHours(maxSlot?.hours ?? 0)})
+          Peak: {maxSlot?.timeSlot} ({formatHours(maxSlot?.hours ?? 0)})
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -101,9 +98,8 @@ export function HourlyDistributionChart() {
           </BarChart>
         </ChartContainer>
 
-        {/* 合計時間 */}
         <div className="text-muted-foreground mt-2 text-center text-xs">
-          合計 {formatHours(totalHours)}
+          Total {formatHours(totalHours)}
         </div>
       </CardContent>
     </Card>

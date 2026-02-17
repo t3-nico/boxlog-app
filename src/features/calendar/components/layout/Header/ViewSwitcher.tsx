@@ -40,6 +40,7 @@ const MAIN_VIEW_OPTIONS: MainViewOption[] = [
   { value: 'week', labelKey: 'calendar.views.week', shortcut: 'W' },
   { value: 'agenda', labelKey: 'calendar.views.agenda', shortcut: 'A' },
   { value: 'timesheet', labelKey: 'calendar.views.timesheet', shortcut: 'T' },
+  { value: 'stats', labelKey: 'calendar.views.stats', shortcut: 'S' },
 ];
 
 const DAY_COUNTS = [2, 3, 4, 5, 6, 7, 8, 9] as const;

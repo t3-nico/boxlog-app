@@ -18,7 +18,6 @@ const NAMESPACES = [
   'notification',
   'onboarding',
   'settings',
-  'stats',
   'tag',
 ] as const;
 

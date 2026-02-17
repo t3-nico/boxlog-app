@@ -26,7 +26,8 @@
       "density_default": "標準",
       "density_spacious": "ゆったり",
       "generalSettings": "一般設定",
-      "timesheet": "タイムシート"
+      "timesheet": "タイムシート",
+      "stats": "統計"
     },
     "mobile": {
       "drawer": {
@@ -151,7 +152,8 @@
       "dropFailed": "ドロップに失敗しました"
     },
     "actions": {
-      "goToToday": "今日へ移動"
+      "goToToday": "今日へ移動",
+      "close": "閉じる"
     },
     "performance": {
       "notCalculated": "未計測",
@@ -234,6 +236,23 @@
       "emptyDescription": "カレンダーで新しい予定を作成してください",
       "noItems": "予定なし",
       "noDate": "日付なし"
+    },
+    "stats": {
+      "progress": "進捗",
+      "vsLastWeek": "先週比",
+      "previousWeek": "先週",
+      "streak": "連続記録",
+      "days": "日",
+      "longestStreak": "最長: {days}日",
+      "tag": "タグ",
+      "plan": "Plan",
+      "done": "Done",
+      "percent": "%",
+      "total": "合計",
+      "backToAll": "すべてのタグ",
+      "noTagData": "この期間のタグデータがありません",
+      "emptyTitle": "今週のデータがありません",
+      "emptyDescription": "プランとレコードを追加して進捗を確認しましょう"
     },
     "timesheet": {
       "emptyTitle": "今週のエントリはありません",

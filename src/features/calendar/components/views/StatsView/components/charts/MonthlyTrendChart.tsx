@@ -4,7 +4,7 @@ import { Area, AreaChart, XAxis, YAxis } from 'recharts';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
-  ChartConfig,
+  type ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
@@ -14,15 +14,13 @@ import { api } from '@/lib/trpc';
 
 const chartConfig = {
   hours: {
-    label: '作業時間',
+    label: 'Hours',
     color: 'var(--primary)',
   },
 } satisfies ChartConfig;
 
 function formatHours(hours: number): string {
-  if (hours < 1) {
-    return `${Math.round(hours * 60)}m`;
-  }
+  if (hours < 1) return `${Math.round(hours * 60)}m`;
   return `${hours.toFixed(1)}h`;
 }
 
@@ -33,8 +31,8 @@ export function MonthlyTrendChart() {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>月次トレンド</CardTitle>
-          <CardDescription>過去12ヶ月の推移</CardDescription>
+          <CardTitle>Monthly Trend</CardTitle>
+          <CardDescription>Past 12 months</CardDescription>
         </CardHeader>
         <CardContent>
           <Skeleton className="h-48 w-full" />
@@ -47,25 +45,23 @@ export function MonthlyTrendChart() {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>月次トレンド</CardTitle>
-          <CardDescription>過去12ヶ月の推移</CardDescription>
+          <CardTitle>Monthly Trend</CardTitle>
+          <CardDescription>Past 12 months</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="text-muted-foreground flex h-32 items-center justify-center">
-            データがありません
+          <div className="text-muted-foreground flex h-32 items-center justify-center text-sm">
+            No data
           </div>
         </CardContent>
       </Card>
     );
   }
 
-  // 統計計算
   const totalHours = data.reduce((sum, item) => sum + item.hours, 0);
   const avgHours = totalHours / data.length;
   const lastMonth = data[data.length - 1];
   const prevMonth = data[data.length - 2];
 
-  // 前月比
   let trend = '';
   if (lastMonth && prevMonth && prevMonth.hours > 0) {
     const change = ((lastMonth.hours - prevMonth.hours) / prevMonth.hours) * 100;
@@ -75,9 +71,9 @@ export function MonthlyTrendChart() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>月次トレンド</CardTitle>
+        <CardTitle>Monthly Trend</CardTitle>
         <CardDescription>
-          平均: {formatHours(avgHours)}/月 {trend && `(前月比 ${trend})`}
+          Avg: {formatHours(avgHours)}/mo {trend && `(MoM ${trend})`}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -92,7 +88,7 @@ export function MonthlyTrendChart() {
               tickLine={false}
               tickMargin={10}
               axisLine={false}
-              tickFormatter={(value) => value.replace('月', '')}
+              tickFormatter={(value: string) => value.replace('月', '')}
             />
             <YAxis hide />
             <ChartTooltip
@@ -120,9 +116,8 @@ export function MonthlyTrendChart() {
           </AreaChart>
         </ChartContainer>
 
-        {/* 年間合計 */}
         <div className="text-muted-foreground mt-2 text-center text-xs">
-          年間合計: {formatHours(totalHours)}
+          Annual total: {formatHours(totalHours)}
         </div>
       </CardContent>
     </Card>
