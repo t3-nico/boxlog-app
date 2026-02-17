@@ -1,19 +1,20 @@
 /**
- * AI Chat Message type
+ * AI Feature Types
  *
- * Designed for future compatibility with Vercel AI SDK's UIMessage.
- * When integrating AI SDK, map UIMessage.parts[type='text'].text -> content,
- * or switch to UIMessage entirely.
+ * Vercel AI SDK の UIMessage を統一的な型として使用。
  *
  * @see https://ai-sdk.dev/docs/reference/ai-sdk-core/ui-message
  */
-export interface ChatMessage {
-  /** Unique message identifier */
-  id: string;
-  /** Message sender role */
-  role: 'user' | 'assistant';
-  /** Plain text content of the message */
-  content: string;
-  /** Timestamp when the message was created */
-  createdAt?: Date;
-}
+
+import type { UIMessage } from 'ai';
+
+/**
+ * チャットメッセージ型
+ *
+ * Vercel AI SDK の UIMessage をそのまま使用。
+ * - id: ユニーク識別子
+ * - role: 'user' | 'assistant' | 'system'
+ * - parts: 構造化コンテンツ（text, tool-invocation 等）
+ * - createdAt: タイムスタンプ
+ */
+export type ChatMessage = UIMessage;

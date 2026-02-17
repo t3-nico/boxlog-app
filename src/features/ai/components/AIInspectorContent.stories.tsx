@@ -36,13 +36,13 @@ function WithMessagesStory() {
 
   const handleSubmit = () => {
     if (!input.trim()) return;
+    const text = input.trim();
     setMessages((prev) => [
       ...prev,
       {
         id: `msg-${Date.now()}`,
         role: 'user' as const,
-        content: input.trim(),
-        createdAt: new Date(),
+        parts: [{ type: 'text' as const, text }],
       },
     ]);
     setInput('');

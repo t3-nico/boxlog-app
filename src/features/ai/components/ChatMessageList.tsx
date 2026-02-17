@@ -9,10 +9,22 @@ import {
 } from './prompt-kit/chat-container';
 import { Message, MessageContent } from './prompt-kit/message';
 
-import type { ChatMessage } from '../types';
+import type { UIMessage } from 'ai';
 
 interface ChatMessageListProps {
-  messages: ChatMessage[];
+  messages: UIMessage[];
+}
+
+/**
+ * メッセージからテキストコンテンツを抽出
+ *
+ * Vercel AI SDK v6 の UIMessage.parts からテキストを取得。
+ */
+function getMessageText(message: UIMessage): string {
+  return message.parts
+    .filter((part): part is Extract<typeof part, { type: 'text' }> => part.type === 'text')
+    .map((part) => part.text)
+    .join('');
 }
 
 export const ChatMessageList = memo(function ChatMessageList({ messages }: ChatMessageListProps) {
@@ -31,7 +43,7 @@ export const ChatMessageList = memo(function ChatMessageList({ messages }: ChatM
                   : 'max-w-full bg-transparent p-0 text-sm'
               }
             >
-              {message.content}
+              {getMessageText(message)}
             </MessageContent>
           </Message>
         ))}

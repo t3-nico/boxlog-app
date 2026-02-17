@@ -12,3 +12,9 @@
 
 // Components
 export { AIInspectorContent } from './components';
+
+// Hooks
+export { useAIChat } from './hooks/useAIChat';
+
+// Types
+export type { ChatMessage } from './types';
