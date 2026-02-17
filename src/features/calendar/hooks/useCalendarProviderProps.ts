@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 
 import type { CalendarViewType } from '../types/calendar.types';
+import { isCalendarViewPath } from '../lib/route-utils';
 
 // 有効なビュータイプのリスト
 const VALID_VIEW_TYPES: CalendarViewType[] = ['day', '3day', '5day', 'week', 'agenda'];
@@ -38,8 +39,9 @@ export function useCalendarProviderProps(
   const dateParam = searchParams.get('date');
 
   return useMemo(() => {
-    // ロケールプレフィックス対応: /ja/calendar, /en/calendar 等
-    const isCalendarPage = pathname.includes('/calendar');
+    // ロケールプレフィックスを除去してビューパスを判定
+    const pathWithoutLocale = pathname.replace(/^\/(ja|en)/, '');
+    const isCalendarPage = isCalendarViewPath(pathWithoutLocale);
 
     if (!isCalendarPage) {
       return { isCalendarPage, calendarProviderProps: null };
@@ -47,7 +49,7 @@ export function useCalendarProviderProps(
 
     const pathSegments = pathname.split('/');
     const lastSegment = pathSegments[pathSegments.length - 1] ?? '';
-    // ビュータイプが有効でない場合（/calendar ルートページ等）は 'day' をデフォルトにする
+    // ビュータイプが有効でない場合は 'day' をデフォルトにする
     const view: CalendarViewType = isValidViewType(lastSegment) ? lastSegment : 'day';
 
     let initialDate: Date | undefined;

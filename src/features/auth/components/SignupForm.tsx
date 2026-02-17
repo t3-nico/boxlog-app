@@ -97,7 +97,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
         const errorKey = getAuthErrorKey(error.message, 'signup');
         setServerError(t(errorKey));
       } else {
-        router.push(`/${locale}/calendar`);
+        router.push(`/${locale}/day`);
       }
     } catch {
       setServerError('An unexpected error occurred');

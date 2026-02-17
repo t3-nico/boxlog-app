@@ -28,7 +28,7 @@ export default function TagCreatePage() {
 
   const handleClose = () => {
     // 直接アクセスの場合はカレンダーに戻る
-    router.push('/calendar');
+    router.push('/day');
   };
 
   const handleCreateTag = async (data: CreateTagInput) => {

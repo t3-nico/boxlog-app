@@ -51,7 +51,7 @@ interface CalendarViewPageProps {
 
 // 有効なビュータイプかチェック
 function isValidViewType(view: string): view is CalendarViewType {
-  if (['day', 'week', 'agenda', 'timesheet'].includes(view)) return true;
+  if (['day', 'week', 'agenda', 'timesheet', 'stats'].includes(view)) return true;
   const match = view.match(/^(\d+)day$/);
   if (match) {
     const n = parseInt(match[1]!);
@@ -66,7 +66,7 @@ const CalendarViewPage = async ({ params, searchParams }: CalendarViewPageProps)
 
   // 有効なビュータイプかチェック
   if (!isValidViewType(view)) {
-    redirect(`/${locale}/calendar/day`);
+    redirect(`/${locale}/day`);
   }
 
   // 日付パラメータの解析

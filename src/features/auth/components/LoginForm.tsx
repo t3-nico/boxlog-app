@@ -96,7 +96,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
           return;
         }
 
-        router.push(`/${locale}/calendar`);
+        router.push(`/${locale}/day`);
       }
     } catch (err) {
       console.error('[LoginForm] Unexpected error:', err);

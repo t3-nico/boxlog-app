@@ -11,8 +11,7 @@ interface CalendarPageProps {
 /**
  * カレンダールートページ
  *
- * /calendar → /calendar/day?date=today にリダイレクト
- * URLにビュータイプと日付を含めることで、ブラウザの履歴・ブックマークが正しく機能する
+ * /calendar → /day?date=today にリダイレクト（後方互換）
  */
 export default async function CalendarPage({ params, searchParams }: CalendarPageProps) {
   const { locale } = await params;
@@ -20,5 +19,5 @@ export default async function CalendarPage({ params, searchParams }: CalendarPag
 
   // 日付パラメータがなければ今日の日付を使用
   const dateString = date || format(new Date(), 'yyyy-MM-dd');
-  redirect(`/${locale}/calendar/day?date=${dateString}`);
+  redirect(`/${locale}/day?date=${dateString}`);
 }

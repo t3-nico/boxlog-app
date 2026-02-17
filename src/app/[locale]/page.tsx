@@ -9,8 +9,7 @@ interface PageProps {
 // ロケール付きのホームページ
 export default async function LocaleHomePage({ params }: PageProps) {
   const { locale } = await params;
-  // カレンダーページにリダイレクト
-  redirect(`/${locale}/calendar`);
+  redirect(`/${locale}/day`);
 }
 
 // 静的生成無効化

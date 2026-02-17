@@ -42,7 +42,7 @@ export function SidebarNavigation() {
   return (
     <nav className="flex flex-col gap-1 px-2 py-2" role="navigation" aria-label="Main navigation">
       {navItems.map((item) => {
-        const isActive = pathname?.startsWith(item.url) ?? false;
+        const isActive = (pathname === item.url || pathname?.startsWith(`${item.url}?`)) ?? false;
         const Icon = item.icon;
 
         return (

@@ -59,7 +59,7 @@ export const CalendarController = ({
   const currentPanel = useCalendarPanelStore.use.panelType();
   const setCurrentPanel = useCalendarPanelStore.use.setPanel();
 
-  // 現在のlocaleを取得（例: /ja/calendar/day -> ja）
+  // 現在のlocaleを取得（例: /ja/day -> ja）
   const locale = pathname?.split('/')[1] || 'ja';
 
   // Context が利用可能な場合はそれを使用、そうでない場合は useCalendarLayout を使用
@@ -70,7 +70,7 @@ export const CalendarController = ({
     (newViewType: CalendarViewType, newDate?: Date) => {
       const dateToUse = newDate || new Date();
       const dateString = format(dateToUse, 'yyyy-MM-dd');
-      const newURL = `/${locale}/calendar/${newViewType}?date=${dateString}`;
+      const newURL = `/${locale}/${newViewType}?date=${dateString}`;
       logger.log('🔗 updateURL called:', { newViewType, dateToUse, newURL });
       router.push(newURL);
     },

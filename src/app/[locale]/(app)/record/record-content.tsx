@@ -26,7 +26,7 @@ export function RecordContent() {
   useEffect(() => {
     if (isDesktop) {
       openPanel('record');
-      router.replace(`/${locale}/calendar`);
+      router.replace(`/${locale}/day`);
     }
   }, [isDesktop, router, locale, openPanel]);
 

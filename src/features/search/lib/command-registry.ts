@@ -144,7 +144,7 @@ export const registerDefaultCommands = (actions: CommandActions) => {
       icon: 'calendar',
       shortcut: ['G', 'C'],
       keywords: ['calendar', 'schedule', 'カレンダー', '予定'],
-      action: () => router.push('/calendar'),
+      action: () => router.push('/day'),
     },
     {
       id: 'nav:plan',

@@ -7,6 +7,7 @@ import { Suspense, useMemo } from 'react';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { useAuthStore } from '@/features/auth/stores/useAuthStore';
 import { CalendarSidebar } from '@/features/calendar/components/sidebar/CalendarSidebar';
+import { isCalendarViewPath } from '@/features/calendar/lib/route-utils';
 import { useSidebarStore } from '@/features/navigation/stores/useSidebarStore';
 import { OnboardingBanner } from '@/features/onboarding';
 import { SettingsSidebar } from '@/features/settings/components/sidebar';
@@ -63,11 +64,11 @@ export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
 
   // パフォーマンス最適化: ページ判定をメモ化（pathnameとlocale変更時のみ再計算）
   const currentPage = useMemo(() => {
-    if (pathname?.startsWith(`/${locale}/calendar`)) return 'calendar';
-    if (pathname?.startsWith(`/${locale}/plan`)) return 'plan';
-    if (pathname?.startsWith(`/${locale}/record`)) return 'record';
-    if (pathname?.startsWith(`/${locale}/stats`)) return 'stats';
-    if (pathname?.startsWith(`/${locale}/settings`)) return 'settings';
+    const pathWithoutLocale = pathname?.replace(new RegExp(`^/${locale}`), '') ?? '';
+    if (isCalendarViewPath(pathWithoutLocale)) return 'calendar';
+    if (pathWithoutLocale.startsWith('/plan')) return 'plan';
+    if (pathWithoutLocale.startsWith('/record')) return 'record';
+    if (pathWithoutLocale.startsWith('/settings')) return 'settings';
     return 'default';
   }, [pathname, locale]);
 
@@ -111,7 +112,7 @@ export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
         {/* PageHeader + Main Content + Inspector */}
         <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
           {/* PageHeader（Calendar/Statsは独自ヘッダーを持つため非表示） */}
-          {currentPage !== 'calendar' && currentPage !== 'stats' && <PageHeader />}
+          {currentPage !== 'calendar' && <PageHeader />}
 
           {/* Main Content + Inspector（自動的に残りのスペースを使用） */}
           <div className="min-w-0 flex-1 overflow-hidden">

@@ -29,7 +29,7 @@ test.describe('Critical Path: プラン管理', () => {
     await passwordInput.fill(process.env.TEST_USER_PASSWORD!);
     await submitButton.click();
 
-    await page.waitForURL(/\/calendar/i, { timeout: 15000 });
+    await page.waitForURL(/\/(day|week|agenda|timesheet|stats)/i, { timeout: 15000 });
   });
 
   test('カレンダーページが正常に表示される', async ({ page }) => {
@@ -79,7 +79,7 @@ test.describe('Critical Path: レコード管理', () => {
     await passwordInput.fill(process.env.TEST_USER_PASSWORD!);
     await submitButton.click();
 
-    await page.waitForURL(/\/calendar/i, { timeout: 15000 });
+    await page.waitForURL(/\/(day|week|agenda|timesheet|stats)/i, { timeout: 15000 });
   });
 
   test('レコードがカレンダーに表示される', async ({ page }) => {
@@ -107,7 +107,7 @@ test.describe('Critical Path: タグ管理', () => {
     await passwordInput.fill(process.env.TEST_USER_PASSWORD!);
     await submitButton.click();
 
-    await page.waitForURL(/\/calendar/i, { timeout: 15000 });
+    await page.waitForURL(/\/(day|week|agenda|timesheet|stats)/i, { timeout: 15000 });
   });
 
   test('タグページにアクセスできる', async ({ page }) => {

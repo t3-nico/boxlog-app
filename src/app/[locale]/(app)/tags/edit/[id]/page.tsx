@@ -49,7 +49,7 @@ export default function TagEditPage() {
   }, [tag]);
 
   const handleClose = () => {
-    router.push('/calendar');
+    router.push('/day');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {

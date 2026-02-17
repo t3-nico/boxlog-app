@@ -77,7 +77,7 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
         } else {
           // MFAが不要、または既にaal2の場合は通常通りリダイレクト
           router.refresh();
-          router.push(`/${locale}/calendar`);
+          router.push(`/${locale}/day`);
         }
       } else {
         // サインアップ処理

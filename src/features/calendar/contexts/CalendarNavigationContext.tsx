@@ -33,7 +33,7 @@ export const CalendarNavigationProvider = ({
   const [currentDate, setCurrentDate] = useState(initialDate);
   const [viewType, setViewType] = useState<CalendarViewType>(initialView);
 
-  // 現在のlocaleを取得（例: /ja/calendar/day -> ja）
+  // 現在のlocaleを取得（例: /ja/day -> ja）
   const locale = pathname?.split('/')[1] || 'ja';
 
   // 初期値の変更を検知して状態を更新（初回マウント時のみ）
@@ -65,7 +65,7 @@ export const CalendarNavigationProvider = ({
         const dateString = format(date, 'yyyy-MM-dd');
         // URLからの現在のビュータイプを使用（stateよりも信頼性が高い）
         const activeView = currentViewFromPath || viewType;
-        const newUrl = `/${locale}/calendar/${activeView}?date=${dateString}`;
+        const newUrl = `/${locale}/${activeView}?date=${dateString}`;
         router.push(newUrl, { scroll: false });
       }
     },
@@ -76,7 +76,7 @@ export const CalendarNavigationProvider = ({
     (view: CalendarViewType) => {
       setViewType(view);
       const dateString = format(currentDate, 'yyyy-MM-dd');
-      router.push(`/${locale}/calendar/${view}?date=${dateString}`);
+      router.push(`/${locale}/${view}?date=${dateString}`);
     },
     [router, currentDate, locale],
   );
@@ -99,6 +99,7 @@ export const CalendarNavigationProvider = ({
               newDate.setDate(currentDate.getDate() + 1 * multiplier);
               break;
             case 'week':
+            case 'stats':
               newDate.setDate(currentDate.getDate() + 7 * multiplier);
               break;
             default:

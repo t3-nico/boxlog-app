@@ -6,14 +6,14 @@ import { useEffect, useMemo, useState } from 'react';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { CalendarSidebar } from '@/features/calendar/components/sidebar/CalendarSidebar';
+import { isCalendarViewPath } from '@/features/calendar/lib/route-utils';
 import { AppSidebar } from '@/features/navigation/components/sidebar/app-sidebar';
 import { useSidebarStore } from '@/features/navigation/stores/useSidebarStore';
 import { PlanSidebar } from '@/features/plans/components/PlanSidebar';
-import { StatsSidebar } from '@/features/stats';
 
 import { MainContentWrapper } from './main-content-wrapper';
 
-type PageType = 'calendar' | 'plan' | 'stats' | 'default';
+type PageType = 'calendar' | 'plan' | 'default';
 
 interface MobileLayoutProps {
   children: React.ReactNode;
@@ -57,9 +57,9 @@ export function MobileLayout({ children, locale }: MobileLayoutProps) {
 
   // ページタイプをメモ化（DesktopLayoutと統一パターン）
   const currentPage = useMemo((): PageType => {
-    if (pathname?.startsWith(`/${locale}/calendar`)) return 'calendar';
-    if (pathname?.startsWith(`/${locale}/plan`)) return 'plan';
-    if (pathname?.startsWith(`/${locale}/stats`)) return 'stats';
+    const pathWithoutLocale = pathname?.replace(new RegExp(`^/${locale}`), '') ?? '';
+    if (isCalendarViewPath(pathWithoutLocale)) return 'calendar';
+    if (pathWithoutLocale.startsWith('/plan')) return 'plan';
     return 'default';
   }, [pathname, locale]);
 
@@ -70,8 +70,6 @@ export function MobileLayout({ children, locale }: MobileLayoutProps) {
         return CalendarSidebar;
       case 'plan':
         return PlanSidebar;
-      case 'stats':
-        return StatsSidebar;
       default:
         return AppSidebar;
     }

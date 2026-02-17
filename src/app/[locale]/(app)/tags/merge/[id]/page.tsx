@@ -67,7 +67,7 @@ export default function TagMergePage() {
   const selectedTarget = mergeTargetTags.find((tag) => tag.id === selectedTargetId);
 
   const handleClose = useCallback(() => {
-    router.push('/calendar');
+    router.push('/day');
   }, [router]);
 
   // ESCキーでダイアログを閉じる

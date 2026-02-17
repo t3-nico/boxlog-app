@@ -26,7 +26,7 @@ export function PlanContent() {
   useEffect(() => {
     if (isDesktop) {
       openPanel('plan');
-      router.replace(`/${locale}/calendar`);
+      router.replace(`/${locale}/day`);
     }
   }, [isDesktop, router, locale, openPanel]);
 
