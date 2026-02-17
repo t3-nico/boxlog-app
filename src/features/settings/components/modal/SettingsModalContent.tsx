@@ -20,7 +20,7 @@ const categoryComponents: Record<
     import('../calendar-settings').then((m) => ({ default: m.CalendarSettings })),
   ),
   personalization: lazy(() =>
-    import('../chronotype-settings').then((m) => ({ default: m.ChronotypeSettings })),
+    import('../personalization-page').then((m) => ({ default: m.PersonalizationPage })),
   ),
   notifications: lazy(() =>
     import('../notification-settings').then((m) => ({ default: m.NotificationSettings })),
