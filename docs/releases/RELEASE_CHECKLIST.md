@@ -12,18 +12,18 @@
 
 ---
 
-## 📋 Phase 0: リリース準備
+## 📋 Phase 0: リリース準備（featureブランチで実施）
 
 ### 0.1 バージョン番号の確認
 
 - [ ] **リリースするバージョン番号を決定**
-  - PATCH: バグ修正のみ（例: 0.13.0 → 0.13.1）
-  - MINOR: 新機能追加（例: 0.13.0 → 0.14.0）
-  - MAJOR: 破壊的変更（例: 0.13.0 → 1.0.0）
+  - PATCH: バグ修正のみ（例: 0.16.0 → 0.16.1）
+  - MINOR: 新機能追加（例: 0.16.0 → 0.17.0）
+  - MAJOR: 破壊的変更（例: 0.16.0 → 1.0.0）
 
   ```bash
   # 今回のリリースバージョン（例）
-  VERSION="0.14.0"
+  VERSION="0.17.0"
   ```
 
 - [ ] **既存のリリースタグと重複していないことを確認**
@@ -36,7 +36,18 @@
   gh release view v${VERSION} 2>/dev/null && echo "❌ Already exists!" || echo "✅ OK"
   ```
 
-### 0.2 コード品質の確認
+### 0.2 package.json バージョン更新
+
+- [ ] **リリース前の最後のPRにversion bumpを含める**
+
+  ```bash
+  npm version ${VERSION} --no-git-tag-version
+  # → コミットに含める
+  ```
+
+  **ポイント**: タグ打ち前にmainのpackage.jsonが正しい状態になるため、リリース後の後片付けが不要。
+
+### 0.3 コード品質の確認
 
 - [ ] **Lintチェック**
 
@@ -60,6 +71,8 @@
   ```bash
   npm run build
   ```
+
+→ **PRをマージしてからPhase 1へ**
 
 ---
 
@@ -103,12 +116,6 @@
   gh release view v${VERSION}
   ```
 
-- [ ] **package.json更新PRが自動作成された**
-
-  ```bash
-  gh pr list --label automated
-  ```
-
 ---
 
 ## 📋 Phase 2: リリースノート反映
@@ -149,6 +156,7 @@
   ```
 
 - [ ] **リリースページで確認**
+
   ```bash
   gh release view v${VERSION} --web
   ```
@@ -168,24 +176,12 @@
   - [ ] 新機能が動作する
   - [ ] 既存機能が正常に動作する
 
-### 3.2 version bump PRのマージ
-
-- [ ] **自動作成されたPRを確認・マージ**
-
-  ```bash
-  # PRを確認
-  gh pr list --label automated
-
-  # マージ
-  gh pr merge <PR番号> --squash --delete-branch
-  ```
-
-### 3.3 監視・モニタリング
+### 3.2 監視・モニタリング
 
 - [ ] **Sentryでエラー監視**
   - エラーが急増していないことを確認
 
-### 3.4 通知・関連Issue
+### 3.3 通知・関連Issue
 
 - [ ] **関連Issueにコメント**
   ```bash
@@ -219,12 +215,12 @@
 - ✅ 各PRのコミットを取得して具体的な変更内容を記載
 - ✅ `docs/releases/template.md` の構造を参考にする
 
-### 失敗例4: version bump PRのマージ忘れ
+### 失敗例4: version bump忘れ
 
 **対策**:
 
-- ✅ Phase 3.2で自動作成されたPRを確認
-- ✅ `gh pr list --label automated` で漏れなく確認
+- ✅ Phase 0.2でリリース前の最後のPRにversion bumpを含める
+- ✅ タグ打ち前にmainのpackage.jsonが正しい状態になっていることを確認
 
 ---
 
