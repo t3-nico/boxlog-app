@@ -23,8 +23,8 @@ const SUGGESTIONS = ['今日の予定は？', 'タグを整理したい', '統�
  * AI チャットコンテンツ
  *
  * サイドパネル内に表示されるチャットインターフェース
+ * - ハイブリッドAI: 無料枠（月30回）+ BYOK（無制限）
  * - Vercel AI SDK (useChat) によるストリーミング
- * - BYOK: APIキーをSettings > Integrationsで管理
  * - DB永続化: 会話はリロード後も復元
  * - 会話履歴: ヘッダーから過去の会話に切替可能
  */
@@ -37,6 +37,8 @@ export const AIInspectorContent = memo(function AIInspectorContent() {
     isLoading,
     stop,
     hasApiKey,
+    freeTierUsage,
+    freeTierExhausted,
     keyLoaded,
     providerId,
     error,
@@ -73,28 +75,60 @@ export const AIInspectorContent = memo(function AIInspectorContent() {
     );
   }
 
-  // APIキー未設定
-  if (!hasApiKey) {
+  // 無料枠が上限到達
+  if (freeTierExhausted) {
     return (
-      <div className="flex h-full flex-col items-center justify-center gap-4 px-6 text-center">
-        <div className="bg-surface-container rounded-full p-3">
-          <KeyRound className="text-muted-foreground h-6 w-6" />
+      <div className="flex h-full flex-col">
+        {/* 履歴がある場合はヘッダーを表示 */}
+        {conversations.length > 0 && (
+          <div className="flex shrink-0 items-center justify-end gap-1 px-4 pt-4 pb-2">
+            <ChatHistoryPopover
+              conversations={conversations}
+              activeConversationId={activeConversationId}
+              onSelect={loadConversation}
+              onDelete={deleteConversation}
+            />
+          </div>
+        )}
+
+        <div className="flex flex-1 flex-col items-center justify-center gap-4 px-6 text-center">
+          <div className="bg-surface-container rounded-full p-3">
+            <KeyRound className="text-muted-foreground h-6 w-6" />
+          </div>
+          <div className="space-y-1">
+            <p className="text-foreground text-sm font-medium">Monthly limit reached</p>
+            <p className="text-muted-foreground text-xs">
+              You&apos;ve used all {freeTierUsage?.limit ?? 30} free messages this month. Add your
+              own API key for unlimited usage.
+            </p>
+          </div>
+          <Button variant="outline" size="sm" onClick={handleOpenIntegrations}>
+            Add API Key
+          </Button>
         </div>
-        <div className="space-y-1">
-          <p className="text-foreground text-sm font-medium">API Key Required</p>
-          <p className="text-muted-foreground text-xs">
-            Set up your AI API key in Settings to start chatting.
-          </p>
-        </div>
-        <Button variant="outline" size="sm" onClick={handleOpenIntegrations}>
-          Open Settings
-        </Button>
       </div>
     );
   }
 
   const hasMessages = messages.length > 0;
   const showHeader = hasMessages || conversations.length > 0;
+
+  // startActions: BYOK → ModelSelector, 無料枠 → 残り回数バッジ
+  const startActions = hasApiKey ? (
+    <ModelSelector
+      models={availableModels}
+      selectedModelId={selectedModelId}
+      defaultModelId={DEFAULT_MODELS[providerId]}
+      onSelect={setSelectedModelId}
+      disabled={isLoading}
+    />
+  ) : freeTierUsage ? (
+    <HoverTooltip content="Free tier usage this month">
+      <span className="text-muted-foreground cursor-default text-xs tabular-nums">
+        {freeTierUsage.used}/{freeTierUsage.limit}
+      </span>
+    </HoverTooltip>
+  ) : null;
 
   return (
     <div className="flex h-full flex-col">
@@ -156,15 +190,7 @@ export const AIInspectorContent = memo(function AIInspectorContent() {
         onSubmit={handleSubmit}
         isLoading={isLoading}
         onStop={stop}
-        startActions={
-          <ModelSelector
-            models={availableModels}
-            selectedModelId={selectedModelId}
-            defaultModelId={DEFAULT_MODELS[providerId]}
-            onSelect={setSelectedModelId}
-            disabled={isLoading}
-          />
-        }
+        startActions={startActions}
       />
     </div>
   );

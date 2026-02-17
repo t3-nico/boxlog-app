@@ -8,5 +8,11 @@
 export { buildAIContext } from './context-service';
 export { buildSystemPrompt } from './prompt-builder';
 export { createAITools } from './tools';
-export { DEFAULT_MODELS, SUPPORTED_MODELS } from './types';
-export type { AIContext, AIProviderId } from './types';
+export {
+  DEFAULT_MODELS,
+  FREE_TIER_MODEL,
+  FREE_TIER_MONTHLY_LIMIT,
+  SUPPORTED_MODELS,
+} from './types';
+export type { AIContext, AIProviderId, FreeTierUsage } from './types';
+export { createAIUsageService } from './usage-service';

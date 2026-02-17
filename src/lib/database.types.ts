@@ -28,6 +28,33 @@ export type Database = {
   };
   public: {
     Tables: {
+      ai_usage: {
+        Row: {
+          created_at: string;
+          id: string;
+          month: string;
+          request_count: number;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          month: string;
+          request_count?: number;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          month?: string;
+          request_count?: number;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       auth_audit_logs: {
         Row: {
           created_at: string;
@@ -829,6 +856,10 @@ export type Database = {
           plan_count: number;
           tag_id: string;
         }[];
+      };
+      increment_ai_usage: {
+        Args: { p_month: string; p_user_id: string };
+        Returns: undefined;
       };
       merge_tags: {
         Args: {

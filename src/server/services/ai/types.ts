@@ -73,6 +73,22 @@ export interface AIContextRecord {
   workedAt: string;
 }
 
+// ---------------------------------------------------------------------------
+// 無料枠定数
+// ---------------------------------------------------------------------------
+
+/** 無料枠の月間リクエスト上限 */
+export const FREE_TIER_MONTHLY_LIMIT = 30;
+
+/** 無料枠で使用するモデル（Haiku 4.5 固定） */
+export const FREE_TIER_MODEL = 'claude-haiku-4-5-20251001';
+
+/** 無料枠の利用状況 */
+export interface FreeTierUsage {
+  used: number;
+  limit: number;
+}
+
 /** AIコンテキスト全体 */
 export interface AIContext {
   /** パーソナライゼーション */

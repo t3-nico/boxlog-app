@@ -3,7 +3,10 @@
 /**
  * useAIChat Hook
  *
- * Vercel AI SDK v6 の useChat をラップし、BYOK（Bring Your Own Key）パターンを統合。
+ * Vercel AI SDK v6 の useChat をラップし、ハイブリッドAIパターンを統合。
+ * - BYOK（Bring Your Own Key）: ユーザーキーで制限なし
+ * - 無料枠: サーバーキーで月30回まで（Haiku 4.5固定）
+ *
  * APIキーの読み込み、プロバイダー選択、ストリーミング状態管理、会話永続化を提供。
  */
 
@@ -18,7 +21,7 @@ import { logger } from '@/lib/logger';
 import { ApiKeyStorage } from '@/lib/security/encryption';
 import { api } from '@/lib/trpc';
 
-import type { AIProviderId } from '@/server/services/ai/types';
+import type { AIProviderId, FreeTierUsage } from '@/server/services/ai/types';
 import { MODEL_OPTIONS } from '@/server/services/ai/types';
 
 import { useChatStore } from '../stores/useChatStore';
@@ -58,6 +61,21 @@ export function useAIChat() {
     onSuccess: () => utils.chat.list.invalidate(),
   });
 
+  // 無料枠の利用状況
+  const hasApiKey = apiKey !== null;
+  const isFreeTier = !hasApiKey;
+
+  const usageQuery = api.chat.getUsage.useQuery(undefined, {
+    enabled: keyLoaded && !!user?.id && isFreeTier,
+    staleTime: 10_000,
+  });
+
+  const freeTierUsage: FreeTierUsage | null = isFreeTier ? (usageQuery.data ?? null) : null;
+  const freeTierExhausted = freeTierUsage !== null && freeTierUsage.used >= freeTierUsage.limit;
+
+  // チャット送信可能か（BYOK or 無料枠で残りあり）
+  const canSend = hasApiKey || (isFreeTier && !freeTierExhausted);
+
   // 保存中の競合を防ぐためのガード
   const savingRef = useRef(false);
   const conversationIdRef = useRef<string | null>(null);
@@ -95,18 +113,16 @@ export function useAIChat() {
     };
   }, [user?.id]);
 
-  const hasApiKey = apiKey !== null;
-
-  // 現在のプロバイダーで利用可能なモデル一覧
+  // 現在のプロバイダーで利用可能なモデル一覧（無料枠ではModelSelector非表示なので空配列）
   const availableModels = useMemo(
-    () => MODEL_OPTIONS.filter((m) => m.providerId === providerId),
-    [providerId],
+    () => (isFreeTier ? [] : MODEL_OPTIONS.filter((m) => m.providerId === providerId)),
+    [providerId, isFreeTier],
   );
 
   // transport をメモ化（apiKey/providerId/model が変わった時だけ再作成）
   const transportRef = useRef<DefaultChatTransport<UIMessage> | null>(null);
   const transportKeyRef = useRef<string>('');
-  const currentTransportKey = `${apiKey ?? ''}_${providerId}_${selectedModelId ?? ''}`;
+  const currentTransportKey = `${apiKey ?? 'free'}_${providerId}_${selectedModelId ?? ''}`;
 
   if (currentTransportKey !== transportKeyRef.current) {
     transportKeyRef.current = currentTransportKey;
@@ -124,8 +140,7 @@ export function useAIChat() {
       : new DefaultChatTransport<UIMessage>({
           api: '/api/chat',
           body: {
-            providerId,
-            ...(selectedModelId ? { model: selectedModelId } : {}),
+            providerId: 'anthropic',
           },
         });
   }
@@ -188,6 +203,10 @@ export function useAIChat() {
       // エラーやキャンセル時は保存しない
       if (isError || isAbort) return;
       saveMessages(finishedMessages);
+      // 無料枠の場合、利用量キャッシュを更新
+      if (isFreeTier) {
+        utils.chat.getUsage.invalidate();
+      }
     },
   });
 
@@ -220,26 +239,26 @@ export function useAIChat() {
   // テキストでメッセージ送信
   const sendMessage = useCallback(
     (text: string) => {
-      if (!text.trim() || !hasApiKey || isLoading) return;
+      if (!text.trim() || !canSend || isLoading) return;
       chatSendMessage({ text: text.trim() });
     },
-    [hasApiKey, isLoading, chatSendMessage],
+    [canSend, isLoading, chatSendMessage],
   );
 
   // フォーム送信ハンドラ（入力値をsubmit → クリア）
   const handleSubmit = useCallback(() => {
-    if (!input.trim() || !hasApiKey || isLoading) return;
+    if (!input.trim() || !canSend || isLoading) return;
     chatSendMessage({ text: input.trim() });
     setInput('');
-  }, [input, hasApiKey, isLoading, chatSendMessage]);
+  }, [input, canSend, isLoading, chatSendMessage]);
 
   // サジェスチョンクリック時（入力値を設定してすぐ送信）
   const submitText = useCallback(
     (text: string) => {
-      if (!text.trim() || !hasApiKey || isLoading) return;
+      if (!text.trim() || !canSend || isLoading) return;
       chatSendMessage({ text: text.trim() });
     },
-    [hasApiKey, isLoading, chatSendMessage],
+    [canSend, isLoading, chatSendMessage],
   );
 
   // リトライ（最後のassistantメッセージを除去して再送信）
@@ -324,8 +343,14 @@ export function useAIChat() {
       stop,
       /** エラー */
       error: error ?? null,
-      /** APIキーが設定済み */
+      /** APIキーが設定済み（BYOK） */
       hasApiKey,
+      /** 無料枠モード（APIキー未設定） */
+      isFreeTier,
+      /** 無料枠の利用状況（null = BYOK or 未ロード） */
+      freeTierUsage,
+      /** 無料枠の上限到達 */
+      freeTierExhausted,
       /** キー読み込み完了 */
       keyLoaded,
       /** 現在のプロバイダー */
@@ -348,7 +373,7 @@ export function useAIChat() {
       selectedModelId,
       /** モデル選択を変更 */
       setSelectedModelId,
-      /** 利用可能なモデル一覧（現在のプロバイダー） */
+      /** 利用可能なモデル一覧（現在のプロバイダー。無料枠では空配列） */
       availableModels,
     }),
     [
@@ -362,6 +387,9 @@ export function useAIChat() {
       stop,
       error,
       hasApiKey,
+      isFreeTier,
+      freeTierUsage,
+      freeTierExhausted,
       keyLoaded,
       providerId,
       reset,

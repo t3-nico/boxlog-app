@@ -1,9 +1,10 @@
-import { Plus } from 'lucide-react';
+import { KeyRound, Plus } from 'lucide-react';
 import { useState } from 'react';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { Button } from '@/components/ui/button';
+import { HoverTooltip } from '@/components/ui/tooltip';
 import type { ConversationSummary } from '@/server/services/chat/types';
 
 import type { ChatMessage } from '../types';
@@ -231,6 +232,104 @@ export const WithError: Story = {
 /** 幅広パネル（480px） */
 export const Wide: Story = {
   render: () => <ChatPanelStory initialMessages={MOCK_TOOL_MESSAGES} width={480} />,
+};
+
+// ---------------------------------------------------------------------------
+// 無料枠パターン
+// ---------------------------------------------------------------------------
+
+/** 無料枠（残り回数バッジ付き） */
+export const FreeTier: Story = {
+  render: () => {
+    const [messages, setMessages] = useState<ChatMessage[]>(MOCK_MESSAGES);
+    const [input, setInput] = useState('');
+
+    const handleSubmit = () => {
+      if (!input.trim()) return;
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: `msg-${Date.now()}`,
+          role: 'user' as const,
+          parts: [{ type: 'text' as const, text: input.trim() }],
+        },
+      ]);
+      setInput('');
+    };
+
+    return (
+      <div className="border-border h-[500px] w-[320px] border">
+        <div className="flex h-full flex-col">
+          <div className="flex shrink-0 items-center justify-end gap-1 px-4 pt-4 pb-2">
+            <ChatHistoryPopover
+              conversations={MOCK_CONVERSATIONS}
+              activeConversationId="conv-1"
+              onSelect={() => {}}
+              onDelete={() => {}}
+            />
+            <Button
+              variant="ghost"
+              size="sm"
+              icon
+              onClick={() => setMessages([])}
+              aria-label="New conversation"
+            >
+              <Plus className="size-5" />
+            </Button>
+          </div>
+          <div className="min-h-0 flex-1">
+            <ChatMessageList messages={messages} />
+          </div>
+          <ChatInput
+            value={input}
+            onValueChange={setInput}
+            onSubmit={handleSubmit}
+            startActions={
+              <HoverTooltip content="Free tier usage this month">
+                <span className="text-muted-foreground cursor-default text-xs tabular-nums">
+                  7/30
+                </span>
+              </HoverTooltip>
+            }
+          />
+        </div>
+      </div>
+    );
+  },
+};
+
+/** 無料枠の上限到達 */
+export const FreeTierExhausted: Story = {
+  render: () => (
+    <div className="border-border h-[500px] w-[320px] border">
+      <div className="flex h-full flex-col">
+        <div className="flex shrink-0 items-center justify-end gap-1 px-4 pt-4 pb-2">
+          <ChatHistoryPopover
+            conversations={MOCK_CONVERSATIONS}
+            activeConversationId="conv-1"
+            onSelect={() => {}}
+            onDelete={() => {}}
+          />
+        </div>
+
+        <div className="flex flex-1 flex-col items-center justify-center gap-4 px-6 text-center">
+          <div className="bg-surface-container rounded-full p-3">
+            <KeyRound className="text-muted-foreground h-6 w-6" />
+          </div>
+          <div className="space-y-1">
+            <p className="text-foreground text-sm font-medium">Monthly limit reached</p>
+            <p className="text-muted-foreground text-xs">
+              You&apos;ve used all 30 free messages this month. Add your own API key for unlimited
+              usage.
+            </p>
+          </div>
+          <Button variant="outline" size="sm" onClick={() => {}}>
+            Add API Key
+          </Button>
+        </div>
+      </div>
+    </div>
+  ),
 };
 
 // ---------------------------------------------------------------------------

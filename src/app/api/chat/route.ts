@@ -2,7 +2,9 @@
  * Chat API Route Handler
  *
  * Vercel AI SDKを使ったストリーミングチャットエンドポイント。
- * BYOK（Bring Your Own Key）モデル：APIキーはリクエストヘッダーで受け取る。
+ * ハイブリッドモデル:
+ * - BYOK（Bring Your Own Key）: x-ai-api-key ヘッダーでユーザーキーを受け取り、制限なし
+ * - 無料枠: サーバーサイドの ANTHROPIC_API_KEY を使用、月30回まで（Haiku 4.5固定）
  *
  * tRPC例外理由:
  * - streamText().toUIMessageStreamResponse() は Response object を返す設計
@@ -17,7 +19,8 @@ import { NextResponse } from 'next/server';
 import { logger } from '@/lib/logger';
 import { createClient } from '@/lib/supabase/server';
 import { buildAIContext, buildSystemPrompt, createAITools } from '@/server/services/ai';
-import { DEFAULT_MODELS, SUPPORTED_MODELS } from '@/server/services/ai/types';
+import { DEFAULT_MODELS, FREE_TIER_MODEL, SUPPORTED_MODELS } from '@/server/services/ai/types';
+import { createAIUsageService } from '@/server/services/ai/usage-service';
 
 import type { AIProviderId } from '@/server/services/ai/types';
 import type { UIMessage } from 'ai';
@@ -80,14 +83,57 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Messages are required' }, { status: 400 });
     }
 
-    // 3. APIキー取得（ヘッダー）
-    const apiKey = req.headers.get('x-ai-api-key');
-    if (!apiKey) {
-      return NextResponse.json(
-        { error: 'API key is required. Please configure your API key in Settings > Integrations.' },
-        { status: 400 },
-      );
+    // 3. BYOK vs 無料枠の判定
+    const userApiKey = req.headers.get('x-ai-api-key');
+    const isBYOK = !!userApiKey;
+
+    if (!isBYOK) {
+      // --- 無料枠パス ---
+      const serverApiKey = process.env.ANTHROPIC_API_KEY;
+      if (!serverApiKey) {
+        return NextResponse.json(
+          {
+            error: 'AI is not available. Please configure your API key in Settings > Integrations.',
+          },
+          { status: 400 },
+        );
+      }
+
+      // 利用量チェック
+      const usageService = createAIUsageService(supabase);
+      const hasQuota = await usageService.hasQuota(user.id);
+      if (!hasQuota) {
+        return NextResponse.json(
+          {
+            error:
+              'Monthly free tier limit reached. Add your own API key in Settings > Integrations for unlimited usage.',
+          },
+          { status: 429 },
+        );
+      }
+
+      // カウントをインクリメント
+      await usageService.incrementUsage(user.id);
+
+      // コンテキスト組み立て
+      const aiContext = await buildAIContext(supabase, user.id);
+      const system = buildSystemPrompt(aiContext);
+      const tools = createAITools(supabase, user.id);
+
+      // Haiku 4.5 固定でストリーミング
+      const model = createModel('anthropic', serverApiKey, FREE_TIER_MODEL);
+      const result = streamText({
+        model,
+        system,
+        messages: await convertToModelMessages(messages),
+        tools,
+        stopWhen: stepCountIs(5),
+      });
+
+      return result.toUIMessageStreamResponse();
     }
+
+    // --- BYOKパス（従来通り） ---
 
     // 4. プロバイダー検証
     const providerId = body.providerId ?? 'anthropic';
@@ -115,7 +161,7 @@ export async function POST(req: Request) {
     const tools = createAITools(supabase, user.id);
 
     // 9. ストリーミング生成
-    const model = createModel(providerId, apiKey, body.model);
+    const model = createModel(providerId, userApiKey, body.model);
     const result = streamText({
       model,
       system,
