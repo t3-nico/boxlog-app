@@ -17,7 +17,7 @@ import { Meta } from '@storybook/addon-docs/blocks';
 | **Multi-Day** | 2〜9日間のカスタム表示 | `MultiDayView` |
 | **Agenda** | リスト形式の予定一覧 | `AgendaView` |
 | **Timesheet** | テーブル形式のタイムシート | `TimesheetView` |
-| **Stats** | 統計・分析 | `StatsView` |
+| **Stats** | 統計・分析 | `StatsView`（`@/features/stats`） |
 
 ビュー切替は `ViewSwitcherList` コンポーネントで行い、`CalendarNavigationContext` で状態管理。
 
@@ -43,11 +43,10 @@ CalendarController              メインエントリポイント
 │       ├── CalendarDragSelection/  ドラッグ選択レイヤー
 │       ├── PlanContextMenu     右クリックメニュー
 │       └── CurrentTimeLine     現在時刻線
-├── panels/
-│   ├── CalendarSidePanel       パネル切替
+├── aside/
+│   ├── CalendarAside            アサイド切替
 │   ├── PlanListPanel           プラン一覧パネル
-│   ├── RecordListPanel         レコード一覧パネル
-│   └── StatsPanel              統計パネル
+│   └── RecordListPanel         レコード一覧パネル
 ├── sidebar/
 │   ├── ViewSwitcherList        ビュー切替
 │   └── tag-filter/             タグフィルターUI
@@ -64,7 +63,7 @@ CalendarController              メインエントリポイント
 | Store | 用途 | persist |
 |-------|------|---------|
 | `useCalendarFilterStore` | タイプ/タグのフィルター | Yes |
-| `useCalendarPanelStore` | サイドパネル種別・サイズ | Yes |
+| `useCalendarAsideStore` | アサイド種別・サイズ | Yes |
 | `useCalendarDragStore` | ドラッグ元・ゴースト・プレビュー時間 | No |
 | `useCalendarScrollStore` | スクロール位置同期 | No |
 
@@ -80,7 +79,7 @@ CalendarController              メインエントリポイント
 ## ドラッグ & ドロップ
 
 - **技術**: `@dnd-kit/core`
-- **ソース**: カレンダーグリッド、サイドパネル
+- **ソース**: カレンダーグリッド、アサイド
 - **ターゲット**: タイムグリッドセル
 - **センサー**: PointerSensor（8px閾値）、TouchSensor（250ms遅延）
 - **機能**: ドラッグプレビュー、時間計算、モバイルハプティクス、繰り返しプラン例外処理
@@ -99,17 +98,17 @@ CalendarController              メインエントリポイント
 
 ---
 
-## サイドパネル
+## アサイド
 
-| パネルタイプ | 説明 |
+| アサイドタイプ | 説明 |
 |------------|------|
 | `plan` | プラン一覧（ソート・検索付き） |
 | `record` | レコード一覧 |
-| `stats` | 統計サマリー |
+| `stats` | 統計サマリー（`@/features/stats`） |
 | `chat` | AIチャット |
-| `none` | パネル非表示 |
+| `none` | アサイド非表示 |
 
-`useCalendarPanelStore` でサイズ・種別を管理。
+`useCalendarAsideStore` でサイズ・種別を管理。
 
 ---
 

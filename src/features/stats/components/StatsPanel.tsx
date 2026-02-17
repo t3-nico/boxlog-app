@@ -6,14 +6,15 @@ import { useTranslations } from 'next-intl';
 import { EmptyState } from '@/components/ui/empty-state';
 import { Skeleton } from '@/components/ui/skeleton';
 
-import { useCalendarNavigation } from '../../contexts/CalendarNavigationContext';
-import { SleepStatsCard } from '../views/StatsView/components/charts/SleepStatsCard';
-import { StatsHeroCards } from '../views/StatsView/components/StatsHeroCards';
-import { StatsTable } from '../views/StatsView/components/StatsTable';
-import { useStatsViewData } from '../views/StatsView/hooks/useStatsViewData';
+import { useCalendarNavigation } from '@/features/calendar/contexts/CalendarNavigationContext';
+
+import { useStatsViewData } from '../hooks/useStatsViewData';
+import { SleepStatsCard } from './charts/SleepStatsCard';
+import { StatsHeroCards } from './StatsHeroCards';
+import { StatsTable } from './StatsTable';
 
 /**
- * サイドパネル用 Stats パネル
+ * アサイド用 Stats パネル
  *
  * カレンダーの currentDate に連動した週次進捗を表示:
  * - Hero Cards（Progress / vs Last Week / Streak）

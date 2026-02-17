@@ -5,8 +5,8 @@ import { useTranslations } from 'next-intl';
 
 import { cn } from '@/lib/utils';
 
-import type { StatsTagBreakdown } from '../StatsView.types';
 import { useStatsFilterStore } from '../stores/useStatsFilterStore';
+import type { StatsTagBreakdown } from '../types/stats.types';
 
 interface StatsTableProps {
   tagBreakdown: StatsTagBreakdown[];
@@ -20,7 +20,13 @@ function formatMinutesToDisplay(minutes: number): string {
   return `${minutes}m`;
 }
 
-function DeltaIndicator({ currentMinutes, previousMinutes }: { currentMinutes: number; previousMinutes: number }) {
+function DeltaIndicator({
+  currentMinutes,
+  previousMinutes,
+}: {
+  currentMinutes: number;
+  previousMinutes: number;
+}) {
   const deltaMinutes = currentMinutes - previousMinutes;
   const deltaHours = deltaMinutes / 60;
 
@@ -33,22 +39,21 @@ function DeltaIndicator({ currentMinutes, previousMinutes }: { currentMinutes: n
     );
   }
 
-  const formatted = Math.abs(deltaHours) >= 1
-    ? `${Math.round(Math.abs(deltaHours) * 10) / 10}h`
-    : `${Math.round(Math.abs(deltaMinutes))}m`;
+  const formatted =
+    Math.abs(deltaHours) >= 1
+      ? `${Math.round(Math.abs(deltaHours) * 10) / 10}h`
+      : `${Math.round(Math.abs(deltaMinutes))}m`;
 
   return (
     <span
       className={cn(
         'flex items-center gap-0.5 text-xs font-medium',
-        deltaMinutes > 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400',
+        deltaMinutes > 0
+          ? 'text-emerald-600 dark:text-emerald-400'
+          : 'text-red-600 dark:text-red-400',
       )}
     >
-      {deltaMinutes > 0 ? (
-        <ArrowUp className="h-3 w-3" />
-      ) : (
-        <ArrowDown className="h-3 w-3" />
-      )}
+      {deltaMinutes > 0 ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />}
       <span>
         {deltaMinutes > 0 ? '+' : '-'}
         {formatted}
@@ -134,13 +139,9 @@ export function StatsTable({ tagBreakdown }: StatsTableProps) {
                         className="h-2.5 w-2.5 shrink-0 rounded-full"
                         style={{ backgroundColor: item.tagColor }}
                       />
-                      <span className="text-foreground text-sm font-medium">
-                        {item.tagName}
-                      </span>
+                      <span className="text-foreground text-sm font-medium">{item.tagName}</span>
                       {hasChildren && (
-                        <span className="text-muted-foreground text-xs">
-                          &rsaquo;
-                        </span>
+                        <span className="text-muted-foreground text-xs">&rsaquo;</span>
                       )}
                     </div>
                   </td>
@@ -200,9 +201,7 @@ export function StatsTable({ tagBreakdown }: StatsTableProps) {
       </div>
 
       {displayData.length === 0 && (
-        <div className="text-muted-foreground py-8 text-center text-sm">
-          {t('noTagData')}
-        </div>
+        <div className="text-muted-foreground py-8 text-center text-sm">{t('noTagData')}</div>
       )}
     </div>
   );

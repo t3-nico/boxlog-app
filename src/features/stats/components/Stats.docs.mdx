@@ -10,7 +10,7 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 ## 概要
 
-Calendar Feature 内の StatsView として実装。サイドパネル（StatsPanel）とフルビュー（StatsView）の2モードを提供。
+独立 Feature（`@/features/stats`）として実装。アサイド（StatsPanel）とフルビュー（StatsView）の2モードを提供。カレンダーのビュー切替から遅延ロードされる。
 
 ---
 
@@ -44,7 +44,7 @@ StatsView/                      フルページ統計ビュー
     ├── DayOfWeekChart          曜日分布
     └── SleepStatsCard          睡眠統計
 
-StatsPanel                      サイドパネル版（週間サマリー）
+StatsPanel                      アサイド版（週間サマリー）
 ```
 
 ---

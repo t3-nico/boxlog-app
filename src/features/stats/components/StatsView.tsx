@@ -2,20 +2,20 @@
 
 import { cn } from '@/lib/utils';
 
-import { CalendarViewAnimation } from '../../animations/ViewTransition';
+import { CalendarViewAnimation } from '@/features/calendar/components/animations/ViewTransition';
 
-import { DayOfWeekChart } from './components/charts/DayOfWeekChart';
-import { HourlyDistributionChart } from './components/charts/HourlyDistributionChart';
-import { MonthlyTrendChart } from './components/charts/MonthlyTrendChart';
-import { TagTimeChart } from './components/charts/TagTimeChart';
-import { YearlyHeatmap } from './components/charts/YearlyHeatmap';
-import type { StatsViewProps } from './StatsView.types';
+import type { StatsViewProps } from '../types/stats.types';
+import { DayOfWeekChart } from './charts/DayOfWeekChart';
+import { HourlyDistributionChart } from './charts/HourlyDistributionChart';
+import { MonthlyTrendChart } from './charts/MonthlyTrendChart';
+import { TagTimeChart } from './charts/TagTimeChart';
+import { YearlyHeatmap } from './charts/YearlyHeatmap';
 
 /**
  * StatsView - 累積統計ビュー
  *
  * 全期間/期間フィルター付きの累積チャートを表示。
- * 週次進捗（Hero Cards / Tag Table / Sleep）はサイドパネルに移動済み。
+ * 週次進捗（Hero Cards / Tag Table / Sleep）はアサイドに移動済み。
  */
 export function StatsView({ className }: StatsViewProps) {
   return (

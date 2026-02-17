@@ -6,12 +6,12 @@ import { useTranslations } from 'next-intl';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
-import type { StatsHeroData } from '../StatsView.types';
+import type { StatsHeroData } from '../types/stats.types';
 
 interface StatsHeroCardsProps {
   hero: StatsHeroData;
   streak: { currentStreak: number; longestStreak: number; hasActivityToday: boolean } | null;
-  /** 縦並び固定（サイドパネル用） */
+  /** 縦並び固定（アサイド用） */
   vertical?: boolean;
 }
 

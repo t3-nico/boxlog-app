@@ -1,7 +1,7 @@
-import type { BaseViewProps } from '../shared/types/base.types';
-
-/** StatsView のプロパティ（AgendaView / TimesheetView と同パターン） */
-export interface StatsViewProps extends BaseViewProps {}
+/** StatsView のプロパティ */
+export interface StatsViewProps {
+  className?: string | undefined;
+}
 
 /** Hero カードのデータ */
 export interface StatsHeroData {

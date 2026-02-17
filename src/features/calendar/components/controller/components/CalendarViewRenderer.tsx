@@ -37,7 +37,7 @@ const TimesheetView = React.lazy(() =>
   })),
 );
 const StatsView = React.lazy(() =>
-  import('@/features/calendar/components/views/StatsView').then((module) => ({
+  import('@/features/stats/components/StatsView').then((module) => ({
     default: module.StatsView,
   })),
 );
