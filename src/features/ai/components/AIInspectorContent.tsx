@@ -9,6 +9,7 @@ import { useSettingsModalStore } from '@/features/settings/stores/useSettingsMod
 import { useAIChat } from '../hooks/useAIChat';
 
 import { ChatEmptyState } from './ChatEmptyState';
+import { ChatHistoryPopover } from './ChatHistoryPopover';
 import { ChatInput } from './ChatInput';
 import { ChatMessageList } from './ChatMessageList';
 
@@ -21,6 +22,7 @@ const SUGGESTIONS = ['今日の予定は？', 'タグを整理したい', '統�
  * - Vercel AI SDK (useChat) によるストリーミング
  * - BYOK: APIキーをSettings > Integrationsで管理
  * - DB永続化: 会話はリロード後も復元
+ * - 会話履歴: ヘッダーから過去の会話に切替可能
  */
 export const AIInspectorContent = memo(function AIInspectorContent() {
   const {
@@ -35,6 +37,9 @@ export const AIInspectorContent = memo(function AIInspectorContent() {
     error,
     retry,
     reset,
+    conversations,
+    activeConversationId,
+    loadConversation,
   } = useAIChat();
 
   const openSettings = useSettingsModalStore((s) => s.openModal);
@@ -80,12 +85,19 @@ export const AIInspectorContent = memo(function AIInspectorContent() {
   }
 
   const hasMessages = messages.length > 0;
+  const showHeader = hasMessages || conversations.length > 0;
 
   return (
     <div className="flex h-full flex-col">
-      {/* ヘッダーバー: メッセージ存在時のみ表示 */}
-      {hasMessages && (
-        <div className="border-border flex shrink-0 items-center justify-end border-b px-3 py-1.5">
+      {/* ヘッダーバー: メッセージまたは履歴が存在する時に表示 */}
+      {showHeader && (
+        <div className="border-border flex shrink-0 items-center justify-between border-b px-3 py-1.5">
+          <ChatHistoryPopover
+            conversations={conversations}
+            activeConversationId={activeConversationId}
+            onSelect={loadConversation}
+            disabled={isLoading}
+          />
           <Button
             variant="ghost"
             size="sm"

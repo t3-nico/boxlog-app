@@ -41,8 +41,15 @@ export function useAIChat() {
   const setIsSaving = useChatStore((s) => s.setIsSaving);
   const resetConversation = useChatStore((s) => s.resetConversation);
 
-  // --- tRPC mutations ---
-  const createConversation = api.chat.create.useMutation();
+  // --- tRPC queries & mutations ---
+  const utils = api.useUtils();
+  const conversationsQuery = api.chat.list.useQuery(undefined, {
+    enabled: keyLoaded && !!user?.id,
+    staleTime: 30_000,
+  });
+  const createConversation = api.chat.create.useMutation({
+    onSuccess: () => utils.chat.list.invalidate(),
+  });
   const saveConversation = api.chat.save.useMutation();
 
   // 保存中の競合を防ぐためのガード
@@ -243,6 +250,23 @@ export function useAIChat() {
     chatSendMessage({ text: textPart.text });
   }, [messages, isLoading, setMessages, chatSendMessage]);
 
+  // 会話切替（履歴から読み込み）
+  const loadConversation = useCallback(
+    async (conversationId: string) => {
+      if (isLoading) return;
+      try {
+        const conversation = await utils.chat.getById.fetch({ conversationId });
+        if (conversation) {
+          setMessages(conversation.messages as UIMessage[]);
+          setActiveConversationId(conversation.id);
+        }
+      } catch (err) {
+        logger.error('Failed to load conversation', { error: err });
+      }
+    },
+    [isLoading, utils.chat.getById, setMessages, setActiveConversationId],
+  );
+
   // 会話リセット（新規会話開始）
   const reset = useCallback(() => {
     setMessages([]);
@@ -283,6 +307,10 @@ export function useAIChat() {
       isSaving,
       /** 現在の会話ID */
       activeConversationId,
+      /** 会話一覧（サマリー） */
+      conversations: conversationsQuery.data ?? [],
+      /** 会話切替 */
+      loadConversation,
     }),
     [
       messages,
@@ -301,6 +329,8 @@ export function useAIChat() {
       retry,
       isSaving,
       activeConversationId,
+      conversationsQuery.data,
+      loadConversation,
     ],
   );
 }
