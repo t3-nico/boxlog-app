@@ -10,12 +10,11 @@
 import { useCallback, useRef } from 'react';
 
 import type { RecurringEditScope } from '@/features/plans/components/RecurringEditConfirmDialog';
-import { usePlanInstanceMutations } from '@/features/plans/hooks/usePlanInstances';
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
+import { useRecurringScopeMutations } from '@/features/plans/hooks/useRecurringScopeMutations';
 import { useRecurringEditConfirmStore } from '@/features/plans/stores/useRecurringEditConfirmStore';
 import { useRecordMutations } from '@/features/records/hooks/useRecordMutations';
 import { logger } from '@/lib/logger';
-import { api } from '@/lib/trpc';
 
 import type { CalendarPlan } from '../types/calendar.types';
 import { isRecordEvent } from '../utils/planDataAdapter';
@@ -31,52 +30,9 @@ interface UseRecurringPlanDragOptions {
 }
 
 export function useRecurringPlanDrag({ plans }: UseRecurringPlanDragOptions) {
-  const utils = api.useUtils();
   const { updatePlan } = usePlanMutations();
   const { updateRecord } = useRecordMutations();
-  const { createInstance } = usePlanInstanceMutations();
-
-  // 繰り返しプラン分割用mutation（楽観的更新付き）
-  const splitRecurrence = api.plans.splitRecurrence.useMutation({
-    // 楽観的更新: 分割直後に親プランの終了日を即座に更新
-    onMutate: async (input) => {
-      // 進行中のクエリをキャンセル
-      await utils.plans.list.cancel();
-      await utils.plans.getInstances.cancel();
-
-      // 現在のキャッシュを保存（ロールバック用）
-      const previousPlans = utils.plans.list.getData();
-
-      // 親プランのrecurrence_end_dateを楽観的に更新（splitDateの前日）
-      const splitDate = new Date(input.splitDate);
-      splitDate.setDate(splitDate.getDate() - 1);
-      const endDateString = splitDate.toISOString().slice(0, 10);
-
-      utils.plans.list.setData(undefined, (oldData) => {
-        if (!oldData) return oldData;
-        return oldData.map((plan) => {
-          if (plan.id === input.planId) {
-            return { ...plan, recurrence_end_date: endDateString };
-          }
-          return plan;
-        });
-      });
-
-      return { previousPlans };
-    },
-    onSuccess: () => {
-      // 新プランが作成されるため、必ずinvalidateで最新データを取得
-      void utils.plans.list.invalidate();
-      void utils.plans.getInstances.invalidate();
-    },
-    onError: (_err, _input, context) => {
-      // エラー時: ロールバック
-      if (context?.previousPlans) {
-        utils.plans.list.setData(undefined, context.previousPlans);
-      }
-      void utils.plans.getInstances.invalidate();
-    },
-  });
+  const { applyEdit } = useRecurringScopeMutations();
 
   // 保留中のドラッグ更新（refで保持してダイアログのコールバックで参照）
   const pendingDragUpdateRef = useRef<PendingDragUpdate | null>(null);
@@ -97,76 +53,25 @@ export function useRecurringPlanDrag({ plans }: UseRecurringPlanDragOptions) {
       const parentPlanId = plan.originalPlanId!;
       const instanceDate = plan.instanceDate!;
       const newDate = updates.startTime.toISOString().slice(0, 10);
-      const isSameDate = instanceDate === newDate;
 
       try {
-        switch (scope) {
-          case 'this': {
-            // このイベントのみ: moved/modified例外を作成
-            logger.log('🔄 繰り返しインスタンスの移動 (このイベントのみ):', {
-              parentPlanId,
-              instanceDate,
-              newDate,
-              isSameDate,
-            });
-
-            await createInstance.mutateAsync({
-              planId: parentPlanId,
-              instanceDate,
-              exceptionType: isSameDate ? 'modified' : 'moved',
-              overrides: {
-                start_time: updates.startTime.toISOString(),
-                end_time: updates.endTime.toISOString(),
-              },
-              ...(isSameDate ? {} : { originalDate: newDate }),
-            });
-
-            utils.plans.list.invalidate();
-            utils.plans.getInstances.invalidate();
-            break;
-          }
-
-          case 'thisAndFuture': {
-            // この日以降: 親プランを分割して新しい日時で開始
-            logger.log('🔄 繰り返しインスタンスの移動 (この日以降):', {
-              parentPlanId,
-              instanceDate,
-            });
-
-            await splitRecurrence.mutateAsync({
-              planId: parentPlanId,
-              splitDate: instanceDate,
-              overrides: {
-                start_time: updates.startTime.toISOString(),
-                end_time: updates.endTime.toISOString(),
-              },
-            });
-            break;
-          }
-
-          case 'all': {
-            // すべてのイベント: 親プランを直接更新
-            logger.log('🔄 繰り返しプランの更新 (すべて):', {
-              parentPlanId,
-            });
-
-            updatePlan.mutate({
-              id: parentPlanId,
-              data: {
-                start_time: updates.startTime.toISOString(),
-                end_time: updates.endTime.toISOString(),
-              },
-            });
-            break;
-          }
-        }
+        await applyEdit({
+          scope,
+          planId: parentPlanId,
+          instanceDate,
+          overrides: {
+            start_time: updates.startTime.toISOString(),
+            end_time: updates.endTime.toISOString(),
+          },
+          targetDate: newDate,
+        });
       } catch (error) {
         logger.error('繰り返しプランの更新に失敗:', error);
       } finally {
         pendingDragUpdateRef.current = null;
       }
     },
-    [createInstance, updatePlan, splitRecurrence, utils],
+    [applyEdit],
   );
 
   /**
@@ -225,11 +130,6 @@ export function useRecurringPlanDrag({ plans }: UseRecurringPlanDragOptions) {
           return;
         }
 
-        logger.log('🔄 Recordのドラッグ更新:', {
-          recordId,
-          planId: plan.id,
-        });
-
         // worked_at は startTime から取得（YYYY-MM-DD）
         const workedAt = resolvedUpdates.startTime.toISOString().slice(0, 10);
         // start_time, end_time は HH:MM:SS 形式
@@ -252,20 +152,10 @@ export function useRecurringPlanDrag({ plans }: UseRecurringPlanDragOptions) {
       }
 
       // 繰り返しインスタンスかどうか判定
-      // - isRecurring が true
-      // - originalPlanId が設定されている（親プランID）
-      // - instanceDate が設定されている（インスタンス日付）
       const isRecurringInstance = plan.isRecurring && plan.originalPlanId && plan.instanceDate;
 
       if (isRecurringInstance) {
         // 繰り返しインスタンスの場合: ダイアログを表示
-        logger.log('🔄 繰り返しインスタンスのドラッグ検出:', {
-          planId: plan.id,
-          originalPlanId: plan.originalPlanId,
-          instanceDate: plan.instanceDate,
-        });
-
-        // refに保存してダイアログを開く
         pendingDragUpdateRef.current = { plan, updates: resolvedUpdates };
         openDialog(plan.title, 'edit', handleScopeConfirm);
 
