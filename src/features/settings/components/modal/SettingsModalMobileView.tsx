@@ -40,13 +40,18 @@ export function SettingsModalMobileView() {
 
     return (
       <div className="flex h-full flex-col">
-        <header className="border-border flex h-14 shrink-0 items-center gap-2 border-b px-4">
-          <Button variant="ghost" icon onClick={handleBack} aria-label={t('common.back')}>
-            <ChevronLeft className="size-5" />
+        <header className="border-border flex h-14 shrink-0 items-center justify-between border-b px-4">
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" icon onClick={handleBack} aria-label={t('common.back')}>
+              <ChevronLeft className="size-5" />
+            </Button>
+            <h1 className="text-lg font-bold">
+              {currentCategory ? t(currentCategory.labelKey) : ''}
+            </h1>
+          </div>
+          <Button variant="ghost" icon onClick={closeModal} aria-label={t('actions.close')}>
+            <X className="size-5" />
           </Button>
-          <h1 className="text-lg font-bold">
-            {currentCategory ? t(currentCategory.labelKey) : ''}
-          </h1>
         </header>
         <SettingsModalContent />
       </div>
