@@ -4,6 +4,7 @@ import { PanelLeft, PanelRight } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { FeatureErrorBoundary } from '@/components/error-boundary';
+import { HeaderUtilities } from '@/components/layout/HeaderUtilities';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { HoverTooltip } from '@/components/ui/tooltip';
@@ -74,20 +75,23 @@ export function StatsPageContent() {
               <h1 className="text-lg leading-8 font-bold">{t('calendar.views.stats')}</h1>
             </div>
 
-            {/* 右側: アサイドトグル */}
-            {!showAside && (
-              <HoverTooltip content={t('calendar.aside.open')} side="bottom">
-                <Button
-                  variant="ghost"
-                  icon
-                  className="hidden size-8 md:flex"
-                  onClick={() => setCurrentAside('plan')}
-                  aria-label={t('calendar.aside.open')}
-                >
-                  <PanelRight className="size-4" />
-                </Button>
-              </HoverTooltip>
-            )}
+            {/* 右側: 通知 + 検索 + アサイドトグル */}
+            <div className="hidden items-center gap-2 md:flex">
+              <HeaderUtilities />
+              {!showAside && (
+                <HoverTooltip content={t('calendar.aside.open')} side="bottom">
+                  <Button
+                    variant="ghost"
+                    icon
+                    className="size-8"
+                    onClick={() => setCurrentAside('plan')}
+                    aria-label={t('calendar.aside.open')}
+                  >
+                    <PanelRight className="size-4" />
+                  </Button>
+                </HoverTooltip>
+              )}
+            </div>
           </header>
 
           {/* Stats コンテンツ */}

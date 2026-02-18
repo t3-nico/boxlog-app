@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { BarChart3, CircleSlash, Moon, Search, Sun } from 'lucide-react';
+import { BarChart3, CircleSlash, Moon, Sun } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import Link from 'next/link';
 
@@ -19,8 +19,6 @@ import { useTagCacheStore } from '@/features/tags/stores/useTagCacheStore';
 
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { Skeleton } from '@/components/ui/skeleton';
-import { NotificationDropdown } from '@/features/notifications';
-import { useGlobalSearch } from '@/features/search';
 import { api } from '@/lib/trpc';
 
 import { TagSortableTree } from '@/features/tags/components/sortable-tree/TagSortableTree';
@@ -245,12 +243,11 @@ export function CalendarFilterList() {
   );
 }
 
-/** 通知 + 検索 + テーマ切替ユーティリティ */
+/** Stats + テーマ切替ユーティリティ */
 function SidebarUtilities() {
   const t = useTranslations();
   const locale = useLocale();
   const { resolvedTheme, setTheme } = useTheme();
-  const { open: openGlobalSearch } = useGlobalSearch();
 
   const handleThemeToggle = useCallback(() => {
     setTheme(resolvedTheme === 'light' ? 'dark' : 'light');
@@ -258,18 +255,6 @@ function SidebarUtilities() {
 
   return (
     <div className="flex items-center gap-1 px-2 py-2">
-      <NotificationDropdown size="sm" />
-      <HoverTooltip content={t('sidebar.navigation.search')} side="right">
-        <Button
-          variant="ghost"
-          icon
-          className="size-8"
-          onClick={() => openGlobalSearch()}
-          aria-label={t('sidebar.navigation.search')}
-        >
-          <Search className="size-4" aria-hidden="true" />
-        </Button>
-      </HoverTooltip>
       <HoverTooltip content={t('calendar.views.stats')} side="right">
         <Button variant="ghost" icon className="size-8" asChild>
           <Link href={`/${locale}/stats`} aria-label={t('calendar.views.stats')}>

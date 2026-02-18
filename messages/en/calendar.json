@@ -240,6 +240,8 @@
     "stats": {
       "progress": "Progress",
       "today": "Today",
+      "vsLastWeek": "vs Last Week",
+      "previousWeek": "Last week",
       "streak": "Streak",
       "days": "days",
       "longestStreak": "Best: {days} days",
