@@ -9,7 +9,6 @@ import { useAuthStore } from '@/features/auth/stores/useAuthStore';
 import { isCalendarViewPath } from '@/features/calendar/lib/route-utils';
 import { AppSidebar } from '@/features/navigation/components/sidebar/app-sidebar';
 import { useSidebarStore } from '@/features/navigation/stores/useSidebarStore';
-import { OnboardingBanner } from '@/features/onboarding';
 import { cn } from '@/lib/utils';
 
 import { MainContentWrapper } from './main-content-wrapper';
@@ -69,10 +68,6 @@ export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-      {/* オンボーディングバナー（クロノタイプ未設定時のみ表示） */}
-      {isAuthenticated && <OnboardingBanner />}
-
-      {/* 上部エリア（サイドバー + コンテンツ） */}
       {/* 上部エリア（サイドバー + コンテンツ） */}
       <div className="flex min-h-0 flex-1">
         {/* Sidebar（固定幅256px、開閉可能） */}
