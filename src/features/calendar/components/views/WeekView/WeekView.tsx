@@ -50,7 +50,7 @@ export const WeekView = ({
   onEmptyClick,
   onTimeRangeSelect,
 }: WeekViewProps) => {
-  const { timezone, weekStartsOn: weekStartsOnSetting } = useCalendarSettingsStore();
+  const weekStartsOnSetting = useCalendarSettingsStore((s) => s.weekStartsOn);
   // 設定ストアの値を優先、プロップでオーバーライド可能
   const weekStartsOn = weekStartsOnProp ?? weekStartsOnSetting;
 
@@ -81,7 +81,6 @@ export const WeekView = ({
         allPlans={allPlans}
         eventsByDate={eventsByDate}
         todayIndex={todayIndex}
-        timezone={timezone}
         disabledPlanId={disabledPlanId}
         onEventClick={onPlanClick}
         onEventContextMenu={onPlanContextMenu}

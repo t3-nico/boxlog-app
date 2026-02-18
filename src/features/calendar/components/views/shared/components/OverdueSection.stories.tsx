@@ -140,7 +140,7 @@ export const BadgeMultiple: Story = {
 export const InWeekView: Story = {
   render: () => (
     <div className="w-[800px]">
-      <OverdueSection dates={weekDates()} plans={overdueSectionPlans} timezone="Asia/Tokyo" />
+      <OverdueSection dates={weekDates()} plans={overdueSectionPlans} />
     </div>
   ),
 };
@@ -149,7 +149,7 @@ export const InWeekView: Story = {
 export const InDayView: Story = {
   render: () => (
     <div className="w-[400px]">
-      <OverdueSectionSingle date={now} plans={overdueSectionPlans} timezone="Asia/Tokyo" />
+      <OverdueSectionSingle date={now} plans={overdueSectionPlans} />
     </div>
   ),
 };
@@ -158,7 +158,7 @@ export const InDayView: Story = {
 export const Empty: Story = {
   render: () => (
     <div className="w-[800px]">
-      <OverdueSection dates={weekDates()} plans={[]} timezone="Asia/Tokyo" />
+      <OverdueSection dates={weekDates()} plans={[]} />
     </div>
   ),
 };
@@ -180,10 +180,10 @@ export const AllPatterns: Story = {
         className="border-warning hover:bg-state-hover h-6 w-48 rounded-lg border px-1"
       />
       <div className="w-[800px]">
-        <OverdueSection dates={weekDates()} plans={overdueSectionPlans} timezone="Asia/Tokyo" />
+        <OverdueSection dates={weekDates()} plans={overdueSectionPlans} />
       </div>
       <div className="w-[400px]">
-        <OverdueSectionSingle date={now} plans={overdueSectionPlans} timezone="Asia/Tokyo" />
+        <OverdueSectionSingle date={now} plans={overdueSectionPlans} />
       </div>
     </div>
   ),

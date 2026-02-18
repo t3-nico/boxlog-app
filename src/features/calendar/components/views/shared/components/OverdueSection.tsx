@@ -16,8 +16,6 @@ interface OverdueSectionProps {
   dates: Date[];
   /** 全プラン配列 */
   plans: CalendarPlan[];
-  /** タイムゾーン（左端に表示） */
-  timezone?: string;
   /** 追加のクラス名 */
   className?: string;
 }
@@ -30,7 +28,7 @@ interface OverdueSectionProps {
  * タイムゾーンと今日の列に未完了プランバッジを表示するセクション。
  * バッジは今日の列にのみ表示され、全ての期限切れ未完了プランの件数を表示。
  */
-export function OverdueSection({ dates, plans, timezone, className }: OverdueSectionProps) {
+export function OverdueSection({ dates, plans, className }: OverdueSectionProps) {
   const overduePlans = useAllOverduePlans(plans);
 
   return (
@@ -40,7 +38,7 @@ export function OverdueSection({ dates, plans, timezone, className }: OverdueSec
         className="hidden flex-shrink-0 items-center md:flex"
         style={{ width: TIME_COLUMN_WIDTH }}
       >
-        {timezone ? <TimezoneOffset timezone={timezone} className="w-full text-xs" /> : null}
+        <TimezoneOffset className="w-full text-xs" />
       </div>
 
       {/* 各日付のエリア（今日の列のみバッジ表示） */}
@@ -70,8 +68,6 @@ interface OverdueSectionSingleProps {
   date: Date;
   /** 全プラン配列 */
   plans: CalendarPlan[];
-  /** タイムゾーン（左端に表示） */
-  timezone?: string;
   /** 追加のクラス名 */
   className?: string;
 }
@@ -83,12 +79,7 @@ interface OverdueSectionSingleProps {
  * DayViewなど、単一日付のビューで使用。
  * 今日を表示している場合のみバッジを表示。
  */
-export function OverdueSectionSingle({
-  date,
-  plans,
-  timezone,
-  className,
-}: OverdueSectionSingleProps) {
+export function OverdueSectionSingle({ date, plans, className }: OverdueSectionSingleProps) {
   const overduePlans = useAllOverduePlans(plans);
   const isTodayView = isToday(date);
   const hasOverdue = isTodayView && overduePlans.length > 0;
@@ -97,7 +88,7 @@ export function OverdueSectionSingle({
     <div className={cn('bg-background border-border flex h-6 items-center border-b', className)}>
       {/* タイムゾーン表示（左端） */}
       <div className="flex flex-shrink-0 items-center" style={{ width: TIME_COLUMN_WIDTH }}>
-        {timezone ? <TimezoneOffset timezone={timezone} className="w-full text-xs" /> : null}
+        <TimezoneOffset className="w-full text-xs" />
       </div>
 
       {/* バッジエリア（今日の場合のみ表示） */}

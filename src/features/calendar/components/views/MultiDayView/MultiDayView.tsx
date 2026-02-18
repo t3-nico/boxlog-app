@@ -4,7 +4,6 @@ import { useMemo } from 'react';
 
 import { format, getWeek, isToday } from 'date-fns';
 
-import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
 import { cn } from '@/lib/utils';
 
 import { CalendarViewAnimation } from '../../animations/ViewTransition';
@@ -48,8 +47,6 @@ export function MultiDayView({
   onNavigateToday: _onNavigateToday,
   onEmptyAreaContextMenu,
 }: MultiDayViewProps) {
-  const timezone = useCalendarSettingsStore((state) => state.timezone);
-
   const HOUR_HEIGHT = useResponsiveHourHeight();
 
   const displayCenterDate = useMemo(() => {
@@ -101,10 +98,9 @@ export function MultiDayView({
   return (
     <CalendarViewAnimation viewType={viewMode}>
       <div className={cn('bg-background flex min-h-0 flex-1 flex-col', className)}>
-        <CalendarDateHeader header={headerComponent} showTimezone={false} weekNumber={weekNumber} />
+        <CalendarDateHeader header={headerComponent} weekNumber={weekNumber} />
 
         <ScrollableCalendarLayout
-          timezone={timezone}
           scrollToHour={isCurrentDay ? undefined : 8}
           displayDates={displayDates}
           viewMode={viewMode}

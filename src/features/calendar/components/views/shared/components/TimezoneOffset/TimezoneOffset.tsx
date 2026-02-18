@@ -1,18 +1,19 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-
+import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
+import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
+import { getTimeZones } from '@/features/settings/utils/timezone-utils';
+import { api } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
-import { useLocale } from 'next-intl';
 
 interface TimezoneOffsetProps {
-  timezone: string;
   className?: string;
 }
 
-export function TimezoneOffset({ timezone, className }: TimezoneOffsetProps) {
-  const router = useRouter();
-  const locale = useLocale();
+export function TimezoneOffset({ className }: TimezoneOffsetProps) {
+  const timezone = useCalendarSettingsStore((s) => s.timezone);
+  const updateSettings = useCalendarSettingsStore((s) => s.updateSettings);
+  const updateMutation = api.userSettings.update.useMutation();
 
   const getUTCOffset = (tz: string): string => {
     try {
@@ -45,23 +46,31 @@ export function TimezoneOffset({ timezone, className }: TimezoneOffsetProps) {
     }
   };
 
-  const handleClick = () => {
-    router.push(`/${locale}/settings/calendar`);
+  const handleTimezoneChange = (value: string) => {
+    updateSettings({ timezone: value });
+    updateMutation.mutate({ timezone: value });
   };
 
   const offset = getUTCOffset(timezone);
 
   return (
-    <button
-      type="button"
-      onClick={handleClick}
-      className={cn(
-        'text-muted-foreground flex items-center justify-end pr-2 text-xs',
-        'hover:text-foreground cursor-pointer rounded transition-colors',
-        className,
-      )}
-    >
-      <span className="font-normal">UTC{offset}</span>
-    </button>
+    <Select value={timezone} onValueChange={handleTimezoneChange}>
+      <SelectTrigger
+        variant="ghost"
+        className={cn(
+          'text-muted-foreground h-auto justify-center px-1 py-0.5 text-xs [&_svg]:hidden',
+          className,
+        )}
+      >
+        <span className="font-normal">UTC{offset}</span>
+      </SelectTrigger>
+      <SelectContent>
+        {getTimeZones().map((tz) => (
+          <SelectItem key={tz.value} value={tz.value}>
+            {tz.label}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   );
 }

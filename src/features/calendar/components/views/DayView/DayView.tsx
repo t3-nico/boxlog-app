@@ -4,7 +4,6 @@ import React, { useMemo } from 'react';
 
 import { getWeek } from 'date-fns';
 
-import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
 import { cn } from '@/lib/utils';
 
 import { CalendarViewAnimation } from '../../animations/ViewTransition';
@@ -36,8 +35,6 @@ export const DayView = ({
   onNavigateNext: _onNavigateNext,
   onNavigateToday,
 }: DayViewProps) => {
-  const { timezone } = useCalendarSettingsStore();
-
   // 表示する日付
   const displayDates = useMemo(() => {
     const date = new Date(currentDate);
@@ -108,11 +105,10 @@ export const DayView = ({
     <CalendarViewAnimation viewType="day">
       <div className={cn('bg-background flex min-h-0 flex-1 flex-col', className)}>
         {/* 固定日付ヘッダー */}
-        <CalendarDateHeader header={headerComponent} showTimezone={false} weekNumber={weekNumber} />
+        <CalendarDateHeader header={headerComponent} weekNumber={weekNumber} />
 
         {/* スクロール可能コンテンツ */}
         <ScrollableCalendarLayout
-          timezone={timezone}
           {...(isToday && { scrollToHour: 8 })}
           displayDates={displayDates}
           viewMode="day"

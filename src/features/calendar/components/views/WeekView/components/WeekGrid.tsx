@@ -41,7 +41,6 @@ export const WeekGrid = ({
   onEmptyClick,
   onEventUpdate,
   onTimeRangeSelect,
-  timezone,
   className,
   onEmptyAreaContextMenu,
 }: WeekGridProps) => {
@@ -107,11 +106,10 @@ export const WeekGrid = ({
   return (
     <div className={cn('bg-background flex min-h-0 flex-1 flex-col', className)}>
       {/* 固定日付ヘッダー */}
-      <CalendarDateHeader header={headerComponent} showTimezone={false} weekNumber={weekNumber} />
+      <CalendarDateHeader header={headerComponent} weekNumber={weekNumber} />
 
       {/* スクロール可能コンテンツ */}
       <ScrollableCalendarLayout
-        timezone={timezone}
         scrollToHour={todayIndex !== -1 ? undefined : 8}
         displayDates={currentTimeDisplayDates}
         viewMode="week"
