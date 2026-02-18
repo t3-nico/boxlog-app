@@ -181,7 +181,16 @@
 - [ ] **Sentryでエラー監視**
   - エラーが急増していないことを確認
 
-### 3.3 通知・関連Issue
+### 3.3 OSSライセンス情報の更新
+
+- [ ] **ライセンス情報を再生成**
+  ```bash
+  npm run generate-licenses
+  ```
+- [ ] **生成物をマーケティングサイト（web）に反映**
+  - `public/oss-credits.json` を web リポジトリへコピー
+
+### 3.4 通知・関連Issue
 
 - [ ] **関連Issueにコメント**
   ```bash
