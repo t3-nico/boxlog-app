@@ -26,10 +26,7 @@ export function TimesheetTotalRow({ dailyTotals, weekTotal, weekDates }: Timeshe
         const key = format(startOfDay(date), 'yyyy-MM-dd');
         const minutes = dailyTotals[key] ?? 0;
         return (
-          <td
-            key={date.toISOString()}
-            className="px-2 py-2 text-right"
-          >
+          <td key={date.toISOString()} className="px-2 py-2 text-right">
             {formatMinutes(minutes)}
           </td>
         );

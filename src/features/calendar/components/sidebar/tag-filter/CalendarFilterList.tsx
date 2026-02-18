@@ -227,7 +227,6 @@ export function CalendarFilterList() {
           )}
         </SidebarSection>
 
-
         {/* 通知 + テーマ切替 */}
         <SidebarUtilities />
       </div>

@@ -44,9 +44,7 @@ export function TimesheetGrid({ data, onPlanClick }: TimesheetGridProps) {
                   className="text-muted-foreground px-2 py-2 text-right text-xs"
                 >
                   <div className="flex items-center justify-end gap-1">
-                    <span className={cn(today && 'text-primary')}>
-                      {format(date, 'EEE')}
-                    </span>
+                    <span className={cn(today && 'text-primary')}>{format(date, 'EEE')}</span>
                     <span
                       className={cn(
                         'flex h-5 w-5 items-center justify-center rounded-full',

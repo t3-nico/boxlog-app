@@ -49,7 +49,7 @@ export const DateNavigator = ({
   return (
     <div
       className={cn(
-        'inline-flex h-8 items-center divide-x divide-border overflow-hidden rounded-md border border-border',
+        'divide-border border-border inline-flex h-8 items-center divide-x overflow-hidden rounded-md border',
         className,
       )}
     >
@@ -58,7 +58,7 @@ export const DateNavigator = ({
           <button
             type="button"
             onClick={() => onNavigate('prev')}
-            className={cn(navButtonBase, 'w-8 text-muted-foreground')}
+            className={cn(navButtonBase, 'text-muted-foreground w-8')}
             aria-label={t('common.previous')}
           >
             <ChevronLeft className={arrowSizes[arrowSize]} />
@@ -67,7 +67,11 @@ export const DateNavigator = ({
       )}
 
       {showTodayButton && (
-        <HoverTooltip content={t('calendar.actions.goToToday')} side="bottom" wrapperClassName="h-full">
+        <HoverTooltip
+          content={t('calendar.actions.goToToday')}
+          side="bottom"
+          wrapperClassName="h-full"
+        >
           <button
             type="button"
             onClick={() => onNavigate('today')}
@@ -83,7 +87,7 @@ export const DateNavigator = ({
           <button
             type="button"
             onClick={() => onNavigate('next')}
-            className={cn(navButtonBase, 'w-8 text-muted-foreground')}
+            className={cn(navButtonBase, 'text-muted-foreground w-8')}
             aria-label={t('common.next')}
           >
             <ChevronRight className={arrowSizes[arrowSize]} />
