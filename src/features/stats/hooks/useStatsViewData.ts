@@ -23,6 +23,7 @@ export function useStatsViewData(currentDate: Date) {
         endDate: formatDateISO(we),
         prevStartDate: formatDateISO(prevWeekStart),
         prevEndDate: formatDateISO(prevWeekEnd),
+        todayDate: formatDateISO(new Date()),
       },
       weekStart: ws,
       weekEnd: we,

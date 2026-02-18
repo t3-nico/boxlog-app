@@ -3,6 +3,7 @@
 import { useCallback, useMemo } from 'react';
 
 import { ExternalLink, Star } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import {
   Select,
@@ -11,12 +12,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { cn } from '@/lib/utils';
-
+import { Skeleton } from '@/components/ui/skeleton';
 import { CACHE_5_MINUTES } from '@/constants/time';
 import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings';
 import { api } from '@/lib/trpc';
-import { useTranslations } from 'next-intl';
+import { cn } from '@/lib/utils';
 
 import { SettingRow } from './fields/SettingRow';
 import { SettingsCard } from './SettingsCard';
@@ -32,15 +32,6 @@ const CHRONOTYPE_EMOJI: Record<Exclude<ChronotypeType, 'custom'>, string> = {
   dolphin: '🐬',
 };
 
-// 生産性レベルの日本語ラベル
-const LEVEL_LABELS: Record<ProductivityZone['level'], string> = {
-  peak: 'ピーク',
-  good: '集中',
-  moderate: '通常',
-  low: '低調',
-  sleep: '睡眠',
-};
-
 interface ChronotypeAutoSaveSettings {
   chronotype: {
     enabled: boolean;
@@ -54,6 +45,7 @@ interface ChronotypeAutoSaveSettings {
  * 24時間タイムラインバーコンポーネント
  */
 function TimelineBar({ zones }: { zones: ProductivityZone[] }) {
+  const t = useTranslations();
   // 0-24時間を表すバーを生成
   const segments = useMemo(() => {
     const result: Array<{ hour: number; level: ProductivityZone['level']; label: string }> = [];
@@ -105,7 +97,9 @@ function TimelineBar({ zones }: { zones: ProductivityZone[] }) {
         {(['peak', 'good', 'moderate', 'low', 'sleep'] as const).map((level) => (
           <div key={level} className="flex items-center gap-1">
             <div className={cn(LEVEL_COLORS[level], 'h-3 w-3 rounded')} />
-            <span className="text-muted-foreground">{LEVEL_LABELS[level]}</span>
+            <span className="text-muted-foreground">
+              {t(`settings.chronotype.levels.${level}`)}
+            </span>
           </div>
         ))}
       </div>
@@ -151,18 +145,21 @@ export function ChronotypeSettings() {
 
   // DB値から初期値を構築（DBにデータがない場合はデフォルト）
   const dbChronotype = dbSettings?.chronotype;
-  const initialChronotype: ChronotypeAutoSaveSettings['chronotype'] = {
-    enabled: dbChronotype?.enabled ?? false,
-    type: (dbChronotype?.type as ChronotypeType) ?? 'bear',
-    displayMode: (dbChronotype?.displayMode as 'border' | 'background' | 'both') ?? 'border',
-    opacity: dbChronotype?.opacity ?? 90,
-  };
+  const initialValues = useMemo(
+    () => ({
+      chronotype: {
+        enabled: dbChronotype?.enabled ?? false,
+        type: (dbChronotype?.type as ChronotypeType) ?? 'bear',
+        displayMode: (dbChronotype?.displayMode as 'border' | 'background' | 'both') ?? 'border',
+        opacity: dbChronotype?.opacity ?? 90,
+      },
+    }),
+    [dbChronotype?.enabled, dbChronotype?.type, dbChronotype?.displayMode, dbChronotype?.opacity],
+  );
 
   // 自動保存システム（DB に直接保存）
   const autoSave = useAutoSaveSettings<ChronotypeAutoSaveSettings>({
-    initialValues: {
-      chronotype: initialChronotype,
-    },
+    initialValues,
     onSave: async (values) => {
       await updateMutation.mutateAsync({
         chronotypeEnabled: values.chronotype.enabled,
@@ -203,9 +200,9 @@ export function ChronotypeSettings() {
 
   if (isPending) {
     return (
-      <div className="animate-pulse space-y-6">
-        <div className="bg-surface-container h-24 rounded-2xl" />
-      </div>
+      <SettingsCard title={t('settings.chronotype.title')}>
+        <Skeleton className="h-12 w-full rounded-lg" />
+      </SettingsCard>
     );
   }
 
@@ -267,7 +264,7 @@ export function ChronotypeSettings() {
             </div>
 
             {/* ピーク時間のハイライト */}
-            <div className="bg-success/12 flex items-center gap-2 rounded-2xl p-4">
+            <div className="bg-success/10 flex items-center gap-2 rounded-2xl p-4">
               <Star className="text-success h-4 w-4" />
               <div>
                 <span className="text-sm font-normal">{t('settings.chronotype.peakTime')}</span>

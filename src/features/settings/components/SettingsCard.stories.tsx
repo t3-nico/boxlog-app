@@ -33,10 +33,6 @@ const meta = {
       control: 'boolean',
       description: '保存中状態',
     },
-    noPadding: {
-      control: 'boolean',
-      description: 'パディングなし',
-    },
     actions: {
       table: { disable: true },
     },
@@ -150,7 +146,18 @@ export const SavingState: Story = {
           </Select>
         </SettingRow>
         <SettingRow label="タイムゾーン">
-          <span className="text-muted-foreground text-base">Asia/Tokyo</span>
+          <Select defaultValue="Asia/Tokyo">
+            <SelectTrigger variant="ghost">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="America/Los_Angeles">ロサンゼルス (GMT-8)</SelectItem>
+              <SelectItem value="America/New_York">ニューヨーク (GMT-5)</SelectItem>
+              <SelectItem value="Europe/London">ロンドン (GMT+0)</SelectItem>
+              <SelectItem value="Asia/Tokyo">東京 (GMT+9)</SelectItem>
+              <SelectItem value="Australia/Sydney">シドニー (GMT+10)</SelectItem>
+            </SelectContent>
+          </Select>
         </SettingRow>
       </SettingsCard>
     </div>

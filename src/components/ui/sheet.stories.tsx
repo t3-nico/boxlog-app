@@ -5,6 +5,19 @@ import { useState } from 'react';
 import { Button } from './button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from './sheet';
 
+/**
+ * Sheet - スライドインパネル。
+ *
+ * ## 閉じるボタンのガイドライン
+ *
+ * | パターン | 閉じるボタン | 例 |
+ * |----------|-------------|-----|
+ * | サイドパネル（left/right） | あり（デフォルト） | ナビゲーション、フィルター |
+ * | フルスクリーン（bottom, h-[100dvh]） | ヘッダーに配置 | モバイル設定画面 |
+ * | ハーフシート（bottom, 固定高さ） | あり（デフォルト） | アクションメニュー |
+ *
+ * フルスクリーン Sheet は `showCloseButton={false}` にして、ヘッダー内にカスタム閉じるボタンを配置する。
+ */
 const meta = {
   title: 'Components/Sheet',
   component: Sheet,

@@ -4,16 +4,12 @@ import React, { useMemo } from 'react';
 
 import { getWeek } from 'date-fns';
 
-import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
 import { cn } from '@/lib/utils';
 
+import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
+
 import { CalendarViewAnimation } from '../../animations/ViewTransition';
-import {
-  CalendarDateHeader,
-  DailyUsageStripSingle,
-  DateDisplay,
-  ScrollableCalendarLayout,
-} from '../shared';
+import { CalendarDateHeader, DateDisplay, ScrollableCalendarLayout } from '../shared';
 
 import { DayContent } from './components/DayContent';
 import type { DayViewProps } from './DayView.types';
@@ -22,7 +18,7 @@ import { useDayView } from './hooks/useDayView';
 export const DayView = ({
   dateRange: _dateRange,
   plans,
-  allPlans,
+  allPlans: _allPlans,
   currentDate,
   showWeekends: _showWeekends = true,
   className,
@@ -41,7 +37,7 @@ export const DayView = ({
   onNavigateNext: _onNavigateNext,
   onNavigateToday,
 }: DayViewProps) => {
-  const { timezone } = useCalendarSettingsStore();
+  const timezone = useCalendarSettingsStore((s) => s.timezone);
 
   // 表示する日付
   const displayDates = useMemo(() => {
@@ -77,6 +73,7 @@ export const DayView = ({
     date,
     plans: plans || [],
     ...(onUpdatePlan && { onPlanUpdate: onUpdatePlan }),
+    timezone,
   });
 
   // 週番号を計算
@@ -113,14 +110,10 @@ export const DayView = ({
     <CalendarViewAnimation viewType="day">
       <div className={cn('bg-background flex min-h-0 flex-1 flex-col', className)}>
         {/* 固定日付ヘッダー */}
-        <CalendarDateHeader header={headerComponent} showTimezone={false} weekNumber={weekNumber} />
-
-        {/* タイムゾーン＋日別使用時間 */}
-        <DailyUsageStripSingle date={date} plans={allPlans || plans || []} timezone={timezone} />
+        <CalendarDateHeader header={headerComponent} weekNumber={weekNumber} />
 
         {/* スクロール可能コンテンツ */}
         <ScrollableCalendarLayout
-          timezone={timezone}
           {...(isToday && { scrollToHour: 8 })}
           displayDates={displayDates}
           viewMode="day"

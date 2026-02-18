@@ -4,13 +4,13 @@ import { useMemo } from 'react';
 
 import { format, getWeek, isToday } from 'date-fns';
 
-import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
 import { cn } from '@/lib/utils';
+
+import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
 
 import { CalendarViewAnimation } from '../../animations/ViewTransition';
 import {
   CalendarDateHeader,
-  DailyUsageStrip,
   DateDisplay,
   ScrollableCalendarLayout,
   useMultiDayPlanPositions,
@@ -29,7 +29,7 @@ export function MultiDayView({
   dayCount,
   dateRange: _dateRange,
   plans,
-  allPlans,
+  allPlans: _allPlans,
   currentDate,
   centerDate: _centerDate,
   showWeekends = true,
@@ -49,8 +49,7 @@ export function MultiDayView({
   onNavigateToday: _onNavigateToday,
   onEmptyAreaContextMenu,
 }: MultiDayViewProps) {
-  const timezone = useCalendarSettingsStore((state) => state.timezone);
-
+  const timezone = useCalendarSettingsStore((s) => s.timezone);
   const HOUR_HEIGHT = useResponsiveHourHeight();
 
   const displayCenterDate = useMemo(() => {
@@ -66,10 +65,11 @@ export function MultiDayView({
     showWeekends,
   });
 
-  const { planPositions } = useMultiDayPlanPositions({
+  const { planPositions, plansByDate } = useMultiDayPlanPositions({
     displayDates,
     plans,
     hourHeight: HOUR_HEIGHT,
+    timezone,
   });
 
   const planStyles = usePlanStyles(planPositions);
@@ -102,12 +102,9 @@ export function MultiDayView({
   return (
     <CalendarViewAnimation viewType={viewMode}>
       <div className={cn('bg-background flex min-h-0 flex-1 flex-col', className)}>
-        <CalendarDateHeader header={headerComponent} showTimezone={false} weekNumber={weekNumber} />
-
-        <DailyUsageStrip dates={displayDates} plans={allPlans || plans} timezone={timezone} />
+        <CalendarDateHeader header={headerComponent} weekNumber={weekNumber} />
 
         <ScrollableCalendarLayout
-          timezone={timezone}
           scrollToHour={isCurrentDay ? undefined : 8}
           displayDates={displayDates}
           viewMode={viewMode}
@@ -116,10 +113,7 @@ export function MultiDayView({
         >
           {displayDates.map((date, dayIndex) => {
             const dateKey = format(date, 'yyyy-MM-dd');
-            const dayPlans = plans.filter((plan) => {
-              const planDate = plan.startDate || new Date();
-              return format(planDate, 'yyyy-MM-dd') === dateKey;
-            });
+            const dayPlans = plansByDate.get(dateKey) || [];
 
             return (
               <div

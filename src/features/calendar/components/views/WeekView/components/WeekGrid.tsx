@@ -6,9 +6,10 @@ import { getWeek, isToday } from 'date-fns';
 
 import { cn } from '@/lib/utils';
 
+import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
+
 import {
   CalendarDateHeader,
-  DailyUsageStrip,
   DateDisplay,
   ScrollableCalendarLayout,
   getDateKey,
@@ -33,8 +34,8 @@ import { WeekContent } from './WeekContent';
 export const WeekGrid = ({
   weekDates,
   events,
-  allPlans,
-  eventsByDate,
+  allPlans: _allPlans,
+  eventsByDate: _eventsByDate,
   todayIndex,
   disabledPlanId,
   onEventClick,
@@ -42,10 +43,11 @@ export const WeekGrid = ({
   onEmptyClick,
   onEventUpdate,
   onTimeRangeSelect,
-  timezone,
   className,
   onEmptyAreaContextMenu,
 }: WeekGridProps) => {
+  const timezone = useCalendarSettingsStore((s) => s.timezone);
+
   // レスポンシブな時間高さ
   const hourHeight = useResponsiveHourHeight();
 
@@ -64,11 +66,12 @@ export const WeekGrid = ({
     [onEventUpdate, events],
   );
 
-  // プラン位置計算
-  const { planPositions } = useWeekPlans({
+  // プラン位置計算（TZ変換済みの日付グルーピングも取得）
+  const { planPositions, plansByDate: tzPlansByDate } = useWeekPlans({
     weekDates,
     events,
     hourHeight,
+    timezone,
   });
 
   // CurrentTimeLine表示のための日付配列（weekDatesをそのまま使用）
@@ -108,14 +111,10 @@ export const WeekGrid = ({
   return (
     <div className={cn('bg-background flex min-h-0 flex-1 flex-col', className)}>
       {/* 固定日付ヘッダー */}
-      <CalendarDateHeader header={headerComponent} showTimezone={false} weekNumber={weekNumber} />
-
-      {/* タイムゾーン＋日別使用時間 */}
-      <DailyUsageStrip dates={weekDates} plans={allPlans || events} timezone={timezone} />
+      <CalendarDateHeader header={headerComponent} weekNumber={weekNumber} />
 
       {/* スクロール可能コンテンツ */}
       <ScrollableCalendarLayout
-        timezone={timezone}
         scrollToHour={todayIndex !== -1 ? undefined : 8}
         displayDates={currentTimeDisplayDates}
         viewMode="week"
@@ -125,7 +124,8 @@ export const WeekGrid = ({
         {/* 7日分のグリッド */}
         {weekDates.map((date, dayIndex) => {
           const dateKey = getDateKey(date);
-          const dayEvents = eventsByDate[dateKey] || [];
+          // TZ変換済みのplansByDateを使用（eventsByDateはTZ未対応）
+          const dayEvents = tzPlansByDate[dateKey] || [];
 
           return (
             <div

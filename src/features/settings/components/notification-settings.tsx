@@ -1,8 +1,10 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { ChevronDown } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -11,13 +13,12 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   checkBrowserNotificationSupport,
   requestNotificationPermission,
 } from '@/features/notifications/utils/notification-helpers';
-import { trpc } from '@/lib/trpc/client';
-import { useTranslations } from 'next-intl';
-import { toast } from 'sonner';
+import { api } from '@/lib/trpc';
 
 import { SettingRow } from './fields/SettingRow';
 import { SettingsCard } from './SettingsCard';
@@ -64,6 +65,7 @@ interface DeliveryMethodDropdownProps {
   onMethodsChange: (methods: DeliveryMethod[]) => void;
   isPending: boolean;
   browserPermission: NotificationPermission | null;
+  onBrowserPermissionChange: (permission: NotificationPermission) => void;
 }
 
 function DeliveryMethodDropdown({
@@ -71,6 +73,7 @@ function DeliveryMethodDropdown({
   onMethodsChange,
   isPending,
   browserPermission,
+  onBrowserPermissionChange,
 }: DeliveryMethodDropdownProps) {
   const t = useTranslations();
 
@@ -98,6 +101,7 @@ function DeliveryMethodDropdown({
           toast.error(t('notification.settings.browserPermissionDenied'));
           return;
         }
+        onBrowserPermissionChange('granted');
       }
     }
 
@@ -152,49 +156,50 @@ function DeliveryMethodDropdown({
 
 export function NotificationSettings() {
   const t = useTranslations();
-  const utils = trpc.useUtils();
+  const utils = api.useUtils();
 
   // 通知設定を取得
-  const { data: preferences, isLoading } = trpc.notificationPreferences.get.useQuery();
+  const { data: preferences, isLoading } = api.notificationPreferences.get.useQuery();
+
+  // サーバーデータから設定を導出（useEffect同期不要）
+  const serverSettings = useMemo<DeliverySettings>(
+    () => (preferences?.deliverySettings as DeliverySettings) ?? DEFAULT_DELIVERY_SETTINGS,
+    [preferences],
+  );
+
+  // 楽観的更新用: mutation中のみ変更を保持
+  const [pendingChanges, setPendingChanges] = useState<Partial<DeliverySettings>>({});
+
+  // 表示用設定: サーバーデータ + 楽観的変更をマージ
+  const displaySettings = useMemo<DeliverySettings>(
+    () => ({ ...serverSettings, ...pendingChanges }),
+    [serverSettings, pendingChanges],
+  );
+
+  // ブラウザ通知許可状態（同期的に読み取り、useEffect不要）
+  const [browserPermission, setBrowserPermission] = useState<NotificationPermission | null>(() => {
+    if (typeof window === 'undefined') return null;
+    return checkBrowserNotificationSupport() ? Notification.permission : null;
+  });
 
   // 配信設定を更新
-  const updateMutation = trpc.notificationPreferences.updateDeliverySettings.useMutation({
+  const updateMutation = api.notificationPreferences.updateDeliverySettings.useMutation({
     onSuccess: () => {
       utils.notificationPreferences.get.invalidate();
+    },
+    onSettled: () => {
+      setPendingChanges({});
     },
     onError: (error) => {
       toast.error(t('notification.settings.saveError', { message: error.message }));
     },
   });
 
-  // ローカル状態（楽観的UI更新用）
-  const [localSettings, setLocalSettings] = useState<DeliverySettings>(DEFAULT_DELIVERY_SETTINGS);
-
-  // ブラウザ通知許可状態
-  const [browserPermission, setBrowserPermission] = useState<NotificationPermission | null>(null);
-
-  // サーバーからのデータでローカル状態を更新
-  useEffect(() => {
-    if (preferences?.deliverySettings) {
-      setLocalSettings(preferences.deliverySettings as DeliverySettings);
-    }
-  }, [preferences]);
-
-  // ブラウザ通知許可状態を確認
-  useEffect(() => {
-    if (checkBrowserNotificationSupport()) {
-      setBrowserPermission(Notification.permission);
-    }
-  }, []);
-
   // 配信方法の変更ハンドラー
   const handleMethodsChange = useCallback(
     (type: NotificationType, methods: DeliveryMethod[]) => {
-      // 楽観的にローカル状態を更新
-      setLocalSettings((prev) => ({
-        ...prev,
-        [type]: methods,
-      }));
+      // 楽観的に変更を記録
+      setPendingChanges((prev) => ({ ...prev, [type]: methods }));
 
       // サーバーに保存
       updateMutation.mutate({
@@ -209,10 +214,10 @@ export function NotificationSettings() {
     return (
       <div className="space-y-8">
         <SettingsCard>
-          <div className="animate-pulse space-y-4">
-            <div className="bg-muted h-12 rounded-lg" />
-            <div className="bg-muted h-12 rounded-lg" />
-            <div className="bg-muted h-12 rounded-lg" />
+          <div className="space-y-4">
+            {Array.from({ length: 3 }, (_, i) => (
+              <Skeleton key={i} className="h-12 w-full rounded-lg" />
+            ))}
           </div>
         </SettingsCard>
       </div>
@@ -226,10 +231,11 @@ export function NotificationSettings() {
           {NOTIFICATION_TYPES.map(({ type, labelKey }) => (
             <SettingRow key={type} label={t(labelKey)}>
               <DeliveryMethodDropdown
-                selectedMethods={localSettings[type] ?? []}
+                selectedMethods={displaySettings[type] ?? []}
                 onMethodsChange={(methods) => handleMethodsChange(type, methods)}
                 isPending={updateMutation.isPending}
                 browserPermission={browserPermission}
+                onBrowserPermissionChange={setBrowserPermission}
               />
             </SettingRow>
           ))}
@@ -237,7 +243,7 @@ export function NotificationSettings() {
       </SettingsCard>
 
       {/* ヒント情報 */}
-      <div className="bg-surface-container border-border rounded-2xl border p-4">
+      <div className="bg-card border-border rounded-lg border p-4">
         <p className="text-muted-foreground text-sm">{t('notification.settings.tip')}</p>
       </div>
     </div>

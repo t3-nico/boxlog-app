@@ -3,6 +3,7 @@
 import { PanelLeft, PanelRight, Search } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
+import { HeaderUtilities } from '@/components/layout/HeaderUtilities';
 import { Button } from '@/components/ui/button';
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { MobileMenuButton } from '@/features/navigation/components/mobile/MobileMenuButton';
@@ -166,8 +167,9 @@ export const CalendarHeader = ({
             </Button>
           </div>
 
-          {/* PC: パネルトグル + アクション */}
+          {/* PC: 通知 + 検索 + パネルトグル + アクション */}
           <div className="hidden items-center gap-2 md:flex">
+            <HeaderUtilities />
             {onAsideChange && currentAside === 'none' && (
               <HoverTooltip content={t('calendar.aside.open')} side="bottom">
                 <Button

@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { format, isSameDay, isValid } from 'date-fns';
 
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
+import { applyTimezoneToDisplayDates } from '@/features/calendar/utils/planDataAdapter';
 
 import { HOUR_HEIGHT as DEFAULT_HOUR_HEIGHT } from '../constants/grid.constants';
 
@@ -16,6 +17,7 @@ interface UseMultiDayPlanPositionsOptions {
   displayDates: Date[];
   plans: CalendarPlan[];
   hourHeight?: number;
+  timezone: string;
 }
 
 interface UseMultiDayPlanPositionsReturn {
@@ -34,26 +36,34 @@ export function useMultiDayPlanPositions({
   displayDates,
   plans,
   hourHeight = DEFAULT_HOUR_HEIGHT,
+  timezone,
 }: UseMultiDayPlanPositionsOptions): UseMultiDayPlanPositionsReturn {
-  // 日付別にプランをグループ化
+  // TZ変換を適用（Planのみ、Recordは変換しない）
+  const tzPlans = useMemo(
+    () => plans.map((p) => applyTimezoneToDisplayDates(p, timezone)),
+    [plans, timezone],
+  );
+
+  // 日付別にプランをグループ化（displayStartDateで判定）
   const plansByDate = useMemo(() => {
     const grouped = new Map<string, CalendarPlan[]>();
 
     displayDates.forEach((date) => {
       const dateKey = format(date, 'yyyy-MM-dd');
-      const dayPlans = plans.filter((plan) => {
-        if (!plan.startDate || !isValid(new Date(plan.startDate))) {
+      const dayPlans = tzPlans.filter((plan) => {
+        if (!plan.displayStartDate || !isValid(new Date(plan.displayStartDate))) {
           return false;
         }
-        return isSameDay(new Date(plan.startDate), date);
+        return isSameDay(plan.displayStartDate, date);
       });
       grouped.set(dateKey, dayPlans);
     });
 
     return grouped;
-  }, [displayDates, plans]);
+  }, [displayDates, tzPlans]);
 
   // 全日付のプランをTimedPlan形式に変換（usePlanLayoutCalculator用）
+  // displayStartDate/displayEndDateを使用してTZ対応の位置計算を実現
   const allConvertedPlans = useMemo(() => {
     const converted: Array<{
       dateKey: string;
@@ -68,8 +78,8 @@ export function useMultiDayPlanPositions({
         converted.push({
           dateKey,
           plan,
-          start: plan.startDate!,
-          end: plan.endDate || new Date(plan.startDate!.getTime() + 60 * 60 * 1000),
+          start: plan.displayStartDate,
+          end: plan.displayEndDate || new Date(plan.displayStartDate.getTime() + 60 * 60 * 1000),
           id: plan.id,
         });
       });

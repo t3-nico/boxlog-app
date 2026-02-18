@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Textarea } from '@/components/ui/textarea';
 import { CACHE_5_MINUTES } from '@/constants/time';
 import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings';
@@ -76,7 +77,18 @@ export function AIStyleSettings() {
     [autoSave],
   );
 
-  if (isPending) return null;
+  if (isPending) {
+    return (
+      <SettingsCard title={t('settings.aiStyle.title')}>
+        <Skeleton className="mb-4 h-4 w-64" />
+        <div className="space-y-3">
+          {Array.from({ length: 4 }, (_, i) => (
+            <Skeleton key={i} className="h-16 w-full rounded-2xl" />
+          ))}
+        </div>
+      </SettingsCard>
+    );
+  }
 
   return (
     <SettingsCard title={t('settings.aiStyle.title')} isSaving={autoSave.isSaving}>

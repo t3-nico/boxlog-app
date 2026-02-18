@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button';
 import { AIInspectorContent } from '@/features/ai/components/AIInspectorContent';
 import { PlanListPanel } from '@/features/calendar/components/aside/PlanListPanel';
 import { RecordListPanel } from '@/features/calendar/components/aside/RecordListPanel';
-import { StatsPanel } from '@/features/stats/components/StatsPanel';
 
 import { AsideSwitcher, type AsideType } from './AsideSwitcher';
 
@@ -20,7 +19,7 @@ interface AppAsideProps {
  * アプリケーション共通アサイド
  *
  * 共通ヘッダー（AsideSwitcher + 閉じるボタン）を持ち、
- * asideTypeに応じてPlan/Record/Stats/Chat/Reflectionパネルを切り替え表示
+ * asideTypeに応じてPlan/Record/Chat/Reflectionパネルを切り替え表示
  */
 export function AppAside({ asideType, onAsideChange }: AppAsideProps) {
   const t = useTranslations('calendar');
@@ -33,8 +32,6 @@ export function AppAside({ asideType, onAsideChange }: AppAsideProps) {
         return <PlanListPanel />;
       case 'record':
         return <RecordListPanel />;
-      case 'stats':
-        return <StatsPanel />;
       case 'chat':
         return <AIInspectorContent />;
       case 'reflection':

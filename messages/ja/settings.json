@@ -220,6 +220,7 @@
       "businessHoursPreview": "営業時間:",
       "resetSettings": "設定のリセット",
       "resetSettingsDesc": "すべてのカレンダー設定をデフォルト値に戻す",
+      "resetConfirm": "カレンダー設定をすべてデフォルトに戻しますか？",
       "resetToDefault": "デフォルトに戻す",
       "defaultViewSection": "デフォルトビュー",
       "defaultView": "起動時のビュー",
@@ -237,7 +238,14 @@
       "details": "タイプの詳細",
       "timeline": "24時間タイムライン",
       "peakTime": "ピーク時間",
-      "learnMore": "クロノタイプについて詳しく知る"
+      "learnMore": "クロノタイプについて詳しく知る",
+      "levels": {
+        "peak": "ピーク",
+        "good": "集中",
+        "moderate": "ふつう",
+        "low": "低調",
+        "sleep": "睡眠"
+      }
     },
     "sleepSchedule": {
       "title": "睡眠スケジュール",
@@ -258,6 +266,7 @@
       "settingsSaved": "価値観を保存しました",
       "placeholder": "この分野で大切にしていることを書いてください...",
       "importance": "重要度",
+      "setImportance": "重要度を{value}に設定",
       "categories": {
         "family": "家族",
         "familyDesc": "祖先は15〜50人の血縁グループで暮らしていた。家族の絆は安心感の土台",
@@ -454,7 +463,10 @@
         "anthropicDesc": "Anthropic社のClaudeを使用します",
         "openaiDesc": "OpenAI社のGPTモデルを使用します",
         "saved": "保存済み",
-        "save": "保存"
+        "save": "保存",
+        "hideKey": "APIキーを非表示",
+        "showKey": "APIキーを表示",
+        "deleteKey": "APIキーを削除"
       },
       "services": {
         "title": "連携サービス",
@@ -502,6 +514,57 @@
         "security": "セキュリティポリシー",
         "cookies": "Cookie設定",
         "ossCredits": "オープンソースライセンス"
+      }
+    },
+    "subscription": {
+      "currentPlan": "現在のプラン",
+      "freePlanLabel": "Free プラン",
+      "currentBadge": "現在のプラン",
+      "freePlanDescription": "基本機能をご利用いただけます",
+      "selectPlan": "プランを選択",
+      "monthly": "月払い",
+      "yearly": "年払い",
+      "yearlyDiscount": "20% OFF",
+      "recommended": "おすすめ",
+      "perMonth": "/月",
+      "inUse": "利用中",
+      "upgrade": "アップグレード",
+      "paymentMethod": "支払い方法",
+      "noCard": "カードが登録されていません",
+      "addCard": "カードを追加",
+      "paymentComingSoon": "※ 支払い機能は現在準備中です",
+      "billingHistory": "請求履歴",
+      "noBillingHistory": "請求履歴はありません",
+      "plans": {
+        "free": {
+          "name": "Free",
+          "features": {
+            "basicTasks": "基本的なタスク管理",
+            "maxTasks": "最大100タスク",
+            "tags": "3つのタグ",
+            "calendar": "カレンダー表示"
+          }
+        },
+        "pro": {
+          "name": "Pro",
+          "features": {
+            "unlimitedTasks": "無制限のタスク",
+            "unlimitedTags": "無制限のタグ",
+            "integrations": "外部サービス連携",
+            "prioritySupport": "優先サポート",
+            "advancedAnalytics": "高度な分析"
+          }
+        },
+        "team": {
+          "name": "Team",
+          "features": {
+            "allPro": "Proの全機能",
+            "teamSharing": "チーム共有",
+            "adminDashboard": "管理者ダッシュボード",
+            "sso": "SSO対応",
+            "dedicatedSupport": "専用サポート"
+          }
+        }
       }
     }
   }

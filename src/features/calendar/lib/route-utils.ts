@@ -6,7 +6,7 @@
  * パスのセグメントからビュー名を判定する必要がある。
  */
 
-const CALENDAR_VIEWS = ['day', 'week', 'agenda', 'timesheet', 'stats'];
+const CALENDAR_VIEWS = ['day', 'week', 'agenda', 'timesheet'];
 
 /**
  * ロケールを除いたパスがカレンダービューかどうかを判定

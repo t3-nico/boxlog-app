@@ -87,7 +87,6 @@ export const CalendarNavigationProvider = ({
               newDate.setDate(currentDate.getDate() + 1 * multiplier);
               break;
             case 'week':
-            case 'stats':
               newDate.setDate(currentDate.getDate() + 7 * multiplier);
               break;
             default:

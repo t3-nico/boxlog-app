@@ -11,6 +11,7 @@ import {
   type ExpandedOccurrence,
   type PlanInstanceException,
 } from '@/features/plans/utils/recurrence';
+import { convertToTimezone } from '@/lib/date/timezone';
 
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
 
@@ -346,6 +347,21 @@ export function recordToCalendarPlan(record: RecordWithPlanInfo): CalendarPlan |
  */
 export function recordsToCalendarPlans(records: RecordWithPlanInfo[]): CalendarPlan[] {
   return records.map(recordToCalendarPlan).filter((plan): plan is CalendarPlan => plan !== null);
+}
+
+/**
+ * CalendarPlan の displayStartDate/displayEndDate をユーザーTZに変換
+ * Records は変換しない（壁時計時刻のため）
+ */
+export function applyTimezoneToDisplayDates(plan: CalendarPlan, timezone: string): CalendarPlan {
+  if (isRecordEvent(plan) || !plan.startDate) {
+    return plan;
+  }
+  return {
+    ...plan,
+    displayStartDate: convertToTimezone(plan.startDate, timezone),
+    displayEndDate: plan.endDate ? convertToTimezone(plan.endDate, timezone) : plan.displayEndDate,
+  };
 }
 
 /**

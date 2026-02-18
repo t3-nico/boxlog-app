@@ -12,7 +12,6 @@ import {
   Loader2,
   MessageSquare,
   Trash2,
-  Unplug,
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
@@ -31,8 +30,6 @@ interface Integration {
   name: string;
   descriptionKey: 'googleCalendarDesc' | 'slackDesc';
   icon: React.ReactNode;
-  connected: boolean;
-  status?: 'active' | 'inactive' | 'error';
 }
 
 interface AIProvider {
@@ -54,6 +51,21 @@ const AI_PROVIDERS: AIProvider[] = [
     name: 'OpenAI',
     descriptionKey: 'openaiDesc',
     keyPrefix: 'sk-',
+  },
+];
+
+const INTEGRATIONS: Integration[] = [
+  {
+    id: 'google-calendar',
+    name: 'Google Calendar',
+    descriptionKey: 'googleCalendarDesc',
+    icon: <Calendar className="text-primary h-5 w-5" />,
+  },
+  {
+    id: 'slack',
+    name: 'Slack',
+    descriptionKey: 'slackDesc',
+    icon: <MessageSquare className="text-primary h-5 w-5" />,
   },
 ];
 
@@ -101,7 +113,6 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
 
   const handleAiKeyChange = useCallback((providerId: string, value: string) => {
     setAiKeys((prev) => ({ ...prev, [providerId]: value }));
-    // キーが変更されたら保存済みフラグをリセット
     setSavedKeys((prev) => ({ ...prev, [providerId]: false }));
   }, []);
 
@@ -133,44 +144,7 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
     setSavedKeys((prev) => ({ ...prev, [providerId]: false }));
   }, []);
 
-  const [integrations, setIntegrations] = useState<Integration[]>([
-    {
-      id: 'google-calendar',
-      name: 'Google Calendar',
-      descriptionKey: 'googleCalendarDesc',
-      icon: <Calendar className="text-primary h-5 w-5" />,
-      connected: false,
-    },
-    {
-      id: 'slack',
-      name: 'Slack',
-      descriptionKey: 'slackDesc',
-      icon: <MessageSquare className="text-primary h-5 w-5" />,
-      connected: false,
-    },
-  ]);
-
   const [syncEnabled, setSyncEnabled] = useState(true);
-
-  const handleConnect = useCallback((integrationId: string) => {
-    setIntegrations((prev) =>
-      prev.map((int) =>
-        int.id === integrationId ? { ...int, connected: true, status: 'active' as const } : int,
-      ),
-    );
-  }, []);
-
-  const handleDisconnect = useCallback((integrationId: string) => {
-    setIntegrations((prev) =>
-      prev.map((int) => {
-        if (int.id === integrationId) {
-          const { status: _, ...rest } = int;
-          return { ...rest, connected: false };
-        }
-        return int;
-      }),
-    );
-  }, []);
 
   const handleSyncChange = useCallback((checked: boolean) => {
     setSyncEnabled(checked);
@@ -181,7 +155,7 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
       {/* AI設定 */}
       <SettingsCard title={t('settings.integrations.ai.title')}>
         <div className="space-y-4">
-          <div className="bg-surface-container rounded-2xl p-4">
+          <div className="bg-card border-border rounded-lg border p-4">
             <p className="text-muted-foreground text-sm">
               {t('settings.integrations.ai.description')}
             </p>
@@ -190,7 +164,7 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
           {AI_PROVIDERS.map((provider) => (
             <div key={provider.id} className="border-border rounded-2xl border p-4">
               <div className="flex items-start gap-4">
-                <div className="bg-surface-container flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl">
+                <div className="bg-container flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl">
                   <Bot className="text-primary h-5 w-5" />
                 </div>
                 <div className="min-w-0 flex-1 space-y-4">
@@ -222,6 +196,11 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
                         icon
                         className="absolute top-1/2 right-1 -translate-y-1/2"
                         onClick={() => toggleKeyVisibility(provider.id)}
+                        aria-label={
+                          showKeys[provider.id]
+                            ? t('settings.integrations.ai.hideKey')
+                            : t('settings.integrations.ai.showKey')
+                        }
                       >
                         {showKeys[provider.id] ? (
                           <EyeOff className="h-4 w-4" />
@@ -246,6 +225,7 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
                         variant="ghost"
                         onClick={() => handleDeleteApiKey(provider.id)}
                         className="text-destructive hover:text-destructive"
+                        aria-label={t('settings.integrations.ai.deleteKey')}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -261,43 +241,26 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
       {/* 連携サービス一覧 */}
       <SettingsCard title={t('settings.integrations.services.title')}>
         <div className="space-y-4">
-          {integrations.map((integration) => (
+          {INTEGRATIONS.map((integration) => (
             <div
               key={integration.id}
               className="border-border flex items-center justify-between rounded-2xl border p-4"
             >
               <div className="flex items-center gap-4">
-                <div className="bg-surface-container flex h-10 w-10 items-center justify-center rounded-2xl">
+                <div className="bg-container flex h-10 w-10 items-center justify-center rounded-2xl">
                   {integration.icon}
                 </div>
                 <div>
-                  <div className="flex items-center gap-2">
-                    <h4 className="text-sm font-normal">{integration.name}</h4>
-                    {integration.connected && (
-                      <Badge variant="outline" className="text-success gap-1">
-                        <CheckCircle2 className="h-3 w-3" />
-                        {t('settings.integrations.services.connected')}
-                      </Badge>
-                    )}
-                  </div>
+                  <h4 className="text-sm font-normal">{integration.name}</h4>
                   <p className="text-muted-foreground text-sm">
                     {t(`settings.integrations.services.${integration.descriptionKey}`)}
                   </p>
                 </div>
               </div>
-              <div>
-                {integration.connected ? (
-                  <Button variant="ghost" onClick={() => handleDisconnect(integration.id)}>
-                    <Unplug className="mr-2 h-4 w-4" />
-                    {t('settings.integrations.services.disconnect')}
-                  </Button>
-                ) : (
-                  <Button variant="ghost" onClick={() => handleConnect(integration.id)}>
-                    <ExternalLink className="mr-2 h-4 w-4" />
-                    {t('settings.integrations.services.connect')}
-                  </Button>
-                )}
-              </div>
+              <Button variant="ghost" disabled>
+                <ExternalLink className="mr-2 h-4 w-4" />
+                {t('common.comingSoon')}
+              </Button>
             </div>
           ))}
         </div>
@@ -311,7 +274,7 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
           </SettingRow>
         </div>
         {syncEnabled && (
-          <div className="bg-surface-container mt-4 rounded-2xl p-4">
+          <div className="bg-card border-border mt-4 rounded-lg border p-4">
             <p className="text-muted-foreground text-sm">
               {t('settings.integrations.sync.description')}
             </p>
@@ -322,7 +285,7 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
       {/* API連携 */}
       <SettingsCard title={t('settings.integrations.api.title')}>
         <div className="space-y-4">
-          <div className="bg-surface-container rounded-2xl p-4">
+          <div className="bg-card border-border rounded-lg border p-4">
             <p className="text-muted-foreground text-sm">
               {t('settings.integrations.api.description')}
             </p>

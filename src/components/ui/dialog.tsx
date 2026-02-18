@@ -73,10 +73,10 @@ const DialogContent = ({
           <DialogPrimitive.Close
             data-slot="dialog-close"
             className={cn(
-              'absolute top-4 right-4 rounded opacity-70 transition-opacity hover:opacity-100',
+              'text-foreground absolute top-4 right-4 flex size-8 items-center justify-center rounded-lg transition-colors',
+              'hover:bg-state-hover active:bg-state-hover',
               'focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-hidden',
               'disabled:pointer-events-none',
-              'data-[state=open]:bg-state-selected',
               '[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*="size-"])]:size-4',
             )}
           >

@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { isSameDay, isValid } from 'date-fns';
 
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
+import { applyTimezoneToDisplayDates } from '@/features/calendar/utils/planDataAdapter';
 
 import { HOUR_HEIGHT } from '../constants/grid.constants';
 
@@ -15,6 +16,7 @@ interface UseViewPlansOptions {
   date: Date;
   plans: CalendarPlan[];
   hourHeight?: number;
+  timezone: string;
 }
 
 export interface PlanPosition {
@@ -44,28 +46,35 @@ export function useViewPlans({
   date,
   plans = [],
   hourHeight = HOUR_HEIGHT,
+  timezone,
 }: UseViewPlansOptions): UseViewPlansReturn {
-  // 指定日のプランのみフィルター
+  // TZ変換を適用（Planのみ、Recordは変換しない）
+  const tzPlans = useMemo(
+    () => plans.map((p) => applyTimezoneToDisplayDates(p, timezone)),
+    [plans, timezone],
+  );
+
+  // 指定日のプランのみフィルター（displayStartDateで判定）
   const dayPlans = useMemo(() => {
-    if (!plans || !Array.isArray(plans)) {
+    if (!tzPlans || !Array.isArray(tzPlans)) {
       return [];
     }
-    return plans.filter((plan) => {
-      if (!plan.startDate || !isValid(new Date(plan.startDate))) {
+    return tzPlans.filter((plan) => {
+      if (!plan.displayStartDate || !isValid(new Date(plan.displayStartDate))) {
         return false;
       }
 
-      const planDate = new Date(plan.startDate);
-      return isSameDay(planDate, date);
+      return isSameDay(plan.displayStartDate, date);
     });
-  }, [date, plans]);
+  }, [date, tzPlans]);
 
   // CalendarPlanをusePlanLayoutCalculatorで期待される形式に変換
+  // displayStartDate/displayEndDateを使用してTZ対応の位置計算を実現
   const convertedPlans = useMemo(() => {
     return dayPlans.map((plan) => ({
       ...plan,
-      start: plan.startDate!,
-      end: plan.endDate || new Date(new Date(plan.startDate!).getTime() + 60 * 60 * 1000),
+      start: plan.displayStartDate,
+      end: plan.displayEndDate || new Date(plan.displayStartDate.getTime() + 60 * 60 * 1000),
     }));
   }, [dayPlans]);
 

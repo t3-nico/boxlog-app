@@ -40,7 +40,6 @@ const MAIN_VIEW_OPTIONS: MainViewOption[] = [
   { value: 'week', labelKey: 'calendar.views.week', shortcut: 'W' },
   { value: 'agenda', labelKey: 'calendar.views.agenda', shortcut: 'A' },
   { value: 'timesheet', labelKey: 'calendar.views.timesheet', shortcut: 'T' },
-  { value: 'stats', labelKey: 'calendar.views.stats', shortcut: 'S' },
 ];
 
 const DAY_COUNTS = [2, 3, 4, 5, 6, 7, 8, 9] as const;
@@ -160,14 +159,14 @@ export function ViewSwitcher({ currentView, onChange, className }: ViewSwitcherP
             onClick={() => handleSelect(option.value)}
             className="flex items-center justify-between gap-2"
           >
+            <span>{t(option.labelKey)}</span>
             <div className="flex items-center gap-2">
               {currentView === option.value && <Check className="text-primary h-4 w-4" />}
               {currentView !== option.value && <span className="w-4" />}
-              <span>{t(option.labelKey)}</span>
+              <span className="bg-surface-container text-muted-foreground rounded px-2 py-0.5 font-mono text-xs">
+                {option.shortcut}
+              </span>
             </div>
-            <span className="bg-surface-container text-muted-foreground rounded px-2 py-0.5 font-mono text-xs">
-              {option.shortcut}
-            </span>
           </DropdownMenuItem>
         ))}
 
@@ -176,11 +175,8 @@ export function ViewSwitcher({ currentView, onChange, className }: ViewSwitcherP
         {/* 日数サブメニュー */}
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>
-            <div className="flex items-center gap-2">
-              {isMultiDayView(currentView) && <Check className="text-primary h-4 w-4" />}
-              {!isMultiDayView(currentView) && <span className="w-4" />}
-              <span>{t('calendar.views.daysSubmenu')}</span>
-            </div>
+            <span>{t('calendar.views.daysSubmenu')}</span>
+            {isMultiDayView(currentView) && <Check className="text-primary ml-auto h-4 w-4" />}
           </DropdownMenuSubTrigger>
           <DropdownMenuSubContent>
             {DAY_COUNTS.map((count) => {
@@ -192,14 +188,14 @@ export function ViewSwitcher({ currentView, onChange, className }: ViewSwitcherP
                   onClick={() => handleSelect(view)}
                   className="flex items-center justify-between gap-4"
                 >
+                  <span>{t('calendar.views.multiday', { count })}</span>
                   <div className="flex items-center gap-2">
                     {isActive && <Check className="text-primary h-4 w-4" />}
                     {!isActive && <span className="w-4" />}
-                    <span>{t('calendar.views.multiday', { count })}</span>
+                    <span className="bg-surface-container text-muted-foreground rounded px-2 py-0.5 font-mono text-xs">
+                      {count}
+                    </span>
                   </div>
-                  <span className="bg-surface-container text-muted-foreground rounded px-2 py-0.5 font-mono text-xs">
-                    {count}
-                  </span>
                 </DropdownMenuItem>
               );
             })}
@@ -209,10 +205,7 @@ export function ViewSwitcher({ currentView, onChange, className }: ViewSwitcherP
         {/* ビューの設定サブメニュー */}
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>
-            <div className="flex items-center gap-2">
-              <span className="w-4" />
-              <span>{t('calendar.views.viewSettings')}</span>
-            </div>
+            <span>{t('calendar.views.viewSettings')}</span>
           </DropdownMenuSubTrigger>
           <DropdownMenuSubContent>
             <DropdownMenuCheckboxItem checked={showWeekends} onCheckedChange={handleToggleWeekends}>

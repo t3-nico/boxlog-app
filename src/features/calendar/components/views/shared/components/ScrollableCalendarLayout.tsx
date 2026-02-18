@@ -32,7 +32,6 @@ import { TimezoneOffset } from './TimezoneOffset';
 interface ScrollableCalendarLayoutProps {
   children: React.ReactNode;
   className?: string | undefined;
-  timezone?: string | undefined;
   scrollToHour?: number | undefined;
   showTimeColumn?: boolean | undefined;
   showCurrentTime?: boolean | undefined;
@@ -54,7 +53,6 @@ interface CalendarDateHeaderProps {
   showTimeColumn?: boolean | undefined;
   showTimezone?: boolean | undefined;
   timeColumnWidth?: number | undefined;
-  timezone?: string | undefined;
   /** 週番号（表示する場合） */
   weekNumber?: number | undefined;
 }
@@ -67,7 +65,6 @@ export const CalendarDateHeader = ({
   showTimeColumn = true,
   showTimezone = true,
   timeColumnWidth = TIME_COLUMN_WIDTH,
-  timezone,
   weekNumber,
 }: CalendarDateHeaderProps) => {
   const showWeekNumbers = useCalendarSettingsStore((state) => state.showWeekNumbers);
@@ -76,12 +73,12 @@ export const CalendarDateHeader = ({
   const shouldShowWeekNumber = showWeekNumbers && weekNumber != null;
 
   return (
-    <div className="flex h-12 shrink-0 flex-col justify-center py-2">
-      <div className="flex items-center">
+    <div className="border-border flex h-12 shrink-0 flex-col justify-end border-b">
+      <div className="flex items-end">
         {/* 左スペーサー（時間列と揃えるため） */}
         {showTimeColumn ? (
           <div
-            className="flex shrink-0 flex-col items-center justify-center"
+            className="flex h-8 shrink-0 flex-col items-center justify-center"
             style={{ width: timeColumnWidth }}
           >
             {/* 週番号バッジ（Googleカレンダースタイル） - モバイルのみ表示 */}
@@ -91,11 +88,8 @@ export const CalendarDateHeader = ({
               </span>
             ) : null}
             {/* タイムゾーン表示（PC: 常に表示、モバイル: 週番号がない場合のみ） */}
-            {showTimezone && timezone ? (
-              <TimezoneOffset
-                timezone={timezone}
-                className={cn('w-full text-xs', shouldShowWeekNumber && 'hidden md:flex')}
-              />
+            {showTimezone ? (
+              <TimezoneOffset className={cn('w-full', shouldShowWeekNumber && 'hidden md:flex')} />
             ) : null}
           </div>
         ) : null}
@@ -113,7 +107,6 @@ export const CalendarDateHeader = ({
 export const ScrollableCalendarLayout = ({
   children,
   className = '',
-  timezone: _timezone,
   scrollToHour: _scrollToHour = 8,
   showTimeColumn = true,
   showCurrentTime = true,

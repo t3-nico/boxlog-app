@@ -4,6 +4,7 @@ import { useCallback, useMemo } from 'react';
 
 import { useTranslations } from 'next-intl';
 
+import { Skeleton } from '@/components/ui/skeleton';
 import { Textarea } from '@/components/ui/textarea';
 import { CACHE_5_MINUTES } from '@/constants/time';
 import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings';
@@ -94,7 +95,17 @@ export function ValuesSettings() {
     [autoSave],
   );
 
-  if (isPending) return null;
+  if (isPending) {
+    return (
+      <SettingsCard title={t('settings.values.title')}>
+        <div className="space-y-4">
+          {Array.from({ length: 3 }, (_, i) => (
+            <Skeleton key={i} className="h-24 w-full rounded-2xl" />
+          ))}
+        </div>
+      </SettingsCard>
+    );
+  }
 
   return (
     <SettingsCard title={t('settings.values.title')} isSaving={autoSave.isSaving}>
@@ -189,18 +200,24 @@ interface ImportanceDotsProps {
  * 10個の小さな丸ボタン。選択済みは bg-primary、未選択は bg-muted。
  */
 function ImportanceDots({ value, onChange }: ImportanceDotsProps) {
+  const t = useTranslations();
+
   return (
-    <div className="flex shrink-0 items-center gap-1" role="group" aria-label="Importance">
+    <div
+      className="flex shrink-0 items-center gap-1"
+      role="group"
+      aria-label={t('settings.values.importance')}
+    >
       {Array.from({ length: 10 }, (_, i) => i + 1).map((dot) => (
         <button
           key={dot}
           type="button"
           className={cn(
-            'size-3 rounded-full transition-colors',
+            '-m-[5px] size-3 rounded-full bg-clip-content p-2 transition-colors',
             dot <= value ? 'bg-primary' : 'bg-muted',
           )}
           onClick={() => onChange(dot)}
-          aria-label={`${dot}`}
+          aria-label={t('settings.values.setImportance', { value: dot })}
         />
       ))}
     </div>

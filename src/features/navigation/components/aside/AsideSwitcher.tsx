@@ -2,12 +2,11 @@
 
 import { SegmentedControl } from '@/components/ui/segmented-control';
 
-export type AsideType = 'none' | 'plan' | 'record' | 'stats' | 'chat' | 'reflection';
+export type AsideType = 'none' | 'plan' | 'record' | 'chat' | 'reflection';
 
 const asideOptions = [
   { value: 'plan' as const, label: 'Plan' },
   { value: 'record' as const, label: 'Record' },
-  { value: 'stats' as const, label: 'Stats' },
   { value: 'chat' as const, label: 'Chat' },
 ];
 
@@ -19,13 +18,13 @@ interface AsideSwitcherProps {
 
 /**
  * アサイド切り替えセグメントコントロール
- * Plan / Record / Stats / Chat をタブ風に切り替え
+ * Plan / Record / Chat をタブ風に切り替え
  */
 export function AsideSwitcher({ currentAside, onChange, className }: AsideSwitcherProps) {
   return (
     <SegmentedControl
       options={asideOptions}
-      value={currentAside as 'plan' | 'record' | 'stats' | 'chat'}
+      value={currentAside as 'plan' | 'record' | 'chat'}
       onChange={onChange}
       className={className}
     />

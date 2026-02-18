@@ -9,9 +9,10 @@ export function useDayView({
   date,
   plans,
   onPlanUpdate: _onPlanUpdate,
+  timezone,
 }: UseDayViewOptions): UseDayViewReturn {
   // プランデータ処理
-  const { dayPlans, planPositions } = useDayPlans({ date, plans });
+  const { dayPlans, planPositions } = useDayPlans({ date, plans, timezone });
 
   // 今日かどうかの判定
   const isTodayFlag = useIsToday(date);
