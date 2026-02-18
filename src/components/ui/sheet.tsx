@@ -85,10 +85,10 @@ const SheetContent = ({
         {showCloseButton && (
           <SheetPrimitive.Close
             className={cn(
-              'absolute top-4 right-4 rounded opacity-70 transition-opacity hover:opacity-100',
+              'text-foreground absolute top-4 right-4 flex size-8 items-center justify-center rounded-lg transition-colors',
+              'hover:bg-state-hover active:bg-state-hover',
               'focus:outline-hidden focus-visible:ring-0',
               'disabled:pointer-events-none',
-              'data-[state=open]:bg-state-selected',
             )}
           >
             <XIcon className="size-4" />
