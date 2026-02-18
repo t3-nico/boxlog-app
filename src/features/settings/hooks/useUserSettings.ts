@@ -19,7 +19,7 @@ import type { ProductivityZone } from '../types/chronotype';
  */
 export function useUserSettings() {
   const store = useCalendarSettingsStore();
-  const updateSettings = store.updateSettings;
+  const updateSettings = useCalendarSettingsStore((s) => s.updateSettings);
   const utils = api.useUtils();
 
   // DBから設定を取得

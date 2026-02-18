@@ -16,7 +16,7 @@ import {
   checkBrowserNotificationSupport,
   requestNotificationPermission,
 } from '@/features/notifications/utils/notification-helpers';
-import { trpc } from '@/lib/trpc/client';
+import { api } from '@/lib/trpc';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
@@ -153,10 +153,10 @@ function DeliveryMethodDropdown({
 
 export function NotificationSettings() {
   const t = useTranslations();
-  const utils = trpc.useUtils();
+  const utils = api.useUtils();
 
   // 通知設定を取得
-  const { data: preferences, isLoading } = trpc.notificationPreferences.get.useQuery();
+  const { data: preferences, isLoading } = api.notificationPreferences.get.useQuery();
 
   // サーバーデータから設定を導出（useEffect同期不要）
   const serverSettings = useMemo<DeliverySettings>(
@@ -180,7 +180,7 @@ export function NotificationSettings() {
   });
 
   // 配信設定を更新
-  const updateMutation = trpc.notificationPreferences.updateDeliverySettings.useMutation({
+  const updateMutation = api.notificationPreferences.updateDeliverySettings.useMutation({
     onSuccess: () => {
       utils.notificationPreferences.get.invalidate();
     },

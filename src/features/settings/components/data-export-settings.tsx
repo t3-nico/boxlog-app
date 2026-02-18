@@ -6,7 +6,7 @@ import { Download, FileJson, History, Upload } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
-import { trpc } from '@/lib/trpc/client';
+import { api } from '@/lib/trpc';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
@@ -17,7 +17,7 @@ export const DataExportSettings = memo(function DataExportSettings() {
   const t = useTranslations();
   const [autoBackup, setAutoBackup] = useState(true);
 
-  const exportDataQuery = trpc.user.exportData.useQuery(undefined, {
+  const exportDataQuery = api.user.exportData.useQuery(undefined, {
     enabled: false, // 手動で実行
   });
 

@@ -7,7 +7,6 @@ import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
 import { logger } from '@/lib/logger';
-import { createClient } from '@/lib/supabase/server';
 import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc';
 
 // 配信方法の型
@@ -48,7 +47,7 @@ export const notificationPreferencesRouter = createTRPCRouter({
       });
     }
 
-    const supabase = await createClient();
+    const supabase = ctx.supabase;
 
     const { data, error } = await supabase
       .from('notification_preferences')
@@ -101,7 +100,7 @@ export const notificationPreferencesRouter = createTRPCRouter({
         });
       }
 
-      const supabase = await createClient();
+      const supabase = ctx.supabase;
 
       // 現在の設定を取得
       const { data: currentData } = await supabase
@@ -165,7 +164,7 @@ export const notificationPreferencesRouter = createTRPCRouter({
         });
       }
 
-      const supabase = await createClient();
+      const supabase = ctx.supabase;
 
       const { error } = await supabase.from('notification_preferences').upsert(
         {

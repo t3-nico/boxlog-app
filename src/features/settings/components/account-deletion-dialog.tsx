@@ -16,7 +16,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { logger } from '@/lib/logger';
-import { trpc } from '@/lib/trpc/client';
+import { api } from '@/lib/trpc';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
@@ -35,7 +35,7 @@ export function AccountDeletionDialog() {
   const [password, setPassword] = useState('');
   const [confirmText, setConfirmText] = useState('');
 
-  const deleteAccountMutation = trpc.user.deleteAccount.useMutation({
+  const deleteAccountMutation = api.user.deleteAccount.useMutation({
     onSuccess: () => {
       logger.info('Account deleted', {
         component: 'account-deletion-dialog',
