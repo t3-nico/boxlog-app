@@ -287,13 +287,3 @@ export interface AnalyticsEvent {
  */
 export type RouteFunction = () => string;
 export type ParameterizedRouteFunction<T = string> = (param: T) => string;
-
-const naming = {
-  SCREENS,
-  FEATURES,
-  ANALYTICS_EVENTS,
-  FILE_NAMING,
-  ROUTES,
-  CSS_CLASSES,
-};
-export default naming;

@@ -391,28 +391,3 @@ export function validateNamingConsistency(): {
     errors,
   };
 }
-
-const namingUtils = {
-  createPageViewEvent,
-  createActionEvent,
-  createEngagementEvent,
-  createErrorEvent,
-  createPerformanceEvent,
-  navigateToScreen,
-  getParameterizedRoute,
-  getPageClassName,
-  getComponentClassName,
-  isValidScreen,
-  isValidFeature,
-  isValidScreenValue,
-  isValidFeatureValue,
-  getScreenValue,
-  getFeatureValue,
-  getScreenName,
-  getFeatureName,
-  getAllScreens,
-  getAllFeatures,
-  validateNamingConsistency,
-};
-
-export default namingUtils;

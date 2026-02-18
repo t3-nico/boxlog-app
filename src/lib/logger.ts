@@ -1,6 +1,8 @@
 /**
- * 開発用ロガー
- * 本番環境ではログを出力しない
+ * アプリケーションロガー
+ *
+ * - error / warn: 全環境で出力（本番でのエラー検知に必須）
+ * - log / info / debug: 開発環境のみ出力
  */
 
 const isDevelopment = process.env.NODE_ENV === 'development';
@@ -12,14 +14,10 @@ export const logger = {
     }
   },
   error: (...args: unknown[]) => {
-    if (isDevelopment) {
-      console.error(...args);
-    }
+    console.error(...args);
   },
   warn: (...args: unknown[]) => {
-    if (isDevelopment) {
-      console.warn(...args);
-    }
+    console.warn(...args);
   },
   info: (...args: unknown[]) => {
     if (isDevelopment) {

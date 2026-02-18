@@ -388,5 +388,3 @@ export const globalApiMiddleware = new ApiMiddleware();
 export const processApiRequest = globalApiMiddleware.process.bind(globalApiMiddleware);
 export const getApiStats = globalApiMiddleware.getStats.bind(globalApiMiddleware);
 export const resetApiStats = globalApiMiddleware.resetStats.bind(globalApiMiddleware);
-
-export default globalApiMiddleware;

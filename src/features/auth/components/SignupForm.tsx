@@ -294,21 +294,23 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                   />
                   <label htmlFor="agree-terms" className="text-sm leading-relaxed">
                     {t('auth.signupForm.byContinuing')}{' '}
-                    <Link
-                      href="/legal/terms"
+                    <a
+                      href="https://dayopt.app/legal/terms"
                       target="_blank"
+                      rel="noopener noreferrer"
                       className="text-muted-foreground hover:text-foreground underline underline-offset-4"
                     >
                       {t('auth.signupForm.termsOfService')}
-                    </Link>{' '}
+                    </a>{' '}
                     {t('auth.signupForm.and')}{' '}
-                    <Link
-                      href="/legal/privacy"
+                    <a
+                      href="https://dayopt.app/legal/privacy"
                       target="_blank"
+                      rel="noopener noreferrer"
                       className="text-muted-foreground hover:text-foreground underline underline-offset-4"
                     >
                       {t('auth.signupForm.privacyPolicy')}
-                    </Link>
+                    </a>
                     に同意します。
                   </label>
                 </div>
