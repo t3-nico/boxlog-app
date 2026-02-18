@@ -5,26 +5,25 @@ import { useTranslations } from 'next-intl';
 
 import { Button } from '@/components/ui/button';
 import { AIInspectorContent } from '@/features/ai/components/AIInspectorContent';
+import { PlanListPanel } from '@/features/calendar/components/aside/PlanListPanel';
+import { RecordListPanel } from '@/features/calendar/components/aside/RecordListPanel';
 import { ReflectionPanel } from '@/features/reflection/components/ReflectionPanel';
-
-import { AsideSwitcher, type AsideType } from '../layout/Header/AsideSwitcher';
-
 import { StatsPanel } from '@/features/stats/components/StatsPanel';
-import { PlanListPanel } from './PlanListPanel';
-import { RecordListPanel } from './RecordListPanel';
 
-interface CalendarAsideProps {
+import { AsideSwitcher, type AsideType } from './AsideSwitcher';
+
+interface AppAsideProps {
   asideType: AsideType;
   onAsideChange: (aside: AsideType) => void;
 }
 
 /**
- * カレンダーアサイド
+ * アプリケーション共通アサイド
  *
  * 共通ヘッダー（AsideSwitcher + 閉じるボタン）を持ち、
- * asideTypeに応じてPlan/Record/Statsパネルを切り替え表示
+ * asideTypeに応じてPlan/Record/Stats/Chat/Reflectionパネルを切り替え表示
  */
-export function CalendarAside({ asideType, onAsideChange }: CalendarAsideProps) {
+export function AppAside({ asideType, onAsideChange }: AppAsideProps) {
   const t = useTranslations('calendar');
 
   if (asideType === 'none') return null;
@@ -40,7 +39,7 @@ export function CalendarAside({ asideType, onAsideChange }: CalendarAsideProps) 
       case 'chat':
         return <AIInspectorContent />;
       case 'reflection':
-        return <ReflectionPanel reflection={null} />;
+        return <ReflectionPanel reflections={[]} />;
       default:
         return null;
     }

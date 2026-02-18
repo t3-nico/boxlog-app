@@ -44,7 +44,6 @@ CalendarController              メインエントリポイント
 │       ├── PlanContextMenu     右クリックメニュー
 │       └── CurrentTimeLine     現在時刻線
 ├── aside/
-│   ├── CalendarAside            アサイド切替
 │   ├── PlanListPanel           プラン一覧パネル
 │   └── RecordListPanel         レコード一覧パネル
 ├── sidebar/
@@ -63,7 +62,7 @@ CalendarController              メインエントリポイント
 | Store | 用途 | persist |
 |-------|------|---------|
 | `useCalendarFilterStore` | タイプ/タグのフィルター | Yes |
-| `useCalendarAsideStore` | アサイド種別・サイズ | Yes |
+| `useAppAsideStore` | アサイド種別・サイズ（`@/features/navigation`） | Yes |
 | `useCalendarDragStore` | ドラッグ元・ゴースト・プレビュー時間 | No |
 | `useCalendarScrollStore` | スクロール位置同期 | No |
 
@@ -108,7 +107,7 @@ CalendarController              メインエントリポイント
 | `chat` | AIチャット |
 | `none` | アサイド非表示 |
 
-`useCalendarAsideStore` でサイズ・種別を管理。
+`useAppAsideStore`（`@/features/navigation`）でサイズ・種別を管理。
 
 ---
 

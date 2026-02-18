@@ -26,7 +26,7 @@ import { DnDProvider } from '../providers/DnDProvider';
 
 import type { CalendarViewProps, CalendarViewType } from '../types/calendar.types';
 
-import { useCalendarAsideStore } from '../stores/useCalendarAsideStore';
+import { useAppAsideStore } from '@/features/navigation/stores/useAppAsideStore';
 import { CalendarViewRenderer } from './controller/components';
 import {
   useCalendarData,
@@ -55,8 +55,8 @@ export const CalendarController = ({
   const calendarNavigation = useCalendarNavigation();
 
   // アサイド状態（Zustand永続化）
-  const currentAside = useCalendarAsideStore.use.asideType();
-  const setCurrentAside = useCalendarAsideStore.use.setAside();
+  const currentAside = useAppAsideStore.use.asideType();
+  const setCurrentAside = useAppAsideStore.use.setAside();
 
   // 現在のlocaleを取得（例: /ja/day -> ja）
   const locale = pathname?.split('/')[1] || 'ja';

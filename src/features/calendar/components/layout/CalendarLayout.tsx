@@ -7,15 +7,15 @@ import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { cn } from '@/lib/utils';
 
-import { useResizeHandle } from '../../hooks/useResizeHandle';
-import { useCalendarAsideStore } from '../../stores/useCalendarAsideStore';
+import { AppAside } from '@/features/navigation/components/aside/AppAside';
+import type { AsideType } from '@/features/navigation/components/aside/AsideSwitcher';
+import { useAppAsideStore } from '@/features/navigation/stores/useAppAsideStore';
 
+import { useResizeHandle } from '../../hooks/useResizeHandle';
 import { useSwipeGesture } from '../../hooks/useSwipeGesture';
 import type { CalendarViewType } from '../../types/calendar.types';
 
-import { CalendarAside } from '../aside/CalendarAside';
 import { CalendarHeader } from './Header';
-import type { AsideType } from './Header/AsideSwitcher';
 
 export interface CalendarLayoutProps {
   children: React.ReactNode;
@@ -99,8 +99,8 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
     const showAside = currentAside && currentAside !== 'none';
 
     // アサイドリサイズ
-    const asideSize = useCalendarAsideStore.use.asideSize();
-    const setAsideSize = useCalendarAsideStore.use.setAsideSize();
+    const asideSize = useAppAsideStore.use.asideSize();
+    const setAsideSize = useAppAsideStore.use.setAsideSize();
     const { percent, isResizing, handleMouseDown, containerRef } = useResizeHandle({
       initialPercent: asideSize,
       onResizeEnd: setAsideSize,
@@ -176,7 +176,7 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
           >
             {showAside && onAsideChange && (
               <div className="bg-container h-full">
-                <CalendarAside asideType={currentAside} onAsideChange={onAsideChange} />
+                <AppAside asideType={currentAside} onAsideChange={onAsideChange} />
               </div>
             )}
           </aside>
@@ -191,7 +191,7 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
               showCloseButton={false}
               aria-label={t('aside.open')}
             >
-              <CalendarAside asideType={currentAside} onAsideChange={onAsideChange} />
+              <AppAside asideType={currentAside} onAsideChange={onAsideChange} />
             </SheetContent>
           </Sheet>
         )}

@@ -3,12 +3,14 @@ import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
 
-import { AsideSwitcher } from './AsideSwitcher';
+import {
+  AsideSwitcher,
+  type AsideType,
+} from '@/features/navigation/components/aside/AsideSwitcher';
+
 import { CompactDateNavigator, DateNavigator } from './DateNavigator';
 import { HeaderActions } from './HeaderActions';
 import { ViewSwitcher } from './ViewSwitcher';
-
-import type { AsideType } from './AsideSwitcher';
 
 /** カレンダーヘッダーのサブコンポーネント（ViewSwitcher, DateNavigator, HeaderActions, AsideSwitcher）。 */
 const meta = {

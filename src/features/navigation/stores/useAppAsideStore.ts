@@ -3,12 +3,12 @@ import { devtools, persist } from 'zustand/middleware';
 
 import { createSelectors } from '@/lib/zustand/createSelectors';
 
-import type { AsideType } from '../components/layout/Header/AsideSwitcher';
+import type { AsideType } from '../components/aside/AsideSwitcher';
 
 /** アサイドのデフォルト幅（%） */
 const DEFAULT_ASIDE_SIZE = 28;
 
-interface CalendarAsideState {
+interface AppAsideState {
   /** 現在開いているアサイドの種類 */
   asideType: AsideType;
   /** アサイドの幅（%） */
@@ -24,7 +24,7 @@ interface CalendarAsideState {
 }
 
 /**
- * カレンダーアサイド状態を管理するStore
+ * アプリ共通アサイド状態を管理するStore
  *
  * PC版ではサイドバーのPlan/RecordナビゲーションがこのStoreを通じてアサイドを操作。
  * localStorage に永続化されるため、ページリロード後もアサイド状態が復元される。
@@ -32,14 +32,14 @@ interface CalendarAsideState {
  * @example
  * ```tsx
  * // ✅ 推奨: auto-generated selectors
- * const asideType = useCalendarAsideStore.use.asideType()
- * const openAside = useCalendarAsideStore.use.openAside()
+ * const asideType = useAppAsideStore.use.asideType()
+ * const openAside = useAppAsideStore.use.openAside()
  *
  * // ✅ OK: 手動selector
- * const asideType = useCalendarAsideStore((state) => state.asideType)
+ * const asideType = useAppAsideStore((state) => state.asideType)
  * ```
  */
-const useCalendarAsideStoreBase = create<CalendarAsideState>()(
+const useAppAsideStoreBase = create<AppAsideState>()(
   devtools(
     persist(
       (set) => ({
@@ -55,7 +55,7 @@ const useCalendarAsideStoreBase = create<CalendarAsideState>()(
         name: 'calendar-panel-storage',
         // localStorage に不正な値が残っている場合は 'none' にリセット
         merge: (persistedState, currentState) => {
-          const state = persistedState as Partial<CalendarAsideState> | undefined;
+          const state = persistedState as Partial<AppAsideState> | undefined;
           // 旧 panelType / 新 asideType どちらでも復元可能
           const asideType =
             state?.asideType ??
@@ -74,9 +74,9 @@ const useCalendarAsideStoreBase = create<CalendarAsideState>()(
       },
     ),
     {
-      name: 'calendar-aside-store',
+      name: 'app-aside-store',
     },
   ),
 );
 
-export const useCalendarAsideStore = createSelectors(useCalendarAsideStoreBase);
+export const useAppAsideStore = createSelectors(useAppAsideStoreBase);

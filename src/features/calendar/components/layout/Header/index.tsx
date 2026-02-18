@@ -12,7 +12,7 @@ import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendar
 
 import type { CalendarViewType } from '../../../types/calendar.types';
 
-import type { AsideType } from './AsideSwitcher';
+import type { AsideType } from '@/features/navigation/components/aside/AsideSwitcher';
 import { DateNavigator } from './DateNavigator';
 import { DateRangeDisplay } from './DateRangeDisplay';
 import { HeaderActions } from './HeaderActions';

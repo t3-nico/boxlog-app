@@ -1,4 +1,3 @@
-export { useCalendarAsideStore } from './useCalendarAsideStore';
 export { useCalendarDragStore } from './useCalendarDragStore';
 export type { CalendarDragState } from './useCalendarDragStore';
 export { useCalendarFilterStore } from './useCalendarFilterStore';

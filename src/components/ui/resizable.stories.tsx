@@ -15,7 +15,7 @@ import { cn } from '@/lib/utils';
  * - デフォルト: 28%, min: 25%, max: 40%, min-width: 288px
  * - ハンドル: 1px境界線（bg-border）、ホバー/ドラッグ中に bg-primary
  * - ドラッグ中はカーソルが col-resize に変化
- * - サイズは localStorage に永続化（useCalendarAsideStore）
+ * - サイズは localStorage に永続化（useAppAsideStore）
  *
  * ## 使用箇所
  *

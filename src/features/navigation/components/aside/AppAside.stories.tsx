@@ -3,10 +3,10 @@ import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 
-import type { AsideType } from '../layout/Header/AsideSwitcher';
-import { CalendarAside } from './CalendarAside';
+import { AppAside } from './AppAside';
+import type { AsideType } from './AsideSwitcher';
 
-/** CalendarAside - カレンダーアサイド */
+/** AppAside - アプリケーション共通アサイド */
 const meta = {
   title: 'Features/Aside/Overview',
   parameters: {
@@ -30,7 +30,7 @@ function InteractiveAsideStory() {
   const [asideType, setAsideType] = useState<AsideType>('plan');
   return (
     <AsideFrame>
-      <CalendarAside asideType={asideType} onAsideChange={setAsideType} />
+      <AppAside asideType={asideType} onAsideChange={setAsideType} />
     </AsideFrame>
   );
 }
@@ -43,7 +43,7 @@ function InteractiveAsideStory() {
 export const PlanPanel: Story = {
   render: () => (
     <AsideFrame>
-      <CalendarAside asideType="plan" onAsideChange={fn()} />
+      <AppAside asideType="plan" onAsideChange={fn()} />
     </AsideFrame>
   ),
 };
@@ -52,7 +52,7 @@ export const PlanPanel: Story = {
 export const RecordPanel: Story = {
   render: () => (
     <AsideFrame>
-      <CalendarAside asideType="record" onAsideChange={fn()} />
+      <AppAside asideType="record" onAsideChange={fn()} />
     </AsideFrame>
   ),
 };
@@ -67,15 +67,15 @@ export const AllPatterns: Story = {
   render: () => (
     <div className="flex flex-col items-start gap-6">
       <AsideFrame>
-        <CalendarAside asideType="plan" onAsideChange={fn()} />
+        <AppAside asideType="plan" onAsideChange={fn()} />
       </AsideFrame>
 
       <AsideFrame>
-        <CalendarAside asideType="record" onAsideChange={fn()} />
+        <AppAside asideType="record" onAsideChange={fn()} />
       </AsideFrame>
 
       <AsideFrame>
-        <CalendarAside asideType="chat" onAsideChange={fn()} />
+        <AppAside asideType="chat" onAsideChange={fn()} />
       </AsideFrame>
     </div>
   ),

@@ -29,8 +29,8 @@ import {
 } from '@/components/ui/command';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { useTheme } from '@/contexts/theme-context';
-import { useCalendarAsideStore } from '@/features/calendar/stores/useCalendarAsideStore';
 import { useCalendarFilterStore } from '@/features/calendar/stores/useCalendarFilterStore';
+import { useAppAsideStore } from '@/features/navigation/stores/useAppAsideStore';
 import { usePlans } from '@/features/plans/hooks';
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
 import { useSettingsModalStore } from '@/features/settings/stores/useSettingsModalStore';
@@ -109,7 +109,7 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
   const { openTagCreateModal } = useTagModalNavigation();
   const { resolvedTheme, setTheme } = useTheme();
   const openSettingsModal = useSettingsModalStore((state) => state.openModal);
-  const openAside = useCalendarAsideStore((state) => state.openAside);
+  const openAside = useAppAsideStore((state) => state.openAside);
 
   const toggleTheme = useCallback(() => {
     setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');
