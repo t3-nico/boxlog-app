@@ -26,7 +26,8 @@
       "density_default": "標準",
       "density_spacious": "ゆったり",
       "generalSettings": "一般設定",
-      "timesheet": "タイムシート"
+      "timesheet": "タイムシート",
+      "stats": "統計"
     },
     "mobile": {
       "drawer": {
@@ -151,7 +152,8 @@
       "dropFailed": "ドロップに失敗しました"
     },
     "actions": {
-      "goToToday": "今日へ移動"
+      "goToToday": "今日へ移動",
+      "close": "閉じる"
     },
     "performance": {
       "notCalculated": "未計測",
@@ -235,6 +237,27 @@
       "noItems": "予定なし",
       "noDate": "日付なし"
     },
+    "stats": {
+      "progress": "進捗",
+      "vsLastWeek": "先週比",
+      "previousWeek": "先週",
+      "streak": "連続記録",
+      "days": "日",
+      "longestStreak": "最長: {days}日",
+      "tag": "タグ",
+      "plan": "Plan",
+      "done": "Done",
+      "percent": "%",
+      "total": "合計",
+      "backToAll": "すべてのタグ",
+      "noTagData": "この期間のタグデータがありません",
+      "emptyTitle": "今週のデータがありません",
+      "emptyDescription": "プランとレコードを追加して進捗を確認しましょう",
+      "periodWeek": "週",
+      "periodMonth": "月",
+      "periodYear": "年",
+      "periodAll": "全期間"
+    },
     "timesheet": {
       "emptyTitle": "今週のエントリはありません",
       "emptyDescription": "プランとレコードがここに表示されます",
@@ -259,7 +282,7 @@
     "timeGrid": {
       "ariaLabel": "カレンダータイムグリッド - クリックまたはEnterキーでイベントを作成"
     },
-    "panel": {
+    "aside": {
       "open": "サイドパネルを開く",
       "plan": "プラン",
       "record": "記録",
@@ -329,6 +352,28 @@
         "today": "今日",
         "thisWeek": "今週",
         "thisMonth": "今月"
+      }
+    },
+    "reflection": {
+      "empty": {
+        "title": "まだ振り返りがありません",
+        "description": "今日のアクティビティからAIが振り返りを生成します",
+        "generate": "振り返りを生成"
+      },
+      "sections": {
+        "activities": "アクティビティ",
+        "insights": "所感",
+        "question": "問いかけ",
+        "note": "あなたのメモ"
+      },
+      "userNote": {
+        "placeholder": "感じたことを書いてみましょう..."
+      },
+      "list": {
+        "thisWeek": "今週",
+        "lastWeek": "先週",
+        "older": "それ以前",
+        "back": "一覧に戻る"
       }
     },
     "error": {

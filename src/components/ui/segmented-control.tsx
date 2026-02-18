@@ -17,7 +17,7 @@ interface SegmentedControlProps<T extends string> {
 }
 
 /**
- * セグメントコントロール。2〜4個の選択肢を横並びで表示し1つを選択するUI。PanelSwitcher、Inspector等で使用。
+ * セグメントコントロール。2〜4個の選択肢を横並びで表示し1つを選択するUI。AsideSwitcher、Inspector等で使用。
  */
 export function SegmentedControl<T extends string>({
   options,

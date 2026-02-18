@@ -9,7 +9,7 @@ import { SidebarShell } from './SidebarShell';
 
 /** サイドバーシェル。カレンダーや設定ページで使用。折りたたみ可能で、状態はlocalStorageに永続化される。 */
 const meta = {
-  title: 'Features/Navigation/Sidebar',
+  title: 'Features/Sidebar/Shell',
   component: SidebarShell,
   parameters: {
     layout: 'fullscreen',

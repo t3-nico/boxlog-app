@@ -1,21 +1,21 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-/** パネル最小幅（コンテナ幅に対する%） */
-const MIN_PANEL_PERCENT = 25;
-/** パネル最大幅（コンテナ幅に対する%） */
-const MAX_PANEL_PERCENT = 40;
+/** アサイド最小幅（コンテナ幅に対する%） */
+const MIN_ASIDE_PERCENT = 25;
+/** アサイド最大幅（コンテナ幅に対する%） */
+const MAX_ASIDE_PERCENT = 40;
 
 interface UseResizeHandleOptions {
-  /** 現在のパネル幅（%） */
+  /** 現在のアサイド幅（%） */
   initialPercent: number;
   /** リサイズ完了時のコールバック（%値） */
   onResizeEnd: (percent: number) => void;
 }
 
 /**
- * サイドパネルのドラッグリサイズを制御するフック
+ * アサイドのドラッグリサイズを制御するフック
  *
- * マウスドラッグでパネル幅を変更。ドラッグ中はリアルタイムで%を更新し、
+ * マウスドラッグでアサイド幅を変更。ドラッグ中はリアルタイムで%を更新し、
  * ドラッグ終了時に onResizeEnd でストアに永続化する。
  */
 export function useResizeHandle({ initialPercent, onResizeEnd }: UseResizeHandleOptions) {
@@ -43,12 +43,12 @@ export function useResizeHandle({ initialPercent, onResizeEnd }: UseResizeHandle
       const startPercent = percent;
 
       const handleMouseMove = (moveEvent: MouseEvent) => {
-        // ハンドルを左に動かす → パネルが広がる（右端固定のため）
+        // ハンドルを左に動かす → アサイドが広がる（右端固定のため）
         const deltaPx = startX - moveEvent.clientX;
         const deltaPercent = (deltaPx / containerWidth) * 100;
         const newPercent = Math.min(
-          MAX_PANEL_PERCENT,
-          Math.max(MIN_PANEL_PERCENT, startPercent + deltaPercent),
+          MAX_ASIDE_PERCENT,
+          Math.max(MIN_ASIDE_PERCENT, startPercent + deltaPercent),
         );
         setPercent(Math.round(newPercent * 10) / 10);
       };
@@ -77,7 +77,7 @@ export function useResizeHandle({ initialPercent, onResizeEnd }: UseResizeHandle
   );
 
   return {
-    /** パネル幅（%） */
+    /** アサイド幅（%） */
     percent,
     isResizing,
     handleMouseDown,

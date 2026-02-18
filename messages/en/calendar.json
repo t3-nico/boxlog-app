@@ -26,7 +26,8 @@
       "density_default": "Default",
       "density_spacious": "Spacious",
       "generalSettings": "General settings",
-      "timesheet": "Timesheet"
+      "timesheet": "Timesheet",
+      "stats": "Stats"
     },
     "mobile": {
       "drawer": {
@@ -151,7 +152,8 @@
       "dropFailed": "Drop failed"
     },
     "actions": {
-      "goToToday": "Go to today"
+      "goToToday": "Go to today",
+      "close": "Close"
     },
     "performance": {
       "notCalculated": "Not Calculated",
@@ -235,6 +237,27 @@
       "noItems": "No items",
       "noDate": "No Date"
     },
+    "stats": {
+      "progress": "Progress",
+      "vsLastWeek": "vs Last Week",
+      "previousWeek": "Last week",
+      "streak": "Streak",
+      "days": "days",
+      "longestStreak": "Best: {days} days",
+      "tag": "Tag",
+      "plan": "Plan",
+      "done": "Done",
+      "percent": "%",
+      "total": "Total",
+      "backToAll": "All tags",
+      "noTagData": "No tag data for this period",
+      "emptyTitle": "No data this week",
+      "emptyDescription": "Add plans and records to see your progress",
+      "periodWeek": "Week",
+      "periodMonth": "Month",
+      "periodYear": "Year",
+      "periodAll": "All"
+    },
     "timesheet": {
       "emptyTitle": "No entries this week",
       "emptyDescription": "Plans and records will appear here",
@@ -259,8 +282,8 @@
     "timeGrid": {
       "ariaLabel": "Calendar time grid - click or press Enter to create event"
     },
-    "panel": {
-      "open": "Open side panel",
+    "aside": {
+      "open": "Open aside",
       "plan": "Plans",
       "record": "Records",
       "stats": "Statistics",
@@ -329,6 +352,28 @@
         "today": "Today",
         "thisWeek": "This week",
         "thisMonth": "This month"
+      }
+    },
+    "reflection": {
+      "empty": {
+        "title": "No reflection yet",
+        "description": "Generate an AI reflection from today's activities",
+        "generate": "Generate Reflection"
+      },
+      "sections": {
+        "activities": "Activities",
+        "insights": "Insights",
+        "question": "Question",
+        "note": "Your Note"
+      },
+      "userNote": {
+        "placeholder": "Add your thoughts..."
+      },
+      "list": {
+        "thisWeek": "This Week",
+        "lastWeek": "Last Week",
+        "older": "Older",
+        "back": "Back to list"
       }
     },
     "error": {

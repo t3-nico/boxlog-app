@@ -1,0 +1,150 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Features/Calendar/Docs" />
+
+# Calendar
+
+時間管理の中核ビュー。プラン・レコードをタイムグリッド上に表示し、ドラッグ&ドロップで直感的に操作する。
+
+---
+
+## ビュー一覧
+
+| ビュー | 説明 | コンポーネント |
+|-------|------|--------------|
+| **Day** | 1日のタイムグリッド | `DayView` |
+| **Week** | 7日間のタイムグリッド | `WeekView` |
+| **Multi-Day** | 2〜9日間のカスタム表示 | `MultiDayView` |
+| **Agenda** | リスト形式の予定一覧 | `AgendaView` |
+| **Timesheet** | テーブル形式のタイムシート | `TimesheetView` |
+| **Stats** | 統計・分析 | `StatsView`（`@/features/stats`） |
+
+ビュー切替は `ViewSwitcherList` コンポーネントで行い、`CalendarNavigationContext` で状態管理。
+
+---
+
+## コンポーネント構成
+
+```
+CalendarController              メインエントリポイント
+├── layout/
+│   ├── CalendarLayout          レイアウトラッパー
+│   └── Header/                 日付表示・ビュー操作
+├── views/
+│   ├── DayView/                1日ビュー
+│   ├── WeekView/               週ビュー
+│   ├── MultiDayView/           N日ビュー
+│   ├── AgendaView/             アジェンダ
+│   ├── TimesheetView/          タイムシート
+│   └── shared/
+│       ├── grid/               TimeGrid, TimeColumn, GridLines
+│       ├── PlanCard/           プランカード描画
+│       ├── DayColumn/          日カラム
+│       ├── CalendarDragSelection/  ドラッグ選択レイヤー
+│       ├── PlanContextMenu     右クリックメニュー
+│       └── CurrentTimeLine     現在時刻線
+├── aside/
+│   ├── PlanListPanel           プラン一覧パネル
+│   └── RecordListPanel         レコード一覧パネル
+├── sidebar/
+│   ├── ViewSwitcherList        ビュー切替
+│   └── tag-filter/             タグフィルターUI
+├── animations/                 ビュー遷移アニメーション
+└── controller/                 ビュー描画ディスパッチ
+```
+
+---
+
+## 状態管理
+
+### Zustand Stores
+
+| Store | 用途 | persist |
+|-------|------|---------|
+| `useCalendarFilterStore` | タイプ/タグのフィルター | Yes |
+| `useAppAsideStore` | アサイド種別・サイズ（`@/features/navigation`） | Yes |
+| `useCalendarDragStore` | ドラッグ元・ゴースト・プレビュー時間 | No |
+| `useCalendarScrollStore` | スクロール位置同期 | No |
+
+### Context
+
+| Context | 用途 |
+|---------|------|
+| `CalendarNavigationContext` | 日付・ビュー・ナビゲーション操作 |
+| `CalendarGridProvider` | グリッド計算の共有 |
+
+---
+
+## ドラッグ & ドロップ
+
+- **技術**: `@dnd-kit/core`
+- **ソース**: カレンダーグリッド、アサイド
+- **ターゲット**: タイムグリッドセル
+- **センサー**: PointerSensor（8px閾値）、TouchSensor（250ms遅延）
+- **機能**: ドラッグプレビュー、時間計算、モバイルハプティクス、繰り返しプラン例外処理
+
+---
+
+## フィルター
+
+| フィルター | 説明 |
+|-----------|------|
+| タイプ別 | Plan / Record の表示切替 |
+| タグ別 | 階層対応のマルチタグフィルタ |
+| 未タグ | タグなしアイテムの表示トグル |
+
+`useCalendarFilterStore` で管理、localStorage に永続化。
+
+---
+
+## アサイド
+
+| アサイドタイプ | 説明 |
+|------------|------|
+| `plan` | プラン一覧（ソート・検索付き） |
+| `record` | レコード一覧 |
+| `stats` | 統計サマリー（`@/features/stats`） |
+| `chat` | AIチャット |
+| `none` | アサイド非表示 |
+
+`useAppAsideStore`（`@/features/navigation`）でサイズ・種別を管理。
+
+---
+
+## コンテキストメニュー
+
+| メニュー | トリガー | アクション |
+|---------|---------|-----------|
+| `PlanContextMenu` | プランカード右クリック | 編集、複製、削除、ステータス変更 |
+| `EmptyAreaContextMenu` | 空エリア右クリック | プラン作成、レコード作成 |
+
+---
+
+## リアルタイム更新
+
+`useCalendarRealtime` で Supabase Realtime を購読。Plans / Records / Tags の変更をリアルタイムに反映。
+
+---
+
+## DB テーブル
+
+| テーブル | 用途 |
+|---------|------|
+| `plans` | プランデータ（タイトル、時間、ステータス等） |
+| `records` | 時間記録データ |
+| `plan_tags` / `record_tags` | タグ紐付け |
+| `recurrence_patterns` | 繰り返しルール |
+| `plan_instances` | 繰り返しインスタンス・例外 |
+| `tags` | マスタータグ |
+
+---
+
+## キーボード操作
+
+- ビュー切替、日付ナビゲーション、プラン選択
+- 週末トグルショートカット
+- Escape でキャンセル
+
+---
+
+**最終更新**: 2026-02-17

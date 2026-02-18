@@ -1,9 +1,7 @@
 'use client';
 
-import { format, isToday, startOfDay } from 'date-fns';
+import { format, startOfDay } from 'date-fns';
 import { useTranslations } from 'next-intl';
-
-import { cn } from '@/lib/utils';
 
 import { formatMinutes } from '../hooks/useTimesheetData';
 
@@ -28,10 +26,7 @@ export function TimesheetTotalRow({ dailyTotals, weekTotal, weekDates }: Timeshe
         const key = format(startOfDay(date), 'yyyy-MM-dd');
         const minutes = dailyTotals[key] ?? 0;
         return (
-          <td
-            key={date.toISOString()}
-            className={cn('px-2 py-2 text-right', isToday(date) && 'bg-primary-state-hover')}
-          >
+          <td key={date.toISOString()} className="px-2 py-2 text-right">
             {formatMinutes(minutes)}
           </td>
         );

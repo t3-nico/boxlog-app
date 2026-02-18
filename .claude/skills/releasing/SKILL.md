@@ -1,6 +1,6 @@
 ---
 name: releasing
-description: Dayoptのリリース作業をガイド。バージョン決定、重複チェック、リリースノート作成、タグ付けまでの全プロセスを支援。
+description: Dayoptのリリース作業をエンドツーエンドで実行。状態を自動判定し、version bump→タグ→デプロイ→リリースノートの全プロセスを支援。
 ---
 
 # Releasing Skill
@@ -16,27 +16,66 @@ Dayoptプロジェクトのリリース作業を安全かつ確実に実行す�
 - 「タグを作成」「タグ付け」
 - 「v0.X.0をリリース」
 
-## リリースワークフロー概要
+## 状態自動判定
+
+スキル起動時、まず現在の状態を判定して適切なフェーズから開始する：
 
 ```
-Phase 0: 準備（PRマージ前）
+ユーザー: 「v0.17.0リリースしたい」
+│
+├─ featureブランチにいる？（PRがオープン）
+│  └─ Phase 0 から: version bump → 品質チェック → PRマージを促す → タグ → リリースノート
+│
+├─ mainにいてタグがまだ？
+│  └─ Phase 1 から: タグ作成・push → リリースノート
+│
+├─ タグはあるがReleaseがまだ？
+│  └─ Phase 2 から: GitHub Actions確認 → リリースノート
+│
+└─ タグもReleaseも既にある？
+   └─ Phase 3 から: リリースノート上書きのみ
+```
+
+### 判定コマンド
+
+```bash
+# 1. 現在のブランチを確認
+git branch --show-current
+
+# 2. タグの存在確認
+git tag -l "v${VERSION}"
+
+# 3. GitHub Releaseの存在確認
+gh release view v${VERSION} 2>/dev/null && echo "exists" || echo "not found"
+
+# 4. package.json の現在バージョン
+node -p "require('./package.json').version"
+```
+
+## リリースワークフロー
+
+```
+Phase 0: 準備（featureブランチにいる場合）
   ├── 0.1 バージョン番号決定・重複チェック ← 最重要
-  ├── 0.2 コード品質確認（lint, typecheck, test, build）
-  ├── 0.3 package.json更新
-  └── 0.4 リリースノート作成
+  ├── 0.2 package.json バージョン更新（このPRに含める）
+  └── 0.3 コード品質確認（lint, typecheck, test, build）
+  → ユーザーにPRマージを促す
 
-Phase 1: PRマージ
-  ├── 1.1 PR作成
-  ├── 1.2 CI/CD確認
-  └── 1.3 マージ
+Phase 1: タグ作成・リリース（mainブランチ）
+  ├── 1.1 mainブランチ最新取得
+  ├── 1.2 Gitタグ作成・プッシュ
+  └── 1.3 GitHub Actions 自動実行の確認
+       ├── 本番デプロイ
+       └── GitHub Release作成（auto-generated notes）
 
-Phase 2: タグ作成
-  ├── 2.1 mainブランチ更新
-  ├── 2.2 Gitタグ作成・プッシュ
-  └── 2.3 GitHub Release確認
+Phase 2: リリースノート反映
+  ├── 2.1 前回リリース以降の全PRを取得
+  ├── 2.2 詳細なリリースノートを作成
+  └── 2.3 gh release edit で GitHub Release に反映
 
-Phase 3: デプロイ確認
-Phase 4: リリース後作業
+Phase 3: リリース後作業
+  ├── 3.1 デプロイ確認
+  └── 3.2 Sentry監視
 ```
 
 ## 必須チェック項目
@@ -54,26 +93,52 @@ gh release view v${VERSION} 2>/dev/null && echo "❌ Already exists!" || echo "�
 
 **重複が見つかった場合**: 必ず「v0.X.0ではなくv0.Y.0じゃないですか？」と確認する
 
-### Phase 0.2: コード品質
+### Phase 0.2: package.json バージョン更新
+
+```bash
+# 現在のPRブランチでバージョンを更新
+npm version ${VERSION} --no-git-tag-version
+# → コミットに含める（タグ打ち前にmainのpackage.jsonが正しい状態になる）
+```
+
+**ポイント**: リリース前の最後のPRにversion bumpを含めることで、タグ打ち後の後片付けがゼロになる。
+
+### Phase 0.3: コード品質
 
 ```bash
 npm run lint && npm run typecheck && npm run test:run && npm run build
 ```
 
-### Phase 0.3: バージョン更新
+### Phase 1.1: mainブランチ最新取得
 
 ```bash
-# PATCH: バグ修正 (0.3.0 → 0.3.1)
-npm version patch --no-git-tag-version
-
-# MINOR: 新機能 (0.3.0 → 0.4.0)
-npm version minor --no-git-tag-version
-
-# MAJOR: 破壊的変更 (0.3.0 → 1.0.0)
-npm version major --no-git-tag-version
+git checkout main
+git pull origin main
 ```
 
-### Phase 0.4: リリースノート作成（詳細化必須）
+### Phase 1.2: Gitタグ作成・プッシュ
+
+```bash
+git tag v${VERSION}
+git push origin v${VERSION}
+```
+
+タグpushにより GitHub Actions が自動で以下を実行：
+
+- 本番デプロイ（Vercel）
+- GitHub Release作成（GitHub auto-generated notes）
+
+### Phase 1.3: 自動実行の確認
+
+```bash
+# ワークフローの実行状況を確認
+gh run list --workflow=create-release.yml --limit 1
+
+# リリースが作成されたことを確認
+gh release view v${VERSION}
+```
+
+### Phase 2: リリースノート反映（詳細化必須）
 
 #### Step 1: PRとコミット情報を取得
 
@@ -93,6 +158,8 @@ done
 #### Step 2: 詳細なリリースノートを作成
 
 **粒度の基準**: 第三者が見ても「何が変わったか」がわかるレベル
+
+**構造テンプレート**: `docs/releases/template.md` を参照
 
 **❌ 悪い例（抽象的）**:
 
@@ -130,6 +197,13 @@ done
 4. **パフォーマンス (Performance)**: 最適化内容 + 改善値（あれば）
 5. **破壊的変更 (Breaking Changes)**: DB変更、削除されたAPI/コンポーネント
 
+#### Step 4: GitHub Release に反映
+
+```bash
+# 一時ファイルにリリースノートを書き出してから反映
+gh release edit v${VERSION} --notes-file /tmp/release-notes-v${VERSION}.md
+```
+
 #### チェックリスト
 
 - [ ] 各PRのコミットを確認した
@@ -138,20 +212,26 @@ done
 - [ ] 削除されたコンポーネント/機能をリストした
 - [ ] Full Changelogリンクがある
 
-## 詳細ドキュメント
+### Phase 3: リリース後作業
 
-完全なチェックリスト: `docs/releases/RELEASE_CHECKLIST.md`
+```bash
+# デプロイ確認
+# Vercel Dashboard で本番環境の動作確認
+
+# Sentryでエラー監視
+# エラーが急増していないことを確認
+```
 
 ## よくある失敗
 
 | 失敗                   | 対策                                           |
 | ---------------------- | ---------------------------------------------- |
 | バージョン重複         | Phase 0.1で必ず `gh release view`              |
-| package.json更新忘れ   | Phase 0.3でPRマージ前に更新                    |
-| Full Changelog抜け     | template.mdをコピーして使用                    |
-| 一部PRのみ記載         | `gh pr list --state merged` で全件取得         |
 | リリースノートが抽象的 | 各PRのコミットを取得して具体的な変更内容を記載 |
 | 破壊的変更の記載漏れ   | DB変更、削除コンポーネントを明記               |
+| 一部PRのみ記載         | `gh pr list --state merged` で全件取得         |
+| Full Changelog抜け     | template.mdの構造を参考にする                  |
+| version bump忘れ       | Phase 0.2でPRに含める（タグ前に完了）          |
 
 ## スクリプト
 
@@ -166,3 +246,7 @@ done
 ```bash
 .claude/skills/releasing/scripts/get-merged-prs.sh
 ```
+
+## 詳細ドキュメント
+
+完全なチェックリスト: `docs/releases/RELEASE_CHECKLIST.md`

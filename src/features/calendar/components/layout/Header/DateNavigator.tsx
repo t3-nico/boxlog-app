@@ -2,7 +2,6 @@
 
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
-import { buttonVariants } from '@/components/ui/button';
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
@@ -15,7 +14,6 @@ interface DateNavigatorProps {
   showTodayButton?: boolean | undefined;
   showArrows?: boolean | undefined;
   className?: string | undefined;
-  buttonClassName?: string | undefined;
   arrowSize?: 'sm' | 'md' | 'lg' | undefined;
 }
 
@@ -25,13 +23,18 @@ const arrowSizes = {
   lg: 'size-5',
 };
 
+const navButtonBase =
+  'flex h-full items-center justify-center transition-colors hover:bg-state-hover';
+
 /**
  * 日付ナビゲーション
  * 前後移動と今日への移動を提供
+ * Google Calendar風のグループ化ボタンバー
  *
  * **デザイン仕様**:
- * - ボタン: 32px（8pxグリッド準拠）
+ * - ボタン高さ: 32px（8pxグリッド準拠）
  * - アイコン: 16px（size-4）
+ * - 共通ボーダーで囲み、内部はdividerで区切る
  */
 export const DateNavigator = ({
   onNavigate,
@@ -39,63 +42,58 @@ export const DateNavigator = ({
   showTodayButton = true,
   showArrows = true,
   className,
-  buttonClassName,
   arrowSize = 'md',
 }: DateNavigatorProps) => {
   const t = useTranslations();
 
   return (
-    <div className={cn('flex items-center gap-2', className)}>
-      {/* 今日ボタン - 32px（8pxグリッド準拠） */}
-      {showTodayButton != null ? (
-        <HoverTooltip content={t('calendar.actions.goToToday')} side="bottom">
+    <div
+      className={cn(
+        'divide-border border-border inline-flex h-8 items-center divide-x overflow-hidden rounded-md border',
+        className,
+      )}
+    >
+      {showArrows && (
+        <HoverTooltip content={t('common.previous')} side="bottom" wrapperClassName="h-full">
+          <button
+            type="button"
+            onClick={() => onNavigate('prev')}
+            className={cn(navButtonBase, 'text-muted-foreground w-8')}
+            aria-label={t('common.previous')}
+          >
+            <ChevronLeft className={arrowSizes[arrowSize]} />
+          </button>
+        </HoverTooltip>
+      )}
+
+      {showTodayButton && (
+        <HoverTooltip
+          content={t('calendar.actions.goToToday')}
+          side="bottom"
+          wrapperClassName="h-full"
+        >
           <button
             type="button"
             onClick={() => onNavigate('today')}
-            className={cn(
-              buttonVariants({ variant: 'outline', size: 'sm' }),
-              'text-sm',
-              buttonClassName,
-            )}
+            className={cn(navButtonBase, 'px-3 text-sm font-medium')}
           >
-            <span>{todayLabel}</span>
+            {todayLabel}
           </button>
         </HoverTooltip>
-      ) : null}
+      )}
 
-      {/* 前後ナビゲーション - 32px（8pxグリッド準拠） */}
-      {showArrows != null ? (
-        <div className="flex items-center gap-1">
-          <HoverTooltip content={t('common.previous')} side="bottom">
-            <button
-              type="button"
-              onClick={() => onNavigate('prev')}
-              className={cn(
-                'flex size-8 items-center justify-center rounded-full transition-colors',
-                'hover:bg-state-hover',
-                'text-muted-foreground',
-              )}
-              aria-label={t('common.previous')}
-            >
-              <ChevronLeft className={arrowSizes[arrowSize]} />
-            </button>
-          </HoverTooltip>
-          <HoverTooltip content={t('common.next')} side="bottom">
-            <button
-              type="button"
-              onClick={() => onNavigate('next')}
-              className={cn(
-                'flex size-8 items-center justify-center rounded-full transition-colors',
-                'hover:bg-state-hover',
-                'text-muted-foreground',
-              )}
-              aria-label={t('common.next')}
-            >
-              <ChevronRight className={arrowSizes[arrowSize]} />
-            </button>
-          </HoverTooltip>
-        </div>
-      ) : null}
+      {showArrows && (
+        <HoverTooltip content={t('common.next')} side="bottom" wrapperClassName="h-full">
+          <button
+            type="button"
+            onClick={() => onNavigate('next')}
+            className={cn(navButtonBase, 'text-muted-foreground w-8')}
+            aria-label={t('common.next')}
+          >
+            <ChevronRight className={arrowSizes[arrowSize]} />
+          </button>
+        </HoverTooltip>
+      )}
     </div>
   );
 };

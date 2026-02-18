@@ -2,7 +2,25 @@ import { useState } from 'react';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
+import type { ModelInfo } from '@/server/services/ai/types';
+
 import { ChatInput } from './ChatInput';
+import { ModelSelector } from './ModelSelector';
+
+const MOCK_MODELS: ModelInfo[] = [
+  {
+    id: 'claude-sonnet-4-5-20250929',
+    name: 'Sonnet 4.5',
+    providerId: 'anthropic',
+    description: 'Balanced performance',
+  },
+  {
+    id: 'claude-haiku-4-5-20251001',
+    name: 'Haiku 4.5',
+    providerId: 'anthropic',
+    description: 'Fast & affordable',
+  },
+];
 
 /** ChatInput - AIチャット入力フォーム（内部stateで動作） */
 const meta = {
@@ -52,6 +70,32 @@ export const Loading: Story = {
 // ---------------------------------------------------------------------------
 // AllPatterns
 // ---------------------------------------------------------------------------
+
+/** モデルセレクター付き */
+export const WithModelSelector: Story = {
+  render: () => {
+    const [value, setValue] = useState('');
+    const [selectedModelId, setSelectedModelId] = useState<string | null>(null);
+    return (
+      <div className="border-border w-[320px] border">
+        <ChatInput
+          value={value}
+          onValueChange={setValue}
+          onSubmit={() => setValue('')}
+          onStop={() => {}}
+          startActions={
+            <ModelSelector
+              models={MOCK_MODELS}
+              selectedModelId={selectedModelId}
+              defaultModelId="claude-sonnet-4-5-20250929"
+              onSelect={setSelectedModelId}
+            />
+          }
+        />
+      </div>
+    );
+  },
+};
 
 /** 全パターン一覧 */
 export const AllPatterns: Story = {

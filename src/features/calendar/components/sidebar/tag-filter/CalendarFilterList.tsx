@@ -22,8 +22,6 @@ import { NotificationDropdown } from '@/features/notifications';
 import { useGlobalSearch } from '@/features/search';
 import { api } from '@/lib/trpc';
 
-import { SidebarNavigation } from '@/features/navigation/components/navigation-tabs/SidebarNavigation';
-
 import { TagSortableTree } from '@/features/tags/components/sortable-tree/TagSortableTree';
 import { CreateTagButton } from './components/CreateTagButton';
 import { FilterItem } from './components/FilterItem';
@@ -228,9 +226,6 @@ export function CalendarFilterList() {
             </div>
           )}
         </SidebarSection>
-
-        {/* ナビゲーション（Calendar/Plan/Record/Stats） */}
-        <SidebarNavigation />
 
         {/* 通知 + テーマ切替 */}
         <SidebarUtilities />

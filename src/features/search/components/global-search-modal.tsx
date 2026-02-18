@@ -29,6 +29,8 @@ import {
 } from '@/components/ui/command';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { useTheme } from '@/contexts/theme-context';
+import { useCalendarFilterStore } from '@/features/calendar/stores/useCalendarFilterStore';
+import { useAppAsideStore } from '@/features/navigation/stores/useAppAsideStore';
 import { usePlans } from '@/features/plans/hooks';
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
 import { useSettingsModalStore } from '@/features/settings/stores/useSettingsModalStore';
@@ -107,6 +109,7 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
   const { openTagCreateModal } = useTagModalNavigation();
   const { resolvedTheme, setTheme } = useTheme();
   const openSettingsModal = useSettingsModalStore((state) => state.openModal);
+  const openAside = useAppAsideStore((state) => state.openAside);
 
   const toggleTheme = useCallback(() => {
     setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');
@@ -124,8 +127,9 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
       openTagCreateModal,
       navigateToSettings,
       toggleTheme,
+      openAside,
     });
-  }, [router, openPlanInspector, openTagCreateModal, navigateToSettings, toggleTheme]);
+  }, [router, openPlanInspector, openTagCreateModal, navigateToSettings, toggleTheme, openAside]);
 
   // Reset query when modal closes
   useEffect(() => {
@@ -224,21 +228,22 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
       }
       addRecentPlan(planId, title);
       onClose();
-      router.push(`/plan?plan=${planId}`);
+      openPlanInspector(planId);
     },
-    [query, addToHistory, addRecentPlan, router, onClose],
+    [query, addToHistory, addRecentPlan, onClose, openPlanInspector],
   );
 
-  // Handle tag selection
+  // Handle tag selection - toggle tag filter visibility
+  const toggleTag = useCalendarFilterStore((s) => s.toggleTag);
   const handleTagSelect = useCallback(
     (tagId: string) => {
       if (query) {
         addToHistory(query);
       }
+      toggleTag(tagId);
       onClose();
-      router.push(`/tags/${tagId}`);
     },
-    [query, addToHistory, router, onClose],
+    [query, addToHistory, toggleTag, onClose],
   );
 
   return (

@@ -3,6 +3,7 @@
  * 全APIルーターの統合とエクスポート
  */
 
+import { chatRouter } from './routers/chat';
 import { notificationPreferencesRouter } from './routers/notificationPreferences';
 import { notificationsRouter } from './routers/notifications';
 import { plansRouter } from './routers/plans';
@@ -17,6 +18,7 @@ import { createTRPCRouter } from './trpc';
  * メインAPIルーター
  */
 export const appRouter = createTRPCRouter({
+  chat: chatRouter,
   plans: plansRouter,
   records: recordsRouter,
   suggestions: suggestionsRouter,

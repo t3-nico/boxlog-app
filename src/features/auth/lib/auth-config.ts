@@ -24,8 +24,8 @@ export const AUTH_CONFIG = {
 
   // リダイレクトURL
   REDIRECT_URLS: {
-    SIGN_IN: '/calendar',
-    SIGN_UP: '/calendar',
+    SIGN_IN: '/day',
+    SIGN_UP: '/day',
     SIGN_OUT: '/auth',
     PASSWORD_RESET: '/auth/reset-password',
   },

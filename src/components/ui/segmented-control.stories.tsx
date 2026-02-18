@@ -86,7 +86,7 @@ export const TwoOptions: Story = {
   render: () => <TwoOptionsExample />,
 };
 
-/** 3つの選択肢。実装例: サイドパネル PanelSwitcher */
+/** 3つの選択肢。実装例: アサイド AsideSwitcher */
 export const ThreeOptions: Story = {
   render: () => <ThreeOptionsExample />,
 };

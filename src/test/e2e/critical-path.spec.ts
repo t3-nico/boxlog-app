@@ -29,7 +29,7 @@ test.describe('Critical Path: プラン管理', () => {
     await passwordInput.fill(process.env.TEST_USER_PASSWORD!);
     await submitButton.click();
 
-    await page.waitForURL(/\/calendar/i, { timeout: 15000 });
+    await page.waitForURL(/\/(day|week|agenda|timesheet|stats)/i, { timeout: 15000 });
   });
 
   test('カレンダーページが正常に表示される', async ({ page }) => {
@@ -79,7 +79,7 @@ test.describe('Critical Path: レコード管理', () => {
     await passwordInput.fill(process.env.TEST_USER_PASSWORD!);
     await submitButton.click();
 
-    await page.waitForURL(/\/calendar/i, { timeout: 15000 });
+    await page.waitForURL(/\/(day|week|agenda|timesheet|stats)/i, { timeout: 15000 });
   });
 
   test('レコードがカレンダーに表示される', async ({ page }) => {
@@ -107,26 +107,6 @@ test.describe('Critical Path: タグ管理', () => {
     await passwordInput.fill(process.env.TEST_USER_PASSWORD!);
     await submitButton.click();
 
-    await page.waitForURL(/\/calendar/i, { timeout: 15000 });
-  });
-
-  test('タグページにアクセスできる', async ({ page }) => {
-    // タグページへのナビゲーション
-    const tagLink = page
-      .locator('a[href*="/tags"], [role="link"]:has-text("タグ"), [role="link"]:has-text("Tags")')
-      .first();
-
-    if (await tagLink.isVisible()) {
-      await tagLink.click();
-      await page.waitForLoadState('networkidle');
-    } else {
-      // 直接URLで遷移
-      await page.goto('/en/tags');
-      await page.waitForLoadState('networkidle');
-    }
-
-    // ページが表示される
-    const body = page.locator('body');
-    await expect(body).toBeVisible();
+    await page.waitForURL(/\/(day|week|agenda|timesheet|stats)/i, { timeout: 15000 });
   });
 });

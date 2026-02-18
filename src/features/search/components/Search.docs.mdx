@@ -1,0 +1,125 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Features/Search/Docs" />
+
+# Search
+
+グローバル検索 & コマンドパレット。Cmd/Ctrl + K でどこからでもアクセス可能。
+
+---
+
+## 概要
+
+| 項目 | 値 |
+|------|-----|
+| 起動 | `Cmd/Ctrl + K` |
+| UI | コマンドパレット（モーダル） |
+| 検索対象 | コマンド、Plans、Tags、履歴 |
+| 状態管理 | React Context（`GlobalSearchProvider`） |
+| データソース | クライアントサイド（tRPC不使用） |
+
+---
+
+## コンポーネント構成
+
+```
+GlobalSearchProvider            Context プロバイダー + キーバインド
+└── GlobalSearchModal           コマンドパレットモーダル
+    ├── Commands グループ       ナビゲーション・作成・アクション
+    ├── Recent Searches         検索履歴（localStorage）
+    ├── Recent Plans            最近のプラン
+    ├── Plans グループ          プラン検索結果
+    └── Tags グループ           タグ検索結果
+
+SearchBar                       通常サイズ検索バー
+CompactSearchBar                コンパクト版
+```
+
+---
+
+## 検索グループ
+
+| グループ | ソース | 説明 |
+|---------|-------|------|
+| **Commands** | `CommandRegistry` | ナビゲーション、作成、設定変更 |
+| **Recent Searches** | localStorage | 過去の検索クエリ（最大10件） |
+| **Plans** | `usePlans()` | タイトル・タグでフィルタ |
+| **Tags** | `useTagStore()` | タグ名検索 |
+
+---
+
+## クエリパーサー
+
+フィルター構文でインライン絞り込みが可能。
+
+| 構文 | 説明 | 例 |
+|------|------|-----|
+| `status:` | ステータスフィルター | `status:done` |
+| `#` | タグフィルター | `#marketing` |
+
+`parseSearchQuery()` がクエリからフィルターを抽出。
+空クエリ時は `getFilterHints()` でフィルターヒントを表示。
+
+---
+
+## コマンドレジストリ
+
+```typescript
+CommandRegistry (シングルトン)
+├── register(command)       コマンド登録
+├── getAll()                全コマンド取得
+├── getAvailable()          条件付きコマンドをフィルタ
+└── search(query)           キーワード検索
+```
+
+### デフォルトコマンド
+
+| カテゴリ | コマンド例 |
+|---------|----------|
+| Navigation | Calendar、Stats、Settings |
+| Create | New Plan、New Tag |
+| Actions | Toggle Theme、Toggle Sidebar |
+
+---
+
+## Hooks
+
+| Hook | 用途 |
+|------|------|
+| `useGlobalSearch()` | Context hook（open, close, isOpen） |
+| `useSearchHistory()` | localStorage 履歴管理（max 10） |
+| `useRecentPlans()` | 最近開いたプラン追跡 |
+
+---
+
+## データフロー
+
+```
+Cmd/Ctrl + K → GlobalSearchModal 表示
+       ↓
+クエリ入力 → parseSearchQuery()
+       ↓
+├── CommandRegistry.search(query)
+├── Plans フィルタリング（クライアント側）
+├── Tags フィルタリング（クライアント側）
+└── 検索履歴マッチング
+       ↓
+結果表示 → 選択
+├── Command → action 実行
+├── Plan → Inspector 開く
+└── Tag → カレンダーフィルター適用
+```
+
+---
+
+## 連携
+
+| 連携先 | 操作 |
+|-------|------|
+| `usePlanInspectorStore` | Plan 選択時に Inspector を開く |
+| `useCalendarFilterStore` | Tag 選択時にフィルター適用 |
+| `useSettingsModalStore` | Settings コマンド実行時にモーダルを開く |
+
+---
+
+**最終更新**: 2026-02-17

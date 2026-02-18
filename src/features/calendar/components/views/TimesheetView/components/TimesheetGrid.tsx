@@ -35,18 +35,28 @@ export function TimesheetGrid({ data, onPlanClick }: TimesheetGridProps) {
             <th scope="col" className="text-muted-foreground px-3 py-2 text-left text-xs">
               {t('tag')}
             </th>
-            {weekDates.map((date) => (
-              <th
-                key={date.toISOString()}
-                scope="col"
-                className={cn(
-                  'text-muted-foreground px-2 py-2 text-right text-xs',
-                  isToday(date) && 'bg-primary-state-hover text-primary',
-                )}
-              >
-                {format(date, 'EEE d')}
-              </th>
-            ))}
+            {weekDates.map((date) => {
+              const today = isToday(date);
+              return (
+                <th
+                  key={date.toISOString()}
+                  scope="col"
+                  className="text-muted-foreground px-2 py-2 text-right text-xs"
+                >
+                  <div className="flex items-center justify-end gap-1">
+                    <span className={cn(today && 'text-primary')}>{format(date, 'EEE')}</span>
+                    <span
+                      className={cn(
+                        'flex h-5 w-5 items-center justify-center rounded-full',
+                        today && 'bg-primary text-primary-foreground font-bold',
+                      )}
+                    >
+                      {format(date, 'd')}
+                    </span>
+                  </div>
+                </th>
+              );
+            })}
             <th scope="col" className="text-muted-foreground px-2 py-2 text-right text-xs">
               {t('total')}
             </th>

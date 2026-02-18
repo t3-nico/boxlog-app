@@ -7,7 +7,7 @@
 export type { CalendarPlan, ViewDateRange } from '@/features/calendar/types/calendar.types';
 import type { CalendarPlan, ViewDateRange } from '@/features/calendar/types/calendar.types';
 
-export type CalendarViewType = 'day' | '3day' | '5day' | 'week' | 'agenda' | 'timesheet';
+export type CalendarViewType = 'day' | '3day' | '5day' | 'week' | 'agenda' | 'timesheet' | 'stats';
 
 /**
  * 全ビューで共通する最小限のプロパティ
@@ -28,7 +28,7 @@ export interface BaseViewProps {
 
 /**
  * 時間グリッドビュー用の拡張プロパティ
- * DayView, ThreeDayView, FiveDayView, WeekView向け
+ * DayView, MultiDayView(3day/5day), WeekView向け
  */
 export interface GridViewProps extends BaseViewProps {
   // Core data

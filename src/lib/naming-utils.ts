@@ -149,7 +149,7 @@ export function navigateToScreen(screen: ScreenName): string {
     DASHBOARD: ROUTES.dashboard,
     CALENDAR: ROUTES.calendar,
     CALENDAR_VIEW: () => ROUTES.calendarView('month'), // デフォルトビュー
-    PLAN: ROUTES.plan,
+    PLAN: ROUTES.calendar,
     STATS: ROUTES.stats,
     STATS_DETAIL: () => ROUTES.statsDetail(''), // パラメータが必要
     HELP: settingsRouteStub,

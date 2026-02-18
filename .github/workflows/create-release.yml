@@ -68,50 +68,9 @@ jobs:
           echo "version=${VERSION}" >> $GITHUB_OUTPUT
           echo "version_number=${VERSION#v}" >> $GITHUB_OUTPUT
 
-      - name: Check if release notes exist
-        id: check_notes
-        run: |
-          NOTES_FILE="docs/releases/RELEASE_NOTES_${{ steps.version.outputs.version }}.md"
-          if [ -f "$NOTES_FILE" ]; then
-            echo "exists=true" >> $GITHUB_OUTPUT
-            echo "file=$NOTES_FILE" >> $GITHUB_OUTPUT
-          else
-            echo "exists=false" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Verify package.json version matches tag
-        run: |
-          PACKAGE_VERSION=$(node -p "require('./package.json').version")
-          TAG_VERSION="${{ steps.version.outputs.version_number }}"
-
-          if [ "$PACKAGE_VERSION" != "$TAG_VERSION" ]; then
-            echo "❌ Error: package.json version ($PACKAGE_VERSION) does not match tag version ($TAG_VERSION)"
-            exit 1
-          fi
-
-          echo "✅ Version match: $PACKAGE_VERSION"
-
-      - name: Create Release with notes file
-        if: steps.check_notes.outputs.exists == 'true'
+      - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          body_path: ${{ steps.check_notes.outputs.file }}
-          draft: false
-          prerelease: false
-          generate_release_notes: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Create Release with auto-generated notes
-        if: steps.check_notes.outputs.exists == 'false'
-        uses: softprops/action-gh-release@v2
-        with:
-          body: |
-            ## 🎉 Release ${{ steps.version.outputs.version }}
-
-            **⚠️ Note**: This release was created automatically. Release notes file was not found.
-
-            Please see the [Full Changelog](${{ github.server_url }}/${{ github.repository }}/compare/${{ steps.version.outputs.version }}...${{ steps.version.outputs.version }}) for details.
           draft: false
           prerelease: false
           generate_release_notes: true

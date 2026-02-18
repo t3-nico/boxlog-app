@@ -98,7 +98,7 @@ test.describe('Smoke: 認証フロー', () => {
       await submitButton.click();
 
       // カレンダーページに遷移
-      await page.waitForURL(/\/calendar/i, { timeout: 15000 });
+      await page.waitForURL(/\/(day|week|agenda|timesheet|stats)/i, { timeout: 15000 });
       await expect(page).toHaveTitle(/Dayopt/);
     });
   });

@@ -2,11 +2,9 @@
 
 import { useCallback, useState } from 'react';
 
-import { format, isToday, startOfDay } from 'date-fns';
+import { format, startOfDay } from 'date-fns';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-
-import { cn } from '@/lib/utils';
 
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
 
@@ -81,10 +79,7 @@ export function TimesheetTagRow({ group, weekDates, onPlanClick }: TimesheetTagR
           return (
             <td
               key={date.toISOString()}
-              className={cn(
-                'text-muted-foreground px-2 py-2 text-right text-xs',
-                isToday(date) && 'bg-primary-state-hover',
-              )}
+              className="text-muted-foreground px-2 py-2 text-right text-xs"
             >
               {formatMinutes(minutes)}
             </td>

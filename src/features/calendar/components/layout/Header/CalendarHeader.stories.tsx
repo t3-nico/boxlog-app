@@ -3,14 +3,16 @@ import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
 
+import {
+  AsideSwitcher,
+  type AsideType,
+} from '@/features/navigation/components/aside/AsideSwitcher';
+
 import { CompactDateNavigator, DateNavigator } from './DateNavigator';
 import { HeaderActions } from './HeaderActions';
-import { PanelSwitcher } from './PanelSwitcher';
 import { ViewSwitcher } from './ViewSwitcher';
 
-import type { PanelType } from './PanelSwitcher';
-
-/** カレンダーヘッダーのサブコンポーネント（ViewSwitcher, DateNavigator, HeaderActions, PanelSwitcher）。 */
+/** カレンダーヘッダーのサブコンポーネント（ViewSwitcher, DateNavigator, HeaderActions, AsideSwitcher）。 */
 const meta = {
   title: 'Features/Calendar/Header',
   parameters: {
@@ -34,9 +36,9 @@ function ViewSwitcherExample({
   return <ViewSwitcher currentView={current} onChange={setCurrent} />;
 }
 
-function PanelSwitcherExample() {
-  const [panel, setPanel] = useState<PanelType>('none');
-  return <PanelSwitcher currentPanel={panel} onChange={setPanel} />;
+function AsideSwitcherExample() {
+  const [aside, setAside] = useState<AsideType>('none');
+  return <AsideSwitcher currentAside={aside} onChange={setAside} />;
 }
 
 // ---------------------------------------------------------------------------
@@ -58,26 +60,33 @@ export const ViewSwitcherMultiDay: Story = {
   render: () => <ViewSwitcherExample initial="3day" />,
 };
 
-/** 日付ナビゲーション。Todayボタン + 前後矢印。 */
-export const DateNavigatorDefault: Story = {
-  render: () => <DateNavigator onNavigate={fn()} />,
+/** 日付ナビゲーション3パターン。Google Calendar風のグループ化ボタンバー（h-8 = sm, 32px）。 */
+export const DateNavigatorPatterns: Story = {
+  render: () => (
+    <div className="flex flex-col items-start gap-6">
+      <div className="space-y-2">
+        <p className="text-muted-foreground text-xs">Full: [&lt;] [Today] [&gt;]</p>
+        <DateNavigator onNavigate={fn()} />
+      </div>
+      <div className="space-y-2">
+        <p className="text-muted-foreground text-xs">Compact: [&lt;] [&gt;]（矢印のみ）</p>
+        <CompactDateNavigator onNavigate={fn()} />
+      </div>
+      <div className="space-y-2">
+        <p className="text-muted-foreground text-xs">Today only: [Today]</p>
+        <DateNavigator onNavigate={fn()} showArrows={false} />
+      </div>
+    </div>
+  ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-
-    // 前後ナビゲーションボタンをクリック
     const buttons = canvas.getAllByRole('button');
     await expect(buttons.length).toBeGreaterThan(0);
-    // 最初のボタン（Today or 前矢印）をクリック
     const firstButton = buttons[0];
     if (firstButton) {
       await userEvent.click(firstButton);
     }
   },
-};
-
-/** コンパクトナビゲーション。矢印のみ。 */
-export const DateNavigatorCompact: Story = {
-  render: () => <CompactDateNavigator onNavigate={fn()} />,
 };
 
 /** ヘッダーアクションボタン群。設定・エクスポート・インポート・その他。 */
@@ -92,9 +101,9 @@ export const HeaderActionsCompact: Story = {
   ),
 };
 
-/** サイドパネル切替ドロップダウン。None/Plan/Record/Stats。 */
-export const PanelSwitcherDefault: Story = {
-  render: () => <PanelSwitcherExample />,
+/** アサイド切替セグメントコントロール。None/Plan/Record/Stats。 */
+export const AsideSwitcherDefault: Story = {
+  render: () => <AsideSwitcherExample />,
 };
 
 /** 全パターン一覧。 */
@@ -102,11 +111,14 @@ export const AllPatterns: Story = {
   render: () => (
     <div className="flex flex-col items-start gap-6">
       <ViewSwitcherExample />
-      <DateNavigator onNavigate={fn()} />
-      <CompactDateNavigator onNavigate={fn()} />
+      <div className="flex items-center gap-4">
+        <DateNavigator onNavigate={fn()} />
+        <CompactDateNavigator onNavigate={fn()} />
+        <DateNavigator onNavigate={fn()} showArrows={false} />
+      </div>
       <HeaderActions onSettings={fn()} onExport={fn()} onImport={fn()} onMore={fn()} />
       <HeaderActions onSettings={fn()} onExport={fn()} onImport={fn()} onMore={fn()} compact />
-      <PanelSwitcherExample />
+      <AsideSwitcherExample />
     </div>
   ),
 };

@@ -1,0 +1,115 @@
+'use client';
+
+import { useMemo } from 'react';
+
+import { Bar, BarChart, XAxis, YAxis } from 'recharts';
+
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  type ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from '@/components/ui/chart';
+import { Skeleton } from '@/components/ui/skeleton';
+import { api } from '@/lib/trpc';
+
+import { useStatsFilterStore } from '../../stores/useStatsFilterStore';
+import { computeDateRange } from '../../utils/computeDateRange';
+
+const chartConfig = {
+  hours: {
+    label: 'Hours',
+    color: 'var(--primary)',
+  },
+} satisfies ChartConfig;
+
+function formatHours(hours: number): string {
+  if (hours < 1) return `${Math.round(hours * 60)}m`;
+  return `${hours.toFixed(1)}h`;
+}
+
+export function HourlyDistributionChart() {
+  const period = useStatsFilterStore((s) => s.period);
+  const dateRange = useMemo(() => computeDateRange(period), [period]);
+  const queryInput = dateRange.startDate ? dateRange : undefined;
+  const { data, isPending } = api.plans.getHourlyDistribution.useQuery(queryInput);
+
+  if (isPending) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Hourly Distribution</CardTitle>
+          <CardDescription>When you work</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Skeleton className="h-48 w-full" />
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (!data || data.length === 0) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Hourly Distribution</CardTitle>
+          <CardDescription>When you work</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="text-muted-foreground flex h-32 items-center justify-center text-sm">
+            No data
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const firstItem = data[0];
+  const maxSlot = firstItem
+    ? data.reduce((max, item) => (item.hours > max.hours ? item : max), firstItem)
+    : undefined;
+  const totalHours = data.reduce((sum, item) => sum + item.hours, 0);
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Hourly Distribution</CardTitle>
+        <CardDescription>
+          Peak: {maxSlot?.timeSlot} ({formatHours(maxSlot?.hours ?? 0)})
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <ChartContainer config={chartConfig}>
+          <BarChart
+            accessibilityLayer
+            data={data}
+            layout="vertical"
+            margin={{ left: 0, right: 16 }}
+          >
+            <YAxis
+              dataKey="timeSlot"
+              type="category"
+              tickLine={false}
+              tickMargin={10}
+              axisLine={false}
+              width={50}
+            />
+            <XAxis dataKey="hours" type="number" hide />
+            <ChartTooltip
+              cursor={false}
+              content={
+                <ChartTooltipContent formatter={(value) => formatHours(Number(value))} hideLabel />
+              }
+            />
+            <Bar dataKey="hours" fill="var(--color-hours)" radius={5} />
+          </BarChart>
+        </ChartContainer>
+
+        <div className="text-muted-foreground mt-2 text-center text-xs">
+          Total {formatHours(totalHours)}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}

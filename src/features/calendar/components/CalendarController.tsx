@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useMemo } from 'react';
 
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 
 import { addHours, format, startOfHour } from 'date-fns';
 
@@ -26,7 +26,7 @@ import { DnDProvider } from '../providers/DnDProvider';
 
 import type { CalendarViewProps, CalendarViewType } from '../types/calendar.types';
 
-import { useCalendarPanelStore } from '../stores/useCalendarPanelStore';
+import { useAppAsideStore } from '@/features/navigation/stores/useAppAsideStore';
 import { CalendarViewRenderer } from './controller/components';
 import {
   useCalendarData,
@@ -51,15 +51,14 @@ export const CalendarController = ({
   initialViewType = 'day',
   initialDate,
 }: CalendarViewExtendedProps) => {
-  const router = useRouter();
   const pathname = usePathname();
   const calendarNavigation = useCalendarNavigation();
 
-  // サイドパネル状態（Zustand永続化）
-  const currentPanel = useCalendarPanelStore.use.panelType();
-  const setCurrentPanel = useCalendarPanelStore.use.setPanel();
+  // アサイド状態（Zustand永続化）
+  const currentAside = useAppAsideStore.use.asideType();
+  const setCurrentAside = useAppAsideStore.use.setAside();
 
-  // 現在のlocaleを取得（例: /ja/calendar/day -> ja）
+  // 現在のlocaleを取得（例: /ja/day -> ja）
   const locale = pathname?.split('/')[1] || 'ja';
 
   // Context が利用可能な場合はそれを使用、そうでない場合は useCalendarLayout を使用
@@ -70,11 +69,12 @@ export const CalendarController = ({
     (newViewType: CalendarViewType, newDate?: Date) => {
       const dateToUse = newDate || new Date();
       const dateString = format(dateToUse, 'yyyy-MM-dd');
-      const newURL = `/${locale}/calendar/${newViewType}?date=${dateString}`;
+      const newURL = `/${locale}/${newViewType}?date=${dateString}`;
       logger.log('🔗 updateURL called:', { newViewType, dateToUse, newURL });
-      router.push(newURL);
+      // pushState: 即座にURL更新、サーバーナビゲーションなし
+      window.history.pushState(null, '', newURL);
     },
-    [router, locale],
+    [locale],
   );
 
   // 初期日付をメモ化して参照の安定性を保つ
@@ -361,8 +361,8 @@ export const CalendarController = ({
           start: viewDateRange.start,
           end: viewDateRange.end,
         }}
-        currentPanel={currentPanel}
-        onPanelChange={setCurrentPanel}
+        currentAside={currentAside}
+        onAsideChange={setCurrentAside}
       >
         <CalendarViewRenderer viewType={viewType} commonProps={commonProps} />
       </CalendarLayout>

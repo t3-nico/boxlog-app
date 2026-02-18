@@ -11,16 +11,25 @@ const intlMiddleware = createMiddleware(routing);
 const protectedPaths = [
   '/tasks',
   '/settings',
-  '/calendar',
+  '/day',
+  '/week',
+  '/agenda',
+  '/timesheet',
+  '/stats',
+
   '/box',
   '/table',
   '/board',
-  '/stats',
   '/review',
   '/notifications',
   '/add',
   '/tags',
 ];
+
+// Multi-day calendar views (/2day - /9day)
+function isMultiDayPath(path: string): boolean {
+  return /^\/\d+day/.test(path);
+}
 
 // 認証ページのパス
 const authPaths = ['/login', '/signup', '/auth'];
@@ -105,7 +114,9 @@ export async function middleware(request: NextRequest) {
   const currentLocale = getCurrentLocale(pathname);
   const pathWithoutLocale = getPathWithoutLocale(pathname);
 
-  const isProtectedPath = protectedPaths.some((path) => pathWithoutLocale.startsWith(path));
+  const isProtectedPath =
+    protectedPaths.some((path) => pathWithoutLocale.startsWith(path)) ||
+    isMultiDayPath(pathWithoutLocale);
   const isAuthPath = authPaths.some((path) => pathWithoutLocale.startsWith(path));
   const isPublicPath = publicPaths.some((path) => pathWithoutLocale === path);
 
@@ -143,9 +154,7 @@ export async function middleware(request: NextRequest) {
     const isMFAVerifyPath = pathWithoutLocale === '/auth/mfa-verify';
 
     if (user && isAuthPath && !isMFAVerifyPath) {
-      return NextResponse.redirect(
-        new URL(getLocalizedPath('/calendar', currentLocale), request.url),
-      );
+      return NextResponse.redirect(new URL(getLocalizedPath('/day', currentLocale), request.url));
     }
 
     // next-intlのヘッダーをコピー

@@ -28,6 +28,33 @@ export type Database = {
   };
   public: {
     Tables: {
+      ai_usage: {
+        Row: {
+          created_at: string;
+          id: string;
+          month: string;
+          request_count: number;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          month: string;
+          request_count?: number;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          month?: string;
+          request_count?: number;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       auth_audit_logs: {
         Row: {
           created_at: string;
@@ -60,6 +87,36 @@ export type Database = {
           ip_address?: string | null;
           metadata?: Json | null;
           user_agent?: string | null;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
+      chat_conversations: {
+        Row: {
+          created_at: string;
+          id: string;
+          message_count: number;
+          messages: Json;
+          title: string;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          message_count?: number;
+          messages?: Json;
+          title?: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          message_count?: number;
+          messages?: Json;
+          title?: string;
+          updated_at?: string;
           user_id?: string;
         };
         Relationships: [];
@@ -652,6 +709,8 @@ export type Database = {
       };
       user_settings: {
         Row: {
+          ai_communication_style: string | null;
+          ai_custom_style_prompt: string | null;
           business_hours_end: number;
           business_hours_start: number;
           chronotype_custom_zones: Json | null;
@@ -664,6 +723,8 @@ export type Database = {
           date_format: string;
           default_duration: number;
           id: string;
+          personalization_ranked_values: Json | null;
+          personalization_values: Json | null;
           plan_record_mode: string;
           show_declined_events: boolean;
           show_utc_offset: boolean;
@@ -678,6 +739,8 @@ export type Database = {
           week_starts_on: number;
         };
         Insert: {
+          ai_communication_style?: string | null;
+          ai_custom_style_prompt?: string | null;
           business_hours_end?: number;
           business_hours_start?: number;
           chronotype_custom_zones?: Json | null;
@@ -690,6 +753,8 @@ export type Database = {
           date_format?: string;
           default_duration?: number;
           id?: string;
+          personalization_ranked_values?: Json | null;
+          personalization_values?: Json | null;
           plan_record_mode?: string;
           show_declined_events?: boolean;
           show_utc_offset?: boolean;
@@ -704,6 +769,8 @@ export type Database = {
           week_starts_on?: number;
         };
         Update: {
+          ai_communication_style?: string | null;
+          ai_custom_style_prompt?: string | null;
           business_hours_end?: number;
           business_hours_start?: number;
           chronotype_custom_zones?: Json | null;
@@ -716,6 +783,8 @@ export type Database = {
           date_format?: string;
           default_duration?: number;
           id?: string;
+          personalization_ranked_values?: Json | null;
+          personalization_values?: Json | null;
           plan_record_mode?: string;
           show_declined_events?: boolean;
           show_utc_offset?: boolean;
@@ -787,6 +856,10 @@ export type Database = {
           plan_count: number;
           tag_id: string;
         }[];
+      };
+      increment_ai_usage: {
+        Args: { p_month: string; p_user_id: string };
+        Returns: undefined;
       };
       merge_tags: {
         Args: {

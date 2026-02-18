@@ -6,10 +6,9 @@ import { Suspense, useMemo } from 'react';
 
 import { PageHeader } from '@/components/layout/PageHeader';
 import { useAuthStore } from '@/features/auth/stores/useAuthStore';
-import { CalendarSidebar } from '@/features/calendar/components/sidebar/CalendarSidebar';
+import { isCalendarViewPath } from '@/features/calendar/lib/route-utils';
+import { AppSidebar } from '@/features/navigation/components/sidebar/app-sidebar';
 import { useSidebarStore } from '@/features/navigation/stores/useSidebarStore';
-import { OnboardingBanner } from '@/features/onboarding';
-import { SettingsSidebar } from '@/features/settings/components/sidebar';
 import { cn } from '@/lib/utils';
 
 import { MainContentWrapper } from './main-content-wrapper';
@@ -52,7 +51,7 @@ function StatusBarItemSkeleton() {
  * デスクトップ用レイアウト
  *
  * 2カラムレイアウト:
- * - Sidebar（240px、常に表示）← ページごとに動的切り替え
+ * - Sidebar（256px、開閉可能）← 全ページ共通 AppSidebar
  * - PageHeader + MainContent + Inspector
  */
 export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
@@ -61,57 +60,32 @@ export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
   const isAuthenticated = !!user;
   const isSidebarOpen = useSidebarStore.use.isOpen();
 
-  // パフォーマンス最適化: ページ判定をメモ化（pathnameとlocale変更時のみ再計算）
-  const currentPage = useMemo(() => {
-    if (pathname?.startsWith(`/${locale}/calendar`)) return 'calendar';
-    if (pathname?.startsWith(`/${locale}/plan`)) return 'plan';
-    if (pathname?.startsWith(`/${locale}/record`)) return 'record';
-    if (pathname?.startsWith(`/${locale}/stats`)) return 'stats';
-    if (pathname?.startsWith(`/${locale}/settings`)) return 'settings';
-    return 'default';
+  // ページ判定: カレンダービューかどうか（ヘッダー表示制御用）
+  const isCalendarPage = useMemo(() => {
+    const pathWithoutLocale = pathname?.replace(new RegExp(`^/${locale}`), '') ?? '';
+    return isCalendarViewPath(pathWithoutLocale);
   }, [pathname, locale]);
-
-  // Sidebarを表示するページ（Calendar, Settings のみ）
-  const showSidebar = currentPage === 'calendar' || currentPage === 'settings';
-
-  // サイドバーコンポーネントをメモ化（currentPage変更時のみ再計算）
-  const SidebarComponent = useMemo(() => {
-    switch (currentPage) {
-      case 'calendar':
-        return CalendarSidebar;
-      case 'settings':
-        return SettingsSidebar;
-      default:
-        return null;
-    }
-  }, [currentPage]);
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-      {/* オンボーディングバナー（クロノタイプ未設定時のみ表示） */}
-      {isAuthenticated && <OnboardingBanner />}
-
-      {/* 上部エリア（サイドバー + コンテンツ） */}
       {/* 上部エリア（サイドバー + コンテンツ） */}
       <div className="flex min-h-0 flex-1">
-        {/* Sidebar（固定幅256px）← Calendar/Settingsのみ表示、開閉可能 */}
-        {showSidebar && SidebarComponent && (
-          <div
-            className={cn(
-              'h-full shrink-0 overflow-hidden transition-all duration-200',
-              isSidebarOpen ? 'w-64' : 'w-0',
-            )}
-          >
-            <div className="h-full w-64">
-              <SidebarComponent />
-            </div>
+        {/* Sidebar（固定幅256px、開閉可能） */}
+        <div
+          className={cn(
+            'h-full shrink-0 overflow-hidden transition-all duration-200',
+            isSidebarOpen ? 'w-64' : 'w-0',
+          )}
+        >
+          <div className="h-full w-64">
+            <AppSidebar />
           </div>
-        )}
+        </div>
 
         {/* PageHeader + Main Content + Inspector */}
         <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
           {/* PageHeader（Calendar/Statsは独自ヘッダーを持つため非表示） */}
-          {currentPage !== 'calendar' && currentPage !== 'stats' && <PageHeader />}
+          {!isCalendarPage && <PageHeader />}
 
           {/* Main Content + Inspector（自動的に残りのスペースを使用） */}
           <div className="min-w-0 flex-1 overflow-hidden">

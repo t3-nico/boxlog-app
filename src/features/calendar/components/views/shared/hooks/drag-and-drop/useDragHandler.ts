@@ -69,7 +69,7 @@ export function useDragHandler({
       const startPosition = { x: e.clientX, y: e.clientY };
       // 外側のポジショニング用divを優先して取得
       // DayView: data-event-wrapper / data-event-block
-      // WeekView/ThreeDayView/FiveDayView: data-plan-block
+      // WeekView/MultiDayView: data-plan-block
       const originalElement =
         ((e.target as HTMLElement).closest('[data-event-wrapper="true"]') as HTMLElement) ||
         ((e.target as HTMLElement).closest('[data-plan-block="true"]') as HTMLElement) ||

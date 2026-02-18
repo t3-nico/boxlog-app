@@ -23,7 +23,7 @@ import { cn } from '@/lib/utils';
 // ---------------------------------------------------------------------------
 
 const meta = {
-  title: 'Features/Navigation/CreateMenu',
+  title: 'Features/Sidebar/CreateMenu',
   parameters: {
     layout: 'centered',
   },

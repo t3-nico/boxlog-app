@@ -2,10 +2,8 @@
 
 import { useCallback } from 'react';
 
-import { format, isToday, startOfDay } from 'date-fns';
+import { format, startOfDay } from 'date-fns';
 import { Clock, PenLine } from 'lucide-react';
-
-import { cn } from '@/lib/utils';
 
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
 
@@ -54,10 +52,7 @@ export function TimesheetPlanRow({ plan, weekDates, onPlanClick }: TimesheetPlan
         return (
           <td
             key={date.toISOString()}
-            className={cn(
-              'text-muted-foreground px-2 py-1.5 text-right text-xs',
-              isToday(date) && 'bg-primary-state-hover',
-            )}
+            className="text-muted-foreground px-2 py-1.5 text-right text-xs"
           >
             {duration > 0 ? formatMinutes(duration) : ''}
           </td>

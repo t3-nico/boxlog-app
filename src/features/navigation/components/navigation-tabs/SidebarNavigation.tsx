@@ -19,7 +19,7 @@ interface NavTabItem {
 /**
  * サイドバー用ナビゲーション
  *
- * PC: Calendar/Plan/Record はカレンダー+サイドパネルに統合済み。
+ * PC: Calendar/Plan/Record はカレンダー+アサイドに統合済み。
  * ここには Stats など独立ページへのリンクのみ配置。
  */
 export function SidebarNavigation() {
@@ -42,7 +42,7 @@ export function SidebarNavigation() {
   return (
     <nav className="flex flex-col gap-1 px-2 py-2" role="navigation" aria-label="Main navigation">
       {navItems.map((item) => {
-        const isActive = pathname?.startsWith(item.url) ?? false;
+        const isActive = (pathname === item.url || pathname?.startsWith(`${item.url}?`)) ?? false;
         const Icon = item.icon;
 
         return (

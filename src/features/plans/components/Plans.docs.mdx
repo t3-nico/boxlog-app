@@ -1,0 +1,197 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Features/Plans/Docs" />
+
+# Plans
+
+タスク・予定のプランニング機能。タイムボクシング、繰り返し、完了→Record作成をサポート。
+
+---
+
+## 概要
+
+| 項目 | 値 |
+|------|-----|
+| ステータス | `open` / `closed`（2段階） |
+| 時間指定 | `start_time` + `end_time`（ISO 8601、任意） |
+| 繰り返し | RRULE ベース（daily / weekly / monthly / yearly） |
+| タグ | 多対多（`plan_tags` 経由） |
+| リマインダー | 開始N分前（5/10/15/30） |
+| アクティビティ | 全操作の監査ログ |
+
+---
+
+## コンポーネント構成
+
+```
+PlanInspector                   Intercepting Route シェル
+├── PlanInspectorContent        タブ付きコンテンツ
+│   ├── PlanInspectorDetailsTab 編集フォーム
+│   │   ├── TitleInput          タイトル入力（自動保存）
+│   │   ├── ScheduleRow         時間表示・編集（TimeSelect）
+│   │   ├── RecurrenceIconButton → RecurrenceDialog
+│   │   ├── ReminderSelect      リマインダー設定
+│   │   ├── TagsIconButton      タグエディタ
+│   │   ├── NoteIconButton      説明エディタ
+│   │   └── RecordCreateForm    完了時Record作成フォーム
+│   └── ActivityTab             変更履歴
+│       └── ActivityPopover     アクティビティ表示
+├── PlanInspectorMenu           アクションメニュー
+└── DraggableInspector          ドラッグ移動対応シェル
+
+PlanCreateTrigger               「+」ボタン（新規作成）
+PlanDeleteConfirmDialog         削除確認
+RecurringEditConfirmDialog      繰り返し編集スコープ選択
+```
+
+---
+
+## 状態管理
+
+### Zustand Stores
+
+| Store | 用途 |
+|-------|------|
+| `usePlanInspectorStore` | Inspector開閉、draftPlan、pendingChanges |
+| `usePlanFilterStore` | フィルター（ステータス、タグ、検索等）persist |
+| `usePlanCacheStore` | Realtime競合防止（recurrence_type即時同期） |
+| `useDeleteConfirmStore` | 削除ダイアログ状態 |
+| `useRecurringEditConfirmStore` | 繰り返し編集スコープ選択 |
+| `usePlanClipboardStore` | プランのコピー&ペースト |
+
+---
+
+## Hooks
+
+| Hook | 用途 |
+|------|------|
+| `usePlans(filters)` | プラン一覧取得（staleTime: 30s） |
+| `usePlan(id)` | 単一プラン取得（キャッシュからplaceholder） |
+| `usePlanMutations()` | CRUD（楽観的更新付き） |
+| `usePlanActivities(planId)` | アクティビティログ + Realtime |
+| `usePlanTags(planId)` | タグ取得 |
+| `usePlanInstances(planId)` | 繰り返しインスタンス取得 |
+
+---
+
+## tRPC ルーター
+
+| サブルーター | エンドポイント |
+|------------|--------------|
+| `crud` | list, getById, create, update, delete |
+| `bulk` | update, delete, addTags |
+| `instances` | list, create, delete |
+| `recurrence` | splitRecurrence |
+| `tags` | addTag, removeTag, setTags |
+| `activities` | list, create |
+| `statistics` | getStats, getTagStats, getTotalTime ほか11種 |
+| `statsView` | getStatsViewData |
+
+---
+
+## 繰り返し（Recurrence）
+
+- **RRULE形式**: `FREQ=WEEKLY;INTERVAL=2;BYDAY=MO,WE,FR;UNTIL=20251231`
+- **編集スコープ**（Google Calendar式）:
+  - This instance only
+  - This & after
+  - All instances
+- **例外**: `plan_instances` テーブルに `is_exception` で管理
+- **`splitRecurrence`**: スコープに応じて繰り返しパターンを分割
+
+---
+
+## 完了 → Record 作成フロー
+
+```
+Plan status: 'open' → 'closed'
+       ↓
+Inspector に RecordCreateForm 表示
+       ↓
+プランデータをプリフィル（タイトル、時間、タグ）
+       ↓
+Record 作成（plan_id を参照）
+       ↓
+fulfillment_score（1-5）を記録
+```
+
+---
+
+## DB テーブル
+
+| テーブル | 主要カラム |
+|---------|----------|
+| `plans` | title, status, start_time, end_time, recurrence_type, recurrence_rule, reminder_minutes |
+| `plan_tags` | plan_id, tag_id（多対多） |
+| `plan_activities` | action_type, field_name, old_value, new_value（監査ログ） |
+| `plan_instances` | instance_date, is_exception, overrides（繰り返しインスタンス） |
+
+---
+
+## 編集パネル（PlanInspector）
+
+### 表示仕様
+
+| 項目 | 値 |
+|------|-----|
+| PC | ドラッグ可能な Popover（480px幅、dnd-kit） |
+| モバイル | ボトムシート Drawer（50%/97%スナップ） |
+| 保存方式 | Google Calendar式（pendingChanges → 閉じ時に保存） |
+
+### 共通コンポーネント（inspector/shared/）
+
+| コンポーネント | 用途 |
+|-------------|------|
+| `InspectorShell` | PC/Mobile レスポンシブラッパー |
+| `InspectorHeader` | ヘッダー（閉じる、前後ナビ、メニュー） |
+| `DraggableInspector` | ドラッグ移動（dnd-kit） |
+| `TitleInput` | タイトル入力 |
+| `ScheduleRow` | 日時表示・編集 |
+| `TagsIconButton` | タグ選択ボタン |
+| `NoteIconButton` | 説明ボタン |
+
+### 保存フロー
+
+```
+パネル開く
+  ├── 既存Plan → planId セット、draftPlan = null
+  └── 新規作成 → draftPlan セット
+
+ユーザー編集
+  ├── タイトル/説明 → 即時保存（IMMEDIATE_SAVE_FIELDS）
+  └── 日時変更 → pendingChanges にバッファ
+      └── 繰り返しプランの場合 → スコープダイアログ表示
+
+パネル閉じる
+  └── consumePendingChanges()
+      └── updatePlan mutation（楽観的更新）
+```
+
+### 特殊アクション
+
+| アクション | 説明 |
+|-----------|------|
+| Complete + Record | Plan を closed にして Record 作成フォーム表示 |
+| Duplicate | Plan のコピーを作成 |
+| Save as Template | Plan パターンをテンプレート保存 |
+| Delete | 確認ダイアログ（繰り返しの場合スコープ選択） |
+
+### 時間競合チェック
+
+- 同日の Record と時間重複を検出
+- 重複時は「Complete + Record」ボタンを無効化
+- 警告メッセージ表示、時間変更時にクリア
+
+### Inspector Hooks
+
+| Hook | 用途 |
+|------|------|
+| `useInspectorAutoSave` | デバウンス付き自動保存（500ms） |
+| `useInspectorNavigation` | 前後ナビゲーション（矢印キー） |
+| `useInspectorKeyboard` | ESC、Cmd+Z、矢印キー |
+| `useRecurringPlanEdit` | 繰り返し編集スコープダイアログ |
+| `usePlanInspectorContentLogic` | メインロジック |
+
+---
+
+**最終更新**: 2026-02-17

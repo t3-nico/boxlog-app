@@ -20,7 +20,7 @@ export interface UseCurrentPeriodReturn {
   isCurrentPeriod: boolean;
   todayIndex: number; // -1 if not in period
   currentWeekIndex?: number | undefined; // 複数週ビューでのみ使用
-  relativeDayIndex?: number | undefined; // ThreeDayViewでのみ使用（-1=昨日, 0=今日, 1=明日）
+  relativeDayIndex?: number | undefined; // MultiDayView(3day)でのみ使用（-1=昨日, 0=今日, 1=明日）
 }
 
 /**
@@ -72,7 +72,7 @@ export function useCurrentPeriod({
     return Math.floor(todayIndex / 7);
   }, [todayIndex]);
 
-  // ThreeDayView用: 中央日を基準とした相対インデックス
+  // MultiDayView(3day)用: 中央日を基準とした相対インデックス
   const relativeDayIndex = useMemo(() => {
     if (periodType !== 'threeday' || todayIndex === -1) return undefined;
     return todayIndex - 1; // 中央が1なので、0=昨日, 1=今日, 2=明日 → -1, 0, 1

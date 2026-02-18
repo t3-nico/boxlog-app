@@ -1,0 +1,122 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Features/Stats/Docs" />
+
+# Stats
+
+時間記録の統計・分析ビュー。ヒートマップ、チャート、タグ別分析で自己客観視を支援。
+
+---
+
+## 概要
+
+独立 Feature（`@/features/stats`）として実装。アサイド（StatsPanel）とフルビュー（StatsView）の2モードを提供。カレンダーのビュー切替から遅延ロードされる。
+
+---
+
+## ビジュアライゼーション
+
+| チャート | コンポーネント | 説明 |
+|---------|--------------|------|
+| **ヒートマップ** | `YearlyHeatmap` | GitHub風の年間アクティビティ表示（react-calendar-heatmap） |
+| **タグ別時間** | `TagTimeChart` | 横棒グラフ、Top10タグの時間内訳 |
+| **月間トレンド** | `MonthlyTrendChart` | エリアチャート、月次推移 |
+| **時間帯分布** | `HourlyDistributionChart` | 横棒グラフ、2時間スロット |
+| **曜日分布** | `DayOfWeekChart` | 棒グラフ、平日 vs 週末 |
+| **睡眠統計** | `SleepStatsCard` | 作業-睡眠重複計算 |
+
+チャートライブラリ: Recharts
+
+---
+
+## コンポーネント構成
+
+```
+StatsView/                      フルページ統計ビュー
+├── StatsHeroCards              3カードメトリクス（進捗%、先週比、ストリーク）
+├── StatsPeriodSelector         期間フィルター（Week/Month/Year/All）
+├── StatsTable                  タグ別ブレイクダウンテーブル
+└── charts/
+    ├── YearlyHeatmap           年間ヒートマップ
+    ├── TagTimeChart            タグ別時間チャート
+    ├── MonthlyTrendChart       月間トレンド
+    ├── HourlyDistributionChart 時間帯分布
+    ├── DayOfWeekChart          曜日分布
+    └── SleepStatsCard          睡眠統計
+
+StatsPanel                      アサイド版（週間サマリー）
+```
+
+---
+
+## 状態管理
+
+### useStatsFilterStore
+
+| State | 説明 |
+|-------|------|
+| `selectedTagId` | 選択中タグ（null = 全タグ） |
+| `period` | 期間フィルター: week / month / year / all |
+
+---
+
+## Hooks
+
+| Hook | 用途 |
+|------|------|
+| `useStatsViewData()` | メインデータ取得（現在週 + 前週を並列取得） |
+
+---
+
+## tRPC エンドポイント
+
+### plans.statistics ルーター
+
+| エンドポイント | 説明 |
+|-------------|------|
+| `getSummary` | 合計時間、今月、完了タスク数 |
+| `getStreak` | 現在/最長ストリーク |
+| `getTimeByTag` | タグ別時間（日付範囲フィルタ） |
+| `getDailyHours` | ヒートマップ用日次集計 |
+| `getHourlyDistribution` | 2時間スロット分布 |
+| `getDayOfWeekDistribution` | 曜日別分布 |
+| `getMonthlyTrend` | 月次集計（1/3/12/全期間） |
+| `getTotalTime` | 生涯合計時間 |
+| `getCumulativeTime` | 今週の Plans + Records 時間 |
+
+### plans.statsView ルーター
+
+| エンドポイント | 説明 |
+|-------------|------|
+| `getStatsViewData` | メイン集計（Hero + タグブレイクダウン） |
+
+---
+
+## データフロー
+
+```
+StatsView / StatsPanel
+├── useStatsViewData()
+│   └── api.plans.getStatsViewData（Hero + タグ内訳）
+├── useStatsFilterStore()（期間・タグ選択）
+└── 各チャート
+    ├── api.plans.getDailyHours（ヒートマップ）
+    ├── api.plans.getTimeByTag（タグチャート）
+    ├── api.plans.getMonthlyTrend（トレンド）
+    ├── api.plans.getHourlyDistribution（時間帯）
+    └── api.plans.getDayOfWeekDistribution（曜日）
+```
+
+---
+
+## Hero カード
+
+| カード | 表示内容 |
+|-------|---------|
+| Progress | 計画時間 vs 実績時間（%表示） |
+| vs Last Week | 先週比の時間差分（矢印インジケーター） |
+| Streak | 連続アクティビティ日数 |
+
+---
+
+**最終更新**: 2026-02-17

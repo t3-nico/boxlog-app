@@ -127,12 +127,19 @@ interface CommandActions {
   openTagCreateModal: () => void;
   navigateToSettings: () => void;
   toggleTheme: () => void;
+  openAside: (aside: 'plan' | 'record' | 'stats' | 'chat') => void;
 }
 
 // Default commands that are always available
 export const registerDefaultCommands = (actions: CommandActions) => {
-  const { router, openPlanInspector, openTagCreateModal, navigateToSettings, toggleTheme } =
-    actions;
+  const {
+    router,
+    openPlanInspector,
+    openTagCreateModal,
+    navigateToSettings,
+    toggleTheme,
+    openAside,
+  } = actions;
 
   const defaultCommands: Command[] = [
     // Navigation commands
@@ -144,17 +151,20 @@ export const registerDefaultCommands = (actions: CommandActions) => {
       icon: 'calendar',
       shortcut: ['G', 'C'],
       keywords: ['calendar', 'schedule', 'カレンダー', '予定'],
-      action: () => router.push('/calendar'),
+      action: () => router.push('/day'),
     },
     {
       id: 'nav:plan',
       title: 'プランを開く',
-      description: 'タスク一覧を表示',
+      description: 'プランパネルを表示',
       category: 'navigation',
       icon: 'check-square',
       shortcut: ['G', 'P'],
       keywords: ['plan', 'board', 'kanban', 'タスク', '一覧', 'プラン'],
-      action: () => router.push('/plan'),
+      action: () => {
+        router.push('/day');
+        openAside('plan');
+      },
     },
     {
       id: 'nav:stats',

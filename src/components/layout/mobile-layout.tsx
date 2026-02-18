@@ -5,15 +5,11 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { PageHeader } from '@/components/layout/PageHeader';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
-import { CalendarSidebar } from '@/features/calendar/components/sidebar/CalendarSidebar';
+import { isCalendarViewPath } from '@/features/calendar/lib/route-utils';
 import { AppSidebar } from '@/features/navigation/components/sidebar/app-sidebar';
 import { useSidebarStore } from '@/features/navigation/stores/useSidebarStore';
-import { PlanSidebar } from '@/features/plans/components/PlanSidebar';
-import { StatsSidebar } from '@/features/stats';
 
 import { MainContentWrapper } from './main-content-wrapper';
-
-type PageType = 'calendar' | 'plan' | 'stats' | 'default';
 
 interface MobileLayoutProps {
   children: React.ReactNode;
@@ -55,29 +51,11 @@ export function MobileLayout({ children, locale }: MobileLayoutProps) {
 
   const pathname = usePathname();
 
-  // ページタイプをメモ化（DesktopLayoutと統一パターン）
-  const currentPage = useMemo((): PageType => {
-    if (pathname?.startsWith(`/${locale}/calendar`)) return 'calendar';
-    if (pathname?.startsWith(`/${locale}/plan`)) return 'plan';
-    if (pathname?.startsWith(`/${locale}/stats`)) return 'stats';
-    return 'default';
+  // ページ判定: カレンダービューかどうか（ヘッダー表示制御用）
+  const isCalendarPage = useMemo(() => {
+    const pathWithoutLocale = pathname?.replace(new RegExp(`^/${locale}`), '') ?? '';
+    return isCalendarViewPath(pathWithoutLocale);
   }, [pathname, locale]);
-
-  // サイドバーコンポーネントをメモ化（currentPageのみに依存）
-  const SidebarComponent = useMemo(() => {
-    switch (currentPage) {
-      case 'calendar':
-        return CalendarSidebar;
-      case 'plan':
-        return PlanSidebar;
-      case 'stats':
-        return StatsSidebar;
-      default:
-        return AppSidebar;
-    }
-  }, [currentPage]);
-
-  const isCalendarPage = currentPage === 'calendar';
 
   return (
     <>
@@ -89,7 +67,7 @@ export function MobileLayout({ children, locale }: MobileLayoutProps) {
           showCloseButton={false}
           aria-label="Navigation menu"
         >
-          <SidebarComponent />
+          <AppSidebar />
         </SheetContent>
       </Sheet>
 

@@ -1,0 +1,157 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Features/AI/Docs" />
+
+# AI Chat
+
+アサイドに表示されるAIチャット機能の仕様。
+
+---
+
+## ハイブリッドモデル
+
+Cursorライクな2層構成。APIキーの有無で自動的に切り替わる。
+
+| | 無料枠 | BYOK |
+|---|---|---|
+| **対象** | 全ユーザー（設定不要） | APIキー設定済みユーザー |
+| **モデル** | Haiku 4.5 固定 | 全モデル選択可 |
+| **月間上限** | 30回/月 | 無制限 |
+| **APIキー** | サーバーサイド（`ANTHROPIC_API_KEY`） | ユーザー自前（AES-GCM暗号化） |
+| **ModelSelector** | 非表示 | 表示 |
+| **UI表示** | 残り回数バッジ（例: `7/30`） | なし |
+
+### 判定フロー
+
+```
+リクエスト受信
+│
+├─ x-ai-api-key ヘッダーあり？
+│  └─ YES → BYOKパス（ユーザーキー使用、制限なし）
+│
+└─ NO → 無料枠パス
+   ├─ ANTHROPIC_API_KEY 環境変数あり？
+   │  └─ NO → 400エラー
+   ├─ hasQuota チェック（月30回未満か）
+   │  └─ NO → 429エラー（上限到達）
+   ├─ incrementUsage（カウント+1）
+   └─ Haiku 4.5 でストリーミング
+```
+
+---
+
+## 機能一覧
+
+| 機能 | 説明 | 実装Phase |
+|---|---|---|
+| ストリーミング | Vercel AI SDK v6 `useChat` + `streamText` | Phase 1 |
+| BYOK | クライアントAES-GCM暗号化、Settings > Integrations で管理 | Phase 1 |
+| ツール呼び出し | 今日の予定取得、統計取得など（`stepCountIs(5)`で制限） | Phase 2 |
+| コンテキスト | ユーザー設定・予定・実績・タグをシステムプロンプトに注入 | Phase 3 |
+| DB永続化 | 会話をリロード後も復元、会話履歴の切替・削除 | Phase 4 |
+| モデル選択 | BYOKユーザーはプロバイダー内でモデルを切替可能 | Phase 5 |
+| 無料枠 | サーバーキーでHaiku 4.5固定、月30回まで | Phase 6 |
+
+---
+
+## コンポーネント構成
+
+```
+AIInspectorContent          メインコンテナ（状態管理・分岐）
+├── ChatHistoryPopover      会話履歴の切替・削除
+├── ChatEmptyState          空状態（サジェスチョン表示）
+├── ChatMessageList         メッセージ一覧
+│   └── ChatMessage         個別メッセージ
+│       ├── MarkdownContent Markdown描画
+│       └── ToolInvocation  ツール呼び出し表示
+├── ChatInput               入力フォーム
+│   └── PromptInput         テキストエリア + アクション
+└── ModelSelector           モデル選択（BYOKのみ表示）
+```
+
+---
+
+## データフロー
+
+```
+[useAIChat hook]
+├── APIキー読み込み（ApiKeyStorage → AES-GCM復号）
+├── 無料枠利用状況（tRPC chat.getUsage → ai_usage テーブル）
+├── Transport作成（BYOK: headerあり / 無料枠: headerなし）
+├── useChat（AI SDK v6 → /api/chat → streamText）
+├── DB永続化（onFinish → tRPC chat.create/save）
+└── 返却値
+    ├── messages, input, handleSubmit, isLoading, stop
+    ├── hasApiKey, isFreeTier, freeTierUsage, freeTierExhausted
+    ├── conversations, loadConversation, deleteConversation
+    └── selectedModelId, setSelectedModelId, availableModels
+```
+
+---
+
+## DB テーブル
+
+### ai_usage
+
+月間利用量のトラッキング。`YYYY-MM` 形式の `month` カラムで月次自動リセット。
+
+| カラム | 型 | 説明 |
+|---|---|---|
+| `id` | UUID | PK |
+| `user_id` | UUID | FK → auth.users |
+| `month` | TEXT | `'YYYY-MM'` 形式 |
+| `request_count` | INT | 利用回数 |
+| `created_at` | TIMESTAMPTZ | 作成日時 |
+| `updated_at` | TIMESTAMPTZ | 更新日時 |
+
+- **UNIQUE**: `(user_id, month)` でUPSERT対応
+- **RPC**: `increment_ai_usage(p_user_id, p_month)` でアトミックインクリメント（SECURITY DEFINER）
+- **RLS**: `auth.uid() = user_id` で自分のデータのみアクセス可
+
+### chat_conversations
+
+会話の永続化。メッセージは JSONB で格納。
+
+---
+
+## 環境変数
+
+| 変数名 | 用途 | 設定場所 |
+|---|---|---|
+| `ANTHROPIC_API_KEY` | 無料枠用サーバーサイドAPIキー | `.env.local`, Vercel |
+
+---
+
+## コスト試算（無料枠）
+
+Haiku 4.5: input $1/MTok, output $5/MTok
+
+| ユーザー数 | 月間リクエスト（最大） | 月コスト |
+|---|---|---|
+| 10 | 300 | ~$0.30 |
+| 100 | 3,000 | ~$3.00 |
+| 1,000 | 30,000 | ~$30.00 |
+
+---
+
+## UI状態
+
+| 状態 | 画面 | Story |
+|---|---|---|
+| キー読み込み中 | "Loading..." | - |
+| 無料枠（通常） | チャット + 残り回数バッジ | `FreeTier` |
+| 無料枠（上限到達） | "Monthly limit reached" + Add API Key | `FreeTierExhausted` |
+| BYOK（通常） | チャット + ModelSelector | `Default` |
+| エラー | エラーバナー + Retry | `WithError` |
+
+---
+
+## 今後の検討事項
+
+- プラン/課金システムとの統合（無料枠上限の動的変更）
+- バーストレート制限（既存Upstash基盤の接続）
+- 無料枠モデルのアップグレード検討
+
+---
+
+**最終更新**: 2026-02-17 | **Phase**: 6

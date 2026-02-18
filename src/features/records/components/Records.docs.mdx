@@ -1,0 +1,142 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Features/Records/Docs" />
+
+# Records
+
+時間記録の管理機能。実績のトラッキング、タグ紐付け、Inspector での編集をサポート。
+
+---
+
+## 概要
+
+| 項目 | 値 |
+|------|-----|
+| 主キー | `worked_at`（作業日）+ `start_time` / `end_time` |
+| 所要時間 | `duration_minutes`（必須、1分以上） |
+| 充実度 | `fulfillment_score`（1〜5、任意） |
+| タグ | 多対多（`record_tags` 経由） |
+| プラン連携 | `plan_id` で Plan に紐付け可能 |
+| アクティビティ | 全操作の監査ログ |
+
+---
+
+## コンポーネント構成
+
+```
+RecordInspector                 メインパネル（PC: Popover / Mobile: Drawer）
+├── RecordInspectorContent      Toggl風3行UI
+│   ├── タイトル行              タイトル入力
+│   ├── 日付+時間行             worked_at, start_time, end_time
+│   └── タグ+オプション行       タグ選択、充実度、メモ
+└── ActivityPopover             変更履歴表示
+```
+
+---
+
+## 状態管理
+
+### Zustand Stores
+
+| Store | 用途 | persist |
+|-------|------|---------|
+| `useRecordInspectorStore` | Inspector開閉、selectedRecordId | No |
+| `useRecordFilterStore` | フィルター（日付、タグ、充実度、所要時間、検索） | Yes |
+| `useRecordCacheStore` | TanStack Queryキャッシュ補完、mutation中フラグ | No |
+
+---
+
+## Hooks
+
+| Hook | 用途 |
+|------|------|
+| `useRecords()` | レコード一覧（Realtimeキャッシュ戦略） |
+| `useRecord(id)` | 単一レコード（list キャッシュからplaceholder） |
+| `useRecordData()` | フィルタ付き一覧（クライアント側後処理） |
+| `useRecordMutations()` | CRUD + duplicate + bulkDelete（楽観的更新） |
+| `useRecordTags()` | タグ操作（add, remove, setTags） |
+| `useRecordActivities(id)` | アクティビティログ + Realtime |
+| `useRecordInspectorNavigation()` | 前後ナビゲーション |
+
+---
+
+## tRPC ルーター
+
+| サブルーター | エンドポイント |
+|------------|--------------|
+| `crud` | list, getById, create, update, delete, duplicate, getRecent, listByPlan, bulkDelete |
+| `tags` | addTag, removeTag, setTags |
+| `activities` | list |
+
+---
+
+## フィルター
+
+| フィルター | 説明 |
+|-----------|------|
+| `workedAt` | today, yesterday, this_week, last_week, this_month, all |
+| `tags` | タグID配列（OR論理） |
+| `fulfillment` | all, 1-5, unrated |
+| `duration` | short (&lt;30m), medium (30-60m), long (&gt;60m) |
+| `search` | タイトル・メモのテキスト検索 |
+| `planSearch` | 関連プラン名検索 |
+
+---
+
+## DB テーブル
+
+### records
+
+| カラム | 型 | 説明 |
+|-------|-----|------|
+| `id` | UUID | PK |
+| `plan_id` | UUID | FK → plans（任意） |
+| `user_id` | UUID | FK → auth.users |
+| `worked_at` | DATE | 作業日（必須） |
+| `start_time` | TIME | 開始時刻（任意） |
+| `end_time` | TIME | 終了時刻（任意） |
+| `duration_minutes` | INT | 所要時間（必須、>0） |
+| `fulfillment_score` | INT | 充実度 1-5（任意） |
+| `note` | TEXT | メモ（任意） |
+
+- **RLS**: `auth.uid() = user_id`
+- **インデックス**: `user_id`, `plan_id`, `worked_at DESC`
+
+### record_tags
+
+| カラム | 型 | 説明 |
+|-------|-----|------|
+| `record_id` | UUID | FK → records |
+| `tag_id` | UUID | FK → tags |
+| UNIQUE | | `(record_id, tag_id)` |
+
+### record_activities
+
+監査ログ: `action_type` = created / time_changed / title_changed / memo_changed / fulfillment_changed / tag_added / tag_removed
+
+---
+
+## 楽観的更新
+
+全 mutation（create, update, delete, duplicate, bulkDelete）で実装:
+- `onMutate`: キャッシュに即時反映
+- `onError`: 前の状態にロールバック
+- `onSettled`: キャッシュ無効化
+
+---
+
+## 編集パネル（RecordInspector）
+
+| 項目 | 値 |
+|------|-----|
+| PC | Popover（Plans と共通の InspectorShell） |
+| モバイル | ボトムシート Drawer |
+| UI | Toggl風3行レイアウト（タイトル → 日時 → タグ+オプション） |
+
+- `useRecordInspectorStore` で開閉・選択状態を管理
+- `useRecordInspectorNavigation` で前後レコード移動
+- 共通コンポーネント（`InspectorShell`, `InspectorHeader`等）は Plans と共有
+
+---
+
+**最終更新**: 2026-02-17

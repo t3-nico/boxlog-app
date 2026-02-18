@@ -26,6 +26,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { useAuthStore } from '@/features/auth/stores/useAuthStore';
 import { useCalendarRealtime } from '@/features/calendar/hooks/useCalendarRealtime';
+import { isCalendarViewPath } from '@/features/calendar/lib/route-utils';
 import { useNotificationRealtime } from '@/features/notifications/hooks/useNotificationRealtime';
 import { usePlanRealtime } from '@/features/plans/hooks/usePlanRealtime';
 import { useTagRealtime } from '@/features/tags/hooks/useTagRealtime';
@@ -88,13 +89,15 @@ export function RealtimeProvider({ children }: RealtimeProviderProps) {
     // localeを除去してパスを正規化
     const normalizedPath = pathname.replace(/^\/(ja|en)/, '');
 
+    const isCalendarPage = isCalendarViewPath(normalizedPath);
+
     return {
       // カレンダーページ: カレンダーとプランの購読が必要
-      calendar: normalizedPath.startsWith('/calendar'),
-      // Planページ: プランの購読が必要
-      plan: normalizedPath.startsWith('/plan'),
-      // タグページ / カレンダー: タグの購読が必要
-      tags: normalizedPath.startsWith('/tags') || normalizedPath.startsWith('/calendar'),
+      calendar: isCalendarPage,
+      // プランはカレンダーのアサイドで表示されるため、カレンダーページで購読
+      plan: isCalendarPage,
+      // タグはサイドバーに常時表示されるため、カレンダーページで購読
+      tags: isCalendarPage,
       // 通知は全ページで必要
       notifications: true,
     };

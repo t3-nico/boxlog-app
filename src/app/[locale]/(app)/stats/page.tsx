@@ -1,41 +1,39 @@
-import { createServerHelpers, dehydrate, HydrationBoundary } from '@/lib/trpc/server';
+import type { Metadata } from 'next';
+import { getTranslations } from 'next-intl/server';
 
-import { StatsContent } from './stats-client';
+import type { Locale } from '@/i18n/routing';
+import { HydrationBoundary } from '@/lib/trpc/server';
 
-/**
- * Route Segment Config
- *
- * ユーザー固有のデータを表示するため、常に動的レンダリング
- * （ISRキャッシュは別ユーザーのデータが混在する危険があるため使用不可）
- */
+import { prefetchStatsData } from '../_helpers/calendar-prefetch';
+import { CalendarViewClient } from '../_helpers/CalendarViewClient';
+import { getCalendarTranslations } from '../_helpers/page-utils';
+
 export const dynamic = 'force-dynamic';
 
-/**
- * 統計ページ
- *
- * Server-side prefetchでデータを事前取得
- * チャートはクライアントで遅延ロード（Rechartsが重いため）
- */
-export default async function StatsPage() {
-  // Server-side prefetch: クライアントでのデータ取得を高速化
-  const helpers = await createServerHelpers();
-  const currentYear = new Date().getFullYear();
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale?: Locale }>;
+}): Promise<Metadata> {
+  const { locale = 'ja' } = await params;
+  const t = await getTranslations({ locale, namespace: 'calendar' });
+  return {
+    title: t('views.stats'),
+    description: t('meta.description'),
+  };
+}
 
-  await Promise.all([
-    helpers.plans.list.prefetch({}),
-    helpers.plans.getSummary.prefetch(),
-    helpers.plans.getStreak.prefetch(),
-    helpers.plans.getTotalTime.prefetch(),
-    helpers.plans.getTimeByTag.prefetch(),
-    helpers.plans.getHourlyDistribution.prefetch(),
-    helpers.plans.getDayOfWeekDistribution.prefetch(),
-    helpers.plans.getMonthlyTrend.prefetch(),
-    helpers.plans.getDailyHours.prefetch({ year: currentYear }),
-  ]);
+const StatsPage = async ({ params }: { params: Promise<{ locale?: Locale }> }) => {
+  const { locale = 'ja' } = await params;
+
+  const translations = await getCalendarTranslations(locale);
+  const { dehydratedState } = await prefetchStatsData();
 
   return (
-    <HydrationBoundary state={dehydrate(helpers.queryClient)}>
-      <StatsContent />
+    <HydrationBoundary state={dehydratedState}>
+      <CalendarViewClient view="stats" initialDate={null} translations={translations} />
     </HydrationBoundary>
   );
-}
+};
+
+export default StatsPage;
