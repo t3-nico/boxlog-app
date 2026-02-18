@@ -181,7 +181,7 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
       {/* AI設定 */}
       <SettingsCard title={t('settings.integrations.ai.title')}>
         <div className="space-y-4">
-          <div className="bg-surface-container rounded-2xl p-4">
+          <div className="bg-card border-border rounded-lg border p-4">
             <p className="text-muted-foreground text-sm">
               {t('settings.integrations.ai.description')}
             </p>
@@ -311,7 +311,7 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
           </SettingRow>
         </div>
         {syncEnabled && (
-          <div className="bg-surface-container mt-4 rounded-2xl p-4">
+          <div className="bg-card border-border mt-4 rounded-lg border p-4">
             <p className="text-muted-foreground text-sm">
               {t('settings.integrations.sync.description')}
             </p>
@@ -322,7 +322,7 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
       {/* API連携 */}
       <SettingsCard title={t('settings.integrations.api.title')}>
         <div className="space-y-4">
-          <div className="bg-surface-container rounded-2xl p-4">
+          <div className="bg-card border-border rounded-lg border p-4">
             <p className="text-muted-foreground text-sm">
               {t('settings.integrations.api.description')}
             </p>

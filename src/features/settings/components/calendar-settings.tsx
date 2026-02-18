@@ -315,7 +315,7 @@ export function CalendarSettings() {
           </SettingRow>
         </div>
         {/* 営業時間プレビュー */}
-        <div className="bg-surface-container mt-4 rounded-2xl p-4">
+        <div className="bg-card border-border mt-4 rounded-lg border p-4">
           <p className="text-muted-foreground text-sm">
             {t('settings.calendar.businessHoursPreview')}{' '}
             <span className="text-foreground font-normal">
