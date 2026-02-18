@@ -25,6 +25,7 @@ import { GripVertical } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
 import { CACHE_5_MINUTES } from '@/constants/time';
 import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings';
 import { api } from '@/lib/trpc';
@@ -144,7 +145,18 @@ export function ValueRankingSettings() {
     [autoSave],
   );
 
-  if (isPending) return null;
+  if (isPending) {
+    return (
+      <SettingsCard title={t('settings.values.ranking.title')}>
+        <Skeleton className="mb-4 h-4 w-48" />
+        <div className="flex flex-wrap gap-2">
+          {Array.from({ length: 12 }, (_, i) => (
+            <Skeleton key={i} className="h-7 w-16 rounded-full" />
+          ))}
+        </div>
+      </SettingsCard>
+    );
+  }
 
   return (
     <SettingsCard title={t('settings.values.ranking.title')} isSaving={autoSave.isSaving}>

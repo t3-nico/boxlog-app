@@ -1,8 +1,10 @@
 'use client';
 
-import { Suspense, lazy } from 'react';
+import { Suspense, lazy, useEffect } from 'react';
 
 import { Skeleton } from '@/components/ui/skeleton';
+import { CACHE_5_MINUTES } from '@/constants/time';
+import { api } from '@/lib/trpc';
 
 import { useSettingsModalStore } from '../../stores/useSettingsModalStore';
 import type { SettingsCategory } from '../../types';
@@ -47,6 +49,14 @@ const categoryComponents: Record<
 export function SettingsModalContent() {
   const selectedCategory = useSettingsModalStore((state) => state.selectedCategory);
   const CategoryComponent = categoryComponents[selectedCategory];
+  const utils = api.useUtils();
+
+  // モーダルマウント時に設定データをプリフェッチ
+  // カテゴリ切替時にはキャッシュ済みデータが即表示される
+  useEffect(() => {
+    void utils.userSettings.get.prefetch(undefined, { staleTime: CACHE_5_MINUTES });
+    void utils.notificationPreferences.get.prefetch();
+  }, [utils]);
 
   return (
     <div className="bg-background flex h-full min-w-0 flex-1 flex-col">

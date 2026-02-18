@@ -10,6 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Switch } from '@/components/ui/switch';
 
 import { useUserSettings } from '@/features/settings/hooks/useUserSettings';
@@ -131,7 +132,18 @@ export function CalendarSettings() {
   );
 
   if (isPending) {
-    return <div className="animate-pulse space-y-6">Loading...</div>;
+    return (
+      <div className="space-y-8">
+        {Array.from({ length: 3 }, (_, i) => (
+          <SettingsCard key={i}>
+            <div className="space-y-4">
+              <Skeleton className="h-12 w-full" />
+              <Skeleton className="h-12 w-full" />
+            </div>
+          </SettingsCard>
+        ))}
+      </div>
+    );
   }
 
   return (

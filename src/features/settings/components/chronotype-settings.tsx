@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 
 import { CACHE_5_MINUTES } from '@/constants/time';
@@ -203,9 +204,9 @@ export function ChronotypeSettings() {
 
   if (isPending) {
     return (
-      <div className="animate-pulse space-y-6">
-        <div className="bg-surface-container h-24 rounded-2xl" />
-      </div>
+      <SettingsCard title={t('settings.chronotype.title')}>
+        <Skeleton className="h-12 w-full rounded-lg" />
+      </SettingsCard>
     );
   }
 
