@@ -129,14 +129,7 @@ function InspectorFrame({ children }: { children: React.ReactNode }) {
 
 /** Plan用メニューコンテンツ */
 const planMenuContent = (
-  <PlanInspectorMenu
-    onDuplicate={noop}
-    onCopyLink={noop}
-    onSaveAsTemplate={noop}
-    onCopyId={noop}
-    onOpenInNewTab={noop}
-    onDelete={noop}
-  />
+  <PlanInspectorMenu onDuplicate={noop} onSaveAsTemplate={noop} onCopyId={noop} onDelete={noop} />
 );
 
 /** 編集モードフッター（完了にするスプリットボタン） */

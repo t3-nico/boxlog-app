@@ -19,6 +19,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { SegmentedControl } from '@/components/ui/segmented-control';
+import { useSubmitShortcut } from '@/hooks/useSubmitShortcut';
 import { api } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
 import { InspectorHeader, useDragHandle } from '../shared';
@@ -72,12 +73,29 @@ export function PlanInspectorContent() {
     updatePlan,
     handleDelete,
     handleCopyId,
-    handleOpenInNewTab,
     handleDuplicate,
-    handleCopyLink,
     handleSaveAsTemplate,
     getCache,
   } = usePlanInspectorContentLogic();
+
+  // Cmd+Enter / Ctrl+Enter でドラフト作成
+  useSubmitShortcut({
+    enabled: isDraftMode,
+    isLoading: isSaving,
+    checkDisabled: () => {
+      if (createType === 'record') {
+        return recordFormRef.current?.isSaveDisabled() ?? false;
+      }
+      return false;
+    },
+    onSubmit: () => {
+      if (createType === 'record') {
+        recordFormRef.current?.save();
+      } else {
+        saveAndClose();
+      }
+    },
+  });
 
   // タブ切り替え時にタイトルをフォーカス
   useEffect(() => {
@@ -121,10 +139,8 @@ export function PlanInspectorContent() {
   const menuContent = (
     <PlanInspectorMenu
       onDuplicate={handleDuplicate}
-      onCopyLink={handleCopyLink}
       onSaveAsTemplate={handleSaveAsTemplate}
       onCopyId={handleCopyId}
-      onOpenInNewTab={handleOpenInNewTab}
       onDelete={handleDelete}
     />
   );
