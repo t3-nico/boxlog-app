@@ -306,6 +306,7 @@ interface SortableRankItemProps {
 }
 
 function SortableRankItem({ id, rank, label }: SortableRankItemProps) {
+  const t = useTranslations();
   const {
     attributes,
     listeners,
@@ -331,13 +332,12 @@ function SortableRankItem({ id, rank, label }: SortableRankItemProps) {
       )}
     >
       <span className="text-muted-foreground w-5 text-right text-sm">{rank}</span>
-      <span ref={setDraggableNodeRef} className="text-foreground flex-1 text-sm">
-        {label}
-      </span>
+      <span className="text-foreground flex-1 text-sm">{label}</span>
       <button
+        ref={setDraggableNodeRef}
         type="button"
         className="text-muted-foreground hover:text-foreground cursor-grab touch-none"
-        aria-label="Drag to reorder"
+        aria-label={t('settings.values.ranking.dragHint')}
         {...attributes}
         {...listeners}
       >

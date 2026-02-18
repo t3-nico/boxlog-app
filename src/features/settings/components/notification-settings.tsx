@@ -3,6 +3,8 @@
 import { useCallback, useMemo, useState } from 'react';
 
 import { ChevronDown } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -17,8 +19,6 @@ import {
   requestNotificationPermission,
 } from '@/features/notifications/utils/notification-helpers';
 import { api } from '@/lib/trpc';
-import { useTranslations } from 'next-intl';
-import { toast } from 'sonner';
 
 import { SettingRow } from './fields/SettingRow';
 import { SettingsCard } from './SettingsCard';
@@ -65,6 +65,7 @@ interface DeliveryMethodDropdownProps {
   onMethodsChange: (methods: DeliveryMethod[]) => void;
   isPending: boolean;
   browserPermission: NotificationPermission | null;
+  onBrowserPermissionChange: (permission: NotificationPermission) => void;
 }
 
 function DeliveryMethodDropdown({
@@ -72,6 +73,7 @@ function DeliveryMethodDropdown({
   onMethodsChange,
   isPending,
   browserPermission,
+  onBrowserPermissionChange,
 }: DeliveryMethodDropdownProps) {
   const t = useTranslations();
 
@@ -99,6 +101,7 @@ function DeliveryMethodDropdown({
           toast.error(t('notification.settings.browserPermissionDenied'));
           return;
         }
+        onBrowserPermissionChange('granted');
       }
     }
 
@@ -174,7 +177,7 @@ export function NotificationSettings() {
   );
 
   // ブラウザ通知許可状態（同期的に読み取り、useEffect不要）
-  const [browserPermission] = useState<NotificationPermission | null>(() => {
+  const [browserPermission, setBrowserPermission] = useState<NotificationPermission | null>(() => {
     if (typeof window === 'undefined') return null;
     return checkBrowserNotificationSupport() ? Notification.permission : null;
   });
@@ -232,6 +235,7 @@ export function NotificationSettings() {
                 onMethodsChange={(methods) => handleMethodsChange(type, methods)}
                 isPending={updateMutation.isPending}
                 browserPermission={browserPermission}
+                onBrowserPermissionChange={setBrowserPermission}
               />
             </SettingRow>
           ))}

@@ -220,6 +220,7 @@
       "businessHoursPreview": "Business hours:",
       "resetSettings": "Reset Settings",
       "resetSettingsDesc": "Reset all calendar settings to default values",
+      "resetConfirm": "Are you sure you want to reset all calendar settings to default values?",
       "resetToDefault": "Reset to Default",
       "defaultViewSection": "Default View",
       "defaultView": "Startup view",
@@ -237,7 +238,14 @@
       "details": "Type Details",
       "timeline": "24-Hour Timeline",
       "peakTime": "Peak Time",
-      "learnMore": "Learn more about chronotypes"
+      "learnMore": "Learn more about chronotypes",
+      "levels": {
+        "peak": "Peak",
+        "good": "Focus",
+        "moderate": "Moderate",
+        "low": "Low",
+        "sleep": "Sleep"
+      }
     },
     "sleepSchedule": {
       "title": "Sleep Schedule",
@@ -258,6 +266,7 @@
       "settingsSaved": "Values saved",
       "placeholder": "What matters to you about this area...",
       "importance": "Importance",
+      "setImportance": "Set importance to {value}",
       "categories": {
         "family": "Family",
         "familyDesc": "Our ancestors lived in kin groups of 15-50. Family bonds are the foundation of security",
@@ -454,7 +463,10 @@
         "anthropicDesc": "Use Claude by Anthropic",
         "openaiDesc": "Use OpenAI's GPT models",
         "saved": "Saved",
-        "save": "Save"
+        "save": "Save",
+        "hideKey": "Hide API key",
+        "showKey": "Show API key",
+        "deleteKey": "Delete API key"
       },
       "services": {
         "title": "Connected Services",
@@ -502,6 +514,57 @@
         "security": "Security Policy",
         "cookies": "Cookie Settings",
         "ossCredits": "Open Source Licenses"
+      }
+    },
+    "subscription": {
+      "currentPlan": "Current Plan",
+      "freePlanLabel": "Free Plan",
+      "currentBadge": "Current Plan",
+      "freePlanDescription": "Basic features are available",
+      "selectPlan": "Select Plan",
+      "monthly": "Monthly",
+      "yearly": "Yearly",
+      "yearlyDiscount": "20% OFF",
+      "recommended": "Recommended",
+      "perMonth": "/mo",
+      "inUse": "In Use",
+      "upgrade": "Upgrade",
+      "paymentMethod": "Payment Method",
+      "noCard": "No card registered",
+      "addCard": "Add Card",
+      "paymentComingSoon": "* Payment features are currently being prepared",
+      "billingHistory": "Billing History",
+      "noBillingHistory": "No billing history",
+      "plans": {
+        "free": {
+          "name": "Free",
+          "features": {
+            "basicTasks": "Basic task management",
+            "maxTasks": "Up to 100 tasks",
+            "tags": "3 tags",
+            "calendar": "Calendar view"
+          }
+        },
+        "pro": {
+          "name": "Pro",
+          "features": {
+            "unlimitedTasks": "Unlimited tasks",
+            "unlimitedTags": "Unlimited tags",
+            "integrations": "External service integrations",
+            "prioritySupport": "Priority support",
+            "advancedAnalytics": "Advanced analytics"
+          }
+        },
+        "team": {
+          "name": "Team",
+          "features": {
+            "allPro": "All Pro features",
+            "teamSharing": "Team sharing",
+            "adminDashboard": "Admin dashboard",
+            "sso": "SSO support",
+            "dedicatedSupport": "Dedicated support"
+          }
+        }
       }
     }
   }

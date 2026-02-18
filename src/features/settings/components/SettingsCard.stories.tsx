@@ -33,10 +33,6 @@ const meta = {
       control: 'boolean',
       description: '保存中状態',
     },
-    noPadding: {
-      control: 'boolean',
-      description: 'パディングなし',
-    },
     actions: {
       table: { disable: true },
     },

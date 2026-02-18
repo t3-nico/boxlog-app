@@ -1,9 +1,11 @@
 'use client';
 
+import type { ReactNode } from 'react';
+
 interface SettingRowProps {
   label: string;
   description?: string;
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 /**

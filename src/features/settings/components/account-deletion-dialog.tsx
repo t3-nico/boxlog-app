@@ -1,7 +1,10 @@
 'use client';
 
-import { AlertTriangle } from 'lucide-react';
 import { useState } from 'react';
+
+import { AlertTriangle } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { toast } from 'sonner';
 
 import {
   AlertDialog,
@@ -17,8 +20,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { logger } from '@/lib/logger';
 import { api } from '@/lib/trpc';
-import { useTranslations } from 'next-intl';
-import { toast } from 'sonner';
 
 /**
  * 🗑️ Account Deletion Dialog Component
@@ -37,10 +38,6 @@ export function AccountDeletionDialog() {
 
   const deleteAccountMutation = api.user.deleteAccount.useMutation({
     onSuccess: () => {
-      logger.info('Account deleted', {
-        component: 'account-deletion-dialog',
-      });
-
       toast.success(t('settings.account.deletion.success'));
       setIsOpen(false);
 
@@ -70,10 +67,6 @@ export function AccountDeletionDialog() {
       toast.error(t('settings.account.deletion.passwordRequired'));
       return;
     }
-
-    logger.info('Account deletion initiated', {
-      component: 'account-deletion-dialog',
-    });
 
     deleteAccountMutation.mutate({
       password,
@@ -128,10 +121,14 @@ export function AccountDeletionDialog() {
               <p>{t('settings.account.deletion.dialogDescription')}</p>
 
               <div className="space-y-2">
-                <label className="text-foreground text-sm font-normal">
+                <label
+                  htmlFor="delete-account-password"
+                  className="text-foreground text-sm font-normal"
+                >
                   {t('settings.account.deletion.passwordLabel')}
                 </label>
                 <Input
+                  id="delete-account-password"
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -141,10 +138,14 @@ export function AccountDeletionDialog() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-foreground text-sm font-normal">
+                <label
+                  htmlFor="delete-account-confirm"
+                  className="text-foreground text-sm font-normal"
+                >
                   {t('settings.account.deletion.confirmTextLabel')}
                 </label>
                 <Input
+                  id="delete-account-confirm"
                   type="text"
                   value={confirmText}
                   onChange={(e) => setConfirmText(e.target.value)}

@@ -3,12 +3,12 @@
 import { memo, useCallback, useState } from 'react';
 
 import { Download, FileJson, History, Upload } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { api } from '@/lib/trpc';
-import { useTranslations } from 'next-intl';
-import { toast } from 'sonner';
 
 import { SettingRow } from './fields/SettingRow';
 import { SettingsCard } from './SettingsCard';
@@ -108,7 +108,7 @@ export const DataExportSettings = memo(function DataExportSettings() {
       <SettingsCard title={t('settings.dataControls.backup.title')}>
         <div className="space-y-0">
           <SettingRow label={t('settings.dataControls.backup.enableLabel')}>
-            <Switch checked={autoBackup} onCheckedChange={handleAutoBackupChange} />
+            <Switch checked={autoBackup} onCheckedChange={handleAutoBackupChange} disabled />
           </SettingRow>
         </div>
         {autoBackup && (

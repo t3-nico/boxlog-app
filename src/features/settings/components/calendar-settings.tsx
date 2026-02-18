@@ -13,10 +13,11 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { Switch } from '@/components/ui/switch';
 
+import { useTranslations } from 'next-intl';
+
 import { useUserSettings } from '@/features/settings/hooks/useUserSettings';
 import type { DateFormatType } from '@/features/settings/stores/useCalendarSettingsStore';
-import { formatHour } from '@/features/settings/utils/timezone-utils';
-import { useTranslations } from 'next-intl';
+import { formatHour, getTimeZones } from '@/features/settings/utils/timezone-utils';
 
 import { SettingRow } from './fields/SettingRow';
 import { SettingsCard } from './SettingsCard';
@@ -27,7 +28,7 @@ export function CalendarSettings() {
 
   // jsx-no-bind optimization: Reset settings handler
   const handleResetSettings = useCallback(() => {
-    if (confirm('カレンダー設定をすべてデフォルトに戻しますか？')) {
+    if (confirm(t('settings.calendar.resetConfirm'))) {
       settings.resetSettings();
       saveSettings({
         timezone: 'Asia/Tokyo',
@@ -41,7 +42,7 @@ export function CalendarSettings() {
         businessHours: { start: 9, end: 18 },
       });
     }
-  }, [settings, saveSettings]);
+  }, [settings, saveSettings, t]);
 
   // Handler functions
   const handleTimezoneChange = useCallback(
@@ -157,10 +158,11 @@ export function CalendarSettings() {
                 <SelectValue placeholder={t('settings.calendar.selectTimezone')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Asia/Tokyo">東京 (GMT+9)</SelectItem>
-                <SelectItem value="America/New_York">ニューヨーク (GMT-5)</SelectItem>
-                <SelectItem value="Europe/London">ロンドン (GMT+0)</SelectItem>
-                <SelectItem value="America/Los_Angeles">ロサンゼルス (GMT-8)</SelectItem>
+                {getTimeZones().map((tz) => (
+                  <SelectItem key={tz.value} value={tz.value}>
+                    {tz.label}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </SettingRow>
