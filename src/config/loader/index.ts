@@ -137,5 +137,3 @@ export const loadConfig = globalConfigLoader.load.bind(globalConfigLoader);
 export const reloadConfig = globalConfigLoader.reload.bind(globalConfigLoader);
 export const getCurrentConfig = globalConfigLoader.getCurrentConfig.bind(globalConfigLoader);
 export const clearConfigCache = globalConfigLoader.clearCache.bind(globalConfigLoader);
-
-export default globalConfigLoader;

@@ -399,5 +399,3 @@ export function withApiVersioning(
 export const parseApiVersion = globalVersionManager.parseRequest.bind(globalVersionManager);
 export const validateApiVersion = globalVersionManager.validateVersion.bind(globalVersionManager);
 export const registerApiEndpoint = globalVersionManager.registerEndpoint.bind(globalVersionManager);
-
-export default globalVersionManager;

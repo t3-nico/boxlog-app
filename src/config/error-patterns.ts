@@ -685,20 +685,3 @@ export function createAppError(
 ): AppError {
   return new AppError(message, code, metadata, userMessage);
 }
-
-// ==============================================
-// エクスポート
-// ==============================================
-
-const errorPatterns = {
-  ERROR_PATTERNS,
-  getErrorPattern,
-  getUserFriendlyMessage,
-  getRecommendedActions,
-  isAutoRecoverable,
-  createErrorToast,
-  getDetailedErrorInfo,
-  AppError,
-  createAppError,
-};
-export default errorPatterns;
