@@ -158,32 +158,48 @@ export function NavUser({
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
-                <Link href={`/${locale}/legal/terms`} target="_blank" rel="noopener noreferrer">
+                <a
+                  href={`https://dayopt.app/${locale}/legal/terms`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   <FileText />
                   <span className="flex-1">{t('navUser.helpSubmenu.termsOfService')}</span>
                   <ExternalLink className="text-muted-foreground size-3" />
-                </Link>
+                </a>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link href={`/${locale}/legal/privacy`} target="_blank" rel="noopener noreferrer">
+                <a
+                  href={`https://dayopt.app/${locale}/legal/privacy`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   <FileText />
                   <span className="flex-1">{t('navUser.helpSubmenu.privacyPolicy')}</span>
                   <ExternalLink className="text-muted-foreground size-3" />
-                </Link>
+                </a>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link href={`/${locale}/legal/tokushoho`} target="_blank" rel="noopener noreferrer">
+                <a
+                  href={`https://dayopt.app/${locale}/legal/tokushoho`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   <Building />
                   <span className="flex-1">{t('navUser.helpSubmenu.tokushoho')}</span>
                   <ExternalLink className="text-muted-foreground size-3" />
-                </Link>
+                </a>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link href={`/${locale}/legal/security`} target="_blank" rel="noopener noreferrer">
+                <a
+                  href={`https://dayopt.app/${locale}/legal/security`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   <Shield />
                   <span className="flex-1">{t('navUser.helpSubmenu.security')}</span>
                   <ExternalLink className="text-muted-foreground size-3" />
-                </Link>
+                </a>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
