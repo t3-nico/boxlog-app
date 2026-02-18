@@ -3,6 +3,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations } from 'next-intl/server';
 import Script from 'next/script';
 
+import { CookieConsentBanner } from '@/components/ui/cookie-consent-banner';
 import type { Locale } from '@/i18n/routing';
 import { routing } from '@/i18n/routing';
 
@@ -167,6 +168,7 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
           strategy="afterInteractive"
         />
         {children}
+        <CookieConsentBanner />
       </div>
     </NextIntlClientProvider>
   );

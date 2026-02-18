@@ -40,10 +40,12 @@ function isAnalyticsConsented(): boolean {
   }
 }
 
-// DSNが設定されていて、同意がある場合のみ初期化
-if (SENTRY_DSN && isAnalyticsConsented()) {
+/**
+ * Sentry初期化（一度だけ実行）
+ */
+function initSentry(dsn: string) {
   Sentry.init({
-    dsn: SENTRY_DSN,
+    dsn,
     environment: VERCEL_ENV,
     ...(process.env.NEXT_PUBLIC_APP_VERSION && { release: process.env.NEXT_PUBLIC_APP_VERSION }),
 
@@ -104,4 +106,23 @@ if (SENTRY_DSN && isAnalyticsConsented()) {
       }),
     ],
   });
+}
+
+// DSNが設定されている場合のみ処理
+if (SENTRY_DSN) {
+  if (isAnalyticsConsented()) {
+    // 同意済み: 即座に初期化
+    initSentry(SENTRY_DSN);
+  } else if (typeof window !== 'undefined' && IS_PRODUCTION) {
+    // 本番環境で未同意: Cookie同意バナーからの同意イベントを待機
+    const dsn = SENTRY_DSN;
+    const handler = (event: Event) => {
+      const detail = (event as CustomEvent).detail;
+      if (detail?.analytics === true) {
+        initSentry(dsn);
+        window.removeEventListener('cookieConsentChanged', handler);
+      }
+    };
+    window.addEventListener('cookieConsentChanged', handler);
+  }
 }
