@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Field, FieldError } from '@/components/ui/field';
 import { Textarea } from '@/components/ui/textarea';
 import { useDialogKeyboard } from '@/hooks/useDialogKeyboard';
+import { useSubmitShortcut } from '@/hooks/useSubmitShortcut';
 import { useTranslations } from 'next-intl';
 
 const MAX_LENGTH = 100;
@@ -60,6 +61,13 @@ export function TagNoteDialog({ isOpen, onClose, onSave, currentNote }: TagNoteD
       setIsLoading(false);
     }
   }, [note, currentNote, onSave, onClose]);
+
+  // Cmd+Enter / Ctrl+Enter で保存
+  useSubmitShortcut({
+    enabled: isOpen,
+    isLoading,
+    onSubmit: handleSubmit,
+  });
 
   const handleBackdropClick = useCallback(
     (e: React.MouseEvent) => {

@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/select';
 import { zIndex } from '@/config/ui/z-index';
 import { useDateFormat } from '@/features/settings/hooks/useDateFormat';
+import { useSubmitShortcut } from '@/hooks/useSubmitShortcut';
 
 import type { RecurrenceConfig } from '../../types/plan';
 import { configToRRule, ruleToConfig } from '../../utils/rrule';
@@ -163,6 +164,13 @@ export function RecurrenceDialog({
     }
     return undefined;
   }, [open, onOpenChange, triggerRef]);
+
+  // Cmd+Enter / Ctrl+Enter で適用
+  useSubmitShortcut({
+    enabled: open,
+    isLoading: false,
+    onSubmit: () => handleSave(),
+  });
 
   const handleSave = () => {
     const rrule = configToRRule(config);

@@ -13,6 +13,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import type { Tag } from '@/features/tags/types';
+import { useSubmitShortcut } from '@/hooks/useSubmitShortcut';
 
 import type {
   ActionConfig,
@@ -151,6 +152,14 @@ export function AutomationEditorModal({
     hasTriggerValue &&
     actionType !== undefined &&
     actionConfig !== undefined;
+
+  // Cmd+Enter / Ctrl+Enter で保存
+  useSubmitShortcut({
+    enabled: open,
+    isLoading: false,
+    checkDisabled: () => !isValid,
+    onSubmit: () => handleSave(),
+  });
 
   function handleSave() {
     if (!isValid || !actionType || !actionConfig) return;

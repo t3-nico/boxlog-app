@@ -20,6 +20,7 @@ import {
 } from '@/features/tags/constants/colors';
 import { useTagGroups } from '@/features/tags/hooks/useTagGroups';
 import type { CreateTagInput, TagGroup } from '@/features/tags/types';
+import { useSubmitShortcut } from '@/hooks/useSubmitShortcut';
 import { logger } from '@/lib/logger';
 import { ChevronDown, Circle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -164,6 +165,14 @@ export const TagCreateModal = ({
     },
     [handleSubmit, isLoading, name],
   );
+
+  // Cmd+Enter / Ctrl+Enter で作成（色や親タグ選択中でも動作）
+  useSubmitShortcut({
+    enabled: isOpen,
+    isLoading,
+    checkDisabled: () => !name.trim(),
+    onSubmit: handleSubmit,
+  });
 
   const selectedParent = parentTags.find((p) => p.id === parentId);
 
