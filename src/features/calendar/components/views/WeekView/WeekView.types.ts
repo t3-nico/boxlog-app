@@ -50,6 +50,7 @@ export interface UseWeekPlansOptions {
   weekDates: Date[];
   events: CalendarPlan[];
   hourHeight?: number;
+  timezone: string;
 }
 
 // useWeekPlansフックの返却値

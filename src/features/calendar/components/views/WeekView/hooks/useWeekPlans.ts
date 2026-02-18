@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { isSameDay } from 'date-fns';
 
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
+import { applyTimezoneToDisplayDates } from '@/features/calendar/utils/planDataAdapter';
 
 import { getDateKey, isValidEvent, sortEventsByDateKeys } from '../../shared';
 import { HOUR_HEIGHT } from '../../shared/constants/grid.constants';
@@ -20,8 +21,15 @@ export function useWeekPlans({
   weekDates,
   events: plans = [],
   hourHeight = HOUR_HEIGHT,
+  timezone,
 }: UseWeekPlansOptions): UseWeekPlansReturn {
-  // プランを日付ごとにグループ化
+  // TZ変換を適用（Planのみ、Recordは変換しない）
+  const tzPlans = useMemo(
+    () => plans.map((p) => applyTimezoneToDisplayDates(p, timezone)),
+    [plans, timezone],
+  );
+
+  // プランを日付ごとにグループ化（displayStartDateで判定）
   const plansByDate = useMemo(() => {
     const grouped: Record<string, CalendarPlan[]> = {};
 
@@ -34,13 +42,15 @@ export function useWeekPlans({
     });
 
     // プランを適切な日付に配置
-    plans.forEach((plan) => {
+    tzPlans.forEach((plan) => {
       if (!isValidEvent(plan)) return;
 
-      // startDateがnullまたはundefinedの場合はスキップ
-      if (!plan.startDate) return;
+      if (!plan.displayStartDate) return;
 
-      const planStart = plan.startDate instanceof Date ? plan.startDate : new Date(plan.startDate);
+      const planStart =
+        plan.displayStartDate instanceof Date
+          ? plan.displayStartDate
+          : new Date(plan.displayStartDate);
 
       // 無効な日付は除外
       if (isNaN(planStart.getTime())) return;
@@ -58,7 +68,7 @@ export function useWeekPlans({
 
     // 各日のプランを時刻順にソート
     return sortEventsByDateKeys(grouped);
-  }, [weekDates, plans]);
+  }, [weekDates, tzPlans]);
 
   // プランの位置情報を計算
   const planPositions = useMemo(() => {
@@ -77,18 +87,18 @@ export function useWeekPlans({
       const planColumns = calculatePlanColumns(dayPlans);
 
       dayPlans.forEach((plan, planIndex) => {
-        if (!plan.startDate) return;
+        if (!plan.displayStartDate) return;
 
-        // 時刻からピクセル位置を計算
-        const startHour = plan.startDate.getHours();
-        const startMinute = plan.startDate.getMinutes();
+        // 時刻からピクセル位置を計算（displayStartDateでTZ対応）
+        const startHour = plan.displayStartDate.getHours();
+        const startMinute = plan.displayStartDate.getMinutes();
         const top = (startHour + startMinute / 60) * hourHeight;
 
         // 終了時刻から高さを計算
         let height = hourHeight; // デフォルト1時間
-        if (plan.endDate) {
-          const endHour = plan.endDate.getHours();
-          const endMinute = plan.endDate.getMinutes();
+        if (plan.displayEndDate) {
+          const endHour = plan.displayEndDate.getHours();
+          const endMinute = plan.displayEndDate.getMinutes();
           const duration = endHour + endMinute / 60 - (startHour + startMinute / 60);
           height = Math.max(20, duration * hourHeight); // 最小20px
         }
@@ -127,11 +137,11 @@ export function useWeekPlans({
       const timeSlots: { start: number; end: number }[] = [];
 
       dayPlans.forEach((plan) => {
-        if (!plan.startDate) return;
+        if (!plan.displayStartDate) return;
 
-        const start = plan.startDate.getHours() + plan.startDate.getMinutes() / 60;
-        const end = plan.endDate
-          ? plan.endDate.getHours() + plan.endDate.getMinutes() / 60
+        const start = plan.displayStartDate.getHours() + plan.displayStartDate.getMinutes() / 60;
+        const end = plan.displayEndDate
+          ? plan.displayEndDate.getHours() + plan.displayEndDate.getMinutes() / 60
           : start + 1;
 
         timeSlots.push({ start, end });
@@ -168,13 +178,15 @@ function calculatePlanColumns(
   const occupiedColumns: Array<{ end: number }> = [];
 
   plans.forEach((plan) => {
-    if (!plan.startDate) {
+    if (!plan.displayStartDate) {
       columns.push({ column: 0, totalColumns: 1 });
       return;
     }
 
-    const start = plan.startDate.getHours() + plan.startDate.getMinutes() / 60;
-    const end = plan.endDate ? plan.endDate.getHours() + plan.endDate.getMinutes() / 60 : start + 1;
+    const start = plan.displayStartDate.getHours() + plan.displayStartDate.getMinutes() / 60;
+    const end = plan.displayEndDate
+      ? plan.displayEndDate.getHours() + plan.displayEndDate.getMinutes() / 60
+      : start + 1;
 
     // 利用可能な列を探す
     let columnIndex = 0;

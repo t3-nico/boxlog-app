@@ -6,6 +6,8 @@ import { format, getWeek, isToday } from 'date-fns';
 
 import { cn } from '@/lib/utils';
 
+import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
+
 import { CalendarViewAnimation } from '../../animations/ViewTransition';
 import {
   CalendarDateHeader,
@@ -47,6 +49,7 @@ export function MultiDayView({
   onNavigateToday: _onNavigateToday,
   onEmptyAreaContextMenu,
 }: MultiDayViewProps) {
+  const timezone = useCalendarSettingsStore((s) => s.timezone);
   const HOUR_HEIGHT = useResponsiveHourHeight();
 
   const displayCenterDate = useMemo(() => {
@@ -62,10 +65,11 @@ export function MultiDayView({
     showWeekends,
   });
 
-  const { planPositions } = useMultiDayPlanPositions({
+  const { planPositions, plansByDate } = useMultiDayPlanPositions({
     displayDates,
     plans,
     hourHeight: HOUR_HEIGHT,
+    timezone,
   });
 
   const planStyles = usePlanStyles(planPositions);
@@ -109,10 +113,7 @@ export function MultiDayView({
         >
           {displayDates.map((date, dayIndex) => {
             const dateKey = format(date, 'yyyy-MM-dd');
-            const dayPlans = plans.filter((plan) => {
-              const planDate = plan.startDate || new Date();
-              return format(planDate, 'yyyy-MM-dd') === dateKey;
-            });
+            const dayPlans = plansByDate.get(dateKey) || [];
 
             return (
               <div

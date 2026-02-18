@@ -6,6 +6,8 @@ import { getWeek, isToday } from 'date-fns';
 
 import { cn } from '@/lib/utils';
 
+import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
+
 import {
   CalendarDateHeader,
   DateDisplay,
@@ -33,7 +35,7 @@ export const WeekGrid = ({
   weekDates,
   events,
   allPlans: _allPlans,
-  eventsByDate,
+  eventsByDate: _eventsByDate,
   todayIndex,
   disabledPlanId,
   onEventClick,
@@ -44,6 +46,8 @@ export const WeekGrid = ({
   className,
   onEmptyAreaContextMenu,
 }: WeekGridProps) => {
+  const timezone = useCalendarSettingsStore((s) => s.timezone);
+
   // レスポンシブな時間高さ
   const hourHeight = useResponsiveHourHeight();
 
@@ -62,11 +66,12 @@ export const WeekGrid = ({
     [onEventUpdate, events],
   );
 
-  // プラン位置計算
-  const { planPositions } = useWeekPlans({
+  // プラン位置計算（TZ変換済みの日付グルーピングも取得）
+  const { planPositions, plansByDate: tzPlansByDate } = useWeekPlans({
     weekDates,
     events,
     hourHeight,
+    timezone,
   });
 
   // CurrentTimeLine表示のための日付配列（weekDatesをそのまま使用）
@@ -119,7 +124,8 @@ export const WeekGrid = ({
         {/* 7日分のグリッド */}
         {weekDates.map((date, dayIndex) => {
           const dateKey = getDateKey(date);
-          const dayEvents = eventsByDate[dateKey] || [];
+          // TZ変換済みのplansByDateを使用（eventsByDateはTZ未対応）
+          const dayEvents = tzPlansByDate[dateKey] || [];
 
           return (
             <div

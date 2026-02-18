@@ -50,6 +50,7 @@ export interface UseDayViewOptions {
   date: Date;
   plans: CalendarPlan[];
   onPlanUpdate?: (plan: CalendarPlan) => void;
+  timezone: string;
 }
 
 export interface UseDayViewReturn {
@@ -62,6 +63,7 @@ export interface UseDayViewReturn {
 export interface UseDayPlansOptions {
   date: Date;
   plans: CalendarPlan[];
+  timezone: string;
 }
 
 export interface UseDayPlansReturn {

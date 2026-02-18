@@ -6,6 +6,8 @@ import { getWeek } from 'date-fns';
 
 import { cn } from '@/lib/utils';
 
+import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
+
 import { CalendarViewAnimation } from '../../animations/ViewTransition';
 import { CalendarDateHeader, DateDisplay, ScrollableCalendarLayout } from '../shared';
 
@@ -35,6 +37,8 @@ export const DayView = ({
   onNavigateNext: _onNavigateNext,
   onNavigateToday,
 }: DayViewProps) => {
+  const timezone = useCalendarSettingsStore((s) => s.timezone);
+
   // 表示する日付
   const displayDates = useMemo(() => {
     const date = new Date(currentDate);
@@ -69,6 +73,7 @@ export const DayView = ({
     date,
     plans: plans || [],
     ...(onUpdatePlan && { onPlanUpdate: onUpdatePlan }),
+    timezone,
   });
 
   // 週番号を計算

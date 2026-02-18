@@ -42,7 +42,24 @@ const MOCK_CONTENT: Record<SettingsCategory, React.ReactNode> = {
           </Select>
         </SettingRow>
         <SettingRow label="タイムゾーン">
-          <span className="text-muted-foreground">Asia/Tokyo (UTC+9)</span>
+          <Select defaultValue="Asia/Tokyo">
+            <SelectTrigger variant="ghost">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Pacific/Honolulu">ホノルル (GMT-10)</SelectItem>
+              <SelectItem value="America/Los_Angeles">ロサンゼルス (GMT-8)</SelectItem>
+              <SelectItem value="America/New_York">ニューヨーク (GMT-5)</SelectItem>
+              <SelectItem value="Europe/London">ロンドン (GMT+0)</SelectItem>
+              <SelectItem value="Europe/Paris">パリ (GMT+1)</SelectItem>
+              <SelectItem value="Asia/Dubai">ドバイ (GMT+4)</SelectItem>
+              <SelectItem value="Asia/Singapore">シンガポール (GMT+8)</SelectItem>
+              <SelectItem value="Asia/Shanghai">上海 (GMT+8)</SelectItem>
+              <SelectItem value="Asia/Tokyo">東京 (GMT+9)</SelectItem>
+              <SelectItem value="Australia/Sydney">シドニー (GMT+10)</SelectItem>
+              <SelectItem value="Pacific/Auckland">オークランド (GMT+12)</SelectItem>
+            </SelectContent>
+          </Select>
         </SettingRow>
         <SettingRow label="日付形式">
           <span className="text-muted-foreground">YYYY-MM-DD</span>

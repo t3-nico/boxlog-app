@@ -54,6 +54,7 @@ export function getTimeZones(): TimezoneInfoJa[] {
     { value: 'Europe/Moscow', label: 'モスクワ (GMT+3)', offset: 3 },
     { value: 'Asia/Dubai', label: 'ドバイ (GMT+4)', offset: 4 },
     { value: 'Asia/Kolkata', label: 'コルカタ (GMT+5:30)', offset: 5.5 },
+    { value: 'Asia/Singapore', label: 'シンガポール (GMT+8)', offset: 8 },
     { value: 'Asia/Shanghai', label: '上海 (GMT+8)', offset: 8 },
     { value: 'Asia/Tokyo', label: '東京 (GMT+9)', offset: 9 },
     { value: 'Australia/Sydney', label: 'シドニー (GMT+10)', offset: 10 },
