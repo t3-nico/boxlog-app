@@ -5,7 +5,7 @@ import type { CalendarViewType } from '../types/calendar.types';
 
 // 有効なビュータイプかチェック
 function isValidViewType(view: string): view is CalendarViewType {
-  if (['day', 'week', 'agenda', 'timesheet', 'stats'].includes(view)) return true;
+  if (['day', 'week', 'agenda', 'timesheet'].includes(view)) return true;
   const match = view.match(/^(\d+)day$/);
   if (match) {
     const n = parseInt(match[1]!);

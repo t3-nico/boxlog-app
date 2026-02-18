@@ -127,7 +127,7 @@ interface CommandActions {
   openTagCreateModal: () => void;
   navigateToSettings: () => void;
   toggleTheme: () => void;
-  openAside: (aside: 'plan' | 'record' | 'stats' | 'chat') => void;
+  openAside: (aside: 'plan' | 'record' | 'chat') => void;
 }
 
 // Default commands that are always available

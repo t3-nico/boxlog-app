@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowDown, ArrowUp, Flame, Minus, Target, TrendingUp } from 'lucide-react';
+import { CalendarCheck, Flame, Target } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { Card, CardContent } from '@/components/ui/card';
@@ -23,11 +23,22 @@ function formatMinutesToHours(minutes: number): string {
 
 /**
  * Stats Hero カード（3カードグリッド）
- * Progress%, vs先週, Streak
+ * Progress%, Today, Streak
  */
 export function StatsHeroCards({ hero, streak, vertical }: StatsHeroCardsProps) {
   const t = useTranslations('calendar.stats');
-  const { progressPercent, actualMinutes, plannedMinutes, hoursDelta } = hero;
+  const {
+    progressPercent,
+    actualMinutes,
+    plannedMinutes,
+    todayPlannedMinutes,
+    todayActualMinutes,
+  } = hero;
+
+  const todayProgressPercent =
+    todayPlannedMinutes > 0
+      ? Math.min(Math.round((todayActualMinutes / todayPlannedMinutes) * 100), 100)
+      : 0;
 
   return (
     <div className={cn('grid grid-cols-1 gap-3 p-4', !vertical && 'md:grid-cols-3')}>
@@ -55,29 +66,34 @@ export function StatsHeroCards({ hero, streak, vertical }: StatsHeroCardsProps) 
         </CardContent>
       </Card>
 
-      {/* vs Last Week Card */}
+      {/* Today Card */}
       <Card className="bg-card">
         <CardContent className="flex flex-col gap-2 p-4">
           <div className="text-muted-foreground flex items-center gap-1.5 text-xs font-medium">
-            <TrendingUp className="h-3.5 w-3.5" />
-            {t('vsLastWeek')}
+            <CalendarCheck className="h-3.5 w-3.5" />
+            {t('today')}
           </div>
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-baseline gap-1">
             <span className="text-2xl font-bold tracking-tight">
-              {hoursDelta > 0 ? '+' : ''}
-              {hoursDelta}h
+              {formatMinutesToHours(todayActualMinutes)}
             </span>
-            {hoursDelta > 0 ? (
-              <ArrowUp className="h-5 w-5 text-emerald-500" />
-            ) : hoursDelta < 0 ? (
-              <ArrowDown className="h-5 w-5 text-red-500" />
-            ) : (
-              <Minus className="text-muted-foreground h-5 w-5" />
+            {todayPlannedMinutes > 0 && (
+              <span className="text-muted-foreground text-sm">
+                / {formatMinutesToHours(todayPlannedMinutes)}
+              </span>
             )}
           </div>
-          <div className="text-muted-foreground text-xs">
-            {t('previousWeek')}: {formatMinutesToHours(hero.previousActualMinutes)}
-          </div>
+          {todayPlannedMinutes > 0 && (
+            <div className="bg-muted h-2 w-full overflow-hidden rounded-full">
+              <div
+                className={cn(
+                  'h-full rounded-full transition-all',
+                  todayProgressPercent >= 100 ? 'bg-emerald-500' : 'bg-primary',
+                )}
+                style={{ width: `${todayProgressPercent}%` }}
+              />
+            </div>
+          )}
         </CardContent>
       </Card>
 

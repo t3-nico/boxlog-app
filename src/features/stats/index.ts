@@ -1,4 +1,4 @@
-export { StatsPanel } from './components/StatsPanel';
+export { StatsPageContent } from './components/StatsPageContent';
 export { StatsView } from './components/StatsView';
 export { useStatsViewData } from './hooks/useStatsViewData';
 export { useStatsFilterStore } from './stores/useStatsFilterStore';

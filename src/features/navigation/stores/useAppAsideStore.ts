@@ -63,7 +63,7 @@ const useAppAsideStoreBase = create<AppAsideState>()(
           const asideSize =
             state?.asideSize ??
             ((state as Record<string, unknown>)?.panelSize as number | undefined);
-          const validAsideTypes = ['none', 'plan', 'record', 'stats', 'chat', 'reflection'];
+          const validAsideTypes = ['none', 'plan', 'record', 'chat', 'reflection'];
           return {
             ...currentState,
             ...state,

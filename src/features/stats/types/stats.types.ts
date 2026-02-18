@@ -8,8 +8,8 @@ export interface StatsHeroData {
   plannedMinutes: number;
   actualMinutes: number;
   progressPercent: number;
-  previousActualMinutes: number;
-  hoursDelta: number;
+  todayPlannedMinutes: number;
+  todayActualMinutes: number;
 }
 
 /** タグ別ブレイクダウン */

@@ -239,8 +239,7 @@
     },
     "stats": {
       "progress": "Progress",
-      "vsLastWeek": "vs Last Week",
-      "previousWeek": "Last week",
+      "today": "Today",
       "streak": "Streak",
       "days": "days",
       "longestStreak": "Best: {days} days",

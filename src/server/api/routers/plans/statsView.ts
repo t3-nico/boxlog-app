@@ -17,6 +17,7 @@ const statsViewInputSchema = z.object({
   endDate: z.string(), // ISO date string (YYYY-MM-DD)
   prevStartDate: z.string(), // Previous period start
   prevEndDate: z.string(), // Previous period end
+  todayDate: z.string(), // ISO date string (YYYY-MM-DD) for "Today" card
 });
 
 interface TagBreakdownItem {
@@ -284,19 +285,32 @@ export const statsViewRouter = createTRPCRouter({
       return a.tagName.localeCompare(b.tagName);
     });
 
+    // --- Today データ（既存データからフィルター） ---
+    let todayPlannedMinutes = 0;
+    for (const plan of plans) {
+      if (plan.start_time?.startsWith(input.todayDate)) {
+        const diffMs = new Date(plan.end_time!).getTime() - new Date(plan.start_time).getTime();
+        if (diffMs > 0) todayPlannedMinutes += diffMs / MS_PER_MINUTE;
+      }
+    }
+    let todayActualMinutes = 0;
+    for (const record of records) {
+      if (record.worked_at === input.todayDate) {
+        todayActualMinutes += record.duration_minutes ?? 0;
+      }
+    }
+
     // --- Hero データ ---
     const progressPercent =
       totalPlannedMinutes > 0 ? Math.round((totalActualMinutes / totalPlannedMinutes) * 100) : 0;
-
-    const hoursDelta = (totalActualMinutes - totalPreviousActualMinutes) / 60;
 
     return {
       hero: {
         plannedMinutes: Math.round(totalPlannedMinutes),
         actualMinutes: Math.round(totalActualMinutes),
         progressPercent,
-        previousActualMinutes: Math.round(totalPreviousActualMinutes),
-        hoursDelta: Math.round(hoursDelta * 10) / 10, // 小数第1位まで
+        todayPlannedMinutes: Math.round(todayPlannedMinutes),
+        todayActualMinutes: Math.round(todayActualMinutes),
       },
       tagBreakdown,
     };

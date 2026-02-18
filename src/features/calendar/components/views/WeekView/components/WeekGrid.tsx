@@ -8,7 +8,6 @@ import { cn } from '@/lib/utils';
 
 import {
   CalendarDateHeader,
-  DailyUsageStrip,
   DateDisplay,
   ScrollableCalendarLayout,
   getDateKey,
@@ -33,7 +32,7 @@ import { WeekContent } from './WeekContent';
 export const WeekGrid = ({
   weekDates,
   events,
-  allPlans,
+  allPlans: _allPlans,
   eventsByDate,
   todayIndex,
   disabledPlanId,
@@ -109,9 +108,6 @@ export const WeekGrid = ({
     <div className={cn('bg-background flex min-h-0 flex-1 flex-col', className)}>
       {/* 固定日付ヘッダー */}
       <CalendarDateHeader header={headerComponent} showTimezone={false} weekNumber={weekNumber} />
-
-      {/* タイムゾーン＋日別使用時間 */}
-      <DailyUsageStrip dates={weekDates} plans={allPlans || events} timezone={timezone} />
 
       {/* スクロール可能コンテンツ */}
       <ScrollableCalendarLayout

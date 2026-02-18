@@ -239,8 +239,7 @@
     },
     "stats": {
       "progress": "進捗",
-      "vsLastWeek": "先週比",
-      "previousWeek": "先週",
+      "today": "今日",
       "streak": "連続記録",
       "days": "日",
       "longestStreak": "最長: {days}日",

@@ -8,12 +8,7 @@ import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendar
 import { cn } from '@/lib/utils';
 
 import { CalendarViewAnimation } from '../../animations/ViewTransition';
-import {
-  CalendarDateHeader,
-  DailyUsageStripSingle,
-  DateDisplay,
-  ScrollableCalendarLayout,
-} from '../shared';
+import { CalendarDateHeader, DateDisplay, ScrollableCalendarLayout } from '../shared';
 
 import { DayContent } from './components/DayContent';
 import type { DayViewProps } from './DayView.types';
@@ -22,7 +17,7 @@ import { useDayView } from './hooks/useDayView';
 export const DayView = ({
   dateRange: _dateRange,
   plans,
-  allPlans,
+  allPlans: _allPlans,
   currentDate,
   showWeekends: _showWeekends = true,
   className,
@@ -114,9 +109,6 @@ export const DayView = ({
       <div className={cn('bg-background flex min-h-0 flex-1 flex-col', className)}>
         {/* 固定日付ヘッダー */}
         <CalendarDateHeader header={headerComponent} showTimezone={false} weekNumber={weekNumber} />
-
-        {/* タイムゾーン＋日別使用時間 */}
-        <DailyUsageStripSingle date={date} plans={allPlans || plans || []} timezone={timezone} />
 
         {/* スクロール可能コンテンツ */}
         <ScrollableCalendarLayout

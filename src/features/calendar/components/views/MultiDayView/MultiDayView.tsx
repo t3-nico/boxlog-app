@@ -10,7 +10,6 @@ import { cn } from '@/lib/utils';
 import { CalendarViewAnimation } from '../../animations/ViewTransition';
 import {
   CalendarDateHeader,
-  DailyUsageStrip,
   DateDisplay,
   ScrollableCalendarLayout,
   useMultiDayPlanPositions,
@@ -29,7 +28,7 @@ export function MultiDayView({
   dayCount,
   dateRange: _dateRange,
   plans,
-  allPlans,
+  allPlans: _allPlans,
   currentDate,
   centerDate: _centerDate,
   showWeekends = true,
@@ -103,8 +102,6 @@ export function MultiDayView({
     <CalendarViewAnimation viewType={viewMode}>
       <div className={cn('bg-background flex min-h-0 flex-1 flex-col', className)}>
         <CalendarDateHeader header={headerComponent} showTimezone={false} weekNumber={weekNumber} />
-
-        <DailyUsageStrip dates={displayDates} plans={allPlans || plans} timezone={timezone} />
 
         <ScrollableCalendarLayout
           timezone={timezone}
