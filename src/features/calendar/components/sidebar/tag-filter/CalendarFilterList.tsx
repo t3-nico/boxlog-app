@@ -2,8 +2,9 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { CircleSlash, Moon, Search, Sun } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { BarChart3, CircleSlash, Moon, Search, Sun } from 'lucide-react';
+import { useLocale, useTranslations } from 'next-intl';
+import Link from 'next/link';
 
 import { useCalendarFilterStore, type ItemType } from '../../../stores/useCalendarFilterStore';
 
@@ -247,6 +248,7 @@ export function CalendarFilterList() {
 /** 通知 + 検索 + テーマ切替ユーティリティ */
 function SidebarUtilities() {
   const t = useTranslations();
+  const locale = useLocale();
   const { resolvedTheme, setTheme } = useTheme();
   const { open: openGlobalSearch } = useGlobalSearch();
 
@@ -266,6 +268,13 @@ function SidebarUtilities() {
           aria-label={t('sidebar.navigation.search')}
         >
           <Search className="size-4" aria-hidden="true" />
+        </Button>
+      </HoverTooltip>
+      <HoverTooltip content={t('calendar.views.stats')} side="right">
+        <Button variant="ghost" icon className="size-8" asChild>
+          <Link href={`/${locale}/stats`} aria-label={t('calendar.views.stats')}>
+            <BarChart3 className="size-4" aria-hidden="true" />
+          </Link>
         </Button>
       </HoverTooltip>
       <HoverTooltip content={resolvedTheme === 'light' ? 'Dark mode' : 'Light mode'} side="right">

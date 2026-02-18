@@ -60,10 +60,10 @@ export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
   const isAuthenticated = !!user;
   const isSidebarOpen = useSidebarStore.use.isOpen();
 
-  // ページ判定: カレンダービューかどうか（ヘッダー表示制御用）
-  const isCalendarPage = useMemo(() => {
+  // ページ判定: 独自ヘッダーを持つページかどうか（PageHeader表示制御用）
+  const hasOwnHeader = useMemo(() => {
     const pathWithoutLocale = pathname?.replace(new RegExp(`^/${locale}`), '') ?? '';
-    return isCalendarViewPath(pathWithoutLocale);
+    return isCalendarViewPath(pathWithoutLocale) || pathWithoutLocale === '/stats';
   }, [pathname, locale]);
 
   return (
@@ -85,7 +85,7 @@ export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
         {/* PageHeader + Main Content + Inspector */}
         <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
           {/* PageHeader（Calendar/Statsは独自ヘッダーを持つため非表示） */}
-          {!isCalendarPage && <PageHeader />}
+          {!hasOwnHeader && <PageHeader />}
 
           {/* Main Content + Inspector（自動的に残りのスペースを使用） */}
           <div className="min-w-0 flex-1 overflow-hidden">
