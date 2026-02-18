@@ -5,7 +5,7 @@ import type { Reflection } from '../types';
 import { ReflectionContent } from './ReflectionContent';
 
 const meta = {
-  title: 'Features/Reflection/ReflectionContent',
+  title: 'Draft/Reflection/ReflectionContent',
   parameters: { layout: 'padded' },
   tags: ['autodocs'],
 } satisfies Meta;

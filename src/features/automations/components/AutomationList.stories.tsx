@@ -109,7 +109,7 @@ const mockAutomations: Automation[] = [
 ];
 
 const meta = {
-  title: 'Features/Automations/AutomationList',
+  title: 'Draft/Automations/AutomationList',
   component: AutomationList,
   parameters: {
     layout: 'padded',

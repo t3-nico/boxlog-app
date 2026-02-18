@@ -7,7 +7,7 @@ import type { Reflection } from '../types';
 import { ReflectionPanel } from './ReflectionPanel';
 
 const meta = {
-  title: 'Features/Reflection/ReflectionPanel',
+  title: 'Draft/Reflection/ReflectionPanel',
   parameters: { layout: 'padded' },
   tags: ['autodocs'],
 } satisfies Meta;

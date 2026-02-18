@@ -211,7 +211,7 @@ function EditWrapper({ automation }: { automation: Automation }) {
 }
 
 const meta = {
-  title: 'Features/Automations/AutomationEditorModal',
+  title: 'Draft/Automations/AutomationEditorModal',
   parameters: {
     layout: 'centered',
     docs: {

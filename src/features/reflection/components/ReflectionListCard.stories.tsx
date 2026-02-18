@@ -5,7 +5,7 @@ import type { ReflectionSummary } from '../types';
 import { ReflectionListCard } from './ReflectionListCard';
 
 const meta = {
-  title: 'Features/Reflection/ReflectionListCard',
+  title: 'Draft/Reflection/ReflectionListCard',
   parameters: { layout: 'padded' },
   tags: ['autodocs'],
 } satisfies Meta;

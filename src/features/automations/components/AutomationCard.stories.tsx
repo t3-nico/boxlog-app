@@ -18,7 +18,7 @@ const baseAutomation: Automation = {
 };
 
 const meta = {
-  title: 'Features/Automations/AutomationCard',
+  title: 'Draft/Automations/AutomationCard',
   component: AutomationCard,
   parameters: {
     layout: 'padded',
