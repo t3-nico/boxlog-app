@@ -11,6 +11,7 @@ import {
   useRef,
   useState,
 } from 'react';
+import { toast } from 'sonner';
 
 import { SuggestInput } from '@/components/common/SuggestInput';
 import { ClockTimePicker } from '@/components/ui/clock-time-picker';
@@ -50,7 +51,7 @@ interface RecordFormData {
 }
 
 export interface RecordCreateFormRef {
-  save: () => Promise<void>;
+  save: () => void;
   isSaveDisabled: () => boolean;
   focusTitle: () => void;
 }
@@ -336,8 +337,11 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
       return formData.duration_minutes <= 0;
     }, [formData.duration_minutes]);
 
-    // 保存処理
-    const save = useCallback(async () => {
+    /**
+     * Inspectorを即座に閉じ、Record作成はバックグラウンドで実行
+     * エラー時はtoastで通知。
+     */
+    const save = useCallback(() => {
       if (!formData.worked_at) {
         return;
       }
@@ -348,7 +352,6 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
       if (formData.start_time && formData.end_time) {
         const records = utils.records.list.getData();
         if (records && records.length > 0) {
-          // 新規Recordの時間範囲
           const [startH, startM] = formData.start_time.split(':').map(Number);
           const [endH, endM] = formData.end_time.split(':').map(Number);
           const newStart = new Date(formData.worked_at);
@@ -356,12 +359,10 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
           const newEnd = new Date(formData.worked_at);
           newEnd.setHours(endH ?? 0, endM ?? 0, 0, 0);
 
-          // 同日のRecordと重複チェック
           const hasOverlap = records.some((r) => {
             if (r.worked_at !== workedAtStr) return false;
             if (!r.start_time || !r.end_time) return false;
 
-            // HH:MM:SS形式をパース
             const [rStartH, rStartM] = r.start_time.split(':').map(Number);
             const [rEndH, rEndM] = r.end_time.split(':').map(Number);
             const rStart = new Date(formData.worked_at!);
@@ -374,33 +375,35 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
 
           if (hasOverlap) {
             setTimeConflictError(true);
-            return; // サーバーを呼ばずに即座にエラー表示
+            return; // 重複があればインラインエラー表示（閉じない）
           }
         }
       }
 
-      try {
-        await createRecord.mutateAsync({
-          plan_id: formData.plan_id,
-          title: formData.title || null,
-          worked_at: workedAtStr,
-          start_time: formData.start_time || null,
-          end_time: formData.end_time || null,
-          duration_minutes: formData.duration_minutes,
-          fulfillment_score: formData.fulfillment_score,
-          note: formData.note || null,
-          tagIds: formData.tagIds.length > 0 ? formData.tagIds : undefined,
-        });
+      // データをキャプチャしてから即座に閉じる
+      const saveData = {
+        plan_id: formData.plan_id,
+        title: formData.title || null,
+        worked_at: workedAtStr,
+        start_time: formData.start_time || null,
+        end_time: formData.end_time || null,
+        duration_minutes: formData.duration_minutes,
+        fulfillment_score: formData.fulfillment_score,
+        note: formData.note || null,
+        tagIds: formData.tagIds.length > 0 ? formData.tagIds : undefined,
+      };
 
-        closeInspector();
-      } catch (error) {
-        // TIME_OVERLAPエラー（重複防止）の場合はフィールドにエラー表示（toastなし）
+      closeInspector();
+
+      // バックグラウンドで作成
+      createRecord.mutateAsync(saveData).catch((error: unknown) => {
         const errorMessage = error instanceof Error ? error.message : '';
         if (errorMessage.includes('既にRecord') || errorMessage.includes('TIME_OVERLAP')) {
-          // エラー表示（時間変更するまで維持）
-          setTimeConflictError(true);
+          toast.error('時間が重複しています');
+        } else {
+          toast.error('Recordの作成に失敗しました');
         }
-      }
+      });
     }, [formData, createRecord, closeInspector, utils.records.list]);
 
     // ref 経由で save と isSaveDisabled を公開
@@ -434,6 +437,7 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
             value={formData.title}
             onChange={handleTitleChange}
             onSuggestionSelect={handleSuggestionSelect}
+            type="record"
             placeholder="何をした？"
             className="pl-2"
             aria-label="記録タイトル"

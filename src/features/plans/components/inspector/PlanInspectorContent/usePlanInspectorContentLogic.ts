@@ -17,9 +17,9 @@ import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendar
 import { api } from '@/lib/trpc';
 import type { RecurringEditScope } from '../../../components/RecurringEditConfirmDialog';
 import { usePlan } from '../../../hooks/usePlan';
-import { usePlanInstanceMutations } from '../../../hooks/usePlanInstances';
 import { usePlanMutations } from '../../../hooks/usePlanMutations';
 import { usePlanTags } from '../../../hooks/usePlanTags';
+import { useRecurringScopeMutations } from '../../../hooks/useRecurringScopeMutations';
 import { useDeleteConfirmStore } from '../../../stores/useDeleteConfirmStore';
 import { usePlanCacheStore } from '../../../stores/usePlanCacheStore';
 import { usePlanInspectorStore, type DraftPlan } from '../../../stores/usePlanInspectorStore';
@@ -45,8 +45,8 @@ export function usePlanInspectorContentLogic() {
   // 時間重複エラー状態（視覚的フィードバック用）
   const [timeConflictError, setTimeConflictError] = useState(false);
 
-  // 保存中フラグ（重複保存防止）
-  const [isSaving, setIsSaving] = useState(false);
+  // 保存中フラグ（即座に閉じるため常にfalse、UIの disabled guard として維持）
+  const isSaving = false;
 
   // 自動保存デバウンス用タイマー（Activityノイズ防止）
   const autoSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -69,7 +69,7 @@ export function usePlanInspectorContentLogic() {
   const openDeleteDialog = useDeleteConfirmStore((state) => state.openDialog);
   const openRecurringDialog = useRecurringEditConfirmStore((state) => state.openDialog);
   const getCache = usePlanCacheStore((state) => state.getCache);
-  const { createInstance } = usePlanInstanceMutations();
+  const { applyDelete } = useRecurringScopeMutations();
   const { createPlan } = usePlanMutations();
 
   // Inspectorマウント時にグローバルダイアログをリセット
@@ -433,41 +433,13 @@ export function usePlanInspectorContentLogic() {
       if (!planId || !instanceDate) return;
 
       try {
-        switch (scope) {
-          case 'this':
-            // この日のみ例外として削除（cancelled例外を作成）
-            await createInstance.mutateAsync({
-              planId,
-              instanceDate,
-              exceptionType: 'cancelled',
-            });
-            break;
-
-          case 'thisAndFuture': {
-            // この日以降を終了: 親プランの recurrence_end_date を更新
-            // 前日を終了日にする（この日は含めない）
-            const endDate = new Date(instanceDate);
-            endDate.setDate(endDate.getDate() - 1);
-            await updatePlan.mutateAsync({
-              id: planId,
-              data: {
-                recurrence_end_date: endDate.toISOString().slice(0, 10),
-              },
-            });
-            break;
-          }
-
-          case 'all':
-            // 親プラン自体を削除
-            await deletePlan.mutateAsync({ id: planId });
-            break;
-        }
+        await applyDelete({ scope, planId, instanceDate });
         closeInspector();
       } catch (err) {
         console.error('Failed to delete recurring plan:', err);
       }
     },
-    [planId, instanceDate, createInstance, updatePlan, deletePlan, closeInspector],
+    [planId, instanceDate, applyDelete, closeInspector],
   );
 
   const handleDelete = useCallback(() => {
@@ -617,10 +589,6 @@ export function usePlanInspectorContentLogic() {
     if (planId) navigator.clipboard.writeText(planId);
   }, [planId]);
 
-  const handleOpenInNewTab = useCallback(() => {
-    if (planId) window.open(`/plans/${planId}`, '_blank');
-  }, [planId]);
-
   const handleDuplicate = useCallback(() => {
     if (!plan || !('id' in plan)) return;
 
@@ -638,25 +606,17 @@ export function usePlanInspectorContentLogic() {
     }, 100);
   }, [plan, closeInspector, openInspectorWithDraft]);
 
-  const handleCopyLink = useCallback(() => {
-    if (planId) {
-      const url = `${window.location.origin}/plans/${planId}`;
-      navigator.clipboard.writeText(url);
-    }
-  }, [planId]);
-
   const handleSaveAsTemplate = useCallback(() => {
     // Stub: テンプレート保存機能は未実装
   }, []);
 
   /**
-   * 未保存の変更を保存してからInspectorを閉じる（Google Calendar準拠）
-   * 時間重複チェックはサーバー側（TIME_OVERLAP）のみに依存
+   * Inspectorを即座に閉じ、保存処理はバックグラウンドで実行
+   *
+   * 楽観的更新でキャッシュは反映済みのため、サーバー応答を待たずに閉じる。
+   * エラー時はtoastで通知。
    */
-  const saveAndClose = useCallback(async () => {
-    // 保存中は重複実行を防止
-    setIsSaving(true);
-
+  const saveAndClose = useCallback(() => {
     // ストアから最新の状態を取得（クロージャの古い値を避ける）
     const {
       draftPlan: currentDraft,
@@ -664,82 +624,65 @@ export function usePlanInspectorContentLogic() {
       consumePendingChanges: consume,
     } = usePlanInspectorStore.getState();
     const currentIsDraftMode = currentDraft !== null && currentPlanId === null;
+    const currentTagIds = selectedTagIdsRef.current;
+    const currentHasTagChanges = hasTagChanges;
 
-    // ドラフトモードの場合: 新規作成
+    // 即座に閉じる
+    if (currentIsDraftMode) {
+      clearDraft();
+      window.dispatchEvent(new CustomEvent('calendar-drag-cancel'));
+    }
+    closeInspector();
+
+    // バックグラウンドで保存
     if (currentIsDraftMode && currentDraft) {
-      try {
-        const newPlan = await createPlan.mutateAsync({
-          title: currentDraft.title.trim(), // 空の場合はUI側で「(タイトルなし)」を表示
-          description: currentDraft.description ?? undefined,
-          status: 'open',
-          start_time: currentDraft.start_time,
-          end_time: currentDraft.end_time,
-        });
-        if (newPlan?.id) {
-          // タグが選択されていれば保存
-          const currentTagIds = selectedTagIdsRef.current;
-          if (currentTagIds.length > 0) {
+      // ドラフトモード: 新規作成
+      (async () => {
+        try {
+          const newPlan = await createPlan.mutateAsync({
+            title: currentDraft.title.trim(),
+            description: currentDraft.description ?? undefined,
+            status: 'open',
+            start_time: currentDraft.start_time,
+            end_time: currentDraft.end_time,
+          });
+          if (newPlan?.id && currentTagIds.length > 0) {
             try {
               await setplanTags(newPlan.id, currentTagIds);
-            } catch (error) {
-              console.error('Failed to save tags for new plan:', error);
+            } catch {
               toast.error('タグの保存に失敗しました');
             }
           }
-          clearDraft();
-          // カレンダーのドラッグ選択をクリア（保存成功後）
-          window.dispatchEvent(new CustomEvent('calendar-drag-cancel'));
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : '';
+          if (errorMessage.includes('TIME_OVERLAP') || errorMessage.includes('既に')) {
+            toast.error('時間が重複しています');
+          } else {
+            toast.error('Planの作成に失敗しました');
+          }
         }
-      } catch (error) {
-        console.error('Failed to create plan:', error);
-        // TIME_OVERLAPエラーの場合はフィールドにエラー表示
-        const errorMessage = error instanceof Error ? error.message : '';
-        if (errorMessage.includes('TIME_OVERLAP') || errorMessage.includes('既に')) {
-          setTimeConflictError(true);
-          setIsSaving(false);
-          return; // 閉じない
-        }
-      }
-      setIsSaving(false);
-      closeInspector();
-      return;
-    }
+      })();
+    } else {
+      // 編集モード: pending changesとタグを保存
+      const changes = consume();
 
-    // 編集モードの場合: 既存の処理
-    const changes = consume();
-
-    // 変更があればサーバーに保存
-    if (changes && currentPlanId && Object.keys(changes).length > 0) {
-      try {
-        await updatePlan.mutateAsync({
-          id: currentPlanId,
-          data: changes,
+      if (changes && currentPlanId && Object.keys(changes).length > 0) {
+        updatePlan.mutateAsync({ id: currentPlanId, data: changes }).catch((error: unknown) => {
+          const errorMessage = error instanceof Error ? error.message : '';
+          if (errorMessage.includes('TIME_OVERLAP') || errorMessage.includes('既に')) {
+            toast.error('時間が重複しています');
+          } else {
+            toast.error('保存に失敗しました');
+          }
         });
-      } catch (error) {
-        console.error('Failed to save pending changes:', error);
-        // TIME_OVERLAPエラーの場合はフィールドにエラー表示
-        const errorMessage = error instanceof Error ? error.message : '';
-        if (errorMessage.includes('TIME_OVERLAP') || errorMessage.includes('既に')) {
-          setTimeConflictError(true);
-          setIsSaving(false);
-          return; // 閉じない
-        }
+      }
+
+      if (currentHasTagChanges && currentPlanId) {
+        setplanTags(currentPlanId, currentTagIds).catch(() => {
+          toast.error('タグの保存に失敗しました');
+        });
       }
     }
-
-    // タグ変更があればサーバーに保存
-    if (hasTagChanges && currentPlanId) {
-      try {
-        await setplanTags(currentPlanId, selectedTagIdsRef.current);
-      } catch (error) {
-        console.error('Failed to save tags:', error);
-        toast.error('タグの保存に失敗しました');
-        // タグ保存エラーは閉じることを妨げない（キャッシュは既に更新済み）
-      }
-    }
-
-    setIsSaving(false);
-    closeInspector();
   }, [updatePlan, closeInspector, createPlan, clearDraft, setplanTags, hasTagChanges]);
 
   /**
@@ -801,9 +744,7 @@ export function usePlanInspectorContentLogic() {
     // Menu handlers
     handleDelete,
     handleCopyId,
-    handleOpenInNewTab,
     handleDuplicate,
-    handleCopyLink,
     handleSaveAsTemplate,
 
     // Cache

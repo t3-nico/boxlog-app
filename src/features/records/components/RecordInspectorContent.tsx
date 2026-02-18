@@ -12,7 +12,7 @@
  */
 
 import { useQueryClient } from '@tanstack/react-query';
-import { Check, ExternalLink, FolderOpen, Smile, Trash2, X } from 'lucide-react';
+import { Check, Copy, ExternalLink, FolderOpen, Smile, Trash2, X } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -38,7 +38,9 @@ import {
   TitleInput,
 } from '@/features/plans/components/inspector/shared';
 import { usePlans } from '@/features/plans/hooks/usePlans';
+import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
 import { useTags } from '@/features/tags/hooks';
+import { useSubmitShortcut } from '@/hooks/useSubmitShortcut';
 import { api } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
 
@@ -85,6 +87,8 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
   const queryClient = useQueryClient();
   const utils = api.useUtils();
   const selectedRecordId = useRecordInspectorStore((state) => state.selectedRecordId);
+  const closeRecordInspector = useRecordInspectorStore((state) => state.closeInspector);
+  const openInspectorWithDraft = usePlanInspectorStore((state) => state.openInspectorWithDraft);
 
   // 時間重複エラー状態
   const [timeConflictError, setTimeConflictError] = useState(false);
@@ -134,7 +138,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
     tagIds: [],
   });
   const [isDirty, setIsDirty] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
+  const isSaving = false;
 
   // Popover開閉状態
   const [isPlanPopoverOpen, setIsPlanPopoverOpen] = useState(false);
@@ -423,6 +427,52 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
     [selectedRecordId, updateTagsInCache],
   );
 
+  // 複製
+  const handleDuplicate = useCallback(() => {
+    if (!record) return;
+
+    closeRecordInspector();
+
+    setTimeout(() => {
+      openInspectorWithDraft(
+        {
+          title: `${record.title ?? ''} (copy)`,
+          start_time: record.start_time
+            ? (() => {
+                const [h, m] = record.start_time.split(':').map(Number);
+                const d = new Date(formData.worked_at ?? new Date());
+                d.setHours(h ?? 0, m ?? 0, 0, 0);
+                return d.toISOString();
+              })()
+            : null,
+          end_time: record.end_time
+            ? (() => {
+                const [h, m] = record.end_time.split(':').map(Number);
+                const d = new Date(formData.worked_at ?? new Date());
+                d.setHours(h ?? 0, m ?? 0, 0, 0);
+                return d.toISOString();
+              })()
+            : null,
+          tagIds: formData.tagIds,
+          note: formData.note || null,
+        },
+        'record',
+      );
+    }, 100);
+  }, [
+    record,
+    formData.worked_at,
+    formData.tagIds,
+    formData.note,
+    closeRecordInspector,
+    openInspectorWithDraft,
+  ]);
+
+  // IDをコピー
+  const handleCopyId = useCallback(() => {
+    if (selectedRecordId) navigator.clipboard.writeText(selectedRecordId);
+  }, [selectedRecordId]);
+
   // 削除
   const handleDelete = async () => {
     if (!selectedRecordId) return;
@@ -432,94 +482,52 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
     onClose();
   };
 
-  // 保存して閉じる（時間フィールドとタグを保存）
-  const saveAndClose = useCallback(async () => {
-    setIsSaving(true);
-
+  /**
+   * Inspectorを即座に閉じ、保存処理はバックグラウンドで実行
+   *
+   * 楽観的更新でキャッシュは反映済みのため、サーバー応答を待たずに閉じる。
+   * エラー時はtoastで通知。
+   */
+  const saveAndClose = useCallback(() => {
     if (!selectedRecordId || !formData.worked_at) {
-      setIsSaving(false);
       onClose();
       return;
     }
 
+    // 閉じる前にデータをキャプチャ
+    const recordId = selectedRecordId;
     const workedAtStr = formData.worked_at.toISOString().split('T')[0] ?? '';
+    const currentIsDirty = isDirty;
+    const currentHasTagChanges = hasTagChanges;
+    const saveData = {
+      worked_at: workedAtStr,
+      start_time: formData.start_time || null,
+      end_time: formData.end_time || null,
+      duration_minutes: formData.duration_minutes,
+    };
+    const tagIds = [...formData.tagIds];
 
-    // 時間重複チェック
-    if (formData.start_time && formData.end_time) {
-      const records = utils.records.list.getData();
-      if (records && records.length > 0) {
-        const [startH, startM] = formData.start_time.split(':').map(Number);
-        const [endH, endM] = formData.end_time.split(':').map(Number);
-        const newStart = new Date(formData.worked_at);
-        newStart.setHours(startH ?? 0, startM ?? 0, 0, 0);
-        const newEnd = new Date(formData.worked_at);
-        newEnd.setHours(endH ?? 0, endM ?? 0, 0, 0);
-
-        const hasOverlap = records.some((r) => {
-          if (r.id === selectedRecordId) return false;
-          if (r.worked_at !== workedAtStr) return false;
-          if (!r.start_time || !r.end_time) return false;
-
-          const [rStartH, rStartM] = r.start_time.split(':').map(Number);
-          const [rEndH, rEndM] = r.end_time.split(':').map(Number);
-          const rStart = new Date(formData.worked_at!);
-          rStart.setHours(rStartH ?? 0, rStartM ?? 0, 0, 0);
-          const rEnd = new Date(formData.worked_at!);
-          rEnd.setHours(rEndH ?? 0, rEndM ?? 0, 0, 0);
-
-          return rStart < newEnd && rEnd > newStart;
-        });
-
-        if (hasOverlap) {
-          setTimeConflictError(true);
-          setIsSaving(false);
-          return;
-        }
-      }
-    }
-
-    try {
-      // 時間フィールドを保存（変更があれば）
-      if (isDirty) {
-        await updateRecord.mutateAsync({
-          id: selectedRecordId,
-          data: {
-            worked_at: workedAtStr,
-            start_time: formData.start_time || null,
-            end_time: formData.end_time || null,
-            duration_minutes: formData.duration_minutes,
-          },
-        });
-      }
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : '';
-      if (errorMessage.includes('TIME_OVERLAP') || errorMessage.includes('既に')) {
-        setTimeConflictError(true);
-        setIsSaving(false);
-        return; // 閉じない
-      }
-      // その他のエラーはtoastで通知
-      toast.error('保存に失敗しました');
-      setIsSaving(false);
-      return;
-    }
-
-    // タグを保存（変更があれば）
-    if (hasTagChanges) {
-      try {
-        await setRecordTags(selectedRecordId, formData.tagIds);
-      } catch (error) {
-        console.error('Failed to save tags:', error);
-        toast.error('タグの保存に失敗しました');
-        // 楽観的更新をロールバック
-        updateTagsInCache(selectedRecordId, originalTagIdsRef.current);
-        setFormData((prev) => ({ ...prev, tagIds: originalTagIdsRef.current }));
-        // タグ保存エラーは閉じることを妨げない
-      }
-    }
-
-    setIsSaving(false);
+    // 即座に閉じる
     onClose();
+
+    // バックグラウンドで保存
+    if (currentIsDirty) {
+      updateRecord.mutateAsync({ id: recordId, data: saveData }).catch((error: unknown) => {
+        const errorMessage = error instanceof Error ? error.message : '';
+        if (errorMessage.includes('TIME_OVERLAP') || errorMessage.includes('既に')) {
+          toast.error('時間が重複しています');
+        } else {
+          toast.error('保存に失敗しました');
+        }
+      });
+    }
+
+    if (currentHasTagChanges) {
+      setRecordTags(recordId, tagIds).catch(() => {
+        toast.error('タグの保存に失敗しました');
+        updateTagsInCache(recordId, originalTagIdsRef.current);
+      });
+    }
   }, [
     selectedRecordId,
     formData.worked_at,
@@ -532,9 +540,15 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
     updateRecord,
     setRecordTags,
     updateTagsInCache,
-    utils.records.list,
     onClose,
   ]);
+
+  // Cmd+Enter / Ctrl+Enter で保存して閉じる
+  useSubmitShortcut({
+    enabled: !!selectedRecordId && !isLoading,
+    isLoading: isSaving,
+    onSubmit: saveAndClose,
+  });
 
   // ローディング状態
   if (isLoading) {
@@ -557,9 +571,18 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
   // メニューコンテンツ
   const menuContent = (
     <>
+      <DropdownMenuItem onClick={handleDuplicate}>
+        <Copy className="size-4" />
+        複製する
+      </DropdownMenuItem>
       <DropdownMenuSeparator />
-      <DropdownMenuItem onClick={handleDelete} className="text-destructive focus:text-destructive">
-        <Trash2 className="mr-2 size-4" />
+      <DropdownMenuItem onClick={handleCopyId}>
+        <Copy className="size-4" />
+        IDをコピー
+      </DropdownMenuItem>
+      <DropdownMenuSeparator />
+      <DropdownMenuItem onClick={handleDelete} variant="destructive">
+        <Trash2 className="size-4" />
         削除
       </DropdownMenuItem>
     </>
