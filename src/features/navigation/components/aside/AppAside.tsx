@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button';
 import { AIInspectorContent } from '@/features/ai/components/AIInspectorContent';
 import { PlanListPanel } from '@/features/calendar/components/aside/PlanListPanel';
 import { RecordListPanel } from '@/features/calendar/components/aside/RecordListPanel';
-import { ReflectionPanel } from '@/features/reflection/components/ReflectionPanel';
 import { StatsPanel } from '@/features/stats/components/StatsPanel';
 
 import { AsideSwitcher, type AsideType } from './AsideSwitcher';
@@ -39,7 +38,7 @@ export function AppAside({ asideType, onAsideChange }: AppAsideProps) {
       case 'chat':
         return <AIInspectorContent />;
       case 'reflection':
-        return <ReflectionPanel reflections={[]} />;
+        return null;
       default:
         return null;
     }

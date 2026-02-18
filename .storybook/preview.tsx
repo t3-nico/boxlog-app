@@ -279,6 +279,12 @@ const messages = {
       userNote: {
         placeholder: '感じたことを書いてみましょう...',
       },
+      list: {
+        thisWeek: '今週',
+        lastWeek: '先週',
+        older: 'それ以前',
+        back: '一覧に戻る',
+      },
     },
     aside: {
       loading: '読み込み中...',

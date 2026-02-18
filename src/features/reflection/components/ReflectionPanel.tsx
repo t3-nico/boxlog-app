@@ -1,15 +1,21 @@
 'use client';
 
+import { useCallback, useState } from 'react';
+
+import { ArrowLeft } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+
+import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 
 import type { Reflection } from '../types';
 
 import { ReflectionContent } from './ReflectionContent';
-import { ReflectionEmptyState } from './ReflectionEmptyState';
+import { ReflectionListView } from './ReflectionListView';
 
 interface ReflectionPanelProps {
-  /** Reflectionデータ（null = 未生成） */
-  reflection: Reflection | null;
+  /** 全Reflectionデータ（リスト表示用） */
+  reflections: Reflection[];
   /** 生成中か */
   isLoading?: boolean;
   /** 生成ボタンのコールバック */
@@ -21,15 +27,23 @@ interface ReflectionPanelProps {
 /**
  * Reflection（AI日報）パネル
  *
- * 状態に応じてEmptyState / Loading / Contentを切り替え表示。
- * CalendarAsideから呼び出される。
+ * リストビューと詳細ビューを切り替え表示する。
+ * - selectedId === null → リストビュー（ReflectionListView）
+ * - selectedId !== null → 詳細ビュー（ReflectionContent）
  */
 export function ReflectionPanel({
-  reflection,
+  reflections,
   isLoading,
   onGenerate,
   onUserNoteChange,
 }: ReflectionPanelProps) {
+  const t = useTranslations('calendar.reflection');
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  const handleBack = useCallback(() => {
+    setSelectedId(null);
+  }, []);
+
   if (isLoading) {
     return (
       <div className="flex h-full flex-col">
@@ -51,21 +65,41 @@ export function ReflectionPanel({
     );
   }
 
-  if (!reflection) {
+  // 詳細ビュー
+  if (selectedId !== null) {
+    const selected = reflections.find((r) => r.id === selectedId);
+
+    if (!selected) {
+      setSelectedId(null);
+      return null;
+    }
+
     return (
       <div className="flex h-full flex-col">
-        <div className="flex flex-1 items-center justify-center">
-          <ReflectionEmptyState onGenerate={onGenerate ?? (() => {})} />
+        {/* 戻るヘッダー */}
+        <div className="flex shrink-0 items-center px-4 py-2">
+          <Button variant="ghost" size="sm" className="-ml-2" onClick={handleBack}>
+            <ArrowLeft className="size-4" />
+            {t('list.back')}
+          </Button>
+        </div>
+
+        {/* 詳細コンテンツ */}
+        <div className="flex-1 overflow-y-auto">
+          <ReflectionContent reflection={selected} onUserNoteChange={onUserNoteChange} />
         </div>
       </div>
     );
   }
 
+  // リストビュー
+  const summaries = reflections.map((r) => ({
+    id: r.id,
+    date: r.date,
+    title: r.title,
+  }));
+
   return (
-    <div className="flex h-full flex-col">
-      <div className="flex-1 overflow-y-auto">
-        <ReflectionContent reflection={reflection} onUserNoteChange={onUserNoteChange} />
-      </div>
-    </div>
+    <ReflectionListView reflections={summaries} onSelect={setSelectedId} onGenerate={onGenerate} />
   );
 }

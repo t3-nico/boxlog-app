@@ -368,6 +368,12 @@
       },
       "userNote": {
         "placeholder": "Add your thoughts..."
+      },
+      "list": {
+        "thisWeek": "This Week",
+        "lastWeek": "Last Week",
+        "older": "Older",
+        "back": "Back to list"
       }
     },
     "error": {

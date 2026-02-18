@@ -17,6 +17,15 @@ export interface Reflection {
   updatedAt: string;
 }
 
+/** リスト表示用の軽量Reflection */
+export interface ReflectionSummary {
+  id: string;
+  /** 対象日（YYYY-MM-DD） */
+  date: string;
+  /** AIが生成する一日のタイトル */
+  title: string;
+}
+
 /** アクティビティの要約 */
 export interface ActivitySummary {
   /** タグ名 or タスク名 */

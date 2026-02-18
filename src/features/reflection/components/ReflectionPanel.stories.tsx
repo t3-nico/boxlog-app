@@ -62,6 +62,64 @@ const MOCK_REFLECTION_LONG: Reflection = {
     'フロントエンドとバックエンドの両方に取り組む日と、どちらかに集中する日、あなたはどちらが生産性が高いと感じますか？',
 };
 
+// 過去の Reflection モックデータ（リスト表示用）
+const MOCK_REFLECTIONS: Reflection[] = [
+  MOCK_REFLECTION,
+  {
+    id: 'ref-2',
+    date: '2026-02-16',
+    title: 'ゆっくり過ごした休日',
+    activities: [{ label: '読書', duration: 60, type: 'record' }],
+    insights: '休息も大切な時間です。',
+    question: '休日にリフレッシュできましたか？',
+    userNote: '',
+    createdAt: '2026-02-16T21:00:00Z',
+    updatedAt: '2026-02-16T21:00:00Z',
+  },
+  {
+    id: 'ref-3',
+    date: '2026-02-14',
+    title: '週の締めくくり',
+    activities: [
+      { label: 'コードレビュー', duration: 120, type: 'record' },
+      { label: 'ドキュメント作成', duration: 90, type: 'record' },
+    ],
+    insights: '週末に向けてタスクを整理できました。',
+    question: '今週の一番の学びは何でしたか？',
+    userNote: '',
+    createdAt: '2026-02-14T21:00:00Z',
+    updatedAt: '2026-02-14T21:00:00Z',
+  },
+  {
+    id: 'ref-4',
+    date: '2026-02-10',
+    title: '新機能の設計に集中',
+    activities: [
+      { label: '設計', duration: 180, type: 'record' },
+      { label: 'プロトタイピング', duration: 120, type: 'record' },
+    ],
+    insights: 'プロトタイプの完成度が高かった一日。',
+    question: '設計段階で一番意識したことは？',
+    userNote: '',
+    createdAt: '2026-02-10T21:00:00Z',
+    updatedAt: '2026-02-10T21:00:00Z',
+  },
+  {
+    id: 'ref-5',
+    date: '2026-02-03',
+    title: 'チームコラボレーションの日',
+    activities: [
+      { label: 'ペアプログラミング', duration: 240, type: 'record' },
+      { label: 'チームMTG', duration: 60, type: 'record' },
+    ],
+    insights: 'ペアプロで新しい視点を得られた。',
+    question: '次にペアプロしたい相手は？',
+    userNote: '',
+    createdAt: '2026-02-03T21:00:00Z',
+    updatedAt: '2026-02-03T21:00:00Z',
+  },
+];
+
 // ---------------------------------------------------------------------------
 // ヘルパー
 // ---------------------------------------------------------------------------
@@ -71,14 +129,14 @@ function PanelFrame({ children }: { children: React.ReactNode }) {
 }
 
 // ---------------------------------------------------------------------------
-// Stories
+// Stories: 詳細ビュー（単一 Reflection）
 // ---------------------------------------------------------------------------
 
-/** 未生成状態（生成ボタンあり） */
+/** 未生成状態（空リスト） */
 export const Empty: Story = {
   render: () => (
     <PanelFrame>
-      <ReflectionPanel reflection={null} onGenerate={() => {}} />
+      <ReflectionPanel reflections={[]} onGenerate={() => {}} />
     </PanelFrame>
   ),
 };
@@ -87,16 +145,16 @@ export const Empty: Story = {
 export const Loading: Story = {
   render: () => (
     <PanelFrame>
-      <ReflectionPanel reflection={null} isLoading />
+      <ReflectionPanel reflections={[]} isLoading />
     </PanelFrame>
   ),
 };
 
-/** 生成済み状態（全セクション表示） */
-export const Generated: Story = {
+/** 1件のみ → リストに1件表示 */
+export const SingleItem: Story = {
   render: () => (
     <PanelFrame>
-      <ReflectionPanel reflection={MOCK_REFLECTION} onUserNoteChange={() => {}} />
+      <ReflectionPanel reflections={[MOCK_REFLECTION]} onUserNoteChange={() => {}} />
     </PanelFrame>
   ),
 };
@@ -108,7 +166,7 @@ export const WithUserNote: Story = {
     return (
       <PanelFrame>
         <ReflectionPanel
-          reflection={{ ...MOCK_REFLECTION_WITH_NOTE, userNote: note }}
+          reflections={[{ ...MOCK_REFLECTION_WITH_NOTE, userNote: note }]}
           onUserNoteChange={setNote}
         />
       </PanelFrame>
@@ -120,10 +178,49 @@ export const WithUserNote: Story = {
 export const ManyActivities: Story = {
   render: () => (
     <PanelFrame>
-      <ReflectionPanel reflection={MOCK_REFLECTION_LONG} onUserNoteChange={() => {}} />
+      <ReflectionPanel reflections={[MOCK_REFLECTION_LONG]} onUserNoteChange={() => {}} />
     </PanelFrame>
   ),
 };
+
+// ---------------------------------------------------------------------------
+// Stories: リストビュー
+// ---------------------------------------------------------------------------
+
+/** 複数件のリスト表示（週グループ付き） */
+export const List: Story = {
+  render: () => (
+    <PanelFrame>
+      <ReflectionPanel reflections={MOCK_REFLECTIONS} onGenerate={() => {}} />
+    </PanelFrame>
+  ),
+};
+
+/** リストが空の状態 */
+export const ListEmpty: Story = {
+  render: () => (
+    <PanelFrame>
+      <ReflectionPanel reflections={[]} onGenerate={() => {}} />
+    </PanelFrame>
+  ),
+};
+
+/** リストからクリックで詳細に遷移（インタラクティブ） */
+export const ListToDetail: Story = {
+  render: () => (
+    <PanelFrame>
+      <ReflectionPanel
+        reflections={MOCK_REFLECTIONS}
+        onGenerate={() => {}}
+        onUserNoteChange={() => {}}
+      />
+    </PanelFrame>
+  ),
+};
+
+// ---------------------------------------------------------------------------
+// Stories: 全パターン一覧
+// ---------------------------------------------------------------------------
 
 /** 全パターン一覧 */
 export const AllPatterns: Story = {
@@ -132,25 +229,25 @@ export const AllPatterns: Story = {
       <div>
         <p className="text-muted-foreground mb-2 text-xs">Empty</p>
         <PanelFrame>
-          <ReflectionPanel reflection={null} onGenerate={() => {}} />
+          <ReflectionPanel reflections={[]} onGenerate={() => {}} />
         </PanelFrame>
       </div>
       <div>
         <p className="text-muted-foreground mb-2 text-xs">Loading</p>
         <PanelFrame>
-          <ReflectionPanel reflection={null} isLoading />
+          <ReflectionPanel reflections={[]} isLoading />
         </PanelFrame>
       </div>
       <div>
-        <p className="text-muted-foreground mb-2 text-xs">Generated</p>
+        <p className="text-muted-foreground mb-2 text-xs">List</p>
         <PanelFrame>
-          <ReflectionPanel reflection={MOCK_REFLECTION} onUserNoteChange={() => {}} />
+          <ReflectionPanel reflections={MOCK_REFLECTIONS} onGenerate={() => {}} />
         </PanelFrame>
       </div>
       <div>
-        <p className="text-muted-foreground mb-2 text-xs">With Note</p>
+        <p className="text-muted-foreground mb-2 text-xs">Single Item</p>
         <PanelFrame>
-          <ReflectionPanel reflection={MOCK_REFLECTION_WITH_NOTE} onUserNoteChange={() => {}} />
+          <ReflectionPanel reflections={[MOCK_REFLECTION]} onUserNoteChange={() => {}} />
         </PanelFrame>
       </div>
     </div>
