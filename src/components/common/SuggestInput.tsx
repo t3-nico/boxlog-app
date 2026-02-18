@@ -43,6 +43,8 @@ interface SuggestInputProps {
   value: string;
   onChange: (value: string) => void;
   onSuggestionSelect: (entry: SuggestionEntry) => void;
+  /** サジェストソースの絞り込み（'plan' or 'record'） */
+  type?: 'plan' | 'record';
   placeholder?: string;
   className?: string;
   'aria-label'?: string;
@@ -54,6 +56,7 @@ export const SuggestInput = forwardRef<HTMLInputElement, SuggestInputProps>(func
     value,
     onChange,
     onSuggestionSelect,
+    type,
     placeholder = '',
     className,
     'aria-label': ariaLabel,
@@ -79,7 +82,7 @@ export const SuggestInput = forwardRef<HTMLInputElement, SuggestInputProps>(func
     data: suggestions,
     isLoading,
     isError,
-  } = trpc.suggestions.recentTitles.useQuery(undefined, {
+  } = trpc.suggestions.recentTitles.useQuery(type ? { type } : undefined, {
     staleTime: 5 * 60 * 1000,
   });
 

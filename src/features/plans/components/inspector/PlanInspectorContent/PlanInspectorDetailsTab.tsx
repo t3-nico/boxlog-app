@@ -93,6 +93,7 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
             value={plan.title}
             onChange={(value) => onAutoSave('title', value)}
             onSuggestionSelect={handleSuggestionSelect}
+            type="plan"
             placeholder="タイトルを追加"
             className="flex-1"
             autoFocus
