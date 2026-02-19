@@ -206,7 +206,10 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
     // モバイル: Googleカレンダー風 / デスクトップ: 角丸
     isMobile
       ? 'border-l-2 rounded-r pl-1 pr-1 pt-1 text-xs flex items-start gap-1'
-      : 'rounded-lg p-2 text-sm',
+      : cn(
+          'p-2 text-sm',
+          isRecord ? 'border-l-[3px] border-l-record-border rounded-r-lg' : 'rounded-lg',
+        ),
     className,
   );
 
@@ -221,8 +224,12 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
       className={planCardClasses}
       style={{
         ...dynamicStyle,
-        // モバイルの左ボーダー色はタグ色
-        borderLeftColor: isMobile && plan.color ? plan.color : undefined,
+        // モバイル: Recordは固定色、Planはタグ色
+        borderLeftColor: isMobile
+          ? isRecord
+            ? 'var(--record-border)'
+            : plan.color || undefined
+          : undefined,
       }}
       onClick={handleClick}
       onContextMenu={handleContextMenu}
