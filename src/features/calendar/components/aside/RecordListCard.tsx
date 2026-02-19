@@ -23,7 +23,7 @@ interface RecordListCardProps {
  * PlanListCard と同構造だが：
  * - チェックボックスなし（Record にはステータスがない）
  * - D&D なし → cursor-pointer 固定
- * - bg-record-box 背景
+ * - 透明背景 + 3px左縦線アクセント（record-border）
  * - 充実度スコア表示（1-5）
  * - 所要時間表示
  */
