@@ -5,11 +5,12 @@
  *
  * Plan Inspector の Row 3 で使用。
  * TagsIconButton と同じ Badge + X パターンで Record を表示。
+ * Popover では未紐付き Record を検索・選択して紐付ける。
  */
 
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
-import { ListChecks, Plus, X } from 'lucide-react';
+import { Check, ListChecks, Plus, X } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import {
@@ -40,27 +41,55 @@ export function RecordsIconButton({ planId, disabled = false }: RecordsIconButto
   const [searchQuery, setSearchQuery] = useState('');
   const openInspectorWithDraft = usePlanInspectorStore((state) => state.openInspectorWithDraft);
 
-  const { data: records, isPending } = api.records.listByPlan.useQuery({
+  // 紐付き Record（Badge 表示用）
+  const { data: records } = api.records.listByPlan.useQuery({
     planId,
     sortOrder: 'desc',
   });
 
+  // 全 Record（Popover 候補用）
+  const { data: allRecords, isPending: isAllRecordsPending } = api.records.list.useQuery(
+    {},
+    { enabled: isOpen },
+  );
+
   // タグデータ取得
   const { data: allTags = [] } = useTags();
 
-  // 検索フィルタリング
-  const filteredRecords = useMemo(() => {
-    if (!records) return [];
-    if (!searchQuery.trim()) return records;
+  // 紐付き Record の ID セット
+  const linkedRecordIds = useMemo(() => new Set(records?.map((r) => r.id) ?? []), [records]);
 
-    const query = searchQuery.toLowerCase();
-    return records.filter((record) => {
-      const title = record.title?.toLowerCase() ?? '';
-      const note = record.note?.toLowerCase() ?? '';
-      const date = record.worked_at.toLowerCase();
-      return title.includes(query) || note.includes(query) || date.includes(query);
+  // 検索フィルタ関数
+  const matchesQuery = useCallback(
+    (r: { title?: string | null; worked_at: string }) => {
+      if (!searchQuery.trim()) return true;
+      const q = searchQuery.toLowerCase();
+      return (r.title?.toLowerCase() ?? '').includes(q) || r.worked_at.toLowerCase().includes(q);
+    },
+    [searchQuery],
+  );
+
+  // Popover 内: 全 Record（紐付き済みを先頭にソート + 検索フィルタ適用）
+  const sortedRecords = useMemo(() => {
+    if (!allRecords) return [];
+    const filtered = allRecords.filter(matchesQuery);
+    return [...filtered].sort((a, b) => {
+      const aLinked = linkedRecordIds.has(a.id);
+      const bLinked = linkedRecordIds.has(b.id);
+      if (aLinked && !bLinked) return -1;
+      if (!aLinked && bLinked) return 1;
+      return 0;
     });
-  }, [records, searchQuery]);
+  }, [allRecords, linkedRecordIds, matchesQuery]);
+
+  // Record を Plan に紐付け
+  const linkRecord = api.records.update.useMutation({
+    onSettled: () => {
+      void utils.records.listByPlan.invalidate({ planId });
+      void utils.records.list.invalidate(undefined, { refetchType: 'all' });
+      void utils.plans.getCumulativeTime.invalidate();
+    },
+  });
 
   // Record の plan_id を null にして紐付け解除
   const unlinkRecord = api.records.update.useMutation({
@@ -86,6 +115,10 @@ export function RecordsIconButton({ planId, disabled = false }: RecordsIconButto
       void utils.plans.getCumulativeTime.invalidate();
     },
   });
+
+  const handleLinkRecord = (recordId: string) => {
+    linkRecord.mutate({ id: recordId, data: { plan_id: planId } });
+  };
 
   const handleUnlinkRecord = (recordId: string) => {
     unlinkRecord.mutate({ id: recordId, data: { plan_id: null } });
@@ -123,9 +156,9 @@ export function RecordsIconButton({ planId, disabled = false }: RecordsIconButto
         </Badge>
       ))}
 
-      {/* Record 追加ボタン（Popover） */}
+      {/* Record 選択ボタン（Popover） */}
       <Popover open={isOpen} onOpenChange={setIsOpen}>
-        <HoverTooltip content="Recordを追加" side="top">
+        <HoverTooltip content="Recordを紐付け" side="top">
           <PopoverTrigger asChild>
             <button
               type="button"
@@ -135,7 +168,7 @@ export function RecordsIconButton({ planId, disabled = false }: RecordsIconButto
                 'hover:bg-state-hover focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
                 'text-muted-foreground hover:text-foreground',
               )}
-              aria-label="Recordを追加"
+              aria-label="Recordを紐付け"
             >
               <ListChecks className="size-4" />
             </button>
@@ -148,7 +181,7 @@ export function RecordsIconButton({ planId, disabled = false }: RecordsIconButto
           sideOffset={8}
           style={{ zIndex: zIndex.overlayDropdown }}
         >
-          {isPending ? (
+          {isAllRecordsPending ? (
             <div className="flex items-center justify-center py-8">
               <Spinner size="sm" />
             </div>
@@ -162,20 +195,34 @@ export function RecordsIconButton({ planId, disabled = false }: RecordsIconButto
               <CommandList className="max-h-[280px]">
                 <CommandEmpty>一致するRecordがありません</CommandEmpty>
                 <CommandGroup>
-                  {filteredRecords.map((record) => {
+                  {sortedRecords.map((record) => {
+                    const isLinked = linkedRecordIds.has(record.id);
                     const recordTags = record.tagIds
                       ?.map((id) => allTags.find((t) => t.id === id))
                       .filter(Boolean);
                     return (
-                      <CommandItem key={record.id} value={record.id}>
-                        {/* タイトル or (タイトルなし) */}
+                      <CommandItem
+                        key={record.id}
+                        value={record.id}
+                        onSelect={() =>
+                          isLinked ? handleUnlinkRecord(record.id) : handleLinkRecord(record.id)
+                        }
+                        className="cursor-pointer"
+                      >
+                        {/* チェックボックスインジケータ（TagSelectCombobox準拠） */}
+                        <div
+                          className={cn(
+                            'flex size-4 shrink-0 items-center justify-center rounded border',
+                            isLinked ? 'border-primary bg-primary' : 'border-muted-foreground/30',
+                          )}
+                        >
+                          {isLinked && <Check className="size-3 text-white" />}
+                        </div>
                         <span className="shrink truncate">
                           {record.title || (
                             <span className="text-muted-foreground">(タイトルなし)</span>
                           )}
                         </span>
-
-                        {/* タグ */}
                         {recordTags && recordTags.length > 0 && (
                           <div className="flex shrink-0 gap-1 pl-2">
                             {recordTags.slice(0, 2).map((tag) => (
@@ -197,26 +244,9 @@ export function RecordsIconButton({ planId, disabled = false }: RecordsIconButto
                             )}
                           </div>
                         )}
-
-                        {/* 日付 */}
                         <span className="text-muted-foreground ml-auto shrink-0 pl-2 text-xs">
                           {record.worked_at}
                         </span>
-
-                        {/* 紐付け解除 */}
-                        {!disabled && (
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleUnlinkRecord(record.id);
-                            }}
-                            className="hover:bg-state-hover text-muted-foreground hover:text-foreground shrink-0 rounded p-1 transition-colors"
-                            aria-label="Record紐付けを解除"
-                          >
-                            <X className="size-3.5" />
-                          </button>
-                        )}
                       </CommandItem>
                     );
                   })}
