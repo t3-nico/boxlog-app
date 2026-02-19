@@ -144,10 +144,12 @@ export function ConfirmDialog({
 
   // ラベルの決定
   const resolvedConfirmLabel =
-    confirmLabel ?? (variant === 'destructive' ? t('actions.delete') : t('actions.confirm'));
-  const resolvedCancelLabel = cancelLabel ?? t('actions.cancel');
+    confirmLabel ??
+    (variant === 'destructive' ? t('common.actions.delete') : t('common.actions.confirm'));
+  const resolvedCancelLabel = cancelLabel ?? t('common.actions.cancel');
   const resolvedLoadingLabel =
-    loadingLabel ?? (variant === 'destructive' ? t('actions.deleting') : t('common.loading'));
+    loadingLabel ??
+    (variant === 'destructive' ? t('common.actions.deleting') : t('common.loading'));
 
   const dialog = (
     <div

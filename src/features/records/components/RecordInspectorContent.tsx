@@ -597,9 +597,9 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
         onClose={isSaving ? () => {} : saveAndClose}
         onPrevious={goToPrevious}
         onNext={goToNext}
-        closeLabel={t('actions.close')}
-        previousLabel={t('aria.previous')}
-        nextLabel={t('aria.next')}
+        closeLabel={t('common.actions.close')}
+        previousLabel={t('common.aria.previous')}
+        nextLabel={t('common.aria.next')}
         extraRightContent={
           selectedRecordId ? <RecordActivityPopover recordId={selectedRecordId} /> : undefined
         }

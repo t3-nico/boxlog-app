@@ -292,7 +292,7 @@ export function TagMergeModal({
             disabled={mergeTagMutation.isPending}
             className="hover:bg-state-hover"
           >
-            {t('actions.cancel')}
+            {t('common.actions.cancel')}
           </Button>
           <Button variant="destructive" onClick={handleMerge} disabled={mergeTagMutation.isPending}>
             {mergeTagMutation.isPending

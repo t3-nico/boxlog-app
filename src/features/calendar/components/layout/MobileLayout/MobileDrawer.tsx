@@ -82,7 +82,7 @@ export const MobileDrawer = ({
     },
     {
       id: 'import',
-      label: t('actions.create'),
+      label: t('common.actions.create'),
       icon: <Upload className="h-5 w-5" />,
     },
   ];

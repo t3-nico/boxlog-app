@@ -40,7 +40,7 @@ export function SettingsCard({
               {isSaving === true && (
                 <div className="text-primary flex items-center gap-2 text-sm">
                   <Loader2 className="h-3 w-3 animate-spin" />
-                  <span>{t('actions.saving')}</span>
+                  <span>{t('common.actions.saving')}</span>
                 </div>
               )}
               {actions ? <div>{actions}</div> : null}

@@ -132,7 +132,7 @@ export function useMFA(): UseMFAReturn {
       });
 
       if (enrollError) {
-        throw new Error(`${t('errors.mfa.enrollFailed')}: ${enrollError.message}`);
+        throw new Error(`${t('common.errors.mfa.enrollFailed')}: ${enrollError.message}`);
       }
 
       if (data) {
@@ -142,11 +142,11 @@ export function useMFA(): UseMFAReturn {
         setQrCode(qrCodeDataUrl);
         setShowMFASetup(true);
       } else {
-        throw new Error(t('errors.mfa.dataNotFound'));
+        throw new Error(t('common.errors.mfa.dataNotFound'));
       }
     } catch (err) {
       console.error('MFA enrollment error:', err);
-      const errorMessage = err instanceof Error ? err.message : t('errors.mfa.setupFailed');
+      const errorMessage = err instanceof Error ? err.message : t('common.errors.mfa.setupFailed');
       setError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -156,12 +156,12 @@ export function useMFA(): UseMFAReturn {
   // MFA検証
   const verifyMFA = useCallback(async () => {
     if (!factorId || !verificationCode) {
-      setError(t('errors.mfa.enterCode'));
+      setError(t('common.errors.mfa.enterCode'));
       return;
     }
 
     if (verificationCode.length !== 6) {
-      setError(t('errors.mfa.codeLength'));
+      setError(t('common.errors.mfa.codeLength'));
       return;
     }
 
@@ -175,7 +175,7 @@ export function useMFA(): UseMFAReturn {
       });
 
       if (challengeError) {
-        throw new Error(`${t('errors.mfa.challengeFailed')}: ${challengeError.message}`);
+        throw new Error(`${t('common.errors.mfa.challengeFailed')}: ${challengeError.message}`);
       }
 
       const { error: verifyError } = await supabase.auth.mfa.verify({
@@ -185,7 +185,7 @@ export function useMFA(): UseMFAReturn {
       });
 
       if (verifyError) {
-        throw new Error(`${t('errors.mfa.verifyFailed')}: ${verifyError.message}`);
+        throw new Error(`${t('common.errors.mfa.verifyFailed')}: ${verifyError.message}`);
       }
 
       // セッションを更新（AAL2に昇格）
@@ -201,7 +201,7 @@ export function useMFA(): UseMFAReturn {
         setRecoveryCodeCount(codes.length);
       }
 
-      setSuccess(t('errors.mfa.enabled'));
+      setSuccess(t('common.errors.mfa.enabled'));
       setHasMFA(true);
       setShowMFASetup(false);
       setVerificationCode('');
@@ -212,7 +212,8 @@ export function useMFA(): UseMFAReturn {
       await checkMFAStatus();
     } catch (err) {
       console.error('MFA verification error:', err);
-      const errorMessage = err instanceof Error ? err.message : t('errors.mfa.verificationFailed');
+      const errorMessage =
+        err instanceof Error ? err.message : t('common.errors.mfa.verificationFailed');
       setError(errorMessage);
       setVerificationCode('');
     } finally {
@@ -222,9 +223,9 @@ export function useMFA(): UseMFAReturn {
 
   // MFA無効化
   const disableMFA = useCallback(async () => {
-    const code = window.prompt(t('errors.mfa.disablePrompt'));
+    const code = window.prompt(t('common.errors.mfa.disablePrompt'));
     if (!code || code.length !== 6) {
-      setError(t('errors.mfa.enterCode'));
+      setError(t('common.errors.mfa.enterCode'));
       return;
     }
 
@@ -236,18 +237,18 @@ export function useMFA(): UseMFAReturn {
       const { data: factors, error: listError } = await supabase.auth.mfa.listFactors();
 
       if (listError) {
-        throw new Error(`${t('errors.mfa.factorListFailed')}: ${listError.message}`);
+        throw new Error(`${t('common.errors.mfa.factorListFailed')}: ${listError.message}`);
       }
 
       if (!factors || factors.totp.length === 0) {
-        setError(t('errors.mfa.noFactorFound'));
+        setError(t('common.errors.mfa.noFactorFound'));
         return;
       }
 
       const verifiedFactor = factors.totp.find((f) => f.status === 'verified');
 
       if (!verifiedFactor) {
-        setError(t('errors.mfa.noVerifiedFactor'));
+        setError(t('common.errors.mfa.noVerifiedFactor'));
         return;
       }
 
@@ -257,7 +258,7 @@ export function useMFA(): UseMFAReturn {
       });
 
       if (challengeError) {
-        throw new Error(`${t('errors.mfa.challengeFailed')}: ${challengeError.message}`);
+        throw new Error(`${t('common.errors.mfa.challengeFailed')}: ${challengeError.message}`);
       }
 
       // チャレンジを検証してAAL2に昇格
@@ -268,7 +269,7 @@ export function useMFA(): UseMFAReturn {
       });
 
       if (verifyError) {
-        throw new Error(t('errors.mfa.codeInvalid'));
+        throw new Error(t('common.errors.mfa.codeInvalid'));
       }
 
       // AAL2セッションでMFA無効化
@@ -277,17 +278,17 @@ export function useMFA(): UseMFAReturn {
       });
 
       if (unenrollError) {
-        throw new Error(`${t('errors.mfa.disableFailed')}: ${unenrollError.message}`);
+        throw new Error(`${t('common.errors.mfa.disableFailed')}: ${unenrollError.message}`);
       }
 
-      setSuccess(t('errors.mfa.disabled'));
+      setSuccess(t('common.errors.mfa.disabled'));
       setHasMFA(false);
 
       await checkMFAStatus();
     } catch (err) {
       console.error('MFA disable error:', err);
       const errorMessage =
-        err instanceof Error ? err.message : t('errors.mfa.disableGeneralFailed');
+        err instanceof Error ? err.message : t('common.errors.mfa.disableGeneralFailed');
       setError(errorMessage);
     } finally {
       setIsLoading(false);

@@ -64,7 +64,7 @@ export const SuggestInput = forwardRef<HTMLInputElement, SuggestInputProps>(func
   },
   ref,
 ) {
-  const t = useTranslations('suggest');
+  const t = useTranslations('common.suggest');
   const inputRef = useRef<HTMLInputElement>(null);
   const [localValue, setLocalValue] = useState(value);
   const [isOpen, setIsOpen] = useState(false);

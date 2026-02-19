@@ -202,7 +202,9 @@ export function RecurrenceDialog({
       >
         {/* ヘッダー */}
         <div className="px-6 py-4">
-          <h3 className="text-foreground text-base font-bold">{t('recurrence.dialog.title')}</h3>
+          <h3 className="text-foreground text-base font-bold">
+            {t('common.recurrence.dialog.title')}
+          </h3>
         </div>
 
         {/* コンテンツ */}
@@ -210,7 +212,7 @@ export function RecurrenceDialog({
           {/* 1. 間隔 */}
           <div className="space-y-2">
             <Label className="text-foreground text-sm font-normal">
-              {t('recurrence.dialog.interval')}
+              {t('common.recurrence.dialog.interval')}
             </Label>
             <div className="flex items-center gap-2">
               <Input
@@ -239,10 +241,10 @@ export function RecurrenceDialog({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent style={{ zIndex: zIndex.overlayDropdown }}>
-                  <SelectItem value="daily">{t('recurrence.dialog.perDay')}</SelectItem>
-                  <SelectItem value="weekly">{t('recurrence.dialog.perWeek')}</SelectItem>
-                  <SelectItem value="monthly">{t('recurrence.dialog.perMonth')}</SelectItem>
-                  <SelectItem value="yearly">{t('recurrence.dialog.perYear')}</SelectItem>
+                  <SelectItem value="daily">{t('common.recurrence.dialog.perDay')}</SelectItem>
+                  <SelectItem value="weekly">{t('common.recurrence.dialog.perWeek')}</SelectItem>
+                  <SelectItem value="monthly">{t('common.recurrence.dialog.perMonth')}</SelectItem>
+                  <SelectItem value="yearly">{t('common.recurrence.dialog.perYear')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -252,7 +254,7 @@ export function RecurrenceDialog({
           {config.frequency === 'weekly' && (
             <div className="space-y-2">
               <Label className="text-foreground text-sm font-normal">
-                {t('recurrence.dialog.pattern')}
+                {t('common.recurrence.dialog.pattern')}
               </Label>
               <div className="flex gap-2">
                 {[1, 2, 3, 4, 5, 6, 0].map((weekdayIdx) => {
@@ -277,7 +279,7 @@ export function RecurrenceDialog({
           {config.frequency === 'monthly' && (
             <div className="space-y-2">
               <Label className="text-foreground text-sm font-normal">
-                {t('recurrence.dialog.pattern')}
+                {t('common.recurrence.dialog.pattern')}
               </Label>
               <Select
                 value={
@@ -331,14 +333,14 @@ export function RecurrenceDialog({
                     const options = [
                       // 選択肢1: 毎月 X 日
                       <SelectItem key={`monthday-${day}`} value={`monthday-${day}`}>
-                        {t('recurrence.dialog.everyMonth', { day })}
+                        {t('common.recurrence.dialog.everyMonth', { day })}
                       </SelectItem>,
                       // 選択肢2: 毎月 第 N X曜日
                       <SelectItem
                         key={`setpos-${weekOfMonth}-${weekday}`}
                         value={`setpos-${weekOfMonth}-${weekday}`}
                       >
-                        {t('recurrence.dialog.everyNthWeekday', {
+                        {t('common.recurrence.dialog.everyNthWeekday', {
                           nth: weekOfMonth,
                           weekday: weekdayName,
                         })}
@@ -349,7 +351,7 @@ export function RecurrenceDialog({
                     if (isLastWeek) {
                       options.push(
                         <SelectItem key={`setpos--1-${weekday}`} value={`setpos--1-${weekday}`}>
-                          {t('recurrence.dialog.everyLastWeekday', { weekday: weekdayName })}
+                          {t('common.recurrence.dialog.everyLastWeekday', { weekday: weekdayName })}
                         </SelectItem>,
                       );
                     }
@@ -364,7 +366,7 @@ export function RecurrenceDialog({
           {/* 3. 期間 */}
           <div className="space-y-2">
             <Label className="text-foreground text-sm font-normal">
-              {t('recurrence.dialog.period')}
+              {t('common.recurrence.dialog.period')}
             </Label>
             <RadioGroup
               value={config.endType}
@@ -380,7 +382,7 @@ export function RecurrenceDialog({
                   htmlFor="end-never"
                   className="text-foreground cursor-pointer text-sm font-normal"
                 >
-                  {t('recurrence.dialog.endNever')}
+                  {t('common.recurrence.dialog.endNever')}
                 </Label>
               </div>
 
@@ -402,7 +404,7 @@ export function RecurrenceDialog({
                     setShowCalendar(true);
                   }}
                 >
-                  {t('recurrence.dialog.endUntil')}
+                  {t('common.recurrence.dialog.endUntil')}
                 </Label>
                 <span className="text-foreground text-sm">
                   {config.endDate ? formatDateWithSettings(new Date(config.endDate)) : ''}
@@ -441,7 +443,9 @@ export function RecurrenceDialog({
                   disabled={config.endType !== 'count'}
                   className="border-border bg-secondary h-8 w-20 rounded-lg border text-center disabled:opacity-50"
                 />
-                <span className="text-foreground text-sm">{t('recurrence.dialog.endCount')}</span>
+                <span className="text-foreground text-sm">
+                  {t('common.recurrence.dialog.endCount')}
+                </span>
               </div>
             </RadioGroup>
           </div>
@@ -450,7 +454,7 @@ export function RecurrenceDialog({
         {/* フッター */}
         <div className="border-border flex justify-end gap-2 border-t px-6 py-4">
           <Button variant="outline" onClick={() => onOpenChange(false)} type="button">
-            {t('actions.cancel')}
+            {t('common.actions.cancel')}
           </Button>
           <Button onClick={handleSave} type="button">
             {t('common.apply')}

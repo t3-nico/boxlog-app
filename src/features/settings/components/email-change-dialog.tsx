@@ -46,7 +46,7 @@ export function EmailChangeDialog({ open, onOpenChange, currentEmail }: EmailCha
       });
 
       if (signInError) {
-        throw new Error(t('errors.auth.wrongPassword'));
+        throw new Error(t('common.errors.auth.wrongPassword'));
       }
 
       // 2. メールアドレス更新（確認メール送信）
@@ -58,13 +58,13 @@ export function EmailChangeDialog({ open, onOpenChange, currentEmail }: EmailCha
       );
 
       if (updateError) {
-        throw new Error(`${t('errors.auth.emailUpdateFailed')}: ${updateError.message}`);
+        throw new Error(`${t('common.errors.auth.emailUpdateFailed')}: ${updateError.message}`);
       }
 
       // 成功
       setSuccess(true);
     } catch (err) {
-      setError(err instanceof Error ? err.message : t('errors.generic'));
+      setError(err instanceof Error ? err.message : t('common.errors.generic'));
     } finally {
       setIsLoading(false);
     }

@@ -81,7 +81,7 @@ export function PasswordChangeDialog({ open, onOpenChange }: PasswordChangeDialo
       try {
         // Step 1: Re-authenticate with current password
         if (!user?.email) {
-          throw new Error(t('errors.auth.emailNotFound'));
+          throw new Error(t('common.errors.auth.emailNotFound'));
         }
 
         const { error: reAuthError } = await supabase.auth.signInWithPassword({
@@ -246,7 +246,7 @@ export function PasswordChangeDialog({ open, onOpenChange }: PasswordChangeDialo
 
             <DialogFooter>
               <Button type="button" variant="outline" onClick={handleClose} disabled={isLoading}>
-                {t('actions.cancel')}
+                {t('common.actions.cancel')}
               </Button>
               <Button type="submit" disabled={isLoading}>
                 {isLoading
@@ -259,7 +259,7 @@ export function PasswordChangeDialog({ open, onOpenChange }: PasswordChangeDialo
 
         {success && (
           <DialogFooter>
-            <Button onClick={handleClose}>{t('actions.close')}</Button>
+            <Button onClick={handleClose}>{t('common.actions.close')}</Button>
           </DialogFooter>
         )}
       </DialogContent>

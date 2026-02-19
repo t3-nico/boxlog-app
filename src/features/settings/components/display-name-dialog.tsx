@@ -68,7 +68,7 @@ export function DisplayNameDialog({ open, onOpenChange, currentName }: DisplayNa
         onOpenChange(false);
       } catch (error) {
         console.error('Display name update error:', error);
-        toast.error(t('errors.generic'));
+        toast.error(t('common.errors.generic'));
       } finally {
         setIsLoading(false);
       }
@@ -117,10 +117,10 @@ export function DisplayNameDialog({ open, onOpenChange, currentName }: DisplayNa
               onClick={() => handleOpenChange(false)}
               disabled={isLoading}
             >
-              {t('actions.cancel')}
+              {t('common.actions.cancel')}
             </Button>
             <Button type="submit" isLoading={isLoading} disabled={!displayName.trim()}>
-              {t('actions.confirm')}
+              {t('common.actions.confirm')}
             </Button>
           </DialogFooter>
         </form>

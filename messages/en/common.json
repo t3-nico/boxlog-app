@@ -37,284 +37,284 @@
       "required": "Required",
       "optional": "Optional",
       "processing": "Processing..."
-    }
-  },
-  "actions": {
-    "save": "Save",
-    "cancel": "Cancel",
-    "close": "Close",
-    "delete": "Delete",
-    "edit": "Edit",
-    "create": "Create",
-    "update": "Update",
-    "search": "Search",
-    "filter": "Filter",
-    "sort": "Sort",
-    "confirm": "Confirm",
-    "rename": "Rename",
-    "archive": "Archive",
-    "restore": "Restore",
-    "add": "Add",
-    "remove": "Remove",
-    "view": "View",
-    "duplicate": "Duplicate",
-    "move": "Move",
-    "paste": "Paste",
-    "createNew": "Create New",
-    "saving": "Saving...",
-    "creating": "Creating...",
-    "deleting": "Deleting...",
-    "updating": "Updating...",
-    "archiving": "Archiving...",
-    "restoring": "Restoring...",
-    "clear": "Clear"
-  },
-  "confirm": {
-    "delete": {
-      "title": "Delete {name}?",
-      "titleGeneric": "Delete this item?",
-      "description": "This action cannot be undone.",
-      "button": "Delete"
     },
-    "archive": {
-      "title": "Archive {name}?",
-      "description": "Archived items can be restored later.",
-      "button": "Archive"
+    "actions": {
+      "save": "Save",
+      "cancel": "Cancel",
+      "close": "Close",
+      "delete": "Delete",
+      "edit": "Edit",
+      "create": "Create",
+      "update": "Update",
+      "search": "Search",
+      "filter": "Filter",
+      "sort": "Sort",
+      "confirm": "Confirm",
+      "rename": "Rename",
+      "archive": "Archive",
+      "restore": "Restore",
+      "add": "Add",
+      "remove": "Remove",
+      "view": "View",
+      "duplicate": "Duplicate",
+      "move": "Move",
+      "paste": "Paste",
+      "createNew": "Create New",
+      "saving": "Saving...",
+      "creating": "Creating...",
+      "deleting": "Deleting...",
+      "updating": "Updating...",
+      "archiving": "Archiving...",
+      "restoring": "Restoring...",
+      "clear": "Clear"
     },
-    "bulkDelete": {
-      "title": "Delete {count} items?",
-      "description": "This will permanently delete {count} selected items. This action cannot be undone."
-    },
-    "recurring": {
-      "editTitle": "Edit recurring event",
-      "deleteTitle": "Delete recurring event",
-      "thisOnly": "This event only",
-      "thisAndFuture": "This and future events",
-      "allEvents": "All events",
-      "apply": "Apply"
-    }
-  },
-  "aria": {
-    "clearSelection": "Clear selection",
-    "openMenu": "Open menu",
-    "closeSidebar": "Close sidebar",
-    "cardMenu": "Card menu",
-    "closeModal": "Close modal",
-    "closeFilterMenu": "Close filter menu",
-    "changeColor": "Change color",
-    "unread": "Unread",
-    "notifications": "Notifications",
-    "close": "Close",
-    "previousPlan": "Previous plan",
-    "nextPlan": "Next plan",
-    "options": "Options",
-    "selectAll": "Select all",
-    "tagColor": "Tag color",
-    "closeSettings": "Close settings",
-    "weeklyCalendar": "Weekly calendar",
-    "previous": "Previous",
-    "next": "Next",
-    "selectColor": "Select {color}",
-    "openAIAssistant": "Open AI Assistant",
-    "selectDate": "Select {date}"
-  },
-  "status": {
-    "loading": "Loading...",
-    "success": "Success",
-    "error": "Error",
-    "warning": "Warning",
-    "info": "Info"
-  },
-  "time": {
-    "today": "Today",
-    "yesterday": "Yesterday",
-    "tomorrow": "Tomorrow",
-    "thisWeek": "This Week",
-    "nextWeek": "Next Week",
-    "thisMonth": "This Month",
-    "nextMonth": "Next Month",
-    "daysAgo": "{count, plural, one {1 day ago} other {# days ago}}",
-    "weeksAgo": "{count, plural, one {1 week ago} other {# weeks ago}}",
-    "monthsAgo": "{count, plural, one {1 month ago} other {# months ago}}",
-    "justNow": "just now",
-    "minutesAgo": "{count, plural, one {1 min ago} other {# min ago}}",
-    "hoursAgo": "{count, plural, one {1h ago} other {#h ago}}"
-  },
-  "reminder": {
-    "label": "Reminder",
-    "none": "None",
-    "atStart": "At start time",
-    "min10": "10 minutes before",
-    "min30": "30 minutes before",
-    "hour1": "1 hour before",
-    "day1": "1 day before",
-    "week1": "1 week before",
-    "custom": "Custom"
-  },
-  "recurrence": {
-    "label": "Repeat",
-    "none": "Repeat",
-    "daily": "Daily",
-    "weekly": "Weekly",
-    "monthly": "Monthly",
-    "yearly": "Yearly",
-    "weekdays": "Weekdays",
-    "dialog": {
-      "title": "Repeat",
-      "interval": "Interval",
-      "pattern": "Pattern",
-      "period": "Period",
-      "endNever": "No end date",
-      "endUntil": "End date:",
-      "endCount": "occurrences",
-      "perDay": "days",
-      "perWeek": "weeks",
-      "perMonth": "months",
-      "perYear": "years",
-      "everyMonth": "Monthly on day {day}",
-      "everyNthWeekday": "Monthly on the {nth}{weekday}",
-      "everyLastWeekday": "Monthly on the last {weekday}",
-      "weekdaysShort": {
-        "0": "Sun",
-        "1": "Mon",
-        "2": "Tue",
-        "3": "Wed",
-        "4": "Thu",
-        "5": "Fri",
-        "6": "Sat"
+    "confirm": {
+      "delete": {
+        "title": "Delete {name}?",
+        "titleGeneric": "Delete this item?",
+        "description": "This action cannot be undone.",
+        "button": "Delete"
+      },
+      "archive": {
+        "title": "Archive {name}?",
+        "description": "Archived items can be restored later.",
+        "button": "Archive"
+      },
+      "bulkDelete": {
+        "title": "Delete {count} items?",
+        "description": "This will permanently delete {count} selected items. This action cannot be undone."
+      },
+      "recurring": {
+        "editTitle": "Edit recurring event",
+        "deleteTitle": "Delete recurring event",
+        "thisOnly": "This event only",
+        "thisAndFuture": "This and future events",
+        "allEvents": "All events",
+        "apply": "Apply"
       }
-    }
-  },
-  "language": {
-    "current": "Current Language",
-    "switch": "Switch Language",
-    "english": "English",
-    "japanese": "Japanese"
-  },
-  "search": {
-    "shortcut": "⌘K"
-  },
-  "createNew": {
-    "plan": "Create Plan",
-    "task": "Create Task",
-    "tag": "Create Tag",
-    "defaultPlanTitle": "New Plan"
-  },
-  "comingSoon": "Coming Soon",
-  "userProfile": {
-    "comingSoon": "Profile page coming soon",
-    "notFound": "User not found"
-  },
-  "theme": {
-    "light": "Light Mode",
-    "dark": "Dark Mode"
-  },
-  "suggest": {
-    "recentHistory": "Last 30 entries",
-    "loading": "Loading...",
-    "loadError": "Failed to load",
-    "noResults": "No results"
-  },
-  "createSheet": {
-    "title": "What would you like to add?",
-    "description": "Choose the type of item to add",
-    "plan": "Plan",
-    "planDescription": "Create a new plan",
-    "record": "Record",
-    "recordDescription": "Log what you actually did",
-    "template": "Template",
-    "templateDescription": "Add from saved templates",
-    "history": "Create from History",
-    "historyDescription": "Recreate from recently used items"
-  },
-  "validation": {
-    "required": "This field is required",
-    "invalidUuid": "Please enter a valid ID",
-    "invalidEmail": "Please enter a valid email address",
-    "invalidUrl": "Please enter a valid URL",
-    "invalidColorCode": "Please enter a valid color code (#RRGGBB)",
-    "futureDate": "Please enter a future date",
-    "title": {
-      "required": "Title is required",
-      "maxLength": "Title must be {max} characters or less",
-      "noNewlines": "Title cannot contain only newlines or spaces"
     },
-    "description": {
-      "maxLength": "Description must be {max} characters or less"
+    "aria": {
+      "clearSelection": "Clear selection",
+      "openMenu": "Open menu",
+      "closeSidebar": "Close sidebar",
+      "cardMenu": "Card menu",
+      "closeModal": "Close modal",
+      "closeFilterMenu": "Close filter menu",
+      "changeColor": "Change color",
+      "unread": "Unread",
+      "notifications": "Notifications",
+      "close": "Close",
+      "previousPlan": "Previous plan",
+      "nextPlan": "Next plan",
+      "options": "Options",
+      "selectAll": "Select all",
+      "tagColor": "Tag color",
+      "closeSettings": "Close settings",
+      "weeklyCalendar": "Weekly calendar",
+      "previous": "Previous",
+      "next": "Next",
+      "selectColor": "Select {color}",
+      "openAIAssistant": "Open AI Assistant",
+      "selectDate": "Select {date}"
     },
-    "password": {
-      "minLength": "Password must be at least {min} characters",
-      "maxLength": "Password must be {max} characters or less",
-      "lowercase": "Password must contain a lowercase letter",
-      "uppercase": "Password must contain an uppercase letter",
-      "number": "Password must contain a number"
+    "status": {
+      "loading": "Loading...",
+      "success": "Success",
+      "error": "Error",
+      "warning": "Warning",
+      "info": "Info"
     },
-    "email": {
-      "maxLength": "Email address is too long"
+    "time": {
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "tomorrow": "Tomorrow",
+      "thisWeek": "This Week",
+      "nextWeek": "Next Week",
+      "thisMonth": "This Month",
+      "nextMonth": "Next Month",
+      "daysAgo": "{count, plural, one {1 day ago} other {# days ago}}",
+      "weeksAgo": "{count, plural, one {1 week ago} other {# weeks ago}}",
+      "monthsAgo": "{count, plural, one {1 month ago} other {# months ago}}",
+      "justNow": "just now",
+      "minutesAgo": "{count, plural, one {1 min ago} other {# min ago}}",
+      "hoursAgo": "{count, plural, one {1h ago} other {#h ago}}"
     },
-    "pagination": {
-      "pageMin": "Page number must be at least 1",
-      "limitMin": "Limit must be at least 1",
-      "limitMax": "Limit must be {max} or less"
+    "reminder": {
+      "label": "Reminder",
+      "none": "None",
+      "atStart": "At start time",
+      "min10": "10 minutes before",
+      "min30": "30 minutes before",
+      "hour1": "1 hour before",
+      "day1": "1 day before",
+      "week1": "1 week before",
+      "custom": "Custom"
+    },
+    "recurrence": {
+      "label": "Repeat",
+      "none": "Repeat",
+      "daily": "Daily",
+      "weekly": "Weekly",
+      "monthly": "Monthly",
+      "yearly": "Yearly",
+      "weekdays": "Weekdays",
+      "dialog": {
+        "title": "Repeat",
+        "interval": "Interval",
+        "pattern": "Pattern",
+        "period": "Period",
+        "endNever": "No end date",
+        "endUntil": "End date:",
+        "endCount": "occurrences",
+        "perDay": "days",
+        "perWeek": "weeks",
+        "perMonth": "months",
+        "perYear": "years",
+        "everyMonth": "Monthly on day {day}",
+        "everyNthWeekday": "Monthly on the {nth}{weekday}",
+        "everyLastWeekday": "Monthly on the last {weekday}",
+        "weekdaysShort": {
+          "0": "Sun",
+          "1": "Mon",
+          "2": "Tue",
+          "3": "Wed",
+          "4": "Thu",
+          "5": "Fri",
+          "6": "Sat"
+        }
+      }
+    },
+    "language": {
+      "current": "Current Language",
+      "switch": "Switch Language",
+      "english": "English",
+      "japanese": "Japanese"
     },
     "search": {
-      "maxLength": "Search query must be {max} characters or less"
+      "shortcut": "⌘K"
     },
-    "file": {
-      "maxSize": "File size must be {max}MB or less"
+    "createNew": {
+      "plan": "Create Plan",
+      "task": "Create Task",
+      "tag": "Create Tag",
+      "defaultPlanTitle": "New Plan"
     },
-    "tag": {
-      "nameRequired": "Tag name is required",
-      "nameMaxLength": "Tag name must be {max} characters or less"
+    "comingSoon": "Coming Soon",
+    "userProfile": {
+      "comingSoon": "Profile page coming soon",
+      "notFound": "User not found"
     },
-    "recaptcha": {
-      "required": "reCAPTCHA token is required"
+    "theme": {
+      "light": "Light Mode",
+      "dark": "Dark Mode"
     },
-    "username": {
-      "required": "Username is required",
-      "maxLength": "Username must be {max} characters or less"
+    "suggest": {
+      "recentHistory": "Last 30 entries",
+      "loading": "Loading...",
+      "loadError": "Failed to load",
+      "noResults": "No results"
     },
-    "limitReached": "Limit reached"
-  },
-  "errors": {
-    "generic": "An error occurred",
-    "storage": {
-      "imageOnly": "Only image files can be uploaded",
-      "fileTooLarge": "File size must be 5MB or less",
-      "uploadFailed": "Upload failed",
-      "listFailed": "Failed to get file list",
-      "deleteFailed": "Failed to delete"
+    "createSheet": {
+      "title": "What would you like to add?",
+      "description": "Choose the type of item to add",
+      "plan": "Plan",
+      "planDescription": "Create a new plan",
+      "record": "Record",
+      "recordDescription": "Log what you actually did",
+      "template": "Template",
+      "templateDescription": "Add from saved templates",
+      "history": "Create from History",
+      "historyDescription": "Recreate from recently used items"
     },
-    "mfa": {
-      "enrollFailed": "Enrollment error",
-      "dataNotFound": "Could not retrieve MFA data",
-      "setupFailed": "Failed to start 2FA setup",
-      "enterCode": "Please enter a 6-digit code",
-      "codeLength": "Code must be 6 digits",
-      "challengeFailed": "Challenge error",
-      "verifyFailed": "Verification error",
-      "codeInvalid": "Invalid code. Please try again.",
-      "verificationFailed": "Code verification failed. Please try again",
-      "factorListFailed": "Factor retrieval error",
-      "noFactorFound": "No valid MFA factor found",
-      "noVerifiedFactor": "No verified MFA factor found",
-      "disableFailed": "Disable error",
-      "disableGeneralFailed": "Failed to disable 2FA",
-      "disablePrompt": "Enter your 6-digit authenticator code to disable 2FA:",
-      "enabled": "2FA has been enabled!",
-      "disabled": "2FA has been disabled"
+    "validation": {
+      "required": "This field is required",
+      "invalidUuid": "Please enter a valid ID",
+      "invalidEmail": "Please enter a valid email address",
+      "invalidUrl": "Please enter a valid URL",
+      "invalidColorCode": "Please enter a valid color code (#RRGGBB)",
+      "futureDate": "Please enter a future date",
+      "title": {
+        "required": "Title is required",
+        "maxLength": "Title must be {max} characters or less",
+        "noNewlines": "Title cannot contain only newlines or spaces"
+      },
+      "description": {
+        "maxLength": "Description must be {max} characters or less"
+      },
+      "password": {
+        "minLength": "Password must be at least {min} characters",
+        "maxLength": "Password must be {max} characters or less",
+        "lowercase": "Password must contain a lowercase letter",
+        "uppercase": "Password must contain an uppercase letter",
+        "number": "Password must contain a number"
+      },
+      "email": {
+        "maxLength": "Email address is too long"
+      },
+      "pagination": {
+        "pageMin": "Page number must be at least 1",
+        "limitMin": "Limit must be at least 1",
+        "limitMax": "Limit must be {max} or less"
+      },
+      "search": {
+        "maxLength": "Search query must be {max} characters or less"
+      },
+      "file": {
+        "maxSize": "File size must be {max}MB or less"
+      },
+      "tag": {
+        "nameRequired": "Tag name is required",
+        "nameMaxLength": "Tag name must be {max} characters or less"
+      },
+      "recaptcha": {
+        "required": "reCAPTCHA token is required"
+      },
+      "username": {
+        "required": "Username is required",
+        "maxLength": "Username must be {max} characters or less"
+      },
+      "limitReached": "Limit reached"
     },
-    "auth": {
-      "wrongPassword": "Incorrect password",
-      "emailUpdateFailed": "Failed to update email address",
-      "emailNotFound": "Email address not found",
-      "userIdNotFound": "User ID not found",
-      "profileUpdateFailed": "Failed to update profile"
-    },
-    "calendar": {
-      "invalidDateFormat": "Invalid date format",
-      "invalidTimeFormat": "Invalid time format",
-      "timeOutOfRange": "Time is out of range"
+    "errors": {
+      "generic": "An error occurred",
+      "storage": {
+        "imageOnly": "Only image files can be uploaded",
+        "fileTooLarge": "File size must be 5MB or less",
+        "uploadFailed": "Upload failed",
+        "listFailed": "Failed to get file list",
+        "deleteFailed": "Failed to delete"
+      },
+      "mfa": {
+        "enrollFailed": "Enrollment error",
+        "dataNotFound": "Could not retrieve MFA data",
+        "setupFailed": "Failed to start 2FA setup",
+        "enterCode": "Please enter a 6-digit code",
+        "codeLength": "Code must be 6 digits",
+        "challengeFailed": "Challenge error",
+        "verifyFailed": "Verification error",
+        "codeInvalid": "Invalid code. Please try again.",
+        "verificationFailed": "Code verification failed. Please try again",
+        "factorListFailed": "Factor retrieval error",
+        "noFactorFound": "No valid MFA factor found",
+        "noVerifiedFactor": "No verified MFA factor found",
+        "disableFailed": "Disable error",
+        "disableGeneralFailed": "Failed to disable 2FA",
+        "disablePrompt": "Enter your 6-digit authenticator code to disable 2FA:",
+        "enabled": "2FA has been enabled!",
+        "disabled": "2FA has been disabled"
+      },
+      "auth": {
+        "wrongPassword": "Incorrect password",
+        "emailUpdateFailed": "Failed to update email address",
+        "emailNotFound": "Email address not found",
+        "userIdNotFound": "User ID not found",
+        "profileUpdateFailed": "Failed to update profile"
+      },
+      "calendar": {
+        "invalidDateFormat": "Invalid date format",
+        "invalidTimeFormat": "Invalid time format",
+        "timeOutOfRange": "Time is out of range"
+      }
     }
   }
 }
