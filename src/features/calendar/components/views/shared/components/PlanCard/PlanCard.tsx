@@ -206,7 +206,7 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
     // モバイル / デスクトップ共通: Recordのみ左縦線アクセント
     isMobile
       ? cn(
-          'pl-1 pr-1 pt-1 text-xs flex items-start gap-1',
+          'px-2 pt-2 text-xs flex items-start gap-1',
           isRecord ? 'border-l-2 rounded-r' : 'rounded',
         )
       : cn(
