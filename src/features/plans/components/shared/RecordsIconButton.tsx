@@ -4,14 +4,13 @@
  * Records紐付けアイコンボタン
  *
  * Plan Inspector の Row 3 で使用。
- * Record画面のPlan紐付けと同じUIパターン（Command/CommandList）。
+ * Record Inspector の Plan紐付けと同じUIパターン（アイコン + 名前インライン表示）。
  */
 
 import { useMemo, useState } from 'react';
 
-import { Clock, ExternalLink, Plus, Smile } from 'lucide-react';
+import { ListChecks, Plus } from 'lucide-react';
 import { useLocale } from 'next-intl';
-import Link from 'next/link';
 
 import {
   Command,
@@ -35,51 +34,22 @@ interface RecordsIconButtonProps {
   disabled?: boolean;
 }
 
-/**
- * 時間をフォーマット（分 → 時間:分）
- */
-function formatDuration(minutes: number): string {
-  const hours = Math.floor(minutes / 60);
-  const mins = minutes % 60;
-  if (hours === 0) {
-    return `${mins}m`;
-  }
-  return mins > 0 ? `${hours}h ${mins}m` : `${hours}h`;
-}
-
-/**
- * 充実度スコアの色を取得
- */
-function getScoreColor(score: number): string {
-  const colors = [
-    'text-red-500',
-    'text-orange-500',
-    'text-yellow-500',
-    'text-lime-500',
-    'text-green-500',
-  ];
-  return colors[score - 1] ?? 'text-muted-foreground';
-}
-
 export function RecordsIconButton({ planId, disabled = false }: RecordsIconButtonProps) {
   const locale = useLocale();
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const openInspectorWithDraft = usePlanInspectorStore((state) => state.openInspectorWithDraft);
 
-  const { data: records, isPending } = api.records.listByPlan.useQuery(
-    { planId, sortOrder: 'desc' },
-    { enabled: isOpen }, // Popoverが開いた時のみ取得
-  );
+  const { data: records, isPending } = api.records.listByPlan.useQuery({
+    planId,
+    sortOrder: 'desc',
+  });
 
   // タグデータ取得
   const { data: allTags = [] } = useTags();
 
   const recordCount = records?.length ?? 0;
   const hasRecords = recordCount > 0;
-
-  // 合計時間を計算
-  const totalMinutes = records?.reduce((sum, r) => sum + r.duration_minutes, 0) ?? 0;
 
   // 検索フィルタリング
   const filteredRecords = useMemo(() => {
@@ -96,32 +66,37 @@ export function RecordsIconButton({ planId, disabled = false }: RecordsIconButto
   }, [records, searchQuery]);
 
   // 新しいRecordを作成（このPlanに紐づけて）
-  // TODO: PlanInspectorのRecord作成モードでplanIdを事前選択できるようにする
   const handleCreateRecord = () => {
     setIsOpen(false);
-    openInspectorWithDraft(undefined, 'record');
+    openInspectorWithDraft({ plan_id: planId }, 'record');
   };
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <HoverTooltip content={hasRecords ? `Records (${recordCount})` : 'Recordを追加'} side="top">
-        <PopoverTrigger asChild>
-          <button
-            type="button"
-            disabled={disabled}
-            className={cn(
-              'relative flex h-8 items-center gap-1 rounded-lg px-2 transition-colors',
-              'hover:bg-state-hover focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
-              hasRecords ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',
-            )}
-            aria-label={hasRecords ? `Records (${recordCount})` : 'Recordを追加'}
-          >
-            <Clock className="size-4" />
-            {hasRecords && (
-              <span className="text-sm tabular-nums">{formatDuration(totalMinutes)}</span>
-            )}
-          </button>
-        </PopoverTrigger>
+        <div
+          className={cn(
+            'hover:bg-state-hover flex h-8 items-center rounded-lg transition-colors',
+            hasRecords ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',
+          )}
+        >
+          <PopoverTrigger asChild>
+            <button
+              type="button"
+              disabled={disabled}
+              className="focus-visible:ring-ring flex items-center gap-1 px-2 text-sm focus-visible:ring-2 focus-visible:outline-none"
+              aria-label={hasRecords ? `Records (${recordCount})` : 'Recordを追加'}
+            >
+              <ListChecks className="size-4 shrink-0" />
+              {hasRecords &&
+                records?.map((record) => (
+                  <span key={record.id} className="max-w-24 truncate text-xs">
+                    {record.title || '(タイトルなし)'}
+                  </span>
+                ))}
+            </button>
+          </PopoverTrigger>
+        </div>
       </HoverTooltip>
       <PopoverContent
         className="w-[400px] p-0"
@@ -142,16 +117,6 @@ export function RecordsIconButton({ planId, disabled = false }: RecordsIconButto
               onValueChange={setSearchQuery}
             />
             <CommandList className="max-h-[280px]">
-              {/* 合計時間サマリー */}
-              {hasRecords && (
-                <div className="bg-surface-container mx-2 my-2 flex items-center justify-between rounded-lg px-4 py-2">
-                  <span className="text-muted-foreground text-xs">合計</span>
-                  <span className="text-sm font-bold tabular-nums">
-                    {formatDuration(totalMinutes)}
-                  </span>
-                </div>
-              )}
-
               <CommandEmpty>Recordがありません</CommandEmpty>
               <CommandGroup>
                 {filteredRecords.map((record) => {
@@ -198,18 +163,10 @@ export function RecordsIconButton({ planId, disabled = false }: RecordsIconButto
                         </div>
                       )}
 
-                      {/* メタ情報: 日付 + 時間 + 充実度 */}
-                      <div className="ml-auto flex shrink-0 items-center gap-2 pl-2">
-                        <span className="text-muted-foreground text-xs">{record.worked_at}</span>
-                        <span className="text-xs tabular-nums">
-                          {formatDuration(record.duration_minutes)}
-                        </span>
-                        {record.fulfillment_score && (
-                          <Smile
-                            className={cn('size-4', getScoreColor(record.fulfillment_score))}
-                          />
-                        )}
-                      </div>
+                      {/* 日付 */}
+                      <span className="text-muted-foreground ml-auto shrink-0 pl-2 text-xs">
+                        {record.worked_at}
+                      </span>
                     </CommandItem>
                   );
                 })}
@@ -226,17 +183,6 @@ export function RecordsIconButton({ planId, disabled = false }: RecordsIconButto
                 <Plus className="size-4" />
                 <span>作業ログを追加</span>
               </button>
-
-              {/* Record一覧ページへのナビゲーション */}
-              {hasRecords && (
-                <Link
-                  href={`/${locale}/record`}
-                  className="text-muted-foreground hover:text-foreground hover:bg-state-hover mt-1 flex items-center gap-2 rounded-lg px-2 py-2 text-sm transition-colors"
-                >
-                  <ExternalLink className="size-4" />
-                  <span>Record一覧を開く</span>
-                </Link>
-              )}
             </div>
           </Command>
         )}

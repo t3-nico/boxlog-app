@@ -267,7 +267,7 @@ export class RecordService {
   /**
    * Recordを更新
    *
-   * Note: plan_id は作成後に変更不可（スキーマで除外済み）
+   * Note: plan_id は UI（RecordInspector）から変更可能
    */
   async update(options: UpdateRecordOptions): Promise<RecordRow> {
     const { userId, recordId, input } = options;
