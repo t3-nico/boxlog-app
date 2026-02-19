@@ -8,6 +8,7 @@ interface Plan {
   id: string;
   user_id: string;
   title: string;
+  start_time: string;
   reminder_at: string | null;
   reminder_sent: boolean;
 }
@@ -30,7 +31,7 @@ Deno.serve(async (req) => {
 
     const { data: plans, error: plansError } = await supabase
       .from('plans')
-      .select('id, user_id, title, reminder_at, reminder_sent')
+      .select('id, user_id, title, start_time, reminder_at, reminder_sent')
       .not('reminder_at', 'is', null)
       .eq('reminder_sent', false)
       .lte('reminder_at', oneMinuteLater.toISOString())
@@ -53,6 +54,18 @@ Deno.serve(async (req) => {
     const plansUpdated = [];
 
     for (const plan of plans) {
+      // 残り時間を計算
+      const minutesUntilStart = Math.max(
+        0,
+        Math.round((new Date(plan.start_time).getTime() - now.getTime()) / (60 * 1000)),
+      );
+      const timeLabel =
+        minutesUntilStart <= 0
+          ? 'now'
+          : minutesUntilStart < 60
+            ? `in ${minutesUntilStart} min`
+            : `in ${Math.round(minutesUntilStart / 60)}h`;
+
       // 通知を作成
       const { data: notification, error: notificationError } = await supabase
         .from('notifications')
@@ -60,8 +73,8 @@ Deno.serve(async (req) => {
           user_id: plan.user_id,
           type: 'reminder',
           priority: 'high',
-          title: 'Reminder',
-          message: `Reminder: "${plan.title}" is starting soon`,
+          title: plan.title,
+          message: `Starting ${timeLabel}`,
           related_plan_id: plan.id,
           is_read: false,
         })
