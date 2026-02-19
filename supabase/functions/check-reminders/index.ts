@@ -1,32 +1,32 @@
 // check-reminders Edge Function
 // 毎分実行され、reminder_atが近いプランをチェックして通知を生成
 
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3'
-import { corsHeaders } from '../_shared/cors.ts'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
+import { corsHeaders } from '../_shared/cors.ts';
 
-interface plan {
-  id: string
-  user_id: string
-  title: string
-  reminder_at: string | null
-  reminder_sent: boolean
+interface Plan {
+  id: string;
+  user_id: string;
+  title: string;
+  reminder_at: string | null;
+  reminder_sent: boolean;
 }
 
 Deno.serve(async (req) => {
   // CORSヘッダー設定
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
+    return new Response('ok', { headers: corsHeaders });
   }
 
   try {
     // Supabaseクライアント作成（service_role key使用でRLSをバイパス）
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-    const supabase = createClient(supabaseUrl, supabaseServiceKey)
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     // 現在時刻の1分後までにリマインダーが設定されているプランを取得
-    const now = new Date()
-    const oneMinuteLater = new Date(now.getTime() + 60 * 1000)
+    const now = new Date();
+    const oneMinuteLater = new Date(now.getTime() + 60 * 1000);
 
     const { data: plans, error: plansError } = await supabase
       .from('plans')
@@ -34,23 +34,23 @@ Deno.serve(async (req) => {
       .not('reminder_at', 'is', null)
       .eq('reminder_sent', false)
       .lte('reminder_at', oneMinuteLater.toISOString())
-      .returns<plan[]>()
+      .returns<Plan[]>();
 
     if (plansError) {
-      console.error('Error fetching plans:', plansError)
-      throw plansError
+      console.error('Error fetching plans:', plansError);
+      throw plansError;
     }
 
     if (!plans || plans.length === 0) {
       return new Response(JSON.stringify({ message: 'No reminders to send', count: 0 }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,
-      })
+      });
     }
 
     // 各プランに対して通知を作成
-    const notificationsCreated = []
-    const plansUpdated = []
+    const notificationsCreated = [];
+    const plansUpdated = [];
 
     for (const plan of plans) {
       // 通知を作成
@@ -60,30 +60,33 @@ Deno.serve(async (req) => {
           user_id: plan.user_id,
           type: 'reminder',
           priority: 'high',
-          title: 'リマインダー',
-          message: `「${plan.title}」のリマインダー時刻になりました`,
+          title: 'Reminder',
+          message: `Reminder: "${plan.title}" is starting soon`,
           related_plan_id: plan.id,
           is_read: false,
         })
         .select()
-        .single()
+        .single();
 
       if (notificationError) {
-        console.error('Error creating notification:', notificationError)
-        continue // エラーが発生しても他のプランの処理は続行
+        console.error('Error creating notification:', notificationError);
+        continue; // エラーが発生しても他のプランの処理は続行
       }
 
-      notificationsCreated.push(notification)
+      notificationsCreated.push(notification);
 
       // プランのreminder_sentをtrueに更新
-      const { error: updateError } = await supabase.from('plans').update({ reminder_sent: true }).eq('id', plan.id)
+      const { error: updateError } = await supabase
+        .from('plans')
+        .update({ reminder_sent: true })
+        .eq('id', plan.id);
 
       if (updateError) {
-        console.error('Error updating plan:', updateError)
-        continue
+        console.error('Error updating plan:', updateError);
+        continue;
       }
 
-      plansUpdated.push(plan.id)
+      plansUpdated.push(plan.id);
     }
 
     return new Response(
@@ -93,13 +96,16 @@ Deno.serve(async (req) => {
         plansUpdated: plansUpdated.length,
         planIds: plansUpdated,
       }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
-    )
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 },
+    );
   } catch (error) {
-    console.error('Error in check-reminders function:', error)
-    return new Response(JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      status: 500,
-    })
+    console.error('Error in check-reminders function:', error);
+    return new Response(
+      JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
+      {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 500,
+      },
+    );
   }
-})
+});

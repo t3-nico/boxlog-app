@@ -153,10 +153,7 @@ export const CalendarController = ({
     permission: notificationPermission,
     hasRequested: hasRequestedNotification,
     requestPermission: requestNotificationPermission,
-  } = useNotifications({
-    events: [],
-    onReminderTriggered: () => {},
-  });
+  } = useNotifications();
 
   // 🚀 初回ロード時にイベントストアを初期化（マウント時のみ）
   useEffect(() => {
