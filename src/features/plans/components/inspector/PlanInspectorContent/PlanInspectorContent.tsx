@@ -238,20 +238,18 @@ export function PlanInspectorContent() {
             onRemoveTag={handleRemoveTag}
             onRepeatTypeChange={(type) => {
               if (!planId) return;
-              const typeMap: Record<
-                string,
-                'none' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'weekdays'
-              > = {
-                '': 'none',
-                毎日: 'daily',
-                毎週: 'weekly',
-                毎月: 'monthly',
-                毎年: 'yearly',
-                平日: 'weekdays',
-              };
               updatePlan.mutate({
                 id: planId,
-                data: { recurrence_type: typeMap[type] || 'none', recurrence_rule: null },
+                data: {
+                  recurrence_type: (type || 'none') as
+                    | 'none'
+                    | 'daily'
+                    | 'weekly'
+                    | 'monthly'
+                    | 'yearly'
+                    | 'weekdays',
+                  recurrence_rule: null,
+                },
               });
             }}
             onRecurrenceRuleChange={(rrule) => {
