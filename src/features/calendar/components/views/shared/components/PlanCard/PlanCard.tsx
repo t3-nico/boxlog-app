@@ -203,9 +203,12 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
     'text-foreground',
     // 状態別スタイル
     isDraft ? 'cursor-default' : isDragging ? 'cursor-grabbing' : 'cursor-pointer',
-    // モバイル: Googleカレンダー風 / デスクトップ: 角丸
+    // モバイル / デスクトップ共通: Recordのみ左縦線アクセント
     isMobile
-      ? 'border-l-2 rounded-r pl-1 pr-1 pt-1 text-xs flex items-start gap-1'
+      ? cn(
+          'pl-1 pr-1 pt-1 text-xs flex items-start gap-1',
+          isRecord ? 'border-l-2 rounded-r' : 'rounded',
+        )
       : cn(
           'p-2 text-sm',
           isRecord ? 'border-l-[3px] border-l-record-border rounded-r-lg' : 'rounded-lg',
@@ -224,12 +227,8 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
       className={planCardClasses}
       style={{
         ...dynamicStyle,
-        // モバイル: Recordは固定色、Planはタグ色
-        borderLeftColor: isMobile
-          ? isRecord
-            ? 'var(--record-border)'
-            : plan.color || undefined
-          : undefined,
+        // Recordのみ左ボーダー色を設定（モバイル）
+        borderLeftColor: isMobile && isRecord ? 'var(--record-border)' : undefined,
       }}
       onClick={handleClick}
       onContextMenu={handleContextMenu}
