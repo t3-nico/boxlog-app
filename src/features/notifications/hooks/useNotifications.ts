@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
+import { logger } from '@/lib/logger';
 
 interface UseNotificationsOptions {
   events: CalendarPlan[];
@@ -63,7 +64,7 @@ export function useNotifications({
       setHasRequested(true);
       localStorage.setItem('notification-permission-requested', 'true');
     } catch (error) {
-      console.error('通知権限のリクエストに失敗しました:', error);
+      logger.error('Failed to request notification permission:', error);
     }
   }, []);
 

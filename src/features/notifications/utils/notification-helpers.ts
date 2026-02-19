@@ -1,7 +1,7 @@
 import { isThisMonth, isThisWeek, isToday, isYesterday } from 'date-fns';
 
+import { logger } from '@/lib/logger';
 import type { NotificationType } from '@/schemas/notifications';
-import { useTranslations } from 'next-intl';
 
 // 日付グループのキー
 export type DateGroupKey = 'today' | 'yesterday' | 'thisWeek' | 'thisMonth' | 'older';
@@ -49,10 +49,10 @@ export function groupNotificationsByDate<T extends { created_at: string }>(
 
   // ラベル付きのグループ配列を作成（空のグループは除外）
   const groupLabels: Record<DateGroupKey, string> = {
-    today: t('time.today'),
-    yesterday: t('time.yesterday'),
-    thisWeek: t('time.thisWeek'),
-    thisMonth: t('time.thisMonth'),
+    today: t('common.time.today'),
+    yesterday: t('common.time.yesterday'),
+    thisWeek: t('common.time.thisWeek'),
+    thisMonth: t('common.time.thisMonth'),
     older: t('notification.dateGroups.older'),
   };
 
@@ -83,49 +83,6 @@ export function getNotificationTypeIcon(type: NotificationType): string {
   return icons[type] || 'bell';
 }
 
-export const getNotificationTypeColor = (type: string) => {
-  switch (type) {
-    case 'system':
-      return 'text-info-foreground bg-info';
-    case 'feature':
-      return 'text-success-foreground bg-success';
-    case 'important':
-      return 'text-destructive-foreground bg-destructive';
-    default:
-      return 'text-muted-foreground bg-muted';
-  }
-};
-
-export const useNotificationTypeLabel = () => {
-  const t = useTranslations();
-
-  return (type: string) => {
-    switch (type) {
-      case 'system':
-        return t('notification.types.system');
-      case 'feature':
-        return t('notification.types.feature');
-      case 'important':
-        return t('notification.types.important');
-      case 'reminder':
-        return t('notification.types.reminder');
-      case 'task':
-        return t('notification.types.task');
-      case 'event':
-        return t('notification.types.event');
-      default:
-        return t('notification.types.general');
-    }
-  };
-};
-
-export const formatNotificationDate = (date: string | Date, locale: string = 'ja-JP') => {
-  if (typeof date === 'string') {
-    return new Date(date).toLocaleDateString(locale);
-  }
-  return date.toLocaleDateString(locale);
-};
-
 export const checkBrowserNotificationSupport = (): boolean => {
   return typeof window !== 'undefined' && 'Notification' in window;
 };
@@ -136,8 +93,8 @@ export const requestNotificationPermission = async (
   if (!checkBrowserNotificationSupport()) {
     const message = t
       ? t('notification.errors.notSupported')
-      : 'このブラウザは通知をサポートしていません';
-    console.warn(message);
+      : 'Browser notifications not supported';
+    logger.warn(message);
     return 'denied';
   }
 
@@ -145,8 +102,10 @@ export const requestNotificationPermission = async (
     const result = await Notification.requestPermission();
     return result;
   } catch (error) {
-    const message = t ? t('notification.errors.permissionFailed') : '通知許可の取得に失敗しました';
-    console.error(message, error);
+    const message = t
+      ? t('notification.errors.permissionFailed')
+      : 'Failed to request notification permission';
+    logger.error(message, error);
     return 'denied';
   }
 };
@@ -175,8 +134,35 @@ export const showBrowserNotification = (
 
     return notification;
   } catch (error) {
-    const message = t ? t('notification.errors.displayFailed') : 'ブラウザ通知の表示に失敗しました';
-    console.error(message, error);
+    const message = t
+      ? t('notification.errors.displayFailed')
+      : 'Failed to display browser notification';
+    logger.error(message, error);
     return null;
   }
 };
+
+// 通知設定用タイプ
+export type NotificationSettingsType = 'reminders' | 'plan_updates' | 'system';
+
+/**
+ * DB通知タイプを設定用タイプにマッピング
+ */
+export function mapNotificationTypeToSettingsType(
+  type: NotificationType,
+): NotificationSettingsType | null {
+  switch (type) {
+    case 'reminder':
+      return 'reminders';
+    case 'plan_created':
+    case 'plan_updated':
+    case 'plan_deleted':
+    case 'plan_completed':
+      return 'plan_updates';
+    case 'trash_warning':
+    case 'system':
+      return 'system';
+    default:
+      return null;
+  }
+}

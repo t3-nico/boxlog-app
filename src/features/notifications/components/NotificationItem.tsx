@@ -100,7 +100,7 @@ export function NotificationItem({
           <div className="flex items-center gap-2">
             <h4 className="truncate text-sm font-normal">{title}</h4>
             {!isRead && (
-              <span className="bg-primary h-1.5 w-1.5 shrink-0 rounded-full" aria-label="未読" />
+              <span className="bg-primary h-1.5 w-1.5 shrink-0 rounded-full" aria-label="Unread" />
             )}
           </div>
           {message && <p className="text-muted-foreground mt-1 line-clamp-1 text-xs">{message}</p>}
