@@ -51,9 +51,10 @@ export function ScheduleRow({
   onEndTimeChange,
   disabled = false,
   timeConflictError = false,
-  datePlaceholder = '日付...',
+  datePlaceholder,
 }: ScheduleRowProps) {
   const t = useTranslations();
+  const resolvedPlaceholder = datePlaceholder ?? t('common.schedule.datePlaceholder');
 
   // 時刻自動調整フック
   const { handleStartTimeChange: autoStartTimeChange, handleEndTimeChange: autoEndTimeChange } =
@@ -99,7 +100,7 @@ export function ScheduleRow({
       <DatePickerPopover
         selectedDate={selectedDate}
         onDateChange={onDateChange}
-        placeholder={datePlaceholder}
+        placeholder={resolvedPlaceholder}
         showIcon
       />
 

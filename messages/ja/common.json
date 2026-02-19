@@ -115,7 +115,11 @@
       "next": "次へ",
       "selectColor": "{color}を選択",
       "openAIAssistant": "AIアシスタントを開く",
-      "selectDate": "{date}を選択"
+      "selectDate": "{date}を選択",
+      "selectTime": "時刻選択: {time}",
+      "timeNotSelected": "時刻選択: 未選択",
+      "startTime": "開始時刻",
+      "endTime": "終了時刻"
     },
     "status": {
       "loading": "読み込み中...",
@@ -154,6 +158,14 @@
       "edit": "メモを編集",
       "add": "メモを追加",
       "placeholder": "メモを追加..."
+    },
+    "datePicker": {
+      "placeholder": "日付を選択",
+      "selectLabel": "日付選択: {date}",
+      "notSelected": "日付選択: 未選択"
+    },
+    "schedule": {
+      "datePlaceholder": "日付..."
     },
     "recurrence": {
       "label": "繰り返し",
@@ -278,7 +290,8 @@
         "required": "ユーザー名は必須です",
         "maxLength": "ユーザー名は{max}文字以内で入力してください"
       },
-      "limitReached": "上限に達しました"
+      "limitReached": "上限に達しました",
+      "timeAfterStart": "開始時刻（{minTime}）より後の時刻を入力してください"
     },
     "errors": {
       "generic": "エラーが発生しました",

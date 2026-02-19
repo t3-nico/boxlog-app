@@ -115,7 +115,11 @@
       "next": "Next",
       "selectColor": "Select {color}",
       "openAIAssistant": "Open AI Assistant",
-      "selectDate": "Select {date}"
+      "selectDate": "Select {date}",
+      "selectTime": "Select time: {time}",
+      "timeNotSelected": "Select time: not selected",
+      "startTime": "Start time",
+      "endTime": "End time"
     },
     "status": {
       "loading": "Loading...",
@@ -154,6 +158,14 @@
       "edit": "Edit note",
       "add": "Add note",
       "placeholder": "Add a note..."
+    },
+    "datePicker": {
+      "placeholder": "Select date",
+      "selectLabel": "Select date: {date}",
+      "notSelected": "Select date: not selected"
+    },
+    "schedule": {
+      "datePlaceholder": "Date..."
     },
     "recurrence": {
       "label": "Repeat",
@@ -278,7 +290,8 @@
         "required": "Username is required",
         "maxLength": "Username must be {max} characters or less"
       },
-      "limitReached": "Limit reached"
+      "limitReached": "Limit reached",
+      "timeAfterStart": "Enter a time after start time ({minTime})"
     },
     "errors": {
       "generic": "An error occurred",

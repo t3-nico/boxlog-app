@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { Clock, Flag } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import type { TimeIconType } from '@/components/ui/clock-time-picker';
 
@@ -122,6 +123,7 @@ export function TimeSelect({
   iconType = 'clock',
   showDurationInMenu = false,
 }: TimeSelectProps) {
+  const t = useTranslations();
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState(value);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
@@ -261,7 +263,7 @@ export function TimeSelect({
       const minMinutes = minHour! * 60 + minMinute!;
 
       if (parsedMinutes <= minMinutes) {
-        setError(`開始時刻（${minTime}）より後の時刻を入力してください`);
+        setError(t('common.validation.timeAfterStart', { minTime }));
         return;
       }
     }
@@ -291,7 +293,7 @@ export function TimeSelect({
           const minMinutes = minHour! * 60 + minMinute!;
 
           if (parsedMinutes <= minMinutes) {
-            setError(`開始時刻（${minTime}）より後の時刻を入力してください`);
+            setError(t('common.validation.timeAfterStart', { minTime }));
             return;
           }
         }

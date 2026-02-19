@@ -7,6 +7,7 @@
  */
 
 import { Calendar } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import { MiniCalendar } from '@/components/ui/mini-calendar';
 import { zIndex } from '@/config/ui/z-index';
@@ -34,11 +35,13 @@ interface DatePickerPopoverProps {
 export function DatePickerPopover({
   selectedDate,
   onDateChange,
-  placeholder = '日付を選択',
+  placeholder,
   popoverZIndex = zIndex.overlayDropdown,
   showIcon = false,
 }: DatePickerPopoverProps) {
+  const t = useTranslations();
   const { formatDate } = useDateFormat();
+  const resolvedPlaceholder = placeholder ?? t('common.datePicker.placeholder');
 
   return (
     <MiniCalendar
@@ -48,10 +51,14 @@ export function DatePickerPopover({
           type="button"
           className="text-muted-foreground data-[state=selected]:text-foreground hover:bg-state-hover focus-visible:ring-ring inline-flex h-8 items-center gap-2 rounded-lg px-2 text-sm transition-colors focus-visible:ring-2 focus-visible:outline-none"
           data-state={selectedDate ? 'selected' : undefined}
-          aria-label={`日付選択: ${selectedDate ? formatDate(selectedDate) : '未選択'}`}
+          aria-label={
+            selectedDate
+              ? t('common.datePicker.selectLabel', { date: formatDate(selectedDate) })
+              : t('common.datePicker.notSelected')
+          }
         >
           {showIcon && <Calendar className="size-4" />}
-          {selectedDate ? formatDate(selectedDate) : placeholder}
+          {selectedDate ? formatDate(selectedDate) : resolvedPlaceholder}
         </button>
       }
       selectedDate={selectedDate}

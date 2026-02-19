@@ -95,6 +95,10 @@ const messages = {
       previous: '前へ',
       next: '次へ',
       openMenu: 'メニューを開く',
+      selectTime: '時刻選択: {time}',
+      timeNotSelected: '時刻選択: 未選択',
+      startTime: '開始時刻',
+      endTime: '終了時刻',
     },
     form: {
       required: '※必須',
@@ -103,6 +107,7 @@ const messages = {
     },
     validation: {
       limitReached: '上限に達しました',
+      timeAfterStart: '開始時刻（{minTime}）より後の時刻を入力してください',
     },
     comingSoon: '近日公開',
     createNew: {
@@ -135,6 +140,14 @@ const messages = {
       edit: 'メモを編集',
       add: 'メモを追加',
       placeholder: 'メモを追加...',
+    },
+    datePicker: {
+      placeholder: '日付を選択',
+      selectLabel: '日付選択: {date}',
+      notSelected: '日付選択: 未選択',
+    },
+    schedule: {
+      datePlaceholder: '日付...',
     },
   },
   error: {
