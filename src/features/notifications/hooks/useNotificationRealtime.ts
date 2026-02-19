@@ -9,6 +9,7 @@ import { useEffect, useRef } from 'react';
 
 import { createClient } from '@/lib/supabase/client';
 import { trpc } from '@/lib/trpc/client';
+import type { NotificationType } from '@/schemas/notifications';
 import { toast } from 'sonner';
 
 import {
@@ -22,7 +23,7 @@ interface NotificationPayload {
   id: string;
   title: string;
   message: string | null;
-  type: string;
+  type: NotificationType;
   priority: string;
   created_at: string;
   user_id: string;
