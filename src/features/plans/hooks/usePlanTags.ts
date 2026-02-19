@@ -1,6 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
 
+import { logger } from '@/lib/logger';
 import { api } from '@/lib/trpc';
 
 // 楽観的更新用のコンテキスト型
@@ -371,7 +372,7 @@ export function usePlanTags() {
         await addTagMutation.mutateAsync({ planId, tagId });
         return true;
       } catch (error) {
-        console.error('Failed to add tag:', error);
+        logger.error('Failed to add tag:', error);
         return false;
       }
     },
@@ -387,7 +388,7 @@ export function usePlanTags() {
         await removeTagMutation.mutateAsync({ planId, tagId });
         return true;
       } catch (error) {
-        console.error('Failed to remove tag:', error);
+        logger.error('Failed to remove tag:', error);
         return false;
       }
     },

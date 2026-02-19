@@ -87,6 +87,25 @@
       "closed": "完了",
       "cancel": "中止"
     },
+    "inspector": {
+      "addTitle": "タイトルを追加",
+      "editDescription": "説明を編集",
+      "addDescription": "説明を追加",
+      "addDescriptionPlaceholder": "説明を追加...",
+      "createPlan": "Plan 作成",
+      "createRecord": "Record 作成",
+      "markComplete": "完了にする",
+      "markIncomplete": "未完了に戻す",
+      "completeOptions": "完了オプション",
+      "completeAndCreateRecord": "完了 + Record作成",
+      "timeConflict": "時間が重複しています",
+      "toast": {
+        "tagsSaveFailed": "タグの保存に失敗しました",
+        "timeOverlap": "時間が重複しています",
+        "createFailed": "Planの作成に失敗しました",
+        "saveFailed": "保存に失敗しました"
+      }
+    },
     "view": {
       "edit": "編集",
       "delete": "削除",

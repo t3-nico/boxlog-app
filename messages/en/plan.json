@@ -87,6 +87,25 @@
       "closed": "Closed",
       "cancel": "Cancel"
     },
+    "inspector": {
+      "addTitle": "Add title",
+      "editDescription": "Edit description",
+      "addDescription": "Add description",
+      "addDescriptionPlaceholder": "Add description...",
+      "createPlan": "Create Plan",
+      "createRecord": "Create Record",
+      "markComplete": "Mark complete",
+      "markIncomplete": "Mark incomplete",
+      "completeOptions": "Complete options",
+      "completeAndCreateRecord": "Complete + Create Record",
+      "timeConflict": "Time overlaps",
+      "toast": {
+        "tagsSaveFailed": "Failed to save tags",
+        "timeOverlap": "Time overlaps with another event",
+        "createFailed": "Failed to create plan",
+        "saveFailed": "Failed to save"
+      }
+    },
     "view": {
       "edit": "Edit",
       "delete": "Delete",

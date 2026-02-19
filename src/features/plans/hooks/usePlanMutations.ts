@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 import { api } from '@/lib/trpc';
 import type { UpdatePlanInput } from '@/schemas/plans/plan';
 import { useQueryClient } from '@tanstack/react-query';
@@ -125,7 +126,7 @@ export function usePlanMutations() {
       utils.plans.getById.setData({ id: newPlan.id }, newPlan);
     },
     onError: (error, _input, context) => {
-      console.error('[usePlanMutations] Create error:', error);
+      logger.error('[usePlanMutations] Create error:', error);
 
       // エラー時: 全ての plans.list キャッシュをロールバック
       if (context?.previousPlansList) {
