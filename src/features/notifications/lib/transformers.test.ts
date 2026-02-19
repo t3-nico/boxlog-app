@@ -1,12 +1,8 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import type { NotificationEntity } from '../types';
 
-import {
-  getRelativeTime,
-  transformNotificationEntities,
-  transformNotificationEntity,
-} from './transformers';
+import { transformNotificationEntities, transformNotificationEntity } from './transformers';
 
 describe('transformers', () => {
   describe('transformNotificationEntity', () => {
@@ -18,7 +14,7 @@ describe('transformers', () => {
         priority: 'medium',
         title: 'テスト通知',
         message: 'これはテストです',
-        related_event_id: 'event-1',
+        related_plan_id: 'plan-1',
         related_tag_id: 'tag-1',
         action_url: '/calendar',
         icon: 'bell',
@@ -37,7 +33,7 @@ describe('transformers', () => {
       expect(result.priority).toBe('medium');
       expect(result.title).toBe('テスト通知');
       expect(result.message).toBe('これはテストです');
-      expect(result.relatedEventId).toBe('event-1');
+      expect(result.relatedPlanId).toBe('plan-1');
       expect(result.relatedTagId).toBe('tag-1');
       expect(result.actionUrl).toBe('/calendar');
       expect(result.icon).toBe('bell');
@@ -57,7 +53,7 @@ describe('transformers', () => {
         priority: 'low',
         title: 'シンプル通知',
         message: null,
-        related_event_id: null,
+        related_plan_id: null,
         related_tag_id: null,
         action_url: null,
         icon: null,
@@ -72,7 +68,7 @@ describe('transformers', () => {
       const result = transformNotificationEntity(entity);
 
       expect(result.message).toBeUndefined();
-      expect(result.relatedEventId).toBeUndefined();
+      expect(result.relatedPlanId).toBeUndefined();
       expect(result.relatedTagId).toBeUndefined();
       expect(result.actionUrl).toBeUndefined();
       expect(result.icon).toBeUndefined();
@@ -91,7 +87,7 @@ describe('transformers', () => {
           priority: 'high',
           title: '通知1',
           message: null,
-          related_event_id: null,
+          related_plan_id: null,
           related_tag_id: null,
           action_url: null,
           icon: null,
@@ -109,7 +105,7 @@ describe('transformers', () => {
           priority: 'medium',
           title: '通知2',
           message: null,
-          related_event_id: null,
+          related_plan_id: null,
           related_tag_id: null,
           action_url: null,
           icon: null,
@@ -133,86 +129,6 @@ describe('transformers', () => {
       const result = transformNotificationEntities([]);
 
       expect(result).toEqual([]);
-    });
-  });
-
-  describe('getRelativeTime', () => {
-    beforeEach(() => {
-      vi.useFakeTimers();
-      vi.setSystemTime(new Date('2025-01-15T12:00:00Z'));
-    });
-
-    afterEach(() => {
-      vi.useRealTimers();
-    });
-
-    describe('日本語ロケール', () => {
-      it('1分未満は「たった今」を返す', () => {
-        const date = new Date('2025-01-15T11:59:30Z');
-        expect(getRelativeTime(date, 'ja')).toBe('たった今');
-      });
-
-      it('1分以上60分未満は「X分前」を返す', () => {
-        const date = new Date('2025-01-15T11:30:00Z');
-        expect(getRelativeTime(date, 'ja')).toBe('30分前');
-      });
-
-      it('1時間以上24時間未満は「X時間前」を返す', () => {
-        const date = new Date('2025-01-15T09:00:00Z');
-        expect(getRelativeTime(date, 'ja')).toBe('3時間前');
-      });
-
-      it('1日以上7日未満は「X日前」を返す', () => {
-        const date = new Date('2025-01-10T12:00:00Z');
-        expect(getRelativeTime(date, 'ja')).toBe('5日前');
-      });
-
-      it('7日以上28日未満は「X週間前」を返す', () => {
-        const date = new Date('2025-01-01T12:00:00Z');
-        expect(getRelativeTime(date, 'ja')).toBe('2週間前');
-      });
-
-      it('28日以上は「Xヶ月前」を返す', () => {
-        const date = new Date('2024-11-15T12:00:00Z');
-        expect(getRelativeTime(date, 'ja')).toBe('2ヶ月前');
-      });
-    });
-
-    describe('英語ロケール', () => {
-      it('1分未満は「just now」を返す', () => {
-        const date = new Date('2025-01-15T11:59:30Z');
-        expect(getRelativeTime(date, 'en')).toBe('just now');
-      });
-
-      it('1分以上60分未満は「Xm ago」を返す', () => {
-        const date = new Date('2025-01-15T11:30:00Z');
-        expect(getRelativeTime(date, 'en')).toBe('30m ago');
-      });
-
-      it('1時間以上24時間未満は「Xh ago」を返す', () => {
-        const date = new Date('2025-01-15T09:00:00Z');
-        expect(getRelativeTime(date, 'en')).toBe('3h ago');
-      });
-
-      it('1日以上7日未満は「Xd ago」を返す', () => {
-        const date = new Date('2025-01-10T12:00:00Z');
-        expect(getRelativeTime(date, 'en')).toBe('5d ago');
-      });
-
-      it('7日以上28日未満は「Xw ago」を返す', () => {
-        const date = new Date('2025-01-01T12:00:00Z');
-        expect(getRelativeTime(date, 'en')).toBe('2w ago');
-      });
-
-      it('28日以上は「Xmo ago」を返す', () => {
-        const date = new Date('2024-11-15T12:00:00Z');
-        expect(getRelativeTime(date, 'en')).toBe('2mo ago');
-      });
-    });
-
-    it('デフォルトロケールは日本語', () => {
-      const date = new Date('2025-01-15T11:30:00Z');
-      expect(getRelativeTime(date)).toBe('30分前');
     });
   });
 });
