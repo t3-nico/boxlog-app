@@ -18,6 +18,7 @@ import {
   checkBrowserNotificationSupport,
   requestNotificationPermission,
 } from '@/features/notifications/utils/notification-helpers';
+import { ReminderSelect } from '@/features/plans/components/shared/ReminderSelect';
 import { api } from '@/lib/trpc';
 
 import { SettingRow } from './fields/SettingRow';
@@ -182,6 +183,17 @@ export function NotificationSettings() {
     return checkBrowserNotificationSupport() ? Notification.permission : null;
   });
 
+  // デフォルトリマインダーを更新
+  const updateDefaultReminder =
+    api.notificationPreferences.updateDefaultReminderMinutes.useMutation({
+      onSuccess: () => {
+        utils.notificationPreferences.get.invalidate();
+      },
+      onError: (error) => {
+        toast.error(t('notification.settings.saveError', { message: error.message }));
+      },
+    });
+
   // 配信設定を更新
   const updateMutation = api.notificationPreferences.updateDeliverySettings.useMutation({
     onSuccess: () => {
@@ -226,7 +238,7 @@ export function NotificationSettings() {
 
   return (
     <div className="space-y-8">
-      <SettingsCard isSaving={updateMutation.isPending}>
+      <SettingsCard isSaving={updateMutation.isPending || updateDefaultReminder.isPending}>
         <div className="space-y-0">
           {NOTIFICATION_TYPES.map(({ type, labelKey }) => (
             <SettingRow key={type} label={t(labelKey)}>
@@ -239,6 +251,17 @@ export function NotificationSettings() {
               />
             </SettingRow>
           ))}
+          <SettingRow
+            label={t('notification.settings.defaultReminder.label')}
+            description={t('notification.settings.defaultReminder.description')}
+          >
+            <ReminderSelect
+              value={preferences?.defaultReminderMinutes ?? null}
+              onChange={(minutes) => updateDefaultReminder.mutate({ minutes })}
+              variant="button"
+              disabled={updateDefaultReminder.isPending}
+            />
+          </SettingRow>
         </div>
       </SettingsCard>
 

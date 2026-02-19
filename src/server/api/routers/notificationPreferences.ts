@@ -153,7 +153,7 @@ export const notificationPreferencesRouter = createTRPCRouter({
    * デフォルトリマインダー時間を更新
    */
   updateDefaultReminderMinutes: protectedProcedure
-    .input(z.object({ minutes: z.number().min(1).max(1440) }))
+    .input(z.object({ minutes: z.number().min(0).max(10080).nullable() }))
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.userId;
 

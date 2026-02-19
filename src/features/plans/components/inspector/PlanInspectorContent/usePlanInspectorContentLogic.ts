@@ -44,6 +44,9 @@ export function usePlanInspectorContentLogic() {
   // ユーザーのタイムゾーン設定
   const timezone = useCalendarSettingsStore((state) => state.timezone);
 
+  // デフォルトリマインダー設定を取得
+  const { data: notifPrefs } = api.notificationPreferences.get.useQuery();
+
   // 時間重複エラー状態（視覚的フィードバック用）
   const [timeConflictError, setTimeConflictError] = useState(false);
 
@@ -269,7 +272,12 @@ export function usePlanInspectorContentLogic() {
         setEndTime('');
       }
 
-      setReminderMinutes(draftPlan.reminder_minutes ?? null);
+      // ドラフトに明示的にリマインダーが設定されていなければデフォルト値を適用
+      setReminderMinutes(
+        draftPlan.reminder_minutes !== undefined
+          ? (draftPlan.reminder_minutes ?? null)
+          : (notifPrefs?.defaultReminderMinutes ?? null),
+      );
       return;
     }
 
@@ -316,7 +324,7 @@ export function usePlanInspectorContentLogic() {
       setEndTime('');
       setReminderMinutes(null);
     }
-  }, [plan, initialData, isDraftMode, draftPlan, timezone]);
+  }, [plan, initialData, isDraftMode, draftPlan, timezone, notifPrefs?.defaultReminderMinutes]);
 
   // Focus title on open
   useEffect(() => {

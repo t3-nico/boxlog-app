@@ -73,7 +73,11 @@
       "permissionDenied": "Denied",
       "comingSoon": "Soon",
       "saveError": "Failed to save settings: {message}",
-      "tip": "Browser notifications only work when the app is open. Push notifications (coming soon) will work even when the app is closed."
+      "tip": "Browser notifications only work when the app is open. Push notifications (coming soon) will work even when the app is closed.",
+      "defaultReminder": {
+        "label": "Default reminder",
+        "description": "Automatically set for new plans"
+      }
     }
   }
 }
