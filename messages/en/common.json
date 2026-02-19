@@ -150,6 +150,11 @@
       "week1": "1 week before",
       "custom": "Custom"
     },
+    "note": {
+      "edit": "Edit note",
+      "add": "Add note",
+      "placeholder": "Add a note..."
+    },
     "recurrence": {
       "label": "Repeat",
       "none": "Repeat",

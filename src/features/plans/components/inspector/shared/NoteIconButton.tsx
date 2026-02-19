@@ -11,6 +11,7 @@
 import { useState } from 'react';
 
 import { FileText } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { SimpleDescriptionEditor } from '@/components/ui/simple-description-editor';
@@ -51,12 +52,13 @@ export function NoteIconButton({
   disabled = false,
   labels = {},
 }: NoteIconButtonProps) {
+  const t = useTranslations();
   const [isOpen, setIsOpen] = useState(false);
 
-  // デフォルトラベル
-  const editTooltip = labels.editTooltip ?? 'メモを編集';
-  const addTooltip = labels.addTooltip ?? 'メモを追加';
-  const placeholder = labels.placeholder ?? 'メモを追加...';
+  // デフォルトラベル（labels未指定時はi18nフォールバック）
+  const editTooltip = labels.editTooltip ?? t('common.note.edit');
+  const addTooltip = labels.addTooltip ?? t('common.note.add');
+  const placeholder = labels.placeholder ?? t('common.note.placeholder');
 
   // 内容があるかどうか（空のHTMLタグを除外）
   const hasContent = note && note.replace(/<[^>]*>/g, '').trim().length > 0;

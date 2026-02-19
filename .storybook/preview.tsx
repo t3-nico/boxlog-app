@@ -131,6 +131,11 @@ const messages = {
       week1: '1週間前',
       custom: 'カスタム',
     },
+    note: {
+      edit: 'メモを編集',
+      add: 'メモを追加',
+      placeholder: 'メモを追加...',
+    },
   },
   error: {
     loading: {
