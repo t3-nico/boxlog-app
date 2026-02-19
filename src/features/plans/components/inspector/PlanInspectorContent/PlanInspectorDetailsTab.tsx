@@ -30,7 +30,7 @@ interface PlanInspectorDetailsTabProps {
   scheduleDate: Date | undefined; // スケジュール日（カレンダー配置用）
   startTime: string;
   endTime: string;
-  reminderType: string;
+  reminderMinutes: number | null;
   selectedTagIds: string[];
   recurrenceRule: string | null;
   recurrenceType: RecurrenceType;
@@ -40,7 +40,7 @@ interface PlanInspectorDetailsTabProps {
   onScheduleDateChange: (date: Date | undefined) => void;
   onStartTimeChange: (time: string) => void;
   onEndTimeChange: (time: string) => void;
-  onReminderChange: (type: string) => void;
+  onReminderChange: (minutes: number | null) => void;
   onTagsChange: (tagIds: string[]) => void;
   onRemoveTag: (tagId: string) => void;
   onRepeatTypeChange: (type: string) => void;
@@ -58,7 +58,7 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
   scheduleDate,
   startTime,
   endTime,
-  reminderType,
+  reminderMinutes,
   selectedTagIds,
   recurrenceRule,
   recurrenceType,
@@ -94,7 +94,7 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
             onChange={(value) => onAutoSave('title', value)}
             onSuggestionSelect={handleSuggestionSelect}
             type="plan"
-            placeholder="タイトルを追加"
+            placeholder={t('plan.inspector.addTitle')}
             className="flex-1"
             autoFocus
           />
@@ -139,9 +139,9 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
           note={plan.description || ''}
           onNoteChange={(html) => onAutoSave('description', html)}
           labels={{
-            editTooltip: '説明を編集',
-            addTooltip: '説明を追加',
-            placeholder: '説明を追加...',
+            editTooltip: t('plan.inspector.editDescription'),
+            addTooltip: t('plan.inspector.addDescription'),
+            placeholder: t('plan.inspector.addDescriptionPlaceholder'),
           }}
         />
 
@@ -154,7 +154,7 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
         />
 
         {/* Reminder */}
-        <ReminderSelect value={reminderType} onChange={onReminderChange} variant="icon" />
+        <ReminderSelect value={reminderMinutes} onChange={onReminderChange} variant="icon" />
       </div>
     </>
   );

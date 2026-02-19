@@ -1,57 +1,39 @@
 /**
- * 通知設定のユーティリティ関数
+ * Reminder utility functions
+ *
+ * REMINDER_OPTIONS: i18n key-based option definitions for ReminderSelect
+ * getReminderI18nKey: minutes → i18n key lookup
  */
 
 /**
- * リマインダー設定の定義
- * UI表示文字列と分数のマッピング
+ * Reminder option definitions
+ * Each option maps a minutes value to its i18n key
  */
 export const REMINDER_OPTIONS = [
-  { label: '開始時刻', minutes: 0 },
-  { label: '10分前', minutes: 10 },
-  { label: '30分前', minutes: 30 },
-  { label: '1時間前', minutes: 60 },
-  { label: '1日前', minutes: 1440 },
-  { label: '1週間前', minutes: 10080 },
+  { minutes: null, i18nKey: 'common.reminder.none' },
+  { minutes: 0, i18nKey: 'common.reminder.atStart' },
+  { minutes: 10, i18nKey: 'common.reminder.min10' },
+  { minutes: 30, i18nKey: 'common.reminder.min30' },
+  { minutes: 60, i18nKey: 'common.reminder.hour1' },
+  { minutes: 1440, i18nKey: 'common.reminder.day1' },
+  { minutes: 10080, i18nKey: 'common.reminder.week1' },
 ] as const;
 
-/**
- * UI表示文字列をreminder_minutes（分）に変換
- *
- * @param reminderType - UI表示文字列（'', '開始時刻', '10分前', ...）
- * @returns reminder_minutes（分数、null）
- *
- * @example
- * reminderTypeToMinutes('10分前') // => 10
- * reminderTypeToMinutes('開始時刻') // => 0
- * reminderTypeToMinutes('') // => null
- */
-export function reminderTypeToMinutes(reminderType: string): number | null {
-  if (!reminderType || reminderType === 'none') return null;
-
-  const option = REMINDER_OPTIONS.find((opt) => opt.label === reminderType);
-  return option?.minutes ?? null;
-}
+export type ReminderMinutes = (typeof REMINDER_OPTIONS)[number]['minutes'];
 
 /**
- * reminder_minutes（分）をUI表示文字列に変換
+ * Get the i18n key for a given reminder minutes value
  *
- * @param minutes - reminder_minutes（分数）
- * @param fallback - 定義外の値の場合のフォールバック（デフォルト: 'カスタム'）
- * @returns UI表示文字列
+ * @param minutes - reminder_minutes value (null = no reminder)
+ * @returns i18n key string
  *
  * @example
- * minutesToReminderType(10) // => '10分前'
- * minutesToReminderType(0) // => '開始時刻'
- * minutesToReminderType(null) // => ''
- * minutesToReminderType(15) // => 'カスタム'
+ * getReminderI18nKey(null)  // => 'common.reminder.none'
+ * getReminderI18nKey(0)     // => 'common.reminder.atStart'
+ * getReminderI18nKey(10)    // => 'common.reminder.min10'
+ * getReminderI18nKey(15)    // => 'common.reminder.custom'
  */
-export function minutesToReminderType(
-  minutes: number | null | undefined,
-  fallback: string = 'カスタム',
-): string {
-  if (minutes === null || minutes === undefined) return '';
-
+export function getReminderI18nKey(minutes: number | null): string {
   const option = REMINDER_OPTIONS.find((opt) => opt.minutes === minutes);
-  return option?.label ?? fallback;
+  return option?.i18nKey ?? 'common.reminder.custom';
 }

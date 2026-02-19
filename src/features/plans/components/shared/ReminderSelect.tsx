@@ -3,6 +3,7 @@
 import { useState } from 'react';
 
 import { Bell, Check } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -10,34 +11,25 @@ import { HoverTooltip } from '@/components/ui/tooltip';
 import { zIndex } from '@/config/ui/z-index';
 import { cn } from '@/lib/utils';
 
-// 通知オプションの定義（UI表示文字列）
-export const REMINDER_OPTIONS = [
-  { value: '', label: '選択しない' },
-  { value: '開始時刻', label: 'イベント開始時刻' },
-  { value: '10分前', label: '10分前' },
-  { value: '30分前', label: '30分前' },
-  { value: '1時間前', label: '1時間前' },
-  { value: '1日前', label: '1日前' },
-  { value: '1週間前', label: '1週間前' },
-] as const;
+import { getReminderI18nKey, REMINDER_OPTIONS } from '../../utils/reminder';
 
 interface ReminderSelectProps {
-  value: string; // UI表示文字列（'', '開始時刻', '10分前', ...）
-  onChange: (value: string) => void;
-  variant?: 'inspector' | 'compact' | 'button' | 'icon'; // inspectorスタイル、compactスタイル、buttonスタイル、またはiconスタイル
-  disabled?: boolean; // 無効化フラグ
+  value: number | null;
+  onChange: (value: number | null) => void;
+  variant?: 'inspector' | 'compact' | 'button' | 'icon';
+  disabled?: boolean;
 }
 
 /**
- * 通知選択コンポーネント（ボタン + Popover）
+ * Reminder select component (Button + Popover)
  *
- * Inspector、Card、Tableの全てで共通して使用
- * - inspector: Inspectorで使用する横長スタイル（Bell + テキスト）
- * - compact: Card/Tableで使用するコンパクトスタイル（Bell のみ）
- * - button: Card/Tableポップオーバー内で使用する標準ボタンスタイル（繰り返しと同じ）
- * - icon: アイコンのみのスタイル
+ * Used across Inspector, Card, and Table views
+ * - inspector: Wide style with Bell + text
+ * - compact: Compact style with Bell icon only
+ * - button: Standard button style for Card/Table popovers
+ * - icon: Icon-only style
  *
- * Radix Popover（Portal経由）を使用し、Inspector内でも正しく表示
+ * Uses Radix Popover (via Portal) for correct display inside Inspector
  */
 export function ReminderSelect({
   value,
@@ -45,16 +37,13 @@ export function ReminderSelect({
   variant = 'inspector',
   disabled = false,
 }: ReminderSelectProps) {
+  const t = useTranslations();
   const [showPopover, setShowPopover] = useState(false);
 
-  // 通知が設定されているかどうか
-  const hasReminder = value && value !== '';
+  const hasReminder = value !== null;
 
-  // 表示ラベルを取得
   const getDisplayLabel = () => {
-    if (!value || value === '') return 'なし';
-    const option = REMINDER_OPTIONS.find((opt) => opt.value === value);
-    return option?.label || value;
+    return t(getReminderI18nKey(value));
   };
 
   const triggerButton = (() => {
@@ -93,12 +82,15 @@ export function ReminderSelect({
           type="button"
           disabled={disabled}
         >
-          {value || '通知'}
+          {hasReminder ? getDisplayLabel() : t('common.reminder.label')}
         </Button>
       );
     }
 
     if (variant === 'icon') {
+      const label = hasReminder
+        ? `${t('common.reminder.label')}: ${getDisplayLabel()}`
+        : t('common.reminder.label');
       return (
         <button
           type="button"
@@ -108,7 +100,7 @@ export function ReminderSelect({
             'hover:bg-state-hover focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
             hasReminder ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',
           )}
-          aria-label={hasReminder ? `通知: ${getDisplayLabel()}` : '通知を設定'}
+          aria-label={label}
         >
           <Bell className="size-4" />
           {hasReminder && <span className="text-sm">{getDisplayLabel()}</span>}
@@ -136,7 +128,11 @@ export function ReminderSelect({
     <Popover open={showPopover} onOpenChange={setShowPopover}>
       {variant === 'icon' ? (
         <HoverTooltip
-          content={hasReminder ? `通知: ${getDisplayLabel()}` : '通知を設定'}
+          content={
+            hasReminder
+              ? `${t('common.reminder.label')}: ${getDisplayLabel()}`
+              : t('common.reminder.label')
+          }
           side="top"
         >
           {popoverTrigger}
@@ -151,18 +147,18 @@ export function ReminderSelect({
         style={{ zIndex: zIndex.overlayDropdown }}
       >
         {REMINDER_OPTIONS.map((option, index) => (
-          <div key={option.value}>
+          <div key={option.i18nKey}>
             {index === 1 && <div className="border-border my-1 border-t" />}
             <button
               className="hover:bg-state-hover flex w-full items-center justify-between rounded px-2 py-2 text-left text-sm"
               onClick={() => {
-                onChange(option.value);
+                onChange(option.minutes);
                 setShowPopover(false);
               }}
               type="button"
             >
-              {option.label}
-              {value === option.value && <Check className="text-primary h-4 w-4" />}
+              {t(option.i18nKey)}
+              {value === option.minutes && <Check className="text-primary h-4 w-4" />}
             </button>
           </div>
         ))}

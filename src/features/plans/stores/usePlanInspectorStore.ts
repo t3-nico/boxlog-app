@@ -31,6 +31,7 @@ export interface DraftPlan {
   status: 'open';
   start_time: string | null;
   end_time: string | null;
+  reminder_minutes?: number | null;
   // Record作成時に使用する追加フィールド
   tagIds?: string[];
   plan_id?: string | null;

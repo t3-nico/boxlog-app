@@ -25,7 +25,6 @@ import { cn } from '@/lib/utils';
 import { InspectorHeader, useDragHandle } from '../shared';
 
 import { usePlanInspectorStore, type DraftPlan } from '../../../stores/usePlanInspectorStore';
-import { reminderTypeToMinutes } from '../../../utils/reminder';
 import { normalizeStatus } from '../../../utils/status';
 
 import { ActivityPopover } from './ActivityPopover';
@@ -63,8 +62,8 @@ export function PlanInspectorContent() {
     scheduleDate,
     startTime,
     endTime,
-    reminderType,
-    setReminderType,
+    reminderMinutes,
+    handleReminderChange,
     timeConflictError,
     handleScheduleDateChange,
     handleStartTimeChange,
@@ -160,9 +159,9 @@ export function PlanInspectorContent() {
           onClose={isSaving ? () => {} : saveAndClose}
           onPrevious={goToPrevious}
           onNext={goToNext}
-          closeLabel={t('actions.close')}
-          previousLabel={t('aria.previous')}
-          nextLabel={t('aria.next')}
+          closeLabel={t('common.actions.close')}
+          previousLabel={t('common.aria.previous')}
+          nextLabel={t('common.aria.next')}
           extraRightContent={planId ? <ActivityPopover planId={planId} /> : undefined}
           menuContent={menuContent}
         />
@@ -186,7 +185,7 @@ export function PlanInspectorContent() {
               scheduleDate={scheduleDate}
               startTime={startTime}
               endTime={endTime}
-              reminderType={reminderType}
+              reminderMinutes={reminderMinutes}
               selectedTagIds={selectedTagIds}
               recurrenceRule={null}
               recurrenceType={null}
@@ -194,7 +193,7 @@ export function PlanInspectorContent() {
               onScheduleDateChange={handleScheduleDateChange}
               onStartTimeChange={handleStartTimeChange}
               onEndTimeChange={handleEndTimeChange}
-              onReminderChange={(type) => setReminderType(type)}
+              onReminderChange={handleReminderChange}
               onTagsChange={handleTagsChange}
               onRemoveTag={handleRemoveTag}
               onRepeatTypeChange={() => {}}
@@ -214,7 +213,7 @@ export function PlanInspectorContent() {
             scheduleDate={scheduleDate}
             startTime={startTime}
             endTime={endTime}
-            reminderType={reminderType}
+            reminderMinutes={reminderMinutes}
             selectedTagIds={selectedTagIds}
             recurrenceRule={(() => {
               if (!planId) return null;
@@ -234,15 +233,7 @@ export function PlanInspectorContent() {
             onScheduleDateChange={handleScheduleDateChange}
             onStartTimeChange={handleStartTimeChange}
             onEndTimeChange={handleEndTimeChange}
-            onReminderChange={(type) => {
-              setReminderType(type);
-              if (planId) {
-                updatePlan.mutate({
-                  id: planId,
-                  data: { reminder_minutes: reminderTypeToMinutes(type) },
-                });
-              }
-            }}
+            onReminderChange={handleReminderChange}
             onTagsChange={handleTagsChange}
             onRemoveTag={handleRemoveTag}
             onRepeatTypeChange={(type) => {
@@ -278,15 +269,15 @@ export function PlanInspectorContent() {
         // ドラフトモード: 作成ボタン
         <div className="flex shrink-0 justify-end gap-2 px-4 py-4">
           <Button variant="ghost" onClick={cancelAndClose} disabled={isSaving}>
-            キャンセル
+            {t('common.actions.cancel')}
           </Button>
           {createType === 'record' ? (
             <Button onClick={() => recordFormRef.current?.save()} disabled={isSaving}>
-              Record 作成
+              {t('plan.inspector.createRecord')}
             </Button>
           ) : (
             <Button onClick={saveAndClose} disabled={isSaving}>
-              Plan 作成
+              {t('plan.inspector.createPlan')}
             </Button>
           )}
         </div>
@@ -341,7 +332,7 @@ export function PlanInspectorContent() {
               // 完了状態: シンプルなボタン
               return (
                 <Button variant="outline" onClick={handleReopen}>
-                  未完了に戻す
+                  {t('plan.inspector.markIncomplete')}
                 </Button>
               );
             }
@@ -355,7 +346,7 @@ export function PlanInspectorContent() {
                   className="rounded-none border-0"
                   onClick={handleComplete}
                 >
-                  完了にする
+                  {t('plan.inspector.markComplete')}
                 </Button>
                 {/* ドロップダウントリガー */}
                 <DropdownMenu>
@@ -364,22 +355,24 @@ export function PlanInspectorContent() {
                       variant="primary"
                       icon
                       className="rounded-none border-0"
-                      aria-label="完了オプション"
+                      aria-label={t('plan.inspector.completeOptions')}
                     >
                       <ChevronDown className="size-4" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={handleComplete}>完了にする</DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleComplete}>
+                      {t('plan.inspector.markComplete')}
+                    </DropdownMenuItem>
                     <DropdownMenuItem
                       onClick={handleCompleteWithRecord}
                       disabled={cannotCreateRecord}
                     >
-                      完了 + Record作成
+                      {t('plan.inspector.completeAndCreateRecord')}
                     </DropdownMenuItem>
                     {cannotCreateRecord && (
                       <DropdownMenuLabel className="text-muted-foreground px-2 py-1 text-xs font-normal">
-                        時間が重複しています
+                        {t('plan.inspector.timeConflict')}
                       </DropdownMenuLabel>
                     )}
                   </DropdownMenuContent>

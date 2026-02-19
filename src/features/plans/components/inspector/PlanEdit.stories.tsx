@@ -179,7 +179,7 @@ function PlanEditStory({
   initialScheduleDate,
   initialStartTime = '',
   initialEndTime = '',
-  initialReminderType = 'none',
+  initialReminderMinutes = null as number | null,
   timeConflictError = false,
 }: {
   plan: Plan;
@@ -187,7 +187,7 @@ function PlanEditStory({
   initialScheduleDate?: Date;
   initialStartTime?: string;
   initialEndTime?: string;
-  initialReminderType?: string;
+  initialReminderMinutes?: number | null;
   timeConflictError?: boolean;
 }) {
   const titleRef = useRef<HTMLInputElement | null>(null);
@@ -195,7 +195,7 @@ function PlanEditStory({
   const [scheduleDate, setScheduleDate] = useState<Date | undefined>(initialScheduleDate);
   const [startTime, setStartTime] = useState(initialStartTime);
   const [endTime, setEndTime] = useState(initialEndTime);
-  const [reminderType, setReminderType] = useState(initialReminderType);
+  const [reminderMinutes, setReminderMinutes] = useState<number | null>(initialReminderMinutes);
 
   return (
     <InspectorFrame>
@@ -215,7 +215,7 @@ function PlanEditStory({
           scheduleDate={scheduleDate}
           startTime={startTime}
           endTime={endTime}
-          reminderType={reminderType}
+          reminderMinutes={reminderMinutes}
           selectedTagIds={tagIds}
           recurrenceRule={null}
           recurrenceType={null}
@@ -224,7 +224,7 @@ function PlanEditStory({
           onScheduleDateChange={setScheduleDate}
           onStartTimeChange={setStartTime}
           onEndTimeChange={setEndTime}
-          onReminderChange={setReminderType}
+          onReminderChange={setReminderMinutes}
           onTagsChange={setTagIds}
           onRemoveTag={(id) => setTagIds((prev) => prev.filter((t) => t !== id))}
           onRepeatTypeChange={noop}
@@ -251,7 +251,7 @@ export const Edit: Story = {
       initialScheduleDate={new Date('2024-01-15')}
       initialStartTime="10:00"
       initialEndTime="11:00"
-      initialReminderType="15min"
+      initialReminderMinutes={15}
     />
   ),
 };
@@ -265,7 +265,7 @@ export const Completed: Story = {
       initialScheduleDate={new Date('2024-01-15')}
       initialStartTime="10:00"
       initialEndTime="11:00"
-      initialReminderType="15min"
+      initialReminderMinutes={15}
     />
   ),
 };
@@ -318,7 +318,7 @@ export const AllPatterns: Story = {
         initialScheduleDate={new Date('2024-01-15')}
         initialStartTime="10:00"
         initialEndTime="11:00"
-        initialReminderType="15min"
+        initialReminderMinutes={15}
       />
       <PlanEditStory
         plan={completedPlan}
@@ -326,7 +326,7 @@ export const AllPatterns: Story = {
         initialScheduleDate={new Date('2024-01-15')}
         initialStartTime="10:00"
         initialEndTime="11:00"
-        initialReminderType="15min"
+        initialReminderMinutes={15}
       />
       <PlanEditStory
         plan={filledPlan}

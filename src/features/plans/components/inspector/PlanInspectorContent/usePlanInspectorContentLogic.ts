@@ -5,6 +5,7 @@
  */
 
 import { useQueryClient } from '@tanstack/react-query';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -26,7 +27,6 @@ import { usePlanCacheStore } from '../../../stores/usePlanCacheStore';
 import { usePlanInspectorStore, type DraftPlan } from '../../../stores/usePlanInspectorStore';
 import { useRecurringEditConfirmStore } from '../../../stores/useRecurringEditConfirmStore';
 import type { Plan } from '../../../types/plan';
-import { minutesToReminderType } from '../../../utils/reminder';
 import { useInspectorAutoSave, useInspectorNavigation, useRecurringPlanEdit } from '../hooks';
 
 // スコープダイアログを表示するフィールド（日付・時間）
@@ -37,6 +37,7 @@ const SCOPE_DIALOG_FIELDS = ['start_time', 'end_time'] as const;
 const IMMEDIATE_SAVE_FIELDS = ['title', 'description'] as const;
 
 export function usePlanInspectorContentLogic() {
+  const t = useTranslations();
   const utils = api.useUtils();
   const queryClient = useQueryClient();
 
@@ -202,7 +203,7 @@ export function usePlanInspectorContentLogic() {
   const [scheduleDate, setScheduleDate] = useState<Date | undefined>(); // スケジュール日（start_time/end_time用）
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
-  const [reminderType, setReminderType] = useState<string>('');
+  const [reminderMinutes, setReminderMinutes] = useState<number | null>(null);
 
   // planIdが変わったらタグ選択をリセット（別のPlanを開いた時）
   useEffect(() => {
@@ -268,7 +269,7 @@ export function usePlanInspectorContentLogic() {
         setEndTime('');
       }
 
-      setReminderType('');
+      setReminderMinutes(draftPlan.reminder_minutes ?? null);
       return;
     }
 
@@ -294,11 +295,7 @@ export function usePlanInspectorContentLogic() {
         setEndTime('');
       }
 
-      if ('reminder_minutes' in plan && plan.reminder_minutes !== null) {
-        setReminderType(minutesToReminderType(plan.reminder_minutes));
-      } else {
-        setReminderType('');
-      }
+      setReminderMinutes('reminder_minutes' in plan ? (plan.reminder_minutes ?? null) : null);
     } else if (!plan && initialData) {
       if (initialData.start_time) {
         const startDate = parseISOToUserTimezone(initialData.start_time, timezone);
@@ -317,7 +314,7 @@ export function usePlanInspectorContentLogic() {
       setScheduleDate(undefined);
       setStartTime('');
       setEndTime('');
-      setReminderType('');
+      setReminderMinutes(null);
     }
   }, [plan, initialData, isDraftMode, draftPlan, timezone]);
 
@@ -585,6 +582,20 @@ export function usePlanInspectorContentLogic() {
     [scheduleDate, isDraftMode, recurringEdit, updateDraft, addPendingChange, timezone],
   );
 
+  // Reminder handler
+  const handleReminderChange = useCallback(
+    (minutes: number | null) => {
+      setReminderMinutes(minutes);
+
+      if (isDraftMode) {
+        updateDraft({ reminder_minutes: minutes });
+      } else if (planId) {
+        updatePlan.mutate({ id: planId, data: { reminder_minutes: minutes } });
+      }
+    },
+    [isDraftMode, planId, updateDraft, updatePlan],
+  );
+
   // Menu handlers
   const handleCopyId = useCallback(() => {
     if (planId) navigator.clipboard.writeText(planId);
@@ -646,20 +657,21 @@ export function usePlanInspectorContentLogic() {
             status: 'open',
             start_time: currentDraft.start_time,
             end_time: currentDraft.end_time,
+            reminder_minutes: currentDraft.reminder_minutes ?? undefined,
           });
           if (newPlan?.id && currentTagIds.length > 0) {
             try {
               await setplanTags(newPlan.id, currentTagIds);
             } catch {
-              toast.error('タグの保存に失敗しました');
+              toast.error(t('plan.inspector.toast.tagsSaveFailed'));
             }
           }
         } catch (error) {
           const errorMessage = error instanceof Error ? error.message : '';
           if (errorMessage.includes('TIME_OVERLAP') || errorMessage.includes('既に')) {
-            toast.error('時間が重複しています');
+            toast.error(t('plan.inspector.toast.timeOverlap'));
           } else {
-            toast.error('Planの作成に失敗しました');
+            toast.error(t('plan.inspector.toast.createFailed'));
           }
         }
       })();
@@ -671,20 +683,20 @@ export function usePlanInspectorContentLogic() {
         updatePlan.mutateAsync({ id: currentPlanId, data: changes }).catch((error: unknown) => {
           const errorMessage = error instanceof Error ? error.message : '';
           if (errorMessage.includes('TIME_OVERLAP') || errorMessage.includes('既に')) {
-            toast.error('時間が重複しています');
+            toast.error(t('plan.inspector.toast.timeOverlap'));
           } else {
-            toast.error('保存に失敗しました');
+            toast.error(t('plan.inspector.toast.saveFailed'));
           }
         });
       }
 
       if (currentHasTagChanges && currentPlanId) {
         setplanTags(currentPlanId, currentTagIds).catch(() => {
-          toast.error('タグの保存に失敗しました');
+          toast.error(t('plan.inspector.toast.tagsSaveFailed'));
         });
       }
     }
-  }, [updatePlan, closeInspector, createPlan, clearDraft, setplanTags, hasTagChanges]);
+  }, [t, updatePlan, closeInspector, createPlan, clearDraft, setplanTags, hasTagChanges]);
 
   /**
    * 変更を破棄してInspectorを閉じる（キャンセル）
@@ -731,8 +743,8 @@ export function usePlanInspectorContentLogic() {
     scheduleDate, // スケジュール日（カレンダー配置用）
     startTime,
     endTime,
-    reminderType,
-    setReminderType,
+    reminderMinutes,
+    handleReminderChange,
     timeConflictError,
 
     // Form handlers
