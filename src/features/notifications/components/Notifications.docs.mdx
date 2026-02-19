@@ -4,7 +4,7 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 # Notifications
 
-イベント、タスク、システムメッセージをユーザーに通知するシステム。
+プラン変更、リマインダー、システムメッセージをユーザーに通知するシステム。
 
 ---
 
@@ -14,12 +14,12 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 | タイプ | 説明 | アイコン |
 |-------|------|---------|
-| `reminder` | イベント開始前リマインダー | bell |
-| `event_created` | イベント作成 | calendar |
-| `event_updated` | イベント更新 | calendar |
-| `event_deleted` | イベント削除 | calendar |
-| `task_completed` | タスク完了 | check |
-| `trash_warning` | ゴミ箱自動削除警告 | trash |
+| `reminder` | プラン開始前リマインダー | bell |
+| `plan_created` | プラン作成 | calendar |
+| `plan_updated` | プラン更新 | calendar |
+| `plan_deleted` | プラン削除 | trash |
+| `plan_completed` | プラン完了 | check |
+| `trash_warning` | ゴミ箱自動削除警告 | alert |
 | `system` | システム通知 | info |
 
 ### 優先度
@@ -45,7 +45,7 @@ import { Meta } from '@storybook/addon-docs/blocks';
 | `priority` | TEXT | 優先度（default: medium） |
 | `title` | TEXT | 通知タイトル |
 | `message` | TEXT | 通知本文（nullable） |
-| `related_event_id` | UUID | 関連イベント（nullable） |
+| `related_plan_id` | UUID | 関連プラン（nullable） |
 | `action_url` | TEXT | クリック時遷移先 |
 | `icon` | TEXT | 表示アイコン |
 | `data` | JSONB | 拡張用データ |
@@ -66,15 +66,15 @@ import { Meta } from '@storybook/addon-docs/blocks';
 ## データフロー
 
 ```
-[ユーザー操作（イベント作成/更新/削除）]
+[ユーザー操作（プラン作成/更新/削除）]
        ↓
 [通知生成関数 → Supabase INSERT]
        ↓
 [Realtime Subscription]
        ↓
-[Zustand Store 更新]
+[tRPC + TanStack Query キャッシュ更新]
        ↓
-[UI更新: NotificationBadge + NotificationDialog]
+[UI更新: NotificationDropdown + NotificationItem]
 ```
 
 ---
@@ -84,21 +84,18 @@ import { Meta } from '@storybook/addon-docs/blocks';
 ```
 src/features/notifications/
 ├── components/
-│   ├── NotificationDialog.tsx        メインダイアログ
+│   ├── NotificationDropdown.tsx      ドロップダウンメニュー
 │   ├── NotificationItem.tsx          通知アイテム
-│   ├── NotificationList.tsx          通知リスト
-│   └── NotificationBadge.tsx         未読バッジ
+│   └── Notifications.docs.mdx       ドキュメント
 ├── hooks/
-│   ├── useNotifications.ts           データ取得
-│   ├── useNotificationActions.ts     操作（既読化、削除）
-│   └── useRealtimeNotifications.ts   リアルタイム更新
-├── stores/
-│   ├── useNotificationStore.ts       Zustand store
-│   └── useNotificationDialogStore.ts ダイアログ開閉
+│   ├── useNotifications.ts           ブラウザ通知管理
+│   └── useNotificationPreferences.ts 通知設定・配信判定
+├── utils/
+│   └── notification-helpers.ts       ヘルパー関数
 ├── lib/
-│   ├── transformers.ts               Entity → Notification変換
-│   └── constants.ts                  定数
-└── types.ts
+│   └── transformers.ts               Entity → Notification変換
+├── types.ts                          型定義（@/schemas/notifications から re-export）
+└── index.ts                          公開API
 ```
 
 ---
@@ -119,7 +116,7 @@ src/features/notifications/
 | トリガー | 実行タイミング | 優先度 |
 |---------|--------------|--------|
 | リマインダー | Cron Job（1分ごと） | high |
-| イベント変更 | クライアント操作時 | medium |
+| プラン変更 | クライアント操作時 | medium |
 | ゴミ箱警告 | Cron Job（1日1回） | urgent |
 
 ---
@@ -140,4 +137,4 @@ src/features/notifications/
 
 ---
 
-**最終更新**: 2026-02-17
+**最終更新**: 2026-02-19
