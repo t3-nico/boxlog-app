@@ -48,7 +48,7 @@ export function planToCalendarPlan(plan: PlanWithTagIds): CalendarPlan {
   })();
 
   // 繰り返し設定があるかチェック
-  const isRecurring = !!(plan.recurrence_type && plan.recurrence_type !== 'none');
+  const isRecurring = isRecurringPlan(plan);
 
   return {
     id: plan.id,

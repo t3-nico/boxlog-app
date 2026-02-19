@@ -14,6 +14,7 @@ import {
   parseISOToUserTimezone,
 } from '@/features/calendar/utils/dateUtils';
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
+import { logger } from '@/lib/logger';
 import { api } from '@/lib/trpc';
 import type { RecurringEditScope } from '../../../components/RecurringEditConfirmDialog';
 import { usePlan } from '../../../hooks/usePlan';
@@ -436,7 +437,7 @@ export function usePlanInspectorContentLogic() {
         await applyDelete({ scope, planId, instanceDate });
         closeInspector();
       } catch (err) {
-        console.error('Failed to delete recurring plan:', err);
+        logger.error('Failed to delete recurring plan:', err);
       }
     },
     [planId, instanceDate, applyDelete, closeInspector],

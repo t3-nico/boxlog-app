@@ -158,7 +158,32 @@
     "weekly": "毎週",
     "monthly": "毎月",
     "yearly": "毎年",
-    "weekdays": "平日"
+    "weekdays": "平日",
+    "dialog": {
+      "title": "繰り返し",
+      "interval": "間隔",
+      "pattern": "パターン",
+      "period": "期間",
+      "endNever": "終了日未定",
+      "endUntil": "終了日：",
+      "endCount": "回 実施",
+      "perDay": "日ごと",
+      "perWeek": "週間ごと",
+      "perMonth": "ヶ月ごと",
+      "perYear": "年ごと",
+      "everyMonth": "毎月 {day} 日",
+      "everyNthWeekday": "毎月 第{nth}{weekday}曜日",
+      "everyLastWeekday": "毎月 最終{weekday}曜日",
+      "weekdaysShort": {
+        "0": "日",
+        "1": "月",
+        "2": "火",
+        "3": "水",
+        "4": "木",
+        "5": "金",
+        "6": "土"
+      }
+    }
   },
   "language": {
     "current": "現在の言語",

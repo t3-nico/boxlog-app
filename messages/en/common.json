@@ -158,7 +158,32 @@
     "weekly": "Weekly",
     "monthly": "Monthly",
     "yearly": "Yearly",
-    "weekdays": "Weekdays"
+    "weekdays": "Weekdays",
+    "dialog": {
+      "title": "Repeat",
+      "interval": "Interval",
+      "pattern": "Pattern",
+      "period": "Period",
+      "endNever": "No end date",
+      "endUntil": "End date:",
+      "endCount": "occurrences",
+      "perDay": "days",
+      "perWeek": "weeks",
+      "perMonth": "months",
+      "perYear": "years",
+      "everyMonth": "Monthly on day {day}",
+      "everyNthWeekday": "Monthly on the {nth}{weekday}",
+      "everyLastWeekday": "Monthly on the last {weekday}",
+      "weekdaysShort": {
+        "0": "Sun",
+        "1": "Mon",
+        "2": "Tue",
+        "3": "Wed",
+        "4": "Thu",
+        "5": "Fri",
+        "6": "Sat"
+      }
+    }
   },
   "language": {
     "current": "Current Language",

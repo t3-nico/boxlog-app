@@ -4,6 +4,7 @@ import { useCallback } from 'react';
 
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
 import { useRecurringEditConfirmStore } from '@/features/plans/stores/useRecurringEditConfirmStore';
+import { getInstanceRef } from '@/features/plans/utils/instanceId';
 import { useRecordInspectorStore } from '@/features/records/stores';
 import { logger } from '@/lib/logger';
 
@@ -50,10 +51,8 @@ export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandle
       const planIdToOpen = plan.calendarId ?? plan.id;
 
       // 繰り返しプランの場合はインスタンス日付を渡す
-      const instanceDateRaw =
-        plan.isRecurring && plan.id.includes('_')
-          ? plan.id.split('_').pop()
-          : plan.startDate?.toISOString().slice(0, 10);
+      const ref = plan.isRecurring ? getInstanceRef(plan) : null;
+      const instanceDateRaw = ref?.instanceDate ?? plan.startDate?.toISOString().slice(0, 10);
 
       openPlanInspector(
         planIdToOpen,

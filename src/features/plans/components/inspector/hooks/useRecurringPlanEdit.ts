@@ -14,6 +14,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { RecurringEditScope } from '@/features/plans/components/RecurringEditConfirmDialog';
 import { useRecurringScopeMutations } from '@/features/plans/hooks/useRecurringScopeMutations';
 import { useRecurringEditConfirmStore } from '@/features/plans/stores/useRecurringEditConfirmStore';
+import { isRecurringPlan } from '@/features/plans/utils/recurrence';
+import { logger } from '@/lib/logger';
 
 import type { Plan } from '../../../types/plan';
 
@@ -44,7 +46,7 @@ export function useRecurringPlanEdit({ plan, planId, instanceDate }: UseRecurrin
   const isRecurringInstance = useMemo(() => {
     if (!plan || !instanceDate) return false;
     // 繰り返し設定があり、かつインスタンス日付が指定されている
-    return !!(plan.recurrence_type && plan.recurrence_type !== 'none');
+    return isRecurringPlan(plan);
   }, [plan, instanceDate]);
 
   // 保留中の変更
@@ -111,7 +113,7 @@ export function useRecurringPlanEdit({ plan, planId, instanceDate }: UseRecurrin
         pendingChangesRef.current = {};
         pendingFieldRef.current = null;
       } catch (error) {
-        console.error('Failed to apply recurring edit:', error);
+        logger.error('Failed to apply recurring edit:', error);
       }
     },
     [planId, instanceDate, applyEdit],
