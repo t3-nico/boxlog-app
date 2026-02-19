@@ -61,7 +61,7 @@ export function TagsIconButton({
           <Badge
             variant="outline"
             style={{ borderColor: tag.color || undefined }}
-            className="group relative h-7 pr-6 text-xs font-normal"
+            className="h-7 gap-1 bg-transparent text-xs font-normal"
           >
             {tag.name}
             <button
@@ -70,7 +70,7 @@ export function TagsIconButton({
                 e.stopPropagation();
                 handleRemoveTag(tag.id);
               }}
-              className="hover:bg-state-hover absolute top-1/2 right-1 -translate-y-1/2 rounded opacity-70 transition-opacity hover:opacity-100"
+              className="hover:bg-state-hover text-muted-foreground hover:text-foreground -mr-1 rounded p-0.5 transition-colors"
             >
               <X className="size-3" />
             </button>

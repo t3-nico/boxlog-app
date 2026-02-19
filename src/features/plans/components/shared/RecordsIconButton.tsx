@@ -4,14 +4,14 @@
  * Records紐付けアイコンボタン
  *
  * Plan Inspector の Row 3 で使用。
- * Record Inspector の Plan紐付けと同じUIパターン（アイコン + 名前インライン表示）。
+ * TagsIconButton と同じ Badge + X パターンで Record を表示。
  */
 
 import { useMemo, useState } from 'react';
 
-import { ListChecks, Plus } from 'lucide-react';
-import { useLocale } from 'next-intl';
+import { ListChecks, Plus, X } from 'lucide-react';
 
+import { Badge } from '@/components/ui/badge';
 import {
   Command,
   CommandEmpty,
@@ -35,7 +35,7 @@ interface RecordsIconButtonProps {
 }
 
 export function RecordsIconButton({ planId, disabled = false }: RecordsIconButtonProps) {
-  const locale = useLocale();
+  const utils = api.useUtils();
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const openInspectorWithDraft = usePlanInspectorStore((state) => state.openInspectorWithDraft);
@@ -47,9 +47,6 @@ export function RecordsIconButton({ planId, disabled = false }: RecordsIconButto
 
   // タグデータ取得
   const { data: allTags = [] } = useTags();
-
-  const recordCount = records?.length ?? 0;
-  const hasRecords = recordCount > 0;
 
   // 検索フィルタリング
   const filteredRecords = useMemo(() => {
@@ -65,6 +62,35 @@ export function RecordsIconButton({ planId, disabled = false }: RecordsIconButto
     });
   }, [records, searchQuery]);
 
+  // Record の plan_id を null にして紐付け解除
+  const unlinkRecord = api.records.update.useMutation({
+    onMutate: async ({ id }) => {
+      await utils.records.listByPlan.cancel({ planId });
+      const previous = utils.records.listByPlan.getData({ planId, sortOrder: 'desc' });
+
+      utils.records.listByPlan.setData({ planId, sortOrder: 'desc' }, (old) => {
+        if (!old) return old;
+        return old.filter((r) => r.id !== id);
+      });
+
+      return { previous };
+    },
+    onError: (_err, _input, context) => {
+      if (context?.previous) {
+        utils.records.listByPlan.setData({ planId, sortOrder: 'desc' }, context.previous);
+      }
+    },
+    onSettled: () => {
+      void utils.records.listByPlan.invalidate({ planId });
+      void utils.records.list.invalidate(undefined, { refetchType: 'all' });
+      void utils.plans.getCumulativeTime.invalidate();
+    },
+  });
+
+  const handleUnlinkRecord = (recordId: string) => {
+    unlinkRecord.mutate({ id: recordId, data: { plan_id: null } });
+  };
+
   // 新しいRecordを作成（このPlanに紐づけて）
   const handleCreateRecord = () => {
     setIsOpen(false);
@@ -72,121 +98,146 @@ export function RecordsIconButton({ planId, disabled = false }: RecordsIconButto
   };
 
   return (
-    <Popover open={isOpen} onOpenChange={setIsOpen}>
-      <HoverTooltip content={hasRecords ? `Records (${recordCount})` : 'Recordを追加'} side="top">
-        <div
-          className={cn(
-            'hover:bg-state-hover flex h-8 items-center rounded-lg transition-colors',
-            hasRecords ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',
-          )}
+    <div className="flex flex-wrap items-center gap-1">
+      {/* 紐付き Record（Badge 表示） */}
+      {records?.map((record) => (
+        <Badge
+          key={record.id}
+          variant="outline"
+          className="h-7 gap-1 bg-transparent text-xs font-normal"
         >
+          <span className="max-w-20 truncate">{record.title || '(タイトルなし)'}</span>
+          {!disabled && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleUnlinkRecord(record.id);
+              }}
+              className="hover:bg-state-hover text-muted-foreground hover:text-foreground -mr-1 rounded p-0.5 transition-colors"
+              aria-label="Record紐付けを解除"
+            >
+              <X className="size-3" />
+            </button>
+          )}
+        </Badge>
+      ))}
+
+      {/* Record 追加ボタン（Popover） */}
+      <Popover open={isOpen} onOpenChange={setIsOpen}>
+        <HoverTooltip content="Recordを追加" side="top">
           <PopoverTrigger asChild>
             <button
               type="button"
               disabled={disabled}
-              className="focus-visible:ring-ring flex items-center gap-1 px-2 text-sm focus-visible:ring-2 focus-visible:outline-none"
-              aria-label={hasRecords ? `Records (${recordCount})` : 'Recordを追加'}
+              className={cn(
+                'flex size-8 items-center justify-center rounded-lg transition-colors',
+                'hover:bg-state-hover focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
+                'text-muted-foreground hover:text-foreground',
+              )}
+              aria-label="Recordを追加"
             >
-              <ListChecks className="size-4 shrink-0" />
-              {hasRecords &&
-                records?.map((record) => (
-                  <span key={record.id} className="max-w-24 truncate text-xs">
-                    {record.title || '(タイトルなし)'}
-                  </span>
-                ))}
+              <ListChecks className="size-4" />
             </button>
           </PopoverTrigger>
-        </div>
-      </HoverTooltip>
-      <PopoverContent
-        className="w-[400px] p-0"
-        align="start"
-        side="bottom"
-        sideOffset={8}
-        style={{ zIndex: zIndex.overlayDropdown }}
-      >
-        {isPending ? (
-          <div className="flex items-center justify-center py-8">
-            <Spinner size="sm" />
-          </div>
-        ) : (
-          <Command shouldFilter={false}>
-            <CommandInput
-              placeholder="Recordを検索..."
-              value={searchQuery}
-              onValueChange={setSearchQuery}
-            />
-            <CommandList className="max-h-[280px]">
-              <CommandEmpty>Recordがありません</CommandEmpty>
-              <CommandGroup>
-                {filteredRecords.map((record) => {
-                  const recordTags = record.tagIds
-                    ?.map((id) => allTags.find((t) => t.id === id))
-                    .filter(Boolean);
-                  return (
-                    <CommandItem
-                      key={record.id}
-                      value={record.id}
-                      onSelect={() => {
-                        setIsOpen(false);
-                        window.location.href = `/${locale}/record?selected=${record.id}`;
-                      }}
-                      className="cursor-pointer"
-                    >
-                      {/* タイトル or (タイトルなし) */}
-                      <span className="shrink truncate">
-                        {record.title || (
-                          <span className="text-muted-foreground">(タイトルなし)</span>
-                        )}
-                      </span>
-
-                      {/* タグ */}
-                      {recordTags && recordTags.length > 0 && (
-                        <div className="flex shrink-0 gap-1 pl-2">
-                          {recordTags.slice(0, 2).map((tag) => (
-                            <span
-                              key={tag!.id}
-                              className="rounded px-1 py-1 text-xs"
-                              style={{
-                                backgroundColor: tag!.color ? `${tag!.color}20` : undefined,
-                                color: tag!.color || undefined,
-                              }}
-                            >
-                              {tag!.name}
-                            </span>
-                          ))}
-                          {recordTags.length > 2 && (
-                            <span className="text-muted-foreground text-xs">
-                              +{recordTags.length - 2}
-                            </span>
-                          )}
-                        </div>
-                      )}
-
-                      {/* 日付 */}
-                      <span className="text-muted-foreground ml-auto shrink-0 pl-2 text-xs">
-                        {record.worked_at}
-                      </span>
-                    </CommandItem>
-                  );
-                })}
-              </CommandGroup>
-            </CommandList>
-
-            {/* 新規作成ボタン */}
-            <div className="border-border border-t p-2">
-              <button
-                type="button"
-                onClick={handleCreateRecord}
-                className="text-muted-foreground hover:text-foreground hover:bg-state-hover flex w-full items-center gap-2 rounded-lg px-2 py-2 text-sm transition-colors"
-              >
-                <Plus className="size-4" />
-                <span>作業ログを追加</span>
-              </button>
+        </HoverTooltip>
+        <PopoverContent
+          className="w-[400px] p-0"
+          align="start"
+          side="bottom"
+          sideOffset={8}
+          style={{ zIndex: zIndex.overlayDropdown }}
+        >
+          {isPending ? (
+            <div className="flex items-center justify-center py-8">
+              <Spinner size="sm" />
             </div>
-          </Command>
-        )}
-      </PopoverContent>
-    </Popover>
+          ) : (
+            <Command shouldFilter={false}>
+              <CommandInput
+                placeholder="Recordを検索..."
+                value={searchQuery}
+                onValueChange={setSearchQuery}
+              />
+              <CommandList className="max-h-[280px]">
+                <CommandEmpty>一致するRecordがありません</CommandEmpty>
+                <CommandGroup>
+                  {filteredRecords.map((record) => {
+                    const recordTags = record.tagIds
+                      ?.map((id) => allTags.find((t) => t.id === id))
+                      .filter(Boolean);
+                    return (
+                      <CommandItem key={record.id} value={record.id}>
+                        {/* タイトル or (タイトルなし) */}
+                        <span className="shrink truncate">
+                          {record.title || (
+                            <span className="text-muted-foreground">(タイトルなし)</span>
+                          )}
+                        </span>
+
+                        {/* タグ */}
+                        {recordTags && recordTags.length > 0 && (
+                          <div className="flex shrink-0 gap-1 pl-2">
+                            {recordTags.slice(0, 2).map((tag) => (
+                              <span
+                                key={tag!.id}
+                                className="rounded px-1 py-1 text-xs"
+                                style={{
+                                  backgroundColor: tag!.color ? `${tag!.color}20` : undefined,
+                                  color: tag!.color || undefined,
+                                }}
+                              >
+                                {tag!.name}
+                              </span>
+                            ))}
+                            {recordTags.length > 2 && (
+                              <span className="text-muted-foreground text-xs">
+                                +{recordTags.length - 2}
+                              </span>
+                            )}
+                          </div>
+                        )}
+
+                        {/* 日付 */}
+                        <span className="text-muted-foreground ml-auto shrink-0 pl-2 text-xs">
+                          {record.worked_at}
+                        </span>
+
+                        {/* 紐付け解除 */}
+                        {!disabled && (
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleUnlinkRecord(record.id);
+                            }}
+                            className="hover:bg-state-hover text-muted-foreground hover:text-foreground shrink-0 rounded p-1 transition-colors"
+                            aria-label="Record紐付けを解除"
+                          >
+                            <X className="size-3.5" />
+                          </button>
+                        )}
+                      </CommandItem>
+                    );
+                  })}
+                </CommandGroup>
+              </CommandList>
+
+              {/* 新規作成ボタン */}
+              <div className="border-border border-t p-2">
+                <button
+                  type="button"
+                  onClick={handleCreateRecord}
+                  className="text-muted-foreground hover:text-foreground hover:bg-state-hover flex w-full items-center gap-2 rounded-lg px-2 py-2 text-sm transition-colors"
+                >
+                  <Plus className="size-4" />
+                  <span>作業ログを追加</span>
+                </button>
+              </div>
+            </Command>
+          )}
+        </PopoverContent>
+      </Popover>
+    </div>
   );
 }
