@@ -83,15 +83,24 @@ export const Plan: Story = {
   ),
 };
 
-/** Record（実績記録）。左ボーダーで区別。 */
+/** Record（実績記録）。3px左縦線アクセント（record-border）で区別、右側のみ角丸。 */
 export const Record: Story = {
   render: () => (
-    <Slot>
-      <PlanCard
-        plan={{ ...basePlan, id: 'record-1', type: 'record', title: '開発作業' }}
-        position={basePosition}
-      />
-    </Slot>
+    <div className="flex flex-col gap-4">
+      <Slot>
+        <PlanCard
+          plan={{ ...basePlan, id: 'record-1', type: 'record', title: '開発作業' }}
+          position={basePosition}
+        />
+      </Slot>
+      <Slot>
+        <PlanCard
+          plan={{ ...basePlan, id: 'record-2', type: 'record', title: '選択中のRecord' }}
+          position={basePosition}
+          isSelected
+        />
+      </Slot>
+    </div>
   ),
 };
 

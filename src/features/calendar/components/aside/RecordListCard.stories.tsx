@@ -11,7 +11,7 @@ import { RecordListCard } from './RecordListCard';
  * PlanListCard との違い:
  * - チェックボックスなし（Record にはステータスがない）
  * - D&D なし → cursor-pointer 固定
- * - bg-record-box 背景（緑系）
+ * - 透明背景 + 3px左縦線アクセント（record-border）
  * - 充実度スコア表示（星 1-5）
  * - 所要時間表示（Clock アイコン + {n}分）
  */
