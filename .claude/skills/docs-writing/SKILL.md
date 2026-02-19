@@ -27,11 +27,11 @@ app側の技術ドキュメント（`docs/`）とは別物。
 
 ## 対象コンテンツ種別
 
-| 種別         | ディレクトリ             | 用途                                                    |
-| ------------ | ------------------------ | ------------------------------------------------------- |
-| **docs**     | `content/docs/**/*.mdx`  | 機能ドキュメント（Getting Started, Features, Guides等） |
-| **blog**     | `content/blog/*.mdx`     | ブログ記事（機能紹介、Tips、開発裏話等）                |
-| **releases** | `content/releases/*.mdx` | リリースノート                                          |
+| 種別         | ディレクトリ                     | 用途                                                    |
+| ------------ | -------------------------------- | ------------------------------------------------------- |
+| **docs**     | `content/docs/**/*.mdx`          | 機能ドキュメント（Getting Started, Features, Guides等） |
+| **blog**     | `content/blog/{en,ja}/*.mdx`     | ブログ記事（機能紹介、Tips、開発裏話等）                |
+| **releases** | `content/releases/{en,ja}/*.mdx` | リリースノート                                          |
 
 ---
 
@@ -102,6 +102,7 @@ publishedAt: '2026-02-19'
 updatedAt: '2026-02-19'
 order: 1 # サイドバー表示順序（昇順）
 featured: false # 注目コンテンツ
+draft: false # 下書き（true で非公開）
 category: 'features' # getting-started / features / guides / troubleshooting / account
 slug: 'features/plans' # URLパスに対応
 
@@ -128,15 +129,16 @@ ai:
 | ------------- | -------- | ---- | ------------------------------------------ |
 | `title`       | string   | ✅   | ページタイトル                             |
 | `description` | string   | ✅   | 説明文（SEO + AI要約）                     |
-| `tags`        | string[] | ✅   | Web UI フィルタリング + RAG + SEO（3-6個） |
-| `author`      | string   | ✅   | 著者名（通常 `"Dayopt Team"`）             |
-| `publishedAt` | string   | ✅   | 公開日（ISO 8601: `YYYY-MM-DD`）           |
-| `updatedAt`   | string   | ✅   | 更新日（ISO 8601）                         |
-| `order`       | number   | ✅   | サイドバー表示順序（昇順）                 |
-| `featured`    | boolean  | ✅   | 注目コンテンツか                           |
+| `tags`        | string[] | ❌   | Web UI フィルタリング + RAG + SEO（3-6個） |
+| `author`      | string   | ❌   | 著者名（通常 `"Dayopt Team"`）             |
+| `publishedAt` | string   | ❌   | 公開日（ISO 8601: `YYYY-MM-DD`）           |
+| `updatedAt`   | string   | ❌   | 更新日（ISO 8601）                         |
+| `order`       | number   | ❌   | サイドバー表示順序（昇順）                 |
+| `featured`    | boolean  | ❌   | 注目コンテンツか（デフォルト: `false`）    |
+| `draft`       | boolean  | ❌   | 下書き（`true` で非公開）                  |
 | `category`    | string   | ✅   | カテゴリ（ディレクトリに対応）             |
 | `slug`        | string   | ✅   | URLスラッグ（ファイルパスに対応）          |
-| `ai`          | object   | ✅   | AI/RAGメタデータ                           |
+| `ai`          | object   | ❌   | AI/RAGメタデータ                           |
 
 ### blog（ブログ記事）
 
@@ -177,10 +179,10 @@ ai:
 | `category`     | string   | ✅   | カテゴリ                                       |
 | `author`       | string   | ✅   | 著者名                                         |
 | `authorAvatar` | string   | ❌   | アバター画像パス                               |
-| `coverImage`   | string   | ✅   | カバー画像パス（`/images/blog/*`）             |
+| `coverImage`   | string   | ❌   | カバー画像パス（`/images/blog/*`）             |
 | `featured`     | boolean  | ❌   | トップページ表示（デフォルト: `false`）        |
 | `draft`        | boolean  | ❌   | 下書き（デフォルト: `false`、`true` で非公開） |
-| `ai`           | object   | ✅   | AI/RAGメタデータ                               |
+| `ai`           | object   | ❌   | AI/RAGメタデータ                               |
 
 ### releases（リリースノート）
 
@@ -223,7 +225,8 @@ ai:
 | `prerelease`   | boolean  | ❌   | プレリリースか（デフォルト: `false`）           |
 | `author`       | string   | ❌   | 著者名                                          |
 | `authorAvatar` | string   | ❌   | アバター画像パス                                |
-| `ai`           | object   | ✅   | AI/RAGメタデータ                                |
+| `coverImage`   | string   | ❌   | カバー画像パス                                  |
+| `ai`           | object   | ❌   | AI/RAGメタデータ                                |
 
 #### バージョンバッジの色（UI自動判定）
 
@@ -326,6 +329,8 @@ Account: Profile, Notifications
   items: [
     // ... 既存項目 ...
     { title: 'New Feature', href: '/docs/features/new-feature' },
+    // badge?: string — 「New」などのバッジ表示
+    // external?: boolean — 外部リンクの場合 true
   ],
 },
 ```
