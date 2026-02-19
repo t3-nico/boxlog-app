@@ -24,15 +24,16 @@ interface RecordActivityPopoverProps {
 
 export function RecordActivityPopover({ recordId }: RecordActivityPopoverProps) {
   const locale = useLocale();
-  const t = useTranslations('settings');
+  const tSettings = useTranslations('settings');
+  const t = useTranslations();
   const [open, setOpen] = useState(false);
   const { data: activities, isPending } = useRecordActivities(recordId, { order: 'desc' });
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <HoverTooltip content={t('tabs.activity')} side="top">
+      <HoverTooltip content={tSettings('tabs.activity')} side="top">
         <PopoverTrigger asChild>
-          <Button variant="ghost" size="sm" icon aria-label={t('tabs.activity')}>
+          <Button variant="ghost" size="sm" icon aria-label={tSettings('tabs.activity')}>
             <History className="size-5" />
           </Button>
         </PopoverTrigger>
@@ -44,7 +45,7 @@ export function RecordActivityPopover({ recordId }: RecordActivityPopoverProps) 
         style={{ zIndex: zIndex.overlayDropdown }}
       >
         <div className="px-4 py-4">
-          <h3 className="text-sm font-bold">{t('tabs.activity')}</h3>
+          <h3 className="text-sm font-bold">{tSettings('tabs.activity')}</h3>
         </div>
         <div className="max-h-96 overflow-y-auto">
           {isPending ? (
@@ -57,7 +58,7 @@ export function RecordActivityPopover({ recordId }: RecordActivityPopoverProps) 
               if (visibleActivities.length === 0) {
                 return (
                   <div className="text-muted-foreground px-4 py-8 text-center text-sm">
-                    {t('activity.noActivity')}
+                    {tSettings('activity.noActivity')}
                   </div>
                 );
               }
@@ -86,7 +87,7 @@ export function RecordActivityPopover({ recordId }: RecordActivityPopoverProps) 
                         <div className="flex-1 pb-6">
                           <div className="flex items-start justify-between gap-2">
                             <span className="text-sm leading-8 font-bold">
-                              {formatted.actionLabel}
+                              {t(formatted.actionLabelKey)}
                             </span>
                             <span className="text-muted-foreground mt-2 flex-shrink-0 text-xs">
                               {formatRelativeTime(activity.created_at, locale)}

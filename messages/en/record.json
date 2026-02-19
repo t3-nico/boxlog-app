@@ -1,0 +1,27 @@
+{
+  "record": {
+    "inspector": {
+      "title": "Record details",
+      "deleteConfirm": "Delete this record?",
+      "notFound": "Record not found",
+      "openPlan": "Open plan",
+      "toast": {
+        "timeOverlap": "Time overlaps with existing record",
+        "saveFailed": "Failed to save",
+        "tagsSaveFailed": "Failed to save tags"
+      }
+    },
+    "activity": {
+      "created": "Created record",
+      "updated": "Updated record",
+      "timeChanged": "Changed time",
+      "titleChanged": "Changed title",
+      "memoChanged": "Updated memo",
+      "fulfillmentChanged": "Changed fulfillment",
+      "tagAdded": "Added tag",
+      "tagRemoved": "Removed tag",
+      "deleted": "Deleted record",
+      "changed": "Changed"
+    }
+  }
+}

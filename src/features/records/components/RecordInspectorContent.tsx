@@ -476,7 +476,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
   // 削除
   const handleDelete = async () => {
     if (!selectedRecordId) return;
-    if (!window.confirm('このRecordを削除しますか？')) return;
+    if (!window.confirm(t('record.inspector.deleteConfirm'))) return;
 
     await deleteRecord.mutateAsync({ id: selectedRecordId });
     onClose();
@@ -515,16 +515,16 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
       updateRecord.mutateAsync({ id: recordId, data: saveData }).catch((error: unknown) => {
         const errorMessage = error instanceof Error ? error.message : '';
         if (errorMessage.includes('TIME_OVERLAP') || errorMessage.includes('既に')) {
-          toast.error('時間が重複しています');
+          toast.error(t('record.inspector.toast.timeOverlap'));
         } else {
-          toast.error('保存に失敗しました');
+          toast.error(t('record.inspector.toast.saveFailed'));
         }
       });
     }
 
     if (currentHasTagChanges) {
       setRecordTags(recordId, tagIds).catch(() => {
-        toast.error('タグの保存に失敗しました');
+        toast.error(t('record.inspector.toast.tagsSaveFailed'));
         updateTagsInCache(recordId, originalTagIdsRef.current);
       });
     }
@@ -541,6 +541,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
     setRecordTags,
     updateTagsInCache,
     onClose,
+    t,
   ]);
 
   // Cmd+Enter / Ctrl+Enter で保存して閉じる
@@ -554,7 +555,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
   if (isLoading) {
     return (
       <div className="flex h-full items-center justify-center">
-        <p className="text-muted-foreground text-sm">読み込み中...</p>
+        <p className="text-muted-foreground text-sm">{t('common.loading')}</p>
       </div>
     );
   }
@@ -563,7 +564,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
   if (!record) {
     return (
       <div className="flex h-full items-center justify-center">
-        <p className="text-muted-foreground text-sm">Recordが見つかりません</p>
+        <p className="text-muted-foreground text-sm">{t('record.inspector.notFound')}</p>
       </div>
     );
   }
@@ -573,17 +574,17 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
     <>
       <DropdownMenuItem onClick={handleDuplicate}>
         <Copy className="size-4" />
-        複製する
+        {t('plan.inspector.menu.duplicate')}
       </DropdownMenuItem>
       <DropdownMenuSeparator />
       <DropdownMenuItem onClick={handleCopyId}>
         <Copy className="size-4" />
-        IDをコピー
+        {t('plan.inspector.menu.copyId')}
       </DropdownMenuItem>
       <DropdownMenuSeparator />
       <DropdownMenuItem onClick={handleDelete} variant="destructive">
         <Trash2 className="size-4" />
-        削除
+        {t('common.actions.delete')}
       </DropdownMenuItem>
     </>
   );
@@ -617,7 +618,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
             onChange={handleTitleChange}
             placeholder={t('calendar.event.noTitle')}
             className="pl-2"
-            aria-label="記録タイトル"
+            aria-label={t('plan.inspector.recordCreate.titleLabel')}
             autoFocus
             selectOnFocus
           />
@@ -645,7 +646,10 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
 
           {/* Plan紐付け */}
           <Popover open={isPlanPopoverOpen} onOpenChange={handlePlanPopoverOpenChange}>
-            <HoverTooltip content={selectedPlanName ?? 'Planに紐付け'} side="top">
+            <HoverTooltip
+              content={selectedPlanName ?? t('plan.inspector.recordCreate.linkPlan')}
+              side="top"
+            >
               <div
                 className={cn(
                   'hover:bg-state-hover flex h-8 items-center rounded-lg transition-colors',
@@ -656,7 +660,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
                   <button
                     type="button"
                     className="focus-visible:ring-ring flex items-center gap-1 px-2 text-sm focus-visible:ring-2 focus-visible:outline-none"
-                    aria-label="Planに紐付け"
+                    aria-label={t('plan.inspector.recordCreate.linkPlan')}
                   >
                     <FolderOpen className="size-4" />
                     {hasPlan && selectedPlanName && (
@@ -669,7 +673,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
                     type="button"
                     onClick={() => handlePlanChange(null)}
                     className="hover:bg-state-hover mr-1 rounded p-1 transition-colors"
-                    aria-label="Plan紐付けを解除"
+                    aria-label={t('plan.inspector.recordCreate.unlinkPlan')}
                   >
                     <X className="size-4" />
                   </button>
@@ -685,12 +689,12 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
             >
               <Command shouldFilter={false}>
                 <CommandInput
-                  placeholder="Planを検索..."
+                  placeholder={t('plan.inspector.recordCreate.searchPlan')}
                   value={planSearchQuery}
                   onValueChange={setPlanSearchQuery}
                 />
                 <CommandList className="max-h-[280px]">
-                  <CommandEmpty>Planがありません</CommandEmpty>
+                  <CommandEmpty>{t('plan.inspector.recordCreate.noPlans')}</CommandEmpty>
                   <CommandGroup>
                     {filteredPlans.map((plan) => {
                       const planTags = plan.tagIds
@@ -707,7 +711,9 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
                         >
                           <span className="shrink truncate">
                             {plan.title || (
-                              <span className="text-muted-foreground">(タイトルなし)</span>
+                              <span className="text-muted-foreground">
+                                {t('plan.inspector.noTitle')}
+                              </span>
                             )}
                           </span>
                           {planTags && planTags.length > 0 && (
@@ -751,7 +757,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
                     className="text-muted-foreground hover:text-foreground hover:bg-state-hover flex items-center gap-2 rounded-lg px-2 py-2 text-sm transition-colors"
                   >
                     <ExternalLink className="size-4" />
-                    <span>Planを開く</span>
+                    <span>{t('record.inspector.openPlan')}</span>
                   </Link>
                 </div>
               )}
@@ -762,8 +768,10 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
           <HoverTooltip
             content={
               hasScore
-                ? `充実度: ${formData.fulfillment_score}/5（長押しでリセット）`
-                : '充実度（タップで加算）'
+                ? t('plan.inspector.recordCreate.fulfillmentTooltip', {
+                    score: formData.fulfillment_score ?? 0,
+                  })
+                : t('plan.inspector.recordCreate.fulfillmentTap')
             }
             side="top"
           >
@@ -780,7 +788,9 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
                 'select-none', // 長押し時のテキスト選択防止
                 hasScore ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',
               )}
-              aria-label={`充実度: ${formData.fulfillment_score ?? 0}/5`}
+              aria-label={t('plan.inspector.recordCreate.fulfillmentLabel', {
+                score: formData.fulfillment_score ?? 0,
+              })}
             >
               <Smile className="size-4" />
               {hasScore && (

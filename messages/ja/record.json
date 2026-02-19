@@ -1,0 +1,27 @@
+{
+  "record": {
+    "inspector": {
+      "title": "Record詳細",
+      "deleteConfirm": "このRecordを削除しますか？",
+      "notFound": "Recordが見つかりません",
+      "openPlan": "Planを開く",
+      "toast": {
+        "timeOverlap": "時間が重複しています",
+        "saveFailed": "保存に失敗しました",
+        "tagsSaveFailed": "タグの保存に失敗しました"
+      }
+    },
+    "activity": {
+      "created": "レコードを作成",
+      "updated": "レコードを更新",
+      "timeChanged": "時間を変更",
+      "titleChanged": "タイトルを変更",
+      "memoChanged": "メモを更新",
+      "fulfillmentChanged": "充実度を変更",
+      "tagAdded": "タグを追加",
+      "tagRemoved": "タグを削除",
+      "deleted": "レコードを削除",
+      "changed": "変更"
+    }
+  }
+}

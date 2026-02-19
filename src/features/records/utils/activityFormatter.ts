@@ -70,26 +70,26 @@ export function filterVisibleActivities(activities: RecordActivity[]): RecordAct
  * アクティビティを表示用フォーマットに変換
  */
 export function formatActivity(activity: RecordActivity): RecordActivityDisplay {
-  let actionLabel = '';
+  let actionLabelKey = '';
   let detail: string | undefined;
   let icon: RecordActivityDisplay['icon'] = 'time';
   let iconColor: ActivityIconColor = 'info';
 
   switch (activity.action_type) {
     case 'created':
-      actionLabel = 'レコードを作成';
+      actionLabelKey = 'record.activity.created';
       icon = 'create';
       iconColor = 'success';
       break;
 
     case 'updated':
-      actionLabel = 'レコードを更新';
+      actionLabelKey = 'record.activity.updated';
       icon = 'time';
       iconColor = 'info';
       break;
 
     case 'time_changed':
-      actionLabel = '時間を変更';
+      actionLabelKey = 'record.activity.timeChanged';
       if (activity.old_value && activity.new_value) {
         detail = `${activity.old_value} → ${activity.new_value}`;
       }
@@ -98,7 +98,7 @@ export function formatActivity(activity: RecordActivity): RecordActivityDisplay 
       break;
 
     case 'title_changed':
-      actionLabel = 'タイトルを変更';
+      actionLabelKey = 'record.activity.titleChanged';
       if (activity.old_value && activity.new_value) {
         detail = `${activity.old_value} → ${activity.new_value}`;
       }
@@ -107,13 +107,13 @@ export function formatActivity(activity: RecordActivity): RecordActivityDisplay 
       break;
 
     case 'memo_changed':
-      actionLabel = 'メモを更新';
+      actionLabelKey = 'record.activity.memoChanged';
       icon = 'time';
       iconColor = 'info';
       break;
 
     case 'fulfillment_changed':
-      actionLabel = '充実度を変更';
+      actionLabelKey = 'record.activity.fulfillmentChanged';
       if (activity.old_value && activity.new_value) {
         detail = `${activity.old_value} → ${activity.new_value}`;
       }
@@ -122,7 +122,7 @@ export function formatActivity(activity: RecordActivity): RecordActivityDisplay 
       break;
 
     case 'tag_added':
-      actionLabel = 'タグを追加';
+      actionLabelKey = 'record.activity.tagAdded';
       if (activity.new_value) {
         detail = activity.new_value;
       }
@@ -131,7 +131,7 @@ export function formatActivity(activity: RecordActivity): RecordActivityDisplay 
       break;
 
     case 'tag_removed':
-      actionLabel = 'タグを削除';
+      actionLabelKey = 'record.activity.tagRemoved';
       if (activity.old_value) {
         detail = activity.old_value;
       }
@@ -140,20 +140,20 @@ export function formatActivity(activity: RecordActivity): RecordActivityDisplay 
       break;
 
     case 'deleted':
-      actionLabel = 'レコードを削除';
+      actionLabelKey = 'record.activity.deleted';
       icon = 'delete';
       iconColor = 'destructive';
       break;
 
     default:
-      actionLabel = '変更';
+      actionLabelKey = 'record.activity.changed';
       icon = 'time';
       iconColor = 'info';
   }
 
   return {
     ...activity,
-    actionLabel,
+    actionLabelKey,
     detail,
     icon,
     iconColor,
