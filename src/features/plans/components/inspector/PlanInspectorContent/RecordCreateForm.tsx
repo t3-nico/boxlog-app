@@ -399,12 +399,12 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
       createRecord.mutateAsync(saveData).catch((error: unknown) => {
         const errorMessage = error instanceof Error ? error.message : '';
         if (errorMessage.includes('既にRecord') || errorMessage.includes('TIME_OVERLAP')) {
-          toast.error('時間が重複しています');
+          toast.error(t('plan.inspector.recordCreate.timeOverlap'));
         } else {
-          toast.error('Recordの作成に失敗しました');
+          toast.error(t('plan.inspector.recordCreate.failed'));
         }
       });
-    }, [formData, createRecord, closeInspector, utils.records.list]);
+    }, [formData, createRecord, closeInspector, utils.records.list, t]);
 
     // ref 経由で save と isSaveDisabled を公開
     useImperativeHandle(
@@ -438,9 +438,9 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
             onChange={handleTitleChange}
             onSuggestionSelect={handleSuggestionSelect}
             type="record"
-            placeholder="何をした？"
+            placeholder={t('plan.inspector.recordCreate.titlePlaceholder')}
             className="pl-2"
-            aria-label="記録タイトル"
+            aria-label={t('plan.inspector.recordCreate.titleLabel')}
             autoFocus
           />
         </div>
@@ -451,7 +451,7 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
           <DatePickerPopover
             selectedDate={formData.worked_at}
             onDateChange={handleDateChange}
-            placeholder="日付..."
+            placeholder={t('common.schedule.datePlaceholder')}
             showIcon
           />
 
@@ -501,7 +501,10 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
 
           {/* Plan紐付け */}
           <Popover open={isPlanPopoverOpen} onOpenChange={handlePlanPopoverOpenChange}>
-            <HoverTooltip content={selectedPlanName ?? 'Planに紐付け'} side="top">
+            <HoverTooltip
+              content={selectedPlanName ?? t('plan.inspector.recordCreate.linkPlan')}
+              side="top"
+            >
               <div
                 className={cn(
                   'hover:bg-state-hover flex h-8 items-center rounded-lg transition-colors',
@@ -515,7 +518,7 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
                       'focus-visible:ring-ring flex items-center gap-1 text-sm focus-visible:ring-2 focus-visible:outline-none',
                       hasPlan ? 'pl-2' : 'px-2',
                     )}
-                    aria-label="Planに紐付け"
+                    aria-label={t('plan.inspector.recordCreate.linkPlan')}
                   >
                     <FolderOpen className="size-4" />
                     {hasPlan && selectedPlanName && (
@@ -528,7 +531,7 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
                     type="button"
                     onClick={() => handlePlanChange('')}
                     className="hover:bg-state-hover mr-1 rounded p-2 transition-colors"
-                    aria-label="Plan紐付けを解除"
+                    aria-label={t('plan.inspector.recordCreate.unlinkPlan')}
                   >
                     <X className="size-4" />
                   </button>
@@ -544,12 +547,12 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
             >
               <Command shouldFilter={false}>
                 <CommandInput
-                  placeholder="Planを検索..."
+                  placeholder={t('plan.inspector.recordCreate.searchPlan')}
                   value={planSearchQuery}
                   onValueChange={setPlanSearchQuery}
                 />
                 <CommandList className="max-h-[280px]">
-                  <CommandEmpty>Planがありません</CommandEmpty>
+                  <CommandEmpty>{t('plan.inspector.recordCreate.noPlans')}</CommandEmpty>
                   <CommandGroup>
                     {filteredPlans.map((plan) => {
                       const planTags = plan.tagIds
@@ -564,7 +567,9 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
                         >
                           <span className="shrink truncate">
                             {plan.title || (
-                              <span className="text-muted-foreground">(タイトルなし)</span>
+                              <span className="text-muted-foreground">
+                                {t('plan.inspector.noTitle')}
+                              </span>
                             )}
                           </span>
                           {planTags && planTags.length > 0 && (
@@ -607,8 +612,10 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
           <HoverTooltip
             content={
               hasScore
-                ? `充実度: ${formData.fulfillment_score}/5（長押しでリセット）`
-                : '充実度（タップで加算）'
+                ? t('plan.inspector.recordCreate.fulfillmentTooltip', {
+                    score: formData.fulfillment_score ?? 0,
+                  })
+                : t('plan.inspector.recordCreate.fulfillmentTap')
             }
             side="top"
           >
@@ -625,7 +632,9 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
                 'select-none', // 長押し時のテキスト選択防止
                 hasScore ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',
               )}
-              aria-label={`充実度: ${formData.fulfillment_score ?? 0}/5`}
+              aria-label={t('plan.inspector.recordCreate.fulfillmentLabel', {
+                score: formData.fulfillment_score ?? 0,
+              })}
             >
               <Smile className="size-4" />
               {hasScore && (

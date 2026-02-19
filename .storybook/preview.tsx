@@ -150,6 +150,49 @@ const messages = {
       datePlaceholder: '日付...',
     },
   },
+  plan: {
+    inspector: {
+      noTitle: '（タイトルなし）',
+      notFound: 'プランが見つかりません',
+      noData: 'データが見つかりません',
+      menu: {
+        duplicate: '複製する',
+        saveAsTemplate: 'テンプレートとして保存',
+        copyId: 'IDをコピー',
+        copyLink: 'リンクをコピー',
+        openNewTab: '新しいタブで開く',
+      },
+      tags: {
+        add: 'タグを追加',
+      },
+      records: {
+        link: 'Recordを紐付け',
+        unlink: 'Record紐付けを解除',
+        search: 'Recordを検索...',
+        noMatch: '一致するRecordがありません',
+        addNew: '作業ログを追加',
+      },
+      recurrence: {
+        setRepeat: '繰り返しを設定',
+        repeatLabel: '繰り返し: {type}',
+        options: '繰り返しオプション',
+        customEllipsis: 'カスタム...',
+      },
+      recordCreate: {
+        titlePlaceholder: '何をした？',
+        titleLabel: '記録タイトル',
+        timeOverlap: '時間が重複しています',
+        failed: 'Recordの作成に失敗しました',
+        linkPlan: 'Planに紐付け',
+        unlinkPlan: 'Plan紐付けを解除',
+        searchPlan: 'Planを検索...',
+        noPlans: 'Planがありません',
+        fulfillmentTooltip: '充実度: {score}/5（長押しでリセット）',
+        fulfillmentTap: '充実度（タップで加算）',
+        fulfillmentLabel: '充実度: {score}/5',
+      },
+    },
+  },
   error: {
     loading: {
       default: '読み込み中...',

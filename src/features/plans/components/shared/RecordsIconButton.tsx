@@ -11,6 +11,7 @@
 import { useCallback, useMemo, useState } from 'react';
 
 import { Check, ListChecks, Plus, X } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import { Badge } from '@/components/ui/badge';
 import {
@@ -27,6 +28,7 @@ import { HoverTooltip } from '@/components/ui/tooltip';
 import { zIndex } from '@/config/ui/z-index';
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
 import { useTags } from '@/features/tags/hooks';
+import { logger } from '@/lib/logger';
 import { api } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
 
@@ -36,15 +38,24 @@ interface RecordsIconButtonProps {
 }
 
 export function RecordsIconButton({ planId, disabled = false }: RecordsIconButtonProps) {
+  const t = useTranslations();
   const utils = api.useUtils();
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const openInspectorWithDraft = usePlanInspectorStore((state) => state.openInspectorWithDraft);
 
   // 紐付き Record（Badge 表示用）
-  const { data: records } = api.records.listByPlan.useQuery({
+  const { data: records, status: listByPlanStatus } = api.records.listByPlan.useQuery({
     planId,
     sortOrder: 'desc',
+  });
+
+  // DEBUG: listByPlan クエリ結果を確認
+  logger.debug('[RecordsIconButton] listByPlan result', {
+    planId,
+    status: listByPlanStatus,
+    recordCount: records?.length ?? 0,
+    records: records?.map((r) => ({ id: r.id, title: r.title })),
   });
 
   // 全 Record（Popover 候補用）
@@ -84,6 +95,12 @@ export function RecordsIconButton({ planId, disabled = false }: RecordsIconButto
 
   // Record を Plan に紐付け
   const linkRecord = api.records.update.useMutation({
+    onSuccess: (data) => {
+      logger.debug('[RecordsIconButton] linkRecord success', { data });
+    },
+    onError: (error) => {
+      logger.error('[RecordsIconButton] linkRecord error', { error: error.message });
+    },
     onSettled: () => {
       void utils.records.listByPlan.invalidate({ planId });
       void utils.records.list.invalidate(undefined, { refetchType: 'all' });
@@ -117,6 +134,7 @@ export function RecordsIconButton({ planId, disabled = false }: RecordsIconButto
   });
 
   const handleLinkRecord = (recordId: string) => {
+    logger.debug('[RecordsIconButton] handleLinkRecord called', { recordId, planId });
     linkRecord.mutate({ id: recordId, data: { plan_id: planId } });
   };
 
@@ -139,7 +157,7 @@ export function RecordsIconButton({ planId, disabled = false }: RecordsIconButto
           variant="outline"
           className="h-7 gap-1 bg-transparent text-xs font-normal"
         >
-          <span className="max-w-20 truncate">{record.title || '(タイトルなし)'}</span>
+          <span className="max-w-20 truncate">{record.title || t('plan.inspector.noTitle')}</span>
           {!disabled && (
             <button
               type="button"
@@ -148,7 +166,7 @@ export function RecordsIconButton({ planId, disabled = false }: RecordsIconButto
                 handleUnlinkRecord(record.id);
               }}
               className="hover:bg-state-hover text-muted-foreground hover:text-foreground -mr-1 rounded p-0.5 transition-colors"
-              aria-label="Record紐付けを解除"
+              aria-label={t('plan.inspector.records.unlink')}
             >
               <X className="size-3" />
             </button>
@@ -158,7 +176,7 @@ export function RecordsIconButton({ planId, disabled = false }: RecordsIconButto
 
       {/* Record 選択ボタン（Popover） */}
       <Popover open={isOpen} onOpenChange={setIsOpen}>
-        <HoverTooltip content="Recordを紐付け" side="top">
+        <HoverTooltip content={t('plan.inspector.records.link')} side="top">
           <PopoverTrigger asChild>
             <button
               type="button"
@@ -168,7 +186,7 @@ export function RecordsIconButton({ planId, disabled = false }: RecordsIconButto
                 'hover:bg-state-hover focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
                 'text-muted-foreground hover:text-foreground',
               )}
-              aria-label="Recordを紐付け"
+              aria-label={t('plan.inspector.records.link')}
             >
               <ListChecks className="size-4" />
             </button>
@@ -188,12 +206,12 @@ export function RecordsIconButton({ planId, disabled = false }: RecordsIconButto
           ) : (
             <Command shouldFilter={false}>
               <CommandInput
-                placeholder="Recordを検索..."
+                placeholder={t('plan.inspector.records.search')}
                 value={searchQuery}
                 onValueChange={setSearchQuery}
               />
               <CommandList className="max-h-[280px]">
-                <CommandEmpty>一致するRecordがありません</CommandEmpty>
+                <CommandEmpty>{t('plan.inspector.records.noMatch')}</CommandEmpty>
                 <CommandGroup>
                   {sortedRecords.map((record) => {
                     const isLinked = linkedRecordIds.has(record.id);
@@ -220,7 +238,9 @@ export function RecordsIconButton({ planId, disabled = false }: RecordsIconButto
                         </div>
                         <span className="shrink truncate">
                           {record.title || (
-                            <span className="text-muted-foreground">(タイトルなし)</span>
+                            <span className="text-muted-foreground">
+                              {t('plan.inspector.noTitle')}
+                            </span>
                           )}
                         </span>
                         {recordTags && recordTags.length > 0 && (
@@ -261,7 +281,7 @@ export function RecordsIconButton({ planId, disabled = false }: RecordsIconButto
                   className="text-muted-foreground hover:text-foreground hover:bg-state-hover flex w-full items-center gap-2 rounded-lg px-2 py-2 text-sm transition-colors"
                 >
                   <Plus className="size-4" />
-                  <span>作業ログを追加</span>
+                  <span>{t('plan.inspector.records.addNew')}</span>
                 </button>
               </div>
             </Command>
