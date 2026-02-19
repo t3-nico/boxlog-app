@@ -44,6 +44,7 @@ const messages = {
     save: '保存',
     delete: '削除',
     edit: '編集',
+    apply: '適用',
     loading: '読み込み中...',
     deleting: '削除中...',
     aria: {
@@ -56,6 +57,43 @@ const messages = {
     },
     validation: {
       limitReached: '上限に達しました',
+    },
+  },
+  confirm: {
+    recurring: {
+      editTitle: '繰り返しイベントを編集',
+      deleteTitle: '繰り返しイベントを削除',
+      thisOnly: 'このイベントのみ',
+      thisAndFuture: 'このイベント以降すべて',
+      allEvents: 'すべてのイベント',
+      apply: '適用',
+    },
+  },
+  recurrence: {
+    dialog: {
+      title: '繰り返し',
+      interval: '間隔',
+      pattern: 'パターン',
+      period: '期間',
+      endNever: '終了日未定',
+      endUntil: '終了日：',
+      endCount: '回 実施',
+      perDay: '日ごと',
+      perWeek: '週間ごと',
+      perMonth: 'ヶ月ごと',
+      perYear: '年ごと',
+      everyMonth: '毎月 {day} 日',
+      everyNthWeekday: '毎月 第{nth}{weekday}曜日',
+      everyLastWeekday: '毎月 最終{weekday}曜日',
+      weekdaysShort: {
+        '0': '日',
+        '1': '月',
+        '2': '火',
+        '3': '水',
+        '4': '木',
+        '5': '金',
+        '6': '土',
+      },
     },
   },
   actions: {

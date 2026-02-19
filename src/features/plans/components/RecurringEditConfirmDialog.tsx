@@ -81,9 +81,7 @@ export function RecurringEditConfirmDialog() {
   if (!mounted || !isOpen) return null;
 
   const isEdit = mode === 'edit';
-  const title = t(
-    isEdit ? 'common.confirm.recurring.editTitle' : 'common.confirm.recurring.deleteTitle',
-  );
+  const title = t(isEdit ? 'confirm.recurring.editTitle' : 'confirm.recurring.deleteTitle');
 
   const dialog = (
     <div
@@ -111,22 +109,22 @@ export function RecurringEditConfirmDialog() {
         >
           <label htmlFor="scope-this" className="flex cursor-pointer items-center gap-4">
             <RadioGroupItem value="this" id="scope-this" />
-            <span className="text-sm">{t('common.confirm.recurring.thisOnly')}</span>
+            <span className="text-sm">{t('confirm.recurring.thisOnly')}</span>
           </label>
           <label htmlFor="scope-future" className="flex cursor-pointer items-center gap-4">
             <RadioGroupItem value="thisAndFuture" id="scope-future" />
-            <span className="text-sm">{t('common.confirm.recurring.thisAndFuture')}</span>
+            <span className="text-sm">{t('confirm.recurring.thisAndFuture')}</span>
           </label>
           <label htmlFor="scope-all" className="flex cursor-pointer items-center gap-4">
             <RadioGroupItem value="all" id="scope-all" />
-            <span className="text-sm">{t('common.confirm.recurring.allEvents')}</span>
+            <span className="text-sm">{t('confirm.recurring.allEvents')}</span>
           </label>
         </RadioGroup>
 
         {/* Footer */}
         <div className="flex justify-end gap-2">
           <Button variant="outline" onClick={closeDialog} disabled={isProcessing}>
-            {t('common.actions.cancel')}
+            {t('actions.cancel')}
           </Button>
           <Button
             variant={isEdit ? 'primary' : 'destructive'}
@@ -136,8 +134,8 @@ export function RecurringEditConfirmDialog() {
             {isProcessing
               ? t('common.form.processing')
               : isEdit
-                ? t('common.confirm.recurring.apply')
-                : t('common.actions.delete')}
+                ? t('confirm.recurring.apply')
+                : t('actions.delete')}
           </Button>
         </div>
       </div>

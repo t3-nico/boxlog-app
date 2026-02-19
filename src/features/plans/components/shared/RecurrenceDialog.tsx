@@ -55,7 +55,7 @@ export function RecurrenceDialog({
   triggerRef,
   placement = 'bottom',
 }: RecurrenceDialogProps) {
-  const t = useTranslations('common');
+  const t = useTranslations();
   const dialogRef = useRef<HTMLDivElement>(null);
   const [showCalendar, setShowCalendar] = useState(false);
   const [position, setPosition] = useState({ top: 0, left: 0 });
@@ -450,10 +450,10 @@ export function RecurrenceDialog({
         {/* フッター */}
         <div className="border-border flex justify-end gap-2 border-t px-6 py-4">
           <Button variant="outline" onClick={() => onOpenChange(false)} type="button">
-            {t('cancel')}
+            {t('actions.cancel')}
           </Button>
           <Button onClick={handleSave} type="button">
-            {t('apply')}
+            {t('common.apply')}
           </Button>
         </div>
       </div>
