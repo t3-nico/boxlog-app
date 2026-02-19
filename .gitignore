@@ -148,3 +148,4 @@ temp/
 /playwright/.auth/
 # Lighthouse CI
 .lighthouseci/
+.env*.local
