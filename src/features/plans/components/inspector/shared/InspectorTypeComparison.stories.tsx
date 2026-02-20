@@ -45,7 +45,7 @@ import { ReminderSelect } from '../../shared/ReminderSelect';
 // ---------------------------------------------------------------------------
 
 const meta = {
-  title: 'Features/Inspector/TypeComparison',
+  title: 'Draft/Inspector/TypeComparison',
   parameters: {
     layout: 'padded',
   },
