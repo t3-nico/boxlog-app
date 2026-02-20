@@ -1,6 +1,6 @@
 'use client';
 
-import { AlertCircle, Check, FolderOpen, Smile, X } from 'lucide-react';
+import { AlertCircle, Check, FolderOpen, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import {
   forwardRef,
@@ -29,7 +29,7 @@ import { zIndex } from '@/config/ui/z-index';
 import { useRecordMutations } from '@/features/records/hooks';
 import { useTags } from '@/features/tags/hooks';
 import { api } from '@/lib/trpc';
-import { NoteIconButton, TagsIconButton } from '../shared';
+import { FulfillmentButton, NoteIconButton, TagsIconButton } from '../shared';
 
 import { cn } from '@/lib/utils';
 
@@ -135,11 +135,6 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
     // Popover開閉状態
     const [isPlanPopoverOpen, setIsPlanPopoverOpen] = useState(false);
     const [planSearchQuery, setPlanSearchQuery] = useState('');
-
-    // 充実度: 長押し検出用
-    const pressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-    const isLongPressRef = useRef(false);
-    const isPressingRef = useRef(false); // 実際にpress中かどうか
 
     // Plan: updated_at降順ソート + 検索フィルタリング
     const filteredPlans = useMemo(() => {
@@ -280,46 +275,6 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
       }));
     }, []);
 
-    // 充実度: 長押し開始
-    const handlePressStart = useCallback(() => {
-      isPressingRef.current = true;
-      isLongPressRef.current = false;
-      pressTimerRef.current = setTimeout(() => {
-        isLongPressRef.current = true;
-        // リセット
-        handleScoreChange(null);
-      }, 500);
-    }, [handleScoreChange]);
-
-    // 充実度: 長押し終了/タップ
-    const handlePressEnd = useCallback(() => {
-      if (pressTimerRef.current) {
-        clearTimeout(pressTimerRef.current);
-        pressTimerRef.current = null;
-      }
-      // 実際にpress中でなければ何もしない（mouseLeave対策）
-      if (!isPressingRef.current) {
-        return;
-      }
-      isPressingRef.current = false;
-      // 長押しでなければ加算
-      if (!isLongPressRef.current) {
-        setFormData((prev) => ({
-          ...prev,
-          fulfillment_score: Math.min((prev.fulfillment_score ?? 0) + 1, 5) as FulfillmentScore,
-        }));
-      }
-    }, []);
-
-    // 充実度: タイマークリーンアップ
-    useEffect(() => {
-      return () => {
-        if (pressTimerRef.current) {
-          clearTimeout(pressTimerRef.current);
-        }
-      };
-    }, []);
-
     const handleNoteChange = useCallback((value: string) => {
       setFormData((prev) => ({ ...prev, note: value }));
     }, []);
@@ -419,7 +374,6 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
 
     // 各オプションに値があるか
     const hasPlan = !!formData.plan_id;
-    const hasScore = formData.fulfillment_score !== null;
 
     // 選択中のPlan名
     const selectedPlanName = useMemo(() => {
@@ -608,40 +562,8 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
             </PopoverContent>
           </Popover>
 
-          {/* 充実度（連打形式） */}
-          <HoverTooltip
-            content={
-              hasScore
-                ? t('plan.inspector.recordCreate.fulfillmentTooltip', {
-                    score: formData.fulfillment_score ?? 0,
-                  })
-                : t('plan.inspector.recordCreate.fulfillmentTap')
-            }
-            side="top"
-          >
-            <button
-              type="button"
-              onMouseDown={handlePressStart}
-              onMouseUp={handlePressEnd}
-              onMouseLeave={handlePressEnd}
-              onTouchStart={handlePressStart}
-              onTouchEnd={handlePressEnd}
-              className={cn(
-                'flex h-8 items-center gap-1 rounded-lg px-2 transition-colors',
-                'hover:bg-state-hover focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
-                'select-none', // 長押し時のテキスト選択防止
-                hasScore ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',
-              )}
-              aria-label={t('plan.inspector.recordCreate.fulfillmentLabel', {
-                score: formData.fulfillment_score ?? 0,
-              })}
-            >
-              <Smile className="size-4" />
-              {hasScore && (
-                <span className="text-xs font-bold tabular-nums">{formData.fulfillment_score}</span>
-              )}
-            </button>
-          </HoverTooltip>
+          {/* 充実度 */}
+          <FulfillmentButton score={formData.fulfillment_score} onScoreChange={handleScoreChange} />
 
           {/* メモ */}
           <NoteIconButton id="draft-record" note={formData.note} onNoteChange={handleNoteChange} />

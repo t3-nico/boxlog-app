@@ -12,7 +12,7 @@
  */
 
 import { useQueryClient } from '@tanstack/react-query';
-import { Check, Copy, ExternalLink, FolderOpen, Smile, Trash2, X } from 'lucide-react';
+import { Check, Copy, ExternalLink, FolderOpen, Trash2, X } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -31,6 +31,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { zIndex } from '@/config/ui/z-index';
 import {
+  FulfillmentButton,
   InspectorHeader,
   NoteIconButton,
   ScheduleRow,
@@ -147,11 +148,6 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
   // タイトル入力のref
   const titleRef = useRef<HTMLInputElement>(null);
 
-  // 充実度: 長押し検出用
-  const pressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const isLongPressRef = useRef(false);
-  const isPressingRef = useRef(false); // 実際にpress中かどうか
-
   // Duration計算
   const calculateDuration = useCallback((start: string, end: string): number => {
     if (!start || !end) return 0;
@@ -224,7 +220,6 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
 
   // 各オプションに値があるか
   const hasPlan = !!formData.plan_id;
-  const hasScore = formData.fulfillment_score !== null;
 
   // フォーム変更ハンドラ
   const handleTitleChange = useCallback(
@@ -316,45 +311,6 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
     },
     [selectedRecordId, updateRecord],
   );
-
-  // 充実度: 長押し開始
-  const handlePressStart = useCallback(() => {
-    isPressingRef.current = true;
-    isLongPressRef.current = false;
-    pressTimerRef.current = setTimeout(() => {
-      isLongPressRef.current = true;
-      // リセット
-      handleScoreChange(null);
-    }, 500);
-  }, [handleScoreChange]);
-
-  // 充実度: 長押し終了/タップ
-  const handlePressEnd = useCallback(() => {
-    if (pressTimerRef.current) {
-      clearTimeout(pressTimerRef.current);
-      pressTimerRef.current = null;
-    }
-    // 実際にpress中でなければ何もしない（mouseLeave対策）
-    if (!isPressingRef.current) {
-      return;
-    }
-    isPressingRef.current = false;
-    // 長押しでなければ加算
-    if (!isLongPressRef.current) {
-      const currentScore = formData.fulfillment_score ?? 0;
-      const newScore = Math.min(currentScore + 1, 5);
-      handleScoreChange(newScore);
-    }
-  }, [formData.fulfillment_score, handleScoreChange]);
-
-  // 充実度: タイマークリーンアップ
-  useEffect(() => {
-    return () => {
-      if (pressTimerRef.current) {
-        clearTimeout(pressTimerRef.current);
-      }
-    };
-  }, []);
 
   const handleNoteChange = useCallback(
     (value: string) => {
@@ -764,40 +720,8 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
             </PopoverContent>
           </Popover>
 
-          {/* 充実度（連打形式） */}
-          <HoverTooltip
-            content={
-              hasScore
-                ? t('plan.inspector.recordCreate.fulfillmentTooltip', {
-                    score: formData.fulfillment_score ?? 0,
-                  })
-                : t('plan.inspector.recordCreate.fulfillmentTap')
-            }
-            side="top"
-          >
-            <button
-              type="button"
-              onMouseDown={handlePressStart}
-              onMouseUp={handlePressEnd}
-              onMouseLeave={handlePressEnd}
-              onTouchStart={handlePressStart}
-              onTouchEnd={handlePressEnd}
-              className={cn(
-                'flex h-8 items-center gap-1 rounded-lg px-2 transition-colors',
-                'hover:bg-state-hover focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
-                'select-none', // 長押し時のテキスト選択防止
-                hasScore ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',
-              )}
-              aria-label={t('plan.inspector.recordCreate.fulfillmentLabel', {
-                score: formData.fulfillment_score ?? 0,
-              })}
-            >
-              <Smile className="size-4" />
-              {hasScore && (
-                <span className="text-xs font-bold tabular-nums">{formData.fulfillment_score}</span>
-              )}
-            </button>
-          </HoverTooltip>
+          {/* 充実度 */}
+          <FulfillmentButton score={formData.fulfillment_score} onScoreChange={handleScoreChange} />
 
           {/* メモ */}
           <NoteIconButton

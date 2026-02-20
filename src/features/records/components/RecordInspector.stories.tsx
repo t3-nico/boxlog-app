@@ -1,8 +1,8 @@
 'use client';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { ChevronDown, ChevronUp, FolderOpen, MoreHorizontal, Smile, X } from 'lucide-react';
-import { useCallback, useRef, useState } from 'react';
+import { ChevronDown, ChevronUp, FolderOpen, MoreHorizontal, X } from 'lucide-react';
+import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -14,6 +14,7 @@ import {
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { HoverTooltip } from '@/components/ui/tooltip';
 import {
+  FulfillmentButton,
   NoteIconButton,
   ScheduleRow,
   TagsIconButton,
@@ -21,6 +22,7 @@ import {
 } from '@/features/plans/components/inspector/shared';
 import { cn } from '@/lib/utils';
 
+import type { FulfillmentScore } from '@/features/records/types/record';
 import type { Tag } from '@/features/tags/types';
 
 // ---------------------------------------------------------------------------
@@ -200,60 +202,6 @@ function PlanLinkButton({ planName }: { planName?: string | undefined }) {
   );
 }
 
-/** 充実度ボタン（インタラクティブ） */
-function FulfillmentButton({ initialScore = null }: { initialScore?: number | null }) {
-  const [score, setScore] = useState<number | null>(initialScore);
-  const pressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const isLongPressRef = useRef(false);
-  const isPressingRef = useRef(false);
-  const hasScore = score !== null && score > 0;
-
-  const handlePressStart = useCallback(() => {
-    isPressingRef.current = true;
-    isLongPressRef.current = false;
-    pressTimerRef.current = setTimeout(() => {
-      isLongPressRef.current = true;
-      setScore(null);
-    }, 500);
-  }, []);
-
-  const handlePressEnd = useCallback(() => {
-    if (pressTimerRef.current) {
-      clearTimeout(pressTimerRef.current);
-      pressTimerRef.current = null;
-    }
-    if (!isPressingRef.current) return;
-    isPressingRef.current = false;
-    if (!isLongPressRef.current) {
-      setScore((prev) => Math.min((prev ?? 0) + 1, 5));
-    }
-  }, []);
-
-  return (
-    <HoverTooltip
-      content={hasScore ? `充実度: ${score}/5（長押しでリセット）` : '充実度（タップで加算）'}
-      side="top"
-    >
-      <button
-        type="button"
-        onMouseDown={handlePressStart}
-        onMouseUp={handlePressEnd}
-        onMouseLeave={handlePressEnd}
-        className={cn(
-          'flex h-8 items-center gap-1 rounded-lg px-2 transition-colors',
-          'hover:bg-state-hover focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
-          'select-none',
-          hasScore ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',
-        )}
-        aria-label={`充実度: ${score ?? 0}/5`}
-      >
-        <Smile className="size-4" />
-        {hasScore && <span className="text-xs font-bold tabular-nums">{score}</span>}
-      </button>
-    </HoverTooltip>
-  );
-}
-
 // ---------------------------------------------------------------------------
 // インタラクティブラッパー
 // ---------------------------------------------------------------------------
@@ -278,16 +226,16 @@ function RecordFormStory({
   initialEndTime?: string;
   initialNote?: string;
   initialPlanName?: string;
-  initialScore?: number | null;
+  initialScore?: FulfillmentScore | null;
   timeConflictError?: boolean;
 }) {
-  const titleRef = useRef<HTMLInputElement | null>(null);
   const [title, setTitle] = useState(initialTitle);
   const [tagIds, setTagIds] = useState(initialTagIds);
   const [scheduleDate, setScheduleDate] = useState<Date | undefined>(initialScheduleDate);
   const [startTime, setStartTime] = useState(initialStartTime);
   const [endTime, setEndTime] = useState(initialEndTime);
   const [note, setNote] = useState(initialNote);
+  const [score, setScore] = useState<FulfillmentScore | null>(initialScore);
 
   return (
     <InspectorFrame>
@@ -296,7 +244,6 @@ function RecordFormStory({
         {/* Row 1: タイトル */}
         <div className="px-4 pt-4 pb-2">
           <TitleInput
-            ref={titleRef}
             value={title}
             onChange={setTitle}
             placeholder="何をした？"
@@ -325,7 +272,7 @@ function RecordFormStory({
             availableTags={mockTags}
           />
           <PlanLinkButton {...(initialPlanName ? { planName: initialPlanName } : {})} />
-          <FulfillmentButton initialScore={initialScore} />
+          <FulfillmentButton score={score} onScoreChange={setScore} />
           <NoteIconButton id="record-story" note={note} onNoteChange={setNote} />
         </div>
       </div>
