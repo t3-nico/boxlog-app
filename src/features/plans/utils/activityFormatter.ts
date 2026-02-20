@@ -1,210 +1,136 @@
+import { createActivityFormatter, detailHelpers, formatTimeRange } from '@/lib/activity-formatter';
 import type { ActivityActionType } from '@/schemas/plans/activity';
 
-import type { ActivityIconColor, PlanActivity, PlanActivityDisplay } from '../types/activity';
+import type { PlanActivity, PlanActivityDisplay } from '../types/activity';
 
 /**
- * "TIMESTAMPTZ - TIMESTAMPTZ" 形式の時間範囲を "HH:MM - HH:MM" に整形
- * 例: "2026-02-10T09:00:00+09:00 - 2026-02-10T10:00:00+09:00" → "09:00 - 10:00"
- * パース失敗時はそのまま返す
+ * Plan アクティビティフォーマッター
+ *
+ * 共有ファクトリを使い、Plan固有のアクションタイプ → 表示情報を定義。
+ * i18nキーは plan.activity.* を使用。
  */
-function formatTimeRange(value: string): string {
-  const parts = value.split(' - ');
-  if (parts.length !== 2) return value;
 
-  const formatTime = (raw: string): string => {
-    const date = new Date(raw);
-    if (Number.isNaN(date.getTime())) return raw;
-    return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
-  };
+/** ステータスラベルマッピング（detail表示用） */
+const STATUS_LABELS: Record<string, string> = {
+  open: 'Open',
+  closed: 'Closed',
+  // 後方互換: 旧ステータス値
+  todo: '未完了',
+  doing: '進行中',
+  done: '完了',
+  backlog: '準備中',
+  ready: '配置済み',
+  active: '作業中',
+  wait: '待ち',
+  cancel: '中止',
+};
 
-  const start = parts[0];
-  const end = parts[1];
-  if (!start || !end) return value;
-  return `${formatTime(start)} - ${formatTime(end)}`;
+function statusTransitionDetail(
+  oldValue: string | null,
+  newValue: string | null,
+): string | undefined {
+  const oldLabel = oldValue ? (STATUS_LABELS[oldValue] ?? oldValue) : '';
+  const newLabel = newValue ? (STATUS_LABELS[newValue] ?? newValue) : '';
+  if (oldLabel && newLabel) return `${oldLabel} → ${newLabel}`;
+  return undefined;
 }
 
-/**
- * UI表示対象のアクションタイプ
- * GAFA基準: 「意思決定」を伴う変更のみ表示
- *
- * - created: ライフサイクル開始
- * - status_changed: 最重要（完了/未完了）
- * - title_changed: プラン名の変更（識別情報の変更）
- * - time_changed: カレンダーアプリの本質
- * - tag_added: タグ追加（分類の意思決定）
- * - tag_removed: タグ削除（分類の意思決定）
- * - recurrence_changed: 繰り返し設定（習慣化の意思決定）
- * - reminder_changed: 通知設定（リマインダーの意思決定）
- *
- * ※ deleted は除外: plan_activities が ON DELETE CASCADE のため、
- *   プラン削除時にアクティビティも削除され誰も見れない
- * ※ description_changed は除外: 頻繁な編集作業でノイズになりやすい
- */
-const VISIBLE_ACTION_TYPES: Set<ActivityActionType> = new Set([
-  'created',
-  'status_changed',
-  'title_changed',
-  'time_changed',
-  'tag_added',
-  'tag_removed',
-  'recurrence_changed',
-  'reminder_changed',
-]);
-
-/**
- * アクティビティが表示対象かどうかを判定
- */
-export function isVisibleActivity(activity: PlanActivity): boolean {
-  return VISIBLE_ACTION_TYPES.has(activity.action_type);
+function timeChangeDetail(oldValue: string | null, newValue: string | null): string | undefined {
+  if (oldValue && newValue) {
+    return `${formatTimeRange(oldValue)} → ${formatTimeRange(newValue)}`;
+  }
+  return undefined;
 }
 
-/**
- * アクティビティ配列から表示対象のみをフィルタリング
- */
-export function filterVisibleActivities(activities: PlanActivity[]): PlanActivity[] {
-  return activities.filter(isVisibleActivity);
-}
+const planFormatter = createActivityFormatter<ActivityActionType>({
+  visibleTypes: new Set<ActivityActionType>([
+    'created',
+    'status_changed',
+    'title_changed',
+    'time_changed',
+    'tag_added',
+    'tag_removed',
+    'recurrence_changed',
+    'reminder_changed',
+  ]),
+  config: {
+    created: { labelKey: 'plan.activity.created', icon: 'create', iconColor: 'success' },
+    updated: { labelKey: 'plan.activity.updated', icon: 'time', iconColor: 'info' },
+    status_changed: {
+      labelKey: 'plan.activity.statusChanged',
+      icon: 'status',
+      iconColor: 'info',
+      formatDetail: statusTransitionDetail,
+    },
+    title_changed: {
+      labelKey: 'plan.activity.titleChanged',
+      icon: 'time',
+      iconColor: 'info',
+      formatDetail: detailHelpers.transition,
+    },
+    description_changed: {
+      labelKey: 'plan.activity.descriptionChanged',
+      icon: 'time',
+      iconColor: 'info',
+    },
+    time_changed: {
+      labelKey: 'plan.activity.timeChanged',
+      icon: 'time',
+      iconColor: 'info',
+      formatDetail: timeChangeDetail,
+    },
+    tag_added: {
+      labelKey: 'plan.activity.tagAdded',
+      icon: 'tag',
+      iconColor: 'primary',
+      formatDetail: detailHelpers.newValue,
+    },
+    tag_removed: {
+      labelKey: 'plan.activity.tagRemoved',
+      icon: 'tag',
+      iconColor: 'destructive',
+      formatDetail: detailHelpers.oldValue,
+    },
+    recurrence_changed: {
+      labelKey: 'plan.activity.recurrenceChanged',
+      icon: 'time',
+      iconColor: 'info',
+      formatDetail: detailHelpers.removed,
+    },
+    reminder_changed: {
+      labelKey: 'plan.activity.reminderChanged',
+      icon: 'time',
+      iconColor: 'info',
+      formatDetail: detailHelpers.removed,
+    },
+    deleted: { labelKey: 'plan.activity.deleted', icon: 'delete', iconColor: 'destructive' },
+  },
+  defaultConfig: { labelKey: 'plan.activity.changed', icon: 'time', iconColor: 'info' },
+});
+
+export const isVisibleActivity = planFormatter.isVisible;
+export const filterVisibleActivities = planFormatter.filterVisible;
 
 /**
- * アクティビティを表示用フォーマットに変換
+ * Plan アクティビティを表示用フォーマットに変換
  *
- * TickTick風のデザイン:
- * - actionLabel: 簡潔なアクション名（例: "ステータスを変更"）
- * - detail: 詳細情報（例: "未完了 → 完了"）※任意
- * - iconColor: アイコンの色
+ * status_changed の iconColor は new_value に依存するため、動的に上書き。
  */
 export function formatActivity(activity: PlanActivity): PlanActivityDisplay {
-  let actionLabel = '';
-  let detail: string | undefined;
-  let icon: PlanActivityDisplay['icon'] = 'time';
-  let iconColor: ActivityIconColor = 'info';
+  const formatted = planFormatter.format(activity);
 
-  switch (activity.action_type) {
-    case 'created':
-      actionLabel = 'プランを作成';
-      icon = 'create';
-      iconColor = 'success';
-      break;
-
-    case 'updated':
-      actionLabel = 'プランを更新';
-      icon = 'time';
-      iconColor = 'info';
-      break;
-
-    case 'status_changed': {
-      const statusLabels: Record<string, string> = {
-        open: 'Open',
-        closed: 'Closed',
-        // 後方互換: 旧ステータス値
-        todo: '未完了',
-        doing: '進行中',
-        done: '完了',
-        backlog: '準備中',
-        ready: '配置済み',
-        active: '作業中',
-        wait: '待ち',
-        cancel: '中止',
-      };
-      actionLabel = 'ステータスを変更';
-      const oldLabel = activity.old_value
-        ? (statusLabels[activity.old_value] ?? activity.old_value)
-        : '';
-      const newLabel = activity.new_value
-        ? (statusLabels[activity.new_value] ?? activity.new_value)
-        : '';
-      if (oldLabel && newLabel) {
-        detail = `${oldLabel} → ${newLabel}`;
-      }
-      icon = 'status';
-      iconColor = activity.new_value === 'closed' ? 'success' : 'warning';
-      break;
-    }
-
-    case 'title_changed':
-      actionLabel = 'タイトルを変更';
-      if (activity.old_value && activity.new_value) {
-        detail = `${activity.old_value} → ${activity.new_value}`;
-      }
-      icon = 'time';
-      iconColor = 'info';
-      break;
-
-    case 'description_changed':
-      actionLabel = '説明を更新';
-      icon = 'time';
-      iconColor = 'info';
-      break;
-
-    case 'time_changed':
-      actionLabel = '時間を変更';
-      if (activity.old_value && activity.new_value) {
-        detail = `${formatTimeRange(activity.old_value)} → ${formatTimeRange(activity.new_value)}`;
-      }
-      icon = 'time';
-      iconColor = 'info';
-      break;
-
-    case 'tag_added':
-      actionLabel = 'タグを追加';
-      if (activity.new_value) {
-        detail = activity.new_value;
-      }
-      icon = 'tag';
-      iconColor = 'primary';
-      break;
-
-    case 'tag_removed':
-      actionLabel = 'タグを削除';
-      if (activity.old_value) {
-        detail = activity.old_value;
-      }
-      icon = 'tag';
-      iconColor = 'destructive';
-      break;
-
-    case 'recurrence_changed':
-      actionLabel = '繰り返しを変更';
-      if (activity.new_value) {
-        detail = activity.new_value;
-      } else if (activity.old_value) {
-        detail = `${activity.old_value} → なし`;
-      }
-      icon = 'time';
-      iconColor = 'info';
-      break;
-
-    case 'reminder_changed':
-      actionLabel = '通知を変更';
-      if (activity.new_value) {
-        detail = activity.new_value;
-      } else if (activity.old_value) {
-        detail = `${activity.old_value} → なし`;
-      }
-      icon = 'time';
-      iconColor = 'info';
-      break;
-
-    case 'deleted':
-      actionLabel = 'プランを削除';
-      icon = 'delete';
-      iconColor = 'destructive';
-      break;
-
-    default:
-      actionLabel = '変更';
-      icon = 'time';
-      iconColor = 'info';
-  }
+  const iconColor =
+    activity.action_type === 'status_changed'
+      ? activity.new_value === 'closed'
+        ? 'success'
+        : 'warning'
+      : formatted.iconColor;
 
   return {
     ...activity,
-    actionLabel,
-    detail,
-    icon,
+    actionLabelKey: formatted.actionLabelKey,
+    detail: formatted.detail,
+    icon: formatted.icon as PlanActivityDisplay['icon'],
     iconColor,
   };
 }
-
-// formatRelativeTimeはformatters.tsにあるのでそちらを使う
-export { formatRelativeTime } from './formatters';

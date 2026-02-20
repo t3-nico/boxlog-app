@@ -8,29 +8,18 @@ import { useCallback, useEffect, useRef, useState, type RefObject } from 'react'
 
 import { useCalendarScrollStore } from '@/features/calendar/stores';
 
-import { COLLAPSED_SECTION_HEIGHT } from '../components/CollapsedSleepSection';
-
 export type CalendarViewModeForScroll = 'day' | '3day' | '5day' | 'week';
-
-interface SleepHoursForScroll {
-  wakeTime: number;
-  bedtime: number;
-}
 
 interface UseScrollableCalendarOptions {
   viewMode: string;
   hourHeight: number;
-  sleepHoursCollapsed: boolean;
-  sleepHours: SleepHoursForScroll | null;
   enableKeyboardNavigation?: boolean | undefined;
   onScrollPositionChange?: ((scrollTop: number) => void) | undefined;
-  onToggleSleepHours?: (() => void) | undefined;
 }
 
 interface UseScrollableCalendarReturn {
   scrollContainerRef: RefObject<HTMLDivElement | null>;
   handleKeyDown: (e: React.KeyboardEvent | KeyboardEvent) => void;
-  handleToggleSleepHours: () => void;
 }
 
 /**
@@ -39,11 +28,8 @@ interface UseScrollableCalendarReturn {
 export const useScrollableCalendar = ({
   viewMode,
   hourHeight,
-  sleepHoursCollapsed,
-  sleepHours,
   enableKeyboardNavigation = true,
   onScrollPositionChange,
-  onToggleSleepHours,
 }: UseScrollableCalendarOptions): UseScrollableCalendarReturn => {
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const scrollTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
@@ -52,62 +38,6 @@ export const useScrollableCalendar = ({
 
   // スクロール位置ストア
   const { setScrollPosition, getScrollPosition, setLastActiveView } = useCalendarScrollStore();
-
-  // 睡眠時間帯の折りたたみトグル（スクロール位置を維持）
-  const handleToggleSleepHours = useCallback(() => {
-    if (!sleepHours || !scrollContainerRef.current) {
-      onToggleSleepHours?.();
-      return;
-    }
-
-    const { wakeTime } = sleepHours;
-    const currentScrollTop = scrollContainerRef.current.scrollTop;
-
-    // 現在見ている時間を計算
-    let currentHour: number;
-    if (sleepHoursCollapsed) {
-      // 折りたたみ → 展開: 折りたたみセクション後の位置から時間を計算
-      if (currentScrollTop <= COLLAPSED_SECTION_HEIGHT) {
-        currentHour = wakeTime; // 睡眠セクション内なら起床時間
-      } else {
-        currentHour = wakeTime + (currentScrollTop - COLLAPSED_SECTION_HEIGHT) / hourHeight;
-      }
-    } else {
-      // 展開 → 折りたたみ: 通常の位置から時間を計算
-      currentHour = currentScrollTop / hourHeight;
-    }
-
-    // 状態を更新
-    onToggleSleepHours?.();
-
-    // 次のレンダリング後にスクロール位置を調整
-    setTimeout(() => {
-      if (!scrollContainerRef.current || !sleepHours) return;
-
-      let newScrollTop: number;
-      if (!sleepHoursCollapsed) {
-        // 展開 → 折りたたみ: 起きている時間帯に変換
-        if (currentHour < wakeTime) {
-          // 睡眠時間帯（朝）→ 折りたたみセクションへ
-          newScrollTop = 0;
-        } else if (currentHour >= sleepHours.bedtime) {
-          // 睡眠時間帯（夜）→ 折りたたみセクションへ
-          newScrollTop = 0;
-        } else {
-          // 起きている時間帯
-          newScrollTop = COLLAPSED_SECTION_HEIGHT + (currentHour - wakeTime) * hourHeight;
-        }
-      } else {
-        // 折りたたみ → 展開: 通常の位置に変換
-        newScrollTop = currentHour * hourHeight;
-      }
-
-      scrollContainerRef.current.scrollTo({
-        top: Math.max(0, newScrollTop),
-        behavior: 'instant',
-      });
-    }, 0);
-  }, [onToggleSleepHours, sleepHoursCollapsed, sleepHours, hourHeight]);
 
   // 密度変更時のスクロール位置保持
   const prevHourHeight = useRef(hourHeight);
@@ -267,6 +197,5 @@ export const useScrollableCalendar = ({
   return {
     scrollContainerRef,
     handleKeyDown,
-    handleToggleSleepHours,
   };
 };

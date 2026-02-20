@@ -150,7 +150,7 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
           // 文字列の場合、そのまま使用
           dateStr = dropData.date;
         } else {
-          throw new Error(t('errors.calendar.invalidDateFormat'));
+          throw new Error(t('common.errors.calendar.invalidDateFormat'));
         }
 
         // 2. 時刻を取得
@@ -161,7 +161,7 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
           // 時間指定あり（例: "14:30"）
           const timeMatch = dropData.time.match(/^(\d{1,2}):(\d{2})$/);
           if (!timeMatch) {
-            throw new Error(t('errors.calendar.invalidTimeFormat'));
+            throw new Error(t('common.errors.calendar.invalidTimeFormat'));
           }
 
           const [, hourStr, minuteStr] = timeMatch;
@@ -170,7 +170,7 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
 
           // 時刻の妥当性チェック
           if (hour < 0 || hour > 23 || minute < 0 || minute > 59) {
-            throw new Error(t('errors.calendar.timeOutOfRange'));
+            throw new Error(t('common.errors.calendar.timeOutOfRange'));
           }
 
           // ユーザーのタイムゾーンでDateオブジェクトを作成

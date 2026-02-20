@@ -2,6 +2,8 @@
 
 import type { ReactNode } from 'react';
 
+import { useTranslations } from 'next-intl';
+
 import { Spinner } from '@/components/ui/spinner';
 
 interface InspectorContentProps {
@@ -37,12 +39,15 @@ interface InspectorContentProps {
  */
 export function InspectorContent({
   isLoading = false,
-  emptyMessage = 'データが見つかりません',
+  emptyMessage,
   hasData = true,
   children,
   loadingComponent,
   emptyComponent,
 }: InspectorContentProps) {
+  const t = useTranslations();
+  const resolvedEmptyMessage = emptyMessage ?? t('plan.inspector.noData');
+
   // ローディング状態
   if (isLoading) {
     if (loadingComponent) {
@@ -62,7 +67,7 @@ export function InspectorContent({
     }
     return (
       <div className="flex h-full flex-1 items-center justify-center">
-        <p className="text-muted-foreground">{emptyMessage}</p>
+        <p className="text-muted-foreground">{resolvedEmptyMessage}</p>
       </div>
     );
   }

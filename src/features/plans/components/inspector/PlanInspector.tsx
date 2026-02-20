@@ -1,6 +1,7 @@
 'use client';
 
 import { Copy, ExternalLink, Link, Trash2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useCallback } from 'react';
 
 import { DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
@@ -23,6 +24,7 @@ import { PlanInspectorContent } from './PlanInspectorContent';
  * PC: Popover（フローティング）、モバイル: Drawer
  */
 export function PlanInspector() {
+  const t = useTranslations();
   const isOpen = usePlanInspectorStore((state) => state.isOpen);
   const planId = usePlanInspectorStore((state) => state.planId);
   const closeInspector = usePlanInspectorStore((state) => state.closeInspector);
@@ -100,11 +102,11 @@ export function PlanInspector() {
     <>
       <DropdownMenuItem onClick={handleCopyLink}>
         <Link className="size-4" />
-        リンクをコピー
+        {t('plan.inspector.menu.copyLink')}
       </DropdownMenuItem>
       <DropdownMenuItem onClick={handleOpenInNewTab}>
         <ExternalLink className="size-4" />
-        新しいタブで開く
+        {t('plan.inspector.menu.openNewTab')}
       </DropdownMenuItem>
       <DropdownMenuItem
         onClick={() => {
@@ -112,12 +114,12 @@ export function PlanInspector() {
         }}
       >
         <Copy className="size-4" />
-        IDをコピー
+        {t('plan.inspector.menu.copyId')}
       </DropdownMenuItem>
       <DropdownMenuSeparator />
       <DropdownMenuItem onClick={handleDelete} variant="destructive">
         <Trash2 className="size-4" />
-        削除
+        {t('common.actions.delete')}
       </DropdownMenuItem>
     </>
   );
@@ -126,13 +128,13 @@ export function PlanInspector() {
     <InspectorShell
       isOpen={isOpen}
       onClose={handleClose}
-      title={isDraftMode ? '' : plan?.title || '（タイトルなし）'}
+      title={isDraftMode ? '' : plan?.title || t('plan.inspector.noTitle')}
       mobileMenuContent={isDraftMode ? undefined : mobileMenuContent}
     >
       <InspectorContent
         isLoading={isDraftMode ? false : isLoading}
         hasData={isDraftMode ? true : !!plan}
-        emptyMessage="プランが見つかりません"
+        emptyMessage={t('plan.inspector.notFound')}
       >
         <PlanInspectorContent />
       </InspectorContent>

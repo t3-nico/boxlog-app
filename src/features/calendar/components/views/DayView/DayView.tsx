@@ -113,12 +113,7 @@ export const DayView = ({
         <CalendarDateHeader header={headerComponent} weekNumber={weekNumber} />
 
         {/* スクロール可能コンテンツ */}
-        <ScrollableCalendarLayout
-          {...(isToday && { scrollToHour: 8 })}
-          displayDates={displayDates}
-          viewMode="day"
-          plans={plans}
-        >
+        <ScrollableCalendarLayout displayDates={displayDates} viewMode="day">
           {/* 日のコンテンツ */}
           <DayContent
             date={date}

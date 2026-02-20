@@ -553,18 +553,18 @@ function setupMockQueryWithTags(
   records: unknown[],
   tagIdsMap: Map<string, string[]>,
 ) {
-  mockFrom.mockImplementation((table: string) => {
-    if (table === 'record_tags') {
-      const tagData: { record_id: string; tag_id: string }[] = [];
-      tagIdsMap.forEach((tagIds, recordId) => {
-        tagIds.forEach((tagId) => {
-          tagData.push({ record_id: recordId, tag_id: tagId });
-        });
-      });
-      return createChainableMock(tagData);
-    }
-    return createChainableMock(records);
+  // RecordService は record_tags をネストされたフィールドとして取得するため、
+  // レコードデータに record_tags フィールドを追加する
+  const recordsWithTags = records.map((record) => {
+    const recordId = (record as { id: string }).id;
+    const tagIds = tagIdsMap.get(recordId) ?? [];
+    return {
+      ...(record as Record<string, unknown>),
+      record_tags: tagIds.map((tag_id) => ({ tag_id })),
+    };
   });
+
+  mockFrom.mockReturnValue(createChainableMock(recordsWithTags));
 }
 
 function setupMockQueryError(mockFrom: ReturnType<typeof vi.fn>, errorMessage: string) {
@@ -584,18 +584,16 @@ function setupMockSingleQueryWithTags(
   record: unknown,
   tagIds: string[],
 ) {
-  mockFrom.mockImplementation((table: string) => {
-    if (table === 'record_tags') {
-      const tagData = tagIds.map((tagId) => ({
-        record_id: (record as { id: string }).id,
-        tag_id: tagId,
-      }));
-      return createChainableMock(tagData);
-    }
-    const mock = createChainableMock(record);
-    mock.single = vi.fn().mockResolvedValue({ data: record, error: null });
-    return mock;
-  });
+  // RecordService は record_tags をネストされたフィールドとして取得するため、
+  // レコードデータに record_tags フィールドを追加する
+  const recordWithTags = {
+    ...(record as Record<string, unknown>),
+    record_tags: tagIds.map((tag_id) => ({ tag_id })),
+  };
+
+  const mock = createChainableMock(recordWithTags);
+  mock.single = vi.fn().mockResolvedValue({ data: recordWithTags, error: null });
+  mockFrom.mockReturnValue(mock);
 }
 
 function setupMockInsertQuery(mockFrom: ReturnType<typeof vi.fn>, data: unknown) {

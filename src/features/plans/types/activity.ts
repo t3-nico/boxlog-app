@@ -1,8 +1,9 @@
+import type { ActivityIconColor } from '@/lib/activity-formatter';
 import type { Database } from '@/lib/database.types';
 import type { ActivityActionType } from '@/schemas/plans/activity';
 
 // アクション種別を再エクスポート
-export type { ActivityActionType };
+export type { ActivityActionType, ActivityIconColor };
 
 /**
  * プランアクティビティ（変更履歴）
@@ -17,16 +18,11 @@ export type PlanActivity = Omit<
 };
 
 /**
- * アイコン色の種別
- */
-export type ActivityIconColor = 'success' | 'info' | 'warning' | 'primary' | 'destructive';
-
-/**
  * アクティビティ表示用の情報
  */
 export interface PlanActivityDisplay extends PlanActivity {
-  actionLabel: string; // 簡潔なアクション名（例: "ステータスを変更"）
-  detail?: string | undefined; // 詳細情報（例: "未完了 → 完了"）※任意
-  icon: 'create' | 'status' | 'tag' | 'delete' | 'time'; // アイコン種別（5種類に統一）
-  iconColor: ActivityIconColor; // アイコン色
+  actionLabelKey: string;
+  detail?: string | undefined;
+  icon: 'create' | 'status' | 'tag' | 'delete' | 'time';
+  iconColor: ActivityIconColor;
 }

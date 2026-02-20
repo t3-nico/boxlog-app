@@ -87,6 +87,90 @@
       "closed": "完了",
       "cancel": "中止"
     },
+    "inspector": {
+      "addTitle": "タイトルを追加",
+      "editDescription": "説明を編集",
+      "addDescription": "説明を追加",
+      "addDescriptionPlaceholder": "説明を追加...",
+      "createPlan": "Plan 作成",
+      "createRecord": "Record 作成",
+      "markComplete": "完了にする",
+      "markIncomplete": "未完了に戻す",
+      "completeOptions": "完了オプション",
+      "completeAndCreateRecord": "完了 + Record作成",
+      "timeConflict": "時間が重複しています",
+      "toast": {
+        "tagsSaveFailed": "タグの保存に失敗しました",
+        "timeOverlap": "時間が重複しています",
+        "createFailed": "Planの作成に失敗しました",
+        "saveFailed": "保存に失敗しました"
+      },
+      "noTitle": "（タイトルなし）",
+      "notFound": "プランが見つかりません",
+      "noData": "データが見つかりません",
+      "menu": {
+        "duplicate": "複製する",
+        "saveAsTemplate": "テンプレートとして保存",
+        "copyId": "IDをコピー",
+        "copyLink": "リンクをコピー",
+        "openNewTab": "新しいタブで開く"
+      },
+      "tags": {
+        "add": "タグを追加"
+      },
+      "records": {
+        "link": "Recordを紐付け",
+        "unlink": "Record紐付けを解除",
+        "search": "Recordを検索...",
+        "noMatch": "一致するRecordがありません",
+        "addNew": "作業ログを追加"
+      },
+      "recurrence": {
+        "setRepeat": "繰り返しを設定",
+        "repeatLabel": "繰り返し: {type}",
+        "options": "繰り返しオプション",
+        "customEllipsis": "カスタム...",
+        "dialog": {
+          "weekdaysShort": {
+            "0": "日",
+            "1": "月",
+            "2": "火",
+            "3": "水",
+            "4": "木",
+            "5": "金",
+            "6": "土"
+          }
+        }
+      },
+      "recordCreate": {
+        "titlePlaceholder": "何をした？",
+        "titleLabel": "記録タイトル",
+        "timeOverlap": "時間が重複しています",
+        "failed": "Recordの作成に失敗しました",
+        "linkPlan": "Planに紐付け",
+        "unlinkPlan": "Plan紐付けを解除",
+        "searchPlan": "Planを検索...",
+        "noPlans": "Planがありません",
+        "fulfillmentTooltip": "充実度: {score}/5（長押しでリセット）",
+        "fulfillmentTap": "充実度（タップで加算）",
+        "fulfillmentLabel": "充実度: {score}/5",
+        "addNewPlan": "予定を追加"
+      }
+    },
+    "activity": {
+      "created": "プランを作成",
+      "updated": "プランを更新",
+      "statusChanged": "ステータスを変更",
+      "titleChanged": "タイトルを変更",
+      "descriptionChanged": "説明を更新",
+      "timeChanged": "時間を変更",
+      "tagAdded": "タグを追加",
+      "tagRemoved": "タグを削除",
+      "recurrenceChanged": "繰り返しを変更",
+      "reminderChanged": "通知を変更",
+      "deleted": "プランを削除",
+      "changed": "変更"
+    },
     "view": {
       "edit": "編集",
       "delete": "削除",

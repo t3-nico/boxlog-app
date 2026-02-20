@@ -143,6 +143,103 @@ t('toolbar.today'); // → calendar.toolbar.today
 
 ---
 
+## メッセージファイルの構造
+
+### 基本ルール
+
+各JSONファイルは**ネームスペース名と一致するトップレベルキー**を持つ。`src/i18n/request.ts` が全ファイルを `Object.assign` でフラットにマージするため、トップレベルキーがそのままグローバルなネームスペースになる。
+
+```json
+// messages/en/calendar.json
+{
+  "calendar": {        // ← ファイル名と一致するトップレベルキー
+    "toolbar": { ... },
+    "event": { ... }
+  }
+}
+```
+
+> **重要**: トップレベルに複数のキーを置かないこと。`useTranslations('calendar')` は `calendar` キー配下のみをスコープとするため、兄弟キーにはアクセスできない。
+
+```json
+// ❌ 悪い例: 兄弟キーが useTranslations('calendar') からアクセス不可
+{
+  "calendar": { ... },
+  "calendarActions": { ... }  // ← 別ネームスペース扱いになる
+}
+
+// ✅ 良い例: すべて calendar 配下に統合
+{
+  "calendar": {
+    "actions": { ... }  // ← t('calendar.actions.xxx') でアクセス可能
+  }
+}
+```
+
+### common.json の構造
+
+`common.json` は全Feature横断で使う共通キーを管理する。`common` キー配下に以下のセクションが存在する。
+
+```
+common
+├── actions        # ボタンラベル: save, cancel, close, delete, create, edit, ...
+├── confirm        # 確認ダイアログ: delete, archive, bulkDelete, recurring
+├── aria           # アクセシビリティ: openMenu, selectColor, selectDate, ...
+├── form           # フォーム: required, optional, processing
+├── validation     # バリデーション: required, title.maxLength, password.*, ...
+├── errors         # エラー: generic, auth.*, mfa.*, calendar.*
+├── status         # ステータス: loading, success, error, warning, info
+├── time           # 相対時間: today, yesterday, daysAgo, minutesAgo, ...
+├── recurrence     # 繰り返し: daily, weekly, monthly, dialog.*
+├── reminder       # リマインダー: none, atStart, min10, min30, ...
+├── suggest        # サジェスト入力: recentHistory, loading, noResults
+├── createNew      # 新規作成メニュー: plan, task, tag
+├── createSheet    # 作成シート: plan, record, template, history
+├── dates          # 日付フォーマット: formats.monthDay, formats.dateTime, ...
+├── language       # 言語切替: current, switch, english, japanese
+├── theme          # テーマ: light, dark
+├── userProfile    # ユーザープロフィール
+├── search         # 検索: shortcut
+├── comingSoon     # "近日公開" (文字列)
+├── toast          # トースト通知
+└── (その他フラットキー) # apply, loading, reload, back, next, ...
+```
+
+### 翻訳キーの使い分け
+
+| パターン | 例 | 用途 |
+|---------|-----|------|
+| `useTranslations()` | `t('common.actions.save')` | 複数ネームスペースを参照するコンポーネント |
+| `useTranslations('common')` | `t('actions.save')` | common のみ参照するコンポーネント |
+| `useTranslations('common.suggest')` | `t('loading')` | 特定セクションのみ参照する場合 |
+
+**推奨**: 多くのコンポーネントは `common` + Feature固有キーの両方を使うため、`useTranslations()`（ルートスコープ）が最も一般的。
+
+### Storybook のメッセージ管理
+
+Storybookでは `.storybook/preview.tsx` で `NextIntlClientProvider` に直接メッセージオブジェクトを渡している。
+
+```tsx
+// .storybook/preview.tsx
+const messages = {
+  common: {
+    actions: { save: '保存', cancel: 'キャンセル', ... },
+    confirm: { recurring: { ... } },
+    ...
+  },
+  calendar: { ... },
+  tags: { ... },
+};
+```
+
+**ルール**:
+- 実際のJSONファイルと**同じキー構造**を維持すること
+- Storyに必要なキーのみを含める（全キーのコピーは不要）
+- 新しいStoryを追加する際、翻訳キーが不足していれば `preview.tsx` のメッセージに追加する
+- `npm run i18n:check` は `messages/` ディレクトリのみ検証するため、`preview.tsx` の整合性は手動で確認する
+
+---
+
 ## 新規ネームスペース追加手順
 
 1. `messages/en/{namespace}.json` を作成
@@ -179,4 +276,4 @@ npm run i18n:unused   # 未使用キーの検出
 
 ---
 
-**最終更新**: 2026-02-12 | **バージョン**: v1.0
+**最終更新**: 2026-02-19 | **バージョン**: v1.1

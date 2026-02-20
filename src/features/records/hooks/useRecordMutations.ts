@@ -5,6 +5,7 @@
  * 楽観的更新でUIを即座に反映
  */
 
+import { createTempId, invalidateEntityCaches } from '@/hooks/mutations/mutationUtils';
 import { api } from '@/lib/trpc';
 
 import type { CreateRecordInput, UpdateRecordInput } from '@/schemas/records';
@@ -26,7 +27,7 @@ export function useRecordMutations() {
       utils.records.list.setData({}, (old) => {
         if (!old) return old;
         const tempRecord: RecordItem = {
-          id: `temp-${Date.now()}`,
+          id: createTempId(),
           user_id: '',
           plan_id: input.plan_id ?? null,
           title: input.title ?? null,
@@ -52,10 +53,7 @@ export function useRecordMutations() {
       // TIME_OVERLAPエラーはモーダル内でエラー表示（toastなし）
     },
     onSettled: () => {
-      // すべてのrecords.listクエリを無効化（日付フィルター付きも含む）
-      void utils.records.list.invalidate(undefined, { refetchType: 'all' });
-      void utils.records.getRecent.invalidate();
-      void utils.plans.getCumulativeTime.invalidate();
+      void invalidateEntityCaches(utils, 'records');
     },
   });
 
@@ -96,11 +94,7 @@ export function useRecordMutations() {
       }
     },
     onSettled: (_data, _error, { id }) => {
-      // すべてのrecords.listクエリを無効化（日付フィルター付きも含む）
-      void utils.records.list.invalidate(undefined, { refetchType: 'all' });
-      // 個別Recordのキャッシュも無効化（編集画面用）
-      void utils.records.getById.invalidate({ id });
-      void utils.plans.getCumulativeTime.invalidate();
+      void invalidateEntityCaches(utils, 'records', { entityId: id });
     },
   });
 
@@ -123,10 +117,7 @@ export function useRecordMutations() {
       }
     },
     onSettled: () => {
-      // すべてのrecords.listクエリを無効化（日付フィルター付きも含む）
-      void utils.records.list.invalidate(undefined, { refetchType: 'all' });
-      void utils.records.getRecent.invalidate();
-      void utils.plans.getCumulativeTime.invalidate();
+      void invalidateEntityCaches(utils, 'records');
     },
   });
 
@@ -134,10 +125,7 @@ export function useRecordMutations() {
   const duplicateRecord = api.records.duplicate.useMutation({
     // TIME_OVERLAPエラーはモーダル内でエラー表示（toastなし）
     onSettled: () => {
-      // すべてのrecords.listクエリを無効化（日付フィルター付きも含む）
-      void utils.records.list.invalidate(undefined, { refetchType: 'all' });
-      void utils.records.getRecent.invalidate();
-      void utils.plans.getCumulativeTime.invalidate();
+      void invalidateEntityCaches(utils, 'records');
     },
   });
 
@@ -161,10 +149,7 @@ export function useRecordMutations() {
       }
     },
     onSettled: () => {
-      // すべてのrecords.listクエリを無効化（日付フィルター付きも含む）
-      void utils.records.list.invalidate(undefined, { refetchType: 'all' });
-      void utils.records.getRecent.invalidate();
-      void utils.plans.getCumulativeTime.invalidate();
+      void invalidateEntityCaches(utils, 'records');
     },
   });
 

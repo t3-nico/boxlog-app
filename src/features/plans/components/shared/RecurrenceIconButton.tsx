@@ -3,6 +3,7 @@
 import { useState } from 'react';
 
 import { Check, Repeat } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { HoverTooltip } from '@/components/ui/tooltip';
@@ -11,14 +12,14 @@ import { cn } from '@/lib/utils';
 
 import { RecurrenceDialog } from './RecurrenceDialog';
 
-// 繰り返しオプション
+// 繰り返しオプション（value は type 名）
 const RECURRENCE_OPTIONS = [
-  { value: '', label: '選択しない' },
-  { value: '毎日', label: '毎日' },
-  { value: '毎週', label: '毎週' },
-  { value: '毎月', label: '毎月' },
-  { value: '毎年', label: '毎年' },
-  { value: '平日', label: '平日（月〜金）' },
+  { value: '', labelKey: 'common.recurrence.none' },
+  { value: 'daily', labelKey: 'common.recurrence.daily' },
+  { value: 'weekly', labelKey: 'common.recurrence.weekly' },
+  { value: 'monthly', labelKey: 'common.recurrence.monthly' },
+  { value: 'yearly', labelKey: 'common.recurrence.yearly' },
+  { value: 'weekdays', labelKey: 'common.recurrence.weekdays' },
 ] as const;
 
 interface RecurrenceIconButtonProps {
@@ -40,6 +41,7 @@ export function RecurrenceIconButton({
   onRecurrenceRuleChange,
   disabled = false,
 }: RecurrenceIconButtonProps) {
+  const t = useTranslations();
   const [showPopover, setShowPopover] = useState(false);
   const [showCustomDialog, setShowCustomDialog] = useState(false);
 
@@ -49,18 +51,11 @@ export function RecurrenceIconButton({
   // 表示テキスト
   const displayText = (() => {
     if (recurrenceRule) {
-      // RRULEがある場合は簡易表示（詳細はtooltipで）
-      return 'カスタム';
+      return t('common.recurrence.custom');
     }
     if (recurrenceType && recurrenceType !== 'none') {
-      const typeMap: Record<string, string> = {
-        daily: '毎日',
-        weekly: '毎週',
-        monthly: '毎月',
-        yearly: '毎年',
-        weekdays: '平日',
-      };
-      return typeMap[recurrenceType] || '繰り返し';
+      const option = RECURRENCE_OPTIONS.find((o) => o.value === recurrenceType);
+      return option ? t(option.labelKey) : t('common.recurrence.label');
     }
     return null;
   })();
@@ -69,7 +64,11 @@ export function RecurrenceIconButton({
     <>
       <Popover open={showPopover} onOpenChange={setShowPopover}>
         <HoverTooltip
-          content={hasRecurrence ? `繰り返し: ${displayText}` : '繰り返しを設定'}
+          content={
+            hasRecurrence
+              ? t('plan.inspector.recurrence.repeatLabel', { type: displayText ?? '' })
+              : t('plan.inspector.recurrence.setRepeat')
+          }
           side="top"
         >
           <PopoverTrigger asChild>
@@ -81,7 +80,11 @@ export function RecurrenceIconButton({
                 'hover:bg-state-hover focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
                 hasRecurrence ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',
               )}
-              aria-label={hasRecurrence ? `繰り返し: ${displayText}` : '繰り返しを設定'}
+              aria-label={
+                hasRecurrence
+                  ? t('plan.inspector.recurrence.repeatLabel', { type: displayText ?? '' })
+                  : t('plan.inspector.recurrence.setRepeat')
+              }
             >
               <Repeat className="size-4" />
               {hasRecurrence && <span className="text-sm">{displayText}</span>}
@@ -95,7 +98,7 @@ export function RecurrenceIconButton({
           sideOffset={4}
           style={{ zIndex: zIndex.overlayDropdown }}
         >
-          <div role="menu" aria-label="繰り返しオプション">
+          <div role="menu" aria-label={t('plan.inspector.recurrence.options')}>
             <button
               className="hover:bg-state-hover focus-visible:bg-state-hover flex w-full items-center justify-between rounded px-2 py-2 text-left text-sm transition-colors focus-visible:outline-none"
               onClick={() => {
@@ -106,7 +109,7 @@ export function RecurrenceIconButton({
               type="button"
               role="menuitem"
             >
-              選択しない
+              {t('common.recurrence.none')}
               {!hasRecurrence && <Check className="text-primary h-4 w-4" />}
             </button>
             <div className="border-border my-1 border-t" />
@@ -122,8 +125,10 @@ export function RecurrenceIconButton({
                 type="button"
                 role="menuitem"
               >
-                {option.label}
-                {displayText === option.value && <Check className="text-primary h-4 w-4" />}
+                {t(option.labelKey)}
+                {recurrenceType === option.value && !recurrenceRule && (
+                  <Check className="text-primary h-4 w-4" />
+                )}
               </button>
             ))}
             <div className="border-border my-1 border-t" />
@@ -136,7 +141,7 @@ export function RecurrenceIconButton({
               type="button"
               role="menuitem"
             >
-              カスタム...
+              {t('plan.inspector.recurrence.customEllipsis')}
             </button>
           </div>
         </PopoverContent>

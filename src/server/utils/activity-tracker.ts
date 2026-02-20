@@ -108,11 +108,11 @@ function detectChanges(oldData: Record<string, any>, newData: Record<string, any
   // 通知設定変更
   if (oldData.reminder_minutes !== newData.reminder_minutes) {
     const formatReminder = (minutes: number | null | undefined): string => {
-      if (minutes === null || minutes === undefined) return 'なし';
-      if (minutes === 0) return '開始時';
-      if (minutes < 60) return `${minutes}分前`;
-      if (minutes < 1440) return `${minutes / 60}時間前`;
-      return `${minutes / 1440}日前`;
+      if (minutes === null || minutes === undefined) return 'None';
+      if (minutes === 0) return 'At start';
+      if (minutes < 60) return `${minutes}min before`;
+      if (minutes < 1440) return `${minutes / 60}h before`;
+      return `${minutes / 1440}d before`;
     };
     changes.push({
       field_name: 'reminder',

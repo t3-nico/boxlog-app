@@ -2,12 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
-
-interface UseNotificationsOptions {
-  events: CalendarPlan[];
-  onReminderTriggered?: (event: CalendarPlan) => void;
-}
+import { logger } from '@/lib/logger';
 
 interface UseNotificationsReturn {
   permission: NotificationPermission;
@@ -16,42 +11,32 @@ interface UseNotificationsReturn {
 }
 
 /**
- * ブラウザ通知を管理するフック
+ * Browser notification permission management hook
  *
- * @param options - 通知オプション
- * @param options.events - 監視対象のイベント配列
- * @param options.onReminderTriggered - リマインダーがトリガーされた時のコールバック
- * @returns 通知の権限状態と権限リクエスト関数
+ * Manages notification permission state and provides a function to request permission.
+ * Reminder monitoring is handled server-side via Edge Function + Realtime subscription.
+ *
+ * @returns Notification permission state and request function
  *
  * @example
  * ```tsx
- * const { permission, hasRequested, requestPermission } = useNotifications({
- *   events: calendarEvents,
- *   onReminderTriggered: (event) => {
- *     console.log('Reminder for:', event.title)
- *   },
- * })
+ * const { permission, hasRequested, requestPermission } = useNotifications();
  * ```
  */
-export function useNotifications({
-  events,
-  onReminderTriggered,
-}: UseNotificationsOptions): UseNotificationsReturn {
+export function useNotifications(): UseNotificationsReturn {
   const [permission, setPermission] = useState<NotificationPermission>('default');
   const [hasRequested, setHasRequested] = useState(false);
 
-  // 初回マウント時に現在の通知権限を取得
+  // Get current notification permission on mount
   useEffect(() => {
     if (typeof window !== 'undefined' && 'Notification' in window) {
       setPermission(Notification.permission);
-      // localStorage から権限リクエスト履歴を取得
       const requested = localStorage.getItem('notification-permission-requested');
-
       setHasRequested(requested === 'true');
     }
   }, []);
 
-  // 通知権限をリクエストする関数
+  // Request notification permission
   const requestPermission = useCallback(async () => {
     if (typeof window === 'undefined' || !('Notification' in window)) {
       return;
@@ -63,40 +48,9 @@ export function useNotifications({
       setHasRequested(true);
       localStorage.setItem('notification-permission-requested', 'true');
     } catch (error) {
-      console.error('通知権限のリクエストに失敗しました:', error);
+      logger.error('Failed to request notification permission:', error);
     }
   }, []);
-
-  // イベントのリマインダーを監視（将来の実装用）
-  useEffect(() => {
-    if (permission !== 'granted' || events.length === 0) {
-      return;
-    }
-
-    const checkReminders = () => {
-      const now = new Date();
-      events.forEach((event) => {
-        // イベント開始15分前に通知（例）
-        if (!event.startDate) return;
-        const eventStart = new Date(event.startDate);
-        const reminderTime = new Date(eventStart.getTime() - 15 * 60 * 1000);
-
-        if (now >= reminderTime && now < eventStart) {
-          // リマインダーをトリガー
-          if (onReminderTriggered) {
-            onReminderTriggered(event);
-          }
-        }
-      });
-    };
-
-    // 1分ごとにチェック（本番では間隔を調整）
-    const intervalId = setInterval(checkReminders, 60 * 1000);
-
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, [permission, events, onReminderTriggered]);
 
   return {
     permission,

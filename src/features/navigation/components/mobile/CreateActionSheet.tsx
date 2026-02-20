@@ -37,16 +37,16 @@ export function CreateActionSheet({ open, onOpenChange, onSelect }: CreateAction
   const actions = [
     {
       id: 'plan' as const,
-      label: t('createSheet.plan'),
-      description: t('createSheet.planDescription'),
+      label: t('common.createSheet.plan'),
+      description: t('common.createSheet.planDescription'),
       icon: Calendar,
       color: 'text-primary',
       bgColor: 'bg-muted',
     },
     {
       id: 'record' as const,
-      label: t('createSheet.record'),
-      description: t('createSheet.recordDescription'),
+      label: t('common.createSheet.record'),
+      description: t('common.createSheet.recordDescription'),
       icon: CheckSquare,
       color: 'text-success',
       bgColor: 'bg-muted',
@@ -62,8 +62,8 @@ export function CreateActionSheet({ open, onOpenChange, onSelect }: CreateAction
     <Drawer open={open} onOpenChange={onOpenChange}>
       <DrawerContent className="pb-safe-area-inset-bottom">
         <DrawerHeader className="text-center">
-          <DrawerTitle>{t('createSheet.title')}</DrawerTitle>
-          <DrawerDescription>{t('createSheet.description')}</DrawerDescription>
+          <DrawerTitle>{t('common.createSheet.title')}</DrawerTitle>
+          <DrawerDescription>{t('common.createSheet.description')}</DrawerDescription>
         </DrawerHeader>
 
         <div className="flex flex-col gap-2 px-4 pb-6">

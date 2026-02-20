@@ -5,6 +5,7 @@
 
 import { MS_PER_MINUTE } from '@/constants/time';
 import type { Plan } from '@/features/plans/types/plan';
+import { encodeInstanceId } from '@/features/plans/utils/instanceId';
 import {
   expandRecurrence,
   isRecurringPlan,
@@ -47,7 +48,7 @@ export function planToCalendarPlan(plan: PlanWithTagIds): CalendarPlan {
   })();
 
   // 繰り返し設定があるかチェック
-  const isRecurring = !!(plan.recurrence_type && plan.recurrence_type !== 'none');
+  const isRecurring = isRecurringPlan(plan);
 
   return {
     id: plan.id,
@@ -233,7 +234,7 @@ function occurrenceToCalendarPlan(
 
   // 一意のIDを生成（元プランID + 日付）
   const instanceDate = occurrence.date.toISOString().slice(0, 10);
-  const instanceId = `${basePlan.id}_${instanceDate}`;
+  const instanceId = encodeInstanceId(basePlan.id, instanceDate);
 
   return {
     id: instanceId,

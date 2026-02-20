@@ -58,9 +58,6 @@ interface CalendarSettings {
     wakeTime: number; // 起床時刻（0-23）
   };
 
-  // 睡眠時間帯折りたたみ
-  sleepHoursCollapsed: boolean;
-
   // グリッド密度
   hourHeightDensity: HourHeightDensity;
 }
@@ -98,7 +95,6 @@ const defaultSettings: CalendarSettings = {
     bedtime: 23,
     wakeTime: 7,
   },
-  sleepHoursCollapsed: false,
   hourHeightDensity: 'default',
 };
 

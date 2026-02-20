@@ -8,6 +8,8 @@ import { PlanListCard } from './PlanListCard';
 /**
  * アサイド用の Plan カード。
  *
+ * - 透明背景 + フラットなリスト表示（角丸なし）
+ * - ホバー領域は左右8pxの余白を確保（-mx-1で親paddingに食い込み）
  * - チェックボックスで open/closed 切り替え
  * - 時間範囲 + 作業時間をメタ情報行に表示
  * - タグ表示（TagsContainer）

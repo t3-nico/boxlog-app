@@ -13,29 +13,14 @@ import {
   getProductivityZoneForHour,
 } from '@/types/chronotype';
 
-import { COLLAPSED_SECTION_HEIGHT } from '../components/CollapsedSleepSection';
-
-interface SleepHoursInfo {
-  wakeTime: number;
-  bedtime: number;
-  totalHours: number;
-}
-
-interface CollapsedLayoutInfo {
-  awakeStartY: number;
-}
-
 interface UseCurrentTimeLineOptions {
   hourHeight: number;
   showCurrentTime: boolean;
-  sleepHours: SleepHoursInfo | null;
-  collapsedLayout: CollapsedLayoutInfo | null;
 }
 
 interface UseCurrentTimeLineReturn {
   currentTime: Date;
   currentTimePosition: number;
-  collapsedCurrentTimePosition: number;
   currentTimeLineColor: string | null;
 }
 
@@ -45,8 +30,6 @@ interface UseCurrentTimeLineReturn {
 export const useCurrentTimeLine = ({
   hourHeight,
   showCurrentTime,
-  sleepHours,
-  collapsedLayout,
 }: UseCurrentTimeLineOptions): UseCurrentTimeLineReturn => {
   // クロノタイプ設定
   const chronotype = useCalendarSettingsStore((state) => state.chronotype);
@@ -96,46 +79,9 @@ export const useCurrentTimeLine = ({
     return () => clearInterval(timer);
   }, [showCurrentTime]);
 
-  // 折りたたみ時の現在時刻線位置を計算
-  const collapsedCurrentTimePosition = useMemo(() => {
-    if (!collapsedLayout || !sleepHours) return currentTimePosition;
-
-    const currentHour = currentTime.getHours();
-    const currentMinutes = currentTime.getMinutes();
-    const { wakeTime, bedtime, totalHours } = sleepHours;
-
-    // 睡眠時間帯内かどうか判定
-    const isCrossingMidnight = bedtime >= wakeTime;
-    const isInSleepHours = isCrossingMidnight
-      ? currentHour >= bedtime || currentHour < wakeTime
-      : currentHour >= bedtime && currentHour < wakeTime;
-
-    if (isInSleepHours) {
-      // 睡眠時間帯内の場合、折りたたみセクション内に比例配置
-      let hoursIntoSleep: number;
-      if (isCrossingMidnight) {
-        // 日跨ぎ: bedtime(23)から深夜0時、そして0時からwakeTime(7)まで
-        if (currentHour >= bedtime) {
-          hoursIntoSleep = currentHour - bedtime + currentMinutes / 60;
-        } else {
-          hoursIntoSleep = 24 - bedtime + currentHour + currentMinutes / 60;
-        }
-      } else {
-        hoursIntoSleep = currentHour - bedtime + currentMinutes / 60;
-      }
-      const ratio = hoursIntoSleep / totalHours;
-      return ratio * COLLAPSED_SECTION_HEIGHT;
-    }
-
-    // 起きている時間帯の場合
-    const hoursFromWake = currentHour - wakeTime + currentMinutes / 60;
-    return collapsedLayout.awakeStartY + hoursFromWake * hourHeight;
-  }, [collapsedLayout, currentTimePosition, currentTime, sleepHours, hourHeight]);
-
   return {
     currentTime,
     currentTimePosition,
-    collapsedCurrentTimePosition,
     currentTimeLineColor,
   };
 };

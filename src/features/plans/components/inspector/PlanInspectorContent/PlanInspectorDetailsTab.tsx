@@ -11,7 +11,13 @@
 import { memo, useCallback } from 'react';
 
 import { useTranslations } from 'next-intl';
-import { NoteIconButton, ScheduleRow, TagsIconButton, TitleInput } from '../shared';
+import {
+  InspectorDetailsLayout,
+  NoteIconButton,
+  ScheduleRow,
+  TagsIconButton,
+  TitleInput,
+} from '../shared';
 
 import { SuggestInput } from '@/components/common/SuggestInput';
 import type { Tag } from '@/features/tags/types';
@@ -30,7 +36,7 @@ interface PlanInspectorDetailsTabProps {
   scheduleDate: Date | undefined; // スケジュール日（カレンダー配置用）
   startTime: string;
   endTime: string;
-  reminderType: string;
+  reminderMinutes: number | null;
   selectedTagIds: string[];
   recurrenceRule: string | null;
   recurrenceType: RecurrenceType;
@@ -40,13 +46,17 @@ interface PlanInspectorDetailsTabProps {
   onScheduleDateChange: (date: Date | undefined) => void;
   onStartTimeChange: (time: string) => void;
   onEndTimeChange: (time: string) => void;
-  onReminderChange: (type: string) => void;
+  onReminderChange: (minutes: number | null) => void;
   onTagsChange: (tagIds: string[]) => void;
   onRemoveTag: (tagId: string) => void;
   onRepeatTypeChange: (type: string) => void;
   onRecurrenceRuleChange: (rrule: string | null) => void;
   /** ドラフトモード（新規作成時） */
   isDraftMode?: boolean;
+  /** ドラフトモード用: 選択済み Record IDs */
+  draftRecordIds?: string[];
+  /** ドラフトモード用: Record IDs 変更コールバック */
+  onDraftRecordIdsChange?: (ids: string[]) => void;
   /** 外部からタグデータを注入（Storybook等で使用） */
   availableTags?: Tag[] | undefined;
 }
@@ -58,7 +68,7 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
   scheduleDate,
   startTime,
   endTime,
-  reminderType,
+  reminderMinutes,
   selectedTagIds,
   recurrenceRule,
   recurrenceType,
@@ -72,6 +82,8 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
   onRepeatTypeChange,
   onRecurrenceRuleChange,
   isDraftMode = false,
+  draftRecordIds,
+  onDraftRecordIdsChange,
   availableTags,
 }: PlanInspectorDetailsTabProps) {
   const t = useTranslations();
@@ -85,16 +97,15 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
   );
 
   return (
-    <>
-      {/* Row 1: Title */}
-      <div className="flex items-center gap-2 px-4 pt-4 pb-2">
-        {isDraftMode ? (
+    <InspectorDetailsLayout
+      title={
+        isDraftMode ? (
           <SuggestInput
             value={plan.title}
             onChange={(value) => onAutoSave('title', value)}
             onSuggestionSelect={handleSuggestionSelect}
-            placeholder="タイトルを追加"
-            className="flex-1"
+            type="plan"
+            placeholder={t('plan.inspector.addTitle')}
             autoFocus
           />
         ) : (
@@ -103,58 +114,52 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
             value={plan.title}
             onChange={(value) => onAutoSave('title', value)}
             placeholder={t('calendar.event.noTitle')}
-            className="flex-1"
           />
-        )}
-      </div>
-
-      {/* Row 2: Date + Time + Duration */}
-      <ScheduleRow
-        selectedDate={scheduleDate}
-        startTime={startTime}
-        endTime={endTime}
-        onDateChange={onScheduleDateChange}
-        onStartTimeChange={onStartTimeChange}
-        onEndTimeChange={onEndTimeChange}
-        timeConflictError={timeConflictError}
-      />
-
-      {/* Row 3: Option Icons */}
-      <div className="flex flex-wrap items-center gap-1 px-4 pt-2 pb-4">
-        {/* Tags */}
-        <TagsIconButton
-          tagIds={selectedTagIds}
-          onTagsChange={onTagsChange}
-          popoverSide="bottom"
-          {...(availableTags ? { availableTags } : {})}
+        )
+      }
+      schedule={
+        <ScheduleRow
+          selectedDate={scheduleDate}
+          startTime={startTime}
+          endTime={endTime}
+          onDateChange={onScheduleDateChange}
+          onStartTimeChange={onStartTimeChange}
+          onEndTimeChange={onEndTimeChange}
+          timeConflictError={timeConflictError}
         />
-
-        {/* Records - 編集モードのみ */}
-        {!isDraftMode && planId && <RecordsIconButton planId={planId} />}
-
-        {/* Description */}
-        <NoteIconButton
-          id={plan.id}
-          note={plan.description || ''}
-          onNoteChange={(html) => onAutoSave('description', html)}
-          labels={{
-            editTooltip: '説明を編集',
-            addTooltip: '説明を追加',
-            placeholder: '説明を追加...',
-          }}
-        />
-
-        {/* Recurrence */}
-        <RecurrenceIconButton
-          recurrenceRule={recurrenceRule}
-          recurrenceType={recurrenceType}
-          onRepeatTypeChange={onRepeatTypeChange}
-          onRecurrenceRuleChange={onRecurrenceRuleChange}
-        />
-
-        {/* Reminder */}
-        <ReminderSelect value={reminderType} onChange={onReminderChange} variant="icon" />
-      </div>
-    </>
+      }
+      options={
+        <>
+          <TagsIconButton
+            tagIds={selectedTagIds}
+            onTagsChange={onTagsChange}
+            popoverSide="bottom"
+            {...(availableTags ? { availableTags } : {})}
+          />
+          <RecordsIconButton
+            planId={planId ?? null}
+            draftRecordIds={draftRecordIds}
+            onDraftRecordIdsChange={onDraftRecordIdsChange}
+          />
+          <NoteIconButton
+            id={plan.id}
+            note={plan.description || ''}
+            onNoteChange={(html) => onAutoSave('description', html)}
+            labels={{
+              editTooltip: t('plan.inspector.editDescription'),
+              addTooltip: t('plan.inspector.addDescription'),
+              placeholder: t('plan.inspector.addDescriptionPlaceholder'),
+            }}
+          />
+          <RecurrenceIconButton
+            recurrenceRule={recurrenceRule}
+            recurrenceType={recurrenceType}
+            onRepeatTypeChange={onRepeatTypeChange}
+            onRecurrenceRuleChange={onRecurrenceRuleChange}
+          />
+          <ReminderSelect value={reminderMinutes} onChange={onReminderChange} variant="icon" />
+        </>
+      }
+    />
   );
 });

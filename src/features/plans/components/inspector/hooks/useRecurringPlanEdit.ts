@@ -12,10 +12,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import type { RecurringEditScope } from '@/features/plans/components/RecurringEditConfirmDialog';
-import { usePlanInstanceMutations } from '@/features/plans/hooks/usePlanInstances';
-import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
+import { useRecurringScopeMutations } from '@/features/plans/hooks/useRecurringScopeMutations';
 import { useRecurringEditConfirmStore } from '@/features/plans/stores/useRecurringEditConfirmStore';
-import { api } from '@/lib/trpc';
+import { isRecurringPlan } from '@/features/plans/utils/recurrence';
+import { logger } from '@/lib/logger';
 
 import type { Plan } from '../../../types/plan';
 
@@ -37,60 +37,16 @@ interface UseRecurringPlanEditOptions {
 }
 
 export function useRecurringPlanEdit({ plan, planId, instanceDate }: UseRecurringPlanEditOptions) {
-  const utils = api.useUtils();
-  const { updatePlan } = usePlanMutations();
-  const { createInstance } = usePlanInstanceMutations();
+  const { applyEdit } = useRecurringScopeMutations();
 
   // グローバルダイアログストア
   const openDialog = useRecurringEditConfirmStore((state) => state.openDialog);
-
-  // 繰り返しプラン分割用mutation（楽観的更新付き）
-  const splitRecurrence = api.plans.splitRecurrence.useMutation({
-    // 楽観的更新: 分割直後に親プランの終了日を即座に更新
-    onMutate: async (input) => {
-      // 進行中のクエリをキャンセル
-      await utils.plans.list.cancel();
-      await utils.plans.getInstances.cancel();
-
-      // 現在のキャッシュを保存（ロールバック用）
-      const previousPlans = utils.plans.list.getData();
-
-      // 親プランのrecurrence_end_dateを楽観的に更新（splitDateの前日）
-      const splitDate = new Date(input.splitDate);
-      splitDate.setDate(splitDate.getDate() - 1);
-      const endDateString = splitDate.toISOString().slice(0, 10);
-
-      utils.plans.list.setData(undefined, (oldData) => {
-        if (!oldData) return oldData;
-        return oldData.map((p) => {
-          if (p.id === input.planId) {
-            return { ...p, recurrence_end_date: endDateString };
-          }
-          return p;
-        });
-      });
-
-      return { previousPlans };
-    },
-    onSuccess: () => {
-      // 新プランが作成されるため、必ずinvalidateで最新データを取得
-      void utils.plans.list.invalidate();
-      void utils.plans.getInstances.invalidate();
-    },
-    onError: (_err, _input, context) => {
-      // エラー時: ロールバック
-      if (context?.previousPlans) {
-        utils.plans.list.setData(undefined, context.previousPlans);
-      }
-      void utils.plans.getInstances.invalidate();
-    },
-  });
 
   // 繰り返しインスタンスかどうか
   const isRecurringInstance = useMemo(() => {
     if (!plan || !instanceDate) return false;
     // 繰り返し設定があり、かつインスタンス日付が指定されている
-    return !!(plan.recurrence_type && plan.recurrence_type !== 'none');
+    return isRecurringPlan(plan);
   }, [plan, instanceDate]);
 
   // 保留中の変更
@@ -145,47 +101,22 @@ export function useRecurringPlanEdit({ plan, planId, instanceDate }: UseRecurrin
       }
 
       try {
-        switch (scope) {
-          case 'this': {
-            // このイベントのみ: modified例外を作成
-            await createInstance.mutateAsync({
-              planId,
-              instanceDate,
-              exceptionType: 'modified',
-              overrides: changesToApply,
-            });
-            break;
-          }
-
-          case 'thisAndFuture': {
-            // この日以降: 親プランを分割して新プランを作成
-            await splitRecurrence.mutateAsync({
-              planId,
-              splitDate: instanceDate,
-              overrides: changesToApply,
-            });
-            break;
-          }
-
-          case 'all': {
-            // すべてのイベント: 親プランを直接更新
-            await updatePlan.mutateAsync({
-              id: planId,
-              data: changesToApply,
-            });
-            break;
-          }
-        }
+        await applyEdit({
+          scope,
+          planId,
+          instanceDate,
+          overrides: changesToApply,
+        });
 
         // 成功したら保留中の変更をクリア
         setPendingChanges({});
         pendingChangesRef.current = {};
         pendingFieldRef.current = null;
       } catch (error) {
-        console.error('Failed to apply recurring edit:', error);
+        logger.error('Failed to apply recurring edit:', error);
       }
     },
-    [planId, instanceDate, createInstance, updatePlan, splitRecurrence],
+    [planId, instanceDate, applyEdit],
   );
 
   /**

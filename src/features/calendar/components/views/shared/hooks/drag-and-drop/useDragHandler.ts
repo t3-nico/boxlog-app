@@ -28,6 +28,10 @@ interface UseDragHandlerProps {
   date: Date;
   displayDates: Date[] | undefined;
   viewMode: string;
+  /** カレンダー設定のタイムゾーン（例: 'Asia/Tokyo'） */
+  timezone: string;
+  /** 1時間あたりの高さ（px）— レスポンシブ対応 */
+  hourHeight: number;
   eventUpdateHandler:
     | ((
         eventId: string,
@@ -45,6 +49,8 @@ export function useDragHandler({
   date,
   displayDates,
   viewMode,
+  timezone,
+  hourHeight,
   eventUpdateHandler,
   eventClickHandler,
   dragDataRef,
@@ -141,6 +147,7 @@ export function useDragHandler({
         targetDateIndex,
         viewMode,
         displayDates,
+        hourHeight,
       );
 
       // originalElementRect（mousedown時点の位置）を基準に計算
@@ -163,9 +170,11 @@ export function useDragHandler({
         date,
         viewMode,
         displayDates,
+        hourHeight,
+        timezone,
       );
 
-      updateTimeDisplay(dragData.dragElement || null, previewStartTime, previewEndTime);
+      updateTimeDisplay(dragData.dragElement || null, previewStartTime, previewEndTime, timezone);
 
       // クライアント側で重複チェック（全イベントを使用して別日への移動もチェック）
       const eventsToCheck = allEventsForOverlapCheck ?? events;
@@ -191,19 +200,34 @@ export function useDragHandler({
         isOverlapping,
       }));
     },
-    [events, allEventsForOverlapCheck, date, viewMode, displayDates, dragDataRef, setDragState],
+    [
+      events,
+      allEventsForOverlapCheck,
+      date,
+      viewMode,
+      displayDates,
+      timezone,
+      hourHeight,
+      dragDataRef,
+      setDragState,
+    ],
   );
 
   // プランドロップのヘルパー
   const handleEventDrop = useCallback(
     (eventId: string, newStartTime: Date) => {
       if (eventUpdateHandler) {
-        const { durationMs } = calculateEventDuration(events, eventId, dragDataRef.current);
+        const { durationMs } = calculateEventDuration(
+          events,
+          eventId,
+          dragDataRef.current,
+          hourHeight,
+        );
         const newEndTime = new Date(newStartTime.getTime() + durationMs);
         eventUpdateHandler(eventId, { startTime: newStartTime, endTime: newEndTime });
       }
     },
-    [eventUpdateHandler, events, dragDataRef],
+    [eventUpdateHandler, events, dragDataRef, hourHeight],
   );
 
   // クリック処理
@@ -298,6 +322,7 @@ export function useDragHandler({
         events,
         dragDataRef.current.eventId,
         dragDataRef.current,
+        hourHeight,
       );
 
       if (!event) {
@@ -335,7 +360,7 @@ export function useDragHandler({
         return false; // エラー時はスナップバック必要
       }
     },
-    [eventUpdateHandler, events, dragDataRef, handleEventUpdateToast, calendarToast, t],
+    [eventUpdateHandler, events, dragDataRef, handleEventUpdateToast, calendarToast, t, hourHeight],
   );
 
   return {

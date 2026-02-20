@@ -334,11 +334,12 @@ deno_version = 2
 # [edge_runtime.secrets]
 # secret_key = "env(SECRET_VALUE)"
 
-# Cron jobs for Edge Functions (not yet supported in supabase CLI)
-# [[edge_runtime.cron_jobs]]
-# name = "check-reminders"
-# schedule = "* * * * *"  # Every minute
-# function_name = "check-reminders"
+# Cron jobs for Edge Functions
+# Note: For production, configure via Supabase Dashboard > Database > pg_cron
+[[edge_runtime.cron_jobs]]
+name = "check-reminders"
+schedule = "* * * * *"
+function_name = "check-reminders"
 
 [analytics]
 enabled = true

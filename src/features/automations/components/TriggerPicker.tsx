@@ -1,6 +1,7 @@
 'use client';
 
 import { ChevronDown } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -122,6 +123,7 @@ export function TriggerPicker({
   onTagIdsChange,
   availableTags,
 }: TriggerPickerProps) {
+  const t = useTranslations();
   const selectedLabel = FIELD_OPTIONS.find((o) => o.value === field)?.label;
 
   function toggleTag(tagId: string) {
@@ -290,7 +292,7 @@ export function TriggerPicker({
               value={timeRange.start}
               onChange={(e) => onValueChange(`${e.target.value}-${timeRange.end}`)}
               className="w-32"
-              aria-label="開始時刻"
+              aria-label={t('common.aria.startTime')}
             />
             <span className="text-muted-foreground text-sm">〜</span>
             <Input
@@ -298,7 +300,7 @@ export function TriggerPicker({
               value={timeRange.end}
               onChange={(e) => onValueChange(`${timeRange.start}-${e.target.value}`)}
               className="w-32"
-              aria-label="終了時刻"
+              aria-label={t('common.aria.endTime')}
             />
           </div>
         </div>

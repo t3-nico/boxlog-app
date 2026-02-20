@@ -12,7 +12,8 @@ import { memo } from 'react';
 import { Circle } from 'lucide-react';
 
 import { useCalendarDragStore } from '@/features/calendar/stores/useCalendarDragStore';
-import { useDateFormat } from '@/features/settings/hooks/useDateFormat';
+import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
+import { formatInTimezone } from '@/lib/date/timezone';
 import { cn } from '@/lib/utils';
 
 import { calendarStyles } from '../../../../theme/styles';
@@ -33,7 +34,7 @@ export const PanelDragPreview = memo(function PanelDragPreview({
   const previewTime = useCalendarDragStore((s) => s.previewTime);
   const planData = useCalendarDragStore((s) => s.draggedPlanData);
 
-  const { formatTime } = useDateFormat();
+  const timezone = useCalendarSettingsStore((s) => s.timezone);
 
   // パネルドラッグ中 && この日のカラム && 位置データあり
   if (dragSource !== 'panel' || targetDateIndex !== dayIndex || !snappedPosition || !previewTime) {
@@ -43,8 +44,9 @@ export const PanelDragPreview = memo(function PanelDragPreview({
   const height = snappedPosition.height ?? hourHeight;
   const title = planData?.title || '';
 
-  const startTimeStr = formatTime(previewTime.start);
-  const endTimeStr = formatTime(previewTime.end);
+  // previewTime はUTC（convertFromTimezone済み）なのでカレンダーTZで表示
+  const startTimeStr = formatInTimezone(previewTime.start, timezone, 'H:mm');
+  const endTimeStr = formatInTimezone(previewTime.end, timezone, 'H:mm');
 
   return (
     <div

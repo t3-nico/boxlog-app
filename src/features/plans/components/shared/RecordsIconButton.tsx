@@ -4,15 +4,19 @@
  * Records紐付けアイコンボタン
  *
  * Plan Inspector の Row 3 で使用。
- * Record画面のPlan紐付けと同じUIパターン（Command/CommandList）。
+ * TagsIconButton と同じ Badge + X パターンで Record を表示。
+ * Popover では未紐付き Record を検索・選択して紐付ける。
+ *
+ * ドラフトモード（planId が null）では API mutation の代わりに
+ * コールバック経由でローカル状態を管理する。
  */
 
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
-import { Clock, ExternalLink, Plus, Smile } from 'lucide-react';
-import { useLocale } from 'next-intl';
-import Link from 'next/link';
+import { Check, ListChecks, Plus, X } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
+import { Badge } from '@/components/ui/badge';
 import {
   Command,
   CommandEmpty,
@@ -27,220 +31,297 @@ import { HoverTooltip } from '@/components/ui/tooltip';
 import { zIndex } from '@/config/ui/z-index';
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
 import { useTags } from '@/features/tags/hooks';
+import { logger } from '@/lib/logger';
 import { api } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
 
 interface RecordsIconButtonProps {
-  planId: string;
+  planId: string | null;
+  /** ドラフトモード用: 選択済み Record IDs */
+  draftRecordIds?: string[] | undefined;
+  /** ドラフトモード用: Record IDs 変更コールバック */
+  onDraftRecordIdsChange?: ((ids: string[]) => void) | undefined;
   disabled?: boolean;
 }
 
-/**
- * 時間をフォーマット（分 → 時間:分）
- */
-function formatDuration(minutes: number): string {
-  const hours = Math.floor(minutes / 60);
-  const mins = minutes % 60;
-  if (hours === 0) {
-    return `${mins}m`;
-  }
-  return mins > 0 ? `${hours}h ${mins}m` : `${hours}h`;
-}
-
-/**
- * 充実度スコアの色を取得
- */
-function getScoreColor(score: number): string {
-  const colors = [
-    'text-red-500',
-    'text-orange-500',
-    'text-yellow-500',
-    'text-lime-500',
-    'text-green-500',
-  ];
-  return colors[score - 1] ?? 'text-muted-foreground';
-}
-
-export function RecordsIconButton({ planId, disabled = false }: RecordsIconButtonProps) {
-  const locale = useLocale();
+export function RecordsIconButton({
+  planId,
+  draftRecordIds,
+  onDraftRecordIdsChange,
+  disabled = false,
+}: RecordsIconButtonProps) {
+  const t = useTranslations();
+  const utils = api.useUtils();
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const openInspectorWithDraft = usePlanInspectorStore((state) => state.openInspectorWithDraft);
 
-  const { data: records, isPending } = api.records.listByPlan.useQuery(
-    { planId, sortOrder: 'desc' },
-    { enabled: isOpen }, // Popoverが開いた時のみ取得
+  const isDraftMode = !planId;
+  const hasDraftRecords = isDraftMode && (draftRecordIds?.length ?? 0) > 0;
+
+  // 紐付き Record（Badge 表示用）— ドラフトモードではスキップ
+  const { data: records } = api.records.listByPlan.useQuery(
+    { planId: planId!, sortOrder: 'desc' },
+    { enabled: !!planId },
+  );
+
+  // 全 Record（Popover 候補用 + ドラフトモードの Badge 表示用）
+  const { data: allRecords, isPending: isAllRecordsPending } = api.records.list.useQuery(
+    {},
+    { enabled: isOpen || hasDraftRecords },
   );
 
   // タグデータ取得
   const { data: allTags = [] } = useTags();
 
-  const recordCount = records?.length ?? 0;
-  const hasRecords = recordCount > 0;
+  // 紐付き Record の ID セット
+  const linkedRecordIds = useMemo(
+    () => (isDraftMode ? new Set(draftRecordIds ?? []) : new Set(records?.map((r) => r.id) ?? [])),
+    [isDraftMode, draftRecordIds, records],
+  );
 
-  // 合計時間を計算
-  const totalMinutes = records?.reduce((sum, r) => sum + r.duration_minutes, 0) ?? 0;
+  // Badge 表示用 Record リスト
+  const displayRecords = useMemo(() => {
+    if (!isDraftMode) return records ?? [];
+    if (!allRecords || !draftRecordIds?.length) return [];
+    const idSet = new Set(draftRecordIds);
+    return allRecords.filter((r) => idSet.has(r.id));
+  }, [isDraftMode, records, allRecords, draftRecordIds]);
 
-  // 検索フィルタリング
-  const filteredRecords = useMemo(() => {
-    if (!records) return [];
-    if (!searchQuery.trim()) return records;
+  // 検索フィルタ関数
+  const matchesQuery = useCallback(
+    (r: { title?: string | null; worked_at: string }) => {
+      if (!searchQuery.trim()) return true;
+      const q = searchQuery.toLowerCase();
+      return (r.title?.toLowerCase() ?? '').includes(q) || r.worked_at.toLowerCase().includes(q);
+    },
+    [searchQuery],
+  );
 
-    const query = searchQuery.toLowerCase();
-    return records.filter((record) => {
-      const title = record.title?.toLowerCase() ?? '';
-      const note = record.note?.toLowerCase() ?? '';
-      const date = record.worked_at.toLowerCase();
-      return title.includes(query) || note.includes(query) || date.includes(query);
+  // Popover 内: 全 Record（紐付き済みを先頭にソート + 検索フィルタ適用）
+  const sortedRecords = useMemo(() => {
+    if (!allRecords) return [];
+    const filtered = allRecords.filter(matchesQuery);
+    return [...filtered].sort((a, b) => {
+      const aLinked = linkedRecordIds.has(a.id);
+      const bLinked = linkedRecordIds.has(b.id);
+      if (aLinked && !bLinked) return -1;
+      if (!aLinked && bLinked) return 1;
+      return 0;
     });
-  }, [records, searchQuery]);
+  }, [allRecords, linkedRecordIds, matchesQuery]);
 
-  // 新しいRecordを作成（このPlanに紐づけて）
-  // TODO: PlanInspectorのRecord作成モードでplanIdを事前選択できるようにする
-  const handleCreateRecord = () => {
+  // Record を Plan に紐付け（API モードのみ）
+  const linkRecord = api.records.update.useMutation({
+    onError: (error) => {
+      logger.error('[RecordsIconButton] linkRecord error', { error: error.message });
+    },
+    onSettled: () => {
+      if (!planId) return;
+      void utils.records.listByPlan.invalidate({ planId });
+      void utils.records.list.invalidate();
+      void utils.plans.getCumulativeTime.invalidate();
+    },
+  });
+
+  // Record の plan_id を null にして紐付け解除（API モードのみ）
+  const unlinkRecord = api.records.update.useMutation({
+    onMutate: async ({ id }) => {
+      if (!planId) return { previous: undefined };
+      await utils.records.listByPlan.cancel({ planId });
+      const previous = utils.records.listByPlan.getData({ planId, sortOrder: 'desc' });
+
+      utils.records.listByPlan.setData({ planId, sortOrder: 'desc' }, (old) => {
+        if (!old) return old;
+        return old.filter((r) => r.id !== id);
+      });
+
+      return { previous };
+    },
+    onError: (_err, _input, context) => {
+      if (context?.previous && planId) {
+        utils.records.listByPlan.setData({ planId, sortOrder: 'desc' }, context.previous);
+      }
+    },
+    onSettled: () => {
+      if (!planId) return;
+      void utils.records.listByPlan.invalidate({ planId });
+      void utils.records.list.invalidate();
+      void utils.plans.getCumulativeTime.invalidate();
+    },
+  });
+
+  const handleLinkRecord = useCallback(
+    (recordId: string) => {
+      if (isDraftMode && onDraftRecordIdsChange) {
+        onDraftRecordIdsChange([...(draftRecordIds ?? []), recordId]);
+      } else if (planId) {
+        linkRecord.mutate({ id: recordId, data: { plan_id: planId } });
+      }
+    },
+    [isDraftMode, onDraftRecordIdsChange, draftRecordIds, planId, linkRecord],
+  );
+
+  const handleUnlinkRecord = useCallback(
+    (recordId: string) => {
+      if (isDraftMode && onDraftRecordIdsChange) {
+        onDraftRecordIdsChange((draftRecordIds ?? []).filter((id) => id !== recordId));
+      } else if (planId) {
+        unlinkRecord.mutate({ id: recordId, data: { plan_id: null } });
+      }
+    },
+    [isDraftMode, onDraftRecordIdsChange, draftRecordIds, planId, unlinkRecord],
+  );
+
+  // 新しいRecordを作成（このPlanに紐づけて）— API モードのみ
+  const handleCreateRecord = useCallback(() => {
+    if (!planId) return;
     setIsOpen(false);
-    openInspectorWithDraft(undefined, 'record');
-  };
+    openInspectorWithDraft({ plan_id: planId }, 'record');
+  }, [planId, openInspectorWithDraft]);
 
   return (
-    <Popover open={isOpen} onOpenChange={setIsOpen}>
-      <HoverTooltip content={hasRecords ? `Records (${recordCount})` : 'Recordを追加'} side="top">
-        <PopoverTrigger asChild>
-          <button
-            type="button"
-            disabled={disabled}
-            className={cn(
-              'relative flex h-8 items-center gap-1 rounded-lg px-2 transition-colors',
-              'hover:bg-state-hover focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
-              hasRecords ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',
-            )}
-            aria-label={hasRecords ? `Records (${recordCount})` : 'Recordを追加'}
-          >
-            <Clock className="size-4" />
-            {hasRecords && (
-              <span className="text-sm tabular-nums">{formatDuration(totalMinutes)}</span>
-            )}
-          </button>
-        </PopoverTrigger>
-      </HoverTooltip>
-      <PopoverContent
-        className="w-[400px] p-0"
-        align="start"
-        side="bottom"
-        sideOffset={8}
-        style={{ zIndex: zIndex.overlayDropdown }}
-      >
-        {isPending ? (
-          <div className="flex items-center justify-center py-8">
-            <Spinner size="sm" />
-          </div>
-        ) : (
-          <Command shouldFilter={false}>
-            <CommandInput
-              placeholder="Recordを検索..."
-              value={searchQuery}
-              onValueChange={setSearchQuery}
-            />
-            <CommandList className="max-h-[280px]">
-              {/* 合計時間サマリー */}
-              {hasRecords && (
-                <div className="bg-surface-container mx-2 my-2 flex items-center justify-between rounded-lg px-4 py-2">
-                  <span className="text-muted-foreground text-xs">合計</span>
-                  <span className="text-sm font-bold tabular-nums">
-                    {formatDuration(totalMinutes)}
-                  </span>
-                </div>
+    <div className="flex flex-wrap items-center gap-1">
+      {/* 紐付き Record（Badge 表示） */}
+      {displayRecords.map((record) => (
+        <Badge
+          key={record.id}
+          variant="outline"
+          className="h-7 gap-1 bg-transparent text-xs font-normal"
+        >
+          <span className="max-w-20 truncate">{record.title || t('plan.inspector.noTitle')}</span>
+          {!disabled && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleUnlinkRecord(record.id);
+              }}
+              className="hover:bg-state-hover text-muted-foreground hover:text-foreground -mr-1 rounded p-0.5 transition-colors"
+              aria-label={t('plan.inspector.records.unlink')}
+            >
+              <X className="size-3" />
+            </button>
+          )}
+        </Badge>
+      ))}
+
+      {/* Record 選択ボタン（Popover） */}
+      <Popover open={isOpen} onOpenChange={setIsOpen}>
+        <HoverTooltip content={t('plan.inspector.records.link')} side="top">
+          <PopoverTrigger asChild>
+            <button
+              type="button"
+              disabled={disabled}
+              className={cn(
+                'flex size-8 items-center justify-center rounded-lg transition-colors',
+                'hover:bg-state-hover focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
+                'text-muted-foreground hover:text-foreground',
               )}
-
-              <CommandEmpty>Recordがありません</CommandEmpty>
-              <CommandGroup>
-                {filteredRecords.map((record) => {
-                  const recordTags = record.tagIds
-                    ?.map((id) => allTags.find((t) => t.id === id))
-                    .filter(Boolean);
-                  return (
-                    <CommandItem
-                      key={record.id}
-                      value={record.id}
-                      onSelect={() => {
-                        setIsOpen(false);
-                        window.location.href = `/${locale}/record?selected=${record.id}`;
-                      }}
-                      className="cursor-pointer"
-                    >
-                      {/* タイトル or (タイトルなし) */}
-                      <span className="shrink truncate">
-                        {record.title || (
-                          <span className="text-muted-foreground">(タイトルなし)</span>
-                        )}
-                      </span>
-
-                      {/* タグ */}
-                      {recordTags && recordTags.length > 0 && (
-                        <div className="flex shrink-0 gap-1 pl-2">
-                          {recordTags.slice(0, 2).map((tag) => (
-                            <span
-                              key={tag!.id}
-                              className="rounded px-1 py-1 text-xs"
-                              style={{
-                                backgroundColor: tag!.color ? `${tag!.color}20` : undefined,
-                                color: tag!.color || undefined,
-                              }}
-                            >
-                              {tag!.name}
-                            </span>
-                          ))}
-                          {recordTags.length > 2 && (
-                            <span className="text-muted-foreground text-xs">
-                              +{recordTags.length - 2}
+              aria-label={t('plan.inspector.records.link')}
+            >
+              <ListChecks className="size-4" />
+            </button>
+          </PopoverTrigger>
+        </HoverTooltip>
+        <PopoverContent
+          className="w-[400px] p-0"
+          align="start"
+          side="bottom"
+          sideOffset={8}
+          style={{ zIndex: zIndex.overlayDropdown }}
+        >
+          {isAllRecordsPending ? (
+            <div className="flex items-center justify-center py-8">
+              <Spinner size="sm" />
+            </div>
+          ) : (
+            <Command shouldFilter={false}>
+              <CommandInput
+                placeholder={t('plan.inspector.records.search')}
+                value={searchQuery}
+                onValueChange={setSearchQuery}
+              />
+              <CommandList className="max-h-[280px]">
+                <CommandEmpty>{t('plan.inspector.records.noMatch')}</CommandEmpty>
+                <CommandGroup>
+                  {sortedRecords.map((record) => {
+                    const isLinked = linkedRecordIds.has(record.id);
+                    const recordTags = record.tagIds
+                      ?.map((id) => allTags.find((t) => t.id === id))
+                      .filter(Boolean);
+                    return (
+                      <CommandItem
+                        key={record.id}
+                        value={record.id}
+                        onSelect={() =>
+                          isLinked ? handleUnlinkRecord(record.id) : handleLinkRecord(record.id)
+                        }
+                        className="cursor-pointer"
+                      >
+                        {/* チェックボックスインジケータ（TagSelectCombobox準拠） */}
+                        <div
+                          className={cn(
+                            'flex size-4 shrink-0 items-center justify-center rounded border',
+                            isLinked ? 'border-primary bg-primary' : 'border-muted-foreground/30',
+                          )}
+                        >
+                          {isLinked && <Check className="size-3 text-white" />}
+                        </div>
+                        <span className="shrink truncate">
+                          {record.title || (
+                            <span className="text-muted-foreground">
+                              {t('plan.inspector.noTitle')}
                             </span>
                           )}
-                        </div>
-                      )}
-
-                      {/* メタ情報: 日付 + 時間 + 充実度 */}
-                      <div className="ml-auto flex shrink-0 items-center gap-2 pl-2">
-                        <span className="text-muted-foreground text-xs">{record.worked_at}</span>
-                        <span className="text-xs tabular-nums">
-                          {formatDuration(record.duration_minutes)}
                         </span>
-                        {record.fulfillment_score && (
-                          <Smile
-                            className={cn('size-4', getScoreColor(record.fulfillment_score))}
-                          />
+                        {recordTags && recordTags.length > 0 && (
+                          <div className="flex shrink-0 gap-1 pl-2">
+                            {recordTags.slice(0, 2).map((tag) => (
+                              <span
+                                key={tag!.id}
+                                className="rounded px-1 py-1 text-xs"
+                                style={{
+                                  backgroundColor: tag!.color ? `${tag!.color}20` : undefined,
+                                  color: tag!.color || undefined,
+                                }}
+                              >
+                                {tag!.name}
+                              </span>
+                            ))}
+                            {recordTags.length > 2 && (
+                              <span className="text-muted-foreground text-xs">
+                                +{recordTags.length - 2}
+                              </span>
+                            )}
+                          </div>
                         )}
-                      </div>
-                    </CommandItem>
-                  );
-                })}
-              </CommandGroup>
-            </CommandList>
+                        <span className="text-muted-foreground ml-auto shrink-0 pl-2 text-xs">
+                          {record.worked_at}
+                        </span>
+                      </CommandItem>
+                    );
+                  })}
+                </CommandGroup>
+              </CommandList>
 
-            {/* 新規作成ボタン */}
-            <div className="border-border border-t p-2">
-              <button
-                type="button"
-                onClick={handleCreateRecord}
-                className="text-muted-foreground hover:text-foreground hover:bg-state-hover flex w-full items-center gap-2 rounded-lg px-2 py-2 text-sm transition-colors"
-              >
-                <Plus className="size-4" />
-                <span>作業ログを追加</span>
-              </button>
-
-              {/* Record一覧ページへのナビゲーション */}
-              {hasRecords && (
-                <Link
-                  href={`/${locale}/record`}
-                  className="text-muted-foreground hover:text-foreground hover:bg-state-hover mt-1 flex items-center gap-2 rounded-lg px-2 py-2 text-sm transition-colors"
-                >
-                  <ExternalLink className="size-4" />
-                  <span>Record一覧を開く</span>
-                </Link>
+              {/* 新規作成ボタン（API モードのみ: ドラフトでは Plan 未作成のため非表示） */}
+              {!isDraftMode && (
+                <div className="border-border border-t p-2">
+                  <button
+                    type="button"
+                    onClick={handleCreateRecord}
+                    className="text-muted-foreground hover:text-foreground hover:bg-state-hover flex w-full items-center gap-2 rounded-lg px-2 py-2 text-sm transition-colors"
+                  >
+                    <Plus className="size-4" />
+                    <span>{t('plan.inspector.records.addNew')}</span>
+                  </button>
+                </div>
               )}
-            </div>
-          </Command>
-        )}
-      </PopoverContent>
-    </Popover>
+            </Command>
+          )}
+        </PopoverContent>
+      </Popover>
+    </div>
   );
 }

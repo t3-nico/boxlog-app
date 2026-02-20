@@ -49,7 +49,7 @@ export function SettingsModalMobileView() {
               {currentCategory ? t(currentCategory.labelKey) : ''}
             </h1>
           </div>
-          <Button variant="ghost" icon onClick={closeModal} aria-label={t('actions.close')}>
+          <Button variant="ghost" icon onClick={closeModal} aria-label={t('common.actions.close')}>
             <X className="size-5" />
           </Button>
         </header>
@@ -63,7 +63,7 @@ export function SettingsModalMobileView() {
     <div className="flex h-full flex-col">
       <header className="border-border flex h-14 shrink-0 items-center justify-between border-b px-4">
         <h1 className="text-lg font-bold">{t('settings.dialog.title')}</h1>
-        <Button variant="ghost" icon onClick={closeModal} aria-label={t('actions.close')}>
+        <Button variant="ghost" icon onClick={closeModal} aria-label={t('common.actions.close')}>
           <X className="size-5" />
         </Button>
       </header>

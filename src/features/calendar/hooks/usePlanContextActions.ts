@@ -4,12 +4,13 @@ import { useCallback, useRef } from 'react';
 
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
 import type { RecurringEditScope } from '@/features/plans/components/RecurringEditConfirmDialog';
-import { usePlanInstanceMutations } from '@/features/plans/hooks/usePlanInstances';
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
+import { useRecurringScopeMutations } from '@/features/plans/hooks/useRecurringScopeMutations';
 import { useDeleteConfirmStore } from '@/features/plans/stores/useDeleteConfirmStore';
 import { usePlanClipboardStore } from '@/features/plans/stores/usePlanClipboardStore';
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
 import { useRecurringEditConfirmStore } from '@/features/plans/stores/useRecurringEditConfirmStore';
+import { getInstanceRef } from '@/features/plans/utils/instanceId';
 import { toast } from 'sonner';
 
 export function usePlanContextActions() {
@@ -17,7 +18,7 @@ export function usePlanContextActions() {
   const openDeleteDialog = useDeleteConfirmStore((state) => state.openDialog);
   const openRecurringDialog = useRecurringEditConfirmStore((state) => state.openDialog);
   const { deletePlan, updatePlan } = usePlanMutations();
-  const { createInstance } = usePlanInstanceMutations();
+  const { applyDelete } = useRecurringScopeMutations();
 
   // 繰り返しプラン削除用のターゲットをrefで保持（ダイアログのコールバックで参照）
   const recurringDeleteTargetRef = useRef<CalendarPlan | null>(null);
@@ -29,49 +30,19 @@ export function usePlanContextActions() {
       if (!target) return;
 
       try {
-        // 親プランID（展開されたオカレンスの場合はcalendarIdが親ID）
-        const parentPlanId = target.calendarId || target.id;
+        const ref = getInstanceRef(target);
+        if (!ref) return;
 
-        // インスタンスの日付を取得（展開されたオカレンスのIDから抽出）
-        // ID形式: {parentPlanId}_{YYYY-MM-DD}
-        const instanceDate = target.id.includes('_')
-          ? (target.id.split('_').pop() ?? '')
-          : (target.startDate?.toISOString().slice(0, 10) ?? '');
-
-        switch (scope) {
-          case 'this':
-            // この日のみ例外として削除（cancelled例外を作成）
-            await createInstance.mutateAsync({
-              planId: parentPlanId,
-              instanceDate,
-              exceptionType: 'cancelled',
-            });
-            break;
-
-          case 'thisAndFuture': {
-            // この日以降を終了: 親プランの recurrence_end_date を更新
-            // 前日を終了日にする（この日は含めない）
-            const endDate = new Date(instanceDate);
-            endDate.setDate(endDate.getDate() - 1);
-            await updatePlan.mutateAsync({
-              id: parentPlanId,
-              data: {
-                recurrence_end_date: endDate.toISOString().slice(0, 10),
-              },
-            });
-            break;
-          }
-
-          case 'all':
-            // 親プラン自体を削除
-            await deletePlan.mutateAsync({ id: parentPlanId });
-            break;
-        }
+        await applyDelete({
+          scope,
+          planId: ref.parentPlanId,
+          instanceDate: ref.instanceDate,
+        });
       } finally {
         recurringDeleteTargetRef.current = null;
       }
     },
-    [deletePlan, createInstance, updatePlan],
+    [applyDelete],
   );
 
   const handleDeletePlan = useCallback(
@@ -96,15 +67,10 @@ export function usePlanContextActions() {
     (plan: CalendarPlan) => {
       // planInspectorを開いて編集モードにする
       // 繰り返しプランの場合はインスタンス日付を渡す
-      const instanceDateRaw =
-        plan.isRecurring && plan.id.includes('_')
-          ? plan.id.split('_').pop()
-          : plan.startDate?.toISOString().slice(0, 10);
-      // instanceDateがundefinedの場合は渡さない
-      openInspector(
-        plan.calendarId || plan.id,
-        instanceDateRaw ? { instanceDate: instanceDateRaw } : undefined,
-      );
+      const ref = plan.isRecurring ? getInstanceRef(plan) : null;
+      const instanceDate = ref?.instanceDate ?? plan.startDate?.toISOString().slice(0, 10);
+
+      openInspector(plan.calendarId || plan.id, instanceDate ? { instanceDate } : undefined);
     },
     [openInspector],
   );

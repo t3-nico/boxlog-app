@@ -1,6 +1,7 @@
 import type { PlanStatus } from '@/features/plans/types/plan';
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import type { DateRangeFilter } from '@/lib/date';
+import type { BaseFilterState } from '@/stores/createFilterStore';
+import { createFilterStore } from '@/stores/createFilterStore';
 
 /**
  * 繰り返しフィルタータイプ
@@ -17,22 +18,13 @@ export type ReminderFilter = 'all' | 'yes' | 'no';
  */
 export type ScheduleFilter = 'all' | 'scheduled' | 'unscheduled';
 
-/**
- * 日付範囲フィルタータイプ（作成日・更新日共通）
- */
-export type DateRangeFilter =
-  | 'all'
-  | 'today'
-  | 'yesterday'
-  | 'this_week'
-  | 'last_week'
-  | 'this_month';
+// DateRangeFilter は @/lib/date から再エクスポート
+export type { DateRangeFilter };
 
 /**
- * Plan共通フィルタ状態
- * Board/Table両方で共有するフィルター
+ * Plan フィルタ状態
  */
-interface PlanFilterState {
+interface PlanFilterState extends BaseFilterState {
   status: PlanStatus[];
   tags: string[];
   search: string;
@@ -42,79 +34,26 @@ interface PlanFilterState {
   schedule: ScheduleFilter;
   createdAt: DateRangeFilter;
   updatedAt: DateRangeFilter;
-  /** 検索UIの展開状態（再マウント耐性のため） */
-  isSearchOpen: boolean;
 }
 
 /**
- * Plan共通フィルタストア
- */
-interface PlanFilterStore extends PlanFilterState {
-  setStatus: (status: PlanStatus[]) => void;
-  setTags: (tags: string[]) => void;
-  setSearch: (search: string) => void;
-  setAssignee: (assignee: string) => void;
-  setRecurrence: (recurrence: RecurrenceFilter) => void;
-  setReminder: (reminder: ReminderFilter) => void;
-  setSchedule: (schedule: ScheduleFilter) => void;
-  setCreatedAt: (createdAt: DateRangeFilter) => void;
-  setUpdatedAt: (updatedAt: DateRangeFilter) => void;
-  setIsSearchOpen: (isOpen: boolean) => void;
-  reset: () => void;
-}
-
-/**
- * 初期状態
- */
-const initialState: PlanFilterState = {
-  status: [],
-  tags: [],
-  search: '',
-  assignee: '',
-  recurrence: 'all',
-  reminder: 'all',
-  schedule: 'all',
-  createdAt: 'all',
-  updatedAt: 'all',
-  isSearchOpen: false,
-};
-
-/**
- * Plan共通フィルタストア
+ * Plan フィルタストア
  *
  * Board/Table間でフィルター状態を共有
  * LocalStorageで永続化
  */
-export const usePlanFilterStore = create<PlanFilterStore>()(
-  persist(
-    (set) => ({
-      ...initialState,
-      setStatus: (status) => set({ status }),
-      setTags: (tags) => set({ tags }),
-      setSearch: (search) => set({ search }),
-      setAssignee: (assignee) => set({ assignee }),
-      setRecurrence: (recurrence) => set({ recurrence }),
-      setReminder: (reminder) => set({ reminder }),
-      setSchedule: (schedule) => set({ schedule }),
-      setCreatedAt: (createdAt) => set({ createdAt }),
-      setUpdatedAt: (updatedAt) => set({ updatedAt }),
-      setIsSearchOpen: (isSearchOpen) => set({ isSearchOpen }),
-      reset: () => set(initialState),
-    }),
-    {
-      name: 'plan-filter',
-      // isSearchOpenは永続化しない（ページリロード時は閉じているべき）
-      partialize: (state) => ({
-        status: state.status,
-        tags: state.tags,
-        search: state.search,
-        assignee: state.assignee,
-        recurrence: state.recurrence,
-        reminder: state.reminder,
-        schedule: state.schedule,
-        createdAt: state.createdAt,
-        updatedAt: state.updatedAt,
-      }),
-    },
-  ),
-);
+export const usePlanFilterStore = createFilterStore<PlanFilterState>({
+  name: 'plan-filter',
+  initialState: {
+    status: [],
+    tags: [],
+    search: '',
+    assignee: '',
+    recurrence: 'all',
+    reminder: 'all',
+    schedule: 'all',
+    createdAt: 'all',
+    updatedAt: 'all',
+    isSearchOpen: false,
+  },
+});

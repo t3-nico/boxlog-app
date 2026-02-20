@@ -196,7 +196,7 @@ export function TagRenameDialog({
         {/* Footer */}
         <div className="flex justify-end gap-2">
           <Button variant="ghost" onClick={onClose} disabled={isLoading}>
-            {t('actions.cancel')}
+            {t('common.actions.cancel')}
           </Button>
           <Button onClick={handleSubmit} disabled={isLoading}>
             {isLoading ? '...' : 'OK'}

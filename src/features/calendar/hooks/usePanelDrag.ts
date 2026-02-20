@@ -5,6 +5,8 @@ import { useCallback, useRef } from 'react';
 import { addDays, startOfWeek } from 'date-fns';
 
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
+import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
+import { convertFromTimezone } from '@/lib/date/timezone';
 import type { PlanWithTags } from '@/server/services/plans/types';
 
 import {
@@ -62,6 +64,7 @@ function getDisplayDates(viewType: CalendarViewType, currentDate: Date): Date[] 
 export function usePanelDrag() {
   const navigation = useCalendarNavigation();
   const { updatePlan } = usePlanMutations();
+  const timezone = useCalendarSettingsStore((s) => s.timezone);
 
   const startPanelDrag = useCalendarDragStore((s) => s.startPanelDrag);
   const updateDrag = useCalendarDragStore((s) => s.updateDrag);
@@ -142,8 +145,9 @@ export function usePanelDrag() {
         const { hour, minute, snappedTop } = calculateTimeFromGridPosition(gridInfo, e.clientY);
         const targetDate = displayDates[gridInfo.dayIndex] ?? displayDates[0]!;
 
-        const startTime = new Date(targetDate);
-        startTime.setHours(hour, minute, 0, 0);
+        const localStart = new Date(targetDate);
+        localStart.setHours(hour, minute, 0, 0);
+        const startTime = convertFromTimezone(localStart, timezone);
         const endTime = new Date(startTime.getTime() + DEFAULT_DURATION_MS);
 
         updateDrag({
@@ -160,7 +164,7 @@ export function usePanelDrag() {
         });
       }
     },
-    [navigation, startPanelDrag, updateDrag],
+    [navigation, startPanelDrag, updateDrag, timezone],
   );
 
   const handleMouseUp = useCallback(
@@ -182,8 +186,9 @@ export function usePanelDrag() {
         const { hour, minute } = calculateTimeFromGridPosition(gridInfo, e.clientY);
         const targetDate = displayDates[gridInfo.dayIndex] ?? displayDates[0]!;
 
-        const startTime = new Date(targetDate);
-        startTime.setHours(hour, minute, 0, 0);
+        const localStart = new Date(targetDate);
+        localStart.setHours(hour, minute, 0, 0);
+        const startTime = convertFromTimezone(localStart, timezone);
         const endTime = new Date(startTime.getTime() + DEFAULT_DURATION_MS);
 
         // mutation: Plan に時間を設定
@@ -199,7 +204,7 @@ export function usePanelDrag() {
 
       cleanup();
     },
-    [cleanup, navigation, updatePlan],
+    [cleanup, navigation, updatePlan, timezone],
   );
 
   const handleKeyDown = useCallback(

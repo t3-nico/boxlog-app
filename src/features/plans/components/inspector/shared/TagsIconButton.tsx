@@ -3,6 +3,7 @@
 import { useMemo } from 'react';
 
 import { Tag, X } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import { Badge } from '@/components/ui/badge';
 import { HoverTooltip } from '@/components/ui/tooltip';
@@ -39,6 +40,7 @@ export function TagsIconButton({
   isOverlay = true,
   availableTags,
 }: TagsIconButtonProps) {
+  const t = useTranslations();
   const { data: fetchedTags = [] } = useTags();
   const allTags = availableTags ?? fetchedTags;
 
@@ -61,7 +63,7 @@ export function TagsIconButton({
           <Badge
             variant="outline"
             style={{ borderColor: tag.color || undefined }}
-            className="group relative h-7 pr-6 text-xs font-normal"
+            className="h-7 gap-1 bg-transparent text-xs font-normal"
           >
             {tag.name}
             <button
@@ -70,7 +72,7 @@ export function TagsIconButton({
                 e.stopPropagation();
                 handleRemoveTag(tag.id);
               }}
-              className="hover:bg-state-hover absolute top-1/2 right-1 -translate-y-1/2 rounded opacity-70 transition-opacity hover:opacity-100"
+              className="hover:bg-state-hover text-muted-foreground hover:text-foreground -mr-1 rounded p-0.5 transition-colors"
             >
               <X className="size-3" />
             </button>
@@ -79,7 +81,7 @@ export function TagsIconButton({
       ))}
 
       {/* タグ追加ボタン */}
-      <HoverTooltip content="タグを追加" side="top">
+      <HoverTooltip content={t('plan.inspector.tags.add')} side="top">
         <TagSelectCombobox
           selectedTagIds={tagIds}
           onTagsChange={onTagsChange}
@@ -95,7 +97,7 @@ export function TagsIconButton({
               'hover:bg-state-hover focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
               'text-muted-foreground hover:text-foreground',
             )}
-            aria-label="タグを追加"
+            aria-label={t('plan.inspector.tags.add')}
           >
             <Tag className="size-4" />
           </button>

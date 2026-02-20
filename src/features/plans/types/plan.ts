@@ -12,7 +12,7 @@ export type PlanStatus = 'open' | 'closed';
 /**
  * 繰り返しタイプ（シンプル版）
  */
-export type RecurrenceType = 'none' | 'daily' | 'weekly' | 'monthly';
+export type RecurrenceType = 'none' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'weekdays';
 
 /**
  * カスタム繰り返し設定

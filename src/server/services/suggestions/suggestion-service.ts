@@ -16,6 +16,8 @@ interface RecentTitlesOptions {
   userId: string;
   search?: string | undefined;
   limit?: number | undefined;
+  /** 'plan' のみ or 'record' のみに絞り込む。省略時は両方取得 */
+  type?: 'plan' | 'record' | undefined;
 }
 
 interface RecentEntry {
@@ -43,35 +45,41 @@ export class SuggestionService {
    * 使用頻度と最新日時でソートする
    */
   async recentTitles(options: RecentTitlesOptions): Promise<RecentEntry[]> {
-    const { userId, search, limit = 20 } = options;
+    const { userId, search, limit = 20, type } = options;
 
-    // Plans からタイトル+タグを取得
-    let plansQuery = this.supabase
-      .from('plans')
-      .select('title, created_at, plan_tags(tag_id)')
-      .eq('user_id', userId)
-      .not('title', 'eq', '')
-      .order('created_at', { ascending: false })
-      .limit(50);
+    // Plans からタイトル+タグを取得（type='record' の場合はスキップ）
+    const plansPromise =
+      type === 'record'
+        ? Promise.resolve({ data: [], error: null })
+        : (() => {
+            let q = this.supabase
+              .from('plans')
+              .select('title, created_at, plan_tags(tag_id)')
+              .eq('user_id', userId)
+              .not('title', 'eq', '')
+              .order('created_at', { ascending: false })
+              .limit(50);
+            if (search) q = q.ilike('title', `%${search}%`);
+            return q;
+          })();
 
-    if (search) {
-      plansQuery = plansQuery.ilike('title', `%${search}%`);
-    }
+    // Records からタイトル+タグを取得（type='plan' の場合はスキップ）
+    const recordsPromise =
+      type === 'plan'
+        ? Promise.resolve({ data: [], error: null })
+        : (() => {
+            let q = this.supabase
+              .from('records')
+              .select('title, created_at, record_tags(tag_id)')
+              .eq('user_id', userId)
+              .not('title', 'eq', '')
+              .order('created_at', { ascending: false })
+              .limit(50);
+            if (search) q = q.ilike('title', `%${search}%`);
+            return q;
+          })();
 
-    // Records からタイトル+タグを取得
-    let recordsQuery = this.supabase
-      .from('records')
-      .select('title, created_at, record_tags(tag_id)')
-      .eq('user_id', userId)
-      .not('title', 'eq', '')
-      .order('created_at', { ascending: false })
-      .limit(50);
-
-    if (search) {
-      recordsQuery = recordsQuery.ilike('title', `%${search}%`);
-    }
-
-    const [plansResult, recordsResult] = await Promise.all([plansQuery, recordsQuery]);
+    const [plansResult, recordsResult] = await Promise.all([plansPromise, recordsPromise]);
 
     if (plansResult.error) {
       throw new SuggestionServiceError('FETCH_FAILED', plansResult.error.message);

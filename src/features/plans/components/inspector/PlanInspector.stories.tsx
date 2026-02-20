@@ -15,10 +15,9 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 
-import type { Tag } from '@/features/tags/types';
-
 import type { Plan } from '../../types/plan';
 import { PlanInspectorDetailsTab } from './PlanInspectorContent/PlanInspectorDetailsTab';
+import { InspectorFrame, mockTags } from './shared/story-helpers';
 
 // ---------------------------------------------------------------------------
 // Meta
@@ -39,48 +38,6 @@ type Story = StoryObj<typeof meta>;
 // ---------------------------------------------------------------------------
 // モックデータ
 // ---------------------------------------------------------------------------
-
-const mockTags: Tag[] = [
-  {
-    id: 'tag-1',
-    name: '仕事',
-    user_id: 'user-1',
-    color: '#3B82F6',
-    description: '仕事関連のタスク',
-    icon: null,
-    is_active: true,
-    parent_id: null,
-    sort_order: 0,
-    created_at: '2024-01-01T00:00:00Z',
-    updated_at: '2024-01-01T00:00:00Z',
-  },
-  {
-    id: 'tag-2',
-    name: '重要',
-    user_id: 'user-1',
-    color: '#EF4444',
-    description: '重要なタスク',
-    icon: null,
-    is_active: true,
-    parent_id: null,
-    sort_order: 1,
-    created_at: '2024-01-01T00:00:00Z',
-    updated_at: '2024-01-01T00:00:00Z',
-  },
-  {
-    id: 'tag-3',
-    name: '個人',
-    user_id: 'user-1',
-    color: '#10B981',
-    description: null,
-    icon: null,
-    is_active: true,
-    parent_id: null,
-    sort_order: 2,
-    created_at: '2024-01-01T00:00:00Z',
-    updated_at: '2024-01-01T00:00:00Z',
-  },
-];
 
 const basePlan: Plan = {
   id: 'plan-1',
@@ -105,7 +62,7 @@ const filledPlan: Plan = {
   description: '<p>週次の進捗確認。アジェンダを事前に共有すること。</p>',
   start_time: '2024-01-15T10:00:00+09:00',
   end_time: '2024-01-15T11:00:00+09:00',
-  reminder_minutes: 15,
+  reminder_minutes: null,
 };
 
 const completedPlan: Plan = {
@@ -117,15 +74,6 @@ const completedPlan: Plan = {
 // ---------------------------------------------------------------------------
 // ヘルパーコンポーネント
 // ---------------------------------------------------------------------------
-
-/** Inspector風コンテナ */
-function InspectorFrame({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="bg-card border-border w-[400px] overflow-hidden rounded-xl border shadow-lg">
-      {children}
-    </div>
-  );
-}
 
 /** ドラフトモードヘッダー（Plan/Record タブ） */
 function DraftHeader() {
@@ -261,7 +209,7 @@ function PlanFormStory({
   initialScheduleDate,
   initialStartTime = '',
   initialEndTime = '',
-  initialReminderType = 'none',
+  initialReminderMinutes = null as number | null,
   timeConflictError = false,
 }: {
   plan: Plan;
@@ -270,7 +218,7 @@ function PlanFormStory({
   initialScheduleDate?: Date;
   initialStartTime?: string;
   initialEndTime?: string;
-  initialReminderType?: string;
+  initialReminderMinutes?: number | null;
   timeConflictError?: boolean;
 }) {
   const titleRef = useRef<HTMLInputElement | null>(null);
@@ -278,7 +226,7 @@ function PlanFormStory({
   const [scheduleDate, setScheduleDate] = useState<Date | undefined>(initialScheduleDate);
   const [startTime, setStartTime] = useState(initialStartTime);
   const [endTime, setEndTime] = useState(initialEndTime);
-  const [reminderType, setReminderType] = useState(initialReminderType);
+  const [reminderMinutes, setReminderMinutes] = useState<number | null>(initialReminderMinutes);
 
   return (
     <InspectorFrame>
@@ -291,7 +239,7 @@ function PlanFormStory({
           scheduleDate={scheduleDate}
           startTime={startTime}
           endTime={endTime}
-          reminderType={reminderType}
+          reminderMinutes={reminderMinutes}
           selectedTagIds={tagIds}
           recurrenceRule={null}
           recurrenceType={null}
@@ -300,7 +248,7 @@ function PlanFormStory({
           onScheduleDateChange={setScheduleDate}
           onStartTimeChange={setStartTime}
           onEndTimeChange={setEndTime}
-          onReminderChange={setReminderType}
+          onReminderChange={setReminderMinutes}
           onTagsChange={setTagIds}
           onRemoveTag={(id) => setTagIds((prev) => prev.filter((t) => t !== id))}
           onRepeatTypeChange={() => {}}
@@ -346,7 +294,7 @@ export const PlanCreateFilled: Story = {
       initialScheduleDate={new Date('2024-01-15')}
       initialStartTime="10:00"
       initialEndTime="11:00"
-      initialReminderType="15min"
+      initialReminderMinutes={15}
     />
   ),
 };
@@ -360,7 +308,7 @@ export const PlanEdit: Story = {
       initialScheduleDate={new Date('2024-01-15')}
       initialStartTime="10:00"
       initialEndTime="11:00"
-      initialReminderType="15min"
+      initialReminderMinutes={15}
     />
   ),
 };
@@ -374,7 +322,7 @@ export const PlanEditCompleted: Story = {
       initialScheduleDate={new Date('2024-01-15')}
       initialStartTime="10:00"
       initialEndTime="11:00"
-      initialReminderType="15min"
+      initialReminderMinutes={15}
     />
   ),
 };
@@ -416,7 +364,7 @@ export const AllPatterns: Story = {
         initialScheduleDate={new Date('2024-01-15')}
         initialStartTime="10:00"
         initialEndTime="11:00"
-        initialReminderType="15min"
+        initialReminderMinutes={15}
       />
       <PlanFormStory
         plan={filledPlan}
@@ -424,7 +372,7 @@ export const AllPatterns: Story = {
         initialScheduleDate={new Date('2024-01-15')}
         initialStartTime="10:00"
         initialEndTime="11:00"
-        initialReminderType="15min"
+        initialReminderMinutes={15}
       />
       <PlanFormStory
         plan={completedPlan}
@@ -432,7 +380,7 @@ export const AllPatterns: Story = {
         initialScheduleDate={new Date('2024-01-15')}
         initialStartTime="10:00"
         initialEndTime="11:00"
-        initialReminderType="15min"
+        initialReminderMinutes={15}
       />
       <PlanFormStory
         plan={filledPlan}

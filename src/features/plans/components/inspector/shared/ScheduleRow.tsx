@@ -15,10 +15,10 @@ import { useMemo } from 'react';
 import { AlertCircle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
+import { ClockTimePicker } from '@/components/ui/clock-time-picker';
 import { DatePickerPopover } from '@/components/ui/date-picker-popover';
 import { useAutoAdjustEndTime } from '@/features/plans/hooks/useAutoAdjustEndTime';
-
-import { ClockTimePicker } from '@/components/ui/clock-time-picker';
+import { computeDuration, formatDurationDisplay } from '@/lib/time-utils';
 
 interface ScheduleRowProps {
   // 日付・時刻（必須）
@@ -51,9 +51,10 @@ export function ScheduleRow({
   onEndTimeChange,
   disabled = false,
   timeConflictError = false,
-  datePlaceholder = '日付...',
+  datePlaceholder,
 }: ScheduleRowProps) {
   const t = useTranslations();
+  const resolvedPlaceholder = datePlaceholder ?? t('common.schedule.datePlaceholder');
 
   // 時刻自動調整フック
   const { handleStartTimeChange: autoStartTimeChange, handleEndTimeChange: autoEndTimeChange } =
@@ -72,26 +73,10 @@ export function ScheduleRow({
   };
 
   // 合計時間（分）を計算
-  const durationMinutes = useMemo(() => {
-    if (!startTime || !endTime) return 0;
-    const [startH, startM] = startTime.split(':').map(Number);
-    const [endH, endM] = endTime.split(':').map(Number);
-    if (isNaN(startH!) || isNaN(startM!) || isNaN(endH!) || isNaN(endM!)) return 0;
-    const startMinutes = startH! * 60 + startM!;
-    const endMinutes = endH! * 60 + endM!;
-    const duration = endMinutes - startMinutes;
-    return duration > 0 ? duration : 0;
-  }, [startTime, endTime]);
+  const durationMinutes = useMemo(() => computeDuration(startTime, endTime), [startTime, endTime]);
 
   // 時間表示フォーマット（例: "2h 30m"）
-  const durationDisplay = useMemo(() => {
-    if (durationMinutes <= 0) return '';
-    const h = Math.floor(durationMinutes / 60);
-    const m = durationMinutes % 60;
-    if (h > 0 && m > 0) return `${h}h ${m}m`;
-    if (h > 0) return `${h}h`;
-    return `${m}m`;
-  }, [durationMinutes]);
+  const durationDisplay = useMemo(() => formatDurationDisplay(durationMinutes), [durationMinutes]);
 
   return (
     <div className="flex items-start gap-2 px-4 py-2">
@@ -99,7 +84,7 @@ export function ScheduleRow({
       <DatePickerPopover
         selectedDate={selectedDate}
         onDateChange={onDateChange}
-        placeholder={datePlaceholder}
+        placeholder={resolvedPlaceholder}
         showIcon
       />
 

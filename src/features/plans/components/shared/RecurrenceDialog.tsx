@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/select';
 import { zIndex } from '@/config/ui/z-index';
 import { useDateFormat } from '@/features/settings/hooks/useDateFormat';
+import { useSubmitShortcut } from '@/hooks/useSubmitShortcut';
 
 import type { RecurrenceConfig } from '../../types/plan';
 import { configToRRule, ruleToConfig } from '../../utils/rrule';
@@ -54,7 +55,7 @@ export function RecurrenceDialog({
   triggerRef,
   placement = 'bottom',
 }: RecurrenceDialogProps) {
-  const t = useTranslations('common');
+  const t = useTranslations();
   const dialogRef = useRef<HTMLDivElement>(null);
   const [showCalendar, setShowCalendar] = useState(false);
   const [position, setPosition] = useState({ top: 0, left: 0 });
@@ -164,6 +165,13 @@ export function RecurrenceDialog({
     return undefined;
   }, [open, onOpenChange, triggerRef]);
 
+  // Cmd+Enter / Ctrl+Enter で適用
+  useSubmitShortcut({
+    enabled: open,
+    isLoading: false,
+    onSubmit: () => handleSave(),
+  });
+
   const handleSave = () => {
     const rrule = configToRRule(config);
     onChange(rrule);
@@ -194,14 +202,18 @@ export function RecurrenceDialog({
       >
         {/* ヘッダー */}
         <div className="px-6 py-4">
-          <h3 className="text-foreground text-base font-bold">繰り返し</h3>
+          <h3 className="text-foreground text-base font-bold">
+            {t('common.recurrence.dialog.title')}
+          </h3>
         </div>
 
         {/* コンテンツ */}
         <div className="space-y-6 px-6 pb-4">
           {/* 1. 間隔 */}
           <div className="space-y-2">
-            <Label className="text-foreground text-sm font-normal">間隔</Label>
+            <Label className="text-foreground text-sm font-normal">
+              {t('common.recurrence.dialog.interval')}
+            </Label>
             <div className="flex items-center gap-2">
               <Input
                 type="number"
@@ -229,10 +241,10 @@ export function RecurrenceDialog({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent style={{ zIndex: zIndex.overlayDropdown }}>
-                  <SelectItem value="daily">日ごと</SelectItem>
-                  <SelectItem value="weekly">週間ごと</SelectItem>
-                  <SelectItem value="monthly">ヶ月ごと</SelectItem>
-                  <SelectItem value="yearly">年ごと</SelectItem>
+                  <SelectItem value="daily">{t('common.recurrence.dialog.perDay')}</SelectItem>
+                  <SelectItem value="weekly">{t('common.recurrence.dialog.perWeek')}</SelectItem>
+                  <SelectItem value="monthly">{t('common.recurrence.dialog.perMonth')}</SelectItem>
+                  <SelectItem value="yearly">{t('common.recurrence.dialog.perYear')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -241,18 +253,19 @@ export function RecurrenceDialog({
           {/* 2. パターン（週次・月次のみ） */}
           {config.frequency === 'weekly' && (
             <div className="space-y-2">
-              <Label className="text-foreground text-sm font-normal">パターン</Label>
+              <Label className="text-foreground text-sm font-normal">
+                {t('common.recurrence.dialog.pattern')}
+              </Label>
               <div className="flex gap-2">
-                {['月', '火', '水', '木', '金', '土', '日'].map((day, index) => {
-                  // 月=1, 火=2, ..., 日=0 に変換
-                  const weekdayIndex = index === 6 ? 0 : index + 1;
+                {[1, 2, 3, 4, 5, 6, 0].map((weekdayIdx) => {
+                  const day = t(`recurrence.dialog.weekdaysShort.${String(weekdayIdx)}`);
                   return (
                     <Button
-                      key={index}
-                      variant={config.byWeekday?.includes(weekdayIndex) ? 'primary' : 'outline'}
+                      key={weekdayIdx}
+                      variant={config.byWeekday?.includes(weekdayIdx) ? 'primary' : 'outline'}
                       size="sm"
                       className="h-10 w-10 rounded-full p-0 text-sm"
-                      onClick={() => toggleWeekday(weekdayIndex)}
+                      onClick={() => toggleWeekday(weekdayIdx)}
                       type="button"
                     >
                       {day}
@@ -265,7 +278,9 @@ export function RecurrenceDialog({
 
           {config.frequency === 'monthly' && (
             <div className="space-y-2">
-              <Label className="text-foreground text-sm font-normal">パターン</Label>
+              <Label className="text-foreground text-sm font-normal">
+                {t('common.recurrence.dialog.pattern')}
+              </Label>
               <Select
                 value={
                   config.bySetPos !== undefined && config.byWeekday?.[0] !== undefined
@@ -301,8 +316,7 @@ export function RecurrenceDialog({
                     const today = new Date();
                     const day = today.getDate();
                     const weekday = today.getDay();
-                    const weekdayNames = ['日', '月', '火', '水', '木', '金', '土'];
-                    const weekdayName = weekdayNames[weekday];
+                    const weekdayName = t(`recurrence.dialog.weekdaysShort.${String(weekday)}`);
 
                     // その日が第何週か計算
                     const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -319,15 +333,17 @@ export function RecurrenceDialog({
                     const options = [
                       // 選択肢1: 毎月 X 日
                       <SelectItem key={`monthday-${day}`} value={`monthday-${day}`}>
-                        毎月 {day} 日
+                        {t('common.recurrence.dialog.everyMonth', { day })}
                       </SelectItem>,
                       // 選択肢2: 毎月 第 N X曜日
                       <SelectItem
                         key={`setpos-${weekOfMonth}-${weekday}`}
                         value={`setpos-${weekOfMonth}-${weekday}`}
                       >
-                        毎月 第{weekOfMonth}
-                        {weekdayName}曜日
+                        {t('common.recurrence.dialog.everyNthWeekday', {
+                          nth: weekOfMonth,
+                          weekday: weekdayName,
+                        })}
                       </SelectItem>,
                     ];
 
@@ -335,7 +351,7 @@ export function RecurrenceDialog({
                     if (isLastWeek) {
                       options.push(
                         <SelectItem key={`setpos--1-${weekday}`} value={`setpos--1-${weekday}`}>
-                          毎月 最終{weekdayName}曜日
+                          {t('common.recurrence.dialog.everyLastWeekday', { weekday: weekdayName })}
                         </SelectItem>,
                       );
                     }
@@ -349,7 +365,9 @@ export function RecurrenceDialog({
 
           {/* 3. 期間 */}
           <div className="space-y-2">
-            <Label className="text-foreground text-sm font-normal">期間</Label>
+            <Label className="text-foreground text-sm font-normal">
+              {t('common.recurrence.dialog.period')}
+            </Label>
             <RadioGroup
               value={config.endType}
               onValueChange={(value) =>
@@ -364,7 +382,7 @@ export function RecurrenceDialog({
                   htmlFor="end-never"
                   className="text-foreground cursor-pointer text-sm font-normal"
                 >
-                  終了日未定
+                  {t('common.recurrence.dialog.endNever')}
                 </Label>
               </div>
 
@@ -386,7 +404,7 @@ export function RecurrenceDialog({
                     setShowCalendar(true);
                   }}
                 >
-                  終了日：
+                  {t('common.recurrence.dialog.endUntil')}
                 </Label>
                 <span className="text-foreground text-sm">
                   {config.endDate ? formatDateWithSettings(new Date(config.endDate)) : ''}
@@ -425,7 +443,9 @@ export function RecurrenceDialog({
                   disabled={config.endType !== 'count'}
                   className="border-border bg-secondary h-8 w-20 rounded-lg border text-center disabled:opacity-50"
                 />
-                <span className="text-foreground text-sm">回 実施</span>
+                <span className="text-foreground text-sm">
+                  {t('common.recurrence.dialog.endCount')}
+                </span>
               </div>
             </RadioGroup>
           </div>
@@ -434,10 +454,10 @@ export function RecurrenceDialog({
         {/* フッター */}
         <div className="border-border flex justify-end gap-2 border-t px-6 py-4">
           <Button variant="outline" onClick={() => onOpenChange(false)} type="button">
-            {t('cancel')}
+            {t('common.actions.cancel')}
           </Button>
           <Button onClick={handleSave} type="button">
-            {t('apply')}
+            {t('common.apply')}
           </Button>
         </div>
       </div>

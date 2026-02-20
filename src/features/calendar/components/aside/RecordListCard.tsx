@@ -23,7 +23,7 @@ interface RecordListCardProps {
  * PlanListCard と同構造だが：
  * - チェックボックスなし（Record にはステータスがない）
  * - D&D なし → cursor-pointer 固定
- * - bg-record-box 背景
+ * - 透明背景 + 3px左縦線アクセント（record-border）
  * - 充実度スコア表示（1-5）
  * - 所要時間表示
  */
@@ -65,11 +65,13 @@ export const RecordListCard = memo<RecordListCardProps>(function RecordListCard(
     <Card
       className={cn(
         // レイアウト
-        'group relative flex flex-row items-start gap-2 px-3 py-2',
-        // 背景（Record 用カラートークン）
-        'bg-record-box',
+        'group relative flex flex-row items-start gap-2 py-2 pr-3 pl-3',
+        // 左ボーダーアクセント（Apple Calendar 風）
+        'border-l-record-border border-l-[3px]',
+        // 背景なし（縦線のみのリスト表示）
+        'bg-transparent',
         // Card デフォルト打ち消し
-        'rounded-xl border-0 shadow-none',
+        'rounded-none border-y-0 border-r-0 shadow-none',
         // ホバー（オーバーレイ方式）
         'after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:transition-colors',
         'hover:after:bg-state-hover',

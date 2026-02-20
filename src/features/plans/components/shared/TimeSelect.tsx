@@ -3,11 +3,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { Clock, Flag } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import type { TimeIconType } from '@/components/ui/clock-time-picker';
 
 import { Popover, PopoverAnchor, PopoverContent } from '@/components/ui/popover';
 import { zIndex } from '@/config/ui/z-index';
+import { computeDuration, formatDurationDisplay } from '@/lib/time-utils';
 
 /**
  * 15分刻みの時刻オプションを生成（00:00 ~ 23:45）
@@ -95,23 +97,6 @@ interface TimeSelectProps {
  * - クリック → 15分刻みのドロップダウン
  * - 直接入力も可能（スマートパース対応）
  */
-/**
- * 時間差を「Xh Xm」形式でフォーマット
- */
-function formatDuration(startTime: string, endTime: string): string {
-  const [startH, startM] = startTime.split(':').map(Number);
-  const [endH, endM] = endTime.split(':').map(Number);
-  const startMinutes = (startH ?? 0) * 60 + (startM ?? 0);
-  const endMinutes = (endH ?? 0) * 60 + (endM ?? 0);
-  const diff = endMinutes - startMinutes;
-  if (diff <= 0) return '';
-  const h = Math.floor(diff / 60);
-  const m = diff % 60;
-  if (h > 0 && m > 0) return `${h}h ${m}m`;
-  if (h > 0) return `${h}h`;
-  return `${m}m`;
-}
-
 export function TimeSelect({
   value,
   onChange,
@@ -122,6 +107,7 @@ export function TimeSelect({
   iconType = 'clock',
   showDurationInMenu = false,
 }: TimeSelectProps) {
+  const t = useTranslations();
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState(value);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
@@ -261,7 +247,7 @@ export function TimeSelect({
       const minMinutes = minHour! * 60 + minMinute!;
 
       if (parsedMinutes <= minMinutes) {
-        setError(`開始時刻（${minTime}）より後の時刻を入力してください`);
+        setError(t('common.validation.timeAfterStart', { minTime }));
         return;
       }
     }
@@ -291,7 +277,7 @@ export function TimeSelect({
           const minMinutes = minHour! * 60 + minMinute!;
 
           if (parsedMinutes <= minMinutes) {
-            setError(`開始時刻（${minTime}）より後の時刻を入力してください`);
+            setError(t('common.validation.timeAfterStart', { minTime }));
             return;
           }
         }
@@ -455,7 +441,7 @@ export function TimeSelect({
                     <span className="flex items-center gap-2">
                       <span className="tabular-nums">{option}</span>
                       <span className="text-muted-foreground text-xs tabular-nums">
-                        {formatDuration(minTime, option)}
+                        {formatDurationDisplay(computeDuration(minTime, option))}
                       </span>
                     </span>
                   ) : (

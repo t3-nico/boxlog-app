@@ -2,6 +2,8 @@
 
 import { cloneElement, isValidElement, useCallback, type ReactNode } from 'react';
 
+import { useTranslations } from 'next-intl';
+
 import { api } from '@/lib/trpc';
 
 import { usePlanInspectorStore } from '../../stores/usePlanInspectorStore';
@@ -18,6 +20,7 @@ export function PlanCreateTrigger({
   onSuccess,
   initialDate,
 }: PlanCreateTriggerProps) {
+  const t = useTranslations();
   const { openInspectorWithDraft } = usePlanInspectorStore();
   const utils = api.useUtils();
 
@@ -117,7 +120,7 @@ export function PlanCreateTrigger({
       type="button"
       onClick={handleClick}
       className="focus-visible:outline-ring inline-flex cursor-pointer appearance-none items-center justify-center border-none bg-transparent p-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-      aria-label="新しい予定を作成"
+      aria-label={t('common.createNewEvent')}
     >
       {triggerElement}
     </button>

@@ -87,6 +87,90 @@
       "closed": "Closed",
       "cancel": "Cancel"
     },
+    "inspector": {
+      "addTitle": "Add title",
+      "editDescription": "Edit description",
+      "addDescription": "Add description",
+      "addDescriptionPlaceholder": "Add description...",
+      "createPlan": "Create Plan",
+      "createRecord": "Create Record",
+      "markComplete": "Mark complete",
+      "markIncomplete": "Mark incomplete",
+      "completeOptions": "Complete options",
+      "completeAndCreateRecord": "Complete + Create Record",
+      "timeConflict": "Time overlaps",
+      "toast": {
+        "tagsSaveFailed": "Failed to save tags",
+        "timeOverlap": "Time overlaps with another event",
+        "createFailed": "Failed to create plan",
+        "saveFailed": "Failed to save"
+      },
+      "noTitle": "(No title)",
+      "notFound": "Plan not found",
+      "noData": "No data found",
+      "menu": {
+        "duplicate": "Duplicate",
+        "saveAsTemplate": "Save as template",
+        "copyId": "Copy ID",
+        "copyLink": "Copy link",
+        "openNewTab": "Open in new tab"
+      },
+      "tags": {
+        "add": "Add tag"
+      },
+      "records": {
+        "link": "Link record",
+        "unlink": "Unlink record",
+        "search": "Search records...",
+        "noMatch": "No matching records",
+        "addNew": "Add work log"
+      },
+      "recurrence": {
+        "setRepeat": "Set repeat",
+        "repeatLabel": "Repeat: {type}",
+        "options": "Repeat options",
+        "customEllipsis": "Custom...",
+        "dialog": {
+          "weekdaysShort": {
+            "0": "Sun",
+            "1": "Mon",
+            "2": "Tue",
+            "3": "Wed",
+            "4": "Thu",
+            "5": "Fri",
+            "6": "Sat"
+          }
+        }
+      },
+      "recordCreate": {
+        "titlePlaceholder": "What did you do?",
+        "titleLabel": "Record title",
+        "timeOverlap": "Time overlaps with existing record",
+        "failed": "Failed to create record",
+        "linkPlan": "Link to plan",
+        "unlinkPlan": "Unlink from plan",
+        "searchPlan": "Search plans...",
+        "noPlans": "No plans found",
+        "fulfillmentTooltip": "Fulfillment: {score}/5 (long press to reset)",
+        "fulfillmentTap": "Fulfillment (tap to add)",
+        "fulfillmentLabel": "Fulfillment: {score}/5",
+        "addNewPlan": "Add new plan"
+      }
+    },
+    "activity": {
+      "created": "Created plan",
+      "updated": "Updated plan",
+      "statusChanged": "Changed status",
+      "titleChanged": "Changed title",
+      "descriptionChanged": "Updated description",
+      "timeChanged": "Changed time",
+      "tagAdded": "Added tag",
+      "tagRemoved": "Removed tag",
+      "recurrenceChanged": "Changed recurrence",
+      "reminderChanged": "Changed reminder",
+      "deleted": "Deleted plan",
+      "changed": "Changed"
+    },
     "view": {
       "edit": "Edit",
       "delete": "Delete",

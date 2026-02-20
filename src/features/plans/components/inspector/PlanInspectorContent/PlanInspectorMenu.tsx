@@ -6,55 +6,46 @@
 
 import { memo } from 'react';
 
-import { Copy, ExternalLink, Link, Save, Trash2 } from 'lucide-react';
+import { Copy, Save, Trash2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import { DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 
 interface PlanInspectorMenuProps {
   onDuplicate: () => void;
-  onCopyLink: () => void;
   onSaveAsTemplate: () => void;
   onCopyId: () => void;
-  onOpenInNewTab: () => void;
   onDelete: () => void;
 }
 
 export const PlanInspectorMenu = memo(function PlanInspectorMenu({
   onDuplicate,
-  onCopyLink,
   onSaveAsTemplate,
   onCopyId,
-  onOpenInNewTab,
   onDelete,
 }: PlanInspectorMenuProps) {
+  const t = useTranslations();
+
   return (
     <>
       <DropdownMenuItem onClick={onDuplicate}>
         <Copy className="size-4" />
-        複製する
-      </DropdownMenuItem>
-      <DropdownMenuItem onClick={onCopyLink}>
-        <Link className="size-4" />
-        リンクをコピー
+        {t('plan.inspector.menu.duplicate')}
       </DropdownMenuItem>
       <DropdownMenuItem onClick={onSaveAsTemplate} disabled>
         <Save className="size-4" />
-        テンプレートとして保存
-        <span className="text-muted-foreground ml-auto text-xs">Coming soon</span>
+        {t('plan.inspector.menu.saveAsTemplate')}
+        <span className="text-muted-foreground ml-auto text-xs">{t('common.comingSoon')}</span>
       </DropdownMenuItem>
       <DropdownMenuSeparator />
       <DropdownMenuItem onClick={onCopyId}>
         <Copy className="size-4" />
-        IDをコピー
-      </DropdownMenuItem>
-      <DropdownMenuItem onClick={onOpenInNewTab}>
-        <ExternalLink className="size-4" />
-        新しいタブで開く
+        {t('plan.inspector.menu.copyId')}
       </DropdownMenuItem>
       <DropdownMenuSeparator />
       <DropdownMenuItem onClick={onDelete} variant="destructive">
         <Trash2 className="size-4" />
-        削除
+        {t('common.actions.delete')}
       </DropdownMenuItem>
     </>
   );

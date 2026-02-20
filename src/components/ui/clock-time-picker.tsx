@@ -3,6 +3,7 @@
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
 
 import { Clock, Flag } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { TimepickerUI } from 'timepicker-ui';
 
 import { TimeSelect } from '@/features/plans/components/shared/TimeSelect';
@@ -104,6 +105,7 @@ function MobileClockPicker({
   iconType = 'clock',
   className,
 }: ClockTimePickerProps) {
+  const t = useTranslations();
   const inputRef = useRef<HTMLInputElement>(null);
   const timepickerRef = useRef<TimepickerUI | null>(null);
   const isInitializedRef = useRef(false);
@@ -209,7 +211,9 @@ function MobileClockPicker({
           className,
         )}
         data-state={value ? 'selected' : undefined}
-        aria-label={`時刻選択: ${value || '未選択'}`}
+        aria-label={
+          value ? t('common.aria.selectTime', { time: value }) : t('common.aria.timeNotSelected')
+        }
       >
         {showIcon &&
           (iconType === 'flag' ? <Flag className="size-4" /> : <Clock className="size-4" />)}

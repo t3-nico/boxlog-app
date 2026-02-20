@@ -81,9 +81,7 @@ export function RecurringEditConfirmDialog() {
   if (!mounted || !isOpen) return null;
 
   const isEdit = mode === 'edit';
-  const title = t(
-    isEdit ? 'common.confirm.recurring.editTitle' : 'common.confirm.recurring.deleteTitle',
-  );
+  const title = t(isEdit ? 'confirm.recurring.editTitle' : 'confirm.recurring.deleteTitle');
 
   const dialog = (
     <div

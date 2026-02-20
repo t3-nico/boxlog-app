@@ -2,9 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
   checkBrowserNotificationSupport,
-  formatNotificationDate,
   getDateGroupKey,
-  getNotificationTypeColor,
   getNotificationTypeIcon,
 } from './notification-helpers';
 
@@ -84,46 +82,6 @@ describe('notification-helpers', () => {
 
     it('未知のタイプはbellを返す', () => {
       expect(getNotificationTypeIcon('unknown' as never)).toBe('bell');
-    });
-  });
-
-  describe('getNotificationTypeColor', () => {
-    it('systemはinfo系のセマンティックトークンを返す', () => {
-      const result = getNotificationTypeColor('system');
-      expect(result).toBe('text-info-foreground bg-info');
-    });
-
-    it('featureはsuccess系のセマンティックトークンを返す', () => {
-      const result = getNotificationTypeColor('feature');
-      expect(result).toBe('text-success-foreground bg-success');
-    });
-
-    it('importantはdestructive系のセマンティックトークンを返す', () => {
-      const result = getNotificationTypeColor('important');
-      expect(result).toBe('text-destructive-foreground bg-destructive');
-    });
-
-    it('未知のタイプはmuted系のセマンティックトークンを返す', () => {
-      const result = getNotificationTypeColor('unknown');
-      expect(result).toBe('text-muted-foreground bg-muted');
-    });
-  });
-
-  describe('formatNotificationDate', () => {
-    it('文字列の日付をフォーマットできる', () => {
-      const result = formatNotificationDate('2025-01-15T12:00:00Z', 'ja-JP');
-      expect(typeof result).toBe('string');
-    });
-
-    it('Dateオブジェクトをフォーマットできる', () => {
-      const date = new Date('2025-01-15T12:00:00Z');
-      const result = formatNotificationDate(date, 'ja-JP');
-      expect(typeof result).toBe('string');
-    });
-
-    it('デフォルトロケールは日本語', () => {
-      const result = formatNotificationDate('2025-01-15T12:00:00Z');
-      expect(typeof result).toBe('string');
     });
   });
 

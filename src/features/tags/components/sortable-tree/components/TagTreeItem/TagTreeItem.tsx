@@ -397,7 +397,7 @@ export const TagTreeItem = forwardRef<HTMLDivElement, TagTreeItemProps>(
                   <DropdownMenuSeparator />
                   <DropdownMenuItem variant="destructive" onClick={onDeleteTag}>
                     <Trash2 className="mr-2 size-4" />
-                    {t('actions.delete')}
+                    {t('common.actions.delete')}
                   </DropdownMenuItem>
                 </>
               )}

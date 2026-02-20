@@ -1,6 +1,7 @@
 'use client';
 
 import { Trash2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useCallback } from 'react';
 
 import { DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
@@ -19,6 +20,7 @@ import { RecordInspectorContent } from './RecordInspectorContent';
  * - PC: Popover（フローティング）、モバイル: Drawer
  */
 export function RecordInspector() {
+  const t = useTranslations();
   const isOpen = useRecordInspectorStore((state) => state.isOpen);
   const selectedRecordId = useRecordInspectorStore((state) => state.selectedRecordId);
   const closeInspector = useRecordInspectorStore((state) => state.closeInspector);
@@ -40,11 +42,11 @@ export function RecordInspector() {
   // 削除ハンドラー
   const handleDelete = useCallback(async () => {
     if (!selectedRecordId) return;
-    if (!window.confirm('このRecordを削除しますか？')) return;
+    if (!window.confirm(t('record.inspector.deleteConfirm'))) return;
 
     await deleteRecord.mutateAsync({ id: selectedRecordId });
     closeInspector();
-  }, [selectedRecordId, deleteRecord, closeInspector]);
+  }, [selectedRecordId, deleteRecord, closeInspector, t]);
 
   // キーボードショートカット
   useInspectorKeyboard({
@@ -53,7 +55,7 @@ export function RecordInspector() {
   });
 
   // タイトル
-  const title = record?.title || 'Record詳細';
+  const title = record?.title || t('record.inspector.title');
 
   // モバイル用メニューコンテンツ
   const mobileMenuContent = (
@@ -61,7 +63,7 @@ export function RecordInspector() {
       <DropdownMenuSeparator />
       <DropdownMenuItem onClick={handleDelete} variant="destructive">
         <Trash2 className="size-4" />
-        削除
+        {t('common.actions.delete')}
       </DropdownMenuItem>
     </>
   );
@@ -76,7 +78,7 @@ export function RecordInspector() {
       <InspectorContent
         isLoading={isLoading}
         hasData={!!record}
-        emptyMessage="Recordが見つかりません"
+        emptyMessage={t('record.inspector.notFound')}
       >
         <RecordInspectorContent onClose={handleClose} />
       </InspectorContent>

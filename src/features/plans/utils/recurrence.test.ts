@@ -89,8 +89,7 @@ describe('recurrence', () => {
     });
 
     it('yearlyタイプは毎年繰り返しの設定を返す', () => {
-      // NOTE: 'yearly'はRecurrenceType型に含まれていないが、内部実装はサポート
-      const plan = createMockPlan({ recurrence_type: 'yearly' as 'daily' });
+      const plan = createMockPlan({ recurrence_type: 'yearly' });
       const config = getPlanRecurrenceConfig(plan);
 
       expect(config).toEqual({
@@ -101,8 +100,7 @@ describe('recurrence', () => {
     });
 
     it('weekdaysタイプは平日繰り返しの設定を返す', () => {
-      // NOTE: 'weekdays'はRecurrenceType型に含まれていないが、内部実装はサポート
-      const plan = createMockPlan({ recurrence_type: 'weekdays' as 'daily' });
+      const plan = createMockPlan({ recurrence_type: 'weekdays' });
       const config = getPlanRecurrenceConfig(plan);
 
       expect(config?.frequency).toBe('weekly');
@@ -161,9 +159,8 @@ describe('recurrence', () => {
     });
 
     it('weekdaysタイプは平日のみにオカレンスを生成する', () => {
-      // NOTE: 'weekdays'はRecurrenceType型に含まれていないが、内部実装はサポート
       const plan = createMockPlan({
-        recurrence_type: 'weekdays' as 'daily',
+        recurrence_type: 'weekdays',
         start_time: '2025-01-06T09:00:00Z', // 月曜日
         end_time: '2025-01-06T10:00:00Z',
       });
@@ -239,6 +236,38 @@ describe('recurrence', () => {
         (o) => o.date.toISOString().slice(0, 10) === '2025-01-08' && o.exceptionType === 'moved',
       );
       expect(movedOccurrence).toBeDefined();
+    });
+
+    it('modified例外はオーバーライド値が反映される', () => {
+      const plan = createMockPlan({
+        recurrence_type: 'daily',
+        start_time: '2025-01-01T09:00:00Z',
+        end_time: '2025-01-01T10:00:00Z',
+      });
+      const rangeStart = new Date('2025-01-01');
+      const rangeEnd = new Date('2025-01-05');
+
+      const exceptions = [
+        {
+          instanceDate: '2025-01-03',
+          isException: true,
+          exceptionType: 'modified' as const,
+          overrides: { title: '変更後のタイトル', start_time: '2025-01-03T14:00:00Z' },
+        },
+      ];
+
+      const occurrences = expandRecurrence(plan, rangeStart, rangeEnd, exceptions);
+
+      const modifiedOccurrence = occurrences.find(
+        (o) => o.date.toISOString().slice(0, 10) === '2025-01-03',
+      );
+      expect(modifiedOccurrence).toBeDefined();
+      expect(modifiedOccurrence?.isException).toBe(true);
+      expect(modifiedOccurrence?.exceptionType).toBe('modified');
+      expect(modifiedOccurrence?.overrides).toEqual({
+        title: '変更後のタイトル',
+        start_time: '2025-01-03T14:00:00Z',
+      });
     });
 
     it('start_timeがないプランは空配列を返す', () => {
