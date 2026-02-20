@@ -14,6 +14,8 @@ import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
 import { useRecurringScopeMutations } from '@/features/plans/hooks/useRecurringScopeMutations';
 import { useRecurringEditConfirmStore } from '@/features/plans/stores/useRecurringEditConfirmStore';
 import { useRecordMutations } from '@/features/records/hooks/useRecordMutations';
+import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
+import { formatInTimezone } from '@/lib/date/timezone';
 import { logger } from '@/lib/logger';
 
 import type { CalendarPlan } from '../types/calendar.types';
@@ -33,6 +35,7 @@ export function useRecurringPlanDrag({ plans }: UseRecurringPlanDragOptions) {
   const { updatePlan } = usePlanMutations();
   const { updateRecord } = useRecordMutations();
   const { applyEdit } = useRecurringScopeMutations();
+  const timezone = useCalendarSettingsStore((s) => s.timezone);
 
   // 保留中のドラッグ更新（refで保持してダイアログのコールバックで参照）
   const pendingDragUpdateRef = useRef<PendingDragUpdate | null>(null);
@@ -130,11 +133,11 @@ export function useRecurringPlanDrag({ plans }: UseRecurringPlanDragOptions) {
           return;
         }
 
-        // worked_at は startTime から取得（YYYY-MM-DD）
-        const workedAt = resolvedUpdates.startTime.toISOString().slice(0, 10);
-        // start_time, end_time は HH:MM:SS 形式
-        const startTime = resolvedUpdates.startTime.toTimeString().slice(0, 8);
-        const endTime = resolvedUpdates.endTime.toTimeString().slice(0, 8);
+        // worked_at は startTime から取得（YYYY-MM-DD）- カレンダーTZで日付を取得
+        const workedAt = formatInTimezone(resolvedUpdates.startTime, timezone, 'yyyy-MM-dd');
+        // start_time, end_time は HH:MM:SS 形式 - カレンダーTZで時刻を取得
+        const startTime = formatInTimezone(resolvedUpdates.startTime, timezone, 'HH:mm:ss');
+        const endTime = formatInTimezone(resolvedUpdates.endTime, timezone, 'HH:mm:ss');
         // duration_minutes を計算
         const durationMs = resolvedUpdates.endTime.getTime() - resolvedUpdates.startTime.getTime();
         const durationMinutes = Math.round(durationMs / (1000 * 60));
@@ -172,7 +175,7 @@ export function useRecurringPlanDrag({ plans }: UseRecurringPlanDragOptions) {
         });
       }
     },
-    [plans, updatePlan, updateRecord, openDialog, handleScopeConfirm],
+    [plans, updatePlan, updateRecord, openDialog, handleScopeConfirm, timezone],
   );
 
   return {

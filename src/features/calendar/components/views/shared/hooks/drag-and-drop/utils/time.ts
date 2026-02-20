@@ -1,4 +1,5 @@
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
+import { convertFromTimezone, formatInTimezone } from '@/lib/date/timezone';
 
 import { HOUR_HEIGHT } from '../../../constants/grid.constants';
 import { formatTimeRange } from '../../../utils/dateHelpers';
@@ -20,6 +21,7 @@ export function calculatePreviewTime(
   viewMode: string,
   displayDates: Date[] | undefined,
   hourHeight: number = HOUR_HEIGHT,
+  timezone?: string,
 ): { previewStartTime: Date; previewEndTime: Date } {
   const event = events.find((e) => e.id === draggedEventId);
   let durationMs = 60 * 60 * 1000;
@@ -44,8 +46,9 @@ export function calculatePreviewTime(
     targetDate = date;
   }
 
-  const previewStartTime = new Date(targetDate);
-  previewStartTime.setHours(hour, minute, 0, 0);
+  const localStart = new Date(targetDate);
+  localStart.setHours(hour, minute, 0, 0);
+  const previewStartTime = timezone ? convertFromTimezone(localStart, timezone) : localStart;
   const previewEndTime = new Date(previewStartTime.getTime() + durationMs);
 
   return { previewStartTime, previewEndTime };
@@ -85,6 +88,7 @@ export function calculateNewTime(
   displayDates: Date[] | undefined,
   dragDataRef: DragDataRef | null,
   hourHeight: number = HOUR_HEIGHT,
+  timezone?: string,
 ): Date {
   const hourDecimal = newTop / hourHeight;
   let hour = Math.floor(Math.max(0, Math.min(23, hourDecimal)));
@@ -107,7 +111,7 @@ export function calculateNewTime(
   const newStartTime = new Date(targetDate);
   newStartTime.setHours(hour, minute, 0, 0);
 
-  return newStartTime;
+  return timezone ? convertFromTimezone(newStartTime, timezone) : newStartTime;
 }
 
 /**
@@ -138,12 +142,19 @@ export function updateTimeDisplay(
   dragElement: HTMLElement | null,
   previewStartTime: Date,
   previewEndTime: Date,
+  timezone?: string,
 ): void {
   if (!dragElement) return;
 
   const timeElement = dragElement.querySelector('.event-time');
   if (timeElement) {
-    const formattedTimeRange = formatTimeRange(previewStartTime, previewEndTime, '24h');
-    timeElement.textContent = formattedTimeRange;
+    if (timezone) {
+      const startStr = formatInTimezone(previewStartTime, timezone, 'H:mm');
+      const endStr = formatInTimezone(previewEndTime, timezone, 'H:mm');
+      timeElement.textContent = `${startStr} - ${endStr}`;
+    } else {
+      const formattedTimeRange = formatTimeRange(previewStartTime, previewEndTime, '24h');
+      timeElement.textContent = formattedTimeRange;
+    }
   }
 }

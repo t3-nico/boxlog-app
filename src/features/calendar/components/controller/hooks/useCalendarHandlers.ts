@@ -6,6 +6,8 @@ import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorS
 import { useRecurringEditConfirmStore } from '@/features/plans/stores/useRecurringEditConfirmStore';
 import { getInstanceRef } from '@/features/plans/utils/instanceId';
 import { useRecordInspectorStore } from '@/features/records/stores';
+import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
+import { convertFromTimezone } from '@/lib/date/timezone';
 import { logger } from '@/lib/logger';
 
 import type { CalendarPlan, CalendarViewType } from '../../../types/calendar.types';
@@ -23,6 +25,9 @@ export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandle
 
   // Record Inspector
   const openRecordInspector = useRecordInspectorStore((state) => state.openInspector);
+
+  // カレンダー設定のタイムゾーン
+  const timezone = useCalendarSettingsStore((s) => s.timezone);
 
   // Inspector で開いているプランIDをDnD無効化用に計算
   // Inspector が開いている場合のみ planId を返す
@@ -115,19 +120,23 @@ export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandle
       // ドラフトモードでInspectorを開く（DB保存は入力時に遅延実行）
       // Note: 重複チェックはサーバー側で行う（Plan↔Record共存を許可するため）
       if (startTime && endTime && date) {
+        // カレンダーTZの時刻をUTCに変換
+        const utcStartTime = convertFromTimezone(startTime, timezone);
+        const utcEndTime = convertFromTimezone(endTime, timezone);
+
         openInspectorWithDraft({
           title: '',
-          start_time: startTime.toISOString(),
-          end_time: endTime.toISOString(),
+          start_time: utcStartTime.toISOString(),
+          end_time: utcEndTime.toISOString(),
         });
 
         logger.log('📝 Opened draft plan:', {
-          startTime: startTime.toISOString(),
-          endTime: endTime.toISOString(),
+          startTime: utcStartTime.toISOString(),
+          endTime: utcEndTime.toISOString(),
         });
       }
     },
-    [viewType, currentDate, openInspectorWithDraft],
+    [viewType, currentDate, openInspectorWithDraft, timezone],
   );
 
   // 空き時間クリック用のハンドラー（ダブルクリックで使用）
@@ -148,21 +157,25 @@ export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandle
       endHour: number;
       endMinute: number;
     }) => {
-      // 指定された日付に時間を設定
-      const startTime = new Date(
+      // 指定された日付に時間を設定（カレンダーTZの値として解釈）
+      const localStart = new Date(
         selection.date.getFullYear(),
         selection.date.getMonth(),
         selection.date.getDate(),
         selection.startHour,
         selection.startMinute,
       );
-      const endTime = new Date(
+      const localEnd = new Date(
         selection.date.getFullYear(),
         selection.date.getMonth(),
         selection.date.getDate(),
         selection.endHour,
         selection.endMinute,
       );
+
+      // カレンダーTZの時刻をUTCに変換
+      const startTime = convertFromTimezone(localStart, timezone);
+      const endTime = convertFromTimezone(localEnd, timezone);
 
       logger.log('📅 Calendar Drag Selection:', {
         date: selection.date.toDateString(),
@@ -183,7 +196,7 @@ export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandle
         endTime: endTime.toISOString(),
       });
     },
-    [openInspectorWithDraft],
+    [openInspectorWithDraft, timezone],
   );
 
   return {

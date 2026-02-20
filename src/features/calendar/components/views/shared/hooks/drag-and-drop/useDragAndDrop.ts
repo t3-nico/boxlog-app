@@ -3,7 +3,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useCalendarDragStore } from '@/features/calendar/stores/useCalendarDragStore';
+import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
 import { useHapticFeedback } from '@/hooks/useHapticFeedback';
+
+import { useResponsiveHourHeight } from '../useResponsiveHourHeight';
 
 import type { DragDataRef, DragState, UseDragAndDropProps } from './types';
 import { initialDragState } from './types';
@@ -39,6 +42,12 @@ export function useDragAndDrop({
 }: UseDragAndDropProps) {
   const eventUpdateHandler = onEventUpdate || onPlanUpdate;
   const eventClickHandler = onEventClick || onPlanClick;
+
+  // カレンダー設定のタイムゾーン
+  const timezone = useCalendarSettingsStore((s) => s.timezone);
+
+  // レスポンシブ対応の1時間あたり高さ（px）
+  const hourHeight = useResponsiveHourHeight();
 
   // グローバルドラッグ状態（日付間移動用）
   const { startDrag, updateDrag, endDrag } = useCalendarDragStore();
@@ -79,6 +88,7 @@ export function useDragAndDrop({
     eventUpdateHandler,
     dragDataRef,
     setDragState,
+    hourHeight,
   });
 
   // handleResizeStart をラップして disabledPlanId をチェック
@@ -106,6 +116,8 @@ export function useDragAndDrop({
       date,
       displayDates,
       viewMode,
+      timezone,
+      hourHeight,
       eventUpdateHandler,
       eventClickHandler,
       dragDataRef,
@@ -192,6 +204,8 @@ export function useDragAndDrop({
         viewMode,
         displayDates,
         dragDataRef.current,
+        hourHeight,
+        timezone,
       );
 
       // 重複チェック
@@ -245,7 +259,16 @@ export function useDragAndDrop({
       endDrag();
       return true;
     },
-    [date, viewMode, displayDates, executeEventUpdate, completeDragOperation, endDrag],
+    [
+      date,
+      viewMode,
+      displayDates,
+      timezone,
+      hourHeight,
+      executeEventUpdate,
+      completeDragOperation,
+      endDrag,
+    ],
   );
 
   // マウス移動処理
