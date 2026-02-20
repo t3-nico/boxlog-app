@@ -1,21 +1,11 @@
-import type { Database } from '@/lib/database.types';
-import { createClient } from '@/lib/supabase/client';
+import { useActivityRealtimeSync } from '@/hooks/useActivityRealtimeSync';
 import { getCacheStrategy } from '@/lib/tanstack-query/cache-config';
 import { api } from '@/lib/trpc';
-import type { RealtimePostgresInsertPayload } from '@supabase/supabase-js';
-import { useQueryClient } from '@tanstack/react-query';
 import { getQueryKey } from '@trpc/react-query';
-import { useEffect } from 'react';
-
-import type { RecordActivity } from '../types/activity';
 
 /**
  * Recordアクティビティ（変更履歴）取得フック
  * Supabase Realtimeでリアルタイム更新に対応
- *
- * @param recordId - RecordID
- * @param options - オプション
- * @returns アクティビティ一覧とローディング状態
  */
 export function useRecordActivities(
   recordId: string,
@@ -26,79 +16,29 @@ export function useRecordActivities(
     enabled?: boolean;
   },
 ) {
-  const queryClient = useQueryClient();
-  const supabase = createClient();
+  const limit = options?.limit ?? 50;
+  const offset = options?.offset ?? 0;
+  const order = options?.order ?? 'desc';
+  const enabled = options?.enabled ?? true;
 
-  const query = api.records.activities.useQuery(
-    {
-      record_id: recordId,
-      limit: options?.limit ?? 50,
-      offset: options?.offset ?? 0,
-      order: options?.order ?? 'desc',
-    },
-    {
-      retry: 1,
-      refetchOnWindowFocus: false,
-      ...getCacheStrategy('planActivities'), // 同じキャッシュ戦略を使用
-      enabled: options?.enabled ?? true,
-    },
-  );
+  const input = { record_id: recordId, limit, offset, order };
 
-  // Supabase Realtimeでリアルタイム更新を購読
-  useEffect(() => {
-    if (!recordId || options?.enabled === false) return;
+  const query = api.records.activities.useQuery(input, {
+    retry: 1,
+    refetchOnWindowFocus: false,
+    ...getCacheStrategy('planActivities'),
+    enabled,
+  });
 
-    const channel = supabase
-      .channel(`record-activities:${recordId}`)
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'record_activities',
-          filter: `record_id=eq.${recordId}`,
-        },
-        (
-          payload: RealtimePostgresInsertPayload<
-            Database['public']['Tables']['record_activities']['Row']
-          >,
-        ) => {
-          // 新しいアクティビティを追加（order に応じて先頭 or 末尾）
-          const queryKey = getQueryKey(
-            api.records.activities,
-            {
-              record_id: recordId,
-              limit: options?.limit ?? 50,
-              offset: options?.offset ?? 0,
-              order: options?.order ?? 'desc',
-            },
-            'query',
-          );
-
-          const order = options?.order ?? 'desc';
-          queryClient.setQueryData<RecordActivity[]>(queryKey, (oldData) => {
-            if (!oldData) return [payload.new as RecordActivity];
-            // desc（最新順）なら先頭に追加、asc（古い順）なら末尾に追加
-            return order === 'desc'
-              ? [payload.new as RecordActivity, ...oldData]
-              : [...oldData, payload.new as RecordActivity];
-          });
-        },
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [
-    recordId,
-    options?.enabled,
-    options?.limit,
-    options?.offset,
-    options?.order,
-    queryClient,
-    supabase,
-  ]);
+  useActivityRealtimeSync({
+    entityId: recordId,
+    channelPrefix: 'record-activities',
+    table: 'record_activities',
+    filterColumn: 'record_id',
+    queryKey: getQueryKey(api.records.activities, input, 'query'),
+    order,
+    enabled,
+  });
 
   return query;
 }
