@@ -1,3 +1,8 @@
+import {
+  createListQueryPredicate,
+  createTempId,
+  normalizeDateTime,
+} from '@/hooks/mutations/mutationUtils';
 import { logger } from '@/lib/logger';
 import { api } from '@/lib/trpc';
 import type { UpdatePlanInput } from '@/schemas/plans/plan';
@@ -9,18 +14,8 @@ import { usePlanInspectorStore } from '../stores/usePlanInspectorStore';
 
 /**
  * plans.list クエリキーにマッチする predicate
- * tRPC v11 のクエリキー形式: [['plans', 'list'], { input, type }]
  */
-const isPlansListQuery = (query: { queryKey: unknown }) => {
-  const key = query.queryKey;
-  return (
-    Array.isArray(key) &&
-    key.length >= 1 &&
-    Array.isArray(key[0]) &&
-    key[0][0] === 'plans' &&
-    key[0][1] === 'list'
-  );
-};
+const isPlansListQuery = createListQueryPredicate('plans');
 
 /**
  * Plan Mutations Hook（作成・更新・削除）
@@ -63,7 +58,7 @@ export function usePlanMutations() {
       const previousPlans = utils.plans.list.getData();
 
       // 一時的なプランを作成（IDは仮）
-      const tempId = `temp-${Date.now()}`;
+      const tempId = createTempId();
       const tempPlan = {
         id: tempId,
         title: input.title,
@@ -337,19 +332,6 @@ export function usePlanMutations() {
       // 楽観的にtoastを即座に表示（undo付き）
       if (previousPlan) {
         // undoで復元するデータを事前に準備
-        // start_time/end_timeをISO 8601（UTC）形式に正規化（Zodバリデーション対策）
-        const normalizeDateTime = (value: string | null | undefined): string | undefined => {
-          if (!value || value === '') return undefined;
-          // Dateオブジェクトに変換してからISO文字列に変換（UTCの'Z'サフィックス形式）
-          try {
-            const date = new Date(value);
-            if (isNaN(date.getTime())) return undefined;
-            return date.toISOString();
-          } catch {
-            return undefined;
-          }
-        };
-
         const restoreData = {
           title: previousPlan.title,
           description: previousPlan.description ?? undefined,
