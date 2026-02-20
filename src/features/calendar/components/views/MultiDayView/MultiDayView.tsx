@@ -58,7 +58,7 @@ export function MultiDayView({
     return date;
   }, [currentDate]);
 
-  const { displayDates, isCurrentDay } = useMultiDayView({
+  const { displayDates } = useMultiDayView({
     centerDate: displayCenterDate,
     dayCount,
     events: plans,
@@ -105,10 +105,8 @@ export function MultiDayView({
         <CalendarDateHeader header={headerComponent} weekNumber={weekNumber} />
 
         <ScrollableCalendarLayout
-          scrollToHour={isCurrentDay ? undefined : 8}
           displayDates={displayDates}
           viewMode={viewMode}
-          plans={plans}
           enableKeyboardNavigation={true}
         >
           {displayDates.map((date, dayIndex) => {

@@ -36,7 +36,7 @@ export const WeekGrid = ({
   events,
   allPlans: _allPlans,
   eventsByDate: _eventsByDate,
-  todayIndex,
+  todayIndex: _todayIndex,
   disabledPlanId,
   onEventClick,
   onEventContextMenu,
@@ -115,10 +115,8 @@ export const WeekGrid = ({
 
       {/* スクロール可能コンテンツ */}
       <ScrollableCalendarLayout
-        scrollToHour={todayIndex !== -1 ? undefined : 8}
         displayDates={currentTimeDisplayDates}
         viewMode="week"
-        plans={events}
         enableKeyboardNavigation={true}
       >
         {/* 7日分のグリッド */}
