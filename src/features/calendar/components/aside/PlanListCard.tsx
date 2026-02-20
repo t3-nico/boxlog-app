@@ -26,8 +26,10 @@ interface PlanListCardProps {
 /**
  * アサイド用のPlanカード
  *
- * カレンダーTimeGridのPlanCardと同じビジュアル（チェックボックス+タイトル+時間）
- * position/drag/resizeは不要なシンプル版
+ * - 透明背景 + フラットなリスト表示（角丸なし）
+ * - ホバー領域は左右8pxの余白を確保（-mx-1で親paddingに食い込み）
+ * - チェックボックス + タイトル + 時間
+ * - D&D なし → cursor-pointer 固定
  */
 export const PlanListCard = memo<PlanListCardProps>(function PlanListCard({
   plan,
@@ -90,12 +92,12 @@ export const PlanListCard = memo<PlanListCardProps>(function PlanListCard({
   return (
     <Card
       className={cn(
-        // レイアウト
-        'group relative flex flex-row items-start gap-2 px-3 py-2',
-        // 背景（カレンダー PlanCard と統一）
-        'bg-plan-box',
+        // レイアウト（-mx-1 で親paddingに少し食い込み、左右8pxの余白を確保）
+        'group relative -mx-1 flex flex-row items-start gap-2 px-2 py-2',
+        // 背景なし（フラットなリスト表示）
+        'bg-transparent',
         // Card デフォルト打ち消し
-        'rounded-xl border-0 shadow-none',
+        'rounded-none border-0 shadow-none',
         // ホバー（オーバーレイ方式: bg-plan-box を保ちつつ暗くする）
         'after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:transition-colors',
         'hover:after:bg-state-hover',

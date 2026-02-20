@@ -12,7 +12,9 @@
 export const REMINDER_OPTIONS = [
   { minutes: null, i18nKey: 'common.reminder.none' },
   { minutes: 0, i18nKey: 'common.reminder.atStart' },
+  { minutes: 5, i18nKey: 'common.reminder.min5' },
   { minutes: 10, i18nKey: 'common.reminder.min10' },
+  { minutes: 15, i18nKey: 'common.reminder.min15' },
   { minutes: 30, i18nKey: 'common.reminder.min30' },
   { minutes: 60, i18nKey: 'common.reminder.hour1' },
   { minutes: 1440, i18nKey: 'common.reminder.day1' },

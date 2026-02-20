@@ -142,7 +142,8 @@
         "noPlans": "No plans found",
         "fulfillmentTooltip": "Fulfillment: {score}/5 (long press to reset)",
         "fulfillmentTap": "Fulfillment (tap to add)",
-        "fulfillmentLabel": "Fulfillment: {score}/5"
+        "fulfillmentLabel": "Fulfillment: {score}/5",
+        "addNewPlan": "Add new plan"
       }
     },
     "view": {

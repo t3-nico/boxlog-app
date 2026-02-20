@@ -27,7 +27,7 @@ import { InspectorHeader, useDragHandle } from '../shared';
 import { usePlanInspectorStore, type DraftPlan } from '../../../stores/usePlanInspectorStore';
 import { normalizeStatus } from '../../../utils/status';
 
-import { ActivityPopover } from './ActivityPopover';
+import { PlanActivityPopover } from './ActivityPopover';
 import { PlanInspectorDetailsTab } from './PlanInspectorDetailsTab';
 import { PlanInspectorMenu } from './PlanInspectorMenu';
 import { RecordCreateForm, type RecordCreateFormRef } from './RecordCreateForm';
@@ -162,7 +162,7 @@ export function PlanInspectorContent() {
           closeLabel={t('common.actions.close')}
           previousLabel={t('common.aria.previous')}
           nextLabel={t('common.aria.next')}
-          extraRightContent={planId ? <ActivityPopover planId={planId} /> : undefined}
+          extraRightContent={planId ? <PlanActivityPopover planId={planId} /> : undefined}
           menuContent={menuContent}
         />
       )}

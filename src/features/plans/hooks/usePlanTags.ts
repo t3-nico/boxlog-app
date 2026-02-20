@@ -1,6 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
 
+import { useUpdateEntityTagsInCache } from '@/hooks/useUpdateEntityTagsInCache';
 import { logger } from '@/lib/logger';
 import { api } from '@/lib/trpc';
 
@@ -28,53 +29,7 @@ interface OptimisticUpdateContext {
 export function usePlanTags() {
   const utils = api.useUtils();
   const queryClient = useQueryClient();
-
-  // プランキャッシュのtagIdsを楽観的に更新するヘルパー
-  const updatePlanTagIdsInCache = useCallback(
-    (planId: string, newTagIds: string[]) => {
-      type PlanData = ReturnType<typeof utils.plans.getById.getData>;
-
-      // plans.list のすべてのキャッシュを更新（入力キーに関係なく）
-      // tRPCのクエリキーは [['plans', 'list'], ...] の形式
-      // setQueriesData で部分一致させ、すべての plans.list クエリを更新
-      queryClient.setQueriesData(
-        {
-          predicate: (query) => {
-            const key = query.queryKey;
-            // tRPC v11 のクエリキー形式: [procedurePath, { input, type }]
-            // procedurePath は ['plans', 'list'] のような配列
-            return (
-              Array.isArray(key) &&
-              key.length >= 1 &&
-              Array.isArray(key[0]) &&
-              key[0][0] === 'plans' &&
-              key[0][1] === 'list'
-            );
-          },
-        },
-        (oldData: unknown) => {
-          if (!oldData || !Array.isArray(oldData)) return oldData;
-          return oldData.map((plan: { id: string; tagIds?: string[] }) =>
-            plan.id === planId ? { ...plan, tagIds: newTagIds } : plan,
-          );
-        },
-      );
-
-      // plans.getById のキャッシュを更新
-      utils.plans.getById.setData({ id: planId }, (oldData) => {
-        if (!oldData) return oldData;
-        return { ...oldData, tagIds: newTagIds } as PlanData;
-      });
-
-      // include: tags 付きの getById も更新
-      utils.plans.getById.setData({ id: planId, include: { tags: true } }, (oldData) => {
-        if (!oldData) return oldData;
-        return { ...oldData, tagIds: newTagIds } as PlanData;
-      });
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- utils自体は安定しており、plans.list/getByIdで十分
-    [queryClient, utils.plans.getById],
-  );
+  const updatePlanTagIdsInCache = useUpdateEntityTagsInCache('plans');
 
   // 現在のプランのタグIDリストを取得するヘルパー
   const getCurrentPlanTagIds = useCallback(

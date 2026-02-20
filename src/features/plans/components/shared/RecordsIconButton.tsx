@@ -45,17 +45,9 @@ export function RecordsIconButton({ planId, disabled = false }: RecordsIconButto
   const openInspectorWithDraft = usePlanInspectorStore((state) => state.openInspectorWithDraft);
 
   // 紐付き Record（Badge 表示用）
-  const { data: records, status: listByPlanStatus } = api.records.listByPlan.useQuery({
+  const { data: records } = api.records.listByPlan.useQuery({
     planId,
     sortOrder: 'desc',
-  });
-
-  // DEBUG: listByPlan クエリ結果を確認
-  logger.debug('[RecordsIconButton] listByPlan result', {
-    planId,
-    status: listByPlanStatus,
-    recordCount: records?.length ?? 0,
-    records: records?.map((r) => ({ id: r.id, title: r.title })),
   });
 
   // 全 Record（Popover 候補用）
@@ -95,15 +87,12 @@ export function RecordsIconButton({ planId, disabled = false }: RecordsIconButto
 
   // Record を Plan に紐付け
   const linkRecord = api.records.update.useMutation({
-    onSuccess: (data) => {
-      logger.debug('[RecordsIconButton] linkRecord success', { data });
-    },
     onError: (error) => {
       logger.error('[RecordsIconButton] linkRecord error', { error: error.message });
     },
     onSettled: () => {
       void utils.records.listByPlan.invalidate({ planId });
-      void utils.records.list.invalidate(undefined, { refetchType: 'all' });
+      void utils.records.list.invalidate();
       void utils.plans.getCumulativeTime.invalidate();
     },
   });
@@ -128,13 +117,12 @@ export function RecordsIconButton({ planId, disabled = false }: RecordsIconButto
     },
     onSettled: () => {
       void utils.records.listByPlan.invalidate({ planId });
-      void utils.records.list.invalidate(undefined, { refetchType: 'all' });
+      void utils.records.list.invalidate();
       void utils.plans.getCumulativeTime.invalidate();
     },
   });
 
   const handleLinkRecord = (recordId: string) => {
-    logger.debug('[RecordsIconButton] handleLinkRecord called', { recordId, planId });
     linkRecord.mutate({ id: recordId, data: { plan_id: planId } });
   };
 

@@ -1,117 +1,16 @@
 'use client';
 
-import { CheckCircle, Clock, History, Plus, Tag, Trash } from 'lucide-react';
-import { useLocale, useTranslations } from 'next-intl';
-import { useState } from 'react';
-
-import { Button } from '@/components/ui/button';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Spinner } from '@/components/ui/spinner';
-import { HoverTooltip } from '@/components/ui/tooltip';
-import { zIndex } from '@/config/ui/z-index';
+import { CheckCircle, Clock, Plus, Tag, Trash } from 'lucide-react';
+import { useMemo } from 'react';
 
 import { usePlanActivities } from '../../../hooks/usePlanActivities';
-import type { ActivityIconColor } from '../../../types/activity';
-import {
-  filterVisibleActivities,
-  formatActivity,
-  formatRelativeTime,
-} from '../../../utils/activityFormatter';
+import type { PlanActivityDisplay } from '../../../types/activity';
+import { filterVisibleActivities, formatActivity } from '../../../utils/activityFormatter';
+import { ActivityPopover } from '../shared';
 
-interface ActivityPopoverProps {
-  planId: string;
-}
+import type { ActivityDisplayItem } from '../shared';
 
-export function ActivityPopover({ planId }: ActivityPopoverProps) {
-  const locale = useLocale();
-  const t = useTranslations('settings');
-  const [open, setOpen] = useState(false);
-  const { data: activities, isPending } = usePlanActivities(planId, { order: 'desc' });
-
-  return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <HoverTooltip content={t('tabs.activity')} side="top">
-        <PopoverTrigger asChild>
-          <Button variant="ghost" size="sm" icon aria-label={t('tabs.activity')}>
-            <History className="size-5" />
-          </Button>
-        </PopoverTrigger>
-      </HoverTooltip>
-      <PopoverContent
-        align="end"
-        sideOffset={8}
-        className="w-80 p-0"
-        style={{ zIndex: zIndex.overlayDropdown }}
-      >
-        <div className="px-4 py-4">
-          <h3 className="text-sm font-bold">{t('tabs.activity')}</h3>
-        </div>
-        <div className="max-h-96 overflow-y-auto">
-          {isPending ? (
-            <div className="flex items-center justify-center py-8">
-              <Spinner size="sm" />
-            </div>
-          ) : (
-            (() => {
-              const visibleActivities = filterVisibleActivities(activities ?? []);
-              if (visibleActivities.length === 0) {
-                return (
-                  <div className="text-muted-foreground px-4 py-8 text-center text-sm">
-                    {t('activity.noActivity')}
-                  </div>
-                );
-              }
-              return (
-                <div className="px-4 py-4">
-                  {visibleActivities.map((activity, index) => {
-                    const formatted = formatActivity(activity);
-                    const IconComponent = getActivityIcon(formatted.icon);
-                    const isLast = index === visibleActivities.length - 1;
-
-                    return (
-                      <div key={activity.id} className="flex gap-4">
-                        {/* アイコン（色付き） */}
-                        <div className="relative flex flex-col items-center">
-                          <div className="bg-container relative z-10 flex size-8 flex-shrink-0 items-center justify-center rounded-full">
-                            <IconComponent
-                              className={`size-4 ${getIconColor(formatted.iconColor)}`}
-                            />
-                          </div>
-                          {!isLast && (
-                            <div className="bg-border absolute top-8 left-1/2 h-full w-px -translate-x-1/2" />
-                          )}
-                        </div>
-
-                        {/* コンテンツ */}
-                        <div className="flex-1 pb-6">
-                          <div className="flex items-start justify-between gap-2">
-                            <span className="text-sm leading-8 font-bold">
-                              {formatted.actionLabel}
-                            </span>
-                            <span className="text-muted-foreground mt-2 flex-shrink-0 text-xs">
-                              {formatRelativeTime(activity.created_at, locale)}
-                            </span>
-                          </div>
-                          {formatted.detail && (
-                            <p className="text-muted-foreground -mt-1 text-xs">
-                              {formatted.detail}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              );
-            })()
-          )}
-        </div>
-      </PopoverContent>
-    </Popover>
-  );
-}
-
-function getActivityIcon(icon: 'create' | 'status' | 'tag' | 'delete' | 'time') {
+function getActivityIcon(icon: PlanActivityDisplay['icon']) {
   switch (icon) {
     case 'create':
       return Plus;
@@ -128,13 +27,27 @@ function getActivityIcon(icon: 'create' | 'status' | 'tag' | 'delete' | 'time') 
   }
 }
 
-function getIconColor(color: ActivityIconColor): string {
-  switch (color) {
-    case 'success':
-      return 'text-success';
-    case 'destructive':
-      return 'text-destructive';
-    default:
-      return 'text-muted-foreground';
-  }
+interface PlanActivityPopoverProps {
+  planId: string;
+}
+
+export function PlanActivityPopover({ planId }: PlanActivityPopoverProps) {
+  const { data: activities, isPending } = usePlanActivities(planId, { order: 'desc' });
+
+  const items: ActivityDisplayItem[] = useMemo(() => {
+    const visible = filterVisibleActivities(activities ?? []);
+    return visible.map((activity) => {
+      const formatted = formatActivity(activity);
+      return {
+        id: activity.id,
+        createdAt: activity.created_at,
+        label: formatted.actionLabel,
+        detail: formatted.detail,
+        icon: getActivityIcon(formatted.icon),
+        iconColor: formatted.iconColor,
+      };
+    });
+  }, [activities]);
+
+  return <ActivityPopover items={items} isPending={isPending} />;
 }

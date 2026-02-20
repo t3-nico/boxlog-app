@@ -67,34 +67,35 @@ export function ScheduleStatusItem() {
     return zone ? getChronotypeColor(zone.level) : null;
   }, [chronotype, currentTime]);
 
-  // 今日の予定を取得
-  const { data: plans, isPending } = api.plans.list.useQuery(undefined, {
+  // 今日の日付文字列（日付が変わるまで安定）
+  const todayStr = useMemo(() => {
+    return currentTime.toISOString().split('T')[0]!;
+  }, [currentTime]);
+
+  // 今日の日付範囲フィルター（todayStrが変わらない限りクエリキーも安定）
+  const todayDateFilter = useMemo(() => {
+    return {
+      startDate: `${todayStr}T00:00:00.000Z`,
+      endDate: `${todayStr}T23:59:59.999Z`,
+    };
+  }, [todayStr]);
+
+  // 今日の予定のみ取得（全plans取得を回避してDB負荷を大幅削減）
+  const { data: plans, isPending } = api.plans.list.useQuery(todayDateFilter, {
     staleTime: 60 * 1000, // 1分
     refetchInterval: 60 * 1000, // 1分ごとに再取得
   });
 
-  // 今日の予定をフィルタリング
+  // 今日の予定をフィルタリング（ステータスでフィルタ + ソート）
   const todayPlans = useMemo(() => {
     if (!plans) return [];
 
-    const today = new Date();
-    const todayStr = today.toISOString().split('T')[0];
-
     return plans
       .filter((plan) => {
-        // start_time が今日のもの
-        if (plan.start_time) {
-          const startDate = new Date(plan.start_time).toISOString().split('T')[0];
-          return startDate === todayStr;
-        }
-        return false;
-      })
-      .filter((plan) => {
-        // 完了・キャンセル以外
-        return plan.status !== 'closed' && plan.status !== 'cancel';
+        // start_time があり、完了・キャンセル以外
+        return plan.start_time && plan.status !== 'closed' && plan.status !== 'cancel';
       })
       .sort((a, b) => {
-        // start_time でソート
         const aTime = a.start_time ? new Date(a.start_time).getTime() : Infinity;
         const bTime = b.start_time ? new Date(b.start_time).getTime() : Infinity;
         return aTime - bTime;

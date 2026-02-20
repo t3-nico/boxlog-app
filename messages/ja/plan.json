@@ -142,7 +142,8 @@
         "noPlans": "Planがありません",
         "fulfillmentTooltip": "充実度: {score}/5（長押しでリセット）",
         "fulfillmentTap": "充実度（タップで加算）",
-        "fulfillmentLabel": "充実度: {score}/5"
+        "fulfillmentLabel": "充実度: {score}/5",
+        "addNewPlan": "予定を追加"
       }
     },
     "view": {

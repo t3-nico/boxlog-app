@@ -1,6 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
 
+import { useUpdateEntityTagsInCache } from '@/hooks/useUpdateEntityTagsInCache';
 import { api } from '@/lib/trpc';
 
 // 楽観的更新用のコンテキスト型
@@ -19,45 +20,7 @@ interface OptimisticUpdateContext {
 export function useRecordTags() {
   const utils = api.useUtils();
   const queryClient = useQueryClient();
-
-  // レコードキャッシュのtagIdsを楽観的に更新するヘルパー
-  const updateRecordTagIdsInCache = useCallback(
-    (recordId: string, newTagIds: string[]) => {
-      // records.list のすべてのキャッシュを更新
-      queryClient.setQueriesData(
-        {
-          predicate: (query) => {
-            const key = query.queryKey;
-            return (
-              Array.isArray(key) &&
-              key.length >= 1 &&
-              Array.isArray(key[0]) &&
-              key[0][0] === 'records' &&
-              key[0][1] === 'list'
-            );
-          },
-        },
-        (oldData: unknown) => {
-          if (!oldData || !Array.isArray(oldData)) return oldData;
-          return oldData.map((record: { id: string; tagIds?: string[] }) =>
-            record.id === recordId ? { ...record, tagIds: newTagIds } : record,
-          );
-        },
-      );
-
-      // records.getById のキャッシュを更新
-      utils.records.getById.setData({ id: recordId }, (oldData) => {
-        if (!oldData) return oldData;
-        return { ...oldData, tagIds: newTagIds };
-      });
-
-      utils.records.getById.setData({ id: recordId, include: { plan: true } }, (oldData) => {
-        if (!oldData) return oldData;
-        return { ...oldData, tagIds: newTagIds };
-      });
-    },
-    [queryClient, utils.records.getById],
-  );
+  const updateRecordTagIdsInCache = useUpdateEntityTagsInCache('records');
 
   // 現在のレコードのタグIDリストを取得するヘルパー
   const getCurrentRecordTagIds = useCallback(

@@ -52,8 +52,8 @@ export function useRecordMutations() {
       // TIME_OVERLAPエラーはモーダル内でエラー表示（toastなし）
     },
     onSettled: () => {
-      // すべてのrecords.listクエリを無効化（日付フィルター付きも含む）
-      void utils.records.list.invalidate(undefined, { refetchType: 'all' });
+      // アクティブなrecords.listクエリを無効化（非表示のクエリは次回マウント時にリフェッチ）
+      void utils.records.list.invalidate();
       void utils.records.listByPlan.invalidate();
       void utils.records.getRecent.invalidate();
       void utils.plans.getCumulativeTime.invalidate();
@@ -97,8 +97,8 @@ export function useRecordMutations() {
       }
     },
     onSettled: (_data, _error, { id }) => {
-      // すべてのrecords.listクエリを無効化（日付フィルター付きも含む）
-      void utils.records.list.invalidate(undefined, { refetchType: 'all' });
+      // アクティブなrecords.listクエリを無効化（非表示のクエリは次回マウント時にリフェッチ）
+      void utils.records.list.invalidate();
       void utils.records.listByPlan.invalidate();
       // 個別Recordのキャッシュも無効化（編集画面用）
       void utils.records.getById.invalidate({ id });
@@ -125,8 +125,8 @@ export function useRecordMutations() {
       }
     },
     onSettled: () => {
-      // すべてのrecords.listクエリを無効化（日付フィルター付きも含む）
-      void utils.records.list.invalidate(undefined, { refetchType: 'all' });
+      // アクティブなrecords.listクエリを無効化（非表示のクエリは次回マウント時にリフェッチ）
+      void utils.records.list.invalidate();
       void utils.records.listByPlan.invalidate();
       void utils.records.getRecent.invalidate();
       void utils.plans.getCumulativeTime.invalidate();
@@ -137,8 +137,8 @@ export function useRecordMutations() {
   const duplicateRecord = api.records.duplicate.useMutation({
     // TIME_OVERLAPエラーはモーダル内でエラー表示（toastなし）
     onSettled: () => {
-      // すべてのrecords.listクエリを無効化（日付フィルター付きも含む）
-      void utils.records.list.invalidate(undefined, { refetchType: 'all' });
+      // アクティブなrecords.listクエリを無効化（非表示のクエリは次回マウント時にリフェッチ）
+      void utils.records.list.invalidate();
       void utils.records.listByPlan.invalidate();
       void utils.records.getRecent.invalidate();
       void utils.plans.getCumulativeTime.invalidate();
@@ -165,8 +165,8 @@ export function useRecordMutations() {
       }
     },
     onSettled: () => {
-      // すべてのrecords.listクエリを無効化（日付フィルター付きも含む）
-      void utils.records.list.invalidate(undefined, { refetchType: 'all' });
+      // アクティブなrecords.listクエリを無効化（非表示のクエリは次回マウント時にリフェッチ）
+      void utils.records.list.invalidate();
       void utils.records.listByPlan.invalidate();
       void utils.records.getRecent.invalidate();
       void utils.plans.getCumulativeTime.invalidate();

@@ -36,6 +36,8 @@ export interface DraftPlan {
   tagIds?: string[];
   plan_id?: string | null;
   note?: string | null;
+  // Plan作成後に自動紐付けするRecord ID（Record Inspector経由の場合）
+  _linkRecordId?: string | null;
 }
 
 /**
@@ -177,6 +179,7 @@ export const usePlanInspectorStore = create<PlanInspectorStore>()(
               tagIds: initialData?.tagIds ?? [],
               plan_id: initialData?.plan_id ?? null,
               note: initialData?.note ?? null,
+              _linkRecordId: initialData?._linkRecordId ?? null,
             },
             createType,
           },

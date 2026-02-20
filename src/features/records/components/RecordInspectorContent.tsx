@@ -11,39 +11,26 @@
  * 既存Record編集専用（新規作成はPlanInspectorで行う）
  */
 
-import { useQueryClient } from '@tanstack/react-query';
-import { Check, Copy, ExternalLink, FolderOpen, Trash2, X } from 'lucide-react';
-import { useLocale, useTranslations } from 'next-intl';
-import Link from 'next/link';
+import { Copy, Trash2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from '@/components/ui/command';
 import { DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { HoverTooltip } from '@/components/ui/tooltip';
-import { zIndex } from '@/config/ui/z-index';
 import {
   FulfillmentButton,
+  InspectorDetailsLayout,
   InspectorHeader,
   NoteIconButton,
+  PlanIconButton,
   ScheduleRow,
   TagsIconButton,
   TitleInput,
 } from '@/features/plans/components/inspector/shared';
-import { usePlans } from '@/features/plans/hooks/usePlans';
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
-import { useTags } from '@/features/tags/hooks';
 import { useSubmitShortcut } from '@/hooks/useSubmitShortcut';
-import { api } from '@/lib/trpc';
-import { cn } from '@/lib/utils';
+import { useUpdateEntityTagsInCache } from '@/hooks/useUpdateEntityTagsInCache';
+import { computeDuration } from '@/lib/time-utils';
 
 import {
   useRecord,
@@ -84,9 +71,7 @@ function formatTimeWithoutSeconds(time: string | null | undefined): string {
 
 export function RecordInspectorContent({ onClose }: RecordInspectorContentProps) {
   const t = useTranslations();
-  const locale = useLocale();
-  const queryClient = useQueryClient();
-  const utils = api.useUtils();
+  const updateTagsInCache = useUpdateEntityTagsInCache('records');
   const selectedRecordId = useRecordInspectorStore((state) => state.selectedRecordId);
   const closeRecordInspector = useRecordInspectorStore((state) => state.closeInspector);
   const openInspectorWithDraft = usePlanInspectorStore((state) => state.openInspectorWithDraft);
@@ -108,12 +93,6 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
     includePlan: true,
     enabled: !!selectedRecordId,
   });
-
-  // Plan一覧取得（キャッシュ戦略適用済み）
-  const { data: plans } = usePlans({});
-
-  // タグデータ取得
-  const { data: allTags = [] } = useTags();
 
   // Mutations
   const { updateRecord, deleteRecord } = useRecordMutations();
@@ -141,23 +120,10 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
   const [isDirty, setIsDirty] = useState(false);
   const isSaving = false;
 
-  // Popover開閉状態
-  const [isPlanPopoverOpen, setIsPlanPopoverOpen] = useState(false);
-  const [planSearchQuery, setPlanSearchQuery] = useState('');
-
   // タイトル入力のref
   const titleRef = useRef<HTMLInputElement>(null);
 
-  // Duration計算
-  const calculateDuration = useCallback((start: string, end: string): number => {
-    if (!start || !end) return 0;
-    const [startH, startM] = start.split(':').map(Number);
-    const [endH, endM] = end.split(':').map(Number);
-    const startMinutes = (startH ?? 0) * 60 + (startM ?? 0);
-    const endMinutes = (endH ?? 0) * 60 + (endM ?? 0);
-    const duration = endMinutes - startMinutes;
-    return duration > 0 ? duration : 0;
-  }, []);
+  // Duration計算（共有ユーティリティを使用）
 
   // Recordデータを編集フォームに反映
   useEffect(() => {
@@ -183,11 +149,11 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
 
   // 時間変更時にdurationを自動計算
   useEffect(() => {
-    const duration = calculateDuration(formData.start_time, formData.end_time);
+    const duration = computeDuration(formData.start_time, formData.end_time);
     if (duration !== formData.duration_minutes) {
       setFormData((prev) => ({ ...prev, duration_minutes: duration }));
     }
-  }, [formData.start_time, formData.end_time, calculateDuration, formData.duration_minutes]);
+  }, [formData.start_time, formData.end_time, formData.duration_minutes]);
 
   // 自動保存タイマーのクリーンアップ
   useEffect(() => {
@@ -200,26 +166,6 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
 
   // TitleInputの自動フォーカストリガー用のキー
   const autoFocusKey = selectedRecordId ?? '';
-
-  // Plan: updated_at降順ソート + 検索フィルタリング
-  const filteredPlans = useMemo(() => {
-    if (!plans) return [];
-    const sorted = [...plans].sort(
-      (a, b) => new Date(b.updated_at || 0).getTime() - new Date(a.updated_at || 0).getTime(),
-    );
-    if (!planSearchQuery) return sorted;
-    return sorted.filter((p) => p.title.toLowerCase().includes(planSearchQuery.toLowerCase()));
-  }, [plans, planSearchQuery]);
-
-  // 選択中のPlan名
-  const selectedPlanName = useMemo(() => {
-    if (!formData.plan_id || !plans) return null;
-    const plan = plans.find((p) => p.id === formData.plan_id);
-    return plan?.title ?? null;
-  }, [formData.plan_id, plans]);
-
-  // 各オプションに値があるか
-  const hasPlan = !!formData.plan_id;
 
   // フォーム変更ハンドラ
   const handleTitleChange = useCallback(
@@ -240,45 +186,31 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
   );
 
   const handlePlanChange = useCallback(
-    (planId: string | null) => {
+    (planId: string | null, plan?: { title: string; tagIds?: string[] }) => {
       setFormData((prev) => {
         const updates: Partial<FormData> = { plan_id: planId };
 
-        // Planのタグを自動プリセット
-        if (planId && plans) {
-          const selectedPlan = plans.find((p) => p.id === planId);
-          if (selectedPlan) {
-            // タイトルが空の場合はPlanのタイトルをプリセット
-            if (!prev.title) {
-              updates.title = selectedPlan.title;
-            }
-            // タグも自動プリセット
-            if (selectedPlan.tagIds && selectedPlan.tagIds.length > 0) {
-              updates.tagIds = selectedPlan.tagIds;
-            }
+        // Planのタイトル・タグを自動プリセット
+        if (plan) {
+          if (!prev.title) {
+            updates.title = plan.title;
+          }
+          if (plan.tagIds && plan.tagIds.length > 0) {
+            updates.tagIds = plan.tagIds;
           }
         }
 
         return { ...prev, ...updates };
       });
       setIsDirty(true);
-      setIsPlanPopoverOpen(false);
-      setPlanSearchQuery('');
 
       if (selectedRecordId) {
         // plan_id変更を即座にDB保存
         updateRecord.mutate({ id: selectedRecordId, data: { plan_id: planId } });
       }
     },
-    [plans, selectedRecordId, updateRecord],
+    [selectedRecordId, updateRecord],
   );
-
-  const handlePlanPopoverOpenChange = useCallback((open: boolean) => {
-    setIsPlanPopoverOpen(open);
-    if (!open) {
-      setPlanSearchQuery('');
-    }
-  }, []);
 
   const handleDateChange = useCallback((date: Date | undefined) => {
     setFormData((prev) => ({ ...prev, worked_at: date }));
@@ -327,46 +259,6 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
       }
     },
     [selectedRecordId, updateRecord],
-  );
-
-  /**
-   * キャッシュのtagIdsを楽観的に更新（CalendarCard等での即時表示用）
-   */
-  const updateTagsInCache = useCallback(
-    (recordId: string, newTagIds: string[]) => {
-      // 1. records.list のすべてのキャッシュを更新
-      queryClient.setQueriesData(
-        {
-          predicate: (query) => {
-            const key = query.queryKey;
-            return (
-              Array.isArray(key) &&
-              key.length >= 1 &&
-              Array.isArray(key[0]) &&
-              key[0][0] === 'records' &&
-              key[0][1] === 'list'
-            );
-          },
-        },
-        (oldData: unknown) => {
-          if (!oldData || !Array.isArray(oldData)) return oldData;
-          return oldData.map((r: { id: string; tagIds?: string[] }) =>
-            r.id === recordId ? { ...r, tagIds: newTagIds } : r,
-          );
-        },
-      );
-
-      // 2. records.getById のキャッシュを更新
-      utils.records.getById.setData({ id: recordId }, (oldData) => {
-        if (!oldData) return oldData;
-        return { ...oldData, tagIds: newTagIds };
-      });
-      utils.records.getById.setData({ id: recordId, include: { plan: true } }, (oldData) => {
-        if (!oldData) return oldData;
-        return { ...oldData, tagIds: newTagIds };
-      });
-    },
-    [queryClient, utils.records.getById],
   );
 
   const handleTagsChange = useCallback(
@@ -565,171 +457,56 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
 
       {/* コンテンツ部分（Toggl風3行構造） */}
       <div className="flex flex-1 flex-col overflow-y-auto">
-        {/* 1行目: タイトル（プライマリ） */}
-        <div className="px-4 pt-4 pb-2">
-          <TitleInput
-            key={autoFocusKey}
-            ref={titleRef}
-            value={formData.title}
-            onChange={handleTitleChange}
-            placeholder={t('calendar.event.noTitle')}
-            className="pl-2"
-            aria-label={t('plan.inspector.recordCreate.titleLabel')}
-            autoFocus
-            selectOnFocus
-          />
-        </div>
-
-        {/* 2行目: 日付 + 時間（メタデータ） */}
-        <ScheduleRow
-          selectedDate={formData.worked_at}
-          startTime={formData.start_time}
-          endTime={formData.end_time}
-          onDateChange={handleDateChange}
-          onStartTimeChange={handleStartTimeChange}
-          onEndTimeChange={handleEndTimeChange}
-          timeConflictError={timeConflictError}
+        <InspectorDetailsLayout
+          title={
+            <TitleInput
+              key={autoFocusKey}
+              ref={titleRef}
+              value={formData.title}
+              onChange={handleTitleChange}
+              placeholder={t('calendar.event.noTitle')}
+              className="pl-2"
+              aria-label={t('plan.inspector.recordCreate.titleLabel')}
+              autoFocus
+              selectOnFocus
+            />
+          }
+          schedule={
+            <ScheduleRow
+              selectedDate={formData.worked_at}
+              startTime={formData.start_time}
+              endTime={formData.end_time}
+              onDateChange={handleDateChange}
+              onStartTimeChange={handleStartTimeChange}
+              onEndTimeChange={handleEndTimeChange}
+              timeConflictError={timeConflictError}
+            />
+          }
+          options={
+            <>
+              <TagsIconButton
+                tagIds={formData.tagIds}
+                onTagsChange={handleTagsChange}
+                popoverSide="bottom"
+              />
+              <PlanIconButton
+                planId={formData.plan_id}
+                onPlanChange={handlePlanChange}
+                recordId={selectedRecordId}
+                onBeforeCreatePlan={closeRecordInspector}
+              />
+              <FulfillmentButton
+                score={formData.fulfillment_score}
+                onScoreChange={handleScoreChange}
+              />
+              <NoteIconButton
+                id={selectedRecordId ?? 'record'}
+                note={formData.note}
+                onNoteChange={handleNoteChange}
+              />
+            </>
+          }
         />
-
-        {/* 3行目: オプションアイコン */}
-        <div className="flex flex-wrap items-center gap-1 px-4 pt-2 pb-4">
-          {/* Tags */}
-          <TagsIconButton
-            tagIds={formData.tagIds}
-            onTagsChange={handleTagsChange}
-            popoverSide="bottom"
-          />
-
-          {/* Plan紐付け */}
-          <Popover open={isPlanPopoverOpen} onOpenChange={handlePlanPopoverOpenChange}>
-            <HoverTooltip
-              content={selectedPlanName ?? t('plan.inspector.recordCreate.linkPlan')}
-              side="top"
-            >
-              <div
-                className={cn(
-                  'hover:bg-state-hover flex h-8 items-center rounded-lg transition-colors',
-                  hasPlan ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',
-                )}
-              >
-                <PopoverTrigger asChild>
-                  <button
-                    type="button"
-                    className="focus-visible:ring-ring flex items-center gap-1 px-2 text-sm focus-visible:ring-2 focus-visible:outline-none"
-                    aria-label={t('plan.inspector.recordCreate.linkPlan')}
-                  >
-                    <FolderOpen className="size-4" />
-                    {hasPlan && selectedPlanName && (
-                      <span className="max-w-20 truncate text-xs">{selectedPlanName}</span>
-                    )}
-                  </button>
-                </PopoverTrigger>
-                {hasPlan && (
-                  <button
-                    type="button"
-                    onClick={() => handlePlanChange(null)}
-                    className="hover:bg-state-hover mr-1 rounded p-1 transition-colors"
-                    aria-label={t('plan.inspector.recordCreate.unlinkPlan')}
-                  >
-                    <X className="size-4" />
-                  </button>
-                )}
-              </div>
-            </HoverTooltip>
-            <PopoverContent
-              className="w-[400px] p-0"
-              side="bottom"
-              align="start"
-              sideOffset={8}
-              style={{ zIndex: zIndex.overlayDropdown }}
-            >
-              <Command shouldFilter={false}>
-                <CommandInput
-                  placeholder={t('plan.inspector.recordCreate.searchPlan')}
-                  value={planSearchQuery}
-                  onValueChange={setPlanSearchQuery}
-                />
-                <CommandList className="max-h-[280px]">
-                  <CommandEmpty>{t('plan.inspector.recordCreate.noPlans')}</CommandEmpty>
-                  <CommandGroup>
-                    {filteredPlans.map((plan) => {
-                      const planTags = plan.tagIds
-                        ?.map((id) => allTags.find((t) => t.id === id))
-                        .filter(Boolean);
-                      return (
-                        <CommandItem
-                          key={plan.id}
-                          value={plan.id}
-                          onSelect={() =>
-                            handlePlanChange(formData.plan_id === plan.id ? null : plan.id)
-                          }
-                          className="cursor-pointer"
-                        >
-                          <span className="shrink truncate">
-                            {plan.title || (
-                              <span className="text-muted-foreground">
-                                {t('plan.inspector.noTitle')}
-                              </span>
-                            )}
-                          </span>
-                          {planTags && planTags.length > 0 && (
-                            <div className="flex shrink-0 gap-1 pl-2">
-                              {planTags.slice(0, 2).map((tag) => (
-                                <span
-                                  key={tag!.id}
-                                  className="rounded px-1 py-1 text-xs"
-                                  style={{
-                                    backgroundColor: tag!.color ? `${tag!.color}20` : undefined,
-                                    color: tag!.color || undefined,
-                                  }}
-                                >
-                                  {tag!.name}
-                                </span>
-                              ))}
-                              {planTags.length > 2 && (
-                                <span className="text-muted-foreground text-xs">
-                                  +{planTags.length - 2}
-                                </span>
-                              )}
-                            </div>
-                          )}
-                          <Check
-                            className={cn(
-                              'text-primary ml-auto size-4 shrink-0',
-                              formData.plan_id === plan.id ? 'opacity-100' : 'opacity-0',
-                            )}
-                          />
-                        </CommandItem>
-                      );
-                    })}
-                  </CommandGroup>
-                </CommandList>
-              </Command>
-              {/* 選択中Planへのナビゲーション */}
-              {hasPlan && formData.plan_id && (
-                <div className="border-border border-t p-2">
-                  <Link
-                    href={`/${locale}/plan?selected=${formData.plan_id}`}
-                    className="text-muted-foreground hover:text-foreground hover:bg-state-hover flex items-center gap-2 rounded-lg px-2 py-2 text-sm transition-colors"
-                  >
-                    <ExternalLink className="size-4" />
-                    <span>{t('record.inspector.openPlan')}</span>
-                  </Link>
-                </div>
-              )}
-            </PopoverContent>
-          </Popover>
-
-          {/* 充実度 */}
-          <FulfillmentButton score={formData.fulfillment_score} onScoreChange={handleScoreChange} />
-
-          {/* メモ */}
-          <NoteIconButton
-            id={selectedRecordId ?? 'record'}
-            note={formData.note}
-            onNoteChange={handleNoteChange}
-          />
-        </div>
       </div>
     </div>
   );

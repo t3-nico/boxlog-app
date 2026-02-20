@@ -11,12 +11,11 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Spinner } from '@/components/ui/spinner';
 
-import type { Tag } from '@/features/tags/types';
-
 import type { Plan } from '../../types/plan';
 import { PlanInspectorDetailsTab } from './PlanInspectorContent/PlanInspectorDetailsTab';
 import { PlanInspectorMenu } from './PlanInspectorContent/PlanInspectorMenu';
 import { InspectorHeader } from './shared';
+import { InspectorFrame, mockTags } from './shared/story-helpers';
 
 // ---------------------------------------------------------------------------
 // Meta
@@ -37,48 +36,6 @@ type Story = StoryObj<typeof meta>;
 // ---------------------------------------------------------------------------
 // モックデータ
 // ---------------------------------------------------------------------------
-
-const mockTags: Tag[] = [
-  {
-    id: 'tag-1',
-    name: '仕事',
-    user_id: 'user-1',
-    color: '#3B82F6',
-    description: '仕事関連のタスク',
-    icon: null,
-    is_active: true,
-    parent_id: null,
-    sort_order: 0,
-    created_at: '2024-01-01T00:00:00Z',
-    updated_at: '2024-01-01T00:00:00Z',
-  },
-  {
-    id: 'tag-2',
-    name: '重要',
-    user_id: 'user-1',
-    color: '#EF4444',
-    description: '重要なタスク',
-    icon: null,
-    is_active: true,
-    parent_id: null,
-    sort_order: 1,
-    created_at: '2024-01-01T00:00:00Z',
-    updated_at: '2024-01-01T00:00:00Z',
-  },
-  {
-    id: 'tag-3',
-    name: '個人',
-    user_id: 'user-1',
-    color: '#10B981',
-    description: null,
-    icon: null,
-    is_active: true,
-    parent_id: null,
-    sort_order: 2,
-    created_at: '2024-01-01T00:00:00Z',
-    updated_at: '2024-01-01T00:00:00Z',
-  },
-];
 
 const basePlan: Plan = {
   id: 'plan-1',
@@ -117,15 +74,6 @@ const completedPlan: Plan = {
 // ---------------------------------------------------------------------------
 
 const noop = () => {};
-
-/** Inspector風コンテナ */
-function InspectorFrame({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="bg-card border-border w-[400px] overflow-hidden rounded-xl border shadow-lg">
-      {children}
-    </div>
-  );
-}
 
 /** Plan用メニューコンテンツ */
 const planMenuContent = (

@@ -4,7 +4,6 @@
  * PlanInspectorContent のロジックを管理するカスタムフック
  */
 
-import { useQueryClient } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
@@ -15,8 +14,10 @@ import {
   parseISOToUserTimezone,
 } from '@/features/calendar/utils/dateUtils';
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
+import { useUpdateEntityTagsInCache } from '@/hooks/useUpdateEntityTagsInCache';
 import { logger } from '@/lib/logger';
 import { api } from '@/lib/trpc';
+import { vanillaTrpc } from '@/lib/trpc/client';
 import type { RecurringEditScope } from '../../../components/RecurringEditConfirmDialog';
 import { usePlan } from '../../../hooks/usePlan';
 import { usePlanMutations } from '../../../hooks/usePlanMutations';
@@ -39,7 +40,7 @@ const IMMEDIATE_SAVE_FIELDS = ['title', 'description'] as const;
 export function usePlanInspectorContentLogic() {
   const t = useTranslations();
   const utils = api.useUtils();
-  const queryClient = useQueryClient();
+  const updateTagsInCache = useUpdateEntityTagsInCache('plans');
 
   // ユーザーのタイムゾーン設定
   const timezone = useCalendarSettingsStore((state) => state.timezone);
@@ -348,47 +349,6 @@ export function usePlanInspectorContentLogic() {
     }
   }, [plan]);
 
-  /**
-   * キャッシュのtagIdsを楽観的に更新（CalendarCard等での即時表示用）
-   */
-  const updateTagsInCache = useCallback(
-    (targetPlanId: string, newTagIds: string[]) => {
-      // plans.list のすべてのキャッシュを更新（CalendarCard用）
-      // tRPC v11 のクエリキー形式: [procedurePath, { input, type }]
-      queryClient.setQueriesData(
-        {
-          predicate: (query) => {
-            const key = query.queryKey;
-            return (
-              Array.isArray(key) &&
-              key.length >= 1 &&
-              Array.isArray(key[0]) &&
-              key[0][0] === 'plans' &&
-              key[0][1] === 'list'
-            );
-          },
-        },
-        (oldData: unknown) => {
-          if (!oldData || !Array.isArray(oldData)) return oldData;
-          return oldData.map((plan: { id: string; tagIds?: string[] }) =>
-            plan.id === targetPlanId ? { ...plan, tagIds: newTagIds } : plan,
-          );
-        },
-      );
-
-      // plans.getById のキャッシュを更新
-      utils.plans.getById.setData({ id: targetPlanId }, (oldData) => {
-        if (!oldData) return oldData;
-        return { ...oldData, tagIds: newTagIds };
-      });
-      utils.plans.getById.setData({ id: targetPlanId, include: { tags: true } }, (oldData) => {
-        if (!oldData) return oldData;
-        return { ...oldData, tagIds: newTagIds };
-      });
-    },
-    [queryClient, utils.plans.getById],
-  );
-
   // Handlers
   const handleTagsChange = useCallback(
     (newTagIds: string[]) => {
@@ -674,6 +634,19 @@ export function usePlanInspectorContentLogic() {
               toast.error(t('plan.inspector.toast.tagsSaveFailed'));
             }
           }
+          // Record→Plan 自動リンク（Record Inspector 経由で作成した場合）
+          // vanillaTrpc を使用: closeInspector() 後にコンポーネントがアンマウントされても確実にAPI呼び出しが実行される
+          if (newPlan?.id && currentDraft._linkRecordId) {
+            try {
+              await vanillaTrpc.records.update.mutate({
+                id: currentDraft._linkRecordId,
+                data: { plan_id: newPlan.id },
+              });
+              void utils.records.list.invalidate();
+            } catch (err) {
+              logger.error('Failed to auto-link record to plan:', err);
+            }
+          }
         } catch (error) {
           const errorMessage = error instanceof Error ? error.message : '';
           if (errorMessage.includes('TIME_OVERLAP') || errorMessage.includes('既に')) {
@@ -704,7 +677,7 @@ export function usePlanInspectorContentLogic() {
         });
       }
     }
-  }, [t, updatePlan, closeInspector, createPlan, clearDraft, setplanTags, hasTagChanges]);
+  }, [t, updatePlan, closeInspector, createPlan, clearDraft, setplanTags, hasTagChanges, utils]);
 
   /**
    * 変更を破棄してInspectorを閉じる（キャンセル）
