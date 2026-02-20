@@ -465,7 +465,6 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
               value={formData.title}
               onChange={handleTitleChange}
               placeholder={t('calendar.event.noTitle')}
-              className="pl-2"
               aria-label={t('plan.inspector.recordCreate.titleLabel')}
               autoFocus
               selectOnFocus

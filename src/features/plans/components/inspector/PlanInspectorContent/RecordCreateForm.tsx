@@ -306,7 +306,6 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
               onSuggestionSelect={handleSuggestionSelect}
               type="record"
               placeholder={t('plan.inspector.recordCreate.titlePlaceholder')}
-              className="pl-2"
               aria-label={t('plan.inspector.recordCreate.titleLabel')}
               autoFocus
             />

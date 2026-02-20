@@ -105,7 +105,6 @@ function RecordEditStory({
             value={title}
             onChange={setTitle}
             placeholder="何をした？"
-            className="pl-2"
             aria-label="記録タイトル"
           />
         </div>
