@@ -69,7 +69,7 @@ export const useRecordFilterStore = createFilterStore<RecordFilterState, RecordF
   },
   extraActions: (_, get) => ({
     getActiveFilterCount: () => {
-      const state = get();
+      const state = get() as RecordFilterState;
       let count = 0;
       if (state.workedAt !== 'all') count++;
       if (state.planSearch) count++;
