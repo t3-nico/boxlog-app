@@ -45,9 +45,6 @@ export function usePlanInspectorContentLogic() {
   // ユーザーのタイムゾーン設定
   const timezone = useCalendarSettingsStore((state) => state.timezone);
 
-  // デフォルトリマインダー設定を取得
-  const { data: notifPrefs } = api.notificationPreferences.get.useQuery();
-
   // 時間重複エラー状態（視覚的フィードバック用）
   const [timeConflictError, setTimeConflictError] = useState(false);
 
@@ -273,12 +270,8 @@ export function usePlanInspectorContentLogic() {
         setEndTime('');
       }
 
-      // ドラフトに明示的にリマインダーが設定されていなければデフォルト値を適用
-      setReminderMinutes(
-        draftPlan.reminder_minutes !== undefined
-          ? (draftPlan.reminder_minutes ?? null)
-          : (notifPrefs?.defaultReminderMinutes ?? null),
-      );
+      // リマインダーのデフォルトは常に null（なし）
+      setReminderMinutes(draftPlan.reminder_minutes ?? null);
       return;
     }
 
@@ -325,7 +318,7 @@ export function usePlanInspectorContentLogic() {
       setEndTime('');
       setReminderMinutes(null);
     }
-  }, [plan, initialData, isDraftMode, draftPlan, timezone, notifPrefs?.defaultReminderMinutes]);
+  }, [plan, initialData, isDraftMode, draftPlan, timezone]);
 
   // Focus title on open
   useEffect(() => {
@@ -616,35 +609,63 @@ export function usePlanInspectorContentLogic() {
 
     // バックグラウンドで保存
     if (currentIsDraftMode && currentDraft) {
+      const linkRecordId = currentDraft._linkRecordId;
+      const createInput = {
+        title: currentDraft.title.trim(),
+        description: currentDraft.description ?? undefined,
+        status: 'open' as const,
+        start_time: currentDraft.start_time,
+        end_time: currentDraft.end_time,
+        reminder_minutes: currentDraft.reminder_minutes ?? undefined,
+      };
+
       // ドラフトモード: 新規作成
       (async () => {
         try {
-          const newPlan = await createPlan.mutateAsync({
-            title: currentDraft.title.trim(),
-            description: currentDraft.description ?? undefined,
-            status: 'open',
-            start_time: currentDraft.start_time,
-            end_time: currentDraft.end_time,
-            reminder_minutes: currentDraft.reminder_minutes ?? undefined,
-          });
-          if (newPlan?.id && currentTagIds.length > 0) {
-            try {
-              await setplanTags(newPlan.id, currentTagIds);
-            } catch {
-              toast.error(t('plan.inspector.toast.tagsSaveFailed'));
+          if (linkRecordId) {
+            // Record→Plan 自動リンクが必要な場合:
+            // vanillaTrpc で全処理を実行（React lifecycle に依存しない）
+            // closeInspector() 後にコンポーネントがアンマウントされても確実に完了する
+            const newPlan = await vanillaTrpc.plans.create.mutate(createInput);
+
+            if (newPlan?.id) {
+              if (currentTagIds.length > 0) {
+                try {
+                  await vanillaTrpc.plans.setTags.mutate({
+                    planId: newPlan.id,
+                    tagIds: currentTagIds,
+                  });
+                } catch {
+                  toast.error(t('plan.inspector.toast.tagsSaveFailed'));
+                }
+              }
+
+              // Record→Plan 自動リンク
+              try {
+                await vanillaTrpc.records.update.mutate({
+                  id: linkRecordId,
+                  data: { plan_id: newPlan.id },
+                });
+              } catch (err) {
+                logger.error('Failed to auto-link record to plan:', err);
+              }
+
+              toast.success(t('plan.toast.created', { title: newPlan.title }));
             }
-          }
-          // Record→Plan 自動リンク（Record Inspector 経由で作成した場合）
-          // vanillaTrpc を使用: closeInspector() 後にコンポーネントがアンマウントされても確実にAPI呼び出しが実行される
-          if (newPlan?.id && currentDraft._linkRecordId) {
-            try {
-              await vanillaTrpc.records.update.mutate({
-                id: currentDraft._linkRecordId,
-                data: { plan_id: newPlan.id },
-              });
-              void utils.records.list.invalidate();
-            } catch (err) {
-              logger.error('Failed to auto-link record to plan:', err);
+
+            // キャッシュ無効化（vanillaTrpc は React Query キャッシュを自動更新しない）
+            void utils.plans.list.invalidate();
+            void utils.plans.getCumulativeTime.invalidate();
+            void utils.records.list.invalidate();
+          } else {
+            // 通常のPlan作成（React Query 楽観的更新付き）
+            const newPlan = await createPlan.mutateAsync(createInput);
+            if (newPlan?.id && currentTagIds.length > 0) {
+              try {
+                await setplanTags(newPlan.id, currentTagIds);
+              } catch {
+                toast.error(t('plan.inspector.toast.tagsSaveFailed'));
+              }
             }
           }
         } catch (error) {

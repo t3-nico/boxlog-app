@@ -60,7 +60,7 @@ const filledPlan: Plan = {
   description: '<p>週次の進捗確認。アジェンダを事前に共有すること。</p>',
   start_time: '2024-01-15T10:00:00+09:00',
   end_time: '2024-01-15T11:00:00+09:00',
-  reminder_minutes: 15,
+  reminder_minutes: null,
 };
 
 const completedPlan: Plan = {

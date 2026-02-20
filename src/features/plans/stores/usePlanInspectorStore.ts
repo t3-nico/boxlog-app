@@ -172,9 +172,7 @@ export const usePlanInspectorStore = create<PlanInspectorStore>()(
               status: 'open',
               start_time: initialData?.start_time ?? null,
               end_time: initialData?.end_time ?? null,
-              ...(initialData?.reminder_minutes !== undefined && {
-                reminder_minutes: initialData.reminder_minutes,
-              }),
+              reminder_minutes: initialData?.reminder_minutes ?? null,
               // Record作成時に使用する追加フィールド
               tagIds: initialData?.tagIds ?? [],
               plan_id: initialData?.plan_id ?? null,
