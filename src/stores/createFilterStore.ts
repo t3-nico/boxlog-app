@@ -26,7 +26,10 @@ export interface CreateFilterStoreOptions<TState extends BaseFilterState, TExtra
   /** 初期状態 */
   initialState: TState;
   /** 追加のアクション（省略可） */
-  extraActions?: (set: (partial: unknown) => void, get: () => unknown) => TExtra;
+  extraActions?: (
+    set: (partial: Partial<TState> | ((state: TState) => Partial<TState>)) => void,
+    get: () => TState,
+  ) => TExtra;
 }
 
 /**
@@ -93,7 +96,12 @@ export function createFilterStore<TState extends BaseFilterState, TExtra extends
         }
 
         // 追加アクションを取得
-        const extra = extraActions ? extraActions(set, get) : ({} as TExtra);
+        const extra = extraActions
+          ? extraActions(
+              set as (partial: Partial<TState> | ((state: TState) => Partial<TState>)) => void,
+              get as () => TState,
+            )
+          : ({} as TExtra);
 
         return {
           ...initialState,

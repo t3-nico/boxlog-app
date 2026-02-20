@@ -23,7 +23,9 @@ export function useRecordActivities(
 
   const input = { record_id: recordId, limit, offset, order };
 
-  const query = api.records.activities.useQuery(input, {
+  // Type assertion: createActivityRouter で動的生成されたルーターの型推論が不完全なため
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const query = (api.records.activities as any).useQuery(input, {
     retry: 1,
     refetchOnWindowFocus: false,
     ...getCacheStrategy('planActivities'),
@@ -35,7 +37,8 @@ export function useRecordActivities(
     channelPrefix: 'record-activities',
     table: 'record_activities',
     filterColumn: 'record_id',
-    queryKey: getQueryKey(api.records.activities, input, 'query'),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    queryKey: getQueryKey(api.records.activities as any, input, 'query'),
     order,
     enabled,
   });

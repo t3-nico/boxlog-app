@@ -7,7 +7,7 @@ import { useMemo } from 'react';
 import { ActivityPopover } from '@/features/plans/components/inspector/shared';
 
 import { useRecordActivities } from '../hooks/useRecordActivities';
-import type { RecordActivityDisplay } from '../types/activity';
+import type { RecordActivity, RecordActivityDisplay } from '../types/activity';
 import { filterVisibleActivities, formatActivity } from '../utils/activityFormatter';
 
 import type { ActivityDisplayItem } from '@/features/plans/components/inspector/shared';
@@ -38,7 +38,7 @@ export function RecordActivityPopover({ recordId }: RecordActivityPopoverProps) 
   const { data: activities, isPending } = useRecordActivities(recordId, { order: 'desc' });
 
   const items: ActivityDisplayItem[] = useMemo(() => {
-    const visible = filterVisibleActivities(activities ?? []);
+    const visible = filterVisibleActivities((activities ?? []) as RecordActivity[]);
     return visible.map((activity) => {
       const formatted = formatActivity(activity);
       return {

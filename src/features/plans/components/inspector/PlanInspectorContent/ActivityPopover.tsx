@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import { useMemo } from 'react';
 
 import { usePlanActivities } from '../../../hooks/usePlanActivities';
-import type { PlanActivityDisplay } from '../../../types/activity';
+import type { PlanActivity, PlanActivityDisplay } from '../../../types/activity';
 import { filterVisibleActivities, formatActivity } from '../../../utils/activityFormatter';
 import { ActivityPopover } from '../shared';
 
@@ -37,7 +37,7 @@ export function PlanActivityPopover({ planId }: PlanActivityPopoverProps) {
   const { data: activities, isPending } = usePlanActivities(planId, { order: 'desc' });
 
   const items: ActivityDisplayItem[] = useMemo(() => {
-    const visible = filterVisibleActivities(activities ?? []);
+    const visible = filterVisibleActivities((activities ?? []) as PlanActivity[]);
     return visible.map((activity) => {
       const formatted = formatActivity(activity);
       return {

@@ -11,9 +11,22 @@ import type { Tag } from '@/features/tags/types';
 import { cn } from '@/lib/utils';
 
 /** Inspector風コンテナ（400px幅） */
-export function InspectorFrame({ children }: { children: React.ReactNode }) {
+export function InspectorFrame({
+  children,
+  variant,
+}: {
+  children: React.ReactNode;
+  /** variant を指定すると左ボーダーでタイプを視覚的に区別 */
+  variant?: 'plan' | 'record' | undefined;
+}) {
   return (
-    <div className="bg-card border-border w-[400px] overflow-hidden rounded-xl border shadow-lg">
+    <div
+      className={cn(
+        'bg-card border-border w-[400px] overflow-hidden rounded-xl border shadow-lg',
+        variant === 'plan' && 'border-l-plan-border border-l-[3px]',
+        variant === 'record' && 'border-l-record-border border-l-[3px]',
+      )}
+    >
       {children}
     </div>
   );

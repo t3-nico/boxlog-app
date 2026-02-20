@@ -23,7 +23,9 @@ export function usePlanActivities(
 
   const input = { plan_id: planId, limit, offset, order };
 
-  const query = api.plans.activities.useQuery(input, {
+  // Type assertion: createActivityRouter で動的生成されたルーターの型推論が不完全なため
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const query = (api.plans.activities as any).useQuery(input, {
     retry: 1,
     refetchOnWindowFocus: false,
     ...getCacheStrategy('planActivities'),
@@ -35,7 +37,8 @@ export function usePlanActivities(
     channelPrefix: 'plan-activities',
     table: 'plan_activities',
     filterColumn: 'plan_id',
-    queryKey: getQueryKey(api.plans.activities, input, 'query'),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    queryKey: getQueryKey(api.plans.activities as any, input, 'query'),
     order,
     enabled,
   });
