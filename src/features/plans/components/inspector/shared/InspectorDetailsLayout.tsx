@@ -1,36 +1,73 @@
 'use client';
 
 /**
- * Inspector 3行レイアウト（共通コンポーネント）
+ * Inspector 詳細レイアウト（3行構造）
  *
- * Plan/Record Inspector 共通の Toggl風3行構造:
- * 1行目: タイトル入力
- * 2行目: スケジュール（日付 + 時間 + Duration）
- * 3行目: オプションアイコン群（タグ、メモ、充実度など）
+ * Plan/Record Inspector共通の3行レイアウトを提供
+ * - Row 1: タイトル入力
+ * - Row 2: スケジュール選択
+ * - Row 3: オプションボタン群（タグ、ノート、その他）
+ *
+ * Slotベースで柔軟にコンテンツを挿入可能
  */
 
 import type { ReactNode } from 'react';
 
-interface InspectorDetailsLayoutProps {
-  /** Row 1: TitleInput / SuggestInput */
+import { cn } from '@/lib/utils';
+
+export interface InspectorDetailsLayoutProps {
+  /** Row 1: タイトル入力コンポーネント */
   title: ReactNode;
-  /** Row 2: ScheduleRow */
+  /** Row 2: スケジュール選択コンポーネント */
   schedule: ReactNode;
-  /** Row 3: アイコンボタン群（TagsIconButton, NoteIconButton 等） */
+  /** Row 3: オプションボタン群 */
   options: ReactNode;
+  /** Row 1追加コンテンツ（タイトル横のアクセント線など） */
+  titlePrefix?: ReactNode;
+  /** Row 1のカスタムクラス */
+  titleClassName?: string;
 }
 
-export function InspectorDetailsLayout({ title, schedule, options }: InspectorDetailsLayoutProps) {
+/**
+ * Inspector詳細レイアウト
+ *
+ * @example
+ * ```tsx
+ * <InspectorDetailsLayout
+ *   title={<TitleInput value={title} onChange={setTitle} />}
+ *   schedule={<ScheduleRow ... />}
+ *   options={
+ *     <>
+ *       <TagsIconButton />
+ *       <NoteIconButton />
+ *       <FulfillmentButton />
+ *     </>
+ *   }
+ * />
+ * ```
+ */
+export function InspectorDetailsLayout({
+  title,
+  schedule,
+  options,
+  titlePrefix,
+  titleClassName,
+}: InspectorDetailsLayoutProps) {
   return (
-    <>
-      {/* Row 1: Title */}
-      <div className="px-4 pt-4 pb-2">{title}</div>
+    <div>
+      {/* Row 1: タイトル */}
+      <div
+        className={cn('px-4 pt-4 pb-2', titlePrefix && 'flex items-center gap-2', titleClassName)}
+      >
+        {titlePrefix}
+        {title}
+      </div>
 
-      {/* Row 2: Schedule */}
+      {/* Row 2: スケジュール */}
       {schedule}
 
-      {/* Row 3: Option Icons */}
+      {/* Row 3: オプション */}
       <div className="flex flex-wrap items-center gap-1 px-4 pt-2 pb-4">{options}</div>
-    </>
+    </div>
   );
 }
