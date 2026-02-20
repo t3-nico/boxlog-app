@@ -5,7 +5,7 @@ import { getReminderI18nKey, REMINDER_OPTIONS } from './reminder';
 describe('reminder', () => {
   describe('REMINDER_OPTIONS', () => {
     it('has correct number of options', () => {
-      expect(REMINDER_OPTIONS).toHaveLength(7);
+      expect(REMINDER_OPTIONS).toHaveLength(9);
     });
 
     it('first option is null (no reminder)', () => {
@@ -58,9 +58,16 @@ describe('reminder', () => {
       expect(getReminderI18nKey(10080)).toBe('common.reminder.week1');
     });
 
+    it('returns min5 key for 5', () => {
+      expect(getReminderI18nKey(5)).toBe('common.reminder.min5');
+    });
+
+    it('returns min15 key for 15', () => {
+      expect(getReminderI18nKey(15)).toBe('common.reminder.min15');
+    });
+
     it('returns custom key for unknown minutes values', () => {
-      expect(getReminderI18nKey(5)).toBe('common.reminder.custom');
-      expect(getReminderI18nKey(15)).toBe('common.reminder.custom');
+      expect(getReminderI18nKey(3)).toBe('common.reminder.custom');
       expect(getReminderI18nKey(120)).toBe('common.reminder.custom');
       expect(getReminderI18nKey(999)).toBe('common.reminder.custom');
     });

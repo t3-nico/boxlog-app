@@ -25,6 +25,21 @@ app側の技術ドキュメント（`docs/`）とは別物。
 
 ---
 
+## レビューワークフロー（AI生成コンテンツ）
+
+AI が記事を作成する場合は必ず `draft: true` で作成し、開発者がレビュー後に公開する。
+
+```
+1. AI が draft: true で記事を作成（en/ja 両ファイル）
+2. 開発者がレビュー（内容・フロントマター・リンク確認）
+3. OK → draft: false に変更してコミット → 本番公開
+4. NG → フィードバックして AI に修正依頼
+```
+
+**`draft: true` のファイルはビルドから除外され、本番に公開されない。**
+
+---
+
 ## 対象コンテンツ種別
 
 | 種別         | ディレクトリ                     | 用途                                                    |
@@ -102,7 +117,7 @@ publishedAt: '2026-02-19'
 updatedAt: '2026-02-19'
 order: 1 # サイドバー表示順序（昇順）
 featured: false # 注目コンテンツ
-draft: false # 下書き（true で非公開）
+draft: true # 下書き（レビュー後に false に変更して公開）
 category: 'features' # getting-started / features / guides / troubleshooting / account
 slug: 'features/plans' # URLパスに対応
 
@@ -154,7 +169,7 @@ author: 'Dayopt Team'
 authorAvatar: '/avatars/dayopt-team.jpg'
 coverImage: '/images/blog/timeboxing-tips.jpg'
 featured: false
-draft: false
+draft: true # レビュー後に false に変更して公開
 
 ai:
   relatedQuestions:
@@ -483,6 +498,7 @@ const plan = await dayopt.plans.create({
 - [ ] `ai.relatedQuestions` は 3-5個（手動で記述）
 - [ ] `ai.chunkStrategy` / `searchable` / `difficulty` / `contentType` が設定されている
 - [ ] `description` は SEO + AI要約として十分な内容
+- [ ] `npm run validate:content` でエラーがないことを確認した
 
 ### コンテンツ
 
