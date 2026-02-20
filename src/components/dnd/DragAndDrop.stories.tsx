@@ -26,9 +26,19 @@ import { TagSortableTree } from '@/features/tags/components/sortable-tree/TagSor
  * | **プロバイダー層** | @dnd-kit (`DnDProvider`) | パネル↔カレンダー間ドラッグ |
  *
  * ### グリッド定数 (`grid.constants.ts`)
- * - `HOUR_HEIGHT = 72px` — 1時間あたりの高さ
- * - `MINUTE_HEIGHT = 1.2px` — 1分あたりの高さ
+ * - `HOUR_HEIGHT = 72px` — 1時間あたりの高さ（基準値）
+ * - `MINUTE_HEIGHT = 1.2px` — 1分あたりの高さ（基準値）
  * - `TIME_COLUMN_WIDTH = 56px` — 左側の時間列幅
+ *
+ * **重要**: 実際のグリッド高さはデバイス・密度設定により可変（48-96px）。
+ * ドラッグ時間計算では `useResponsiveHourHeight()` から取得した値を使うこと。
+ * 定数 `HOUR_HEIGHT` をドラッグ計算に直接使うと、ピクセル→時間変換がずれる。
+ *
+ * ### タイムゾーン対応
+ * グリッド上の時間はカレンダー設定TZ（`useCalendarSettingsStore.timezone`）で表示される。
+ * ドラッグで得た hour/minute はカレンダーTZの値として解釈し、
+ * `convertFromTimezone()` でUTCに変換してから保存する。
+ * ゴースト要素の時刻表示には `formatInTimezone()` を使用する。
  *
  * ### タグ並び替え
  * タグDnDは `TagSortableTree` コンポーネントが @dnd-kit で自己完結しており、
@@ -137,6 +147,11 @@ const formatTime = (hour: number, minute: number) => {
  * dnd-kit ではなく**カスタム mouse/touch ハンドラ**で実装。
  * `useDragAndDrop` がマウスイベントを直接購読し、グリッドDOM測定を行う。
  * タッチは500ms長押しで起動。15分単位でスナップ。
+ *
+ * ### 注意点
+ * - ピクセル→時間変換には `useResponsiveHourHeight()` の値を使用すること（定数 `HOUR_HEIGHT` は不可）
+ * - 時間計算後は `convertFromTimezone(localTime, timezone)` でUTCに変換してから保存
+ * - ゴースト要素の時刻表示は `formatInTimezone()` でカレンダーTZ表示
  */
 export const CalendarDrag: Story = {
   render: () => (
