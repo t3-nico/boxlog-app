@@ -53,6 +53,10 @@ interface PlanInspectorDetailsTabProps {
   onRecurrenceRuleChange: (rrule: string | null) => void;
   /** ドラフトモード（新規作成時） */
   isDraftMode?: boolean;
+  /** ドラフトモード用: 選択済み Record IDs */
+  draftRecordIds?: string[];
+  /** ドラフトモード用: Record IDs 変更コールバック */
+  onDraftRecordIdsChange?: (ids: string[]) => void;
   /** 外部からタグデータを注入（Storybook等で使用） */
   availableTags?: Tag[] | undefined;
 }
@@ -78,6 +82,8 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
   onRepeatTypeChange,
   onRecurrenceRuleChange,
   isDraftMode = false,
+  draftRecordIds,
+  onDraftRecordIdsChange,
   availableTags,
 }: PlanInspectorDetailsTabProps) {
   const t = useTranslations();
@@ -130,7 +136,11 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
             popoverSide="bottom"
             {...(availableTags ? { availableTags } : {})}
           />
-          {!isDraftMode && planId && <RecordsIconButton planId={planId} />}
+          <RecordsIconButton
+            planId={planId ?? null}
+            draftRecordIds={draftRecordIds}
+            onDraftRecordIdsChange={onDraftRecordIdsChange}
+          />
           <NoteIconButton
             id={plan.id}
             note={plan.description || ''}

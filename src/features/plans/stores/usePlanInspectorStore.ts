@@ -38,6 +38,8 @@ export interface DraftPlan {
   note?: string | null;
   // Plan作成後に自動紐付けするRecord ID（Record Inspector経由の場合）
   _linkRecordId?: string | null;
+  // Plan Inspector内で選択したRecord IDs（ドラフトモードでの複数Record紐付け用）
+  _linkedRecordIds?: string[];
 }
 
 /**
@@ -178,6 +180,7 @@ export const usePlanInspectorStore = create<PlanInspectorStore>()(
               plan_id: initialData?.plan_id ?? null,
               note: initialData?.note ?? null,
               _linkRecordId: initialData?._linkRecordId ?? null,
+              _linkedRecordIds: initialData?._linkedRecordIds ?? [],
             },
             createType,
           },

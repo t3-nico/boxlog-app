@@ -6,6 +6,9 @@
  * Plan Inspector の Row 3 で使用。
  * TagsIconButton と同じ Badge + X パターンで Record を表示。
  * Popover では未紐付き Record を検索・選択して紐付ける。
+ *
+ * ドラフトモード（planId が null）では API mutation の代わりに
+ * コールバック経由でローカル状態を管理する。
  */
 
 import { useCallback, useMemo, useState } from 'react';
@@ -33,34 +36,57 @@ import { api } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
 
 interface RecordsIconButtonProps {
-  planId: string;
+  planId: string | null;
+  /** ドラフトモード用: 選択済み Record IDs */
+  draftRecordIds?: string[] | undefined;
+  /** ドラフトモード用: Record IDs 変更コールバック */
+  onDraftRecordIdsChange?: ((ids: string[]) => void) | undefined;
   disabled?: boolean;
 }
 
-export function RecordsIconButton({ planId, disabled = false }: RecordsIconButtonProps) {
+export function RecordsIconButton({
+  planId,
+  draftRecordIds,
+  onDraftRecordIdsChange,
+  disabled = false,
+}: RecordsIconButtonProps) {
   const t = useTranslations();
   const utils = api.useUtils();
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const openInspectorWithDraft = usePlanInspectorStore((state) => state.openInspectorWithDraft);
 
-  // 紐付き Record（Badge 表示用）
-  const { data: records } = api.records.listByPlan.useQuery({
-    planId,
-    sortOrder: 'desc',
-  });
+  const isDraftMode = !planId;
+  const hasDraftRecords = isDraftMode && (draftRecordIds?.length ?? 0) > 0;
 
-  // 全 Record（Popover 候補用）
+  // 紐付き Record（Badge 表示用）— ドラフトモードではスキップ
+  const { data: records } = api.records.listByPlan.useQuery(
+    { planId: planId!, sortOrder: 'desc' },
+    { enabled: !!planId },
+  );
+
+  // 全 Record（Popover 候補用 + ドラフトモードの Badge 表示用）
   const { data: allRecords, isPending: isAllRecordsPending } = api.records.list.useQuery(
     {},
-    { enabled: isOpen },
+    { enabled: isOpen || hasDraftRecords },
   );
 
   // タグデータ取得
   const { data: allTags = [] } = useTags();
 
   // 紐付き Record の ID セット
-  const linkedRecordIds = useMemo(() => new Set(records?.map((r) => r.id) ?? []), [records]);
+  const linkedRecordIds = useMemo(
+    () => (isDraftMode ? new Set(draftRecordIds ?? []) : new Set(records?.map((r) => r.id) ?? [])),
+    [isDraftMode, draftRecordIds, records],
+  );
+
+  // Badge 表示用 Record リスト
+  const displayRecords = useMemo(() => {
+    if (!isDraftMode) return records ?? [];
+    if (!allRecords || !draftRecordIds?.length) return [];
+    const idSet = new Set(draftRecordIds);
+    return allRecords.filter((r) => idSet.has(r.id));
+  }, [isDraftMode, records, allRecords, draftRecordIds]);
 
   // 検索フィルタ関数
   const matchesQuery = useCallback(
@@ -85,21 +111,23 @@ export function RecordsIconButton({ planId, disabled = false }: RecordsIconButto
     });
   }, [allRecords, linkedRecordIds, matchesQuery]);
 
-  // Record を Plan に紐付け
+  // Record を Plan に紐付け（API モードのみ）
   const linkRecord = api.records.update.useMutation({
     onError: (error) => {
       logger.error('[RecordsIconButton] linkRecord error', { error: error.message });
     },
     onSettled: () => {
+      if (!planId) return;
       void utils.records.listByPlan.invalidate({ planId });
       void utils.records.list.invalidate();
       void utils.plans.getCumulativeTime.invalidate();
     },
   });
 
-  // Record の plan_id を null にして紐付け解除
+  // Record の plan_id を null にして紐付け解除（API モードのみ）
   const unlinkRecord = api.records.update.useMutation({
     onMutate: async ({ id }) => {
+      if (!planId) return { previous: undefined };
       await utils.records.listByPlan.cancel({ planId });
       const previous = utils.records.listByPlan.getData({ planId, sortOrder: 'desc' });
 
@@ -111,35 +139,51 @@ export function RecordsIconButton({ planId, disabled = false }: RecordsIconButto
       return { previous };
     },
     onError: (_err, _input, context) => {
-      if (context?.previous) {
+      if (context?.previous && planId) {
         utils.records.listByPlan.setData({ planId, sortOrder: 'desc' }, context.previous);
       }
     },
     onSettled: () => {
+      if (!planId) return;
       void utils.records.listByPlan.invalidate({ planId });
       void utils.records.list.invalidate();
       void utils.plans.getCumulativeTime.invalidate();
     },
   });
 
-  const handleLinkRecord = (recordId: string) => {
-    linkRecord.mutate({ id: recordId, data: { plan_id: planId } });
-  };
+  const handleLinkRecord = useCallback(
+    (recordId: string) => {
+      if (isDraftMode && onDraftRecordIdsChange) {
+        onDraftRecordIdsChange([...(draftRecordIds ?? []), recordId]);
+      } else if (planId) {
+        linkRecord.mutate({ id: recordId, data: { plan_id: planId } });
+      }
+    },
+    [isDraftMode, onDraftRecordIdsChange, draftRecordIds, planId, linkRecord],
+  );
 
-  const handleUnlinkRecord = (recordId: string) => {
-    unlinkRecord.mutate({ id: recordId, data: { plan_id: null } });
-  };
+  const handleUnlinkRecord = useCallback(
+    (recordId: string) => {
+      if (isDraftMode && onDraftRecordIdsChange) {
+        onDraftRecordIdsChange((draftRecordIds ?? []).filter((id) => id !== recordId));
+      } else if (planId) {
+        unlinkRecord.mutate({ id: recordId, data: { plan_id: null } });
+      }
+    },
+    [isDraftMode, onDraftRecordIdsChange, draftRecordIds, planId, unlinkRecord],
+  );
 
-  // 新しいRecordを作成（このPlanに紐づけて）
-  const handleCreateRecord = () => {
+  // 新しいRecordを作成（このPlanに紐づけて）— API モードのみ
+  const handleCreateRecord = useCallback(() => {
+    if (!planId) return;
     setIsOpen(false);
     openInspectorWithDraft({ plan_id: planId }, 'record');
-  };
+  }, [planId, openInspectorWithDraft]);
 
   return (
     <div className="flex flex-wrap items-center gap-1">
       {/* 紐付き Record（Badge 表示） */}
-      {records?.map((record) => (
+      {displayRecords.map((record) => (
         <Badge
           key={record.id}
           variant="outline"
@@ -261,17 +305,19 @@ export function RecordsIconButton({ planId, disabled = false }: RecordsIconButto
                 </CommandGroup>
               </CommandList>
 
-              {/* 新規作成ボタン */}
-              <div className="border-border border-t p-2">
-                <button
-                  type="button"
-                  onClick={handleCreateRecord}
-                  className="text-muted-foreground hover:text-foreground hover:bg-state-hover flex w-full items-center gap-2 rounded-lg px-2 py-2 text-sm transition-colors"
-                >
-                  <Plus className="size-4" />
-                  <span>{t('plan.inspector.records.addNew')}</span>
-                </button>
-              </div>
+              {/* 新規作成ボタン（API モードのみ: ドラフトでは Plan 未作成のため非表示） */}
+              {!isDraftMode && (
+                <div className="border-border border-t p-2">
+                  <button
+                    type="button"
+                    onClick={handleCreateRecord}
+                    className="text-muted-foreground hover:text-foreground hover:bg-state-hover flex w-full items-center gap-2 rounded-lg px-2 py-2 text-sm transition-colors"
+                  >
+                    <Plus className="size-4" />
+                    <span>{t('plan.inspector.records.addNew')}</span>
+                  </button>
+                </div>
+              )}
             </Command>
           )}
         </PopoverContent>

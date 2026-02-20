@@ -206,6 +206,31 @@ export function usePlanInspectorContentLogic() {
   const [endTime, setEndTime] = useState('');
   const [reminderMinutes, setReminderMinutes] = useState<number | null>(null);
 
+  // Draft Record IDs state（ドラフトモードでの Record 紐付け用）
+  const [draftRecordIds, setDraftRecordIds] = useState<string[]>([]);
+
+  // ドラフトモード突入時に _linkedRecordIds + _linkRecordId をマージして初期化
+  useEffect(() => {
+    if (isDraftMode && draftPlan) {
+      const ids = [...(draftPlan._linkedRecordIds ?? [])];
+      if (draftPlan._linkRecordId && !ids.includes(draftPlan._linkRecordId)) {
+        ids.push(draftPlan._linkRecordId);
+      }
+      setDraftRecordIds(ids);
+    } else {
+      setDraftRecordIds([]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- draftPlan は除外（更新の度に再実行しない）
+  }, [isDraftMode]);
+
+  const handleDraftRecordIdsChange = useCallback(
+    (ids: string[]) => {
+      setDraftRecordIds(ids);
+      updateDraft({ _linkedRecordIds: ids });
+    },
+    [updateDraft],
+  );
+
   // planIdが変わったらタグ選択をリセット（別のPlanを開いた時）
   useEffect(() => {
     // ドラフトモードでは何もしない
@@ -609,7 +634,15 @@ export function usePlanInspectorContentLogic() {
 
     // バックグラウンドで保存
     if (currentIsDraftMode && currentDraft) {
-      const linkRecordId = currentDraft._linkRecordId;
+      // リンク対象の全 Record IDs を統合（_linkedRecordIds + _linkRecordId）
+      const allRecordIdsToLink = [
+        ...(currentDraft._linkedRecordIds ?? []),
+        ...(currentDraft._linkRecordId &&
+        !(currentDraft._linkedRecordIds ?? []).includes(currentDraft._linkRecordId)
+          ? [currentDraft._linkRecordId]
+          : []),
+      ];
+
       const createInput = {
         title: currentDraft.title.trim(),
         description: currentDraft.description ?? undefined,
@@ -622,8 +655,8 @@ export function usePlanInspectorContentLogic() {
       // ドラフトモード: 新規作成
       (async () => {
         try {
-          if (linkRecordId) {
-            // Record→Plan 自動リンクが必要な場合:
+          if (allRecordIdsToLink.length > 0) {
+            // Record リンクが必要な場合:
             // vanillaTrpc で全処理を実行（React lifecycle に依存しない）
             // closeInspector() 後にコンポーネントがアンマウントされても確実に完了する
             const newPlan = await vanillaTrpc.plans.create.mutate(createInput);
@@ -640,14 +673,16 @@ export function usePlanInspectorContentLogic() {
                 }
               }
 
-              // Record→Plan 自動リンク
-              try {
-                await vanillaTrpc.records.update.mutate({
-                  id: linkRecordId,
-                  data: { plan_id: newPlan.id },
-                });
-              } catch (err) {
-                logger.error('Failed to auto-link record to plan:', err);
+              // 全 Record を Plan にリンク
+              for (const recordId of allRecordIdsToLink) {
+                try {
+                  await vanillaTrpc.records.update.mutate({
+                    id: recordId,
+                    data: { plan_id: newPlan.id },
+                  });
+                } catch (err) {
+                  logger.error('Failed to link record to plan:', err);
+                }
               }
 
               toast.success(t('plan.toast.created', { title: newPlan.title }));
@@ -739,6 +774,10 @@ export function usePlanInspectorContentLogic() {
     selectedTagIds,
     handleTagsChange,
     handleRemoveTag,
+
+    // Draft Record IDs（ドラフトモードでの Record 紐付け用）
+    draftRecordIds,
+    handleDraftRecordIdsChange,
 
     // Form state
     titleRef,

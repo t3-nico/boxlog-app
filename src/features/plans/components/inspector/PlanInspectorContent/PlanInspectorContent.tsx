@@ -75,6 +75,8 @@ export function PlanInspectorContent() {
     handleDuplicate,
     handleSaveAsTemplate,
     getCache,
+    draftRecordIds,
+    handleDraftRecordIdsChange,
   } = usePlanInspectorContentLogic();
 
   // Cmd+Enter / Ctrl+Enter でドラフト作成
@@ -200,6 +202,8 @@ export function PlanInspectorContent() {
               onRecurrenceRuleChange={() => {}}
               timeConflictError={timeConflictError}
               isDraftMode={isDraftMode}
+              draftRecordIds={draftRecordIds}
+              onDraftRecordIdsChange={handleDraftRecordIdsChange}
             />
           ) : (
             <RecordCreateForm ref={recordFormRef} />
@@ -258,6 +262,8 @@ export function PlanInspectorContent() {
             }}
             timeConflictError={timeConflictError}
             isDraftMode={isDraftMode}
+            draftRecordIds={draftRecordIds}
+            onDraftRecordIdsChange={handleDraftRecordIdsChange}
           />
         )}
       </div>
