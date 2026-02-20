@@ -10,7 +10,7 @@
  * - WithLabel: ヘッダーにテキストラベルのみ
  * - WithBorder: 左ボーダーのみ
  * - WithLabelAndBorder: テキストラベル + 左ボーダー
- * - WithTitleUnderline: タイトル行下に色付き横線
+ * - WithTitleAccent: タイトル横に色付き縦線（ブロッククォート風）
  */
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
@@ -113,15 +113,15 @@ function EditHeader({ typeLabel }: { typeLabel?: string | undefined }) {
 interface FormStyleProps {
   typeLabel?: string | undefined;
   variant?: 'plan' | 'record' | undefined;
-  /** タイトル行下に色付き横線 */
-  titleUnderline?: 'plan' | 'record' | undefined;
+  /** タイトル左に色付き縦線（ブロッククォート風） */
+  titleAccent?: 'plan' | 'record' | undefined;
 }
 
 // ---------------------------------------------------------------------------
 // Plan フォーム（手動レイアウト — タイトル横線を正確に配置するため）
 // ---------------------------------------------------------------------------
 
-function PlanForm({ typeLabel, variant, titleUnderline }: FormStyleProps) {
+function PlanForm({ typeLabel, variant, titleAccent }: FormStyleProps) {
   const [tagIds, setTagIds] = useState(['tag-1']);
   const [scheduleDate, setScheduleDate] = useState<Date | undefined>(new Date('2024-01-15'));
   const [startTime, setStartTime] = useState('10:00');
@@ -133,13 +133,15 @@ function PlanForm({ typeLabel, variant, titleUnderline }: FormStyleProps) {
       <EditHeader typeLabel={typeLabel} />
       <div>
         {/* Row 1: タイトル */}
-        <div
-          className={cn(
-            'px-4 pt-4 pb-2',
-            titleUnderline === 'plan' && 'border-b-plan-border border-b-2',
-            titleUnderline === 'record' && 'border-b-record-border border-b-2',
+        <div className={cn('px-4 pt-4 pb-2', titleAccent && 'flex items-center gap-2')}>
+          {titleAccent && (
+            <div
+              className={cn(
+                'h-6 w-[3px] shrink-0 rounded-full',
+                titleAccent === 'plan' ? 'bg-plan-border' : 'bg-record-border',
+              )}
+            />
           )}
-        >
           <TitleInput
             value="チームミーティング"
             onChange={() => {}}
@@ -184,7 +186,7 @@ function PlanForm({ typeLabel, variant, titleUnderline }: FormStyleProps) {
 // Record フォーム
 // ---------------------------------------------------------------------------
 
-function RecordForm({ typeLabel, variant, titleUnderline }: FormStyleProps) {
+function RecordForm({ typeLabel, variant, titleAccent }: FormStyleProps) {
   const [tagIds, setTagIds] = useState(['tag-1']);
   const [scheduleDate, setScheduleDate] = useState<Date | undefined>(new Date('2024-01-15'));
   const [startTime, setStartTime] = useState('09:00');
@@ -196,13 +198,15 @@ function RecordForm({ typeLabel, variant, titleUnderline }: FormStyleProps) {
       <EditHeader typeLabel={typeLabel} />
       <div>
         {/* Row 1: タイトル */}
-        <div
-          className={cn(
-            'px-4 pt-4 pb-2',
-            titleUnderline === 'plan' && 'border-b-plan-border border-b-2',
-            titleUnderline === 'record' && 'border-b-record-border border-b-2',
+        <div className={cn('px-4 pt-4 pb-2', titleAccent && 'flex items-center gap-2')}>
+          {titleAccent && (
+            <div
+              className={cn(
+                'h-6 w-[3px] shrink-0 rounded-full',
+                titleAccent === 'plan' ? 'bg-plan-border' : 'bg-record-border',
+              )}
+            />
           )}
-        >
           <TitleInput
             value="開発作業"
             onChange={() => {}}
@@ -246,12 +250,12 @@ function ComparisonRow({
   label,
   typeLabel,
   variant,
-  titleUnderline,
+  titleAccent,
 }: {
   label: string;
   typeLabel?: { plan: string; record: string } | undefined;
   variant?: boolean | undefined;
-  titleUnderline?: boolean | undefined;
+  titleAccent?: boolean | undefined;
 }) {
   return (
     <div>
@@ -262,7 +266,7 @@ function ComparisonRow({
           <PlanForm
             typeLabel={typeLabel?.plan}
             variant={variant ? 'plan' : undefined}
-            titleUnderline={titleUnderline ? 'plan' : undefined}
+            titleAccent={titleAccent ? 'plan' : undefined}
           />
         </div>
         <div>
@@ -270,7 +274,7 @@ function ComparisonRow({
           <RecordForm
             typeLabel={typeLabel?.record}
             variant={variant ? 'record' : undefined}
-            titleUnderline={titleUnderline ? 'record' : undefined}
+            titleAccent={titleAccent ? 'record' : undefined}
           />
         </div>
       </div>
@@ -313,18 +317,18 @@ export const WithLabelAndBorder: Story = {
   ),
 };
 
-/** タイトル行下に色付き横線のみ。 */
-export const WithTitleUnderline: Story = {
-  render: () => <ComparisonRow label="Pattern D — タイトル横線" titleUnderline />,
+/** タイトル横に色付き縦線のみ。 */
+export const WithTitleAccent: Story = {
+  render: () => <ComparisonRow label="Pattern D — タイトル縦線" titleAccent />,
 };
 
-/** タイトル横線 + テキストラベル。 */
-export const WithTitleUnderlineAndLabel: Story = {
+/** タイトル縦線 + テキストラベル。 */
+export const WithTitleAccentAndLabel: Story = {
   render: () => (
     <ComparisonRow
-      label="Pattern A+D — テキストラベル + タイトル横線"
+      label="Pattern A+D — テキストラベル + タイトル縦線"
       typeLabel={{ plan: 'Plan', record: 'Record' }}
-      titleUnderline
+      titleAccent
     />
   ),
 };
@@ -344,11 +348,11 @@ export const AllPatterns: Story = {
         typeLabel={{ plan: 'Plan', record: 'Record' }}
         variant
       />
-      <ComparisonRow label="5. Pattern D — タイトル横線" titleUnderline />
+      <ComparisonRow label="5. Pattern D — タイトル縦線" titleAccent />
       <ComparisonRow
-        label="6. Pattern A+D — テキストラベル + タイトル横線"
+        label="6. Pattern A+D — テキストラベル + タイトル縦線"
         typeLabel={{ plan: 'Plan', record: 'Record' }}
-        titleUnderline
+        titleAccent
       />
     </div>
   ),
