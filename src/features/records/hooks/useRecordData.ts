@@ -3,13 +3,14 @@
  * フィルタリング・ソート対応
  */
 
+import type { DateRangeFilter } from '@/lib/date';
+import { matchesDateRangeFilter } from '@/lib/date';
 import { cacheStrategies } from '@/lib/tanstack-query/cache-config';
 import { api } from '@/lib/trpc';
 
 import type { RecordFilter } from '@/schemas/records';
 
 import type {
-  DateRangeFilter,
   DurationFilter,
   FulfillmentFilter,
   WorkedAtFilter,
@@ -142,60 +143,6 @@ function getWorkedAtDateRange(filter: WorkedAtFilter): {
 
     default:
       return {};
-  }
-}
-
-/**
- * 日付範囲フィルターの判定（作成日・更新日）
- * @internal テスト用にエクスポート
- */
-export function matchesDateRangeFilter(
-  dateStr: string | null | undefined,
-  filter: DateRangeFilter,
-): boolean {
-  if (filter === 'all') return true;
-  if (!dateStr) return false;
-
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  const itemDate = new Date(dateStr);
-  itemDate.setHours(0, 0, 0, 0);
-
-  switch (filter) {
-    case 'today':
-      return itemDate.getTime() === today.getTime();
-
-    case 'yesterday': {
-      const yesterday = new Date(today);
-      yesterday.setDate(yesterday.getDate() - 1);
-      return itemDate.getTime() === yesterday.getTime();
-    }
-
-    case 'this_week': {
-      const startOfWeek = new Date(today);
-      startOfWeek.setDate(startOfWeek.getDate() - today.getDay());
-      const endOfWeek = new Date(startOfWeek);
-      endOfWeek.setDate(endOfWeek.getDate() + 6);
-      return itemDate >= startOfWeek && itemDate <= endOfWeek;
-    }
-
-    case 'last_week': {
-      const startOfLastWeek = new Date(today);
-      startOfLastWeek.setDate(startOfLastWeek.getDate() - today.getDay() - 7);
-      const endOfLastWeek = new Date(startOfLastWeek);
-      endOfLastWeek.setDate(endOfLastWeek.getDate() + 6);
-      return itemDate >= startOfLastWeek && itemDate <= endOfLastWeek;
-    }
-
-    case 'this_month': {
-      const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-      const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-      return itemDate >= startOfMonth && itemDate <= endOfMonth;
-    }
-
-    default:
-      return true;
   }
 }
 

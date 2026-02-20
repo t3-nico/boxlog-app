@@ -1,3 +1,4 @@
+import type { DateRangeFilter } from '@/lib/date';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
@@ -23,16 +24,8 @@ export type FulfillmentFilter = 'all' | '1' | '2' | '3' | '4' | '5' | 'unrated';
  */
 export type DurationFilter = 'all' | 'short' | 'medium' | 'long';
 
-/**
- * 日付範囲フィルタータイプ（作成日・更新日共通）
- */
-export type DateRangeFilter =
-  | 'all'
-  | 'today'
-  | 'yesterday'
-  | 'this_week'
-  | 'last_week'
-  | 'this_month';
+// DateRangeFilter は @/lib/date から再エクスポート
+export type { DateRangeFilter };
 
 /**
  * Record フィルタ状態

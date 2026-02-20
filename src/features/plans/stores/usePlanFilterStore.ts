@@ -1,4 +1,5 @@
 import type { PlanStatus } from '@/features/plans/types/plan';
+import type { DateRangeFilter } from '@/lib/date';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
@@ -17,16 +18,8 @@ export type ReminderFilter = 'all' | 'yes' | 'no';
  */
 export type ScheduleFilter = 'all' | 'scheduled' | 'unscheduled';
 
-/**
- * 日付範囲フィルタータイプ（作成日・更新日共通）
- */
-export type DateRangeFilter =
-  | 'all'
-  | 'today'
-  | 'yesterday'
-  | 'this_week'
-  | 'last_week'
-  | 'this_month';
+// DateRangeFilter は @/lib/date から再エクスポート
+export type { DateRangeFilter };
 
 /**
  * Plan共通フィルタ状態
