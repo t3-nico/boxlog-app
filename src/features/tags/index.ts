@@ -55,11 +55,6 @@ export { colorCategories, tagColors, useTagStore } from './stores/useTagStore';
 // Constants - Colors
 export { DEFAULT_TAG_COLOR, TAG_COLOR_PALETTE, TAG_PRESET_COLORS } from './constants/colors';
 
-// Constants - Icons
-export { tagIconCategories, tagIconMapping } from './constants/icons';
-
-export type { TagIconName } from './constants/icons';
-
 // Types
 export type {
   CreateTagInput,

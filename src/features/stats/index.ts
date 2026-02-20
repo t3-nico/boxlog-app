@@ -1,6 +1,5 @@
 export { StatsPageContent } from './components/StatsPageContent';
 export { StatsView } from './components/StatsView';
-export { useStatsViewData } from './hooks/useStatsViewData';
 export { useStatsFilterStore } from './stores/useStatsFilterStore';
 export type { StatsPeriod } from './stores/useStatsFilterStore';
 export type {
