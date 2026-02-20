@@ -1,8 +1,9 @@
+import type { ActivityIconColor } from '@/lib/activity-formatter';
 import type { Database } from '@/lib/database.types';
 import type { ActivityActionType } from '@/schemas/records/activity';
 
 // アクション種別を再エクスポート
-export type { ActivityActionType };
+export type { ActivityActionType, ActivityIconColor };
 
 /**
  * Recordアクティビティ（変更履歴）
@@ -15,11 +16,6 @@ export type RecordActivity = Omit<
   action_type: ActivityActionType;
   metadata?: Record<string, unknown> | null;
 };
-
-/**
- * アイコン色の種別
- */
-export type ActivityIconColor = 'success' | 'info' | 'warning' | 'primary' | 'destructive';
 
 /**
  * アクティビティ表示用の情報

@@ -146,6 +146,20 @@
         "addNewPlan": "Add new plan"
       }
     },
+    "activity": {
+      "created": "Created plan",
+      "updated": "Updated plan",
+      "statusChanged": "Changed status",
+      "titleChanged": "Changed title",
+      "descriptionChanged": "Updated description",
+      "timeChanged": "Changed time",
+      "tagAdded": "Added tag",
+      "tagRemoved": "Removed tag",
+      "recurrenceChanged": "Changed recurrence",
+      "reminderChanged": "Changed reminder",
+      "deleted": "Deleted plan",
+      "changed": "Changed"
+    },
     "view": {
       "edit": "Edit",
       "delete": "Delete",

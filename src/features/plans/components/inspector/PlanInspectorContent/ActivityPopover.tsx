@@ -1,6 +1,7 @@
 'use client';
 
 import { CheckCircle, Clock, Plus, Tag, Trash } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useMemo } from 'react';
 
 import { usePlanActivities } from '../../../hooks/usePlanActivities';
@@ -32,6 +33,7 @@ interface PlanActivityPopoverProps {
 }
 
 export function PlanActivityPopover({ planId }: PlanActivityPopoverProps) {
+  const t = useTranslations();
   const { data: activities, isPending } = usePlanActivities(planId, { order: 'desc' });
 
   const items: ActivityDisplayItem[] = useMemo(() => {
@@ -41,13 +43,13 @@ export function PlanActivityPopover({ planId }: PlanActivityPopoverProps) {
       return {
         id: activity.id,
         createdAt: activity.created_at,
-        label: formatted.actionLabel,
+        label: t(formatted.actionLabelKey),
         detail: formatted.detail,
         icon: getActivityIcon(formatted.icon),
         iconColor: formatted.iconColor,
       };
     });
-  }, [activities]);
+  }, [activities, t]);
 
   return <ActivityPopover items={items} isPending={isPending} />;
 }

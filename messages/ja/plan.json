@@ -146,6 +146,20 @@
         "addNewPlan": "予定を追加"
       }
     },
+    "activity": {
+      "created": "プランを作成",
+      "updated": "プランを更新",
+      "statusChanged": "ステータスを変更",
+      "titleChanged": "タイトルを変更",
+      "descriptionChanged": "説明を更新",
+      "timeChanged": "時間を変更",
+      "tagAdded": "タグを追加",
+      "tagRemoved": "タグを削除",
+      "recurrenceChanged": "繰り返しを変更",
+      "reminderChanged": "通知を変更",
+      "deleted": "プランを削除",
+      "changed": "変更"
+    },
     "view": {
       "edit": "編集",
       "delete": "削除",
