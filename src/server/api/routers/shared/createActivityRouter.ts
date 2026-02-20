@@ -66,7 +66,8 @@ export function createActivityRouter<
     protectedProcedure,
   } = options;
 
-  const router = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const router: any = {
     /**
      * Get activity list
      */
