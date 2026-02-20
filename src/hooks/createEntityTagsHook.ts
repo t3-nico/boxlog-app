@@ -9,6 +9,7 @@ import { useCallback } from 'react';
 
 import { useUpdateEntityTagsInCache } from '@/hooks/useUpdateEntityTagsInCache';
 import { logger } from '@/lib/logger';
+import { api } from '@/lib/trpc';
 
 /**
  * エンティティタグフックファクトリーのオプション
@@ -37,35 +38,35 @@ export interface EntityTagsHook {
  * エンティティタグフックファクトリー
  *
  * @param options フック設定
- * @param api tRPC API utils
+ * @param utils tRPC API utils (api.useUtils()の結果)
  * @returns エンティティタグフック
  *
  * @example
  * ```typescript
  * // Plan用
  * export function usePlanTags() {
- *   const api = useApi();
+ *   const utils = api.useUtils();
  *   return useEntityTagsHook({
  *     entityName: 'plans',
  *     entityIdField: 'planId',
  *     enableTagStats: true,
- *   }, api);
+ *   }, utils);
  * }
  *
  * // Record用
  * export function useRecordTags() {
- *   const api = useApi();
+ *   const utils = api.useUtils();
  *   return useEntityTagsHook({
  *     entityName: 'records',
  *     entityIdField: 'recordId',
- *   }, api);
+ *   }, utils);
  * }
  * ```
  */
 export function useEntityTagsHook(
   options: CreateEntityTagsHookOptions,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  api: any,
+  utils: any,
 ): EntityTagsHook {
   const { entityName, entityIdField, enableTagStats = false } = options;
   const queryClient = useQueryClient();
@@ -76,7 +77,7 @@ export function useEntityTagsHook(
     (entityId: string): string[] => {
       // まず getById から取得を試みる
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const entityData = api[entityName].getById.getData({ id: entityId }) as any;
+      const entityData = utils[entityName].getById.getData({ id: entityId }) as any;
       if (entityData?.tagIds) {
         return entityData.tagIds;
       }
@@ -106,7 +107,7 @@ export function useEntityTagsHook(
 
       return [];
     },
-    [queryClient, api, entityName],
+    [queryClient, utils, entityName],
   );
 
   // addTag mutation
@@ -116,25 +117,32 @@ export function useEntityTagsHook(
       const entityId = variables[entityIdField];
       const { tagId } = variables;
 
-      await api[entityName].list.cancel();
-      await api[entityName].getById.cancel({ id: entityId });
-      if (enableTagStats) {
-        await api[entityName].getTagStats.cancel();
+      await utils[entityName].list.cancel();
+      await utils[entityName].getById.cancel({ id: entityId });
+      if (enableTagStats && entityName === 'plans') {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await (utils as any).plans.getTagStats.cancel();
       }
 
-      const previousListData = api[entityName].list.getData();
-      const previousEntityData = api[entityName].getById.getData({ id: entityId });
-      const previousTagStats = enableTagStats ? api[entityName].getTagStats.getData() : undefined;
+      const previousListData = utils[entityName].list.getData();
+      const previousEntityData = utils[entityName].getById.getData({ id: entityId });
+      /* eslint-disable @typescript-eslint/no-explicit-any */
+      const previousTagStats =
+        enableTagStats && entityName === 'plans'
+          ? (utils as any).plans.getTagStats.getData()
+          : undefined;
+      /* eslint-enable @typescript-eslint/no-explicit-any */
 
       const currentTagIds = getCurrentEntityTagIds(entityId);
       if (!currentTagIds.includes(tagId)) {
         updateEntityTagIdsInCache(entityId, [...currentTagIds, tagId]);
 
-        if (enableTagStats && previousTagStats) {
+        if (enableTagStats && entityName === 'plans' && previousTagStats) {
           const newCounts = { ...previousTagStats.counts };
           newCounts[tagId] = (newCounts[tagId] ?? 0) + 1;
           const wasUntagged = currentTagIds.length === 0;
-          api[entityName].getTagStats.setData(undefined, {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (utils as any).plans.getTagStats.setData(undefined, {
             ...previousTagStats,
             counts: newCounts,
             untaggedCount: wasUntagged
@@ -150,22 +158,23 @@ export function useEntityTagsHook(
     onError: (_err: unknown, variables: any, context: any) => {
       const entityId = variables[entityIdField];
       if (context?.previousListData) {
-        api[entityName].list.setData(undefined, context.previousListData);
+        utils[entityName].list.setData(undefined, context.previousListData);
       }
       if (context?.previousEntityData) {
-        api[entityName].getById.setData({ id: entityId }, context.previousEntityData);
+        utils[entityName].getById.setData({ id: entityId }, context.previousEntityData);
       }
-      if (enableTagStats && context?.previousTagStats) {
-        api[entityName].getTagStats.setData(undefined, context.previousTagStats);
+      if (enableTagStats && entityName === 'plans' && context?.previousTagStats) {
+        utils[entityName].getTagStats.setData(undefined, context.previousTagStats);
       }
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onSettled: (_data: unknown, _err: unknown, variables: any) => {
       const entityId = variables[entityIdField];
-      void api[entityName].getById.invalidate({ id: entityId });
-      void api[entityName].list.invalidate();
-      if (enableTagStats) {
-        void api[entityName].getTagStats.invalidate();
+      void utils[entityName].getById.invalidate({ id: entityId });
+      void utils[entityName].list.invalidate();
+      if (enableTagStats && entityName === 'plans') {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        void (utils as any).plans.getTagStats.invalidate();
       }
     },
   });
@@ -177,27 +186,34 @@ export function useEntityTagsHook(
       const entityId = variables[entityIdField];
       const { tagId } = variables;
 
-      await api[entityName].list.cancel();
-      await api[entityName].getById.cancel({ id: entityId });
-      if (enableTagStats) {
-        await api[entityName].getTagStats.cancel();
+      await utils[entityName].list.cancel();
+      await utils[entityName].getById.cancel({ id: entityId });
+      if (enableTagStats && entityName === 'plans') {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await (utils as any).plans.getTagStats.cancel();
       }
 
-      const previousListData = api[entityName].list.getData();
-      const previousEntityData = api[entityName].getById.getData({ id: entityId });
-      const previousTagStats = enableTagStats ? api[entityName].getTagStats.getData() : undefined;
+      const previousListData = utils[entityName].list.getData();
+      const previousEntityData = utils[entityName].getById.getData({ id: entityId });
+      /* eslint-disable @typescript-eslint/no-explicit-any */
+      const previousTagStats =
+        enableTagStats && entityName === 'plans'
+          ? (utils as any).plans.getTagStats.getData()
+          : undefined;
+      /* eslint-enable @typescript-eslint/no-explicit-any */
 
       const currentTagIds = getCurrentEntityTagIds(entityId);
       const newTagIds = currentTagIds.filter((id) => id !== tagId);
       updateEntityTagIdsInCache(entityId, newTagIds);
 
-      if (enableTagStats && previousTagStats) {
+      if (enableTagStats && entityName === 'plans' && previousTagStats) {
         const newCounts = { ...previousTagStats.counts };
         if (newCounts[tagId] !== undefined && newCounts[tagId] > 0) {
           newCounts[tagId] = newCounts[tagId] - 1;
         }
         const willBeUntagged = newTagIds.length === 0;
-        api[entityName].getTagStats.setData(undefined, {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (utils as any).plans.getTagStats.setData(undefined, {
           ...previousTagStats,
           counts: newCounts,
           untaggedCount: willBeUntagged
@@ -212,22 +228,23 @@ export function useEntityTagsHook(
     onError: (_err: unknown, variables: any, context: any) => {
       const entityId = variables[entityIdField];
       if (context?.previousListData) {
-        api[entityName].list.setData(undefined, context.previousListData);
+        utils[entityName].list.setData(undefined, context.previousListData);
       }
       if (context?.previousEntityData) {
-        api[entityName].getById.setData({ id: entityId }, context.previousEntityData);
+        utils[entityName].getById.setData({ id: entityId }, context.previousEntityData);
       }
-      if (enableTagStats && context?.previousTagStats) {
-        api[entityName].getTagStats.setData(undefined, context.previousTagStats);
+      if (enableTagStats && entityName === 'plans' && context?.previousTagStats) {
+        utils[entityName].getTagStats.setData(undefined, context.previousTagStats);
       }
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onSettled: (_data: unknown, _err: unknown, variables: any) => {
       const entityId = variables[entityIdField];
-      void api[entityName].getById.invalidate({ id: entityId });
-      void api[entityName].list.invalidate();
-      if (enableTagStats) {
-        void api[entityName].getTagStats.invalidate();
+      void utils[entityName].getById.invalidate({ id: entityId });
+      void utils[entityName].list.invalidate();
+      if (enableTagStats && entityName === 'plans') {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        void (utils as any).plans.getTagStats.invalidate();
       }
     },
   });
@@ -239,20 +256,26 @@ export function useEntityTagsHook(
       const entityId = variables[entityIdField];
       const { tagIds } = variables;
 
-      await api[entityName].list.cancel();
-      await api[entityName].getById.cancel({ id: entityId });
-      if (enableTagStats) {
-        await api[entityName].getTagStats.cancel();
+      await utils[entityName].list.cancel();
+      await utils[entityName].getById.cancel({ id: entityId });
+      if (enableTagStats && entityName === 'plans') {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await (utils as any).plans.getTagStats.cancel();
       }
 
-      const previousListData = api[entityName].list.getData();
-      const previousEntityData = api[entityName].getById.getData({ id: entityId });
-      const previousTagStats = enableTagStats ? api[entityName].getTagStats.getData() : undefined;
+      const previousListData = utils[entityName].list.getData();
+      const previousEntityData = utils[entityName].getById.getData({ id: entityId });
+      /* eslint-disable @typescript-eslint/no-explicit-any */
+      const previousTagStats =
+        enableTagStats && entityName === 'plans'
+          ? (utils as any).plans.getTagStats.getData()
+          : undefined;
+      /* eslint-enable @typescript-eslint/no-explicit-any */
 
       const currentTagIds = getCurrentEntityTagIds(entityId);
       updateEntityTagIdsInCache(entityId, tagIds);
 
-      if (enableTagStats && previousTagStats) {
+      if (enableTagStats && entityName === 'plans' && previousTagStats) {
         const currentTagIdSet = new Set(currentTagIds);
         const newTagIdSet = new Set(tagIds);
         const addedTagIds = tagIds.filter((id: string) => !currentTagIdSet.has(id));
@@ -277,7 +300,8 @@ export function useEntityTagsHook(
           newUntaggedCount = newUntaggedCount + 1;
         }
 
-        api[entityName].getTagStats.setData(undefined, {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (utils as any).plans.getTagStats.setData(undefined, {
           ...previousTagStats,
           counts: newCounts,
           untaggedCount: newUntaggedCount,
@@ -290,22 +314,23 @@ export function useEntityTagsHook(
     onError: (_err: unknown, variables: any, context: any) => {
       const entityId = variables[entityIdField];
       if (context?.previousListData) {
-        api[entityName].list.setData(undefined, context.previousListData);
+        utils[entityName].list.setData(undefined, context.previousListData);
       }
       if (context?.previousEntityData) {
-        api[entityName].getById.setData({ id: entityId }, context.previousEntityData);
+        utils[entityName].getById.setData({ id: entityId }, context.previousEntityData);
       }
-      if (enableTagStats && context?.previousTagStats) {
-        api[entityName].getTagStats.setData(undefined, context.previousTagStats);
+      if (enableTagStats && entityName === 'plans' && context?.previousTagStats) {
+        utils[entityName].getTagStats.setData(undefined, context.previousTagStats);
       }
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onSettled: (_data: unknown, _err: unknown, variables: any) => {
       const entityId = variables[entityIdField];
-      void api[entityName].getById.invalidate({ id: entityId });
-      void api[entityName].list.invalidate();
-      if (enableTagStats) {
-        void api[entityName].getTagStats.invalidate();
+      void utils[entityName].getById.invalidate({ id: entityId });
+      void utils[entityName].list.invalidate();
+      if (enableTagStats && entityName === 'plans') {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        void (utils as any).plans.getTagStats.invalidate();
       }
     },
   });
@@ -314,37 +339,40 @@ export function useEntityTagsHook(
   const addTag = useCallback(
     async (entityId: string, tagId: string): Promise<boolean> => {
       try {
-        await addTagMutation.mutateAsync({ [entityIdField]: entityId, tagId });
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await addTagMutation.mutateAsync({ [entityIdField]: entityId, tagId } as any);
         return true;
       } catch (error) {
-        if (enableTagStats) {
+        if (enableTagStats && entityName === 'plans') {
           logger.error('Failed to add tag:', error);
         }
         return false;
       }
     },
-    [addTagMutation, entityIdField, enableTagStats],
+    [addTagMutation, entityIdField, enableTagStats, entityName],
   );
 
   const removeTag = useCallback(
     async (entityId: string, tagId: string): Promise<boolean> => {
       try {
-        await removeTagMutation.mutateAsync({ [entityIdField]: entityId, tagId });
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await removeTagMutation.mutateAsync({ [entityIdField]: entityId, tagId } as any);
         return true;
       } catch (error) {
-        if (enableTagStats) {
+        if (enableTagStats && entityName === 'plans') {
           logger.error('Failed to remove tag:', error);
         }
         return false;
       }
     },
-    [removeTagMutation, entityIdField, enableTagStats],
+    [removeTagMutation, entityIdField, enableTagStats, entityName],
   );
 
   const setTags = useCallback(
     async (entityId: string, tagIds: string[]): Promise<boolean> => {
       try {
-        await setTagsMutation.mutateAsync({ [entityIdField]: entityId, tagIds });
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await setTagsMutation.mutateAsync({ [entityIdField]: entityId, tagIds } as any);
         return true;
       } catch {
         return false;
