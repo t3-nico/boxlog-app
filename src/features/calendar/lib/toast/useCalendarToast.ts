@@ -1,19 +1,24 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 
+import { useLocale } from 'next-intl';
 import { toast } from 'sonner';
 
 import type { CalendarPlan } from '@/features/calendar/types';
+import type { Locale } from '@/types/i18n';
 
 import { getTranslation } from './get-translation';
-import { toastTemplates } from './templates';
+import { createToastTemplates } from './templates';
 import { CALENDAR_TOAST_KEYS } from './translation-keys';
 import type { CalendarAction, CalendarToastOptions } from './types';
 
 export const useCalendarToast = () => {
+  const locale = useLocale() as Locale;
+  const templates = useMemo(() => createToastTemplates(locale), [locale]);
+
   // 汎用的なtoast表示関数
   const showCalendarToast = useCallback(
     (action: CalendarAction, options: CalendarToastOptions = {}) => {
-      const template = toastTemplates[action];
+      const template = templates[action];
       const description = template.description?.(options);
 
       // durationを取得（numberまたはundefined）
@@ -24,24 +29,24 @@ export const useCalendarToast = () => {
 
       if (options.undoAction) {
         actions.push({
-          label: getTranslation(CALENDAR_TOAST_KEYS.TOAST_UNDO),
+          label: getTranslation(CALENDAR_TOAST_KEYS.TOAST_UNDO, locale),
           onClick: () => {
             options.undoAction!();
-            toast.success(getTranslation(CALENDAR_TOAST_KEYS.TOAST_UNDO_COMPLETED));
+            toast.success(getTranslation(CALENDAR_TOAST_KEYS.TOAST_UNDO_COMPLETED, locale));
           },
         });
       }
 
       if (options.viewAction) {
         actions.push({
-          label: getTranslation(CALENDAR_TOAST_KEYS.TOAST_VIEW),
+          label: getTranslation(CALENDAR_TOAST_KEYS.TOAST_VIEW, locale),
           onClick: options.viewAction,
         });
       }
 
       if (options.retryAction) {
         actions.push({
-          label: getTranslation(CALENDAR_TOAST_KEYS.TOAST_RETRY),
+          label: getTranslation(CALENDAR_TOAST_KEYS.TOAST_RETRY, locale),
           onClick: options.retryAction,
         });
       }
@@ -66,7 +71,7 @@ export const useCalendarToast = () => {
 
       return toastId;
     },
-    [],
+    [templates, locale],
   );
 
   // 便利なショートカット関数
@@ -132,7 +137,7 @@ export const useCalendarToast = () => {
       },
     ) => {
       const id = toast.loading(
-        messages.loading || getTranslation(CALENDAR_TOAST_KEYS.TOAST_PROCESSING),
+        messages.loading || getTranslation(CALENDAR_TOAST_KEYS.TOAST_PROCESSING, locale),
       );
 
       try {
@@ -141,7 +146,7 @@ export const useCalendarToast = () => {
         toast.success(
           typeof messages.success === 'function'
             ? messages.success(result)
-            : messages.success || getTranslation(CALENDAR_TOAST_KEYS.TOAST_SUCCESS),
+            : messages.success || getTranslation(CALENDAR_TOAST_KEYS.TOAST_SUCCESS, locale),
         );
         return result;
       } catch (error) {
@@ -150,12 +155,12 @@ export const useCalendarToast = () => {
         toast.error(
           typeof messages.error === 'function'
             ? messages.error(errorObject)
-            : messages.error || getTranslation(CALENDAR_TOAST_KEYS.TOAST_ERROR_OCCURRED),
+            : messages.error || getTranslation(CALENDAR_TOAST_KEYS.TOAST_ERROR_OCCURRED, locale),
         );
         throw error;
       }
     },
-    [],
+    [locale],
   );
 
   return {
