@@ -9,6 +9,10 @@ import {
   useCreateActionSheet,
   type CreateActionType,
 } from '@/features/navigation/components/mobile/CreateActionSheet';
+import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
+import { TemplateListModal } from '@/features/templates/components/TemplateListModal';
+import { useTemplateStore } from '@/features/templates/stores/useTemplateStore';
+import type { PlanTemplate } from '@/features/templates/types';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { Plus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -54,9 +58,35 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
   // CreateActionSheet状態管理
   const createActionSheet = useCreateActionSheet();
 
+  // テンプレート選択ハンドラー: テンプレートからプランを作成
+  const handleSelectTemplate = useCallback((template: PlanTemplate) => {
+    const draftData: Record<string, unknown> = {
+      title: template.title_pattern,
+      description: template.plan_description,
+      tagIds: template.tag_ids,
+      reminder_minutes: template.reminder_minutes,
+    };
+
+    // duration_minutesがある場合、現在時刻からend_timeを計算
+    if (template.duration_minutes) {
+      const now = new Date();
+      const end = new Date(now.getTime() + template.duration_minutes * 60 * 1000);
+      draftData.start_time = now.toISOString();
+      draftData.end_time = end.toISOString();
+    }
+
+    usePlanInspectorStore.getState().openInspectorWithDraft(draftData, 'plan');
+  }, []);
+
   // FABからのアクション選択ハンドラー
-  const handleCreateAction = useCallback((_type: CreateActionType) => {
-    // Stub: 各アクションの実装は未完了
+  const handleCreateAction = useCallback((type: CreateActionType) => {
+    if (type === 'plan') {
+      usePlanInspectorStore.getState().openInspectorWithDraft(undefined, 'plan');
+    } else if (type === 'record') {
+      usePlanInspectorStore.getState().openInspectorWithDraft(undefined, 'record');
+    } else if (type === 'template') {
+      useTemplateStore.getState().openListModal();
+    }
   }, []);
 
   // メモ化: コンテンツ部分（children, isMobile, localeに依存）
@@ -102,9 +132,20 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
             onSelect={handleCreateAction}
           />
         ) : null}
+
+        {/* テンプレート一覧モーダル */}
+        <TemplateListModal onSelectTemplate={handleSelectTemplate} />
       </div>
     ),
-    [children, isMobile, localeFromPath, t, createActionSheet, handleCreateAction],
+    [
+      children,
+      isMobile,
+      localeFromPath,
+      t,
+      createActionSheet,
+      handleCreateAction,
+      handleSelectTemplate,
+    ],
   );
 
   // カレンダーページの場合はCalendarNavigationProviderでラップ

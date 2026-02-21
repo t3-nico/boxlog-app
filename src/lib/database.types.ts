@@ -428,6 +428,87 @@ export type Database = {
           },
         ];
       };
+      plan_template_tags: {
+        Row: {
+          created_at: string;
+          id: string;
+          tag_id: string;
+          template_id: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          tag_id: string;
+          template_id: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          tag_id?: string;
+          template_id?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'plan_template_tags_template_id_fkey';
+            columns: ['template_id'];
+            isOneToOne: false;
+            referencedRelation: 'plan_templates';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'plan_template_tags_tag_id_fkey';
+            columns: ['tag_id'];
+            isOneToOne: false;
+            referencedRelation: 'tags';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      plan_templates: {
+        Row: {
+          created_at: string;
+          description: string | null;
+          duration_minutes: number | null;
+          id: string;
+          name: string;
+          plan_description: string | null;
+          reminder_minutes: number | null;
+          title_pattern: string;
+          updated_at: string;
+          use_count: number;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          description?: string | null;
+          duration_minutes?: number | null;
+          id?: string;
+          name: string;
+          plan_description?: string | null;
+          reminder_minutes?: number | null;
+          title_pattern: string;
+          updated_at?: string;
+          use_count?: number;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          description?: string | null;
+          duration_minutes?: number | null;
+          id?: string;
+          name?: string;
+          plan_description?: string | null;
+          reminder_minutes?: number | null;
+          title_pattern?: string;
+          updated_at?: string;
+          use_count?: number;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       plans: {
         Row: {
           completed_at: string | null;

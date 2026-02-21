@@ -1,0 +1,39 @@
+{
+  "templates": {
+    "listModal": {
+      "title": "テンプレート",
+      "description": "テンプレートを選択してプランを作成",
+      "empty": "テンプレートがありません"
+    },
+    "formModal": {
+      "createTitle": "テンプレートを作成",
+      "createDescription": "プランのパターンを再利用可能なテンプレートとして保存",
+      "editTitle": "テンプレートを編集",
+      "editDescription": "テンプレートの詳細を更新"
+    },
+    "fields": {
+      "name": "テンプレート名",
+      "namePlaceholder": "例: 朝の定例",
+      "description": "説明",
+      "descriptionPlaceholder": "任意の説明",
+      "titlePattern": "プランタイトル",
+      "titlePatternPlaceholder": "新しいプランのタイトル",
+      "planDescription": "プランの説明",
+      "planDescriptionPlaceholder": "任意のプランの説明",
+      "duration": "所要時間（分）",
+      "durationPlaceholder": "例: 30"
+    },
+    "actions": {
+      "create": "新規テンプレート",
+      "saveAsTemplate": "テンプレートとして保存"
+    },
+    "toast": {
+      "created": "テンプレート「{name}」を作成しました",
+      "updated": "テンプレート「{name}」を更新しました",
+      "deleted": "テンプレートを削除しました",
+      "createFailed": "テンプレートの作成に失敗しました",
+      "updateFailed": "テンプレートの更新に失敗しました",
+      "deleteFailed": "テンプレートの削除に失敗しました"
+    }
+  }
+}

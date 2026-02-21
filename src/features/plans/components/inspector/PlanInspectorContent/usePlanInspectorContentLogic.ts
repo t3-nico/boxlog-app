@@ -14,6 +14,7 @@ import {
   parseISOToUserTimezone,
 } from '@/features/calendar/utils/dateUtils';
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
+import { useTemplateStore } from '@/features/templates/stores/useTemplateStore';
 import { useUpdateEntityTagsInCache } from '@/hooks/useUpdateEntityTagsInCache';
 import { logger } from '@/lib/logger';
 import { api } from '@/lib/trpc';
@@ -605,8 +606,28 @@ export function usePlanInspectorContentLogic() {
   }, [plan, closeInspector, openInspectorWithDraft]);
 
   const handleSaveAsTemplate = useCallback(() => {
-    // Stub: テンプレート保存機能は未実装
-  }, []);
+    if (!plan) return;
+
+    // start_time と end_time から duration_minutes を計算
+    let durationMinutes: number | null = null;
+    if (plan.start_time && plan.end_time) {
+      const start = new Date(plan.start_time);
+      const end = new Date(plan.end_time);
+      const diffMs = end.getTime() - start.getTime();
+      if (diffMs > 0) {
+        durationMinutes = Math.round(diffMs / (1000 * 60));
+      }
+    }
+
+    const { openSaveAsTemplate } = useTemplateStore.getState();
+    openSaveAsTemplate({
+      title: plan.title || '',
+      description: plan.description ?? null,
+      duration_minutes: durationMinutes,
+      reminder_minutes: 'reminder_minutes' in plan ? (plan.reminder_minutes ?? null) : null,
+      tag_ids: selectedTagIdsRef.current,
+    });
+  }, [plan]);
 
   /**
    * Inspectorを即座に閉じ、保存処理はバックグラウンドで実行

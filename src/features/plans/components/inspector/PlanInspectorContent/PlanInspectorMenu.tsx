@@ -32,10 +32,9 @@ export const PlanInspectorMenu = memo(function PlanInspectorMenu({
         <Copy className="size-4" />
         {t('plan.inspector.menu.duplicate')}
       </DropdownMenuItem>
-      <DropdownMenuItem onClick={onSaveAsTemplate} disabled>
+      <DropdownMenuItem onClick={onSaveAsTemplate}>
         <Save className="size-4" />
         {t('plan.inspector.menu.saveAsTemplate')}
-        <span className="text-muted-foreground ml-auto text-xs">{t('common.comingSoon')}</span>
       </DropdownMenuItem>
       <DropdownMenuSeparator />
       <DropdownMenuItem onClick={onCopyId}>
