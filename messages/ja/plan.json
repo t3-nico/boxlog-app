@@ -110,7 +110,6 @@
       "noData": "データが見つかりません",
       "menu": {
         "duplicate": "複製する",
-        "saveAsTemplate": "テンプレートとして保存",
         "copyId": "IDをコピー",
         "copyLink": "リンクをコピー",
         "openNewTab": "新しいタブで開く"

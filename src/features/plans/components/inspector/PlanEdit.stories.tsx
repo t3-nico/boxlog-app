@@ -76,9 +76,7 @@ const completedPlan: Plan = {
 const noop = () => {};
 
 /** Plan用メニューコンテンツ */
-const planMenuContent = (
-  <PlanInspectorMenu onDuplicate={noop} onSaveAsTemplate={noop} onCopyId={noop} onDelete={noop} />
-);
+const planMenuContent = <PlanInspectorMenu onDuplicate={noop} onCopyId={noop} onDelete={noop} />;
 
 /** 編集モードフッター（完了にするスプリットボタン） */
 function EditFooter({ status }: { status: 'open' | 'closed' }) {

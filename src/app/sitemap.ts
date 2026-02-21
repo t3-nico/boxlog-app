@@ -52,7 +52,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     'preferences',
     'notifications',
     'calendar',
-    'templates',
     'integration',
     'data-export',
     'plan-billing',

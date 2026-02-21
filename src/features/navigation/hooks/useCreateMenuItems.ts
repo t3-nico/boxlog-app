@@ -9,11 +9,10 @@
 
 import { useCallback, useMemo } from 'react';
 
-import { CalendarPlus, Clock, FileText, Tag } from 'lucide-react';
+import { CalendarPlus, Clock, Tag } from 'lucide-react';
 
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
 import { useTagModalNavigation } from '@/features/tags/hooks/useTagModalNavigation';
-import { useTemplateStore } from '@/features/templates/stores/useTemplateStore';
 import { useTranslations } from 'next-intl';
 
 import type { LucideIcon } from 'lucide-react';
@@ -59,10 +58,6 @@ export function useCreateMenuItems(options?: UseCreateMenuItemsOptions): CreateM
     openTagCreateModal();
   }, [openTagCreateModal]);
 
-  const handleCreateFromTemplate = useCallback(() => {
-    useTemplateStore.getState().openListModal();
-  }, []);
-
   return useMemo(
     () => [
       {
@@ -79,13 +74,6 @@ export function useCreateMenuItems(options?: UseCreateMenuItemsOptions): CreateM
         label: t('common.createSheet.record'),
         action: handleCreateRecord,
       },
-      {
-        type: 'item' as const,
-        id: 'template',
-        icon: FileText,
-        label: t('common.createSheet.template'),
-        action: handleCreateFromTemplate,
-      },
       { type: 'separator' as const },
       {
         type: 'item' as const,
@@ -95,6 +83,6 @@ export function useCreateMenuItems(options?: UseCreateMenuItemsOptions): CreateM
         action: handleCreateTag,
       },
     ],
-    [t, handleCreatePlan, handleCreateRecord, handleCreateFromTemplate, handleCreateTag],
+    [t, handleCreatePlan, handleCreateRecord, handleCreateTag],
   );
 }

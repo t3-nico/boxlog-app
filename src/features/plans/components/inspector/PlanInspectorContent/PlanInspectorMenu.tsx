@@ -6,21 +6,19 @@
 
 import { memo } from 'react';
 
-import { Copy, Save, Trash2 } from 'lucide-react';
+import { Copy, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 
 interface PlanInspectorMenuProps {
   onDuplicate: () => void;
-  onSaveAsTemplate: () => void;
   onCopyId: () => void;
   onDelete: () => void;
 }
 
 export const PlanInspectorMenu = memo(function PlanInspectorMenu({
   onDuplicate,
-  onSaveAsTemplate,
   onCopyId,
   onDelete,
 }: PlanInspectorMenuProps) {
@@ -31,10 +29,6 @@ export const PlanInspectorMenu = memo(function PlanInspectorMenu({
       <DropdownMenuItem onClick={onDuplicate}>
         <Copy className="size-4" />
         {t('plan.inspector.menu.duplicate')}
-      </DropdownMenuItem>
-      <DropdownMenuItem onClick={onSaveAsTemplate}>
-        <Save className="size-4" />
-        {t('plan.inspector.menu.saveAsTemplate')}
       </DropdownMenuItem>
       <DropdownMenuSeparator />
       <DropdownMenuItem onClick={onCopyId}>
