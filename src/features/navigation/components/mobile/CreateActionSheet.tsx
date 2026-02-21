@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-import { Calendar, CheckSquare } from 'lucide-react';
+import { Calendar, CheckSquare, FileText } from 'lucide-react';
 
 import {
   Drawer,
@@ -14,7 +14,7 @@ import {
 import { cn } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
 
-export type CreateActionType = 'plan' | 'record';
+export type CreateActionType = 'plan' | 'record' | 'template';
 
 interface CreateActionSheetProps {
   open: boolean;
@@ -49,6 +49,14 @@ export function CreateActionSheet({ open, onOpenChange, onSelect }: CreateAction
       description: t('common.createSheet.recordDescription'),
       icon: CheckSquare,
       color: 'text-success',
+      bgColor: 'bg-muted',
+    },
+    {
+      id: 'template' as const,
+      label: t('common.createSheet.template'),
+      description: t('common.createSheet.templateDescription'),
+      icon: FileText,
+      color: 'text-foreground',
       bgColor: 'bg-muted',
     },
   ];

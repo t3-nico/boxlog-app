@@ -93,6 +93,15 @@ const SettingsModal = dynamic(
   { ssr: false },
 );
 
+// TemplateFormModalを遅延ロード
+const TemplateFormModal = dynamic(
+  () =>
+    import('@/features/templates/components/TemplateFormModal').then(
+      (mod) => mod.TemplateFormModal,
+    ),
+  { ssr: false },
+);
+
 function getBaseUrl() {
   if (typeof window !== 'undefined') return ''; // ブラウザではルート相対パス
   if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`; // SSR Vercel
@@ -214,6 +223,7 @@ export function Providers({ children }: ProvidersProps) {
                 <GlobalTagCreateModal />
                 <GlobalTagMergeModal />
                 <SettingsModal />
+                <TemplateFormModal />
               </ServiceWorkerProvider>
             </GlobalSearchProvider>
           </ThemeProvider>
