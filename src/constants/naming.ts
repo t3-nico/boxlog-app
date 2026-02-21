@@ -39,7 +39,6 @@ export const SCREENS = {
   SETTINGS_NOTIFICATIONS: 'settings_notifications',
   SETTINGS_CALENDAR: 'settings_calendar',
   SETTINGS_TAGS: 'settings_tags',
-  SETTINGS_TEMPLATES: 'settings_templates',
   SETTINGS_INTEGRATION: 'settings_integration',
   SETTINGS_DATA_EXPORT: 'settings_data_export',
   SETTINGS_PLAN_BILLING: 'settings_plan_billing',

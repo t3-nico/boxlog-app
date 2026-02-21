@@ -73,7 +73,6 @@ export function PlanInspectorContent() {
     handleDelete,
     handleCopyId,
     handleDuplicate,
-    handleSaveAsTemplate,
     getCache,
     draftRecordIds,
     handleDraftRecordIdsChange,
@@ -140,7 +139,6 @@ export function PlanInspectorContent() {
   const menuContent = (
     <PlanInspectorMenu
       onDuplicate={handleDuplicate}
-      onSaveAsTemplate={handleSaveAsTemplate}
       onCopyId={handleCopyId}
       onDelete={handleDelete}
     />

@@ -19,7 +19,6 @@ const NAMESPACES = [
   'notification',
   'settings',
   'tag',
-  'template',
 ] as const;
 
 /**

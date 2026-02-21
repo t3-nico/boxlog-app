@@ -240,8 +240,6 @@
       "planDescription": "新しい予定を作成します",
       "record": "記録",
       "recordDescription": "実際に行ったことを記録します",
-      "template": "テンプレート",
-      "templateDescription": "保存済みテンプレートから追加します",
       "history": "履歴から作成",
       "historyDescription": "最近使った項目から再度作成します"
     },

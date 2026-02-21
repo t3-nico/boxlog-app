@@ -10,7 +10,6 @@ import { plansRouter } from './routers/plans';
 import { recordsRouter } from './routers/records';
 import { suggestionsRouter } from './routers/suggestions';
 import { tagsRouter } from './routers/tags';
-import { templatesRouter } from './routers/templates';
 import { userRouter } from './routers/user';
 import { userSettingsRouter } from './routers/userSettings';
 import { createTRPCRouter } from './trpc';
@@ -24,7 +23,6 @@ export const appRouter = createTRPCRouter({
   records: recordsRouter,
   suggestions: suggestionsRouter,
   tags: tagsRouter,
-  templates: templatesRouter,
   user: userRouter,
   notifications: notificationsRouter,
   notificationPreferences: notificationPreferencesRouter,
