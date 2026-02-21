@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect, within } from 'storybook/test';
 
 import { ScheduleRow } from './ScheduleRow';
 
@@ -82,6 +83,20 @@ function ScheduleRowStory({
 /** 初期状態 — 日付・時間ともに未設定 */
 export const Empty: Story = {
   render: () => <ScheduleRowStory />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // 日付ピッカー（未選択）が表示される
+    const datePicker = canvas.getByRole('button', { name: /日付選択: 未選択/i });
+    await expect(datePicker).toBeInTheDocument();
+
+    // 時刻ピッカー（combobox）が2つ表示される
+    const comboboxes = canvas.getAllByRole('combobox');
+    await expect(comboboxes).toHaveLength(2);
+
+    // 区切りのダッシュ
+    await expect(canvas.getByText('–')).toBeInTheDocument();
+  },
 };
 
 /** 日付 + 時間 + Duration表示 */
@@ -89,6 +104,17 @@ export const WithDateTime: Story = {
   render: () => (
     <ScheduleRowStory initialDate={new Date()} initialStartTime="10:00" initialEndTime="11:30" />
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // Duration "1h 30m" が表示される
+    await expect(canvas.getByText('1h 30m')).toBeInTheDocument();
+
+    // 時刻ピッカーに値が入っている
+    const comboboxes = canvas.getAllByRole('combobox');
+    await expect(comboboxes[0]).toHaveValue('10:00');
+    await expect(comboboxes[1]).toHaveValue('11:30');
+  },
 };
 
 /** 日付なし、時間のみ */
@@ -106,6 +132,19 @@ export const TimeConflict: Story = {
       timeConflictError
     />
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // エラーアラートが表示される
+    const alert = canvas.getByRole('alert');
+    await expect(alert).toBeInTheDocument();
+    await expect(canvas.getByText('この時間帯には既に予定があります')).toBeInTheDocument();
+
+    // 時刻ピッカーにエラー状態が反映される
+    const comboboxes = canvas.getAllByRole('combobox');
+    await expect(comboboxes[0]).toHaveAttribute('aria-invalid', 'true');
+    await expect(comboboxes[1]).toHaveAttribute('aria-invalid', 'true');
+  },
 };
 
 /** 全フィールド無効化 */
@@ -118,6 +157,14 @@ export const Disabled: Story = {
       disabled
     />
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // 時刻ピッカーが無効化されている
+    const comboboxes = canvas.getAllByRole('combobox');
+    await expect(comboboxes[0]).toBeDisabled();
+    await expect(comboboxes[1]).toBeDisabled();
+  },
 };
 
 /** 全パターン一覧 */
