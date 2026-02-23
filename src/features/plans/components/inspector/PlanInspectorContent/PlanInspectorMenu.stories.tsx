@@ -15,7 +15,6 @@ import { PlanInspectorMenu } from './PlanInspectorMenu';
  *
  * ## Props
  * - `onDuplicate` — 複製アクション
- * - `onSaveAsTemplate` — テンプレート保存（現在disabled）
  * - `onCopyId` — ID コピー
  * - `onDelete` — 削除（destructive）
  *
@@ -24,7 +23,6 @@ import { PlanInspectorMenu } from './PlanInspectorMenu';
  */
 interface MenuArgs {
   onDuplicate: () => void;
-  onSaveAsTemplate: () => void;
   onCopyId: () => void;
   onDelete: () => void;
 }
@@ -35,7 +33,6 @@ const meta = {
   tags: ['autodocs'],
   args: {
     onDuplicate: fn(),
-    onSaveAsTemplate: fn(),
     onCopyId: fn(),
     onDelete: fn(),
   },
@@ -50,7 +47,6 @@ type Story = StoryObj<MenuArgs>;
 
 function MenuWrapper(props: {
   onDuplicate: () => void;
-  onSaveAsTemplate: () => void;
   onCopyId: () => void;
   onDelete: () => void;
 }) {
@@ -85,10 +81,8 @@ export const Default: Story = {
     // ポータル経由のコンテンツを検証
     const body = within(document.body);
     await expect(body.getByText('複製する')).toBeInTheDocument();
-    await expect(body.getByText('テンプレートとして保存')).toBeInTheDocument();
     await expect(body.getByText('IDをコピー')).toBeInTheDocument();
     await expect(body.getByText('削除')).toBeInTheDocument();
-    await expect(body.getByText('近日公開')).toBeInTheDocument();
   },
 };
 
