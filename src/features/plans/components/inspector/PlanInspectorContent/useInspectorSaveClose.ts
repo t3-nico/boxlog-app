@@ -160,14 +160,19 @@ export function useInspectorSaveClose({
       const changes = consume();
 
       if (changes && currentPlanId && Object.keys(changes).length > 0) {
-        updatePlan.mutateAsync({ id: currentPlanId, data: changes }).catch((error: unknown) => {
-          const errorMessage = error instanceof Error ? error.message : '';
-          if (errorMessage.includes('TIME_OVERLAP') || errorMessage.includes('既に')) {
-            toast.error(t('plan.inspector.toast.timeOverlap'));
-          } else {
-            toast.error(t('plan.inspector.toast.saveFailed'));
-          }
-        });
+        updatePlan
+          .mutateAsync({
+            id: currentPlanId,
+            data: changes as Record<string, string | number | null | undefined>,
+          })
+          .catch((error: unknown) => {
+            const errorMessage = error instanceof Error ? error.message : '';
+            if (errorMessage.includes('TIME_OVERLAP') || errorMessage.includes('既に')) {
+              toast.error(t('plan.inspector.toast.timeOverlap'));
+            } else {
+              toast.error(t('plan.inspector.toast.saveFailed'));
+            }
+          });
       }
 
       if (currentHasTagChanges && currentPlanId) {

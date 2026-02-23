@@ -9,12 +9,9 @@
  * - useInspectorSaveClose: 保存・閉じるロジック
  */
 
-import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
 import { logger } from '@/lib/logger';
-import { api } from '@/lib/trpc';
 import type { RecurringEditScope } from '../../../components/RecurringEditConfirmDialog';
 import { usePlan } from '../../../hooks/usePlan';
 import { useRecurringScopeMutations } from '../../../hooks/useRecurringScopeMutations';
@@ -36,12 +33,6 @@ const SCOPE_DIALOG_FIELDS = ['start_time', 'end_time'] as const;
 const IMMEDIATE_SAVE_FIELDS = ['title', 'description'] as const;
 
 export function usePlanInspectorContentLogic() {
-  const t = useTranslations();
-  const utils = api.useUtils();
-
-  // ユーザーのタイムゾーン設定
-  const timezone = useCalendarSettingsStore((state) => state.timezone);
-
   // 保存中フラグ（即座に閉じるため常にfalse、UIの disabled guard として維持）
   const isSaving = false;
 
@@ -140,14 +131,12 @@ export function usePlanInspectorContentLogic() {
     handleTagsChange,
     handleRemoveTag,
     setplanTags,
-    updateTagsInCache,
-  } = useInspectorTagState({ planId, planData, isDraftMode });
+  } = useInspectorTagState({ planId, planData: planData as Plan | undefined, isDraftMode });
 
   // --- サブフック: 時間・スケジュール状態 ---
   const {
     timeConflictError,
     titleRef,
-    descriptionRef,
     scheduleDate,
     startTime,
     endTime,
@@ -161,7 +150,7 @@ export function usePlanInspectorContentLogic() {
     planId,
     isDraftMode,
     draftPlan,
-    initialData,
+    initialData: initialData ?? null,
     recurringEdit,
     addPendingChange,
     updateDraft,
@@ -174,10 +163,10 @@ export function usePlanInspectorContentLogic() {
     hasTagChanges,
     selectedTagIdsRef,
     originalTagIdsRef,
-    setplanTags,
+    setplanTags: setplanTags as unknown as (planId: string, tagIds: string[]) => Promise<void>,
     updatePlan,
     closeInspector,
-    pendingChanges,
+    pendingChanges: pendingChanges as Record<string, string | number | null | undefined> | null,
     clearPendingChanges,
   });
 
@@ -299,10 +288,6 @@ export function usePlanInspectorContentLogic() {
       });
     }, 100);
   }, [plan, closeInspector, openInspectorWithDraft]);
-
-  const handleSaveAsTemplate = useCallback(() => {
-    // Stub: テンプレート保存機能は未実装
-  }, []);
 
   return {
     // Store state

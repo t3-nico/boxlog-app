@@ -5,7 +5,7 @@
  * mousemove/mouseup/touchmove/touchendの登録・クリーンアップ
  */
 
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 
 import { useCalendarDragStore } from '@/features/calendar/stores/useCalendarDragStore';
 
@@ -14,7 +14,6 @@ import type { DragDataRef, DragState } from './types';
 import { initialDragState } from './types';
 import {
   animateSnapBack,
-  calculateColumnWidth,
   calculateNewTime,
   calculateTargetDateIndex,
   checkClientSideOverlap,
@@ -273,7 +272,7 @@ export function useDragEvents({
 
       if (dragState.isResizing) {
         handleResizing(constrainedX, constrainedY, deltaY);
-      } else if (dragState.isDragging || dragData.hasMoved) {
+      } else if ((dragState.isDragging || dragData.hasMoved) && targetDateIndex !== undefined) {
         handleDragging(constrainedX, constrainedY, deltaX, deltaY, targetDateIndex);
 
         updateDrag({

@@ -20,7 +20,6 @@ import { useDragEvents } from './useDragEvents';
 import { useDragHandler } from './useDragHandler';
 import { useResizeHandler } from './useResizeHandler';
 import { useTouchHandlers } from './useTouchHandlers';
-import { calculateColumnWidth } from './utils';
 
 export function useDragAndDrop({
   onEventUpdate,
@@ -147,7 +146,10 @@ export function useDragAndDrop({
     cleanupDrag,
     executeEventUpdateWithOverlapCheck,
     startDrag,
-    updateDrag,
+    updateDrag: updateDrag as (update: {
+      targetDateIndex: number | undefined;
+      isDragging: boolean;
+    }) => void,
     endDrag,
   });
 

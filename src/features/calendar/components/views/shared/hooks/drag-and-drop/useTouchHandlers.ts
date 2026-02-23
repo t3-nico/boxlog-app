@@ -11,7 +11,6 @@ import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
 import { useHapticFeedback } from '@/hooks/useHapticFeedback';
 
 import type { DragDataRef, DragState } from './types';
-import { initialDragState } from './types';
 import {
   calculateColumnWidth,
   calculateTargetDateIndex,
@@ -169,7 +168,17 @@ export function useTouchHandlers({
         });
       }, 500);
     },
-    [disabledPlanId, viewMode, displayDates, clearLongPressTimer, impact, startDrag, dragDataRef, eventsRef, setDragState],
+    [
+      disabledPlanId,
+      viewMode,
+      displayDates,
+      clearLongPressTimer,
+      impact,
+      startDrag,
+      dragDataRef,
+      eventsRef,
+      setDragState,
+    ],
   );
 
   // タッチ移動
