@@ -63,6 +63,13 @@ const messages = {
       },
     },
     recurrence: {
+      label: '繰り返し',
+      none: '繰り返しなし',
+      daily: '毎日',
+      weekly: '毎週',
+      monthly: '毎月',
+      yearly: '毎年',
+      weekdays: '平日',
       dialog: {
         title: '繰り返し',
         interval: '間隔',
@@ -129,7 +136,9 @@ const messages = {
       label: 'リマインダー',
       none: 'なし',
       atStart: '開始時',
+      min5: '5分前',
       min10: '10分前',
+      min15: '15分前',
       min30: '30分前',
       hour1: '1時間前',
       day1: '1日前',
@@ -177,6 +186,10 @@ const messages = {
   },
   plan: {
     inspector: {
+      addTitle: 'タイトルを追加',
+      editDescription: '説明を編集',
+      addDescription: '説明を追加',
+      addDescriptionPlaceholder: '説明を追加...',
       noTitle: '（タイトルなし）',
       notFound: 'プランが見つかりません',
       noData: 'データが見つかりません',
