@@ -110,7 +110,6 @@
       "noData": "No data found",
       "menu": {
         "duplicate": "Duplicate",
-        "saveAsTemplate": "Save as template",
         "copyId": "Copy ID",
         "copyLink": "Copy link",
         "openNewTab": "Open in new tab"

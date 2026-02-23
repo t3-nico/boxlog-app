@@ -1,27 +1,19 @@
 'use client';
 
 /**
- * PlanInspectorContent のロジックを管理するカスタムフック
+ * PlanInspectorContent のロジックを管理するカスタムフック（オーケストレーション）
+ *
+ * 責務を3つのサブフックに分割:
+ * - useInspectorTagState: タグ状態管理
+ * - useInspectorTimeState: 時間・スケジュール状態管理
+ * - useInspectorSaveClose: 保存・閉じるロジック
  */
 
-import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { toast } from 'sonner';
 
-import {
-  localTimeToUTCISO,
-  parseDatetimeString,
-  parseISOToUserTimezone,
-} from '@/features/calendar/utils/dateUtils';
-import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
-import { useUpdateEntityTagsInCache } from '@/hooks/useUpdateEntityTagsInCache';
 import { logger } from '@/lib/logger';
-import { api } from '@/lib/trpc';
-import { vanillaTrpc } from '@/lib/trpc/client';
 import type { RecurringEditScope } from '../../../components/RecurringEditConfirmDialog';
 import { usePlan } from '../../../hooks/usePlan';
-import { usePlanMutations } from '../../../hooks/usePlanMutations';
-import { usePlanTags } from '../../../hooks/usePlanTags';
 import { useRecurringScopeMutations } from '../../../hooks/useRecurringScopeMutations';
 import { useDeleteConfirmStore } from '../../../stores/useDeleteConfirmStore';
 import { usePlanCacheStore } from '../../../stores/usePlanCacheStore';
@@ -29,6 +21,9 @@ import { usePlanInspectorStore, type DraftPlan } from '../../../stores/usePlanIn
 import { useRecurringEditConfirmStore } from '../../../stores/useRecurringEditConfirmStore';
 import type { Plan } from '../../../types/plan';
 import { useInspectorAutoSave, useInspectorNavigation, useRecurringPlanEdit } from '../hooks';
+import { useInspectorSaveClose } from './useInspectorSaveClose';
+import { useInspectorTagState } from './useInspectorTagState';
+import { useInspectorTimeState } from './useInspectorTimeState';
 
 // スコープダイアログを表示するフィールド（日付・時間）
 // title/descriptionは即座に保存（Googleカレンダー準拠）
@@ -38,16 +33,6 @@ const SCOPE_DIALOG_FIELDS = ['start_time', 'end_time'] as const;
 const IMMEDIATE_SAVE_FIELDS = ['title', 'description'] as const;
 
 export function usePlanInspectorContentLogic() {
-  const t = useTranslations();
-  const utils = api.useUtils();
-  const updateTagsInCache = useUpdateEntityTagsInCache('plans');
-
-  // ユーザーのタイムゾーン設定
-  const timezone = useCalendarSettingsStore((state) => state.timezone);
-
-  // 時間重複エラー状態（視覚的フィードバック用）
-  const [timeConflictError, setTimeConflictError] = useState(false);
-
   // 保存中フラグ（即座に閉じるため常にfalse、UIの disabled guard として維持）
   const isSaving = false;
 
@@ -60,7 +45,6 @@ export function usePlanInspectorContentLogic() {
   const closeInspector = usePlanInspectorStore((state) => state.closeInspector);
   const openInspectorWithDraft = usePlanInspectorStore((state) => state.openInspectorWithDraft);
   const draftPlan = usePlanInspectorStore((state) => state.draftPlan);
-  const clearDraft = usePlanInspectorStore((state) => state.clearDraft);
   const updateDraft = usePlanInspectorStore((state) => state.updateDraft);
   const addPendingChange = usePlanInspectorStore((state) => state.addPendingChange);
   const clearPendingChanges = usePlanInspectorStore((state) => state.clearPendingChanges);
@@ -73,15 +57,11 @@ export function usePlanInspectorContentLogic() {
   const openRecurringDialog = useRecurringEditConfirmStore((state) => state.openDialog);
   const getCache = usePlanCacheStore((state) => state.getCache);
   const { applyDelete } = useRecurringScopeMutations();
-  const { createPlan } = usePlanMutations();
 
   // Inspectorマウント時にグローバルダイアログをリセット
-  // （ドラッグ操作で開いたダイアログが残っている場合があるため）
-  // 次のティックで閉じることで、他の操作より後に実行されることを保証
   useEffect(() => {
     const { closeDialog } = useRecurringEditConfirmStore.getState();
     closeDialog();
-    // 念のため遅延しても閉じる（タイミング問題対策）
     const timer = setTimeout(() => {
       const { closeDialog: close } = useRecurringEditConfirmStore.getState();
       close();
@@ -115,7 +95,6 @@ export function usePlanInspectorContentLogic() {
 
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       e.preventDefault();
-      // 標準的なブラウザメッセージを表示（カスタムメッセージは無視される）
     };
 
     window.addEventListener('beforeunload', handleBeforeUnload);
@@ -143,39 +122,78 @@ export function usePlanInspectorContentLogic() {
   const { hasPrevious, hasNext, goToPrevious, goToNext } = useInspectorNavigation(planId);
   const { updatePlan, deletePlan } = useInspectorAutoSave({ planId, plan });
 
+  // --- サブフック: タグ状態 ---
+  const {
+    selectedTagIds,
+    selectedTagIdsRef,
+    originalTagIdsRef,
+    hasTagChanges,
+    handleTagsChange,
+    handleRemoveTag,
+    setplanTags,
+  } = useInspectorTagState({ planId, planData: planData as Plan | undefined, isDraftMode });
+
+  // --- サブフック: 時間・スケジュール状態 ---
+  const {
+    timeConflictError,
+    titleRef,
+    scheduleDate,
+    startTime,
+    endTime,
+    reminderMinutes,
+    handleScheduleDateChange,
+    handleStartTimeChange,
+    handleEndTimeChange,
+    handleReminderChange,
+  } = useInspectorTimeState({
+    plan,
+    planId,
+    isDraftMode,
+    draftPlan,
+    initialData: initialData ?? null,
+    recurringEdit,
+    addPendingChange,
+    updateDraft,
+    updatePlan,
+  });
+
+  // --- サブフック: 保存・閉じるロジック ---
+  const { saveAndClose, cancelAndClose, hasPendingChanges } = useInspectorSaveClose({
+    planId,
+    hasTagChanges,
+    selectedTagIdsRef,
+    originalTagIdsRef,
+    setplanTags: setplanTags as unknown as (planId: string, tagIds: string[]) => Promise<void>,
+    updatePlan,
+    closeInspector,
+    pendingChanges: pendingChanges as Record<string, string | number | null | undefined> | null,
+    clearPendingChanges,
+  });
+
   // 繰り返しインスタンス対応のautoSave
-  // 編集モード: title/descriptionは即座にDB保存（Googleカレンダー準拠）
-  // 時間フィールドはバッファリング（重複チェック・繰り返しスコープ対応）
   const autoSave = useCallback(
     async (field: string, value: string | undefined) => {
-      // ストアから最新の状態を取得（クロージャの古い値を避ける）
       const { draftPlan: currentDraft, planId: currentPlanId } = usePlanInspectorStore.getState();
       const currentIsDraftMode = currentDraft !== null && currentPlanId === null;
 
-      // ドラフトモードの場合: ローカル更新のみ（DBには保存しない）
-      // 保存は saveAndClose() で行う
       if (currentIsDraftMode) {
         updateDraft({ [field]: value } as Partial<DraftPlan>);
         return;
       }
 
-      // 即座にDB保存するフィールド（編集モードのみ）→ デバウンス適用
       if (
         currentPlanId &&
         IMMEDIATE_SAVE_FIELDS.includes(field as (typeof IMMEDIATE_SAVE_FIELDS)[number])
       ) {
-        // 前のタイマーをクリア（連続入力時の重複保存防止）
         if (autoSaveTimerRef.current) {
           clearTimeout(autoSaveTimerRef.current);
         }
-        // 500ms後にmutation実行（入力完了を待つ）
         autoSaveTimerRef.current = setTimeout(() => {
           updatePlan.mutate({ id: currentPlanId, data: { [field]: value } });
         }, 500);
         return;
       }
 
-      // 繰り返しインスタンスの場合、時間フィールドはスコープダイアログを表示
       if (
         recurringEdit.isRecurringInstance &&
         SCOPE_DIALOG_FIELDS.includes(field as (typeof SCOPE_DIALOG_FIELDS)[number])
@@ -183,28 +201,10 @@ export function usePlanInspectorContentLogic() {
         recurringEdit.openScopeDialog(field, value);
         return;
       }
-      // その他: pendingChanges にバッファリング（閉じる時に保存）
       addPendingChange({ [field]: value });
     },
     [addPendingChange, recurringEdit, updateDraft, updatePlan],
   );
-
-  // Tags state
-  const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
-  const selectedTagIdsRef = useRef<string[]>(selectedTagIds);
-  // 元のタグID（キャンセル時のロールバック用）
-  const originalTagIdsRef = useRef<string[]>([]);
-  // タグが変更されたか（保存時のチェック用 + UI更新用）
-  const [hasTagChanges, setHasTagChanges] = useState(false);
-  const { setplanTags } = usePlanTags();
-
-  // UI state
-  const titleRef = useRef<HTMLInputElement>(null);
-  const descriptionRef = useRef<HTMLTextAreaElement>(null);
-  const [scheduleDate, setScheduleDate] = useState<Date | undefined>(); // スケジュール日（start_time/end_time用）
-  const [startTime, setStartTime] = useState('');
-  const [endTime, setEndTime] = useState('');
-  const [reminderMinutes, setReminderMinutes] = useState<number | null>(null);
 
   // Draft Record IDs state（ドラフトモードでの Record 紐付け用）
   const [draftRecordIds, setDraftRecordIds] = useState<string[]>([]);
@@ -231,187 +231,7 @@ export function usePlanInspectorContentLogic() {
     [updateDraft],
   );
 
-  // planIdが変わったらタグ選択をリセット（別のPlanを開いた時）
-  useEffect(() => {
-    // ドラフトモードでは何もしない
-    if (isDraftMode) return;
-    // 新しいplanIdが設定された時点で空配列にリセット
-    // planDataがロードされたら正しいタグで上書きされる
-    setSelectedTagIds([]);
-    selectedTagIdsRef.current = [];
-    originalTagIdsRef.current = [];
-    setHasTagChanges(false);
-  }, [planId, isDraftMode]);
-
-  // Sync tags from plan data
-  useEffect(() => {
-    // タグ変更中はサーバーからの同期をスキップ（楽観的更新を保持）
-    if (hasTagChanges) {
-      return;
-    }
-    // データ未ロード時は何もしない（空配列をセットしない）
-    // これにより、ローディング中にタグが消えるのを防ぐ
-    if (planData === undefined) {
-      return;
-    }
-    if (planData && 'tagIds' in planData && Array.isArray(planData.tagIds)) {
-      setSelectedTagIds(planData.tagIds);
-      selectedTagIdsRef.current = planData.tagIds;
-      originalTagIdsRef.current = planData.tagIds;
-    } else if (planData) {
-      // planDataがnullの場合（存在しないプラン）のみ空にする
-      setSelectedTagIds([]);
-      selectedTagIdsRef.current = [];
-      originalTagIdsRef.current = [];
-    }
-  }, [planData, hasTagChanges]);
-
-  // Keep ref in sync
-  useEffect(() => {
-    selectedTagIdsRef.current = selectedTagIds;
-  }, [selectedTagIds]);
-
-  // Initialize state from plan data or draftPlan
-  useEffect(() => {
-    // ドラフトモードの場合はdraftPlanから初期化
-    if (isDraftMode && draftPlan) {
-      if (draftPlan.start_time) {
-        const date = parseDatetimeString(draftPlan.start_time);
-        setScheduleDate(date);
-        setStartTime(
-          `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`,
-        );
-      } else {
-        setScheduleDate(undefined);
-        setStartTime('');
-      }
-
-      if (draftPlan.end_time) {
-        const date = parseDatetimeString(draftPlan.end_time);
-        setEndTime(
-          `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`,
-        );
-      } else {
-        setEndTime('');
-      }
-
-      // リマインダーのデフォルトは常に null（なし）
-      setReminderMinutes(draftPlan.reminder_minutes ?? null);
-      return;
-    }
-
-    if (plan && 'id' in plan) {
-      // スケジュール日と時間を設定（タイムゾーン対応）
-      if (plan.start_time) {
-        const date = parseISOToUserTimezone(plan.start_time, timezone);
-        setScheduleDate(date); // スケジュール日はstart_timeから取得
-        setStartTime(
-          `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`,
-        );
-      } else {
-        setScheduleDate(undefined);
-        setStartTime('');
-      }
-
-      if (plan.end_time) {
-        const date = parseISOToUserTimezone(plan.end_time, timezone);
-        setEndTime(
-          `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`,
-        );
-      } else {
-        setEndTime('');
-      }
-
-      setReminderMinutes('reminder_minutes' in plan ? (plan.reminder_minutes ?? null) : null);
-    } else if (!plan && initialData) {
-      if (initialData.start_time) {
-        const startDate = parseISOToUserTimezone(initialData.start_time, timezone);
-        setScheduleDate(startDate);
-        setStartTime(
-          `${startDate.getHours().toString().padStart(2, '0')}:${startDate.getMinutes().toString().padStart(2, '0')}`,
-        );
-      }
-      if (initialData.end_time) {
-        const endDate = parseISOToUserTimezone(initialData.end_time, timezone);
-        setEndTime(
-          `${endDate.getHours().toString().padStart(2, '0')}:${endDate.getMinutes().toString().padStart(2, '0')}`,
-        );
-      }
-    } else if (!plan && !initialData) {
-      setScheduleDate(undefined);
-      setStartTime('');
-      setEndTime('');
-      setReminderMinutes(null);
-    }
-  }, [plan, initialData, isDraftMode, draftPlan, timezone]);
-
-  // Focus title on open
-  useEffect(() => {
-    if (titleRef.current) {
-      const timer = setTimeout(() => {
-        titleRef.current?.focus();
-        titleRef.current?.select(); // input要素の全選択
-      }, 100);
-      return () => clearTimeout(timer);
-    }
-    return undefined;
-  }, [planId]);
-
-  // Adjust description height
-  useEffect(() => {
-    if (descriptionRef.current && plan) {
-      const textarea = descriptionRef.current;
-      textarea.style.height = 'auto';
-      const newHeight = Math.min(textarea.scrollHeight, 96);
-      textarea.style.height = `${newHeight}px`;
-    }
-  }, [plan]);
-
-  // Handlers
-  const handleTagsChange = useCallback(
-    (newTagIds: string[]) => {
-      const oldTagIds = selectedTagIdsRef.current;
-
-      // 変更がない場合は何もしない
-      if (
-        newTagIds.length === oldTagIds.length &&
-        newTagIds.every((id) => oldTagIds.includes(id))
-      ) {
-        return;
-      }
-
-      // ローカル状態を即座に更新（楽観的UI）
-      setSelectedTagIds(newTagIds);
-      selectedTagIdsRef.current = newTagIds;
-      setHasTagChanges(true);
-
-      // キャッシュも更新（CalendarCard等での即時表示用）
-      // ドラフトモード（planId未確定）ではスキップ
-      if (planId) {
-        updateTagsInCache(planId, newTagIds);
-      }
-    },
-    [planId, updateTagsInCache],
-  );
-
-  const handleRemoveTag = useCallback(
-    (tagId: string) => {
-      const newTagIds = selectedTagIdsRef.current.filter((id) => id !== tagId);
-
-      setSelectedTagIds(newTagIds);
-      selectedTagIdsRef.current = newTagIds;
-      setHasTagChanges(true);
-
-      // キャッシュも更新
-      // ドラフトモード（planId未確定）ではスキップ
-      if (planId) {
-        updateTagsInCache(planId, newTagIds);
-      }
-    },
-    [planId, updateTagsInCache],
-  );
-
-  // 繰り返しプラン削除確認ハンドラー（ダイアログのコールバック）
+  // 繰り返しプラン削除確認ハンドラー
   const handleRecurringDeleteConfirm = useCallback(
     async (scope: RecurringEditScope) => {
       if (!planId || !instanceDate) return;
@@ -429,13 +249,11 @@ export function usePlanInspectorContentLogic() {
   const handleDelete = useCallback(() => {
     if (!planId) return;
 
-    // 繰り返しインスタンスの場合はスコープ選択ダイアログを表示
     if (recurringEdit.isRecurringInstance) {
       openRecurringDialog(plan?.title ?? '', 'delete', handleRecurringDeleteConfirm);
       return;
     }
 
-    // 通常プラン: カスタム削除確認ダイアログを使用
     openDeleteDialog(planId, plan?.title ?? null, async () => {
       await deletePlan.mutateAsync({ id: planId });
       closeInspector();
@@ -451,137 +269,6 @@ export function usePlanInspectorContentLogic() {
     closeInspector,
   ]);
 
-  // スケジュール日変更ハンドラー（start_time/end_timeの日付部分）
-  const handleScheduleDateChange = useCallback(
-    (date: Date | undefined) => {
-      // 日付変更時に既存のエラーをクリア
-      setTimeConflictError(false);
-      setScheduleDate(date);
-
-      // ドラフトモードの場合はローカル更新のみ
-      if (isDraftMode) {
-        if (date && startTime) {
-          const [hours, minutes] = startTime.split(':').map(Number);
-          updateDraft({ start_time: localTimeToUTCISO(date, hours ?? 0, minutes ?? 0, timezone) });
-        }
-        if (date && endTime) {
-          const [hours, minutes] = endTime.split(':').map(Number);
-          updateDraft({ end_time: localTimeToUTCISO(date, hours ?? 0, minutes ?? 0, timezone) });
-        }
-        return;
-      }
-
-      // 通常モード: ローカルにバッファリング（Google Calendar準拠: 閉じる時に保存）
-      if (date && startTime && endTime) {
-        const [startHours, startMinutes] = startTime.split(':').map(Number);
-        const [endHours, endMinutes] = endTime.split(':').map(Number);
-
-        // 両フィールドを一度にバッファリング（タイムゾーン対応）
-        addPendingChange({
-          start_time: localTimeToUTCISO(date, startHours ?? 0, startMinutes ?? 0, timezone),
-          end_time: localTimeToUTCISO(date, endHours ?? 0, endMinutes ?? 0, timezone),
-        });
-      } else if (date && startTime) {
-        const [hours, minutes] = startTime.split(':').map(Number);
-        addPendingChange({
-          start_time: localTimeToUTCISO(date, hours ?? 0, minutes ?? 0, timezone),
-        });
-      } else if (date && endTime) {
-        const [hours, minutes] = endTime.split(':').map(Number);
-        addPendingChange({
-          end_time: localTimeToUTCISO(date, hours ?? 0, minutes ?? 0, timezone),
-        });
-      }
-    },
-    [isDraftMode, startTime, endTime, addPendingChange, updateDraft, timezone],
-  );
-
-  const handleStartTimeChange = useCallback(
-    (time: string) => {
-      // 時間変更時に既存のエラーをクリア
-      setTimeConflictError(false);
-
-      // 時刻をパース
-      const [hours, minutes] = time ? time.split(':').map(Number) : [0, 0];
-
-      setStartTime(time);
-
-      // タイムゾーン対応のISO文字列を生成
-      const isoValue =
-        time && scheduleDate
-          ? localTimeToUTCISO(scheduleDate, hours ?? 0, minutes ?? 0, timezone)
-          : null;
-
-      // ドラフトモード
-      if (isDraftMode) {
-        updateDraft({ start_time: isoValue });
-        return;
-      }
-
-      // 繰り返しインスタンス → スコープダイアログ
-      if (recurringEdit.isRecurringInstance) {
-        recurringEdit.openScopeDialog('start_time', isoValue ?? undefined);
-        return;
-      }
-
-      // 通常モード → ローカルにバッファリング（Google Calendar準拠: 閉じる時に保存）
-      if (isoValue) {
-        addPendingChange({ start_time: isoValue });
-      }
-    },
-    [scheduleDate, isDraftMode, recurringEdit, updateDraft, addPendingChange, timezone],
-  );
-
-  const handleEndTimeChange = useCallback(
-    (time: string) => {
-      // 時間変更時に既存のエラーをクリア
-      setTimeConflictError(false);
-
-      // 時刻をパース
-      const [hours, minutes] = time ? time.split(':').map(Number) : [0, 0];
-
-      setEndTime(time);
-
-      // タイムゾーン対応のISO文字列を生成
-      const isoValue =
-        time && scheduleDate
-          ? localTimeToUTCISO(scheduleDate, hours ?? 0, minutes ?? 0, timezone)
-          : null;
-
-      // ドラフトモード
-      if (isDraftMode) {
-        updateDraft({ end_time: isoValue });
-        return;
-      }
-
-      // 繰り返しインスタンス → スコープダイアログ
-      if (recurringEdit.isRecurringInstance) {
-        recurringEdit.openScopeDialog('end_time', isoValue ?? undefined);
-        return;
-      }
-
-      // 通常モード → ローカルにバッファリング（Google Calendar準拠: 閉じる時に保存）
-      if (isoValue) {
-        addPendingChange({ end_time: isoValue });
-      }
-    },
-    [scheduleDate, isDraftMode, recurringEdit, updateDraft, addPendingChange, timezone],
-  );
-
-  // Reminder handler
-  const handleReminderChange = useCallback(
-    (minutes: number | null) => {
-      setReminderMinutes(minutes);
-
-      if (isDraftMode) {
-        updateDraft({ reminder_minutes: minutes });
-      } else if (planId) {
-        updatePlan.mutate({ id: planId, data: { reminder_minutes: minutes } });
-      }
-    },
-    [isDraftMode, planId, updateDraft, updatePlan],
-  );
-
   // Menu handlers
   const handleCopyId = useCallback(() => {
     if (planId) navigator.clipboard.writeText(planId);
@@ -590,10 +277,8 @@ export function usePlanInspectorContentLogic() {
   const handleDuplicate = useCallback(() => {
     if (!plan || !('id' in plan)) return;
 
-    // 現在のインスペクターを閉じる
     closeInspector();
 
-    // 少し遅延してから新規作成モードで開く（閉じるアニメーション後）
     setTimeout(() => {
       openInspectorWithDraft({
         title: `${plan.title} (copy)`,
@@ -604,165 +289,16 @@ export function usePlanInspectorContentLogic() {
     }, 100);
   }, [plan, closeInspector, openInspectorWithDraft]);
 
-  const handleSaveAsTemplate = useCallback(() => {
-    // Stub: テンプレート保存機能は未実装
-  }, []);
-
-  /**
-   * Inspectorを即座に閉じ、保存処理はバックグラウンドで実行
-   *
-   * 楽観的更新でキャッシュは反映済みのため、サーバー応答を待たずに閉じる。
-   * エラー時はtoastで通知。
-   */
-  const saveAndClose = useCallback(() => {
-    // ストアから最新の状態を取得（クロージャの古い値を避ける）
-    const {
-      draftPlan: currentDraft,
-      planId: currentPlanId,
-      consumePendingChanges: consume,
-    } = usePlanInspectorStore.getState();
-    const currentIsDraftMode = currentDraft !== null && currentPlanId === null;
-    const currentTagIds = selectedTagIdsRef.current;
-    const currentHasTagChanges = hasTagChanges;
-
-    // 即座に閉じる
-    if (currentIsDraftMode) {
-      clearDraft();
-      window.dispatchEvent(new CustomEvent('calendar-drag-cancel'));
-    }
-    closeInspector();
-
-    // バックグラウンドで保存
-    if (currentIsDraftMode && currentDraft) {
-      // リンク対象の全 Record IDs を統合（_linkedRecordIds + _linkRecordId）
-      const allRecordIdsToLink = [
-        ...(currentDraft._linkedRecordIds ?? []),
-        ...(currentDraft._linkRecordId &&
-        !(currentDraft._linkedRecordIds ?? []).includes(currentDraft._linkRecordId)
-          ? [currentDraft._linkRecordId]
-          : []),
-      ];
-
-      const createInput = {
-        title: currentDraft.title.trim(),
-        description: currentDraft.description ?? undefined,
-        status: 'open' as const,
-        start_time: currentDraft.start_time,
-        end_time: currentDraft.end_time,
-        reminder_minutes: currentDraft.reminder_minutes ?? undefined,
-      };
-
-      // ドラフトモード: 新規作成
-      (async () => {
-        try {
-          if (allRecordIdsToLink.length > 0) {
-            // Record リンクが必要な場合:
-            // vanillaTrpc で全処理を実行（React lifecycle に依存しない）
-            // closeInspector() 後にコンポーネントがアンマウントされても確実に完了する
-            const newPlan = await vanillaTrpc.plans.create.mutate(createInput);
-
-            if (newPlan?.id) {
-              if (currentTagIds.length > 0) {
-                try {
-                  await vanillaTrpc.plans.setTags.mutate({
-                    planId: newPlan.id,
-                    tagIds: currentTagIds,
-                  });
-                } catch {
-                  toast.error(t('plan.inspector.toast.tagsSaveFailed'));
-                }
-              }
-
-              // 全 Record を Plan にリンク
-              for (const recordId of allRecordIdsToLink) {
-                try {
-                  await vanillaTrpc.records.update.mutate({
-                    id: recordId,
-                    data: { plan_id: newPlan.id },
-                  });
-                } catch (err) {
-                  logger.error('Failed to link record to plan:', err);
-                }
-              }
-
-              toast.success(t('plan.toast.created', { title: newPlan.title }));
-            }
-
-            // キャッシュ無効化（vanillaTrpc は React Query キャッシュを自動更新しない）
-            void utils.plans.list.invalidate();
-            void utils.plans.getCumulativeTime.invalidate();
-            void utils.records.list.invalidate();
-          } else {
-            // 通常のPlan作成（React Query 楽観的更新付き）
-            const newPlan = await createPlan.mutateAsync(createInput);
-            if (newPlan?.id && currentTagIds.length > 0) {
-              try {
-                await setplanTags(newPlan.id, currentTagIds);
-              } catch {
-                toast.error(t('plan.inspector.toast.tagsSaveFailed'));
-              }
-            }
-          }
-        } catch (error) {
-          const errorMessage = error instanceof Error ? error.message : '';
-          if (errorMessage.includes('TIME_OVERLAP') || errorMessage.includes('既に')) {
-            toast.error(t('plan.inspector.toast.timeOverlap'));
-          } else {
-            toast.error(t('plan.inspector.toast.createFailed'));
-          }
-        }
-      })();
-    } else {
-      // 編集モード: pending changesとタグを保存
-      const changes = consume();
-
-      if (changes && currentPlanId && Object.keys(changes).length > 0) {
-        updatePlan.mutateAsync({ id: currentPlanId, data: changes }).catch((error: unknown) => {
-          const errorMessage = error instanceof Error ? error.message : '';
-          if (errorMessage.includes('TIME_OVERLAP') || errorMessage.includes('既に')) {
-            toast.error(t('plan.inspector.toast.timeOverlap'));
-          } else {
-            toast.error(t('plan.inspector.toast.saveFailed'));
-          }
-        });
-      }
-
-      if (currentHasTagChanges && currentPlanId) {
-        setplanTags(currentPlanId, currentTagIds).catch(() => {
-          toast.error(t('plan.inspector.toast.tagsSaveFailed'));
-        });
-      }
-    }
-  }, [t, updatePlan, closeInspector, createPlan, clearDraft, setplanTags, hasTagChanges, utils]);
-
-  /**
-   * 変更を破棄してInspectorを閉じる（キャンセル）
-   */
-  const cancelAndClose = useCallback(() => {
-    clearPendingChanges();
-
-    // タグ変更があった場合はキャッシュを元に戻す
-    if (hasTagChanges && planId) {
-      updateTagsInCache(planId, originalTagIdsRef.current);
-    }
-
-    closeInspector();
-  }, [clearPendingChanges, closeInspector, planId, updateTagsInCache, hasTagChanges]);
-
-  // 未保存の変更があるか判定（タグ変更も含む）
-  const hasPendingChanges =
-    (pendingChanges && Object.keys(pendingChanges).length > 0) || hasTagChanges;
-
   return {
     // Store state
     planId,
     plan,
-    closeInspector, // 直接閉じる（変更を破棄）
-    saveAndClose, // 変更を保存して閉じる
-    cancelAndClose, // 変更を破棄して閉じる
-    hasPendingChanges, // 未保存の変更があるか
+    closeInspector,
+    saveAndClose,
+    cancelAndClose,
+    hasPendingChanges,
     isDraftMode,
-    isSaving, // 保存中フラグ（ボタン無効化用）
+    isSaving,
 
     // Navigation
     hasPrevious,
@@ -781,7 +317,7 @@ export function usePlanInspectorContentLogic() {
 
     // Form state
     titleRef,
-    scheduleDate, // スケジュール日（カレンダー配置用）
+    scheduleDate,
     startTime,
     endTime,
     reminderMinutes,
@@ -789,7 +325,7 @@ export function usePlanInspectorContentLogic() {
     timeConflictError,
 
     // Form handlers
-    handleScheduleDateChange, // スケジュール日変更
+    handleScheduleDateChange,
     handleStartTimeChange,
     handleEndTimeChange,
     autoSave,
@@ -799,8 +335,6 @@ export function usePlanInspectorContentLogic() {
     handleDelete,
     handleCopyId,
     handleDuplicate,
-    handleSaveAsTemplate,
-
     // Cache
     getCache,
   };

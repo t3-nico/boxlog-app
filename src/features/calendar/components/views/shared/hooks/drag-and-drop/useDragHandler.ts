@@ -135,10 +135,10 @@ export function useDragHandler({
       constrainedY: number,
       deltaX: number,
       deltaY: number,
-      targetDateIndex: number,
+      targetDateIndex: number | undefined,
     ) => {
       const dragData = dragDataRef.current;
-      if (!dragData) return;
+      if (!dragData || targetDateIndex === undefined) return;
 
       const { snappedTop, snappedLeft, hour, minute } = calculateSnappedPosition(
         dragData.originalTop,

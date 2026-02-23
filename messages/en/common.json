@@ -240,8 +240,6 @@
       "planDescription": "Create a new plan",
       "record": "Record",
       "recordDescription": "Log what you actually did",
-      "template": "Template",
-      "templateDescription": "Add from saved templates",
       "history": "Create from History",
       "historyDescription": "Recreate from recently used items"
     },

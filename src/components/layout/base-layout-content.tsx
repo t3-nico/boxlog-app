@@ -9,6 +9,7 @@ import {
   useCreateActionSheet,
   type CreateActionType,
 } from '@/features/navigation/components/mobile/CreateActionSheet';
+import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { Plus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -55,8 +56,12 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
   const createActionSheet = useCreateActionSheet();
 
   // FABからのアクション選択ハンドラー
-  const handleCreateAction = useCallback((_type: CreateActionType) => {
-    // Stub: 各アクションの実装は未完了
+  const handleCreateAction = useCallback((type: CreateActionType) => {
+    if (type === 'plan') {
+      usePlanInspectorStore.getState().openInspectorWithDraft(undefined, 'plan');
+    } else if (type === 'record') {
+      usePlanInspectorStore.getState().openInspectorWithDraft(undefined, 'record');
+    }
   }, []);
 
   // メモ化: コンテンツ部分（children, isMobile, localeに依存）

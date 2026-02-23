@@ -166,7 +166,6 @@ export function navigateToScreen(screen: ScreenName): string {
     SETTINGS_NOTIFICATIONS: settingsRouteStub,
     SETTINGS_CALENDAR: settingsRouteStub,
     SETTINGS_TAGS: settingsRouteStub,
-    SETTINGS_TEMPLATES: settingsRouteStub,
     SETTINGS_INTEGRATION: settingsRouteStub,
     SETTINGS_DATA_EXPORT: settingsRouteStub,
     SETTINGS_PLAN_BILLING: settingsRouteStub,
