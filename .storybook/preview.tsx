@@ -386,7 +386,13 @@ const messages = {
       showWeekends: '週末を表示',
       viewSettings: 'ビューの設定',
       week: '週',
+      timesheet: 'タイムシート',
+      density: '密度',
+      density_compact: 'コンパクト',
+      density_default: 'デフォルト',
+      density_spacious: '広々',
     },
+    timesheet: 'タイムシート',
     navigation: {
       previous: '前へ',
       next: '次へ',
