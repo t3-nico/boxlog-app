@@ -25,15 +25,8 @@ export function useAIChat() {
   const utils = api.useUtils();
 
   // --- サブフック: APIキー・プロバイダー ---
-  const {
-    providerId,
-    keyLoaded,
-    hasApiKey,
-    isFreeTier,
-    availableModels,
-    transportRef,
-    userId,
-  } = useAIChatApiKey();
+  const { providerId, keyLoaded, hasApiKey, isFreeTier, availableModels, transportRef, userId } =
+    useAIChatApiKey();
 
   // 無料枠の利用状況
   const usageQuery = api.chat.getUsage.useQuery(undefined, {
