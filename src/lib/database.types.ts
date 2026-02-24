@@ -180,6 +180,8 @@ export type Database = {
           created_at: string;
           default_reminder_minutes: number | null;
           enable_browser_notifications: boolean;
+          enable_email_notifications: boolean;
+          enable_push_notifications: boolean;
           id: string;
           updated_at: string;
           user_id: string;
@@ -188,6 +190,8 @@ export type Database = {
           created_at?: string;
           default_reminder_minutes?: number | null;
           enable_browser_notifications?: boolean;
+          enable_email_notifications?: boolean;
+          enable_push_notifications?: boolean;
           id?: string;
           updated_at?: string;
           user_id: string;
@@ -196,6 +200,8 @@ export type Database = {
           created_at?: string;
           default_reminder_minutes?: number | null;
           enable_browser_notifications?: boolean;
+          enable_email_notifications?: boolean;
+          enable_push_notifications?: boolean;
           id?: string;
           updated_at?: string;
           user_id?: string;

@@ -5,6 +5,7 @@ import { useCallback, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
+import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Switch } from '@/components/ui/switch';
 import {
@@ -30,27 +31,44 @@ export function NotificationSettings() {
     return checkBrowserNotificationSupport() ? Notification.permission : null;
   });
 
+  const onSettingsSuccess = useCallback(() => {
+    utils.notificationPreferences.get.invalidate();
+  }, [utils]);
+
+  const onSettingsError = useCallback(
+    (error: { message: string }) => {
+      toast.error(t('notification.settings.saveError', { message: error.message }));
+    },
+    [t],
+  );
+
   // デフォルトリマインダーを更新
   const updateDefaultReminder =
     api.notificationPreferences.updateDefaultReminderMinutes.useMutation({
-      onSuccess: () => {
-        utils.notificationPreferences.get.invalidate();
-      },
-      onError: (error) => {
-        toast.error(t('notification.settings.saveError', { message: error.message }));
-      },
+      onSuccess: onSettingsSuccess,
+      onError: onSettingsError,
     });
 
   // ブラウザ通知設定を更新
   const updateBrowserNotifications =
     api.notificationPreferences.updateBrowserNotifications.useMutation({
-      onSuccess: () => {
-        utils.notificationPreferences.get.invalidate();
-      },
-      onError: (error) => {
-        toast.error(t('notification.settings.saveError', { message: error.message }));
-      },
+      onSuccess: onSettingsSuccess,
+      onError: onSettingsError,
     });
+
+  // メール通知設定を更新
+  const updateEmailNotifications = api.notificationPreferences.updateEmailNotifications.useMutation(
+    {
+      onSuccess: onSettingsSuccess,
+      onError: onSettingsError,
+    },
+  );
+
+  // プッシュ通知設定を更新
+  const updatePushNotifications = api.notificationPreferences.updatePushNotifications.useMutation({
+    onSuccess: onSettingsSuccess,
+    onError: onSettingsError,
+  });
 
   const handleBrowserToggle = useCallback(
     async (checked: boolean) => {
@@ -71,12 +89,18 @@ export function NotificationSettings() {
     [updateBrowserNotifications, t],
   );
 
+  const isSaving =
+    updateBrowserNotifications.isPending ||
+    updateEmailNotifications.isPending ||
+    updatePushNotifications.isPending ||
+    updateDefaultReminder.isPending;
+
   if (isLoading) {
     return (
       <div className="space-y-8">
         <SettingsCard>
           <div className="space-y-4">
-            {Array.from({ length: 2 }, (_, i) => (
+            {Array.from({ length: 4 }, (_, i) => (
               <Skeleton key={i} className="h-12 w-full rounded-lg" />
             ))}
           </div>
@@ -89,9 +113,7 @@ export function NotificationSettings() {
 
   return (
     <div className="space-y-8">
-      <SettingsCard
-        isSaving={updateBrowserNotifications.isPending || updateDefaultReminder.isPending}
-      >
+      <SettingsCard isSaving={isSaving}>
         <div className="space-y-0">
           <SettingRow
             label={t('notification.settings.browserNotifications.label')}
@@ -105,6 +127,33 @@ export function NotificationSettings() {
               checked={preferences?.enableBrowserNotifications ?? true}
               onCheckedChange={handleBrowserToggle}
               disabled={updateBrowserNotifications.isPending || isBrowserPermissionDenied}
+            />
+          </SettingRow>
+          <SettingRow
+            label={t('notification.settings.emailNotifications.label')}
+            description={t('notification.settings.emailNotifications.description')}
+          >
+            <Switch
+              checked={preferences?.enableEmailNotifications ?? false}
+              onCheckedChange={(checked) => updateEmailNotifications.mutate({ enabled: checked })}
+              disabled={updateEmailNotifications.isPending}
+            />
+          </SettingRow>
+          <SettingRow
+            label={
+              <span className="flex items-center gap-2">
+                {t('notification.settings.pushNotifications.label')}
+                <Badge variant="secondary" className="text-xs">
+                  {t('notification.settings.pushNotifications.comingSoon')}
+                </Badge>
+              </span>
+            }
+            description={t('notification.settings.pushNotifications.description')}
+          >
+            <Switch
+              checked={preferences?.enablePushNotifications ?? false}
+              onCheckedChange={(checked) => updatePushNotifications.mutate({ enabled: checked })}
+              disabled={updatePushNotifications.isPending}
             />
           </SettingRow>
           <SettingRow

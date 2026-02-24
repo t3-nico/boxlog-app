@@ -1,6 +1,6 @@
 /**
  * useNotificationPreferences hook
- * 通知設定を取得し、ブラウザ通知の表示可否を判定する
+ * 通知設定を取得し、各チャネルの通知可否を判定する
  */
 
 import { trpc } from '@/lib/trpc/client';
@@ -15,9 +15,13 @@ export function useNotificationPreferences() {
   });
 
   const enableBrowserNotifications = data?.enableBrowserNotifications ?? true;
+  const enableEmailNotifications = data?.enableEmailNotifications ?? false;
+  const enablePushNotifications = data?.enablePushNotifications ?? false;
 
   return {
     enableBrowserNotifications,
+    enableEmailNotifications,
+    enablePushNotifications,
     isLoading,
     error,
   };

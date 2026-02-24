@@ -4,6 +4,8 @@
  * 通知設定の統合テスト
  * - 設定取得（デフォルト値）
  * - ブラウザ通知ON/OFF
+ * - メール通知ON/OFF
+ * - プッシュ通知ON/OFF
  * - リマインダー時間の更新
  */
 
@@ -109,6 +111,8 @@ describe.skipIf(SKIP_INTEGRATION)('NotificationPreferences Router Integration', 
       expect(result).toBeDefined();
       expect(result.defaultReminderMinutes).toBe(10);
       expect(result.enableBrowserNotifications).toBe(true);
+      expect(result.enableEmailNotifications).toBe(false);
+      expect(result.enablePushNotifications).toBe(false);
     });
   });
 
@@ -131,6 +135,50 @@ describe.skipIf(SKIP_INTEGRATION)('NotificationPreferences Router Integration', 
 
       const prefs = await caller.get();
       expect(prefs.enableBrowserNotifications).toBe(true);
+    });
+  });
+
+  describe('Update Email Notifications', () => {
+    it('should enable email notifications', async () => {
+      const caller = createTestCaller(notificationPreferencesRouter, ctx);
+
+      const result = await caller.updateEmailNotifications({ enabled: true });
+      expect(result.success).toBe(true);
+
+      const prefs = await caller.get();
+      expect(prefs.enableEmailNotifications).toBe(true);
+    });
+
+    it('should disable email notifications', async () => {
+      const caller = createTestCaller(notificationPreferencesRouter, ctx);
+
+      await caller.updateEmailNotifications({ enabled: true });
+      await caller.updateEmailNotifications({ enabled: false });
+
+      const prefs = await caller.get();
+      expect(prefs.enableEmailNotifications).toBe(false);
+    });
+  });
+
+  describe('Update Push Notifications', () => {
+    it('should enable push notifications', async () => {
+      const caller = createTestCaller(notificationPreferencesRouter, ctx);
+
+      const result = await caller.updatePushNotifications({ enabled: true });
+      expect(result.success).toBe(true);
+
+      const prefs = await caller.get();
+      expect(prefs.enablePushNotifications).toBe(true);
+    });
+
+    it('should disable push notifications', async () => {
+      const caller = createTestCaller(notificationPreferencesRouter, ctx);
+
+      await caller.updatePushNotifications({ enabled: true });
+      await caller.updatePushNotifications({ enabled: false });
+
+      const prefs = await caller.get();
+      expect(prefs.enablePushNotifications).toBe(false);
     });
   });
 
@@ -167,6 +215,20 @@ describe.skipIf(SKIP_INTEGRATION)('NotificationPreferences Router Integration', 
       const caller = createTestCaller(notificationPreferencesRouter, unauthenticatedCtx);
 
       await expect(caller.updateBrowserNotifications({ enabled: true })).rejects.toThrow(TRPCError);
+    });
+
+    it('should not allow unauthenticated access to updateEmailNotifications', async () => {
+      const unauthenticatedCtx = { ...ctx, userId: undefined };
+      const caller = createTestCaller(notificationPreferencesRouter, unauthenticatedCtx);
+
+      await expect(caller.updateEmailNotifications({ enabled: true })).rejects.toThrow(TRPCError);
+    });
+
+    it('should not allow unauthenticated access to updatePushNotifications', async () => {
+      const unauthenticatedCtx = { ...ctx, userId: undefined };
+      const caller = createTestCaller(notificationPreferencesRouter, unauthenticatedCtx);
+
+      await expect(caller.updatePushNotifications({ enabled: true })).rejects.toThrow(TRPCError);
     });
 
     it('should not allow unauthenticated access to updateDefaultReminderMinutes', async () => {

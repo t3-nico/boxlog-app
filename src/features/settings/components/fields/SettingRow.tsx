@@ -3,7 +3,7 @@
 import type { ReactNode } from 'react';
 
 interface SettingRowProps {
-  label: string;
+  label: ReactNode;
   description?: string;
   children: ReactNode;
 }
