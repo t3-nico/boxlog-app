@@ -43,8 +43,10 @@ export interface PaginatedList<T> {
 interface CacheOperations<TData, TInput = undefined> {
   cancel: (input?: TInput) => Promise<void>;
   getData: (input?: TInput) => TData | undefined;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  setData: (input: any, updater: any) => void;
+  setData: (
+    input: TInput,
+    updater: TData | undefined | ((old: TData | undefined) => TData | undefined),
+  ) => void;
   invalidate: (input?: TInput, options?: { refetchType?: 'active' | 'all' }) => Promise<void>;
 }
 
@@ -118,7 +120,8 @@ export async function snapshotQuery<TData, TInput = undefined>(
   return {
     previous,
     restore: () => {
-      query.setData(key, previous);
+      // key は getData で使用した値と同じ型 — optional parameter の undefined 許容を吸収
+      query.setData(key as TInput, previous);
     },
   };
 }

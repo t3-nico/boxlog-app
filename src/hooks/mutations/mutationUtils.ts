@@ -4,6 +4,8 @@
  * Plan/Record mutation フック共通のユーティリティ関数
  */
 
+import { api } from '@/lib/trpc';
+
 /**
  * 一時ID生成（楽観的作成用）
  */
@@ -73,8 +75,7 @@ export interface InvalidateEntityCachesOptions {
  * ```
  */
 export async function invalidateEntityCaches(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  utils: any,
+  utils: ReturnType<typeof api.useUtils>,
   entityName: 'plans' | 'records',
   options: InvalidateEntityCachesOptions = {},
 ): Promise<void> {
