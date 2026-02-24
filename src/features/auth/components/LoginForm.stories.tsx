@@ -1,0 +1,58 @@
+import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect, userEvent, within } from 'storybook/test';
+
+import { LoginForm } from './LoginForm';
+
+/** LoginForm - ログインフォーム */
+const meta = {
+  title: 'Features/Auth/LoginForm',
+  component: LoginForm,
+  parameters: {
+    layout: 'padded',
+  },
+  tags: ['autodocs'],
+} satisfies Meta<typeof LoginForm>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+// ─────────────────────────────────────────────────────────
+// Stories
+// ─────────────────────────────────────────────────────────
+
+/** デフォルト表示 */
+export const Default: Story = {};
+
+/** フォーム入力の操作テスト */
+export const WithInteraction: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // メール入力
+    const emailInput = canvas.getByLabelText(/email/i);
+    await userEvent.type(emailInput, 'user@example.com');
+    await expect(emailInput).toHaveValue('user@example.com');
+
+    // パスワード入力
+    const passwordInput = canvas.getByLabelText(/password/i);
+    await userEvent.type(passwordInput, 'SecureP@ss123');
+    await expect(passwordInput).toHaveValue('SecureP@ss123');
+  },
+};
+
+/** パスワード表示トグル */
+export const PasswordToggle: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // パスワード入力
+    const passwordInput = canvas.getByLabelText(/^password/i);
+    await userEvent.type(passwordInput, 'TestPassword');
+    await expect(passwordInput).toHaveAttribute('type', 'password');
+
+    // トグルボタンクリック
+    const toggleButton = canvas.getByRole('button', { name: /password/i });
+    await userEvent.click(toggleButton);
+    await expect(passwordInput).toHaveAttribute('type', 'text');
+  },
+};
