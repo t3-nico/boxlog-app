@@ -3,10 +3,37 @@
  * ドメインの追加と検証状態の確認を自動化
  *
  * 使い方:
- * npx tsx scripts/resend-domain-setup.ts
+ * npx tsx scripts/resend-domain-setup.ts          # ドメイン追加
+ * npx tsx scripts/resend-domain-setup.ts verify   # 検証確認
  */
 
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+
 import { Resend } from 'resend';
+
+// .env.local から環境変数を読み込み（dotenv不要の簡易実装）
+function loadEnvLocal() {
+  try {
+    const envPath = resolve(process.cwd(), '.env.local');
+    const content = readFileSync(envPath, 'utf-8');
+    for (const line of content.split('\n')) {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith('#')) continue;
+      const eqIndex = trimmed.indexOf('=');
+      if (eqIndex === -1) continue;
+      const key = trimmed.slice(0, eqIndex).trim();
+      const value = trimmed.slice(eqIndex + 1).trim();
+      if (!process.env[key]) {
+        process.env[key] = value;
+      }
+    }
+  } catch {
+    // .env.local が無い場合は無視
+  }
+}
+
+loadEnvLocal();
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
