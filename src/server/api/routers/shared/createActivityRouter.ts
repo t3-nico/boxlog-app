@@ -9,7 +9,11 @@ import type { AnyZodObject } from 'zod';
 
 import type { SupabaseClient } from '@supabase/supabase-js';
 
+import type { protectedProcedure as ProtectedProcedureImpl } from '@/server/api/trpc';
 import { createTRPCRouter } from '@/server/api/trpc';
+
+/** protectedProcedure の型（ファクトリで受け取る用） */
+type ProtectedProcedure = typeof ProtectedProcedureImpl;
 
 /**
  * Activity Router Factory Options
@@ -30,8 +34,7 @@ export interface CreateActivityRouterOptions<
   /** create用Zodスキーマ（省略可） */
   createSchema?: AnyZodObject;
   /** protectedProcedure */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  protectedProcedure: any;
+  protectedProcedure: ProtectedProcedure;
 }
 
 /**
@@ -66,20 +69,20 @@ export function createActivityRouter<
     protectedProcedure,
   } = options;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const router: any = {
+  // tRPC動的ルーター構築: AnyZodObjectからの型推論は制限されるため、
+  // ハンドラ内で手動キャストし、ルーター辞書は unknown 経由で渡す
+  const router: Record<string, unknown> = {
     /**
      * Get activity list
      */
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    list: protectedProcedure.input(listSchema).query(async ({ ctx, input }: any) => {
+    list: protectedProcedure.input(listSchema).query(async ({ ctx, input }) => {
       const { supabase, userId } = ctx;
       const typedInput = input as TListInput;
       const entityId = typedInput[entityIdField] as string;
       const { limit, offset, order } = typedInput;
 
       // Verify entity ownership
-      const { data: entity, error: entityError } = await supabase
+      const { data: entity, error: entityError } = await (supabase as SupabaseClient)
         .from(entityTable)
         .select('id')
         .eq('id', entityId)
@@ -94,10 +97,11 @@ export function createActivityRouter<
       }
 
       // Get activities (order: desc=newest first, asc=oldest first)
-      const { data: activities, error } = await supabase
+      // 動的テーブル名・カラム名のため untyped SupabaseClient にキャスト
+      const { data: activities, error } = await (supabase as SupabaseClient)
         .from(activitiesTable)
         .select('*')
-        .eq(entityIdField, entityId)
+        .eq(entityIdField, entityId as never)
         .order('created_at', { ascending: order === 'asc' })
         .range(offset, offset + limit - 1);
 
@@ -114,8 +118,7 @@ export function createActivityRouter<
 
   // createスキーマが提供されている場合、create procedureを追加
   if (createSchema) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    router.create = protectedProcedure.input(createSchema).mutation(async ({ ctx, input }: any) => {
+    router.create = protectedProcedure.input(createSchema).mutation(async ({ ctx, input }) => {
       const { supabase, userId } = ctx;
       const typedInput = input as Record<string, unknown>;
       const entityId = typedInput[entityIdField] as string;
@@ -165,5 +168,7 @@ export function createActivityRouter<
     });
   }
 
-  return createTRPCRouter(router);
+  // Record<string, unknown> → CreateRouterOptions のキャストが必要
+  // tRPCの動的ルーター構築では避けられない制約
+  return createTRPCRouter(router as Parameters<typeof createTRPCRouter>[0]);
 }

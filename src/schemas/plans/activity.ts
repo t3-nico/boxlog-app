@@ -44,9 +44,3 @@ export const getPlanActivitiesSchema = z.object({
 });
 
 export type GetPlanActivitiesInput = z.infer<typeof getPlanActivitiesSchema>;
-
-// 互換性のためのエイリアス
-export const createplanActivitySchema = createPlanActivitySchema;
-export const getplanActivitiesSchema = getPlanActivitiesSchema;
-export type CreateplanActivityInput = CreatePlanActivityInput;
-export type GetplanActivitiesInput = GetPlanActivitiesInput;

@@ -179,11 +179,13 @@ EXISTS (SELECT 1 FROM plans WHERE plans.id = plan_tags.plan_id
 
 ## 定期クリーンアップ（pg_cron）
 
-| ジョブ                    | スケジュール   | 保持期間         | 対象テーブル    |
-| ------------------------- | -------------- | ---------------- | --------------- |
-| `cleanup-login-attempts`  | 毎日 03:00 UTC | 90日             | login_attempts  |
-| `cleanup-auth-audit-logs` | 毎日 03:10 UTC | 365日            | auth_audit_logs |
-| `cleanup-notifications`   | 毎日 03:20 UTC | 30日（既読のみ） | notifications   |
+| ジョブ                      | スケジュール   | 保持期間         | 対象テーブル      |
+| --------------------------- | -------------- | ---------------- | ----------------- |
+| `cleanup-login-attempts`    | 毎日 03:00 UTC | 90日             | login_attempts    |
+| `cleanup-auth-audit-logs`   | 毎日 03:10 UTC | 365日            | auth_audit_logs   |
+| `cleanup-notifications`     | 毎日 03:20 UTC | 30日（既読のみ） | notifications     |
+| `cleanup-plan-activities`   | 毎日 03:30 UTC | 365日            | plan_activities   |
+| `cleanup-record-activities` | 毎日 03:40 UTC | 365日            | record_activities |
 
 ---
 
