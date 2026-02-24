@@ -8,7 +8,6 @@
 export type {
   CreateTagInput,
   Tag,
-  TagGroup,
   TagOption,
   TagWithChildren,
   UpdateTagInput,

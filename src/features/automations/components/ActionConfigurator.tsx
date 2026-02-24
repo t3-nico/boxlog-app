@@ -242,7 +242,6 @@ export function ActionConfigurator({
                   onCheckedChange={() => toggleActionTag(tag.id)}
                 />
                 <Label htmlFor={`action_tag_${tag.id}`} className="cursor-pointer font-normal">
-                  {tag.icon ? `${tag.icon} ` : ''}
                   {tag.name}
                 </Label>
               </div>

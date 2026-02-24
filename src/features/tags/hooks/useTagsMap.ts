@@ -19,7 +19,6 @@ export type TagInfo = {
   id: string;
   name: string;
   color: string;
-  icon?: string | null;
   parent_id?: string | null;
   description?: string | null;
 };
@@ -35,7 +34,6 @@ export function useTagsMap() {
         id: tag.id,
         name: tag.name,
         color: tag.color ?? '#6b7280', // デフォルトはグレー
-        icon: tag.icon,
         parent_id: tag.parent_id,
         description: tag.description,
       });

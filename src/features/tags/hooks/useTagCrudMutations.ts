@@ -25,13 +25,8 @@ interface LegacyTagUpdateInput {
     name?: string | undefined;
     color?: string | undefined;
     description?: string | null | undefined;
-    icon?: string | null | undefined;
     is_active?: boolean | undefined;
     parentId?: string | null | undefined;
-    /** @deprecated use parentId instead */
-    group_id?: string | null | undefined;
-    /** @deprecated use parentId instead */
-    groupId?: string | null | undefined;
     sort_order?: number | undefined;
   };
 }
@@ -43,8 +38,6 @@ interface TrpcTagUpdateInput {
   color?: string | undefined;
   description?: string | null | undefined;
   parentId?: string | null | undefined;
-  /** @deprecated use parentId instead */
-  groupId?: string | null | undefined;
 }
 
 export type UpdateTagInput = LegacyTagUpdateInput | TrpcTagUpdateInput;
@@ -73,7 +66,6 @@ export function useCreateTag() {
         name: input.name,
         color: input.color || DEFAULT_TAG_COLOR,
         description: input.description ?? null,
-        icon: null,
         parent_id: input.parentId ?? null,
         sort_order: 0,
         is_active: true,
@@ -196,36 +188,24 @@ export function useUpdateTag() {
     ...mutation,
     mutate: (input: UpdateTagInput) => {
       if (isLegacyTagInput(input)) {
-        const parentId =
-          input.data.parentId !== undefined
-            ? input.data.parentId
-            : input.data.groupId !== undefined
-              ? input.data.groupId
-              : input.data.group_id;
         return mutation.mutate({
           id: input.id,
           name: input.data.name,
           color: input.data.color,
           description: input.data.description,
-          parentId,
+          parentId: input.data.parentId,
         });
       }
       return mutation.mutate(input);
     },
     mutateAsync: async (input: UpdateTagInput) => {
       if (isLegacyTagInput(input)) {
-        const parentId =
-          input.data.parentId !== undefined
-            ? input.data.parentId
-            : input.data.groupId !== undefined
-              ? input.data.groupId
-              : input.data.group_id;
         return mutation.mutateAsync({
           id: input.id,
           name: input.data.name,
           color: input.data.color,
           description: input.data.description,
-          parentId,
+          parentId: input.data.parentId,
         });
       }
       return mutation.mutateAsync(input);

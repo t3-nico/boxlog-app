@@ -35,8 +35,8 @@ export function useTagOperations(tags: Tag[]) {
     useOptimisticTagUpdate();
 
   // タグ作成（グループを指定して作成）
-  const handleCreateTag = useCallback((groupId?: string | null) => {
-    setCreateGroupId(groupId ?? null);
+  const handleCreateTag = useCallback((parentId?: string | null) => {
+    setCreateGroupId(parentId ?? null);
     setShowCreateModal(true);
   }, []);
 
@@ -50,9 +50,8 @@ export function useTagOperations(tags: Tag[]) {
           user_id: 'current-user',
           color: data.color || DEFAULT_TAG_COLOR,
           description: data.description || null,
-          icon: null,
           is_active: true,
-          parent_id: data.parentId ?? data.groupId ?? createGroupId,
+          parent_id: data.parentId ?? createGroupId,
           sort_order: tags.length,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
@@ -65,7 +64,7 @@ export function useTagOperations(tags: Tag[]) {
           name: data.name,
           color: data.color,
           description: data.description ?? undefined,
-          groupId: data.groupId ?? createGroupId ?? undefined,
+          parentId: data.parentId ?? createGroupId ?? undefined,
         });
       } catch (error) {
         logger.error('Failed to create tag:', error);
@@ -129,7 +128,7 @@ export function useTagOperations(tags: Tag[]) {
         // 実際の移動
         await moveTagMutation.mutateAsync({
           id: tag.id,
-          groupId: newGroupId,
+          parentId: newGroupId,
         });
       } catch (error) {
         logger.error('Failed to move tag:', error);

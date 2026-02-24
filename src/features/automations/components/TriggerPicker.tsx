@@ -201,7 +201,6 @@ export function TriggerPicker({
                   onCheckedChange={() => toggleTag(tag.id)}
                 />
                 <Label htmlFor={`tag_${tag.id}`} className="cursor-pointer font-normal">
-                  {tag.icon ? `${tag.icon} ` : ''}
                   {tag.name}
                 </Label>
               </div>

@@ -13,13 +13,9 @@ import {
 import { Field, FieldError, FieldGroup, FieldLabel, FieldSupportText } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { TagNoteField } from '@/features/tags/components/tag-note-field';
-import {
-  DEFAULT_GROUP_COLOR,
-  DEFAULT_TAG_COLOR,
-  TAG_NAME_MAX_LENGTH,
-} from '@/features/tags/constants/colors';
-import { useTagGroups } from '@/features/tags/hooks/useTagGroups';
-import type { CreateTagInput, TagGroup } from '@/features/tags/types';
+import { DEFAULT_TAG_COLOR, TAG_NAME_MAX_LENGTH } from '@/features/tags/constants/colors';
+import { useTags } from '@/features/tags/hooks';
+import type { CreateTagInput } from '@/features/tags/types';
 import { useSubmitShortcut } from '@/hooks/useSubmitShortcut';
 import { logger } from '@/lib/logger';
 import { ChevronDown, Circle } from 'lucide-react';
@@ -59,8 +55,9 @@ export const TagCreateModal = ({
   const [mounted, setMounted] = useState(false);
   const [isParentDropdownOpen, setIsParentDropdownOpen] = useState(false);
 
-  // タググループ（親タグ）取得 - モーダルが開いている時だけフェッチ
-  const { data: parentTags = [] as TagGroup[] } = useTagGroups({ enabled: isOpen });
+  // 親タグ取得 - useTags()から parent_id = null のタグを抽出
+  const { data: allTags = [] } = useTags();
+  const parentTags = allTags.filter((t) => !t.parent_id);
 
   // クライアントサイドでのみマウント
   useEffect(() => {
@@ -302,7 +299,7 @@ export const TagCreateModal = ({
                     >
                       <span
                         className="size-3 rounded-full"
-                        style={{ backgroundColor: parent.color ?? DEFAULT_GROUP_COLOR }}
+                        style={{ backgroundColor: parent.color ?? DEFAULT_TAG_COLOR }}
                       />
                       {parent.name}
                     </button>

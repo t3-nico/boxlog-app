@@ -13,7 +13,6 @@ import { HoverTooltip } from '@/components/ui/tooltip';
 import { useTheme } from '@/contexts/theme-context';
 import { SidebarSection } from '@/features/navigation/components/sidebar/SidebarSection';
 import { useDeleteTag, useReorderTags, useTags, useUpdateTag } from '@/features/tags/hooks';
-import { useTagGroups } from '@/features/tags/hooks/useTagGroups';
 import { useTagModalNavigation } from '@/features/tags/hooks/useTagModalNavigation';
 import { useTagCacheStore } from '@/features/tags/stores/useTagCacheStore';
 
@@ -40,7 +39,6 @@ const RECORD_COLOR = '#10b981'; // emerald-500
 export function CalendarFilterList() {
   const t = useTranslations();
   const { data: tags, isLoading: tagsLoading } = useTags();
-  const { isLoading: groupsLoading } = useTagGroups();
   const { data: tagStats } = api.plans.getTagStats.useQuery();
 
   const tagPlanCounts = useMemo(() => tagStats?.counts ?? {}, [tagStats?.counts]);
@@ -129,7 +127,7 @@ export function CalendarFilterList() {
     }
   }, [tags, initializeWithTags, mutationCount, isSettling]);
 
-  const isLoading = tagsLoading || groupsLoading;
+  const isLoading = tagsLoading;
 
   // タグモーダルナビゲーション
   const { openTagCreateModal, openTagMergeModal } = useTagModalNavigation();

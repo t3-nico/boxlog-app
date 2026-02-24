@@ -27,7 +27,7 @@ import type { Tag, TagWithChildren } from '@/features/tags/types';
 import type { Database } from '@/lib/database.types';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
-/** DB タグ行の型（マイグレーション前は group_id、後は parent_id） */
+/** DB タグ行の型 */
 type DbTagRow = Database['public']['Tables']['tags']['Row'];
 
 /**
@@ -40,7 +40,6 @@ function transformDbTag(dbTag: DbTagRow): Tag {
     user_id: dbTag.user_id,
     color: dbTag.color,
     description: dbTag.description,
-    icon: dbTag.icon,
     is_active: dbTag.is_active,
     parent_id: dbTag.parent_id,
     sort_order: dbTag.sort_order,
@@ -79,8 +78,6 @@ export interface CreateTagInput {
   description?: string | undefined;
   /** 親タグのID */
   parentId?: string | null | undefined;
-  /** @deprecated use parentId instead */
-  groupId?: string | null | undefined;
 }
 
 /** タグ更新入力 */
@@ -90,8 +87,6 @@ export interface UpdateTagInput {
   description?: string | null | undefined;
   /** 親タグのID */
   parentId?: string | null | undefined;
-  /** @deprecated use parentId instead */
-  groupId?: string | null | undefined;
 }
 
 /** タグ一覧取得オプション */
@@ -306,8 +301,7 @@ export class TagService {
       throw new TagServiceError('INVALID_INPUT', 'Tag name must be 50 characters or less');
     }
 
-    // parentId または groupId を使用（parentId を優先）
-    const parentId = input.parentId ?? input.groupId ?? null;
+    const parentId = input.parentId ?? null;
 
     // 親タグの階層チェック（1階層のみ許可）
     if (parentId) {
@@ -389,8 +383,7 @@ export class TagService {
       }
     }
 
-    // parentId または groupId を使用（parentId を優先）
-    const parentId = updates.parentId !== undefined ? updates.parentId : updates.groupId;
+    const parentId = updates.parentId;
 
     // 親タグの階層チェック
     if (parentId !== undefined && parentId !== null) {

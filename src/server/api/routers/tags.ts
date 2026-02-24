@@ -128,22 +128,18 @@ export const tagsRouter = createTRPCRouter({
         description: z.string().optional(),
         /** 親タグID */
         parentId: z.string().uuid().nullable().optional(),
-        /** @deprecated use parentId instead */
-        groupId: z.string().uuid().nullable().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       try {
         const service = createTagService(ctx.supabase);
-        // parentId を優先、後方互換のため groupId もサポート
-        const parentId = input.parentId ?? input.groupId;
         const tag = await service.create({
           userId: ctx.userId!,
           input: {
             name: input.name,
             color: input.color,
             description: input.description,
-            parentId,
+            parentId: input.parentId,
           },
         });
 
@@ -171,15 +167,11 @@ export const tagsRouter = createTRPCRouter({
         description: z.string().nullable().optional(),
         /** 親タグID */
         parentId: z.string().uuid().nullable().optional(),
-        /** @deprecated use parentId instead */
-        groupId: z.string().uuid().nullable().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       try {
         const service = createTagService(ctx.supabase);
-        // parentId を優先、後方互換のため groupId もサポート
-        const parentId = input.parentId !== undefined ? input.parentId : input.groupId;
         const tag = await service.update({
           userId: ctx.userId!,
           tagId: input.id,
@@ -187,7 +179,7 @@ export const tagsRouter = createTRPCRouter({
             name: input.name,
             color: input.color,
             description: input.description,
-            parentId,
+            parentId: input.parentId,
           },
         });
 

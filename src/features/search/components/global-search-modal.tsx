@@ -34,8 +34,8 @@ import { useAppAsideStore } from '@/features/navigation/stores/useAppAsideStore'
 import { usePlans } from '@/features/plans/hooks';
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
 import { useSettingsModalStore } from '@/features/settings/stores/useSettingsModalStore';
+import { useTags } from '@/features/tags/hooks';
 import { useTagModalNavigation } from '@/features/tags/hooks/useTagModalNavigation';
-import { useTagStore } from '@/features/tags/stores/useTagStore';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 
 import type { PlanStatus } from '@/features/plans/types';
@@ -102,7 +102,7 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
 
   // Get data from stores - only fetch when modal is open to prevent 401 errors on unauthenticated pages
   const { data: plans = [] } = usePlans(undefined, { enabled: isOpen });
-  const tags = useTagStore((state) => state.tags);
+  const { data: tags = [] } = useTags();
 
   // Get actions from stores
   const openPlanInspector = usePlanInspectorStore((state) => state.openInspector);
