@@ -158,9 +158,11 @@ export function useCalendarData({
       }
       map.get(planId)!.push({
         instanceDate: inst.instance_date,
-        isException: inst.is_exception,
         exceptionType: inst.exception_type as 'modified' | 'cancelled' | 'moved' | undefined,
-        overrides: inst.overrides as Record<string, unknown> | undefined,
+        title: inst.title ?? undefined,
+        description: inst.description ?? undefined,
+        instanceStart: inst.instance_start ?? undefined,
+        instanceEnd: inst.instance_end ?? undefined,
         originalDate: inst.original_date ?? undefined,
       });
     }

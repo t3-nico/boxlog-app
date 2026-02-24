@@ -38,8 +38,14 @@ export interface ExpandedOccurrence {
   isException: boolean;
   /** 例外タイプ */
   exceptionType?: 'modified' | 'cancelled' | 'moved' | undefined;
-  /** オーバーライド値 */
-  overrides?: Record<string, unknown> | undefined;
+  /** タイトルオーバーライド */
+  overrideTitle?: string | undefined;
+  /** 説明オーバーライド */
+  overrideDescription?: string | undefined;
+  /** 開始時刻オーバーライド（ISO 8601） */
+  overrideStartTime?: string | undefined;
+  /** 終了時刻オーバーライド（ISO 8601） */
+  overrideEndTime?: string | undefined;
 }
 
 /**
@@ -47,9 +53,11 @@ export interface ExpandedOccurrence {
  */
 export interface PlanInstanceException {
   instanceDate: string; // YYYY-MM-DD
-  isException: boolean;
   exceptionType?: 'modified' | 'cancelled' | 'moved' | undefined;
-  overrides?: Record<string, unknown> | undefined;
+  title?: string | undefined;
+  description?: string | undefined;
+  instanceStart?: string | undefined; // ISO 8601
+  instanceEnd?: string | undefined; // ISO 8601
   originalDate?: string | undefined; // moved時の元日付
 }
 
@@ -249,9 +257,12 @@ export function expandRecurrence(
           planId: plan.id,
           startTime,
           endTime,
-          isException: exception?.isException ?? false,
+          isException: !!exception,
           exceptionType: exception?.exceptionType,
-          overrides: exception?.overrides,
+          overrideTitle: exception?.title,
+          overrideDescription: exception?.description,
+          overrideStartTime: exception?.instanceStart,
+          overrideEndTime: exception?.instanceEnd,
         });
       }
     }
@@ -280,7 +291,10 @@ export function expandRecurrence(
           endTime,
           isException: true,
           exceptionType: 'moved',
-          overrides: ex.overrides,
+          overrideTitle: ex.title,
+          overrideDescription: ex.description,
+          overrideStartTime: ex.instanceStart,
+          overrideEndTime: ex.instanceEnd,
         });
       }
     }

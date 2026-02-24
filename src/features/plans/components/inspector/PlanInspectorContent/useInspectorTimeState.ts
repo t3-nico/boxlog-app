@@ -25,7 +25,10 @@ interface UseInspectorTimeStateProps {
   initialData: { start_time?: string | null; end_time?: string | null } | null;
   recurringEdit: {
     isRecurringInstance: boolean;
-    openScopeDialog: (field: string, value: string | undefined) => void;
+    openScopeDialog: (
+      field?: 'title' | 'description' | 'start_time' | 'end_time',
+      value?: string | undefined,
+    ) => void;
   };
   addPendingChange: (change: Record<string, string | number | null | undefined>) => void;
   updateDraft: (partial: Partial<DraftPlan>) => void;

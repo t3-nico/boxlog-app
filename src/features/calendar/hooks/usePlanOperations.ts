@@ -66,10 +66,8 @@ export const usePlanOperations = () => {
               planId: decoded.parentPlanId,
               instanceDate: decoded.instanceDate,
               exceptionType: isSameDate ? 'modified' : 'moved',
-              overrides: {
-                start_time: updates.startTime.toISOString(),
-                end_time: updates.endTime.toISOString(),
-              },
+              instanceStart: updates.startTime.toISOString(),
+              instanceEnd: updates.endTime.toISOString(),
               // moved例外の場合、新しい日付を記録
               ...(isSameDate ? {} : { originalDate: newDate }),
             });
@@ -117,10 +115,8 @@ export const usePlanOperations = () => {
               planId: decoded.parentPlanId,
               instanceDate: decoded.instanceDate,
               exceptionType: isSameDate ? 'modified' : 'moved',
-              overrides: {
-                start_time: updatedPlan.startDate.toISOString(),
-                end_time: updatedPlan.endDate?.toISOString(),
-              },
+              instanceStart: updatedPlan.startDate.toISOString(),
+              instanceEnd: updatedPlan.endDate?.toISOString(),
               ...(isSameDate ? {} : { originalDate: newDate }),
             });
 

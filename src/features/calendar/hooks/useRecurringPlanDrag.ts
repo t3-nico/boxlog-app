@@ -62,7 +62,7 @@ export function useRecurringPlanDrag({ plans }: UseRecurringPlanDragOptions) {
           scope,
           planId: parentPlanId,
           instanceDate,
-          overrides: {
+          changes: {
             start_time: updates.startTime.toISOString(),
             end_time: updates.endTime.toISOString(),
           },

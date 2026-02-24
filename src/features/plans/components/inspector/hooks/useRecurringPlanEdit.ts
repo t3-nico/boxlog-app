@@ -23,7 +23,6 @@ import type { Plan } from '../../../types/plan';
 type OverrideableField = 'title' | 'description' | 'start_time' | 'end_time';
 
 interface PendingChanges {
-  [key: string]: string | undefined;
   title?: string;
   description?: string;
   start_time?: string;
@@ -52,7 +51,9 @@ export function useRecurringPlanEdit({ plan, planId, instanceDate }: UseRecurrin
   // 保留中の変更
   const [pendingChanges, setPendingChanges] = useState<PendingChanges>({});
   const pendingChangesRef = useRef<PendingChanges>({});
-  const pendingFieldRef = useRef<{ field: string; value: string | undefined } | null>(null);
+  const pendingFieldRef = useRef<{ field: OverrideableField; value: string | undefined } | null>(
+    null,
+  );
 
   // planIdが変わったときに状態をリセット
   useEffect(() => {
@@ -91,8 +92,8 @@ export function useRecurringPlanEdit({ plan, planId, instanceDate }: UseRecurrin
 
       // 単一フィールドの変更の場合
       const singleChange = pendingFieldRef.current;
-      const changesToApply = singleChange
-        ? { [singleChange.field]: singleChange.value }
+      const changesToApply: PendingChanges = singleChange
+        ? ({ [singleChange.field]: singleChange.value } as PendingChanges)
         : pendingChangesRef.current;
 
       if (Object.keys(changesToApply).length === 0) {
@@ -105,7 +106,7 @@ export function useRecurringPlanEdit({ plan, planId, instanceDate }: UseRecurrin
           scope,
           planId,
           instanceDate,
-          overrides: changesToApply,
+          changes: changesToApply,
         });
 
         // 成功したら保留中の変更をクリア
@@ -123,7 +124,7 @@ export function useRecurringPlanEdit({ plan, planId, instanceDate }: UseRecurrin
    * スコープ選択ダイアログを開く（グローバルダイアログを使用）
    */
   const openScopeDialog = useCallback(
-    (field?: string, value?: string | undefined) => {
+    (field?: OverrideableField, value?: string | undefined) => {
       if (field !== undefined) {
         pendingFieldRef.current = { field, value };
       }

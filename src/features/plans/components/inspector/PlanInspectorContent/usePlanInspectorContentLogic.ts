@@ -198,7 +198,10 @@ export function usePlanInspectorContentLogic() {
         recurringEdit.isRecurringInstance &&
         SCOPE_DIALOG_FIELDS.includes(field as (typeof SCOPE_DIALOG_FIELDS)[number])
       ) {
-        recurringEdit.openScopeDialog(field, value);
+        recurringEdit.openScopeDialog(
+          field as 'title' | 'description' | 'start_time' | 'end_time',
+          value,
+        );
         return;
       }
       addPendingChange({ [field]: value });

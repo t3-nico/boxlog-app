@@ -342,41 +342,41 @@ export type Database = {
       plan_instances: {
         Row: {
           created_at: string;
+          description: string | null;
           exception_type: string | null;
           id: string;
           instance_date: string;
           instance_end: string | null;
           instance_start: string | null;
-          is_exception: boolean;
           original_date: string | null;
-          overrides: Json | null;
           plan_id: string;
+          title: string | null;
           updated_at: string;
         };
         Insert: {
           created_at?: string;
+          description?: string | null;
           exception_type?: string | null;
           id?: string;
           instance_date: string;
           instance_end?: string | null;
           instance_start?: string | null;
-          is_exception?: boolean;
           original_date?: string | null;
-          overrides?: Json | null;
           plan_id: string;
+          title?: string | null;
           updated_at?: string;
         };
         Update: {
           created_at?: string;
+          description?: string | null;
           exception_type?: string | null;
           id?: string;
           instance_date?: string;
           instance_end?: string | null;
           instance_start?: string | null;
-          is_exception?: boolean;
           original_date?: string | null;
-          overrides?: Json | null;
           plan_id?: string;
+          title?: string | null;
           updated_at?: string;
         };
         Relationships: [
@@ -514,7 +514,6 @@ export type Database = {
           completed_at: string | null;
           created_at: string | null;
           description: string | null;
-          due_date: string | null;
           end_time: string | null;
           id: string;
           recurrence_end_date: string | null;
@@ -533,7 +532,6 @@ export type Database = {
           completed_at?: string | null;
           created_at?: string | null;
           description?: string | null;
-          due_date?: string | null;
           end_time?: string | null;
           id?: string;
           recurrence_end_date?: string | null;
@@ -552,7 +550,6 @@ export type Database = {
           completed_at?: string | null;
           created_at?: string | null;
           description?: string | null;
-          due_date?: string | null;
           end_time?: string | null;
           id?: string;
           recurrence_end_date?: string | null;

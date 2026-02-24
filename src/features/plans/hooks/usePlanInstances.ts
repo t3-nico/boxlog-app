@@ -9,9 +9,11 @@ import type { PlanInstanceException } from '../utils/recurrence';
 interface PlanInstance {
   plan_id: string;
   instance_date: string;
-  is_exception: boolean;
   exception_type: 'modified' | 'cancelled' | 'moved' | null;
-  overrides: Record<string, unknown> | null;
+  title: string | null;
+  description: string | null;
+  instance_start: string | null;
+  instance_end: string | null;
   original_date: string | null;
 }
 
@@ -58,9 +60,11 @@ export function instancesToExceptionsMap(
   instances: Array<{
     plan_id: string;
     instance_date: string;
-    is_exception: boolean;
     exception_type: string | null;
-    overrides: Record<string, unknown> | null;
+    title: string | null;
+    description: string | null;
+    instance_start: string | null;
+    instance_end: string | null;
     original_date: string | null;
   }>,
 ): Map<string, PlanInstanceException[]> {
@@ -70,9 +74,11 @@ export function instancesToExceptionsMap(
     const exceptionType = instance.exception_type as 'modified' | 'cancelled' | 'moved' | null;
     const exception: PlanInstanceException = {
       instanceDate: instance.instance_date,
-      isException: instance.is_exception,
       exceptionType: exceptionType ?? undefined,
-      overrides: instance.overrides ?? undefined,
+      title: instance.title ?? undefined,
+      description: instance.description ?? undefined,
+      instanceStart: instance.instance_start ?? undefined,
+      instanceEnd: instance.instance_end ?? undefined,
       originalDate: instance.original_date ?? undefined,
     };
 
@@ -105,9 +111,11 @@ export function usePlanInstanceMutations() {
       const tempInstance: PlanInstance = {
         plan_id: input.planId,
         instance_date: input.instanceDate,
-        is_exception: true,
         exception_type: input.exceptionType,
-        overrides: input.overrides ? JSON.parse(JSON.stringify(input.overrides)) : null,
+        title: input.title ?? null,
+        description: input.description ?? null,
+        instance_start: input.instanceStart ?? null,
+        instance_end: input.instanceEnd ?? null,
         original_date: input.originalDate ?? null,
       };
 

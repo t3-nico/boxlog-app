@@ -133,9 +133,9 @@ export interface PlanInstance {
   recurrencePatternId?: string;
   instanceStart: Date;
   instanceEnd: Date;
-  isException: boolean;
   exceptionType?: 'modified' | 'cancelled' | 'moved';
-  overrides?: Partial<CalendarPlan>;
+  title?: string;
+  description?: string;
   createdAt: Date;
   updatedAt: Date;
 }

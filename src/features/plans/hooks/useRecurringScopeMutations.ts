@@ -22,7 +22,12 @@ interface ApplyEditParams {
   scope: RecurringEditScope;
   planId: string;
   instanceDate: string;
-  overrides: Record<string, string | undefined>;
+  changes: {
+    title?: string;
+    description?: string;
+    start_time?: string;
+    end_time?: string;
+  };
   /** ドラッグ移動で日付が変わる場合の移動先日付（YYYY-MM-DD） */
   targetDate?: string;
 }
@@ -83,7 +88,7 @@ export function useRecurringScopeMutations() {
    * - all: 親プランを直接更新
    */
   const applyEdit = useCallback(
-    async ({ scope, planId, instanceDate, overrides, targetDate }: ApplyEditParams) => {
+    async ({ scope, planId, instanceDate, changes, targetDate }: ApplyEditParams) => {
       switch (scope) {
         case 'this': {
           const isSameDate = !targetDate || targetDate === instanceDate;
@@ -91,7 +96,10 @@ export function useRecurringScopeMutations() {
             planId,
             instanceDate,
             exceptionType: isSameDate ? 'modified' : 'moved',
-            overrides,
+            title: changes.title,
+            description: changes.description,
+            instanceStart: changes.start_time,
+            instanceEnd: changes.end_time,
             ...(isSameDate ? {} : { originalDate: targetDate }),
           });
           break;
@@ -101,7 +109,7 @@ export function useRecurringScopeMutations() {
           await splitRecurrence.mutateAsync({
             planId,
             splitDate: instanceDate,
-            overrides,
+            overrides: changes,
           });
           break;
         }
@@ -109,7 +117,7 @@ export function useRecurringScopeMutations() {
         case 'all': {
           await updatePlan.mutateAsync({
             id: planId,
-            data: overrides,
+            data: changes,
           });
           break;
         }
