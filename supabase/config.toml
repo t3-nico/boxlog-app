@@ -336,10 +336,12 @@ deno_version = 2
 
 # Cron jobs for Edge Functions
 # Note: For production, configure via Supabase Dashboard > Database > pg_cron
-[[edge_runtime.cron_jobs]]
-name = "check-reminders"
-schedule = "* * * * *"
-function_name = "check-reminders"
+# TODO: cron_jobs は Supabase CLI の edge_runtime セクションでサポートされていないため
+# 本番は Dashboard > Database > pg_cron で設定する
+# [[edge_runtime.cron_jobs]]
+# name = "check-reminders"
+# schedule = "* * * * *"
+# function_name = "check-reminders"
 
 [analytics]
 enabled = true
