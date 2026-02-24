@@ -1,10 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import {
-  checkBrowserNotificationSupport,
-  getDateGroupKey,
-  getNotificationTypeIcon,
-} from './notification-helpers';
+import { checkBrowserNotificationSupport, getDateGroupKey } from './notification-helpers';
 
 describe('notification-helpers', () => {
   describe('getDateGroupKey', () => {
@@ -51,44 +47,8 @@ describe('notification-helpers', () => {
     });
   });
 
-  describe('getNotificationTypeIcon', () => {
-    it('reminderはbellを返す', () => {
-      expect(getNotificationTypeIcon('reminder')).toBe('bell');
-    });
-
-    it('plan_createdはplus-circleを返す', () => {
-      expect(getNotificationTypeIcon('plan_created')).toBe('plus-circle');
-    });
-
-    it('plan_updatedはeditを返す', () => {
-      expect(getNotificationTypeIcon('plan_updated')).toBe('edit');
-    });
-
-    it('plan_deletedはtrashを返す', () => {
-      expect(getNotificationTypeIcon('plan_deleted')).toBe('trash');
-    });
-
-    it('plan_completedはcheck-circleを返す', () => {
-      expect(getNotificationTypeIcon('plan_completed')).toBe('check-circle');
-    });
-
-    it('trash_warningはalert-triangleを返す', () => {
-      expect(getNotificationTypeIcon('trash_warning')).toBe('alert-triangle');
-    });
-
-    it('systemはinfoを返す', () => {
-      expect(getNotificationTypeIcon('system')).toBe('info');
-    });
-
-    it('未知のタイプはbellを返す', () => {
-      expect(getNotificationTypeIcon('unknown' as never)).toBe('bell');
-    });
-  });
-
   describe('checkBrowserNotificationSupport', () => {
     it('window.Notificationが存在する場合はtrueを返す', () => {
-      // Happy-DOMやJSDOMではNotificationがモックされている可能性がある
-      // 実際のテストではモックが必要
       const result = checkBrowserNotificationSupport();
       expect(typeof result).toBe('boolean');
     });

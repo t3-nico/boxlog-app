@@ -1,11 +1,7 @@
 /**
  * tRPC Router: Notifications
  *
- * 通知管理API
- *
- * @description
- * このルーターはサービス層（NotificationService）を使用してビジネスロジックを実行します。
- * ルーターの責務は入力バリデーションとエラーハンドリングのみです。
+ * リマインダー通知管理API
  */
 
 import { z } from 'zod';
@@ -73,31 +69,17 @@ export const notificationsRouter = createTRPCRouter({
   }),
 
   /**
-   * 通知作成（システム用）
+   * 通知作成
    */
   create: protectedProcedure.input(createNotificationSchema).mutation(async ({ ctx, input }) => {
     const service = createNotificationService(ctx.supabase);
 
     try {
-      const options: Parameters<typeof service.create>[0] = {
+      return await service.create({
         userId: ctx.userId,
         type: input.type,
-        priority: input.priority,
-        title: input.title,
-      };
-      if (input.message !== undefined && input.message !== null) options.message = input.message;
-      if (input.related_plan_id !== undefined && input.related_plan_id !== null)
-        options.relatedPlanId = input.related_plan_id;
-      if (input.related_tag_id !== undefined && input.related_tag_id !== null)
-        options.relatedTagId = input.related_tag_id;
-      if (input.action_url !== undefined && input.action_url !== null)
-        options.actionUrl = input.action_url;
-      if (input.icon !== undefined && input.icon !== null) options.icon = input.icon;
-      if (input.data !== undefined) options.data = input.data as Record<string, unknown>;
-      if (input.expires_at !== undefined && input.expires_at !== null)
-        options.expiresAt = input.expires_at;
-
-      return await service.create(options);
+        planId: input.plan_id,
+      });
     } catch (error) {
       handleServiceError(error);
     }

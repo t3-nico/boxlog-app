@@ -1,7 +1,6 @@
 import { isThisMonth, isThisWeek, isToday, isYesterday } from 'date-fns';
 
 import { logger } from '@/lib/logger';
-import type { NotificationType } from '@/schemas/notifications';
 
 // 日付グループのキー
 export type DateGroupKey = 'today' | 'yesterday' | 'thisWeek' | 'thisMonth' | 'older';
@@ -67,22 +66,6 @@ export function groupNotificationsByDate<T extends { created_at: string }>(
     }));
 }
 
-/**
- * 通知タイプのアイコン名を取得
- */
-export function getNotificationTypeIcon(type: NotificationType): string {
-  const icons: Record<NotificationType, string> = {
-    reminder: 'bell',
-    plan_created: 'plus-circle',
-    plan_updated: 'edit',
-    plan_deleted: 'trash',
-    plan_completed: 'check-circle',
-    trash_warning: 'alert-triangle',
-    system: 'info',
-  };
-  return icons[type] || 'bell';
-}
-
 export const checkBrowserNotificationSupport = (): boolean => {
   return typeof window !== 'undefined' && 'Notification' in window;
 };
@@ -141,28 +124,3 @@ export const showBrowserNotification = (
     return null;
   }
 };
-
-// 通知設定用タイプ
-export type NotificationSettingsType = 'reminders' | 'plan_updates' | 'system';
-
-/**
- * DB通知タイプを設定用タイプにマッピング
- */
-export function mapNotificationTypeToSettingsType(
-  type: NotificationType,
-): NotificationSettingsType | null {
-  switch (type) {
-    case 'reminder':
-      return 'reminders';
-    case 'plan_created':
-    case 'plan_updated':
-    case 'plan_deleted':
-    case 'plan_completed':
-      return 'plan_updates';
-    case 'trash_warning':
-    case 'system':
-      return 'system';
-    default:
-      return null;
-  }
-}

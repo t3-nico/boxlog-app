@@ -23,14 +23,14 @@ export class NotificationService {
   constructor(private readonly supabase: ServiceSupabaseClient) {}
 
   /**
-   * 通知一覧を取得
+   * 通知一覧を取得（plan titleをJOIN）
    */
-  async list(options: ListNotificationsOptions): Promise<NotificationRow[]> {
+  async list(options: ListNotificationsOptions) {
     const { userId, isRead, type, limit = 50, offset = 0 } = options;
 
     let query = this.supabase
       .from('notifications')
-      .select('*')
+      .select('*, plans(title)')
       .eq('user_id', userId)
       .order('created_at', { ascending: false })
       .range(offset, offset + limit - 1);
@@ -103,38 +103,15 @@ export class NotificationService {
    * 通知を作成
    */
   async create(options: CreateNotificationOptions): Promise<NotificationRow> {
-    const {
-      userId,
-      type,
-      priority,
-      title,
-      message,
-      relatedPlanId,
-      relatedTagId,
-      actionUrl,
-      icon,
-      data,
-      expiresAt,
-    } = options;
-
-    const insertData: Record<string, unknown> = {
-      user_id: userId,
-      type,
-      priority,
-      title,
-    };
-
-    if (message !== undefined) insertData.message = message;
-    if (relatedPlanId !== undefined) insertData.related_plan_id = relatedPlanId;
-    if (relatedTagId !== undefined) insertData.related_tag_id = relatedTagId;
-    if (actionUrl !== undefined) insertData.action_url = actionUrl;
-    if (icon !== undefined) insertData.icon = icon;
-    if (data !== undefined) insertData.data = data as never;
-    if (expiresAt !== undefined) insertData.expires_at = expiresAt;
+    const { userId, type, planId } = options;
 
     const { data: result, error } = await this.supabase
       .from('notifications')
-      .insert(insertData as never)
+      .insert({
+        user_id: userId,
+        type,
+        plan_id: planId,
+      })
       .select()
       .single();
 

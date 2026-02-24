@@ -179,14 +179,7 @@ export type Database = {
         Row: {
           created_at: string;
           default_reminder_minutes: number | null;
-          delivery_settings: Json | null;
           enable_browser_notifications: boolean;
-          enable_email_notifications: boolean;
-          enable_plan_updates: boolean;
-          enable_push_notifications: boolean;
-          enable_reminders: boolean;
-          enable_system_notifications: boolean;
-          enable_trash_warnings: boolean;
           id: string;
           updated_at: string;
           user_id: string;
@@ -194,14 +187,7 @@ export type Database = {
         Insert: {
           created_at?: string;
           default_reminder_minutes?: number | null;
-          delivery_settings?: Json | null;
           enable_browser_notifications?: boolean;
-          enable_email_notifications?: boolean;
-          enable_plan_updates?: boolean;
-          enable_push_notifications?: boolean;
-          enable_reminders?: boolean;
-          enable_system_notifications?: boolean;
-          enable_trash_warnings?: boolean;
           id?: string;
           updated_at?: string;
           user_id: string;
@@ -209,14 +195,7 @@ export type Database = {
         Update: {
           created_at?: string;
           default_reminder_minutes?: number | null;
-          delivery_settings?: Json | null;
           enable_browser_notifications?: boolean;
-          enable_email_notifications?: boolean;
-          enable_plan_updates?: boolean;
-          enable_push_notifications?: boolean;
-          enable_reminders?: boolean;
-          enable_system_notifications?: boolean;
-          enable_trash_warnings?: boolean;
           id?: string;
           updated_at?: string;
           user_id?: string;
@@ -225,72 +204,38 @@ export type Database = {
       };
       notifications: {
         Row: {
-          action_url: string | null;
           created_at: string;
-          data: Json | null;
-          expires_at: string | null;
-          icon: string | null;
           id: string;
           is_read: boolean;
-          message: string | null;
-          priority: string;
+          plan_id: string | null;
           read_at: string | null;
-          related_plan_id: string | null;
-          related_tag_id: string | null;
-          title: string;
           type: string;
-          updated_at: string;
           user_id: string;
         };
         Insert: {
-          action_url?: string | null;
           created_at?: string;
-          data?: Json | null;
-          expires_at?: string | null;
-          icon?: string | null;
           id?: string;
           is_read?: boolean;
-          message?: string | null;
-          priority?: string;
+          plan_id?: string | null;
           read_at?: string | null;
-          related_plan_id?: string | null;
-          related_tag_id?: string | null;
-          title: string;
           type: string;
-          updated_at?: string;
           user_id: string;
         };
         Update: {
-          action_url?: string | null;
           created_at?: string;
-          data?: Json | null;
-          expires_at?: string | null;
-          icon?: string | null;
           id?: string;
           is_read?: boolean;
-          message?: string | null;
-          priority?: string;
+          plan_id?: string | null;
           read_at?: string | null;
-          related_plan_id?: string | null;
-          related_tag_id?: string | null;
-          title?: string;
           type?: string;
-          updated_at?: string;
           user_id?: string;
         };
         Relationships: [
           {
             foreignKeyName: 'notifications_related_plan_id_fkey';
-            columns: ['related_plan_id'];
+            columns: ['plan_id'];
             isOneToOne: false;
             referencedRelation: 'plans';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'notifications_related_tag_id_fkey';
-            columns: ['related_tag_id'];
-            isOneToOne: false;
-            referencedRelation: 'tags';
             referencedColumns: ['id'];
           },
         ];
@@ -689,7 +634,7 @@ export type Database = {
           end_time: string | null;
           fulfillment_score: number | null;
           id: string;
-          note: string | null;
+          description: string | null;
           plan_id: string | null;
           start_time: string | null;
           title: string | null;
@@ -703,7 +648,7 @@ export type Database = {
           end_time?: string | null;
           fulfillment_score?: number | null;
           id?: string;
-          note?: string | null;
+          description?: string | null;
           plan_id?: string | null;
           start_time?: string | null;
           title?: string | null;
@@ -717,7 +662,7 @@ export type Database = {
           end_time?: string | null;
           fulfillment_score?: number | null;
           id?: string;
-          note?: string | null;
+          description?: string | null;
           plan_id?: string | null;
           start_time?: string | null;
           title?: string | null;

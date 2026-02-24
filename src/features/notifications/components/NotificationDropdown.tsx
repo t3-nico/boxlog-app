@@ -1,7 +1,6 @@
 'use client';
 
 import { Bell, CheckCheck, Loader2, Settings, Trash2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 import { useCallback, useMemo, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -29,11 +28,10 @@ import { NotificationItem } from './NotificationItem';
 interface NotificationData {
   id: string;
   type: NotificationType;
-  title: string;
-  message: string | null;
+  plan_id: string | null;
   is_read: boolean;
   created_at: string;
-  action_url?: string | null;
+  plans?: { title: string } | null;
 }
 
 interface NotificationDropdownProps {
@@ -54,7 +52,6 @@ export function NotificationDropdown({
   className: _className,
   size = 'default',
 }: NotificationDropdownProps) {
-  const router = useRouter();
   const locale = useLocale();
   const t = useTranslations();
   const openSettingsModal = useSettingsModalStore((state) => state.openModal);
@@ -97,14 +94,6 @@ export function NotificationDropdown({
       deleteAllRead.mutate();
     }
   }, [deleteAllRead, t]);
-
-  const handleNavigate = useCallback(
-    (url: string) => {
-      setIsOpen(false);
-      router.push(url);
-    },
-    [router],
-  );
 
   const handleOpenSettings = useCallback(() => {
     setIsOpen(false);
@@ -174,15 +163,12 @@ export function NotificationDropdown({
                     key={notification.id}
                     id={notification.id}
                     type={notification.type}
-                    title={notification.title}
-                    message={notification.message}
+                    planTitle={notification.plans?.title ?? undefined}
                     isRead={notification.is_read}
                     createdAt={notification.created_at}
-                    actionUrl={notification.action_url}
                     locale={locale as 'ja' | 'en'}
                     onMarkAsRead={handleMarkAsRead}
                     onDelete={handleDelete}
-                    onNavigate={handleNavigate}
                     isDeleting={deleteNotification.isPending}
                   />
                 ))}
