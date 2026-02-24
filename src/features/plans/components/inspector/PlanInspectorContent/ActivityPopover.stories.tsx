@@ -55,6 +55,7 @@ const baseMock = {
   old_value: null,
   new_value: null,
   metadata: null,
+  schema_version: 1,
 } as const;
 
 const mockActivities: PlanActivity[] = [

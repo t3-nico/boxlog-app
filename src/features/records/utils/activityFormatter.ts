@@ -15,7 +15,7 @@ const recordFormatter = createActivityFormatter<ActivityActionType>({
     'created',
     'time_changed',
     'title_changed',
-    'memo_changed',
+    'description_changed',
     'fulfillment_changed',
     'tag_added',
     'tag_removed',
@@ -35,8 +35,8 @@ const recordFormatter = createActivityFormatter<ActivityActionType>({
       iconColor: 'info',
       formatDetail: detailHelpers.transition,
     },
-    memo_changed: {
-      labelKey: 'record.activity.memoChanged',
+    description_changed: {
+      labelKey: 'record.activity.descriptionChanged',
       icon: 'time',
       iconColor: 'info',
     },

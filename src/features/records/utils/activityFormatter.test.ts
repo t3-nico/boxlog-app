@@ -79,8 +79,8 @@ describe('activityFormatter (records)', () => {
       expect(result.iconColor).toBe('destructive');
     });
 
-    it('memo_changed: detailなし', () => {
-      const result = formatActivity(makeActivity('memo_changed'));
+    it('description_changed: detailなし', () => {
+      const result = formatActivity(makeActivity('description_changed'));
       expect(result.detail).toBeUndefined();
     });
   });

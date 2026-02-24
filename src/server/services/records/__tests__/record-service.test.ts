@@ -307,17 +307,17 @@ describe('RecordService', () => {
         note: 'Original note',
         user_id: userId,
       };
-      const updatedRecord = { ...existingRecord, note: 'Updated note' };
+      const updatedRecord = { ...existingRecord, description: 'Updated description' };
 
       setupMockUpdateQuery(mockSupabase.from, existingRecord, updatedRecord);
 
       const result = await service.update({
         userId,
         recordId: 'record-1',
-        input: { note: 'Updated note' },
+        input: { description: 'Updated description' },
       });
 
-      expect(result.note).toBe('Updated note');
+      expect(result.description).toBe('Updated description');
     });
 
     it('should check for time overlap when time fields change', async () => {
@@ -351,7 +351,7 @@ describe('RecordService', () => {
         service.update({
           userId,
           recordId: 'record-1',
-          input: { note: 'Updated' },
+          input: { description: 'Updated' },
         }),
       ).rejects.toThrow(RecordServiceError);
     });

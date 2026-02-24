@@ -176,7 +176,7 @@ const messages = {
       updated: 'レコードを更新',
       timeChanged: '時間を変更',
       titleChanged: 'タイトルを変更',
-      memoChanged: 'メモを更新',
+      descriptionChanged: '説明を更新',
       fulfillmentChanged: '充実度を変更',
       tagAdded: 'タグを追加',
       tagRemoved: 'タグを削除',

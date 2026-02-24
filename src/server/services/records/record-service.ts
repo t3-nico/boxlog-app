@@ -398,7 +398,7 @@ export class RecordService {
       end_time: original.end_time,
       duration_minutes: original.duration_minutes,
       fulfillment_score: original.fulfillment_score,
-      note: original.note,
+      description: original.description,
     };
 
     const { data, error } = await this.supabase

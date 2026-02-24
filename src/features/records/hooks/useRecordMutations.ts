@@ -36,7 +36,7 @@ export function useRecordMutations() {
           end_time: input.end_time ?? null,
           duration_minutes: input.duration_minutes,
           fulfillment_score: input.fulfillment_score ?? null,
-          note: input.note ?? null,
+          description: input.description ?? null,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
           tagIds: input.tagIds ?? [],
@@ -79,7 +79,7 @@ export function useRecordMutations() {
               data.fulfillment_score !== undefined
                 ? data.fulfillment_score
                 : record.fulfillment_score,
-            note: data.note !== undefined ? data.note : record.note,
+            description: data.description !== undefined ? data.description : record.description,
             updated_at: new Date().toISOString(),
             tagIds: record.tagIds, // 明示的に保持
           };

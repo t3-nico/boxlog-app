@@ -280,7 +280,7 @@ interface RecordWithPlanInfo {
   end_time: string | null; // HH:MM:SS or HH:MM
   duration_minutes: number;
   fulfillment_score: number | null;
-  note: string | null;
+  description: string | null;
   created_at: string;
   updated_at: string;
   tagIds?: string[]; // Recordに紐づくタグID
@@ -317,7 +317,7 @@ export function recordToCalendarPlan(record: RecordWithPlanInfo): CalendarPlan |
   return {
     id: `record-${record.id}`, // PlanのIDと区別するためにプレフィックスを付ける
     title: record.title ?? record.plan?.title ?? '', // 空の場合はUI側で「(タイトルなし)」を表示
-    description: record.note ?? undefined,
+    description: record.description ?? undefined,
     startDate,
     endDate,
     status: 'closed', // Records は完了済みの作業ログなので常に closed

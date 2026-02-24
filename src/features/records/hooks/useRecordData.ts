@@ -26,7 +26,7 @@ export interface RecordItem {
   end_time: string | null;
   duration_minutes: number;
   fulfillment_score: number | null;
-  note: string | null;
+  description: string | null;
   created_at: string;
   updated_at: string;
   plan?: {
@@ -243,7 +243,7 @@ export function useRecordData(
     items = items.filter(
       (item) =>
         item.title?.toLowerCase().includes(searchLower) ||
-        item.note?.toLowerCase().includes(searchLower),
+        item.description?.toLowerCase().includes(searchLower),
     );
   }
 

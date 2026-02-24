@@ -319,7 +319,6 @@ export function PlanInspectorContent() {
                 end_time: buildIsoTime(endTime),
                 tagIds: selectedTagIds,
                 plan_id: planId,
-                note: plan.description,
               };
               openInspectorWithDraft(draftData, 'record');
             };

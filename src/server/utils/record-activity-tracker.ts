@@ -16,7 +16,7 @@ interface RecordChanges {
 /** Recordの更新可能フィールド（アクティビティ追跡用） */
 interface RecordData {
   title?: string | null;
-  note?: string | null;
+  description?: string | null;
   fulfillment_score?: number | null;
   start_time?: string | null;
   end_time?: string | null;
@@ -120,13 +120,13 @@ function detectRecordChanges(oldData: RecordData, newData: RecordData): RecordCh
     });
   }
 
-  // メモ変更
-  if (oldData.note !== newData.note) {
+  // 説明変更
+  if (oldData.description !== newData.description) {
     changes.push({
-      field_name: 'note',
-      old_value: oldData.note || '',
-      new_value: newData.note || '',
-      action_type: 'memo_changed',
+      field_name: 'description',
+      old_value: oldData.description || '',
+      new_value: newData.description || '',
+      action_type: 'description_changed',
     });
   }
 

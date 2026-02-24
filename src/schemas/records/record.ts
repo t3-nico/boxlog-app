@@ -22,7 +22,7 @@ export const createRecordSchema = z.object({
     .optional(), // HH:MM or HH:MM:SS
   duration_minutes: z.number().int().min(1, 'validation.durationMin'), // 1分以上
   fulfillment_score: fulfillmentScoreSchema.nullable().optional(),
-  note: z.string().max(5000, 'validation.note.maxLength').nullable().optional(),
+  description: z.string().max(5000, 'validation.description.maxLength').nullable().optional(),
   tagIds: z.array(z.string().uuid()).optional(), // 紐付けるタグID（任意）
 });
 

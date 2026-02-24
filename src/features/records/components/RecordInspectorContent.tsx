@@ -52,7 +52,7 @@ interface FormData {
   end_time: string;
   duration_minutes: number;
   fulfillment_score: FulfillmentScore | null;
-  note: string;
+  description: string;
   tagIds: string[];
 }
 
@@ -114,7 +114,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
     end_time: '',
     duration_minutes: 0,
     fulfillment_score: null,
-    note: '',
+    description: '',
     tagIds: [],
   });
   const [isDirty, setIsDirty] = useState(false);
@@ -137,7 +137,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
         end_time: formatTimeWithoutSeconds(record.end_time),
         duration_minutes: record.duration_minutes,
         fulfillment_score: record.fulfillment_score as FulfillmentScore | null,
-        note: record.note ?? '',
+        description: record.description ?? '',
         tagIds: record.tagIds ?? [],
       });
       setIsDirty(false);
@@ -246,7 +246,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
 
   const handleNoteChange = useCallback(
     (value: string) => {
-      setFormData((prev) => ({ ...prev, note: value }));
+      setFormData((prev) => ({ ...prev, description: value }));
       setIsDirty(true);
       if (selectedRecordId) {
         // デバウンス適用してDB保存（Activityノイズ防止）
@@ -254,7 +254,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
           clearTimeout(autoSaveTimerRef.current);
         }
         autoSaveTimerRef.current = setTimeout(() => {
-          updateRecord.mutate({ id: selectedRecordId, data: { note: value || null } });
+          updateRecord.mutate({ id: selectedRecordId, data: { description: value || null } });
         }, 500);
       }
     },
@@ -302,7 +302,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
               })()
             : null,
           tagIds: formData.tagIds,
-          note: formData.note || null,
+          description: formData.description || null,
         },
         'record',
       );
@@ -311,7 +311,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
     record,
     formData.worked_at,
     formData.tagIds,
-    formData.note,
+    formData.description,
     closeRecordInspector,
     openInspectorWithDraft,
   ]);
@@ -500,7 +500,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
               />
               <NoteIconButton
                 id={selectedRecordId ?? 'record'}
-                note={formData.note}
+                note={formData.description}
                 onNoteChange={handleNoteChange}
               />
             </>

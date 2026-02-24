@@ -28,7 +28,7 @@ export interface RecordRow {
   end_time: string | null;
   duration_minutes: number;
   fulfillment_score: number | null;
-  note: string | null;
+  description: string | null;
   created_at: string;
   updated_at: string;
 }

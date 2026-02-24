@@ -49,20 +49,20 @@ describe('Record Activity Tracker', () => {
       );
     });
 
-    it('should detect note changes', async () => {
+    it('should detect description changes', async () => {
       const { trackRecordChanges } = await import('../record-activity-tracker');
 
-      const oldData = { note: 'Old note' };
-      const newData = { note: 'New note' };
+      const oldData = { description: 'Old description' };
+      const newData = { description: 'New description' };
 
       await trackRecordChanges(mockSupabase as never, 'record-123', 'user-123', oldData, newData);
 
       expect(mockInsert).toHaveBeenCalledWith(
         expect.objectContaining({
-          action_type: 'memo_changed',
-          field_name: 'note',
-          old_value: 'Old note',
-          new_value: 'New note',
+          action_type: 'description_changed',
+          field_name: 'description',
+          old_value: 'Old description',
+          new_value: 'New description',
         }),
       );
     });
@@ -154,12 +154,12 @@ describe('Record Activity Tracker', () => {
 
       const oldData = {
         title: 'Old Title',
-        note: 'Old note',
+        description: 'Old description',
         fulfillment_score: 3,
       };
       const newData = {
         title: 'New Title',
-        note: 'New note',
+        description: 'New description',
         fulfillment_score: 5,
       };
 
@@ -240,18 +240,18 @@ describe('Record Activity Tracker', () => {
       );
     });
 
-    it('should handle value to null change for note', async () => {
+    it('should handle value to null change for description', async () => {
       const { trackRecordChanges } = await import('../record-activity-tracker');
 
-      const oldData = { note: 'Some note' };
-      const newData = { note: null };
+      const oldData = { description: 'Some description' };
+      const newData = { description: null };
 
       await trackRecordChanges(mockSupabase as never, 'record-123', 'user-123', oldData, newData);
 
       expect(mockInsert).toHaveBeenCalledWith(
         expect.objectContaining({
-          action_type: 'memo_changed',
-          old_value: 'Some note',
+          action_type: 'description_changed',
+          old_value: 'Some description',
           new_value: '',
         }),
       );

@@ -5,7 +5,7 @@ import { createCacheStore } from '@/stores/createCacheStore';
  */
 interface RecordCache {
   fulfillment_score?: number | null;
-  note?: string | null;
+  description?: string | null;
   tagIds?: string[];
 }
 
@@ -13,7 +13,7 @@ interface RecordCache {
  * Record キャッシュストア
  *
  * 用途:
- * - fulfillment_score / note の即座の同期
+ * - fulfillment_score / description の即座の同期
  * - Inspector、Table が同時に開いている場合の状態管理
  * - mutation 実行中フラグ管理（Realtime 二重更新防止）
  */

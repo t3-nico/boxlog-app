@@ -97,7 +97,7 @@ RecordInspector                 メインパネル（PC: Popover / Mobile: Drawe
 | `end_time` | TIME | 終了時刻（任意） |
 | `duration_minutes` | INT | 所要時間（必須、>0） |
 | `fulfillment_score` | INT | 充実度 1-5（任意） |
-| `note` | TEXT | メモ（任意） |
+| `description` | TEXT | 説明（任意） |
 
 - **RLS**: `auth.uid() = user_id`
 - **インデックス**: `user_id`, `plan_id`, `worked_at DESC`
@@ -112,7 +112,7 @@ RecordInspector                 メインパネル（PC: Popover / Mobile: Drawe
 
 ### record_activities
 
-監査ログ: `action_type` = created / time_changed / title_changed / memo_changed / fulfillment_changed / tag_added / tag_removed
+監査ログ: `action_type` = created / time_changed / title_changed / description_changed / fulfillment_changed / tag_added / tag_removed
 
 ---
 
