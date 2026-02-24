@@ -234,6 +234,13 @@ max_frequency = "5s"
 # enabled = true
 # uri = "pg-functions://<database>/<schema>/<hook_name>"
 
+# Send Email Hook: カスタム認証メール送信（Resend経由）
+# ローカルでは無効化（Inbucket使用）。リモートは config push 時に env() で解決。
+[auth.hook.send_email]
+enabled = false
+uri = "env(SUPABASE_AUTH_HOOK_SEND_EMAIL_URI)"
+secrets = "env(SUPABASE_AUTH_HOOK_SEND_EMAIL_SECRETS)"
+
 # Configure one of the supported SMS providers: `twilio`, `twilio_verify`, `messagebird`, `textlocal`, `vonage`.
 [auth.sms.twilio]
 enabled = false
