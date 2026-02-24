@@ -200,7 +200,6 @@ describe('recurrence', () => {
       const exceptions = [
         {
           instanceDate: '2025-01-02',
-          isException: true,
           exceptionType: 'cancelled' as const,
         },
       ];
@@ -224,7 +223,6 @@ describe('recurrence', () => {
       const exceptions = [
         {
           instanceDate: '2025-01-08', // 移動先
-          isException: true,
           exceptionType: 'moved' as const,
           originalDate: '2025-01-02', // 元の日付
         },
@@ -250,9 +248,9 @@ describe('recurrence', () => {
       const exceptions = [
         {
           instanceDate: '2025-01-03',
-          isException: true,
           exceptionType: 'modified' as const,
-          overrides: { title: '変更後のタイトル', start_time: '2025-01-03T14:00:00Z' },
+          title: '変更後のタイトル',
+          instanceStart: '2025-01-03T14:00:00Z',
         },
       ];
 
@@ -264,10 +262,8 @@ describe('recurrence', () => {
       expect(modifiedOccurrence).toBeDefined();
       expect(modifiedOccurrence?.isException).toBe(true);
       expect(modifiedOccurrence?.exceptionType).toBe('modified');
-      expect(modifiedOccurrence?.overrides).toEqual({
-        title: '変更後のタイトル',
-        start_time: '2025-01-03T14:00:00Z',
-      });
+      expect(modifiedOccurrence?.overrideTitle).toBe('変更後のタイトル');
+      expect(modifiedOccurrence?.overrideStartTime).toBe('2025-01-03T14:00:00Z');
     });
 
     it('start_timeがないプランは空配列を返す', () => {
