@@ -22,7 +22,7 @@ interface UseInspectorSaveCloseProps {
   hasTagChanges: boolean;
   selectedTagIdsRef: React.RefObject<string[]>;
   originalTagIdsRef: React.RefObject<string[]>;
-  setplanTags: (planId: string, tagIds: string[]) => Promise<void>;
+  setPlanTags: (planId: string, tagIds: string[]) => Promise<void>;
   updatePlan: {
     mutateAsync: (args: {
       id: string;
@@ -39,7 +39,7 @@ export function useInspectorSaveClose({
   hasTagChanges,
   selectedTagIdsRef,
   originalTagIdsRef,
-  setplanTags,
+  setPlanTags,
   updatePlan,
   closeInspector,
   pendingChanges,
@@ -140,7 +140,7 @@ export function useInspectorSaveClose({
             const newPlan = await createPlan.mutateAsync(createInput);
             if (newPlan?.id && currentTagIds.length > 0) {
               try {
-                await setplanTags(newPlan.id, currentTagIds);
+                await setPlanTags(newPlan.id, currentTagIds);
               } catch {
                 toast.error(t('plan.inspector.toast.tagsSaveFailed'));
               }
@@ -176,7 +176,7 @@ export function useInspectorSaveClose({
       }
 
       if (currentHasTagChanges && currentPlanId) {
-        setplanTags(currentPlanId, currentTagIds).catch(() => {
+        setPlanTags(currentPlanId, currentTagIds).catch(() => {
           toast.error(t('plan.inspector.toast.tagsSaveFailed'));
         });
       }
@@ -186,7 +186,7 @@ export function useInspectorSaveClose({
     updatePlan,
     closeInspector,
     createPlan,
-    setplanTags,
+    setPlanTags,
     hasTagChanges,
     utils,
     selectedTagIdsRef,

@@ -27,14 +27,8 @@ export function usePlanTags() {
     error,
 
     // Plan Tag Actions
-    addplanTag: addTag,
-    removeplanTag: removeTag,
-    setplanTags: setTags,
-    // Plan Tag Actions (aliases)
     addPlanTag: addTag,
     removePlanTag: removeTag,
+    setPlanTags: setTags,
   };
 }
-
-// Backward compatibility
-export { usePlanTags as useplanTags };

@@ -130,7 +130,7 @@ export function usePlanInspectorContentLogic() {
     hasTagChanges,
     handleTagsChange,
     handleRemoveTag,
-    setplanTags,
+    setPlanTags,
   } = useInspectorTagState({ planId, planData: planData as Plan | undefined, isDraftMode });
 
   // --- サブフック: 時間・スケジュール状態 ---
@@ -163,7 +163,7 @@ export function usePlanInspectorContentLogic() {
     hasTagChanges,
     selectedTagIdsRef,
     originalTagIdsRef,
-    setplanTags: setplanTags as unknown as (planId: string, tagIds: string[]) => Promise<void>,
+    setPlanTags: setPlanTags as unknown as (planId: string, tagIds: string[]) => Promise<void>,
     updatePlan,
     closeInspector,
     pendingChanges: pendingChanges as Record<string, string | number | null | undefined> | null,
