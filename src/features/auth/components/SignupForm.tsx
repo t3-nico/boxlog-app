@@ -6,8 +6,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, EyeOff } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import NextImage from 'next/image';
-import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
+
+import { Link } from '@/i18n/navigation';
 import { Controller, useForm } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
@@ -25,6 +26,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { useAuthStore } from '@/features/auth/stores/useAuthStore';
+import { logger } from '@/lib/logger';
 import { cn } from '@/lib/utils';
 
 import { getAuthErrorKey } from '../lib/sanitize-auth-error';
@@ -40,7 +42,7 @@ async function safeCheckPasswordPwned(password: string): Promise<boolean> {
     const { checkPasswordPwned } = await import('@/lib/auth/pwned-password');
     return await checkPasswordPwned(password);
   } catch (err) {
-    console.warn('[SignupForm] Pwned password check failed, skipping:', err);
+    logger.warn('[SignupForm] Pwned password check failed, skipping:', err);
     return false;
   }
 }
@@ -63,6 +65,8 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
+  const [emailSent, setEmailSent] = useState(false);
+  const [submittedEmail, setSubmittedEmail] = useState('');
 
   const {
     register,
@@ -75,7 +79,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
       email: '',
       password: '',
       confirmPassword: '',
-      agreedToTerms: false as unknown as true, // 初期値はfalse、バリデーションでtrueを要求
+      agreedToTerms: false,
     },
     mode: 'onSubmit', // DADS準拠: 送信時バリデーション
   });
@@ -91,18 +95,62 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
     }
 
     try {
-      const { error } = await signUp(data.email, data.password);
+      const { error, data: signUpData } = await signUp(data.email, data.password);
       if (error) {
         // OWASP準拠: Supabase の生エラーを漏洩しない
         const errorKey = getAuthErrorKey(error.message, 'signup');
         setServerError(t(errorKey));
-      } else {
+      } else if (signUpData.session) {
+        // email確認不要（即ログイン）
         router.push(`/${locale}/day`);
+      } else {
+        // email確認が必要
+        setSubmittedEmail(data.email);
+        setEmailSent(true);
       }
     } catch {
-      setServerError('An unexpected error occurred');
+      setServerError(t('auth.errors.unexpectedError'));
     }
   };
+
+  if (emailSent) {
+    return (
+      <div className={cn('flex flex-col gap-6', className)} {...props}>
+        <Card className="overflow-hidden p-0">
+          <CardContent className="grid p-0 md:grid-cols-2">
+            <div className="p-6 md:p-8">
+              <FieldGroup>
+                <div className="flex flex-col items-center gap-2 text-center">
+                  <h1 className="text-2xl font-bold">
+                    {t('auth.success.signupSuccess').split('.')[0]}
+                  </h1>
+                  <p className="text-muted-foreground text-balance">
+                    {t('auth.passwordResetForm.sentResetLink')}{' '}
+                    <span className="font-normal">{submittedEmail}</span>
+                  </p>
+                </div>
+                <Field>
+                  <Button asChild>
+                    <Link href="/auth/login">{t('auth.passwordResetForm.backToLogin')}</Link>
+                  </Button>
+                </Field>
+              </FieldGroup>
+            </div>
+            <div className="bg-container relative hidden md:block">
+              <NextImage
+                src="/placeholder.svg"
+                alt="Decorative background"
+                fill
+                priority
+                sizes="(min-width: 768px) 50vw, 0vw"
+                className="object-cover dark:brightness-[0.2] dark:grayscale"
+              />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
@@ -311,7 +359,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                     >
                       {t('auth.signupForm.privacyPolicy')}
                     </a>
-                    に同意します。
+                    {t('auth.signupForm.agree')}
                   </label>
                 </div>
                 {errors.agreedToTerms && <FieldError>{errors.agreedToTerms.message}</FieldError>}

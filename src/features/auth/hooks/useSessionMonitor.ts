@@ -71,7 +71,7 @@ export function useSessionMonitor(): SessionMonitorState {
       const { error } = await supabase.auth.refreshSession();
 
       if (error) {
-        console.error('[SessionMonitor] Failed to extend session:', error);
+        logger.error('[SessionMonitor] Failed to extend session:', error);
         return;
       }
 
@@ -80,7 +80,7 @@ export function useSessionMonitor(): SessionMonitorState {
       setShowTimeoutWarning(false);
       setRemainingTime(SESSION_CONFIG.idleTimeout);
     } catch (err) {
-      console.error('[SessionMonitor] Session extension error:', err);
+      logger.error('[SessionMonitor] Session extension error:', err);
     }
   }, [recordActivity]);
 
@@ -92,7 +92,7 @@ export function useSessionMonitor(): SessionMonitorState {
       await signOut();
       router.push(SESSION_SECURITY.logoutRedirect);
     } catch (err) {
-      console.error('[SessionMonitor] Logout error:', err);
+      logger.error('[SessionMonitor] Logout error:', err);
       // エラーでもリダイレクト
       router.push(SESSION_SECURITY.logoutRedirect);
     }

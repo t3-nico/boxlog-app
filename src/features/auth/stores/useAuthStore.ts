@@ -4,6 +4,7 @@
  *
  * @see docs/architecture/AUTH_STORE.md
  */
+import { logger } from '@/lib/logger';
 import { createClient } from '@/lib/supabase/client';
 import type { AuthError, AuthResponse, OAuthResponse, Session, User } from '@supabase/supabase-js';
 import { create } from 'zustand';
@@ -61,7 +62,7 @@ export const useAuthStore = create<AuthState>()(
           const timeoutPromise = new Promise<{ data: { session: null }; error: null }>(
             (resolve) => {
               setTimeout(() => {
-                console.warn('[AuthStore] Session retrieval timed out, proceeding without session');
+                logger.warn('[AuthStore] Session retrieval timed out, proceeding without session');
                 resolve({ data: { session: null }, error: null });
               }, TIMEOUT_MS);
             },
@@ -70,7 +71,7 @@ export const useAuthStore = create<AuthState>()(
           const { data, error } = await Promise.race([sessionPromise, timeoutPromise]);
 
           if (error) {
-            console.error('[AuthStore] Session retrieval error:', error);
+            logger.error('[AuthStore] Session retrieval error:', error);
             // エラー時もloadingをfalseにして画面表示を許可
             set({ error: null, loading: false, user: null, session: null });
             return;
@@ -101,11 +102,11 @@ export const useAuthStore = create<AuthState>()(
               });
             }
           } catch (listenerError) {
-            console.warn('[AuthStore] Failed to set up auth state listener:', listenerError);
+            logger.warn('[AuthStore] Failed to set up auth state listener:', listenerError);
             // リスナー設定失敗は致命的ではない
           }
         } catch (err) {
-          console.error('[AuthStore] Initialization error:', err);
+          logger.error('[AuthStore] Initialization error:', err);
           // エラー時もloadingをfalseにして画面表示を許可
           set({ error: null, loading: false, user: null, session: null });
         }

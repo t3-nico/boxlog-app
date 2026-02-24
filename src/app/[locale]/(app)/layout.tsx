@@ -15,7 +15,6 @@
 import { BaseLayout } from '@/components/layout/base-layout';
 import { Providers } from '@/components/providers';
 import { Toaster } from '@/components/ui/toast';
-import { SessionMonitorProvider } from '@/features/auth/components/SessionMonitorProvider';
 import {
   PlanDeleteConfirmDialog,
   PlanInspector,
@@ -30,16 +29,14 @@ interface AppLayoutProps {
 const AppLayout = async ({ children }: AppLayoutProps) => {
   return (
     <Providers>
-      <SessionMonitorProvider>
-        <BaseLayout>
-          {children}
-          <PlanInspector />
-          <RecordInspector />
-          <PlanDeleteConfirmDialog />
-          <RecurringEditConfirmDialog />
-          <Toaster />
-        </BaseLayout>
-      </SessionMonitorProvider>
+      <BaseLayout>
+        {children}
+        <PlanInspector />
+        <RecordInspector />
+        <PlanDeleteConfirmDialog />
+        <RecurringEditConfirmDialog />
+        <Toaster />
+      </BaseLayout>
     </Providers>
   );
 };

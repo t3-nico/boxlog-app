@@ -11,7 +11,7 @@ interface AuthGuardProps {
   fallback?: React.ReactNode;
 }
 
-export const AuthGuard = ({ children, fallback }: AuthGuardProps) => {
+export function AuthGuard({ children, fallback }: AuthGuardProps) {
   const user = useAuthStore((state) => state.user);
   const loading = useAuthStore((state) => state.loading);
   const router = useRouter();
@@ -59,4 +59,4 @@ export const AuthGuard = ({ children, fallback }: AuthGuardProps) => {
 
   // 認証済みの場合
   return <>{children}</>;
-};
+}

@@ -42,9 +42,9 @@ export const signupSchema = z
       .email('有効なメールアドレスを入力してください'),
     password: passwordSchema,
     confirmPassword: z.string().min(1, 'パスワード確認を入力してください'),
-    agreedToTerms: z.literal(true, {
-      errorMap: () => ({ message: '利用規約への同意が必要です' }),
-    }),
+    agreedToTerms: z
+      .boolean()
+      .refine((val) => val === true, { message: '利用規約への同意が必要です' }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: 'パスワードが一致しません',

@@ -2,6 +2,7 @@ import createMiddleware from 'next-intl/middleware';
 import { NextResponse, type NextRequest } from 'next/server';
 
 import { routing } from '@/i18n/routing';
+import { logger } from '@/lib/logger';
 import { updateSession } from '@/lib/supabase/middleware';
 
 // next-intlのミドルウェアを作成
@@ -164,7 +165,7 @@ export async function middleware(request: NextRequest) {
 
     return response;
   } catch (error) {
-    console.error('Middleware error:', error);
+    logger.error('Middleware error:', error);
     return NextResponse.redirect(
       new URL(getLocalizedPath('/auth/login', currentLocale), request.url),
     );

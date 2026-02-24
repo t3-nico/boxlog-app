@@ -6,8 +6,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, EyeOff } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
-import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
+
+import { Link } from '@/i18n/navigation';
 import { useForm } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
@@ -24,6 +25,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { useAuthStore } from '@/features/auth/stores/useAuthStore';
+import { logger } from '@/lib/logger';
 import { createClient } from '@/lib/supabase/client';
 import { cn } from '@/lib/utils';
 
@@ -76,14 +78,13 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
 
         // MFAチェック（セキュリティ上必須 - エラー時もMFA画面へ誘導）
         const supabase = createClient();
-        await new Promise((resolve) => setTimeout(resolve, 100));
         const { data: aalData, error: mfaError } =
           await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
 
         // MFAが必要な場合、またはMFAチェックに失敗した場合
         // → MFA検証画面へ（エラー時にバイパスさせない）
         if (mfaError) {
-          console.warn(
+          logger.warn(
             '[LoginForm] MFA check failed, redirecting to MFA verify for safety:',
             mfaError,
           );
@@ -99,7 +100,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
         router.push(`/${locale}/day`);
       }
     } catch (err) {
-      console.error('[LoginForm] Unexpected error:', err);
+      logger.error('[LoginForm] Unexpected error:', err);
       setServerError(t('auth.errors.unexpectedError') || 'An unexpected error occurred');
     }
   };
