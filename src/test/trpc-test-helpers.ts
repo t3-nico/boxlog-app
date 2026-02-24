@@ -316,7 +316,6 @@ export function createMockTag(
     parent_id: null,
     sort_order: 0,
     description: null,
-    icon: null,
     created_at: now,
     updated_at: now,
     ...overrides,
