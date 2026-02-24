@@ -94,7 +94,6 @@ npm run build
 
 ### 2. ドキュメント確認
 
-- [ ] CHANGELOG.md の [Unreleased] セクションに変更内容が記載されている
 - [ ] 新機能のドキュメントが更新されている
 - [ ] 破壊的変更がある場合、マイグレーションガイドが用意されている
 - [ ] README.md が最新の状態である
@@ -151,7 +150,6 @@ gh pr create \
 ## 📦 Release v${VERSION}
 
 ### リリース内容
-- CHANGELOG.md を参照
 - docs/releases/v${VERSION}.md を参照
 
 ### リリース前チェックリスト
@@ -159,7 +157,6 @@ gh pr create \
 - [ ] npm run typecheck - 成功
 - [ ] npm run test:run - 成功
 - [ ] npm run build - 成功
-- [ ] CHANGELOG.md 更新済み
 - [ ] リリースノート作成済み
 
 ### CI/CD
@@ -320,31 +317,6 @@ vim docs/releases/RELEASE_NOTES_v${VERSION}.md
 - [ ] 各PRにリンクが付いている
 - [ ] カテゴリ別に整理されている
 - [ ] Full Changelogリンクが正しい
-
-#### 2.4 CHANGELOG.md 更新
-
-```bash
-# エディタで編集
-vim CHANGELOG.md
-```
-
-**更新内容:**
-
-1. [Unreleased] セクションの内容を新バージョンに移動
-2. リリース日を追加
-3. バージョンリンクを追加
-
-**例:**
-
-```markdown
-## [0.1.0] - 2025-10-15
-
-### Added
-
-- 新機能の説明
-
-[0.1.0]: https://github.com/t3-nico/dayopt/releases/tag/v0.1.0
-```
 
 ### Phase 3: バージョンアップ
 
@@ -633,7 +605,6 @@ npm run vercel:check
 - [ ] npm run typecheck - 成功
 - [ ] npm run test:run - 成功
 - [ ] npm run build - 成功
-- [ ] CHANGELOG.md 更新済み
 - [ ] リリースノート作成済み
 - [ ] マイルストーンの全Issue/PRクローズ済み
 
@@ -720,7 +691,6 @@ npm run vercel:check
 ### プロジェクト内
 
 - [VERSIONING.md](VERSIONING.md) - バージョニングルール
-- [CHANGELOG.md](../../CHANGELOG.md) - 変更履歴
 - [.github/workflows/ci.yml](../../.github/workflows/ci.yml) - CI/CD設定
 
 ### 公式ドキュメント

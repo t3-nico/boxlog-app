@@ -68,16 +68,7 @@ npm version minor -m "feat: bump version to %s"
 npm version major -m "feat!: bump version to %s"
 ```
 
-### 2. CHANGELOG.md の更新
-
-```bash
-# CHANGELOG.md を手動で更新
-# 1. [Unreleased] セクションの内容を新バージョンに移動
-# 2. リリース日を記入
-# 3. バージョンリンクを追加
-```
-
-### 3. リリースノート作成
+### 2. リリースノート作成
 
 ```bash
 # docs/releases/vX.Y.Z.md を作成
@@ -85,7 +76,7 @@ cp docs/releases/template.md docs/releases/vX.Y.Z.md
 # 内容を編集
 ```
 
-### 4. コミット & プッシュ
+### 3. コミット & プッシュ
 
 ```bash
 # npm version コマンドが自動でコミット＆タグを作成
@@ -93,7 +84,7 @@ git push origin dev
 git push origin vX.Y.Z
 ```
 
-### 5. GitHub Release 作成
+### 4. GitHub Release 作成
 
 ```bash
 # GitHub CLI を使用
@@ -118,7 +109,7 @@ gh release create vX.Y.Z \
    ↓
 4. バージョンアップ
    ↓
-5. CHANGELOG & リリースノート更新
+5. リリースノート更新
    ↓
 6. タグ作成 & プッシュ
    ↓
@@ -173,7 +164,6 @@ npm version prerelease --preid=rc
 ### ✅ 推奨
 
 - リリース前に必ず `npm run lint` と `npm run typecheck` を実行
-- CHANGELOG.md は必ず更新
 - 破壊的変更は BREAKING CHANGE として明記
 - バージョンタグは必ず `v` プレフィックスを付ける（例: `v0.0.1`）
 
@@ -181,14 +171,12 @@ npm version prerelease --preid=rc
 
 - リリース後のバージョン番号の変更
 - タグの削除・付け替え
-- CHANGELOG の過去バージョン編集（誤字修正を除く）
 
 ## 参考リンク
 
 - [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html)
 - [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - [npm version](https://docs.npmjs.com/cli/v8/commands/npm-version)
-- [CHANGELOG.md](../../CHANGELOG.md)
 
 ---
 
