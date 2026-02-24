@@ -1,14 +1,12 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Docs/Guides/SentryAlerts" />
+
 # Sentryアラート設定ガイド
 
-Sentryダッシュボードでアラート・通知を設定する手順書
+Sentryダッシュボードでアラート・通知を設定する手順書。
 
-## 📋 目次
-
-- [前提条件](#前提条件)
-- [基本アラートルール設定](#基本アラートルール設定)
-- [Slack通知設定](#slack通知設定)
-- [推奨アラート5件の設定](#推奨アラート5件の設定)
-- [動作確認](#動作確認)
+**Sentry統合ガイド**: [Docs/Guides/Sentry](?path=/docs/docs-guides-sentry--docs)
 
 ---
 
@@ -16,10 +14,10 @@ Sentryダッシュボードでアラート・通知を設定する手順書
 
 ### 必要なもの
 
-- ✅ Sentryアカウント（Owner または Admin権限）
-- ✅ Dayoptプロジェクトが作成済み
-- ✅ `.env.local` に `NEXT_PUBLIC_SENTRY_DSN` 設定済み
-- ⚠️ Slack連携の場合: Slackワークスペースの管理者権限
+- Sentryアカウント（Owner または Admin権限）
+- Dayoptプロジェクトが作成済み
+- `.env.local` に `NEXT_PUBLIC_SENTRY_DSN` 設定済み
+- Slack連携の場合: Slackワークスペースの管理者権限
 
 ### 確認方法
 
@@ -101,40 +99,33 @@ THEN [アクション]
 
 ## 推奨アラート5件の設定
 
-### 1️⃣ 新規エラー検知
+### 1. 新規エラー検知
 
 **目的**: 初めて発生したエラーを即座に検知
 
 #### 設定手順
 
 1. **Create Alert Rule** → **Issues**
-2. **Alert name**: `🚨 新規エラー検知`
+2. **Alert name**: `新規エラー検知`
 3. **Environment**: `production`（本番のみ）
 4. **条件設定**:
    - **When**: `The issue is first seen`
    - **Filter**: `level:error OR level:fatal`
-
 5. **Action**:
-   - ✅ Send email to: `your-email@example.com`
-   - ✅ Send Slack notification to: `#alerts-critical`
-
+   - Send email to: `your-email@example.com`
+   - Send Slack notification to: `#alerts-critical`
 6. **Save Rule**
-
-#### 期待される動作
-
-- 本番環境で初めて発生したエラーを即座に通知
-- 開発環境のノイズは除外
 
 ---
 
-### 2️⃣ エラー率急増検知
+### 2. エラー率急増検知
 
 **目的**: 1時間で通常の10倍のエラーが発生した場合に通知
 
 #### 設定手順
 
 1. **Create Alert Rule** → **Metric Alerts**
-2. **Alert name**: `📈 エラー率急増`
+2. **Alert name**: `エラー率急増`
 3. **Environment**: `production`
 4. **条件設定**:
    - **Metric**: `count()`
@@ -142,49 +133,38 @@ THEN [アクション]
    - **When**: `the count of errors`
    - **Is**: `above 50` (1時間に50件以上)
    - **Time window**: `1 hour`
-
 5. **Comparison** (オプション):
    - **Compared to**: `1 hour ago`
    - **Increase by**: `10x` (10倍)
-
 6. **Action**:
-   - ✅ Send Slack notification to: `#alerts-critical`
-   - ✅ Send email to: `your-email@example.com`
-
+   - Send Slack notification to: `#alerts-critical`
+   - Send email to: `your-email@example.com`
 7. **Save Rule**
-
-#### 期待される動作
-
-- 急激なエラー増加（例: デプロイ失敗、障害発生）を即座に検知
-- 緊急対応が必要なケースを見逃さない
 
 ---
 
-### 3️⃣ パフォーマンス劣化検知（LCP/INP）
+### 3. パフォーマンス劣化検知（LCP/INP）
 
 **目的**: Core Web Vitals が Google 2025基準の「Poor」を超えた場合に通知
 
 #### 設定手順
 
 1. **Create Alert Rule** → **Metric Alerts**
-2. **Alert name**: `⚡ パフォーマンス劣化（LCP/INP）`
+2. **Alert name**: `パフォーマンス劣化（LCP/INP）`
 3. **Environment**: `production`
 4. **条件設定（LCP）**:
    - **Metric**: `p75(measurements.lcp)`
    - **When**: `the 75th percentile of LCP`
    - **Is**: `above 4000` (4秒 = Poor閾値)
    - **Time window**: `1 hour`
-
 5. **追加条件（INP）**:
    - **OR**
    - **Metric**: `p75(measurements.inp)`
    - **When**: `the 75th percentile of INP`
    - **Is**: `above 500` (500ms = Poor閾値)
    - **Time window**: `1 hour`
-
 6. **Action**:
-   - ✅ Send Slack notification to: `#alerts-performance`
-
+   - Send Slack notification to: `#alerts-performance`
 7. **Save Rule**
 
 #### Google 2025基準（参考）
@@ -197,14 +177,14 @@ THEN [アクション]
 
 ---
 
-### 4️⃣ クリティカルエラー検知（DB/セキュリティ）
+### 4. クリティカルエラー検知（DB/セキュリティ）
 
 **目的**: データベースエラー・セキュリティエラーの即座検知
 
 #### 設定手順
 
 1. **Create Alert Rule** → **Issues**
-2. **Alert name**: `🔴 クリティカルエラー（DB/セキュリティ）`
+2. **Alert name**: `クリティカルエラー（DB/セキュリティ）`
 3. **Environment**: `production`
 4. **条件設定**:
    - **When**: `An event is captured`
@@ -213,12 +193,10 @@ THEN [アクション]
      (level:fatal OR level:error)
      AND (tags.category:DB OR tags.category:SECURITY)
      ```
-
 5. **Action**:
-   - ✅ Send Slack notification to: `#alerts-critical`
-   - ✅ Send email to: `your-email@example.com`
-   - ⚠️ **Priority**: High
-
+   - Send Slack notification to: `#alerts-critical`
+   - Send email to: `your-email@example.com`
+   - **Priority**: High
 6. **Save Rule**
 
 #### カテゴリ（Dayopt実装）
@@ -232,31 +210,24 @@ THEN [アクション]
 
 ---
 
-### 5️⃣ ユーザー影響大（多数ユーザーに影響）
+### 5. ユーザー影響大（多数ユーザーに影響）
 
 **目的**: 1時間に10人以上のユーザーに影響があるエラーを検知
 
 #### 設定手順
 
 1. **Create Alert Rule** → **Metric Alerts**
-2. **Alert name**: `👥 ユーザー影響大`
+2. **Alert name**: `ユーザー影響大`
 3. **Environment**: `production`
 4. **条件設定**:
    - **Metric**: `count_unique(user)`
    - **When**: `the count of unique users affected`
    - **Is**: `above 10`
    - **Time window**: `1 hour`
-
 5. **Action**:
-   - ✅ Send Slack notification to: `#alerts-critical`
-   - ✅ **Mention**: `@channel` (全員に通知)
-
+   - Send Slack notification to: `#alerts-critical`
+   - **Mention**: `@channel` (全員に通知)
 6. **Save Rule**
-
-#### 期待される動作
-
-- 局所的なエラー（1人のユーザーのみ）は無視
-- 広範囲に影響があるエラーのみ通知（緊急度高）
 
 ---
 
@@ -282,14 +253,11 @@ curl http://localhost:3000/api/test/sentry?type=error
 
 Sentryダッシュボード → **Alerts** → **History** タブ
 
-- 発火したアラート一覧
-- 通知先・時刻の確認
-
 ---
 
-## アラート設定のベストプラクティス
+## ベストプラクティス
 
-### ✅ 推奨事項
+### 推奨事項
 
 1. **環境別フィルタ必須**
    - 本番: `environment:production`
@@ -308,12 +276,12 @@ Sentryダッシュボード → **Alerts** → **History** タブ
    - 重要度低いアラートは日次サマリーに変更
    - 閾値を適切に設定（最初は緩め → 徐々に厳しく）
 
-### ❌ 避けるべき設定
+### 避けるべき設定
 
-- ❌ 開発環境のエラーを本番アラートに含める
-- ❌ すべてのアラートを @channel で通知（重要度の区別）
-- ❌ 閾値を厳しくしすぎてノイズだらけ
-- ❌ アラート受信者が不在時の対応未定義
+- 開発環境のエラーを本番アラートに含める
+- すべてのアラートを @channel で通知（重要度の区別）
+- 閾値を厳しくしすぎてノイズだらけ
+- アラート受信者が不在時の対応未定義
 
 ---
 
@@ -342,16 +310,6 @@ Slackチャンネルで:
 2. Environmentフィルタが正しいか
 3. 実際にエラーが発生しているか（Issues タブで確認）
 
-**デバッグ方法**:
-
-```bash
-# テストイベント送信
-curl http://localhost:3000/api/test/sentry?type=error
-
-# Sentryダッシュボード → Issues で確認
-# → 条件にマッチするか手動チェック
-```
-
 ### 誤検知が多い
 
 **対策**:
@@ -363,51 +321,12 @@ curl http://localhost:3000/api/test/sentry?type=error
 
 ---
 
-## 次のステップ
-
-### 1. アラートルールの作成
-
-上記の推奨アラート5件を設定:
-
-- [ ] 新規エラー検知
-- [ ] エラー率急増
-- [ ] パフォーマンス劣化（LCP/INP）
-- [ ] クリティカルエラー（DB/セキュリティ）
-- [ ] ユーザー影響大
-
-### 2. Slack通知設定
-
-- [ ] Slackワークスペース連携
-- [ ] 通知チャンネル作成（#alerts-critical, #alerts-production等）
-- [ ] Sentryボットを各チャンネルに招待
-
-### 3. 本番環境で動作確認
-
-- [ ] Vercelにデプロイ
-- [ ] 本番URLでテストイベント送信
-- [ ] Slackで通知受信確認
-
-### 4. 運用開始
-
-- [ ] チームメンバーにアラートルール共有
-- [ ] オンコール体制の確立（誰が対応するか）
-- [ ] 月次レビュー会議設定
-
----
-
 ## 関連ドキュメント
 
-- **Sentry統合ガイド**: [`SENTRY.md`](./SENTRY.md)
-- **エラーパターン辞書**: [`../../src/config/error-patterns.ts`](../../src/config/error-patterns.ts)
+- **Sentry統合ガイド**: [Docs/Guides/Sentry](?path=/docs/docs-guides-sentry--docs)
+- **エラーパターン辞書**: `src/config/error-patterns.ts`
 - **Sentry公式ドキュメント**: https://docs.sentry.io/product/alerts/
 
 ---
 
-**📖 最終更新**: 2025-10-08 | **作成者**: Claude Code
-**対象Issue**: #489 - Sentryエラー監視の完全実装
-
----
-
-**種類**: 📗 ハウツーガイド
-**最終更新**: 2025-12-11
-**所有者**: Dayopt 開発チーム
+**最終更新**: 2026-02-25 | **バージョン**: v1.1

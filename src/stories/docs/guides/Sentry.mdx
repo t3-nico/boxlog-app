@@ -1,18 +1,12 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Docs/Guides/Sentry" />
+
 # Sentry 統合ガイド
 
 DayoptアプリケーションにおけるSentryの統合・設定・運用の完全ガイド。
 
-**📘 アラート設定の詳細手順**: [`SENTRY_ALERT_SETUP.md`](./SENTRY_ALERT_SETUP.md)
-
-## 📋 目次
-
-- [概要](#概要)
-- [アーキテクチャ（v2.0）](#アーキテクチャv20)
-- [セットアップ](#セットアップ)
-- [実装ガイド](#実装ガイド)
-- [運用](#運用)
-- [トラブルシューティング](#トラブルシューティング)
-- [FAQ](#faq)
+**アラート設定の詳細手順**: [Docs/Guides/SentryAlerts](?path=/docs/docs-guides-sentryalerts--docs)
 
 ---
 
@@ -133,9 +127,9 @@ Sentryダッシュボード表示
 1. **Settings** → **Auth Tokens**
 2. **Create New Token**
 3. **Scopes** を選択:
-   - `project:releases` ✅
-   - `project:write` ✅
-   - `org:read` ✅
+   - `project:releases`
+   - `project:write`
+   - `org:read`
 4. 生成されたトークンを記録
 
 #### 3. 環境変数設定
@@ -168,15 +162,6 @@ curl http://localhost:3000/api/test/sentry?type=error
 # https://sentry.io/organizations/[YOUR_ORG]/issues/
 ```
 
-**確認ポイント**:
-
-- [ ] エラーイベントが Sentry に送信される
-- [ ] スタックトレースが正確に表示される
-- [ ] ユーザーコンテキストが記録される
-- [ ] ブラウザ情報が記録される
-
----
-
 ### Vercel環境
 
 #### 1. Vercelダッシュボードで環境変数設定
@@ -196,16 +181,6 @@ curl http://localhost:3000/api/test/sentry?type=error
 | `SENTRY_PROJECT`          | `dayopt`                                | プロジェクト名    |
 | `SENTRY_AUTH_TOKEN`       | `your-auth-token`                       | 認証トークン      |
 | `NEXT_PUBLIC_APP_VERSION` | `1.0.0`                                 | アプリバージョン  |
-
-#### 3. デプロイと確認
-
-```bash
-# dev ブランチにプッシュ → 自動デプロイ
-git push origin dev
-
-# デプロイ完了後、本番環境でテスト
-curl https://your-app.vercel.app/api/health
-```
 
 ---
 
@@ -329,27 +304,7 @@ const { result, duration } = await withTrace(
 
 ### アラート設定
 
-#### 推奨アラートルール
-
-1. **Critical Errors**
-   - 条件: `severity:fatal` または `category:DB`
-   - 通知: 即座にSlack/Email
-
-2. **High Error Rate**
-   - 条件: 1時間に50件以上のエラー
-   - 通知: Slack/Email
-
-3. **Performance Degradation (2025基準)**
-   - 条件: LCP > 4.0秒（Poor）または INP > 500ms（Poor）
-   - 通知: 日次レポート
-
-4. **新規エラー検知**
-   - 条件: 初めて発生したエラー
-   - 通知: 即座にメール
-
-5. **ユーザー影響大**
-   - 条件: 影響ユーザー > 10人/時
-   - 通知: Slack（緊急チャンネル）
+推奨アラートルールの詳細は [SentryAlerts](?path=/docs/docs-guides-sentryalerts--docs) を参照。
 
 ### カテゴリ別タグ設定
 
@@ -416,9 +371,9 @@ const connectSrc = [
 **解決方法**:
 
 1. Auth Token のスコープを確認
-   - `project:releases` ✅
-   - `project:write` ✅
-   - `org:read` ✅
+   - `project:releases`
+   - `project:write`
+   - `org:read`
 2. トークンの有効期限を確認
 3. 新しいトークンを生成して再設定
 
@@ -434,21 +389,6 @@ const connectSrc = [
    - `SENTRY_PROJECT`
    - `SENTRY_AUTH_TOKEN`
 3. ビルドログでソースマップアップロードを確認
-
-### 開発環境でノイズが多い
-
-**症状**: 開発中に不要なエラーが大量に送信される
-
-**解決方法**:
-
-開発環境ではSentryは自動的に無効化されています（`sentry.server.config.ts` の `enabled` 設定）。
-
-手動で有効化したい場合:
-
-```bash
-# .env.local
-NEXT_PUBLIC_SENTRY_DEBUG=true
-```
 
 ---
 
@@ -488,23 +428,6 @@ Core Web Vitals目標（2025基準）：
 - GDPR対応: Cookie同意がある場合のみSentry有効化
 - 個人情報（メールアドレス、パスワード等）はマスキング
 
-### Q6. 旧APIからの移行は？
-
-`initializeSentry()` と `SentryIntegration` クラスは非推奨になりました。
-
-```typescript
-// ❌ 旧（非推奨）
-import { initializeSentry, sentryIntegration } from '@/lib/sentry';
-initializeSentry();
-sentryIntegration.reportError(error);
-
-// ✅ 新（推奨）
-import { reportToSentry } from '@/lib/sentry';
-reportToSentry(error);
-```
-
-Sentryの初期化は `instrumentation.ts` / `instrumentation-client.ts` で自動的に行われます。
-
 ---
 
 ## 参考リンク
@@ -519,6 +442,7 @@ Sentryの初期化は `instrumentation.ts` / `instrumentation-client.ts` で自�
 ### Dayopt関連
 
 - **エラーパターン**: Storybook → Docs/Architecture/Error Patterns
+- **アラート設定**: [SentryAlerts](?path=/docs/docs-guides-sentryalerts--docs)
 
 ### ヘルパースクリプト
 
@@ -527,12 +451,4 @@ Sentryの初期化は `instrumentation.ts` / `instrumentation-client.ts` で自�
 
 ---
 
-**📖 最終更新**: 2025-12-01
-**バージョン**: 2.0
-**メンテナー**: Dayopt Development Team
-
----
-
-**種類**: 📗 ハウツーガイド
-**最終更新**: 2025-12-11
-**所有者**: Dayopt 開発チーム
+**最終更新**: 2026-02-25 | **バージョン**: v2.1
