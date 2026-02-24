@@ -1,3 +1,5 @@
+import { logger } from '@/lib/logger';
+
 /**
  * Have I Been Pwned API統合 - 漏洩パスワードチェック
  *
@@ -67,7 +69,7 @@ export async function checkPasswordPwned(password: string): Promise<boolean> {
 
     if (!response.ok) {
       // APIエラー時は安全側に倒す（チェックをスキップ）
-      console.warn(`Pwned Passwords API error: ${response.status}`);
+      logger.warn(`Pwned Passwords API error: ${response.status}`);
       return false;
     }
 
@@ -90,7 +92,7 @@ export async function checkPasswordPwned(password: string): Promise<boolean> {
     return false;
   } catch (err) {
     // ネットワークエラー等の場合は安全側に倒す
-    console.error('Pwned password check error:', err);
+    logger.error('Pwned password check error:', err);
     return false;
   }
 }
@@ -131,7 +133,7 @@ export async function getPasswordPwnedCount(password: string): Promise<number> {
 
     return 0;
   } catch (err) {
-    console.error('Pwned password count check error:', err);
+    logger.error('Pwned password count check error:', err);
     return 0;
   }
 }

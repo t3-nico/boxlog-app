@@ -1,11 +1,11 @@
 // 認証設定の定数
 export const AUTH_CONFIG = {
-  // パスワード設定
+  // パスワード設定（NIST SP 800-63B 準拠: 構成ルールは課さない）
   PASSWORD: {
     MIN_LENGTH: 8,
-    REQUIRE_UPPERCASE: true,
-    REQUIRE_LOWERCASE: true,
-    REQUIRE_NUMBERS: true,
+    REQUIRE_UPPERCASE: false,
+    REQUIRE_LOWERCASE: false,
+    REQUIRE_NUMBERS: false,
     REQUIRE_SPECIAL_CHARS: false,
   },
 

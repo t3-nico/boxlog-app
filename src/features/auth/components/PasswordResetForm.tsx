@@ -3,7 +3,8 @@
 import { useState } from 'react';
 
 import NextImage from 'next/image';
-import Link from 'next/link';
+
+import { Link } from '@/i18n/navigation';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -19,6 +20,8 @@ import { Input } from '@/components/ui/input';
 import { useAuthStore } from '@/features/auth/stores/useAuthStore';
 import { cn } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
+
+import { getAuthErrorKey } from '../lib/sanitize-auth-error';
 
 export function PasswordResetForm({ className, ...props }: React.ComponentProps<'div'>) {
   const t = useTranslations();
@@ -37,12 +40,13 @@ export function PasswordResetForm({ className, ...props }: React.ComponentProps<
       const { error } = await resetPassword(email);
 
       if (error) {
-        setError(error.message);
+        const errorKey = getAuthErrorKey(error.message, 'resetPassword');
+        setError(t(errorKey));
       } else {
         setSuccess(true);
       }
-    } catch (err) {
-      setError('An error occurred while resetting the password');
+    } catch {
+      setError(t('auth.errors.unexpectedError'));
     } finally {
       setLoading(false);
     }

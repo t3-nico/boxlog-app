@@ -12,7 +12,7 @@
  * @see OWASP - Account Recovery
  */
 
-import { createHash, randomBytes } from 'crypto';
+import { createHmac, randomBytes } from 'crypto';
 
 /**
  * リカバリーコードの設定
@@ -25,6 +25,14 @@ const RECOVERY_CODE_CONFIG = {
   /** コード形式：4文字-4文字 */
   FORMAT_LENGTH: 4,
 } as const;
+
+/**
+ * HMAC pepper を取得
+ * 環境変数から取得し、未設定の場合はフォールバック値を使用
+ */
+function getHmacPepper(): string {
+  return process.env.RECOVERY_CODE_PEPPER ?? 'dayopt-recovery-code-default-pepper';
+}
 
 /**
  * リカバリーコードを生成
@@ -61,7 +69,7 @@ export function generateRecoveryCodes(): string[] {
 export function hashRecoveryCode(code: string): string {
   // ハイフンと空白を除去して正規化
   const normalized = code.replace(/[-\s]/g, '').toUpperCase();
-  return createHash('sha256').update(normalized).digest('hex');
+  return createHmac('sha256', getHmacPepper()).update(normalized).digest('hex');
 }
 
 /**
