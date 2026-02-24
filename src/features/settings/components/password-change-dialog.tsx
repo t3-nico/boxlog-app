@@ -18,6 +18,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuthStore } from '@/features/auth/stores/useAuthStore';
 import { checkPasswordPwned } from '@/lib/auth/pwned-password';
+import { logger } from '@/lib/logger';
 import { createClient } from '@/lib/supabase/client';
 
 interface PasswordChangeDialogProps {
@@ -113,7 +114,7 @@ export function PasswordChangeDialog({ open, onOpenChange }: PasswordChangeDialo
 
         setSuccess(true);
       } catch (err) {
-        console.error('Password update error:', err);
+        logger.error('Password update error:', err);
         const errorMessage =
           err instanceof Error ? err.message : t('settings.account.passwordUpdateFailed');
         setError(errorMessage);
@@ -168,9 +169,9 @@ export function PasswordChangeDialog({ open, onOpenChange }: PasswordChangeDialo
                     onClick={() => setShowCurrentPassword(!showCurrentPassword)}
                   >
                     {showCurrentPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
                       <Eye className="h-4 w-4" />
+                    ) : (
+                      <EyeOff className="h-4 w-4" />
                     )}
                   </Button>
                 </div>
@@ -198,7 +199,7 @@ export function PasswordChangeDialog({ open, onOpenChange }: PasswordChangeDialo
                     className="absolute top-1/2 right-1 -translate-y-1/2"
                     onClick={() => setShowNewPassword(!showNewPassword)}
                   >
-                    {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    {showNewPassword ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
                   </Button>
                 </div>
                 <p className="text-muted-foreground text-xs">
@@ -229,9 +230,9 @@ export function PasswordChangeDialog({ open, onOpenChange }: PasswordChangeDialo
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   >
                     {showConfirmPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
                       <Eye className="h-4 w-4" />
+                    ) : (
+                      <EyeOff className="h-4 w-4" />
                     )}
                   </Button>
                 </div>
