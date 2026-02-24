@@ -260,9 +260,9 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                           }
                         >
                           {showConfirmPassword ? (
-                            <EyeOff className="h-4 w-4" />
-                          ) : (
                             <Eye className="h-4 w-4" />
+                          ) : (
+                            <EyeOff className="h-4 w-4" />
                           )}
                         </Button>
                       </HoverTooltip>
