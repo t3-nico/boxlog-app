@@ -19,7 +19,7 @@ interface ErrorProps {
  * SSR prefetch失敗時やランタイムエラー時に表示される。
  * FeatureErrorBoundary（クライアント側）より上位で捕捉。
  */
-export default function CalendarError({ error, reset }: ErrorProps) {
+export function CalendarError({ error, reset }: ErrorProps) {
   const t = useTranslations('calendar.error');
 
   useEffect(() => {

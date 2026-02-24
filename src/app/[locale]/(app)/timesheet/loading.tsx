@@ -1,1 +1,1 @@
-export { default } from '../_helpers/CalendarLoading';
+export { CalendarLoading as default } from '../_helpers/CalendarLoading';
