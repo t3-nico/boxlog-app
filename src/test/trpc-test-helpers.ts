@@ -294,7 +294,6 @@ export function createMockPlan(
     reminder_at: null,
     reminder_sent: false,
     completed_at: null,
-    due_date: null,
     created_at: now,
     updated_at: now,
     ...overrides,

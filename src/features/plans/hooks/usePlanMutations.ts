@@ -70,7 +70,6 @@ export function usePlanMutations() {
         recurrence_type: input.recurrence_type ?? null,
         recurrence_rule: input.recurrence_rule ?? null,
         recurrence_end_date: null,
-        due_date: null, // DB column still exists but feature is removed
         completed_at: null,
         reminder_at: null,
         reminder_sent: false,

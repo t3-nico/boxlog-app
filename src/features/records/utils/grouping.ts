@@ -8,7 +8,7 @@ import { ja } from 'date-fns/locale';
 /**
  * Record グルーピングフィールド
  *
- * Plan の GroupByField ('status' | 'due_date' | 'tags') と異なり、
+ * Plan の GroupByField ('status' | 'tags') と異なり、
  * Record には status がないため worked_at と tags のみ
  */
 export type RecordGroupByField = 'worked_at' | 'tags' | 'fulfillment_score' | null;

@@ -317,7 +317,6 @@ function PanelDragPreviewStory() {
         recurrence_rule: null,
         recurrence_type: null,
         recurrence_end_date: null,
-        due_date: null,
         tagIds: [],
       },
     });
