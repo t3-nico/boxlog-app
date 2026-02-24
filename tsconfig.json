@@ -40,5 +40,11 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"
   ],
-  "exclude": ["node_modules", "compass/**", "supabase/functions/**", "src/test/integration/**"]
+  "exclude": [
+    "node_modules",
+    "compass/**",
+    "supabase/functions/**",
+    "src/test/integration/**",
+    "scripts/**"
+  ]
 }
