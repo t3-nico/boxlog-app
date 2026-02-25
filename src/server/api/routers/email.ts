@@ -21,6 +21,7 @@ import { OverdueEmail } from '@/emails/OverdueEmail';
 import { ReminderEmail } from '@/emails/ReminderEmail';
 import { WelcomeEmail } from '@/emails/WelcomeEmail';
 import { logger } from '@/lib/logger';
+import type { Context } from '@/server/api/trpc';
 import { createTRPCRouter, protectedProcedure, publicProcedure } from '../trpc';
 
 // Resendクライアント初期化
@@ -29,6 +30,23 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 // 送信元メールアドレス
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev';
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://dayopt.app';
+
+/**
+ * 送信先メールアドレスがログインユーザー自身のものか検証する
+ * 他ユーザーへのスパム送信を防止
+ */
+async function verifyEmailOwnership(ctx: Context, inputEmail: string): Promise<void> {
+  const {
+    data: { user },
+  } = await ctx.supabase.auth.getUser();
+
+  if (!user?.email || user.email !== inputEmail) {
+    throw new TRPCError({
+      code: 'FORBIDDEN',
+      message: 'Can only send emails to your own address',
+    });
+  }
+}
 
 /**
  * Resend APIでメールを送信する共通ヘルパー
@@ -78,6 +96,7 @@ export const emailRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      await verifyEmailOwnership(ctx, input.email);
       logger.info('Sending welcome email', { email: input.email, userId: ctx.userId });
 
       return sendEmail({
@@ -104,6 +123,7 @@ export const emailRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      await verifyEmailOwnership(ctx, input.email);
       logger.info('Sending reminder email', { planTitle: input.planTitle, userId: ctx.userId });
 
       return sendEmail({
@@ -132,6 +152,7 @@ export const emailRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      await verifyEmailOwnership(ctx, input.email);
       logger.info('Sending overdue email', { planTitle: input.planTitle, userId: ctx.userId });
 
       return sendEmail({
@@ -158,6 +179,7 @@ export const emailRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      await verifyEmailOwnership(ctx, input.email);
       logger.info('Sending account deletion email', { userId: ctx.userId });
 
       return sendEmail({
