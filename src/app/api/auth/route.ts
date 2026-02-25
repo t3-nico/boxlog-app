@@ -51,6 +51,11 @@ export async function GET(request: NextRequest) {
 
     switch (action) {
       case 'session':
+        // getUser()でJWT署名を検証してからセッション取得
+        const { data: sessionUserData, error: sessionUserError } = await supabase.auth.getUser();
+        if (sessionUserError || !sessionUserData.user) {
+          return NextResponse.json({ session: null });
+        }
         const { data, error } = await supabase.auth.getSession();
         if (error) throw error;
         return NextResponse.json({ session: data.session });

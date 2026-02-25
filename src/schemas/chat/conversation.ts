@@ -18,20 +18,20 @@ const messagePartSchema = z
 export const chatMessageSchema = z.object({
   id: z.string(),
   role: z.enum(['user', 'assistant', 'system']),
-  parts: z.array(messagePartSchema),
+  parts: z.array(messagePartSchema).max(100),
 });
 
 // 会話作成
 export const createConversationSchema = z.object({
   title: z.string().max(200).optional(),
-  messages: z.array(chatMessageSchema).default([]),
+  messages: z.array(chatMessageSchema).max(200).default([]),
 });
 
 // 会話メッセージ更新（保存）
 export const updateConversationSchema = z.object({
   conversationId: z.string().uuid(),
   title: z.string().max(200).optional(),
-  messages: z.array(chatMessageSchema),
+  messages: z.array(chatMessageSchema).max(200),
 });
 
 // 会話ID

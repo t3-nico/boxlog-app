@@ -22,7 +22,7 @@ import { ReminderEmail } from '@/emails/ReminderEmail';
 import { WelcomeEmail } from '@/emails/WelcomeEmail';
 import { logger } from '@/lib/logger';
 import type { Context } from '@/server/api/trpc';
-import { createTRPCRouter, protectedProcedure, publicProcedure } from '../trpc';
+import { createTRPCRouter, protectedProcedure } from '../trpc';
 
 // Resendクライアント初期化
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -201,7 +201,7 @@ export const emailRouter = createTRPCRouter({
   /**
    * テストメール送信（開発用）
    */
-  sendTest: publicProcedure
+  sendTest: protectedProcedure
     .input(
       z.object({
         to: z.string().email('Invalid email address'),
