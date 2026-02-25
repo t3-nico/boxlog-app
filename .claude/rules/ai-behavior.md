@@ -58,6 +58,7 @@ Taskツールでsubagentを起動する際のモデル選択基準:
 | **Opus**   | $15/$75     | 5+ファイル変更、アーキテクチャ設計、セキュリティレビュー（red/blue team等） |
 
 **原則**: Sonnetをデフォルトに、必要時のみOpusにアップグレード。並列Haiku > 単発Opusを検討。
+**Agent catalog with triggers**: See `.claude/rules/agents.md`
 
 ## ルール競合時の優先順位
 
@@ -89,44 +90,3 @@ Taskツールでsubagentを起動する際のモデル選択基準:
 ## ドキュメント提案
 
 機能実装の完了後、`.claude/skills/docs-writing/SUGGEST.md` を参照してドキュメント更新を提案する。
-
-## 学習パターン
-
-`.claude/sessions/learned/` に蓄積されたプロジェクト固有の解決パターンを活用する。
-
-- エラーに遭遇 → まず `ls .claude/sessions/learned/` で関連パターンを確認
-- 新しいパターンを発見 → ユーザーに確認後、以下の形式で保存
-- 自動チェック: `zustand-*.md`, `trpc-*.md`, `calendar-*.md`, `typescript-*.md`
-
-### 保存基準
-
-- **保存する**: Dayopt固有の知見、公式ドキュメントにないワークアラウンド、2回以上ハマった問題
-- **保存しない**: 一般的すぎるパターン、一時的な対処
-
-### ファイル形式
-
-ファイル名: `{category}-{topic}.md`（例: `zustand-optimistic-update-undefined-cache.md`）
-
-```markdown
-# [パターン名]
-
-## Problem
-
-[どんな問題が発生したか]
-
-## Solution
-
-[どう解決したか - コード例含む]
-
-## Why It Works
-
-[なぜこのアプローチが有効か]
-
-## When to Use
-
-[どんな状況で使うべきか]
-
-## Related Files
-
-[関連するファイルパス]
-```
