@@ -1,5 +1,5 @@
 ---
-name: dayopt-frontend-design
+name: frontend-design
 description: Dayopt専用のフロントエンドデザインスキル。「装飾のない基本体験」を実現するためのUI設計ガイドライン。Storybookを補完し、フォント・アニメーション・デザイン判断基準を提供。
 license: MIT
 metadata:

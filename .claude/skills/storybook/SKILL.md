@@ -1,3 +1,8 @@
+---
+name: storybook
+description: Storybook Story作成スキル。UIコンポーネントのStory追加・更新時に自動発動。公式ベストプラクティスに基づいたStory作成を支援。
+---
+
 # Storybook Story作成スキル
 
 Storybookの公式ベストプラクティスに基づいたStory作成ガイド。
