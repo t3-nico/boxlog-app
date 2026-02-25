@@ -577,12 +577,15 @@ export class TagService {
   /**
    * タグ使用統計取得
    *
+   * DB側集計関数 get_tag_stats を使用（5クエリ → 1 RPC に最適化）
+   *
    * @param options - userId
    * @returns タグ統計の配列
    */
   async getStats(options: { userId: string }): Promise<TagStatsRow[]> {
     const { userId } = options;
 
+    // タグ基本情報を取得
     const { data: tags, error: tagsError } = await this.supabase
       .from('tags')
       .select('id, name, color')
@@ -597,73 +600,39 @@ export class TagService {
       return [];
     }
 
-    const tagIds = tags.map((t) => t.id);
+    // DB側集計関数で plan_count, record_count, last_used を一括取得
+    const { data: statsRows, error: statsError } = await this.supabase.rpc('get_tag_stats', {
+      p_user_id: userId,
+    });
 
-    // plan_tags と record_tags の両方からカウントを取得
-    const [planTagsResult, recordTagsResult] = await Promise.all([
-      this.supabase.from('plan_tags').select('tag_id').in('tag_id', tagIds),
-      this.supabase.from('record_tags').select('tag_id').in('tag_id', tagIds),
-    ]);
-
-    if (planTagsResult.error) {
-      throw new TagServiceError(
-        'FETCH_FAILED',
-        `Failed to fetch plan tag counts: ${planTagsResult.error.message}`,
-      );
-    }
-    if (recordTagsResult.error) {
-      throw new TagServiceError(
-        'FETCH_FAILED',
-        `Failed to fetch record tag counts: ${recordTagsResult.error.message}`,
-      );
+    if (statsError) {
+      throw new TagServiceError('FETCH_FAILED', `Failed to fetch tag stats: ${statsError.message}`);
     }
 
-    // plan_tags のカウント
-    const planCountMap = new Map<string, number>();
-    planTagsResult.data?.forEach((pt) => {
-      planCountMap.set(pt.tag_id, (planCountMap.get(pt.tag_id) || 0) + 1);
-    });
-
-    // record_tags のカウント
-    const recordCountMap = new Map<string, number>();
-    recordTagsResult.data?.forEach((rt) => {
-      recordCountMap.set(rt.tag_id, (recordCountMap.get(rt.tag_id) || 0) + 1);
-    });
-
-    // 最終使用日を両方から取得
-    const [planLastUsed, recordLastUsed] = await Promise.all([
-      this.supabase
-        .from('plan_tags')
-        .select('tag_id, created_at')
-        .in('tag_id', tagIds)
-        .order('created_at', { ascending: false }),
-      this.supabase
-        .from('record_tags')
-        .select('tag_id, created_at')
-        .in('tag_id', tagIds)
-        .order('created_at', { ascending: false }),
-    ]);
-
-    const lastUsedMap = new Map<string, string | null>();
-    // plan_tags の最終使用日
-    planLastUsed.data?.forEach((pt) => {
-      if (!lastUsedMap.has(pt.tag_id) && pt.created_at) {
-        lastUsedMap.set(pt.tag_id, pt.created_at);
+    // RPC結果をMapに変換
+    const statsMap = new Map<
+      string,
+      { plan_count: number; record_count: number; last_used: string | null }
+    >();
+    for (const row of (statsRows ?? []) as Array<{
+      tag_id: string | null;
+      plan_count: number;
+      record_count: number;
+      last_used: string | null;
+    }>) {
+      if (row.tag_id) {
+        statsMap.set(row.tag_id, {
+          plan_count: row.plan_count,
+          record_count: row.record_count,
+          last_used: row.last_used,
+        });
       }
-    });
-    // record_tags の最終使用日（より新しい場合は上書き）
-    recordLastUsed.data?.forEach((rt) => {
-      if (rt.created_at) {
-        const existing = lastUsedMap.get(rt.tag_id);
-        if (!existing || rt.created_at > existing) {
-          lastUsedMap.set(rt.tag_id, rt.created_at);
-        }
-      }
-    });
+    }
 
     const statsData: TagStatsRow[] = tags.map((tag) => {
-      const planCount = planCountMap.get(tag.id) || 0;
-      const recordCount = recordCountMap.get(tag.id) || 0;
+      const stats = statsMap.get(tag.id);
+      const planCount = stats?.plan_count ?? 0;
+      const recordCount = stats?.record_count ?? 0;
       return {
         id: tag.id,
         name: tag.name,
@@ -671,7 +640,7 @@ export class TagService {
         plan_count: planCount,
         record_count: recordCount,
         total_count: planCount + recordCount,
-        last_used_at: lastUsedMap.get(tag.id) || null,
+        last_used_at: stats?.last_used ?? null,
       };
     });
 
