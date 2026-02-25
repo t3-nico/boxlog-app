@@ -97,7 +97,6 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
     try {
       const { error, data: signUpData } = await signUp(data.email, data.password);
       if (error) {
-        // OWASP準拠: Supabase の生エラーを漏洩しない
         const errorKey = getAuthErrorKey(error.message, 'signup');
         setServerError(t(errorKey));
       } else if (signUpData.session) {
@@ -108,7 +107,8 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
         setSubmittedEmail(data.email);
         setEmailSent(true);
       }
-    } catch {
+    } catch (err) {
+      logger.error('[SignupForm] Signup error:', err);
       setServerError(t('auth.errors.unexpectedError'));
     }
   };

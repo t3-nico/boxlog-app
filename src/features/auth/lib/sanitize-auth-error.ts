@@ -35,15 +35,20 @@ export function getAuthErrorKey(errorMessage: string, context: AuthContext): str
     return 'auth.errors.invalidCredentials';
   }
 
-  // サインアップ: ユーザーの存在を漏洩しない
+  // サインアップ
   if (context === 'signup') {
     if (
       normalizedMessage.includes('already registered') ||
       normalizedMessage.includes('already exists') ||
       normalizedMessage.includes('duplicate')
     ) {
-      // 「アカウントが既に存在します」とは言わない
-      return 'auth.errors.unexpectedError';
+      return 'auth.errors.emailAlreadyRegistered';
+    }
+    if (
+      normalizedMessage.includes('rate limit') ||
+      normalizedMessage.includes('too many requests')
+    ) {
+      return 'auth.errors.tooManyRequests';
     }
     if (normalizedMessage.includes('password') && normalizedMessage.includes('weak')) {
       return 'auth.errors.weakPassword';
