@@ -13,34 +13,48 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { Resend } from 'resend';
 
 import { logger } from '@/lib/logger';
 
-interface ResendWebhookEvent {
-  type:
-    | 'email.sent'
-    | 'email.delivered'
-    | 'email.delivery_delayed'
-    | 'email.bounced'
-    | 'email.complained'
-    | 'email.opened'
-    | 'email.clicked';
-  created_at: string;
-  data: {
-    email_id: string;
-    from: string;
-    to: string[];
-    subject: string;
-    created_at: string;
-    bounce?: {
-      message: string;
-    };
-  };
-}
+const resend = new Resend(process.env.RESEND_API_KEY);
+const WEBHOOK_SECRET = process.env.RESEND_WEBHOOK_SECRET;
 
 export async function POST(request: NextRequest) {
   try {
-    const event: ResendWebhookEvent = await request.json();
+    // Webhook署名検証
+    if (!WEBHOOK_SECRET) {
+      logger.error('RESEND_WEBHOOK_SECRET is not configured');
+      return NextResponse.json({ error: 'Webhook secret not configured' }, { status: 500 });
+    }
+
+    const payload = await request.text();
+
+    // svixヘッダーを抽出（Resendが内部的にsvixを使用）
+    const svixId = request.headers.get('svix-id');
+    const svixTimestamp = request.headers.get('svix-timestamp');
+    const svixSignature = request.headers.get('svix-signature');
+
+    if (!svixId || !svixTimestamp || !svixSignature) {
+      logger.warn('Resend webhook missing svix headers');
+      return NextResponse.json({ error: 'Missing signature headers' }, { status: 401 });
+    }
+
+    let event;
+    try {
+      event = resend.webhooks.verify({
+        payload,
+        headers: {
+          id: svixId,
+          timestamp: svixTimestamp,
+          signature: svixSignature,
+        },
+        webhookSecret: WEBHOOK_SECRET,
+      });
+    } catch {
+      logger.warn('Resend webhook signature verification failed');
+      return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
+    }
 
     switch (event.type) {
       case 'email.bounced':
@@ -48,7 +62,6 @@ export async function POST(request: NextRequest) {
           emailId: event.data.email_id,
           to: event.data.to,
           subject: event.data.subject,
-          bounce: event.data.bounce?.message,
         });
         // TODO: バウンスしたアドレスをDBに記録し、再送信を防止
         break;
@@ -77,10 +90,9 @@ export async function POST(request: NextRequest) {
         break;
 
       default:
-        // sent, opened, clicked は現時点ではログのみ
+        // sent, opened, clicked, contact, domain イベントはログのみ
         logger.info('Resend webhook event', {
           type: event.type,
-          emailId: event.data.email_id,
         });
     }
 
