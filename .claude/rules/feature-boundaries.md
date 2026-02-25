@@ -26,8 +26,30 @@ feature間の橋渡しはここで行う:
 - `useCalendarComposition.ts` - plans + records + tags + settings → CalendarController を接続
 - CalendarController は**純粋なView**（propsのみで駆動、`@/features/*` importゼロ）
 
+## 境界維持（ラチェット方式）
+
+違反数は `.feature-boundary-budget.json` に記録されており、**増やすことはできない**。
+
+```bash
+npm run lint:boundaries        # 違反数が予算を超えていないかチェック
+npm run lint:boundaries:update # 違反を減らした後に予算を更新
+```
+
+### 違反を減らす方法
+
+1. **自己参照の修正**（138件）: `@/features/tags/types` → `../types` に変換（機械的）
+2. **cross-feature hookの移動**: `features/` 内のhookを `_composition/` に移動
+3. 減らしたら `npm run lint:boundaries:update` で新しい上限をロック
+
+### コミット前チェック
+
+```bash
+npm run typecheck && npm run lint && npm run lint:boundaries
+```
+
 ## Claude Code向け要点
 
 - **feature内部を編集する時、他featureを見る必要がない**
 - feature内の変更は `index.ts` のexportが変わらない限り外部に影響しない
 - 新しい `@/features/*` importを書いても `npm run lint` で検出される
+- `npm run lint:boundaries` で違反数の増加を自動ブロック

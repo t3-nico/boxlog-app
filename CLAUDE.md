@@ -43,8 +43,9 @@
 ```bash
 npm run dev          # 開発サーバー（ユーザー責務：AIは実行しない）
 npm run storybook    # Storybook（ユーザー責務：AIは実行しない）
-npm run typecheck    # 型チェック（AI必須：コード変更後）
-npm run lint         # コード品質（AI必須：コミット前）
+npm run typecheck        # 型チェック（AI必須：コード変更後）
+npm run lint             # コード品質（AI必須：コミット前）
+npm run lint:boundaries  # feature境界チェック（AI必須：コミット前）
 
 # デプロイ・インフラ操作
 # 手順: Staging → 開発者が確認 → 指示があればProductionへ
@@ -63,13 +64,14 @@ supabase secrets set       # Secrets設定
 - `style`属性、直接カラー(`text-blue-500`) → セマンティックトークン
 - `export default`（App Router特殊ファイル例外） → `export function`
 - `React.FC` → `export function ComponentName() {}`
+- `@/features/X` を他featureから直接import → Composition Layer経由（詳細: `.claude/rules/feature-boundaries.md`）
 
 ## ワークフロー
 
 1. **Explore**: 既存コードを検索、影響範囲を把握
 2. **Plan**: 実装戦略を策定（`think hard`〜`ultrathink`で検討）
 3. **Code**: CLAUDE.md + rules/ 準拠で実装
-4. **Commit**: `npm run typecheck` → `npm run lint` → コミット
+4. **Commit**: `npm run typecheck` → `npm run lint` → `npm run lint:boundaries` → コミット
 
 ### コミットメッセージ
 
@@ -86,4 +88,4 @@ supabase secrets set       # Secrets設定
 
 ---
 
-**📖 最終更新**: 2026-02-24 | **バージョン**: v15.0
+**📖 最終更新**: 2026-02-26 | **バージョン**: v16.0
