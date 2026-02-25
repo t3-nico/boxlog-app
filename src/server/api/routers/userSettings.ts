@@ -43,7 +43,17 @@ const userSettingsSchema = z.object({
   // クロノタイプ設定
   chronotypeEnabled: z.boolean().optional(),
   chronotypeType: z.enum(['bear', 'lion', 'wolf', 'dolphin', 'custom']).optional(),
-  chronotypeCustomZones: z.any().optional(),
+  chronotypeCustomZones: z
+    .array(
+      z.object({
+        startHour: z.number().int().min(0).max(23),
+        endHour: z.number().int().min(0).max(23),
+        level: z.enum(['peak', 'good', 'moderate', 'low', 'sleep']),
+        label: z.string().max(100),
+      }),
+    )
+    .max(24)
+    .optional(),
   chronotypeDisplayMode: z.enum(['border', 'background', 'both']).optional(),
   chronotypeOpacity: z.number().min(0).max(100).optional(),
 

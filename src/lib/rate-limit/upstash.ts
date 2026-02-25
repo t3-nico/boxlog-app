@@ -11,6 +11,7 @@
 import { Ratelimit } from '@upstash/ratelimit';
 import { Redis } from '@upstash/redis';
 
+import { logger } from '@/lib/logger';
 import { extractClientIp } from '@/lib/security/ip-validation';
 
 /**
@@ -128,7 +129,7 @@ export async function withUpstashRateLimit(
     return { success, limit, remaining, reset, pending };
   } catch (error) {
     // Redis接続エラー等の場合はログを出力し、レート制限をスキップ（可用性優先）
-    console.error('[RateLimit] Upstash rate limit check failed:', {
+    logger.error('[RateLimit] Upstash rate limit check failed:', {
       identifier,
       error: error instanceof Error ? error.message : String(error),
     });

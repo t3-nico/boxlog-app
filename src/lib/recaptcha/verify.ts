@@ -3,6 +3,8 @@
  * @description サーバーサイドでreCAPTCHAトークンを検証
  */
 
+import { logger } from '@/lib/logger';
+
 import { RECAPTCHA_CONFIG, isDevelopment } from './config';
 
 /**
@@ -26,7 +28,7 @@ export async function verifyRecaptchaV3(
 ): Promise<RecaptchaVerifyResponse> {
   // 開発環境ではスキップ（オプション）
   if (isDevelopment() && !RECAPTCHA_CONFIG.SECRET_KEY_V3) {
-    console.warn('[reCAPTCHA] v3 secret key not configured, skipping verification in development');
+    logger.warn('[reCAPTCHA] v3 secret key not configured, skipping verification in development');
     return {
       success: true,
       score: 1.0,
@@ -63,7 +65,7 @@ export async function verifyRecaptchaV3(
 
     return data;
   } catch (error) {
-    console.error('[reCAPTCHA] Verification error:', error);
+    logger.error('[reCAPTCHA] Verification error:', error);
     return {
       success: false,
       'error-codes': ['verification-failed'],
@@ -77,7 +79,7 @@ export async function verifyRecaptchaV3(
 export async function verifyRecaptchaV2(token: string): Promise<RecaptchaVerifyResponse> {
   // 開発環境ではスキップ（オプション）
   if (isDevelopment() && !RECAPTCHA_CONFIG.SECRET_KEY_V2) {
-    console.warn('[reCAPTCHA] v2 secret key not configured, skipping verification in development');
+    logger.warn('[reCAPTCHA] v2 secret key not configured, skipping verification in development');
     return {
       success: true,
     };
@@ -102,7 +104,7 @@ export async function verifyRecaptchaV2(token: string): Promise<RecaptchaVerifyR
     const data: RecaptchaVerifyResponse = await response.json();
     return data;
   } catch (error) {
-    console.error('[reCAPTCHA] Verification error:', error);
+    logger.error('[reCAPTCHA] Verification error:', error);
     return {
       success: false,
       'error-codes': ['verification-failed'],
