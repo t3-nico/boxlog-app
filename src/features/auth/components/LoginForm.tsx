@@ -269,8 +269,15 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
         </CardContent>
       </Card>
       <FieldDescription className="px-6 text-center">
-        {t('auth.loginForm.termsAndPrivacy')} <a href="#">{t('auth.loginForm.termsOfService')}</a>{' '}
-        {t('auth.loginForm.and')} <a href="#">{t('auth.loginForm.privacyPolicy')}</a>.
+        {t('auth.loginForm.termsAndPrivacy')}{' '}
+        <a href="https://dayopt.app/legal/terms" target="_blank" rel="noopener noreferrer">
+          {t('auth.loginForm.termsOfService')}
+        </a>{' '}
+        {t('auth.loginForm.and')}{' '}
+        <a href="https://dayopt.app/legal/privacy" target="_blank" rel="noopener noreferrer">
+          {t('auth.loginForm.privacyPolicy')}
+        </a>
+        {t('auth.loginForm.agree')}
       </FieldDescription>
     </div>
   );
