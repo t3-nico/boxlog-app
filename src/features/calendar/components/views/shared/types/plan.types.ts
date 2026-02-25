@@ -19,6 +19,8 @@ export interface PlanCardProps {
   position?: PlanCardPosition | undefined;
   onClick?: ((plan: CalendarPlan) => void) | undefined;
   onContextMenu?: ((plan: CalendarPlan, e: React.MouseEvent) => void) | undefined;
+  /** ステータス変更コールバック（親でusePlanMutationsを1度だけ呼び、各PlanCardに配布） */
+  onStatusChange?: ((planId: string, newStatus: 'open' | 'closed') => void) | undefined;
   onDragStart?:
     | ((
         plan: CalendarPlan,

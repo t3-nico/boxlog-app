@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback } from 'react';
 
 import { usePlanInstanceMutations } from '@/features/plans/hooks/usePlanInstances';
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
@@ -17,13 +17,6 @@ export const usePlanOperations = () => {
   const utils = api.useUtils();
   const { updatePlan, deletePlan } = usePlanMutations();
   const { createInstance } = usePlanInstanceMutations();
-
-  // プランリストをキャッシュ経由で参照
-  const plansCache = utils.plans.list.getData();
-  const plansCacheRef = useRef(plansCache);
-  useEffect(() => {
-    plansCacheRef.current = plansCache;
-  });
 
   // プラン削除ハンドラー
   const handlePlanDelete = useCallback(
@@ -147,11 +140,6 @@ export const usePlanOperations = () => {
     },
     [updatePlan, createInstance, utils],
   );
-
-  // 30日経過したプランを自動削除
-  useEffect(() => {
-    // noop - Plans統合後に実装予定
-  }, []);
 
   return {
     handlePlanDelete,

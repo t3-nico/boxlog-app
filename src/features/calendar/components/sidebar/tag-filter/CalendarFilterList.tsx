@@ -98,19 +98,19 @@ export function CalendarFilterList() {
     [reorderTagsMutation],
   );
 
-  const {
-    visibleTypes,
-    visibleTagIds,
-    showUntagged,
-    toggleType,
-    toggleTag,
-    toggleGroupTags,
-    toggleUntagged,
-    initializeWithTags,
-    showOnlyTag,
-    showOnlyUntagged,
-    showOnlyGroupTags,
-  } = useCalendarFilterStore();
+  // セレクタで必要な状態のみ購読（CLAUDE.md: 全状態購読禁止）
+  const visibleTypes = useCalendarFilterStore((s) => s.visibleTypes);
+  const visibleTagIds = useCalendarFilterStore((s) => s.visibleTagIds);
+  const showUntagged = useCalendarFilterStore((s) => s.showUntagged);
+  // アクション（参照安定）
+  const toggleType = useCalendarFilterStore((s) => s.toggleType);
+  const toggleTag = useCalendarFilterStore((s) => s.toggleTag);
+  const toggleGroupTags = useCalendarFilterStore((s) => s.toggleGroupTags);
+  const toggleUntagged = useCalendarFilterStore((s) => s.toggleUntagged);
+  const initializeWithTags = useCalendarFilterStore((s) => s.initializeWithTags);
+  const showOnlyTag = useCalendarFilterStore((s) => s.showOnlyTag);
+  const showOnlyUntagged = useCalendarFilterStore((s) => s.showOnlyUntagged);
+  const showOnlyGroupTags = useCalendarFilterStore((s) => s.showOnlyGroupTags);
 
   // タグミューテーション状態を監視（Race Condition防止）
   // mutationCountは参照カウント方式：複数mutation同時実行に対応

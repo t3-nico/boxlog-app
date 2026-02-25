@@ -2,6 +2,7 @@
 
 import React, { useCallback } from 'react';
 
+import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
 import { cn } from '@/lib/utils';
 
@@ -33,6 +34,15 @@ export const DayContent = ({
   // Inspectorで開いているプランのIDを取得
   const inspectorPlanId = usePlanInspectorStore((state) => state.planId);
   const isInspectorOpen = usePlanInspectorStore((state) => state.isOpen);
+
+  // ステータス変更を1度だけ初期化し、全PlanCardに配布
+  const { updatePlan } = usePlanMutations();
+  const handleStatusChange = useCallback(
+    (planId: string, newStatus: 'open' | 'closed') => {
+      updatePlan.mutate({ id: planId, data: { status: newStatus } });
+    },
+    [updatePlan],
+  );
 
   // レスポンシブな高さ
   const HOUR_HEIGHT = useResponsiveHourHeight();
@@ -140,10 +150,7 @@ export const DayContent = ({
               >
                 {/* PlanCardの内容部分のみクリック可能 */}
                 <div
-                  className="focus:ring-ring pointer-events-auto absolute inset-0 rounded focus:ring-2 focus:ring-offset-1 focus:outline-none"
-                  role="button"
-                  tabIndex={0}
-                  aria-label={`Drag plan: ${plan.title}`}
+                  className="pointer-events-auto absolute inset-0 rounded"
                   data-plan-block="true"
                   onMouseDown={(e) => {
                     // 左クリックのみドラッグ開始
@@ -165,13 +172,6 @@ export const DayContent = ({
                       height: currentHeight,
                     });
                   }}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      // キーボードでドラッグ操作を開始する代替手段
-                      // ここでは単純にフォーカスを維持
-                    }
-                  }}
                 >
                   <PlanCard
                     plan={plan}
@@ -184,6 +184,7 @@ export const DayContent = ({
                           ? (dragState.snappedPosition.height ?? currentHeight)
                           : currentHeight,
                     }}
+                    onStatusChange={handleStatusChange}
                     // クリックは useDragAndDrop で処理されるため削除
                     onContextMenu={(p: CalendarPlan, e: React.MouseEvent) =>
                       handlePlanContextMenu(p, e)

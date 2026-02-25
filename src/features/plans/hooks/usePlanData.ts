@@ -4,6 +4,8 @@
  * TanStack Query統合済み
  */
 
+import { useMemo } from 'react';
+
 import { useplans } from '@/features/plans/hooks/usePlans';
 import type { Plan, PlanStatus } from '@/features/plans/types/plan';
 import { normalizeStatus } from '@/features/plans/utils/status';
@@ -176,83 +178,83 @@ export function usePlanData(filters: PlanFilters = {}, sort?: PlanSortOptions) {
     ...(filters.search && { search: filters.search }),
   });
 
-  // PlanをPlanItemに変換
-  // APIレスポンスの型はPlanWithTagIdsと互換性がある
-  let items: PlanItem[] = plansData?.map((plan) => planToPlanItem(plan as PlanWithTagIds)) || [];
+  // フィルタリング・ソートをメモ化（毎レンダリングでの再計算を防止）
+  const items = useMemo(() => {
+    let result: PlanItem[] = plansData?.map((plan) => planToPlanItem(plan as PlanWithTagIds)) || [];
 
-  // ステータスフィルタリング（クライアント側 - 楽観的更新後の即座反映用）
-  // サーバーからのデータはstatus指定済みだが、楽観的更新で変更された場合に即座に反映
-  if (filters.status) {
-    items = items.filter((item) => item.status === filters.status);
-  }
+    // ステータスフィルタリング（クライアント側 - 楽観的更新後の即座反映用）
+    if (filters.status) {
+      result = result.filter((item) => item.status === filters.status);
+    }
 
-  // タグフィルタリング（クライアント側）
-  if (filters.tags && filters.tags.length > 0) {
-    items = items.filter((item) => {
-      const itemTagIds = item.tagIds ?? [];
-      // フィルタータグのいずれかに一致するかチェック（OR条件）
-      return filters.tags!.some((filterTagId) => itemTagIds.includes(filterTagId));
-    });
-  }
+    // タグフィルタリング（クライアント側）
+    if (filters.tags && filters.tags.length > 0) {
+      result = result.filter((item) => {
+        const itemTagIds = item.tagIds ?? [];
+        return filters.tags!.some((filterTagId) => itemTagIds.includes(filterTagId));
+      });
+    }
 
-  // 繰り返しフィルタリング（クライアント側）
-  if (filters.recurrence && filters.recurrence !== 'all') {
-    items = items.filter((item) =>
-      matchesRecurrenceFilter(item.recurrence_type, filters.recurrence!),
-    );
-  }
+    // 繰り返しフィルタリング
+    if (filters.recurrence && filters.recurrence !== 'all') {
+      result = result.filter((item) =>
+        matchesRecurrenceFilter(item.recurrence_type, filters.recurrence!),
+      );
+    }
 
-  // リマインダーフィルタリング（クライアント側）
-  if (filters.reminder && filters.reminder !== 'all') {
-    items = items.filter((item) => matchesReminderFilter(item.reminder_minutes, filters.reminder!));
-  }
+    // リマインダーフィルタリング
+    if (filters.reminder && filters.reminder !== 'all') {
+      result = result.filter((item) =>
+        matchesReminderFilter(item.reminder_minutes, filters.reminder!),
+      );
+    }
 
-  // スケジュールフィルタリング（クライアント側）
-  if (filters.schedule && filters.schedule !== 'all') {
-    items = items.filter((item) => matchesScheduleFilter(item.start_time, filters.schedule!));
-  }
+    // スケジュールフィルタリング
+    if (filters.schedule && filters.schedule !== 'all') {
+      result = result.filter((item) => matchesScheduleFilter(item.start_time, filters.schedule!));
+    }
 
-  // 作成日フィルタリング（クライアント側）
-  if (filters.createdAt && filters.createdAt !== 'all') {
-    items = items.filter((item) => matchesDateRangeFilter(item.created_at, filters.createdAt!));
-  }
+    // 作成日フィルタリング
+    if (filters.createdAt && filters.createdAt !== 'all') {
+      result = result.filter((item) => matchesDateRangeFilter(item.created_at, filters.createdAt!));
+    }
 
-  // 更新日フィルタリング（クライアント側）
-  if (filters.updatedAt && filters.updatedAt !== 'all') {
-    items = items.filter((item) => matchesDateRangeFilter(item.updated_at, filters.updatedAt!));
-  }
+    // 更新日フィルタリング
+    if (filters.updatedAt && filters.updatedAt !== 'all') {
+      result = result.filter((item) => matchesDateRangeFilter(item.updated_at, filters.updatedAt!));
+    }
 
-  // 完了を非表示フィルタリング（クライアント側）
-  if (filters.hideCompleted) {
-    items = items.filter((item) => item.status !== 'closed');
-  }
+    // 完了を非表示フィルタリング
+    if (filters.hideCompleted) {
+      result = result.filter((item) => item.status !== 'closed');
+    }
 
-  // ソート適用
-  if (sort?.field && sort?.direction) {
-    items.sort((a, b) => {
-      const field = sort.field as keyof PlanItem;
-      const aValue = a[field];
-      const bValue = b[field];
+    // ソート適用
+    if (sort?.field && sort?.direction) {
+      result.sort((a, b) => {
+        const field = sort.field as keyof PlanItem;
+        const aValue = a[field];
+        const bValue = b[field];
 
-      // 日付フィールドの場合
-      if (field === 'created_at' || field === 'updated_at') {
-        const aTime = new Date(aValue as string).getTime();
-        const bTime = new Date(bValue as string).getTime();
-        return sort.direction === 'asc' ? aTime - bTime : bTime - aTime;
-      }
+        if (field === 'created_at' || field === 'updated_at') {
+          const aTime = new Date(aValue as string).getTime();
+          const bTime = new Date(bValue as string).getTime();
+          return sort.direction === 'asc' ? aTime - bTime : bTime - aTime;
+        }
 
-      // 文字列フィールドの場合
-      const aStr = String(aValue ?? '');
-      const bStr = String(bValue ?? '');
-      const comparison = aStr.localeCompare(bStr, 'ja');
-      return sort.direction === 'asc' ? comparison : -comparison;
-    });
-  } else {
-    // デフォルト: 更新日時の降順でソート
-    items.sort((a, b) => {
-      return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
-    });
-  }
+        const aStr = String(aValue ?? '');
+        const bStr = String(bValue ?? '');
+        const comparison = aStr.localeCompare(bStr, 'ja');
+        return sort.direction === 'asc' ? comparison : -comparison;
+      });
+    } else {
+      result.sort((a, b) => {
+        return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
+      });
+    }
+
+    return result;
+  }, [plansData, filters, sort]);
 
   return {
     items,

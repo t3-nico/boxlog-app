@@ -43,7 +43,7 @@ export const tagsRouter = createTRPCRouter({
       try {
         const service = createTagService(ctx.supabase);
         const tags = await service.list({
-          userId: ctx.userId!,
+          userId: ctx.userId,
           sortField: input?.sortField,
           sortOrder: input?.sortOrder,
         });
@@ -65,7 +65,7 @@ export const tagsRouter = createTRPCRouter({
     try {
       const service = createTagService(ctx.supabase);
       return await service.listHierarchy({
-        userId: ctx.userId!,
+        userId: ctx.userId,
       });
     } catch (error) {
       return handleServiceError(error);
@@ -80,7 +80,7 @@ export const tagsRouter = createTRPCRouter({
     try {
       const service = createTagService(ctx.supabase);
       const tags = await service.listParentTags({
-        userId: ctx.userId!,
+        userId: ctx.userId,
       });
       return {
         data: tags,
@@ -104,7 +104,7 @@ export const tagsRouter = createTRPCRouter({
       try {
         const service = createTagService(ctx.supabase);
         const tag = await service.getById({
-          userId: ctx.userId!,
+          userId: ctx.userId,
           tagId: input.id,
         });
 
@@ -134,7 +134,7 @@ export const tagsRouter = createTRPCRouter({
       try {
         const service = createTagService(ctx.supabase);
         const tag = await service.create({
-          userId: ctx.userId!,
+          userId: ctx.userId,
           input: {
             name: input.name,
             color: input.color,
@@ -144,7 +144,7 @@ export const tagsRouter = createTRPCRouter({
         });
 
         // サーバーサイドキャッシュを無効化（次のリクエストで最新データ取得）
-        await invalidateUserTagsCache(ctx.userId!);
+        await invalidateUserTagsCache(ctx.userId);
 
         return tag;
       } catch (error) {
@@ -173,7 +173,7 @@ export const tagsRouter = createTRPCRouter({
       try {
         const service = createTagService(ctx.supabase);
         const tag = await service.update({
-          userId: ctx.userId!,
+          userId: ctx.userId,
           tagId: input.id,
           updates: {
             name: input.name,
@@ -184,7 +184,7 @@ export const tagsRouter = createTRPCRouter({
         });
 
         // サーバーサイドキャッシュを無効化
-        await invalidateUserTagsCache(ctx.userId!);
+        await invalidateUserTagsCache(ctx.userId);
 
         return tag;
       } catch (error) {
@@ -211,7 +211,7 @@ export const tagsRouter = createTRPCRouter({
       try {
         const service = createTagService(ctx.supabase);
         const result = await service.merge({
-          userId: ctx.userId!,
+          userId: ctx.userId,
           sourceTagId: input.sourceTagId,
           targetTagId: input.targetTagId,
           mergeAssociations: input.mergeAssociations,
@@ -219,7 +219,7 @@ export const tagsRouter = createTRPCRouter({
         });
 
         // サーバーサイドキャッシュを無効化
-        await invalidateUserTagsCache(ctx.userId!);
+        await invalidateUserTagsCache(ctx.userId);
 
         return result;
       } catch (error) {
@@ -240,12 +240,12 @@ export const tagsRouter = createTRPCRouter({
       try {
         const service = createTagService(ctx.supabase);
         const deletedTag = await service.delete({
-          userId: ctx.userId!,
+          userId: ctx.userId,
           tagId: input.id,
         });
 
         // サーバーサイドキャッシュを無効化
-        await invalidateUserTagsCache(ctx.userId!);
+        await invalidateUserTagsCache(ctx.userId);
 
         return deletedTag;
       } catch (error) {
@@ -274,12 +274,12 @@ export const tagsRouter = createTRPCRouter({
       try {
         const service = createTagService(ctx.supabase);
         const result = await service.reorder({
-          userId: ctx.userId!,
+          userId: ctx.userId,
           updates: input.updates,
         });
 
         // サーバーサイドキャッシュを無効化
-        await invalidateUserTagsCache(ctx.userId!);
+        await invalidateUserTagsCache(ctx.userId);
 
         return result;
       } catch (error) {
@@ -294,7 +294,7 @@ export const tagsRouter = createTRPCRouter({
     try {
       const service = createTagService(ctx.supabase);
       const stats = await service.getStats({
-        userId: ctx.userId!,
+        userId: ctx.userId,
       });
 
       return {
