@@ -1,11 +1,11 @@
 // 認証設定の定数
 export const AUTH_CONFIG = {
-  // パスワード設定（NIST SP 800-63B 準拠: 構成ルールは課さない）
+  // パスワード設定（config.toml の password_requirements = "lower_upper_letters_digits" と一致）
   PASSWORD: {
-    MIN_LENGTH: 8,
-    REQUIRE_UPPERCASE: false,
-    REQUIRE_LOWERCASE: false,
-    REQUIRE_NUMBERS: false,
+    MIN_LENGTH: 12,
+    REQUIRE_UPPERCASE: true,
+    REQUIRE_LOWERCASE: true,
+    REQUIRE_NUMBERS: true,
     REQUIRE_SPECIAL_CHARS: false,
   },
 
