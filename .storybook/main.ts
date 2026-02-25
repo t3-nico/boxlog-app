@@ -46,6 +46,9 @@ const config: StorybookConfig = {
       'next/image': path.resolve(__dirname, './mocks/next-image.tsx'),
       'next/link': path.resolve(__dirname, './mocks/next-link.tsx'),
       'next/navigation': path.resolve(__dirname, './mocks/next-navigation.tsx'),
+      // next-intl（React未定義エラー回避）
+      'next-intl/navigation': path.resolve(__dirname, './mocks/next-intl-navigation.tsx'),
+      'next-intl/routing': path.resolve(__dirname, './mocks/next-intl-routing.ts'),
       // Sentry（@sentry/nextjs が Next.js 内部の process 依存のため Storybook ではモック化）
       '@sentry/nextjs': path.resolve(__dirname, './mocks/sentry-nextjs.ts'),
       // Storybook 10: @storybook/blocks は @storybook/addon-docs/blocks に統合
