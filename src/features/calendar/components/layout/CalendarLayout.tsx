@@ -135,8 +135,8 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
             />
 
             {/* カレンダーコンテンツ（スワイプ対応） */}
-            <main
-              ref={ref as React.RefObject<HTMLElement>}
+            <div
+              ref={ref as React.RefObject<HTMLDivElement>}
               data-calendar-main
               className="flex min-h-0 flex-1 flex-col"
               onTouchStart={handlers.onTouchStart}
@@ -144,7 +144,7 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
               onTouchEnd={handlers.onTouchEnd}
             >
               <div className="flex min-h-0 flex-1 flex-col">{children}</div>
-            </main>
+            </div>
           </div>
 
           {/* リサイズハンドル（デスクトップ、パネルオープン時のみ） */}

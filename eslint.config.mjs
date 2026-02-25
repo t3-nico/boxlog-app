@@ -46,6 +46,46 @@ const eslintConfig = defineConfig([
     },
   },
 
+  // Feature boundary enforcement: features cannot import from other features
+  {
+    files: ['src/features/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': ['warn', {
+        patterns: [
+          {
+            group: ['@/features/*', '@/features/**'],
+            message: 'Feature間の直接importは禁止。core型とコールバックを使用。',
+          },
+        ],
+      }],
+    },
+  },
+
+  // App layer: barrel imports only (no deep paths)
+  {
+    files: ['src/app/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': ['warn', {
+        patterns: [
+          {
+            group: [
+              '@/features/*/components/*',
+              '@/features/*/hooks/*',
+              '@/features/*/stores/*',
+              '@/features/*/utils/*',
+              '@/features/*/types/*',
+              '@/features/*/lib/*',
+              '@/features/*/constants/*',
+              '@/features/*/contexts/*',
+              '@/features/*/adapters/*',
+            ],
+            message: 'barrel import (@/features/featureName) のみ使用。',
+          },
+        ],
+      }],
+    },
+  },
+
   // テスト用グローバル変数
   {
     files: ['**/*.test.{js,jsx,ts,tsx}', '**/*.spec.{js,jsx,ts,tsx}'],

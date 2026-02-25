@@ -24,7 +24,19 @@ const config: StorybookConfig = {
         },
       },
     },
+    {
+      name: '@storybook/addon-mcp',
+      options: {
+        toolsets: {
+          dev: true,
+          docs: true,
+        },
+      },
+    },
   ],
+  features: {
+    experimentalComponentsManifest: true,
+  },
   framework: {
     name: '@storybook/react-vite',
     options: {},
