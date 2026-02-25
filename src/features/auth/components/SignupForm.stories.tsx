@@ -5,7 +5,7 @@ import { expect, userEvent, within } from 'storybook/test';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { FieldGroup } from '@/components/ui/field';
+import { FieldError, FieldGroup } from '@/components/ui/field';
 import { Link } from '@/i18n/navigation';
 
 import { SignupForm } from './SignupForm';
@@ -85,4 +85,28 @@ export const WithInteraction: Story = {
 /** メール確認送信後の画面 */
 export const EmailSent: Story = {
   render: () => <EmailSentExample />,
+};
+
+/** エラーメッセージ一覧 */
+export const ErrorMessages: Story = {
+  render: () => (
+    <div className="flex max-w-md flex-col gap-4 p-6">
+      <p className="text-muted-foreground text-sm font-medium">SignupForm error variations</p>
+      <FieldError announceImmediately className="text-center">
+        This email is already registered. Please try logging in.
+      </FieldError>
+      <FieldError announceImmediately className="text-center">
+        Too many requests. Please wait a moment and try again.
+      </FieldError>
+      <FieldError announceImmediately className="text-center">
+        Password must be at least 8 characters long
+      </FieldError>
+      <FieldError announceImmediately className="text-center">
+        This password has been exposed in a data breach. Please use a more secure password.
+      </FieldError>
+      <FieldError announceImmediately className="text-center">
+        An unexpected error occurred
+      </FieldError>
+    </div>
+  ),
 };

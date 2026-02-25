@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within } from 'storybook/test';
 
+import { FieldError } from '@/components/ui/field';
+
 import { LoginForm } from './LoginForm';
 
 /** LoginForm - ログインフォーム */
@@ -55,4 +57,23 @@ export const PasswordToggle: Story = {
     await userEvent.click(toggleButton);
     await expect(passwordInput).toHaveAttribute('type', 'text');
   },
+};
+
+/** エラーメッセージ一覧 */
+export const ErrorMessages: Story = {
+  render: () => (
+    <div className="flex max-w-md flex-col gap-4 p-6">
+      <p className="text-muted-foreground text-sm font-medium">LoginForm error variations</p>
+      <FieldError announceImmediately className="text-center">
+        Invalid email or password
+      </FieldError>
+      <FieldError announceImmediately className="text-center">
+        For security reasons, this account has been temporarily locked. Please try again in 15
+        minutes.
+      </FieldError>
+      <FieldError announceImmediately className="text-center">
+        An unexpected error occurred
+      </FieldError>
+    </div>
+  ),
 };

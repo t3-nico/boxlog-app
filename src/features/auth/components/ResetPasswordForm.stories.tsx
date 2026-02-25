@@ -200,6 +200,26 @@ export const Success: Story = {
   render: () => <ResetPasswordFormSuccess />,
 };
 
+/** エラーメッセージ一覧 */
+export const ErrorMessages: Story = {
+  render: () => (
+    <div className="flex max-w-md flex-col gap-4 p-6">
+      <p className="text-muted-foreground text-sm font-medium">
+        ResetPasswordForm error variations
+      </p>
+      <FieldError announceImmediately className="text-center">
+        Passwords do not match
+      </FieldError>
+      <FieldError announceImmediately className="text-center">
+        Password must be at least 8 characters long
+      </FieldError>
+      <FieldError announceImmediately className="text-center">
+        An unexpected error occurred
+      </FieldError>
+    </div>
+  ),
+};
+
 /** 全パターン */
 export const AllPatterns: Story = {
   render: () => (
