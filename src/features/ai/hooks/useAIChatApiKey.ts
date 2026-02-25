@@ -28,9 +28,11 @@ export function useAIChatApiKey() {
 
   const selectedModelId = useChatStore((s) => s.selectedModelId);
 
+  const userId = user?.id;
+
   // APIキーの遅延読み込み
   useEffect(() => {
-    if (!user?.id) return;
+    if (!userId) return;
 
     let cancelled = false;
 
@@ -38,7 +40,7 @@ export function useAIChatApiKey() {
       for (const provider of PROVIDER_PRIORITY) {
         if (!ApiKeyStorage.exists(provider)) continue;
 
-        const key = await ApiKeyStorage.load(provider, user!.id);
+        const key = await ApiKeyStorage.load(provider, userId!);
         if (key && !cancelled) {
           setApiKey(key);
           setProviderId(provider);
@@ -58,7 +60,7 @@ export function useAIChatApiKey() {
     return () => {
       cancelled = true;
     };
-  }, [user?.id]);
+  }, [userId]);
 
   const hasApiKey = apiKey !== null;
   const isFreeTier = !hasApiKey;

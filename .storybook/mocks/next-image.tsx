@@ -20,7 +20,7 @@ function NextImage({ fill, priority, quality, sizes, unoptimized, ...props }: Ne
     : undefined;
 
   // eslint-disable-next-line @next/next/no-img-element
-  return <img {...props} style={{ ...style, ...props.style }} />;
+  return <img alt="" {...props} style={{ ...style, ...props.style }} />;
 }
 
 export { NextImage as default };

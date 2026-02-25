@@ -1,8 +1,8 @@
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
 import { convertFromTimezone, formatInTimezone } from '@/lib/date/timezone';
 
+import { formatTimeRange } from '@/lib/date';
 import { HOUR_HEIGHT } from '../../../constants/grid.constants';
-import { formatTimeRange } from '../../../utils/dateHelpers';
 
 import type { DragDataRef } from '../types';
 

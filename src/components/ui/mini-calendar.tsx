@@ -45,8 +45,8 @@ export interface MiniCalendarProps {
   onOpenChange?: ((open: boolean) => void) | undefined;
   /** 「日付なし」ボタンを表示するか */
   allowClear?: boolean | undefined;
-  /** Popover の z-index（Inspector内では高い値を使用） */
-  popoverZIndex?: number | undefined;
+  /** Popover の z-index クラス名（Inspector内では高い値を使用） */
+  popoverZIndex?: string | undefined;
   /** 表示期間のハイライト範囲（WeekViewなどで現在表示中の期間をハイライト） */
   displayRange?: { start: Date; end: Date } | undefined;
 }
@@ -384,8 +384,11 @@ export const MiniCalendar = memo<MiniCalendarProps>(
         <Popover open={open} onOpenChange={handleOpenChange} modal={false}>
           <PopoverTrigger asChild>{popoverTrigger}</PopoverTrigger>
           <PopoverContent
-            className={cn('bg-card border-border w-auto border p-0', popoverClassName)}
-            style={popoverZIndex !== undefined ? { zIndex: popoverZIndex } : undefined}
+            className={cn(
+              'bg-card border-border w-auto border p-0',
+              popoverClassName,
+              popoverZIndex,
+            )}
             align={popoverAlign}
             side={popoverSide}
           >

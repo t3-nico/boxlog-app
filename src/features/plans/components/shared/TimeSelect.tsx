@@ -8,7 +8,6 @@ import { useTranslations } from 'next-intl';
 import type { TimeIconType } from '@/components/ui/clock-time-picker';
 
 import { Popover, PopoverAnchor, PopoverContent } from '@/components/ui/popover';
-import { zIndex } from '@/config/ui/z-index';
 import { computeDuration, formatDurationDisplay } from '@/lib/time-utils';
 
 /**
@@ -399,12 +398,11 @@ export function TimeSelect({
 
         {!disabled && filteredOptions.length > 0 && (
           <PopoverContent
-            className="overflow-hidden p-0"
+            className="z-overlay-popover overflow-hidden p-0"
             align="start"
             sideOffset={4}
             style={{
               width: showDurationInMenu && minTime ? '140px' : '80px',
-              zIndex: zIndex.overlayDropdown,
             }}
             onOpenAutoFocus={(e) => e.preventDefault()}
           >

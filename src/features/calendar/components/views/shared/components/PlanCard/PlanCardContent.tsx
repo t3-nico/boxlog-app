@@ -11,7 +11,7 @@ import { RecurringIndicatorFromFlag } from '@/features/plans/components/shared/R
 import { useTranslations } from 'next-intl';
 
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
-import { formatTimeRange } from '../../utils/dateHelpers';
+import { formatTimeRange } from '@/lib/date';
 import { TagsContainer } from './TagsContainer';
 
 /** プレビューモード設定（ドラッグ選択時の簡略表示） */

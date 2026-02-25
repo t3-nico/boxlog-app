@@ -5,7 +5,6 @@ import { useCallback, useMemo, useState } from 'react';
 import { Check, ChevronRight } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-import { zIndex } from '@/config/ui/z-index';
 import { useTags } from '@/features/tags/hooks';
 import { cn } from '@/lib/utils';
 
@@ -262,8 +261,7 @@ export function TagSelectCombobox({
     <Popover open={isOpen} onOpenChange={handleOpenChange}>
       <PopoverTrigger asChild>{children}</PopoverTrigger>
       <PopoverContent
-        className="w-[280px] p-0"
-        style={isOverlay ? { zIndex: zIndex.overlayDropdown } : undefined}
+        className={cn('w-[280px] p-0', isOverlay && 'z-overlay-popover')}
         align={align}
         side={side}
         alignOffset={alignOffset}

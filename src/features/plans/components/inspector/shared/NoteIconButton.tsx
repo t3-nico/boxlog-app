@@ -16,7 +16,6 @@ import { useTranslations } from 'next-intl';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { SimpleDescriptionEditor } from '@/components/ui/simple-description-editor';
 import { HoverTooltip } from '@/components/ui/tooltip';
-import { zIndex } from '@/config/ui/z-index';
 import { cn } from '@/lib/utils';
 
 interface NoteIconButtonProps {
@@ -86,11 +85,10 @@ export function NoteIconButton({
         </PopoverTrigger>
       </HoverTooltip>
       <PopoverContent
-        className="w-96 p-0"
+        className="z-overlay-popover w-96 p-0"
         align="start"
         side="bottom"
         sideOffset={8}
-        style={{ zIndex: zIndex.overlayDropdown }}
       >
         <SimpleDescriptionEditor
           key={id}

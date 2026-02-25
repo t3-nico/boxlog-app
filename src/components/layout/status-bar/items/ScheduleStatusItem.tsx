@@ -37,7 +37,10 @@ export function ScheduleStatusItem() {
     staleTime: CACHE_5_MINUTES,
     refetchOnWindowFocus: false,
   });
-  const chronotype = dbSettings?.chronotype ?? { enabled: false, type: 'bear' as const };
+  const chronotype = useMemo(
+    () => dbSettings?.chronotype ?? { enabled: false, type: 'bear' as const },
+    [dbSettings?.chronotype],
+  );
 
   // 1分ごとに現在時刻を更新
   useEffect(() => {

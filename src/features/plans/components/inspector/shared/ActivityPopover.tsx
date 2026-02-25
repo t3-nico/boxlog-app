@@ -18,8 +18,6 @@ import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Spinner } from '@/components/ui/spinner';
 import { HoverTooltip } from '@/components/ui/tooltip';
-import { zIndex } from '@/config/ui/z-index';
-
 /** アイコン色の種別 */
 export type ActivityIconColor = 'success' | 'info' | 'warning' | 'primary' | 'destructive';
 
@@ -86,12 +84,7 @@ export function ActivityPopover({ items, isPending }: ActivityPopoverProps) {
           </Button>
         </PopoverTrigger>
       </HoverTooltip>
-      <PopoverContent
-        align="end"
-        sideOffset={8}
-        className="w-80 p-0"
-        style={{ zIndex: zIndex.overlayDropdown }}
-      >
+      <PopoverContent align="end" sideOffset={8} className="z-overlay-popover w-80 p-0">
         <div className="px-4 py-4">
           <h3 className="text-sm font-bold">{t('tabs.activity')}</h3>
         </div>

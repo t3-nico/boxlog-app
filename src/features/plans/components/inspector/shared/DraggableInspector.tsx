@@ -10,7 +10,6 @@ import {
 } from '@dnd-kit/core';
 import { createContext, useCallback, useContext, useState, type ReactNode } from 'react';
 
-import { zIndex } from '@/config/ui/z-index';
 import { cn } from '@/lib/utils';
 
 /** インスペクターのサイズ定数 */
@@ -95,8 +94,7 @@ export function DraggableInspector({ children, onClose, title }: DraggableInspec
     <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
       {/* 透明な背景（クリックで閉じる） */}
       <div
-        className="fixed inset-0"
-        style={{ zIndex: zIndex.draggableInspectorBackdrop }}
+        className="z-inspector-backdrop fixed inset-0"
         onClick={handleBackdropClick}
         aria-hidden="true"
       />
@@ -127,7 +125,6 @@ function DraggableContent({ children, position, title }: DraggableContentProps) 
     position: 'fixed',
     left: position.x + (transform?.x ?? 0),
     top: position.y + (transform?.y ?? 0),
-    zIndex: zIndex.draggableInspector,
   };
 
   return (
@@ -136,7 +133,7 @@ function DraggableContent({ children, position, title }: DraggableContentProps) 
       style={style}
       className={cn(
         // 元のDialogContentと同じベーススタイル
-        'border-border bg-card text-card-foreground',
+        'border-border bg-card text-card-foreground z-inspector',
         'rounded-2xl border shadow-lg',
         // 元のInspectorShell popoverモードと同じスタイル
         // 高さは内容に応じて可変（最大40rem）

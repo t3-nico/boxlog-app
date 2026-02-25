@@ -8,7 +8,6 @@ import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { HoverTooltip } from '@/components/ui/tooltip';
-import { zIndex } from '@/config/ui/z-index';
 import { cn } from '@/lib/utils';
 
 import { getReminderI18nKey, REMINDER_OPTIONS } from '../../utils/reminder';
@@ -140,12 +139,7 @@ export function ReminderSelect({
       ) : (
         popoverTrigger
       )}
-      <PopoverContent
-        className="w-56 p-1"
-        align="start"
-        sideOffset={4}
-        style={{ zIndex: zIndex.overlayDropdown }}
-      >
+      <PopoverContent className="z-overlay-popover w-56 p-1" align="start" sideOffset={4}>
         {REMINDER_OPTIONS.map((option, index) => (
           <div key={option.i18nKey}>
             {index === 1 && <div className="border-border my-1 border-t" />}

@@ -130,18 +130,6 @@ export function generateTimeLabels(interval: number): string[] {
 }
 
 /**
- * 現在時刻の位置を計算（パーセンテージ）
- * @deprecated このファイルの関数は非推奨です。代わりに utils/timezone.ts の getCurrentTimePosition を使用してください
- */
-export function getCurrentTimePosition(): number {
-  const now = new Date();
-  const currentMinutes = now.getHours() * 60 + now.getMinutes();
-
-  // 24時間 = 1440分を100%とする
-  return (currentMinutes / 1440) * 100;
-}
-
-/**
  * 時間帯に応じた背景色クラスを取得
  */
 export function getTimeSlotBgClass(hour: number): string {

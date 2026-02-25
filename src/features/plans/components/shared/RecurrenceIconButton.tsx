@@ -7,7 +7,6 @@ import { useTranslations } from 'next-intl';
 
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { HoverTooltip } from '@/components/ui/tooltip';
-import { zIndex } from '@/config/ui/z-index';
 import { cn } from '@/lib/utils';
 
 import { RecurrenceDialog } from './RecurrenceDialog';
@@ -92,12 +91,7 @@ export function RecurrenceIconButton({
           </PopoverTrigger>
         </HoverTooltip>
 
-        <PopoverContent
-          className="w-48 p-1"
-          align="start"
-          sideOffset={4}
-          style={{ zIndex: zIndex.overlayDropdown }}
-        >
+        <PopoverContent className="z-overlay-popover w-48 p-1" align="start" sideOffset={4}>
           <div role="menu" aria-label={t('plan.inspector.recurrence.options')}>
             <button
               className="hover:bg-state-hover focus-visible:bg-state-hover flex w-full items-center justify-between rounded px-2 py-2 text-left text-sm transition-colors focus-visible:outline-none"

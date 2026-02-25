@@ -28,7 +28,6 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Spinner } from '@/components/ui/spinner';
 import { HoverTooltip } from '@/components/ui/tooltip';
-import { zIndex } from '@/config/ui/z-index';
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
 import { useTags } from '@/features/tags/hooks';
 import { logger } from '@/lib/logger';
@@ -225,11 +224,10 @@ export function RecordsIconButton({
           </PopoverTrigger>
         </HoverTooltip>
         <PopoverContent
-          className="w-[400px] p-0"
+          className="z-overlay-popover w-[400px] p-0"
           align="start"
           side="bottom"
           sideOffset={8}
-          style={{ zIndex: zIndex.overlayDropdown }}
         >
           {isAllRecordsPending ? (
             <div className="flex items-center justify-center py-8">

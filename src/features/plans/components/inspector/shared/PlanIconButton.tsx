@@ -23,7 +23,6 @@ import {
 } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { HoverTooltip } from '@/components/ui/tooltip';
-import { zIndex } from '@/config/ui/z-index';
 import { usePlans } from '@/features/plans/hooks/usePlans';
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
 import { useTags } from '@/features/tags/hooks';
@@ -157,11 +156,10 @@ export function PlanIconButton({
         )}
       </div>
       <PopoverContent
-        className="w-[400px] p-0"
+        className="z-overlay-popover w-[400px] p-0"
         side="bottom"
         align="start"
         sideOffset={8}
-        style={{ zIndex: zIndex.overlayDropdown }}
       >
         <Command shouldFilter={false}>
           <CommandInput

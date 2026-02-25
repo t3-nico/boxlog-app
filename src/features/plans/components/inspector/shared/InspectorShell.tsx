@@ -10,7 +10,6 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { zIndex } from '@/config/ui/z-index';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 
 import { DraggableInspector } from './DraggableInspector';
@@ -78,9 +77,8 @@ export function InspectorShell({
         fadeFromIndex={1}
       >
         <DrawerContent
-          className="bg-card flex flex-col gap-0 overflow-hidden p-0 [&>div:first-child]:hidden"
+          className="bg-card z-modal flex flex-col gap-0 overflow-hidden p-0 [&>div:first-child]:hidden"
           style={{
-            zIndex: zIndex.modal,
             // 全画面時は角丸をなくす
             borderTopLeftRadius: isFullScreen ? 0 : undefined,
             borderTopRightRadius: isFullScreen ? 0 : undefined,
