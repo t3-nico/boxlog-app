@@ -111,7 +111,6 @@ export const PlanListCard = memo<PlanListCardProps>(function PlanListCard({
       onClick={handleCardClick}
       onMouseDown={onDragStart ? handleMouseDown : undefined}
       tabIndex={0}
-      role="button"
     >
       {/* チェックボックス */}
       <button

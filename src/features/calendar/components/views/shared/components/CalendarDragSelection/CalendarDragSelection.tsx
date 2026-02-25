@@ -89,9 +89,7 @@ export const CalendarDragSelection = ({
         setNodeRef(node);
       }}
       className={cn('relative', className, dndIsOver && 'bg-primary-state-hover')}
-      role="button"
-      tabIndex={0}
-      aria-label="Calendar drag selection area"
+      aria-label="Calendar time grid"
       onMouseDown={(e) => {
         // Googleカレンダー互換: クリックした日付を記憶（Cmd+Vでペーストする日付として使用）
         const target = e.target as HTMLElement;
@@ -105,11 +103,6 @@ export const CalendarDragSelection = ({
       onTouchStart={handleTouchStart}
       onClick={(e) => {
         e.stopPropagation();
-      }}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-        }
       }}
     >
       {children}

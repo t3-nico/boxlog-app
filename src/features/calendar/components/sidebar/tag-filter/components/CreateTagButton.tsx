@@ -17,6 +17,7 @@ export function CreateTagButton() {
         type="button"
         className="text-muted-foreground hover:text-foreground hover:bg-state-hover flex size-6 items-center justify-center rounded"
         onClick={() => openTagCreateModal()}
+        aria-label={t('calendar.filter.createTag')}
       >
         <Plus className="size-4" />
       </button>

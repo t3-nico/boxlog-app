@@ -86,6 +86,7 @@ export function RecordListToolbar({
               onSearchChange('');
               onSearchOpenChange(false);
             }}
+            aria-label={t('aside.closeSearch')}
           >
             <X className="size-4" />
           </Button>
@@ -108,7 +109,13 @@ export function RecordListToolbar({
           />
 
           {/* 検索ボタン */}
-          <Button variant="ghost" size="sm" icon onClick={() => onSearchOpenChange(true)}>
+          <Button
+            variant="ghost"
+            size="sm"
+            icon
+            onClick={() => onSearchOpenChange(true)}
+            aria-label={t('aside.search')}
+          >
             <Search className="size-4" />
           </Button>
 

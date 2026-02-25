@@ -163,10 +163,7 @@ export function MultiDayContent({
               data-plan-block="true"
             >
               <div
-                className="focus:ring-ring pointer-events-auto absolute inset-0 rounded focus:ring-2 focus:ring-offset-1 focus:outline-none"
-                role="button"
-                tabIndex={0}
-                aria-label={`Drag plan: ${plan.title}`}
+                className="pointer-events-auto absolute inset-0 rounded"
                 data-plan-block="true"
                 onMouseDown={(e) => {
                   if (e.button === 0) {
@@ -195,11 +192,6 @@ export function MultiDayContent({
                     },
                     dayIndex,
                   );
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                  }
                 }}
               >
                 <PlanCard

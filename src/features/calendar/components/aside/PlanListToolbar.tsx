@@ -90,6 +90,7 @@ export function PlanListToolbar({
               onSearchChange('');
               onSearchOpenChange(false);
             }}
+            aria-label={t('aside.closeSearch')}
           >
             <X className="size-4" />
           </Button>
@@ -114,7 +115,13 @@ export function PlanListToolbar({
           />
 
           {/* 検索ボタン */}
-          <Button variant="ghost" icon className="size-6" onClick={() => onSearchOpenChange(true)}>
+          <Button
+            variant="ghost"
+            icon
+            className="size-6"
+            onClick={() => onSearchOpenChange(true)}
+            aria-label={t('aside.search')}
+          >
             <Search className="size-4" />
           </Button>
         </>

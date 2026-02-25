@@ -289,6 +289,8 @@
       "record": "Records",
       "stats": "Statistics",
       "unscheduled": "Unscheduled",
+      "search": "Search",
+      "closeSearch": "Close search",
       "searchPlaceholder": "Search plans...",
       "error": "Failed to load",
       "noPlans": "No unscheduled plans",
