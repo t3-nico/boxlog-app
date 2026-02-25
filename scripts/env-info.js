@@ -30,7 +30,6 @@ class EnvInfo {
   constructor() {
     this.envPath = path.join(process.cwd(), '.env');
     this.envLocalPath = path.join(process.cwd(), '.env.local');
-    this.envExamplePath = path.join(process.cwd(), '.env.example');
   }
 
   // 環境変数を安全に表示（機密情報をマスク）
@@ -107,7 +106,6 @@ class EnvInfo {
     console.log(`${colors.blue}${colors.bold}📊 環境変数ファイルの統計${colors.reset}`);
 
     const files = [
-      { path: this.envExamplePath, name: '.env.example', description: 'テンプレート' },
       { path: this.envPath, name: '.env', description: '開発環境設定' },
       { path: this.envLocalPath, name: '.env.local', description: 'ローカル環境設定' },
     ];
@@ -176,7 +174,7 @@ class EnvInfo {
       issues.push({
         level: 'error',
         message: '.env または .env.local ファイルが見つかりません',
-        solution: 'npm run env:setup でテンプレートから作成してください',
+        solution: '.env.local を作成して必要な環境変数を設定してください',
       });
     }
 
@@ -204,7 +202,7 @@ class EnvInfo {
     }
 
     console.log(`${colors.blue}  📖 関連コマンド:${colors.reset}`);
-    console.log(`     npm run env:setup   - 環境変数ファイルの初期化`);
+    console.log(`     .env.local を作成    - 環境変数ファイルの初期化`);
     console.log(`     npm run env:check   - 環境変数の検証`);
   }
 

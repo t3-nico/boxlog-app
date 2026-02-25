@@ -38,7 +38,6 @@
     "log:feat": "git log --grep=\"^feat:\" --pretty=\"%s\"",
     "log:fix": "git log --grep=\"^fix:\" --pretty=\"%s\"",
     "log:type": "git log --pretty=\"%s\" | grep -E '^(feat|fix|docs|style|refactor|perf|test|chore):' | head -20",
-    "env:setup": "cp .env.example .env",
     "env:check": "tsc --noEmit src/env.ts",
     "env:validate": "npm run env:check",
     "env:info": "node scripts/env-info.js",
