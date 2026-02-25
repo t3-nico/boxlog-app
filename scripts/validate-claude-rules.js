@@ -17,14 +17,14 @@
  *   1: Violations found (non-blocking warning)
  */
 
-import { glob } from 'glob'
-import fs from 'node:fs'
-import path from 'node:path'
-import { fileURLToPath } from 'node:url'
+import { glob } from 'glob';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
-const ROOT_DIR = path.resolve(__dirname, '..')
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const ROOT_DIR = path.resolve(__dirname, '..');
 
 // ANSI colors
 const colors = {
@@ -34,7 +34,7 @@ const colors = {
   yellow: '\x1b[33m',
   blue: '\x1b[34m',
   cyan: '\x1b[36m',
-}
+};
 
 // App Router file patterns (export default is required)
 const APP_ROUTER_PATTERNS = [
@@ -46,46 +46,46 @@ const APP_ROUTER_PATTERNS = [
   '**/app/**/route.ts',
   '**/app/**/template.tsx',
   '**/app/**/default.tsx',
-]
+];
 
 /**
  * Check if file is an App Router component
  */
 function isAppRouterFile(filePath) {
-  const relativePath = path.relative(ROOT_DIR, filePath)
+  const relativePath = path.relative(ROOT_DIR, filePath);
   return APP_ROUTER_PATTERNS.some((pattern) => {
-    const regex = new RegExp(pattern.replace(/\*/g, '.*').replace(/\?/g, '.'))
-    return regex.test(relativePath)
-  })
+    const regex = new RegExp(pattern.replace(/\*/g, '.*').replace(/\?/g, '.'));
+    return regex.test(relativePath);
+  });
 }
 
 /**
  * Detect `any` type usage
  */
 function detectAnyType(content, filePath) {
-  const violations = []
-  const lines = content.split('\n')
+  const violations = [];
+  const lines = content.split('\n');
 
   lines.forEach((line, index) => {
     // Skip comments
-    if (line.trim().startsWith('//') || line.trim().startsWith('*')) return
+    if (line.trim().startsWith('//') || line.trim().startsWith('*')) return;
 
     // Match `: any` type annotations
-    const anyTypeRegex = /:\s*any\b/g
-    let match
+    const anyTypeRegex = /:\s*any\b/g;
+    let _match;
 
-    while ((match = anyTypeRegex.exec(line)) !== null) {
+    while ((_match = anyTypeRegex.exec(line)) !== null) {
       violations.push({
         type: 'any-type',
         file: filePath,
         line: index + 1,
         content: line.trim(),
         severity: 'error',
-      })
+      });
     }
-  })
+  });
 
-  return violations
+  return violations;
 }
 
 /**
@@ -93,14 +93,14 @@ function detectAnyType(content, filePath) {
  */
 function detectExportDefault(content, filePath) {
   // Skip if App Router file (export default is required)
-  if (isAppRouterFile(filePath)) return []
+  if (isAppRouterFile(filePath)) return [];
 
-  const violations = []
-  const lines = content.split('\n')
+  const violations = [];
+  const lines = content.split('\n');
 
   lines.forEach((line, index) => {
     // Skip comments
-    if (line.trim().startsWith('//') || line.trim().startsWith('*')) return
+    if (line.trim().startsWith('//') || line.trim().startsWith('*')) return;
 
     // Match export default
     if (/export\s+default\b/.test(line)) {
@@ -110,23 +110,23 @@ function detectExportDefault(content, filePath) {
         line: index + 1,
         content: line.trim(),
         severity: 'warning',
-      })
+      });
     }
-  })
+  });
 
-  return violations
+  return violations;
 }
 
 /**
  * Detect `React.FC` usage
  */
 function detectReactFC(content, filePath) {
-  const violations = []
-  const lines = content.split('\n')
+  const violations = [];
+  const lines = content.split('\n');
 
   lines.forEach((line, index) => {
     // Skip comments
-    if (line.trim().startsWith('//') || line.trim().startsWith('*')) return
+    if (line.trim().startsWith('//') || line.trim().startsWith('*')) return;
 
     // Match React.FC or React.FunctionComponent
     if (/React\.(FC|FunctionComponent)\b/.test(line)) {
@@ -136,29 +136,34 @@ function detectReactFC(content, filePath) {
         line: index + 1,
         content: line.trim(),
         severity: 'warning',
-      })
+      });
     }
-  })
+  });
 
-  return violations
+  return violations;
 }
 
 /**
  * Detect direct Tailwind color classes (should use semantic tokens)
  */
 function detectDirectColors(content, filePath) {
-  const violations = []
-  const lines = content.split('\n')
+  const violations = [];
+  const lines = content.split('\n');
 
   // Common color classes to detect
   const colorPatterns = [
     /className="[^"]*\b(bg|text|border)-(white|black|gray|red|blue|green|yellow|purple|pink|indigo)-\d{2,3}\b/g,
     /className='[^']*\b(bg|text|border)-(white|black|gray|red|blue|green|yellow|purple|pink|indigo)-\d{2,3}\b/g,
-  ]
+  ];
 
   lines.forEach((line, index) => {
     // Skip if line contains semantic tokens
-    if (line.includes('bg-card') || line.includes('text-foreground') || line.includes('border-border')) return
+    if (
+      line.includes('bg-card') ||
+      line.includes('text-foreground') ||
+      line.includes('border-border')
+    )
+      return;
 
     colorPatterns.forEach((pattern) => {
       if (pattern.test(line)) {
@@ -168,27 +173,27 @@ function detectDirectColors(content, filePath) {
           line: index + 1,
           content: line.trim(),
           severity: 'info',
-        })
+        });
       }
-    })
-  })
+    });
+  });
 
-  return violations
+  return violations;
 }
 
 /**
  * Validate a single file
  */
 function validateFile(filePath) {
-  const content = fs.readFileSync(filePath, 'utf-8')
-  const violations = []
+  const content = fs.readFileSync(filePath, 'utf-8');
+  const violations = [];
 
-  violations.push(...detectAnyType(content, filePath))
-  violations.push(...detectExportDefault(content, filePath))
-  violations.push(...detectReactFC(content, filePath))
-  violations.push(...detectDirectColors(content, filePath))
+  violations.push(...detectAnyType(content, filePath));
+  violations.push(...detectExportDefault(content, filePath));
+  violations.push(...detectReactFC(content, filePath));
+  violations.push(...detectDirectColors(content, filePath));
 
-  return violations
+  return violations;
 }
 
 /**
@@ -196,90 +201,94 @@ function validateFile(filePath) {
  */
 function formatViolationsJSON(violations) {
   const grouped = violations.reduce((acc, v) => {
-    acc[v.type] = acc[v.type] || []
-    acc[v.type].push(v)
-    return acc
-  }, {})
+    acc[v.type] = acc[v.type] || [];
+    acc[v.type].push(v);
+    return acc;
+  }, {});
 
-  return JSON.stringify(grouped, null, 2)
+  return JSON.stringify(grouped, null, 2);
 }
 
 /**
  * Main validation function
  */
 async function main() {
-  console.log(`${colors.cyan}🚨 CLAUDE.md Rule Violation Detector${colors.reset}\n`)
+  console.log(`${colors.cyan}🚨 CLAUDE.md Rule Violation Detector${colors.reset}\n`);
 
   // Find all TypeScript/TSX files in src
   const files = await glob('src/**/*.{ts,tsx}', {
     cwd: ROOT_DIR,
     ignore: ['**/*.test.ts', '**/*.test.tsx', '**/*.spec.ts', '**/*.spec.tsx', '**/__tests__/**'],
     absolute: true,
-  })
+  });
 
-  console.log(`${colors.blue}Checking ${files.length} files...${colors.reset}\n`)
+  console.log(`${colors.blue}Checking ${files.length} files...${colors.reset}\n`);
 
-  const allViolations = []
+  const allViolations = [];
 
   for (const file of files) {
-    const violations = validateFile(file)
-    allViolations.push(...violations)
+    const violations = validateFile(file);
+    allViolations.push(...violations);
   }
 
   // Group by severity
-  const errors = allViolations.filter((v) => v.severity === 'error')
-  const warnings = allViolations.filter((v) => v.severity === 'warning')
-  const infos = allViolations.filter((v) => v.severity === 'info')
+  const errors = allViolations.filter((v) => v.severity === 'error');
+  const warnings = allViolations.filter((v) => v.severity === 'warning');
+  const infos = allViolations.filter((v) => v.severity === 'info');
 
   // Display results
   if (errors.length > 0) {
-    console.log(`${colors.red}❌ Errors (${errors.length}):${colors.reset}`)
+    console.log(`${colors.red}❌ Errors (${errors.length}):${colors.reset}`);
     errors.forEach((v) => {
-      const relativePath = path.relative(ROOT_DIR, v.file)
-      console.log(`  ${relativePath}:${v.line}`)
-      console.log(`    ${colors.yellow}${v.content}${colors.reset}`)
-      console.log(`    ${colors.red}Rule: ${v.type === 'any-type' ? 'No `any` type allowed' : v.type}${colors.reset}\n`)
-    })
+      const relativePath = path.relative(ROOT_DIR, v.file);
+      console.log(`  ${relativePath}:${v.line}`);
+      console.log(`    ${colors.yellow}${v.content}${colors.reset}`);
+      console.log(
+        `    ${colors.red}Rule: ${v.type === 'any-type' ? 'No `any` type allowed' : v.type}${colors.reset}\n`,
+      );
+    });
   }
 
   if (warnings.length > 0) {
-    console.log(`${colors.yellow}⚠️  Warnings (${warnings.length}):${colors.reset}`)
+    console.log(`${colors.yellow}⚠️  Warnings (${warnings.length}):${colors.reset}`);
     warnings.forEach((v) => {
-      const relativePath = path.relative(ROOT_DIR, v.file)
-      console.log(`  ${relativePath}:${v.line}`)
-      console.log(`    ${colors.yellow}${v.content}${colors.reset}`)
-      console.log(`    ${colors.yellow}Rule: ${v.type}${colors.reset}\n`)
-    })
+      const relativePath = path.relative(ROOT_DIR, v.file);
+      console.log(`  ${relativePath}:${v.line}`);
+      console.log(`    ${colors.yellow}${v.content}${colors.reset}`);
+      console.log(`    ${colors.yellow}Rule: ${v.type}${colors.reset}\n`);
+    });
   }
 
   if (infos.length > 0) {
-    console.log(`${colors.blue}ℹ️  Info (${infos.length}):${colors.reset}`)
-    console.log(`  ${infos.length} instances of direct color classes found (consider using semantic tokens)\n`)
+    console.log(`${colors.blue}ℹ️  Info (${infos.length}):${colors.reset}`);
+    console.log(
+      `  ${infos.length} instances of direct color classes found (consider using semantic tokens)\n`,
+    );
   }
 
   // Write violations to file for GitHub Actions
   if (allViolations.length > 0) {
-    const violationsJSON = formatViolationsJSON(allViolations)
-    fs.writeFileSync(path.join(ROOT_DIR, '.violations.json'), violationsJSON)
+    const violationsJSON = formatViolationsJSON(allViolations);
+    fs.writeFileSync(path.join(ROOT_DIR, '.violations.json'), violationsJSON);
   }
 
   // Summary
-  console.log('='.repeat(60))
+  console.log('='.repeat(60));
   if (allViolations.length === 0) {
-    console.log(`${colors.green}✅ No rule violations found!${colors.reset}`)
-    process.exit(0)
+    console.log(`${colors.green}✅ No rule violations found!${colors.reset}`);
+    process.exit(0);
   } else {
     console.log(
-      `${colors.yellow}⚠️  Found ${allViolations.length} violation(s) (${errors.length} errors, ${warnings.length} warnings, ${infos.length} info)${colors.reset}`
-    )
-    console.log(`${colors.cyan}See CLAUDE.md for coding guidelines${colors.reset}`)
+      `${colors.yellow}⚠️  Found ${allViolations.length} violation(s) (${errors.length} errors, ${warnings.length} warnings, ${infos.length} info)${colors.reset}`,
+    );
+    console.log(`${colors.cyan}See CLAUDE.md for coding guidelines${colors.reset}`);
 
     // Exit with error only if there are actual errors
-    process.exit(errors.length > 0 ? 1 : 0)
+    process.exit(errors.length > 0 ? 1 : 0);
   }
 }
 
 main().catch((error) => {
-  console.error(`${colors.red}Error:${colors.reset}`, error.message)
-  process.exit(1)
-})
+  console.error(`${colors.red}Error:${colors.reset}`, error.message);
+  process.exit(1);
+});

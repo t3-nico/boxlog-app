@@ -1,85 +1,133 @@
-// For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
-import storybook from "eslint-plugin-storybook";
+// Dayopt ESLint - Next.js 16 Flat Config
+// @see https://nextjs.org/docs/app/api-reference/config/eslint
 
-// Dayopt ESLint - 公式準拠設定
-// Next.js公式推奨設定を使用（学習コスト0、メンテ0）
+import { defineConfig, globalIgnores } from 'eslint/config'
+import nextVitals from 'eslint-config-next/core-web-vitals'
+import nextTs from 'eslint-config-next/typescript'
+import storybook from 'eslint-plugin-storybook'
 
-import { FlatCompat } from '@eslint/eslintrc'
-import tsPlugin from '@typescript-eslint/eslint-plugin'
-import tsParser from '@typescript-eslint/parser'
-import path from 'node:path'
-import { fileURLToPath } from 'node:url'
+const eslintConfig = defineConfig([
+  // Next.js公式推奨設定（React, React Hooks, Core Web Vitals）
+  ...nextVitals,
+  // TypeScript推奨ルール
+  ...nextTs,
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
+  // Ignore patterns
+  globalIgnores([
+    '.next/**',
+    'out/**',
+    'build/**',
+    'dist/**',
+    'coverage/**',
+    'storybook-static/**',
+    'next-env.d.ts',
+  ]),
 
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-})
-
-const config = [// Ignore patterns
-{
-  ignores: ['**/node_modules/**', '**/.next/**', '**/dist/**', '**/build/**', '**/coverage/**', 'storybook-static/**'],
-}, // Next.js公式推奨設定（React, TypeScript, アクセシビリティ含む）
-...compat.extends('next/core-web-vitals'), // TypeScript用カスタムルール
-{
-  files: ['**/*.{ts,tsx}'],
-  plugins: {
-    '@typescript-eslint': tsPlugin,
-  },
-  languageOptions: {
-    parser: tsParser,
-  },
-  rules: {
-    // any型禁止（CLAUDE.md準拠）
-    '@typescript-eslint/no-explicit-any': 'error',
-    // console.log禁止（warn/errorは許可）
-    'no-console': ['error', { allow: ['warn', 'error'] }],
-  },
-}, // テスト用グローバル変数
-{
-  files: ['**/*.test.{js,jsx,ts,tsx}', '**/*.spec.{js,jsx,ts,tsx}'],
-  languageOptions: {
-    globals: {
-      vi: 'readonly',
-      describe: 'readonly',
-      it: 'readonly',
-      expect: 'readonly',
-      test: 'readonly',
-      beforeEach: 'readonly',
-      afterEach: 'readonly',
-      beforeAll: 'readonly',
-      afterAll: 'readonly',
+  // TypeScript用カスタムルール
+  {
+    files: ['**/*.{ts,tsx}'],
+    rules: {
+      // any型禁止（CLAUDE.md準拠）
+      '@typescript-eslint/no-explicit-any': 'error',
+      // console.log禁止（warn/errorは許可）
+      'no-console': ['error', { allow: ['warn', 'error'] }],
+      // React 19.2 の新しい react-hooks ルール
+      // TODO: 段階的に error に昇格して既存コードを修正する
+      'react-hooks/set-state-in-effect': 'warn',
+      'react-hooks/refs': 'warn',
+      'react-hooks/purity': 'warn',
+      'react-hooks/immutability': 'warn',
+      'react-hooks/preserve-manual-memoization': 'warn',
+      // 空のインターフェースは type alias で代替可能だが既存コードに多いため warn
+      '@typescript-eslint/no-empty-object-type': 'warn',
+      // no-unused-vars は以前の設定では未有効。段階的に有効化する
+      // TypeScript自体が未使用importを検出し、Prettierが自動削除するため低優先
+      '@typescript-eslint/no-unused-vars': 'off',
     },
   },
-  rules: {
-    // テストファイルではconsole許可
-    'no-console': 'off',
-  },
-}, // logger.tsではconsole許可（開発用ロガー）
-{
-  files: ['**/logger.ts'],
-  rules: {
-    'no-console': 'off',
-  },
-}, // scripts/ではconsole許可（CLIツール）
-{
-  files: ['scripts/**/*.{js,ts}'],
-  rules: {
-    'no-console': 'off',
-  },
-}, // src/test/ではconsole許可（テストユーティリティ）
-{
-  files: ['src/test/**/*.{js,ts,tsx}'],
-  rules: {
-    'no-console': 'off',
-  },
-}, // 開発専用コンポーネントではconsole許可
-{
-  files: ['**/components/dev/**/*.{js,ts,tsx}'],
-  rules: {
-    'no-console': 'off',
-  },
-}, ...storybook.configs["flat/recommended"]]
 
-export default config
+  // テスト用グローバル変数
+  {
+    files: ['**/*.test.{js,jsx,ts,tsx}', '**/*.spec.{js,jsx,ts,tsx}'],
+    languageOptions: {
+      globals: {
+        vi: 'readonly',
+        describe: 'readonly',
+        it: 'readonly',
+        expect: 'readonly',
+        test: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        beforeAll: 'readonly',
+        afterAll: 'readonly',
+      },
+    },
+    rules: {
+      'no-console': 'off',
+    },
+  },
+
+  // logger.tsではconsole許可（開発用ロガー）
+  {
+    files: ['**/logger.ts'],
+    rules: {
+      'no-console': 'off',
+    },
+  },
+
+  // scripts/ではconsole許可 + CJS require許可（CLIツール）
+  {
+    files: ['scripts/**/*.{js,cjs,mjs,ts}'],
+    rules: {
+      'no-console': 'off',
+      '@typescript-eslint/no-require-imports': 'off',
+      '@typescript-eslint/no-unused-vars': 'off',
+    },
+  },
+
+  // public/ のJSファイル（Service Worker等）
+  {
+    files: ['public/**/*.js'],
+    rules: {
+      '@typescript-eslint/no-unused-vars': 'off',
+      '@typescript-eslint/no-require-imports': 'off',
+    },
+  },
+
+  // .storybook/ のモックファイル
+  {
+    files: ['.storybook/**/*.{ts,tsx,js}'],
+    rules: {
+      '@typescript-eslint/no-unused-vars': 'off',
+    },
+  },
+
+  // supabase/ Edge Functions
+  {
+    files: ['supabase/**/*.ts'],
+    rules: {
+      '@typescript-eslint/no-unused-vars': 'off',
+    },
+  },
+
+  // src/test/ではconsole許可（テストユーティリティ）
+  {
+    files: ['src/test/**/*.{js,ts,tsx}'],
+    rules: {
+      'no-console': 'off',
+    },
+  },
+
+  // 開発専用コンポーネントではconsole許可
+  {
+    files: ['**/components/dev/**/*.{js,ts,tsx}'],
+    rules: {
+      'no-console': 'off',
+    },
+  },
+
+  // Storybook
+  ...storybook.configs['flat/recommended'],
+])
+
+export default eslintConfig

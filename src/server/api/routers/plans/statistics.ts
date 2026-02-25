@@ -144,7 +144,7 @@ export const statisticsRouter = createTRPCRouter({
 
     // Calculate current streak
     let currentStreak = 0;
-    let checkDate = new Date();
+    const checkDate = new Date();
 
     // If no activity today, start from yesterday
     if (!hasActivityToday) {

@@ -78,7 +78,7 @@ function getLocalizedPath(path: string, locale: string): string {
   return `/${locale}${path}`;
 }
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
   // 静的ファイル、API、_nextファイルはスキップ
@@ -165,7 +165,7 @@ export async function middleware(request: NextRequest) {
 
     return response;
   } catch (error) {
-    logger.error('Middleware error:', error);
+    logger.error('Proxy error:', error);
     return NextResponse.redirect(
       new URL(getLocalizedPath('/auth/login', currentLocale), request.url),
     );

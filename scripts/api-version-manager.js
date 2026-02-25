@@ -302,7 +302,7 @@ function makeRequest(method, url, headers = {}) {
             data: parsedData,
             responseTime,
           });
-        } catch (error) {
+        } catch {
           resolve({
             statusCode: res.statusCode,
             headers: res.headers,

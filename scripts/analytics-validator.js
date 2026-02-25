@@ -144,7 +144,7 @@ function findEventUsage(events) {
         }
       });
     });
-  } catch (error) {
+  } catch {
     console.warn(colorize('⚠️ 検索コマンドが失敗しました（検索結果なしの可能性）', 'yellow'));
   }
 

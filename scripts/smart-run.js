@@ -36,7 +36,7 @@ class SmartRunner {
       });
 
       return result;
-    } catch (error) {
+    } catch {
       console.error(`❌ Failed to execute: ${command}`);
       process.exit(1);
     }

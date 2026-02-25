@@ -30,7 +30,7 @@ describe.skipIf(SKIP_INTEGRATION)('Notifications Router Integration', () => {
   let adminSupabase: ReturnType<typeof createClient<Database>>;
   let supabase: ReturnType<typeof createClient<Database>>;
   let ctx: Context;
-  let createdNotificationIds: string[] = [];
+  const createdNotificationIds: string[] = [];
 
   const TEST_EMAIL = `test-notifications-${TEST_USER_ID}@example.com`;
   const TEST_PASSWORD = 'test-password-123';

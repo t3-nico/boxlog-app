@@ -29,8 +29,8 @@ describe.skipIf(SKIP_INTEGRATION)('Plans Statistics Router Integration', () => {
   let adminSupabase: ReturnType<typeof createClient<Database>>;
   let supabase: ReturnType<typeof createClient<Database>>;
   let ctx: Context;
-  let createdPlanIds: string[] = [];
-  let createdTagIds: string[] = [];
+  const createdPlanIds: string[] = [];
+  const createdTagIds: string[] = [];
 
   const TEST_EMAIL = `test-stats-${TEST_USER_ID}@example.com`;
   const TEST_PASSWORD = 'test-password-123';
