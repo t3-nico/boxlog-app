@@ -156,6 +156,119 @@ export const Guidelines: Story = {
           <li>maxWidth: 580px（モバイル表示を考慮）</li>
         </ul>
       </section>
+
+      <section>
+        <h2 className="border-border mb-4 border-b pb-2 text-lg font-bold">Resend インフラ構成</h2>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-border border-b">
+                <th className="py-3 text-left font-bold">項目</th>
+                <th className="py-3 text-left font-bold">設定値</th>
+              </tr>
+            </thead>
+            <tbody className="text-muted-foreground">
+              {[
+                ['送信ドメイン', 'send.dayopt.app（Resend verified）'],
+                ['送信元アドレス', 'noreply@send.dayopt.app'],
+                ['DNS レコード', 'DKIM + SPF + MX（Vercel DNS）'],
+                ['DMARC', 'v=DMARC1; p=none（監視モード）'],
+                ['Webhook URL', '/api/webhooks/resend'],
+                ['本番 API キー', 'Sending Access（send.dayopt.app のみ）'],
+                ['開発 API キー', 'Full Access（テスト送信用）'],
+              ].map(([item, value]) => (
+                <tr key={item} className="border-border border-b">
+                  <td className="py-3">
+                    <code className="text-xs">{item}</code>
+                  </td>
+                  <td className="py-3">{value}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2 className="border-border mb-4 border-b pb-2 text-lg font-bold">送信フロー</h2>
+        <div className="text-muted-foreground space-y-4 text-sm">
+          <div>
+            <h3 className="text-foreground mb-2 text-sm font-bold">
+              Auth メール（signup / reset / magic_link）
+            </h3>
+            <div className="bg-muted rounded-lg p-4 font-mono text-xs">
+              <p>Supabase Auth → send_email hook → Edge Function</p>
+              <p className="pl-4">→ supabase/functions/send-auth-email/index.ts</p>
+              <p className="pl-4">→ Resend API → ユーザー</p>
+            </div>
+          </div>
+          <div>
+            <h3 className="text-foreground mb-2 text-sm font-bold">
+              アプリメール（welcome / reminder / overdue / deletion）
+            </h3>
+            <div className="bg-muted rounded-lg p-4 font-mono text-xs">
+              <p>App → tRPC email.sendXxx → React Email render</p>
+              <p className="pl-4">→ src/server/api/routers/email.ts</p>
+              <p className="pl-4">→ Resend API → ユーザー</p>
+            </div>
+          </div>
+          <div>
+            <h3 className="text-foreground mb-2 text-sm font-bold">Webhook（配信結果の監視）</h3>
+            <div className="bg-muted rounded-lg p-4 font-mono text-xs">
+              <p>Resend → POST /api/webhooks/resend → ログ記録</p>
+              <p className="pl-4">→ src/app/api/webhooks/resend/route.ts</p>
+              <p className="pl-4">→ bounced / complained / delivered / delayed</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 className="border-border mb-4 border-b pb-2 text-lg font-bold">環境変数</h2>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-border border-b">
+                <th className="py-3 text-left font-bold">変数名</th>
+                <th className="py-3 text-left font-bold">用途</th>
+                <th className="py-3 text-left font-bold">設定場所</th>
+              </tr>
+            </thead>
+            <tbody className="text-muted-foreground">
+              {[
+                ['RESEND_API_KEY', 'Resend API キー', 'Vercel + .env.local'],
+                ['RESEND_FROM_EMAIL', '送信元アドレス', 'Vercel + .env.local'],
+                ['RESEND_WEBHOOK_SECRET', 'Webhook 署名検証シークレット', 'Vercel + .env.local'],
+              ].map(([name, purpose, where]) => (
+                <tr key={name} className="border-border border-b">
+                  <td className="py-3">
+                    <code className="text-xs">{name}</code>
+                  </td>
+                  <td className="py-3">{purpose}</td>
+                  <td className="py-3">{where}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2 className="border-border mb-4 border-b pb-2 text-lg font-bold">セキュリティ</h2>
+        <ul className="text-muted-foreground list-disc space-y-2 pl-6 text-sm">
+          <li>
+            本番は <strong>Sending Access</strong> キー（ドメイン管理不可、送信のみ）
+          </li>
+          <li>
+            tRPC mutation は <code>verifyEmailOwnership()</code> で送信先を自分のアドレスに制限
+          </li>
+          <li>
+            Webhook は <strong>svix 署名検証</strong>で改ざん防止
+          </li>
+          <li>テストメール endpoint は本番環境で無効化</li>
+          <li>DMARC で送信ドメインのなりすましを監視</li>
+        </ul>
+      </section>
     </div>
   ),
 };
