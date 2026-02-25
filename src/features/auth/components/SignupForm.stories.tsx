@@ -91,21 +91,21 @@ export const EmailSent: Story = {
 export const ErrorMessages: Story = {
   render: () => (
     <div className="flex max-w-md flex-col gap-4 p-6">
-      <p className="text-muted-foreground text-sm font-medium">SignupForm error variations</p>
+      <p className="text-muted-foreground text-sm font-medium">SignupForm エラーバリエーション</p>
       <FieldError announceImmediately className="text-center">
-        This email is already registered. Please try logging in.
+        このメールアドレスは既に登録されています。ログインしてください。
       </FieldError>
       <FieldError announceImmediately className="text-center">
-        Too many requests. Please wait a moment and try again.
+        リクエストが多すぎます。しばらく待ってから再試行してください。
       </FieldError>
       <FieldError announceImmediately className="text-center">
-        Password must be at least 8 characters long
+        パスワードは8文字以上にしてください
       </FieldError>
       <FieldError announceImmediately className="text-center">
-        This password has been exposed in a data breach. Please use a more secure password.
+        このパスワードは過去に漏洩しています。より安全なパスワードを使用してください。
       </FieldError>
       <FieldError announceImmediately className="text-center">
-        An unexpected error occurred
+        問題が発生しました。時間をおいて再度お試しください。
       </FieldError>
     </div>
   ),

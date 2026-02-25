@@ -63,16 +63,15 @@ export const PasswordToggle: Story = {
 export const ErrorMessages: Story = {
   render: () => (
     <div className="flex max-w-md flex-col gap-4 p-6">
-      <p className="text-muted-foreground text-sm font-medium">LoginForm error variations</p>
+      <p className="text-muted-foreground text-sm font-medium">LoginForm エラーバリエーション</p>
       <FieldError announceImmediately className="text-center">
-        Invalid email or password
+        メールアドレスまたはパスワードが正しくありません
       </FieldError>
       <FieldError announceImmediately className="text-center">
-        For security reasons, this account has been temporarily locked. Please try again in 15
-        minutes.
+        セキュリティのため、このアカウントは一時的にロックされています。15分後に再試行してください。
       </FieldError>
       <FieldError announceImmediately className="text-center">
-        An unexpected error occurred
+        問題が発生しました。時間をおいて再度お試しください。
       </FieldError>
     </div>
   ),

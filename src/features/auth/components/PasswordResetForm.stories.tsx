@@ -82,10 +82,10 @@ export const ErrorMessages: Story = {
   render: () => (
     <div className="flex max-w-md flex-col gap-4 p-6">
       <p className="text-muted-foreground text-sm font-medium">
-        PasswordResetForm error variations
+        PasswordResetForm エラーバリエーション
       </p>
       <FieldError announceImmediately className="text-center">
-        An unexpected error occurred
+        問題が発生しました。時間をおいて再度お試しください。
       </FieldError>
     </div>
   ),

@@ -51,7 +51,7 @@ function ResetPasswordFormWithError() {
               </div>
 
               <FieldError announceImmediately className="text-center">
-                Passwords do not match
+                パスワードが一致しません
               </FieldError>
 
               <Field>
@@ -205,16 +205,16 @@ export const ErrorMessages: Story = {
   render: () => (
     <div className="flex max-w-md flex-col gap-4 p-6">
       <p className="text-muted-foreground text-sm font-medium">
-        ResetPasswordForm error variations
+        ResetPasswordForm エラーバリエーション
       </p>
       <FieldError announceImmediately className="text-center">
-        Passwords do not match
+        パスワードが一致しません
       </FieldError>
       <FieldError announceImmediately className="text-center">
-        Password must be at least 8 characters long
+        パスワードは8文字以上である必要があります
       </FieldError>
       <FieldError announceImmediately className="text-center">
-        An unexpected error occurred
+        問題が発生しました。時間をおいて再度お試しください。
       </FieldError>
     </div>
   ),
