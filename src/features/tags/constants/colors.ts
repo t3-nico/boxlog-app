@@ -20,9 +20,3 @@ export const TAG_GROUP_NAME_MAX_LENGTH = 50;
 // ========================================
 
 export { DEFAULT_GROUP_COLOR, DEFAULT_TAG_COLOR, TAG_COLOR_PALETTE } from '@/config/ui/colors';
-
-/**
- * @deprecated TAG_PRESET_COLORS は TAG_COLOR_PALETTE に統一されました
- * 互換性のため TAG_COLOR_PALETTE を再エクスポート
- */
-export { TAG_COLOR_PALETTE as TAG_PRESET_COLORS } from '@/config/ui/colors';

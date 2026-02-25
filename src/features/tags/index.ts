@@ -43,7 +43,7 @@ export {
 } from './hooks';
 
 // Constants - Colors
-export { DEFAULT_TAG_COLOR, TAG_COLOR_PALETTE, TAG_PRESET_COLORS } from './constants/colors';
+export { DEFAULT_TAG_COLOR, TAG_COLOR_PALETTE } from './constants/colors';
 
 // Types
 export type {

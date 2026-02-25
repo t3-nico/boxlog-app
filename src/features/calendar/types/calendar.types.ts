@@ -119,11 +119,6 @@ export interface RecurrencePattern {
   timezone: string;
   createdAt: Date;
   updatedAt: Date;
-  // 後方互換性
-  /** @deprecated Use planId instead */
-  ticketId?: string;
-  /** @deprecated Use planId instead */
-  eventId?: string;
 }
 
 // プランインスタンス（繰り返しプランの個別オカレンス）
@@ -143,8 +138,6 @@ export interface PlanInstance {
 // 後方互換性のためのエイリアス
 export type TicketInstance = PlanInstance;
 export type EventInstance = PlanInstance;
-/** @deprecated Use PlanInstance instead */
-export type planInstance = PlanInstance;
 
 // カレンダー共有
 export interface CalendarShare {
@@ -242,8 +235,6 @@ export interface UpdatePlanInput extends Partial<CreatePlanInput> {
 // 後方互換性のためのエイリアス
 export type UpdateTicketInput = UpdatePlanInput;
 export type UpdateEventInput = UpdatePlanInput;
-/** @deprecated Use UpdatePlanInput instead */
-export type UpdateplanInput = UpdatePlanInput;
 
 export interface CalendarShareInput {
   calendarId: string;
