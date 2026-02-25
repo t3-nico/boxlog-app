@@ -40,6 +40,27 @@ description: リファクタリングスキル。パターン統一、構造改�
 
 ## リファクタリングワークフロー
 
+### Phase 0: 不要コード検出（cleanup）
+
+リファクタリング前にまず不要コードを検出・削除する。
+
+```bash
+npm run lint       # console.log, 未使用変数
+npm run typecheck  # noUnusedLocals, noUnusedParameters
+```
+
+**検出対象**:
+
+| 種類              | 検出方法                            | 置き換え                                |
+| ----------------- | ----------------------------------- | --------------------------------------- |
+| `console.log`     | ESLint `no-console`                 | `import { logger } from '@/lib/logger'` |
+| 未使用import/変数 | TypeScript strict + ESLint          | 削除                                    |
+| 未使用export      | Grepで参照0件を確認                 | export削除 → typecheck → ファイル削除   |
+| コメントアウト    | 目視                                | 削除（gitに履歴あり）                   |
+| `TODO/FIXME/HACK` | `grep -rn "TODO\|FIXME\|HACK" src/` | 対応済みなら削除                        |
+
+**Dayopt固有**: 未使用Zustandセレクタ、未使用tRPCエンドポイント、未使用i18nキーもGrepで検出。
+
 ### Phase 1: 影響範囲分析
 
 ```bash
@@ -151,7 +172,7 @@ src/features/{feature-name}/
 └── utils/
 ```
 
-既存の散らばったコードをFeature構造に移行する際は `/feature-scaffolding` を参照。
+既存の散らばったコードをFeature構造に移行する際は `/architecture`（新Feature作成テンプレート）を参照。
 
 ### tRPCルーターの整理
 
@@ -205,6 +226,5 @@ Service層への分離は `/trpc-router-creating` を参照。
 
 ## 関連スキル
 
-- `/cleanup` - 不要コード削除
 - `/architecture` - 設計相談
-- `/learn-pattern` - パターン学習・保存
+- `/test` - 回帰テストの作成

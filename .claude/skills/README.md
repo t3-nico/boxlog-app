@@ -6,55 +6,47 @@ Dayoptプロジェクト固有のスキル集。各スキルは特定のタス�
 
 ### 実装系
 
-| スキル | 説明 | 自動発動条件 |
-|--------|------|-------------|
-| [`store-creating`](store-creating/SKILL.md) | Zustandストア作成 | 新しいストアが必要な時 |
-| [`trpc-router-creating`](trpc-router-creating/SKILL.md) | tRPCルーター作成 | 新しいAPIエンドポイントが必要な時 |
-| [`optimistic-update`](optimistic-update/SKILL.md) | 楽観的更新実装 | mutation実装時 |
-| [`supabase`](supabase/SKILL.md) | Supabase運用 | RLS設計、マイグレーション、Realtime実装時 |
-| [`feature-scaffolding`](feature-scaffolding/SKILL.md) | Feature構造作成 | 新機能モジュール作成時 |
-| [`i18n`](i18n/SKILL.md) | 国際化対応 | UIテキスト追加時 |
+| スキル                                                  | 説明              | 自動発動条件                              |
+| ------------------------------------------------------- | ----------------- | ----------------------------------------- |
+| [`store-creating`](store-creating/SKILL.md)             | Zustandストア作成 | 新しいストアが必要な時                    |
+| [`trpc-router-creating`](trpc-router-creating/SKILL.md) | tRPCルーター作成  | 新しいAPIエンドポイントが必要な時         |
+| [`optimistic-update`](optimistic-update/SKILL.md)       | 楽観的更新実装    | mutation実装時                            |
+| [`supabase`](supabase/SKILL.md)                         | Supabase運用      | RLS設計、マイグレーション、Realtime実装時 |
+| [`i18n`](i18n/SKILL.md)                                 | 国際化対応        | UIテキスト追加時                          |
 
 ### 品質系
 
-| スキル | 説明 | 自動発動条件 |
-|--------|------|-------------|
-| [`test`](test/SKILL.md) | テスト作成 | 新機能実装後、バグ修正後 |
-| [`security`](security/SKILL.md) | セキュリティ監査 | 認証/認可、入力処理実装時 |
-| [`error-handling`](error-handling/SKILL.md) | エラー処理 | エラー処理、Sentry連携、ErrorBoundary配置時 |
-| [`a11y`](a11y/SKILL.md) | アクセシビリティ | インタラクティブ要素実装時 |
-| [`react-best-practices`](react-best-practices/SKILL.md) | React最適化 | コンポーネント実装時 |
+| スキル                                                  | 説明             | 自動発動条件                                |
+| ------------------------------------------------------- | ---------------- | ------------------------------------------- |
+| [`test`](test/SKILL.md)                                 | テスト作成       | 新機能実装後、バグ修正後                    |
+| [`security`](security/SKILL.md)                         | セキュリティ監査 | 認証/認可、入力処理実装時                   |
+| [`error-handling`](error-handling/SKILL.md)             | エラー処理       | エラー処理、Sentry連携、ErrorBoundary配置時 |
+| [`a11y`](a11y/SKILL.md)                                 | アクセシビリティ | インタラクティブ要素実装時                  |
+| [`react-best-practices`](react-best-practices/SKILL.md) | React最適化      | コンポーネント実装時                        |
 
 ### 改善系
 
-| スキル | 説明 | 自動発動条件 |
-|--------|------|-------------|
-| [`refactor`](refactor/SKILL.md) | リファクタリング | パターン統一、構造改善時 |
-| [`cleanup`](cleanup/SKILL.md) | 不要コード削除 | console.log検出、未使用import発見時 |
-| [`debug`](debug/SKILL.md) | デバッグ | エラー発生時、予期しない動作報告時 |
+| スキル                          | 説明                            | 自動発動条件                                         |
+| ------------------------------- | ------------------------------- | ---------------------------------------------------- |
+| [`refactor`](refactor/SKILL.md) | リファクタリング（cleanup含む） | パターン統一、構造改善、不要コード検出時             |
+| [`debug`](debug/SKILL.md)       | デバッグ（調査含む）            | エラー発生時、予期しない動作報告時、API/コード調査時 |
 
-### 設計・調査系
+### 設計系
 
-| スキル | 説明 | 自動発動条件 |
-|--------|------|-------------|
-| [`architecture`](architecture/SKILL.md) | 設計相談 | 複雑な機能の計画時 |
-| [`investigate`](investigate/SKILL.md) | API/コード調査 | 外部API連携、ライブラリ導入時 |
-| [`frontend-design`](frontend-design/SKILL.md) | UIデザイン指針 | UI設計判断が必要な時 |
+| スキル                                        | 説明                            | 自動発動条件                                  |
+| --------------------------------------------- | ------------------------------- | --------------------------------------------- |
+| [`architecture`](architecture/SKILL.md)       | 設計相談（Feature構造作成含む） | 複雑な機能の計画時、新Featureモジュール作成時 |
+| [`frontend-design`](frontend-design/SKILL.md) | UIデザイン指針                  | UI設計判断が必要な時                          |
 
 ### ドキュメント・運用系
 
-| スキル | 説明 | 自動発動条件 |
-|--------|------|-------------|
-| [`docs`](docs/SKILL.md) | ドキュメント作成 | 技術ドキュメント、ADR作成時 |
-| [`releasing`](releasing/SKILL.md) | リリース作業 | バージョンリリース時 |
-| [`learn-pattern`](learn-pattern/SKILL.md) | パターン学習・保存 | 難しい問題を解決した時 |
+| スキル                                  | 説明                                                    | 自動発動条件                        |
+| --------------------------------------- | ------------------------------------------------------- | ----------------------------------- |
+| [`docs-writing`](docs-writing/SKILL.md) | ドキュメント作成（ユーザー向け + 内部技術ドキュメント） | ドキュメント、ブログ、ADR作成時     |
+| [`storybook`](storybook/SKILL.md)       | Storybook Story作成                                     | UIコンポーネントのStory追加・更新時 |
+| [`releasing`](releasing/SKILL.md)       | リリース作業                                            | バージョンリリース時                |
 
-### 判断系
-
-| スキル | 説明 | 自動発動条件 |
-|--------|------|-------------|
-| [`model-selection`](model-selection/SKILL.md) | モデル選択 | タスクに応じたモデル選択時 |
-| [`ask-questions-if-underspecified`](ask-questions-if-underspecified/SKILL.md) | 要件確認 | 仕様が曖昧な時 |
+> **判断系ルール**（モデル選択、要件確認、パターン学習）は `.claude/rules/ai-behavior.md` に移動済み。
 
 ## スキルの構造（テンプレート）
 
@@ -101,10 +93,10 @@ description: スキルの説明。自動発動条件を含める。
 
 ## CLAUDE.mdとの関係
 
-| ドキュメント | 役割 | 内容 |
-|-------------|------|------|
+| ドキュメント  | 役割             | 内容                             |
+| ------------- | ---------------- | -------------------------------- |
 | **CLAUDE.md** | 「何を」「なぜ」 | クイックチェック、禁止事項、方針 |
-| **Skills** | 「どうやって」 | 詳細なコードテンプレート、手順 |
+| **Skills**    | 「どうやって」   | 詳細なコードテンプレート、手順   |
 
 CLAUDE.mdは簡潔に保ち、詳細はSkillに委譲する。
 

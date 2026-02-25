@@ -126,6 +126,13 @@ Each rule file contains:
 
 For the complete guide with all rules expanded: `AGENTS.md`
 
+## 関連エージェント
+
+- **react-specialist** — 既存コードの設計批評・Agent Teamsでの議論
+- **performance-analyst** — p95実測データに基づくボトルネック特定
+
+> このスキルは「実装時の45ルール」、エージェントは「設計判断の評価」と「実測ベースの分析」。
+
 ## 関連スキル
 
 - `/a11y` - アクセシビリティとパフォーマンスの両立
