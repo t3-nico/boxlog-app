@@ -7,6 +7,7 @@ import { useTranslations } from 'next-intl';
 
 import { DEFAULT_TAG_COLOR } from '@/features/tags/constants/colors';
 import { useMergeTag, useTags } from '@/features/tags/hooks';
+import { useHasMounted } from '@/hooks/useHasMounted';
 import { logger } from '@/lib/logger';
 import { cn } from '@/lib/utils';
 
@@ -44,13 +45,8 @@ export function TagMergeModal({
 
   const [selectedTargetId, setSelectedTargetId] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState('');
-  const [mounted, setMounted] = useState(false);
+  const mounted = useHasMounted();
   const [error, setError] = useState('');
-
-  // クライアントサイドでのみマウント
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   // モーダルが開いたらリセット＆最新タグを取得
   useEffect(() => {

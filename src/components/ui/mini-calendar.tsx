@@ -1,5 +1,6 @@
 'use client';
 
+import { useHasMounted } from '@/hooks/useHasMounted';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 
 import {
@@ -125,13 +126,9 @@ export const MiniCalendar = memo<MiniCalendarProps>(
   }) => {
     const locale = useLocale();
     const weekStartsOn = useCalendarSettingsStore((state) => state.weekStartsOn);
-    const [isMounted, setIsMounted] = useState(false);
+    const isMounted = useHasMounted();
     const [open, setOpen] = useState(false);
     const [viewMonth, setViewMonth] = useState(() => month ?? selectedDate ?? new Date());
-
-    useEffect(() => {
-      setIsMounted(true);
-    }, []);
 
     // 外部からmonthが変更された場合に同期
     useEffect(() => {

@@ -6,9 +6,7 @@
  * 技術的負債を包括的に分析し、視覚的なレポートを生成
  */
 
-const { execSync: _execSync } = require('child_process');
 const fs = require('fs');
-
 const path = require('path');
 
 const { ESLint } = require('eslint');
@@ -338,19 +336,6 @@ async function generateIntegratedReport() {
 }
 
 /**
- * TODO健康スコア計算
- */
-function _calculateTodoHealthScore(todoStats) {
-  if (!todoStats.total) return 100;
-
-  let score = 100;
-  const structuredRate = todoStats.structured / todoStats.total;
-  score = structuredRate * 80 + (todoStats.overdue ? 0 : 20);
-
-  return Math.max(Math.round(score), 0);
-}
-
-/**
  * 総合技術的負債スコア計算
  */
 function calculateOverallDebtScore(eslintReport, todoAnalysis, bundleAnalysis) {
@@ -442,7 +427,7 @@ function updateTrendsData(currentSummary) {
   if (fs.existsSync(trendsPath)) {
     try {
       trendsData = JSON.parse(fs.readFileSync(trendsPath, 'utf8'));
-    } catch (error) {
+    } catch {
       console.warn(`${colors.yellow}⚠️ トレンドデータの読み込みに失敗しました${colors.reset}`);
     }
   }

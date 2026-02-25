@@ -6,6 +6,7 @@ import { createPortal } from 'react-dom';
 import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useDialogKeyboard } from '@/hooks/useDialogKeyboard';
+import { useHasMounted } from '@/hooks/useHasMounted';
 import { useTranslations } from 'next-intl';
 
 import { useRecurringEditConfirmStore } from '../stores/useRecurringEditConfirmStore';
@@ -29,18 +30,13 @@ export type RecurringEditScope = 'this' | 'thisAndFuture' | 'all';
 export function RecurringEditConfirmDialog() {
   const t = useTranslations();
   const [isProcessing, setIsProcessing] = useState(false);
-  const [mounted, setMounted] = useState(false);
+  const mounted = useHasMounted();
   const [scope, setScope] = useState<RecurringEditScope>('this');
 
   const isOpen = useRecurringEditConfirmStore((state) => state.isOpen);
   const mode = useRecurringEditConfirmStore((state) => state.mode);
   const onConfirm = useRecurringEditConfirmStore((state) => state.onConfirm);
   const closeDialog = useRecurringEditConfirmStore((state) => state.closeDialog);
-
-  // クライアントサイドでのみマウント
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   // ダイアログが開くたびにscopeをリセット
   useEffect(() => {

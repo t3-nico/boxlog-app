@@ -5,9 +5,7 @@ import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
 import type { DateTimeSelection, GridViewProps, TimeSlot } from '../shared';
 
 // DayViewの固有Props（GridViewPropsを継承して時間グリッド機能を使用）
-export interface DayViewProps extends GridViewProps {
-  // DayView固有のプロパティがあれば追加
-}
+export type DayViewProps = GridViewProps;
 
 // シンプル版のProps（後方互換性のため）
 export interface SimpleDayViewProps {

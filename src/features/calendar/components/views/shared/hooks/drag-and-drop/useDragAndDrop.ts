@@ -44,15 +44,21 @@ export function useDragAndDrop({
 
   // eventClickHandler の最新参照を保持（クロージャー問題を回避）
   const eventClickHandlerRef = useRef(eventClickHandler);
-  eventClickHandlerRef.current = eventClickHandler;
+  useEffect(() => {
+    eventClickHandlerRef.current = eventClickHandler;
+  });
 
   // events の最新参照を保持
   const eventsRef = useRef(events);
-  eventsRef.current = events;
+  useEffect(() => {
+    eventsRef.current = events;
+  });
 
   // 重複チェック用の全イベント
   const allEventsRef = useRef(allEventsForOverlapCheck ?? events);
-  allEventsRef.current = allEventsForOverlapCheck ?? events;
+  useEffect(() => {
+    allEventsRef.current = allEventsForOverlapCheck ?? events;
+  });
 
   const [dragState, setDragState] = useState<DragState>(initialDragState);
   const dragDataRef = useRef<DragDataRef | null>(null);

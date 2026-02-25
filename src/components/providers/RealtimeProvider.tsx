@@ -30,6 +30,7 @@ import { isCalendarViewPath } from '@/features/calendar/lib/route-utils';
 import { useNotificationRealtime } from '@/features/notifications/hooks/useNotificationRealtime';
 import { usePlanRealtime } from '@/features/plans/hooks/usePlanRealtime';
 import { useTagRealtime } from '@/features/tags/hooks/useTagRealtime';
+import { useHasMounted } from '@/hooks/useHasMounted';
 
 interface RealtimeProviderProps {
   children: React.ReactNode;
@@ -49,12 +50,7 @@ export function RealtimeProvider({ children }: RealtimeProviderProps) {
   const pathname = usePathname();
   const [isReady, setIsReady] = useState(false);
   // クライアントサイドマウント確認（SSR時のtRPCコンテキストエラー回避）
-  const [isMounted, setIsMounted] = useState(false);
-
-  // クライアントマウント時にフラグを設定
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
+  const isMounted = useHasMounted();
 
   // AuthStoreの初期化を待つ
   useEffect(() => {

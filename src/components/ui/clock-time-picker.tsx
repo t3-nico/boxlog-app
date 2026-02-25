@@ -1,12 +1,13 @@
 'use client';
 
-import { memo, useCallback, useEffect, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useRef } from 'react';
 
 import { Clock, Flag } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { TimepickerUI } from 'timepicker-ui';
 
 import { TimeSelect } from '@/features/plans/components/shared/TimeSelect';
+import { useHasMounted } from '@/hooks/useHasMounted';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { cn } from '@/lib/utils';
 
@@ -109,11 +110,7 @@ function MobileClockPicker({
   const inputRef = useRef<HTMLInputElement>(null);
   const timepickerRef = useRef<TimepickerUI | null>(null);
   const isInitializedRef = useRef(false);
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
+  const isMounted = useHasMounted();
 
   // timepicker 初期化
   useEffect(() => {

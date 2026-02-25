@@ -21,7 +21,9 @@ export const usePlanOperations = () => {
   // プランリストをキャッシュ経由で参照
   const plansCache = utils.plans.list.getData();
   const plansCacheRef = useRef(plansCache);
-  plansCacheRef.current = plansCache;
+  useEffect(() => {
+    plansCacheRef.current = plansCache;
+  });
 
   // プラン削除ハンドラー
   const handlePlanDelete = useCallback(

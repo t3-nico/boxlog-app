@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { RefreshCw } from 'lucide-react';
 
@@ -13,14 +13,9 @@ import { useServiceWorker } from '@/hooks/useServiceWorker';
  */
 export function ServiceWorkerProvider({ children }: { children: React.ReactNode }) {
   const { updateAvailable, applyUpdate } = useServiceWorker();
-  const [showUpdateBanner, setShowUpdateBanner] = useState(false);
-
-  // 更新が利用可能になったらバナーを表示
-  useEffect(() => {
-    if (updateAvailable) {
-      setShowUpdateBanner(true);
-    }
-  }, [updateAvailable]);
+  // updateAvailable が一度 true になったら表示を維持（ユーザーが「後で」で閉じるまで）
+  const [dismissed, setDismissed] = useState(false);
+  const showUpdateBanner = updateAvailable && !dismissed;
 
   return (
     <>
@@ -38,7 +33,7 @@ export function ServiceWorkerProvider({ children }: { children: React.ReactNode 
             <div className="flex gap-2">
               <button
                 type="button"
-                onClick={() => setShowUpdateBanner(false)}
+                onClick={() => setDismissed(true)}
                 className="text-muted-foreground hover:text-foreground text-sm transition-colors"
               >
                 後で

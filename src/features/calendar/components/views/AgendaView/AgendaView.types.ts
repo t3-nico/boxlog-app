@@ -9,9 +9,7 @@ import type { BaseViewProps } from '../shared';
  * データは親コンポーネント（useCalendarData）から渡される
  * 日付範囲はcalculateViewDateRangeで制御（agenda用に60日）
  */
-export interface AgendaViewProps extends BaseViewProps {
-  // AgendaView固有のプロパティがあれば追加
-}
+export type AgendaViewProps = BaseViewProps;
 
 export interface AgendaItemProps {
   plan: CalendarPlan;

@@ -16,6 +16,7 @@ import { TagNoteField } from '@/features/tags/components/tag-note-field';
 import { DEFAULT_TAG_COLOR, TAG_NAME_MAX_LENGTH } from '@/features/tags/constants/colors';
 import { useTags } from '@/features/tags/hooks';
 import type { CreateTagInput } from '@/features/tags/types';
+import { useHasMounted } from '@/hooks/useHasMounted';
 import { useSubmitShortcut } from '@/hooks/useSubmitShortcut';
 import { logger } from '@/lib/logger';
 import { ChevronDown, Circle } from 'lucide-react';
@@ -52,17 +53,12 @@ export const TagCreateModal = ({
   const [description, setDescription] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const [mounted, setMounted] = useState(false);
+  const mounted = useHasMounted();
   const [isParentDropdownOpen, setIsParentDropdownOpen] = useState(false);
 
   // 親タグ取得 - useTags()から parent_id = null のタグを抽出
   const { data: allTags = [] } = useTags();
   const parentTags = allTags.filter((t) => !t.parent_id);
-
-  // クライアントサイドでのみマウント
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   // モーダルが開いたらリセット（defaultParentIdがあればプリセット）
   useEffect(() => {
