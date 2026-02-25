@@ -45,10 +45,18 @@ npm run dev          # 開発サーバー（ユーザー責務：AIは実行し�
 npm run storybook    # Storybook（ユーザー責務：AIは実行しない）
 npm run typecheck    # 型チェック（AI必須：コード変更後）
 npm run lint         # コード品質（AI必須：コミット前）
+
+# デプロイ・インフラ操作
+# 手順: Staging → 開発者が確認 → 指示があればProductionへ
+# ⚠️ StagingとProductionを同時にデプロイしない
+supabase functions deploy --use-api  # Edge Functionデプロイ（Docker不要）
+supabase db push           # マイグレーション適用
+supabase secrets set       # Secrets設定
 ```
 
 ## 絶対禁止
 
+- StagingとProductionを同時にデプロイ → 必ずStagingを先に完了し、開発者の指示後にProductionへ
 - `any`, `unknown`, `Function`, `as any` → 具体的な型、`as never`
 - `console.log` → `@/lib/logger`
 - `useEffect`でのfetch → tRPC / TanStack Query
