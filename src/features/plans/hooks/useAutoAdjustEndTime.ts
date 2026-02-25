@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 /**
  * 開始時刻変更時に終了時刻を自動調整するカスタムフック
@@ -19,17 +19,18 @@ export function useAutoAdjustEndTime(
   onEndTimeChange: (time: string) => void,
 ) {
   const [isEndTimeManuallySet, setIsEndTimeManuallySet] = useState(false);
-  const [previousStartTime, setPreviousStartTime] = useState(startTime);
+  // refで前回の開始時刻を追跡（再レンダー不要）
+  const previousStartTimeRef = useRef(startTime);
 
   // 開始時刻が変更されたら、終了時刻を自動調整（時間幅保持）
   useEffect(() => {
-    if (startTime && startTime !== previousStartTime && !isEndTimeManuallySet) {
+    if (startTime && startTime !== previousStartTimeRef.current && !isEndTimeManuallySet) {
       try {
         const [startHour, startMin] = startTime.split(':').map(Number);
 
         if (endTime) {
           // 終了時刻が既に設定されている場合: 時間幅を保持
-          const [prevStartHour, prevStartMin] = (previousStartTime || startTime)
+          const [prevStartHour, prevStartMin] = (previousStartTimeRef.current || startTime)
             .split(':')
             .map(Number);
           const [endHour, endMin] = endTime.split(':').map(Number);
@@ -53,12 +54,12 @@ export function useAutoAdjustEndTime(
           onEndTimeChange(calculatedEndTime);
         }
 
-        setPreviousStartTime(startTime);
+        previousStartTimeRef.current = startTime;
       } catch {
         // パースエラーの場合は何もしない
       }
     }
-  }, [startTime, endTime, previousStartTime, isEndTimeManuallySet, onEndTimeChange]);
+  }, [startTime, endTime, isEndTimeManuallySet, onEndTimeChange]);
 
   // 開始時刻変更ハンドラー
   const handleStartTimeChange = (time: string) => {

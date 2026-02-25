@@ -15,7 +15,7 @@
     "prebuild": "echo 'prebuild: no-op'",
     "build": "NODE_OPTIONS='--max-old-space-size=12288' next build",
     "start": "next start",
-    "lint": "eslint . --max-warnings 39",
+    "lint": "eslint . --max-warnings 34",
     "lint:tokens": "node scripts/check-tailwind-tokens.js",
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc --noEmit",

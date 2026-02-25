@@ -9,7 +9,7 @@
  * グローバルダイアログ（RecurringEditConfirmDialog）を使用
  */
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 
 import type { RecurringEditScope } from '@/features/plans/components/RecurringEditConfirmDialog';
 import { useRecurringScopeMutations } from '@/features/plans/hooks/useRecurringScopeMutations';
@@ -55,12 +55,14 @@ export function useRecurringPlanEdit({ plan, planId, instanceDate }: UseRecurrin
     null,
   );
 
-  // planIdが変わったときに状態をリセット
-  useEffect(() => {
+  // planIdが変わったときに状態をリセット（React推奨: レンダー中のstate調整）
+  const [prevPlanId, setPrevPlanId] = useState(planId);
+  if (planId !== prevPlanId) {
+    setPrevPlanId(planId);
     setPendingChanges({});
     pendingChangesRef.current = {};
     pendingFieldRef.current = null;
-  }, [planId]);
+  }
 
   // 変更があるかどうか
   const hasPendingChanges = useMemo(() => {

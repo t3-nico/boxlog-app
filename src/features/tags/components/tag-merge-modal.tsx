@@ -48,13 +48,20 @@ export function TagMergeModal({
   const mounted = useHasMounted();
   const [error, setError] = useState('');
 
-  // モーダルが開いたらリセット＆最新タグを取得
+  // モーダルが開いたらリセット（React推奨: レンダー中のstate調整）
+  const [prevOpen, setPrevOpen] = useState(open);
+  if (open && !prevOpen) {
+    setPrevOpen(open);
+    setSelectedTargetId('');
+    setSearchQuery('');
+    setError('');
+  } else if (open !== prevOpen) {
+    setPrevOpen(open);
+  }
+
+  // 最新のタグリストを取得（外部システム同期なのでeffect内が適切）
   useEffect(() => {
     if (open) {
-      setSelectedTargetId('');
-      setSearchQuery('');
-      setError('');
-      // 最新のタグリストを取得
       void refetchTags();
     }
   }, [open, refetchTags]);

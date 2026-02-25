@@ -1,7 +1,7 @@
 'use client';
 
 import { useHasMounted } from '@/hooks/useHasMounted';
-import { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { memo, useCallback, useMemo, useState } from 'react';
 
 import {
   addMonths,
@@ -130,19 +130,21 @@ export const MiniCalendar = memo<MiniCalendarProps>(
     const [open, setOpen] = useState(false);
     const [viewMonth, setViewMonth] = useState(() => month ?? selectedDate ?? new Date());
 
-    // 外部からmonthが変更された場合に同期
-    useEffect(() => {
-      if (month) {
-        setViewMonth(month);
-      }
-    }, [month]);
-
-    // selectedDateが変更された場合、その月を表示（メインカレンダーとの同期）
-    useEffect(() => {
-      if (selectedDate) {
-        setViewMonth(selectedDate);
-      }
-    }, [selectedDate]);
+    // 外部からmonth/selectedDateが変更された場合に同期（React推奨: レンダー中のstate調整）
+    const [prevMonth, setPrevMonth] = useState(month);
+    const [prevSelectedDate, setPrevSelectedDate] = useState(selectedDate);
+    if (month && month !== prevMonth) {
+      setPrevMonth(month);
+      setViewMonth(month);
+    } else if (month !== prevMonth) {
+      setPrevMonth(month);
+    }
+    if (selectedDate && selectedDate !== prevSelectedDate) {
+      setPrevSelectedDate(selectedDate);
+      setViewMonth(selectedDate);
+    } else if (selectedDate !== prevSelectedDate) {
+      setPrevSelectedDate(selectedDate);
+    }
 
     const weekdays = getWeekdays(locale, weekStartsOn);
     const months = locale === 'ja' ? MONTHS_JA : MONTHS_EN;

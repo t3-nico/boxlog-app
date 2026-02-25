@@ -131,12 +131,14 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
     });
   }, [router, openPlanInspector, openTagCreateModal, navigateToSettings, toggleTheme, openAside]);
 
-  // Reset query when modal closes
-  useEffect(() => {
-    if (!isOpen) {
-      setQuery('');
-    }
-  }, [isOpen]);
+  // Reset query when modal closes（React推奨: レンダー中のstate調整）
+  const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
+  if (prevIsOpen && !isOpen) {
+    setPrevIsOpen(isOpen);
+    setQuery('');
+  } else if (prevIsOpen !== isOpen) {
+    setPrevIsOpen(isOpen);
+  }
 
   // Get commands from registry
   const commands = useMemo(() => {

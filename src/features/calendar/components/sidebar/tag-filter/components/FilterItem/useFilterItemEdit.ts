@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { DEFAULT_TAG_COLOR } from '@/features/tags/constants/colors';
 import { useUpdateTag } from '@/features/tags/hooks';
@@ -27,16 +27,12 @@ export function useFilterItemEdit({
 }: UseFilterItemEditProps): UseFilterItemEditReturn {
   const updateTagMutation = useUpdateTag();
 
-  // Color optimistic update state
+  // Color optimistic update state（派生状態: サーバー色と一致したら自動的に無視される）
   const [optimisticColor, setOptimisticColor] = useState<string | null>(null);
-  const displayColor = optimisticColor ?? initialColor ?? DEFAULT_TAG_COLOR;
-
-  // Clear optimistic color when server color matches
-  useEffect(() => {
-    if (initialColor && optimisticColor && initialColor === optimisticColor) {
-      setOptimisticColor(null);
-    }
-  }, [initialColor, optimisticColor]);
+  const displayColor =
+    optimisticColor !== null && optimisticColor !== initialColor
+      ? optimisticColor
+      : (initialColor ?? DEFAULT_TAG_COLOR);
 
   // Color change with optimistic update
   const handleColorChange = useCallback(

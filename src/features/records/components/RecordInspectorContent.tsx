@@ -123,7 +123,11 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
   // タイトル入力のref
   const titleRef = useRef<HTMLInputElement>(null);
 
-  // Duration計算（共有ユーティリティを使用）
+  // Duration計算（派生状態: 時間変更時に自動再計算）
+  const durationMinutes = useMemo(
+    () => computeDuration(formData.start_time, formData.end_time),
+    [formData.start_time, formData.end_time],
+  );
 
   // Recordデータを編集フォームに反映
   useEffect(() => {
@@ -146,14 +150,6 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
       setHasTagChanges(false);
     }
   }, [record, today]);
-
-  // 時間変更時にdurationを自動計算
-  useEffect(() => {
-    const duration = computeDuration(formData.start_time, formData.end_time);
-    if (duration !== formData.duration_minutes) {
-      setFormData((prev) => ({ ...prev, duration_minutes: duration }));
-    }
-  }, [formData.start_time, formData.end_time, formData.duration_minutes]);
 
   // 自動保存タイマーのクリーンアップ
   useEffect(() => {
@@ -351,7 +347,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
       worked_at: workedAtStr,
       start_time: formData.start_time || null,
       end_time: formData.end_time || null,
-      duration_minutes: formData.duration_minutes,
+      duration_minutes: durationMinutes,
     };
     const tagIds = [...formData.tagIds];
 
@@ -381,7 +377,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
     formData.worked_at,
     formData.start_time,
     formData.end_time,
-    formData.duration_minutes,
+    durationMinutes,
     formData.tagIds,
     isDirty,
     hasTagChanges,
