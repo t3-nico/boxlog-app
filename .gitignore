@@ -31,7 +31,7 @@ yarn-error.log*
 .env.development
 .env.staging
 .env.production.local
-!.env.production
+.env.production
 
 # Supabase environment config (contains secrets for config push)
 supabase/.env

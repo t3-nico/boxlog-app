@@ -21,7 +21,7 @@ const planTagInputSchema = z.object({
 /** タグ一括設定の入力スキーマ */
 const setTagsInputSchema = z.object({
   planId: z.string().uuid(),
-  tagIds: z.array(z.string().uuid()),
+  tagIds: z.array(z.string().uuid()).max(50),
 });
 
 export const tagsRouter = createTRPCRouter({

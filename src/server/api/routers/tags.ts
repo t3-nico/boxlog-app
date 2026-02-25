@@ -259,13 +259,15 @@ export const tagsRouter = createTRPCRouter({
   reorder: protectedProcedure
     .input(
       z.object({
-        updates: z.array(
-          z.object({
-            id: z.string().uuid(),
-            sort_order: z.number().int(),
-            parent_id: z.string().uuid().nullable(),
-          }),
-        ),
+        updates: z
+          .array(
+            z.object({
+              id: z.string().uuid(),
+              sort_order: z.number().int(),
+              parent_id: z.string().uuid().nullable(),
+            }),
+          )
+          .max(200),
       }),
     )
     .mutation(async ({ ctx, input }) => {
