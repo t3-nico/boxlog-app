@@ -35,7 +35,7 @@ export const markAllAsReadSchema = z.object({
 
 // 一括削除
 export const deleteNotificationsSchema = z.object({
-  ids: z.array(z.string().uuid()),
+  ids: z.array(z.string().uuid()).min(1).max(100),
 });
 
 // 型エクスポート

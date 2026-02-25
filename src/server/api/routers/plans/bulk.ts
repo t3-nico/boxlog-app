@@ -13,8 +13,8 @@ import { removeUndefinedFields } from './utils';
 
 /** 一括タグ追加のスキーマ */
 const bulkAddTagsSchema = z.object({
-  planIds: z.array(z.string().uuid()),
-  tagIds: z.array(z.string().uuid()),
+  planIds: z.array(z.string().uuid()).min(1).max(100),
+  tagIds: z.array(z.string().uuid()).min(1).max(50),
 });
 
 export const bulkRouter = createTRPCRouter({

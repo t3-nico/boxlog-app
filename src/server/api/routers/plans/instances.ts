@@ -16,7 +16,7 @@ export const instancesRouter = createTRPCRouter({
   list: protectedProcedure
     .input(
       z.object({
-        planIds: z.array(z.string().uuid()),
+        planIds: z.array(z.string().uuid()).max(100),
         startDate: z.string().optional(), // YYYY-MM-DD
         endDate: z.string().optional(), // YYYY-MM-DD
       }),
