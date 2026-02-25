@@ -43,7 +43,7 @@ interface WeekContentProps {
   disabledPlanId?: string | null | undefined;
 }
 
-export const WeekContent = ({
+export const WeekContent = React.memo(function WeekContent({
   date,
   plans,
   allEventsForOverlapCheck,
@@ -57,7 +57,7 @@ export const WeekContent = ({
   dayIndex,
   displayDates,
   disabledPlanId,
-}: WeekContentProps) => {
+}: WeekContentProps) {
   // Inspectorで開いているプランのIDを取得
   const inspectorPlanId = usePlanInspectorStore((state) => state.planId);
   const isInspectorOpen = usePlanInspectorStore((state) => state.isOpen);
@@ -302,4 +302,4 @@ export const WeekContent = ({
       </div>
     </div>
   );
-};
+});

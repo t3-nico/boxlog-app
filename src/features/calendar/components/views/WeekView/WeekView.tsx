@@ -85,9 +85,7 @@ export const WeekView = ({
         onEventClick={onPlanClick}
         onEventContextMenu={onPlanContextMenu}
         onEmptyAreaContextMenu={onEmptyAreaContextMenu}
-        onEmptyClick={(date, time) => {
-          onEmptyClick?.(date, time);
-        }}
+        onEmptyClick={onEmptyClick}
         onEventUpdate={onUpdatePlan}
         onTimeRangeSelect={onTimeRangeSelect}
         className={className}

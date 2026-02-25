@@ -28,16 +28,18 @@ export async function trackPlanChanges(
 ) {
   const changes = detectChanges(oldData, newData);
 
-  // 各変更に対してアクティビティを記録
-  for (const change of changes) {
-    await supabase.from('plan_activities').insert({
-      plan_id: planId,
-      user_id: userId,
-      action_type: change.action_type,
-      field_name: change.field_name,
-      old_value: change.old_value,
-      new_value: change.new_value,
-    });
+  // バッチINSERTで1回のDBリクエストに統合（N+1回避）
+  if (changes.length > 0) {
+    await supabase.from('plan_activities').insert(
+      changes.map((change) => ({
+        plan_id: planId,
+        user_id: userId,
+        action_type: change.action_type,
+        field_name: change.field_name,
+        old_value: change.old_value,
+        new_value: change.new_value,
+      })),
+    );
   }
 }
 

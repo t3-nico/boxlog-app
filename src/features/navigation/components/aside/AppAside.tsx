@@ -2,11 +2,17 @@
 
 import { ArrowLeft, PanelRight } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import dynamic from 'next/dynamic';
 
 import { Button } from '@/components/ui/button';
-import { AIInspectorContent } from '@/features/ai/components/AIInspectorContent';
 import { PlanListPanel } from '@/features/calendar/components/aside/PlanListPanel';
 import { RecordListPanel } from '@/features/calendar/components/aside/RecordListPanel';
+
+// tiptap + AI SDK を初期バンドルから除外（LCP改善）
+const AIInspectorContent = dynamic(
+  () => import('@/features/ai/components/AIInspectorContent').then((mod) => mod.AIInspectorContent),
+  { ssr: false },
+);
 
 import { AsideSwitcher, type AsideType } from './AsideSwitcher';
 
