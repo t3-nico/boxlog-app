@@ -57,6 +57,9 @@ jobs:
       - name: 🔍 Run ESLint
         run: npm run lint
 
+      - name: 🏗️ Feature boundary check
+        run: npm run lint:boundaries
+
       - name: 🎨 Check Prettier
         run: npx prettier --check "src/**/*.{ts,tsx,js,jsx,json,md}"
 
