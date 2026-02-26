@@ -6,7 +6,7 @@ import { useTranslations } from 'next-intl';
 
 import { api } from '@/lib/trpc';
 
-import { usePlanInspectorStore } from '../../stores/usePlanInspectorStore';
+import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
 
 interface PlanCreateTriggerProps {
   triggerElement: ReactNode;

@@ -10,7 +10,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { localTimeToUTCISO, parseDatetimeString, parseISOToUserTimezone } from '@/lib/date-utils';
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 
-import { type DraftPlan } from '../../../stores/usePlanInspectorStore';
+import { type DraftPlan } from '@/stores/usePlanInspectorStore';
 import type { Plan } from '../../../types/plan';
 
 interface UseInspectorTimeStateProps {

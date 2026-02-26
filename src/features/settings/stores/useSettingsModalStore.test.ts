@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { useSettingsModalStore } from './useSettingsModalStore';
+import { useSettingsModalStore } from '@/stores/useSettingsModalStore';
 
 describe('useSettingsModalStore', () => {
   beforeEach(() => {

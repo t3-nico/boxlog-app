@@ -14,7 +14,7 @@ import { api } from '@/lib/trpc';
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
 
-import { useCalendarFilterStore } from '../../../stores/useCalendarFilterStore';
+import { useCalendarFilterStore } from '@/stores/useCalendarFilterStore';
 
 import { calculateViewDateRange } from '../../../lib/view-helpers';
 import {

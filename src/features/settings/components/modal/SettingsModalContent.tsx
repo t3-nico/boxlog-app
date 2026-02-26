@@ -6,7 +6,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { CACHE_5_MINUTES } from '@/constants/time';
 import { api } from '@/lib/trpc';
 
-import { useSettingsModalStore } from '../../stores/useSettingsModalStore';
+import { useSettingsModalStore } from '@/stores/useSettingsModalStore';
 import type { SettingsCategory } from '../../types';
 
 // 各設定コンポーネントを遅延読み込み

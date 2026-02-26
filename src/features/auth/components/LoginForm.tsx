@@ -27,7 +27,7 @@ import { HoverTooltip } from '@/components/ui/tooltip';
 import { logger } from '@/lib/logger';
 import { createClient } from '@/lib/supabase/client';
 import { cn } from '@/lib/utils';
-import { useAuthStore } from '../stores/useAuthStore';
+import { useAuthStore } from '@/stores/useAuthStore';
 
 import { getAuthErrorKey } from '../lib/sanitize-auth-error';
 import { loginSchema, type LoginFormData } from '../schemas/auth.schema';

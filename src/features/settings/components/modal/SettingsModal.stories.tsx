@@ -16,7 +16,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Camera } from 'lucide-react';
 import { expect, userEvent, within } from 'storybook/test';
 
-import { useSettingsModalStore } from '../../stores/useSettingsModalStore';
+import { useSettingsModalStore } from '@/stores/useSettingsModalStore';
 import type { SettingsCategory } from '../../types';
 import { SettingsCard } from '../SettingsCard';
 import { SettingRow } from '../fields/SettingRow';

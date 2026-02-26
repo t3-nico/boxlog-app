@@ -99,10 +99,10 @@ export {
 // =============================================================================
 // Hooks
 // =============================================================================
+export { useResizeHandle } from '@/hooks/useResizeHandle';
 export { useCalendarLayout } from './hooks/ui/useCalendarLayout';
 export { useCalendarProviderProps } from './hooks/useCalendarProviderProps';
 export { useCalendarRealtime } from './hooks/useCalendarRealtime';
-export { useResizeHandle } from './hooks/useResizeHandle';
 export { useWeekendNavigation } from './hooks/useWeekendNavigation';
 
 // Hooks: Cross-feature (used by composition layer in app/)

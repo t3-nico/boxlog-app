@@ -7,9 +7,9 @@ import { useTranslations } from 'next-intl';
 import { usePlans } from '@/hooks/usePlans';
 import { useTagsMap } from '@/hooks/useTagsMap';
 import { groupItems } from '@/lib/plan-grouping';
+import { useCalendarFilterStore } from '@/stores/useCalendarFilterStore';
 import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
 import { usePanelDrag } from '../../hooks/usePanelDrag';
-import { useCalendarFilterStore } from '../../stores/useCalendarFilterStore';
 
 import { PlanListCard } from './PlanListCard';
 import { PlanListGroup } from './PlanListGroup';

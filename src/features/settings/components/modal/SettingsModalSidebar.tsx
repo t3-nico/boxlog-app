@@ -5,8 +5,8 @@ import { useTranslations } from 'next-intl';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 
+import { useSettingsModalStore } from '@/stores/useSettingsModalStore';
 import { SETTINGS_CATEGORIES } from '../../constants';
-import { useSettingsModalStore } from '../../stores/useSettingsModalStore';
 
 interface SettingsModalSidebarProps {
   className?: string;

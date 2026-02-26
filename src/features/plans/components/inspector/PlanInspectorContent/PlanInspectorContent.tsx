@@ -24,7 +24,7 @@ import { api } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
 import { InspectorHeader, useDragHandle } from '../shared';
 
-import { usePlanInspectorStore, type DraftPlan } from '../../../stores/usePlanInspectorStore';
+import { usePlanInspectorStore, type DraftPlan } from '@/stores/usePlanInspectorStore';
 import { normalizeStatus } from '../../../utils/status';
 
 import { PlanActivityPopover } from './ActivityPopover';

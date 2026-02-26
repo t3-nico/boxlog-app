@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { useTagCreateModalStore } from './useTagCreateModalStore';
+import { useTagCreateModalStore } from '@/stores/useTagCreateModalStore';
 
 describe('useTagCreateModalStore', () => {
   beforeEach(() => {

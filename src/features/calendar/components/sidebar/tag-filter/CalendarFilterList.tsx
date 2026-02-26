@@ -6,7 +6,7 @@ import { BarChart3, CircleSlash, Moon, Sun } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import Link from 'next/link';
 
-import { useCalendarFilterStore, type ItemType } from '../../../stores/useCalendarFilterStore';
+import { useCalendarFilterStore, type ItemType } from '@/stores/useCalendarFilterStore';
 
 import { SidebarSection } from '@/components/layout/SidebarSection';
 import { Button } from '@/components/ui/button';

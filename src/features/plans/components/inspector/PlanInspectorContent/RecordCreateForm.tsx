@@ -25,7 +25,7 @@ import {
   TagsIconButton,
 } from '../shared';
 
-import { usePlanInspectorStore } from '../../../stores/usePlanInspectorStore';
+import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
 
 import type { FulfillmentScore } from '@/core/types/record';
 

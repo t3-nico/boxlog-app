@@ -20,12 +20,12 @@ export { SidebarSection } from './components/sidebar/SidebarSection';
 // =============================================================================
 // Hooks
 // =============================================================================
-export { useCreateMenuItems } from './hooks/useCreateMenuItems';
+export { useCreateMenuItems } from '@/hooks/useCreateMenuItems';
 export type {
   CreateMenuEntry,
   CreateMenuItem,
   CreateMenuSeparator,
-} from './hooks/useCreateMenuItems';
+} from '@/hooks/useCreateMenuItems';
 
 // =============================================================================
 // Stores

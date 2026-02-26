@@ -8,10 +8,10 @@ import { DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdow
 import { useInspectorKeyboard } from './hooks';
 import { InspectorContent, InspectorShell } from './shared';
 
+import { useDeleteConfirmStore } from '@/stores/useDeleteConfirmStore';
+import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
+import { useRecurringEditConfirmStore } from '@/stores/useRecurringEditConfirmStore';
 import { usePlan } from '../../hooks/usePlan';
-import { useDeleteConfirmStore } from '../../stores/useDeleteConfirmStore';
-import { usePlanInspectorStore } from '../../stores/usePlanInspectorStore';
-import { useRecurringEditConfirmStore } from '../../stores/useRecurringEditConfirmStore';
 import type { Plan } from '../../types/plan';
 
 import { useInspectorAutoSave, useInspectorNavigation } from './hooks';

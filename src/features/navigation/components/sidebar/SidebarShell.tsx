@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useTranslations } from 'next-intl';
 
-import { useSidebarStore } from '../../stores/useSidebarStore';
+import { useSidebarStore } from '@/stores/useSidebarStore';
 
 import { CreateNewDropdown } from './CreateNewDropdown';
 import { NavUser } from './nav-user';

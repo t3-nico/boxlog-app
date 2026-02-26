@@ -13,9 +13,9 @@ export { RecordInspector } from './components';
 // =============================================================================
 // Hooks
 // =============================================================================
+export type { CreateRecordInput, UpdateRecordInput } from '@/hooks/useRecordMutations';
 export { useRecentRecords, useRecordData, useRecordMutations, useRecords } from './hooks';
 export type { RecordFilters, RecordItem, RecordSortField, RecordSortOptions } from './hooks';
-export type { CreateRecordInput, UpdateRecordInput } from './hooks/useRecordMutations';
 
 // =============================================================================
 // Stores (Re-export from shared stores for backward compatibility)

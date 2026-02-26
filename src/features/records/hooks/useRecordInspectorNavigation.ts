@@ -4,7 +4,7 @@ import { useCallback, useMemo } from 'react';
 
 import { useRecordInspectorStore } from '../stores';
 
-import { useRecordData } from './useRecordData';
+import { useRecordData } from '@/hooks/useRecordData';
 
 /**
  * Record Inspector のナビゲーション

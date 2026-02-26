@@ -9,7 +9,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useUpdateEntityTagsInCache } from '@/hooks/useUpdateEntityTagsInCache';
 
-import { usePlanTags } from '../../../hooks/usePlanTags';
+import { usePlanTags } from '@/hooks/usePlanTags';
 import type { Plan } from '../../../types/plan';
 
 interface UseInspectorTagStateProps {

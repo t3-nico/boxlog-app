@@ -48,18 +48,18 @@ export { useRecurringEditConfirmStore } from '@/stores/useRecurringEditConfirmSt
 // =============================================================================
 // Hooks
 // =============================================================================
-export { usePlan, useplan } from './hooks/usePlan';
-export { usePlanActivities } from './hooks/usePlanActivities';
 export {
   instancesToExceptionsMap,
   usePlanInstanceMutations,
   usePlanInstances,
-} from './hooks/usePlanInstances';
-export { usePlanMutations } from './hooks/usePlanMutations';
+} from '@/hooks/usePlanInstances';
+export { usePlanMutations } from '@/hooks/usePlanMutations';
+export { usePlans, useplans } from '@/hooks/usePlans';
+export { usePlanTags } from '@/hooks/usePlanTags';
+export { useRecurringScopeMutations } from '@/hooks/useRecurringScopeMutations';
+export { usePlan, useplan } from './hooks/usePlan';
+export { usePlanActivities } from './hooks/usePlanActivities';
 export { usePlanRealtime } from './hooks/usePlanRealtime';
-export { usePlans, useplans } from './hooks/usePlans';
-export { usePlanTags } from './hooks/usePlanTags';
-export { useRecurringScopeMutations } from './hooks/useRecurringScopeMutations';
 
 // =============================================================================
 // Utils
@@ -108,10 +108,7 @@ export {
   TitleInput,
   useDragHandle,
 } from './components/inspector/shared';
-export type {
-  ActivityDisplayItem,
-  ActivityIconColor as ActivityIconColorType,
-} from './components/inspector/shared';
+export type { ActivityDisplayItem } from './components/inspector/shared';
 
 // =============================================================================
 // Adapters

@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { useRecordFilterStore } from './useRecordFilterStore';
+import { useRecordFilterStore } from '@/stores/useRecordFilterStore';
 
 describe('useRecordFilterStore', () => {
   beforeEach(() => {

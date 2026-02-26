@@ -14,8 +14,8 @@ import { logger } from '@/lib/logger';
 import { api } from '@/lib/trpc';
 import { vanillaTrpc } from '@/lib/trpc/client';
 
-import { usePlanMutations } from '../../../hooks/usePlanMutations';
-import { usePlanInspectorStore } from '../../../stores/usePlanInspectorStore';
+import { usePlanMutations } from '@/hooks/usePlanMutations';
+import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
 
 interface UseInspectorSaveCloseProps {
   planId: string | null;

@@ -15,8 +15,8 @@ import { HoverTooltip } from '@/components/ui/tooltip';
 import { Link } from '@/i18n/navigation';
 import { cn } from '@/lib/utils';
 
+import { useAuthStore } from '@/stores/useAuthStore';
 import { getAuthErrorKey } from '../lib/sanitize-auth-error';
-import { useAuthStore } from '../stores/useAuthStore';
 
 export function ResetPasswordForm({ className, ...props }: React.ComponentProps<'div'>) {
   const router = useRouter();

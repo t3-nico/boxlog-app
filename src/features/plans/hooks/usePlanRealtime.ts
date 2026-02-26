@@ -35,7 +35,7 @@
 
 import { createRealtimeHook } from '@/lib/supabase/realtime/createRealtimeHook';
 
-import { usePlanCacheStore } from '../stores/usePlanCacheStore';
+import { usePlanCacheStore } from '@/stores/usePlanCacheStore';
 
 export const usePlanRealtime = createRealtimeHook({
   name: 'plan',

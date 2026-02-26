@@ -8,8 +8,8 @@ import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
+import { useSettingsModalStore } from '@/stores/useSettingsModalStore';
 import { SETTINGS_CATEGORIES } from '../../constants';
-import { useSettingsModalStore } from '../../stores/useSettingsModalStore';
 import type { SettingsCategory } from '../../types';
 import { SettingsModalContent } from './SettingsModalContent';
 

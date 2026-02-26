@@ -11,9 +11,9 @@
 
 import { useCallback, useMemo, useRef, useState } from 'react';
 
+import { useRecurringScopeMutations } from '@/hooks/useRecurringScopeMutations';
 import { logger } from '@/lib/logger';
-import { useRecurringScopeMutations } from '../../../hooks/useRecurringScopeMutations';
-import { useRecurringEditConfirmStore } from '../../../stores/useRecurringEditConfirmStore';
+import { useRecurringEditConfirmStore } from '@/stores/useRecurringEditConfirmStore';
 import { isRecurringPlan } from '../../../utils/recurrence';
 import type { RecurringEditScope } from '../../RecurringEditConfirmDialog';
 

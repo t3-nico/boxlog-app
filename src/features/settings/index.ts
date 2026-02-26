@@ -17,7 +17,7 @@ export { useSettingsModalStore } from '@/stores/useSettingsModalStore';
 // =============================================================================
 // Hooks
 // =============================================================================
-export { useDateFormat } from './hooks/useDateFormat';
+export { useDateFormat } from '@/hooks/useDateFormat';
 
 // =============================================================================
 // Utils

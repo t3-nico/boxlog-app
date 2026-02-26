@@ -15,7 +15,7 @@ import {
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { useTranslations } from 'next-intl';
 
-import { useCreateMenuItems } from '../../hooks/useCreateMenuItems';
+import { useCreateMenuItems } from '@/hooks/useCreateMenuItems';
 
 interface CreateNewDropdownProps {
   /** ボタンサイズ: 'default' = 40px, 'sm' = 32px */

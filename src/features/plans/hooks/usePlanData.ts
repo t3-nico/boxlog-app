@@ -6,11 +6,11 @@
 
 import { useMemo } from 'react';
 
+import { useplans } from '@/hooks/usePlans';
 import type { DateRangeFilter } from '@/lib/date';
 import { matchesDateRangeFilter } from '@/lib/date';
 import type { Plan, PlanStatus } from '../types/plan';
 import { normalizeStatus } from '../utils/status';
-import { useplans } from './usePlans';
 
 import type {
   RecurrenceFilter,

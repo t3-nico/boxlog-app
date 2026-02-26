@@ -15,8 +15,8 @@ import { Switch } from '@/components/ui/switch';
 
 import { useTranslations } from 'next-intl';
 
+import type { DateFormatType } from '@/stores/useCalendarSettingsStore';
 import { useUserSettings } from '../hooks/useUserSettings';
-import type { DateFormatType } from '../stores/useCalendarSettingsStore';
 import { formatHour, getTimeZones } from '../utils/timezone-utils';
 
 import { SettingRow } from './fields/SettingRow';

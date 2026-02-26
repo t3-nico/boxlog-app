@@ -19,7 +19,7 @@ const AIInspectorContent = dynamic(
   { ssr: false },
 );
 
-import { useResizeHandle } from '../../hooks/useResizeHandle';
+import { useResizeHandle } from '@/hooks/useResizeHandle';
 import { useSwipeGesture } from '../../hooks/useSwipeGesture';
 import type { CalendarViewType } from '../../types/calendar.types';
 

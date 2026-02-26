@@ -8,4 +8,4 @@ export type {
   WorkedAtFilter,
 } from '@/stores/useRecordFilterStore';
 
-export { useRecordCacheStore } from './useRecordCacheStore';
+export { useRecordCacheStore } from '@/stores/useRecordCacheStore';

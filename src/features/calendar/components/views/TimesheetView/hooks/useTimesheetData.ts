@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { eachDayOfInterval, endOfWeek, format, startOfDay, startOfWeek } from 'date-fns';
 
 import { useTagsMap } from '@/hooks/useTagsMap';
-import { useCalendarFilterStore } from '../../../../stores/useCalendarFilterStore';
+import { useCalendarFilterStore } from '@/stores/useCalendarFilterStore';
 import type { CalendarPlan } from '../../../../types/calendar.types';
 
 import type { TimesheetData, TimesheetTagGroup } from '../TimesheetView.types';

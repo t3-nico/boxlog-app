@@ -12,7 +12,7 @@ import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
 import type { WorkedAtFilter } from '@/stores/useRecordFilterStore';
 import { useRecordInspectorStore } from '@/stores/useRecordInspectorStore';
 
-import { useCalendarFilterStore } from '../../stores/useCalendarFilterStore';
+import { useCalendarFilterStore } from '@/stores/useCalendarFilterStore';
 
 import { PlanListGroup } from './PlanListGroup';
 import { RecordListCard } from './RecordListCard';

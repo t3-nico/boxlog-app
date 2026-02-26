@@ -32,7 +32,7 @@ import { useTags } from '@/hooks/useTagsQuery';
 import { logger } from '@/lib/logger';
 import { api } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
-import { usePlanInspectorStore } from '../../stores/usePlanInspectorStore';
+import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
 
 interface RecordsIconButtonProps {
   planId: string | null;

@@ -11,7 +11,7 @@ import { TagNoteDialog } from '@/components/tags/TagNoteDialog';
 import { TagRenameDialog } from '@/components/tags/TagRenameDialog';
 import { useUpdateTag } from '@/hooks/mutations/useTagMutations';
 import { useTagModalNavigation } from '@/hooks/useTagModalNavigation';
-import { useCalendarFilterStore } from '../../../../../stores/useCalendarFilterStore';
+import { useCalendarFilterStore } from '@/stores/useCalendarFilterStore';
 
 import { Checkbox } from '@/components/ui/checkbox';
 import { DropdownMenu, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';

@@ -1,7 +1,7 @@
 import { act, renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-import { useAutoAdjustEndTime } from '../useAutoAdjustEndTime';
+import { useAutoAdjustEndTime } from '@/hooks/useAutoAdjustEndTime';
 
 describe('useAutoAdjustEndTime', () => {
   describe('開始時刻変更時の自動調整', () => {
