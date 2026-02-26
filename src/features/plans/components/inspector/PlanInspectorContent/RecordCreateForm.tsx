@@ -13,7 +13,7 @@ import {
 import { toast } from 'sonner';
 
 import { SuggestInput } from '@/components/common/SuggestInput';
-import { useRecordMutations } from '@/features/records/hooks';
+import { useRecordMutations } from '@/hooks/useRecordMutations';
 import { computeDuration } from '@/lib/time-utils';
 import { api } from '@/lib/trpc';
 import {
@@ -27,7 +27,7 @@ import {
 
 import { usePlanInspectorStore } from '../../../stores/usePlanInspectorStore';
 
-import type { FulfillmentScore } from '@/features/records/types/record';
+import type { FulfillmentScore } from '@/core/types/record';
 
 interface RecordFormData {
   title: string;

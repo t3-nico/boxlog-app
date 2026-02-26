@@ -2,8 +2,8 @@
 
 import { useCallback, useState } from 'react';
 
-import { DEFAULT_TAG_COLOR } from '@/features/tags/constants/colors';
-import { useUpdateTag } from '@/features/tags/hooks';
+import { useUpdateTag } from '@/hooks/mutations/useTagMutations';
+import { DEFAULT_TAG_COLOR } from '@/lib/tag-colors';
 
 interface UseFilterItemEditProps {
   tagId: string | undefined;

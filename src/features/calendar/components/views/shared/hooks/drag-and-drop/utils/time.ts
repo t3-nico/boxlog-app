@@ -1,5 +1,5 @@
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
 import { convertFromTimezone, formatInTimezone } from '@/lib/date/timezone';
+import type { CalendarPlan } from '../../../../../../types/calendar.types';
 
 import { formatTimeRange } from '@/lib/date';
 import { HOUR_HEIGHT } from '../../../constants/grid.constants';

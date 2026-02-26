@@ -1,8 +1,8 @@
 // Search Feature Types
 
-import type { Tag } from '@/features/tags/types';
+import type { Tag } from '@/core/types/tag';
 
-import type { PlanStatus, PlanWithTags } from '@/features/plans/types';
+import type { PlanStatus, PlanWithTags } from '@/core/types/plan';
 
 // Search result types
 export type SearchResultType = 'command' | 'plan' | 'tag';

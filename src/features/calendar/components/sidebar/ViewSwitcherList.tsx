@@ -13,11 +13,11 @@ import {
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-import { useCalendarNavigation } from '@/features/calendar/contexts/CalendarNavigationContext';
-import type { CalendarViewType } from '@/features/calendar/types/calendar.types';
-import { isMultiDayView } from '@/features/calendar/types/calendar.types';
-import { useSidebarStore } from '@/features/navigation/stores/useSidebarStore';
 import { cn } from '@/lib/utils';
+import { useSidebarStore } from '@/stores/useSidebarStore';
+import { useCalendarNavigation } from '../../contexts/CalendarNavigationContext';
+import type { CalendarViewType } from '../../types/calendar.types';
+import { isMultiDayView } from '../../types/calendar.types';
 
 interface MainViewOption {
   value: CalendarViewType;

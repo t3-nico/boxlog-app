@@ -11,8 +11,8 @@
 
 import { useDroppable } from '@dnd-kit/core';
 
-import { usePlanClipboardStore } from '@/features/plans/stores/usePlanClipboardStore';
 import { cn } from '@/lib/utils';
+import { usePlanClipboardStore } from '@/stores/usePlanClipboardStore';
 
 import { useResponsiveHourHeight } from '../../hooks/useResponsiveHourHeight';
 import { DragSelectionPreview } from './DragSelectionPreview';

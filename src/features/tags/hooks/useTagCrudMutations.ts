@@ -11,12 +11,12 @@ import {
 } from '@/lib/tanstack-query/optimistic-mutation';
 import { trpc } from '@/lib/trpc/client';
 
-import { DEFAULT_TAG_COLOR } from '@/features/tags/constants/colors';
-import type { Tag } from '@/features/tags/types';
+import { DEFAULT_TAG_COLOR } from '../constants/colors';
 import { useTagCacheStore } from '../stores/useTagCacheStore';
+import type { Tag } from '../types';
 
 // カレンダーフィルターストアへの参照（楽観的更新用）
-import { useCalendarFilterStore } from '@/features/calendar/stores/useCalendarFilterStore';
+import { useCalendarFilterStore } from '@/stores/useCalendarFilterStore';
 
 // 後方互換性のための入力型
 interface LegacyTagUpdateInput {

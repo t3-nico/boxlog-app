@@ -2,7 +2,7 @@
 
 import { useQueryClient } from '@tanstack/react-query';
 
-import type { Tag } from '@/features/tags/types';
+import type { Tag } from '../types';
 import { tagKeys } from './tagQueryKeys';
 
 export function useOptimisticTagUpdate() {

@@ -9,8 +9,8 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import type { UIMessage } from 'ai';
 import { DefaultChatTransport } from 'ai';
 
-import { useAuthStore } from '@/features/auth/stores/useAuthStore';
 import { ApiKeyStorage } from '@/lib/security/encryption';
+import { useAuthStore } from '@/stores/useAuthStore';
 
 import type { AIProviderId } from '@/server/services/ai/types';
 import { MODEL_OPTIONS } from '@/server/services/ai/types';

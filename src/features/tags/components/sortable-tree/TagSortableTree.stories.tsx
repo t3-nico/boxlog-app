@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 
-import type { Tag } from '@/features/tags/types';
+import type { Tag } from '../../types';
 
 import { TagSortableTree } from './TagSortableTree';
 

@@ -4,7 +4,7 @@
  * NOTE: CalendarPlan は @/features/calendar/types/calendar.types から直接インポートすること
  */
 
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
+import type { CalendarPlan } from '../../../../types/calendar.types';
 
 // 時間指定プラン（start/endを持つプラン）
 // CalendarPlanの startDate/endDate を start/end に変換した型

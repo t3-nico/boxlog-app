@@ -2,10 +2,10 @@
 
 import React, { useCallback } from 'react';
 
-import { useCalendarDragStore } from '@/features/calendar/stores/useCalendarDragStore';
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
-import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
 import { cn } from '@/lib/utils';
+import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
+import { useCalendarDragStore } from '../../../../stores/useCalendarDragStore';
+import type { CalendarPlan } from '../../../../types/calendar.types';
 
 import {
   calculatePlanGhostStyle,

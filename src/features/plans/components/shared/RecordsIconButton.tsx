@@ -28,11 +28,11 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Spinner } from '@/components/ui/spinner';
 import { HoverTooltip } from '@/components/ui/tooltip';
-import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
-import { useTags } from '@/features/tags/hooks';
+import { useTags } from '@/hooks/useTagsQuery';
 import { logger } from '@/lib/logger';
 import { api } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
+import { usePlanInspectorStore } from '../../stores/usePlanInspectorStore';
 
 interface RecordsIconButtonProps {
   planId: string | null;

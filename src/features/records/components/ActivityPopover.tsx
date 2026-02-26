@@ -4,13 +4,13 @@ import { Clock, Plus, Star, Tag, Trash } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useMemo } from 'react';
 
-import { ActivityPopover } from '@/features/plans/components/inspector/shared';
+import { ActivityPopover } from '@/core/components/inspector';
 
 import { useRecordActivities } from '../hooks/useRecordActivities';
 import type { RecordActivity, RecordActivityDisplay } from '../types/activity';
 import { filterVisibleActivities, formatActivity } from '../utils/activityFormatter';
 
-import type { ActivityDisplayItem } from '@/features/plans/components/inspector/shared';
+import type { ActivityDisplayItem } from '@/core/components/inspector';
 
 function getActivityIcon(icon: RecordActivityDisplay['icon']) {
   switch (icon) {

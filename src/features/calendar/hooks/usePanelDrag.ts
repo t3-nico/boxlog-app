@@ -4,10 +4,10 @@ import { useCallback, useRef } from 'react';
 
 import { addDays, startOfWeek } from 'date-fns';
 
-import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
-import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
+import { usePlanMutations } from '@/hooks/usePlanMutations';
 import { convertFromTimezone } from '@/lib/date/timezone';
 import type { PlanWithTags } from '@/server/services/plans/types';
+import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 
 import {
   calculatePreviewHeight,

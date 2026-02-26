@@ -11,11 +11,11 @@
 
 import { useCallback, useMemo, useRef, useState } from 'react';
 
-import type { RecurringEditScope } from '@/features/plans/components/RecurringEditConfirmDialog';
-import { useRecurringScopeMutations } from '@/features/plans/hooks/useRecurringScopeMutations';
-import { useRecurringEditConfirmStore } from '@/features/plans/stores/useRecurringEditConfirmStore';
-import { isRecurringPlan } from '@/features/plans/utils/recurrence';
 import { logger } from '@/lib/logger';
+import { useRecurringScopeMutations } from '../../../hooks/useRecurringScopeMutations';
+import { useRecurringEditConfirmStore } from '../../../stores/useRecurringEditConfirmStore';
+import { isRecurringPlan } from '../../../utils/recurrence';
+import type { RecurringEditScope } from '../../RecurringEditConfirmDialog';
 
 import type { Plan } from '../../../types/plan';
 

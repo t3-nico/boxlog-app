@@ -7,12 +7,8 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import {
-  localTimeToUTCISO,
-  parseDatetimeString,
-  parseISOToUserTimezone,
-} from '@/features/calendar/utils/dateUtils';
-import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
+import { localTimeToUTCISO, parseDatetimeString, parseISOToUserTimezone } from '@/lib/date-utils';
+import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 
 import { type DraftPlan } from '../../../stores/usePlanInspectorStore';
 import type { Plan } from '../../../types/plan';

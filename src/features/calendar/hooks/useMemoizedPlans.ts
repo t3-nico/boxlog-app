@@ -3,7 +3,7 @@
 // パフォーマンス計測のため、useMemo内でperformance.now()を呼び出す必要がある
 import { useEffect, useMemo, useRef } from 'react';
 
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
+import type { CalendarPlan } from '../types/calendar.types';
 
 // メモ化キーの生成
 interface MemoizationKey {

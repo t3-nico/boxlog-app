@@ -11,10 +11,10 @@ import { memo } from 'react';
 
 import { Circle } from 'lucide-react';
 
-import { useCalendarDragStore } from '@/features/calendar/stores/useCalendarDragStore';
-import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
 import { formatInTimezone } from '@/lib/date/timezone';
 import { cn } from '@/lib/utils';
+import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
+import { useCalendarDragStore } from '../../../../stores/useCalendarDragStore';
 
 import { calendarStyles } from '../../../../theme/styles';
 import { useResponsiveHourHeight } from '../hooks/useResponsiveHourHeight';

@@ -5,10 +5,10 @@ import { useCallback, useMemo, useState } from 'react';
 import { Check, ChevronRight } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-import { useTags } from '@/features/tags/hooks';
 import { cn } from '@/lib/utils';
+import { useTags } from '../hooks';
 
-import type { Tag } from '@/features/tags/types';
+import type { Tag } from '../types';
 
 import {
   Command,

@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 
-import type { CalendarPlan, ViewDateRange } from '@/features/calendar/types/calendar.types';
+import type { CalendarPlan, ViewDateRange } from '../../../types/calendar.types';
 
 import { WeekView } from './WeekView';
 

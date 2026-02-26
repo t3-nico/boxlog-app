@@ -30,6 +30,8 @@ export type {
 // =============================================================================
 // Stores
 // =============================================================================
-export { useAppAsideStore } from './stores/useAppAsideStore';
+// Re-export from shared stores for backward compatibility
+export { useAppAsideStore } from '@/stores/useAppAsideStore';
 export { usePageTitleStore } from './stores/usePageTitleStore';
-export { useSidebarStore } from './stores/useSidebarStore';
+// Re-export from shared stores for backward compatibility
+export { useSidebarStore } from '@/stores/useSidebarStore';

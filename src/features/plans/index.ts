@@ -30,20 +30,20 @@ export type {
 } from './types/activity';
 
 // =============================================================================
-// Stores
+// Stores (Re-export from shared stores for backward compatibility)
 // =============================================================================
-export { useDeleteConfirmStore } from './stores/useDeleteConfirmStore';
-export { usePlanCacheStore, useplanCacheStore } from './stores/usePlanCacheStore';
-export { usePlanClipboardStore } from './stores/usePlanClipboardStore';
-export type { ClipboardPlan, LastClickedPosition } from './stores/usePlanClipboardStore';
-export { usePlanInspectorStore } from './stores/usePlanInspectorStore';
+export { useDeleteConfirmStore } from '@/stores/useDeleteConfirmStore';
+export { usePlanCacheStore, useplanCacheStore } from '@/stores/usePlanCacheStore';
+export { usePlanClipboardStore } from '@/stores/usePlanClipboardStore';
+export type { ClipboardPlan, LastClickedPosition } from '@/stores/usePlanClipboardStore';
+export { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
 export type {
   CreateEntryType,
   DraftPlan,
   PendingChanges,
   PlanInitialData,
-} from './stores/usePlanInspectorStore';
-export { useRecurringEditConfirmStore } from './stores/useRecurringEditConfirmStore';
+} from '@/stores/usePlanInspectorStore';
+export { useRecurringEditConfirmStore } from '@/stores/useRecurringEditConfirmStore';
 
 // =============================================================================
 // Hooks

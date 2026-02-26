@@ -1,11 +1,11 @@
-export { useRecordInspectorStore } from './useRecordInspectorStore';
+export { useRecordInspectorStore } from '@/stores/useRecordInspectorStore';
 
-export { useRecordFilterStore } from './useRecordFilterStore';
+export { useRecordFilterStore } from '@/stores/useRecordFilterStore';
 export type {
   DateRangeFilter,
   DurationFilter,
   FulfillmentFilter,
   WorkedAtFilter,
-} from './useRecordFilterStore';
+} from '@/stores/useRecordFilterStore';
 
 export { useRecordCacheStore } from './useRecordCacheStore';

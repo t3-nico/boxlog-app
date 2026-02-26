@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import type { Tag } from '@/features/tags/types';
+import type { Tag } from '../types';
 
 import { TagBadge } from './tag-badge';
 

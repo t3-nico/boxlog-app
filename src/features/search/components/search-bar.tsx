@@ -14,8 +14,8 @@ import {
   CommandList,
 } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { usePlans } from '@/features/plans/hooks';
-import { useTags } from '@/features/tags/hooks';
+import { usePlans } from '@/hooks/usePlans';
+import { useTags } from '@/hooks/useTagsQuery';
 import { cn } from '@/lib/utils';
 
 import { useSearchHistory } from '../hooks/useSearch';

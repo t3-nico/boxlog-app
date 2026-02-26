@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 
 import { cn } from '@/lib/utils';
 
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
+import type { CalendarPlan } from '../../../../types/calendar.types';
 
 import type { TimesheetData } from '../TimesheetView.types';
 

@@ -83,10 +83,10 @@ export type {
 } from './types/calendar.types';
 
 // =============================================================================
-// Stores
+// Stores (Re-export from shared stores for backward compatibility)
 // =============================================================================
-export { useCalendarFilterStore } from './stores/useCalendarFilterStore';
-export type { ItemType } from './stores/useCalendarFilterStore';
+export { useCalendarFilterStore } from '@/stores/useCalendarFilterStore';
+export type { ItemType } from '@/stores/useCalendarFilterStore';
 
 // =============================================================================
 // Contexts

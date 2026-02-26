@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
 
-import { usePlanInstanceMutations } from '@/features/plans/hooks/usePlanInstances';
-import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
-import { decodeInstanceId } from '@/features/plans/utils/instanceId';
+import { usePlanInstanceMutations } from '@/hooks/usePlanInstances';
+import { usePlanMutations } from '@/hooks/usePlanMutations';
+import { decodeInstanceId } from '@/lib/instance-id';
 import { logger } from '@/lib/logger';
 import { api } from '@/lib/trpc';
 

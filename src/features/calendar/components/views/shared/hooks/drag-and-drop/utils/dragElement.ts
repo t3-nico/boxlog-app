@@ -1,5 +1,5 @@
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
-import { getEventType } from '@/features/calendar/utils/planDataAdapter';
+import type { CalendarPlan } from '../../../../../../types/calendar.types';
+import { getEventType } from '../../../../../../utils/planDataAdapter';
 
 /**
  * ドラッグ要素を作成する（position: fixed で自由移動）

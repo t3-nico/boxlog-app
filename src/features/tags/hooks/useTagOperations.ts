@@ -2,7 +2,10 @@
  * タグ操作のビジネスロジックを管理するカスタムフック
  */
 
-import { DEFAULT_TAG_COLOR } from '@/features/tags/constants/colors';
+import { logger } from '@/lib/logger';
+import { useCallback, useState } from 'react';
+import { DEFAULT_TAG_COLOR } from '../constants/colors';
+import type { CreateTagInput, Tag, UpdateTagInput } from '../types';
 import {
   useCreateTag,
   useDeleteTag,
@@ -10,10 +13,7 @@ import {
   useOptimisticTagUpdate,
   useRenameTag,
   useUpdateTag,
-} from '@/features/tags/hooks';
-import type { CreateTagInput, Tag, UpdateTagInput } from '@/features/tags/types';
-import { logger } from '@/lib/logger';
-import { useCallback, useState } from 'react';
+} from './';
 
 export function useTagOperations(tags: Tag[]) {
   const [showCreateModal, setShowCreateModal] = useState(false);

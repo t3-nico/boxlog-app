@@ -1,24 +1,5 @@
-import { create } from 'zustand';
-
-import type { SettingsCategory } from '../types';
-
 /**
- * 設定モーダルの状態管理
- *
- * Notion風フルスクリーンモーダルの開閉とカテゴリ選択を管理
+ * Re-export from shared stores for backward compatibility
+ * 実体は @/stores/useSettingsModalStore に移動済み
  */
-interface SettingsModalStore {
-  isOpen: boolean;
-  selectedCategory: SettingsCategory;
-  openModal: (category?: SettingsCategory) => void;
-  closeModal: () => void;
-  setCategory: (category: SettingsCategory) => void;
-}
-
-export const useSettingsModalStore = create<SettingsModalStore>((set) => ({
-  isOpen: false,
-  selectedCategory: 'general',
-  openModal: (category = 'general') => set({ isOpen: true, selectedCategory: category }),
-  closeModal: () => set({ isOpen: false }),
-  setCategory: (category) => set({ selectedCategory: category }),
-}));
+export { useSettingsModalStore } from '@/stores/useSettingsModalStore';

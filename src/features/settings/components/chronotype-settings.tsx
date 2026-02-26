@@ -14,15 +14,15 @@ import {
 } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
 import { CACHE_5_MINUTES } from '@/constants/time';
-import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings';
 import { api } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
+import { useAutoSaveSettings } from '../hooks/useAutoSaveSettings';
 
 import { SettingRow } from './fields/SettingRow';
 import { SettingsCard } from './SettingsCard';
 
-import type { ChronotypeType, ProductivityZone } from '@/features/settings/types/chronotype';
-import { CHRONOTYPE_PRESETS, LEVEL_COLORS } from '@/features/settings/types/chronotype';
+import type { ChronotypeType, ProductivityZone } from '../types/chronotype';
+import { CHRONOTYPE_PRESETS, LEVEL_COLORS } from '../types/chronotype';
 
 // クロノタイプごとの絵文字アイコン
 const CHRONOTYPE_EMOJI: Record<Exclude<ChronotypeType, 'custom'>, string> = {

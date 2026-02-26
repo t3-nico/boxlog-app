@@ -15,11 +15,11 @@ import { fromZonedTime } from 'date-fns-tz';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
-import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
-import { useplans } from '@/features/plans/hooks/usePlans';
-import { useDateFormat } from '@/features/settings/hooks/useDateFormat';
-import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
+import { useDateFormat } from '@/hooks/useDateFormat';
 import { useHapticFeedback } from '@/hooks/useHapticFeedback';
+import { usePlanMutations } from '@/hooks/usePlanMutations';
+import { useplans } from '@/hooks/usePlans';
+import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 
 interface DnDProviderProps {
   children: React.ReactNode;

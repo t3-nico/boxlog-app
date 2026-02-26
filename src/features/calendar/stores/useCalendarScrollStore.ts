@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-import type { CalendarViewType } from '@/features/settings/stores/useCalendarSettingsStore';
+import type { CalendarViewType } from '@/stores/useCalendarSettingsStore';
 
 /**
  * カレンダーのスクロール位置を管理するストア

@@ -6,7 +6,7 @@ import { format, startOfDay } from 'date-fns';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
+import type { CalendarPlan } from '../../../../types/calendar.types';
 
 import { formatMinutes } from '../hooks/useTimesheetData';
 

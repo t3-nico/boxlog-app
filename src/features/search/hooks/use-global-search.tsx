@@ -1,32 +1,13 @@
 'use client';
 
-import {
-  createContext,
-  ReactNode,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 
+import { GlobalSearchContext } from '@/hooks/use-global-search';
 import { GlobalSearchModal } from '../components/global-search-modal';
 
-interface GlobalSearchContextType {
-  open: () => void;
-  close: () => void;
-  isOpen: boolean;
-}
-
-const noop = () => {};
-const fallback: GlobalSearchContextType = { open: noop, close: noop, isOpen: false };
-
-const GlobalSearchContext = createContext<GlobalSearchContextType | null>(null);
-
-/** Provider外ではnoop fallbackを返す（Storybook等で安全に動作） */
-export function useGlobalSearch(): GlobalSearchContextType {
-  return useContext(GlobalSearchContext) ?? fallback;
-}
+// Re-export for backward compatibility
+export { useGlobalSearch } from '@/hooks/use-global-search';
+export type { GlobalSearchContextType } from '@/hooks/use-global-search';
 
 export const GlobalSearchProvider = ({ children }: { children: ReactNode }) => {
   const [isOpen, setIsOpen] = useState(false);

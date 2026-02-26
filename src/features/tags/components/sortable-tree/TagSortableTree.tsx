@@ -32,7 +32,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-import type { Tag } from '@/features/tags/types';
+import type { Tag } from '../../types';
 
 import { SortableTagTreeItem, TagTreeItem } from './components';
 import { sortableTreeKeyboardCoordinates } from './keyboardCoordinates';

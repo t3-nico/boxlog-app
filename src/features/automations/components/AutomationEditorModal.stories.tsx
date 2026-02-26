@@ -4,7 +4,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 
 import { Button } from '@/components/ui/button';
-import type { Tag } from '@/features/tags/types';
+import type { Tag } from '@/core/types/tag';
 
 import type { Automation } from '../types';
 import { AutomationEditorModal } from './AutomationEditorModal';

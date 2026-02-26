@@ -19,7 +19,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
-import type { Tag } from '@/features/tags/types';
+import type { Tag } from '@/core/types/tag';
 
 import type {
   ActionConfig,

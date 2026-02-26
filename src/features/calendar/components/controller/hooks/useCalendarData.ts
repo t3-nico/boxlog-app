@@ -4,15 +4,15 @@ import { useEffect, useMemo } from 'react';
 
 import { addDays, format, subDays } from 'date-fns';
 
-import { usePlans } from '@/features/plans/hooks/usePlans';
-import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
-import type { Plan } from '@/features/plans/types/plan';
-import { isRecurringPlan } from '@/features/plans/utils/recurrence';
-import { useRecords } from '@/features/records/hooks';
-import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
-import { useTags } from '@/features/tags/hooks';
+import type { Plan } from '@/core/types/plan';
+import { usePlans } from '@/hooks/usePlans';
+import { useRecords } from '@/hooks/useRecords';
+import { useTags } from '@/hooks/useTagsQuery';
 import { logger } from '@/lib/logger';
+import { isRecurringPlan } from '@/lib/plan-recurrence';
 import { api } from '@/lib/trpc';
+import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
+import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
 
 import { useCalendarFilterStore } from '../../../stores/useCalendarFilterStore';
 

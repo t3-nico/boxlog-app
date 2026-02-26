@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
+import type { CalendarPlan } from '../../../../types/calendar.types';
 
 import { DragSelectionPreview } from './CalendarDragSelection/DragSelectionPreview';
 import { PlanCard } from './PlanCard/PlanCard';

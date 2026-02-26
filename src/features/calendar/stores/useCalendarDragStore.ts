@@ -1,6 +1,6 @@
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
 import type { PlanWithTags } from '@/server/services/plans/types';
 import { create } from 'zustand';
+import type { CalendarPlan } from '../types/calendar.types';
 
 /**
  * カレンダーのドラッグ状態を管理するストア

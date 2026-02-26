@@ -1,15 +1,23 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
+import dynamic from 'next/dynamic';
 import { memo, useCallback } from 'react';
 
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { cn } from '@/lib/utils';
 
-import { AppAside } from '@/features/navigation/components/aside/AppAside';
-import type { AsideType } from '@/features/navigation/components/aside/AsideSwitcher';
-import { useAppAsideStore } from '@/features/navigation/stores/useAppAsideStore';
+import { AppAside, type AsideType } from '@/components/layout/AppAside';
+import { useAppAsideStore } from '@/stores/useAppAsideStore';
+import { PlanListPanel } from '../aside/PlanListPanel';
+import { RecordListPanel } from '../aside/RecordListPanel';
+
+// tiptap + AI SDK を初期バンドルから除外（LCP改善）
+const AIInspectorContent = dynamic(
+  () => import('@/features/ai/components/AIInspectorContent').then((mod) => mod.AIInspectorContent),
+  { ssr: false },
+);
 
 import { useResizeHandle } from '../../hooks/useResizeHandle';
 import { useSwipeGesture } from '../../hooks/useSwipeGesture';
@@ -176,7 +184,22 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
           >
             {showAside && onAsideChange && (
               <div className="bg-container h-full">
-                <AppAside asideType={currentAside} onAsideChange={onAsideChange} />
+                <AppAside
+                  asideType={currentAside}
+                  onAsideChange={onAsideChange}
+                  renderContent={(type) => {
+                    switch (type) {
+                      case 'plan':
+                        return <PlanListPanel />;
+                      case 'record':
+                        return <RecordListPanel />;
+                      case 'chat':
+                        return <AIInspectorContent />;
+                      default:
+                        return null;
+                    }
+                  }}
+                />
               </div>
             )}
           </aside>
@@ -191,7 +214,22 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
               showCloseButton={false}
               aria-label={t('aside.open')}
             >
-              <AppAside asideType={currentAside} onAsideChange={onAsideChange} />
+              <AppAside
+                asideType={currentAside}
+                onAsideChange={onAsideChange}
+                renderContent={(type) => {
+                  switch (type) {
+                    case 'plan':
+                      return <PlanListPanel />;
+                    case 'record':
+                      return <RecordListPanel />;
+                    case 'chat':
+                      return <AIInspectorContent />;
+                    default:
+                      return null;
+                  }
+                }}
+              />
             </SheetContent>
           </Sheet>
         )}

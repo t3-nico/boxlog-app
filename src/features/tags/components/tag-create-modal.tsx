@@ -12,15 +12,15 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Field, FieldError, FieldGroup, FieldLabel, FieldSupportText } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import { TagNoteField } from '@/features/tags/components/tag-note-field';
-import { DEFAULT_TAG_COLOR, TAG_NAME_MAX_LENGTH } from '@/features/tags/constants/colors';
-import { useTags } from '@/features/tags/hooks';
-import type { CreateTagInput } from '@/features/tags/types';
 import { useHasMounted } from '@/hooks/useHasMounted';
 import { useSubmitShortcut } from '@/hooks/useSubmitShortcut';
 import { logger } from '@/lib/logger';
 import { ChevronDown, Circle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { DEFAULT_TAG_COLOR, TAG_NAME_MAX_LENGTH } from '../constants/colors';
+import { useTags } from '../hooks';
+import type { CreateTagInput } from '../types';
+import { TagNoteField } from './tag-note-field';
 
 interface TagCreateModalProps {
   isOpen: boolean;

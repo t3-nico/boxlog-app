@@ -17,7 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { useDateFormat } from '@/features/settings/hooks/useDateFormat';
+import { useDateFormat } from '@/hooks/useDateFormat';
 import { useSubmitShortcut } from '@/hooks/useSubmitShortcut';
 
 import type { RecurrenceConfig } from '../../types/plan';

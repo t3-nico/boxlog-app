@@ -1,7 +1,7 @@
-import type { PlanStatus } from '@/features/plans/types/plan';
 import type { DateRangeFilter } from '@/lib/date';
 import type { BaseFilterState } from '@/stores/createFilterStore';
 import { createFilterStore } from '@/stores/createFilterStore';
+import type { PlanStatus } from '../types/plan';
 
 /**
  * 繰り返しフィルタータイプ

@@ -1,4 +1,4 @@
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
+import type { CalendarPlan } from '../../../types/calendar.types';
 
 import type { BaseViewProps } from '../shared/types/base.types';
 

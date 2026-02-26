@@ -4,16 +4,16 @@ import { PanelLeft, PanelRight, Search } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { HeaderUtilities } from '@/components/layout/HeaderUtilities';
+import { MobileMenuButton } from '@/components/layout/MobileMenuButton';
 import { Button } from '@/components/ui/button';
 import { HoverTooltip } from '@/components/ui/tooltip';
-import { MobileMenuButton } from '@/features/navigation/components/mobile/MobileMenuButton';
-import { useSidebarStore } from '@/features/navigation/stores/useSidebarStore';
-import { useGlobalSearch } from '@/features/search/hooks/use-global-search';
-import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
+import { useGlobalSearch } from '@/hooks/use-global-search';
+import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
+import { useSidebarStore } from '@/stores/useSidebarStore';
 
 import type { CalendarViewType } from '../../../types/calendar.types';
 
-import type { AsideType } from '@/features/navigation/components/aside/AsideSwitcher';
+import type { AsideType } from '@/components/layout/AppAside';
 import { DateNavigator } from './DateNavigator';
 import { DateRangeDisplay } from './DateRangeDisplay';
 import { HeaderActions } from './HeaderActions';

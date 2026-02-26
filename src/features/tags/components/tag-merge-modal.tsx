@@ -5,11 +5,11 @@ import { createPortal } from 'react-dom';
 
 import { useTranslations } from 'next-intl';
 
-import { DEFAULT_TAG_COLOR } from '@/features/tags/constants/colors';
-import { useMergeTag, useTags } from '@/features/tags/hooks';
 import { useHasMounted } from '@/hooks/useHasMounted';
 import { logger } from '@/lib/logger';
 import { cn } from '@/lib/utils';
+import { DEFAULT_TAG_COLOR } from '../constants/colors';
+import { useMergeTag, useTags } from '../hooks';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';

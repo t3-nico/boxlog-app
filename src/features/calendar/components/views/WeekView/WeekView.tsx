@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 
 import { isWeekend } from 'date-fns';
 
-import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
+import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 
 import { CalendarViewAnimation } from '../../animations/ViewTransition';
 

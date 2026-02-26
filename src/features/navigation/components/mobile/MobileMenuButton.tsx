@@ -1,38 +1,5 @@
-'use client';
-
-import { Menu } from 'lucide-react';
-
-import { Button } from '@/components/ui/button';
-import { useSidebarStore } from '@/features/navigation/stores/useSidebarStore';
-import { useTranslations } from 'next-intl';
-
 /**
- * モバイル用ハンバーガーメニューボタン
- *
- * 各ページのヘッダー/ツールバーに配置してSidebarを開閉する
- *
- * @example
- * ```tsx
- * // Calendar Toolbar
- * <div className="flex items-center gap-2">
- *   <MobileMenuButton className="md:hidden" />
- *   <h1>カレンダー</h1>
- * </div>
- * ```
+ * Re-export from shared components for backward compatibility
+ * 実体は @/components/layout/MobileMenuButton に移動済み
  */
-export function MobileMenuButton({ className }: { className?: string }) {
-  const toggle = useSidebarStore((state) => state.toggle);
-  const t = useTranslations();
-
-  return (
-    <Button
-      variant="ghost"
-      icon
-      onClick={toggle}
-      aria-label={t('common.aria.openMenu')}
-      className={className}
-    >
-      <Menu className="size-6" />
-    </Button>
-  );
-}
+export { MobileMenuButton } from '@/components/layout/MobileMenuButton';

@@ -4,7 +4,7 @@ import { memo, useMemo } from 'react';
 
 import { cn } from '@/lib/utils';
 
-import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
+import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 import {
   CHRONOTYPE_PRESETS,
   getProductivityLevelColor,

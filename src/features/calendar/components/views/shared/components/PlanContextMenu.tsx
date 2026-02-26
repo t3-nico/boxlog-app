@@ -14,9 +14,9 @@ import {
   Trash2,
 } from 'lucide-react';
 
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
 import { cn } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
+import type { CalendarPlan } from '../../../../types/calendar.types';
 
 interface PlanContextMenuProps {
   plan: CalendarPlan;

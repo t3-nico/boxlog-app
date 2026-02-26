@@ -7,9 +7,9 @@
 
 import { useCallback } from 'react';
 
-import { useCalendarDragStore } from '@/features/calendar/stores/useCalendarDragStore';
+import { useCalendarDragStore } from '../../../../../stores/useCalendarDragStore';
 
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
+import type { CalendarPlan } from '../../../../../types/calendar.types';
 import type { DragDataRef, DragState } from './types';
 import { initialDragState } from './types';
 import {

@@ -18,10 +18,17 @@ export type { RecordFilters, RecordItem, RecordSortField, RecordSortOptions } fr
 export type { CreateRecordInput, UpdateRecordInput } from './hooks/useRecordMutations';
 
 // =============================================================================
-// Stores
+// Stores (Re-export from shared stores for backward compatibility)
 // =============================================================================
-export { useRecordCacheStore, useRecordFilterStore, useRecordInspectorStore } from './stores';
-export type { DateRangeFilter, DurationFilter, FulfillmentFilter, WorkedAtFilter } from './stores';
+export { useRecordFilterStore } from '@/stores/useRecordFilterStore';
+export type {
+  DateRangeFilter,
+  DurationFilter,
+  FulfillmentFilter,
+  WorkedAtFilter,
+} from '@/stores/useRecordFilterStore';
+export { useRecordInspectorStore } from '@/stores/useRecordInspectorStore';
+export { useRecordCacheStore } from './stores';
 
 // =============================================================================
 // Types

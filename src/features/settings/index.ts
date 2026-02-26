@@ -8,9 +8,11 @@
 // =============================================================================
 // Stores
 // =============================================================================
-export { useCalendarSettingsStore } from './stores/useCalendarSettingsStore';
-export type { CalendarViewType, DateFormatType } from './stores/useCalendarSettingsStore';
-export { useSettingsModalStore } from './stores/useSettingsModalStore';
+// Re-export from shared stores for backward compatibility
+export { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
+export type { CalendarViewType, DateFormatType } from '@/stores/useCalendarSettingsStore';
+// Re-export from shared stores for backward compatibility
+export { useSettingsModalStore } from '@/stores/useSettingsModalStore';
 
 // =============================================================================
 // Hooks

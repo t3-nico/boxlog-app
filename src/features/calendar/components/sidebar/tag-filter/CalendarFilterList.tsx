@@ -8,19 +8,20 @@ import Link from 'next/link';
 
 import { useCalendarFilterStore, type ItemType } from '../../../stores/useCalendarFilterStore';
 
+import { SidebarSection } from '@/components/layout/SidebarSection';
 import { Button } from '@/components/ui/button';
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { useTheme } from '@/contexts/theme-context';
-import { SidebarSection } from '@/features/navigation/components/sidebar/SidebarSection';
-import { useDeleteTag, useReorderTags, useTags, useUpdateTag } from '@/features/tags/hooks';
-import { useTagModalNavigation } from '@/features/tags/hooks/useTagModalNavigation';
-import { useTagCacheStore } from '@/features/tags/stores/useTagCacheStore';
+import { useDeleteTag, useReorderTags, useUpdateTag } from '@/hooks/mutations/useTagMutations';
+import { useTagModalNavigation } from '@/hooks/useTagModalNavigation';
+import { useTags } from '@/hooks/useTagsQuery';
+import { useTagCacheStore } from '@/stores/useTagCacheStore';
 
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { Skeleton } from '@/components/ui/skeleton';
 import { api } from '@/lib/trpc';
 
-import { TagSortableTree } from '@/features/tags/components/sortable-tree/TagSortableTree';
+import { TagSortableTree } from '@/components/tags/TagSortableTree';
 import { CreateTagButton } from './components/CreateTagButton';
 import { FilterItem } from './components/FilterItem';
 

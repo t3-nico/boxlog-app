@@ -14,7 +14,7 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
 } from '@/components/ui/dropdown-menu';
-import { DEFAULT_TAG_COLOR } from '@/features/tags/constants/colors';
+import { DEFAULT_TAG_COLOR } from '@/lib/tag-colors';
 
 interface FilterItemMenuProps {
   displayColor: string;

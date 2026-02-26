@@ -16,21 +16,20 @@ import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
+import { PlanIconButton, TagsIconButton } from '@/components/inspector';
 import { DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import {
   FulfillmentButton,
   InspectorDetailsLayout,
   InspectorHeader,
   NoteIconButton,
-  PlanIconButton,
   ScheduleRow,
-  TagsIconButton,
   TitleInput,
-} from '@/features/plans/components/inspector/shared';
-import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
+} from '@/core/components/inspector';
 import { useSubmitShortcut } from '@/hooks/useSubmitShortcut';
 import { useUpdateEntityTagsInCache } from '@/hooks/useUpdateEntityTagsInCache';
 import { computeDuration } from '@/lib/time-utils';
+import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
 
 import {
   useRecord,

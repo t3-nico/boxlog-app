@@ -9,14 +9,14 @@
 
 import { useCallback, useRef } from 'react';
 
-import type { RecurringEditScope } from '@/features/plans/components/RecurringEditConfirmDialog';
-import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
-import { useRecurringScopeMutations } from '@/features/plans/hooks/useRecurringScopeMutations';
-import { useRecurringEditConfirmStore } from '@/features/plans/stores/useRecurringEditConfirmStore';
-import { useRecordMutations } from '@/features/records/hooks/useRecordMutations';
-import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
+import { usePlanMutations } from '@/hooks/usePlanMutations';
+import { useRecordMutations } from '@/hooks/useRecordMutations';
+import { useRecurringScopeMutations } from '@/hooks/useRecurringScopeMutations';
 import { formatInTimezone } from '@/lib/date/timezone';
 import { logger } from '@/lib/logger';
+import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
+import type { RecurringEditScope } from '@/stores/useRecurringEditConfirmStore';
+import { useRecurringEditConfirmStore } from '@/stores/useRecurringEditConfirmStore';
 
 import type { CalendarPlan } from '../types/calendar.types';
 import { isRecordEvent } from '../utils/planDataAdapter';

@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react';
 
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
+import type { CalendarPlan } from '../../../types/calendar.types';
 
 import type { DateTimeSelection, GridViewProps, TimeSlot } from '../shared';
 

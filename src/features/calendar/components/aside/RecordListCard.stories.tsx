@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 
-import type { RecordItem } from '@/features/records/hooks/useRecordData';
+import type { RecordItem } from '@/hooks/useRecordData';
 
 import { RecordListCard } from './RecordListCard';
 

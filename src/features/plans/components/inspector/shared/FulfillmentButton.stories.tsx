@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import type { FulfillmentScore } from '@/features/records/types/record';
+import type { FulfillmentScore } from '@/core/types/record';
 
 import { FulfillmentButton } from './FulfillmentButton';
 

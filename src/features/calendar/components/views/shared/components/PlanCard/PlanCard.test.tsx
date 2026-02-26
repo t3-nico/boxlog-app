@@ -1,12 +1,12 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
+import type { CalendarPlan } from '../../../../../types/calendar.types';
 
 import { PlanCard } from './PlanCard';
 
 // usePlanMutations フックをモック
-vi.mock('@/features/plans/hooks/usePlanMutations', () => ({
+vi.mock('@/hooks/usePlanMutations', () => ({
   usePlanMutations: () => ({
     updatePlan: { mutate: vi.fn(), isPending: false },
     createPlan: { mutate: vi.fn(), isPending: false },

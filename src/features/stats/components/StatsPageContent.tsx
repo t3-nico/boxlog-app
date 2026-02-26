@@ -4,19 +4,24 @@ import { PanelLeft, PanelRight } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { FeatureErrorBoundary } from '@/components/error-boundary';
+import { AppAside, type AsideType } from '@/components/layout/AppAside';
 import { HeaderUtilities } from '@/components/layout/HeaderUtilities';
+import { MobileMenuButton } from '@/components/layout/MobileMenuButton';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { HoverTooltip } from '@/components/ui/tooltip';
-import { useResizeHandle } from '@/features/calendar/hooks/useResizeHandle';
-import { AppAside } from '@/features/navigation/components/aside/AppAside';
-import { MobileMenuButton } from '@/features/navigation/components/mobile/MobileMenuButton';
-import { useAppAsideStore } from '@/features/navigation/stores/useAppAsideStore';
-import { useSidebarStore } from '@/features/navigation/stores/useSidebarStore';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { useResizeHandle } from '@/hooks/useResizeHandle';
 import { cn } from '@/lib/utils';
+import { useAppAsideStore } from '@/stores/useAppAsideStore';
+import { useSidebarStore } from '@/stores/useSidebarStore';
 
 import { StatsView } from './StatsView';
+
+interface StatsPageContentProps {
+  /** アサイドパネルのコンテンツレンダラー（page.tsxから注入） */
+  renderAsideContent?: (asideType: AsideType) => React.ReactNode;
+}
 
 /**
  * Stats ページのクライアントエントリポイント
@@ -24,7 +29,7 @@ import { StatsView } from './StatsView';
  * CalendarController を経由せず、Stats を直接レンダリングする。
  * CalendarLayout と同じヘッダー + Aside 構造を持つ。
  */
-export function StatsPageContent() {
+export function StatsPageContent({ renderAsideContent }: StatsPageContentProps) {
   const t = useTranslations();
   const isMobile = useMediaQuery('(max-width: 767px)');
 
@@ -129,7 +134,11 @@ export function StatsPageContent() {
         >
           {showAside && (
             <div className="bg-container h-full">
-              <AppAside asideType={currentAside} onAsideChange={setCurrentAside} />
+              <AppAside
+                asideType={currentAside}
+                onAsideChange={setCurrentAside}
+                renderContent={renderAsideContent}
+              />
             </div>
           )}
         </aside>
@@ -144,7 +153,11 @@ export function StatsPageContent() {
             showCloseButton={false}
             aria-label={t('calendar.aside.open')}
           >
-            <AppAside asideType={currentAside} onAsideChange={setCurrentAside} />
+            <AppAside
+              asideType={currentAside}
+              onAsideChange={setCurrentAside}
+              renderContent={renderAsideContent}
+            />
           </SheetContent>
         </Sheet>
       )}

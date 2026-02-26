@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import type { CalendarPlan as Plan } from '@/features/calendar/types/calendar.types';
+import type { CalendarPlan as Plan } from '../types/calendar.types';
 
 import {
   planToTimedPlan,

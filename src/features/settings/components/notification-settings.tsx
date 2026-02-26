@@ -5,14 +5,14 @@ import { useCallback, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
+import { ReminderSelect } from '@/components/common/ReminderSelect';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Switch } from '@/components/ui/switch';
 import {
   checkBrowserNotificationSupport,
   requestNotificationPermission,
-} from '@/features/notifications/utils/notification-helpers';
-import { ReminderSelect } from '@/features/plans/components/shared/ReminderSelect';
+} from '@/lib/notification-helpers';
 import { api } from '@/lib/trpc';
 
 import { SettingRow } from './fields/SettingRow';

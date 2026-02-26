@@ -18,10 +18,10 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import type { CalendarViewType } from '@/features/calendar/types/calendar.types';
-import { isMultiDayView } from '@/features/calendar/types/calendar.types';
-import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
 import { cn } from '@/lib/utils';
+import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
+import type { CalendarViewType } from '../../../types/calendar.types';
+import { isMultiDayView } from '../../../types/calendar.types';
 
 interface ViewSwitcherProps {
   currentView: CalendarViewType;

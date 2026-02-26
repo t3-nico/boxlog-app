@@ -14,9 +14,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { useAuthStore } from '@/features/auth/stores/useAuthStore';
 import { createClient } from '@/lib/supabase/client';
 import { deleteAvatar, uploadAvatar } from '@/lib/supabase/storage';
+import { useAuthStore } from '@/stores/useAuthStore';
 
 interface AvatarChangeDialogProps {
   open: boolean;

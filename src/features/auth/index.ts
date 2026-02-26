@@ -13,6 +13,7 @@ export { SignupForm } from './components/SignupForm';
 
 // State management - Zustand store (Context APIから移行)
 export { AuthStoreInitializer } from './stores/AuthStoreInitializer';
+// Re-export from shared stores for backward compatibility
 export {
   selectError,
   selectIsAuthenticated,
@@ -20,7 +21,7 @@ export {
   selectSession,
   selectUser,
   useAuthStore,
-} from './stores/useAuthStore';
+} from '@/stores/useAuthStore';
 
 // Hooks
 export { useSessionMonitor } from './hooks/useSessionMonitor';

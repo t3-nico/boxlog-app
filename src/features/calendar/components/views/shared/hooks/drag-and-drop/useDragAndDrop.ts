@@ -10,7 +10,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
+import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 
 import { useResponsiveHourHeight } from '../useResponsiveHourHeight';
 

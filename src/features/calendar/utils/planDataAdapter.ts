@@ -9,7 +9,7 @@
 
 import { convertToTimezone } from '@/lib/date/timezone';
 
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
+import type { CalendarPlan } from '../types/calendar.types';
 
 import type { TimedPlan } from '../components/views/shared/types/plan.types';
 
@@ -20,12 +20,9 @@ export {
   expandRecurringPlansToCalendarPlans,
   plansToCalendarPlans,
   planToCalendarPlan,
-} from '@/features/plans/adapters/toCalendarEvent';
+} from '@/lib/plan-adapter';
 
-export type {
-  ExpandedOccurrence,
-  PlanInstanceException,
-} from '@/features/plans/adapters/toCalendarEvent';
+export type { ExpandedOccurrence, PlanInstanceException } from '@/lib/plan-adapter';
 
 // ========================================
 // Records feature アダプターからの再エクスポート（後方互換性）
@@ -33,9 +30,9 @@ export type {
 export {
   recordsToCalendarEvents as recordsToCalendarPlans,
   recordToCalendarEvent as recordToCalendarPlan,
-} from '@/features/records/adapters/toCalendarEvent';
+} from '@/lib/record-adapter';
 
-export type { RecordWithPlanInfo } from '@/features/records/adapters/toCalendarEvent';
+export type { RecordWithPlanInfo } from '@/lib/record-adapter';
 
 // ========================================
 // Calendar固有の変換ロジック

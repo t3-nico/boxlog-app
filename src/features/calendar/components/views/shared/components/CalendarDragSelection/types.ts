@@ -2,7 +2,7 @@
  * CalendarDragSelection 型定義
  */
 
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
+import type { CalendarPlan } from '../../../../../types/calendar.types';
 
 export interface TimeRange {
   startHour: number;

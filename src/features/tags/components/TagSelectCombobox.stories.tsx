@@ -4,7 +4,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Tags } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import type { Tag } from '@/features/tags/types';
+import type { Tag } from '../types';
 
 import { TagSelectCombobox } from './TagSelectCombobox';
 

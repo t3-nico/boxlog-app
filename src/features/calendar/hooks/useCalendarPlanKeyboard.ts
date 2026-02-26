@@ -2,10 +2,10 @@
 
 import { useEffect, useRef } from 'react';
 
-import { useDeleteConfirmStore } from '@/features/plans/stores/useDeleteConfirmStore';
-import { usePlanClipboardStore } from '@/features/plans/stores/usePlanClipboardStore';
-import type { PlanInitialData } from '@/features/plans/stores/usePlanInspectorStore';
-import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
+import { useDeleteConfirmStore } from '@/stores/useDeleteConfirmStore';
+import { usePlanClipboardStore } from '@/stores/usePlanClipboardStore';
+import type { PlanInitialData } from '@/stores/usePlanInspectorStore';
+import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
 import { toast } from 'sonner';
 
 interface UseCalendarPlanKeyboardOptions {

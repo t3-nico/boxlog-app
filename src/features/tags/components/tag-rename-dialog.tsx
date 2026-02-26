@@ -6,10 +6,10 @@ import { createPortal } from 'react-dom';
 import { Button } from '@/components/ui/button';
 import { Field, FieldError } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import { TAG_NAME_MAX_LENGTH } from '@/features/tags/constants/colors';
-import { useTags } from '@/features/tags/hooks';
 import { useDialogKeyboard } from '@/hooks/useDialogKeyboard';
 import { useTranslations } from 'next-intl';
+import { TAG_NAME_MAX_LENGTH } from '../constants/colors';
+import { useTags } from '../hooks';
 
 interface TagRenameDialogProps {
   isOpen: boolean;

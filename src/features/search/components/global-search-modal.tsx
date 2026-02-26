@@ -29,16 +29,16 @@ import {
 } from '@/components/ui/command';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { useTheme } from '@/contexts/theme-context';
-import { useCalendarFilterStore } from '@/features/calendar/stores/useCalendarFilterStore';
-import { useAppAsideStore } from '@/features/navigation/stores/useAppAsideStore';
-import { usePlans } from '@/features/plans/hooks';
-import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
-import { useSettingsModalStore } from '@/features/settings/stores/useSettingsModalStore';
-import { useTags } from '@/features/tags/hooks';
-import { useTagModalNavigation } from '@/features/tags/hooks/useTagModalNavigation';
+import { usePlans } from '@/hooks/usePlans';
+import { useTagModalNavigation } from '@/hooks/useTagModalNavigation';
+import { useTags } from '@/hooks/useTagsQuery';
+import { useAppAsideStore } from '@/stores/useAppAsideStore';
+import { useCalendarFilterStore } from '@/stores/useCalendarFilterStore';
+import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
+import { useSettingsModalStore } from '@/stores/useSettingsModalStore';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 
-import type { PlanStatus } from '@/features/plans/types';
+import type { PlanStatus } from '@/core/types/plan';
 import { useRecentPlans } from '../hooks/useRecentPlans';
 import { useSearchHistory } from '../hooks/useSearch';
 import { commandRegistry, registerDefaultCommands } from '../lib/command-registry';

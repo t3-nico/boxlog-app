@@ -6,7 +6,7 @@
 
 import React, { memo, useCallback, useEffect, useMemo } from 'react';
 
-import { normalizeStatus } from '@/features/plans/utils/status';
+import { normalizeStatus } from '@/lib/plan-status';
 import { CheckCircle2, Circle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 

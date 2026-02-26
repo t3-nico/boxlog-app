@@ -3,7 +3,7 @@ import { fn } from 'storybook/test';
 
 import { eachDayOfInterval, endOfWeek, startOfWeek } from 'date-fns';
 
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
+import type { CalendarPlan } from '../../../types/calendar.types';
 
 import { TimesheetGrid } from './components/TimesheetGrid';
 

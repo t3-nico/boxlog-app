@@ -6,7 +6,7 @@
 
 import { useCallback, useEffect, useRef, useState, type RefObject } from 'react';
 
-import { useCalendarScrollStore } from '@/features/calendar/stores';
+import { useCalendarScrollStore } from '../../../../stores';
 
 export type CalendarViewModeForScroll = 'day' | '3day' | '5day' | 'week';
 

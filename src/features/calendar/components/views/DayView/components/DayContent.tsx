@@ -2,9 +2,9 @@
 
 import React, { useCallback } from 'react';
 
-import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
-import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
+import { usePlanMutations } from '@/hooks/usePlanMutations';
 import { cn } from '@/lib/utils';
+import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
 
 import {
   CalendarDragSelection,

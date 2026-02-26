@@ -12,8 +12,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { HoverTooltip } from '@/components/ui/tooltip';
-import { useSettingsModalStore } from '@/features/settings/stores/useSettingsModalStore';
 import type { NotificationType } from '@/schemas/notifications';
+import { useSettingsModalStore } from '@/stores/useSettingsModalStore';
 import { useLocale, useTranslations } from 'next-intl';
 
 import {

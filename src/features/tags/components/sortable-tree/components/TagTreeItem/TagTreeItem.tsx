@@ -28,9 +28,9 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { HoverTooltip } from '@/components/ui/tooltip';
-import { TagNoteDialog } from '@/features/tags/components/tag-note-dialog';
-import { TagRenameDialog } from '@/features/tags/components/tag-rename-dialog';
 import { cn } from '@/lib/utils';
+import { TagNoteDialog } from '../../../tag-note-dialog';
+import { TagRenameDialog } from '../../../tag-rename-dialog';
 
 export interface TagTreeItemData {
   id: string;
