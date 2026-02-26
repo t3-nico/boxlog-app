@@ -24,8 +24,10 @@ import { logger } from '@/lib/logger';
 import type { Context } from '@/server/api/trpc';
 import { createTRPCRouter, protectedProcedure } from '../trpc';
 
-// Resendクライアント初期化
-const resend = new Resend(process.env.RESEND_API_KEY);
+// 遅延初期化: ビルド時にAPI_KEYが未設定でもクラッシュしないようにする
+function getResend() {
+  return new Resend(process.env.RESEND_API_KEY);
+}
 
 // 送信元メールアドレス
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev';
@@ -62,7 +64,7 @@ async function sendEmail({
   react: React.ReactElement;
   context: string;
 }) {
-  const { data, error } = await resend.emails.send({
+  const { data, error } = await getResend().emails.send({
     from: `Dayopt <${FROM_EMAIL}>`,
     to,
     subject,
