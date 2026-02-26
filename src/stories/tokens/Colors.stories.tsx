@@ -193,37 +193,89 @@ export const Surface: Story = {
 };
 
 export const Semantic: Story = {
-  render: () => (
-    <div>
-      <h2 className="mb-6 text-xl font-bold">Semantic Colors（意味を持つ色）</h2>
+  render: () => {
+    const semanticColors = [
+      {
+        name: 'Destructive',
+        bg: 'bg-destructive',
+        text: 'text-destructive',
+        fg: 'text-destructive-foreground',
+        desc: '削除、エラー',
+      },
+      {
+        name: 'Warning',
+        bg: 'bg-warning',
+        text: 'text-warning',
+        fg: 'text-warning-foreground',
+        desc: '警告、注意',
+      },
+      {
+        name: 'Success',
+        bg: 'bg-success',
+        text: 'text-success',
+        fg: 'text-success-foreground',
+        desc: '成功、完了',
+      },
+      {
+        name: 'Info',
+        bg: 'bg-info',
+        text: 'text-info',
+        fg: 'text-info-foreground',
+        desc: '情報、ヒント',
+      },
+    ] as const;
 
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-        <div className="border-border rounded-lg border p-4 text-center">
-          <div className="bg-success mb-2 h-12 rounded" />
-          <div className="text-foreground font-bold">Success</div>
-          <div className="text-muted-foreground text-sm">成功、完了</div>
+    return (
+      <div>
+        <h2 className="mb-2 text-xl font-bold">Semantic Colors（意味を持つ色）</h2>
+        <p className="text-muted-foreground mb-6 text-sm">
+          WCAG 2.1 AA 準拠。全ペアが card 背景上で 4.5:1+ のコントラスト比を確保。
+          ダークモードでは明度を上げ、foreground をダーク文字に反転。
+        </p>
+
+        {/* 背景スウォッチ */}
+        <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
+          {semanticColors.map(({ name, bg, fg, desc }) => (
+            <div key={name} className="border-border rounded-lg border p-4 text-center">
+              <div className={`${bg} mb-2 flex h-12 items-center justify-center rounded`}>
+                <span className={`${fg} text-sm font-bold`}>Aa</span>
+              </div>
+              <div className="text-foreground font-bold">{name}</div>
+              <div className="text-muted-foreground text-sm">{desc}</div>
+            </div>
+          ))}
         </div>
 
-        <div className="border-border rounded-lg border p-4 text-center">
-          <div className="bg-warning mb-2 h-12 rounded" />
-          <div className="text-foreground font-bold">Warning</div>
-          <div className="text-muted-foreground text-sm">警告、注意</div>
+        {/* テキスト on Surface（コントラストチェック） */}
+        <h3 className="mb-4 text-lg font-bold">text-* on Surface</h3>
+        <p className="text-muted-foreground mb-4 text-sm">
+          badge outline 等で使われるパターン。card / background 上で 4.5:1+ を確保。
+        </p>
+        <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2">
+          {semanticColors.map(({ name, text }) => (
+            <div key={name} className="border-border flex gap-4 rounded-lg border p-4">
+              <div className="bg-card flex flex-1 items-center justify-center rounded p-3">
+                <span className={`${text} font-bold`}>{name} on card</span>
+              </div>
+              <div className="bg-background flex flex-1 items-center justify-center rounded p-3">
+                <span className={`${text} font-bold`}>{name} on bg</span>
+              </div>
+            </div>
+          ))}
         </div>
 
-        <div className="border-border rounded-lg border p-4 text-center">
-          <div className="bg-info mb-2 h-12 rounded" />
-          <div className="text-foreground font-bold">Info</div>
-          <div className="text-muted-foreground text-sm">情報</div>
-        </div>
-
-        <div className="border-border rounded-lg border p-4 text-center">
-          <div className="bg-destructive mb-2 h-12 rounded" />
-          <div className="text-foreground font-bold">Destructive</div>
-          <div className="text-muted-foreground text-sm">削除、エラー</div>
+        {/* foreground 反転の説明 */}
+        <div className="bg-card border-border rounded-lg border p-6">
+          <h3 className="mb-2 font-bold">ダークモードの foreground 反転</h3>
+          <p className="text-muted-foreground text-sm">
+            ダークモードではセマンティックカラーの明度が上がるため、
+            <code className="bg-container rounded px-1">text-*-foreground</code>{' '}
+            が白→ダーク文字に自動反転。 コンポーネント側の変更は不要。
+          </p>
         </div>
       </div>
-    </div>
-  ),
+    );
+  },
 };
 
 export const Interaction: Story = {

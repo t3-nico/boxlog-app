@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { usePlanInspectorStore } from './usePlanInspectorStore';
+import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
 
 describe('usePlanInspectorStore', () => {
   beforeEach(() => {
@@ -138,7 +138,7 @@ describe('usePlanInspectorStore', () => {
       expect(draft.end_time).toBeNull();
       expect(draft.tagIds).toEqual([]);
       expect(draft.plan_id).toBeNull();
-      expect(draft.note).toBeNull();
+      expect(draft.description).toBeNull();
     });
 
     it('createTypeを指定できる', () => {

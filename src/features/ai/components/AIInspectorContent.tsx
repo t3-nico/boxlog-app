@@ -5,7 +5,7 @@ import { memo, useCallback } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { HoverTooltip } from '@/components/ui/tooltip';
-import { useSettingsModalStore } from '@/features/settings/stores/useSettingsModalStore';
+import { useSettingsModalStore } from '@/stores/useSettingsModalStore';
 
 import { DEFAULT_MODELS } from '@/server/services/ai/types';
 

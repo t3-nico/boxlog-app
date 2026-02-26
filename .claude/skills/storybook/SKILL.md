@@ -1,3 +1,8 @@
+---
+name: storybook
+description: Storybook Story作成スキル。UIコンポーネントのStory追加・更新時に自動発動。公式ベストプラクティスに基づいたStory作成を支援。
+---
+
 # Storybook Story作成スキル
 
 Storybookの公式ベストプラクティスに基づいたStory作成ガイド。
@@ -796,9 +801,114 @@ Story対象のコンポーネントが以下に依存する場合、対応する
 | エラーハンドリング   | `/error-handling`       | ErrorBoundary配置、エラー状態のStory   |
 | a11y要件             | `/a11y`                 | aria属性、キーボード操作のテスト       |
 
+## ESLint連携
+
+`eslint-plugin-storybook` が `eslint.config.mjs` で有効化されている。
+
+```js
+// eslint.config.mjs
+import storybook from 'eslint-plugin-storybook';
+// ...
+...storybook.configs['flat/recommended'],
+```
+
+### 主なルール
+
+| ルール                            | 内容                                             |
+| --------------------------------- | ------------------------------------------------ |
+| `storybook/default-exports`       | Storyファイルに `export default meta` が必要     |
+| `storybook/hierarchy-separator`   | title に `/` 区切りを使用（`Components/Button`） |
+| `storybook/no-uninstalled-addons` | 未インストールアドオンの参照を検出               |
+| `storybook/story-exports`         | 少なくとも1つのnamed exportが必要                |
+
+### 対象ファイル
+
+`eslint-plugin-storybook` は `*.stories.*` パターンに自動適用される。設定不要。
+
+## Husky + lint-staged 連携
+
+Huskyはgit commitフックで品質チェックを自動実行するツール。ESLintと組み合わせて、**チェックを通さないとコミットできない**仕組みを作る。
+
+### コミット時の流れ
+
+```
+git commit
+  ├─ .husky/pre-commit → lint-staged
+  │   └─ ステージ済みファイルに ESLint + Prettier を実行
+  │      （*.stories.tsx も対象 → storybook ルールが適用される）
+  └─ .husky/commit-msg → commitlint
+      └─ Conventional Commits 形式を強制（feat, fix, chore 等）
+```
+
+### 設定ファイル
+
+| ファイル            | 役割                                          |
+| ------------------- | --------------------------------------------- |
+| `.husky/pre-commit` | lint-staged 実行 + ライセンスチェック         |
+| `.husky/commit-msg` | commitlint でメッセージ形式チェック           |
+| `.husky/_/`         | Husky v9 の内部ファイル（自動生成、触らない） |
+
+### Story 作成者への影響
+
+- Story ファイルをコミットすると **ESLint の storybook ルールが自動で走る**
+- ルール違反があるとコミットが失敗する
+- `npm run lint:fix` で自動修正できるものは先に修正しておく
+
+## MCP Server 連携（`@storybook/addon-mcp`）
+
+Storybook公式のMCPアドオンにより、Storybook起動中はClaude CodeからMCPツールが利用可能。
+
+### セットアップ
+
+- **アドオン**: `@storybook/addon-mcp@0.3.2`（`.storybook/main.ts` に設定済み）
+- **MCPサーバー**: `http://localhost:6006/mcp`（`.mcp.json` に登録済み）
+- **前提条件**: Storybookが起動中であること（`npm run storybook`）
+
+### 利用可能なMCPツール
+
+| ツール                         | 機能                                    | ツールセット   |
+| ------------------------------ | --------------------------------------- | -------------- |
+| `get_ui_building_instructions` | プロジェクトのUI開発ガイドラインを取得  | dev            |
+| `preview-stories`              | ストーリーのURLを取得（ブラウザ確認用） | dev            |
+| `list-all-documentation`       | コンポーネント一覧を取得                | docs（実験的） |
+| `get-documentation`            | 特定コンポーネントのドキュメントを取得  | docs（実験的） |
+
+### 設定内容
+
+```ts
+// .storybook/main.ts
+{
+  name: '@storybook/addon-mcp',
+  options: {
+    toolsets: {
+      dev: true,   // Story URL取得・UI開発ガイドライン
+      docs: true,  // コンポーネントドキュメント（実験的）
+    },
+  },
+},
+// docsツールセットに必要
+features: {
+  experimentalComponentsManifest: true,
+},
+```
+
+### 使い分け
+
+| 状況            | 使うもの                                              |
+| --------------- | ----------------------------------------------------- |
+| Storybook起動中 | MCPツール（リアルタイムでコンポーネント情報を取得）   |
+| Storybook停止中 | このスキル（SKILL.md）のルールに従って手動でStory作成 |
+
+### 注意事項
+
+- MCPサーバーはStorybook起動中のみ接続可能
+- Storybook停止中にMCPツールを呼ぶとエラーになるが、開発に支障はない
+- MCPツールの出力とこのスキルのルールが矛盾する場合、**このスキルのルールを優先**する
+
 ## 参考リンク
 
 - [How to write stories | Storybook](https://storybook.js.org/docs/writing-stories)
 - [Component Story Format 3.0](https://storybook.js.org/blog/storybook-csf3-is-here/)
 - [ArgTypes API](https://storybook.js.org/docs/api/arg-types)
 - [Autodocs](https://storybook.js.org/docs/writing-docs/autodocs)
+- [@storybook/addon-mcp](https://github.com/storybookjs/mcp)

@@ -14,15 +14,6 @@ import type { PlanActivity, PlanActivityDisplay } from '../types/activity';
 const STATUS_LABELS: Record<string, string> = {
   open: 'Open',
   closed: 'Closed',
-  // 後方互換: 旧ステータス値
-  todo: '未完了',
-  doing: '進行中',
-  done: '完了',
-  backlog: '準備中',
-  ready: '配置済み',
-  active: '作業中',
-  wait: '待ち',
-  cancel: '中止',
 };
 
 function statusTransitionDetail(

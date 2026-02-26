@@ -157,7 +157,7 @@ export class ApiMiddleware {
 
       return response;
     } catch (error) {
-      console.error('API middleware error:', error);
+      logger.error('API middleware error:', error);
 
       // エラーメトリクス
       if (this.config.metrics.enabled) {

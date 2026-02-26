@@ -17,7 +17,7 @@ vi.mock('@/lib/trpc', () => ({
 }));
 
 let mockIsMutating = false;
-vi.mock('../../stores/usePlanCacheStore', () => ({
+vi.mock('@/stores/usePlanCacheStore', () => ({
   usePlanCacheStore: (selector: (state: { isMutating: boolean }) => boolean) =>
     selector({ isMutating: mockIsMutating }),
 }));

@@ -20,7 +20,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-import { useSettingsModalStore } from '@/features/settings/stores/useSettingsModalStore';
+import { useSettingsModalStore } from '@/stores/useSettingsModalStore';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {

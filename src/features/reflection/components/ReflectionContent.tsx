@@ -3,7 +3,7 @@
 import { MessageCircle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-import { MarkdownContent } from '@/features/ai/components/MarkdownContent';
+import { MarkdownContent } from '@/components/common/MarkdownContent';
 import { formatDurationMinutes } from '@/lib/date/format';
 
 import type { Reflection } from '../types';

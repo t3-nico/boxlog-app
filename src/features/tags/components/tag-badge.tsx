@@ -4,8 +4,8 @@ import { X } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { HoverTooltip } from '@/components/ui/tooltip';
-import { Tag } from '@/features/tags/types';
 import { cn } from '@/lib/utils';
+import { Tag } from '../types';
 
 interface TagBadgeProps {
   tag: Tag;

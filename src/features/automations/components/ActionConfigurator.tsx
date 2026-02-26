@@ -19,7 +19,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
-import type { Tag } from '@/features/tags/types';
+import type { Tag } from '@/core/types/tag';
 
 import type {
   ActionConfig,
@@ -242,7 +242,6 @@ export function ActionConfigurator({
                   onCheckedChange={() => toggleActionTag(tag.id)}
                 />
                 <Label htmlFor={`action_tag_${tag.id}`} className="cursor-pointer font-normal">
-                  {tag.icon ? `${tag.icon} ` : ''}
                   {tag.name}
                 </Label>
               </div>

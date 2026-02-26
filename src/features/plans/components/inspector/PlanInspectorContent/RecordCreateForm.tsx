@@ -13,7 +13,7 @@ import {
 import { toast } from 'sonner';
 
 import { SuggestInput } from '@/components/common/SuggestInput';
-import { useRecordMutations } from '@/features/records/hooks';
+import { useRecordMutations } from '@/hooks/useRecordMutations';
 import { computeDuration } from '@/lib/time-utils';
 import { api } from '@/lib/trpc';
 import {
@@ -25,9 +25,9 @@ import {
   TagsIconButton,
 } from '../shared';
 
-import { usePlanInspectorStore } from '../../../stores/usePlanInspectorStore';
+import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
 
-import type { FulfillmentScore } from '@/features/records/types/record';
+import type { FulfillmentScore } from '@/core/types/record';
 
 interface RecordFormData {
   title: string;
@@ -36,7 +36,7 @@ interface RecordFormData {
   start_time: string;
   end_time: string;
   fulfillment_score: FulfillmentScore | null;
-  note: string;
+  description: string;
   tagIds: string[];
 }
 
@@ -98,7 +98,7 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
       start_time: initialStartTime,
       end_time: initialEndTime,
       fulfillment_score: null,
-      note: draftPlan?.note ?? draftPlan?.description ?? '',
+      description: draftPlan?.description ?? '',
       tagIds: draftPlan?.tagIds ?? [],
     });
 
@@ -199,7 +199,7 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
     }, []);
 
     const handleNoteChange = useCallback((value: string) => {
-      setFormData((prev) => ({ ...prev, note: value }));
+      setFormData((prev) => ({ ...prev, description: value }));
     }, []);
 
     const handleTagsChange = useCallback((tagIds: string[]) => {
@@ -267,7 +267,7 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
         end_time: formData.end_time || null,
         duration_minutes: computeDuration(formData.start_time, formData.end_time),
         fulfillment_score: formData.fulfillment_score,
-        note: formData.note || null,
+        description: formData.description || null,
         tagIds: formData.tagIds.length > 0 ? formData.tagIds : undefined,
       };
 
@@ -335,7 +335,7 @@ export const RecordCreateForm = forwardRef<RecordCreateFormRef>(
               />
               <NoteIconButton
                 id="draft-record"
-                note={formData.note}
+                note={formData.description}
                 onNoteChange={handleNoteChange}
               />
             </>

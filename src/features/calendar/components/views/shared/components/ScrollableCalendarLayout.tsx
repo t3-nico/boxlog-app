@@ -11,8 +11,8 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
 import { cn } from '@/lib/utils';
+import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 
 import { TimeColumn } from '../grid/TimeColumn/TimeColumn';
 import { useCurrentTimeLine } from '../hooks/useCurrentTimeLine';

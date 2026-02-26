@@ -3,6 +3,8 @@
  * プロシージャ定義とコンテキスト管理
  */
 
+import { timingSafeEqual } from 'crypto';
+
 import { SupabaseClient } from '@supabase/supabase-js';
 import { initTRPC, TRPCError } from '@trpc/server';
 import { CreateNextContextOptions } from '@trpc/server/adapters/next';
@@ -10,6 +12,8 @@ import superjson from 'superjson';
 import { z } from 'zod';
 
 import { createAppError, ERROR_CODES } from '@/config/error-patterns';
+import { logger } from '@/lib/logger';
+import { apiRateLimit, withUpstashRateLimit } from '@/lib/rate-limit/upstash';
 import { extractClientIp } from '@/lib/security/ip-validation';
 import {
   AuthMode,
@@ -72,7 +76,7 @@ export async function createTRPCContext(opts: CreateNextContextOptions): Promise
       supabase = verificationResult.client;
     } catch (error) {
       if (error instanceof OAuthError) {
-        console.error('OAuth token verification failed:', error.message);
+        logger.error('OAuth token verification failed', { message: error.message });
       }
       throw new TRPCError({
         code: 'UNAUTHORIZED',
@@ -85,9 +89,9 @@ export async function createTRPCContext(opts: CreateNextContextOptions): Promise
   else if (authMode === 'service-role') {
     try {
       const apiKey = typeof req.headers['x-api-key'] === 'string' ? req.headers['x-api-key'] : null;
-      const expectedKey = process.env.SERVICE_ROLE_KEY;
+      const expectedKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-      if (!apiKey || apiKey !== expectedKey) {
+      if (!apiKey || !expectedKey || !safeCompare(apiKey, expectedKey)) {
         throw new TRPCError({
           code: 'UNAUTHORIZED',
           message: 'Invalid or missing API key',
@@ -98,7 +102,7 @@ export async function createTRPCContext(opts: CreateNextContextOptions): Promise
       supabase = createServiceRoleClient();
       userId = undefined; // Admin操作ではuserIdはundefined
     } catch (error) {
-      console.error('Service role authentication failed:', error);
+      logger.error('Service role authentication failed', { error });
       throw error;
     }
   }
@@ -125,16 +129,20 @@ export async function createTRPCContext(opts: CreateNextContextOptions): Promise
     );
 
     try {
+      // getUser()はSupabase Authサーバーに問い合わせてJWTを検証する（getSession()は署名未検証）
       const {
-        data: { session },
-      } = await supabase.auth.getSession();
+        data: { user },
+      } = await supabase.auth.getUser();
 
-      if (session?.user) {
-        userId = session.user.id;
-        sessionId = session.access_token;
+      if (user) {
+        userId = user.id;
+        // セッションからアクセストークンを取得（ログ・追跡用）
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+        sessionId = session?.access_token;
       }
-    } catch (error) {
-      console.error('Session auth context creation error:', error);
+    } catch {
       // 認証エラーは無視（ゲストユーザーとして扱う）
     }
   }
@@ -265,10 +273,31 @@ async function checkAdminPermission(_userId: string): Promise<boolean> {
   return false; // 仮実装
 }
 
-async function checkRateLimit(_ip: string): Promise<boolean> {
-  // レート制限の確認ロジックを実装
-  // Redis等を使用してIPごとのリクエスト数を管理
-  return true; // 仮実装
+async function checkRateLimit(ip: string): Promise<boolean> {
+  if (!apiRateLimit) {
+    // Upstash未設定の場合はレート制限をスキップ（開発環境向け）
+    return true;
+  }
+
+  // Requestオブジェクトを簡易的に作成してUpstashレート制限を利用
+  const dummyRequest = new Request('http://localhost', {
+    headers: { 'x-real-ip': ip },
+  });
+
+  const result = await withUpstashRateLimit(dummyRequest, apiRateLimit);
+  if (result === null) {
+    // Upstashエラー時はフォールバック（可用性優先）
+    return true;
+  }
+  return result.success;
+}
+
+/**
+ * タイミング攻撃耐性のある文字列比較
+ */
+function safeCompare(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
+  return timingSafeEqual(Buffer.from(a), Buffer.from(b));
 }
 
 function getClientIP(req: CreateNextContextOptions['req']): string {

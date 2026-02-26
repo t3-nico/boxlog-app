@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { useCreateMenuItems } from '@/features/navigation/hooks/useCreateMenuItems';
+import { useCreateMenuItems } from '@/hooks/useCreateMenuItems';
 import { cn } from '@/lib/utils';
 
 interface EmptyAreaContextMenuProps {

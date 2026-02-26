@@ -76,14 +76,3 @@ export interface IntegrationSettingsData {
   slack: boolean;
   zapier: boolean;
 }
-
-/**
- * @deprecated Use SettingsMenuItem instead
- */
-export interface SettingsSection {
-  id: string;
-  title: string;
-  description?: string;
-  icon?: string;
-  href: string;
-}

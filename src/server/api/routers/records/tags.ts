@@ -25,7 +25,7 @@ const recordTagInputSchema = z.object({
 /** タグ一括設定の入力スキーマ */
 const setTagsInputSchema = z.object({
   recordId: z.string().uuid(),
-  tagIds: z.array(z.string().uuid()),
+  tagIds: z.array(z.string().uuid()).max(50),
 });
 
 export const recordTagsRouter = createTRPCRouter({

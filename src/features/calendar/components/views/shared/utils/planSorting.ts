@@ -3,7 +3,7 @@
  * 全ビューで共通使用される重複ソート処理をまとめる
  */
 
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
+import type { CalendarPlan } from '../../../../types/calendar.types';
 
 /**
  * イベントを時刻順でソート（基本パターン）

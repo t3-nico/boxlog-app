@@ -16,21 +16,20 @@ import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
+import { PlanIconButton, TagsIconButton } from '@/components/inspector';
 import { DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import {
   FulfillmentButton,
   InspectorDetailsLayout,
   InspectorHeader,
   NoteIconButton,
-  PlanIconButton,
   ScheduleRow,
-  TagsIconButton,
   TitleInput,
-} from '@/features/plans/components/inspector/shared';
-import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
+} from '@/core/components/inspector';
 import { useSubmitShortcut } from '@/hooks/useSubmitShortcut';
 import { useUpdateEntityTagsInCache } from '@/hooks/useUpdateEntityTagsInCache';
 import { computeDuration } from '@/lib/time-utils';
+import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
 
 import {
   useRecord,
@@ -52,7 +51,7 @@ interface FormData {
   end_time: string;
   duration_minutes: number;
   fulfillment_score: FulfillmentScore | null;
-  note: string;
+  description: string;
   tagIds: string[];
 }
 
@@ -114,7 +113,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
     end_time: '',
     duration_minutes: 0,
     fulfillment_score: null,
-    note: '',
+    description: '',
     tagIds: [],
   });
   const [isDirty, setIsDirty] = useState(false);
@@ -123,7 +122,11 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
   // タイトル入力のref
   const titleRef = useRef<HTMLInputElement>(null);
 
-  // Duration計算（共有ユーティリティを使用）
+  // Duration計算（派生状態: 時間変更時に自動再計算）
+  const durationMinutes = useMemo(
+    () => computeDuration(formData.start_time, formData.end_time),
+    [formData.start_time, formData.end_time],
+  );
 
   // Recordデータを編集フォームに反映
   useEffect(() => {
@@ -137,7 +140,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
         end_time: formatTimeWithoutSeconds(record.end_time),
         duration_minutes: record.duration_minutes,
         fulfillment_score: record.fulfillment_score as FulfillmentScore | null,
-        note: record.note ?? '',
+        description: record.description ?? '',
         tagIds: record.tagIds ?? [],
       });
       setIsDirty(false);
@@ -146,14 +149,6 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
       setHasTagChanges(false);
     }
   }, [record, today]);
-
-  // 時間変更時にdurationを自動計算
-  useEffect(() => {
-    const duration = computeDuration(formData.start_time, formData.end_time);
-    if (duration !== formData.duration_minutes) {
-      setFormData((prev) => ({ ...prev, duration_minutes: duration }));
-    }
-  }, [formData.start_time, formData.end_time, formData.duration_minutes]);
 
   // 自動保存タイマーのクリーンアップ
   useEffect(() => {
@@ -246,7 +241,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
 
   const handleNoteChange = useCallback(
     (value: string) => {
-      setFormData((prev) => ({ ...prev, note: value }));
+      setFormData((prev) => ({ ...prev, description: value }));
       setIsDirty(true);
       if (selectedRecordId) {
         // デバウンス適用してDB保存（Activityノイズ防止）
@@ -254,7 +249,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
           clearTimeout(autoSaveTimerRef.current);
         }
         autoSaveTimerRef.current = setTimeout(() => {
-          updateRecord.mutate({ id: selectedRecordId, data: { note: value || null } });
+          updateRecord.mutate({ id: selectedRecordId, data: { description: value || null } });
         }, 500);
       }
     },
@@ -302,7 +297,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
               })()
             : null,
           tagIds: formData.tagIds,
-          note: formData.note || null,
+          description: formData.description || null,
         },
         'record',
       );
@@ -311,7 +306,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
     record,
     formData.worked_at,
     formData.tagIds,
-    formData.note,
+    formData.description,
     closeRecordInspector,
     openInspectorWithDraft,
   ]);
@@ -351,7 +346,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
       worked_at: workedAtStr,
       start_time: formData.start_time || null,
       end_time: formData.end_time || null,
-      duration_minutes: formData.duration_minutes,
+      duration_minutes: durationMinutes,
     };
     const tagIds = [...formData.tagIds];
 
@@ -381,7 +376,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
     formData.worked_at,
     formData.start_time,
     formData.end_time,
-    formData.duration_minutes,
+    durationMinutes,
     formData.tagIds,
     isDirty,
     hasTagChanges,
@@ -500,7 +495,7 @@ export function RecordInspectorContent({ onClose }: RecordInspectorContentProps)
               />
               <NoteIconButton
                 id={selectedRecordId ?? 'record'}
-                note={formData.note}
+                note={formData.description}
                 onNoteChange={handleNoteChange}
               />
             </>

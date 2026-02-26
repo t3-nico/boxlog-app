@@ -7,11 +7,11 @@
 import { Bell } from 'lucide-react';
 import { memo } from 'react';
 
-import { RecurringIndicatorFromFlag } from '@/features/plans/components/shared/RecurringIndicator';
+import { RecurringIndicatorFromFlag } from '@/components/common/RecurringIndicator';
 import { useTranslations } from 'next-intl';
 
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
-import { formatTimeRange } from '../../utils/dateHelpers';
+import { formatTimeRange } from '@/lib/date';
+import type { CalendarPlan } from '../../../../../types/calendar.types';
 import { TagsContainer } from './TagsContainer';
 
 /** プレビューモード設定（ドラッグ選択時の簡略表示） */

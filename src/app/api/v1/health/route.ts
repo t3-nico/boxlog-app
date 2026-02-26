@@ -44,12 +44,11 @@ export async function GET(_request: NextRequest): Promise<NextResponse> {
     };
 
     return NextResponse.json(healthResponse, { status: 200 });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       {
         status: 'error',
         message: 'Health check failed',
-        error: error instanceof Error ? error.message : 'Unknown error',
         timestamp: new Date().toISOString(),
       },
       { status: 500 },

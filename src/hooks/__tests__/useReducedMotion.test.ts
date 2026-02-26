@@ -61,8 +61,10 @@ describe('useReducedMotion', () => {
 
     expect(result.current).toBe(false);
 
-    // メディアクエリが変更された
+    // useSyncExternalStore は callback 後に getSnapshot() を再評価するため
+    // mockMatchMedia.matches も更新してからコールバックを呼ぶ
     act(() => {
+      mockMatchMedia.matches = true;
       changeHandler?.({ matches: true } as MediaQueryListEvent);
     });
 

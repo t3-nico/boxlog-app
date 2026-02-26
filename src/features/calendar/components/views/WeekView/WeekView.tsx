@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 
 import { isWeekend } from 'date-fns';
 
-import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
+import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 
 import { CalendarViewAnimation } from '../../animations/ViewTransition';
 
@@ -85,9 +85,7 @@ export const WeekView = ({
         onEventClick={onPlanClick}
         onEventContextMenu={onPlanContextMenu}
         onEmptyAreaContextMenu={onEmptyAreaContextMenu}
-        onEmptyClick={(date, time) => {
-          onEmptyClick?.(date, time);
-        }}
+        onEmptyClick={onEmptyClick}
         onEventUpdate={onUpdatePlan}
         onTimeRangeSelect={onTimeRangeSelect}
         className={className}

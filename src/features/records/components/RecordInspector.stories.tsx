@@ -4,6 +4,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ChevronDown, ChevronUp, MoreHorizontal, X } from 'lucide-react';
 import { useState } from 'react';
 
+import { TagsIconButton } from '@/components/inspector';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -17,17 +18,16 @@ import {
   FulfillmentButton,
   NoteIconButton,
   ScheduleRow,
-  TagsIconButton,
   TitleInput,
-} from '@/features/plans/components/inspector/shared';
+} from '@/core/components/inspector';
 import {
   InspectorFrame,
   MockPlanLinkButton,
   mockTags,
-} from '@/features/plans/components/inspector/shared/story-helpers';
+} from '@/core/components/inspector/story-helpers';
 import { cn } from '@/lib/utils';
 
-import type { FulfillmentScore } from '@/features/records/types/record';
+import type { FulfillmentScore } from '../types/record';
 
 // ---------------------------------------------------------------------------
 // Meta

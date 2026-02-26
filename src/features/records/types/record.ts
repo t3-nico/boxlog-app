@@ -1,11 +1,5 @@
 // Record 型定義
+// Canonical definition is in @/core/types/record.
+// Re-exported here for backward compatibility.
 
-/**
- * 充実度スコア（1-5）
- * 1: 低い
- * 2: やや低い
- * 3: 普通
- * 4: やや高い
- * 5: 高い
- */
-export type FulfillmentScore = 1 | 2 | 3 | 4 | 5;
+export type { FulfillmentScore } from '@/core/types/record';

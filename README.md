@@ -1,6 +1,6 @@
 # Dayopt App
 
-Next.js 14 + TypeScript で構築されたタスク管理アプリケーション
+Next.js 15 + TypeScript で構築されたタスク管理アプリケーション
 
 ## 🚀 クイックスタート
 
@@ -8,9 +8,7 @@ Next.js 14 + TypeScript で構築されたタスク管理アプリケーショ�
 # 依存関係のインストール
 npm install
 
-# 環境変数の設定
-cp .env.example .env.local
-# .env.localに必要な値を設定
+# 環境変数の設定（.env.local を作成して必要な値を設定）
 
 # 開発サーバー起動
 npm run dev
@@ -22,8 +20,8 @@ npm run dev
 
 | カテゴリ           | 技術                                                  |
 | ------------------ | ----------------------------------------------------- |
-| **フレームワーク** | Next.js 14 (App Router), React 18, TypeScript 5       |
-| **UIライブラリ**   | shadcn/ui (Radix UI), HeadlessUI, kiboUI              |
+| **フレームワーク** | Next.js 15 (App Router), React 19, TypeScript 5       |
+| **UIライブラリ**   | shadcn/ui (Radix UI)                                  |
 | **スタイリング**   | Tailwind CSS v4, セマンティックトークン (globals.css) |
 | **状態管理**       | Zustand (グローバル), TanStack Query (サーバー状態)   |
 | **API**            | tRPC 11 (型安全なAPI)                                 |
@@ -46,7 +44,7 @@ npm run dev         # 開発サーバー起動
 1. **コンポーネント**: 関数宣言 + 名前付きエクスポート（`React.FC`禁止）
 2. **スタイリング**: `globals.css`のセマンティックトークン使用（`bg-card`, `text-foreground`等）
 3. **型定義**: `any`型禁止、厳密な型定義必須
-4. **UIコンポーネント選択**: shadcn/ui → HeadlessUI → kiboUI → カスタム実装
+4. **UIコンポーネント選択**: shadcn/ui → カスタム実装
 
 ```tsx
 // ✅ 推奨
@@ -140,8 +138,6 @@ Dayoptは以下のオープンソースプロジェクトを利用していま�
 - **[Tailwind CSS](https://tailwindcss.com/)** - A utility-first CSS framework (MIT License)
 - **[Supabase](https://supabase.com/)** - Open source Firebase alternative (Apache-2.0 License)
 
-詳細なライセンス情報は [`docs/CREDITS.md`](./docs/CREDITS.md) をご覧ください。
-
 ---
 
-**バージョン**: 0.4.0 | **最終更新**: 2025-11-24
+**バージョン**: 0.16.0 | **最終更新**: 2026-02-26

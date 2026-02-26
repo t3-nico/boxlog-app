@@ -5,8 +5,8 @@ import { useTranslations } from 'next-intl';
 import { useCallback } from 'react';
 
 import { DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
-import { useInspectorKeyboard } from '@/features/plans/components/inspector/hooks';
-import { InspectorContent, InspectorShell } from '@/features/plans/components/inspector/shared';
+import { InspectorContent, InspectorShell } from '@/core/components/inspector';
+import { useInspectorKeyboard } from '@/hooks/useInspectorKeyboard';
 
 import { useRecord, useRecordMutations } from '../hooks';
 import { useRecordInspectorStore } from '../stores';

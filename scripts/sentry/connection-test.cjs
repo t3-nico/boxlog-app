@@ -16,7 +16,7 @@ const envPath = path.join(process.cwd(), '.env.local')
 
 if (!fs.existsSync(envPath)) {
   console.error('❌ .env.local ファイルが見つかりません')
-  console.log('💡 .env.example をコピーして .env.local を作成してください')
+  console.log('💡 .env.local を作成して必要な環境変数を設定してください')
   process.exit(1)
 }
 

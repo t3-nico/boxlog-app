@@ -6,10 +6,10 @@ import { CheckCircle2, Circle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { Card } from '@/components/ui/card';
-import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
-import type { PlanStatus } from '@/features/plans/types/plan';
-import { normalizeStatus } from '@/features/plans/utils/status';
-import { useDateFormat } from '@/features/settings/hooks/useDateFormat';
+import type { PlanStatus } from '@/core/types/plan';
+import { useDateFormat } from '@/hooks/useDateFormat';
+import { usePlanMutations } from '@/hooks/usePlanMutations';
+import { normalizeStatus } from '@/lib/plan-status';
 import { cn } from '@/lib/utils';
 import type { PlanWithTags } from '@/server/services/plans/types';
 
@@ -111,7 +111,6 @@ export const PlanListCard = memo<PlanListCardProps>(function PlanListCard({
       onClick={handleCardClick}
       onMouseDown={onDragStart ? handleMouseDown : undefined}
       tabIndex={0}
-      role="button"
     >
       {/* チェックボックス */}
       <button

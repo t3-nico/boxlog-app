@@ -28,8 +28,13 @@
     ["clsx\\(([^)]*)\\)", "(?:[\"'`]([^\"'`]*).*?[\"'`])"]
   ],
   "typescript.suggest.autoImports": true,
-  "typescript.preferences.importModuleSpecifier": "relative",
+  "typescript.preferences.importModuleSpecifier": "non-relative",
   "editor.snippetSuggestions": "top",
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/.next": true,
+    "**/dist": true
+  },
   "files.watcherExclude": {
     "**/node_modules/**": true,
     "**/.git/**": true,

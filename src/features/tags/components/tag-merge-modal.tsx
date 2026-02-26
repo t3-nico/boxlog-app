@@ -5,10 +5,11 @@ import { createPortal } from 'react-dom';
 
 import { useTranslations } from 'next-intl';
 
-import { DEFAULT_TAG_COLOR } from '@/features/tags/constants/colors';
-import { useMergeTag, useTags } from '@/features/tags/hooks';
+import { useHasMounted } from '@/hooks/useHasMounted';
 import { logger } from '@/lib/logger';
 import { cn } from '@/lib/utils';
+import { DEFAULT_TAG_COLOR } from '../constants/colors';
+import { useMergeTag, useTags } from '../hooks';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -44,21 +45,23 @@ export function TagMergeModal({
 
   const [selectedTargetId, setSelectedTargetId] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState('');
-  const [mounted, setMounted] = useState(false);
+  const mounted = useHasMounted();
   const [error, setError] = useState('');
 
-  // クライアントサイドでのみマウント
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  // モーダルが開いたらリセット（React推奨: レンダー中のstate調整）
+  const [prevOpen, setPrevOpen] = useState(open);
+  if (open && !prevOpen) {
+    setPrevOpen(open);
+    setSelectedTargetId('');
+    setSearchQuery('');
+    setError('');
+  } else if (open !== prevOpen) {
+    setPrevOpen(open);
+  }
 
-  // モーダルが開いたらリセット＆最新タグを取得
+  // 最新のタグリストを取得（外部システム同期なのでeffect内が適切）
   useEffect(() => {
     if (open) {
-      setSelectedTargetId('');
-      setSearchQuery('');
-      setError('');
-      // 最新のタグリストを取得
       void refetchTags();
     }
   }, [open, refetchTags]);

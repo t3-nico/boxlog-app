@@ -107,6 +107,6 @@ export const CalendarViewRenderer = React.memo(function CalendarViewRenderer({
     }
   }, [viewType, commonProps]);
 
-  // 外側のSuspenseはフォールバック用（初回ロード時のスケルトン表示）
-  return <Suspense fallback={<CalendarViewSkeleton />}>{viewContent}</Suspense>;
+  // 各ビューが個別にSuspenseでラップ済みのため、外側の二重Suspenseは不要（CLS回避）
+  return viewContent;
 });

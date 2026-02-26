@@ -12,18 +12,15 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Field, FieldError, FieldGroup, FieldLabel, FieldSupportText } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import { TagNoteField } from '@/features/tags/components/tag-note-field';
-import {
-  DEFAULT_GROUP_COLOR,
-  DEFAULT_TAG_COLOR,
-  TAG_NAME_MAX_LENGTH,
-} from '@/features/tags/constants/colors';
-import { useTagGroups } from '@/features/tags/hooks/useTagGroups';
-import type { CreateTagInput, TagGroup } from '@/features/tags/types';
+import { useHasMounted } from '@/hooks/useHasMounted';
 import { useSubmitShortcut } from '@/hooks/useSubmitShortcut';
 import { logger } from '@/lib/logger';
 import { ChevronDown, Circle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { DEFAULT_TAG_COLOR, TAG_NAME_MAX_LENGTH } from '../constants/colors';
+import { useTags } from '../hooks';
+import type { CreateTagInput } from '../types';
+import { TagNoteField } from './tag-note-field';
 
 interface TagCreateModalProps {
   isOpen: boolean;
@@ -56,16 +53,12 @@ export const TagCreateModal = ({
   const [description, setDescription] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const [mounted, setMounted] = useState(false);
+  const mounted = useHasMounted();
   const [isParentDropdownOpen, setIsParentDropdownOpen] = useState(false);
 
-  // タググループ（親タグ）取得 - モーダルが開いている時だけフェッチ
-  const { data: parentTags = [] as TagGroup[] } = useTagGroups({ enabled: isOpen });
-
-  // クライアントサイドでのみマウント
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  // 親タグ取得 - useTags()から parent_id = null のタグを抽出
+  const { data: allTags = [] } = useTags();
+  const parentTags = allTags.filter((t) => !t.parent_id);
 
   // モーダルが開いたらリセット（defaultParentIdがあればプリセット）
   useEffect(() => {
@@ -302,7 +295,7 @@ export const TagCreateModal = ({
                     >
                       <span
                         className="size-3 rounded-full"
-                        style={{ backgroundColor: parent.color ?? DEFAULT_GROUP_COLOR }}
+                        style={{ backgroundColor: parent.color ?? DEFAULT_TAG_COLOR }}
                       />
                       {parent.name}
                     </button>

@@ -3,8 +3,8 @@
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useRef } from 'react';
 
+import { useSettingsModalStore } from '@/stores/useSettingsModalStore';
 import { SETTINGS_CATEGORIES } from '../constants';
-import { useSettingsModalStore } from '../stores/useSettingsModalStore';
 import type { SettingsCategory } from '../types';
 
 /**

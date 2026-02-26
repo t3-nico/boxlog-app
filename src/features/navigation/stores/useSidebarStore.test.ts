@@ -1,7 +1,7 @@
 import { act } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
-import { useSidebarStore } from './useSidebarStore';
+import { useSidebarStore } from '@/stores/useSidebarStore';
 
 describe('useSidebarStore', () => {
   beforeEach(() => {

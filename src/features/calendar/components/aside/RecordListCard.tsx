@@ -6,8 +6,8 @@ import { Clock, Star } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { Card } from '@/components/ui/card';
-import type { RecordItem } from '@/features/records/hooks/useRecordData';
-import { useDateFormat } from '@/features/settings/hooks/useDateFormat';
+import { useDateFormat } from '@/hooks/useDateFormat';
+import type { RecordItem } from '@/hooks/useRecordData';
 import { cn } from '@/lib/utils';
 
 import { TagsContainer } from '../views/shared/components/PlanCard/TagsContainer';

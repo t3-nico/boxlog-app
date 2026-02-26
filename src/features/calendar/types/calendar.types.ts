@@ -1,3 +1,8 @@
+import type { CalendarEvent as CalendarPlan } from '@/core/types/calendar-event';
+
+export type { CalendarEvent } from '@/core/types/calendar-event';
+export type { CalendarPlan };
+
 export type MultiDayCount = 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 export type MultiDayViewType = `${MultiDayCount}day`;
 export type CalendarViewType = 'day' | 'week' | 'agenda' | 'timesheet' | MultiDayViewType;
@@ -34,52 +39,8 @@ export interface ViewSelectorProps {
   onChange: (view: CalendarViewType) => void;
 }
 
-// Calendar Plan type (プランデータ)
-export interface CalendarPlan {
-  id: string;
-  title: string;
-  description?: string | undefined;
-  startDate: Date | null;
-  endDate: Date | null;
-  status: 'open' | 'closed';
-  color: string;
-  plan_number?: number | null | undefined; // プラン番号
-  completed_at?: string | null | undefined; // 完了日時
-  reminder_minutes?: number | null | undefined; // 通知タイミング（開始時刻の何分前か）
-  /** タグIDリスト。タグの詳細情報はtags.listキャッシュから取得する。 */
-  tagIds?: string[] | undefined;
-  createdAt: Date;
-  updatedAt: Date;
-  // Display-specific properties
-  displayStartDate: Date;
-  displayEndDate: Date;
-  duration: number; // minutes
-  isMultiDay: boolean;
-  isRecurring: boolean;
-  // Optional properties used in various contexts
-  type?: 'event' | 'plan' | 'task' | 'record' | undefined; // エントリの種類
-  userId?: string | undefined; // 所有者ID
-  location?: string | undefined; // 場所
-  url?: string | undefined; // 関連URL
-  priority?: 'urgent' | 'important' | 'necessary' | 'delegate' | 'optional' | undefined; // 優先度
-  calendarId?: string | undefined; // カレンダーID（繰り返しの場合は親プランID）
-  // 繰り返し例外情報
-  isException?: boolean | undefined; // 例外インスタンスかどうか
-  exceptionType?: 'modified' | 'cancelled' | 'moved' | undefined; // 例外タイプ
-  originalPlanId?: string | undefined; // 繰り返しインスタンスの親プランID
-  instanceDate?: string | undefined; // インスタンス日付（YYYY-MM-DD）
-  // Record固有フィールド（type === 'record' の場合）
-  recordId?: string | undefined; // RecordのID
-  fulfillmentScore?: number | null | undefined; // 充実度（1-5）
-  linkedPlanId?: string | undefined; // 紐づくPlanのID
-  linkedPlanTitle?: string | undefined; // 紐づくPlanのタイトル
-  // ドラフト状態（未保存のプレビュー）
-  isDraft?: boolean | undefined;
-}
-
 // 後方互換性のためのエイリアス
 export type CalendarTicket = CalendarPlan;
-export type CalendarEvent = CalendarPlan;
 // ========================================
 // 新しいDB設計に対応した型定義
 // ========================================
@@ -119,11 +80,6 @@ export interface RecurrencePattern {
   timezone: string;
   createdAt: Date;
   updatedAt: Date;
-  // 後方互換性
-  /** @deprecated Use planId instead */
-  ticketId?: string;
-  /** @deprecated Use planId instead */
-  eventId?: string;
 }
 
 // プランインスタンス（繰り返しプランの個別オカレンス）
@@ -133,9 +89,9 @@ export interface PlanInstance {
   recurrencePatternId?: string;
   instanceStart: Date;
   instanceEnd: Date;
-  isException: boolean;
   exceptionType?: 'modified' | 'cancelled' | 'moved';
-  overrides?: Partial<CalendarPlan>;
+  title?: string;
+  description?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -143,8 +99,6 @@ export interface PlanInstance {
 // 後方互換性のためのエイリアス
 export type TicketInstance = PlanInstance;
 export type EventInstance = PlanInstance;
-/** @deprecated Use PlanInstance instead */
-export type planInstance = PlanInstance;
 
 // カレンダー共有
 export interface CalendarShare {
@@ -242,8 +196,6 @@ export interface UpdatePlanInput extends Partial<CreatePlanInput> {
 // 後方互換性のためのエイリアス
 export type UpdateTicketInput = UpdatePlanInput;
 export type UpdateEventInput = UpdatePlanInput;
-/** @deprecated Use UpdatePlanInput instead */
-export type UpdateplanInput = UpdatePlanInput;
 
 export interface CalendarShareInput {
   calendarId: string;

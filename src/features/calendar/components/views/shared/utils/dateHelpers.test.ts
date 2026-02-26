@@ -4,24 +4,23 @@ import {
   addDays,
   addMinutes,
   endOfDay,
-  formatDate,
   formatTime,
   formatTimeRange,
   generateDateRange,
   getDateKey,
   getDaysDifference,
-  getMonthEnd,
-  getMonthStart,
-  getTodayIndex,
-  getWeekEnd,
-  getWeekStart,
+  endOfMonth as getMonthEnd,
+  startOfMonth as getMonthStart,
+  endOfWeek as getWeekEnd,
+  startOfWeek as getWeekStart,
   isSameDay,
   isToday,
-  isValidEvent,
   isWeekend,
-  normalizeEventDate,
+  normalizeDate as normalizeEventDate,
   startOfDay,
-} from './dateHelpers';
+} from '@/lib/date';
+
+import { formatDate, getTodayIndex, isValidEvent } from './dateHelpers';
 
 describe('dateHelpers', () => {
   describe('isToday', () => {

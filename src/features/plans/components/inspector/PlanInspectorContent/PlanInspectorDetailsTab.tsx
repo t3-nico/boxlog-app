@@ -20,7 +20,7 @@ import {
 } from '../shared';
 
 import { SuggestInput } from '@/components/common/SuggestInput';
-import type { Tag } from '@/features/tags/types';
+import type { Tag } from '@/core/types/tag';
 
 import type { Plan } from '../../../types/plan';
 import { RecordsIconButton } from '../../shared/RecordsIconButton';

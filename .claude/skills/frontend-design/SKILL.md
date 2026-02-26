@@ -1,5 +1,5 @@
 ---
-name: dayopt-frontend-design
+name: frontend-design
 description: Dayopt専用のフロントエンドデザインスキル。「装飾のない基本体験」を実現するためのUI設計ガイドライン。Storybookを補完し、フォント・アニメーション・デザイン判断基準を提供。
 license: MIT
 metadata:
@@ -190,6 +190,12 @@ className = 'p-3 gap-5'; // 12px, 20px
 ```
 
 ---
+
+## 関連エージェント
+
+- **ux-critic** — ユーザー視点でのUX体験批評。GoogleカレンダーやTogglとの比較評価
+
+> このスキルは「デザイントークン・アニメーション等の実装ルール」、エージェントは「ユーザー体験の品質評価」。
 
 ## 参照リンク
 

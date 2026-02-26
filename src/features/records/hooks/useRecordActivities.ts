@@ -4,6 +4,23 @@ import { api } from '@/lib/trpc';
 import { getQueryKey } from '@trpc/react-query';
 
 /**
+ * createActivityRouter で動的生成されたルーターの型推論が不完全なため、
+ * useQuery の最小限インターフェースを定義。
+ * any ではなく unknown[] ベースで data 型を制約する。
+ */
+interface ActivityQueryResult {
+  data: unknown[] | undefined;
+  isPending: boolean;
+  isError: boolean;
+  error: unknown;
+  refetch: () => void;
+}
+
+interface ActivityRouterProxy {
+  useQuery: (input: unknown, options: unknown) => ActivityQueryResult;
+}
+
+/**
  * Recordアクティビティ（変更履歴）取得フック
  * Supabase Realtimeでリアルタイム更新に対応
  */
@@ -23,12 +40,11 @@ export function useRecordActivities(
 
   const input = { record_id: recordId, limit, offset, order };
 
-  // Type assertion: createActivityRouter で動的生成されたルーターの型推論が不完全なため
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const query = (api.records.activities as any).useQuery(input, {
+  const activitiesProxy = api.records.activities as unknown as ActivityRouterProxy;
+  const query = activitiesProxy.useQuery(input, {
     retry: 1,
     refetchOnWindowFocus: false,
-    ...getCacheStrategy('planActivities'),
+    ...getCacheStrategy('recordActivities'),
     enabled,
   });
 
@@ -37,8 +53,11 @@ export function useRecordActivities(
     channelPrefix: 'record-activities',
     table: 'record_activities',
     filterColumn: 'record_id',
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    queryKey: getQueryKey(api.records.activities as any, input, 'query'),
+    queryKey: getQueryKey(
+      api.records.activities as Parameters<typeof getQueryKey>[0],
+      input,
+      'query',
+    ),
     order,
     enabled,
   });

@@ -1,13 +1,19 @@
-export { ActivityPopover } from './ActivityPopover';
-export type { ActivityDisplayItem, ActivityIconColor } from './ActivityPopover';
-export { DraggableInspector, useDragHandle } from './DraggableInspector';
-export { FulfillmentButton } from './FulfillmentButton';
-export { InspectorContent } from './InspectorContent';
-export { InspectorDetailsLayout } from './InspectorDetailsLayout';
-export { InspectorHeader } from './InspectorHeader';
-export { InspectorShell } from './InspectorShell';
-export { NoteIconButton } from './NoteIconButton';
+// Re-export shared components from core
+export {
+  ActivityPopover,
+  DraggableInspector,
+  FulfillmentButton,
+  InspectorContent,
+  InspectorDetailsLayout,
+  InspectorHeader,
+  InspectorShell,
+  NoteIconButton,
+  ScheduleRow,
+  TitleInput,
+  useDragHandle,
+} from '@/core/components/inspector';
+export type { ActivityDisplayItem, ActivityIconColor } from '@/core/components/inspector';
+
+// Feature-dependent components (re-exported from shared)
 export { PlanIconButton } from './PlanIconButton';
-export { ScheduleRow } from './ScheduleRow';
 export { TagsIconButton } from './TagsIconButton';
-export { TitleInput } from './TitleInput';

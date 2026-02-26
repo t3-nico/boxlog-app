@@ -6,11 +6,11 @@ import { format, isSameDay, isToday } from 'date-fns';
 import { X } from 'lucide-react';
 import { toast } from 'sonner';
 
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
-import { useDateFormat } from '@/features/settings/hooks/useDateFormat';
-import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
 import { useAddPopup } from '@/hooks/useAddPopup';
+import { useDateFormat } from '@/hooks/useDateFormat';
+import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 import { useTranslations } from 'next-intl';
+import type { CalendarPlan } from '../../../types/calendar.types';
 
 import type { ViewDateRange } from '../../../types/calendar.types';
 
@@ -314,7 +314,6 @@ export const WeekCalendarLayout = ({
                       <div
                         key={plan.id}
                         data-event-block
-                        role="button"
                         tabIndex={0}
                         className={`group border-border/20 absolute z-20 cursor-pointer rounded-lg border transition-all duration-200 hover:scale-[1.02] hover:shadow-lg ${selectedPlanId === plan.id ? 'ring-primary ring-2 ring-offset-2' : ''}`}
                         style={{

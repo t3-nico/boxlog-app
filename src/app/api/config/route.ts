@@ -10,6 +10,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { loadConfig } from '@/config/loader';
+import { logger } from '@/lib/logger';
 
 /**
  * Configuration structure type
@@ -166,6 +167,11 @@ function buildHealthInfo(config: ConfigStructure): {
  * 📊 GET /api/config - Configuration Information API
  */
 export async function GET(_request: NextRequest): Promise<NextResponse> {
+  // 本番環境では設定情報を公開しない（情報漏洩防止）
+  if (process.env.NODE_ENV === 'production') {
+    return NextResponse.json({ error: 'Not available' }, { status: 403 });
+  }
+
   try {
     // 設定の読み込み・検証
     const configResult = await loadConfig({
@@ -220,7 +226,7 @@ export async function GET(_request: NextRequest): Promise<NextResponse> {
 
     return NextResponse.json(response, { status: 200 });
   } catch (error) {
-    console.error('Configuration API error:', error);
+    logger.error('Configuration API error', { error });
     return NextResponse.json(
       {
         error: 'CONFIG_API_ERROR',
@@ -236,6 +242,11 @@ export async function GET(_request: NextRequest): Promise<NextResponse> {
  * 🔄 POST /api/config - Configuration Validation
  */
 export async function POST(request: NextRequest): Promise<NextResponse> {
+  // 本番環境では設定操作を許可しない（情報漏洩・キャッシュクリア防止）
+  if (process.env.NODE_ENV === 'production') {
+    return NextResponse.json({ error: 'Not available' }, { status: 403 });
+  }
+
   try {
     const body = await request.json().catch(() => ({}));
     const { strict = false, clearCache = false } = body;
@@ -277,7 +288,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     return NextResponse.json(validationResponse, { status: 200 });
   } catch (error) {
-    console.error('Configuration validation API error:', error);
+    logger.error('Configuration validation API error', { error });
     return NextResponse.json(
       {
         error: 'CONFIG_VALIDATION_ERROR',

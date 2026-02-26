@@ -1,6 +1,6 @@
 import { useDragAndDrop as useSharedDragAndDrop } from '../../shared/hooks/useDragAndDrop';
 
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
+import type { CalendarPlan } from '../../../../types/calendar.types';
 
 export type { DragHandlers, DragState } from '../../shared/hooks/useDragAndDrop';
 

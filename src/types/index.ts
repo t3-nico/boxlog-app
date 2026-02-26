@@ -52,4 +52,3 @@ export type ProfileUpdate = Partial<Omit<Profile, 'id' | 'created_at'>>;
 export * from './chronotype';
 export * from './common';
 export * from './tags';
-export * from './trash';

@@ -66,7 +66,7 @@ const ERROR_CODE_MAP: Record<string, TRPCErrorCode> = {
   SAME_TAG_MERGE: 'BAD_REQUEST',
   TARGET_NOT_FOUND: 'NOT_FOUND',
 
-  // ===== TagGroup関連 =====
+  // ===== Tag並び替え関連 =====
   REORDER_FAILED: 'INTERNAL_SERVER_ERROR',
 
   // ===== Plan関連 =====

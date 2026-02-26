@@ -1,8 +1,35 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState, useSyncExternalStore } from 'react';
 
 import { logger } from '@/lib/logger';
+
+const STORAGE_KEY = 'notification-permission-requested';
+
+// useSyncExternalStore用: Notification.permission を外部ストアとして購読
+function subscribePermission(callback: () => void) {
+  // permissionchangeイベントで権限変更を検知（Chrome対応）
+  if (typeof window !== 'undefined' && 'Notification' in window && 'permissions' in navigator) {
+    let cleanup = () => {};
+    navigator.permissions.query({ name: 'notifications' }).then((status) => {
+      status.addEventListener('change', callback);
+      cleanup = () => status.removeEventListener('change', callback);
+    });
+    return () => cleanup();
+  }
+  return () => {};
+}
+
+function getPermissionSnapshot(): NotificationPermission {
+  if (typeof window !== 'undefined' && 'Notification' in window) {
+    return Notification.permission;
+  }
+  return 'default';
+}
+
+function getPermissionServerSnapshot(): NotificationPermission {
+  return 'default';
+}
 
 interface UseNotificationsReturn {
   permission: NotificationPermission;
@@ -24,17 +51,19 @@ interface UseNotificationsReturn {
  * ```
  */
 export function useNotifications(): UseNotificationsReturn {
-  const [permission, setPermission] = useState<NotificationPermission>('default');
-  const [hasRequested, setHasRequested] = useState(false);
+  const permission = useSyncExternalStore(
+    subscribePermission,
+    getPermissionSnapshot,
+    getPermissionServerSnapshot,
+  );
 
-  // Get current notification permission on mount
-  useEffect(() => {
-    if (typeof window !== 'undefined' && 'Notification' in window) {
-      setPermission(Notification.permission);
-      const requested = localStorage.getItem('notification-permission-requested');
-      setHasRequested(requested === 'true');
+  // hasRequestedはlocalStorage由来の初期値（変更頻度低いためuseStateで十分）
+  const [hasRequested, setHasRequested] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem(STORAGE_KEY) === 'true';
     }
-  }, []);
+    return false;
+  });
 
   // Request notification permission
   const requestPermission = useCallback(async () => {
@@ -43,10 +72,9 @@ export function useNotifications(): UseNotificationsReturn {
     }
 
     try {
-      const result = await Notification.requestPermission();
-      setPermission(result);
+      await Notification.requestPermission();
       setHasRequested(true);
-      localStorage.setItem('notification-permission-requested', 'true');
+      localStorage.setItem(STORAGE_KEY, 'true');
     } catch (error) {
       logger.error('Failed to request notification permission:', error);
     }

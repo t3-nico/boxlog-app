@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
+import type { CalendarPlan } from '../../../../types/calendar.types';
 import { useCurrentPeriod, useDateUtilities, usePlansByDate } from '../../shared';
 
 export interface UseMultiDayViewOptions {

@@ -2,8 +2,8 @@
 
 import { useCallback, useMemo } from 'react';
 
-import { usePlans } from '../../../hooks/usePlans';
-import { usePlanInspectorStore } from '../../../stores/usePlanInspectorStore';
+import { usePlans } from '@/hooks/usePlans';
+import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
 
 export function useInspectorNavigation(planId: string | null) {
   const openInspector = usePlanInspectorStore((state) => state.openInspector);

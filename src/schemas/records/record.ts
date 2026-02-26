@@ -22,8 +22,8 @@ export const createRecordSchema = z.object({
     .optional(), // HH:MM or HH:MM:SS
   duration_minutes: z.number().int().min(1, 'validation.durationMin'), // 1分以上
   fulfillment_score: fulfillmentScoreSchema.nullable().optional(),
-  note: z.string().max(5000, 'validation.note.maxLength').nullable().optional(),
-  tagIds: z.array(z.string().uuid()).optional(), // 紐付けるタグID（任意）
+  description: z.string().max(5000, 'validation.description.maxLength').nullable().optional(),
+  tagIds: z.array(z.string().uuid()).max(50).optional(), // 紐付けるタグID（任意）
 });
 
 // Record 更新スキーマ（plan_id変更も許可）
@@ -71,7 +71,7 @@ export const getRecordByIdSchema = z.object({
 
 // 一括削除スキーマ
 export const bulkDeleteRecordSchema = z.object({
-  ids: z.array(z.string().uuid()),
+  ids: z.array(z.string().uuid()).min(1).max(100),
 });
 
 // 複製スキーマ（最近のエントリ複製用）

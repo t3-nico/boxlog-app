@@ -34,9 +34,9 @@ describe.skipIf(SKIP_INTEGRATION)('Records Router Integration', () => {
   let adminSupabase: ReturnType<typeof createClient<Database>>;
   let supabase: ReturnType<typeof createClient<Database>>;
   let ctx: Context;
-  let createdRecordIds: string[] = [];
-  let createdTagIds: string[] = [];
-  let createdPlanIds: string[] = [];
+  const createdRecordIds: string[] = [];
+  const createdTagIds: string[] = [];
+  const createdPlanIds: string[] = [];
 
   const TEST_EMAIL = `test-records-${TEST_USER_ID}@example.com`;
   const TEST_PASSWORD = 'test-password-123';

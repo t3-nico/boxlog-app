@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback } from 'react';
 
-import { usePlanInstanceMutations } from '@/features/plans/hooks/usePlanInstances';
-import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
-import { decodeInstanceId } from '@/features/plans/utils/instanceId';
+import { usePlanInstanceMutations } from '@/hooks/usePlanInstances';
+import { usePlanMutations } from '@/hooks/usePlanMutations';
+import { decodeInstanceId } from '@/lib/instance-id';
 import { logger } from '@/lib/logger';
 import { api } from '@/lib/trpc';
 
@@ -17,11 +17,6 @@ export const usePlanOperations = () => {
   const utils = api.useUtils();
   const { updatePlan, deletePlan } = usePlanMutations();
   const { createInstance } = usePlanInstanceMutations();
-
-  // プランリストをキャッシュ経由で参照
-  const plansCache = utils.plans.list.getData();
-  const plansCacheRef = useRef(plansCache);
-  plansCacheRef.current = plansCache;
 
   // プラン削除ハンドラー
   const handlePlanDelete = useCallback(
@@ -66,10 +61,8 @@ export const usePlanOperations = () => {
               planId: decoded.parentPlanId,
               instanceDate: decoded.instanceDate,
               exceptionType: isSameDate ? 'modified' : 'moved',
-              overrides: {
-                start_time: updates.startTime.toISOString(),
-                end_time: updates.endTime.toISOString(),
-              },
+              instanceStart: updates.startTime.toISOString(),
+              instanceEnd: updates.endTime.toISOString(),
               // moved例外の場合、新しい日付を記録
               ...(isSameDate ? {} : { originalDate: newDate }),
             });
@@ -117,10 +110,8 @@ export const usePlanOperations = () => {
               planId: decoded.parentPlanId,
               instanceDate: decoded.instanceDate,
               exceptionType: isSameDate ? 'modified' : 'moved',
-              overrides: {
-                start_time: updatedPlan.startDate.toISOString(),
-                end_time: updatedPlan.endDate?.toISOString(),
-              },
+              instanceStart: updatedPlan.startDate.toISOString(),
+              instanceEnd: updatedPlan.endDate?.toISOString(),
               ...(isSameDate ? {} : { originalDate: newDate }),
             });
 
@@ -149,11 +140,6 @@ export const usePlanOperations = () => {
     },
     [updatePlan, createInstance, utils],
   );
-
-  // 30日経過したプランを自動削除
-  useEffect(() => {
-    // noop - Plans統合後に実装予定
-  }, []);
 
   return {
     handlePlanDelete,

@@ -9,7 +9,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useUpdateEntityTagsInCache } from '@/hooks/useUpdateEntityTagsInCache';
 
-import { usePlanTags } from '../../../hooks/usePlanTags';
+import { usePlanTags } from '@/hooks/usePlanTags';
 import type { Plan } from '../../../types/plan';
 
 interface UseInspectorTagStateProps {
@@ -20,7 +20,7 @@ interface UseInspectorTagStateProps {
 
 export function useInspectorTagState({ planId, planData, isDraftMode }: UseInspectorTagStateProps) {
   const updateTagsInCache = useUpdateEntityTagsInCache('plans');
-  const { setplanTags } = usePlanTags();
+  const { setPlanTags } = usePlanTags();
 
   // Tags state
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
@@ -30,40 +30,34 @@ export function useInspectorTagState({ planId, planData, isDraftMode }: UseInspe
   // タグが変更されたか（保存時のチェック用 + UI更新用）
   const [hasTagChanges, setHasTagChanges] = useState(false);
 
-  // planIdが変わったらタグ選択をリセット（別のPlanを開いた時）
-  useEffect(() => {
-    // ドラフトモードでは何もしない
-    if (isDraftMode) return;
-    // 新しいplanIdが設定された時点で空配列にリセット
-    // planDataがロードされたら正しいタグで上書きされる
-    setSelectedTagIds([]);
-    selectedTagIdsRef.current = [];
-    originalTagIdsRef.current = [];
-    setHasTagChanges(false);
-  }, [planId, isDraftMode]);
-
-  // Sync tags from plan data
-  useEffect(() => {
-    // タグ変更中はサーバーからの同期をスキップ（楽観的更新を保持）
-    if (hasTagChanges) {
-      return;
-    }
-    // データ未ロード時は何もしない（空配列をセットしない）
-    // これにより、ローディング中にタグが消えるのを防ぐ
-    if (planData === undefined) {
-      return;
-    }
-    if (planData && 'tagIds' in planData && Array.isArray(planData.tagIds)) {
-      setSelectedTagIds(planData.tagIds);
-      selectedTagIdsRef.current = planData.tagIds;
-      originalTagIdsRef.current = planData.tagIds;
-    } else if (planData) {
-      // planDataがnullの場合（存在しないプラン）のみ空にする
+  // planIdが変わったらタグ選択をリセット（React推奨: レンダー中のstate調整）
+  const [prevPlanId, setPrevPlanId] = useState(planId);
+  if (planId !== prevPlanId) {
+    setPrevPlanId(planId);
+    if (!isDraftMode) {
       setSelectedTagIds([]);
       selectedTagIdsRef.current = [];
       originalTagIdsRef.current = [];
+      setHasTagChanges(false);
     }
-  }, [planData, hasTagChanges]);
+  }
+
+  // Sync tags from plan data（React推奨: レンダー中のstate調整）
+  const [prevPlanData, setPrevPlanData] = useState(planData);
+  if (planData !== prevPlanData) {
+    setPrevPlanData(planData);
+    if (!hasTagChanges && planData !== undefined) {
+      if (planData && 'tagIds' in planData && Array.isArray(planData.tagIds)) {
+        setSelectedTagIds(planData.tagIds);
+        selectedTagIdsRef.current = planData.tagIds;
+        originalTagIdsRef.current = planData.tagIds;
+      } else if (planData) {
+        setSelectedTagIds([]);
+        selectedTagIdsRef.current = [];
+        originalTagIdsRef.current = [];
+      }
+    }
+  }
 
   // Keep ref in sync
   useEffect(() => {
@@ -121,7 +115,7 @@ export function useInspectorTagState({ planId, planData, isDraftMode }: UseInspe
     hasTagChanges,
     handleTagsChange,
     handleRemoveTag,
-    setplanTags,
+    setPlanTags,
     updateTagsInCache,
   };
 }

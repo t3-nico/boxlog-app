@@ -9,14 +9,14 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Textarea } from '@/components/ui/textarea';
 import { CACHE_5_MINUTES } from '@/constants/time';
-import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings';
 import { api } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
+import { useAutoSaveSettings } from '../hooks/useAutoSaveSettings';
 
 import { SettingsCard } from './SettingsCard';
 
-import type { AICommunicationStyle } from '@/features/settings/types/personalization';
-import { AI_COMMUNICATION_STYLES } from '@/features/settings/types/personalization';
+import type { AICommunicationStyle } from '../types/personalization';
+import { AI_COMMUNICATION_STYLES } from '../types/personalization';
 
 interface AIStyleAutoSaveSettings {
   aiStyle: AICommunicationStyle;

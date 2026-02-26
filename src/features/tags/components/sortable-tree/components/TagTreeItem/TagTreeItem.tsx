@@ -13,14 +13,7 @@ import {
   Trash2,
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import React, {
-  CSSProperties,
-  forwardRef,
-  HTMLAttributes,
-  useCallback,
-  useEffect,
-  useState,
-} from 'react';
+import React, { CSSProperties, forwardRef, HTMLAttributes, useCallback, useState } from 'react';
 
 import { Checkbox } from '@/components/ui/checkbox';
 import { ColorPaletteMenuItems } from '@/components/ui/color-palette-picker';
@@ -35,9 +28,9 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { HoverTooltip } from '@/components/ui/tooltip';
-import { TagNoteDialog } from '@/features/tags/components/tag-note-dialog';
-import { TagRenameDialog } from '@/features/tags/components/tag-rename-dialog';
 import { cn } from '@/lib/utils';
+import { TagNoteDialog } from '../../../tag-note-dialog';
+import { TagRenameDialog } from '../../../tag-rename-dialog';
 
 export interface TagTreeItemData {
   id: string;
@@ -141,16 +134,10 @@ export const TagTreeItem = forwardRef<HTMLDivElement, TagTreeItemProps>(
     const [showRenameDialog, setShowRenameDialog] = useState(false);
     const [showNoteDialog, setShowNoteDialog] = useState(false);
 
-    // 楽観的更新用
+    // 楽観的更新用（派生状態: サーバー色と一致したら自動的に無視される）
     const [optimisticColor, setOptimisticColor] = useState<string | null>(null);
-    const displayColor = optimisticColor ?? tag.color;
-
-    // サーバーからの色が更新されたら楽観的更新をクリア
-    useEffect(() => {
-      if (tag.color && optimisticColor && tag.color === optimisticColor) {
-        setOptimisticColor(null);
-      }
-    }, [tag.color, optimisticColor]);
+    const displayColor =
+      optimisticColor !== null && optimisticColor !== tag.color ? optimisticColor : tag.color;
 
     // カラー変更
     const handleColorChange = useCallback(

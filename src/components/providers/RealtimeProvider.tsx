@@ -22,14 +22,14 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 
-import { useAuthStore } from '@/features/auth/stores/useAuthStore';
-import { useCalendarRealtime } from '@/features/calendar/hooks/useCalendarRealtime';
-import { isCalendarViewPath } from '@/features/calendar/lib/route-utils';
-import { useNotificationRealtime } from '@/features/notifications/hooks/useNotificationRealtime';
-import { usePlanRealtime } from '@/features/plans/hooks/usePlanRealtime';
-import { useTagRealtime } from '@/features/tags/hooks/useTagRealtime';
+import { isCalendarViewPath, useCalendarRealtime } from '@/features/calendar';
+import { useNotificationRealtime } from '@/features/notifications';
+import { usePlanRealtime } from '@/features/plans';
+import { useTagRealtime } from '@/features/tags';
+import { useHasMounted } from '@/hooks/useHasMounted';
+import { useAuthStore } from '@/stores/useAuthStore';
 
 interface RealtimeProviderProps {
   children: React.ReactNode;
@@ -47,31 +47,14 @@ export function RealtimeProvider({ children }: RealtimeProviderProps) {
   const userId = useAuthStore((state) => state.user?.id);
   const loading = useAuthStore((state) => state.loading);
   const pathname = usePathname();
-  const [isReady, setIsReady] = useState(false);
   // クライアントサイドマウント確認（SSR時のtRPCコンテキストエラー回避）
-  const [isMounted, setIsMounted] = useState(false);
-
-  // クライアントマウント時にフラグを設定
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  // AuthStoreの初期化を待つ
-  useEffect(() => {
-    // loadingがfalseになるまで待つ（AuthStoreの初期化完了を待つ）
-    if (loading) {
-      return;
-    }
-
-    // AuthStoreのloading完了 = 初期化完了なので、即座にreadyにする
-    setIsReady(true);
-  }, [userId, loading]);
+  const isMounted = useHasMounted();
 
   // 購読を有効化する条件
   // - クライアントサイドでマウントされている
-  // - 初期化が完了している
+  // - AuthStoreの初期化が完了している（loading === false）
   // - ユーザーIDが存在する
-  const shouldSubscribe = isMounted && isReady && !!userId;
+  const shouldSubscribe = isMounted && !loading && !!userId;
 
   // ページ別購読設定（パフォーマンス最適化）
   // 各ページで必要な購読のみを有効化してWebSocket接続数を削減

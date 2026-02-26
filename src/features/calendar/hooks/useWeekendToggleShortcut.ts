@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
+import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 
 /**
  * 週末表示切り替えのキーボードショートカット（Cmd/Ctrl + W）を管理するフック
@@ -121,7 +121,7 @@ function showToggleFeedback(newState: boolean) {
   }, 2000);
 }
 
-import { getTranslation } from '@/features/calendar/lib/toast/get-translation';
+import { getTranslation } from '../lib/toast/get-translation';
 
 const CALENDAR_ACCESSIBILITY_KEYS = {
   TOGGLE_WEEKEND: 'calendar.accessibility.toggleWeekend',

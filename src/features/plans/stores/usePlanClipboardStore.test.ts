@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import type { ClipboardPlan } from './usePlanClipboardStore';
-import { usePlanClipboardStore } from './usePlanClipboardStore';
+import type { ClipboardPlan } from '@/stores/usePlanClipboardStore';
+import { usePlanClipboardStore } from '@/stores/usePlanClipboardStore';
 
 const mockPlan: ClipboardPlan = {
   title: 'テストプラン',

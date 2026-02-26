@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef } from 'react';
 
-import { usePlanMutations } from '../../../hooks/usePlanMutations';
+import { usePlanMutations } from '@/hooks/usePlanMutations';
 import type { Plan } from '../../../types/plan';
 
 interface UseInspectorAutoSaveOptions {

@@ -4,32 +4,16 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 # Notifications
 
-プラン変更、リマインダー、システムメッセージをユーザーに通知するシステム。
+リマインダー通知をユーザーに配信するシステム。個人向けアプリのため、自分の操作に対するイベント通知は不要（Google Calendarと同じ思想）。
 
 ---
 
-## 要件
-
-### 通知タイプ
+## 通知タイプ
 
 | タイプ | 説明 | アイコン |
 |-------|------|---------|
-| `reminder` | プラン開始前リマインダー | bell |
-| `plan_created` | プラン作成 | calendar |
-| `plan_updated` | プラン更新 | calendar |
-| `plan_deleted` | プラン削除 | trash |
-| `plan_completed` | プラン完了 | check |
-| `trash_warning` | ゴミ箱自動削除警告 | alert |
-| `system` | システム通知 | info |
-
-### 優先度
-
-| 優先度 | 表示 |
-|-------|------|
-| `urgent` | 緊急（赤） |
-| `high` | 高（オレンジ） |
-| `medium` | 中（青） |
-| `low` | 低（グレー） |
+| `reminder` | プラン開始前リマインダー | Bell |
+| `overdue` | 期限超過通知（将来追加） | AlertTriangle |
 
 ---
 
@@ -41,34 +25,30 @@ import { Meta } from '@storybook/addon-docs/blocks';
 |-------|-----|------|
 | `id` | UUID | PK |
 | `user_id` | UUID | FK → auth.users |
-| `type` | TEXT | 通知タイプ（CHECK制約） |
-| `priority` | TEXT | 優先度（default: medium） |
-| `title` | TEXT | 通知タイトル |
-| `message` | TEXT | 通知本文（nullable） |
-| `related_plan_id` | UUID | 関連プラン（nullable） |
-| `action_url` | TEXT | クリック時遷移先 |
-| `icon` | TEXT | 表示アイコン |
-| `data` | JSONB | 拡張用データ |
+| `type` | TEXT | 通知タイプ: reminder \| overdue |
+| `plan_id` | UUID | 対象プランID（FK → plans） |
 | `is_read` | BOOLEAN | 既読状態 |
 | `read_at` | TIMESTAMPTZ | 既読日時 |
-| `expires_at` | TIMESTAMPTZ | 有効期限 |
+| `created_at` | TIMESTAMPTZ | 作成日時 |
 
 - **RLS**: `auth.uid() = user_id` で自分の通知のみアクセス
-- **インデックス**: `user_id`, `(user_id, is_read)`, `created_at DESC`
-- **自動削除**: 既読30日後にCron Jobで削除
+- **インデックス**: `user_id`, `(user_id, is_read)`, `plan_id`, `created_at DESC`
 
 ### notification_preferences テーブル
 
-ユーザーごとの通知設定（ブラウザ通知、メール通知、リマインダーデフォルト分数等）。
+| カラム | 型 | 説明 |
+|-------|-----|------|
+| `enable_browser_notifications` | BOOLEAN | ブラウザ通知ON/OFF |
+| `default_reminder_minutes` | INTEGER | デフォルトリマインダー時間（分） |
 
 ---
 
 ## データフロー
 
 ```
-[ユーザー操作（プラン作成/更新/削除）]
+[Cron Job: check-reminders（1分ごと）]
        ↓
-[通知生成関数 → Supabase INSERT]
+[Edge Function → Supabase INSERT]
        ↓
 [Realtime Subscription]
        ↓
@@ -89,7 +69,9 @@ src/features/notifications/
 │   └── Notifications.docs.mdx       ドキュメント
 ├── hooks/
 │   ├── useNotifications.ts           ブラウザ通知管理
-│   └── useNotificationPreferences.ts 通知設定・配信判定
+│   ├── useNotificationPreferences.ts ブラウザ通知ON/OFF設定
+│   ├── useNotificationRealtime.ts    Realtime購読
+│   └── useNotificationsData.ts       tRPCデータ取得・楽観的更新
 ├── utils/
 │   └── notification-helpers.ts       ヘルパー関数
 ├── lib/
@@ -104,20 +86,13 @@ src/features/notifications/
 
 | プロシージャ | タイプ | 説明 |
 |-------------|-------|------|
-| `notifications.list` | query | 通知一覧取得 |
+| `notifications.list` | query | 通知一覧取得（plan titleをJOIN） |
 | `notifications.markAsRead` | mutation | 個別既読化 |
 | `notifications.markAllAsRead` | mutation | 一括既読化 |
 | `notifications.delete` | mutation | 通知削除 |
-
----
-
-## 通知生成トリガー
-
-| トリガー | 実行タイミング | 優先度 |
-|---------|--------------|--------|
-| リマインダー | Cron Job（1分ごと） | high |
-| プラン変更 | クライアント操作時 | medium |
-| ゴミ箱警告 | Cron Job（1日1回） | urgent |
+| `notificationPreferences.get` | query | 設定取得 |
+| `notificationPreferences.updateBrowserNotifications` | mutation | ブラウザ通知ON/OFF |
+| `notificationPreferences.updateDefaultReminderMinutes` | mutation | リマインダー時間更新 |
 
 ---
 
@@ -132,9 +107,8 @@ src/features/notifications/
 ## セキュリティ
 
 - RLS有効化: 自分の通知のみアクセス
-- XSS対策: messageフィールドのサニタイズ
 - レート制限: 通知作成は1分間に10件まで
 
 ---
 
-**最終更新**: 2026-02-19
+**最終更新**: 2026-02-25

@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 
-import type { RecordItem } from '@/features/records/hooks/useRecordData';
+import type { RecordItem } from '@/hooks/useRecordData';
 
 import { RecordListCard } from './RecordListCard';
 
@@ -26,7 +26,7 @@ const BASE_RECORD: RecordItem = {
   end_time: '2025-01-15T07:30:00.000Z',
   duration_minutes: 30,
   fulfillment_score: 4,
-  note: null,
+  description: null,
   created_at: '2025-01-15T07:30:00.000Z',
   updated_at: '2025-01-15T07:30:00.000Z',
   tagIds: [],

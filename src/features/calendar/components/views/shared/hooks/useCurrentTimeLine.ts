@@ -6,7 +6,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 
-import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
+import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 import {
   CHRONOTYPE_PRESETS,
   getChronotypeColor,

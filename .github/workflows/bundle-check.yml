@@ -34,7 +34,7 @@ jobs:
         run: npm ci
 
       - name: 📏 Bundle size check
-        run: npm run bundle:guard
+        run: npm run size
         continue-on-error: true
 
       - name: 💬 Comment PR

@@ -225,7 +225,7 @@ class DocsConsistencyChecker {
       } else {
         this.addResult('warning', 'TODO管理', 'TODO_REPORT.md が見つかりません')
       }
-    } catch (error) {
+    } catch {
       this.addResult('warning', 'TODO検索', 'TODO検索でエラーが発生しました')
     }
   }

@@ -179,14 +179,9 @@ export type Database = {
         Row: {
           created_at: string;
           default_reminder_minutes: number | null;
-          delivery_settings: Json | null;
           enable_browser_notifications: boolean;
           enable_email_notifications: boolean;
-          enable_plan_updates: boolean;
           enable_push_notifications: boolean;
-          enable_reminders: boolean;
-          enable_system_notifications: boolean;
-          enable_trash_warnings: boolean;
           id: string;
           updated_at: string;
           user_id: string;
@@ -194,14 +189,9 @@ export type Database = {
         Insert: {
           created_at?: string;
           default_reminder_minutes?: number | null;
-          delivery_settings?: Json | null;
           enable_browser_notifications?: boolean;
           enable_email_notifications?: boolean;
-          enable_plan_updates?: boolean;
           enable_push_notifications?: boolean;
-          enable_reminders?: boolean;
-          enable_system_notifications?: boolean;
-          enable_trash_warnings?: boolean;
           id?: string;
           updated_at?: string;
           user_id: string;
@@ -209,14 +199,9 @@ export type Database = {
         Update: {
           created_at?: string;
           default_reminder_minutes?: number | null;
-          delivery_settings?: Json | null;
           enable_browser_notifications?: boolean;
           enable_email_notifications?: boolean;
-          enable_plan_updates?: boolean;
           enable_push_notifications?: boolean;
-          enable_reminders?: boolean;
-          enable_system_notifications?: boolean;
-          enable_trash_warnings?: boolean;
           id?: string;
           updated_at?: string;
           user_id?: string;
@@ -225,72 +210,38 @@ export type Database = {
       };
       notifications: {
         Row: {
-          action_url: string | null;
           created_at: string;
-          data: Json | null;
-          expires_at: string | null;
-          icon: string | null;
           id: string;
           is_read: boolean;
-          message: string | null;
-          priority: string;
+          plan_id: string | null;
           read_at: string | null;
-          related_plan_id: string | null;
-          related_tag_id: string | null;
-          title: string;
           type: string;
-          updated_at: string;
           user_id: string;
         };
         Insert: {
-          action_url?: string | null;
           created_at?: string;
-          data?: Json | null;
-          expires_at?: string | null;
-          icon?: string | null;
           id?: string;
           is_read?: boolean;
-          message?: string | null;
-          priority?: string;
+          plan_id?: string | null;
           read_at?: string | null;
-          related_plan_id?: string | null;
-          related_tag_id?: string | null;
-          title: string;
           type: string;
-          updated_at?: string;
           user_id: string;
         };
         Update: {
-          action_url?: string | null;
           created_at?: string;
-          data?: Json | null;
-          expires_at?: string | null;
-          icon?: string | null;
           id?: string;
           is_read?: boolean;
-          message?: string | null;
-          priority?: string;
+          plan_id?: string | null;
           read_at?: string | null;
-          related_plan_id?: string | null;
-          related_tag_id?: string | null;
-          title?: string;
           type?: string;
-          updated_at?: string;
           user_id?: string;
         };
         Relationships: [
           {
             foreignKeyName: 'notifications_related_plan_id_fkey';
-            columns: ['related_plan_id'];
+            columns: ['plan_id'];
             isOneToOne: false;
             referencedRelation: 'plans';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'notifications_related_tag_id_fkey';
-            columns: ['related_tag_id'];
-            isOneToOne: false;
-            referencedRelation: 'tags';
             referencedColumns: ['id'];
           },
         ];
@@ -305,6 +256,7 @@ export type Database = {
           new_value: string | null;
           old_value: string | null;
           plan_id: string | null;
+          schema_version: number;
           user_id: string;
         };
         Insert: {
@@ -316,6 +268,7 @@ export type Database = {
           new_value?: string | null;
           old_value?: string | null;
           plan_id?: string | null;
+          schema_version?: number;
           user_id: string;
         };
         Update: {
@@ -327,6 +280,7 @@ export type Database = {
           new_value?: string | null;
           old_value?: string | null;
           plan_id?: string | null;
+          schema_version?: number;
           user_id?: string;
         };
         Relationships: [
@@ -342,41 +296,41 @@ export type Database = {
       plan_instances: {
         Row: {
           created_at: string;
+          description: string | null;
           exception_type: string | null;
           id: string;
           instance_date: string;
           instance_end: string | null;
           instance_start: string | null;
-          is_exception: boolean;
           original_date: string | null;
-          overrides: Json | null;
           plan_id: string;
+          title: string | null;
           updated_at: string;
         };
         Insert: {
           created_at?: string;
+          description?: string | null;
           exception_type?: string | null;
           id?: string;
           instance_date: string;
           instance_end?: string | null;
           instance_start?: string | null;
-          is_exception?: boolean;
           original_date?: string | null;
-          overrides?: Json | null;
           plan_id: string;
+          title?: string | null;
           updated_at?: string;
         };
         Update: {
           created_at?: string;
+          description?: string | null;
           exception_type?: string | null;
           id?: string;
           instance_date?: string;
           instance_end?: string | null;
           instance_start?: string | null;
-          is_exception?: boolean;
           original_date?: string | null;
-          overrides?: Json | null;
           plan_id?: string;
+          title?: string | null;
           updated_at?: string;
         };
         Relationships: [
@@ -428,93 +382,11 @@ export type Database = {
           },
         ];
       };
-      plan_template_tags: {
-        Row: {
-          created_at: string;
-          id: string;
-          tag_id: string;
-          template_id: string;
-          user_id: string;
-        };
-        Insert: {
-          created_at?: string;
-          id?: string;
-          tag_id: string;
-          template_id: string;
-          user_id: string;
-        };
-        Update: {
-          created_at?: string;
-          id?: string;
-          tag_id?: string;
-          template_id?: string;
-          user_id?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: 'plan_template_tags_template_id_fkey';
-            columns: ['template_id'];
-            isOneToOne: false;
-            referencedRelation: 'plan_templates';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'plan_template_tags_tag_id_fkey';
-            columns: ['tag_id'];
-            isOneToOne: false;
-            referencedRelation: 'tags';
-            referencedColumns: ['id'];
-          },
-        ];
-      };
-      plan_templates: {
-        Row: {
-          created_at: string;
-          description: string | null;
-          duration_minutes: number | null;
-          id: string;
-          name: string;
-          plan_description: string | null;
-          reminder_minutes: number | null;
-          title_pattern: string;
-          updated_at: string;
-          use_count: number;
-          user_id: string;
-        };
-        Insert: {
-          created_at?: string;
-          description?: string | null;
-          duration_minutes?: number | null;
-          id?: string;
-          name: string;
-          plan_description?: string | null;
-          reminder_minutes?: number | null;
-          title_pattern: string;
-          updated_at?: string;
-          use_count?: number;
-          user_id: string;
-        };
-        Update: {
-          created_at?: string;
-          description?: string | null;
-          duration_minutes?: number | null;
-          id?: string;
-          name?: string;
-          plan_description?: string | null;
-          reminder_minutes?: number | null;
-          title_pattern?: string;
-          updated_at?: string;
-          use_count?: number;
-          user_id?: string;
-        };
-        Relationships: [];
-      };
       plans: {
         Row: {
           completed_at: string | null;
           created_at: string | null;
           description: string | null;
-          due_date: string | null;
           end_time: string | null;
           id: string;
           recurrence_end_date: string | null;
@@ -533,7 +405,6 @@ export type Database = {
           completed_at?: string | null;
           created_at?: string | null;
           description?: string | null;
-          due_date?: string | null;
           end_time?: string | null;
           id?: string;
           recurrence_end_date?: string | null;
@@ -552,7 +423,6 @@ export type Database = {
           completed_at?: string | null;
           created_at?: string | null;
           description?: string | null;
-          due_date?: string | null;
           end_time?: string | null;
           id?: string;
           recurrence_end_date?: string | null;
@@ -572,7 +442,6 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null;
-          bio: string | null;
           created_at: string;
           email: string;
           full_name: string | null;
@@ -582,7 +451,6 @@ export type Database = {
         };
         Insert: {
           avatar_url?: string | null;
-          bio?: string | null;
           created_at?: string;
           email: string;
           full_name?: string | null;
@@ -592,7 +460,6 @@ export type Database = {
         };
         Update: {
           avatar_url?: string | null;
-          bio?: string | null;
           created_at?: string;
           email?: string;
           full_name?: string | null;
@@ -612,6 +479,7 @@ export type Database = {
           new_value: string | null;
           old_value: string | null;
           record_id: string | null;
+          schema_version: number;
           user_id: string;
         };
         Insert: {
@@ -623,6 +491,7 @@ export type Database = {
           new_value?: string | null;
           old_value?: string | null;
           record_id?: string | null;
+          schema_version?: number;
           user_id: string;
         };
         Update: {
@@ -634,6 +503,7 @@ export type Database = {
           new_value?: string | null;
           old_value?: string | null;
           record_id?: string | null;
+          schema_version?: number;
           user_id?: string;
         };
         Relationships: [
@@ -688,11 +558,11 @@ export type Database = {
       records: {
         Row: {
           created_at: string;
+          description: string | null;
           duration_minutes: number;
           end_time: string | null;
           fulfillment_score: number | null;
           id: string;
-          note: string | null;
           plan_id: string | null;
           start_time: string | null;
           title: string | null;
@@ -702,11 +572,11 @@ export type Database = {
         };
         Insert: {
           created_at?: string;
+          description?: string | null;
           duration_minutes: number;
           end_time?: string | null;
           fulfillment_score?: number | null;
           id?: string;
-          note?: string | null;
           plan_id?: string | null;
           start_time?: string | null;
           title?: string | null;
@@ -716,11 +586,11 @@ export type Database = {
         };
         Update: {
           created_at?: string;
+          description?: string | null;
           duration_minutes?: number;
           end_time?: string | null;
           fulfillment_score?: number | null;
           id?: string;
-          note?: string | null;
           plan_id?: string | null;
           start_time?: string | null;
           title?: string | null;
@@ -743,7 +613,6 @@ export type Database = {
           color: string | null;
           created_at: string | null;
           description: string | null;
-          icon: string | null;
           id: string;
           is_active: boolean;
           name: string;
@@ -756,7 +625,6 @@ export type Database = {
           color?: string | null;
           created_at?: string | null;
           description?: string | null;
-          icon?: string | null;
           id?: string;
           is_active?: boolean;
           name: string;
@@ -769,7 +637,6 @@ export type Database = {
           color?: string | null;
           created_at?: string | null;
           description?: string | null;
-          icon?: string | null;
           id?: string;
           is_active?: boolean;
           name?: string;
@@ -883,34 +750,13 @@ export type Database = {
       };
     };
     Views: {
-      user_recent_logins: {
-        Row: {
-          created_at: string | null;
-          ip_address: string | null;
-          location: string | null;
-          user_agent: string | null;
-          user_id: string | null;
-        };
-        Insert: {
-          created_at?: string | null;
-          ip_address?: string | null;
-          location?: never;
-          user_agent?: string | null;
-          user_id?: string | null;
-        };
-        Update: {
-          created_at?: string | null;
-          ip_address?: string | null;
-          location?: never;
-          user_agent?: string | null;
-          user_id?: string | null;
-        };
-        Relationships: [];
-      };
+      [_ in never]: never;
     };
     Functions: {
       cleanup_old_auth_audit_logs: { Args: never; Returns: undefined };
       cleanup_old_login_attempts: { Args: never; Returns: undefined };
+      cleanup_old_plan_activities: { Args: never; Returns: undefined };
+      cleanup_old_record_activities: { Args: never; Returns: undefined };
       count_unused_recovery_codes: {
         Args: { p_user_id: string };
         Returns: number;

@@ -3,7 +3,9 @@
  *
  * 通知設定の統合テスト
  * - 設定取得（デフォルト値）
- * - 配信方法の更新
+ * - ブラウザ通知ON/OFF
+ * - メール通知ON/OFF
+ * - プッシュ通知ON/OFF
  * - リマインダー時間の更新
  */
 
@@ -108,95 +110,75 @@ describe.skipIf(SKIP_INTEGRATION)('NotificationPreferences Router Integration', 
 
       expect(result).toBeDefined();
       expect(result.defaultReminderMinutes).toBe(10);
-      expect(result.deliverySettings).toBeDefined();
-      expect(result.deliverySettings.reminders).toEqual(['browser']);
-      expect(result.deliverySettings.plan_updates).toEqual(['browser']);
-      expect(result.deliverySettings.system).toEqual(['browser']);
-    });
-
-    it('should return saved preferences after update', async () => {
-      const caller = createTestCaller(notificationPreferencesRouter, ctx);
-
-      // 設定を更新
-      await caller.updateDeliverySettings({
-        notificationType: 'reminders',
-        deliveryMethods: ['browser', 'email'],
-      });
-
-      const result = await caller.get();
-
-      expect(result.deliverySettings.reminders).toEqual(['browser', 'email']);
+      expect(result.enableBrowserNotifications).toBe(true);
+      expect(result.enableEmailNotifications).toBe(false);
+      expect(result.enablePushNotifications).toBe(false);
     });
   });
 
-  describe('Update Delivery Settings', () => {
-    it('should update reminders delivery methods', async () => {
+  describe('Update Browser Notifications', () => {
+    it('should disable browser notifications', async () => {
       const caller = createTestCaller(notificationPreferencesRouter, ctx);
 
-      const result = await caller.updateDeliverySettings({
-        notificationType: 'reminders',
-        deliveryMethods: ['browser', 'push'],
-      });
-
+      const result = await caller.updateBrowserNotifications({ enabled: false });
       expect(result.success).toBe(true);
-      expect(result.deliverySettings.reminders).toEqual(['browser', 'push']);
+
+      const prefs = await caller.get();
+      expect(prefs.enableBrowserNotifications).toBe(false);
     });
 
-    it('should update plan_updates delivery methods', async () => {
+    it('should enable browser notifications', async () => {
       const caller = createTestCaller(notificationPreferencesRouter, ctx);
 
-      const result = await caller.updateDeliverySettings({
-        notificationType: 'plan_updates',
-        deliveryMethods: ['email'],
-      });
+      await caller.updateBrowserNotifications({ enabled: false });
+      await caller.updateBrowserNotifications({ enabled: true });
 
+      const prefs = await caller.get();
+      expect(prefs.enableBrowserNotifications).toBe(true);
+    });
+  });
+
+  describe('Update Email Notifications', () => {
+    it('should enable email notifications', async () => {
+      const caller = createTestCaller(notificationPreferencesRouter, ctx);
+
+      const result = await caller.updateEmailNotifications({ enabled: true });
       expect(result.success).toBe(true);
-      expect(result.deliverySettings.plan_updates).toEqual(['email']);
+
+      const prefs = await caller.get();
+      expect(prefs.enableEmailNotifications).toBe(true);
     });
 
-    it('should update system delivery methods', async () => {
+    it('should disable email notifications', async () => {
       const caller = createTestCaller(notificationPreferencesRouter, ctx);
 
-      const result = await caller.updateDeliverySettings({
-        notificationType: 'system',
-        deliveryMethods: ['browser', 'email', 'push'],
-      });
+      await caller.updateEmailNotifications({ enabled: true });
+      await caller.updateEmailNotifications({ enabled: false });
 
+      const prefs = await caller.get();
+      expect(prefs.enableEmailNotifications).toBe(false);
+    });
+  });
+
+  describe('Update Push Notifications', () => {
+    it('should enable push notifications', async () => {
+      const caller = createTestCaller(notificationPreferencesRouter, ctx);
+
+      const result = await caller.updatePushNotifications({ enabled: true });
       expect(result.success).toBe(true);
-      expect(result.deliverySettings.system).toEqual(['browser', 'email', 'push']);
+
+      const prefs = await caller.get();
+      expect(prefs.enablePushNotifications).toBe(true);
     });
 
-    it('should allow empty delivery methods (disable notifications)', async () => {
+    it('should disable push notifications', async () => {
       const caller = createTestCaller(notificationPreferencesRouter, ctx);
 
-      const result = await caller.updateDeliverySettings({
-        notificationType: 'reminders',
-        deliveryMethods: [],
-      });
+      await caller.updatePushNotifications({ enabled: true });
+      await caller.updatePushNotifications({ enabled: false });
 
-      expect(result.success).toBe(true);
-      expect(result.deliverySettings.reminders).toEqual([]);
-    });
-
-    it('should preserve other notification types when updating one', async () => {
-      const caller = createTestCaller(notificationPreferencesRouter, ctx);
-
-      // 最初にremindersを更新
-      await caller.updateDeliverySettings({
-        notificationType: 'reminders',
-        deliveryMethods: ['email'],
-      });
-
-      // 次にsystemを更新
-      await caller.updateDeliverySettings({
-        notificationType: 'system',
-        deliveryMethods: ['push'],
-      });
-
-      // remindersが維持されているか確認
-      const result = await caller.get();
-      expect(result.deliverySettings.reminders).toEqual(['email']);
-      expect(result.deliverySettings.system).toEqual(['push']);
+      const prefs = await caller.get();
+      expect(prefs.enablePushNotifications).toBe(false);
     });
   });
 
@@ -212,58 +194,11 @@ describe.skipIf(SKIP_INTEGRATION)('NotificationPreferences Router Integration', 
       expect(prefs.defaultReminderMinutes).toBe(30);
     });
 
-    it('should accept minimum value (1 minute)', async () => {
+    it('should accept minimum value (0 minutes)', async () => {
       const caller = createTestCaller(notificationPreferencesRouter, ctx);
 
-      const result = await caller.updateDefaultReminderMinutes({ minutes: 1 });
-
+      const result = await caller.updateDefaultReminderMinutes({ minutes: 0 });
       expect(result.success).toBe(true);
-    });
-
-    it('should accept maximum value (1440 minutes = 24 hours)', async () => {
-      const caller = createTestCaller(notificationPreferencesRouter, ctx);
-
-      const result = await caller.updateDefaultReminderMinutes({ minutes: 1440 });
-
-      expect(result.success).toBe(true);
-    });
-
-    it('should reject value below minimum', async () => {
-      const caller = createTestCaller(notificationPreferencesRouter, ctx);
-
-      await expect(caller.updateDefaultReminderMinutes({ minutes: 0 })).rejects.toThrow();
-    });
-
-    it('should reject value above maximum', async () => {
-      const caller = createTestCaller(notificationPreferencesRouter, ctx);
-
-      await expect(caller.updateDefaultReminderMinutes({ minutes: 1441 })).rejects.toThrow();
-    });
-  });
-
-  describe('Validation', () => {
-    it('should reject invalid notification type', async () => {
-      const caller = createTestCaller(notificationPreferencesRouter, ctx);
-
-      await expect(
-        caller.updateDeliverySettings({
-          // @ts-expect-error - Testing invalid input
-          notificationType: 'invalid_type',
-          deliveryMethods: ['browser'],
-        }),
-      ).rejects.toThrow();
-    });
-
-    it('should reject invalid delivery method', async () => {
-      const caller = createTestCaller(notificationPreferencesRouter, ctx);
-
-      await expect(
-        caller.updateDeliverySettings({
-          notificationType: 'reminders',
-          // @ts-expect-error - Testing invalid input
-          deliveryMethods: ['invalid_method'],
-        }),
-      ).rejects.toThrow();
     });
   });
 
@@ -275,16 +210,25 @@ describe.skipIf(SKIP_INTEGRATION)('NotificationPreferences Router Integration', 
       await expect(caller.get()).rejects.toThrow(TRPCError);
     });
 
-    it('should not allow unauthenticated access to updateDeliverySettings', async () => {
+    it('should not allow unauthenticated access to updateBrowserNotifications', async () => {
       const unauthenticatedCtx = { ...ctx, userId: undefined };
       const caller = createTestCaller(notificationPreferencesRouter, unauthenticatedCtx);
 
-      await expect(
-        caller.updateDeliverySettings({
-          notificationType: 'reminders',
-          deliveryMethods: ['browser'],
-        }),
-      ).rejects.toThrow(TRPCError);
+      await expect(caller.updateBrowserNotifications({ enabled: true })).rejects.toThrow(TRPCError);
+    });
+
+    it('should not allow unauthenticated access to updateEmailNotifications', async () => {
+      const unauthenticatedCtx = { ...ctx, userId: undefined };
+      const caller = createTestCaller(notificationPreferencesRouter, unauthenticatedCtx);
+
+      await expect(caller.updateEmailNotifications({ enabled: true })).rejects.toThrow(TRPCError);
+    });
+
+    it('should not allow unauthenticated access to updatePushNotifications', async () => {
+      const unauthenticatedCtx = { ...ctx, userId: undefined };
+      const caller = createTestCaller(notificationPreferencesRouter, unauthenticatedCtx);
+
+      await expect(caller.updatePushNotifications({ enabled: true })).rejects.toThrow(TRPCError);
     });
 
     it('should not allow unauthenticated access to updateDefaultReminderMinutes', async () => {

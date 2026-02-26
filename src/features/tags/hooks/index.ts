@@ -3,7 +3,7 @@
  *
  * @example
  * ```tsx
- * import { useTags, useTagGroups, useCreateTag } from '@/features/tags/hooks'
+ * import { useTags, useCreateTag } from '@/features/tags/hooks'
  * ```
  */
 
@@ -11,7 +11,7 @@
 export { tagKeys } from './tagQueryKeys';
 
 // Tags Query Hooks
-export { useTag, useTags } from './useTagsQuery';
+export { useTag, useTags } from '@/hooks/useTagsQuery';
 
 // Tags Mutation Hooks
 export {
@@ -28,16 +28,6 @@ export type { ReorderTagInput } from './useTagsMutations';
 
 // Tags Optimistic Helpers (Legacy)
 export { useOptimisticTagUpdate } from './useTagsOptimistic';
-
-// Tag Groups
-export {
-  tagGroupKeys,
-  useCreateTagGroup,
-  useDeleteTagGroup,
-  useTagGroup,
-  useTagGroups,
-  useUpdateTagGroup,
-} from './useTagGroups';
 
 // Tag Operations
 export { useTagOperations } from './useTagOperations';

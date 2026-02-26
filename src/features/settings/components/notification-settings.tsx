@@ -1,159 +1,22 @@
 'use client';
 
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useState } from 'react';
 
-import { ChevronDown } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
-import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+import { ReminderSelect } from '@/components/common/ReminderSelect';
+import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Switch } from '@/components/ui/switch';
 import {
   checkBrowserNotificationSupport,
   requestNotificationPermission,
-} from '@/features/notifications/utils/notification-helpers';
-import { ReminderSelect } from '@/features/plans/components/shared/ReminderSelect';
+} from '@/lib/notification-helpers';
 import { api } from '@/lib/trpc';
 
 import { SettingRow } from './fields/SettingRow';
 import { SettingsCard } from './SettingsCard';
-
-// 配信方法の型
-type DeliveryMethod = 'browser' | 'email' | 'push';
-
-// 通知タイプの型
-type NotificationType = 'reminders' | 'plan_updates' | 'system';
-
-// 配信設定の型
-type DeliverySettings = Record<NotificationType, DeliveryMethod[]>;
-
-// デフォルトの配信設定
-const DEFAULT_DELIVERY_SETTINGS: DeliverySettings = {
-  reminders: ['browser'],
-  plan_updates: ['browser'],
-  system: ['browser'],
-};
-
-// 通知タイプの設定
-const NOTIFICATION_TYPES: {
-  type: NotificationType;
-  labelKey: string;
-}[] = [
-  { type: 'reminders', labelKey: 'notification.settings.types.reminders.label' },
-  { type: 'plan_updates', labelKey: 'notification.settings.types.plan_updates.label' },
-  { type: 'system', labelKey: 'notification.settings.types.system.label' },
-];
-
-// 配信方法の設定
-const DELIVERY_METHODS: {
-  method: DeliveryMethod;
-  labelKey: string;
-  disabled: boolean;
-}[] = [
-  { method: 'browser', labelKey: 'notification.settings.methods.browser', disabled: false },
-  { method: 'push', labelKey: 'notification.settings.methods.push', disabled: true },
-  { method: 'email', labelKey: 'notification.settings.methods.email', disabled: true },
-];
-
-interface DeliveryMethodDropdownProps {
-  selectedMethods: DeliveryMethod[];
-  onMethodsChange: (methods: DeliveryMethod[]) => void;
-  isPending: boolean;
-  browserPermission: NotificationPermission | null;
-  onBrowserPermissionChange: (permission: NotificationPermission) => void;
-}
-
-function DeliveryMethodDropdown({
-  selectedMethods,
-  onMethodsChange,
-  isPending,
-  browserPermission,
-  onBrowserPermissionChange,
-}: DeliveryMethodDropdownProps) {
-  const t = useTranslations();
-
-  // 選択中の配信方法のラベルを生成
-  const getSelectedLabel = () => {
-    if (selectedMethods.length === 0) {
-      return t('notification.settings.methods.none');
-    }
-
-    return selectedMethods
-      .map((method) => {
-        const config = DELIVERY_METHODS.find((m) => m.method === method);
-        return config ? t(config.labelKey) : method;
-      })
-      .join(', ');
-  };
-
-  // 配信方法のトグル
-  const handleMethodToggle = async (method: DeliveryMethod) => {
-    // ブラウザ通知を有効にする場合は許可をリクエスト
-    if (method === 'browser' && !selectedMethods.includes('browser')) {
-      if (checkBrowserNotificationSupport()) {
-        const permission = await requestNotificationPermission();
-        if (permission !== 'granted') {
-          toast.error(t('notification.settings.browserPermissionDenied'));
-          return;
-        }
-        onBrowserPermissionChange('granted');
-      }
-    }
-
-    const newMethods = selectedMethods.includes(method)
-      ? selectedMethods.filter((m) => m !== method)
-      : [...selectedMethods, method];
-
-    onMethodsChange(newMethods);
-  };
-
-  const isBrowserPermissionDenied = browserPermission === 'denied';
-
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="flex items-center gap-2" disabled={isPending}>
-          <span className="text-sm">{getSelectedLabel()}</span>
-          <ChevronDown className="size-4 opacity-50" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-48">
-        {DELIVERY_METHODS.map(({ method, labelKey, disabled }) => {
-          const isDisabledByPermission = method === 'browser' && isBrowserPermissionDenied;
-          const isChecked = selectedMethods.includes(method);
-
-          return (
-            <DropdownMenuCheckboxItem
-              key={method}
-              checked={isChecked}
-              onCheckedChange={() => handleMethodToggle(method)}
-              disabled={disabled || isDisabledByPermission}
-              className="flex items-center gap-2"
-            >
-              {t(labelKey)}
-              {disabled && (
-                <span className="text-muted-foreground ml-auto text-xs">
-                  {t('notification.settings.comingSoon')}
-                </span>
-              )}
-              {isDisabledByPermission && (
-                <span className="text-destructive ml-auto text-xs">
-                  {t('notification.settings.permissionDenied')}
-                </span>
-              )}
-            </DropdownMenuCheckboxItem>
-          );
-        })}
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
-}
 
 export function NotificationSettings() {
   const t = useTranslations();
@@ -162,72 +25,82 @@ export function NotificationSettings() {
   // 通知設定を取得
   const { data: preferences, isLoading } = api.notificationPreferences.get.useQuery();
 
-  // サーバーデータから設定を導出（useEffect同期不要）
-  const serverSettings = useMemo<DeliverySettings>(
-    () => (preferences?.deliverySettings as DeliverySettings) ?? DEFAULT_DELIVERY_SETTINGS,
-    [preferences],
-  );
-
-  // 楽観的更新用: mutation中のみ変更を保持
-  const [pendingChanges, setPendingChanges] = useState<Partial<DeliverySettings>>({});
-
-  // 表示用設定: サーバーデータ + 楽観的変更をマージ
-  const displaySettings = useMemo<DeliverySettings>(
-    () => ({ ...serverSettings, ...pendingChanges }),
-    [serverSettings, pendingChanges],
-  );
-
-  // ブラウザ通知許可状態（同期的に読み取り、useEffect不要）
+  // ブラウザ通知許可状態
   const [browserPermission, setBrowserPermission] = useState<NotificationPermission | null>(() => {
     if (typeof window === 'undefined') return null;
     return checkBrowserNotificationSupport() ? Notification.permission : null;
   });
 
+  const onSettingsSuccess = useCallback(() => {
+    utils.notificationPreferences.get.invalidate();
+  }, [utils]);
+
+  const onSettingsError = useCallback(
+    (error: { message: string }) => {
+      toast.error(t('notification.settings.saveError', { message: error.message }));
+    },
+    [t],
+  );
+
   // デフォルトリマインダーを更新
   const updateDefaultReminder =
     api.notificationPreferences.updateDefaultReminderMinutes.useMutation({
-      onSuccess: () => {
-        utils.notificationPreferences.get.invalidate();
-      },
-      onError: (error) => {
-        toast.error(t('notification.settings.saveError', { message: error.message }));
-      },
+      onSuccess: onSettingsSuccess,
+      onError: onSettingsError,
     });
 
-  // 配信設定を更新
-  const updateMutation = api.notificationPreferences.updateDeliverySettings.useMutation({
-    onSuccess: () => {
-      utils.notificationPreferences.get.invalidate();
+  // ブラウザ通知設定を更新
+  const updateBrowserNotifications =
+    api.notificationPreferences.updateBrowserNotifications.useMutation({
+      onSuccess: onSettingsSuccess,
+      onError: onSettingsError,
+    });
+
+  // メール通知設定を更新
+  const updateEmailNotifications = api.notificationPreferences.updateEmailNotifications.useMutation(
+    {
+      onSuccess: onSettingsSuccess,
+      onError: onSettingsError,
     },
-    onSettled: () => {
-      setPendingChanges({});
-    },
-    onError: (error) => {
-      toast.error(t('notification.settings.saveError', { message: error.message }));
-    },
+  );
+
+  // プッシュ通知設定を更新
+  const updatePushNotifications = api.notificationPreferences.updatePushNotifications.useMutation({
+    onSuccess: onSettingsSuccess,
+    onError: onSettingsError,
   });
 
-  // 配信方法の変更ハンドラー
-  const handleMethodsChange = useCallback(
-    (type: NotificationType, methods: DeliveryMethod[]) => {
-      // 楽観的に変更を記録
-      setPendingChanges((prev) => ({ ...prev, [type]: methods }));
+  const handleBrowserToggle = useCallback(
+    async (checked: boolean) => {
+      if (checked) {
+        // 有効にする場合はブラウザの許可をリクエスト
+        if (checkBrowserNotificationSupport()) {
+          const permission = await requestNotificationPermission();
+          if (permission !== 'granted') {
+            toast.error(t('notification.settings.browserPermissionDenied'));
+            return;
+          }
+          setBrowserPermission('granted');
+        }
+      }
 
-      // サーバーに保存
-      updateMutation.mutate({
-        notificationType: type,
-        deliveryMethods: methods,
-      });
+      updateBrowserNotifications.mutate({ enabled: checked });
     },
-    [updateMutation],
+    [updateBrowserNotifications, t],
   );
+
+  const isSaving =
+    updateBrowserNotifications.isPending ||
+    updateEmailNotifications.isPending ||
+    updatePushNotifications.isPending ||
+    updateDefaultReminder.isPending;
 
   if (isLoading) {
     return (
       <div className="space-y-8">
         <SettingsCard>
           <div className="space-y-4">
-            {Array.from({ length: 3 }, (_, i) => (
+            {Array.from({ length: 4 }, (_, i) => (
               <Skeleton key={i} className="h-12 w-full rounded-lg" />
             ))}
           </div>
@@ -236,21 +109,53 @@ export function NotificationSettings() {
     );
   }
 
+  const isBrowserPermissionDenied = browserPermission === 'denied';
+
   return (
     <div className="space-y-8">
-      <SettingsCard isSaving={updateMutation.isPending || updateDefaultReminder.isPending}>
+      <SettingsCard isSaving={isSaving}>
         <div className="space-y-0">
-          {NOTIFICATION_TYPES.map(({ type, labelKey }) => (
-            <SettingRow key={type} label={t(labelKey)}>
-              <DeliveryMethodDropdown
-                selectedMethods={displaySettings[type] ?? []}
-                onMethodsChange={(methods) => handleMethodsChange(type, methods)}
-                isPending={updateMutation.isPending}
-                browserPermission={browserPermission}
-                onBrowserPermissionChange={setBrowserPermission}
-              />
-            </SettingRow>
-          ))}
+          <SettingRow
+            label={t('notification.settings.browserNotifications.label')}
+            description={
+              isBrowserPermissionDenied
+                ? t('notification.settings.permissionDenied')
+                : t('notification.settings.browserNotifications.description')
+            }
+          >
+            <Switch
+              checked={preferences?.enableBrowserNotifications ?? true}
+              onCheckedChange={handleBrowserToggle}
+              disabled={updateBrowserNotifications.isPending || isBrowserPermissionDenied}
+            />
+          </SettingRow>
+          <SettingRow
+            label={t('notification.settings.emailNotifications.label')}
+            description={t('notification.settings.emailNotifications.description')}
+          >
+            <Switch
+              checked={preferences?.enableEmailNotifications ?? false}
+              onCheckedChange={(checked) => updateEmailNotifications.mutate({ enabled: checked })}
+              disabled={updateEmailNotifications.isPending}
+            />
+          </SettingRow>
+          <SettingRow
+            label={
+              <span className="flex items-center gap-2">
+                {t('notification.settings.pushNotifications.label')}
+                <Badge variant="secondary" className="text-xs">
+                  {t('notification.settings.pushNotifications.comingSoon')}
+                </Badge>
+              </span>
+            }
+            description={t('notification.settings.pushNotifications.description')}
+          >
+            <Switch
+              checked={preferences?.enablePushNotifications ?? false}
+              onCheckedChange={(checked) => updatePushNotifications.mutate({ enabled: checked })}
+              disabled={updatePushNotifications.isPending}
+            />
+          </SettingRow>
           <SettingRow
             label={t('notification.settings.defaultReminder.label')}
             description={t('notification.settings.defaultReminder.description')}

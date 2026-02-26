@@ -75,16 +75,20 @@ async function createServerContext(): Promise<Context> {
   let sessionId: string | undefined;
 
   try {
+    // getUser()はSupabase Authサーバーに問い合わせてJWTを検証する
     const {
-      data: { session },
-    } = await supabase.auth.getSession();
+      data: { user },
+    } = await supabase.auth.getUser();
 
-    if (session?.user) {
-      userId = session.user.id;
-      sessionId = session.access_token;
+    if (user) {
+      userId = user.id;
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      sessionId = session?.access_token;
     }
-  } catch (error) {
-    console.error('Server context auth error:', error);
+  } catch {
+    // Server Component での認証エラーは無視
   }
 
   // Server Componentではreq/resは不要なのでダミーを渡す
@@ -140,11 +144,11 @@ export const createServerHelpers = cache(async () => {
 export async function getServerAuthStatus() {
   const supabase = await createSupabaseServerClient();
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+  } = await supabase.auth.getUser();
 
   return {
-    isAuthenticated: !!session?.user,
-    userId: session?.user?.id,
+    isAuthenticated: !!user,
+    userId: user?.id,
   };
 }

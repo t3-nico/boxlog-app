@@ -11,8 +11,8 @@ import { MEDIA_QUERIES } from '@/config/ui/breakpoints';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 
+import { useSettingsModalStore } from '@/stores/useSettingsModalStore';
 import { useSettingsModalURLSync } from '../../hooks/useSettingsModalURLSync';
-import { useSettingsModalStore } from '../../stores/useSettingsModalStore';
 import { SettingsModalContent } from './SettingsModalContent';
 import { SettingsModalMobileView } from './SettingsModalMobileView';
 import { SettingsModalSidebar } from './SettingsModalSidebar';

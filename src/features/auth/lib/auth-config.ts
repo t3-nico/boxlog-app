@@ -1,8 +1,8 @@
 // 認証設定の定数
 export const AUTH_CONFIG = {
-  // パスワード設定
+  // パスワード設定（config.toml の password_requirements = "lower_upper_letters_digits" と一致）
   PASSWORD: {
-    MIN_LENGTH: 8,
+    MIN_LENGTH: 12,
     REQUIRE_UPPERCASE: true,
     REQUIRE_LOWERCASE: true,
     REQUIRE_NUMBERS: true,

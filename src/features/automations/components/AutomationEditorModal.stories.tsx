@@ -4,7 +4,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 
 import { Button } from '@/components/ui/button';
-import type { Tag } from '@/features/tags/types';
+import type { Tag } from '@/core/types/tag';
 
 import type { Automation } from '../types';
 import { AutomationEditorModal } from './AutomationEditorModal';
@@ -14,7 +14,6 @@ const mockTags: Tag[] = [
     id: 'tag-1',
     name: '仕事',
     color: '#3b82f6',
-    icon: '💼',
     user_id: null,
     description: null,
     is_active: true,
@@ -26,7 +25,6 @@ const mockTags: Tag[] = [
         id: 'tag-1-1',
         name: 'ミーティング',
         color: '#3b82f6',
-        icon: '🤝',
         user_id: null,
         description: null,
         is_active: true,
@@ -38,7 +36,6 @@ const mockTags: Tag[] = [
         id: 'tag-1-2',
         name: 'コーディング',
         color: '#3b82f6',
-        icon: '💻',
         user_id: null,
         description: null,
         is_active: true,
@@ -52,7 +49,6 @@ const mockTags: Tag[] = [
     id: 'tag-2',
     name: '勉強',
     color: '#10b981',
-    icon: '📚',
     user_id: null,
     description: null,
     is_active: true,
@@ -64,7 +60,6 @@ const mockTags: Tag[] = [
     id: 'tag-3',
     name: '運動',
     color: '#f59e0b',
-    icon: '🏃',
     user_id: null,
     description: null,
     is_active: true,
@@ -76,7 +71,6 @@ const mockTags: Tag[] = [
     id: 'tag-4',
     name: 'プライベート',
     color: '#ec4899',
-    icon: '🏠',
     user_id: null,
     description: null,
     is_active: true,

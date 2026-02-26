@@ -7,6 +7,8 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+import { logger } from '@/lib/logger';
+
 import { RECAPTCHA_CONFIG } from './config';
 
 // 設定値は静的なので、コンポーネント外で一度だけ計算
@@ -31,7 +33,7 @@ export function useRecaptchaV3(action: string) {
 
     // reCAPTCHAが設定されていない場合は何もしない
     if (!IS_V3_CONFIGURED) {
-      console.warn('[reCAPTCHA] v3 not configured, skipping initialization');
+      logger.warn('[reCAPTCHA] v3 not configured, skipping initialization');
       return;
     }
 
@@ -66,7 +68,7 @@ export function useRecaptchaV3(action: string) {
     const interval = setInterval(checkRecaptcha, 100);
     const timeout = setTimeout(() => {
       clearInterval(interval);
-      console.warn('[reCAPTCHA] v3 initialization timeout');
+      logger.warn('[reCAPTCHA] v3 initialization timeout');
     }, 5000);
 
     return () => {
@@ -78,12 +80,12 @@ export function useRecaptchaV3(action: string) {
 
   const generateToken = useCallback(async (): Promise<string | null> => {
     if (!IS_V3_CONFIGURED) {
-      console.warn('[reCAPTCHA] v3 not configured, skipping token generation');
+      logger.warn('[reCAPTCHA] v3 not configured, skipping token generation');
       return null;
     }
 
     if (!executeRecaptcha) {
-      console.warn('[reCAPTCHA] executeRecaptcha not ready');
+      logger.warn('[reCAPTCHA] executeRecaptcha not ready');
       return null;
     }
 
@@ -91,7 +93,7 @@ export function useRecaptchaV3(action: string) {
       const token = await executeRecaptcha(action);
       return token;
     } catch (error) {
-      console.error('[reCAPTCHA] Token generation error:', error);
+      logger.error('[reCAPTCHA] Token generation error:', error);
       return null;
     }
   }, [executeRecaptcha, action]);
@@ -117,7 +119,7 @@ export function useRecaptchaV2() {
 
     // reCAPTCHA v2が設定されていない場合は何もしない
     if (!IS_V2_CONFIGURED) {
-      console.warn('[reCAPTCHA] v2 not configured, skipping script load');
+      logger.warn('[reCAPTCHA] v2 not configured, skipping script load');
       return;
     }
 
@@ -142,12 +144,12 @@ export function useRecaptchaV2() {
   const renderWidget = useCallback(
     (containerId: string, callback: (token: string) => void) => {
       if (!IS_V2_CONFIGURED) {
-        console.warn('[reCAPTCHA] v2 not configured');
+        logger.warn('[reCAPTCHA] v2 not configured');
         return;
       }
 
       if (!isReady || !window.grecaptcha) {
-        console.warn('[reCAPTCHA] v2 not ready');
+        logger.warn('[reCAPTCHA] v2 not ready');
         return;
       }
 
@@ -164,7 +166,7 @@ export function useRecaptchaV2() {
 
   const execute = useCallback(() => {
     if (!isReady || !window.grecaptcha || widgetId === null) {
-      console.warn('[reCAPTCHA] v2 not ready or widget not rendered');
+      logger.warn('[reCAPTCHA] v2 not ready or widget not rendered');
       return;
     }
 

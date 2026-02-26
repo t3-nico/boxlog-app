@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react';
 
-import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
+import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 
 export interface SleepHoursRange {
   /** 上部の睡眠時間帯（0:00〜起床時間）- 日跨ぎの場合に存在 */

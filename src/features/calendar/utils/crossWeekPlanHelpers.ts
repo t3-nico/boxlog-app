@@ -10,7 +10,7 @@ import {
 } from 'date-fns';
 
 import { MS_PER_DAY, MS_PER_MINUTE } from '@/constants/time';
-import { CalendarPlan } from '@/features/calendar/types/calendar.types';
+import { CalendarPlan } from '../types/calendar.types';
 
 export interface PlanSegment extends CalendarPlan {
   originalPlan: CalendarPlan;

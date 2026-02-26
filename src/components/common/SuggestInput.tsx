@@ -27,8 +27,7 @@ import {
   CommandList,
 } from '@/components/ui/command';
 import { Popover, PopoverAnchor, PopoverContent } from '@/components/ui/popover';
-import { zIndex } from '@/config/ui/z-index';
-import { useTags } from '@/features/tags/hooks/useTagsQuery';
+import { useTags } from '@/hooks/useTagsQuery';
 import { trpc } from '@/lib/trpc/client';
 import { cn } from '@/lib/utils';
 
@@ -198,6 +197,7 @@ export const SuggestInput = forwardRef<HTMLInputElement, SuggestInputProps>(func
           )}
           role="combobox"
           aria-expanded={showDropdown}
+          aria-controls={showDropdown ? 'suggest-input-listbox' : undefined}
           aria-haspopup="listbox"
           aria-autocomplete="list"
           aria-label={ariaLabel}
@@ -207,15 +207,14 @@ export const SuggestInput = forwardRef<HTMLInputElement, SuggestInputProps>(func
 
       <PopoverContent
         ref={listRef}
-        className="w-[var(--radix-popover-trigger-width)] p-0"
+        className="z-overlay-popover w-[var(--radix-popover-trigger-width)] p-0"
         align="start"
         sideOffset={4}
-        style={{ zIndex: zIndex.overlayDropdown }}
         onOpenAutoFocus={(e) => e.preventDefault()}
         onCloseAutoFocus={(e) => e.preventDefault()}
       >
         <Command shouldFilter={false}>
-          <CommandList className="max-h-[240px]">
+          <CommandList id="suggest-input-listbox" className="max-h-[240px]">
             {isLoading ? (
               <div className="text-muted-foreground py-6 text-center text-sm">{t('loading')}</div>
             ) : isError ? (

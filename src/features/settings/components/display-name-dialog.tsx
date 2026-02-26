@@ -15,8 +15,8 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useAuthStore } from '@/features/auth/stores/useAuthStore';
 import { createClient } from '@/lib/supabase/client';
+import { useAuthStore } from '@/stores/useAuthStore';
 import { toast } from 'sonner';
 
 interface DisplayNameDialogProps {

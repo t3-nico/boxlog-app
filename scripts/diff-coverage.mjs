@@ -9,7 +9,7 @@
 
 import { execSync } from 'child_process';
 import { readFileSync, existsSync } from 'fs';
-import { resolve, relative } from 'path';
+import { resolve } from 'path';
 
 // 重要領域の定義（これらは厳格にチェック）
 const CRITICAL_PATHS = [

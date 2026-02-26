@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 
-import type { MultiDayViewType } from '@/features/calendar/types/calendar.types';
+import type { MultiDayViewType } from '@/features/calendar';
 import type { Locale } from '@/i18n/routing';
 import { HydrationBoundary } from '@/lib/trpc/server';
 

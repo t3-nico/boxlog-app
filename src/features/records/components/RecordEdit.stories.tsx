@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Trash2 } from 'lucide-react';
 import { useRef, useState } from 'react';
 
+import { TagsIconButton } from '@/components/inspector';
 import { DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { Spinner } from '@/components/ui/spinner';
 import {
@@ -9,16 +10,15 @@ import {
   InspectorHeader,
   NoteIconButton,
   ScheduleRow,
-  TagsIconButton,
   TitleInput,
-} from '@/features/plans/components/inspector/shared';
+} from '@/core/components/inspector';
 import {
   InspectorFrame,
   MockPlanLinkButton,
   mockTags,
-} from '@/features/plans/components/inspector/shared/story-helpers';
+} from '@/core/components/inspector/story-helpers';
 
-import type { FulfillmentScore } from '@/features/records/types/record';
+import type { FulfillmentScore } from '../types/record';
 
 // ---------------------------------------------------------------------------
 // Meta

@@ -4,8 +4,8 @@ import { format, isToday } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import { useLocale, useTranslations } from 'next-intl';
 
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
 import { cn } from '@/lib/utils';
+import type { CalendarPlan } from '../../../../types/calendar.types';
 
 import { AgendaListItem } from './AgendaListItem';
 

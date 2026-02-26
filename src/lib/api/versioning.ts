@@ -9,6 +9,8 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 
+import { logger } from '@/lib/logger';
+
 /**
  * 📋 APIバージョン定義
  */
@@ -381,7 +383,7 @@ export function withApiVersioning(
       // レスポンスを処理
       return globalVersionManager.processResponse(apiRequest, response);
     } catch (error) {
-      console.error('API versioning error:', error);
+      logger.error('API versioning error:', error);
       return NextResponse.json(
         {
           error: 'INTERNAL_VERSION_ERROR',

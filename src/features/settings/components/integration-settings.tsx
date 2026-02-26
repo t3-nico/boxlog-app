@@ -19,8 +19,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
-import { useAuthStore } from '@/features/auth/stores/useAuthStore';
 import { ApiKeyStorage } from '@/lib/security/encryption';
+import { useAuthStore } from '@/stores/useAuthStore';
 
 import { SettingRow } from './fields/SettingRow';
 import { SettingsCard } from './SettingsCard';

@@ -13,7 +13,7 @@ import { getUserParentTagsCacheTag, getUserTagsCacheTag } from './tag-cache';
  */
 function safeRevalidateTag(tag: string): void {
   try {
-    revalidateTag(tag);
+    revalidateTag(tag, 'max');
   } catch {
     // Next.js 15ではtRPCルーター内からの呼び出しで
     // "static generation store missing" エラーが発生する場合がある

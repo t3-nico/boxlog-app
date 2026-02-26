@@ -4,15 +4,15 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { useTranslations } from 'next-intl';
 
-import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
-import { useRecordData, type RecordFilters } from '@/features/records/hooks/useRecordData';
-import type { WorkedAtFilter } from '@/features/records/stores/useRecordFilterStore';
-import { useRecordInspectorStore } from '@/features/records/stores/useRecordInspectorStore';
-import type { RecordGroupByField } from '@/features/records/utils/grouping';
-import { groupRecordItems } from '@/features/records/utils/grouping';
-import { useTagsMap } from '@/features/tags/hooks/useTagsMap';
+import { useRecordData, type RecordFilters } from '@/hooks/useRecordData';
+import { useTagsMap } from '@/hooks/useTagsMap';
+import type { RecordGroupByField } from '@/lib/record-grouping';
+import { groupRecordItems } from '@/lib/record-grouping';
+import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
+import type { WorkedAtFilter } from '@/stores/useRecordFilterStore';
+import { useRecordInspectorStore } from '@/stores/useRecordInspectorStore';
 
-import { useCalendarFilterStore } from '../../stores/useCalendarFilterStore';
+import { useCalendarFilterStore } from '@/stores/useCalendarFilterStore';
 
 import { PlanListGroup } from './PlanListGroup';
 import { RecordListCard } from './RecordListCard';

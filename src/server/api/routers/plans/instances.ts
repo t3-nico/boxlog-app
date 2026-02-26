@@ -16,7 +16,7 @@ export const instancesRouter = createTRPCRouter({
   list: protectedProcedure
     .input(
       z.object({
-        planIds: z.array(z.string().uuid()),
+        planIds: z.array(z.string().uuid()).max(100),
         startDate: z.string().optional(), // YYYY-MM-DD
         endDate: z.string().optional(), // YYYY-MM-DD
       }),
@@ -49,11 +49,7 @@ export const instancesRouter = createTRPCRouter({
       }
 
       // Get exception info from plan_instances
-      let query = supabase
-        .from('plan_instances')
-        .select('*')
-        .in('plan_id', validPlanIds)
-        .eq('is_exception', true);
+      let query = supabase.from('plan_instances').select('*').in('plan_id', validPlanIds);
 
       // Date range filter
       if (startDate) {
@@ -92,7 +88,10 @@ export const instancesRouter = createTRPCRouter({
         planId: z.string().uuid(),
         instanceDate: z.string(), // YYYY-MM-DD
         exceptionType: z.enum(['modified', 'cancelled', 'moved']),
-        overrides: z.record(z.unknown()).optional(),
+        title: z.string().optional(),
+        description: z.string().optional(),
+        instanceStart: z.string().optional(), // ISO 8601
+        instanceEnd: z.string().optional(), // ISO 8601
         originalDate: z.string().optional(), // Original date when moved
       }),
     )
@@ -121,9 +120,11 @@ export const instancesRouter = createTRPCRouter({
           {
             plan_id: input.planId,
             instance_date: input.instanceDate,
-            is_exception: true,
             exception_type: input.exceptionType,
-            overrides: input.overrides ? JSON.parse(JSON.stringify(input.overrides)) : null,
+            title: input.title ?? null,
+            description: input.description ?? null,
+            instance_start: input.instanceStart ?? null,
+            instance_end: input.instanceEnd ?? null,
             original_date: input.originalDate ?? null,
           },
           {

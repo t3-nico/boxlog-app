@@ -8,7 +8,7 @@ import { Camera } from 'lucide-react';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { useAuthStore } from '@/features/auth/stores/useAuthStore';
+import { useAuthStore } from '@/stores/useAuthStore';
 
 import { AccountDeletionDialog } from './account-deletion-dialog';
 import { AvatarChangeDialog } from './avatar-change-dialog';

@@ -27,16 +27,16 @@ import { useTranslations } from 'next-intl';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { CACHE_5_MINUTES } from '@/constants/time';
-import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings';
 import { api } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
+import { useAutoSaveSettings } from '../hooks/useAutoSaveSettings';
 
 import { SettingsCard } from './SettingsCard';
 
-import type { ValueKeyword } from '@/features/settings/types/personalization';
-import { MAX_RANKED_VALUES, VALUE_KEYWORDS } from '@/features/settings/types/personalization';
 import type { DragEndEvent, DropAnimation, Modifier } from '@dnd-kit/core';
 import type { AnimateLayoutChanges } from '@dnd-kit/sortable';
+import type { ValueKeyword } from '../types/personalization';
+import { MAX_RANKED_VALUES, VALUE_KEYWORDS } from '../types/personalization';
 
 /** ドラッグ中はレイアウトアニメーションを無効化（タグツリーと同じパターン） */
 const animateLayoutChanges: AnimateLayoutChanges = ({ isSorting, wasDragging }) =>

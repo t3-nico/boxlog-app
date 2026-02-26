@@ -11,6 +11,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 
+import { logger } from '@/lib/logger';
 import {
   loginRateLimit,
   passwordResetRateLimit,
@@ -50,6 +51,11 @@ export async function GET(request: NextRequest) {
 
     switch (action) {
       case 'session':
+        // getUser()でJWT署名を検証してからセッション取得
+        const { data: sessionUserData, error: sessionUserError } = await supabase.auth.getUser();
+        if (sessionUserError || !sessionUserData.user) {
+          return NextResponse.json({ session: null });
+        }
         const { data, error } = await supabase.auth.getSession();
         if (error) throw error;
         return NextResponse.json({ session: data.session });
@@ -63,10 +69,8 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
     }
   } catch (error) {
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Internal server error' },
-      { status: 500 },
-    );
+    logger.error('Auth GET error', { error });
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
@@ -135,9 +139,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
     }
   } catch (error) {
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Internal server error' },
-      { status: 500 },
-    );
+    logger.error('Auth POST error', { error });
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

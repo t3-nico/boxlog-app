@@ -16,7 +16,7 @@
       "updated": "Updated record",
       "timeChanged": "Changed time",
       "titleChanged": "Changed title",
-      "memoChanged": "Updated memo",
+      "descriptionChanged": "Updated description",
       "fulfillmentChanged": "Changed fulfillment",
       "tagAdded": "Added tag",
       "tagRemoved": "Removed tag",

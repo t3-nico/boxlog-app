@@ -3,6 +3,7 @@
  * @description 成功ログイン、ログアウト、MFA変更等のセキュリティイベントを記録
  */
 
+import { logger } from '@/lib/logger';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
 /**
@@ -72,13 +73,13 @@ export async function recordAuthAuditLog(
     });
 
     if (error) {
-      console.error('[AuditLog] Failed to record audit log:', error);
+      logger.error('[AuditLog] Failed to record audit log:', error);
       return { success: false, error: error.message };
     }
 
     return { success: true };
   } catch (err) {
-    console.error('[AuditLog] Exception recording audit log:', err);
+    logger.error('[AuditLog] Exception recording audit log:', err);
     return { success: false, error: 'Failed to record audit log' };
   }
 }
@@ -102,13 +103,13 @@ export async function getRecentLogins(
       .limit(limit);
 
     if (error) {
-      console.error('[AuditLog] Failed to get recent logins:', error);
+      logger.error('[AuditLog] Failed to get recent logins:', error);
       return { logins: [], error: error.message };
     }
 
     return { logins: data as AuthAuditLogEntry[] };
   } catch (err) {
-    console.error('[AuditLog] Exception getting recent logins:', err);
+    logger.error('[AuditLog] Exception getting recent logins:', err);
     return { logins: [], error: 'Failed to get recent logins' };
   }
 }
@@ -152,13 +153,13 @@ export async function getAuditLogs(
     const { data, error } = await query;
 
     if (error) {
-      console.error('[AuditLog] Failed to get audit logs:', error);
+      logger.error('[AuditLog] Failed to get audit logs:', error);
       return { logs: [], error: error.message };
     }
 
     return { logs: data as AuthAuditLogEntry[] };
   } catch (err) {
-    console.error('[AuditLog] Exception getting audit logs:', err);
+    logger.error('[AuditLog] Exception getting audit logs:', err);
     return { logs: [], error: 'Failed to get audit logs' };
   }
 }

@@ -2,10 +2,11 @@
 
 import React, { useCallback } from 'react';
 
-import { useCalendarDragStore } from '@/features/calendar/stores/useCalendarDragStore';
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
-import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
+import { usePlanMutations } from '@/hooks/usePlanMutations';
 import { cn } from '@/lib/utils';
+import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
+import { useCalendarDragStore } from '../../../../stores/useCalendarDragStore';
+import type { CalendarPlan } from '../../../../types/calendar.types';
 
 import {
   calculatePlanGhostStyle,
@@ -42,7 +43,7 @@ interface WeekContentProps {
   disabledPlanId?: string | null | undefined;
 }
 
-export const WeekContent = ({
+export const WeekContent = React.memo(function WeekContent({
   date,
   plans,
   allEventsForOverlapCheck,
@@ -56,10 +57,19 @@ export const WeekContent = ({
   dayIndex,
   displayDates,
   disabledPlanId,
-}: WeekContentProps) => {
+}: WeekContentProps) {
   // Inspectorで開いているプランのIDを取得
   const inspectorPlanId = usePlanInspectorStore((state) => state.planId);
   const isInspectorOpen = usePlanInspectorStore((state) => state.isOpen);
+
+  // ステータス変更を1度だけ初期化し、全PlanCardに配布
+  const { updatePlan } = usePlanMutations();
+  const handleStatusChange = useCallback(
+    (planId: string, newStatus: 'open' | 'closed') => {
+      updatePlan.mutate({ id: planId, data: { status: newStatus } });
+    },
+    [updatePlan],
+  );
 
   // レスポンシブな高さ
   const HOUR_HEIGHT = useResponsiveHourHeight();
@@ -217,10 +227,7 @@ export const WeekContent = ({
             >
               {/* PlanCardの内容部分のみクリック可能 */}
               <div
-                className="focus:ring-ring pointer-events-auto absolute inset-0 rounded focus:ring-2 focus:ring-offset-1 focus:outline-none"
-                role="button"
-                tabIndex={0}
-                aria-label={`Drag plan: ${plan.title}`}
+                className="pointer-events-auto absolute inset-0 rounded"
                 data-plan-block="true"
                 onMouseDown={(e) => {
                   // 左クリックのみドラッグ開始
@@ -235,7 +242,7 @@ export const WeekContent = ({
                         height: currentHeight,
                       },
                       dayIndex,
-                    ); // 日付インデックスを渡す
+                    );
                   }
                 }}
                 onTouchStart={(e) => {
@@ -252,12 +259,6 @@ export const WeekContent = ({
                     dayIndex,
                   );
                 }}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    // キーボードでドラッグ操作を開始する代替手段
-                  }
-                }}
               >
                 <PlanCard
                   plan={plan}
@@ -270,6 +271,7 @@ export const WeekContent = ({
                         ? (dragState.snappedPosition.height ?? currentHeight)
                         : currentHeight,
                   }}
+                  onStatusChange={handleStatusChange}
                   // クリックは useDragAndDrop で処理されるため削除
                   onContextMenu={(plan: CalendarPlan, e: React.MouseEvent) =>
                     handlePlanContextMenu(plan, e)
@@ -300,4 +302,4 @@ export const WeekContent = ({
       </div>
     </div>
   );
-};
+});

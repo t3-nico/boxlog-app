@@ -2,9 +2,9 @@ import { useMemo } from 'react';
 
 import { eachDayOfInterval, endOfWeek, format, startOfDay, startOfWeek } from 'date-fns';
 
-import { useCalendarFilterStore } from '@/features/calendar/stores/useCalendarFilterStore';
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
-import { useTagsMap } from '@/features/tags/hooks/useTagsMap';
+import { useTagsMap } from '@/hooks/useTagsMap';
+import { useCalendarFilterStore } from '@/stores/useCalendarFilterStore';
+import type { CalendarPlan } from '../../../../types/calendar.types';
 
 import type { TimesheetData, TimesheetTagGroup } from '../TimesheetView.types';
 

@@ -72,10 +72,7 @@ Deno.serve(async (req) => {
         .insert({
           user_id: plan.user_id,
           type: 'reminder',
-          priority: 'high',
-          title: plan.title,
-          message: `Starting ${timeLabel}`,
-          related_plan_id: plan.id,
+          plan_id: plan.id,
           is_read: false,
         })
         .select()

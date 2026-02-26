@@ -289,6 +289,8 @@
       "record": "記録",
       "stats": "統計",
       "unscheduled": "未予定",
+      "search": "検索",
+      "closeSearch": "検索を閉じる",
       "searchPlaceholder": "プランを検索...",
       "error": "読み込みに失敗しました",
       "noPlans": "未予定のプランはありません",

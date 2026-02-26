@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { useDeleteConfirmStore } from './useDeleteConfirmStore';
+import { useDeleteConfirmStore } from '@/stores/useDeleteConfirmStore';
 
 describe('useDeleteConfirmStore', () => {
   beforeEach(() => {

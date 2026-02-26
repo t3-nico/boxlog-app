@@ -9,6 +9,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { getApiStats } from '@/lib/api/middleware';
 import { API_VERSIONS } from '@/lib/api/versioning';
+import { logger } from '@/lib/logger';
 
 /**
  * 💻 System Information レスポンス型定義
@@ -52,6 +53,11 @@ interface SystemInfoResponse {
  * 📊 GET /api/v1/system - System Information API
  */
 export async function GET(_request: NextRequest): Promise<NextResponse> {
+  // 本番環境ではシステム情報を公開しない（情報漏洩防止）
+  if (process.env.NODE_ENV === 'production') {
+    return NextResponse.json({ error: 'Not available' }, { status: 403 });
+  }
+
   try {
     // API統計情報の取得
     const apiStats = getApiStats();
@@ -81,7 +87,7 @@ export async function GET(_request: NextRequest): Promise<NextResponse> {
       },
       middleware: {
         versioning: true,
-        rateLimit: process.env.NODE_ENV === 'production',
+        rateLimit: false, // 開発環境のみ到達するため常にfalse
         cors: true,
         logging: true,
         metrics: true,
@@ -94,7 +100,7 @@ export async function GET(_request: NextRequest): Promise<NextResponse> {
 
     return NextResponse.json(systemInfo, { status: 200 });
   } catch (error) {
-    console.error('System info API error:', error);
+    logger.error('System info API error', { error });
     return NextResponse.json(
       {
         error: 'SYSTEM_INFO_ERROR',

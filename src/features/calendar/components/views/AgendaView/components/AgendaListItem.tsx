@@ -5,12 +5,12 @@ import { useCallback, useMemo } from 'react';
 import { Tag } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
-import { usePlanTags } from '@/features/plans/hooks/usePlanTags';
-import { useDateFormat } from '@/features/settings/hooks/useDateFormat';
-import { TagSelectCombobox } from '@/features/tags/components/TagSelectCombobox';
-import { useTagsMap } from '@/features/tags/hooks/useTagsMap';
+import { TagSelectCombobox } from '@/components/tags/TagSelectCombobox';
+import { useDateFormat } from '@/hooks/useDateFormat';
+import { usePlanTags } from '@/hooks/usePlanTags';
+import { useTagsMap } from '@/hooks/useTagsMap';
 import { cn } from '@/lib/utils';
+import type { CalendarPlan } from '../../../../types/calendar.types';
 
 interface AgendaListItemProps {
   plan: CalendarPlan;

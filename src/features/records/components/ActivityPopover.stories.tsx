@@ -55,6 +55,7 @@ const baseMock = {
   old_value: null,
   new_value: null,
   metadata: null,
+  schema_version: 1,
 } as const;
 
 const mockActivities: RecordActivity[] = [
@@ -92,7 +93,7 @@ const mockActivities: RecordActivity[] = [
   {
     ...baseMock,
     id: '5',
-    action_type: 'memo_changed',
+    action_type: 'description_changed',
     created_at: daysAgo(1),
   },
   {

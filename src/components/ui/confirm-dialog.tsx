@@ -1,10 +1,11 @@
 'use client';
 
-import { type ReactNode, useCallback, useEffect, useState } from 'react';
+import { type ReactNode, useCallback, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import { Button } from '@/components/ui/button';
 import { useDialogKeyboard } from '@/hooks/useDialogKeyboard';
+import { useHasMounted } from '@/hooks/useHasMounted';
 import { AlertTriangle, type LucideIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
@@ -89,12 +90,7 @@ export function ConfirmDialog({
 }: ConfirmDialogProps) {
   const t = useTranslations();
   const [isLoading, setIsLoading] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  // クライアントサイドでのみマウント
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = useHasMounted();
 
   // ESCキーでダイアログを閉じる
   useDialogKeyboard(open, isLoading, onClose);

@@ -13,6 +13,9 @@ interface PlanChanges {
   action_type: ActivityActionType;
 }
 
+/** プランデータの動的フィールド型 */
+type PlanDataRecord = Record<string, string | number | boolean | null | undefined>;
+
 /**
  * プランの変更を検出してアクティビティを作成
  */
@@ -20,39 +23,38 @@ export async function trackPlanChanges(
   supabase: SupabaseClient,
   planId: string,
   userId: string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- 動的なプランデータ
-  oldData: Record<string, any>,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- 動的なプランデータ
-  newData: Record<string, any>,
+  oldData: PlanDataRecord,
+  newData: PlanDataRecord,
 ) {
   const changes = detectChanges(oldData, newData);
 
-  // 各変更に対してアクティビティを記録
-  for (const change of changes) {
-    await supabase.from('plan_activities').insert({
-      plan_id: planId,
-      user_id: userId,
-      action_type: change.action_type,
-      field_name: change.field_name,
-      old_value: change.old_value,
-      new_value: change.new_value,
-    });
+  // バッチINSERTで1回のDBリクエストに統合（N+1回避）
+  if (changes.length > 0) {
+    await supabase.from('plan_activities').insert(
+      changes.map((change) => ({
+        plan_id: planId,
+        user_id: userId,
+        action_type: change.action_type,
+        field_name: change.field_name,
+        old_value: change.old_value,
+        new_value: change.new_value,
+      })),
+    );
   }
 }
 
 /**
  * 変更を検出してアクティビティ種別を決定
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any -- 動的なプランデータ
-function detectChanges(oldData: Record<string, any>, newData: Record<string, any>): PlanChanges[] {
+function detectChanges(oldData: PlanDataRecord, newData: PlanDataRecord): PlanChanges[] {
   const changes: PlanChanges[] = [];
 
   // ステータス変更
   if (oldData.status !== newData.status) {
     changes.push({
       field_name: 'status',
-      old_value: oldData.status || '',
-      new_value: newData.status || '',
+      old_value: String(oldData.status ?? ''),
+      new_value: String(newData.status ?? ''),
       action_type: 'status_changed',
     });
   }
@@ -61,8 +63,8 @@ function detectChanges(oldData: Record<string, any>, newData: Record<string, any
   if (oldData.title !== newData.title) {
     changes.push({
       field_name: 'title',
-      old_value: oldData.title || '',
-      new_value: newData.title || '',
+      old_value: String(oldData.title ?? ''),
+      new_value: String(newData.title ?? ''),
       action_type: 'title_changed',
     });
   }
@@ -71,8 +73,8 @@ function detectChanges(oldData: Record<string, any>, newData: Record<string, any
   if (oldData.description !== newData.description) {
     changes.push({
       field_name: 'description',
-      old_value: oldData.description || '',
-      new_value: newData.description || '',
+      old_value: String(oldData.description ?? ''),
+      new_value: String(newData.description ?? ''),
       action_type: 'description_changed',
     });
   }
@@ -81,43 +83,28 @@ function detectChanges(oldData: Record<string, any>, newData: Record<string, any
   if (oldData.start_time !== newData.start_time || oldData.end_time !== newData.end_time) {
     changes.push({
       field_name: 'time',
-      old_value: `${oldData.start_time || ''} - ${oldData.end_time || ''}`,
-      new_value: `${newData.start_time || ''} - ${newData.end_time || ''}`,
+      old_value: `${String(oldData.start_time ?? '')} - ${String(oldData.end_time ?? '')}`,
+      new_value: `${String(newData.start_time ?? '')} - ${String(newData.end_time ?? '')}`,
       action_type: 'time_changed',
     });
   }
 
-  // 繰り返し設定変更
+  // 繰り返し設定変更 — 生値を保存（UIフォーマットはクライアント側のformatterが担当）
   if (oldData.recurrence_type !== newData.recurrence_type) {
-    const recurrenceLabels: Record<string, string> = {
-      none: 'なし',
-      daily: '毎日',
-      weekly: '毎週',
-      monthly: '毎月',
-      yearly: '毎年',
-      weekdays: '平日',
-    };
     changes.push({
       field_name: 'recurrence',
-      old_value: recurrenceLabels[oldData.recurrence_type] || oldData.recurrence_type || '',
-      new_value: recurrenceLabels[newData.recurrence_type] || newData.recurrence_type || '',
+      old_value: String(oldData.recurrence_type ?? ''),
+      new_value: String(newData.recurrence_type ?? ''),
       action_type: 'recurrence_changed',
     });
   }
 
-  // 通知設定変更
+  // 通知設定変更 — 数値をそのまま文字列化（UIフォーマットはクライアント側のformatterが担当）
   if (oldData.reminder_minutes !== newData.reminder_minutes) {
-    const formatReminder = (minutes: number | null | undefined): string => {
-      if (minutes === null || minutes === undefined) return 'None';
-      if (minutes === 0) return 'At start';
-      if (minutes < 60) return `${minutes}min before`;
-      if (minutes < 1440) return `${minutes / 60}h before`;
-      return `${minutes / 1440}d before`;
-    };
     changes.push({
       field_name: 'reminder',
-      old_value: formatReminder(oldData.reminder_minutes),
-      new_value: formatReminder(newData.reminder_minutes),
+      old_value: oldData.reminder_minutes != null ? String(oldData.reminder_minutes) : '',
+      new_value: newData.reminder_minutes != null ? String(newData.reminder_minutes) : '',
       action_type: 'reminder_changed',
     });
   }

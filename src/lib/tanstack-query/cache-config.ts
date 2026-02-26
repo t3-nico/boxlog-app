@@ -65,6 +65,7 @@ export const cacheStrategies = {
   userSettings: staticCache,
   plans: realtimeCache, // プランはリアルタイム性が重要
   planActivities: shortTermCache, // アクティビティ履歴は少し遅れてもOK
+  recordActivities: shortTermCache, // レコードアクティビティ履歴
   records: realtimeCache, // レコードもリアルタイム性が重要（カレンダー表示）
   sessions: realtimeCache, // セッションもリアルタイム性が重要
   notifications: shortTermCache, // 通知はリアルタイム性が重要だが、短期キャッシュで十分

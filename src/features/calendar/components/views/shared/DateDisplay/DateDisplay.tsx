@@ -30,7 +30,7 @@ const useDateFormats = (
 const generateDateClassName = (
   today: boolean,
   isSelected: boolean,
-  onClick?: Function,
+  onClick?: (date: Date) => void,
   className?: string,
 ) => {
   const classes = ['text-center py-2 px-1 transition-colors'];
@@ -77,7 +77,11 @@ const createKeyDownHandler = (onClick?: (date: Date) => void, date?: Date) => {
 };
 
 // アクセシビリティ属性を生成
-const generateAccessibilityProps = (onClick?: Function, dateFormat?: string, date?: Date) => {
+const generateAccessibilityProps = (
+  onClick?: (date: Date) => void,
+  dateFormat?: string,
+  date?: Date,
+) => {
   if (!onClick) return {};
 
   return {

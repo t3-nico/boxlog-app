@@ -4,7 +4,6 @@ import * as React from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-import { zIndex } from '@/config/ui/z-index';
 import { cn } from '@/lib/utils';
 
 /**
@@ -153,14 +152,13 @@ function HoverTooltip({
             ref={tooltipRef}
             role="tooltip"
             className={cn(
-              'bg-foreground text-background animate-in fade-in-0 zoom-in-95 pointer-events-none fixed rounded-lg px-2 py-1 text-xs',
+              'bg-foreground text-background animate-in fade-in-0 zoom-in-95 z-tooltip pointer-events-none fixed rounded-lg px-2 py-1 text-xs',
               className,
             )}
             style={{
               top: position.top,
               left: position.left,
               maxWidth,
-              zIndex: zIndex.tooltip,
             }}
           >
             {content}

@@ -9,10 +9,10 @@ import { useFormatter, useTranslations } from 'next-intl';
 import React, { memo, useMemo } from 'react';
 
 import { EmptyState } from '@/components/ui/empty-state';
+import { isWeekend } from '@/lib/date';
 import { GRID_BACKGROUND, HOUR_HEIGHT } from '../../constants/grid.constants';
 import { usePlanPosition } from '../../hooks/usePlanPosition';
 import type { DayColumnProps } from '../../types/view.types';
-import { isWeekend } from '../../utils/dateHelpers';
 
 import { filterPlansByDate, sortTimedPlans } from '../../utils/planPositioning';
 import { PlanCard } from '../PlanCard/PlanCard';

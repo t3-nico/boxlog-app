@@ -4,12 +4,12 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { useTranslations } from 'next-intl';
 
-import { usePlans } from '@/features/plans/hooks/usePlans';
-import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
-import { groupItems } from '@/features/plans/utils/grouping';
-import { useTagsMap } from '@/features/tags/hooks/useTagsMap';
+import { usePlans } from '@/hooks/usePlans';
+import { useTagsMap } from '@/hooks/useTagsMap';
+import { groupItems } from '@/lib/plan-grouping';
+import { useCalendarFilterStore } from '@/stores/useCalendarFilterStore';
+import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
 import { usePanelDrag } from '../../hooks/usePanelDrag';
-import { useCalendarFilterStore } from '../../stores/useCalendarFilterStore';
 
 import { PlanListCard } from './PlanListCard';
 import { PlanListGroup } from './PlanListGroup';

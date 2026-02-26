@@ -1,7 +1,7 @@
 'use client';
 
-import { MobileMenuButton } from '@/features/navigation/components/mobile/MobileMenuButton';
-import { usePageTitleStore } from '@/features/navigation/stores/usePageTitleStore';
+import { MobileMenuButton } from '@/components/layout/MobileMenuButton';
+import { usePageTitleStore } from '@/features/navigation';
 import { cn } from '@/lib/utils';
 
 import { HeaderUtilities } from './HeaderUtilities';

@@ -45,7 +45,7 @@ export const AuthConfigSchema = z.object({
   /** リフレッシュトークン有効期限 */
   refreshTokenExpiresIn: z.string().default('30d'),
   /** パスワード最小長 */
-  passwordMinLength: z.number().int().min(6).max(50).default(8),
+  passwordMinLength: z.number().int().min(6).max(50).default(12),
   /** パスワードリセット有効期限（分） */
   passwordResetExpiry: z.number().int().min(5).max(1440).default(60),
   /** アカウントロック試行回数 */

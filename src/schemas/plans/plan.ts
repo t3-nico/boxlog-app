@@ -59,12 +59,12 @@ export const getPlanByIdSchema = z.object({
 
 // 一括操作用のスキーマ
 export const bulkUpdatePlanSchema = z.object({
-  ids: z.array(z.string().uuid()),
+  ids: z.array(z.string().uuid()).min(1).max(100),
   data: updatePlanSchema,
 });
 
 export const bulkDeletePlanSchema = z.object({
-  ids: z.array(z.string().uuid()),
+  ids: z.array(z.string().uuid()).min(1).max(100),
 });
 
 // 型エクスポート

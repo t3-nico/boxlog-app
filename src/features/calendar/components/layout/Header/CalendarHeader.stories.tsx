@@ -3,10 +3,8 @@ import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
 
-import {
-  AsideSwitcher,
-  type AsideType,
-} from '@/features/navigation/components/aside/AsideSwitcher';
+import { type AsideType } from '@/components/layout/AppAside';
+import { SegmentedControl } from '@/components/ui/segmented-control';
 
 import { CompactDateNavigator, DateNavigator } from './DateNavigator';
 import { HeaderActions } from './HeaderActions';
@@ -36,9 +34,21 @@ function ViewSwitcherExample({
   return <ViewSwitcher currentView={current} onChange={setCurrent} />;
 }
 
+const asideOptions = [
+  { value: 'plan' as const, label: 'Plan' },
+  { value: 'record' as const, label: 'Record' },
+  { value: 'chat' as const, label: 'Chat' },
+];
+
 function AsideSwitcherExample() {
   const [aside, setAside] = useState<AsideType>('none');
-  return <AsideSwitcher currentAside={aside} onChange={setAside} />;
+  return (
+    <SegmentedControl
+      options={asideOptions}
+      value={aside as 'plan' | 'record' | 'chat'}
+      onChange={setAside}
+    />
+  );
 }
 
 // ---------------------------------------------------------------------------

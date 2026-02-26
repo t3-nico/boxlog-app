@@ -5,7 +5,7 @@ import { useCallback } from 'react';
 import { format, startOfDay } from 'date-fns';
 import { Clock, PenLine } from 'lucide-react';
 
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
+import type { CalendarPlan } from '../../../../types/calendar.types';
 
 import { formatMinutes } from '../hooks/useTimesheetData';
 

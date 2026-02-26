@@ -17,6 +17,18 @@ description: デバッグスキル。エラー発生時、予期しない動作�
 
 ## デバッグワークフロー
 
+### Phase 0: 調査（investigate）
+
+バグ修正でなく「調べて」「仕様確認」の場合はここから:
+
+**情報源の優先順位**: 公式ドキュメント（WebFetch）→ 既存実装（Grep）→ 型定義（`node_modules/*.d.ts`）
+
+**調査テンプレート**:
+
+- **外部API**: 認証方式、エンドポイント一覧、レート制限、SDK推奨
+- **ライブラリ導入**: Stars 1000+/最終コミット6ヶ月以内を確認（CLAUDE.md依存関係ルール）
+- **コードベース構造**: 関連ファイル → データフロー → 型定義 → 注意点
+
 ### Phase 1: 問題の理解
 
 1. **エラーメッセージを確認**
@@ -112,7 +124,6 @@ const useMyStore = create<MyState>()(
 ### カレンダードラッグの問題
 
 ```typescript
-// 参照: .claude/sessions/learned/drag-*.md
 // よくある問題:
 // 1. イベント伝播（stopPropagation漏れ）
 // 2. 座標計算（getBoundingClientRect）
@@ -143,20 +154,6 @@ const useMyStore = create<MyState>()(
 // 1. useEffect内で副作用を実行
 // 2. dynamic importでSSRを無効化
 // 3. suppressHydrationWarning（最終手段）
-```
-
-## 学習パターンの活用
-
-```bash
-# 過去の解決パターンを確認
-ls .claude/sessions/learned/
-
-# 関連パターンを読み込み
-# - zustand-*.md: Zustand関連
-# - trpc-*.md: tRPC関連
-# - calendar-*.md: カレンダー関連
-# - drag-*.md: ドラッグ関連
-# - typescript-*.md: 型エラー
 ```
 
 ## よくあるエラーと対処法
@@ -194,10 +191,6 @@ ls .claude/sessions/learned/
 ### 確認方法
 
 [動作確認の手順]
-
-### 学習パターン
-
-[今回学んだパターン（/learn-patternで保存を検討）]
 ```
 
 ## チェックリスト
@@ -220,6 +213,5 @@ ls .claude/sessions/learned/
 
 ## 関連スキル
 
-- `/learn-pattern` - 解決パターンの保存
 - `/test` - 回帰テストの作成
 - `/fix-types` - 型エラー修正（コマンド）

@@ -1,10 +1,10 @@
 'use client';
 
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
-import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
-import { getTimeZones } from '@/features/settings/utils/timezone-utils';
+import { getTimeZones } from '@/lib/timezone-utils';
 import { api } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
+import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 
 interface TimezoneOffsetProps {
   className?: string;

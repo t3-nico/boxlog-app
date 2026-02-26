@@ -191,31 +191,7 @@ export const DragSelectionLayer = ({
     : null;
 
   return (
-    <div
-      ref={containerRef}
-      role="button"
-      tabIndex={0}
-      className={cn('relative', className)}
-      onMouseDown={handleMouseDown}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          // キーボードからの操作用のダミーイベントを作成
-          const rect = containerRef.current?.getBoundingClientRect();
-          if (rect) {
-            const mockEvent = {
-              currentTarget: containerRef.current,
-              clientY: rect.top + rect.height / 2,
-              target: containerRef.current,
-              preventDefault: () => {},
-              stopPropagation: () => {},
-            } as unknown as React.MouseEvent;
-            handleMouseDown(mockEvent);
-          }
-        }
-      }}
-      aria-label="Time range selection area"
-    >
+    <div ref={containerRef} className={cn('relative', className)} onMouseDown={handleMouseDown}>
       {children}
 
       {/* ドラッグ選択範囲の表示 */}

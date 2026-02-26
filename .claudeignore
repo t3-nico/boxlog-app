@@ -50,7 +50,6 @@ debug.log
 # ==========================================
 .env
 .env.*
-!.env.example
 .claude-session.json
 .claude/settings.local.json
 .op/

@@ -6,6 +6,7 @@
  */
 
 import { AppError } from '@/config/error-patterns';
+import { logger } from '@/lib/logger';
 
 /**
  * サニタイズされたエラーレスポンス
@@ -193,7 +194,7 @@ export function logSecureError(error: unknown, context?: Record<string, unknown>
 
   if (isProd) {
     // 本番環境: サニタイズされたエラーのみ
-    console.error('[Error]', {
+    logger.error('[Error]', {
       message: sanitized.message,
       code: sanitized.code,
       timestamp: sanitized.timestamp,
@@ -202,7 +203,7 @@ export function logSecureError(error: unknown, context?: Record<string, unknown>
     });
   } else {
     // 開発環境: 完全なエラー情報
-    console.error('[Error]', {
+    logger.error('[Error]', {
       error,
       context,
       stack: error instanceof Error ? error.stack : undefined,

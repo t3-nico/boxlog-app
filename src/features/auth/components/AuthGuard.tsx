@@ -4,14 +4,14 @@ import { useEffect } from 'react';
 
 import { useRouter } from 'next/navigation';
 
-import { useAuthStore } from '../stores/useAuthStore';
+import { useAuthStore } from '@/stores/useAuthStore';
 
 interface AuthGuardProps {
   children: React.ReactNode;
   fallback?: React.ReactNode;
 }
 
-export const AuthGuard = ({ children, fallback }: AuthGuardProps) => {
+export function AuthGuard({ children, fallback }: AuthGuardProps) {
   const user = useAuthStore((state) => state.user);
   const loading = useAuthStore((state) => state.loading);
   const router = useRouter();
@@ -59,4 +59,4 @@ export const AuthGuard = ({ children, fallback }: AuthGuardProps) => {
 
   // 認証済みの場合
   return <>{children}</>;
-};
+}

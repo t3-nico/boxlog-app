@@ -1,8 +1,27 @@
 'use client';
 
+/**
+ * CalendarViewClient - Composition Bridge
+ *
+ * ナビゲーション状態を管理し、useCalendarCompositionを呼び出して
+ * CalendarControllerにデータとコールバックを渡すブリッジコンポーネント。
+ *
+ * CalendarController自体はpure view（@/features/* importゼロ）。
+ * cross-feature依存の橋渡しはこのファイルが担当する。
+ */
+
+import { useCallback, useMemo } from 'react';
+
+import { usePathname } from 'next/navigation';
+
+import { format } from 'date-fns';
+
 import { FeatureErrorBoundary } from '@/components/error-boundary';
-import { CalendarController } from '@/features/calendar/components/CalendarController';
-import type { CalendarViewType } from '@/features/calendar/types/calendar.types';
+import type { CalendarViewType } from '@/features/calendar';
+import { CalendarController, useCalendarLayout, useCalendarNavigation } from '@/features/calendar';
+import { logger } from '@/lib/logger';
+
+import { useCalendarComposition } from '../_composition/useCalendarComposition';
 
 interface CalendarViewClientProps {
   view: CalendarViewType;
@@ -15,6 +34,57 @@ interface CalendarViewClientProps {
 }
 
 export function CalendarViewClient({ view, initialDate, translations }: CalendarViewClientProps) {
+  const pathname = usePathname();
+  const calendarNavigation = useCalendarNavigation();
+
+  // 現在のlocaleを取得（例: /ja/day -> ja）
+  const locale = pathname?.split('/')[1] || 'ja';
+
+  const contextAvailable = calendarNavigation !== null;
+
+  // URLを更新する関数
+  const updateURL = useCallback(
+    (newViewType: CalendarViewType, newDate?: Date) => {
+      const dateToUse = newDate || new Date();
+      const dateString = format(dateToUse, 'yyyy-MM-dd');
+      const newURL = `/${locale}/${newViewType}?date=${dateString}`;
+      logger.log('🔗 updateURL called:', { newViewType, dateToUse, newURL });
+      window.history.pushState(null, '', newURL);
+    },
+    [locale],
+  );
+
+  // 初期日付をメモ化
+  const stableInitialDate = useMemo(() => initialDate || new Date(), [initialDate]);
+
+  // フォールバック: CalendarNavigationContextが利用できない場合
+  const layoutHook = useCalendarLayout({
+    initialViewType: view,
+    initialDate: stableInitialDate,
+    onViewChange: contextAvailable ? undefined : (v: CalendarViewType) => updateURL(v),
+    onDateChange: contextAvailable ? undefined : (d: Date) => updateURL(view, d),
+  });
+
+  // ナビゲーション状態を解決（Context優先、フォールバックはlayoutHook）
+  const viewType = contextAvailable ? calendarNavigation.viewType : layoutHook.viewType;
+  const currentDate = contextAvailable ? calendarNavigation.currentDate : layoutHook.currentDate;
+  const navigateRelative = contextAvailable
+    ? calendarNavigation.navigateRelative
+    : layoutHook.navigateRelative;
+  const changeView = contextAvailable ? calendarNavigation.changeView : layoutHook.changeView;
+  const navigateToDate = contextAvailable
+    ? calendarNavigation.navigateToDate
+    : layoutHook.navigateToDate;
+
+  // Composition: 全cross-featureデータとコールバックを集約
+  const composition = useCalendarComposition({
+    viewType,
+    currentDate,
+    navigateRelative,
+    navigateToDate,
+    changeView,
+  });
+
   return (
     <div className="flex h-full flex-col overflow-hidden">
       <FeatureErrorBoundary
@@ -39,7 +109,7 @@ export function CalendarViewClient({ view, initialDate, translations }: Calendar
           </div>
         }
       >
-        <CalendarController initialViewType={view} initialDate={initialDate} />
+        <CalendarController viewType={viewType} currentDate={currentDate} {...composition} />
       </FeatureErrorBoundary>
     </div>
   );

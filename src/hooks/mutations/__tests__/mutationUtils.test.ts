@@ -1,11 +1,15 @@
 import { describe, expect, it, vi } from 'vitest';
 
+import type { api } from '@/lib/trpc';
+
 import {
   createListQueryPredicate,
   createTempId,
   invalidateEntityCaches,
   normalizeDateTime,
 } from '../mutationUtils';
+
+type TRPCUtils = ReturnType<typeof api.useUtils>;
 
 describe('mutationUtils', () => {
   describe('createTempId', () => {
@@ -102,7 +106,7 @@ describe('mutationUtils', () => {
         },
       };
 
-      await invalidateEntityCaches(mockUtils, 'plans');
+      await invalidateEntityCaches(mockUtils as unknown as TRPCUtils, 'plans');
 
       expect(mockUtils.plans.list.invalidate).toHaveBeenCalledWith(undefined, {
         refetchType: 'active',
@@ -119,7 +123,9 @@ describe('mutationUtils', () => {
         },
       };
 
-      await invalidateEntityCaches(mockUtils, 'plans', { entityId: 'plan-1' });
+      await invalidateEntityCaches(mockUtils as unknown as TRPCUtils, 'plans', {
+        entityId: 'plan-1',
+      });
 
       expect(mockUtils.plans.getById.invalidate).toHaveBeenCalledWith(
         { id: 'plan-1' },
@@ -140,7 +146,7 @@ describe('mutationUtils', () => {
         },
       };
 
-      await invalidateEntityCaches(mockUtils, 'records');
+      await invalidateEntityCaches(mockUtils as unknown as TRPCUtils, 'records');
 
       expect(mockUtils.records.list.invalidate).toHaveBeenCalled();
       expect(mockUtils.records.listByPlan.invalidate).toHaveBeenCalled();
@@ -155,7 +161,9 @@ describe('mutationUtils', () => {
         },
       };
 
-      await invalidateEntityCaches(mockUtils, 'plans', { refetchType: 'all' });
+      await invalidateEntityCaches(mockUtils as unknown as TRPCUtils, 'plans', {
+        refetchType: 'all',
+      });
 
       expect(mockUtils.plans.list.invalidate).toHaveBeenCalledWith(undefined, {
         refetchType: 'all',

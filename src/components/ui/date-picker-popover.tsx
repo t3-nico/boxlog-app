@@ -10,16 +10,15 @@ import { Calendar } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { MiniCalendar } from '@/components/ui/mini-calendar';
-import { zIndex } from '@/config/ui/z-index';
-import { useDateFormat } from '@/features/settings/hooks/useDateFormat';
+import { useDateFormat } from '@/hooks/useDateFormat';
 
 interface DatePickerPopoverProps {
   selectedDate: Date | undefined;
   onDateChange: (date: Date | undefined) => void;
   placeholder?: string;
   className?: string;
-  /** Popover の z-index（デフォルト: overlayDropdown） */
-  popoverZIndex?: number;
+  /** Popover の z-index クラス名（デフォルト: 'z-overlay-popover'） */
+  popoverZIndex?: string;
   /** アイコンを表示するか（デフォルト: false） */
   showIcon?: boolean;
 }
@@ -36,7 +35,7 @@ export function DatePickerPopover({
   selectedDate,
   onDateChange,
   placeholder,
-  popoverZIndex = zIndex.overlayDropdown,
+  popoverZIndex = 'z-overlay-popover',
   showIcon = false,
 }: DatePickerPopoverProps) {
   const t = useTranslations();

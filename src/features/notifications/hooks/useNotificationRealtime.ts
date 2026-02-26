@@ -21,10 +21,8 @@ import { useNotificationPreferences } from './useNotificationPreferences';
 
 interface NotificationPayload {
   id: string;
-  title: string;
-  message: string | null;
   type: NotificationType;
-  priority: string;
+  plan_id: string | null;
   created_at: string;
   user_id: string;
 }
@@ -34,7 +32,7 @@ export function useNotificationRealtime(userId: string | undefined, enabled = tr
   const channelRef = useRef<ReturnType<ReturnType<typeof createClient>['channel']> | null>(null);
 
   // 通知設定を取得
-  const { shouldShowNotification, shouldShowBrowserNotification } = useNotificationPreferences();
+  const { enableBrowserNotifications } = useNotificationPreferences();
 
   useEffect(() => {
     if (!enabled || !userId) return;
@@ -55,33 +53,35 @@ export function useNotificationRealtime(userId: string | undefined, enabled = tr
         (payload) => {
           const notification = payload.new as NotificationPayload;
 
-          // 設定に基づいてこの通知タイプを表示すべきか判定
-          if (!shouldShowNotification(notification.type)) {
-            // 通知タイプが無効化されている場合はキャッシュのみ更新
+          if (!enableBrowserNotifications) {
+            // ブラウザ通知が無効の場合はキャッシュのみ更新
             utils.notifications.list.invalidate();
             utils.notifications.unreadCount.invalidate();
             return;
           }
 
-          // Toast表示（既存のToastシステムを使用）
-          toast.info(notification.title, {
-            description: notification.message || undefined,
+          // plan titleをtRPCキャッシュから取得
+          const cachedList = utils.notifications.list.getData();
+          const cachedNotification = cachedList?.find(
+            (n) => 'plan_id' in n && n.plan_id === notification.plan_id,
+          );
+          const planTitle =
+            cachedNotification && 'plans' in cachedNotification
+              ? (cachedNotification.plans as { title: string } | null)?.title
+              : undefined;
+
+          const toastTitle = planTitle ?? notification.type;
+
+          // Toast表示
+          toast.info(toastTitle, {
             duration: 5000,
           });
 
-          // ブラウザ通知を表示（設定で有効かつブラウザがサポートしている場合）
-          if (
-            shouldShowBrowserNotification(notification.type) &&
-            checkBrowserNotificationSupport() &&
-            Notification.permission === 'granted'
-          ) {
-            const notificationOptions: NotificationOptions = {
-              tag: notification.id, // 重複通知を防ぐ
-            };
-            if (notification.message) {
-              notificationOptions.body = notification.message;
-            }
-            showBrowserNotification(notification.title, notificationOptions);
+          // ブラウザ通知を表示
+          if (checkBrowserNotificationSupport() && Notification.permission === 'granted') {
+            showBrowserNotification(toastTitle, {
+              tag: notification.id,
+            });
           }
 
           // tRPCキャッシュを無効化して最新データを取得
@@ -98,5 +98,5 @@ export function useNotificationRealtime(userId: string | undefined, enabled = tr
         supabase.removeChannel(channelRef.current);
       }
     };
-  }, [userId, enabled, utils, shouldShowNotification, shouldShowBrowserNotification]);
+  }, [userId, enabled, utils, enableBrowserNotifications]);
 }

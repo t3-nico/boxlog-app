@@ -22,12 +22,10 @@ const meta = {
   args: {
     id: '1',
     locale: 'ja',
-    message: null,
     isRead: false,
     createdAt: fiveMinutesAgo,
     onMarkAsRead: fn(),
     onDelete: fn(),
-    onNavigate: fn(),
   },
   decorators: [
     (Story) => (
@@ -41,34 +39,33 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
+export const Reminder: Story = {
   args: {
     type: 'reminder',
-    title: 'ミーティングの準備',
+    planTitle: 'ミーティングの準備',
+  },
+};
+
+export const Overdue: Story = {
+  args: {
+    type: 'overdue',
+    planTitle: 'レポート提出',
   },
 };
 
 export const Read: Story = {
   args: {
     type: 'reminder',
-    title: 'ミーティングの準備',
+    planTitle: 'ミーティングの準備',
     isRead: true,
     createdAt: oneHourAgo,
   },
 };
 
-export const WithActionUrl: Story = {
-  args: {
-    type: 'plan_created',
-    title: '新しいプランが作成されました',
-    actionUrl: '/ja/calendar',
-  },
-};
-
 export const Deleting: Story = {
   args: {
-    type: 'system',
-    title: 'システムメンテナンス',
+    type: 'reminder',
+    planTitle: 'タスク完了',
     isRead: true,
     isDeleting: true,
   },
@@ -77,27 +74,23 @@ export const Deleting: Story = {
 export const AllTypes: Story = {
   args: {
     type: 'reminder',
-    title: '',
+    planTitle: '',
   },
   render: (args) => (
     <div className="space-y-1">
-      <NotificationItem {...args} id="1" type="reminder" title="リマインダー" />
-      <NotificationItem {...args} id="2" type="plan_created" title="プラン作成" />
-      <NotificationItem {...args} id="3" type="plan_updated" title="プラン更新" isRead={true} />
-      <NotificationItem {...args} id="4" type="plan_deleted" title="プラン削除" />
-      <NotificationItem {...args} id="5" type="plan_completed" title="プラン完了" isRead={true} />
+      <NotificationItem {...args} id="1" type="reminder" planTitle="リマインダー" />
       <NotificationItem
         {...args}
-        id="6"
-        type="trash_warning"
-        title="ゴミ箱警告"
+        id="2"
+        type="overdue"
+        planTitle="期限超過タスク"
         createdAt={yesterday}
       />
       <NotificationItem
         {...args}
-        id="7"
-        type="system"
-        title="システム通知"
+        id="3"
+        type="reminder"
+        planTitle="既読のリマインダー"
         isRead={true}
         createdAt={yesterday}
       />

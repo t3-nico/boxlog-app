@@ -6,22 +6,22 @@ import { BarChart3, CircleSlash, Moon, Sun } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import Link from 'next/link';
 
-import { useCalendarFilterStore, type ItemType } from '../../../stores/useCalendarFilterStore';
+import { useCalendarFilterStore, type ItemType } from '@/stores/useCalendarFilterStore';
 
+import { SidebarSection } from '@/components/layout/SidebarSection';
 import { Button } from '@/components/ui/button';
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { useTheme } from '@/contexts/theme-context';
-import { SidebarSection } from '@/features/navigation/components/sidebar/SidebarSection';
-import { useDeleteTag, useReorderTags, useTags, useUpdateTag } from '@/features/tags/hooks';
-import { useTagGroups } from '@/features/tags/hooks/useTagGroups';
-import { useTagModalNavigation } from '@/features/tags/hooks/useTagModalNavigation';
-import { useTagCacheStore } from '@/features/tags/stores/useTagCacheStore';
+import { useDeleteTag, useReorderTags, useUpdateTag } from '@/hooks/mutations/useTagMutations';
+import { useTagModalNavigation } from '@/hooks/useTagModalNavigation';
+import { useTags } from '@/hooks/useTagsQuery';
+import { useTagCacheStore } from '@/stores/useTagCacheStore';
 
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { Skeleton } from '@/components/ui/skeleton';
 import { api } from '@/lib/trpc';
 
-import { TagSortableTree } from '@/features/tags/components/sortable-tree/TagSortableTree';
+import { TagSortableTree } from '@/components/tags/TagSortableTree';
 import { CreateTagButton } from './components/CreateTagButton';
 import { FilterItem } from './components/FilterItem';
 
@@ -40,7 +40,6 @@ const RECORD_COLOR = '#10b981'; // emerald-500
 export function CalendarFilterList() {
   const t = useTranslations();
   const { data: tags, isLoading: tagsLoading } = useTags();
-  const { isLoading: groupsLoading } = useTagGroups();
   const { data: tagStats } = api.plans.getTagStats.useQuery();
 
   const tagPlanCounts = useMemo(() => tagStats?.counts ?? {}, [tagStats?.counts]);
@@ -100,19 +99,19 @@ export function CalendarFilterList() {
     [reorderTagsMutation],
   );
 
-  const {
-    visibleTypes,
-    visibleTagIds,
-    showUntagged,
-    toggleType,
-    toggleTag,
-    toggleGroupTags,
-    toggleUntagged,
-    initializeWithTags,
-    showOnlyTag,
-    showOnlyUntagged,
-    showOnlyGroupTags,
-  } = useCalendarFilterStore();
+  // セレクタで必要な状態のみ購読（CLAUDE.md: 全状態購読禁止）
+  const visibleTypes = useCalendarFilterStore((s) => s.visibleTypes);
+  const visibleTagIds = useCalendarFilterStore((s) => s.visibleTagIds);
+  const showUntagged = useCalendarFilterStore((s) => s.showUntagged);
+  // アクション（参照安定）
+  const toggleType = useCalendarFilterStore((s) => s.toggleType);
+  const toggleTag = useCalendarFilterStore((s) => s.toggleTag);
+  const toggleGroupTags = useCalendarFilterStore((s) => s.toggleGroupTags);
+  const toggleUntagged = useCalendarFilterStore((s) => s.toggleUntagged);
+  const initializeWithTags = useCalendarFilterStore((s) => s.initializeWithTags);
+  const showOnlyTag = useCalendarFilterStore((s) => s.showOnlyTag);
+  const showOnlyUntagged = useCalendarFilterStore((s) => s.showOnlyUntagged);
+  const showOnlyGroupTags = useCalendarFilterStore((s) => s.showOnlyGroupTags);
 
   // タグミューテーション状態を監視（Race Condition防止）
   // mutationCountは参照カウント方式：複数mutation同時実行に対応
@@ -129,7 +128,7 @@ export function CalendarFilterList() {
     }
   }, [tags, initializeWithTags, mutationCount, isSettling]);
 
-  const isLoading = tagsLoading || groupsLoading;
+  const isLoading = tagsLoading;
 
   // タグモーダルナビゲーション
   const { openTagCreateModal, openTagMergeModal } = useTagModalNavigation();

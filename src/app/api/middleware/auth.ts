@@ -7,6 +7,7 @@
  */
 
 import { createAppError, ERROR_CODES } from '@/config/error-patterns';
+import { logger } from '@/lib/logger';
 import { createClient } from '@/lib/supabase/server';
 import { withErrorHandling } from './error-handler';
 import type { ApiHandler, MiddlewareConfig } from './types';
@@ -58,18 +59,18 @@ async function validateTokenAndGetUserId(token: string): Promise<string | null> 
     const { data, error } = await supabase.auth.getUser(token);
 
     if (error) {
-      console.error('Token validation error:', error.message);
+      logger.error('Token validation error:', error.message);
       return null;
     }
 
     if (!data.user) {
-      console.warn('Token validated but no user found');
+      logger.warn('Token validated but no user found');
       return null;
     }
 
     return data.user.id;
   } catch (err) {
-    console.error('Unexpected error during token validation:', err);
+    logger.error('Unexpected error during token validation:', err);
     return null;
   }
 }

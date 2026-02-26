@@ -4,7 +4,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { Button } from '@/components/ui/button';
 
-import { useRecurringEditConfirmStore } from '../stores/useRecurringEditConfirmStore';
+import { useRecurringEditConfirmStore } from '@/stores/useRecurringEditConfirmStore';
 
 import { RecurringEditConfirmDialog } from './RecurringEditConfirmDialog';
 

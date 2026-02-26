@@ -4,8 +4,8 @@
  */
 
 // CalendarPlan, ViewDateRange を Source of Truth から直接エクスポート
-export type { CalendarPlan, ViewDateRange } from '@/features/calendar/types/calendar.types';
-import type { CalendarPlan, ViewDateRange } from '@/features/calendar/types/calendar.types';
+export type { CalendarPlan, ViewDateRange } from '../../../../types/calendar.types';
+import type { CalendarPlan, ViewDateRange } from '../../../../types/calendar.types';
 
 export type CalendarViewType = 'day' | '3day' | '5day' | 'week' | 'agenda' | 'timesheet';
 

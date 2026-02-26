@@ -1,4 +1,4 @@
-import type { PlanStatus } from '@/features/plans/types';
+import type { PlanStatus } from '@/core/types/plan';
 
 import type { SearchFilters } from '../types';
 

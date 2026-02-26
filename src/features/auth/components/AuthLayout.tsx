@@ -4,7 +4,7 @@ import type React from 'react';
 
 import { usePathname } from 'next/navigation';
 
-export const AuthLayout = ({ children }: { children: React.ReactNode }) => {
+export function AuthLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   // ログインとサインアップページは shadcn/ui の2カラムレイアウトを使用するため、ラップしない
@@ -24,4 +24,4 @@ export const AuthLayout = ({ children }: { children: React.ReactNode }) => {
       </div>
     </main>
   );
-};
+}

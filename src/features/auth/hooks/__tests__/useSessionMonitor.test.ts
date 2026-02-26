@@ -92,9 +92,9 @@ describe('useSessionMonitor', () => {
       expect(mockRefreshSession).toHaveBeenCalledTimes(1);
     });
 
-    it('更新失敗時にconsole.errorが呼ばれる', async () => {
+    it('更新失敗時にlogger.errorが呼ばれる', async () => {
       mockRefreshSession.mockResolvedValue({ error: new Error('failed') });
-      const spy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      const { logger } = await import('@/lib/logger');
 
       const { result } = renderHook(() => useSessionMonitor());
 
@@ -102,13 +102,12 @@ describe('useSessionMonitor', () => {
         await result.current.extendSession();
       });
 
-      expect(spy).toHaveBeenCalled();
-      spy.mockRestore();
+      expect(logger.error).toHaveBeenCalled();
     });
 
     it('例外が発生してもクラッシュしない', async () => {
       mockRefreshSession.mockRejectedValue(new Error('network'));
-      const spy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      const { logger } = await import('@/lib/logger');
 
       const { result } = renderHook(() => useSessionMonitor());
 
@@ -116,8 +115,7 @@ describe('useSessionMonitor', () => {
         await result.current.extendSession();
       });
 
-      expect(spy).toHaveBeenCalled();
-      spy.mockRestore();
+      expect(logger.error).toHaveBeenCalled();
     });
   });
 

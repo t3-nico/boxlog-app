@@ -8,7 +8,6 @@ import {
   detectTimeConflicts,
   formatTimeForDisplay,
   generateTimeLabels,
-  getCurrentTimePosition,
   getGridLineClass,
   getTimeSlotBgClass,
   isDraggable,
@@ -69,14 +68,6 @@ describe('time-grid-helpers', () => {
 
       expect(snapped.getHours()).toBe(10);
       expect(snapped.getMinutes()).toBe(30); // 37分 → 30分
-    });
-  });
-
-  describe('getCurrentTimePosition', () => {
-    it('現在時刻の位置をパーセンテージで返す', () => {
-      const position = getCurrentTimePosition();
-      expect(position).toBeGreaterThanOrEqual(0);
-      expect(position).toBeLessThanOrEqual(100);
     });
   });
 

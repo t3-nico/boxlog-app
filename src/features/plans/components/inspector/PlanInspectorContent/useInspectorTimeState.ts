@@ -7,14 +7,10 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import {
-  localTimeToUTCISO,
-  parseDatetimeString,
-  parseISOToUserTimezone,
-} from '@/features/calendar/utils/dateUtils';
-import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
+import { localTimeToUTCISO, parseDatetimeString, parseISOToUserTimezone } from '@/lib/date-utils';
+import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 
-import { type DraftPlan } from '../../../stores/usePlanInspectorStore';
+import { type DraftPlan } from '@/stores/usePlanInspectorStore';
 import type { Plan } from '../../../types/plan';
 
 interface UseInspectorTimeStateProps {
@@ -25,7 +21,10 @@ interface UseInspectorTimeStateProps {
   initialData: { start_time?: string | null; end_time?: string | null } | null;
   recurringEdit: {
     isRecurringInstance: boolean;
-    openScopeDialog: (field: string, value: string | undefined) => void;
+    openScopeDialog: (
+      field?: 'title' | 'description' | 'start_time' | 'end_time',
+      value?: string | undefined,
+    ) => void;
   };
   addPendingChange: (change: Record<string, string | number | null | undefined>) => void;
   updateDraft: (partial: Partial<DraftPlan>) => void;

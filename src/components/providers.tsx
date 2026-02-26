@@ -12,7 +12,7 @@
  * 4. RealtimeProvider（リアルタイム購読層 - Supabase）
  * 5. ThemeProvider（UI層）
  * 6. GlobalSearchProvider（機能層）
- * 7. ReactQueryDevtools（開発ツール - 本番環境では自動除外）
+ * 7. AxeAccessibilityChecker（開発ツール - 本番環境では自動除外）
  *
  * 公開ページ（/auth/、/legal/、/error/）では、このProvidersではなく
  * 軽量なPublicProvidersを使用すること。
@@ -30,15 +30,6 @@ import { MutationCache, QueryCache, QueryClient, QueryClientProvider } from '@ta
 import { httpBatchLink, loggerLink, TRPCClientError } from '@trpc/client';
 import superjson from 'superjson';
 
-// React Query DevTools: 本番環境では完全に除外（バンドルサイズ削減）
-const ReactQueryDevtools =
-  process.env.NODE_ENV === 'development'
-    ? dynamic(
-        () => import('@tanstack/react-query-devtools').then((mod) => mod.ReactQueryDevtools),
-        { ssr: false },
-      )
-    : () => null;
-
 // axe-core アクセシビリティチェッカー: 開発環境のみ
 const AxeAccessibilityChecker =
   process.env.NODE_ENV === 'development'
@@ -53,7 +44,7 @@ const AxeAccessibilityChecker =
 
 import { RealtimeProvider } from '@/components/providers/RealtimeProvider';
 import { ThemeProvider } from '@/contexts/theme-context';
-import { AuthStoreInitializer } from '@/features/auth/stores/AuthStoreInitializer';
+import { AuthStoreInitializer } from '@/features/auth';
 import { api } from '@/lib/trpc';
 
 // GlobalSearchProviderを遅延ロード（初回レンダリングをブロックしない）
@@ -219,12 +210,7 @@ export function Providers({ children }: ProvidersProps) {
           </ThemeProvider>
         </RealtimeProvider>
         {/* 開発ツール（開発環境のみ） */}
-        {process.env.NODE_ENV === 'development' && (
-          <>
-            <ReactQueryDevtools initialIsOpen={false} buttonPosition="bottom-right" />
-            <AxeAccessibilityChecker />
-          </>
-        )}
+        {process.env.NODE_ENV === 'development' && <AxeAccessibilityChecker />}
       </api.Provider>
     </QueryClientProvider>
   );

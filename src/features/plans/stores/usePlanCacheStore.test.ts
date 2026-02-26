@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { usePlanCacheStore } from './usePlanCacheStore';
+import { usePlanCacheStore } from '@/stores/usePlanCacheStore';
 
 describe('usePlanCacheStore', () => {
   beforeEach(() => {

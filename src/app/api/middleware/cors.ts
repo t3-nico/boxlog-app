@@ -4,6 +4,8 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 
+import { createAppError, ERROR_CODES } from '@/config/error-patterns';
+
 /**
  * CORS ヘッダーを設定
  */
@@ -30,7 +32,6 @@ export function setCorsHeaders(req: NextRequest, allowedOrigins?: string[]): Nex
 export function createTimeoutPromise(timeout: number): Promise<never> {
   return new Promise((_, reject) => {
     setTimeout(() => {
-      const { createAppError, ERROR_CODES } = require('@/config/error-patterns');
       reject(createAppError(`Request timeout after ${timeout}ms`, ERROR_CODES.API_TIMEOUT));
     }, timeout);
   });

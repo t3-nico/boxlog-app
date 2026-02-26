@@ -1,6 +1,6 @@
 import type React from 'react';
 
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
+import type { CalendarPlan } from '../../../../../types/calendar.types';
 
 export interface DragState {
   /** マウスダウン後、移動前の準備状態 */

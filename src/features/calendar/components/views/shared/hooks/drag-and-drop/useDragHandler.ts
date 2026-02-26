@@ -4,10 +4,10 @@ import type React from 'react';
 import { useCallback } from 'react';
 
 import { MS_PER_MINUTE } from '@/constants/time';
-import useCalendarToast from '@/features/calendar/lib/toast';
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
 import { logger } from '@/lib/logger';
 import { useTranslations } from 'next-intl';
+import useCalendarToast from '../../../../../lib/toast';
+import type { CalendarPlan } from '../../../../../types/calendar.types';
 
 import type { DragDataRef, DragState } from './types';
 import {

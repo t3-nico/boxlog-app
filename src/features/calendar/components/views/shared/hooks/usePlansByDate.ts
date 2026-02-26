@@ -6,8 +6,9 @@ import { useMemo } from 'react';
 
 import { isSameDay } from 'date-fns';
 
+import { getDateKey } from '@/lib/date';
 import type { CalendarPlan } from '../types/base.types';
-import { getDateKey, isValidEvent } from '../utils/dateHelpers';
+import { isValidEvent } from '../utils/dateHelpers';
 import { sortAgendaEventsByDateKeys, sortEventsByDateKeys } from '../utils/planSorting';
 
 export interface UsePlansByDateOptions {

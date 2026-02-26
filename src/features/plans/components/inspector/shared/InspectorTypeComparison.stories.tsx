@@ -36,7 +36,7 @@ import {
 } from './index';
 import { InspectorFrame, MockPlanLinkButton, mockTags } from './story-helpers';
 
-import type { FulfillmentScore } from '@/features/records/types/record';
+import type { FulfillmentScore } from '@/core/types/record';
 import { RecurrenceIconButton } from '../../shared/RecurrenceIconButton';
 import { ReminderSelect } from '../../shared/ReminderSelect';
 

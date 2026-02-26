@@ -12,10 +12,10 @@ import { memo, useMemo } from 'react';
 import { Ban, Circle } from 'lucide-react';
 
 import { MEDIA_QUERIES } from '@/config/ui/breakpoints';
-import { calendarStyles } from '@/features/calendar/theme/styles';
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { cn } from '@/lib/utils';
+import { calendarStyles } from '../../../../../theme/styles';
+import type { CalendarPlan } from '../../../../../types/calendar.types';
 
 import { HOUR_HEIGHT } from '../../constants/grid.constants';
 import { PlanCardContent } from '../PlanCard/PlanCardContent';

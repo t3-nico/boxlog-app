@@ -19,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import type { Tag } from '@/features/tags/types';
+import type { Tag } from '@/core/types/tag';
 
 import type { ConditionField } from '../types';
 
@@ -201,7 +201,6 @@ export function TriggerPicker({
                   onCheckedChange={() => toggleTag(tag.id)}
                 />
                 <Label htmlFor={`tag_${tag.id}`} className="cursor-pointer font-normal">
-                  {tag.icon ? `${tag.icon} ` : ''}
                   {tag.name}
                 </Label>
               </div>

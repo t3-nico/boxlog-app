@@ -1,6 +1,6 @@
 'use client';
 
-import { useTagMergeModalStore } from '../stores/useTagMergeModalStore';
+import { useTagMergeModalStore } from '@/stores/useTagMergeModalStore';
 import { TagMergeModal } from './tag-merge-modal';
 
 /**

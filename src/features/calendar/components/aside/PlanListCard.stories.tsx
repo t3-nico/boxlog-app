@@ -24,7 +24,6 @@ const BASE_PLAN: PlanWithTags = {
   status: 'open',
   start_time: '2025-01-15T10:00:00.000Z',
   end_time: '2025-01-15T11:00:00.000Z',
-  due_date: null,
   created_at: now.toISOString(),
   updated_at: now.toISOString(),
   completed_at: null,

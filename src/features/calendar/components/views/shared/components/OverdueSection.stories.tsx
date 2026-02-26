@@ -3,7 +3,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { addDays, subHours } from 'date-fns';
 
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
+import type { CalendarPlan } from '../../../../types/calendar.types';
 
 import type { OverduePlan } from '../../../../hooks/useOverduePlans';
 import { OverdueBadge } from './OverdueBadge';

@@ -4,55 +4,39 @@ import { Button } from '@/components/ui/button';
 import type { NotificationType } from '@/schemas/notifications';
 import { formatDistanceToNow } from 'date-fns';
 import { enUS, ja } from 'date-fns/locale';
-import { AlertTriangle, Bell, CheckCircle, Edit, Info, PlusCircle, Trash2 } from 'lucide-react';
+import { AlertTriangle, Bell, Trash2 } from 'lucide-react';
 
 interface NotificationItemProps {
   id: string;
   type: NotificationType;
-  title: string;
-  message: string | null;
+  planTitle?: string | undefined;
   isRead: boolean;
   createdAt: string;
-  actionUrl?: string | null | undefined;
   locale: 'ja' | 'en';
   onMarkAsRead: (id: string) => void;
   onDelete: (id: string) => void;
-  onNavigate?: (url: string) => void;
   isDeleting?: boolean;
 }
 
 const typeIcons: Record<NotificationType, React.ReactNode> = {
   reminder: <Bell className="h-4 w-4" />,
-  plan_created: <PlusCircle className="h-4 w-4" />,
-  plan_updated: <Edit className="h-4 w-4" />,
-  plan_deleted: <Trash2 className="h-4 w-4" />,
-  plan_completed: <CheckCircle className="h-4 w-4" />,
-  trash_warning: <AlertTriangle className="h-4 w-4" />,
-  system: <Info className="h-4 w-4" />,
+  overdue: <AlertTriangle className="h-4 w-4" />,
 };
 
 const typeColors: Record<NotificationType, string> = {
   reminder: 'text-primary',
-  plan_created: 'text-success',
-  plan_updated: 'text-primary',
-  plan_deleted: 'text-destructive',
-  plan_completed: 'text-success',
-  trash_warning: 'text-warning',
-  system: 'text-muted-foreground',
+  overdue: 'text-warning',
 };
 
 export function NotificationItem({
   id,
   type,
-  title,
-  message,
+  planTitle,
   isRead,
   createdAt,
-  actionUrl,
   locale,
   onMarkAsRead,
   onDelete,
-  onNavigate,
   isDeleting,
 }: NotificationItemProps) {
   const dateLocale = locale === 'ja' ? ja : enUS;
@@ -69,9 +53,6 @@ export function NotificationItem({
     if (!isRead) {
       onMarkAsRead(id);
     }
-    if (actionUrl && onNavigate) {
-      onNavigate(actionUrl);
-    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -85,11 +66,11 @@ export function NotificationItem({
     <div
       className={`rounded-2xl px-4 py-2 transition-colors ${
         !isRead ? 'bg-state-active' : 'hover:bg-state-hover'
-      } ${actionUrl ? 'cursor-pointer' : ''}`}
+      }`}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
-      role={actionUrl || !isRead ? 'button' : undefined}
-      tabIndex={actionUrl || !isRead ? 0 : undefined}
+      role={!isRead ? 'button' : undefined}
+      tabIndex={!isRead ? 0 : undefined}
     >
       <div className="flex items-start gap-2">
         {/* アイコン */}
@@ -98,12 +79,11 @@ export function NotificationItem({
         {/* コンテンツ */}
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            <h4 className="truncate text-sm font-normal">{title}</h4>
+            <h4 className="truncate text-sm font-normal">{planTitle ?? type}</h4>
             {!isRead && (
               <span className="bg-primary h-1.5 w-1.5 shrink-0 rounded-full" aria-label="Unread" />
             )}
           </div>
-          {message && <p className="text-muted-foreground mt-1 line-clamp-1 text-xs">{message}</p>}
           <span className="text-muted-foreground mt-1 block text-xs">{formatTime(createdAt)}</span>
         </div>
 

@@ -13,8 +13,8 @@ import { useTheme } from '@/contexts/theme-context';
 import { usePathname, useRouter } from '@/i18n/navigation';
 import { routing, type Locale } from '@/i18n/routing';
 
-import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings';
 import { useLocale, useTranslations } from 'next-intl';
+import { useAutoSaveSettings } from '../hooks/useAutoSaveSettings';
 
 import { SettingRow } from './fields/SettingRow';
 import { SettingsCard } from './SettingsCard';

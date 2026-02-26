@@ -2,7 +2,7 @@
  * ハイコントラストテーマ定義・CSS生成・ユーティリティ
  */
 
-import { getTranslation } from '@/features/calendar/lib/toast/get-translation';
+import { getTranslation } from '../lib/toast/get-translation';
 
 export interface HighContrastColors {
   background: string;

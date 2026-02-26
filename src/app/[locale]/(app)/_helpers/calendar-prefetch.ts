@@ -1,5 +1,5 @@
-import { calculateViewDateRange } from '@/features/calendar/lib/view-helpers';
-import type { CalendarViewType } from '@/features/calendar/types/calendar.types';
+import type { CalendarViewType } from '@/features/calendar';
+import { calculateViewDateRange } from '@/features/calendar';
 import { createServerHelpers, dehydrate } from '@/lib/trpc/server';
 
 /**

@@ -6,8 +6,7 @@
 
 import React, { memo, useCallback, useEffect, useMemo } from 'react';
 
-import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
-import { normalizeStatus } from '@/features/plans/utils/status';
+import { normalizeStatus } from '@/lib/plan-status';
 import { CheckCircle2, Circle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
@@ -25,6 +24,7 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
   position,
   onClick,
   onContextMenu,
+  onStatusChange,
   onDragStart,
   onTouchStart,
   onDragEnd,
@@ -37,7 +37,6 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
   previewTime = null,
 }) {
   const t = useTranslations();
-  const { updatePlan } = usePlanMutations();
   const isMobile = useMediaQuery(MEDIA_QUERIES.mobile);
 
   // Record かどうか判定（Records は作業ログなので読み取り専用）
@@ -259,10 +258,7 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
             if (isDraft) return;
             const currentStatus = normalizeStatus(plan.status);
             const newStatus = currentStatus === 'closed' ? 'open' : 'closed';
-            updatePlan.mutate({
-              id: plan.id,
-              data: { status: newStatus },
-            });
+            onStatusChange?.(plan.id, newStatus);
           }}
           className={cn(
             'group/checkbox',

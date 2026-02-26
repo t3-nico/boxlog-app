@@ -1,18 +1,21 @@
 'use client';
 
-import { memo, useCallback, useEffect, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useRef } from 'react';
 
 import { Clock, Flag } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { TimepickerUI } from 'timepicker-ui';
 
-import { TimeSelect } from '@/features/plans/components/shared/TimeSelect';
+import { TimeSelect } from '@/components/common/TimeSelect';
+import { useHasMounted } from '@/hooks/useHasMounted';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { cn } from '@/lib/utils';
 
+import type { TimeIconType } from '@/components/common/TimeSelect';
+
 import 'timepicker-ui/index.css';
 
-export type TimeIconType = 'clock' | 'flag';
+export type { TimeIconType };
 
 export interface ClockTimePickerProps {
   /** 時刻値 "HH:MM" 形式 */
@@ -109,11 +112,7 @@ function MobileClockPicker({
   const inputRef = useRef<HTMLInputElement>(null);
   const timepickerRef = useRef<TimepickerUI | null>(null);
   const isInitializedRef = useRef(false);
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
+  const isMounted = useHasMounted();
 
   // timepicker 初期化
   useEffect(() => {

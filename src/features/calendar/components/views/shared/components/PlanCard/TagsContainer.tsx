@@ -10,7 +10,7 @@
 
 import { memo, useEffect, useRef, useState } from 'react';
 
-import { useTagsMap } from '@/features/tags/hooks/useTagsMap';
+import { useTagsMap } from '@/hooks/useTagsMap';
 
 interface TagsContainerProps {
   tagIds: string[];

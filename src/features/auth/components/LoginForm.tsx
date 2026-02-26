@@ -6,8 +6,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, EyeOff } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
-import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
+
+import { Link } from '@/i18n/navigation';
 import { useForm } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
@@ -23,9 +24,10 @@ import {
 } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { HoverTooltip } from '@/components/ui/tooltip';
-import { useAuthStore } from '@/features/auth/stores/useAuthStore';
+import { logger } from '@/lib/logger';
 import { createClient } from '@/lib/supabase/client';
 import { cn } from '@/lib/utils';
+import { useAuthStore } from '@/stores/useAuthStore';
 
 import { getAuthErrorKey } from '../lib/sanitize-auth-error';
 import { loginSchema, type LoginFormData } from '../schemas/auth.schema';
@@ -76,14 +78,13 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
 
         // MFAチェック（セキュリティ上必須 - エラー時もMFA画面へ誘導）
         const supabase = createClient();
-        await new Promise((resolve) => setTimeout(resolve, 100));
         const { data: aalData, error: mfaError } =
           await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
 
         // MFAが必要な場合、またはMFAチェックに失敗した場合
         // → MFA検証画面へ（エラー時にバイパスさせない）
         if (mfaError) {
-          console.warn(
+          logger.warn(
             '[LoginForm] MFA check failed, redirecting to MFA verify for safety:',
             mfaError,
           );
@@ -99,7 +100,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
         router.push(`/${locale}/day`);
       }
     } catch (err) {
-      console.error('[LoginForm] Unexpected error:', err);
+      logger.error('[LoginForm] Unexpected error:', err);
       setServerError(t('auth.errors.unexpectedError') || 'An unexpected error occurred');
     }
   };
@@ -268,8 +269,15 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
         </CardContent>
       </Card>
       <FieldDescription className="px-6 text-center">
-        {t('auth.loginForm.termsAndPrivacy')} <a href="#">{t('auth.loginForm.termsOfService')}</a>{' '}
-        {t('auth.loginForm.and')} <a href="#">{t('auth.loginForm.privacyPolicy')}</a>.
+        {t('auth.loginForm.termsAndPrivacy')}{' '}
+        <a href="https://dayopt.app/legal/terms" target="_blank" rel="noopener noreferrer">
+          {t('auth.loginForm.termsOfService')}
+        </a>{' '}
+        {t('auth.loginForm.and')}{' '}
+        <a href="https://dayopt.app/legal/privacy" target="_blank" rel="noopener noreferrer">
+          {t('auth.loginForm.privacyPolicy')}
+        </a>
+        {t('auth.loginForm.agree')}
       </FieldDescription>
     </div>
   );

@@ -23,11 +23,11 @@
  * - TanStack Queryのクライアントキャッシュ（5分）で対応
  */
 
-import type { Tag, TagWithChildren } from '@/features/tags/types';
+import type { Tag, TagWithChildren } from '@/core/types/tag';
 import type { Database } from '@/lib/database.types';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
-/** DB タグ行の型（マイグレーション前は group_id、後は parent_id） */
+/** DB タグ行の型 */
 type DbTagRow = Database['public']['Tables']['tags']['Row'];
 
 /**
@@ -40,7 +40,6 @@ function transformDbTag(dbTag: DbTagRow): Tag {
     user_id: dbTag.user_id,
     color: dbTag.color,
     description: dbTag.description,
-    icon: dbTag.icon,
     is_active: dbTag.is_active,
     parent_id: dbTag.parent_id,
     sort_order: dbTag.sort_order,
@@ -79,8 +78,6 @@ export interface CreateTagInput {
   description?: string | undefined;
   /** 親タグのID */
   parentId?: string | null | undefined;
-  /** @deprecated use parentId instead */
-  groupId?: string | null | undefined;
 }
 
 /** タグ更新入力 */
@@ -90,8 +87,6 @@ export interface UpdateTagInput {
   description?: string | null | undefined;
   /** 親タグのID */
   parentId?: string | null | undefined;
-  /** @deprecated use parentId instead */
-  groupId?: string | null | undefined;
 }
 
 /** タグ一覧取得オプション */
@@ -306,8 +301,7 @@ export class TagService {
       throw new TagServiceError('INVALID_INPUT', 'Tag name must be 50 characters or less');
     }
 
-    // parentId または groupId を使用（parentId を優先）
-    const parentId = input.parentId ?? input.groupId ?? null;
+    const parentId = input.parentId ?? null;
 
     // 親タグの階層チェック（1階層のみ許可）
     if (parentId) {
@@ -389,8 +383,7 @@ export class TagService {
       }
     }
 
-    // parentId または groupId を使用（parentId を優先）
-    const parentId = updates.parentId !== undefined ? updates.parentId : updates.groupId;
+    const parentId = updates.parentId;
 
     // 親タグの階層チェック
     if (parentId !== undefined && parentId !== null) {
@@ -584,12 +577,15 @@ export class TagService {
   /**
    * タグ使用統計取得
    *
+   * DB側集計関数 get_tag_stats を使用（5クエリ → 1 RPC に最適化）
+   *
    * @param options - userId
    * @returns タグ統計の配列
    */
   async getStats(options: { userId: string }): Promise<TagStatsRow[]> {
     const { userId } = options;
 
+    // タグ基本情報を取得
     const { data: tags, error: tagsError } = await this.supabase
       .from('tags')
       .select('id, name, color')
@@ -604,73 +600,39 @@ export class TagService {
       return [];
     }
 
-    const tagIds = tags.map((t) => t.id);
+    // DB側集計関数で plan_count, record_count, last_used を一括取得
+    const { data: statsRows, error: statsError } = await this.supabase.rpc('get_tag_stats', {
+      p_user_id: userId,
+    });
 
-    // plan_tags と record_tags の両方からカウントを取得
-    const [planTagsResult, recordTagsResult] = await Promise.all([
-      this.supabase.from('plan_tags').select('tag_id').in('tag_id', tagIds),
-      this.supabase.from('record_tags').select('tag_id').in('tag_id', tagIds),
-    ]);
-
-    if (planTagsResult.error) {
-      throw new TagServiceError(
-        'FETCH_FAILED',
-        `Failed to fetch plan tag counts: ${planTagsResult.error.message}`,
-      );
-    }
-    if (recordTagsResult.error) {
-      throw new TagServiceError(
-        'FETCH_FAILED',
-        `Failed to fetch record tag counts: ${recordTagsResult.error.message}`,
-      );
+    if (statsError) {
+      throw new TagServiceError('FETCH_FAILED', `Failed to fetch tag stats: ${statsError.message}`);
     }
 
-    // plan_tags のカウント
-    const planCountMap = new Map<string, number>();
-    planTagsResult.data?.forEach((pt) => {
-      planCountMap.set(pt.tag_id, (planCountMap.get(pt.tag_id) || 0) + 1);
-    });
-
-    // record_tags のカウント
-    const recordCountMap = new Map<string, number>();
-    recordTagsResult.data?.forEach((rt) => {
-      recordCountMap.set(rt.tag_id, (recordCountMap.get(rt.tag_id) || 0) + 1);
-    });
-
-    // 最終使用日を両方から取得
-    const [planLastUsed, recordLastUsed] = await Promise.all([
-      this.supabase
-        .from('plan_tags')
-        .select('tag_id, created_at')
-        .in('tag_id', tagIds)
-        .order('created_at', { ascending: false }),
-      this.supabase
-        .from('record_tags')
-        .select('tag_id, created_at')
-        .in('tag_id', tagIds)
-        .order('created_at', { ascending: false }),
-    ]);
-
-    const lastUsedMap = new Map<string, string | null>();
-    // plan_tags の最終使用日
-    planLastUsed.data?.forEach((pt) => {
-      if (!lastUsedMap.has(pt.tag_id) && pt.created_at) {
-        lastUsedMap.set(pt.tag_id, pt.created_at);
+    // RPC結果をMapに変換
+    const statsMap = new Map<
+      string,
+      { plan_count: number; record_count: number; last_used: string | null }
+    >();
+    for (const row of (statsRows ?? []) as Array<{
+      tag_id: string | null;
+      plan_count: number;
+      record_count: number;
+      last_used: string | null;
+    }>) {
+      if (row.tag_id) {
+        statsMap.set(row.tag_id, {
+          plan_count: row.plan_count,
+          record_count: row.record_count,
+          last_used: row.last_used,
+        });
       }
-    });
-    // record_tags の最終使用日（より新しい場合は上書き）
-    recordLastUsed.data?.forEach((rt) => {
-      if (rt.created_at) {
-        const existing = lastUsedMap.get(rt.tag_id);
-        if (!existing || rt.created_at > existing) {
-          lastUsedMap.set(rt.tag_id, rt.created_at);
-        }
-      }
-    });
+    }
 
     const statsData: TagStatsRow[] = tags.map((tag) => {
-      const planCount = planCountMap.get(tag.id) || 0;
-      const recordCount = recordCountMap.get(tag.id) || 0;
+      const stats = statsMap.get(tag.id);
+      const planCount = stats?.plan_count ?? 0;
+      const recordCount = stats?.record_count ?? 0;
       return {
         id: tag.id,
         name: tag.name,
@@ -678,7 +640,7 @@ export class TagService {
         plan_count: planCount,
         record_count: recordCount,
         total_count: planCount + recordCount,
-        last_used_at: lastUsedMap.get(tag.id) || null,
+        last_used_at: stats?.last_used ?? null,
       };
     });
 

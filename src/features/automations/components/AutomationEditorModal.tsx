@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import type { Tag } from '@/features/tags/types';
+import type { Tag } from '@/core/types/tag';
 import { useSubmitShortcut } from '@/hooks/useSubmitShortcut';
 
 import type {

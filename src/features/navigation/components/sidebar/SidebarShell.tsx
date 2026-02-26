@@ -5,11 +5,11 @@ import type { ReactNode } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { HoverTooltip } from '@/components/ui/tooltip';
-import { useAuthStore } from '@/features/auth/stores/useAuthStore';
 import { cn } from '@/lib/utils';
+import { useAuthStore } from '@/stores/useAuthStore';
 import { useTranslations } from 'next-intl';
 
-import { useSidebarStore } from '../../stores/useSidebarStore';
+import { useSidebarStore } from '@/stores/useSidebarStore';
 
 import { CreateNewDropdown } from './CreateNewDropdown';
 import { NavUser } from './nav-user';

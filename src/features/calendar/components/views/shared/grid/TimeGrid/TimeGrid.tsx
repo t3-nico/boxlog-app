@@ -94,30 +94,11 @@ export const TimeGrid = memo<TimeGridProps>(function TimeGrid({
   return (
     <div
       ref={containerRef}
-      role="grid"
-      tabIndex={0}
       aria-label={t('timeGrid.ariaLabel')}
-      aria-rowcount={endHour - startHour}
       className={`relative overflow-auto ${GRID_BACKGROUND} ${className} ${isSelecting ? 'select-none' : ''}`}
       style={{ height: '100%' }}
       onClick={handleGridClick}
       onMouseDown={handleMouseDown}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          // キーボードからの操作用のダミーイベントを作成
-          const rect = containerRef.current?.getBoundingClientRect();
-          if (rect) {
-            const mockEvent = {
-              currentTarget: containerRef.current,
-              clientX: rect.left + rect.width / 2,
-              clientY: rect.top + rect.height / 2,
-              stopPropagation: () => {},
-            } as unknown as React.MouseEvent;
-            handleGridClick(mockEvent);
-          }
-        }
-      }}
     >
       {/* スクロールバーはglobals.cssのグローバルスタイルを使用 */}
       {/* 時間列（固定） */}

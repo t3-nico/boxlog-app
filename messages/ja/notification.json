@@ -5,14 +5,6 @@
       "all": "すべて",
       "unread": "未読"
     },
-    "messages": {
-      "meetingReminder": "ミーティングのリマインダー",
-      "meetingStartsIn": "5分後に開始します",
-      "taskCompleted": "タスク完了",
-      "taskCompletedMessage": "タスクが完了しました",
-      "eventNotification": "イベント通知",
-      "eventAddedMessage": "新しいイベントが追加されました"
-    },
     "empty": {
       "all": "通知はありません",
       "unread": "未読の通知はありません"
@@ -37,43 +29,30 @@
     "types": {
       "all": "すべて",
       "reminder": "リマインダー",
-      "plan_created": "作成",
-      "plan_updated": "更新",
-      "plan_deleted": "削除",
-      "plan_completed": "完了",
-      "trash_warning": "ゴミ箱",
-      "system": "システム"
+      "overdue": "期限超過"
     },
     "dateGroups": {
       "older": "それ以前"
     },
     "settings": {
       "title": "通知",
-      "types": {
-        "reminders": {
-          "label": "リマインダー",
-          "description": "予定の開始前に通知を受け取る"
-        },
-        "plan_updates": {
-          "label": "プラン更新",
-          "description": "プランの作成、更新、完了時に通知"
-        },
-        "system": {
-          "label": "システム",
-          "description": "重要な更新やシステムメッセージ"
-        }
+      "browserNotifications": {
+        "label": "ブラウザ通知",
+        "description": "リマインダー時にブラウザ通知を表示"
       },
-      "methods": {
-        "browser": "ブラウザ",
-        "push": "プッシュ",
-        "email": "メール",
-        "none": "なし"
+      "emailNotifications": {
+        "label": "メール通知",
+        "description": "リマインダー通知をメールで受信"
+      },
+      "pushNotifications": {
+        "label": "プッシュ通知",
+        "description": "アプリを閉じていても通知を受け取る",
+        "comingSoon": "近日公開"
       },
       "browserPermissionDenied": "ブラウザ通知の許可が拒否されました",
       "permissionDenied": "拒否済み",
-      "comingSoon": "準備中",
       "saveError": "設定の保存に失敗しました: {message}",
-      "tip": "ブラウザ通知はアプリを開いている時のみ動作します。プッシュ通知（近日公開）を有効にすると、アプリを閉じていても通知を受け取れます。",
+      "tip": "ブラウザ通知はアプリを開いている時のみ動作します。メール通知やプッシュ通知を有効にすると、いつでも通知を受け取れます。",
       "defaultReminder": {
         "label": "デフォルトリマインダー",
         "description": "新規プラン作成時に自動設定"

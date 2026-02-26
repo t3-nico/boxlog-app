@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { useRecurringEditConfirmStore } from './useRecurringEditConfirmStore';
+import { useRecurringEditConfirmStore } from '@/stores/useRecurringEditConfirmStore';
 
 describe('useRecurringEditConfirmStore', () => {
   beforeEach(() => {

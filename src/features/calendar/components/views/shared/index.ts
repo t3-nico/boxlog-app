@@ -87,29 +87,29 @@ export {
 export type { PositionedPlan } from './hooks/usePlanPosition';
 
 // ===== ユーティリティ関数 =====
-// dateHelpers
+// @/lib/date re-exports（後方互換性のため）
 export {
   addDays,
   addMinutes,
   endOfDay,
-  formatDate,
   formatTime,
   formatTimeRange,
   generateDateRange,
   getDateKey,
   getDaysDifference,
-  getMonthEnd,
-  getMonthStart,
-  getTodayIndex,
-  getWeekEnd,
-  getWeekStart,
+  endOfMonth as getMonthEnd,
+  startOfMonth as getMonthStart,
+  endOfWeek as getWeekEnd,
+  startOfWeek as getWeekStart,
   isSameDay,
   isToday,
-  isValidEvent,
   isWeekend,
-  normalizeEventDate,
+  normalizeDate as normalizeEventDate,
   startOfDay,
-} from './utils/dateHelpers';
+} from '@/lib/date';
+
+// dateHelpers（カレンダー固有）
+export { formatDate, getTodayIndex, isValidEvent } from './utils/dateHelpers';
 
 // gridCalculator
 export {

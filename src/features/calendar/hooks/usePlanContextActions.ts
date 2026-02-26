@@ -2,16 +2,16 @@
 
 import { useCallback, useRef } from 'react';
 
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
-import type { RecurringEditScope } from '@/features/plans/components/RecurringEditConfirmDialog';
-import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations';
-import { useRecurringScopeMutations } from '@/features/plans/hooks/useRecurringScopeMutations';
-import { useDeleteConfirmStore } from '@/features/plans/stores/useDeleteConfirmStore';
-import { usePlanClipboardStore } from '@/features/plans/stores/usePlanClipboardStore';
-import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
-import { useRecurringEditConfirmStore } from '@/features/plans/stores/useRecurringEditConfirmStore';
-import { getInstanceRef } from '@/features/plans/utils/instanceId';
+import { usePlanMutations } from '@/hooks/usePlanMutations';
+import { useRecurringScopeMutations } from '@/hooks/useRecurringScopeMutations';
+import { getInstanceRef } from '@/lib/instance-id';
+import { useDeleteConfirmStore } from '@/stores/useDeleteConfirmStore';
+import { usePlanClipboardStore } from '@/stores/usePlanClipboardStore';
+import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
+import type { RecurringEditScope } from '@/stores/useRecurringEditConfirmStore';
+import { useRecurringEditConfirmStore } from '@/stores/useRecurringEditConfirmStore';
 import { toast } from 'sonner';
+import type { CalendarPlan } from '../types/calendar.types';
 
 export function usePlanContextActions() {
   const { openInspector, openInspectorWithDraft } = usePlanInspectorStore();

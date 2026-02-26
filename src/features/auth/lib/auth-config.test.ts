@@ -6,7 +6,7 @@ describe('auth-config', () => {
   describe('validatePassword', () => {
     describe('有効なパスワード', () => {
       it('すべての要件を満たすパスワードは有効', () => {
-        const result = validatePassword('Password123');
+        const result = validatePassword('Password1234');
 
         expect(result.isValid).toBe(true);
         expect(result.errorKeys).toHaveLength(0);
@@ -28,21 +28,21 @@ describe('auth-config', () => {
       });
 
       it('大文字がないパスワードはエラー', () => {
-        const result = validatePassword('password123');
+        const result = validatePassword('passwordabcd1');
 
         expect(result.isValid).toBe(false);
         expect(result.errorKeys).toContain(AUTH_CONFIG.PASSWORD_VALIDATION_KEYS.REQUIRE_UPPERCASE);
       });
 
       it('小文字がないパスワードはエラー', () => {
-        const result = validatePassword('PASSWORD123');
+        const result = validatePassword('PASSWORDABC1');
 
         expect(result.isValid).toBe(false);
         expect(result.errorKeys).toContain(AUTH_CONFIG.PASSWORD_VALIDATION_KEYS.REQUIRE_LOWERCASE);
       });
 
       it('数字がないパスワードはエラー', () => {
-        const result = validatePassword('Passwordabc');
+        const result = validatePassword('Passwordabcd');
 
         expect(result.isValid).toBe(false);
         expect(result.errorKeys).toContain(AUTH_CONFIG.PASSWORD_VALIDATION_KEYS.REQUIRE_NUMBER);
@@ -68,13 +68,13 @@ describe('auth-config', () => {
 
     describe('境界値', () => {
       it('ちょうど最小文字数のパスワード', () => {
-        const result = validatePassword('Passwo1a'); // 8文字
+        const result = validatePassword('Passwo1abcde'); // 12文字
 
         expect(result.isValid).toBe(true);
       });
 
       it('最小文字数-1のパスワード', () => {
-        const result = validatePassword('Passw1a'); // 7文字
+        const result = validatePassword('Passwo1abcd'); // 11文字
 
         expect(result.isValid).toBe(false);
         expect(result.errorKeys).toContain(AUTH_CONFIG.PASSWORD_VALIDATION_KEYS.MIN_LENGTH);
@@ -201,8 +201,8 @@ describe('auth-config', () => {
   });
 
   describe('AUTH_CONFIG', () => {
-    it('パスワードの最小文字数が8文字', () => {
-      expect(AUTH_CONFIG.PASSWORD.MIN_LENGTH).toBe(8);
+    it('パスワードの最小文字数が12文字', () => {
+      expect(AUTH_CONFIG.PASSWORD.MIN_LENGTH).toBe(12);
     });
 
     it('セッションタイムアウトが1時間', () => {

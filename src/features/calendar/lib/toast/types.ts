@@ -1,6 +1,6 @@
 import type { ExternalToast } from 'sonner';
 
-import type { CalendarPlan } from '@/features/calendar/types';
+import type { CalendarPlan } from '../../types';
 
 // Calendar操作の種類
 export type CalendarAction =

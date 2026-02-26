@@ -3,9 +3,9 @@ import { useEffect, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 
+import type { CalendarPlan } from '@/core/types/calendar-event';
+import type { Tag } from '@/core/types/tag';
 import { useCalendarDragStore } from '@/features/calendar/stores/useCalendarDragStore';
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
-import type { Tag } from '@/features/tags/types';
 
 import { DragSelectionPreview } from '@/features/calendar/components/views/shared/components/CalendarDragSelection/DragSelectionPreview';
 import { PanelDragPreview } from '@/features/calendar/components/views/shared/components/PanelDragPreview';
@@ -317,7 +317,6 @@ function PanelDragPreviewStory() {
         recurrence_rule: null,
         recurrence_type: null,
         recurrence_end_date: null,
-        due_date: null,
         tagIds: [],
       },
     });
@@ -460,7 +459,6 @@ const flatMockTags: Tag[] = [
     sort_order: 0,
     user_id: 'demo-user',
     description: null,
-    icon: null,
     is_active: true,
     created_at: now,
     updated_at: now,
@@ -473,7 +471,6 @@ const flatMockTags: Tag[] = [
     sort_order: 1,
     user_id: 'demo-user',
     description: null,
-    icon: null,
     is_active: true,
     created_at: now,
     updated_at: now,
@@ -486,7 +483,6 @@ const flatMockTags: Tag[] = [
     sort_order: 2,
     user_id: 'demo-user',
     description: null,
-    icon: null,
     is_active: true,
     created_at: now,
     updated_at: now,
@@ -503,7 +499,6 @@ const nestedMockTags: Tag[] = [
     sort_order: 0,
     user_id: 'demo-user',
     description: null,
-    icon: null,
     is_active: true,
     created_at: now,
     updated_at: now,
@@ -516,7 +511,6 @@ const nestedMockTags: Tag[] = [
     sort_order: 0,
     user_id: 'demo-user',
     description: null,
-    icon: null,
     is_active: true,
     created_at: now,
     updated_at: now,
@@ -529,7 +523,6 @@ const nestedMockTags: Tag[] = [
     sort_order: 1,
     user_id: 'demo-user',
     description: null,
-    icon: null,
     is_active: true,
     created_at: now,
     updated_at: now,
@@ -542,7 +535,6 @@ const nestedMockTags: Tag[] = [
     sort_order: 1,
     user_id: 'demo-user',
     description: null,
-    icon: null,
     is_active: true,
     created_at: now,
     updated_at: now,
@@ -555,7 +547,6 @@ const nestedMockTags: Tag[] = [
     sort_order: 0,
     user_id: 'demo-user',
     description: null,
-    icon: null,
     is_active: true,
     created_at: now,
     updated_at: now,
@@ -568,7 +559,6 @@ const nestedMockTags: Tag[] = [
     sort_order: 2,
     user_id: 'demo-user',
     description: null,
-    icon: null,
     is_active: true,
     created_at: now,
     updated_at: now,

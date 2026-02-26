@@ -158,6 +158,37 @@ src/features/xxx/
 - [ ] [開発者への質問]
 ```
 
+## 新Feature作成テンプレート
+
+`/new-feature` 実行時、以下の構造で作成:
+
+```
+src/features/{feature-name}/
+├── index.ts              # Public API（バレルファイル）
+├── types/index.ts        # 型定義（Entity, CreateInput, UpdateInput）
+├── stores/index.ts       # Zustand stores → `/store-creating` 参照
+├── hooks/index.ts        # カスタムフック
+└── components/index.ts   # UIコンポーネント
+```
+
+**命名規則**:
+
+| 種類           | 規則                  | 例                     |
+| -------------- | --------------------- | ---------------------- |
+| ディレクトリ   | kebab-case            | `user-settings`        |
+| コンポーネント | PascalCase            | `UserSettingsList`     |
+| フック         | camelCase (use-)      | `useUserSettings`      |
+| ストア         | camelCase (use-Store) | `useUserSettingsStore` |
+
+**チェックリスト**:
+
+- [ ] 全exportは `index.ts` 経由
+- [ ] ストアは devtools + persist ミドルウェア → `/store-creating` 参照
+- [ ] tRPCルーターは Service層分離 → `/trpc-router-creating` 参照
+- [ ] `export function` 形式（`export default` 禁止）
+
+**参考実装**: `src/features/tags/`（最も完成度が高い）
+
 ## Dayopt固有ルール
 
 1. **既存shadcn/uiコンポーネントを最大限活用**

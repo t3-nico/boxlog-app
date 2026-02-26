@@ -1,6 +1,6 @@
 /**
  * tRPC Router: NotificationPreferences
- * 通知設定管理API（ChatGPTスタイル: 通知タイプごとに配信方法を選択）
+ * 通知設定管理API（ブラウザ/メール/プッシュ通知ON/OFF + デフォルトリマインダー時間）
  */
 
 import { TRPCError } from '@trpc/server';
@@ -8,30 +8,6 @@ import { z } from 'zod';
 
 import { logger } from '@/lib/logger';
 import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc';
-
-// 配信方法の型
-const deliveryMethodSchema = z.enum(['browser', 'email', 'push']);
-type DeliveryMethod = z.infer<typeof deliveryMethodSchema>;
-
-// 通知タイプの型
-const notificationTypeSchema = z.enum(['reminders', 'plan_updates', 'system']);
-type NotificationType = z.infer<typeof notificationTypeSchema>;
-
-// 配信設定の型（通知タイプごとの配信方法配列）
-type DeliverySettings = Record<NotificationType, DeliveryMethod[]>;
-
-// デフォルトの配信設定
-const DEFAULT_DELIVERY_SETTINGS: DeliverySettings = {
-  reminders: ['browser'],
-  plan_updates: ['browser'],
-  system: ['browser'],
-};
-
-// 更新用スキーマ
-const updateDeliverySettingsSchema = z.object({
-  notificationType: notificationTypeSchema,
-  deliveryMethods: z.array(deliveryMethodSchema),
-});
 
 export const notificationPreferencesRouter = createTRPCRouter({
   /**
@@ -66,30 +42,26 @@ export const notificationPreferencesRouter = createTRPCRouter({
     // 設定がない場合はデフォルト値を返す
     if (!data) {
       return {
-        deliverySettings: DEFAULT_DELIVERY_SETTINGS,
+        enableBrowserNotifications: true,
+        enableEmailNotifications: false,
+        enablePushNotifications: false,
         defaultReminderMinutes: 10,
       };
     }
 
-    // delivery_settingsがない場合はデフォルト値を使用
-    const deliverySettings =
-      (data as unknown as { delivery_settings?: DeliverySettings }).delivery_settings ??
-      DEFAULT_DELIVERY_SETTINGS;
-
     return {
-      deliverySettings: {
-        ...DEFAULT_DELIVERY_SETTINGS,
-        ...deliverySettings,
-      },
+      enableBrowserNotifications: data.enable_browser_notifications,
+      enableEmailNotifications: data.enable_email_notifications,
+      enablePushNotifications: data.enable_push_notifications,
       defaultReminderMinutes: data.default_reminder_minutes ?? 10,
     };
   }),
 
   /**
-   * 通知タイプごとの配信方法を更新
+   * ブラウザ通知のON/OFFを更新
    */
-  updateDeliverySettings: protectedProcedure
-    .input(updateDeliverySettingsSchema)
+  updateBrowserNotifications: protectedProcedure
+    .input(z.object({ enabled: z.boolean() }))
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.userId;
 
@@ -102,36 +74,13 @@ export const notificationPreferencesRouter = createTRPCRouter({
 
       const supabase = ctx.supabase;
 
-      // 現在の設定を取得
-      const { data: currentData } = await supabase
-        .from('notification_preferences')
-        .select('delivery_settings')
-        .eq('user_id', userId)
-        .single();
-
-      const currentSettings =
-        (currentData as { delivery_settings?: DeliverySettings } | null)?.delivery_settings ??
-        DEFAULT_DELIVERY_SETTINGS;
-
-      // 新しい設定をマージ
-      const newSettings: DeliverySettings = {
-        ...DEFAULT_DELIVERY_SETTINGS,
-        ...currentSettings,
-        [input.notificationType]: input.deliveryMethods,
-      };
-
-      // upsert
-      const { data, error } = await supabase
-        .from('notification_preferences')
-        .upsert(
-          {
-            user_id: userId,
-            delivery_settings: newSettings,
-          },
-          { onConflict: 'user_id' },
-        )
-        .select()
-        .single();
+      const { error } = await supabase.from('notification_preferences').upsert(
+        {
+          user_id: userId,
+          enable_browser_notifications: input.enabled,
+        },
+        { onConflict: 'user_id' },
+      );
 
       if (error) {
         logger.error('NotificationPreferences update error:', error);
@@ -141,12 +90,79 @@ export const notificationPreferencesRouter = createTRPCRouter({
         });
       }
 
-      return {
-        success: true,
-        deliverySettings:
-          (data as unknown as { delivery_settings?: DeliverySettings }).delivery_settings ??
-          newSettings,
-      };
+      return { success: true };
+    }),
+
+  /**
+   * メール通知のON/OFFを更新
+   */
+  updateEmailNotifications: protectedProcedure
+    .input(z.object({ enabled: z.boolean() }))
+    .mutation(async ({ ctx, input }) => {
+      const userId = ctx.userId;
+
+      if (!userId) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'ユーザーIDが見つかりません',
+        });
+      }
+
+      const supabase = ctx.supabase;
+
+      const { error } = await supabase.from('notification_preferences').upsert(
+        {
+          user_id: userId,
+          enable_email_notifications: input.enabled,
+        },
+        { onConflict: 'user_id' },
+      );
+
+      if (error) {
+        logger.error('NotificationPreferences update error:', error);
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: `通知設定の更新に失敗しました: ${error.message}`,
+        });
+      }
+
+      return { success: true };
+    }),
+
+  /**
+   * プッシュ通知のON/OFFを更新
+   */
+  updatePushNotifications: protectedProcedure
+    .input(z.object({ enabled: z.boolean() }))
+    .mutation(async ({ ctx, input }) => {
+      const userId = ctx.userId;
+
+      if (!userId) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'ユーザーIDが見つかりません',
+        });
+      }
+
+      const supabase = ctx.supabase;
+
+      const { error } = await supabase.from('notification_preferences').upsert(
+        {
+          user_id: userId,
+          enable_push_notifications: input.enabled,
+        },
+        { onConflict: 'user_id' },
+      );
+
+      if (error) {
+        logger.error('NotificationPreferences update error:', error);
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: `通知設定の更新に失敗しました: ${error.message}`,
+        });
+      }
+
+      return { success: true };
     }),
 
   /**
@@ -185,6 +201,3 @@ export const notificationPreferencesRouter = createTRPCRouter({
       return { success: true };
     }),
 });
-
-// 型エクスポート
-export type { DeliveryMethod, DeliverySettings, NotificationType };

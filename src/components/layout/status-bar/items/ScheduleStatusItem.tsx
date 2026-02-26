@@ -10,10 +10,10 @@ import { StatusBarItem } from '../StatusBarItem';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { CACHE_5_MINUTES } from '@/constants/time';
-import { PlanCreateTrigger } from '@/features/plans/components/shared/PlanCreateTrigger';
-import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
+import { PlanCreateTrigger } from '@/features/plans';
 import { api } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
+import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
 import {
   CHRONOTYPE_PRESETS,
   getChronotypeColor,
@@ -37,7 +37,10 @@ export function ScheduleStatusItem() {
     staleTime: CACHE_5_MINUTES,
     refetchOnWindowFocus: false,
   });
-  const chronotype = dbSettings?.chronotype ?? { enabled: false, type: 'bear' as const };
+  const chronotype = useMemo(
+    () => dbSettings?.chronotype ?? { enabled: false, type: 'bear' as const },
+    [dbSettings?.chronotype],
+  );
 
   // 1分ごとに現在時刻を更新
   useEffect(() => {

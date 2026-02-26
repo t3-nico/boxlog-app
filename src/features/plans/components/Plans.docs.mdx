@@ -96,7 +96,7 @@ RecurringEditConfirmDialog      繰り返し編集スコープ選択
   - This instance only
   - This & after
   - All instances
-- **例外**: `plan_instances` テーブルに `is_exception` で管理
+- **例外**: `plan_instances` テーブルに型付きカラム（title, description, instance_start, instance_end）で管理
 - **`splitRecurrence`**: スコープに応じて繰り返しパターンを分割
 
 ---
@@ -124,7 +124,7 @@ fulfillment_score（1-5）を記録
 | `plans` | title, status, start_time, end_time, recurrence_type, recurrence_rule, reminder_minutes |
 | `plan_tags` | plan_id, tag_id（多対多） |
 | `plan_activities` | action_type, field_name, old_value, new_value（監査ログ） |
-| `plan_instances` | instance_date, is_exception, overrides（繰り返しインスタンス） |
+| `plan_instances` | instance_date, exception_type, title, description, instance_start, instance_end（繰り返しインスタンス） |
 
 ---
 

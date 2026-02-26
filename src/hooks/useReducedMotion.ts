@@ -1,11 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useSyncExternalStore } from 'react';
 
 /**
  * prefers-reduced-motion メディアクエリを監視するフック
  *
- * ユーザーがアニメーションの減少を好む設定をしている場合にtrueを返す
+ * useSyncExternalStore を使い、SSR安全かつ
+ * useEffect + setState パターンを回避する。
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-reduced-motion
  * @see https://www.w3.org/WAI/WCAG21/Understanding/animation-from-interactions.html
@@ -21,29 +22,25 @@ import { useEffect, useState } from 'react';
  * )
  * ```
  */
+
+const MEDIA_QUERY = '(prefers-reduced-motion: reduce)';
+
+function subscribe(callback: () => void) {
+  const mediaQuery = window.matchMedia(MEDIA_QUERY);
+  mediaQuery.addEventListener('change', callback);
+  return () => {
+    mediaQuery.removeEventListener('change', callback);
+  };
+}
+
+function getSnapshot() {
+  return window.matchMedia(MEDIA_QUERY).matches;
+}
+
+function getServerSnapshot() {
+  return false;
+}
+
 export function useReducedMotion(): boolean {
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
-
-  useEffect(() => {
-    // SSRセーフ: windowが存在しない場合は早期リターン
-    if (typeof window === 'undefined') return;
-
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-
-    // 初期値を設定
-    setPrefersReducedMotion(mediaQuery.matches);
-
-    // 変更を監視
-    const handleChange = (event: MediaQueryListEvent) => {
-      setPrefersReducedMotion(event.matches);
-    };
-
-    mediaQuery.addEventListener('change', handleChange);
-
-    return () => {
-      mediaQuery.removeEventListener('change', handleChange);
-    };
-  }, []);
-
-  return prefersReducedMotion;
+  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 }

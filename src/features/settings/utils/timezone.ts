@@ -112,21 +112,9 @@ export const setUserTimezone = (timezone: string): void => {
 
 /**
  * タイムゾーン変更通知をリッスンするためのユーティリティ関数
+ * 実装は @/lib/timezone-listener に移動（@/stores から参照するため）
  */
-export const listenToTimezoneChange = (callback: (timezone: string) => void): (() => void) => {
-  if (typeof window === 'undefined') return () => {};
-
-  const handleTimezoneChange = (event: CustomEvent) => {
-    callback(event.detail.timezone);
-  };
-
-  window.addEventListener(TIMEZONE_CHANGE_EVENT, handleTimezoneChange as EventListener);
-
-  // クリーンアップ関数を返す
-  return () => {
-    window.removeEventListener(TIMEZONE_CHANGE_EVENT, handleTimezoneChange as EventListener);
-  };
-};
+export { listenToTimezoneChange } from '@/lib/timezone-listener';
 
 /**
  * 現在使用すべきタイムゾーンを取得

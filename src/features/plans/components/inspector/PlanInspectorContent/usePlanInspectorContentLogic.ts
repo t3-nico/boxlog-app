@@ -11,14 +11,14 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+import { useRecurringScopeMutations } from '@/hooks/useRecurringScopeMutations';
 import { logger } from '@/lib/logger';
+import { useDeleteConfirmStore } from '@/stores/useDeleteConfirmStore';
+import { usePlanCacheStore } from '@/stores/usePlanCacheStore';
+import { usePlanInspectorStore, type DraftPlan } from '@/stores/usePlanInspectorStore';
+import { useRecurringEditConfirmStore } from '@/stores/useRecurringEditConfirmStore';
 import type { RecurringEditScope } from '../../../components/RecurringEditConfirmDialog';
 import { usePlan } from '../../../hooks/usePlan';
-import { useRecurringScopeMutations } from '../../../hooks/useRecurringScopeMutations';
-import { useDeleteConfirmStore } from '../../../stores/useDeleteConfirmStore';
-import { usePlanCacheStore } from '../../../stores/usePlanCacheStore';
-import { usePlanInspectorStore, type DraftPlan } from '../../../stores/usePlanInspectorStore';
-import { useRecurringEditConfirmStore } from '../../../stores/useRecurringEditConfirmStore';
 import type { Plan } from '../../../types/plan';
 import { useInspectorAutoSave, useInspectorNavigation, useRecurringPlanEdit } from '../hooks';
 import { useInspectorSaveClose } from './useInspectorSaveClose';
@@ -130,7 +130,7 @@ export function usePlanInspectorContentLogic() {
     hasTagChanges,
     handleTagsChange,
     handleRemoveTag,
-    setplanTags,
+    setPlanTags,
   } = useInspectorTagState({ planId, planData: planData as Plan | undefined, isDraftMode });
 
   // --- サブフック: 時間・スケジュール状態 ---
@@ -163,7 +163,7 @@ export function usePlanInspectorContentLogic() {
     hasTagChanges,
     selectedTagIdsRef,
     originalTagIdsRef,
-    setplanTags: setplanTags as unknown as (planId: string, tagIds: string[]) => Promise<void>,
+    setPlanTags: setPlanTags as unknown as (planId: string, tagIds: string[]) => Promise<void>,
     updatePlan,
     closeInspector,
     pendingChanges: pendingChanges as Record<string, string | number | null | undefined> | null,
@@ -198,7 +198,10 @@ export function usePlanInspectorContentLogic() {
         recurringEdit.isRecurringInstance &&
         SCOPE_DIALOG_FIELDS.includes(field as (typeof SCOPE_DIALOG_FIELDS)[number])
       ) {
-        recurringEdit.openScopeDialog(field, value);
+        recurringEdit.openScopeDialog(
+          field as 'title' | 'description' | 'start_time' | 'end_time',
+          value,
+        );
         return;
       }
       addPendingChange({ [field]: value });

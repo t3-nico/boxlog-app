@@ -4,7 +4,7 @@ import { memo, useMemo } from 'react';
 
 import { cn } from '@/lib/utils';
 
-import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
+import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 import {
   CHRONOTYPE_PRESETS,
   getProductivityLevelColor,
@@ -56,8 +56,8 @@ export const ChronotypeBackground = memo<ChronotypeBackgroundProps>(function Chr
       if (zone.level === 'moderate' || zone.level === 'low') continue;
 
       // 表示範囲内のゾーンのみ処理
-      let zoneStart = zone.startHour;
-      let zoneEnd = zone.endHour;
+      const zoneStart = zone.startHour;
+      const zoneEnd = zone.endHour;
 
       // 日跨ぎの時間帯は分割して処理
       if (zoneStart > zoneEnd) {

@@ -1,15 +1,16 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 
 import { PageHeader } from '@/components/layout/PageHeader';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
-import { isCalendarViewPath } from '@/features/calendar/lib/route-utils';
-import { AppSidebar } from '@/features/navigation/components/sidebar/app-sidebar';
-import { useSidebarStore } from '@/features/navigation/stores/useSidebarStore';
+import { isCalendarViewPath } from '@/features/calendar';
+import { AppSidebar } from '@/features/navigation';
+import { useSidebarStore } from '@/stores/useSidebarStore';
 
 import { MainContentWrapper } from './main-content-wrapper';
+import { SidebarContent } from './SidebarContent';
 
 interface MobileLayoutProps {
   children: React.ReactNode;
@@ -37,17 +38,17 @@ export function MobileLayout({ children, locale }: MobileLayoutProps) {
 
   // モバイルでの初期表示時にサイドバーを閉じる
   // デスクトップとストアを共有しているため、初期状態がtrueになる問題を解決
-  const [isInitialized, setIsInitialized] = useState(false);
+  const isInitializedRef = useRef(false);
 
   useEffect(() => {
-    if (!isInitialized) {
+    if (!isInitializedRef.current) {
       close();
-      setIsInitialized(true);
+      isInitializedRef.current = true;
     }
-  }, [close, isInitialized]);
+  }, [close]);
 
   // 初期化前は常にfalse、初期化後はストアの値を使用
-  const sheetOpen = isInitialized ? isOpen : false;
+  const sheetOpen = isInitializedRef.current ? isOpen : false;
 
   const pathname = usePathname();
 
@@ -67,7 +68,9 @@ export function MobileLayout({ children, locale }: MobileLayoutProps) {
           showCloseButton={false}
           aria-label="Navigation menu"
         >
-          <AppSidebar />
+          <AppSidebar>
+            <SidebarContent />
+          </AppSidebar>
         </SheetContent>
       </Sheet>
 

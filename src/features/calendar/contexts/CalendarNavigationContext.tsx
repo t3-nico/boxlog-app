@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useCallback, useContext, useState } from 'react';
+import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
 
 import { usePathname } from 'next/navigation';
 
@@ -100,16 +100,19 @@ export const CalendarNavigationProvider = ({
     [currentDate, viewType, navigateToDate],
   );
 
+  const contextValue = useMemo(
+    () => ({
+      currentDate,
+      viewType,
+      navigateToDate,
+      changeView,
+      navigateRelative,
+    }),
+    [currentDate, viewType, navigateToDate, changeView, navigateRelative],
+  );
+
   return (
-    <CalendarNavigationContext.Provider
-      value={{
-        currentDate,
-        viewType,
-        navigateToDate,
-        changeView,
-        navigateRelative,
-      }}
-    >
+    <CalendarNavigationContext.Provider value={contextValue}>
       {children}
     </CalendarNavigationContext.Provider>
   );

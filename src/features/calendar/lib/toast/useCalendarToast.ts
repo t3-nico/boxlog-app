@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 
 import { toast } from 'sonner';
 
-import type { CalendarPlan } from '@/features/calendar/types';
+import type { CalendarPlan } from '../../types';
 
 import { getTranslation } from './get-translation';
 import { toastTemplates } from './templates';

@@ -7,8 +7,8 @@
 
 import { useCallback, useRef } from 'react';
 
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types';
 import { useHapticFeedback } from '@/hooks/useHapticFeedback';
+import type { CalendarPlan } from '../../../../../types/calendar.types';
 
 import type { DragDataRef, DragState } from './types';
 import {

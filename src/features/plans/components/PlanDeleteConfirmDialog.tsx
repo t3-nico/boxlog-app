@@ -5,7 +5,7 @@ import { useCallback } from 'react';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { useTranslations } from 'next-intl';
 
-import { useDeleteConfirmStore } from '../stores/useDeleteConfirmStore';
+import { useDeleteConfirmStore } from '@/stores/useDeleteConfirmStore';
 
 /**
  * プラン削除確認ダイアログ

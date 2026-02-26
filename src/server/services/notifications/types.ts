@@ -21,15 +21,7 @@ export interface ListNotificationsOptions {
 export interface CreateNotificationOptions {
   userId: string;
   type: string;
-  priority: string;
-  title: string;
-  message?: string;
-  relatedPlanId?: string;
-  relatedTagId?: string;
-  actionUrl?: string;
-  icon?: string;
-  data?: Record<string, unknown>;
-  expiresAt?: string;
+  planId: string;
 }
 
 export interface UpdateNotificationOptions {

@@ -1,57 +1,9 @@
 /**
- * 日付操作ヘルパー関数
+ * カレンダー固有の日付ヘルパー関数
  *
- * @deprecated 新しいコードでは `@/lib/date` を直接使用してください。
- * このファイルは後方互換性のため維持されています。
- *
- * @example
- * ```typescript
- * // 推奨: 新しいライブラリを使用
- * import { startOfDay, addDays, formatTime } from '@/lib/date';
- *
- * // 非推奨: このファイルからのインポート
- * import { startOfDay, addDays } from './dateHelpers';
- * ```
+ * 汎用的な日付操作は `@/lib/date` を使用してください。
+ * このファイルにはカレンダービュー固有のユーティリティのみ含まれます。
  */
-
-// ========================================
-// @/lib/date から再エクスポート（共通関数）
-// ========================================
-export {
-  // 日付加算
-  addDays,
-  addMinutes,
-  endOfDay,
-  // 配列生成
-  generateDateRange,
-  // キー生成
-  getDateKey,
-  // 差分計算
-  getDaysDifference,
-  endOfMonth as getMonthEnd,
-  // 月の境界
-  startOfMonth as getMonthStart,
-  endOfWeek as getWeekEnd,
-  // 週の境界
-  startOfWeek as getWeekStart,
-  // 比較・判定
-  isSameDay,
-  isToday,
-  isWeekend,
-  // パース
-  normalizeDate as normalizeEventDate,
-  // 日の境界
-  startOfDay,
-} from '@/lib/date';
-
-// ========================================
-// カレンダー固有のフォーマット関数
-// ========================================
-import {
-  formatTime as formatTimeBase,
-  formatTimeRange as formatTimeRangeBase,
-  type TimeFormat,
-} from '@/lib/date';
 
 /**
  * 日付をフォーマット（カレンダービュー用）
@@ -90,24 +42,6 @@ export function formatDate(date: Date, format: 'short' | 'long' | 'numeric' = 's
       return `${day}`;
   }
 }
-
-/**
- * 時刻をフォーマット
- */
-export function formatTime(date: Date, format: TimeFormat = '24h'): string {
-  return formatTimeBase(date, format);
-}
-
-/**
- * 時間範囲をフォーマット
- */
-export function formatTimeRange(start: Date, end: Date, format: TimeFormat = '24h'): string {
-  return formatTimeRangeBase(start, end, format);
-}
-
-// ========================================
-// カレンダー固有のユーティリティ
-// ========================================
 
 /**
  * イベントの妥当性をチェック

@@ -163,6 +163,13 @@ npm audit
 2. **Service層を経由** - ルーターに直接ロジックを書かない
 3. **`handleServiceError()` を使用** - 直接TRPCErrorをthrowしない
 
+## 関連エージェント
+
+- **security-auditor** — 既存コードの回帰スキャン（PASS/FAIL判定）。PR前・週次で実行
+- **red-team / blue-team** — 探索的な攻防監査。月次・大きな機能追加時
+
+> このスキルは「実装時のガイド」、エージェントは「既存コードの検査」。新規コード実装時はこのスキルを、既存コードのスキャンはエージェントを使う。
+
 ## 関連スキル
 
 - `/trpc-router-creating` - 認証付きエンドポイント作成

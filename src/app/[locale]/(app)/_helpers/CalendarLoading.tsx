@@ -4,7 +4,7 @@ import { Skeleton } from '@/components/ui/skeleton';
  * カレンダーページのローディングUI
  * ページ遷移時に即座に表示され、体感速度を向上
  */
-export default function CalendarLoading() {
+export function CalendarLoading() {
   return (
     <div
       className="flex h-full flex-1 flex-col"

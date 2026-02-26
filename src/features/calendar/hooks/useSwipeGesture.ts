@@ -30,10 +30,6 @@ export interface SwipeGestureResult {
   };
   /** ref を要素に設定 */
   ref: React.RefObject<HTMLElement | null>;
-  /** 現在のスワイプ方向（プレビュー用） */
-  swipeDirection: 'left' | 'right' | null;
-  /** 現在のスワイプ距離（プレビュー用） */
-  swipeDistance: number;
 }
 
 /**
@@ -163,7 +159,5 @@ export function useSwipeGesture(
       onTouchEnd: handleTouchEnd,
     },
     ref,
-    swipeDirection: swipeDirection.current,
-    swipeDistance: swipeDistance.current,
   };
 }

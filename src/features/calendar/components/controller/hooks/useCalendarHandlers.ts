@@ -2,13 +2,13 @@
 
 import { useCallback } from 'react';
 
-import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
-import { useRecurringEditConfirmStore } from '@/features/plans/stores/useRecurringEditConfirmStore';
-import { getInstanceRef } from '@/features/plans/utils/instanceId';
-import { useRecordInspectorStore } from '@/features/records/stores';
-import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
 import { convertFromTimezone } from '@/lib/date/timezone';
+import { getInstanceRef } from '@/lib/instance-id';
 import { logger } from '@/lib/logger';
+import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
+import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
+import { useRecordInspectorStore } from '@/stores/useRecordInspectorStore';
+import { useRecurringEditConfirmStore } from '@/stores/useRecurringEditConfirmStore';
 
 import type { CalendarPlan, CalendarViewType } from '../../../types/calendar.types';
 

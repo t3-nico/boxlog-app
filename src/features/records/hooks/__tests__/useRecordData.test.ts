@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { matchesDurationFilter, matchesFulfillmentFilter } from '../useRecordData';
+import { matchesDurationFilter, matchesFulfillmentFilter } from '@/hooks/useRecordData';
 
 describe('useRecordData ユーティリティ関数', () => {
   describe('matchesFulfillmentFilter', () => {

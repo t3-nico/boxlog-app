@@ -1,6 +1,7 @@
 'use client';
 
-import { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { useHasMounted } from '@/hooks/useHasMounted';
+import { memo, useCallback, useMemo, useState } from 'react';
 
 import {
   addMonths,
@@ -28,8 +29,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore';
 import { cn } from '@/lib/utils';
+import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 
 export interface MiniCalendarProps {
   selectedDate?: Date | undefined;
@@ -45,8 +46,8 @@ export interface MiniCalendarProps {
   onOpenChange?: ((open: boolean) => void) | undefined;
   /** 「日付なし」ボタンを表示するか */
   allowClear?: boolean | undefined;
-  /** Popover の z-index（Inspector内では高い値を使用） */
-  popoverZIndex?: number | undefined;
+  /** Popover の z-index クラス名（Inspector内では高い値を使用） */
+  popoverZIndex?: string | undefined;
   /** 表示期間のハイライト範囲（WeekViewなどで現在表示中の期間をハイライト） */
   displayRange?: { start: Date; end: Date } | undefined;
 }
@@ -125,27 +126,25 @@ export const MiniCalendar = memo<MiniCalendarProps>(
   }) => {
     const locale = useLocale();
     const weekStartsOn = useCalendarSettingsStore((state) => state.weekStartsOn);
-    const [isMounted, setIsMounted] = useState(false);
+    const isMounted = useHasMounted();
     const [open, setOpen] = useState(false);
     const [viewMonth, setViewMonth] = useState(() => month ?? selectedDate ?? new Date());
 
-    useEffect(() => {
-      setIsMounted(true);
-    }, []);
-
-    // 外部からmonthが変更された場合に同期
-    useEffect(() => {
-      if (month) {
-        setViewMonth(month);
-      }
-    }, [month]);
-
-    // selectedDateが変更された場合、その月を表示（メインカレンダーとの同期）
-    useEffect(() => {
-      if (selectedDate) {
-        setViewMonth(selectedDate);
-      }
-    }, [selectedDate]);
+    // 外部からmonth/selectedDateが変更された場合に同期（React推奨: レンダー中のstate調整）
+    const [prevMonth, setPrevMonth] = useState(month);
+    const [prevSelectedDate, setPrevSelectedDate] = useState(selectedDate);
+    if (month && month !== prevMonth) {
+      setPrevMonth(month);
+      setViewMonth(month);
+    } else if (month !== prevMonth) {
+      setPrevMonth(month);
+    }
+    if (selectedDate && selectedDate !== prevSelectedDate) {
+      setPrevSelectedDate(selectedDate);
+      setViewMonth(selectedDate);
+    } else if (selectedDate !== prevSelectedDate) {
+      setPrevSelectedDate(selectedDate);
+    }
 
     const weekdays = getWeekdays(locale, weekStartsOn);
     const months = locale === 'ja' ? MONTHS_JA : MONTHS_EN;
@@ -384,8 +383,11 @@ export const MiniCalendar = memo<MiniCalendarProps>(
         <Popover open={open} onOpenChange={handleOpenChange} modal={false}>
           <PopoverTrigger asChild>{popoverTrigger}</PopoverTrigger>
           <PopoverContent
-            className={cn('bg-card border-border w-auto border p-0', popoverClassName)}
-            style={popoverZIndex !== undefined ? { zIndex: popoverZIndex } : undefined}
+            className={cn(
+              'bg-card border-border w-auto border p-0',
+              popoverClassName,
+              popoverZIndex,
+            )}
             align={popoverAlign}
             side={popoverSide}
           >

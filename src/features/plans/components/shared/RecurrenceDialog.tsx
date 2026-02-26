@@ -17,8 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { zIndex } from '@/config/ui/z-index';
-import { useDateFormat } from '@/features/settings/hooks/useDateFormat';
+import { useDateFormat } from '@/hooks/useDateFormat';
 import { useSubmitShortcut } from '@/hooks/useSubmitShortcut';
 
 import type { RecurrenceConfig } from '../../types/plan';
@@ -193,11 +192,10 @@ export function RecurrenceDialog({
     <Portal.Root>
       <div
         ref={dialogRef}
-        className="bg-card border-border fixed w-[25rem] overflow-hidden rounded-2xl border shadow-lg"
+        className="bg-card border-border z-overlay-popover fixed w-[25rem] overflow-hidden rounded-2xl border shadow-lg"
         style={{
           top: `${position.top}px`,
           left: `${position.left}px`,
-          zIndex: zIndex.overlayDropdown,
         }}
       >
         {/* ヘッダー */}
@@ -240,7 +238,7 @@ export function RecurrenceDialog({
                 <SelectTrigger className="w-24">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent style={{ zIndex: zIndex.overlayDropdown }}>
+                <SelectContent className="z-overlay-popover">
                   <SelectItem value="daily">{t('common.recurrence.dialog.perDay')}</SelectItem>
                   <SelectItem value="weekly">{t('common.recurrence.dialog.perWeek')}</SelectItem>
                   <SelectItem value="monthly">{t('common.recurrence.dialog.perMonth')}</SelectItem>
@@ -310,7 +308,7 @@ export function RecurrenceDialog({
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent style={{ zIndex: zIndex.overlayDropdown }}>
+                <SelectContent className="z-overlay-popover">
                   {(() => {
                     // 現在の日付から候補を生成
                     const today = new Date();

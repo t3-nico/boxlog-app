@@ -29,16 +29,16 @@ import {
 } from '@/components/ui/command';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { useTheme } from '@/contexts/theme-context';
-import { useCalendarFilterStore } from '@/features/calendar/stores/useCalendarFilterStore';
-import { useAppAsideStore } from '@/features/navigation/stores/useAppAsideStore';
-import { usePlans } from '@/features/plans/hooks';
-import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
-import { useSettingsModalStore } from '@/features/settings/stores/useSettingsModalStore';
-import { useTagModalNavigation } from '@/features/tags/hooks/useTagModalNavigation';
-import { useTagStore } from '@/features/tags/stores/useTagStore';
+import { usePlans } from '@/hooks/usePlans';
+import { useTagModalNavigation } from '@/hooks/useTagModalNavigation';
+import { useTags } from '@/hooks/useTagsQuery';
+import { useAppAsideStore } from '@/stores/useAppAsideStore';
+import { useCalendarFilterStore } from '@/stores/useCalendarFilterStore';
+import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
+import { useSettingsModalStore } from '@/stores/useSettingsModalStore';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 
-import type { PlanStatus } from '@/features/plans/types';
+import type { PlanStatus } from '@/core/types/plan';
 import { useRecentPlans } from '../hooks/useRecentPlans';
 import { useSearchHistory } from '../hooks/useSearch';
 import { commandRegistry, registerDefaultCommands } from '../lib/command-registry';
@@ -102,7 +102,7 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
 
   // Get data from stores - only fetch when modal is open to prevent 401 errors on unauthenticated pages
   const { data: plans = [] } = usePlans(undefined, { enabled: isOpen });
-  const tags = useTagStore((state) => state.tags);
+  const { data: tags = [] } = useTags();
 
   // Get actions from stores
   const openPlanInspector = usePlanInspectorStore((state) => state.openInspector);
@@ -131,12 +131,14 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
     });
   }, [router, openPlanInspector, openTagCreateModal, navigateToSettings, toggleTheme, openAside]);
 
-  // Reset query when modal closes
-  useEffect(() => {
-    if (!isOpen) {
-      setQuery('');
-    }
-  }, [isOpen]);
+  // Reset query when modal closes（React推奨: レンダー中のstate調整）
+  const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
+  if (prevIsOpen && !isOpen) {
+    setPrevIsOpen(isOpen);
+    setQuery('');
+  } else if (prevIsOpen !== isOpen) {
+    setPrevIsOpen(isOpen);
+  }
 
   // Get commands from registry
   const commands = useMemo(() => {
