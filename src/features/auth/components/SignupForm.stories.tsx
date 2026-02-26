@@ -72,7 +72,7 @@ export const WithInteraction: Story = {
     await expect(emailInput).toHaveValue('newuser@example.com');
 
     // パスワード入力
-    const passwordInput = canvas.getByLabelText(/^パスワード/);
+    const passwordInput = canvas.getByLabelText('パスワード', { exact: true });
     await userEvent.type(passwordInput, 'SecureP@ss123');
 
     // 確認パスワード入力
