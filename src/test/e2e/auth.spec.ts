@@ -36,7 +36,7 @@ test.describe('Auth: サインアップ', () => {
 
     // チェックボックスまたは利用規約リンクが存在
     const termsElement = page
-      .locator('[type="checkbox"], a[href*="terms"], [data-testid="terms"]')
+      .locator('[role="checkbox"], a[href*="terms"], [data-testid="terms"]')
       .first();
     await expect(termsElement).toBeVisible({ timeout: 10000 });
   });
@@ -57,7 +57,7 @@ test.describe('Auth: サインアップ', () => {
     const passwordInput = page.locator('input[type="password"]').first();
     const confirmInput = page.locator('input[type="password"]').nth(1);
     const submitButton = page.locator('button[type="submit"]').first();
-    const checkbox = page.locator('[type="checkbox"]').first();
+    const checkbox = page.locator('[role="checkbox"]').first();
 
     await emailInput.fill('test@example.com');
     await passwordInput.fill('short');
