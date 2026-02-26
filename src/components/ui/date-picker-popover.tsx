@@ -10,7 +10,7 @@ import { Calendar } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { MiniCalendar } from '@/components/ui/mini-calendar';
-import { useDateFormat } from '@/features/settings/hooks/useDateFormat';
+import { useDateFormat } from '@/hooks/useDateFormat';
 
 interface DatePickerPopoverProps {
   selectedDate: Date | undefined;

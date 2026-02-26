@@ -1,7 +1,6 @@
 /**
- * Tag mutation hooks - Re-export from feature for cross-feature usage
+ * Tag mutation hooks - Shared layer implementations
  *
- * 実体は @/features/tags/hooks/useTagCrudMutations に存在
  * features間のimport禁止ルールに対応するため、shared hooksとして公開
  */
 export {
@@ -12,8 +11,8 @@ export {
   useReorderTags,
   useUpdateTag,
   useUpdateTagColor,
-} from '@/features/tags/hooks/useTagCrudMutations';
+} from './useTagCrudMutations';
 
-export type { ReorderTagInput } from '@/features/tags/hooks/useTagCrudMutations';
+export type { ReorderTagInput } from './useTagCrudMutations';
 
-export { useMergeTag } from '@/features/tags/hooks/useTagMergeMutation';
+export { useMergeTag } from './useTagMergeMutation';

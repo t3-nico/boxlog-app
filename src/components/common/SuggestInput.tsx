@@ -27,7 +27,7 @@ import {
   CommandList,
 } from '@/components/ui/command';
 import { Popover, PopoverAnchor, PopoverContent } from '@/components/ui/popover';
-import { useTags } from '@/features/tags/hooks/useTagsQuery';
+import { useTags } from '@/hooks/useTagsQuery';
 import { trpc } from '@/lib/trpc/client';
 import { cn } from '@/lib/utils';
 

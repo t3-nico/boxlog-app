@@ -5,9 +5,9 @@ import { useMemo } from 'react';
 import { Tag, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
+import { TagSelectCombobox } from '@/components/tags/TagSelectCombobox';
 import { Badge } from '@/components/ui/badge';
 import { HoverTooltip } from '@/components/ui/tooltip';
-import { TagSelectCombobox } from '@/features/tags/components/TagSelectCombobox';
 import { useTags } from '@/hooks/useTagsQuery';
 import { cn } from '@/lib/utils';
 
