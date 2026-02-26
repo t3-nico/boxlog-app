@@ -61,6 +61,32 @@ const eslintConfig = defineConfig([
     },
   },
 
+  // Shared layer: cannot import from features (dependency inversion)
+  {
+    files: [
+      'src/components/**/*.{ts,tsx}',
+      'src/hooks/**/*.{ts,tsx}',
+      'src/stores/**/*.{ts,tsx}',
+    ],
+    ignores: [
+      'src/components/layout/**',       // Layout Composition Layer
+      'src/components/providers/**',     // Provider Composition Layer
+      'src/components/providers.tsx',    // Provider root
+      'src/components/dnd/**',           // DnD (stories only)
+      'src/components/**/*.stories.*',   // Storybook files
+    ],
+    rules: {
+      'no-restricted-imports': ['error', {
+        patterns: [
+          {
+            group: ['@/features/*', '@/features/**'],
+            message: '共有層→featureの逆依存は禁止。共有層に実体を移動するか、Composition Layerに配置。',
+          },
+        ],
+      }],
+    },
+  },
+
   // App layer: barrel imports only (no deep paths)
   {
     files: ['src/app/**/*.{ts,tsx}'],
