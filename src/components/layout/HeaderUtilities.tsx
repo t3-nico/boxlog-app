@@ -6,7 +6,7 @@ import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { NotificationDropdown } from '@/features/notifications';
-import { useGlobalSearch } from '@/features/search/hooks/use-global-search';
+import { useGlobalSearch } from '@/features/search';
 
 /**
  * ヘッダー共通ユーティリティ（通知 + 検索）

@@ -24,11 +24,10 @@
 import { usePathname } from 'next/navigation';
 import { useMemo } from 'react';
 
-import { useCalendarRealtime } from '@/features/calendar/hooks/useCalendarRealtime';
-import { isCalendarViewPath } from '@/features/calendar/lib/route-utils';
-import { useNotificationRealtime } from '@/features/notifications/hooks/useNotificationRealtime';
-import { usePlanRealtime } from '@/features/plans/hooks/usePlanRealtime';
-import { useTagRealtime } from '@/features/tags/hooks/useTagRealtime';
+import { isCalendarViewPath, useCalendarRealtime } from '@/features/calendar';
+import { useNotificationRealtime } from '@/features/notifications';
+import { usePlanRealtime } from '@/features/plans';
+import { useTagRealtime } from '@/features/tags';
 import { useHasMounted } from '@/hooks/useHasMounted';
 import { useAuthStore } from '@/stores/useAuthStore';
 

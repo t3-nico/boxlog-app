@@ -10,7 +10,7 @@ import { StatusBarItem } from '../StatusBarItem';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { CACHE_5_MINUTES } from '@/constants/time';
-import { PlanCreateTrigger } from '@/features/plans/components/shared/PlanCreateTrigger';
+import { PlanCreateTrigger } from '@/features/plans';
 import { api } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
 import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';

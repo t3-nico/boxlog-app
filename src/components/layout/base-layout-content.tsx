@@ -2,13 +2,12 @@
 
 import { Button } from '@/components/ui/button';
 import { MEDIA_QUERIES } from '@/config/ui/breakpoints';
-import { CalendarNavigationProvider } from '@/features/calendar/contexts/CalendarNavigationContext';
-import { useCalendarProviderProps } from '@/features/calendar/hooks/useCalendarProviderProps';
+import { CalendarNavigationProvider, useCalendarProviderProps } from '@/features/calendar';
 import {
   CreateActionSheet,
   useCreateActionSheet,
   type CreateActionType,
-} from '@/features/navigation/components/mobile/CreateActionSheet';
+} from '@/features/navigation';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
 import { Plus } from 'lucide-react';

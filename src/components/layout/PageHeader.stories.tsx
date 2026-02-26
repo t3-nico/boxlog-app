@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { usePageTitleStore } from '@/features/navigation/stores/usePageTitleStore';
+import { usePageTitleStore } from '@/features/navigation';
 
 import { PageHeader } from './PageHeader';
 

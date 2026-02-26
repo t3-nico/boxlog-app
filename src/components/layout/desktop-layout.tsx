@@ -5,8 +5,8 @@ import { usePathname } from 'next/navigation';
 import { Suspense, useMemo } from 'react';
 
 import { PageHeader } from '@/components/layout/PageHeader';
-import { isCalendarViewPath } from '@/features/calendar/lib/route-utils';
-import { AppSidebar } from '@/features/navigation/components/sidebar/app-sidebar';
+import { isCalendarViewPath } from '@/features/calendar';
+import { AppSidebar } from '@/features/navigation';
 import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useSidebarStore } from '@/stores/useSidebarStore';

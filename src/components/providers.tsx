@@ -53,7 +53,7 @@ const AxeAccessibilityChecker =
 
 import { RealtimeProvider } from '@/components/providers/RealtimeProvider';
 import { ThemeProvider } from '@/contexts/theme-context';
-import { AuthStoreInitializer } from '@/features/auth/stores/AuthStoreInitializer';
+import { AuthStoreInitializer } from '@/features/auth';
 import { api } from '@/lib/trpc';
 
 // GlobalSearchProviderを遅延ロード（初回レンダリングをブロックしない）
@@ -221,7 +221,7 @@ export function Providers({ children }: ProvidersProps) {
         {/* 開発ツール（開発環境のみ） */}
         {process.env.NODE_ENV === 'development' && (
           <>
-            <ReactQueryDevtools initialIsOpen={false} buttonPosition="bottom-right" />
+            {/* <ReactQueryDevtools initialIsOpen={false} buttonPosition="bottom-right" /> */}
             <AxeAccessibilityChecker />
           </>
         )}

@@ -5,8 +5,8 @@ import { useEffect, useMemo, useRef } from 'react';
 
 import { PageHeader } from '@/components/layout/PageHeader';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
-import { isCalendarViewPath } from '@/features/calendar/lib/route-utils';
-import { AppSidebar } from '@/features/navigation/components/sidebar/app-sidebar';
+import { isCalendarViewPath } from '@/features/calendar';
+import { AppSidebar } from '@/features/navigation';
 import { useSidebarStore } from '@/stores/useSidebarStore';
 
 import { MainContentWrapper } from './main-content-wrapper';

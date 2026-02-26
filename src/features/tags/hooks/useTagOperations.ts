@@ -10,10 +10,10 @@ import {
   useCreateTag,
   useDeleteTag,
   useMoveTag,
-  useOptimisticTagUpdate,
   useRenameTag,
   useUpdateTag,
-} from './';
+} from './useTagsMutations';
+import { useOptimisticTagUpdate } from './useTagsOptimistic';
 
 export function useTagOperations(tags: Tag[]) {
   const [showCreateModal, setShowCreateModal] = useState(false);

@@ -8,9 +8,7 @@
  */
 
 import { MiniCalendar } from '@/components/ui/mini-calendar';
-import { CalendarFilterList } from '@/features/calendar/components/sidebar/tag-filter/CalendarFilterList';
-import { ViewSwitcherList } from '@/features/calendar/components/sidebar/ViewSwitcherList';
-import { useCalendarNavigation } from '@/features/calendar/contexts/CalendarNavigationContext';
+import { CalendarFilterList, useCalendarNavigation, ViewSwitcherList } from '@/features/calendar';
 
 export function SidebarContent() {
   const navigation = useCalendarNavigation();
