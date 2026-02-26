@@ -180,7 +180,7 @@ jobs:
         run: npm ci
 
       - name: 🔍 ESLint a11y check
-        run: npm run a11y:check || echo "⚠️ Accessibility warnings found"
+        run: npm run lint:a11y || echo "⚠️ Accessibility warnings found"
         continue-on-error: true
 
   heavy-checks:
@@ -205,13 +205,6 @@ jobs:
         run: npm run license:check
         continue-on-error: true
 
-      - name: 🔄 API changes
-        run: npm run api:check
-        continue-on-error: true
-
-      - name: 🏷️ Naming convention
-        run: npm run naming:migrate
-        continue-on-error: true
 
   docs-consistency:
     name: 📚 Docs Consistency
