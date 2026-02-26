@@ -25,18 +25,20 @@
 
 ## 主要機能（Features）
 
-| 機能           | ディレクトリ              | 説明                                   |
-| -------------- | ------------------------- | -------------------------------------- |
-| **Plans**      | `src/features/plans`      | プラン（タスク）管理、タイムボクシング |
-| **Records**    | `src/features/records`    | 時間記録、実績管理                     |
-| **Calendar**   | `src/features/calendar`   | カレンダービュー、ドラッグ&ドロップ    |
-| **Tags**       | `src/features/tags`       | タグ管理、親子階層モデル               |
-| **Stats**      | `src/features/stats`      | 統計・分析、ヒートマップ               |
-| **Inspector**  | `src/features/inspector`  | 詳細パネル、プラン/レコード編集        |
-| **Auth**       | `src/features/auth`       | 認証、Supabase Auth連携                |
-| **Settings**   | `src/features/settings`   | ユーザー設定、通知設定                 |
-| **Navigation** | `src/features/navigation` | サイドバー、ナビゲーションタブ         |
-| **Search**     | `src/features/search`     | グローバル検索                         |
+| 機能            | ディレクトリ               | 説明                                   |
+| --------------- | -------------------------- | -------------------------------------- |
+| **Plans**       | `src/features/plans`       | プラン（タスク）管理、タイムボクシング |
+| **Records**     | `src/features/records`     | 時間記録、実績管理                     |
+| **Calendar**    | `src/features/calendar`    | カレンダービュー、ドラッグ&ドロップ    |
+| **Tags**        | `src/features/tags`        | タグ管理、親子階層モデル               |
+| **Stats**       | `src/features/stats`       | 統計・分析、ヒートマップ               |
+| **Auth**        | `src/features/auth`        | 認証、Supabase Auth連携                |
+| **Settings**    | `src/features/settings`    | ユーザー設定、通知設定                 |
+| **Navigation**  | `src/features/navigation`  | サイドバー、ナビゲーションタブ         |
+| **Search**      | `src/features/search`      | グローバル検索                         |
+| **AI**          | `src/features/ai`          | AIチャット、インスペクタ統合           |
+| **Automations** | `src/features/automations` | 自動化ルール、トリガー/アクション      |
+| **Reflection**  | `src/features/reflection`  | 振り返り、日次/週次レビュー            |
 
 ## コマンド
 

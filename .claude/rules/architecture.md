@@ -38,7 +38,7 @@ const { count, tags, filters } = useTagStore();
 
 ### tRPC化完了エリア
 
-Plans (12), Tags (7), Records (2), Notifications (4), User (2), Profile (2), Auth (3), UserSettings (2), NotificationPreferences (2)
+Plans (27), Records (12), Tags (10), Notifications (10), Chat (7), Email (5), NotificationPreferences (5), User (2), UserSettings (2), Suggestions (1)
 
 ### REST維持エリア
 
