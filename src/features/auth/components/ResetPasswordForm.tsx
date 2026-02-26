@@ -55,7 +55,7 @@ export function ResetPasswordForm({ className, ...props }: React.ComponentProps<
         return;
       }
 
-      if (password.length < 8) {
+      if (password.length < 12) {
         setError(t('auth.resetPasswordForm.passwordTooShort'));
         setLoading(false);
         return;
@@ -147,7 +147,7 @@ export function ResetPasswordForm({ className, ...props }: React.ComponentProps<
                     aria-disabled={loading || undefined}
                     autoComplete="new-password"
                     required
-                    minLength={8}
+                    minLength={12}
                   />
                   <HoverTooltip
                     content={
@@ -189,7 +189,7 @@ export function ResetPasswordForm({ className, ...props }: React.ComponentProps<
                     aria-disabled={loading || undefined}
                     autoComplete="new-password"
                     required
-                    minLength={8}
+                    minLength={12}
                   />
                   <HoverTooltip
                     content={

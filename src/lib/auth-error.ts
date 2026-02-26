@@ -40,12 +40,13 @@ export function getAuthErrorKey(errorMessage: string, context: AuthContext): str
 
   // サインアップ
   if (context === 'signup') {
+    // OWASP: 「既に登録済み」もユーザー列挙防止のため汎用メッセージを返す
     if (
       normalizedMessage.includes('already registered') ||
       normalizedMessage.includes('already exists') ||
       normalizedMessage.includes('duplicate')
     ) {
-      return 'auth.errors.emailAlreadyRegistered';
+      return 'auth.errors.unexpectedError';
     }
     if (
       normalizedMessage.includes('rate limit') ||

@@ -18,7 +18,7 @@ vi.mock('@/lib/trpc', () => ({
 }));
 
 let mockMutationCount = 0;
-vi.mock('../../stores/useTagCacheStore', () => ({
+vi.mock('@/stores/useTagCacheStore', () => ({
   useTagCacheStore: (selector: (state: { mutationCount: number }) => boolean) =>
     selector({ mutationCount: mockMutationCount }),
 }));

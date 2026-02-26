@@ -24,7 +24,17 @@ vi.mock('next-intl', () => ({
   useTranslations: () => (key: string) => key,
 }));
 
-vi.mock('@/features/auth/stores/useAuthStore', () => ({
+vi.mock('@/i18n/navigation', async () => {
+  const React = await import('react');
+  return {
+    Link: ({ children, href, ...props }: { children: React.ReactNode; href: string }) =>
+      React.createElement('a', { href, ...props }, children),
+    useRouter: () => ({ push: vi.fn() }),
+    usePathname: () => '/',
+  };
+});
+
+vi.mock('@/stores/useAuthStore', () => ({
   useAuthStore: (selector: (state: { signUp: typeof mockSignUp }) => typeof mockSignUp) =>
     selector({ signUp: mockSignUp }),
 }));
@@ -123,13 +133,13 @@ describe('SignupForm', () => {
       renderWithProviders(<SignupForm />);
 
       await user.type(screen.getByLabelText(/auth\.signupForm\.email/), 'test@example.com');
-      await user.type(screen.getByLabelText(/auth\.signupForm\.password/), 'password123');
-      await user.type(screen.getByLabelText(/auth\.signupForm\.confirmPassword/), 'password123');
+      await user.type(screen.getByLabelText(/auth\.signupForm\.password/), 'Password1234');
+      await user.type(screen.getByLabelText(/auth\.signupForm\.confirmPassword/), 'Password1234');
       await user.click(screen.getByRole('checkbox'));
       await user.click(screen.getByRole('button', { name: 'auth.signupForm.createAccountButton' }));
 
       await waitFor(() => {
-        expect(mockSignUp).toHaveBeenCalledWith('test@example.com', 'password123');
+        expect(mockSignUp).toHaveBeenCalledWith('test@example.com', 'Password1234');
         expect(mockPush).toHaveBeenCalledWith('/ja/day');
       });
     });
@@ -144,8 +154,8 @@ describe('SignupForm', () => {
       renderWithProviders(<SignupForm />);
 
       await user.type(screen.getByLabelText(/auth\.signupForm\.email/), 'existing@example.com');
-      await user.type(screen.getByLabelText(/auth\.signupForm\.password/), 'password123');
-      await user.type(screen.getByLabelText(/auth\.signupForm\.confirmPassword/), 'password123');
+      await user.type(screen.getByLabelText(/auth\.signupForm\.password/), 'Password1234');
+      await user.type(screen.getByLabelText(/auth\.signupForm\.confirmPassword/), 'Password1234');
       await user.click(screen.getByRole('checkbox'));
       await user.click(screen.getByRole('button', { name: 'auth.signupForm.createAccountButton' }));
 
@@ -166,8 +176,8 @@ describe('SignupForm', () => {
       renderWithProviders(<SignupForm />);
 
       await user.type(screen.getByLabelText(/auth\.signupForm\.email/), 'test@example.com');
-      await user.type(screen.getByLabelText(/auth\.signupForm\.password/), 'password123');
-      await user.type(screen.getByLabelText(/auth\.signupForm\.confirmPassword/), 'password123');
+      await user.type(screen.getByLabelText(/auth\.signupForm\.password/), 'Password1234');
+      await user.type(screen.getByLabelText(/auth\.signupForm\.confirmPassword/), 'Password1234');
       await user.click(screen.getByRole('checkbox'));
 
       const submitButton = screen.getByRole('button', {
@@ -234,8 +244,8 @@ describe('SignupForm', () => {
       renderWithProviders(<SignupForm />);
 
       await user.type(screen.getByLabelText(/auth\.signupForm\.email/), 'test@example.com');
-      await user.type(screen.getByLabelText(/auth\.signupForm\.password/), 'password123');
-      await user.type(screen.getByLabelText(/auth\.signupForm\.confirmPassword/), 'password123');
+      await user.type(screen.getByLabelText(/auth\.signupForm\.password/), 'Password1234');
+      await user.type(screen.getByLabelText(/auth\.signupForm\.confirmPassword/), 'Password1234');
       await user.click(screen.getByRole('checkbox'));
       await user.click(screen.getByRole('button', { name: 'auth.signupForm.createAccountButton' }));
 
@@ -254,8 +264,8 @@ describe('SignupForm', () => {
       renderWithProviders(<SignupForm />);
 
       await user.type(screen.getByLabelText(/auth\.signupForm\.email/), 'test@example.com');
-      await user.type(screen.getByLabelText(/auth\.signupForm\.password/), 'password123');
-      await user.type(screen.getByLabelText(/auth\.signupForm\.confirmPassword/), 'password123');
+      await user.type(screen.getByLabelText(/auth\.signupForm\.password/), 'Password1234');
+      await user.type(screen.getByLabelText(/auth\.signupForm\.confirmPassword/), 'Password1234');
       await user.click(screen.getByRole('checkbox'));
       await user.click(screen.getByRole('button', { name: 'auth.signupForm.createAccountButton' }));
 

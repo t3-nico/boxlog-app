@@ -64,7 +64,7 @@ function ResetPasswordFormWithError() {
                     onChange={(e) => setPassword(e.target.value)}
                     autoComplete="new-password"
                     required
-                    minLength={8}
+                    minLength={12}
                   />
                   <HoverTooltip
                     content={showPassword ? 'Hide password' : 'Show password'}
@@ -94,7 +94,7 @@ function ResetPasswordFormWithError() {
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     autoComplete="new-password"
                     required
-                    minLength={8}
+                    minLength={12}
                   />
                   <HoverTooltip
                     content={showConfirmPassword ? 'Hide password' : 'Show password'}
@@ -211,7 +211,7 @@ export const ErrorMessages: Story = {
         パスワードが一致しません
       </FieldError>
       <FieldError announceImmediately className="text-center">
-        パスワードは8文字以上である必要があります
+        パスワードは12文字以上である必要があります
       </FieldError>
       <FieldError announceImmediately className="text-center">
         問題が発生しました。時間をおいて再度お試しください。

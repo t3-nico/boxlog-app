@@ -64,7 +64,7 @@ test.describe('Auth: サインアップ', () => {
     // HTML5 minLength バリデーションまたはカスタムエラーが表示される
     await page.waitForTimeout(500);
     const isValid = await passwordInput.evaluate((el: HTMLInputElement) => el.validity.valid);
-    // minLength=8 のため、5文字では invalid になる
+    // minLength=12 のため、5文字では invalid になる
     expect(isValid).toBe(false);
   });
 });

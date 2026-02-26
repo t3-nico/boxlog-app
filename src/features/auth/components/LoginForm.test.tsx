@@ -27,7 +27,17 @@ vi.mock('next-intl', () => ({
   useTranslations: () => (key: string) => key,
 }));
 
-vi.mock('@/features/auth/stores/useAuthStore', () => ({
+vi.mock('@/i18n/navigation', async () => {
+  const React = await import('react');
+  return {
+    Link: ({ children, href, ...props }: { children: React.ReactNode; href: string }) =>
+      React.createElement('a', { href, ...props }, children),
+    useRouter: () => ({ push: vi.fn() }),
+    usePathname: () => '/',
+  };
+});
+
+vi.mock('@/stores/useAuthStore', () => ({
   useAuthStore: (selector: (state: { signIn: typeof mockSignIn }) => typeof mockSignIn) =>
     selector({ signIn: mockSignIn }),
 }));
