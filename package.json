@@ -221,6 +221,7 @@
     "@vitest/coverage-v8": "^4.0.14",
     "@vitest/ui": "^4.0.14",
     "@vueless/storybook-dark-mode": "^10.0.7",
+    "culori": "^4.0.2",
     "eslint": "^9.39.1",
     "eslint-config-next": "^16.1.6",
     "eslint-plugin-storybook": "10.2.8",

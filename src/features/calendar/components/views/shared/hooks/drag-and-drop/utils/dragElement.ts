@@ -222,13 +222,14 @@ export function updateDragElementOverlapStyle(
         pointer-events: none;
       `;
       // DragSelectionPreviewと同じレイアウト（アイコン + テキスト）
+      // 白固定: 赤オーバーレイ上のテキストは常に白（DragSelectionPreview の text-white と統一）
       overlay.innerHTML = `
         <div style="display: flex; align-items: center; gap: 4px; margin-bottom: 4px;">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--destructive-foreground)" stroke-width="2.5" stroke-linecap="round" style="flex-shrink: 0;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" style="flex-shrink: 0;">
             <circle cx="12" cy="12" r="10"/>
             <path d="m4.9 4.9 14.2 14.2"/>
           </svg>
-          <span style="color: var(--destructive-foreground); font-size: 12px; font-weight: 500;">時間が重複しています</span>
+          <span style="color: #fff; font-size: 12px; font-weight: 500;">時間が重複しています</span>
         </div>
       `;
       dragElement.appendChild(overlay);

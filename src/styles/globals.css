@@ -59,14 +59,14 @@
   --accent: var(--state-active);
   --accent-foreground: var(--state-active-foreground);
 
-  /* Semantic Colors */
-  --destructive: oklch(0.6368 0.2078 25.3313);
+  /* Semantic Colors（WCAG 2.1 AA準拠 — card L=0.90 上で 4.5:1+） */
+  --destructive: oklch(0.52 0.22 25.33);             /* 赤: card上4.59:1, white-on-bg 6.19:1 */
   --destructive-foreground: oklch(1 0 0);
-  --warning: oklch(0.7039 0.1555 68.04);
+  --warning: oklch(0.48 0.16 68.04);                 /* amber: card上5.08:1, white-on-bg 6.85:1 */
   --warning-foreground: oklch(1 0 0);
-  --success: oklch(0.5859 0.1684 149.2);
+  --success: oklch(0.47 0.17 149.2);                 /* 緑: card上4.69:1, white-on-bg 6.33:1 */
   --success-foreground: oklch(1 0 0);
-  --info: oklch(0.40 0 0);
+  --info: oklch(0.48 0.17 250);                      /* 青（gray→blue）: card上4.89:1, white-on-bg 6.59:1 */
   --info-foreground: oklch(1 0 0);
 
   /* Chronotype Colors（生産性ゾーン） */
@@ -165,15 +165,15 @@
   --accent: var(--state-active);
   --accent-foreground: var(--state-active-foreground);
 
-  /* Semantic Colors */
-  --destructive: oklch(0.6368 0.2078 25.3313);
-  --destructive-foreground: oklch(1 0 0);
-  --warning: oklch(0.7039 0.1555 68.04);
-  --warning-foreground: oklch(1 0 0);
-  --success: oklch(0.5859 0.1684 149.2);
-  --success-foreground: oklch(1 0 0);
-  --info: oklch(0.40 0 0);
-  --info-foreground: oklch(1 0 0);
+  /* Semantic Colors（WCAG 2.1 AA準拠 — dark bg/card 上で 4.5:1+） */
+  --destructive: oklch(0.72 0.19 25.33);             /* 赤: bg上6.10:1, card上7.53:1 */
+  --destructive-foreground: oklch(0.15 0 0);         /* ダーク文字: bg上7.30:1 */
+  --warning: oklch(0.78 0.14 68.04);                 /* amber: bg上8.01:1, card上9.88:1 */
+  --warning-foreground: oklch(0.15 0 0);             /* ダーク文字: bg上9.58:1 */
+  --success: oklch(0.72 0.15 149.2);                 /* 緑: bg上7.04:1, card上8.68:1 */
+  --success-foreground: oklch(0.15 0 0);             /* ダーク文字: bg上8.42:1 */
+  --info: oklch(0.72 0.12 250);                      /* 青: bg上6.67:1, card上8.23:1 */
+  --info-foreground: oklch(0.15 0 0);                /* ダーク文字: bg上7.97:1 */
 
   /* Chronotype Colors（生産性ゾーン - ダークモード用） */
   --chronotype-peak: oklch(0.65 0.17 145);        /* ピーク - 緑（やや暗め） */
@@ -203,12 +203,12 @@
   --input: oklch(1 0 0 / 0.08);                    /* インプット背景（どのsurfaceでも軽く浮く） */
   --ring: oklch(0.6231 0.188 259.8145);
 
-  /* Charts - Comparison（比較用、shadcn準拠） */
+  /* Charts - Comparison（比較用、shadcn準拠・card L=0.12上で3:1+） */
   --chart-1: oklch(0.7137 0.1434 254.624);
   --chart-2: oklch(0.6231 0.188 259.8145);
   --chart-3: oklch(0.5461 0.2152 262.8809);
-  --chart-4: oklch(0.4882 0.2172 264.3763);
-  --chart-5: oklch(0.4244 0.1809 265.6377);
+  --chart-4: oklch(0.55 0.20 264.38);                /* L=0.55（旧0.4882）→ card上4.01:1 */
+  --chart-5: oklch(0.50 0.16 265.64);                /* L=0.50（旧0.4244）→ card上3.28:1 */
 }
 
 /* Tailwindへのマッピング（@theme inline） */

@@ -46,12 +46,20 @@ Material Design 3 / Apple HIG の共通原則に基づく意味ベース設計�
 
 ## Semantic（意味を持つ色）
 
-| トークン | 用途 |
-|----------|------|
-| `bg-success` / `text-success-foreground` | 成功、完了 |
-| `bg-warning` / `text-warning-foreground` | 警告、注意 |
-| `bg-info` / `text-info-foreground` | 情報 |
-| `bg-destructive` / `text-destructive-foreground` | 削除、エラー |
+WCAG 2.1 AA 準拠。全ペアが card 背景上で 4.5:1+ のコントラスト比を確保。
+ダークモードでは明度を上げ、foreground をダーク文字に反転して対応。
+
+| トークン | 色 | 用途 |
+|----------|-----|------|
+| `bg-destructive` / `text-destructive-foreground` | 赤 (hue 25) | 削除、エラー |
+| `bg-warning` / `text-warning-foreground` | amber (hue 68) | 警告、注意 |
+| `bg-success` / `text-success-foreground` | 緑 (hue 149) | 成功、完了 |
+| `bg-info` / `text-info-foreground` | 青 (hue 250) | 情報、ヒント |
+
+### ダークモードの foreground 反転
+
+ダークモードではセマンティックカラーの明度が上がるため、foreground を白→ダーク文字に反転。
+`text-{semantic}-foreground` は自動で切り替わるため、コンポーネント側の変更は不要。
 
 ---
 
@@ -96,8 +104,8 @@ Material Design 3 / Apple HIG の共通原則に基づく意味ベース設計�
 
 | トークン | 用途 |
 |----------|------|
-| `bg-plan-box` | Plan（予定）の背景：グレー系 |
-| `bg-record-box` | Record（実績）の背景：暖色オレンジ系 |
+| `bg-plan-box` / `border-plan-border` | Plan（予定）：sky blue 系 |
+| `bg-record-box` / `border-record-border` | Record（実績）：green 系 |
 
 ---
 
@@ -236,3 +244,20 @@ bg-state-active text-state-active-foreground
 
 - ✅ 成功 → `text-success`、エラー → `text-destructive`、警告 → `text-warning`、情報 → `text-info`
 - ❌ 成功を青で表示、エラーを黄色で表示、色だけで状態を伝える（アイコンなし）
+
+---
+
+## 色覚多様性への配慮（WCAG 1.4.1）
+
+色だけで情報を伝えない。必ずアイコン・テキスト・形状を併用する。
+
+```tsx
+// ✅ Do — 色 + アイコン + テキストの三重伝達
+<Badge variant="success"><CheckCircle2 /> 完了</Badge>
+<Badge variant="destructive"><XCircle /> エラー</Badge>
+
+// ❌ Don't — 色のみで状態を伝える
+<span className="text-success">完了</span>  // 色盲ユーザーが識別困難
+```
+
+赤/緑の組み合わせのみで対比しない（protanopia/deuteranopia 対策）。

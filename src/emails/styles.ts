@@ -13,9 +13,10 @@
  *   --primary-fg    oklch(1 0 0)                → #ffffff
  *   --muted-fg      oklch(0.35 0.02 264.54)     → #464655
  *   --border        oklch(0.75 0.01 264.54)     → #b3b3ba
- *   --destructive   oklch(0.6368 0.2078 25.33)  → #e5484d
- *   --success       oklch(0.5859 0.1684 149.2)  → #30a46c
- *   --warning       oklch(0.7039 0.1555 68.04)  → #f5a623
+ *   --destructive   oklch(0.52 0.22 25.33)      → #c90018
+ *   --success       oklch(0.47 0.17 149.2)      → #007218
+ *   --warning       oklch(0.48 0.16 68.04)      → #954400
+ *   --info          oklch(0.48 0.17 250)        → #005db8
  */
 
 import type { CSSProperties } from 'react';
@@ -43,11 +44,13 @@ export const colors = {
   /** --border: ボーダー */
   border: '#b3b3ba',
   /** --destructive: エラー・削除 */
-  destructive: '#e5484d',
+  destructive: '#c90018',
   /** --success: 成功・完了 */
-  success: '#30a46c',
+  success: '#007218',
   /** --warning: 警告・注意 */
-  warning: '#f5a623',
+  warning: '#954400',
+  /** --info: 情報・ヒント */
+  info: '#005db8',
 } as const;
 
 export const fontFamily =
