@@ -10,8 +10,8 @@ import { CACHE_5_MINUTES } from '@/constants/time';
 
 import { StatusBarItem } from '../StatusBarItem';
 
-import { useSettingsModalStore } from '@/features/settings/stores/useSettingsModalStore';
 import { api } from '@/lib/trpc';
+import { useSettingsModalStore } from '@/stores/useSettingsModalStore';
 import {
   CHRONOTYPE_PRESETS,
   getChronotypeColor,

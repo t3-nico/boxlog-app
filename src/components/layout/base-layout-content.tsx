@@ -9,8 +9,8 @@ import {
   useCreateActionSheet,
   type CreateActionType,
 } from '@/features/navigation/components/mobile/CreateActionSheet';
-import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
 import { Plus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { usePathname, useSearchParams } from 'next/navigation';

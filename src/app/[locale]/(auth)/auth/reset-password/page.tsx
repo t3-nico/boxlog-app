@@ -1,1 +1,1 @@
-export { ResetPasswordForm as default } from '@/features/auth/components/ResetPasswordForm';
+export { ResetPasswordForm as default } from '@/features/auth';

@@ -5,13 +5,14 @@ import { usePathname } from 'next/navigation';
 import { Suspense, useMemo } from 'react';
 
 import { PageHeader } from '@/components/layout/PageHeader';
-import { useAuthStore } from '@/features/auth/stores/useAuthStore';
 import { isCalendarViewPath } from '@/features/calendar/lib/route-utils';
 import { AppSidebar } from '@/features/navigation/components/sidebar/app-sidebar';
-import { useSidebarStore } from '@/features/navigation/stores/useSidebarStore';
 import { cn } from '@/lib/utils';
+import { useAuthStore } from '@/stores/useAuthStore';
+import { useSidebarStore } from '@/stores/useSidebarStore';
 
 import { MainContentWrapper } from './main-content-wrapper';
+import { SidebarContent } from './SidebarContent';
 import { StatusBar } from './status-bar';
 
 // LCP改善: StatusBarアイテムを遅延ロード（APIコール・ストア参照を含むため初回レンダリングをブロックしない）
@@ -78,7 +79,9 @@ export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
           )}
         >
           <div className="h-full w-64">
-            <AppSidebar />
+            <AppSidebar>
+              <SidebarContent />
+            </AppSidebar>
           </div>
         </div>
 

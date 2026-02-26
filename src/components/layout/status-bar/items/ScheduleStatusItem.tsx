@@ -11,9 +11,9 @@ import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { CACHE_5_MINUTES } from '@/constants/time';
 import { PlanCreateTrigger } from '@/features/plans/components/shared/PlanCreateTrigger';
-import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore';
 import { api } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
+import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
 import {
   CHRONOTYPE_PRESETS,
   getChronotypeColor,

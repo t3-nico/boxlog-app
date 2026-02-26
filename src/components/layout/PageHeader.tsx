@@ -1,6 +1,6 @@
 'use client';
 
-import { MobileMenuButton } from '@/features/navigation/components/mobile/MobileMenuButton';
+import { MobileMenuButton } from '@/components/layout/MobileMenuButton';
 import { usePageTitleStore } from '@/features/navigation/stores/usePageTitleStore';
 import { cn } from '@/lib/utils';
 

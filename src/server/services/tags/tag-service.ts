@@ -23,7 +23,7 @@
  * - TanStack Queryのクライアントキャッシュ（5分）で対応
  */
 
-import type { Tag, TagWithChildren } from '@/features/tags/types';
+import type { Tag, TagWithChildren } from '@/core/types/tag';
 import type { Database } from '@/lib/database.types';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
