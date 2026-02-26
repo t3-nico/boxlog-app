@@ -50,7 +50,7 @@ const eslintConfig = defineConfig([
   {
     files: ['src/features/**/*.{ts,tsx}'],
     rules: {
-      'no-restricted-imports': ['warn', {
+      'no-restricted-imports': ['error', {
         patterns: [
           {
             group: ['@/features/*', '@/features/**'],
@@ -65,7 +65,7 @@ const eslintConfig = defineConfig([
   {
     files: ['src/app/**/*.{ts,tsx}'],
     rules: {
-      'no-restricted-imports': ['warn', {
+      'no-restricted-imports': ['error', {
         patterns: [
           {
             group: [
