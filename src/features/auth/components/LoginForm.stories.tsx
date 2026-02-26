@@ -30,14 +30,15 @@ export const WithInteraction: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    // メール入力
-    const emailInput = canvas.getByLabelText(/メールアドレス/i);
+    // メール入力（id="email"）
+    const emailInput = canvas.getByRole('textbox', { name: /メールアドレス/ });
     await userEvent.type(emailInput, 'user@example.com');
     await expect(emailInput).toHaveValue('user@example.com');
 
-    // パスワード入力
-    const passwordInput = canvas.getByLabelText('パスワード', { exact: true });
-    await userEvent.type(passwordInput, 'SecureP@ss123');
+    // パスワード入力（id="password"）
+    const passwordInput = canvasElement.querySelector<HTMLInputElement>('#password');
+    await expect(passwordInput).not.toBeNull();
+    await userEvent.type(passwordInput!, 'SecureP@ss123');
     await expect(passwordInput).toHaveValue('SecureP@ss123');
   },
 };
@@ -47,9 +48,10 @@ export const PasswordToggle: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    // パスワード入力
-    const passwordInput = canvas.getByLabelText('パスワード', { exact: true });
-    await userEvent.type(passwordInput, 'TestPassword');
+    // パスワード入力（id="password"）
+    const passwordInput = canvasElement.querySelector<HTMLInputElement>('#password');
+    await expect(passwordInput).not.toBeNull();
+    await userEvent.type(passwordInput!, 'TestPassword');
     await expect(passwordInput).toHaveAttribute('type', 'password');
 
     // トグルボタンクリック
