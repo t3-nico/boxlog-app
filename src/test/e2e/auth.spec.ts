@@ -55,17 +55,23 @@ test.describe('Auth: サインアップ', () => {
 
     const emailInput = page.locator('input[type="email"], input[name="email"]').first();
     const passwordInput = page.locator('input[type="password"]').first();
+    const confirmInput = page.locator('input[type="password"]').nth(1);
     const submitButton = page.locator('button[type="submit"]').first();
+    const checkbox = page.locator('[type="checkbox"]').first();
 
     await emailInput.fill('test@example.com');
     await passwordInput.fill('short');
+    await confirmInput.fill('short');
+    if (await checkbox.isVisible()) {
+      await checkbox.click();
+    }
     await submitButton.click();
 
-    // HTML5 minLength バリデーションまたはカスタムエラーが表示される
-    await page.waitForTimeout(500);
-    const isValid = await passwordInput.evaluate((el: HTMLInputElement) => el.validity.valid);
-    // minLength=12 のため、5文字では invalid になる
-    expect(isValid).toBe(false);
+    // Zodバリデーションエラー（minLength=12）が表示される
+    const errorElement = page
+      .locator('[data-field-error], [role="alert"], .text-destructive')
+      .first();
+    await expect(errorElement).toBeVisible({ timeout: 5000 });
   });
 });
 
@@ -175,7 +181,7 @@ test.describe('Auth: ログイン', () => {
 
 test.describe('Auth: パスワードリセット', () => {
   test('パスワードリセットフォームが表示される', async ({ page }) => {
-    await page.goto('/auth/password-reset');
+    await page.goto('/auth/password');
     await page.waitForLoadState('networkidle');
 
     const emailInput = page.locator('input[type="email"], input[name="email"]').first();
@@ -186,7 +192,7 @@ test.describe('Auth: パスワードリセット', () => {
   });
 
   test('ログインページへ戻るリンクが存在する', async ({ page }) => {
-    await page.goto('/auth/password-reset');
+    await page.goto('/auth/password');
     await page.waitForLoadState('networkidle');
 
     const backLink = page.locator('a[href*="login"]').first();

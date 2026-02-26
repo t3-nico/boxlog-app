@@ -17,7 +17,10 @@ import { Resend } from 'resend';
 
 import { logger } from '@/lib/logger';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// 遅延初期化: ビルド時にAPI_KEYが未設定でもクラッシュしないようにする
+function getResend() {
+  return new Resend(process.env.RESEND_API_KEY);
+}
 const WEBHOOK_SECRET = process.env.RESEND_WEBHOOK_SECRET;
 
 export async function POST(request: NextRequest) {
@@ -42,7 +45,7 @@ export async function POST(request: NextRequest) {
 
     let event;
     try {
-      event = resend.webhooks.verify({
+      event = getResend().webhooks.verify({
         payload,
         headers: {
           id: svixId,
