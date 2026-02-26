@@ -1,32 +1,10 @@
 {
-  "hooks": {
-    "Stop": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": ".claude/hooks/memory-persistence/session-end.sh"
-          }
-        ]
-      }
-    ],
-    "PreCompact": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": ".claude/hooks/memory-persistence/pre-compact.sh"
-          }
-        ]
-      }
-    ]
-  },
+  "hooks": {},
   "permissions": {
     "allow": [
       "Read(./**/*)",
       "Edit(./**/*)",
+      "Write(.claude/**)",
       "Bash(cat:*)",
       "Bash(ls:*)",
       "Bash(find:*)",
@@ -40,6 +18,12 @@
       "Bash(mkdir:*)",
       "Bash(cp:*)",
       "Bash(chmod:*)",
+      "Bash(echo:*)",
+      "Bash(tr:*)",
+      "Bash(jq:*)",
+      "Bash(sed:*)",
+      "Bash(rm:*)",
+      "Bash(mv:*)",
       "Bash(git status:*)",
       "Bash(git diff:*)",
       "Bash(git log:*)",
@@ -48,8 +32,51 @@
       "Bash(git branch:*)",
       "Bash(git stash:*)",
       "Bash(git clone:*)",
+      "Bash(git show:*)",
+      "Bash(git rm:*)",
+      "Bash(git mv:*)",
+      "Bash(git fetch:*)",
+      "Bash(git checkout:*)",
+      "Bash(git restore:*)",
+      "Bash(git cherry-pick:*)",
+      "Bash(npm run typecheck:*)",
+      "Bash(npm run lint:*)",
+      "Bash(npm run test:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run test:run:*)",
+      "Bash(npm install:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(npm ls:*)",
+      "Bash(npm outdated:*)",
+      "Bash(npm audit:*)",
+      "Bash(npm view:*)",
+      "Bash(npm why:*)",
+      "Bash(npm version:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npx vitest:*)",
+      "Bash(npx eslint:*)",
+      "Bash(npx shadcn:*)",
+      "Bash(npx shadcn@latest:*)",
+      "Bash(npx next:*)",
+      "Bash(npx tsx:*)",
+      "Bash(npx storybook:*)",
+      "Bash(gh issue:*)",
+      "Bash(gh pr:*)",
+      "Bash(gh run:*)",
+      "Bash(gh release:*)",
+      "Bash(gh api:*)",
+      "Bash(gh label:*)",
+      "Bash(gh workflow:*)",
+      "Bash(supabase:*)",
+      "Bash(node:*)",
+      "Bash(du:*)",
+      "Bash(tree:*)",
+      "Bash(python3:*)",
+      "Bash(sw_vers)",
       "WebSearch",
-      "WebFetch"
+      "WebFetch",
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__query-docs"
     ],
     "deny": [
       "Read(**/.env)",
@@ -69,9 +96,6 @@
       "Bash(git push:*)",
       "Bash(git pull:*)",
       "Bash(git reset:*)",
-      "Bash(git checkout:*)",
-      "Bash(rm:*)",
-      "Bash(mv:*)",
       "Bash(curl:*)",
       "Bash(wget:*)"
     ]
