@@ -67,16 +67,16 @@ export const WithInteraction: Story = {
     const canvas = within(canvasElement);
 
     // メール入力
-    const emailInput = canvas.getByLabelText(/email/i);
+    const emailInput = canvas.getByLabelText(/メールアドレス/i);
     await userEvent.type(emailInput, 'newuser@example.com');
     await expect(emailInput).toHaveValue('newuser@example.com');
 
     // パスワード入力
-    const passwordInput = canvas.getByLabelText(/^password/i);
+    const passwordInput = canvas.getByLabelText(/^パスワード/);
     await userEvent.type(passwordInput, 'SecureP@ss123');
 
     // 確認パスワード入力
-    const confirmInput = canvas.getByLabelText(/confirm/i);
+    const confirmInput = canvas.getByLabelText(/パスワード確認/i);
     await userEvent.type(confirmInput, 'SecureP@ss123');
     await expect(confirmInput).toHaveValue('SecureP@ss123');
   },
@@ -99,7 +99,7 @@ export const ErrorMessages: Story = {
         リクエストが多すぎます。しばらく待ってから再試行してください。
       </FieldError>
       <FieldError announceImmediately className="text-center">
-        パスワードは8文字以上にしてください
+        パスワードは12文字以上にしてください
       </FieldError>
       <FieldError announceImmediately className="text-center">
         このパスワードは過去に漏洩しています。より安全なパスワードを使用してください。

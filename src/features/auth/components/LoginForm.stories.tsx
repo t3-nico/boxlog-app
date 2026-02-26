@@ -31,12 +31,12 @@ export const WithInteraction: Story = {
     const canvas = within(canvasElement);
 
     // メール入力
-    const emailInput = canvas.getByLabelText(/email/i);
+    const emailInput = canvas.getByLabelText(/メールアドレス/i);
     await userEvent.type(emailInput, 'user@example.com');
     await expect(emailInput).toHaveValue('user@example.com');
 
     // パスワード入力
-    const passwordInput = canvas.getByLabelText(/password/i);
+    const passwordInput = canvas.getByLabelText(/^パスワード/);
     await userEvent.type(passwordInput, 'SecureP@ss123');
     await expect(passwordInput).toHaveValue('SecureP@ss123');
   },
@@ -48,12 +48,12 @@ export const PasswordToggle: Story = {
     const canvas = within(canvasElement);
 
     // パスワード入力
-    const passwordInput = canvas.getByLabelText(/^password/i);
+    const passwordInput = canvas.getByLabelText(/^パスワード/);
     await userEvent.type(passwordInput, 'TestPassword');
     await expect(passwordInput).toHaveAttribute('type', 'password');
 
     // トグルボタンクリック
-    const toggleButton = canvas.getByRole('button', { name: /password/i });
+    const toggleButton = canvas.getByRole('button', { name: /パスワード/i });
     await userEvent.click(toggleButton);
     await expect(passwordInput).toHaveAttribute('type', 'text');
   },

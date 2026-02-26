@@ -66,7 +66,7 @@ export const WithInteraction: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const emailInput = canvas.getByLabelText(/email/i);
+    const emailInput = canvas.getByLabelText(/メールアドレス/i);
     await userEvent.type(emailInput, 'forgot@example.com');
     await expect(emailInput).toHaveValue('forgot@example.com');
   },

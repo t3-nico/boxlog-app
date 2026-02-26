@@ -138,7 +138,7 @@ export const TimeConflict: Story = {
     // エラーアラートが表示される
     const alert = canvas.getByRole('alert');
     await expect(alert).toBeInTheDocument();
-    await expect(canvas.getByText('この時間帯には既に予定があります')).toBeInTheDocument();
+    await expect(canvas.getByText('既存の予定と時間が重複しています')).toBeInTheDocument();
 
     // 時刻ピッカーにエラー状態が反映される
     const comboboxes = canvas.getAllByRole('combobox');

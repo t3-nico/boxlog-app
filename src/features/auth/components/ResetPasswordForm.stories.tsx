@@ -177,11 +177,11 @@ export const WithInteraction: Story = {
     const canvas = within(canvasElement);
 
     // パスワード入力
-    const passwordInput = canvas.getByLabelText(/new password/i);
+    const passwordInput = canvas.getByLabelText(/新しいパスワード/i);
     await userEvent.type(passwordInput, 'SecureP@ss123');
 
     // 確認パスワード入力
-    const confirmInput = canvas.getByLabelText(/confirm password/i);
+    const confirmInput = canvas.getByLabelText(/パスワード確認/i);
     await userEvent.type(confirmInput, 'SecureP@ss123');
 
     // 入力されていることを確認
