@@ -240,7 +240,7 @@
     "prettier-plugin-organize-imports": "^4.0.0",
     "prettier-plugin-tailwindcss": "^0.7.1",
     "size-limit": "^11.2.0",
-    "storybook": "10.2.8",
+    "storybook": "10.2.10",
     "supabase": "^2.30.4",
     "tailwindcss": "^4.1.7",
     "tsx": "^4.20.6",
