@@ -754,6 +754,68 @@ export type Database = {
           },
         ];
       };
+      reflections: {
+        Row: {
+          id: string;
+          user_id: string;
+          period_type: string;
+          period_start: string;
+          period_end: string;
+          title: string;
+          activities: Json;
+          insights: string;
+          question: string;
+          model_used: string | null;
+          prompt_tokens: number | null;
+          completion_tokens: number | null;
+          user_note: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          period_type: string;
+          period_start: string;
+          period_end: string;
+          title: string;
+          activities?: Json;
+          insights?: string;
+          question?: string;
+          model_used?: string | null;
+          prompt_tokens?: number | null;
+          completion_tokens?: number | null;
+          user_note?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          period_type?: string;
+          period_start?: string;
+          period_end?: string;
+          title?: string;
+          activities?: Json;
+          insights?: string;
+          question?: string;
+          model_used?: string | null;
+          prompt_tokens?: number | null;
+          completion_tokens?: number | null;
+          user_note?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'reflections_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       records: {
         Row: {
           created_at: string;
