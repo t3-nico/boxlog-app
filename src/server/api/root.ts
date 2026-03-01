@@ -5,6 +5,7 @@
 
 import { chatRouter } from './routers/chat';
 import { emailRouter } from './routers/email';
+import { entriesRouter } from './routers/entries';
 import { notificationPreferencesRouter } from './routers/notificationPreferences';
 import { notificationsRouter } from './routers/notifications';
 import { plansRouter } from './routers/plans';
@@ -21,8 +22,9 @@ import { createTRPCRouter } from './trpc';
 export const appRouter = createTRPCRouter({
   chat: chatRouter,
   email: emailRouter,
-  plans: plansRouter,
-  records: recordsRouter,
+  entries: entriesRouter,
+  plans: plansRouter, // 後方互換性（Part Bで削除予定）
+  records: recordsRouter, // 後方互換性（Part Bで削除予定）
   suggestions: suggestionsRouter,
   tags: tagsRouter,
   user: userRouter,

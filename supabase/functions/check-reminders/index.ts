@@ -1,10 +1,10 @@
 // check-reminders Edge Function
-// 毎分実行され、reminder_atが近いプランをチェックして通知を生成
+// 毎分実行され、reminder_atが近いエントリをチェックして通知を生成
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 import { corsHeaders } from '../_shared/cors.ts';
 
-interface Plan {
+interface Entry {
   id: string;
   user_id: string;
   title: string;
@@ -25,39 +25,39 @@ Deno.serve(async (req) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    // 現在時刻の1分後までにリマインダーが設定されているプランを取得
+    // 現在時刻の1分後までにリマインダーが設定されているエントリを取得
     const now = new Date();
     const oneMinuteLater = new Date(now.getTime() + 60 * 1000);
 
-    const { data: plans, error: plansError } = await supabase
-      .from('plans')
+    const { data: entries, error: entriesError } = await supabase
+      .from('entries')
       .select('id, user_id, title, start_time, reminder_at, reminder_sent')
       .not('reminder_at', 'is', null)
       .eq('reminder_sent', false)
       .lte('reminder_at', oneMinuteLater.toISOString())
-      .returns<Plan[]>();
+      .returns<Entry[]>();
 
-    if (plansError) {
-      console.error('Error fetching plans:', plansError);
-      throw plansError;
+    if (entriesError) {
+      console.error('Error fetching entries:', entriesError);
+      throw entriesError;
     }
 
-    if (!plans || plans.length === 0) {
+    if (!entries || entries.length === 0) {
       return new Response(JSON.stringify({ message: 'No reminders to send', count: 0 }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,
       });
     }
 
-    // 各プランに対して通知を作成
+    // 各エントリに対して通知を作成
     const notificationsCreated = [];
-    const plansUpdated = [];
+    const entriesUpdated = [];
 
-    for (const plan of plans) {
+    for (const entry of entries) {
       // 残り時間を計算
       const minutesUntilStart = Math.max(
         0,
-        Math.round((new Date(plan.start_time).getTime() - now.getTime()) / (60 * 1000)),
+        Math.round((new Date(entry.start_time).getTime() - now.getTime()) / (60 * 1000)),
       );
       const timeLabel =
         minutesUntilStart <= 0
@@ -70,9 +70,9 @@ Deno.serve(async (req) => {
       const { data: notification, error: notificationError } = await supabase
         .from('notifications')
         .insert({
-          user_id: plan.user_id,
+          user_id: entry.user_id,
           type: 'reminder',
-          plan_id: plan.id,
+          entry_id: entry.id,
           is_read: false,
         })
         .select()
@@ -80,31 +80,31 @@ Deno.serve(async (req) => {
 
       if (notificationError) {
         console.error('Error creating notification:', notificationError);
-        continue; // エラーが発生しても他のプランの処理は続行
+        continue; // エラーが発生しても他のエントリの処理は続行
       }
 
       notificationsCreated.push(notification);
 
-      // プランのreminder_sentをtrueに更新
+      // エントリのreminder_sentをtrueに更新
       const { error: updateError } = await supabase
-        .from('plans')
+        .from('entries')
         .update({ reminder_sent: true })
-        .eq('id', plan.id);
+        .eq('id', entry.id);
 
       if (updateError) {
-        console.error('Error updating plan:', updateError);
+        console.error('Error updating entry:', updateError);
         continue;
       }
 
-      plansUpdated.push(plan.id);
+      entriesUpdated.push(entry.id);
     }
 
     return new Response(
       JSON.stringify({
         message: 'Reminders processed successfully',
         notificationsCreated: notificationsCreated.length,
-        plansUpdated: plansUpdated.length,
-        planIds: plansUpdated,
+        entriesUpdated: entriesUpdated.length,
+        entryIds: entriesUpdated,
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 },
     );

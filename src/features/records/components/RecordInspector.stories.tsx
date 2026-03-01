@@ -260,7 +260,7 @@ export const RecordEditWithPlan: Story = {
       initialEndTime="12:00"
       initialNote="<p>React コンポーネントのリファクタリング完了。テスト追加。</p>"
       initialPlanName="Sprint 3 開発"
-      initialScore={4}
+      initialScore={3}
     />
   ),
 };
@@ -302,7 +302,7 @@ export const AllPatterns: Story = {
         initialEndTime="12:00"
         initialNote="<p>React コンポーネントのリファクタリング完了。テスト追加。</p>"
         initialPlanName="Sprint 3 開発"
-        initialScore={4}
+        initialScore={3}
       />
     </div>
   ),

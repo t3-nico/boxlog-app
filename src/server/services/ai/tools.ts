@@ -2,7 +2,7 @@
  * AI Tool Definitions
  *
  * Vercel AI SDK v6 の tool() でツールを定義。
- * 既存のサービス層（PlanService, RecordService, TagService）をラップし、
+ * EntryService + TagService をラップし、
  * AIが過去データをオンデマンドで検索できるようにする。
  *
  * セキュリティ: userId はクロージャ経由で注入。AIモデルには公開しない。
@@ -11,10 +11,9 @@
 import { tool } from 'ai';
 import { z } from 'zod';
 
-import { MS_PER_HOUR } from '@/constants/time';
+import { MS_PER_HOUR, MS_PER_MINUTE } from '@/constants/time';
 import { logger } from '@/lib/logger';
-import { PlanService } from '@/server/services/plans/plan-service';
-import { RecordService } from '@/server/services/records/record-service';
+import { EntryService } from '@/server/services/entries/entry-service';
 import { TagService } from '@/server/services/tags/tag-service';
 
 import type { ToolSet } from 'ai';
@@ -26,14 +25,13 @@ import type { AISupabaseClient } from './types';
  * リクエストごとに呼ばれ、認証済みsupabaseクライアントとuserIdをクロージャでキャプチャ。
  */
 export function createAITools(supabase: AISupabaseClient, userId: string): ToolSet {
-  const planService = new PlanService(supabase);
-  const recordService = new RecordService(supabase);
+  const entryService = new EntryService(supabase);
   const tagService = new TagService(supabase);
 
   return {
     searchPlans: tool({
       description:
-        'Search user plans (tasks/events) by date range, status, or text. Use when the user asks about their past or future plans, schedule, or tasks.',
+        'Search user entries (tasks/events) by date range, origin, or text. Use when the user asks about their past or future plans, schedule, or tasks.',
       inputSchema: z.object({
         startDate: z
           .string()
@@ -43,7 +41,10 @@ export function createAITools(supabase: AISupabaseClient, userId: string): ToolS
           .string()
           .optional()
           .describe('End of date range (ISO 8601 datetime, e.g. 2026-01-31T23:59:59)'),
-        status: z.enum(['open', 'closed']).optional().describe('Filter by plan status'),
+        origin: z
+          .enum(['planned', 'unplanned'])
+          .optional()
+          .describe('Filter by entry origin (planned=scheduled, unplanned=logged)'),
         search: z.string().optional().describe('Search text to match in title or description'),
         limit: z
           .number()
@@ -55,11 +56,11 @@ export function createAITools(supabase: AISupabaseClient, userId: string): ToolS
       }),
       execute: async (input) => {
         try {
-          const plans = await planService.list({
+          const entries = await entryService.list({
             userId,
             startDate: input.startDate,
             endDate: input.endDate,
-            status: input.status,
+            origin: input.origin,
             search: input.search,
             limit: input.limit ?? 20,
             sortBy: 'created_at',
@@ -70,45 +71,48 @@ export function createAITools(supabase: AISupabaseClient, userId: string): ToolS
           const tags = await tagService.list({ userId });
           const tagMap = new Map(tags.map((t) => [t.id, t.name]));
 
-          const simplified = plans.map((p) => ({
-            title: p.title ?? '(Untitled)',
-            startTime: p.start_time ?? null,
-            endTime: p.end_time ?? null,
-            status: p.status,
-            tags: (p.plan_tags ?? []).map((pt) => tagMap.get(pt.tag_id) ?? '').filter(Boolean),
+          const simplified = entries.map((e) => ({
+            title: e.title ?? '(Untitled)',
+            startTime: e.start_time ?? null,
+            endTime: e.end_time ?? null,
+            origin: e.origin,
+            tags: (e.tagIds ?? []).map((id) => tagMap.get(id) ?? '').filter(Boolean),
           }));
 
           return { count: simplified.length, plans: simplified };
         } catch (error) {
           logger.error('AI tool searchPlans failed:', error);
-          return { error: 'Failed to search plans' };
+          return { error: 'Failed to search entries' };
         }
       },
     }),
 
-    searchRecords: tool({
+    searchPastEntries: tool({
       description:
-        'Search user time records (work log entries) by date range or fulfillment score. Use when the user asks about their past activities, time spent, or work history.',
+        'Search user past entries (work log) by date range or fulfillment score. Use when the user asks about their past activities, time spent, or work history.',
       inputSchema: z.object({
-        workedAtFrom: z
+        startDate: z
           .string()
           .optional()
-          .describe('Start date (YYYY-MM-DD format, e.g. 2026-01-01)'),
-        workedAtTo: z.string().optional().describe('End date (YYYY-MM-DD format, e.g. 2026-01-31)'),
+          .describe('Start of date range (ISO 8601 datetime, e.g. 2026-01-01T00:00:00)'),
+        endDate: z
+          .string()
+          .optional()
+          .describe('End of date range (ISO 8601 datetime, e.g. 2026-01-31T23:59:59)'),
         fulfillmentScoreMin: z
           .number()
           .int()
           .min(1)
-          .max(5)
+          .max(3)
           .optional()
-          .describe('Minimum fulfillment score (1-5)'),
+          .describe('Minimum fulfillment score (1-3)'),
         fulfillmentScoreMax: z
           .number()
           .int()
           .min(1)
-          .max(5)
+          .max(3)
           .optional()
-          .describe('Maximum fulfillment score (1-5)'),
+          .describe('Maximum fulfillment score (1-3)'),
         limit: z
           .number()
           .int()
@@ -119,26 +123,35 @@ export function createAITools(supabase: AISupabaseClient, userId: string): ToolS
       }),
       execute: async (input) => {
         try {
-          const records = await recordService.list({
+          const entries = await entryService.list({
             userId,
-            worked_at_from: input.workedAtFrom,
-            worked_at_to: input.workedAtTo,
-            fulfillment_score_min: input.fulfillmentScoreMin,
-            fulfillment_score_max: input.fulfillmentScoreMax,
+            origin: 'unplanned',
+            startDate: input.startDate,
+            endDate: input.endDate,
+            fulfillmentScoreMin: input.fulfillmentScoreMin,
+            fulfillmentScoreMax: input.fulfillmentScoreMax,
             limit: input.limit ?? 20,
-            sortBy: 'worked_at',
+            sortBy: 'start_time',
             sortOrder: 'desc',
           });
 
-          const totalMinutes = records.reduce((sum, r) => sum + (r.duration_minutes ?? 0), 0);
+          let totalMinutes = 0;
+          const simplified = entries.map((e) => {
+            let minutes = e.duration_minutes ?? 0;
+            if (!minutes && e.start_time && e.end_time) {
+              minutes = Math.round(
+                (new Date(e.end_time).getTime() - new Date(e.start_time).getTime()) / MS_PER_MINUTE,
+              );
+            }
+            totalMinutes += minutes;
 
-          const simplified = records.map((r) => ({
-            title: r.title ?? r.plan?.title ?? '(Untitled)',
-            workedAt: r.worked_at,
-            durationMinutes: r.duration_minutes,
-            fulfillmentScore: r.fulfillment_score,
-            planTitle: r.plan?.title ?? null,
-          }));
+            return {
+              title: e.title ?? '(Untitled)',
+              startTime: e.start_time ?? null,
+              durationMinutes: minutes,
+              fulfillmentScore: e.fulfillment_score,
+            };
+          });
 
           return {
             count: simplified.length,
@@ -147,15 +160,15 @@ export function createAITools(supabase: AISupabaseClient, userId: string): ToolS
             records: simplified,
           };
         } catch (error) {
-          logger.error('AI tool searchRecords failed:', error);
-          return { error: 'Failed to search records' };
+          logger.error('AI tool searchPastEntries failed:', error);
+          return { error: 'Failed to search past entries' };
         }
       },
     }),
 
     getStatistics: tool({
       description:
-        'Get summary statistics: total hours, completed tasks, monthly comparison, streaks. Use when the user asks about their progress, productivity stats, or trends.',
+        'Get summary statistics: total hours, reviewed entries, monthly comparison. Use when the user asks about their progress, productivity stats, or trends.',
       inputSchema: z.object({
         period: z
           .enum(['week', 'month', 'year', 'all'])
@@ -184,47 +197,48 @@ export function createAITools(supabase: AISupabaseClient, userId: string): ToolS
               break;
           }
 
-          // プラン統計
-          const { data: plans, error: plansError } = await supabase
-            .from('plans')
-            .select('start_time, end_time, status')
+          // entries テーブルから全エントリを取得
+          const { data: entries, error: entriesError } = await supabase
+            .from('entries')
+            .select('start_time, end_time, duration_minutes, origin, reviewed_at, fulfillment_score')
             .eq('user_id', userId)
             .gte('start_time', startDate.toISOString());
 
-          if (plansError) {
-            return { error: 'Failed to fetch plan statistics' };
+          if (entriesError) {
+            return { error: 'Failed to fetch entry statistics' };
           }
 
-          let totalHours = 0;
-          let completedTasks = 0;
+          let plannedHours = 0;
+          let recordedMinutes = 0;
+          let reviewedEntries = 0;
 
-          for (const plan of plans ?? []) {
-            if (plan.status === 'closed') completedTasks++;
-            if (plan.start_time && plan.end_time) {
-              const hours =
-                (new Date(plan.end_time).getTime() - new Date(plan.start_time).getTime()) /
-                MS_PER_HOUR;
-              if (hours > 0) totalHours += hours;
+          for (const entry of entries ?? []) {
+            // reviewed_at が設定されている = 振り返り済み
+            if (entry.reviewed_at) reviewedEntries++;
+
+            if (entry.origin === 'planned') {
+              // Planned entries: use start_time/end_time
+              if (entry.start_time && entry.end_time) {
+                const hours =
+                  (new Date(entry.end_time).getTime() - new Date(entry.start_time).getTime()) /
+                  MS_PER_HOUR;
+                if (hours > 0) plannedHours += hours;
+              }
+            } else {
+              // Unplanned entries: prefer duration_minutes
+              if (entry.duration_minutes) {
+                recordedMinutes += entry.duration_minutes;
+              } else if (entry.start_time && entry.end_time) {
+                const minutes =
+                  (new Date(entry.end_time).getTime() - new Date(entry.start_time).getTime()) /
+                  MS_PER_MINUTE;
+                if (minutes > 0) recordedMinutes += minutes;
+              }
             }
           }
 
-          // レコード統計
-          const { data: records, error: recordsError } = await supabase
-            .from('records')
-            .select('duration_minutes, fulfillment_score')
-            .eq('user_id', userId)
-            .gte('worked_at', startDate.toISOString().split('T')[0]);
-
-          if (recordsError) {
-            return { error: 'Failed to fetch record statistics' };
-          }
-
-          const recordMinutes = (records ?? []).reduce(
-            (sum, r) => sum + (r.duration_minutes ?? 0),
-            0,
-          );
-          const scores = (records ?? [])
-            .map((r) => r.fulfillment_score)
+          const scores = (entries ?? [])
+            .map((e) => e.fulfillment_score)
             .filter((s): s is number => s !== null);
           const avgFulfillment =
             scores.length > 0
@@ -233,10 +247,10 @@ export function createAITools(supabase: AISupabaseClient, userId: string): ToolS
 
           return {
             period,
-            plannedHours: Math.round(totalHours * 10) / 10,
-            recordedHours: Math.round((recordMinutes / 60) * 10) / 10,
-            completedTasks,
-            totalPlans: (plans ?? []).length,
+            plannedHours: Math.round(plannedHours * 10) / 10,
+            recordedHours: Math.round((recordedMinutes / 60) * 10) / 10,
+            completedTasks: reviewedEntries,
+            totalPlans: (entries ?? []).length,
             avgFulfillmentScore: avgFulfillment,
           };
         } catch (error) {
@@ -248,7 +262,7 @@ export function createAITools(supabase: AISupabaseClient, userId: string): ToolS
 
     getTagStats: tool({
       description:
-        'Get tag usage statistics: how many plans and records use each tag. Use when the user asks about their tag usage, category breakdown, or how they spend time across different areas.',
+        'Get tag usage statistics: how many entries use each tag. Use when the user asks about their tag usage, category breakdown, or how they spend time across different areas.',
       inputSchema: z.object({}),
       execute: async () => {
         try {

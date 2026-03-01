@@ -208,6 +208,205 @@ export type Database = {
         };
         Relationships: [];
       };
+      entries: {
+        Row: {
+          created_at: string | null;
+          description: string | null;
+          duration_minutes: number | null;
+          end_time: string | null;
+          fulfillment_score: number | null;
+          id: string;
+          origin: string;
+          recurrence_end_date: string | null;
+          recurrence_rule: string | null;
+          recurrence_type: string | null;
+          reminder_at: string | null;
+          reminder_minutes: number | null;
+          reminder_sent: boolean;
+          reviewed_at: string | null;
+          start_time: string | null;
+          title: string;
+          updated_at: string | null;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string | null;
+          description?: string | null;
+          duration_minutes?: number | null;
+          end_time?: string | null;
+          fulfillment_score?: number | null;
+          id?: string;
+          origin?: string;
+          recurrence_end_date?: string | null;
+          recurrence_rule?: string | null;
+          recurrence_type?: string | null;
+          reminder_at?: string | null;
+          reminder_minutes?: number | null;
+          reminder_sent?: boolean;
+          reviewed_at?: string | null;
+          start_time?: string | null;
+          title: string;
+          updated_at?: string | null;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string | null;
+          description?: string | null;
+          duration_minutes?: number | null;
+          end_time?: string | null;
+          fulfillment_score?: number | null;
+          id?: string;
+          origin?: string;
+          recurrence_end_date?: string | null;
+          recurrence_rule?: string | null;
+          recurrence_type?: string | null;
+          reminder_at?: string | null;
+          reminder_minutes?: number | null;
+          reminder_sent?: boolean;
+          reviewed_at?: string | null;
+          start_time?: string | null;
+          title?: string;
+          updated_at?: string | null;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
+      entry_activities: {
+        Row: {
+          action_type: string;
+          created_at: string;
+          entry_id: string | null;
+          field_name: string | null;
+          id: string;
+          metadata: Json | null;
+          new_value: string | null;
+          old_value: string | null;
+          schema_version: number;
+          user_id: string;
+        };
+        Insert: {
+          action_type: string;
+          created_at?: string;
+          entry_id?: string | null;
+          field_name?: string | null;
+          id?: string;
+          metadata?: Json | null;
+          new_value?: string | null;
+          old_value?: string | null;
+          schema_version?: number;
+          user_id: string;
+        };
+        Update: {
+          action_type?: string;
+          created_at?: string;
+          entry_id?: string | null;
+          field_name?: string | null;
+          id?: string;
+          metadata?: Json | null;
+          new_value?: string | null;
+          old_value?: string | null;
+          schema_version?: number;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'plan_activities_plan_id_fkey';
+            columns: ['entry_id'];
+            isOneToOne: false;
+            referencedRelation: 'entries';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      entry_instances: {
+        Row: {
+          created_at: string;
+          description: string | null;
+          entry_id: string;
+          exception_type: string | null;
+          id: string;
+          instance_date: string;
+          instance_end: string | null;
+          instance_start: string | null;
+          original_date: string | null;
+          title: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          description?: string | null;
+          entry_id: string;
+          exception_type?: string | null;
+          id?: string;
+          instance_date: string;
+          instance_end?: string | null;
+          instance_start?: string | null;
+          original_date?: string | null;
+          title?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          description?: string | null;
+          entry_id?: string;
+          exception_type?: string | null;
+          id?: string;
+          instance_date?: string;
+          instance_end?: string | null;
+          instance_start?: string | null;
+          original_date?: string | null;
+          title?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'plan_instances_plan_id_fkey';
+            columns: ['entry_id'];
+            isOneToOne: false;
+            referencedRelation: 'entries';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      entry_tags: {
+        Row: {
+          created_at: string | null;
+          entry_id: string;
+          id: string;
+          tag_id: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string | null;
+          entry_id: string;
+          id?: string;
+          tag_id: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string | null;
+          entry_id?: string;
+          id?: string;
+          tag_id?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'plan_tags_plan_id_fkey';
+            columns: ['entry_id'];
+            isOneToOne: false;
+            referencedRelation: 'entries';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'plan_tags_tag_id_fkey';
+            columns: ['tag_id'];
+            isOneToOne: false;
+            referencedRelation: 'tags';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       notifications: {
         Row: {
           created_at: string;

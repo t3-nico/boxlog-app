@@ -2,8 +2,7 @@
  * AI Context Service
  *
  * ユーザーデータを並列取得してAIチャットのコンテキストを組み立てる。
- * 既存のDBクエリを使い、AIが有用なアドバイスをするために必要な
- * パーソナライゼーション、スケジュール、統計情報を取得する。
+ * entries テーブル（plans+records統合）からデータを取得する。
  */
 
 import { MS_PER_MINUTE } from '@/constants/time';
@@ -18,9 +17,9 @@ import type { AIContext, AIContextPlan, AIContextRecord, AISupabaseClient } from
  *
  * Promise.allで以下を並列取得:
  * - ユーザー設定（パーソナライゼーション、クロノタイプ）
- * - 今日のプラン
- * - 最近のレコード（直近7日）
- * - 今週のプラン時間・レコード時間
+ * - 今日のエントリ（origin='planned'）
+ * - 最近の過去エントリ（origin='unplanned'、直近7日）
+ * - 今週の planned/unplanned 時間
  * - タグ一覧
  */
 export async function buildAIContext(
@@ -33,41 +32,54 @@ export async function buildAIContext(
   const weekEnd = endOfWeek(now);
   const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * MS_PER_MINUTE);
 
-  const [settingsResult, plansResult, recordsResult, weeklyPlansResult, tagsResult] =
+  const [settingsResult, todayEntriesResult, recentEntriesResult, weeklyPlannedResult, weeklyUnplannedResult, tagsResult] =
     await Promise.all([
       // 1. ユーザー設定
       supabase.from('user_settings').select('*').eq('user_id', userId).single(),
 
-      // 2. 今日のプラン
+      // 2. 今日のエントリ（planned）
       supabase
-        .from('plans')
-        .select('id, title, start_time, end_time, status, plan_tags(tag_id)')
+        .from('entries')
+        .select('id, title, start_time, end_time, origin, entry_tags(tag_id)')
         .eq('user_id', userId)
+        .eq('origin', 'planned')
         .gte('start_time', `${todayStr}T00:00:00`)
         .lte('start_time', `${todayStr}T23:59:59`)
         .order('start_time', { ascending: true })
         .limit(20),
 
-      // 3. 最近のレコード（直近7日）
+      // 3. 最近のエントリ（unplanned = 旧records、直近7日）
       supabase
-        .from('records')
-        .select('title, duration_minutes, fulfillment_score, worked_at')
+        .from('entries')
+        .select('title, duration_minutes, fulfillment_score, start_time')
         .eq('user_id', userId)
-        .gte('worked_at', sevenDaysAgo.toISOString())
-        .order('worked_at', { ascending: false })
+        .eq('origin', 'unplanned')
+        .gte('start_time', sevenDaysAgo.toISOString())
+        .order('start_time', { ascending: false })
         .limit(10),
 
-      // 4. 今週のプラン（時間計算用）
+      // 4. 今週の planned エントリ（時間計算用）
       supabase
-        .from('plans')
+        .from('entries')
         .select('start_time, end_time')
         .eq('user_id', userId)
+        .eq('origin', 'planned')
         .not('start_time', 'is', null)
         .not('end_time', 'is', null)
         .gte('start_time', weekStart.toISOString())
         .lte('start_time', weekEnd.toISOString()),
 
-      // 5. タグ一覧
+      // 5. 今週の unplanned エントリ（時間計算用）
+      supabase
+        .from('entries')
+        .select('duration_minutes, start_time, end_time')
+        .eq('user_id', userId)
+        .eq('origin', 'unplanned')
+        .not('start_time', 'is', null)
+        .gte('start_time', weekStart.toISOString())
+        .lte('start_time', weekEnd.toISOString()),
+
+      // 6. タグ一覧
       supabase
         .from('tags')
         .select('id, name, color')
@@ -83,37 +95,38 @@ export async function buildAIContext(
   }
 
   const settings = settingsResult.data;
-  const plans = plansResult.data ?? [];
-  const records = recordsResult.data ?? [];
-  const weeklyPlans = weeklyPlansResult.data ?? [];
+  const todayEntries = todayEntriesResult.data ?? [];
+  const recentEntries = recentEntriesResult.data ?? [];
+  const weeklyPlanned = weeklyPlannedResult.data ?? [];
+  const weeklyUnplanned = weeklyUnplannedResult.data ?? [];
   const tags = tagsResult.data ?? [];
 
   // タグIDから名前のマッピング
   const tagMap = new Map(tags.map((t) => [t.id, t.name]));
 
-  // 今日のプラン整形
-  const todayPlans: AIContextPlan[] = plans.map((p) => ({
-    title: p.title ?? '',
-    startTime: p.start_time ?? '',
-    endTime: p.end_time ?? '',
-    status: p.status ?? 'draft',
-    tags: (p.plan_tags as { tag_id: string }[])?.map((pt) => tagMap.get(pt.tag_id) ?? '') ?? [],
+  // 今日のプラン整形（AIContextPlan 形式を維持して後方互換性を保つ）
+  const todayPlans: AIContextPlan[] = todayEntries.map((e) => ({
+    title: e.title ?? '',
+    startTime: e.start_time ?? '',
+    endTime: e.end_time ?? '',
+    status: e.origin ?? 'planned',
+    tags: (e.entry_tags as { tag_id: string }[])?.map((et) => tagMap.get(et.tag_id) ?? '') ?? [],
   }));
 
-  // 最近のレコード整形
-  const recentRecords: AIContextRecord[] = records.map((r) => ({
-    title: r.title ?? '',
-    durationMinutes: r.duration_minutes ?? 0,
-    fulfillmentScore: r.fulfillment_score,
-    workedAt: r.worked_at ?? '',
+  // 最近のレコード整形（AIContextRecord 形式を維持して後方互換性を保つ）
+  const recentRecords: AIContextRecord[] = recentEntries.map((e) => ({
+    title: e.title ?? '',
+    durationMinutes: e.duration_minutes ?? 0,
+    fulfillmentScore: e.fulfillment_score,
+    workedAt: e.start_time ? e.start_time.split('T')[0] ?? '' : '',
   }));
 
-  // 今週のプラン時間（分）
+  // 今週の planned 時間（分）
   let planWeeklyMinutes = 0;
-  for (const plan of weeklyPlans) {
-    if (plan.start_time && plan.end_time) {
-      const start = new Date(plan.start_time);
-      const end = new Date(plan.end_time);
+  for (const entry of weeklyPlanned) {
+    if (entry.start_time && entry.end_time) {
+      const start = new Date(entry.start_time);
+      const end = new Date(entry.end_time);
       const minutes = (end.getTime() - start.getTime()) / MS_PER_MINUTE;
       if (minutes > 0) {
         planWeeklyMinutes += minutes;
@@ -121,13 +134,15 @@ export async function buildAIContext(
     }
   }
 
-  // 今週のレコード時間（分）- recentRecordsから今週分をフィルター
+  // 今週の unplanned 時間（分）
   let recordWeeklyMinutes = 0;
-  for (const record of records) {
-    if (record.worked_at) {
-      const workedAt = new Date(record.worked_at);
-      if (workedAt >= weekStart && workedAt <= weekEnd) {
-        recordWeeklyMinutes += record.duration_minutes ?? 0;
+  for (const entry of weeklyUnplanned) {
+    if (entry.duration_minutes) {
+      recordWeeklyMinutes += entry.duration_minutes;
+    } else if (entry.start_time && entry.end_time) {
+      const diffMs = new Date(entry.end_time).getTime() - new Date(entry.start_time).getTime();
+      if (diffMs > 0) {
+        recordWeeklyMinutes += diffMs / MS_PER_MINUTE;
       }
     }
   }
