@@ -1,0 +1,75 @@
+/**
+ * Entries Router
+ * Aggregates all entry-related subrouters (plans + records 統合)
+ *
+ * This router maintains backward compatibility with the original plans router API
+ * while organizing code into logical subrouter files.
+ */
+
+import { createTRPCRouter, mergeRouters } from '@/server/api/trpc';
+
+import { activitiesRouter } from './activities';
+import { bulkRouter } from './bulk';
+import { entriesCrudRouter } from './crud';
+import { instancesRouter } from './instances';
+import { recurrenceRouter } from './recurrence';
+import { statisticsRouter } from './statistics';
+import { statsViewRouter } from './statsView';
+import { tagsRouter } from './tags';
+
+const bulkAliasRouter = createTRPCRouter({
+  bulkUpdate: bulkRouter.update,
+  bulkDelete: bulkRouter.delete,
+  bulkAddTags: bulkRouter.addTags,
+});
+
+const statisticsAliasRouter = createTRPCRouter({
+  getStats: statisticsRouter.getStats,
+  getTagStats: statisticsRouter.getTagStats,
+  getTotalTime: statisticsRouter.getTotalTime,
+  getCumulativeTime: statisticsRouter.getCumulativeTime,
+  getSummary: statisticsRouter.getSummary,
+  getStreak: statisticsRouter.getStreak,
+  getTimeByTag: statisticsRouter.getTimeByTag,
+  getDailyHours: statisticsRouter.getDailyHours,
+  getHourlyDistribution: statisticsRouter.getHourlyDistribution,
+  getDayOfWeekDistribution: statisticsRouter.getDayOfWeekDistribution,
+  getMonthlyTrend: statisticsRouter.getMonthlyTrend,
+});
+
+const activitiesAliasRouter = createTRPCRouter({
+  activities: activitiesRouter.list,
+  createActivity: activitiesRouter.create,
+});
+
+const instancesAliasRouter = createTRPCRouter({
+  getInstances: instancesRouter.list,
+  createInstance: instancesRouter.create,
+  deleteInstance: instancesRouter.delete,
+});
+
+const tagsAliasRouter = createTRPCRouter({
+  addTag: tagsRouter.addTag,
+  removeTag: tagsRouter.removeTag,
+  setTags: tagsRouter.setTags,
+});
+
+const recurrenceAliasRouter = createTRPCRouter({
+  splitRecurrence: recurrenceRouter.splitRecurrence,
+});
+
+const statsViewAliasRouter = createTRPCRouter({
+  getStatsViewData: statsViewRouter.getStatsViewData,
+});
+
+// Merge all routers to create final entriesRouter
+export const entriesRouter = mergeRouters(
+  entriesCrudRouter,
+  bulkAliasRouter,
+  statisticsAliasRouter,
+  statsViewAliasRouter,
+  activitiesAliasRouter,
+  instancesAliasRouter,
+  tagsAliasRouter,
+  recurrenceAliasRouter,
+);

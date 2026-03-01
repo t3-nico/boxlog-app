@@ -62,9 +62,9 @@ export const WithScore: Story = {
   render: () => <FulfillmentButtonStory initialScore={3} />,
 };
 
-/** スコア5 — 最大値（タップしても増加しない） */
+/** スコア3 — 最大値（タップしても増加しない） */
 export const MaxScore: Story = {
-  render: () => <FulfillmentButtonStory initialScore={5} />,
+  render: () => <FulfillmentButtonStory initialScore={3} />,
 };
 
 /** 無効化状態 */
@@ -93,12 +93,8 @@ export const AllStates: Story = {
         <FulfillmentButtonStory initialScore={3} />
       </div>
       <div>
-        <p className="text-muted-foreground mb-2 text-xs font-medium">Score: 4</p>
-        <FulfillmentButtonStory initialScore={4} />
-      </div>
-      <div>
-        <p className="text-muted-foreground mb-2 text-xs font-medium">Score: 5 (max)</p>
-        <FulfillmentButtonStory initialScore={5} />
+        <p className="text-muted-foreground mb-2 text-xs font-medium">Score: 3 (max)</p>
+        <FulfillmentButtonStory initialScore={3} />
       </div>
       <div>
         <p className="text-muted-foreground mb-2 text-xs font-medium">Disabled</p>

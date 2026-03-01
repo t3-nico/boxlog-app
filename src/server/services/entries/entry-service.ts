@@ -1,0 +1,463 @@
+/**
+ * Entries Service
+ *
+ * plans + records を統合した entries テーブルのビジネスロジック
+ */
+
+import { isTimePast } from '@/lib/entry-status';
+import { logger } from '@/lib/logger';
+import {
+  normalizeDateTimeConsistency,
+  removeUndefinedFields,
+} from '@/server/api/routers/plans/utils';
+
+import type {
+  CreateEntryOptions,
+  DeleteEntryOptions,
+  EntryRow,
+  EntryWithTags,
+  GetEntryByIdOptions,
+  ListEntriesOptions,
+  ServiceSupabaseClient,
+  UpdateEntryOptions,
+} from './types';
+
+/**
+ * エントリサービスクラス
+ */
+export class EntryService {
+  constructor(private readonly supabase: ServiceSupabaseClient) {}
+
+  /**
+   * エントリ一覧を取得
+   */
+  async list(options: ListEntriesOptions): Promise<EntryWithTags[]> {
+    const {
+      userId,
+      tagId,
+      origin,
+      search,
+      startDate,
+      endDate,
+      fulfillmentScoreMin,
+      fulfillmentScoreMax,
+      sortBy = 'created_at',
+      sortOrder = 'desc',
+      limit,
+      offset,
+    } = options;
+
+    let query = this.supabase.from('entries').select('*, entry_tags(tag_id)').eq('user_id', userId);
+
+    // タグフィルター
+    if (tagId) {
+      const entryIds = await this.getEntryIdsByTagId(tagId);
+      if (entryIds.length === 0) {
+        return [];
+      }
+      query = query.in('id', entryIds);
+    }
+
+    // origin フィルター
+    if (origin) {
+      query = query.eq('origin', origin);
+    }
+
+    // 検索フィルター
+    if (search) {
+      query = query.or(`title.ilike.%${search}%,description.ilike.%${search}%`);
+    }
+
+    // 日付範囲フィルタ（start_time基準）
+    if (startDate) {
+      query = query.gte('start_time', startDate);
+    }
+    if (endDate) {
+      query = query.lte('start_time', endDate);
+    }
+
+    // 充実度フィルタ
+    if (fulfillmentScoreMin) {
+      query = query.gte('fulfillment_score', fulfillmentScoreMin);
+    }
+    if (fulfillmentScoreMax) {
+      query = query.lte('fulfillment_score', fulfillmentScoreMax);
+    }
+
+    // ソート
+    query = query.order(sortBy, { ascending: sortOrder === 'asc' });
+
+    // ページネーション
+    if (limit) {
+      query = query.limit(limit);
+    }
+    if (offset) {
+      query = query.range(offset, offset + (limit ?? 100) - 1);
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      throw new EntryServiceError('FETCH_FAILED', `Failed to fetch entries: ${error.message}`);
+    }
+
+    return (data as unknown as EntryWithTags[]).map((entry) => this.formatEntryWithTags(entry));
+  }
+
+  /**
+   * エントリをIDで取得
+   */
+  async getById(options: GetEntryByIdOptions): Promise<EntryWithTags> {
+    const { userId, entryId, includeTags } = options;
+
+    if (includeTags) {
+      const { data, error } = await this.supabase
+        .from('entries')
+        .select('*, entry_tags(tag_id)')
+        .eq('id', entryId)
+        .eq('user_id', userId)
+        .single();
+
+      if (error) {
+        throw new EntryServiceError('NOT_FOUND', `Entry not found: ${error.message}`);
+      }
+
+      return this.formatEntryWithTags(data as unknown as EntryWithTags);
+    }
+
+    const { data, error } = await this.supabase
+      .from('entries')
+      .select('*')
+      .eq('id', entryId)
+      .eq('user_id', userId)
+      .single();
+
+    if (error) {
+      throw new EntryServiceError('NOT_FOUND', `Entry not found: ${error.message}`);
+    }
+
+    return data as EntryWithTags;
+  }
+
+  /**
+   * 時間重複をチェック
+   */
+  async checkTimeOverlap(options: {
+    userId: string;
+    startTime: string;
+    endTime: string;
+    excludeEntryId?: string;
+  }): Promise<string[]> {
+    const { userId, startTime, endTime, excludeEntryId } = options;
+
+    let query = this.supabase
+      .from('entries')
+      .select('id')
+      .eq('user_id', userId)
+      .not('start_time', 'is', null)
+      .not('end_time', 'is', null)
+      .lt('start_time', endTime)
+      .gt('end_time', startTime);
+
+    if (excludeEntryId) {
+      query = query.neq('id', excludeEntryId);
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      logger.error('Time overlap check failed:', error);
+      return [];
+    }
+
+    return data?.map((row) => row.id) ?? [];
+  }
+
+  /**
+   * エントリを作成
+   */
+  async create(options: CreateEntryOptions): Promise<EntryRow> {
+    const { userId, input, preventOverlappingEntries } = options;
+
+    // 日時の正規化
+    const normalizedInput = this.normalizeDateTimeFields(input);
+
+    // origin 自動判定: start_time が過去なら 'unplanned'
+    const origin =
+      normalizedInput.origin ??
+      (normalizedInput.start_time && isTimePast(normalizedInput.start_time as string)
+        ? 'unplanned'
+        : 'planned');
+
+    // 重複チェック
+    if (preventOverlappingEntries && normalizedInput.start_time && normalizedInput.end_time) {
+      const overlappingIds = await this.checkTimeOverlap({
+        userId,
+        startTime: normalizedInput.start_time as string,
+        endTime: normalizedInput.end_time as string,
+      });
+
+      if (overlappingIds.length > 0) {
+        throw new EntryServiceError(
+          'TIME_OVERLAP',
+          `この時間帯には既にエントリがあります（${overlappingIds.length}件）`,
+        );
+      }
+    }
+
+    const insertData = {
+      user_id: userId,
+      origin,
+      ...removeUndefinedFields(normalizedInput),
+    };
+
+    const { data, error } = await this.supabase
+      .from('entries')
+      .insert(insertData as never)
+      .select()
+      .single();
+
+    if (error) {
+      throw new EntryServiceError('CREATE_FAILED', `Failed to create entry: ${error.message}`);
+    }
+
+    // アクティビティ記録
+    await this.recordActivity(data.id, userId, 'created');
+
+    return data;
+  }
+
+  /**
+   * エントリを更新
+   */
+  async update(options: UpdateEntryOptions): Promise<EntryRow> {
+    const { userId, entryId, input, preventOverlappingEntries } = options;
+
+    // 既存データを取得
+    const oldData = await this.getExistingEntry(entryId, userId);
+
+    // 日時の正規化
+    const normalizedInput = this.normalizeDateTimeFieldsForUpdate(input, oldData);
+
+    // 重複チェック
+    const finalStartTime =
+      (normalizedInput as { start_time?: string }).start_time ?? oldData?.start_time;
+    const finalEndTime = (normalizedInput as { end_time?: string }).end_time ?? oldData?.end_time;
+
+    if (preventOverlappingEntries && finalStartTime && finalEndTime) {
+      const overlappingIds = await this.checkTimeOverlap({
+        userId,
+        startTime: finalStartTime,
+        endTime: finalEndTime,
+        excludeEntryId: entryId,
+      });
+
+      if (overlappingIds.length > 0) {
+        throw new EntryServiceError(
+          'TIME_OVERLAP',
+          `この時間帯には既にエントリがあります（${overlappingIds.length}件）`,
+        );
+      }
+    }
+
+    const updateData = removeUndefinedFields(normalizedInput) as Record<string, unknown>;
+
+    // reviewed_at 自動設定: fulfillment_score が設定されたら reviewed_at をセット
+    const inputWithFulfillment = input as { fulfillment_score?: number | null };
+    if (
+      inputWithFulfillment.fulfillment_score != null &&
+      oldData?.fulfillment_score !== inputWithFulfillment.fulfillment_score
+    ) {
+      updateData.reviewed_at = new Date().toISOString();
+    } else if (inputWithFulfillment.fulfillment_score === null && oldData?.reviewed_at) {
+      // 充実度をクリアした場合、reviewed_at もクリア
+      updateData.reviewed_at = null;
+    }
+
+    const { data, error } = await this.supabase
+      .from('entries')
+      .update(updateData)
+      .eq('id', entryId)
+      .eq('user_id', userId)
+      .select()
+      .single();
+
+    if (error) {
+      throw new EntryServiceError('UPDATE_FAILED', `Failed to update entry: ${error.message}`);
+    }
+
+    // 変更追跡
+    if (oldData) {
+      await this.trackChanges(entryId, userId, oldData, data);
+    }
+
+    return data;
+  }
+
+  /**
+   * エントリを削除
+   */
+  async delete(options: DeleteEntryOptions): Promise<{ success: boolean }> {
+    const { userId, entryId } = options;
+
+    // エントリ情報を取得（アクティビティ記録用）
+    const { data: entry } = await this.supabase
+      .from('entries')
+      .select('title')
+      .eq('id', entryId)
+      .eq('user_id', userId)
+      .single();
+
+    // アクティビティ記録（削除前）
+    await this.supabase.from('entry_activities').insert({
+      entry_id: entryId,
+      user_id: userId,
+      action_type: 'deleted',
+      field_name: 'title',
+      old_value: entry?.title ?? '',
+    });
+
+    const { error } = await this.supabase
+      .from('entries')
+      .delete()
+      .eq('id', entryId)
+      .eq('user_id', userId);
+
+    if (error) {
+      throw new EntryServiceError('DELETE_FAILED', `Failed to delete entry: ${error.message}`);
+    }
+
+    return { success: true };
+  }
+
+  // ========================================
+  // プライベートメソッド
+  // ========================================
+
+  private async getEntryIdsByTagId(tagId: string): Promise<string[]> {
+    const { data, error } = await this.supabase
+      .from('entry_tags')
+      .select('entry_id')
+      .eq('tag_id', tagId);
+
+    if (error) {
+      throw new EntryServiceError(
+        'TAG_FILTER_FAILED',
+        `Failed to apply tag filter: ${error.message}`,
+      );
+    }
+
+    return data.map((row) => row.entry_id);
+  }
+
+  private formatEntryWithTags(entry: EntryWithTags): EntryWithTags {
+    const tagIds = entry.entry_tags?.map((et) => et.tag_id) ?? [];
+    const { entry_tags: _, ...entryData } = entry;
+    return { ...entryData, tagIds };
+  }
+
+  private normalizeDateTimeFields<T extends Record<string, unknown>>(input: T): T {
+    const dateTimeData: {
+      start_time?: string | null;
+      end_time?: string | null;
+    } = {};
+
+    const typedInput = input as {
+      start_time?: string | null;
+      end_time?: string | null;
+    };
+    if (typedInput.start_time !== undefined) dateTimeData.start_time = typedInput.start_time;
+    if (typedInput.end_time !== undefined) dateTimeData.end_time = typedInput.end_time;
+
+    normalizeDateTimeConsistency(dateTimeData);
+
+    return {
+      ...input,
+      ...dateTimeData,
+    };
+  }
+
+  private normalizeDateTimeFieldsForUpdate<T extends Record<string, unknown>>(
+    input: T,
+    existingData: EntryRow | null,
+  ): T {
+    const typedInput = input as {
+      start_time?: string | null;
+      end_time?: string | null;
+    };
+    const hasDateTimeUpdate = !!(typedInput.start_time || typedInput.end_time);
+
+    if (!hasDateTimeUpdate || !existingData) {
+      return input;
+    }
+
+    const mergedData: {
+      start_time?: string | null;
+      end_time?: string | null;
+    } = {};
+
+    const startTimeValue = typedInput.start_time ?? existingData.start_time;
+    if (startTimeValue !== undefined) mergedData.start_time = startTimeValue;
+
+    const endTimeValue = typedInput.end_time ?? existingData.end_time;
+    if (endTimeValue !== undefined) mergedData.end_time = endTimeValue;
+
+    normalizeDateTimeConsistency(mergedData);
+
+    const result = { ...input } as Record<string, unknown>;
+
+    if (mergedData.start_time !== undefined) result.start_time = mergedData.start_time;
+    if (mergedData.end_time !== undefined) result.end_time = mergedData.end_time;
+
+    return result as T;
+  }
+
+  private async getExistingEntry(entryId: string, userId: string): Promise<EntryRow | null> {
+    const { data } = await this.supabase
+      .from('entries')
+      .select('*')
+      .eq('id', entryId)
+      .eq('user_id', userId)
+      .single();
+
+    return data;
+  }
+
+  private async recordActivity(entryId: string, userId: string, actionType: string): Promise<void> {
+    await this.supabase.from('entry_activities').insert({
+      entry_id: entryId,
+      user_id: userId,
+      action_type: actionType,
+    });
+  }
+
+  private async trackChanges(
+    entryId: string,
+    userId: string,
+    oldData: EntryRow,
+    newData: EntryRow,
+  ): Promise<void> {
+    const { trackEntryChanges } = await import('@/server/utils/activity-tracker');
+    await trackEntryChanges(this.supabase, entryId, userId, oldData, newData);
+  }
+}
+
+/**
+ * エントリサービスエラー
+ */
+export class EntryServiceError extends Error {
+  constructor(
+    public readonly code: string,
+    message: string,
+  ) {
+    super(message);
+    this.name = 'EntryServiceError';
+  }
+}
+
+/**
+ * サービスインスタンスを作成
+ */
+export function createEntryService(supabase: ServiceSupabaseClient): EntryService {
+  return new EntryService(supabase);
+}

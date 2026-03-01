@@ -1,34 +1,65 @@
 /**
  * アクティビティトラッキング用ユーティリティ
- * プランの変更を検出して、適切なアクティビティを記録する
+ * エントリの変更を検出して、適切なアクティビティを記録する
  */
 
+import type { EntryActivityActionType } from '@/schemas/entries/activity';
 import type { ActivityActionType } from '@/schemas/plans/activity';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
-interface PlanChanges {
+interface ChangeRecord {
   field_name: string;
   old_value: string;
   new_value: string;
-  action_type: ActivityActionType;
+  action_type: EntryActivityActionType;
 }
 
-/** プランデータの動的フィールド型 */
-type PlanDataRecord = Record<string, string | number | boolean | null | undefined>;
+/** データの動的フィールド型 */
+type DataRecord = Record<string, string | number | boolean | null | undefined>;
 
 /**
- * プランの変更を検出してアクティビティを作成
+ * エントリの変更を検出してアクティビティを作成
+ */
+export async function trackEntryChanges(
+  supabase: SupabaseClient,
+  entryId: string,
+  userId: string,
+  oldData: DataRecord,
+  newData: DataRecord,
+) {
+  const changes = detectChanges(oldData, newData);
+
+  if (changes.length > 0) {
+    await supabase.from('entry_activities').insert(
+      changes.map((change) => ({
+        entry_id: entryId,
+        user_id: userId,
+        action_type: change.action_type,
+        field_name: change.field_name,
+        old_value: change.old_value,
+        new_value: change.new_value,
+      })),
+    );
+  }
+}
+
+/**
+ * @deprecated trackEntryChanges を使用
  */
 export async function trackPlanChanges(
   supabase: SupabaseClient,
   planId: string,
   userId: string,
-  oldData: PlanDataRecord,
-  newData: PlanDataRecord,
+  oldData: DataRecord,
+  newData: DataRecord,
 ) {
-  const changes = detectChanges(oldData, newData);
+  const changes = detectChanges(oldData, newData) as Array<{
+    field_name: string;
+    old_value: string;
+    new_value: string;
+    action_type: ActivityActionType;
+  }>;
 
-  // バッチINSERTで1回のDBリクエストに統合（N+1回避）
   if (changes.length > 0) {
     await supabase.from('plan_activities').insert(
       changes.map((change) => ({
@@ -46,18 +77,8 @@ export async function trackPlanChanges(
 /**
  * 変更を検出してアクティビティ種別を決定
  */
-function detectChanges(oldData: PlanDataRecord, newData: PlanDataRecord): PlanChanges[] {
-  const changes: PlanChanges[] = [];
-
-  // ステータス変更
-  if (oldData.status !== newData.status) {
-    changes.push({
-      field_name: 'status',
-      old_value: String(oldData.status ?? ''),
-      new_value: String(newData.status ?? ''),
-      action_type: 'status_changed',
-    });
-  }
+function detectChanges(oldData: DataRecord, newData: DataRecord): ChangeRecord[] {
+  const changes: ChangeRecord[] = [];
 
   // タイトル変更
   if (oldData.title !== newData.title) {
@@ -89,7 +110,17 @@ function detectChanges(oldData: PlanDataRecord, newData: PlanDataRecord): PlanCh
     });
   }
 
-  // 繰り返し設定変更 — 生値を保存（UIフォーマットはクライアント側のformatterが担当）
+  // 充実度変更
+  if (oldData.fulfillment_score !== newData.fulfillment_score) {
+    changes.push({
+      field_name: 'fulfillment_score',
+      old_value: oldData.fulfillment_score != null ? String(oldData.fulfillment_score) : '',
+      new_value: newData.fulfillment_score != null ? String(newData.fulfillment_score) : '',
+      action_type: 'fulfillment_changed',
+    });
+  }
+
+  // 繰り返し設定変更
   if (oldData.recurrence_type !== newData.recurrence_type) {
     changes.push({
       field_name: 'recurrence',
@@ -99,7 +130,7 @@ function detectChanges(oldData: PlanDataRecord, newData: PlanDataRecord): PlanCh
     });
   }
 
-  // 通知設定変更 — 数値をそのまま文字列化（UIフォーマットはクライアント側のformatterが担当）
+  // 通知設定変更
   if (oldData.reminder_minutes !== newData.reminder_minutes) {
     changes.push({
       field_name: 'reminder',
