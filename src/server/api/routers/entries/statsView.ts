@@ -304,8 +304,7 @@ export const statsViewRouter = createTRPCRouter({
     let todayPlannedMinutes = 0;
     for (const entry of planned) {
       if (entry.start_time?.startsWith(input.todayDate)) {
-        const diffMs =
-          new Date(entry.end_time!).getTime() - new Date(entry.start_time).getTime();
+        const diffMs = new Date(entry.end_time!).getTime() - new Date(entry.start_time).getTime();
         if (diffMs > 0) todayPlannedMinutes += diffMs / MS_PER_MINUTE;
       }
     }
@@ -315,8 +314,7 @@ export const statsViewRouter = createTRPCRouter({
         if (entry.duration_minutes) {
           todayActualMinutes += entry.duration_minutes;
         } else if (entry.start_time && entry.end_time) {
-          const diffMs =
-            new Date(entry.end_time).getTime() - new Date(entry.start_time).getTime();
+          const diffMs = new Date(entry.end_time).getTime() - new Date(entry.start_time).getTime();
           if (diffMs > 0) todayActualMinutes += diffMs / MS_PER_MINUTE;
         }
       }

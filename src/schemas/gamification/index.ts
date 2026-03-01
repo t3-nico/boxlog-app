@@ -5,7 +5,7 @@ import { z } from 'zod';
  */
 export const getGamificationMetricsSchema = z.object({
   startDate: z.string(), // YYYY-MM-DD
-  endDate: z.string(),   // YYYY-MM-DD
+  endDate: z.string(), // YYYY-MM-DD
 });
 
 export type GetGamificationMetricsInput = z.infer<typeof getGamificationMetricsSchema>;

@@ -5,6 +5,8 @@
  * コンテキスト組み立てとシステムプロンプト生成を提供。
  */
 
+export { createAnomalyDetectionService } from './anomaly-service';
+export type { AnomalyAlert, AnomalyCheckResult } from './anomaly-service';
 export { buildAIContext } from './context-service';
 export { buildSystemPrompt } from './prompt-builder';
 export { createAITools } from './tools';
@@ -16,5 +18,3 @@ export {
 } from './types';
 export type { AIContext, AIProviderId, FreeTierUsage } from './types';
 export { createAIUsageService } from './usage-service';
-export { createAnomalyDetectionService } from './anomaly-service';
-export type { AnomalyAlert, AnomalyCheckResult } from './anomaly-service';

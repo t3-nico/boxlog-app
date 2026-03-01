@@ -80,22 +80,20 @@ export const reflectionsRouter = createTRPCRouter({
   /**
    * 振り返りAI生成（冪等: 同一期間の既存レポートがあればそれを返す）
    */
-  generate: protectedProcedure
-    .input(generateReflectionSchema)
-    .mutation(async ({ ctx, input }) => {
-      const { supabase, userId } = ctx;
-      const service = createReflectionGenerationService(supabase);
+  generate: protectedProcedure.input(generateReflectionSchema).mutation(async ({ ctx, input }) => {
+    const { supabase, userId } = ctx;
+    const service = createReflectionGenerationService(supabase);
 
-      try {
-        return await service.generate({
-          userId,
-          periodType: input.periodType,
-          periodStart: input.periodStart,
-        });
-      } catch (error) {
-        handleServiceError(error);
-      }
-    }),
+    try {
+      return await service.generate({
+        userId,
+        periodType: input.periodType,
+        periodStart: input.periodStart,
+      });
+    } catch (error) {
+      handleServiceError(error);
+    }
+  }),
 
   /**
    * 週次集計データ取得
@@ -132,18 +130,16 @@ export const reflectionsRouter = createTRPCRouter({
   /**
    * エネルギーマップ取得
    */
-  getEnergyMap: protectedProcedure
-    .input(getEnergyMapSchema)
-    .query(async ({ ctx, input }) => {
-      const { supabase, userId } = ctx;
-      const service = createDataAggregationService(supabase);
+  getEnergyMap: protectedProcedure.input(getEnergyMapSchema).query(async ({ ctx, input }) => {
+    const { supabase, userId } = ctx;
+    const service = createDataAggregationService(supabase);
 
-      try {
-        return await service.getEnergyMap(userId, input.startDate, input.endDate);
-      } catch (error) {
-        handleServiceError(error);
-      }
-    }),
+    try {
+      return await service.getEnergyMap(userId, input.startDate, input.endDate);
+    } catch (error) {
+      handleServiceError(error);
+    }
+  }),
 
   /**
    * データ蓄積状況取得（コールドスタート対策）

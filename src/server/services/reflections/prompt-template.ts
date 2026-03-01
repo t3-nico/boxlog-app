@@ -6,13 +6,17 @@
  * 構造化されたJSONレポートを生成するプロンプトを組み立てる。
  */
 
-import type { WeeklyReflectionData, FulfillmentTrendPoint, EnergyMapCell } from './data-aggregation-service';
+import type {
+  EnergyMapCell,
+  FulfillmentTrendPoint,
+  WeeklyReflectionData,
+} from './data-aggregation-service';
 
 /** プロンプトに渡すデータ */
 export interface ReflectionPromptData {
   periodType: 'daily' | 'weekly' | 'monthly';
   periodStart: string; // YYYY-MM-DD
-  periodEnd: string;   // YYYY-MM-DD
+  periodEnd: string; // YYYY-MM-DD
 
   /** 週次集計データ */
   weeklyData: WeeklyReflectionData;
@@ -176,7 +180,10 @@ Respond in the same language the user's data suggests. If tag names or notes are
 
     if (topCells.length > 0) {
       const mapStr = topCells
-        .map((c) => `- ${dayNames[c.dow]} ${c.hour}:00: fulfillment ${c.avgFulfillment}/3, ${Math.round(c.totalMinutes)}min (${c.entryCount} entries)`)
+        .map(
+          (c) =>
+            `- ${dayNames[c.dow]} ${c.hour}:00: fulfillment ${c.avgFulfillment}/3, ${Math.round(c.totalMinutes)}min (${c.entryCount} entries)`,
+        )
         .join('\n');
       sections.push(`## Peak Performance Times (Top 10)\n${mapStr}`);
     }

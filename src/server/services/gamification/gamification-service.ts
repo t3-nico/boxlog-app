@@ -6,8 +6,8 @@
  * - 週別集中スコア
  */
 
-import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '@/lib/database.types';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 type ServiceSupabaseClient = SupabaseClient<Database>;
 
@@ -67,10 +67,7 @@ export class GamificationService {
   /**
    * 週別集中スコアを取得
    */
-  async getWeeklyFocusScores(
-    userId: string,
-    weeks: number = 8,
-  ): Promise<WeeklyFocusScore[]> {
+  async getWeeklyFocusScores(userId: string, weeks: number = 8): Promise<WeeklyFocusScore[]> {
     const { data, error } = await this.supabase.rpc(
       'get_weekly_focus_score' as never,
       {
@@ -83,11 +80,13 @@ export class GamificationService {
       throw new Error(`Failed to fetch weekly focus scores: ${error.message}`);
     }
 
-    return ((data ?? []) as Array<{
-      week_start: string;
-      focus_score: number;
-      total_minutes: number;
-    }>).map((row) => ({
+    return (
+      (data ?? []) as Array<{
+        week_start: string;
+        focus_score: number;
+        total_minutes: number;
+      }>
+    ).map((row) => ({
       weekStart: row.week_start,
       focusScore: Math.round(row.focus_score * 10) / 10,
       totalMinutes: Math.round(row.total_minutes),

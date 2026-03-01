@@ -22,10 +22,9 @@ import { createDataAggregationService } from './data-aggregation-service';
 import { buildReflectionPrompt } from './prompt-template';
 import { createReflectionService } from './reflection-service';
 
-import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '@/lib/database.types';
-import type { ReflectionPromptData } from './prompt-template';
-import type { ReflectionGenerationResult } from './prompt-template';
+import type { SupabaseClient } from '@supabase/supabase-js';
+import type { ReflectionGenerationResult, ReflectionPromptData } from './prompt-template';
 
 type ServiceSupabaseClient = SupabaseClient<Database>;
 type ReflectionRow = Database['public']['Tables']['reflections']['Row'];

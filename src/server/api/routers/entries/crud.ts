@@ -18,8 +18,8 @@ import {
   updateEntrySchema,
 } from '@/schemas/entries';
 import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc';
-import { handleServiceError } from '@/server/services/errors';
 import { createEntryService } from '@/server/services/entries';
+import { handleServiceError } from '@/server/services/errors';
 
 export const entriesCrudRouter = createTRPCRouter({
   /**

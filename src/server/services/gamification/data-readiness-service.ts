@@ -10,8 +10,8 @@
  * - 異常検知: 4週間分のデータ（28日以上）
  */
 
-import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '@/lib/database.types';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 type ServiceSupabaseClient = SupabaseClient<Database>;
 
@@ -57,9 +57,7 @@ export class DataReadinessService {
 
     // ユニーク日数を計算
     const uniqueDates = new Set(
-      entries
-        .filter((e) => e.start_time)
-        .map((e) => e.start_time!.split('T')[0]),
+      entries.filter((e) => e.start_time).map((e) => e.start_time!.split('T')[0]),
     );
     const totalDays = uniqueDates.size;
 

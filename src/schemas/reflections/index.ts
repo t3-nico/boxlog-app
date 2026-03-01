@@ -60,7 +60,7 @@ export type GetAggregationDataInput = z.infer<typeof getAggregationDataSchema>;
  */
 export const getFulfillmentTrendSchema = z.object({
   startDate: z.string(), // YYYY-MM-DD
-  endDate: z.string(),   // YYYY-MM-DD
+  endDate: z.string(), // YYYY-MM-DD
 });
 
 export type GetFulfillmentTrendInput = z.infer<typeof getFulfillmentTrendSchema>;
@@ -70,7 +70,7 @@ export type GetFulfillmentTrendInput = z.infer<typeof getFulfillmentTrendSchema>
  */
 export const getEnergyMapSchema = z.object({
   startDate: z.string(), // YYYY-MM-DD
-  endDate: z.string(),   // YYYY-MM-DD
+  endDate: z.string(), // YYYY-MM-DD
 });
 
 export type GetEnergyMapInput = z.infer<typeof getEnergyMapSchema>;

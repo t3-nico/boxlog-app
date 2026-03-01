@@ -4,8 +4,8 @@
  * 振り返り用の集計データを取得・整形する
  */
 
-import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '@/lib/database.types';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 type ServiceSupabaseClient = SupabaseClient<Database>;
 
@@ -95,21 +95,19 @@ export class DataAggregationService {
       throw new Error(`Failed to fetch fulfillment trend: ${error.message}`);
     }
 
-    return ((data ?? []) as Array<{ date: string; avg_score: number; count: number }>).map((row) => ({
-      date: row.date,
-      avgScore: Math.round(row.avg_score * 10) / 10,
-      count: row.count,
-    }));
+    return ((data ?? []) as Array<{ date: string; avg_score: number; count: number }>).map(
+      (row) => ({
+        date: row.date,
+        avgScore: Math.round(row.avg_score * 10) / 10,
+        count: row.count,
+      }),
+    );
   }
 
   /**
    * エネルギーマップを取得
    */
-  async getEnergyMap(
-    userId: string,
-    startDate: string,
-    endDate: string,
-  ): Promise<EnergyMapCell[]> {
+  async getEnergyMap(userId: string, startDate: string, endDate: string): Promise<EnergyMapCell[]> {
     const { data, error } = await this.supabase.rpc(
       'get_energy_map' as never,
       {
@@ -123,13 +121,15 @@ export class DataAggregationService {
       throw new Error(`Failed to fetch energy map: ${error.message}`);
     }
 
-    return ((data ?? []) as Array<{
-      hour: number;
-      dow: number;
-      avg_fulfillment: number;
-      total_minutes: number;
-      entry_count: number;
-    }>).map((row) => ({
+    return (
+      (data ?? []) as Array<{
+        hour: number;
+        dow: number;
+        avg_fulfillment: number;
+        total_minutes: number;
+        entry_count: number;
+      }>
+    ).map((row) => ({
       hour: row.hour,
       dow: row.dow,
       avgFulfillment: Math.round(row.avg_fulfillment * 10) / 10,
@@ -142,6 +142,8 @@ export class DataAggregationService {
 /**
  * サービスインスタンスを作成
  */
-export function createDataAggregationService(supabase: ServiceSupabaseClient): DataAggregationService {
+export function createDataAggregationService(
+  supabase: ServiceSupabaseClient,
+): DataAggregationService {
   return new DataAggregationService(supabase);
 }

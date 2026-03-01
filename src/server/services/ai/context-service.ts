@@ -32,62 +32,68 @@ export async function buildAIContext(
   const weekEnd = endOfWeek(now);
   const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * MS_PER_MINUTE);
 
-  const [settingsResult, todayEntriesResult, recentEntriesResult, weeklyPlannedResult, weeklyUnplannedResult, tagsResult] =
-    await Promise.all([
-      // 1. ユーザー設定
-      supabase.from('user_settings').select('*').eq('user_id', userId).single(),
+  const [
+    settingsResult,
+    todayEntriesResult,
+    recentEntriesResult,
+    weeklyPlannedResult,
+    weeklyUnplannedResult,
+    tagsResult,
+  ] = await Promise.all([
+    // 1. ユーザー設定
+    supabase.from('user_settings').select('*').eq('user_id', userId).single(),
 
-      // 2. 今日のエントリ（planned）
-      supabase
-        .from('entries')
-        .select('id, title, start_time, end_time, origin, entry_tags(tag_id)')
-        .eq('user_id', userId)
-        .eq('origin', 'planned')
-        .gte('start_time', `${todayStr}T00:00:00`)
-        .lte('start_time', `${todayStr}T23:59:59`)
-        .order('start_time', { ascending: true })
-        .limit(20),
+    // 2. 今日のエントリ（planned）
+    supabase
+      .from('entries')
+      .select('id, title, start_time, end_time, origin, entry_tags(tag_id)')
+      .eq('user_id', userId)
+      .eq('origin', 'planned')
+      .gte('start_time', `${todayStr}T00:00:00`)
+      .lte('start_time', `${todayStr}T23:59:59`)
+      .order('start_time', { ascending: true })
+      .limit(20),
 
-      // 3. 最近のエントリ（unplanned = 旧records、直近7日）
-      supabase
-        .from('entries')
-        .select('title, duration_minutes, fulfillment_score, start_time')
-        .eq('user_id', userId)
-        .eq('origin', 'unplanned')
-        .gte('start_time', sevenDaysAgo.toISOString())
-        .order('start_time', { ascending: false })
-        .limit(10),
+    // 3. 最近のエントリ（unplanned = 旧records、直近7日）
+    supabase
+      .from('entries')
+      .select('title, duration_minutes, fulfillment_score, start_time')
+      .eq('user_id', userId)
+      .eq('origin', 'unplanned')
+      .gte('start_time', sevenDaysAgo.toISOString())
+      .order('start_time', { ascending: false })
+      .limit(10),
 
-      // 4. 今週の planned エントリ（時間計算用）
-      supabase
-        .from('entries')
-        .select('start_time, end_time')
-        .eq('user_id', userId)
-        .eq('origin', 'planned')
-        .not('start_time', 'is', null)
-        .not('end_time', 'is', null)
-        .gte('start_time', weekStart.toISOString())
-        .lte('start_time', weekEnd.toISOString()),
+    // 4. 今週の planned エントリ（時間計算用）
+    supabase
+      .from('entries')
+      .select('start_time, end_time')
+      .eq('user_id', userId)
+      .eq('origin', 'planned')
+      .not('start_time', 'is', null)
+      .not('end_time', 'is', null)
+      .gte('start_time', weekStart.toISOString())
+      .lte('start_time', weekEnd.toISOString()),
 
-      // 5. 今週の unplanned エントリ（時間計算用）
-      supabase
-        .from('entries')
-        .select('duration_minutes, start_time, end_time')
-        .eq('user_id', userId)
-        .eq('origin', 'unplanned')
-        .not('start_time', 'is', null)
-        .gte('start_time', weekStart.toISOString())
-        .lte('start_time', weekEnd.toISOString()),
+    // 5. 今週の unplanned エントリ（時間計算用）
+    supabase
+      .from('entries')
+      .select('duration_minutes, start_time, end_time')
+      .eq('user_id', userId)
+      .eq('origin', 'unplanned')
+      .not('start_time', 'is', null)
+      .gte('start_time', weekStart.toISOString())
+      .lte('start_time', weekEnd.toISOString()),
 
-      // 6. タグ一覧
-      supabase
-        .from('tags')
-        .select('id, name, color')
-        .eq('user_id', userId)
-        .eq('is_active', true)
-        .order('sort_order', { ascending: true })
-        .limit(50),
-    ]);
+    // 6. タグ一覧
+    supabase
+      .from('tags')
+      .select('id, name, color')
+      .eq('user_id', userId)
+      .eq('is_active', true)
+      .order('sort_order', { ascending: true })
+      .limit(50),
+  ]);
 
   // エラーハンドリング（致命的でないのでデフォルト値で続行）
   if (settingsResult.error && settingsResult.error.code !== 'PGRST116') {
@@ -118,7 +124,7 @@ export async function buildAIContext(
     title: e.title ?? '',
     durationMinutes: e.duration_minutes ?? 0,
     fulfillmentScore: e.fulfillment_score,
-    workedAt: e.start_time ? e.start_time.split('T')[0] ?? '' : '',
+    workedAt: e.start_time ? (e.start_time.split('T')[0] ?? '') : '',
   }));
 
   // 今週の planned 時間（分）

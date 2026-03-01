@@ -4,8 +4,8 @@
  * plans + records を統合した entries テーブルのビジネスロジック
  */
 
-import { logger } from '@/lib/logger';
 import { isTimePast } from '@/lib/entry-status';
+import { logger } from '@/lib/logger';
 import {
   normalizeDateTimeConsistency,
   removeUndefinedFields,
@@ -47,10 +47,7 @@ export class EntryService {
       offset,
     } = options;
 
-    let query = this.supabase
-      .from('entries')
-      .select('*, entry_tags(tag_id)')
-      .eq('user_id', userId);
+    let query = this.supabase.from('entries').select('*, entry_tags(tag_id)').eq('user_id', userId);
 
     // タグフィルター
     if (tagId) {
@@ -426,11 +423,7 @@ export class EntryService {
     return data;
   }
 
-  private async recordActivity(
-    entryId: string,
-    userId: string,
-    actionType: string,
-  ): Promise<void> {
+  private async recordActivity(entryId: string, userId: string, actionType: string): Promise<void> {
     await this.supabase.from('entry_activities').insert({
       entry_id: entryId,
       user_id: userId,

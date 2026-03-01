@@ -6,8 +6,8 @@
 
 import { logger } from '@/lib/logger';
 
-import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '@/lib/database.types';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 type ServiceSupabaseClient = SupabaseClient<Database>;
 type ReflectionRow = Database['public']['Tables']['reflections']['Row'];
@@ -71,7 +71,10 @@ export class ReflectionService {
     const { data, error } = await query;
 
     if (error) {
-      throw new ReflectionServiceError('FETCH_FAILED', `Failed to fetch reflections: ${error.message}`);
+      throw new ReflectionServiceError(
+        'FETCH_FAILED',
+        `Failed to fetch reflections: ${error.message}`,
+      );
     }
 
     return data;
@@ -101,7 +104,19 @@ export class ReflectionService {
    * 振り返りを作成（冪等: 同一期間の既存レポートがあればそれを返す）
    */
   async create(options: CreateReflectionOptions): Promise<ReflectionRow> {
-    const { userId, periodType, periodStart, periodEnd, title, activities, insights, question, modelUsed, promptTokens, completionTokens } = options;
+    const {
+      userId,
+      periodType,
+      periodStart,
+      periodEnd,
+      title,
+      activities,
+      insights,
+      question,
+      modelUsed,
+      promptTokens,
+      completionTokens,
+    } = options;
 
     // 既存チェック（冪等性）
     const { data: existing } = await this.supabase
@@ -140,7 +155,10 @@ export class ReflectionService {
       .single();
 
     if (error) {
-      throw new ReflectionServiceError('CREATE_FAILED', `Failed to create reflection: ${error.message}`);
+      throw new ReflectionServiceError(
+        'CREATE_FAILED',
+        `Failed to create reflection: ${error.message}`,
+      );
     }
 
     return data;
@@ -161,7 +179,10 @@ export class ReflectionService {
       .single();
 
     if (error) {
-      throw new ReflectionServiceError('UPDATE_FAILED', `Failed to update reflection note: ${error.message}`);
+      throw new ReflectionServiceError(
+        'UPDATE_FAILED',
+        `Failed to update reflection note: ${error.message}`,
+      );
     }
 
     return data;
@@ -170,7 +191,11 @@ export class ReflectionService {
   /**
    * 期間に該当する既存の振り返りを取得
    */
-  async getByPeriod(userId: string, periodType: string, periodStart: string): Promise<ReflectionRow | null> {
+  async getByPeriod(
+    userId: string,
+    periodType: string,
+    periodStart: string,
+  ): Promise<ReflectionRow | null> {
     const { data } = await this.supabase
       .from('reflections')
       .select('*')

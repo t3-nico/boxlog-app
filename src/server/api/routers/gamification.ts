@@ -4,10 +4,7 @@
  * ゲーミフィケーション指標の取得: タイムボクシング遵守率、週別集中スコア
  */
 
-import {
-  getGamificationMetricsSchema,
-  getWeeklyFocusScoresSchema,
-} from '@/schemas/gamification';
+import { getGamificationMetricsSchema, getWeeklyFocusScoresSchema } from '@/schemas/gamification';
 import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc';
 import { handleServiceError } from '@/server/services/errors';
 import { createGamificationService } from '@/server/services/gamification/gamification-service';

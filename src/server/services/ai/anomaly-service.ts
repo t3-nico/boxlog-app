@@ -12,8 +12,8 @@
 
 import { logger } from '@/lib/logger';
 
-import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '@/lib/database.types';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 type ServiceSupabaseClient = SupabaseClient<Database>;
 
@@ -96,7 +96,10 @@ export class AnomalyDetectionService {
     ) {
       alerts.push({
         type: 'fulfillment_drop',
-        severity: baselineData.avgFulfillment - currentWeekData.avgFulfillment >= 1.5 ? 'critical' : 'warning',
+        severity:
+          baselineData.avgFulfillment - currentWeekData.avgFulfillment >= 1.5
+            ? 'critical'
+            : 'warning',
         message: `Fulfillment dropped from ${baselineData.avgFulfillment.toFixed(1)} to ${currentWeekData.avgFulfillment.toFixed(1)} this week.`,
         data: {
           baseline: baselineData.avgFulfillment,
@@ -109,11 +112,13 @@ export class AnomalyDetectionService {
     // 2. 記録時間急増チェック
     if (
       baselineData.avgWeeklyMinutes > 0 &&
-      currentWeekData.totalMinutes > baselineData.avgWeeklyMinutes * THRESHOLDS.TIME_SURGE_MULTIPLIER
+      currentWeekData.totalMinutes >
+        baselineData.avgWeeklyMinutes * THRESHOLDS.TIME_SURGE_MULTIPLIER
     ) {
       alerts.push({
         type: 'time_surge',
-        severity: currentWeekData.totalMinutes > baselineData.avgWeeklyMinutes * 2 ? 'critical' : 'warning',
+        severity:
+          currentWeekData.totalMinutes > baselineData.avgWeeklyMinutes * 2 ? 'critical' : 'warning',
         message: `Recorded time this week (${Math.round(currentWeekData.totalMinutes / 60)}h) is significantly above your average (${Math.round(baselineData.avgWeeklyMinutes / 60)}h/week).`,
         data: {
           baseline: baselineData.avgWeeklyMinutes,
@@ -182,7 +187,8 @@ export class AnomalyDetectionService {
     const withFulfillment = entries.filter((e) => e.fulfillment_score !== null);
     const avgFulfillment =
       withFulfillment.length > 0
-        ? withFulfillment.reduce((sum, e) => sum + (e.fulfillment_score ?? 0), 0) / withFulfillment.length
+        ? withFulfillment.reduce((sum, e) => sum + (e.fulfillment_score ?? 0), 0) /
+          withFulfillment.length
         : 0;
 
     // 総時間（分）
@@ -234,7 +240,8 @@ export class AnomalyDetectionService {
     const withFulfillment = entries.filter((e) => e.fulfillment_score !== null);
     const avgFulfillment =
       withFulfillment.length > 0
-        ? withFulfillment.reduce((sum, e) => sum + (e.fulfillment_score ?? 0), 0) / withFulfillment.length
+        ? withFulfillment.reduce((sum, e) => sum + (e.fulfillment_score ?? 0), 0) /
+          withFulfillment.length
         : 0;
 
     let totalMinutes = 0;
@@ -277,9 +284,7 @@ export class AnomalyDetectionService {
 
     // ユニーク日付のセットを作成
     const entryDates = new Set(
-      entries
-        .filter((e) => e.start_time)
-        .map((e) => e.start_time!.split('T')[0]),
+      entries.filter((e) => e.start_time).map((e) => e.start_time!.split('T')[0]),
     );
 
     // 今日から遡って無記録日を数える
@@ -312,6 +317,8 @@ function formatDate(date: Date): string {
 /**
  * サービスインスタンスを作成
  */
-export function createAnomalyDetectionService(supabase: ServiceSupabaseClient): AnomalyDetectionService {
+export function createAnomalyDetectionService(
+  supabase: ServiceSupabaseClient,
+): AnomalyDetectionService {
   return new AnomalyDetectionService(supabase);
 }
