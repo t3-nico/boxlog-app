@@ -1,7 +1,14 @@
 import { z } from 'zod';
 
-// 通知タイプ（リマインダー専用）
-export const notificationTypeSchema = z.enum(['reminder', 'overdue']);
+// 通知タイプ（リマインダー + AI通知）
+export const notificationTypeSchema = z.enum([
+  'reminder',
+  'overdue',
+  'ai_insight',
+  'weekly_report',
+  'burnout_warning',
+  'energy_insight',
+]);
 
 // 通知作成
 export const createNotificationSchema = z.object({

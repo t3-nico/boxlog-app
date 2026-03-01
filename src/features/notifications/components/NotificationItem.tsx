@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import type { NotificationType } from '@/schemas/notifications';
 import { formatDistanceToNow } from 'date-fns';
 import { enUS, ja } from 'date-fns/locale';
-import { AlertTriangle, Bell, Trash2 } from 'lucide-react';
+import { AlertTriangle, Bell, Brain, Lightbulb, Sparkles, Trash2, Zap } from 'lucide-react';
 
 interface NotificationItemProps {
   id: string;
@@ -21,11 +21,19 @@ interface NotificationItemProps {
 const typeIcons: Record<NotificationType, React.ReactNode> = {
   reminder: <Bell className="h-4 w-4" />,
   overdue: <AlertTriangle className="h-4 w-4" />,
+  ai_insight: <Lightbulb className="h-4 w-4" />,
+  weekly_report: <Sparkles className="h-4 w-4" />,
+  burnout_warning: <Brain className="h-4 w-4" />,
+  energy_insight: <Zap className="h-4 w-4" />,
 };
 
 const typeColors: Record<NotificationType, string> = {
   reminder: 'text-primary',
   overdue: 'text-warning',
+  ai_insight: 'text-primary',
+  weekly_report: 'text-primary',
+  burnout_warning: 'text-warning',
+  energy_insight: 'text-primary',
 };
 
 export function NotificationItem({

@@ -410,28 +410,34 @@ export type Database = {
       notifications: {
         Row: {
           created_at: string;
+          data: Json | null;
           id: string;
           is_read: boolean;
           plan_id: string | null;
           read_at: string | null;
+          reflection_id: string | null;
           type: string;
           user_id: string;
         };
         Insert: {
           created_at?: string;
+          data?: Json | null;
           id?: string;
           is_read?: boolean;
           plan_id?: string | null;
           read_at?: string | null;
+          reflection_id?: string | null;
           type: string;
           user_id: string;
         };
         Update: {
           created_at?: string;
+          data?: Json | null;
           id?: string;
           is_read?: boolean;
           plan_id?: string | null;
           read_at?: string | null;
+          reflection_id?: string | null;
           type?: string;
           user_id?: string;
         };
@@ -441,6 +447,13 @@ export type Database = {
             columns: ['plan_id'];
             isOneToOne: false;
             referencedRelation: 'plans';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'notifications_reflection_id_fkey';
+            columns: ['reflection_id'];
+            isOneToOne: false;
+            referencedRelation: 'reflections';
             referencedColumns: ['id'];
           },
         ];

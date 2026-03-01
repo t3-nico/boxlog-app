@@ -16,3 +16,5 @@ export {
 } from './types';
 export type { AIContext, AIProviderId, FreeTierUsage } from './types';
 export { createAIUsageService } from './usage-service';
+export { createAnomalyDetectionService } from './anomaly-service';
+export type { AnomalyAlert, AnomalyCheckResult } from './anomaly-service';
