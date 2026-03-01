@@ -19,21 +19,23 @@ SET search_path = public
 AS $$
 BEGIN
   RETURN QUERY
+  WITH eligible_users AS (
+    -- 累計ユニーク日数がしきい値以上のユーザー（CTE で1回だけ集計）
+    SELECT e2.user_id
+    FROM entries e2
+    WHERE e2.start_time IS NOT NULL
+    GROUP BY e2.user_id
+    HAVING COUNT(DISTINCT (e2.start_time::date)) >= p_threshold_days
+  )
   SELECT
     e.user_id,
     COUNT(*) AS entry_count
   FROM entries e
+  JOIN eligible_users eu ON eu.user_id = e.user_id
   WHERE
     -- 指定週にエントリがある
     e.start_time >= p_week_start::timestamptz
     AND e.start_time < (p_week_start + INTERVAL '7 days')::timestamptz
-    -- 累計ユニーク日数がしきい値以上
-    AND (
-      SELECT COUNT(DISTINCT (e2.start_time::date))
-      FROM entries e2
-      WHERE e2.user_id = e.user_id
-        AND e2.start_time IS NOT NULL
-    ) >= p_threshold_days
     -- まだ振り返りが生成されていない
     AND NOT EXISTS (
       SELECT 1 FROM reflections r
@@ -48,3 +50,7 @@ END;
 $$;
 
 COMMENT ON FUNCTION get_active_users_for_reflection IS 'Edge Function用: 振り返り生成対象のアクティブユーザーを取得';
+
+-- authenticated ロールからのアクセスを禁止（service_role のみ使用可能）
+REVOKE EXECUTE ON FUNCTION get_active_users_for_reflection FROM authenticated;
+REVOKE EXECUTE ON FUNCTION get_active_users_for_reflection FROM anon;

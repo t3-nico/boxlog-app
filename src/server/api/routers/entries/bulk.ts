@@ -21,6 +21,7 @@ export const bulkRouter = createTRPCRouter({
   update: protectedProcedure.input(bulkUpdateEntrySchema).mutation(async ({ ctx, input }) => {
     const { supabase, userId } = ctx;
 
+    // exactOptionalPropertyTypes: Partial<T> の undefined と Supabase の null が非互換のためキャスト
     const updateData = removeUndefinedFields(input.data) as Record<string, unknown>;
 
     const { data, error } = await supabase

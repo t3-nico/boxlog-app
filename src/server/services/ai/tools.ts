@@ -89,7 +89,7 @@ export function createAITools(supabase: AISupabaseClient, userId: string): ToolS
 
     searchPastEntries: tool({
       description:
-        'Search user past entries (work log) by date range or fulfillment score. Use when the user asks about their past activities, time spent, or work history.',
+        'Search user past entries (work log) by date range, origin, or fulfillment score. Use when the user asks about their past activities, time spent, or work history.',
       inputSchema: z.object({
         startDate: z
           .string()
@@ -99,6 +99,10 @@ export function createAITools(supabase: AISupabaseClient, userId: string): ToolS
           .string()
           .optional()
           .describe('End of date range (ISO 8601 datetime, e.g. 2026-01-31T23:59:59)'),
+        origin: z
+          .enum(['planned', 'unplanned'])
+          .optional()
+          .describe('Filter by entry origin. Omit to include all entries.'),
         fulfillmentScoreMin: z
           .number()
           .int()
@@ -125,7 +129,7 @@ export function createAITools(supabase: AISupabaseClient, userId: string): ToolS
         try {
           const entries = await entryService.list({
             userId,
-            origin: 'unplanned',
+            origin: input.origin,
             startDate: input.startDate,
             endDate: input.endDate,
             fulfillmentScoreMin: input.fulfillmentScoreMin,
@@ -200,7 +204,9 @@ export function createAITools(supabase: AISupabaseClient, userId: string): ToolS
           // entries テーブルから全エントリを取得
           const { data: entries, error: entriesError } = await supabase
             .from('entries')
-            .select('start_time, end_time, duration_minutes, origin, reviewed_at, fulfillment_score')
+            .select(
+              'start_time, end_time, duration_minutes, origin, reviewed_at, fulfillment_score',
+            )
             .eq('user_id', userId)
             .gte('start_time', startDate.toISOString());
 

@@ -4,12 +4,17 @@
 //
 // バッチサイズ制限: 10ユーザー/回（タイムアウト対策）
 // 冪等性: reflections テーブルの UNIQUE(user_id, period_type, period_start) で保証
+// 認証: CRON_SECRET ヘッダーで保護
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 import { corsHeaders } from '../_shared/cors.ts';
 
 const BATCH_SIZE = 10;
 const REFLECTION_THRESHOLD_DAYS = 7; // 振り返り解放条件: 7日以上のデータ
+
+// ============================================================
+// 型定義
+// ============================================================
 
 interface UserEntry {
   user_id: string;
@@ -23,9 +28,75 @@ interface ReflectionResult {
   error?: string;
 }
 
+interface EntryRow {
+  start_time: string | null;
+  end_time: string | null;
+  duration_minutes: number | null;
+  fulfillment_score: number | null;
+}
+
+interface AnomalyAlert {
+  type: 'fulfillment_drop' | 'time_surge' | 'no_record_streak';
+  severity: 'warning' | 'critical';
+  message: string;
+  baseline?: number;
+  current?: number;
+  streakDays?: number;
+}
+
+interface WeeklyReflectionData {
+  total_entries: number;
+  total_minutes: number;
+  avg_fulfillment: number;
+}
+
+interface ParsedReflection {
+  title: string;
+  insights: string;
+  question: string;
+  activities: Array<{ label: string; minutes: number; highlight: string }>;
+}
+
+// ============================================================
+// 構造化ログ（Edge Function 用）
+// ============================================================
+
+// Edge Functions は Deno 上で動作し @/lib/logger を使えないため console を直接使用
+function log(
+  level: 'info' | 'warn' | 'error',
+  message: string,
+  meta?: Record<string, unknown>,
+): void {
+  const entry = { level, message, timestamp: new Date().toISOString(), ...meta };
+  if (level === 'error') {
+    console.error(JSON.stringify(entry));
+  } else if (level === 'warn') {
+    console.warn(JSON.stringify(entry));
+  } else {
+    console.log(JSON.stringify(entry)); // eslint-disable-line no-console
+  }
+}
+
+// ============================================================
+// メインハンドラー
+// ============================================================
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
+  }
+
+  // 認証チェック: CRON_SECRET で保護
+  const cronSecret = Deno.env.get('CRON_SECRET');
+  if (cronSecret) {
+    const authHeader = req.headers.get('Authorization');
+    if (authHeader !== `Bearer ${cronSecret}`) {
+      log('warn', 'Unauthorized access attempt to generate-reflections');
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 401,
+      });
+    }
   }
 
   try {
@@ -34,10 +105,10 @@ Deno.serve(async (req) => {
     const anthropicApiKey = Deno.env.get('ANTHROPIC_API_KEY');
 
     if (!anthropicApiKey) {
-      return new Response(
-        JSON.stringify({ error: 'ANTHROPIC_API_KEY is not configured' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 },
-      );
+      return new Response(JSON.stringify({ error: 'ANTHROPIC_API_KEY is not configured' }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 500,
+      });
     }
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
@@ -55,26 +126,26 @@ Deno.serve(async (req) => {
 
     // アクティブユーザーを取得（先週エントリがあり、十分なデータ蓄積がある）
     const { data: activeUsers, error: usersError } = await supabase.rpc(
-      'get_active_users_for_reflection' as never,
+      'get_active_users_for_reflection',
       {
         p_week_start: weekStart,
         p_threshold_days: REFLECTION_THRESHOLD_DAYS,
         p_limit: BATCH_SIZE,
-      } as never,
+      },
     );
 
     if (usersError) {
-      console.error('Error fetching active users:', usersError);
+      log('error', 'Failed to fetch active users', { error: usersError.message });
       throw usersError;
     }
 
     const users = (activeUsers ?? []) as UserEntry[];
 
     if (users.length === 0) {
-      return new Response(
-        JSON.stringify({ message: 'No eligible users found', count: 0 }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 },
-      );
+      return new Response(JSON.stringify({ message: 'No eligible users found', count: 0 }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200,
+      });
     }
 
     // 各ユーザーの振り返りを生成
@@ -98,18 +169,22 @@ Deno.serve(async (req) => {
 
         // 集計データ取得
         const { data: weeklyData, error: dataError } = await supabase.rpc(
-          'get_weekly_reflection_data' as never,
-          { p_user_id: user.user_id, p_week_start: weekStart } as never,
+          'get_weekly_reflection_data',
+          { p_user_id: user.user_id, p_week_start: weekStart },
         );
 
         if (dataError) {
-          console.error(`Error fetching data for user ${user.user_id}:`, dataError);
+          log('error', 'Failed to fetch weekly data', {
+            userId: user.user_id,
+            error: dataError.message,
+          });
           results.push({ userId: user.user_id, status: 'error', error: dataError.message });
           continue;
         }
 
         // AI呼び出し（Haiku 4.5）
-        const prompt = buildSimpleReflectionPrompt(weeklyData as Record<string, unknown>, weekStart, weekEnd);
+        const typedWeeklyData = weeklyData as WeeklyReflectionData | null;
+        const prompt = buildSimpleReflectionPrompt(typedWeeklyData, weekStart, weekEnd);
 
         const aiResponse = await fetch('https://api.anthropic.com/v1/messages', {
           method: 'POST',
@@ -132,12 +207,20 @@ Deno.serve(async (req) => {
 
         if (!aiResponse.ok) {
           const errorText = await aiResponse.text();
-          console.error(`AI API error for user ${user.user_id}:`, errorText);
-          results.push({ userId: user.user_id, status: 'error', error: `AI API error: ${aiResponse.status}` });
+          log('error', 'AI API error', {
+            userId: user.user_id,
+            status: aiResponse.status,
+            error: errorText,
+          });
+          results.push({
+            userId: user.user_id,
+            status: 'error',
+            error: `AI API error: ${aiResponse.status}`,
+          });
           continue;
         }
 
-        const aiResult = await aiResponse.json() as {
+        const aiResult = (await aiResponse.json()) as {
           content: Array<{ type: string; text: string }>;
           usage: { input_tokens: number; output_tokens: number };
         };
@@ -164,7 +247,10 @@ Deno.serve(async (req) => {
           .single();
 
         if (insertError) {
-          console.error(`Error saving reflection for user ${user.user_id}:`, insertError);
+          log('error', 'Failed to save reflection', {
+            userId: user.user_id,
+            error: insertError.message,
+          });
           results.push({ userId: user.user_id, status: 'error', error: insertError.message });
           continue;
         }
@@ -186,7 +272,10 @@ Deno.serve(async (req) => {
 
         results.push({ userId: user.user_id, status: 'generated', reflectionId: reflection.id });
       } catch (error) {
-        console.error(`Error processing user ${user.user_id}:`, error);
+        log('error', 'Failed to process user', {
+          userId: user.user_id,
+          error: error instanceof Error ? error.message : 'Unknown error',
+        });
         results.push({
           userId: user.user_id,
           status: 'error',
@@ -215,7 +304,10 @@ Deno.serve(async (req) => {
           anomalyResults.push({ userId: user.user_id, alerts: anomalies.length });
         }
       } catch (error) {
-        console.error(`Anomaly check error for user ${user.user_id}:`, error);
+        log('warn', 'Anomaly check failed', {
+          userId: user.user_id,
+          error: error instanceof Error ? error.message : 'Unknown error',
+        });
       }
     }
 
@@ -223,6 +315,13 @@ Deno.serve(async (req) => {
     const skipped = results.filter((r) => r.status === 'skipped').length;
     const errors = results.filter((r) => r.status === 'error').length;
     const totalAnomalyAlerts = anomalyResults.reduce((sum, r) => sum + r.alerts, 0);
+
+    log('info', 'Reflections generation completed', {
+      generated,
+      skipped,
+      errors,
+      anomalyAlerts: totalAnomalyAlerts,
+    });
 
     return new Response(
       JSON.stringify({
@@ -237,7 +336,9 @@ Deno.serve(async (req) => {
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 },
     );
   } catch (error) {
-    console.error('Error in generate-reflections function:', error);
+    log('error', 'generate-reflections function failed', {
+      error: error instanceof Error ? error.message : 'Unknown error',
+    });
     return new Response(
       JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 },
@@ -268,13 +369,13 @@ function getCurrentMonth(): string {
  * （メインアプリのprompt-template.tsの簡略版）
  */
 function buildSimpleReflectionPrompt(
-  weeklyData: Record<string, unknown>,
+  weeklyData: WeeklyReflectionData | null,
   weekStart: string,
   weekEnd: string,
 ): string {
-  const totalEntries = Number(weeklyData.totalEntries ?? weeklyData.total_entries ?? 0);
-  const totalMinutes = Number(weeklyData.totalMinutes ?? weeklyData.total_minutes ?? 0);
-  const avgFulfillment = Number(weeklyData.avgFulfillment ?? weeklyData.avg_fulfillment ?? 0);
+  const totalEntries = weeklyData?.total_entries ?? 0;
+  const totalMinutes = weeklyData?.total_minutes ?? 0;
+  const avgFulfillment = weeklyData?.avg_fulfillment ?? 0;
   const totalHours = (totalMinutes / 60).toFixed(1);
 
   return `You are "Dayopt AI", generating a weekly reflection report for ${weekStart} to ${weekEnd}.
@@ -296,24 +397,19 @@ Respond ONLY with the JSON object. No markdown, no explanation.`;
 /**
  * AI出力からJSONをパース
  */
-function parseReflectionJSON(text: string): {
-  title: string;
-  insights: string;
-  question: string;
-  activities: Array<{ label: string; minutes: number; highlight: string }>;
-} {
+function parseReflectionJSON(text: string): ParsedReflection {
   try {
     let jsonStr = text.trim();
     if (jsonStr.startsWith('```')) {
       jsonStr = jsonStr.replace(/^```(?:json)?\s*/, '').replace(/\s*```$/, '');
     }
-    const parsed = JSON.parse(jsonStr);
+    const parsed = JSON.parse(jsonStr) as Record<string, unknown>;
     return {
       title: String(parsed.title ?? 'Weekly Reflection'),
       insights: String(parsed.insights ?? ''),
       question: String(parsed.question ?? ''),
       activities: Array.isArray(parsed.activities)
-        ? parsed.activities.map((a: Record<string, unknown>) => ({
+        ? (parsed.activities as Array<Record<string, unknown>>).map((a) => ({
             label: String(a.label ?? ''),
             minutes: Number(a.minutes ?? 0),
             highlight: String(a.highlight ?? ''),
@@ -325,15 +421,13 @@ function parseReflectionJSON(text: string): {
   }
 }
 
-type SupabaseClientType = Record<string, (...args: never[]) => unknown>;
-
 /**
  * 異常検知: 過去4週の平均と今週を比較
  */
 async function checkAnomalies(
-  supabase: SupabaseClientType,
+  supabase: ReturnType<typeof createClient>,
   userId: string,
-): Promise<Array<Record<string, unknown>>> {
+): Promise<AnomalyAlert[]> {
   const now = new Date();
   const dayOfWeek = now.getDay();
   const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
@@ -354,7 +448,8 @@ async function checkAnomalies(
     .eq('user_id', userId)
     .gte('start_time', `${baselineStart}T00:00:00`)
     .lt('start_time', `${thisWeekStart}T00:00:00`)
-    .not('start_time', 'is', null);
+    .not('start_time', 'is', null)
+    .returns<EntryRow[]>();
 
   // 今週のデータ
   const { data: currentEntries } = await supabase
@@ -363,53 +458,58 @@ async function checkAnomalies(
     .eq('user_id', userId)
     .gte('start_time', `${thisWeekStart}T00:00:00`)
     .lte('start_time', `${today}T23:59:59`)
-    .not('start_time', 'is', null);
+    .not('start_time', 'is', null)
+    .returns<EntryRow[]>();
 
-  const alerts: Array<Record<string, unknown>> = [];
+  const alerts: AnomalyAlert[] = [];
   const baseline = baselineEntries ?? [];
   const current = currentEntries ?? [];
 
   if (baseline.length === 0) return alerts;
 
   // ベースライン: 充実度平均
-  const baseWithScore = baseline.filter((e: Record<string, unknown>) => e.fulfillment_score != null);
-  const baseAvgFulfillment = baseWithScore.length > 0
-    ? baseWithScore.reduce((s: number, e: Record<string, unknown>) => s + Number(e.fulfillment_score), 0) / baseWithScore.length
-    : 0;
+  const baseWithScore = baseline.filter((e) => e.fulfillment_score != null);
+  const baseAvgFulfillment =
+    baseWithScore.length > 0
+      ? baseWithScore.reduce((s, e) => s + (e.fulfillment_score ?? 0), 0) / baseWithScore.length
+      : 0;
 
   // ベースライン: 週平均時間（4週で割る）
   let baseTotalMinutes = 0;
-  for (const e of baseline) {
-    const entry = e as Record<string, unknown>;
+  for (const entry of baseline) {
     if (entry.duration_minutes) {
-      baseTotalMinutes += Number(entry.duration_minutes);
+      baseTotalMinutes += entry.duration_minutes;
     } else if (entry.start_time && entry.end_time) {
-      const diff = new Date(entry.end_time as string).getTime() - new Date(entry.start_time as string).getTime();
+      const diff = new Date(entry.end_time).getTime() - new Date(entry.start_time).getTime();
       if (diff > 0) baseTotalMinutes += diff / 60000;
     }
   }
   const baseWeeklyMinutes = baseTotalMinutes / 4;
 
   // 今週: 充実度平均
-  const currWithScore = current.filter((e: Record<string, unknown>) => e.fulfillment_score != null);
-  const currAvgFulfillment = currWithScore.length > 0
-    ? currWithScore.reduce((s: number, e: Record<string, unknown>) => s + Number(e.fulfillment_score), 0) / currWithScore.length
-    : 0;
+  const currWithScore = current.filter((e) => e.fulfillment_score != null);
+  const currAvgFulfillment =
+    currWithScore.length > 0
+      ? currWithScore.reduce((s, e) => s + (e.fulfillment_score ?? 0), 0) / currWithScore.length
+      : 0;
 
   // 今週: 総時間
   let currTotalMinutes = 0;
-  for (const e of current) {
-    const entry = e as Record<string, unknown>;
+  for (const entry of current) {
     if (entry.duration_minutes) {
-      currTotalMinutes += Number(entry.duration_minutes);
+      currTotalMinutes += entry.duration_minutes;
     } else if (entry.start_time && entry.end_time) {
-      const diff = new Date(entry.end_time as string).getTime() - new Date(entry.start_time as string).getTime();
+      const diff = new Date(entry.end_time).getTime() - new Date(entry.start_time).getTime();
       if (diff > 0) currTotalMinutes += diff / 60000;
     }
   }
 
   // 充実度急落（-1以上）
-  if (baseAvgFulfillment > 0 && currAvgFulfillment > 0 && baseAvgFulfillment - currAvgFulfillment >= 1) {
+  if (
+    baseAvgFulfillment > 0 &&
+    currAvgFulfillment > 0 &&
+    baseAvgFulfillment - currAvgFulfillment >= 1
+  ) {
     alerts.push({
       type: 'fulfillment_drop',
       severity: baseAvgFulfillment - currAvgFulfillment >= 1.5 ? 'critical' : 'warning',
@@ -436,12 +536,11 @@ async function checkAnomalies(
     .select('start_time')
     .eq('user_id', userId)
     .gte('start_time', formatDate(new Date(now.getTime() - 14 * 86400000)))
-    .not('start_time', 'is', null);
+    .not('start_time', 'is', null)
+    .returns<Array<{ start_time: string }>>();
 
   const entryDates = new Set(
-    (recentEntries ?? [])
-      .filter((e: Record<string, unknown>) => e.start_time)
-      .map((e: Record<string, unknown>) => String(e.start_time).split('T')[0]),
+    (recentEntries ?? []).filter((e) => e.start_time).map((e) => e.start_time.split('T')[0]),
   );
 
   let streak = 0;

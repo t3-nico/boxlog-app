@@ -62,12 +62,13 @@ SELECT
     ELSE NULL
   END,
   -- end_time: TIME → TIMESTAMPTZ、なければstart + durationで算出
+  -- DST対策: 先にUTC変換してからduration加算
   CASE
     WHEN rd.end_time IS NOT NULL THEN
       (rd.worked_at || 'T' || rd.end_time)::timestamp AT TIME ZONE rd.tz
     WHEN rd.start_time IS NOT NULL THEN
-      ((rd.worked_at || 'T' || rd.start_time)::timestamp + rd.duration_minutes * interval '1 minute')
-        AT TIME ZONE rd.tz
+      ((rd.worked_at || 'T' || rd.start_time)::timestamp AT TIME ZONE rd.tz)
+        + rd.duration_minutes * interval '1 minute'
     ELSE NULL
   END,
   rd.duration_minutes,
@@ -335,16 +336,22 @@ STABLE
 SECURITY DEFINER
 SET search_path = public
 AS $$
-  -- entry_tags からカウント（plan_count に統合、record_count は後方互換で0）
+  -- entry_tags からカウント（plan_count=planned, record_count=unplanned）
   SELECT
     t.id AS tag_id,
-    COALESCE(et.cnt, 0) AS plan_count,
-    0::BIGINT AS record_count,
+    COALESCE(et.planned_cnt, 0) AS plan_count,
+    COALESCE(et.unplanned_cnt, 0) AS record_count,
     et.last_used AS last_used
   FROM tags t
   LEFT JOIN (
-    SELECT tag_id, COUNT(*) AS cnt, MAX(created_at) AS last_used
-    FROM entry_tags GROUP BY tag_id
+    SELECT
+      etag.tag_id,
+      COUNT(*) FILTER (WHERE e.origin = 'planned') AS planned_cnt,
+      COUNT(*) FILTER (WHERE e.origin = 'unplanned') AS unplanned_cnt,
+      MAX(etag.created_at) AS last_used
+    FROM entry_tags etag
+    JOIN entries e ON e.id = etag.entry_id
+    GROUP BY etag.tag_id
   ) et ON et.tag_id = t.id
   WHERE t.user_id = p_user_id AND t.is_active = true
 
@@ -353,8 +360,8 @@ AS $$
   -- タグなしエントリ数
   SELECT
     NULL::UUID AS tag_id,
-    COUNT(*)::BIGINT AS plan_count,
-    0::BIGINT AS record_count,
+    COUNT(*) FILTER (WHERE e.origin = 'planned') AS plan_count,
+    COUNT(*) FILTER (WHERE e.origin = 'unplanned') AS record_count,
     MAX(e.created_at) AS last_used
   FROM entries e
   WHERE e.user_id = p_user_id
@@ -390,8 +397,13 @@ $function$;
 SELECT cron.unschedule('cleanup-record-activities');
 
 -- ============================================================
--- Step 10: 旧テーブル削除
+-- Step 10: 旧テーブルをバックアップしてから削除
 -- ============================================================
+-- ロールバック用バックアップ（問題がなければ後続マイグレーションで削除）
+
+CREATE TABLE IF NOT EXISTS _backup_records AS SELECT * FROM records;
+CREATE TABLE IF NOT EXISTS _backup_record_tags AS SELECT * FROM record_tags;
+CREATE TABLE IF NOT EXISTS _backup_record_activities AS SELECT * FROM record_activities;
 
 DROP TABLE IF EXISTS record_activities;
 DROP TABLE IF EXISTS record_tags;
