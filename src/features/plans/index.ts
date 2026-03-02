@@ -57,14 +57,14 @@ export { usePlanRealtime } from './hooks/usePlanRealtime';
 // =============================================================================
 // Utils
 // =============================================================================
-export { expandRecurrence, getPlanRecurrenceConfig, isRecurringPlan } from './utils/recurrence';
-export type { ExpandedOccurrence, PlanInstanceException } from './utils/recurrence';
+export { expandRecurrence, getPlanRecurrenceConfig, isRecurringPlan } from '@/lib/plan-recurrence';
+export type { ExpandedOccurrence, PlanInstanceException } from '@/lib/plan-recurrence';
 
 export { decodeInstanceId, encodeInstanceId, getInstanceRef } from './utils/instanceId';
 export type { RecurrenceInstanceRef } from './utils/instanceId';
 
-export { groupItems } from './utils/grouping';
-export type { GroupByField, GroupedData } from './utils/grouping';
+export { groupItems } from '@/lib/plan-grouping';
+export type { GroupByField, GroupedData } from '@/lib/plan-grouping';
 
 // =============================================================================
 // Components

@@ -13,8 +13,8 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 
 import { useRecurringScopeMutations } from '@/hooks/useRecurringScopeMutations';
 import { logger } from '@/lib/logger';
+import { isRecurringPlan } from '@/lib/plan-recurrence';
 import { openRecurringEditConfirm, type RecurringEditScope } from '@/stores/useModalStore';
-import { isRecurringPlan } from '../../../utils/recurrence';
 
 import type { Plan } from '../../../types/plan';
 
