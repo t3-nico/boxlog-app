@@ -13,7 +13,7 @@ import { CACHE_5_MINUTES } from '@/constants/time';
 import { PlanCreateTrigger } from '@/features/plans';
 import { api } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
-import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
+import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 import {
   CHRONOTYPE_PRESETS,
   getChronotypeColor,
@@ -29,7 +29,7 @@ import {
  */
 export function ScheduleStatusItem() {
   const t = useTranslations('calendar');
-  const openInspector = usePlanInspectorStore((state) => state.openInspector);
+  const openInspector = useEntryInspectorStore((state) => state.openInspector);
   const [currentTime, setCurrentTime] = useState(() => new Date());
 
   // DBから直接クロノタイプ設定を取得（Zustandストアに依存しない）

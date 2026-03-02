@@ -11,7 +11,7 @@
 
 import { useCallback, useRef } from 'react';
 
-import { usePlanMutations } from '@/hooks/usePlanMutations';
+import { useEntryMutations } from '@/hooks/useEntryMutations';
 import { useRecurringScopeMutations } from '@/hooks/useRecurringScopeMutations';
 import { logger } from '@/lib/logger';
 import type { RecurringEditScope } from '@/stores/useRecurringEditConfirmStore';
@@ -30,7 +30,7 @@ interface UseRecurringPlanDragOptions {
 }
 
 export function useRecurringPlanDrag({ plans }: UseRecurringPlanDragOptions) {
-  const { updatePlan } = usePlanMutations();
+  const { updateEntry } = useEntryMutations();
   const { applyEdit } = useRecurringScopeMutations();
 
   // 保留中のドラッグ更新（refで保持してダイアログのコールバックで参照）
@@ -116,7 +116,7 @@ export function useRecurringPlanDrag({ plans }: UseRecurringPlanDragOptions) {
         return { skipToast: true };
       } else {
         // 通常エントリ: 直接更新
-        updatePlan.mutate({
+        updateEntry.mutate({
           id: plan.id,
           data: {
             start_time: resolvedUpdates.startTime.toISOString(),
@@ -125,7 +125,7 @@ export function useRecurringPlanDrag({ plans }: UseRecurringPlanDragOptions) {
         });
       }
     },
-    [plans, updatePlan, openDialog, handleScopeConfirm],
+    [plans, updateEntry, openDialog, handleScopeConfirm],
   );
 
   return {

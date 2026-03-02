@@ -2,22 +2,22 @@
 
 import { useCallback, useRef } from 'react';
 
-import { usePlanMutations } from '@/hooks/usePlanMutations';
+import { useEntryMutations } from '@/hooks/useEntryMutations';
 import { useRecurringScopeMutations } from '@/hooks/useRecurringScopeMutations';
 import { getInstanceRef } from '@/lib/instance-id';
 import { useDeleteConfirmStore } from '@/stores/useDeleteConfirmStore';
+import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 import { usePlanClipboardStore } from '@/stores/usePlanClipboardStore';
-import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
 import type { RecurringEditScope } from '@/stores/useRecurringEditConfirmStore';
 import { useRecurringEditConfirmStore } from '@/stores/useRecurringEditConfirmStore';
 import { toast } from 'sonner';
 import type { CalendarPlan } from '../types/calendar.types';
 
 export function usePlanContextActions() {
-  const { openInspector, openInspectorWithDraft } = usePlanInspectorStore();
+  const { openInspector, openInspectorWithDraft } = useEntryInspectorStore();
   const openDeleteDialog = useDeleteConfirmStore((state) => state.openDialog);
   const openRecurringDialog = useRecurringEditConfirmStore((state) => state.openDialog);
-  const { deletePlan, updatePlan } = usePlanMutations();
+  const { deleteEntry } = useEntryMutations();
   const { applyDelete } = useRecurringScopeMutations();
 
   // 繰り返しプラン削除用のターゲットをrefで保持（ダイアログのコールバックで参照）
@@ -57,10 +57,10 @@ export function usePlanContextActions() {
       // 通常プラン: カスタム削除確認ダイアログを使用
       const planIdToDelete = plan.calendarId || plan.id;
       openDeleteDialog(planIdToDelete, plan.title, async () => {
-        await deletePlan.mutateAsync({ id: planIdToDelete });
+        await deleteEntry.mutateAsync({ id: planIdToDelete });
       });
     },
-    [deletePlan, openDeleteDialog, openRecurringDialog, handleRecurringDeleteConfirm],
+    [deleteEntry, openDeleteDialog, openRecurringDialog, handleRecurringDeleteConfirm],
   );
 
   const handleEditPlan = useCallback(
@@ -143,33 +143,22 @@ export function usePlanContextActions() {
     [openInspectorWithDraft],
   );
 
-  const handleCompletePlan = useCallback(
-    (plan: CalendarPlan) => {
-      const planId = plan.calendarId || plan.id;
-      const newStatus = plan.status === 'closed' ? 'open' : 'closed';
-      updatePlan.mutate({ id: planId, data: { status: newStatus } });
-    },
-    [updatePlan],
-  );
+  // TODO: entries統合後、status概念は削除されたため要リファクタ
+  const handleCompletePlan = useCallback((_plan: CalendarPlan) => {
+    // entries モデルには status フィールドがないため no-op
+  }, []);
 
   const handleCompleteWithRecord = useCallback(
     (plan: CalendarPlan) => {
-      const planId = plan.calendarId || plan.id;
-      // Plan を完了にする
-      updatePlan.mutate({ id: planId, data: { status: 'closed' } });
       // Record 作成フォームを開く（Plan のデータをプリフィル）
-      openInspectorWithDraft(
-        {
-          title: plan.title,
-          plan_id: planId,
-          start_time: plan.startDate?.toISOString() ?? null,
-          end_time: plan.endDate?.toISOString() ?? null,
-          tagIds: plan.tagIds ?? [],
-        },
-        'record',
-      );
+      openInspectorWithDraft({
+        title: plan.title,
+        start_time: plan.startDate?.toISOString() ?? null,
+        end_time: plan.endDate?.toISOString() ?? null,
+        tagIds: plan.tagIds ?? [],
+      });
     },
-    [updatePlan, openInspectorWithDraft],
+    [openInspectorWithDraft],
   );
 
   return {

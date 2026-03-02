@@ -9,7 +9,7 @@ import { useInspectorKeyboard } from './hooks';
 import { InspectorContent, InspectorShell } from './shared';
 
 import { useDeleteConfirmStore } from '@/stores/useDeleteConfirmStore';
-import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
+import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 import { useRecurringEditConfirmStore } from '@/stores/useRecurringEditConfirmStore';
 import { usePlan } from '../../hooks/usePlan';
 import type { Plan } from '../../types/plan';
@@ -25,23 +25,23 @@ import { PlanInspectorContent } from './PlanInspectorContent';
  */
 export function PlanInspector() {
   const t = useTranslations();
-  const isOpen = usePlanInspectorStore((state) => state.isOpen);
-  const planId = usePlanInspectorStore((state) => state.planId);
-  const closeInspector = usePlanInspectorStore((state) => state.closeInspector);
-  const draftPlan = usePlanInspectorStore((state) => state.draftPlan);
-  const clearDraft = usePlanInspectorStore((state) => state.clearDraft);
-  const clearPendingChanges = usePlanInspectorStore((state) => state.clearPendingChanges);
+  const isOpen = useEntryInspectorStore((state) => state.isOpen);
+  const planId = useEntryInspectorStore((state) => state.entryId);
+  const closeInspector = useEntryInspectorStore((state) => state.closeInspector);
+  const draftEntry = useEntryInspectorStore((state) => state.draftEntry);
+  const clearDraft = useEntryInspectorStore((state) => state.clearDraft);
+  const clearPendingChanges = useEntryInspectorStore((state) => state.clearPendingChanges);
 
   // ドラフトモード判定
-  const isDraftMode = draftPlan !== null && planId === null;
+  const isDraftMode = draftEntry !== null && planId === null;
 
   const { data: planData, isLoading } = usePlan(planId!, {
     includeTags: true,
     enabled: !!planId && !isDraftMode,
   });
-  // ドラフトモードの場合はdraftPlanを使用
+  // ドラフトモードの場合はdraftEntryを使用
   const plan = isDraftMode
-    ? (draftPlan as unknown as Plan | null)
+    ? (draftEntry as unknown as Plan | null)
     : ((planData ?? null) as unknown as Plan | null);
 
   // 繰り返しダイアログが開いている間はInspectorを閉じない

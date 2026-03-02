@@ -14,7 +14,7 @@ import {
   CommandList,
 } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { usePlans } from '@/hooks/usePlans';
+import { useEntries } from '@/hooks/useEntries';
 import { useTags } from '@/hooks/useTagsQuery';
 import { cn } from '@/lib/utils';
 
@@ -48,7 +48,7 @@ export function SearchBar({
   const { addToHistory } = useSearchHistory();
 
   // Get data from stores
-  const { data: plans = [] } = usePlans();
+  const { data: plans = [] } = useEntries();
   const { data: tags = [] } = useTags();
 
   // Convert plans to displayable format

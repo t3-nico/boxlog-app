@@ -2,9 +2,8 @@
 
 import React, { useCallback } from 'react';
 
-import { usePlanMutations } from '@/hooks/usePlanMutations';
 import { cn } from '@/lib/utils';
-import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
+import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 import { useCalendarDragStore } from '../../../../stores/useCalendarDragStore';
 import type { CalendarPlan } from '../../../../types/calendar.types';
 
@@ -59,17 +58,13 @@ export const WeekContent = React.memo(function WeekContent({
   disabledPlanId,
 }: WeekContentProps) {
   // Inspectorで開いているプランのIDを取得
-  const inspectorPlanId = usePlanInspectorStore((state) => state.planId);
-  const isInspectorOpen = usePlanInspectorStore((state) => state.isOpen);
+  const inspectorPlanId = useEntryInspectorStore((state) => state.entryId);
+  const isInspectorOpen = useEntryInspectorStore((state) => state.isOpen);
 
-  // ステータス変更を1度だけ初期化し、全PlanCardに配布
-  const { updatePlan } = usePlanMutations();
-  const handleStatusChange = useCallback(
-    (planId: string, newStatus: 'open' | 'closed') => {
-      updatePlan.mutate({ id: planId, data: { status: newStatus } });
-    },
-    [updatePlan],
-  );
+  // TODO: entries統合後、status概念は削除されたため要リファクタ
+  const handleStatusChange = useCallback((_planId: string, _newStatus: 'open' | 'closed') => {
+    // entries モデルには status フィールドがないため no-op
+  }, []);
 
   // レスポンシブな高さ
   const HOUR_HEIGHT = useResponsiveHourHeight();

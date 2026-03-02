@@ -11,7 +11,8 @@ export type GroupByField = 'status' | 'tags' | null;
  * グループ化可能なアイテムの最小インターフェース
  */
 interface Groupable {
-  status: string;
+  id: string;
+  status?: string;
   tagIds?: string[] | undefined;
 }
 
@@ -95,7 +96,7 @@ export function groupItems<T extends Groupable>(
 function getGroupKey(item: Groupable, groupBy: GroupByField): string {
   switch (groupBy) {
     case 'status':
-      return item.status;
+      return item.status ?? 'unknown';
 
     case 'tags':
       // tagIdsの最初のIDをグループキーとして使用（タグ名の解決はUI側で行う）

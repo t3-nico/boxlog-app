@@ -6,7 +6,7 @@ import { convertFromTimezone } from '@/lib/date/timezone';
 import { getInstanceRef } from '@/lib/instance-id';
 import { logger } from '@/lib/logger';
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
-import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
+import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 import { useRecurringEditConfirmStore } from '@/stores/useRecurringEditConfirmStore';
 
 import type { CalendarPlan, CalendarViewType } from '../../../types/calendar.types';
@@ -17,10 +17,10 @@ interface UseCalendarHandlersOptions {
 }
 
 export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandlersOptions) {
-  const openPlanInspector = usePlanInspectorStore((state) => state.openInspector);
-  const openInspectorWithDraft = usePlanInspectorStore((state) => state.openInspectorWithDraft);
-  const inspectorPlanId = usePlanInspectorStore((state) => state.planId);
-  const inspectorIsOpen = usePlanInspectorStore((state) => state.isOpen);
+  const openPlanInspector = useEntryInspectorStore((state) => state.openInspector);
+  const openInspectorWithDraft = useEntryInspectorStore((state) => state.openInspectorWithDraft);
+  const inspectorPlanId = useEntryInspectorStore((state) => state.entryId);
+  const inspectorIsOpen = useEntryInspectorStore((state) => state.isOpen);
 
   // カレンダー設定のタイムゾーン
   const timezone = useCalendarSettingsStore((s) => s.timezone);

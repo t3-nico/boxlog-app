@@ -12,7 +12,7 @@ import { useCallback, useMemo } from 'react';
 import { CalendarPlus, Clock, Tag } from 'lucide-react';
 
 import { useTagModalNavigation } from '@/hooks/useTagModalNavigation';
-import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
+import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 import { useTranslations } from 'next-intl';
 
 import type { LucideIcon } from 'lucide-react';
@@ -43,15 +43,15 @@ interface UseCreateMenuItemsOptions {
  */
 export function useCreateMenuItems(options?: UseCreateMenuItemsOptions): CreateMenuEntry[] {
   const t = useTranslations();
-  const openInspectorWithDraft = usePlanInspectorStore((state) => state.openInspectorWithDraft);
+  const openInspectorWithDraft = useEntryInspectorStore((state) => state.openInspectorWithDraft);
   const { openTagCreateModal } = useTagModalNavigation();
 
   const handleCreatePlan = useCallback(() => {
-    openInspectorWithDraft(options?.initialData, 'plan');
+    openInspectorWithDraft(options?.initialData);
   }, [openInspectorWithDraft, options?.initialData]);
 
   const handleCreateRecord = useCallback(() => {
-    openInspectorWithDraft(options?.initialData, 'record');
+    openInspectorWithDraft(options?.initialData);
   }, [openInspectorWithDraft, options?.initialData]);
 
   const handleCreateTag = useCallback(() => {

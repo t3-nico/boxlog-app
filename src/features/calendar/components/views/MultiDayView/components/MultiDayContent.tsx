@@ -3,7 +3,7 @@
 import React, { useCallback } from 'react';
 
 import { cn } from '@/lib/utils';
-import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
+import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 import { useCalendarDragStore } from '../../../../stores/useCalendarDragStore';
 import type { CalendarPlan } from '../../../../types/calendar.types';
 
@@ -55,8 +55,8 @@ export function MultiDayContent({
   disabledPlanId,
   viewMode,
 }: MultiDayContentProps) {
-  const inspectorPlanId = usePlanInspectorStore((state) => state.planId);
-  const isInspectorOpen = usePlanInspectorStore((state) => state.isOpen);
+  const inspectorPlanId = useEntryInspectorStore((state) => state.entryId);
+  const isInspectorOpen = useEntryInspectorStore((state) => state.isOpen);
 
   // レスポンシブな高さ
   const HOUR_HEIGHT = useResponsiveHourHeight();

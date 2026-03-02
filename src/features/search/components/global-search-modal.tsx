@@ -29,12 +29,12 @@ import {
 } from '@/components/ui/command';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { useTheme } from '@/contexts/theme-context';
-import { usePlans } from '@/hooks/usePlans';
+import { useEntries } from '@/hooks/useEntries';
 import { useTagModalNavigation } from '@/hooks/useTagModalNavigation';
 import { useTags } from '@/hooks/useTagsQuery';
 import { useAppAsideStore } from '@/stores/useAppAsideStore';
 import { useCalendarFilterStore } from '@/stores/useCalendarFilterStore';
-import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
+import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 import { useSettingsModalStore } from '@/stores/useSettingsModalStore';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 
@@ -101,11 +101,11 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
   const filterHints = useMemo(() => getFilterHints(), []);
 
   // Get data from stores - only fetch when modal is open to prevent 401 errors on unauthenticated pages
-  const { data: plans = [] } = usePlans(undefined, { enabled: isOpen });
+  const { data: plans = [] } = useEntries(undefined, { enabled: isOpen });
   const { data: tags = [] } = useTags();
 
   // Get actions from stores
-  const openPlanInspector = usePlanInspectorStore((state) => state.openInspector);
+  const openPlanInspector = useEntryInspectorStore((state) => state.openInspector);
   const { openTagCreateModal } = useTagModalNavigation();
   const { resolvedTheme, setTheme } = useTheme();
   const openSettingsModal = useSettingsModalStore((state) => state.openModal);

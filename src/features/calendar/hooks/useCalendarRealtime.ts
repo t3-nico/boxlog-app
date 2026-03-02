@@ -30,12 +30,12 @@
 
 import { createRealtimeHook } from '@/lib/supabase/realtime/createRealtimeHook';
 
-import { usePlanCacheStore } from '@/stores/usePlanCacheStore';
+import { useEntryCacheStore } from '@/stores/useEntryCacheStore';
 
 export const useCalendarRealtime = createRealtimeHook({
   name: 'calendar',
   table: 'tickets',
-  useMutationGuard: () => usePlanCacheStore((state) => state.isMutating),
+  useMutationGuard: () => useEntryCacheStore((state) => state.isMutating),
   onInvalidate: (utils, payload) => {
     const recordId = payload.new?.id ?? payload.old?.id;
 

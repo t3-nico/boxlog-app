@@ -303,21 +303,6 @@ function PanelDragPreviewStory() {
       draggedPlanData: {
         id: 'panel-plan-1',
         title: 'Panel Drag Preview',
-        status: 'open',
-        user_id: 'user-1',
-        description: null,
-        start_time: start.toISOString(),
-        end_time: end.toISOString(),
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        completed_at: null,
-        reminder_minutes: null,
-        reminder_at: null,
-        reminder_sent: false,
-        recurrence_rule: null,
-        recurrence_type: null,
-        recurrence_end_date: null,
-        tagIds: [],
       },
     });
 

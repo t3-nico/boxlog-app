@@ -10,14 +10,14 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { localTimeToUTCISO, parseDatetimeString, parseISOToUserTimezone } from '@/lib/date-utils';
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 
-import { type DraftPlan } from '@/stores/usePlanInspectorStore';
+import { type DraftEntry } from '@/stores/useEntryInspectorStore';
 import type { Plan } from '../../../types/plan';
 
 interface UseInspectorTimeStateProps {
   plan: Plan | null;
   planId: string | null;
   isDraftMode: boolean;
-  draftPlan: DraftPlan | null;
+  draftPlan: DraftEntry | null;
   initialData: { start_time?: string | null; end_time?: string | null } | null;
   recurringEdit: {
     isRecurringInstance: boolean;
@@ -27,7 +27,7 @@ interface UseInspectorTimeStateProps {
     ) => void;
   };
   addPendingChange: (change: Record<string, string | number | null | undefined>) => void;
-  updateDraft: (partial: Partial<DraftPlan>) => void;
+  updateDraft: (partial: Partial<DraftEntry>) => void;
   updatePlan: {
     mutate: (args: {
       id: string;

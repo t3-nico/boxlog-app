@@ -23,10 +23,10 @@ import {
 } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { HoverTooltip } from '@/components/ui/tooltip';
-import { usePlans } from '@/hooks/usePlans';
+import { useEntries } from '@/hooks/useEntries';
 import { useTags } from '@/hooks/useTagsQuery';
 import { cn } from '@/lib/utils';
-import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
+import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 
 /** コールバックに渡す Plan の最小型（タイトル・タグの自動プリセット用） */
 interface PlanForCallback {
@@ -54,10 +54,10 @@ export function PlanIconButton({
   const t = useTranslations();
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const openInspectorWithDraft = usePlanInspectorStore((state) => state.openInspectorWithDraft);
+  const openInspectorWithDraft = useEntryInspectorStore((state) => state.openInspectorWithDraft);
 
   // Plan一覧（キャッシュ済み）
-  const { data: plans } = usePlans({});
+  const { data: plans } = useEntries({});
 
   // タグデータ取得
   const { data: allTags = [] } = useTags();
@@ -108,7 +108,7 @@ export function PlanIconButton({
   const handleCreatePlan = useCallback(() => {
     setIsOpen(false);
     onBeforeCreatePlan?.();
-    openInspectorWithDraft({ _linkRecordId: recordId ?? null, reminder_minutes: null }, 'plan');
+    openInspectorWithDraft({ reminder_minutes: null });
   }, [onBeforeCreatePlan, openInspectorWithDraft, recordId]);
 
   const handleOpenChange = useCallback((open: boolean) => {

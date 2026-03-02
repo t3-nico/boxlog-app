@@ -1,6 +1,11 @@
-import type { PlanWithTags } from '@/server/services/plans/types';
 import { create } from 'zustand';
 import type { CalendarPlan } from '../types/calendar.types';
+
+/** パネルドラッグ用のエントリデータ（最小型） */
+export interface DragEntryData {
+  id: string;
+  title: string;
+}
 
 /**
  * カレンダーのドラッグ状態を管理するストア
@@ -23,7 +28,7 @@ export interface CalendarDragState {
   /** ドラッグ中のプランデータ（カレンダー内ドラッグ用） */
   draggedPlan: CalendarPlan | null;
   /** ドラッグ中のプランデータ（パネルドラッグ用） */
-  draggedPlanData: PlanWithTags | null;
+  draggedPlanData: DragEntryData | null;
   /** 元の日付インデックス */
   originalDateIndex: number;
   /** 現在のターゲット日付インデックス */
@@ -40,7 +45,7 @@ interface CalendarDragActions {
   /** カレンダー内ドラッグ開始 */
   startDrag: (planId: string, plan: CalendarPlan, dateIndex: number) => void;
   /** パネルからのドラッグ開始 */
-  startPanelDrag: (plan: PlanWithTags) => void;
+  startPanelDrag: (plan: DragEntryData) => void;
   /** ドラッグ中の状態更新 */
   updateDrag: (
     updates: Partial<

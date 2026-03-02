@@ -28,10 +28,11 @@ import {
 import type { AsideType } from '@/features/navigation';
 import { useAppAsideStore } from '@/features/navigation';
 import { useNotifications } from '@/features/notifications';
-import type { PlanInitialData } from '@/features/plans';
-import { usePlanInspectorStore } from '@/features/plans';
+import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
+
 import { getCurrentTimezone, setUserTimezone, useCalendarSettingsStore } from '@/features/settings';
 import { logger } from '@/lib/logger';
+import type { EntryInitialData } from '@/stores/useEntryInspectorStore';
 
 // =============================================================================
 // Types
@@ -142,7 +143,7 @@ export function useCalendarComposition({
   // =========================================================================
   // Plan Inspector state
   // =========================================================================
-  const selectedPlanId = usePlanInspectorStore((state) => state.planId);
+  const selectedPlanId = useEntryInspectorStore((state) => state.entryId);
 
   // =========================================================================
   // Notifications（初回許可リクエスト）
@@ -233,7 +234,7 @@ export function useCalendarComposition({
   // =========================================================================
   // Plan Keyboard Shortcuts
   // =========================================================================
-  const getInitialPlanData = useCallback((): PlanInitialData => {
+  const getInitialPlanData = useCallback((): EntryInitialData => {
     const now = new Date();
     const start = startOfHour(now);
     const end = addHours(start, 1);

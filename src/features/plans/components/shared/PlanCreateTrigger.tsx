@@ -6,7 +6,7 @@ import { useTranslations } from 'next-intl';
 
 import { api } from '@/lib/trpc';
 
-import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
+import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 
 interface PlanCreateTriggerProps {
   triggerElement: ReactNode;
@@ -21,7 +21,7 @@ export function PlanCreateTrigger({
   initialDate,
 }: PlanCreateTriggerProps) {
   const t = useTranslations();
-  const { openInspectorWithDraft } = usePlanInspectorStore();
+  const { openInspectorWithDraft } = useEntryInspectorStore();
   const utils = api.useUtils();
 
   // 次の15分単位の時刻を取得

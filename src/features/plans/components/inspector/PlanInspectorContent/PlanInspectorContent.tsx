@@ -20,7 +20,7 @@ import { getEntryState, isTimePast } from '@/lib/entry-status';
 import { cn } from '@/lib/utils';
 import { InspectorHeader, useDragHandle } from '../shared';
 
-import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
+import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 
 import { PlanActivityPopover } from './ActivityPopover';
 import { PlanInspectorDetailsTab } from './PlanInspectorDetailsTab';
@@ -79,7 +79,7 @@ export function PlanInspectorContent() {
   }, [plan]);
 
   // ドラフトの時間位置（ボタンラベル用）
-  const draftStartTime = usePlanInspectorStore((state) => state.draftPlan?.start_time);
+  const draftStartTime = useEntryInspectorStore((state) => state.draftEntry?.start_time);
   const isDraftPast = draftStartTime ? isTimePast(draftStartTime) : false;
 
   // 充実度スコアのハンドリング（active/past のみ表示）

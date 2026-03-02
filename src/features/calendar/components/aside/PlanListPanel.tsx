@@ -4,11 +4,11 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { useTranslations } from 'next-intl';
 
-import { usePlans } from '@/hooks/usePlans';
+import { useEntries } from '@/hooks/useEntries';
 import { useTagsMap } from '@/hooks/useTagsMap';
 import { groupItems } from '@/lib/plan-grouping';
 import { useCalendarFilterStore } from '@/stores/useCalendarFilterStore';
-import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
+import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 import { usePanelDrag } from '../../hooks/usePanelDrag';
 
 import { PlanListCard } from './PlanListCard';
@@ -53,7 +53,7 @@ export function PlanListPanel() {
   const isPlanVisible = useCalendarFilterStore((s) => s.isPlanVisible);
 
   // Inspector
-  const openInspector = usePlanInspectorStore((s) => s.openInspector);
+  const openInspector = useEntryInspectorStore((s) => s.openInspector);
 
   // D&D
   const { handleDragStart } = usePanelDrag();
@@ -62,13 +62,12 @@ export function PlanListPanel() {
   const { getTagById } = useTagsMap();
 
   // プラン一覧取得（サーバー側ソート + ステータスフィルター）
-  const baseFilters =
-    statusFilter === 'all' ? { sortBy, sortOrder } : { status: statusFilter, sortBy, sortOrder };
+  const baseFilters = { origin: 'planned' as const, sortBy, sortOrder };
   const {
     data: plans,
     isLoading,
     error,
-  } = usePlans(search ? { ...baseFilters, search } : baseFilters);
+  } = useEntries(search ? { ...baseFilters, search } : baseFilters);
 
   // フィルタリング: スケジュールフィルター + タグフィルター
   const filteredPlans = useMemo(() => {

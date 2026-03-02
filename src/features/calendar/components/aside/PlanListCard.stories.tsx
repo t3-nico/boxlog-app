@@ -1,8 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 
-import type { PlanWithTags } from '@/server/services/plans/types';
-
 import { PlanListCard } from './PlanListCard';
 
 /**
@@ -10,30 +8,17 @@ import { PlanListCard } from './PlanListCard';
  *
  * - 透明背景 + フラットなリスト表示（角丸なし）
  * - ホバー領域は左右8pxの余白を確保（-mx-1で親paddingに食い込み）
- * - チェックボックスで open/closed 切り替え
+ * - 時間位置ベースで過去判定（"Time waits for no one"）
  * - 時間範囲 + 作業時間をメタ情報行に表示
  * - タグ表示（TagsContainer）
  */
 
-const now = new Date();
-const BASE_PLAN: PlanWithTags = {
+const BASE_PLAN = {
   id: 'plan-1',
-  user_id: 'user-1',
   title: 'チームミーティング',
-  description: '週次の進捗確認',
-  status: 'open',
   start_time: '2025-01-15T10:00:00.000Z',
   end_time: '2025-01-15T11:00:00.000Z',
-  created_at: now.toISOString(),
-  updated_at: now.toISOString(),
-  completed_at: null,
-  recurrence_type: null,
-  recurrence_rule: null,
-  recurrence_end_date: null,
-  reminder_minutes: null,
-  reminder_at: null,
-  reminder_sent: false,
-  tagIds: [],
+  tagIds: [] as string[],
 };
 
 const meta = {
@@ -65,15 +50,15 @@ export const Default: Story = {
   },
 };
 
-/** 完了済み（line-through + muted） */
-export const Completed: Story = {
+/** 過去のエントリ（時間位置ベースで判定） */
+export const PastEntry: Story = {
   args: {
     plan: {
       ...BASE_PLAN,
-      id: 'plan-completed',
+      id: 'plan-past',
       title: '完了したタスク',
-      status: 'closed',
-      completed_at: now.toISOString(),
+      start_time: '2020-01-15T10:00:00.000Z',
+      end_time: '2020-01-15T11:00:00.000Z',
     },
   },
 };
@@ -175,7 +160,13 @@ export const AllPatterns: Story = {
     <div className="flex w-[280px] flex-col gap-2">
       <PlanListCard plan={BASE_PLAN} onClick={fn()} />
       <PlanListCard
-        plan={{ ...BASE_PLAN, id: 'p2', status: 'closed', title: '完了済み' }}
+        plan={{
+          ...BASE_PLAN,
+          id: 'p2',
+          title: '過去のタスク',
+          start_time: '2020-01-15T10:00:00.000Z',
+          end_time: '2020-01-15T11:00:00.000Z',
+        }}
         onClick={fn()}
       />
       <PlanListCard

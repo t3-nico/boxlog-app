@@ -3,9 +3,9 @@
 import { useEffect, useRef } from 'react';
 
 import { useDeleteConfirmStore } from '@/stores/useDeleteConfirmStore';
+import type { EntryInitialData } from '@/stores/useEntryInspectorStore';
+import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 import { usePlanClipboardStore } from '@/stores/usePlanClipboardStore';
-import type { PlanInitialData } from '@/stores/usePlanInspectorStore';
-import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
 import { toast } from 'sonner';
 
 interface UseCalendarPlanKeyboardOptions {
@@ -16,7 +16,7 @@ interface UseCalendarPlanKeyboardOptions {
   /** 現在選択中のプランのタイトルを取得する関数 */
   getSelectedPlanTitle?: () => string | null;
   /** 新規プラン作成時の初期データ取得関数（現在の日時など） */
-  getInitialPlanData?: () => PlanInitialData | undefined;
+  getInitialPlanData?: () => EntryInitialData | undefined;
   /** 現在選択中のプランのコピー情報を取得する関数 */
   getSelectedPlanForCopy?: () => {
     title: string;
@@ -63,7 +63,7 @@ export function useCalendarPlanKeyboard({
   getSelectedPlanForCopy,
   getPasteDateForKeyboard,
 }: UseCalendarPlanKeyboardOptions) {
-  const { isOpen, planId, openInspector, closeInspector } = usePlanInspectorStore();
+  const { isOpen, entryId, openInspector, closeInspector } = useEntryInspectorStore();
   const { openDialog } = useDeleteConfirmStore();
 
   // コールバックの最新値を参照
@@ -112,13 +112,13 @@ export function useCalendarPlanKeyboard({
       if (isInputFocused) return;
 
       // Delete / Backspace: 選択中のプランの削除確認ダイアログを表示
-      if ((e.key === 'Delete' || e.key === 'Backspace') && isOpen && planId) {
+      if ((e.key === 'Delete' || e.key === 'Backspace') && isOpen && entryId) {
         e.preventDefault();
         const title = getSelectedPlanTitleRef.current?.() ?? null;
         const deleteCallback = onDeletePlanRef.current;
         if (deleteCallback) {
-          openDialog(planId, title, async () => {
-            await deleteCallback(planId);
+          openDialog(entryId, title, async () => {
+            await deleteCallback(entryId);
             closeInspector();
           });
         }
@@ -128,7 +128,7 @@ export function useCalendarPlanKeyboard({
       // Cmd/Ctrl + C: コピー
       if ((e.key === 'c' || e.key === 'C') && (e.metaKey || e.ctrlKey)) {
         // Inspectorで選択中のプランがある場合のみコピー
-        if (isOpen && planId) {
+        if (isOpen && entryId) {
           const planData = getSelectedPlanForCopyRef.current?.();
           if (planData) {
             e.preventDefault();
@@ -158,7 +158,7 @@ export function useCalendarPlanKeyboard({
           const endTime = new Date(startTime);
           endTime.setMinutes(endTime.getMinutes() + copiedPlan.duration);
 
-          const { openInspectorWithDraft } = usePlanInspectorStore.getState();
+          const { openInspectorWithDraft } = useEntryInspectorStore.getState();
           openInspectorWithDraft({
             title: copiedPlan.title,
             description: copiedPlan.description,
@@ -194,5 +194,5 @@ export function useCalendarPlanKeyboard({
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [enabled, isOpen, planId, openInspector, closeInspector, openDialog]);
+  }, [enabled, isOpen, entryId, openInspector, closeInspector, openDialog]);
 }

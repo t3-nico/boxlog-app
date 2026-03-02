@@ -6,11 +6,12 @@
 
 import { useMemo } from 'react';
 
-import { useplans } from '@/hooks/usePlans';
+import type { EntryWithTags } from '@/core/types/entry';
+import { useEntries } from '@/hooks/useEntries';
 import type { DateRangeFilter } from '@/lib/date';
 import { matchesDateRangeFilter } from '@/lib/date';
-import type { Plan, PlanStatus } from '../types/plan';
-import { normalizeStatus } from '../utils/status';
+import { getEntryState } from '@/lib/entry-status';
+import type { PlanStatus } from '../types/plan';
 
 import type {
   RecurrenceFilter,
@@ -30,13 +31,10 @@ export interface PlanSortOptions {
 }
 
 /**
- * APIから返されるプランデータの型
- * tagIdsはplan-serviceのformatPlanWithTagsで変換済み
+ * APIから返されるエントリデータの型
  * @internal テスト用にエクスポート
  */
-export type PlanWithTagIds = Plan & {
-  tagIds?: string[];
-};
+export type PlanWithTagIds = EntryWithTags;
 
 /**
  * Planアイテム
@@ -124,11 +122,15 @@ function matchesScheduleFilter(
  * @internal テスト用にエクスポート
  */
 export function planToPlanItem(plan: PlanWithTagIds): PlanItem {
+  // 時間位置ベースでステータスを導出
+  const entryState = getEntryState({ start_time: plan.start_time, end_time: plan.end_time });
+  const status: PlanStatus = entryState === 'past' ? 'closed' : 'open';
+
   return {
     id: plan.id,
     type: 'plan',
     title: plan.title,
-    status: normalizeStatus(plan.status),
+    status,
     created_at: plan.created_at ?? new Date().toISOString(),
     updated_at: plan.updated_at ?? new Date().toISOString(),
     description: plan.description ?? undefined,
@@ -170,17 +172,17 @@ export function planToPlanItem(plan: PlanWithTagIds): PlanItem {
 export function usePlanData(filters: PlanFilters = {}, sort?: PlanSortOptions) {
   // plansの取得（リアルタイム性最適化済み）
   const {
-    data: plansData,
+    data: entriesData,
     isPending,
     error,
-  } = useplans({
-    ...(filters.status && { status: filters.status }),
+  } = useEntries({
     ...(filters.search && { search: filters.search }),
   });
 
   // フィルタリング・ソートをメモ化（毎レンダリングでの再計算を防止）
   const items = useMemo(() => {
-    let result: PlanItem[] = plansData?.map((plan) => planToPlanItem(plan as PlanWithTagIds)) || [];
+    let result: PlanItem[] =
+      entriesData?.map((plan) => planToPlanItem(plan as PlanWithTagIds)) || [];
 
     // ステータスフィルタリング（クライアント側 - 楽観的更新後の即座反映用）
     if (filters.status) {
@@ -254,11 +256,11 @@ export function usePlanData(filters: PlanFilters = {}, sort?: PlanSortOptions) {
     }
 
     return result;
-  }, [plansData, filters, sort]);
+  }, [entriesData, filters, sort]);
 
   return {
     items,
-    plans: plansData || [],
+    plans: entriesData || [],
     isPending,
     error,
   };

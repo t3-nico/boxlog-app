@@ -5,12 +5,12 @@ import type { CalendarPlan } from '../../../../../types/calendar.types';
 
 import { PlanCard } from './PlanCard';
 
-// usePlanMutations フックをモック
-vi.mock('@/hooks/usePlanMutations', () => ({
-  usePlanMutations: () => ({
-    updatePlan: { mutate: vi.fn(), isPending: false },
-    createPlan: { mutate: vi.fn(), isPending: false },
-    deletePlan: { mutate: vi.fn(), isPending: false },
+// useEntryMutations フックをモック
+vi.mock('@/hooks/useEntryMutations', () => ({
+  useEntryMutations: () => ({
+    updateEntry: { mutate: vi.fn(), isPending: false },
+    createEntry: { mutate: vi.fn(), isPending: false },
+    deleteEntry: { mutate: vi.fn(), isPending: false },
   }),
 }));
 

@@ -30,31 +30,26 @@ export type {
 } from './types/activity';
 
 // =============================================================================
-// Stores (Re-export from shared stores for backward compatibility)
+// Stores (Re-export from shared stores)
 // =============================================================================
 export { useDeleteConfirmStore } from '@/stores/useDeleteConfirmStore';
-export { usePlanCacheStore, useplanCacheStore } from '@/stores/usePlanCacheStore';
+export { useEntryCacheStore } from '@/stores/useEntryCacheStore';
+export { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
+export type { DraftEntry, EntryInitialData, PendingChanges } from '@/stores/useEntryInspectorStore';
 export { usePlanClipboardStore } from '@/stores/usePlanClipboardStore';
 export type { ClipboardPlan, LastClickedPosition } from '@/stores/usePlanClipboardStore';
-export { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
-export type {
-  CreateEntryType,
-  DraftPlan,
-  PendingChanges,
-  PlanInitialData,
-} from '@/stores/usePlanInspectorStore';
 export { useRecurringEditConfirmStore } from '@/stores/useRecurringEditConfirmStore';
 
 // =============================================================================
 // Hooks
 // =============================================================================
+export { useEntries } from '@/hooks/useEntries';
+export { useEntryMutations } from '@/hooks/useEntryMutations';
 export {
   instancesToExceptionsMap,
   usePlanInstanceMutations,
   usePlanInstances,
 } from '@/hooks/usePlanInstances';
-export { usePlanMutations } from '@/hooks/usePlanMutations';
-export { usePlans, useplans } from '@/hooks/usePlans';
 export { usePlanTags } from '@/hooks/usePlanTags';
 export { useRecurringScopeMutations } from '@/hooks/useRecurringScopeMutations';
 export { usePlan, useplan } from './hooks/usePlan';

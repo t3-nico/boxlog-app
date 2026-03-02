@@ -9,7 +9,7 @@ import {
   type CreateActionType,
 } from '@/features/navigation';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
+import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 import { Plus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { usePathname, useSearchParams } from 'next/navigation';
@@ -57,9 +57,9 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
   // FABからのアクション選択ハンドラー
   const handleCreateAction = useCallback((type: CreateActionType) => {
     if (type === 'plan') {
-      usePlanInspectorStore.getState().openInspectorWithDraft(undefined, 'plan');
+      useEntryInspectorStore.getState().openInspectorWithDraft(undefined);
     } else if (type === 'record') {
-      usePlanInspectorStore.getState().openInspectorWithDraft(undefined, 'record');
+      useEntryInspectorStore.getState().openInspectorWithDraft(undefined);
     }
   }, []);
 

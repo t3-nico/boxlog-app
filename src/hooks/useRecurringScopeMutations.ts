@@ -13,8 +13,8 @@
 
 import { useCallback } from 'react';
 
+import { useEntryMutations } from '@/hooks/useEntryMutations';
 import { usePlanInstanceMutations } from '@/hooks/usePlanInstances';
-import { usePlanMutations } from '@/hooks/usePlanMutations';
 import { api } from '@/lib/trpc';
 import type { RecurringEditScope } from '@/stores/useRecurringEditConfirmStore';
 
@@ -40,7 +40,7 @@ interface ApplyDeleteParams {
 
 export function useRecurringScopeMutations() {
   const utils = api.useUtils();
-  const { updatePlan, deletePlan } = usePlanMutations();
+  const { updateEntry, deleteEntry } = useEntryMutations();
   const { createInstance } = usePlanInstanceMutations();
 
   // splitRecurrence mutation（楽観的更新付き）- 1箇所で定義
@@ -115,7 +115,7 @@ export function useRecurringScopeMutations() {
         }
 
         case 'all': {
-          await updatePlan.mutateAsync({
+          await updateEntry.mutateAsync({
             id: planId,
             data: changes,
           });
@@ -123,7 +123,7 @@ export function useRecurringScopeMutations() {
         }
       }
     },
-    [createInstance, splitRecurrence, updatePlan],
+    [createInstance, splitRecurrence, updateEntry],
   );
 
   /**
@@ -148,7 +148,7 @@ export function useRecurringScopeMutations() {
         case 'thisAndFuture': {
           const endDate = new Date(instanceDate);
           endDate.setDate(endDate.getDate() - 1);
-          await updatePlan.mutateAsync({
+          await updateEntry.mutateAsync({
             id: planId,
             data: {
               recurrence_end_date: endDate.toISOString().slice(0, 10),
@@ -158,12 +158,12 @@ export function useRecurringScopeMutations() {
         }
 
         case 'all': {
-          await deletePlan.mutateAsync({ id: planId });
+          await deleteEntry.mutateAsync({ id: planId });
           break;
         }
       }
     },
-    [createInstance, updatePlan, deletePlan],
+    [createInstance, updateEntry, deleteEntry],
   );
 
   return {

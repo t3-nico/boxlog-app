@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef } from 'react';
 
-import { usePlanMutations } from '@/hooks/usePlanMutations';
+import { useEntryMutations } from '@/hooks/useEntryMutations';
 import type { Plan } from '../../../types/plan';
 
 interface UseInspectorAutoSaveOptions {
@@ -16,7 +16,7 @@ export function useInspectorAutoSave({
   plan,
   debounceMs = 500,
 }: UseInspectorAutoSaveOptions) {
-  const { updatePlan, deletePlan } = usePlanMutations();
+  const { updateEntry: updatePlan, deleteEntry: deletePlan } = useEntryMutations();
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const autoSave = useCallback(
@@ -32,12 +32,7 @@ export function useInspectorAutoSave({
 
       debounceTimerRef.current = setTimeout(() => {
         const updateData: Record<string, string | undefined> = {};
-
-        if (field === 'status' && value) {
-          updateData.status = value as 'open' | 'in_progress' | 'completed' | 'cancelled';
-        } else {
-          updateData[field] = value;
-        }
+        updateData[field] = value;
 
         updatePlan.mutate({
           id: planId,

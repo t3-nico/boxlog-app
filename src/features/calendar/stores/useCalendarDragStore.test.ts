@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import type { PlanWithTags } from '@/server/services/plans/types';
 import type { CalendarPlan } from '../types/calendar.types';
+import type { DragEntryData } from './useCalendarDragStore';
 
 import { useCalendarDragStore } from './useCalendarDragStore';
 
@@ -21,10 +21,10 @@ const mockCalendarPlan: CalendarPlan = {
   isRecurring: false,
 };
 
-const mockPlanWithTags = {
+const mockPlanWithTags: DragEntryData = {
   id: 'plan-2',
   title: 'パネルプラン',
-} as PlanWithTags;
+};
 
 describe('useCalendarDragStore', () => {
   beforeEach(() => {

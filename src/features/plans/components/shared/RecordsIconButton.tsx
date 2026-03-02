@@ -32,7 +32,7 @@ import { useTags } from '@/hooks/useTagsQuery';
 import { logger } from '@/lib/logger';
 import { api } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
-import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
+import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 
 interface RecordsIconButtonProps {
   planId: string | null;
@@ -53,7 +53,7 @@ export function RecordsIconButton({
   const utils = api.useUtils();
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const openInspectorWithDraft = usePlanInspectorStore((state) => state.openInspectorWithDraft);
+  const openInspectorWithDraft = useEntryInspectorStore((state) => state.openInspectorWithDraft);
 
   const isDraftMode = !planId;
   const hasDraftRecords = isDraftMode && (draftRecordIds?.length ?? 0) > 0;
@@ -176,7 +176,7 @@ export function RecordsIconButton({
   const handleCreateRecord = useCallback(() => {
     if (!planId) return;
     setIsOpen(false);
-    openInspectorWithDraft({ plan_id: planId }, 'record');
+    openInspectorWithDraft({});
   }, [planId, openInspectorWithDraft]);
 
   return (
